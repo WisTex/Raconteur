@@ -1,7 +1,8 @@
 <?php
-/** @file boot.php
+/**
+ * @file boot.php
  *
- * This file defines some global constants and includes the central App class.
+ * @brief This file defines some global constants and includes the central App class.
  */
 
 /**
@@ -95,10 +96,9 @@ $DIRECTORY_FALLBACK_SERVERS = array(
  * App::$config['system']['jpeg_quality'] = n;
  * in .htconfig.php, where n is netween 1 and 100, and with very poor results
  * below about 50
- *
  */
-
 define ( 'JPEG_QUALITY',            100  );
+
 /**
  * App::$config['system']['png_quality'] from 0 (uncompressed) to 9
  */
@@ -107,7 +107,6 @@ define ( 'PNG_QUALITY',             8  );
 /**
  * Language detection parameters
  */
-
 define ( 'LANGUAGE_DETECT_MIN_LENGTH',     128 );
 define ( 'LANGUAGE_DETECT_MIN_CONFIDENCE', 0.01 );
 
@@ -264,7 +263,6 @@ define ( 'NETWORK_LINKEDIN',         'lnkd');    // LinkedIn
 define ( 'NETWORK_XMPP',             'xmpp');    // XMPP
 define ( 'NETWORK_MYSPACE',          'mysp');    // MySpace
 define ( 'NETWORK_GPLUS',            'goog');    // Google+
-
 define ( 'NETWORK_PHANTOM',          'unkn');    // Place holder
 
 
@@ -455,8 +453,8 @@ define ( 'NAMESPACE_STATUSNET',       'http://status.net/schema/api/1/' );
 define ( 'NAMESPACE_ATOM1',           'http://www.w3.org/2005/Atom' );
 define ( 'NAMESPACE_YMEDIA',          'http://search.yahoo.com/mrss/' );
 
-// We should be using versioned jsonld contexts so that signatures will be slightly more reliable. 
-// Why signatures are unreliable by design is a problem nobody seems to care about 
+// We should be using versioned jsonld contexts so that signatures will be slightly more reliable.
+// Why signatures are unreliable by design is a problem nobody seems to care about
 // "because it's a proposed W3C standard". .
 
 // Anyway, if you use versioned contexts, communication with Mastodon fails. Have not yet investigated
@@ -642,7 +640,7 @@ function sys_boot() {
 
 		unset($db_host, $db_port, $db_user, $db_pass, $db_data, $db_type);
 
-		/**
+		/*
 		 * Load configs from db. Overwrite configs from .htconfig.php
 		 */
 
@@ -652,20 +650,21 @@ function sys_boot() {
 		App::$session = new Zotlabs\Web\Session();
 		App::$session->init();
 		load_hooks();
+		/**
+		 * @hooks init_1
+		 */
 		call_hooks('init_1');
 	}
-
 }
 
 
 /**
+ * @brief Reverse the effect of magic_quotes_gpc if it is enabled.
  *
- * Reverse the effect of magic_quotes_gpc if it is enabled.
  * Please disable magic_quotes_gpc so we don't have to do this.
  * See http://php.net/manual/en/security.magicquotes.disabling.php
  *
  */
-
 function startup() {
 	error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
@@ -709,18 +708,16 @@ function startup() {
  * which is now static (although currently constructed at startup). We are only converting
  * 'system' config settings.
  */
-
 class miniApp {
 	public $config = array('system' => array());
 
 	public function convert() {
 		if($this->config['system']) {
-		    foreach($this->config['system'] as $k => $v)
-		        App::$config['system'][$k] = $v;
+			foreach($this->config['system'] as $k => $v)
+				App::$config['system'][$k] = $v;
 		}
 	}
 }
-
 
 
 /**
@@ -886,11 +883,11 @@ class App {
 
 			if(x($_SERVER,'SERVER_PORT') && $_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443)
 				self::$hostname .= ':' . $_SERVER['SERVER_PORT'];
-			/**
+
+			/*
 			 * Figure out if we are running at the top of a domain
 			 * or in a sub-directory and adjust accordingly
 			 */
-
 			$path = trim(dirname($_SERVER['SCRIPT_NAME']),'/\\');
 			if(isset($path) && strlen($path) && ($path != self::$path))
 				self::$path = $path;
@@ -922,7 +919,7 @@ class App {
 		 *
 		 * There will always be one argument. If provided a naked domain
 		 * URL, self::$argv[0] is set to "home".
-		 * 
+		 *
 		 * If $argv[0] has a period in it, for example foo.json; rewrite
 		 * to module = 'foo' and set $_REQUEST['module_format'] = 'json';
 		 */
@@ -1147,7 +1144,12 @@ class App {
 		head_add_link(['rel' => 'shortcut icon', 'href' => head_get_icon()]);
 
 		$x = [ 'header' => '' ];
-		call_hooks('build_pagehead',$x);
+		/**
+		 * @hooks build_pagehead
+		 *   Called when creating the HTML page header.
+		 *   * \e string \b header - Return the HTML header which should be added
+		 */
+		call_hooks('build_pagehead', $x);
 
 		/* put the head template at the beginning of page['htmlhead']
 		 * since the code added by the modules frequently depends on it
@@ -1178,8 +1180,10 @@ class App {
 	}
 
 	/**
-	* register template engine class
-	* if $name is "", is used class static property $class::$name
+	* @brief Register template engine class.
+	*
+	* If $name is "", is used class static property $class::$name.
+	*
 	* @param string $class
 	* @param string $name
 	*/
@@ -1198,8 +1202,9 @@ class App {
 	}
 
 	/**
-	* return template engine instance. If $name is not defined,
-	* return engine defined by theme, or default
+	* @brief Return template engine instance.
+	*
+	* If $name is not defined, return engine defined by theme, or default.
 	*
 	* @param string $name Template engine name
 	*
@@ -1302,8 +1307,11 @@ function x($s, $k = null) {
 }
 
 
-// called from db initialisation if db is dead.
-
+/**
+ * @brief Called from db initialisation if db is dead.
+ *
+ * @ref include/system_unavailable.php will handle everything further.
+ */
 function system_unavailable() {
 	include('include/system_unavailable.php');
 	system_down();
@@ -1359,7 +1367,12 @@ function os_mkdir($path, $mode = 0777, $recursive = false) {
 }
 
 
-// recursively delete a directory
+/**
+ * @brief Recursively delete a directory.
+ *
+ * @param string $path
+ * @return boolean
+ */
 function rrmdir($path) {
 	if(is_dir($path) === true) {
 		$files = array_diff(scandir($path), array('.', '..'));
@@ -1386,10 +1399,11 @@ function is_ajax() {
 }
 
 
-// Primarily involved with database upgrade, but also sets the
-// base url for use in cmdline programs which don't have
-// $_SERVER variables, and synchronising the state of installed plugins.
-
+/**
+ * Primarily involved with database upgrade, but also sets the
+ * base url for use in cmdline programs which don't have
+ * $_SERVER variables, and synchronising the state of installed plugins.
+ */
 function check_config() {
 
 	$saved = get_config('system','urlverify');
@@ -1600,15 +1614,23 @@ function fix_system_urls($oldurl, $newurl) {
 			);
 		}
 	}
-
 }
 
 
-// wrapper for adding a login box. If $register == true provide a registration
-// link. This will most always depend on the value of App::$config['system']['register_policy'].
-// returns the complete html for inserting into the page
-
-function login($register = false, $form_id = 'main-login', $hiddens=false, $login_page = true) {
+/**
+ * @brief Wrapper for adding a login box.
+ *
+ * If $register == true provide a registration link. This will most always depend
+ * on the value of App::$config['system']['register_policy'].
+ * Returns the complete html for inserting into the page
+ *
+ * @param boolean $register (optional) default false
+ * @param string $form_id (optional) default \e main-login
+ * @param boolean $hiddens (optional) default false
+ * @param boolean $login_page (optional) default true
+ * @return string Parsed HTML code.
+ */
+function login($register = false, $form_id = 'main-login', $hiddens = false, $login_page = true) {
 	$o = '';
 	$reg = false;
 	$reglink = get_config('system', 'register_link');
@@ -1648,6 +1670,11 @@ function login($register = false, $form_id = 'main-login', $hiddens=false, $logi
 		'$lostlink'     => t('Password Reset'),
 	));
 
+	/**
+	 * @hooks login_hook
+	 *   Called when generating the login form.
+	 *   * \e string with parsed HTML
+	 */
 	call_hooks('login_hook', $o);
 
 	return $o;
@@ -1736,8 +1763,12 @@ function remote_channel() {
 }
 
 /**
+ * @brief Show an error or alert text on next page load.
+ *
  * Contents of $s are displayed prominently on the page the next time
  * a page is loaded. Usually used for errors or alerts.
+ *
+ * For informational text use info().
  *
  * @param string $s Text to display
  */
@@ -1751,18 +1782,20 @@ function notice($s) {
 	// - typically seen as multiple 'permission denied' messages
 	// as a result of auto-reloading a protected page with &JS=1
 
-	if(in_array($s,$_SESSION['sysmsg']))
+	if(in_array($s, $_SESSION['sysmsg']))
 		return;
 
 	if(App::$interactive) {
 		$_SESSION['sysmsg'][] = $s;
 	}
-
 }
 
 /**
+ * @brief Show an information text on next page load.
+ *
  * Contents of $s are displayed prominently on the page the next time a page is
  * loaded. Usually used for information.
+ *
  * For error and alerts use notice().
  *
  * @param string $s Text to display
@@ -1777,7 +1810,7 @@ function info($s) {
 }
 
 /**
- * @brief Wrapper around config to limit the text length of an incoming message
+ * @brief Wrapper around config to limit the text length of an incoming message.
  *
  * @return int
  */
@@ -1787,15 +1820,15 @@ function get_max_import_size() {
 
 
 /**
- *
- * Wrap calls to proc_close(proc_open()) and call hook
+ * @brief Wrap calls to proc_close(proc_open()) and call hook
  * so plugins can take part in process :)
  *
  * args:
  * $cmd program to run
  *  next args are passed as $cmd command line
  *
- * e.g.: proc_run("ls","-la","/tmp");
+ * e.g.:
+ * @code{.php}proc_run("ls", "-la", "/tmp");@endcode
  *
  * $cmd and string args are surrounded with ""
  */
@@ -1810,8 +1843,16 @@ function proc_run(){
 
 	$args = flatten_array_recursive($args);
 
-	$arr = array('args' => $args, 'run_cmd' => true);
-
+	$arr =  [
+			'args' => $args,
+			'run_cmd' => true
+	];
+	/**
+	 * @hooks proc_run
+	 *   Called when invoking PHP sub processes.
+	 *   * \e array \b args
+	 *   * \e boolean \b run_cmd
+	 */
 	call_hooks('proc_run', $arr);
 
 	if(! $arr['run_cmd'])
@@ -1873,7 +1914,6 @@ function is_windows() {
  *
  * @return bool true if user is an admin
  */
-
 function is_site_admin() {
 
 	if(! session_id())
@@ -1943,7 +1983,6 @@ function load_contact_links($uid) {
  *
  * @return string
  */
-
 function build_querystring($params, $name = null) {
 	$ret = '';
 	foreach($params as $key => $val) {
@@ -1962,12 +2001,14 @@ function build_querystring($params, $name = null) {
 			}
 		}
 	}
+
 	return $ret;
 }
 
 
-// much better way of dealing with c-style args
-
+/*
+ * @brief Much better way of dealing with c-style args.
+ */
 function argc() {
 	return App::$argc;
 }
@@ -1986,9 +2027,8 @@ function dba_timer() {
 /**
  * @brief Returns xchan_hash from the observer.
  *
- * @return empty string if no observer, otherwise xchan_hash from observer
+ * @return string xchan_hash from observer, otherwise empty string if no observer
  */
-
 function get_observer_hash() {
 	$observer = App::get_observer();
 	if(is_array($observer))
@@ -1999,19 +2039,24 @@ function get_observer_hash() {
 
 
 /**
- * Returns the complete URL of the current page, e.g.: http(s)://something.com/network
+ * @brief Returns the complete URL of the current page, e.g.: http(s)://something.com/network
  *
  * Taken from http://webcheatsheet.com/php/get_current_page_url.php
+ *
+ * @return string
  */
 function curPageURL() {
 	$pageURL = 'http';
-	if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
+	if ($_SERVER["HTTPS"] == "on") {
+		$pageURL .= "s";
+	}
 	$pageURL .= "://";
 	if ($_SERVER["SERVER_PORT"] != "80" && $_SERVER["SERVER_PORT"] != "443") {
 		$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
 	} else {
 		$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
 	}
+
 	return $pageURL;
 }
 
@@ -2022,7 +2067,6 @@ function curPageURL() {
  *
  * @todo not fully implemented yet
  *
- * @param App $a global application object
  * @param string $navname
  *
  * @return mixed
@@ -2046,8 +2090,17 @@ function load_pdl() {
 
 	if (! count(App::$layout)) {
 
-		$arr = array('module' => App::$module, 'layout' => '');
-		call_hooks('load_pdl',$arr);
+		$arr = [
+				'module' => App::$module,
+				'layout' => ''
+		];
+		/**
+		 * @hooks load_pdl
+		 *   Called when we load a PDL file or description.
+		 *   * \e string \b module
+		 *   * \e string \b layout
+		 */
+		call_hooks('load_pdl', $arr);
 		$layout = $arr['layout'];
 
 		$n = 'mod_' . App::$module . '.pdl' ;
@@ -2096,7 +2149,7 @@ function construct_page() {
 	if($uid) {
 		$navbar = get_pconfig($uid,'system','navbar',$navbar);
 	}
-	
+
 	if($comanche && App::$layout['navbar']) {
 		$navbar = App::$layout['navbar'];
 	}
@@ -2150,7 +2203,17 @@ function construct_page() {
 	// layout completely with a new layout definition, or replace/remove existing content.
 
 	if($comanche) {
-		$arr = array('module' => App::$module, 'layout' => App::$layout);
+		$arr = [
+				'module' => App::$module,
+				'layout' => App::$layout
+		];
+		/**
+		 * @hooks construct_page
+		 *   General purpose hook to provide content to certain page regions.
+		 *   Called when constructing the Comanche page.
+		 *   * \e string \b module
+		 *   * \e string \b layout
+		 */
 		call_hooks('construct_page', $arr);
 		App::$layout = $arr['layout'];
 
@@ -2294,10 +2357,13 @@ function get_directory_primary() {
 
 
 /**
- * @brief return relative date of last completed poller execution.
+ * @brief Return relative date of last completed poller execution.
+ *
+ * @return string relative date of last completed poller execution
  */
 function get_poller_runtime() {
 	$t = get_config('system', 'lastpoll');
+
 	return relative_date($t);
 }
 
@@ -2307,6 +2373,7 @@ function z_get_upload_dir() {
 		$upload_dir = ini_get('upload_tmp_dir');
 	if(! $upload_dir)
 		$upload_dir = sys_get_temp_dir();
+
 	return $upload_dir;
 }
 
@@ -2314,16 +2381,22 @@ function z_get_temp_dir() {
 	$temp_dir = get_config('system','tempdir');
 	if(! $temp_dir)
 		$temp_dir = sys_get_temp_dir();
+
 	return $upload_dir;
 }
 
-function z_check_cert() {
 
-	if(strpos(z_root(),'https://') !== false) {
+/**
+ * @brief Check if server certificate is valid.
+ *
+ * Notify admin if not.
+ */
+function z_check_cert() {
+	if(strpos(z_root(), 'https://') !== false) {
 		$x = z_fetch_url(z_root() . '/siteinfo.json');
 		if(! $x['success']) {
 			$recurse = 0;
-			$y = z_fetch_url(z_root() . '/siteinfo.json',false,$recurse,array('novalidate' => true));
+			$y = z_fetch_url(z_root() . '/siteinfo.json', false, $recurse, ['novalidate' => true]);
 			if($y['success'])
 				cert_bad_email();
 		}
@@ -2336,7 +2409,6 @@ function z_check_cert() {
  *
  * If a hub is available over https it must have a publicly valid certificate.
  */
-
 function cert_bad_email() {
 	return z_mail(
 		[
@@ -2345,7 +2417,7 @@ function cert_bad_email() {
 			'textVersion'    => replace_macros(get_intltext_template('cert_bad_eml.tpl'),
 				[
 					'$sitename' => App::$config['system']['sitename'],
-					'$siteurl'  =>  z_root(),
+					'$siteurl'  => z_root(),
 					'$error'    => t('Website SSL certificate is not valid. Please correct.')
 				]
 			)
@@ -2407,7 +2479,6 @@ function check_for_new_perms() {
 									\Zotlabs\Access\PermissionLimits::Set($cc['channel_id'],$p,0);
 								}
 
-
 								$set = ((array_key_exists('perms_connect',$rp) && in_array($p,$rp['perms_connect'])) ? 1 : 0);
 								// foreach connection set to the perms_connect value
 								if($x) {
@@ -2426,9 +2497,7 @@ function check_for_new_perms() {
 	// We should probably call perms_refresh here, but this should get pushed in 24 hours and there is no urgency
 	if($found_new_perm)
 		set_config('system','perms',$pcurrent);
-
 }
-
 
 
 /**
@@ -2479,11 +2548,15 @@ function check_cron_broken() {
 }
 
 
-
+/**
+ * @brief
+ *
+ * @param boolean $allow_account (optional) default false
+ * @return boolean
+ */
 function observer_prohibited($allow_account = false) {
-
 	if($allow_account)
-		return (((get_config('system','block_public')) && (! get_account_id()) && (! remote_channel())) ? true : false );
-	return (((get_config('system','block_public')) && (! local_channel()) && (! remote_channel())) ? true : false );
+		return (((get_config('system', 'block_public')) && (! get_account_id()) && (! remote_channel())) ? true : false );
 
+	return (((get_config('system', 'block_public')) && (! local_channel()) && (! remote_channel())) ? true : false );
 }

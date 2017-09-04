@@ -1,12 +1,21 @@
 <?php
 
-
 namespace Zotlabs\Access;
 
-use Zotlabs\Lib as Zlib;
-
+/**
+ * @brief PermissionRoles class.
+ *
+ * @see Permissions
+ */
 class PermissionRoles {
 
+	/**
+	 * @brief PermissionRoles version.
+	 *
+	 * This must match the version in Permissions.php before permission updates can run.
+	 *
+	 * @return number
+	 */
 	static public function version() {
 		return 2;
 	}
@@ -23,12 +32,13 @@ class PermissionRoles {
 				$ret['default_collection'] = false;
 				$ret['directory_publish'] = true;
 				$ret['online'] = true;
-				$ret['perms_connect'] = [ 
+				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments', 
-					'post_mail', 'chat', 'post_like', 'republish' ];
-
+					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments',
+					'post_mail', 'chat', 'post_like', 'republish'
+				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
+
 				break;
 
 			case 'social_restricted':
@@ -36,11 +46,11 @@ class PermissionRoles {
 				$ret['default_collection'] = true;
 				$ret['directory_publish'] = true;
 				$ret['online'] = true;
-				$ret['perms_connect'] = [ 
+				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments', 
-					'post_mail', 'chat', 'post_like' ];
-
+					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments',
+					'post_mail', 'chat', 'post_like'
+				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 
 				break;
@@ -50,10 +60,11 @@ class PermissionRoles {
 				$ret['default_collection'] = true;
 				$ret['directory_publish'] = false;
 				$ret['online'] = false;
-				$ret['perms_connect'] = [ 
+				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments', 
-					'post_mail', 'post_like' ];
+					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments',
+					'post_mail', 'post_like'
+				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 				$ret['limits']['view_contacts'] = PERMS_SPECIFIC;
 				$ret['limits']['view_storage'] = PERMS_SPECIFIC;
@@ -65,12 +76,13 @@ class PermissionRoles {
 				$ret['default_collection'] = false;
 				$ret['directory_publish'] = true;
 				$ret['online'] = false;
-				$ret['perms_connect'] = [ 
+				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
 					'view_pages', 'view_wiki', 'post_wall', 'post_comments', 'tag_deliver',
-					'post_mail', 'post_like' , 'republish', 'chat' ];
-
+					'post_mail', 'post_like' , 'republish', 'chat'
+				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
+
 				break;
 
 			case 'forum_restricted':
@@ -78,11 +90,10 @@ class PermissionRoles {
 				$ret['default_collection'] = true;
 				$ret['directory_publish'] = true;
 				$ret['online'] = false;
-				$ret['perms_connect'] = [ 
+				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
 					'view_pages', 'view_wiki', 'post_wall', 'post_comments', 'tag_deliver',
 					'post_mail', 'post_like' , 'chat' ];
-
 				$ret['limits'] = PermissionLimits::Std_Limits();
 
 				break;
@@ -92,12 +103,11 @@ class PermissionRoles {
 				$ret['default_collection'] = true;
 				$ret['directory_publish'] = false;
 				$ret['online'] = false;
-
-				$ret['perms_connect'] = [ 
+				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
 					'view_pages', 'view_wiki', 'post_wall', 'post_comments',
-					'post_mail', 'post_like' , 'chat' ];
-
+					'post_mail', 'post_like' , 'chat'
+				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 				$ret['limits']['view_profile']  = PERMS_SPECIFIC;
 				$ret['limits']['view_contacts'] = PERMS_SPECIFIC;
@@ -112,12 +122,11 @@ class PermissionRoles {
 				$ret['default_collection'] = false;
 				$ret['directory_publish'] = true;
 				$ret['online'] = false;
-
-				$ret['perms_connect'] = [ 
+				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments', 
-					'post_mail', 'post_like' , 'republish' ];
-	
+					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments',
+					'post_mail', 'post_like' , 'republish'
+				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 
 				break;
@@ -127,11 +136,11 @@ class PermissionRoles {
 				$ret['default_collection'] = true;
 				$ret['directory_publish'] = false;
 				$ret['online'] = false;
-				$ret['perms_connect'] = [ 
+				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments', 
-					'post_mail', 'post_like' , 'republish' ];
-
+					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments',
+					'post_mail', 'post_like' , 'republish'
+				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 
 				break;
@@ -141,11 +150,10 @@ class PermissionRoles {
 				$ret['default_collection'] = false;
 				$ret['directory_publish'] = true;
 				$ret['online'] = false;
-
-				$ret['perms_connect'] = [ 
+				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'post_like' , 'republish' ];
-
+					'view_pages', 'view_wiki', 'post_like' , 'republish'
+				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 
 				break;
@@ -155,13 +163,13 @@ class PermissionRoles {
 				$ret['default_collection'] = false;
 				$ret['directory_publish'] = true;
 				$ret['online'] = false;
-
-				$ret['perms_connect'] = [ 
+				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
 					'view_pages', 'view_wiki', 'write_storage', 'write_pages', 'post_wall', 'post_comments', 'tag_deliver',
-					'post_mail', 'post_like' , 'republish', 'chat', 'write_wiki' ];
-
+					'post_mail', 'post_like' , 'republish', 'chat', 'write_wiki'
+				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
+
 				break;
 
 			case 'custom':
@@ -170,11 +178,15 @@ class PermissionRoles {
 		}
 
 		$x = get_config('system','role_perms');
-		// let system settings over-ride any or all 
+		// let system settings over-ride any or all
 		if($x && is_array($x) && array_key_exists($role,$x))
 			$ret = array_merge($ret,$x[$role]);
 
-		call_hooks('get_role_perms',$ret);
+		/**
+		 * @hooks get_role_perms
+		 *   * \e array
+		 */
+		call_hooks('get_role_perms', $ret);
 
 		return $ret;
 	}
@@ -187,10 +199,10 @@ class PermissionRoles {
 		//     \Zotlabs\Access\PermissionLimits::Set($uid,$perm,1);
 
 		if($perm === 'view_wiki')
-		     \Zotlabs\Access\PermissionLimits::Set($uid,$perm,PERMS_PUBLIC);
+			\Zotlabs\Access\PermissionLimits::Set($uid, $perm, PERMS_PUBLIC);
 
 		if($perm === 'write_wiki')
-		     \Zotlabs\Access\PermissionLimits::Set($uid,$perm,PERMS_SPECIFIC);
+			\Zotlabs\Access\PermissionLimits::Set($uid, $perm, PERMS_SPECIFIC);
 
 
 		// set autoperms here if applicable
@@ -213,8 +225,6 @@ class PermissionRoles {
 			if($c) {
 				set_abconfig($uid,$c['channel_hash'],'autoperms',$perm,$value);
 			}
-
-
 		}
 
 		// now set something for all existing connections.
@@ -242,38 +252,44 @@ class PermissionRoles {
 		}
 	}
 
-
+	/**
+	 * @brief Array with translated role names and grouping.
+	 *
+	 * Return an associative array with grouped role names that can be used
+	 * to create select groups like in \e field_select_grouped.tpl.
+	 *
+	 * @return array
+	 */
 	static public function roles() {
-	    $roles = [
+		$roles = [
 			t('Social Networking') => [
-				'social' => t('Social - Mostly Public'), 
-				'social_restricted' => t('Social - Restricted'), 
+				'social' => t('Social - Mostly Public'),
+				'social_restricted' => t('Social - Restricted'),
 				'social_private' => t('Social - Private')
 			],
 
 			t('Community Forum') => [
-				'forum' => t('Forum - Mostly Public'), 
-				'forum_restricted' => t('Forum - Restricted'), 
+				'forum' => t('Forum - Mostly Public'),
+				'forum_restricted' => t('Forum - Restricted'),
 				'forum_private' => t('Forum - Private')
 			],
 
 			t('Feed Republish') => [
-				'feed' => t('Feed - Mostly Public'), 
+				'feed' => t('Feed - Mostly Public'),
 				'feed_restricted' => t('Feed - Restricted')
 			],
 
 			t('Special Purpose') => [
-				'soapbox' => t('Special - Celebrity/Soapbox'), 
+				'soapbox' => t('Special - Celebrity/Soapbox'),
 				'repository' => t('Special - Group Repository')
 			],
 
 			t('Other') => [
 				'custom' => t('Custom/Expert Mode')
 			]
-    
 		];
 
-    	return $roles;
+		return $roles;
 	}
 
 }

@@ -1,8 +1,21 @@
-<?php /** @file */
+<?php
 
 namespace Zotlabs\Lib;
 
-
+/**
+ * @brief Class for handling channel specific configurations.
+ *
+ * <b>PConfig</b> is used for channel specific configurations and takes a
+ * <i>channel_id</i> as identifier. It stores for example which features are
+ * enabled per channel. The storage is of size MEDIUMTEXT.
+ *
+ * @code{.php}$var = Zotlabs\Lib\PConfig::Get('uid', 'category', 'key');
+ * // with default value for non existent key
+ * $var = Zotlabs\Lib\PConfig::Get('uid', 'category', 'unsetkey', 'defaultvalue');@endcode
+ *
+ * The old (deprecated?) way to access a PConfig value is:
+ * @code{.php}$var = get_pconfig(local_channel(), 'category', 'key');@endcode
+ */
 class PConfig {
 
 	/**
@@ -13,9 +26,8 @@ class PConfig {
 	 *
 	 * @param string $uid
 	 *  The channel_id
-	 * @return void|false Nothing or false if $uid is false
+	 * @return void|false Nothing or false if $uid is null or false
 	 */
-
 	static public function Load($uid) {
 		if(is_null($uid) || $uid === false)
 			return false;
@@ -64,11 +76,11 @@ class PConfig {
 	 *  The category of the configuration value
 	 * @param string $key
 	 *  The configuration key to query
-	 * @param boolean $instore (deprecated, without function)
+	 * @param mixed $default (optional, default false)
+	 *  Default value to return if key does not exist
 	 * @return mixed Stored value or false if it does not exist
 	 */
-
-	static public function Get($uid,$family,$key,$default = false) {
+	static public function Get($uid, $family, $key, $default = false) {
 
 		if(is_null($uid) || $uid === false)
 			return $default;
@@ -79,11 +91,10 @@ class PConfig {
 		if((! array_key_exists($family, \App::$config[$uid])) || (! array_key_exists($key, \App::$config[$uid][$family])))
 			return $default;
 
-		return ((! is_array(\App::$config[$uid][$family][$key])) && (preg_match('|^a:[0-9]+:{.*}$|s', \App::$config[$uid][$family][$key])) 
+		return ((! is_array(\App::$config[$uid][$family][$key])) && (preg_match('|^a:[0-9]+:{.*}$|s', \App::$config[$uid][$family][$key]))
 			? unserialize(\App::$config[$uid][$family][$key])
 			: \App::$config[$uid][$family][$key]
 		);
-
 	}
 
 	/**
@@ -102,12 +113,11 @@ class PConfig {
 	 *  The value to store
 	 * @return mixed Stored $value or false
 	 */
-
 	static public function Set($uid, $family, $key, $value) {
 
-		// this catches subtle errors where this function has been called 
+		// this catches subtle errors where this function has been called
 		// with local_channel() when not logged in (which returns false)
-		// and throws an error in array_key_exists below. 
+		// and throws an error in array_key_exists below.
 		// we provide a function backtrace in the logs so that we can find
 		// and fix the calling function.
 
@@ -132,7 +142,6 @@ class PConfig {
 				dbesc($key),
 				dbesc($dbvalue)
 			);
-
 		}
 		else {
 
@@ -142,7 +151,6 @@ class PConfig {
 				dbesc($family),
 				dbesc($key)
 			);
-
 		}
 
 		// keep a separate copy for all variables which were
@@ -178,7 +186,6 @@ class PConfig {
 	 *  The configuration key to delete
 	 * @return mixed
 	 */
- 
 	static public function Delete($uid, $family, $key) {
 
 		if(is_null($uid) || $uid === false)
@@ -186,12 +193,12 @@ class PConfig {
 
 		$ret = false;
 
-		if(array_key_exists($uid,\App::$config) 
-			&& is_array(\App::$config['uid']) 
-			&& array_key_exists($family,\App::$config['uid']) 
+		if(array_key_exists($uid,\App::$config)
+			&& is_array(\App::$config['uid'])
+			&& array_key_exists($family,\App::$config['uid'])
 			&& array_key_exists($key, \App::$config[$uid][$family]))
 			unset(\App::$config[$uid][$family][$key]);
-			
+
 		$ret = q("DELETE FROM pconfig WHERE uid = %d AND cat = '%s' AND k = '%s'",
 			intval($uid),
 			dbesc($family),
@@ -202,4 +209,3 @@ class PConfig {
 	}
 
 }
-		

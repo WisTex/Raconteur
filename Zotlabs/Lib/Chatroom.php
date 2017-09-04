@@ -2,22 +2,18 @@
 namespace Zotlabs\Lib;
 
 /**
- * @brief Chat related functions.
+ * @brief A class with chatroom related static methods.
  */
-
-
-
 class Chatroom {
 	/**
 	 * @brief Creates a chatroom.
 	 *
 	 * @param array $channel
 	 * @param array $arr
-	 * @return An associative array containing:
-	 *  - success: A boolean
-	 *  - message: (optional) A string
+	 * @return array An associative array containing:
+	 *   * \e boolean \b success - A boolean success status
+	 *   * \e string \b message - (optional) A string
 	 */
-
 	static public function create($channel, $arr) {
 
 		$ret = array('success' => false);
@@ -150,8 +146,8 @@ class Chatroom {
 		}
 
 		if(intval($x[0]['cr_expire'])) {
-			$r = q("delete from chat where created < %s - INTERVAL %s and chat_room = %d", 
-				db_utcnow(), 
+			$r = q("delete from chat where created < %s - INTERVAL %s and chat_room = %d",
+				db_utcnow(),
 				db_quoteinterval( intval($x[0]['cr_expire']) . ' MINUTE' ),
 				intval($x[0]['cr_id'])
 			);
@@ -225,10 +221,16 @@ class Chatroom {
 	}
 
 	/**
-	 * create a chat message via API.
+	 * @brief Create a chat message via API.
+	 *
 	 * It is the caller's responsibility to enter the room.
- 	*/
-
+	 *
+	 * @param int $uid
+	 * @param int $room_id
+	 * @param string $xchan
+	 * @param string $text
+	 * @return array
+	 */
 	static public function message($uid, $room_id, $xchan, $text) {
 
 		$ret = array('success' => false);
@@ -245,12 +247,18 @@ class Chatroom {
 		if(! $r)
 			return $ret;
 
-		$arr = array(
+		$arr = [
 			'chat_room' => $room_id,
 			'chat_xchan' => $xchan,
 			'chat_text' => $text
-		);
-
+		];
+		/**
+		 * @hooks chat_message
+		 *   Called to create a chat message.
+		 *   * \e int \b chat_room
+		 *   * \e string \b chat_xchan
+		 *   * \e string \b chat_text
+		 */
 		call_hooks('chat_message', $arr);
 
 		$x = q("insert into chat ( chat_room, chat_xchan, created, chat_text )

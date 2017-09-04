@@ -21,6 +21,7 @@ function is_matrix_url($url) {
 		}
 		$remembered[$m['host']] = false;
 	}
+
 	return false;
 }
 
@@ -32,14 +33,8 @@ function is_matrix_url($url) {
  * @param boolean $address
  *   $address to use instead of session environment
  * @return string
- *
- * @hooks 'zid'
- *      string url - url to accept zid
- *      string zid - urlencoded zid
- *      string result - the return string we calculated, change it if you want to return something else
  */
-
-function zid($s,$address = '') {
+function zid($s, $address = '') {
 	if (! strlen($s) || strpos($s,'zid='))
 		return $s;
 
@@ -74,7 +69,18 @@ function zid($s,$address = '') {
 	if($fragment)
 		$zurl .= '#' . $fragment;
 
-	$arr = array('url' => $s, 'zid' => urlencode($myaddr), 'result' => $zurl);
+	$arr = [
+			'url' => $s,
+			'zid' => urlencode($myaddr),
+			'result' => $zurl
+	];
+	/**
+	 * @hooks zid
+	 *   Called when adding the observer's zid to a URL.
+	 *   * \e string \b url - url to accept zid
+	 *   * \e string \b zid - urlencoded zid
+	 *   * \e string \b result - the return string we calculated, change it if you want to return something else
+	 */
 	call_hooks('zid', $arr);
 
 	return $arr['result'];
@@ -100,25 +106,26 @@ function strip_zats($s) {
  * because the latter is used for general purpose conversions and the former is used only when preparing text for
  * immediate display.
  *
- * Issues: Currently the order of HTML parameters in the text is somewhat rigid and inflexible.
+ * @TODO Issues: Currently the order of HTML parameters in the text is somewhat rigid and inflexible.
  *    We assume it looks like \<a class="zrl" href="xxxxxxxxxx"\> and will not work if zrl and href appear in a different order.
  *
  * @param array $match
  * @return string
  */
 function zidify_callback($match) {
-	$is_zid = ((feature_enabled(local_channel(),'sendzid')) || (strpos($match[1],'zrl')) ? true : false);
+	$is_zid = ((feature_enabled(local_channel(), 'sendzid')) || (strpos($match[1], 'zrl')) ? true : false);
 	$replace = '<a' . $match[1] . ' href="' . (($is_zid) ? zid($match[2]) : $match[2]) . '"';
-	$x = str_replace($match[0],$replace,$match[0]);
+
+	$x = str_replace($match[0], $replace, $match[0]);
 
 	return $x;
 }
 
 function zidify_img_callback($match) {
-	$is_zid = ((feature_enabled(local_channel(),'sendzid')) || (strpos($match[1],'zrl')) ? true : false);
+	$is_zid = ((feature_enabled(local_channel(), 'sendzid')) || (strpos($match[1], 'zrl')) ? true : false);
 	$replace = '<img' . $match[1] . ' src="' . (($is_zid) ? zid($match[2]) : $match[2]) . '"';
 
-	$x = str_replace($match[0],$replace,$match[0]);
+	$x = str_replace($match[0], $replace, $match[0]);
 
 	return $x;
 }
@@ -132,12 +139,11 @@ function zidify_links($s) {
 }
 
 
-
-
 function zidify_text_callback($match) {
 	$is_zid = is_matrix_url($match[2]);
 	$replace = '<a' . $match[1] . ' href="' . (($is_zid) ? zid($match[2]) : $match[2]) . '"';
-	$x = str_replace($match[0],$replace,$match[0]);
+
+	$x = str_replace($match[0], $replace, $match[0]);
 
 	return $x;
 }
@@ -146,7 +152,7 @@ function zidify_text_img_callback($match) {
 	$is_zid = is_matrix_url($match[2]);
 	$replace = '<img' . $match[1] . ' src="' . (($is_zid) ? zid($match[2]) : $match[2]) . '"';
 
-	$x = str_replace($match[0],$replace,$match[0]);
+	$x = str_replace($match[0], $replace, $match[0]);
 
 	return $x;
 }
@@ -157,8 +163,6 @@ function zidify_text($s) {
 	$s = preg_replace_callback('/\<img(.*?)src\=\"(.*?)\"/ism','zidify_text_img_callback',$s);
 
 	return $s;
-
-
 }
 
 
@@ -198,7 +202,6 @@ function red_zrl_callback($matches) {
  * @param array $matches
  * @return string
  */
-
 function red_escape_zrl_callback($matches) {
 
 	// Uncertain why the url/zrl forms weren't picked up by the non-greedy regex.
@@ -234,11 +237,17 @@ function red_zrlify_img_callback($matches) {
 	return $matches[0];
 }
 
+
+/**
+ * @brief OpenWebAuth authentication.
+ *
+ * @param string $token
+ */
 function owt_init($token) {
 
-	\Zotlabs\Zot\Verify::purge('owt','3 MINUTE');
+	\Zotlabs\Zot\Verify::purge('owt', '3 MINUTE');
 
-	$ob_hash = \Zotlabs\Zot\Verify::get_meta('owt',0,$token);
+	$ob_hash = \Zotlabs\Zot\Verify::get_meta('owt', 0, $token);
 
 	if($ob_hash === false) {
 		return;
@@ -262,7 +271,7 @@ function owt_init($token) {
 	}
 	if(! $r) {
 		logger('owt: unable to finger ' . $ob_hash);
-		return;	
+		return;
 	}
 	$hubloc = $r[0];
 
@@ -296,14 +305,25 @@ function owt_init($token) {
 		$_SESSION['DNT'] = 1;
 	}
 
-	$arr = array('xchan' => $hubloc, 'url' => \App::$query_string, 'session' => $_SESSION);
-	call_hooks('magic_auth_success',$arr);
+	$arr = [
+			'xchan' => $hubloc,
+			'url' => \App::$query_string,
+			'session' => $_SESSION
+	];
+	/**
+	 * @hooks magic_auth_success
+	 *   Called when a magic-auth was successful.
+	 *   * \e array \b xchan
+	 *   * \e string \b url
+	 *   * \e array \b session
+	 */
+	call_hooks('magic_auth_success', $arr);
+
 	\App::set_observer($hubloc);
 	require_once('include/security.php');
 	\App::set_groups(init_groups_visitor($_SESSION['visitor_id']));
-	if(! get_config('system','hide_owa_greeting'))
+	if(! get_config('system', 'hide_owa_greeting'))
 		info(sprintf( t('OpenWebAuth: %1$s welcomes %2$s'),\App::get_hostname(), $hubloc['xchan_name']));
+
 	logger('OpenWebAuth: auth success from ' . $hubloc['xchan_addr']);
-
-
 }

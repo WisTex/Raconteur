@@ -2,7 +2,12 @@
 
 namespace Zotlabs\Extend;
 
+use App;
 
+/**
+ * @brief Hook class.
+ *
+ */
 class Hook {
 
 	static public function register($hook,$file,$function,$version = 1,$priority = 0) {
@@ -64,18 +69,20 @@ class Hook {
 		return $r;
 	}
 
-	// unregister all hooks with this file component. 
-	// Useful for addon upgrades where you want to clean out old interfaces.
-
+	/**
+	 * @brief Unregister all hooks with this file component.
+	 *
+	 * Useful for addon upgrades where you want to clean out old interfaces.
+	 *
+	 * @param string $file
+	 */
 	static public function unregister_by_file($file) {
-
 		$r = q("DELETE FROM hook WHERE file = '%s' ",
 			dbesc($file)
 		);
 
 		return $r;
 	}
-
 
 	/**
 	 * @brief Inserts a hook into a page request.
@@ -98,7 +105,6 @@ class Hook {
 	 * @param int $priority
 	 *     currently not implemented in this function, would require the hook array to be resorted
 	 */
-
 	static public function insert($hook, $fn, $version = 0, $priority = 0) {
 		if(is_array($fn)) {
 			$fn = serialize($fn);

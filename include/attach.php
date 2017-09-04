@@ -21,7 +21,7 @@ require_once('include/group.php');
  * This function takes a file name and guess the mimetype from the
  * filename extension.
  *
- * @param $filename a string filename
+ * @param string $filename a string filename
  * @return string The mimetype according to a file ending.
  */
 function z_mime_content_type($filename) {
@@ -412,6 +412,10 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 
 	require_once('include/photos.php');
 
+	/**
+	 * @hooks photo_upload_begin
+	 *   Called when attempting to upload a photo.
+	 */
 	call_hooks('photo_upload_begin', $arr);
 
 	$ret = array('success' => false);
@@ -486,14 +490,36 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 			$x = attach_mkdir($channel,$observer_hash,$arr);
 			if($x['message'])
 				logger('import_directory: ' . $x['message']);
+
 			return;
 		}
 	}
 	elseif($options !== 'update') {
-		$f = array('src' => '', 'filename' => '', 'filesize' => 0, 'type' => '');
+		$f = [
+				'src' => '',
+				'filename' => '',
+				'filesize' => 0,
+				'type' => ''
+		];
 
-		call_hooks('photo_upload_file',$f);
-		call_hooks('attach_upload_file',$f);
+		/**
+		 * @hooks photo_upload_file
+		 *   Called to generate alternate filenames for an upload.
+		 *   * \e string \b src - return value, default empty
+		 *   * \e string \b filename - return value, default empty
+		 *   * \e number \b filesize - return value, default 0
+		 *   * \e string \b type - return value, default empty
+		 */
+		call_hooks('photo_upload_file', $f);
+		/**
+		 * @hooks attach_upload_file
+		 *   Called when uploading a file.
+		 *   * \e string \b src - return value, default empty
+		 *   * \e string \b filename - return value, default empty
+		 *   * \e number \b filesize - return value, default 0
+		 *   * \e string \b type - return value, default empty
+		 */
+		call_hooks('attach_upload_file', $f);
 
 		if (x($f,'src') && x($f,'filesize')) {
 			$src      = $f['src'];
@@ -680,7 +706,13 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 			$ret['message'] = sprintf( t('File exceeds size limit of %d'), $maxfilesize);
 			if($remove_when_processed)
 				@unlink($src);
-			call_hooks('photo_upload_end',$ret);
+
+			/**
+			 * @hooks photo_upload_end
+			 *   Called when a photo upload has been processed.
+			 */
+			call_hooks('photo_upload_end', $ret);
+
 			return $ret;
 		}
 
@@ -695,7 +727,12 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 				if($remove_when_processed)
 					@unlink($src);
 
-				call_hooks('photo_upload_end',$ret);
+				/**
+				 * @hooks photo_upload_end
+				 *   Called when a photo upload has been processed.
+				 */
+				call_hooks('photo_upload_end', $ret);
+
 				return $ret;
 			}
 		}
@@ -773,7 +810,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 		);
 	}
 	elseif($options === 'update') {
-		$r = q("update attach set filename = '%s', filetype = '%s', folder = '%s', edited = '%s', os_storage = %d, is_photo = %d, os_path = '%s', 
+		$r = q("update attach set filename = '%s', filetype = '%s', folder = '%s', edited = '%s', os_storage = %d, is_photo = %d, os_path = '%s',
 			display_path = '%s', allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid  = '%s' where id = %d and uid = %d",
 			dbesc((array_key_exists('filename',$arr))  ? $arr['filename']  : $x[0]['filename']),
 			dbesc((array_key_exists('filetype',$arr))  ? $arr['filetype']  : $x[0]['filetype']),
@@ -862,7 +899,13 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 
 	if(! $r) {
 		$ret['message'] = t('File upload failed. Possible system limit or action terminated.');
-		call_hooks('photo_upload_end',$ret);
+
+		/**
+		 * @hooks photo_upload_end
+		 *   Called when a photo upload has been processed.
+		 */
+		call_hooks('photo_upload_end', $ret);
+
 		return $ret;
 	}
 
@@ -875,15 +918,25 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 
 	if(! $r) {
 		$ret['message'] = t('Stored file could not be verified. Upload failed.');
-		call_hooks('photo_upload_end',$ret);
+
+		/**
+		 * @hooks photo_upload_end
+		 *   Called when a photo upload has been processed.
+		 */
+		call_hooks('photo_upload_end', $ret);
+
 		return $ret;
 	}
 
 	$ret['success'] = true;
 	$ret['data'] = $r[0];
 	if(! $is_photo) {
-		// This would've been called already with a success result in photos_upload() if it was a photo.
-		call_hooks('photo_upload_end',$ret);
+		/**
+		 * @hooks photo_upload_end
+		 *   Called when a photo upload has been processed.
+		 *   This would've been called already with a success result in photos_upload() if it was a photo.
+		 */
+		call_hooks('photo_upload_end', $ret);
 	}
 
 	if($dosync) {
@@ -986,7 +1039,7 @@ function attach_mkdir($channel, $observer_hash, $arr = null) {
 
 	$os_basepath = 'store/' . $channel['channel_address'];
 
-	logger('attach_mkdir: basepath: ' . $os_basepath);
+	logger('basepath: ' . $os_basepath);
 
 	if(! is_dir($os_basepath))
 		os_mkdir($os_basepath,STORAGE_DEFAULT_PERMISSIONS, true);
@@ -1055,7 +1108,7 @@ function attach_mkdir($channel, $observer_hash, $arr = null) {
 				return $ret;
 			}
 
-			$dpath = $r[0]['filename'] . (($dpath) ? '/' . $dpath : ''); 
+			$dpath = $r[0]['filename'] . (($dpath) ? '/' . $dpath : '');
 
 			if($lfile)
 				$lpath = $r[0]['hash'] . (($lpath) ? '/' . $lpath : '');
@@ -1154,7 +1207,7 @@ function attach_mkdirp($channel, $observer_hash, $arr = null) {
 
 	$basepath = 'store/' . $channel['channel_address'];
 
-	logger('attach_mkdirp: basepath: ' . $basepath);
+	logger('basepath: ' . $basepath);
 
 	if(! is_dir($basepath))
 		os_mkdir($basepath,STORAGE_DEFAULT_PERMISSIONS, true);
@@ -1180,6 +1233,7 @@ function attach_mkdirp($channel, $observer_hash, $arr = null) {
 	foreach($paths as $p) {
 		if(! $p)
 			continue;
+
 		$arx = array(
 			'filename' => $p,
 			'folder' => $current_parent,
@@ -1308,7 +1362,7 @@ function attach_delete($channel_id, $resource, $is_photo = 0) {
 	);
 
 	if(! $r) {
-		attach_drop_photo($channel_id,$resource);		
+		attach_drop_photo($channel_id,$resource);
 		return;
 	}
 
@@ -1501,6 +1555,13 @@ function find_folder_hash_by_attach_hash($channel_id, $attachHash, $recurse = fa
 	return $hash;
 }
 
+/**
+ * @brief Return the hash of an attachment's folder.
+ *
+ * @param int $channel_id
+ * @param string $path
+ * @return string
+ */
 function find_folder_hash_by_path($channel_id, $path) {
 
 	if(! $path)
@@ -1530,7 +1591,6 @@ function find_folder_hash_by_path($channel_id, $path) {
 		return '';
 
 	return $parent_hash;
-
 }
 
 /**
@@ -1557,9 +1617,11 @@ function find_filename_by_hash($channel_id, $attachHash) {
 }
 
 /**
+ * @brief Pipes $in to $out in 16MB chunks.
  *
- * @param $in
- * @param $out
+ * @param resource $in File pointer of input
+ * @param resource $out File pointer of output
+ * @return number with the size
  */
 function pipe_streams($in, $out) {
 	$size = 0;
@@ -1726,11 +1788,12 @@ function file_activity($channel_id, $object, $allow_cid, $allow_gid, $deny_cid, 
 }
 
 /**
- * @brief Create file activity object
+ * @brief Create file activity object.
  *
  * @param int $channel_id
  * @param string $hash
- * @param string $cloudpath
+ * @param string $url
+ * @return array An associative array for the specified file.
  */
 function get_file_activity_object($channel_id, $hash, $url) {
 
@@ -2257,7 +2320,7 @@ function attach_move($channel_id, $resource_id, $new_folder_hash) {
 
 
 	if($r[0]['is_photo']) {
-		$t = q("update photo set album = '%s', filename = '%s', os_path = '%s', display_path = '%s' 
+		$t = q("update photo set album = '%s', filename = '%s', os_path = '%s', display_path = '%s'
 			where resource_id = '%s' and uid = %d",
 			dbesc($newdirname),
 			dbesc($filename),
@@ -2349,8 +2412,6 @@ function attach_syspaths($channel_id,$attach_hash) {
 	while($attach_hash);
 
 	return [ 'os_path' => $os_path, 'path' => $path ];
-
-
 }
 
 
@@ -2386,7 +2447,7 @@ function save_chunk($channel,$start,$end,$len) {
 	$tmp_path = $_FILES['files']['tmp_name'];
 	$new_base = 'store/[data]/' . $channel['channel_address'] . '/tmp';
 	os_mkdir($new_base,STORAGE_DEFAULT_PERMISSIONS,true);
-	
+
 	$new_path = $new_base . '/' . $_FILES['files']['name'];
 
 	if(! file_exists($new_path)) {
@@ -2417,20 +2478,19 @@ function save_chunk($channel,$start,$end,$len) {
 }
 
 
-/*
- * chunkloader
- * Submit handler for chunked uploads
- * 
+/**
+ * @brief Submit handler for chunked uploads.
+ *
+ * @param array $channel
+ * @param array $arr
+ * @return array
  */
-
-function chunkloader($channel,$arr) {
+function chunkloader($channel, $arr) {
 
 	logger('request: ' . print_r($arr,true), LOGGER_DEBUG);
 	logger('files: ' . print_r($_FILES,true), LOGGER_DEBUG);
-	
 
 	$result = [];
-		
 
 	$tmp_path = $_FILES['file']['tmp_name'];
 	$new_base = 'store/[data]/' . $channel['channel_address'] . '/tmp';
@@ -2439,7 +2499,7 @@ function chunkloader($channel,$arr) {
 	$new_path = $new_base . '/' . $arr['resumableFilename'];
 
 	rename($tmp_path,$new_path . '.' . intval($arr['resumableChunkNumber']));
-	
+
 	$missing_parts = false;
 	for($x = 1; $x <= intval($arr['resumableTotalChunks']); $x ++) {
 		if(! file_exists($new_path . '.' . $x)) {
@@ -2475,7 +2535,7 @@ function chunkloader($channel,$arr) {
 	$result['error'] = 0;
 	$result['size'] = $arr['resumableTotalSize'];
 	$result['complete'] = true;
-	return $result;
 
+	return $result;
 }
 
