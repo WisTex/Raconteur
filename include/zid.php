@@ -81,6 +81,10 @@ function zid($s,$address = '') {
 }
 
 
+function strip_query_param($s,$param) {
+	return preg_replace('/[\?&]' . $param . '=(.*?)(&|$)/ism','$2',$s);
+}
+
 function strip_zids($s) {
 	return preg_replace('/[\?&]zid=(.*?)(&|$)/ism','$2',$s);
 }
@@ -230,3 +234,76 @@ function red_zrlify_img_callback($matches) {
 	return $matches[0];
 }
 
+function owt_init($token) {
+
+	\Zotlabs\Zot\Verify::purge('owt','3 MINUTE');
+
+	$ob_hash = \Zotlabs\Zot\Verify::get_meta('owt',0,$token);
+
+	if($ob_hash === false) {
+		return;
+	}
+
+	$r = q("select * from hubloc left join xchan on xchan_hash = hubloc_hash
+		where hubloc_addr = '%s' order by hubloc_id desc",
+		dbesc($ob_hash)
+	);
+
+	if(! $r) {
+		// finger them if they can't be found.
+		$j = \Zotlabs\Zot\Finger::run($ob_hash, null);
+		if ($j['success']) {
+			import_xchan($j);
+			$r = q("select * from hubloc left join xchan on xchan_hash = hubloc_hash
+				where hubloc_addr = '%s' order by hubloc_id desc",
+				dbesc($ob_hash)
+			);
+		}
+	}
+	if(! $r) {
+		logger('owt: unable to finger ' . $ob_hash);
+		return;	
+	}
+	$hubloc = $r[0];
+
+	$_SESSION['authenticated'] = 1;
+
+	$delegate_success = false;
+	if($_REQUEST['delegate']) {
+		$r = q("select * from channel left join xchan on channel_hash = xchan_hash where xchan_addr = '%s' limit 1",
+			dbesc($_REQUEST['delegate'])
+		);
+		if ($r && intval($r[0]['channel_id'])) {
+			$allowed = perm_is_allowed($r[0]['channel_id'],$hubloc['xchan_hash'],'delegate');
+			if($allowed) {
+				$_SESSION['delegate_channel'] = $r[0]['channel_id'];
+				$_SESSION['delegate'] = $hubloc['xchan_hash'];
+				$_SESSION['account_id'] = intval($r[0]['channel_account_id']);
+				require_once('include/security.php');
+				// this will set the local_channel authentication in the session
+				change_channel($r[0]['channel_id']);
+				$delegate_success = true;
+			}
+		}
+	}
+
+	if (! $delegate_success) {
+		// normal visitor (remote_channel) login session credentials
+		$_SESSION['visitor_id'] = $hubloc['xchan_hash'];
+		$_SESSION['my_url'] = $hubloc['xchan_url'];
+		$_SESSION['my_address'] = $hubloc['hubloc_addr'];
+		$_SESSION['remote_hub'] = $hubloc['hubloc_url'];
+		$_SESSION['DNT'] = 1;
+	}
+
+	$arr = array('xchan' => $hubloc, 'url' => \App::$query_string, 'session' => $_SESSION);
+	call_hooks('magic_auth_success',$arr);
+	\App::set_observer($hubloc);
+	require_once('include/security.php');
+	\App::set_groups(init_groups_visitor($_SESSION['visitor_id']));
+	if(! get_config('system','hide_owa_greeting'))
+		info(sprintf( t('OpenWebAuth: %1$s welcomes %2$s'),\App::get_hostname(), $hubloc['xchan_name']));
+	logger('OpenWebAuth: auth success from ' . $hubloc['xchan_addr']);
+
+
+}
