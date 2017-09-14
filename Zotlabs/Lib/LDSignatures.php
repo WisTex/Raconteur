@@ -16,11 +16,13 @@ class LDSignatures {
 	}
 
 	static function dopplesign(&$data,$channel) {
-		$data['magicEnv'] = self::salmon_sign($data,$channel);
+	// remove for the time being - performance issues
+	//	$data['magicEnv'] = self::salmon_sign($data,$channel);
 		return self::sign($data,$channel);
 	}
 
 	static function sign($data,$channel) {
+
 		$options = [
 			'type' => 'RsaSignature2017',
 			'nonce' => random_string(64),
@@ -46,7 +48,7 @@ class LDSignatures {
 		if($data) {
 			foreach($data as $k => $v) {
 				if(! in_array($k,[ 'signature' ])) {
-					$newopts[$k] = $v;
+					$newdata[$k] = $v;
 				}
 			}
 		}
@@ -68,6 +70,7 @@ class LDSignatures {
 	}
 
 	static function hash($obj) {
+
 		return hash('sha256',self::normalise($obj));
 	}
 
