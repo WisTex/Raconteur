@@ -135,6 +135,18 @@ class NativeWiki {
 
 		$item_id = $update['item_id'];
 
+		// update acl for any existing wiki pages
+
+		q("update item set allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', item_private = %d where resource_type = 'nwikipage' and resource_id = '%s'",
+			dbesc($item['allow_cid']), 
+			dbesc($item['allow_gid']), 
+			dbesc($item['deny_cid']), 
+			dbesc($item['deny_gid']), 
+			dbesc($item['item_private']), 
+			dbesc($arr['resource_id'])
+		); 
+
+
 		if($update['item_id']) {
 			info( t('Wiki updated successfully'));
 			if($update_title) {
@@ -160,6 +172,12 @@ class NativeWiki {
 			dbesc($resource_id)
 		);
 		if($r) {
+			$q = q("select * from item where resource_type = 'nwikipage' and resource_id = '%s'",
+				dbesc($r[0]['resource_type'])
+			);
+			if($q) {
+				$r = array_merge($r,$q);
+			}
 			xchan_query($r);
 			$sync_item = fetch_post_tags($r);
 			build_sync_packet($uid,array('wiki' => array(encode_item($sync_item[0],true))));
