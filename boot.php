@@ -456,7 +456,16 @@ define ( 'NAMESPACE_STATUSNET',       'http://status.net/schema/api/1/' );
 define ( 'NAMESPACE_ATOM1',           'http://www.w3.org/2005/Atom' );
 define ( 'NAMESPACE_YMEDIA',          'http://search.yahoo.com/mrss/' );
 
-define ( 'ACTIVITYSTREAMS_JSONLD_REV', 'https://www.w3.org/ns/activitystreams-history/v1.8.jsonld' );
+// We should be using versioned jsonld contexts so that signatures will be slightly more reliable. 
+// Why signatures are unreliable by design is a problem nobody seems to care about 
+// "because it's a proposed W3C standard". .
+
+// Anyway, if you use versioned contexts, communication with Mastodon fails. Have not yet investigated
+// the reason for the dependency but for the current time, use the standard non-versioned context.
+//define ( 'ACTIVITYSTREAMS_JSONLD_REV', 'https://www.w3.org/ns/activitystreams-history/v1.8.jsonld' );
+
+define ( 'ACTIVITYSTREAMS_JSONLD_REV', 'https://www.w3.org/ns/activitystreams' );
+
 define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.2' );
 /**
  * activity stream defines
@@ -782,6 +791,10 @@ class App {
 	public static $is_tablet = false;
 	public static $comanche;
 
+
+	public static $channel_links;
+
+
 	public static  $category;
 
 	// Allow themes to control internal parameters
@@ -929,6 +942,7 @@ class App {
 			self::$module = 'home';
 		}
 
+
 		/*
 		 * See if there is any page number information, and initialise
 		 * pagination
@@ -1026,6 +1040,19 @@ class App {
 		return self::$path;
 	}
 
+	public static function get_channel_links() {
+		$s = '';
+		$x = self::$channel_links;
+		if($x && is_array($x) && count($x)) {
+			foreach($x as $y) {
+				if($s) {
+					$s .= ',';
+				}
+				$s .= '<' . $y['url'] . '>; rel="' . $y['rel'] . '"; type="' . $y['type'] . '"';
+			}
+		}
+		return $s;
+	}
 	public static function set_account($acct) {
 		self::$account = $acct;
 	}
