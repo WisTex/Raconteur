@@ -11,6 +11,8 @@
 			{{if $register}}<a href="{{$register.link}}" title="{{$register.title}}" id="register-link" class="pull-right">{{$register.desc}}</a>{{/if}}
 			<a href="lostpass" title="{{$lostpass}}" id="lost-password-link" >{{$lostlink}}</a>
 		</div>
+		<hr>
+		<a href="rmagic" class="btn btn-block btn-outline-success rmagic-button">{{$remote_login}}</a>
 	</div>
 	{{foreach $hiddens as $k=>$v}}
 		<input type="hidden" name="{{$k}}" value="{{$v}}" />
