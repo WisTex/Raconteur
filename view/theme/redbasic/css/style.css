@@ -7,6 +7,7 @@
 
 
 /* generals */
+
 html {
 	font-size: $font_size;
 }
@@ -227,6 +228,81 @@ nav {
 }
 
 /* contextual help end */
+
+/* spinner */
+
+.spinner-wrapper {
+	display: none;
+}
+
+.spinner.s {
+	height: 1rem;
+	width: 1rem;
+}
+
+.spinner.m {
+	height: 2rem;
+	width: 2rem;
+}
+
+.spinner.l {
+	height: 3rem;
+	width: 3rem;
+}
+
+.spinner.s,
+.spinner.m,
+.spinner.l {
+	margin: 0 auto;
+	position: relative;
+	-webkit-animation: rotation 1s infinite linear;
+	-moz-animation: rotation 1s infinite linear;
+	-o-animation: rotation 1s infinite linear;
+	animation: rotation 1s infinite linear;
+	border-left: .2rem solid rgba(77, 77, 77, .15);
+	border-right: .2rem solid rgba(77, 77, 77, .15);
+	border-bottom: .2rem solid rgba(77, 77, 77, .15);
+	border-top: .2rem solid rgba(77, 77, 77, .5);
+	border-radius: 100%;
+}
+
+@-webkit-keyframes rotation {
+	from {
+		-webkit-transform: rotate(0deg);
+	}
+	to {
+		-webkit-transform: rotate(359deg);
+	}
+}
+
+@-moz-keyframes rotation {
+	from {
+		-moz-transform: rotate(0deg);
+	}
+	to {
+		-moz-transform: rotate(359deg);
+	}
+}
+
+@-o-keyframes rotation {
+	from {
+		-o-transform: rotate(0deg);
+	}
+	to {
+		-o-transform: rotate(359deg);
+	}
+}
+
+@keyframes rotation {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(359deg);
+	}
+}
+
+/* spinner end */
 
 /* footer */
 
@@ -478,8 +554,8 @@ footer {
 
 #nav-search-spinner {
 	float: right;
-	margin-top: -0.85rem;
-	margin-right: 1.6rem;
+	margin-top: -1.4rem;
+	margin-right: 1rem;
 }
 
 
@@ -719,11 +795,6 @@ div.jGrowl div.jGrowl-notification {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	display: block;
-}
-
-#page-spinner {
-	color: #777;
-	margin: 24px;
 }
 
 #acl-search::-webkit-input-placeholder {
@@ -973,10 +1044,6 @@ img.mail-conv-sender-photo {
 	display: none;
 }
 
-#profile-rotator {
-	color: #777;
-}
-
 .jot-icons.jot-lock-warn {
 	color: darkorange;
 }
@@ -1194,7 +1261,8 @@ img.mail-conv-sender-photo {
 .generic-content-wrapper {
 	border: 1px solid #ccc;
 	box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.2);
-	border-radius:  $radius;
+	border-radius: $radius;
+	margin-bottom: 1.5rem;
 }
 
 .section-title-wrapper {
