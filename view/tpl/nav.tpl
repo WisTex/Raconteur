@@ -63,16 +63,25 @@
 	<button id="expand-aside" type="button" class="navbar-toggler border-0" data-toggle="offcanvas" data-target="#region_1">
 		<i class="fa fa-arrow-circle-right" id="expand-aside-icon"></i>
 	</button>
+	{{if ! $experimental_notif}}
 	{{if $localuser || $nav.pubs}}
 	<button id="notifications-btn" type="button" class="navbar-toggler border-0 text-white" data-toggle="collapse" data-target="#navbar-collapse-1">
 		<i class="fa fa-exclamation-circle"></i>
 	</button>
+	{{/if}}
+	{{else}}
+	{{if $localuser || $nav.pubs}}
+	<button id="notifications-btn-1" type="button" class="navbar-toggler border-0 text-white">
+		<i class="fa fa-exclamation-circle"></i>
+	</button>
+	{{/if}}
 	{{/if}}
 	<button id="menu-btn" class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navbar-collapse-2">
 		<i class="fa fa-bars"></i>
 	</button>
 </div>
 <div class="collapse navbar-collapse" id="navbar-collapse-1">
+	{{if ! $experimental_notif}}
 	<ul class="navbar-nav mr-auto">
 		{{if $nav.network}}
 		<li class="nav-item dropdown network-button" style="display: none;">
@@ -188,17 +197,25 @@
 			<a class="nav-link" href="{{$nav.alogout.0}}" title="{{$nav.alogout.3}}" id="{{$nav.alogout.4}}">{{$nav.alogout.1}}</a>
 		</li>
 		{{/if}}
-
 		{{if $nav.pubs}}
 		<li class="nav-item dropdown pubs-button" style="display: none;">
-			<a class="nav-link" href="{{$nav.pubs.0}}" title="{{$nav.pubs.3}}" id="{{$nav.pubs.4}}" rel="#nav-pubs-menu">
+			<a class="nav-link" href="#" title="{{$nav.pubs.3}}" id="{{$nav.pubs.4}}" data-toggle="dropdown" rel="#nav-pubs-menu">
 				<i class="fa fa-fw fa-globe"></i>
-				<span class="badge badge-pill badge-primary pubs-update"></span>
+				<span class="badge badge-pill badge-secondary pubs-update"></span>
 			</a>
+			<div id="nav-pubs-menu" class="dropdown-menu" rel="pubs">
+				<a class="dropdown-item" id="nav-pubs-see-all" href="{{$nav.pubs.all.0}}">{{$nav.pubs.all.1}}</a>
+				<a class="dropdown-item" id="nav-pubs-mark-all" href="#" onclick="markRead('pubs'); return false;">{{$nav.pubs.mark.1}}</a>
+				{{$emptynotifications}}
+			</div>
 		</li>
 		{{/if}}
 	</ul>
-
+	{{else}}
+	<div class="navbar-nav mr-auto">
+		<div class="text-white">{{$sel.active}}</div>
+	</div>
+	{{/if}}
 	<div id="banner" class="navbar-text d-none d-md-flex">{{$banner}}</div>
 
 	<ul id="nav-right" class="navbar-nav ml-auto d-none d-md-flex">
@@ -218,10 +235,20 @@
 			<a class="nav-link {{$nav.help.2}}" target="hubzilla-help" href="{{$nav.help.0}}" title="{{$nav.help.3}}" id="{{$nav.help.4}}" onclick="contextualHelp(); return false;"><i class="fa fa-fw fa-question-circle"></i></a>
 		</li>
 		{{/if}}
+		{{if $channel_menu && $channel_apps.0}}
+		<li class="nav-item dropdown" id="channel-menu">
+			<a class="nav-link" href="#" data-toggle="dropdown"><img src="{{$channel_thumb}}" style="height:14px; width:14px;position:relative; top:-2px;" /></a>
+			<div id="dropdown-menu" class="dropdown-menu dropdown-menu-right">
+				{{foreach $channel_apps as $channel_app}}
+				{{$channel_app}}
+				{{/foreach}}
+			</div>
+		</li>
+		{{/if}}
 		<li class="nav-item dropdown" id="app-menu">
 			<a class="nav-link" href="#" data-toggle="dropdown"><i class="fa fa-fw fa-bars"></i></a>
 			<div id="dropdown-menu" class="dropdown-menu dropdown-menu-right">
-				{{if $channel_apps.0}}
+				{{if $channel_apps.0 && ! $channel_menu}}
 				{{foreach $channel_apps as $channel_app}}
 				{{$channel_app}}
 				{{/foreach}}
@@ -233,7 +260,7 @@
 				{{foreach $nav_apps as $nav_app}}
 				{{$nav_app}}
 				{{/foreach}}
-				{{if $channel_apps.0}}
+				{{if $channel_apps.0 && ! $channel_menu}}
 				</div>
 				{{/if}}
 				{{if $is_owner}}
