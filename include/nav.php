@@ -6,7 +6,7 @@ require_once('include/security.php');
 require_once('include/menu.php');
 
 
-function nav() {
+function nav($template = 'nav') {
 
 	/**
 	 *
@@ -103,12 +103,12 @@ EOT;
 		$nav['logout'] = ['logout',t('Logout'), "", t('End this session'),'logout_nav_btn'];
 		
 		// user menu
-		$nav['usermenu'][] = ['profile/' . $channel['channel_address'], t('View Profile'), ((\App::$nav_sel['active'] == 'Profile') ? 'active' : ''), t('Your profile page'),'profile_nav_btn'];
+		$nav['usermenu'][] = ['profile/' . $channel['channel_address'], t('View Profile'), ((\App::$nav_sel['name'] == 'Profile') ? 'active' : ''), t('Your profile page'),'profile_nav_btn'];
 
 		if(feature_enabled(local_channel(),'multi_profiles'))
-			$nav['usermenu'][]   = ['profiles', t('Edit Profiles'), ((\App::$nav_sel['active'] == 'Profiles') ? 'active' : '') , t('Manage/Edit profiles'),'profiles_nav_btn'];
+			$nav['usermenu'][]   = ['profiles', t('Edit Profiles'), ((\App::$nav_sel['name'] == 'Profiles') ? 'active' : '') , t('Manage/Edit profiles'),'profiles_nav_btn'];
 		else
-			$nav['usermenu'][]   = ['profiles/' . $prof[0]['id'], t('Edit Profile'), ((\App::$nav_sel['active'] == 'Profiles') ? 'active' : ''), t('Edit your profile'),'profiles_nav_btn'];
+			$nav['usermenu'][]   = ['profiles/' . $prof[0]['id'], t('Edit Profile'), ((\App::$nav_sel['name'] == 'Profiles') ? 'active' : ''), t('Edit your profile'),'profiles_nav_btn'];
 
 	}
 	else {
@@ -233,6 +233,15 @@ EOT;
 	// turned off until somebody discovers this and figures out a good location for it. 
 	$powered_by = '';
 
+	$active_app = q("SELECT app_url FROM app WHERE app_channel = %d AND app_name = '%s' LIMIT 1",
+		intval($channel['channel_id']),
+		dbesc(\App::$nav_sel['raw_name'])
+	);
+
+	if($active_app) {
+		$url = $active_app[0]['app_url'];
+	}
+
 	//app bin
 	if($is_owner) {
 		if(get_pconfig(local_channel(), 'system','initial_import_system_apps') === false) {
@@ -258,16 +267,33 @@ EOT;
 	$syslist = Zlib\Apps::app_order(local_channel(),$syslist);
 
 	foreach($syslist as $app) {
-		if(\App::$nav_sel['active'] == $app['name'])
+		if(\App::$nav_sel['name'] == $app['name'])
 			$app['active'] = true;
 
-		if($is_owner)
+		if($is_owner) {
 			$nav_apps[] = Zlib\Apps::app_render($app,'nav');
-		elseif(! $is_owner && strpos($app['requires'], 'local_channel') === false)
+			if(strpos($app['categories'],'navbar_' . $template)) {
+				$navbar_apps[] = Zlib\Apps::app_render($app,'navbar');
+			}
+		}
+		elseif(! $is_owner && strpos($app['requires'], 'local_channel') === false) {
 			$nav_apps[] = Zlib\Apps::app_render($app,'nav');
+			if(strpos($app['categories'],'navbar_' . $template)) {
+				$navbar_apps[] = Zlib\Apps::app_render($app,'navbar');
+			}
+		}
 	}
 
-	$tpl = get_markup_template('nav.tpl');
+	$c = theme_include('navbar_' . $template . '.css');
+	$tpl = get_markup_template('navbar_' . $template . '.tpl');
+
+	if($c && $tpl) {
+		head_add_css('navbar_' . $template . '.css');
+	}
+
+	if(! $tpl) {
+		$tpl = get_markup_template('nav.tpl');
+	}
 
 	App::$page['nav'] .= replace_macros($tpl, array(
 		'$baseurl' => z_root(),
@@ -280,18 +306,19 @@ EOT;
 		'$userinfo' => $x['usermenu'],
 		'$localuser' => local_channel(),
 		'$is_owner' => $is_owner,
-		'$sel' => 	App::$nav_sel,
+		'$sel' => App::$nav_sel,
 		'$powered_by' => $powered_by,
 		'$help' => t('@name, #tag, ?doc, content'),
 		'$pleasewait' => t('Please wait...'),
 		'$nav_apps' => $nav_apps,
+		'$navbar_apps' => $navbar_apps,
 		'$channel_menu' => get_config('system','channel_menu'),
 		'$channel_thumb' => ((App::$profile) ? App::$profile['thumb'] : ''),
 		'$channel_apps' => $channel_apps,
 		'$addapps' => t('Add Apps'),
 		'$orderapps' => t('Arrange Apps'),
 		'$sysapps_toggle' => t('Toggle System Apps'),
-		'$loc' => $myident
+		'$url' => $url
 	));
 
 	if(x($_SESSION, 'reload_avatar') && $observer) {
@@ -314,7 +341,10 @@ EOT;
  * 
  */
 function nav_set_selected($item){
-	App::$nav_sel['active'] = $item;
+	App::$nav_sel['raw_name'] = $item;
+	$item = ['name' => $item];
+	Zlib\Apps::translate_system_apps($item);
+	App::$nav_sel['name'] = $item['name'];
 }
 
 
@@ -490,7 +520,6 @@ function channel_apps($is_owner = false, $nickname = null) {
 			'$tabs'  => $arr['tabs'],
 			'$name'  => App::$profile['channel_name'],
 			'$thumb' => App::$profile['thumb'],
-			'$channel_menu' => get_config('system','channel_menu')
 		]
 	);
 }
