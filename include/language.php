@@ -322,6 +322,8 @@ function get_language_name($s, $l = null) {
 			$language = $languageRepository->get($s, $l);
 		} catch (CommerceGuys\Intl\Exception\UnknownLanguageException $e) {
 			return $s; // Give up
+		} catch (CommerceGuys\Intl\Exception\UnknownLocaleException $e) {
+			return $s; // Give up
 		}
 	}
 
