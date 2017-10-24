@@ -52,7 +52,6 @@ class LanguageTest extends UnitTestCase {
 
 		// Can not unit test detect_language(), therefore test the used library
 		// only for now to find regressions on library updates.
-		require_once('library/langdet/Text/LanguageDetect.php');
 		$l = new Text_LanguageDetect;
 		// return 2-letter ISO 639-1 (en) language code
 		$l->setNameMode(2);
@@ -71,8 +70,8 @@ class LanguageTest extends UnitTestCase {
 				],
 				'English' => [
 						'English is a West Germanic language that was first spoken in early medieval England and is now a global lingua franca.[4][5] Named after the Angles, one of the Germanic tribes that migrated to England, it ultimately derives its name from the Anglia (Angeln) peninsula in the Baltic Sea. It is closely related to the Frisian languages, but its vocabulary has been significantly influenced by other Germanic languages, particularly Norse (a North Germanic language), as well as by Latin and Romance languages, especially French.',
-						'da', // nearly impossible to find a wikipedia article which is detected as english
-						0.000367 // minimum confidence is checked in detect_language(), but that is not yet unit testable
+						'en',
+						0.078422
 				],
 				'German' => [
 						'Deutschland ist ein Bundesstaat in Mitteleuropa. Er besteht aus 16 Ländern und ist als freiheitlich-demokratischer und sozialer Rechtsstaat verfasst. Die Bundesrepublik Deutschland stellt die jüngste Ausprägung des deutschen Nationalstaates dar. Mit rund 82,8 Millionen Einwohnern (31. Dezember 2016) zählt Deutschland zu den dicht besiedelten Flächenstaaten.',

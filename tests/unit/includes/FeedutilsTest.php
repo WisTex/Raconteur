@@ -24,7 +24,9 @@ class FeedutilsTest extends UnitTestCase {
 		$b = ['attribs' => ['' => [
 				'rel' => 'rel_value',
 				'type' => 'type_value',
-				'href' => 'href_value'
+				'href' => 'href_value',
+				'length' => 'length_value',
+				'title' => 'title_value'
 		]]];
 		$blink1 = ['link1' => $b];
 		$bresult[] = $b['attribs'][''];
@@ -37,6 +39,9 @@ class FeedutilsTest extends UnitTestCase {
 		//Illegal string offset 'attribs'
 	}*/
 
+	/**
+	 * @uses ::xmlify
+	 */
 	public function test_atom_author() {
 		$this->assertEquals('', atom_author('', 'nick', 'name', 'uri', 72, 72, 'png', 'photourl'));
 
@@ -47,7 +52,7 @@ class FeedutilsTest extends UnitTestCase {
   <link rel="photo"  type="png" media:width="72" media:height="72" href="http://photourl" />
   <link rel="avatar" type="png" media:width="72" media:height="72" href="http://photourl" />
   <poco:preferredUsername>nick</poco:preferredUsername>
-  <poco:displayName>name<poco:displayName>
+  <poco:displayName>name</poco:displayName>
 </tag>';
 
 		$this->assertXmlStringEqualsXmlString($a, atom_author('tag', 'nick', 'name', 'uri', 72, 72, 'png', 'http://photourl'));
