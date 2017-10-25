@@ -8,6 +8,7 @@
  * language related tasks.
  */
 
+use CommerceGuys\Intl\Language\LanguageRepository;
 
 /**
  * @brief Get the browser's submitted preferred languages.
@@ -298,11 +299,7 @@ function detect_language($s) {
  * @param string $s Language code to look up
  * @param string $l (optional) In which language to return the name
  * @return string with the language name, or $s if unrecognized
- *
- * @todo include CommerceGuys\Intl through composer like SabreDAV.
  */
-require_once(__DIR__ . '/../library/intl/vendor/autoload.php');
-use CommerceGuys\Intl\Language\LanguageRepository;
 function get_language_name($s, $l = null) {
 	// get() expects the second part to be in upper case
 	if (strpos($s, '-') !== false) $s = substr($s, 0, 2) . strtoupper(substr($s, 2));
