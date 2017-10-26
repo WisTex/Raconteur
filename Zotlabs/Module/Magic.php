@@ -146,10 +146,17 @@ class Magic extends \Zotlabs\Web\Controller {
 
 				if($x['success']) {
 					$j = json_decode($x['body'],true);
-					if($j['success'] && $j['token']) {
-						$x = strpbrk($dest,'?&');
-						$args = (($x) ? '&owt=' . $j['token'] : '?f=&owt=' . $j['token']) . (($delegate) ? '&delegate=1' : '');
+					if($j['success']) {
+						$token = '';
+						if($j['encrypted_token']) {
+							openssl_private_decrypt(base64url_decode($j['encrypted_token']),$token,$channel['channel_prvkey']);
+						}
+						else {
+							$token = $j['token'];
+						}
 						
+						$x = strpbrk($dest,'?&');
+						$args = (($x) ? '&owt=' . $token : '?f=&owt=' . $token) . (($delegate) ? '&delegate=1' : '');
 						goaway($dest . $args);
 					}
 				}
