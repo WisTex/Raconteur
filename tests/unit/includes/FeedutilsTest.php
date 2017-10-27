@@ -57,4 +57,33 @@ class FeedutilsTest extends UnitTestCase {
 
 		$this->assertXmlStringEqualsXmlString($a, atom_author('tag', 'nick', 'name', 'uri', 72, 72, 'png', 'http://photourl'));
 	}
+
+	/**
+	 * @uses ::xmlify
+	 */
+	public function test_atom_render_author() {
+		$xchan = [
+				'xchan_addr' => 'chan@hub',
+				'xchan_url' => 'http://hub',
+				'xchan_name' => 'Chan',
+				'xchan_photo_l' => 'http://hub/img',
+				'xchan_photo_mimetype' => 'mimetype'
+		];
+		// There is no input validation in atom_render_author
+		//$this->assertEquals('', atom_render_author('', $xchan));
+
+		$a = '<tag>
+  <as:object-type>http://activitystrea.ms/schema/1.0/person</as:object-type>
+  <id>http://hub</id>
+  <name>chan</name>
+  <uri>http://hub</uri>
+  <link rel="alternate" type="text/html" href="http://hub" />
+  <link rel="photo"  type="mimetype" media:width="300" media:height="300" href="http://hub/img" />
+  <link rel="avatar" type="mimetype" media:width="300" media:height="300" href="http://hub/img" />
+  <poco:preferredUsername>chan</poco:preferredUsername>
+  <poco:displayName>Chan</poco:displayName>
+</tag>';
+
+		$this->assertXmlStringEqualsXmlString($a, atom_render_author('tag', $xchan));
+	}
 }

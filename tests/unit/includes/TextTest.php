@@ -5,7 +5,7 @@ namespace Zotlabs\Tests\Unit\includes;
 use Zotlabs\Tests\Unit\UnitTestCase;
 
 /**
- * @brief Unit Test case for include/texter.php file.
+ * @brief Unit Test case for include/text.php file.
  *
  * @author ken restivo
  */
@@ -77,6 +77,44 @@ empty line above';
 		$this->assertEquals('<div>position removed</div>', purify_html('<div style="top:10px; left:3em;">position removed</div>'));
 		$this->assertEquals('<div style="top:10px;left:3em;right:50%;">position preserved</div>', purify_html('<div style="top:10px; left:3em; right:50%;">position preserved</div>', true));
 		$this->assertEquals('<div>invalid position removed</div>', purify_html('<div style="top:10p">invalid position removed</div>', true));
+	}
+
+	/**
+	 * @dataProvider notagsProvider
+	 */
+	public function testNotags($string, $expected) {
+		$this->assertEquals($expected, notags($string));
+	}
+	public function notagsProvider() {
+		return [
+				'empty string' => ['', ''],
+				'simple tag' => ['<value>', '[value]'],
+				'tag pair' => ['<b>text</b>', '[b]text[/b]'],
+				'double angle bracket' => ['<<value', '[[value'],
+				'HTML entity &gt;' => ['&gt;', '&gt;']
+		];
+	}
+
+	/**
+	 * @dataProvider sanitise_aclProvider
+	 */
+	public function testSanitise_acl($string, $expected) {
+		sanitise_acl($string);
+		$this->assertEquals($expected, $string);
+	}
+	public function sanitise_aclProvider() {
+		return [
+				'text' => ['value', '<value>'],
+				'text with angle bracket' => ['<value>', '<[value]>'],
+				'comma separated acls' => ['value1,value2', '<value1,value2>']
+		];
+	}
+
+	public function testUnsetSanitise_acl() {
+		$empty = '';
+		sanitise_acl($empty);
+		$this->assertTrue(isset($empty)); // unset() not working? Would expect false
+		$this->assertEmpty($empty);
 	}
 
 }
