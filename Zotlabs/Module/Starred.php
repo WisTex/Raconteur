@@ -16,7 +16,7 @@ class Starred extends \Zotlabs\Web\Controller {
 		if(! $message_id)
 			killme();
 	
-		$r = q("SELECT item_flags FROM item WHERE uid = %d AND id = %d LIMIT 1",
+		$r = q("SELECT item_starred FROM item WHERE uid = %d AND id = %d LIMIT 1",
 			intval(local_channel()),
 			intval($message_id)
 		);
