@@ -100,7 +100,7 @@ class Page extends \Zotlabs\Web\Controller {
 			$r = q("select item.* from item left join iconfig on item.id = iconfig.iid
 				where item.uid = %d and iconfig.cat = 'system' and iconfig.v = '%s' and item.item_delayed = 0 
 				and iconfig.k = 'WEBPAGE' and item_type = %d 
-				OR ( iconfig.k = 'PDL' AND item_type = %d )) $sql_options $revision limit 1",
+				$sql_options $revision limit 1",
 				intval($u[0]['channel_id']),
 				dbesc($page_id),
 				intval(ITEM_TYPE_WEBPAGE)
