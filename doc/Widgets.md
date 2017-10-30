@@ -129,14 +129,44 @@ Some/many of these widgets have restrictions which may restrict the type of page
 Creating New Widgets
 ====================
 
-If you want a widget named 'slugfish', create widget/slugfish.php containing
+### Class Widgets
+
+To create a class-based widget named 'slugfish' create a file with the following contents:
+
+````
+<?php
+
+namespace Zotlabs\Widget;
+
+
+class Slugfish {
+
+	function widget($args) {
+
+	... widget code goes here.
+	... The function returns a string which is the HTML content of the widget.
+	... $args is a named array which is passed any [var] variables from the layout editor
+	... For instance [widget=slugfish][var=count]3[/var][/widget] will populate $args with
+	... [ 'count' => 3 ]
+
+	}
+
+````
+
+The resultant file may be placed in widget/Slugfish/Slugfish.php , or Zotlabs/SiteWidgets/Slugfish.php . It also may be linked from a git repository using util/add_widget_repo.
+
+
+
+Traditional function based widget:
+
+If you want a widget named 'slugfish', create widget/widget_slugfish.php containing
 
 
     <?php
     
     function widget_slugfish($args) {
     
-    .. widget code goes here
+    .. widget code goes here. See above information for class-based widgets for details.
     
     }
 
