@@ -469,8 +469,11 @@ class Comanche {
 
 		if(file_exists('Zotlabs/SiteWidget/' . $clsname . '.php'))
 			require_once('Zotlabs/SiteWidget/' . $clsname . '.php');
+		elseif(file_exists('widget/' . $clsname . '/' . $clsname . '.php'))
+			require_once('widget/' . $clsname . '/' . $clsname . '.php');
 		elseif(file_exists('Zotlabs/Widget/' . $clsname . '.php'))
 			require_once('Zotlabs/Widget/' . $clsname . '.php');
+
 		if(class_exists($nsname)) {
 			$x = new $nsname;
 			$f = 'widget';
