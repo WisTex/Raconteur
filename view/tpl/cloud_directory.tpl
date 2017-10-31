@@ -2,27 +2,27 @@
 	{{if $tiles}}
 
 	{{if $parentpath}}
-	<div class="cloud-container" style="float: left; width: 80px; height: 80px; margin: 5px;">
+	<div class="cloud-container" >
 	<div class="cloud-icon"><a href="{{$parentpath.path}}">
-	<i class="fa fa-level-up" style="font-size: 48px;"></i>
+	<i class="fa fa-fw fa-level-up" ></i>
 	</a>
 	</div>
-	<div class="cloud-title" style="width: 78px; height: 36px; overflow: hidden;"><a href="{{$parentpath.path}}">..</a>
+	<div class="cloud-title"><a href="{{$parentpath.path}}">..</a>
 	</div>
 	</div>
 	{{/if}}
 
 	{{foreach $entries as $item}}
-	<div class="cloud-container" style="float: left; width: 80px; height: 80px; margin: 5px;">
+	<div class="cloud-container">
 	<div class="cloud-icon"><a href="{{$item.fullPath}}">
 	{{if $item.photo_icon}}
-	<img src="photo/{{$item.photo_icon}}" style="width: 48px; height: 48px;">
+	<img src="photo/{{$item.photo_icon}}" title="{{$item.type}}" >
 	{{else}}
-	<i class="fa {{$item.iconFromType}}" title="{{$item.type}}" style="font-size: 48px;"></i>
+	<i class="fa fa-fw {{$item.iconFromType}}" title="{{$item.type}}"></i>
 	{{/if}}
 	</a>
 	</div>
-	<div class="cloud-title" style="width: 78px; height: 36px; overflow: hidden;"><a href="{{$item.fullPath}}">
+	<div class="cloud-title"><a href="{{$item.fullPath}}">
 	{{$item.displayName}}
 	</a>
 	</div>
