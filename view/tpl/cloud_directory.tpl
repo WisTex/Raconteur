@@ -1,4 +1,38 @@
 <div id="cloud-drag-area" class="section-content-wrapper-np">
+	{{if $tiles}}
+
+	{{if $parentpath}}
+	<div class="cloud-container" >
+	<div class="cloud-icon"><a href="{{$parentpath.path}}">
+	<i class="fa fa-fw fa-level-up" ></i>
+	</a>
+	</div>
+	<div class="cloud-title"><a href="{{$parentpath.path}}">..</a>
+	</div>
+	</div>
+	{{/if}}
+
+	{{foreach $entries as $item}}
+	<div class="cloud-container">
+	<div class="cloud-icon"><a href="{{$item.fullPath}}">
+	{{if $item.photo_icon}}
+	<img src="photo/{{$item.photo_icon}}" title="{{$item.type}}" >
+	{{else}}
+	<i class="fa fa-fw {{$item.iconFromType}}" title="{{$item.type}}"></i>
+	{{/if}}
+	</a>
+	</div>
+	<div class="cloud-title"><a href="{{$item.fullPath}}">
+	{{$item.displayName}}
+	</a>
+	</div>
+	{{if $item.is_owner}}
+
+	{{/if}}
+	</div>
+	{{/foreach}}
+	<div class="clear"></div>
+	{{else}}
 	<table id="cloud-index">
 		<tr>
 			<th width="1%"></th>
@@ -42,4 +76,5 @@
 
 	{{/foreach}}
 	</table>
+	{{/if}}
 </div>

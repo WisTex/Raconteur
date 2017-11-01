@@ -11,7 +11,10 @@
 <br />
 <br />
 
+<div class="descriptive-text">{{$original}}</div>
+<pre><code>{{$src}}</code></pre>
 
+<br />
 
 <form action="pdledit" method="post" >
 <input type="hidden" name="module" value="{{$module}}" />

@@ -1695,3 +1695,26 @@ dl.bb-dl > dd > li {
 #permcat-index {
 	margin: 10px;
 }
+
+.cloud-container {
+	float: left;
+	width: 80px;
+	height: 80px;
+	margin: 5px;
+}
+
+.cloud-icon i {
+	font-size: 48px;
+}
+
+.cloud-icon img {
+	width: 48px;
+	height: 48px;
+}
+
+.cloud-title {
+	width: 78px;
+	height: 36px;
+	overflow: hidden;
+}
+

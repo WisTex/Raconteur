@@ -1,5 +1,5 @@
 [region=aside]
-[comment][widget=sitesearch][/widget][/comment]
+[widget=sitesearch][/widget]
 [/region]
 [region=right_aside]
 [widget=notifications][/widget]
