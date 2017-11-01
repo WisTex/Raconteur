@@ -3649,6 +3649,7 @@ function process_channel_sync_delivery($sender, $arr, $deliveries) {
 			$disallowed = array('id','aid','uid','guid');
 
 			foreach($arr['profile'] as $profile) {
+
 				$x = q("select * from profile where profile_guid = '%s' and uid = %d limit 1",
 					dbesc($profile['profile_guid']),
 					intval($channel['channel_id'])
@@ -3669,6 +3670,9 @@ function process_channel_sync_delivery($sender, $arr, $deliveries) {
 				$clean = array();
 				foreach($profile as $k => $v) {
 					if(in_array($k,$disallowed))
+						continue;
+
+					if($profile['is_default'] && in_array($k,['photo','thumb']))
 						continue;
 
 					if($k === 'name')
