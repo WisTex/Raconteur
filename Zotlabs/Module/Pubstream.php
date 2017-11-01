@@ -31,6 +31,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 		$item_normal_update = item_normal_update();
 
 		$static = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
+		$net    = ((array_key_exists('net',$_REQUEST))    ? escape_tags($_REQUEST['net']) : '');
 
 	
 		if(! $update && !$load) {
@@ -81,7 +82,8 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				'$tags'    => '',
 				'$dend'    => '',
 				'$mid'     => $mid,
-				'$verb'     => '',
+				'$verb'    => '',
+				'$net'     => $net,
 				'$dbegin'  => ''
 			));
 		}
@@ -112,6 +114,10 @@ class Pubstream extends \Zotlabs\Web\Controller {
 			$page_mode = 'list';
 		else
 			$page_mode = 'client';
+
+
+		$net_query = (($net) ? " left join xchan on xchan_hash = author_xchan " : ''); 
+		$net_query2 = (($net) ? " and xchan_network = '" . protect_sprintf(dbesc($net)) . "' " : '');
 	
 	
 		$simple_update = (($update) ? " and item.item_unseen = 1 " : '');
@@ -134,9 +140,10 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				if($mid) {
 					$r = q("SELECT parent AS item_id FROM item
 						left join abook on item.author_xchan = abook.abook_xchan
+						$net_query
 						WHERE mid like '%s' $uids $item_normal
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
-						$sql_extra3 $sql_extra $sql_nets LIMIT 1",
+						$sql_extra3 $sql_extra $sql_nets $net_query2 LIMIT 1",
 						dbesc($mid . '%')
 					);
 				}
@@ -144,10 +151,11 @@ class Pubstream extends \Zotlabs\Web\Controller {
 					// Fetch a page full of parent items for this page
 					$r = q("SELECT distinct item.id AS item_id, $ordering FROM item
 						left join abook on item.author_xchan = abook.abook_xchan
+						$net_query
 						WHERE true $uids $item_normal
 						AND item.parent = item.id
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
-						$sql_extra3 $sql_extra $sql_nets
+						$sql_extra3 $sql_extra $sql_nets $net_query2
 						ORDER BY $ordering DESC $pager_sql "
 					);
 				}
@@ -156,19 +164,21 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				if($mid) {
 					$r = q("SELECT parent AS item_id FROM item
 						left join abook on item.author_xchan = abook.abook_xchan
+						$net_query
 						WHERE mid like '%s' $uids $item_normal_update $simple_update
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
-						$sql_extra3 $sql_extra $sql_nets LIMIT 1",
+						$sql_extra3 $sql_extra $sql_nets $net_query2 LIMIT 1",
 						dbesc($mid . '%')
 					);
 				}
 				else {
 					$r = q("SELECT distinct item.id AS item_id, $ordering FROM item
 						left join abook on item.author_xchan = abook.abook_xchan
+						$net_query
 						WHERE true $uids $item_normal_update
 						AND item.parent = item.id $simple_update
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
-						$sql_extra3 $sql_extra $sql_nets"
+						$sql_extra3 $sql_extra $sql_nets $net_query2"
 					);
 				}
 				$_SESSION['loadtime'] = datetime_convert();

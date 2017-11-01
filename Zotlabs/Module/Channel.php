@@ -332,6 +332,7 @@ class Channel extends \Zotlabs\Web\Controller {
 				'$tags' => (($hashtags) ? urlencode($hashtags) : ''),
 				'$mid' => $mid,
 				'$verb' => '',
+				'$net' => '',
 				'$dend' => $datequery,
 				'$dbegin' => $datequery2
 			));
