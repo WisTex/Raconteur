@@ -19,7 +19,7 @@ class Mail extends \Zotlabs\Web\Controller {
 		$replyto   = ((x($_REQUEST,'replyto'))      ? notags(trim($_REQUEST['replyto']))      : '');
 		$subject   = ((x($_REQUEST,'subject'))      ? notags(trim($_REQUEST['subject']))      : '');
 		$body      = ((x($_REQUEST,'body'))         ? escape_tags(trim($_REQUEST['body']))    : '');
-		$recipient = ((x($_REQUEST,'messageto'))    ? notags(trim($_REQUEST['messageto']))    : '');
+		$recipient = ((x($_REQUEST,'messageto'))    ? notags(trim(urldecode($_REQUEST['messageto'])))    : '');
 		$rstr      = ((x($_REQUEST,'messagerecip')) ? notags(trim($_REQUEST['messagerecip'])) : '');
 		$preview   = ((x($_REQUEST,'preview'))      ? intval($_REQUEST['preview'])            : 0);
 		$expires   = ((x($_REQUEST,'expires'))      ? datetime_convert(date_default_timezone_get(),'UTC', $_REQUEST['expires']) : NULL_DATE);
@@ -124,7 +124,7 @@ class Mail extends \Zotlabs\Web\Controller {
 		// We have a local_channel, let send_message use the session channel and save a lookup
 		
 		$ret = send_message(0, $recipient, $body, $subject, $replyto, $expires, $mimetype, $raw);
-	
+
 		if($ret['success']) {
 			xchan_mail_query($ret['mail']);
 			build_sync_packet(0,array('conv' => array($ret['conv']),'mail' => array(encode_mail($ret['mail'],true))));
