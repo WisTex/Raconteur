@@ -285,6 +285,16 @@ function zot_refresh($them, $channel = null, $force = false) {
 		return false;
 	}
 
+	$s = q("select site_dead from site where site_url = '%s' limit 1",
+		dbesc($url)
+	);
+
+	if($s && intval($s[0]['site_dead']) && (! $force)) {
+		logger('zot_refresh: site ' . $url . ' is marked dead and force flag is not set. Cancelling operation.');
+		return false;
+	} 
+
+
 	$token = random_string();
 
 	$postvars = [];
