@@ -3148,6 +3148,15 @@ function build_sync_packet($uid = 0, $packet = null, $groups_changed = false) {
 			'msg'        => json_encode($info)
 		));
 
+
+		$x = q("select count(outq_hash) as total from outq where outq_delivered = 0");
+		if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',300))) {
+			logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
+			update_queue_item($hash);
+			continue;
+		}
+
+
 		Zotlabs\Daemon\Master::Summon(array('Deliver', $hash));
 		$total = $total - 1;
 
@@ -3914,6 +3923,14 @@ function zot_reply_message_request($data) {
 				'notify'     => $n,
 				'msg'        => $data_packet
 			));
+
+
+			$x = q("select count(outq_hash) as total from outq where outq_delivered = 0");
+			if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',300))) {
+				logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
+				update_queue_item($hash);
+				continue;
+			}
 
 			/*
 			 * invoke delivery to send out the notify packet

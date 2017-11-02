@@ -88,6 +88,14 @@ class Ratenotif {
 						'msg'        => json_encode($encoded_item)
 					));
 
+
+					$x = q("select count(outq_hash) as total from outq where outq_delivered = 0");
+					if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',300))) {
+						logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
+						update_queue_item($hash);
+						continue;
+					}
+
 					$deliver[] = $hash;
 	
 					if(count($deliver) >= $deliveries_per_process) {

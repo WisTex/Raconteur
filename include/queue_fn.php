@@ -158,14 +158,6 @@ function queue_deliver($outq, $immediate = false) {
 		}
 	}
 
-	if($immediate) {
-		$x = q("select count(outq_hash) as total from outq where outq_delivered = 0");
-		if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',300))) {
-			logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
-			update_queue_item($outq['outq_hash']);
-			return;
-		}
-	}
 
 
 	$arr = array('outq' => $outq, 'base' => $base, 'handled' => false, 'immediate' => $immediate);
