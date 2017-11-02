@@ -188,6 +188,7 @@ class Display extends \Zotlabs\Web\Controller {
 				'$dend'    => '',
 				'$dbegin'  => '',
 				'$verb'    => '',
+				'$net'     => '',
 				'$mid'     => $mid
 			));
 

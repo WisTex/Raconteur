@@ -138,6 +138,7 @@ class Search extends \Zotlabs\Web\Controller {
 				'$tags' => '',
 				'$mid' => '',
 				'$verb' => '',
+				'$net' => '',
 				'$dend' => '',
 				'$dbegin' => ''
 			));

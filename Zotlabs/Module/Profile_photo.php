@@ -150,6 +150,14 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 					// If setting for the default profile, unset the profile photo flag from any other photos I own
 	
 					if($is_default_profile) {
+
+						$r = q("update profile set photo = '%s', thumb = '%s' where is_default = 1 and uid = %d",
+							dbesc(z_root() . '/photo/profile/l/' . local_channel()),
+							dbesc(z_root() . '/photo/profile/m/' . local_channel()),
+							intval(local_channel())
+						);
+
+
 						$r = q("UPDATE photo SET photo_usage = %d WHERE photo_usage = %d
 							AND resource_id != '%s' AND uid = %d",
 							intval(PHOTO_NORMAL),
@@ -158,8 +166,6 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 							intval(local_channel())
 						);
 	
-
-
 
 						send_profile_photo_activity($channel,$base_image,$profile);
 	

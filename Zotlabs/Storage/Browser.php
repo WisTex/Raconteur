@@ -173,6 +173,7 @@ class Browser extends DAV\Browser\Plugin {
 			$displayName = $this->escapeHTML($displayName);
 			$type = $this->escapeHTML($type);
 
+
 			$icon = '';
 
 			if ($this->enableAssets) {
@@ -196,12 +197,28 @@ class Browser extends DAV\Browser\Plugin {
 				}
 			}
 
+			$photo_icon = '';
+
+			if(strpos($type,'image/') === 0 && $attachHash) {
+				$r = q("select resource_id, imgscale from photo where resource_id = '%s' and imgscale in ( %d, %d ) order by imgscale asc limit 1",
+					dbesc($attachHash),
+					intval(PHOTO_RES_320),
+					intval(PHOTO_RES_PROFILE_80)
+				);
+				if($r) {
+					$photo_icon = $r[0]['resource_id'] . '-' . $r[0]['imgscale'];				
+				}
+			}
+
+
+
 			$attachIcon = ""; // "<a href=\"attach/".$attachHash."\" title=\"".$displayName."\"><i class=\"fa fa-arrow-circle-o-down\"></i></a>";
 
 			// put the array for this file together
 			$ft['attachId'] = $this->findAttachIdByHash($attachHash);
 			$ft['fileStorageUrl'] = substr($fullPath, 0, strpos($fullPath, "cloud/")) . "filestorage/" . $this->auth->getCurrentUser();
 			$ft['icon'] = $icon;
+			$ft['photo_icon'] = $photo_icon;
 			$ft['attachIcon'] = (($size) ? $attachIcon : '');
 			// @todo Should this be an item value, not a global one?
 			$ft['is_owner'] = $is_owner;
@@ -221,6 +238,7 @@ class Browser extends DAV\Browser\Plugin {
 			$this->server->emit('onHTMLActionsPanel', array($parent, &$output, $path));
 		}
 
+
 		$html .= replace_macros(get_markup_template('cloud.tpl'), array(
 				'$header' => t('Files') . ": " . $this->escapeHTML($path) . "/",
 				'$total' => t('Total'),
@@ -230,6 +248,8 @@ class Browser extends DAV\Browser\Plugin {
 				'$upload' => t('Upload'),
 				'$is_owner' => $is_owner,
 				'$parentpath' => $parentpath,
+				'$cpath' => bin2hex(\App::$query_string),
+				'$tiles' => intval($_SESSION['cloud_tiles']),
 				'$entries' => $f,
 				'$name' => t('Name'),
 				'$type' => t('Type'),

@@ -312,7 +312,7 @@ EOT;
 		'$pleasewait' => t('Please wait...'),
 		'$nav_apps' => $nav_apps,
 		'$navbar_apps' => $navbar_apps,
-		'$channel_menu' => get_config('system','channel_menu'),
+		'$channel_menu' => get_pconfig(App::$profile_uid,'system','channel_menu',get_config('system','channel_menu')),
 		'$channel_thumb' => ((App::$profile) ? App::$profile['thumb'] : ''),
 		'$channel_apps' => $channel_apps,
 		'$addapps' => t('Add Apps'),

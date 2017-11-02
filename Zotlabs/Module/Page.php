@@ -89,22 +89,30 @@ class Page extends \Zotlabs\Web\Controller {
 		if(! $ignore_language) {
 			$r = q("select item.* from item left join iconfig on item.id = iconfig.iid
 				where item.uid = %d and iconfig.cat = 'system' and iconfig.v = '%s' and item.item_delayed = 0 
-				and (( iconfig.k = 'WEBPAGE' and item_type = %d ) 
-				OR ( iconfig.k = 'PDL' AND item_type = %d )) $sql_options $revision limit 1",
+				and iconfig.k = 'WEBPAGE' and item_type = %d  
+				$sql_options $revision limit 1",
 				intval($u[0]['channel_id']),
 				dbesc($lang_page_id),
-				intval(ITEM_TYPE_WEBPAGE),
-				intval(ITEM_TYPE_PDL)
+				intval(ITEM_TYPE_WEBPAGE)
 			);
 		}
 		if(! $r) {
 			$r = q("select item.* from item left join iconfig on item.id = iconfig.iid
 				where item.uid = %d and iconfig.cat = 'system' and iconfig.v = '%s' and item.item_delayed = 0 
-				and (( iconfig.k = 'WEBPAGE' and item_type = %d ) 
-				OR ( iconfig.k = 'PDL' AND item_type = %d )) $sql_options $revision limit 1",
+				and iconfig.k = 'WEBPAGE' and item_type = %d 
+				$sql_options $revision limit 1",
 				intval($u[0]['channel_id']),
 				dbesc($page_id),
-				intval(ITEM_TYPE_WEBPAGE),
+				intval(ITEM_TYPE_WEBPAGE)
+			);
+		}
+		if(! $r) {
+			// no webpage by that name, but we do allow you to load/preview a layout using this module. Try that.
+			$r = q("select item.* from item left join iconfig on item.id = iconfig.iid
+				where item.uid = %d and iconfig.cat = 'system' and iconfig.v = '%s' and item.item_delayed = 0 
+				and iconfig.k = 'PDL' AND item_type = %d $sql_options $revision limit 1",
+				intval($u[0]['channel_id']),
+				dbesc($page_id),
 				intval(ITEM_TYPE_PDL)
 			);
 		}
@@ -129,7 +137,7 @@ class Page extends \Zotlabs\Web\Controller {
 			}
 			return;
 		}
-	
+
 		if($r[0]['title'])
 			\App::$page['title'] = escape_tags($r[0]['title']);
 	

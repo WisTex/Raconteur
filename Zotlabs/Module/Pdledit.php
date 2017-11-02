@@ -77,8 +77,10 @@ class Pdledit extends \Zotlabs\Web\Controller {
 		}
 	
 		$t = get_pconfig(local_channel(),'system',$module);
-		if(! $t)
-			$t = file_get_contents(theme_include($module));
+		$s = file_get_contents(theme_include($module));
+		if(! $t) {
+			$t = $s;
+		}	
 		if(! $t) {
 			notice( t('Layout not found.') . EOL);
 			return '';
@@ -89,7 +91,9 @@ class Pdledit extends \Zotlabs\Web\Controller {
 			'$mname' => t('Module Name:'),
 			'$help' => t('Layout Help'),
 			'$another' => t('Edit another layout'),
+			'$original' => t('System layout'),
 			'$module' => argv(1),
+			'$src' => $s,
 			'$content' => htmlspecialchars($t,ENT_COMPAT,'UTF-8'),
 			'$submit' => t('Submit')
 		));

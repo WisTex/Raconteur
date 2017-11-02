@@ -41,7 +41,9 @@ class Owa extends \Zotlabs\Web\Controller {
 								$ret['success'] = true;
 								$token = random_string(32);
 								\Zotlabs\Zot\Verify::create('owt',0,$token,$r[0]['hubloc_addr']);
-								$ret['token'] = $token;
+								$result = '';
+								openssl_public_encrypt($token,$result,$hubloc['xchan_pubkey']);
+								$ret['encrypted_token'] = base64url_encode($result);
 							}
 						}
 					}

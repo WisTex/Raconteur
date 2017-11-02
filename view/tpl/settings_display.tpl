@@ -64,6 +64,7 @@
 						{{include file="field_input.tpl" field=$channel_divmore_height}}
 						{{include file="field_input.tpl" field=$network_divmore_height}}
 						{{include file="field_checkbox.tpl" field=$nosmile}}
+						{{include file="field_checkbox.tpl" field=$channel_menu}}
 						{{include file="field_checkbox.tpl" field=$title_tosource}}
 						{{include file="field_checkbox.tpl" field=$channel_list_mode}}
 						{{include file="field_checkbox.tpl" field=$network_list_mode}}
