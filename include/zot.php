@@ -285,6 +285,16 @@ function zot_refresh($them, $channel = null, $force = false) {
 		return false;
 	}
 
+	$s = q("select site_dead from site where site_url = '%s' limit 1",
+		dbesc($url)
+	);
+
+	if($s && intval($s[0]['site_dead']) && (! $force)) {
+		logger('zot_refresh: site ' . $url . ' is marked dead and force flag is not set. Cancelling operation.');
+		return false;
+	} 
+
+
 	$token = random_string();
 
 	$postvars = [];
@@ -3872,7 +3882,7 @@ function zot_reply_message_request($data) {
 	if ($messages) {
 		$env_recips = null;
 
-		$r = q("select hubloc.*, site.site_crypto from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and hubloc_error = 0 and hubloc_deleted = 0",
+		$r = q("select hubloc.*, site.site_crypto from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and hubloc_error = 0 and hubloc_deleted = 0 and site.site_dead = 0 ",
 			dbesc($sender_hash)
 		);
 		if (! $r) {
