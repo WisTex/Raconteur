@@ -381,7 +381,7 @@ function private_messages_list($uid, $mailbox = '', $start = 0, $numitems = 0) {
 			$chans[] = $s;
  	}
 
-	$c = q("select * from xchan where xchan_hash in (" . implode(',',$chans) . ")");
+	$c = q("select * from xchan where xchan_hash in (" . protect_sprintf(implode(',',$chans)) . ")");
 
 	foreach($r as $k => $rr) {
 		$r[$k]['from'] = find_xchan_in_array($rr['from_xchan'],$c);
@@ -420,7 +420,7 @@ function private_messages_fetch_message($channel_id, $messageitem_id, $updatesee
 			$chans[] = $s;
 	}
 
-	$c = q("select * from xchan where xchan_hash in (" . implode(',',$chans) . ")");
+	$c = q("select * from xchan where xchan_hash in (" . protect_sprintf(implode(',',$chans)) . ")");
 
 	foreach($messages as $k => $message) {
 		$messages[$k]['from'] = find_xchan_in_array($message['from_xchan'],$c);
@@ -545,7 +545,7 @@ function private_messages_fetch_conversation($channel_id, $messageitem_id, $upda
 	}
 
 
-	$c = q("select * from xchan where xchan_hash in (" . implode(',',$chans) . ")");
+	$c = q("select * from xchan where xchan_hash in (" . protect_sprintf(implode(',',$chans)) . ")");
 
 	foreach($messages as $k => $message) {
 		$messages[$k]['from'] = find_xchan_in_array($message['from_xchan'],$c);
