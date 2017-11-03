@@ -2,6 +2,7 @@
 namespace Zotlabs\Module;
 
 require_once('include/conversation.php');
+require_once('include/acl_selectors.php');
 
 
 class Pubstream extends \Zotlabs\Web\Controller {
@@ -32,6 +33,47 @@ class Pubstream extends \Zotlabs\Web\Controller {
 
 		$static = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
 		$net    = ((array_key_exists('net',$_REQUEST))    ? escape_tags($_REQUEST['net']) : '');
+
+
+		if(local_channel() && (! $update)) {
+	
+			$channel = \App::get_channel();
+
+			$channel_acl = array(
+				'allow_cid' => $channel['channel_allow_cid'], 
+				'allow_gid' => $channel['channel_allow_gid'], 
+				'deny_cid'  => $channel['channel_deny_cid'], 
+				'deny_gid'  => $channel['channel_deny_gid']
+			); 
+
+			$x = array(
+				'is_owner'            => true,
+				'allow_location'      => ((intval(get_pconfig($channel['channel_id'],'system','use_browser_location'))) ? '1' : ''),
+				'default_location'    => $channel['channel_location'],
+				'nickname'            => $channel['channel_address'],
+				'lockstate'           => (($group || $cid || $channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
+	
+				'acl'                 => populate_acl($channel_acl),
+				'permissions'         => $channel_acl,
+				'bang'                => '',
+				'visitor'             => true,
+				'profile_uid'         => local_channel(),
+				'return_path'         => 'channel/' . $channel['channel_address'],
+				'expanded'            => true,
+				'editor_autocomplete' => true,
+				'bbco_autocomplete'   => 'bbcode',
+				'bbcode'              => true,
+				'jotnets'             => true
+			);
+	
+			$o = '<div id="jot-popup">';
+			$o .= status_editor($a,$x);
+			$o .= '</div>';
+		}
+
+
+
+
 
 	
 		if(! $update && !$load) {
