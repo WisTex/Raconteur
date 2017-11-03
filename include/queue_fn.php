@@ -42,7 +42,7 @@ function update_queue_item($id, $add_priority = 0) {
 		$next = datetime_convert('UTC','UTC','now + 1 hour');
 	}
 	else {
-		$next = datetime_convert('UTC','UTC','now + 15 minutes');
+		$next = datetime_convert('UTC','UTC','now + ' . intval($add_priority) . ' minutes');
 	}
 
 	q("UPDATE outq SET outq_updated = '%s', 
@@ -200,14 +200,15 @@ function queue_deliver($outq, $immediate = false) {
 					}
 				}
 				if($piled_up) {
-					do_delivery($piled_up);
+					// call do_delivery() with the force flag
+					do_delivery($piled_up, true);
 				}
 			}
 		}
 		else {
 			logger('deliver: queue post returned ' . $result['return_code'] 
 				. ' from ' . $outq['outq_posturl'],LOGGER_DEBUG);
-				update_queue_item($outq['outq_hash']);
+				update_queue_item($outq['outq_hash'],10);
 		}
 		return;
 	}

@@ -12,6 +12,7 @@ class Queue {
 		require_once('include/items.php');
 		require_once('include/bbcode.php');
 
+
 		if(argc() > 1)
 			$queue_id = argv(1);
 		else

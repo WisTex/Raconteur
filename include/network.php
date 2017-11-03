@@ -1433,14 +1433,19 @@ function scrape_feed($url) {
 
 
 
-function do_delivery($deliveries) {
+
+
+function do_delivery($deliveries, $force = false) {
+
+	// $force is set if a site that wasn't responding suddenly returns to life.
+	// Try and shove through everything going to that site while it's responding. 
 
 	if(! (is_array($deliveries) && count($deliveries)))
 		return;
 
 
 	$x = q("select count(outq_hash) as total from outq where outq_delivered = 0");
-	if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',300))) {
+	if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',300)) && (! $force)) {
 		logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
 		foreach($deliveries as $d) {
 			update_queue_item($d);
