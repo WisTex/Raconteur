@@ -1438,6 +1438,17 @@ function do_delivery($deliveries) {
 	if(! (is_array($deliveries) && count($deliveries)))
 		return;
 
+
+	$x = q("select count(outq_hash) as total from outq where outq_delivered = 0");
+	if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',300))) {
+		logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
+		foreach($deliveries as $d) {
+			update_queue_item($d);
+		}
+		return;
+	}
+
+
 	$interval = ((get_config('system','delivery_interval') !== false)
 			? intval(get_config('system','delivery_interval')) : 2 );
 
