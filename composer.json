@@ -33,7 +33,9 @@
 		"bshaffer/oauth2-server-php": "^1.9",
 		"ezyang/htmlpurifier": "^4.9",
 		"simplepie/simplepie": "~1.5",
-		"league/html-to-markdown": "^4.4"
+		"league/html-to-markdown": "^4.4",
+		"pear/text_languagedetect": "^1.0",
+		"commerceguys/intl": "~0.7"
 	},
 	"require-dev" : {
 		"php" : ">=7.0",

@@ -1699,7 +1699,7 @@ function handle_feed($uid, $abook_id, $url) {
  * @param int $w image width
  * @param string $type profile photo mime type
  * @param string $photo Fully qualified URL to a profile/avator photo
- * @return string
+ * @return string XML tag
  */
 function atom_author($tag, $nick, $name, $uri, $h, $w, $type, $photo) {
 	$o = '';
@@ -1736,22 +1736,22 @@ function atom_author($tag, $nick, $name, $uri, $h, $w, $type, $photo) {
 
 
 /**
- * @brief
+ * @brief Return an atom tag with author information from an xchan.
  *
  * @param string $tag
  * @param array $xchan
- * @return string An xml tag
+ * @return string
  */
 function atom_render_author($tag, $xchan) {
 
-	$nick = xmlify(substr($xchan['xchan_addr'],0,strpos($xchan['xchan_addr'],'@')));
+	$nick = xmlify(substr($xchan['xchan_addr'], 0, strpos($xchan['xchan_addr'], '@')));
 	$id   = xmlify($xchan['xchan_url']);
 	$name = xmlify($xchan['xchan_name']);
 	$photo = xmlify($xchan['xchan_photo_l']);
 	$type = xmlify($xchan['xchan_photo_mimetype']);
 	$w = $h = 300;
 
-	$o .= "<$tag>\r\n";
+	$o = "<$tag>\r\n";
 	$o .= "  <as:object-type>http://activitystrea.ms/schema/1.0/person</as:object-type>\r\n";
 	$o .= "  <id>$id</id>\r\n";
 	$o .= "  <name>$nick</name>\r\n";
@@ -1764,7 +1764,8 @@ function atom_render_author($tag, $xchan) {
 
 	/**
 	 * @hooks atom_render_author
-	 *   * \e string - The created XML tag as a string without closing tag
+	 *   Possibility to add further tags to returned XML string.
+	 *   * \e string The created XML tag as a string without closing tag
 	 */
 	call_hooks('atom_render_author', $o);
 
