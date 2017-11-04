@@ -172,7 +172,7 @@ function localize_item(&$item){
 				$shortbodyverb = t('doesn\'t like %1$s\'s %2$s');
 			}
 
-			$item['shortlocalize'] = sprintf($bodyverb, $objauthor, $plink);
+			$item['shortlocalize'] = sprintf($shortbodyverb, $objauthor, $plink);
 
 			$item['body'] = $item['localize'] = sprintf($bodyverb, $author, $objauthor, $plink);
 			if($Bphoto != "") 
