@@ -57,12 +57,21 @@ class Cloud extends \Zotlabs\Web\Controller {
 			$auth->observer = $ob_hash;
 		}
 
+		// if we arrived at this path with any query parameters in the url, build a clean url without
+		// them and redirect.
+		// @fixme if the filename has an ampersand in it AND there are query parameters, 
+		// this may not do the right thing. 
 
-		$_SERVER['QUERY_STRING'] = str_replace(array('?f=', '&f='), array('', ''), $_SERVER['QUERY_STRING']);
-		$_SERVER['QUERY_STRING'] = strip_zids($_SERVER['QUERY_STRING']);
+		if((strpos($_SERVER['QUERY_STRING'],'?') !== false) || (strpos($_SERVER['QUERY_STRING'],'&') !== false && strpos($_SERVER['QUERY_STRING'],'&amp;') === false)) {
+			$path = z_root();
+			if(argc()) {
+				foreach(\App::$argv as $a) {
+					$path .= '/' . $a;
+				}
+			}
+			goaway($path);
+		}
 
-		$_SERVER['REQUEST_URI'] = str_replace(array('?f=', '&f='), array('', ''), $_SERVER['REQUEST_URI']);
-		$_SERVER['REQUEST_URI'] = strip_zids($_SERVER['REQUEST_URI']);
 
 		$rootDirectory = new \Zotlabs\Storage\Directory('/', $auth);
 

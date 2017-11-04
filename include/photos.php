@@ -75,6 +75,9 @@ function photo_upload($channel, $observer, $args) {
 				$imagedata = @file_get_contents($tmp_name);
 				@unlink($tmp_name);
 			}
+			else {
+				$imagedata = @file_get_contents($args['os_syspath']);
+			}
 		}
 		else {
 			$imagedata = @file_get_contents($args['os_syspath']);

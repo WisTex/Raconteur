@@ -169,15 +169,13 @@ class Ping extends \Zotlabs\Web\Controller {
 			$r = q("SELECT * FROM item
 				WHERE uid = %d
 				AND author_xchan != '%s'
-				AND obj_type != '%s'
 				AND item_unseen = 1
 				AND created > '" . datetime_convert('UTC','UTC',$_SESSION['static_loadtime']) . "'
 				$item_normal
 				ORDER BY created DESC
 				LIMIT 300",
 				intval($sys['channel_id']),
-				dbesc(get_observer_hash()),
-				dbesc(ACTIVITY_OBJ_FILE)
+				dbesc(get_observer_hash())
 			);
 
 			if($r) {
@@ -313,11 +311,9 @@ class Ping extends \Zotlabs\Web\Controller {
 			$r = q("SELECT * FROM item
 				WHERE item_unseen = 1 and uid = %d $item_normal
 				AND author_xchan != '%s'
-				AND obj_type != '%s'
 				ORDER BY created DESC limit 300",
 				intval(local_channel()),
-				dbesc($ob_hash),
-				dbesc(ACTIVITY_OBJ_FILE)
+				dbesc($ob_hash)
 			);
 
 			if($r) {
@@ -487,11 +483,9 @@ class Ping extends \Zotlabs\Web\Controller {
 			$r = q("SELECT id, item_wall FROM item
 				WHERE item_unseen = 1 and uid = %d
 				$item_normal
-				AND author_xchan != '%s'
-				AND obj_type != '%s'",
+				AND author_xchan != '%s'",
 				intval(local_channel()),
-				dbesc($ob_hash),
-				dbesc(ACTIVITY_OBJ_FILE)
+				dbesc($ob_hash)
 			);
 
 			if($r) {
