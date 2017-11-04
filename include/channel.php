@@ -1,6 +1,7 @@
 <?php
 /**
  * @file include/channel.php
+ * @brief Channel related functions.
  */
 
 require_once('include/zot.php');
@@ -58,10 +59,8 @@ function identity_check_service_class($account_id) {
  * Plugins can set additional policies such as full name requirements, character
  * sets, multi-byte length, etc.
  *
- * @hooks validate_channelname
- *   * \e array \b name
  * @param string $name
- * @returns nil return if name is valid, or string describing the error state.
+ * @return string describing the error state, or nil return if name is valid
  */
 function validate_channelname($name) {
 
@@ -72,6 +71,12 @@ function validate_channelname($name) {
 		return t('Name too long');
 
 	$arr = ['name' => $name];
+	/**
+	 * @hooks validate_channelname
+	 *   Used to validate the names used by a channel.
+	 *   * \e string \b name
+	 *   * \e string \b message - return error message
+	 */
 	call_hooks('validate_channelname', $arr);
 
 	if (x($arr, 'message'))
@@ -259,7 +264,6 @@ function create_identity($arr) {
 			'channel_system'      => intval($system),
 			'channel_expire_days' => intval($expire),
 			'channel_timezone'    => App::$timezone
-
 		]
 	);
 
@@ -280,9 +284,19 @@ function create_identity($arr) {
 
 	$photo_type = null;
 
-	$z = [ 'account' => $a[0], 'channel' => $r[0], 'photo_url' => '' ];
-	call_hooks('create_channel_photo',$z);
- 
+	$z = [
+			'account' => $a[0],
+			'channel' => $r[0],
+			'photo_url' => ''
+	];
+	/**
+	 * @hooks create_channel_photo
+	 *   * \e array \b account
+	 *   * \e array \b channel
+	 *   * \e string \b photo_url - Return value
+	 */
+	call_hooks('create_channel_photo', $z);
+
 	if($z['photo_url']) {
 		$photo_type = import_channel_photo_from_url($z['photo_url'],$arr['account_id'],$r[0]['channel_id']);
 	}
@@ -322,7 +336,7 @@ function create_identity($arr) {
 		]
 	);
 	if(! $r)
-		logger('create_identity: Unable to store hub location');
+		logger('Unable to store hub location');
 
 	$newuid = $ret['channel']['channel_id'];
 
@@ -454,12 +468,18 @@ function create_identity($arr) {
 			require_once('include/follow.php');
 			if(! is_array($accts))
 				$accts = array($accts);
+
 			foreach($accts as $acct) {
 				if(trim($acct))
 					new_contact($newuid,trim($acct),$ret['channel'],false);
 			}
 		}
 
+		/**
+		 * @hooks create_identity
+		 *   Called when creating a channel.
+		 *   * \e int - The UID of the created identity
+		 */
 		call_hooks('create_identity', $newuid);
 
 		Zotlabs\Daemon\Master::Summon(array('Directory', $ret['channel']['channel_id']));
@@ -576,14 +596,14 @@ function channel_change_address($channel,$new_address) {
 	$old_address = $channel['channel_address'];
 
 	if($new_address === 'sys') {
-        $ret['message'] = t('Reserved nickname. Please choose another.');
-        return $ret;
-    }
+		$ret['message'] = t('Reserved nickname. Please choose another.');
+		return $ret;
+	}
 
-    if(check_webbie(array($new_address)) !== $new_address) {
-        $ret['message'] = t('Nickname has unsupported characters or is already being used on this site.');
-        return $ret;
-    }
+	if(check_webbie(array($new_address)) !== $new_address) {
+		$ret['message'] = t('Nickname has unsupported characters or is already being used on this site.');
+		return $ret;
+	}
 
 	$r = q("update channel set channel_address = '%s' where channel_id = %d",
 		dbesc($new_address),
@@ -644,17 +664,13 @@ function channel_change_address($channel,$new_address) {
 				);
 			}
 		}
-	}		
+	}
 
 	Zotlabs\Daemon\Master::Summon(array('Notifier', 'refresh_all', $channel['channel_id']));
 
 	$ret['success'] = true;
 	return $ret;
 }
-
-
-
-
 
 
 /**
@@ -664,9 +680,9 @@ function channel_change_address($channel,$new_address) {
  *       login account
  * @param int $channel_id
  *       channel id to set as default for this account
- * @param boolean $force
- *       if true, set this default unconditionally
- *       if $force is false only do this if there is no existing default
+ * @param boolean $force (optional) default true
+ *       - if true, set this default unconditionally
+ *       - if $force is false only do this if there is no existing default
  */
 function set_default_login_identity($account_id, $channel_id, $force = true) {
 	$r = q("select account_default_channel from account where account_id = %d limit 1",
@@ -685,8 +701,6 @@ function set_default_login_identity($account_id, $channel_id, $force = true) {
 /**
  * @brief Return an array with default list of sections to export.
  *
- * @hooks get_default_export_sections
- *   * \e array \b sections
  * @return array with default section names to export
  */
 function get_default_export_sections() {
@@ -703,6 +717,11 @@ function get_default_export_sections() {
 	];
 
 	$cb = [ 'sections' => $sections ];
+	/**
+	 * @hooks get_default_export_sections
+	 *   Called to get the default list of functional data groups to export in identity_basic_export().
+	 *   * \e array \b sections - return value
+	 */
 	call_hooks('get_default_export_sections', $cb);
 
 	return $cb['sections'];
@@ -714,15 +733,11 @@ function get_default_export_sections() {
  * which would be necessary to create a nomadic identity clone. This includes
  * most channel resources and connection information with the exception of content.
  *
- * @hooks identity_basic_export
- *   * \e int \b channel_id
- *   * \e array \b sections
- *   * \e array \b data
  * @param int $channel_id
  *     Channel_id to export
  * @param array $sections (optional)
  *     Which sections to include in the export, default see get_default_export_sections()
- * @returns array
+ * @return array
  *     See function for details
  */
 function identity_basic_export($channel_id, $sections = null) {
@@ -967,7 +982,7 @@ function identity_basic_export($channel_id, $sections = null) {
 		}
 	}
 
-	if(in_array('items',$sections)) {
+	if(in_array('items', $sections)) {
 		/** @warning this may run into memory limits on smaller systems */
 
 		/** export three months of posts. If you want to export and import all posts you have to start with
@@ -991,22 +1006,42 @@ function identity_basic_export($channel_id, $sections = null) {
 		}
 	}
 
-	$addon = [ 'channel_id' => $channel_id, 'sections' => $sections, 'data' => $ret];
-	call_hooks('identity_basic_export',$addon);
+	$addon = [
+			'channel_id' => $channel_id,
+			'sections' => $sections,
+			'data' => $ret
+	];
+	/**
+	 * @hooks identity_basic_export
+	 *   Called when exporting a channel's basic information for backup or transfer.
+	 *   * \e number \b channel_id - The channel ID
+	 *   * \e array \b sections
+	 *   * \e array \b data - The data will get returned
+	 */
+	call_hooks('identity_basic_export', $addon);
 	$ret = $addon['data'];
 
 	return $ret;
 }
 
-
-function identity_export_year($channel_id,$year,$month = 0) {
+/**
+ * @brief Export items for a year, or a month of a year.
+ *
+ * @param int $channel_id The channel ID
+ * @param number $year YYYY
+ * @param number $month (optional) 0-12, default 0 complete year
+ * @return array An associative array
+ *   * \e array \b relocate - (optional)
+ *   * \e array \b item - array with items encoded_item()
+ */
+function identity_export_year($channel_id, $year, $month = 0) {
 
 	if(! $year)
 		return array();
 
 	if($month && $month <= 12) {
-		$target_month = sprintf('%02d',$month);
-		$target_month_plus = sprintf('%02d',$month+1);
+		$target_month = sprintf('%02d', $month);
+		$target_month_plus = sprintf('%02d', $month+1);
 	}
 	else
 		$target_month = '01';
@@ -1017,13 +1052,13 @@ function identity_export_year($channel_id,$year,$month = 0) {
 	if($ch) {
 		$ret['relocate'] = [ 'channel_address' => $ch['channel_address'], 'url' => z_root()];
 	}
-	$mindate = datetime_convert('UTC','UTC',$year . '-' . $target_month . '-01 00:00:00');
+	$mindate = datetime_convert('UTC', 'UTC', $year . '-' . $target_month . '-01 00:00:00');
 	if($month && $month < 12)
-		$maxdate = datetime_convert('UTC','UTC',$year . '-' . $target_month_plus . '-01 00:00:00');
+		$maxdate = datetime_convert('UTC', 'UTC', $year . '-' . $target_month_plus . '-01 00:00:00');
 	else
-		$maxdate = datetime_convert('UTC','UTC',$year+1 . '-01-01 00:00:00');
+		$maxdate = datetime_convert('UTC', 'UTC', $year+1 . '-01-01 00:00:00');
 
-	$r = q("select * from item where ( item_wall = 1 or item_type != %d ) and item_deleted = 0 and uid = %d and created >= '%s' and created < '%s'  and resource_type = '' order by created",
+	$r = q("select * from item where ( item_wall = 1 or item_type != %d ) and item_deleted = 0 and uid = %d and created >= '%s' and created < '%s' and resource_type = '' order by created",
 		intval(ITEM_TYPE_POST),
 		intval($channel_id),
 		dbesc($mindate),
@@ -1033,9 +1068,9 @@ function identity_export_year($channel_id,$year,$month = 0) {
 	if($r) {
 		$ret['item'] = array();
 		xchan_query($r);
-		$r = fetch_post_tags($r,true);
+		$r = fetch_post_tags($r, true);
 		foreach($r as $rr)
-			$ret['item'][] = encode_item($rr,true);
+			$ret['item'][] = encode_item($rr, true);
 	}
 
 	return $ret;
@@ -1274,6 +1309,7 @@ function profile_edit_menu($uid) {
 			foreach($r as $rr) {
 				if(!($multi_profiles || $rr['is_default']))
 					 continue;
+
 				$ret['menu']['entries'][] = array(
 					'photo'                => $rr['thumb'],
 					'id'                   => $rr['id'],
@@ -1298,8 +1334,8 @@ function profile_edit_menu($uid) {
  *
  * @param array $profile
  * @param int $block
- * @param boolean $show_connect
- * @param mixed $zcard
+ * @param boolean $show_connect (optional) default true
+ * @param mixed $zcard (optional) default false
  *
  * @return HTML string suitable for sidebar inclusion
  * Exceptions: Returns empty string if passed $profile is wrong type or not populated
@@ -1327,6 +1363,10 @@ function profile_sidebar($profile, $block = 0, $show_connect = true, $zcard = fa
 
 	$profile['picdate'] = urlencode($profile['picdate']);
 
+	/**
+	 * @hooks profile_sidebar_enter
+	 *   Called before generating the 'channel sidebar' or mini-profile.
+	 */
 	call_hooks('profile_sidebar_enter', $profile);
 
 	if($show_connect) {
@@ -1409,22 +1449,30 @@ function profile_sidebar($profile, $block = 0, $show_connect = true, $zcard = fa
 		'$reddress'      => $reddress,
 		'$rating'        => '',
 		'$contact_block' => $contact_block,
-		'$editmenu'	 => profile_edit_menu($profile['uid'])
+		'$editmenu'      => profile_edit_menu($profile['uid'])
 	));
 
-	$arr = array('profile' => $profile, 'entry' => $o);
+	$arr = [
+			'profile' => $profile,
+			'entry' => $o
+	];
 
+	/**
+	 * @hooks profile_sidebar
+	 *   Called when generating the 'channel sidebar' or mini-profile.
+	 *   * \e array \b profile
+	 *   * \e string \b entry - The parsed HTML template
+	 */
 	call_hooks('profile_sidebar', $arr);
 
 	return $arr['entry'];
-
 }
 
 function gender_icon($gender) {
 
 //	logger('gender: ' . $gender);
 
-	// This can easily get throw off if the observer language is different 
+	// This can easily get throw off if the observer language is different
 	// than the channel owner language.
 
 	if(strpos(strtolower($gender),strtolower(t('Female'))) !== false)
@@ -1622,16 +1670,21 @@ function get_my_address() {
  * If somebody arrives at our site using a zid, add their xchan to our DB if we
  * don't have it already.
  * And if they aren't already authenticated here, attempt reverse magic auth.
- *
- * @hooks zid_init
- *   * \e string \b zid - their zid
- *   * \e string \b url - the destination url
  */
 function zid_init() {
 	$tmp_str = get_my_address();
 	if(validate_email($tmp_str)) {
-		$arr = array('zid' => $tmp_str, 'url' => App::$cmd);
-		call_hooks('zid_init',$arr);
+		$arr = [
+				'zid' => $tmp_str,
+				'url' => App::$cmd
+		];
+		/**
+		* @hooks zid_init
+		*   * \e string \b zid - their zid
+		*   * \e string \b url - the destination url
+		*/
+		call_hooks('zid_init', $arr);
+
 		if(! local_channel()) {
 			$r = q("select * from hubloc where hubloc_addr = '%s' order by hubloc_connected desc limit 1",
 				dbesc($tmp_str)
@@ -1641,7 +1694,8 @@ function zid_init() {
 			}
 			if($r && remote_channel() && remote_channel() === $r[0]['hubloc_hash'])
 				return;
-			logger('zid_init: not authenticated. Invoking reverse magic-auth for ' . $tmp_str);
+
+			logger('Not authenticated. Invoking reverse magic-auth for ' . $tmp_str);
 			// try to avoid recursion - but send them home to do a proper magic auth
 			$query = App::$query_string;
 			$query = str_replace(array('?zid=','&zid='),array('?rzid=','&rzid='),$query);
@@ -1650,7 +1704,7 @@ function zid_init() {
 				goaway($r[0]['hubloc_url'] . '/magic' . '?f=&rev=1&owa=1&dest=' . z_root() . $dest);
 			}
 			else
-				logger('zid_init: no hubloc found.');
+				logger('No hubloc found.');
 		}
 	}
 }
@@ -1673,21 +1727,23 @@ function zat_init() {
 }
 
 
-
-
-// Used from within PCSS themes to set theme parameters. If there's a
-// puid request variable, that is the "page owner" and normally their theme
-// settings take precedence; unless a local user sets the "always_my_theme"
-// system pconfig, which means they don't want to see anybody else's theme
-// settings except their own while on this site.
-
+/**
+ * @brief Used from within PCSS themes to set theme parameters.
+ *
+ * If there's a puid request variable, that is the "page owner" and normally
+ * their theme settings take precedence; unless a local user sets the "always_my_theme"
+ * system pconfig, which means they don't want to see anybody else's theme
+ * settings except their own while on this site.
+ *
+ * @return int
+ */
 function get_theme_uid() {
 	$uid = (($_REQUEST['puid']) ? intval($_REQUEST['puid']) : 0);
 	if(local_channel()) {
 		if((get_pconfig(local_channel(),'system','always_my_theme')) || (! $uid))
 			return local_channel();
 	}
-	if(! $uid) {
+	if(! $uierd) {
 		$x = get_sys_channel();
 		if($x)
 			return $x['channel_id'];
@@ -1700,9 +1756,9 @@ function get_theme_uid() {
 * @brief Retrieves the path of the default_profile_photo for this system
 * with the specified size.
 *
-* @param int $size
-*  one of (300, 80, 48)
-* @returns string with path to profile photo
+* @param int $size (optional) default 300
+*   one of (300, 80, 48)
+* @return string with path to profile photo
 */
 function get_default_profile_photo($size = 300) {
 	$scheme = get_config('system','default_profile_photo');
@@ -1715,9 +1771,9 @@ function get_default_profile_photo($size = 300) {
 /**
  * @brief Test whether a given identity is NOT a member of the Hubzilla.
  *
- * @param string $s;
+ * @param string $s
  *    xchan_hash of the identity in question
- * @returns boolean true or false
+ * @return boolean true or false
  */
 function is_foreigner($s) {
 	return((strpbrk($s, '.:@')) ? true : false);
@@ -1726,14 +1782,21 @@ function is_foreigner($s) {
 /**
  * @brief Test whether a given identity is a member of the Hubzilla.
  *
- * @param string $s;
+ * @param string $s
  *    xchan_hash of the identity in question
- * @returns boolean true or false
+ * @return boolean true or false
  */
 function is_member($s) {
 	return((is_foreigner($s)) ? false : true);
 }
 
+/**
+ * @brief Get chatpresence status for nick.
+ *
+ * @param string $nick
+ * @return array An associative array with
+ *   * \e bool \b result
+ */
 function get_online_status($nick) {
 
 	$ret = array('result' => false);
@@ -1748,6 +1811,7 @@ function get_online_status($nick) {
 		$hide = get_pconfig($r[0]['channel_id'],'system','hide_online_status');
 		if($hide)
 			return $ret;
+
 		$x = q("select cp_status from chatpresence where cp_xchan = '%s' and cp_room = 0 limit 1",
 			dbesc($r[0]['channel_hash'])
 		);
@@ -1759,6 +1823,12 @@ function get_online_status($nick) {
 }
 
 
+/**
+ * @brief
+ *
+ * @param string $webbie
+ * @return array|boolean|string
+ */
 function remote_online_status($webbie) {
 
 	$result = false;
@@ -1782,11 +1852,10 @@ function remote_online_status($webbie) {
 
 
 /**
- * @brief
+ * @brief Return the parsed identity selector HTML template.
  *
- * @return string
+ * @return string with parsed HTML channel_id_selet template
  */
-
 function identity_selector() {
 	if(local_channel()) {
 		$r = q("select channel.*, xchan.* from channel left join xchan on channel.channel_hash = xchan.xchan_hash where channel.channel_account_id = %d and channel_removed = 0 order by channel_name ",
@@ -1798,6 +1867,7 @@ function identity_selector() {
 				'$channels' => $r,
 				'$selected' => local_channel()
 			));
+
 			return $o;
 		}
 	}
@@ -1809,14 +1879,17 @@ function identity_selector() {
 function is_public_profile() {
 	if(! local_channel())
 		return false;
+
 	if(intval(get_config('system','block_public')))
 		return false;
+
 	$channel = App::get_channel();
 	if($channel) {
 		$perm = \Zotlabs\Access\PermissionLimits::Get($channel['channel_id'],'view_profile');
 		if($perm == PERMS_PUBLIC)
 			return true;
 	}
+
 	return false;
 }
 
@@ -1861,7 +1934,7 @@ function get_profile_fields_advanced($filter = 0) {
  *
  * @param int $channel_id
  *    The channel to disable notifications for
- * @returns int
+ * @return int
  *    Current notification flag value. Send this to notifications_on() to restore the channel settings when finished
  *    with the activity requiring notifications_off();
  */
@@ -1993,13 +2066,14 @@ function get_cover_photo($channel_id,$format = 'bbcode', $res = PHOTO_RES_COVER_
 	return $output;
 }
 
+
 /**
- * @brief
+ * @brief Return parsed HTML zcard template.
  *
  * @param array $channel
- * @param string $observer_hash
- * @param array $args
- * @return string
+ * @param string $observer_hash (optional)
+ * @param array $args (optional)
+ * @return string parsed HTML from \e zcard template
  */
 function get_zcard($channel, $observer_hash = '', $args = array()) {
 
@@ -2067,6 +2141,14 @@ function get_zcard($channel, $observer_hash = '', $args = array()) {
 }
 
 
+/**
+ * @brief Return parsed HTML embed zcard template.
+ *
+ * @param array $channel
+ * @param string $observer_hash (optional)
+ * @param array $args (optional)
+ * @return string parsed HTML from \e zcard_embed template
+ */
 function get_zcard_embed($channel, $observer_hash = '', $args = array()) {
 
 	logger('get_zcard_embed');
@@ -2133,10 +2215,12 @@ function get_zcard_embed($channel, $observer_hash = '', $args = array()) {
 }
 
 /**
- * @brief
+ * @brief Get a channel array from a channel nickname.
  *
- * @param string $nick
- * @return mixed
+ * @param string $nick - A channel_address nickname
+ * @return array|boolean
+ *   - array with channel entry
+ *   - false if no channel with $nick was found
  */
 function channelx_by_nick($nick) {
 	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_address = '%s'  and channel_removed = 0 LIMIT 1",
@@ -2147,10 +2231,10 @@ function channelx_by_nick($nick) {
 }
 
 /**
- * @brief
+ * @brief Get a channel array by a channel_hash.
  *
  * @param string $hash
- * @return mixed
+ * @return array|boolean false if channel ID not found, otherwise the channel array
  */
 function channelx_by_hash($hash) {
 	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_hash = '%s' and channel_removed = 0 LIMIT 1",
@@ -2161,13 +2245,13 @@ function channelx_by_hash($hash) {
 }
 
 /**
- * @brief
+ * @brief Get a channel array by a channel ID.
  *
- * @param int $id
- * @return mixed
+ * @param int $id A channel ID
+ * @return array|boolean false if channel ID not found, otherwise the channel array
  */
 function channelx_by_n($id) {
-	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_id = %d and channel_removed = 0 LIMIT 1",
+	$r = q("SELECT * FROM channel LEFT JOIN xchan ON channel_hash = xchan_hash WHERE channel_id = %d AND channel_removed = 0 LIMIT 1",
 		dbesc($id)
 	);
 
@@ -2177,7 +2261,7 @@ function channelx_by_n($id) {
 /**
  * @brief
  *
- * @param string $channel
+ * @param array $channel
  * @return string
  */
 function channel_reddress($channel) {
@@ -2188,67 +2272,77 @@ function channel_reddress($channel) {
 }
 
 
+/**
+ * @brief Get manual channel conversation update config.
+ *
+ * Check the channel config \e manual_conversation_update, if not set fall back
+ * to global system config, defaults to 1 if nothing set.
+ *
+ * @param int $channel_id
+ * @return int
+ */
 function channel_manual_conv_update($channel_id) {
 
-	$x = get_pconfig($channel_id, 'system','manual_conversation_update');
+	$x = get_pconfig($channel_id, 'system', 'manual_conversation_update');
 	if($x === false)
-		$x = get_config('system','manual_conversation_update', 1);
+		$x = get_config('system', 'manual_conversation_update', 1);
 
 	return intval($x);
 }
 
 
+/**
+ * @brief Return parsed HTML remote_login template.
+ *
+ * @return string with parsed HTML from \e remote_login template
+ */
 function remote_login() {
+	$o = replace_macros(get_markup_template('remote_login.tpl'),array(
+		'$title' => t('Remote Authentication'),
+		'$desc' => t('Enter your channel address (e.g. channel@example.com)'),
+		'$submit' => t('Authenticate')
+	));
 
-		$o = replace_macros(get_markup_template('remote_login.tpl'),array(
-			'$title' => t('Remote Authentication'),
-			'$desc' => t('Enter your channel address (e.g. channel@example.com)'),
-			'$submit' => t('Authenticate')
-		));
-		return $o;
-
+	return $o;
 }
 
 function channel_store_lowlevel($arr) {
-    $store = [
-        'channel_account_id'      => ((array_key_exists('channel_account_id',$arr))      ? $arr['channel_account_id']      : '0'),
-        'channel_primary'         => ((array_key_exists('channel_primary',$arr))         ? $arr['channel_primary']         : '0'),
-        'channel_name'            => ((array_key_exists('channel_name',$arr))            ? $arr['channel_name']            : ''),
-        'channel_address'         => ((array_key_exists('channel_address',$arr))         ? $arr['channel_address']         : ''),
-        'channel_guid'            => ((array_key_exists('channel_guid',$arr))            ? $arr['channel_guid']            : ''),
-        'channel_guid_sig'        => ((array_key_exists('channel_guid_sig',$arr))        ? $arr['channel_guid_sig']        : ''),
-        'channel_hash'            => ((array_key_exists('channel_hash',$arr))            ? $arr['channel_hash']            : ''),
-        'channel_timezone'        => ((array_key_exists('channel_timezone',$arr))        ? $arr['channel_timezone']        : 'UTC'),
-        'channel_location'        => ((array_key_exists('channel_location',$arr))        ? $arr['channel_location']        : ''),
-        'channel_theme'           => ((array_key_exists('channel_theme',$arr))           ? $arr['channel_theme']           : ''),
-        'channel_startpage'       => ((array_key_exists('channel_startpage',$arr))       ? $arr['channel_startpage']       : ''),
-        'channel_pubkey'          => ((array_key_exists('channel_pubkey',$arr))          ? $arr['channel_pubkey']          : ''),
-        'channel_prvkey'          => ((array_key_exists('channel_prvkey',$arr))          ? $arr['channel_prvkey']          : ''),
-        'channel_notifyflags'     => ((array_key_exists('channel_notifyflags',$arr))     ? $arr['channel_notifyflags']     : '65535'),
-        'channel_pageflags'       => ((array_key_exists('channel_pageflags',$arr))       ? $arr['channel_pageflags']       : '0'),
-        'channel_dirdate'         => ((array_key_exists('channel_dirdate',$arr))         ? $arr['channel_dirdate']         : NULL_DATE),
-        'channel_lastpost'        => ((array_key_exists('channel_lastpost',$arr))        ? $arr['channel_lastpost']        : NULL_DATE),
-        'channel_deleted'         => ((array_key_exists('channel_deleted',$arr))         ? $arr['channel_deleted']         : NULL_DATE),
-        'channel_max_anon_mail'   => ((array_key_exists('channel_max_anon_mail',$arr))   ? $arr['channel_max_anon_mail']   : '10'),
-        'channel_max_friend_req'  => ((array_key_exists('channel_max_friend_req',$arr))  ? $arr['channel_max_friend_req']  : '10'),
-        'channel_expire_days'     => ((array_key_exists('channel_expire_days',$arr))     ? $arr['channel_expire_days']     : '0'),
-        'channel_passwd_reset'    => ((array_key_exists('channel_passwd_reset',$arr))    ? $arr['channel_passwd_reset']    : ''),
-        'channel_default_group'   => ((array_key_exists('channel_default_group',$arr))   ? $arr['channel_default_group']   : ''),
-        'channel_allow_cid'       => ((array_key_exists('channel_allow_cid',$arr))       ? $arr['channel_allow_cid']       : ''),
-        'channel_allow_gid'       => ((array_key_exists('channel_allow_gid',$arr))       ? $arr['channel_allow_gid']       : ''),
-        'channel_deny_cid'        => ((array_key_exists('channel_deny_cid',$arr))        ? $arr['channel_deny_cid']        : ''),
-        'channel_deny_gid'        => ((array_key_exists('channel_deny_gid',$arr))        ? $arr['channel_deny_gid']        : ''),
-        'channel_removed'         => ((array_key_exists('channel_removed',$arr))         ? $arr['channel_removed']         : '0'),
-        'channel_system'          => ((array_key_exists('channel_system',$arr))          ? $arr['channel_system']          : '0'),
-
+	$store = [
+		'channel_account_id'      => ((array_key_exists('channel_account_id',$arr))      ? $arr['channel_account_id']      : '0'),
+		'channel_primary'         => ((array_key_exists('channel_primary',$arr))         ? $arr['channel_primary']         : '0'),
+		'channel_name'            => ((array_key_exists('channel_name',$arr))            ? $arr['channel_name']            : ''),
+		'channel_address'         => ((array_key_exists('channel_address',$arr))         ? $arr['channel_address']         : ''),
+		'channel_guid'            => ((array_key_exists('channel_guid',$arr))            ? $arr['channel_guid']            : ''),
+		'channel_guid_sig'        => ((array_key_exists('channel_guid_sig',$arr))        ? $arr['channel_guid_sig']        : ''),
+		'channel_hash'            => ((array_key_exists('channel_hash',$arr))            ? $arr['channel_hash']            : ''),
+		'channel_timezone'        => ((array_key_exists('channel_timezone',$arr))        ? $arr['channel_timezone']        : 'UTC'),
+		'channel_location'        => ((array_key_exists('channel_location',$arr))        ? $arr['channel_location']        : ''),
+		'channel_theme'           => ((array_key_exists('channel_theme',$arr))           ? $arr['channel_theme']           : ''),
+		'channel_startpage'       => ((array_key_exists('channel_startpage',$arr))       ? $arr['channel_startpage']       : ''),
+		'channel_pubkey'          => ((array_key_exists('channel_pubkey',$arr))          ? $arr['channel_pubkey']          : ''),
+		'channel_prvkey'          => ((array_key_exists('channel_prvkey',$arr))          ? $arr['channel_prvkey']          : ''),
+		'channel_notifyflags'     => ((array_key_exists('channel_notifyflags',$arr))     ? $arr['channel_notifyflags']     : '65535'),
+		'channel_pageflags'       => ((array_key_exists('channel_pageflags',$arr))       ? $arr['channel_pageflags']       : '0'),
+		'channel_dirdate'         => ((array_key_exists('channel_dirdate',$arr))         ? $arr['channel_dirdate']         : NULL_DATE),
+		'channel_lastpost'        => ((array_key_exists('channel_lastpost',$arr))        ? $arr['channel_lastpost']        : NULL_DATE),
+		'channel_deleted'         => ((array_key_exists('channel_deleted',$arr))         ? $arr['channel_deleted']         : NULL_DATE),
+		'channel_max_anon_mail'   => ((array_key_exists('channel_max_anon_mail',$arr))   ? $arr['channel_max_anon_mail']   : '10'),
+		'channel_max_friend_req'  => ((array_key_exists('channel_max_friend_req',$arr))  ? $arr['channel_max_friend_req']  : '10'),
+		'channel_expire_days'     => ((array_key_exists('channel_expire_days',$arr))     ? $arr['channel_expire_days']     : '0'),
+		'channel_passwd_reset'    => ((array_key_exists('channel_passwd_reset',$arr))    ? $arr['channel_passwd_reset']    : ''),
+		'channel_default_group'   => ((array_key_exists('channel_default_group',$arr))   ? $arr['channel_default_group']   : ''),
+		'channel_allow_cid'       => ((array_key_exists('channel_allow_cid',$arr))       ? $arr['channel_allow_cid']       : ''),
+		'channel_allow_gid'       => ((array_key_exists('channel_allow_gid',$arr))       ? $arr['channel_allow_gid']       : ''),
+		'channel_deny_cid'        => ((array_key_exists('channel_deny_cid',$arr))        ? $arr['channel_deny_cid']        : ''),
+		'channel_deny_gid'        => ((array_key_exists('channel_deny_gid',$arr))        ? $arr['channel_deny_gid']        : ''),
+		'channel_removed'         => ((array_key_exists('channel_removed',$arr))         ? $arr['channel_removed']         : '0'),
+		'channel_system'          => ((array_key_exists('channel_system',$arr))          ? $arr['channel_system']          : '0'),
 		'channel_moved'           => ((array_key_exists('channel_moved',$arr))           ? $arr['channel_moved']           : ''),
 		'channel_password'        => ((array_key_exists('channel_password',$arr))        ? $arr['channel_password']        : ''),
 		'channel_salt'            => ((array_key_exists('channel_salt',$arr))            ? $arr['channel_salt']            : '')
-
 	];
 
-	return create_table_from_array('channel',$store);
-
+	return create_table_from_array('channel', $store);
 }
 
 function profile_store_lowlevel($arr) {
@@ -2304,16 +2398,22 @@ function profile_store_lowlevel($arr) {
 }
 
 
-// Included here for completeness, but this is a very dangerous operation.
-// It is the caller's responsibility to confirm the requestor's intent and
-// authorisation to do this.
-
-function account_remove($account_id,$local = true,$unset_session = true) {
+/**
+ * Included here for completeness, but this is a very dangerous operation.
+ * It is the caller's responsibility to confirm the requestor's intent and
+ * authorisation to do this.
+ *
+ * @param int $account_id
+ * @param boolean $local (optional) default true
+ * @param boolean $unset_session (optional) default true
+ * @return boolean|array
+ */
+function account_remove($account_id, $local = true, $unset_session = true) {
 
 	logger('account_remove: ' . $account_id);
 
 	if(! intval($account_id)) {
-		logger('account_remove: no account.');
+		logger('No account.');
 		return false;
 	}
 
@@ -2334,7 +2434,7 @@ function account_remove($account_id,$local = true,$unset_session = true) {
 	$account_email=$r[0]['account_email'];
 
 	if(! $r) {
-		logger('account_remove: No account with id: ' . $account_id);
+		logger('No account with id: ' . $account_id);
 		return false;
 	}
 
@@ -2351,7 +2451,6 @@ function account_remove($account_id,$local = true,$unset_session = true) {
 		intval($account_id)
 	);
 
-
 	if ($unset_session) {
 		App::$session->nuke();
 		notice( sprintf(t('Account \'%s\' deleted'),$account_email) . EOL);
@@ -2364,8 +2463,6 @@ function account_remove($account_id,$local = true,$unset_session = true) {
 /**
  * @brief Removes a channel.
  *
- * @hooks channel_remove
- *   * \e array \b entry from channel tabel for $channel_id
  * @param int $channel_id
  * @param boolean $local default true
  * @param boolean $unset_session default false
@@ -2386,6 +2483,11 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 
 	$channel = $r[0];
 
+	/**
+	 * @hooks channel_remove
+	 *   Called when removing a channel.
+	 *   * \e array with entry from channel tabel for $channel_id
+	 */
 	call_hooks('channel_remove', $r[0]);
 
 	if(! $local) {
@@ -2457,6 +2559,7 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 			$rr = q("update account set account_default_channel = %d where account_id = %d",
 				intval($r[0]['channel_id']),
 				intval(App::$account['account_id']));
+
 			logger("Default channel deleted, changing default to channel_id " . $r[0]['channel_id']);
 		}
 		else {
@@ -2531,20 +2634,30 @@ function channel_codeallowed($channel_id) {
 		return true;
 
 	return false;
-
 }
 
 function anon_identity_init($reqvars) {
 
-	$x = [ 'request_vars' => $reqvars, 'xchan' => null, 'success' => 'unset' ];
-	call_hooks('anon_identity_init',$x);
+	$x = [
+			'request_vars' => $reqvars,
+			'xchan' => null,
+			'success' => 'unset'
+	];
+	/**
+	 * @hooks anon_identity_init
+	 *   * \e array \b request_vars
+	 *   * \e string \b xchan - return value
+	 *   * \e string|int \b success - Must be a number, so xchan return value gets used
+	 */
+	call_hooks('anon_identity_init', $x);
+
 	if($x['success'] !== 'unset' && intval($x['success']) && $x['xchan'])
 		return $x['xchan'];
 
-	// allow a captcha handler to over-ride 
+	// allow a captcha handler to over-ride
 	if($x['success'] !== 'unset' && (intval($x['success']) === 0))
-		return false;	
-	
+		return false;
+
 
 	$anon_name  = strip_tags(trim($reqvars['anonname']));
 	$anon_email = strip_tags(trim($reqvars['anonmail']));
@@ -2571,7 +2684,7 @@ function anon_identity_init($reqvars) {
 	);
 
 	if(! $x) {
-		xchan_store_lowlevel([ 
+		xchan_store_lowlevel([
 			'xchan_guid'    => $anon_email,
 			'xchan_hash'    => $hash,
 			'xchan_name'    => $anon_name,
@@ -2579,7 +2692,7 @@ function anon_identity_init($reqvars) {
 			'xchan_network' => 'unknown',
 			'xchan_name_date' => datetime_convert()
 		]);
-			
+
 
 		$x = q("select * from xchan where xchan_guid = '%s' and xchan_hash = '%s' and xchan_network = 'unknown' limit 1",
 			dbesc($anon_email),
@@ -2597,13 +2710,18 @@ function anon_identity_init($reqvars) {
 			dbesc($anon_email),
 			dbesc($hash)
 		);
-
 	}
 
 	return $x[0];
 }
 
 
+/**
+ * @brief Create a channel array from proxy channel (pchan).
+ *
+ * @param array $pchan The proxy channel
+ * @return array channel array
+ */
 function pchan_to_chan($pchan) {
 	$chan = $pchan;
 	$chan['channel_address'] = $pchan['pchan_guid'];
@@ -2611,5 +2729,7 @@ function pchan_to_chan($pchan) {
 	$chan['channel_pubkey']  = $pchan['pchan_pubkey'];
 	$chan['channel_prvkey']  = $pchan['pchan_prvkey'];
 	$chan['channel_name']    = $pchan['xchan_name'];
+
 	return $chan;
 }
+

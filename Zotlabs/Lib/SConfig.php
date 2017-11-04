@@ -2,8 +2,11 @@
 
 namespace Zotlabs\Lib;
 
-// account configuration storage is built on top of the under-utilised xconfig
-
+/**
+ * @brief Account configuration storage is built on top of the under-utilised xconfig.
+ *
+ * @see XConfig
+ */
 class SConfig {
 
 	static public function Load($server_id) {

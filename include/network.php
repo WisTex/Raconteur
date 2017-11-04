@@ -1,6 +1,7 @@
 <?php
 /**
  * @file include/network.php
+ * @brief Network related functions.
  */
 
 /**
@@ -189,7 +190,7 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
 
 
 /**
- * @brief
+ * @brief Does a curl post request.
  *
  * @param string $url
  *    URL to post
@@ -214,7 +215,7 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
  *  * \e string \b body => content
  *  * \e string \b debug => from curl_info()
  */
-function z_post_url($url,$params, $redirects = 0, $opts = array()) {
+function z_post_url($url, $params, $redirects = 0, $opts = array()) {
 
 //	logger('url: ' . $url);
 //	logger('params: ' . print_r($params,true));
@@ -276,13 +277,10 @@ function z_post_url($url,$params, $redirects = 0, $opts = array()) {
 		@curl_setopt($ch, CURLOPT_USERPWD, $opts['http_auth']);
 	}
 
-
 	if(x($opts,'cookiejar'))
 		@curl_setopt($ch, CURLOPT_COOKIEJAR, $opts['cookiejar']);
 	if(x($opts,'cookiefile'))
 		@curl_setopt($ch, CURLOPT_COOKIEFILE, $opts['cookiefile']);
-
-
 	if(x($opts,'cookie'))
 		@curl_setopt($ch, CURLOPT_COOKIE, $opts['cookie']);
 
@@ -423,7 +421,7 @@ function http_status($val, $msg = '') {
  *    integer HTTP status result value
  * @param string $msg
  *    optional message
- * @return does not return, process is terminated
+ * @return void does not return, process is terminated
  */
 function http_status_exit($val, $msg = '') {
 	http_status($val, $msg);
@@ -431,10 +429,10 @@ function http_status_exit($val, $msg = '') {
 }
 
 /**
- * @brief convert an XML document to a normalised, case-corrected array used by webfinger.
+ * @brief Convert an XML document to a normalised, case-corrected array used by webfinger.
  *
  * @param string|array|SimpleXMLElement $xml_element
- * @param int $recursion_depth[in,out]
+ * @param[in,out] int $recursion_depth
  * @return NULL|string|array
  */
 function convert_xml_element_to_array($xml_element, &$recursion_depth=0) {
@@ -501,14 +499,14 @@ function z_dns_check($h,$check_mx = 0) {
 }
 
 /**
- * @brief Validates a given URL
+ * @brief Validates a given URL.
  *
  * Take a URL from the wild, prepend http:// if necessary and check DNS to see
  * if it's real (or check if is a valid IP address).
  *
  * @see z_dns_check()
  *
- * @param string $url[in,out] URL to check
+ * @param[in,out] string $url URL to check
  * @return boolean Return true if it's OK, false if something is wrong with it
  */
 function validate_url(&$url) {
@@ -593,6 +591,7 @@ function allowed_url($url) {
 			}
 		}
 	}
+
 	return $found;
 }
 
@@ -658,7 +657,7 @@ function allowed_email($email) {
 
 
 
-function parse_xml_string($s,$strict = true) {
+function parse_xml_string($s, $strict = true) {
 	if($strict) {
 		if(! strstr($s,'<?xml'))
 			return false;
@@ -683,14 +682,21 @@ function parse_xml_string($s,$strict = true) {
 	return $x;
 }
 
-
+/**
+ * @brief Scales an external image.
+ *
+ * @param string $s
+ * @param string $include_link default true
+ * @param string $scale_replace default false
+ * @return string
+ */
 function scale_external_images($s, $include_link = true, $scale_replace = false) {
 
 	// Picture addresses can contain special characters
 	$s = htmlspecialchars_decode($s, ENT_COMPAT);
 
 	$matches = null;
-	$c = preg_match_all('/\[([zi])mg(.*?)\](.*?)\[\/[zi]mg\]/ism',$s,$matches,PREG_SET_ORDER);
+	$c = preg_match_all('/\[([zi])mg(.*?)\](.*?)\[\/[zi]mg\]/ism', $s, $matches, PREG_SET_ORDER);
 	if($c) {
 		require_once('include/photo/photo_driver.php');
 
@@ -717,22 +723,21 @@ function scale_external_images($s, $include_link = true, $scale_replace = false)
 			else
 				$scaled = $mtch[3];
 
-			if(! strpbrk(substr($scaled,0,1),'zhfmt'))
+			if(! strpbrk(substr($scaled, 0, 1), 'zhfmt'))
 				continue;
 
-			$i = z_fetch_url($scaled,true);
+			$i = z_fetch_url($scaled, true);
 
-
-			$cache = get_config('system','itemcache');
+			$cache = get_config('system', 'itemcache');
 			if (($cache != '') and is_dir($cache)) {
-				$cachefile = $cache."/".hash("md5", $scaled);
+				$cachefile = $cache . '/' . hash('md5', $scaled);
 				file_put_contents($cachefile, $i['body']);
 			}
 
 			// guess mimetype from headers or filename
 
-			$type = guess_image_type($mtch[3],$i['header']);
-			if(strpos($type,'image') === false)
+			$type = guess_image_type($mtch[3], $i['header']);
+			if(strpos($type, 'image') === false)
 				continue;
 
 			if($i['success']) {
@@ -764,7 +769,7 @@ function scale_external_images($s, $include_link = true, $scale_replace = false)
 
 	// replace the special char encoding
 
-	$s = htmlspecialchars($s,ENT_COMPAT,'UTF-8');
+	$s = htmlspecialchars($s, ENT_COMPAT, 'UTF-8');
 
 	return $s;
 }
@@ -1141,7 +1146,14 @@ function discover_by_url($url, $arr = null) {
 	return true;
 }
 
-function discover_by_webbie($webbie,$protocol = '') {
+/**
+ * @brief
+ *
+ * @param string $webbie
+ * @param string $protocol (optional) default empty
+ * @return boolean
+ */
+function discover_by_webbie($webbie, $protocol = '') {
 
 	$result   = [];
 
@@ -1149,7 +1161,7 @@ function discover_by_webbie($webbie,$protocol = '') {
 
 //	$webbie = strtolower($webbie);
 
-	$x = webfinger_rfc7033($webbie,true);
+	$x = webfinger_rfc7033($webbie, true);
 	if($x && array_key_exists('links',$x) && $x['links']) {
 		foreach($x['links'] as $link) {
 			if(array_key_exists('rel',$link)) {
@@ -1158,7 +1170,7 @@ function discover_by_webbie($webbie,$protocol = '') {
 				// here.
 
 				if($link['rel'] === PROTOCOL_ZOT && ((! $protocol) || (strtolower($protocol) === 'zot'))) {
-					logger('discover_by_webbie: zot found for ' . $webbie, LOGGER_DEBUG);
+					logger('zot found for ' . $webbie, LOGGER_DEBUG);
 					if(array_key_exists('zot',$x) && $x['zot']['success']) {
 						$i = import_xchan($x['zot']);
 						return true;
@@ -1178,16 +1190,35 @@ function discover_by_webbie($webbie,$protocol = '') {
 
 	logger('webfinger: ' . print_r($x,true), LOGGER_DATA, LOG_INFO);
 
-	$arr = array('address' => $webbie, 'protocol' => $protocol, 'success' => false, 'webfinger' => $x);
+	$arr = [
+			'address' => $webbie,
+			'protocol' => $protocol,
+			'success' => false,
+			'webfinger' => $x
+	];
+	/**
+	 * @hooks discover_channel_webfinger
+	 *   Called when performing a webfinger lookup.
+	 *   * \e string \b address - The webbie
+	 *   * \e string \b protocol
+	 *   * \e array \b webfinger - The result from webfinger_rfc7033()
+	 *   * \e boolean \b success - The return value, default false
+	 */
 	call_hooks('discover_channel_webfinger', $arr);
 	if($arr['success'])
 		return true;
 
 	return false;
-
 }
 
-function webfinger_rfc7033($webbie,$zot = false) {
+/**
+ * @brief Fetch and return a webfinger for a webbie.
+ *
+ * @param string $webbie - The webbie
+ * @param boolean $zot (optional) default false
+ * @return boolean|string false or associative array from result JSON
+ */
+function webfinger_rfc7033($webbie, $zot = false) {
 
 	if(strpos($webbie,'@')) {
 		$lhs = substr($webbie,0,strpos($webbie,'@'));
@@ -1199,6 +1230,7 @@ function webfinger_rfc7033($webbie,$zot = false) {
 		if($m) {
 			if($m['scheme'] !== 'https')
 				return false;
+
 			$rhs = $m['host'] . (($m['port']) ? ':' . $m['port'] : '');
 			$resource = urlencode($webbie);
 		}
@@ -1211,20 +1243,19 @@ function webfinger_rfc7033($webbie,$zot = false) {
 	// and results in a 406 (Not Acceptable) response, and will also incorrectly produce an XML
 	// document if you use 'application/jrd+json, */*'. We could set this to application/jrd+json,
 	// but some test webfinger servers may not explicitly set the content type and they would be
-	// blocked. The best compromise until Mastodon is fixed is to remove the Accept header which is 
-	// accomplished by setting it to nothing. 
+	// blocked. The best compromise until Mastodon is fixed is to remove the Accept header which is
+	// accomplished by setting it to nothing.
 
 	$counter = 0;
-	$s = z_fetch_url('https://' . $rhs . '/.well-known/webfinger?f=&resource=' . $resource . (($zot) ? '&zot=1' : ''), 
+	$s = z_fetch_url('https://' . $rhs . '/.well-known/webfinger?f=&resource=' . $resource . (($zot) ? '&zot=1' : ''),
 		false, $counter, [ 'headers' => [ 'Accept:' ] ]);
 
 	if($s['success']) {
-		$j = json_decode($s['body'],true);
+		$j = json_decode($s['body'], true);
 		return($j);
 	}
 
 	return false;
-
 }
 
 function old_webfinger($webbie) {
@@ -1604,7 +1635,13 @@ function check_siteallowed($url) {
 	$retvalue = true;
 
 	$arr = array('url' => $url);
-	call_hooks('check_siteallowed',$arr);
+	/**
+	 * @hooks check_siteallowed
+	 *   Used to over-ride or bypass the site black/white block lists.
+	 *   * \e string \b url
+	 *   * \e boolean \b allowed - optional return value set in hook
+	 */
+	call_hooks('check_siteallowed', $arr);
 
 	if(array_key_exists('allowed',$arr))
 		return $arr['allowed'];
@@ -1643,7 +1680,13 @@ function check_channelallowed($hash) {
 	$retvalue = true;
 
 	$arr = array('hash' => $hash);
-	call_hooks('check_channelallowed',$arr);
+	/**
+	 * @hooks check_channelallowed
+	 *   Used to over-ride or bypass the channel black/white block lists.
+	 *   * \e string \b hash
+	 *   * \e boolean \b allowed - optional return value set in hook
+	 */
+	call_hooks('check_channelallowed', $arr);
 
 	if(array_key_exists('allowed',$arr))
 		return $arr['allowed'];
@@ -1732,6 +1775,10 @@ function network_to_name($s) {
 		NETWORK_MYSPACE     => t('MySpace'),
 	);
 
+	/**
+	 * @hooks network_to_name
+	 * @deprecated
+	 */
 	call_hooks('network_to_name', $nets);
 
 	$search  = array_keys($nets);
@@ -1743,7 +1790,7 @@ function network_to_name($s) {
 /**
  * @brief Send a text email message.
  *
- * @param array $params an assoziative array with:
+ * @param array $params an associative array with:
  *  * \e string \b fromName        name of the sender
  *  * \e string \b fromEmail       email of the sender
  *  * \e string \b replyTo         replyTo address to direct responses
@@ -1774,6 +1821,10 @@ function z_mail($params) {
 	$params['sent']   = false;
 	$params['result'] = false;
 
+	/**
+	 * @hooks email_send
+	 *   * \e params @see z_mail()
+	 */
 	call_hooks('email_send', $params);
 
 	if($params['sent']) {
@@ -1921,60 +1972,78 @@ function service_plink($contact, $guid) {
 	$plink = $url . '/channel/' . $handle . '?f=&mid=' . $guid;
 
 	$x = [ 'xchan' => $contact, 'guid' => $guid, 'url' => $url, 'plink' => $plink ];
+	/**
+	 * @hooks service_plink
+	 *   * \e array \b xchan
+	 *   * \e string \b guid
+	 *   * \e string \b url
+	 *   * \e string \b plink will get returned
+	 */
 	call_hooks('service_plink', $x);
 
 	return $x['plink'];
 }
 
+
+/**
+ * @brief
+ *
+ * @param array $mimeTypes
+ * @param string $acceptedTypes by default false will use $_SERVER['HTTP_ACCEPT']
+ * @return array|NULL
+ */
 function getBestSupportedMimeType($mimeTypes = null, $acceptedTypes = false) {
-    // Values will be stored in this array
+	// Values will be stored in this array
+	$AcceptTypes = [];
 
 	if($acceptedTypes === false)
 		$acceptedTypes = $_SERVER['HTTP_ACCEPT'];
 
-    $AcceptTypes = Array ();
+	// Accept header is case insensitive, and whitespace isn’t important
+	$accept = strtolower(str_replace(' ', '', $acceptedTypes));
+	// divide it into parts in the place of a ","
+	$accept = explode(',', $accept);
+	foreach ($accept as $a) {
+		// the default quality is 1.
+		$q = 1;
+		// check if there is a different quality
+		if (strpos($a, ';q=')) {
+			// divide "mime/type;q=X" into two parts: "mime/type" i "X"
+			list($a, $q) = explode(';q=', $a);
+		}
+		// mime-type $a is accepted with the quality $q
+		// WARNING: $q == 0 means, that mime-type isn’t supported!
+		$AcceptTypes[$a] = $q;
+	}
+	arsort($AcceptTypes);
 
-    // Accept header is case insensitive, and whitespace isn’t important
-    $accept = strtolower(str_replace(' ', '', $acceptedTypes));
-    // divide it into parts in the place of a ","
-    $accept = explode(',', $accept);
-    foreach ($accept as $a) {
-        // the default quality is 1.
-        $q = 1;
-        // check if there is a different quality
-        if (strpos($a, ';q=')) {
-            // divide "mime/type;q=X" into two parts: "mime/type" i "X"
-            list($a, $q) = explode(';q=', $a);
-        }
-        // mime-type $a is accepted with the quality $q
-        // WARNING: $q == 0 means, that mime-type isn’t supported!
-        $AcceptTypes[$a] = $q;
-    }
-    arsort($AcceptTypes);
+	// if no parameter was passed, just return parsed data
+	if (!$mimeTypes) return $AcceptTypes;
 
-    // if no parameter was passed, just return parsed data
-    if (!$mimeTypes) return $AcceptTypes;
+	$mimeTypes = array_map('strtolower', (array)$mimeTypes);
 
-    $mimeTypes = array_map('strtolower', (array)$mimeTypes);
+	// let’s check our supported types:
+	foreach ($AcceptTypes as $mime => $q) {
+		if ($q && in_array($mime, $mimeTypes)) return $mime;
+	}
 
-    // let’s check our supported types:
-    foreach ($AcceptTypes as $mime => $q) {
-       if ($q && in_array($mime, $mimeTypes)) return $mime;
-    }
-    // no mime-type found
-    return null;
+	// no mime-type found
+	return null;
 }
 
-
+/**
+ * @brief Perform caching for jsonld normaliser.
+ *
+ * @param string $url
+ * @return mixed|boolean|array
+ */
 function jsonld_document_loader($url) {
-
-	// perform caching for jsonld normaliser
 
 	require_once('library/jsonld/jsonld.php');
 
 	$cachepath = 'store/[data]/ldcache';
 	if(! is_dir($cachepath))
-		os_mkdir($cachepath,STORAGE_DEFAULT_PERMISSIONS,true);
+		os_mkdir($cachepath, STORAGE_DEFAULT_PERMISSIONS, true);
 
 	$filename = $cachepath . '/' . urlencode($url);
 	if(file_exists($filename) && filemtime($filename) > time() - (12 * 60 * 60)) {
@@ -1983,7 +2052,7 @@ function jsonld_document_loader($url) {
 
 	$r = jsonld_default_document_loader($url);
 	if($r) {
-		file_put_contents($filename,json_encode($r));
+		file_put_contents($filename, json_encode($r));
 		return $r;
 	}
 
@@ -1993,5 +2062,4 @@ function jsonld_document_loader($url) {
 	}
 
 	return [];
-
 }

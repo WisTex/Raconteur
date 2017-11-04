@@ -1,4 +1,4 @@
-<?php /** @file */
+<?php
 
 namespace Zotlabs\Lib;
 
@@ -14,7 +14,6 @@ class Config {
 	 * @param string $family
 	 *  The category of the configuration value
 	 */
-
 	static public function Load($family) {
 		if(! array_key_exists($family, \App::$config))
 			\App::$config[$family] = array();
@@ -30,7 +29,7 @@ class Config {
 				}
 				\App::$config[$family]['config_loaded'] = true;
 			}
-		} 
+		}
 	}
 
 	/**
@@ -47,8 +46,7 @@ class Config {
 	 * @return mixed
 	 *  Return the set value, or false if the database update failed
 	 */
-
-	static public function Set($family,$key,$value) {
+	static public function Set($family, $key, $value) {
 		// manage array value
 		$dbvalue = ((is_array($value))  ? serialize($value) : $value);
 		$dbvalue = ((is_bool($dbvalue)) ? intval($dbvalue)  : $dbvalue);
@@ -76,8 +74,8 @@ class Config {
 			\App::$config[$family][$key] = $value;
 			$ret = $value;
 		}
-		return $ret;
 
+		return $ret;
 	}
 
 	/**
@@ -88,25 +86,25 @@ class Config {
 	 * $key from a cached storage in App::$config[$family]. If a key is found in the
 	 * DB but does not exist in local config cache, pull it into the cache so we
 	 * do not have to hit the DB again for this item.
-	 * 
+	 *
 	 * Returns false if not set.
 	 *
 	 * @param string $family
 	 *  The category of the configuration value
 	 * @param string $key
 	 *  The configuration key to query
+	 * @param string $default (optional) default false
 	 * @return mixed Return value or false on error or if not set
 	 */
-
-	static public function Get($family,$key,$default = false) {
+	static public function Get($family, $key, $default = false) {
 		if((! array_key_exists($family, \App::$config)) || (! array_key_exists('config_loaded', \App::$config[$family])))
 			self::Load($family);
 
 		if(array_key_exists('config_loaded', \App::$config[$family])) {
 			if(! array_key_exists($key, \App::$config[$family])) {
-				return $default;		
+				return $default;
 			}
-			return ((! is_array(\App::$config[$family][$key])) && (preg_match('|^a:[0-9]+:{.*}$|s', \App::$config[$family][$key])) 
+			return ((! is_array(\App::$config[$family][$key])) && (preg_match('|^a:[0-9]+:{.*}$|s', \App::$config[$family][$key]))
 				? unserialize(\App::$config[$family][$key])
 				: \App::$config[$family][$key]
 			);
@@ -127,17 +125,18 @@ class Config {
 	 *  The configuration key to delete
 	 * @return mixed
 	 */
-
-	static public function Delete($family,$key) {
+	static public function Delete($family, $key) {
 
 		$ret = false;
 
 		if(array_key_exists($family, \App::$config) && array_key_exists($key, \App::$config[$family]))
 			unset(\App::$config[$family][$key]);
-			$ret = q("DELETE FROM config WHERE cat = '%s' AND k = '%s'",
+
+		$ret = q("DELETE FROM config WHERE cat = '%s' AND k = '%s'",
 			dbesc($family),
 			dbesc($key)
 		);
+
 		return $ret;
 	}
 
@@ -154,12 +153,12 @@ class Config {
 	 *  The configuration key to query
 	 * @return mixed
 	 */
-
 	static private function get_from_storage($family,$key) {
 		$ret = q("SELECT * FROM config WHERE cat = '%s' AND k = '%s' LIMIT 1",
 			dbesc($family),
 			dbesc($key)
 		);
+
 		return $ret;
 	}
 
