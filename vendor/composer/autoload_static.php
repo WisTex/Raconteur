@@ -46,6 +46,10 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         array (
             'Hubzilla\\' => 9,
         ),
+        'C' => 
+        array (
+            'CommerceGuys\\Intl\\' => 18,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -101,9 +105,20 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         array (
             0 => __DIR__ . '/../..' . '/include',
         ),
+        'CommerceGuys\\Intl\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/commerceguys/intl/src',
+        ),
     );
 
     public static $prefixesPsr0 = array (
+        'T' => 
+        array (
+            'Text' => 
+            array (
+                0 => __DIR__ . '/..' . '/pear/text_languagedetect',
+            ),
+        ),
         'S' => 
         array (
             'SimplePie' => 
@@ -135,6 +150,36 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
     );
 
     public static $classMap = array (
+        'CommerceGuys\\Intl\\Calculator' => __DIR__ . '/..' . '/commerceguys/intl/src/Calculator.php',
+        'CommerceGuys\\Intl\\Country\\Country' => __DIR__ . '/..' . '/commerceguys/intl/src/Country/Country.php',
+        'CommerceGuys\\Intl\\Country\\CountryEntityInterface' => __DIR__ . '/..' . '/commerceguys/intl/src/Country/CountryEntityInterface.php',
+        'CommerceGuys\\Intl\\Country\\CountryInterface' => __DIR__ . '/..' . '/commerceguys/intl/src/Country/CountryInterface.php',
+        'CommerceGuys\\Intl\\Country\\CountryRepository' => __DIR__ . '/..' . '/commerceguys/intl/src/Country/CountryRepository.php',
+        'CommerceGuys\\Intl\\Country\\CountryRepositoryInterface' => __DIR__ . '/..' . '/commerceguys/intl/src/Country/CountryRepositoryInterface.php',
+        'CommerceGuys\\Intl\\Currency\\Currency' => __DIR__ . '/..' . '/commerceguys/intl/src/Currency/Currency.php',
+        'CommerceGuys\\Intl\\Currency\\CurrencyEntityInterface' => __DIR__ . '/..' . '/commerceguys/intl/src/Currency/CurrencyEntityInterface.php',
+        'CommerceGuys\\Intl\\Currency\\CurrencyInterface' => __DIR__ . '/..' . '/commerceguys/intl/src/Currency/CurrencyInterface.php',
+        'CommerceGuys\\Intl\\Currency\\CurrencyRepository' => __DIR__ . '/..' . '/commerceguys/intl/src/Currency/CurrencyRepository.php',
+        'CommerceGuys\\Intl\\Currency\\CurrencyRepositoryInterface' => __DIR__ . '/..' . '/commerceguys/intl/src/Currency/CurrencyRepositoryInterface.php',
+        'CommerceGuys\\Intl\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/commerceguys/intl/src/Exception/ExceptionInterface.php',
+        'CommerceGuys\\Intl\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/commerceguys/intl/src/Exception/InvalidArgumentException.php',
+        'CommerceGuys\\Intl\\Exception\\UnknownCountryException' => __DIR__ . '/..' . '/commerceguys/intl/src/Exception/UnknownCountryException.php',
+        'CommerceGuys\\Intl\\Exception\\UnknownCurrencyException' => __DIR__ . '/..' . '/commerceguys/intl/src/Exception/UnknownCurrencyException.php',
+        'CommerceGuys\\Intl\\Exception\\UnknownLanguageException' => __DIR__ . '/..' . '/commerceguys/intl/src/Exception/UnknownLanguageException.php',
+        'CommerceGuys\\Intl\\Exception\\UnknownLocaleException' => __DIR__ . '/..' . '/commerceguys/intl/src/Exception/UnknownLocaleException.php',
+        'CommerceGuys\\Intl\\Formatter\\NumberFormatter' => __DIR__ . '/..' . '/commerceguys/intl/src/Formatter/NumberFormatter.php',
+        'CommerceGuys\\Intl\\Formatter\\NumberFormatterInterface' => __DIR__ . '/..' . '/commerceguys/intl/src/Formatter/NumberFormatterInterface.php',
+        'CommerceGuys\\Intl\\Language\\Language' => __DIR__ . '/..' . '/commerceguys/intl/src/Language/Language.php',
+        'CommerceGuys\\Intl\\Language\\LanguageEntityInterface' => __DIR__ . '/..' . '/commerceguys/intl/src/Language/LanguageEntityInterface.php',
+        'CommerceGuys\\Intl\\Language\\LanguageInterface' => __DIR__ . '/..' . '/commerceguys/intl/src/Language/LanguageInterface.php',
+        'CommerceGuys\\Intl\\Language\\LanguageRepository' => __DIR__ . '/..' . '/commerceguys/intl/src/Language/LanguageRepository.php',
+        'CommerceGuys\\Intl\\Language\\LanguageRepositoryInterface' => __DIR__ . '/..' . '/commerceguys/intl/src/Language/LanguageRepositoryInterface.php',
+        'CommerceGuys\\Intl\\LocaleResolverTrait' => __DIR__ . '/..' . '/commerceguys/intl/src/LocaleResolverTrait.php',
+        'CommerceGuys\\Intl\\NumberFormat\\NumberFormat' => __DIR__ . '/..' . '/commerceguys/intl/src/NumberFormat/NumberFormat.php',
+        'CommerceGuys\\Intl\\NumberFormat\\NumberFormatEntityInterface' => __DIR__ . '/..' . '/commerceguys/intl/src/NumberFormat/NumberFormatEntityInterface.php',
+        'CommerceGuys\\Intl\\NumberFormat\\NumberFormatInterface' => __DIR__ . '/..' . '/commerceguys/intl/src/NumberFormat/NumberFormatInterface.php',
+        'CommerceGuys\\Intl\\NumberFormat\\NumberFormatRepository' => __DIR__ . '/..' . '/commerceguys/intl/src/NumberFormat/NumberFormatRepository.php',
+        'CommerceGuys\\Intl\\NumberFormat\\NumberFormatRepositoryInterface' => __DIR__ . '/..' . '/commerceguys/intl/src/NumberFormat/NumberFormatRepositoryInterface.php',
         'HTMLPurifier' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.php',
         'HTMLPurifier_Arborize' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Arborize.php',
         'HTMLPurifier_AttrCollections' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/AttrCollections.php',
@@ -846,6 +891,12 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'SimplePie_Source' => __DIR__ . '/..' . '/simplepie/simplepie/library/SimplePie/Source.php',
         'SimplePie_XML_Declaration_Parser' => __DIR__ . '/..' . '/simplepie/simplepie/library/SimplePie/XML/Declaration/Parser.php',
         'SimplePie_gzdecode' => __DIR__ . '/..' . '/simplepie/simplepie/library/SimplePie/gzdecode.php',
+        'Text_LanguageDetect' => __DIR__ . '/..' . '/pear/text_languagedetect/Text/LanguageDetect.php',
+        'Text_LanguageDetectTest' => __DIR__ . '/..' . '/pear/text_languagedetect/tests/Text_LanguageDetectTest.php',
+        'Text_LanguageDetect_Exception' => __DIR__ . '/..' . '/pear/text_languagedetect/Text/LanguageDetect/Exception.php',
+        'Text_LanguageDetect_ISO639' => __DIR__ . '/..' . '/pear/text_languagedetect/Text/LanguageDetect/ISO639.php',
+        'Text_LanguageDetect_ISO639Test' => __DIR__ . '/..' . '/pear/text_languagedetect/tests/Text_LanguageDetect_ISO639Test.php',
+        'Text_LanguageDetect_Parser' => __DIR__ . '/..' . '/pear/text_languagedetect/Text/LanguageDetect/Parser.php',
         'Zotlabs\\Access\\AccessList' => __DIR__ . '/../..' . '/Zotlabs/Access/AccessList.php',
         'Zotlabs\\Access\\PermissionLimits' => __DIR__ . '/../..' . '/Zotlabs/Access/PermissionLimits.php',
         'Zotlabs\\Access\\PermissionRoles' => __DIR__ . '/../..' . '/Zotlabs/Access/PermissionRoles.php',
