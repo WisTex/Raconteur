@@ -12,6 +12,8 @@ class Display extends \Zotlabs\Web\Controller {
 
 	function get($update = 0, $load = false) {
 
+		$module_format = 'html';
+
 		if(argc() > 1) {
 			$module_format = substr(argv(1),strrpos(argv(1),'.') + 1);
 			if(! in_array($module_format,['atom','zot','json']))
