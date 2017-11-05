@@ -8,6 +8,7 @@
  * language related tasks.
  */
 
+use CommerceGuys\Intl\Language\LanguageRepository;
 
 /**
  * @brief Get the browser's submitted preferred languages.
@@ -17,7 +18,7 @@
  *
  * Get the language setting directly from system variables, bypassing get_config()
  * as database may not yet be configured.
- * 
+ *
  * If possible, we use the value from the browser.
  *
  * @return array with ordered list of preferred languages from browser
@@ -28,7 +29,7 @@ function get_browser_language() {
 
 	if (x($_SERVER, 'HTTP_ACCEPT_LANGUAGE')) {
 		// break up string into pieces (languages and q factors)
-		preg_match_all('/([a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(1|0\.[0-9]+))?/i', 
+		preg_match_all('/([a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(1|0\.[0-9]+))?/i',
 			$_SERVER['HTTP_ACCEPT_LANGUAGE'], $lang_parse);
 
 		if (count($lang_parse[1])) {
@@ -40,7 +41,7 @@ function get_browser_language() {
 				if ($val === '') $langs[$lang] = 1;
 			}
 
-			// sort list based on value	
+			// sort list based on value
 			arsort($langs, SORT_NUMERIC);
 		}
 	}
@@ -52,7 +53,7 @@ function get_browser_language() {
  * @brief Returns the best language for which also a translation exists.
  *
  * This function takes the results from get_browser_language() and compares it
- * with the available translations and returns the best fitting language for 
+ * with the available translations and returns the best fitting language for
  * which there exists a translation.
  *
  * If there is no match fall back to config['system']['language']
@@ -243,11 +244,9 @@ function string_plural_select_default($n) {
  *
  * @see http://pear.php.net/package/Text_LanguageDetect
  * @param string $s A string to examine
- * @return Language code in 2-letter ISO 639-1 (en, de, fr) format
+ * @return string Language code in 2-letter ISO 639-1 (en, de, fr) format
  */
 function detect_language($s) {
-	require_once('Text/LanguageDetect.php');
-
 	$min_length = get_config('system', 'language_detect_min_length');
 	if ($min_length === false)
 		$min_length = LANGUAGE_DETECT_MIN_LENGTH;
@@ -257,7 +256,7 @@ function detect_language($s) {
 		$min_confidence = LANGUAGE_DETECT_MIN_CONFIDENCE;
 
 	// embedded apps have long base64 strings which will trip up the detector.
-	$naked_body = preg_replace('/\[app\](.*?)\[\/app\]/','',$s);
+	$naked_body = preg_replace('/\[app\](.*?)\[\/app\]/', '', $s);
 	// strip off bbcode
 	$naked_body = preg_replace('/\[(.+?)\]/', '', $naked_body);
 	if (mb_strlen($naked_body) < intval($min_length)) {
@@ -300,11 +299,7 @@ function detect_language($s) {
  * @param string $s Language code to look up
  * @param string $l (optional) In which language to return the name
  * @return string with the language name, or $s if unrecognized
- *
- * @todo include CommerceGuys\Intl through composer like SabreDAV.
  */
-require_once(__DIR__ . '/../library/intl/vendor/autoload.php');
-use CommerceGuys\Intl\Language\LanguageRepository;
 function get_language_name($s, $l = null) {
 	// get() expects the second part to be in upper case
 	if (strpos($s, '-') !== false) $s = substr($s, 0, 2) . strtoupper(substr($s, 2));
@@ -321,6 +316,8 @@ function get_language_name($s, $l = null) {
 		try {
 			$language = $languageRepository->get($s, $l);
 		} catch (CommerceGuys\Intl\Exception\UnknownLanguageException $e) {
+			return $s; // Give up
+		} catch (CommerceGuys\Intl\Exception\UnknownLocaleException $e) {
 			return $s; // Give up
 		}
 	}
@@ -379,7 +376,7 @@ function lang_selector() {
 	$o = replace_macros($tpl, array(
 		'$title' => t('Select an alternate language'),
 		'$langs' => array($lang_options, $selected),
-		
+
 	));
 
 	return $o;

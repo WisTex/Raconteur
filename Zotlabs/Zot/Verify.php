@@ -26,11 +26,10 @@ class Verify {
 			q("delete from verify where id = %d",
 				intval($r[0]['id'])
 			);
-			return true; 
+			return true;
 		}
 		return false;
 	}
-
 
 	function get_meta($type,$channel_id,$token) {
 		$r = q("select id, meta from verify where vtype = '%s' and channel = %d and token = '%s' limit 1",
@@ -42,12 +41,18 @@ class Verify {
 			q("delete from verify where id = %d",
 				intval($r[0]['id'])
 			);
-			return $r[0]['meta']; 
+			return $r[0]['meta'];
 		}
 		return false;
 	}
 
-	function purge($type,$interval) {
+	/**
+	 * @brief Purge entries of a verify-type older than interval.
+	 *
+	 * @param string $type Verify type
+	 * @param string $interval SQL compatible time interval
+	 */
+	function purge($type, $interval) {
 		q("delete from verify where vtype = '%s' and created < %s - INTERVAL %s",
 			dbesc($type),
 			db_utcnow(),

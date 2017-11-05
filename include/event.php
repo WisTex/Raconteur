@@ -1,15 +1,16 @@
 <?php
+/**
+ * @file include/event.php
+ * @brief Event related functions.
+ */
+
 use Sabre\VObject;
 
 /**
- * @file include/event.php
- */
-
-/**
- * @brief Returns an event as HTML
+ * @brief Returns an event as HTML.
  *
  * @param array $ev
- * @return string
+ * @return string HTML formatted event
  */
 function format_event_html($ev) {
 
@@ -21,7 +22,7 @@ function format_event_html($ev) {
 
 	$bd_format = t('l F d, Y \@ g:i A') ; // Friday January 18, 2011 @ 8:01 AM
 
-	//todo: move this to template
+	/// @TODO move this to template
 
 	$o = '<div class="vevent">' . "\r\n";
 
@@ -29,27 +30,27 @@ function format_event_html($ev) {
 
 	$o .= '<div class="event-start"><span class="event-label">' . t('Starts:') . '</span>&nbsp;<span class="dtstart" title="'
 		. datetime_convert('UTC', 'UTC', $ev['dtstart'], (($ev['adjust']) ? ATOM_TIME : 'Y-m-d\TH:i:s' ))
-		. '" >' 
-		. (($ev['adjust']) ? day_translate(datetime_convert('UTC', date_default_timezone_get(), 
+		. '" >'
+		. (($ev['adjust']) ? day_translate(datetime_convert('UTC', date_default_timezone_get(),
 			$ev['dtstart'] , $bd_format ))
-			:  day_translate(datetime_convert('UTC', 'UTC', 
+			:  day_translate(datetime_convert('UTC', 'UTC',
 			$ev['dtstart'] , $bd_format)))
 		. '</span></div>' . "\r\n";
 
 	if(! $ev['nofinish'])
 		$o .= '<div class="event-end" ><span class="event-label">' . t('Finishes:') . '</span>&nbsp;<span class="dtend" title="'
 			. datetime_convert('UTC','UTC',$ev['dtend'], (($ev['adjust']) ? ATOM_TIME : 'Y-m-d\TH:i:s' ))
-			. '" >' 
-			. (($ev['adjust']) ? day_translate(datetime_convert('UTC', date_default_timezone_get(), 
+			. '" >'
+			. (($ev['adjust']) ? day_translate(datetime_convert('UTC', date_default_timezone_get(),
 				$ev['dtend'] , $bd_format ))
-				:  day_translate(datetime_convert('UTC', 'UTC', 
+				:  day_translate(datetime_convert('UTC', 'UTC',
 				$ev['dtend'] , $bd_format )))
 			. '</span></div>'  . "\r\n";
 
 	$o .= '<div class="event-description">' . zidify_links(smilies(bbcode($ev['description']))) .  '</div>' . "\r\n";
 
 	if(strlen($ev['location']))
-		$o .= '<div class="event-location"><span class="event-label"> ' . t('Location:') . '</span>&nbsp;<span class="location">' 
+		$o .= '<div class="event-location"><span class="event-label"> ' . t('Location:') . '</span>&nbsp;<span class="location">'
 			. zidify_links(smilies(bbcode($ev['location'])))
 			. '</span></div>' . "\r\n";
 
@@ -123,9 +124,9 @@ function format_event_ical($ev) {
 	$o .= "\r\nCREATED:" . datetime_convert('UTC','UTC', $ev['created'],'Ymd\\THis\\Z');
 	$o .= "\r\nLAST-MODIFIED:" . datetime_convert('UTC','UTC', $ev['edited'],'Ymd\\THis\\Z');
 	$o .= "\r\nDTSTAMP:" . datetime_convert('UTC','UTC', $ev['edited'],'Ymd\\THis\\Z');
-	if($ev['dtstart']) 
+	if($ev['dtstart'])
 		$o .= "\r\nDTSTART:" . datetime_convert('UTC','UTC', $ev['dtstart'],'Ymd\\THis' . (($ev['adjust']) ? '\\Z' : ''));
-	if($ev['dtend'] && ! $ev['nofinish']) 
+	if($ev['dtend'] && ! $ev['nofinish'])
 		$o .= "\r\nDTEND:" . datetime_convert('UTC','UTC', $ev['dtend'],'Ymd\\THis' . (($ev['adjust']) ? '\\Z' : ''));
 	if($ev['summary']) {
 		$o .= "\r\nSUMMARY:" . format_ical_text($ev['summary']);
@@ -143,7 +144,7 @@ function format_event_ical($ev) {
 		$o .= "\r\nPRIORITY:" . intval($ev['event_priority']);
 	$o .= "\r\nUID:" . $ev['event_hash'] ;
 	$o .= "\r\nEND:VEVENT\r\n";
-	
+
 	return $o;
 }
 
@@ -156,9 +157,9 @@ function format_todo_ical($ev) {
 	$o .= "\r\nCREATED:" . datetime_convert('UTC','UTC', $ev['created'],'Ymd\\THis\\Z');
 	$o .= "\r\nLAST-MODIFIED:" . datetime_convert('UTC','UTC', $ev['edited'],'Ymd\\THis\\Z');
 	$o .= "\r\nDTSTAMP:" . datetime_convert('UTC','UTC', $ev['edited'],'Ymd\\THis\\Z');
-	if($ev['dtstart']) 
+	if($ev['dtstart'])
 		$o .= "\r\nDTSTART:" . datetime_convert('UTC','UTC', $ev['dtstart'],'Ymd\\THis' . (($ev['adjust']) ? '\\Z' : ''));
-	if($ev['dtend'] && ! $ev['nofinish']) 
+	if($ev['dtend'] && ! $ev['nofinish'])
 		$o .= "\r\nDUE:" . datetime_convert('UTC','UTC', $ev['dtend'],'Ymd\\THis' . (($ev['adjust']) ? '\\Z' : ''));
 	if($ev['summary']) {
 		$o .= "\r\nSUMMARY:" . format_ical_text($ev['summary']);
@@ -170,8 +171,8 @@ function format_todo_ical($ev) {
 			$o .= "\r\nCOMPLETED:" . datetime_convert('UTC','UTC', $ev['event_status_date'],'Ymd\\THis\\Z');
 	}
 	if(intval($ev['event_percent']))
-		$o .= "\r\nPERCENT-COMPLETE:" . $ev['event_percent'];		
-	if(intval($ev['event_sequence'])) 
+		$o .= "\r\nPERCENT-COMPLETE:" . $ev['event_percent'];
+	if(intval($ev['event_sequence']))
 		$o .= "\r\nSEQUENCE:" . $ev['event_sequence'];
 	if($ev['location']) {
 		$o .= "\r\nLOCATION:" . format_ical_text($ev['location']);
@@ -196,12 +197,13 @@ function format_ical_text($s) {
 
 	$s = html2plain(bbcode($s));
 	$s = str_replace(["\r\n","\n"],["",""],$s);
-	return(wordwrap(str_replace(['\\',',',';'],['\\\\','\\,','\\;'],$s),72,"\r\n ",true));
 
+	return(wordwrap(str_replace(['\\',',',';'],['\\\\','\\,','\\;'],$s),72,"\r\n ",true));
 }
 
 function format_ical_sourcetext($s) {
 	$s = base64_encode($s);
+
 	return(wordwrap(str_replace(['\\',',',';'],['\\\\','\\,','\\;'],$s),72,"\r\n ",true));
 }
 
@@ -225,7 +227,7 @@ function format_event_bbcode($ev) {
 
 	if(($ev['dtend']) && (! $ev['nofinish']))
 		$o .= '[event-finish]' . $ev['dtend'] . '[/event-finish]';
- 
+
 	if($ev['location'])
 		$o .= '[event-location]' . $ev['location'] . '[/event-location]';
 
@@ -252,7 +254,6 @@ function bbtovcal($s) {
 function bbtoevent($s) {
 
 	$ev = array();
-
 
 	$match = '';
 	if(preg_match("/\[event\](.*?)\[\/event\]/is",$s,$match)) {
@@ -306,7 +307,7 @@ function bbtoevent($s) {
  *
  * @see ev_compare()
  * @param array $arr
- * @return sorted array
+ * @return array Date sorted array of events
  */
 function sort_by_date($arr) {
 	if (is_array($arr))
@@ -317,6 +318,8 @@ function sort_by_date($arr) {
 
 /**
  * @brief Compare function for events.
+ *
+ * This function can be used in usort() to sort events by date.
  *
  * @see sort_by_date()
  * @param array $a
@@ -375,8 +378,19 @@ function event_store_event($arr) {
 		}
 	}
 
-	$hook_info = [ 'event' => $arr, 'existing_event' => $existing_event, 'cancel' => false ];
-	call_hooks('event_store_event',$hook_info);
+	$hook_info = [
+			'event' => $arr,
+			'existing_event' => $existing_event,
+			'cancel' => false
+	];
+	/**
+	 * @hooks event_store_event
+	 *   Called when an event record is created or updated.
+	 *   * \e array \b event
+	 *   * \e array \b existing_event
+	 *   * \e boolean \b cancel - default false
+	 */
+	call_hooks('event_store_event', $hook_info);
 	if($hook_info['cancel'])
 		return false;
 
@@ -386,7 +400,7 @@ function event_store_event($arr) {
 	if($existing_event) {
 
 		if($existing_event['edited'] >= $arr['edited']) {
-			// Nothing has changed. 
+			// Nothing has changed.
 			return $existing_event;
 		}
 
@@ -443,7 +457,6 @@ function event_store_event($arr) {
 	} else {
 
 		// New event. Store it.
-
 
 		if(array_key_exists('external_id',$arr))
 			$hash = $arr['external_id'];
@@ -531,7 +544,7 @@ function event_addtocal($item_id, $uid) {
 		}
 
 		if($ev->private)
-			$ev['allow_cid'] = '<' . $channel['channel_hash'] . '>'; 
+			$ev['allow_cid'] = '<' . $channel['channel_hash'] . '>';
 		else {
 			$acl = new Zotlabs\Access\AccessList($channel);
 			$x = $acl->get();
@@ -596,13 +609,11 @@ function ical_to_ev($s) {
 	date_default_timezone_set($saved_timezone);
 
 	return $ev;
-
 }
 
 
 
 function parse_vobject($ical, $type) {
-
 
 	$ev = [];
 
@@ -698,10 +709,8 @@ function parse_vobject($ical, $type) {
 
 
 
-
-
 function parse_ical_file($f,$uid) {
-require_once('vendor/autoload.php');
+	require_once('vendor/autoload.php');
 
 	$s = @file_get_contents($f);
 
@@ -731,6 +740,7 @@ require_once('vendor/autoload.php');
 
 	if($ical)
 		return true;
+
 	return false;
 }
 
@@ -779,7 +789,6 @@ function event_import_ical($ical, $uid) {
 		$ev['created'] = datetime_convert('UTC','UTC',$created->format(\DateTime::W3C));
 	}
 
-
 	if(isset($ical->{'LAST-MODIFIED'})) {
 		$edited = $ical->{'LAST-MODIFIED'}->getDateTime();
 		$ev['edited'] = datetime_convert('UTC','UTC',$edited->format(\DateTime::W3C));
@@ -814,7 +823,7 @@ function event_import_ical($ical, $uid) {
 		else
 			$ev['external_id'] = $evuid;
 	}
-		
+
 	if($ev['summary'] && $ev['dtstart']) {
 		$ev['event_xchan'] = $channel['channel_hash'];
 		$ev['uid']         = $channel['channel_id'];
@@ -822,7 +831,7 @@ function event_import_ical($ical, $uid) {
 		$ev['private']     = 1;
 		$ev['allow_cid']   = '<' . $channel['channel_hash'] . '>';
 
-		logger('storing event: ' . print_r($ev,true), LOGGER_ALL);		
+		logger('storing event: ' . print_r($ev,true), LOGGER_ALL);
 		$event = event_store_event($ev);
 		if($event) {
 			$item_id = event_store_item($ev,$event);
@@ -831,7 +840,6 @@ function event_import_ical($ical, $uid) {
 	}
 
 	return false;
-
 }
 
 function event_ical_get_sourcetext($s) {
@@ -931,7 +939,7 @@ function event_import_ical_task($ical, $uid) {
 	if(isset($ical->SEQUENCE)) {
 		$ev['event_sequence'] = (string) $ical->SEQUENCE;
 		// see if our stored event is more current than the one we're importing
-		if((intval($ev['event_sequence']) <= intval($stored_event['event_sequence'])) 
+		if((intval($ev['event_sequence']) <= intval($stored_event['event_sequence']))
 			&& ($ev['edited'] <= $stored_event['edited']))
 			return false;
 	}
@@ -958,7 +966,7 @@ function event_import_ical_task($ical, $uid) {
 		$ev['private']     = 1;
 		$ev['allow_cid']   = '<' . $channel['channel_hash'] . '>';
 
-		logger('storing event: ' . print_r($ev,true), LOGGER_ALL);		
+		logger('storing event: ' . print_r($ev,true), LOGGER_ALL);
 		$event = event_store_event($ev);
 		if($event) {
 			$item_id = event_store_item($ev,$event);
@@ -967,11 +975,7 @@ function event_import_ical_task($ical, $uid) {
 	}
 
 	return false;
-
 }
-
-
-
 
 
 
@@ -995,7 +999,6 @@ function event_store_item($arr, $event) {
 	}
 
 
-
 	$item_arr = array();
 	$prefix = '';
 //	$birthday = false;
@@ -1008,9 +1011,9 @@ function event_store_item($arr, $event) {
 			$prefix =  t('This event has been added to your calendar.');
 //		$birthday = true;
 
-		// The event is created on your own site by the system, but appears to belong 
+		// The event is created on your own site by the system, but appears to belong
 		// to the birthday person. It also isn't propagated - so we need to prevent
-		// folks from trying to comment on it. If you're looking at this and trying to 
+		// folks from trying to comment on it. If you're looking at this and trying to
 		// fix it, you'll need to completely change the way birthday events are created
 		// and send them out from the source. This has its own issues.
 
@@ -1048,9 +1051,10 @@ function event_store_item($arr, $event) {
 
 		$private = (($arr['allow_cid'] || $arr['allow_gid'] || $arr['deny_cid'] || $arr['deny_gid']) ? 1 : 0);
 
-		// @FIXME can only update sig if we have the author's channel on this site
-		// Until fixed, set it to nothing so it won't give us signature errors
-
+		/**
+		 * @FIXME can only update sig if we have the author's channel on this site
+		 * Until fixed, set it to nothing so it won't give us signature errors.
+		 */
 		$sig = '';
 
 		q("UPDATE item SET title = '%s', body = '%s', obj = '%s', allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', edited = '%s', sig = '%s', item_flags = %d, item_private = %d, obj_type = '%s'  WHERE id = %d AND uid = %d",
@@ -1090,6 +1094,10 @@ function event_store_item($arr, $event) {
 		}
 
 		$item_id = $r[0]['id'];
+		/**
+		 * @hooks event_updated
+		 *   Called when an event record is modified.
+		 */
 		call_hooks('event_updated', $event['id']);
 
 		return $item_id;
@@ -1103,7 +1111,7 @@ function event_store_item($arr, $event) {
 
 		$item_wall = 0;
 		$item_origin = 0;
-		$item_thread_top = 0;				
+		$item_thread_top = 0;
 
 		if($item) {
 			$item_arr['id'] = $item['id'];
@@ -1196,6 +1204,10 @@ function event_store_item($arr, $event) {
 
 		$item_id = $res['item_id'];
 
+		/**
+		 * @hooks event_created
+		 *   Called when an event record is created.
+		 */
 		call_hooks('event_created', $event['id']);
 
 		return $item_id;
@@ -1216,25 +1228,24 @@ function todo_stat() {
 
 function tasks_fetch($arr) {
 
-   if(! local_channel())
-        return;
+	if(! local_channel())
+		return;
 
-    $ret = array();
-    $sql_extra = " and event_status != 'COMPLETED' ";
-    if($arr && $arr['all'] == 1)
-        $sql_extra = '';
+	$ret = array();
+	$sql_extra = " and event_status != 'COMPLETED' ";
+	if($arr && $arr['all'] == 1)
+		$sql_extra = '';
 
-    $r = q("select * from event where etype = 'task' and uid = %d $sql_extra order by created desc",
-        intval(local_channel())
-    );
+	$r = q("select * from event where etype = 'task' and uid = %d $sql_extra order by created desc",
+		intval(local_channel())
+	);
 
-    $ret['success'] = (($r) ? true : false);
-    if($r) {
-        $ret['tasks'] = $r;
-    }
+	$ret['success'] = (($r) ? true : false);
+	if($r) {
+		$ret['tasks'] = $r;
+	}
 
 	return $ret;
-
 }
 
 function cdav_principal($uri) {

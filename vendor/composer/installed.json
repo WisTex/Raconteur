@@ -5,12 +5,12 @@
         "version_normalized": "3.0.0.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/fruux/sabre-event.git",
+            "url": "https://github.com/sabre-io/event.git",
             "reference": "831d586f5a442dceacdcf5e9c4c36a4db99a3534"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/fruux/sabre-event/zipball/831d586f5a442dceacdcf5e9c4c36a4db99a3534",
+            "url": "https://api.github.com/repos/sabre-io/event/zipball/831d586f5a442dceacdcf5e9c4c36a4db99a3534",
             "reference": "831d586f5a442dceacdcf5e9c4c36a4db99a3534",
             "shasum": ""
         },
@@ -64,12 +64,12 @@
         "version_normalized": "1.5.0.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/fruux/sabre-xml.git",
+            "url": "https://github.com/sabre-io/xml.git",
             "reference": "59b20e5bbace9912607481634f97d05a776ffca7"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/fruux/sabre-xml/zipball/59b20e5bbace9912607481634f97d05a776ffca7",
+            "url": "https://api.github.com/repos/sabre-io/xml/zipball/59b20e5bbace9912607481634f97d05a776ffca7",
             "reference": "59b20e5bbace9912607481634f97d05a776ffca7",
             "shasum": ""
         },
@@ -354,12 +354,12 @@
         "version_normalized": "3.2.2.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/fruux/sabre-dav.git",
+            "url": "https://github.com/sabre-io/dav.git",
             "reference": "e987775e619728f12205606c9cc3ee565ffb1516"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/fruux/sabre-dav/zipball/e987775e619728f12205606c9cc3ee565ffb1516",
+            "url": "https://api.github.com/repos/sabre-io/dav/zipball/e987775e619728f12205606c9cc3ee565ffb1516",
             "reference": "e987775e619728f12205606c9cc3ee565ffb1516",
             "shasum": ""
         },
@@ -505,12 +505,12 @@
         "version_normalized": "1.2.1.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/fruux/sabre-uri.git",
+            "url": "https://github.com/sabre-io/uri.git",
             "reference": "ada354d83579565949d80b2e15593c2371225e61"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/fruux/sabre-uri/zipball/ada354d83579565949d80b2e15593c2371225e61",
+            "url": "https://api.github.com/repos/sabre-io/uri/zipball/ada354d83579565949d80b2e15593c2371225e61",
             "reference": "ada354d83579565949d80b2e15593c2371225e61",
             "shasum": ""
         },
@@ -558,12 +558,12 @@
         "version_normalized": "4.1.2.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/fruux/sabre-vobject.git",
+            "url": "https://github.com/sabre-io/vobject.git",
             "reference": "d0fde2fafa2a3dad1f559c2d1c2591d4fd75ae3c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/fruux/sabre-vobject/zipball/d0fde2fafa2a3dad1f559c2d1c2591d4fd75ae3c",
+            "url": "https://api.github.com/repos/sabre-io/vobject/zipball/d0fde2fafa2a3dad1f559c2d1c2591d4fd75ae3c",
             "reference": "d0fde2fafa2a3dad1f559c2d1c2591d4fd75ae3c",
             "shasum": ""
         },
@@ -706,12 +706,12 @@
         "version_normalized": "4.2.3.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/fruux/sabre-http.git",
+            "url": "https://github.com/sabre-io/http.git",
             "reference": "0295f9a3ee39be97e0898592fc19e42421e0cd93"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/fruux/sabre-http/zipball/0295f9a3ee39be97e0898592fc19e42421e0cd93",
+            "url": "https://api.github.com/repos/sabre-io/http/zipball/0295f9a3ee39be97e0898592fc19e42421e0cd93",
             "reference": "0295f9a3ee39be97e0898592fc19e42421e0cd93",
             "shasum": ""
         },
@@ -757,5 +757,97 @@
         "keywords": [
             "http"
         ]
+    },
+    {
+        "name": "pear/text_languagedetect",
+        "version": "v1.0.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/pear/Text_LanguageDetect.git",
+            "reference": "bb9ff6f4970f686fac59081e916b456021fe7ba6"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/pear/Text_LanguageDetect/zipball/bb9ff6f4970f686fac59081e916b456021fe7ba6",
+            "reference": "bb9ff6f4970f686fac59081e916b456021fe7ba6",
+            "shasum": ""
+        },
+        "require-dev": {
+            "phpunit/phpunit": "*"
+        },
+        "suggest": {
+            "ext-mbstring": "May require the mbstring PHP extension"
+        },
+        "time": "2017-03-02T16:14:08+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Text": "./"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "include-path": [
+            "./"
+        ],
+        "license": [
+            "BSD-2-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Nicholas Pisarro",
+                "email": "taak@php.net",
+                "role": "Lead"
+            }
+        ],
+        "description": "Identify human languages from text samples",
+        "homepage": "http://pear.php.net/package/Text_LanguageDetect"
+    },
+    {
+        "name": "commerceguys/intl",
+        "version": "v0.7.4",
+        "version_normalized": "0.7.4.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/commerceguys/intl.git",
+            "reference": "edfcfc26ed8505c4f6fcf862eb36dfda1af74b00"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/commerceguys/intl/zipball/edfcfc26ed8505c4f6fcf862eb36dfda1af74b00",
+            "reference": "edfcfc26ed8505c4f6fcf862eb36dfda1af74b00",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4.0"
+        },
+        "require-dev": {
+            "mikey179/vfsstream": "1.*",
+            "phpunit/phpunit": "~4.0"
+        },
+        "time": "2016-12-13T12:33:19+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "CommerceGuys\\Intl\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Bojan Zivanovic"
+            }
+        ],
+        "description": "Internationalization library powered by CLDR data."
     }
 ]

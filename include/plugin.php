@@ -7,7 +7,7 @@
 
 
 /**
- * @brief unloads an addon.
+ * @brief Unloads an addon.
  *
  * @param string $plugin name of the addon
  */
@@ -22,7 +22,7 @@ function unload_plugin($plugin){
 }
 
 /**
- * @brief uninstalls an addon.
+ * @brief Uninstalls an addon.
  *
  * @param string $plugin name of the addon
  * @return boolean
@@ -110,6 +110,13 @@ function load_plugin($plugin) {
 	}
 }
 
+
+/**
+ * @brief Check if addon is installed.
+ *
+ * @param string $name
+ * @return boolean
+ */
 function plugin_is_installed($name) {
 	$r = q("select aname from addon where aname = '%s' and installed = 1 limit 1",
 		dbesc($name)
@@ -121,8 +128,9 @@ function plugin_is_installed($name) {
 }
 
 
-// reload all updated plugins
-
+/**
+ * @brief Reload all updated plugins.
+ */
 function reload_plugins() {
 	$plugins = get_config('system', 'addon');
 	if(strlen($plugins)) {
@@ -167,11 +175,16 @@ function reload_plugins() {
 	}
 }
 
+
+/**
+ * @brief Get a list of non hidden addons.
+ *
+ * @return array
+ */
 function visible_plugin_list() {
 	$r = q("select * from addon where hidden = 0 order by aname asc");
 	return(($r) ? ids_to_array($r,'aname') : array());
 }
-
 
 
 /**
@@ -282,7 +295,7 @@ function insert_hook($hook, $fn, $version = 0, $priority = 0) {
  * the provided data.
  *
  * @param string $name of the hook to call
- * @param string|array &$data to transmit to the callback handler
+ * @param[in,out] string|array &$data to transmit to the callback handler
  */
 function call_hooks($name, &$data = null) {
 	$a = 0;
@@ -414,8 +427,8 @@ function check_plugin_versions($info) {
 			|| stristr($info['serverroles'],'any')
 			|| stristr($info['serverroles'],$role))) {
 			logger('serverrole limit: ' . $info['name'],LOGGER_NORMAL,LOG_WARNING);
-			return false;
 
+			return false;
 		}
 	}
 
@@ -445,8 +458,6 @@ function check_plugin_versions($info) {
 
 	return true;
 }
-
-
 
 
 /**
@@ -532,7 +543,7 @@ function get_theme_info($theme){
  *
  * The screenshot is expected as view/theme/$theme/img/screenshot.[png|jpg].
  *
- * @param sring $theme The name of the theme
+ * @param string $theme The name of the theme
  * @return string
  */
 function get_theme_screenshot($theme) {
@@ -626,15 +637,16 @@ function format_css_if_exists($source) {
 	}
 }
 
-/*
+/**
  * This basically calculates the baseurl. We have other functions to do that, but
  * there was an issue with script paths and mixed-content whose details are arcane
  * and perhaps lost in the message archives. The short answer is that we're ignoring
  * the URL which we are "supposed" to use, and generating script paths relative to
  * the URL which we are currently using; in order to ensure they are found and aren't
  * blocked due to mixed content issues.
+ *
+ * @return string
  */
-
 function script_path() {
 	if(x($_SERVER,'HTTPS') && $_SERVER['HTTPS'])
 		$scheme = 'https';
@@ -659,6 +671,7 @@ function script_path() {
 	else {
 		return z_root();
 	}
+
 	return $scheme . '://' . $hostname;
 }
 
@@ -675,10 +688,13 @@ function head_remove_js($src, $priority = 0) {
 		unset(App::$js_sources[$priority][$index]);
 }
 
-// We should probably try to register main.js with a high priority, but currently we handle it
-// separately and put it at the end of the html head block in case any other javascript is
-// added outside the head_add_js construct.
-
+/**
+ * We should probably try to register main.js with a high priority, but currently
+ * we handle it separately and put it at the end of the html head block in case
+ * any other javascript is added outside the head_add_js construct.
+ *
+ * @return string
+ */
 function head_get_js() {
 
 	$str = '';
@@ -694,6 +710,7 @@ function head_get_js() {
 			}
 		}
 	}
+
 	return $str;
 }
 
@@ -703,6 +720,7 @@ function head_get_main_js() {
 	if(count($sources))
 		foreach($sources as $source)
 			$str .= format_js_if_exists($source,true);
+
 	return $str;
 }
 
@@ -716,7 +734,7 @@ function format_js_if_exists($source) {
 		if(substr($source,0,2) === '//') {
 			$path_prefix = '';
 		}
-	} 
+	}
 	else {
 		// It's a file from the theme
 		$path = '/' . theme_include($source);
@@ -781,12 +799,16 @@ function get_markup_template($s, $root = '') {
 	return $template;
 }
 
+/**
+ * @brief
+ *
+ * @param string $folder
+ * @return boolean|string
+ */
+function folder_exists($folder) {
+	// Get canonicalized absolute pathname
+	$path = realpath($folder);
 
-function folder_exists($folder)
-{
-    // Get canonicalized absolute pathname
-    $path = realpath($folder);
-
-    // If it exist, check if it's a directory
-    return (($path !== false) && is_dir($path)) ? $path : false;
+	// If it exist, check if it's a directory
+	return (($path !== false) && is_dir($path)) ? $path : false;
 }

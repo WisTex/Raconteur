@@ -57,7 +57,7 @@ class PermissionsTest extends UnitTestCase {
 						[],
 						['perm1' => 0, 'perm2' => 0]
 				],
-				'valild' => [
+				'valid' => [
 						[['perm1' => 1]],
 						['perm1' => 1, 'perm2' => 0]
 				]

@@ -8,6 +8,8 @@
 /**
  * @brief Two-level sort for timezones.
  *
+ * Can be used in usort() to sort timezones.
+ *
  * @param string $a
  * @param string $b
  * @return number
@@ -27,13 +29,14 @@ function timezone_cmp($a, $b) {
 function is_null_date($s) {
 	if($s === '0000-00-00 00:00:00' || $s === '0001-01-01 00:00:00')
 		return true;
+
 	return false;
 }
-
 
 /**
  * @brief Return timezones grouped (primarily) by continent.
  *
+ * @see timezone_cmp()
  * @return array
  */
 function get_timezones( ){
@@ -54,7 +57,7 @@ function get_timezones( ){
 			$city = $ex[0];
 			$continent = t('Miscellaneous');
 		}
-		$city = str_replace('_', ' ',  t($city));
+		$city = str_replace('_', ' ', t($city));
 
 		if (!x($continents, $ex[0])) $continents[$ex[0]] = array();
 		$continents[$continent][$value] = $city;
@@ -109,7 +112,7 @@ function datetime_convert($from = 'UTC', $to = 'UTC', $s = 'now', $fmt = "Y-m-d 
 	try {
 		$d = new DateTime($s, $from_obj);
 	} catch(Exception $e) {
-		logger('datetime_convert: exception: ' . $e->getMessage());
+		logger('exception: ' . $e->getMessage());
 		$d = new DateTime('now', $from_obj);
 	}
 
@@ -128,7 +131,7 @@ function datetime_convert($from = 'UTC', $to = 'UTC', $s = 'now', $fmt = "Y-m-d 
  * @brief Wrapper for date selector, tailored for use in birthday fields.
  *
  * @param string $dob Date of Birth
- * @return string
+ * @return string Parsed HTML with selector
  */
 function dob($dob) {
 
@@ -161,59 +164,62 @@ function dob($dob) {
 }
 
 /**
- * returns a date selector
- * @param $format
- *  format string, e.g. 'ymd' or 'mdy'. Not currently supported
- * @param $min
- *  unix timestamp of minimum date
- * @param $max
- *  unix timestap of maximum date
- * @param $default
- *  unix timestamp of default date
- * @param $id
- *  id and name of datetimepicker (defaults to "datetimepicker")
+ * @brief Returns a date selector.
+ *
+ * @see datetimesel()
+ * @param string $format
+ *   format string, e.g. 'ymd' or 'mdy'. Not currently supported
+ * @param DateTime $min
+ *   unix timestamp of minimum date
+ * @param DateTime $max
+ *   unix timestap of maximum date
+ * @param DateTime $default
+ *   unix timestamp of default date
+ * @param string $id
+ *   id and name of datetimepicker (defaults to "datetimepicker")
  */
 function datesel($format, $min, $max, $default, $id = 'datepicker') {
-	return datetimesel($format, $min, $max, $default, '', $id,true, false, '', '');
+	return datetimesel($format, $min, $max, $default, '', $id, true, false, '', '');
 }
 
 /**
- * returns a time selector
- * @param $format
- *  format string, e.g. 'ymd' or 'mdy'. Not currently supported
- * @param $h
- *  already selected hour
- * @param $m
+ * @brief Returns a time selector.
+ *
+ * @param string $format
+ *   format string, e.g. 'ymd' or 'mdy'. Not currently supported
+ * @param string $h
+ *   already selected hour
+ * @param string $m
  *  already selected minute
- * @param $id
+ * @param string $id
  *  id and name of datetimepicker (defaults to "timepicker")
  */
 function timesel($format, $h, $m, $id='timepicker') {
-	return datetimesel($format,new DateTime(),new DateTime(),new DateTime("$h:$m"),'', $id,false,true);
+	return datetimesel($format, new DateTime(), new DateTime(), new DateTime("$h:$m"), '', $id, false, true);
 }
 
 /**
  * @brief Returns a datetime selector.
  *
  * @param string $format
- *  format string, e.g. 'ymd' or 'mdy'. Not currently supported
- * @param $min
- *  unix timestamp of minimum date
- * @param $max
- *  unix timestap of maximum date
- * @param $default
- *  unix timestamp of default date
+ *   format string, e.g. 'ymd' or 'mdy'. Not currently supported
+ * @param DateTime $min
+ *   unix timestamp of minimum date
+ * @param DateTime $max
+ *   unix timestap of maximum date
+ * @param DateTime $default
+ *   unix timestamp of default date
  * @param string $label
  * @param string $id
- *  id and name of datetimepicker (defaults to "datetimepicker")
+ *   id and name of datetimepicker (defaults to "datetimepicker")
  * @param boolean $pickdate
- *  true to show date picker (default)
+ *   true to show date picker (default)
  * @param boolean $picktime
- *  true to show time picker (default)
- * @param $minfrom
- *  set minimum date from picker with id $minfrom (none by default)
- * @param $maxfrom
- *  set maximum date from picker with id $maxfrom (none by default)
+ *   true to show time picker (default)
+ * @param DateTime $minfrom
+ *   set minimum date from picker with id $minfrom (none by default)
+ * @param DateTime $maxfrom
+ *   set maximum date from picker with id $maxfrom (none by default)
  * @param boolean $required default false
  * @param int $first_day (optional) default 0
  * @return string Parsed HTML output.
@@ -343,9 +349,6 @@ function plural_dates($k,$n) {
 	}
 }
 
-
-
-
 /**
  * @brief Returns timezone correct age in years.
  *
@@ -418,7 +421,7 @@ function get_dim($y, $m) {
  *
  * @param int $y Year
  * @param int $m Month (1=January, 12=December)
- * @return day 0 = Sunday through 6 = Saturday
+ * @return string day 0 = Sunday through 6 = Saturday
  */
 function get_first_dim($y, $m) {
 	$d = sprintf('%04d-%02d-01 00:00', intval($y), intval($m));
