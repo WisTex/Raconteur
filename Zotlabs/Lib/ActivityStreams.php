@@ -2,6 +2,11 @@
 
 namespace Zotlabs\Lib;
 
+/**
+ * @brief ActivityStreams class.
+ *
+ * Parses an ActivityStream JSON string.
+ */
 class ActivityStreams {
 
 	public $data;
@@ -19,9 +24,16 @@ class ActivityStreams {
 	public $recips = null;
 	public $raw_recips = null;
 
+	/**
+	 * @brief Constructor for ActivityStreams.
+	 *
+	 * Takes a JSON string as parameter, decodes it and sets up this object.
+	 *
+	 * @param string $string
+	 */
 	function __construct($string) {
 
-		$this->data = json_decode($string,true);
+		$this->data = json_decode($string, true);
 		if($this->data) {
 			$this->valid = true;
 		}
@@ -50,6 +62,11 @@ class ActivityStreams {
 		}
 	}
 
+	/**
+	 * @brief Return if instantiated ActivityStream is valid.
+	 *
+	 * @return boolean Return true if the JSON string could be decoded.
+	 */
 	function is_valid() {
 		return $this->valid;
 	}
@@ -58,18 +75,26 @@ class ActivityStreams {
 		$this->saved_recips = $arr;
 	}
 
-	function collect_recips($base = '',$namespace = '') {
+	/**
+	 * @brief Collects all recipients.
+	 *
+	 * @param string $base
+	 * @param string $namespace (optional) default empty
+	 * @return array
+	 */
+	function collect_recips($base = '', $namespace = '') {
 		$x = [];
-		$fields = [ 'to','cc','bto','bcc','audience'];
+		$fields = [ 'to', 'cc', 'bto', 'bcc', 'audience'];
 		foreach($fields as $f) {
-			$y = $this->get_compound_property($f,$base,$namespace);
+			$y = $this->get_compound_property($f, $base, $namespace);
 			if($y) {
-				$x = array_merge($x,$y);
+				$x = array_merge($x, $y);
 				if(! is_array($this->raw_recips))
 					$this->raw_recips = [];
+
 				$this->raw_recips[$f] = $x;
 			}
-		}						
+		}
 // not yet ready for prime time
 //		$x = $this->expand($x,$base,$namespace);
 		return $x;
@@ -96,23 +121,30 @@ class ActivityStreams {
 			}
 		}
 
-		// @fixme de-duplicate
+		/// @fixme de-duplicate
 
 		return $ret;
 	}
 
-	function get_namespace($base,$namespace) {
+	/**
+	 * @brief
+	 *
+	 * @param array $base
+	 * @param string $namespace if not set return empty string
+	 * @return string|NULL
+	 */
+	function get_namespace($base, $namespace) {
 
 		if(! $namespace)
 			return '';
 
 		$key = null;
 
-
 		foreach( [ $this->data, $base ] as $b ) {
 			if(! $b)
 				continue;
-			if(array_key_exists('@context',$b)) {
+
+			if(array_key_exists('@context', $b)) {
 				if(is_array($b['@context'])) {
 					foreach($b['@context'] as $ns) {
 						if(is_array($ns)) {
@@ -135,19 +167,35 @@ class ActivityStreams {
 				}
 			}
 		}
+
 		return $key;
 	}
 
-
-	function get_property_obj($property,$base = '',$namespace = '' ) {
-		$prefix = $this->get_namespace($base,$namespace);
+	/**
+	 * @brief
+	 *
+	 * @param string $property
+	 * @param array $base (optional)
+	 * @param string $namespace (optional) default empty
+	 * @return NULL|mixed
+	 */
+	function get_property_obj($property, $base = '', $namespace = '') {
+		$prefix = $this->get_namespace($base, $namespace);
 		if($prefix === null)
-			return null;	
+			return null;
+
 		$base = (($base) ? $base : $this->data);
 		$propname = (($prefix) ? $prefix . ':' : '') . $property;
-		return ((array_key_exists($propname,$base)) ? $base[$propname] : null);
+
+		return ((array_key_exists($propname, $base)) ? $base[$propname] : null);
 	}
 
+	/**
+	 * @brief Fetches a property from an URL.
+	 *
+	 * @param string $url
+	 * @return NULL|mixed
+	 */
 	function fetch_property($url) {
 		$redirects = 0;
 		if(! check_siteallowed($url)) {
@@ -155,44 +203,70 @@ class ActivityStreams {
 			return null;
 		}
 
-		$x = z_fetch_url($url,true,$redirects,
+		$x = z_fetch_url($url, true, $redirects,
 			['headers' => [ 'Accept: application/ld+json; profile="https://www.w3.org/ns/activitystreams", application/activity+json' ]]);
 		if($x['success'])
-			return json_decode($x['body'],true);
+			return json_decode($x['body'], true);
+
 		return null;
 	}
 
-	function get_compound_property($property,$base = '',$namespace = '') {
-		$x = $this->get_property_obj($property,$base,$namespace);
+	/**
+	 * @brief
+	 *
+	 * @param string $property
+	 * @param array $base
+	 * @param string $namespace (optional) default empty
+	 * @return NULL|mixed
+	 */
+	function get_compound_property($property, $base = '', $namespace = '') {
+		$x = $this->get_property_obj($property, $base, $namespace);
 		if($this->is_url($x)) {
-			$x = $this->fetch_property($x); 	
+			$x = $this->fetch_property($x);
 		}
+
 		return $x;
 	}
 
+	/**
+	 * @brief Check if string starts with http.
+	 *
+	 * @param string $url
+	 * @return boolean
+	 */
 	function is_url($url) {
-		if(($url) && (! is_array($url)) && (strpos($url,'http') === 0)) {
+		if(($url) && (! is_array($url)) && (strpos($url, 'http') === 0)) {
 			return true;
 		}
+
 		return false;
 	}
 
-	function get_primary_type($base = '',$namespace = '') {
+	/**
+	 * @brief Gets the type property.
+	 *
+	 * @param array $base
+	 * @param string $namespace (optional) default empty
+	 * @return NULL|mixed
+	 */
+	function get_primary_type($base = '', $namespace = '') {
 		if(! $base)
 			$base = $this->data;
-		$x = $this->get_property_obj('type',$base,$namespace);
+
+		$x = $this->get_property_obj('type', $base, $namespace);
 		if(is_array($x)) {
 			foreach($x as $y) {
-				if(strpos($y,':') === false) {
+				if(strpos($y, ':') === false) {
 					return $y;
 				}
 			}
 		}
+
 		return $x;
 	}
 
 	function debug() {
-		$x = var_export($this,true);
+		$x = var_export($this, true);
 		return $x;
 	}
 

@@ -33,19 +33,22 @@ use Zotlabs\Lib as Zlib;
  */
 class Permissions {
 
+	/**
+	 * @brief Permissions version.
+	 *
+	 * This must match the version in PermissionRoles.php before permission updates can run.
+	 *
+	 * @return number
+	 */
 	static public function version() {
-		// This must match the version in PermissionRoles.php before permission updates can run.
 		return 2;
 	}
 
 	/**
 	 * @brief Return an array with Permissions.
 	 *
-	 * @hooks permissions_list
-	 *   * \e array \b permissions
-	 *   * \e string \b filter
-	 * @param string $filter (optional) only passed to hook permission_list
-	 * @return Associative array with permissions and short description.
+	 * @param string $filter (optional) only passed to hook permissions_list
+	 * @return array Associative array with permissions and short description.
 	 */
 	static public function Perms($filter = '') {
 
@@ -74,6 +77,11 @@ class Permissions {
 			'permissions' => $perms,
 			'filter' => $filter
 		];
+		/**
+		 * @hooks permissions_list
+		 *   * \e array \b permissions
+		 *   * \e string \b filter
+		 */
 		call_hooks('permissions_list', $x);
 
 		return($x['permissions']);
@@ -84,9 +92,7 @@ class Permissions {
 	 *
 	 * e.g. you must be authenticated.
 	 *
-	 * @hooks write_perms
-	 *   * \e array \b permissions
-	 * @return Associative array with permissions and short description.
+	 * @return array Associative array with permissions and short description.
 	 */
 	static public function BlockedAnonPerms() {
 
@@ -99,6 +105,10 @@ class Permissions {
 		}
 
 		$x = ['permissions' => $res];
+		/**
+		 * @hooks write_perms
+		 *   * \e array \b permissions
+		 */
 		call_hooks('write_perms', $x);
 
 		return($x['permissions']);
@@ -138,7 +148,7 @@ class Permissions {
 	 * to [ 0 => ['name' => 'view_stream', 'value' => 1], ... ]
 	 *
 	 * @param array $arr associative perms array 'view_stream' => 1
-	 * @return Indexed array with elements that look like
+	 * @return array Indexed array with elements that look like
 	 *   * \e string \b name the perm name (e.g. view_stream)
 	 *   * \e int \b value the value of the perm (e.g. 1)
 	 */
@@ -197,11 +207,10 @@ class Permissions {
 	 * @brief
 	 *
 	 * @param int $channel_id A channel id
-	 * @return associative array
+	 * @return array Associative array with
 	 *   * \e array \b perms Permission array
 	 *   * \e int \b automatic 0 or 1
 	 */
-
 	static public function connect_perms($channel_id) {
 
 		$my_perms = [];

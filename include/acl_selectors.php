@@ -110,7 +110,7 @@ function fixacl(&$item) {
 *
 * @param array   $defaults Optional access control list for the initial state of the dialog.
 * @param boolean $show_jotnets Whether plugins for federated networks should be included in the permissions dialog
-* @param PermissionDescription $emptyACL_description - An optional description for the permission implied by selecting an empty ACL. Preferably an instance of PermissionDescription.
+* @param \Zotlabs\Lib\PermissionDescription $emptyACL_description - An optional description for the permission implied by selecting an empty ACL. Preferably an instance of PermissionDescription.
 * @param string  $dialog_description Optional message to include at the top of the dialog. E.g. "Warning: Post permissions cannot be changed once sent".
 * @param string  $context_help Allows the dialog to present a help icon. E.g. "acl_dialog_post"
 * @param boolean $readonly Not implemented yet. When implemented, the dialog will use acl_readonly.tpl instead, so that permissions may be viewed for posts that can no longer have their permissions changed.
@@ -172,7 +172,7 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 	if(count($allow_cid) === 1 && $channel && $allow_cid[0] = $channel['channel_hash'] && (! $allow_gid) && (! $deny_gid) && (! $deny_cid)) {
 		$just_me = true;
 		$custom = false;
-	}	
+	}
 
 	$r = q("SELECT id, profile_guid, profile_name from profile where is_default = 0 and uid = %d order by profile_name",
 		intval(local_channel())

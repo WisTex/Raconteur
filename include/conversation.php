@@ -162,6 +162,18 @@ function localize_item(&$item){
 			elseif(activity_match($item['verb'],ACTIVITY_DISLIKE)) {
 				$bodyverb = t('%1$s doesn\'t like %2$s\'s %3$s');
 			}
+
+			// short version, in notification strings the author will be displayed separately
+
+			if(activity_match($item['verb'],ACTIVITY_LIKE)) {
+				$shortbodyverb = t('likes %1$s\'s %2$s');
+			}
+			elseif(activity_match($item['verb'],ACTIVITY_DISLIKE)) {
+				$shortbodyverb = t('doesn\'t like %1$s\'s %2$s');
+			}
+
+			$item['shortlocalize'] = sprintf($shortbodyverb, $objauthor, $plink);
+
 			$item['body'] = $item['localize'] = sprintf($bodyverb, $author, $objauthor, $plink);
 			if($Bphoto != "") 
 				$item['body'] .= "\n\n\n" . '[zrl=' . chanlink_url($author_link) . '][zmg=80x80]' . $Bphoto . '[/zmg][/zrl]';

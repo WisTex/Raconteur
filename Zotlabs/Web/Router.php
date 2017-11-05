@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Web;
 
+use Exception;
+
 /**
  *
  * We have already parsed the server path into App::$argc and App::$argv
@@ -34,7 +36,7 @@ class Router {
 	private $controller = null;
 
 	/**
-	 * @brief Router constructor
+	 * @brief Router constructor.
 	 *
 	 * @param[in,out] App &$a
 	 * @throws Exception module not found
@@ -98,15 +100,23 @@ class Router {
 				}
 			}
 
-			/*
-			 * This provides a place for plugins to register module handlers which don't otherwise exist
-			 * on the system, or to completely over-ride an existing module.
-			 * If the plugin sets 'installed' to true we won't throw a 404 error for the specified module even if
-			 * there is no specific module file or matching plugin name.
-			 * The plugin should catch at least one of the module hooks for this URL.
+			$x = [
+					'module' => $module,
+					'installed' => \App::$module_loaded,
+					'controller' => $this->controller
+			];
+			/**
+			 * @hooks module_loaded
+			 *   Called when a module has been successfully locate to server a URL request.
+			 *   This provides a place for plugins to register module handlers which don't otherwise exist
+			 *   on the system, or to completely over-ride an existing module.
+			 *   If the plugin sets 'installed' to true we won't throw a 404 error for the specified module even if
+			 *   there is no specific module file or matching plugin name.
+			 *   The plugin should catch at least one of the module hooks for this URL.
+			 *   * \e string \b module
+			 *   * \e boolean \b installed
+			 *   * \e mixed \b controller - The initialized module object
 			 */
-
-			$x = array('module' => $module, 'installed' => \App::$module_loaded, 'controller' => $this->controller);
 			call_hooks('module_loaded', $x);
 			if($x['installed']) {
 				\App::$module_loaded = true;
@@ -131,14 +141,14 @@ class Router {
 					}
 				}
 
-				$x = [ 
-					'module' => $module, 
-					'installed' => \App::$module_loaded, 
+				$x = [
+					'module' => $module,
+					'installed' => \App::$module_loaded,
 					'controller' => $this->controller
 				];
 				call_hooks('page_not_found',$x);
 
-				// Stupid browser tried to pre-fetch our Javascript img template. 
+				// Stupid browser tried to pre-fetch our Javascript img template.
 				// Don't log the event or return anything - just quietly exit.
 
 				if((x($_SERVER, 'QUERY_STRING')) && preg_match('/{[0-9]}/', $_SERVER['QUERY_STRING']) !== 0) {
@@ -147,8 +157,8 @@ class Router {
 
 				if(get_config('system','log_404',true)) {
 					logger("Module {$module} not found.", LOGGER_DEBUG, LOG_WARNING);
-					logger('index.php: page not found: ' . $_SERVER['REQUEST_URI'] 
-						. ' ADDRESS: ' . $_SERVER['REMOTE_ADDR'] . ' QUERY: ' 
+					logger('index.php: page not found: ' . $_SERVER['REQUEST_URI']
+						. ' ADDRESS: ' . $_SERVER['REMOTE_ADDR'] . ' QUERY: '
 						. $_SERVER['QUERY_STRING'], LOGGER_DEBUG);
 				}
 

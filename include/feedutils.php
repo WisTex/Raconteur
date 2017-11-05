@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * @file include/feedutils.php
+ * @brief Some functions to work with XML feeds.
+ */
 
 /**
  * @brief Return an Atom feed for channel.
@@ -57,7 +60,6 @@ function get_public_feed($channel, $params) {
  * @param array $params
  * @return string with an atom feed
  */
-
 function get_feed_for($channel, $observer_hash, $params) {
 
 	if(! $channel)
@@ -105,12 +107,28 @@ function get_feed_for($channel, $observer_hash, $params) {
 	));
 
 
-	$x = [ 'xml' => $atom, 'channel' => $channel, 'observer_hash' => $observer_hash, 'params' => $params ];
-	call_hooks('atom_feed_top',$x);
+	$x = [
+			'xml' => $atom,
+			'channel' => $channel,
+			'observer_hash' => $observer_hash,
+			'params' => $params
+	];
+	/**
+	 * @hooks atom_feed_top
+	 *   * \e string \b xml - the generated feed and what will get returned from the hook
+	 *   * \e array \b channel
+	 *   * \e string \b observer_hash
+	 *   * \e array \b params
+	 */
+	call_hooks('atom_feed_top', $x);
 
 	$atom = $x['xml'];
 
-	// a much simpler interface
+	/**
+	 * @hooks atom_feed
+	 *   A much simpler interface than atom_feed_top.
+	 *   * \e string - the feed after atom_feed_top hook
+	 */
 	call_hooks('atom_feed', $atom);
 
 	$items = items_fetch(
@@ -135,11 +153,14 @@ function get_feed_for($channel, $observer_hash, $params) {
 			if($item['item_private'])
 				continue;
 
-			/** @BUG $owner is undefined in this call */
 			$atom .= atom_entry($item, $type, null, $owner, true, '', $params['compat']);
 		}
 	}
 
+	/**
+	 * @hooks atom_feed_end
+	 *   \e string - The created XML feed as a string without closing tag
+	 */
 	call_hooks('atom_feed_end', $atom);
 
 	$atom .= '</feed>' . "\r\n";
@@ -344,6 +365,7 @@ function get_atom_elements($feed, $item, &$author) {
 		}
 	}
 
+
 	// check for a yahoo media element (github etc.)
 
 	if(! $author['author_photo']) {
@@ -355,7 +377,6 @@ function get_atom_elements($feed, $item, &$author) {
 
 
 	// No photo/profile-link on the item - look at the feed level
-
 
 	if((! (x($author,'author_link'))) || (! (x($author,'author_photo')))) {
 		$rawauthor = $feed->get_feed_tags(SIMPLEPIE_NAMESPACE_ATOM_10,'author');
@@ -396,7 +417,7 @@ function get_atom_elements($feed, $item, &$author) {
 		// new style
 		$ostatus_conversation = normalise_id(unxmlify($rawcnv[0]['attribs']['']['ref']));
 		if(! $ostatus_conversation) {
-			// old style 
+			// old style
 			$ostatus_conversation = normalise_id(unxmlify($rawcnv[0]['data']));
 		}
 		if($ostatus_conversation) {
@@ -406,7 +427,7 @@ function get_atom_elements($feed, $item, &$author) {
 	}
 
 	$ostatus_protocol = (($ostatus_conversation) ? true : false);
-	
+
 	$mastodon = (($item->get_item_tags('http://mastodon.social/schema/1.0','scope')) ? true : false);
 	if($mastodon) {
 		$ostatus_protocol = true;
@@ -645,7 +666,7 @@ function get_atom_elements($feed, $item, &$author) {
 			$res['attach'][] = array('href' => $link, 'length' => $len, 'type' => $type, 'title' => $title );
 		}
 	}
-	
+
 
 	$rawobj = $item->get_item_tags(NAMESPACE_ACTIVITY, 'object');
 
@@ -723,7 +744,6 @@ function get_atom_elements($feed, $item, &$author) {
 		$res['target'] = $obj;
 	}
 
-	
 
 	if(array_key_exists('verb',$res) && $res['verb'] === ACTIVITY_SHARE
 		&& array_key_exists('obj_type',$res) && in_array($res['obj_type'], [ ACTIVITY_OBJ_NOTE, ACTIVITY_OBJ_COMMENT, ACTIVITY_OBJ_ACTIVITY ] )) {
@@ -737,7 +757,13 @@ function get_atom_elements($feed, $item, &$author) {
 			'author' => $author,
 			'result' => $res
 	];
-
+	/**
+	 * @hooks parse_atom
+	 *    * \e SimplePie \b feed - The original SimplePie feed
+	 *    * \e array \b item
+	 *    * \e array \b author
+	 *    * \e array \b result - the result array that will also get returned
+	 */
 	call_hooks('parse_atom', $arr);
 
 	logger('author: ' .print_r($arr['author'], true), LOGGER_DATA);
@@ -782,7 +808,7 @@ function feed_get_reshare(&$res,$item) {
 			$share['avatar'] = z_root() . '/' . get_default_profile_photo(80);
 		if(! $share['profile'])
 			$share['profile'] = z_root();
-	
+
 		$child = $rawobj[0]['child'];
 
 
@@ -809,7 +835,7 @@ function feed_get_reshare(&$res,$item) {
 				$body = html2bbcode($body);
 			}
 		}
-	
+
 		$attach = $share['links'];
 
 		if($attach) {
@@ -845,16 +871,16 @@ function feed_get_reshare(&$res,$item) {
 				}
 			}
 		}
-	
+
 		if((! $body) && ($share['alternate'])) {
 			$body = $share['alternate'];
-		}			
+		}
 
-		$res['body'] = "[share author='" . urlencode($share['author']) . 
+		$res['body'] = "[share author='" . urlencode($share['author']) .
 			"' profile='"    . $share['profile'] .
 			"' avatar='"     . $share['avatar']  .
 			"' link='"       . $share['alternate']    .
-			"' posted='"     . $share['created'] . 
+			"' posted='"     . $share['created'] .
 			"' message_id='" . $share['message_id'] . "']";
 
 		$res['body'] .= $body;
@@ -862,7 +888,6 @@ function feed_get_reshare(&$res,$item) {
 	}
 
 }
-
 
 
 /**
@@ -940,7 +965,7 @@ function process_feed_tombstones($feed,$importer,$contact,$pass) {
  *
  * @param string $xml
  *   The (atom) feed to consume - RSS isn't as fully supported but may work for simple feeds.
- * @param $importer
+ * @param array $importer
  *   The contact_record (joined to user_record) of the local user who owns this
  *   relationship. It is this person's stuff that is going to be updated.
  * @param[in,out] array $contact
@@ -1103,7 +1128,7 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 				// Update content if 'updated' changes
 
 				if($r) {
-					if(activity_match($datarray['verb'],ACTIVITY_DELETE) 
+					if(activity_match($datarray['verb'],ACTIVITY_DELETE)
 						&& $datarray['author_xchan'] === $r[0]['author_xchan']) {
 						if(! intval($r[0]['item_deleted'])) {
 							logger('deleting item ' . $r[0]['id'] . ' mid=' . $datarray['mid'], LOGGER_DEBUG);
@@ -1147,6 +1172,7 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 						$datarray['parent_mid'] = $pmid;
 					}
 				}
+
 				if(($item_parent_mid) && (! $pmid)) {
 					logger('find_parent: matched in-reply-to: ' . $parent_mid, LOGGER_DEBUG);
 					$pmid = $item_parent_mid[0]['parent_mid'];
@@ -1172,7 +1198,7 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 								dbesc($parent_mid),
 								intval($importer['channel_id'])
 							);
-				
+
 							if($x) {
 								$item_parent_mid = $x;
 								$pmid = $x[0]['parent_mid'];
@@ -1205,7 +1231,7 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 					);
 					if($r) {
 						$parent_item = $r[0];
-						if(intval($parent_item['item_nocomment']) || $parent_item['comment_policy'] === 'none' 
+						if(intval($parent_item['item_nocomment']) || $parent_item['comment_policy'] === 'none'
 							|| ($parent_item['comments_closed'] > NULL_DATE && $parent_item['comments_closed'] < datetime_convert())) {
 							logger('comments disabled for post ' . $parent_item['mid']);
 							continue;
@@ -1215,7 +1241,7 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 					$allowed = false;
 
 					if($parent_item) {
-						if($parent_item['owner_xchan'] == $importer['channel_hash']) 
+						if($parent_item['owner_xchan'] == $importer['channel_hash'])
 							$allowed = perm_is_allowed($importer['channel_id'],$contact['xchan_hash'],'post_comments');
 						else
 							$allowed = true;
@@ -1230,16 +1256,17 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 						// interactive feeds (such as OStatus) downstream to our followers
 						// We do not want to set it for non-interactive feeds or conversations we do not own
 
-						if(array_key_exists('send_downstream',$importer) && intval($importer['send_downstream']) 
+						if(array_key_exists('send_downstream',$importer) && intval($importer['send_downstream'])
 							&& ($parent_item['owner_xchan'] == $importer['channel_hash'])) {
 							$send_downstream = true;
 						}
 					}
 					else {
 						if((! perm_is_allowed($importer['channel_id'],$contact['xchan_hash'],'send_stream')) && (! $importer['system'])) {
-							// @fixme check for and process ostatus autofriend
-							// otherwise 
-
+							/**
+							 * @fixme check for and process ostatus autofriend
+							 * otherwise ignore this author.
+							 */
 							logger('Ignoring this author.');
 							continue;
 						}
@@ -1249,13 +1276,13 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 
 					// immediate parent wasn't found. Turn into a top-level post if permissions allow
 					// but save the thread_parent in case we need to refer to it later.
-  
+
 					if(! post_is_importable($datarray, $contact))
 						continue;
+
 					$datarray['parent_mid'] = $datarray['mid'];
 					set_iconfig($datarray,'system','parent_mid',$parent_mid,true);
 				}
-				
 
 				// allow likes of comments
 
@@ -1304,7 +1331,6 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 					$datarray['public_policy'] = 'specific';
 					$datarray['comment_policy'] = 'none';
 				}
-
 
 
 				// if we have everything but a photo, provide the default profile photo
@@ -1364,7 +1390,7 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 				// Update content if 'updated' changes
 
 				if($r) {
-					if(activity_match($datarray['verb'],ACTIVITY_DELETE) 
+					if(activity_match($datarray['verb'],ACTIVITY_DELETE)
 						&& $datarray['author_xchan'] === $r[0]['author_xchan']) {
 						if(! intval($r[0]['item_deleted'])) {
 							logger('deleting item ' . $r[0]['id'] . ' mid=' . $datarray['mid'], LOGGER_DEBUG);
@@ -1426,12 +1452,12 @@ function feed_conversation_fetch($importer,$contact,$parent_link) {
 	// GNU-Social flavoured feeds
 	if(strpos($parent_link,'/notice/')) {
 		$link = str_replace('/notice/','/api/statuses/show/',$parent_link) . '.atom';
-	} 
+	}
 
 	// Mastodon flavoured feeds
 	if(strpos($parent_link,'/users/') && strpos($parent_link,'/updates/')) {
 		$link = $parent_link . '.atom';
-	} 
+	}
 
 	if(! $link)
 		return false;
@@ -1446,20 +1472,20 @@ function feed_conversation_fetch($importer,$contact,$parent_link) {
 	$data = $fetch['body'];
 
 	// We will probably receive an atom 'entry' and not an atom 'feed'. Unfortunately
-	// our parser is a bit strict about compliance so we'll insert just enough of a feed 
-	// tag to trick it into believing it's a compliant feed. 
+	// our parser is a bit strict about compliance so we'll insert just enough of a feed
+	// tag to trick it into believing it's a compliant feed.
 
 	if(! strstr($data,'<feed')) {
-		$data = str_replace('<entry ','<feed xmlns="http://www.w3.org/2005/Atom"><entry ',$data); 
+		$data = str_replace('<entry ','<feed xmlns="http://www.w3.org/2005/Atom"><entry ',$data);
 		$data .= '</feed>';
-	} 
- 
+	}
+
 	consume_feed($data,$importer,$contact,1);
 	consume_feed($data,$importer,$contact,2);
 
 	return true;
-	
 }
+
 
 /**
  * @brief Normalise an id.
@@ -1479,7 +1505,7 @@ function normalise_id($id) {
  *
  * @param string $xml
  *   The (atom) feed to consume - RSS isn't as fully supported but may work for simple feeds.
- * @param $importer
+ * @param array $importer (unused)
  *   The contact_record (joined to user_record) of the local user who owns this
  *   relationship. It is this person's stuff that is going to be updated.
  */
@@ -1617,6 +1643,7 @@ function feed_meta($xml) {
 	return $ret;
 }
 
+
 /**
  * @brief Not yet implemented function to update feed item.
  *
@@ -1626,6 +1653,7 @@ function feed_meta($xml) {
 function update_feed_item($uid, $datarray) {
 	item_store_update($datarray);
 }
+
 
 /**
  * @brief Fetch the content of a feed and further consume it.
@@ -1659,11 +1687,10 @@ function handle_feed($uid, $abook_id, $url) {
 	}
 }
 
+
 /**
  * @brief Return a XML tag with author information.
  *
- * @hooks \b atom_author Possibility to add further tags to returned XML string
- *   * \e string The created XML tag as a string without closing tag
  * @param string $tag The XML tag to create
  * @param string $nick preferred username
  * @param string $name displayed name of the author
@@ -1672,7 +1699,7 @@ function handle_feed($uid, $abook_id, $url) {
  * @param int $w image width
  * @param string $type profile photo mime type
  * @param string $photo Fully qualified URL to a profile/avator photo
- * @return string
+ * @return string XML tag
  */
 function atom_author($tag, $nick, $name, $uri, $h, $w, $type, $photo) {
 	$o = '';
@@ -1695,6 +1722,11 @@ function atom_author($tag, $nick, $name, $uri, $h, $w, $type, $photo) {
 	$o .= '  <poco:preferredUsername>' . $nick . '</poco:preferredUsername>' . "\r\n";
 	$o .= '  <poco:displayName>' . $name . '</poco:displayName>' . "\r\n";
 
+	/**
+	 * @hooks atom_author
+	 *  Possibility to add further tags to returned XML string
+	 *   * \e string - The created XML tag as a string without closing tag
+	 */
 	call_hooks('atom_author', $o);
 
 	$o .= "</$tag>\r\n";
@@ -1703,17 +1735,23 @@ function atom_author($tag, $nick, $name, $uri, $h, $w, $type, $photo) {
 }
 
 
-function atom_render_author($tag,$xchan) {
+/**
+ * @brief Return an atom tag with author information from an xchan.
+ *
+ * @param string $tag
+ * @param array $xchan
+ * @return string
+ */
+function atom_render_author($tag, $xchan) {
 
-	
-	$nick = xmlify(substr($xchan['xchan_addr'],0,strpos($xchan['xchan_addr'],'@')));
+	$nick = xmlify(substr($xchan['xchan_addr'], 0, strpos($xchan['xchan_addr'], '@')));
 	$id   = xmlify($xchan['xchan_url']);
 	$name = xmlify($xchan['xchan_name']);
 	$photo = xmlify($xchan['xchan_photo_l']);
 	$type = xmlify($xchan['xchan_photo_mimetype']);
 	$w = $h = 300;
 
-	$o .= "<$tag>\r\n";
+	$o = "<$tag>\r\n";
 	$o .= "  <as:object-type>http://activitystrea.ms/schema/1.0/person</as:object-type>\r\n";
 	$o .= "  <id>$id</id>\r\n";
 	$o .= "  <name>$nick</name>\r\n";
@@ -1724,13 +1762,16 @@ function atom_render_author($tag,$xchan) {
 	$o .= '  <poco:preferredUsername>' . $nick . '</poco:preferredUsername>' . "\r\n";
 	$o .= '  <poco:displayName>' . $name . '</poco:displayName>' . "\r\n";
 
+	/**
+	 * @hooks atom_render_author
+	 *   Possibility to add further tags to returned XML string.
+	 *   * \e string The created XML tag as a string without closing tag
+	 */
 	call_hooks('atom_render_author', $o);
 
 	$o .= "</$tag>\r\n";
 
 	return $o;
-
-
 }
 
 function compat_photos_list($s) {
@@ -1740,7 +1781,7 @@ function compat_photos_list($s) {
 	$found = preg_match_all('/\[[zi]mg(.*?)\](.*?)\[/ism',$s,$matches,PREG_SET_ORDER);
 
 	if($found) {
-		foreach($matches as $match) {			
+		foreach($matches as $match) {
 			$ret[] = [
 				'href' => $match[2],
 				'length' => 0,
@@ -1754,7 +1795,6 @@ function compat_photos_list($s) {
 }
 
 
-
 /**
  * @brief Create an item for the Atom feed.
  *
@@ -1766,10 +1806,10 @@ function compat_photos_list($s) {
  * @param array $owner
  * @param string $comment default false
  * @param number $cid default 0
+ * @param boolean $compat default false
  * @return void|string
  */
 function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $compat = false) {
-
 
 	if(! $item['parent'])
 		return;
@@ -1922,9 +1962,17 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
 		'abook_id' => $cid,
 		'entry'    => $o
 	];
-
+	/**
+	 * @hooks atom_entry
+	 *   * \e array \b item
+	 *   * \e string \b type
+	 *   * \e array \b author
+	 *   * \e array \b owner
+	 *   * \e string \b comment
+	 *   * \e number \b abook_id
+	 *   * \e string \b entry - The generated entry and what will get returned
+	 */
 	call_hooks('atom_entry', $x);
 
 	return $x['entry'];
 }
-

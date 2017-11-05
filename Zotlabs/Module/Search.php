@@ -56,8 +56,7 @@ class Search extends \Zotlabs\Web\Controller {
 
 		$static = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
 	
-		if((! local_channel()) || (! feature_enabled(local_channel(),'savedsearch')))
-			$o .= search($search,'search-box','/search',((local_channel()) ? true : false));
+		$o .= search($search,'search-box','/search',((local_channel()) ? true : false));
 	
 		if(strpos($search,'#') === 0) {
 			$tag = true;
