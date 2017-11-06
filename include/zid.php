@@ -103,25 +103,14 @@ function strip_zats($s) {
 	return preg_replace('/[\?&]zat=(.*?)(&|$)/ism','$2',$s);
 }
 
-function strip_auth_query_params() {
-
-		$_SERVER['QUERY_STRING'] = str_replace(array('?f=', '&f='), array('', ''), $_SERVER['QUERY_STRING']);
-		$_SERVER['QUERY_STRING'] = strip_zids($_SERVER['QUERY_STRING']);
-		$_SERVER['QUERY_STRING'] = strip_owt($_SERVER['QUERY_STRING']);
-
-		$_SERVER['REQUEST_URI'] = str_replace(array('?f=', '&f='), array('', ''), $_SERVER['REQUEST_URI']);
-		$_SERVER['REQUEST_URI'] = strip_zids($_SERVER['REQUEST_URI']);
-		$_SERVER['REQUEST_URI'] = strip_owt($_SERVER['REQUEST_URI']);
 
 
-		$_ENV['QUERY_STRING'] = str_replace(array('?f=', '&f='), array('', ''), $_ENV['QUERY_STRING']);
-		$_ENV['QUERY_STRING'] = strip_zids($_ENV['QUERY_STRING']);
-		$_ENV['QUERY_STRING'] = strip_owt($_ENV['QUERY_STRING']);
+function clean_query_string() {
+	$x = strip_zids(\App::$query_string);
+	$x = strip_owt($x);
+	$x = strip_zats($x);
 
-		$_ENV['REQUEST_URI'] = str_replace(array('?f=', '&f='), array('', ''), $_ENV['REQUEST_URI']);
-		$_ENV['REQUEST_URI'] = strip_zids($_ENV['REQUEST_URI']);
-		$_ENV['REQUEST_URI'] = strip_owt($_ENV['REQUEST_URI']);
-
+	return strip_query_param($x,'f');
 }
 
 

@@ -925,6 +925,7 @@ class App {
 		 */
 
 		self::$argv = explode('/', self::$cmd);
+
 		self::$argc = count(self::$argv);
 		if ((array_key_exists('0', self::$argv)) && strlen(self::$argv[0])) {
 			if(strpos(self::$argv[0],'.')) {
