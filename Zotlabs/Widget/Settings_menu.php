@@ -107,7 +107,7 @@ class Settings_menu {
 		if($role === false || $role === 'custom') {
 			$tabs[] = array(
 				'label' => t('Connection Default Permissions'),
-				'url' => z_root() . '/connedit/' . $abook_self_id,
+				'url' => z_root() . '/defperms',
 				'selected' => ''
 			);
 		}

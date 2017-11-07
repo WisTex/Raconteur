@@ -977,6 +977,11 @@ a .drop-icons:hover {
 	color: #FF0000;
 }
 
+.perm-inherited {
+	color: #FF0000;
+}
+
+
 #menulist {
 	list-style-type: none;
 }
@@ -1638,6 +1643,17 @@ dl.bb-dl > dd > li {
     right: 0px;
     background-color: #0275d8;
 }
+
+
+.form-group.checkbox > div > input:disabled + label .onoffswitch-switch {
+    background-color: red;
+	border-radius: 3px;
+	opacity: 0.3;
+	filter:alpha(opacity=30);
+
+}
+
+
 
 .help-searchlist {
 	list-style-type: none;
