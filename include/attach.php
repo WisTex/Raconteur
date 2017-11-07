@@ -947,9 +947,9 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 	}
 
 	if($notify) {
-		//$cloudPath =  z_root() . '/cloud/' . $channel['channel_address'] . '/' . $r['0']['display_path'];
-		//$object = get_file_activity_object($channel['channel_id'], $r['0']['hash'], $cloudPath);
-		//file_activity($channel['channel_id'], $object, $r['0']['allow_cid'], $r['0']['allow_gid'], $r['0']['deny_cid'], $r['0']['deny_gid'], 'post', $notify);
+		$cloudPath =  z_root() . '/cloud/' . $channel['channel_address'] . '/' . $r['0']['display_path'];
+		$object = get_file_activity_object($channel['channel_id'], $r['0']['hash'], $cloudPath);
+		file_activity($channel['channel_id'], $object, $r['0']['allow_cid'], $r['0']['allow_gid'], $r['0']['deny_cid'], $r['0']['deny_gid'], 'post', $notify);
 	}
 
 	return $ret;
@@ -1421,7 +1421,7 @@ function attach_delete($channel_id, $resource, $is_photo = 0) {
 		intval($channel_id)
 	);
 
-	file_activity($channel_id, $object, $object['allow_cid'], $object['allow_gid'], $object['deny_cid'], $object['deny_gid'], 'update', $notify=1);
+	file_activity($channel_id, $object, $object['allow_cid'], $object['allow_gid'], $object['deny_cid'], $object['deny_gid'], 'update', true);
 
 	return;
 }

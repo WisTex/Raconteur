@@ -219,7 +219,7 @@ class Ping extends \Zotlabs\Web\Controller {
 						intval(local_channel())
 					);
 					break;
-				case 'messages':
+				case 'mail':
 					$r = q("update mail set mail_seen = 1 where mail_seen = 0 and channel_id = %d ",
 						intval(local_channel())
 					);
