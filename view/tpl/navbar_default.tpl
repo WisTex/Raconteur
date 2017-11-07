@@ -17,8 +17,8 @@
 </div>
 {{/if}}
 {{if $userinfo}}
-<div class="dropdown usermenu">
-	<div class="fakelink" data-toggle="dropdown">
+<div class="dropdown">
+	<div class="fakelink usermenu" data-toggle="dropdown">
 		<img id="avatar" src="{{$userinfo.icon}}" alt="{{$userinfo.name}}">
 		<i class="fa fa-caret-down"></i>
 	</div>
@@ -60,7 +60,13 @@
 	{{/if}}
 </div>
 <div class="navbar-nav mr-auto">
-	<div><a id="nav-app-link" href="{{$url}}" class="nav-link">{{$sel.name}}</a></div>
+	<a id="nav-app-link" href="{{$url}}" class="nav-link" style="padding: .175rem;{{if $sitelocation}} line-height: 1; height:2.35rem;{{/if}}">
+		{{$sel.name}}
+		{{if $sitelocation}}
+		<br>
+		<small class="text-muted">{{$sitelocation}}</small>
+		{{/if}}
+	</a>
 </div>
 {{/if}}
 <div class="navbar-toggler-right">
