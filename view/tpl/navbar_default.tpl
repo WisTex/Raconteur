@@ -60,11 +60,10 @@
 	{{/if}}
 </div>
 <div class="navbar-nav mr-auto">
-	<a id="nav-app-link" href="{{$url}}" class="nav-link" style="padding: .175rem;{{if $sitelocation}} line-height: 1; height:2.35rem;{{/if}}">
+	<a id="nav-app-link" href="{{$url}}" class="nav-link">
 		{{$sel.name}}
 		{{if $sitelocation}}
-		<br>
-		<small class="text-muted">{{$sitelocation}}</small>
+		<br><small>{{$sitelocation}}</small>
 		{{/if}}
 	</a>
 </div>

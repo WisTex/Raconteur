@@ -1255,6 +1255,11 @@ img.mail-conv-sender-photo {
 	border-radius: $radius;
 }
 
+#nav-app-link {
+	padding: 0 !important;
+	line-height: 1.175;
+}
+
 .page-title {
 	margin: 7px 0px;
 }
