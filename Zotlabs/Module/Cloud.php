@@ -59,19 +59,10 @@ class Cloud extends \Zotlabs\Web\Controller {
 
 		// if we arrived at this path with any query parameters in the url, build a clean url without
 		// them and redirect.
-		// @fixme if the filename has an ampersand in it AND there are query parameters, 
-		// this may not do the right thing. 
 
-		if((strpos($_SERVER['QUERY_STRING'],'?') !== false) || (strpos($_SERVER['QUERY_STRING'],'&') !== false && strpos($_SERVER['QUERY_STRING'],'&amp;') === false)) {
-			$path = z_root();
-			if(argc()) {
-				foreach(\App::$argv as $a) {
-					$path .= '/' . $a;
-				}
-			}
-			goaway($path);
-		}
-
+		$x = clean_query_string();
+		if($x !== \App::$query_string)
+			goaway(z_root() . '/' . $x);
 
 		$rootDirectory = new \Zotlabs\Storage\Directory('/', $auth);
 
@@ -92,16 +83,17 @@ class Cloud extends \Zotlabs\Web\Controller {
 		$server->addPlugin($browser);
 
 		// Experimental QuotaPlugin
-	//	require_once('\Zotlabs\Storage/QuotaPlugin.php');
-	//	$server->addPlugin(new \Zotlabs\Storage\\QuotaPlugin($auth));
+		//	require_once('\Zotlabs\Storage/QuotaPlugin.php');
+		//	$server->addPlugin(new \Zotlabs\Storage\\QuotaPlugin($auth));
 
-//		ob_start();
+
 		// All we need to do now, is to fire up the server
+
 		$server->exec();
 
-//		ob_end_flush();
 		if($browser->build_page)
 			construct_page();
+		
 		killme();
 	}
 

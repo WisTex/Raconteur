@@ -102,7 +102,7 @@ class Directory extends \Zotlabs\Web\Controller {
 			$common = array();
 			$index = 0;
 			foreach($r as $rr) {
-				$common[$rr['xchan_addr']] = $rr['total'];
+				$common[$rr['xchan_addr']] = ((intval($rr['total']) > 0) ? intval($rr['total']) - 1 : 0);
 				$addresses[$rr['xchan_addr']] = $index++;
 			}
 	
@@ -334,7 +334,7 @@ class Directory extends \Zotlabs\Web\Controller {
 								'ignlink' => $suggest ? z_root() . '/directory?ignore=' . $rr['hash'] : '',
 								'ignore_label' => t('Don\'t suggest'),
 								'common_friends' => (($common[$rr['address']]) ? intval($common[$rr['address']]) : ''),
-								'common_label' => t('Common connections:'),
+								'common_label' => t('Common connections (estimated):'),
 								'common_count' => intval($common[$rr['address']]),
 								'safe' => $safe_mode
 							);

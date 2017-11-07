@@ -233,6 +233,7 @@ class Browser extends DAV\Browser\Plugin {
 			$f[] = $ft;
 		}
 
+
 		$output = '';
 		if ($this->enablePost) {
 			$this->server->emit('onHTMLActionsPanel', array($parent, &$output, $path));

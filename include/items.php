@@ -230,6 +230,7 @@ function can_comment_on_post($observer_xchan, $item) {
 	$x = [
 			'observer_hash' => $observer_xchan,
 			'item' => $item,
+			'allowed' => 'unset'
 	];
 	/**
 	 * @hooks can_comment_on_post
