@@ -440,10 +440,10 @@ function channel_apps($is_owner = false, $nickname = null) {
 
 	if($p['view_stream'] && $cal_link) {
 		$tabs[] = [
-			'label' => t('Events'),
+			'label' => t('Calendar'),
 			'url'   => z_root() . $cal_link,
-			'sel'   => ((argv(0) == 'cal' || argv(0) == 'events') ? 'active' : ''),
-			'title' => t('Events'),
+			'sel'   => ((argv(0) == 'cal') ? 'active' : ''),
+			'title' => t('Calendar'),
 			'id'    => 'event-tab',
 			'icon'  => 'calendar'
 		];
