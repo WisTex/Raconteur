@@ -159,7 +159,7 @@ class Defperms extends \Zotlabs\Web\Controller {
 			build_sync_packet(0 /* use the current local_channel */, array('abook' => array($clone)));
 	}
 	
-	/* @brief Generate content of connection edit page
+	/* @brief Generate content of connection default permissions page
 	 *
 	 *
 	 */
