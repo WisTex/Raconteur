@@ -19,10 +19,11 @@
 Thumbs.db
 
 
-## Ignore RedMatrix site specific files and folders
+## Ignore site specific files and folders
 .htconfig.php
 favicon.*
 addon/
+widget/
 custom/
 /store/
 # site apps
