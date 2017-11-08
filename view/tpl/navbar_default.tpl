@@ -59,8 +59,8 @@
 	</div>
 	{{/if}}
 </div>
-<div class="navbar-nav mr-auto">
-	<a id="nav-app-link" href="{{$url}}" class="nav-link">
+<div id="nav-app-link-wrapper" class="navbar-nav mr-auto">
+	<a id="nav-app-link" href="{{$url}}" class="nav-link text-truncate">
 		{{$sel.name}}
 		{{if $sitelocation}}
 		<br><small>{{$sitelocation}}</small>
