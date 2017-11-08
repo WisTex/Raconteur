@@ -59,16 +59,16 @@
 	</div>
 	{{/if}}
 </div>
+{{if $sel.name}}
 <div id="nav-app-link-wrapper" class="navbar-nav mr-auto">
-	{{if $sel.name}}
 	<a id="nav-app-link" href="{{$url}}" class="nav-link text-truncate">
 		{{$sel.name}}
 		{{if $sitelocation}}
 		<br><small class="text-muted">{{$sitelocation}}</small>
 		{{/if}}
 	</a>
-	{{/if}}
 </div>
+{{/if}}
 {{/if}}
 <div class="navbar-toggler-right">
 	{{if $nav.help.6}}
