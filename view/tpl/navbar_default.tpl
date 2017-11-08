@@ -63,7 +63,7 @@
 	<a id="nav-app-link" href="{{$url}}" class="nav-link text-truncate">
 		{{$sel.name}}
 		{{if $sitelocation}}
-		<br><small>{{$sitelocation}}</small>
+		<br><small class="text-muted">{{$sitelocation}}</small>
 		{{/if}}
 	</a>
 </div>
