@@ -264,6 +264,7 @@ function change_channel($change_channel) {
 			App::set_channel($r[0]);
 			$_SESSION['theme'] = $r[0]['channel_theme'];
 			$_SESSION['mobile_theme'] = get_pconfig(local_channel(),'system', 'mobile_theme');
+			$_SESSION['cloud_tiles'] = get_pconfig(local_channel(),'system', 'cloud_tiles');
 			date_default_timezone_set($r[0]['channel_timezone']);
 			$ret = $r[0];
 		}
