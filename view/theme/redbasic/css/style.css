@@ -161,10 +161,6 @@ nav {
 	filter:alpha(opacity=$nav_percent_min_opacity);
 }
 
-#nav-app-link {
-	white-space: nowrap;
-}
-
 #powered-by {
 	font-size: 0.5rem;
 	position: absolute;
@@ -1260,6 +1256,12 @@ img.mail-conv-sender-photo {
 	border-radius: $radius;
 }
 
+#nav-app-link {
+	padding: 0 !important;
+	line-height: 1.175;
+	white-space: nowrap;
+}
+
 .page-title {
 	margin: 7px 0px;
 }
@@ -1495,6 +1497,11 @@ blockquote {
 
 	main.region_1-on {
 		left: 0px;
+	}
+
+	#nav-app-link-wrapper {
+		min-width: 0;
+		flex-basis: 25%;
 	}
 
 }

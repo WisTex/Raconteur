@@ -27,6 +27,8 @@ function nav($template = 'default') {
 </script>
 EOT;
 
+	$is_owner = (((local_channel()) && ((App::$profile_uid == local_channel()) || (App::$profile_uid == 0))) ? true : false);
+
 	if(local_channel()) {
 		$channel = App::get_channel();
 		$observer = App::get_observer();
@@ -39,17 +41,17 @@ EOT;
 				intval(get_account_id())
 			);
 		}
+		$sitelocation = (($is_owner) ? '' : App::$profile['reddress']);
 	}
-	elseif(remote_channel())
+	elseif(remote_channel()) {
 		$observer = App::get_observer();
+		$sitelocation = ((App::$profile['reddress']) ? App::$profile['reddress'] : '@' . App::get_hostname());
+	}
 
 	require_once('include/conversation.php');
-	$is_owner = (((local_channel()) && ((App::$profile_uid == local_channel()) || (App::$profile_uid == 0))) ? true : false);
+
 	$channel_apps[] = channel_apps($is_owner, App::$profile['channel_address']);
 
-	$myident = (($channel) ? $channel['xchan_addr'] : '');
-		
-	$sitelocation = (($myident) ? $myident : App::get_hostname());
 
 	/**
 	 *
@@ -438,10 +440,10 @@ function channel_apps($is_owner = false, $nickname = null) {
 
 	if($p['view_stream'] && $cal_link) {
 		$tabs[] = [
-			'label' => t('Events'),
+			'label' => t('Calendar'),
 			'url'   => z_root() . $cal_link,
-			'sel'   => ((argv(0) == 'cal' || argv(0) == 'events') ? 'active' : ''),
-			'title' => t('Events'),
+			'sel'   => ((argv(0) == 'cal') ? 'active' : ''),
+			'title' => t('Calendar'),
 			'id'    => 'event-tab',
 			'icon'  => 'calendar'
 		];
