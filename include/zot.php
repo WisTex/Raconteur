@@ -2010,8 +2010,7 @@ function update_imported_item($sender, $item, $orig, $uid, $tag_delivery) {
 	// may have a different owner than the one being transmitted.
 
 	if(($sender['hash'] != $orig['owner_xchan'] && $sender['hash'] != $orig['author_xchan']) && (! $tag_delivery)) {
-		/// @fixme shouldn't this be logger?
-		notice('sender is not owner or author');
+		logger('sender is not owner or author');
 		return;
 	}
 
