@@ -1,6 +1,8 @@
 /**
  * redbasic theme specific JavaScript
  */
+
+var notifications_parent;
 $(document).ready(function() {
 
 	// CSS3 calc() fallback (for unsupported browsers)
@@ -82,7 +84,7 @@ $(document).ready(function() {
 		}
 	});
 
-	var notifications_parent = $('#notifications_wrapper')[0].parentElement.id;
+	notifications_parent = $('#notifications_wrapper')[0].parentElement.id;
 	$('#notifications-btn').click(function() {
 		if($('#notifications_wrapper').hasClass('fs'))
 			$('#notifications_wrapper').prependTo('#' + notifications_parent);

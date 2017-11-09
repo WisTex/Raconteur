@@ -750,6 +750,7 @@ function collapseHeight() {
 }
 
 function liveUpdate() {
+
 	if(typeof profile_uid === 'undefined') profile_uid = false; /* Should probably be unified with channelId defined in head.tpl */
 	if((src === null) || (stopped) || (! profile_uid)) { $('.like-rotator').hide(); return; }
 	if(($('.comment-edit-text.expanded').length) || (in_progress)) {
@@ -790,7 +791,6 @@ function liveUpdate() {
 		update_mode = 'update';
 		var orgHeight = $("#region_2").height();
 	}
-
 
 	var dstart = new Date();
 	console.log('LOADING data...');
@@ -959,9 +959,9 @@ function notify_popup_loader(notifyType) {
 		$("." + notifyType + "-update").html(data.notify.length);
 
 		$(data.notify).each(function() {
-			html = navbar_notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass);
+			html = navbar_notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,notifyType == 'pubs' ? 'undefined' : this.b64mid);
 			$("#navbar-" + notifyType + "-menu").append(html);
-			html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass);
+			html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,notifyType == 'pubs' ? 'undefined' : this.b64mid);
 			$("#nav-" + notifyType + "-menu").append(html);
 		});
 

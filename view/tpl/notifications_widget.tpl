@@ -26,11 +26,36 @@
 	}
 </style>
 
+{{if $module == 'display'}}
+<script>
+	$(document).on('click', '.notification', function(e) {
+		var b64mid = $(this).data('b64mid');
+
+		console.log(b64mid);
+
+		if(b64mid !== 'undefined') {
+			e.preventDefault();
+			e.stopPropagation();
+
+			$('.thread-wrapper').remove();
+			$(this).fadeOut();
+			bParam_mid = b64mid;
+			mode = 'replace';
+			page_load = true;
+			liveUpdate();
+
+			if($('#notifications_wrapper').hasClass('fs'))
+				$('#notifications_wrapper').prependTo('#' + notifications_parent).removeClass('fs'); //var notifications_parent is defined in redbasic.js
+		}
+	});
+</script>
+{{/if}}
+
 {{if $notifications}}
 <div id="notifications_wrapper">
 	<div id="notifications" class="navbar-nav" data-children=".nav-item">
 		<div id="nav-notifications-template" rel="template">
-			<a class="list-group-item clearfix notification {5}" href="{0}" title="{2} {3}">
+			<a class="list-group-item clearfix notification {5}" href="{0}" title="{2} {3}" data-b64mid="{6}">
 				<img class="menu-img-3" data-src="{1}">
 				<span class="contactname">{2}</span>
 				<span class="dropdown-sub-text">{3}<br>{4}</span>
