@@ -494,7 +494,7 @@ class Wiki extends \Zotlabs\Web\Controller {
 				return; //not reached
 			}
 
-			$wiki = Zlib\NativeWiki::exists_by_name($owner['channel_id'], $arr['urlName']);
+			$wiki = Zlib\NativeWiki::exists_by_name($owner['channel_id'], urldecode($arr['urlName']));
 
 			if($wiki['resource_id']) {
 
