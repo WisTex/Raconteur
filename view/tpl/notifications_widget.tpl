@@ -29,17 +29,16 @@
 {{if $module == 'display'}}
 <script>
 	$(document).on('click', '.notification', function(e) {
-		var b64mid = $(this).data('b64mid');
+		var mid = $(this)[0].pathname.substr(9);
+		var path = $(this)[0].pathname.substr(1,7);
 
-		console.log(b64mid);
-
-		if(b64mid !== 'undefined') {
+		if(path === 'display' && mid) {
 			e.preventDefault();
 			e.stopPropagation();
 
 			$('.thread-wrapper').remove();
 			$(this).fadeOut();
-			bParam_mid = b64mid;
+			bParam_mid = mid;
 			mode = 'replace';
 			page_load = true;
 			liveUpdate();
@@ -55,7 +54,7 @@
 <div id="notifications_wrapper">
 	<div id="notifications" class="navbar-nav" data-children=".nav-item">
 		<div id="nav-notifications-template" rel="template">
-			<a class="list-group-item clearfix notification {5}" href="{0}" title="{2} {3}" data-b64mid="{6}">
+			<a class="list-group-item clearfix notification {5}" href="{0}" title="{2} {3}">
 				<img class="menu-img-3" data-src="{1}">
 				<span class="contactname">{2}</span>
 				<span class="dropdown-sub-text">{3}<br>{4}</span>
