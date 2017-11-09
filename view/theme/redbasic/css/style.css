@@ -161,10 +161,6 @@ nav {
 	filter:alpha(opacity=$nav_percent_min_opacity);
 }
 
-#nav-app-link {
-	white-space: nowrap;
-}
-
 #powered-by {
 	font-size: 0.5rem;
 	position: absolute;
@@ -977,6 +973,11 @@ a .drop-icons:hover {
 	color: #FF0000;
 }
 
+.perm-inherited {
+	color: #FF0000;
+}
+
+
 #menulist {
 	list-style-type: none;
 }
@@ -1255,6 +1256,12 @@ img.mail-conv-sender-photo {
 	border-radius: $radius;
 }
 
+#nav-app-link {
+	padding: 0 !important;
+	line-height: 1.175;
+	white-space: nowrap;
+}
+
 .page-title {
 	margin: 7px 0px;
 }
@@ -1492,6 +1499,11 @@ blockquote {
 		left: 0px;
 	}
 
+	#nav-app-link-wrapper {
+		min-width: 0;
+		flex-basis: 25%;
+	}
+
 }
 
 .shareable_element_text {
@@ -1638,6 +1650,17 @@ dl.bb-dl > dd > li {
     right: 0px;
     background-color: #0275d8;
 }
+
+
+.form-group.checkbox > div > input:disabled + label .onoffswitch-switch {
+    background-color: red;
+	border-radius: 3px;
+	opacity: 0.3;
+	filter:alpha(opacity=30);
+
+}
+
+
 
 .help-searchlist {
 	list-style-type: none;

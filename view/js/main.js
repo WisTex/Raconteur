@@ -32,7 +32,12 @@ function handle_comment_form(e) {
 	var fields_empty = true;
 
 	if(form.find('.comment-edit-text').length) {
-		form.find('.comment-edit-text').addClass('expanded').removeAttr('placeholder');
+		var commentElm = form.find('.comment-edit-text').attr('id');
+		var submitElm = commentElm.replace(/text/,'submit');
+
+		$('#' + commentElm).addClass('expanded').removeAttr('placeholder');
+		$('#' + commentElm).attr('tabindex','9');
+		$('#' + submitElm).attr('tabindex','10');
 		form.find(':not(:visible)').show();
 	}
 
@@ -43,7 +48,12 @@ function handle_comment_form(e) {
 				fields_empty = false;
 		});
 		if(fields_empty) {
-			form.find('.comment-edit-text').removeClass('expanded').attr('placeholder', aStr.comment);
+			var emptyCommentElm = form.find('.comment-edit-text').attr('id');
+        	var emptySubmitElm = commentElm.replace(/text/,'submit');
+
+			$('#' + emptyCommentElm).removeClass('expanded').attr('placeholder', aStr.comment);
+			$('#' + emptyCommentElm).removeAttr('tabindex');
+			$('#' + emptySubmitElm).removeAttr('tabindex');
 			form.find(':not(.comment-edit-text)').hide();
 		}
 	});
