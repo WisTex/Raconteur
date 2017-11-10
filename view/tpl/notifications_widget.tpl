@@ -26,6 +26,30 @@
 	}
 </style>
 
+{{if $module == 'display'}}
+<script>
+	$(document).on('click', '.notification', function(e) {
+		var mid = $(this)[0].pathname.substr(9);
+		var path = $(this)[0].pathname.substr(1,7);
+
+		if(path === 'display' && mid) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			$('.thread-wrapper').remove();
+			$(this).fadeOut();
+			bParam_mid = mid;
+			mode = 'replace';
+			page_load = true;
+			liveUpdate();
+
+			if($('#notifications_wrapper').hasClass('fs'))
+				$('#notifications_wrapper').prependTo('#' + notifications_parent).removeClass('fs'); //var notifications_parent is defined in redbasic.js
+		}
+	});
+</script>
+{{/if}}
+
 {{if $notifications}}
 <div id="notifications_wrapper">
 	<div id="notifications" class="navbar-nav" data-children=".nav-item">

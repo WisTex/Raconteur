@@ -139,6 +139,7 @@ class Notifications {
 		}
 
 		$o = replace_macros(get_markup_template('notifications_widget.tpl'), array(
+			'$module' => \App::$module,
 			'$notifications' => $notifications,
 			'$loading' => t('Loading...')
 		));

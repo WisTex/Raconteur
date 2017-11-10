@@ -750,6 +750,7 @@ function collapseHeight() {
 }
 
 function liveUpdate() {
+
 	if(typeof profile_uid === 'undefined') profile_uid = false; /* Should probably be unified with channelId defined in head.tpl */
 	if((src === null) || (stopped) || (! profile_uid)) { $('.like-rotator').hide(); return; }
 	if(($('.comment-edit-text.expanded').length) || (in_progress)) {
@@ -790,7 +791,6 @@ function liveUpdate() {
 		update_mode = 'update';
 		var orgHeight = $("#region_2").height();
 	}
-
 
 	var dstart = new Date();
 	console.log('LOADING data...');
