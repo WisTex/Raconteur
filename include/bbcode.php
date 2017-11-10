@@ -838,13 +838,13 @@ function bbcode($Text, $preserve_nl = false, $tryoembed = true, $cache = false) 
 
 	// Perform URL Search
 
-	$urlchars = '[a-zA-Z0-9\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]';
+	$urlchars = '[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]';
 
 	if (strpos($Text,'http') !== false) {
 		if($tryoembed) {
-			$Text = preg_replace_callback("/([^\]\='".'"'."\/]|^|\#\^)(https?\:\/\/$urlchars+)/ism", 'tryoembed', $Text);
+			$Text = preg_replace_callback("/([^\]\='".'"'."\/]|^|\#\^)(https?\:\/\/$urlchars+)/ismu", 'tryoembed', $Text);
 		}
-		$Text = preg_replace("/([^\]\='".'"'."\/]|^|\#\^)(https?\:\/\/$urlchars+)/ism", '$1<a href="$2" target="_blank" rel="nofollow noopener">$2</a>', $Text);
+		$Text = preg_replace("/([^\]\='".'"'."\/]|^|\#\^)(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" target="_blank" rel="nofollow noopener">$2</a>', $Text);
 	}
 
 	if (strpos($Text,'[/share]') !== false) {
