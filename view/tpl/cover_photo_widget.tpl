@@ -62,7 +62,7 @@
 		if(coverSlid) {
 			return;
 		}
-		$('html, body').animate({scrollTop: Math.ceil($('#cover-photo').height()) + 'px' });
+		$('html, body').animate({scrollTop: Math.ceil($('#cover-photo').height()) + 'px' }, 'fast');
 		return;
 	}
 </script>
