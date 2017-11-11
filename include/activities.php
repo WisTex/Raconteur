@@ -50,7 +50,7 @@ function profile_activity($changed, $value) {
 
 	if($t == 1 && strlen($value)) {
 		// if it's a url, the HTML quotes will mess it up, so link it and don't try and zidify it because we don't know what it points to.
- 		$value = preg_replace_callback("/([^\]\='".'"'."]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\+\,]+)/ism", 'red_zrl_callback', $value);
+ 		$value = preg_replace_callback("/([^\]\='".'"'."]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\+\,]+)/ismu", 'red_zrl_callback', $value);
 		// take out the bookmark indicator
 		if(substr($value,0,2) === '#^')
 			$value = str_replace('#^','',$value);
