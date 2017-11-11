@@ -12,7 +12,7 @@ class Wiki_pages {
 
 		if(! $arr['resource_id']) {
 			$c = channelx_by_nick(argv(1));
-			$w = \Zotlabs\Lib\NativeWiki::exists_by_name($c['channel_id'],argv(2));
+			$w = \Zotlabs\Lib\NativeWiki::exists_by_name($c['channel_id'],urldecode(argv(2)));
 			$arr = array(
 				'resource_id' => $w['resource_id'],
 				'channel_id' => $c['channel_id'],
