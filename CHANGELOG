@@ -7,6 +7,8 @@ Hubzilla 2.8.1 (2017-11-11)
 	- Added mode to portfolio widget
 
 	Bugfixes
+	- Fix os_syspath in DAV file put operation so that photos will scale correctly
+	- Fix unicode characters in urls tripping up url regexes - github issue #901
 	- Fix wiki pages not updating after creating new page
 	- Fix notifications covered by cover photo on medium size screens - github issue #906
 	- Fix unable to change permissions on wiki with space in name
