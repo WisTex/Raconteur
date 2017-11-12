@@ -307,7 +307,7 @@ a, a:visited, a:link, .fakelink, .fakelink:visited, .fakelink:link {
 
 .group-selected, .fileas-selected, .categories-selected, .search-selected, a.active {
 	color: #fff !important;
-	text-decoration: none !important;
+	text-decoration: underline !important;
 }
 
 .generic-content-wrapper-styled {
