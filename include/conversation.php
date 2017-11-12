@@ -573,22 +573,16 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 	if (! feature_enabled($profile_owner,'multi_delete'))
 		$page_dropping = false;
 
-	$uploading = true;
+	$uploading = false;
 
-	if($profile_owner > 0) {
-		$owner_channel = channelx_by_n($profile_owner);
-		if($owner_channel['channel_allow_cid'] || $owner_channel['channel_allow_gid']
-			|| $owner_channel['channel_deny_cid'] || $owner_channel['channel_deny_gid']) {
-			$uploading = false;
-		}
-		if(\Zotlabs\Access\PermissionLimits::Get($profile_owner,'view_storage') !== PERMS_PUBLIC) {
-			$uploading = false;
+	if(local_channel()) {
+		$cur_channel = App::get_channel();
+		if($cur_channel['channel_allow_cid'] === '' &&  $cur_channel['channel_allow_gid'] === ''
+			&& $cur_channel['channel_deny_cid'] === '' && $cur_channel['channel_deny_gid'] === ''
+			&& intval(\Zotlabs\Access\PermissionLimits::Get(local_channel(),'view_storage')) === PERMS_PUBLIC) {
+			$uploading = true;
 		}
 	}
-	else {
-		$uploading = false;
-	}
-
 
 	$channel = App::get_channel();
 	$observer = App::get_observer();
