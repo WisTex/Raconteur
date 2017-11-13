@@ -959,9 +959,9 @@ function notify_popup_loader(notifyType) {
 		$("." + notifyType + "-update").html(data.notify.length);
 
 		$(data.notify).each(function() {
-			html = navbar_notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass);
+			html = navbar_notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid);
 			$("#navbar-" + notifyType + "-menu").append(html);
-			html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass);
+			html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid);
 			$("#nav-" + notifyType + "-menu").append(html);
 		});
 

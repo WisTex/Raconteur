@@ -1,4 +1,37 @@
-Hubzilla 2.8 (????-??-??)
+Hubzilla 2.8.1 (2017-11-11)
+	- Rename channel app events to calendar and add nav_set_selected() to /cal
+	- Load notifications links to /display via ajax if we are already in /display
+	- Add location info to the navbar for remote visitors
+	- Bring back tabindex to submit comments
+	- Add spanish translations for context help
+	- Added mode to portfolio widget
+
+	Bugfixes
+	- Fix os_syspath in DAV file put operation so that photos will scale correctly
+	- Fix unicode characters in urls tripping up url regexes - github issue #901
+	- Fix wiki pages not updating after creating new page
+	- Fix notifications covered by cover photo on medium size screens - github issue #906
+	- Fix unable to change permissions on wiki with space in name
+	- Fix only show nav app link if we have a selected app
+	- Fix unable to mark all messages read
+	- Fix imagedata not set correctly if large photo and imagick is not installed
+	- Fix issues with diaspora xchans
+	- Fix profile photo issue triggered by a previous bug
+
+	Plugins/Addon
+	N-S-F-W: improve the undocumented n-s-f-w author::word feature
+	Diaspora: update the import_diaspora tool for the version 2.0 account export files
+	Diaspora: fix comments are partly containing "diaspora_handle" instead of "author" - github issue #69
+	Pubcrawl: provide feature setting for downgrade_media option
+	Pubcrawl: fix issue where replies to replies did not find its parent
+	Diaspora: fix friendica likes on comments
+	Diaspora: fix private mail
+	Diaspora: fix third party deletes/retractions not propagating
+	Diaspora: likes not working - github issue #895 in core
+	Diaspora: fix comments from unknown persons not accepted if allow public comments is enabled - github issue #68
+	XMPP: fix php warning
+
+Hubzilla 2.8 (2017-10-25)
 	- Redirect to be moderated items to /moderate
 	- Update notifications if notifications area remains open
 	- Create an actual logout module instead of relying on internal variables

@@ -802,7 +802,8 @@ class Enotify {
 			'url' => $item['author']['xchan_url'],
 			'photo' => $item['author']['xchan_photo_s'],
 			'when' => relative_date($item['created']), 
-			'class' => (intval($item['item_unseen']) ? 'notify-unseen' : 'notify-seen'), 
+			'class' => (intval($item['item_unseen']) ? 'notify-unseen' : 'notify-seen'),
+			'b64mid' => ((in_array($item['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) ? 'b64.' . base64url_encode($item['thr_parent']) : 'b64.' . base64url_encode($item['mid'])),
 			'message' => strip_tags(bbcode($itemem_text))
 		);
 
