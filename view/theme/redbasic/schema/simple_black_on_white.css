@@ -198,11 +198,15 @@ aside .nav > li > a:hover, aside .nav > li > a:focus {
 	background-color: #F5F5F5;
 }
 
+.list-group-item {
+	background-color: #F5F5F5;
+}
+
 a, a:visited, a:link, .fakelink, .fakelink:visited, .fakelink:link { 
 	font-weight: bold;
 }
 
-.group-selected, .fileas-selected, .categories-selected, .search-selected, .active {
+.group-selected, .fileas-selected, .categories-selected, .search-selected, a.active {
 	color: #000 !important;
 	text-decoration: underline !important;
 }

@@ -301,7 +301,11 @@ a, a:visited, a:link, .fakelink, .fakelink:visited, .fakelink:link {
 	font-weight: bold;
 }
 
-.group-selected, .fileas-selected, .categories-selected, .search-selected, .active {
+.list-group-item {
+	background-color: #222;
+}
+
+.group-selected, .fileas-selected, .categories-selected, .search-selected, a.active {
 	color: #fff !important;
 	text-decoration: underline !important;
 }

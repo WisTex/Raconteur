@@ -581,6 +581,9 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 			|| $owner_channel['channel_deny_cid'] || $owner_channel['channel_deny_gid']) {
 			$uploading = false;
 		}
+		if(\Zotlabs\Access\PermissionLimits::Get($profile_owner,'view_storage') !== PERMS_PUBLIC) {
+			$uploading = false;
+		}
 	}
 	else {
 		$uploading = false;
