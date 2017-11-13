@@ -176,11 +176,18 @@ class Acl extends \Zotlabs\Web\Controller {
 					$extra_channels_sql = " OR (abook_channel IN ($extra_channels_sql)) and abook_hidden = 0 ";
 
 
-				// Add atokens belonging to the local channel @TODO restrict by search
+				// Add atokens belonging to the local channel
+
+				if($search) {
+					$sql_extra_atoken = "AND ( atoken_name LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . ") ";
+				}
+				else {
+					$sql_extra_atoken = '';
+				}
 
 				$r2 = null;
 
-				$r1 = q("select * from atoken where atoken_uid = %d",
+				$r1 = q("select * from atoken where atoken_uid = %d $sql_extra_atoken",
 					intval(local_channel())
 				);
 
