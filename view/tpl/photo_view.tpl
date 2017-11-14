@@ -92,7 +92,7 @@
 					<i id="jot-perms-icon" class="fa fa-{{$edit.lockstate}}"></i>
 				</button>
 				{{/if}}
-				<button id="dbtn-submit" class="btn btn-primary btn-sm" type="submit" name="submit" >{{$edit.submit}}</button>
+				<button id="tool-submit" class="btn btn-primary btn-sm" type="submit" name="submit" >{{$edit.submit}}</button>
 			</div>
 		</form>
 		{{$edit.aclselect}}
