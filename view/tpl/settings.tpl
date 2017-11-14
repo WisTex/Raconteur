@@ -104,6 +104,9 @@
 				<div id="notification-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="notification-settings">
 					<div class="section-content-tools-wrapper">
 						<div id="settings-notifications">
+
+								{{include file="field_input.tpl" field=$mailhost}}
+
 							<h3>{{$activity_options}}</h3>
 							<div class="group">
 								{{*not yet implemented *}}

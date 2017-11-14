@@ -148,6 +148,8 @@ class Channel {
 		$defpermcat       = ((x($_POST,'defpermcat')) ? notags(trim($_POST['defpermcat'])) : 'default');
 	
 		$cal_first_day   = (((x($_POST,'first_day')) && (intval($_POST['first_day']) == 1)) ? 1: 0);
+		$mailhost       = ((array_key_exists('mailhost',$_POST)) ? notags(trim($_POST['mailhost'])) : '');
+
 	
 		$pageflags = $channel['channel_pageflags'];
 		$existing_adult = (($pageflags & PAGE_ADULT) ? 1 : 0);
@@ -239,6 +241,7 @@ class Channel {
 		set_pconfig(local_channel(),'system','attach_path',$attach_path);
 		set_pconfig(local_channel(),'system','cal_first_day',$cal_first_day);
 		set_pconfig(local_channel(),'system','default_permcat',$defpermcat);
+		set_pconfig(local_channel(),'system','email_notify_host',$mailhost);
 	
 		$r = q("update channel set channel_name = '%s', channel_pageflags = %d, channel_timezone = '%s', channel_location = '%s', channel_notifyflags = %d, channel_max_anon_mail = %d, channel_max_friend_req = %d, channel_expire_days = %d $set_perms where channel_id = %d",
 			dbesc($username),
@@ -561,6 +564,7 @@ class Channel {
 			'$vnotify11'  => array('vnotify11', t('System Registrations'), ($vnotify & VNOTIFY_REGISTER), VNOTIFY_REGISTER, '', $yes_no),
 			'$vnotify12'  => array('vnotify12', t('Unseen shared files'), ($vnotify & VNOTIFY_FILES), VNOTIFY_FILES, '', $yes_no),
 			'$vnotify13'  => ((get_config('system', 'disable_discover_tab') != 1) ? array('vnotify13', t('Unseen public activity'), ($vnotify & VNOTIFY_PUBS), VNOTIFY_PUBS, '', $yes_no) : array()),
+			'$mailhost' => [ 'mailhost', t('Email notification hub (hostname)'), get_pconfig(local_channel(),'system','email_notify_host',\App::get_hostname()), sprintf( t('If your channel is mirrored to multiple hubs, set this to your preferred location. This will prevent duplicate email notifications. Example: %s'),\App::get_hostname()) ],
 			'$always_show_in_notices'  => array('always_show_in_notices', t('Also show new wall posts, private messages and connections under Notices'), $always_show_in_notices, 1, '', $yes_no),
 	
 			'$evdays' => array('evdays', t('Notify me of events this many days in advance'), $evdays, t('Must be greater than 0')),			

@@ -18,10 +18,6 @@ function group_add($uid,$name,$public = 0) {
 				intval($r)
 			);
 			if(($z) && $z[0]['deleted']) {
-				/*$r = q("UPDATE groups SET deleted = 0 WHERE uid = %d AND gname = '%s'",
-					intval($uid),
-					dbesc($name)
-				);*/
 				q('UPDATE groups SET deleted = 0 WHERE id = %d', intval($z[0]['id']));
 				notice( t('A deleted group with this name was revived. Existing item permissions <strong>may</strong> apply to this group and any future members. If this is not what you intended, please create another group with a different name.') . EOL); 
 			}
@@ -81,11 +77,11 @@ function group_rmv($uid,$name) {
 				$user_info['channel_default_group'] = '';
 				$change = true;
 			}
-			if(strpos($user_info['channel_allow_gid'], '<' . $group_id . '>') !== false) {
+			if(strpos($user_info['channel_allow_gid'], '<' . $group_hash . '>') !== false) {
 				$user_info['channel_allow_gid'] = str_replace('<' . $group_hash . '>', '', $user_info['channel_allow_gid']);
 				$change = true;
 			}
-			if(strpos($user_info['channel_deny_gid'], '<' . $group_id . '>') !== false) {
+			if(strpos($user_info['channel_deny_gid'], '<' . $group_hash . '>') !== false) {
 				$user_info['channel_deny_gid'] = str_replace('<' . $group_hash . '>', '', $user_info['channel_deny_gid']);
 				$change = true;
 			}
