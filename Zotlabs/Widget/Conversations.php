@@ -28,6 +28,8 @@ class Conversations {
 
 			require_once('include/message.php');
 
+			$o = '';
+
 			// private_messages_list() can do other more complicated stuff, for now keep it simple
 			$r = private_messages_list(local_channel(), $mailbox, \App::$pager['start'], \App::$pager['itemspage']);
 
@@ -36,13 +38,13 @@ class Conversations {
 				return $o;
 			}
 
-			$messages = array();
+			$messages = [];
 
 			foreach($r as $rr) {
 
 				$selected = ((argc() == 3) ? intval(argv(2)) == intval($rr['id']) : $r[0]['id'] == $rr['id']);
 
-				$messages[] = array(
+				$messages[] = [
 					'mailbox'      => $mailbox,
 					'id'           => $rr['id'],
 					'from_name'    => $rr['from']['xchan_name'],
@@ -57,14 +59,14 @@ class Conversations {
 					'date'         => datetime_convert('UTC',date_default_timezone_get(),$rr['created'], 'c'),
 					'seen'         => $rr['seen'],
 					'selected'     => ((argv(1) != 'new') ? $selected : '')
-				);
+				];
 			}
 
 			$tpl = get_markup_template('mail_head.tpl');
-			$o .= replace_macros($tpl, array(
+			$o .= replace_macros($tpl, [
 				'$header' => $header,
 				'$messages' => $messages
-			));
+			]);
 
 		}
 		return $o;

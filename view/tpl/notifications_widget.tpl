@@ -28,6 +28,22 @@
 
 {{if $module == 'display'}}
 <script>
+	var notifications_parent;
+	$(document).ready(function() {
+		notifications_parent = $('#notifications_wrapper')[0].parentElement.id;
+		$('#notifications-btn').click(function() {
+			if($('#notifications_wrapper').hasClass('fs'))
+				$('#notifications_wrapper').prependTo('#' + notifications_parent);
+			else
+				$('#notifications_wrapper').prependTo('section');
+
+			$('#notifications_wrapper').toggleClass('fs');
+			if($('#navbar-collapse-2').hasClass('show')){
+				$('#navbar-collapse-2').removeClass('show');
+			}
+		});
+	});
+
 	$(document).on('click', '.notification', function(e) {
 		var b64mid = $(this).data('b64mid');
 		var path = $(this)[0].pathname.substr(1,7);

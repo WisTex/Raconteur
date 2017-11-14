@@ -1366,7 +1366,7 @@ function attach_delete($channel_id, $resource, $is_photo = 0) {
 		return;
 	}
 
-	$url = get_cloudpath($channel_id, $channel_address, $resource);
+	$url = get_cloud_url($channel_id, $channel_address, $resource);
 	$object = get_file_activity_object($channel_id, $resource, $url);
 
 	// If resource is a directory delete everything in the directory recursive

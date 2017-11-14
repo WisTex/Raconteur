@@ -64,6 +64,11 @@ class Directory extends \Zotlabs\Web\Controller {
 			return;
 		}
 	
+		if(get_config('system','block_public_directory',false) && (! get_observer_hash())) {
+			notice( t('Public access denied.') . EOL);
+			return;
+		}
+			
 		$observer = get_observer_hash();
 	
 		$globaldir = get_directory_setting($observer, 'globaldir');

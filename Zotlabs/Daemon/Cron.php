@@ -78,7 +78,7 @@ class Cron {
 		// channels and sites that quietly vanished and prevent the directory from accumulating stale
 		// or dead entries.
 
-		$r = q("select channel_id from channel where channel_dirdate < %s - INTERVAL %s",
+		$r = q("select channel_id from channel where channel_dirdate < %s - INTERVAL %s and channel_removed = 0",
 			db_utcnow(), 
 			db_quoteinterval('30 DAY')
 		);

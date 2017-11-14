@@ -21,6 +21,21 @@ class Cron_weekly {
 	
 		mark_orphan_hubsxchans();
 
+		// Find channels that were removed in the last three weeks, but 
+		// haven't been finally cleaned up. These should be older than 10
+		// days to ensure that "purgeall" messages have gone out or bounced 
+		// or timed out. 
+
+		$r = q("select channel_id from channel where channel_removed = 1 and 
+			channel_deleted >  %s - INTERVAL %s and channel_deleted < %s - INTERVAL %s",
+			db_utcnow(), db_quoteinterval('21 DAY'),
+			db_utcnow(), db_quoteinterval('10 DAY')
+		);
+		if($r) {
+			foreach($r as $rv) {
+				channel_remove_final($rv['channel_id']);
+			}
+		}
 
 		// get rid of really old poco records
 

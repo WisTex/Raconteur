@@ -2527,19 +2527,43 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 		}
 	}
 
+	q("DELETE FROM app WHERE app_channel = %d", intval($channel_id));
+	q("DELETE FROM atoken WHERE atoken_uid = %d", intval($channel_id));
+	q("DELETE FROM chatroom WHERE cr_uid = %d", intval($channel_id));
+	q("DELETE FROM conv WHERE uid = %d", intval($channel_id));
 
 	q("DELETE FROM groups WHERE uid = %d", intval($channel_id));
 	q("DELETE FROM group_member WHERE uid = %d", intval($channel_id));
 	q("DELETE FROM event WHERE uid = %d", intval($channel_id));
-	q("DELETE FROM item WHERE uid = %d", intval($channel_id));
 	q("DELETE FROM mail WHERE channel_id = %d", intval($channel_id));
+	q("DELETE FROM menu WHERE menu_channel_id = %d", intval($channel_id));
+	q("DELETE FROM menu_item WHERE mitem_channel_id = %d", intval($channel_id));
+
 	q("DELETE FROM notify WHERE uid = %d", intval($channel_id));
+	q("DELETE FROM obj WHERE obj_channel = %d", intval($channel_id));
+
+
 	q("DELETE FROM photo WHERE uid = %d", intval($channel_id));
 	q("DELETE FROM attach WHERE uid = %d", intval($channel_id));
 	q("DELETE FROM profile WHERE uid = %d", intval($channel_id));
-	q("DELETE FROM pconfig WHERE uid = %d", intval($channel_id));
+	q("DELETE FROM src WHERE src_channel_id = %d", intval($channel_id));
 
-	/// @FIXME At this stage we need to remove the file resources located under /store/$nickname
+	$r = q("select resource_id FROM attach WHERE uid = %d", intval($channel_id));
+	if($r) {
+		foreach($r as $rv) {
+			attach_delete($channel_id,$rv['resource_id']);
+		}
+	}
+	
+
+
+	$r = q("select id from item where uid = %d", intval($channel_id));
+	if($r) {
+		foreach($r as $rv) {
+			drop_item($rv['id'],false);
+		}
+	}
+
 
 	q("delete from abook where abook_xchan = '%s' and abook_self = 1 ",
 		dbesc($channel['channel_hash'])
@@ -2593,19 +2617,11 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 	}
 
 	//remove from file system
-	$r = q("select channel_address from channel where channel_id = %d limit 1",
-		intval($channel_id)
-	);
 
-	if($r) {
-		$channel_address = $r[0]['channel_address'] ;
-	}
-	if($channel_address) {
-		$f = 'store/' . $channel_address.'/';
-		logger('delete '. $f);
-		if(is_dir($f)) {
-				@rrmdir($f);
-		}
+
+	$f = 'store/' . $channel['channel_address'];
+	if(is_dir($f)) {
+		@rrmdir($f);
 	}
 
 	Zotlabs\Daemon\Master::Summon(array('Directory',$channel_id));
@@ -2615,6 +2631,20 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 		goaway(z_root());
 	}
 }
+
+// execute this at least a week after removing a channel
+
+function channel_remove_final($channel_id) {
+
+	q("delete from abook where abook_channel = %d", intval($channel_id));
+	q("delete from abconfig where chan = %d", intval($channel_id));
+	q("delete from pconfig where uid = %d", intval($channel_id));
+	
+
+}
+
+
+
 
 /**
  * @brief This checks if a channel is allowed to publish executable code.

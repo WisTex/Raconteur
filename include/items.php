@@ -2571,148 +2571,149 @@ function tag_deliver($uid, $item_id) {
 	if($terms)
 		logger('Post mentions: ' . print_r($terms,true), LOGGER_DATA);
 
+
+	$max_forums = get_config('system','max_tagged_forums',2);
+	$matched_forums = 0;
+
+
 	$link = normalise_link($u[0]['xchan_url']);
+
 
 	if($terms) {
 		foreach($terms as $term) {
-			if(link_compare($term['url'],$link)) {
-				$mention = true;
-				break;
+			if(! link_compare($term['url'],$link)) {
+				continue;
 			}
-		}
-	}
 
-	if($mention) {
-		logger('Mention found for ' . $u[0]['channel_name']);
+			$mention = true;
 
-		$r = q("update item set item_mentionsme = 1 where id = %d",
-			intval($item_id)
-		);
+			logger('Mention found for ' . $u[0]['channel_name']);
 
-		// At this point we've determined that the person receiving this post was mentioned in it or it is a union.
-		// Now let's check if this mention was inside a reshare so we don't spam a forum
-		// If it's private we may have to unobscure it momentarily so that we can parse it.
+			$r = q("update item set item_mentionsme = 1 where id = %d",
+				intval($item_id)
+			);
 
-		$body = $item['body'];
+			// At this point we've determined that the person receiving this post was mentioned in it or it is a union.
+			// Now let's check if this mention was inside a reshare so we don't spam a forum
+			// If it's private we may have to unobscure it momentarily so that we can parse it.
 
-		$body = preg_replace('/\[share(.*?)\[\/share\]/','',$body);
+			$body = preg_replace('/\[share(.*?)\[\/share\]/','',$item['body']);
 
-		$tagged = false;
-		$plustagged = false;
-		$matches = array();
+			$tagged = false;
+			$plustagged = false;
+			$matches = array();
 
-		$pattern = '/[\!@]\!?\[zrl\=' . preg_quote($term['url'],'/') . '\]' . preg_quote($term['term'],'/') . '\[\/zrl\]/';
-		if(preg_match($pattern,$body,$matches))
-			$tagged = true;
+			$pattern = '/[\!@]\!?\[zrl\=' . preg_quote($term['url'],'/') . '\]' . preg_quote($term['term'],'/') . '\[\/zrl\]/';
+			if(preg_match($pattern,$body,$matches))
+				$tagged = true;
 
-		// original red forum tagging sequence @forumname+
-		// standard forum tagging sequence !forumname
+			// original red forum tagging sequence @forumname+
+			// standard forum tagging sequence !forumname
 
-		$pluspattern = '/@\!?\[zrl\=([^\]]*?)\]((?:.(?!\[zrl\=))*?)\+\[\/zrl\]/';
+			$pluspattern = '/@\!?\[zrl\=([^\]]*?)\]((?:.(?!\[zrl\=))*?)\+\[\/zrl\]/';
 
-		$forumpattern = '/\!\!?\[zrl\=([^\]]*?)\]((?:.(?!\[zrl\=))*?)\[\/zrl\]/';
+			$forumpattern = '/\!\!?\[zrl\=([^\]]*?)\]((?:.(?!\[zrl\=))*?)\[\/zrl\]/';
 
-		$found = false;
+			$found = false;
 
-		$max_forums = get_config('system','max_tagged_forums');
-		if(! $max_forums)
-			$max_forums = 2;
-		$matched_forums = 0;
-		$matches = array();
+			$matches = array();
 
-		if(preg_match_all($pluspattern,$body,$matches,PREG_SET_ORDER)) {
-			foreach($matches as $match) {
-				$matched_forums ++;
-				if($term['url'] === $match[1] && $term['term'] === $match[2]) {
-					if($matched_forums <= $max_forums) {
-						$plustagged = true;
-						$found = true;
-						break;
+			if(preg_match_all($pluspattern,$body,$matches,PREG_SET_ORDER)) {
+				foreach($matches as $match) {
+					$matched_forums ++;
+					if($term['url'] === $match[1] && $term['term'] === $match[2] && intval($term['ttype']) === TERM_MENTION) {
+						if($matched_forums <= $max_forums) {
+							$plustagged = true;
+							$found = true;
+							break;
+						}
+						logger('forum ' . $term['term'] . ' exceeded max_tagged_forums - ignoring');
 					}
-					logger('forum ' . $term['term'] . ' exceeded max_tagged_forums - ignoring');
 				}
 			}
-		}
 
-		if(preg_match_all($forumpattern,$body,$matches,PREG_SET_ORDER)) {
-			foreach($matches as $match) {
-				$matched_forums ++;
-				if($term['url'] === $match[1] && $term['term'] === $match[2]) {
-					if($matched_forums <= $max_forums) {
-						$plustagged = true;
-						$found = true;
-						break;
+			if(preg_match_all($forumpattern,$body,$matches,PREG_SET_ORDER)) {
+				foreach($matches as $match) {
+					$matched_forums ++;
+					if($term['url'] === $match[1] && $term['term'] === $match[2] && intval($term['ttype']) === TERM_FORUM) {
+						if($matched_forums <= $max_forums) {
+							$plustagged = true;
+							$found = true;
+							break;
+						}
+						logger('forum ' . $term['term'] . ' exceeded max_tagged_forums - ignoring');
 					}
-					logger('forum ' . $term['term'] . ' exceeded max_tagged_forums - ignoring');
 				}
 			}
-		}
 
-		if(! ($tagged || $plustagged)) {
-			logger('Mention was in a reshare or exceeded max_tagged_forums - ignoring');
-			return;
-		}
+			if(! ($tagged || $plustagged)) {
+				logger('Mention was in a reshare or exceeded max_tagged_forums - ignoring');
+				continue;
+			}
 
-		$arr = [
-				'channel_id' => $uid,
-				'item' => $item,
-				'body' => $body
-		];
-		/**
-		 * @hooks tagged
-		 *   Called when a delivery is processed which results in you being tagged.
-		 *   * \e number \b channel_id
-		 *   * \e array \b item
-		 *   * \e string \b body
-		 */
-		call_hooks('tagged', $arr);
+			$arr = [
+					'channel_id' => $uid,
+					'item' => $item,
+					'body' => $body
+			];
+			/**
+			 * @hooks tagged
+			 *   Called when a delivery is processed which results in you being tagged.
+			 *   * \e number \b channel_id
+			 *   * \e array \b item
+			 *   * \e string \b body
+			 */
+			call_hooks('tagged', $arr);
 
-		/*
-		 * Kill two birds with one stone. As long as we're here, send a mention notification.
-		 */
+			/*
+			 * Kill two birds with one stone. As long as we're here, send a mention notification.
+			 */
 
-		Zlib\Enotify::submit(array(
-			'to_xchan'     => $u[0]['channel_hash'],
-			'from_xchan'   => $item['author_xchan'],
-			'type'         => NOTIFY_TAGSELF,
-			'item'         => $item,
-			'link'         => $i[0]['llink'],
-			'verb'         => ACTIVITY_TAG,
-			'otype'        => 'item'
-		));
+			Zlib\Enotify::submit(array(
+				'to_xchan'     => $u[0]['channel_hash'],
+				'from_xchan'   => $item['author_xchan'],
+				'type'         => NOTIFY_TAGSELF,
+				'item'         => $item,
+				'link'         => $i[0]['llink'],
+				'verb'         => ACTIVITY_TAG,
+				'otype'        => 'item'
+			));
 
-		// Just a normal tag?
+			// Just a normal tag?
 
-		if(! $plustagged) {
-			logger('Not a plus tag', LOGGER_DEBUG);
-			return;
-		}
+			if(! $plustagged) {
+				logger('Not a plus tag', LOGGER_DEBUG);
+				continue;
+			}
 
-		// plustagged - keep going, next check permissions
+			// plustagged - keep going, next check permissions
 
-		if(! perm_is_allowed($uid,$item['author_xchan'],'tag_deliver')) {
-			logger('tag_delivery denied for uid ' . $uid . ' and xchan ' . $item['author_xchan']);
-			return;
+			if(! perm_is_allowed($uid,$item['author_xchan'],'tag_deliver')) {
+				logger('tag_delivery denied for uid ' . $uid . ' and xchan ' . $item['author_xchan']);
+				continue;
+			}
+
+
+			if((! $mention) && (! $union)) {
+				logger('No mention for ' . $u[0]['channel_name'] . ' and no union.');
+				continue;
+			}
+
+			// tgroup delivery - setup a second delivery chain
+			// prevent delivery looping - only proceed
+			// if the message originated elsewhere and is a top-level post
+
+
+			if(intval($item['item_wall']) || intval($item['item_origin']) || (! intval($item['item_thread_top'])) || ($item['id'] != $item['parent'])) {
+				logger('Item was local or a comment. rejected.');
+				continue;
+			}
+
+			logger('Creating second delivery chain.');
+			start_delivery_chain($u[0],$item,$item_id,null);
+
 		}
 	}
-
-	if((! $mention) && (! $union)) {
-		logger('No mention for ' . $u[0]['channel_name'] . ' and no union.');
-		return;
-	}
-
-	// tgroup delivery - setup a second delivery chain
-	// prevent delivery looping - only proceed
-	// if the message originated elsewhere and is a top-level post
-
-
-	if(intval($item['item_wall']) || intval($item['item_origin']) || (! intval($item['item_thread_top'])) || ($item['id'] != $item['parent'])) {
-		logger('Item was local or a comment. rejected.');
-		return;
-	}
-
-	logger('Creating second delivery chain.');
-	start_delivery_chain($u[0],$item,$item_id,null);
 }
 
 /**
@@ -2760,78 +2761,73 @@ function tgroup_check($uid, $item) {
 	if($terms)
 		logger('tgroup_check: post mentions: ' . print_r($terms,true), LOGGER_DATA);
 
+	$max_forums = get_config('system','max_tagged_forums',2);
+	$matched_forums = 0;
+
 	$link = normalise_link($u[0]['xchan_url']);
 
 	if($terms) {
 		foreach($terms as $term) {
-			if(link_compare($term['url'],$link)) {
-				$mention = true;
-				break;
+			if(! link_compare($term['url'],$link)) {
+				continue;
 			}
-		}
-	}
 
-	if($mention) {
-		logger('tgroup_check: mention found for ' . $u[0]['channel_name']);
-	}
-	else
-		return false;
+			$mention = true;
+			logger('tgroup_check: mention found for ' . $u[0]['channel_name']);
 
-	// At this point we've determined that the person receiving this post was mentioned in it.
-	// Now let's check if this mention was inside a reshare so we don't spam a forum
-	// note: $term has been set to the matching term
+			// At this point we've determined that the person receiving this post was mentioned in it.
+			// Now let's check if this mention was inside a reshare so we don't spam a forum
+			// note: $term has been set to the matching term
 
 
-	$body = $item['body'];
-
-	$body = preg_replace('/\[share(.*?)\[\/share\]/','',$body);
+			$body = preg_replace('/\[share(.*?)\[\/share\]/','',$item['body']);
 
 
-	$pluspattern = '/@\!?\[zrl\=([^\]]*?)\]((?:.(?!\[zrl\=))*?)\+\[\/zrl\]/';
+			$pluspattern = '/@\!?\[zrl\=([^\]]*?)\]((?:.(?!\[zrl\=))*?)\+\[\/zrl\]/';
 
-	$forumpattern = '/\!\!?\[zrl\=([^\]]*?)\]((?:.(?!\[zrl\=))*?)\[\/zrl\]/';
+			$forumpattern = '/\!\!?\[zrl\=([^\]]*?)\]((?:.(?!\[zrl\=))*?)\[\/zrl\]/';
 
+			$found = false;
 
-	$found = false;
+			$matches = array();
 
-	$max_forums = get_config('system','max_tagged_forums');
-	if(! $max_forums)
-		$max_forums = 2;
-	$matched_forums = 0;
-	$matches = array();
-
-	if(preg_match_all($pluspattern,$body,$matches,PREG_SET_ORDER)) {
-		foreach($matches as $match) {
-			$matched_forums ++;
-			if($term['url'] === $match[1] && $term['term'] === $match[2]) {
-				if($matched_forums <= $max_forums) {
-					$found = true;
-					break;
+			if(preg_match_all($pluspattern,$body,$matches,PREG_SET_ORDER)) {
+				foreach($matches as $match) {
+					$matched_forums ++;
+					if($term['url'] === $match[1] && $term['term'] === $match[2] && intval($term['ttype']) === TERM_MENTION) {
+						if($matched_forums <= $max_forums) {
+							$found = true;
+							break;
+						}
+						logger('forum ' . $term['term'] . ' exceeded max_tagged_forums - ignoring');
+					}
 				}
-				logger('forum ' . $term['term'] . ' exceeded max_tagged_forums - ignoring');
 			}
-		}
-	}
 
-	if(preg_match_all($forumpattern,$body,$matches,PREG_SET_ORDER)) {
-		foreach($matches as $match) {
-			$matched_forums ++;
-			if($term['url'] === $match[1] && $term['term'] === $match[2]) {
-				if($matched_forums <= $max_forums) {
-					$found = true;
-					break;
+			if(preg_match_all($forumpattern,$body,$matches,PREG_SET_ORDER)) {
+				foreach($matches as $match) {
+					$matched_forums ++;
+					if($term['url'] === $match[1] && $term['term'] === $match[2] && intval($term['ttype']) === TERM_FORUM) {
+						if($matched_forums <= $max_forums) {
+							$found = true;
+							break;
+						}
+						logger('forum ' . $term['term'] . ' exceeded max_tagged_forums - ignoring');
+					}
 				}
-				logger('forum ' . $term['term'] . ' exceeded max_tagged_forums - ignoring');
 			}
+
+			if(! $found) {
+				logger('tgroup_check: mention was in a reshare or exceeded max_tagged_forums - ignoring');
+				continue;
+			}
+
+			return true;
 		}
 	}
 
-	if(! $found) {
-		logger('tgroup_check: mention was in a reshare or exceeded max_tagged_forums - ignoring');
-		return false;
-	}
+	return false;
 
-	return true;
 }
 
 /**
