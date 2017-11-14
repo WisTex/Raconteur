@@ -127,6 +127,7 @@ class Permissions {
 	static public function FilledPerms($arr) {
 		if(is_null($arr)) {
 			btlogger('FilledPerms: null');
+			$arr = [];
 		}
 
 		$everything = self::Perms();
