@@ -1,31 +1,3 @@
-<style>
-	.notification-content {
-		max-height: 70vh;
-		overflow: auto;
-	}
-
-	.notification-content.collapsing {
-		overflow: hidden;
-	}
-
-	.fs {
-		position: fixed;
-		top: 0px;
-		left: 0px;
-		padding: 4.5rem .5rem 1rem .5rem;
-		background-color: white;
-		width: 100%;
-		max-width: 100%;
-		height: 100%;
-		z-index: 1029;
-		overflow: auto;
-	}
-
-	#notifications {
-		margin-bottom: 1rem;
-	}
-</style>
-
 <script>
 	var notifications_parent;
 	$(document).ready(function() {
