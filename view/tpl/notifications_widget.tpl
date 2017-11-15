@@ -26,7 +26,6 @@
 	}
 </style>
 
-{{if $module == 'display'}}
 <script>
 	var notifications_parent;
 	$(document).ready(function() {
@@ -44,6 +43,7 @@
 		});
 	});
 
+	{{if $module == 'display'}}
 	$(document).on('click', '.notification', function(e) {
 		var b64mid = $(this).data('b64mid');
 		var path = $(this)[0].pathname.substr(1,7);
@@ -60,11 +60,12 @@
 			liveUpdate();
 
 			if($('#notifications_wrapper').hasClass('fs'))
-				$('#notifications_wrapper').prependTo('#' + notifications_parent).removeClass('fs'); //var notifications_parent is defined in redbasic.js
+				$('#notifications_wrapper').prependTo('#' + notifications_parent).removeClass('fs');
 		}
 	});
+	{{/if}}
 </script>
-{{/if}}
+
 
 {{if $notifications}}
 <div id="notifications_wrapper">
