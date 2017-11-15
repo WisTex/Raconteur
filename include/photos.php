@@ -62,27 +62,52 @@ function photo_upload($channel, $observer, $args) {
 
 	$ac = $acl->get();
 
+	$width = $height = 0;
+
+	if($args['getimagesize']) {
+		$width = $args['getimagesize'][0];
+		$height = $args['getimagesize'][1];
+	}
+
+
 	$os_storage = 0;
 
+	$max_thumb = get_config('system','max_thumbnail',1600);
+
 	if($args['os_syspath'] && $args['getimagesize']) {
-		if($args['getimagesize'][0] > 1600 || $args['getimagesize'][1] > 1600) {
+		if($args['getimagesize'][0] > $max_thumb || $args['getimagesize'][1] > $max_thumb) {
 			$imagick_path = get_config('system','imagick_convert_path');
 			if($imagick_path && @file_exists($imagick_path)) {
 				$tmp_name = $args['os_syspath'] . '-001';
-				$newsize = photo_calculate_1600_scale($args['getimagesize']);
-				exec($imagick_path . ' ' . $args['os_syspath'] . ' -resize ' . $newsize . '^ ' . $tmp_name);
+				$newsize = photo_calculate_scale(array_merge($args['getimagesize'],['max' => $max_thumb]));
+				$cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $args['os_syspath']) . ' -thumbnail ' . $newsize . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmp_name);
+				//	logger('imagick thumbnail command: ' . $cmd);
+				for($x = 0; $x < 4; $x ++) {
+					exec($cmd);
+					if(! file_exists($tmp_name)) {
+						logger('imagick scale failed. Retrying.');
+						continue;
+					}
+				}
+				if(! file_exists($tmp_name)) {
+					logger('imagick scale failed. Abort.');
+					return $ret;
+				}
+
 				$imagedata = @file_get_contents($tmp_name);
+				$filesize = @filesize($args['os_syspath']);
 				@unlink($tmp_name);
 			}
 			else {
 				$imagedata = @file_get_contents($args['os_syspath']);
+				$filesize = strlen($imagedata);
 			}
 		}
 		else {
 			$imagedata = @file_get_contents($args['os_syspath']);
+			$filesize = strlen($imagedata);
 		}
 		$filename = $args['filename'];
-		$filesize = strlen($imagedata);
 		// this is going to be deleted if it exists
 		$src = '/tmp/deletemenow';
 		$type = $args['getimagesize']['mime'];
@@ -188,8 +213,10 @@ function photo_upload($channel, $observer, $args) {
 	if ($max_length > 0)
 		$ph->scaleImage($max_length);
 
-	$width  = $ph->getWidth();
-	$height = $ph->getHeight();
+	if(! $width)
+		$width  = $ph->getWidth();
+	if(! $height)
+		$height = $ph->getHeight();
 
 	$smallest = 0;
 
@@ -203,6 +230,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$p = array('aid' => $account_id, 'uid' => $channel_id, 'xchan' => $visitor, 'resource_id' => $photo_hash,
 		'filename' => $filename, 'album' => $album, 'imgscale' => 0, 'photo_usage' => PHOTO_NORMAL,
+		'width' => $width, 'height' => $height,
 		'allow_cid' => $ac['allow_cid'], 'allow_gid' => $ac['allow_gid'],
 		'deny_cid' => $ac['deny_cid'], 'deny_gid' => $ac['deny_gid'],
 		'os_storage' => $os_storage, 'os_syspath' => $args['os_syspath'],
@@ -224,14 +252,16 @@ function photo_upload($channel, $observer, $args) {
 		'rel'  => 'alternate',
 		'type' => 'text/html',
 		'href' => z_root() . '/photo/' . $photo_hash . '-0.' . $ph->getExt(),
-		'width' => $ph->getWidth(),
-		'height' => $ph->getHeight()
+		'width' => $width,
+		'height' => $height
 	);
 	if(! $r0)
 		$errors = true;
 
 	unset($p['os_storage']);
 	unset($p['os_syspath']);
+	unset($p['width']);
+	unset($p['height']);
 
 	if(($width > 1024 || $height > 1024) && (! $errors))
 		$ph->scaleImage(1024);
@@ -462,9 +492,9 @@ function photo_upload($channel, $observer, $args) {
 }
 
 
-function photo_calculate_1600_scale($arr) {
+function photo_calculate_scale($arr) {
 
-	$max = 1600;
+	$max = $arr['max'];
 	$width = $arr[0];
 	$height = $arr[1];
 

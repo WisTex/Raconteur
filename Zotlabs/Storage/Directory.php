@@ -299,6 +299,17 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota {
 			$is_photo = 1;
 		}
 
+		// If we know it's a photo, over-ride the type in case the source system could not determine what it was
+
+		if($is_photo) {
+			q("update attach set filetype = '%s' where hash = '%s' and uid = %d",
+				dbesc($gis['mime']),
+				dbesc($hash),
+				intval($c[0]['channel_id'])
+			);
+		}
+
+
 		// updates entry with filesize and timestamp
 		$d = q("UPDATE attach SET filesize = '%s', os_path = '%s', display_path = '%s', is_photo = %d, edited = '%s' WHERE hash = '%s' AND uid = %d",
 			dbesc($size),

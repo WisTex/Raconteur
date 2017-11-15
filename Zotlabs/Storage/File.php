@@ -168,6 +168,17 @@ class File extends DAV\Node implements DAV\IFile {
 				if(($gis) && ($gis[2] === IMAGETYPE_GIF || $gis[2] === IMAGETYPE_JPEG || $gis[2] === IMAGETYPE_PNG)) {
 					$is_photo = 1;
 				}
+
+				// If we know it's a photo, over-ride the type in case the source system could not determine what it was
+
+				if($is_photo) {
+					q("update attach set filetype = '%s' where hash = '%s' and uid = %d",
+						dbesc($gis['mime']),
+						dbesc($this->data['hash']),
+						intval($this->data['uid'])
+					);
+				}
+
 			}
 			else {
 				// this shouldn't happen any more
