@@ -1743,7 +1743,7 @@ function get_theme_uid() {
 		if((get_pconfig(local_channel(),'system','always_my_theme')) || (! $uid))
 			return local_channel();
 	}
-	if(! $uierd) {
+	if(! $uid) {
 		$x = get_sys_channel();
 		if($x)
 			return $x['channel_id'];
