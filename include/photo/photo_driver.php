@@ -309,6 +309,11 @@ abstract class photo_driver {
 
 	public function save($arr) {
 
+		if(! $this->is_valid()) {
+			logger('attempt to store invalid photo.');
+			return false;
+		}
+
 		$p = array();
 
 		$p['aid'] = ((intval($arr['aid'])) ? intval($arr['aid']) : 0);
@@ -331,6 +336,8 @@ abstract class photo_driver {
 		$p['os_path'] = $arr['os_path'];
 		$p['os_syspath'] = ((array_key_exists('os_syspath',$arr)) ? $arr['os_syspath'] : '');
 		$p['display_path'] = (($arr['display_path']) ? $arr['display_path'] : '');
+		$p['width'] = (($arr['width']) ? $arr['width'] : $this->getWidth());
+		$p['height'] = (($arr['height']) ? $arr['height'] : $this->getHeight());
 
 		if(! intval($p['imgscale']))
 			logger('save: ' . print_r($arr,true), LOGGER_DATA);
@@ -378,8 +385,8 @@ abstract class photo_driver {
 				dbesc(basename($p['filename'])),
 				dbesc($this->getType()),
 				dbesc($p['album']),
-				intval($this->getHeight()),
-				intval($this->getWidth()),
+				intval($p['height']),
+				intval($p['width']),
 				(intval($p['os_storage']) ? dbescbin($p['os_syspath']) : dbescbin($this->imageString())),
 				intval($p['os_storage']),
 				intval(strlen($this->imageString())),
@@ -409,8 +416,8 @@ abstract class photo_driver {
 				dbesc(basename($p['filename'])),
 				dbesc($this->getType()),
 				dbesc($p['album']),
-				intval($this->getHeight()),
-				intval($this->getWidth()),
+				intval($p['height']),
+				intval($p['width']),
 				(intval($p['os_storage']) ? dbescbin($p['os_syspath']) : dbescbin($this->imageString())),
 				intval($p['os_storage']),
 				intval(strlen($this->imageString())),
@@ -426,6 +433,7 @@ abstract class photo_driver {
 				dbesc($p['deny_gid'])
 			);
 		}
+		logger('photo save ' . $p['imgscale'] . ' returned ' . intval($r));
 		return $r;
 	}
 

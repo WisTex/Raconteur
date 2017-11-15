@@ -588,6 +588,12 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 			$def_extension =  '.png';
 	}
 
+	// If we know it's a photo, over-ride the type in case the source system could not determine what it was
+
+	if($is_photo) {
+		$type = $gis['mime'];
+	}
+
 	$pathname = '';
 
 	if($is_photo) {
