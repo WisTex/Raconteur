@@ -12,7 +12,10 @@ class Like extends \Zotlabs\Web\Controller {
 	function get() {
 	
 		$o = '';
-	
+
+		$sys_channel = get_sys_channel();
+		$sys_channel_id = (($sys_channel) ? $sys_channel['channel_id'] : 0);
+
 		$observer = \App::get_observer();
 		$interactive = $_REQUEST['interactive'];
 		if($interactive) {
@@ -253,20 +256,22 @@ class Like extends \Zotlabs\Web\Controller {
 			logger('like: verb ' . $verb . ' item ' . $item_id, LOGGER_DEBUG);
 	
 			// get the item. Allow linked photos (which are normally hidden) to be liked
-	
+
 			$r = q("SELECT * FROM item WHERE id = %d 
 				and (item_type = 0 or item_type = 6) and item_deleted = 0 and item_unpublished = 0 
 				and item_delayed = 0 and item_pending_remove = 0 and item_blocked = 0 LIMIT 1",
 				intval($item_id)
 			);
-	
+
 			if(! $item_id || (! $r)) {
 				logger('like: no item ' . $item_id);
 				killme();
 			}
 
+			// Use the $effective_uid option of xchan_query to sort out comment permission
+			// for public stream items
 
-			xchan_query($r,true,(($r[0]['uid'] == local_channel()) ? 0 : local_channel()));	
+			xchan_query($r,true,(($r[0]['uid'] == $sys_channel_id) ? local_channel() : 0));
 
 			$item = $r[0];
 
@@ -464,6 +469,8 @@ class Like extends \Zotlabs\Web\Controller {
 		$arr['mid']          = $mid;
 		$arr['aid']          = (($extended_like) ? $ch[0]['channel_account_id'] : $owner_aid);
 		$arr['uid']          = $owner_uid;
+
+
 		$arr['item_flags']   = $item_flags;
 		$arr['item_wall']    = $item_wall;
 		$arr['parent_mid']   = (($extended_like) ? $mid : $item['mid']);

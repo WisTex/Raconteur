@@ -101,14 +101,14 @@ function create_sys_channel() {
 		set_config('system', 'prvkey', $hostkey['prvkey']);
 	}
 
-	create_identity(array(
-		'account_id' => 'xxx',  // This will create an identity with an (integer) account_id of 0, but account_id is required
-		'nickname' => 'sys',
-		'name' => 'System',
-		'pageflags' => 0,
-		'publish' => 0,
-		'system' => 1
-	));
+	create_identity([
+			'account_id' => 'xxx',  // Typecast trickery: account_id is required. This will create an identity with an (integer) account_id of 0
+			'nickname'   => 'sys',
+			'name'       => 'System',
+			'pageflags'  => 0,
+			'publish'    => 0,
+			'system'     => 1
+	]);
 }
 
 
