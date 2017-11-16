@@ -408,8 +408,8 @@ class Apps {
 			'$order' => (($mode == 'nav-order') ? true : false),
 			'$add' => t('Add to app-tray'),
 			'$remove' => t('Remove from app-tray'),
-			'$add_nav' => t('Add to navbar'),
-			'$remove_nav' => t('Remove from navbar')
+			'$add_nav' => t('Pin to navbar'),
+			'$remove_nav' => t('Unpin from navbar')
 		));
 	}
 
