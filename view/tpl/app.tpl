@@ -12,7 +12,7 @@
 	</div>
 	{{/if}}
 	{{if $install || $update || $delete || $feature}}
-	<div class="app-tools">
+	<div class="text-center app-tools">
 		<form action="{{$hosturl}}appman" method="post">
 		<input type="hidden" name="papp" value="{{$app.papp}}" />
 		{{if $install}}<button type="submit" name="install" value="{{$install}}" class="btn btn-outline-secondary btn-sm" title="{{$install}}" ><i class="fa fa-fw fa-arrow-circle-o-down" ></i></button>{{/if}}

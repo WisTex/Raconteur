@@ -274,7 +274,7 @@ EOT;
 			$app['active'] = true;
 
 		if($is_owner) {
-			if(strpos($app['categories'],'nav_pinned_app')) {
+			if(strpos($app['categories'],'nav_pinned_app') !== false) {
 				$navbar_apps[] = Zlib\Apps::app_render($app,'navbar');
 			}
 			else {
@@ -282,7 +282,7 @@ EOT;
 			}
 		}
 		elseif(! $is_owner && strpos($app['requires'], 'local_channel') === false) {
-			if(strpos($app['categories'],'nav_pinned_app')) {
+			if(strpos($app['categories'],'nav_pinned_app') !== false) {
 				$navbar_apps[] = Zlib\Apps::app_render($app,'navbar');
 			}
 			else {
