@@ -26,6 +26,7 @@ class Appcategories {
         	and term.uid = app_channel
 	        and term.otype = %d
     	    and term.term != 'nav_featured_app'
+    	    and term.term != 'nav_pinned_app'
         	order by term.term asc",
 			intval(local_channel()),
 		    intval(TERM_OBJ_APP)

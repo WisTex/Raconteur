@@ -253,7 +253,7 @@ EOT;
 		}
 
 		$syslist = array();
-		$list = Zlib\Apps::app_list(local_channel(), false, 'nav_featured_app');
+		$list = Zlib\Apps::app_list(local_channel(), false, ['nav_featured_app', 'nav_pinned_app']);
 		if($list) {
 			foreach($list as $li) {
 				$syslist[] = Zlib\Apps::app_encode($li);
@@ -274,15 +274,19 @@ EOT;
 			$app['active'] = true;
 
 		if($is_owner) {
-			$nav_apps[] = Zlib\Apps::app_render($app,'nav');
-			if(strpos($app['categories'],'navbar_' . $template)) {
+			if(strpos($app['categories'],'nav_pinned_app')) {
 				$navbar_apps[] = Zlib\Apps::app_render($app,'navbar');
+			}
+			else {
+				$nav_apps[] = Zlib\Apps::app_render($app,'nav');
 			}
 		}
 		elseif(! $is_owner && strpos($app['requires'], 'local_channel') === false) {
-			$nav_apps[] = Zlib\Apps::app_render($app,'nav');
-			if(strpos($app['categories'],'navbar_' . $template)) {
+			if(strpos($app['categories'],'nav_pinned_app')) {
 				$navbar_apps[] = Zlib\Apps::app_render($app,'navbar');
+			}
+			else {
+				$nav_apps[] = Zlib\Apps::app_render($app,'nav');
 			}
 		}
 	}

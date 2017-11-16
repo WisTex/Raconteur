@@ -64,7 +64,11 @@ class Appman extends \Zotlabs\Web\Controller {
 		}
 
 		if($_POST['feature']) {
-			Zlib\Apps::app_feature(local_channel(),$papp);
+			Zlib\Apps::app_feature(local_channel(), $papp, $_POST['feature']);
+		}
+
+		if($_POST['pin']) {
+			Zlib\Apps::app_feature(local_channel(), $papp, $_POST['pin']);
 		}
 
 		if($_SESSION['return_url']) 
