@@ -609,7 +609,6 @@ CREATE TABLE IF NOT EXISTS `item` (
   `resource_type` char(16) NOT NULL DEFAULT '',
   `attach` mediumtext NOT NULL,
   `sig` text NOT NULL,
-  `diaspora_meta` mediumtext NOT NULL,
   `location` char(191) NOT NULL DEFAULT '',
   `coord` char(191) NOT NULL DEFAULT '',
   `public_policy` char(191) NOT NULL DEFAULT '',
