@@ -9,6 +9,7 @@
 					<a class="dropdown-item lang-choice" href="/help">de</a>
 					<a class="dropdown-item lang-choice" href="/help">en</a>
 					<a class="dropdown-item lang-choice" href="/help">es</a>
+					<a class="dropdown-item lang-choice" href="/help">fr</a>
 				</div>
 			</div>
 		</div>
