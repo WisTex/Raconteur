@@ -16,7 +16,7 @@
 	<div class="cloud-container">
 	<div class="cloud-icon"><a href="{{$item.fullPath}}">
 	{{if $item.photo_icon}}
-	<img src="photo/{{$item.photo_icon}}" title="{{$item.type}}" >
+	<img src="{{$item.photo_icon}}" title="{{$item.type}}" >
 	{{else}}
 	<i class="fa fa-fw {{$item.iconFromType}}" title="{{$item.type}}"></i>
 	{{/if}}

@@ -197,6 +197,11 @@ class Browser extends DAV\Browser\Plugin {
 				}
 			}
 
+
+			// generate preview icons for tile view. 
+			// Currently we only handle images, but this could potentially be extended with plugins
+			// to provide document and video thumbnails
+
 			$photo_icon = '';
 
 			if(strpos($type,'image/') === 0 && $attachHash) {
@@ -206,8 +211,12 @@ class Browser extends DAV\Browser\Plugin {
 					intval(PHOTO_RES_PROFILE_80)
 				);
 				if($r) {
-					$photo_icon = $r[0]['resource_id'] . '-' . $r[0]['imgscale'];				
+					$photo_icon = 'photo/' . $r[0]['resource_id'] . '-' . $r[0]['imgscale'];				
 				}
+				if($type === 'image/svg+xml') {
+					$photo_icon = $fullPath;
+				}
+
 			}
 
 			$attachIcon = ""; // "<a href=\"attach/".$attachHash."\" title=\"".$displayName."\"><i class=\"fa fa-arrow-circle-o-down\"></i></a>";
