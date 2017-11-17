@@ -262,6 +262,13 @@ class Ping extends \Zotlabs\Web\Controller {
 
 			if($t) {
 				foreach($t as $tt) {
+
+					$message = trim(strip_tags(bbcode($tt['msg'])));
+					$count = 1;
+
+					if(strpos($message, $tt['xname']) === 0)
+						$message = str_replace($tt['xname'], '', $message, $count);
+
 					$notifs[] = array(
 						'notify_link' => z_root() . '/notify/view/' . $tt['id'],
 						'name' => $tt['xname'],
@@ -269,7 +276,7 @@ class Ping extends \Zotlabs\Web\Controller {
 						'photo' => $tt['photo'],
 						'when' => relative_date($tt['created']),
 						'hclass' => (($tt['seen']) ? 'notify-seen' : 'notify-unseen'),
-						'message' => strip_tags(bbcode($tt['msg']))
+						'message' => $message
 					);
 				}
 			}
