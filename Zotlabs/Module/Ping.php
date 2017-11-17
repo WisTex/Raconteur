@@ -263,10 +263,9 @@ class Ping extends \Zotlabs\Web\Controller {
 			if($t) {
 				foreach($t as $tt) {
 					$message = trim(strip_tags(bbcode($tt['msg'])));
-					$count = 1;
 
 					if(strpos($message, $tt['xname']) === 0)
-						$message = str_replace($tt['xname'], '', $message, $count);
+						$message = substr($message, strlen($tt['xname']) + 1);
 
 					$notifs[] = array(
 						'notify_link' => z_root() . '/notify/view/' . $tt['id'],
