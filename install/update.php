@@ -1,6 +1,6 @@
 <?php
 
-define( 'UPDATE_VERSION' , 1197 );
+define( 'UPDATE_VERSION' , 1198 );
 
 /**
  *
@@ -3059,4 +3059,14 @@ function update_r1196() {
 	}
 
 	return UPDATE_FAILED;
+}
+
+function update_r1197() {
+
+	$r = q("select diaspora_meta from item where true limit 1");
+	if($r) {
+		$r = q("ALTER TABLE item DROP diaspora_meta");
+	}
+
+	return UPDATE_SUCCESS;
 }
