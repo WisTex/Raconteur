@@ -262,7 +262,6 @@ class Ping extends \Zotlabs\Web\Controller {
 
 			if($t) {
 				foreach($t as $tt) {
-
 					$message = trim(strip_tags(bbcode($tt['msg'])));
 					$count = 1;
 

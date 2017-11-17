@@ -15,7 +15,7 @@
 		});
 	});
 
-	{{if $module == 'display'}}
+	{{if $module == 'display' || $module == 'hq'}}
 	$(document).on('click', '.notification', function(e) {
 		var b64mid = $(this).data('b64mid');
 		var path = $(this)[0].pathname.substr(1,7);
