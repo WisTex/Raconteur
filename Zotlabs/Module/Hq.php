@@ -55,7 +55,6 @@ class Hq extends \Zotlabs\Web\Controller {
 			}
 		}
 	
-		$observer_is_owner = false;
 		$updateable = false;
 
 		if(local_channel() && (! $update)) {
