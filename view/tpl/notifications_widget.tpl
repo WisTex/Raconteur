@@ -21,8 +21,10 @@
 		var notify_id = $(this).data('notify_id');
 		var path = $(this)[0].pathname.substr(1,7);
 
+		console.log(path);
+
 		{{if $module == 'hq'}}
-		if(b64mid !== 'undefined') {
+		if(b64mid !== 'undefined' && path !== 'pubstre') {
 		{{else}}
 		if(path === 'display' && b64mid) {
 		{{/if}}
