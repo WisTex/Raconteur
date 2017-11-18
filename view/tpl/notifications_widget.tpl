@@ -18,18 +18,30 @@
 	{{if $module == 'display' || $module == 'hq'}}
 	$(document).on('click', '.notification', function(e) {
 		var b64mid = $(this).data('b64mid');
+		var notify_id = $(this).data('notify_id');
 		var path = $(this)[0].pathname.substr(1,7);
 
+		{{if $module == 'hq'}}
+		if(b64mid !== 'undefined') {
+		{{else}}
 		if(path === 'display' && b64mid) {
+		{{/if}}
 			e.preventDefault();
 			e.stopPropagation();
 
 			$('.thread-wrapper').remove();
-			$(this).fadeOut();
+
+			if(! page_load)
+				$(this).fadeOut();
+
 			bParam_mid = b64mid;
 			mode = 'replace';
 			page_load = true;
+			{{if $module == 'hq'}}
+			hqLiveUpdate(notify_id);
+			{{else}}
 			liveUpdate();
+			{{/if}}
 
 			if($('#notifications_wrapper').hasClass('fs'))
 				$('#notifications_wrapper').prependTo('#' + notifications_parent).removeClass('fs');
@@ -43,7 +55,7 @@
 <div id="notifications_wrapper">
 	<div id="notifications" class="navbar-nav" data-children=".nav-item">
 		<div id="nav-notifications-template" rel="template">
-			<a class="list-group-item clearfix notification {5}" href="{0}" title="{2} {3}" data-b64mid="{6}">
+			<a class="list-group-item clearfix notification {5}" href="{0}" title="{2} {3}" data-b64mid="{6}" data-notify_id="{7}">
 				<img class="menu-img-3" data-src="{1}">
 				<span class="contactname">{2}</span>
 				<span class="dropdown-sub-text">{3}<br>{4}</span>

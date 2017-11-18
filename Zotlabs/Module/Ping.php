@@ -274,6 +274,8 @@ class Ping extends \Zotlabs\Web\Controller {
 						'photo' => $tt['photo'],
 						'when' => relative_date($tt['created']),
 						'hclass' => (($tt['seen']) ? 'notify-seen' : 'notify-unseen'),
+						'b64mid' => 'b64.' . base64url_encode(basename($tt['link'])),
+						'notify_id' => $tt['id'],
 						'message' => $message
 					);
 				}

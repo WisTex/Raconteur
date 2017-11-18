@@ -10,20 +10,27 @@ require_once('include/items.php');
 
 class Hq extends \Zotlabs\Web\Controller {
 
+	function post() {
+
+		if(!local_channel())
+			return;
+
+		if($_REQUEST['notify_id']) {
+			q("update notify set seen = 1 where id = %d and uid = %d",
+				intval($_REQUEST['notify_id']),
+				intval(local_channel())
+			);
+		}
+
+	}
+
 	function get($update = 0, $load = false) {
 
 		if(!local_channel())
 			return;
 
-		$checkjs = new \Zotlabs\Web\CheckJS(1);
-	
 		if($load)
 			$_SESSION['loadtime'] = datetime_convert();
-	
-		if(observer_prohibited()) {
-			notice( t('Public access denied.') . EOL);
-			return;
-		}
 	
 		if(argc() > 1 && argv(1) !== 'load') {
 			$item_hash = argv(1);
@@ -31,10 +38,6 @@ class Hq extends \Zotlabs\Web\Controller {
 	
 		if($_REQUEST['mid'])
 			$item_hash = $_REQUEST['mid'];
-
-		require_once('include/channel.php');
-		$sys = get_sys_channel();
-		$sysid = $sys['channel_id'];
 
 		if(! $item_hash) {
 
@@ -44,7 +47,7 @@ class Hq extends \Zotlabs\Web\Controller {
 				$item_normal
 				ORDER BY id DESC
 				limit 1",
-				local_channel() ? intval(local_channel()) : intval($sysid)
+				local_channel()
 			);
 			$item_hash = 'b64.' . base64url_encode($r[0]['mid']);
 
@@ -57,7 +60,7 @@ class Hq extends \Zotlabs\Web\Controller {
 	
 		$updateable = false;
 
-		if(local_channel() && (! $update)) {
+		if(! $update) {
 	
 			$channel = \App::get_channel();
 
@@ -113,29 +116,8 @@ class Hq extends \Zotlabs\Web\Controller {
 			goaway(z_root() . '/moderate/' . $target_item['id']);
 		}
 	
-		$r = null;
-	
-		if($target_item['item_type']  == ITEM_TYPE_WEBPAGE) {
-			$x = q("select * from channel where channel_id = %d limit 1",
-				intval($target_item['uid'])
-			);
-			$y = q("select * from iconfig left join item on iconfig.iid = item.id 
-				where item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'WEBPAGE' and item.id = %d limit 1",
-				intval($target_item['uid']),
-				intval($target_item['id'])
-			);
-			if($x && $y) {
-				goaway(z_root() . '/page/' . $x[0]['channel_address'] . '/' . $y[0]['v']);
-			}
-			else {
-				notice( t('Page not found.') . EOL);
-			 	return '';
-			}
-		}
-		
 		$static = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
-	
-	
+
 		$simple_update = (($update) ? " AND item_unseen = 1 " : '');
 			
 		if($update && $_SESSION['loadtime'])
@@ -146,7 +128,7 @@ class Hq extends \Zotlabs\Web\Controller {
 		if($static && $simple_update)
 			$simple_update .= " and item_thread_top = 0 and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
 	
-		if((! $update) && (! $load)) {
+		if(! $update && ! $load) {
 
 			$static  = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 1);
 
@@ -159,7 +141,7 @@ class Hq extends \Zotlabs\Web\Controller {
 				$mid = 'b64.' . base64url_encode($mid);
 
 			$o .= '<div id="live-display"></div>' . "\r\n";
-			$o .= "<script> var profile_uid = " . ((intval(local_channel())) ? local_channel() : (-1))
+			$o .= "<script> var profile_uid = " . local_channel()
 				. "; var netargs = '?f='; var profile_page = " . \App::$pager['page'] . "; </script>\r\n";
 	
 			\App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),[
@@ -178,7 +160,7 @@ class Hq extends \Zotlabs\Web\Controller {
 				'$nouveau' => '0',
 				'$wall'    => '0',
 				'$static'  => $static,
-				'$page'    => ((\App::$pager['page'] != 1) ? \App::$pager['page'] : 1),
+				'$page'    => 1,
 				'$list'    => ((x($_REQUEST,'list')) ? intval($_REQUEST['list']) : 0),
 				'$search'  => '',
 				'$xchan'   => '',
@@ -193,47 +175,30 @@ class Hq extends \Zotlabs\Web\Controller {
 				'$mid'     => $mid
 			]);
 
-			head_add_link([ 
-				'rel'   => 'alternate',
-				'type'  => 'application/json+oembed',
-				'href'  => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . \App::$query_string),
-				'title' => 'oembed'
-			]);
-
 		}
 
 		$item_normal = item_normal();
 		$item_normal_update = item_normal_update();
 
-		$sql_extra = ''; //public_permissions_sql($observer_hash);
+		if($load) {
+			$r = null;
 
-		if(($update && $load) || ($checkjs->disabled())) {
-
-			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']),intval(\App::$pager['start']));
-
-			if($load || ($checkjs->disabled())) {
-				$r = null;
-
-				$r = q("SELECT item.id as item_id from item
-					WHERE uid = %d
-					and mid = '%s'
-					$item_normal
-					limit 1",
-					intval(local_channel()),
-					dbesc($target_item['parent_mid'])
-				);
-				if($r) {
-					$updateable = true;
-				}
+			$r = q("SELECT item.id as item_id from item
+				WHERE uid = %d
+				and mid = '%s'
+				$item_normal
+				limit 1",
+				intval(local_channel()),
+				dbesc($target_item['parent_mid'])
+			);
+			if($r) {
+				$updateable = true;
 			}
+
 		}
 	
-		elseif($update && !$load) {
+		elseif($update) {
 			$r = null;
-	
-			require_once('include/channel.php');
-			$sys = get_sys_channel();
-			$sysid = $sys['channel_id'];
 
 			$r = q("SELECT item.parent AS item_id from item
 				WHERE uid = %d
@@ -273,15 +238,7 @@ class Hq extends \Zotlabs\Web\Controller {
 			$items = [];
 		}
 	
-
-		if ($checkjs->disabled()) {
-			$o .= conversation($items, 'display', $update, 'traditional');
-			if ($items[0]['title'])
-				\App::$page['title'] = $items[0]['title'] . " - " . \App::$page['title'];
-		} 
-		else {
-			$o .= conversation($items, 'display', $update, 'client');
-		}
+		$o .= conversation($items, 'display', $update, 'client');
 
 		if($updateable) {
 			$x = q("UPDATE item SET item_unseen = 0 where item_unseen = 1 AND uid = %d and parent = %d ",
@@ -291,6 +248,10 @@ class Hq extends \Zotlabs\Web\Controller {
 		}
 
 		$o .= '<div id="content-complete"></div>';
+
+		if(($update && $load) && (! $items))  {
+			notice( t('Something went wrong.') . EOL );
+		}
 
 		return $o;
 
