@@ -200,9 +200,13 @@ class Browser extends DAV\Browser\Plugin {
 
 			// generate preview icons for tile view. 
 			// Currently we only handle images, but this could potentially be extended with plugins
-			// to provide document and video thumbnails
+			// to provide document and video thumbnails. SVG, PDF and office documents have some 
+			// security concerns and should only be allowed on single-user sites with tightly controlled
+			// upload access. system.thumbnail_security should be set to 1 if you want to include these 
+			// types 
 
 			$photo_icon = '';
+			$preview_style = intval(get_config('system','thumbnail_security',0));
 
 			if(strpos($type,'image/') === 0 && $attachHash) {
 				$r = q("select resource_id, imgscale from photo where resource_id = '%s' and imgscale in ( %d, %d ) order by imgscale asc limit 1",
@@ -213,11 +217,16 @@ class Browser extends DAV\Browser\Plugin {
 				if($r) {
 					$photo_icon = 'photo/' . $r[0]['resource_id'] . '-' . $r[0]['imgscale'];				
 				}
-				if($type === 'image/svg+xml') {
+				if($type === 'image/svg+xml' && $preview_style > 0) {
 					$photo_icon = $fullPath;
 				}
 
 			}
+
+			$g = [ 'resource_id' => $attachHash, 'thumbnail' => $photo_icon, 'security' => $preview_style ];
+			call_hooks('file_thumbnail', $g);
+			$photo_icon = $g['photo_icon'];
+
 
 			$attachIcon = ""; // "<a href=\"attach/".$attachHash."\" title=\"".$displayName."\"><i class=\"fa fa-arrow-circle-o-down\"></i></a>";
 
