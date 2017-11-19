@@ -633,7 +633,7 @@ class Apps {
 
 	static function moveup($uid,$guid) {
 		$syslist = array();
-		$list = self::app_list($uid, false, 'nav_featured_app');
+		$list = self::app_list($uid, false, ['nav_featured_app', 'nav_pinned_app']);
 		if($list) {
 			foreach($list as $li) {
 				$syslist[] = self::app_encode($li);
@@ -674,7 +674,7 @@ class Apps {
 
 	static function movedown($uid,$guid) {
 		$syslist = array();
-		$list = self::app_list($uid, false, 'nav_featured_app');
+		$list = self::app_list($uid, false, ['nav_featured_app', 'nav_pinned_app']);
 		if($list) {
 			foreach($list as $li) {
 				$syslist[] = self::app_encode($li);

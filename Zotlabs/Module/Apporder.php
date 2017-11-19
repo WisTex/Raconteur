@@ -18,7 +18,7 @@ class Apporder extends \Zotlabs\Web\Controller {
 		nav_set_selected('Order Apps');
 
 		$syslist = array();
-		$list = Zlib\Apps::app_list(local_channel(), false, 'nav_featured_app');
+		$list = Zlib\Apps::app_list(local_channel(), false, ['nav_featured_app', 'nav_pinned_app']);
 		if($list) {
 			foreach($list as $li) {
 				$syslist[] = Zlib\Apps::app_encode($li);
@@ -31,14 +31,20 @@ class Apporder extends \Zotlabs\Web\Controller {
 		$syslist = Zlib\Apps::app_order(local_channel(),$syslist);
 
 		foreach($syslist as $app) {
-			$nav_apps[] = Zlib\Apps::app_render($app,'nav-order');
+			if(strpos($app['categories'],'nav_pinned_app') !== false) {
+				$navbar_apps[] = Zlib\Apps::app_render($app,'nav-order');
+			}
+			else {
+				$nav_apps[] = Zlib\Apps::app_render($app,'nav-order');
+			}
 		}
 
 		return replace_macros(get_markup_template('apporder.tpl'),
 			[
-				'$header' => t('Change Order of Navigation Apps'),
-				'$desc' => t('Use arrows to move the corresponding app up or down in the display list'),
-				'$nav_apps' => $nav_apps
+				'$header' => [t('Change Order of Pinned Navbar Apps'), t('Change Order of App Tray Apps')],
+				'$desc' => [t('Use arrows to move the corresponding app left (top) or right (bottom) in the navbar'), t('Use arrows to move the corresponding app up or down in the app tray')],
+				'$nav_apps' => $nav_apps,
+				'$navbar_apps' => $navbar_apps
 			]
 		);
 	}
