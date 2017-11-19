@@ -39,6 +39,9 @@ class Hq extends \Zotlabs\Web\Controller {
 		if($_REQUEST['mid'])
 			$item_hash = $_REQUEST['mid'];
 
+		$item_normal = item_normal();
+		$item_normal_update = item_normal_update();
+
 		if(! $item_hash) {
 
 			$r = q("SELECT mid FROM item
@@ -176,9 +179,6 @@ class Hq extends \Zotlabs\Web\Controller {
 			]);
 
 		}
-
-		$item_normal = item_normal();
-		$item_normal_update = item_normal_update();
 
 		if($load) {
 			$r = null;
