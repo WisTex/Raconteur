@@ -280,7 +280,7 @@ class Ping extends \Zotlabs\Web\Controller {
 						'when' => relative_date($tt['created']),
 						'hclass' => (($tt['seen']) ? 'notify-seen' : 'notify-unseen'),
 						'b64mid' => $b64mid,
-						'notify_id' => $tt['id'],
+						'notify_id' => (($tt['otype'] == 'item') ? $tt['id'] : ''),
 						'message' => $message
 					);
 				}
