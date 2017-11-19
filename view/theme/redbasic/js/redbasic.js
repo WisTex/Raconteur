@@ -8,7 +8,7 @@ $(document).ready(function() {
 	$('body').append('<div id="css3-calc" style="width: 10px; width: calc(10px + 10px); display: none;"></div>');
 	if( $('#css3-calc').width() == 10) {
 		$(window).resize(function() {
-			if($(window).width() < 767) {
+			if($(window).width() < 992) {
 				$('main').css('width', $(window).width() + $('aside').outerWidth() );
 			} else {
 				$('main').css('width', '100%' );
@@ -17,7 +17,7 @@ $(document).ready(function() {
 	}
 	$('#css3-calc').remove(); // Remove the test element
 
-	if($(window).width() >= 767) {
+	if($(window).width() >= 992) {
 		$('#left_aside_wrapper').stick_in_parent({
 			offset_top: parseInt($('aside').css('padding-top')),
 			parent: 'main',
@@ -25,7 +25,7 @@ $(document).ready(function() {
 		});
 	}
 
-	if($(window).width() >= 1200) {
+	if($(window).width() >= 992) {
 		$('#right_aside_wrapper').stick_in_parent({
 			offset_top: parseInt($('aside').css('padding-top')),
 			parent: 'main',
@@ -77,7 +77,9 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#notifications-btn').click(function() {
+	$('.notifications-btn').click(function(e) {
+		e.preventDefault();
+		e.stopPropagation();
 		if($('#navbar-collapse-2').hasClass('show')){
 			$('#navbar-collapse-2').removeClass('show');
 		}

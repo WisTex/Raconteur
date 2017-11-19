@@ -2,7 +2,7 @@
 	var notifications_parent;
 	$(document).ready(function() {
 		notifications_parent = $('#notifications_wrapper')[0].parentElement.id;
-		$('#notifications-btn').click(function() {
+		$('.notifications-btn').click(function() {
 			if($('#notifications_wrapper').hasClass('fs'))
 				$('#notifications_wrapper').prependTo('#' + notifications_parent);
 			else
