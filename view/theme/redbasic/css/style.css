@@ -1504,6 +1504,11 @@ blockquote {
 		flex-basis: 25%;
 	}
 
+	#navbar-collapse-2 .navbar-app i {
+		font-size: 1rem;
+		margin-right: 0.5rem;
+	}
+
 }
 
 .shareable_element_text {
