@@ -1484,7 +1484,7 @@ blockquote {
 	color: $nav_active_icon_colour;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 992px) {
 
 	aside#region_1 {
 		border-right: 1px solid $nav_bd;
@@ -1502,6 +1502,11 @@ blockquote {
 	#nav-app-link-wrapper {
 		min-width: 0;
 		flex-basis: 25%;
+	}
+
+	#navbar-collapse-2 .navbar-app i {
+		font-size: 1rem;
+		margin-right: 0.5rem;
 	}
 
 }

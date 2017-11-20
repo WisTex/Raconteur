@@ -31,7 +31,6 @@ function z_mime_content_type($filename) {
 	'txt'  => 'text/plain',
 	'htm'  => 'text/html',
 	'html' => 'text/html',
-	'php'  => 'text/html',
 	'css'  => 'text/css',
 	'md'   => 'text/markdown',
 	'bb'   => 'text/bbcode',
@@ -41,8 +40,17 @@ function z_mime_content_type($filename) {
 	'swf'  => 'application/x-shockwave-flash',
 	'flv'  => 'video/x-flv',
 	'epub' => 'application/epub+zip',
+	'c'    => 'text/plain',
+	'h'    => 'text/plain',
+	'sh'   => 'text/plain',
+	'py'   => 'text/plain',
+	'php'  => 'text/plain',
+	'rb'   => 'text/plain',
+	'pdl'  => 'text/plain',
+
 
 	// images
+
 	'png'  => 'image/png',
 	'jpe'  => 'image/jpeg',
 	'jpeg' => 'image/jpeg',
@@ -73,9 +81,7 @@ function z_mime_content_type($filename) {
 	'flac' => 'audio/flac',
 	'opus' => 'audio/ogg',
 	'webm' => 'video/webm',
-//	'webm' => 'audio/webm',
 	'mp4'  => 'video/mp4',
-//	'mp4'  => 'audio/mp4',
 	'mkv'  => 'video/x-matroska',
 
 	// adobe

@@ -2710,6 +2710,9 @@ function getIconFromType($type) {
 		'application/octet-stream' => 'fa-file-o',
 		//Text
 		'text/plain' => 'fa-file-text-o',
+		'text/markdown' => 'fa-file-text-o',
+		'text/bbcode' => 'fa-file-text-o',
+		'text/html' => 'fa-file-text-o',
 		'application/msword' => 'fa-file-word-o',
 		'application/pdf' => 'fa-file-pdf-o',
 		'application/vnd.oasis.opendocument.text' => 'fa-file-word-o',
@@ -2739,11 +2742,33 @@ function getIconFromType($type) {
 		'video/x-matroska' => 'fa-file-video-o'
 	);
 
-	$iconFromType = 'fa-file-o';
+	$catMap = [ 
+		'application' => 'fa-file-code-o',
+		'multipart'   => 'fa-folder',
+		'audio'       => 'fa-file-audio-o',
+		'video'       => 'fa-file-video-o',
+		'text'        => 'fa-file-text-o',
+		'image'       => 'fa=file-picture-o',
+		'message'     => 'fa-file-text-o'
+	]; 
+
+
+	$iconFromType = '';
 
 	if (array_key_exists($type, $iconMap)) {
 		$iconFromType = $iconMap[$type];
 	}
+	else {
+		$parts = explode('/',$type);
+		if($parts[0] && $catMap[$parts[0]]) { 
+			$iconFromType = $catMap[$parts[0]];
+		}
+	}
+
+	if(! $iconFromType)	{
+		$iconFromType = 'fa-file-o';
+	}
+
 
 	return $iconFromType;
 }

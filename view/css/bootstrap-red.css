@@ -11,7 +11,7 @@ nav .dropdown-menu {
 	min-width: 16rem;
 }
 
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 992px) {
 	nav .badge {
 		top: 0px;
 		left: 0px;
@@ -19,7 +19,7 @@ nav .dropdown-menu {
 	}
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 992px) {
 	.navbar {
 		padding: .5rem 7px;
 	}

@@ -12,13 +12,14 @@
 	</div>
 	{{/if}}
 	{{if $install || $update || $delete || $feature}}
-	<div class="app-tools">
+	<div class="text-center app-tools">
 		<form action="{{$hosturl}}appman" method="post">
 		<input type="hidden" name="papp" value="{{$app.papp}}" />
-		{{if $install}}<button type="submit" name="install" value="{{$install}}" class="btn btn-outline-secondary btn-sm" title="{{$install}}" ><i class="fa fa-arrow-circle-o-down" ></i></button>{{/if}}
-		{{if $edit}}<input type="hidden" name="appid" value="{{$app.guid}}" /><button type="submit" name="edit" value="{{$edit}}" class="btn btn-outline-secondary btn-sm" title="{{$edit}}" ><i class="fa fa-pencil" ></i></button>{{/if}}
-		{{if $delete}}<button type="submit" name="delete" value="{{if $deleted}}{{$undelete}}{{else}}{{$delete}}{{/if}}" class="btn btn-outline-secondary btn-sm" title="{{if $deleted}}{{$undelete}}{{else}}{{$delete}}{{/if}}" ><i class="fa fa-trash-o drop-icons"></i></button>{{/if}}
-		{{if $feature}}<button type="submit" name="feature" value="feature" class="btn btn-outline-secondary btn-sm" title="{{if $featured}}{{$remove}}{{else}}{{$add}}{{/if}}"><i class="fa fa-star"{{if $featured}} style="color: gold"{{/if}}></i></button>{{/if}}
+		{{if $install}}<button type="submit" name="install" value="{{$install}}" class="btn btn-outline-secondary btn-sm" title="{{$install}}" ><i class="fa fa-fw fa-arrow-circle-o-down" ></i></button>{{/if}}
+		{{if $edit}}<input type="hidden" name="appid" value="{{$app.guid}}" /><button type="submit" name="edit" value="{{$edit}}" class="btn btn-outline-secondary btn-sm" title="{{$edit}}" ><i class="fa fa-fw fa-pencil" ></i></button>{{/if}}
+		{{if $delete}}<button type="submit" name="delete" value="{{if $deleted}}{{$undelete}}{{else}}{{$delete}}{{/if}}" class="btn btn-outline-secondary btn-sm" title="{{if $deleted}}{{$undelete}}{{else}}{{$delete}}{{/if}}" ><i class="fa fa-fw fa-trash-o drop-icons"></i></button>{{/if}}
+		{{if $feature}}<button type="submit" name="feature" value="nav_featured_app" class="btn btn-outline-secondary btn-sm" title="{{if $featured}}{{$remove}}{{else}}{{$add}}{{/if}}"><i class="fa fa-fw fa-star{{if $featured}} text-warning{{/if}}"></i></button>{{/if}}
+		{{if $pin}}<button type="submit" name="pin" value="nav_pinned_app" class="btn btn-outline-secondary btn-sm" title="{{if $pinned}}{{$remove_nav}}{{else}}{{$add_nav}}{{/if}}"><i class="fa fa-fw fa-thumb-tack{{if $pinned}} text-success{{/if}}"></i></button>{{/if}}
 		</form>
 	</div>
 	{{/if}}

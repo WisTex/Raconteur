@@ -229,6 +229,9 @@ Hooks allow plugins/addons to "hook into" the code at many points and alter the 
 [zrl=[baseurl]/help/hook/feature_settings_post]feature_settings_post[/zrl]
 	called from settings page when posting from 'addon/feature settings'
 
+[zrl=[baseurl]/help/hook/file_thumbnail]file_thumbnail[/zrl]
+	called when generating thumbnail images for cloud page in 'view tiles' mode
+
 [zrl=[baseurl]/help/hook/follow]follow[/zrl]
 	called when a follow operation takes place
 

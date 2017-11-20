@@ -401,11 +401,15 @@ class Apps {
 			'$undelete' => ((local_channel() && $installed && $mode == 'edit') ? t('Undelete') : ''),
 			'$deleted' => $papp['deleted'],
 			'$feature' => (($papp['embed']) ? false : true),
+			'$pin' => (($papp['embed']) ? false : true),
 			'$featured' => ((strpos($papp['categories'], 'nav_featured_app') === false) ? false : true),
+			'$pinned' => ((strpos($papp['categories'], 'nav_pinned_app') === false) ? false : true),
 			'$navapps' => (($mode == 'nav') ? true : false),
 			'$order' => (($mode == 'nav-order') ? true : false),
 			'$add' => t('Add to app-tray'),
-			'$remove' => t('Remove from app-tray')
+			'$remove' => t('Remove from app-tray'),
+			'$add_nav' => t('Pin to navbar'),
+			'$remove_nav' => t('Unpin from navbar')
 		));
 	}
 
@@ -498,25 +502,27 @@ class Apps {
 		}
 	}
 
-	static public function app_feature($uid,$app) {
+	static public function app_feature($uid,$app,$term) {
 		$r = q("select id from app where app_id = '%s' and app_channel = %d limit 1",
 			dbesc($app['guid']),
 			intval($uid)
 		);
 
-		$x = q("select * from term where otype = %d and oid = %d and term = 'nav_featured_app' limit 1",
+		$x = q("select * from term where otype = %d and oid = %d and term = '%s' limit 1",
 			intval(TERM_OBJ_APP),
-			intval($r[0]['id'])
+			intval($r[0]['id']),
+			dbesc($term)
 		);
 
 		if($x) {
-			q("delete from term where otype = %d and oid = %d and term = 'nav_featured_app'",
+			q("delete from term where otype = %d and oid = %d and term = '%s'",
 				intval(TERM_OBJ_APP),
-				intval($x[0]['oid'])
+				intval($x[0]['oid']),
+				dbesc($term)
 			);
 		}
 		else {
-			store_item_tag($uid,$r[0]['id'],TERM_OBJ_APP,TERM_CATEGORY,'nav_featured_app',escape_tags(z_root() . '/apps/?f=&cat=nav_featured_app'));
+			store_item_tag($uid, $r[0]['id'], TERM_OBJ_APP, TERM_CATEGORY, $term, escape_tags(z_root() . '/apps/?f=&cat=' . $term));
 		}
 	}
 
@@ -531,16 +537,27 @@ class Apps {
 	}
 
 
-	static public function app_list($uid, $deleted = false, $cat = '') {
+	static public function app_list($uid, $deleted = false, $cats = []) {
 		if($deleted) 
 			$sql_extra = "";
 		else
 			$sql_extra = " and app_deleted = 0 ";
 
-		if($cat) {
-			$r = q("select oid from term where otype = %d and term = '%s'",
-				intval(TERM_OBJ_APP),
-				dbesc($cat)
+		if($cats) {
+
+			$cat_sql_extra = " and ( ";
+
+			foreach($cats as $cat) {
+				if(strpos($cat_sql_extra, 'term'))
+					$cat_sql_extra .= "or ";
+
+				$cat_sql_extra .= "term = '" . dbesc($cat) . "' ";
+			}
+
+			$cat_sql_extra .=  ") ";
+
+			$r = q("select oid from term where otype = %d $cat_sql_extra",
+				intval(TERM_OBJ_APP)
 			);
 			if(! $r)
 				return $r;
@@ -616,7 +633,7 @@ class Apps {
 
 	static function moveup($uid,$guid) {
 		$syslist = array();
-		$list = self::app_list($uid, false, 'nav_featured_app');
+		$list = self::app_list($uid, false, ['nav_featured_app', 'nav_pinned_app']);
 		if($list) {
 			foreach($list as $li) {
 				$syslist[] = self::app_encode($li);
@@ -657,7 +674,7 @@ class Apps {
 
 	static function movedown($uid,$guid) {
 		$syslist = array();
-		$list = self::app_list($uid, false, 'nav_featured_app');
+		$list = self::app_list($uid, false, ['nav_featured_app', 'nav_pinned_app']);
 		if($list) {
 			foreach($list as $li) {
 				$syslist[] = self::app_encode($li);

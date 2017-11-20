@@ -451,20 +451,20 @@ function NavUpdate() {
 			updateCountsOnly = false;
 
 			if(data.network || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs) {
-				$('#notifications-btn').css('opacity', 1);
+				$('.notifications-btn').css('opacity', 1);
 			}
 			else {
-				$('#notifications-btn').css('opacity', 0.5);
+				$('.notifications-btn').css('opacity', 0.5);
 				$('#navbar-collapse-1').removeClass('show');
 			}
 
 			if(data.home || data.intros || data.register || data.mail || data.notify || data.files) {
-				$('#notifications-btn-icon').removeClass('fa-exclamation-circle');
-				$('#notifications-btn-icon').addClass('fa-exclamation-triangle');
+				$('.notifications-btn-icon').removeClass('fa-exclamation-circle');
+				$('.notifications-btn-icon').addClass('fa-exclamation-triangle');
 			}
 			if(!data.home && !data.intros && !data.register && !data.mail && !data.notify && !data.files) {
-				$('#notifications-btn-icon').removeClass('fa-exclamation-triangle');
-				$('#notifications-btn-icon').addClass('fa-exclamation-circle');
+				$('.notifications-btn-icon').removeClass('fa-exclamation-triangle');
+				$('.notifications-btn-icon').addClass('fa-exclamation-circle');
 			}
 
 			$.each(data, function(index, item) {
@@ -959,9 +959,9 @@ function notify_popup_loader(notifyType) {
 		$("." + notifyType + "-update").html(data.notify.length);
 
 		$(data.notify).each(function() {
-			html = navbar_notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid);
+			html = navbar_notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id);
 			$("#navbar-" + notifyType + "-menu").append(html);
-			html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid);
+			html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id);
 			$("#nav-" + notifyType + "-menu").append(html);
 		});
 

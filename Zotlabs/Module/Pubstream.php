@@ -240,7 +240,10 @@ class Pubstream extends \Zotlabs\Web\Controller {
 					dbesc($parents_str)
 				);
 	
-				xchan_query($items,true,(-1));
+				// use effective_uid param of xchan_query to help sort out comment permission
+				// for sys_channel owned items. 
+
+				xchan_query($items,true,(($sys) ? local_channel() : 0));
 				$items = fetch_post_tags($items,true);
 				$items = conv_sort($items,$ordering);
 			}
