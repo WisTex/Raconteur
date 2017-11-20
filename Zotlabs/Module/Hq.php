@@ -46,7 +46,6 @@ class Hq extends \Zotlabs\Web\Controller {
 
 			$r = q("SELECT mid FROM item
 				WHERE uid = %d
-				AND item_unseen = 1
 				AND mid = parent_mid
 				$item_normal
 				ORDER BY created DESC
