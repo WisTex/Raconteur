@@ -129,12 +129,16 @@ class File extends DAV\Node implements DAV\IFile {
 		$album = '';
 		$os_path = '';
 
-		$r = q("SELECT flags, folder, os_storage, os_path, filename, is_photo FROM attach WHERE hash = '%s' AND uid = %d LIMIT 1",
+		$r = q("SELECT flags, folder, os_storage, os_path, display_path, filename, is_photo FROM attach WHERE hash = '%s' AND uid = %d LIMIT 1",
 			dbesc($this->data['hash']),
 			intval($c[0]['channel_id'])
 		);
 		if ($r) {
+
 			$os_path = $r[0]['os_path'];
+			$display_path = $r[0]['display_path'];
+			$filename = $r[0]['filename'];
+
 
 			if (intval($r[0]['os_storage'])) {
 				$d = q("select folder, content from attach where hash = '%s' and uid = %d limit 1",
@@ -210,7 +214,7 @@ class File extends DAV\Node implements DAV\IFile {
 
 		if($is_photo) {
 			require_once('include/photos.php');
-			$args = array( 'resource_id' => $this->data['hash'], 'album' => $album, 'os_syspath' => $f, 'os_path' => $os_path, 'filename' => $r[0]['filename'], 'getimagesize' => $gis, 'directory' => $direct );
+			$args = array( 'resource_id' => $this->data['hash'], 'album' => $album, 'os_syspath' => $f, 'os_path' => $os_path, 'display_path' => $display_path, 'filename' => $filename, 'getimagesize' => $gis, 'directory' => $direct );
 			$p = photo_upload($c[0],\App::get_observer(),$args);
 		}
 
