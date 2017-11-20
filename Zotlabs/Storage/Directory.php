@@ -362,6 +362,8 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota {
 			$args = array( 'resource_id' => $hash, 'album' => $album, 'os_syspath' => $f, 'os_path' => $xpath['os_path'], 'display_path' => $xpath['path'], 'filename' => $name, 'getimagesize' => $gis, 'directory' => $direct);
 			$p = photo_upload($c[0], \App::get_observer(), $args);
 		}
+		
+		\Zotlabs\Daemon\Master::Summon([ 'Thumbnail' , $this->folder_hash ]);
 
 		$sync = attach_export_data($c[0], $hash);
 

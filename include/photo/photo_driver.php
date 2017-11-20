@@ -241,69 +241,84 @@ abstract class photo_driver {
 	}
 
 
+	/**
+	 * @brief reads exif data from filename
+	 */
+
+	public function exif($filename) {
 
 
-	public function orient($filename) {
+		if((! function_exists('exif_read_data')) 
+			|| (! in_array($this->getType(), [ 'image/jpeg' , 'image/tiff'] ))) {
+			return false;
+		}
 
-		/**
-		 * This function is a bit unusual, because it is operating on a file, but you must
-		 * first create an image from that file to initialise the type and check validity
-		 * of the image.
+		/*
+		 * PHP 7.2 allows you to use a stream resource, which should reduce/avoid
+		 * memory exhaustion on large images. 
 		 */
 
-		if(! $this->is_valid())
-			return false;
-
-		if((! function_exists('exif_read_data')) || ($this->getType() !== 'image/jpeg'))
-			return false;
-
-		$exif = @exif_read_data($filename,null,true);
-
-		if($exif) {
-			$ort = $exif['IFD0']['Orientation'];
-
-			switch($ort)
-			{
-				case 1: // nothing
-					break;
-
-				case 2: // horizontal flip
-					$this->flip();
-					break;
-
-				case 3: // 180 rotate left
-					$this->rotate(180);
-					break;
-
-				case 4: // vertical flip
-					$this->flip(false, true);
-					break;
-
-				case 5: // vertical flip + 90 rotate right
-					$this->flip(false, true);
-					$this->rotate(-90);
-					break;
-
-				case 6: // 90 rotate right
-					$this->rotate(-90);
-					break;
-
-				case 7: // horizontal flip + 90 rotate right
-					$this->flip();
-					$this->rotate(-90);
-					break;
-
-				case 8:	// 90 rotate left
-					$this->rotate(90);
-					break;
-			}
-
-			return $exif;
-
+		if(version_compare(PHP_VERSION,'7.2.0') >= 0) {
+			$f = @fopen($filename,'rb');
 		}
-		
-		return false;
+		else {
+			$f = $filename;
+		}
 
+		if($f) {
+			return @exif_read_data($f);
+		}
+
+		return false;
+	}
+
+	/**
+	 * @brief orients current image based on exif orientation information
+	 */
+
+	public function orient($exif) {
+
+		if(! ($this->is_valid() && $exif)) {
+			return false;
+		}
+
+		$ort = $exif['IFD0']['Orientation'];
+
+		if(! $ort) {
+			return false;
+		}
+
+		switch($ort) {
+			case 1: // nothing
+				break;
+			case 2: // horizontal flip
+				$this->flip();
+				break;
+			case 3: // 180 rotate left
+				$this->rotate(180);
+				break;
+			case 4: // vertical flip
+				$this->flip(false, true);
+				break;
+			case 5: // vertical flip + 90 rotate right
+				$this->flip(false, true);
+				$this->rotate(-90);
+				break;
+			case 6: // 90 rotate right
+				$this->rotate(-90);
+				break;
+			case 7: // horizontal flip + 90 rotate right
+				$this->flip();
+				$this->rotate(-90);
+				break;
+			case 8:	// 90 rotate left
+				$this->rotate(90);
+				break;
+			default:
+				break;
+		}
+
+		return true;
 	}
 
 

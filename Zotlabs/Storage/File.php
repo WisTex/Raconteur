@@ -244,6 +244,9 @@ class File extends DAV\Node implements DAV\IFile {
 			}
 		}
 
+		\Zotlabs\Daemon\Master::Summon([ 'Thumbnail' , $this->data['hash'] ]);
+
+
 		$sync = attach_export_data($c[0],$this->data['hash']);
 
 		if($sync)
