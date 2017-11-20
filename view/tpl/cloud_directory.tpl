@@ -3,7 +3,7 @@
 
 	{{if $parentpath}}
 	<div class="cloud-container" >
-	<div class="cloud-icon"><a href="{{$parentpath.path}}">
+	<div class="cloud-icon tiles"><a href="{{$parentpath.path}}">
 	<i class="fa fa-fw fa-level-up" ></i>
 	</a>
 	</div>
@@ -14,7 +14,7 @@
 
 	{{foreach $entries as $item}}
 	<div class="cloud-container">
-	<div class="cloud-icon"><a href="{{$item.fullPath}}">
+	<div class="cloud-icon tiles"><a href="{{$item.fullPath}}">
 	{{if $item.photo_icon}}
 	<img src="{{$item.photo_icon}}" title="{{$item.type}}" >
 	{{else}}

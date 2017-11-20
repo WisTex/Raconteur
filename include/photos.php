@@ -203,7 +203,13 @@ function photo_upload($channel, $observer, $args) {
 		return $ret;
 	}
 
-	$exif = $ph->orient(($args['os_syspath']) ? $args['os_syspath'] : $src);
+	// obtain exif data from the source file if present
+
+	$exif = $ph->exif(($args['os_syspath']) ? $args['os_syspath'] : $src);
+
+	if($exif) {
+		$ph->orient($exif);
+	}
 
 	@unlink($src);
 

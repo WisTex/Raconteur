@@ -208,6 +208,16 @@ class Browser extends DAV\Browser\Plugin {
 			$photo_icon = '';
 			$preview_style = intval(get_config('system','thumbnail_security',0));
 
+			$r = q("select content from attach where hash = '%s' and uid = %d limit 1",
+				dbesc($attachHash),
+				intval($owner)
+			);
+
+			if($r && file_exists(dbunescbin($r[0]['content']) . '.thumb')) {
+				$photo_icon = 'data:image/jpeg;base64,' . base64_encode(file_get_contents(dbunescbin($r[0]['content']) . '.thumb'));
+//				logger('found thumb: ' . $photo_icon);
+			}
+
 			if(strpos($type,'image/') === 0 && $attachHash) {
 				$r = q("select resource_id, imgscale from photo where resource_id = '%s' and imgscale in ( %d, %d ) order by imgscale asc limit 1",
 					dbesc($attachHash),
@@ -220,12 +230,11 @@ class Browser extends DAV\Browser\Plugin {
 				if($type === 'image/svg+xml' && $preview_style > 0) {
 					$photo_icon = $fullPath;
 				}
-
 			}
 
 			$g = [ 'resource_id' => $attachHash, 'thumbnail' => $photo_icon, 'security' => $preview_style ];
 			call_hooks('file_thumbnail', $g);
-			$photo_icon = $g['photo_icon'];
+			$photo_icon = $g['thumbnail'];
 
 
 			$attachIcon = ""; // "<a href=\"attach/".$attachHash."\" title=\"".$displayName."\"><i class=\"fa fa-arrow-circle-o-down\"></i></a>";
