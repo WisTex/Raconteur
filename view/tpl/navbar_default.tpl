@@ -1,5 +1,5 @@
 {{if $nav.login && !$userinfo}}
-<div class="d-xl-none pt-1 pb-1">
+<div class="d-lg-none pt-1 pb-1">
 	{{if $nav.loginmenu.1.4}}
 	<a class="btn btn-primary btn-sm text-white" href="#" title="{{$nav.loginmenu.1.3}}" id="{{$nav.loginmenu.1.4}}_collapse" data-toggle="modal" data-target="#nav-login">
 		{{$nav.loginmenu.1.1}}
@@ -76,12 +76,12 @@
 		<i class="fa fa-question-circle"></i>
 	</button>
 	{{/if}}
-	<button id="expand-aside" type="button" class="d-md-none navbar-toggler border-0" data-toggle="offcanvas" data-target="#region_1">
+	<button id="expand-aside" type="button" class="d-lg-none navbar-toggler border-0" data-toggle="offcanvas" data-target="#region_1">
 		<i class="fa fa-arrow-circle-right" id="expand-aside-icon"></i>
 	</button>
 	{{if $localuser || $nav.pubs}}
-	<button id="notifications-btn" type="button" class="navbar-toggler border-0 text-white">
-		<i id="notifications-btn-icon" class="fa fa-exclamation-circle"></i>
+	<button id="notifications-btn-1" type="button" class="navbar-toggler border-0 text-white notifications-btn">
+		<i id="notifications-btn-icon-1" class="fa fa-exclamation-circle notifications-btn-icon"></i>
 	</button>
 	{{/if}}
 	<button id="menu-btn" class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navbar-collapse-2">
@@ -134,6 +134,11 @@
 			<a class="nav-link {{$nav.help.2}}" target="hubzilla-help" href="{{$nav.help.0}}" title="{{$nav.help.3}}" id="{{$nav.help.4}}" onclick="contextualHelp(); return false;"><i class="fa fa-fw fa-question-circle"></i></a>
 		</li>
 		{{/if}}
+		{{if $localuser || $nav.pubs}}
+		<li id="notifications-btn" class="nav-item d-xl-none">
+			<a class="nav-link text-white notifications-btn" href="#"><i id="notifications-btn-icon" class="fa fa-exclamation-circle  notifications-btn-icon"></i></a>
+		</li>
+		{{/if}}
 		{{if $channel_menu && $channel_apps.0}}
 		<li class="nav-item dropdown" id="channel-menu">
 			<a class="nav-link" href="#" data-toggle="dropdown"><img src="{{$channel_thumb}}" style="height:14px; width:14px;position:relative; top:-2px;" /></a>
@@ -179,7 +184,7 @@
 		</li>
 	</ul>
 </div>
-<div class="collapse d-xl-none" id="navbar-collapse-2">
+<div class="collapse d-lg-none" id="navbar-collapse-2">
 	<div class="navbar-nav mr-auto">
 		{{if $channel_apps.0}}
 		{{foreach $channel_apps as $channel_app}}
@@ -190,6 +195,9 @@
 		</div>
 		<div id="sys-apps-collapsed" style="display:none;">
 		{{/if}}
+		{{foreach $navbar_apps as $navbar_app}}
+		{{$navbar_app}}
+		{{/foreach}}
 		{{foreach $nav_apps as $nav_app}}
 		{{$nav_app|replace:'dropdown-item':'nav-link'}}
 		{{/foreach}}
