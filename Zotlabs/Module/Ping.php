@@ -492,10 +492,11 @@ class Ping extends \Zotlabs\Web\Controller {
 		$t3 = dba_timer();
 
 		if($vnotify & (VNOTIFY_NETWORK|VNOTIFY_CHANNEL)) {
+			
 			$r = q("SELECT id, item_wall FROM item
 				WHERE item_unseen = 1 and uid = %d
 				$item_normal
-				AND author_xchan != '%s'",
+				AND author_xchan != '%s' $sql_extra ",
 				intval(local_channel()),
 				dbesc($ob_hash)
 			);

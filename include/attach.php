@@ -951,6 +951,9 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 		call_hooks('photo_upload_end', $ret);
 	}
 
+	\Zotlabs\Daemon\Master::Summon([ 'Thumbnail' , $hash ]);
+
+
 	if($dosync) {
 		$sync = attach_export_data($channel,$hash);
 

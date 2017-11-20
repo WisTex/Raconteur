@@ -48,7 +48,7 @@ class Hq extends \Zotlabs\Web\Controller {
 				WHERE uid = %d
 				AND mid = parent_mid
 				$item_normal
-				ORDER BY id DESC
+				ORDER BY created DESC
 				limit 1",
 				local_channel()
 			);

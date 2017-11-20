@@ -18,6 +18,7 @@ return array(
     'Sabre\\CalDAV\\' => array($vendorDir . '/sabre/dav/lib/CalDAV'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
     'League\\HTMLToMarkdown\\' => array($vendorDir . '/league/html-to-markdown/src'),
+    'ID3Parser\\' => array($vendorDir . '/lukasreschke/id3parser/src'),
     'Hubzilla\\' => array($baseDir . '/include'),
     'CommerceGuys\\Intl\\' => array($vendorDir . '/commerceguys/intl/src'),
 );
