@@ -105,6 +105,10 @@ a,
   color: $link_colour;
 }
 
+.cloud-icon.tiles i {
+	color: #aaa;
+}
+
 a:hover,
 a:focus,
 .fakelink:hover,
