@@ -49,7 +49,7 @@ class Hq extends \Zotlabs\Web\Controller {
 				AND item_unseen = 1
 				AND mid = parent_mid
 				$item_normal
-				ORDER BY id DESC
+				ORDER BY created DESC
 				limit 1",
 				local_channel()
 			);
