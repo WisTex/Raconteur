@@ -45,7 +45,9 @@ class Thumbnail {
 				}
 			}
 		}
-		if(($default_controller) && (! file_exists(dbunescbin($attach['content']) . '.thumb'))) {
+		if(($default_controller) 
+			&& ((! file_exists(dbunescbin($attach['content']) . '.thumb')) 
+				|| (filectime(dbunescbin($attach['content']) . 'thumb') < (time() - 60)))) {
 			$default_controller->Thumb($attach,$preview_style,$preview_width,$preview_height);
 		}
 	}
