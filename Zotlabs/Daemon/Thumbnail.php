@@ -17,46 +17,36 @@ class Thumbnail {
 		if(! $c)
 			return;
 
-		$preview_style = intval(get_config('system','thumbnail_security',0));
+		$preview_style   = intval(get_config('system','thumbnail_security',0));
+		$preview_width   = intval(get_config('system','thumbnail_width',300));
+		$preview_height  = intval(get_config('system','thumbnail_height',300));
 
 		$attach = $c[0];
-		$isize = 300;
+		$default_controller = null;
 		
-		if(strpos($attach['filetype'],'text/') !== false) {
-			$stream = @fopen($attach['content'],'rb');
-			if($stream) {
-				$content = trim(stream_get_contents($stream,4096));
-				$content = str_replace("\r",'',$content);
-				$content_a = explode("\n",$content);
-			}
-			if($content_a) {
-				$fsize = 4;
-				$lsize = 8;
-				$image = imagecreate($isize,$isize);
-				imagecolorallocate($image,255,255,255);
-				$colour = imagecolorallocate($image,0,0,0);
-				$border = imagecolorallocate($image,64,64,64);
-
-				$x1 = 0; 
-				$y1 = 0; 
-				$x2 = ImageSX($image) - 1; 
-				$y2 = ImageSY($image) - 1; 
-
-				for($i = 0; $i < 2; $i++) { 
-					ImageRectangle($image, $x1++, $y1++, $x2--, $y2--, $border); 
-				}
-
-				foreach($content_a as $l => $t) {
-					$l = $l + 1;
-					$x = 3;
-					$y = ($l * $lsize) + 3 - $fsize;
-					imagestring($image,1,$x,$y,$t,$colour);
-					if(($l * $lsize) >= $isize) {
-						break;
+		$files = glob('Zotlabs/Thumbs/*.php');
+		if($files) {
+			foreach($files as $f) {
+				$clsname = '\\Zotlabs\\Thumbs\\' . ucfirst(basename($f,'.php'));
+				if(class_exists($clsname)) {
+					$x = new $clsname();
+					if(method_exists($x,'Match')) {
+						$matched = $x->Match($attach['filetype']);
+						if($matched) {
+							$x->Thumb($attach,$preview_style,$preview_width,$preview_height);
+						}
+					}
+					if(method_exists($x,'MatchDefault')) {
+						$default_matched = $x->MatchDefault(substr($attach['filetype'],0,strpos($attach['filetype'],'/')));
+						if($default_matched) {
+							$default_controller = $x;
+						}
 					}
 				}
-				imagejpeg($image,$attach['content'] . '.thumb');
 			}
+		}
+		if(($default_controller) && (! file_exists(dbunescbin($attach['content']) . '.thumb'))) {
+			$default_controller->Thumb($attach,$preview_style,$preview_width,$preview_height);
 		}
 	}
 }
