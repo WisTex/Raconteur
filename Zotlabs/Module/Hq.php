@@ -45,11 +45,11 @@ class Hq extends \Zotlabs\Web\Controller {
 		if(! $item_hash) {
 
 			$r = q("SELECT mid FROM item
-				WHERE uid = %d
-				AND mid = parent_mid
+				WHERE uid = %d 
+				AND item_thread_top = 1
 				ORDER BY created DESC
 				limit 1",
-				local_channel()
+				intval(local_channel())
 			);
 
 			if(!$r[0]['mid']) {
