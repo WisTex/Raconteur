@@ -2,7 +2,7 @@
 
 namespace Zotlabs\Thumbs;
 
-use ID3Parser\ID3Parser;
+use \ID3Parser\ID3Parser;
 
 class Mp3audio {
 
@@ -11,7 +11,7 @@ class Mp3audio {
 	}
 
 	function Thumb($attach,$preview_style,$height = 300, $width = 300) {
-		$p = newID3Parser();
+		$p = new ID3Parser();
 
         $id = $p->analyze(dbunescbin($attach['content']));
 
