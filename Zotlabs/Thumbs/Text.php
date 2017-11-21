@@ -23,7 +23,7 @@ class Text {
 			$image = imagecreate($width,$height);
 			imagecolorallocate($image,255,255,255);
 			$colour = imagecolorallocate($image,0,0,0);
-			$border = imagecolorallocate($image,64,64,64);
+			$border = imagecolorallocate($image,208,208,208);
 
 			$x1 = 0; 
 			$y1 = 0; 

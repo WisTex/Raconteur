@@ -105,9 +105,6 @@ a,
   color: $link_colour;
 }
 
-.cloud-icon.tiles i {
-	color: #aaa;
-}
 
 a:hover,
 a:focus,
@@ -1735,13 +1732,23 @@ dl.bb-dl > dd > li {
 	margin: 5px;
 }
 
+.cloud-icon-container {
+	width: 48px;
+	height: 48px;
+	border: 1px solid #eee;
+	border-radius: $radius;
+}
+
 .cloud-icon i {
-	font-size: 48px;
+	font-size: 32px;
+	color: #aaa;
+	margin-top: 8px;
 }
 
 .cloud-icon img {
 	width: 48px;
 	height: 48px;
+	border-radius: $radius;
 }
 
 .cloud-title {
