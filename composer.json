@@ -35,7 +35,8 @@
 		"simplepie/simplepie": "~1.5",
 		"league/html-to-markdown": "^4.4",
 		"pear/text_languagedetect": "^1.0",
-		"commerceguys/intl": "~0.7"
+		"commerceguys/intl": "~0.7",
+		"lukasreschke/id3parser": "^0.0.1"
 	},
 	"require-dev" : {
 		"php" : ">=7.0",

@@ -42,6 +42,10 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         array (
             'League\\HTMLToMarkdown\\' => 22,
         ),
+        'I' => 
+        array (
+            'ID3Parser\\' => 10,
+        ),
         'H' => 
         array (
             'Hubzilla\\' => 9,
@@ -100,6 +104,10 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'League\\HTMLToMarkdown\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/html-to-markdown/src',
+        ),
+        'ID3Parser\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/lukasreschke/id3parser/src',
         ),
         'Hubzilla\\' => 
         array (
@@ -415,6 +423,13 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'HTMLPurifier_VarParser_Native' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/VarParser/Native.php',
         'HTMLPurifier_Zipper' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Zipper.php',
         'Hubzilla\\Import\\Import' => __DIR__ . '/../..' . '/include/Import/Importer.php',
+        'ID3Parser\\ID3Parser' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/ID3Parser.php',
+        'ID3Parser\\getID3\\Tags\\getid3_id3v1' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/Tags/getid3_id3v1.php',
+        'ID3Parser\\getID3\\Tags\\getid3_id3v2' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/Tags/getid3_id3v2.php',
+        'ID3Parser\\getID3\\getID3' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3.php',
+        'ID3Parser\\getID3\\getid3_exception' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3_exception.php',
+        'ID3Parser\\getID3\\getid3_handler' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3_handler.php',
+        'ID3Parser\\getID3\\getid3_lib' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3_lib.php',
         'League\\HTMLToMarkdown\\Configuration' => __DIR__ . '/..' . '/league/html-to-markdown/src/Configuration.php',
         'League\\HTMLToMarkdown\\ConfigurationAwareInterface' => __DIR__ . '/..' . '/league/html-to-markdown/src/ConfigurationAwareInterface.php',
         'League\\HTMLToMarkdown\\Converter\\BlockquoteConverter' => __DIR__ . '/..' . '/league/html-to-markdown/src/Converter/BlockquoteConverter.php',
@@ -924,6 +939,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Daemon\\Poller' => __DIR__ . '/../..' . '/Zotlabs/Daemon/Poller.php',
         'Zotlabs\\Daemon\\Queue' => __DIR__ . '/../..' . '/Zotlabs/Daemon/Queue.php',
         'Zotlabs\\Daemon\\Ratenotif' => __DIR__ . '/../..' . '/Zotlabs/Daemon/Ratenotif.php',
+        'Zotlabs\\Daemon\\Thumbnail' => __DIR__ . '/../..' . '/Zotlabs/Daemon/Thumbnail.php',
         'Zotlabs\\Extend\\Hook' => __DIR__ . '/../..' . '/Zotlabs/Extend/Hook.php',
         'Zotlabs\\Identity\\BasicId\\BasicId' => __DIR__ . '/../..' . '/Zotlabs/Identity/BasicId.php',
         'Zotlabs\\Identity\\ProfilePhoto\\ProfilePhoto' => __DIR__ . '/../..' . '/Zotlabs/Identity/ProfilePhoto.php',
@@ -992,6 +1008,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Module\\Chat' => __DIR__ . '/../..' . '/Zotlabs/Module/Chat.php',
         'Zotlabs\\Module\\Chatsvc' => __DIR__ . '/../..' . '/Zotlabs/Module/Chatsvc.php',
         'Zotlabs\\Module\\Cloud' => __DIR__ . '/../..' . '/Zotlabs/Module/Cloud.php',
+        'Zotlabs\\Module\\Cloud_tiles' => __DIR__ . '/../..' . '/Zotlabs/Module/Cloud_tiles.php',
         'Zotlabs\\Module\\Common' => __DIR__ . '/../..' . '/Zotlabs/Module/Common.php',
         'Zotlabs\\Module\\Connect' => __DIR__ . '/../..' . '/Zotlabs/Module/Connect.php',
         'Zotlabs\\Module\\Connections' => __DIR__ . '/../..' . '/Zotlabs/Module/Connections.php',
@@ -999,6 +1016,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Module\\Contactgroup' => __DIR__ . '/../..' . '/Zotlabs/Module/Contactgroup.php',
         'Zotlabs\\Module\\Cover_photo' => __DIR__ . '/../..' . '/Zotlabs/Module/Cover_photo.php',
         'Zotlabs\\Module\\Dav' => __DIR__ . '/../..' . '/Zotlabs/Module/Dav.php',
+        'Zotlabs\\Module\\Defperms' => __DIR__ . '/../..' . '/Zotlabs/Module/Defperms.php',
         'Zotlabs\\Module\\Directory' => __DIR__ . '/../..' . '/Zotlabs/Module/Directory.php',
         'Zotlabs\\Module\\Dirsearch' => __DIR__ . '/../..' . '/Zotlabs/Module/Dirsearch.php',
         'Zotlabs\\Module\\Display' => __DIR__ . '/../..' . '/Zotlabs/Module/Display.php',
@@ -1023,6 +1041,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Module\\Help' => __DIR__ . '/../..' . '/Zotlabs/Module/Help.php',
         'Zotlabs\\Module\\Home' => __DIR__ . '/../..' . '/Zotlabs/Module/Home.php',
         'Zotlabs\\Module\\Hostxrd' => __DIR__ . '/../..' . '/Zotlabs/Module/Hostxrd.php',
+        'Zotlabs\\Module\\Hq' => __DIR__ . '/../..' . '/Zotlabs/Module/Hq.php',
         'Zotlabs\\Module\\Impel' => __DIR__ . '/../..' . '/Zotlabs/Module/Impel.php',
         'Zotlabs\\Module\\Import' => __DIR__ . '/../..' . '/Zotlabs/Module/Import.php',
         'Zotlabs\\Module\\Import_items' => __DIR__ . '/../..' . '/Zotlabs/Module/Import_items.php',

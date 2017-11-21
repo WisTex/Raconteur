@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "cc603d3dc499e43f840f9551039fa93c",
+    "content-hash": "9c45792f04ea3e30f312f5eef0bdad86",
     "packages": [
         {
             "name": "bshaffer/oauth2-server-php",
@@ -216,6 +216,41 @@
                 "markdown"
             ],
             "time": "2017-03-16T00:45:59+00:00"
+        },
+        {
+            "name": "lukasreschke/id3parser",
+            "version": "v0.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LukasReschke/ID3Parser.git",
+                "reference": "cd3ba6e8918cc30883f01a3c24281cfe23b8877a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LukasReschke/ID3Parser/zipball/cd3ba6e8918cc30883f01a3c24281cfe23b8877a",
+                "reference": "cd3ba6e8918cc30883f01a3c24281cfe23b8877a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ID3Parser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL"
+            ],
+            "homepage": "https://github.com/LukasReschke/ID3Parser/",
+            "keywords": [
+                "codecs",
+                "php",
+                "tags"
+            ],
+            "time": "2016-04-04T09:34:50+00:00"
         },
         {
             "name": "michelf/php-markdown",
