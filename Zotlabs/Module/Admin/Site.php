@@ -63,6 +63,7 @@ class Site {
 		$verify_email      = ((x($_POST,'verify_email'))     ? 1 : 0);
 		$techlevel_lock    = ((x($_POST,'techlock'))         ? intval($_POST['techlock'])   : 0);
 		$imagick_path      = ((x($_POST,'imagick_path'))     ? trim($_POST['imagick_path'])   : '');
+		$thumbnail_security  = ((x($_POST,'thumbnail_security'))     ? intval($_POST['thumbnail_security'])   : 0);
 		$force_queue       = ((intval($_POST['force_queue']) > 0) ? intval($_POST['force_queue'])   : 300);
 
 		$techlevel         = null;
@@ -85,7 +86,7 @@ class Site {
 		set_config('system', 'from_email', $from_email);
 		set_config('system', 'from_email_name' , $from_email_name);
 		set_config('system', 'imagick_convert_path' , $imagick_path);
-
+		set_config('system', 'thumbnail_security' , $thumbnail_security);
 
 		set_config('system', 'techlevel_lock', $techlevel_lock);
 
@@ -323,6 +324,7 @@ class Site {
 			'$force_queue'			=> array('force_queue', t("Queue Threshold"), get_config('system','force_queue_threshold',300), t("Always defer immediate delivery if queue contains more than this number of entries.")),
 			'$poll_interval'			=> array('poll_interval', t("Poll interval"), (x(get_config('system','poll_interval'))?get_config('system','poll_interval'):2), t("Delay background polling processes by this many seconds to reduce system load. If 0, use delivery interval.")),
 			'$imagick_path'			=> array('imagick_path', t("Path to ImageMagick convert program"), get_config('system','imagick_convert_path'), t("If set, use this program to generate photo thumbnails for huge images ( > 4000 pixels in either dimension), otherwise memory exhaustion may occur. Example: /usr/bin/convert")),
+			'$thumbnail_security'			=> array('thumbnail_security', t("Allow SVG thumbnails in file browser"), get_config('system','thumbnail_security',0), t("WARNING: SVG images may contain malicious code.")),
 			'$maxloadavg'			=> array('maxloadavg', t("Maximum Load Average"), ((intval(get_config('system','maxloadavg')) > 0)?get_config('system','maxloadavg'):50), t("Maximum system load before delivery and poll processes are deferred - default 50.")),
 			'$default_expire_days' => array('default_expire_days', t('Expiration period in days for imported (grid/network) content'), intval(get_config('system','default_expire_days')), t('0 for no expiration of imported content')),
 			'$form_security_token' => get_form_security_token("admin_site"),
