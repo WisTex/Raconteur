@@ -1,4 +1,4 @@
-function hqLiveUpdate(notify_id, b64mid) {
+function hqLiveUpdate(notify_id) {
 
 	if(typeof profile_uid === 'undefined') profile_uid = false; /* Should probably be unified with channelId defined in head.tpl */
 	if((src === null) || (stopped) || (! profile_uid)) { $('.like-rotator').hide(); return; }
@@ -65,7 +65,7 @@ function hqLiveUpdate(notify_id, b64mid) {
 		// else data was valid - reset the recursion counter
 		liveRecurse = 0;
 
-			if(notify_id !== 'undefined') {
+		if(notify_id !== 'undefined') {
 			$.post(
 				"hq",
 				{

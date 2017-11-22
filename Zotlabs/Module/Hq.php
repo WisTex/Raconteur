@@ -45,21 +45,26 @@ class Hq extends \Zotlabs\Web\Controller {
 		if(! $item_hash) {
 
 			$r = q("SELECT mid FROM item
-				WHERE uid = %d
-				AND mid = parent_mid
-				$item_normal
+				WHERE uid = %d 
+				AND item_thread_top = 1
 				ORDER BY created DESC
 				limit 1",
-				local_channel()
+				intval(local_channel())
 			);
-			$item_hash = 'b64.' . base64url_encode($r[0]['mid']);
 
-			if(!$item_hash) {
+			if(!$r[0]['mid']) {
 				\App::$error = 404;
 				notice( t('Item not found.') . EOL);
 				return;
 			}
+
+			$item_hash = 'b64.' . base64url_encode($r[0]['mid']);
 		}
+
+		if(strpos($item_hash,'b64.') === 0)
+			$decoded = @base64url_decode(substr($item_hash,4));
+		if($decoded)
+			$item_hash = $decoded;
 	
 		$updateable = false;
 
@@ -100,11 +105,6 @@ class Hq extends \Zotlabs\Web\Controller {
 		}
 	
 		$target_item = null;
-
-		if(strpos($item_hash,'b64.') === 0)
-			$decoded = @base64url_decode(substr($item_hash,4));
-		if($decoded)
-			$item_hash = $decoded;
 
 		$r = q("select id, uid, mid, parent_mid, thr_parent, verb, item_type, item_deleted, item_blocked from item where mid like '%s' limit 1",
 			dbesc($item_hash . '%')

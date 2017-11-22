@@ -4,7 +4,7 @@
 	{{if $parentpath}}
 	<div class="cloud-container" >
 	<div class="cloud-icon tiles"><a href="{{$parentpath.path}}">
-	<i class="fa fa-fw fa-level-up" ></i>
+	<div class="cloud-icon-container"><i class="fa fa-fw fa-level-up" ></i></div>
 	</a>
 	</div>
 	<div class="cloud-title"><a href="{{$parentpath.path}}">..</a>
@@ -18,7 +18,7 @@
 	{{if $item.photo_icon}}
 	<img src="{{$item.photo_icon}}" title="{{$item.type}}" >
 	{{else}}
-	<i class="fa fa-fw {{$item.iconFromType}}" title="{{$item.type}}"></i>
+	<div class="cloud-icon-container"><i class="fa fa-fw {{$item.iconFromType}}" title="{{$item.type}}"></i></div>
 	{{/if}}
 	</a>
 	</div>
