@@ -17,11 +17,35 @@ class Thumbnail {
 		if(! $c)
 			return;
 
+		$attach = $c[0];
+
 		$preview_style   = intval(get_config('system','thumbnail_security',0));
 		$preview_width   = intval(get_config('system','thumbnail_width',300));
 		$preview_height  = intval(get_config('system','thumbnail_height',300));
 
-		$attach = $c[0];
+		$p = [
+			'attach'         => $attach,
+			'preview_style'  => $preview_style,
+			'preview_width'  => $preview_width,
+			'preview_height' => $preview_height,
+			'thumbnail' => null
+		];
+
+		/**
+		 * @hooks thumbnail
+		 *  * \e array \b attach
+		 *  * \e int \b preview_style
+		 *  * \e int \b preview_width
+		 *  * \e int \b preview_height
+		 *  * \e string \b thumbnail
+		 */
+
+		call_hooks('thumbnail',$p);
+		if($p['thumbnail']) {
+			return;
+		}
+
+
 		$default_controller = null;
 		
 		$files = glob('Zotlabs/Thumbs/*.php');
@@ -45,7 +69,9 @@ class Thumbnail {
 				}
 			}
 		}
-		if(($default_controller) && (! file_exists(dbunescbin($attach['content']) . '.thumb'))) {
+		if(($default_controller) 
+			&& ((! file_exists(dbunescbin($attach['content']) . '.thumb')) 
+				|| (filectime(dbunescbin($attach['content']) . 'thumb') < (time() - 60)))) {
 			$default_controller->Thumb($attach,$preview_style,$preview_width,$preview_height);
 		}
 	}

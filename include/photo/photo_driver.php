@@ -129,7 +129,14 @@ abstract class photo_driver {
 		return $this->types[$this->getType()];
 	}
 
-	public function scaleImage($max) {
+	/**
+	 * @brief scale image
+	 * int $max maximum pixel size in either dimension
+	 * boolean $float_height - if true allow height to float to any length on tall images, 
+	 *     constraining only the width
+	 */
+
+	public function scaleImage($max, $float_height = true) {
 		if(!$this->is_valid())
 			return FALSE;
 
@@ -146,7 +153,7 @@ abstract class photo_driver {
 			// very tall image (greater than 16:9)
 			// constrain the width - let the height float.
 
-			if((($height * 9) / 16) > $width) {
+			if(((($height * 9) / 16) > $width) && ($float_height)) {
 				$dest_width = $max;
 	 			$dest_height = intval(( $height * $max ) / $width);
 			}
@@ -173,7 +180,7 @@ abstract class photo_driver {
 					// very tall image (greater than 16:9)
 					// but width is OK - don't do anything
 
-					if((($height * 9) / 16) > $width) {
+					if(((($height * 9) / 16) > $width) && ($float_height)) {
 						$dest_width = $width;
 	 					$dest_height = $height;
 					}
