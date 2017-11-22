@@ -170,7 +170,7 @@ class Articles extends \Zotlabs\Web\Controller {
 				$items = [];
 		}
 
-		$mode = 'cards';
+		$mode = 'articles';
 			
      	$content = conversation($items,$mode,false,'traditional');
 

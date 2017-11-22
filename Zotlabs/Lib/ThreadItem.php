@@ -105,7 +105,17 @@ class ThreadItem {
 
 		$mode = $conv->get_mode();
 
-		$edlink = (($item['item_type'] == ITEM_TYPE_CARD) ? 'card_edit' : 'editpost');
+		switch($item['item_type']) {
+			case ITEM_TYPE_CARD:
+				$edlink = 'card_edit';
+				break;
+			case ITEM_TYPE_ARTICLE:
+				$edlink = 'article_edit';
+				break;
+			default:
+				$edlink = 'editpost';
+				break;
+		}
 
 		if(local_channel() && $observer['xchan_hash'] === $item['author_xchan'])
 			$edpost = array(z_root() . '/' . $edlink . '/' . $item['id'], t('Edit'));
