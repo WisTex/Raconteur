@@ -127,6 +127,15 @@ function get_features($filtered = true) {
 			],
 
 			[
+				'articles',       
+				t('Articles'),          
+				t('Create interactive articles'),
+				false,
+				get_config('feature_lock','articles'),
+				feature_level('articles',1),
+			],
+
+			[
 				'nav_channel_select',  
 				t('Navigation Channel Select'), 
 				t('Change channels directly from within the navigation dropdown menu'),
