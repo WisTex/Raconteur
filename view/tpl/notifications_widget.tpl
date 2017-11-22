@@ -1,5 +1,6 @@
 <script>
 	var notifications_parent;
+
 	$(document).ready(function() {
 		notifications_parent = $('#notifications_wrapper')[0].parentElement.id;
 		$('.notifications-btn').click(function() {
@@ -13,6 +14,11 @@
 				$('#navbar-collapse-2').removeClass('show');
 			}
 		});
+
+		window.onpopstate = function(e) {
+			if(e.state !== null)
+				getData(e.state.b64mid, '');
+		};
 	});
 
 	{{if $module == 'display' || $module == 'hq'}}
@@ -20,8 +26,14 @@
 		var b64mid = $(this).data('b64mid');
 		var notify_id = $(this).data('notify_id');
 		var path = $(this)[0].pathname.substr(1,7);
+		var stateObj = { b64mid: b64mid };
 
-		console.log(path);
+		{{if $module == 'display'}}
+		history.pushState(stateObj, '', 'display/' + b64mid);
+		{{/if}}
+		{{if $module == 'hq'}}
+		history.pushState(stateObj, '', 'hq/' + b64mid);
+		{{/if}}
 
 		{{if $module == 'hq'}}
 		if(b64mid !== 'undefined' && path !== 'pubstre') {
@@ -31,25 +43,29 @@
 			e.preventDefault();
 			e.stopPropagation();
 
-			$('.thread-wrapper').remove();
-
-			if(! page_load)
+			if(! page_load) {
 				$(this).fadeOut();
-
-			bParam_mid = b64mid;
-			mode = 'replace';
-			page_load = true;
-			{{if $module == 'hq'}}
-			hqLiveUpdate(notify_id);
-			{{else}}
-			liveUpdate();
-			{{/if}}
+				getData(b64mid, notify_id);
+			}
 
 			if($('#notifications_wrapper').hasClass('fs'))
 				$('#notifications_wrapper').prependTo('#' + notifications_parent).removeClass('fs');
 		}
 	});
 	{{/if}}
+
+	function getData(b64mid, notify_id) {
+		$('.thread-wrapper').remove();
+		bParam_mid = b64mid;
+		mode = 'replace';
+		page_load = true;
+		{{if $module == 'hq'}}
+		hqLiveUpdate(notify_id);
+		{{/if}}
+		{{if $module == 'display'}}
+		liveUpdate();
+		{{/if}}
+	}
 </script>
 
 
