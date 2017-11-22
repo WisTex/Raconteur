@@ -3,18 +3,25 @@
 namespace Zotlabs\Thumbs;
 
 
-class Pdf {
+class Video {
 
-	function Match($type) {
-		return(($type === 'application/pdf') ? true : false );
+	function MatchDefault($type) {
+		return(($type === 'video') ? true : false );
 	}
 
 	function Thumb($attach,$preview_style,$height = 300, $width = 300) {
 
 		$photo = false;
 
+		$t = explode('/',$attach['filetype']);
+		if($t[1])
+			$extension = '.' . $t[1];
+		else
+			return; 
+
+
 		$file = dbunescbin($attach['content']);
-		$tmpfile = $file . '.pdf';
+		$tmpfile = $file . $extension;
 		$outfile = $file . '.jpg';
 
 		$istream = fopen($file,'rb');
@@ -29,13 +36,9 @@ class Pdf {
 		if($imagick_path && @file_exists($imagick_path)) {
 			$cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmpfile . '[0]') . ' -thumbnail ' . $width . 'x' . $height . ' ' . escapeshellarg(PROJECT_BASE . '/' . $outfile);
 			//  logger('imagick thumbnail command: ' . $cmd);
-			for($x = 0; $x < 4; $x ++) {
-				exec($cmd);
-				if(! file_exists($outfile)) {
-					logger('imagick scale failed. Retrying.');
-					continue;
-				}
-			}
+
+			exec($cmd);
+
 			if(! file_exists($outfile)) {
 				logger('imagick scale failed.');
 			}
@@ -43,6 +46,7 @@ class Pdf {
 				@rename($outfile,$file . '.thumb');
 			}
 		}
+			
 		@unlink($tmpfile);
 	}
 }
