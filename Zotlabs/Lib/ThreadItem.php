@@ -313,7 +313,7 @@ class ThreadItem {
 		$comment_count_txt = sprintf( tt('%d comment','%d comments',$total_children),$total_children );
 		$list_unseen_txt = (($unseen_comments) ? sprintf('%d unseen',$unseen_comments) : '');
 		
-
+		
 
 		
 
@@ -370,6 +370,7 @@ class ThreadItem {
 			'unverified' => $unverified,
 			'forged' => $forged,
 			'location' => $location,
+			'divider' => get_pconfig($conv->get_profile_owner(),'system','item_divider'),
 			'attend_label' => t('Attend'),
 			'attend_title' => t('Attendance Options'),
 			'vote_label' => t('Vote'),

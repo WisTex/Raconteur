@@ -628,13 +628,14 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 			// "New Item View" on network page or search page results
 			// - just loop through the items and format them minimally for display
 
-
-			//$tpl = get_markup_template('search_item.tpl');
 			$tpl = 'search_item.tpl';
 
 			foreach($items as $item) {
 
-				$x = [ 'mode' => $mode, 'item' => $item ];
+				$x = [ 
+					'mode' => $mode, 
+					'item' => $item 
+				];
 				call_hooks('stream_item',$x);
 				
 				if($x['item']['blocked'])
@@ -655,14 +656,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 					if(((activity_match($item['verb'],ACTIVITY_LIKE)) || (activity_match($item['verb'],ACTIVITY_DISLIKE))) 
 						&& ($item['id'] != $item['parent']))
 						continue;
-//					$nickname = $item['nickname'];
 				}
-//				else
-//					$nickname = App::$user['nickname'];
-
-//				$profile_name   = ((strlen($item['author-name']))   ? $item['author-name']   : $item['name']);
-//				if($item['author-link'] && (! $item['author-name']))
-//					$profile_name = $item['author-link'];
 
 				$sp = false;
 				$profile_link = best_link_url($item,$sp);
@@ -670,8 +664,6 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 					$sparkle = ' sparkle';
 				else
 					$profile_link = zid($profile_link);
-
-//				$normalised = normalise_link((strlen($item['author-link'])) ? $item['author-link'] : $item['url']);
 
 				$profile_name = $item['author']['xchan_name'];
 				$profile_link = $item['author']['xchan_url'];
@@ -768,6 +760,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 					'editedtime' => (($item['edited'] != $item['created']) ? sprintf( t('last edited: %s'), datetime_convert('UTC', date_default_timezone_get(), $item['edited'], 'r')) : ''),
 					'expiretime' => (($item['expires'] > NULL_DATE) ? sprintf( t('Expires: %s'), datetime_convert('UTC', date_default_timezone_get(), $item['expires'], 'r')):''),
 					'location' => $location,
+					'divider' => false,
 					'indent' => '',
 					'owner_name' => $owner_name,
 					'owner_url' => $owner_url,

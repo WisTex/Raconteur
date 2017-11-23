@@ -87,6 +87,10 @@
 	margin-left:10px;
 }
 
+.wall-item-divider {
+	margin: 5px;
+}
+
 .wall-item-lock {
 	float: left;
 }
