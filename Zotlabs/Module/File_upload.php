@@ -47,6 +47,46 @@ class File_upload extends \Zotlabs\Web\Controller {
 			}
 		}
 		else {
+
+			$matches = [];
+			$partial = false;
+
+			$x = preg_match('/bytes (\d*)\-(\d*)\/(\d*)/',$_SERVER['HTTP_CONTENT_RANGE'],$matches);
+			if($x) {
+				// logger('Content-Range: ' . print_r($matches,true));
+				$partial = true;
+			}
+
+			if($partial) {
+				$x = save_chunk($channel,$matches[1],$matches[2],$matches[3]);
+				if($x['partial']) {
+					header('Range: bytes=0-' . (($x['length']) ? $x['length'] - 1 : 0));
+					json_return_and_die($result);
+				}
+				else {
+					header('Range: bytes=0-' . (($x['size']) ? $x['size'] - 1 : 0));
+
+					$_FILES['userfile'] = [
+						'name'     => $x['name'],
+						'type'     => $x['type'],
+						'tmp_name' => $x['tmp_name'],
+						'error'    => $x['error'],
+						'size'     => $x['size']
+					];
+				}
+			}
+			else {	
+				if(! array_key_exists('userfile',$_FILES)) {
+					$_FILES['userfile'] = [
+						'name'     => $_FILES['files']['name'],
+						'type'     => $_FILES['files']['type'],
+						'tmp_name' => $_FILES['files']['tmp_name'],
+						'error'    => $_FILES['files']['error'],
+						'size'     => $_FILES['files']['size']
+					];
+				}
+			}
+
 			$r = attach_store($channel, get_observer_hash(), '', $_REQUEST);
 			if($r['success']) {
 				$sync = attach_export_data($channel,$r['data']['hash']);
