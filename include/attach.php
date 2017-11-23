@@ -1639,7 +1639,7 @@ function find_filename_by_hash($channel_id, $attachHash) {
  * @param int $bufsize size of chunk, default 16384
  * @return number with the size
  */
-function pipe_streams($in, $out, $bufize = 16384) {
+function pipe_streams($in, $out, $bufsize = 16384) {
 	$size = 0;
 	while (!feof($in))
 		$size += fwrite($out, fread($in, $bufsize));
