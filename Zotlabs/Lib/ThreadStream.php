@@ -63,6 +63,11 @@ class ThreadStream {
 				$this->writable = perm_is_allowed($this->profile_owner,$ob_hash,'post_comments');
 				$this->reload = $_SESSION['return_url'];
 				break;
+			case 'articles':
+				$this->profile_owner = \App::$profile['profile_uid'];
+				$this->writable = perm_is_allowed($this->profile_owner,$ob_hash,'post_comments');
+				$this->reload = $_SESSION['return_url'];
+				break;
 			case 'display':
 				// in this mode we set profile_owner after initialisation (from conversation()) and then 
 				// pull some trickery which allows us to re-invoke this function afterward

@@ -13,8 +13,14 @@ class Categories {
 		if(($cards) && (! feature_enabled(\App::$profile['profile_uid'],'cards')))
 			return '';
 
+		$articles = ((array_key_exists('articles',$arr) && $arr['articles']) ? true : false);
+
+		if(($articles) && (! feature_enabled(\App::$profile['profile_uid'],'articles')))
+			return '';
+
+
 		if((! \App::$profile['profile_uid']) 
-			|| (! perm_is_allowed(\App::$profile['profile_uid'],get_observer_hash(),(($cards) ? 'view_pages' : 'view_stream')))) {
+			|| (! perm_is_allowed(\App::$profile['profile_uid'],get_observer_hash(),(($cards || $articles) ? 'view_pages' : 'view_stream')))) {
 			return '';
 		}
 
@@ -25,6 +31,8 @@ class Categories {
 
 		if($cards)
 			return cardcategories_widget($srchurl, $cat);
+		elseif($articles)
+			return articlecategories_widget($srchurl, $cat);
 		else
 			return categories_widget($srchurl, $cat);
 

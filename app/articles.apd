@@ -1,0 +1,6 @@
+version: 1.1
+url: $baseurl/articles/$nick
+name: Articles
+requires: local_channel, articles
+photo: icon:file-text-o
+categories: Productivity

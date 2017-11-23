@@ -4309,6 +4309,8 @@ function webpage_to_namespace($webpage) {
 		$page_type = 'PDL';
 	elseif($webpage == ITEM_TYPE_CARD)
 		$page_type = 'CARD';
+	elseif($webpage == ITEM_TYPE_ARTICLE)
+		$page_type = 'ARTICLE';
 	elseif($webpage == ITEM_TYPE_DOC)
 		$page_type = 'docfile';
 	else

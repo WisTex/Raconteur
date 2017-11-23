@@ -329,6 +329,8 @@ function bb_ShareAttributes($match) {
 
 	if(strpos($link,'/cards/'))
 		$type = t('card');
+	elseif(strpos($link,'/articles/'))
+		$type = t('article');
 	else
 		$type = t('post');
 

@@ -105,7 +105,17 @@ class ThreadItem {
 
 		$mode = $conv->get_mode();
 
-		$edlink = (($item['item_type'] == ITEM_TYPE_CARD) ? 'card_edit' : 'editpost');
+		switch($item['item_type']) {
+			case ITEM_TYPE_CARD:
+				$edlink = 'card_edit';
+				break;
+			case ITEM_TYPE_ARTICLE:
+				$edlink = 'article_edit';
+				break;
+			default:
+				$edlink = 'editpost';
+				break;
+		}
 
 		if(local_channel() && $observer['xchan_hash'] === $item['author_xchan'])
 			$edpost = array(z_root() . '/' . $edlink . '/' . $item['id'], t('Edit'));
@@ -303,7 +313,7 @@ class ThreadItem {
 		$comment_count_txt = sprintf( tt('%d comment','%d comments',$total_children),$total_children );
 		$list_unseen_txt = (($unseen_comments) ? sprintf('%d unseen',$unseen_comments) : '');
 		
-
+		
 
 		
 
@@ -360,6 +370,7 @@ class ThreadItem {
 			'unverified' => $unverified,
 			'forged' => $forged,
 			'location' => $location,
+			'divider' => get_pconfig($conv->get_profile_owner(),'system','item_divider'),
 			'attend_label' => t('Attend'),
 			'attend_title' => t('Attendance Options'),
 			'vote_label' => t('Vote'),
