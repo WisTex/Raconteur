@@ -30,8 +30,8 @@ class File_upload extends \Zotlabs\Web\Controller {
 
 		$_REQUEST['allow_cid'] = perms2str($_REQUEST['contact_allow']);
 		$_REQUEST['allow_gid'] = perms2str($_REQUEST['group_allow']);
-		$_REQUEST['deny_cid'] = perms2str($_REQUEST['contact_deny']);
-		$_REQUEST['deny_gid'] = perms2str($_REQUEST['group_deny']);
+		$_REQUEST['deny_cid']  = perms2str($_REQUEST['contact_deny']);
+		$_REQUEST['deny_gid']  = perms2str($_REQUEST['group_deny']);
 
 		if($_REQUEST['filename']) {
 			$r = attach_mkdir($channel, get_observer_hash(), $_REQUEST);
@@ -51,10 +51,14 @@ class File_upload extends \Zotlabs\Web\Controller {
 			$matches = [];
 			$partial = false;
 
-			$x = preg_match('/bytes (\d*)\-(\d*)\/(\d*)/',$_SERVER['HTTP_CONTENT_RANGE'],$matches);
-			if($x) {
-				// logger('Content-Range: ' . print_r($matches,true));
-				$partial = true;
+
+
+			if(array_key_exists('HTTP_CONTENT_RANGE',$_SERVER)) {
+				$pm = preg_match('/bytes (\d*)\-(\d*)\/(\d*)/',$_SERVER['HTTP_CONTENT_RANGE'],$matches);
+				if($pm) {
+					// logger('Content-Range: ' . print_r($matches,true));
+					$partial = true;
+				}
 			}
 
 			if($partial) {
