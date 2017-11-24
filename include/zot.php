@@ -394,6 +394,7 @@ function zot_refresh($them, $channel = null, $force = false) {
 				$next_birthday = NULL_DATE;
 			}
 
+			$profile_assign = get_pconfig($channel['channel_id'],'system','profile_assign','');
 
 			// Keep original perms to check if we need to notify them
 			$previous_perms = get_all_perms($channel['channel_id'],$x['hash']);
@@ -455,6 +456,7 @@ function zot_refresh($them, $channel = null, $force = false) {
 						'abook_channel'   => intval($channel['channel_id']),
 						'abook_closeness' => intval($closeness),
 						'abook_xchan'     => $x['hash'],
+						'abook_profile'   => $profile_assign,
 						'abook_created'   => datetime_convert(),
 						'abook_updated'   => datetime_convert(),
 						'abook_dob'       => $next_birthday,
