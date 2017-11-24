@@ -43,10 +43,9 @@ class Hq extends \Zotlabs\Web\Controller {
 		$item_normal_update = item_normal_update();
 
 		if(! $item_hash) {
-
 			$r = q("SELECT mid FROM item
 				WHERE uid = %d 
-				AND item_thread_top = 1
+				AND mid = parent_mid
 				ORDER BY created DESC
 				limit 1",
 				intval(local_channel())
@@ -64,13 +63,13 @@ class Hq extends \Zotlabs\Web\Controller {
 
 		if(strpos($item_hash,'b64.') === 0)
 			$decoded = @base64url_decode(substr($item_hash,4));
+
 		if($decoded)
 			$item_hash = $decoded;
 	
 		$updateable = false;
 
 		if(! $update) {
-	
 			$channel = \App::get_channel();
 
 			$channel_acl = [
@@ -139,7 +138,6 @@ class Hq extends \Zotlabs\Web\Controller {
 			$static  = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 1);
 
 			// if the target item is not a post (eg a like) we want to address its thread parent
-
 			$mid = ((($target_item['verb'] == ACTIVITY_LIKE) || ($target_item['verb'] == ACTIVITY_DISLIKE)) ? $target_item['thr_parent'] : $target_item['mid']);
 
 			// if we got a decoded hash we must encode it again before handing to javascript 
@@ -180,11 +178,9 @@ class Hq extends \Zotlabs\Web\Controller {
 				'$net'     => '',
 				'$mid'     => $mid
 			]);
-
 		}
 
 		if($load) {
-
 			$r = null;
 
 			$r = q("SELECT item.id as item_id from item
@@ -198,11 +194,8 @@ class Hq extends \Zotlabs\Web\Controller {
 			if($r) {
 				$updateable = true;
 			}
-
 		}
-	
 		elseif($update) {
-
 			$r = null;
 
 			$r = q("SELECT item.parent AS item_id from item
@@ -220,7 +213,6 @@ class Hq extends \Zotlabs\Web\Controller {
 
 			$_SESSION['loadtime'] = datetime_convert();
 		}
-	
 		else {
 			$r = [];
 		}
