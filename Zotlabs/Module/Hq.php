@@ -61,6 +61,7 @@ class Hq extends \Zotlabs\Web\Controller {
 			$item_hash = 'b64.' . base64url_encode($r[0]['mid']);
 		}
 
+
 		if(strpos($item_hash,'b64.') === 0)
 			$decoded = @base64url_decode(substr($item_hash,4));
 		if($decoded)
@@ -91,7 +92,7 @@ class Hq extends \Zotlabs\Web\Controller {
 				'bang'                => '',
 				'visitor'             => true,
 				'profile_uid'         => local_channel(),
-				'return_path'         => 'channel/' . $channel['channel_address'],
+				'return_path'         => 'hq',
 				'expanded'            => true,
 				'editor_autocomplete' => true,
 				'bbco_autocomplete'   => 'bbcode',
@@ -133,6 +134,8 @@ class Hq extends \Zotlabs\Web\Controller {
 	
 		if(! $update && ! $load) {
 
+			nav_set_selected('HQ');
+
 			$static  = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 1);
 
 			// if the target item is not a post (eg a like) we want to address its thread parent
@@ -143,14 +146,14 @@ class Hq extends \Zotlabs\Web\Controller {
 			if($decoded)
 				$mid = 'b64.' . base64url_encode($mid);
 
-			$o .= '<div id="live-display"></div>' . "\r\n";
+			$o .= '<div id="live-hq"></div>' . "\r\n";
 			$o .= "<script> var profile_uid = " . local_channel()
 				. "; var netargs = '?f='; var profile_page = " . \App::$pager['page'] . "; </script>\r\n";
 	
 			\App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),[
 				'$baseurl' => z_root(),
-				'$pgtype'  => 'display',
-				'$uid'     => '0',
+				'$pgtype'  => 'hq',
+				'$uid'     => local_channel(),
 				'$gid'     => '0',
 				'$cid'     => '0',
 				'$cmin'    => '0',
@@ -181,6 +184,7 @@ class Hq extends \Zotlabs\Web\Controller {
 		}
 
 		if($load) {
+
 			$r = null;
 
 			$r = q("SELECT item.id as item_id from item
@@ -198,6 +202,7 @@ class Hq extends \Zotlabs\Web\Controller {
 		}
 	
 		elseif($update) {
+
 			$r = null;
 
 			$r = q("SELECT item.parent AS item_id from item
@@ -238,7 +243,7 @@ class Hq extends \Zotlabs\Web\Controller {
 			$items = [];
 		}
 	
-		$o .= conversation($items, 'display', $update, 'client');
+		$o .= conversation($items, 'hq', $update, 'client');
 
 		if($updateable) {
 			$x = q("UPDATE item SET item_unseen = 0 where item_unseen = 1 AND uid = %d and parent = %d ",
@@ -248,10 +253,6 @@ class Hq extends \Zotlabs\Web\Controller {
 		}
 
 		$o .= '<div id="content-complete"></div>';
-
-		if(($update && $load) && (! $items))  {
-			notice( t('Something went wrong.') . EOL );
-		}
 
 		return $o;
 

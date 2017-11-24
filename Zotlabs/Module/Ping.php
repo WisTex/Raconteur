@@ -496,7 +496,7 @@ class Ping extends \Zotlabs\Web\Controller {
 			$r = q("SELECT id, item_wall FROM item
 				WHERE item_unseen = 1 and uid = %d
 				$item_normal
-				AND author_xchan != '%s' $sql_extra ",
+				AND author_xchan != '%s'",
 				intval(local_channel()),
 				dbesc($ob_hash)
 			);

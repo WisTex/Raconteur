@@ -54,6 +54,10 @@ class ThreadStream {
 				$this->profile_owner = local_channel();
 				$this->writable = true;
 				break;
+			case 'hq':
+				$this->profile_owner = local_channel();
+				$this->writable = true;
+				break;
 			case 'channel':
 				$this->profile_owner = \App::$profile['profile_uid'];
 				$this->writable = perm_is_allowed($this->profile_owner,$ob_hash,'post_comments');
