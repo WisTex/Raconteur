@@ -72,21 +72,22 @@ function categories_widget($baseurl,$selected = '') {
 	$item_normal = item_normal();
 
 	$terms = array();
-	$r = q("select distinct(term.term)
-                from term join item on term.oid = item.id
-                where item.uid = %d
-                and term.uid = item.uid
-                and term.ttype = %d
-				and term.otype = %d
-                and item.owner_xchan = '%s'
-				and item.item_wall = 1
-				$item_normal
-				$sql_extra
-                order by term.term asc",
+	$r = q("select distinct(term.term) from term join item on term.oid = item.id
+		where item.uid = %d
+		and term.uid = item.uid
+		and term.ttype = %d
+		and term.otype = %d
+		and item.owner_xchan = '%s'
+		and item.item_wall = 1
+		and item.verb != '%s'
+		$item_normal
+		$sql_extra
+		order by term.term asc",
 		intval(App::$profile['profile_uid']),
-	        intval(TERM_CATEGORY),
-			intval(TERM_OBJ_POST),
-	        dbesc(App::$profile['channel_hash'])
+		intval(TERM_CATEGORY),
+		intval(TERM_OBJ_POST),
+		dbesc(App::$profile['channel_hash']),
+		dbesc(ACTIVITY_UPDATE)
 	);
 	if($r && count($r)) {
 		foreach($r as $rr)
@@ -118,19 +119,19 @@ function cardcategories_widget($baseurl,$selected = '') {
 
 	$terms = array();
 	$r = q("select distinct(term.term)
-                from term join item on term.oid = item.id
-                where item.uid = %d
-                and term.uid = item.uid
-                and term.ttype = %d
+				from term join item on term.oid = item.id
+				where item.uid = %d
+				and term.uid = item.uid
+				and term.ttype = %d
 				and term.otype = %d
-                and item.owner_xchan = '%s'
+				and item.owner_xchan = '%s'
 				$item_normal
 				$sql_extra
-                order by term.term asc",
+				order by term.term asc",
 		intval(App::$profile['profile_uid']),
-	        intval(TERM_CATEGORY),
+			intval(TERM_CATEGORY),
 			intval(TERM_OBJ_POST),
-	        dbesc(App::$profile['channel_hash'])
+			dbesc(App::$profile['channel_hash'])
 	);
 	if($r && count($r)) {
 		foreach($r as $rr)
@@ -163,19 +164,19 @@ function articlecategories_widget($baseurl,$selected = '') {
 
 	$terms = array();
 	$r = q("select distinct(term.term)
-                from term join item on term.oid = item.id
-                where item.uid = %d
-                and term.uid = item.uid
-                and term.ttype = %d
+				from term join item on term.oid = item.id
+				where item.uid = %d
+				and term.uid = item.uid
+				and term.ttype = %d
 				and term.otype = %d
-                and item.owner_xchan = '%s'
+				and item.owner_xchan = '%s'
 				$item_normal
 				$sql_extra
-                order by term.term asc",
+				order by term.term asc",
 		intval(App::$profile['profile_uid']),
-	        intval(TERM_CATEGORY),
+			intval(TERM_CATEGORY),
 			intval(TERM_OBJ_POST),
-	        dbesc(App::$profile['channel_hash'])
+			dbesc(App::$profile['channel_hash'])
 	);
 	if($r && count($r)) {
 		foreach($r as $rr)
