@@ -1749,6 +1749,22 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 			intval($arr['uid'])
 		);
 
+		// perhaps the system channel owns the post and it's a pubstream item
+
+		if(! $r) {
+			$s = q("select channel_id from channel where channel_system = 1 limit 1");
+			if($s) {
+				$r = q("SELECT * FROM item WHERE mid = '%s' AND uid = %d  ORDER BY id ASC LIMIT 1",
+					dbesc($arr['parent_mid']),
+					intval($s[0]['channel_id'])
+				);
+			}
+			if($r) {
+				$arr['uid'] = $r[0]['uid'];
+				$arr['aid'] = 0;
+			}
+		}
+
 		if($r) {
 
 			// in case item_store was killed before the parent's parent attribute got set,

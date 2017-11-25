@@ -1679,9 +1679,9 @@ function prepare_text($text, $content_type = 'text/bbcode', $cache = false) {
 			require_once('include/bbcode.php');
 
 			if(stristr($text,'[nosmile]'))
-				$s = bbcode($text,false,true,$cache);
+				$s = bbcode($text, [ 'cache' => $cache ]);
 			else
-				$s = smilies(bbcode($text,false,true,$cache));
+				$s = smilies(bbcode($text, [ 'cache' => $cache ]));
 
 			$s = zidify_links($s);
 

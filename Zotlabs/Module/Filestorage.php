@@ -103,6 +103,11 @@ class Filestorage extends \Zotlabs\Web\Controller {
 
 			attach_delete($owner, $f['hash']);
 
+			$sync = attach_export_data($channel, $f['hash'], true);
+			if($sync) {
+				build_sync_packet($channel['channel_id'], array('file' => array($sync)));
+			}
+
 			goaway(dirname($url));
 		}
 

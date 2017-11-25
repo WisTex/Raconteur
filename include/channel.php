@@ -1490,7 +1490,7 @@ function gender_icon($gender) {
 }
 
 
-function advanced_profile(&$a) {
+function advanced_profile() {
 	require_once('include/text.php');
 	if(! perm_is_allowed(App::$profile['profile_uid'],get_observer_hash(),'view_profile'))
 		return '';
