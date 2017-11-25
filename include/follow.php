@@ -226,6 +226,8 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 
 	}
 
+	$profile_assign = get_pconfig($uid,'system','profile_assign','');
+
 
 	$r = q("select abook_id, abook_xchan, abook_pending, abook_instance from abook 
 		where abook_xchan = '%s' and abook_channel = %d limit 1",
@@ -265,6 +267,7 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 				'abook_channel'   => intval($uid),
 				'abook_closeness' => intval($closeness),
 				'abook_xchan'     => $xchan_hash,
+				'abook_profile'   => $profile_assign,
 				'abook_feed'      => intval(($xchan['xchan_network'] === 'rss') ? 1 : 0),
 				'abook_created'   => datetime_convert(),
 				'abook_updated'   => datetime_convert(),

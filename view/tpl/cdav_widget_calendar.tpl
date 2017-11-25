@@ -14,10 +14,10 @@
 			<div id="share-calendar-{{$calendar.calendarid}}" class="sub-menu" style="display: none; border-color: {{$calendar.color}};">
 				{{if $calendar.sharees}}
 				{{foreach $calendar.sharees as $sharee}}
-				<div id="sharee-{{$calendar.calendarid}}" class="form-group">
+				<div id="sharee-{{$calendar.calendarid}}-{{$sharee@iteration}}" class="form-group">
 					<i class="fa fa-share generic-icons"></i>{{$sharee.name}}&nbsp;{{$sharee.access}}
 					<div class="pull-right">
-						<a href="#" onclick="dropItem('/cdav/calendar/dropsharee/{{$calendar.calendarid}}/{{$calendar.instanceid}}/{{$sharee.hash}}', '#sharee-{{$calendar.calendarid}}'); return false;"><i class="fa fa-trash-o drop-icons"></i></a>
+						<a href="#" onclick="dropItem('/cdav/calendar/dropsharee/{{$calendar.calendarid}}/{{$calendar.instanceid}}/{{$sharee.hash}}', '#sharee-{{$calendar.calendarid}}-{{$sharee@iteration}}'); return false;"><i class="fa fa-trash-o drop-icons"></i></a>
 					</div>
 				</div>
 				{{/foreach}}

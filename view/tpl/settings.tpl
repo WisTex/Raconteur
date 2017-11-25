@@ -167,6 +167,10 @@
 				</div>
 				<div id="miscellaneous-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="miscellaneous-settings">
 					<div class="section-content-tools-wrapper">
+						{{if $profselect}}
+						<label for="contact-profile-selector">{{$profseltxt}}</label>
+						{{$profselect}}
+						{{/if}}
 						{{if $menus}}
 						<div class="form-group channel-menu">
 							<label for="channel_menu">{{$menu_desc}}</label>

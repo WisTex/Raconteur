@@ -204,7 +204,7 @@ function bb_to_markdown($Text, $options = []) {
 	$Text = $x['bbcode'];
 
 	// Convert it to HTML - don't try oembed
-	$Text = bbcode($Text, $preserve_nl, false);
+	$Text = bbcode($Text, [ 'tryoembed' => false ]);
 
 	// Markdownify does not preserve previously escaped html entities such as <> and &.
 	$Text = str_replace(array('&lt;','&gt;','&amp;'),array('&_lt_;','&_gt_;','&_amp_;'),$Text);

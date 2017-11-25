@@ -1,3 +1,15 @@
+$(document).on('click', '#jot-toggle', function(e) {
+	e.preventDefault();
+	e.stopPropagation();
+
+	$(this).toggleClass('active');
+	$(window).scrollTop(0);
+	$('#jot-popup').toggle();
+	$('#profile-jot-text').focus();
+
+});
+
+
 function hqLiveUpdate(notify_id) {
 
 	if(typeof profile_uid === 'undefined') profile_uid = false; /* Should probably be unified with channelId defined in head.tpl */

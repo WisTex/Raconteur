@@ -43,10 +43,9 @@ class Hq extends \Zotlabs\Web\Controller {
 		$item_normal_update = item_normal_update();
 
 		if(! $item_hash) {
-
 			$r = q("SELECT mid FROM item
 				WHERE uid = %d 
-				AND item_thread_top = 1
+				AND mid = parent_mid
 				ORDER BY created DESC
 				limit 1",
 				intval(local_channel())
@@ -61,15 +60,16 @@ class Hq extends \Zotlabs\Web\Controller {
 			$item_hash = 'b64.' . base64url_encode($r[0]['mid']);
 		}
 
+
 		if(strpos($item_hash,'b64.') === 0)
 			$decoded = @base64url_decode(substr($item_hash,4));
+
 		if($decoded)
 			$item_hash = $decoded;
 	
 		$updateable = false;
 
 		if(! $update) {
-	
 			$channel = \App::get_channel();
 
 			$channel_acl = [
@@ -91,7 +91,7 @@ class Hq extends \Zotlabs\Web\Controller {
 				'bang'                => '',
 				'visitor'             => true,
 				'profile_uid'         => local_channel(),
-				'return_path'         => 'channel/' . $channel['channel_address'],
+				'return_path'         => 'hq',
 				'expanded'            => true,
 				'editor_autocomplete' => true,
 				'bbco_autocomplete'   => 'bbcode',
@@ -125,32 +125,34 @@ class Hq extends \Zotlabs\Web\Controller {
 			
 		if($update && $_SESSION['loadtime'])
 			$simple_update = " AND (( item_unseen = 1 AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' )  OR item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' ) ";
-		if($load)
-			$simple_update = '';
 	
 		if($static && $simple_update)
 			$simple_update .= " and item_thread_top = 0 and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
+
+		$sys = get_sys_channel();
+		$sql_extra = item_permissions_sql($sys['channel_id']);
 	
 		if(! $update && ! $load) {
+
+			nav_set_selected('HQ');
 
 			$static  = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 1);
 
 			// if the target item is not a post (eg a like) we want to address its thread parent
-
 			$mid = ((($target_item['verb'] == ACTIVITY_LIKE) || ($target_item['verb'] == ACTIVITY_DISLIKE)) ? $target_item['thr_parent'] : $target_item['mid']);
 
 			// if we got a decoded hash we must encode it again before handing to javascript 
 			if($decoded)
 				$mid = 'b64.' . base64url_encode($mid);
 
-			$o .= '<div id="live-display"></div>' . "\r\n";
+			$o .= '<div id="live-hq"></div>' . "\r\n";
 			$o .= "<script> var profile_uid = " . local_channel()
 				. "; var netargs = '?f='; var profile_page = " . \App::$pager['page'] . "; </script>\r\n";
 	
 			\App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),[
 				'$baseurl' => z_root(),
-				'$pgtype'  => 'display',
-				'$uid'     => '0',
+				'$pgtype'  => 'hq',
+				'$uid'     => local_channel(),
 				'$gid'     => '0',
 				'$cid'     => '0',
 				'$cmin'    => '0',
@@ -177,45 +179,65 @@ class Hq extends \Zotlabs\Web\Controller {
 				'$net'     => '',
 				'$mid'     => $mid
 			]);
-
 		}
 
 		if($load) {
 			$r = null;
 
-			$r = q("SELECT item.id as item_id from item
+			$r = q("SELECT item.id AS item_id FROM item
 				WHERE uid = %d
-				and mid = '%s'
+				AND mid = '%s'
 				$item_normal
-				limit 1",
+				LIMIT 1",
 				intval(local_channel()),
 				dbesc($target_item['parent_mid'])
 			);
+
 			if($r) {
 				$updateable = true;
 			}
 
+			if(!$r) {
+				$r = q("SELECT item.id AS item_id FROM item
+					LEFT JOIN abook ON item.author_xchan = abook.abook_xchan
+					WHERE mid = '%s' AND item.uid = %d $item_normal
+					AND (abook.abook_blocked = 0 or abook.abook_flags is null)
+					$sql_extra LIMIT 1",
+					dbesc($target_item['parent_mid']),
+					intval($sys['channel_id'])
+				);
+			}
 		}
-	
 		elseif($update) {
 			$r = null;
 
-			$r = q("SELECT item.parent AS item_id from item
+			$r = q("SELECT item.parent AS item_id FROM item
 				WHERE uid = %d
-				and parent_mid = '%s'
+				AND parent_mid = '%s'
 				$item_normal_update
 				$simple_update
-				limit 1",
+				LIMIT 1",
 				intval(local_channel()),
 				dbesc($target_item['parent_mid'])
 			);
+
 			if($r) {
 				$updateable = true;
+			}
+
+			if(!$r) {
+				$r = q("SELECT item.parent AS item_id FROM item
+					LEFT JOIN abook ON item.author_xchan = abook.abook_xchan
+					WHERE mid = '%s' AND item.uid = %d $item_normal_update $simple_update
+					AND (abook.abook_blocked = 0 or abook.abook_flags is null)
+					$sql_extra LIMIT 1",
+					dbesc($target_item['parent_mid']),
+					intval($sys['channel_id'])
+				);
 			}
 
 			$_SESSION['loadtime'] = datetime_convert();
 		}
-	
 		else {
 			$r = [];
 		}
@@ -225,11 +247,11 @@ class Hq extends \Zotlabs\Web\Controller {
 			if($parents_str) {
 				$items = q("SELECT item.*, item.id AS item_id 
 					FROM item
-					WHERE parent in ( %s ) $item_normal ",
+					WHERE parent IN ( %s ) $item_normal ",
 					dbesc($parents_str)
 				);
 	
-				xchan_query($items);
+				xchan_query($items,true,local_channel());
 				$items = fetch_post_tags($items,true);
 				$items = conv_sort($items,'created');
 			}
@@ -238,20 +260,16 @@ class Hq extends \Zotlabs\Web\Controller {
 			$items = [];
 		}
 	
-		$o .= conversation($items, 'display', $update, 'client');
+		$o .= conversation($items, 'hq', $update, 'client');
 
 		if($updateable) {
-			$x = q("UPDATE item SET item_unseen = 0 where item_unseen = 1 AND uid = %d and parent = %d ",
+			$x = q("UPDATE item SET item_unseen = 0 WHERE item_unseen = 1 AND uid = %d AND parent = %d ",
 				intval(local_channel()),
 				intval($r[0]['item_id'])
 			);
 		}
 
 		$o .= '<div id="content-complete"></div>';
-
-		if(($update && $load) && (! $items))  {
-			notice( t('Something went wrong.') . EOL );
-		}
 
 		return $o;
 

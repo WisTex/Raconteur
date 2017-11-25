@@ -36,7 +36,7 @@
 		{{/if}}
 
 		{{if $module == 'hq'}}
-		if(b64mid !== 'undefined' && path !== 'pubstre') {
+		if(b64mid !== 'undefined') {
 		{{else}}
 		if(path === 'display' && b64mid) {
 		{{/if}}

@@ -513,6 +513,12 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 		}
 	}
 
+	elseif ($mode === 'hq') {
+		$profile_owner = local_channel();
+		$page_writeable = true;
+		$live_update_div = '<div id="live-hq"></div>' . "\r\n";
+	}
+
 	elseif ($mode === 'channel') {
 		$profile_owner = App::$profile['profile_uid'];
 		$page_writeable = ($profile_owner == local_channel());
