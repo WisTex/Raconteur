@@ -11,10 +11,12 @@ class Tagger extends \Zotlabs\Web\Controller {
 
 	function get() {
 	
-		if(! local_channel() && ! remote_channel()) {
+		if(! local_channel()) {
 			return;
 		}
 	
+		$sys = get_sys_channel();
+
 		$observer_hash = get_observer_hash();
 		//strip html-tags
 		$term = notags(trim($_GET['term']));
@@ -26,9 +28,29 @@ class Tagger extends \Zotlabs\Web\Controller {
 	
 		logger('tagger: tag ' . $term . ' item ' . $item_id);
 	
-	
-		$r = q("SELECT * FROM item left join xchan on xchan_hash = author_xchan WHERE id = '%s' and uid = %d LIMIT 1",
-			dbesc($item_id),
+		$r = q("select * from item where id = %d and uid = %d limit 1",
+			intval($item_id),
+			intval(local_channel())
+		);	
+
+		if(! $r) {
+			$r = q("select * from item where id = %d and uid = %d limit 1",
+				intval($item_id),
+				intval($sys['channel_id'])
+			);	
+			if($r) {
+				$r = [ copy_of_pubitem($channel, $i[0]['mid']) ];
+                $item_id = (($r) ? $r[0]['id'] : 0);
+			}
+		}
+
+		if(! $r) {
+			notice( t('Post not found.') . EOL);
+			return;
+		}
+
+		$r = q("SELECT * FROM item left join xchan on xchan_hash = author_xchan WHERE id = %d and uid = %d LIMIT 1",
+			intval($item_id),
 			intval(local_channel())
 		);
 	
