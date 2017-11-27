@@ -41,7 +41,6 @@
 		if(path === 'display' && b64mid) {
 		{{/if}}
 			e.preventDefault();
-			e.stopPropagation();
 
 			if(! page_load) {
 				$(this).fadeOut();
