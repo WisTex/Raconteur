@@ -1,0 +1,15 @@
+{
+    "timeout": 13,
+    "source": {
+        "directories": [
+            "include",
+            "Zotlabs"
+        ]
+    },
+    "logs": {
+        "text": "tests/results/infection-log.txt"
+    },
+    "phpUnit": {
+        "configDir": "tests"
+    }
+}

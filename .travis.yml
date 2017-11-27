@@ -39,6 +39,7 @@ addons:
 php:
   - '7.0'
   - '7.1'
+  - '7.2'
   # HHVM does not fulfil PHPUnit platform requirements as being compatible with PHP7 yet
   #- 'hhvm'
 
@@ -69,7 +70,7 @@ matrix:
         mariadb: '10.1'
     # PHP7.1, PostgreSQL 9.6
     - php: '7.1'
-      env: DB=pgsql POSTGRESQL_VERSION=9.6
+      env: DB=pgsql POSTGRESQL_VERSION=9.6 PHPUNITFILE=phpunit-pgsql.xml
       # Use newer postgres than 9.2 default
       addons:
         postgresql: '9.6'
@@ -125,15 +126,19 @@ before_script:
   - if [[ "$DB" == "pgsql" ]]; then ./tests/travis/prepare_pgsql.sh; fi
 
 # omitting "script:" will default to phpunit
-script: ./vendor/bin/phpunit $PHPUCOV -c tests/phpunit-$DB.xml
+script:
+  - ./vendor/bin/phpunit $PHPUCOV -c tests/$PHPUNITFILE
 
 after_success:
-  # Generate API documentation and deploy it to gh-pages
+  - cat tests/results/testdox.txt
+  # Generate API documentation and prepare for deployment
   - ./tests/travis/gen_apidocs.sh
-#after_failure:
+after_failure:
+  - cat tests/results/testdox.txt
 
 # Deploying release and API documentation to GitHub
-#before_deploy:
+before_deploy:
+  - if [[ "$CODECOV" == "1" ]]; then zip -9 -r -q tests/hubzilla-testresults.zip tests/results; fi
 deploy:
   - provider: pages
     skip_cleanup: true
@@ -152,6 +157,15 @@ deploy:
       repo: redmatrix/hubzilla
       tags: true
       condition: '(-n "$GH_TOKEN") && ("$TRAVIS_JOB_NUMBER" == "${TRAVIS_BUILD_NUMBER}.1")'
+  # add code coverage and test results to release
+  - provider: releases
+    skip_cleanup: true
+    api_key: $GH_TOKEN
+    file: 'tests/hubzilla-testresults.zip'
+    on:
+      repo: redmatrix/hubzilla
+      tags: true
+      condition: '(-n "$GH_TOKEN") && ("$CODECOV" == "1")'
 #after_deploy:
 
 #after_script:
