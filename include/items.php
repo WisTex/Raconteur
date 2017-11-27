@@ -4756,6 +4756,9 @@ function copy_of_pubitem($channel,$mid) {
 			unset($rv['parent']);
 			$rv['aid'] = $channel['channel_account_id'];
 			$rv['uid'] = $channel['channel_id'];
+			$rv['item_wall'] = 0;
+			$rv['item_origin'] = 0;
+
 			$x = item_store($rv);
 			if($x['item_id'] && $x['item']['mid'] === $mid) {
 				$result = $x['item'];
