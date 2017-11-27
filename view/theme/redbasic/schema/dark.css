@@ -140,7 +140,7 @@ option {
 }
 
 .nav-link.active {
-	color:#000 !important;
+	color:#fff !important;
 }
 
 a.btn, aside a {
@@ -303,6 +303,13 @@ a, a:visited, a:link, .fakelink, .fakelink:visited, .fakelink:link {
 
 .list-group-item {
 	background-color: #222;
+}
+
+.text-dark {
+	color: #aaa !important;
+}
+a.text-dark:focus, a.text-dark:hover {
+	color: #ddd !important;
 }
 
 .group-selected, .fileas-selected, .categories-selected, .search-selected, a.active {
