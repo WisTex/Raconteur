@@ -482,10 +482,10 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 	$previewing = (($preview) ? ' preview ' : '');
 	$preview_lbl = t('This is an unsaved preview');
 
-	if ($mode === 'network') {
+	if (in_array($mode, [ 'network', 'pubstream'])) {
 
 		$profile_owner = local_channel();
-		$page_writeable = true;
+		$page_writeable = ((local_channel()) ? true : false);
 
 		if (!$update) {
 			// The special div is needed for liveUpdate to kick in for this page.

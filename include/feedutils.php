@@ -65,15 +65,34 @@ function get_feed_for($channel, $observer_hash, $params) {
 	if(! $channel)
 		http_status_exit(401);
 
-	if($params['pages']) {
-		if(! perm_is_allowed($channel['channel_id'],$observer_hash,'view_pages'))
-			http_status_exit(403);
-	} else {
-		if(! perm_is_allowed($channel['channel_id'],$observer_hash,'view_stream'))
-			http_status_exit(403);
-	}
 
 	// logger('params: ' . print_r($params,true));
+
+
+	$interactive = ((is_array($params) && array_key_exists('interactive',$params)) ? intval($params['interactive']) : 0);
+
+
+	if($params['pages']) {
+		if(! perm_is_allowed($channel['channel_id'],$observer_hash,'view_pages')) {
+			if($interactive) {
+				return '';
+			}
+			else {
+				http_status_exit(403);
+			}
+		}
+	}
+	else {
+		if(! perm_is_allowed($channel['channel_id'],$observer_hash,'view_stream')) {
+			if($interactive) {
+				return '';
+			}
+			else {
+				http_status_exit(403);
+			}
+		}
+	}
+
 
 	$feed_template = get_markup_template('atom_feed.tpl');
 

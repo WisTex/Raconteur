@@ -1749,22 +1749,6 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 			intval($arr['uid'])
 		);
 
-		// perhaps the system channel owns the post and it's a pubstream item
-
-		if(! $r) {
-			$s = q("select channel_id from channel where channel_system = 1 limit 1");
-			if($s) {
-				$r = q("SELECT * FROM item WHERE mid = '%s' AND uid = %d  ORDER BY id ASC LIMIT 1",
-					dbesc($arr['parent_mid']),
-					intval($s[0]['channel_id'])
-				);
-			}
-			if($r) {
-				$arr['uid'] = $r[0]['uid'];
-				$arr['aid'] = 0;
-			}
-		}
-
 		if($r) {
 
 			// in case item_store was killed before the parent's parent attribute got set,
@@ -4724,4 +4708,63 @@ function item_create_edit_activity($post) {
 	}
 
 	\Zotlabs\Daemon\Master::Summon(array('Notifier', 'edit_activity', $post_id));
+}
+
+/**
+ * @brief copies an entire conversation from the pubstream to this channel's stream
+ * which will allow you to interact with it.
+ */
+
+
+
+function copy_of_pubitem($channel,$mid) {
+
+	$result = null;
+	$syschan = get_sys_channel();
+
+	// logger('copy_of_pubitem: ' . $channel['channel_id'] . ' mid: ' . $mid);
+
+	$r = q("select * from item where mid = '%s' and uid = %d limit 1",
+		dbesc($mid),
+		intval($channel['channel_id'])
+	);
+
+	if($r) {
+		logger('exists');
+		$item = fetch_post_tags($r,true);
+		return $item[0];
+	}
+
+
+	$r = q("select * from item where parent_mid = (select parent_mid from item where mid = '%s' and uid = %d ) order by id ",
+		dbesc($mid),
+		intval($syschan['channel_id'])
+	);
+		
+	if($r) {
+		$items = fetch_post_tags($r,true);
+		foreach($items as $rv) {
+			$d = q("select id from item where mid = '%s' and uid = %d limit 1",
+				dbesc($rv['mid']),
+				intval($channel['channel_id'])
+			);
+			if($d) {
+				continue;
+			}
+
+			unset($rv['id']);
+			unset($rv['parent']);
+			$rv['aid'] = $channel['channel_account_id'];
+			$rv['uid'] = $channel['channel_id'];
+			$rv['item_wall'] = 0;
+			$rv['item_origin'] = 0;
+
+			$x = item_store($rv);
+			if($x['item_id'] && $x['item']['mid'] === $mid) {
+				$result = $x['item'];
+			}
+
+		}
+	}
+	return $result;		
 }

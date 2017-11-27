@@ -6,8 +6,12 @@ namespace Zotlabs\Module;
 class React extends \Zotlabs\Web\Controller {
 
 	function get() {
+
 		if(! local_channel())
 			return;
+
+		$sys = get_sys_channel();
+		$channel = \App::get_channel();
 
 		$postid = $_REQUEST['postid'];
 
@@ -15,6 +19,8 @@ class React extends \Zotlabs\Web\Controller {
 			return;
 
 		$emoji = $_REQUEST['emoji'];
+
+
 		if($_REQUEST['emoji']) {
 
 			$i = q("select * from item where id = %d and uid = %d",
@@ -22,10 +28,22 @@ class React extends \Zotlabs\Web\Controller {
 				intval(local_channel())
 			);
 
-			if(! $i)
-				return;
+			if(! $i) {
+				$i = q("select * from item where id = %d and uid = %d",
+					intval($postid),
+					intval($sys['channel_id'])
+				);
 
-			$channel = \App::get_channel();
+				if($i) {
+					$i = [ copy_of_pubitem($channel, $i[0]['mid']) ];
+					$postid = (($i) ? $i[0]['id'] : 0);
+				}
+			}
+
+			if(! $i) {
+				return;
+			}
+
 
 			$n = array();
 			$n['aid'] = $channel['channel_account_id'];
@@ -40,8 +58,7 @@ class React extends \Zotlabs\Web\Controller {
 
 			$x = item_store($n); 
 
-			if(local_channel())
-				retain_item($postid);
+			retain_item($postid);
 
 			if($x['success']) {
 				$nid = $x['item_id'];

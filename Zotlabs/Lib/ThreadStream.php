@@ -54,6 +54,10 @@ class ThreadStream {
 				$this->profile_owner = local_channel();
 				$this->writable = true;
 				break;
+			case 'pubstream':
+				$this->profile_owner = local_channel();
+				$this->writable = ((local_channel()) ? true : false);
+				break;
 			case 'hq':
 				$this->profile_owner = local_channel();
 				$this->writable = true;
@@ -188,6 +192,10 @@ class ThreadStream {
 					$item->set_commentable(can_comment_on_post($ob_hash,$item->data));
 			}
 		}
+		if($this->mode === 'pubstream' && (! local_channel())) {
+			$item->set_commentable(false);
+		} 
+
 		require_once('include/channel.php');
 
 		$item->set_conversation($this);
