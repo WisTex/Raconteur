@@ -17,6 +17,33 @@ function UploadInit() {
 	var filedrag = $("#cloud-drag-area");
 	var submit = $("#upload-submit");
 
+
+	$('#invisible-cloud-file-upload').fileupload({
+			url: 'file_upload',
+			dataType: 'json',
+		  //  dropZone: $('#profile-jot-text'),
+			maxChunkSize: 4 * 1024 * 1024,
+			add: function(e,data) {
+				$('#profile-rotator').show();
+				data.submit();
+			},
+			done: function(e,data) {
+				addeditortext(data.result.message);
+				$('#jot-media').val($('#jot-media').val() + data.result.message);
+			},
+			stop: function(e,data) {
+				preview_post();
+				$('#profile-rotator').hide();
+			},
+		});
+
+		$('#files-upload').click(function(event) { event.preventDefault(); $('#invisible-cloud-file-upload').trigger('click'); return false;});
+
+
+
+
+
+
 	// is XHR2 available?
 	var xhr = new XMLHttpRequest();
 	if (xhr.upload) {
