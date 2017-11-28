@@ -10,6 +10,13 @@ require_once('include/items.php');
 
 class Hq extends \Zotlabs\Web\Controller {
 
+	function init() {
+		if(! local_channel())
+			return;
+
+		\App::$profile_uid = local_channel();
+	}
+
 	function post() {
 
 		if(!local_channel())
