@@ -1,3 +1,98 @@
+var src = null;
+var prev = null;
+var livetime = null;
+var msie = false;
+var stopped = false;
+var totStopped = false;
+var timer = null;
+var pr = 0;
+var liking = 0;
+var in_progress = false;
+var langSelect = false;
+var commentBusy = false;
+var last_popup_menu = null;
+var last_popup_button = null;
+var scroll_next = false;
+var next_page = 1;
+var page_load = true;
+var loadingPage = true;
+var pageHasMoreContent = true;
+var updateCountsOnly = false;
+var divmore_height = 400;
+var last_filestorage_id = null;
+var mediaPlaying = false;
+var contentHeightDiff = 0;
+var liveRecurse = 0;
+var savedTitle = '';
+
+$.ajaxSetup({cache: false});
+
+$(document).ready(function() {
+
+	$(document).on('click focus', '.comment-edit-form', handle_comment_form);
+
+	jQuery.timeago.settings.strings = {
+		prefixAgo     : aStr['t01'],
+		prefixFromNow : aStr['t02'],
+		suffixAgo     : aStr['t03'],
+		suffixFromNow : aStr['t04'],
+		seconds       : aStr['t05'],
+		minute        : aStr['t06'],
+		minutes       : aStr['t07'],
+		hour          : aStr['t08'],
+		hours         : aStr['t09'],
+		day           : aStr['t10'],
+		days          : aStr['t11'],
+		month         : aStr['t12'],
+		months        : aStr['t13'],
+		year          : aStr['t14'],
+		years         : aStr['t15'],
+		wordSeparator : aStr['t16'],
+		numbers       : aStr['t17'],
+	};
+
+	savedTitle = document.title;
+
+	NavUpdate();
+	liveUpdateInit();
+
+	$('a[rel^="#"]').click(function(e){
+		manage_popup_menu(this, e);
+		return;
+	});
+
+	// Allow folks to stop the ajax page updates with the pause/break key
+	$(document).keydown(function(event) {
+		if(event.keyCode == '8') {
+			var target = event.target || event.srcElement;
+			if (!/input|textarea/i.test(target.nodeName)) {
+				return false;
+			}
+		}
+
+		if(event.keyCode == '19' || (event.ctrlKey && event.which == '32')) {
+			event.preventDefault();
+			if(stopped === false) {
+				stopped = true;
+				if (event.ctrlKey) {
+					totStopped = true;
+				}
+				$('#pause').html('<img src="images/pause.gif" alt="pause" style="border: 1px solid black;" />');
+			} else {
+				unpause();
+			}
+		} else {
+			if (!totStopped) {
+				unpause();
+			}
+		}
+	});
+
+	var e = document.getElementById('content-complete');
+	if(e)
+		pageHasMoreContent = false;	
+
+});
 
 function confirmDelete() { return confirm(aStr.delitem); }
 
@@ -59,59 +154,6 @@ function handle_comment_form(e) {
 	});
 }
 
-/*
-function commentOpenUI(obj, id) {
-	$(document).unbind( "click.commentOpen", handler );
-
-	var handler = function() {
-		if(obj.value == aStr.comment) {
-			obj.value = '';
-			$("#comment-edit-text-" + id).addClass("comment-edit-text-full").removeClass("comment-edit-text-empty");
-			// Choose an arbitrary tab index that's greater than what we're using in jot (3 of them)
-			// The submit button gets tabindex + 1
-			$("#comment-edit-text-" + id).attr('tabindex','9');
-			$("#comment-edit-submit-" + id).attr('tabindex','10');
-			$("#comment-tools-" + id).show();
-			$("#comment-edit-anon-" + id).show();
-		}
-	};
-
-	$(document).bind( "click.commentOpen", handler );
-}
-
-function commentCloseUI(obj, id) {
-	var form_id = $(obj)[0].form.id;
-
-	$('#' + form_id).on('click', function(e) {
-		$(document).unbind( "click.commentClose", handler );
-	});
-
-	var handler = function() {
-		if($('#comment-edit-text-' + id).val() === '') {
-			$('#comment-edit-text-' + id).val(aStr.comment);
-			$("#comment-edit-text-" + id).removeClass("comment-edit-text-full").addClass("comment-edit-text-empty");
-			$("#comment-edit-text-" + id).removeAttr('tabindex');
-			$("#comment-edit-submit-" + id).removeAttr('tabindex');
-			$("#comment-tools-" + id).hide();
-			$("#comment-edit-anon-" + id).hide();
-		}
-	};
-
-	$(document).bind( "click.commentClose", handler );
-}
-
-function commentOpen(obj, id) {
-	if(obj.value == aStr.comment) {
-		obj.value = '';
-		$("#comment-edit-text-" + id).addClass("expanded");
-		$("#mod-cmnt-wrap-" + id).show();
-		$("#comment-tools-" + id).show();
-		$("#comment-edit-anon-" + id).show();
-		return true;
-	}
-	return false;
-}
-*/
 function commentClose(obj, id) {
 	if(obj.value === '') {
 		obj.value = aStr.comment;
@@ -123,7 +165,6 @@ function commentClose(obj, id) {
 	}
 	return false;
 }
-
 
 function showHideCommentBox(id) {
 	if( $('#comment-edit-form-' + id).is(':visible')) {
@@ -308,114 +349,18 @@ function markItemRead(itemId) {
 	$('.unseen-wall-indicator-'+itemId).hide();
 }
 
+function manage_popup_menu(w,e) {
+	menu = $( $(w).attr('rel') );
 
-var src = null;
-var prev = null;
-var livetime = null;
-var msie = false;
-var stopped = false;
-var totStopped = false;
-var timer = null;
-var pr = 0;
-var liking = 0;
-var in_progress = false;
-var langSelect = false;
-var commentBusy = false;
-var last_popup_menu = null;
-var last_popup_button = null;
-var scroll_next = false;
-var next_page = 1;
-var page_load = true;
-var loadingPage = true;
-var pageHasMoreContent = true;
-var updateCountsOnly = false;
-var divmore_height = 400;
-var last_filestorage_id = null;
-var mediaPlaying = false;
-var contentHeightDiff = 0;
-var liveRecurse = 0;
-var savedTitle = '';
+	/* notification menus are loaded dynamically 
+	 * - here we find a rel tag to figure out what type of notification to load */
 
-$(function() {
-	$.ajaxSetup({cache: false});
+	var loader_source = $(menu).attr('rel');
 
-	msie = false; // $.browser.msie ;
-
-	var e = document.getElementById('content-complete');
-	if(e)
-		pageHasMoreContent = false;		
-
-	/* setup onoff widgets */
-	$(".onoff input").each(function(){
-		val = $(this).val();
-		id = $(this).attr("id");
-		$("#"+id+"_onoff ."+ (val==0?"on":"off")).addClass("hidden");
-	});
-	$(".onoff > a").click(function(event){
-		event.preventDefault();	
-		var input = $(this).siblings("input");
-		var val = 1-input.val();
-		var id = input.attr("id");
-		$("#"+id+"_onoff ."+ (val==0?"on":"off")).addClass("hidden");
-		$("#"+id+"_onoff ."+ (val==1?"on":"off")).removeClass("hidden");
-		input.val(val);
-		//console.log(id);
-	});
-
-	/* setup field_richtext */
-	//setupFieldRichtext();
-
-
-	/* Turn elements with one of our special rel tags into popup menus */
-	/* CHANGES: let bootstrap handle popups and only do the loading here */
-
-
-	$('a[rel^="#"]').click(function(e){
-		manage_popup_menu(this, e);
-		return;
-	});
-
-	function manage_popup_menu(w,e) {
-		menu = $( $(w).attr('rel') );
-
-		/* notification menus are loaded dynamically 
-		 * - here we find a rel tag to figure out what type of notification to load */
-
-		var loader_source = $(menu).attr('rel');
-
-		if(typeof(loader_source) != 'undefined' && loader_source.length) {	
-			notify_popup_loader(loader_source);
-		}
+	if(typeof(loader_source) != 'undefined' && loader_source.length) {	
+		notify_popup_loader(loader_source);
 	}
-
-	NavUpdate(); 
-	// Allow folks to stop the ajax page updates with the pause/break key
-	$(document).keydown(function(event) {
-		if(event.keyCode == '8') {
-			var target = event.target || event.srcElement;
-			if (!/input|textarea/i.test(target.nodeName)) {
-				return false;
-			}
-		}
-
-		if(event.keyCode == '19' || (event.ctrlKey && event.which == '32')) {
-			event.preventDefault();
-			if(stopped === false) {
-				stopped = true;
-				if (event.ctrlKey) {
-					totStopped = true;
-				}
-				$('#pause').html('<img src="images/pause.gif" alt="pause" style="border: 1px solid black;" />');
-			} else {
-				unpause();
-			}
-		} else {
-			if (!totStopped) {
-				unpause();
-			}
-		}
-	});
-});
+}
 
 function NavUpdate() {
 	if(liking)
@@ -430,27 +375,7 @@ function NavUpdate() {
 				window.location.href=window.location.href;
 			}
 
-			if(! updateCountsOnly) {
-				// start live update
-
-				if($('#live-network').length)    { src = 'network'; liveUpdate(); }
-				if($('#live-channel').length)    { src = 'channel'; liveUpdate(); }
-				if($('#live-pubstream').length)  { src = 'pubstream'; liveUpdate(); }
-				if($('#live-display').length)    { src = 'display'; liveUpdate(); }
-				if($('#live-hq').length)         { src = 'hq'; liveUpdate(); }
-				if($('#live-search').length)     { src = 'search'; liveUpdate(); }
-				// if($('#live-cards').length)      { src = 'cards'; liveUpdate(); }
-				// if($('#live-articles').length)   { src = 'articles'; liveUpdate(); }
-
-				if($('#live-photos').length || $('#live-cards').length || $('#live-articles').length ) {
-					if(liking) {
-						liking = 0;
-						window.location.href=window.location.href;
-					}
-				}
-			}
-
-			updateCountsOnly = false;
+			liveUpdateInit();
 
 			if(data.network || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs) {
 				$('.notifications-btn').css('opacity', 1);
@@ -749,6 +674,29 @@ function collapseHeight() {
 	}
 
 
+}
+
+function liveUpdateInit() {
+	if(! updateCountsOnly) {
+		// start live update
+
+		if($('#live-network').length)    { src = 'network'; liveUpdate(); }
+		if($('#live-channel').length)    { src = 'channel'; liveUpdate(); }
+		if($('#live-pubstream').length)  { src = 'pubstream'; liveUpdate(); }
+		if($('#live-display').length)    { src = 'display'; liveUpdate(); }
+		if($('#live-hq').length)         { src = 'hq'; liveUpdate(); }
+		if($('#live-search').length)     { src = 'search'; liveUpdate(); }
+		// if($('#live-cards').length)      { src = 'cards'; liveUpdate(); }
+		// if($('#live-articles').length)   { src = 'articles'; liveUpdate(); }
+
+		if($('#live-photos').length || $('#live-cards').length || $('#live-articles').length ) {
+			if(liking) {
+				liking = 0;
+				window.location.href=window.location.href;
+			}
+		}
+	}
+	updateCountsOnly = false;
 }
 
 function liveUpdate() {
@@ -1297,36 +1245,6 @@ function fcFileBrowser (field_name, url, type, win) {
 	return false;
 }
 
-/*
-function setupFieldRichtext(){
-
-	tinyMCE.init({
-		theme : "advanced",
-		mode : "specific_textareas",
-		editor_selector: "fieldRichtext",
-		plugins : "bbcode,paste, inlinepopups",
-		theme_advanced_buttons1 : "bold,italic,underline,undo,redo,link,unlink,image,forecolor,formatselect,code",
-		theme_advanced_buttons2 : "",
-		theme_advanced_buttons3 : "",
-		theme_advanced_toolbar_location : "top",
-		theme_advanced_toolbar_align : "center",
-		theme_advanced_blockformats : "blockquote,code",
-		paste_text_sticky : true,
-		entity_encoding : "raw",
-		add_unload_trigger : false,
-		remove_linebreaks : false,
-		force_p_newlines : false,
-		force_br_newlines : true,
-		forced_root_block : '',
-		convert_urls: false,
-		content_css: baseurl+"/view/custom_tinymce.css",
-		theme_advanced_path : false,
-		file_browser_callback : "fcFileBrowser",
-	});
-
-}
-*/
-
 /**
  * sprintf in javascript
  *  "{0} and {1}".format('zero','uno');
@@ -1347,34 +1265,6 @@ Array.prototype.remove = function(item) {
 	this.length = from < 0 ? this.length + from : from;
 	return this.push.apply(this, rest);
 };
-
-$(document).ready(function() {
-
-	$(document).on('click focus', '.comment-edit-form', handle_comment_form);
-
-	jQuery.timeago.settings.strings = {
-		prefixAgo     : aStr['t01'],
-		prefixFromNow : aStr['t02'],
-		suffixAgo     : aStr['t03'],
-		suffixFromNow : aStr['t04'],
-		seconds       : aStr['t05'],
-		minute        : aStr['t06'],
-		minutes       : aStr['t07'],
-		hour          : aStr['t08'],
-		hours         : aStr['t09'],
-		day           : aStr['t10'],
-		days          : aStr['t11'],
-		month         : aStr['t12'],
-		months        : aStr['t13'],
-		year          : aStr['t14'],
-		years         : aStr['t15'],
-		wordSeparator : aStr['t16'],
-		numbers       : aStr['t17'],
-	};
-
-	savedTitle = document.title;
-
-});
 
 function zFormError(elm,x) {
 	if(x) {

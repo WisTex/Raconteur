@@ -147,7 +147,7 @@ class Hq extends \Zotlabs\Web\Controller {
 
 			$o .= '<div id="live-hq"></div>' . "\r\n";
 			$o .= "<script> var profile_uid = " . local_channel()
-				. "; var netargs = '?f='; var profile_page = " . \App::$pager['page'] . "; </script>\r\n";
+				. "; var netargs = '?f='; var profile_page = " . \App::$pager['page'] . ";</script>\r\n";
 	
 			\App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),[
 				'$baseurl' => z_root(),
