@@ -375,7 +375,11 @@ function NavUpdate() {
 				window.location.href=window.location.href;
 			}
 
-			liveUpdateInit();
+			if(! updateCountsOnly) {
+				liveUpdateInit();
+			}
+
+			updateCountsOnly = false;
 
 			if(data.network || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs) {
 				$('.notifications-btn').css('opacity', 1);
@@ -677,26 +681,22 @@ function collapseHeight() {
 }
 
 function liveUpdateInit() {
-	if(! updateCountsOnly) {
-		// start live update
+	// start live update
+	if($('#live-network').length)    { src = 'network'; liveUpdate(); }
+	if($('#live-channel').length)    { src = 'channel'; liveUpdate(); }
+	if($('#live-pubstream').length)  { src = 'pubstream'; liveUpdate(); }
+	if($('#live-display').length)    { src = 'display'; liveUpdate(); }
+	if($('#live-hq').length)         { src = 'hq'; liveUpdate(); }
+	if($('#live-search').length)     { src = 'search'; liveUpdate(); }
+	// if($('#live-cards').length)      { src = 'cards'; liveUpdate(); }
+	// if($('#live-articles').length)   { src = 'articles'; liveUpdate(); }
 
-		if($('#live-network').length)    { src = 'network'; liveUpdate(); }
-		if($('#live-channel').length)    { src = 'channel'; liveUpdate(); }
-		if($('#live-pubstream').length)  { src = 'pubstream'; liveUpdate(); }
-		if($('#live-display').length)    { src = 'display'; liveUpdate(); }
-		if($('#live-hq').length)         { src = 'hq'; liveUpdate(); }
-		if($('#live-search').length)     { src = 'search'; liveUpdate(); }
-		// if($('#live-cards').length)      { src = 'cards'; liveUpdate(); }
-		// if($('#live-articles').length)   { src = 'articles'; liveUpdate(); }
-
-		if($('#live-photos').length || $('#live-cards').length || $('#live-articles').length ) {
-			if(liking) {
-				liking = 0;
-				window.location.href=window.location.href;
-			}
+	if($('#live-photos').length || $('#live-cards').length || $('#live-articles').length ) {
+		if(liking) {
+			liking = 0;
+			window.location.href=window.location.href;
 		}
 	}
-	updateCountsOnly = false;
 }
 
 function liveUpdate() {
