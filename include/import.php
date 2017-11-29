@@ -1199,7 +1199,14 @@ function sync_files($channel, $files) {
 							continue;
 						}
 						$redirects = 0;
-						$x = z_post_url($fetch_url,$parr,$redirects,array('filep' => $fp));
+
+
+						$headers = [];
+						$headers['Accept'] = 'application/x-zot+json' ;
+						$headers['Sigtoken'] = random_string();
+						$headers = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],	'acct:' . $channel['channel_address'] . '@' . \App::get_hostname(),false,true,'sha512');
+
+						$x = z_post_url($fetch_url,$parr,$redirects,[ 'filep' => $fp, 'headers' => $headers]);
 						fclose($fp);
 
 						if($x['success']) {
