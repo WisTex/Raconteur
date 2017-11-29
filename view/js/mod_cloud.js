@@ -18,26 +18,28 @@ function UploadInit() {
 	var submit = $("#upload-submit");
 
 
-	$('#invisible-cloud-file-upload').fileupload({
+	$('#files-upload').fileupload({
 			url: 'file_upload',
 			dataType: 'json',
-		  //  dropZone: $('#profile-jot-text'),
-			maxChunkSize: 4 * 1024 * 1024,
+			dropZone: filedrag,
+			maxChunkSize: 100000, // 4 * 1024 * 1024,
+
 			add: function(e,data) {
 				$('#profile-rotator').show();
 				data.submit();
 			},
-			done: function(e,data) {
-				addeditortext(data.result.message);
-				$('#jot-media').val($('#jot-media').val() + data.result.message);
-			},
-			stop: function(e,data) {
-				preview_post();
-				$('#profile-rotator').hide();
-			},
+
+//			done: function(e,data) {
+//				addeditortext(data.result.message);
+//				$('#jot-media').val($('#jot-media').val() + data.result.message);
+//			},
+//			stop: function(e,data) {
+//				preview_post();
+//				$('#profile-rotator').hide();
+//			},
 		});
 
-		$('#files-upload').click(function(event) { event.preventDefault(); $('#invisible-cloud-file-upload').trigger('click'); return false;});
+//		$('#files-upload').click(function(event) { event.preventDefault(); $('#invisible-cloud-file-upload').trigger('click'); return false;});
 
 
 
@@ -185,6 +187,8 @@ function getIconFromType(type) {
 // upload  files
 function UploadFile(file, idx) {
 
+	return;
+
 	window.filesToUpload = window.filesToUpload + 1;
 
 	var xhr = new XMLHttpRequest();
@@ -229,15 +233,15 @@ function UploadFile(file, idx) {
 	});
 
 	// POST to the entire cloud path 
-	xhr.open('post', 'file_upload', true);
+//	xhr.open('post', 'file_upload', true);
 
-	var formfields = $("#ajax-upload-files").serializeArray();
+//	var formfields = $("#ajax-upload-files").serializeArray();
 
-	var data = new FormData();
-	$.each(formfields, function(i, field) {
-		data.append(field.name, field.value);
-	});
-	data.append('userfile', file);
+//	var data = new FormData();
+//	$.each(formfields, function(i, field) {
+//		data.append(field.name, field.value);
+//	});
+//	data.append('userfile', file);
 
-	xhr.send(data);
+//	xhr.send(data);
 }
