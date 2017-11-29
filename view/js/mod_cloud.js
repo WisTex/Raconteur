@@ -25,8 +25,7 @@ function UploadInit() {
 			maxChunkSize: 100000, // 4 * 1024 * 1024,
 
 			add: function(e,data) {
-				$('#profile-rotator').show();
-				data.submit();
+//				data.submit();
 			},
 
 //			done: function(e,data) {
@@ -47,24 +46,24 @@ function UploadInit() {
 
 
 	// is XHR2 available?
-	var xhr = new XMLHttpRequest();
-	if (xhr.upload) {
+//	var xhr = new XMLHttpRequest();
+//	if (xhr.upload) {
 
 		// file select
-		fileselect.attr("multiple", 'multiple');
-		fileselect.on("change", UploadFileSelectHandler);
+//		fileselect.attr("multiple", 'multiple');
+//		fileselect.on("change", UploadFileSelectHandler);
 
 		// file submit
-		submit.on("click", fileselect, UploadFileSelectHandler);
+//		submit.on("click", fileselect, UploadFileSelectHandler);
 
 		// file drop
-		filedrag.on("dragover", DragDropUploadFileHover);
-		filedrag.on("dragleave", DragDropUploadFileHover);
-		filedrag.on("drop", DragDropUploadFileSelectHandler);
-	}
+//		filedrag.on("dragover", DragDropUploadFileHover);
+//		filedrag.on("dragleave", DragDropUploadFileHover);
+//		filedrag.on("drop", DragDropUploadFileSelectHandler);
+//	}
 
-	window.filesToUpload = 0;
-	window.fileUploadsCompleted = 0;
+//	window.filesToUpload = 0;
+//	window.fileUploadsCompleted = 0;
 }
 
 // file drag hover
