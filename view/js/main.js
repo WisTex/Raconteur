@@ -339,8 +339,8 @@ function closeMenu(theID) {
 
 function markRead(notifType) {
 	$.get('ping?f=&markRead='+notifType);
-	if(timer) clearTimeout(timer);
 	$('.' + notifType + '-button').hide();
+	if(timer) clearTimeout(timer);
 	timer = setTimeout(updateInit,2000);
 }
 
@@ -412,7 +412,8 @@ function notificationsUpdate() {
 			$.jGrowl(this.message, { sticky: false, theme: 'info', life: 10000 });
 		});
 	})
-	timer = setTimeout(updateInit, updateInterval);
+	if(timer) clearTimeout(timer);
+	timer = setTimeout(updateInit,updateInterval);
 }
 
 function contextualHelp() {
@@ -762,7 +763,7 @@ function liveUpdate(notify_id) {
 		// else data was valid - reset the recursion counter
 		liveRecurse = 0;
 
-		if(notify_id !== 'undefined') {
+		if(typeof notify_id !== 'undefined') {
 			$.post(
 				"hq",
 				{
