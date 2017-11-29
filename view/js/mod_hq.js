@@ -9,18 +9,20 @@ $(document).on('click', '#jot-toggle', function(e) {
 
 });
 
-
 function hqLiveUpdate(notify_id) {
 
 	if(typeof profile_uid === 'undefined') profile_uid = false; /* Should probably be unified with channelId defined in head.tpl */
+
 	if((src === null) || (stopped) || (! profile_uid)) { $('.like-rotator').hide(); return; }
-	if(($('.comment-edit-text.expanded').length) || (in_progress)) {
+
+	if(($('.comment-edit-text.expanded').length) || (in_progress) || (mediaPlaying)) {
 		if(livetime) {
 			clearTimeout(livetime);
 		}
 		livetime = setTimeout(liveUpdate, 10000);
 		return;
 	}
+
 	if(livetime !== null)
 		livetime = null;
 
@@ -113,20 +115,6 @@ function hqLiveUpdate(notify_id) {
 
 				in_progress = false;
 
-				// FIXME - the following lines were added so that almost
-				// immediately after we update the posts on the page, we
-				// re-check and update the notification counts.
-				// As it turns out this causes a bit of an inefficiency
-				// as we're pinging twice for every update, once before
-				// and once after. A btter way to do this is to rewrite
-				// NavUpdate and perhaps LiveUpdate so that we check for 
-				// post updates first and only call the notification ping 
-				// once. 
-
-				updateCountsOnly = true;
-				if(timer) clearTimeout(timer);
-				timer = setTimeout(NavUpdate,10);
-
 			});
 		}
 		else {
@@ -138,20 +126,11 @@ function hqLiveUpdate(notify_id) {
 
 			in_progress = false;
 
-			// FIXME - the following lines were added so that almost
-			// immediately after we update the posts on the page, we
-			// re-check and update the notification counts.
-			// As it turns out this causes a bit of an inefficiency
-			// as we're pinging twice for every update, once before
-			// and once after. A btter way to do this is to rewrite
-			// NavUpdate and perhaps LiveUpdate so that we check for 
-			// post updates first and only call the notification ping 
-			// once. 
-
-			updateCountsOnly = true;
-			if(timer) clearTimeout(timer);
-			timer = setTimeout(NavUpdate,10);
-
 		}
+
+	})
+	.done(function() {
+		notificationsUpdate();
 	});
 }
+
