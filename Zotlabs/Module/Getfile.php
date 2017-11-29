@@ -28,7 +28,7 @@ class Getfile extends \Zotlabs\Web\Controller {
 
 	function post() {
 
-		$header_verification = false;
+		$header_verified = false;
 
 		$hash     = $_POST['hash'];
 		$time     = $_POST['time'];
