@@ -59,7 +59,7 @@
 		mode = 'replace';
 		page_load = true;
 		{{if $module == 'hq'}}
-		hqLiveUpdate(notify_id);
+		liveUpdate(notify_id);
 		{{/if}}
 		{{if $module == 'display'}}
 		liveUpdate();

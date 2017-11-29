@@ -692,7 +692,7 @@ function updateInit() {
 	}
 }
 
-function liveUpdate() {
+function liveUpdate(notify_id) {
 
 	if(typeof profile_uid === 'undefined') profile_uid = false; /* Should probably be unified with channelId defined in head.tpl */
 
@@ -761,6 +761,15 @@ function liveUpdate() {
 
 		// else data was valid - reset the recursion counter
 		liveRecurse = 0;
+
+		if(notify_id !== 'undefined') {
+			$.post(
+				"hq",
+				{
+					"notify_id" : notify_id
+				}
+			);
+		}
 
 		var dready = new Date();
 		console.log('DATA ready in: ' + (dready - dstart)/1000 + ' seconds.');
