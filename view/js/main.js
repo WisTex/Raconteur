@@ -17,7 +17,6 @@ var next_page = 1;
 var page_load = true;
 var loadingPage = true;
 var pageHasMoreContent = true;
-var updateCountsOnly = false;
 var divmore_height = 400;
 var last_filestorage_id = null;
 var mediaPlaying = false;
