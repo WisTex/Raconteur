@@ -24,9 +24,13 @@ function UploadInit() {
 			dropZone: filedrag,
 			maxChunkSize: 100000, // 4 * 1024 * 1024,
 
-			add: function(e,data) {
+//			add: function(e,data) {
 //				data.submit();
-			},
+//			},
+
+//			submit: function(e,data) {
+//				data.submit();
+//			},
 
 //			done: function(e,data) {
 //				addeditortext(data.result.message);
