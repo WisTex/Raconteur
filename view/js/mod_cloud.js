@@ -28,9 +28,9 @@ function UploadInit() {
 //				data.submit();
 //			},
 
-//			submit: function(e,data) {
-//				data.submit();
-//			},
+			submit: function(e,data) {
+				e.preventDefault();
+			},
 
 //			done: function(e,data) {
 //				addeditortext(data.result.message);

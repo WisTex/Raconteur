@@ -25,7 +25,7 @@
 		<input type="hidden" name="channick" value="{{$channick}}" />
 		<input type="hidden" name="return_url" value="{{$return_url}}" />
 		<label for="files-upload">{{$upload_header}}</label>
-		<input class="form-group pull-left" id="files-upload" type="file" name="files">
+		<input class="form-group pull-left" id="files-upload" type="file" name="files[]" multiple>
 		{{include file="field_checkbox.tpl" field=$notify}}
 		<div class="pull-right btn-group">
 			<div class="btn-group">
