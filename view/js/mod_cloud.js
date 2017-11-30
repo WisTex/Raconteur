@@ -18,19 +18,20 @@ function UploadInit() {
 	var submit = $("#upload-submit");
 
 
-	$('#files-upload').fileupload({
+	$('#invisible-cloud-file-upload').fileupload({
 			url: 'file_upload',
 			dataType: 'json',
 			dropZone: filedrag,
+			formData: $('#ajax-upload-files').serializeArray(),
 			maxChunkSize: 100000, // 4 * 1024 * 1024,
 
-//			add: function(e,data) {
-//				data.submit();
-//			},
-
-			submit: function(e,data) {
-				e.preventDefault();
+			add: function(e,data) {
+				data.submit();
 			},
+
+//			submit: function(e,data) {
+//				e.preventDefault();
+//			},
 
 //			done: function(e,data) {
 //				addeditortext(data.result.message);
@@ -42,7 +43,7 @@ function UploadInit() {
 //			},
 		});
 
-//		$('#files-upload').click(function(event) { event.preventDefault(); $('#invisible-cloud-file-upload').trigger('click'); return false;});
+		$('#upload-submit').click(function(event) { event.preventDefault(); $('#invisible-cloud-file-upload').trigger('click'); return false;});
 
 
 
@@ -190,7 +191,6 @@ function getIconFromType(type) {
 // upload  files
 function UploadFile(file, idx) {
 
-	return;
 
 	window.filesToUpload = window.filesToUpload + 1;
 
