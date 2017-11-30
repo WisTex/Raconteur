@@ -17,7 +17,6 @@ var next_page = 1;
 var page_load = true;
 var loadingPage = true;
 var pageHasMoreContent = true;
-var updateCountsOnly = false;
 var divmore_height = 400;
 var last_filestorage_id = null;
 var mediaPlaying = false;
@@ -53,8 +52,7 @@ $(document).ready(function() {
 
 	savedTitle = document.title;
 
-	NavUpdate();
-	liveUpdateInit();
+	updateInit();
 
 	$('a[rel^="#"]').click(function(e){
 		manage_popup_menu(this, e);
@@ -94,7 +92,9 @@ $(document).ready(function() {
 
 });
 
-function confirmDelete() { return confirm(aStr.delitem); }
+function confirmDelete() {
+	return confirm(aStr.delitem);
+}
 
 function handle_comment_form(e) {
 	e.stopPropagation();
@@ -339,9 +339,9 @@ function closeMenu(theID) {
 
 function markRead(notifType) {
 	$.get('ping?f=&markRead='+notifType);
-	if(timer) clearTimeout(timer);
 	$('.' + notifType + '-button').hide();
-	timer = setTimeout(NavUpdate,2000);
+	if(timer) clearTimeout(timer);
+	timer = setTimeout(updateInit,2000);
 }
 
 function markItemRead(itemId) {
@@ -362,68 +362,58 @@ function manage_popup_menu(w,e) {
 	}
 }
 
-function NavUpdate() {
-	if(liking)
-		$('.like-rotator').hide();
+function notificationsUpdate() {
+	var pingCmd = 'ping' + ((localUser != 0) ? '?f=&uid=' + localUser : '');
 
-	if((! stopped) && (! mediaPlaying)) {
-		var pingCmd = 'ping' + ((localUser != 0) ? '?f=&uid=' + localUser : '');
+	$.get(pingCmd,function(data) {
 
-		$.get(pingCmd,function(data) {
+		if(data.invalid == 1) { 
+			window.location.href=window.location.href;
+		}
 
-			if(data.invalid == 1) { 
-				window.location.href=window.location.href;
+		if(data.network || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs) {
+			$('.notifications-btn').css('opacity', 1);
+		}
+		else {
+			$('.notifications-btn').css('opacity', 0.5);
+			$('#navbar-collapse-1').removeClass('show');
+		}
+
+		if(data.home || data.intros || data.register || data.mail || data.notify || data.files) {
+			$('.notifications-btn-icon').removeClass('fa-exclamation-circle');
+			$('.notifications-btn-icon').addClass('fa-exclamation-triangle');
+		}
+		if(!data.home && !data.intros && !data.register && !data.mail && !data.notify && !data.files) {
+			$('.notifications-btn-icon').removeClass('fa-exclamation-triangle');
+			$('.notifications-btn-icon').addClass('fa-exclamation-circle');
+		}
+
+		$.each(data, function(index, item) {
+			//do not process those
+			var arr = ['notice', 'info', 'invalid'];
+			if(arr.indexOf(index) !== -1)
+				return;
+
+			if(item == 0) {
+				$('.' + index + '-button').fadeOut();
+			} else {
+				$('.' + index + '-button').fadeIn();
+				$('.' + index + '-update').html(item);
 			}
+		});
 
-			if(! updateCountsOnly) {
-				liveUpdateInit();
-			}
+		$.jGrowl.defaults.closerTemplate = '<div>[ ' + aStr.closeAll + ']</div>';
 
-			updateCountsOnly = false;
+		$(data.notice).each(function() {
+			$.jGrowl(this.message, { sticky: true, theme: 'notice' });
+		});
 
-			if(data.network || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs) {
-				$('.notifications-btn').css('opacity', 1);
-			}
-			else {
-				$('.notifications-btn').css('opacity', 0.5);
-				$('#navbar-collapse-1').removeClass('show');
-			}
-
-			if(data.home || data.intros || data.register || data.mail || data.notify || data.files) {
-				$('.notifications-btn-icon').removeClass('fa-exclamation-circle');
-				$('.notifications-btn-icon').addClass('fa-exclamation-triangle');
-			}
-			if(!data.home && !data.intros && !data.register && !data.mail && !data.notify && !data.files) {
-				$('.notifications-btn-icon').removeClass('fa-exclamation-triangle');
-				$('.notifications-btn-icon').addClass('fa-exclamation-circle');
-			}
-
-			$.each(data, function(index, item) {
-				//do not process those
-				var arr = ['notice', 'info', 'invalid'];
-				if(arr.indexOf(index) !== -1)
-					return;
-
-				if(item == 0) {
-					$('.' + index + '-button').hide();
-				} else {
-					$('.' + index + '-button').show();
-					$('.' + index + '-update').html(item);
-				}
-			});
-
-			$.jGrowl.defaults.closerTemplate = '<div>[ ' + aStr.closeAll + ']</div>';
-
-			$(data.notice).each(function() {
-				$.jGrowl(this.message, { sticky: true, theme: 'notice' });
-			});
-
-			$(data.info).each(function(){
-				$.jGrowl(this.message, { sticky: false, theme: 'info', life: 10000 });
-			});
-		}) ;
-	}
-	timer = setTimeout(NavUpdate, updateInterval);
+		$(data.info).each(function(){
+			$.jGrowl(this.message, { sticky: false, theme: 'info', life: 10000 });
+		});
+	})
+	if(timer) clearTimeout(timer);
+	timer = setTimeout(updateInit,updateInterval);
 }
 
 function contextualHelp() {
@@ -627,7 +617,6 @@ function updateConvItems(mode,data) {
 	}
 
 	$(document.body).trigger("sticky_kit:recalc");
-
 }
 
 function collapseHeight() {
@@ -676,20 +665,25 @@ function collapseHeight() {
 		console.log('collapsed above viewport count: ' + i);
 		$(window).scrollTop(sval);
 	}
-
-
 }
 
-function liveUpdateInit() {
-	// start live update
-	if($('#live-network').length)    { src = 'network'; liveUpdate(); }
-	if($('#live-channel').length)    { src = 'channel'; liveUpdate(); }
-	if($('#live-pubstream').length)  { src = 'pubstream'; liveUpdate(); }
-	if($('#live-display').length)    { src = 'display'; liveUpdate(); }
-	if($('#live-hq').length)         { src = 'hq'; liveUpdate(); }
-	if($('#live-search').length)     { src = 'search'; liveUpdate(); }
-	// if($('#live-cards').length)      { src = 'cards'; liveUpdate(); }
-	// if($('#live-articles').length)   { src = 'articles'; liveUpdate(); }
+function updateInit() {
+
+	if($('#live-network').length)    { src = 'network'; }
+	if($('#live-channel').length)    { src = 'channel'; }
+	if($('#live-pubstream').length)  { src = 'pubstream'; }
+	if($('#live-display').length)    { src = 'display'; }
+	if($('#live-hq').length)         { src = 'hq'; }
+	if($('#live-search').length)     { src = 'search'; }
+	// if($('#live-cards').length)      { src = 'cards'; }
+	// if($('#live-articles').length)   { src = 'articles'; }
+
+	if(! src) {
+		notificationsUpdate();
+	}
+	else {
+		liveUpdate();
+	}
 
 	if($('#live-photos').length || $('#live-cards').length || $('#live-articles').length ) {
 		if(liking) {
@@ -699,17 +693,20 @@ function liveUpdateInit() {
 	}
 }
 
-function liveUpdate() {
+function liveUpdate(notify_id) {
 
 	if(typeof profile_uid === 'undefined') profile_uid = false; /* Should probably be unified with channelId defined in head.tpl */
+
 	if((src === null) || (stopped) || (! profile_uid)) { $('.like-rotator').hide(); return; }
-	if(($('.comment-edit-text.expanded').length) || (in_progress)) {
+
+	if(($('.comment-edit-text.expanded').length) || (in_progress) || (mediaPlaying)) {
 		if(livetime) {
 			clearTimeout(livetime);
 		}
 		livetime = setTimeout(liveUpdate, 10000);
 		return;
 	}
+
 	if(livetime !== null)
 		livetime = null;
 
@@ -766,6 +763,15 @@ function liveUpdate() {
 		// else data was valid - reset the recursion counter
 		liveRecurse = 0;
 
+		if(typeof notify_id !== 'undefined') {
+			$.post(
+				"hq",
+				{
+					"notify_id" : notify_id
+				}
+			);
+		}
+
 		var dready = new Date();
 		console.log('DATA ready in: ' + (dready - dstart)/1000 + ' seconds.');
 
@@ -789,20 +795,6 @@ function liveUpdate() {
 
 				in_progress = false;
 
-				// FIXME - the following lines were added so that almost
-				// immediately after we update the posts on the page, we
-				// re-check and update the notification counts.
-				// As it turns out this causes a bit of an inefficiency
-				// as we're pinging twice for every update, once before
-				// and once after. A btter way to do this is to rewrite
-				// NavUpdate and perhaps LiveUpdate so that we check for 
-				// post updates first and only call the notification ping 
-				// once. 
-
-				updateCountsOnly = true;
-				if(timer) clearTimeout(timer);
-				timer = setTimeout(NavUpdate,10);
-
 			});
 		}
 		else {
@@ -814,22 +806,11 @@ function liveUpdate() {
 
 			in_progress = false;
 
-			// FIXME - the following lines were added so that almost
-			// immediately after we update the posts on the page, we
-			// re-check and update the notification counts.
-			// As it turns out this causes a bit of an inefficiency
-			// as we're pinging twice for every update, once before
-			// and once after. A btter way to do this is to rewrite
-			// NavUpdate and perhaps LiveUpdate so that we check for 
-			// post updates first and only call the notification ping 
-			// once. 
-
-			updateCountsOnly = true;
-			if(timer) clearTimeout(timer);
-			timer = setTimeout(NavUpdate,10);
-
 		}
 
+	})
+	.done(function() {
+		notificationsUpdate();
 	});
 }
 
@@ -930,7 +911,6 @@ function notify_popup_loader(notifyType) {
 	}, 1000);
 }
 
-
 // Since our ajax calls are asynchronous, we will give a few
 // seconds for the first ajax call (setting like/dislike), then
 // run the updater to pick up any changes and display on the page.
@@ -939,20 +919,17 @@ function notify_popup_loader(notifyType) {
 // events have completed and therefore there won't be any
 // visible feedback that anything changed without all this
 // trickery. This still could cause confusion if the "like" ajax call
-// is delayed and NavUpdate runs before it completes.
-
-
+// is delayed and updateInit runs before it completes.
 function dolike(ident, verb) {
 	unpause();
 	$('#like-rotator-' + ident.toString()).show();
-	$.get('like/' + ident.toString() + '?verb=' + verb, NavUpdate );
+	$.get('like/' + ident.toString() + '?verb=' + verb, updateInit );
 	liking = 1;
 }
 
 function doprofilelike(ident, verb) {
 	$.get('like/' + ident + '?verb=' + verb, function() { window.location.href=window.location.href; });
 }
-
 
 function dropItem(url, object) {
 	var confirm = confirmDelete();
@@ -975,19 +952,16 @@ function dropItem(url, object) {
 function dosubthread(ident) {
 	unpause();
 	$('#like-rotator-' + ident.toString()).show();
-	$.get('subthread/sub/' + ident.toString(), NavUpdate );
+	$.get('subthread/sub/' + ident.toString(), updateInit );
 	liking = 1;
 }
-
 
 function dounsubthread(ident) {
 	unpause();
 	$('#like-rotator-' + ident.toString()).show();
-	$.get('subthread/unsub/' + ident.toString(), NavUpdate );
+	$.get('subthread/unsub/' + ident.toString(), updateInit );
 	liking = 1;
 }
-
-
 
 function dostar(ident) {
 	ident = ident.toString();
@@ -1071,7 +1045,7 @@ function post_comment(id) {
 					$(document).unbind( "click.commentOpen");
 				}
 				if(timer) clearTimeout(timer);
-				timer = setTimeout(NavUpdate,1500);
+				timer = setTimeout(updateInit,1500);
 			}
 			if(data.reload) {
 				window.location.href=data.reload;
@@ -1106,7 +1080,7 @@ function importElement(elem) {
 		{ "element" : elem },
 		function(data) {
 			if(timer) clearTimeout(timer);
-			timer = setTimeout(NavUpdate,10);
+			timer = setTimeout(updateInit,10);
 		}
 	);
 	return false;
@@ -1115,7 +1089,6 @@ function importElement(elem) {
 function preview_post() {
 	$("#jot-preview").val("1");
 	$("#jot-preview-content").show();
-//	tinyMCE.triggerSave();
 	$.post(
 		"item",
 		$("#profile-jot-form").serialize(),
@@ -1221,30 +1194,6 @@ function checkboxhighlight(box) {
 	}
 }
 
-
-// code from http://www.tinymce.com/wiki.php/How-to_implement_a_custom_file_browser
-function fcFileBrowser (field_name, url, type, win) {
-	/* TODO: If you work with sessions in PHP and your client doesn't accept cookies you might need to carry
-	 the session name and session ID in the request string (can look like this: "?PHPSESSID=88p0n70s9dsknra96qhuk6etm5").
-	 These lines of code extract the necessary parameters and add them back to the filebrowser URL again. */
-
-	var cmsURL = baseurl+"/fbrowser/"+type+"/";
-
-	tinyMCE.activeEditor.windowManager.open({
-		file : cmsURL,
-		title : 'File Browser',
-		width : 420,  // Your dimensions may differ - toy around with them!
-		height : 400,
-		resizable : "yes",
-		inline : "yes",  // This parameter only has an effect if you use the inlinepopups plugin!
-		close_previous : "no"
-		}, {
-		window : win,
-		input : field_name
-	});
-	return false;
-}
-
 /**
  * sprintf in javascript
  *  "{0} and {1}".format('zero','uno');
@@ -1257,6 +1206,7 @@ String.prototype.format = function() {
 	}
 	return formatted;
 };
+
 // Array Remove
 Array.prototype.remove = function(item) {
 	to = undefined;
@@ -1333,8 +1283,6 @@ function addeditortext(data) {
 		var currentText = $("#profile-jot-text").val();
 		$("#profile-jot-text").val(currentText + data);
 	}
-	else
-		tinyMCE.execCommand('mceInsertRawHTML',false,data);
 }
 
 function h2b(s) {

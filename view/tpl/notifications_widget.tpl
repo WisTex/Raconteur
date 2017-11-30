@@ -22,7 +22,7 @@
 	});
 
 	{{if $module == 'display' || $module == 'hq'}}
-	$(document).on('click', '.notification', function(e) {
+	$(document).on('click touch', '.notification', function(e) {
 		var b64mid = $(this).data('b64mid');
 		var notify_id = $(this).data('notify_id');
 		var path = $(this)[0].pathname.substr(1,7);
@@ -59,7 +59,7 @@
 		mode = 'replace';
 		page_load = true;
 		{{if $module == 'hq'}}
-		hqLiveUpdate(notify_id);
+		liveUpdate(notify_id);
 		{{/if}}
 		{{if $module == 'display'}}
 		liveUpdate();

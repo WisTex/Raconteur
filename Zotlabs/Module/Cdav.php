@@ -1250,7 +1250,7 @@ class Cdav extends \Zotlabs\Web\Controller {
 			//create default addressbook
 			$carddavBackend = new \Sabre\CardDAV\Backend\PDO($pdo);
 			$properties = ['{DAV:}displayname' => t('Default Addressbook')];
-			$carddavBackend->createAddressBook($uri, $default, $properties);
+			$carddavBackend->createAddressBook($uri, 'default', $properties);
 
 		}
 	}

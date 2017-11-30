@@ -173,6 +173,12 @@ ACL.prototype.on_custom = function(event) {
 	that.deny_cid  = [];
 	that.deny_gid  = [];
 
+	$("#acl-list-content .acl-list-item img[data-src]").each(function(i, el) {
+		//Replace data-src attribute with src attribute for every image
+		$(el).attr('src', $(el).data("src"));
+		$(el).removeAttr("data-src");
+	});
+
 	that.update_view('custom');
 	that.on_submit();
 
@@ -407,11 +413,5 @@ ACL.prototype.populate = function(data) {
 			that.self[0] = this.xid;
 		}
 		that.list_content.append(html);
-	});
-
-	$("#acl-list-content .acl-list-item img[data-src]").each(function(i, el) {
-		// Replace data-src attribute with src attribute for every image
-		$(el).attr('src', $(el).data("src"));
-		$(el).removeAttr("data-src");
 	});
 };
