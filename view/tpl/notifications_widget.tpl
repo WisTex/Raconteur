@@ -101,12 +101,12 @@
 				</a>
 				{{/if}}
 				{{if $notification.markall}}
-				<div class="list-group-item" id="nav-{{$notification.type}}-mark-all" onclick="markRead('{{$notification.type}}'); return false;">
+				<div class="list-group-item cursor-pointer" id="nav-{{$notification.type}}-mark-all" onclick="markRead('{{$notification.type}}'); return false;">
 					<i class="fa fa-fw fa-check"></i> {{$notification.markall.label}}
 				</div>
 				{{/if}}
 				{{if $notification.filter}}
-				<div class="list-group-item" id="tt-{{$notification.type}}-only">
+				<div class="list-group-item cursor-pointer" id="tt-{{$notification.type}}-only">
 					<i class="fa fa-fw fa-filter"></i> {{$notification.filter.label}}
 				</div>
 				{{/if}}
