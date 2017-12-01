@@ -65,7 +65,6 @@ class File_upload extends \Zotlabs\Web\Controller {
 			if($partial) {
 				$x = save_chunk($channel,$matches[1],$matches[2],$matches[3]);
 
-logger('save_chunk: ' . print_r($x,true));
 				if($x['partial']) {
 					header('Range: bytes=0-' . (($x['length']) ? $x['length'] - 1 : 0));
 					json_return_and_die($result);
