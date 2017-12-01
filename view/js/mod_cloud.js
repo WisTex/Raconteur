@@ -16,7 +16,7 @@ function UploadInit() {
 	var fileselect = $("#files-upload");
 	var filedrag = $("#cloud-drag-area");
 	var submit = $("#upload-submit");
-
+	var count = 1;
 
 	$('#invisible-cloud-file-upload').fileupload({
 			url: 'file_upload',
@@ -26,6 +26,7 @@ function UploadInit() {
 			maxChunkSize: 100000, // 4 * 1024 * 1024,
 
 			add: function(e,data) {
+				$(data.files).each( function() { this.count = ++ count; prepareHtml(this) }); 
 				data.submit();
 			},
 
@@ -117,8 +118,9 @@ function UploadFileSelectHandler(e) {
 	}
 }
 
-function prepareHtml(f, i) {
-	var num = i - 1;
+function prepareHtml(f) {
+	var num = f.count - 1;
+	var i = f.count;
 	$('#cloud-index #new-upload-progress-bar-' + num.toString()).after(
 		'<tr id="new-upload-' + i + '" class="new-upload">' +
 		'<td><i class="fa ' + getIconFromType(f.type) + '" title="' + f.type + '"></i></td>' +
