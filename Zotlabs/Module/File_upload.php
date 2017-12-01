@@ -10,7 +10,8 @@ class File_upload extends \Zotlabs\Web\Controller {
 
 	function post() {
 
-		// logger('file upload: ' . print_r($_REQUEST,true));
+		logger('file upload: ' . print_r($_REQUEST,true));
+		logger('file upload: ' . print_r($_FILES,true));
 	
 		$channel = (($_REQUEST['channick']) ? channelx_by_nick($_REQUEST['channick']) : null);
 	
@@ -56,13 +57,15 @@ class File_upload extends \Zotlabs\Web\Controller {
 			if(array_key_exists('HTTP_CONTENT_RANGE',$_SERVER)) {
 				$pm = preg_match('/bytes (\d*)\-(\d*)\/(\d*)/',$_SERVER['HTTP_CONTENT_RANGE'],$matches);
 				if($pm) {
-					// logger('Content-Range: ' . print_r($matches,true));
+					logger('Content-Range: ' . print_r($matches,true));
 					$partial = true;
 				}
 			}
 
 			if($partial) {
 				$x = save_chunk($channel,$matches[1],$matches[2],$matches[3]);
+
+logger('save_chunk: ' . print_r($x,true));
 				if($x['partial']) {
 					header('Range: bytes=0-' . (($x['length']) ? $x['length'] - 1 : 0));
 					json_return_and_die($result);
