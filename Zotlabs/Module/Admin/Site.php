@@ -251,6 +251,7 @@ class Site {
 		);
 
 		$discover_tab = get_config('system','disable_discover_tab');
+
 		// $disable public streams by default
 		if($discover_tab === false)
 			$discover_tab = 1;
