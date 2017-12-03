@@ -113,7 +113,8 @@ a:focus,
   color: $link_colour;
 }
 
-.fakelink {
+.fakelink,
+.cursor-pointer {
 	cursor: pointer;
 }
 

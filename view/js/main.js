@@ -874,6 +874,7 @@ function notify_popup_loader(notifyType) {
 	var notifications_tpl= unescape($("#nav-notifications-template[rel=template]").html());
 	var notifications_all = unescape($('<div>').append( $("#nav-" + notifyType + "-see-all").clone() ).html()); //outerHtml hack
 	var notifications_mark = unescape($('<div>').append( $("#nav-" + notifyType + "-mark-all").clone() ).html()); //outerHtml hack
+	var notifications_tt_only = unescape($('<div>').append( $("#tt-" + notifyType + "-only").clone() ).html()); //outerHtml hack
 	var notifications_empty = unescape($("#nav-" + notifyType + "-menu").html());
 
 	var notify_menu = $("#nav-" + notifyType + "-menu");
@@ -885,14 +886,15 @@ function notify_popup_loader(notifyType) {
 			window.location.href=window.location.href;
 		}
 
-		$("#navbar-" + notifyType + "-menu").html(notifications_all + notifications_mark);
-		$("#nav-" + notifyType + "-menu").html(notifications_all + notifications_mark);
+		$("#navbar-" + notifyType + "-menu").html(notifications_all + notifications_mark + notifications_tt_only);
+		$("#nav-" + notifyType + "-menu").html(notifications_all + notifications_mark + notifications_tt_only);
+
 		$("." + notifyType + "-update").html(data.notify.length);
 
 		$(data.notify).each(function() {
-			html = navbar_notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id);
+			html = navbar_notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top);
 			$("#navbar-" + notifyType + "-menu").append(html);
-			html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id);
+			html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top);
 			$("#nav-" + notifyType + "-menu").append(html);
 		});
 
@@ -901,7 +903,11 @@ function notify_popup_loader(notifyType) {
 			$(el).attr('src', $(el).data("src"));
 			$(el).removeAttr("data-src");
 		});
+
+		if($('#tt-' + notifyType + '-only').hasClass('active'))
+			$('#nav-' + notifyType + '-menu [data-thread_top=false]').hide();
 	});
+
 
 	setTimeout(function() {
 		if(notify_menu.hasClass('show')) {

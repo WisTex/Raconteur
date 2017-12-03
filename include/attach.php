@@ -2506,7 +2506,7 @@ function save_chunk($channel,$start,$end,$len) {
 	}
 	if(($len - 1) == $end) {
 		unlink($tmp_path);
-		$result['name']     = $_FILES['files']['tmp_name'];
+		$result['name']     = $_FILES['files']['name'];
 		$result['type']     = $_FILES['files']['type'];
 		$result['tmp_name'] = $new_path;
 		$result['error']    = 0;

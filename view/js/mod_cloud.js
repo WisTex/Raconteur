@@ -16,26 +16,69 @@ function UploadInit() {
 	var fileselect = $("#files-upload");
 	var filedrag = $("#cloud-drag-area");
 	var submit = $("#upload-submit");
+	var count = 1;
 
-	// is XHR2 available?
-	var xhr = new XMLHttpRequest();
-	if (xhr.upload) {
+ 
+	$('#invisible-cloud-file-upload').fileupload({
+			url: 'file_upload',
+			dataType: 'json',
+			dropZone: filedrag,
+			maxChunkSize: 4 * 1024 * 1024,
 
-		// file select
-		fileselect.attr("multiple", 'multiple');
-		fileselect.on("change", UploadFileSelectHandler);
+			add: function(e,data) {
+				$(data.files).each( function() { this.count = ++ count; prepareHtml(this); }); 
+				
+				var allow_cid = ($('#ajax-upload-files').data('allow_cid') || []);
+				var allow_gid = ($('#ajax-upload-files').data('allow_gid') || []);
+				var deny_cid  = ($('#ajax-upload-files').data('deny_cid') || []);
+				var deny_gid  = ($('#ajax-upload-files').data('deny_gid') || []);
 
-		// file submit
-		submit.on("click", fileselect, UploadFileSelectHandler);
+				$('.acl-field').remove();
 
-		// file drop
-		filedrag.on("dragover", DragDropUploadFileHover);
-		filedrag.on("dragleave", DragDropUploadFileHover);
-		filedrag.on("drop", DragDropUploadFileSelectHandler);
-	}
+				$(allow_gid).each(function(i,v) {
+					$('#ajax-upload-files').append("<input class='acl-field' type='hidden' name='group_allow[]' value='"+v+"'>");
+				});
+				$(allow_cid).each(function(i,v) {
+					$('#ajax-upload-files').append("<input class='acl-field' type='hidden' name='contact_allow[]' value='"+v+"'>");
+				});
+				$(deny_gid).each(function(i,v) {
+					$('#ajax-upload-files').append("<input class='acl-field' type='hidden' name='group_deny[]' value='"+v+"'>");
+				});
+				$(deny_cid).each(function(i,v) {
+					$('#ajax-upload-files').append("<input class='acl-field' type='hidden' name='contact_deny[]' value='"+v+"'>");
+				});
 
-	window.filesToUpload = 0;
-	window.fileUploadsCompleted = 0;
+				data.formData = $('#ajax-upload-files').serializeArray();
+
+				data.submit();
+			},
+
+
+			progress: function(e,data) {
+
+				// there will only be one file, the one we are looking for
+
+				$(data.files).each( function() { 
+					var idx = this.count;
+
+					// Dynamically update the percentage complete displayed in the file upload list
+					$('#upload-progress-' + idx).html(Math.round(data.loaded / data.total * 100) + '%');
+					$('#upload-progress-bar-' + idx).css('background-size', Math.round(data.loaded / data.total * 100) + '%');
+
+				});
+
+
+			},
+
+
+			stop: function(e,data) {
+				window.location.href = window.location.href;
+			}
+
+		});
+
+		$('#upload-submit').click(function(event) { event.preventDefault(); $('#invisible-cloud-file-upload').trigger('click'); return false;});
+
 }
 
 // file drag hover
@@ -84,8 +127,9 @@ function UploadFileSelectHandler(e) {
 	}
 }
 
-function prepareHtml(f, i) {
-	var num = i - 1;
+function prepareHtml(f) {
+	var num = f.count - 1;
+	var i = f.count;
 	$('#cloud-index #new-upload-progress-bar-' + num.toString()).after(
 		'<tr id="new-upload-' + i + '" class="new-upload">' +
 		'<td><i class="fa ' + getIconFromType(f.type) + '" title="' + f.type + '"></i></td>' +
@@ -158,6 +202,7 @@ function getIconFromType(type) {
 // upload  files
 function UploadFile(file, idx) {
 
+
 	window.filesToUpload = window.filesToUpload + 1;
 
 	var xhr = new XMLHttpRequest();
@@ -202,15 +247,15 @@ function UploadFile(file, idx) {
 	});
 
 	// POST to the entire cloud path 
-	xhr.open('post', 'file_upload', true);
+//	xhr.open('post', 'file_upload', true);
 
-	var formfields = $("#ajax-upload-files").serializeArray();
+//	var formfields = $("#ajax-upload-files").serializeArray();
 
-	var data = new FormData();
-	$.each(formfields, function(i, field) {
-		data.append(field.name, field.value);
-	});
-	data.append('userfile', file);
+//	var data = new FormData();
+//	$.each(formfields, function(i, field) {
+//		data.append(field.name, field.value);
+//	});
+//	data.append('userfile', file);
 
-	xhr.send(data);
+//	xhr.send(data);
 }
