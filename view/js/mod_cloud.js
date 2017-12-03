@@ -23,12 +23,33 @@ function UploadInit() {
 			url: 'file_upload',
 			dataType: 'json',
 			dropZone: filedrag,
-			formData: $('#ajax-upload-files').serializeArray(),
 			maxChunkSize: 4 * 1024 * 1024,
 
 			add: function(e,data) {
 				$(data.files).each( function() { this.count = ++ count; prepareHtml(this); }); 
 				
+				var allow_cid = ($('#ajax-upload-files').data('allow_cid') || []);
+				var allow_gid = ($('#ajax-upload-files').data('allow_gid') || []);
+				var deny_cid  = ($('#ajax-upload-files').data('deny_cid') || []);
+				var deny_gid  = ($('#ajax-upload-files').data('deny_gid') || []);
+
+				$('.acl-field').remove();
+
+				$(allow_gid).each(function(i,v) {
+					$('#ajax-upload-files').append("<input class='acl-field' type='hidden' name='group_allow[]' value='"+v+"'>");
+				});
+				$(allow_cid).each(function(i,v) {
+					$('#ajax-upload-files').append("<input class='acl-field' type='hidden' name='contact_allow[]' value='"+v+"'>");
+				});
+				$(deny_gid).each(function(i,v) {
+					$('#ajax-upload-files').append("<input class='acl-field' type='hidden' name='group_deny[]' value='"+v+"'>");
+				});
+				$(deny_cid).each(function(i,v) {
+					$('#ajax-upload-files').append("<input class='acl-field' type='hidden' name='contact_deny[]' value='"+v+"'>");
+				});
+
+				data.formData = $('#ajax-upload-files').serializeArray();
+
 				data.submit();
 			},
 

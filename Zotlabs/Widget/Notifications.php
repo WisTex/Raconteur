@@ -20,8 +20,10 @@ class Notifications {
 					'label' => t('View your network activity')
 				],
 				'markall' => [
-					'url' => '#',
 					'label' => t('Mark all notifications read')
+				],
+				'filter' => [
+					'label' => t('Show new posts only')
 				]
 			];
 
@@ -36,8 +38,10 @@ class Notifications {
 					'label' => t('View your home activity')
 				],
 				'markall' => [
-					'url' => '#',
 					'label' => t('Mark all notifications seen')
+				],
+				'filter' => [
+					'label' => t('Show new posts only')
 				]
 			];
 
@@ -52,7 +56,6 @@ class Notifications {
 					'label' => t('View your private mails')
 				],
 				'markall' => [
-					'url' => '#',
 					'label' => t('Mark all messages seen')
 				]
 			];
@@ -68,7 +71,6 @@ class Notifications {
 					'label' => t('View events')
 				],
 				'markall' => [
-					'url' => '#',
 					'label' => t('Mark all events seen')
 				]
 			];
@@ -104,7 +106,6 @@ class Notifications {
 					'label' => t('View all notices')
 				],
 				'markall' => [
-					'url' => '#',
 					'label' => t('Mark all notices seen')
 				]
 			];
@@ -132,8 +133,10 @@ class Notifications {
 					'label' => t('View the public stream')
 				],
 				'markall' => [
-					'url' => '#',
 					'label' => t('Mark all notifications seen')
+				],
+				'filter' => [
+					'label' => t('Show new posts only')
 				]
 			];
 		}
