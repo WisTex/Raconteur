@@ -704,7 +704,7 @@ class Photos extends \Zotlabs\Web\Controller {
 				'$uploader' => $ret['addon_text'],
 				'$default' => (($ret['default_upload']) ? true : false),
 				'$uploadurl' => $ret['post_url'],
-				'$submit' => t('Submit')
+				'$submit' => t('Upload')
 	
 			));
 	
