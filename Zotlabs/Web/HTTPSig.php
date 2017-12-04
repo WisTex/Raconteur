@@ -237,7 +237,7 @@ class HTTPSig {
 			$fields = '(request-target)';
 		}			
 
-		if(head) {
+		if($head) {
 			foreach($head as $k => $v) {
 				$headers .= strtolower($k) . ': ' . trim($v) . "\n";
 				if($fields)
