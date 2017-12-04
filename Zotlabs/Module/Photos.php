@@ -1100,7 +1100,7 @@ class Photos extends \Zotlabs\Web\Controller {
 				}
 	
 				$comments = '';
-				if(! count($r)) {
+				if(! $r) {
 					if($observer && ($can_post || $can_comment)) {
 						$commentbox = replace_macros($cmnt_tpl,array(
 							'$return_path' => '', 
