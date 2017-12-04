@@ -1,6 +1,6 @@
 <script> 
 
-	var bParam_cmd = "{{$baseurl}}/update_{{$pgtype}}";
+	var bParam_cmd = "{{$baseurl}}/update/{{$pgtype}}";
 
 
 	var bParam_uid = {{$uid}};
