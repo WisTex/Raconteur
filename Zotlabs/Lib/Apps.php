@@ -352,7 +352,7 @@ class Apps {
 							break;
 						default:
 							if($config)
-								$unset = ((get_config('system', $require[0]) == $require[1]) ? false : true);
+								$unset = ((get_config('system', $require[0]) === $require[1]) ? false : true);
 							else
 								$unset = ((local_channel() && feature_enabled(local_channel(),$require)) ? false : true);
 							if($unset)

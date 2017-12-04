@@ -1473,7 +1473,7 @@ function sort_item_children($items) {
 	$result = $items;
 	usort($result,'sort_thr_created_rev');
 	foreach($result as $k => $i) {
-		if(count($result[$k]['children'])) {
+		if($result[$k]['children']) {
 			$result[$k]['children'] = sort_item_children($result[$k]['children']);
 		}
 	}
@@ -1483,7 +1483,7 @@ function sort_item_children($items) {
 function add_children_to_list($children, &$arr) {
 	foreach($children as $y) {
 		$arr[] = $y;
-		if(count($y['children']))
+		if($y['children'])
 			add_children_to_list($y['children'], $arr);
 	}
 }

@@ -38,7 +38,7 @@ class ThreadItem {
 		$this->toplevel = ($this->get_id() == $this->get_data_value('parent'));
 
 		// Prepare the children
-		if(count($data['children'])) {
+		if($data['children']) {
 			foreach($data['children'] as $item) {
 
 				/*
@@ -196,7 +196,7 @@ class ThreadItem {
 
 		$like_count = ((x($conv_responses['like'],$item['mid'])) ? $conv_responses['like'][$item['mid']] : '');
 		$like_list = ((x($conv_responses['like'],$item['mid'])) ? $conv_responses['like'][$item['mid'] . '-l'] : '');
-		if (count($like_list) > MAX_LIKERS) {
+		if (($like_list) && (count($like_list) > MAX_LIKERS)) {
 			$like_list_part = array_slice($like_list, 0, MAX_LIKERS);
 			array_push($like_list_part, '<a class="dropdown-item" href="#" data-toggle="modal" data-target="#likeModal-' . $this->get_id() . '"><b>' . t('View all') . '</b></a>');
 		} else {
@@ -208,7 +208,7 @@ class ThreadItem {
 			$dislike_count = ((x($conv_responses['dislike'],$item['mid'])) ? $conv_responses['dislike'][$item['mid']] : '');
 			$dislike_list = ((x($conv_responses['dislike'],$item['mid'])) ? $conv_responses['dislike'][$item['mid'] . '-l'] : '');
 			$dislike_button_label = tt('Dislike','Dislikes',$dislike_count,'noun');
-			if (count($dislike_list) > MAX_LIKERS) {
+			if (($dislike_list) && (count($dislike_list) > MAX_LIKERS)) {
 				$dislike_list_part = array_slice($dislike_list, 0, MAX_LIKERS);
 				array_push($dislike_list_part, '<a class="dropdown-item" href="#" data-toggle="modal" data-target="#dislikeModal-' . $this->get_id() . '"><b>' . t('View all') . '</b></a>');
 			} else {

@@ -246,8 +246,8 @@ function bb_parse_element($match) {
 	$j = json_decode(base64url_decode($match[1]),true);
 
 	if ($j && local_channel()) {
-		$text = sprintf( t('Install %s element: '), translate_design_element($j['type'])) . $j['pagetitle'];
-		$o = EOL . '<a href="#" onclick="importElement(\'' . $match[1] . '\'); return false;" >' . $text . '</a>' . EOL;
+		$text = sprintf( t('Install %1$s element %2$s'), translate_design_element($j['type']), $j['pagetitle']);
+		$o = EOL . '<button class="btn btn-primary" onclick="importElement(\'' . $match[1] . '\'); return false;" >' . $text . '</button>' . EOL;
 	}
 	else {
 		$text = sprintf( t('This post contains an installable %s element, however you lack permissions to install it on this site.' ), translate_design_element($j['type'])) . $j['pagetitle'];

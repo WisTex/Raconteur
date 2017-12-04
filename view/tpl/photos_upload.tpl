@@ -1,6 +1,7 @@
 <div id="photo-upload-form">
+	<input id="invisible-photos-file-upload" type="file" name="files" style="visibility:hidden;position:absolute;top:-50;left:-50;width:0;height:0;" multiple data-nickname='{{$nickname}}' >
 	<div class="section-content-tools-wrapper">
-		<form action="photos/{{$nickname}}" enctype="multipart/form-data" method="post" name="photos-upload-form" id="photos-upload-form" class="acl-form" data-form_id="photos-upload-form" data-allow_cid='{{$allow_cid}}' data-allow_gid='{{$allow_gid}}' data-deny_cid='{{$deny_cid}}' data-deny_gid='{{$deny_gid}}'>
+		<form action="#" enctype="multipart/form-data" method="post" name="photos-upload-form" id="photos-upload-form" class="acl-form" data-form_id="photos-upload-form" data-allow_cid='{{$allow_cid}}' data-allow_gid='{{$allow_gid}}' data-deny_cid='{{$deny_cid}}' data-deny_gid='{{$deny_gid}}'>
 			<input type="hidden" id="photos-upload-source" name="source" value="photos" />
 
 			<div class="form-group">
@@ -15,9 +16,9 @@
 				</datalist>
 			</div>
 			{{if $default}}
-			<div class="form-group">
+			<!-- div class="form-group">
 				<input id="photos-upload-choose" type="file" name="userfile" />
-			</div>
+			</div -->
 			{{include file="field_input.tpl" field=$caption}}
 			{{include file="field_checkbox.tpl" field=$visible}}
 			<div id="body-textarea">
@@ -30,7 +31,7 @@
 						<i id="jot-perms-icon" class="fa fa-{{$lockstate}}"></i>
 					</button>
 					{{/if}}
-					<button id="dbtn-submit" class="btn btn-primary btn-sm" type="submit" name="submit" >{{$submit}}</button>
+					<button id="dbtn-submit" class="btn btn-primary btn-sm">{{$submit}}</button>
 				</div>
 
 			</div>
@@ -57,7 +58,7 @@
 		</form>
 	</div>
 	<table id="upload-index">
-		<tr id="new-upload-progress-bar--1"></tr> {{* this is needed to append the upload files in the right order *}}
+		<tr id="new-upload-progress-bar-1"></tr> {{* this is needed to append the upload files in the right order *}}
 	</table>
 	{{$aclselect}}
 	<div id="photos-upload-end" class="clear"></div>

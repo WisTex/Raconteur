@@ -206,7 +206,7 @@ class Channel {
 			$vnotify += intval($_POST['vnotify11']);
 		if(x($_POST,'vnotify12'))
 			$vnotify += intval($_POST['vnotify12']);
-		if(x($_POST,'vnotify13') && (get_config('system', 'disable_discover_tab') != 1))
+		if(x($_POST,'vnotify13'))
 			$vnotify += intval($_POST['vnotify13']);
 	
 		$always_show_in_notices = x($_POST,'always_show_in_notices') ? 1 : 0;
@@ -481,6 +481,8 @@ class Channel {
 		$plugin = [ 'basic' => '', 'security' => '', 'notify' => '', 'misc' => '' ];
 		call_hooks('channel_settings',$plugin);
 
+		$disable_discover_tab = get_config('system','disable_discover_tab') || get_config('system','disable_discover_tab') === false;
+
 		$o .= replace_macros($stpl,array(
 			'$ptitle' 	=> t('Channel Settings'),
 	
@@ -570,7 +572,7 @@ class Channel {
 			'$vnotify10'  => array('vnotify10', t('New connections'), ($vnotify & VNOTIFY_INTRO), VNOTIFY_INTRO, t('Recommended'), $yes_no),
 			'$vnotify11'  => array('vnotify11', t('System Registrations'), ($vnotify & VNOTIFY_REGISTER), VNOTIFY_REGISTER, '', $yes_no),
 			'$vnotify12'  => array('vnotify12', t('Unseen shared files'), ($vnotify & VNOTIFY_FILES), VNOTIFY_FILES, '', $yes_no),
-			'$vnotify13'  => ((get_config('system', 'disable_discover_tab') != 1) ? array('vnotify13', t('Unseen public activity'), ($vnotify & VNOTIFY_PUBS), VNOTIFY_PUBS, '', $yes_no) : array()),
+			'$vnotify13'  => (($disable_discover_tab) ? array() : array('vnotify13', t('Unseen public activity'), ($vnotify & VNOTIFY_PUBS), VNOTIFY_PUBS, '', $yes_no)),
 			'$mailhost' => [ 'mailhost', t('Email notification hub (hostname)'), get_pconfig(local_channel(),'system','email_notify_host',\App::get_hostname()), sprintf( t('If your channel is mirrored to multiple hubs, set this to your preferred location. This will prevent duplicate email notifications. Example: %s'),\App::get_hostname()) ],
 			'$always_show_in_notices'  => array('always_show_in_notices', t('Also show new wall posts, private messages and connections under Notices'), $always_show_in_notices, 1, '', $yes_no),
 	

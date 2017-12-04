@@ -53,29 +53,53 @@ class Hq extends \Zotlabs\Web\Controller {
 			$r = q("SELECT mid FROM item
 				WHERE uid = %d 
 				AND mid = parent_mid
-				ORDER BY created DESC
-				limit 1",
+				ORDER BY created DESC LIMIT 1",
 				intval(local_channel())
 			);
 
-			if(!$r[0]['mid']) {
-				\App::$error = 404;
-				notice( t('Item not found.') . EOL);
-				return;
+			if($r[0]['mid']) {
+				$item_hash = 'b64.' . base64url_encode($r[0]['mid']);
 			}
-
-			$item_hash = 'b64.' . base64url_encode($r[0]['mid']);
 		}
 
+		if($item_hash) {
 
-		if(strpos($item_hash,'b64.') === 0)
-			$decoded = @base64url_decode(substr($item_hash,4));
+			if(strpos($item_hash,'b64.') === 0)
+				$decoded = @base64url_decode(substr($item_hash,4));
 
-		if($decoded)
-			$item_hash = $decoded;
+			if($decoded)
+				$item_hash = $decoded;
+
+			$target_item = null;
+
+			$r = q("select id, uid, mid, parent_mid, thr_parent, verb, item_type, item_deleted, item_blocked from item where mid like '%s' limit 1",
+				dbesc($item_hash . '%')
+			);
+		
+			if($r) {
+				$target_item = $r[0];
+			}
+
+			//if the item is to be moderated redirect to /moderate
+			if($target_item['item_blocked'] == ITEM_MODERATED) {
+				goaway(z_root() . '/moderate/' . $target_item['id']);
+			}
+		
+			$static = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
+
+			$simple_update = (($update) ? " AND item_unseen = 1 " : '');
+				
+			if($update && $_SESSION['loadtime'])
+				$simple_update = " AND (( item_unseen = 1 AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' )  OR item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' ) ";
+		
+			if($static && $simple_update)
+				$simple_update .= " and item_thread_top = 0 and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
+
+			$sys = get_sys_channel();
+			$sql_extra = item_permissions_sql($sys['channel_id']);
+
+		}
 	
-		$updateable = false;
-
 		if(! $update) {
 			$channel = \App::get_channel();
 
@@ -105,52 +129,36 @@ class Hq extends \Zotlabs\Web\Controller {
 				'bbcode'              => true,
 				'jotnets'             => true
 			];
+
+			$o = replace_macros(get_markup_template("hq.tpl"),
+				[
+					'$no_messages' => (($target_item) ? false : true),
+					'$no_messages_label' => t('Welcome to hubzilla!')
+				]
+			);
 	
 			$o = '<div id="jot-popup">';
 			$o .= status_editor($a,$x);
 			$o .= '</div>';
 		}
-	
-		$target_item = null;
 
-		$r = q("select id, uid, mid, parent_mid, thr_parent, verb, item_type, item_deleted, item_blocked from item where mid like '%s' limit 1",
-			dbesc($item_hash . '%')
-		);
-	
-		if($r) {
-			$target_item = $r[0];
-		}
-
-		//if the item is to be moderated redirect to /moderate
-		if($target_item['item_blocked'] == ITEM_MODERATED) {
-			goaway(z_root() . '/moderate/' . $target_item['id']);
-		}
-	
-		$static = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
-
-		$simple_update = (($update) ? " AND item_unseen = 1 " : '');
-			
-		if($update && $_SESSION['loadtime'])
-			$simple_update = " AND (( item_unseen = 1 AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' )  OR item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' ) ";
-	
-		if($static && $simple_update)
-			$simple_update .= " and item_thread_top = 0 and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
-
-		$sys = get_sys_channel();
-		$sql_extra = item_permissions_sql($sys['channel_id']);
-	
 		if(! $update && ! $load) {
 
 			nav_set_selected('HQ');
 
 			$static  = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 1);
 
-			// if the target item is not a post (eg a like) we want to address its thread parent
-			$mid = ((($target_item['verb'] == ACTIVITY_LIKE) || ($target_item['verb'] == ACTIVITY_DISLIKE)) ? $target_item['thr_parent'] : $target_item['mid']);
+			if($target_item) {
+				// if the target item is not a post (eg a like) we want to address its thread parent
+				$mid = ((($target_item['verb'] == ACTIVITY_LIKE) || ($target_item['verb'] == ACTIVITY_DISLIKE)) ? $target_item['thr_parent'] : $target_item['mid']);
 
-			// if we got a decoded hash we must encode it again before handing to javascript 
-			if($decoded)
-				$mid = 'b64.' . base64url_encode($mid);
+				// if we got a decoded hash we must encode it again before handing to javascript 
+				if($decoded)
+					$mid = 'b64.' . base64url_encode($mid);
+			}
+			else {
+				$mid = '';
+			}
 
 			$o .= '<div id="live-hq"></div>' . "\r\n";
 			$o .= "<script> var profile_uid = " . local_channel()
@@ -188,7 +196,9 @@ class Hq extends \Zotlabs\Web\Controller {
 			]);
 		}
 
-		if($load) {
+		$updateable = false;
+
+		if($load && $target_item) {
 			$r = null;
 
 			$r = q("SELECT item.id AS item_id FROM item
@@ -215,7 +225,7 @@ class Hq extends \Zotlabs\Web\Controller {
 				);
 			}
 		}
-		elseif($update) {
+		elseif($update && $target_item) {
 			$r = null;
 
 			$r = q("SELECT item.parent AS item_id FROM item

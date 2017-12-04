@@ -162,12 +162,12 @@ class Layouts extends \Zotlabs\Web\Controller {
 					'created'   => $rr['created'],
 					'edited'    => $rr['edited'],
 					'mimetype'  => $rr['mimetype'],
-					'pagetitle' => $rr['sid'],
+					'pagetitle' => urldecode($rr['v']),
 					'mid'       => $rr['mid']
 				);
 				$pages[$rr['iid']][] = array(
 					'url' => $rr['iid'],
-					'title' => $rr['v'],
+					'title' => urldecode($rr['v']),
 					'descr' => $rr['title'],
 					'mid' => $rr['mid'],
 					'created' => $rr['created'],
