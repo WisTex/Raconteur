@@ -14,6 +14,7 @@ class Display extends \Zotlabs\Web\Controller {
 
 		$module_format = 'html';
 
+
 		if(argc() > 1) {
 			$module_format = substr(argv(1),strrpos(argv(1),'.') + 1);
 			if(! in_array($module_format,['atom','zot','json']))
@@ -30,7 +31,7 @@ class Display extends \Zotlabs\Web\Controller {
 			return;
 		}
 	
-		if(argc() > 1 && argv(1) !== 'load') {
+		if(argc() > 1) {
 			$item_hash = argv(1);
 			if($module_format !== 'html') {
 				$item_hash = substr($item_hash,0,strrpos($item_hash,'.'));
@@ -260,7 +261,7 @@ class Display extends \Zotlabs\Web\Controller {
 	
 		elseif($update && !$load) {
 			$r = null;
-	
+
 			require_once('include/channel.php');
 			$sys = get_sys_channel();
 			$sysid = $sys['channel_id'];
@@ -285,7 +286,6 @@ class Display extends \Zotlabs\Web\Controller {
 				// make that content unsearchable by ensuring the owner_xchan can't match
 				if(! perm_is_allowed($sysid,$observer_hash,'view_stream'))
 					$sysid = 0;
-
 				$r = q("SELECT item.parent AS item_id from item
 					WHERE parent_mid = '%s'
 					AND (((( item.allow_cid = ''  AND item.allow_gid = '' AND item.deny_cid  = '' 
@@ -315,7 +315,6 @@ class Display extends \Zotlabs\Web\Controller {
 					WHERE parent in ( %s ) $item_normal ",
 					dbesc($parents_str)
 				);
-	
 				xchan_query($items);
 				$items = fetch_post_tags($items,true);
 				$items = conv_sort($items,'created');

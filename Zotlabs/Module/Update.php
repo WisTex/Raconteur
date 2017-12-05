@@ -8,6 +8,9 @@ class Update extends \Zotlabs\Web\Controller {
 	
 		$profile_uid = intval($_GET['p']);
 
+		if((! $profile_uid) && in_array(argv(1),['display','search','pubstream','home']))
+			$profile_uid = (-1);
+
 		if(argc() < 2) {
 			killme();
 		}
@@ -23,6 +26,9 @@ class Update extends \Zotlabs\Web\Controller {
 		$mod = new $module;
 
 		header("Content-type: text/html");
+
+		\App::$argv = [ argv(1) ];
+		\App::$argc = 1;
 
 		echo "<!DOCTYPE html><html><body><section>\r\n";
 		echo $mod->get($profile_uid, $load);
