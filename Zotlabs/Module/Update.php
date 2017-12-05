@@ -8,6 +8,9 @@ class Update extends \Zotlabs\Web\Controller {
 	
 		$profile_uid = intval($_GET['p']);
 
+		// it's probably safe to do this for all modules and not just a limited subset,
+		// but it needs to be verified.
+
 		if((! $profile_uid) && in_array(argv(1),['display','search','pubstream','home']))
 			$profile_uid = (-1);
 
