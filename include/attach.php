@@ -276,6 +276,8 @@ function attach_by_hash($hash, $observer_hash, $rev = 0) {
 		return $ret;
 	}
 
+	$r[0]['content'] = dbunescbin($r[0]['content']);
+
 	if($r[0]['folder']) {
 		$x = attach_can_view_folder($r[0]['uid'],$observer_hash,$r[0]['folder']);
 		if(! $x) {
@@ -2037,6 +2039,7 @@ function attach_export_data($channel, $resource_id, $deleted = false) {
 		if($hash_ptr === $resource_id) {
 			$attach_ptr = $r[0];
 		}
+		$r[0]['content'] = dbunescbin($r[0]['content']);
 
 		$hash_ptr = $r[0]['folder'];
 		$paths[] = $r[0];
@@ -2222,7 +2225,6 @@ function copy_folder_to_cloudfiles($channel, $observer_hash, $srcpath, $cloudpat
  * the attach.hash of the new parent folder, which must already exist. If $new_folder_hash is blank or empty,
  * the file is relocated to the root of the channel's storage area.
  *
- * @fixme: this operation is currently not synced to clones !!
  *
  * @param int $channel_id
  * @param int $resource_id
@@ -2245,7 +2247,7 @@ function attach_move($channel_id, $resource_id, $new_folder_hash) {
 	$oldstorepath = dbunescbin($r[0]['content']);
 
 	if($new_folder_hash) {
-		$n = q("select * from attach where hash = '%s' and uid = %d limit 1",
+		$n = q("select * from attach where hash = '%s' and uid = %d and is_dir = 1 limit 1",
 			dbesc($new_folder_hash),
 			intval($channel_id)
 		);
