@@ -293,31 +293,43 @@ class Wiki extends \Zotlabs\Web\Controller {
 					$p = Zlib\NativeWikiPage::get_page_content(array('channel_id' => $owner['channel_id'], 'observer_hash' => $observer_hash, 'resource_id' => $resource_id, 'pageUrlName' => $pageUrlName));
 				}
 				if(! ($p && $p['success'])) {
+			                $x = new \Zotlabs\Widget\Wiki_pages();
+
+			                $html = $x->create_missing_page([
+				                'resource_id' => $resource_id,
+				                'channel_id' => $owner['channel_id'],
+				                'channel_address' => $owner['channel_address'],
+				                'refresh' => true
+			                ]);
+			                //json_return_and_die(array('pages' => $page_list_html, 'message' => '', 'success' => true));					
 					notice( t('Error retrieving page content') . EOL);
-					goaway(z_root() . '/' . argv(0) . '/' . argv(1) );
+					//goaway(z_root() . '/' . argv(0) . '/' . argv(1) );
+				        $renderedContent = Zlib\NativeWikiPage::convert_links($html, argv(0) . '/' . argv(1) . '/' . $wikiUrlName);
+				        $showPageControls = $wiki_editor;
 				}
+                                else {
+				    $mimeType = $p['pageMimeType'];
 
-				$mimeType = $p['pageMimeType'];
+				    $sampleContent = (($mimeType == 'text/bbcode') ? '[h3]' . t('New page') . '[/h3]' : '### ' . t('New page'));
+				    if($mimeType === 'text/plain')
+				        $sampleContent = t('New page');
 
-				$sampleContent = (($mimeType == 'text/bbcode') ? '[h3]' . t('New page') . '[/h3]' : '### ' . t('New page'));
-				if($mimeType === 'text/plain')
-					$sampleContent = t('New page');
-
-				$content = (($p['content'] == '') ? $sampleContent : $p['content']);
-
-				// Render the Markdown-formatted page content in HTML
-				if($mimeType == 'text/bbcode') {
-					$renderedContent = Zlib\NativeWikiPage::convert_links(zidify_links(smilies(bbcode($content))), argv(0) . '/' . argv(1) . '/' . $wikiUrlName);
-				}
-				elseif($mimeType === 'text/plain') {
-					$renderedContent = str_replace(["\n",' ',"\t"],[EOL,'&nbsp;','&nbsp;&nbsp;&nbsp;&nbsp;'],htmlentities($content,ENT_COMPAT,'UTF-8',false));
-				}
-				elseif($mimeType === 'text/markdown') {
-					$content = Zlib\MarkdownSoap::unescape($content);
-					$html = Zlib\NativeWikiPage::generate_toc(zidify_text(MarkdownExtra::defaultTransform(Zlib\NativeWikiPage::bbcode($content))));
-					$renderedContent = Zlib\NativeWikiPage::convert_links($html, argv(0) . '/' . argv(1) . '/' . $wikiUrlName);
-				}
-				$showPageControls = $wiki_editor;
+				    $content = (($p['content'] == '') ? $sampleContent : $p['content']);
+    
+				    // Render the Markdown-formatted page content in HTML
+				    if($mimeType == 'text/bbcode') {
+				        $renderedContent = Zlib\NativeWikiPage::convert_links(zidify_links(smilies(bbcode($content))), argv(0) . '/' . argv(1) . '/' . $wikiUrlName);
+				    }
+			 	    elseif($mimeType === 'text/plain') {
+				        $renderedContent = str_replace(["\n",' ',"\t"],[EOL,'&nbsp;','&nbsp;&nbsp;&nbsp;&nbsp;'],htmlentities($content,ENT_COMPAT,'UTF-8',false));
+				    }
+				    elseif($mimeType === 'text/markdown') {
+				     $content = Zlib\MarkdownSoap::unescape($content);
+				     $html = Zlib\NativeWikiPage::generate_toc(zidify_text(MarkdownExtra::defaultTransform(Zlib\NativeWikiPage::bbcode($content))));
+				     $renderedContent = Zlib\NativeWikiPage::convert_links($html, argv(0) . '/' . argv(1) . '/' . $wikiUrlName);
+				    }
+				    $showPageControls = $wiki_editor;
+                                }
 				break;
 //			default:	// Strip the extraneous URL components
 //				goaway('/' . argv(0) . '/' . argv(1) . '/' . $wikiUrlName . '/' . $pageUrlName);
@@ -563,9 +575,10 @@ class Wiki extends \Zotlabs\Web\Controller {
 			// backslashes won't work well in the javascript functions
 			$name = str_replace('\\','',$name);
 
-			if(urlencode(escape_tags($name)) === '') {				
-				json_return_and_die(array('message' => 'Error creating page. Invalid name.', 'success' => false));
+			if(urlencode(escape_tags($name)) === '') {
+				json_return_and_die(array('message' => 'Error creating page. Invalid name (' . print_r($_POST,true) . ').', 'success' => false));
 			}
+
 			$page = Zlib\NativeWikiPage::create_page($owner['channel_id'],$observer_hash, $name, $resource_id, $mimetype);
 
 			if($page['item_id']) {
