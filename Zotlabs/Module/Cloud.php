@@ -87,6 +87,10 @@ class Cloud extends \Zotlabs\Web\Controller {
 		//	$server->addPlugin(new \Zotlabs\Storage\\QuotaPlugin($auth));
 
 
+		// over-ride the default XML output on thrown exceptions
+
+		$server->on('exception', [ $this, 'DAVException' ]);
+
 		// All we need to do now, is to fire up the server
 
 		$server->exec();
@@ -97,4 +101,24 @@ class Cloud extends \Zotlabs\Web\Controller {
 		killme();
 	}
 
+
+	function DAVException($err) {
+			
+		if($err instanceof \Sabre\DAV\Exception\NotFound) {
+			notice( t('Not found') . EOL);
+		}
+		elseif($err instanceof \Sabre\DAV\Exception\Forbidden) {
+			notice( t('Permission denied') . EOL);
+		}
+		else {
+			notice( t('Unknown error') . EOL);
+		}
+
+		construct_page();
+			
+		killme();
+	}
+
 }
+
+
