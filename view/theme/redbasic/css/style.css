@@ -1728,32 +1728,33 @@ dl.bb-dl > dd > li {
 
 .cloud-container {
 	float: left;
-	width: 80px;
-	height: 80px;
+	width: 100px;
+	height: 110px;
 	margin: 5px;
 }
 
 .cloud-icon-container {
-	width: 48px;
-	height: 48px;
+	width: 64px;
+	height: 64px;
 	border: 1px solid #eee;
 	border-radius: $radius;
 }
 
 .cloud-icon i {
-	font-size: 32px;
+	font-size: 42px;
 	color: #888;
 	margin-top: 8px;
+	margin-left: 6px;
 }
 
 .cloud-icon img {
-	width: 48px;
-	height: 48px;
+	max-width: 64px;
+	max-height: 64px;
 	border-radius: $radius;
 }
 
 .cloud-title {
-	width: 78px;
+	width: 98px;
 	height: 36px;
 	overflow: hidden;
 }
