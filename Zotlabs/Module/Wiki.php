@@ -430,11 +430,15 @@ class Wiki extends \Zotlabs\Web\Controller {
 				goaway('/' . argv(0) . '/' . $nick . '/');
 			} 
 			$wiki = array(); 
+
+			// backslashes won't work well in the javascript functions
+			$name = str_replace('\\','',$_POST['wikiName']);
+
 			// Generate new wiki info from input name
 			$wiki['postVisible'] = ((intval($_POST['postVisible'])) ? 1 : 0);
-			$wiki['rawName']     = $_POST['wikiName'];
-			$wiki['htmlName']    = escape_tags($_POST['wikiName']);
-			$wiki['urlName']     = urlencode(urlencode($_POST['wikiName'])); 
+			$wiki['rawName']     = $name;
+			$wiki['htmlName']    = escape_tags($name);
+			$wiki['urlName']     = urlencode(urlencode($name)); 
 			$wiki['mimeType']    = $_POST['mimeType'];
 			$wiki['typelock']    = $_POST['typelock'];
 
@@ -555,7 +559,11 @@ class Wiki extends \Zotlabs\Web\Controller {
 			}
 
 			$name = $_POST['pageName']; //Get new page name
-			if(urlencode(escape_tags($_POST['pageName'])) === '') {				
+
+			// backslashes won't work well in the javascript functions
+			$name = str_replace('\\','',$name);
+
+			if(urlencode(escape_tags($name)) === '') {				
 				json_return_and_die(array('message' => 'Error creating page. Invalid name.', 'success' => false));
 			}
 			$page = Zlib\NativeWikiPage::create_page($owner['channel_id'],$observer_hash, $name, $resource_id, $mimetype);
@@ -626,7 +634,7 @@ class Wiki extends \Zotlabs\Web\Controller {
 				logger('Wiki write permission denied. ' . EOL);
 				json_return_and_die(array('success' => false));					
 			}
-			
+
 			$saved = Zlib\NativeWikiPage::save_page(array('channel_id' => $owner['channel_id'], 'observer_hash' => $observer_hash, 'resource_id' => $resource_id, 'pageUrlName' => $pageUrlName, 'content' => $content));
 
 			if($saved['success']) {
@@ -758,7 +766,7 @@ class Wiki extends \Zotlabs\Web\Controller {
 		if ((argc() === 4) && (argv(2) === 'rename') && (argv(3) === 'page')) {
 			$resource_id = $_POST['resource_id']; 
 			$pageUrlName = $_POST['oldName'];
-			$pageNewName = $_POST['newName'];
+			$pageNewName = str_replace('\\','',$_POST['newName']);
 			if ($pageUrlName === 'Home') {
 				json_return_and_die(array('message' => 'Cannot rename Home','success' => false));
 			}
