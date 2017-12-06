@@ -575,7 +575,7 @@ class Wiki extends \Zotlabs\Web\Controller {
 			// backslashes won't work well in the javascript functions
 			$name = str_replace('\\','',$name);
 
-			if(urlencode(escape_tags($_POST['pageName'])) === '') {				
+			if(urlencode(escape_tags($name)) === '') {
 				json_return_and_die(array('message' => 'Error creating page. Invalid name (' . print_r($_POST,true) . ').', 'success' => false));
 			}
 
