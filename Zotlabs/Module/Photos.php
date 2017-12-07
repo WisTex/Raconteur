@@ -202,6 +202,11 @@ class Photos extends \Zotlabs\Web\Controller {
 			);
 			if(($m) && ($m[0]['folder'] != $_POST['move_to_album'])) {
 				attach_move($page_owner_uid,argv(2),$_POST['move_to_album']);			
+
+				$sync = attach_export_data(\App::$data['channel'],argv(2),true);
+				if($sync) 
+					build_sync_packet($page_owner_uid,array('file' => array($sync)));
+
 				if(! ($_POST['desc'] && $_POST['newtag']))
 					goaway(z_root() . '/' . $_SESSION['photo_return']);
 			}

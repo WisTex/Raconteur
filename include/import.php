@@ -1081,6 +1081,7 @@ function sync_files($channel, $files) {
 					logger('sync_files duplicate check: attach_by_hash() returned ' . print_r($x,true), LOGGER_DEBUG);
 
 					if($x['success']) {
+						$orig_attach = $x[0];
 						$attach_exists = true;
 						$attach_id = $x[0]['id'];
 					}
@@ -1145,12 +1146,18 @@ function sync_files($channel, $files) {
 					// If the hash ever contains any escapable chars this could cause
 					// problems. Currently it does not.
 
-					/// @TODO implement os_path
 					if(!isset($att['os_path']))
 						$att['os_path'] = '';
 
 					if($attach_exists) {
 						logger('sync_files attach exists: ' . print_r($att,true), LOGGER_DEBUG);
+
+						// process/sync a remote rename/move operation
+
+						if($orig_attach['content'] !== $newfname) {
+							rename($orig_attach['content'],$newfname);
+						}
+
 						if(! dbesc_array($att))
 							continue;
 
