@@ -2234,7 +2234,7 @@ function copy_folder_to_cloudfiles($channel, $observer_hash, $srcpath, $cloudpat
 function attach_move($channel_id, $resource_id, $new_folder_hash) {
 
 	$c = channelx_by_n($channel_id);
-	if(! $c)
+	if(! ($c && $resource_id))
 		return false;
 
 	$r = q("select * from attach where hash = '%s' and uid = %d limit 1",
@@ -2246,13 +2246,32 @@ function attach_move($channel_id, $resource_id, $new_folder_hash) {
 
 	$oldstorepath = dbunescbin($r[0]['content']);
 
+	if($r[0]['is_dir']) {
+		$move_success = true;
+		$x = q("select hash from attach where folder = '%s' and uid = %d",
+			dbesc($r[0]['hash']),
+			intval($channel_id)
+		);
+		if($x) {
+			foreach($x as $xv) {
+				$rs = attach_move($channel_id,$xv['hash'],$r[0]['hash']);
+				if(! $rs) {
+					$move_success = false;
+					break;
+				}
+			}
+		}
+		return $move_success;
+	}
+
+
 	if($new_folder_hash) {
 		$n = q("select * from attach where hash = '%s' and uid = %d and is_dir = 1 limit 1",
 			dbesc($new_folder_hash),
 			intval($channel_id)
 		);
 		if(! $n)
-			return;
+			return false;
 
 		$newdirname = $n[0]['filename'];
 		$newstorepath = dbunescbin($n[0]['content']) . '/' . $resource_id;

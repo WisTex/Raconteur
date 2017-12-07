@@ -16,7 +16,7 @@ use Sabre\DAV;
  * @link http://github.com/friendica/red
  * @license http://opensource.org/licenses/mit-license.php The MIT License (MIT)
  */
-class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota {
+class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMoveTarget {
 
 	/**
 	 * @brief The path inside /cloud
@@ -456,6 +456,22 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota {
 
 		return false;
 	}
+
+
+	public function moveInto($targetName,$sourcePath, DAV\INode $sourceNode) {
+
+		if(! $this->auth->owner_id) {
+			return false;
+		}
+
+		if(! ($sourceNode->data && $sourceNode->data->hash)) {
+			return false;
+		}
+
+		return attach_move($this->auth->owner_id, $sourceNode->data->hash, $this->folder_hash);
+
+	}
+
 
 	/**
 	 * @todo add description of what this function does.
