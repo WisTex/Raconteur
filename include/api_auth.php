@@ -52,6 +52,7 @@ function api_login(&$a){
 		/* Signature authentication */
 
 		if(array_key_exists($head,$_SERVER) && substr(trim($_SERVER[$head]),0,9) === 'Signature') {
+
 			if($head !== 'HTTP_AUTHORIZATION') {
 				$_SERVER['HTTP_AUTHORIZATION'] = $_SERVER[$head];
 				continue;
@@ -59,7 +60,7 @@ function api_login(&$a){
 
 			$sigblock = \Zotlabs\Web\HTTPSig::parse_sigheader($_SERVER[$head]);
 			if($sigblock) {
-				$keyId = $sigblock['keyId'];
+				$keyId = str_replace('acct:','',$sigblock['keyId']);
 				if($keyId) {
 					$r = q("select * from hubloc where hubloc_addr = '%s' limit 1",
 						dbesc($keyId)
