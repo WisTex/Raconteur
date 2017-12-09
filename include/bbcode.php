@@ -711,7 +711,7 @@ function parseIdentityAwareHTML($Text) {
 function bbcode($Text, $options = []) {
 
 	$preserve_nl = ((array_key_exists('preserve_nl',$options)) ? $options['preserve_nl'] : false);
-	$tryoembed   = ((array_key_exists('tryomebed',$options)) ? $options['tryoembed'] : true);
+	$tryoembed   = ((array_key_exists('tryoembed',$options)) ? $options['tryoembed'] : true);
 	$cache       = ((array_key_exists('cache',$options)) ? $options['cache'] : false);
 
 
