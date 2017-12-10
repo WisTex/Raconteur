@@ -189,7 +189,7 @@ function attach_count_files($channel_id, $observer, $hash = '', $filename = '', 
  *  * \e array|boolean \b results array with results, or false
  *  * \e string \b message with error messages if any
  */
-function attach_list_files($channel_id, $observer, $hash = '', $filename = '', $filetype = '', $orderby = 'created desc', $start = 0, $entries = 0) {
+function attach_list_files($channel_id, $observer, $hash = '', $filename = '', $filetype = '', $orderby = 'created desc', $start = 0, $entries = 0, $since = '', $until = '') {
 
 	$ret = array('success' => false);
 
@@ -197,6 +197,7 @@ function attach_list_files($channel_id, $observer, $hash = '', $filename = '', $
 		$ret['message'] = t('Permission denied.');
 		return $ret;
 	}
+
 
 	require_once('include/security.php');
 	$sql_extra = permissions_sql($channel_id);
@@ -213,14 +214,22 @@ function attach_list_files($channel_id, $observer, $hash = '', $filename = '', $
 	if($entries)
 		$limit = " limit " . intval($start) . ", " . intval($entries) . " ";
 
-	// Retrieve all columns except 'data'
+	if(! $since)
+		$since = NULL_DATE;
+
+	if(! $until)
+		$until = datetime_convert();
+
+	$sql_extra .= " and created >= '" . dbesc($since) . "' and created <= '" . dbesc($until) . "' ";
+
+	// Retrieve all columns except 'content'
 
 	$r = q("select id, aid, uid, hash, filename, filetype, filesize, revision, folder, os_path, display_path, os_storage, is_dir, is_photo, flags, created, edited, allow_cid, allow_gid, deny_cid, deny_gid from attach where uid = %d $sql_extra ORDER BY $orderby $limit",
 		intval($channel_id)
 	);
 
 	$ret['success'] = ((is_array($r)) ? true : false);
-	$ret['results'] = ((is_array($r)) ? $r : false);
+	$ret['results'] = ((is_array($r)) ? $r : []);
 
 	return $ret;
 }
@@ -2052,14 +2061,13 @@ function attach_export_data($channel, $resource_id, $deleted = false) {
 
 
 	if($attach_ptr['is_photo']) {
-		$r = q("select * from photo where resource_id = '%s' and uid = %d order by imgscale asc",
+
+		$r = q("select aid,uid,xchan,resource_id,created,edited,title,description,album,filename,mimetype,height,width,filesize,imgscale,photo_usage,profile,is_nsfw,os_storage,display_path,photo_flags,allow_cid,allow_gid,deny_cid,deny_gid from photo where resource_id = '%s' and uid = %d order by imgscale asc",
 			dbesc($resource_id),
 			intval($channel['channel_id'])
 		);
+
 		if($r) {
-			for($x = 0; $x < count($r); $x ++) {
-				$r[$x]['content'] = base64_encode(dbunescbin($r[$x]['content']));
-			}
 			$ret['photo'] = $r;
 		}
 
