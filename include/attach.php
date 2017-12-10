@@ -2062,14 +2062,29 @@ function attach_export_data($channel, $resource_id, $deleted = false) {
 
 	if($attach_ptr['is_photo']) {
 
-		$r = q("select aid,uid,xchan,resource_id,created,edited,title,description,album,filename,mimetype,height,width,filesize,imgscale,photo_usage,profile,is_nsfw,os_storage,display_path,photo_flags,allow_cid,allow_gid,deny_cid,deny_gid from photo where resource_id = '%s' and uid = %d order by imgscale asc",
+		// This query could potentially result in a few megabytes of data use.  
+
+		$r = q("select * from photo where resource_id = '%s' and uid = %d order by imgscale asc",
 			dbesc($resource_id),
 			intval($channel['channel_id'])
 		);
-
 		if($r) {
+			for($x = 0; $x < count($r); $x ++) {
+				$r[$x]['content'] = base64_encode(dbunescbin($r[$x]['content']));
+			}
 			$ret['photo'] = $r;
 		}
+
+//	This query can be used instead in memory starved environments. There will be a corresponding
+//  performance hit during sync because the data will need to be fetched over the network.
+//		$r = q("select aid,uid,xchan,resource_id,created,edited,title,description,album,filename,mimetype,height,width,filesize,imgscale,photo_usage,profile,is_nsfw,os_storage,display_path,photo_flags,allow_cid,allow_gid,deny_cid,deny_gid from photo where resource_id = '%s' and uid = %d order by imgscale asc",
+//			dbesc($resource_id),
+//			intval($channel['channel_id'])
+//		);
+
+//		if($r) {
+//			$ret['photo'] = $r;
+//		}
 
 		$r = q("select * from item where resource_id = '%s' and resource_type = 'photo' and uid = %d ",
 			dbesc($resource_id),
