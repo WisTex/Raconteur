@@ -42,8 +42,8 @@ mysql $PROTO -e "SELECT @@sql_mode;"
 
 # Create Hubzilla database
 mysql $PROTO -u root -e "CREATE DATABASE IF NOT EXISTS hubzilla;";
-mysql $PROTO -u root -e "CREATE USER 'hubzilla'@'localhost' IDENTIFIED BY 'hubzilla';"
-mysql $PROTO -u root -e "GRANT ALL ON hubzilla.* TO 'hubzilla'@'localhost';"
+mysql $PROTO -u root -e "CREATE USER 'hubzilla'@'%' IDENTIFIED BY 'hubzilla';"
+mysql $PROTO -u root -e "GRANT ALL ON hubzilla.* TO 'hubzilla'@'%';"
 
 # Import table structure
 mysql $PROTO -u root hubzilla < ./install/schema_mysql.sql

@@ -34,10 +34,15 @@ psql -U postgres -c "SELECT VERSION();"
 
 # Create Hubzilla database
 psql -U postgres -c "DROP DATABASE IF EXISTS hubzilla;"
-psql -U postgres -c "CREATE DATABASE hubzilla;"
+psql -U postgres -v ON_ERROR_STOP=1 <<-EOSQL
+    CREATE USER hubzilla WITH PASSWORD 'hubzilla';
+    CREATE DATABASE hubzilla;
+    ALTER DATABASE hubzilla OWNER TO hubzilla;
+    GRANT ALL PRIVILEGES ON DATABASE hubzilla TO hubzilla;
+EOSQL
 
 # Import table structure
-psql -U postgres -v ON_ERROR_STOP=1 hubzilla < ./install/schema_postgres.sql
+psql -U hubzilla -v ON_ERROR_STOP=1 hubzilla < ./install/schema_postgres.sql
 
 # Show databases and tables
 psql -U postgres -l
