@@ -43,7 +43,9 @@
 			e.preventDefault();
 
 			if(! page_load) {
-				$(this).fadeOut();
+				if($(this).parent().attr('id') !== 'nav-pubs-menu')
+					$(this).fadeOut();
+
 				getData(b64mid, notify_id);
 			}
 
@@ -110,7 +112,7 @@
 					<i class="fa fa-fw fa-filter"></i> {{$notification.filter.label}}
 				</div>
 				{{/if}}
-				{{$loading}}
+				{{$loading}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 			</div>
 		</div>
 		{{/foreach}}

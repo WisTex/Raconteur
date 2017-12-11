@@ -306,6 +306,49 @@ nav {
 
 /* spinner end */
 
+/* jumping dots */
+.jumping-dots span {
+	position: relative;
+	bottom: 0px;
+	transition-timing-function: ease-in-out;
+	-webkit-animation: jump 1s infinite;
+	animation: jump 1s infinite;
+}
+
+.jumping-dots .dot-1 {
+	-webkit-animation-delay: 200ms;
+	animation-delay: 200ms;
+}
+
+.jumping-dots .dot-2 {
+	-webkit-animation-delay: 400ms;
+	animation-delay: 400ms;
+}
+
+.jumping-dots .dot-3 {
+	-webkit-animation-delay: 600ms;
+	animation-delay: 600ms;
+}
+
+@-webkit-keyframes jump {
+	0% {
+		bottom: 0px;
+	}
+	20% {
+		bottom: 3px;
+	}
+	40% {
+		bottom: 0px;
+	}
+}
+
+@keyframes jump {
+	0%   {bottom: 0px;}
+	20%  {bottom: 3px;}
+	40%  {bottom: 0px;}
+}
+/* jumping dots end */
+
 /* footer */
 
 footer {

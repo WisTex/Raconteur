@@ -313,7 +313,7 @@ EOT;
 		'$sitelocation' => $sitelocation,
 		'$nav' => $x['nav'],
 		'$banner' =>  $banner,
-		'$emptynotifications' => t('Loading...'),
+		'$emptynotifications' => t('Loading'),
 		'$userinfo' => $x['usermenu'],
 		'$localuser' => local_channel(),
 		'$is_owner' => $is_owner,
