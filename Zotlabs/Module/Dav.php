@@ -48,7 +48,7 @@ class Dav extends \Zotlabs\Web\Controller {
 
 				$sigblock = \Zotlabs\Web\HTTPSig::parse_sigheader($_SERVER[$head]);
 				if($sigblock) {
-					$keyId = $sigblock['keyId'];
+					$keyId = str_replace('acct:','',$sigblock['keyId']);
 					if($keyId) {
 						$r = q("select * from hubloc where hubloc_addr = '%s' limit 1",
 							dbesc($keyId)

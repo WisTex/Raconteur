@@ -1263,10 +1263,43 @@ function sync_files($channel, $files) {
 						);
 					}
 
-					if($p['imgscale'] === 0 && $p['os_storage'])
+					if(intval($p['imgscale']) === 0 && $p['os_storage'])
 						$p['content'] = $store_path;
 					else
-						$p['content'] = base64_decode($p['content']);
+						$p['content'] = (($p['content'])? base64_decode($p['content']) : '');
+
+					if(intval($p['imgscale']) && (! $p['content'])) {
+
+						$time = datetime_convert();
+
+						$parr = array('hash' => $channel['channel_hash'],
+							'time' => $time,
+							'resource' => $att['hash'],
+							'revision' => 0,
+							'signature' => base64url_encode(rsa_sign($channel['channel_hash'] . '.' . $time, $channel['channel_prvkey'])),
+							'resolution' => $p['imgscale']
+						);
+
+						$stored_image = $newfname . '-' . intval($p['imgscale']);
+
+						$fp = fopen($stored_image,'w');
+						if(! $fp) {
+							logger('failed to open storage file.',LOGGER_NORMAL,LOG_ERR);
+							continue;
+						}
+						$redirects = 0;
+
+
+						$headers = [];
+						$headers['Accept'] = 'application/x-zot+json' ;
+						$headers['Sigtoken'] = random_string();
+						$headers = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],	'acct:' . $channel['channel_address'] . '@' . \App::get_hostname(),false,true,'sha512');
+
+						$x = z_post_url($fetch_url,$parr,$redirects,[ 'filep' => $fp, 'headers' => $headers]);
+						fclose($fp);
+						$p['content'] = file_get_contents($stored_image);
+						unlink($stored_image);
+					}
 
 					if(!isset($p['display_path']))
 						$p['display_path'] = '';

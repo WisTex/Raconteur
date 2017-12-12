@@ -325,7 +325,7 @@ function create_identity($arr) {
 			'hubloc_guid_sig' => $sig,
 			'hubloc_hash'     => $hash,
 			'hubloc_addr'     => channel_reddress($ret['channel']),
-			'hubloc_primary'  => $primary,
+			'hubloc_primary'  => intval($primary),
 			'hubloc_url'      => z_root(),
 			'hubloc_url_sig'  => base64url_encode(rsa_sign(z_root(),$ret['channel']['channel_prvkey'])),
 			'hubloc_host'     => App::get_hostname(),

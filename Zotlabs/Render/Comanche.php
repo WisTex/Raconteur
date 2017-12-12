@@ -534,7 +534,12 @@ class Comanche {
 			require_once('widget/' . $clsname . '/' . $clsname . '.php');
 		elseif(file_exists('Zotlabs/Widget/' . $clsname . '.php'))
 			require_once('Zotlabs/Widget/' . $clsname . '.php');
-
+		else {
+			$pth = theme_include($clsname . '.php');
+			if($pth) {
+				require_once($pth);
+			}
+		}
 		if(class_exists($nsname)) {
 			$x = new $nsname;
 			$f = 'widget';
@@ -550,11 +555,13 @@ class Comanche {
 				require_once('widget/' . trim($name) . '.php');
 			elseif(file_exists('widget/' . trim($name) . '/' . trim($name) . '.php'))
 				require_once('widget/' . trim($name) . '/' . trim($name) . '.php');
-		}
-		else {
-			$theme_widget = $func . '.php';
-			if((! function_exists($func)) && theme_include($theme_widget))
-				require_once(theme_include($theme_widget));
+		
+			if(! function_exists($func)) {
+				$theme_widget = $func . '.php';
+				if(theme_include($theme_widget)) {
+					require_once(theme_include($theme_widget));
+				}
+			}
 		}
 
 		if(function_exists($func))

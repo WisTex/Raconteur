@@ -2694,8 +2694,8 @@ function tag_deliver($uid, $item_id) {
 			}
 
 
-			if((! $mention) && (! $union)) {
-				logger('No mention for ' . $u[0]['channel_name'] . ' and no union.');
+			if(! $mention) {
+				logger('No mention for ' . $u[0]['channel_name']);
 				continue;
 			}
 
@@ -2714,6 +2714,18 @@ function tag_deliver($uid, $item_id) {
 
 		}
 	}
+
+	if($union) {
+		if(intval($item['item_wall']) || intval($item['item_origin']) || (! intval($item['item_thread_top'])) || ($item['id'] != $item['parent'])) {
+			logger('Item was local or a comment. rejected.');
+			return;
+		}
+
+		logger('Creating second delivery chain.');
+		start_delivery_chain($u[0],$item,$item_id,null);
+
+	}
+
 }
 
 /**

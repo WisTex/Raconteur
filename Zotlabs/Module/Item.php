@@ -1139,7 +1139,29 @@ class Item extends \Zotlabs\Web\Controller {
 			$ret['message'] = t('Unable to obtain post information from database.');
 			return $ret;
 		} 
-	
+
+		// auto-upgrade beginner (techlevel 0) accounts - if they have at least two friends and ten posts
+		// and have uploaded something (like a profile photo), promote them to level 1. 
+
+		$a = q("select account_id, account_level from account where account_id = (select channel_account_id from channel where channel_id = %d limit 1)",
+			intval($channel_id)
+		);
+		if((! intval($a[0]['account_level'])) && intval($r[0]['total']) > 10) {
+			$x = q("select count(abook_id) as total from abook where abook_channel = %d",
+				intval($channel_id)
+			);
+			if($x && intval($x[0]['total']) > 2) {
+				$y = q("select count(id) as total from attach where uid = %d",
+					intval($channel_id)
+				);
+				if($y && intval($y[0]['total']) > 1) {
+					q("update account set account_level = 1 where account_id = %d limit 1",
+						intval($a[0]['account_id'])
+					);
+				}
+			}
+		} 
+
 		if (!$iswebpage) {
 			$max = engr_units_to_bytes(service_class_fetch($channel_id,'total_items'));
 			if(! service_class_allows($channel_id,'total_items',$r[0]['total'])) {

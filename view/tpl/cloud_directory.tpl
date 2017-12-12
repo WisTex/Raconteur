@@ -39,12 +39,12 @@
 	{{else}}
 	<table id="cloud-index">
 		<tr>
-			<th width="1%"></th>
-			<th width="92%">{{$name}}</th>
-			<th width="1%"></th><th width="1%"></th><th width="1%"></th><th width="1%"></th>
+			<th width="4%"></th>
+			<th width="47%">{{$name}}</th>
+			<th width="4%"></th><th width="4%"></th><th width="4%"></th><th width="4%"></th>
 			<th width="1%">{{*{{$type}}*}}</th>
-			<th width="1%" class="d-none d-md-table-cell">{{$size}}</th>
-			<th width="1%" class="d-none d-md-table-cell">{{$lastmod}}</th>
+			<th width="10%" class="d-none d-md-table-cell">{{$size}}</th>
+			<th width="22%" class="d-none d-md-table-cell">{{$lastmod}}</th>
 		</tr>
 	{{if $parentpath}}
 		<tr>
