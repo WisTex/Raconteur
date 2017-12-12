@@ -1811,3 +1811,7 @@ dl.bb-dl > dd > li {
 	width: auto;
 	overflow: hidden;
 }
+
+.caption-visible {
+	max-height: 75%;
+}
