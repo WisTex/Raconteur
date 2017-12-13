@@ -1802,3 +1802,6 @@ dl.bb-dl > dd > li {
 	overflow: hidden;
 }
 
+.caption-visible {
+	max-height: 75%;
+}

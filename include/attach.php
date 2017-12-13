@@ -308,6 +308,11 @@ function attach_can_view_folder($uid,$ob_hash,$folder_hash) {
 	$hash = $folder_hash;
 	$result = false;
 
+	if(! $folder_hash) {
+		return perm_is_allowed($uid,$ob_hash,'view_storage');
+	}
+
+
 	do {
 		$r = q("select folder from attach where hash = '%s' and uid = %d $sql_extra",
 			dbesc($hash),
