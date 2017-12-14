@@ -176,12 +176,14 @@ EOT;
 
 	}
 
-
-	$homelink = get_my_url();
-	if(! $homelink) {
+	$my_url = get_my_url();
+	if(! $my_url) {
 		$observer = App::get_observer();
-		$homelink = (($observer) ? $observer['xchan_url'] : '');
+		$my_url = (($observer) ? $observer['xchan_url'] : '');
 	}
+
+	$homelink_arr = parse_url($my_url);
+	$homelink = $homelink_arr['scheme'] . '://' . $homelink_arr['host'];
 
 	if(! $is_owner) {
 		$nav['rusermenu'] = array(
