@@ -1802,12 +1802,6 @@ dl.bb-dl > dd > li {
 	overflow: hidden;
 }
 
-#cloud-index {
-	width: 100%;
-	table-layout: fixed;
-}
-
-#cloud-index td {
-	width: auto;
-	overflow: hidden;
+.caption-visible {
+	max-height: 75%;
 }

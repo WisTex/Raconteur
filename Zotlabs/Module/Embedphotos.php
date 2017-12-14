@@ -83,7 +83,7 @@ class Embedphotos extends \Zotlabs\Web\Controller {
 			return '';
 
 		if($args['album'])
-			$album = $args['album'];
+			$album = (($args['album'] === '/') ? '' : $args['album']);
 		if($args['title'])
 			$title = $args['title'];
 
