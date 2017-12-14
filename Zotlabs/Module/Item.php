@@ -156,7 +156,7 @@ class Item extends \Zotlabs\Web\Controller {
 			if(! x($_REQUEST,'type'))
 				$_REQUEST['type'] = 'net-comment';
 	
-			if($obj_type == ACTIVITY_OBJ_POST)
+			if($obj_type == ACTIVITY_OBJ_NOTE)
 				$obj_type = ACTIVITY_OBJ_COMMENT;
 	
 			if($parent) {
