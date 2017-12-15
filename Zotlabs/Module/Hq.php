@@ -98,6 +98,8 @@ class Hq extends \Zotlabs\Web\Controller {
 			$sys = get_sys_channel();
 			$sql_extra = item_permissions_sql($sys['channel_id']);
 
+			$sys_item = false;
+
 		}
 	
 		if(! $update) {
@@ -215,6 +217,8 @@ class Hq extends \Zotlabs\Web\Controller {
 			}
 
 			if(!$r) {
+				$sys_item = true;
+
 				$r = q("SELECT item.id AS item_id FROM item
 					LEFT JOIN abook ON item.author_xchan = abook.abook_xchan
 					WHERE mid = '%s' AND item.uid = %d $item_normal
@@ -243,6 +247,8 @@ class Hq extends \Zotlabs\Web\Controller {
 			}
 
 			if(!$r) {
+				$sys_item = true;
+
 				$r = q("SELECT item.parent AS item_id FROM item
 					LEFT JOIN abook ON item.author_xchan = abook.abook_xchan
 					WHERE mid = '%s' AND item.uid = %d $item_normal_update $simple_update
@@ -268,7 +274,7 @@ class Hq extends \Zotlabs\Web\Controller {
 					dbesc($parents_str)
 				);
 	
-				xchan_query($items,true,local_channel());
+				xchan_query($items,true,(($sys_item) ? local_channel() : 0));
 				$items = fetch_post_tags($items,true);
 				$items = conv_sort($items,'created');
 			}
