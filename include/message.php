@@ -215,7 +215,7 @@ function send_message($uid = 0, $recipient = '', $body = '', $subject = '', $rep
 		return $ret;
 	}
 
-	if(count($images)) {
+	if($images) {
 		foreach($images as $image) {
 			if(! stristr($image,z_root() . '/photo/'))
 				continue;
