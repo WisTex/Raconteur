@@ -1754,10 +1754,10 @@ function get_plink($item,$conversation_mode = true) {
 	else
 		$key = 'llink';
 
-	$zidify = false;
+	$zidify = true;
 
-	if(array_key_exists('author',$item) && $item['author']['xchan_network'] === 'zot')
-		$zidify = true;
+	if(array_key_exists('author',$item) && $item['author']['xchan_network'] !== 'zot')
+		$zidify = false;
 
 	if(x($item,$key)) {
 		return array(
