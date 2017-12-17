@@ -1754,9 +1754,14 @@ function get_plink($item,$conversation_mode = true) {
 	else
 		$key = 'llink';
 
+	$zidify = true;
+
+	if(array_key_exists('author',$item) && $item['author']['xchan_network'] !== 'zot')
+		$zidify = false;
+
 	if(x($item,$key)) {
 		return array(
-			'href' => zid($item[$key]),
+			'href' => (($zidify) ? zid($item[$key]) : $item[$key]),
 			'title' => t('Link to Source'),
 		);
 	}
