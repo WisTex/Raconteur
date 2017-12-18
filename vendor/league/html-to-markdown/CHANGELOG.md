@@ -4,6 +4,17 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ## [Unreleased][unreleased]
 
+## [4.6.0]
+### Added
+ - Added support for ordered lists starting at numbers other than 1
+
+### Fixed
+ - Fixed overly-eager escaping of list-like text (#141)
+
+## [4.5.0]
+### Added
+ - Added configuration option for list item style (#135, #136)
+
 ## [4.4.1]
 
 ### Fixed
@@ -188,7 +199,9 @@ not ideally set, so this releases fixes that. Moving forwards this should reduce
 ### Added
  - Initial release
 
-[unreleased]: https://github.com/thephpleague/html-to-markdown/compare/4.4.1...master
+[unreleased]: https://github.com/thephpleague/html-to-markdown/compare/4.6.0...master
+[4.6.0]: https://github.com/thephpleague/html-to-markdown/compare/4.5.0...4.6.0
+[4.5.0]: https://github.com/thephpleague/html-to-markdown/compare/4.4.1...4.5.0
 [4.4.1]: https://github.com/thephpleague/html-to-markdown/compare/4.4.0...4.4.1
 [4.4.0]: https://github.com/thephpleague/html-to-markdown/compare/4.3.1...4.4.0
 [4.3.1]: https://github.com/thephpleague/html-to-markdown/compare/4.3.0...4.3.1

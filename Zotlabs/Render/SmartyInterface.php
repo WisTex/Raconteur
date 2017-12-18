@@ -2,8 +2,6 @@
 
 namespace Zotlabs\Render;
 
-require_once('library/Smarty/libs/Smarty.class.php');
-
 class SmartyInterface extends \Smarty {
 
 	public $filename;
