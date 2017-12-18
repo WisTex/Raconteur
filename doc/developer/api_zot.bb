@@ -1,5 +1,9 @@
 [h3]Zot API[/h3]
 
+Many existing social applications and tools can interface directly using the Twitter/StatusNet API, which  is available using the 'twitter_api' addon. 
+
+This document describes the native API; which allows direct programmatic access to several internal data structures and libraries extending beyond the basic social interface.   
+
 The API endpoints detailed below are relative to [code]api/z/1.0[/code], meaning that if an API is listed as [code]channel/stream[/code] the full API URL is [code][baseurl]/api/z/1.0/channel/stream[/code].
 
 [h3]channel/export/basic[/h3]
