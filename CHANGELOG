@@ -1,3 +1,117 @@
+Hubzilla 3.0 (????-??-??)
+	- Don't zidify all permalinks, only zot permalinks
+	- Make remote homelink link to the home host and not to the home channel
+	- Auto promote beginner (techlevel 0) accounts to level 1 after they show signs of active participation.
+	- Go back to including the photo thumbnail data in the export file.
+	- Improvements to file import/export
+	- Default value for xlink_rating_text
+	- Implement IMoveTarget and recursive file/directory move/rename - github issue #680
+	- Synchronise an attach_move operation to clones
+	- Provide a themed page with an error notification on errors instead of an obtuse XML error structure in mod cloud
+	- Disallow backslashes in wiki and wiki-page names
+	- We only require one update module. The rest are superfluous.
+	- Render installable elements as buttons instead of links
+	- Implement chunked uploads for photos page
+	- Remove warning for large files on cloud upload
+	- Add a filter for notification to show new posts only
+	- Implement chunked uploads for cloud
+	- Use httpsig auth for getfile
+	- Load the profile images in the custom acl selector only if we actually need them
+	- Rework liveUpdate() and notificationsUpdate() (aka ping) to first do the liveUpdate and when this is done only do the ping once.
+	- Don't include invisible "update activities" in category widget
+	- Default profile assign
+	- Provide system config option for minimum registration age.
+	- Remove deprecated $a argument from advanced_profile()
+	- Change to bbcode calling parameters
+	- Extra checking of server headers in upload functions
+	- Provide a handler for chunked uploads in mod file_upload
+	- Optional divider between item header and body
+	- Allow toggle to SMBC scaling mode.
+	- Add thumbnail hook
+	- Implement SVG thumbnails and expose security setting
+	- Implement video thumbnail generator
+	- Implement pdf thumbnails
+	- Implement thumbnail generator for epubs
+	- Make browser history buttons work with ajax calls in mod display and hq
+	- Implement tile view for mod cloud (read only)
+	- Add mp3 audio thumbnail generator
+	- Set display_path for photo_upload from the DAV File interface
+	- Provide a generalised interface for thumbnail generators to support various content types
+	- Add ID3Parser library.
+	- Text thumbnails in cloud tile mode
+	- Revisit media breakpoints - do not switch to mobile view to early.
+	- Add French to help pages language dropdown selector
+	- Inroduce the HQ module - an alternative landing page for hubzilla
+	- Strip author name from notify messages in notifications - github issue #911
+	- Remove column item.diaspora_meta
+	- Provide ability to pin apps to navbar from mod apps
+	- Add private forums to forum widget
+	- Move notifications style to widgets.css
+	- Sort out a few more large image upload issues
+	- Move notifications full-screen handling to notifications widget
+	- Move mailhost settings from plugin to core
+	- Sort combined private mail conversations by latest updated conversation instead of created parent
+	- Filter atokens on acl search
+	- Allow a site to block (public) the directory separately from other resources.
+	- Improve removed_channel final cleanup - github issue #386
+	- Cleanup of upload_to_comments(
+	- Dedicate the first click to slideup the cover again but make sure the nav buttons remain functional
+	- Set os_syspath in DAV file put operation so that photos will scale correctly.
+	- Unit tests for Zotlabs\Access classes
+	- Bring back tabindex to submit comments
+	- attach.php minor cleanup and doc
+	- Allow cloud filenames to include ampersands without messing up auth tokens (zid, owt, and zat, and the constant placeholder 'f=')
+	- Provide short localised summary for likes that will end up in displayed notifications
+	- Improving Doxygen documentation.
+	- Update item_normal() to not include ACTIVITY_OBJ_FILE obj_type
+	- Sort out issues with pubstream item interactions
+	- Don't perform zot_refresh on dead sites unless $force is set
+	- Do not send message_list responses to dead sites (this delivery method bypassed the notifier)
+	- Support for netselect query
+	- Add another delivery control parameter (queue threshold)
+	- Add some documentation about shareable widgets
+	- Allow plugin class widgets
+	- Some more work on unit tests
+	- Encrypt the owa token
+	- Bring back the markdown post feature
+	- We call Theme:url() statically, make it also static.
+	- Table structure for pseudo or proxy channels (pchan)
+
+	Bugfixes
+	- Fix issue with long filenames in mod cloud
+	- Fix misc. issues with new 'insert photo from photo album' github issue #475
+	- Fix regression in channel sources delivery
+	- Fix loading of theme-specific widgets
+	- Fix unable to add wiki pages with spaces
+	- Fix mod display and others that require a non-zero profile_uid for updates
+	- Fix various PHP 7.2 issues
+	- Fix typo in HTTPSig
+	- Fix pagetitle lost importing a pdl element from conversation
+	- Fix js warning - getelementbyid (id doesn't exist)
+	- Fix some pubstream on/off weirdness
+	- Fix default addressbook has no name - github issue #921
+	- Fix double html ids in caldav widget if more than one sharee
+	- Fix regression in cdav calendar widget
+	- Fix sync packet not generated when deleting a file using the web browser interface
+	- Fix album cover thumb generator
+	- Fix like-button for images - github issue #826
+	- Fix typo - github issue #910
+	- Fix issue with group_rmv()
+	- Fix php warnings on photo delete
+	- Fix some conflicts between private tags and forum tags
+	- Fix some schema issues
+	- Fix wiki pages not updating after creating new page
+	- Fix a PHP warning in Permissions::FilledPerms()
+	- Fix unicode characters in urls tripping up url regexes - github issue #901
+	- Fix second half of github issue #893
+	- Fix common connections on suggestion page showing wildly different results than remote profile, and is consistently off by one
+	- Fix cloud redirects with owt tokens
+	- Fix issues with diaspora xchans
+	- Fix memory overflow trying to delete a connection with a very high noise to signal ratio
+	- Fix sql error in page module
+	- Fix unstar
+
+
 Hubzilla 2.8.1 (2017-11-11)
 	- Rename channel app events to calendar and add nav_set_selected() to /cal
 	- Load notifications links to /display via ajax if we are already in /display
