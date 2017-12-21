@@ -28,6 +28,9 @@
 		var path = $(this)[0].pathname.substr(1,7);
 		var stateObj = { b64mid: b64mid };
 
+		if(b64mid === 'undefined' && notify_id === 'undefined')
+			return;
+
 		{{if $module == 'display'}}
 		history.pushState(stateObj, '', 'display/' + b64mid);
 		{{/if}}
