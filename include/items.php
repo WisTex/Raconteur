@@ -4139,7 +4139,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 	}
 
 	if($channel && intval($arr['compat']) === 1) {
-		$sql_extra = " AND author_xchan = '" . $channel['channel_hash'] . "' and item_private = 0 ";
+		$sql_extra = " AND author_xchan = '" . $channel['channel_hash'] . "' and item_private = 0 $item_normal ";
 	}
 
 	if ($arr['datequery']) {
