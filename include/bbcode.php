@@ -941,27 +941,34 @@ function bbcode($Text, $options = []) {
 	// Check for h1
 	if (strpos($Text,'[h1]') !== false) {
 		$Text = preg_replace("(\[h1\](.*?)\[\/h1\])ism",'<h1>$1</h1>',$Text);
+		$Text = str_replace('</h1><br />', '</h1>', $Text);
 	}
 	// Check for h2
 	if (strpos($Text,'[h2]') !== false) {
 		$Text = preg_replace("(\[h2\](.*?)\[\/h2\])ism",'<h2>$1</h2>',$Text);
+		$Text = str_replace('</h2><br />', '</h2>', $Text);
 	}
 	// Check for h3
 	if (strpos($Text,'[h3]') !== false) {
 		$Text = preg_replace("(\[h3\](.*?)\[\/h3\])ism",'<h3>$1</h3>',$Text);
+		$Text = str_replace('</h3><br />', '</h3>', $Text);
 	}
 	// Check for h4
 	if (strpos($Text,'[h4]') !== false) {
 		$Text = preg_replace("(\[h4\](.*?)\[\/h4\])ism",'<h4>$1</h4>',$Text);
+		$Text = str_replace('</h4><br />', '</h4>', $Text);
 	}
 	// Check for h5
 	if (strpos($Text,'[h5]') !== false) {
 		$Text = preg_replace("(\[h5\](.*?)\[\/h5\])ism",'<h5>$1</h5>',$Text);
+		$Text = str_replace('</h5><br />', '</h5>', $Text);
 	}
 	// Check for h6
 	if (strpos($Text,'[h6]') !== false) {
 		$Text = preg_replace("(\[h6\](.*?)\[\/h6\])ism",'<h6>$1</h6>',$Text);
+		$Text = str_replace('</h6><br />', '</h6>', $Text);
 	}
+
 	// Check for table of content without params
 	while(strpos($Text,'[toc]') !== false) {
 		$toc_id = 'toc-' . random_string(10);
