@@ -1305,7 +1305,7 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 
 				// allow likes of comments
 
-				if($item_parent_mid && activity_match($datarray['verb'],ACTVITY_LIKE)) {
+				if($item_parent_mid && activity_match($datarray['verb'],ACTIVITY_LIKE)) {
 					$datarray['thr_parent'] = $item_parent_mid[0]['parent_mid'];
 				}
 

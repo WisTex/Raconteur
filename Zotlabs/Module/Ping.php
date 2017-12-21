@@ -279,8 +279,8 @@ class Ping extends \Zotlabs\Web\Controller {
 						'photo' => $tt['photo'],
 						'when' => relative_date($tt['created']),
 						'hclass' => (($tt['seen']) ? 'notify-seen' : 'notify-unseen'),
-						'b64mid' => $b64mid,
-						'notify_id' => (($tt['otype'] == 'item') ? $tt['id'] : ''),
+						'b64mid' => (($tt['otype'] == 'item') ? $b64mid : 'undefined'),
+						'notify_id' => (($tt['otype'] == 'item') ? $tt['id'] : 'undefined'),
 						'message' => $message
 					);
 				}

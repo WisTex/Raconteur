@@ -1,38 +1,267 @@
 [
     {
-        "name": "sabre/event",
-        "version": "3.0.0",
-        "version_normalized": "3.0.0.0",
+        "name": "commerceguys/intl",
+        "version": "v0.7.4",
+        "version_normalized": "0.7.4.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/sabre-io/event.git",
-            "reference": "831d586f5a442dceacdcf5e9c4c36a4db99a3534"
+            "url": "https://github.com/commerceguys/intl.git",
+            "reference": "edfcfc26ed8505c4f6fcf862eb36dfda1af74b00"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sabre-io/event/zipball/831d586f5a442dceacdcf5e9c4c36a4db99a3534",
-            "reference": "831d586f5a442dceacdcf5e9c4c36a4db99a3534",
+            "url": "https://api.github.com/repos/commerceguys/intl/zipball/edfcfc26ed8505c4f6fcf862eb36dfda1af74b00",
+            "reference": "edfcfc26ed8505c4f6fcf862eb36dfda1af74b00",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.5"
+            "php": ">=5.4.0"
         },
         "require-dev": {
-            "phpunit/phpunit": "*",
-            "sabre/cs": "~0.0.4"
+            "mikey179/vfsstream": "1.*",
+            "phpunit/phpunit": "~4.0"
         },
-        "time": "2015-11-05T20:14:39+00:00",
+        "time": "2016-12-13T12:33:19+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "CommerceGuys\\Intl\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Bojan Zivanovic"
+            }
+        ],
+        "description": "Internationalization library powered by CLDR data."
+    },
+    {
+        "name": "ezyang/htmlpurifier",
+        "version": "v4.9.3",
+        "version_normalized": "4.9.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ezyang/htmlpurifier.git",
+            "reference": "95e1bae3182efc0f3422896a3236e991049dac69"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/95e1bae3182efc0f3422896a3236e991049dac69",
+            "reference": "95e1bae3182efc0f3422896a3236e991049dac69",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2"
+        },
+        "require-dev": {
+            "simpletest/simpletest": "^1.1"
+        },
+        "time": "2017-06-03T02:28:16+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "HTMLPurifier": "library/"
+            },
+            "files": [
+                "library/HTMLPurifier.composer.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "LGPL"
+        ],
+        "authors": [
+            {
+                "name": "Edward Z. Yang",
+                "email": "admin@htmlpurifier.org",
+                "homepage": "http://ezyang.com"
+            }
+        ],
+        "description": "Standards compliant HTML filter written in PHP",
+        "homepage": "http://htmlpurifier.org/",
+        "keywords": [
+            "html"
+        ]
+    },
+    {
+        "name": "lukasreschke/id3parser",
+        "version": "v0.0.1",
+        "version_normalized": "0.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/LukasReschke/ID3Parser.git",
+            "reference": "cd3ba6e8918cc30883f01a3c24281cfe23b8877a"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/LukasReschke/ID3Parser/zipball/cd3ba6e8918cc30883f01a3c24281cfe23b8877a",
+            "reference": "cd3ba6e8918cc30883f01a3c24281cfe23b8877a",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4.0"
+        },
+        "time": "2016-04-04T09:34:50+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "Sabre\\Event\\": "lib/"
+                "ID3Parser\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL"
+        ],
+        "homepage": "https://github.com/LukasReschke/ID3Parser/",
+        "keywords": [
+            "codecs",
+            "php",
+            "tags"
+        ]
+    },
+    {
+        "name": "michelf/php-markdown",
+        "version": "1.7.0",
+        "version_normalized": "1.7.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/michelf/php-markdown.git",
+            "reference": "1f51cc520948f66cd2af8cbc45a5ee175e774220"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/michelf/php-markdown/zipball/1f51cc520948f66cd2af8cbc45a5ee175e774220",
+            "reference": "1f51cc520948f66cd2af8cbc45a5ee175e774220",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2016-10-29T18:58:20+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-lib": "1.4.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Michelf": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Michel Fortin",
+                "email": "michel.fortin@michelf.ca",
+                "homepage": "https://michelf.ca/",
+                "role": "Developer"
             },
+            {
+                "name": "John Gruber",
+                "homepage": "https://daringfireball.net/"
+            }
+        ],
+        "description": "PHP Markdown",
+        "homepage": "https://michelf.ca/projects/php-markdown/",
+        "keywords": [
+            "markdown"
+        ]
+    },
+    {
+        "name": "pear/text_languagedetect",
+        "version": "v1.0.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/pear/Text_LanguageDetect.git",
+            "reference": "bb9ff6f4970f686fac59081e916b456021fe7ba6"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/pear/Text_LanguageDetect/zipball/bb9ff6f4970f686fac59081e916b456021fe7ba6",
+            "reference": "bb9ff6f4970f686fac59081e916b456021fe7ba6",
+            "shasum": ""
+        },
+        "require-dev": {
+            "phpunit/phpunit": "*"
+        },
+        "suggest": {
+            "ext-mbstring": "May require the mbstring PHP extension"
+        },
+        "time": "2017-03-02T16:14:08+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Text": "./"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "include-path": [
+            "./"
+        ],
+        "license": [
+            "BSD-2-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Nicholas Pisarro",
+                "email": "taak@php.net",
+                "role": "Lead"
+            }
+        ],
+        "description": "Identify human languages from text samples",
+        "homepage": "http://pear.php.net/package/Text_LanguageDetect"
+    },
+    {
+        "name": "sabre/uri",
+        "version": "1.2.1",
+        "version_normalized": "1.2.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/sabre-io/uri.git",
+            "reference": "ada354d83579565949d80b2e15593c2371225e61"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/sabre-io/uri/zipball/ada354d83579565949d80b2e15593c2371225e61",
+            "reference": "ada354d83579565949d80b2e15593c2371225e61",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4.7"
+        },
+        "require-dev": {
+            "phpunit/phpunit": ">=4.0,<6.0",
+            "sabre/cs": "~1.0.0"
+        },
+        "time": "2017-02-20T19:59:28+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
             "files": [
-                "lib/coroutine.php",
-                "lib/Loop/functions.php",
-                "lib/Promise/functions.php"
-            ]
+                "lib/functions.php"
+            ],
+            "psr-4": {
+                "Sabre\\Uri\\": "lib/"
+            }
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
@@ -46,16 +275,12 @@
                 "role": "Developer"
             }
         ],
-        "description": "sabre/event is a library for lightweight event-based programming",
-        "homepage": "http://sabre.io/event/",
+        "description": "Functions for making sense out of URIs.",
+        "homepage": "http://sabre.io/uri/",
         "keywords": [
-            "EventEmitter",
-            "async",
-            "events",
-            "hooks",
-            "plugin",
-            "promise",
-            "signal"
+            "rfc3986",
+            "uri",
+            "url"
         ]
     },
     {
@@ -124,6 +349,123 @@
         ]
     },
     {
+        "name": "sabre/event",
+        "version": "3.0.0",
+        "version_normalized": "3.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/sabre-io/event.git",
+            "reference": "831d586f5a442dceacdcf5e9c4c36a4db99a3534"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/sabre-io/event/zipball/831d586f5a442dceacdcf5e9c4c36a4db99a3534",
+            "reference": "831d586f5a442dceacdcf5e9c4c36a4db99a3534",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.5"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "*",
+            "sabre/cs": "~0.0.4"
+        },
+        "time": "2015-11-05T20:14:39+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Sabre\\Event\\": "lib/"
+            },
+            "files": [
+                "lib/coroutine.php",
+                "lib/Loop/functions.php",
+                "lib/Promise/functions.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Evert Pot",
+                "email": "me@evertpot.com",
+                "homepage": "http://evertpot.com/",
+                "role": "Developer"
+            }
+        ],
+        "description": "sabre/event is a library for lightweight event-based programming",
+        "homepage": "http://sabre.io/event/",
+        "keywords": [
+            "EventEmitter",
+            "async",
+            "events",
+            "hooks",
+            "plugin",
+            "promise",
+            "signal"
+        ]
+    },
+    {
+        "name": "sabre/http",
+        "version": "4.2.3",
+        "version_normalized": "4.2.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/sabre-io/http.git",
+            "reference": "0295f9a3ee39be97e0898592fc19e42421e0cd93"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/sabre-io/http/zipball/0295f9a3ee39be97e0898592fc19e42421e0cd93",
+            "reference": "0295f9a3ee39be97e0898592fc19e42421e0cd93",
+            "shasum": ""
+        },
+        "require": {
+            "ext-ctype": "*",
+            "ext-mbstring": "*",
+            "php": ">=5.4",
+            "sabre/event": ">=1.0.0,<4.0.0",
+            "sabre/uri": "~1.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4.3",
+            "sabre/cs": "~0.0.1"
+        },
+        "suggest": {
+            "ext-curl": " to make http requests with the Client class"
+        },
+        "time": "2017-06-12T07:53:04+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "lib/functions.php"
+            ],
+            "psr-4": {
+                "Sabre\\HTTP\\": "lib/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Evert Pot",
+                "email": "me@evertpot.com",
+                "homepage": "http://evertpot.com/",
+                "role": "Developer"
+            }
+        ],
+        "description": "The sabre/http library provides utilities for dealing with http requests and responses. ",
+        "homepage": "https://github.com/fruux/sabre-http",
+        "keywords": [
+            "http"
+        ]
+    },
+    {
         "name": "psr/log",
         "version": "1.0.2",
         "version_normalized": "1.0.2.0",
@@ -171,182 +513,6 @@
             "psr",
             "psr-3"
         ]
-    },
-    {
-        "name": "michelf/php-markdown",
-        "version": "1.7.0",
-        "version_normalized": "1.7.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/michelf/php-markdown.git",
-            "reference": "1f51cc520948f66cd2af8cbc45a5ee175e774220"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/michelf/php-markdown/zipball/1f51cc520948f66cd2af8cbc45a5ee175e774220",
-            "reference": "1f51cc520948f66cd2af8cbc45a5ee175e774220",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.0"
-        },
-        "time": "2016-10-29T18:58:20+00:00",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-lib": "1.4.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Michelf": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Michel Fortin",
-                "email": "michel.fortin@michelf.ca",
-                "homepage": "https://michelf.ca/",
-                "role": "Developer"
-            },
-            {
-                "name": "John Gruber",
-                "homepage": "https://daringfireball.net/"
-            }
-        ],
-        "description": "PHP Markdown",
-        "homepage": "https://michelf.ca/projects/php-markdown/",
-        "keywords": [
-            "markdown"
-        ]
-    },
-    {
-        "name": "bshaffer/oauth2-server-php",
-        "version": "v1.9.0",
-        "version_normalized": "1.9.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/bshaffer/oauth2-server-php.git",
-            "reference": "8856aed1a98d6da596ae3f9b8095b5c7a1581697"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/bshaffer/oauth2-server-php/zipball/8856aed1a98d6da596ae3f9b8095b5c7a1581697",
-            "reference": "8856aed1a98d6da596ae3f9b8095b5c7a1581697",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.9"
-        },
-        "require-dev": {
-            "aws/aws-sdk-php": "~2.8",
-            "firebase/php-jwt": "~2.2",
-            "mongodb/mongodb": "^1.1",
-            "predis/predis": "dev-master",
-            "thobbs/phpcassa": "dev-master"
-        },
-        "suggest": {
-            "aws/aws-sdk-php": "~2.8 is required to use DynamoDB storage",
-            "firebase/php-jwt": "~1.1 is required to use MondoDB storage",
-            "predis/predis": "Required to use Redis storage",
-            "thobbs/phpcassa": "Required to use Cassandra storage"
-        },
-        "time": "2017-01-06T23:20:00+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "OAuth2": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Brent Shaffer",
-                "email": "bshafs@gmail.com",
-                "homepage": "http://brentertainment.com"
-            }
-        ],
-        "description": "OAuth2 Server for PHP",
-        "homepage": "http://github.com/bshaffer/oauth2-server-php",
-        "keywords": [
-            "auth",
-            "oauth",
-            "oauth2"
-        ]
-    },
-    {
-        "name": "simplepie/simplepie",
-        "version": "1.5",
-        "version_normalized": "1.5.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/simplepie/simplepie.git",
-            "reference": "5de5551953f95feef12cf355a7a26a70f94aa3ab"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/simplepie/simplepie/zipball/5de5551953f95feef12cf355a7a26a70f94aa3ab",
-            "reference": "5de5551953f95feef12cf355a7a26a70f94aa3ab",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "~4 || ~5"
-        },
-        "suggest": {
-            "mf2/mf2": "Microformat module that allows for parsing HTML for microformats"
-        },
-        "time": "2017-04-17T07:29:31+00:00",
-        "type": "library",
-        "installation-source": "source",
-        "autoload": {
-            "psr-0": {
-                "SimplePie": "library"
-            }
-        },
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Ryan Parman",
-                "homepage": "http://ryanparman.com/",
-                "role": "Creator, alumnus developer"
-            },
-            {
-                "name": "Geoffrey Sneddon",
-                "homepage": "http://gsnedders.com/",
-                "role": "Alumnus developer"
-            },
-            {
-                "name": "Ryan McCue",
-                "email": "me@ryanmccue.info",
-                "homepage": "http://ryanmccue.info/",
-                "role": "Developer"
-            }
-        ],
-        "description": "A simple Atom/RSS parsing library for PHP",
-        "homepage": "http://simplepie.org/",
-        "keywords": [
-            "atom",
-            "feeds",
-            "rss"
-        ],
-        "support": {
-            "source": "https://github.com/simplepie/simplepie/tree/1.5",
-            "issues": "https://github.com/simplepie/simplepie/issues"
-        }
     },
     {
         "name": "sabre/dav",
@@ -434,18 +600,143 @@
         ]
     },
     {
-        "name": "league/html-to-markdown",
-        "version": "4.4.1",
-        "version_normalized": "4.4.1.0",
+        "name": "bshaffer/oauth2-server-php",
+        "version": "v1.10.0",
+        "version_normalized": "1.10.0.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/thephpleague/html-to-markdown.git",
-            "reference": "82ea375b5b2b1da1da222644c0565c695bf88186"
+            "url": "https://github.com/bshaffer/oauth2-server-php.git",
+            "reference": "d158878425392fe5a0cc34f15dbaf46315ae0ed9"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/82ea375b5b2b1da1da222644c0565c695bf88186",
-            "reference": "82ea375b5b2b1da1da222644c0565c695bf88186",
+            "url": "https://api.github.com/repos/bshaffer/oauth2-server-php/zipball/d158878425392fe5a0cc34f15dbaf46315ae0ed9",
+            "reference": "d158878425392fe5a0cc34f15dbaf46315ae0ed9",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.9"
+        },
+        "require-dev": {
+            "aws/aws-sdk-php": "~2.8",
+            "firebase/php-jwt": "~2.2",
+            "mongodb/mongodb": "^1.1",
+            "phpunit/phpunit": "^4.0",
+            "predis/predis": "dev-master",
+            "thobbs/phpcassa": "dev-master"
+        },
+        "suggest": {
+            "aws/aws-sdk-php": "~2.8 is required to use DynamoDB storage",
+            "firebase/php-jwt": "~2.2 is required to use JWT features",
+            "mongodb/mongodb": "^1.1 is required to use MongoDB storage",
+            "predis/predis": "Required to use Redis storage",
+            "thobbs/phpcassa": "Required to use Cassandra storage"
+        },
+        "time": "2017-11-15T01:41:02+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "OAuth2": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Brent Shaffer",
+                "email": "bshafs@gmail.com",
+                "homepage": "http://brentertainment.com"
+            }
+        ],
+        "description": "OAuth2 Server for PHP",
+        "homepage": "http://github.com/bshaffer/oauth2-server-php",
+        "keywords": [
+            "auth",
+            "oauth",
+            "oauth2"
+        ]
+    },
+    {
+        "name": "simplepie/simplepie",
+        "version": "1.5.1",
+        "version_normalized": "1.5.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/simplepie/simplepie.git",
+            "reference": "db9fff27b6d49eed3d4047cd3211ec8dba2f5d6e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/simplepie/simplepie/zipball/db9fff27b6d49eed3d4047cd3211ec8dba2f5d6e",
+            "reference": "db9fff27b6d49eed3d4047cd3211ec8dba2f5d6e",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4 || ~5"
+        },
+        "suggest": {
+            "mf2/mf2": "Microformat module that allows for parsing HTML for microformats"
+        },
+        "time": "2017-11-12T02:03:34+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "SimplePie": "library"
+            }
+        },
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Ryan Parman",
+                "homepage": "http://ryanparman.com/",
+                "role": "Creator, alumnus developer"
+            },
+            {
+                "name": "Geoffrey Sneddon",
+                "homepage": "http://gsnedders.com/",
+                "role": "Alumnus developer"
+            },
+            {
+                "name": "Ryan McCue",
+                "email": "me@ryanmccue.info",
+                "homepage": "http://ryanmccue.info/",
+                "role": "Developer"
+            }
+        ],
+        "description": "A simple Atom/RSS parsing library for PHP",
+        "homepage": "http://simplepie.org/",
+        "keywords": [
+            "atom",
+            "feeds",
+            "rss"
+        ],
+        "support": {
+            "source": "https://github.com/simplepie/simplepie/tree/1.5.1",
+            "issues": "https://github.com/simplepie/simplepie/issues"
+        }
+    },
+    {
+        "name": "league/html-to-markdown",
+        "version": "4.6.0",
+        "version_normalized": "4.6.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/thephpleague/html-to-markdown.git",
+            "reference": "9022e648bc40e44cb3b18438d97ed8715ecbc49b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/9022e648bc40e44cb3b18438d97ed8715ecbc49b",
+            "reference": "9022e648bc40e44cb3b18438d97ed8715ecbc49b",
             "shasum": ""
         },
         "require": {
@@ -458,14 +749,14 @@
             "phpunit/phpunit": "4.*",
             "scrutinizer/ocular": "~1.1"
         },
-        "time": "2017-03-16T00:45:59+00:00",
+        "time": "2017-10-24T02:45:05+00:00",
         "bin": [
             "bin/html-to-markdown"
         ],
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "4.5-dev"
+                "dev-master": "4.7-dev"
             }
         },
         "installation-source": "dist",
@@ -500,71 +791,18 @@
         ]
     },
     {
-        "name": "sabre/uri",
-        "version": "1.2.1",
-        "version_normalized": "1.2.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/sabre-io/uri.git",
-            "reference": "ada354d83579565949d80b2e15593c2371225e61"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/sabre-io/uri/zipball/ada354d83579565949d80b2e15593c2371225e61",
-            "reference": "ada354d83579565949d80b2e15593c2371225e61",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.4.7"
-        },
-        "require-dev": {
-            "phpunit/phpunit": ">=4.0,<6.0",
-            "sabre/cs": "~1.0.0"
-        },
-        "time": "2017-02-20T19:59:28+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "files": [
-                "lib/functions.php"
-            ],
-            "psr-4": {
-                "Sabre\\Uri\\": "lib/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Evert Pot",
-                "email": "me@evertpot.com",
-                "homepage": "http://evertpot.com/",
-                "role": "Developer"
-            }
-        ],
-        "description": "Functions for making sense out of URIs.",
-        "homepage": "http://sabre.io/uri/",
-        "keywords": [
-            "rfc3986",
-            "uri",
-            "url"
-        ]
-    },
-    {
         "name": "sabre/vobject",
-        "version": "4.1.2",
-        "version_normalized": "4.1.2.0",
+        "version": "4.1.3",
+        "version_normalized": "4.1.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/sabre-io/vobject.git",
-            "reference": "d0fde2fafa2a3dad1f559c2d1c2591d4fd75ae3c"
+            "reference": "df9916813d1d83e4f761c4cba13361ee74196fac"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sabre-io/vobject/zipball/d0fde2fafa2a3dad1f559c2d1c2591d4fd75ae3c",
-            "reference": "d0fde2fafa2a3dad1f559c2d1c2591d4fd75ae3c",
+            "url": "https://api.github.com/repos/sabre-io/vobject/zipball/df9916813d1d83e4f761c4cba13361ee74196fac",
+            "reference": "df9916813d1d83e4f761c4cba13361ee74196fac",
             "shasum": ""
         },
         "require": {
@@ -573,13 +811,13 @@
             "sabre/xml": ">=1.5 <3.0"
         },
         "require-dev": {
-            "phpunit/phpunit": "*",
+            "phpunit/phpunit": "> 4.8, <6.0.0",
             "sabre/cs": "^1.0.0"
         },
         "suggest": {
             "hoa/bench": "If you would like to run the benchmark scripts"
         },
-        "time": "2016-12-06T04:14:09+00:00",
+        "time": "2017-10-18T08:29:40+00:00",
         "bin": [
             "bin/vobject",
             "bin/generate_vcards"
@@ -652,239 +890,58 @@
         ]
     },
     {
-        "name": "ezyang/htmlpurifier",
-        "version": "v4.9.3",
-        "version_normalized": "4.9.3.0",
+        "name": "smarty/smarty",
+        "version": "v3.1.31",
+        "version_normalized": "3.1.31.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/ezyang/htmlpurifier.git",
-            "reference": "95e1bae3182efc0f3422896a3236e991049dac69"
+            "url": "https://github.com/smarty-php/smarty.git",
+            "reference": "c7d42e4a327c402897dd587871434888fde1e7a9"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/95e1bae3182efc0f3422896a3236e991049dac69",
-            "reference": "95e1bae3182efc0f3422896a3236e991049dac69",
+            "url": "https://api.github.com/repos/smarty-php/smarty/zipball/c7d42e4a327c402897dd587871434888fde1e7a9",
+            "reference": "c7d42e4a327c402897dd587871434888fde1e7a9",
             "shasum": ""
         },
         "require": {
             "php": ">=5.2"
         },
-        "require-dev": {
-            "simpletest/simpletest": "^1.1"
-        },
-        "time": "2017-06-03T02:28:16+00:00",
+        "time": "2016-12-14T21:57:25+00:00",
         "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.1.x-dev"
+            }
+        },
         "installation-source": "dist",
         "autoload": {
-            "psr-0": {
-                "HTMLPurifier": "library/"
-            },
             "files": [
-                "library/HTMLPurifier.composer.php"
+                "libs/bootstrap.php"
             ]
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
-            "LGPL"
+            "LGPL-3.0"
         ],
         "authors": [
             {
-                "name": "Edward Z. Yang",
-                "email": "admin@htmlpurifier.org",
-                "homepage": "http://ezyang.com"
+                "name": "Monte Ohrt",
+                "email": "monte@ohrt.com"
+            },
+            {
+                "name": "Uwe Tews",
+                "email": "uwe.tews@googlemail.com"
+            },
+            {
+                "name": "Rodney Rehm",
+                "email": "rodney.rehm@medialize.de"
             }
         ],
-        "description": "Standards compliant HTML filter written in PHP",
-        "homepage": "http://htmlpurifier.org/",
+        "description": "Smarty - the compiling PHP template engine",
+        "homepage": "http://www.smarty.net",
         "keywords": [
-            "html"
-        ]
-    },
-    {
-        "name": "sabre/http",
-        "version": "4.2.3",
-        "version_normalized": "4.2.3.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/sabre-io/http.git",
-            "reference": "0295f9a3ee39be97e0898592fc19e42421e0cd93"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/sabre-io/http/zipball/0295f9a3ee39be97e0898592fc19e42421e0cd93",
-            "reference": "0295f9a3ee39be97e0898592fc19e42421e0cd93",
-            "shasum": ""
-        },
-        "require": {
-            "ext-ctype": "*",
-            "ext-mbstring": "*",
-            "php": ">=5.4",
-            "sabre/event": ">=1.0.0,<4.0.0",
-            "sabre/uri": "~1.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "~4.3",
-            "sabre/cs": "~0.0.1"
-        },
-        "suggest": {
-            "ext-curl": " to make http requests with the Client class"
-        },
-        "time": "2017-06-12T07:53:04+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "files": [
-                "lib/functions.php"
-            ],
-            "psr-4": {
-                "Sabre\\HTTP\\": "lib/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Evert Pot",
-                "email": "me@evertpot.com",
-                "homepage": "http://evertpot.com/",
-                "role": "Developer"
-            }
-        ],
-        "description": "The sabre/http library provides utilities for dealing with http requests and responses. ",
-        "homepage": "https://github.com/fruux/sabre-http",
-        "keywords": [
-            "http"
-        ]
-    },
-    {
-        "name": "pear/text_languagedetect",
-        "version": "v1.0.0",
-        "version_normalized": "1.0.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/pear/Text_LanguageDetect.git",
-            "reference": "bb9ff6f4970f686fac59081e916b456021fe7ba6"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/pear/Text_LanguageDetect/zipball/bb9ff6f4970f686fac59081e916b456021fe7ba6",
-            "reference": "bb9ff6f4970f686fac59081e916b456021fe7ba6",
-            "shasum": ""
-        },
-        "require-dev": {
-            "phpunit/phpunit": "*"
-        },
-        "suggest": {
-            "ext-mbstring": "May require the mbstring PHP extension"
-        },
-        "time": "2017-03-02T16:14:08+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Text": "./"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "include-path": [
-            "./"
-        ],
-        "license": [
-            "BSD-2-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Nicholas Pisarro",
-                "email": "taak@php.net",
-                "role": "Lead"
-            }
-        ],
-        "description": "Identify human languages from text samples",
-        "homepage": "http://pear.php.net/package/Text_LanguageDetect"
-    },
-    {
-        "name": "commerceguys/intl",
-        "version": "v0.7.4",
-        "version_normalized": "0.7.4.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/commerceguys/intl.git",
-            "reference": "edfcfc26ed8505c4f6fcf862eb36dfda1af74b00"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/commerceguys/intl/zipball/edfcfc26ed8505c4f6fcf862eb36dfda1af74b00",
-            "reference": "edfcfc26ed8505c4f6fcf862eb36dfda1af74b00",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.4.0"
-        },
-        "require-dev": {
-            "mikey179/vfsstream": "1.*",
-            "phpunit/phpunit": "~4.0"
-        },
-        "time": "2016-12-13T12:33:19+00:00",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "CommerceGuys\\Intl\\": "src"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Bojan Zivanovic"
-            }
-        ],
-        "description": "Internationalization library powered by CLDR data."
-    },
-    {
-        "name": "lukasreschke/id3parser",
-        "version": "v0.0.1",
-        "version_normalized": "0.0.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/LukasReschke/ID3Parser.git",
-            "reference": "cd3ba6e8918cc30883f01a3c24281cfe23b8877a"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/LukasReschke/ID3Parser/zipball/cd3ba6e8918cc30883f01a3c24281cfe23b8877a",
-            "reference": "cd3ba6e8918cc30883f01a3c24281cfe23b8877a",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.4.0"
-        },
-        "time": "2016-04-04T09:34:50+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "ID3Parser\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "GPL"
-        ],
-        "homepage": "https://github.com/LukasReschke/ID3Parser/",
-        "keywords": [
-            "codecs",
-            "php",
-            "tags"
+            "templating"
         ]
     }
 ]
