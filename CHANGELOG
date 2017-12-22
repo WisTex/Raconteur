@@ -1,4 +1,8 @@
 Hubzilla 3.0 (????-??-??)
+	- Make homeinstall script ready for Debian 9
+	- Add url and headings to bbco_autocomplete()
+	- Remove additional linebreaks after headings
+	- html2bbcode: use headings bbcode for headings
 	- Don't zidify all permalinks, only zot permalinks
 	- Make remote homelink link to the home host and not to the home channel
 	- Auto promote beginner (techlevel 0) accounts to level 1 after they show signs of active participation.
@@ -110,6 +114,18 @@ Hubzilla 3.0 (????-??-??)
 	- Fix memory overflow trying to delete a connection with a very high noise to signal ratio
 	- Fix sql error in page module
 	- Fix unstar
+
+	Plugins/Addon
+	Pubcrawl: fix PHP warning
+	Diaspora: remove garbage from magic envelope
+	Diaspora: fix permalinks for zot reshares
+	New addon: hzfiles - sync files across hubzilla servers
+	Fix various PHP 7.2 issues
+	Remove Firefox social plugin - it was deprecated and removed in firefox version 57
+	Diaspora: unset id and parent for local comments
+	Pubsubhubbub: set interactive flag to avoid delivery killing if block_public is enabled
+	Mailhost addon moved to core
+	Remove js_upload addon
 
 
 Hubzilla 2.8.1 (2017-11-11)
