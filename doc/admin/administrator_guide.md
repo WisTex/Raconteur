@@ -168,20 +168,18 @@ any time that the documentation is updated :
     util/importdoc
 
 ### Automated installation via the .homeinstall shell script
-There is a shell script in (``.homeinstall/hubzilla-setup.sh``) that will install $Projectname and its dependencies on a fresh installation of Debian 8.3 stable (Jessie). It should work on similar Linux systems but your results may vary.
+There is a shell script in (``.homeinstall/hubzilla-setup.sh``) that will install $Projectname and its dependencies on a fresh installation of Debian 9 stable (Stetch). It should work on similar Linux systems but your results may vary.
 
 #### Requirements
-The installation script was originally designed for a small hardware server behind your home router. However, it has been tested on several systems running Debian 8.3:
+The installation script was originally designed for a small hardware server behind your home router. However, it has been tested on several systems running Debian 9:
 
-* Home-PC (Debian-8.3.0-amd64)
+* Home-PC (Debian-9.2-amd64) and Rapberry-Pi 3 (Rasbian = Debian 9.3)
 
   * Internet connection and router at home
-  * Mini-pc connected to your router
+  * Mini-PC / Raspi connected to your router
   * USB drive for backups
   * Fresh installation of Debian on your mini-pc
   * Router with open ports 80 and 443 for your Debian
-
-* DigitalOcean droplet (Debian 8.3 x64 / 512 MB Memory / 20 GB Disk / NYC3)
 
 #### Overview of installation steps
 1. `apt-get install git`
@@ -191,8 +189,6 @@ The installation script was originally designed for a small hardware server behi
 1. `nano .homeinstall/hubzilla-config.txt`
 1. `cd .homeinstall/`
 1. `./hubzilla-setup.sh`
-1. `sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php5/apache2/php.ini`
-1. `sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php5/apache2/php.ini`
 1. `service apache2 reload`
 1. Open your domain with a browser and step throught the initial configuration of $Projectname.
 
