@@ -263,20 +263,20 @@ class Router {
 			}
 
 			if(! \App::$error) {
- 				$arr = array('content' => \App::$page['content'], 'replace' => false);
-                                call_hooks(\App::$module . '_mod_content', $arr);
+				$arr = array('content' => \App::$page['content'], 'replace' => false);
+				call_hooks(\App::$module . '_mod_content', $arr);
 
-                                if(! $arr['replace']) {
-                                        if($this->controller && method_exists($this->controller,'get')) {
-                                                $arr = array('content' => $this->controller->get());
-                                        }
-                                        elseif(function_exists(\App::$module . '_content')) {
-                                                $func = \App::$module . '_content';
-                                                $arr = array('content' => $func($a));
-                                        }
-                                }
-                                call_hooks(\App::$module . '_mod_aftercontent', $arr);
-                                \App::$page['content'] = (($arr['replace']) ? $arr['content'] : \App::$page['content'] . $arr['content']);
+				if(! $arr['replace']) {
+					if($this->controller && method_exists($this->controller,'get')) {
+						$arr = array('content' => $this->controller->get());
+					}
+					elseif(function_exists(\App::$module . '_content')) {
+						$func = \App::$module . '_content';
+						$arr = array('content' => $func($a));
+					}
+				}
+				call_hooks(\App::$module . '_mod_aftercontent', $arr);
+				\App::$page['content'] = (($arr['replace']) ? $arr['content'] : \App::$page['content'] . $arr['content']);
 			}
 		}
 	}
