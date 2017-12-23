@@ -116,6 +116,8 @@ Hubzilla 3.0 (????-??-??)
 	- Fix unstar
 
 	Plugins/Addon
+	GNU-Social: fix uploading a photo to a post results in double post - github issue 75
+	GNU-Social: fix gnusoc plugin not respecting delayed delivery - github issue 74
 	Pubcrawl: fix PHP warning
 	Diaspora: remove garbage from magic envelope
 	Diaspora: fix permalinks for zot reshares
