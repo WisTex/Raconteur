@@ -2009,7 +2009,7 @@ function build_querystring($params, $name = null) {
 }
 
 
-/*
+/**
  * @brief Much better way of dealing with c-style args.
  */
 function argc() {
@@ -2030,6 +2030,8 @@ function dba_timer() {
 /**
  * @brief Returns xchan_hash from the observer.
  *
+ * Observer can be a local or remote channel.
+ *
  * @return string xchan_hash from observer, otherwise empty string if no observer
  */
 function get_observer_hash() {
@@ -2039,7 +2041,6 @@ function get_observer_hash() {
 
 	return '';
 }
-
 
 /**
  * @brief Returns the complete URL of the current page, e.g.: http(s)://something.com/network
