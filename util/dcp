@@ -14,7 +14,7 @@ require_once('include/attach.php');
 cli_startup();
 
 
-if($argc <= 3) {
+if($argc < 3) {
 	echo "Usage: " . $argv[0] . ' src dstdir' . "\n";
 	echo 'Always run from the toplevel web directory.' . "\n";
 	echo 'destination should begin with store/$nickname/desired/path or $nickname/desired/path' . "\n";

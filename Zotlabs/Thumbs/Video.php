@@ -32,12 +32,18 @@ class Video {
 			fclose($ostream);
 		}
 
+		/*
+		 * Note: imagick convert may try to call 'ffmpeg' (or other conversion utilities) under
+		 * the covers for this particular operation. If this is not installed or not in the path
+		 * for the web server user, errors may be reported in the web server logs.
+		 */
+
 		$imagick_path = get_config('system','imagick_convert_path');
 		if($imagick_path && @file_exists($imagick_path)) {
 			$cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmpfile . '[0]') . ' -thumbnail ' . $width . 'x' . $height . ' ' . escapeshellarg(PROJECT_BASE . '/' . $outfile);
 			//  logger('imagick thumbnail command: ' . $cmd);
 
-			exec($cmd);
+			@exec($cmd);
 
 			if(! file_exists($outfile)) {
 				logger('imagick scale failed.');

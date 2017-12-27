@@ -550,6 +550,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 			$type     = $f['type'];
 		} else {
 			if(! x($_FILES,'userfile')) {
+				logger('No source file');
 				$ret['message'] = t('No source file.');
 				return $ret;
 			}
@@ -590,6 +591,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 			intval($channel_id)
 		);
 		if(! $x) {
+			logger('update file source not found');
 			$ret['message'] = t('Cannot locate file to revise/update');
 			return $ret;
 		}
@@ -731,6 +733,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 		$maxfilesize = get_config('system','maxfilesize');
 
 		if(($maxfilesize) && ($filesize > $maxfilesize)) {
+			logger('quota_exceeded');
 			$ret['message'] = sprintf( t('File exceeds size limit of %d'), $maxfilesize);
 			if($remove_when_processed)
 				@unlink($src);
@@ -751,6 +754,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 				intval($channel['channel_account_id'])
 			);
 			if(($r) &&  (($r[0]['total'] + $filesize) > ($limit - $existing_size))) {
+				logger('service_class limit exceeded');
 				$ret['message'] = upgrade_message(true) . sprintf(t("You have reached your limit of %1$.0f Mbytes attachment storage."), $limit / 1024000);
 				if($remove_when_processed)
 					@unlink($src);
@@ -783,8 +787,15 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 	$os_path      = $os_relpath;
 	$display_path = ltrim($pathname . '/' . $filename,'/');
 
-	if($src)
-		@file_put_contents($os_basepath . $os_relpath,@file_get_contents($src));
+	if($src) {
+		$istream = @fopen($src,'rb');
+		$ostream = @fopen($os_basepath . $os_relpath,'wb');
+		if($istream && $ostream) {
+			pipe_streams($istream,$ostream,65535);
+			fclose($istream);
+			fclose($ostream);
+		}
+	}
 
 	if(array_key_exists('created', $arr))
 		$created = $arr['created'];
