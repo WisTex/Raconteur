@@ -106,6 +106,8 @@ class Network extends \Zotlabs\Web\Controller {
 	
 		$o = '';
 	
+		$default_cmin = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmin',0) : 0);
+		$default_cmax = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmax',99) : 99);
 	
 		// if no tabs are selected, defaults to comments
 	
@@ -115,8 +117,8 @@ class Network extends \Zotlabs\Web\Controller {
 		$liked    = ((x($_GET,'liked')) ? intval($_GET['liked']) : 0);
 		$conv     = ((x($_GET,'conv'))  ? intval($_GET['conv'])  : 0);
 		$spam     = ((x($_GET,'spam'))  ? intval($_GET['spam'])  : 0);
-		$cmin     = ((x($_GET,'cmin'))  ? intval($_GET['cmin'])  : 0);
-		$cmax     = ((x($_GET,'cmax'))  ? intval($_GET['cmax'])  : 99);
+		$cmin     = ((x($_GET,'cmin'))  ? intval($_GET['cmin'])  : $default_cmin);
+		$cmax     = ((x($_GET,'cmax'))  ? intval($_GET['cmax'])  : $default_cmax);
 		$file     = ((x($_GET,'file'))  ? $_GET['file']          : '');
 		$xchan    = ((x($_GET,'xchan')) ? $_GET['xchan']         : '');
 		$net      = ((x($_GET,'net'))   ? $_GET['net']           : '');
