@@ -1,4 +1,7 @@
 Hubzilla 3.0 (????-??-??)
+	- Sort cloud directory by 1. is_dir and 2. name
+	- Document that imagick calls/execs ffmpeg for mp4 video thumbnails
+	- Use pipe_stream() instead of file_{get, put}_contents() in attach_store()
 	- Make homeinstall script ready for Debian 9
 	- Add url and headings to bbco_autocomplete()
 	- Remove additional linebreaks after headings
@@ -82,6 +85,8 @@ Hubzilla 3.0 (????-??-??)
 	- Table structure for pseudo or proxy channels (pchan)
 
 	Bugfixes
+	- Fix directory keywords returned from dir_tagadelic() in standalone mode
+	- Fix argument warning when arguments are correct in util/dcp
 	- Fix issue with long filenames in mod cloud
 	- Fix misc. issues with new 'insert photo from photo album' github issue #475
 	- Fix regression in channel sources delivery
@@ -116,6 +121,7 @@ Hubzilla 3.0 (????-??-??)
 	- Fix unstar
 
 	Plugins/Addon
+	Diaspora: implement recent changes in diaspora account_migration spec
 	GNU-Social: fix uploading a photo to a post results in double post - github issue 75
 	GNU-Social: fix gnusoc plugin not respecting delayed delivery - github issue 74
 	Pubcrawl: fix PHP warning
