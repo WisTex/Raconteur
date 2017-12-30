@@ -567,7 +567,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 			$contact_id = \App::$poi['abook_id'];
 			$contact = \App::$poi;
 
-			$cn = q("SELECT abook_id, xchan_name from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 order by xchan_name",
+			$cn = q("SELECT abook_id, xchan_name from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and xchan_deleted = 0 order by xchan_name",
 				intval(local_channel())
 			);
 
