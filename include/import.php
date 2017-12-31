@@ -162,13 +162,17 @@ function import_profiles($channel, $profiles) {
 			convert_oldfields($profile,'work','employment');
 
 			/**
-			 * @TODO we are going to reset all profile photos to the original
-			 * somebody will have to fix this later and put all the applicable
-			 * photos into the export.
+			 * @TODO put all the applicable photos into the export.
 			 */
 
-			$profile['photo'] = z_root() . '/photo/profile/l/' . $channel['channel_id'];
-			$profile['thumb'] = z_root() . '/photo/profile/m/' . $channel['channel_id'];
+			if((strpos($profile['thumb'],'/photo/profile/l/') !== false) || intval($profile['is_default'])) {
+				$profile['photo'] = z_root() . '/photo/profile/l/' . $channel['channel_id'];
+				$profile['thumb'] = z_root() . '/photo/profile/m/' . $channel['channel_id'];
+			}
+			else {
+				$profile['photo'] = z_root() . '/photo/' . basename($profile['photo']);
+				$profile['thumb'] = z_root() . '/photo/' . basename($profile['thumb']);
+			}
 
 			create_table_from_array('profile', $profile);
 		}

@@ -3745,6 +3745,15 @@ function process_channel_sync_delivery($sender, $arr, $deliveries) {
 					 * @TODO
 					 * We also need to import local photos if a custom photo is selected
 					 */
+
+					if((strpos($profile['thumb'],'/photo/profile/l/') !== false) || intval($profile['is_default'])) {
+						$profile['photo'] = z_root() . '/photo/profile/l/' . $channel['channel_id'];
+						$profile['thumb'] = z_root() . '/photo/profile/m/' . $channel['channel_id'];
+					}
+					else {
+						$profile['photo'] = z_root() . '/photo/' . basename($profile['photo']);
+						$profile['thumb'] = z_root() . '/photo/' . basename($profile['thumb']);
+					}
 				}
 
 				if(count($clean)) {
