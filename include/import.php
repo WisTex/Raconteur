@@ -1328,6 +1328,9 @@ function sync_files($channel, $files) {
 					}
 				}
 			}
+
+			\Zotlabs\Daemon\Master::Summon([ 'Thumbnail' , $att['hash'] ]);
+
 			if($f['item']) {
 				sync_items($channel,$f['item'],
 					['channel_address' => $original_channel,'url' => $oldbase]
