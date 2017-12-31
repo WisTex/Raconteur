@@ -9,9 +9,11 @@ class Affinity {
 		if(! local_channel())
 			return '';
 	
+		$default_cmin = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmin',0) : 0);
+		$default_cmax = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmax',99) : 99);
 
-		$cmin = ((x($_REQUEST,'cmin')) ? intval($_REQUEST['cmin']) : 0);
-		$cmax = ((x($_REQUEST,'cmax')) ? intval($_REQUEST['cmax']) : 99);
+		$cmin = ((x($_REQUEST,'cmin')) ? intval($_REQUEST['cmin']) : $default_cmin);
+		$cmax = ((x($_REQUEST,'cmax')) ? intval($_REQUEST['cmax']) : $default_cmax);
 
 
 		if(feature_enabled(local_channel(),'affinity')) {
