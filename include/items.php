@@ -4063,8 +4063,9 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 	$item_uids = ' true ';
 	$item_normal = item_normal();
 
-
-	if ($arr['uid']) $uid= $arr['uid'];
+	if($arr['uid']) {
+		$uid = $arr['uid'];
+	}
 
 	if($channel) {
 		$uid = $channel['channel_id'];
@@ -4226,7 +4227,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 		$items = q("SELECT item.*, item.id AS item_id FROM item
 				WHERE $item_uids $item_restrict
 				$simple_update
-				$sql_extra $sql_nets
+				$sql_extra $sql_nets $sql_extra3
 				ORDER BY item.received DESC $pager_sql"
 		);
 

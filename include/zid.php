@@ -105,8 +105,8 @@ function strip_zats($s) {
 
 
 
-function clean_query_string() {
-	$x = strip_zids(\App::$query_string);
+function clean_query_string($s = '') {
+	$x = strip_zids(($s) ? $s : \App::$query_string);
 	$x = strip_owt($x);
 	$x = strip_zats($x);
 
