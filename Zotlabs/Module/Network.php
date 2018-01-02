@@ -35,9 +35,12 @@ class Network extends \Zotlabs\Web\Controller {
 			return login(false);
 		}
 	
-		if($load)
+		$o = '';
+
+		if($load) {
 			$_SESSION['loadtime'] = datetime_convert();
-	
+		}
+
 		$arr = array('query' => \App::$query_string);
 	
 		call_hooks('network_content_init', $arr);
@@ -104,8 +107,10 @@ class Network extends \Zotlabs\Web\Controller {
 			$def_acl    = array('allow_gid' => '<' . $r[0]['hash'] . '>');
 		}
 	
-		$o = '';
 	
+		$default_cmin = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmin',0) : 0);
+		$default_cmax = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmax',99) : 99);
+
 	
 		// if no tabs are selected, defaults to comments
 	
@@ -115,8 +120,8 @@ class Network extends \Zotlabs\Web\Controller {
 		$liked    = ((x($_GET,'liked')) ? intval($_GET['liked']) : 0);
 		$conv     = ((x($_GET,'conv'))  ? intval($_GET['conv'])  : 0);
 		$spam     = ((x($_GET,'spam'))  ? intval($_GET['spam'])  : 0);
-		$cmin     = ((x($_GET,'cmin'))  ? intval($_GET['cmin'])  : 0);
-		$cmax     = ((x($_GET,'cmax'))  ? intval($_GET['cmax'])  : 99);
+		$cmin     = ((array_key_exists('cmin',$_GET))  ? intval($_GET['cmin'])  : $default_cmin);
+		$cmax     = ((array_key_exists('cmax',$_GET))  ? intval($_GET['cmax'])  : $default_cmax);
 		$file     = ((x($_GET,'file'))  ? $_GET['file']          : '');
 		$xchan    = ((x($_GET,'xchan')) ? $_GET['xchan']         : '');
 		$net      = ((x($_GET,'net'))   ? $_GET['net']           : '');
@@ -404,7 +409,6 @@ class Network extends \Zotlabs\Web\Controller {
 			if($cmax == 99)
 				$sql_nets .= " OR abook.abook_closeness IS NULL ) ";
 	
-	
 		}
 
 		$net_query = (($net) ? " left join xchan on xchan_hash = author_xchan " : ''); 
@@ -473,7 +477,6 @@ class Network extends \Zotlabs\Web\Controller {
 			if($load) {
 
 				// Fetch a page full of parent items for this page
-	
 				$r = q("SELECT distinct item.id AS item_id, $ordering FROM item
 					left join abook on ( item.owner_xchan = abook.abook_xchan $abook_uids )
 					$net_query
@@ -484,7 +487,6 @@ class Network extends \Zotlabs\Web\Controller {
 					$net_query2
 					ORDER BY $ordering DESC $pager_sql "
 				);
-	
 			}
 			else {
 

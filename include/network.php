@@ -752,13 +752,14 @@ function scale_external_images($s, $include_link = true, $scale_replace = false)
 
 					if($orig_width > 1024 || $orig_height > 1024) {
 						$tag = (($match[1] == 'z') ? 'zmg' : 'img');
+						$linktag = (($match[1] == 'z') ? 'zrl' : 'url');
 						$ph->scaleImage(1024);
 						$new_width = $ph->getWidth();
 						$new_height = $ph->getHeight();
 						logger('data: ' . $orig_width . '->' . $new_width . 'w ' . $orig_height . '->' . $new_height . 'h' . ' match: ' . $mtch[0], LOGGER_DEBUG);
 						$s = str_replace($mtch[0],'[' . $tag . '=' . $new_width . 'x' . $new_height. ']' . $scaled . '[/' . $tag . ']'
 							. "\n" . (($include_link)
-								? '[zrl=' . $mtch[2] . ']' . t('view full size') . '[/zrl]' . "\n"
+								? '[' . $linktag . '=' . $mtch[3] . ']' . t('view full size') . '[/' . $linktag . ']' . "\n"
 								: ''),$s);
 						logger('new string: ' . $s, LOGGER_DEBUG);
 					}
