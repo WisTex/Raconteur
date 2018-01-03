@@ -1,4 +1,5 @@
 Hubzilla 3.0 (????-??-??)
+	- Updated homeinstall script
 	- Sort cloud directory by 1. is_dir and 2. name
 	- Document that imagick calls/execs ffmpeg for mp4 video thumbnails
 	- Use pipe_stream() instead of file_{get, put}_contents() in attach_store()
@@ -85,6 +86,10 @@ Hubzilla 3.0 (????-??-??)
 	- Table structure for pseudo or proxy channels (pchan)
 
 	Bugfixes
+	- Fix sync non-default profile photo changes to clones - github issue #113
+	- Fix prev/next buttons on connedit can show deleted connections - github issue #673
+	- Fix affinity widget settings
+	- Fix dupe bug in content hooks - github issue #943
 	- Fix directory keywords returned from dir_tagadelic() in standalone mode
 	- Fix argument warning when arguments are correct in util/dcp
 	- Fix issue with long filenames in mod cloud
@@ -121,6 +126,7 @@ Hubzilla 3.0 (????-??-??)
 	- Fix unstar
 
 	Plugins/Addon
+	Diaspora: fix 'view full size' photo link - core github issue #947
 	Diaspora: implement recent changes in diaspora account_migration spec
 	GNU-Social: fix uploading a photo to a post results in double post - github issue 75
 	GNU-Social: fix gnusoc plugin not respecting delayed delivery - github issue 74
