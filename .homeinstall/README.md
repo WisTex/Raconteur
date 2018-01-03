@@ -34,7 +34,7 @@ Software
 ## The basic steps (quick overview)
 
 + Register your own domain (for example at selfHOST) or a free subdomain (for example at freeDNS)
-+ Log on to your new debian (server)
++ Log on to your fresh Debian
   - apt-get install git
   - mkdir -p /var/www
   - cd /var/www
@@ -44,7 +44,7 @@ Software
   - nano hubzilla-config.txt
     - Read the comments carefully
     - Enter your values: db pass, domain, values for dyn DNS
-  - Make sure your your external drive (for backups) is mounted
+  - Make sure your external drive (for backups) is mounted
   - hubzilla-setup.sh as root
     - ... wait, wait, wait until the script is finised
   - reboot
