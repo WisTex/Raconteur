@@ -13,10 +13,10 @@ db_pass=
 # This script automates installation of an SSL certificate from
 # Let's Encrypt (https://letsencrypt.org)
 #
-# Please give the domain name of your hub. Examples:
+# Please give the domain name of your hub
 #
-#     le_domain=my.cooldomain.org
-#     le_domain=cooldomain.org
+#     Example: my.cooldomain.org
+#     Example: cooldomain.org
 #
 # Email is optional
 #
@@ -25,7 +25,7 @@ le_domain=
 le_email=
 
 ###############################################
-### OPTIONAL - dynamic IP address - selfHOST ##
+### OPTIONAL - selfHOST - dynamic IP address ##
 #
 # 1. Register a domain at selfhost.de
 #    - choose offer "DOMAIN dynamisch" 1,50€/mon at 08.01.2016
@@ -42,7 +42,7 @@ selfhost_user=
 selfhost_pass=
 
 ###############################################
-### OPTIONAL - dynamic IP address - FreeDNS ###
+### OPTIONAL - FreeDNS - dynamic IP address ###
 #
 # Please give the alpha-numeric-key of freedns
 #
