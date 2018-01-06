@@ -63,7 +63,7 @@
 	$(document).on('click', '#tt-{{$notification.type}}-only', function(e) {
 		e.preventDefault();
 		$('#nav-{{$notification.type}}-menu [data-thread_top=false]').toggle();
-		$(this).toggleClass('active');
+		$(this).toggleClass('active sticky-top');
 	});
 	{{/if}}
 	{{/foreach}}
