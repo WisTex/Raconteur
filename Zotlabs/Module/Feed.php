@@ -16,12 +16,15 @@ class Feed extends \Zotlabs\Web\Controller {
 		$params['type']      = ((stristr(argv(0),'json'))   ? 'json'                        : 'xml');
 		$params['pages']     = ((x($_REQUEST,'pages'))      ? intval($_REQUEST['pages'])    : 0);
 		$params['top']       = ((x($_REQUEST,'top'))        ? intval($_REQUEST['top'])      : 0);
-		$params['start']     = ((x($params,'start'))        ? intval($params['start'])      : 0);
-		$params['records']   = ((x($params,'records'))      ? intval($params['records'])    : 40);
-		$params['direction'] = ((x($params,'direction'))    ? dbesc($params['direction'])   : 'desc');
+		$params['start']     = ((x($_REQUEST,'start'))      ? intval($_REQUEST['start'])      : 0);
+		$params['records']   = ((x($_REQUEST,'records'))    ? intval($_REQUEST['records'])    : 40);
+		$params['direction'] = ((x($_REQUEST,'direction'))  ? dbesc($_REQUEST['direction'])   : 'desc');
 		$params['cat']       = ((x($_REQUEST,'cat'))        ? escape_tags($_REQUEST['cat']) : '');
 		$params['compat']    = ((x($_REQUEST,'compat'))     ? intval($_REQUEST['compat'])   : 0);	
 
+		if(! in_array($params['direction'],['asc','desc'])) {
+			$params['direction'] = 'desc';
+		}
 
 		if(argc() > 1) {
 
