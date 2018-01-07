@@ -1801,12 +1801,17 @@ function compat_photos_list($s) {
 
 	if($found) {
 		foreach($matches as $match) {
-			$ret[] = [
+			$entry = [
 				'href' => $match[2],
-				'length' => 0,
 				'type' => guess_image_type($match[2])
 			];
+			$sizer = new \Zotlabs\Lib\Img_filesize($match[2]);
+			$size = $sizer->getSize();
+			if(intval($size)) {
+				$entry['length'] = intval($size);
+			}
 
+			$ret[] = $entry;
 		}
 	}
 
