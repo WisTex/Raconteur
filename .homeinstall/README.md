@@ -28,23 +28,23 @@ Hardware
 
 Software
 
-+ Fresh installation of Debian 9 (Stretch) on your mini-pc
-+ Router with open ports 80 and 443 for your Debian
++ Fresh installation of Debian 9 (Stretch)
++ Router with open ports 80 and 443 for your Hub
 
 ## The basic steps (quick overview)
 
 + Register your own domain (for example at selfHOST) or a free subdomain (for example at freeDNS)
-+ Install Debian 9
-+ On your router: Open the ports 80 and 443
 + Log on to your fresh Debian
   - apt-get install git
   - mkdir -p /var/www
   - cd /var/www
   - git clone https://github.com/redmatrix/hubzilla.git html
-  - cp .homeinstall/hubzilla-config.txt.template .homeinstall/hubzilla-config.txt
-  - nano .homeinstall/hubzilla-config.txt
+  - cd /html/.homeinstall
+  - cp hubzilla-config.txt.template hubzilla-config.txt
+  - nano hubzilla-config.txt
     - Read the comments carefully
     - Enter your values: db pass, domain, values for dyn DNS
+  - Make sure your external drive (for backups) is mounted
   - hubzilla-setup.sh as root
     - ... wait, wait, wait until the script is finised
   - reboot
@@ -58,24 +58,27 @@ Software
 
 ### Recommended: USB Drive for Backups
 
-The installation will create a daily backup.
-
-If the backup process does not find an external device than the backup goes to
-the internal disk.
+The installation will create a daily backup written to an external drive.
 
 The USB drive must be compatible with the filesystems
 
 - ext4 (if you do not want to encrypt the USB) 
 - LUKS + ext4 (if you want to encrypt the USB) 
 
+The backup includes 
+
+- Hubzilla DB
+- Hubzilla installation /var/www/html
+- Certificates for letsencrypt
+
 ## Preparations Software
 
 ### Install Debian Linux on the Mini-PC
 
-Download the stable Debian 9 at https://www.debian.org/  
+Download the stable Debian at https://www.debian.org/  
 (Debian 8 is no longer supported.)
 
-Create bootable USB drive with Debian on it. You could use
+Create bootable USB drive with Debian on it.You could use
 
 - unetbootin, https://en.wikipedia.org/wiki/UNetbootin
 - or simply the linux command "dd"
@@ -109,12 +112,9 @@ You can use subdomains as well
 
     my.cooldomain.org
 
-There are two ways to get a domain
+There are two ways to get a domain...
 
-- buy a domain, or
-- register a free subdomain
-
-### Method 1: Buy an own Domain 
+### Method 1: Buy a Domain 
 
 ...for example buy at selfHOST.de  
 
@@ -122,14 +122,14 @@ The cost are around 10,- € once and 1,50 € per month (2017).
 
 ### Method 2 Register a (free) Subdomain
 
-...for example register at freeDNS
+...for example register at freedns.afraid.org
 
 Follow the instructions in .homeinstall/hubzilla-config.txt.  
 
 
 ## Install Hubzilla on your Debian
 
-Login to your Debian
+Login to your debian
 (Provided your username is "you" and the name of the mini pc is "debian". You
 could take the IP address instead of "debian")
 
@@ -164,6 +164,8 @@ Modify the file "hubzilla-config.txt". Read the instructions there carefully and
 
     nano hubzilla-config.txt
 
+Make sure your external drive (for backups) is plugged in and can be mounted as configured in "hubzilla-config.txt". Otherwise the daily backups will not work.
+
 Run the script
 
      ./hubzilla-setup.sh
@@ -187,11 +189,16 @@ Leave db type "MySQL" untouched.
 
 Follow the instructions in the next pages.
 
+After the daily script was executed at 05:30 (am)
+
+- look at var/www/html/hubzilla-daily.log
+- check your backup on the external drive
+- optionally view the daily log under yourdomain.org/admin/logs/
+  - set the logfile to var/www/html/hubzilla-daily.log
+
 ## Note for the Rasperry 
 
-The script was tested with a Raspberry 3 under Raspian (Debian 9.3, 2017-11-29-raspbian-stretch.img).
-
-Be patient when a page is loaded by your Raspi-Hub for the very first time. Especially the config pages after the install will load very slowly.
+The script was tested with an Raspberry 3 under Raspian (Debian 9.3, 2017-11-29-raspbian-stretch.img).
 
 It is recommended to deinstall these programms to avoid endless updates. Use...
 
@@ -202,8 +209,8 @@ It is recommended to run the Raspi without graphical frontend (X-Server). Use...
 
     sudo raspi-config
 
-There choose "3 Boot Options" > "31 Desktop / CLI" > "B1 Console". Reboot.
+to boot the Rapsi to the client console.
 
-**DO NOT FORGET TO CHANGE THE DEFAULT PASSWORD FOR USER PI!**
+DO NOT FORGET TO CHANGE THE DEFAULT PASSWORD FOR USER PI!
 
 

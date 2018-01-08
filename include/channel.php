@@ -1982,12 +1982,17 @@ function get_channel_default_perms($uid) {
 }
 
 
-function profiles_build_sync($channel_id) {
+function profiles_build_sync($channel_id,$send = true) {
 	$r = q("select * from profile where uid = %d",
 		intval($channel_id)
 	);
 	if($r) {
-		build_sync_packet($channel_id,array('profile' => $r));
+		if($send) {
+			build_sync_packet($channel_id,array('profile' => $r));
+		}
+		else {
+			return $r;
+		}
 	}
 }
 

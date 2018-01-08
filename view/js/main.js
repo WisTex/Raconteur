@@ -373,10 +373,12 @@ function notificationsUpdate() {
 
 		if(data.network || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs) {
 			$('.notifications-btn').css('opacity', 1);
+			$('#no_notifications').hide();
 		}
 		else {
 			$('.notifications-btn').css('opacity', 0.5);
 			$('#navbar-collapse-1').removeClass('show');
+			$('#no_notifications').show();
 		}
 
 		if(data.home || data.intros || data.register || data.mail || data.notify || data.files) {

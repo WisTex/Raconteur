@@ -313,12 +313,25 @@ function dir_tagadelic($count = 0) {
 
 	$count = intval($count);
 
-	// Fetch tags
-	$r = q("select xtag_term as term, count(xtag_term) as total from xtag where xtag_flags = 0
-		group by xtag_term order by total desc %s",
-		((intval($count)) ? "limit $count" : '')
-	);
+	$dirmode = get_config('system','directory_mode');
 
+	if($dirmode == DIRECTORY_MODE_STANDALONE) {
+		// Fetch tags
+		$r = q("select xtag_term as term, count(xtag_term) as total from xtag 
+			left join hubloc on xtag_hash = hubloc_hash 
+			where xtag_flags = 0 and hubloc_url = '%s'
+			group by xtag_term order by total desc %s",
+			dbesc(z_root()),
+			((intval($count)) ? "limit $count" : '')
+		);
+	}
+	else {
+		// Fetch tags
+		$r = q("select xtag_term as term, count(xtag_term) as total from xtag where xtag_flags = 0
+			group by xtag_term order by total desc %s",
+			((intval($count)) ? "limit $count" : '')
+		);
+	}
 	if(! $r)
 		return array();
 

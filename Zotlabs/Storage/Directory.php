@@ -691,7 +691,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 		}
 
 		$prefix = '';
-		$suffix = '';
+		$suffix = ' order by is_dir desc, filename asc ';
 
 		$r = q("select $prefix id, uid, hash, filename, filetype, filesize, revision, folder, flags, is_dir, created, edited from attach where folder = '%s' and uid = %d $perms $suffix",
 			dbesc($folder),

@@ -170,6 +170,9 @@ a.wikilist {
 }
 
 /* notifications */
+.notifications-btn {
+	opacity: .5;
+}
 
 .notification-content {
 	max-height: 70vh;
