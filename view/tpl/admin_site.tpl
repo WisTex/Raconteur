@@ -23,7 +23,7 @@
 					
 					$.post(url, data, function(data) {
 						if(timer) clearTimeout(timer);
-						NavUpdate();
+						updateInit();
 						$.colorbox.close();
 					})
 					
