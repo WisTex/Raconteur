@@ -184,7 +184,7 @@ function import_profiles($channel, $profiles) {
  *
  * @param array $channel
  * @param array $hublocs
- * @param unknown $seize
+ * @param boolean $seize
  * @param boolean $moving (optional) default false
  */
 function import_hublocs($channel, $hublocs, $seize, $moving = false) {
