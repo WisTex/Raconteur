@@ -1,4 +1,4 @@
-Hubzilla 3.0 (????-??-??)
+Hubzilla 3.0 (2018-01-09)
 	- Updated homeinstall script
 	- Sort cloud directory by 1. is_dir and 2. name
 	- Document that imagick calls/execs ffmpeg for mp4 video thumbnails
