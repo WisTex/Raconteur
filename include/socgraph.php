@@ -178,10 +178,11 @@ function poco_load($xchan = '', $url = null) {
 		);
 
 		if(! $r) {
-			q("insert into xlink ( xlink_xchan, xlink_link, xlink_rating, xlink_rating_text, xlink_updated, xlink_static ) values ( '%s', '%s', %d, '%s', '%s', 0 ) ",
+			q("insert into xlink ( xlink_xchan, xlink_link, xlink_rating, xlink_rating_text, xlink_sig, xlink_updated, xlink_static ) values ( '%s', '%s', %d, '%s', '%s', '%s', 0 ) ",
 				dbesc($xchan),
 				dbesc($hash),
 				intval(0),
+				dbesc(''),
 				dbesc(''),
 				dbesc(datetime_convert())
 			);
