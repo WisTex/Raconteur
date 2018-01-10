@@ -49,6 +49,7 @@ class Video {
 			$cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmpfile . '[0]') . ' -thumbnail ' . $width . 'x' . $height . ' ' . escapeshellarg(PROJECT_BASE . '/' . $outfile);
 			//  logger('imagick thumbnail command: ' . $cmd);
 
+			/** @scrutinizer ignore-unhandled */
 			@exec($cmd);
 
 			if(! file_exists($outfile)) {
