@@ -92,6 +92,13 @@ $(document).ready(function() {
 
 });
 
+function datasrc2src(selector) {
+	$(selector).each(function(i, el) {
+		$(el).attr("src", $(el).data("src"));
+		$(el).removeAttr("data-src");
+	});
+}
+
 function confirmDelete() {
 	return confirm(aStr.delitem);
 }
