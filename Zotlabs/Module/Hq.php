@@ -51,8 +51,8 @@ class Hq extends \Zotlabs\Web\Controller {
 
 		if(! $item_hash) {
 			$r = q("SELECT mid FROM item
-				WHERE uid = %d 
-				AND mid = parent_mid
+				WHERE uid = %d $item_normal
+				AND item_unseen = 1 
 				ORDER BY created DESC LIMIT 1",
 				intval(local_channel())
 			);
@@ -135,13 +135,11 @@ class Hq extends \Zotlabs\Web\Controller {
 			$o = replace_macros(get_markup_template("hq.tpl"),
 				[
 					'$no_messages' => (($target_item) ? false : true),
-					'$no_messages_label' => t('Welcome to hubzilla!')
+					'$no_messages_label' => [ t('Welcome to Hubzilla!'), t('You have got no unseen activity...') ],
+					'$editor' => status_editor($a,$x)
 				]
 			);
-	
-			$o = '<div id="jot-popup">';
-			$o .= status_editor($a,$x);
-			$o .= '</div>';
+
 		}
 
 		if(! $update && ! $load) {
@@ -266,23 +264,20 @@ class Hq extends \Zotlabs\Web\Controller {
 		}
 	
 		if($r) {
-			$parents_str = ids_to_querystr($r,'item_id');
-			if($parents_str) {
-				$items = q("SELECT item.*, item.id AS item_id 
-					FROM item
-					WHERE parent IN ( %s ) $item_normal ",
-					dbesc($parents_str)
-				);
+			$items = q("SELECT item.*, item.id AS item_id 
+				FROM item
+				WHERE parent = '%s' $item_normal ",
+				dbesc($r[0]['item_id'])
+			);
 	
-				xchan_query($items,true,(($sys_item) ? local_channel() : 0));
-				$items = fetch_post_tags($items,true);
-				$items = conv_sort($items,'created');
-			}
+			xchan_query($items,true,(($sys_item) ? local_channel() : 0));
+			$items = fetch_post_tags($items,true);
+			$items = conv_sort($items,'created');
 		}
 		else {
 			$items = [];
 		}
-	
+
 		$o .= conversation($items, 'hq', $update, 'client');
 
 		if($updateable) {
