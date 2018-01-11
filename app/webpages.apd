@@ -3,4 +3,4 @@ url: $baseurl/webpages/$nick
 requires: local_channel, webpages
 name: Webpages
 photo: icon:newspaper-o
-categories: Productivity
+categories: nav_featured_app, Productivity
