@@ -8,53 +8,24 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
 {
     public static $files = array (
         '383eaff206634a77a1be54e64e6459c7' => __DIR__ . '/..' . '/sabre/uri/lib/functions.php',
-        '3569eecfeed3bcf0bad3c998a494ecb8' => __DIR__ . '/..' . '/sabre/xml/lib/Deserializer/functions.php',
-        '93aa591bc4ca510c520999e34229ee79' => __DIR__ . '/..' . '/sabre/xml/lib/Serializer/functions.php',
         '2b9d0f43f9552984cfa82fee95491826' => __DIR__ . '/..' . '/sabre/event/lib/coroutine.php',
         'd81bab31d3feb45bfe2f283ea3c8fdf7' => __DIR__ . '/..' . '/sabre/event/lib/Loop/functions.php',
         'a1cce3d26cc15c00fcd0b3354bd72c88' => __DIR__ . '/..' . '/sabre/event/lib/Promise/functions.php',
+        '3569eecfeed3bcf0bad3c998a494ecb8' => __DIR__ . '/..' . '/sabre/xml/lib/Deserializer/functions.php',
+        '93aa591bc4ca510c520999e34229ee79' => __DIR__ . '/..' . '/sabre/xml/lib/Serializer/functions.php',
         'ebdb698ed4152ae445614b69b5e4bb6a' => __DIR__ . '/..' . '/sabre/http/lib/functions.php',
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
         'f084d01b0a599f67676cffef638aa95b' => __DIR__ . '/..' . '/smarty/smarty/libs/bootstrap.php',
     );
 
-    public static $prefixLengthsPsr4 = array (
-        'Z' => 
-        array (
-            'Zotlabs\\' => 8,
-        ),
-        'S' => 
-        array (
-            'Sabre\\Xml\\' => 10,
-            'Sabre\\VObject\\' => 14,
-            'Sabre\\Uri\\' => 10,
-            'Sabre\\HTTP\\' => 11,
-            'Sabre\\Event\\' => 12,
-            'Sabre\\DAV\\' => 10,
-            'Sabre\\DAVACL\\' => 13,
-            'Sabre\\CardDAV\\' => 14,
-            'Sabre\\CalDAV\\' => 13,
-        ),
-        'P' => 
-        array (
-            'Psr\\Log\\' => 8,
-        ),
-        'L' => 
-        array (
-            'League\\HTMLToMarkdown\\' => 22,
-        ),
-        'I' => 
-        array (
-            'ID3Parser\\' => 10,
-        ),
-        'H' => 
-        array (
-            'Hubzilla\\' => 9,
-        ),
-        'C' => 
-        array (
-            'CommerceGuys\\Intl\\' => 18,
-        ),
+    public static $firstCharsPsr4 = array (
+        'Z' => true,
+        'S' => true,
+        'P' => true,
+        'L' => true,
+        'I' => true,
+        'H' => true,
+        'C' => true,
     );
 
     public static $prefixDirsPsr4 = array (
@@ -954,6 +925,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Lib\\Enotify' => __DIR__ . '/../..' . '/Zotlabs/Lib/Enotify.php',
         'Zotlabs\\Lib\\ExtendedZip' => __DIR__ . '/../..' . '/Zotlabs/Lib/ExtendedZip.php',
         'Zotlabs\\Lib\\IConfig' => __DIR__ . '/../..' . '/Zotlabs/Lib/IConfig.php',
+        'Zotlabs\\Lib\\Img_filesize' => __DIR__ . '/../..' . '/Zotlabs/Lib/Img_filesize.php',
         'Zotlabs\\Lib\\JSalmon' => __DIR__ . '/../..' . '/Zotlabs/Lib/JSalmon.php',
         'Zotlabs\\Lib\\LDSignatures' => __DIR__ . '/../..' . '/Zotlabs/Lib/LDSignatures.php',
         'Zotlabs\\Lib\\MarkdownSoap' => __DIR__ . '/../..' . '/Zotlabs/Lib/MarkdownSoap.php',
@@ -1258,7 +1230,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d::$prefixLengthsPsr4;
+            $loader->firstCharsPsr4 = ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d::$firstCharsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d::$classMap;
