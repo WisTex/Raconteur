@@ -1,36 +1,39 @@
 <?php
+
 namespace Zotlabs\Module;
 
-/*
- * ACL selector json backend 
+require_once 'include/acl_selectors.php';
+require_once 'include/group.php';
+
+/**
+ * @brief ACL selector json backend.
+ *
  * This module provides JSON lists of connections and local/remote channels
  * (xchans) to populate various tools such as the ACL (AccessControlList) popup
- * and various auto-complete functions (such as email recipients, search, and 
+ * and various auto-complete functions (such as email recipients, search, and
  * mention targets.
+ *
  * There are two primary output structural formats. One for the ACL widget and
  * the other for auto-completion.
- * Many of the  behaviour variations are triggered on the use of single character keys
- * however this functionality has grown in an ad-hoc manner and has gotten quite messy over time.    
+ *
+ * Many of the behaviour variations are triggered on the use of single character
+ * keys however this functionality has grown in an ad-hoc manner and has gotten
+ * quite messy over time.
  */
-
-require_once("include/acl_selectors.php");
-require_once("include/group.php");
-
-
 class Acl extends \Zotlabs\Web\Controller {
 
 	function init() {
-	
+
 		logger('mod_acl: ' . print_r($_REQUEST,true));
-	
+
 		$start    = (x($_REQUEST,'start')  ? $_REQUEST['start']  : 0);
 		$count    = (x($_REQUEST,'count')  ? $_REQUEST['count']  : 500);
 		$search   = (x($_REQUEST,'search') ? $_REQUEST['search'] : '');
 		$type     = (x($_REQUEST,'type')   ? $_REQUEST['type']   : '');
-		$noforums = (x($_REQUEST,'n')      ? $_REQUEST['n']      : false);	
+		$noforums = (x($_REQUEST,'n')      ? $_REQUEST['n']      : false);
 
 
-		// $type = 
+		// $type =
 		//  ''   =>  standard ACL request
 		//  'g'  =>  Groups only ACL request
 		//  'f'  =>  forums only ACL request
@@ -382,15 +385,13 @@ class Acl extends \Zotlabs\Web\Controller {
 			'count'	=> $count,
 			'items'	=> $items,
 		);
-	
-	
-		
+
 		echo json_encode($o);
-	
+
 		killme();
 	}
-	
-	
+
+
 	function navbar_complete(&$a) {
 	
 	//	logger('navbar_complete');
@@ -447,5 +448,5 @@ class Acl extends \Zotlabs\Web\Controller {
 		}
 		return array();
 	}
-	
+
 }

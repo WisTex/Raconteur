@@ -2,12 +2,36 @@
 
 namespace Zotlabs\Lib;
 
-use \Zotlabs\Access as Zaccess;
+use Zotlabs\Access\PermissionRoles;
+use Zotlabs\Access\Permissions;
 
+/**
+ * @brief Permission Categories. Permission rules for various classes of connections.
+ *
+ * Connection permissions answer the question "Can Joe view my photos?"
+ *
+ * Some permissions may be inherited from the channel's "privacy settings"
+ * (@ref ::Zotlabs::Access::PermissionLimits "PermissionLimits") "Who can view my
+ * photos (at all)?" which have higher priority than individual connection settings.
+ * We evaluate permission limits first, and then fall through to connection
+ * permissions if the permission limits didn't already make a definitive decision.
+ *
+ * After PermissionLimits and connection permissions are evaluated, individual
+ * content ACLs are evaluated (@ref ::Zotlabs::Access::AccessList "AccessList").
+ * These answer the question "Can Joe view *this* album/photo?".
+ */
 class Permcat {
 
+	/**
+	 * @var array
+	 */
 	private $permcats = [];
 
+	/**
+	 * @brief Permcat constructor.
+	 *
+	 * @param int $channel_id
+	 */
 	public function __construct($channel_id) {
 
 		$perms = [];
@@ -16,16 +40,16 @@ class Permcat {
 
 		$role = get_pconfig($channel_id,'system','permissions_role');
 		if($role) {
-			$x = Zaccess\PermissionRoles::role_perms($role);
+			$x = PermissionRoles::role_perms($role);
 			if($x['perms_connect']) {
-				$perms = Zaccess\Permissions::FilledPerms($x['perms_connect']);
+				$perms = Permissions::FilledPerms($x['perms_connect']);
 			}
 		}
 
 		// if no role perms it may be a custom role, see if there any autoperms
 
 		if(! $perms) {
-			$perms = Zaccess\Permissions::FilledAutoPerms($channel_id);
+			$perms = Permissions::FilledAutoPerms($channel_id);
 		}
 
 		// if no autoperms it may be a custom role with manual perms
@@ -50,13 +74,13 @@ class Permcat {
 		// nothing was found - create a filled permission array where all permissions are 0
 
 		if(! $perms) {
-			$perms = Zaccess\Permissions::FilledPerms([]);
+			$perms = Permissions::FilledPerms([]);
 		}
 
 		$this->permcats[] = [
 			'name'      => 'default',
 			'localname' => t('default','permcat'),
-			'perms'     => Zaccess\Permissions::Operms($perms),
+			'perms'     => Permissions::Operms($perms),
 			'system'    => 1
 		];
 
@@ -67,26 +91,39 @@ class Permcat {
 				$this->permcats[] = [
 					'name'      => $p[$x][0],
 					'localname' => $p[$x][1],
-					'perms'     => Zaccess\Permissions::Operms(Zaccess\Permissions::FilledPerms($p[$x][2])),
+					'perms'     => Permissions::Operms(Permissions::FilledPerms($p[$x][2])),
 					'system'    => intval($p[$x][3])
 				];
 			}
 		}
 	}
 
-
+	/**
+	 * @brief Return array with permcats.
+	 *
+	 * @return array
+	 */
 	public function listing() {
 		return $this->permcats;
 	}
 
+	/**
+	 * @brief
+	 *
+	 * @param string $name
+	 * @return array
+	 *   * \e array with permcats
+	 *   * \e bool \b error if $name not found in permcats true
+	 */
 	public function fetch($name) {
 		if($name && $this->permcats) {
 			foreach($this->permcats as $permcat) {
-				if(strcasecmp($permcat['name'],$name) === 0) {
+				if(strcasecmp($permcat['name'], $name) === 0) {
 					return $permcat;
 				}
 			}
 		}
+
 		return ['error' => true];
 	}
 
@@ -118,29 +155,32 @@ class Permcat {
 					$permcats[] = [ $xv['k'], $xv['k'], $value, 0 ];
 				}
 			}
-		}					
+		}
 
-		call_hooks('permcats',$permcats);
+		/**
+		 * @hooks permcats
+		 *   * \e array
+		 */
+		call_hooks('permcats', $permcats);
 
 		return $permcats;
-
 	}
 
-	static public function find_permcat($arr,$name) {
+	static public function find_permcat($arr, $name) {
 		if((! $arr) || (! $name))
 			return false;
+
 		foreach($arr as $p)
 			if($p['name'] == $name)
 				return $p['value'];
 	}
 
-	static public function update($channel_id, $name,$permarr) {
-		PConfig::Set($channel_id,'permcat',$name,$permarr);
+	static public function update($channel_id, $name, $permarr) {
+		PConfig::Set($channel_id, 'permcat', $name, $permarr);
 	}
 
-	static public function delete($channel_id,$name) {
-		PConfig::Delete($channel_id,'permcat',$name);
+	static public function delete($channel_id, $name) {
+		PConfig::Delete($channel_id, 'permcat', $name);
 	}
-
 
 }
