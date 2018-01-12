@@ -35,6 +35,8 @@ class Site {
 		$abandon_days	=	((x($_POST,'abandon_days'))	    ? intval(trim($_POST['abandon_days']))	    :  0);
 
 		$register_text		=	((x($_POST,'register_text'))	? notags(trim($_POST['register_text']))		: '');
+		$site_sellpage		=	((x($_POST,'site_sellpage'))	? notags(trim($_POST['site_sellpage']))		: '');
+		$site_location		=	((x($_POST,'site_location'))	? notags(trim($_POST['site_location']))		: '');
 		$frontpage			=	((x($_POST,'frontpage'))	? notags(trim($_POST['frontpage']))		: '');
 		$mirror_frontpage	=	((x($_POST,'mirror_frontpage'))	? intval(trim($_POST['mirror_frontpage']))		: 0);
 		$directory_server	=	((x($_POST,'directory_server')) ? trim($_POST['directory_server']) : '');
@@ -76,6 +78,8 @@ class Site {
 		set_config('system', 'poll_interval', $poll_interval);
 		set_config('system', 'maxloadavg', $maxloadavg);
 		set_config('system', 'frontpage', $frontpage);
+		set_config('system', 'sellpage', $site_sellpage);
+		set_config('system', 'site_location', $site_location);
 		set_config('system', 'mirror_frontpage', $mirror_frontpage);
 		set_config('system', 'sitename', $sitename);
 		set_config('system', 'login_on_homepage', $login_on_homepage);
@@ -328,6 +332,12 @@ class Site {
 			'$thumbnail_security'			=> array('thumbnail_security', t("Allow SVG thumbnails in file browser"), get_config('system','thumbnail_security',0), t("WARNING: SVG images may contain malicious code.")),
 			'$maxloadavg'			=> array('maxloadavg', t("Maximum Load Average"), ((intval(get_config('system','maxloadavg')) > 0)?get_config('system','maxloadavg'):50), t("Maximum system load before delivery and poll processes are deferred - default 50.")),
 			'$default_expire_days' => array('default_expire_days', t('Expiration period in days for imported (grid/network) content'), intval(get_config('system','default_expire_days')), t('0 for no expiration of imported content')),
+
+			'$sellpage' => array('site_sellpage', t('Public servers: Optional landing (marketing) webpage for new registrants'), get_config('system','sellpage',''), sprintf( t('Create this page first. Default is %s/register'),z_root())),
+
+			'$location' => array('site_location', t('Optional: site location'), get_config('system','site_location',''), t('Region or country')),
+
+
 			'$form_security_token' => get_form_security_token("admin_site"),
 		));
 	}

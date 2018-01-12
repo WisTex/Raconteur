@@ -71,6 +71,9 @@
 	{{include file="field_select.tpl" field=$register_policy}}
 	{{include file="field_checkbox.tpl" field=$invite_only}}
 	{{include file="field_select.tpl" field=$access_policy}}
+	{{include file="field_input.tpl" field=$location}}
+	{{include file="field_input.tpl" field=$sellpage}}
+
 	<div class="submit"><input type="submit" name="page_site" value="{{$submit}}" /></div>
 
 	<h3>{{$corporate}}</h3>
