@@ -51,8 +51,8 @@ class Hq extends \Zotlabs\Web\Controller {
 
 		if(! $item_hash) {
 			$r = q("SELECT mid FROM item
-				WHERE uid = %d $item_normal
-				AND mid = parent_mid AND item_unseen = 1 
+				WHERE uid = %d
+				AND mid = parent_mid 
 				ORDER BY created DESC LIMIT 1",
 				intval(local_channel())
 			);
