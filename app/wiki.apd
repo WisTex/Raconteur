@@ -3,4 +3,4 @@ url: $baseurl/wiki/$nick
 requires: local_channel, wiki
 name: Wiki
 photo: icon:pencil-square-o
-categories: Productivity
+categories: nav_featured_app, Productivity

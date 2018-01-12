@@ -309,19 +309,27 @@ function article_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags 
 
 
 
-function dir_tagadelic($count = 0) {
+function dir_tagadelic($count = 0, $hub = '') {
 
 	$count = intval($count);
 
 	$dirmode = get_config('system','directory_mode');
 
-	if($dirmode == DIRECTORY_MODE_STANDALONE) {
+	if(($dirmode == DIRECTORY_MODE_STANDALONE) && (! $hub)) {
+		$hub = \App::get_hostname();
+	}
+
+	if($hub)
+		$hub_query = " and xtag_hash in (select hubloc_hash from hubloc where hubloc_host =  '" . protect_sprintf(dbesc($hub)) . "') ";
+	else
+		$hub_query = '';
+
+	if($hub_query) {
 		// Fetch tags
 		$r = q("select xtag_term as term, count(xtag_term) as total from xtag 
 			left join hubloc on xtag_hash = hubloc_hash 
-			where xtag_flags = 0 and hubloc_url = '%s'
+			where xtag_flags = 0 $hub_query
 			group by xtag_term order by total desc %s",
-			dbesc(z_root()),
 			((intval($count)) ? "limit $count" : '')
 		);
 	}
@@ -485,9 +493,6 @@ function dir_tagblock($link,$r) {
 	$o = '';
 
 	$observer = get_observer_hash();
-	if(! get_directory_setting($observer, 'globaldir'))
-		return $o;
-
 
 	if(! $r)
 		$r = App::$data['directory_keywords'];

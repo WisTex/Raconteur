@@ -114,8 +114,9 @@ function getRemoteFileSize($url)
         return strlen($data);
     });
 
-    $result = curl_exec($ch);
-    $info   = curl_getinfo($ch);
+    curl_exec($ch);
+    curl_getinfo($ch);
+	curl_close($ch);
 
     return $size;
 }
