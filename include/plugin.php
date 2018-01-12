@@ -47,7 +47,10 @@ function uninstall_plugin($plugin) {
 }
 
 /**
- * @brief installs an addon.
+ * @brief Installs an addon.
+ *
+ * This function is called once to install the addon (either from the cli or via
+ * the web admin). This will also call load_plugin() once.
  *
  * @param string $plugin name of the addon
  * @return bool
@@ -188,7 +191,9 @@ function visible_plugin_list() {
 
 
 /**
- * @brief registers a hook.
+ * @brief Registers a hook.
+ *
+ * @see ::Zotlabs::Extend::Hook::register()
  *
  * @param string $hook the name of the hook
  * @param string $file the name of the file that hooks into
@@ -218,6 +223,8 @@ function register_hook($hook, $file, $function, $priority = 0) {
 
 /**
  * @brief unregisters a hook.
+ *
+ * @see ::Zotlabs::Extend::Hook::unregister
  *
  * @param string $hook the name of the hook
  * @param string $file the name of the file that hooks into

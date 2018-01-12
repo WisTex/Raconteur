@@ -24,12 +24,20 @@ define('RANDOM_STRING_TEXT', 0x01 );
  * @return string substituted string
  */
 function replace_macros($s, $r) {
+	$arr = [
+			'template' => $s,
+			'params' => $r
+	];
 
-	$arr = array('template' => $s, 'params' => $r);
+	/**
+	 * @hooks replace_macros
+	 *   * \e string \b template
+	 *   * \e array \b params
+	 */
 	call_hooks('replace_macros', $arr);
 
 	$t = App::template_engine();
-	$output = $t->replace_macros($arr['template'],$arr['params']);
+	$output = $t->replace_macros($arr['template'], $arr['params']);
 
 	return $output;
 }
@@ -301,12 +309,16 @@ function purify_html($s, $allow_position = false) {
 
 
 /**
- * @brief generate a string that's random, but usually pronounceable.
+ * @brief Generate a string that's random, but usually pronounceable.
  *
  * Used to generate initial passwords.
  *
- * @param int $len
- * @return string
+ * @note In order to create "pronounceable" strings some consonant pairs or
+ * letters that does not make a very good word ending are chopped off, so that
+ * the returned string length can be lower than $len.
+ *
+ * @param int $len max length of generated string
+ * @return string Genereated random, but usually pronounceable string
  */
 function autoname($len) {
 
@@ -343,6 +355,7 @@ function autoname($len) {
 	$midcons = array('ck','ct','gn','ld','lf','lm','lt','mb','mm', 'mn','mp',
 				'nd','ng','nk','nt','rn','rp','rt');
 
+	// avoid these consonant pairs at the end of the string
 	$noend = array('bl', 'br', 'cl','cr','dr','fl','fr','gl','gr',
 				'kh', 'kl','kr','mn','pl','pr','rh','tr','qu','wh');
 
@@ -355,7 +368,7 @@ function autoname($len) {
 	$word = '';
 
 	for ($x = 0; $x < $len; $x ++) {
-		$r = mt_rand(0,count($table) - 1);
+		$r = mt_rand(0, count($table) - 1);
 		$word .= $table[$r];
 
 		if ($table == $vowels)
@@ -364,14 +377,15 @@ function autoname($len) {
 			$table = $vowels;
 	}
 
-	$word = substr($word,0,$len);
+	$word = substr($word, 0, $len);
 
 	foreach ($noend as $noe) {
-		if ((strlen($word) > 2) && (substr($word,-2) == $noe)) {
-			$word = substr($word,0,-1);
+		if ((strlen($word) > 2) && (substr($word, -2) == $noe)) {
+			$word = substr($word, 0, -1);
 			break;
 		}
 	}
+	// avoid the letter 'q' as it does not make a very good word ending
 	if (substr($word, -1) == 'q')
 		$word = substr($word, 0, -1);
 
@@ -1094,17 +1108,19 @@ function sslify($s) {
 	return $s;
 }
 
-
+/**
+ * @brief Get an array of poke verbs.
+ *
+ * @return array
+ *  * \e index is present tense verb
+ *  * \e value is array containing past tense verb, translation of present, translation of past
+ */
 function get_poke_verbs() {
-	// index is present tense verb
-	// value is array containing past tense verb, translation of present, translation of past
-
-	if(get_config('system','poke_basic')) {
+	if (get_config('system', 'poke_basic')) {
 		$arr = array(
-			'poke' => array( 'poked', t('poke'), t('poked')),
+			'poke' => array('poked', t('poke'), t('poked')),
 		);
-	}
-	else {
+	} else {
 		$arr = array(
 			'poke' => array( 'poked', t('poke'), t('poked')),
 			'ping' => array( 'pinged', t('ping'), t('pinged')),
@@ -1114,15 +1130,26 @@ function get_poke_verbs() {
 			'rebuff' => array( 'rebuffed', t('rebuff'), t('rebuffed')),
 		);
 
+		/**
+		 * @hooks poke_verbs
+		 *   * \e array associative array with another array as value
+		 */
 		call_hooks('poke_verbs', $arr);
 	}
 
 	return $arr;
 }
 
+/**
+ * @brief Get an array of mood verbs.
+ *
+ * @return array
+ *   * \e index is the verb
+ *   * \e value is the translated verb
+ */
 function get_mood_verbs() {
 
-	$arr = array(
+	$arr = [
 		'happy'      => t('happy'),
 		'sad'        => t('sad'),
 		'mellow'     => t('mellow'),
@@ -1144,9 +1171,14 @@ function get_mood_verbs() {
 		'motivated'  => t('motivated'),
 		'relaxed'    => t('relaxed'),
 		'surprised'  => t('surprised'),
-	);
+	];
 
+	/**
+	 * @hooks mood_verbs
+	 *   * \e array associative array with mood verbs
+	 */
 	call_hooks('mood_verbs', $arr);
+
 	return $arr;
 }
 
@@ -1513,14 +1545,37 @@ function format_filer(&$item) {
 function generate_map($coord) {
 	$coord = trim($coord);
 	$coord = str_replace(array(',','/','  '),array(' ',' ',' '),$coord);
-	$arr = array('lat' => trim(substr($coord,0,strpos($coord,' '))), 'lon' => trim(substr($coord,strpos($coord,' ')+1)), 'html' => '');
-	call_hooks('generate_map',$arr);
+
+	$arr = [
+			'lat' => trim(substr($coord, 0, strpos($coord, ' '))),
+			'lon' => trim(substr($coord, strpos($coord, ' ')+1)),
+			'html' => ''
+	];
+
+	/**
+	 * @hooks generate_map
+	 *   * \e string \b lat
+	 *   * \e string \b lon
+	 *   * \e string \b html the parsed HTML to return
+	 */
+	call_hooks('generate_map', $arr);
+
 	return (($arr['html']) ? $arr['html'] : $coord);
 }
 
 function generate_named_map($location) {
-	$arr = array('location' => $location, 'html' => '');
-	call_hooks('generate_named_map',$arr);
+	$arr = [
+			'location' => $location,
+			'html' => ''
+	];
+
+	/**
+	 * @hooks generate_named_map
+	 *   * \e string \b location
+	 *   * \e string \b html the parsed HTML to return
+	 */
+	call_hooks('generate_named_map', $arr);
+
 	return (($arr['html']) ? $arr['html'] : $location);
 }
 
@@ -1626,13 +1681,11 @@ function prepare_binary($item) {
 }
 
 
-
-
 /**
  * @brief Given a text string, convert from bbcode to html and add smilie icons.
  *
  * @param string $text
- * @param sting $content_type (optional) default text/bbcode
+ * @param string $content_type (optional) default text/bbcode
  * @param boolean $cache (optional) default false
  *
  * @return string
@@ -3033,8 +3086,19 @@ function text_highlight($s, $lang) {
 			$s = jindent($s);
 	}
 
-	$arr = [ 'text' => $s, 'language' => $lang, 'success' => false ];
-	call_hooks('text_highlight',$arr);
+	$arr = [
+			'text' => $s,
+			'language' => $lang,
+			'success' => false
+	];
+
+	/**
+	 * @hooks text_highlight
+	 *   * \e string \b text
+	 *   * \e string \b language
+	 *   * \e boolean \b success default false
+	 */
+	call_hooks('text_highlight', $arr);
 
 	if($arr['success'])
 		$o = $arr['text'];
@@ -3117,7 +3181,6 @@ function share_unshield($m) {
 
 function cleanup_bbcode($body) {
 
-
 	/**
 	 * fix naked links by passing through a callback to see if this is a hubzilla site
 	 * (already known to us) which will get a zrl, otherwise link with url, add bookmark tag to both.
@@ -3155,7 +3218,6 @@ function cleanup_bbcode($body) {
 
 
 	return $body;
-
 }
 
 function gen_link_id($mid) {
