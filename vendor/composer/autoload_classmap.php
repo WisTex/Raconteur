@@ -801,6 +801,7 @@ return array(
     'Zotlabs\\Lib\\Enotify' => $baseDir . '/Zotlabs/Lib/Enotify.php',
     'Zotlabs\\Lib\\ExtendedZip' => $baseDir . '/Zotlabs/Lib/ExtendedZip.php',
     'Zotlabs\\Lib\\IConfig' => $baseDir . '/Zotlabs/Lib/IConfig.php',
+    'Zotlabs\\Lib\\Img_filesize' => $baseDir . '/Zotlabs/Lib/Img_filesize.php',
     'Zotlabs\\Lib\\JSalmon' => $baseDir . '/Zotlabs/Lib/JSalmon.php',
     'Zotlabs\\Lib\\LDSignatures' => $baseDir . '/Zotlabs/Lib/LDSignatures.php',
     'Zotlabs\\Lib\\MarkdownSoap' => $baseDir . '/Zotlabs/Lib/MarkdownSoap.php',
