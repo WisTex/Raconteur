@@ -28,7 +28,7 @@ function rsa_verify($data,$sig,$key,$alg = 'sha256') {
 		btlogger('openssl_verify: key: ' . $key, LOGGER_DEBUG, LOG_ERR); 
 	}
 
-	return $verify;
+	return (intval($verify) > 0 ? 1 : 0);
 }
 
 function pkcs5_pad ($text, $blocksize)

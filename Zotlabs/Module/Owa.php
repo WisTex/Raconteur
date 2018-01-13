@@ -38,6 +38,7 @@ class Owa extends \Zotlabs\Web\Controller {
 							foreach($r as $hubloc) {
 								$verified = \Zotlabs\Web\HTTPSig::verify('',$hubloc['xchan_pubkey']);	
 								if($verified && $verified['header_signed'] && $verified['header_valid']) {
+									logger('OWA header: ' . print_r($verified,true));	
 									logger('OWA success: ' . $hubloc['hubloc_addr'],LOGGER_DATA);
 									$ret['success'] = true;
 									$token = random_string(32);
