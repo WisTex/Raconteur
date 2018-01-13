@@ -51,8 +51,8 @@ class Hq extends \Zotlabs\Web\Controller {
 
 		if(! $item_hash) {
 			$r = q("SELECT mid FROM item
-				WHERE uid = %d $item_normal
-				AND item_unseen = 1 
+				WHERE uid = %d
+				AND mid = parent_mid 
 				ORDER BY created DESC LIMIT 1",
 				intval(local_channel())
 			);
@@ -135,7 +135,7 @@ class Hq extends \Zotlabs\Web\Controller {
 			$o = replace_macros(get_markup_template("hq.tpl"),
 				[
 					'$no_messages' => (($target_item) ? false : true),
-					'$no_messages_label' => [ t('Welcome to Hubzilla!'), t('You have got no unseen activity...') ],
+					'$no_messages_label' => [ t('Welcome to Hubzilla!'), t('You have got no unseen posts...') ],
 					'$editor' => status_editor($a,$x)
 				]
 			);

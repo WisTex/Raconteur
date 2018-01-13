@@ -66,7 +66,7 @@
 			<div id="id_{{$commitMsg.0}}_wrapper" class="field input" style="display: none">
 				<div class="input-group">
 					<input class="form-control form-control-sm" name="{{$commitMsg.0}}" id="id_{{$commitMsg.0}}" type="text" value="{{$commitMsg.2}}"{{if $commitMsg.5}} {{$commitMsg.5}}{{/if}}>
-					<div class="input-group-btn">
+					<div class="input-group-append">
 						<button id="save-page" type="button" class="btn btn-primary disabled">Save</button>
 					</div>
 				</div>

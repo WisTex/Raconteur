@@ -404,6 +404,83 @@ function get_plugin_info($plugin){
 	return $info;
 }
 
+/**
+ * @brief Parse widget comment in search of widget info.
+ *
+ * like
+ * \code
+ *   * Name: MyWidget
+ *   * Description: A widget
+ *   * Version: 1.2.3
+ *   * Author: John <profile url>
+ *   * Author: Jane <email>
+ *   *
+ *\endcode
+ * @param string $widget the name of the widget
+ * @return array with the information
+ */
+function get_widget_info($widget){
+	$m = array();
+	$info = array(
+		'name' => $widget,
+		'description' => '',
+		'author' => array(),
+		'maintainer' => array(),
+		'version' => '',
+		'requires' => ''
+	);
+
+	$ucwidget = ucfirst($widget);
+
+	$checkpaths = [
+		"Zotlabs/SiteWidget/$ucwidget.php",
+		"Zotlibs/Widget/$ucwidget.php",
+		"addon/$ucwidget/$ucwidget.php",
+		"addon/$widget.php"
+	];
+
+	$widget_found = false;
+
+	foreach ($checkpaths as $path) {
+		if (is_file($path)) {
+			$widget_found = true;
+			$f = file_get_contents($path);
+			break;
+		}
+	}
+
+	if(! ($widget_found && $f))		
+		return $info;
+
+	$f = escape_tags($f);
+	$r = preg_match("|/\*.*\*/|msU", $f, $m);
+
+	if ($r) {
+		$ll = explode("\n", $m[0]);
+		foreach( $ll as $l ) {
+			$l = trim($l, "\t\n\r */");
+			if ($l != ""){
+				list($k, $v) = array_map("trim", explode(":", $l, 2));
+				$k = strtolower($k);
+				if ($k == 'author' || $k == 'maintainer'){
+					$r = preg_match("|([^<]+)<([^>]+)>|", $v, $m);
+					if ($r) {
+						$info[$k][] = array('name' => $m[1], 'link' => $m[2]);
+					} else {
+						$info[$k][] = array('name' => $v);
+					}
+				}
+				else {
+					$info[$k] = $v;
+				}
+			}
+		}
+	}
+
+	return $info;
+}
+
+
 function check_plugin_versions($info) {
 
 	if(! is_array($info))

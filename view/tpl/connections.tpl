@@ -19,7 +19,7 @@
 		<form action="{{$cmd}}" method="get" >
 			<div class="input-group form-group">
 				<input type="text" name="search" id="contacts-search" class="form-control" onfocus="this.select();" value="{{$search}}" placeholder="{{$desc}}" />
-				<div class="input-group-btn">
+				<div class="input-group-append">
 					<button id="contacts-search-submit" class="btn btn-outline-secondary" type="submit" name="submit" value="{{$submit}}"><i class="fa fa-fw fa-search"></i></button>
 				</div>
 			</div>
