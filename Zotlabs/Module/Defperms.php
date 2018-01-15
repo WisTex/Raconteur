@@ -237,7 +237,7 @@ class Defperms extends \Zotlabs\Web\Controller {
 			$o .= replace_macros($tpl, [
 				'$header'         => t('Connection Default Permissions'),
 				'$autoperms'      => array('autoperms',t('Apply these permissions automatically'), ((get_pconfig(local_channel(),'system','autoperms')) ? 1 : 0), t('If enabled, connection requests will be approved without your interaction'), $yes_no),
-				'$permcat'        => [ 'permcat', t('Permission role'), '', '',$permcats ],
+				'$permcat'        => [ 'permcat', t('Permission role'), '', '<span class="loading invisible">' . t('Loading') . '<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span></span>',$permcats ],
 				'$permcat_new'    => t('Add permission role'),
 				'$permcat_enable' => feature_enabled(local_channel(),'permcats'),
 				'$section'        => $section,
