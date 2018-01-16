@@ -28,6 +28,9 @@
 		var path = $(this)[0].pathname.substr(1,7);
 		var stateObj = { b64mid: b64mid };
 
+		if(b64mid === 'undefined' && notify_id === 'undefined')
+			return;
+
 		{{if $module == 'display'}}
 		history.pushState(stateObj, '', 'display/' + b64mid);
 		{{/if}}
@@ -36,15 +39,16 @@
 		{{/if}}
 
 		{{if $module == 'hq'}}
-		if(b64mid !== 'undefined' && path !== 'pubstre') {
+		if(b64mid !== 'undefined') {
 		{{else}}
 		if(path === 'display' && b64mid) {
 		{{/if}}
 			e.preventDefault();
-			e.stopPropagation();
 
 			if(! page_load) {
-				$(this).fadeOut();
+				if($(this).parent().attr('id') !== 'nav-pubs-menu')
+					$(this).fadeOut();
+
 				getData(b64mid, notify_id);
 			}
 
@@ -54,13 +58,23 @@
 	});
 	{{/if}}
 
+	{{foreach $notifications as $notification}}
+	{{if $notification.filter}}
+	$(document).on('click', '#tt-{{$notification.type}}-only', function(e) {
+		e.preventDefault();
+		$('#nav-{{$notification.type}}-menu [data-thread_top=false]').toggle();
+		$(this).toggleClass('active sticky-top');
+	});
+	{{/if}}
+	{{/foreach}}
+
 	function getData(b64mid, notify_id) {
 		$('.thread-wrapper').remove();
 		bParam_mid = b64mid;
 		mode = 'replace';
 		page_load = true;
 		{{if $module == 'hq'}}
-		hqLiveUpdate(notify_id);
+		liveUpdate(notify_id);
 		{{/if}}
 		{{if $module == 'display'}}
 		liveUpdate();
@@ -71,9 +85,12 @@
 
 {{if $notifications}}
 <div id="notifications_wrapper">
+	<div id="no_notifications" class="d-xl-none">
+		{{$no_notifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
+	</div>
 	<div id="notifications" class="navbar-nav" data-children=".nav-item">
 		<div id="nav-notifications-template" rel="template">
-			<a class="list-group-item clearfix notification {5}" href="{0}" title="{2} {3}" data-b64mid="{6}" data-notify_id="{7}">
+			<a class="list-group-item clearfix notification {5}" href="{0}" title="{2} {3}" data-b64mid="{6}" data-notify_id="{7}" data-thread_top="{8}">
 				<img class="menu-img-3" data-src="{1}">
 				<span class="contactname">{2}</span>
 				<span class="dropdown-sub-text">{3}<br>{4}</span>
@@ -92,11 +109,16 @@
 				</a>
 				{{/if}}
 				{{if $notification.markall}}
-				<a class="list-group-item text-dark" id="nav-{{$notification.type}}-mark-all" href="{{$notification.markall.url}}" onclick="markRead('{{$notification.type}}'); return false;">
+				<div class="list-group-item cursor-pointer" id="nav-{{$notification.type}}-mark-all" onclick="markRead('{{$notification.type}}'); return false;">
 					<i class="fa fa-fw fa-check"></i> {{$notification.markall.label}}
-				</a>
+				</div>
 				{{/if}}
-				{{$loading}}
+				{{if $notification.filter}}
+				<div class="list-group-item cursor-pointer" id="tt-{{$notification.type}}-only">
+					<i class="fa fa-fw fa-filter"></i> {{$notification.filter.label}}
+				</div>
+				{{/if}}
+				{{$loading}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 			</div>
 		</div>
 		{{/foreach}}

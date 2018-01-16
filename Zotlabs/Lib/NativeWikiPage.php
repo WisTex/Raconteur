@@ -68,6 +68,9 @@ class NativeWikiPage {
 			return array('content' => null, 'message' => 'Error reading wiki', 'success' => false);
 		}
 
+		// backslashes won't work well in the javascript functions
+		$name = str_replace('\\','',$name);
+
 		// create an empty activity
 
 		$arr = [];
@@ -351,6 +354,7 @@ class NativeWikiPage {
 		// fetch the most recently saved revision. 
 
 		$item = self::load_page($arr);
+
 		if(! $item) {
 			return array('message' => t('Page not found'), 'success' => false);
 		}

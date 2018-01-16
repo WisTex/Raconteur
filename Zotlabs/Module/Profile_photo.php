@@ -179,7 +179,10 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 						);
 					}
 	
-					profiles_build_sync(local_channel());
+					// set $send to false in profiles_build_sync() to return the data
+					// so that we only send one sync packet. 
+
+					$sync_profiles = profiles_build_sync(local_channel(),false);
 	
 					// We'll set the updated profile-photo timestamp even if it isn't the default profile,
 					// so that browsers will do a cache update unconditionally
@@ -201,7 +204,7 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 
 					$sync = attach_export_data($channel,$base_image['resource_id']);
 					if($sync)
-						build_sync_packet($channel['channel_id'],array('file' => array($sync)));
+						build_sync_packet($channel['channel_id'],array('file' => array($sync), 'profile' => $sync_profiles));
 
 
 					// Similarly, tell the nav bar to bypass the cache and update the avatar image.

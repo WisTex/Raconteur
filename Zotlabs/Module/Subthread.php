@@ -11,10 +11,13 @@ class Subthread extends \Zotlabs\Web\Controller {
 
 	function get() {
 	
-		if((! local_channel()) && (! remote_channel())) {
+		if(! local_channel()) {
 			return;
 		}
 	
+		$sys = get_sys_channel();
+		$channel = \App::get_channel();
+
 		$item_id = ((argc() > 2) ? notags(trim(argv(2))) : 0);
 	
 		if(argv(1) === 'sub')
@@ -23,10 +26,31 @@ class Subthread extends \Zotlabs\Web\Controller {
 			$activity = ACTIVITY_UNFOLLOW;
 	
 	
-		$r = q("SELECT parent FROM item WHERE id = '%s'",
-			dbesc($item_id)
+		$i = q("select * from item where id = %d and uid = %d",
+			intval($item_id),
+			intval(local_channel())
 		);
-	
+
+		if(! $i) {
+			$i = q("select * from item where id = %d and uid = %d",
+				intval($postid),
+				intval($sys['channel_id'])
+			);
+
+			if($i) {
+				$i = [ copy_of_pubitem($channel, $i[0]['mid']) ];
+				$item_id = (($i) ? $i[0]['id'] : 0);
+			}
+		}
+		
+		if(! $i) {
+			return;
+		}
+
+		$r = q("SELECT parent FROM item WHERE id = %d",
+			intval($item_id)
+		);
+
 		if($r) {
 			$r = q("select * from item where id = parent and id = %d limit 1",
 				dbesc($r[0]['parent'])

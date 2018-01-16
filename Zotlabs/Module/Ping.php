@@ -140,7 +140,7 @@ class Ping extends \Zotlabs\Web\Controller {
 			db_utcnow(), db_quoteinterval('3 MINUTE')
 		);
 
-		$discover_tab_on = ((get_config('system','disable_discover_tab') != 1) ? true : false);
+		$discover_tab_on = ((get_config('system','disable_discover_tab') || get_config('system','disable_discover_tab') === false) ? false : true);
 		$notify_pubs = ((local_channel()) ? ($vnotify & VNOTIFY_PUBS) && $discover_tab_on : $discover_tab_on);
 
 		if($notify_pubs) {
@@ -279,8 +279,8 @@ class Ping extends \Zotlabs\Web\Controller {
 						'photo' => $tt['photo'],
 						'when' => relative_date($tt['created']),
 						'hclass' => (($tt['seen']) ? 'notify-seen' : 'notify-unseen'),
-						'b64mid' => $b64mid,
-						'notify_id' => (($tt['otype'] == 'item') ? $tt['id'] : ''),
+						'b64mid' => (($tt['otype'] == 'item') ? $b64mid : 'undefined'),
+						'notify_id' => (($tt['otype'] == 'item') ? $tt['id'] : 'undefined'),
 						'message' => $message
 					);
 				}
@@ -496,7 +496,7 @@ class Ping extends \Zotlabs\Web\Controller {
 			$r = q("SELECT id, item_wall FROM item
 				WHERE item_unseen = 1 and uid = %d
 				$item_normal
-				AND author_xchan != '%s' $sql_extra ",
+				AND author_xchan != '%s'",
 				intval(local_channel()),
 				dbesc($ob_hash)
 			);

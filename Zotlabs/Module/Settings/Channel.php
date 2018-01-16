@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Module\Settings;
 
+require_once('include/selectors.php');
+
 
 class Channel {
 
@@ -148,7 +150,8 @@ class Channel {
 		$defpermcat       = ((x($_POST,'defpermcat')) ? notags(trim($_POST['defpermcat'])) : 'default');
 	
 		$cal_first_day   = (((x($_POST,'first_day')) && (intval($_POST['first_day']) == 1)) ? 1: 0);
-		$mailhost       = ((array_key_exists('mailhost',$_POST)) ? notags(trim($_POST['mailhost'])) : '');
+		$mailhost        = ((array_key_exists('mailhost',$_POST)) ? notags(trim($_POST['mailhost'])) : '');
+		$profile_assign  = ((x($_POST,'profile_assign')) ? notags(trim($_POST['profile_assign'])) : '');
 
 	
 		$pageflags = $channel['channel_pageflags'];
@@ -203,7 +206,7 @@ class Channel {
 			$vnotify += intval($_POST['vnotify11']);
 		if(x($_POST,'vnotify12'))
 			$vnotify += intval($_POST['vnotify12']);
-		if(x($_POST,'vnotify13') && (get_config('system', 'disable_discover_tab') != 1))
+		if(x($_POST,'vnotify13'))
 			$vnotify += intval($_POST['vnotify13']);
 	
 		$always_show_in_notices = x($_POST,'always_show_in_notices') ? 1 : 0;
@@ -242,6 +245,7 @@ class Channel {
 		set_pconfig(local_channel(),'system','cal_first_day',$cal_first_day);
 		set_pconfig(local_channel(),'system','default_permcat',$defpermcat);
 		set_pconfig(local_channel(),'system','email_notify_host',$mailhost);
+		set_pconfig(local_channel(),'system','profile_assign',$profile_assign);
 	
 		$r = q("update channel set channel_name = '%s', channel_pageflags = %d, channel_timezone = '%s', channel_location = '%s', channel_notifyflags = %d, channel_max_anon_mail = %d, channel_max_friend_req = %d, channel_expire_days = %d $set_perms where channel_id = %d",
 			dbesc($username),
@@ -477,6 +481,8 @@ class Channel {
 		$plugin = [ 'basic' => '', 'security' => '', 'notify' => '', 'misc' => '' ];
 		call_hooks('channel_settings',$plugin);
 
+		$disable_discover_tab = get_config('system','disable_discover_tab') || get_config('system','disable_discover_tab') === false;
+
 		$o .= replace_macros($stpl,array(
 			'$ptitle' 	=> t('Channel Settings'),
 	
@@ -515,6 +521,9 @@ class Channel {
 			'$permissions' => t('Default Privacy Group'),
 			'$permdesc' => t("\x28click to open/close\x29"),
 			'$aclselect' => populate_acl($perm_defaults, false, \Zotlabs\Lib\PermissionDescription::fromDescription(t('Use my default audience setting for the type of object published'))),
+			'$profseltxt' => t('Profile to assign new connections'),
+			'$profselect' => ((feature_enabled(local_channel(),'multi_profiles')) ? contact_profile_assign(get_pconfig(local_channel(),'system','profile_assign','')) : ''),
+
 			'$allow_cid' => acl2json($perm_defaults['allow_cid']),
 			'$allow_gid' => acl2json($perm_defaults['allow_gid']),
 			'$deny_cid' => acl2json($perm_defaults['deny_cid']),
@@ -563,7 +572,7 @@ class Channel {
 			'$vnotify10'  => array('vnotify10', t('New connections'), ($vnotify & VNOTIFY_INTRO), VNOTIFY_INTRO, t('Recommended'), $yes_no),
 			'$vnotify11'  => array('vnotify11', t('System Registrations'), ($vnotify & VNOTIFY_REGISTER), VNOTIFY_REGISTER, '', $yes_no),
 			'$vnotify12'  => array('vnotify12', t('Unseen shared files'), ($vnotify & VNOTIFY_FILES), VNOTIFY_FILES, '', $yes_no),
-			'$vnotify13'  => ((get_config('system', 'disable_discover_tab') != 1) ? array('vnotify13', t('Unseen public activity'), ($vnotify & VNOTIFY_PUBS), VNOTIFY_PUBS, '', $yes_no) : array()),
+			'$vnotify13'  => (($disable_discover_tab) ? array() : array('vnotify13', t('Unseen public activity'), ($vnotify & VNOTIFY_PUBS), VNOTIFY_PUBS, '', $yes_no)),
 			'$mailhost' => [ 'mailhost', t('Email notification hub (hostname)'), get_pconfig(local_channel(),'system','email_notify_host',\App::get_hostname()), sprintf( t('If your channel is mirrored to multiple hubs, set this to your preferred location. This will prevent duplicate email notifications. Example: %s'),\App::get_hostname()) ],
 			'$always_show_in_notices'  => array('always_show_in_notices', t('Also show new wall posts, private messages and connections under Notices'), $always_show_in_notices, 1, '', $yes_no),
 	

@@ -246,8 +246,8 @@ function bb_parse_element($match) {
 	$j = json_decode(base64url_decode($match[1]),true);
 
 	if ($j && local_channel()) {
-		$text = sprintf( t('Install %s element: '), translate_design_element($j['type'])) . $j['pagetitle'];
-		$o = EOL . '<a href="#" onclick="importElement(\'' . $match[1] . '\'); return false;" >' . $text . '</a>' . EOL;
+		$text = sprintf( t('Install %1$s element %2$s'), translate_design_element($j['type']), $j['pagetitle']);
+		$o = EOL . '<button class="btn btn-primary" onclick="importElement(\'' . $match[1] . '\'); return false;" >' . $text . '</button>' . EOL;
 	}
 	else {
 		$text = sprintf( t('This post contains an installable %s element, however you lack permissions to install it on this site.' ), translate_design_element($j['type'])) . $j['pagetitle'];
@@ -329,6 +329,8 @@ function bb_ShareAttributes($match) {
 
 	if(strpos($link,'/cards/'))
 		$type = t('card');
+	elseif(strpos($link,'/articles/'))
+		$type = t('article');
 	else
 		$type = t('post');
 
@@ -425,6 +427,16 @@ function bb_spoilertag($match) {
 
 	return '<div onclick="openClose(\'opendiv-' . $rnd . '\'); return false;" class="fakelink">' . $openclose . '</div><blockquote id="opendiv-' . $rnd . '" style="display: none;">' . $text . '</blockquote>';
 }
+
+function bb_summary($match) {
+	$rnd1 = mt_rand();
+	$rnd2 = mt_rand();
+	$rnd3 = mt_rand();
+	$rnd4 = mt_rand();
+
+	return $match[1] . '<div style="display: block;" id="opendiv-' . $rnd2 . '">' . $match[2] . '</div><div style="display: block;" id="opendiv-' . $rnd3 . '" onclick="openClose(\'opendiv-' . $rnd1 . '\'); openClose(\'opendiv-' . $rnd2 . '\'); openClose(\'opendiv-' . $rnd3 . '\'); openClose(\'opendiv-' . $rnd4 . '\'); return false;" class="fakelink">' . t('View article') . '</div><div style="display: none;" id="opendiv-' . $rnd4 . '" onclick="openClose(\'opendiv-' . $rnd1 . '\'); openClose(\'opendiv-' . $rnd2 . '\'); openClose(\'opendiv-' . $rnd3 . '\'); openClose(\'opendiv-' . $rnd4 . '\'); return false;" class="fakelink">' . t('View summary') . '</div><div id="opendiv-' . $rnd1 . '" style="display: none;">' . $match[3] . '</div>';
+}
+
 
 function bb_definitionList($match) {
 	// $match[1] is the markup styles for the "terms" in the definition list.
@@ -705,10 +717,12 @@ function parseIdentityAwareHTML($Text) {
 	return $Text;
 }
 
-	// BBcode 2 HTML was written by WAY2WEB.net
-	// extended to work with Mistpark/Friendica/Redmatrix/Hubzilla - Mike Macgirvin
 
-function bbcode($Text, $preserve_nl = false, $tryoembed = true, $cache = false) {
+function bbcode($Text, $options = []) {
+
+	$preserve_nl = ((array_key_exists('preserve_nl',$options)) ? $options['preserve_nl'] : false);
+	$tryoembed   = ((array_key_exists('tryoembed',$options)) ? $options['tryoembed'] : true);
+	$cache       = ((array_key_exists('cache',$options)) ? $options['cache'] : false);
 
 
 	call_hooks('bbcode_filter', $Text);
@@ -937,27 +951,34 @@ function bbcode($Text, $preserve_nl = false, $tryoembed = true, $cache = false) 
 	// Check for h1
 	if (strpos($Text,'[h1]') !== false) {
 		$Text = preg_replace("(\[h1\](.*?)\[\/h1\])ism",'<h1>$1</h1>',$Text);
+		$Text = str_replace('</h1><br />', '</h1>', $Text);
 	}
 	// Check for h2
 	if (strpos($Text,'[h2]') !== false) {
 		$Text = preg_replace("(\[h2\](.*?)\[\/h2\])ism",'<h2>$1</h2>',$Text);
+		$Text = str_replace('</h2><br />', '</h2>', $Text);
 	}
 	// Check for h3
 	if (strpos($Text,'[h3]') !== false) {
 		$Text = preg_replace("(\[h3\](.*?)\[\/h3\])ism",'<h3>$1</h3>',$Text);
+		$Text = str_replace('</h3><br />', '</h3>', $Text);
 	}
 	// Check for h4
 	if (strpos($Text,'[h4]') !== false) {
 		$Text = preg_replace("(\[h4\](.*?)\[\/h4\])ism",'<h4>$1</h4>',$Text);
+		$Text = str_replace('</h4><br />', '</h4>', $Text);
 	}
 	// Check for h5
 	if (strpos($Text,'[h5]') !== false) {
 		$Text = preg_replace("(\[h5\](.*?)\[\/h5\])ism",'<h5>$1</h5>',$Text);
+		$Text = str_replace('</h5><br />', '</h5>', $Text);
 	}
 	// Check for h6
 	if (strpos($Text,'[h6]') !== false) {
 		$Text = preg_replace("(\[h6\](.*?)\[\/h6\])ism",'<h6>$1</h6>',$Text);
+		$Text = str_replace('</h6><br />', '</h6>', $Text);
 	}
+
 	// Check for table of content without params
 	while(strpos($Text,'[toc]') !== false) {
 		$toc_id = 'toc-' . random_string(10);
@@ -1049,6 +1070,11 @@ function bbcode($Text, $preserve_nl = false, $tryoembed = true, $cache = false) 
 	// Check for [code options] text
 	if (strpos($Text,'[code ') !== false) {
 		$Text = preg_replace_callback("/\[code(.*?)\](.*?)\[\/code\]/ism", 'bb_code_options', $Text);
+	}
+
+
+	if(strpos($Text,'[/summary]') !== false) {
+		$Text = preg_replace_callback("/^(.*?)\[summary\](.*?)\[\/summary\](.*?)$/ism", 'bb_summary', $Text);
 	}
 
 	// Check for [spoiler] text

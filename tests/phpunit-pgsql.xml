@@ -30,5 +30,6 @@
         <log type="coverage-clover" target="./results/coverage-clover.xml"/>
         <log type="coverage-html" target="./results/coverage-report/" lowUpperBound="35"
         highLowerBound="70"/>
+        <log type="testdox-text" target="./results/testdox.txt"/>
     </logging>
 </phpunit>

@@ -482,10 +482,10 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 	$previewing = (($preview) ? ' preview ' : '');
 	$preview_lbl = t('This is an unsaved preview');
 
-	if ($mode === 'network') {
+	if (in_array($mode, [ 'network', 'pubstream'])) {
 
 		$profile_owner = local_channel();
-		$page_writeable = true;
+		$page_writeable = ((local_channel()) ? true : false);
 
 		if (!$update) {
 			// The special div is needed for liveUpdate to kick in for this page.
@@ -513,6 +513,12 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 		}
 	}
 
+	elseif ($mode === 'hq') {
+		$profile_owner = local_channel();
+		$page_writeable = true;
+		$live_update_div = '<div id="live-hq"></div>' . "\r\n";
+	}
+
 	elseif ($mode === 'channel') {
 		$profile_owner = App::$profile['profile_uid'];
 		$page_writeable = ($profile_owner == local_channel());
@@ -534,6 +540,15 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 		$profile_owner = App::$profile['profile_uid'];
 		$page_writeable = ($profile_owner == local_channel());
 		$live_update_div = '<div id="live-cards"></div>' . "\r\n"
+			. "<script> var profile_uid = " . App::$profile['profile_uid']
+			. "; var netargs = '?f='; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
+		$jsreload = $_SESSION['return_url'];
+	}
+
+	elseif ($mode === 'articles') {
+		$profile_owner = App::$profile['profile_uid'];
+		$page_writeable = ($profile_owner == local_channel());
+		$live_update_div = '<div id="live-articles"></div>' . "\r\n"
 			. "<script> var profile_uid = " . App::$profile['profile_uid']
 			. "; var netargs = '?f='; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
 		$jsreload = $_SESSION['return_url'];
@@ -619,13 +634,14 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 			// "New Item View" on network page or search page results
 			// - just loop through the items and format them minimally for display
 
-
-			//$tpl = get_markup_template('search_item.tpl');
 			$tpl = 'search_item.tpl';
 
 			foreach($items as $item) {
 
-				$x = [ 'mode' => $mode, 'item' => $item ];
+				$x = [ 
+					'mode' => $mode, 
+					'item' => $item 
+				];
 				call_hooks('stream_item',$x);
 				
 				if($x['item']['blocked'])
@@ -646,14 +662,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 					if(((activity_match($item['verb'],ACTIVITY_LIKE)) || (activity_match($item['verb'],ACTIVITY_DISLIKE))) 
 						&& ($item['id'] != $item['parent']))
 						continue;
-//					$nickname = $item['nickname'];
 				}
-//				else
-//					$nickname = App::$user['nickname'];
-
-//				$profile_name   = ((strlen($item['author-name']))   ? $item['author-name']   : $item['name']);
-//				if($item['author-link'] && (! $item['author-name']))
-//					$profile_name = $item['author-link'];
 
 				$sp = false;
 				$profile_link = best_link_url($item,$sp);
@@ -661,8 +670,6 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 					$sparkle = ' sparkle';
 				else
 					$profile_link = zid($profile_link);
-
-//				$normalised = normalise_link((strlen($item['author-link'])) ? $item['author-link'] : $item['url']);
 
 				$profile_name = $item['author']['xchan_name'];
 				$profile_link = $item['author']['xchan_url'];
@@ -714,7 +721,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
 				$conv_link_mid = (($mode == 'moderate') ? $item['parent_mid'] : $item['mid']);
 
-				$conv_link = (($item['item_type'] == ITEM_TYPE_CARD) ? $item['plink'] : z_root() . '/display/' . gen_link_id($conv_link_mid));
+				$conv_link = ((in_array($item['item_type'],[ ITEM_TYPE_CARD, ITEM_TYPE_ARTICLE] )) ? $item['plink'] : z_root() . '/display/' . gen_link_id($conv_link_mid));
 
 
 				$tmp_item = array(
@@ -748,8 +755,8 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 					'forged' => $forged,
 					'txt_cats' => t('Categories:'),
 					'txt_folders' => t('Filed under:'),
-					'has_cats' => ((count($body['categories'])) ? 'true' : ''),
-					'has_folders' => ((count($body['folders'])) ? 'true' : ''),
+					'has_cats' => (($body['categories']) ? 'true' : ''),
+					'has_folders' => (($body['folders']) ? 'true' : ''),
 					'text' => strip_tags($body['html']),
 					'ago' => relative_date($item['created']),
 					'app' => $item['app'],
@@ -759,6 +766,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 					'editedtime' => (($item['edited'] != $item['created']) ? sprintf( t('last edited: %s'), datetime_convert('UTC', date_default_timezone_get(), $item['edited'], 'r')) : ''),
 					'expiretime' => (($item['expires'] > NULL_DATE) ? sprintf( t('Expires: %s'), datetime_convert('UTC', date_default_timezone_get(), $item['expires'], 'r')):''),
 					'location' => $location,
+					'divider' => false,
 					'indent' => '',
 					'owner_name' => $owner_name,
 					'owner_url' => $owner_url,
@@ -1465,7 +1473,7 @@ function sort_item_children($items) {
 	$result = $items;
 	usort($result,'sort_thr_created_rev');
 	foreach($result as $k => $i) {
-		if(count($result[$k]['children'])) {
+		if($result[$k]['children']) {
 			$result[$k]['children'] = sort_item_children($result[$k]['children']);
 		}
 	}
@@ -1475,7 +1483,7 @@ function sort_item_children($items) {
 function add_children_to_list($children, &$arr) {
 	foreach($children as $y) {
 		$arr[] = $y;
-		if(count($y['children']))
+		if($y['children'])
 			add_children_to_list($y['children'], $arr);
 	}
 }
@@ -1885,6 +1893,17 @@ function profile_tabs($a, $is_owner = false, $nickname = null){
 			'title' => t('View Cards'),
 			'id'    => 'cards-tab',
 			'icon'  => 'list'
+		);
+	}
+
+	if(feature_enabled($uid,'articles')) {
+		$tabs[] = array(
+			'label' => t('articles'),
+			'url'   => z_root() . '/articles/' . $nickname,
+			'sel'   => ((argv(0) == 'articles') ? 'active' : ''),
+			'title' => t('View Articles'),
+			'id'    => 'articles-tab',
+			'icon'  => 'file-text-o'
 		);
 	}
  

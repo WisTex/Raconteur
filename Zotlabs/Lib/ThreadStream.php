@@ -54,11 +54,24 @@ class ThreadStream {
 				$this->profile_owner = local_channel();
 				$this->writable = true;
 				break;
+			case 'pubstream':
+				$this->profile_owner = local_channel();
+				$this->writable = ((local_channel()) ? true : false);
+				break;
+			case 'hq':
+				$this->profile_owner = local_channel();
+				$this->writable = true;
+				break;
 			case 'channel':
 				$this->profile_owner = \App::$profile['profile_uid'];
 				$this->writable = perm_is_allowed($this->profile_owner,$ob_hash,'post_comments');
 				break;
 			case 'cards':
+				$this->profile_owner = \App::$profile['profile_uid'];
+				$this->writable = perm_is_allowed($this->profile_owner,$ob_hash,'post_comments');
+				$this->reload = $_SESSION['return_url'];
+				break;
+			case 'articles':
 				$this->profile_owner = \App::$profile['profile_uid'];
 				$this->writable = perm_is_allowed($this->profile_owner,$ob_hash,'post_comments');
 				$this->reload = $_SESSION['return_url'];
@@ -179,6 +192,10 @@ class ThreadStream {
 					$item->set_commentable(can_comment_on_post($ob_hash,$item->data));
 			}
 		}
+		if($this->mode === 'pubstream' && (! local_channel())) {
+			$item->set_commentable(false);
+		} 
+
 		require_once('include/channel.php');
 
 		$item->set_conversation($this);

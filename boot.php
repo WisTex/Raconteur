@@ -48,9 +48,10 @@ require_once('include/zid.php');
 require_once('include/xchan.php');
 require_once('include/hubloc.php');
 require_once('include/attach.php');
+require_once('include/bbcode.php');
 
 define ( 'PLATFORM_NAME',           'hubzilla' );
-define ( 'STD_VERSION',             '2.9.1' );
+define ( 'STD_VERSION',             '3.1.1' );
 define ( 'ZOT_REVISION',            '1.3' );
 
 define ( 'DB_UPDATE_VERSION',       1198  );
@@ -560,6 +561,7 @@ define ( 'ITEM_BUG',			 0x0400);	// Is a bug, can be used by the internal bug tr
 define ( 'ITEM_PENDING_REMOVE',  0x0800);   // deleted, notification period has lapsed
 define ( 'ITEM_DOC',             0x1000);   // hubzilla only, define here so that item import does the right thing
 define ( 'ITEM_CARD',            0x2000);
+define ( 'ITEM_ARTICLE',         0x4000);
 
 
 define ( 'ITEM_TYPE_POST',       0 );
@@ -569,6 +571,7 @@ define ( 'ITEM_TYPE_WEBPAGE',    3 );
 define ( 'ITEM_TYPE_BUG',        4 );
 define ( 'ITEM_TYPE_DOC',        5 );
 define ( 'ITEM_TYPE_CARD',       6 );
+define ( 'ITEM_TYPE_ARTICLE',    7 );
 
 define ( 'ITEM_IS_STICKY',       1000 );
 
@@ -2007,7 +2010,7 @@ function build_querystring($params, $name = null) {
 }
 
 
-/*
+/**
  * @brief Much better way of dealing with c-style args.
  */
 function argc() {
@@ -2028,6 +2031,8 @@ function dba_timer() {
 /**
  * @brief Returns xchan_hash from the observer.
  *
+ * Observer can be a local or remote channel.
+ *
  * @return string xchan_hash from observer, otherwise empty string if no observer
  */
 function get_observer_hash() {
@@ -2037,7 +2042,6 @@ function get_observer_hash() {
 
 	return '';
 }
-
 
 /**
  * @brief Returns the complete URL of the current page, e.g.: http(s)://something.com/network

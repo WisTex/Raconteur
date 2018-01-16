@@ -11,15 +11,17 @@ class Featured {
 		call_hooks('feature_settings_post', $_POST);
 	
 		if($_POST['affinity_slider-submit']) {
-			if(intval($_POST['affinity_cmax'])) {
-				set_pconfig(local_channel(),'affinity','cmax',intval($_POST['affinity_cmax']));
-			}
-			if(intval($_POST['affinity_cmin'])) {
-				set_pconfig(local_channel(),'affinity','cmin',intval($_POST['affinity_cmin']));			
-			}
-			if(intval($_POST['affinity_cmax']) || intval($_POST['affinity_cmin'])) {
-				info( t('Affinity Slider settings updated.') . EOL);
-			}
+			$cmax = intval($_POST['affinity_cmax']);
+			if($cmax < 0 || $cmax > 99)
+				$cmax = 99;
+			$cmin = intval($_POST['affinity_cmin']);
+			if($cmin < 0 || $cmin > 99)
+				$cmin = 0;
+			set_pconfig(local_channel(),'affinity','cmin',$cmin);
+			set_pconfig(local_channel(),'affinity','cmax',$cmax);
+
+			info( t('Affinity Slider settings updated.') . EOL);
+
 		}
 		
 		build_sync_packet();
@@ -40,12 +42,12 @@ class Featured {
 			$cmax = intval(get_pconfig(local_channel(),'affinity','cmax'));
 			$cmax = (($cmax) ? $cmax : 99);
 			$setting_fields .= replace_macros(get_markup_template('field_input.tpl'), array(
-				'$field'    => array('affinity_cmax', t('Default maximum affinity level'), $cmax, '')
+				'$field'    => array('affinity_cmax', t('Default maximum affinity level'), $cmax, t('0-99 default 99'))
 			));
 			$cmin = intval(get_pconfig(local_channel(),'affinity','cmin'));
 			$cmin = (($cmin) ? $cmin : 0);
 			$setting_fields .= replace_macros(get_markup_template('field_input.tpl'), array(
-				'$field'    => array('affinity_cmin', t('Default minimum affinity level'), $cmin, '')
+				'$field'    => array('affinity_cmin', t('Default minimum affinity level'), $cmin, t('0-99 - default 0'))
 			));
 
 			$settings_addons .= replace_macros(get_markup_template('generic_addon_settings.tpl'), array(

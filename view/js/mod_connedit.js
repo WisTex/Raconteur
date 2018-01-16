@@ -19,7 +19,7 @@ $(document).ready(function() {
 
 
 	$('#id_permcat').change(function() {
-		$('.loading-role-rotator').spin(true);
+		$('.loading').toggleClass('invisible');
 		var permName = $('#id_permcat').val();
 		loadAbookRole(permName);
 	});
@@ -128,7 +128,7 @@ function loadAbookRole(name) {
 			if(this.value)
 				$('#me_id_perms_' + this.name).attr('checked','checked');
 		});
-		$('.loading-role-rotator').spin(false);
+		$('.loading').toggleClass('invisible');
 	});
 }
 

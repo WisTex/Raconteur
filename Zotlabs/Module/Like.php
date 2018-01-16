@@ -258,20 +258,27 @@ class Like extends \Zotlabs\Web\Controller {
 			// get the item. Allow linked photos (which are normally hidden) to be liked
 
 			$r = q("SELECT * FROM item WHERE id = %d 
-				and (item_type = 0 or item_type = 6) and item_deleted = 0 and item_unpublished = 0 
+				and item_type in (0,6,7) and item_deleted = 0 and item_unpublished = 0 
 				and item_delayed = 0 and item_pending_remove = 0 and item_blocked = 0 LIMIT 1",
 				intval($item_id)
 			);
+
+			// if interacting with a pubstream item,
+			// create a copy of the parent in your stream. If not the conversation
+			// parent, copy that as well.
+
+			if($r) {
+				if($r[0]['uid'] === $sys_channel['channel_id'] && local_channel()) {
+					$r = [ copy_of_pubitem(\App::get_channel(), $r[0]['mid']) ];
+				}
+			}
 
 			if(! $item_id || (! $r)) {
 				logger('like: no item ' . $item_id);
 				killme();
 			}
 
-			// Use the $effective_uid option of xchan_query to sort out comment permission
-			// for public stream items
-
-			xchan_query($r,true,(($r[0]['uid'] == $sys_channel_id) ? local_channel() : 0));
+			xchan_query($r,true);
 
 			$item = $r[0];
 

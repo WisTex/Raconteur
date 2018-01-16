@@ -1,7 +1,7 @@
 $(document).ready(function() {
 
 	$('#id_permcat').change(function() {
-		$('.loading-role-rotator').show();
+		$('.loading').toggleClass('invisible');
 		var permName = $('#id_permcat').val();
 		loadConnectionRole(permName);
 	});
@@ -25,7 +25,7 @@ function loadConnectionRole(name) {
 			if(this.value)
 				$('#id_perms_' + this.name).attr('checked','checked');
 		});
-		$('.loading-role-rotator').hide();
+		$('.loading').toggleClass('invisible');
 	});
 }
 

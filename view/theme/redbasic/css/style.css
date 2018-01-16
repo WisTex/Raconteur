@@ -113,7 +113,8 @@ a:focus,
   color: $link_colour;
 }
 
-.fakelink {
+.fakelink,
+.cursor-pointer {
 	cursor: pointer;
 }
 
@@ -304,6 +305,49 @@ nav {
 }
 
 /* spinner end */
+
+/* jumping dots */
+.jumping-dots span {
+	position: relative;
+	bottom: 0px;
+	transition-timing-function: ease-in-out;
+	-webkit-animation: jump 1s infinite;
+	animation: jump 1s infinite;
+}
+
+.jumping-dots .dot-1 {
+	-webkit-animation-delay: 200ms;
+	animation-delay: 200ms;
+}
+
+.jumping-dots .dot-2 {
+	-webkit-animation-delay: 400ms;
+	animation-delay: 400ms;
+}
+
+.jumping-dots .dot-3 {
+	-webkit-animation-delay: 600ms;
+	animation-delay: 600ms;
+}
+
+@-webkit-keyframes jump {
+	0% {
+		bottom: 0px;
+	}
+	20% {
+		bottom: 3px;
+	}
+	40% {
+		bottom: 0px;
+	}
+}
+
+@keyframes jump {
+	0%   {bottom: 0px;}
+	20%  {bottom: 3px;}
+	40%  {bottom: 0px;}
+}
+/* jumping dots end */
 
 /* footer */
 
@@ -1727,33 +1771,37 @@ dl.bb-dl > dd > li {
 
 .cloud-container {
 	float: left;
-	width: 80px;
-	height: 80px;
+	width: 100px;
+	height: 110px;
 	margin: 5px;
 }
 
 .cloud-icon-container {
-	width: 48px;
-	height: 48px;
+	width: 64px;
+	height: 64px;
 	border: 1px solid #eee;
 	border-radius: $radius;
 }
 
 .cloud-icon i {
-	font-size: 32px;
+	font-size: 42px;
 	color: #888;
 	margin-top: 8px;
+	margin-left: 6px;
 }
 
 .cloud-icon img {
-	width: 48px;
-	height: 48px;
+	max-width: 64px;
+	max-height: 64px;
 	border-radius: $radius;
 }
 
 .cloud-title {
-	width: 78px;
+	width: 98px;
 	height: 36px;
 	overflow: hidden;
 }
 
+.caption-visible {
+	max-height: 75%;
+}

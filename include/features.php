@@ -126,6 +126,16 @@ function get_features($filtered = true) {
 				feature_level('cards',1),
 			],
 
+
+			[
+				'articles',       
+				t('Articles'),          
+				t('Create interactive articles'),
+				false,
+				get_config('feature_lock','articles'),
+				feature_level('articles',1),
+			],
+
 			[
 				'nav_channel_select',  
 				t('Navigation Channel Select'), 
@@ -364,15 +374,6 @@ function get_features($filtered = true) {
 			t('Post/Comment Tools'),
 
 			[
-				'markdown',        
-				t('Markdown'),					
-				t('Use markdown for editing posts'),
-				false,
-				get_config('feature_lock','markdown'),
-				feature_level('markdown',2),
-			],
-
-			[
 				'commtag',        
 				t('Community Tagging'),					
 				t('Ability to tag existing posts'),
@@ -480,6 +481,8 @@ function get_features($filtered = true) {
 	else {
 		$narr = $arr;
 	}
-	call_hooks('get_features',$narr);
-	return $narr;
+
+	$x = [ 'features' => $narr, 'filtered' => $filtered, 'techlevel' => $techlevel ];
+	call_hooks('get_features',$x);
+	return $x['features'];
 }

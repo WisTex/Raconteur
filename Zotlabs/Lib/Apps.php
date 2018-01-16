@@ -221,6 +221,7 @@ class Apps {
 	static public function translate_system_apps(&$arr) {
 		$apps = array(
 			'Apps' => t('Apps'),
+			'Articles' => t('Articles'),
 			'Cards' => t('Cards'),
 			'Admin' => t('Site Admin'),
 			'Report Bug' => t('Report Bug'),
@@ -352,7 +353,7 @@ class Apps {
 							break;
 						default:
 							if($config)
-								$unset = ((get_config('system', $require[0]) == $require[1]) ? false : true);
+								$unset = ((get_config('system', $require[0]) === $require[1]) ? false : true);
 							else
 								$unset = ((local_channel() && feature_enabled(local_channel(),$require)) ? false : true);
 							if($unset)

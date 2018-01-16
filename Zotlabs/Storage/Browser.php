@@ -12,7 +12,7 @@ use Sabre\DAV;
  *
  * @extends \\Sabre\\DAV\\Browser\\Plugin
  *
- * @link http://github.com/friendica/red
+ * @link http://github.com/redmatrix/hubzilla
  * @license http://opensource.org/licenses/mit-license.php The MIT License (MIT)
  */
 class Browser extends DAV\Browser\Plugin {
@@ -373,8 +373,6 @@ class Browser extends DAV\Browser\Plugin {
 		if(strpos($path,$special) === 0)
 			$path = trim(substr($path,$count),'/');
 
-		$info = t('Please use DAV to upload large (video, audio) files.<br>See <a class="zrl" href="help/member/member_guide#Cloud_Desktop_Clients">Cloud Desktop Clients</a>');
-
 
 		$output .= replace_macros(get_markup_template('cloud_actionspanel.tpl'), array(
 				'$folder_header' => t('Create new folder'),
@@ -382,7 +380,6 @@ class Browser extends DAV\Browser\Plugin {
 				'$upload_header' => t('Upload file'),
 				'$upload_submit' => t('Upload'),
 				'$quota' => $quota,
-				'$info' => $info,
 				'$channick' => $this->auth->owner_nick,
 				'$aclselect' => $aclselect,
 				'$allow_cid' => acl2json($channel_acl['allow_cid']),

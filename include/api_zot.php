@@ -150,7 +150,11 @@
 		$start    = ((array_key_exists('start',$_REQUEST))    ? intval($_REQUEST['start'])   : 0);
 		$records  = ((array_key_exists('records',$_REQUEST))  ? intval($_REQUEST['records']) : 0);
 
-		$x = attach_list_files(api_user(),get_observer_hash(),$hash,$filename,$filetype,'created asc',$start,$records);
+		$since    = ((array_key_exists('since',$_REQUEST))    ? datetime_convert(date_default_timezone_get(),'UTC',$_REQUEST['since'])   : NULL_DATE);
+		$until    = ((array_key_exists('until',$_REQUEST))    ? datetime_convert(date_default_timezone_get(),'UTC',$_REQUEST['until'])   : datetime_convert());
+
+		$x = attach_list_files(api_user(),get_observer_hash(),$hash,$filename,$filetype,'created asc',$start,$records, $since, $until);
+
 		if($start || $records) {
 			$x['start'] = $start;
 			$x['records'] = count($x['results']);
@@ -226,7 +230,10 @@
 		if(! $_REQUEST['file_id'])
 			return false;
 
-		$ret = attach_export_data(api_user(),$_REQUEST['file_id']);
+		$channel = channelx_by_n(api_user());
+
+		$ret = attach_export_data($channel,$_REQUEST['file_id']);
+
 		if($ret) {
 			json_return_and_die($ret);
 		}

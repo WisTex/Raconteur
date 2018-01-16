@@ -38,7 +38,7 @@ class ThreadItem {
 		$this->toplevel = ($this->get_id() == $this->get_data_value('parent'));
 
 		// Prepare the children
-		if(count($data['children'])) {
+		if($data['children']) {
 			foreach($data['children'] as $item) {
 
 				/*
@@ -105,7 +105,17 @@ class ThreadItem {
 
 		$mode = $conv->get_mode();
 
-		$edlink = (($item['item_type'] == ITEM_TYPE_CARD) ? 'card_edit' : 'editpost');
+		switch($item['item_type']) {
+			case ITEM_TYPE_CARD:
+				$edlink = 'card_edit';
+				break;
+			case ITEM_TYPE_ARTICLE:
+				$edlink = 'article_edit';
+				break;
+			default:
+				$edlink = 'editpost';
+				break;
+		}
 
 		if(local_channel() && $observer['xchan_hash'] === $item['author_xchan'])
 			$edpost = array(z_root() . '/' . $edlink . '/' . $item['id'], t('Edit'));
@@ -186,7 +196,7 @@ class ThreadItem {
 
 		$like_count = ((x($conv_responses['like'],$item['mid'])) ? $conv_responses['like'][$item['mid']] : '');
 		$like_list = ((x($conv_responses['like'],$item['mid'])) ? $conv_responses['like'][$item['mid'] . '-l'] : '');
-		if (count($like_list) > MAX_LIKERS) {
+		if (($like_list) && (count($like_list) > MAX_LIKERS)) {
 			$like_list_part = array_slice($like_list, 0, MAX_LIKERS);
 			array_push($like_list_part, '<a class="dropdown-item" href="#" data-toggle="modal" data-target="#likeModal-' . $this->get_id() . '"><b>' . t('View all') . '</b></a>');
 		} else {
@@ -198,7 +208,7 @@ class ThreadItem {
 			$dislike_count = ((x($conv_responses['dislike'],$item['mid'])) ? $conv_responses['dislike'][$item['mid']] : '');
 			$dislike_list = ((x($conv_responses['dislike'],$item['mid'])) ? $conv_responses['dislike'][$item['mid'] . '-l'] : '');
 			$dislike_button_label = tt('Dislike','Dislikes',$dislike_count,'noun');
-			if (count($dislike_list) > MAX_LIKERS) {
+			if (($dislike_list) && (count($dislike_list) > MAX_LIKERS)) {
 				$dislike_list_part = array_slice($dislike_list, 0, MAX_LIKERS);
 				array_push($dislike_list_part, '<a class="dropdown-item" href="#" data-toggle="modal" data-target="#dislikeModal-' . $this->get_id() . '"><b>' . t('View all') . '</b></a>');
 			} else {
@@ -303,7 +313,7 @@ class ThreadItem {
 		$comment_count_txt = sprintf( tt('%d comment','%d comments',$total_children),$total_children );
 		$list_unseen_txt = (($unseen_comments) ? sprintf('%d unseen',$unseen_comments) : '');
 		
-
+		
 
 		
 
@@ -360,6 +370,7 @@ class ThreadItem {
 			'unverified' => $unverified,
 			'forged' => $forged,
 			'location' => $location,
+			'divider' => get_pconfig($conv->get_profile_owner(),'system','item_divider'),
 			'attend_label' => t('Attend'),
 			'attend_title' => t('Attendance Options'),
 			'vote_label' => t('Vote'),

@@ -114,7 +114,11 @@ function check_sanity {
     fi
     if [ ! -f /etc/debian_version ]
     then
-        die "Ubuntu is not supported"
+        die "Debian is supported only"
+    fi
+    if ! grep -q 'Linux 9' /etc/issue
+    then
+        die "Linux 9 (stretch) is supported only"x
     fi
 }
 
@@ -253,11 +257,11 @@ function install_sendmail {
 }
 
 function install_php {
-    # openssl and mbstring are included in libapache2-mod-php5
-    # to_to:  php5-suhosin
+    # openssl and mbstring are included in libapache2-mod-php
     print_info "installing php..."
-    nocheck_install "libapache2-mod-php5 php5 php-pear php5-xcache php5-curl php5-mcrypt php5-gd"
-    php5enmod mcrypt
+    nocheck_install "libapache2-mod-php php php-pear php-curl php-mcrypt php-gd"
+    sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/7.0/apache2/php.ini
+    sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/7.0/apache2/php.ini
 }
 
 function install_mysql {
@@ -277,18 +281,17 @@ function install_mysql {
     # want to be prompted for it then this can be arranged by preseeding the
     # DebConf database with the required information.
     #
-    #     echo mysql-server-5.5 mysql-server/root_password password xyzzy | debconf-set-selections
-    #     echo mysql-server-5.5 mysql-server/root_password_again password xyzzy | debconf-set-selections
+    #     echo mysql-server mysql-server/root_password password xyzzy | debconf-set-selections
+    #     echo mysql-server mysql-server/root_password_again password xyzzy | debconf-set-selections
     #
     print_info "installing mysql..."
     if [ -z "$mysqlpass" ]
     then
         die "mysqlpass not set in $configfile"
     fi
-    echo mysql-server-5.5 mysql-server/root_password password $mysqlpass | debconf-set-selections
-    echo mysql-server-5.5 mysql-server/root_password_again password $mysqlpass | debconf-set-selections
-    nocheck_install "php5-mysql mysql-server mysql-client"
-    php5enmod mcrypt
+    echo mysql-server mysql-server/root_password password $mysqlpass | debconf-set-selections
+    echo mysql-server mysql-server/root_password_again password $mysqlpass | debconf-set-selections
+    nocheck_install "php-mysql mysql-server mysql-client"
 }
 
 function install_phpmyadmin {
@@ -327,6 +330,7 @@ function install_phpmyadmin {
         echo "Include /etc/phpmyadmin/apache.conf" >> /etc/apache2/apache2.conf
     fi
     service apache2 restart
+    /etc/init.d/mysql start
 }
 
 function create_hubzilla_db {
@@ -455,11 +459,6 @@ function configure_cron_selfhost {
     fi
 }
 
-function install_git {
-    print_info "installing git..."
-    nocheck_install "git"
-}
-
 function install_letsencrypt {
     print_info "installing let's encrypt ..."
     # check if user gave domain
@@ -511,6 +510,8 @@ END
     then
         die "Failed to load $url_http"
     fi
+    # accept terms of service of letsencrypt
+    ./dehydrated --register --accept-terms
     # run script dehydrated
     # 
     ./dehydrated --cron --config $le_dir/config.sh
@@ -564,17 +565,13 @@ function check_https {
 }
 
 function install_hubzilla {
-    print_info "installing hubzilla..."
-    # rm -R /var/www/html/ # for "stand alone" usage
-    cd /var/www/
-    # git clone https://github.com/redmatrix/hubzilla html # for "stand alone" usage
-    cd html/
-    git clone https://github.com/redmatrix/hubzilla-addons addon
+    print_info "installing hubzilla addons..."
+    cd /var/www/html/
+    util/add_addon_repo https://github.com/redmatrix/hubzilla-addons.git hzaddons
     mkdir -p "store/[data]/smarty3"
     chmod -R 777 store
     touch .htconfig.php
     chmod ou+w .htconfig.php
-    install_hubzilla_plugins
     cd /var/www/
     chown -R www-data:www-data html
 	chown root:www-data /var/www/html/
@@ -587,73 +584,6 @@ function install_hubzilla {
         print_warn "Hubzillas registration prozess might have email verification switched on."
     fi
     print_info "installed hubzilla"
-}
-
-function install_hubzilla_plugins {
-    print_info "installing hubzilla plugins..."
-    cd /var/www/html
-    plugin_install=.homeinstall/plugin_install.txt
-    theme_install=.homeinstall/theme_install.txt
-    # overwrite script to update the plugin and themes
-    rm -f $plugins_update
-    echo "cd /var/www/html" >> $plugins_update
-    ###################
-    # write plugin file
-    if [ ! -f "$plugin_install" ]
-    then
-        echo "# To install a plugin" >> $plugin_install
-        echo "# 1. add the plugin in a new line and run" >> $plugin_install
-        echo "# 2. run" >> $plugin_install
-        echo "#   cd /var/www/html/.homeinstall" >> $plugin_install
-        echo "#   ./hubzilla-setup.sh" >> $plugin_install
-        echo "https://gitlab.com/zot/ownmapp.git ownMapp" >> $plugin_install
-        echo "https://gitlab.com/zot/hubzilla-chess.git chess" >> $plugin_install
-    fi
-    # install plugins
-    while read -r line; do
-        [[ "$line" =~ ^#.*$ ]] && continue
-        p_url=$(echo $line | awk -F' ' '{print $1}')
-        p_name=$(echo $line | awk -F' ' '{print $2}')
-        # basic check of format
-	    if [ ${#p_url} -ge 1 ] && [ ${#p_name} -ge 1 ]
-	    then
-            # install addon
-            util/add_addon_repo $line
-            util/update_addon_repo $p_name # not sure if this line is neccessary
-            echo "util/update_addon_repo $p_name" >> $plugins_update
-        else
-            print_info "skipping installation of a plugin from file $plugin_install - something wrong with format in line: $line"
-	    fi
-    done < "$plugin_install"
-    ###################
-    # write theme file
-    if [ ! -f "$theme_install" ]
-    then
-        echo "# To install a theme" >> $theme_install
-        echo "# 1. add the theme in a new line and run" >> $theme_install
-        echo "# 2. run" >> $theme_install
-        echo "#   cd /var/www/html/.homeinstall" >> $theme_install
-        echo "#   ./hubzilla-setup.sh" >> $theme_install
-        echo "https://github.com/DeadSuperHero/hubzilla-themes.git DeadSuperHeroThemes" >> $theme_install
-
-    fi
-    # install plugins
-    while read -r line; do
-        [[ "$line" =~ ^#.*$ ]] && continue
-        p_url=$(echo $line | awk -F' ' '{print $1}')
-        p_name=$(echo $line | awk -F' ' '{print $2}')
-        # basic check of format
-	    if [ ${#p_url} -ge 1 ] && [ ${#p_name} -ge 1 ]
-	    then
-            # install addon
-            util/add_theme_repo $line
-            util/update_theme_repo $p_name # not sure if this line is neccessary
-            echo "util/update_theme_repo $p_name" >> $plugins_update
-        else
-            print_info "skipping installation of a theme from file $theme_install - something wrong with format in line: $line"
-	    fi
-    done < "$theme_install"
-    print_info "installed hubzilla plugins and themes"
 }
 
 function rewrite_to_https {
@@ -675,25 +605,19 @@ function rewrite_to_https {
 function install_rsnapshot {
     print_info "installing rsnapshot..."
     nocheck_install "rsnapshot"
-	# internal disk
-    cp -f /etc/rsnapshot.conf $snapshotconfig   
-    sed -i "/hourly/s/retain/#retain/" $snapshotconfig 
-    sed -i "/monthly/s/#retain/retain/" $snapshotconfig 
+    # internal disk
+    cp -f /etc/rsnapshot.conf $snapshotconfig
     sed -i "s/^cmd_cp/#cmd_cp/" $snapshotconfig
     sed -i "s/^backup/#backup/" $snapshotconfig
-    if [ -z "`grep 'letsencrypt' $snapshotconfig`" ]
-    then
-		echo "backup	/var/lib/mysql/	localhost/" >> $snapshotconfig
-		echo "backup	/var/www/html/	localhost/" >> $snapshotconfig
-		echo "backup	/var/www/letsencrypt/	localhost/" >> $snapshotconfig
-    fi
+	echo "backup	/var/lib/mysql/	localhost/" >> $snapshotconfig
+	echo "backup	/var/www/html/	localhost/" >> $snapshotconfig
+	echo "backup	/var/www/letsencrypt/	localhost/" >> $snapshotconfig
 	# external disk
-	if [ -n "$backup_device_name" ] && [ -n "$backup_device_pass" ]
+	if [ -n "$backup_device_name" ]
 	then
 		cp -f /etc/rsnapshot.conf $snapshotconfig_external_device   
 		sed -i "s#snapshot_root.*#snapshot_root	$backup_mount_point#" $snapshotconfig_external_device
-		sed -i "/hourly/s/retain/#retain/" $snapshotconfig_external_device 
-		sed -i "/monthly/s/#retain/retain/" $snapshotconfig_external_device 
+		sed -i "/alpha/s/6/30/" $snapshotconfig_external_device 
 		sed -i "s/^cmd_cp/#cmd_cp/" $snapshotconfig_external_device
 		sed -i "s/^backup/#backup/" $snapshotconfig_external_device
 		if [ -z "`grep 'letsencrypt' $snapshotconfig_external_device`" ]
@@ -767,9 +691,7 @@ echo "        if mount $backup_device_name $backup_mount_point" >> /var/www/$hub
 echo "        then" >> /var/www/$hubzilladaily
 echo "            device_mounted=1" >> /var/www/$hubzilladaily
 echo "            echo \"device $backup_device_name is now mounted. Starting backup...\"" >> /var/www/$hubzilladaily
-echo "			rsnapshot -c $snapshotconfig_external_device daily" >> /var/www/$hubzilladaily
-echo "			rsnapshot -c $snapshotconfig_external_device weekly" >> /var/www/$hubzilladaily
-echo "			rsnapshot -c $snapshotconfig_external_device monthly" >> /var/www/$hubzilladaily
+echo "			rsnapshot -c $snapshotconfig_external_device alpha" >> /var/www/$hubzilladaily
 echo "			echo \"\$(date) - disk sizes...\"" >> /var/www/$hubzilladaily
 echo "			df -h" >> /var/www/$hubzilladaily
 echo "			echo \"\$(date) - db size...\"" >> /var/www/$hubzilladaily
@@ -788,28 +710,22 @@ echo "    fi" >> /var/www/$hubzilladaily
 echo "fi" >> /var/www/$hubzilladaily
 echo "if [ \$device_mounted == 0 ]" >> /var/www/$hubzilladaily
 echo "then" >> /var/www/$hubzilladaily
-echo "    echo \"device could not be mounted $backup_device_name. Using internal disk for backup...\"" >> /var/www/$hubzilladaily
-echo "	rsnapshot -c $snapshotconfig daily" >> /var/www/$hubzilladaily
-echo "	rsnapshot -c $snapshotconfig weekly" >> /var/www/$hubzilladaily
-echo "	rsnapshot -c $snapshotconfig monthly" >> /var/www/$hubzilladaily
+echo "    echo \"device could not be mounted $backup_device_name. No backup written.\"" >> /var/www/$hubzilladaily
 echo "fi" >> /var/www/$hubzilladaily
 echo "#" >> /var/www/$hubzilladaily
 echo "echo \"\$(date) - db size...\"" >> /var/www/$hubzilladaily
-echo "du -h /var/cache/rsnapshot/ | grep mysql/hubzilla" >> /var/www/$hubzilladaily
+echo "du -h /var/lib/mysql/ | grep mysql/hubzilla" >> /var/www/$hubzilladaily
 echo "#" >> /var/www/$hubzilladaily
 echo "# update" >> /var/www/$hubzilladaily
 echo "echo \"\$(date) - updating dehydrated...\"" >> /var/www/$hubzilladaily
 echo "git -C /var/www/letsencrypt/ pull" >> /var/www/$hubzilladaily
 echo "echo \"\$(date) - updating hubhilla core...\"" >> /var/www/$hubzilladaily
-echo "git -C /var/www/html/ pull" >> /var/www/$hubzilladaily
-echo "echo \"\$(date) - updating hubhilla addons...\"" >> /var/www/$hubzilladaily
-echo "git -C /var/www/html/addon/ pull" >> /var/www/$hubzilladaily
-echo "bash /var/www/html/$plugins_update" >> /var/www/$hubzilladaily
+echo "(cd /var/www/html/ ; util/udall)" >> /var/www/$hubzilladaily
 echo "chown -R www-data:www-data /var/www/html/ # make all accessable for the webserver" >> /var/www/$hubzilladaily
 echo "chown root:www-data /var/www/html/.htaccess" >> /var/www/$hubzilladaily
 echo "chmod 0644 /var/www/html/.htaccess # www-data can read but not write it" >> /var/www/$hubzilladaily
 echo "echo \"\$(date) - updating linux...\"" >> /var/www/$hubzilladaily
-echo "apt-get -q -y update && apt-get -q -y dist-upgrade # update linux and upgrade" >> /var/www/$hubzilladaily
+echo "apt-get -q -y update && apt-get -q -y dist-upgrade && apt-get -q -y autoremove # update linux and upgrade" >> /var/www/$hubzilladaily
 echo "echo \"\$(date) - Backup hubzilla and update linux finished. Rebooting...\"" >> /var/www/$hubzilladaily
 echo "#" >> /var/www/$hubzilladaily
 echo "reboot" >> /var/www/$hubzilladaily
@@ -894,7 +810,6 @@ install_run_selfhost
 ping_domain
 configure_cron_freedns
 configure_cron_selfhost
-install_git
 install_letsencrypt
 configure_apache_for_https
 check_https

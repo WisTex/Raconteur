@@ -234,7 +234,11 @@ class Register extends \Zotlabs\Web\Controller {
 		if(get_config('system','no_age_restriction')) 
 			$label_tos = sprintf( t('I accept the %s for this website'), $toslink);
 		else
-			$label_tos = sprintf( t('I am over 13 years of age and accept the %s for this website'), $toslink);
+			$age = get_config('system','minimum_age');
+			if(!$age) {
+				$age = 13;
+			}
+			$label_tos = sprintf( t('I am over %s years of age and accept the %s for this website'), $age, $toslink);
 	
 		$enable_tos = 1 - intval(get_config('system','no_termsofservice'));
 	

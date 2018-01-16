@@ -65,15 +65,34 @@ function get_feed_for($channel, $observer_hash, $params) {
 	if(! $channel)
 		http_status_exit(401);
 
-	if($params['pages']) {
-		if(! perm_is_allowed($channel['channel_id'],$observer_hash,'view_pages'))
-			http_status_exit(403);
-	} else {
-		if(! perm_is_allowed($channel['channel_id'],$observer_hash,'view_stream'))
-			http_status_exit(403);
-	}
 
 	// logger('params: ' . print_r($params,true));
+
+
+	$interactive = ((is_array($params) && array_key_exists('interactive',$params)) ? intval($params['interactive']) : 0);
+
+
+	if($params['pages']) {
+		if(! perm_is_allowed($channel['channel_id'],$observer_hash,'view_pages')) {
+			if($interactive) {
+				return '';
+			}
+			else {
+				http_status_exit(403);
+			}
+		}
+	}
+	else {
+		if(! perm_is_allowed($channel['channel_id'],$observer_hash,'view_stream')) {
+			if($interactive) {
+				return '';
+			}
+			else {
+				http_status_exit(403);
+			}
+		}
+	}
+
 
 	$feed_template = get_markup_template('atom_feed.tpl');
 
@@ -1286,7 +1305,7 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 
 				// allow likes of comments
 
-				if($item_parent_mid && activity_match($datarray['verb'],ACTVITY_LIKE)) {
+				if($item_parent_mid && activity_match($datarray['verb'],ACTIVITY_LIKE)) {
 					$datarray['thr_parent'] = $item_parent_mid[0]['parent_mid'];
 				}
 
@@ -1782,12 +1801,17 @@ function compat_photos_list($s) {
 
 	if($found) {
 		foreach($matches as $match) {
-			$ret[] = [
+			$entry = [
 				'href' => $match[2],
-				'length' => 0,
 				'type' => guess_image_type($match[2])
 			];
+			$sizer = new \Zotlabs\Lib\Img_filesize($match[2]);
+			$size = $sizer->getSize();
+			if(intval($size)) {
+				$entry['length'] = intval($size);
+			}
 
+			$ret[] = $entry;
 		}
 	}
 

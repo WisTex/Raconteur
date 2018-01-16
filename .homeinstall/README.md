@@ -2,10 +2,19 @@
 
 Run hubzilla-setup.sh for an unattended installation of hubzilla.
 
-The script is known to work with Debian 8.3 stable (Jessie)
+The script is known to work without adjustments with
 
-+ Home-PC (Debian-8.3.0-amd64)
-+ DigitalOcean droplet (Debian 8.3 x64 / 512 MB Memory / 20 GB Disk / NYC3)
++ Hardware
+  - Mini-PC with Debian-9.2-amd64, or
+  - Rapberry 3 with Raspbian, Debian-9.3
++ DynDNS
+  - selfHOST.de
+  - freedns.afraid.org
+
+## Disclaimers
+
+- This script does work with Debian 9 only.
+- This script has to be used on a fresh debian install only (it does not take account for a possibly already installed and configured webserver or sql implementation).
 
 # Step-by-Step Overwiew
 
@@ -14,25 +23,28 @@ The script is known to work with Debian 8.3 stable (Jessie)
 Hardware
 
 + Internet connection and router at home
-+ Mini-pc connected to your router
++ Mini-pc connected to your router (a Raspberry 3 will do for very small Hubs)
 + USB drive for backups
 
 Software
 
-+ Fresh installation of Debian on your mini-pc
-+ Router with open ports 80 and 443 for your Debian
++ Fresh installation of Debian 9 (Stretch)
++ Router with open ports 80 and 443 for your Hub
 
 ## The basic steps (quick overview)
 
 + Register your own domain (for example at selfHOST) or a free subdomain (for example at freeDNS)
-+ Log on to your new debian (server)
++ Log on to your fresh Debian
   - apt-get install git
   - mkdir -p /var/www
   - cd /var/www
   - git clone https://github.com/redmatrix/hubzilla.git html
-  - cp .homeinstall/hubzilla-config.txt.template .homeinstall/hubzilla-config.txt
-  - nano .homeinstall/hubzilla-config.txt
-    - Enter your values there: db pass, domain, values for dyn DNS
+  - cd /html/.homeinstall
+  - cp hubzilla-config.txt.template hubzilla-config.txt
+  - nano hubzilla-config.txt
+    - Read the comments carefully
+    - Enter your values: db pass, domain, values for dyn DNS
+  - Make sure your external drive (for backups) is mounted
   - hubzilla-setup.sh as root
     - ... wait, wait, wait until the script is finised
   - reboot
@@ -46,23 +58,44 @@ Software
 
 ### Recommended: USB Drive for Backups
 
-The installation will create a daily backup.
+The installation will create a daily backup written to an external drive.
 
-If the backup process does not find an external device than the backup goes to
-the internal disk.
+The USB drive must be compatible with the filesystems
 
-The USB drive must be compatible with an encrpyted filesystem LUKS + ext4.
+- ext4 (if you do not want to encrypt the USB) 
+- LUKS + ext4 (if you want to encrypt the USB) 
+
+The backup includes 
+
+- Hubzilla DB
+- Hubzilla installation /var/www/html
+- Certificates for letsencrypt
 
 ## Preparations Software
 
 ### Install Debian Linux on the Mini-PC
 
-Download the stable Debian at https://www.debian.org/
+Download the stable Debian at https://www.debian.org/  
+(Debian 8 is no longer supported.)
 
-Create bootable USB drive with Debian on it. You could use the programm
-unetbootin, https://en.wikipedia.org/wiki/UNetbootin
+Create bootable USB drive with Debian on it.You could use
 
-Switch of your mini pc, plug in your USB drive and start the mini pc from the
+- unetbootin, https://en.wikipedia.org/wiki/UNetbootin
+- or simply the linux command "dd"
+
+Example for command dd...
+
+    su -
+    dd if=2017-11-29-raspbian-stretch.img of=/dev/mmcblk0
+
+Do not forget to unmount the SD card before and check if unmounted like in this example...
+
+    su -
+    umount /dev/mmcblk0*
+    df -h
+
+
+Switch off your mini pc, plug in your USB drive and start the mini pc from the
 stick. Install Debian. Follow the instructions of the installation.
 
 ### Configure your Router
@@ -79,28 +112,20 @@ You can use subdomains as well
 
     my.cooldomain.org
 
-There are two way to get a domain
+There are two ways to get a domain...
 
-- buy a domain (recommended) or
-- register a free subdomain
+### Method 1: Buy a Domain 
 
-### Method 1: Get yourself an own Domain (recommended)
+...for example buy at selfHOST.de  
 
-...for example at selfHOST.de
+The cost are around 10,- € once and 1,50 € per month (2017).
 
 ### Method 2 Register a (free) Subdomain
 
-Register a free subdomain for example at
+...for example register at freedns.afraid.org
 
-- freeDNS
-- selfHOST
+Follow the instructions in .homeinstall/hubzilla-config.txt.  
 
-WATCH THIS: A free subdomain is not the prefered way to get a domain name. Why?
-
-Let's encrpyt issues a limited number of certificates each
-day. Possibly other users of this domain will try to issue a certificate
-at the same day as you do. So make sure you choose a domain with as less subdomains as
-possible.
 
 ## Install Hubzilla on your Debian
 
@@ -135,9 +160,11 @@ Copy the template file
     
     cp hubzilla-config.txt.template hubzilla-config.txt
 
-Change the file "hubzilla-config.txt". Read the instructions there and enter your values.
+Modify the file "hubzilla-config.txt". Read the instructions there carefully and enter your values.
 
     nano hubzilla-config.txt
+
+Make sure your external drive (for backups) is plugged in and can be mounted as configured in "hubzilla-config.txt". Otherwise the daily backups will not work.
 
 Run the script
 
@@ -146,7 +173,7 @@ Run the script
 Wait... The script should not finish with an error message.
 
 In a webbrowser open your domain.
-Expected: A test page of hubzilla is shown. All checks there shoulg be
+Expected: A test page of hubzilla is shown. All checks there should be
 successfull. Go on...
 Expected: A page for the Hubzilla server configuration shows up.
 
@@ -161,4 +188,29 @@ Enter
 Leave db type "MySQL" untouched.
 
 Follow the instructions in the next pages.
+
+After the daily script was executed at 05:30 (am)
+
+- look at var/www/html/hubzilla-daily.log
+- check your backup on the external drive
+- optionally view the daily log under yourdomain.org/admin/logs/
+  - set the logfile to var/www/html/hubzilla-daily.log
+
+## Note for the Rasperry 
+
+The script was tested with an Raspberry 3 under Raspian (Debian 9.3, 2017-11-29-raspbian-stretch.img).
+
+It is recommended to deinstall these programms to avoid endless updates. Use...
+
+    sudo apt-get purge wolfram-engine sonic-pi
+    sudo apt-get autoremove
+
+It is recommended to run the Raspi without graphical frontend (X-Server). Use...
+
+    sudo raspi-config
+
+to boot the Rapsi to the client console.
+
+DO NOT FORGET TO CHANGE THE DEFAULT PASSWORD FOR USER PI!
+
 

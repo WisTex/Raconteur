@@ -567,7 +567,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 			$contact_id = \App::$poi['abook_id'];
 			$contact = \App::$poi;
 
-			$cn = q("SELECT abook_id, xchan_name from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 order by xchan_name",
+			$cn = q("SELECT abook_id, xchan_name from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and xchan_deleted = 0 order by xchan_name",
 				intval(local_channel())
 			);
 
@@ -866,7 +866,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 			$o .= replace_macros($tpl, [
 				'$header'         => (($self) ? t('Connection Default Permissions') : sprintf( t('Connection: %s'),$contact['xchan_name'])),
 				'$autoperms'      => array('autoperms',t('Apply these permissions automatically'), ((get_pconfig(local_channel(),'system','autoperms')) ? 1 : 0), t('Connection requests will be approved without your interaction'), $yes_no),
-				'$permcat'        => [ 'permcat', t('Permission role'), '', '',$permcats ],
+				'$permcat'        => [ 'permcat', t('Permission role'), '', '<span class="loading invisible">' . t('Loading') . '<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span></span>',$permcats ],
 				'$permcat_new'    => t('Add permission role'),
 				'$permcat_enable' => feature_enabled(local_channel(),'permcats'),
 				'$addr'           => $contact['xchan_addr'],

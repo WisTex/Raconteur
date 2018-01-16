@@ -27,29 +27,93 @@ function showHideBodyTextarea() {
 // initialize
 function UploadInit() {
 
+	var nickname = $('#invisible-photos-file-upload').data('nickname');
 	var fileselect = $("#photos-upload-choose");
 	var filedrag = $("#photos-upload-form");
 	var submit = $("#dbtn-submit");
+	var count = 1;
+
+   $('#invisible-photos-file-upload').fileupload({
+            url: 'photos/' + nickname,
+            dataType: 'json',
+            dropZone: filedrag,
+            maxChunkSize: 4 * 1024 * 1024,
+
+            add: function(e,data) {
+                $(data.files).each( function() { this.count = ++ count; prepareHtml(this); });
+
+                var allow_cid = ($('#photos-upload-form').data('allow_cid') || []);
+                var allow_gid = ($('#photos-upload-form').data('allow_gid') || []);
+                var deny_cid  = ($('#photos-upload-form').data('deny_cid') || []);
+                var deny_gid  = ($('#photos-upload-form').data('deny_gid') || []);
+
+                $('.acl-field').remove();
+
+                $(allow_gid).each(function(i,v) {
+                    $('#photos-upload-form').append("<input class='acl-field' type='hidden' name='group_allow[]' value='"+v+"'>");
+                });
+                $(allow_cid).each(function(i,v) {
+                    $('#photos-upload-form').append("<input class='acl-field' type='hidden' name='contact_allow[]' value='"+v+"'>");
+                });
+                $(deny_gid).each(function(i,v) {
+                    $('#photos-upload-form').append("<input class='acl-field' type='hidden' name='group_deny[]' value='"+v+"'>");
+                });
+                $(deny_cid).each(function(i,v) {
+                    $('#photos-upload-form').append("<input class='acl-field' type='hidden' name='contact_deny[]' value='"+v+"'>");
+                });
+
+                data.formData = $('#photos-upload-form').serializeArray();
+
+                data.submit();
+            },
+
+           progress: function(e,data) {
+
+                // there will only be one file, the one we are looking for                                                                                                                       
+
+                $(data.files).each( function() {
+                    var idx = this.count;
+
+                    // Dynamically update the percentage complete displayed in the file upload list                                                                                              
+                    $('#upload-progress-' + idx).html(Math.round(data.loaded / data.total * 100) + '%');
+                    $('#upload-progress-bar-' + idx).css('background-size', Math.round(data.loaded / data.total * 100) + '%');
+
+                });
+
+
+            },
+
+
+            stop: function(e,data) {
+                window.location.href = window.location.href;
+            }
+
+        });
+
+        $('#dbtn-submit').click(function(event) { event.preventDefault(); $('#invisible-photos-file-upload').trigger('click'); return false;});
+
+
+
 
 	// is XHR2 available?
-	var xhr = new XMLHttpRequest();
-	if (xhr.upload) {
+//	var xhr = new XMLHttpRequest();
+//	if (xhr.upload) {
 
 		// file select
-		fileselect.attr("multiple", 'multiple');
-		fileselect.on("change", UploadFileSelectHandler);
+//		fileselect.attr("multiple", 'multiple');
+//		fileselect.on("change", UploadFileSelectHandler);
 
 		// file submit
-		submit.on("click", fileselect, UploadFileSelectHandler);
+//		submit.on("click", fileselect, UploadFileSelectHandler);
 
 		// file drop
-		filedrag.on("dragover", DragDropUploadFileHover);
-		filedrag.on("dragleave", DragDropUploadFileHover);
-		filedrag.on("drop", DragDropUploadFileSelectHandler);
-	}
+//		filedrag.on("dragover", DragDropUploadFileHover);
+//		filedrag.on("dragleave", DragDropUploadFileHover);
+//		filedrag.on("drop", DragDropUploadFileSelectHandler);
+//	}
 
-	window.filesToUpload = 0;
-	window.fileUploadsCompleted = 0;
+//	window.filesToUpload = 0;
+//	window.fileUploadsCompleted = 0;
 }
 
 // file drag hover
@@ -98,8 +162,11 @@ function UploadFileSelectHandler(e) {
 	}
 }
 
-function prepareHtml(f, i) {
-	var num = i - 1;
+function prepareHtml(f) {
+
+	var num = f.count - 1;
+	var i = f.count;
+
 	$('#upload-index #new-upload-progress-bar-' + num.toString()).after(
 		'<tr id="new-upload-' + i + '" class="new-upload">' +
 		'<td width="1%"><i class="fa ' + getIconFromType(f.type) + '" title="' + f.type + '"></i></td>' +

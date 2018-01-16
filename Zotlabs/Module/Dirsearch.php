@@ -313,7 +313,7 @@ class Dirsearch extends \Zotlabs\Web\Controller {
 	
 			$ret['results'] = $entries;
 			if($kw) {
-				$k = dir_tagadelic($kw);
+				$k = dir_tagadelic($kw, $hub);
 				if($k) {
 					$ret['keywords'] = array();
 					foreach($k as $kv) {

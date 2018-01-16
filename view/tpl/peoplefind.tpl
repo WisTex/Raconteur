@@ -3,7 +3,7 @@
 	<form action="directory" method="post" />
 		<div class="input-group form-group">
 			<input class="form-control form-control-sm" type="text" name="search" title="{{$hint}}{{if $advanced_search}}{{$advanced_hint}}{{/if}}" placeholder="{{$desc}}" />
-			<div class="input-group-btn">
+			<div class="input-group-append">
 				<button class="btn btn-outline-secondary" type="submit" name="submit"><i class="fa fa-fw fa-search"></i></button>
 			</div>
 		</div>

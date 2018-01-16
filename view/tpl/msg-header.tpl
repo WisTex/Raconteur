@@ -26,7 +26,7 @@
 		});
 
 		$('#prvmail-attach-wrapper').click(function(event) { event.preventDefault(); $('#invisible-wall-file-upload').trigger('click'); return false;});
-		$('#prvmail-attach-wrapper-sub').click(function(event) { event.preventDefault(); $('#invisible-wall-file-upload').trigger('click'); return false;});
+		$('#prvmail-attach-sub').click(function(event) { event.preventDefault(); $('#invisible-wall-file-upload').trigger('click'); return false;});
 
 
 	});

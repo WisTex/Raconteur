@@ -1,0 +1,8 @@
+[region=aside]
+[widget=categories][var=articles]1[/var][/widget]
+[widget=tasklist][/widget]
+[widget=notes][/widget]
+[/region]
+[region=right_aside]
+[widget=notifications][/widget]
+[/region]

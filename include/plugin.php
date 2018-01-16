@@ -47,7 +47,10 @@ function uninstall_plugin($plugin) {
 }
 
 /**
- * @brief installs an addon.
+ * @brief Installs an addon.
+ *
+ * This function is called once to install the addon (either from the cli or via
+ * the web admin). This will also call load_plugin() once.
  *
  * @param string $plugin name of the addon
  * @return bool
@@ -188,7 +191,9 @@ function visible_plugin_list() {
 
 
 /**
- * @brief registers a hook.
+ * @brief Registers a hook.
+ *
+ * @see ::Zotlabs::Extend::Hook::register()
  *
  * @param string $hook the name of the hook
  * @param string $file the name of the file that hooks into
@@ -218,6 +223,8 @@ function register_hook($hook, $file, $function, $priority = 0) {
 
 /**
  * @brief unregisters a hook.
+ *
+ * @see ::Zotlabs::Extend::Hook::unregister
  *
  * @param string $hook the name of the hook
  * @param string $file the name of the file that hooks into
@@ -396,6 +403,83 @@ function get_plugin_info($plugin){
 
 	return $info;
 }
+
+/**
+ * @brief Parse widget comment in search of widget info.
+ *
+ * like
+ * \code
+ *   * Name: MyWidget
+ *   * Description: A widget
+ *   * Version: 1.2.3
+ *   * Author: John <profile url>
+ *   * Author: Jane <email>
+ *   *
+ *\endcode
+ * @param string $widget the name of the widget
+ * @return array with the information
+ */
+function get_widget_info($widget){
+	$m = array();
+	$info = array(
+		'name' => $widget,
+		'description' => '',
+		'author' => array(),
+		'maintainer' => array(),
+		'version' => '',
+		'requires' => ''
+	);
+
+	$ucwidget = ucfirst($widget);
+
+	$checkpaths = [
+		"Zotlabs/SiteWidget/$ucwidget.php",
+		"Zotlibs/Widget/$ucwidget.php",
+		"addon/$ucwidget/$ucwidget.php",
+		"addon/$widget.php"
+	];
+
+	$widget_found = false;
+
+	foreach ($checkpaths as $path) {
+		if (is_file($path)) {
+			$widget_found = true;
+			$f = file_get_contents($path);
+			break;
+		}
+	}
+
+	if(! ($widget_found && $f))		
+		return $info;
+
+	$f = escape_tags($f);
+	$r = preg_match("|/\*.*\*/|msU", $f, $m);
+
+	if ($r) {
+		$ll = explode("\n", $m[0]);
+		foreach( $ll as $l ) {
+			$l = trim($l, "\t\n\r */");
+			if ($l != ""){
+				list($k, $v) = array_map("trim", explode(":", $l, 2));
+				$k = strtolower($k);
+				if ($k == 'author' || $k == 'maintainer'){
+					$r = preg_match("|([^<]+)<([^>]+)>|", $v, $m);
+					if ($r) {
+						$info[$k][] = array('name' => $m[1], 'link' => $m[2]);
+					} else {
+						$info[$k][] = array('name' => $v);
+					}
+				}
+				else {
+					$info[$k] = $v;
+				}
+			}
+		}
+	}
+
+	return $info;
+}
+
 
 function check_plugin_versions($info) {
 

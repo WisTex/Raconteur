@@ -59,6 +59,7 @@ class Item extends \Zotlabs\Web\Controller {
 	
 		$profile_uid = ((x($_REQUEST,'profile_uid')) ? intval($_REQUEST['profile_uid'])    : 0);
 		require_once('include/channel.php');
+
 		$sys = get_sys_channel();
 		if($sys && $profile_uid && ($sys['channel_id'] == $profile_uid) && is_site_admin()) {
 			$uid = intval($sys['channel_id']);
@@ -155,7 +156,7 @@ class Item extends \Zotlabs\Web\Controller {
 			if(! x($_REQUEST,'type'))
 				$_REQUEST['type'] = 'net-comment';
 	
-			if($obj_type == ACTIVITY_OBJ_POST)
+			if($obj_type == ACTIVITY_OBJ_NOTE)
 				$obj_type = ACTIVITY_OBJ_COMMENT;
 	
 			if($parent) {
@@ -171,7 +172,7 @@ class Item extends \Zotlabs\Web\Controller {
 				);
 			}
 			// if this isn't the real parent of the conversation, find it
-			if($r !== false && count($r)) {
+			if($r) {
 				$parid = $r[0]['parent'];
 				$parent_mid = $r[0]['mid'];
 				if($r[0]['id'] != $r[0]['parent']) {
@@ -179,9 +180,16 @@ class Item extends \Zotlabs\Web\Controller {
 						intval($parid)
 					);
 				}
+
+				// if interacting with a pubstream item, 
+				// create a copy of the parent in your stream
+
+				if($r[0]['uid'] === $sys['channel_id'] && local_channel()) {
+					$r = [ copy_of_pubitem(\App::get_channel(), $r[0]['mid']) ];
+				}
 			}
-	
-			if(($r === false) || (! count($r))) {
+
+			if(! $r) {
 				notice( t('Unable to locate original post.') . EOL);
 				if($api_source)
 					return ( [ 'success' => false, 'message' => 'invalid post id' ] );	
@@ -189,15 +197,12 @@ class Item extends \Zotlabs\Web\Controller {
 					goaway(z_root() . "/" . $return_path );
 				killme();
 			}
-	
-			// can_comment_on_post() needs info from the following xchan_query 
-			// This may be from the discover tab which means we need to correct the effective uid
 
-			xchan_query($r,true,(($r[0]['uid'] == local_channel()) ? 0 : local_channel()));
-	
+			xchan_query($r,true);
+
 			$parent_item = $r[0];
 			$parent = $r[0]['id'];
-	
+
 			// multi-level threading - preserve the info but re-parent to our single level threading
 	
 			$thr_parent = $parent_mid;
@@ -499,7 +504,12 @@ class Item extends \Zotlabs\Web\Controller {
 			$body = z_input_filter($body,$mimetype,$execflag);
 		}
 	
-		// Verify ability to use html or php!!!
+
+		$arr = [ 'profile_uid' => $profile_uid, 'content' => $body, 'mimetype' => $mimetype ];
+		call_hooks('post_content',$arr);
+		$body = $arr['content'];
+		$mimetype = $arr['mimetype'];
+
 	
 		$gacl = $acl->get();
 		$str_contact_allow = $gacl['allow_cid'];
@@ -511,13 +521,6 @@ class Item extends \Zotlabs\Web\Controller {
 	
 			require_once('include/text.php');			
 	
-			if($uid && $uid == $profile_uid && feature_enabled($uid,'markdown')) {
-				require_once('include/markdown.php');
-				$body = preg_replace_callback('/\[share(.*?)\]/ism','\share_shield',$body);			
-				$body = markdown_to_bb($body,true,['preserve_lf' => true]);
-				$body = preg_replace_callback('/\[share(.*?)\]/ism','\share_unshield',$body);
-
-			}
 	
 			// BBCODE alert: the following functions assume bbcode input
 			// and will require alternatives for alternative content-types (text/html, text/markdown, text/plain, etc.)
@@ -629,6 +632,9 @@ class Item extends \Zotlabs\Web\Controller {
 				if($webpage == ITEM_TYPE_CARD) {
 					$catlink = z_root() . '/cards/' . $channel['channel_address'] . '?f=&cat=' . urlencode(trim($cat));
 				}
+				elseif($webpage == ITEM_TYPE_ARTICLE) {
+					$catlink = z_root() . '/articles/' . $channel['channel_address'] . '?f=&cat=' . urlencode(trim($cat));
+				}
 				else {
 					$catlink = $owner_xchan['xchan_url'] . '?f=&cat=' . urlencode(trim($cat));
 				}
@@ -730,6 +736,18 @@ class Item extends \Zotlabs\Web\Controller {
 			);
 			if($r) {
 				$plink = z_root() . '/cards/' . $channel['channel_address'] . '/' . $r[0]['v'];
+			}
+		}
+
+		if($webpage == ITEM_TYPE_ARTICLE) {
+			$plink = z_root() . '/articles/' . $channel['channel_address'] . '/' . (($pagetitle) ? $pagetitle : substr($mid,0,16));
+		}
+		if(($parent_item) && ($parent_item['item_type'] == ITEM_TYPE_ARTICLE)) {
+			$r = q("select v from iconfig where iconfig.cat = 'system' and iconfig.k = 'ARTICLE' and iconfig.iid = %d limit 1",
+				intval($parent_item['id'])
+			);
+			if($r) {
+				$plink = z_root() . '/articles/' . $channel['channel_address'] . '/' . $r[0]['v'];
 			}
 		}
 
@@ -1119,7 +1137,29 @@ class Item extends \Zotlabs\Web\Controller {
 			$ret['message'] = t('Unable to obtain post information from database.');
 			return $ret;
 		} 
-	
+
+		// auto-upgrade beginner (techlevel 0) accounts - if they have at least two friends and ten posts
+		// and have uploaded something (like a profile photo), promote them to level 1. 
+
+		$a = q("select account_id, account_level from account where account_id = (select channel_account_id from channel where channel_id = %d limit 1)",
+			intval($channel_id)
+		);
+		if((! intval($a[0]['account_level'])) && intval($r[0]['total']) > 10) {
+			$x = q("select count(abook_id) as total from abook where abook_channel = %d",
+				intval($channel_id)
+			);
+			if($x && intval($x[0]['total']) > 2) {
+				$y = q("select count(id) as total from attach where uid = %d",
+					intval($channel_id)
+				);
+				if($y && intval($y[0]['total']) > 1) {
+					q("update account set account_level = 1 where account_id = %d limit 1",
+						intval($a[0]['account_id'])
+					);
+				}
+			}
+		} 
+
 		if (!$iswebpage) {
 			$max = engr_units_to_bytes(service_class_fetch($channel_id,'total_items'));
 			if(! service_class_allows($channel_id,'total_items',$r[0]['total'])) {

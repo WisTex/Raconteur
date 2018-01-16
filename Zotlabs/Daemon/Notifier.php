@@ -426,8 +426,10 @@ class Notifier {
 		logger('notifier: encoded item: ' . print_r($x,true), LOGGER_DATA, LOG_DEBUG);
 
 		stringify_array_elms($recipients);
-		if(! $recipients)
+		if(! $recipients) {
+			logger('no recipients');
 			return;
+		}
 
 		//	logger('notifier: recipients: ' . print_r($recipients,true), LOGGER_NORMAL, LOG_DEBUG);
 

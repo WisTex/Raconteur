@@ -394,6 +394,7 @@ function zot_refresh($them, $channel = null, $force = false) {
 				$next_birthday = NULL_DATE;
 			}
 
+			$profile_assign = get_pconfig($channel['channel_id'],'system','profile_assign','');
 
 			// Keep original perms to check if we need to notify them
 			$previous_perms = get_all_perms($channel['channel_id'],$x['hash']);
@@ -455,6 +456,7 @@ function zot_refresh($them, $channel = null, $force = false) {
 						'abook_channel'   => intval($channel['channel_id']),
 						'abook_closeness' => intval($closeness),
 						'abook_xchan'     => $x['hash'],
+						'abook_profile'   => $profile_assign,
 						'abook_created'   => datetime_convert(),
 						'abook_updated'   => datetime_convert(),
 						'abook_dob'       => $next_birthday,
@@ -2550,7 +2552,7 @@ function sync_locations($sender, $arr, $absolute = false) {
 					'hubloc_hash'      => $sender['hash'],
 					'hubloc_addr'      => $location['address'],
 					'hubloc_network'   => 'zot',
-					'hubloc_primary'   => $location['primary'],
+					'hubloc_primary'   => intval($location['primary']),
 					'hubloc_url'       => $location['url'],
 					'hubloc_url_sig'   => $location['url_sig'],
 					'hubloc_host'      => $location['host'],
@@ -3743,6 +3745,15 @@ function process_channel_sync_delivery($sender, $arr, $deliveries) {
 					 * @TODO
 					 * We also need to import local photos if a custom photo is selected
 					 */
+
+					if((strpos($profile['thumb'],'/photo/profile/l/') !== false) || intval($profile['is_default'])) {
+						$profile['photo'] = z_root() . '/photo/profile/l/' . $channel['channel_id'];
+						$profile['thumb'] = z_root() . '/photo/profile/m/' . $channel['channel_id'];
+					}
+					else {
+						$profile['photo'] = z_root() . '/photo/' . basename($profile['photo']);
+						$profile['thumb'] = z_root() . '/photo/' . basename($profile['thumb']);
+					}
 				}
 
 				if(count($clean)) {

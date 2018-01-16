@@ -188,20 +188,21 @@ function html2bbcode($message)
 
 	node2bbcode($doc, 'hr', array(), "[hr]", "");
 
-	node2bbcode($doc, 'table', array(), "", "");
-	node2bbcode($doc, 'tr', array(), "\n", "");
-	node2bbcode($doc, 'td', array(), "\t", "");
-	//node2bbcode($doc, 'table', array(), "[table]", "[/table]");
-	//node2bbcode($doc, 'th', array(), "[th]", "[/th]");
-	//node2bbcode($doc, 'tr', array(), "[tr]", "[/tr]");
-	//node2bbcode($doc, 'td', array(), "[td]", "[/td]");
+//	node2bbcode($doc, 'table', array(), "", "");
+//	node2bbcode($doc, 'tr', array(), "\n", "");
+//	node2bbcode($doc, 'td', array(), "\t", "");
 
-	node2bbcode($doc, 'h1', array(), "\n\n[size=xx-large][b]", "[/b][/size]\n");
-	node2bbcode($doc, 'h2', array(), "\n\n[size=x-large][b]", "[/b][/size]\n");
-	node2bbcode($doc, 'h3', array(), "\n\n[size=large][b]", "[/b][/size]\n");
-	node2bbcode($doc, 'h4', array(), "\n\n[size=medium][b]", "[/b][/size]\n");
-	node2bbcode($doc, 'h5', array(), "\n\n[size=small][b]", "[/b][/size]\n");
-	node2bbcode($doc, 'h6', array(), "\n\n[size=x-small][b]", "[/b][/size]\n");
+	node2bbcode($doc, 'table', array(), "[table]", "[/table]");
+	node2bbcode($doc, 'th', array(), "[th]", "[/th]");
+	node2bbcode($doc, 'tr', array(), "[tr]", "[/tr]");
+	node2bbcode($doc, 'td', array(), "[td]", "[/td]");
+
+	node2bbcode($doc, 'h1', array(), "\n\n[h1]", "[/h1]\n");
+	node2bbcode($doc, 'h2', array(), "\n\n[h2]", "[/h2]\n");
+	node2bbcode($doc, 'h3', array(), "\n\n[h3]", "[/h3]\n");
+	node2bbcode($doc, 'h4', array(), "\n\n[h4]", "[/h4]\n");
+	node2bbcode($doc, 'h5', array(), "\n\n[h5]", "[/h5]\n");
+	node2bbcode($doc, 'h6', array(), "\n\n[h6]", "[/h6]\n");
 
 	node2bbcode($doc, 'a', array('href'=>'/(.+)/'), '[url=$1]', '[/url]');
 
@@ -211,7 +212,7 @@ function html2bbcode($message)
 
 	node2bbcode($doc, 'video', array('src'=>'/(.+)/'), '[video]$1', '[/video]');
 	node2bbcode($doc, 'audio', array('src'=>'/(.+)/'), '[audio]$1', '[/audio]');
-	node2bbcode($doc, 'iframe', array('src'=>'/(.+)/'), '[iframe]$1', '[/iframe]');
+//	node2bbcode($doc, 'iframe', array('src'=>'/(.+)/'), '[iframe]$1', '[/iframe]');
 
 	node2bbcode($doc, 'code', array(), '[code]', '[/code]');
 

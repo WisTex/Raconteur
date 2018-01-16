@@ -325,7 +325,7 @@ function create_identity($arr) {
 			'hubloc_guid_sig' => $sig,
 			'hubloc_hash'     => $hash,
 			'hubloc_addr'     => channel_reddress($ret['channel']),
-			'hubloc_primary'  => $primary,
+			'hubloc_primary'  => intval($primary),
 			'hubloc_url'      => z_root(),
 			'hubloc_url_sig'  => base64url_encode(rsa_sign(z_root(),$ret['channel']['channel_prvkey'])),
 			'hubloc_host'     => App::get_hostname(),
@@ -1490,7 +1490,7 @@ function gender_icon($gender) {
 }
 
 
-function advanced_profile(&$a) {
+function advanced_profile() {
 	require_once('include/text.php');
 	if(! perm_is_allowed(App::$profile['profile_uid'],get_observer_hash(),'view_profile'))
 		return '';
@@ -1982,12 +1982,17 @@ function get_channel_default_perms($uid) {
 }
 
 
-function profiles_build_sync($channel_id) {
+function profiles_build_sync($channel_id,$send = true) {
 	$r = q("select * from profile where uid = %d",
 		intval($channel_id)
 	);
 	if($r) {
-		build_sync_packet($channel_id,array('profile' => $r));
+		if($send) {
+			build_sync_packet($channel_id,array('profile' => $r));
+		}
+		else {
+			return $r;
+		}
 	}
 }
 

@@ -73,6 +73,11 @@ EOT;
 	// nav links: array of array('href', 'text', 'extra css classes', 'title')
 	$nav = [];
 
+	$disable_discover_tab = get_config('system','disable_discover_tab') || get_config('system','disable_discover_tab') === false;
+
+	if(! $disable_discover_tab)
+		$nav['pubs'] = true;
+
 	/**
 	 * Display login or logout
 	 */	
@@ -171,12 +176,14 @@ EOT;
 
 	}
 
-
-	$homelink = get_my_url();
-	if(! $homelink) {
+	$my_url = get_my_url();
+	if(! $my_url) {
 		$observer = App::get_observer();
-		$homelink = (($observer) ? $observer['xchan_url'] : '');
+		$my_url = (($observer) ? $observer['xchan_url'] : '');
 	}
+
+	$homelink_arr = parse_url($my_url);
+	$homelink = $homelink_arr['scheme'] . '://' . $homelink_arr['host'];
 
 	if(! $is_owner) {
 		$nav['rusermenu'] = array(
@@ -308,7 +315,7 @@ EOT;
 		'$sitelocation' => $sitelocation,
 		'$nav' => $x['nav'],
 		'$banner' =>  $banner,
-		'$emptynotifications' => t('Loading...'),
+		'$emptynotifications' => t('Loading'),
 		'$userinfo' => $x['usermenu'],
 		'$localuser' => local_channel(),
 		'$is_owner' => $is_owner,
@@ -488,6 +495,17 @@ function channel_apps($is_owner = false, $nickname = null) {
 			'title' => t('View Cards'),
 			'id'    => 'cards-tab',
 			'icon'  => 'list'
+		];
+	}
+
+	if($p['view_pages'] && feature_enabled($uid,'articles')) {
+		$tabs[] = [
+			'label' => t('Articles'),
+			'url'   => z_root() . '/articles/' . $nickname ,
+			'sel'   => ((argv(0) == 'articles') ? 'active' : ''),
+			'title' => t('View Articles'),
+			'id'    => 'articles-tab',
+			'icon'  => 'file-text-o'
 		];
 	}
 

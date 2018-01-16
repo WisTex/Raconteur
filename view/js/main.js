@@ -1,5 +1,107 @@
+var src = null;
+var prev = null;
+var livetime = null;
+var msie = false;
+var stopped = false;
+var totStopped = false;
+var timer = null;
+var pr = 0;
+var liking = 0;
+var in_progress = false;
+var langSelect = false;
+var commentBusy = false;
+var last_popup_menu = null;
+var last_popup_button = null;
+var scroll_next = false;
+var next_page = 1;
+var page_load = true;
+var loadingPage = true;
+var pageHasMoreContent = true;
+var divmore_height = 400;
+var last_filestorage_id = null;
+var mediaPlaying = false;
+var contentHeightDiff = 0;
+var liveRecurse = 0;
+var savedTitle = '';
 
-function confirmDelete() { return confirm(aStr.delitem); }
+$.ajaxSetup({cache: false});
+
+$(document).ready(function() {
+
+	$(document).on('click focus', '.comment-edit-form', handle_comment_form);
+
+	jQuery.timeago.settings.strings = {
+		prefixAgo     : aStr['t01'],
+		prefixFromNow : aStr['t02'],
+		suffixAgo     : aStr['t03'],
+		suffixFromNow : aStr['t04'],
+		seconds       : aStr['t05'],
+		minute        : aStr['t06'],
+		minutes       : aStr['t07'],
+		hour          : aStr['t08'],
+		hours         : aStr['t09'],
+		day           : aStr['t10'],
+		days          : aStr['t11'],
+		month         : aStr['t12'],
+		months        : aStr['t13'],
+		year          : aStr['t14'],
+		years         : aStr['t15'],
+		wordSeparator : aStr['t16'],
+		numbers       : aStr['t17'],
+	};
+
+	savedTitle = document.title;
+
+	updateInit();
+
+	$('a[rel^="#"]').click(function(e){
+		manage_popup_menu(this, e);
+		return;
+	});
+
+	// Allow folks to stop the ajax page updates with the pause/break key
+	$(document).keydown(function(event) {
+		if(event.keyCode == '8') {
+			var target = event.target || event.srcElement;
+			if (!/input|textarea/i.test(target.nodeName)) {
+				return false;
+			}
+		}
+
+		if(event.keyCode == '19' || (event.ctrlKey && event.which == '32')) {
+			event.preventDefault();
+			if(stopped === false) {
+				stopped = true;
+				if (event.ctrlKey) {
+					totStopped = true;
+				}
+				$('#pause').html('<img src="images/pause.gif" alt="pause" style="border: 1px solid black;" />');
+			} else {
+				unpause();
+			}
+		} else {
+			if (!totStopped) {
+				unpause();
+			}
+		}
+	});
+
+	var e = document.getElementById('content-complete');
+	if(e)
+		pageHasMoreContent = false;	
+
+});
+
+function datasrc2src(selector) {
+	$(selector).each(function(i, el) {
+		$(el).attr("src", $(el).data("src"));
+		$(el).removeAttr("data-src");
+	});
+}
+
+function confirmDelete() {
+	return confirm(aStr.delitem);
+}
 
 function handle_comment_form(e) {
 	e.stopPropagation();
@@ -59,59 +161,6 @@ function handle_comment_form(e) {
 	});
 }
 
-/*
-function commentOpenUI(obj, id) {
-	$(document).unbind( "click.commentOpen", handler );
-
-	var handler = function() {
-		if(obj.value == aStr.comment) {
-			obj.value = '';
-			$("#comment-edit-text-" + id).addClass("comment-edit-text-full").removeClass("comment-edit-text-empty");
-			// Choose an arbitrary tab index that's greater than what we're using in jot (3 of them)
-			// The submit button gets tabindex + 1
-			$("#comment-edit-text-" + id).attr('tabindex','9');
-			$("#comment-edit-submit-" + id).attr('tabindex','10');
-			$("#comment-tools-" + id).show();
-			$("#comment-edit-anon-" + id).show();
-		}
-	};
-
-	$(document).bind( "click.commentOpen", handler );
-}
-
-function commentCloseUI(obj, id) {
-	var form_id = $(obj)[0].form.id;
-
-	$('#' + form_id).on('click', function(e) {
-		$(document).unbind( "click.commentClose", handler );
-	});
-
-	var handler = function() {
-		if($('#comment-edit-text-' + id).val() === '') {
-			$('#comment-edit-text-' + id).val(aStr.comment);
-			$("#comment-edit-text-" + id).removeClass("comment-edit-text-full").addClass("comment-edit-text-empty");
-			$("#comment-edit-text-" + id).removeAttr('tabindex');
-			$("#comment-edit-submit-" + id).removeAttr('tabindex');
-			$("#comment-tools-" + id).hide();
-			$("#comment-edit-anon-" + id).hide();
-		}
-	};
-
-	$(document).bind( "click.commentClose", handler );
-}
-
-function commentOpen(obj, id) {
-	if(obj.value == aStr.comment) {
-		obj.value = '';
-		$("#comment-edit-text-" + id).addClass("expanded");
-		$("#mod-cmnt-wrap-" + id).show();
-		$("#comment-tools-" + id).show();
-		$("#comment-edit-anon-" + id).show();
-		return true;
-	}
-	return false;
-}
-*/
 function commentClose(obj, id) {
 	if(obj.value === '') {
 		obj.value = aStr.comment;
@@ -123,7 +172,6 @@ function commentClose(obj, id) {
 	}
 	return false;
 }
-
 
 function showHideCommentBox(id) {
 	if( $('#comment-edit-form-' + id).is(':visible')) {
@@ -298,9 +346,9 @@ function closeMenu(theID) {
 
 function markRead(notifType) {
 	$.get('ping?f=&markRead='+notifType);
-	if(timer) clearTimeout(timer);
 	$('.' + notifType + '-button').hide();
-	timer = setTimeout(NavUpdate,2000);
+	if(timer) clearTimeout(timer);
+	timer = setTimeout(updateInit,2000);
 }
 
 function markItemRead(itemId) {
@@ -308,191 +356,73 @@ function markItemRead(itemId) {
 	$('.unseen-wall-indicator-'+itemId).hide();
 }
 
+function manage_popup_menu(w,e) {
+	menu = $( $(w).attr('rel') );
 
-var src = null;
-var prev = null;
-var livetime = null;
-var msie = false;
-var stopped = false;
-var totStopped = false;
-var timer = null;
-var pr = 0;
-var liking = 0;
-var in_progress = false;
-var langSelect = false;
-var commentBusy = false;
-var last_popup_menu = null;
-var last_popup_button = null;
-var scroll_next = false;
-var next_page = 1;
-var page_load = true;
-var loadingPage = true;
-var pageHasMoreContent = true;
-var updateCountsOnly = false;
-var divmore_height = 400;
-var last_filestorage_id = null;
-var mediaPlaying = false;
-var contentHeightDiff = 0;
-var liveRecurse = 0;
-var savedTitle = '';
+	/* notification menus are loaded dynamically 
+	 * - here we find a rel tag to figure out what type of notification to load */
 
-$(function() {
-	$.ajaxSetup({cache: false});
+	var loader_source = $(menu).attr('rel');
 
-	msie = false; // $.browser.msie ;
-
-	var e = document.getElementById('content-complete');
-	if(e)
-		pageHasMoreContent = false;		
-
-	/* setup onoff widgets */
-	$(".onoff input").each(function(){
-		val = $(this).val();
-		id = $(this).attr("id");
-		$("#"+id+"_onoff ."+ (val==0?"on":"off")).addClass("hidden");
-	});
-	$(".onoff > a").click(function(event){
-		event.preventDefault();	
-		var input = $(this).siblings("input");
-		var val = 1-input.val();
-		var id = input.attr("id");
-		$("#"+id+"_onoff ."+ (val==0?"on":"off")).addClass("hidden");
-		$("#"+id+"_onoff ."+ (val==1?"on":"off")).removeClass("hidden");
-		input.val(val);
-		//console.log(id);
-	});
-
-	/* setup field_richtext */
-	//setupFieldRichtext();
-
-
-	/* Turn elements with one of our special rel tags into popup menus */
-	/* CHANGES: let bootstrap handle popups and only do the loading here */
-
-
-	$('a[rel^="#"]').click(function(e){
-		manage_popup_menu(this, e);
-		return;
-	});
-
-	function manage_popup_menu(w,e) {
-		menu = $( $(w).attr('rel') );
-
-		/* notification menus are loaded dynamically 
-		 * - here we find a rel tag to figure out what type of notification to load */
-
-		var loader_source = $(menu).attr('rel');
-
-		if(typeof(loader_source) != 'undefined' && loader_source.length) {	
-			notify_popup_loader(loader_source);
-		}
+	if(typeof(loader_source) != 'undefined' && loader_source.length) {	
+		notify_popup_loader(loader_source);
 	}
+}
 
-	NavUpdate(); 
-	// Allow folks to stop the ajax page updates with the pause/break key
-	$(document).keydown(function(event) {
-		if(event.keyCode == '8') {
-			var target = event.target || event.srcElement;
-			if (!/input|textarea/i.test(target.nodeName)) {
-				return false;
-			}
+function notificationsUpdate() {
+	var pingCmd = 'ping' + ((localUser != 0) ? '?f=&uid=' + localUser : '');
+
+	$.get(pingCmd,function(data) {
+
+		if(data.invalid == 1) { 
+			window.location.href=window.location.href;
 		}
 
-		if(event.keyCode == '19' || (event.ctrlKey && event.which == '32')) {
-			event.preventDefault();
-			if(stopped === false) {
-				stopped = true;
-				if (event.ctrlKey) {
-					totStopped = true;
-				}
-				$('#pause').html('<img src="images/pause.gif" alt="pause" style="border: 1px solid black;" />');
+		if(data.network || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs) {
+			$('.notifications-btn').css('opacity', 1);
+			$('#no_notifications').hide();
+		}
+		else {
+			$('.notifications-btn').css('opacity', 0.5);
+			$('#navbar-collapse-1').removeClass('show');
+			$('#no_notifications').show();
+		}
+
+		if(data.home || data.intros || data.register || data.mail || data.notify || data.files) {
+			$('.notifications-btn-icon').removeClass('fa-exclamation-circle');
+			$('.notifications-btn-icon').addClass('fa-exclamation-triangle');
+		}
+		if(!data.home && !data.intros && !data.register && !data.mail && !data.notify && !data.files) {
+			$('.notifications-btn-icon').removeClass('fa-exclamation-triangle');
+			$('.notifications-btn-icon').addClass('fa-exclamation-circle');
+		}
+
+		$.each(data, function(index, item) {
+			//do not process those
+			var arr = ['notice', 'info', 'invalid'];
+			if(arr.indexOf(index) !== -1)
+				return;
+
+			if(item == 0) {
+				$('.' + index + '-button').fadeOut();
 			} else {
-				unpause();
+				$('.' + index + '-button').fadeIn();
+				$('.' + index + '-update').html(item);
 			}
-		} else {
-			if (!totStopped) {
-				unpause();
-			}
-		}
-	});
-});
+		});
 
-function NavUpdate() {
-	if(liking)
-		$('.like-rotator').hide();
+		$.jGrowl.defaults.closerTemplate = '<div>[ ' + aStr.closeAll + ']</div>';
 
-	if((! stopped) && (! mediaPlaying)) {
-		var pingCmd = 'ping' + ((localUser != 0) ? '?f=&uid=' + localUser : '');
+		$(data.notice).each(function() {
+			$.jGrowl(this.message, { sticky: true, theme: 'notice' });
+		});
 
-		$.get(pingCmd,function(data) {
-
-			if(data.invalid == 1) { 
-				window.location.href=window.location.href;
-			}
-
-			if(! updateCountsOnly) {
-				// start live update
-
-				if($('#live-network').length)    { src = 'network'; liveUpdate(); }
-				if($('#live-channel').length)    { src = 'channel'; liveUpdate(); }
-				if($('#live-pubstream').length)  { src = 'pubstream'; liveUpdate(); }
-				if($('#live-display').length)    { src = 'display'; liveUpdate(); }
-				if($('#live-search').length)     { src = 'search'; liveUpdate(); }
-				// if($('#live-cards').length)      { src = 'cards'; liveUpdate(); }
-
-				if($('#live-photos').length || $('#live-cards').length) {
-					if(liking) {
-						liking = 0;
-						window.location.href=window.location.href;
-					}
-				}
-			}
-
-			updateCountsOnly = false;
-
-			if(data.network || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs) {
-				$('.notifications-btn').css('opacity', 1);
-			}
-			else {
-				$('.notifications-btn').css('opacity', 0.5);
-				$('#navbar-collapse-1').removeClass('show');
-			}
-
-			if(data.home || data.intros || data.register || data.mail || data.notify || data.files) {
-				$('.notifications-btn-icon').removeClass('fa-exclamation-circle');
-				$('.notifications-btn-icon').addClass('fa-exclamation-triangle');
-			}
-			if(!data.home && !data.intros && !data.register && !data.mail && !data.notify && !data.files) {
-				$('.notifications-btn-icon').removeClass('fa-exclamation-triangle');
-				$('.notifications-btn-icon').addClass('fa-exclamation-circle');
-			}
-
-			$.each(data, function(index, item) {
-				//do not process those
-				var arr = ['notice', 'info', 'invalid'];
-				if(arr.indexOf(index) !== -1)
-					return;
-
-				if(item == 0) {
-					$('.' + index + '-button').hide();
-				} else {
-					$('.' + index + '-button').show();
-					$('.' + index + '-update').html(item);
-				}
-			});
-
-			$.jGrowl.defaults.closerTemplate = '<div>[ ' + aStr.closeAll + ']</div>';
-
-			$(data.notice).each(function() {
-				$.jGrowl(this.message, { sticky: true, theme: 'notice' });
-			});
-
-			$(data.info).each(function(){
-				$.jGrowl(this.message, { sticky: false, theme: 'info', life: 10000 });
-			});
-		}) ;
-	}
-	timer = setTimeout(NavUpdate, updateInterval);
+		$(data.info).each(function(){
+			$.jGrowl(this.message, { sticky: false, theme: 'info', life: 10000 });
+		});
+	})
+	if(timer) clearTimeout(timer);
+	timer = setTimeout(updateInit,updateInterval);
 }
 
 function contextualHelp() {
@@ -696,7 +626,6 @@ function updateConvItems(mode,data) {
 	}
 
 	$(document.body).trigger("sticky_kit:recalc");
-
 }
 
 function collapseHeight() {
@@ -745,21 +674,48 @@ function collapseHeight() {
 		console.log('collapsed above viewport count: ' + i);
 		$(window).scrollTop(sval);
 	}
-
-
 }
 
-function liveUpdate() {
+function updateInit() {
+
+	if($('#live-network').length)    { src = 'network'; }
+	if($('#live-channel').length)    { src = 'channel'; }
+	if($('#live-pubstream').length)  { src = 'pubstream'; }
+	if($('#live-display').length)    { src = 'display'; }
+	if($('#live-hq').length)         { src = 'hq'; }
+	if($('#live-search').length)     { src = 'search'; }
+	// if($('#live-cards').length)      { src = 'cards'; }
+	// if($('#live-articles').length)   { src = 'articles'; }
+
+	if(! src) {
+		notificationsUpdate();
+	}
+	else {
+		liveUpdate();
+	}
+
+	if($('#live-photos').length || $('#live-cards').length || $('#live-articles').length ) {
+		if(liking) {
+			liking = 0;
+			window.location.href=window.location.href;
+		}
+	}
+}
+
+function liveUpdate(notify_id) {
 
 	if(typeof profile_uid === 'undefined') profile_uid = false; /* Should probably be unified with channelId defined in head.tpl */
+
 	if((src === null) || (stopped) || (! profile_uid)) { $('.like-rotator').hide(); return; }
-	if(($('.comment-edit-text.expanded').length) || (in_progress)) {
+
+	if(($('.comment-edit-text.expanded').length) || (in_progress) || (mediaPlaying)) {
 		if(livetime) {
 			clearTimeout(livetime);
 		}
 		livetime = setTimeout(liveUpdate, 10000);
 		return;
 	}
+
 	if(livetime !== null)
 		livetime = null;
 
@@ -816,6 +772,15 @@ function liveUpdate() {
 		// else data was valid - reset the recursion counter
 		liveRecurse = 0;
 
+		if(typeof notify_id !== 'undefined') {
+			$.post(
+				"hq",
+				{
+					"notify_id" : notify_id
+				}
+			);
+		}
+
 		var dready = new Date();
 		console.log('DATA ready in: ' + (dready - dstart)/1000 + ' seconds.');
 
@@ -839,20 +804,6 @@ function liveUpdate() {
 
 				in_progress = false;
 
-				// FIXME - the following lines were added so that almost
-				// immediately after we update the posts on the page, we
-				// re-check and update the notification counts.
-				// As it turns out this causes a bit of an inefficiency
-				// as we're pinging twice for every update, once before
-				// and once after. A btter way to do this is to rewrite
-				// NavUpdate and perhaps LiveUpdate so that we check for 
-				// post updates first and only call the notification ping 
-				// once. 
-
-				updateCountsOnly = true;
-				if(timer) clearTimeout(timer);
-				timer = setTimeout(NavUpdate,10);
-
 			});
 		}
 		else {
@@ -864,22 +815,11 @@ function liveUpdate() {
 
 			in_progress = false;
 
-			// FIXME - the following lines were added so that almost
-			// immediately after we update the posts on the page, we
-			// re-check and update the notification counts.
-			// As it turns out this causes a bit of an inefficiency
-			// as we're pinging twice for every update, once before
-			// and once after. A btter way to do this is to rewrite
-			// NavUpdate and perhaps LiveUpdate so that we check for 
-			// post updates first and only call the notification ping 
-			// once. 
-
-			updateCountsOnly = true;
-			if(timer) clearTimeout(timer);
-			timer = setTimeout(NavUpdate,10);
-
 		}
 
+	})
+	.done(function() {
+		notificationsUpdate();
 	});
 }
 
@@ -943,6 +883,7 @@ function notify_popup_loader(notifyType) {
 	var notifications_tpl= unescape($("#nav-notifications-template[rel=template]").html());
 	var notifications_all = unescape($('<div>').append( $("#nav-" + notifyType + "-see-all").clone() ).html()); //outerHtml hack
 	var notifications_mark = unescape($('<div>').append( $("#nav-" + notifyType + "-mark-all").clone() ).html()); //outerHtml hack
+	var notifications_tt_only = unescape($('<div>').append( $("#tt-" + notifyType + "-only").clone() ).html()); //outerHtml hack
 	var notifications_empty = unescape($("#nav-" + notifyType + "-menu").html());
 
 	var notify_menu = $("#nav-" + notifyType + "-menu");
@@ -954,14 +895,15 @@ function notify_popup_loader(notifyType) {
 			window.location.href=window.location.href;
 		}
 
-		$("#navbar-" + notifyType + "-menu").html(notifications_all + notifications_mark);
-		$("#nav-" + notifyType + "-menu").html(notifications_all + notifications_mark);
+		$("#navbar-" + notifyType + "-menu").html(notifications_all + notifications_mark + notifications_tt_only);
+		$("#nav-" + notifyType + "-menu").html(notifications_all + notifications_mark + notifications_tt_only);
+
 		$("." + notifyType + "-update").html(data.notify.length);
 
 		$(data.notify).each(function() {
-			html = navbar_notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id);
+			html = navbar_notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top);
 			$("#navbar-" + notifyType + "-menu").append(html);
-			html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id);
+			html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top);
 			$("#nav-" + notifyType + "-menu").append(html);
 		});
 
@@ -970,7 +912,11 @@ function notify_popup_loader(notifyType) {
 			$(el).attr('src', $(el).data("src"));
 			$(el).removeAttr("data-src");
 		});
+
+		if($('#tt-' + notifyType + '-only').hasClass('active'))
+			$('#nav-' + notifyType + '-menu [data-thread_top=false]').hide();
 	});
+
 
 	setTimeout(function() {
 		if(notify_menu.hasClass('show')) {
@@ -980,7 +926,6 @@ function notify_popup_loader(notifyType) {
 	}, 1000);
 }
 
-
 // Since our ajax calls are asynchronous, we will give a few
 // seconds for the first ajax call (setting like/dislike), then
 // run the updater to pick up any changes and display on the page.
@@ -989,20 +934,17 @@ function notify_popup_loader(notifyType) {
 // events have completed and therefore there won't be any
 // visible feedback that anything changed without all this
 // trickery. This still could cause confusion if the "like" ajax call
-// is delayed and NavUpdate runs before it completes.
-
-
+// is delayed and updateInit runs before it completes.
 function dolike(ident, verb) {
 	unpause();
 	$('#like-rotator-' + ident.toString()).show();
-	$.get('like/' + ident.toString() + '?verb=' + verb, NavUpdate );
+	$.get('like/' + ident.toString() + '?verb=' + verb, updateInit );
 	liking = 1;
 }
 
 function doprofilelike(ident, verb) {
 	$.get('like/' + ident + '?verb=' + verb, function() { window.location.href=window.location.href; });
 }
-
 
 function dropItem(url, object) {
 	var confirm = confirmDelete();
@@ -1025,19 +967,16 @@ function dropItem(url, object) {
 function dosubthread(ident) {
 	unpause();
 	$('#like-rotator-' + ident.toString()).show();
-	$.get('subthread/sub/' + ident.toString(), NavUpdate );
+	$.get('subthread/sub/' + ident.toString(), updateInit );
 	liking = 1;
 }
-
 
 function dounsubthread(ident) {
 	unpause();
 	$('#like-rotator-' + ident.toString()).show();
-	$.get('subthread/unsub/' + ident.toString(), NavUpdate );
+	$.get('subthread/unsub/' + ident.toString(), updateInit );
 	liking = 1;
 }
-
-
 
 function dostar(ident) {
 	ident = ident.toString();
@@ -1121,7 +1060,7 @@ function post_comment(id) {
 					$(document).unbind( "click.commentOpen");
 				}
 				if(timer) clearTimeout(timer);
-				timer = setTimeout(NavUpdate,1500);
+				timer = setTimeout(updateInit,1500);
 			}
 			if(data.reload) {
 				window.location.href=data.reload;
@@ -1156,7 +1095,7 @@ function importElement(elem) {
 		{ "element" : elem },
 		function(data) {
 			if(timer) clearTimeout(timer);
-			timer = setTimeout(NavUpdate,10);
+			timer = setTimeout(updateInit,10);
 		}
 	);
 	return false;
@@ -1165,7 +1104,6 @@ function importElement(elem) {
 function preview_post() {
 	$("#jot-preview").val("1");
 	$("#jot-preview-content").show();
-//	tinyMCE.triggerSave();
 	$.post(
 		"item",
 		$("#profile-jot-form").serialize(),
@@ -1271,60 +1209,6 @@ function checkboxhighlight(box) {
 	}
 }
 
-
-// code from http://www.tinymce.com/wiki.php/How-to_implement_a_custom_file_browser
-function fcFileBrowser (field_name, url, type, win) {
-	/* TODO: If you work with sessions in PHP and your client doesn't accept cookies you might need to carry
-	 the session name and session ID in the request string (can look like this: "?PHPSESSID=88p0n70s9dsknra96qhuk6etm5").
-	 These lines of code extract the necessary parameters and add them back to the filebrowser URL again. */
-
-	var cmsURL = baseurl+"/fbrowser/"+type+"/";
-
-	tinyMCE.activeEditor.windowManager.open({
-		file : cmsURL,
-		title : 'File Browser',
-		width : 420,  // Your dimensions may differ - toy around with them!
-		height : 400,
-		resizable : "yes",
-		inline : "yes",  // This parameter only has an effect if you use the inlinepopups plugin!
-		close_previous : "no"
-		}, {
-		window : win,
-		input : field_name
-	});
-	return false;
-}
-
-/*
-function setupFieldRichtext(){
-
-	tinyMCE.init({
-		theme : "advanced",
-		mode : "specific_textareas",
-		editor_selector: "fieldRichtext",
-		plugins : "bbcode,paste, inlinepopups",
-		theme_advanced_buttons1 : "bold,italic,underline,undo,redo,link,unlink,image,forecolor,formatselect,code",
-		theme_advanced_buttons2 : "",
-		theme_advanced_buttons3 : "",
-		theme_advanced_toolbar_location : "top",
-		theme_advanced_toolbar_align : "center",
-		theme_advanced_blockformats : "blockquote,code",
-		paste_text_sticky : true,
-		entity_encoding : "raw",
-		add_unload_trigger : false,
-		remove_linebreaks : false,
-		force_p_newlines : false,
-		force_br_newlines : true,
-		forced_root_block : '',
-		convert_urls: false,
-		content_css: baseurl+"/view/custom_tinymce.css",
-		theme_advanced_path : false,
-		file_browser_callback : "fcFileBrowser",
-	});
-
-}
-*/
-
 /**
  * sprintf in javascript
  *  "{0} and {1}".format('zero','uno');
@@ -1337,6 +1221,7 @@ String.prototype.format = function() {
 	}
 	return formatted;
 };
+
 // Array Remove
 Array.prototype.remove = function(item) {
 	to = undefined;
@@ -1345,34 +1230,6 @@ Array.prototype.remove = function(item) {
 	this.length = from < 0 ? this.length + from : from;
 	return this.push.apply(this, rest);
 };
-
-$(document).ready(function() {
-
-	$(document).on('click focus', '.comment-edit-form', handle_comment_form);
-
-	jQuery.timeago.settings.strings = {
-		prefixAgo     : aStr['t01'],
-		prefixFromNow : aStr['t02'],
-		suffixAgo     : aStr['t03'],
-		suffixFromNow : aStr['t04'],
-		seconds       : aStr['t05'],
-		minute        : aStr['t06'],
-		minutes       : aStr['t07'],
-		hour          : aStr['t08'],
-		hours         : aStr['t09'],
-		day           : aStr['t10'],
-		days          : aStr['t11'],
-		month         : aStr['t12'],
-		months        : aStr['t13'],
-		year          : aStr['t14'],
-		years         : aStr['t15'],
-		wordSeparator : aStr['t16'],
-		numbers       : aStr['t17'],
-	};
-
-	savedTitle = document.title;
-
-});
 
 function zFormError(elm,x) {
 	if(x) {
@@ -1441,8 +1298,6 @@ function addeditortext(data) {
 		var currentText = $("#profile-jot-text").val();
 		$("#profile-jot-text").val(currentText + data);
 	}
-	else
-		tinyMCE.execCommand('mceInsertRawHTML',false,data);
 }
 
 function h2b(s) {

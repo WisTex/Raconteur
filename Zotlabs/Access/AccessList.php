@@ -3,10 +3,14 @@
 namespace Zotlabs\Access;
 
 /**
- * @brief AccessList class.
+ * @brief AccessList class which represents individual content ACLs.
  *
  * A class to hold an AccessList object with allowed and denied contacts and
  * groups.
+ *
+ * After evaluating @ref ::Zotlabs::Access::PermissionLimits "PermissionLimits"
+ * and @ref ::Zotlabs::Lib::Permcat "Permcat"s individual content ACLs are evaluated.
+ * These answer the question "Can Joe view *this* album/photo?".
  */
 class AccessList {
 	/**
@@ -103,7 +107,7 @@ class AccessList {
 	 * @brief Return an array consisting of the current access list components
 	 * where the elements are directly storable.
 	 *
-	 * @return Associative array with:
+	 * @return array An associative array with:
 	 *   * \e string \b allow_cid => string of allowed cids
 	 *   * \e string \b allow_gid => string of allowed gids
 	 *   * \e string \b deny_cid  => string of denied cids

@@ -162,13 +162,17 @@ function import_profiles($channel, $profiles) {
 			convert_oldfields($profile,'work','employment');
 
 			/**
-			 * @TODO we are going to reset all profile photos to the original
-			 * somebody will have to fix this later and put all the applicable
-			 * photos into the export.
+			 * @TODO put all the applicable photos into the export.
 			 */
 
-			$profile['photo'] = z_root() . '/photo/profile/l/' . $channel['channel_id'];
-			$profile['thumb'] = z_root() . '/photo/profile/m/' . $channel['channel_id'];
+			if((strpos($profile['thumb'],'/photo/profile/l/') !== false) || intval($profile['is_default'])) {
+				$profile['photo'] = z_root() . '/photo/profile/l/' . $channel['channel_id'];
+				$profile['thumb'] = z_root() . '/photo/profile/m/' . $channel['channel_id'];
+			}
+			else {
+				$profile['photo'] = z_root() . '/photo/' . basename($profile['photo']);
+				$profile['thumb'] = z_root() . '/photo/' . basename($profile['thumb']);
+			}
 
 			create_table_from_array('profile', $profile);
 		}
@@ -180,7 +184,7 @@ function import_profiles($channel, $profiles) {
  *
  * @param array $channel
  * @param array $hublocs
- * @param unknown $seize
+ * @param boolean $seize
  * @param boolean $moving (optional) default false
  */
 function import_hublocs($channel, $hublocs, $seize, $moving = false) {
@@ -1081,6 +1085,7 @@ function sync_files($channel, $files) {
 					logger('sync_files duplicate check: attach_by_hash() returned ' . print_r($x,true), LOGGER_DEBUG);
 
 					if($x['success']) {
+						$orig_attach = $x[0];
 						$attach_exists = true;
 						$attach_id = $x[0]['id'];
 					}
@@ -1145,12 +1150,18 @@ function sync_files($channel, $files) {
 					// If the hash ever contains any escapable chars this could cause
 					// problems. Currently it does not.
 
-					/// @TODO implement os_path
 					if(!isset($att['os_path']))
 						$att['os_path'] = '';
 
 					if($attach_exists) {
 						logger('sync_files attach exists: ' . print_r($att,true), LOGGER_DEBUG);
+
+						// process/sync a remote rename/move operation
+
+						if($orig_attach['content'] !== $newfname) {
+							rename($orig_attach['content'],$newfname);
+						}
+
 						if(! dbesc_array($att))
 							continue;
 
@@ -1199,7 +1210,14 @@ function sync_files($channel, $files) {
 							continue;
 						}
 						$redirects = 0;
-						$x = z_post_url($fetch_url,$parr,$redirects,array('filep' => $fp));
+
+
+						$headers = [];
+						$headers['Accept'] = 'application/x-zot+json' ;
+						$headers['Sigtoken'] = random_string();
+						$headers = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],	'acct:' . $channel['channel_address'] . '@' . \App::get_hostname(),false,true,'sha512');
+
+						$x = z_post_url($fetch_url,$parr,$redirects,[ 'filep' => $fp, 'headers' => $headers]);
 						fclose($fp);
 
 						if($x['success']) {
@@ -1249,10 +1267,43 @@ function sync_files($channel, $files) {
 						);
 					}
 
-					if($p['imgscale'] === 0 && $p['os_storage'])
+					if(intval($p['imgscale']) === 0 && $p['os_storage'])
 						$p['content'] = $store_path;
 					else
-						$p['content'] = base64_decode($p['content']);
+						$p['content'] = (($p['content'])? base64_decode($p['content']) : '');
+
+					if(intval($p['imgscale']) && (! $p['content'])) {
+
+						$time = datetime_convert();
+
+						$parr = array('hash' => $channel['channel_hash'],
+							'time' => $time,
+							'resource' => $att['hash'],
+							'revision' => 0,
+							'signature' => base64url_encode(rsa_sign($channel['channel_hash'] . '.' . $time, $channel['channel_prvkey'])),
+							'resolution' => $p['imgscale']
+						);
+
+						$stored_image = $newfname . '-' . intval($p['imgscale']);
+
+						$fp = fopen($stored_image,'w');
+						if(! $fp) {
+							logger('failed to open storage file.',LOGGER_NORMAL,LOG_ERR);
+							continue;
+						}
+						$redirects = 0;
+
+
+						$headers = [];
+						$headers['Accept'] = 'application/x-zot+json' ;
+						$headers['Sigtoken'] = random_string();
+						$headers = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],	'acct:' . $channel['channel_address'] . '@' . \App::get_hostname(),false,true,'sha512');
+
+						$x = z_post_url($fetch_url,$parr,$redirects,[ 'filep' => $fp, 'headers' => $headers]);
+						fclose($fp);
+						$p['content'] = file_get_contents($stored_image);
+						unlink($stored_image);
+					}
 
 					if(!isset($p['display_path']))
 						$p['display_path'] = '';
@@ -1281,6 +1332,9 @@ function sync_files($channel, $files) {
 					}
 				}
 			}
+
+			\Zotlabs\Daemon\Master::Summon([ 'Thumbnail' , $att['hash'] ]);
+
 			if($f['item']) {
 				sync_items($channel,$f['item'],
 					['channel_address' => $original_channel,'url' => $oldbase]

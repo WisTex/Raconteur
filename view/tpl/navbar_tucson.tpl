@@ -113,7 +113,7 @@
 			<div id="navbar-network-menu" class="dropdown-menu" rel="network">
 				<a class="dropdown-item" id="nav-network-see-all" href="{{$nav.network.all.0}}">{{$nav.network.all.1}}</a>
 				<a class="dropdown-item" id="nav-network-mark-all" href="#" onclick="markRead('network'); return false;">{{$nav.network.mark.1}}</a>
-				{{$emptynotifications}}
+				{{$emptynotifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 			</div>
 		</li>
 		{{/if}}
@@ -126,7 +126,7 @@
 			<div id="navbar-home-menu" class="dropdown-menu" rel="home">
 				<a class="dropdown-item" id="nav-home-see-all" href="{{$nav.home.all.0}}">{{$nav.home.all.1}}</a>
 				<a class="dropdown-item" id="nav-home-mark-all" href="#" onclick="markRead('home'); return false;">{{$nav.home.mark.1}}</a>
-				{{$emptynotifications}}
+				{{$emptynotifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 			</div>
 		</li>
 		{{/if}}
@@ -139,7 +139,7 @@
 			<div id="navbar-mail-menu" class="dropdown-menu" rel="messages">
 				<a class="dropdown-item" id="nav-messages-see-all" href="{{$nav.messages.all.0}}">{{$nav.messages.all.1}}</a>
 				<a class="dropdown-item" id="nav-messages-mark-all" href="#" onclick="markRead('messages'); return false;">{{$nav.messages.mark.1}}</a>
-				{{$emptynotifications}}
+				{{$emptynotifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 			</div>
 		</li>
 		{{/if}}
@@ -152,7 +152,7 @@
 			<div id="navbar-all_events-menu" class="dropdown-menu" rel="all_events">
 				<a class="dropdown-item" id="nav-all_events-see-all" href="{{$nav.all_events.all.0}}">{{$nav.all_events.all.1}}</a>
 				<a class="dropdown-item" id="nav-all_events-mark-all" href="#" onclick="markRead('all_events'); return false;">{{$nav.all_events.mark.1}}</a>
-				{{$emptynotifications}}
+				{{$emptynotifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 			</div>
 		</li>
 		{{/if}}
@@ -164,7 +164,7 @@
 			</a>
 			<div id="navbar-intros-menu" class="dropdown-menu" rel="intros">
 				<a class="dropdown-item" id="nav-intros-see-all" href="{{$nav.intros.all.0}}">{{$nav.intros.all.1}}</a>
-				{{$emptynotifications}}
+				{{$emptynotifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 			</div>
 		</li>
 		{{/if}}
@@ -177,7 +177,7 @@
 			<div id="navbar-notify-menu" class="dropdown-menu" rel="notify">
 				<a class="dropdown-item" id="nav-notify-see-all" href="{{$nav.notifications.all.0}}">{{$nav.notifications.all.1}}</a>
 				<a class="dropdown-item" id="nav-notify-mark-all" href="#" onclick="markRead('notify'); return false;">{{$nav.notifications.mark.1}}</a>
-				{{$emptynotifications}}
+				{{$emptynotifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 			</div>
 		</li>
 		{{/if}}

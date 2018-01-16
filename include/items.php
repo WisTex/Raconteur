@@ -2694,8 +2694,8 @@ function tag_deliver($uid, $item_id) {
 			}
 
 
-			if((! $mention) && (! $union)) {
-				logger('No mention for ' . $u[0]['channel_name'] . ' and no union.');
+			if(! $mention) {
+				logger('No mention for ' . $u[0]['channel_name']);
 				continue;
 			}
 
@@ -2714,6 +2714,18 @@ function tag_deliver($uid, $item_id) {
 
 		}
 	}
+
+	if($union) {
+		if(intval($item['item_wall']) || intval($item['item_origin']) || (! intval($item['item_thread_top'])) || ($item['id'] != $item['parent'])) {
+			logger('Item was local or a comment. rejected.');
+			return;
+		}
+
+		logger('Creating second delivery chain.');
+		start_delivery_chain($u[0],$item,$item_id,null);
+
+	}
+
 }
 
 /**
@@ -4051,8 +4063,9 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 	$item_uids = ' true ';
 	$item_normal = item_normal();
 
-
-	if ($arr['uid']) $uid= $arr['uid'];
+	if($arr['uid']) {
+		$uid = $arr['uid'];
+	}
 
 	if($channel) {
 		$uid = $channel['channel_id'];
@@ -4127,7 +4140,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 	}
 
 	if($channel && intval($arr['compat']) === 1) {
-		$sql_extra = " AND author_xchan = '" . $channel['channel_hash'] . "' and item_private = 0 ";
+		$sql_extra = " AND author_xchan = '" . $channel['channel_hash'] . "' and item_private = 0 $item_normal ";
 	}
 
 	if ($arr['datequery']) {
@@ -4214,7 +4227,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 		$items = q("SELECT item.*, item.id AS item_id FROM item
 				WHERE $item_uids $item_restrict
 				$simple_update
-				$sql_extra $sql_nets
+				$sql_extra $sql_nets $sql_extra3
 				ORDER BY item.received DESC $pager_sql"
 		);
 
@@ -4309,6 +4322,8 @@ function webpage_to_namespace($webpage) {
 		$page_type = 'PDL';
 	elseif($webpage == ITEM_TYPE_CARD)
 		$page_type = 'CARD';
+	elseif($webpage == ITEM_TYPE_ARTICLE)
+		$page_type = 'ARTICLE';
 	elseif($webpage == ITEM_TYPE_DOC)
 		$page_type = 'docfile';
 	else
@@ -4706,4 +4721,63 @@ function item_create_edit_activity($post) {
 	}
 
 	\Zotlabs\Daemon\Master::Summon(array('Notifier', 'edit_activity', $post_id));
+}
+
+/**
+ * @brief copies an entire conversation from the pubstream to this channel's stream
+ * which will allow you to interact with it.
+ */
+
+
+
+function copy_of_pubitem($channel,$mid) {
+
+	$result = null;
+	$syschan = get_sys_channel();
+
+	// logger('copy_of_pubitem: ' . $channel['channel_id'] . ' mid: ' . $mid);
+
+	$r = q("select * from item where mid = '%s' and uid = %d limit 1",
+		dbesc($mid),
+		intval($channel['channel_id'])
+	);
+
+	if($r) {
+		logger('exists');
+		$item = fetch_post_tags($r,true);
+		return $item[0];
+	}
+
+
+	$r = q("select * from item where parent_mid = (select parent_mid from item where mid = '%s' and uid = %d ) order by id ",
+		dbesc($mid),
+		intval($syschan['channel_id'])
+	);
+		
+	if($r) {
+		$items = fetch_post_tags($r,true);
+		foreach($items as $rv) {
+			$d = q("select id from item where mid = '%s' and uid = %d limit 1",
+				dbesc($rv['mid']),
+				intval($channel['channel_id'])
+			);
+			if($d) {
+				continue;
+			}
+
+			unset($rv['id']);
+			unset($rv['parent']);
+			$rv['aid'] = $channel['channel_account_id'];
+			$rv['uid'] = $channel['channel_id'];
+			$rv['item_wall'] = 0;
+			$rv['item_origin'] = 0;
+
+			$x = item_store($rv);
+			if($x['item_id'] && $x['item']['mid'] === $mid) {
+				$result = $x['item'];
+			}
+
+		}
+	}
+	return $result;		
 }

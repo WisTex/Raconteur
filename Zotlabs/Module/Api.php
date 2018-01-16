@@ -39,10 +39,12 @@ class Api extends \Zotlabs\Web\Controller {
 					
 			// get consumer/client from request token
 			try {
-				$request = OAuth1Request::from_request();
+				$request = \OAuth1Request::from_request();
 			}
 			catch(\Exception $e) {
-				echo "<pre>"; var_dump($e); killme();
+				logger('OAuth exception: ' . print_r($e,true));
+				// echo "<pre>"; var_dump($e); 
+				killme();
 			}
 			
 			
@@ -52,7 +54,7 @@ class Api extends \Zotlabs\Web\Controller {
 				if (is_null($app)) 
 					return "Invalid request. Unknown token.";
 
-				$consumer = new OAuth1Consumer($app['client_id'], $app['pw'], $app['redirect_uri']);
+				$consumer = new \OAuth1Consumer($app['client_id'], $app['pw'], $app['redirect_uri']);
 	
 				$verifier = md5($app['secret'] . local_channel());
 				set_config('oauth', $verifier, local_channel());
@@ -63,7 +65,7 @@ class Api extends \Zotlabs\Web\Controller {
 					$glue = '?';
 					if(strstr($consumer->callback_url,$glue))
 						$glue = '?';
-					goaway($consumer->callback_url . $glue . "oauth_token=" . OAuth1Util::urlencode_rfc3986($params['oauth_token']) . "&oauth_verifier=" . OAuth1Util::urlencode_rfc3986($verifier));
+					goaway($consumer->callback_url . $glue . "oauth_token=" . \OAuth1Util::urlencode_rfc3986($params['oauth_token']) . "&oauth_verifier=" . \OAuth1Util::urlencode_rfc3986($verifier));
 					killme();
 				}
 							

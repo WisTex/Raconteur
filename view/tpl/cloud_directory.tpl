@@ -1,8 +1,12 @@
 <div id="cloud-drag-area" class="section-content-wrapper-np">
 	{{if $tiles}}
+	<table id="cloud-index">
+		<tr id="new-upload-progress-bar-1"></tr> {{* this is needed to append the upload files in the right order *}}
+	</table>
 
 	{{if $parentpath}}
 	<div class="cloud-container" >
+
 	<div class="cloud-icon tiles"><a href="{{$parentpath.path}}">
 	<div class="cloud-icon-container"><i class="fa fa-fw fa-level-up" ></i></div>
 	</a>
@@ -52,7 +56,7 @@
 			<td class="d-none d-md-table-cell"></td>
 		</tr>
 	{{/if}}
-		<tr id="new-upload-progress-bar--1"></tr> {{* this is needed to append the upload files in the right order *}}
+		<tr id="new-upload-progress-bar-1"></tr> {{* this is needed to append the upload files in the right order *}}
 	{{foreach $entries as $item}}
 		<tr id="cloud-index-{{$item.attachId}}">
 			<td><i class="fa {{$item.iconFromType}}" title="{{$item.type}}"></i></td>

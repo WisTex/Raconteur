@@ -57,7 +57,7 @@ class AutonameTest extends TestCase {
 
 	// 	public function testAutonameMaxLength() {
 	// 		$autoname2=autoname(PHP_INT_MAX);
-	// 		$this->assertEquals(PHP_INT_MAX, count($autoname2));
+	// 		$this->assertEquals(PHP_INT_MAX, strlen($autoname2));
 	// 	}
 
 	/**
@@ -65,10 +65,10 @@ class AutonameTest extends TestCase {
 	 */
 	public function testAutonameLength1() {
 		$autoname1=autoname(1);
-		$this->assertEquals(1, count($autoname1));
+		$this->assertEquals(1, strlen($autoname1));
 
 		$autoname2=autoname(1);
-		$this->assertEquals(1, count($autoname2));
+		$this->assertEquals(1, strlen($autoname2));
 
 		// The following test is problematic, with only 26 possibilities
 		// generating the same thing twice happens often aka

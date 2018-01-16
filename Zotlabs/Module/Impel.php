@@ -26,6 +26,8 @@ class Impel extends \Zotlabs\Web\Controller {
 		if(! $j)
 			json_return_and_die($ret);
 	
+		// logger('element: ' . print_r($j,true));
+
 		$channel = \App::get_channel();
 	
 		$arr = array();

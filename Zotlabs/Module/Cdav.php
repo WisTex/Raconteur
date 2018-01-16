@@ -39,7 +39,7 @@ class Cdav extends \Zotlabs\Web\Controller {
 
 					$sigblock = \Zotlabs\Web\HTTPSig::parse_sigheader($_SERVER[$head]);
 					if($sigblock) {
-						$keyId = $sigblock['keyId'];
+						$keyId = str_replace('acct:','',$sigblock['keyId']);
 						if($keyId) {
 							$r = q("select * from hubloc where hubloc_addr = '%s' limit 1",
 								dbesc($keyId)
@@ -1250,7 +1250,7 @@ class Cdav extends \Zotlabs\Web\Controller {
 			//create default addressbook
 			$carddavBackend = new \Sabre\CardDAV\Backend\PDO($pdo);
 			$properties = ['{DAV:}displayname' => t('Default Addressbook')];
-			$carddavBackend->createAddressBook($uri, $default, $properties);
+			$carddavBackend->createAddressBook($uri, 'default', $properties);
 
 		}
 	}

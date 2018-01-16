@@ -162,18 +162,16 @@ class Pubstream extends \Zotlabs\Web\Controller {
 		$net_query2 = (($net) ? " and xchan_network = '" . protect_sprintf(dbesc($net)) . "' " : '');
 	
 	
-		$simple_update = (($update) ? " and item.item_unseen = 1 " : '');
+		$simple_update = (($_SESSION['loadtime']) ? " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' " : '');
 	
-		if($update && $_SESSION['loadtime'])
-			$simple_update = " AND (( item_unseen = 1 AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' )  OR item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' ) ";
 		if($load)
 			$simple_update = '';
 
 		if($static && $simple_update)
-			$simple_update .= " and item_thread_top = 0 and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
+			$simple_update .= " and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
 
 		//logger('update: ' . $update . ' load: ' . $load);
-	
+
 		if($update) {
 	
 			$ordering = "commented";
@@ -214,17 +212,18 @@ class Pubstream extends \Zotlabs\Web\Controller {
 					);
 				}
 				else {
-					$r = q("SELECT distinct item.id AS item_id, $ordering FROM item
+					$r = q("SELECT distinct parent AS item_id, $ordering FROM item
 						left join abook on item.author_xchan = abook.abook_xchan
 						$net_query
 						WHERE true $uids $item_normal_update
-						AND item.parent = item.id $simple_update
+						$simple_update
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
 						$sql_extra3 $sql_extra $sql_nets $net_query2"
 					);
 				}
 				$_SESSION['loadtime'] = datetime_convert();
 			}
+
 			// Then fetch all the children of the parents that are on this page
 			$parents_str = '';
 			$update_unseen = '';
@@ -254,7 +253,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 		}
 	
 		// fake it
-		$mode = ('network');
+		$mode = ('pubstream');
 	
 		$o .= conversation($items,$mode,$update,$page_mode);
 

@@ -340,7 +340,7 @@ var activeCommentText = '';
 
 				$.get('{{$baseurl}}/tagger/' + id + '?term=' + reply);
 				if(timer) clearTimeout(timer);
-				timer = setTimeout(NavUpdate,3000);
+				timer = setTimeout(updateInit,3000);
 				liking = 1;
 			}
 		}
@@ -359,7 +359,7 @@ var activeCommentText = '';
 				if(reply && reply.length) {
 					commentBusy = true;
 					$('body').css('cursor', 'wait');
-					$.get('{{$baseurl}}/filer/' + id + '?term=' + reply, NavUpdate);
+					$.get('{{$baseurl}}/filer/' + id + '?term=' + reply, updateInit);
 					liking = 1;
 					$('#item-filer-dialog').modal('hide');
 				}
@@ -372,13 +372,13 @@ var activeCommentText = '';
 	function itemBookmark(id) {
 		$.get('{{$baseurl}}/bookmarks?f=&item=' + id);
 		if(timer) clearTimeout(timer);
-		timer = setTimeout(NavUpdate,1000);
+		timer = setTimeout(updateInit,1000);
 	}
 
 	function itemAddToCal(id) {
 		$.get('{{$baseurl}}/events/add/' + id);
 		if(timer) clearTimeout(timer);
-		timer = setTimeout(NavUpdate,1000);
+		timer = setTimeout(updateInit,1000);
 	}
 
 	function toggleVoting() {
@@ -409,7 +409,7 @@ var activeCommentText = '';
 		if(id && icon) {
 			$.get('{{$baseurl}}/react?f=&postid=' + id + '&emoji=' + icon);
 			if(timer) clearTimeout(timer);
-			timer = setTimeout(NavUpdate,1000);
+			timer = setTimeout(updateInit,1000);
 		}
 	}
 

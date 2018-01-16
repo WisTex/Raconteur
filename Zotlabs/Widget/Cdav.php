@@ -63,9 +63,10 @@ class Cdav {
 
 				$sharees = [];
 				$share_displayname = [];
+
 				foreach($invites as $invite) {
 					if(strpos($invite->href, 'mailto:') !== false) {
-						$sharee = channelx_by_hash(substr($invite->href, 7));
+						$sharee = channelx_by_nick(substr($invite->principal, 11));
 						$sharees[] = [
 							'name' => $sharee['channel_name'],
 							'access' => (($invite->access == 3) ? ' (RW)' : ' (R)'),
