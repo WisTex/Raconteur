@@ -428,6 +428,16 @@ function bb_spoilertag($match) {
 	return '<div onclick="openClose(\'opendiv-' . $rnd . '\'); return false;" class="fakelink">' . $openclose . '</div><blockquote id="opendiv-' . $rnd . '" style="display: none;">' . $text . '</blockquote>';
 }
 
+function bb_summary($match) {
+	$rnd1 = mt_rand();
+	$rnd2 = mt_rand();
+	$rnd3 = mt_rand();
+	$rnd4 = mt_rand();
+
+	return $match[1] . '<div style="display: block;" id="opendiv-' . $rnd2 . '">' . $match[2] . '</div><div style="display: block;" id="opendiv-' . $rnd3 . '" onclick="openClose(\'opendiv-' . $rnd1 . '\'); openClose(\'opendiv-' . $rnd2 . '\'); openClose(\'opendiv-' . $rnd3 . '\'); openClose(\'opendiv-' . $rnd4 . '\'); return false;" class="fakelink">' . t('View article') . '</div><div style="display: none;" id="opendiv-' . $rnd4 . '" onclick="openClose(\'opendiv-' . $rnd1 . '\'); openClose(\'opendiv-' . $rnd2 . '\'); openClose(\'opendiv-' . $rnd3 . '\'); openClose(\'opendiv-' . $rnd4 . '\'); return false;" class="fakelink">' . t('View summary') . '</div><div id="opendiv-' . $rnd1 . '" style="display: none;">' . $match[3] . '</div>';
+}
+
+
 function bb_definitionList($match) {
 	// $match[1] is the markup styles for the "terms" in the definition list.
 	// $match[2] is the content between the [dl]...[/dl] tags
@@ -1060,6 +1070,11 @@ function bbcode($Text, $options = []) {
 	// Check for [code options] text
 	if (strpos($Text,'[code ') !== false) {
 		$Text = preg_replace_callback("/\[code(.*?)\](.*?)\[\/code\]/ism", 'bb_code_options', $Text);
+	}
+
+
+	if(strpos($Text,'[/summary]') !== false) {
+		$Text = preg_replace_callback("/^(.*?)\[summary\](.*?)\[\/summary\](.*?)$/ism", 'bb_summary', $Text);
 	}
 
 	// Check for [spoiler] text
