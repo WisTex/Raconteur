@@ -374,15 +374,6 @@ function get_features($filtered = true) {
 			t('Post/Comment Tools'),
 
 			[
-				'markdown',        
-				t('Markdown'),					
-				t('Use markdown for editing posts'),
-				false,
-				get_config('feature_lock','markdown'),
-				feature_level('markdown',2),
-			],
-
-			[
 				'commtag',        
 				t('Community Tagging'),					
 				t('Ability to tag existing posts'),
@@ -490,6 +481,8 @@ function get_features($filtered = true) {
 	else {
 		$narr = $arr;
 	}
-	call_hooks('get_features',$narr);
-	return $narr;
+
+	$x = [ 'features' => $narr, 'filtered' => $filtered, 'techlevel' => $techlevel ];
+	call_hooks('get_features',$x);
+	return $x['features'];
 }

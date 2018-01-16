@@ -117,7 +117,7 @@ class HTTPSig {
 
 		logger('verified: ' . $x, LOGGER_DEBUG);
 
-		if($x === false)
+		if(! $x)
 			return $result;
 
 		if(! $spoofable)

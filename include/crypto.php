@@ -22,13 +22,13 @@ function rsa_verify($data,$sig,$key,$alg = 'sha256') {
 		$alg = OPENSSL_ALGO_SHA256;
 	$verify = @openssl_verify($data,$sig,$key,$alg);
 
-	if(! $verify) {
+	if($verify === (-1)) {
 		while($msg = openssl_error_string())
 			logger('openssl_verify: ' . $msg,LOGGER_NORMAL,LOG_ERR);
 		btlogger('openssl_verify: key: ' . $key, LOGGER_DEBUG, LOG_ERR); 
 	}
 
-	return $verify;
+	return (($verify > 0) ? true : false);
 }
 
 function pkcs5_pad ($text, $blocksize)

@@ -504,7 +504,12 @@ class Item extends \Zotlabs\Web\Controller {
 			$body = z_input_filter($body,$mimetype,$execflag);
 		}
 	
-		// Verify ability to use html or php!!!
+
+		$arr = [ 'profile_uid' => $profile_uid, 'content' => $body, 'mimetype' => $mimetype ];
+		call_hooks('post_content',$arr);
+		$body = $arr['content'];
+		$mimetype = $arr['mimetype'];
+
 	
 		$gacl = $acl->get();
 		$str_contact_allow = $gacl['allow_cid'];
@@ -516,13 +521,6 @@ class Item extends \Zotlabs\Web\Controller {
 	
 			require_once('include/text.php');			
 	
-			if($uid && $uid == $profile_uid && feature_enabled($uid,'markdown')) {
-				require_once('include/markdown.php');
-				$body = preg_replace_callback('/\[share(.*?)\]/ism','\share_shield',$body);			
-				$body = markdown_to_bb($body,true,['preserve_lf' => true]);
-				$body = preg_replace_callback('/\[share(.*?)\]/ism','\share_unshield',$body);
-
-			}
 	
 			// BBCODE alert: the following functions assume bbcode input
 			// and will require alternatives for alternative content-types (text/html, text/markdown, text/plain, etc.)
