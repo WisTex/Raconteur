@@ -216,7 +216,24 @@ function queue_deliver($outq, $immediate = false) {
 	// normal zot delivery
 
 	logger('deliver: dest: ' . $outq['outq_posturl'], LOGGER_DEBUG);
-	$result = zot_zot($outq['outq_posturl'],$outq['outq_notify']);
+
+
+
+	$msg = $outq['outq_notify'];
+	$channel = null;
+
+	if($outq['outq_msg']) {
+		$tmp = json_decode($msg,true);
+		$tmp['pickup'] = json_decode($outq['outq_msg'],true);
+		$msg = json_encode($tmp);
+		if($outq['outq_channel']) {
+			$channel = channelx_by_n($outq['outq_channel']);
+		}
+	}
+
+	$result = zot_zot($outq['outq_posturl'],$msg,$channel);
+
+
 	if($result['success']) {
 		logger('deliver: remote zot delivery succeeded to ' . $outq['outq_posturl']);
 		zot_process_response($outq['outq_posturl'],$result, $outq);

@@ -211,8 +211,19 @@ function zot_best_algorithm($methods) {
  * @param array $data
  * @return array see z_post_url() for returned data format
  */
-function zot_zot($url, $data) {
-	return z_post_url($url, array('data' => $data));
+function zot_zot($url, $data, $channel = null) {
+
+	$headers = [];
+
+	if($channel) {
+		$headers['X-Zot-Token'] = random_string();
+		$hash = \Zotlabs\Web\HTTPSig::generate_digest($data,false);
+		$headers['X-Zot-Digest'] = 'SHA-256=' . $hash;  
+		\Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],'acct:' . $channel['channel_address'] . '@' . \App::get_hostname(),false,true,'sha512');
+	}
+
+	$redirects = 0;
+	return z_post_url($url, array('data' => $data),$redirects,((is_empty($headers)) ? [] : [ 'headers' => $headers ]));
 }
 
 /**
@@ -4967,21 +4978,73 @@ function zot_reply_refresh($sender, $recipients) {
 }
 
 
+function zot6_check_sig() {
+
+	$ret = [ 'success' => false ];
+	  
+	foreach([ 'REDIRECT_REMOTE_USER', 'HTTP_AUTHORIZATION' ] as $head) {
+		if(array_key_exists($head,$_SERVER) && substr(trim($_SERVER[$head]),0,9) === 'Signature') {
+			if($head !== 'HTTP_AUTHORIZATION') {
+				$_SERVER['HTTP_AUTHORIZATION'] = $_SERVER[$head];
+				continue;
+			}
+
+			$sigblock = \Zotlabs\Web\HTTPSig::parse_sigheader($_SERVER[$head]);
+			if($sigblock) {
+				$keyId = $sigblock['keyId'];
+
+				if($keyId) {
+					$r = q("select hubloc.*, site_crypto from hubloc left join site on hubloc_url = site_url
+						where hubloc_addr = '%s' ",
+						dbesc(str_replace('acct:','',$keyId))
+					);
+					if($r) {
+						foreach($r as $hubloc) {
+							$verified = \Zotlabs\Web\HTTPSig::verify('',$hubloc['xchan_pubkey']);
+							if($verified && $verified['header_signed'] && $verified['header_valid'] && $verified['content_signed'] && $verified['content_valid']) {
+								$ret['hubloc'] = $hubloc;
+								$ret['success'] = true;
+								return $ret;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return $ret;
+}
+
 function zot_reply_notify($data) {
 
 	$ret = array('success' => false);
 
 	logger('notify received from ' . $data['sender']['url']);
 
-	$async = get_config('system','queued_fetch');
+	// handle zot6 delivery
 
-	if($async) {
-		// add to receive queue
-		// qreceive_add($data);
+	$zret = zot6_check_sig();
+	if($zret['success'] && $zret['hubloc'] && $zret['hubloc']['hubloc_guid'] === $data['sender']['guid']) { 
+		logger('zot6_delivery');
+		logger('zot6_data: ' . print_r($data,true),LOGGER_DATA);		
+		$x = zot_import($data,$data['sender']['url']);
+		if($x) {
+			$x = crypto_encapsulate(json_encode($x),$zret['hubloc']['hubloc_sitekey'],zot_best_algorithm($zret['hubloc']['site_crypto']));
+			$ret['delivery_report'] = $x;
+		}
 	}
 	else {
-		$x = zot_fetch($data);
-		$ret['delivery_report'] = $x;
+		$async = get_config('system','queued_fetch');
+
+		if($async) {
+			// add to receive queue
+			// qreceive_add($data);
+		}
+		else {
+			$x = zot_fetch($data);
+			$ret['delivery_report'] = $x;
+		}
 	}
 
 	$ret['success'] = true;

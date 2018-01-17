@@ -137,6 +137,21 @@ class HTTPSig {
 			}
 		}
 
+
+		if(in_array('x-zot-digest',$signed_headers)) {
+			$result['content_signed'] = true;
+			$digest = explode('=', $headers['x-zot-digest']);
+			if($digest[0] === 'SHA-256')
+				$hashalg = 'sha256';
+			if($digest[0] === 'SHA-512')
+				$hashalg = 'sha512';
+
+			// The explode operation will have stripped the '=' padding, so compare against unpadded base64 
+			if(rtrim(base64_encode(hash($hashalg,$_POST['data'],true)),'=') === $digest[1]) {
+				$result['content_valid'] = true;
+			}
+		}
+
 		logger('Content_Valid: ' . $result['content_valid']);
 
 		return $result;
