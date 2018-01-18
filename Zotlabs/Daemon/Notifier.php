@@ -315,7 +315,7 @@ class Notifier {
 			}
 
 
-			if($target_item['id'] == $target_item['parent']) {
+			if($target_item['mid'] === $target_item['parent_mid']) {
 				$parent_item = $target_item;
 				$top_level_post = true;
 			}
