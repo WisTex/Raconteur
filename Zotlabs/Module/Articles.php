@@ -35,7 +35,7 @@ class Articles extends \Zotlabs\Web\Controller {
 			return;
 		}
 
-		nav_set_selected(t('Cards'));
+		nav_set_selected(t('Articles'));
 
 		head_add_link([ 
 			'rel'   => 'alternate',
@@ -102,6 +102,7 @@ class Articles extends \Zotlabs\Web\Controller {
 				'permissions'       => $channel_acl,
 				'showacl'           => (($is_owner) ? true : false),
 				'visitor'           => true,
+				'body'              => '[summary][/summary]',
 				'hide_location'     => false,
 				'hide_voting'       => false,
 				'profile_uid'       => intval($owner),

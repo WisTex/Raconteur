@@ -126,7 +126,7 @@ function get_features($filtered = true) {
 				feature_level('cards',1),
 			],
 
-/* reserved, work in progress 
+
 			[
 				'articles',       
 				t('Articles'),          
@@ -135,7 +135,7 @@ function get_features($filtered = true) {
 				get_config('feature_lock','articles'),
 				feature_level('articles',1),
 			],
-*/
+
 			[
 				'nav_channel_select',  
 				t('Navigation Channel Select'), 
