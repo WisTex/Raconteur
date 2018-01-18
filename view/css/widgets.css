@@ -178,6 +178,14 @@ a.wikilist {
 	max-height: 70vh;
 	overflow: auto;
 }
+.notifications-textinput input {
+	font-family: FontAwesome, sans-serif;
+}
+
+
+.notifications-textinput {
+	padding: .75rem 0.85rem;
+}
 
 .notification-content.collapsing {
 	overflow: hidden;

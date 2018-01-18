@@ -881,10 +881,11 @@ function notify_popup_loader(notifyType) {
 	/* notifications template - different for navbar and notifications widget */
 	var navbar_notifications_tpl= unescape($("#navbar-notifications-template[rel=template]").html());
 	var notifications_tpl= unescape($("#nav-notifications-template[rel=template]").html());
-	var notifications_all = unescape($('<div>').append( $("#nav-" + notifyType + "-see-all").clone() ).html()); //outerHtml hack
-	var notifications_mark = unescape($('<div>').append( $("#nav-" + notifyType + "-mark-all").clone() ).html()); //outerHtml hack
-	var notifications_tt_only = unescape($('<div>').append( $("#tt-" + notifyType + "-only").clone() ).html()); //outerHtml hack
-	var notifications_empty = unescape($("#nav-" + notifyType + "-menu").html());
+	//var notifications_all = unescape($('<div>').append( $("#nav-" + notifyType + "-see-all").clone() ).html()); //outerHtml hack
+	//var notifications_mark = unescape($('<div>').append( $("#nav-" + notifyType + "-mark-all").clone() ).html()); //outerHtml hack
+	//var notifications_tt_only = unescape($('<div>').append( $("#tt-" + notifyType + "-only").clone() ).html()); //outerHtml hack
+	//var notifications_cn_only = unescape($('<div>').append( $("#cn-" + notifyType + "-only").clone() ).html()); //outerHtml hack
+	//var notifications_empty = unescape($("#nav-" + notifyType + "-menu").html());
 
 	var notify_menu = $("#nav-" + notifyType + "-menu");
 
@@ -895,10 +896,12 @@ function notify_popup_loader(notifyType) {
 			window.location.href=window.location.href;
 		}
 
-		$("#navbar-" + notifyType + "-menu").html(notifications_all + notifications_mark + notifications_tt_only);
-		$("#nav-" + notifyType + "-menu").html(notifications_all + notifications_mark + notifications_tt_only);
+		//$("#navbar-" + notifyType + "-menu").html(notifications_all + notifications_mark + notifications_tt_only + notifications_cn_only);
+		//$("#nav-" + notifyType + "-menu").html(notifications_all + notifications_mark + notifications_tt_only + notifications_cn_only);
 
 		$("." + notifyType + "-update").html(data.notify.length);
+
+		notify_menu.html('');
 
 		$(data.notify).each(function() {
 			html = navbar_notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top);
@@ -915,11 +918,23 @@ function notify_popup_loader(notifyType) {
 
 		if($('#tt-' + notifyType + '-only').hasClass('active'))
 			$('#nav-' + notifyType + '-menu [data-thread_top=false]').hide();
+
+		var filter = $('#cn-' + notifyType + '-input').val();
+
+		if(filter) {
+			$('#nav-' + notifyType + '-menu .notification').each(function(i, el){
+				var cn = $(el).data('contact_name').toLowerCase();
+				if(cn.indexOf(filter) === -1)
+					$(this).addClass('d-none');
+				else
+					$(this).removeClass('d-none');
+			});
+		}
 	});
 
 
 	setTimeout(function() {
-		if(notify_menu.hasClass('show')) {
+		if($('#nav-' + notifyType + '-sub').hasClass('show')) {
 			console.log('updating ' + notifyType + ' notifications...');
 			setTimeout(notify_popup_loader, updateInterval, notifyType);
 		}
