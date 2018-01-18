@@ -71,6 +71,8 @@ class Forums {
 			if($r)
 				$r1[$x]['unseen'] = $r[0]['unseen'];
 
+		}
+
 		/**
 		 * @FIXME
 		 * This SQL makes the counts correct when you get forum posts arriving from different routes/sources
@@ -79,20 +81,18 @@ class Forums {
 		 * It may make more sense in that query to look for the mention in the body rather than another join,
 		 * but that makes it very inefficient.
 		 *
-		$r = q("select sum(item_unseen) as unseen from item left join term on oid = id where otype = %d and owner_xchan != '%s' and item.uid = %d and url = '%s' and ttype = %d $perms_sql ",
-			intval(TERM_OBJ_POST),
-			dbesc($r1[$x]['xchan_hash']),
-			intval(local_channel()),
-			dbesc($r1[$x]['xchan_url']),
-			intval(TERM_MENTION)
-		);
-		if($r)
-			$r1[$x]['unseen'] = ((array_key_exists('unseen',$r1[$x])) ? $r1[$x]['unseen'] + $r[0]['unseen'] : $r[0]['unseen']);
+		 *		$r = q("select sum(item_unseen) as unseen from item left join term on oid = id where otype = %d and owner_xchan != '%s' and item.uid = %d and url = '%s' and ttype = %d $perms_sql ",
+		 *			intval(TERM_OBJ_POST),
+		 *			dbesc($r1[$x]['xchan_hash']),
+		 *			intval(local_channel()),
+		 *			dbesc($r1[$x]['xchan_url']),
+		 *			intval(TERM_MENTION)
+		 *		);
+		 *		if($r)
+		 *			$r1[$x]['unseen'] = ((array_key_exists('unseen',$r1[$x])) ? $r1[$x]['unseen'] + $r[0]['unseen'] : $r[0]['unseen']);
 		 *
 		 * end @FIXME
 		 */
-
-		}
 
 		if($r1) {
 			$o .= '<div class="widget">';
