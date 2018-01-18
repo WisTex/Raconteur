@@ -878,18 +878,10 @@ function justifyPhotosAjax(id) {
 
 function notify_popup_loader(notifyType) {
 
-	/* notifications template - different for navbar and notifications widget */
-	var navbar_notifications_tpl= unescape($("#navbar-notifications-template[rel=template]").html());
 	var notifications_tpl= unescape($("#nav-notifications-template[rel=template]").html());
-	//var notifications_all = unescape($('<div>').append( $("#nav-" + notifyType + "-see-all").clone() ).html()); //outerHtml hack
-	//var notifications_mark = unescape($('<div>').append( $("#nav-" + notifyType + "-mark-all").clone() ).html()); //outerHtml hack
-	//var notifications_tt_only = unescape($('<div>').append( $("#tt-" + notifyType + "-only").clone() ).html()); //outerHtml hack
-	//var notifications_cn_only = unescape($('<div>').append( $("#cn-" + notifyType + "-only").clone() ).html()); //outerHtml hack
-	//var notifications_empty = unescape($("#nav-" + notifyType + "-menu").html());
-
 	var notify_menu = $("#nav-" + notifyType + "-menu");
-
 	var pingExCmd = 'ping/' + notifyType + ((localUser != 0) ? '?f=&uid=' + localUser : '');
+
 	$.get(pingExCmd, function(data) {
 
 		if(data.invalid == 1) { 
@@ -904,10 +896,8 @@ function notify_popup_loader(notifyType) {
 		notify_menu.html('');
 
 		$(data.notify).each(function() {
-			html = navbar_notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top);
-			$("#navbar-" + notifyType + "-menu").append(html);
 			html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top);
-			$("#nav-" + notifyType + "-menu").append(html);
+			notify_menu.append(html);
 		});
 
 		$(".dropdown-menu img[data-src], .notification img[data-src]").each(function(i, el){
@@ -920,7 +910,6 @@ function notify_popup_loader(notifyType) {
 			$('#nav-' + notifyType + '-menu [data-thread_top=false]').hide();
 
 		var filter = $('#cn-' + notifyType + '-input').val();
-
 		if(filter) {
 			$('#nav-' + notifyType + '-menu .notification').each(function(i, el){
 				var cn = $(el).data('contact_name').toLowerCase();
