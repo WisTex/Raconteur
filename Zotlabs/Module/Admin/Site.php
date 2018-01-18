@@ -67,7 +67,7 @@ class Site {
 		$techlevel_lock    = ((x($_POST,'techlock'))         ? intval($_POST['techlock'])   : 0);
 		$imagick_path      = ((x($_POST,'imagick_path'))     ? trim($_POST['imagick_path'])   : '');
 		$thumbnail_security  = ((x($_POST,'thumbnail_security'))     ? intval($_POST['thumbnail_security'])   : 0);
-		$force_queue       = ((intval($_POST['force_queue']) > 0) ? intval($_POST['force_queue'])   : 300);
+		$force_queue       = ((intval($_POST['force_queue']) > 0) ? intval($_POST['force_queue'])   : 3000);
 
 		$techlevel         = null;
 		if(array_key_exists('techlevel', $_POST))
@@ -332,7 +332,7 @@ class Site {
 			'$timeout'			=> array('timeout', t("Network timeout"), (x(get_config('system','curl_timeout'))?get_config('system','curl_timeout'):60), t("Value is in seconds. Set to 0 for unlimited (not recommended).")),
 			'$delivery_interval'			=> array('delivery_interval', t("Delivery interval"), (x(get_config('system','delivery_interval'))?get_config('system','delivery_interval'):2), t("Delay background delivery processes by this many seconds to reduce system load. Recommend: 4-5 for shared hosts, 2-3 for virtual private servers. 0-1 for large dedicated servers.")),
 			'$delivery_batch_count' => array('delivery_batch_count', t('Deliveries per process'),(x(get_config('system','delivery_batch_count'))?get_config('system','delivery_batch_count'):1), t("Number of deliveries to attempt in a single operating system process. Adjust if necessary to tune system performance. Recommend: 1-5.")),
-			'$force_queue'			=> array('force_queue', t("Queue Threshold"), get_config('system','force_queue_threshold',300), t("Always defer immediate delivery if queue contains more than this number of entries.")),
+			'$force_queue'			=> array('force_queue', t("Queue Threshold"), get_config('system','force_queue_threshold',3000), t("Always defer immediate delivery if queue contains more than this number of entries.")),
 			'$poll_interval'			=> array('poll_interval', t("Poll interval"), (x(get_config('system','poll_interval'))?get_config('system','poll_interval'):2), t("Delay background polling processes by this many seconds to reduce system load. If 0, use delivery interval.")),
 			'$imagick_path'			=> array('imagick_path', t("Path to ImageMagick convert program"), get_config('system','imagick_convert_path'), t("If set, use this program to generate photo thumbnails for huge images ( > 4000 pixels in either dimension), otherwise memory exhaustion may occur. Example: /usr/bin/convert")),
 			'$thumbnail_security'			=> array('thumbnail_security', t("Allow SVG thumbnails in file browser"), get_config('system','thumbnail_security',0), t("WARNING: SVG images may contain malicious code.")),
