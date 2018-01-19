@@ -72,7 +72,7 @@
 		$('#cn-{{$notification.type}}-input-clear').addClass('d-none');
 	});
 	$(document).on('input', '#cn-{{$notification.type}}-input', function(e) {
-		var val = $('#cn-{{$notification.type}}-input').val().toLowerCase();
+		var val = $('#cn-{{$notification.type}}-input').val().toString().toLowerCase();
 
 		if(val) {
 			$('#cn-{{$notification.type}}-only').addClass('active sticky-top');
@@ -84,7 +84,7 @@
 		}
 
 		$("#nav-{{$notification.type}}-menu .notification").each(function(i, el){
-			var cn = $(el).data('contact_name').toLowerCase();
+			var cn = $(el).data('contact_name').toString().toLowerCase();
 
 			if(cn.indexOf(val) === -1)
 				$(this).addClass('d-none');
@@ -132,7 +132,7 @@
 			<div id="nav-{{$notification.type}}-sub" class="collapse notification-content">
 				{{if $notification.viewall}}
 				<a class="list-group-item text-dark" id="nav-{{$notification.type}}-see-all" href="{{$notification.viewall.url}}">
-					<i class="fa fa-fw fa-external-link"></i> {{$notification.viewall.label}}
+					<i class="fa fa-fw fa-external-link-alt"></i> {{$notification.viewall.label}}
 				</a>
 				{{/if}}
 				{{if $notification.markall}}
@@ -145,8 +145,8 @@
 					<i class="fa fa-fw fa-filter"></i> {{$notification.filter.label}}
 				</div>
 				<div class="list-group-item clearfix notifications-textinput" id="cn-{{$notification.type}}-only">
-					<input id="cn-{{$notification.type}}-input" type="text" class="form-control form-control-sm" placeholder="&#xf0b0;  Filter by name">
-					<div id="cn-{{$notification.type}}-input-clear" class="text-muted notifications-textinput-clear d-none"><i class="fa fa-remove"></i></div>
+					<input id="cn-{{$notification.type}}-input" type="text" class="form-control form-control-sm" placeholder="&#xf0b0; Filter by name">
+					<div id="cn-{{$notification.type}}-input-clear" class="text-muted notifications-textinput-clear d-none"><i class="fa fa-times"></i></div>
 				</div>
 				{{/if}}
 				<div id="nav-{{$notification.type}}-menu" class="" rel="{{$notification.type}}">
