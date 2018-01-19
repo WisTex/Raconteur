@@ -19,14 +19,6 @@
 				</div>
 				{{/if}}
 				<textarea id="comment-edit-text-{{$id}}" class="comment-edit-text" placeholder="{{$comment}}" name="body" ondragenter="linkdropper(event);" ondragleave="linkdropexit(event);" ondragover="linkdropper(event);" ondrop="linkdrop(event);" ></textarea>
-				{{if $qcomment}}
-					<select id="qcomment-select-{{$id}}" name="qcomment-{{$id}}" class="qcomment" onchange="qCommentInsert(this,{{$id}});" >
-					<option value=""></option>
-				{{foreach $qcomment as $qc}}
-					<option value="{{$qc}}">{{$qc}}</option>				
-				{{/foreach}}
-					</select>
-				{{/if}}
 				<div id="comment-tools-{{$id}}" class="pt-2 comment-tools">
 					<div id="comment-edit-bb-{{$id}}" class="btn-toolbar pull-left">
 						<div class="btn-group mr-2">

@@ -282,22 +282,6 @@ function viewsrc(id) {
 	$.colorbox({href: 'viewsrc/' + id, maxWidth: '80%', maxHeight: '80%' });
 }
 
-function qCommentInsert(obj, id) {
-	var tmpStr = $("#comment-edit-text-" + id).val();
-	if(tmpStr == aStr.comment) {
-		tmpStr = '';
-		$("#comment-edit-text-" + id).addClass("expanded");
-		openMenu("comment-edit-submit-wrapper-" + id);
-	}
-	var ins = $(obj).val();
-	ins = ins.replace('&lt;','<');
-	ins = ins.replace('&gt;','>');
-	ins = ins.replace('&amp;','&');
-	ins = ins.replace('&quot;','"');
-	$("#comment-edit-text-" + id).val(tmpStr + ins);
-	$(obj).val('');
-}
-
 function showHideComments(id) {
 	if( $('#collapsed-comments-' + id).is(':visible')) {
 		$('#collapsed-comments-' + id + ' .autotime').timeago('dispose');
