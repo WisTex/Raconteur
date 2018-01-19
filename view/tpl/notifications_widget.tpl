@@ -65,6 +65,11 @@
 		$('#nav-{{$notification.type}}-menu [data-thread_top=false]').toggle();
 		$(this).toggleClass('active sticky-top');
 	});
+	$(document).on('click ', '#cn-{{$notification.type}}-input-clear', function(e) {
+		$('#cn-{{$notification.type}}-input').val('');
+		$('#cn-{{$notification.type}}-only').removeClass('active sticky-top');
+		$("#nav-{{$notification.type}}-menu .notification").removeClass('d-none');
+	});
 	$(document).on('keyup', '#cn-{{$notification.type}}-input', function(e) {
 		var val = $('#cn-{{$notification.type}}-input').val().toLowerCase();
 
@@ -134,8 +139,13 @@
 				<div class="list-group-item cursor-pointer" id="tt-{{$notification.type}}-only">
 					<i class="fa fa-fw fa-filter"></i> {{$notification.filter.label}}
 				</div>
-				<div class="list-group-item notifications-textinput" id="cn-{{$notification.type}}-only">
-					<input id="cn-{{$notification.type}}-input" type="text" class="form-control form-control-sm" placeholder="&#xf0b0;  Filter by name">
+				<div class="list-group-item clearfix notifications-textinput" id="cn-{{$notification.type}}-only">
+					<div class="input-group">
+						<input id="cn-{{$notification.type}}-input" type="text" class="form-control form-control-sm" placeholder="&#xf0b0;  Filter by name">
+						<div id="cn-{{$notification.type}}-input-clear" class="input-group-append">
+							<span class="input-group-text"><i class="fa fa-remove"></i></span>
+						</div>
+					</div>
 				</div>
 				{{/if}}
 				<div id="nav-{{$notification.type}}-menu" class="" rel="{{$notification.type}}">
