@@ -140,12 +140,8 @@
 					<i class="fa fa-fw fa-filter"></i> {{$notification.filter.label}}
 				</div>
 				<div class="list-group-item clearfix notifications-textinput" id="cn-{{$notification.type}}-only">
-					<div class="input-group">
-						<input id="cn-{{$notification.type}}-input" type="text" class="form-control form-control-sm" placeholder="&#xf0b0;  Filter by name">
-						<div id="cn-{{$notification.type}}-input-clear" class="input-group-append">
-							<span class="input-group-text"><i class="fa fa-remove"></i></span>
-						</div>
-					</div>
+					<input id="cn-{{$notification.type}}-input" type="text" class="form-control form-control-sm" placeholder="&#xf0b0;  Filter by name">
+					<div id="cn-{{$notification.type}}-input-clear" class="text-muted notifications-textinput-clear"><i class="fa fa-remove"></i></div>
 				</div>
 				{{/if}}
 				<div id="nav-{{$notification.type}}-menu" class="" rel="{{$notification.type}}">
