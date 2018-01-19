@@ -730,9 +730,6 @@ class ThreadItem {
 
 		$observer = $conv->get_observer();
 
-		$qc = ((local_channel()) ? get_pconfig(local_channel(),'system','qcomment') : null);
-		$qcomment = (($qc) ? explode("\n",$qc) : null);
-
 		$arr = array('comment_buttons' => '','id' => $this->get_id());
 		call_hooks('comment_buttons',$arr);
 		$comment_buttons = $arr['comment_buttons'];
@@ -744,7 +741,6 @@ class ThreadItem {
 			'$type' => (($conv->get_mode() === 'channel') ? 'wall-comment' : 'net-comment'),
 			'$id' => $this->get_id(),
 			'$parent' => $this->get_id(),
-			'$qcomment' => $qcomment,
 			'$comment_buttons' => $comment_buttons,
 			'$profile_uid' =>  $conv->get_profile_owner(),
 			'$mylink' => $observer['xchan_url'],

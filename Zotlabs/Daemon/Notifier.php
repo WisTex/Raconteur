@@ -90,8 +90,6 @@ class Notifier {
 
 		$item_id = $argv[2];
 
-		$extra = (($argc > 3) ? $argv[3] : null);
-
 		if(! $item_id)
 			return;
 

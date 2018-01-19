@@ -38,10 +38,9 @@ class Router {
 	/**
 	 * @brief Router constructor.
 	 *
-	 * @param[in,out] App &$a
 	 * @throws Exception module not found
 	 */
-	function __construct(&$a) {
+	function __construct() {
 
 		$module = \App::$module;
 		$modname = "Zotlabs\\Module\\" . ucfirst($module);
@@ -179,9 +178,8 @@ class Router {
 	/**
 	 * @brief
 	 *
-	 * @param[in,out] App &$a
 	 */
-	function Dispatch(&$a) {
+	function Dispatch() {
 
 		/**
 		 * Call module functions
