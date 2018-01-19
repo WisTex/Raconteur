@@ -71,7 +71,7 @@
 		$("#nav-{{$notification.type}}-menu .notification").removeClass('d-none');
 		$('#cn-{{$notification.type}}-input-clear').addClass('d-none');
 	});
-	$(document).on('keyup', '#cn-{{$notification.type}}-input', function(e) {
+	$(document).on('input', '#cn-{{$notification.type}}-input', function(e) {
 		var val = $('#cn-{{$notification.type}}-input').val().toLowerCase();
 
 		if(val) {
