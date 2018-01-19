@@ -69,14 +69,19 @@
 		$('#cn-{{$notification.type}}-input').val('');
 		$('#cn-{{$notification.type}}-only').removeClass('active sticky-top');
 		$("#nav-{{$notification.type}}-menu .notification").removeClass('d-none');
+		$('#cn-{{$notification.type}}-input-clear').addClass('d-none');
 	});
 	$(document).on('keyup', '#cn-{{$notification.type}}-input', function(e) {
 		var val = $('#cn-{{$notification.type}}-input').val().toLowerCase();
 
-		if(val)
+		if(val) {
 			$('#cn-{{$notification.type}}-only').addClass('active sticky-top');
-		else
+			$('#cn-{{$notification.type}}-input-clear').removeClass('d-none');
+		}
+		else {
 			$('#cn-{{$notification.type}}-only').removeClass('active sticky-top');
+			$('#cn-{{$notification.type}}-input-clear').addClass('d-none');
+		}
 
 		$("#nav-{{$notification.type}}-menu .notification").each(function(i, el){
 			var cn = $(el).data('contact_name').toLowerCase();
@@ -141,7 +146,7 @@
 				</div>
 				<div class="list-group-item clearfix notifications-textinput" id="cn-{{$notification.type}}-only">
 					<input id="cn-{{$notification.type}}-input" type="text" class="form-control form-control-sm" placeholder="&#xf0b0;  Filter by name">
-					<div id="cn-{{$notification.type}}-input-clear" class="text-muted notifications-textinput-clear"><i class="fa fa-remove"></i></div>
+					<div id="cn-{{$notification.type}}-input-clear" class="text-muted notifications-textinput-clear d-none"><i class="fa fa-remove"></i></div>
 				</div>
 				{{/if}}
 				<div id="nav-{{$notification.type}}-menu" class="" rel="{{$notification.type}}">
