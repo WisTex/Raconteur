@@ -896,7 +896,7 @@ function notify_popup_loader(notifyType) {
 		var filter = $('#cn-' + notifyType + '-input').val();
 		if(filter) {
 			$('#nav-' + notifyType + '-menu .notification').each(function(i, el){
-				var cn = $(this).data('contact_name').toString().toLowerCase();
+				var cn = $(el).data('contact_name').toString().toLowerCase();
 				if(cn.indexOf(filter) === -1)
 					$(this).addClass('d-none');
 				else
