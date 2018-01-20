@@ -189,8 +189,9 @@ a.wikilist {
 
 .notifications-textinput-clear {
 	padding: .5rem;
+	line-height: 1;
 	position: absolute;
-	top: 0.5rem;
+	top: .75rem;
 	right: 1rem;
 	cursor: pointer;
 }
