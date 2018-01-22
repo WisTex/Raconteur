@@ -282,22 +282,6 @@ function viewsrc(id) {
 	$.colorbox({href: 'viewsrc/' + id, maxWidth: '80%', maxHeight: '80%' });
 }
 
-function qCommentInsert(obj, id) {
-	var tmpStr = $("#comment-edit-text-" + id).val();
-	if(tmpStr == aStr.comment) {
-		tmpStr = '';
-		$("#comment-edit-text-" + id).addClass("expanded");
-		openMenu("comment-edit-submit-wrapper-" + id);
-	}
-	var ins = $(obj).val();
-	ins = ins.replace('&lt;','<');
-	ins = ins.replace('&gt;','>');
-	ins = ins.replace('&amp;','&');
-	ins = ins.replace('&quot;','"');
-	$("#comment-edit-text-" + id).val(tmpStr + ins);
-	$(obj).val('');
-}
-
 function showHideComments(id) {
 	if( $('#collapsed-comments-' + id).is(':visible')) {
 		$('#collapsed-comments-' + id + ' .autotime').timeago('dispose');
@@ -878,33 +862,26 @@ function justifyPhotosAjax(id) {
 
 function notify_popup_loader(notifyType) {
 
-	/* notifications template - different for navbar and notifications widget */
-	var navbar_notifications_tpl= unescape($("#navbar-notifications-template[rel=template]").html());
 	var notifications_tpl= unescape($("#nav-notifications-template[rel=template]").html());
-	var notifications_all = unescape($('<div>').append( $("#nav-" + notifyType + "-see-all").clone() ).html()); //outerHtml hack
-	var notifications_mark = unescape($('<div>').append( $("#nav-" + notifyType + "-mark-all").clone() ).html()); //outerHtml hack
-	var notifications_tt_only = unescape($('<div>').append( $("#tt-" + notifyType + "-only").clone() ).html()); //outerHtml hack
-	var notifications_empty = unescape($("#nav-" + notifyType + "-menu").html());
-
 	var notify_menu = $("#nav-" + notifyType + "-menu");
-
 	var pingExCmd = 'ping/' + notifyType + ((localUser != 0) ? '?f=&uid=' + localUser : '');
+
 	$.get(pingExCmd, function(data) {
 
 		if(data.invalid == 1) { 
 			window.location.href=window.location.href;
 		}
 
-		$("#navbar-" + notifyType + "-menu").html(notifications_all + notifications_mark + notifications_tt_only);
-		$("#nav-" + notifyType + "-menu").html(notifications_all + notifications_mark + notifications_tt_only);
+		//$("#navbar-" + notifyType + "-menu").html(notifications_all + notifications_mark + notifications_tt_only + notifications_cn_only);
+		//$("#nav-" + notifyType + "-menu").html(notifications_all + notifications_mark + notifications_tt_only + notifications_cn_only);
 
 		$("." + notifyType + "-update").html(data.notify.length);
 
+		notify_menu.html('');
+
 		$(data.notify).each(function() {
-			html = navbar_notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top);
-			$("#navbar-" + notifyType + "-menu").append(html);
 			html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top);
-			$("#nav-" + notifyType + "-menu").append(html);
+			notify_menu.append(html);
 		});
 
 		$(".dropdown-menu img[data-src], .notification img[data-src]").each(function(i, el){
@@ -915,11 +892,22 @@ function notify_popup_loader(notifyType) {
 
 		if($('#tt-' + notifyType + '-only').hasClass('active'))
 			$('#nav-' + notifyType + '-menu [data-thread_top=false]').hide();
+
+		var filter = $('#cn-' + notifyType + '-input').val().toString().toLowerCase();
+		if(filter) {
+			$('#nav-' + notifyType + '-menu .notification').each(function(i, el){
+				var cn = $(el).data('contact_name').toString().toLowerCase();
+				if(cn.indexOf(filter) === -1)
+					$(el).addClass('d-none');
+				else
+					$(el).removeClass('d-none');
+			});
+		}
 	});
 
 
 	setTimeout(function() {
-		if(notify_menu.hasClass('show')) {
+		if($('#nav-' + notifyType + '-sub').hasClass('show')) {
 			console.log('updating ' + notifyType + ' notifications...');
 			setTimeout(notify_popup_loader, updateInterval, notifyType);
 		}

@@ -179,6 +179,23 @@ a.wikilist {
 	overflow: auto;
 }
 
+.notifications-textinput input {
+	font-family: FontAwesome, sans-serif;
+}
+
+.notifications-textinput {
+	padding: .75rem 0.85rem;
+}
+
+.notifications-textinput-clear {
+	padding: .5rem;
+	line-height: 1;
+	position: absolute;
+	top: .75rem;
+	right: 1rem;
+	cursor: pointer;
+}
+
 .notification-content.collapsing {
 	overflow: hidden;
 }

@@ -58,11 +58,10 @@ class WebServer {
 		if((x($_GET,'zid')) && (! \App::$install)) {
 			\App::$query_string = strip_zids(\App::$query_string);
 			if(! local_channel()) {
-                                if ($_SESSION['my_address']!=$_GET['zid'])
-                                {
-                                        $_SESSION['my_address'] = $_GET['zid'];
-                                        $_SESSION['authenticated'] = 0;
-                                }
+				if ($_SESSION['my_address']!=$_GET['zid']) {
+					$_SESSION['my_address'] = $_GET['zid'];
+					$_SESSION['authenticated'] = 0;
+				}
 				zid_init();
 			}
 		}
@@ -107,9 +106,43 @@ class WebServer {
 			check_config();
 		}
 
-		//nav_set_selected('nothing');
+		$this->create_channel_links();
 
-		$Router = new Router($a);
+		$Router = new Router();
+
+		$this->initialise_content();
+
+		$Router->Dispatch();
+
+		$this->set_homebase();
+
+		// now that we've been through the module content, see if the page reported
+		// a permission problem and if so, a 403 response would seem to be in order.
+
+		if(is_array($_SESSION['sysmsg']) && stristr(implode("", $_SESSION['sysmsg']), t('Permission denied'))) {
+			header($_SERVER['SERVER_PROTOCOL'] . ' 403 ' . t('Permission denied.'));
+		}
+
+		call_hooks('page_end', \App::$page['content']);
+
+		construct_page();
+
+		killme();
+	}
+
+
+	private function initialise_content() {
+
+		/* initialise content region */
+
+		if(! x(\App::$page, 'content'))
+			\App::$page['content'] = '';
+
+		call_hooks('page_content_top', \App::$page['content']);
+
+	}
+
+	private function create_channel_links() {
 
 		/* Initialise the Link: response header if this is a channel page. 
 		 * This cannot be done inside the channel module because some protocol
@@ -135,26 +168,17 @@ class WebServer {
 			\App::$channel_links = $x['channel_links'];
 			header('Link: ' . \App::get_channel_links());
 		}
+	}
 
 
-
-
-		/* initialise content region */
-
-		if(! x(\App::$page, 'content'))
-			\App::$page['content'] = '';
-
-		call_hooks('page_content_top', \App::$page['content']);
-
-
-		$Router->Dispatch($a);
-
+	private function set_homebase() {
 
 		// If you're just visiting, let javascript take you home
 
 		if(x($_SESSION, 'visitor_home')) {
 			$homebase = $_SESSION['visitor_home'];
-		} elseif(local_channel()) {
+		}
+		elseif(local_channel()) {
 			$homebase = z_root() . '/channel/' . \App::$channel['channel_address'];
 		}
 
@@ -162,17 +186,8 @@ class WebServer {
 			\App::$page['content'] .= '<script>var homebase = "' . $homebase . '";</script>';
 		}
 
-		// now that we've been through the module content, see if the page reported
-		// a permission problem and if so, a 403 response would seem to be in order.
-
-		if(is_array($_SESSION['sysmsg']) && stristr(implode("", $_SESSION['sysmsg']), t('Permission denied'))) {
-			header($_SERVER['SERVER_PROTOCOL'] . ' 403 ' . t('Permission denied.'));
-		}
-
-		call_hooks('page_end', \App::$page['content']);
-
-		construct_page();
-
-		killme();
 	}
+
+
+
 }

@@ -846,6 +846,23 @@ Your files are visible on the web at the location [observer=1][baseurl]/cloud/[o
 
 WebDAV provides a way to copy files directly to or from your computer's operating system, where your cloud files appear as a virtual disk drive. This should be used to upload large files such as video and audio; as it is not limited to available memory. See [zrl=help/member/member_guide#Cloud_Desktop_Clients]Cloud Desktop Clients[/zrl] below.
 
+[h4]CalDAV and CardDAV access on Android[/h4]
+
+You can sync you calendar and contacts on Android with your Hub.
+
+The following steps where tested for [url=https://f-droid.org/en/packages/at.bitfire.davdroid/]DAVdroid[/url]
+[list]
+[*] install DAVdroid
+[*] add account
+[*] use "URL" and "user name" to login
+[list]
+[*] base url is [baseurl]/cdav
+[*] user name is [observer=1][observer.webname][/observer][observer=0]username[/observer]
+[/list]
+[/list]
+
+To share your calendar visit [observer.baseurl]/cdav/calendar
+
 
 [h4]Permissions[/h4]
 

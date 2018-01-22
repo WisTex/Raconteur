@@ -97,7 +97,10 @@ class Dirsearch extends \Zotlabs\Web\Controller {
 		else
 			$sync = false;
 	
-	
+		if(($dirmode == DIRECTORY_MODE_STANDALONE) && (! $hub)) {
+			$hub = \App::get_hostname();
+		}
+
 		if($hub)
 			$hub_query = " and xchan_hash in (select hubloc_hash from hubloc where hubloc_host =  '" . protect_sprintf(dbesc($hub)) . "') ";
 		else
