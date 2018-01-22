@@ -282,22 +282,6 @@ function viewsrc(id) {
 	$.colorbox({href: 'viewsrc/' + id, maxWidth: '80%', maxHeight: '80%' });
 }
 
-function qCommentInsert(obj, id) {
-	var tmpStr = $("#comment-edit-text-" + id).val();
-	if(tmpStr == aStr.comment) {
-		tmpStr = '';
-		$("#comment-edit-text-" + id).addClass("expanded");
-		openMenu("comment-edit-submit-wrapper-" + id);
-	}
-	var ins = $(obj).val();
-	ins = ins.replace('&lt;','<');
-	ins = ins.replace('&gt;','>');
-	ins = ins.replace('&amp;','&');
-	ins = ins.replace('&quot;','"');
-	$("#comment-edit-text-" + id).val(tmpStr + ins);
-	$(obj).val('');
-}
-
 function showHideComments(id) {
 	if( $('#collapsed-comments-' + id).is(':visible')) {
 		$('#collapsed-comments-' + id + ' .autotime').timeago('dispose');
@@ -909,14 +893,14 @@ function notify_popup_loader(notifyType) {
 		if($('#tt-' + notifyType + '-only').hasClass('active'))
 			$('#nav-' + notifyType + '-menu [data-thread_top=false]').hide();
 
-		var filter = $('#cn-' + notifyType + '-input').val();
+		var filter = $('#cn-' + notifyType + '-input').val().toString().toLowerCase();
 		if(filter) {
 			$('#nav-' + notifyType + '-menu .notification').each(function(i, el){
-				var cn = $(el).data('contact_name').toLowerCase();
+				var cn = $(el).data('contact_name').toString().toLowerCase();
 				if(cn.indexOf(filter) === -1)
-					$(this).addClass('d-none');
+					$(el).addClass('d-none');
 				else
-					$(this).removeClass('d-none');
+					$(el).removeClass('d-none');
 			});
 		}
 	});

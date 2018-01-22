@@ -6,6 +6,8 @@
 		api_register_func('api/export/basic','api_export_basic', true);
 		api_register_func('api/red/channel/export/basic','api_export_basic', true);
 		api_register_func('api/z/1.0/channel/export/basic','api_export_basic', true);
+		api_register_func('api/red/channel/list','api_channel_list', true);
+		api_register_func('api/z/1.0/channel/list','api_channel_list', true);
 		api_register_func('api/red/channel/stream','api_channel_stream', true);
 		api_register_func('api/z/1.0/channel/stream','api_channel_stream', true);
 		api_register_func('api/red/files','api_attach_list', true);
@@ -111,9 +113,31 @@
 		}
 	}
 
+	function api_channel_list($type) {
+		if(api_user() === false) {
+			logger('api_channel_stream: no user');
+			return false;
+		}
 
+		$channel = channelx_by_n(api_user());
+		if(! $channel)
+			return false;
 
+		$ret = [];
 
+		$r = q("select channel_address from channel where channel_account_id = %d",
+			intval($channel['channel_account_id'])
+		);
+
+		if($r) {
+			foreach($r as $rv) {
+				$ret[] = $rv['channel_address'];
+			}
+		}
+
+		json_return_and_die($ret);
+
+	}
 
 
 	function api_channel_stream($type) {
