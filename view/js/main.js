@@ -893,14 +893,14 @@ function notify_popup_loader(notifyType) {
 		if($('#tt-' + notifyType + '-only').hasClass('active'))
 			$('#nav-' + notifyType + '-menu [data-thread_top=false]').hide();
 
-		var filter = $('#cn-' + notifyType + '-input').val();
+		var filter = $('#cn-' + notifyType + '-input').val().toString().toLowerCase();
 		if(filter) {
 			$('#nav-' + notifyType + '-menu .notification').each(function(i, el){
-				var cn = $(el).data('contact_name').toLowerCase();
+				var cn = $(el).data('contact_name').toString().toLowerCase();
 				if(cn.indexOf(filter) === -1)
-					$(this).addClass('d-none');
+					$(el).addClass('d-none');
 				else
-					$(this).removeClass('d-none');
+					$(el).removeClass('d-none');
 			});
 		}
 	});

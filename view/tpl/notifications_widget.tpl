@@ -65,16 +65,26 @@
 		$('#nav-{{$notification.type}}-menu [data-thread_top=false]').toggle();
 		$(this).toggleClass('active sticky-top');
 	});
-	$(document).on('keyup', '#cn-{{$notification.type}}-input', function(e) {
-		var val = $('#cn-{{$notification.type}}-input').val().toLowerCase();
+	$(document).on('click ', '#cn-{{$notification.type}}-input-clear', function(e) {
+		$('#cn-{{$notification.type}}-input').val('');
+		$('#cn-{{$notification.type}}-only').removeClass('active sticky-top');
+		$("#nav-{{$notification.type}}-menu .notification").removeClass('d-none');
+		$('#cn-{{$notification.type}}-input-clear').addClass('d-none');
+	});
+	$(document).on('input', '#cn-{{$notification.type}}-input', function(e) {
+		var val = $('#cn-{{$notification.type}}-input').val().toString().toLowerCase();
 
-		if(val)
+		if(val) {
 			$('#cn-{{$notification.type}}-only').addClass('active sticky-top');
-		else
+			$('#cn-{{$notification.type}}-input-clear').removeClass('d-none');
+		}
+		else {
 			$('#cn-{{$notification.type}}-only').removeClass('active sticky-top');
+			$('#cn-{{$notification.type}}-input-clear').addClass('d-none');
+		}
 
 		$("#nav-{{$notification.type}}-menu .notification").each(function(i, el){
-			var cn = $(el).data('contact_name').toLowerCase();
+			var cn = $(el).data('contact_name').toString().toLowerCase();
 
 			if(cn.indexOf(val) === -1)
 				$(this).addClass('d-none');
@@ -134,8 +144,9 @@
 				<div class="list-group-item cursor-pointer" id="tt-{{$notification.type}}-only">
 					<i class="fa fa-fw fa-filter"></i> {{$notification.filter.label}}
 				</div>
-				<div class="list-group-item notifications-textinput" id="cn-{{$notification.type}}-only">
+				<div class="list-group-item clearfix notifications-textinput" id="cn-{{$notification.type}}-only">
 					<input id="cn-{{$notification.type}}-input" type="text" class="form-control form-control-sm" placeholder="&#xf0b0;  Filter by name">
+					<div id="cn-{{$notification.type}}-input-clear" class="text-muted notifications-textinput-clear d-none"><i class="fa fa-times"></i></div>
 				</div>
 				{{/if}}
 				<div id="nav-{{$notification.type}}-menu" class="" rel="{{$notification.type}}">
