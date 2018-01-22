@@ -164,4 +164,26 @@ class dba_pdoTest extends DatabaseTestCase {
 		$this->assertFalse($nodba->q('SELECT * FROM account'));
 	}
 
+	/**
+	 * @depends testConnectToSqlServer
+	 */
+	public function testSelectQueryToNonExistentTableShouldReturnFalse() {
+		$ret = $this->dba->q('SELECT * FROM non_existent_table');
+
+		$this->assertFalse($ret);
+	}
+
+	/**
+	 * @depends testConnectToSqlServer
+	 */
+	public function testInsertQueryToNonExistentTableShouldReturnEmptyArray() {
+		$ret = $this->dba->q('INSERT INTO non_existent_table
+				(account_email, account_language)
+				 VALUES (\'email@example.com\', \'en\')
+		');
+
+		$this->assertNotInstanceOf('PDOStatement', $ret);
+		$this->isEmpty($ret);
+	}
+
 }
