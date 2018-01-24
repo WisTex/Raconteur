@@ -6,36 +6,26 @@
 <img src="{{$image_url}}" id="croppa" class="imgCrop" alt="{{$title}}" />
 </div>
 <div id="cropimage-preview-wrapper" >
-<div id="previewWrap" ></div>
+<div id="previewWrap" class="crop-preview" style="width: 320px; height: 116px; max-width: 320px; max-height: 116px; overflow: hidden"></div>
 </div>
 
 <script type="text/javascript" language="javascript">
 
-	function onEndCrop( coords, dimensions ) {
-		$( 'x1' ).value = coords.x1;
-		$( 'y1' ).value = coords.y1;
-		$( 'x2' ).value = coords.x2;
-		$( 'y2' ).value = coords.y2;
-		$( 'width' ).value = dimensions.width;
-		$( 'height' ).value = dimensions.height;
-	}
+var image = document.getElementById('croppa');
+var cropper = new Cropper(image, {
+  aspectRatio: 2.75 / 1,
+  viewMode: 1,
+  preview: '.crop-preview',
+  crop: function(e) {
+	$( 'x1' ).value = e.detail.x;
+	$( 'y1' ).value = e.detail.y;
+	$( 'x2' ).value = e.detail.x + e.detail.width;
+	$( 'y2' ).value = e.detail.y + e.detail.height;
+	$( 'width' ).value = e.detail.scaleX;
+	$( 'height' ).value = e.detail.scaleY;
 
-	Event.observe( window, 'load', function() {
-		new Cropper.ImgWithPreview(
-		'croppa',
-		{
-			previewWrap: 'previewWrap',
-			minWidth: 240,
-			minHeight: 87,
-			maxWidth: 320,
-			maxHeight: 116,
-			ratioDim: { x: 100, y:36 },
-			displayOnInit: true,
-			onEndCrop: onEndCrop
-		}
-		);
-	}
-	);
+  }
+});
 
 </script>
 

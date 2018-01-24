@@ -64,12 +64,12 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 				$image_id = substr($image_id,0,-2);
 			}
 				
-	
-			$srcX = $_POST['xstart'];
-			$srcY = $_POST['ystart'];
-			$srcW = $_POST['xfinal'] - $srcX;
-			$srcH = $_POST['yfinal'] - $srcY;
-	
+
+
+			$srcX = intval($_POST['xstart']);
+			$srcY = intval($_POST['ystart']);
+			$srcW = intval($_POST['xfinal']) - $srcX;
+			$srcH = intval($_POST['yfinal']) - $srcY;
 	
 			$r = q("select gender from profile where uid = %d and is_default = 1 limit 1",
 				intval(local_channel())
