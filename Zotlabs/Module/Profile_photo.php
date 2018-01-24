@@ -1,10 +1,11 @@
 <?php
 namespace Zotlabs\Module;
 
-/* @file profile_photo.php
-   @brief Module-file with functions for handling of profile-photos
-
-*/
+/*
+ * @file Profile_photo.php
+ * @brief Module-file with functions for handling of profile-photos
+ *
+ */
 
 
 require_once('include/photo/photo_driver.php');
@@ -55,6 +56,10 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 	        
 		if((array_key_exists('cropfinal',$_POST)) && (intval($_POST['cropfinal']) == 1)) {
 	
+			// logger('crop: ' . print_r($_POST,true));
+
+
+
 			// phase 2 - we have finished cropping
 	
 			if(argc() != 2) {
@@ -86,10 +91,10 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 			} 
 
 	
-			$srcX = $_POST['xstart'];
-			$srcY = $_POST['ystart'];
-			$srcW = $_POST['xfinal'] - $srcX;
-			$srcH = $_POST['yfinal'] - $srcY;
+			$srcX = intval($_POST['xstart']);
+			$srcY = intval($_POST['ystart']);
+			$srcW = intval($_POST['xfinal']) - $srcX;
+			$srcH = intval($_POST['yfinal']) - $srcY;
 
 			$r = q("SELECT * FROM photo WHERE resource_id = '%s' AND uid = %d AND imgscale = %d LIMIT 1",
 				dbesc($image_id),

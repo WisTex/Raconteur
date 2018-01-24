@@ -6,36 +6,27 @@
 <img src="{{$image_url}}" id="croppa" class="imgCrop" alt="{{$title}}" />
 </div>
 <div id="cropimage-preview-wrapper" >
-<div id="previewWrap" ></div>
+<div id="previewWrap" class="crop-preview" style="height: 300px; width: 300px; max-width: 300px; max-height: 300px; overflow: hidden;"></div>
 </div>
 
 <script type="text/javascript" language="javascript">
 
-	function onEndCrop( coords, dimensions ) {
-		$( 'x1' ).value = coords.x1;
-		$( 'y1' ).value = coords.y1;
-		$( 'x2' ).value = coords.x2;
-		$( 'y2' ).value = coords.y2;
-		$( 'width' ).value = dimensions.width;
-		$( 'height' ).value = dimensions.height;
-	}
 
-	Event.observe( window, 'load', function() {
-		new Cropper.ImgWithPreview(
-		'croppa',
-		{
-			previewWrap: 'previewWrap',
-			minWidth: 300,
-			minHeight: 300,
-			maxWidth: 1024,
-			maxHeight: 1024,
-			ratioDim: { x: 100, y:100 },
-			displayOnInit: true,
-			onEndCrop: onEndCrop
-		}
-		);
-	}
-	);
+var image = document.getElementById('croppa');
+var cropper = new Cropper(image, {
+  aspectRatio: 1 / 1,
+  viewMode: 1,
+  preview: '.crop-preview',
+  crop: function(e) {
+		$( 'x1' ).value = e.detail.x;
+		$( 'y1' ).value = e.detail.y;
+		$( 'x2' ).value = e.detail.x + e.detail.width;
+		$( 'y2' ).value = e.detail.y + e.detail.height;
+		$( 'width' ).value = e.detail.scaleX;
+		$( 'height' ).value = e.detail.scaleY;
+
+  }
+});
 
 </script>
 
