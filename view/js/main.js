@@ -68,14 +68,11 @@ $(document).ready(function() {
 	$('a.notification-link').click(function(e){
 		var notifyType = $(this).data('type');
 
-		if (!$(this).data('clicked') && (sessionStorage.getItem(notifyType + '_notifications_cache') !== null)) {
-			var cached_data = JSON.parse(sessionStorage.getItem(notifyType + '_notifications_cache'));
-			loadNotificationItems(notifyType, cached_data);
-			$(this).data('clicked', true);
-		}
-		else {
+		if(! $('#nav-' + notifyType + '-sub').hasClass('show')) {
 			loadNotificationItems(notifyType);
 		}
+
+		$(this).data('clicked', true);
 	});
 
 	// Allow folks to stop the ajax page updates with the pause/break key
@@ -389,6 +386,15 @@ function notificationsUpdate(cached_data) {
 				$.jGrowl(this.message, { sticky: false, theme: 'info', life: 10000 });
 			});
 		});
+	}
+
+	var notifyType = null;
+
+	if($('.notification-content.show').length)
+		notifyType = $('.notification-content.show').data('type');
+
+	if(notifyType !== null) {
+		loadNotificationItems(notifyType);
 	}
 
 	if(timer) clearTimeout(timer);
@@ -924,33 +930,35 @@ function justifyPhotosAjax(id) {
 	$('#' + id).justifiedGallery('norewind').on('jg.complete', function(e){ justifiedGalleryActive = false; });
 }
 
-function loadNotificationItems(notifyType, cached_data) {
+function loadNotificationItems(notifyType) {
 
 	var pingExCmd = 'ping/' + notifyType + ((localUser != 0) ? '?f=&uid=' + localUser : '');
 
-	if(cached_data !== undefined) {
+	var clicked = $('[data-type=\'' + notifyType + '\']').data('clicked');
+
+	if((clicked === undefined) && (sessionStorage.getItem(notifyType + '_notifications_cache') !== null)) {
+		var cached_data = JSON.parse(sessionStorage.getItem(notifyType + '_notifications_cache'));
 		handleNotificationsItems(notifyType, cached_data);
+		console.log('updating ' + notifyType + ' notifications from cache...');
 	}
 	else {
-		$.get(pingExCmd, function(data) {
-			if(data.invalid == 1) {
-				window.location.href=window.location.href;
-			}
-
-			$("." + notifyType + "-update").html(data.notify.length);
-
-			sessionStorage.setItem(notifyType + '_notifications_cache', JSON.stringify(data.notify));
-
-			handleNotificationsItems(notifyType, data.notify);
-		});
+		var cached_data = [];
 	}
 
-	setTimeout(function() {
-		if($('#nav-' + notifyType + '-sub').hasClass('show')) {
-			console.log('updating ' + notifyType + ' notifications...');
-			setTimeout(loadNotificationItems, updateInterval, notifyType);
+	console.log('updating ' + notifyType + ' notifications...');
+	$.get(pingExCmd, function(data) {
+		if(data.invalid == 1) {
+			window.location.href=window.location.href;
 		}
-	}, 1000);
+
+		if(JSON.stringify(cached_data[0]) === JSON.stringify(data.notify[0])) {
+			console.log(notifyType + ' notifications cache up to date - update deferred');
+		}
+		else {
+			handleNotificationsItems(notifyType, data.notify);
+			sessionStorage.setItem(notifyType + '_notifications_cache', JSON.stringify(data.notify));
+		}
+	});
 }
 
 // Since our ajax calls are asynchronous, we will give a few
