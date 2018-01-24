@@ -56,7 +56,7 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 	        
 		if((array_key_exists('cropfinal',$_POST)) && (intval($_POST['cropfinal']) == 1)) {
 	
-			logger('crop: ' . print_r($_POST,true));
+			// logger('crop: ' . print_r($_POST,true));
 
 
 
