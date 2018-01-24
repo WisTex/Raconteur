@@ -51,7 +51,7 @@ require_once('include/attach.php');
 require_once('include/bbcode.php');
 
 define ( 'PLATFORM_NAME',           'hubzilla' );
-define ( 'STD_VERSION',             '3.1.2' );
+define ( 'STD_VERSION',             '3.1.3' );
 define ( 'ZOT_REVISION',            '1.3' );
 
 define ( 'DB_UPDATE_VERSION',       1198  );
@@ -66,6 +66,7 @@ define ( 'PROJECT_BASE',   __DIR__ );
  * This can be used in HTML and JavaScript where needed a line break.
  */
 define ( 'EOL',                    '<br>' . "\r\n"        );
+define ( 'EMPTY_STR',              ''                     );
 define ( 'ATOM_TIME',              'Y-m-d\\TH:i:s\\Z'     ); // aka ISO 8601 "Zulu"
 define ( 'TEMPLATE_BUILD_PATH',    'store/[data]/smarty3' );
 

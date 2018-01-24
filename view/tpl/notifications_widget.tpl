@@ -125,7 +125,7 @@
 		</div>
 		{{foreach $notifications as $notification}}
 		<div class="collapse {{$notification.type}}-button">
-			<a class="list-group-item" href="#nav-{{$notification.type}}-sub" title="{{$notification.title}}" data-toggle="collapse" data-parent="#notifications" rel="#nav-{{$notification.type}}-menu">
+			<a class="list-group-item notification-link" href="#nav-{{$notification.type}}-sub" title="{{$notification.title}}" data-toggle="collapse" data-parent="#notifications" data-type="{{$notification.type}}">
 				<i class="fa fa-fw fa-{{$notification.icon}}"></i> {{$notification.label}}
 				<span class="float-right badge badge-{{$notification.severity}} {{$notification.type}}-update"></span>
 			</a>
@@ -149,7 +149,7 @@
 					<div id="cn-{{$notification.type}}-input-clear" class="text-muted notifications-textinput-clear d-none"><i class="fa fa-times"></i></div>
 				</div>
 				{{/if}}
-				<div id="nav-{{$notification.type}}-menu" class="" rel="{{$notification.type}}">
+				<div id="nav-{{$notification.type}}-menu" class="">
 					{{$loading}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 				</div>
 			</div>

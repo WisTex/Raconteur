@@ -3009,14 +3009,17 @@ function check_item_source($uid, $item) {
 	$words = explode("\n",$r[0]['src_patt']);
 	if($words) {
 		foreach($words as $word) {
-			if(substr($word,0,1) === '#' && $tags) {
+			$w = trim($word);
+			if(! $w)
+				continue;
+			if(substr($w,0,1) === '#' && $tags) {
 				foreach($tags as $t)
-					if((($t['ttype'] == TERM_HASHTAG) || ($t['ttype'] == TERM_COMMUNITYTAG)) && (($t['term'] === substr($word,1)) || (substr($word,1) === '*')))
+					if((($t['ttype'] == TERM_HASHTAG) || ($t['ttype'] == TERM_COMMUNITYTAG)) && (($t['term'] === substr($w,1)) || (substr($w,1) === '*')))
 						return true;
 			}
-			elseif((strpos($word,'/') === 0) && preg_match($word,$text))
+			elseif((strpos($w,'/') === 0) && preg_match($w,$text))
 				return true;
-			elseif(stristr($text,$word) !== false)
+			elseif(stristr($text,$w) !== false)
 				return true;
 		}
 	}
