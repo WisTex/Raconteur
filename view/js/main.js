@@ -70,8 +70,6 @@ $(document).ready(function() {
 
 		if(! $('#nav-' + notifyType + '-sub').hasClass('show')) {
 			loadNotificationItems(notifyType);
-			if(timer) clearTimeout(timer);
-			timer = setTimeout(updateInit,updateInterval);
 		}
 
 		$(this).data('clicked', true);
