@@ -266,7 +266,7 @@ function verify_email_address($arr) {
 		$email = $arr['email'];
 		$a = q("select * from account where account_email = '%s' limit 1",
 			dbesc($arr['email'])
-		}
+		);
 		if(! ($a && ($a[0]['account_flags'] & ACCOUNT_UNVERIFIED))) {
 			return false;
 		}
