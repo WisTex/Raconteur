@@ -70,10 +70,20 @@ $(document).ready(function() {
 
 		if(! $('#nav-' + notifyType + '-sub').hasClass('show')) {
 			loadNotificationItems(notifyType);
+			sessionStorage.setItem('notification_open', notifyType);
+		}
+		else {
+			sessionStorage.removeItem('notification_open');
 		}
 
 		$(this).data('clicked', true);
 	});
+
+	if(sessionStorage.getItem('notification_open') !== null) {
+		var notifyType = sessionStorage.getItem('notification_open');
+		$('#nav-' + notifyType + '-sub').addClass('show');
+		loadNotificationItems(notifyType);
+	}
 
 	// Allow folks to stop the ajax page updates with the pause/break key
 	$(document).keydown(function(event) {
@@ -389,10 +399,9 @@ function notificationsUpdate(cached_data) {
 	}
 
 	var notifyType = null;
-
-	if($('.notification-content.show').length)
+	if($('.notification-content.show').length) {
 		notifyType = $('.notification-content.show').data('type');
-
+	}
 	if(notifyType !== null) {
 		loadNotificationItems(notifyType);
 	}
@@ -437,7 +446,6 @@ function handleNotifications(data) {
 }
 
 function handleNotificationsItems(notifyType, data) {
-
 	var notifications_tpl= unescape($("#nav-notifications-template[rel=template]").html());
 	var notify_menu = $("#nav-" + notifyType + "-menu");
 
@@ -931,11 +939,9 @@ function justifyPhotosAjax(id) {
 }
 
 function loadNotificationItems(notifyType) {
-
 	var pingExCmd = 'ping/' + notifyType + ((localUser != 0) ? '?f=&uid=' + localUser : '');
 
 	var clicked = $('[data-type=\'' + notifyType + '\']').data('clicked');
-
 	if((clicked === undefined) && (sessionStorage.getItem(notifyType + '_notifications_cache') !== null)) {
 		var cached_data = JSON.parse(sessionStorage.getItem(notifyType + '_notifications_cache'));
 		handleNotificationsItems(notifyType, cached_data);
