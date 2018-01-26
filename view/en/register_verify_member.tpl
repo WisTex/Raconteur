@@ -10,7 +10,12 @@ Login with the password you chose at registration.
 
 We need to verify your email address in order to give you full access.
 
-If you registered this account, please visit the following link:
+Your validation code is
+
+{{$hash}}
+
+
+If you registered this account, please enter the validation code when requested or visit the following link:
 
 {{$siteurl}}/regver/allow/{{$hash}} 
 
