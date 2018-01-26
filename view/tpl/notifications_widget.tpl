@@ -115,21 +115,21 @@
 	<div id="no_notifications" class="d-xl-none">
 		{{$no_notifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 	</div>
-	<div id="notifications" class="navbar-nav" data-children=".nav-item">
-		<div id="nav-notifications-template" rel="template">
-			<a class="list-group-item clearfix notification {5}" href="{0}" title="{2} {3}" data-b64mid="{6}" data-notify_id="{7}" data-thread_top="{8}" data-contact_name="{2}">
-				<img class="menu-img-3" data-src="{1}">
-				<span class="contactname">{2}</span>
-				<span class="dropdown-sub-text">{3}<br>{4}</span>
-			</a>
-		</div>
+	<div id="nav-notifications-template" rel="template">
+		<a class="list-group-item clearfix notification {5}" href="{0}" title="{2} {3}" data-b64mid="{6}" data-notify_id="{7}" data-thread_top="{8}" data-contact_name="{2}">
+			<img class="menu-img-3" data-src="{1}">
+			<span class="contactname">{2}</span>
+			<span class="dropdown-sub-text">{3}<br>{4}</span>
+		</a>
+	</div>
+	<div id="notifications" class="navbar-nav">
 		{{foreach $notifications as $notification}}
 		<div class="collapse {{$notification.type}}-button">
-			<a class="list-group-item notification-link" href="#nav-{{$notification.type}}-sub" title="{{$notification.title}}" data-toggle="collapse" data-parent="#notifications" data-type="{{$notification.type}}">
+			<a class="list-group-item notification-link" href="#" title="{{$notification.title}}" data-target="#nav-{{$notification.type}}-sub" data-toggle="collapse" data-type="{{$notification.type}}">
 				<i class="fa fa-fw fa-{{$notification.icon}}"></i> {{$notification.label}}
 				<span class="float-right badge badge-{{$notification.severity}} {{$notification.type}}-update"></span>
 			</a>
-			<div id="nav-{{$notification.type}}-sub" class="collapse notification-content">
+			<div id="nav-{{$notification.type}}-sub" class="collapse notification-content" data-parent="#notifications" data-type="{{$notification.type}}">
 				{{if $notification.viewall}}
 				<a class="list-group-item text-dark" id="nav-{{$notification.type}}-see-all" href="{{$notification.viewall.url}}">
 					<i class="fa fa-fw fa-external-link"></i> {{$notification.viewall.label}}
