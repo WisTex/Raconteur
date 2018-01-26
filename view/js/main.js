@@ -70,10 +70,20 @@ $(document).ready(function() {
 
 		if(! $('#nav-' + notifyType + '-sub').hasClass('show')) {
 			loadNotificationItems(notifyType);
+			sessionStorage.setItem('notification_open', notifyType);
+		}
+		else {
+			sessionStorage.removeItem('notification_open');
 		}
 
 		$(this).data('clicked', true);
 	});
+
+	if(sessionStorage.getItem('notification_open') !== null) {
+		var notifyType = sessionStorage.getItem('notification_open');
+		$('#nav-' + notifyType + '-sub').addClass('show');
+		loadNotificationItems(notifyType);
+	}
 
 	// Allow folks to stop the ajax page updates with the pause/break key
 	$(document).keydown(function(event) {
