@@ -8,7 +8,7 @@ class Email_validation extends \Zotlabs\Web\Controller {
 	function post() {
 
 		if($_POST['token']) {
-			if(! account_approve(trim($_POST['token']))) {
+			if(! account_approve(trim(basename($_POST['token'])))) {
 				notice('Token verification failed.');
 			}
 		}
