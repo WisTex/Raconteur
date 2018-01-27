@@ -456,11 +456,7 @@ function handleNotificationsItems(notifyType, data) {
 		notify_menu.append(html);
 	});
 
-	$(".dropdown-menu img[data-src], .notification img[data-src]").each(function(i, el){
-		// Replace data-src attribute with src attribute for every image
-		$(el).attr('src', $(el).data("src"));
-		$(el).removeAttr("data-src");
-	});
+	datasrc2src('#notifications .notification img[data-src]');
 
 	if($('#tt-' + notifyType + '-only').hasClass('active'))
 		$('#nav-' + notifyType + '-menu [data-thread_top=false]').hide();
@@ -834,7 +830,7 @@ function liveUpdate(notify_id) {
 		// else data was valid - reset the recursion counter
 		liveRecurse = 0;
 
-		if(typeof notify_id !== 'undefined') {
+		if(typeof notify_id !== 'undefined' && notify_id !== 'undefined') {
 			$.post(
 				"hq",
 				{

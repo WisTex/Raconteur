@@ -29,6 +29,8 @@ class Hq extends \Zotlabs\Web\Controller {
 			);
 		}
 
+		killme();
+
 	}
 
 	function get($update = 0, $load = false) {
