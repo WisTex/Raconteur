@@ -122,14 +122,14 @@
 	<div id="no_notifications" class="d-xl-none">
 		{{$no_notifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 	</div>
+	<div id="nav-notifications-template" rel="template">
+		<a class="list-group-item clearfix notification {5}" href="{0}" title="{2} {3}" data-b64mid="{6}" data-notify_id="{7}" data-thread_top="{8}" data-contact_name="{2}">
+			<img class="menu-img-3" data-src="{1}">
+			<span class="contactname">{2}</span>
+			<span class="dropdown-sub-text">{3}<br>{4}</span>
+		</a>
+	</div>
 	<div id="notifications" class="navbar-nav">
-		<div id="nav-notifications-template" rel="template">
-			<a class="list-group-item clearfix notification {5}" href="{0}" title="{2} {3}" data-b64mid="{6}" data-notify_id="{7}" data-thread_top="{8}" data-contact_name="{2}">
-				<img class="menu-img-3" data-src="{1}">
-				<span class="contactname">{2}</span>
-				<span class="dropdown-sub-text">{3}<br>{4}</span>
-			</a>
-		</div>
 		{{foreach $notifications as $notification}}
 		<div class="collapse {{$notification.type}}-button">
 			<a class="list-group-item notification-link" href="#" title="{{$notification.title}}" data-target="#nav-{{$notification.type}}-sub" data-toggle="collapse" data-type="{{$notification.type}}">
