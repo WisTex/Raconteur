@@ -150,9 +150,11 @@ class Register extends \Zotlabs\Web\Controller {
 		}
 	
 		if($email_verify) {
-			goaway(z_root());
+			goaway(z_root() . '/email_validation/' . bin2hex($result['email']));
 		}
-	
+
+		// fall through and authenticate if no approvals or verifications were required. 	
+
 		authenticate_success($result['account'],null,true,false,true);
 		
 		$new_channel = false;
