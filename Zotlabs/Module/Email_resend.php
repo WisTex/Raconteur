@@ -7,8 +7,6 @@ class Email_resend extends \Zotlabs\Web\Controller {
 
 	function post() {
 
-
-
 		if($_POST['token']) {
 			if(! account_approve(trim($_POST['token']))) {
 				notice('Token verification failed.');
@@ -35,7 +33,7 @@ class Email_resend extends \Zotlabs\Web\Controller {
 				notice(t('Unable to resend email verification message.'));
 			}
 
-			return;
+			goaway(z_root() . '/email_validation/' . bin2hex($email));
 
 		}
 
