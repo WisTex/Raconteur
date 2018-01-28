@@ -52,9 +52,6 @@
 				e.preventDefault();
 
 				if(! page_load) {
-					if($(this).parent().attr('id') !== 'nav-pubs-menu')
-						$(this).fadeOut();
-
 					getData(b64mid, notify_id);
 				}
 

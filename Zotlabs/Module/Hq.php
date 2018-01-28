@@ -51,9 +51,11 @@ class Hq extends \Zotlabs\Web\Controller {
 		$item_normal = item_normal();
 		$item_normal_update = item_normal_update();
 
+		$use_index = db_use_index('created');
+
 		if(! $item_hash) {
-			$r = q("SELECT mid FROM item
-				WHERE uid = %d
+			$r = q("SELECT mid FROM item $use_index
+				WHERE uid = %d $item_normal
 				AND mid = parent_mid 
 				ORDER BY created DESC LIMIT 1",
 				intval(local_channel())
