@@ -38,6 +38,7 @@ class Site {
 		$site_sellpage		=	((x($_POST,'site_sellpage'))	? notags(trim($_POST['site_sellpage']))		: '');
 		$site_location		=	((x($_POST,'site_location'))	? notags(trim($_POST['site_location']))		: '');
 		$frontpage			=	((x($_POST,'frontpage'))	? notags(trim($_POST['frontpage']))		: '');
+		$firstpage		    =	((x(trim($_POST,'firstpage')))	? notags(trim($_POST['firstpage']))		: 'profiles');
 		$mirror_frontpage	=	((x($_POST,'mirror_frontpage'))	? intval(trim($_POST['mirror_frontpage']))		: 0);
 		$directory_server	=	((x($_POST,'directory_server')) ? trim($_POST['directory_server']) : '');
 		$allowed_sites		=	((x($_POST,'allowed_sites'))	? notags(trim($_POST['allowed_sites']))		: '');
@@ -80,6 +81,7 @@ class Site {
 		set_config('system', 'maxloadavg', $maxloadavg);
 		set_config('system', 'frontpage', $frontpage);
 		set_config('system', 'sellpage', $site_sellpage);
+		set_config('system', 'workflow_channel_next', $firstpage);
 		set_config('system', 'site_location', $site_location);
 		set_config('system', 'mirror_frontpage', $mirror_frontpage);
 		set_config('system', 'sitename', $sitename);
@@ -340,6 +342,7 @@ class Site {
 			'$default_expire_days' => array('default_expire_days', t('Expiration period in days for imported (grid/network) content'), intval(get_config('system','default_expire_days')), t('0 for no expiration of imported content')),
 
 			'$sellpage' => array('site_sellpage', t('Public servers: Optional landing (marketing) webpage for new registrants'), get_config('system','sellpage',''), sprintf( t('Create this page first. Default is %s/register'),z_root())),
+			'$firstpage' => array('firstpage', t('Page to display after creating a new channel'), get_config('system','workflow_channel_next','profiles'), t('Recommend: profiles, go, or settings')),
 
 			'$location' => array('site_location', t('Optional: site location'), get_config('system','site_location',''), t('Region or country')),
 
