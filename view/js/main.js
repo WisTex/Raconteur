@@ -75,8 +75,6 @@ $(document).ready(function() {
 		else {
 			sessionStorage.removeItem('notification_open');
 		}
-
-		$(this).data('clicked', true);
 	});
 
 	if(sessionStorage.getItem('notification_open') !== null) {
@@ -938,9 +936,11 @@ function loadNotificationItems(notifyType) {
 	var pingExCmd = 'ping/' + notifyType + ((localUser != 0) ? '?f=&uid=' + localUser : '');
 
 	var clicked = $('[data-type=\'' + notifyType + '\']').data('clicked');
+
 	if((clicked === undefined) && (sessionStorage.getItem(notifyType + '_notifications_cache') !== null)) {
 		var cached_data = JSON.parse(sessionStorage.getItem(notifyType + '_notifications_cache'));
 		handleNotificationsItems(notifyType, cached_data);
+		$('[data-type=\'' + notifyType + '\']').data('clicked',true);
 		console.log('updating ' + notifyType + ' notifications from cache...');
 	}
 	else {
