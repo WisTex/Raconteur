@@ -5,7 +5,7 @@
 				<i class="fa fa-search"></i>&nbsp;{{$label}}
 			</button>
 			<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{$sort}}">
-				<i class="fa fa-sort"></i>
+				<i class="fa fa-filter"></i>
 			</button>
 			<div class="dropdown-menu dropdown-menu-right">
 				{{foreach $tabs as $menu}}
@@ -25,7 +25,7 @@
 			</div>
 		</form>
 	</div>
-	<div id="connections-wrapper clearfix">
+	<div class="connections-wrapper clearfix">
 		{{foreach $contacts as $contact}}
 			{{include file="connection_template.tpl"}}
 		{{/foreach}}
