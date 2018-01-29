@@ -108,7 +108,11 @@ function tryzrlvideo($match) {
 	if($zrl)
 		$link = zid($link);
 
-	return '<video controls="controls" preload="none" src="' . str_replace(' ','%20',$link) . '" style="width:100%; max-width:' . App::$videowidth . 'px"><a href="' . str_replace(' ','%20',$link) . '">' . $link . '</a></video>';
+	$static_link = get_config('system','video_default_poster','images/video_poster.jpg');
+	if($static_link)
+		$poster = 'poster="' . escape_tags($static_link) . '" ' ;
+
+	return '<video ' . $poster . ' controls="controls" preload="none" src="' . str_replace(' ','%20',$link) . '" style="width:100%; max-width:' . App::$videowidth . 'px"><a href="' . str_replace(' ','%20',$link) . '">' . $link . '</a></video>';
 }
 
 // [noparse][i]italic[/i][/noparse] turns into
