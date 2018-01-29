@@ -25,7 +25,7 @@
 			</div>
 		</form>
 	</div>
-	<div id="connections-wrapper clearfix">
+	<div class="connections-wrapper clearfix">
 		{{foreach $contacts as $contact}}
 			{{include file="connection_template.tpl"}}
 		{{/foreach}}
