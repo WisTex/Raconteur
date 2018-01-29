@@ -9,7 +9,7 @@ class Email_resend extends \Zotlabs\Web\Controller {
 
 		if($_POST['token']) {
 			if(! account_approve(trim($_POST['token']))) {
-				notice('Token verification failed.');
+				notice(t('Token verification failed.'));
 			}
 		}
 

@@ -321,6 +321,10 @@ function db_concat($fld, $sep) {
 	return \DBA::$dba->concat($fld, $sep);
 }
 
+function db_use_index($str) {
+	return \DBA::$dba->use_index($str);
+}
+
 /**
  * @brief Execute a SQL query with printf style args.
  *
