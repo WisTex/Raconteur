@@ -120,9 +120,9 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 	
 		$siteinfo = self::parseurl_getsiteinfo($url);
 	
-		// If this is a Red site, use zrl rather than url so they get zids sent to them by default
+		// If the site uses this platform, use zrl rather than url so they get zids sent to them by default
 	
-		if( x($siteinfo,'generator') && (strpos($siteinfo['generator'], \Zotlabs\Lib\System::get_platform_name() . ' ') === 0))
+		if(is_matrix_url($url))
 			$template = str_replace('url','zrl',$template);
 	
 		if($siteinfo["title"] == "") {
