@@ -261,6 +261,7 @@ else {
 			$verify = account_verify_password($_POST['username'], $_POST['password']);
 			if($verify && array_key_exists('reason',$verify) && $verify['reason'] === 'unvalidated') {
 				notice( t('Email validation is incomplete. Please check your email.'));
+				goaway(z_root() . '/email_validation/' . bin2hex(trim(escape_tags($_POST['username']))));
 			}
 			elseif($verify) {
 				$atoken  = $verify['xchan'];
