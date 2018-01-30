@@ -17,8 +17,6 @@ class Accounts {
 
 	function post() {
 
-logger('post: ' . print_r($_POST,true));
-
 		$pending = ( x($_POST, 'pending') ? $_POST['pending'] : array() );
 		$users   = ( x($_POST, 'user')    ? $_POST['user']    : array() );
 		$blocked = ( x($_POST, 'blocked') ? $_POST['blocked'] : array() );
