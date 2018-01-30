@@ -110,10 +110,21 @@ var activeCommentID = 0;
 var activeCommentText = '';
 
 	$(document).ready(function() {
+
 		/* enable tinymce on focus and click */
 		$("#profile-jot-text").focus(enableOnUser);
 		$("#profile-jot-text").click(enableOnUser);
 
+		$('#id_mimetype').on('load', jotSetMime);
+		$('#id_mimetype').on('change', jotSetMime);
+
+		function jotSetMime() { 
+			var mtype = $('#id_mimetype').val(); 
+			if(mtype == 'text/bbcode')
+				$('#profile-jot-submit-left').show();
+			else
+				$('#profile-jot-submit-left').hide();
+		}
 
 		$('#invisible-wall-file-upload').fileupload({
 			url: 'wall_attach/{{$nickname}}',
