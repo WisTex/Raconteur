@@ -70,10 +70,18 @@ $(document).ready(function() {
 
 		if(! $('#nav-' + notifyType + '-sub').hasClass('show')) {
 			loadNotificationItems(notifyType);
+			sessionStorage.setItem('notification_open', notifyType);
 		}
-
-		$(this).data('clicked', true);
+		else {
+			sessionStorage.removeItem('notification_open');
+		}
 	});
+
+	if(sessionStorage.getItem('notification_open') !== null) {
+		var notifyType = sessionStorage.getItem('notification_open');
+		$('#nav-' + notifyType + '-sub').addClass('show');
+		loadNotificationItems(notifyType);
+	}
 
 	// Allow folks to stop the ajax page updates with the pause/break key
 	$(document).keydown(function(event) {
@@ -446,11 +454,7 @@ function handleNotificationsItems(notifyType, data) {
 		notify_menu.append(html);
 	});
 
-	$(".dropdown-menu img[data-src], .notification img[data-src]").each(function(i, el){
-		// Replace data-src attribute with src attribute for every image
-		$(el).attr('src', $(el).data("src"));
-		$(el).removeAttr("data-src");
-	});
+	datasrc2src('#notifications .notification img[data-src]');
 
 	if($('#tt-' + notifyType + '-only').hasClass('active'))
 		$('#nav-' + notifyType + '-menu [data-thread_top=false]').hide();
@@ -824,7 +828,7 @@ function liveUpdate(notify_id) {
 		// else data was valid - reset the recursion counter
 		liveRecurse = 0;
 
-		if(typeof notify_id !== 'undefined') {
+		if(typeof notify_id !== 'undefined' && notify_id !== 'undefined') {
 			$.post(
 				"hq",
 				{
@@ -932,9 +936,11 @@ function loadNotificationItems(notifyType) {
 	var pingExCmd = 'ping/' + notifyType + ((localUser != 0) ? '?f=&uid=' + localUser : '');
 
 	var clicked = $('[data-type=\'' + notifyType + '\']').data('clicked');
+
 	if((clicked === undefined) && (sessionStorage.getItem(notifyType + '_notifications_cache') !== null)) {
 		var cached_data = JSON.parse(sessionStorage.getItem(notifyType + '_notifications_cache'));
 		handleNotificationsItems(notifyType, cached_data);
+		$('[data-type=\'' + notifyType + '\']').data('clicked',true);
 		console.log('updating ' + notifyType + ' notifications from cache...');
 	}
 	else {

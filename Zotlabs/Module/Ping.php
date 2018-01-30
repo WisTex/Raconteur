@@ -320,7 +320,9 @@ class Ping extends \Zotlabs\Web\Controller {
 		if(argc() > 1 && (argv(1) === 'network' || argv(1) === 'home')) {
 			$result = array();
 
-			$r = q("SELECT * FROM item
+			$use_index = db_use_index('uid_item_unseen');
+
+			$r = q("SELECT * FROM item $use_index
 				WHERE item_unseen = 1 and uid = %d $item_normal
 				AND author_xchan != '%s'
 				ORDER BY created DESC limit 300",
@@ -492,8 +494,10 @@ class Ping extends \Zotlabs\Web\Controller {
 		$t3 = dba_timer();
 
 		if($vnotify & (VNOTIFY_NETWORK|VNOTIFY_CHANNEL)) {
+
+			$use_index = db_use_index('uid_item_unseen');
 			
-			$r = q("SELECT id, item_wall FROM item
+			$r = q("SELECT id, item_wall FROM item $use_index
 				WHERE item_unseen = 1 and uid = %d
 				$item_normal
 				AND author_xchan != '%s'",

@@ -973,7 +973,14 @@ function contact_block() {
 			$contacts = t('Connections');
 			$micropro = Array();
 			foreach($r as $rr) {
-				$rr['archived'] = (intval($rr['abook_archived']) ? true : false);
+
+				// There is no setting to discover if you are bi-directionally connected
+				// Use the ability to post comments as an indication that this relationship is more
+				// than wishful thinking; even though soapbox channels and feeds will disable it. 
+
+				if(! intval(get_abconfig(App::$profile['uid'],$rr['xchan_hash'],'their_perms','post_comments'))) {
+					$rr['archived'] = true;
+				}
 				$micropro[] = micropro($rr,true,'mpfriend');
 			}
 		}
