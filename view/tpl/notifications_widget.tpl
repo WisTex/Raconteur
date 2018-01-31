@@ -33,6 +33,14 @@
 
 		{{if $module != 'hq' && $startpage == 'hq'}}
 			e.preventDefault();
+			if(typeof notify_id !== 'undefined' && notify_id !== 'undefined') {
+				$.post(
+					"hq",
+					{
+						"notify_id" : notify_id
+					}
+				);
+			}
 			window.location.href = 'hq/' + b64mid;
 			return;
 		{{else}}
