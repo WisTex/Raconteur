@@ -826,27 +826,10 @@ class Connedit extends \Zotlabs\Web\Controller {
 				}
 			}
 
-			$locstr = '';
-	
-			$locs = q("select hubloc_addr as location from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s'
-				and hubloc_deleted = 0 and site_dead = 0",
-				dbesc($contact['xchan_hash'])
-			);
-	
-			if($locs) {
-				foreach($locs as $l) {
-					if(!($l['location']))
-						continue;
-					if(strpos($locstr,$l['location']) !== false)
-						continue;
-					if(strlen($locstr))
-						$locstr .= ', ';
-					$locstr .= $l['location'];
-				}
-			}
-			else
+			$locstr = locations_by_netid($contact['xchan_hash']);
+			if(! $locstr)
 				$locstr = $contact['xchan_url'];
-
+	
 			$clone_warn = '';
 			$clonable = (in_array($contact['xchan_network'],['zot','rss']) ? true : false);
 			if(! $clonable) {
