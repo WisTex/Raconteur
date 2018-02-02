@@ -1826,10 +1826,24 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
 
 	create_export_photo_body($item);
 
-	if($item['allow_cid'] || $item['allow_gid'] || $item['deny_cid'] || $item['deny_gid'])
-		$body = fix_private_photos($item['body'],$owner['uid'],$item,$cid);
+	// provide separate summary and content unless compat is true; as summary represents a content-warning on some networks
+
+	$matches = false;
+	if(preg_match('|\[summary\](.*?)\[/summary\]|ism',$item['body'],$matches))
+		$summary = $matches[1];
 	else
-		$body = $item['body'];
+		$summary = '';
+
+	$body = $item['body'];
+
+	if($summary) 
+		$body = preg_replace('|^(.*?)\[summary\](.*?)\[/summary\](.*?)$|ism','$1$3',$item['body']);
+
+	if($compat)
+		$summary = '';
+
+	if($item['allow_cid'] || $item['allow_gid'] || $item['deny_cid'] || $item['deny_gid'])
+		$body = fix_private_photos($body,$owner['uid'],$item,$cid);
 
 	if($compat) {
 		$compat_photos = compat_photos_list($body);
@@ -1870,6 +1884,8 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
 	}
 	else {
 		$o .= '<title>' . xmlify($item['title']) . '</title>' . "\r\n";
+		if($summary)
+			$o .= '<summary type="' . $type . '" >' . xmlify(prepare_text($summary,$item['mimetype'])) . '</summary>' . "\r\n";
 		$o .= '<content type="' . $type . '" >' . xmlify(prepare_text($body,$item['mimetype'])) . '</content>' . "\r\n";
 	}
 
