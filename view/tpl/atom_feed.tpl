@@ -13,7 +13,7 @@
 
   <id>{{$feed_id}}</id>
   <title>{{$feed_title}}</title>
-  <generator uri="http://hubzilla.org" version="{{$version}}">{{$red}}</generator>
+  <generator uri="{{$generator_uri}}" version="{{$version}}">{{$generator}}</generator>
   <link rel="license" href="http://creativecommons.org/licenses/by/3.0/" />
   {{if $profile_page}}
   <link rel="alternate" type="text/html" href="{{$profile_page}}" />

@@ -343,14 +343,15 @@ class Display extends \Zotlabs\Web\Controller {
 		case 'atom':
 
 			$atom = replace_macros(get_markup_template('atom_feed.tpl'), array(
-				'$version'      => xmlify(\Zotlabs\Lib\System::get_project_version()),
-				'$red'          => xmlify(\Zotlabs\Lib\System::get_platform_name()),
-				'$feed_id'      => xmlify(\App::$cmd),
-				'$feed_title'   => xmlify(t('Article')),
-				'$feed_updated' => xmlify(datetime_convert('UTC', 'UTC', 'now', ATOM_TIME)),
-				'$author'       => '',
-				'$owner'        => '',
-				'$profile_page' => xmlify(z_root() . '/display/' . $target_item['mid']),
+				'$version'       => xmlify(\Zotlabs\Lib\System::get_project_version()),
+				'$generator'     => xmlify(\Zotlabs\Lib\System::get_platform_name()),
+				'$generator_uri' => 'https://hubzilla.org',
+				'$feed_id'       => xmlify(\App::$cmd),
+				'$feed_title'    => xmlify(t('Article')),
+				'$feed_updated'  => xmlify(datetime_convert('UTC', 'UTC', 'now', ATOM_TIME)),
+				'$author'        => '',
+				'$owner'         => '',
+				'$profile_page'  => xmlify(z_root() . '/display/' . $target_item['mid']),
 			));
 				
 			$x = [ 'xml' => $atom, 'channel' => $channel, 'observer_hash' => $observer_hash, 'params' => $params ];

@@ -15,15 +15,6 @@
  */
 function get_public_feed($channel, $params) {
 
-/*	$type      = 'xml';
-	$begin     = NULL_DATE;
-	$end       = '';
-	$start     = 0;
-	$records   = 40;
-	$direction = 'desc';
-	$pages     = 0;
-*/
-
 	if(! $params)
 		$params = [];
 
@@ -106,23 +97,15 @@ function get_feed_for($channel, $observer_hash, $params) {
 	$owner = atom_render_author('zot:owner',$channel);
 
 	$atom .= replace_macros($feed_template, array(
-		'$version'      => xmlify(Zotlabs\Lib\System::get_project_version()),
-		'$red'          => xmlify(Zotlabs\Lib\System::get_platform_name()),
-		'$feed_id'      => xmlify($channel['xchan_url']),
-		'$feed_title'   => xmlify($channel['channel_name']),
-		'$feed_updated' => xmlify(datetime_convert('UTC', 'UTC', 'now', ATOM_TIME)),
-		'$author'       => $feed_author,
-		'$owner'        => $owner,
-		'$name'         => xmlify($channel['channel_name']),
-		'$profile_page' => xmlify($channel['xchan_url']),
-		'$mimephoto'    => xmlify($channel['xchan_photo_mimetype']),
-		'$photo'        => xmlify($channel['xchan_photo_l']),
-		'$thumb'        => xmlify($channel['xchan_photo_m']),
-		'$picdate'      => '',
-		'$uridate'      => '',
-		'$namdate'      => '',
-		'$birthday'     => '',
-		'$community'    => '',
+		'$version'       => xmlify(Zotlabs\Lib\System::get_project_version()),
+		'$generator'     => xmlify(Zotlabs\Lib\System::get_platform_name()),
+		'$generator_uri' => 'https://hubzilla.org',
+		'$feed_id'       => xmlify($channel['xchan_url']),
+		'$feed_title'    => xmlify($channel['channel_name']),
+		'$feed_updated'  => xmlify(datetime_convert('UTC', 'UTC', 'now', ATOM_TIME)),
+		'$author'        => $feed_author,
+		'$owner'         => $owner,
+		'$profile_page'  => xmlify($channel['xchan_url']),
 	));
 
 
@@ -1843,10 +1826,24 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
 
 	create_export_photo_body($item);
 
-	if($item['allow_cid'] || $item['allow_gid'] || $item['deny_cid'] || $item['deny_gid'])
-		$body = fix_private_photos($item['body'],$owner['uid'],$item,$cid);
+	// provide separate summary and content unless compat is true; as summary represents a content-warning on some networks
+
+	$matches = false;
+	if(preg_match('|\[summary\](.*?)\[/summary\]|ism',$item['body'],$matches))
+		$summary = $matches[1];
 	else
-		$body = $item['body'];
+		$summary = '';
+
+	$body = $item['body'];
+
+	if($summary) 
+		$body = preg_replace('|^(.*?)\[summary\](.*?)\[/summary\](.*?)$|ism','$1$3',$item['body']);
+
+	if($compat)
+		$summary = '';
+
+	if($item['allow_cid'] || $item['allow_gid'] || $item['deny_cid'] || $item['deny_gid'])
+		$body = fix_private_photos($body,$owner['uid'],$item,$cid);
 
 	if($compat) {
 		$compat_photos = compat_photos_list($body);
@@ -1887,6 +1884,8 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
 	}
 	else {
 		$o .= '<title>' . xmlify($item['title']) . '</title>' . "\r\n";
+		if($summary)
+			$o .= '<summary type="' . $type . '" >' . xmlify(prepare_text($summary,$item['mimetype'])) . '</summary>' . "\r\n";
 		$o .= '<content type="' . $type . '" >' . xmlify(prepare_text($body,$item['mimetype'])) . '</content>' . "\r\n";
 	}
 

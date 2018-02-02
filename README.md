@@ -3,18 +3,18 @@
 Hubzilla - Community Server
 ===========================
 
+
 <p align="center" markdown="1">
 <em><a href="https://github.com/redmatrix/hubzilla/blob/master/install/INSTALL.txt">Installing Hubzilla</a></em> 
 </p>
 
-
 **What is Hubzilla?**
 
-Hubzilla is a general purpose communication server integrated with a web publishing system and a decentralised permission system. If this sounds like a bunch of technical mumbo-jumbo to you, just think of it as an independent platform for sharing stuff online. 
+Hubzilla is a general purpose communication server integrated with a web publishing system and a decentralised permission system. If this sounds like a bunch of technical mumbo-jumbo to you, just think of it as an independent platform for sharing stuff online (publicly or privately). 
 
 Hubzilla contains some social network bits, some cloud storage bits, some blog and forum bits, and some content management bits. These are all integrated within a common privacy framework - and it is all decentralised. 
 
-Everything you publish or share can be restricted to those channels and people you wish to share them with; and these permissions work completely invisibly - even with channels on different servers or other communications services.
+Everything you publish or share can be restricted to those channels and people you wish to share them with; and these permissions work completely invisibly - **even with channels on different servers or other communications services**.
 
 Migration and live backups of your connections, settings, and everything you publish are built-in, so you never need worry about server failure. 
 

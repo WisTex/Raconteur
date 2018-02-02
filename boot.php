@@ -1014,7 +1014,7 @@ class App {
 
 		self::$baseurl = $url;
 
-		if($parsed) {
+		if($parsed !== false) {
 			self::$scheme = $parsed['scheme'];
 
 			self::$hostname = $parsed['host'];
