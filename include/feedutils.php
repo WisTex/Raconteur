@@ -15,15 +15,6 @@
  */
 function get_public_feed($channel, $params) {
 
-/*	$type      = 'xml';
-	$begin     = NULL_DATE;
-	$end       = '';
-	$start     = 0;
-	$records   = 40;
-	$direction = 'desc';
-	$pages     = 0;
-*/
-
 	if(! $params)
 		$params = [];
 
@@ -106,23 +97,15 @@ function get_feed_for($channel, $observer_hash, $params) {
 	$owner = atom_render_author('zot:owner',$channel);
 
 	$atom .= replace_macros($feed_template, array(
-		'$version'      => xmlify(Zotlabs\Lib\System::get_project_version()),
-		'$red'          => xmlify(Zotlabs\Lib\System::get_platform_name()),
-		'$feed_id'      => xmlify($channel['xchan_url']),
-		'$feed_title'   => xmlify($channel['channel_name']),
-		'$feed_updated' => xmlify(datetime_convert('UTC', 'UTC', 'now', ATOM_TIME)),
-		'$author'       => $feed_author,
-		'$owner'        => $owner,
-		'$name'         => xmlify($channel['channel_name']),
-		'$profile_page' => xmlify($channel['xchan_url']),
-		'$mimephoto'    => xmlify($channel['xchan_photo_mimetype']),
-		'$photo'        => xmlify($channel['xchan_photo_l']),
-		'$thumb'        => xmlify($channel['xchan_photo_m']),
-		'$picdate'      => '',
-		'$uridate'      => '',
-		'$namdate'      => '',
-		'$birthday'     => '',
-		'$community'    => '',
+		'$version'       => xmlify(Zotlabs\Lib\System::get_project_version()),
+		'$generator'     => xmlify(Zotlabs\Lib\System::get_platform_name()),
+		'$generator_uri' => 'https://hubzilla.org',
+		'$feed_id'       => xmlify($channel['xchan_url']),
+		'$feed_title'    => xmlify($channel['channel_name']),
+		'$feed_updated'  => xmlify(datetime_convert('UTC', 'UTC', 'now', ATOM_TIME)),
+		'$author'        => $feed_author,
+		'$owner'         => $owner,
+		'$profile_page'  => xmlify($channel['xchan_url']),
 	));
 
 
