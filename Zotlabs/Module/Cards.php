@@ -143,7 +143,7 @@ class Cards extends \Zotlabs\Web\Controller {
 		}
 
 		$r = q("select * from item
-			where item.uid = %d and item_type = %d
+			where uid = %d and item_type = %d
 			$sql_extra order by item.created desc",
 			intval($owner),
 			intval(ITEM_TYPE_CARD)
