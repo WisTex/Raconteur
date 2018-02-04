@@ -64,7 +64,8 @@ class Forums {
 		// There also should be a way to update this via ajax.
 
 		for($x = 0; $x < count($r1); $x ++) {
-			$r = q("select sum(item_unseen) as unseen from item where owner_xchan = '%s' and uid = %d and item_unseen = 1 $perms_sql ",
+			$r = q("select sum(item_unseen) as unseen from item 
+				where owner_xchan = '%s' and uid = %d and item_unseen = 1 $perms_sql ",
 				dbesc($r1[$x]['xchan_hash']),
 				intval(local_channel())
 			);
