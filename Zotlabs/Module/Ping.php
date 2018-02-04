@@ -149,13 +149,11 @@ class Ping extends \Zotlabs\Web\Controller {
 			$pubs = q("SELECT count(id) as total from item
 				WHERE uid = %d
 				AND author_xchan != '%s'
-				AND obj_type != '%s'
 				AND item_unseen = 1
 				AND created > '" . datetime_convert('UTC','UTC',$_SESSION['static_loadtime']) . "'
 				$item_normal",
 				intval($sys['channel_id']),
-				dbesc(get_observer_hash()),
-				dbesc(ACTIVITY_OBJ_FILE)
+				dbesc(get_observer_hash())
 			);
 
 			if($pubs)
@@ -320,12 +318,13 @@ class Ping extends \Zotlabs\Web\Controller {
 		if(argc() > 1 && (argv(1) === 'network' || argv(1) === 'home')) {
 			$result = array();
 
-			$use_index = db_use_index('uid_item_unseen');
-
-			$r = q("SELECT * FROM item $use_index
-				WHERE item_unseen = 1 and uid = %d $item_normal
+			$r = q("SELECT * FROM item 
+				WHERE uid = %d
 				AND author_xchan != '%s'
-				ORDER BY created DESC limit 300",
+				AND item_unseen = 1
+				$item_normal
+				ORDER BY created DESC, id
+				LIMIT 300",
 				intval(local_channel()),
 				dbesc($ob_hash)
 			);
@@ -495,9 +494,7 @@ class Ping extends \Zotlabs\Web\Controller {
 
 		if($vnotify & (VNOTIFY_NETWORK|VNOTIFY_CHANNEL)) {
 
-			$use_index = db_use_index('uid_item_unseen');
-			
-			$r = q("SELECT id, item_wall FROM item $use_index
+			$r = q("SELECT id, item_wall FROM item 
 				WHERE item_unseen = 1 and uid = %d
 				$item_normal
 				AND author_xchan != '%s'",

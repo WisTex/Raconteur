@@ -1,6 +1,6 @@
 <?php
 
-define( 'UPDATE_VERSION' , 1198 );
+define( 'UPDATE_VERSION' , 1200 );
 
 /**
  *
@@ -3066,6 +3066,35 @@ function update_r1197() {
 	$r = q("select diaspora_meta from item where true limit 1");
 	if($r) {
 		$r = q("ALTER TABLE item DROP diaspora_meta");
+	}
+
+	return UPDATE_SUCCESS;
+}
+
+function update_r1198() {
+
+	if(ACTIVE_DBTYPE == DBTYPE_MYSQL) {
+		$r = q("ALTER TABLE item 
+			DROP INDEX item_blocked,
+			DROP INDEX item_unpublished,
+			DROP INDEX item_deleted,
+			DROP INDEX item_delayed,
+			DROP INDEX item_hidden,
+			DROP INDEX item_pending_remove,
+			DROP INDEX item_type
+		");
+	}
+
+	return UPDATE_SUCCESS;
+}
+
+function update_r1199() {
+
+	if(ACTIVE_DBTYPE == DBTYPE_MYSQL) {
+		$r = q("ALTER TABLE item 
+			DROP INDEX uid,
+			ADD INDEX (item_type)
+		");
 	}
 
 	return UPDATE_SUCCESS;

@@ -196,10 +196,10 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				}
 				else {
 					// Fetch a page full of parent items for this page
-					$r = q("SELECT distinct item.id AS item_id, $ordering FROM item
+					$r = q("SELECT item.id AS item_id FROM item 
 						left join abook on item.author_xchan = abook.abook_xchan
 						$net_query
-						WHERE true $uids $item_normal
+						WHERE item_thread_top = 1 $uids $item_normal
 						AND item.parent = item.id
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
 						$sql_extra3 $sql_extra $sql_nets $net_query2
