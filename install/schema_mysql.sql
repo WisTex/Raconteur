@@ -690,7 +690,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `item_verified` (`item_verified`),
   KEY `item_retained` (`item_retained`),
   KEY `item_rss` (`item_rss`),
-  KEY `item_consensus` (`item_consensus`),
+  KEY `item_consensus` (`item_consensus`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `item_id` (
