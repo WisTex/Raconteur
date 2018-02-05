@@ -64,12 +64,15 @@ class Forums {
 		// There also should be a way to update this via ajax.
 
 		for($x = 0; $x < count($r1); $x ++) {
-			$r = q("select sum(item_unseen) as unseen from item where owner_xchan = '%s' and uid = %d and item_unseen = 1 $perms_sql ",
+			$r = q("select sum(item_unseen) as unseen from item 
+				where uid = %d and owner_xchan = '%s' and item_unseen = 1 $perms_sql ",
 				dbesc($r1[$x]['xchan_hash']),
 				intval(local_channel())
 			);
 			if($r)
 				$r1[$x]['unseen'] = $r[0]['unseen'];
+
+		}
 
 		/**
 		 * @FIXME
@@ -79,20 +82,18 @@ class Forums {
 		 * It may make more sense in that query to look for the mention in the body rather than another join,
 		 * but that makes it very inefficient.
 		 *
-		$r = q("select sum(item_unseen) as unseen from item left join term on oid = id where otype = %d and owner_xchan != '%s' and item.uid = %d and url = '%s' and ttype = %d $perms_sql ",
-			intval(TERM_OBJ_POST),
-			dbesc($r1[$x]['xchan_hash']),
-			intval(local_channel()),
-			dbesc($r1[$x]['xchan_url']),
-			intval(TERM_MENTION)
-		);
-		if($r)
-			$r1[$x]['unseen'] = ((array_key_exists('unseen',$r1[$x])) ? $r1[$x]['unseen'] + $r[0]['unseen'] : $r[0]['unseen']);
+		 *		$r = q("select sum(item_unseen) as unseen from item left join term on oid = id where otype = %d and owner_xchan != '%s' and item.uid = %d and url = '%s' and ttype = %d $perms_sql ",
+		 *			intval(TERM_OBJ_POST),
+		 *			dbesc($r1[$x]['xchan_hash']),
+		 *			intval(local_channel()),
+		 *			dbesc($r1[$x]['xchan_url']),
+		 *			intval(TERM_MENTION)
+		 *		);
+		 *		if($r)
+		 *			$r1[$x]['unseen'] = ((array_key_exists('unseen',$r1[$x])) ? $r1[$x]['unseen'] + $r[0]['unseen'] : $r[0]['unseen']);
 		 *
 		 * end @FIXME
 		 */
-
-		}
 
 		if($r1) {
 			$o .= '<div class="widget">';

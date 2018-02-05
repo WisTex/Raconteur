@@ -15,7 +15,7 @@ class dba_pdo extends dba_driver {
 			$dsn = $server;
 		}
 		else {
-			$dsn = $this->driver_dbtype . ':host=' . $server . (intval($port) ? '' : ';port=' . $port);
+			$dsn = $this->driver_dbtype . ':host=' . $server . (intval($port) ? ';port=' . $port : '');
 		}
 		
 		$dsn .= ';dbname=' . $db;
@@ -108,6 +108,15 @@ class dba_pdo extends dba_driver {
 		}
 		else {
 			return 'GROUP_CONCAT(DISTINCT ' . $fld . ' SEPARATOR \'' . $sep . '\')';
+		}
+	}
+
+	function use_index($str) {
+		if($this->driver_dbtype === 'pgsql') {
+			return '';
+		}
+		else {
+			return 'USE INDEX( ' . $str . ')';
 		}
 	}
 

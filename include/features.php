@@ -190,6 +190,16 @@ function get_features($filtered = true) {
 				feature_level('event_tz_select',2),
 			],
 
+
+			[
+				'premium_channel', 
+				t('Premium Channel'), 
+				t('Allows you to set restrictions and terms on those that connect with your channel'),
+				false,
+				get_config('feature_lock','premium_channel'),
+				feature_level('premium_channel',4),
+			],
+
 			[ 
 				'advanced_dirsearch', 
 				t('Advanced Directory Search'),
@@ -438,16 +448,10 @@ function get_features($filtered = true) {
 		],
 	];
 
+	$x = [ 'features' => $arr, ];
+	call_hooks('get_features',$x);
 
-	$arr['general'][] = [
-		'premium_channel', 
-		t('Premium Channel'), 
-		t('Allows you to set restrictions and terms on those that connect with your channel'),
-		false,
-		get_config('feature_lock','premium_channel'),
-		feature_level('premium_channel',4),
-	];
-
+	$arr = $x['features'];
 
 	$techlevel = get_account_techlevel();
 
@@ -482,7 +486,5 @@ function get_features($filtered = true) {
 		$narr = $arr;
 	}
 
-	$x = [ 'features' => $narr, 'filtered' => $filtered, 'techlevel' => $techlevel ];
-	call_hooks('get_features',$x);
-	return $x['features'];
+	return $narr;
 }

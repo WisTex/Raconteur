@@ -12,7 +12,9 @@
 			{{/if}}
 
 			{{if $registertext}}
-			<div id="register-text" class="descriptive-paragraph">{{$registertext}}</div>
+			<div class="section-content-info-wrapper">
+				<div id="register-text" class="descriptive-paragraph">{{$registertext}}</div>
+			</div>
 			{{/if}}
 
 			{{if $invitations}}

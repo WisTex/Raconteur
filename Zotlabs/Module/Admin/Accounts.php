@@ -16,6 +16,7 @@ class Accounts {
 	 */
 
 	function post() {
+
 		$pending = ( x($_POST, 'pending') ? $_POST['pending'] : array() );
 		$users   = ( x($_POST, 'user')    ? $_POST['user']    : array() );
 		$blocked = ( x($_POST, 'blocked') ? $_POST['blocked'] : array() );
@@ -24,7 +25,7 @@ class Accounts {
 	
 		// change to switch structure?
 		// account block/unblock button was submitted
-		if (x($_POST, 'page_users_block')) {
+		if (x($_POST, 'page_accounts_block')) {
 			for ($i = 0; $i < count($users); $i++) {
 				// if account is blocked remove blocked bit-flag, otherwise add blocked bit-flag
 				$op = ($blocked[$i]) ? '& ~' : '| ';
@@ -43,13 +44,13 @@ class Accounts {
 			notice( sprintf( tt("%s account deleted", "%s accounts deleted", count($users)), count($users)) );
 		}
 		// registration approved button was submitted
-		if (x($_POST, 'page_users_approve')) {
+		if (x($_POST, 'page_accounts_approve')) {
 			foreach ($pending as $hash) {
 				account_allow($hash);
 			}
 		}
 		// registration deny button was submitted
-		if (x($_POST, 'page_users_deny')) {
+		if (x($_POST, 'page_accounts_deny')) {
 			foreach ($pending as $hash) {
 				account_deny($hash);
 			}

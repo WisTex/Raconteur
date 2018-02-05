@@ -345,15 +345,17 @@ If the person mentioned is in the list of recipients for the post, they will rec
 
 [h4]Deliverable Mentions[/h4]
 
-Some connections in the mention auto-complete box behave differently than others. If you mention a channel which provides "re-delivery of mentions" it will also send the post to all of that channel's default delivery connections. This is how one posts to "forums". The auto-complete box will provide two entries for these channels, one will mention just the channel. The other will invoke re-delivery and be listed as the channel's "network". 
+The [b]![/b] character designates a deliverable mention to a forum or special channel which allows "re-delivery of mentions". 
 
 [code]
 @Gardening  - mention the Gardening forum
 [/code]
 
 [code]
-@Gardening+ - mention the Gardening Forum and also post to the Gardening "network" (e.g. all the forum members; if you have permission to do so)
+!Gardening - mention the Gardening Forum and also post to the Gardening "network" (e.g. send to all the forum members; if you have permission to do so)
 [/code]
+
+Note: In previous releases, forums were delivered by using @forum+ with a plus sign at the end. This mechanism is still used occasionally but is deprecated and !forum is now preferred. 
 
 [h4]Private Mentions[/h4]
 If you wish to restrict a post to a single person or a number of people, you can do this by selecting channels or privacy groups from the privacy tool. You can also just tag them with a privacy tag. A privacy tag is a name preceded by the two characters @! - and in addition to tagging these channels, will also change the privacy permissions of the post to only include them. You can have more than one privacy tag, for instance @!bob and @!linda will send the post only to Bob and Linda. This mechanism over-rides the privacy selector.  
@@ -369,7 +371,7 @@ Topical tags are indicated by preceding the tag name with the  # character. This
 Topical tags are also not linked if they are purely numeric, e.g. #1. If you wish to use a numeric hashtag, please add some descriptive text such as #2012-elections.
 
 [h4]Bookmarks[/h4]
-Bookmarks indicate a link which can be saved to your bookmark folder. They use the sequence #^ followed by the link. Often these are generated automatically. If the 'bookmarker' addon is installed, this sequence will be converted to a bookmark icon when viewing the post or comment online and clicking the icon will save the bookmark. If the bookmarker addon is not installed, the post 'dropdown menu' contains a link for saving the bookmark or bookmarks. 
+Bookmarks indicate a link which can be saved to your bookmark folder. They use the sequence #^ followed by the link. Often these are generated automatically. If the 'bookmarker' addon is installed, this sequence will be converted to a bookmark icon when viewing the post or comment online, and clicking the icon will save the bookmark. If the bookmarker addon is not installed, the post 'dropdown menu' contains a link for saving the bookmark or bookmarks. 
 
 [h4]Spaces in Tags and Mentions[/h4]
 Where possible please use the auto-complete window to select tag and mention recipients, because it will generate a coded tag which uniquely identifies one channel. Names are sometimes ambiguous. However, you can "manually" tag a channel by matching the channel name or address.
@@ -845,6 +847,23 @@ Your files are visible on the web at the location [observer=1][baseurl]/cloud/[o
 [h4]WebDAV access[/h4]
 
 WebDAV provides a way to copy files directly to or from your computer's operating system, where your cloud files appear as a virtual disk drive. This should be used to upload large files such as video and audio; as it is not limited to available memory. See [zrl=help/member/member_guide#Cloud_Desktop_Clients]Cloud Desktop Clients[/zrl] below.
+
+[h4]CalDAV and CardDAV access on Android[/h4]
+
+You can sync you calendar and contacts on Android with your Hub.
+
+The following steps where tested for [url=https://f-droid.org/en/packages/at.bitfire.davdroid/]DAVdroid[/url]
+[list]
+[*] install DAVdroid
+[*] add account
+[*] use "URL" and "user name" to login
+[list]
+[*] base url is [baseurl]/cdav
+[*] user name is [observer=1][observer.webname][/observer][observer=0]username[/observer]
+[/list]
+[/list]
+
+To share your calendar visit [observer.baseurl]/cdav/calendar
 
 
 [h4]Permissions[/h4]

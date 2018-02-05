@@ -165,40 +165,41 @@ class Search extends \Zotlabs\Web\Controller {
 			if($load) {
 				$r = null;
 						
-				if(ACTIVE_DBTYPE == DBTYPE_POSTGRES) {
-					$prefix = 'distinct on (created, mid)';
-					$suffix = 'ORDER BY created DESC, mid';
-				} else {
-					$prefix = 'distinct';
-					$suffix = 'group by mid ORDER BY created DESC';
-				}
 				if(local_channel()) {
-					$r = q("SELECT $prefix mid, item.id as item_id, item.* from item
+					$r = q("SELECT mid, MAX(id) as item_id from item
 						WHERE ((( item.allow_cid = ''  AND item.allow_gid = '' AND item.deny_cid  = '' AND item.deny_gid  = '' AND item_private = 0 ) 
 						OR ( item.uid = %d )) OR item.owner_xchan = '%s' )
 						$item_normal
 						$sql_extra
-						$suffix $pager_sql ",
+						group by mid order by created desc $pager_sql ",
 						intval(local_channel()),
 						dbesc($sys['xchan_hash'])
 					);
 				}
 				if($r === null) {
-					$r = q("SELECT $prefix mid, item.id as item_id, item.* from item
+					$r = q("SELECT mid, MAX(id) as item_id from item
 						WHERE (((( item.allow_cid = ''  AND item.allow_gid = '' AND item.deny_cid  = ''
 						AND item.deny_gid  = '' AND item_private = 0 )
 						and owner_xchan in ( " . stream_perms_xchans(($observer) ? (PERMS_NETWORK|PERMS_PUBLIC) : PERMS_PUBLIC) . " ))
 							$pub_sql ) OR owner_xchan = '%s')
 						$item_normal
 						$sql_extra 
-						$suffix $pager_sql",
+						group by mid order by created desc $pager_sql",
 						dbesc($sys['xchan_hash'])
 					);
+				}
+				if($r) {
+					$str = ids_to_querystr($r,'item_id');
+					$r = q("select *, id as item_id from item where id in ( " . $str . ") order by created desc ");
 				}
 			}
 			else {
 				$r = array();
 			}
+		
+
+
+
 		}
 	
 		if($r) {

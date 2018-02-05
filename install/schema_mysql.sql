@@ -644,7 +644,6 @@ CREATE TABLE IF NOT EXISTS `item` (
   `item_pending_remove` tinyint(1) NOT NULL DEFAULT 0 ,
   `item_blocked` tinyint(1) NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`id`),
-  KEY `uid` (`uid`),
   KEY `parent` (`parent`),
   KEY `created` (`created`),
   KEY `edited` (`edited`),
@@ -690,14 +689,8 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `item_verified` (`item_verified`),
   KEY `item_retained` (`item_retained`),
   KEY `item_rss` (`item_rss`),
-  KEY `item_deleted` (`item_deleted`),
-  KEY `item_type` (`item_type`),
-  KEY `item_hidden` (`item_hidden`),
   KEY `item_consensus` (`item_consensus`),
-  KEY `item_unpublished` (`item_unpublished`),
-  KEY `item_delayed` (`item_delayed`),
-  KEY `item_pending_remove` (`item_pending_remove`),
-  KEY `item_blocked` (`item_blocked`)
+  KEY `item_type` (`item_type`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `item_id` (

@@ -73,8 +73,35 @@ function get_best_language() {
 		}
 	}
 
-	if(! isset($preferred))
+
+	if(! isset($preferred)) {
+
+		/*
+		 * We could find no perfect match for any of the preferred languages. 
+		 * For cases where the preference is fr-fr and we have fr but *not* fr-fr
+		 * run the test again and only look for the language base
+		 * which should provide an interface they can sort of understand
+		 */
+
+		if(isset($langs) && count($langs)) {
+			foreach ($langs as $lang => $v) {
+				if(strlen($lang) ===  2) {
+					/* we have already checked this language */
+					continue;
+				}
+				/* Check the base */
+				$lang = strtolower(substr($lang,0,2));
+				if(is_dir("view/$lang")) {
+					$preferred = $lang;
+					break;
+				}
+			}
+		}
+	}
+
+	if(! isset($preferred)) {
 		$preferred = 'unset';
+	}
 
 	$arr = array('langs' => $langs, 'preferred' => $preferred);
 
@@ -85,6 +112,12 @@ function get_best_language() {
 
 	return ((isset(App::$config['system']['language'])) ? App::$config['system']['language'] : 'en');
 }
+
+/*
+ * push_lang and pop_lang let you temporarily override the default language.
+ * Often used to email the administrator during a session created in another language.
+ * The stack is one level deep - so you must pop after every push.
+ */
 
 
 function push_lang($language) {

@@ -973,7 +973,14 @@ function contact_block() {
 			$contacts = t('Connections');
 			$micropro = Array();
 			foreach($r as $rr) {
-				$rr['archived'] = (intval($rr['abook_archived']) ? true : false);
+
+				// There is no setting to discover if you are bi-directionally connected
+				// Use the ability to post comments as an indication that this relationship is more
+				// than wishful thinking; even though soapbox channels and feeds will disable it. 
+
+				if(! intval(get_abconfig(App::$profile['uid'],$rr['xchan_hash'],'their_perms','post_comments'))) {
+					$rr['archived'] = true;
+				}
 				$micropro[] = micropro($rr,true,'mpfriend');
 			}
 		}
@@ -2153,6 +2160,35 @@ function ids_to_querystr($arr,$idx = 'id',$quote = false) {
 }
 
 /**
+ * @brief array_elm_to_str($arr,$elm,$delim = ',') extract unique individual elements from an array of arrays and return them as a string separated by a delimiter
+ * similar to ids_to_querystr, but allows a different delimiter instead of a db-quote option 
+ * empty elements (evaluated after trim()) are ignored.
+ * @param $arr array
+ * @param $elm array key to extract from sub-array
+ * @param $delim string default ','
+ * @returns string
+ */
+
+function array_elm_to_str($arr,$elm,$delim = ',') {
+
+	$tmp = [];
+	if($arr && is_array($arr)) {
+		foreach($arr as $x) {
+			if(is_array($x) && array_key_exists($elm,$x)) {
+				$z = trim($x[$elm]);
+				if(($z) && (! in_array($z,$tmp))) {
+					$tmp[] = $z;
+				}
+			}
+		}
+	}
+	return implode($delim,$tmp);
+}
+
+
+
+
+/**
  * @brief Fetches xchan and hubloc data for an array of items with only an
  * author_xchan and owner_xchan.
  *
@@ -3254,3 +3290,5 @@ function purify_filename($s) {
 		return '';
 	return $s;
 }
+
+

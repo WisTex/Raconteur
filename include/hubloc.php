@@ -257,6 +257,24 @@ function hubloc_mark_as_down($posturl) {
 }
 
 
+/**
+ * @brief return comma separated string of non-dead clone locations (net addresses) for a given netid
+ *
+ * @param string $netid network identity (typically xchan_hash or hubloc_hash)
+ * @return string
+ */ 
+
+function locations_by_netid($netid) {
+
+	$locs = q("select hubloc_addr as location from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and hubloc_deleted = 0 and site_dead = 0",
+		dbesc($netid)
+	);
+
+	return array_elm_to_str($locs,'location',', ');
+
+}
+
+
 
 function ping_site($url) {
 

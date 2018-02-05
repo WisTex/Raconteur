@@ -9,9 +9,41 @@ require_once('include/items.php');
 
 class Like extends \Zotlabs\Web\Controller {
 
-	function get() {
+
+
+	private function reaction_to_activity($reaction) {
+
+		$acts = [
+			'like'        => ACTIVITY_LIKE ,
+			'dislike'     => ACTIVITY_DISLIKE ,
+			'agree'       => ACTIVITY_AGREE ,
+			'disagree'    => ACTIVITY_DISAGREE ,
+			'abstain'     => ACTIVITY_ABSTAIN ,
+			'attendyes'   => ACTIVITY_ATTEND ,
+			'attendno'    => ACTIVITY_ATTENDNO ,
+			'attendmaybe' => ACTIVITY_ATTENDMAYBE 
+		];
+
+		// unlike (etc.) reactions are an undo of positive reactions, rather than a negative action.
+		// The activity is the same in undo actions and will have the same activity mapping
+
+		if(substr($reaction,0,2) === 'un') {
+			$reaction = substr($reaction,2);
+		}
+
+		if(array_key_exists($reaction,$acts)) {
+			return $acts[$reaction];
+		}
+
+		return EMPTY_STR;
+
+	}
+
+
+
+	public function get() {
 	
-		$o = '';
+		$o = EMPTY_STR;
 
 		$sys_channel = get_sys_channel();
 		$sys_channel_id = (($sys_channel) ? $sys_channel['channel_id'] : 0);
@@ -35,48 +67,17 @@ class Like extends \Zotlabs\Web\Controller {
 		if(! $verb)
 			$verb = 'like';
 	
-		switch($verb) {
-			case 'like':
-			case 'unlike':
-				$activity = ACTIVITY_LIKE;
-				break;
-			case 'dislike':
-			case 'undislike':
-				$activity = ACTIVITY_DISLIKE;
-				break;
-			case 'agree':
-			case 'unagree':
-				$activity = ACTIVITY_AGREE;
-				break;
-			case 'disagree':
-			case 'undisagree':
-				$activity = ACTIVITY_DISAGREE;
-				break;
-			case 'abstain':
-			case 'unabstain':
-				$activity = ACTIVITY_ABSTAIN;
-				break;
-			case 'attendyes':
-			case 'unattendyes':
-				$activity = ACTIVITY_ATTEND;
-				break;
-			case 'attendno':
-			case 'unattendno':
-				$activity = ACTIVITY_ATTENDNO;
-				break;
-			case 'attendmaybe':
-			case 'unattendmaybe':
-				$activity = ACTIVITY_ATTENDMAYBE;
-				break;
-			default:
-				return;
-				break;
+		$activity = $this->reaction_to_activity($verb);
+
+		if(! $activity) {
+			return EMPTY_STR; 
 		}
+
 	
 		$extended_like = false;
 		$object = $target = null;
-		$post_type = '';
-		$objtype = '';
+		$post_type = EMPTY_STR;
+		$objtype = EMPTY_STR;
 	
 		if(argc() == 3) {
 	

@@ -74,6 +74,7 @@
 	{{include file="field_select.tpl" field=$access_policy}}
 	{{include file="field_input.tpl" field=$location}}
 	{{include file="field_input.tpl" field=$sellpage}}
+	{{include file="field_input.tpl" field=$firstpage}}
 
 	<div class="submit"><input type="submit" name="page_site" value="{{$submit}}" /></div>
 
@@ -82,6 +83,7 @@
 	{{include file="field_checkbox.tpl" field=$feed_contacts}}
 	{{include file="field_checkbox.tpl" field=$force_publish}}
 	{{include file="field_checkbox.tpl" field=$disable_discover_tab}}
+	{{include file="field_checkbox.tpl" field=$site_firehose}}
 	
 	<div class="submit"><input type="submit" name="page_site" value="{{$submit}}" /></div>
 	

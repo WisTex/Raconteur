@@ -52,24 +52,24 @@ class Security {
 	function get() {
 	
 		$whitesites = get_config('system','whitelisted_sites');
-		$whitesites_str = ((is_array($whitesites)) ? implode($whitesites,"\n") : '');
+		$whitesites_str = ((is_array($whitesites)) ? implode("\n",$whitesites) : '');
 	
 		$blacksites = get_config('system','blacklisted_sites');
-		$blacksites_str = ((is_array($blacksites)) ? implode($blacksites,"\n") : '');
+		$blacksites_str = ((is_array($blacksites)) ? implode("\n",$blacksites) : '');
 	
 	
 		$whitechannels = get_config('system','whitelisted_channels');
-		$whitechannels_str = ((is_array($whitechannels)) ? implode($whitechannels,"\n") : '');
+		$whitechannels_str = ((is_array($whitechannels)) ? implode("\n",$whitechannels) : '');
 	
 		$blackchannels = get_config('system','blacklisted_channels');
-		$blackchannels_str = ((is_array($blackchannels)) ? implode($blackchannels,"\n") : '');
+		$blackchannels_str = ((is_array($blackchannels)) ? implode("\n",$blackchannels) : '');
 	
 	
 		$whiteembeds = get_config('system','embed_allow');
-		$whiteembeds_str = ((is_array($whiteembeds)) ? implode($whiteembeds,"\n") : '');
+		$whiteembeds_str = ((is_array($whiteembeds)) ? implode("\n",$whiteembeds) : '');
 	
 		$blackembeds = get_config('system','embed_deny');
-		$blackembeds_str = ((is_array($blackembeds)) ? implode($blackembeds,"\n") : '');
+		$blackembeds_str = ((is_array($blackembeds)) ? implode("\n",$blackembeds) : '');
 	
 		$embed_coop = intval(get_config('system','embed_coop'));
 	

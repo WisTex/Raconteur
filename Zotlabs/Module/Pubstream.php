@@ -17,9 +17,16 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				return login();
 		}
 	
-		$disable_discover_tab = get_config('system','disable_discover_tab') || get_config('system','disable_discover_tab') === false;
-		if($disable_discover_tab)
-			return;
+		$site_firehose = ((intval(get_config('system','site_firehose',0))) ? true : false);
+		$net_firehose  = ((get_config('system','disable_discover_tab',1)) ? false : true);
+
+		if(! ($site_firehose || $net_firehose)) {
+			return '';
+		}
+
+		if($net_firehose) {
+			$site_firehose = false;
+		}
 
 		$mid = ((x($_REQUEST,'mid')) ? $_REQUEST['mid'] : '');
 
@@ -142,7 +149,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 		require_once('include/channel.php');
 		require_once('include/security.php');
 	
-		if(get_config('system','site_firehose')) {
+		if($site_firehose) {
 			$uids = " and item.uid in ( " . stream_perms_api_uids(PERMS_PUBLIC) . " ) and item_private = 0  and item_wall = 1 ";
 		}
 		else {
@@ -189,10 +196,10 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				}
 				else {
 					// Fetch a page full of parent items for this page
-					$r = q("SELECT distinct item.id AS item_id, $ordering FROM item
+					$r = q("SELECT item.id AS item_id FROM item 
 						left join abook on item.author_xchan = abook.abook_xchan
 						$net_query
-						WHERE true $uids $item_normal
+						WHERE item_thread_top = 1 $uids $item_normal
 						AND item.parent = item.id
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
 						$sql_extra3 $sql_extra $sql_nets $net_query2

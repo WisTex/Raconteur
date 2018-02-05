@@ -262,24 +262,46 @@ function create_account($arr) {
 
 function verify_email_address($arr) {
 
-	$hash = random_string();
+	if(array_key_exists('resend',$arr)) {
+		$email = $arr['email'];
+		$a = q("select * from account where account_email = '%s' limit 1",
+			dbesc($arr['email'])
+		);
+		if(! ($a && ($a[0]['account_flags'] & ACCOUNT_UNVERIFIED))) {
+			return false;
+		}
+		$account = $a[0];
+		$v = q("select * from register where uid = %d and password = 'verify' limit 1",
+			intval($account['account_id'])
+		);
+		if($v) {
+			$hash = $v[0]['hash'];
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		$hash = random_string(24);
 
-	$r = q("INSERT INTO register ( hash, created, uid, password, lang ) VALUES ( '%s', '%s', %d, '%s', '%s' ) ",
-		dbesc($hash),
-		dbesc(datetime_convert()),
-		intval($arr['account']['account_id']),
-		dbesc('verify'),
-		dbesc($arr['account']['account_language'])
-	);
+		$r = q("INSERT INTO register ( hash, created, uid, password, lang ) VALUES ( '%s', '%s', %d, '%s', '%s' ) ",
+			dbesc($hash),
+			dbesc(datetime_convert()),
+			intval($arr['account']['account_id']),
+			dbesc('verify'),
+			dbesc($arr['account']['account_language'])
+		);
+		$account = $arr['account'];
+	}
 
-	push_lang(($arr['account']['account_language']) ? $arr['account']['account_language'] : 'en');
+	push_lang(($account['account_language']) ? $account['account_language'] : 'en');
 
 	$email_msg = replace_macros(get_intltext_template('register_verify_member.tpl'),
 		[
 			'$sitename' => get_config('system','sitename'),
 			'$siteurl'  => z_root(),
 			'$email'    => $arr['email'],
-			'$uid'      => $arr['account']['account_id'],
+			'$uid'      => $account['account_id'],
 			'$hash'     => $hash,
 			'$details'  => $details
 	 	]

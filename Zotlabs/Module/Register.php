@@ -150,9 +150,11 @@ class Register extends \Zotlabs\Web\Controller {
 		}
 	
 		if($email_verify) {
-			goaway(z_root());
+			goaway(z_root() . '/email_validation/' . bin2hex($result['email']));
 		}
-	
+
+		// fall through and authenticate if no approvals or verifications were required. 	
+
 		authenticate_success($result['account'],null,true,false,true);
 		
 		$new_channel = false;
@@ -217,6 +219,9 @@ class Register extends \Zotlabs\Web\Controller {
 		$privacy_role = ((x($_REQUEST,'permissions_role')) ? $_REQUEST['permissions_role'] : "");
 
 		$perm_roles = \Zotlabs\Access\PermissionRoles::roles();
+
+		// A new account will not have a techlevel, but accounts can also be created by the administrator.
+
 		if((get_account_techlevel() < 4) && $privacy_role !== 'custom')
 			unset($perm_roles[t('Other')]);
 	
@@ -231,15 +236,17 @@ class Register extends \Zotlabs\Web\Controller {
 		// Configurable whether to restrict age or not - default is based on international legal requirements
 		// This can be relaxed if you are on a restricted server that does not share with public servers
 	
-		if(get_config('system','no_age_restriction')) 
+		if(get_config('system','no_age_restriction')) {
 			$label_tos = sprintf( t('I accept the %s for this website'), $toslink);
-		else
+		}
+		else {
 			$age = get_config('system','minimum_age');
 			if(!$age) {
 				$age = 13;
 			}
 			$label_tos = sprintf( t('I am over %s years of age and accept the %s for this website'), $age, $toslink);
-	
+		}
+
 		$enable_tos = 1 - intval(get_config('system','no_termsofservice'));
 	
 		$email        = array('email', t('Your email address'), ((x($_REQUEST,'email')) ? strip_tags(trim($_REQUEST['email'])) : ""));
@@ -255,6 +262,7 @@ class Register extends \Zotlabs\Web\Controller {
 
 		$auto_create  = (get_config('system','auto_channel_create') ? true : false);
 		$default_role = get_config('system','default_permissions_role');
+		$email_verify = get_config('system','verify_email');
 	
 		require_once('include/bbcode.php');
 	
@@ -278,7 +286,7 @@ class Register extends \Zotlabs\Web\Controller {
 			'$pass1'        => $password,
 			'$pass2'        => $password2,
 			'$submit'       => t('Register'),
-			'$verify_note'  => t('This site may require email verification after submitting this form. If you are returned to a login page, please check your email for instructions.')
+			'$verify_note'  => (($email_verify) ? t('This site requires email verification. After completing this form, please check your email for further instructions.') : ''),
 		));
 	
 		return $o;

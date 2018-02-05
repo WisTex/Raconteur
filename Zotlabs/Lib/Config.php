@@ -142,9 +142,9 @@ class Config {
 
 
 	/**
-	 * @brief Returns a value directly from the database configuration storage.
+	 * @brief Returns a record directly from the database configuration storage.
 	 *
-	 * This function queries directly the database and bypasses the chached storage
+	 * This function queries directly the database and bypasses the cached storage
 	 * from get_config($family, $key).
 	 *
 	 * @param string $family

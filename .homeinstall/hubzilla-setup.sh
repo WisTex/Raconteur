@@ -641,7 +641,7 @@ function configure_cron_daily {
     # every 10 min for poller.php
     if [ -z "`grep 'poller.php' /etc/crontab`" ]
     then
-        echo "*/10 * * * * www-data cd /var/www/html; php include/poller.php >> /dev/null 2>&1" >> /etc/crontab
+        echo "*/10 * * * * www-data cd /var/www/html; php Zotlabs/Daemon/Master.php Cron >> /dev/null 2>&1" >> /etc/crontab
     fi
     # Run external script daily at 05:30
     # - stop apache and mysql-server

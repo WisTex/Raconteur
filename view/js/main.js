@@ -23,6 +23,17 @@ var mediaPlaying = false;
 var contentHeightDiff = 0;
 var liveRecurse = 0;
 var savedTitle = '';
+var initialLoad = true;
+
+// Clear the session storage if we switch channel or log out
+var cache_uid = '';
+if(sessionStorage.getItem('uid') !== null) {
+	cache_uid = sessionStorage.getItem('uid');
+}
+if(cache_uid !== localUser.toString()) {
+	sessionStorage.clear();
+	sessionStorage.setItem('uid', localUser.toString());
+}
 
 $.ajaxSetup({cache: false});
 
@@ -54,10 +65,23 @@ $(document).ready(function() {
 
 	updateInit();
 
-	$('a[rel^="#"]').click(function(e){
-		manage_popup_menu(this, e);
-		return;
+	$('a.notification-link').click(function(e){
+		var notifyType = $(this).data('type');
+
+		if(! $('#nav-' + notifyType + '-sub').hasClass('show')) {
+			loadNotificationItems(notifyType);
+			sessionStorage.setItem('notification_open', notifyType);
+		}
+		else {
+			sessionStorage.removeItem('notification_open');
+		}
 	});
+
+	if(sessionStorage.getItem('notification_open') !== null) {
+		var notifyType = sessionStorage.getItem('notification_open');
+		$('#nav-' + notifyType + '-sub').addClass('show');
+		loadNotificationItems(notifyType);
+	}
 
 	// Allow folks to stop the ajax page updates with the pause/break key
 	$(document).keydown(function(event) {
@@ -88,7 +112,9 @@ $(document).ready(function() {
 
 	var e = document.getElementById('content-complete');
 	if(e)
-		pageHasMoreContent = false;	
+		pageHasMoreContent = false;
+
+	initialLoad = false;
 
 });
 
@@ -282,22 +308,6 @@ function viewsrc(id) {
 	$.colorbox({href: 'viewsrc/' + id, maxWidth: '80%', maxHeight: '80%' });
 }
 
-function qCommentInsert(obj, id) {
-	var tmpStr = $("#comment-edit-text-" + id).val();
-	if(tmpStr == aStr.comment) {
-		tmpStr = '';
-		$("#comment-edit-text-" + id).addClass("expanded");
-		openMenu("comment-edit-submit-wrapper-" + id);
-	}
-	var ins = $(obj).val();
-	ins = ins.replace('&lt;','<');
-	ins = ins.replace('&gt;','>');
-	ins = ins.replace('&amp;','&');
-	ins = ins.replace('&quot;','"');
-	$("#comment-edit-text-" + id).val(tmpStr + ins);
-	$(obj).val('');
-}
-
 function showHideComments(id) {
 	if( $('#collapsed-comments-' + id).is(':visible')) {
 		$('#collapsed-comments-' + id + ' .autotime').timeago('dispose');
@@ -356,73 +366,111 @@ function markItemRead(itemId) {
 	$('.unseen-wall-indicator-'+itemId).hide();
 }
 
-function manage_popup_menu(w,e) {
-	menu = $( $(w).attr('rel') );
-
-	/* notification menus are loaded dynamically 
-	 * - here we find a rel tag to figure out what type of notification to load */
-
-	var loader_source = $(menu).attr('rel');
-
-	if(typeof(loader_source) != 'undefined' && loader_source.length) {	
-		notify_popup_loader(loader_source);
-	}
-}
-
-function notificationsUpdate() {
+function notificationsUpdate(cached_data) {
 	var pingCmd = 'ping' + ((localUser != 0) ? '?f=&uid=' + localUser : '');
 
-	$.get(pingCmd,function(data) {
+	if(cached_data !== undefined) {
+		handleNotifications(cached_data);
+	}
+	else {
+		$.get(pingCmd,function(data) {
 
-		if(data.invalid == 1) { 
-			window.location.href=window.location.href;
-		}
+			// Put the object into storage
+			sessionStorage.setItem('notifications_cache', JSON.stringify(data));
 
-		if(data.network || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs) {
-			$('.notifications-btn').css('opacity', 1);
-			$('#no_notifications').hide();
-		}
-		else {
-			$('.notifications-btn').css('opacity', 0.5);
-			$('#navbar-collapse-1').removeClass('show');
-			$('#no_notifications').show();
-		}
-
-		if(data.home || data.intros || data.register || data.mail || data.notify || data.files) {
-			$('.notifications-btn-icon').removeClass('fa-exclamation-circle');
-			$('.notifications-btn-icon').addClass('fa-exclamation-triangle');
-		}
-		if(!data.home && !data.intros && !data.register && !data.mail && !data.notify && !data.files) {
-			$('.notifications-btn-icon').removeClass('fa-exclamation-triangle');
-			$('.notifications-btn-icon').addClass('fa-exclamation-circle');
-		}
-
-		$.each(data, function(index, item) {
-			//do not process those
-			var arr = ['notice', 'info', 'invalid'];
-			if(arr.indexOf(index) !== -1)
-				return;
-
-			if(item == 0) {
-				$('.' + index + '-button').fadeOut();
-			} else {
-				$('.' + index + '-button').fadeIn();
-				$('.' + index + '-update').html(item);
+			if(data.invalid == 1) {
+				window.location.href=window.location.href;
 			}
-		});
 
-		$.jGrowl.defaults.closerTemplate = '<div>[ ' + aStr.closeAll + ']</div>';
+			handleNotifications(data);
 
-		$(data.notice).each(function() {
-			$.jGrowl(this.message, { sticky: true, theme: 'notice' });
-		});
+			$.jGrowl.defaults.closerTemplate = '<div>[ ' + aStr.closeAll + ']</div>';
 
-		$(data.info).each(function(){
-			$.jGrowl(this.message, { sticky: false, theme: 'info', life: 10000 });
+			$(data.notice).each(function() {
+				$.jGrowl(this.message, { sticky: true, theme: 'notice' });
+			});
+
+			$(data.info).each(function(){
+				$.jGrowl(this.message, { sticky: false, theme: 'info', life: 10000 });
+			});
 		});
-	})
+	}
+
+	var notifyType = null;
+	if($('.notification-content.show').length) {
+		notifyType = $('.notification-content.show').data('type');
+	}
+	if(notifyType !== null) {
+		loadNotificationItems(notifyType);
+	}
+
 	if(timer) clearTimeout(timer);
 	timer = setTimeout(updateInit,updateInterval);
+}
+
+function handleNotifications(data) {
+	if(data.network || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs) {
+		$('.notifications-btn').css('opacity', 1);
+		$('#no_notifications').hide();
+	}
+	else {
+		$('.notifications-btn').css('opacity', 0.5);
+		$('#navbar-collapse-1').removeClass('show');
+		$('#no_notifications').show();
+	}
+
+	if(data.home || data.intros || data.register || data.mail || data.notify || data.files) {
+		$('.notifications-btn-icon').removeClass('fa-exclamation-circle');
+		$('.notifications-btn-icon').addClass('fa-exclamation-triangle');
+	}
+	if(!data.home && !data.intros && !data.register && !data.mail && !data.notify && !data.files) {
+		$('.notifications-btn-icon').removeClass('fa-exclamation-triangle');
+		$('.notifications-btn-icon').addClass('fa-exclamation-circle');
+	}
+
+	$.each(data, function(index, item) {
+		//do not process those
+		var arr = ['notice', 'info', 'invalid'];
+		if(arr.indexOf(index) !== -1)
+			return;
+
+		if(item == 0) {
+			$('.' + index + '-button').fadeOut();
+		} else {
+			$('.' + index + '-button').fadeIn();
+			$('.' + index + '-update').html(item);
+		}
+	});
+}
+
+function handleNotificationsItems(notifyType, data) {
+	var notifications_tpl= unescape($("#nav-notifications-template[rel=template]").html());
+	var notify_menu = $("#nav-" + notifyType + "-menu");
+
+	notify_menu.html('');
+
+	$(data).each(function() {
+		html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top);
+		notify_menu.append(html);
+	});
+
+	datasrc2src('#notifications .notification img[data-src]');
+
+	if($('#tt-' + notifyType + '-only').hasClass('active'))
+		$('#nav-' + notifyType + '-menu [data-thread_top=false]').hide();
+
+	if($('#cn-' + notifyType + '-input').length) {
+		var filter = $('#cn-' + notifyType + '-input').val().toString().toLowerCase();
+		if(filter) {
+			$('#nav-' + notifyType + '-menu .notification').each(function(i, el){
+				var cn = $(el).data('contact_name').toString().toLowerCase();
+				if(cn.indexOf(filter) === -1)
+					$(el).addClass('d-none');
+				else
+					$(el).removeClass('d-none');
+			});
+		}
+	}
 }
 
 function contextualHelp() {
@@ -687,6 +735,11 @@ function updateInit() {
 	// if($('#live-cards').length)      { src = 'cards'; }
 	// if($('#live-articles').length)   { src = 'articles'; }
 
+	if (initialLoad && (sessionStorage.getItem('notifications_cache') !== null)) {
+		var cached_data = JSON.parse(sessionStorage.getItem('notifications_cache'));
+		notificationsUpdate(cached_data);
+	}
+
 	if(! src) {
 		notificationsUpdate();
 	}
@@ -715,6 +768,9 @@ function liveUpdate(notify_id) {
 		livetime = setTimeout(liveUpdate, 10000);
 		return;
 	}
+
+	if(timer)
+		clearTimeout(timer);
 
 	if(livetime !== null)
 		livetime = null;
@@ -772,7 +828,7 @@ function liveUpdate(notify_id) {
 		// else data was valid - reset the recursion counter
 		liveRecurse = 0;
 
-		if(typeof notify_id !== 'undefined') {
+		if(typeof notify_id !== 'undefined' && notify_id !== 'undefined') {
 			$.post(
 				"hq",
 				{
@@ -876,54 +932,35 @@ function justifyPhotosAjax(id) {
 	$('#' + id).justifiedGallery('norewind').on('jg.complete', function(e){ justifiedGalleryActive = false; });
 }
 
-function notify_popup_loader(notifyType) {
-
-	/* notifications template - different for navbar and notifications widget */
-	var navbar_notifications_tpl= unescape($("#navbar-notifications-template[rel=template]").html());
-	var notifications_tpl= unescape($("#nav-notifications-template[rel=template]").html());
-	var notifications_all = unescape($('<div>').append( $("#nav-" + notifyType + "-see-all").clone() ).html()); //outerHtml hack
-	var notifications_mark = unescape($('<div>').append( $("#nav-" + notifyType + "-mark-all").clone() ).html()); //outerHtml hack
-	var notifications_tt_only = unescape($('<div>').append( $("#tt-" + notifyType + "-only").clone() ).html()); //outerHtml hack
-	var notifications_empty = unescape($("#nav-" + notifyType + "-menu").html());
-
-	var notify_menu = $("#nav-" + notifyType + "-menu");
-
+function loadNotificationItems(notifyType) {
 	var pingExCmd = 'ping/' + notifyType + ((localUser != 0) ? '?f=&uid=' + localUser : '');
-	$.get(pingExCmd, function(data) {
 
-		if(data.invalid == 1) { 
+	var clicked = $('[data-type=\'' + notifyType + '\']').data('clicked');
+
+	if((clicked === undefined) && (sessionStorage.getItem(notifyType + '_notifications_cache') !== null)) {
+		var cached_data = JSON.parse(sessionStorage.getItem(notifyType + '_notifications_cache'));
+		handleNotificationsItems(notifyType, cached_data);
+		$('[data-type=\'' + notifyType + '\']').data('clicked',true);
+		console.log('updating ' + notifyType + ' notifications from cache...');
+	}
+	else {
+		var cached_data = [];
+	}
+
+	console.log('updating ' + notifyType + ' notifications...');
+	$.get(pingExCmd, function(data) {
+		if(data.invalid == 1) {
 			window.location.href=window.location.href;
 		}
 
-		$("#navbar-" + notifyType + "-menu").html(notifications_all + notifications_mark + notifications_tt_only);
-		$("#nav-" + notifyType + "-menu").html(notifications_all + notifications_mark + notifications_tt_only);
-
-		$("." + notifyType + "-update").html(data.notify.length);
-
-		$(data.notify).each(function() {
-			html = navbar_notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top);
-			$("#navbar-" + notifyType + "-menu").append(html);
-			html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top);
-			$("#nav-" + notifyType + "-menu").append(html);
-		});
-
-		$(".dropdown-menu img[data-src], .notification img[data-src]").each(function(i, el){
-			// Replace data-src attribute with src attribute for every image
-			$(el).attr('src', $(el).data("src"));
-			$(el).removeAttr("data-src");
-		});
-
-		if($('#tt-' + notifyType + '-only').hasClass('active'))
-			$('#nav-' + notifyType + '-menu [data-thread_top=false]').hide();
-	});
-
-
-	setTimeout(function() {
-		if(notify_menu.hasClass('show')) {
-			console.log('updating ' + notifyType + ' notifications...');
-			setTimeout(notify_popup_loader, updateInterval, notifyType);
+		if(JSON.stringify(cached_data[0]) === JSON.stringify(data.notify[0])) {
+			console.log(notifyType + ' notifications cache up to date - update deferred');
 		}
-	}, 1000);
+		else {
+			handleNotificationsItems(notifyType, data.notify);
+			sessionStorage.setItem(notifyType + '_notifications_cache', JSON.stringify(data.notify));
+		}
+	});
 }
 
 // Since our ajax calls are asynchronous, we will give a few

@@ -29,6 +29,8 @@ class Hq extends \Zotlabs\Web\Controller {
 			);
 		}
 
+		killme();
+
 	}
 
 	function get($update = 0, $load = false) {
@@ -50,8 +52,8 @@ class Hq extends \Zotlabs\Web\Controller {
 		$item_normal_update = item_normal_update();
 
 		if(! $item_hash) {
-			$r = q("SELECT mid FROM item
-				WHERE uid = %d
+			$r = q("SELECT mid FROM item 
+				WHERE uid = %d $item_normal
 				AND mid = parent_mid 
 				ORDER BY created DESC LIMIT 1",
 				intval(local_channel())

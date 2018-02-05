@@ -51,10 +51,10 @@ require_once('include/attach.php');
 require_once('include/bbcode.php');
 
 define ( 'PLATFORM_NAME',           'hubzilla' );
-define ( 'STD_VERSION',             '3.1.1' );
+define ( 'STD_VERSION',             '3.1.7' );
 define ( 'ZOT_REVISION',            '1.3' );
 
-define ( 'DB_UPDATE_VERSION',       1198  );
+define ( 'DB_UPDATE_VERSION',       1200  );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 
@@ -66,6 +66,7 @@ define ( 'PROJECT_BASE',   __DIR__ );
  * This can be used in HTML and JavaScript where needed a line break.
  */
 define ( 'EOL',                    '<br>' . "\r\n"        );
+define ( 'EMPTY_STR',              ''                     );
 define ( 'ATOM_TIME',              'Y-m-d\\TH:i:s\\Z'     ); // aka ISO 8601 "Zulu"
 define ( 'TEMPLATE_BUILD_PATH',    'store/[data]/smarty3' );
 
@@ -1013,7 +1014,7 @@ class App {
 
 		self::$baseurl = $url;
 
-		if($parsed) {
+		if($parsed !== false) {
 			self::$scheme = $parsed['scheme'];
 
 			self::$hostname = $parsed['host'];
@@ -1449,57 +1450,9 @@ function check_config() {
 	$x = new \Zotlabs\Lib\DB_Upgrade(DB_UPDATE_VERSION);
 
 
-	/**
-	 *
-	 * Synchronise plugins:
-	 *
-	 * App::$config['system']['addon'] contains a comma-separated list of names
-	 * of plugins/addons which are used on this system.
-	 * Go through the database list of already installed addons, and if we have
-	 * an entry, but it isn't in the config list, call the unload procedure
-	 * and mark it uninstalled in the database (for now we'll remove it).
-	 * Then go through the config list and if we have a plugin that isn't installed,
-	 * call the install procedure and add it to the database.
-	 *
-	 */
-
-	$r = q("SELECT * FROM addon WHERE installed = 1");
-	if($r)
-		$installed = $r;
-	else
-		$installed = array();
-
-	$plugins = get_config('system', 'addon');
-	$plugins_arr = array();
-
-	if($plugins)
-		$plugins_arr = explode(',', str_replace(' ', '', $plugins));
-
-	App::$plugins = $plugins_arr;
-
-	$installed_arr = array();
-
-	if(count($installed)) {
-		foreach($installed as $i) {
-			if(! in_array($i['aname'], $plugins_arr)) {
-				unload_plugin($i['aname']);
-			}
-			else {
-				$installed_arr[] = $i['aname'];
-			}
-		}
-	}
-
-	if(count($plugins_arr)) {
-		foreach($plugins_arr as $p) {
-			if(! in_array($p, $installed_arr)) {
-				load_plugin($p);
-			}
-		}
-	}
+	plugins_sync();
 
 	load_hooks();
-
 
 	check_for_new_perms();
 

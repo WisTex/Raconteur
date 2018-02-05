@@ -49,7 +49,7 @@ class Permcats {
 
 
 		if(argc() > 2) 
-			$name = argv(2);			
+			$name = hex2bin(argv(2));			
 
 		if(argc() > 3 && argv(3) === 'drop') {
 			\Zotlabs\Lib\Permcat::delete(local_channel(),$name);
@@ -70,7 +70,7 @@ class Permcats {
 				if(($pc['name']) && ($name) && ($pc['name'] == $name))
 					$existing = $pc['perms'];
 				if(! $pc['system'])
-					$permcats[$pc['name']] = $pc['localname'];
+					$permcats[bin2hex($pc['name'])] = $pc['localname'];
 			}
 		}
 

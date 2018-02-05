@@ -313,39 +313,25 @@ function dir_tagadelic($count = 0, $hub = '') {
 
 	$count = intval($count);
 
-	$dirmode = get_config('system','directory_mode');
-
-	if(($dirmode == DIRECTORY_MODE_STANDALONE) && (! $hub)) {
-		$hub = \App::get_hostname();
-	}
-
-	if($hub)
-		$hub_query = " and xtag_hash in (select hubloc_hash from hubloc where hubloc_host =  '" . protect_sprintf(dbesc($hub)) . "') ";
-	else
-		$hub_query = '';
-
-	if($hub_query) {
-		// Fetch tags
+	if($hub) {
 		$r = q("select xtag_term as term, count(xtag_term) as total from xtag 
 			left join hubloc on xtag_hash = hubloc_hash 
-			where xtag_flags = 0 $hub_query
+			where xtag_flags = 0  and xtag_hash in (select hubloc_hash from hubloc where hubloc_host =  '%s' )
 			group by xtag_term order by total desc %s",
+			dbesc($hub),
 			((intval($count)) ? "limit $count" : '')
 		);
 	}
 	else {
-		// Fetch tags
 		$r = q("select xtag_term as term, count(xtag_term) as total from xtag where xtag_flags = 0
 			group by xtag_term order by total desc %s",
 			((intval($count)) ? "limit $count" : '')
 		);
 	}
 	if(! $r)
-		return array();
-
+		return [];
 
 	return Zotlabs\Text\Tagadelic::calc($r);
-
 }
 
 

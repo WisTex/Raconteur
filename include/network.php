@@ -1579,6 +1579,7 @@ function get_site_info() {
 	$channels_active_halfyear_stat = intval(get_config('system','channels_active_halfyear_stat'));
 	$channels_active_monthly_stat = intval(get_config('system','channels_active_monthly_stat'));
 	$local_posts_stat = intval(get_config('system','local_posts_stat'));
+	$local_comments_stat = intval(get_config('system','local_comments_stat'));
 	$hide_in_statistics = intval(get_config('system','hide_in_statistics'));
 	$site_expire = intval(get_config('system', 'default_expire_days'));
 
@@ -1612,13 +1613,14 @@ function get_site_info() {
 		'default_service_restrictions' => $service_class,
 		'locked_features'              => $locked_features,
 		'admin'                        => $admin,
-		'dbdriver'                     => DBA::$dba->getdriver(),
+		'dbdriver'                     => DBA::$dba->getdriver() . ' ' . ((ACTIVE_DBTYPE == DBTYPE_POSTGRES) ? 'postgres' : 'mysql'),
 		'lastpoll'                     => get_config('system','lastpoll'),
 		'info'                         => (($site_info) ? $site_info : ''),
 		'channels_total'               => $channels_total_stat,
 		'channels_active_halfyear'     => $channels_active_halfyear_stat,
 		'channels_active_monthly'      => $channels_active_monthly_stat,
 		'local_posts'                  => $local_posts_stat,
+		'local_comments'               => $local_comments_stat,
 		'hide_in_statistics'           => $hide_in_statistics
 	];
 

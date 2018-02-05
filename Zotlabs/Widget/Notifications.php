@@ -145,7 +145,8 @@ class Notifications {
 			'$module' => \App::$module,
 			'$notifications' => $notifications,
 			'$no_notifications' => t('Sorry, you have got no notifications at the moment'),
-			'$loading' => t('Loading')
+			'$loading' => t('Loading'),
+			'$startpage' => get_pconfig(local_channel(), 'system', 'startpage')
 		));
 
 		return $o;

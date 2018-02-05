@@ -9,18 +9,22 @@ require_once('include/acl_selectors.php');
 class Cards extends \Zotlabs\Web\Controller {
 
 	function init() {
-	
+
 		if(argc() > 1)
 			$which = argv(1);
 		else
 			return;
-	
+
 		profile_load($which);
-	
+
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 * @see \Zotlabs\Web\Controller::get()
+	 */
 	function get($update = 0, $load = false) {
-	
+
 		if(observer_prohibited(true)) {
 			return login();
 		}
@@ -31,13 +35,13 @@ class Cards extends \Zotlabs\Web\Controller {
 			return;
 		}
 
-		if(! feature_enabled(\App::$profile_uid,'cards')) {
+		if(! feature_enabled(\App::$profile_uid, 'cards')) {
 			return;
 		}
 
 		nav_set_selected(t('Cards'));
 
-		head_add_link([ 
+		head_add_link([
 			'rel'   => 'alternate',
 			'type'  => 'application/json+oembed',
 			'href'  => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . \App::$query_string),
@@ -46,48 +50,48 @@ class Cards extends \Zotlabs\Web\Controller {
 
 
 		$category = (($_REQUEST['cat']) ? escape_tags(trim($_REQUEST['cat'])) : '');
-					
+
 		if($category) {
-			$sql_extra2 .= protect_sprintf(term_item_parent_query(\App::$profile['profile_uid'],'item', $category, TERM_CATEGORY));
+			$sql_extra2 .= protect_sprintf(term_item_parent_query(\App::$profile['profile_uid'], 'item', $category, TERM_CATEGORY));
 		}
 
 
 		$which = argv(1);
-		
+
 		$selected_card = ((argc() > 2) ? argv(2) : '');
 
 		$_SESSION['return_url'] = \App::$query_string;
-	
+
 		$uid      = local_channel();
 		$owner    = \App::$profile_uid;
 		$observer = \App::get_observer();
-	
+
 		$ob_hash = (($observer) ? $observer['xchan_hash'] : '');
-		
-		if(! perm_is_allowed($owner,$ob_hash,'view_pages')) {
+
+		if(! perm_is_allowed($owner, $ob_hash, 'view_pages')) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
-		
+
 		$is_owner = ($uid && $uid == $owner);
-	
+
 		$channel = channelx_by_n($owner);
 
 		if($channel) {
-			$channel_acl = array(
+			$channel_acl = [
 				'allow_cid' => $channel['channel_allow_cid'],
 				'allow_gid' => $channel['channel_allow_gid'],
 				'deny_cid'  => $channel['channel_deny_cid'],
 				'deny_gid'  => $channel['channel_deny_gid']
-			);
+			];
 		}
 		else {
 			$channel_acl = [ 'allow_cid' => '', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => '' ];
 		}
-	
 
 
-		if(perm_is_allowed($owner,$ob_hash,'write_pages')) {
+
+		if(perm_is_allowed($owner, $ob_hash, 'write_pages')) {
 
 			$x = [
 				'webpage'           => ITEM_TYPE_CARD,
@@ -95,9 +99,9 @@ class Cards extends \Zotlabs\Web\Controller {
 				'content_label'     => t('Add Card'),
 				'button'            => t('Create'),
 				'nickname'          => $channel['channel_address'],
-				'lockstate'         => (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] 
+				'lockstate'         => (($channel['channel_allow_cid'] || $channel['channel_allow_gid']
 					|| $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
-				'acl'               => (($is_owner) ? populate_acl($channel_acl, false, 
+				'acl'               => (($is_owner) ? populate_acl($channel_acl, false,
 					\Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_pages')) : ''),
 				'permissions'       => $channel_acl,
 				'showacl'           => (($is_owner) ? true : false),
@@ -110,7 +114,7 @@ class Cards extends \Zotlabs\Web\Controller {
 				'layoutselect'      => false,
 				'expanded'          => false,
 				'novoting'          => false,
-				'catsenabled'       => feature_enabled($owner,'categories'),
+				'catsenabled'       => feature_enabled($owner, 'categories'),
 				'bbco_autocomplete' => 'bbcode',
 				'bbcode'            => true
 			];
@@ -119,14 +123,14 @@ class Cards extends \Zotlabs\Web\Controller {
 				$x['title'] = $_REQUEST['title'];
 			if($_REQUEST['body'])
 				$x['body'] = $_REQUEST['body'];
-			$editor = status_editor($a,$x);
 
+			$editor = status_editor($a, $x);
 		}
 		else {
 			$editor = '';
 		}
-		
-		
+
+
 		$sql_extra = item_permissions_sql($owner);
 
 		if($selected_card) {
@@ -137,9 +141,9 @@ class Cards extends \Zotlabs\Web\Controller {
 				$sql_extra .= "and item.id = " . intval($r[0]['iid']) . " ";
 			}
 		}
-				
-		$r = q("select * from item 
-			where item.uid = %d and item_type = %d 
+
+		$r = q("select * from item
+			where uid = %d and item_type = %d
 			$sql_extra order by item.created desc",
 			intval($owner),
 			intval(ITEM_TYPE_CARD)
@@ -149,9 +153,10 @@ class Cards extends \Zotlabs\Web\Controller {
 			and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_pending_remove = 0
 			and item.item_blocked = 0 ";
 
+		$items_result = [];
 		if($r) {
 
-			$parents_str = ids_to_querystr($r,'id');
+			$parents_str = ids_to_querystr($r, 'id');
 
 			$items = q("SELECT item.*, item.id AS item_id
 				FROM item
@@ -164,24 +169,22 @@ class Cards extends \Zotlabs\Web\Controller {
 			if($items) {
 				xchan_query($items);
 				$items = fetch_post_tags($items, true);
-				$items = conv_sort($items,'updated');
+				$items_result = conv_sort($items, 'updated');
 			}
-			else
-				$items = [];
 		}
 
 		$mode = 'cards';
-			
-     	$content = conversation($items,$mode,false,'traditional');
+
+		$content = conversation($items_result, $mode, false, 'traditional');
 
 		$o = replace_macros(get_markup_template('cards.tpl'), [
 			'$title' => t('Cards'),
 			'$editor' => $editor,
 			'$content' => $content,
-			'$pager' => alt_pager($a,count($items))
+			'$pager' => alt_pager($a, count($items_result))
 		]);
 
-        return $o;
-    }
+		return $o;
+	}
 
 }

@@ -108,7 +108,11 @@ function tryzrlvideo($match) {
 	if($zrl)
 		$link = zid($link);
 
-	return '<video controls="controls" preload="none" src="' . str_replace(' ','%20',$link) . '" style="width:100%; max-width:' . App::$videowidth . 'px"><a href="' . str_replace(' ','%20',$link) . '">' . $link . '</a></video>';
+	$static_link = get_config('system','video_default_poster','images/video_poster.jpg');
+	if($static_link)
+		$poster = 'poster="' . escape_tags($static_link) . '" ' ;
+
+	return '<video ' . $poster . ' controls="controls" preload="none" src="' . str_replace(' ','%20',$link) . '" style="width:100%; max-width:' . App::$videowidth . 'px"><a href="' . str_replace(' ','%20',$link) . '">' . $link . '</a></video>';
 }
 
 // [noparse][i]italic[/i][/noparse] turns into
@@ -610,11 +614,23 @@ function bb_observer($Text) {
 	return $Text;
 }
 
+function bb_code_protect($s) {
+	return 'b64.^9e%.' . base64_encode($s) . '.b64.$9e%';
+}
+
+function bb_code_unprotect($s) {
+	return preg_replace_callback('|b64\.\^9e\%\.(.*?)\.b64\.\$9e\%|ism','bb_code_unprotect_sub',$s);
+}
+
+function bb_code_unprotect_sub($match) {
+	return base64_decode($match[1]);
+}
+
 function bb_code($match) {
 	if(strpos($match[0], "<br />"))
-		return '<code>' . trim($match[1]) . '</code>';
+		return '<code>' . bb_code_protect(trim($match[1])) . '</code>';
 	else
-		return '<code class="inline-code">' . trim($match[1]) . '</code>';
+		return '<code class="inline-code">' . bb_code_protect(trim($match[1])) . '</code>';
 }
 
 function bb_code_options($match) {
@@ -628,11 +644,11 @@ function bb_code_options($match) {
 	} else {
 		$style = "";
 	}
-	return '<code class="'. $class .'" style="'. $style .'">' . trim($match[2]) . '</code>';
+	return '<code class="'. $class .'" style="'. $style .'">' . bb_code_protect(trim($match[2])) . '</code>';
 }
 
 function bb_highlight($match) {
-	return text_highlight($match[2],strtolower($match[1]));
+	return bb_code_protect(text_highlight($match[2],strtolower($match[1])));
 }
 
 function bb_fixtable_lf($match) {
@@ -821,6 +837,17 @@ function bbcode($Text, $options = []) {
 
 
 	$Text = str_replace(array("\t", "  "), array("&nbsp;&nbsp;&nbsp;&nbsp;", "&nbsp;&nbsp;"), $Text);
+
+
+	// Check for [code] text
+	if (strpos($Text,'[code]') !== false) {
+		$Text = preg_replace_callback("/\[code\](.*?)\[\/code\]/ism", 'bb_code', $Text);
+	}
+
+	// Check for [code options] text
+	if (strpos($Text,'[code ') !== false) {
+		$Text = preg_replace_callback("/\[code(.*?)\](.*?)\[\/code\]/ism", 'bb_code_options', $Text);
+	}
 
 	// Set up the parameters for a URL search string
 	$URLSearchString = "^\[\]";
@@ -1062,16 +1089,6 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace("/\[font=(.*?)\](.*?)\[\/font\]/sm", "<span style=\"font-family: $1;\">$2</span>", $Text);
 	}
 
-	// Check for [code] text
-	if (strpos($Text,'[code]') !== false) {
-		$Text = preg_replace_callback("/\[code\](.*?)\[\/code\]/ism", 'bb_code', $Text);
-	}
-
-	// Check for [code options] text
-	if (strpos($Text,'[code ') !== false) {
-		$Text = preg_replace_callback("/\[code(.*?)\](.*?)\[\/code\]/ism", 'bb_code_options', $Text);
-	}
-
 
 	if(strpos($Text,'[/summary]') !== false) {
 		$Text = preg_replace_callback("/^(.*?)\[summary\](.*?)\[\/summary\](.*?)$/ism", 'bb_summary', $Text);
@@ -1288,6 +1305,7 @@ function bbcode($Text, $options = []) {
 
 	// replace escaped links in code= blocks
 	$Text = str_replace('%eY9-!','http', $Text);
+	$Text = bb_code_unprotect($Text);
 
 	$Text = preg_replace('/\[\&amp\;([#a-z0-9]+)\;\]/', '&$1;', $Text);
 
