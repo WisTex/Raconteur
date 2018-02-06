@@ -1,14 +1,21 @@
-<?php /** @file */
+<?php
 
-require_once('include/dba/dba_driver.php');
+require_once 'include/dba/dba_driver.php';
 
+/**
+ * @brief PDO based database driver.
+ *
+ */
 class dba_pdo extends dba_driver {
-
 
 	public $driver_dbtype = null;
 
-	function connect($server,$scheme,$port,$user,$pass,$db) {
-		
+	/**
+	 * {@inheritDoc}
+	 * @see dba_driver::connect()
+	 */
+	function connect($server, $scheme, $port, $user, $pass, $db) {
+
 		$this->driver_dbtype = $scheme;
 
 		if(strpbrk($server,':;')) {
@@ -17,7 +24,7 @@ class dba_pdo extends dba_driver {
 		else {
 			$dsn = $this->driver_dbtype . ':host=' . $server . (intval($port) ? ';port=' . $port : '');
 		}
-		
+
 		$dsn .= ';dbname=' . $db;
 
 		try {
@@ -36,10 +43,19 @@ class dba_pdo extends dba_driver {
 			$this->q("SET standard_conforming_strings = 'off'; SET backslash_quote = 'on';");
 
 		$this->connected = true;
-		return true;
 
+		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see dba_driver::q()
+	 *
+	 * @return bool|array|PDOStatement
+	 *   - \b false if not connected or PDOException occured on query
+	 *   - \b array with results on a SELECT query
+	 *   - \b PDOStatement on a non SELECT SQL query
+	 */
 	function q($sql) {
 		if((! $this->db) || (! $this->connected))
 			return false;
@@ -50,14 +66,15 @@ class dba_pdo extends dba_driver {
 			}
 		}
 
+		$result = null;
 		$this->error = '';
-		$select = ((stripos($sql,'select') === 0) ? true : false);
+		$select = ((stripos($sql, 'select') === 0) ? true : false);
 
 		try {
 			$result = $this->db->query($sql, PDO::FETCH_ASSOC);
 		}
 		catch(PDOException $e) {
-	
+
 			$this->error = $e->getMessage();
 			if($this->error) {
 				db_logger('dba_pdo: ERROR: ' . printable($sql) . "\n" . $this->error, LOGGER_NORMAL, LOG_ERR);
@@ -82,10 +99,9 @@ class dba_pdo extends dba_driver {
 		}
 
 		if($this->debug) {
-			db_logger('dba_pdo: DEBUG: ' . printable($sql) . ' returned ' . count($r) . ' results.', LOGGER_NORMAL, LOG_INFO); 
+			db_logger('dba_pdo: DEBUG: ' . printable($sql) . ' returned ' . count($r) . ' results.', LOGGER_NORMAL, LOG_INFO);
 			db_logger('dba_pdo: ' . printable(print_r($r,true)), LOGGER_NORMAL, LOG_INFO);
 		}
-
 
 		return (($this->error) ? false : $r);
 	}
@@ -99,9 +115,10 @@ class dba_pdo extends dba_driver {
 	function close() {
 		if($this->db)
 			$this->db = null;
+
 		$this->connected = false;
 	}
-	
+
 	function concat($fld,$sep) {
 		if($this->driver_dbtype === 'pgsql') {
 			return 'string_agg(' . $fld . ',\'' . $sep . '\')';
@@ -140,7 +157,7 @@ class dba_pdo extends dba_driver {
 			return $this->escape($str);
 		}
 	}
-	
+
 	function unescapebin($str) {
 		if($this->driver_dbtype === 'pgsql' && (! is_null($str))) {
 			$x = '';
