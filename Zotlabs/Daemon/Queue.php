@@ -13,10 +13,10 @@ class Queue {
 		require_once('include/bbcode.php');
 
 
-		if(argc() > 1)
-			$queue_id = argv(1);
+		if($argc > 1)
+			$queue_id = $argv[1];
 		else
-			$queue_id = 0;
+			$queue_id = EMPTY_STR;
 
 		logger('queue: start');
 
