@@ -93,16 +93,6 @@ function datetime_convert($from = 'UTC', $to = 'UTC', $s = 'now', $fmt = "Y-m-d 
 		return $d->format($fmt);
 	}
 
-	// Slight hackish adjustment so that 'zero' datetime actually returns what is intended
-	// otherwise we end up with -0001-11-30 ...
-	// add 32 days so that we at least get year 00, and then hack around the fact that
-	// months and days always start with 1.
-
-//	if(substr($s,0,10) == '0000-00-00') {
-//		$d = new DateTime($s . ' + 32 days', new DateTimeZone('UTC'));
-//		return str_replace('1', '0', $d->format($fmt));
-//	}
-
 	try {
 		$from_obj = new DateTimeZone($from);
 	} catch(Exception $e) {
@@ -135,67 +125,17 @@ function datetime_convert($from = 'UTC', $to = 'UTC', $s = 'now', $fmt = "Y-m-d 
  */
 function dob($dob) {
 
-	list($year, $month, $day) = sscanf($dob, '%4d-%2d-%2d');
-	$f = get_config('system', 'birthday_input_format');
-	if (! $f)
-		$f = 'ymd';
-
 	if ($dob === '0000-00-00')
 		$value = '';
 	else
 		$value = (($year) ? datetime_convert('UTC','UTC',$dob,'Y-m-d') : datetime_convert('UTC','UTC',$dob,'m-d'));
 
-	$o = replace_macros(get_markup_template("field_input.tpl"), array('$field' => array(
-		'dob',
-		t('Birthday'),
-		$value,
-		((intval($value)) ? t('Age: ') . age($value,App::$user['timezone'],App::$user['timezone']) : ''),
-		'',
-		'placeholder="' . t('YYYY-MM-DD or MM-DD') .'"'
-	)));
+	$o = replace_macros(get_markup_template("field_input.tpl"), [
+		'$field' => [ 'dob', t('Birthday'), $value, ((intval($value)) ? t('Age: ') . age($value,App::$user['timezone'],App::$user['timezone']) : ''), '', 'placeholder="' . t('YYYY-MM-DD or MM-DD') .'"' ]
+	]);
 
-
-//	if ($dob && $dob != '0000-00-00')
-//		$o = datesel($f,mktime(0,0,0,0,0,1900),mktime(),mktime(0,0,0,$month,$day,$year),'dob');
-//	else
-//		$o = datesel($f,mktime(0,0,0,0,0,1900),mktime(),false,'dob');
 
 	return $o;
-}
-
-/**
- * @brief Returns a date selector.
- *
- * @see datetimesel()
- * @param string $format
- *   format string, e.g. 'ymd' or 'mdy'. Not currently supported
- * @param DateTime $min
- *   unix timestamp of minimum date
- * @param DateTime $max
- *   unix timestap of maximum date
- * @param DateTime $default
- *   unix timestamp of default date
- * @param string $id
- *   id and name of datetimepicker (defaults to "datetimepicker")
- */
-function datesel($format, $min, $max, $default, $id = 'datepicker') {
-	return datetimesel($format, $min, $max, $default, '', $id, true, false, '', '');
-}
-
-/**
- * @brief Returns a time selector.
- *
- * @param string $format
- *   format string, e.g. 'ymd' or 'mdy'. Not currently supported
- * @param string $h
- *   already selected hour
- * @param string $m
- *  already selected minute
- * @param string $id
- *  id and name of datetimepicker (defaults to "timepicker")
- */
-function timesel($format, $h, $m, $id='timepicker') {
-	return datetimesel($format, new DateTime(), new DateTime(), new DateTime("$h:$m"), '', $id, false, true);
 }
 
 /**
@@ -449,12 +389,7 @@ function cal($y = 0, $m = 0, $links = false, $class='') {
 
 	// month table - start at 1 to match human usage.
 
-	$mtab = array(' ',
-		'January','February','March',
-		'April','May','June',
-		'July','August','September',
-		'October','November','December'
-	);
+	$mtab = [ ' ', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
 
 	$thisyear = datetime_convert('UTC',date_default_timezone_get(),'now','Y');
 	$thismonth = datetime_convert('UTC',date_default_timezone_get(),'now','m');
@@ -463,7 +398,7 @@ function cal($y = 0, $m = 0, $links = false, $class='') {
 	if (! $m)
 		$m = intval($thismonth);
 
-	$dn = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+	$dn = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
 	$f = get_first_dim($y, $m);
 	$l = get_dim($y, $m);
 	$d = 1;
@@ -569,17 +504,17 @@ function update_birthdays() {
 			if (! perm_is_allowed($rr['abook_channel'], $rr['xchan_hash'], 'send_stream'))
 				continue;
 
-			$ev = array();
-			$ev['uid'] = $rr['abook_channel'];
-			$ev['account'] = $rr['abook_account'];
-			$ev['event_xchan'] = $rr['xchan_hash'];
-			$ev['dtstart'] = datetime_convert('UTC', 'UTC', $rr['abook_dob']);
-			$ev['dtend'] = datetime_convert('UTC', 'UTC', $rr['abook_dob'] . ' + 1 day ');
-			$ev['adjust'] = intval(feature_enabled($rr['abook_channel'],'smart_birthdays'));
-			$ev['summary'] = sprintf( t('%1$s\'s birthday'), $rr['xchan_name']);
-			$ev['description'] = sprintf( t('Happy Birthday %1$s'),
-				'[zrl=' . $rr['xchan_url'] . ']' . $rr['xchan_name'] . '[/zrl]') ;
-			$ev['etype'] = 'birthday';
+			$ev = [
+				'uid'         => $rr['abook_channel'],
+				'account'     => $rr['abook_account'],
+				'event_xchan' => $rr['xchan_hash'],
+				'dtstart'     => datetime_convert('UTC', 'UTC', $rr['abook_dob']),
+				'dtend'       => datetime_convert('UTC', 'UTC', $rr['abook_dob'] . ' + 1 day '),
+				'adjust'      => intval(feature_enabled($rr['abook_channel'],'smart_birthdays')),
+				'summary'     => sprintf( t('%1$s\'s birthday'), $rr['xchan_name']),
+				'description' => sprintf( t('Happy Birthday %1$s'), '[zrl=' . $rr['xchan_url'] . ']' . $rr['xchan_name'] . '[/zrl]'),
+				'etype'       => 'birthday',
+			];
 
 			$z = event_store_event($ev);
 			if ($z) {
