@@ -1,14 +1,19 @@
 <?php
+/**
+ * @file dba_driver.php
+ * @brief Some database related functions and database classes.
+ *
+ * This file contains the abstract database driver class dba_driver, the
+ * database class DBA and some functions for working with databases.
+ */
 
+/**
+ * @brief Database classs with database factory method.
+ *
+ * The factory will return a database driver which is an implementation of the
+ * abstract dba_driver class.
+ */
 class DBA {
-
-	/**
-	 * @file dba_driver.php
-	 * @brief some database related functions and abstract driver class.
-	 *
-	 * This file contains the abstract database driver class dba_driver and some
-	 * functions for working with databases.
-	 */
 
 	static public $dba = null;
 	static public $dbtype = null;
@@ -19,7 +24,6 @@ class DBA {
 	static public $null_date = '0001-01-01 00:00:00';
 	static public $utc_now = 'UTC_TIMESTAMP()';
 	static public $tquot = "`";
-
 
 
 	/**
@@ -34,13 +38,10 @@ class DBA {
 	 * @param bool $install Defaults to false
 	 * @return null|dba_driver A database driver object (dba_pdo) or null if no driver found.
 	 */
-
 	static public function dba_factory($server,$port,$user,$pass,$db,$dbtype,$install = false) {
 
 		self::$dba = null;
-
 		self::$dbtype = intval($dbtype);
-
 
 		if(self::$dbtype == DBTYPE_POSTGRES) {
 			if(!($port))
@@ -50,7 +51,6 @@ class DBA {
 			self::$utc_now = "now() at time zone 'UTC'";
 			self::$tquot = '"';
 			self::$scheme = 'pgsql';
-
 		}
 		else {
 
@@ -66,40 +66,27 @@ class DBA {
 
 		require_once('include/dba/dba_pdo.php');
 		self::$dba = new dba_pdo($server,self::$scheme,$port,$user,$pass,$db,$install);
-		
-		if(is_object(self::$dba) && self::$dba->connected) {
-
-			if(strpbrk($server,':;')) {
-				$dsn = $server;
-			}
-			else {
-				$dsn = self::$scheme . ':host=' . $server . (intval($port) ? '' : ';port=' . $port);
-			}
-			$dsn .= ';dbname=' . $db;
-
-
-			self::$dba->pdo_set(array($dsn,$user,$pass));
-		}
 
 		define('NULL_DATE', self::$null_date);
 		define('ACTIVE_DBTYPE', self::$dbtype);
 		define('TQUOT', self::$tquot);
+
 		return self::$dba;
 	}
 
 }
 
 /**
- * @brief abstract database driver class.
+ * @brief Abstract database driver class.
  *
- * This class gets extended by the real database driver classes, e.g. dba_mysql,
- * dba_mysqli.
+ * This class gets extended by the real database driver class. We used to have
+ * dba_mysql, dba_mysqli or dba_postgres, but we moved to PDO and the only
+ * implemented driver is dba_pdo.
  */
 abstract class dba_driver {
 	// legacy behavior
 
 	public $db;
-	protected $pdo = array();
 
 	public  $debug = 0;
 	public  $connected = false;
@@ -111,6 +98,7 @@ abstract class dba_driver {
 	 * This abstract function needs to be implemented in the real driver.
 	 *
 	 * @param string $server DB server name
+	 * @param string $scheme DB scheme
 	 * @param string $port DB port
 	 * @param string $user DB username
 	 * @param string $pass DB password
@@ -166,13 +154,13 @@ abstract class dba_driver {
 		$platform_name = \Zotlabs\Lib\System::get_platform_name();
 		if(file_exists('install/' . $platform_name . '/' . \DBA::$install_script))
 			 return 'install/' . $platform_name . '/' . \DBA::$install_script;
+
 		return 'install/' . \DBA::$install_script;
 	}
 
 	function get_table_quote() {
 		return \DBA::$tquot;
 	}
-
 
 	function utcnow() {
 		return \DBA::$utc_now;
@@ -232,19 +220,12 @@ abstract class dba_driver {
 		return $str;
 	}
 
-	function pdo_set($x) {
-		$this->pdo = $x;
-	}
-
-	function pdo_get() {
-		return $this->pdo;
-	}
-
 } // end abstract dba_driver class
 
 
-
+//
 // Procedural functions
+//
 
 function printable($s) {
 	$s = preg_replace("~([\x01-\x08\x0E-\x0F\x10-\x1F\x7F-\xFF])~",".", $s);
@@ -275,7 +256,7 @@ function dbg($state) {
  * wrapping with intval().
  *
  * @param string $str A string to pass to a DB query
- * @return Return an escaped string of the value to pass to a DB query.
+ * @return string Return an escaped string of the value to pass to a DB query.
  */
 function dbesc($str) {
 
@@ -298,6 +279,7 @@ function dbunescbin($str) {
 function dbescdate($date) {
 	if(is_null_date($date))
 		return \DBA::$dba->escape(NULL_DATE);
+
 	return \DBA::$dba->escape($date);
 }
 
@@ -330,17 +312,17 @@ function db_use_index($str) {
  *
  * printf style arguments %s and %d are replaced with variable arguments, which
  * should each be appropriately dbesc() or intval().
+ *
  * SELECT queries return an array of results or false if SQL or DB error. Other
  * queries return true if the command was successful or false if it wasn't.
  *
  * Example:
- *  $r = q("SELECT * FROM %s WHERE `uid` = %d",
- *         'user', 1);
+ * @code{.php}$r = q("SELECT * FROM %s WHERE `uid` = %d",
+ *         'user', 1);@endcode
  *
  * @param string $sql The SQL query to execute
  * @return bool|array
  */
-
 function q($sql) {
 
 	$args = func_get_args();
@@ -359,8 +341,8 @@ function q($sql) {
 	}
 
 	/*
-	 * This will happen occasionally trying to store the 
-	 * session data after abnormal program termination 
+	 * This will happen occasionally trying to store the
+	 * session data after abnormal program termination
 	 */
 
 	db_logger('dba: no database: ' . print_r($args,true),LOGGER_NORMAL,LOG_CRIT);
@@ -389,8 +371,8 @@ function dbq($sql) {
 
 // Caller is responsible for ensuring that any integer arguments to
 // dbesc_array are actually integers and not malformed strings containing
-// SQL injection vectors. All integer array elements should be specifically 
-// cast to int to avoid trouble. 
+// SQL injection vectors. All integer array elements should be specifically
+// cast to int to avoid trouble.
 
 function dbesc_array_cb(&$item, $key) {
 	if(is_string($item)) {
@@ -423,7 +405,7 @@ function dbesc_array(&$arr) {
 function db_getfunc($f) {
 	$lookup = array(
 		'rand'=>array(
-			DBTYPE_MYSQL=>'RAND()', 
+			DBTYPE_MYSQL=>'RAND()',
 			DBTYPE_POSTGRES=>'RANDOM()'
 		),
 		'utc_timestamp'=>array(

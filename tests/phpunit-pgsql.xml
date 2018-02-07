@@ -32,4 +32,15 @@
         highLowerBound="70"/>
         <log type="testdox-text" target="./results/testdox.txt"/>
     </logging>
+    <php>
+        <!-- Default test database config, only used if no environment variables
+             with same names are set.
+             !!! Never run against a real database, it will truncate all tables -->
+        <env name="hz_db_server" value="127.0.0.1"/>
+        <env name="hz_db_scheme" value="pgsql"/>
+        <env name="hz_db_port" value="5432"/>
+        <env name="hz_db_user" value="travis_hz"/>
+        <env name="hz_db_pass" value="hubzilla"/>
+        <env name="hz_db_database" value="travis_hubzilla"/>
+    </php>
 </phpunit>

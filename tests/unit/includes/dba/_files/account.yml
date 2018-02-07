@@ -1,0 +1,9 @@
+account:
+  -
+    account_id: 42
+    account_email: "hubzilla@example.com"
+    account_language: "no"
+  -
+    account_id: 43
+    account_email: "hubzilla@example.org"
+    account_language: "de"
