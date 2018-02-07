@@ -496,7 +496,7 @@ function get_atom_elements($feed, $item) {
 			$res['item_private'] = 1;
 	}
 
-	logger('ostatus_protocol: ' . intval($ostatus_protocol));
+	logger('ostatus_protocol: ' . intval($ostatus_protocol), LOGGER_DEBUG);
 
 	$apps = $item->get_item_tags(NAMESPACE_STATUSNET, 'notice_info');
 	if($apps && $apps[0]['attribs']['']['source']) {
