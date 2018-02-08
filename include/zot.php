@@ -5100,7 +5100,7 @@ function zot_reply_notify($data) {
 	// handle zot6 delivery
 
 	$zret = zot6_check_sig();
-	if($zret['success'] && $zret['hubloc'] && $zret['hubloc']['hubloc_guid'] === $data['sender']['guid']) { 
+	if($zret['success'] && $zret['hubloc'] && $zret['hubloc']['hubloc_guid'] === $data['sender']['guid'] && $data['msg']) { 
 		logger('zot6_delivery',LOGGER_DEBUG);
 		logger('zot6_data: ' . print_r($data,true),LOGGER_DATA);		
 		$import = [ 'success' => true, 'pickup' => [ [ 'notify' => $data, 'message' => json_decode($data['msg'],true) ] ] ];
