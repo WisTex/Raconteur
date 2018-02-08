@@ -219,17 +219,11 @@ function queue_deliver($outq, $immediate = false) {
 
 	$channel = null;
 
-	if($outq['outq_msg']) {
-		$msg = json_decode($outq['outq_notify'],true);
-		$msg['pickup'] = [ 'notify' => json_decode($outq['outq_notify'],true), 'message' => json_decode($outq['outq_msg'],true) ];
-		$msg = json_encode($msg);
-		if($outq['outq_channel']) {
-			$channel = channelx_by_n($outq['outq_channel']);
-		}
+	if($outq['outq_msg'] && $outq['outq_channel']) {
+		$channel = channelx_by_n($outq['outq_channel']);
 	}
-	else {
-		$msg = $outq['outq_notify'];
-	}
+
+	$msg = $outq['outq_notify'];
 
 	$result = zot_zot($outq['outq_posturl'],$msg,$channel);
 

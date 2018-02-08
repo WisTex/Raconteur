@@ -158,6 +158,85 @@ function zot_build_packet($channel, $type = 'notify', $recipients = null, $remot
 	return json_encode($data);
 }
 
+
+/**
+ * @brief Builds a zot6 notification packet.
+ *
+ * Builds a zot6 notification packet that you can either store in the queue with
+ * a message array or call zot_zot to immediately zot it to the other side.
+ *
+ * @param array $channel
+ *   sender channel structure
+ * @param string $type
+ *   packet type: one of 'ping', 'pickup', 'purge', 'refresh', 'keychange', 'force_refresh', 'notify', 'auth_check'
+ * @param array $recipients
+ *   envelope information, array ( 'guid' => string, 'guid_sig' => string ); empty for public posts
+ * @param string $remote_key
+ *   optional public site key of target hub used to encrypt entire packet
+ *   NOTE: remote_key and encrypted packets are required for 'auth_check' packets, optional for all others
+ * @param string $methods
+ *   optional comma separated list of encryption methods @ref zot_best_algorithm()
+ * @param string $secret
+ *   random string, required for packets which require verification/callback
+ *   e.g. 'pickup', 'purge', 'notify', 'auth_check'. Packet types 'ping', 'force_refresh', and 'refresh' do not require verification
+ * @param string $extra
+ * @returns string json encoded zot packet
+ */
+function zot6_build_packet($channel, $type = 'notify', $recipients = null, $msg = '', $remote_key = null, $methods = '', $secret = null, $extra = null) {
+
+	$sig_method = get_config('system','signature_algorithm','sha256');
+
+	$data = [
+		'type' => $type,
+		'sender' => [
+			'guid' => $channel['channel_guid'],
+			'guid_sig' => base64url_encode(rsa_sign($channel['channel_guid'],$channel['channel_prvkey'],$sig_method)),
+			'url' => z_root(),
+			'url_sig' => base64url_encode(rsa_sign(z_root(),$channel['channel_prvkey'],$sig_method)),
+			'sitekey' => get_config('system','pubkey')
+		],
+		'callback' => '/post',
+		'version' => Zotlabs\Lib\System::get_zot_revision(),
+		'encryption' => crypto_methods(),
+		'signing' => signing_methods()
+	];
+
+	if ($recipients) {
+		for ($x = 0; $x < count($recipients); $x ++)
+			unset($recipients[$x]['hash']);
+
+		$data['recipients'] = $recipients;
+	}
+
+	if($msg) {
+		$data['msg'] = $msg;
+	}
+
+	if ($secret) {
+		$data['secret'] = preg_replace('/[^0-9a-fA-F]/','',$secret);
+		$data['secret_sig'] = base64url_encode(rsa_sign($secret,$channel['channel_prvkey'],$sig_method));
+	}
+
+	if ($extra) {
+		foreach ($extra as $k => $v)
+			$data[$k] = $v;
+	}
+
+	logger('zot6_build_packet: ' . print_r($data,true), LOGGER_DATA, LOG_DEBUG);
+
+	// Hush-hush ultra top-secret mode
+
+	if($remote_key) {
+		$algorithm = zot_best_algorithm($methods);
+		$data = crypto_encapsulate(json_encode($data),$remote_key, $algorithm);
+	}
+
+	return json_encode($data);
+}
+
+
+
+
 /**
  * @brief Choose best encryption function from those available on both sites.
  *
@@ -5024,7 +5103,12 @@ function zot_reply_notify($data) {
 	if($zret['success'] && $zret['hubloc'] && $zret['hubloc']['hubloc_guid'] === $data['sender']['guid']) { 
 		logger('zot6_delivery');
 		logger('zot6_data: ' . print_r($data,true),LOGGER_DATA);		
-		$x = zot_import([ 'body' => json_encode($data) ],$data['sender']['url']);
+		$import = [ 'pickup' => [ [ 'notify' => $data, 'message' => $data['msg'] ] ] ];
+		unset($import['pickup'][0]['notify']['msg']);
+
+		logger('import: ' . print_r($import,true), LOGGER_DATA);
+
+		$x = zot_import([ 'body' => json_encode($import) ],$data['sender']['url']);
 		if($x) {
 			$x = crypto_encapsulate(json_encode($x),$zret['hubloc']['hubloc_sitekey'],zot_best_algorithm($zret['hubloc']['site_crypto']));
 			$ret['delivery_report'] = $x;
