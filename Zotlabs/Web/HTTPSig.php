@@ -210,6 +210,9 @@ class HTTPSig {
 
 		if($crypt_key) {
 			$x = crypto_encapsulate($headerval,$crypt_key,$crypt_alg);
+
+logger(cryptosig: ' . print_r($x,true));
+
 			$headerval = 'iv="' . $x['iv'] . '",key="' . $x['key'] . '",alg="' . $x['alg'] . '",data="' . $x['data'];
 		}
 			
