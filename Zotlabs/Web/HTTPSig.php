@@ -215,7 +215,7 @@ logger('cryptkey' . $crypt_key);
 
 logger('cryptosig: ' . print_r($x,true));
 
-			$headerval = 'iv="' . $x['iv'] . '",key="' . $x['key'] . '",alg="' . $x['alg'] . '",data="' . $x['data'];
+			$headerval = 'iv="' . $x['iv'] . '",key="' . $x['key'] . '",alg="' . $x['alg'] . '",data="' . $x['data'] . '"';
 		}
 			
 		if($auth) {
