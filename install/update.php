@@ -1,6 +1,6 @@
 <?php
 
-define( 'UPDATE_VERSION' , 1200 );
+define( 'UPDATE_VERSION' , 1201 );
 
 /**
  *
@@ -3098,4 +3098,18 @@ function update_r1199() {
 	}
 
 	return UPDATE_SUCCESS;
+}
+
+function update_r1200() {
+
+	if(ACTIVE_DBTYPE == DBTYPE_MYSQL) {
+		$r = q("ALTER TABLE item 
+			DROP INDEX item_type,
+			ADD INDEX uid_item_type (uid, item_type)
+		");
+	}
+
+	if($r)
+		return UPDATE_SUCCESS;
+	return UPDATE_FAILED;
 }
