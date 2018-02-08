@@ -5101,10 +5101,10 @@ function zot_reply_notify($data) {
 
 	$zret = zot6_check_sig();
 	if($zret['success'] && $zret['hubloc'] && $zret['hubloc']['hubloc_guid'] === $data['sender']['guid']) { 
-		logger('zot6_delivery');
+		logger('zot6_delivery',LOGGER_DEBUG);
 		logger('zot6_data: ' . print_r($data,true),LOGGER_DATA);		
-		$import = [ 'pickup' => [ [ 'notify' => $data, 'message' => $data['msg'] ] ] ];
-		unset($import['pickup'][0]['notify']['msg']);
+		$import = [ 'success' => true, 'pickup' => [ [ 'notify' => $data, 'message' => json_decode($data['msg'],true) ] ] ];
+		// unset($import['pickup'][0]['notify']['msg']);
 
 		logger('import: ' . print_r($import,true), LOGGER_DATA);
 
