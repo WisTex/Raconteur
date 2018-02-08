@@ -487,7 +487,7 @@ function get_atom_elements($feed, $item) {
 		}
 	}
 
-	$ostatus_protocol = (($ostatus_conversation) ? true : false);
+	$ostatus_protocol = (($ostatus_conversation || $res['verb']) ? true : false);
 
 	$mastodon = (($item->get_item_tags('http://mastodon.social/schema/1.0','scope')) ? true : false);
 	if($mastodon) {
@@ -495,6 +495,8 @@ function get_atom_elements($feed, $item) {
 		if(($mastodon[0]['data']) && ($mastodon[0]['data'] !== 'public'))
 			$res['item_private'] = 1;
 	}
+
+	logger('ostatus_protocol: ' . intval($ostatus_protocol));
 
 	$apps = $item->get_item_tags(NAMESPACE_STATUSNET, 'notice_info');
 	if($apps && $apps[0]['attribs']['']['source']) {
@@ -599,9 +601,8 @@ function get_atom_elements($feed, $item) {
 		);
 	}
 
-	// turn Mastodon content warning into a #nsfw hashtag
-	if($mastodon && $summary) {
-		$res['body'] = $summary . "\n\n" . $res['body'] . "\n\n#ContentWarning\n";
+	if($summary && $res['body']) {
+		$res['body'] = '[summary]' . $summary . '[/summary]' . $res['body'];
 	}
 
 
@@ -802,7 +803,7 @@ function get_atom_elements($feed, $item) {
 	 */
 	call_hooks('parse_atom', $arr);
 
-	logger('result: ' .print_r($arr['result'], true), LOGGER_DATA);
+	logger('result: ' . print_r($arr['result'], true), LOGGER_DATA);
 
 	return $arr['result'];
 }
@@ -1001,9 +1002,9 @@ function process_feed_tombstones($feed,$importer,$contact,$pass) {
  * @param string $xml
  *   The (atom) feed to consume - RSS isn't as fully supported but may work for simple feeds.
  * @param array $importer
- *   The contact_record (joined to user_record) of the local user who owns this
+ *   The channel record of the local user who owns this
  *   relationship. It is this person's stuff that is going to be updated.
- * @param[in,out] array $contact
+ * @param[in,out] array $contact (abook record joined to xchan record)
  *   The person who is sending us stuff. If not set, we MAY be processing a "follow" activity
  *   from an external network and MAY create an appropriate contact record. Otherwise, we MUST
  *   have a contact record.

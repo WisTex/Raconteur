@@ -232,7 +232,7 @@ class Connections extends \Zotlabs\Web\Controller {
 				if($rr['xchan_url']) {
 
 					if(($rr['vcard']) && is_array($rr['vcard']['tels']) && $rr['vcard']['tels'][0]['nr'])
-						$phone = ((\App::$is_mobile || \App::$is_tablet) ? $rr['vcard']['tels'][0]['nr'] : '');
+						$phone = $rr['vcard']['tels'][0]['nr'];
 					else
 						$phone = '';
 	

@@ -16,7 +16,7 @@ class Queue {
 		if($argc > 1)
 			$queue_id = $argv[1];
 		else
-			$queue_id = 0;
+			$queue_id = EMPTY_STR;
 
 		logger('queue: start');
 

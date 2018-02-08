@@ -6,7 +6,7 @@
 		<input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
 
 		<div class="panel-group" id="settings" role="tablist" aria-multiselectable="true">
-			{{if $theme || $mobile_theme}}
+			{{if $theme}}
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="theme-settings-title">
 					<h3>
@@ -23,9 +23,6 @@
 						{{if $schema}}
 							{{include file="field_select.tpl" field=$schema}}
 						{{/if}}
-						{{if $mobile_theme}}
-							{{include file="field_themeselect.tpl" field=$mobile_theme}}
-						{{/if}}
 						<div class="settings-submit-wrapper" >
 							<button type="submit" name="submit" class="btn btn-primary">{{$submit}}</button>
 						</div>
@@ -41,7 +38,7 @@
 						</a>
 					</h3>
 				</div>
-				<div id="custom-settings-content" class="collapse{{if !$theme && !$mobile_theme}} in{{/if}}" role="tabpanel" aria-labelledby="custom-settings">
+				<div id="custom-settings-content" class="collapse{{if !$theme}} in{{/if}}" role="tabpanel" aria-labelledby="custom-settings">
 					<div class="section-content-tools-wrapper">
 						{{if $theme_config}}
 							{{$theme_config}}
@@ -57,7 +54,7 @@
 						</a>
 					</h3>
 				</div>
-				<div id="content-settings-content" class="collapse{{if !$theme && !$mobile_theme && !$theme_config}} in{{/if}}" role="tabpanel" aria-labelledby="content-settings">
+				<div id="content-settings-content" class="collapse{{if !$theme && !$theme_config}} in{{/if}}" role="tabpanel" aria-labelledby="content-settings">
 					<div class="section-content-wrapper">
 						{{include file="field_input.tpl" field=$ajaxint}}
 						{{include file="field_input.tpl" field=$itemspage}}

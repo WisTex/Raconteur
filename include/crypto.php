@@ -31,19 +31,6 @@ function rsa_verify($data,$sig,$key,$alg = 'sha256') {
 	return (($verify > 0) ? true : false);
 }
 
-function pkcs5_pad ($text, $blocksize)
-{
-    $pad = $blocksize - (strlen($text) % $blocksize);
-    return $text . str_repeat(chr($pad), $pad);
-}
-
-function pkcs5_unpad($text)
-{
-    $pad = ord($text{strlen($text)-1});
-    if ($pad > strlen($text)) return false;
-    if (strspn($text, chr($pad), strlen($text) - $pad) != $pad) return false;
-    return substr($text, 0, -1 * $pad);
-} 
 
 function AES256CBC_encrypt($data,$key,$iv) {
 
@@ -281,37 +268,6 @@ function new_keypair($bits) {
 	return $response;
 
 }
-
-function pkcs1to8($oldkey,$len) {
-
-	if($len == 4096)
-		$c = 'g';
-	if($len == 2048)
-		$c = 'Q';
-
-	if(strstr($oldkey,'BEGIN PUBLIC'))
-		return $oldkey;
-
-	$oldkey = str_replace('-----BEGIN RSA PUBLIC KEY-----', '', $oldkey);
-	$oldkey = trim(str_replace('-----END RSA PUBLIC KEY-----', '', $oldkey));
-	$key = 'MIICIjANBgkqhkiG9w0BAQEFAAOCA' . $c . '8A' . str_replace("\n", '', $oldkey);
-	$key = "-----BEGIN PUBLIC KEY-----\n" . wordwrap($key, 64, "\n", true) . "\n-----END PUBLIC KEY-----";
-	return $key;
-}
-
-function pkcs8to1($oldkey,$len) {
-
-	if(strstr($oldkey,'BEGIN RSA'))
-		return $oldkey;
-
-	$oldkey = str_replace('-----BEGIN PUBLIC KEY-----', '', $oldkey);
-	$oldkey = trim(str_replace('-----END PUBLIC KEY-----', '', $oldkey));
-	$key = str_replace("\n",'',$oldkey);
-	$key = substr($key,32);
-	$key = "-----BEGIN RSA PUBLIC KEY-----\n" . wordwrap($key, 64, "\n", true) . "\n-----END RSA PUBLIC KEY-----";
-	return $key;
-}
-
 
 function DerToPem($Der, $Private=false)
 {

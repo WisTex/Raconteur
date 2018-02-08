@@ -21,7 +21,7 @@ class Display {
 		if(! $theme)
 			$theme = 'redbasic';
 
-		$mobile_theme      = ((x($_POST,'mobile_theme')) ? notags(trim($_POST['mobile_theme']))  : '');
+
 		$preload_images    = ((x($_POST,'preload_images')) ? intval($_POST['preload_images'])  : 0);
 		$channel_menu      = ((x($_POST,'channel_menu')) ? intval($_POST['channel_menu'])  : 0);
 		$user_scalable     = ((x($_POST,'user_scalable')) ? intval($_POST['user_scalable'])  : 0);
@@ -47,11 +47,6 @@ class Display {
 		if($itemspage > 100)
 			$itemspage = 100;
 
-		if ($mobile_theme == "---")
-			del_pconfig(local_channel(),'system','mobile_theme');
-		else {
-			set_pconfig(local_channel(),'system','mobile_theme',$mobile_theme);
-		}
 
 		set_pconfig(local_channel(),'system','preload_images',$preload_images);
 		set_pconfig(local_channel(),'system','user_scalable',$user_scalable);
@@ -114,10 +109,6 @@ class Display {
 
 		$theme = (($existing_theme) ? $existing_theme : $default_theme);
 
-		$default_mobile_theme = get_config('system','mobile_theme');
-		if(! $mobile_default_theme)
-			$mobile_default_theme = 'none';
-
 		$allowed_themes_str = get_config('system','allowed_themes');
 		$allowed_themes_raw = explode(',',$allowed_themes_str);
 		$allowed_themes = array();
@@ -135,26 +126,19 @@ class Display {
 
 				$info = get_theme_info($th);
 				$compatible = check_plugin_versions($info);
-				if(!$compatible) {
-					$mobile_themes[$f] = $themes[$f] = sprintf(t('%s - (Incompatible)'), $f);
+				if(! $compatible) {
+					$themes[$f] = sprintf(t('%s - (Incompatible)'), $f);
 					continue;
 				}
 
 				$is_experimental = file_exists('view/theme/' . $th . '/experimental');
 				$unsupported = file_exists('view/theme/' . $th . '/unsupported');
-				$is_mobile = file_exists('view/theme/' . $th . '/mobile');
 				$is_library = file_exists('view/theme/'. $th . '/library');
-				$mobile_themes['---'] = t("No special theme for mobile devices");
 
 				if (!$is_experimental or ($is_experimental && (get_config('experimentals','exp_themes')==1 or get_config('experimentals','exp_themes')===false))){
 					$theme_name = (($is_experimental) ?  sprintf(t('%s - (Experimental)'), $f) : $f);
 					if (! $is_library) {
-						if($is_mobile) {
-							$mobile_themes[$f] = $themes[$f] = $theme_name . ' (' . t('mobile') . ')';
-						}
-						else {
-							$mobile_themes[$f] = $themes[$f] = $theme_name;
-						}
+						$themes[$f] = $theme_name;
 					}
 				}
 			}
@@ -166,7 +150,6 @@ class Display {
 			$theme_selected = explode(':', $theme_selected)[0];
 		}
 
-		$mobile_theme_selected = (!x($_SESSION,'mobile_theme')? $default_mobile_theme : $_SESSION['mobile_theme']);
 
 		$preload_images = get_pconfig(local_channel(),'system','preload_images');
 		$preload_images = (($preload_images===false)? '0': $preload_images); // default if not set: 0
@@ -213,7 +196,6 @@ class Display {
 			'$theme'	=> (($themes) ? array('theme', t('Display Theme:'), $theme_selected, '', $themes, 'preview') : false),
 			'$schema'   => array('schema', t('Select scheme'), $existing_schema, '' , $schemas),
 
-			'$mobile_theme' => (($mobile_themes) ? array('mobile_theme', t('Mobile Theme:'), $mobile_theme_selected, '', $mobile_themes, '') : false),
 			'$preload_images' => array('preload_images', t("Preload images before rendering the page"), $preload_images, t("The subjective page load time will be longer but the page will be ready when displayed"), $yes_no),
 			'$user_scalable' => array('user_scalable', t("Enable user zoom on mobile devices"), $user_scalable, '', $yes_no),
 			'$ajaxint'   => array('browser_update',  t("Update browser every xx seconds"), $browser_update, t('Minimum of 10 seconds, no maximum')),

@@ -8,10 +8,8 @@ use App;
 class Theme {
 
 	static $system_theme = null;
-	static $system_mobile_theme = null;
 
 	static $session_theme = null;
-	static $session_mobile_theme = null;
 
 	/**
 	 * @brief Array with base or fallback themes.
@@ -32,10 +30,6 @@ class Theme {
 			? \App::$config['system']['theme'] : '');
 		self::$session_theme = ((isset($_SESSION) && x($_SESSION, 'theme'))
 			? $_SESSION['theme'] : self::$system_theme);
-		self::$system_mobile_theme = ((isset(\App::$config['system']['mobile_theme']))
-			? \App::$config['system']['mobile_theme'] : '');
-		self::$session_mobile_theme = ((isset($_SESSION) && x($_SESSION, 'mobile_theme'))
-			? $_SESSION['mobile_theme'] : self::$system_mobile_theme);
 
 		$page_theme = null;
 
@@ -55,30 +49,12 @@ class Theme {
 		if(array_key_exists('theme', \App::$layout) && \App::$layout['theme'])
 			$page_theme = \App::$layout['theme'];
 
-		// If the viewer is on a mobile device, ensure that we're using a mobile
-		// theme of some kind or whatever the viewer's preference is for mobile
-		// viewing (if applicable)
+		$chosen_theme = self::$session_theme;
 
-		if(\App::$is_mobile || \App::$is_tablet) {
-			if(isset($_SESSION['show_mobile']) && (! $_SESSION['show_mobile'])) {
-				$chosen_theme = self::$session_theme;
-			}
-			else {
-				$chosen_theme = self::$session_mobile_theme;
-
-				if($chosen_theme === '' || $chosen_theme === '---' ) {
-					// user has selected to have the mobile theme be the same as the normal one
-					$chosen_theme = self::$session_theme;
-				}
-			}
+		if($page_theme) {
+			$chosen_theme = $page_theme;
 		}
-		else {
-			$chosen_theme = self::$session_theme;
 
-			if($page_theme) {
-				$chosen_theme = $page_theme;
-			}
-		}
 		if(array_key_exists('theme_preview', $_GET))
 			$chosen_theme = $_GET['theme_preview'];
 

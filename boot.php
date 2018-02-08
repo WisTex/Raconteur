@@ -38,7 +38,6 @@ require_once('include/datetime.php');
 require_once('include/language.php');
 require_once('include/nav.php');
 require_once('include/permissions.php');
-require_once('library/Mobile_Detect/Mobile_Detect.php');
 require_once('include/features.php');
 require_once('include/taxonomy.php');
 require_once('include/channel.php');
@@ -788,9 +787,7 @@ class App {
 	public static  $theme_info = array();
 	public static  $is_sys = false;
 	public static  $nav_sel;
-	public static $is_mobile = false;
-	public static $is_tablet = false;
-	public static $comanche;
+	public static  $comanche;
 
 
 	public static $channel_links;
@@ -959,14 +956,6 @@ class App {
 		if(self::$pager['start'] < 0)
 			self::$pager['start'] = 0;
 		self::$pager['total'] = 0;
-
-		/*
-		 * Detect mobile devices
-		 */
-
-		$mobile_detect = new Mobile_Detect();
-		self::$is_mobile = $mobile_detect->isMobile();
-		self::$is_tablet = $mobile_detect->isTablet();
 
 		/*
 		 * register template engines
@@ -2195,22 +2184,6 @@ function construct_page() {
 
 				App::$page[substr($k, 7)] = $v;
 			}
-		}
-	}
-
-	if(App::$is_mobile || App::$is_tablet) {
-		if(isset($_SESSION['show_mobile']) && !$_SESSION['show_mobile']) {
-			$link = z_root() . '/toggle_mobile?f=&address=' . curPageURL();
-		}
-		else {
-			$link = z_root() . '/toggle_mobile?f=&off=1&address=' . curPageURL();
-		}
-		if ((isset($_SESSION) && $_SESSION['mobile_theme'] !='' && $_SESSION['mobile_theme'] !='---' ) ||
-			(isset(App::$config['system']['mobile_theme']) && !isset($_SESSION['mobile_theme']))) {
-			App::$page['footer'] .= replace_macros(get_markup_template("toggle_mobile_footer.tpl"), array(
-				'$toggle_link' => $link,
-				'$toggle_text' => t('toggle mobile')
-			));
 		}
 	}
 
