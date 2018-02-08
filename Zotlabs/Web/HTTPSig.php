@@ -194,6 +194,8 @@ class HTTPSig {
 	static function create_sig($request,$head,$prvkey,$keyid = 'Key',$send_headers = false,$auth = false,$alg = 'sha256', 
 		$crypt_key = null, $crypt_algo = 'aes256ctr') {
 
+logger('cryptkey' . $crypt_key);
+
 		$return_headers = [];
 
 		if($alg === 'sha256') {
@@ -211,7 +213,7 @@ class HTTPSig {
 		if($crypt_key) {
 			$x = crypto_encapsulate($headerval,$crypt_key,$crypt_algo);
 
-logger(cryptosig: ' . print_r($x,true));
+logger('cryptosig: ' . print_r($x,true));
 
 			$headerval = 'iv="' . $x['iv'] . '",key="' . $x['key'] . '",alg="' . $x['alg'] . '",data="' . $x['data'];
 		}
