@@ -121,7 +121,7 @@ function queue_deliver($outq, $immediate = false) {
 
 	$base = null;
 	$h = parse_url($outq['outq_posturl']);
-	if($h) 
+	if($h !== false) 
 		$base = $h['scheme'] . '://' . $h['host'] . (($h['port']) ? ':' . $h['port'] : '');
 
 	if(($base) && ($base !== z_root()) && ($immediate)) {
@@ -158,6 +158,9 @@ function queue_deliver($outq, $immediate = false) {
 		}
 	}
 
+
+
+	
 
 
 	$arr = array('outq' => $outq, 'base' => $base, 'handled' => false, 'immediate' => $immediate);
@@ -223,9 +226,24 @@ function queue_deliver($outq, $immediate = false) {
 		$channel = channelx_by_n($outq['outq_channel']);
 	}
 
+	$host_crypto = null;
+
+	if($channel && $base) {
+		$h = q("select hubloc_sitekey, site_crypto from hubloc left join site on hubloc_url = site_url where site_url = '%s' order by hubloc_id desc limit 1",
+			dbesc($base)
+		);
+		if($h) {
+			$host_crypto = $h[0];
+		}
+	}
+
+
+
+
+
 	$msg = $outq['outq_notify'];
 
-	$result = zot_zot($outq['outq_posturl'],$msg,$channel);
+	$result = zot_zot($outq['outq_posturl'],$msg,$channel,$host_crypto);
 
 
 	if($result['success']) {
