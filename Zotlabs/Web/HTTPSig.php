@@ -209,7 +209,7 @@ class HTTPSig {
 			. '",headers="' . $x['headers'] . '",signature="' . $x['signature'] . '"';
 
 		if($crypt_key) {
-			$x = crypto_encapsulate($headerval,$crypt_key,$crypt_alg);
+			$x = crypto_encapsulate($headerval,$crypt_key,$crypt_algo);
 
 logger(cryptosig: ' . print_r($x,true));
 

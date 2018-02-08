@@ -237,10 +237,6 @@ function queue_deliver($outq, $immediate = false) {
 		}
 	}
 
-
-
-
-
 	$msg = $outq['outq_notify'];
 
 	$result = zot_zot($outq['outq_posturl'],$msg,$channel,$host_crypto);

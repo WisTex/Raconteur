@@ -296,6 +296,8 @@ function zot_zot($url, $data, $channel = null,$crypto = null) {
 
 	$headers = [];
 
+logger('crypto: ' . print_r($crypto,true));
+
 	if($channel) {
 		$headers['X-Zot-Token'] = random_string();
 		$hash = \Zotlabs\Web\HTTPSig::generate_digest($data,false);
