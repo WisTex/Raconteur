@@ -204,7 +204,7 @@ class Channel extends \Zotlabs\Web\Controller {
 				$_SESSION['loadtime'] = datetime_convert();
 			}
 			else {
-				$r = q("SELECT distinct parent AS item_id, created from item
+				$r = q("SELECT distinct parent AS item_id from item
 					left join abook on ( item.owner_xchan = abook.abook_xchan $abook_uids )
 					WHERE uid = %d $item_normal_update
 					AND item_wall = 1 $simple_update
@@ -249,11 +249,11 @@ class Channel extends \Zotlabs\Web\Controller {
 					}
 				}
 				else {
-					$r = q("SELECT DISTINCT item.parent AS item_id FROM item 
-						left join abook on item.author_xchan = abook.abook_xchan
+					$r = q("SELECT item.parent AS item_id FROM item 
+						left join abook on ( item.author_xchan = abook.abook_xchan $abook_uids )
 						WHERE true and uid = %d $item_normal
 						AND (abook.abook_blocked = 0 or abook.abook_flags is null)
-						AND item.item_wall = 1 AND item.item_thread_top AND item.mid = item.parent_mid
+						AND item.item_wall = 1 AND item.item_thread_top = 1 
 						$sql_extra $sql_extra2
 						ORDER BY created DESC $pager_sql ",
 						intval(\App::$profile['profile_uid'])
