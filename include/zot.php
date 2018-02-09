@@ -5108,9 +5108,8 @@ function zot_reply_notify($data) {
 		$ret['collected'] = true;
 
 		$import = [ 'success' => true, 'pickup' => [ [ 'notify' => $data, 'message' => json_decode($data['msg'],true) ] ] ];
-		unset($import['pickup'][0]['notify']['msg']);
 
-		logger('import: ' . print_r($import,true), LOGGER_DATA);
+		logger('zot6_import: ' . print_r($import,true), LOGGER_DATA);
 
 		$x = zot_import([ 'success' => true, 'body' => json_encode($import) ], $data['sender']['url']);
 		if($x) {
