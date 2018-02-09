@@ -296,8 +296,6 @@ function zot_zot($url, $data, $channel = null,$crypto = null) {
 
 	$headers = [];
 
-logger('crypto: ' . print_r($crypto,true));
-
 	if($channel) {
 		$headers['X-Zot-Token'] = random_string();
 		$hash = \Zotlabs\Web\HTTPSig::generate_digest($data,false);
@@ -5107,18 +5105,24 @@ function zot_reply_notify($data) {
 	if($zret['success'] && $zret['hubloc'] && $zret['hubloc']['hubloc_guid'] === $data['sender']['guid'] && $data['msg']) { 
 		logger('zot6_delivery',LOGGER_DEBUG);
 		logger('zot6_data: ' . print_r($data,true),LOGGER_DATA);		
+
+		$ret['collected'] = true;
+
 		$import = [ 'success' => true, 'pickup' => [ [ 'notify' => $data, 'message' => json_decode($data['msg'],true) ] ] ];
-		// unset($import['pickup'][0]['notify']['msg']);
+		unset($import['pickup'][0]['notify']['msg']);
 
 		logger('import: ' . print_r($import,true), LOGGER_DATA);
 
-		$x = zot_import([ 'body' => json_encode($import) ],$data['sender']['url']);
+		$x = zot_import([ 'success' => true, 'body' => json_encode($import) ], $data['sender']['url']);
 		if($x) {
 			$x = crypto_encapsulate(json_encode($x),$zret['hubloc']['hubloc_sitekey'],zot_best_algorithm($zret['hubloc']['site_crypto']));
 			$ret['delivery_report'] = $x;
 		}
 	}
 	else {
+
+		// handle traditional zot delivery
+
 		$async = get_config('system','queued_fetch');
 
 		if($async) {
