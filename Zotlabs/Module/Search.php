@@ -90,7 +90,7 @@ class Search extends \Zotlabs\Web\Controller {
 		}
 		else {
 			$regstr = db_getfunc('REGEXP');
-			$sql_extra = sprintf(" AND item.body $regstr '%s' ", dbesc(protect_sprintf(preg_quote($search))));
+			$sql_extra = sprintf(" AND (item.title $regstr '%s' OR item.body $regstr '%s') ", dbesc(protect_sprintf(preg_quote($search))), dbesc(protect_sprintf(preg_quote($search))));
 		}
 	
 		// Here is the way permissions work in the search module...
