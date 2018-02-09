@@ -357,6 +357,7 @@ function closeMenu(theID) {
 function markRead(notifType) {
 	$.get('ping?f=&markRead='+notifType);
 	$('.' + notifType + '-button').hide();
+	sessionStorage.removeItem(notifType + '_notifications_cache');
 	if(timer) clearTimeout(timer);
 	timer = setTimeout(updateInit,2000);
 }
@@ -436,6 +437,7 @@ function handleNotifications(data) {
 
 		if(item == 0) {
 			$('.' + index + '-button').fadeOut();
+			sessionStorage.removeItem(index + '_notifications_cache');
 		} else {
 			$('.' + index + '-button').fadeIn();
 			$('.' + index + '-update').html(item);
