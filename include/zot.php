@@ -5063,10 +5063,9 @@ function zot6_check_sig() {
 
 	$ret = [ 'success' => false ];
 	  
-logger('server: ' . print_r($_SERVER,true));
+	logger('server: ' . print_r($_SERVER,true), LOGGER_DATA);
 
 	if(array_key_exists('HTTP_SIGNATURE',$_SERVER)) {
-logger('parsing signature header');
 		$sigblock = \Zotlabs\Web\HTTPSig::parse_sigheader($_SERVER['HTTP_SIGNATURE']);
 		if($sigblock) {
 			$keyId = $sigblock['keyId'];
