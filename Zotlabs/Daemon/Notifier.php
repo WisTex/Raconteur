@@ -618,8 +618,8 @@ class Notifier {
 				$packet = zot_build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null));
 			}
 			if($packet_type === 'keychange') {
-				$packet = zot_build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null));
 				$pmsg = get_pconfig($channel['channel_id'],'system','keychange');
+				$packet = zot_build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null));
 			}
 			elseif($packet_type === 'request') {
 				$env = (($hub_env && $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']]) ? $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] : '');
@@ -640,7 +640,7 @@ class Notifier {
 			}
 			else {
 				$env = (($hub_env && $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']]) ? $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] : '');
-				$packet = zot_build_packet($channel,'notify',$env,(($private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto'],$hash);	
+				$packet = zot6_build_packet($channel,'notify',$env, json_encode($encoded_item), (($private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto'],$hash);	
 				queue_insert(
 					[
 						'hash'       => $hash,
