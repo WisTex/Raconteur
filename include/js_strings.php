@@ -24,10 +24,16 @@ function js_strings() {
 		'$leavethispage' => t('Unsaved changes. Are you sure you wish to leave this page?'),
 		'$location'    => t('Location'),
 
-		'$t01' => ((t('timeago.prefixAgo') != 'timeago.prefixAgo') ? t('timeago.prefixAgo') : ''),
-		'$t02' => ((t('timeago.prefixFromNow') != 'timeago.prefixFromNow') ? t('timeago.prefixFromNow') : ''),
-		'$t03' => t('ago'),
-		'$t04' => t('from now'),
+		// translatable prefix and suffix strings for jquery.timeago -
+		// using the defaults set below if left untranslated, empty strings if
+		// translated to "NONE" and the corresponding language strings
+		// if translated to anything else
+		'$t01' => ((t('timeago.prefixAgo') == 'timeago.prefixAgo') ? '' : ((t('timeago.prefixAgo') == 'NONE') ? '' : t('timeago.prefixAgo'))),
+		'$t02' => ((t('timeago.prefixFromNow') == 'timeago.prefixFromNow') ? '' : ((t('timeago.prefixFromNow') == 'NONE') ? '' : t('timeago.prefixFromNow'))),
+		'$t03' => ((t('timeago.suffixAgo') == 'timeago.suffixAgo') ? 'ago' : ((t('timeago.suffixAgo') == 'NONE') ? '' : t('timeago.suffixAgo'))),
+		'$t04' => ((t('timeago.suffixFromNow') == 'timeago.suffixFromNow') ? 'from now' : ((t('timeago.suffixFromNow') == 'NONE') ? '' : t('timeago.suffixFromNow'))),
+
+		// translatable main strings for jquery.timeago
 		'$t05' => t('less than a minute'),
 		'$t06' => t('about a minute'),
 		'$t07' => t('%d minutes'),

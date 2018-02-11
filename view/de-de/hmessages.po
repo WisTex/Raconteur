@@ -12377,27 +12377,27 @@ msgstr "Ungespeicherte Änderungen. Bist Du sicher, dass Du diese Seite verlasse
 
 #: ../../include/js_strings.php:27
 msgid "timeago.prefixAgo"
-msgstr "timeago.prefixAgo"
+msgstr "vor"
 
 #: ../../include/js_strings.php:28
 msgid "timeago.prefixFromNow"
-msgstr " "
+msgstr "in"
 
 #: ../../include/js_strings.php:29
-msgid "ago"
-msgstr "her"
+msgid "timeago.suffixAgo"
+msgstr "NONE"
 
 #: ../../include/js_strings.php:30
-msgid "from now"
-msgstr "von jetzt"
+msgid "timeago.suffixFromNow"
+msgstr "NONE"
 
 #: ../../include/js_strings.php:31
 msgid "less than a minute"
-msgstr "weniger als eine Minute"
+msgstr "weniger als einer Minute"
 
 #: ../../include/js_strings.php:32
 msgid "about a minute"
-msgstr "ungefähr eine Minute"
+msgstr "ungefähr einer Minute"
 
 #: ../../include/js_strings.php:33
 #, php-format
@@ -12406,7 +12406,7 @@ msgstr "%d Minuten"
 
 #: ../../include/js_strings.php:34
 msgid "about an hour"
-msgstr "ungefähr eine Stunde"
+msgstr "ungefähr einer Stunde"
 
 #: ../../include/js_strings.php:35
 #, php-format
@@ -12415,30 +12415,30 @@ msgstr "ungefähr %d Stunden"
 
 #: ../../include/js_strings.php:36
 msgid "a day"
-msgstr "ein Tag"
+msgstr "einem Tag"
 
 #: ../../include/js_strings.php:37
 #, php-format
 msgid "%d days"
-msgstr "%d Tage"
+msgstr "%d Tagen"
 
 #: ../../include/js_strings.php:38
 msgid "about a month"
-msgstr "ungefähr einen Monat"
+msgstr "ungefähr einem Monat"
 
 #: ../../include/js_strings.php:39
 #, php-format
 msgid "%d months"
-msgstr "%d Monate"
+msgstr "%d Monaten"
 
 #: ../../include/js_strings.php:40
 msgid "about a year"
-msgstr "ungefähr ein Jahr"
+msgstr "ungefähr einem Jahr"
 
 #: ../../include/js_strings.php:41
 #, php-format
 msgid "%d years"
-msgstr "%d Jahre"
+msgstr "%d Jahren"
 
 #: ../../include/js_strings.php:42
 msgid " "
