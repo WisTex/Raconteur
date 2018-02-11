@@ -436,6 +436,13 @@ function get_atom_elements($feed, $item) {
 
 	$summary = unxmlify($item->get_description(true));
 
+	if(($summary) && ((strpos($summary,'<') !== false) || (strpos($summary,'>') !== false))) {
+		$summary = purify_html($summary);
+		$summary = html2bbcode($summary);
+	}
+
+
+
 	// removing the content of the title if its identically to the body
 	// This helps with auto generated titles e.g. from tumblr
 
