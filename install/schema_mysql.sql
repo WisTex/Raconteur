@@ -651,6 +651,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `uid_commented` (`uid`, `commented`),
   KEY `uid_created` (`uid`, `created`),
   KEY `uid_item_unseen` (`uid`, `item_unseen`),
+  KEY `uid_item_type` (`uid`, `item_type`),
   KEY `aid` (`aid`),
   KEY `owner_xchan` (`owner_xchan`),
   KEY `author_xchan` (`author_xchan`),
@@ -689,8 +690,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `item_verified` (`item_verified`),
   KEY `item_retained` (`item_retained`),
   KEY `item_rss` (`item_rss`),
-  KEY `item_consensus` (`item_consensus`),
-  KEY `item_type` (`item_type`)
+  KEY `item_consensus` (`item_consensus`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `item_id` (
