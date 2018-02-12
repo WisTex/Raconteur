@@ -3653,7 +3653,7 @@ function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
 
 	$linked_item = (($item['resource_id']) ? true : false);
 
-	logger('item: ' . $item . ' stage: ' . $stage . ' force: ' . $force, LOGGER_DATA);
+	logger('item: ' . $item['id'] . ' stage: ' . $stage . ' force: ' . $force, LOGGER_DATA);
 
 	switch($stage) {
 		case DROPITEM_PHASE2:
