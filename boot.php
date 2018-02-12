@@ -661,13 +661,6 @@ function sys_boot() {
 }
 
 
-/**
- * @brief Reverse the effect of magic_quotes_gpc if it is enabled.
- *
- * Please disable magic_quotes_gpc so we don't have to do this.
- * See http://php.net/manual/en/security.magicquotes.disabling.php
- *
- */
 function startup() {
 	error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
@@ -683,22 +676,6 @@ function startup() {
 
 		// Disable transparent Session ID support
 		@ini_set('session.use_trans_sid',    0);
-	}
-
-	if (get_magic_quotes_gpc()) {
-		$process = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
-		while (list($key, $val) = each($process)) {
-			foreach ($val as $k => $v) {
-				unset($process[$key][$k]);
-				if (is_array($v)) {
-					$process[$key][stripslashes($k)] = $v;
-					$process[] = &$process[$key][stripslashes($k)];
-				} else {
-					$process[$key][stripslashes($k)] = stripslashes($v);
-				}
-			}
-		}
-		unset($process);
 	}
 }
 
