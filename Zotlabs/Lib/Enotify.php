@@ -212,7 +212,7 @@ class Enotify {
 		
 		// "your post"
 		if($p[0]['owner']['xchan_name'] == $p[0]['author']['xchan_name'] && intval($p[0]['item_wall']))
-			$dest_str = sprintf(t('%1$s, %2$s %3$s [zrl=%3$s]your %5$s[/zrl]'),
+			$dest_str = sprintf(t('%1$s, %2$s %3$s [zrl=%4$s]your %5$s[/zrl]'),
 				$recip['channel_name'],
 				'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]',
 				$action,
