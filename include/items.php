@@ -2402,7 +2402,7 @@ function send_status_notifications($post_id,$item) {
 		'to_xchan'     => $r[0]['channel_hash'],
 		'item'         => $item,
 		'link'         => $link,
-		'verb'         => ACTIVITY_POST,
+		'verb'         => $item['verb'],
 		'otype'        => 'item',
 		'parent'       => $thr_parent_id ? $thr_parent_id : $parent,
 		'parent_mid'   => $thr_parent_id ? $item['thr_parent'] : $item['parent_mid']

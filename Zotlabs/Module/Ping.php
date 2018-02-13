@@ -268,7 +268,18 @@ class Ping extends \Zotlabs\Web\Controller {
 
 					$mid = basename($tt['link']);
 
-					$b64mid = ((strpos($mid, 'b64.' === 0)) ? $mid : 'b64.' . base64url_encode($mid));
+					if(in_array($tt['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) {
+						// we need the thread parent
+						$r = q("select thr_parent from item where mid = '%s' and uid = %d limit 1",
+							dbesc($mid),
+							intval(local_channel())
+						);
+
+						$b64mid = ((strpos($r[0]['thr_parent'], 'b64.' === 0)) ? $r[0]['thr_parent'] : 'b64.' . base64url_encode($r[0]['thr_parent']));
+					}
+					else {
+						$b64mid = ((strpos($mid, 'b64.' === 0)) ? $mid : 'b64.' . base64url_encode($mid));
+					}
 
 					$notifs[] = array(
 						'notify_link' => z_root() . '/notify/view/' . $tt['id'],
