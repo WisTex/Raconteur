@@ -39,6 +39,7 @@ class Item extends \Zotlabs\Web\Controller {
 		$uid = local_channel();
 		$channel = null;
 		$observer = null;
+		$datarray = [];
 	
 	
 		/**
@@ -619,6 +620,21 @@ class Item extends \Zotlabs\Web\Controller {
 					$i++;
 				}
 			}
+
+
+			if(preg_match_all('/(\[share=(.*?)\](.*?)\[\/share\])/',$body,$match)) {
+				// process share by id				
+
+				$verb = ACTIVITY_SHARE;
+				$i = 0;
+				foreach($match[2] as $mtch) {
+					$reshare = new \Zotlabs\Lib\Share($mtch);
+					$datarray['obj'] = $reshare->obj();
+					$datarray['obj_type'] = $datarray['obj']['type'];
+					$body = str_replace($match[1][$i],$reshare->bbcode(),$body);
+					$i++;
+				}
+			}
 	
 		}
 	
@@ -720,7 +736,6 @@ class Item extends \Zotlabs\Web\Controller {
 		if(!$thr_parent)
 			$thr_parent = $mid;
 	
-		$datarray = array();
 
 		$item_thread_top = ((! $parent) ? 1 : 0);
 	
