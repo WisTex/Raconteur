@@ -119,6 +119,7 @@ class Apps {
 
 
 	static public function parse_app_description($f,$translate = true) {
+
 		$ret = array();
 
 		$baseurl = z_root();
@@ -192,6 +193,10 @@ class Apps {
 						break;
 					case 'public_profile':
 						if(! is_public_profile())
+							unset($ret);
+						break;
+					case 'public_stream':
+						if(! can_view_public_stream())
 							unset($ret);
 						break;
 					case 'observer':
@@ -344,6 +349,10 @@ class Apps {
 							break;
 						case 'public_profile':
 							if(! is_public_profile())
+								return '';
+							break;
+						case 'public_stream':
+							if(! can_view_public_stream())
 								return '';
 							break;
 						case 'observer':

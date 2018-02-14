@@ -73,9 +73,7 @@ EOT;
 	// nav links: array of array('href', 'text', 'extra css classes', 'title')
 	$nav = [];
 
-	$disable_discover_tab = get_config('system','disable_discover_tab') || get_config('system','disable_discover_tab') === false;
-
-	if(! $disable_discover_tab)
+	if(can_view_public_stream())
 		$nav['pubs'] = true;
 
 	/**

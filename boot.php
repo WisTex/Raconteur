@@ -1685,6 +1685,26 @@ function remote_channel() {
 	return false;
 }
 
+
+function can_view_public_stream() {
+
+	if((observer_prohibited(true)) 
+		|| (! (intval(get_config('system','open_pubstream',1))) && get_observer_hash())) {
+		return false;
+	}
+
+	$site_firehose = ((intval(get_config('system','site_firehose',0))) ? true : false);
+	$net_firehose  = ((get_config('system','disable_discover_tab',1)) ? false : true);
+
+	if(! ($site_firehose || $net_firehose)) {
+		return false;
+	}
+
+	return true;
+
+}
+
+
 /**
  * @brief Show an error or alert text on next page load.
  *
