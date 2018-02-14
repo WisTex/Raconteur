@@ -14,6 +14,10 @@ class Share extends \Zotlabs\Web\Controller {
 		if(! $post_id)
 			killme();
 	
+
+		echo '[share=' . $post_id . '][/share]';
+		killme();
+
 		if(! (local_channel() || remote_channel()))
 			killme();
 	
