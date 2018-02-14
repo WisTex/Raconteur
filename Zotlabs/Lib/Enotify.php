@@ -130,7 +130,7 @@ class Enotify {
 	}
 
 	if ($params['type'] == NOTIFY_COMMENT) {
-//		logger("notification: params = " . print_r($params, true), LOGGER_DEBUG);
+		//logger("notification: params = " . print_r($params, true), LOGGER_DEBUG);
 
 		$moderated = (($params['item']['item_blocked'] == ITEM_MODERATED) ? true : false);
 
@@ -138,7 +138,7 @@ class Enotify {
 
 		$action = 'commented on';
 
-		if(array_key_exists('item',$params) && (! visible_activity($params['item']))) {
+		if(array_key_exists('item',$params) && in_array($params['item']['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) {
 
 			if(! $always_show_in_notices) {
 				logger('notification: not a visible activity. Ignoring.');
@@ -146,10 +146,10 @@ class Enotify {
 				return;
 			}
 
-			if(activity_match($params['item']['verb'], ACTIVITY_LIKE))
+			if(activity_match($params['verb'], ACTIVITY_LIKE))
 				$action = 'liked';
 
-			if(activity_match($params['item']['verb'], ACTIVITY_DISLIKE))
+			if(activity_match($params['verb'], ACTIVITY_DISLIKE))
 				$action = 'disliked';
 
 		}
@@ -212,7 +212,7 @@ class Enotify {
 		
 		// "your post"
 		if($p[0]['owner']['xchan_name'] == $p[0]['author']['xchan_name'] && intval($p[0]['item_wall']))
-			$dest_str = sprintf(t('%1$s, %2$s %3$s [zrl=%3$s]your %5$s[/zrl]'),
+			$dest_str = sprintf(t('%1$s, %2$s %3$s [zrl=%4$s]your %5$s[/zrl]'),
 				$recip['channel_name'],
 				'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]',
 				$action,
