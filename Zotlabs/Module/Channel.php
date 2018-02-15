@@ -251,9 +251,9 @@ class Channel extends \Zotlabs\Web\Controller {
 				else {
 					$r = q("SELECT item.parent AS item_id FROM item 
 						left join abook on ( item.author_xchan = abook.abook_xchan $abook_uids )
-						WHERE true and uid = %d $item_normal
+						WHERE true and item.uid = %d AND item.item_thread_top = 1 $item_normal
 						AND (abook.abook_blocked = 0 or abook.abook_flags is null)
-						AND item.item_wall = 1 AND item.item_thread_top = 1 
+						AND item.item_wall = 1 
 						$sql_extra $sql_extra2
 						ORDER BY created DESC $pager_sql ",
 						intval(\App::$profile['profile_uid'])
