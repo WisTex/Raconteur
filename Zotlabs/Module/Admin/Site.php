@@ -45,6 +45,7 @@ class Site {
 		$force_publish		=	((x($_POST,'publish_all'))		? True	: False);
 		$disable_discover_tab =	((x($_POST,'disable_discover_tab'))		? False	:	True);
 		$site_firehose      =   ((x($_POST,'site_firehose')) ? True : False);
+		$open_pubstream     =   ((x($_POST,'open_pubstream')) ? True : False);
 		$login_on_homepage	=	((x($_POST,'login_on_homepage'))		? True	:	False);
 		$enable_context_help = ((x($_POST,'enable_context_help'))		? True	:	False);
 		$global_directory     = ((x($_POST,'directory_submit_url'))	? notags(trim($_POST['directory_submit_url']))	: '');
@@ -139,6 +140,7 @@ class Site {
 		set_config('system','publish_all', $force_publish);
 		set_config('system','disable_discover_tab', $disable_discover_tab);
 		set_config('system','site_firehose', $site_firehose);
+		set_config('system','open_pubstream', $open_pubstream);
 		set_config('system','force_queue_threshold', $force_queue);
 		if ($global_directory == '') {
 			del_config('system', 'directory_submit_url');
@@ -319,7 +321,7 @@ class Site {
 			'$force_publish'	=> array('publish_all', t("Force publish"), get_config('system','publish_all'), t("Check to force all profiles on this site to be listed in the site directory.")),
 			'$disable_discover_tab'	=> array('disable_discover_tab', t('Import Public Streams'), $discover_tab, t('Import and allow access to public content pulled from other sites. Warning: this content is unmoderated.')),
 			'$site_firehose'	=> array('site_firehose', t('Site only Public Streams'), get_config('system','site_firehose'), t('Allow access to public content originating only from this site if Imported Public Streams are disabled.')),
-
+			'$open_pubstream'	=> array('open_pubstream', t('Allow anybody on the internet to access the Public streams'), get_config('system','open_pubstream',1), t('Disable to require authentication before viewing. Warning: this content is unmoderated.')),
 			'$login_on_homepage'	=> array('login_on_homepage', t("Login on Homepage"),((intval($homelogin) || $homelogin === false) ? 1 : '') , t("Present a login box to visitors on the home page if no other content has been configured.")),
 			'$enable_context_help'	=> array('enable_context_help', t("Enable context help"),((intval($enable_context_help) === 1 || $enable_context_help === false) ? 1 : 0) , t("Display contextual help for the current page when the help button is pressed.")),
 

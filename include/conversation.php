@@ -974,7 +974,7 @@ function author_is_pmable($xchan, $abook) {
 	if($x['result'] !== 'unset')
 		return $x['result'];
 	
-	if($xchan['xchan_network'] === 'zot')
+	if($xchan['xchan_network'] === 'zot' && get_observer_hash())
 		return true;
 	return false;
 

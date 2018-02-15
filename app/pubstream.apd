@@ -1,6 +1,6 @@
-version: 2
+version: 2.2
 url: $baseurl/pubstream
-requires: config:disable_discover_tab=0
+requires: public_stream
 name: Public Stream
 photo: icon:globe
-categories: Social
+categories: Social, nav_featured_app
