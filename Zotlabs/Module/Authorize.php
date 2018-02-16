@@ -6,41 +6,38 @@ namespace Zotlabs\Module;
 class Authorize extends \Zotlabs\Web\Controller {
 
 
-	function get() {
+	function init() {
 
 
-			// workaround for HTTP-auth in CGI mode
-			if (x($_SERVER, 'REDIRECT_REMOTE_USER')) {
-				$userpass = base64_decode(substr($_SERVER["REDIRECT_REMOTE_USER"], 6)) ;
-				if(strlen($userpass)) {
-					list($name, $password) = explode(':', $userpass);
-					$_SERVER['PHP_AUTH_USER'] = $name;
-					$_SERVER['PHP_AUTH_PW'] = $password;
-				}
+		// workaround for HTTP-auth in CGI mode
+		if (x($_SERVER, 'REDIRECT_REMOTE_USER')) {
+			$userpass = base64_decode(substr($_SERVER["REDIRECT_REMOTE_USER"], 6)) ;
+			if(strlen($userpass)) {
+				list($name, $password) = explode(':', $userpass);
+				$_SERVER['PHP_AUTH_USER'] = $name;
+				$_SERVER['PHP_AUTH_PW'] = $password;
 			}
+		}
 
-			if (x($_SERVER, 'HTTP_AUTHORIZATION')) {
-				$userpass = base64_decode(substr($_SERVER["HTTP_AUTHORIZATION"], 6)) ;
-				if(strlen($userpass)) {
-					list($name, $password) = explode(':', $userpass);
-					$_SERVER['PHP_AUTH_USER'] = $name;
-					$_SERVER['PHP_AUTH_PW'] = $password;
-				}
+		if (x($_SERVER, 'HTTP_AUTHORIZATION')) {
+			$userpass = base64_decode(substr($_SERVER["HTTP_AUTHORIZATION"], 6)) ;
+			if(strlen($userpass)) {
+				list($name, $password) = explode(':', $userpass);
+				$_SERVER['PHP_AUTH_USER'] = $name;
+				$_SERVER['PHP_AUTH_PW'] = $password;
 			}
+		}
 
+		$s = new \Zotlabs\Identity\OAuth2Server();
 
+		$request = \OAuth2\Request::createFromGlobals();
+		$response = new \OAuth2\Response();
 
-
-	require_once('include/oauth2.php');
-
-	$request = \OAuth2\Request::createFromGlobals();
-	$response = new \OAuth2\Response();
-
-	// validate the authorize request
-	if (! $oauth2_server->validateAuthorizeRequest($request, $response)) {
-	    $response->send();
-    	killme();
-	}
+		// validate the authorize request
+		if (! $s->server->validateAuthorizeRequest($request, $response)) {
+		    $response->send();
+    		killme();
+		}
 
 	// display an authorization form
 	if (empty($_POST)) {
@@ -55,7 +52,7 @@ class Authorize extends \Zotlabs\Web\Controller {
 
 	// print the authorization code if the user has authorized your client
 	$is_authorized = ($_POST['authorized'] === 'yes');
-	$oauth2_server->handleAuthorizeRequest($request, $response, $is_authorized);
+	$s->server->handleAuthorizeRequest($request, $response, $is_authorized, local_channel());
 	if ($is_authorized) {
 		// this is only here so that you get to see your code in the cURL request. Otherwise, 
 		// we'd redirect back to the client
