@@ -646,7 +646,7 @@ class Notifier {
 				// with before switching to zot6 as the primary zot6 handler checks for the existence of a message delivery report
 				// to trigger dequeue'ing
 
-				$z6 = (($encoded_item && $encoded_item['type'] === 'activity' && (! array_key_exists('allow_cid',$encoded_item)) ? true : false);
+				$z6 = (($encoded_item && $encoded_item['type'] === 'activity' && (! array_key_exists('allow_cid',$encoded_item))) ? true : false);
 				if($z6) {
 					$packet = zot6_build_packet($channel,'notify',$env, json_encode($encoded_item), (($private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto'],$hash);
 				}
