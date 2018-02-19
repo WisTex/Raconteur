@@ -1235,6 +1235,8 @@ function zot_fetch($arr) {
  */
 function zot_import($arr, $sender_url) {
 
+	logger('arr: ' . print_r($arr,true));
+
 	$data = json_decode($arr['body'], true);
 
 	if(! $data) {
