@@ -13,11 +13,15 @@ class _1201 {
 				ADD INDEX uid_item_blocked (uid, item_blocked),
 				ADD INDEX item_deleted_pending_remove_changed (item_deleted, item_pending_remove, changed)
 			");
+
+			if($r)
+				return UPDATE_SUCCESS;
+			return UPDATE_FAILED;
+		}
+		else {
+			return UPDATE_SUCCESS;
 		}
 
-		if($r)
-			return UPDATE_SUCCESS;
-		return UPDATE_FAILED;
 	}
 
 }
