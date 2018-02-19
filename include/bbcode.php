@@ -628,7 +628,7 @@ function bb_code_unprotect_sub($match) {
 
 function bb_code($match) {
 	if(strpos($match[0], "<br />"))
-		return '<code>' . bb_code_protect(trim($match[1])) . '</code>';
+		return '<pre><code>' . bb_code_protect(trim($match[1])) . '</code></pre>';
 	else
 		return '<code class="inline-code">' . bb_code_protect(trim($match[1])) . '</code>';
 }
@@ -636,15 +636,21 @@ function bb_code($match) {
 function bb_code_options($match) {
 	if(strpos($match[0], "<br />")) {
 		$class = "";
+		$pre = true;
 	} else {
 		$class = "inline-code";
+		$pre = false;
 	}
 	if(strpos($match[1], 'nowrap')) {
 		$style = "overflow-x: auto; white-space: pre;";
 	} else {
 		$style = "";
 	}
-	return '<code class="'. $class .'" style="'. $style .'">' . bb_code_protect(trim($match[2])) . '</code>';
+	if($pre) {
+		return '<pre><code class="'. $class .'" style="'. $style .'">' . bb_code_protect(trim($match[2])) . '</code></pre>';
+	} else {	
+		return '<code class="'. $class .'" style="'. $style .'">' . bb_code_protect(trim($match[2])) . '</code>';
+	}
 }
 
 function bb_highlight($match) {
