@@ -126,11 +126,11 @@ function other_encapsulate($data,$pubkey,$alg) {
 
 	if(strpos($alg,'.oaep')) {
 		$oaep = true;
-		$alg = substr($alg,0,-5);
+		$subalg = substr($alg,0,-5);
 	}
 
 
-	$fn = strtoupper($alg) . '_encrypt';
+	$fn = strtoupper($subalg) . '_encrypt';
 	if(function_exists($fn)) {
 
 		// A bit hesitant to use openssl_random_pseudo_bytes() as we know
@@ -160,7 +160,7 @@ function other_encapsulate($data,$pubkey,$alg) {
 		return $result;
 	}
 	else {
-		$x = [ 'data' => $data, 'pubkey' => $pubkey, 'alg' => $alg, 'result' => $data ];
+		$x = [ 'data' => $data, 'pubkey' => $pubkey, 'alg' => $subalg, 'result' => $data ];
 		call_hooks('other_encapsulate', $x);
 		return $x['result'];
 	}
@@ -215,6 +215,7 @@ function aes_encapsulate($data,$pubkey) {
 function crypto_unencapsulate($data,$prvkey) {
 	if(! $data)
 		return;
+
 	$alg = ((array_key_exists('alg',$data)) ? $data['alg'] : 'aes256cbc');
 	if($alg === 'aes256cbc')
 		return aes_unencapsulate($data,$prvkey);
@@ -229,18 +230,18 @@ function other_unencapsulate($data,$prvkey,$alg) {
 
 	if(strpos($alg,'.oaep')) {
 		$oaep = true;
-		$alg = substr($alg,0,-5);
+		$subalg = substr($alg,0,-5);
 	}
 
 
-	$fn = strtoupper($alg) . '_decrypt';
+	$fn = strtoupper($subalg) . '_decrypt';
 	if(function_exists($fn)) {
 		openssl_private_decrypt(base64url_decode($data['key']),$k,$prvkey,(($oaep) ? OPENSSL_PKCS1_OAEP_PADDING : OPENSSL_PKCS1_PADDING));
 		openssl_private_decrypt(base64url_decode($data['iv']),$i,$prvkey,(($oaep) ? OPENSSL_PKCS1_OAEP_PADDING : OPENSSL_PKCS1_PADDING));
 		return $fn(base64url_decode($data['data']),$k,$i);
 	}
 	else {
-		$x = [ 'data' => $data, 'prvkey' => $prvkey, 'alg' => $alg, 'result' => $data ];
+		$x = [ 'data' => $data, 'prvkey' => $prvkey, 'alg' => $subalg, 'result' => $data ];
 		call_hooks('other_unencapsulate',$x);
 		return $x['result'];
 	}
