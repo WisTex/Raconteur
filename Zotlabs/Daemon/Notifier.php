@@ -651,7 +651,7 @@ class Notifier {
 					$packet = zot6_build_packet($channel,'notify',$env, json_encode($encoded_item), (($private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto'],$hash);
 				}
 				else {
-					$packet = zot6_build_packet($channel,'notify',$env, (($private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto'],$hash);
+					$packet = zot_build_packet($channel,'notify',$env, (($private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto'],$hash);
 
 				}	
 
