@@ -163,7 +163,7 @@ function other_encapsulate($data,$pubkey,$alg) {
 		return $result;
 	}
 	else {
-		$x = [ 'data' => $data, 'pubkey' => $pubkey, 'alg' => $subalg, 'result' => $data ];
+		$x = [ 'data' => $data, 'pubkey' => $pubkey, 'alg' => $alg, 'result' => $data ];
 		call_hooks('other_encapsulate', $x);
 		return $x['result'];
 	}
@@ -246,7 +246,7 @@ function other_unencapsulate($data,$prvkey,$alg) {
 		return $fn(base64url_decode($data['data']),$k,$i);
 	}
 	else {
-		$x = [ 'data' => $data, 'prvkey' => $prvkey, 'alg' => $subalg, 'result' => $data ];
+		$x = [ 'data' => $data, 'prvkey' => $prvkey, 'alg' => $alg, 'result' => $data ];
 		call_hooks('other_unencapsulate',$x);
 		return $x['result'];
 	}
