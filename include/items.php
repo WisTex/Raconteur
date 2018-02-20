@@ -3477,7 +3477,7 @@ function item_expire($uid,$days) {
 		AND item_thread_top = 1
 		AND resource_type = ''
 		AND item_starred = 0
-		$sql_extra $item_normal ORDER BY created ASC LIMIT $expire_limit ",
+		$sql_extra $item_normal LIMIT $expire_limit ",
 		intval($uid),
 		db_utcnow(),
 		db_quoteinterval(intval($days).' DAY')
