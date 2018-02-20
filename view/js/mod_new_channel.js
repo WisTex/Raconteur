@@ -1,5 +1,7 @@
 	$(document).ready(function() {
-//		$("#id_permissions_role").sSelect();
+
+		$("#newchannel-submit-button").attr('disabled','disabled');
+
 		$("#id_name").blur(function() {
 			$("#name-spinner").show();
 			var zreg_name = $("#id_name").val();
@@ -13,17 +15,26 @@
 			});
 		});
 
-		$("#id_nickname").blur(function() {
-			$("#nick-spinner").show();
-			var zreg_nick = $("#id_nickname").val();
-			$.get("new_channel/checkaddr.json?f=&nick=" + encodeURIComponent(zreg_nick),function(data) {
-				$("#id_nickname").val(data);
-				if(data.error) {
-					$("#help_nickname").html("");
-					zFormError("#help_nickname",data.error);
-				}
-				$("#nick-spinner").hide();
-			});
+		$("#id_nickname").click(function() {
+			$("#newchannel-submit-button").attr('disabled','disabled');
 		});
 
 	});
+
+
+	function validate_channel() {
+		$("#nick-spinner").show();
+		var zreg_nick = $("#id_nickname").val();
+		$.get("new_channel/checkaddr.json?f=&nick=" + encodeURIComponent(zreg_nick),function(data) {
+			$("#id_nickname").val(data);
+			if(data.error) {
+				$("#help_nickname").html("");
+				zFormError("#help_nickname",data.error);
+			}
+			else {
+				$("#newchannel-submit-button").removeAttr('disabled');
+			}
+			$("#nick-spinner").hide();
+		});
+
+	}
