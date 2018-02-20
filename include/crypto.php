@@ -128,6 +128,9 @@ function other_encapsulate($data,$pubkey,$alg) {
 		$oaep = true;
 		$subalg = substr($alg,0,-5);
 	}
+	else {
+		$subalg = $alg;
+	}
 
 
 	$fn = strtoupper($subalg) . '_encrypt';
@@ -232,7 +235,9 @@ function other_unencapsulate($data,$prvkey,$alg) {
 		$oaep = true;
 		$subalg = substr($alg,0,-5);
 	}
-
+	else {
+		$subalg = $alg;
+	}
 
 	$fn = strtoupper($subalg) . '_decrypt';
 	if(function_exists($fn)) {
