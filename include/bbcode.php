@@ -438,7 +438,7 @@ function bb_summary($match) {
 	$rnd3 = mt_rand();
 	$rnd4 = mt_rand();
 
-	return $match[1] . '<div style="display: block;" id="opendiv-' . $rnd2 . '">' . $match[2] . '</div><div style="display: block;" id="opendiv-' . $rnd3 . '" onclick="openClose(\'opendiv-' . $rnd1 . '\'); openClose(\'opendiv-' . $rnd2 . '\'); openClose(\'opendiv-' . $rnd3 . '\'); openClose(\'opendiv-' . $rnd4 . '\'); return false;" class="fakelink">' . t('View article') . '</div><div style="display: none;" id="opendiv-' . $rnd4 . '" onclick="openClose(\'opendiv-' . $rnd1 . '\'); openClose(\'opendiv-' . $rnd2 . '\'); openClose(\'opendiv-' . $rnd3 . '\'); openClose(\'opendiv-' . $rnd4 . '\'); return false;" class="fakelink">' . t('View summary') . '</div><div id="opendiv-' . $rnd1 . '" style="display: none;">' . $match[3] . '</div>';
+	return $match[1] . '<div style="display: block;" id="opendiv-' . $rnd2 . '">' . $match[2] . '</div><div style="display: block;" id="opendiv-' . $rnd3 . '" onclick="openClose(\'opendiv-' . $rnd1 . '\'); openClose(\'opendiv-' . $rnd2 . '\'); openClose(\'opendiv-' . $rnd3 . '\'); openClose(\'opendiv-' . $rnd4 . '\'); return false;" class="fakelink view-article">' . t('View article') . '</div><div style="display: none;" id="opendiv-' . $rnd4 . '" onclick="openClose(\'opendiv-' . $rnd1 . '\'); openClose(\'opendiv-' . $rnd2 . '\'); openClose(\'opendiv-' . $rnd3 . '\'); openClose(\'opendiv-' . $rnd4 . '\'); return false;" class="fakelink view-summary">' . t('View summary') . '</div><div id="opendiv-' . $rnd1 . '" style="display: none;">' . $match[3] . '</div>';
 }
 
 
@@ -628,7 +628,7 @@ function bb_code_unprotect_sub($match) {
 
 function bb_code($match) {
 	if(strpos($match[0], "<br />"))
-		return '<code>' . bb_code_protect(trim($match[1])) . '</code>';
+		return '<pre><code>' . bb_code_protect(trim($match[1])) . '</code></pre>';
 	else
 		return '<code class="inline-code">' . bb_code_protect(trim($match[1])) . '</code>';
 }
@@ -636,15 +636,21 @@ function bb_code($match) {
 function bb_code_options($match) {
 	if(strpos($match[0], "<br />")) {
 		$class = "";
+		$pre = true;
 	} else {
 		$class = "inline-code";
+		$pre = false;
 	}
 	if(strpos($match[1], 'nowrap')) {
 		$style = "overflow-x: auto; white-space: pre;";
 	} else {
 		$style = "";
 	}
-	return '<code class="'. $class .'" style="'. $style .'">' . bb_code_protect(trim($match[2])) . '</code>';
+	if($pre) {
+		return '<pre><code class="'. $class .'" style="'. $style .'">' . bb_code_protect(trim($match[2])) . '</code></pre>';
+	} else {	
+		return '<code class="'. $class .'" style="'. $style .'">' . bb_code_protect(trim($match[2])) . '</code>';
+	}
 }
 
 function bb_highlight($match) {

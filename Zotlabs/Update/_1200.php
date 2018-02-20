@@ -10,11 +10,15 @@ function run() {
 			DROP INDEX item_type,
 			ADD INDEX uid_item_type (uid, item_type)
 		");
+
+		if($r)
+			return UPDATE_SUCCESS;
+		return UPDATE_FAILED;
+	}
+	else {
+		return UPDATE_SUCCESS;
 	}
 
-	if($r)
-		return UPDATE_SUCCESS;
-	return UPDATE_FAILED;
 }
 
 }
