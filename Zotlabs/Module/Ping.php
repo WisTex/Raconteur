@@ -148,14 +148,12 @@ class Ping extends \Zotlabs\Web\Controller {
 
 			$pubs = q("SELECT count(id) as total from item
 				WHERE uid = %d
-				AND author_xchan != '%s'
-				AND obj_type != '%s'
 				AND item_unseen = 1
+				AND author_xchan != '%s'
 				AND created > '" . datetime_convert('UTC','UTC',$_SESSION['static_loadtime']) . "'
 				$item_normal",
 				intval($sys['channel_id']),
-				dbesc(get_observer_hash()),
-				dbesc(ACTIVITY_OBJ_FILE)
+				dbesc(get_observer_hash())
 			);
 
 			if($pubs)
@@ -168,8 +166,8 @@ class Ping extends \Zotlabs\Web\Controller {
 
 			$r = q("SELECT * FROM item
 				WHERE uid = %d
-				AND author_xchan != '%s'
 				AND item_unseen = 1
+				AND author_xchan != '%s'
 				AND created > '" . datetime_convert('UTC','UTC',$_SESSION['static_loadtime']) . "'
 				$item_normal
 				ORDER BY created DESC
@@ -210,22 +208,22 @@ class Ping extends \Zotlabs\Web\Controller {
 		if(x($_REQUEST, 'markRead') && local_channel()) {
 			switch($_REQUEST['markRead']) {
 				case 'network':
-					$r = q("update item set item_unseen = 0 where item_unseen = 1 and uid = %d",
+					$r = q("UPDATE item SET item_unseen = 0 WHERE uid = %d AND item_unseen = 1",
 						intval(local_channel())
 					);
 					break;
 				case 'home':
-					$r = q("update item set item_unseen = 0 where item_unseen = 1 and item_wall = 1  and uid = %d",
+					$r = q("UPDATE item SET item_unseen = 0 WHERE uid = %d AND item_unseen = 1 AND item_wall = 1",
 						intval(local_channel())
 					);
 					break;
 				case 'mail':
-					$r = q("update mail set mail_seen = 1 where mail_seen = 0 and channel_id = %d ",
+					$r = q("UPDATE mail SET mail_seen = 1 WHERE channel_id = %d AND mail_seen = 0",
 						intval(local_channel())
 					);
 					break;
 				case 'all_events':
-					$r = q("update event set dismissed = 1 where dismissed = 0 and uid = %d AND dtstart < '%s' AND dtstart > '%s' ",
+					$r = q("UPDATE event SET dismissed = 1 WHERE uid = %d AND dismissed = 0 AND dtstart < '%s' AND dtstart > '%s' ",
 						intval(local_channel()),
 						dbesc(datetime_convert('UTC', date_default_timezone_get(), 'now + ' . intval($evdays) . ' days')),
 						dbesc(datetime_convert('UTC', date_default_timezone_get(), 'now - 1 days'))
@@ -245,9 +243,9 @@ class Ping extends \Zotlabs\Web\Controller {
 		}
 
 		if(x($_REQUEST, 'markItemRead') && local_channel()) {
-			$r = q("update item set item_unseen = 0 where parent = %d and uid = %d",
-				intval($_REQUEST['markItemRead']),
-				intval(local_channel())
+			$r = q("UPDATE item SET item_unseen = 0 WHERE  uid = %d AND parent = %d",
+				intval(local_channel()),
+				intval($_REQUEST['markItemRead'])
 			);
 		}
 
@@ -256,7 +254,7 @@ class Ping extends \Zotlabs\Web\Controller {
 		 * dropdown menu.
 		 */
 		if(argc() > 1 && argv(1) === 'notify') {
-			$t = q("select * from notify where uid = %d and seen = 0 order by created desc",
+			$t = q("SELECT * FROM notify WHERE uid = %d AND seen = 0 ORDER BY CREATED DESC",
 				intval(local_channel())
 			);
 
@@ -270,7 +268,18 @@ class Ping extends \Zotlabs\Web\Controller {
 
 					$mid = basename($tt['link']);
 
-					$b64mid = ((strpos($mid, 'b64.' === 0)) ? $mid : 'b64.' . base64url_encode($mid));
+					if(in_array($tt['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) {
+						// we need the thread parent
+						$r = q("select thr_parent from item where mid = '%s' and uid = %d limit 1",
+							dbesc($mid),
+							intval(local_channel())
+						);
+
+						$b64mid = ((strpos($r[0]['thr_parent'], 'b64.' === 0)) ? $r[0]['thr_parent'] : 'b64.' . base64url_encode($r[0]['thr_parent']));
+					}
+					else {
+						$b64mid = ((strpos($mid, 'b64.' === 0)) ? $mid : 'b64.' . base64url_encode($mid));
+					}
 
 					$notifs[] = array(
 						'notify_link' => z_root() . '/notify/view/' . $tt['id'],
@@ -320,12 +329,13 @@ class Ping extends \Zotlabs\Web\Controller {
 		if(argc() > 1 && (argv(1) === 'network' || argv(1) === 'home')) {
 			$result = array();
 
-			$use_index = db_use_index('uid_item_unseen');
-
-			$r = q("SELECT * FROM item $use_index
-				WHERE item_unseen = 1 and uid = %d $item_normal
+			$r = q("SELECT * FROM item 
+				WHERE uid = %d
+				AND item_unseen = 1
 				AND author_xchan != '%s'
-				ORDER BY created DESC limit 300",
+				$item_normal
+				ORDER BY created DESC
+				LIMIT 300",
 				intval(local_channel()),
 				dbesc($ob_hash)
 			);
@@ -495,10 +505,8 @@ class Ping extends \Zotlabs\Web\Controller {
 
 		if($vnotify & (VNOTIFY_NETWORK|VNOTIFY_CHANNEL)) {
 
-			$use_index = db_use_index('uid_item_unseen');
-			
-			$r = q("SELECT id, item_wall FROM item $use_index
-				WHERE item_unseen = 1 and uid = %d
+			$r = q("SELECT id, item_wall FROM item 
+				WHERE uid = %d and item_unseen = 1 
 				$item_normal
 				AND author_xchan != '%s'",
 				intval(local_channel()),

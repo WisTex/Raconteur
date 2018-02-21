@@ -6,7 +6,7 @@
 <img src="{{$image_url}}" id="croppa" class="imgCrop" alt="{{$title}}" />
 </div>
 <div id="cropimage-preview-wrapper" >
-<div id="previewWrap" class="crop-preview" style="height: 300px; width: 300px; max-width: 300px; max-height: 300px; overflow: hidden;"></div>
+<div id="previewWrap" class="crop-preview d-lg-none" style="height: 300px; width: 300px; max-width: 300px; max-height: 300px; overflow: hidden;"></div>
 </div>
 
 <script type="text/javascript" language="javascript">
@@ -14,18 +14,17 @@
 
 var image = document.getElementById('croppa');
 var cropper = new Cropper(image, {
-  aspectRatio: 1 / 1,
-  viewMode: 1,
-  preview: '.crop-preview',
-  crop: function(e) {
-		$( 'x1' ).value = e.detail.x;
-		$( 'y1' ).value = e.detail.y;
-		$( 'x2' ).value = e.detail.x + e.detail.width;
-		$( 'y2' ).value = e.detail.y + e.detail.height;
-		$( 'width' ).value = e.detail.scaleX;
-		$( 'height' ).value = e.detail.scaleY;
-
-  }
+	aspectRatio: 1 / 1,
+	viewMode: 1,
+	preview: '#profile-photo-wrapper, .crop-preview',
+	crop: function(e) {
+		$( '#x1' ).val(e.detail.x);
+		$( '#y1' ).val(e.detail.y);
+		$( '#x2' ).val(e.detail.x + e.detail.width);
+		$( '#y2' ).val(e.detail.y + e.detail.height);
+		$( '#width' ).val(e.detail.scaleX);
+		$( '#height' ).val(e.detail.scaleY);
+	}
 });
 
 </script>

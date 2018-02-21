@@ -1,7 +1,7 @@
 <?php
 
-if(! function_exists("string_plural_select_de")) {
-function string_plural_select_de($n){
+if(! function_exists("string_plural_select_de_de")) {
+function string_plural_select_de_de($n){
 	return ($n != 1);;
 }}
 App::$rtl = 0;
@@ -2790,21 +2790,21 @@ App::$strings["Rate This Channel (this is public)"] = "Diesen Kanal bewerten (ö
 App::$strings["Describe (optional)"] = "Beschreibung (optional)";
 App::$strings["Please enter a link URL"] = "Gib eine URL ein:";
 App::$strings["Unsaved changes. Are you sure you wish to leave this page?"] = "Ungespeicherte Änderungen. Bist Du sicher, dass Du diese Seite verlassen möchtest?";
-App::$strings["timeago.prefixAgo"] = "timeago.prefixAgo";
-App::$strings["timeago.prefixFromNow"] = " ";
-App::$strings["ago"] = "her";
-App::$strings["from now"] = "von jetzt";
-App::$strings["less than a minute"] = "weniger als eine Minute";
-App::$strings["about a minute"] = "ungefähr eine Minute";
+App::$strings["timeago.prefixAgo"] = "vor";
+App::$strings["timeago.prefixFromNow"] = "in";
+App::$strings["timeago.suffixAgo"] = "NONE";
+App::$strings["timeago.suffixFromNow"] = "NONE";
+App::$strings["less than a minute"] = "weniger als einer Minute";
+App::$strings["about a minute"] = "ungefähr einer Minute";
 App::$strings["%d minutes"] = "%d Minuten";
-App::$strings["about an hour"] = "ungefähr eine Stunde";
+App::$strings["about an hour"] = "ungefähr einer Stunde";
 App::$strings["about %d hours"] = "ungefähr %d Stunden";
-App::$strings["a day"] = "ein Tag";
-App::$strings["%d days"] = "%d Tage";
-App::$strings["about a month"] = "ungefähr einen Monat";
-App::$strings["%d months"] = "%d Monate";
-App::$strings["about a year"] = "ungefähr ein Jahr";
-App::$strings["%d years"] = "%d Jahre";
+App::$strings["a day"] = "einem Tag";
+App::$strings["%d days"] = "%d Tagen";
+App::$strings["about a month"] = "ungefähr einem Monat";
+App::$strings["%d months"] = "%d Monaten";
+App::$strings["about a year"] = "ungefähr einem Jahr";
+App::$strings["%d years"] = "%d Jahren";
 App::$strings[" "] = " ";
 App::$strings["timeago.numbers"] = "timeago.numbers";
 App::$strings["__ctx:long__ May"] = "Mai";

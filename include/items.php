@@ -2327,6 +2327,16 @@ function send_status_notifications($post_id,$item) {
 
 	$parent = 0;
 
+	if(array_key_exists('verb',$item) && (activity_match($item['verb'], ACTIVITY_LIKE) || activity_match($item['verb'], ACTIVITY_DISLIKE))) {
+
+		$r = q("select id from item where mid = '%s' and uid = %d limit 1",
+			dbesc($item['thr_parent']),
+			intval($item['uid'])
+		);
+
+		$thr_parent_id = $r[0]['id'];
+	}
+
 	$r = q("select channel_hash from channel where channel_id = %d limit 1",
 		intval($item['uid'])
 	);
@@ -2392,10 +2402,10 @@ function send_status_notifications($post_id,$item) {
 		'to_xchan'     => $r[0]['channel_hash'],
 		'item'         => $item,
 		'link'         => $link,
-		'verb'         => ACTIVITY_POST,
+		'verb'         => $item['verb'],
 		'otype'        => 'item',
-		'parent'       => $parent,
-		'parent_mid'   => $item['parent_mid']
+		'parent'       => $thr_parent_id ? $thr_parent_id : $parent,
+		'parent_mid'   => $thr_parent_id ? $item['thr_parent'] : $item['parent_mid']
 	));
 }
 
@@ -3653,7 +3663,7 @@ function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
 
 	$linked_item = (($item['resource_id']) ? true : false);
 
-	logger('item: ' . $item . ' stage: ' . $stage . ' force: ' . $force, LOGGER_DATA);
+	logger('item: ' . $item['id'] . ' stage: ' . $stage . ' force: ' . $force, LOGGER_DATA);
 
 	switch($stage) {
 		case DROPITEM_PHASE2:

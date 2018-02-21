@@ -142,6 +142,7 @@ class New_channel extends \Zotlabs\Web\Controller {
 			'$role'		=> $role,
 			'$default_role' => $default_role,
 			'$nickname'     => $nickname,
+			'$validate'     => t('Validate'),
 			'$submit'       => t('Create'),
 			'$channel_usage_message' => $channel_usage_message
 		));

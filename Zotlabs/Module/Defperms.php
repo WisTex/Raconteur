@@ -22,7 +22,7 @@ class Defperms extends \Zotlabs\Web\Controller {
 	
 		$r = q("SELECT abook.*, xchan.*
 			FROM abook left join xchan on abook_xchan = xchan_hash
-			WHERE abook_self = 1 and abook_id = %d LIMIT 1",
+			WHERE abook_self = 1 and abook_channel = %d LIMIT 1",
 			intval(local_channel())
 		);
 		if($r) {

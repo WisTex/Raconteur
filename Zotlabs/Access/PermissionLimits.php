@@ -41,8 +41,10 @@ class PermissionLimits {
 		$limits = [];
 		$perms = Permissions::Perms();
 
+		$anon_comments = get_config('system','anonymous_comments',true);
+
 		foreach($perms as $k => $v) {
-			if(strstr($k, 'view') || $k === 'post_comments')
+			if(strstr($k, 'view') || ($k === 'post_comments' && $anon_comments))
 				$limits[$k] = PERMS_PUBLIC;
 			else
 				$limits[$k] = PERMS_SPECIFIC;

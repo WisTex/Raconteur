@@ -357,6 +357,9 @@ function closeMenu(theID) {
 function markRead(notifType) {
 	$.get('ping?f=&markRead='+notifType);
 	$('.' + notifType + '-button').hide();
+	$('#nav-' + notifType + '-sub').removeClass('show');
+	sessionStorage.removeItem(notifType + '_notifications_cache');
+	sessionStorage.removeItem('notification_open');
 	if(timer) clearTimeout(timer);
 	timer = setTimeout(updateInit,2000);
 }
@@ -436,6 +439,7 @@ function handleNotifications(data) {
 
 		if(item == 0) {
 			$('.' + index + '-button').fadeOut();
+			sessionStorage.removeItem(index + '_notifications_cache');
 		} else {
 			$('.' + index + '-button').fadeIn();
 			$('.' + index + '-update').html(item);

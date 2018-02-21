@@ -137,7 +137,22 @@ class HTTPSig {
 			}
 		}
 
-		logger('Content_Valid: ' . $result['content_valid']);
+
+		if(in_array('x-zot-digest',$signed_headers)) {
+			$result['content_signed'] = true;
+			$digest = explode('=', $headers['x-zot-digest']);
+			if($digest[0] === 'SHA-256')
+				$hashalg = 'sha256';
+			if($digest[0] === 'SHA-512')
+				$hashalg = 'sha512';
+
+			// The explode operation will have stripped the '=' padding, so compare against unpadded base64 
+			if(rtrim(base64_encode(hash($hashalg,$_POST['data'],true)),'=') === $digest[1]) {
+				$result['content_valid'] = true;
+			}
+		}
+
+		logger('Content_Valid: ' . (($result['content_valid']) ? 'true' : 'false'));
 
 		return $result;
 
@@ -194,8 +209,8 @@ class HTTPSig {
 			. '",headers="' . $x['headers'] . '",signature="' . $x['signature'] . '"';
 
 		if($crypt_key) {
-			$x = crypto_encapsulate($headerval,$crypt_key,$crypt_alg);
-			$headerval = 'iv="' . $x['iv'] . '",key="' . $x['key'] . '",alg="' . $x['alg'] . '",data="' . $x['data'];
+			$x = crypto_encapsulate($headerval,$crypt_key,$crypt_algo);
+			$headerval = 'iv="' . $x['iv'] . '",key="' . $x['key'] . '",alg="' . $x['alg'] . '",data="' . $x['data'] . '"';
 		}
 			
 		if($auth) {

@@ -618,8 +618,8 @@ class Notifier {
 				$packet = zot_build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null));
 			}
 			if($packet_type === 'keychange') {
-				$packet = zot_build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null));
 				$pmsg = get_pconfig($channel['channel_id'],'system','keychange');
+				$packet = zot_build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null));
 			}
 			elseif($packet_type === 'request') {
 				$env = (($hub_env && $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']]) ? $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] : '');
@@ -640,7 +640,21 @@ class Notifier {
 			}
 			else {
 				$env = (($hub_env && $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']]) ? $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] : '');
-				$packet = zot_build_packet($channel,'notify',$env,(($private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto'],$hash);	
+
+				// currently zot6 delivery is only performed on normal items and not sync items or mail or anything else
+				// Eventually we will do this for all deliveries, but for now ensure this is precisely what we are dealing 
+				// with before switching to zot6 as the primary zot6 handler checks for the existence of a message delivery report
+				// to trigger dequeue'ing
+
+				$z6 = (($encoded_item && $encoded_item['type'] === 'activity' && (! array_key_exists('allow_cid',$encoded_item))) ? true : false);
+				if($z6) {
+					$packet = zot6_build_packet($channel,'notify',$env, json_encode($encoded_item), (($private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto'],$hash);
+				}
+				else {
+					$packet = zot_build_packet($channel,'notify',$env, (($private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto'],$hash);
+
+				}	
+
 				queue_insert(
 					[
 						'hash'       => $hash,

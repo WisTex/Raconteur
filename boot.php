@@ -38,7 +38,6 @@ require_once('include/datetime.php');
 require_once('include/language.php');
 require_once('include/nav.php');
 require_once('include/permissions.php');
-require_once('library/Mobile_Detect/Mobile_Detect.php');
 require_once('include/features.php');
 require_once('include/taxonomy.php');
 require_once('include/channel.php');
@@ -51,10 +50,10 @@ require_once('include/attach.php');
 require_once('include/bbcode.php');
 
 define ( 'PLATFORM_NAME',           'hubzilla' );
-define ( 'STD_VERSION',             '3.1.5' );
+define ( 'STD_VERSION',             '3.1.12' );
 define ( 'ZOT_REVISION',            '1.3' );
 
-define ( 'DB_UPDATE_VERSION',       1198  );
+define ( 'DB_UPDATE_VERSION',       1203 );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 
@@ -662,13 +661,6 @@ function sys_boot() {
 }
 
 
-/**
- * @brief Reverse the effect of magic_quotes_gpc if it is enabled.
- *
- * Please disable magic_quotes_gpc so we don't have to do this.
- * See http://php.net/manual/en/security.magicquotes.disabling.php
- *
- */
 function startup() {
 	error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
@@ -684,22 +676,6 @@ function startup() {
 
 		// Disable transparent Session ID support
 		@ini_set('session.use_trans_sid',    0);
-	}
-
-	if (get_magic_quotes_gpc()) {
-		$process = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
-		while (list($key, $val) = each($process)) {
-			foreach ($val as $k => $v) {
-				unset($process[$key][$k]);
-				if (is_array($v)) {
-					$process[$key][stripslashes($k)] = $v;
-					$process[] = &$process[$key][stripslashes($k)];
-				} else {
-					$process[$key][stripslashes($k)] = stripslashes($v);
-				}
-			}
-		}
-		unset($process);
 	}
 }
 
@@ -788,9 +764,7 @@ class App {
 	public static  $theme_info = array();
 	public static  $is_sys = false;
 	public static  $nav_sel;
-	public static $is_mobile = false;
-	public static $is_tablet = false;
-	public static $comanche;
+	public static  $comanche;
 
 
 	public static $channel_links;
@@ -959,14 +933,6 @@ class App {
 		if(self::$pager['start'] < 0)
 			self::$pager['start'] = 0;
 		self::$pager['total'] = 0;
-
-		/*
-		 * Detect mobile devices
-		 */
-
-		$mobile_detect = new Mobile_Detect();
-		self::$is_mobile = $mobile_detect->isMobile();
-		self::$is_tablet = $mobile_detect->isTablet();
 
 		/*
 		 * register template engines
@@ -1450,57 +1416,9 @@ function check_config() {
 	$x = new \Zotlabs\Lib\DB_Upgrade(DB_UPDATE_VERSION);
 
 
-	/**
-	 *
-	 * Synchronise plugins:
-	 *
-	 * App::$config['system']['addon'] contains a comma-separated list of names
-	 * of plugins/addons which are used on this system.
-	 * Go through the database list of already installed addons, and if we have
-	 * an entry, but it isn't in the config list, call the unload procedure
-	 * and mark it uninstalled in the database (for now we'll remove it).
-	 * Then go through the config list and if we have a plugin that isn't installed,
-	 * call the install procedure and add it to the database.
-	 *
-	 */
-
-	$r = q("SELECT * FROM addon WHERE installed = 1");
-	if($r)
-		$installed = $r;
-	else
-		$installed = array();
-
-	$plugins = get_config('system', 'addon');
-	$plugins_arr = array();
-
-	if($plugins)
-		$plugins_arr = explode(',', str_replace(' ', '', $plugins));
-
-	App::$plugins = $plugins_arr;
-
-	$installed_arr = array();
-
-	if(count($installed)) {
-		foreach($installed as $i) {
-			if(! in_array($i['aname'], $plugins_arr)) {
-				unload_plugin($i['aname']);
-			}
-			else {
-				$installed_arr[] = $i['aname'];
-			}
-		}
-	}
-
-	if(count($plugins_arr)) {
-		foreach($plugins_arr as $p) {
-			if(! in_array($p, $installed_arr)) {
-				load_plugin($p);
-			}
-		}
-	}
+	plugins_sync();
 
 	load_hooks();
-
 
 	check_for_new_perms();
 
@@ -1766,6 +1684,26 @@ function remote_channel() {
 
 	return false;
 }
+
+
+function can_view_public_stream() {
+
+	if((observer_prohibited(true)) 
+		|| (! (intval(get_config('system','open_pubstream',1))) && get_observer_hash())) {
+		return false;
+	}
+
+	$site_firehose = ((intval(get_config('system','site_firehose',0))) ? true : false);
+	$net_firehose  = ((get_config('system','disable_discover_tab',1)) ? false : true);
+
+	if(! ($site_firehose || $net_firehose)) {
+		return false;
+	}
+
+	return true;
+
+}
+
 
 /**
  * @brief Show an error or alert text on next page load.
@@ -2243,22 +2181,6 @@ function construct_page() {
 
 				App::$page[substr($k, 7)] = $v;
 			}
-		}
-	}
-
-	if(App::$is_mobile || App::$is_tablet) {
-		if(isset($_SESSION['show_mobile']) && !$_SESSION['show_mobile']) {
-			$link = z_root() . '/toggle_mobile?f=&address=' . curPageURL();
-		}
-		else {
-			$link = z_root() . '/toggle_mobile?f=&off=1&address=' . curPageURL();
-		}
-		if ((isset($_SESSION) && $_SESSION['mobile_theme'] !='' && $_SESSION['mobile_theme'] !='---' ) ||
-			(isset(App::$config['system']['mobile_theme']) && !isset($_SESSION['mobile_theme']))) {
-			App::$page['footer'] .= replace_macros(get_markup_template("toggle_mobile_footer.tpl"), array(
-				'$toggle_link' => $link,
-				'$toggle_text' => t('toggle mobile')
-			));
 		}
 	}
 

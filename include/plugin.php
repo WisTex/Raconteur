@@ -179,14 +179,84 @@ function reload_plugins() {
 }
 
 
+function plugins_installed_list() {
+
+	$r = q("select * from addon where installed = 1 order by aname asc");
+	return(($r) ? ids_to_array($r,'aname') : []);
+}
+
+
+function plugins_sync() {
+
+	/**
+	 *
+	 * Synchronise plugins:
+	 *
+	 * App::$config['system']['addon'] contains a comma-separated list of names
+	 * of plugins/addons which are used on this system.
+	 * Go through the database list of already installed addons, and if we have
+	 * an entry, but it isn't in the config list, call the unload procedure
+	 * and mark it uninstalled in the database (for now we'll remove it).
+	 * Then go through the config list and if we have a plugin that isn't installed,
+	 * call the install procedure and add it to the database.
+	 *
+	 */
+
+	$installed = plugins_installed_list();
+
+	$plugins = get_config('system', 'addon', '');
+
+	$plugins_arr = explode(',', $plugins);
+
+	// array_trim is in include/text.php
+
+	if(! array_walk($plugins_arr,'array_trim'))
+		return;
+
+	App::$plugins = $plugins_arr;
+
+	$installed_arr = [];
+
+	if(count($installed)) {
+		foreach($installed as $i) {
+			if(! in_array($i, $plugins_arr)) {
+				unload_plugin($i);
+			}
+			else {
+				$installed_arr[] = $i;
+			}
+		}
+	}
+
+	if(count($plugins_arr)) {
+		foreach($plugins_arr as $p) {
+			if(! in_array($p, $installed_arr)) {
+				load_plugin($p);
+			}
+		}
+	}
+
+}
+
+
 /**
  * @brief Get a list of non hidden addons.
  *
  * @return array
  */
 function visible_plugin_list() {
+	
 	$r = q("select * from addon where hidden = 0 order by aname asc");
-	return(($r) ? ids_to_array($r,'aname') : array());
+	$x = (($r) ? ids_to_array($r,'aname') : array());
+	$y = [];
+	if($x) {
+		foreach($x as $xv) {
+			if(is_dir('addon/' . $xv)) {
+				$y[] = $xv;
+			}
+		}
+	}			
+	return $y;
 }
 
 

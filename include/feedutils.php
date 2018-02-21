@@ -253,19 +253,18 @@ function construct_activity_target($item) {
 	return '';
 }
 
+
 /**
- * @brief Return an array with a parsed atom item.
+ * @brief Return an array with a parsed atom author.
  *
  * @param SimplePie $feed
- * @param array $item
- * @param[out] array $author
- * @return array Associative array with the parsed item data
+ * @param SimplePie $item
+ * @return array $author
  */
-function get_atom_elements($feed, $item, &$author) {
 
-	require_once('include/html2bbcode.php');
+function get_atom_author($feed, $item) {
 
-	$res = array();
+	$author = [];
 
 	$found_author = $item->get_author();
 	if($found_author) {
@@ -289,52 +288,6 @@ function get_atom_elements($feed, $item, &$author) {
 
 	if(substr($author['author_link'],-1,1) == '/')
 		$author['author_link'] = substr($author['author_link'],0,-1);
-
-	$res['mid'] = normalise_id(unxmlify($item->get_id()));
-	$res['title'] = unxmlify($item->get_title());
-	$res['body'] = unxmlify($item->get_content());
-	$res['plink'] = unxmlify($item->get_link(0));
-	$res['item_rss'] = 1;
-
-
-	$summary = unxmlify($item->get_description(true));
-
-	// removing the content of the title if its identically to the body
-	// This helps with auto generated titles e.g. from tumblr
-
-	if (title_is_body($res['title'], $res['body']))
-		$res['title'] = "";
-
-	if($res['plink'])
-		$base_url = implode('/', array_slice(explode('/',$res['plink']),0,3));
-	else
-		$base_url = '';
-
-
-	$rawcreated = $item->get_item_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'published');
-	if($rawcreated)
-		$res['created'] = unxmlify($rawcreated[0]['data']);
-
-	$rawedited = $item->get_item_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'updated');
-	if($rawedited)
-		$res['edited'] = unxmlify($rawedited[0]['data']);
-
-	if((x($res,'edited')) && (! (x($res,'created'))))
-		$res['created'] = $res['edited'];
-
-	if(! $res['created'])
-		$res['created'] = $item->get_date('c');
-
-	if(! $res['edited'])
-		$res['edited'] = $item->get_date('c');
-
-	$rawverb = $item->get_item_tags(NAMESPACE_ACTIVITY, 'verb');
-
-	// select between supported verbs
-
-	if($rawverb) {
-		$res['verb'] = unxmlify($rawverb[0]['data']);
-	}
 
 
 	// look for a photo. We should check media size and find the best one,
@@ -414,6 +367,122 @@ function get_atom_elements($feed, $item, &$author) {
 		}
 	}
 
+	$rawowner = $item->get_item_tags(NAMESPACE_DFRN, 'owner');
+	if(! $rawowner)
+		$rawowner = $item->get_item_tags(NAMESPACE_ZOT, 'owner');
+
+	if($rawowner[0]['child'][SIMPLEPIE_NAMESPACE_ATOM_10]['name'][0]['data'])
+		$author['owner_name'] = unxmlify($rawowner[0]['child'][SIMPLEPIE_NAMESPACE_ATOM_10]['name'][0]['data']);
+	elseif($rawowner[0]['child'][NAMESPACE_DFRN]['name'][0]['data'])
+		$author['owner_name'] = unxmlify($rawowner[0]['child'][NAMESPACE_DFRN]['name'][0]['data']);
+	if($rawowner[0]['child'][SIMPLEPIE_NAMESPACE_ATOM_10]['uri'][0]['data'])
+		$author['owner_link'] = unxmlify($rawowner[0]['child'][SIMPLEPIE_NAMESPACE_ATOM_10]['uri'][0]['data']);
+	elseif($rawowner[0]['child'][NAMESPACE_DFRN]['uri'][0]['data'])
+		$author['owner_link'] = unxmlify($rawowner[0]['child'][NAMESPACE_DFRN]['uri'][0]['data']);
+
+	if($rawowner[0]['child'][SIMPLEPIE_NAMESPACE_ATOM_10]['link']) {
+		$base = $rawowner[0]['child'][SIMPLEPIE_NAMESPACE_ATOM_10]['link'];
+
+		foreach($base as $link) {
+			if(!x($author, 'owner_photo') || ! $author['owner_photo']) {
+				if($link['attribs']['']['rel'] === 'photo' || $link['attribs']['']['rel'] === 'avatar')
+					$author['owner_photo'] = unxmlify($link['attribs']['']['href']);
+			}
+		}
+	}
+
+	// build array to pass to hook
+	$arr = [
+			'feed'   => $feed,
+			'item'   => $item,
+			'author' => $author
+	];
+	/**
+	 * @hooks parse_atom
+	 *    * \e SimplePie \b feed - The original SimplePie feed
+	 *    * \e SimplePie \b item
+	 *    * \e array \b result - the result array that will also get returned
+	 */
+	call_hooks('parse_atom_author', $arr);
+
+	logger('author: ' . print_r($arr['author'], true), LOGGER_DATA);
+
+	return $arr['author'];
+}
+
+
+/**
+ * @brief Return an array with a parsed atom item.
+ *
+ * @param SimplePie $feed
+ * @param SimplePie $item
+ * @param[out] array $author
+ * @return array Associative array with the parsed item data
+ */
+
+function get_atom_elements($feed, $item) {
+
+	require_once('include/html2bbcode.php');
+
+	$res = array();
+
+
+	$res['mid'] = normalise_id(unxmlify($item->get_id()));
+	$res['title'] = unxmlify($item->get_title());
+	$res['body'] = unxmlify($item->get_content());
+	$res['plink'] = unxmlify($item->get_link(0));
+	$res['item_rss'] = 1;
+
+
+	$summary = unxmlify($item->get_description(true));
+
+	if($summary === $res['body'])
+		$summary = '';
+
+	if(($summary) && ((strpos($summary,'<') !== false) || (strpos($summary,'>') !== false))) {
+		$summary = purify_html($summary);
+		$summary = html2bbcode($summary);
+	}
+
+
+
+	// removing the content of the title if its identically to the body
+	// This helps with auto generated titles e.g. from tumblr
+
+	if (title_is_body($res['title'], $res['body']))
+		$res['title'] = "";
+
+	if($res['plink'])
+		$base_url = implode('/', array_slice(explode('/',$res['plink']),0,3));
+	else
+		$base_url = '';
+
+
+	$rawcreated = $item->get_item_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'published');
+	if($rawcreated)
+		$res['created'] = unxmlify($rawcreated[0]['data']);
+
+	$rawedited = $item->get_item_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'updated');
+	if($rawedited)
+		$res['edited'] = unxmlify($rawedited[0]['data']);
+
+	if((x($res,'edited')) && (! (x($res,'created'))))
+		$res['created'] = $res['edited'];
+
+	if(! $res['created'])
+		$res['created'] = $item->get_date('c');
+
+	if(! $res['edited'])
+		$res['edited'] = $item->get_date('c');
+
+	$rawverb = $item->get_item_tags(NAMESPACE_ACTIVITY, 'verb');
+
+	// select between supported verbs
+
+	if($rawverb) {
+		$res['verb'] = unxmlify($rawverb[0]['data']);
+	}
+
 	$rawcnv = $item->get_item_tags(NAMESPACE_OSTATUS, 'conversation');
 	if($rawcnv) {
 		// new style
@@ -428,7 +497,7 @@ function get_atom_elements($feed, $item, &$author) {
 		}
 	}
 
-	$ostatus_protocol = (($ostatus_conversation) ? true : false);
+	$ostatus_protocol = (($ostatus_conversation || $res['verb']) ? true : false);
 
 	$mastodon = (($item->get_item_tags('http://mastodon.social/schema/1.0','scope')) ? true : false);
 	if($mastodon) {
@@ -436,6 +505,8 @@ function get_atom_elements($feed, $item, &$author) {
 		if(($mastodon[0]['data']) && ($mastodon[0]['data'] !== 'public'))
 			$res['item_private'] = 1;
 	}
+
+	logger('ostatus_protocol: ' . intval($ostatus_protocol), LOGGER_DEBUG);
 
 	$apps = $item->get_item_tags(NAMESPACE_STATUSNET, 'notice_info');
 	if($apps && $apps[0]['attribs']['']['source']) {
@@ -540,9 +611,8 @@ function get_atom_elements($feed, $item, &$author) {
 		);
 	}
 
-	// turn Mastodon content warning into a #nsfw hashtag
-	if($mastodon && $summary) {
-		$res['body'] = $summary . "\n\n" . $res['body'] . "\n\n#ContentWarning\n";
+	if($summary && $res['body']) {
+		$res['body'] = '[summary]' . $summary . '[/summary]' . $res['body'];
 	}
 
 
@@ -571,29 +641,6 @@ function get_atom_elements($feed, $item, &$author) {
 	$res['created'] = datetime_convert('UTC','UTC',$res['created']);
 	$res['edited'] = datetime_convert('UTC','UTC',$res['edited']);
 
-	$rawowner = $item->get_item_tags(NAMESPACE_DFRN, 'owner');
-	if(! $rawowner)
-		$rawowner = $item->get_item_tags(NAMESPACE_ZOT, 'owner');
-
-	if($rawowner[0]['child'][SIMPLEPIE_NAMESPACE_ATOM_10]['name'][0]['data'])
-		$author['owner_name'] = unxmlify($rawowner[0]['child'][SIMPLEPIE_NAMESPACE_ATOM_10]['name'][0]['data']);
-	elseif($rawowner[0]['child'][NAMESPACE_DFRN]['name'][0]['data'])
-		$author['owner_name'] = unxmlify($rawowner[0]['child'][NAMESPACE_DFRN]['name'][0]['data']);
-	if($rawowner[0]['child'][SIMPLEPIE_NAMESPACE_ATOM_10]['uri'][0]['data'])
-		$author['owner_link'] = unxmlify($rawowner[0]['child'][SIMPLEPIE_NAMESPACE_ATOM_10]['uri'][0]['data']);
-	elseif($rawowner[0]['child'][NAMESPACE_DFRN]['uri'][0]['data'])
-		$author['owner_link'] = unxmlify($rawowner[0]['child'][NAMESPACE_DFRN]['uri'][0]['data']);
-
-	if($rawowner[0]['child'][SIMPLEPIE_NAMESPACE_ATOM_10]['link']) {
-		$base = $rawowner[0]['child'][SIMPLEPIE_NAMESPACE_ATOM_10]['link'];
-
-		foreach($base as $link) {
-			if(!x($author, 'owner_photo') || ! $author['owner_photo']) {
-				if($link['attribs']['']['rel'] === 'photo' || $link['attribs']['']['rel'] === 'avatar')
-					$author['owner_photo'] = unxmlify($link['attribs']['']['href']);
-			}
-		}
-	}
 
 	$rawgeo = $item->get_item_tags(NAMESPACE_GEORSS, 'point');
 	if($rawgeo)
@@ -756,20 +803,17 @@ function get_atom_elements($feed, $item, &$author) {
 	$arr = [
 			'feed'   => $feed,
 			'item'   => $item,
-			'author' => $author,
 			'result' => $res
 	];
 	/**
 	 * @hooks parse_atom
 	 *    * \e SimplePie \b feed - The original SimplePie feed
-	 *    * \e array \b item
-	 *    * \e array \b author
+	 *    * \e SimplePie \b item
 	 *    * \e array \b result - the result array that will also get returned
 	 */
 	call_hooks('parse_atom', $arr);
 
-	logger('author: ' .print_r($arr['author'], true), LOGGER_DATA);
-	logger('result: ' .print_r($arr['result'], true), LOGGER_DATA);
+	logger('result: ' . print_r($arr['result'], true), LOGGER_DATA);
 
 	return $arr['result'];
 }
@@ -968,9 +1012,9 @@ function process_feed_tombstones($feed,$importer,$contact,$pass) {
  * @param string $xml
  *   The (atom) feed to consume - RSS isn't as fully supported but may work for simple feeds.
  * @param array $importer
- *   The contact_record (joined to user_record) of the local user who owns this
+ *   The channel record of the local user who owns this
  *   relationship. It is this person's stuff that is going to be updated.
- * @param[in,out] array $contact
+ * @param[in,out] array $contact (abook record joined to xchan record)
  *   The person who is sending us stuff. If not set, we MAY be processing a "follow" activity
  *   from an external network and MAY create an appropriate contact record. Otherwise, we MUST
  *   have a contact record.
@@ -1057,8 +1101,8 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 
 				// Have we seen it? If not, import it.
 
-				$author = array();
-				$datarray = get_atom_elements($feed,$item,$author);
+				$author = get_atom_author($feed,$item);
+				$datarray = get_atom_elements($feed,$item);
 
 				if(! $datarray['mid'])
 					continue;
@@ -1310,8 +1354,8 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 
 				// Head post of a conversation. Have we seen it? If not, import it.
 
-				$author = array();
-				$datarray = get_atom_elements($feed,$item,$author);
+				$author = get_atom_author($feed,$item);
+				$datarray = get_atom_elements($feed,$item);
 
 				if(! $datarray['mid'])
 					continue;
@@ -1513,11 +1557,11 @@ function normalise_id($id) {
  */
 function process_salmon_feed($xml, $importer) {
 
-	$ret = array();
+	$ret = [];
 
 	if(! strlen($xml)) {
 		logger('process_feed: empty input');
-		return;
+		return $ret;
 	}
 
 	$feed = new SimplePie();
@@ -1531,8 +1575,10 @@ function process_salmon_feed($xml, $importer) {
 
 	$feed->init();
 
-	if($feed->error())
+	if($feed->error()) {
 		logger('Error parsing XML: ' . $feed->error());
+		return $ret;
+	}
 
 	$permalink = $feed->get_permalink();
 
@@ -1559,16 +1605,13 @@ function process_salmon_feed($xml, $importer) {
 			if($is_reply)
 				$ret['parent_mid'] = $parent_mid;
 
-			$ret['author'] = array();
-
-			$datarray = get_atom_elements($feed, $item, $ret['author']);
+			$ret['author'] = get_atom_author($feed,$item);
+			$ret['item']   = get_atom_elements($feed,$item);
 
 			// reset policies which are restricted by default for RSS connections
 			// This item is likely coming from GNU-social via salmon and allows public interaction
-			$datarray['public_policy'] = '';
-			$datarray['comment_policy'] = 'authenticated';
-
-			$ret['item'] = $datarray;
+			$ret['item']['public_policy'] = '';
+			$ret['item']['comment_policy'] = 'authenticated';
 		}
 	}
 

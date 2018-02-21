@@ -10,3 +10,11 @@
 #profile-photo-submit-wrapper {
 	clear: both;
 }
+
+#profile-photo-wrapper {
+	height: 300px;
+	width: 300px;
+	max-width: 300px;
+	max-height: 300px;
+	overflow: hidden;
+}

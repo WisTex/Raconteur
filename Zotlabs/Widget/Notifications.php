@@ -67,7 +67,7 @@ class Notifications {
 				'label' => t('New Events'),
 				'title' => t('New Events Notifications'),
 				'viewall' => [
-					'url' => 'mail/combined',
+					'url' => 'events',
 					'label' => t('View events')
 				],
 				'markall' => [

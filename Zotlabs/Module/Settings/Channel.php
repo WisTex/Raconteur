@@ -331,21 +331,20 @@ class Channel {
 		);
 	
 		$limits = \Zotlabs\Access\PermissionLimits::Get(local_channel());
+		$anon_comments = get_config('system','anonymous_comments',true);
 	
 		foreach($global_perms as $k => $perm) {
 			$options = array();
+			$can_be_public = ((strstr($k,'view') || ($k === 'post_comments' && $anon_comments)) ? true : false);
 			foreach($perm_opts as $opt) {
-				if(((! strstr($k,'view')) && $k !== 'post_comments') && $opt[1] == PERMS_PUBLIC)
+				if($opt[1] == PERMS_PUBLIC && (! $can_be_public))
 					continue;
 				$options[$opt[1]] = $opt[0];
 			}
 			$permiss[] = array($k,$perm,$limits[$k],'',$options);			
 		}
-	
-	
+		
 		//		logger('permiss: ' . print_r($permiss,true));
-	
-	
 	
 		$username   = $channel['channel_name'];
 		$nickname   = $channel['channel_address'];
