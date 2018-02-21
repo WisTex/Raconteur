@@ -245,8 +245,18 @@ function plugins_sync() {
  * @return array
  */
 function visible_plugin_list() {
+	
 	$r = q("select * from addon where hidden = 0 order by aname asc");
-	return(($r) ? ids_to_array($r,'aname') : array());
+	$x = (($r) ? ids_to_array($r,'aname') : array());
+	$y = [];
+	if($x) {
+		foreach($x as $xv) {
+			if(is_dir('addon/' . $xv)) {
+				$y[] = $xv;
+			}
+		}
+	}			
+	return $y;
 }
 
 
