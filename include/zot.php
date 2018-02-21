@@ -1170,38 +1170,61 @@ function zot_fetch($arr) {
 
 	$url = $arr['sender']['url'] . $arr['callback'];
 
-	// set $multiple param on zot_gethub() to return all matching hubs
-	// This allows us to recover from re-installs when a redundant (but invalid) hubloc for
-	// this identity is widely dispersed throughout the network.
+	$import = null;
+	$hubs   = null;
 
-	$ret_hubs = zot_gethub($arr['sender'],true);
-	if(! $ret_hubs) {
+	$zret = zot6_check_sig();
+
+	if($zret['success'] && $zret['hubloc'] && $zret['hubloc']['hubloc_guid'] === $data['sender']['guid'] && $data['msg']) {
+		logger('zot6_delivery',LOGGER_DEBUG);
+		logger('zot6_data: ' . print_r($data,true),LOGGER_DATA);
+
+		$ret['collected'] = true;
+
+		$import = [ 'success' => true, 'body' => json_encode( [ 'success' => true, 'pickup' => [ [ 'notify' => $data, 'message' => json_decode($data['msg'],true) ] ] ] ) ];
+		$hubs = [ $zret['hubloc'] ] ;
+	}
+
+	if(! $hubs) {
+		// set $multiple param on zot_gethub() to return all matching hubs
+		// This allows us to recover from re-installs when a redundant (but invalid) hubloc for
+		// this identity is widely dispersed throughout the network.
+
+		$hubs = zot_gethub($arr['sender'],true);
+	}
+
+	if(! $hubs) {
 		logger('No hub: ' . print_r($arr['sender'],true));
 		return;
 	}
 
-	foreach($ret_hubs as $ret_hub) {
+	foreach($hubs as $hub) {
 
-		$secret = substr(preg_replace('/[^0-9a-fA-F]/','',$arr['secret']),0,64);
+		if(! $import) {
+			$secret = substr(preg_replace('/[^0-9a-fA-F]/','',$arr['secret']),0,64);
 
-		$data = [
-			'type'         => 'pickup',
-			'url'          => z_root(),
-			'callback_sig' => base64url_encode(rsa_sign(z_root() . '/post', get_config('system','prvkey'))),
-			'callback'     => z_root() . '/post',
-			'secret'       => $secret,
-			'secret_sig'   => base64url_encode(rsa_sign($secret, get_config('system','prvkey')))
-		];
+			$data = [
+				'type'         => 'pickup',
+				'url'          => z_root(),
+				'callback_sig' => base64url_encode(rsa_sign(z_root() . '/post', get_config('system','prvkey'))),
+				'callback'     => z_root() . '/post',
+				'secret'       => $secret,
+				'secret_sig'   => base64url_encode(rsa_sign($secret, get_config('system','prvkey')))
+			];
 
-		$algorithm = zot_best_algorithm($ret_hub['site_crypto']);
-		$datatosend = json_encode(crypto_encapsulate(json_encode($data),$ret_hub['hubloc_sitekey'], $algorithm));
+			$algorithm = zot_best_algorithm($hub['site_crypto']);
+			$datatosend = json_encode(crypto_encapsulate(json_encode($data),$hub['hubloc_sitekey'], $algorithm));
 
-		$fetch = zot_zot($url,$datatosend);
+			$import = zot_zot($url,$datatosend);
+		}
+		else {
+			$algorithm = zot_best_algorithm($hub['site_crypto']);
+		}
 
-		$result = zot_import($fetch, $arr['sender']['url']);
+		$result = zot_import($import, $arr['sender']['url']);
 
 		if($result) {
-			$result = crypto_encapsulate(json_encode($result),$ret_hub['hubloc_sitekey'], $algorithm);
+			$result = crypto_encapsulate(json_encode($result),$hub['hubloc_sitekey'], $algorithm);
 			return $result;
 		}
 
@@ -5098,39 +5121,15 @@ function zot_reply_notify($data) {
 
 	logger('notify received from ' . $data['sender']['url']);
 
-	// handle zot6 delivery
+	$async = get_config('system','queued_fetch');
 
-	$zret = zot6_check_sig();
-	if($zret['success'] && $zret['hubloc'] && $zret['hubloc']['hubloc_guid'] === $data['sender']['guid'] && $data['msg']) { 
-		logger('zot6_delivery',LOGGER_DEBUG);
-		logger('zot6_data: ' . print_r($data,true),LOGGER_DATA);		
-
-		$ret['collected'] = true;
-
-		$import = [ 'success' => true, 'pickup' => [ [ 'notify' => $data, 'message' => json_decode($data['msg'],true) ] ] ];
-
-		logger('zot6_import: ' . print_r($import,true), LOGGER_DATA);
-
-		$x = zot_import([ 'success' => true, 'body' => json_encode($import) ], $data['sender']['url']);
-		if($x) {
-			$x = crypto_encapsulate(json_encode($x),$zret['hubloc']['hubloc_sitekey'],zot_best_algorithm($zret['hubloc']['site_crypto']));
-			$ret['delivery_report'] = $x;
-		}
+	if($async) {
+		// add to receive queue
+		// qreceive_add($data);
 	}
 	else {
-
-		// handle traditional zot delivery
-
-		$async = get_config('system','queued_fetch');
-
-		if($async) {
-			// add to receive queue
-			// qreceive_add($data);
-		}
-		else {
-			$x = zot_fetch($data);
-			$ret['delivery_report'] = $x;
-		}
+		$x = zot_fetch($data);
+		$ret['delivery_report'] = $x;
 	}
 
 	$ret['success'] = true;
