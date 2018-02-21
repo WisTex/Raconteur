@@ -1152,7 +1152,12 @@ function zot_process_response($hub, $arr, $outq) {
  * @brief
  *
  * We received a notification packet (in mod_post) that a message is waiting for us, and we've verified the sender.
- * Now send back a pickup message, using our message tracking ID ($arr['secret']), which we will sign with our site
+ * Check if the site is using zot6 delivery and includes a verified HTTP Signature, signed content, and a 'msg' field,
+ * and also that the signer and the sender match.
+ * If that happens, we do not need to fetch/pickup the message - we have it already and it is verified.
+ * Translate it into the form we need for zot_import() and import it.
+ * 
+ * Otherwise send back a pickup message, using our message tracking ID ($arr['secret']), which we will sign with our site
  * private key.
  * The entire pickup message is encrypted with the remote site's public key.
  * If everything checks out on the remote end, we will receive back a packet containing one or more messages,
