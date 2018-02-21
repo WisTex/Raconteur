@@ -286,7 +286,6 @@ img.smiley.emoji:hover {
 	height: 32px;
 }
 
-
 .checklist input {
 	margin: 0px;
 	vertical-align: middle;
@@ -295,6 +294,15 @@ img.smiley.emoji:hover {
 .combobox {
 	padding: 15px;
 }
+
+.view-summary {
+	margin-bottom: 1rem;
+}
+
+.view-article {
+	margin-top: 1rem;
+}
+
 
 #filer_save {
 	margin-left: 15px;

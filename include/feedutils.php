@@ -436,6 +436,9 @@ function get_atom_elements($feed, $item) {
 
 	$summary = unxmlify($item->get_description(true));
 
+	if($summary === $res['body'])
+		$summary = '';
+
 	if(($summary) && ((strpos($summary,'<') !== false) || (strpos($summary,'>') !== false))) {
 		$summary = purify_html($summary);
 		$summary = html2bbcode($summary);
