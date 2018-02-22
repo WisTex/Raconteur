@@ -42,7 +42,7 @@ class Owa extends \Zotlabs\Web\Controller {
 									logger('OWA success: ' . $hubloc['hubloc_addr'],LOGGER_DATA);
 									$ret['success'] = true;
 									$token = random_string(32);
-									\Zotlabs\Zot\Verify::create('owt',0,$token,$hubloc['hubloc_addr']);
+									\Zotlabs\Lib\Verify::create('owt',0,$token,$hubloc['hubloc_addr']);
 									$result = '';
 									openssl_public_encrypt($token,$result,$hubloc['xchan_pubkey']);
 									$ret['encrypted_token'] = base64url_encode($result);

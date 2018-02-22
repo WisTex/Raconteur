@@ -265,9 +265,9 @@ function red_zrlify_img_callback($matches) {
  */
 function owt_init($token) {
 
-	\Zotlabs\Zot\Verify::purge('owt', '3 MINUTE');
+	\Zotlabs\Lib\Verify::purge('owt', '3 MINUTE');
 
-	$ob_hash = \Zotlabs\Zot\Verify::get_meta('owt', 0, $token);
+	$ob_hash = \Zotlabs\Lib\Verify::get_meta('owt', 0, $token);
 
 	if($ob_hash === false) {
 		return;
