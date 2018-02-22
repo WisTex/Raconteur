@@ -4,23 +4,34 @@ namespace Zotlabs\Module;
 
 class OAuth2TestVehicle extends \Zotlabs\Web\Controller {
 
+	function init() {
+		
+		// If there is a 'code' and 'state' parameter then this is a client app 
+		// callback issued after the authorization code request
+		if ($_REQUEST['code'] && $_REQUEST['state']) {
+			logger('Authorization callback invoked.', LOGGER_DEBUG);
+			logger(json_encode($_REQUEST, JSON_PRETTY_PRINT), LOGGER_DEBUG);
+			info('Authorization callback invoked.' . EOL);
+			return $this->get();
+		}
+	}
 	function get() {
 
 		$o .= replace_macros(get_markup_template('oauth2testvehicle.tpl'), array(
 			'$baseurl' => z_root(),
 			/*
-			endpoints => array(
+			  endpoints => array(
 			  array(
-				  'path_to_endpoint',
-				  array(
-					  array('field_name_1', 'value'),
-					  array('field_name_2', 'value'),
-					  ...
-					  ),
-				  'submit_button_name',
-				  'Description of API action'
+			  'path_to_endpoint',
+			  array(
+			  array('field_name_1', 'value'),
+			  array('field_name_2', 'value'),
+			  ...
+			  ),
+			  'submit_button_name',
+			  'Description of API action'
 			  )
-			)
+			  )
 			 */
 			'$endpoints' => array(
 				array(
@@ -31,7 +42,8 @@ class OAuth2TestVehicle extends \Zotlabs\Web\Controller {
 						)
 					),
 					'oauth2test_create_db',
-					'Create the OAuth2 database tables'
+					'Create the OAuth2 database tables',
+					'POST'
 				),
 				array(
 					'oauth2testvehicle',
@@ -41,7 +53,20 @@ class OAuth2TestVehicle extends \Zotlabs\Web\Controller {
 						)
 					),
 					'oauth2test_delete_db',
-					'Delete the OAuth2 database tables'
+					'Delete the OAuth2 database tables',
+					'POST'
+				),
+				array(
+					'authorize',
+					array(
+						array('response_type', 'code'),
+						array('client_id', urlencode('test_app_client_id')),
+						array('redirect_uri', urlencode('http://hub.localhost/oauth2testvehicle')),
+						array('state', 'xyz')
+					),
+					'oauth_authorize',
+					'Authorize a test client app',
+					'GET'
 				)
 			)
 		));
@@ -53,8 +78,9 @@ class OAuth2TestVehicle extends \Zotlabs\Web\Controller {
 
 		logger(json_encode($_POST), LOGGER_DEBUG);
 
+
 		switch ($_POST['action']) {
-			
+
 			case 'delete_db':
 				$status = true;
 				// Use the \OAuth2\Storage\Pdo class to create the OAuth2 tables
@@ -64,7 +90,7 @@ class OAuth2TestVehicle extends \Zotlabs\Web\Controller {
 				logger('Deleting existing database tables...', LOGGER_DEBUG);
 				foreach ($storage->getConfig() as $key => $table) {
 					logger('Deleting table ' . dbesc($table), LOGGER_DEBUG);
-					$r = q("DROP TABLE IF EXISTS %s;", dbesc($table));
+					$r = q("DROP TABLE %s;", dbesc($table));
 					if (!$r) {
 						logger('Errors encountered deleting database table ' . $table . '.', LOGGER_DEBUG);
 						$status = false;
@@ -77,7 +103,7 @@ class OAuth2TestVehicle extends \Zotlabs\Web\Controller {
 				}
 
 				break;
-				
+
 			case 'create_db':
 				$status = true;
 				logger('Creating database tables...', LOGGER_DEBUG);
