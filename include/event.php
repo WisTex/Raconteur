@@ -1200,6 +1200,13 @@ function event_store_item($arr, $event) {
 			));
 		}
 
+		// propagate the event resource_id so that posts containing it are easily searchable in downstream copies
+		// of the item which have not stored the actual event. Required for Diaspora event federation as Diaspora 
+		// event_participation messages refer to the event resource_id as a parent, while out own event attendance
+		// activities refer to the item message_id as the parent. 
+
+		set_iconfig($item_arr, 'system','event_id',$event['event_hash'],true);
+
 		$res = item_store($item_arr);
 
 		$item_id = $res['item_id'];

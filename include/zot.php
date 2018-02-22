@@ -1728,7 +1728,7 @@ function process_delivery($sender, $arr, $deliveries, $relay, $public = false, $
 	foreach($deliveries as $d) {
 		$local_public = $public;
 
-		$DR = new Zotlabs\Zot\DReport(z_root(),$sender['hash'],$d['hash'],$arr['mid']);
+		$DR = new Zotlabs\Lib\DReport(z_root(),$sender['hash'],$d['hash'],$arr['mid']);
 
 		$r = q("select * from channel where channel_hash = '%s' limit 1",
 			dbesc($d['hash'])
@@ -2257,7 +2257,7 @@ function process_mail_delivery($sender, $arr, $deliveries) {
 
 	foreach($deliveries as $d) {
 
-		$DR = new Zotlabs\Zot\DReport(z_root(),$sender['hash'],$d['hash'],$arr['mid']);
+		$DR = new Zotlabs\Lib\DReport(z_root(),$sender['hash'],$d['hash'],$arr['mid']);
 
 		$r = q("select * from channel where channel_hash = '%s' limit 1",
 			dbesc($d['hash'])
@@ -3898,11 +3898,11 @@ function process_channel_sync_delivery($sender, $arr, $deliveries) {
 		// we should probably do this for all items, but usually we only send one.
 
 		if(array_key_exists('item',$arr) && is_array($arr['item'][0])) {
-			$DR = new Zotlabs\Zot\DReport(z_root(),$d['hash'],$d['hash'],$arr['item'][0]['message_id'],'channel sync processed');
+			$DR = new Zotlabs\Lib\DReport(z_root(),$d['hash'],$d['hash'],$arr['item'][0]['message_id'],'channel sync processed');
 			$DR->addto_recipient($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
 		}
 		else
-			$DR = new Zotlabs\Zot\DReport(z_root(),$d['hash'],$d['hash'],'sync packet','channel sync delivered');
+			$DR = new Zotlabs\Lib\DReport(z_root(),$d['hash'],$d['hash'],'sync packet','channel sync delivered');
 
 		$result[] = $DR->get();
 	}
@@ -4913,7 +4913,7 @@ function zot_reply_auth_check($data,$encrypted_packet) {
 	 * the web server. We should probably convert this to webserver time rather than DB time so
 	 * that the different clocks won't affect it and allow us to keep the time short.
 	 */
-	Zotlabs\Zot\Verify::purge('auth', '30 MINUTE');
+	Zotlabs\Lib\Verify::purge('auth', '30 MINUTE');
 
 	$y = q("select xchan_pubkey from xchan where xchan_hash = '%s' limit 1",
 		dbesc($sender_hash)
@@ -4954,7 +4954,7 @@ function zot_reply_auth_check($data,$encrypted_packet) {
 		// This additionally checks for forged sites since we already stored the expected result in meta
 		// and we've already verified that this is them via zot_gethub() and that their key signed our token
 
-		$z = Zotlabs\Zot\Verify::match('auth',$c[0]['channel_id'],$data['secret'],$data['sender']['url']);
+		$z = Zotlabs\Lib\Verify::match('auth',$c[0]['channel_id'],$data['secret'],$data['sender']['url']);
 		if (! $z) {
 			logger('mod_zot: auth_check: verification key not found.');
 			$ret['message'] .= 'verification key not found' . EOL;

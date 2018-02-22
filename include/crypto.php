@@ -119,21 +119,27 @@ function crypto_encapsulate($data,$pubkey,$alg='aes256cbc') {
 }
 
 function other_encapsulate($data,$pubkey,$alg) {
+
 	if(! $pubkey)
 		logger('no key. data: ' . $data);
 
-	$oaep = false;
+	// This default will change in the future. For now make it backward compatible.
 
-	if(strpos($alg,'.oaep')) {
-		$oaep = true;
-		$subalg = substr($alg,0,-5);
+	$padding = OPENSSL_PKCS1_PADDING;
+	$base = $alg;
+
+	$exts = explode('.',$alg);
+	if(count($exts) > 1) {
+		switch($exts[1]) {
+			case 'oaep':
+				$padding = OPENSSL_PKCS1_OAEP_PADDING;
+				break;
+		}
+		$base = $exts[0];
 	}
-	else {
-		$subalg = $alg;
-	}
 
 
-	$fn = strtoupper($subalg) . '_encrypt';
+	$fn = strtoupper($base) . '_encrypt';
 	if(function_exists($fn)) {
 
 		// A bit hesitant to use openssl_random_pseudo_bytes() as we know
@@ -151,14 +157,14 @@ function other_encapsulate($data,$pubkey,$alg) {
 		$iv  = openssl_random_pseudo_bytes(256);
 		$result['data'] = base64url_encode($fn($data,$key,$iv),true);
 		// log the offending call so we can track it down
-		if(! openssl_public_encrypt($key,$k,$pubkey,(($oaep) ? OPENSSL_PKCS1_OAEP_PADDING : OPENSSL_PKCS1_PADDING))) {
+		if(! openssl_public_encrypt($key,$k,$pubkey,$padding)) {
 			$x = debug_backtrace();
 			logger('RSA failed. ' . print_r($x[0],true));
 		}
 
 		$result['alg'] = $alg;
 	 	$result['key'] = base64url_encode($k,true);
-		openssl_public_encrypt($iv,$i,$pubkey,(($oaep) ? OPENSSL_PKCS1_OAEP_PADDING : OPENSSL_PKCS1_PADDING));
+		openssl_public_encrypt($iv,$i,$pubkey,$padding);
 		$result['iv'] = base64url_encode($i,true);
 		return $result;
 	}
@@ -229,20 +235,25 @@ function crypto_unencapsulate($data,$prvkey) {
 
 function other_unencapsulate($data,$prvkey,$alg) {
 
-	$oaep = false;
+	// This default will change in the future. For now make it backward compatible.
 
-	if(strpos($alg,'.oaep')) {
-		$oaep = true;
-		$subalg = substr($alg,0,-5);
-	}
-	else {
-		$subalg = $alg;
+	$padding = OPENSSL_PKCS1_PADDING;
+	$base = $alg;
+
+	$exts = explode('.',$alg);
+	if(count($exts) > 1) {
+		switch($exts[1]) {
+			case 'oaep':
+				$padding = OPENSSL_PKCS1_OAEP_PADDING;
+				break;
+		}
+		$base = $exts[0];
 	}
 
-	$fn = strtoupper($subalg) . '_decrypt';
+	$fn = strtoupper($base) . '_decrypt';
 	if(function_exists($fn)) {
-		openssl_private_decrypt(base64url_decode($data['key']),$k,$prvkey,(($oaep) ? OPENSSL_PKCS1_OAEP_PADDING : OPENSSL_PKCS1_PADDING));
-		openssl_private_decrypt(base64url_decode($data['iv']),$i,$prvkey,(($oaep) ? OPENSSL_PKCS1_OAEP_PADDING : OPENSSL_PKCS1_PADDING));
+		openssl_private_decrypt(base64url_decode($data['key']),$k,$prvkey,$padding);
+		openssl_private_decrypt(base64url_decode($data['iv']),$i,$prvkey,$padding);
 		return $fn(base64url_decode($data['data']),$k,$i);
 	}
 	else {
