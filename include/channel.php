@@ -2553,10 +2553,10 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 	q("DELETE FROM profile WHERE uid = %d", intval($channel_id));
 	q("DELETE FROM src WHERE src_channel_id = %d", intval($channel_id));
 
-	$r = q("select resource_id FROM attach WHERE uid = %d", intval($channel_id));
+	$r = q("select hash FROM attach WHERE uid = %d", intval($channel_id));
 	if($r) {
 		foreach($r as $rv) {
-			attach_delete($channel_id,$rv['resource_id']);
+			attach_delete($channel_id,$rv['hash']);
 		}
 	}
 	

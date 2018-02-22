@@ -1152,7 +1152,12 @@ function zot_process_response($hub, $arr, $outq) {
  * @brief
  *
  * We received a notification packet (in mod_post) that a message is waiting for us, and we've verified the sender.
- * Now send back a pickup message, using our message tracking ID ($arr['secret']), which we will sign with our site
+ * Check if the site is using zot6 delivery and includes a verified HTTP Signature, signed content, and a 'msg' field,
+ * and also that the signer and the sender match.
+ * If that happens, we do not need to fetch/pickup the message - we have it already and it is verified.
+ * Translate it into the form we need for zot_import() and import it.
+ * 
+ * Otherwise send back a pickup message, using our message tracking ID ($arr['secret']), which we will sign with our site
  * private key.
  * The entire pickup message is encrypted with the remote site's public key.
  * If everything checks out on the remote end, we will receive back a packet containing one or more messages,
@@ -1170,38 +1175,61 @@ function zot_fetch($arr) {
 
 	$url = $arr['sender']['url'] . $arr['callback'];
 
-	// set $multiple param on zot_gethub() to return all matching hubs
-	// This allows us to recover from re-installs when a redundant (but invalid) hubloc for
-	// this identity is widely dispersed throughout the network.
+	$import = null;
+	$hubs   = null;
 
-	$ret_hubs = zot_gethub($arr['sender'],true);
-	if(! $ret_hubs) {
+	$zret = zot6_check_sig();
+
+	if($zret['success'] && $zret['hubloc'] && $zret['hubloc']['hubloc_guid'] === $data['sender']['guid'] && $data['msg']) {
+		logger('zot6_delivery',LOGGER_DEBUG);
+		logger('zot6_data: ' . print_r($data,true),LOGGER_DATA);
+
+		$ret['collected'] = true;
+
+		$import = [ 'success' => true, 'body' => json_encode( [ 'success' => true, 'pickup' => [ [ 'notify' => $data, 'message' => json_decode($data['msg'],true) ] ] ] ) ];
+		$hubs = [ $zret['hubloc'] ] ;
+	}
+
+	if(! $hubs) {
+		// set $multiple param on zot_gethub() to return all matching hubs
+		// This allows us to recover from re-installs when a redundant (but invalid) hubloc for
+		// this identity is widely dispersed throughout the network.
+
+		$hubs = zot_gethub($arr['sender'],true);
+	}
+
+	if(! $hubs) {
 		logger('No hub: ' . print_r($arr['sender'],true));
 		return;
 	}
 
-	foreach($ret_hubs as $ret_hub) {
+	foreach($hubs as $hub) {
 
-		$secret = substr(preg_replace('/[^0-9a-fA-F]/','',$arr['secret']),0,64);
+		if(! $import) {
+			$secret = substr(preg_replace('/[^0-9a-fA-F]/','',$arr['secret']),0,64);
 
-		$data = [
-			'type'         => 'pickup',
-			'url'          => z_root(),
-			'callback_sig' => base64url_encode(rsa_sign(z_root() . '/post', get_config('system','prvkey'))),
-			'callback'     => z_root() . '/post',
-			'secret'       => $secret,
-			'secret_sig'   => base64url_encode(rsa_sign($secret, get_config('system','prvkey')))
-		];
+			$data = [
+				'type'         => 'pickup',
+				'url'          => z_root(),
+				'callback_sig' => base64url_encode(rsa_sign(z_root() . '/post', get_config('system','prvkey'))),
+				'callback'     => z_root() . '/post',
+				'secret'       => $secret,
+				'secret_sig'   => base64url_encode(rsa_sign($secret, get_config('system','prvkey')))
+			];
 
-		$algorithm = zot_best_algorithm($ret_hub['site_crypto']);
-		$datatosend = json_encode(crypto_encapsulate(json_encode($data),$ret_hub['hubloc_sitekey'], $algorithm));
+			$algorithm = zot_best_algorithm($hub['site_crypto']);
+			$datatosend = json_encode(crypto_encapsulate(json_encode($data),$hub['hubloc_sitekey'], $algorithm));
 
-		$fetch = zot_zot($url,$datatosend);
+			$import = zot_zot($url,$datatosend);
+		}
+		else {
+			$algorithm = zot_best_algorithm($hub['site_crypto']);
+		}
 
-		$result = zot_import($fetch, $arr['sender']['url']);
+		$result = zot_import($import, $arr['sender']['url']);
 
 		if($result) {
-			$result = crypto_encapsulate(json_encode($result),$ret_hub['hubloc_sitekey'], $algorithm);
+			$result = crypto_encapsulate(json_encode($result),$hub['hubloc_sitekey'], $algorithm);
 			return $result;
 		}
 
@@ -1700,7 +1728,7 @@ function process_delivery($sender, $arr, $deliveries, $relay, $public = false, $
 	foreach($deliveries as $d) {
 		$local_public = $public;
 
-		$DR = new Zotlabs\Zot\DReport(z_root(),$sender['hash'],$d['hash'],$arr['mid']);
+		$DR = new Zotlabs\Lib\DReport(z_root(),$sender['hash'],$d['hash'],$arr['mid']);
 
 		$r = q("select * from channel where channel_hash = '%s' limit 1",
 			dbesc($d['hash'])
@@ -2229,7 +2257,7 @@ function process_mail_delivery($sender, $arr, $deliveries) {
 
 	foreach($deliveries as $d) {
 
-		$DR = new Zotlabs\Zot\DReport(z_root(),$sender['hash'],$d['hash'],$arr['mid']);
+		$DR = new Zotlabs\Lib\DReport(z_root(),$sender['hash'],$d['hash'],$arr['mid']);
 
 		$r = q("select * from channel where channel_hash = '%s' limit 1",
 			dbesc($d['hash'])
@@ -3870,11 +3898,11 @@ function process_channel_sync_delivery($sender, $arr, $deliveries) {
 		// we should probably do this for all items, but usually we only send one.
 
 		if(array_key_exists('item',$arr) && is_array($arr['item'][0])) {
-			$DR = new Zotlabs\Zot\DReport(z_root(),$d['hash'],$d['hash'],$arr['item'][0]['message_id'],'channel sync processed');
+			$DR = new Zotlabs\Lib\DReport(z_root(),$d['hash'],$d['hash'],$arr['item'][0]['message_id'],'channel sync processed');
 			$DR->addto_recipient($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
 		}
 		else
-			$DR = new Zotlabs\Zot\DReport(z_root(),$d['hash'],$d['hash'],'sync packet','channel sync delivered');
+			$DR = new Zotlabs\Lib\DReport(z_root(),$d['hash'],$d['hash'],'sync packet','channel sync delivered');
 
 		$result[] = $DR->get();
 	}
@@ -4885,7 +4913,7 @@ function zot_reply_auth_check($data,$encrypted_packet) {
 	 * the web server. We should probably convert this to webserver time rather than DB time so
 	 * that the different clocks won't affect it and allow us to keep the time short.
 	 */
-	Zotlabs\Zot\Verify::purge('auth', '30 MINUTE');
+	Zotlabs\Lib\Verify::purge('auth', '30 MINUTE');
 
 	$y = q("select xchan_pubkey from xchan where xchan_hash = '%s' limit 1",
 		dbesc($sender_hash)
@@ -4926,7 +4954,7 @@ function zot_reply_auth_check($data,$encrypted_packet) {
 		// This additionally checks for forged sites since we already stored the expected result in meta
 		// and we've already verified that this is them via zot_gethub() and that their key signed our token
 
-		$z = Zotlabs\Zot\Verify::match('auth',$c[0]['channel_id'],$data['secret'],$data['sender']['url']);
+		$z = Zotlabs\Lib\Verify::match('auth',$c[0]['channel_id'],$data['secret'],$data['sender']['url']);
 		if (! $z) {
 			logger('mod_zot: auth_check: verification key not found.');
 			$ret['message'] .= 'verification key not found' . EOL;
@@ -5098,39 +5126,15 @@ function zot_reply_notify($data) {
 
 	logger('notify received from ' . $data['sender']['url']);
 
-	// handle zot6 delivery
+	$async = get_config('system','queued_fetch');
 
-	$zret = zot6_check_sig();
-	if($zret['success'] && $zret['hubloc'] && $zret['hubloc']['hubloc_guid'] === $data['sender']['guid'] && $data['msg']) { 
-		logger('zot6_delivery',LOGGER_DEBUG);
-		logger('zot6_data: ' . print_r($data,true),LOGGER_DATA);		
-
-		$ret['collected'] = true;
-
-		$import = [ 'success' => true, 'pickup' => [ [ 'notify' => $data, 'message' => json_decode($data['msg'],true) ] ] ];
-
-		logger('zot6_import: ' . print_r($import,true), LOGGER_DATA);
-
-		$x = zot_import([ 'success' => true, 'body' => json_encode($import) ], $data['sender']['url']);
-		if($x) {
-			$x = crypto_encapsulate(json_encode($x),$zret['hubloc']['hubloc_sitekey'],zot_best_algorithm($zret['hubloc']['site_crypto']));
-			$ret['delivery_report'] = $x;
-		}
+	if($async) {
+		// add to receive queue
+		// qreceive_add($data);
 	}
 	else {
-
-		// handle traditional zot delivery
-
-		$async = get_config('system','queued_fetch');
-
-		if($async) {
-			// add to receive queue
-			// qreceive_add($data);
-		}
-		else {
-			$x = zot_fetch($data);
-			$ret['delivery_report'] = $x;
-		}
+		$x = zot_fetch($data);
+		$ret['delivery_report'] = $x;
 	}
 
 	$ret['success'] = true;

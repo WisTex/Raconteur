@@ -255,7 +255,7 @@ class Channel extends \Zotlabs\Web\Controller {
 						AND (abook.abook_blocked = 0 or abook.abook_flags is null)
 						AND item.item_wall = 1 
 						$sql_extra $sql_extra2
-						ORDER BY created DESC $pager_sql ",
+						ORDER BY created DESC, id $pager_sql ",
 						intval(\App::$profile['profile_uid'])
 					);
 				}

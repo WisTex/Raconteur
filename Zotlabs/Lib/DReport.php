@@ -1,5 +1,5 @@
 <?php
-namespace Zotlabs\Zot;
+namespace Zotlabs\Lib;
 
 class DReport {
 
