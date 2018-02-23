@@ -11,6 +11,9 @@
 					$("#help_name").html("");
 					zFormError("#help_name",data.error);
 				}
+				else {
+					$("#newchannel-submit-button").removeAttr('disabled');
+				}
 				$("#name-spinner").hide();
 			});
 		});
