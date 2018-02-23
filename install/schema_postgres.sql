@@ -942,6 +942,7 @@ create index "photo_os_storage" on photo ("os_storage");
 
 CREATE TABLE "poll" (
   "poll_id" serial  NOT NULL,
+  "poll_guid" text NOT NULL,
   "poll_channel" bigint  NOT NULL DEFAULT '0',
   "poll_desc" text NOT NULL,
   "poll_flags" bigint NOT NULL DEFAULT '0',
@@ -949,17 +950,20 @@ CREATE TABLE "poll" (
   PRIMARY KEY ("poll_id")
 
 );
+create index "poll_guid" on poll ("poll_guid");
 create index "poll_channel" on poll ("poll_channel");
 create index "poll_flags" on poll ("poll_flags");
 create index "poll_votes" on poll ("poll_votes");
 CREATE TABLE "poll_elm" (
   "pelm_id" serial  NOT NULL,
+  "pelm_guid" text NOT NULL,
   "pelm_poll" bigint  NOT NULL DEFAULT '0',
   "pelm_desc" text NOT NULL,
   "pelm_flags" bigint NOT NULL DEFAULT '0',
   "pelm_result" float NOT NULL DEFAULT '0',
   PRIMARY KEY ("pelm_id")
 );
+create index "pelm_guid" on poll_elm ("pelm_guid");
 create index "pelm_poll" on poll_elm ("pelm_poll");
 create index "pelm_result" on poll_elm ("pelm_result");
 
@@ -1227,6 +1231,7 @@ create index "verify_meta" on verify ("meta");
 create index "verify_created" on verify ("created");
 CREATE TABLE "vote" (
   "vote_id" serial  NOT NULL,
+  "vote_guid" text NOT NULL,
   "vote_poll" bigint NOT NULL DEFAULT '0',
   "vote_element" bigint NOT NULL DEFAULT '0',
   "vote_result" text NOT NULL,
@@ -1234,6 +1239,7 @@ CREATE TABLE "vote" (
   PRIMARY KEY ("vote_id"),
   UNIQUE ("vote_poll","vote_element","vote_xchan")
 );
+create index "vote_guid" on vote ("vote_guid");
 create index "vote_poll" on vote ("vote_poll");
 create index "vote_element" on vote ("vote_element");
 CREATE TABLE "xchan" (
