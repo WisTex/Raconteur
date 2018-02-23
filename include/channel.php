@@ -1449,6 +1449,7 @@ function profile_sidebar($profile, $block = 0, $show_connect = true, $zcard = fa
 		'$reddress'      => $reddress,
 		'$rating'        => '',
 		'$contact_block' => $contact_block,
+		'$change_photo'  => t('Change your profile photo'),
 		'$editmenu'      => profile_edit_menu($profile['uid'])
 	));
 

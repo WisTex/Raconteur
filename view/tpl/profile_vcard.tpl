@@ -1,6 +1,6 @@
 <div class="vcard h-card">
 	{{if ! $zcard}}
-	<div id="profile-photo-wrapper"><img class="photo u-photo" src="{{$profile.photo}}?rev={{$profile.picdate}}" alt="{{$profile.fullname}}"></div>
+	<div id="profile-photo-wrapper">{{if $editmenu}}<a href="profile_photo" title="{{$change_photo}}">{{/if}}<img class="photo u-photo" src="{{$profile.photo}}?rev={{$profile.picdate}}" alt="{{$profile.fullname}}">{{if $editmenu}}</a>{{/if}}</div>
 	{{/if}}
 	{{if $connect}}
 	<div class="connect-btn-wrapper"><a href="{{$connect_url}}" class="btn btn-block btn-success btn-sm"><i class="fa fa-plus"></i> {{$connect}}</a></div>
