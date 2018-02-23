@@ -110,6 +110,9 @@ class Cloud extends \Zotlabs\Web\Controller {
 		elseif($err instanceof \Sabre\DAV\Exception\Forbidden) {
 			notice( t('Permission denied') . EOL);
 		}
+		elseif($err instanceof \Sabre\DAV\Exception\NotImplemented) {
+			notice( t('Please refresh page') . EOL);
+		}
 		else {
 			notice( t('Unknown error') . EOL);
 		}
