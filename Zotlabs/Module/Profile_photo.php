@@ -441,14 +441,17 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 				'$importfile' => (($importing) ? \App::$data['importfile'] : ''),
 				'$lbl_upfile' => t('Upload File:'),
 				'$lbl_profiles' => t('Select a profile:'),
-				'$title' => (($importing) ? t('Use Photo for Profile') : t('Upload Profile Photo')),
+				'$title' => (($importing) ? t('Use Photo for Profile') : t('Change Profile Photo')),
 				'$submit' => (($importing) ? t('Use') : t('Upload')),
 				'$profiles' => $profiles,
 				'$single' => ((count($profiles) == 1) ? true : false),
 				'$profile0' => $profiles[0],
+				'$embedPhotos' => t('Use a photo from your albums'),
+				'$embedPhotosModalTitle' => t('Use a photo from your albums'),
+				'$embedPhotosModalCancel' => t('Cancel'),
+				'$embedPhotosModalOK' => t('OK'),
 				'$form_security_token' => get_form_security_token("profile_photo"),
-	// FIXME - yuk  
-				'$select' => sprintf('%s %s', t('or'), ($newuser) ? '<a href="' . z_root() . '">' . t('skip this step') . '</a>' : '<a href="'. z_root() . '/photos/' . \App::$channel['channel_address'] . '">' . t('select a photo from your photo albums') . '</a>')
+				'$select' => t('or select an existing photo'),
 			));
 			
 			call_hooks('profile_photo_content_end', $o);

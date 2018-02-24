@@ -64,7 +64,7 @@ class Import extends \Zotlabs\Web\Controller {
 				notice( t('Nothing to import.') . EOL);
 				return;
 			} else if(strpos($old_address, '＠')) {
-				// if you copy the identity address from your profile page, make it work for convenience
+				// if you copy the identity address from your profile page, make it work for convenience - WARNING: this is a utf-8 variant and NOT an ASCII ampersand. Please do not edit. 
 				$old_address = str_replace('＠', '@', $old_address);
 			}
 

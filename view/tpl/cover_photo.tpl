@@ -21,9 +21,31 @@
 
 		</form>
 		<br />
-		<br />
 		<div id="profile-photo-link-select-wrapper">
-			{{$select}}
+		{{$select}}
+		<button id="embed-photo-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$embedPhotos}}" onclick="initializeEmbedPhotoDialog();return false;">
+		<i id="embed-photo" class="fa fa-file-image-o jot-icons"></i>
+		</button>
 		</div>
 	</div>
 </div>
+<div class="modal" id="embedPhotoModal" tabindex="-1" role="dialog" aria-labelledby="embedPhotoLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="embedPhotoModalLabel">{{$embedPhotosModalTitle}}</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			</div>
+			<div class="modal-body" id="embedPhotoModalBody" >
+				<div id="embedPhotoModalBodyAlbumListDialog" class="d-none">
+					<div id="embedPhotoModalBodyAlbumList"></div>
+				</div>
+				<div id="embedPhotoModalBodyAlbumDialog" class="d-none"></div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$embedPhotosModalCancel}}</button>
+				<button id="embed-photo-OKButton" type="button" class="btn btn-primary">{{$embedPhotosModalOK}}</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
