@@ -37,3 +37,9 @@
 .connphone {
 	color: green;
 }
+
+.contact-photo-wrapper .oneway-overlay {
+	margin-top: -25px;
+	margin-left: 53px;
+	font-size: 20px;
+}
