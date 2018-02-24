@@ -366,7 +366,7 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 				'$embedPhotosModalOK' => t('OK'),
 				'$form_security_token' => get_form_security_token("cover_photo"),
 					/// @FIXME - yuk  
-				'$select' => t('or select an existing photo'),
+				'$select' => t('Select existing photo'),
 
 			));
 			

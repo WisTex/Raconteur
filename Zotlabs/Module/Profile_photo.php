@@ -451,7 +451,7 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 				'$embedPhotosModalCancel' => t('Cancel'),
 				'$embedPhotosModalOK' => t('OK'),
 				'$form_security_token' => get_form_security_token("profile_photo"),
-				'$select' => t('or select an existing photo'),
+				'$select' => t('Select existing photo'),
 			));
 			
 			call_hooks('profile_photo_content_end', $o);

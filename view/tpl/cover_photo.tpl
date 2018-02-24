@@ -22,9 +22,8 @@
 		</form>
 		<br />
 		<div id="profile-photo-link-select-wrapper">
-		{{$select}}
 		<button id="embed-photo-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$embedPhotos}}" onclick="initializeEmbedPhotoDialog();return false;">
-		<i id="embed-photo" class="fa fa-file-image-o jot-icons"></i>
+		<i id="embed-photo" class="fa fa-file-image-o jot-icons"></i> {{$select}}
 		</button>
 		</div>
 	</div>
