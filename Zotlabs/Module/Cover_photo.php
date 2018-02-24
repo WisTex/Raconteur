@@ -357,12 +357,17 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 				'$user'                => \App::$channel['channel_address'],
 				'$lbl_upfile'          => t('Upload File:'),
 				'$lbl_profiles'        => t('Select a profile:'),
-				'$title'               => t('Upload Cover Photo'),
+				'$title'               => t('Change Cover Photo'),
 				'$submit'              => t('Upload'),
 				'$profiles'            => $profiles,
+				'$embedPhotos' => t('Use a photo from your albums'),
+				'$embedPhotosModalTitle' => t('Use a photo from your albums'),
+				'$embedPhotosModalCancel' => t('Cancel'),
+				'$embedPhotosModalOK' => t('OK'),
 				'$form_security_token' => get_form_security_token("cover_photo"),
 					/// @FIXME - yuk  
-				'$select'              => sprintf('%s %s', t('or'), ($newuser) ? '<a href="' . z_root() . '">' . t('skip this step') . '</a>' : '<a href="'. z_root() . '/photos/' . \App::$channel['channel_address'] . '">' . t('select a photo from your photo albums') . '</a>')
+				'$select' => t('Select existing photo'),
+
 			));
 			
 			call_hooks('cover_photo_content_end', $o);

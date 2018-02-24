@@ -299,7 +299,7 @@ class Site {
 
 			'$techlock' => [ 'techlock', t('Lock the technical skill level setting'), get_config('system','techlevel_lock'), t('Members can set their own technical comfort level by default') ],
 
-			'$banner'			=> array('banner', t("Banner/Logo"), $banner, ""),
+			'$banner'			=> array('banner', t("Banner/Logo"), $banner, t('Unfiltered HTML/CSS/JS is allowed')),
 			'$admininfo'		=> array('admininfo', t("Administrator Information"), $admininfo, t("Contact information for site administrators.  Displayed on siteinfo page.  BBCode can be used here")),
 			'$siteinfo'		=> array('siteinfo', t('Site Information'), get_config('system','siteinfo'), t("Publicly visible description of this site.  Displayed on siteinfo page.  BBCode can be used here")),
 			'$language' 		=> array('language', t("System language"), get_config('system','language'), "", $lang_choices),

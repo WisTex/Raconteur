@@ -113,7 +113,7 @@ class Account {
 			'$origpass' => array('origpass', t('Current Password'), ' ',''),
 			'$password1'=> array('npassword', t('Enter New Password'), '', ''),
 			'$password2'=> array('confirm', t('Confirm New Password'), '', t('Leave password fields blank unless changing')),
-			'$techlevel' => [ 'techlevel', t('Your technical skill level'), $def_techlevel, t('Used to provide a member experience matched to your comfort level'), $techlevels ],
+			'$techlevel' => [ 'techlevel', t('Your technical skill level'), $def_techlevel, t('Used to provide a member experience and additional features consistent with your comfort level'), $techlevels ],
 			'$techlock' => $techlock,
 			'$submit' 	=> t('Submit'),
 			'$email' 	=> array('email', t('Email Address:'), $email, ''),
