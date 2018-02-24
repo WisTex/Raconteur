@@ -33,6 +33,7 @@ class Go extends \Zotlabs\Web\Controller {
 
 		$options = [
 			'profile_photo' => t('Upload a profile photo'),
+			'cover_photo'   => t('Upload a cover photo'),
 			'profiles'      => t('Edit your default profile'),
 			'suggest'       => t('View friend suggestions'),
 			'directory'     => t('View the directory to find other interesting channels'),

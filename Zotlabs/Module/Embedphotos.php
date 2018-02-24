@@ -53,7 +53,7 @@ class Embedphotos extends \Zotlabs\Web\Controller {
 			} else {
 				json_return_and_die(array('errormsg' => 'Error retrieving resource ' . $resource_id, 'status' => false));
 			}
-			json_return_and_die(array('status' => true, 'photolink' => $photolink));
+			json_return_and_die(array('status' => true, 'photolink' => $photolink, 'resource_id' => $resource_id));
 		}
 	}
 

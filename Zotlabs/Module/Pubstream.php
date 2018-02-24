@@ -12,8 +12,14 @@ class Pubstream extends \Zotlabs\Web\Controller {
 		if($load)
 			$_SESSION['loadtime'] = datetime_convert();
 
-		if((observer_prohibited(true)) || (! (intval(get_config('system','open_pubstream',1))) && get_observer_hash())) {
+		if((observer_prohibited(true))) {
 			return login();
+		}
+
+		if(! intval(get_config('system','open_pubstream',1))) {
+			if(! get_observer_hash()) {
+				return login();
+			}
 		}
 
 		$site_firehose = ((intval(get_config('system','site_firehose',0))) ? true : false);

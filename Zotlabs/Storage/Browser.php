@@ -264,7 +264,10 @@ class Browser extends DAV\Browser\Plugin {
 			$this->server->emit('onHTMLActionsPanel', array($parent, &$output, $path));
 		}
 
-
+		$deftiles = (($is_owner) ? 0 : 1);
+		$tiles = ((array_key_exists('cloud_tiles',$_SESSION)) ? intval($_SESSION['cloud_tiles']) : $deftiles);
+		$_SESSION['cloud_tiles'] = $tiles;
+	
 		$html .= replace_macros(get_markup_template('cloud.tpl'), array(
 				'$header' => t('Files') . ": " . $this->escapeHTML($path) . "/",
 				'$total' => t('Total'),
