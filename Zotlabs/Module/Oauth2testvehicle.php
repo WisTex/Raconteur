@@ -8,6 +8,7 @@ class OAuth2TestVehicle extends \Zotlabs\Web\Controller {
 		
 		// If there is a 'code' and 'state' parameter then this is a client app 
 		// callback issued after the authorization code request
+		// TODO: Check state value and compare to original sent value
 		if ($_REQUEST['code'] && $_REQUEST['state']) {
 			logger('Authorization callback invoked.', LOGGER_DEBUG);
 			logger(json_encode($_REQUEST, JSON_PRETTY_PRINT), LOGGER_DEBUG);
@@ -61,8 +62,14 @@ class OAuth2TestVehicle extends \Zotlabs\Web\Controller {
 					array(
 						array('response_type', 'code'),
 						array('client_id', urlencode('test_app_client_id')),
-						array('redirect_uri', urlencode('http://hub.localhost/oauth2testvehicle')),
-						array('state', 'xyz')
+						array('redirect_uri', 'http://hub.localhost/oauth2testvehicle'),
+						array('state', 'xyz'),
+						// OpenID Connect Dynamic Client Registration 1.0 Client Metadata
+						// http://openid.net/specs/openid-connect-registration-1_0.html
+						array('client_name', urlencode('Killer App')),
+						array('logo_uri', urlencode('https://client.example.com/website/img/icon.png')),
+						array('client_uri', urlencode('https://client.example.com/website')),
+						array('application_type', 'web'), // would be 'native' for mobile app
 					),
 					'oauth_authorize',
 					'Authorize a test client app',

@@ -32,17 +32,23 @@ class Authorize extends \Zotlabs\Web\Controller {
 		if (!local_channel()) {
 			return login();
 		} else {
-			// display an authorization form
-			$app = array('name' => 'Test App', 'icon' => '/images/icons/plugin.png');
+			// TODO: Fully implement the dynamic client registration protocol:
+			// OpenID Connect Dynamic Client Registration 1.0 Client Metadata
+			// http://openid.net/specs/openid-connect-registration-1_0.html
+			$app = array(
+				'name' => (x($_REQUEST, 'client_name') ? urldecode($_REQUEST['client_name']) : 'Unknown App'),
+				'icon' => (x($_REQUEST, 'logo_uri') ? urldecode($_REQUEST['logo_uri']) : '/images/icons/plugin.png'),
+				'url' => (x($_REQUEST, 'client_uri') ? urldecode($_REQUEST['client_uri']) : ''),
+			);
 			$o .= replace_macros(get_markup_template('oauth_authorize.tpl'), array(
 				'$title' => '',
-				'$authorize' => 'Do you authorize the app "' . $app['name'] . '" to access your channel data?',
+				'$authorize' => 'Do you authorize the app <a style="float: none;" href="' . $app['url'] . '">' . $app['name'] . '</a> to access your channel data?',
 				'$app' => $app,
 				'$yes' => t('Allow'),
 				'$no' => t('Deny'),
 				'$client_id' => (x($_REQUEST, 'client_id') ? $_REQUEST['client_id'] : ''),
 				'$redirect_uri' => (x($_REQUEST, 'redirect_uri') ? $_REQUEST['redirect_uri'] : ''),
-				'$state' => (x($_REQUEST, 'state') ? $_REQUEST['state'] : '')
+				'$state' => (x($_REQUEST, 'state') ? $_REQUEST['state'] : ''),
 			));
 			return $o;
 		}
@@ -56,14 +62,15 @@ class Authorize extends \Zotlabs\Web\Controller {
 		$storage = new OAuth2Storage(\DBA::$dba->db);
 		$s = new \Zotlabs\Identity\OAuth2Server($storage);
 
-
+		// TODO: The automatic client registration protocol below should adhere more
+		// closely to "OAuth 2.0 Dynamic Client Registration Protocol" defined
+		// at https://tools.ietf.org/html/rfc7591
+		
 		// If no client_id was provided, generate a new one.
 		if (x($_POST, 'client_id')) {
 			$client_id = $_POST['client_id'];
-			logger('client_id was provided: ' . $client_id);
 		} else {
 			$client_id = $_POST['client_id'] = random_string(16);
-			logger('client_id was not provided. Generated new id: ' . $client_id);
 		}
 		// If no redirect_uri was provided, generate a fake one.
 		if (x($_POST, 'redirect_uri')) {
@@ -72,15 +79,15 @@ class Authorize extends \Zotlabs\Web\Controller {
 			$redirect_uri = $_POST['redirect_uri'] = 'https://fake.example.com';
 		}
 
-		logger('redirect_uri is : ' . $redirect_uri);
 		// If the client is not registered, add to the database
 		if (!$storage->getClientDetails($client_id)) {
 			$client_secret = random_string(16);
-			$storage->setClientDetails($client_id, $client_secret, $redirect_uri);
+			// Client apps are registered per channel
+			$user_id = local_channel();
+			$storage->setClientDetails($client_id, $client_secret, $redirect_uri, null, null, $user_id);
 		}
 
 		$request = \OAuth2\Request::createFromGlobals();
-		logger(json_encode($request, JSON_PRETTY_PRINT), LOGGER_DEBUG);
 		$response = new \OAuth2\Response();
 
 		// validate the authorize request
