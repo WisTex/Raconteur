@@ -44,7 +44,7 @@ class Viewconnections extends \Zotlabs\Web\Controller {
 		$sql_extra = '';
 	
 		if(! $is_owner) {
-			$abook_flags = " and abook_hidden = 0 ";
+			$abook_flags .= " and abook_hidden = 0 ";
 			$sql_extra = " and xchan_hidden = 0 ";
 		}
 	
