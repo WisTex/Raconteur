@@ -44,7 +44,7 @@ class Viewconnections extends \Zotlabs\Web\Controller {
 		$sql_extra = '';
 	
 		if(! $is_owner) {
-			$abook_flags = " and abook_hidden = 0 ";
+			$abook_flags .= " and abook_hidden = 0 ";
 			$sql_extra = " and xchan_hidden = 0 ";
 		}
 	
@@ -69,8 +69,13 @@ class Viewconnections extends \Zotlabs\Web\Controller {
 		$contacts = array();
 	
 		foreach($r as $rr) {
+
+			$oneway = false;
+			if(! intval(get_abconfig(\App::$profile['uid'],$rr['xchan_hash'],'their_perms','post_comments'))) {
+				$oneway = true;
+			}
 	
-		    $url = chanlink_hash($rr['xchan_hash']);
+			$url = chanlink_hash($rr['xchan_hash']);
 			if($url) {
 				$contacts[] = array(
 					'id' => $rr['abook_id'],
@@ -83,6 +88,7 @@ class Viewconnections extends \Zotlabs\Web\Controller {
 					'sparkle' => '',
 					'itemurl' => $rr['url'],
 					'network' => '',
+					'oneway' => $oneway
 				);
 			}
 		}

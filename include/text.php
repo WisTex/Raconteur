@@ -979,7 +979,7 @@ function contact_block() {
 				// than wishful thinking; even though soapbox channels and feeds will disable it. 
 
 				if(! intval(get_abconfig(App::$profile['uid'],$rr['xchan_hash'],'their_perms','post_comments'))) {
-					$rr['archived'] = true;
+					$rr['oneway'] = true;
 				}
 				$micropro[] = micropro($rr,true,'mpfriend');
 			}
@@ -1033,6 +1033,7 @@ function micropro($contact, $redirect = false, $class = '', $textmode = false) {
 	return replace_macros(get_markup_template(($textmode)?'micropro_txt.tpl':'micropro_img.tpl'),array(
 		'$click' => (($contact['click']) ? $contact['click'] : ''),
 		'$class' => $class . (($contact['archived']) ? ' archived' : ''),
+		'$oneway' => (($contact['oneway']) ? true : false),
 		'$url' => $url,
 		'$photo' => $contact['xchan_photo_s'],
 		'$name' => $contact['xchan_name'],
