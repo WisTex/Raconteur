@@ -1617,12 +1617,15 @@ function get_site_info() {
 		'lastpoll'                     => get_config('system','lastpoll'),
 		'info'                         => (($site_info) ? $site_info : ''),
 		'channels_total'               => $channels_total_stat,
-		'channels_active_halfyear'     => $channels_active_halfyear_stat,
-		'channels_active_monthly'      => $channels_active_monthly_stat,
-		'local_posts'                  => $local_posts_stat,
-		'local_comments'               => $local_comments_stat,
 		'hide_in_statistics'           => $hide_in_statistics
 	];
+
+	if(! $hide_in_statistics) {
+		$data['channels_active_halfyear']     = $channels_active_halfyear_stat;
+		$data['channels_active_monthly']      = $channels_active_monthly_stat;
+		$data['local_posts']                  = $local_posts_stat;
+		$data['local_comments']               = $local_comments_stat;
+	}
 
 	return $data;
 }

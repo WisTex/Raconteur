@@ -37,7 +37,9 @@
                             $.post("embedphotos/photolink", {href: href},
                                 function(ddata) {
                                     if (ddata['status']) {
-                                        window.location.href = 'profile_photo/use/' + ddata['resource_id'];
+										var pf = $('#profile-photo-profiles').val();
+										var prof = ((typeof pf !== 'undefined') ? '?f=&pf=' + pf : '');
+                                        window.location.href = 'profile_photo/use/' + ddata['resource_id'] + prof;
                                     } else {
                                         window.console.log("{{$modalerrorlink}}" + ':' + ddata['errormsg']);
                                     }
