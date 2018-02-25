@@ -226,7 +226,7 @@ class Request implements RequestInterface
         $class = get_called_class();
 
         /** @var Request $request */
-        $request = new $class($_GET, $_POST, array(), $_COOKIE, $_FILES, $_SERVER);
+        $request = new $class($_GET, $_REQUEST, array(), $_COOKIE, $_FILES, $_SERVER);
 
         $contentType = $request->server('CONTENT_TYPE', '');
         $requestMethod = $request->server('REQUEST_METHOD', 'GET');

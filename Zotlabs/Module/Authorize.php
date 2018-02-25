@@ -79,16 +79,17 @@ class Authorize extends \Zotlabs\Web\Controller {
 			$redirect_uri = $_POST['redirect_uri'] = 'https://fake.example.com';
 		}
 
+		$request = \OAuth2\Request::createFromGlobals();
+		$response = new \OAuth2\Response();
+
 		// If the client is not registered, add to the database
 		if (!$storage->getClientDetails($client_id)) {
 			$client_secret = random_string(16);
 			// Client apps are registered per channel
 			$user_id = local_channel();
-			$storage->setClientDetails($client_id, $client_secret, $redirect_uri, null, null, $user_id);
+			$storage->setClientDetails($client_id, $client_secret, $redirect_uri, 'authorization_code', null, $user_id);
+			$response->setParameter('client_secret', $client_secret);
 		}
-
-		$request = \OAuth2\Request::createFromGlobals();
-		$response = new \OAuth2\Response();
 
 		// validate the authorize request
 		if (!$s->validateAuthorizeRequest($request, $response)) {
