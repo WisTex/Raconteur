@@ -180,7 +180,7 @@ a.wikilist {
 }
 
 .notifications-textinput input {
-	font-family: FontAwesome, sans-serif;
+	font-family: sans-serif, ForkAwesome;
 }
 
 .notifications-textinput {

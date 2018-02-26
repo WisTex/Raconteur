@@ -604,14 +604,6 @@ footer {
 	padding: .15rem .5rem;
 }
 
-#nav-search-text::-webkit-input-placeholder {
-	font-family: FontAwesome, sans-serif;
-}
-
-#nav-search-text::-moz-placeholder {
-	font-family: FontAwesome, sans-serif;
-}
-
 nav .acpopup {
 	top: 46px !important;
 	margin-left: -35px;
@@ -842,12 +834,12 @@ div.jGrowl div.jGrowl-notification {
 
 #acl-search::-webkit-input-placeholder {
 	/* non-fontawesome fonts set a fallback for text parts of the placeholder*/
-	font-family: FontAwesome, sans-serif, arial, freesans;
+	font-family: ForkAwesome, sans-serif, arial, freesans;
 }
 
 #acl-search::-moz-placeholder {
 	/* non-fontawesome fonts set a fallback for text parts of the placeholder*/
-	font-family: FontAwesome, sans-serif, arial, freesans;
+	font-family: ForkAwesome, sans-serif, arial, freesans;
 }
 
 .acl-list-item {
