@@ -91,10 +91,6 @@
 				</div>
 				<div id="embedPhotoModalBodyAlbumDialog" class="d-none"></div>
 			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$embedPhotosModalCancel}}</button>
-				<button id="embed-photo-OKButton" type="button" class="btn btn-primary">{{$embedPhotosModalOK}}</button>
-			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
@@ -391,16 +387,10 @@
 						if (typeof($(image).parent()[0]) !== 'undefined') {
 							var imageparent = document.getElementById($(image).parent()[0].id);
 							$(imageparent).toggleClass('embed-photo-selected-photo');
-						}
-					});
-					$('#embedPhotoModalBodyAlbumListDialog').addClass('d-none');
-					$('#embedPhotoModalBodyAlbumDialog').removeClass('d-none');
-					$('#embed-photo-OKButton').click(function () {
-						$('.embed-photo-selected-photo').each(function (index) {
-							var href = $(this).attr('href');
-							$.post("embedphotos/photolink", {href: href},
-								function(ddata) {
-									if (ddata['status']) {
+							var href = $(imageparent).attr('href');
+                            $.post("embedphotos/photolink", {href: href},
+                                function(ddata) {
+                                    if (ddata['status']) {
 										{{if !$mimeType || $mimeType == 'text/markdown'}}
 										var imgURL = ddata['photolink'].replace( /\[.*\]\[.*\](.*)\[.*\]\[.*\]/, '\n![image]($1)' )
 										editor.getSession().insert(editor.getCursorPosition(), imgURL)
@@ -408,17 +398,20 @@
 										var currentContent = $('#editor').val();
 										$('#editor').val(currentContent + ddata['photolink']);
 										{{/if}}
-									} else {
-										window.console.log("{{$modalerrorlink}}" + ':' + ddata['errormsg']);
-									}
-									return false;
+                                    } else {
+                                        window.console.log("{{$modalerrorlink}}" + ':' + ddata['errormsg']);
+                                    }
+                                    return false;
 								},
-							'json');
-						});
-						$('#embedPhotoModalBodyAlbumDialog').html('');
-						$('#embedPhotoModalBodyAlbumDialog').off('click');
-						$('#embedPhotoModal').modal('hide');
-					});
+                               'json');
+                            $('#embedPhotoModalBodyAlbumDialog').html('');
+                            $('#embedPhotoModalBodyAlbumDialog').off('click');
+                            $('#embedPhotoModal').modal('hide');
+						}
+                    });
+
+					$('#embedPhotoModalBodyAlbumListDialog').addClass('d-none');
+					$('#embedPhotoModalBodyAlbumDialog').removeClass('d-none');
 				} else {
 					window.console.log("{{$modalerroralbum}} " + JSON.stringify(album) + ':' + data['errormsg']);
 				}

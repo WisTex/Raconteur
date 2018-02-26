@@ -173,7 +173,7 @@ ACL.prototype.on_custom = function(event) {
 	that.deny_cid  = [];
 	that.deny_gid  = [];
 
-	datasrc2src('#acl-list-content .acl-list-item img[data-src]');
+	datasrc2src('#acl-list-content .list-group-item img[data-src]');
 
 	that.update_view('custom');
 	that.on_submit();
@@ -399,7 +399,7 @@ ACL.prototype.get = function(start, count, search) {
 
 ACL.prototype.populate = function(data) {
 	$(data.items).each(function(){
-		html = "<div class='acl-list-item {4} {7} {5}' title='{6}' id='{2}{3}'>"+that.item_tpl+"</div>";
+		html = "<div class='list-group-item clearfix acl-list-item {4} {7} {5}' id='{2}{3}'>"+that.item_tpl+"</div>";
 		html = html.format(this.photo, this.name, this.type, this.xid, '', this.self, this.link, this.taggable);
 		if (this.uids !== undefined) {
 			that.group_uids[this.xid] = this.uids;

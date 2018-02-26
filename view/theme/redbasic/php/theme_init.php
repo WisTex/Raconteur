@@ -1,6 +1,6 @@
 <?php
 
-head_add_css('/library/font_awesome/css/font-awesome.min.css');
+head_add_css('/library/fork-awesome/css/fork-awesome.min.css');
 head_add_css('/library/bootstrap/css/bootstrap.min.css');
 head_add_css('/library/bootstrap-tagsinput/bootstrap-tagsinput.css');
 head_add_css('/view/css/bootstrap-red.css');

@@ -657,6 +657,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `uid_item_wall` (`uid`, `item_wall`),
   KEY `uid_item_starred` (`uid`, `item_starred`),
   KEY `uid_item_retained` (`uid`, `item_retained`),
+  KEY `uid_item_private` (`uid`, `item_private`),
   KEY `aid` (`aid`),
   KEY `owner_xchan` (`owner_xchan`),
   KEY `author_xchan` (`author_xchan`),
@@ -667,7 +668,6 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `commented` (`commented`),
   KEY `verb` (`verb`),
   KEY `obj_type` (`obj_type`),
-  KEY `item_private` (`item_private`),
   KEY `llink` (`llink`),
   KEY `expires` (`expires`),
   KEY `revision` (`revision`),
@@ -681,6 +681,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `comments_closed` (`comments_closed`),
   KEY `changed` (`changed`),
   KEY `item_origin` (`item_origin`),
+  KEY `item_wall` (`item_wall`),
   KEY `item_unseen` (`item_unseen`),
   KEY `item_uplink` (`item_uplink`),
   KEY `item_notshown` (`item_notshown`),
@@ -692,7 +693,8 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `item_verified` (`item_verified`),
   KEY `item_rss` (`item_rss`),
   KEY `item_consensus` (`item_consensus`),
-  KEY `item_deleted_pending_remove_changed` (`item_deleted`, `item_pending_remove`, `changed`)
+  KEY `item_deleted_pending_remove_changed` (`item_deleted`, `item_pending_remove`, `changed`),
+  KEY `item_pending_remove_changed` (`item_pending_remove`, `changed`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `item_id` (

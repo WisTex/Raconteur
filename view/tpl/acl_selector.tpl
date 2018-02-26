@@ -31,15 +31,17 @@
 
 				<div id="acl-wrapper">
 					<div id="acl-list">
-						<input class="form-control" type="text" id="acl-search" placeholder="&#xf002; {{$search}}">
+						<input class="form-control" type="text" id="acl-search" placeholder="&#xf002;" title="{{$search}}">
 						<small class="text-muted">{{$showlimitedDesc}}</small>
 						<div id="acl-list-content"></div>
 					</div>
 				</div>
 
-				<div class="acl-list-item" rel="acl-template" style="display:none">
-					<div class="acl-item-header">
-						<img class="menu-img-1" data-src="{0}"> {1}
+				<div class="list-group-item acl-list-item" rel="acl-template" style="display:none">
+					<div class="acl-item-header clearfix">
+						<img class="menu-img-3" data-src="{0}">
+						<span class="contactname">{1}</span>
+						<span class="dropdown-sub-text">{6}</span>
 					</div>
 					<button class="acl-button-hide btn btn-sm btn-outline-danger"><i class="fa fa-times"></i> {{$hide}}</button>
 					<button class="acl-button-show btn btn-sm btn-outline-success"><i class="fa fa-check"></i> {{$show}}</button>
