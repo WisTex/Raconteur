@@ -38,7 +38,7 @@
 				</div>
 
 				<div class="list-group-item acl-list-item" rel="acl-template" style="display:none">
-					<div class="acl-item-header">
+					<div class="acl-item-header clearfix">
 						<img class="menu-img-3" data-src="{0}">
 						<span class="contactname">{1}</span>
 						<span class="dropdown-sub-text">{6}</span>
