@@ -35,8 +35,6 @@
 			<br />
 			{{/if}}
 
-
-
 			<div id="profile-photo-submit-wrapper">
 				<input type="submit" name="submit" id="profile-photo-submit" value="{{$submit}}">
 			</div>
@@ -64,10 +62,6 @@
 					<div id="embedPhotoModalBodyAlbumList"></div>
 				</div>
 				<div id="embedPhotoModalBodyAlbumDialog" class="d-none"></div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$embedPhotosModalCancel}}</button>
-				<button id="embed-photo-OKButton" type="button" class="btn btn-primary">{{$embedPhotosModalOK}}</button>
 			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
