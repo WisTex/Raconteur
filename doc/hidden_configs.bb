@@ -28,6 +28,7 @@ Options are:
   [*= system.prevent_tag_hijacking ] Prevent foreign networks hijacking hashtags in your posts and directing them at its own resources.
   [*= system.startpage ] Another of those technically hidden configs made available by addons. Sets the default page to view when logging in.  This is exposed to the UI by the startpage addon.
   [*= system.taganyone ] Requires the config of the same name to be enabled.  Allow the @mention tagging of anyone, whether you are connected or not.  This doesn't scale.
+  [*= system.anonymous_comments ] By default or if set to 1, custom permissions can be set to allow anonymous (moderated) comments like WordPress, moderated by the channel owner. If set to 0, no member of your site can select or enable this. 
   [*= system.user_scalable ] Determine if the app is scalable on touch screens.  Defaults to on, to  disable, set to zero - real zero, not just false.
 [/dl]
 [h2]Site config[/h2][dl terms="mb"]
