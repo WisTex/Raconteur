@@ -63,7 +63,9 @@ class Enotify {
 		$thanks     = t('Thank You,');
 		$sitename   = get_config('system','sitename');
 		$site_admin = sprintf( t('%s Administrator'), $sitename);
-
+		$opt_out1   = sprintf( t('This email was sent by %1$s at %2$s.'), t('$Projectname'), \App::get_hostname());
+		$opt_out2   = sprintf( t('To stop receiving these messages, please adjust your Notification Settings at %s'), z_root() . '/settings');		
+		$hopt_out2  = sprintf( t('To stop receiving these messages, please adjust your %s.'), '<a href="' . z_root() . '/settings' . '">' . t('Notification Settings')  . '</a>');
 		$sender_name = $product;
 		$hostname = \App::get_hostname();
 		if(strpos($hostname,':'))
@@ -613,6 +615,9 @@ class Enotify {
 		$datarray['titemlink']    = $itemlink;
 		$datarray['thanks']       = $thanks;
 		$datarray['site_admin']   = $site_admin;
+		$datarray['opt_out1']     = $opt_out1;
+		$datarray['opt_out2']     = $opt_out2;
+		$datarray['hopt_out2']    = $hopt_out2;
 		$datarray['title']        = stripslashes($title);
 		$datarray['htmlversion']  = $htmlversion;
 		$datarray['textversion']  = $textversion;
@@ -670,6 +675,8 @@ class Enotify {
 			'$hitemlink'    => $datarray['hitemlink'],
 			'$thanks'       => $datarray['thanks'],
 			'$site_admin'   => $datarray['site_admin'],
+			'$opt_out1'     => $datarray['opt_out1'],
+			'$opt_out2'     => $datarray['hopt_out2'],
 			'$title'        => $datarray['title'],
 			'$htmlversion'  => $datarray['htmlversion'],
 		));
@@ -690,6 +697,8 @@ class Enotify {
 			'$titemlink'    => $datarray['titemlink'],
 			'$thanks'       => $datarray['thanks'],
 			'$site_admin'   => $datarray['site_admin'],
+			'$opt_out1'     => $datarray['opt_out1'],
+			'$opt_out2'     => $datarray['opt_out2'],
 			'$title'        => $datarray['title'],
 			'$textversion'  => $datarray['textversion'],
 		));
