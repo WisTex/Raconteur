@@ -6,28 +6,6 @@ use Zotlabs\Identity\OAuth2Storage;
 
 class Authorize extends \Zotlabs\Web\Controller {
 
-	function init() {
-
-		// workaround for HTTP-auth in CGI mode
-		if (x($_SERVER, 'REDIRECT_REMOTE_USER')) {
-			$userpass = base64_decode(substr($_SERVER["REDIRECT_REMOTE_USER"], 6));
-			if (strlen($userpass)) {
-				list($name, $password) = explode(':', $userpass);
-				$_SERVER['PHP_AUTH_USER'] = $name;
-				$_SERVER['PHP_AUTH_PW'] = $password;
-			}
-		}
-
-		if (x($_SERVER, 'HTTP_AUTHORIZATION')) {
-			$userpass = base64_decode(substr($_SERVER["HTTP_AUTHORIZATION"], 6));
-			if (strlen($userpass)) {
-				list($name, $password) = explode(':', $userpass);
-				$_SERVER['PHP_AUTH_USER'] = $name;
-				$_SERVER['PHP_AUTH_PW'] = $password;
-			}
-		}
-	}
-
 	function get() {
 		if (!local_channel()) {
 			return login();
@@ -37,7 +15,7 @@ class Authorize extends \Zotlabs\Web\Controller {
 			// http://openid.net/specs/openid-connect-registration-1_0.html
 			$app = array(
 				'name' => (x($_REQUEST, 'client_name') ? urldecode($_REQUEST['client_name']) : 'Unknown App'),
-				'icon' => (x($_REQUEST, 'logo_uri') ? urldecode($_REQUEST['logo_uri']) : '/images/icons/plugin.png'),
+				'icon' => (x($_REQUEST, 'logo_uri') ? urldecode($_REQUEST['logo_uri']) : z_root() . '/images/icons/plugin.png'),
 				'url' => (x($_REQUEST, 'client_uri') ? urldecode($_REQUEST['client_uri']) : ''),
 			);
 			$o .= replace_macros(get_markup_template('oauth_authorize.tpl'), array(
@@ -76,20 +54,26 @@ class Authorize extends \Zotlabs\Web\Controller {
 		if (x($_POST, 'redirect_uri')) {
 			$redirect_uri = $_POST['redirect_uri'];
 		} else {
-			$redirect_uri = $_POST['redirect_uri'] = 'https://fake.example.com';
+			$redirect_uri = $_POST['redirect_uri'] = 'https://fake.example.com/oauth';
 		}
 
 		$request = \OAuth2\Request::createFromGlobals();
 		$response = new \OAuth2\Response();
 
 		// If the client is not registered, add to the database
-		if (!$storage->getClientDetails($client_id)) {
+		if (!$client = $storage->getClientDetails($client_id)) {
 			$client_secret = random_string(16);
 			// Client apps are registered per channel
 			$user_id = local_channel();
 			$storage->setClientDetails($client_id, $client_secret, $redirect_uri, 'authorization_code', null, $user_id);
-			$response->setParameter('client_secret', $client_secret);
+			
 		}
+		if (!$client = $storage->getClientDetails($client_id)) {
+			// There was an error registering the client.
+			$response->send();
+			killme();
+		}
+		$response->setParameter('client_secret', $client['client_secret']);
 
 		// validate the authorize request
 		if (!$s->validateAuthorizeRequest($request, $response)) {

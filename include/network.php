@@ -88,6 +88,8 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
 			$instance_headers[] = 'Cookie: PHPSESSID=' . session_id();
 		}
 	}
+	logger('headers: ' . json_encode($instance_headers, JSON_PRETTY_PRINT));
+
 	if($instance_headers)
 		@curl_setopt($ch, CURLOPT_HTTPHEADER, $instance_headers);
 
@@ -143,7 +145,7 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
 	$base = $s;
 	$curl_info = @curl_getinfo($ch);
 	$http_code = $curl_info['http_code'];
-	//logger('fetch_url:' . $http_code . ' data: ' . $s);
+	logger('fetch_url:' . $http_code . ' data: ' . $s);
 	$header = '';
 
 	// Pull out multiple headers, e.g. proxy and continuation headers

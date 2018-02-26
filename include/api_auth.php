@@ -14,25 +14,58 @@ function api_login(&$a){
 
 	// login with oauth
 	try {
-		$oauth = new ZotOAuth1();
-		$req = OAuth1Request::from_request();
+		// OAuth 2.0
+		$storage = new \Zotlabs\Identity\OAuth2Storage(\DBA::$dba->db);
+		$server = new \Zotlabs\Identity\OAuth2Server($storage);
+		$request = \OAuth2\Request::createFromGlobals();
+		if ($server->verifyResourceRequest($request)) {
+			$token = $server->getAccessTokenData($request);
+			$uid = $token['user_id'];
+			$r = q("SELECT * FROM channel WHERE channel_id = %d LIMIT 1", 
+				intval($uid)
+			);
+			if (count($r)) {
+				$record = $r[0];
+			} else {
+				header('HTTP/1.0 401 Unauthorized');
+				echo('This api requires login');
+				killme();
+			}
 
-		list($consumer,$token) = $oauth->verify_request($req);
+			$_SESSION['uid'] = $record['channel_id'];
+			$_SESSION['addr'] = $_SERVER['REMOTE_ADDR'];
 
-		if (!is_null($token)){
-			$oauth->loginUser($token->uid);
+			$x = q("select * from account where account_id = %d LIMIT 1", 
+				intval($record['channel_account_id'])
+			);
+			if ($x) {
+				require_once('include/security.php');
+				authenticate_success($x[0], null, true, false, true, true);
+				$_SESSION['allow_api'] = true;
+				call_hooks('logged_in', App::$user);
+				return;
+			}
+		} else {
+			// OAuth 1.0
+			$oauth = new ZotOAuth1();
+			$req = OAuth1Request::from_request();
 
-			App::set_oauth_key($consumer->key);
+			list($consumer, $token) = $oauth->verify_request($req);
 
-			call_hooks('logged_in', App::$user);
-			return;
+			if (!is_null($token)) {
+				$oauth->loginUser($token->uid);
+
+				App::set_oauth_key($consumer->key);
+
+				call_hooks('logged_in', App::$user);
+				return;
+			}
+			killme();
 		}
-		killme();
-	}
-	catch(Exception $e) {
+	} catch (Exception $e) {
 		logger($e->getMessage());
 	}
-		
+
 	// workarounds for HTTP-auth in CGI mode
 
 	foreach([ 'REDIRECT_REMOTE_USER', 'HTTP_AUTHORIZATION' ] as $head) {
