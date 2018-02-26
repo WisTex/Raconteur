@@ -37,9 +37,11 @@
 					</div>
 				</div>
 
-				<div class="acl-list-item" rel="acl-template" style="display:none">
+				<div class="acl-list-item list-group-item" rel="acl-template" style="display:none">
 					<div class="acl-item-header">
-						<img class="menu-img-1" data-src="{0}"> {1}
+						<img class="menu-img-3" data-src="{0}">
+						<span class="contactname">{1}</span>
+						<span class="dropdown-sub-text">{6}</span>
 					</div>
 					<button class="acl-button-hide btn btn-sm btn-outline-danger"><i class="fa fa-times"></i> {{$hide}}</button>
 					<button class="acl-button-show btn btn-sm btn-outline-success"><i class="fa fa-check"></i> {{$show}}</button>
