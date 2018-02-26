@@ -459,13 +459,7 @@ var activeCommentText = '';
                         if (typeof($(image).parent()[0]) !== 'undefined') {
                             var imageparent = document.getElementById($(image).parent()[0].id);
                             $(imageparent).toggleClass('embed-photo-selected-photo');
-                        }
-                    });
-                    $('#embedPhotoModalBodyAlbumListDialog').addClass('d-none');
-                    $('#embedPhotoModalBodyAlbumDialog').removeClass('d-none');
-                    $('#embed-photo-OKButton').click(function () {
-                        $('.embed-photo-selected-photo').each(function (index) {
-                            var href = $(this).attr('href');
+                            var href = $(imageparent).attr('href');
                             $.post("embedphotos/photolink", {href: href},
                                 function(ddata) {
                                     if (ddata['status']) {
@@ -476,12 +470,14 @@ var activeCommentText = '';
                                     }
                                     return false;
                                 },
-                            'json');
-                        });
-                        $('#embedPhotoModalBodyAlbumDialog').html('');
-                        $('#embedPhotoModalBodyAlbumDialog').off('click');
-                        $('#embedPhotoModal').modal('hide');
+         	                   'json');
+	                        $('#embedPhotoModalBodyAlbumDialog').html('');
+    	                    $('#embedPhotoModalBodyAlbumDialog').off('click');
+        	                $('#embedPhotoModal').modal('hide');
+                        }
                     });
+                    $('#embedPhotoModalBodyAlbumListDialog').addClass('d-none');
+                    $('#embedPhotoModalBodyAlbumDialog').removeClass('d-none');
                 } else {
                     window.console.log("{{$modalerroralbum}} " + JSON.stringify(album) + ':' + data['errormsg']);
                 }

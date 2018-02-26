@@ -21,6 +21,9 @@
 	<tr><td style="padding:11px 0;" colspan="2">{{$hitemlink}}</td></tr>
 	<tr><td></td><td>{{$thanks}}</td></tr>
 	<tr><td></td><td>{{$site_admin}}</td></tr>
+
+	<tr><td style="font-size: 12px; color: #444444; padding-top: 18px;" colspan="2">{{$opt_out1}}</td></tr>
+	<tr><td style="font-size: 12px; color: #444444;" colspan="2">{{$opt_out2}}</td></tr>
 	</tbody>
 </table>
 </body>
