@@ -179,12 +179,12 @@ a.wikilist {
 	overflow: auto;
 }
 
-.notifications-textinput input {
-	font-family: sans-serif, ForkAwesome;
-}
-
 .notifications-textinput {
 	padding: .75rem 0.85rem;
+}
+
+.notifications-textinput input {
+	padding-left: 1.75rem;
 }
 
 .notifications-textinput-clear {
@@ -194,6 +194,14 @@ a.wikilist {
 	top: .75rem;
 	right: 1rem;
 	cursor: pointer;
+}
+
+.notifications-textinput-filter {
+	padding: .5rem;
+	line-height: 1;
+	position: absolute;
+	top: .75rem;
+	left: 0.75rem;
 }
 
 .notification-content.collapsing {
