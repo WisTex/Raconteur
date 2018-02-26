@@ -399,7 +399,7 @@ ACL.prototype.get = function(start, count, search) {
 
 ACL.prototype.populate = function(data) {
 	$(data.items).each(function(){
-		html = "<div class='list-group-item clearfix {4} {7} {5}' id='{2}{3}'>"+that.item_tpl+"</div>";
+		html = "<div class='list-group-item clearfix acl-list-item {4} {7} {5}' id='{2}{3}'>"+that.item_tpl+"</div>";
 		html = html.format(this.photo, this.name, this.type, this.xid, '', this.self, this.link, this.taggable);
 		if (this.uids !== undefined) {
 			that.group_uids[this.xid] = this.uids;

@@ -848,10 +848,12 @@ div.jGrowl div.jGrowl-notification {
 
 .acl-list-item.grouphide {
 	border: 1px solid red;
+	z-index: 2;
 }
 
 .acl-list-item.groupshow {
 	border: 1px solid green;
+	z-index: 2;
 }
 
 .acl-list-item.taggable {
