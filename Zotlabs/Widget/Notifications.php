@@ -23,7 +23,8 @@ class Notifications {
 					'label' => t('Mark all notifications read')
 				],
 				'filter' => [
-					'label' => t('Show new posts only')
+					'posts_label' => t('Show new posts only'),
+					'name_label' => t('Filter by name')
 				]
 			];
 
@@ -41,7 +42,8 @@ class Notifications {
 					'label' => t('Mark all notifications seen')
 				],
 				'filter' => [
-					'label' => t('Show new posts only')
+					'posts_label' => t('Show new posts only'),
+					'name_label' => t('Filter by name')
 				]
 			];
 
@@ -136,7 +138,8 @@ class Notifications {
 					'label' => t('Mark all notifications seen')
 				],
 				'filter' => [
-					'label' => t('Show new posts only')
+					'posts_label' => t('Show new posts only'),
+					'name_label' => t('Filter by name')
 				]
 			];
 		}

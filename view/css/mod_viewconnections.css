@@ -31,3 +31,9 @@
 .contact-entry-end {
 	clear: both;
 }
+
+.contact-entry-photo-wrapper .oneway-overlay {
+	margin-top: 25px;
+	margin-left: -25px;
+	font-size: 20px;
+}
