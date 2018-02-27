@@ -71,7 +71,7 @@ class AutonameTest extends TestCase {
 
 		$autoname2=autoname(1);
 		$test = ((strlen($autoname2) < 2) ? 1 : 0);
-		$this->assertEquals(1, $test));
+		$this->assertEquals(1, $test);
 
 		// The following test is problematic, with only 26 possibilities
 		// generating the same thing twice happens often aka
