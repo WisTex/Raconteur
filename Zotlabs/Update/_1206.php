@@ -8,7 +8,7 @@ class _1206 {
 
 		if(ACTIVE_DBTYPE == DBTYPE_MYSQL) {
 			$r = q("ALTER TABLE item 
-				ADD INDEX uid_resource_type (uid, resource_type),
+				ADD INDEX uid_resource_type (uid, resource_type)
 			");
 
 			if($r)
