@@ -79,7 +79,7 @@ class Settings_menu {
 			'selected' => ''
 		);
 
-		if(get_account_techlevel() > 0) {
+		if(feature_enabled(local_channel(),'oauth_clients')) {
 			$tabs[] =	array(
 				'label' => t('Connected apps'),
 				'url' => z_root() . '/settings/oauth',
@@ -87,7 +87,7 @@ class Settings_menu {
 			);
 		}
 
-		if(get_account_techlevel() > 2) {
+		if(feature_enabled(local_channel(),'access_tokens')) {
 			$tabs[] =	array(
 				'label' => t('Guest Access Tokens'),
 				'url' => z_root() . '/settings/tokens',
