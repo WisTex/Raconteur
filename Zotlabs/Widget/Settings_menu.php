@@ -54,7 +54,7 @@ class Settings_menu {
 		}
 
 		$tabs[] =	array(
-			'label'	=> t('Feature/Addon settings'),
+			'label'	=> t('Addon settings'),
 			'url' 	=> z_root().'/settings/featured',
 			'selected'	=> ((argv(1) === 'featured') ? 'active' : ''),
 		);
