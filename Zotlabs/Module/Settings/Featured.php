@@ -62,6 +62,7 @@ class Featured {
 		$o .= replace_macros($tpl, array(
 			'$form_security_token' => get_form_security_token("settings_featured"),
 			'$title'	=> t('Feature/Addon Settings'),
+			'$descrip'  => t('Please save/submit changes to any panel before opening another.'),
 			'$settings_addons' => $settings_addons
 		));
 		return $o;
