@@ -658,6 +658,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `uid_item_starred` (`uid`, `item_starred`),
   KEY `uid_item_retained` (`uid`, `item_retained`),
   KEY `uid_item_private` (`uid`, `item_private`),
+  KEY `uid_resource_type` (`uid`, `resource_type`),
   KEY `aid` (`aid`),
   KEY `owner_xchan` (`owner_xchan`),
   KEY `author_xchan` (`author_xchan`),
