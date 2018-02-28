@@ -208,6 +208,15 @@ function get_features($filtered = true) {
 			t('Access Control and Permissions'),
 
 			[
+				'groups',    		
+				t('Privacy Groups'),		
+				t('Enable management and selection of privacy groups'),
+				true,
+				get_config('feature_lock','groups'),
+				feature_level('groups',0),
+			],
+
+			[
 				'multi_profiles',      
 				t('Multiple Profiles'),      
 				t('Ability to create multiple profiles'), 
@@ -339,14 +348,6 @@ function get_features($filtered = true) {
 				feature_level('archives',1),
 			],
 
-			[
-				'groups',    		
-				t('Privacy Groups'),		
-				t('Enable management and selection of privacy groups'),
-				true,
-				get_config('feature_lock','groups'),
-				feature_level('groups',0),
-			],
 
 			[
 				'savedsearch',    
