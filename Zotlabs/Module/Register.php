@@ -123,9 +123,6 @@ class Register extends \Zotlabs\Web\Controller {
 		if($policy == REGISTER_OPEN ) {
 			if($email_verify) {
 				$res = verify_email_address($result);
-				if($res) {
-					info( t('Registration successful. Please check your email for validation instructions.') . EOL ) ;
-				}
 			}
 			else {
 				$res = send_register_success_email($result['email'],$result['password']);
@@ -133,7 +130,8 @@ class Register extends \Zotlabs\Web\Controller {
 			if($res) {
 				if($invite_code) {
 					info( t('Registration successful. Continue to create your first channel...') . EOL ) ;
-				} else {
+				} 
+				else {
 					info( t('Registration successful. Please check your email for validation instructions.') . EOL ) ;
 				}
 			}
