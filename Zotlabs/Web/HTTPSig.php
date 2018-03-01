@@ -3,16 +3,24 @@
 namespace Zotlabs\Web;
 
 /**
- * Implements HTTP Signatures per draft-cavage-http-signatures-07
+ * @brief Implements HTTP Signatures per draft-cavage-http-signatures-07.
+ *
+ * @see https://tools.ietf.org/html/draft-cavage-http-signatures-07
  */
-
-
 class HTTPSig {
 
-	// See RFC5843
-
-	static function generate_digest($body,$set = true) {
-		$digest = base64_encode(hash('sha256',$body,true));
+	/**
+	 * @brief RFC5843
+	 *
+	 * @see https://tools.ietf.org/html/rfc5843
+	 *
+	 * @param string $body The value to create the digest for
+	 * @param boolean $set (optional, default true)
+	 *   If set send a Digest HTTP header
+	 * @return string The generated digest of $body
+	 */
+	static function generate_digest($body, $set = true) {
+		$digest = base64_encode(hash('sha256', $body, true));
 
 		if($set) {
 			header('Digest: SHA-256=' . $digest);
@@ -40,6 +48,7 @@ class HTTPSig {
 		if(is_array($data) && $data['header']) {
 			if(! $data['success'])
 				return $result;
+
 			$h = new \Zotlabs\Web\HTTPHeaders($data['header']);
 			$headers = $h->fetcharr();
 			$body = $data['body'];
@@ -47,7 +56,7 @@ class HTTPSig {
 
 		else {
 			$headers = [];
-			$headers['(request-target)'] = 
+			$headers['(request-target)'] =
 				strtolower($_SERVER['REQUEST_METHOD']) . ' ' .
 				$_SERVER['REQUEST_URI'];
 			foreach($_SERVER as $k => $v) {
@@ -78,7 +87,7 @@ class HTTPSig {
 		$result['header_signed'] = true;
 
 		$signed_headers = $sig_block['headers'];
-		if(! $signed_headers) 
+		if(! $signed_headers)
 			$signed_headers = [ 'date' ];
 
 		$signed_data = '';
@@ -131,7 +140,7 @@ class HTTPSig {
 			if($digest[0] === 'SHA-512')
 				$hashalg = 'sha512';
 
-			// The explode operation will have stripped the '=' padding, so compare against unpadded base64 
+			// The explode operation will have stripped the '=' padding, so compare against unpadded base64
 			if(rtrim(base64_encode(hash($hashalg,$body,true)),'=') === $digest[1]) {
 				$result['content_valid'] = true;
 			}
@@ -146,7 +155,7 @@ class HTTPSig {
 			if($digest[0] === 'SHA-512')
 				$hashalg = 'sha512';
 
-			// The explode operation will have stripped the '=' padding, so compare against unpadded base64 
+			// The explode operation will have stripped the '=' padding, so compare against unpadded base64
 			if(rtrim(base64_encode(hash($hashalg,$_POST['data'],true)),'=') === $digest[1]) {
 				$result['content_valid'] = true;
 			}
@@ -155,9 +164,15 @@ class HTTPSig {
 		logger('Content_Valid: ' . (($result['content_valid']) ? 'true' : 'false'));
 
 		return $result;
-
 	}
 
+	/**
+	 * @brief
+	 *
+	 * @param string $id
+	 * @return boolean|string
+	 *   false if no pub key found, otherwise return the pub key
+	 */
 	function get_activitypub_key($id) {
 
 		if(strpos($id,'acct:') === 0) {
@@ -180,19 +195,33 @@ class HTTPSig {
 			$j = json_decode($r,true);
 
 			if($j['id'] !== $id)
-				return false; 
+				return false;
+
 			if(array_key_exists('publicKey',$j) && array_key_exists('publicKeyPem',$j['publicKey'])) {
 				return($j['publicKey']['publicKeyPem']);
 			}
 		}
+
 		return false;
 	}
 
-
-
-
-	static function create_sig($request,$head,$prvkey,$keyid = 'Key',$send_headers = false,$auth = false,$alg = 'sha256', 
-		$crypt_key = null, $crypt_algo = 'aes256ctr') {
+	/**
+	 * @brief
+	 *
+	 * @param string $request
+	 * @param array $head
+	 * @param string $prvkey
+	 * @param string $keyid (optional, default 'Key')
+	 * @param boolean $send_headers (optional, default false)
+	 *   If set send a HTTP header
+	 * @param boolean $auth (optional, default false)
+	 * @param string $alg (optional, default 'sha256')
+	 * @param string $crypt_key (optional, default null)
+	 * @param string $crypt_algo (optional, default 'aes256ctr')
+	 * @return array
+	 */
+	static function create_sig($request, $head, $prvkey, $keyid = 'Key', $send_headers = false, $auth = false,
+			$alg = 'sha256', $crypt_key = null, $crypt_algo = 'aes256ctr') {
 
 		$return_headers = [];
 
@@ -212,7 +241,7 @@ class HTTPSig {
 			$x = crypto_encapsulate($headerval,$crypt_key,$crypt_algo);
 			$headerval = 'iv="' . $x['iv'] . '",key="' . $x['key'] . '",alg="' . $x['alg'] . '",data="' . $x['data'] . '"';
 		}
-			
+
 		if($auth) {
 			$sighead = 'Authorization: Signature ' . $headerval;
 		}
@@ -236,12 +265,20 @@ class HTTPSig {
 		else {
 			$return_headers[] = $sighead;
 		}
+
 		return $return_headers;
 	}
 
-
-
-	static function sign($request,$head,$prvkey,$alg = 'sha256') {
+	/**
+	 * @brief
+	 *
+	 * @param string $request
+	 * @param array  $head
+	 * @param string $prvkey
+	 * @param string $alg (optional) default 'sha256'
+	 * @return array
+	 */
+	static function sign($request, $head, $prvkey, $alg = 'sha256') {
 
 		$ret = [];
 
@@ -250,27 +287,38 @@ class HTTPSig {
 		if($request) {
 			$headers = '(request-target)' . ': ' . trim($request) . "\n";
 			$fields = '(request-target)';
-		}			
+		}
 
 		if($head) {
 			foreach($head as $k => $v) {
 				$headers .= strtolower($k) . ': ' . trim($v) . "\n";
 				if($fields)
 					$fields .= ' ';
+
 				$fields .= strtolower($k);
 			}
 			// strip the trailing linefeed
 			$headers = rtrim($headers,"\n");
 		}
 
-		$sig = base64_encode(rsa_sign($headers,$prvkey,$alg)); 		
+		$sig = base64_encode(rsa_sign($headers,$prvkey,$alg));
 
 		$ret['headers']   = $fields;
 		$ret['signature'] = $sig;
-	
+
 		return $ret;
 	}
 
+	/**
+	 * @brief
+	 *
+	 * @param string $header
+	 * @return array associate array with
+	 *   - \e string \b keyID
+	 *   - \e string \b algorithm
+	 *   - \e array  \b headers
+	 *   - \e string \b signature
+	 */
 	static function parse_sigheader($header) {
 
 		$ret = [];
@@ -297,12 +345,23 @@ class HTTPSig {
 	}
 
 
-	static function decrypt_sigheader($header,$prvkey = null) {
+	/**
+	 * @brief
+	 *
+	 * @param string $header
+	 * @param string $prvkey (optional), if not set use site private key
+	 * @return array|string associative array, empty string if failue
+	 *   - \e string \b iv
+	 *   - \e string \b key
+	 *   - \e string \b alg
+	 *   - \e string \b data
+	 */
+	static function decrypt_sigheader($header, $prvkey = null) {
 
 		$iv = $key = $alg = $data = null;
 
 		if(! $prvkey) {
-			$prvkey = get_config('system','prvkey');
+			$prvkey = get_config('system', 'prvkey');
 		}
 
 		$matches = [];
@@ -319,10 +378,8 @@ class HTTPSig {
 		if($iv && $key && $alg && $data) {
 			return crypto_unencapsulate([ 'iv' => $iv, 'key' => $key, 'alg' => $alg, 'data' => $data ] , $prvkey);
 		}
- 		return '';
 
+		return '';
 	}
 
 }
-
-
