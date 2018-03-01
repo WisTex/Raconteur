@@ -220,9 +220,10 @@ class Site {
 		$realm = get_directory_realm();
 
 		// directory server should not be set or settable unless we are a directory client
+		// avoid older redmatrix servers which don't have modern encryption
 
 		if($dirmode == DIRECTORY_MODE_NORMAL) {
-			$x = q("select site_url from site where site_flags in (%d,%d) and site_realm = '%s' and site_dead = 0",
+			$x = q("select site_url from site where site_flags in (%d,%d) and site_realm = '%s' and site_dead = 0 and site_project != 'redmatrix'",
 				intval(DIRECTORY_MODE_SECONDARY),
 				intval(DIRECTORY_MODE_PRIMARY),
 				dbesc($realm)

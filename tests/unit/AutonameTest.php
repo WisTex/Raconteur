@@ -62,13 +62,16 @@ class AutonameTest extends TestCase {
 
 	/**
 	 * test with a length, that may be too short
+	 * length is maximum - autoname can return something shorter.
 	 */
 	public function testAutonameLength1() {
 		$autoname1=autoname(1);
-		$this->assertEquals(1, strlen($autoname1));
+		$test = ((strlen($autoname1) < 2) ? 1 : 0);
+		$this->assertEquals(1, $test);
 
 		$autoname2=autoname(1);
-		$this->assertEquals(1, strlen($autoname2));
+		$test = ((strlen($autoname2) < 2) ? 1 : 0);
+		$this->assertEquals(1, $test);
 
 		// The following test is problematic, with only 26 possibilities
 		// generating the same thing twice happens often aka

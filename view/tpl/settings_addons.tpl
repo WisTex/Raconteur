@@ -1,5 +1,6 @@
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
+		<div class="descriptive-text pull-right">{{$descrip}}</div>
 		<h2>{{$title}}</h2>
 	</div>
 	<form action="settings/featured" method="post" autocomplete="off">

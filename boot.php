@@ -50,10 +50,10 @@ require_once('include/attach.php');
 require_once('include/bbcode.php');
 
 define ( 'PLATFORM_NAME',           'hubzilla' );
-define ( 'STD_VERSION',             '3.2RC' );
+define ( 'STD_VERSION',             '3.3' );
 define ( 'ZOT_REVISION',            '1.3' );
 
-define ( 'DB_UPDATE_VERSION',       1205 );
+define ( 'DB_UPDATE_VERSION',       1206 );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 
@@ -84,8 +84,6 @@ define ( 'DIRECTORY_FALLBACK_MASTER',  'https://gravizot.de');
 
 $DIRECTORY_FALLBACK_SERVERS = array(
 	'https://hubzilla.zottel.net',
-	'https://my.federated.social',
-	//'https://hubzilla.nl',
 	'https://gravizot.de'
 );
 
@@ -1688,9 +1686,14 @@ function remote_channel() {
 
 function can_view_public_stream() {
 
-	if((observer_prohibited(true)) 
-		|| (! (intval(get_config('system','open_pubstream',1))) && get_observer_hash())) {
+	if(observer_prohibited(true)) {
 		return false;
+	}
+ 
+	if(! (intval(get_config('system','open_pubstream',1)))) {
+		if(! get_observer_hash()) {
+			return false;
+		}
 	}
 
 	$site_firehose = ((intval(get_config('system','site_firehose',0))) ? true : false);

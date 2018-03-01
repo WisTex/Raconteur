@@ -138,7 +138,7 @@ class Enotify {
 
 		$itemlink = $params['link'];
 
-		$action = 'commented on';
+		$action = t('commented on');
 
 		if(array_key_exists('item',$params) && in_array($params['item']['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) {
 
@@ -149,10 +149,10 @@ class Enotify {
 			}
 
 			if(activity_match($params['verb'], ACTIVITY_LIKE))
-				$action = 'liked';
+				$action = t('liked');
 
 			if(activity_match($params['verb'], ACTIVITY_DISLIKE))
-				$action = 'disliked';
+				$action = t('disliked');
 
 		}
 

@@ -2019,17 +2019,36 @@ function item_post_type($item) {
 	return $post_type;
 }
 
+// This needs to be fixed to use quoted tag strings
 
 function undo_post_tagging($s) {
+
 	$matches = null;
+	// undo tags and mentions
 	$cnt = preg_match_all('/([@#])(\!*)\[zrl=(.*?)\](.*?)\[\/zrl\]/ism',$s,$matches,PREG_SET_ORDER);
 	if($cnt) {
 		foreach($matches as $mtch) {
-			$s = str_replace($mtch[0], $mtch[1] . $mtch[2] . str_replace(' ','_',$mtch[4]),$s);
+			$s = str_replace($mtch[0], $mtch[1] . $mtch[2] . quote_tag($mtch[4]),$s);
 		}
 	}
+	// undo forum tags
+	$cnt = preg_match_all('/\!\[zrl=(.*?)\](.*?)\[\/zrl\]/ism',$s,$matches,PREG_SET_ORDER);
+	if($cnt) {
+		foreach($matches as $mtch) {
+			$s = str_replace($mtch[0], '!' . quote_tag($mtch[2]),$s);
+		}
+	}
+
+
 	return $s;
 }
+
+function quote_tag($s) {
+	if(strpos($s,' ') !== false)
+		return '&quot;' . $s . '&quot;';
+	return $s;
+}
+
 
 function fix_mce_lf($s) {
 	$s = str_replace("\r\n","\n",$s);

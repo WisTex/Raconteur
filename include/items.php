@@ -2464,7 +2464,7 @@ function tag_deliver($uid, $item_id) {
 		// this is an update (edit) to a post which was already processed by us and has a second delivery chain
 		// Just start the second delivery chain to deliver the updated post
 		// after resetting ownership and permission bits
-
+		logger('updating edited tag_deliver post for ' . $u[0]['channel_address']);
 		start_delivery_chain($u[0], $item, $item_id, 0);
 		return;
 	}
@@ -2767,6 +2767,16 @@ function tgroup_check($uid, $item) {
 
 		return false;
 	}
+
+	// see if we already have this item. Maybe it is being updated.
+
+	$r = q("select id from item where mid = '%s' and uid = %d limit 1",
+		dbesc($item['mid']),
+		intval($uid)
+	);
+	if($r)
+		return true;
+
 	if(! perm_is_allowed($uid,$item['author_xchan'],'tag_deliver'))
 		return false;
 
