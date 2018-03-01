@@ -11,12 +11,12 @@
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="basic-settings">
 					<h3>
-						<a data-toggle="collapse" data-parent="#settings" href="#basic-settings-collapse">
+						<a data-toggle="collapse" data-target="#basic-settings-collapse" href="#">
 							{{$h_basic}}
 						</a>
 					</h3>
 				</div>
-				<div id="basic-settings-collapse" class="collapse show" role="tabpanel" aria-labelledby="basic-settings">
+				<div id="basic-settings-collapse" class="collapse show" role="tabpanel" aria-labelledby="basic-settings" data-parent="#settings">
 					<div class="section-content-tools-wrapper">
 						{{include file="field_input.tpl" field=$username}}
 						{{include file="field_select_grouped.tpl" field=$timezone}}
@@ -37,12 +37,12 @@
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="privacy-settings">
 					<h3>
-						<a data-toggle="collapse" data-parent="#settings" href="#privacy-settings-collapse">
+						<a data-toggle="collapse" data-target="#privacy-settings-collapse" href="#">
 							{{$h_prv}}
 						</a>
 					</h3>
 				</div>
-				<div id="privacy-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="privacy-settings">
+				<div id="privacy-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="privacy-settings" data-parent="#settings">
 					<div class="section-content-tools-wrapper">
 						{{include file="field_select_grouped.tpl" field=$role}}
 						<div id="advanced-perm" style="display:{{if $permissions_set}}none{{else}}block{{/if}};">
@@ -96,12 +96,12 @@
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="notification-settings">
 					<h3>
-						<a data-toggle="collapse" data-parent="#settings" href="#notification-settings-collapse">
+						<a data-toggle="collapse" data-target="#notification-settings-collapse" href="#">
 							{{$h_not}}
 						</a>
 					</h3>
 				</div>
-				<div id="notification-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="notification-settings">
+				<div id="notification-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="notification-settings" data-parent="#settings">
 					<div class="section-content-tools-wrapper">
 						<div id="settings-notifications">
 
@@ -160,12 +160,12 @@
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="miscellaneous-settings">
 					<h3>
-						<a data-toggle="collapse" data-parent="#settings" href="#miscellaneous-settings-collapse" aria-expanded="true" aria-controls="miscellaneous-settings-collapse">
+						<a data-toggle="collapse" data-target="#miscellaneous-settings-collapse" href="#" aria-expanded="true" aria-controls="miscellaneous-settings-collapse">
 							{{$lbl_misc}}
 						</a>
 					</h3>
 				</div>
-				<div id="miscellaneous-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="miscellaneous-settings">
+				<div id="miscellaneous-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="miscellaneous-settings" data-parent="#settings" >
 					<div class="section-content-tools-wrapper">
 						{{if $profselect}}
 						<label for="contact-profile-selector">{{$profseltxt}}</label>
