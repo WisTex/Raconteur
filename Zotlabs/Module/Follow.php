@@ -33,7 +33,7 @@ class Follow extends \Zotlabs\Web\Controller {
 			}
 		}
 	
-		info( t('Channel added.') . EOL);
+		info( t('Connection added.') . EOL);
 	
 		$clone = array();
 		foreach($result['abook'] as $k => $v) {
