@@ -39,7 +39,7 @@ class Newmember {
 
 			t('Find and Connect with others'),
 			[
-				'directory'     => t('View the channel directory'),
+				'directory'     => t('View the directory'),
 				'suggest'       => t('View friend suggestions'),
 				'connections'   => t('Manage your connections'),
 			],
@@ -64,7 +64,7 @@ class Newmember {
 		// hack to put this in the correct spot of the array
 
 		if($site_firehose || $net_firehose) {
-			$options[5]['pubstream'] = t('View public stream. Warning: not moderated');
+			$options[5]['pubstream'] = t('View public stream');
 		}
 
 		$o = replace_macros(get_markup_template('new_member.tpl'), [
