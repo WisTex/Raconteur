@@ -2,7 +2,11 @@
 	<div class="section-subtitle-wrapper" role="tab" id="{{$addon.0}}-settings">
 		<h3>
 			<a title="{{$addon.2}}" data-toggle="collapse" data-target="#{{$addon.0}}-settings-content" href="#" aria-controls="{{$addon.0}}-settings-content">
+				{{if $addon.1|substr:0:1 === '<'}}
 				{{$addon.1}}
+				{{else}}
+				<i class="fa fa-gear"></i> {{$addon.1}}
+				{{/if}}
 			</a>
 		</h3>
 	</div>
