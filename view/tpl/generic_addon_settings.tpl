@@ -1,12 +1,12 @@
 <div class="panel">
 	<div class="section-subtitle-wrapper" role="tab" id="{{$addon.0}}-settings">
 		<h3>
-			<a title="{{$addon.2}}" data-toggle="collapse" data-parent="#settings" href="#{{$addon.0}}-settings-content" aria-controls="{{$addon.0}}-settings-content">
+			<a title="{{$addon.2}}" data-toggle="collapse" data-target="#{{$addon.0}}-settings-content" href="#" aria-controls="{{$addon.0}}-settings-content">
 				{{$addon.1}}
 			</a>
 		</h3>
 	</div>
-	<div id="{{$addon.0}}-settings-content" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{$addon.0}}-settings">
+	<div id="{{$addon.0}}-settings-content" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{$addon.0}}-settings" data-parent="#settings">
 		<div class="section-content-tools-wrapper">
 			{{$content}}
 			{{if $addon.0}}
