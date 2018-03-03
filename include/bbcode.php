@@ -668,6 +668,31 @@ function bb_fixtable_lf($match) {
 
 }
 
+function bbtopoll($s) {
+
+	$pl = [];
+
+	$match = '';
+	if(! preg_match("/\[poll=(.*?)\](.*?)\[\/poll\]/ism",$s,$match)) {
+		return null;
+	}
+	$pl['poll_id'] = $match[1];
+	$pl['poll_question'] = $match[2];
+
+	$match = '';
+	if(preg_match_all("/\[poll\-answer=(.*?)\](.*?)\[\/poll\-answer\]/is",$s,$match,PREG_SET_ORDER)) {
+		$pl['answer'] = [];
+		foreach($match as $m) {
+			$ans = [ 'answer_id' => $m[1], 'answer_text' => $m[2] ];
+			$pl['answer'][] = $ans;
+		}
+	}
+
+	return $pl;
+
+}
+
+
 function parseIdentityAwareHTML($Text) {
 
 	// Hide all [noparse] contained bbtags by spacefying them
@@ -765,6 +790,11 @@ function bbcode($Text, $options = []) {
 	// replace all of the event code with a reformatted version.
 
 	$ev = bbtoevent($Text);
+
+	// and the same with polls
+
+	$pl = bbtopoll($Text);
+
 
 	// process [observer] tags before we do anything else because we might
 	// be stripping away stuff that then doesn't need to be worked on anymore
