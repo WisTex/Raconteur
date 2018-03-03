@@ -20,6 +20,11 @@ class Thing extends \Zotlabs\Web\Controller {
 
 		$channel    = \App::get_channel();
 
+		if($_SERVER['REQUEST_METHOD'] === 'GET' && argc() < 2) {
+			profile_load($channel['channel_address']);
+		}
+
+
 		$term_hash = (($_REQUEST['term_hash']) ? $_REQUEST['term_hash'] : '');
 
 		$name = escape_tags($_REQUEST['term']);
