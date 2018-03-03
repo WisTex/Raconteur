@@ -39,9 +39,9 @@ class Newmember {
 
 			t('Find and Connect with others'),
 			[
-				'directory'     => t('View the directory'),
-				'suggest'       => t('View friend suggestions'),
-				'connections'   => t('Manage your connections'),
+				'directory'              => t('View the directory'),
+				'directory?f=&suggest=1' => t('View friend suggestions'),
+				'connections'            => t('Manage your connections'),
 			],
 
 			t('Communicate'),

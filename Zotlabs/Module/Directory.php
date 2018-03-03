@@ -17,7 +17,7 @@ class Directory extends \Zotlabs\Web\Controller {
 				intval(local_channel()),
 				dbesc($_GET['ignore'])
 			);
-			goaway(z_root() . '/directory?suggest=1');
+			goaway(z_root() . '/directory?f=&suggest=1');
 		}
 	
 		$observer = get_observer_hash();
