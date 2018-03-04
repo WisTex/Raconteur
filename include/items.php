@@ -1412,6 +1412,13 @@ function get_mail_elements($x) {
 	}
 	else {
 		$arr['body']         = (($x['body']) ? htmlspecialchars($x['body'], ENT_COMPAT,'UTF-8',false) : '');
+
+		$maxlen = get_max_import_size();
+
+		if($maxlen && mb_strlen($arr['body']) > $maxlen) {
+			$arr['body'] = mb_substr($arr['body'],0,$maxlen,'UTF-8');
+			logger('message length exceeds max_import_size: truncated');
+		}
 	}
 
 	$arr['title']        = (($x['title'])? htmlspecialchars($x['title'],ENT_COMPAT,'UTF-8',false) : '');
