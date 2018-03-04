@@ -9,17 +9,37 @@ class Profs {
 	
 		if(array_key_exists('basic',$_REQUEST)) {
 			$arr = explode(',',$_REQUEST['basic']);
-			for($x = 0; $x < count($arr); $x ++) 
-				if(trim($arr[$x]))
-					$arr[$x] = trim($arr[$x]);
-			set_config('system','profile_fields_basic',$arr);
-	
+			array_walk($arr,'array_trim');
+			$narr = [];
+			if(count($arr)) {
+				foreach($arr as $a) {
+					if(strlen($a)) {
+						$narr[] = $a;
+					}
+				}
+			}
+			if(! $narr)
+				del_config('system','profile_fields_basic');
+			else
+				set_config('system','profile_fields_basic',$narr);
+
+
 			if(array_key_exists('advanced',$_REQUEST)) {
 				$arr = explode(',',$_REQUEST['advanced']);
-				for($x = 0; $x < count($arr); $x ++)
-					if(trim($arr[$x]))
-						$arr[$x] = trim($arr[$x]);
-				set_config('system','profile_fields_advanced',$arr);
+				array_walk($arr,'array_trim');
+				$narr = [];
+				if(count($arr)) {
+					foreach($arr as $a) {
+						if(strlen($a)) {
+							$narr[] = $a;
+						}
+					}
+				}
+				if(! $narr)
+					del_config('system','profile_fields_advanced');
+				else
+					set_config('system','profile_fields_advanced',$narr);
+
 			}
 			goaway(z_root() . '/admin/profs');
 		}
@@ -98,6 +118,7 @@ class Profs {
 		$basic = '';
 		$barr = array();
 		$fields = get_profile_fields_basic();
+
 		if(! $fields)
 			$fields = get_profile_fields_basic(1);
 		if($fields) {
