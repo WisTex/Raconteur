@@ -36,7 +36,7 @@ class Go extends \Zotlabs\Web\Controller {
 			'cover_photo'   => t('Upload a cover photo'),
 			'profiles'      => t('Edit your default profile'),
 			'suggest'       => t('View friend suggestions'),
-			'directory'     => t('View the directory to find other interesting channels'),
+			'directory'     => t('View the channel directory'),
 			'settings'      => t('View/edit your channel settings'),
 			'help'          => t('View the site or project documentation'),
 			'channel/' . $channel['channel_address']       => t('Visit your channel homepage'),

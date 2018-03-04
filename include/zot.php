@@ -171,6 +171,8 @@ function zot_build_packet($channel, $type = 'notify', $recipients = null, $remot
  *   packet type: one of 'ping', 'pickup', 'purge', 'refresh', 'keychange', 'force_refresh', 'notify', 'auth_check'
  * @param array $recipients
  *   envelope information, array ( 'guid' => string, 'guid_sig' => string ); empty for public posts
+ * @param string msg
+ *   optional message
  * @param string $remote_key
  *   optional public site key of target hub used to encrypt entire packet
  *   NOTE: remote_key and encrypted packets are required for 'auth_check' packets, optional for all others
@@ -299,7 +301,7 @@ function zot_zot($url, $data, $channel = null,$crypto = null) {
 	if($channel) {
 		$headers['X-Zot-Token'] = random_string();
 		$hash = \Zotlabs\Web\HTTPSig::generate_digest($data,false);
-		$headers['X-Zot-Digest'] = 'SHA-256=' . $hash;  
+		$headers['X-Zot-Digest'] = 'SHA-256=' . $hash;
 		$h = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],'acct:' . $channel['channel_address'] . '@' . \App::get_hostname(),false,false,'sha512',(($crypto) ? $crypto['hubloc_sitekey'] : ''), (($crypto) ? zot_best_algorithm($crypto['site_crypto']) : ''));
 	}
 
@@ -393,7 +395,7 @@ function zot_refresh($them, $channel = null, $force = false) {
 	if($s && intval($s[0]['site_dead']) && (! $force)) {
 		logger('zot_refresh: site ' . $url . ' is marked dead and force flag is not set. Cancelling operation.');
 		return false;
-	} 
+	}
 
 
 	$token = random_string();
@@ -1156,7 +1158,7 @@ function zot_process_response($hub, $arr, $outq) {
  * and also that the signer and the sender match.
  * If that happens, we do not need to fetch/pickup the message - we have it already and it is verified.
  * Translate it into the form we need for zot_import() and import it.
- * 
+ *
  * Otherwise send back a pickup message, using our message tracking ID ($arr['secret']), which we will sign with our site
  * private key.
  * The entire pickup message is encrypted with the remote site's public key.
@@ -5090,7 +5092,7 @@ function zot_reply_refresh($sender, $recipients) {
 function zot6_check_sig() {
 
 	$ret = [ 'success' => false ];
-	  
+
 	logger('server: ' . print_r($_SERVER,true), LOGGER_DATA);
 
 	if(array_key_exists('HTTP_SIGNATURE',$_SERVER)) {

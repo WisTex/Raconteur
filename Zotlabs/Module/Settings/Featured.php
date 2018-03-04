@@ -57,7 +57,10 @@ class Featured {
 		}
 
 		call_hooks('feature_settings', $settings_addons);
-					
+		
+		$this->sortpanels($settings_addons);
+
+			
 		$tpl = get_markup_template("settings_addons.tpl");
 		$o .= replace_macros($tpl, array(
 			'$form_security_token' => get_form_security_token("settings_featured"),
@@ -67,5 +70,15 @@ class Featured {
 		));
 		return $o;
 	}
-	
+
+	function sortpanels(&$s) {
+		$a = explode('<div class="panel">',$s);
+		if($a) {
+			usort($a,'featured_sort');
+			$s = implode('<div class="panel">',$a);
+		}
+	}
+
 }
+
+

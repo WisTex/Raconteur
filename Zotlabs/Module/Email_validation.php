@@ -7,12 +7,11 @@ class Email_validation extends \Zotlabs\Web\Controller {
 
 	function post() {
 
+		$success = false;
 		if($_POST['token']) {
 			// This will redirect internally on success unless the channel is auto_created
-			if(! account_approve(trim(basename($_POST['token'])))) {
-				notice('Token verification failed.');
-			}
-			else {
+			if(account_approve(trim(basename($_POST['token'])))) {
+				$success = true;
 				if(get_config('system','auto_channel_create')) {
 					$next_page = get_config('system', 'workflow_channel_next', 'profiles');		
 				}
@@ -21,7 +20,9 @@ class Email_validation extends \Zotlabs\Web\Controller {
 				}
 			}
 		}
-
+		if(! $success) {
+			notice( t('Token verification failed.') . EOL);
+		}
 	}
 
 

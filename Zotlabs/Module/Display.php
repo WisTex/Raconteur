@@ -215,6 +215,7 @@ class Display extends \Zotlabs\Web\Controller {
 			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']),intval(\App::$pager['start']));
 
 			if($load || ($checkjs->disabled()) || ($module_format !== 'html')) {
+
 				$r = null;
 
 				require_once('include/channel.php');
@@ -235,7 +236,7 @@ class Display extends \Zotlabs\Web\Controller {
 					}
 				}
 
-				if($r === null) {
+				if(! $r) {
 
 					// in case somebody turned off public access to sys channel content using permissions
 					// make that content unsearchable by ensuring the owner uid can't match
@@ -281,7 +282,7 @@ class Display extends \Zotlabs\Web\Controller {
 				}
 			}
 
-			if($r === null) {
+			if(! $r) {
 				// in case somebody turned off public access to sys channel content using permissions
 				// make that content unsearchable by ensuring the owner_xchan can't match
 				if(! perm_is_allowed($sysid,$observer_hash,'view_stream'))

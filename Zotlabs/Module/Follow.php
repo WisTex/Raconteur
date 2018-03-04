@@ -17,18 +17,23 @@ class Follow extends \Zotlabs\Web\Controller {
 		$url = notags(trim($_REQUEST['url']));
 		$return_url = $_SESSION['return_url'];
 		$confirm = intval($_REQUEST['confirm']);
-	
+		$interactive = (($_REQUEST['interactive']) ? intval($_REQUEST['interactive']) : 1);	
 		$channel = \App::get_channel();
 
-		$result = new_contact($uid,$url,$channel,true,$confirm);
+		$result = new_contact($uid,$url,$channel,$interactive,$confirm);
 		
 		if($result['success'] == false) {
 			if($result['message'])
 				notice($result['message']);
-			goaway($return_url);
+			if($interactive) {
+				goaway($return_url);
+			}
+			else {
+				json_return_and_die($result);
+			}
 		}
 	
-		info( t('Channel added.') . EOL);
+		info( t('Connection added.') . EOL);
 	
 		$clone = array();
 		foreach($result['abook'] as $k => $v) {
@@ -53,7 +58,12 @@ class Follow extends \Zotlabs\Web\Controller {
 		if(($can_view_stream) || ($result['abook']['xchan_network'] === 'rss'))
 			\Zotlabs\Daemon\Master::Summon(array('Onepoll',$result['abook']['abook_id']));
 	
-		goaway(z_root() . '/connedit/' . $result['abook']['abook_id'] . '?f=&follow=1');
+		if($interactive) {
+			goaway(z_root() . '/connedit/' . $result['abook']['abook_id'] . '?f=&follow=1');
+		}
+		else {
+			json_return_and_die([ 'success' => true ]);
+		}
 	
 	}
 	

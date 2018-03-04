@@ -123,7 +123,8 @@ class Wfinger extends \Zotlabs\Web\Controller {
 			$result['properties'] = [
 					'http://webfinger.net/ns/name'   => $r[0]['channel_name'],
 					'http://xmlns.com/foaf/0.1/name' => $r[0]['channel_name'],
-					'https://w3id.org/security/v1#publicKeyPem' => $r[0]['xchan_pubkey']
+					'https://w3id.org/security/v1#publicKeyPem' => $r[0]['xchan_pubkey'],
+					'http://purl.org/zot/federation' => 'zot'
 			];
 	
 			foreach($aliases as $alias) 

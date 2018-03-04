@@ -88,9 +88,18 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 
 		// Premium channel, set confirm before callback to avoid recursion
 
-		if(array_key_exists('connect_url',$j) && ($interactive) && (! $confirm))
-			goaway(zid($j['connect_url']));
-
+		if(array_key_exists('connect_url',$j) && (! $confirm)) {
+			if($interactive) {
+				goaway(zid($j['connect_url']));
+			}
+			else {
+				$result['message'] = t('Premium channel - please visit:') . ' ' . zid($j['connect_url']);
+				logger('mod_follow: ' . $result['message']);
+				return $result;
+			}
+		}
+				
+				
 
 		// do we have an xchan and hubloc?
 		// If not, create them.	

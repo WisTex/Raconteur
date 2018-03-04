@@ -530,7 +530,7 @@ function account_deny($hash) {
 
 function account_approve($hash) {
 
-	$ret = array('success' => false);
+	$ret = false;
 
 	// Note: when the password in the register table is 'verify', the uid actually contains the account_id
 

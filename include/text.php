@@ -3311,4 +3311,10 @@ function purify_filename($s) {
 	return $s;
 }
 
+// callback for sorting the settings/featured entries.
 
+function featured_sort($a,$b) {
+	$s1 = substr($a,strpos($a,'id='),20);
+	$s2 = substr($b,strpos($b,'id='),20);
+	return(strcmp($s1,$s2));
+}
