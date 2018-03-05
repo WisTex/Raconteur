@@ -101,6 +101,11 @@ class Directory extends \Zotlabs\Web\Controller {
 		if($suggest) {
 	
 			$r = suggestion_query(local_channel(),get_observer_hash());
+
+			if(! $r) {
+				notice( t('No default suggestions were found.') . EOL);
+				return;
+			}
 	
 			// Remember in which order the suggestions were
 			$addresses = array();

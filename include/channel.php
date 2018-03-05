@@ -1126,8 +1126,7 @@ function channel_export_items($channel_id, $start, $finish) {
 /**
  * @brief Loads a profile into the App structure.
  *
- * The function requires a writeable copy of the main App structure, and the
- * nickname of a valid channel.
+ * The function requires the nickname of a valid channel.
  *
  * Permissions of the current observer are checked. If a restricted profile is available
  * to the current observer, that will be loaded instead of the channel default profile.
