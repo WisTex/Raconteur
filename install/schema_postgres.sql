@@ -944,6 +944,7 @@ CREATE TABLE "poll" (
   "poll_id" serial  NOT NULL,
   "poll_guid" text NOT NULL,
   "poll_channel" bigint  NOT NULL DEFAULT '0',
+  "poll_author" text NOT NULL,
   "poll_desc" text NOT NULL,
   "poll_flags" bigint NOT NULL DEFAULT '0',
   "poll_votes" bigint NOT NULL DEFAULT '0',
@@ -952,6 +953,7 @@ CREATE TABLE "poll" (
 );
 create index "poll_guid" on poll ("poll_guid");
 create index "poll_channel" on poll ("poll_channel");
+create index "poll_author" on poll ("poll_author");
 create index "poll_flags" on poll ("poll_flags");
 create index "poll_votes" on poll ("poll_votes");
 CREATE TABLE "poll_elm" (
