@@ -589,13 +589,16 @@ function zot_refresh($them, $channel = null, $force = false) {
 
 
 						// If there is a default group for this channel, add this connection to it
+						// for pending connections this will happens at acceptance time.
 
-						$default_group = $channel['channel_default_group'];
-						if($default_group) {
-							require_once('include/group.php');
-							$g = group_rec_byhash($channel['channel_id'],$default_group);
-							if($g)
-								group_add_member($channel['channel_id'],'',$x['hash'],$g['id']);
+						if(! intval($new_connection[0]['abook_pending'])) {
+							$default_group = $channel['channel_default_group'];
+							if($default_group) {
+								require_once('include/group.php');
+								$g = group_rec_byhash($channel['channel_id'],$default_group);
+								if($g)
+									group_add_member($channel['channel_id'],'',$x['hash'],$g['id']);
+							}
 						}
 
 						unset($new_connection[0]['abook_id']);
