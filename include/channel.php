@@ -1126,8 +1126,7 @@ function channel_export_items($channel_id, $start, $finish) {
 /**
  * @brief Loads a profile into the App structure.
  *
- * The function requires a writeable copy of the main App structure, and the
- * nickname of a valid channel.
+ * The function requires the nickname of a valid channel.
  *
  * Permissions of the current observer are checked. If a restricted profile is available
  * to the current observer, that will be loaded instead of the channel default profile.
@@ -1897,6 +1896,7 @@ function is_public_profile() {
 function get_profile_fields_basic($filter = 0) {
 
 	$profile_fields_basic = (($filter == 0) ? get_config('system','profile_fields_basic') : null);
+
 	if(! $profile_fields_basic)
 		$profile_fields_basic = array('fullname','pdesc','chandesc','comms','gender','dob','dob_tz','region','country_name','marital','sexual','homepage','hometown','keywords','about','contact');
 
