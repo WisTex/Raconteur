@@ -463,6 +463,12 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 				'$embedPhotosModalTitle' => t('Use a photo from your albums'),
 				'$embedPhotosModalCancel' => t('Cancel'),
 				'$embedPhotosModalOK' => t('OK'),
+				'$modalchooseimages' => t('Choose images to embed'),
+				'$modalchoosealbum' => t('Choose an album'),
+				'$modaldiffalbum' => t('Choose a different album'),
+				'$modalerrorlist' => t('Error getting album list'),
+				'$modalerrorlink' => t('Error getting photo link'),
+				'$modalerroralbum' => t('Error getting album'),
 				'$form_security_token' => get_form_security_token("profile_photo"),
 				'$select' => t('Select existing photo'),
 			));
