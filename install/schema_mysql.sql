@@ -988,10 +988,12 @@ CREATE TABLE IF NOT EXISTS `poll_elm` (
   `pelm_desc` text NOT NULL,
   `pelm_flags` int(11) NOT NULL DEFAULT 0 ,
   `pelm_result` float NOT NULL DEFAULT 0 ,
+  `pelm_order` int(11) NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`pelm_id`),
   KEY `pelm_guid` (`pelm_guid`),
   KEY `pelm_poll` (`pelm_poll`),
-  KEY `pelm_result` (`pelm_result`)
+  KEY `pelm_result` (`pelm_result`),
+  KEY `pelm_order` (`pelm_order`),
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `profdef` (

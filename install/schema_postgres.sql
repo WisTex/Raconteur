@@ -963,11 +963,13 @@ CREATE TABLE "poll_elm" (
   "pelm_desc" text NOT NULL,
   "pelm_flags" bigint NOT NULL DEFAULT '0',
   "pelm_result" float NOT NULL DEFAULT '0',
+  "pelm_order" numeric(6) NOT NULL DEFAULT '0',
   PRIMARY KEY ("pelm_id")
 );
 create index "pelm_guid" on poll_elm ("pelm_guid");
 create index "pelm_poll" on poll_elm ("pelm_poll");
 create index "pelm_result" on poll_elm ("pelm_result");
+create index "pelm_order" on poll_elm ("pelm_order");
 
 CREATE TABLE "profdef" (
   "id" serial  NOT NULL,
