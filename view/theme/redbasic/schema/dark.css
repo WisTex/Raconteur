@@ -343,6 +343,10 @@ pre {
 	border:1px solid #090909;
 }
 
+#wiki-content-container code {
+	background: #000;
+}
+
 .notif-item a {
 	color: #ccc;
 }
