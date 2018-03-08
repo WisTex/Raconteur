@@ -8,8 +8,6 @@ class Hashtags extends \Zotlabs\Web\Controller {
 	function init() {
 		$result = [];
 
-		logger(print_r($_REQUEST,true));
-
 		$t = escape_tags($_REQUEST['t']);
 		if(! $t)
 			json_return_and_die($result);
@@ -23,7 +21,7 @@ class Hashtags extends \Zotlabs\Web\Controller {
 				$result[] = [ 'text' => strtolower($rv['term']) ];
 			}
 		}
-		logger(print_r($result,true));
+
 		json_return_and_die($result); 
 	}
 }
