@@ -15,6 +15,10 @@ textarea, input, select
 	padding: 10px 0;
 }
 
+#jot-title {
+	border-radius: 3px;
+}
+
 #jot-title-wrap {
 	border-bottom: none;
 	margin-bottom: 5px;
