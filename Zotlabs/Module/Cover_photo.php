@@ -207,7 +207,7 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 			}
 		}
 	
-		$imagedata = (($os_storage) ? @file_get_contents($imagedata) : $imagedata);
+		$imagedata = (($os_storage) ? @file_get_contents(dbunescbin($imagedata)) : dbunescbin($imagedata));
 		$ph = photo_factory($imagedata, $filetype);
 	
 		if(! $ph->is_valid()) {
