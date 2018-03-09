@@ -993,7 +993,7 @@ CREATE TABLE IF NOT EXISTS `poll_elm` (
   KEY `pelm_guid` (`pelm_guid`),
   KEY `pelm_poll` (`pelm_poll`),
   KEY `pelm_result` (`pelm_result`),
-  KEY `pelm_order` (`pelm_order`),
+  KEY `pelm_order` (`pelm_order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `profdef` (
