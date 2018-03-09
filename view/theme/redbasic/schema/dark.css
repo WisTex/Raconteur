@@ -15,13 +15,26 @@ textarea, input, select
 	padding: 10px 0;
 }
 
+#jot-title {
+	border-radius: 3px;
+}
+
 #jot-title-wrap {
 	border-bottom: none;
 	margin-bottom: 5px;
 }
 
+#jot-category-wrap {
+	border-bottom: none;
+	margin-bottom: 5px;
+}
+
+.bootstrap-tagsinput {
+	background: #333;
+}
+
 optgroup {
-	color: #CCC !important; 
+	color: #CCC !important;
 }
 
 option {
@@ -132,7 +145,7 @@ option {
 .abook-self {
 	border: 1px solid #222;
 	color: #555;
-	background-color:#111;	
+	background-color:#111;
 }
 
 .modal-content {
@@ -208,7 +221,7 @@ a.btn, aside a {
 }
 .btn-danger:hover, .btn-danger:focus, form#chat-destroy > input:hover, form#chat-destroy > input:focus {
 	color: #FFF !important;
-    background-color: #C9302C !important;		
+    background-color: #C9302C !important;
     border-color: #AC2925 !important;
 }
 
@@ -278,7 +291,7 @@ nav .dropdown-menu {
 	border-bottom:1px solid #333;
 }
 
-.nav-tabs .nav-link.active { 
+.nav-tabs .nav-link.active {
 	color: #fff;
 	background-color: #111;
 	border-color: #333;
@@ -297,7 +310,7 @@ aside .nav > li > a:hover, aside .nav > li > a:focus {
 	background-color: #222;
 }
 
-a, a:visited, a:link, .fakelink, .fakelink:visited, .fakelink:link { 
+a, a:visited, a:link, .fakelink, .fakelink:visited, .fakelink:link {
 	font-weight: bold;
 }
 
@@ -343,6 +356,10 @@ pre {
 	border:1px solid #090909;
 }
 
+#wiki-content-container code {
+	background: #000;
+}
+
 .notif-item a {
 	color: #ccc;
 }
@@ -352,23 +369,23 @@ pre {
 }
 
 .dropdown-menu {
-	background-color: #222; 
+	background-color: #222;
 }
 
 .dropdown-menu >li > a {
-	color: #ccc; 
+	color: #ccc;
 }
 
 .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
-    	color: #ddd; 
-    	background-color: #333; 
+    	color: #ddd;
+    	background-color: #333;
 	background-image: none;
 }
 
 .open .dropdown-toggle.btn-default, .open .dropdown-toggle.btn-default:focus {
-    color: #ccc; 
-    background-color: #222; 
-    border-color: #222; 
+    color: #ccc;
+    background-color: #222;
+    border-color: #222;
 }
 
 .pmenu-item:hover a {
@@ -444,7 +461,7 @@ pre {
 
 
 .profile-match-wrapper {
-	width: 150px;	
+	width: 150px;
 	height: 120px;
 	border: none;
 }
@@ -462,5 +479,3 @@ pre {
 .widget-nav-pills-checkbox:hover + a {
 	background-color: #222;
 }
-
-
