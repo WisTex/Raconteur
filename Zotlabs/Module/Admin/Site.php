@@ -14,8 +14,6 @@ class Site {
 			return;
 		}
 
-logger('post: ' . print_r($_POST,true));
-
 		check_form_security_token_redirectOnErr('/admin/site', 'admin_site');
 
 		$sitename 			=	((x($_POST,'sitename'))			? notags(trim($_POST['sitename']))			: '');
