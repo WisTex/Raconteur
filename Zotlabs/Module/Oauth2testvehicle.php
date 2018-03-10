@@ -145,13 +145,14 @@ class OAuth2TestVehicle extends \Zotlabs\Web\Controller {
 				$client_id = (x($_POST, 'client_id') ? $_POST['client_id'] : '');
 				$code = (x($_POST, 'code') ? $_POST['code'] : '');
 				$client_secret = (x($_POST, 'client_secret') ? $_POST['client_secret'] : '');
-				$url = z_root() . '/token/?';
-				$url .= 'grant_type=' . $grant_type;
-				$url .= '&redirect_uri=' . urlencode($redirect_uri);
-				$url .= '&client_id=' . $client_id;
-				$url .= '&code=' . $code;
-				$post = z_fetch_url($url, false, 0, array(
-					'custom' => 'POST',
+				$url = z_root() . '/token/';
+				$params = http_build_query(array(
+					'grant_type' => $grant_type,
+					'redirect_uri' => urlencode($redirect_uri),
+					'client_id' => $client_id,
+					'code' => $code,
+				));
+				$post = z_post_url($url, $params, 0, array(
 					'http_auth' => $client_id . ':' . $client_secret,
 				));
 				logger(json_encode($post, JSON_PRETTY_PRINT), LOGGER_DEBUG);
