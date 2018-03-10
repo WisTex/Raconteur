@@ -969,12 +969,14 @@ CREATE TABLE IF NOT EXISTS `poll` (
   `poll_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `poll_guid` varchar(191) NOT NULL,
   `poll_channel` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `poll_author` varchar(191) NOT NULL,
   `poll_desc` text NOT NULL,
   `poll_flags` int(11) NOT NULL DEFAULT 0 ,
   `poll_votes` int(11) NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`poll_id`),
   KEY `poll_guid` (`poll_guid`),
   KEY `poll_channel` (`poll_channel`),
+  KEY `poll_author` (`poll_author`),
   KEY `poll_flags` (`poll_flags`),
   KEY `poll_votes` (`poll_votes`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -986,10 +988,12 @@ CREATE TABLE IF NOT EXISTS `poll_elm` (
   `pelm_desc` text NOT NULL,
   `pelm_flags` int(11) NOT NULL DEFAULT 0 ,
   `pelm_result` float NOT NULL DEFAULT 0 ,
+  `pelm_order` int(11) NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`pelm_id`),
   KEY `pelm_guid` (`pelm_guid`),
   KEY `pelm_poll` (`pelm_poll`),
-  KEY `pelm_result` (`pelm_result`)
+  KEY `pelm_result` (`pelm_result`),
+  KEY `pelm_order` (`pelm_order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `profdef` (

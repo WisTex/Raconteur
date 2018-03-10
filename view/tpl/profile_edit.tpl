@@ -49,12 +49,12 @@
 				<div class="panel">
 					<div class="section-subtitle-wrapper" role="tab" id="personal">
 						<h3>
-							<a data-toggle="collapse" data-parent="#profile-edit-wrapper" href="#personal-collapse" aria-expanded="true" aria-controls="personal-collapse">
+							<a data-toggle="collapse" data-target="#personal-collapse" href="#" aria-expanded="true" aria-controls="personal-collapse">
 								{{$personal}}
 							</a>
 						</h3>
 					</div>
-					<div id="personal-collapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="personal">
+					<div id="personal-collapse" class="panel-collapse collapse show" data-parent="#profile-edit-wrapper" role="tabpanel" aria-labelledby="personal">
 						<div class="section-content-tools-wrapper">
 							{{include file="field_input.tpl" field=$profile_name}}
 
@@ -215,12 +215,12 @@
 				<div class="panel">
 					<div class="section-subtitle-wrapper" role="tab" id="location">
 						<h3>
-							<a data-toggle="collapse" data-parent="#profile-edit-wrapper" href="#location-collapse" aria-expanded="true" aria-controls="location-collapse">
+							<a data-toggle="collapse" data-target="#location-collapse" href="#" aria-expanded="true" aria-controls="location-collapse">
 								{{$location}}
 							</a>
 						</h3>
 					</div>
-					<div id="location-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="location">
+					<div id="location-collapse" class="panel-collapse collapse" data-parent="#profile-edit-wrapper" role="tabpanel" aria-labelledby="location">
 						<div class="section-content-tools-wrapper">
 							{{if $fields.address}}
 							{{include file="field_input.tpl" field=$address}}
@@ -260,12 +260,12 @@
 				<div class="panel">
 					<div class="section-subtitle-wrapper" role="tab" id="relation">
 						<h3>
-							<a data-toggle="collapse" data-parent="#profile-edit-wrapper" href="#relation-collapse" aria-expanded="true" aria-controls="relation-collapse">
+							<a data-toggle="collapse" data-target="#relation-collapse" href="#" aria-expanded="true" aria-controls="relation-collapse">
 								{{$relation}}
 							</a>
 						</h3>
 					</div>
-					<div id="relation-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="relation">
+					<div id="relation-collapse" class="panel-collapse collapse" data-parent="#profile-edit-wrapper" role="tabpanel" aria-labelledby="relation">
 						<div class="section-content-tools-wrapper">
 							{{if $fields.marital }}
 							<div id="profile-edit-marital-wrapper" class="form-group field" >
@@ -307,12 +307,12 @@
 				<div class="panel">
 					<div class="section-subtitle-wrapper" role="tab" id="miscellaneous">
 						<h3>
-							<a data-toggle="collapse" data-parent="#profile-edit-wrapper" href="#miscellaneous-collapse" aria-expanded="true" aria-controls="miscellaneous-collapse">
+							<a data-toggle="collapse" data-target="#miscellaneous-collapse" href="#" aria-expanded="true" aria-controls="miscellaneous-collapse">
 								{{$miscellaneous}}
 							</a>
 						</h3>
 					</div>
-					<div id="miscellaneous-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="miscellaneous">
+					<div id="miscellaneous-collapse" class="panel-collapse collapse" data-parent="#profile-edit-wrapper" role="tabpanel" aria-labelledby="miscellaneous">
 						<div class="section-content-tools-wrapper">
 							{{if $fields.homepage}}
 							{{include file="field_input.tpl" field=$homepage}}

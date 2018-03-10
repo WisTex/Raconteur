@@ -207,7 +207,7 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 			}
 		}
 	
-		$imagedata = (($os_storage) ? @file_get_contents($imagedata) : $imagedata);
+		$imagedata = (($os_storage) ? @file_get_contents(dbunescbin($imagedata)) : dbunescbin($imagedata));
 		$ph = photo_factory($imagedata, $filetype);
 	
 		if(! $ph->is_valid()) {
@@ -364,6 +364,12 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 				'$embedPhotosModalTitle' => t('Use a photo from your albums'),
 				'$embedPhotosModalCancel' => t('Cancel'),
 				'$embedPhotosModalOK' => t('OK'),
+				'$modalchooseimages' => t('Choose images to embed'),
+				'$modalchoosealbum' => t('Choose an album'),
+				'$modaldiffalbum' => t('Choose a different album'),
+				'$modalerrorlist' => t('Error getting album list'),
+				'$modalerrorlink' => t('Error getting photo link'),
+				'$modalerroralbum' => t('Error getting album'),
 				'$form_security_token' => get_form_security_token("cover_photo"),
 					/// @FIXME - yuk  
 				'$select' => t('Select existing photo'),

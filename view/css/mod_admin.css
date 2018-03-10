@@ -70,3 +70,21 @@
 	margin-top: 0px !important;
 	margin-left: 0px !important;
 }
+
+pre code {
+	background: #F5F5F5;
+	font-family: Courier, monospace;
+	font-size: 1em;
+	padding: 1em 1.5em;
+	display: block;
+	white-space: pre-wrap;
+}
+
+code {
+	background: #F5F5F5;
+	font-family: Courier, monospace;
+	font-size: 1em;
+	display: inline;
+	padding: 0.2em 0.2em;
+	white-space: pre-wrap;
+}

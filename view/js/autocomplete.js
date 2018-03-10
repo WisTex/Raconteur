@@ -74,6 +74,10 @@ function bbco_format(item) {
 	return "<div class='dropdown-item'>" + item + "</div>";
 }
 
+function tag_format(item) {
+	return "<div class='dropdown-item'>" + '#' + item.text + "</div>";
+}
+
 function editor_replace(item) {
 	if(typeof item.replace !== 'undefined') {
 		return '$1$2' + item.replace;
@@ -202,6 +206,16 @@ function string2bb(element) {
 		};
 
 
+		// Autocomplete hashtags
+		tags = {
+			match: /(^|\s)(\#)([^ \n]{2,})$/,
+			index: 3,
+			search: function(term, callback) { $.getJSON('/hashtags/' + '$f=&t=' + term).done(function(data) { callback($.map(data, function(entry) { return entry.text.indexOf(term) === 0 ? entry : null; })); }); },
+			replace: function(item) { return "$1$2" + item.text + ' '; },
+			template: tag_format
+		};
+
+
 		smilies = {
 			match: /(^|\s)(:[a-z_:]{2,})$/,
 			index: 2,
@@ -211,7 +225,7 @@ function string2bb(element) {
 			template: smiley_format
 		};
 		this.attr('autocomplete','off');
-		this.textcomplete([contacts,forums,smilies], {className:'acpopup', zIndex:1020});
+		this.textcomplete([contacts,forums,smilies,tags], {className:'acpopup', zIndex:1020});
 	};
 })( jQuery );
 
