@@ -38,7 +38,7 @@ class Site {
 		$site_sellpage		=	((x($_POST,'site_sellpage'))	? notags(trim($_POST['site_sellpage']))		: '');
 		$site_location		=	((x($_POST,'site_location'))	? notags(trim($_POST['site_location']))		: '');
 		$frontpage			=	((x($_POST,'frontpage'))	? notags(trim($_POST['frontpage']))		: '');
-		$firstpage		    =	((x(trim($_POST,'firstpage')))	? notags(trim($_POST['firstpage']))		: 'profiles');
+		$firstpage		    =	((x($_POST,'firstpage'))	? notags(trim($_POST['firstpage']))		: 'profiles');
 		$mirror_frontpage	=	((x($_POST,'mirror_frontpage'))	? intval(trim($_POST['mirror_frontpage']))		: 0);
 		$directory_server	=	((x($_POST,'directory_server')) ? trim($_POST['directory_server']) : '');
 		$allowed_sites		=	((x($_POST,'allowed_sites'))	? notags(trim($_POST['allowed_sites']))		: '');
