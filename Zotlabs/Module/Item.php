@@ -830,6 +830,12 @@ class Item extends \Zotlabs\Web\Controller {
 		$datarray['plink']               = $plink;
 		$datarray['route']               = $route;
 	
+
+		// A specific ACL over-rides public_policy completely
+ 
+		if(! empty_acl($datarray))
+			$datarray['public_policy'] = '';
+
 		if($iconfig)
 			$datarray['iconfig'] = $iconfig;
 	
