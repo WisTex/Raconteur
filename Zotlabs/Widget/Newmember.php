@@ -9,15 +9,16 @@ class Newmember {
 		if(! local_channel())
 			return EMPTY_STR;
 
+		if(get_pconfig(local_channel(), 'system', 'disable_newmemberwidget'))
+			return EMPTY_STR;
+
 		$c = \App::get_channel();
 		if(! $c)
 			return EMPTY_STR;
 
-
 		$a = \App::get_account();
 		if(! $a)
 			return EMPTY_STR;
-
 
 		if(datetime_convert('UTC','UTC',$a['account_created']) < datetime_convert('UTC','UTC', 'now - 60 days'))
 			return EMPTY_STR;
