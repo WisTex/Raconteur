@@ -32,7 +32,7 @@ class Sitelist extends \Zotlabs\Web\Controller {
 	
 		$result = array('success' => false);
 	
-		$r = q("select count(site_url) as total from site where site_type = %d $sql_extra ",
+		$r = q("select count(site_url) as total from site where site_type = %d and site_dead = 0 $sql_extra ",
 			intval(SITE_TYPE_ZOT)
 		);
 		
@@ -42,7 +42,7 @@ class Sitelist extends \Zotlabs\Web\Controller {
 		$result['start'] = $start;
 		$result['limit'] = $limit;	
 	
-		$r = q("select * from site where site_type = %d $sql_extra $sql_order $sql_limit",
+		$r = q("select * from site where site_type = %d and site_dead = 0 $sql_extra $sql_order $sql_limit",
 			intval(SITE_TYPE_ZOT)
 		);
 	

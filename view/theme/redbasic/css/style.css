@@ -604,14 +604,6 @@ footer {
 	padding: .15rem .5rem;
 }
 
-#nav-search-text::-webkit-input-placeholder {
-	font-family: FontAwesome, sans-serif;
-}
-
-#nav-search-text::-moz-placeholder {
-	font-family: FontAwesome, sans-serif;
-}
-
 nav .acpopup {
 	top: 46px !important;
 	margin-left: -35px;
@@ -842,21 +834,12 @@ div.jGrowl div.jGrowl-notification {
 
 #acl-search::-webkit-input-placeholder {
 	/* non-fontawesome fonts set a fallback for text parts of the placeholder*/
-	font-family: FontAwesome, sans-serif, arial, freesans;
+	font-family: ForkAwesome, sans-serif, arial, freesans;
 }
 
 #acl-search::-moz-placeholder {
 	/* non-fontawesome fonts set a fallback for text parts of the placeholder*/
-	font-family: FontAwesome, sans-serif, arial, freesans;
-}
-
-.acl-list-item {
-	width: 100%;
-	padding: 0.5rem;
-	margin-bottom: 0.5rem;
-	border: 1px solid #ccc;
-	float: left;
-	border-radius: $radius;
+	font-family: ForkAwesome, sans-serif, arial, freesans;
 }
 
 .acl-item-header {
@@ -865,10 +848,12 @@ div.jGrowl div.jGrowl-notification {
 
 .acl-list-item.grouphide {
 	border: 1px solid red;
+	z-index: 2;
 }
 
 .acl-list-item.groupshow {
 	border: 1px solid green;
+	z-index: 2;
 }
 
 .acl-list-item.taggable {
@@ -1799,4 +1784,9 @@ dl.bb-dl > dd > li {
 
 .caption-visible {
 	max-height: 75%;
+}
+
+.oneway-overlay {
+    position: absolute;
+    text-shadow: -2px 0 1px #fff, 0 2px 1px#fff, 2px 0 1px #fff, 0 -2px 1px #fff;
 }

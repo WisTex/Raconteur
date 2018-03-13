@@ -657,17 +657,15 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `uid_item_wall` (`uid`, `item_wall`),
   KEY `uid_item_starred` (`uid`, `item_starred`),
   KEY `uid_item_retained` (`uid`, `item_retained`),
-  KEY `aid` (`aid`),
+  KEY `uid_item_private` (`uid`, `item_private`),
+  KEY `uid_resource_type` (`uid`, `resource_type`),
   KEY `owner_xchan` (`owner_xchan`),
   KEY `author_xchan` (`author_xchan`),
   KEY `resource_id` (`resource_id`),
   KEY `resource_type` (`resource_type`),
-  KEY `item_restrict` (`item_restrict`),
-  KEY `item_flags` (`item_flags`),
   KEY `commented` (`commented`),
   KEY `verb` (`verb`),
   KEY `obj_type` (`obj_type`),
-  KEY `item_private` (`item_private`),
   KEY `llink` (`llink`),
   KEY `expires` (`expires`),
   KEY `revision` (`revision`),
@@ -681,6 +679,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `comments_closed` (`comments_closed`),
   KEY `changed` (`changed`),
   KEY `item_origin` (`item_origin`),
+  KEY `item_wall` (`item_wall`),
   KEY `item_unseen` (`item_unseen`),
   KEY `item_uplink` (`item_uplink`),
   KEY `item_notshown` (`item_notshown`),
@@ -692,7 +691,8 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `item_verified` (`item_verified`),
   KEY `item_rss` (`item_rss`),
   KEY `item_consensus` (`item_consensus`),
-  KEY `item_deleted_pending_remove_changed` (`item_deleted`, `item_pending_remove`, `changed`)
+  KEY `item_deleted_pending_remove_changed` (`item_deleted`, `item_pending_remove`, `changed`),
+  KEY `item_pending_remove_changed` (`item_pending_remove`, `changed`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `item_id` (
@@ -964,25 +964,33 @@ CREATE TABLE IF NOT EXISTS `photo` (
 
 CREATE TABLE IF NOT EXISTS `poll` (
   `poll_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `poll_guid` varchar(191) NOT NULL,
   `poll_channel` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `poll_author` varchar(191) NOT NULL,
   `poll_desc` text NOT NULL,
   `poll_flags` int(11) NOT NULL DEFAULT 0 ,
   `poll_votes` int(11) NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`poll_id`),
+  KEY `poll_guid` (`poll_guid`),
   KEY `poll_channel` (`poll_channel`),
+  KEY `poll_author` (`poll_author`),
   KEY `poll_flags` (`poll_flags`),
   KEY `poll_votes` (`poll_votes`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `poll_elm` (
   `pelm_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `pelm_guid` varchar(191) NOT NULL,
   `pelm_poll` int(10) unsigned NOT NULL DEFAULT 0 ,
   `pelm_desc` text NOT NULL,
   `pelm_flags` int(11) NOT NULL DEFAULT 0 ,
   `pelm_result` float NOT NULL DEFAULT 0 ,
+  `pelm_order` int(11) NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`pelm_id`),
+  KEY `pelm_guid` (`pelm_guid`),
   KEY `pelm_poll` (`pelm_poll`),
-  KEY `pelm_result` (`pelm_result`)
+  KEY `pelm_result` (`pelm_result`),
+  KEY `pelm_order` (`pelm_order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `profdef` (
@@ -1258,12 +1266,14 @@ CREATE TABLE IF NOT EXISTS `verify` (
 
 CREATE TABLE IF NOT EXISTS `vote` (
   `vote_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `vote_guid` varchar(191) NOT NULL, 
   `vote_poll` int(11) NOT NULL DEFAULT 0 ,
   `vote_element` int(11) NOT NULL DEFAULT 0 ,
   `vote_result` text NOT NULL,
   `vote_xchan` char(191) NOT NULL DEFAULT '',
   PRIMARY KEY (`vote_id`),
   UNIQUE KEY `vote_vote` (`vote_poll`,`vote_element`,`vote_xchan`),
+  KEY `vote_guid` (`vote_guid`),
   KEY `vote_poll` (`vote_poll`),
   KEY `vote_element` (`vote_element`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

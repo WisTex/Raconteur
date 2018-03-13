@@ -304,6 +304,12 @@ function insertCommentURL(comment, id) {
 	return true;
 }
 
+function doFollowAuthor(url) {
+	$.get(url, function(data) { notificationsUpdate(); });
+	return true;
+}
+
+
 function viewsrc(id) {
 	$.colorbox({href: 'viewsrc/' + id, maxWidth: '80%', maxHeight: '80%' });
 }

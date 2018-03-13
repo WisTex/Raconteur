@@ -15,7 +15,7 @@ head_add_js('jquery.js');
 head_add_js('/library/justifiedGallery/jquery.justifiedGallery.min.js');
 head_add_js('/library/sprintf.js/dist/sprintf.min.js');
 
-head_add_js('jquery.textinputs.js');
+//head_add_js('jquery.textinputs.js');
 head_add_js('autocomplete.js');
 head_add_js('/library/jquery-textcomplete/jquery.textcomplete.js');
 

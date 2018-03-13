@@ -1005,7 +1005,7 @@ function thread_author_menu($item, $mode = '') {
 		$contact = App::$contacts[$item['author_xchan']];
 	else
 		if($local_channel && $item['author']['xchan_addr'])
-			$follow_url = z_root() . '/follow/?f=&url=' . urlencode($item['author']['xchan_addr']);
+			$follow_url = z_root() . '/follow/?f=&url=' . urlencode($item['author']['xchan_addr']) . '&interactive=0';
 
 	
 	if($item['uid'] > 0 && author_is_pmable($item['author'],$contact)) {
@@ -1051,8 +1051,8 @@ function thread_author_menu($item, $mode = '') {
 			'menu' => 'follow',
 			'title' => t('Connect'),
 			'icon' => 'fw',
-			'action' => '',
-			'href' => $follow_url
+			'action' => 'doFollowAuthor(\'' . $follow_url . '\'); return false;',
+			'href' => '#',
 		];
 	}
 

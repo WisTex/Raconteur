@@ -979,7 +979,7 @@ function contact_block() {
 				// than wishful thinking; even though soapbox channels and feeds will disable it. 
 
 				if(! intval(get_abconfig(App::$profile['uid'],$rr['xchan_hash'],'their_perms','post_comments'))) {
-					$rr['archived'] = true;
+					$rr['oneway'] = true;
 				}
 				$micropro[] = micropro($rr,true,'mpfriend');
 			}
@@ -1033,6 +1033,7 @@ function micropro($contact, $redirect = false, $class = '', $textmode = false) {
 	return replace_macros(get_markup_template(($textmode)?'micropro_txt.tpl':'micropro_img.tpl'),array(
 		'$click' => (($contact['click']) ? $contact['click'] : ''),
 		'$class' => $class . (($contact['archived']) ? ' archived' : ''),
+		'$oneway' => (($contact['oneway']) ? true : false),
 		'$url' => $url,
 		'$photo' => $contact['xchan_photo_s'],
 		'$name' => $contact['xchan_name'],
@@ -2018,17 +2019,36 @@ function item_post_type($item) {
 	return $post_type;
 }
 
+// This needs to be fixed to use quoted tag strings
 
 function undo_post_tagging($s) {
+
 	$matches = null;
+	// undo tags and mentions
 	$cnt = preg_match_all('/([@#])(\!*)\[zrl=(.*?)\](.*?)\[\/zrl\]/ism',$s,$matches,PREG_SET_ORDER);
 	if($cnt) {
 		foreach($matches as $mtch) {
-			$s = str_replace($mtch[0], $mtch[1] . $mtch[2] . str_replace(' ','_',$mtch[4]),$s);
+			$s = str_replace($mtch[0], $mtch[1] . $mtch[2] . quote_tag($mtch[4]),$s);
 		}
 	}
+	// undo forum tags
+	$cnt = preg_match_all('/\!\[zrl=(.*?)\](.*?)\[\/zrl\]/ism',$s,$matches,PREG_SET_ORDER);
+	if($cnt) {
+		foreach($matches as $mtch) {
+			$s = str_replace($mtch[0], '!' . quote_tag($mtch[2]),$s);
+		}
+	}
+
+
 	return $s;
 }
+
+function quote_tag($s) {
+	if(strpos($s,' ') !== false)
+		return '&quot;' . $s . '&quot;';
+	return $s;
+}
+
 
 function fix_mce_lf($s) {
 	$s = str_replace("\r\n","\n",$s);
@@ -3291,4 +3311,26 @@ function purify_filename($s) {
 	return $s;
 }
 
+// callback for sorting the settings/featured entries.
+
+function featured_sort($a,$b) {
+	$s1 = substr($a,strpos($a,'id='),20);
+	$s2 = substr($b,strpos($b,'id='),20);
+	return(strcmp($s1,$s2));
+}
+
+
+function punify($s) {
+	require_once('vendor/simplepie/simplepie/idn/idna_convert.class.php');
+	$x = new idna_convert(['encoding' => 'utf8']);
+	return $x->encode($s);
+
+}
+
+function unpunify($s) {
+	require_once('vendor/simplepie/simplepie/idn/idna_convert.class.php');
+	$x = new idna_convert(['encoding' => 'utf8']);
+	return $x->decode($s);
+
+}
 

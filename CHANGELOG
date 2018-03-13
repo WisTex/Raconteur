@@ -1,3 +1,129 @@
+Hubzilla 3.2 (2018-03-09)
+	- Improve rendering of Readme files in plugin settings
+	- Add pdl file for mod moderate
+	- Update redbasic theme screenshot
+	- Restrict mail messages to max_import_size
+	- Add pdl file for mod thing
+	- Add federation property to webfinger
+	- Provide new member widget which sits beneath the notifications for the first 60 days after an account creation
+	- Rename Addon/Feature settings to Addon Settings
+	- Move privacy groups to the newly created Access Control and Permissions tab
+	- Move oauth_client management and guest access tokens to features rather than auto-enabling at various feature levels
+	- Change undo_post_tagging() to emit quoted tags rather than using underscore replacement if they contain spaces
+	- Require directory servers to be using some modern form of encryption
+	- Change icon set from font-awesome to fork-awesome
+	- Provide opt-out link and text with notification emails
+	- Alter image selection widget to accept/submit on choose (github issue #979)
+	- If hide_in_statistics is set, only include the total channels count and no other statistical info in siteinfo.json
+	- Mark connections where we do not have post_comments permissions with an no entry sign
+	- Click your own profile photo to change it if loged in
+	- Remove street address info from the default basic profile fields
+	- Handle error logging in on cloud page (post method not implemented)
+	- Cloud 'view-as-tiles' toggle wasn't available for guests and they are the most likely to prefer that view
+	- Provide DB compatibility for poll and voting implementations across several platforms
+	- Remove the unused ZotDriver and ProtoDriver classes
+	- Move dreport from zot to lib
+	- Move Zotlabs\Zot\Verify to Zotlabs\Lib\Verify as part of the zot6 re-org
+	- Add event resource_id to iconfig so Diaspora can search on it without looking inside JSON objects
+	- Trim non-existent/deprecated plugins from siteinfo plugin list
+	- Add 'Validate' button to new_channel page
+	- Do not show summary if it is equal to body
+	- Update code tag styling so bbcode [code] blocks and wiki markdown inline code render nicely
+	- Crypto improvements (use pkcs1_oaep_padding instead of the older pkcs1_padding)
+	- Refactor OAuth2Server a bit
+	- Refactor of the DB update system
+	- Extend the oauth2 storage driver so that we can use our own channel table
+	- Provide option to block the public stream unless authenticated
+	- Refactor shares and urn shares into activities
+	- Show likes and dislikes in notices if always_show_in_notices is set
+	- Add hidden config to disallow anonymous comments (github issue #972)
+	- Add flexibility to prefix/suffix string translations for jquery.timeago
+	- Make post titles searchable (github issue #975)
+	- Implement zot6 delivery
+	- Remove mobile_detect library
+	- Separate the parsing of author information from the parsing of item/activity information in feedutils
+	- Provide summaries in feeds under very limited cases
+	- Redirect to the email_validation page if login was attempted after account creation but prior to successful verification
+	- Iprove workflow for form based email validation when auto_channel_create is in effect
+	- Provide a default video image if nothing else is available
+	- Surface the ability to change the landing page after channel creation
+	- Create the 'go' module to present several possible things to do after channel creation
+	- Add unit test for dba_pdo driver class
+	- Add unit test for \DBA factory
+	- Usability improvements to registration/verification workflow
+	- Don't do any bbcode translation within code blocks (except baseurl, observer, and linefeeds)
+	- Improve browser language detection
+	- Remove unused prototype importer template and obsolete reflection cms importer
+	- Update to bootstrap 4 stable
+	- Implement caching of notifications in browser session storage
+	- Code cleanup and simplification in mod_like
+	- Implement new cropper library
+	- Better notifications for edit post/comments which may have been originally posted long ago
+	- Ensure filter words are not empty in include/items.php
+	- Change query in mod search to be compatible with postgres
+	- Provide channel list function in the zot api
+	- Remove deprecated 'qcomment' feature
+	- Simplify webserver logic flow
+	- Simplify interactions with the get_features hook
+	- Provide a local pubstream option (content from this site only)
+	- Simplify dir_tagadelic dramatically
+	- Surface the article feature
+	- Add summary bbcode tag
+	- Move markdown-in-posts/comments feature to plugin
+	- Support tables in markdown posts/comments
+
+
+	Bugfixes
+	- Fix javascript error if there are no notifications
+	- Fix some issues with friend suggestions on standalone sites with no 'suggestme' volunteers
+	- Fix unable to reset profile fields to defaults in admin/profs by emptying the textarea
+	⁻ Fix issues with accordions related to bootstrap upgrade
+	- Fix empty dob is set to the date of the first profile save
+	- Fix several email validation issues
+	- Fix issue if logged in locally and mod_display returns nothing owned by your uid; retry with known public uids rather than issue 'permission denied'
+	- Fix public stream app permission check to match the recent fixes to the Module
+	- Fix issues with delivery of edited posts to forums
+	- Fix autoname test
+	- Fix issue where self and pending connections were visible in connections when not loged in
+	- Fix bad query in mod defperms
+	- Fix issue where gnusocial likes were not recognised as like activity
+	- Fix manual queue invocation
+	- Fix unable to delete accounts using tickboxes on admin/accounts
+	- Fix a PHP7.2 warning when a channel has no cards
+	- Fix unable to delete permission groups with space in name (github issue #920)
+
+	Addons
+	Statistic: fix reporting of incorrect register policy in nodeinfo
+	Diaspora: diaspora_init_relay: calls diaspora_import_author with too many arguments
+	Pubcrawl: provide a system 'allowed' for to match the system setting for other protocols
+	Diaspora: fix issue with sending diaspora profile change messages over diaspora_v2
+	Diaspora: provide limited but hopefully adequate support for new Diaspora html5 audio/video
+	Pubcrawl: send zot context with follow requests
+	Pubcrawl: add video to the set of message types we process
+	Pubcrawl: support for activitypub media
+	Openclipatar: remove extra details for each image
+	Diaspora: initial work on event participation
+	Statistic: remove the friendica protocol from nodeinfo until it is fully implemented
+	Statistic: re-arrange the order of the .host-meta/nodeinfo links
+	Pubcrawl: add share verb to activitystreams translator
+	Pubcrawl: post public posts to syschannel
+	Statistics: fix legacy statistics.json interface
+	Gnusocial: improve error checking when processing a salmon message
+	Dirstats: fix sql syntax error
+	Pubcrawl: possibly reduce constraint violations for xchan_store_lowlevel (duplicate entry)
+	Diaspora: ensure we process Friendica-over-Diaspora yearless birthdays correctly
+	Chess: added simple history browsing controls to spectator view
+	Diaspora: support post/comment edits
+	Diaspora: don't redirect fetch requests for non-Diaspora wall-to-wall and forum posts unless they can be redirected to a Diaspora protocol site
+	Chess: added support for publicly visible games
+	Phpmailer: add quickstart notes
+	Chess: choose random color if no color is chosen
+	New Plugin: mdpost - markdown in posts/comments, migrated from core to addon
+	Diaspora: provide a configuration option to import the diaspora firehose, otherwise only import content matching subscribed tags
+	NSFW: load images only after click on the button
+	Twitter: provide configurable tweet length until such time as 280 becomes universal
+
+
 Hubzilla 3.0 (2018-01-09)
 	- Updated homeinstall script
 	- Sort cloud directory by 1. is_dir and 2. name

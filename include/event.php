@@ -1200,6 +1200,13 @@ function event_store_item($arr, $event) {
 			));
 		}
 
+		// propagate the event resource_id so that posts containing it are easily searchable in downstream copies
+		// of the item which have not stored the actual event. Required for Diaspora event federation as Diaspora 
+		// event_participation messages refer to the event resource_id as a parent, while out own event attendance
+		// activities refer to the item message_id as the parent. 
+
+		set_iconfig($item_arr, 'system','event_id',$event['event_hash'],true);
+
 		$res = item_store($item_arr);
 
 		$item_id = $res['item_id'];
@@ -1315,3 +1322,25 @@ function translate_type($type) {
 		return [$type, t('Other') . ' (' . $type . ')'];
 	}
 }
+
+
+function cal_store_lowlevel($arr) {
+
+	$store = [
+		'cal_aid'    => ((array_key_exists('cal_aid',$arr))   ? $arr['cal_aid']   : 0),
+		'cal_uid'    => ((array_key_exists('cal_uid',$arr))   ? $arr['cal_uid']   : 0),
+		'cal_hash'   => ((array_key_exists('cal_hash',$arr))  ? $arr['cal_hash']  : ''),
+		'cal_name'   => ((array_key_exists('cal_name',$arr))  ? $arr['cal_name']  : ''),
+		'uri'        => ((array_key_exists('uri',$arr))       ? $arr['uri']       : ''),
+		'logname'    => ((array_key_exists('logname',$arr))   ? $arr['logname']   : ''),
+		'pass'       => ((array_key_exists('pass',$arr))      ? $arr['pass']      : ''),
+		'ctag'       => ((array_key_exists('ctag',$arr))      ? $arr['ctag']      : ''),
+		'synctoken'  => ((array_key_exists('synctoken',$arr)) ? $arr['synctoken'] : ''),
+		'cal_types'  => ((array_key_exists('cal_types',$arr)) ? $arr['cal_types'] : ''),
+	];
+
+	return create_table_from_array('cal', $store);
+
+}
+
+

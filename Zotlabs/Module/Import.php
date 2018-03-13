@@ -64,7 +64,7 @@ class Import extends \Zotlabs\Web\Controller {
 				notice( t('Nothing to import.') . EOL);
 				return;
 			} else if(strpos($old_address, '＠')) {
-				// if you copy the identity address from your profile page, make it work for convenience
+				// if you copy the identity address from your profile page, make it work for convenience - WARNING: this is a utf-8 variant and NOT an ASCII ampersand. Please do not edit. 
 				$old_address = str_replace('＠', '@', $old_address);
 			}
 
@@ -114,15 +114,16 @@ class Import extends \Zotlabs\Web\Controller {
 				return;
 		}
 
-		if(array_key_exists('compatibility',$data) && array_key_exists('database',$data['compatibility'])) {
-			$v1 = substr($data['compatibility']['database'],-4);
-			$v2 = substr(DB_UPDATE_VERSION,-4);
-			if($v2 > $v1) {
-				$t = sprintf( t('Warning: Database versions differ by %1$d updates.'), $v2 - $v1 );
-				notice($t);
-			}
-
-		}
+// This is only an info message but it is alarming to folks who then report failure with this as the cause, when in fact we ignore this completely.
+//		if(array_key_exists('compatibility',$data) && array_key_exists('database',$data['compatibility'])) {
+//			$v1 = substr($data['compatibility']['database'],-4);
+//			$v2 = substr(DB_UPDATE_VERSION,-4);
+//			if($v2 > $v1) {
+//				$t = sprintf( t('Warning: Database versions differ by %1$d updates.'), $v2 - $v1 );
+//				notice($t);
+//			}
+//
+//		}
 
 		if($moving)
 			$seize = 1;

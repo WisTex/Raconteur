@@ -969,6 +969,10 @@ function import_author_unknown($x) {
 	return false;
 }
 
+function empty_acl($item) {
+	return (($item['allow_cid'] === EMPTY_STR && $item['allow_gid'] === EMPTY_STR && $item['deny_cid'] === EMPTY_STR && $item['deny_gid'] === EMPTY_STR) ? true : false);
+}
+
 function encode_item($item,$mirror = false) {
 	$x = array();
 	$x['type'] = 'activity';
@@ -1412,6 +1416,13 @@ function get_mail_elements($x) {
 	}
 	else {
 		$arr['body']         = (($x['body']) ? htmlspecialchars($x['body'], ENT_COMPAT,'UTF-8',false) : '');
+
+		$maxlen = get_max_import_size();
+
+		if($maxlen && mb_strlen($arr['body']) > $maxlen) {
+			$arr['body'] = mb_substr($arr['body'],0,$maxlen,'UTF-8');
+			logger('message length exceeds max_import_size: truncated');
+		}
 	}
 
 	$arr['title']        = (($x['title'])? htmlspecialchars($x['title'],ENT_COMPAT,'UTF-8',false) : '');
@@ -2464,7 +2475,7 @@ function tag_deliver($uid, $item_id) {
 		// this is an update (edit) to a post which was already processed by us and has a second delivery chain
 		// Just start the second delivery chain to deliver the updated post
 		// after resetting ownership and permission bits
-
+		logger('updating edited tag_deliver post for ' . $u[0]['channel_address']);
 		start_delivery_chain($u[0], $item, $item_id, 0);
 		return;
 	}
@@ -2767,6 +2778,16 @@ function tgroup_check($uid, $item) {
 
 		return false;
 	}
+
+	// see if we already have this item. Maybe it is being updated.
+
+	$r = q("select id from item where mid = '%s' and uid = %d limit 1",
+		dbesc($item['mid']),
+		intval($uid)
+	);
+	if($r)
+		return true;
+
 	if(! perm_is_allowed($uid,$item['author_xchan'],'tag_deliver'))
 		return false;
 
@@ -4003,18 +4024,24 @@ function zot_feed($uid, $observer_hash, $arr) {
 	$item_normal = item_normal();
 
 	if(is_sys_channel($uid)) {
-		$r = q("SELECT parent, created, postopts from item
-			WHERE uid != %d
-			$item_normal
+
+		$nonsys_uids = q("SELECT channel_id FROM channel WHERE channel_system = 0");
+		$nonsys_uids_str = ids_to_querystr($nonsys_uids,'channel_id');
+
+		$r = q("SELECT parent, postopts FROM item
+			WHERE uid IN ( %s )
 			AND item_wall = 1
-			and item_private = 0 $sql_extra ORDER BY created ASC $limit",
-			intval($uid)
+			AND item_private = 0
+			$item_normal
+			$sql_extra ORDER BY created ASC $limit",
+			intval($nonsys_uids_str)
 		);
 	}
 	else {
-		$r = q("SELECT parent, created, postopts from item
-			WHERE uid = %d $item_normal
+		$r = q("SELECT parent, postopts FROM item
+			WHERE uid = %d
 			AND item_wall = 1
+			$item_normal
 			$sql_extra ORDER BY created ASC $limit",
 			intval($uid)
 		);

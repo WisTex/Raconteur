@@ -304,7 +304,7 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 		}
 	
 		$channel = \App::get_channel();
-	
+		$pf = 0;
 		$newuser = false;
 	
 		if(argc() == 2 && argv(1) === 'new')
@@ -318,8 +318,8 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 				        
 			$resource_id = argv(2);
 	
-			// When using an existing photo, we don't have a dialogue to offer a choice of profiles,
-			// so it gets attached to the default
+
+			$pf = (($_REQUEST['pf']) ? intval($_REQUEST['pf']) : 0);
 
 			$c = q("select id, is_default from profile where uid = %d",
 				intval(local_channel())
@@ -330,6 +330,9 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 			if(($c) && (count($c) === 1) && (intval($c[0]['is_default']))) {
 				$_REQUEST['profile'] = $c[0]['id'];
 				$multi_profiles = false;
+			}
+			else {
+				$_REQUEST['profile'] = $pf;
 			}
 
 			$r = q("SELECT id, album, imgscale FROM photo WHERE uid = %d AND resource_id = '%s' ORDER BY imgscale ASC",
@@ -430,6 +433,16 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 			intval(local_channel())
 		);
 
+		if($profiles) {
+			for($x = 0; $x < count($profiles); $x ++) {
+				$profiles[$x]['selected'] = false;
+				if($pf && $profiles[$x]['id'] == $pf)
+					$profiles[$x]['selected'] = true;
+				if((! $pf) && $profiles[$x]['is_default'])
+					$profiles[$x]['selected'] = true;
+			}
+		}
+
 		$importing = ((array_key_exists('importfile',\App::$data)) ? true : false);
 	
 		if(! x(\App::$data,'imagecrop')) {
@@ -441,14 +454,23 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 				'$importfile' => (($importing) ? \App::$data['importfile'] : ''),
 				'$lbl_upfile' => t('Upload File:'),
 				'$lbl_profiles' => t('Select a profile:'),
-				'$title' => (($importing) ? t('Use Photo for Profile') : t('Upload Profile Photo')),
+				'$title' => (($importing) ? t('Use Photo for Profile') : t('Change Profile Photo')),
 				'$submit' => (($importing) ? t('Use') : t('Upload')),
 				'$profiles' => $profiles,
 				'$single' => ((count($profiles) == 1) ? true : false),
 				'$profile0' => $profiles[0],
+				'$embedPhotos' => t('Use a photo from your albums'),
+				'$embedPhotosModalTitle' => t('Use a photo from your albums'),
+				'$embedPhotosModalCancel' => t('Cancel'),
+				'$embedPhotosModalOK' => t('OK'),
+				'$modalchooseimages' => t('Choose images to embed'),
+				'$modalchoosealbum' => t('Choose an album'),
+				'$modaldiffalbum' => t('Choose a different album'),
+				'$modalerrorlist' => t('Error getting album list'),
+				'$modalerrorlink' => t('Error getting photo link'),
+				'$modalerroralbum' => t('Error getting album'),
 				'$form_security_token' => get_form_security_token("profile_photo"),
-	// FIXME - yuk  
-				'$select' => sprintf('%s %s', t('or'), ($newuser) ? '<a href="' . z_root() . '">' . t('skip this step') . '</a>' : '<a href="'. z_root() . '/photos/' . \App::$channel['channel_address'] . '">' . t('select a photo from your photo albums') . '</a>')
+				'$select' => t('Select existing photo'),
 			));
 			
 			call_hooks('profile_photo_content_end', $o);

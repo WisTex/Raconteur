@@ -10,7 +10,7 @@
 	</form>
 	<ul class="nav nav-pills flex-column">
 		{{if $similar}}<li class="nav-item"><a class="nav-link" href="match" >{{$similar}}</a></li>{{/if}}
-		{{if $loggedin}}<li class="nav-item"><a class="nav-link" href="directory?suggest=1" >{{$suggest}}</a></li>{{/if}}
+		{{if $loggedin}}<li class="nav-item"><a class="nav-link" href="directory?f=&suggest=1" >{{$suggest}}</a></li>{{/if}}
 		<li class="nav-item"><a class="nav-link" href="randprof" >{{$random}}</a></li>
 		{{if $loggedin}}{{if $inv}}<li class="nav-item"><a class="nav-link" href="invite" >{{$inv}}</a></li>{{/if}}{{/if}}
 	</ul>

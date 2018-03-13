@@ -563,16 +563,20 @@ class Setup extends \Zotlabs\Web\Controller {
 		$status = true;
 		$help = '';
 
-		if( (file_exists('.htconfig.php') && !is_writable('.htconfig.php')) ||
-			(!file_exists('.htconfig.php') && !is_writable('.')) ) {
-				$status = false;
-				$help = t('The web installer needs to be able to create a file called ".htconfig.php" in the top folder of your web server and it is unable to do so.') .EOL;
-				$help .= t('This is most often a permission setting, as the web server may not be able to write files in your folder - even if you can.').EOL;
-				$help .= t('At the end of this procedure, we will give you a text to save in a file named .htconfig.php in your Red top folder.').EOL;
-				$help .= t('You can alternatively skip this procedure and perform a manual installation. Please see the file "install/INSTALL.txt" for instructions.').EOL;
+		$fname = '.htconfig.php';
+
+		if((file_exists($fname) && is_writable($fname)) || 
+			(! (file_exists($fname) && is_writable('.')))) {
+			$this->check_add($checks, t('.htconfig.php is writable'), $status, true, $help);
+			return;
 		}
 
-		$this->check_add($checks, t('.htconfig.php is writable'), $status, false, $help);
+		$status = false;
+		$help = t('The web installer needs to be able to create a file called ".htconfig.php" in the top folder of your web server and it is unable to do so.') .EOL;
+		$help .= t('This is most often a permission setting, as the web server may not be able to write files in your folder - even if you can.').EOL;
+		$help .= t('Please see install/INSTALL.txt for additional information.');
+
+		$this->check_add($checks, t('.htconfig.php is writable'), $status, true, $help);
 	}
 
 	/**

@@ -57,14 +57,28 @@ class Featured {
 		}
 
 		call_hooks('feature_settings', $settings_addons);
-					
+		
+		$this->sortpanels($settings_addons);
+
+			
 		$tpl = get_markup_template("settings_addons.tpl");
 		$o .= replace_macros($tpl, array(
 			'$form_security_token' => get_form_security_token("settings_featured"),
-			'$title'	=> t('Feature/Addon Settings'),
+			'$title'	=> t('Addon Settings'),
+			'$descrip'  => t('Please save/submit changes to any panel before opening another.'),
 			'$settings_addons' => $settings_addons
 		));
 		return $o;
 	}
-	
+
+	function sortpanels(&$s) {
+		$a = explode('<div class="panel">',$s);
+		if($a) {
+			usort($a,'featured_sort');
+			$s = implode('<div class="panel">',$a);
+		}
+	}
+
 }
+
+

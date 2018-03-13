@@ -125,7 +125,7 @@ function datetime_convert($from = 'UTC', $to = 'UTC', $s = 'now', $fmt = "Y-m-d 
  */
 function dob($dob) {
 
-	if ($dob === '0000-00-00')
+	if ($dob === '0000-00-00' || $dob === '')
 		$value = '';
 	else
 		$value = (($year) ? datetime_convert('UTC','UTC',$dob,'Y-m-d') : datetime_convert('UTC','UTC',$dob,'m-d'));

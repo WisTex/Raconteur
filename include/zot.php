@@ -171,6 +171,8 @@ function zot_build_packet($channel, $type = 'notify', $recipients = null, $remot
  *   packet type: one of 'ping', 'pickup', 'purge', 'refresh', 'keychange', 'force_refresh', 'notify', 'auth_check'
  * @param array $recipients
  *   envelope information, array ( 'guid' => string, 'guid_sig' => string ); empty for public posts
+ * @param string msg
+ *   optional message
  * @param string $remote_key
  *   optional public site key of target hub used to encrypt entire packet
  *   NOTE: remote_key and encrypted packets are required for 'auth_check' packets, optional for all others
@@ -299,7 +301,7 @@ function zot_zot($url, $data, $channel = null,$crypto = null) {
 	if($channel) {
 		$headers['X-Zot-Token'] = random_string();
 		$hash = \Zotlabs\Web\HTTPSig::generate_digest($data,false);
-		$headers['X-Zot-Digest'] = 'SHA-256=' . $hash;  
+		$headers['X-Zot-Digest'] = 'SHA-256=' . $hash;
 		$h = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],'acct:' . $channel['channel_address'] . '@' . \App::get_hostname(),false,false,'sha512',(($crypto) ? $crypto['hubloc_sitekey'] : ''), (($crypto) ? zot_best_algorithm($crypto['site_crypto']) : ''));
 	}
 
@@ -393,7 +395,7 @@ function zot_refresh($them, $channel = null, $force = false) {
 	if($s && intval($s[0]['site_dead']) && (! $force)) {
 		logger('zot_refresh: site ' . $url . ' is marked dead and force flag is not set. Cancelling operation.');
 		return false;
-	} 
+	}
 
 
 	$token = random_string();
@@ -587,13 +589,16 @@ function zot_refresh($them, $channel = null, $force = false) {
 
 
 						// If there is a default group for this channel, add this connection to it
+						// for pending connections this will happens at acceptance time.
 
-						$default_group = $channel['channel_default_group'];
-						if($default_group) {
-							require_once('include/group.php');
-							$g = group_rec_byhash($channel['channel_id'],$default_group);
-							if($g)
-								group_add_member($channel['channel_id'],'',$x['hash'],$g['id']);
+						if(! intval($new_connection[0]['abook_pending'])) {
+							$default_group = $channel['channel_default_group'];
+							if($default_group) {
+								require_once('include/group.php');
+								$g = group_rec_byhash($channel['channel_id'],$default_group);
+								if($g)
+									group_add_member($channel['channel_id'],'',$x['hash'],$g['id']);
+							}
 						}
 
 						unset($new_connection[0]['abook_id']);
@@ -1156,7 +1161,7 @@ function zot_process_response($hub, $arr, $outq) {
  * and also that the signer and the sender match.
  * If that happens, we do not need to fetch/pickup the message - we have it already and it is verified.
  * Translate it into the form we need for zot_import() and import it.
- * 
+ *
  * Otherwise send back a pickup message, using our message tracking ID ($arr['secret']), which we will sign with our site
  * private key.
  * The entire pickup message is encrypted with the remote site's public key.
@@ -1728,7 +1733,7 @@ function process_delivery($sender, $arr, $deliveries, $relay, $public = false, $
 	foreach($deliveries as $d) {
 		$local_public = $public;
 
-		$DR = new Zotlabs\Zot\DReport(z_root(),$sender['hash'],$d['hash'],$arr['mid']);
+		$DR = new Zotlabs\Lib\DReport(z_root(),$sender['hash'],$d['hash'],$arr['mid']);
 
 		$r = q("select * from channel where channel_hash = '%s' limit 1",
 			dbesc($d['hash'])
@@ -2257,7 +2262,7 @@ function process_mail_delivery($sender, $arr, $deliveries) {
 
 	foreach($deliveries as $d) {
 
-		$DR = new Zotlabs\Zot\DReport(z_root(),$sender['hash'],$d['hash'],$arr['mid']);
+		$DR = new Zotlabs\Lib\DReport(z_root(),$sender['hash'],$d['hash'],$arr['mid']);
 
 		$r = q("select * from channel where channel_hash = '%s' limit 1",
 			dbesc($d['hash'])
@@ -3898,11 +3903,11 @@ function process_channel_sync_delivery($sender, $arr, $deliveries) {
 		// we should probably do this for all items, but usually we only send one.
 
 		if(array_key_exists('item',$arr) && is_array($arr['item'][0])) {
-			$DR = new Zotlabs\Zot\DReport(z_root(),$d['hash'],$d['hash'],$arr['item'][0]['message_id'],'channel sync processed');
+			$DR = new Zotlabs\Lib\DReport(z_root(),$d['hash'],$d['hash'],$arr['item'][0]['message_id'],'channel sync processed');
 			$DR->addto_recipient($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
 		}
 		else
-			$DR = new Zotlabs\Zot\DReport(z_root(),$d['hash'],$d['hash'],'sync packet','channel sync delivered');
+			$DR = new Zotlabs\Lib\DReport(z_root(),$d['hash'],$d['hash'],'sync packet','channel sync delivered');
 
 		$result[] = $DR->get();
 	}
@@ -4913,7 +4918,7 @@ function zot_reply_auth_check($data,$encrypted_packet) {
 	 * the web server. We should probably convert this to webserver time rather than DB time so
 	 * that the different clocks won't affect it and allow us to keep the time short.
 	 */
-	Zotlabs\Zot\Verify::purge('auth', '30 MINUTE');
+	Zotlabs\Lib\Verify::purge('auth', '30 MINUTE');
 
 	$y = q("select xchan_pubkey from xchan where xchan_hash = '%s' limit 1",
 		dbesc($sender_hash)
@@ -4954,7 +4959,7 @@ function zot_reply_auth_check($data,$encrypted_packet) {
 		// This additionally checks for forged sites since we already stored the expected result in meta
 		// and we've already verified that this is them via zot_gethub() and that their key signed our token
 
-		$z = Zotlabs\Zot\Verify::match('auth',$c[0]['channel_id'],$data['secret'],$data['sender']['url']);
+		$z = Zotlabs\Lib\Verify::match('auth',$c[0]['channel_id'],$data['secret'],$data['sender']['url']);
 		if (! $z) {
 			logger('mod_zot: auth_check: verification key not found.');
 			$ret['message'] .= 'verification key not found' . EOL;
@@ -5090,7 +5095,7 @@ function zot_reply_refresh($sender, $recipients) {
 function zot6_check_sig() {
 
 	$ret = [ 'success' => false ];
-	  
+
 	logger('server: ' . print_r($_SERVER,true), LOGGER_DATA);
 
 	if(array_key_exists('HTTP_SIGNATURE',$_SERVER)) {
