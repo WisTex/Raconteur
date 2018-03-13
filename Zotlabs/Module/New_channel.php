@@ -16,8 +16,15 @@ class New_channel extends \Zotlabs\Web\Controller {
 			require_once('library/urlify/URLify.php');
 			$result = array('error' => false, 'message' => '');
 			$n = trim($_REQUEST['name']);
-	
-			$x = strtolower(\URLify::transliterate($n));
+
+			$x = false;
+
+			if(get_config('system','unicode_usernames')) {
+				$x = punify(mb_strtolower($n)); 
+			}
+
+			if((! $x) || strlen($x) > 64)
+				$x = strtolower(\URLify::transliterate($n));
 	
 			$test = array();
 	
@@ -43,7 +50,14 @@ class New_channel extends \Zotlabs\Web\Controller {
 			$result = array('error' => false, 'message' => '');
 			$n = trim($_REQUEST['nick']);
 	
-			$x = strtolower(\URLify::transliterate($n));
+			$x = false;
+
+			if(get_config('system','unicode_usernames')) {
+				$x = punify(mb_strtolower($n)); 
+			}
+
+			if((! $x) || strlen($x) > 64)
+				$x = strtolower(\URLify::transliterate($n));
 	
 			$test = array();
 	

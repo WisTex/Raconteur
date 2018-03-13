@@ -3318,3 +3318,19 @@ function featured_sort($a,$b) {
 	$s2 = substr($b,strpos($b,'id='),20);
 	return(strcmp($s1,$s2));
 }
+
+
+function punify($s) {
+	require_once('vendor/simplepie/simplepie/idn/idna_convert.class.php');
+	$x = new idna_convert(['encoding' => 'utf8']);
+	return $x->encode($s);
+
+}
+
+function unpunify($s) {
+	require_once('vendor/simplepie/simplepie/idn/idna_convert.class.php');
+	$x = new idna_convert(['encoding' => 'utf8']);
+	return $x->decode($s);
+
+}
+
