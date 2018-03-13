@@ -1234,7 +1234,7 @@ function profile_load($nickname, $profile = '') {
 	);
 	if($z) {
 		$p[0]['picdate'] = $z[0]['xchan_photo_date'];
-		$p[0]['reddress'] = str_replace('@','&#x40;',$z[0]['xchan_addr']);
+		$p[0]['reddress'] = str_replace('@','&#x40;',unpunify($z[0]['xchan_addr']));
 	}
 
 	// fetch user tags if this isn't the default profile
@@ -1255,7 +1255,7 @@ function profile_load($nickname, $profile = '') {
 
 	App::$profile = $p[0];
 	App::$profile_uid = $p[0]['profile_uid'];
-	App::$page['title'] = App::$profile['channel_name'] . " - " . channel_reddress(App::$profile);
+	App::$page['title'] = App::$profile['channel_name'] . " - " . unpunify(channel_reddress(App::$profile));
 
 	App::$profile['permission_to_view'] = $can_view_profile;
 
