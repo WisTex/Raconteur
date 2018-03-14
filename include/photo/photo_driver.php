@@ -273,7 +273,7 @@ abstract class photo_driver {
 		}
 
 		if($f) {
-			return @exif_read_data($f);
+			return @exif_read_data($f,null,true);
 		}
 
 		return false;
