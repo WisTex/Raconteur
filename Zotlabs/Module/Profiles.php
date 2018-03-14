@@ -655,7 +655,7 @@ class Profiles extends \Zotlabs\Web\Controller {
 				intval($id),
 				intval(local_channel())
 			);
-			if(! count($r)) {
+			if(! $r) {
 				notice( t('Profile not found.') . EOL);
 				return;
 			}
@@ -712,13 +712,10 @@ class Profiles extends \Zotlabs\Web\Controller {
 	
 			$tpl = get_markup_template("profile_edit.tpl");
 			$o .= replace_macros($tpl,array(
-	
+				'$multi_profiles' => ((feature_enabled(local_channel(),'multi_profiles')) ? true : false),
 				'$form_security_token' => get_form_security_token("profile_edit"),
-				'$profile_clone_link'  => ((feature_enabled(local_channel(),'multi_profiles')) ? 'profiles/clone/' . $r[0]['id'] . '?t=' 
-					. get_form_security_token("profile_clone") : ''),
-				'$profile_drop_link'   => 'profiles/drop/' . $r[0]['id'] . '?t=' 
-					. get_form_security_token("profile_drop"),
-	
+				'$profile_clone_link'  => 'profiles/clone/' . $r[0]['id'] . '?t=' . get_form_security_token("profile_clone"),
+				'$profile_drop_link'   => 'profiles/drop/' . $r[0]['id'] . '?t=' . get_form_security_token("profile_drop"),
 				'$fields'       => $fields,
 				'$vcard'        => $vcard,
 				'$guid'         => $r[0]['profile_guid'],
