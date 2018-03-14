@@ -47,7 +47,7 @@ class Newmember {
 
 			t('Communicate'),
 			[
-				'channel/' . $channel['channel_address']       => t('View your channel homepage'),
+				'channel/' . $c['channel_address']       => t('View your channel homepage'),
 				'network'       => t('View your network stream'),
 			],
 
