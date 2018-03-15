@@ -673,7 +673,7 @@ function get_atom_elements($feed, $item) {
 			// construct so the post will already be collapsed. The generated tag is almost 
 			// always wrong and even if it isn't we would already be doing the right thing.
 	
-			if($mastodon && $termterm === 'nsfw')
+			if($mastodon && $termterm === 'nsfw' && $summary && $res['body'])
 				continue;
 
 			if($termterm) {
