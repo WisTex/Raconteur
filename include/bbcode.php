@@ -329,7 +329,7 @@ function bb_ShareAttributes($match) {
 	$headline = '<div class="shared_container"> <div class="shared_header">';
 
 	if ($avatar != "")
-		$headline .= '<a href="' . zid($profile) . '" ><img src="' . $avatar . '" alt="' . $author . '" height="32" width="32" /></a>';
+		$headline .= '<a href="' . ((is_matrix_url($profile)) ? zid($profile) : $profile) . '" ><img src="' . $avatar . '" alt="' . $author . '" height="32" width="32" /></a>';
 
 	if(strpos($link,'/cards/'))
 		$type = t('card');
@@ -341,8 +341,8 @@ function bb_ShareAttributes($match) {
 	// Bob Smith wrote the following post 2 hours ago
 
 	$fmt = sprintf( t('%1$s wrote the following %2$s %3$s'),
-		'<a href="' . zid($profile) . '" >' . $author . '</a>',
-		'<a href="' . zid($link) . '" >' . $type . '</a>',
+		'<a href="' . ((is_matrix_url($profile)) ? zid($profile) : $profile) . '" >' . $author . '</a>',
+		'<a href="' . ((is_matrix_url($link)) ? zid($link) : $link) . '" >' . $type . '</a>',
 		$reldate
 	);
 
@@ -393,7 +393,7 @@ function bb_ShareAttributesSimple($match) {
 	if ($matches[1] != "")
 		$profile = $matches[1];
 
-	$text = html_entity_decode("&#x2672; ", ENT_QUOTES, 'UTF-8') . ' <a href="' . $profile . '">' . $author . '</a>: div class="reshared-content">' . $match[2] . '</div>';
+	$text = html_entity_decode("&#x2672; ", ENT_QUOTES, 'UTF-8') . ' <a href="' . $profile . '">' . $author . '</a>: <div class="reshared-content">' . $match[2] . '</div>';
 
 	return($text);
 }
