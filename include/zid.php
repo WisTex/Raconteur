@@ -53,13 +53,13 @@ function zid($s, $address = '') {
 	$mine = get_my_url();
 	$myaddr = (($address) ? $address : get_my_address());
 
-	/**
-	 * @FIXME checking against our own channel url is no longer reliable. We may have a lot
-	 * of urls attached to our channel. Should probably match against our site, since we
-	 * will not need to remote authenticate on our own site anyway.
-	 */
+	$mine_parsed = parse_url($mine);
+	$s_parsed = parse_url($s);
 
-	if ($mine && $myaddr && (! link_compare($mine,$s)))
+	if($mine_parsed['host'] === $s_parsed['host'])
+		$url_match = true;
+
+	if ($mine && $myaddr && (! $url_match))
 		$zurl = $s . (($num_slashes >= 3) ? '' : '/') . $achar . 'zid=' . urlencode($myaddr);
 	else
 		$zurl = $s;
