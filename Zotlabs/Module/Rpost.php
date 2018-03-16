@@ -111,43 +111,7 @@ class Rpost extends \Zotlabs\Web\Controller {
 		}
 
 		if($_REQUEST['post_id']) {
-			$r = q("SELECT * from item WHERE id = %d  LIMIT 1",
-				intval($_REQUEST['post_id'])
-			);
-			if(($r) && (! intval($r[0]['item_private']))) {
-				$sql_extra = item_permissions_sql($r[0]['uid']);
-	
-				$r = q("select * from item where id = %d $sql_extra",
-					intval($_REQUEST['post_id'])
-				);
-				if($r && $r[0]['mimetype'] === 'text/bbcode') {
-	
-					xchan_query($r);
-	
-					$is_photo = (($r[0]['obj_type'] === ACTIVITY_OBJ_PHOTO) ? true : false);
-					if($is_photo) {
-						$object = json_decode($r[0]['obj'],true);
-						$photo_bb = $object['body'];
-					}
-	
-					if (strpos($r[0]['body'], "[/share]") !== false) {
-						$pos = strpos($r[0]['body'], "[share");
-						$i = substr($r[0]['body'], $pos);
-					} else {
-						$i = "[share author='".urlencode($r[0]['author']['xchan_name']).
-							"' profile='".$r[0]['author']['xchan_url'] .
-							"' avatar='".$r[0]['author']['xchan_photo_s'].
-							"' link='".$r[0]['plink'].
-							"' posted='".$r[0]['created'].
-							"' message_id='".$r[0]['mid']."']";
-						if($r[0]['title'])
-							$i .= '[b]'.$r[0]['title'].'[/b]'."\r\n";
-						$i .= (($is_photo) ? $photo_bb . "\r\n" . $r[0]['body'] : $r[0]['body']);
-						$i .= "[/share]";
-					}
-				}
-			}	
-			$_REQUEST['body'] = $_REQUEST['body'] . $i;
+			$_REQUEST['body'] .= '[share=' . intval($_REQUEST['post_id']) . '][/share]';
 		}
 	
 		$x = array(

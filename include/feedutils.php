@@ -934,6 +934,7 @@ function feed_get_reshare(&$res,$item) {
 			"' profile='"    . $share['profile'] .
 			"' avatar='"     . $share['avatar']  .
 			"' link='"       . $share['alternate']    .
+			"' auth='"       . 'false' .
 			"' posted='"     . $share['created'] .
 			"' message_id='" . $share['message_id'] . "']";
 

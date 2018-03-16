@@ -14,9 +14,14 @@ class Share extends \Zotlabs\Web\Controller {
 		if(! $post_id)
 			killme();
 	
-
 		echo '[share=' . $post_id . '][/share]';
 		killme();
+
+
+	/**
+	 * The remaining code is deprecated and handled in Zotlabs/Lib/Share.php at post 
+	 * submission time.
+ 	 */
 
 		if(! (local_channel() || remote_channel()))
 			killme();
@@ -60,12 +65,14 @@ class Share extends \Zotlabs\Web\Controller {
 			$pos = strpos($r[0]['body'], "[share");
 			$o = substr($r[0]['body'], $pos);
 		} else {
-			$o = "[share author='".urlencode($r[0]['author']['xchan_name']).
-				"' profile='".$r[0]['author']['xchan_url'] .
-				"' avatar='".$r[0]['author']['xchan_photo_s'].
-				"' link='".$r[0]['plink'].
-				"' posted='".$r[0]['created'].
-				"' message_id='".$r[0]['mid']."']";
+			$o = "[share author='" . urlencode($r[0]['author']['xchan_name']) .
+				"' profile='"    . $r[0]['author']['xchan_url'] .
+				"' avatar='"     . $r[0]['author']['xchan_photo_s'] .
+				"' link='"       . $r[0]['plink'] .
+				"' auth='"       . (($r[0]['author']['network'] === 'zot') ? 'true' : 'false') .
+				"' posted='"     . $r[0]['created'] .
+				"' message_id='" . $r[0]['mid'] . 
+			"']";
 			if($r[0]['title'])
 				$o .= '[b]'.$r[0]['title'].'[/b]'."\r\n";
 			$o .= (($is_photo) ? $photo_bb . "\r\n" . $r[0]['body'] : $r[0]['body']);
