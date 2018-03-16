@@ -680,7 +680,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 				throw new DAV\Exception\Forbidden('Permission denied.');
 			}
 			else {
-				throw new DAV\Exception\NotFound('A component of the request file path could not be found.');
+				throw new DAV\Exception\NotFound('A component of the requested file path could not be found.');
 			}
 		}
 
