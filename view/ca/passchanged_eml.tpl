@@ -1,19 +1,20 @@
 
 Apreciat/da {{$username}},
+	La teva contrasenya ha estat canviada com has demanat. Si et plau, recorda 
+aquesta informació per a tu (o canvia-la immediatament a 
+quelcom que puguis recordar).
 
-    La teva contrasenya ha estat modificada com has sol·licitat. Pren nota d'aquesta informació
-(o canvía immediatament la contrasenya amb quelcom que recordis).
 
+Les dades d'identificació son les següents:
 
-Les teves dades d'accés son les següents:
-
-Lloc:	{{$siteurl}}
-Nom:	{{$email}}
+Localització del lloc Web:⇥{{$siteurl}}
+Nom Identificatiu:⇥{{$email}}
 Contrasenya:	{{$new_password}}
 
-Després d'accedir pots canviar la contrasenya des de la pàgina de configuració del teu perfil.
+Pots canviar aquesta contrasenya en el teu compte desprès que hagis accedit.
 
 
-	{{$sitename}}
+Atentament,
+	{{$sitename}} Administrador
 
  
