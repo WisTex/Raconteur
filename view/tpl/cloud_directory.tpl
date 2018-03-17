@@ -1,5 +1,5 @@
 <div id="cloud-drag-area" class="section-content-wrapper-np">
-	{{if $tiles}}
+{{if $tiles}}
 	<table id="cloud-index">
 		<tr id="new-upload-progress-bar-1"></tr> {{* this is needed to append the upload files in the right order *}}
 	</table>
@@ -36,7 +36,7 @@
 	</div>
 	{{/foreach}}
 	<div class="clear"></div>
-	{{else}}
+{{else}}
 	<table id="cloud-index">
 		<tr>
 			<th width="1%"></th>
@@ -80,5 +80,5 @@
 
 	{{/foreach}}
 	</table>
-	{{/if}}
+{{/if}}
 </div>
