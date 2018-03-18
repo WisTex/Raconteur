@@ -39,6 +39,10 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         array (
             'Psr\\Log\\' => 8,
         ),
+        'M' => 
+        array (
+            'Michelf\\' => 8,
+        ),
         'L' => 
         array (
             'League\\HTMLToMarkdown\\' => 22,
@@ -102,6 +106,10 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
+        'Michelf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/michelf/php-markdown/Michelf',
+        ),
         'League\\HTMLToMarkdown\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/html-to-markdown/src',
@@ -140,13 +148,6 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
             'OAuth2' => 
             array (
                 0 => __DIR__ . '/..' . '/bshaffer/oauth2-server-php/src',
-            ),
-        ),
-        'M' => 
-        array (
-            'Michelf' => 
-            array (
-                0 => __DIR__ . '/..' . '/michelf/php-markdown',
             ),
         ),
         'H' => 
@@ -1044,6 +1045,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Module\\Getfile' => __DIR__ . '/../..' . '/Zotlabs/Module/Getfile.php',
         'Zotlabs\\Module\\Go' => __DIR__ . '/../..' . '/Zotlabs/Module/Go.php',
         'Zotlabs\\Module\\Group' => __DIR__ . '/../..' . '/Zotlabs/Module/Group.php',
+        'Zotlabs\\Module\\Hashtags' => __DIR__ . '/../..' . '/Zotlabs/Module/Hashtags.php',
         'Zotlabs\\Module\\Hcard' => __DIR__ . '/../..' . '/Zotlabs/Module/Hcard.php',
         'Zotlabs\\Module\\Help' => __DIR__ . '/../..' . '/Zotlabs/Module/Help.php',
         'Zotlabs\\Module\\Home' => __DIR__ . '/../..' . '/Zotlabs/Module/Home.php',
@@ -1392,6 +1394,9 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Update\\_1204' => __DIR__ . '/../..' . '/Zotlabs/Update/_1204.php',
         'Zotlabs\\Update\\_1205' => __DIR__ . '/../..' . '/Zotlabs/Update/_1205.php',
         'Zotlabs\\Update\\_1206' => __DIR__ . '/../..' . '/Zotlabs/Update/_1206.php',
+        'Zotlabs\\Update\\_1207' => __DIR__ . '/../..' . '/Zotlabs/Update/_1207.php',
+        'Zotlabs\\Update\\_1208' => __DIR__ . '/../..' . '/Zotlabs/Update/_1208.php',
+        'Zotlabs\\Update\\_1209' => __DIR__ . '/../..' . '/Zotlabs/Update/_1209.php',
         'Zotlabs\\Web\\CheckJS' => __DIR__ . '/../..' . '/Zotlabs/Web/CheckJS.php',
         'Zotlabs\\Web\\Controller' => __DIR__ . '/../..' . '/Zotlabs/Web/Controller.php',
         'Zotlabs\\Web\\HTTPHeaders' => __DIR__ . '/../..' . '/Zotlabs/Web/HTTPHeaders.php',
