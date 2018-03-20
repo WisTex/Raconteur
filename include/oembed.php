@@ -32,6 +32,7 @@ function oembed_action($embedurl) {
 			$action = 'block';
 		}
 	}
+
 	if(strpos($embedurl,'.well-known') !== false)
 		$action = 'block';
 
