@@ -109,6 +109,7 @@ function clean_query_string($s = '') {
 	$x = strip_zids(($s) ? $s : \App::$query_string);
 	$x = strip_owt($x);
 	$x = strip_zats($x);
+	$x = strip_query_param($x,'sort');
 
 	return strip_query_param($x,'f');
 }
