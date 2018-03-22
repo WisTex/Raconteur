@@ -127,6 +127,10 @@ class Articles extends \Zotlabs\Web\Controller {
 			$editor = '';
 		}
 		
+		$itemspage = get_pconfig(local_channel(),'system','itemspage');
+		\App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
+		$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));
+
 		
 		$sql_extra = item_permissions_sql($owner);
 		$sql_item = '';
@@ -142,7 +146,7 @@ class Articles extends \Zotlabs\Web\Controller {
 				
 		$r = q("select * from item 
 			where item.uid = %d and item_type = %d 
-			$sql_extra $sql_item order by item.created desc",
+			$sql_extra $sql_item order by item.created desc $pager_sql",
 			intval($owner),
 			intval(ITEM_TYPE_ARTICLE)
 		);
@@ -152,6 +156,8 @@ class Articles extends \Zotlabs\Web\Controller {
 			and item.item_blocked = 0 ";
 
 		if($r) {
+
+			$pager_total = count($r);
 
 			$parents_str = ids_to_querystr($r,'id');
 
@@ -174,13 +180,18 @@ class Articles extends \Zotlabs\Web\Controller {
 
 		$mode = 'articles';
 			
-     	$content = conversation($items,$mode,false,'traditional');
+		if(get_pconfig(local_channel(),'system','articles_list_mode'))
+            $page_mode = 'list';
+        else
+            $page_mode = 'traditional';
+
+     	$content = conversation($items,$mode,false,$page_mode);
 
 		$o = replace_macros(get_markup_template('cards.tpl'), [
 			'$title' => t('Articles'),
 			'$editor' => $editor,
 			'$content' => $content,
-			'$pager' => alt_pager($a,count($items))
+			'$pager' => alt_pager($a,$pager_total)
 		]);
 
         return $o;
