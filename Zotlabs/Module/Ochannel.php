@@ -56,6 +56,9 @@ class Ochannel extends \Zotlabs\Web\Controller {
 
 	function get($update = 0, $load = false) {
 
+		if(argc() < 2)
+			return;
+
 		if($load)
 			$_SESSION['loadtime'] = datetime_convert();
 
