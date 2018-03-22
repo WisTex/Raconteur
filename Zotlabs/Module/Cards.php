@@ -132,19 +132,20 @@ class Cards extends \Zotlabs\Web\Controller {
 
 
 		$sql_extra = item_permissions_sql($owner);
+		$sql_item = '';
 
 		if($selected_card) {
 			$r = q("select * from iconfig where iconfig.cat = 'system' and iconfig.k = 'CARD' and iconfig.v = '%s' limit 1",
 				dbesc($selected_card)
 			);
 			if($r) {
-				$sql_extra .= "and item.id = " . intval($r[0]['iid']) . " ";
+				$sql_item = "and item.id = " . intval($r[0]['iid']) . " ";
 			}
 		}
 
 		$r = q("select * from item
 			where uid = %d and item_type = %d
-			$sql_extra order by item.created desc",
+			$sql_extra $sql_item order by item.created desc",
 			intval($owner),
 			intval(ITEM_TYPE_CARD)
 		);
