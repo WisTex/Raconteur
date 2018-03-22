@@ -1977,11 +1977,11 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 	 */
 	call_hooks('post_remote_end', $arr);
 
-	// update the commented timestamp on the parent - unless this is potentially a clone of an older item
+	// update the commented timestamp on the parent - unless this is a moderated comment or a potential clone of an older item
 	// which we don't wish to bring to the surface. As the queue only holds deliveries for 3 days, it's
 	// suspected of being an older cloned item if the creation time is older than that.
 
-	if($arr['created'] > datetime_convert('','','now - 4 days')) {
+	if((intval($arr['item_blocked']) != ITEM_MODERATED) || ($arr['created'] > datetime_convert('','','now - 4 days'))) {
 		$z = q("select max(created) as commented from item where parent_mid = '%s' and uid = %d and item_delayed = 0 ",
 			dbesc($arr['parent_mid']),
 			intval($arr['uid'])

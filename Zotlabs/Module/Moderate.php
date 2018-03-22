@@ -52,6 +52,20 @@ class Moderate extends \Zotlabs\Web\Controller {
 						intval(local_channel()),
 						intval($post_id)
 					);
+
+					// update the parent's commented timestamp
+
+					$z = q("select max(created) as commented from item where parent_mid = '%s' and uid = %d and item_delayed = 0 ",
+						dbesc($r[0]['parent_mid']),
+						intval(local_channel())
+					);
+
+					q("UPDATE item set commented = '%s', changed = '%s' WHERE id = %d",
+						dbesc(($z) ? $z[0]['commented'] : (datetime_convert())),
+						dbesc(datetime_convert()),
+						intval($r[0]['parent'])
+					);
+
 					notice( t('Comment approved') . EOL);
 				}
 				elseif($action === 'drop') {
