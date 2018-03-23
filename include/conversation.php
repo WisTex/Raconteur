@@ -838,11 +838,11 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
 					$item_object = new Zotlabs\Lib\ThreadItem($item);
 					$conv->add_thread($item_object);
-					if($page_mode === 'list') {
+					if(($page_mode === 'list') || ($page_mode === 'pager_list')) {
 						$item_object->set_template('conv_list.tpl');
 						$item_object->set_display_mode('list');
 					}
-					if($page_mode === 'cards') {
+					if($mode === 'cards' || $mode === 'articles') {
 						$item_object->set_reload($jsreload);
 					}
 
@@ -857,7 +857,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 		}
 	}
 
-	if($page_mode === 'traditional' || $page_mode === 'preview') {
+	if(in_array($page_mode, [ 'traditional', 'preview', 'pager_list'] )) {
 		$page_template = get_markup_template("threaded_conversation.tpl");
 	}
 	elseif($update) {

@@ -183,8 +183,8 @@ class Cards extends \Zotlabs\Web\Controller {
 
 		$mode = 'cards';
 
-		if(get_pconfig(local_channel(),'system','articles_list_mode'))
-			$page_mode = 'list';
+		if(get_pconfig(local_channel(),'system','articles_list_mode') && (! $selected_card))
+			$page_mode = 'pager_list';
 		else
 			$page_mode = 'traditional';
 
@@ -194,7 +194,7 @@ class Cards extends \Zotlabs\Web\Controller {
 			'$title' => t('Cards'),
 			'$editor' => $editor,
 			'$content' => $content,
-			'$pager' => alt_pager($a, $pager_total))
+			'$pager' => alt_pager($a, $pager_total)
 		]);
 
 		return $o;

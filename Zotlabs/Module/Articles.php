@@ -180,8 +180,8 @@ class Articles extends \Zotlabs\Web\Controller {
 
 		$mode = 'articles';
 			
-		if(get_pconfig(local_channel(),'system','articles_list_mode'))
-            $page_mode = 'list';
+		if(get_pconfig(local_channel(),'system','articles_list_mode') && (! $selected_card))
+            $page_mode = 'pager_list';
         else
             $page_mode = 'traditional';
 
