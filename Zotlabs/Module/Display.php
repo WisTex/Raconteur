@@ -134,6 +134,40 @@ class Display extends \Zotlabs\Web\Controller {
 			 	return '';
 			}
 		}
+		if($target_item['item_type']  == ITEM_TYPE_ARTICLE) {
+			$x = q("select * from channel where channel_id = %d limit 1",
+				intval($target_item['uid'])
+			);
+			$y = q("select * from iconfig left join item on iconfig.iid = item.id 
+				where item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'ARTICLE' and item.id = %d limit 1",
+				intval($target_item['uid']),
+				intval($target_item['id'])
+			);
+			if($x && $y) {
+				goaway(z_root() . '/articles/' . $x[0]['channel_address'] . '/' . $y[0]['v']);
+			}
+			else {
+				notice( t('Page not found.') . EOL);
+			 	return '';
+			}
+		}
+		if($target_item['item_type']  == ITEM_TYPE_CARD) {
+			$x = q("select * from channel where channel_id = %d limit 1",
+				intval($target_item['uid'])
+			);
+			$y = q("select * from iconfig left join item on iconfig.iid = item.id 
+				where item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'CARD' and item.id = %d limit 1",
+				intval($target_item['uid']),
+				intval($target_item['id'])
+			);
+			if($x && $y) {
+				goaway(z_root() . '/cards/' . $x[0]['channel_address'] . '/' . $y[0]['v']);
+			}
+			else {
+				notice( t('Page not found.') . EOL);
+			 	return '';
+			}
+		}
 		
 		$static = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
 	

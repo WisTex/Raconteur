@@ -2285,12 +2285,30 @@ function process_mail_delivery($sender, $arr, $deliveries) {
 			continue;
 		}
 
+
 		if(! perm_is_allowed($channel['channel_id'],$sender['hash'],'post_mail')) {
-			logger("permission denied for mail delivery {$channel['channel_id']}");
-			$DR->update('permission denied');
-			$result[] = $DR->get();
-			continue;
+
+			/* 
+			 * Always allow somebody to reply if you initiated the conversation. It's anti-social
+			 * and a bit rude to send a private message to somebody and block their ability to respond.
+			 * If you are being harrassed and want to put an end to it, delete the conversation.
+			 */
+
+			$return = false;
+			if($arr['parent_mid']) {
+				$return = q("select * from mail where mid = '%s' and channel_id = %d limit 1",
+					dbesc($arr['parent_mid']),
+					intval($channel['channel_id'])
+				);
+			}
+			if(! $return) {
+				logger("permission denied for mail delivery {$channel['channel_id']}");
+				$DR->update('permission denied');
+				$result[] = $DR->get();
+				continue;
+			}
 		}
+
 
 		$r = q("select id from mail where mid = '%s' and channel_id = %d limit 1",
 			dbesc($arr['mid']),
