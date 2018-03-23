@@ -207,7 +207,7 @@ function bb_to_markdown($Text, $options = []) {
 	$Text = bbcode($Text, [ 'tryoembed' => false ]);
 
 	// Markdownify does not preserve previously escaped html entities such as <> and &.
-	$Text = str_replace(array('&lt;','&gt;','&amp;'),array('&_lt_;','&_gt_;','&_amp_;'),$Text);
+	//$Text = str_replace(array('&lt;','&gt;','&amp;'),array('&_lt_;','&_gt_;','&_amp_;'),$Text);
 
 	// Now convert HTML to Markdown
 
@@ -215,7 +215,7 @@ function bb_to_markdown($Text, $options = []) {
 
 	// It also adds backslashes to our attempt at getting around the html entity preservation for some weird reason.
 
-	$Text = str_replace(array('&\\_lt\\_;','&\\_gt\\_;','&\\_amp\\_;'),array('&lt;','&gt;','&amp;'),$Text);
+	//$Text = str_replace(array('&\\_lt\\_;','&\\_gt\\_;','&\\_amp\\_;'),array('&lt;','&gt;','&amp;'),$Text);
 
 	// If the text going into bbcode() has a plain URL in it, i.e.
 	// with no [url] tags around it, it will come out of parseString()
