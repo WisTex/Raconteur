@@ -27,14 +27,19 @@ set -e
 
 echo "Preparing for PostgreSQL ..."
 
+if [[ "$POSTGRESQL_VERSION" == "10" ]]; then
+	echo "Using PostgreSQL in Docker container, need to use TCP"
+	export PROTO="-h localhost"
+fi
+
 # Print out some PostgreSQL information
 psql --version
 # Why does this hang further execution of the job?
-psql -U postgres -c "SELECT VERSION();"
+psql $PROTO -U postgres -c "SELECT VERSION();"
 
 # Create Hubzilla database
-psql -U postgres -c "DROP DATABASE IF EXISTS travis_hubzilla;"
-psql -U postgres -v ON_ERROR_STOP=1 <<-EOSQL
+psql $PROTO -U postgres -c "DROP DATABASE IF EXISTS travis_hubzilla;"
+psql $PROTO -U postgres -v ON_ERROR_STOP=1 <<-EOSQL
     CREATE USER travis_hz WITH PASSWORD 'hubzilla';
     CREATE DATABASE travis_hubzilla;
     ALTER DATABASE travis_hubzilla OWNER TO travis_hz;
@@ -42,8 +47,8 @@ psql -U postgres -v ON_ERROR_STOP=1 <<-EOSQL
 EOSQL
 
 # Import table structure
-psql -U travis_hz -v ON_ERROR_STOP=1 travis_hubzilla < ./install/schema_postgres.sql
+psql $PROTO -U travis_hz -v ON_ERROR_STOP=1 travis_hubzilla < ./install/schema_postgres.sql
 
 # Show databases and tables
-psql -U postgres -l
-psql -U postgres -d travis_hubzilla -c "\dt;"
+psql $PROTO -U postgres -l
+psql $PROTO -U postgres -d travis_hubzilla -c "\dt;"
