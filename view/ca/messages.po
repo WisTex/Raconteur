@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the Red package.
 # 
 # Translators:
-# Espart <ranker72@gmail.com>, 2015
+# fadelkon <fadelkon@posteo.net>, 2015
 # Rafael Garau, 2016
 # Rafael Garau, 2013-2015
 # Rafael Garau, 2015
@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Redmatrix\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-20 00:01-0700\n"
-"PO-Revision-Date: 2016-02-19 11:17+0000\n"
+"POT-Creation-Date: 2016-07-08 00:01-0700\n"
+"PO-Revision-Date: 2017-09-23 19:03+0000\n"
 "Last-Translator: Rafael Garau\n"
 "Language-Team: Catalan (Spain) (http://www.transifex.com/Friendica/red-matrix/language/ca_ES/)\n"
 "MIME-Version: 1.0\n"
@@ -199,7 +199,7 @@ msgstr "Editar Perfils"
 msgid "Manage/Edit profiles"
 msgstr "Gestiona/Edita perfils"
 
-#: ../../include/nav.php:95 ../../include/identity.php:979
+#: ../../include/nav.php:95 ../../include/identity.php:987
 msgid "Edit Profile"
 msgstr "Edita Perfil"
 
@@ -844,7 +844,7 @@ msgstr "Editar Personal App"
 
 #: ../../include/widgets.php:136 ../../include/widgets.php:175
 #: ../../include/Contact.php:107 ../../include/conversation.php:956
-#: ../../include/identity.php:956 ../../mod/match.php:64
+#: ../../include/identity.php:964 ../../mod/match.php:64
 #: ../../mod/directory.php:316 ../../mod/suggest.php:52
 msgid "Connect"
 msgstr "Connecta "
@@ -1110,7 +1110,7 @@ msgid "View all"
 msgstr "Mostra-ho tot"
 
 #: ../../include/ItemObject.php:179 ../../include/conversation.php:1712
-#: ../../include/identity.php:1266 ../../include/taxonomy.php:396
+#: ../../include/identity.php:1274 ../../include/taxonomy.php:396
 #: ../../mod/photos.php:1019
 msgctxt "noun"
 msgid "Like"
@@ -1470,7 +1470,7 @@ msgstr "Visita %1$s de %2$s"
 msgid "%1$s has an updated %2$s, changing %3$s."
 msgstr "%1$s Ha actualitzat %2$s, canviant %3$s."
 
-#: ../../include/api.php:1178
+#: ../../include/api.php:1203
 msgid "Public Timeline"
 msgstr "Cronologia pública"
 
@@ -1482,8 +1482,8 @@ msgstr "Administració"
 msgid "Address Book"
 msgstr "Adreçes"
 
-#: ../../include/apps.php:138 ../../include/identity.php:1240
-#: ../../include/identity.php:1357 ../../mod/profperm.php:112
+#: ../../include/apps.php:138 ../../include/identity.php:1248
+#: ../../include/identity.php:1365 ../../mod/profperm.php:112
 msgid "Profile"
 msgstr "Perfil"
 
@@ -1659,7 +1659,7 @@ msgstr "Adjuntat:"
 
 #: ../../include/bb2diaspora.php:459 ../../include/event.php:22
 msgid "l F d, Y \\@ g:i A"
-msgstr "l F d, Y \\@ g:i A"
+msgstr "l d \\d\\e/\\d' F de Y \\@ H:i T"
 
 #: ../../include/bb2diaspora.php:461
 msgid "$Projectname event notification:"
@@ -1674,7 +1674,7 @@ msgid "Finishes:"
 msgstr "Acaba:"
 
 #: ../../include/bb2diaspora.php:481 ../../include/event.php:50
-#: ../../include/identity.php:1007 ../../mod/directory.php:302
+#: ../../include/identity.php:1015 ../../mod/directory.php:302
 #: ../../mod/events.php:684
 msgid "Location:"
 msgstr "Lloc:"
@@ -3061,11 +3061,11 @@ msgstr "No es pot recuperar la identitat creada"
 msgid "Default Profile"
 msgstr "Perfil per Defecte"
 
-#: ../../include/identity.php:759
+#: ../../include/identity.php:767
 msgid "Requested channel is not available."
 msgstr "El canal demanat no està disponible."
 
-#: ../../include/identity.php:806 ../../mod/achievements.php:11
+#: ../../include/identity.php:814 ../../mod/achievements.php:11
 #: ../../mod/blocks.php:29 ../../mod/profile.php:16 ../../mod/connect.php:13
 #: ../../mod/editblock.php:29 ../../mod/editlayout.php:27
 #: ../../mod/editwebpage.php:28 ../../mod/filestorage.php:54
@@ -3073,188 +3073,188 @@ msgstr "El canal demanat no està disponible."
 msgid "Requested profile is not available."
 msgstr "El perfil demanat no està disponible."
 
-#: ../../include/identity.php:969 ../../mod/profiles.php:774
+#: ../../include/identity.php:977 ../../mod/profiles.php:774
 msgid "Change profile photo"
 msgstr "Canviar la foto del perfil"
 
-#: ../../include/identity.php:975
+#: ../../include/identity.php:983
 msgid "Profiles"
 msgstr "Perfils"
 
-#: ../../include/identity.php:975
+#: ../../include/identity.php:983
 msgid "Manage/edit profiles"
 msgstr "Gestiona/edita perfils"
 
-#: ../../include/identity.php:976 ../../mod/profiles.php:775
+#: ../../include/identity.php:984 ../../mod/profiles.php:775
 msgid "Create New Profile"
 msgstr "Crear un Perfil Nou"
 
-#: ../../include/identity.php:991 ../../mod/profiles.php:786
+#: ../../include/identity.php:999 ../../mod/profiles.php:786
 msgid "Profile Image"
 msgstr "Imatge del Perfil"
 
-#: ../../include/identity.php:994
+#: ../../include/identity.php:1002
 msgid "visible to everybody"
 msgstr "visible per tothom"
 
-#: ../../include/identity.php:995 ../../mod/profiles.php:669
+#: ../../include/identity.php:1003 ../../mod/profiles.php:669
 #: ../../mod/profiles.php:790
 msgid "Edit visibility"
 msgstr "Editar visibilitat"
 
-#: ../../include/identity.php:1011 ../../include/identity.php:1250
+#: ../../include/identity.php:1019 ../../include/identity.php:1258
 msgid "Gender:"
 msgstr "Gènere:"
 
-#: ../../include/identity.php:1012 ../../include/identity.php:1294
+#: ../../include/identity.php:1020 ../../include/identity.php:1302
 msgid "Status:"
 msgstr "Estatus:"
 
-#: ../../include/identity.php:1013 ../../include/identity.php:1305
+#: ../../include/identity.php:1021 ../../include/identity.php:1313
 msgid "Homepage:"
 msgstr "Pàgina Personal:"
 
-#: ../../include/identity.php:1014
+#: ../../include/identity.php:1022
 msgid "Online Now"
 msgstr "Ara en Linia"
 
-#: ../../include/identity.php:1097 ../../include/identity.php:1175
+#: ../../include/identity.php:1105 ../../include/identity.php:1183
 #: ../../mod/ping.php:324
 msgid "g A l F d"
 msgstr "g A l F d"
 
-#: ../../include/identity.php:1098 ../../include/identity.php:1176
+#: ../../include/identity.php:1106 ../../include/identity.php:1184
 msgid "F d"
 msgstr "F d"
 
-#: ../../include/identity.php:1143 ../../include/identity.php:1215
+#: ../../include/identity.php:1151 ../../include/identity.php:1223
 #: ../../mod/ping.php:346
 msgid "[today]"
 msgstr "[avui]"
 
-#: ../../include/identity.php:1154
+#: ../../include/identity.php:1162
 msgid "Birthday Reminders"
 msgstr "Recordatori d'Aniversaris"
 
-#: ../../include/identity.php:1155
+#: ../../include/identity.php:1163
 msgid "Birthdays this week:"
 msgstr "Aniversari aquesta setmana:"
 
-#: ../../include/identity.php:1208
+#: ../../include/identity.php:1216
 msgid "[No description]"
 msgstr "[Sense descripció]"
 
-#: ../../include/identity.php:1226
+#: ../../include/identity.php:1234
 msgid "Event Reminders"
 msgstr "Recordatori d'Events"
 
-#: ../../include/identity.php:1227
+#: ../../include/identity.php:1235
 msgid "Events this week:"
 msgstr "Event aquesta setmana:"
 
-#: ../../include/identity.php:1248 ../../mod/settings.php:1056
+#: ../../include/identity.php:1256 ../../mod/settings.php:1056
 msgid "Full Name:"
 msgstr "Nom Complet:"
 
-#: ../../include/identity.php:1255
+#: ../../include/identity.php:1263
 msgid "Like this channel"
 msgstr "M'agrada aquest canal"
 
-#: ../../include/identity.php:1279
+#: ../../include/identity.php:1287
 msgid "j F, Y"
 msgstr "j F, Y"
 
-#: ../../include/identity.php:1280
+#: ../../include/identity.php:1288
 msgid "j F"
 msgstr "j F"
 
-#: ../../include/identity.php:1287
+#: ../../include/identity.php:1295
 msgid "Birthday:"
 msgstr "Aniversari:"
 
-#: ../../include/identity.php:1291 ../../mod/directory.php:297
+#: ../../include/identity.php:1299 ../../mod/directory.php:297
 msgid "Age:"
 msgstr "Edat:"
 
-#: ../../include/identity.php:1300
+#: ../../include/identity.php:1308
 #, php-format
 msgid "for %1$d %2$s"
 msgstr "per %1$d %2$s"
 
-#: ../../include/identity.php:1303 ../../mod/profiles.php:691
+#: ../../include/identity.php:1311 ../../mod/profiles.php:691
 msgid "Sexual Preference:"
 msgstr "Preferència Sexual:"
 
-#: ../../include/identity.php:1307 ../../mod/profiles.php:693
+#: ../../include/identity.php:1315 ../../mod/profiles.php:693
 #: ../../mod/directory.php:313
 msgid "Hometown:"
 msgstr "Ciutat Natal:"
 
-#: ../../include/identity.php:1309
+#: ../../include/identity.php:1317
 msgid "Tags:"
 msgstr "Etiquetes:"
 
-#: ../../include/identity.php:1311 ../../mod/profiles.php:694
+#: ../../include/identity.php:1319 ../../mod/profiles.php:694
 msgid "Political Views:"
 msgstr "Idees Polítiques:"
 
-#: ../../include/identity.php:1313
+#: ../../include/identity.php:1321
 msgid "Religion:"
 msgstr "Religió:"
 
-#: ../../include/identity.php:1315 ../../mod/directory.php:315
+#: ../../include/identity.php:1323 ../../mod/directory.php:315
 msgid "About:"
 msgstr "Sobre mi:"
 
-#: ../../include/identity.php:1317
+#: ../../include/identity.php:1325
 msgid "Hobbies/Interests:"
 msgstr "Aficions/Interessos:"
 
-#: ../../include/identity.php:1319 ../../mod/profiles.php:697
+#: ../../include/identity.php:1327 ../../mod/profiles.php:697
 msgid "Likes:"
 msgstr "M'agrada:"
 
-#: ../../include/identity.php:1321 ../../mod/profiles.php:698
+#: ../../include/identity.php:1329 ../../mod/profiles.php:698
 msgid "Dislikes:"
 msgstr "No li agrada:"
 
-#: ../../include/identity.php:1323
+#: ../../include/identity.php:1331
 msgid "Contact information and Social Networks:"
 msgstr "Informació de contacte i Xarxes Socials:"
 
-#: ../../include/identity.php:1325
+#: ../../include/identity.php:1333
 msgid "My other channels:"
 msgstr "Els meus altres canals:"
 
-#: ../../include/identity.php:1327
+#: ../../include/identity.php:1335
 msgid "Musical interests:"
 msgstr "Interessos Musicals:"
 
-#: ../../include/identity.php:1329
+#: ../../include/identity.php:1337
 msgid "Books, literature:"
 msgstr "Llibres, literatura:"
 
-#: ../../include/identity.php:1331
+#: ../../include/identity.php:1339
 msgid "Television:"
 msgstr "Televisió:"
 
-#: ../../include/identity.php:1333
+#: ../../include/identity.php:1341
 msgid "Film/dance/culture/entertainment:"
 msgstr "Películes/Dança/Cultura/Entreteniment:"
 
-#: ../../include/identity.php:1335
+#: ../../include/identity.php:1343
 msgid "Love/Romance:"
 msgstr "Amor/Romace:"
 
-#: ../../include/identity.php:1337
+#: ../../include/identity.php:1345
 msgid "Work/employment:"
 msgstr "Treball/feina:"
 
-#: ../../include/identity.php:1339
+#: ../../include/identity.php:1347
 msgid "School/education:"
 msgstr "Escola/educació:"
 
-#: ../../include/identity.php:1359
+#: ../../include/identity.php:1367
 msgid "Like this thing"
 msgstr "M'agrada això"
 
@@ -8845,7 +8845,7 @@ msgstr "Cerca a xchan"
 msgid "Lookup xchan beginning with (or webbie): "
 msgstr "Cerca a xchan començant per (o webbie)"
 
-#: ../../mod/zfinger.php:23
+#: ../../mod/zfinger.php:24
 msgid "invalid target signature"
 msgstr "Signatura objectiu invàlida"
 

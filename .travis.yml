@@ -62,28 +62,34 @@ matrix:
   fast_finish: true
   # Additional check combinations
   include:
-    # PHP7.1, mariadb 10.1
-    - php: '7.1'
-      env: DB=mariadb MARIADB_VERSION=10.1 CODECOV=1
+    # PHP7.2, mariadb 10.2
+    - php: '7.2'
+      env: DB=mariadb MARIADB_VERSION=10.2 CODECOV=1
       # use mariadb instead of MySQL
       addons:
-        mariadb: '10.1'
-    # PHP7.1, PostgreSQL 9.6
-    - php: '7.1'
+        mariadb: '10.2'
+    # PHP7.2, PostgreSQL 9.6
+    - php: '7.2'
       env: DB=pgsql POSTGRESQL_VERSION=9.6 PHPUNITFILE=phpunit-pgsql.xml
       # Use newer postgres than 9.2 default
       addons:
         postgresql: '9.6'
       services:
         - postgresql
-    # PHP7.1, old precise distribution with MySQL 5.5
-    - php: '7.1'
+    # PostgreSQL 10 with Docker container
+    - php: '7.2'
+      env: DB=pgsql POSTGRESQL_VERSION=10 PHPUNITFILE=phpunit-pgsql.xml
+      sudo: required
+      services:
+        - docker
+    # PHP7.2, old precise distribution with MySQL 5.5
+    - php: '7.2'
       env: DB=mysql MYSQL_VERSION=5.5
       dist: precise
       services:
         - mysql
     # MySQL 5.7 with Docker container
-    - php: '7.1'
+    - php: '7.2'
       env: DB=mysql MYSQL_VERSION=5.7
       sudo: required
       services:
@@ -109,6 +115,8 @@ before_install:
   - travis_retry composer self-update
   # Start MySQL 5.7 Docker container, needs some time to come up
   - if [[ "$MYSQL_VERSION" == "5.7" ]]; then sudo service mysql stop; docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes mysql:5.7 && sleep 25 && docker ps; fi
+  # Start PostgreSQL 10 Docker container, needs some time to come up
+  - if [[ "$POSTGRESQL_VERSION" == "10" ]]; then sudo service postgresql stop; docker run -d -p 5432:5432 postgres:10-alpine && sleep 35 && docker ps; fi
 
 # Install composer dev libs
 install:

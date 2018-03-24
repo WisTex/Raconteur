@@ -23,7 +23,7 @@ msgstr ""
 
 #: ../../Zotlabs/Access/Permissions.php:46
 msgid "Can view my channel stream and posts"
-msgstr "Peut voir mon canal et mes publicatiosn"
+msgstr "Peut voir mon canal et mes publications"
 
 #: ../../Zotlabs/Access/Permissions.php:47 ../../include/permissions.php:42
 msgid "Can send me their channel stream and posts"
@@ -75,7 +75,7 @@ msgstr "Peuvent m'envoyer des messages privés"
 
 #: ../../Zotlabs/Access/Permissions.php:59
 msgid "Can like/dislike profiles and profile things"
-msgstr "Peut aimer ou détester des profiles"
+msgstr "Peut aimer ou détester des profils"
 
 #: ../../Zotlabs/Access/Permissions.php:60
 msgid "Can forward to all my channel connections via @+ mentions in posts"
@@ -347,7 +347,7 @@ msgstr "Voir"
 
 #: ../../Zotlabs/Module/Invite.php:29
 msgid "Total invitation limit exceeded."
-msgstr "Limite du nombre total d'invitation dépassée."
+msgstr "Limite du nombre total d'invitations dépassée."
 
 #: ../../Zotlabs/Module/Invite.php:53
 #, php-format
@@ -654,7 +654,7 @@ msgstr "Emplacement introuvable."
 
 #: ../../Zotlabs/Module/Locs.php:62
 msgid "Location lookup failed."
-msgstr "Echec de la recherche de l'emplacement."
+msgstr "Échec de la recherche de l'emplacement."
 
 #: ../../Zotlabs/Module/Locs.php:66
 msgid ""
@@ -868,7 +868,7 @@ msgstr "Les nombres les plus élevés seront au bas de la liste"
 
 #: ../../Zotlabs/Module/Mitem.php:165
 msgid "Submit and finish"
-msgstr "Vadiler et terminer"
+msgstr "Valider et terminer"
 
 #: ../../Zotlabs/Module/Mitem.php:166
 msgid "Submit and continue"
@@ -953,7 +953,7 @@ msgstr "Impossible de générer l'aperçu."
 
 #: ../../Zotlabs/Module/Events.php:119
 msgid "Event title and start time are required."
-msgstr "Un titre et une date de début sont requises pour l'événement."
+msgstr "Un titre et une date de début sont nécessaires pour l'événement."
 
 #: ../../Zotlabs/Module/Events.php:141 ../../Zotlabs/Module/Events.php:265
 msgid "Event not found."

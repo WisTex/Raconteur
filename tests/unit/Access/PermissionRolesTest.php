@@ -62,6 +62,7 @@ class PermissionRolesTest extends UnitTestCase {
 		$this->assertEquals($roles, $r->roles());
 
 		$socialNetworking = [
+				'social_party' => 'Social - Party',
 				'social' => 'Social - Mostly Public',
 				'social_restricted' => 'Social - Restricted',
 				'social_private' => 'Social - Private'
