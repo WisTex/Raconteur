@@ -47,24 +47,17 @@ class Moderate extends \Zotlabs\Web\Controller {
 			);
 
 			if($r) {
+				$item = $r[0];
+
 				if($action === 'approve') {
 					q("update item set item_blocked = 0 where uid = %d and id = %d",
 						intval(local_channel()),
 						intval($post_id)
 					);
 
-					// update the parent's commented timestamp
+					$item['item_blocked'] = 0;
 
-					$z = q("select max(created) as commented from item where parent_mid = '%s' and uid = %d and item_delayed = 0 ",
-						dbesc($r[0]['parent_mid']),
-						intval(local_channel())
-					);
-
-					q("UPDATE item set commented = '%s', changed = '%s' WHERE id = %d",
-						dbesc(($z) ? $z[0]['commented'] : (datetime_convert())),
-						dbesc(datetime_convert()),
-						intval($r[0]['parent'])
-					);
+					item_update_parent_commented($item);
 
 					notice( t('Comment approved') . EOL);
 				}
@@ -72,6 +65,8 @@ class Moderate extends \Zotlabs\Web\Controller {
 					drop_item($post_id,false);
 					notice( t('Comment deleted') . EOL);
 				} 
+
+				// refetch the item after changes have been made
 			
 				$r = q("select * from item where id = %d",
 					intval($post_id)
