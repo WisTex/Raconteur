@@ -9,9 +9,6 @@ class Newmember {
 		if(! local_channel())
 			return EMPTY_STR;
 
-		if(get_pconfig(local_channel(), 'system', 'disable_newmemberwidget'))
-			return EMPTY_STR;
-
 		$c = \App::get_channel();
 		if(! $c)
 			return EMPTY_STR;
@@ -20,15 +17,8 @@ class Newmember {
 		if(! $a)
 			return EMPTY_STR;
 
-		if(datetime_convert('UTC','UTC',$a['account_created']) < datetime_convert('UTC','UTC', 'now - 60 days'))
+		if(! feature_enabled(local_channel(),'start_menu'))
 			return EMPTY_STR;
-
-		// This could be a new account that was used to clone a very old channel
-
-		$ob = \App::get_observer();
-		if($ob && array_key_exists('xchan_name_date',$ob) && $ob['xchan_name_date'] < datetime_convert('UTC','UTC','now - 60 days'))
-			return EMPTY_STR;
-
 
 		$options = [
 			t('Profile Creation'),

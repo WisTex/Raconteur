@@ -45,6 +45,7 @@ function feature_level($feature,$def) {
 
 function get_features($filtered = true) {
 
+	$account = \App::get_account();
 
 	$arr = [
 
@@ -53,7 +54,14 @@ function get_features($filtered = true) {
 
 			t('General Features'),
 
-
+			[
+				'start_menu',   
+				t('New Member Links'),      
+				t('Display new member quick links menu'),
+				true,
+				get_config('feature_lock','start_menu'),
+				feature_level('start_menu',1),
+			],
 
 			[
 				'advanced_profiles',   
