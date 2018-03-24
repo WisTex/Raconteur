@@ -785,6 +785,7 @@ class Apps {
 			dbesc($darray['app_plugin']),
 			intval($darray['app_deleted'])
 		);
+
 		if($r) {
 			$ret['success'] = true;
 			$ret['app_id'] = $darray['app_id'];
