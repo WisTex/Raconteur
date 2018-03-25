@@ -785,6 +785,7 @@ class Apps {
 			dbesc($darray['app_plugin']),
 			intval($darray['app_deleted'])
 		);
+
 		if($r) {
 			$ret['success'] = true;
 			$ret['app_id'] = $darray['app_id'];
@@ -871,6 +872,12 @@ class Apps {
 			dbesc($darray['app_id']),
 			intval($darray['app_channel'])
 		);
+
+		// if updating an embed app, don't mess with any existing categories.
+
+		if(array_key_exists('embed',$arr) && intval($arr['embed']))
+			return $ret;
+
 		if($x) {
 			q("delete from term where otype = %d and oid = %d",
 				intval(TERM_OBJ_APP),
