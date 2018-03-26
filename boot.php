@@ -857,7 +857,7 @@ class App {
 			self::$scheme = 'https';
 
 		if(x($_SERVER,'SERVER_NAME')) {
-			self::$hostname = $_SERVER['SERVER_NAME'];
+			self::$hostname = punify($_SERVER['SERVER_NAME']);
 
 			if(x($_SERVER,'SERVER_PORT') && $_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443)
 				self::$hostname .= ':' . $_SERVER['SERVER_PORT'];
@@ -954,14 +954,14 @@ class App {
 			&& is_array(self::$config['system'])
 			&& array_key_exists('baseurl',self::$config['system'])
 			&& strlen(self::$config['system']['baseurl'])) {
-			$url = self::$config['system']['baseurl'];
+			$url = punify(self::$config['system']['baseurl']);
 			$url = trim($url,'\\/');
 			return $url;
 		}
 
 		$scheme = self::$scheme;
 
-		self::$baseurl = $scheme . "://" . self::$hostname . ((isset(self::$path) && strlen(self::$path)) ? '/' . self::$path : '' );
+		self::$baseurl = $scheme . "://" . punify(self::$hostname) . ((isset(self::$path) && strlen(self::$path)) ? '/' . self::$path : '' );
 
 		return self::$baseurl;
 	}
@@ -972,7 +972,7 @@ class App {
 			&& is_array(self::$config['system'])
 			&& array_key_exists('baseurl',self::$config['system'])
 			&& strlen(self::$config['system']['baseurl'])) {
-			$url = self::$config['system']['baseurl'];
+			$url = punify(self::$config['system']['baseurl']);
 			$url = trim($url,'\\/');
 		}
 
@@ -983,7 +983,7 @@ class App {
 		if($parsed !== false) {
 			self::$scheme = $parsed['scheme'];
 
-			self::$hostname = $parsed['host'];
+			self::$hostname = punify($parsed['host']);
 			if(x($parsed,'port'))
 				self::$hostname .= ':' . $parsed['port'];
 			if(x($parsed,'path'))
