@@ -28,8 +28,9 @@ function get_feature_default($feature) {
 	$f = get_features(false);
 	foreach($f as $cat) {
 		foreach($cat as $feat) {
-			if(is_array($feat) && $feat[0] === $feature)
+			if(is_array($feat) && $feat[0] === $feature) {
 				return $feat[3];
+			}
 		}
 	}
 	return false;
@@ -58,7 +59,7 @@ function get_features($filtered = true) {
 				'start_menu',   
 				t('New Member Links'),      
 				t('Display new member quick links menu'),
-				true,
+				(($account['account_created'] > datetime_convert('','','now - 60 days')) ? true : false),
 				get_config('feature_lock','start_menu'),
 				feature_level('start_menu',1),
 			],
