@@ -32,6 +32,7 @@ class Connections extends \Zotlabs\Web\Controller {
 
 		nav_set_selected('Connections');
 	
+		$active      = false;
 		$blocked     = false;
 		$hidden      = false;
 		$ignored     = false;
@@ -44,11 +45,16 @@ class Connections extends \Zotlabs\Web\Controller {
 		if(! $_REQUEST['aj'])
 			$_SESSION['return_url'] = \App::$query_string;
 	
-		$search_flags = '';
+		$search_flags = "";
 		$head = '';
 	
 		if(argc() == 2) {
 			switch(argv(1)) {
+				case 'active':
+					$search_flags = " and abook_blocked = 0 and abook_ignored = 0 and abook_hidden = 0 and abook_archived = 0 AND abook_not_here = 0 ";
+					$head = t('Active');
+					$active = true;
+					break;
 				case 'blocked':
 					$search_flags = " and abook_blocked = 1 ";
 					$head = t('Blocked');
@@ -101,8 +107,9 @@ class Connections extends \Zotlabs\Web\Controller {
 				case 'all':
 					$head = t('All');
 				default:
-					$search_flags = '';
-					$all = true;
+					$search_flags = " and abook_blocked = 0 and abook_ignored = 0 and abook_hidden = 0 and abook_archived = 0 and abook_not_here = 0 ";
+					$active = true;
+					$head = t('Active');
 					break;
 	
 			}
@@ -129,6 +136,13 @@ class Connections extends \Zotlabs\Web\Controller {
 			),
 			*/
 	
+			'active' => array(
+				'label' => t('Active Connections'),
+				'url'   => z_root() . '/connections/active', 
+				'sel'   => ($active) ? 'active' : '',
+				'title' => t('Show active connections'),
+			),
+
 			'pending' => array(
 				'label' => t('New Connections'),
 				'url'   => z_root() . '/connections/pending', 
@@ -136,12 +150,6 @@ class Connections extends \Zotlabs\Web\Controller {
 				'title' => t('Show pending (new) connections'),
 			),
 	
-			'all' => array(
-				'label' => t('All Connections'),
-				'url'   => z_root() . '/connections/all', 
-				'sel'   => ($all) ? 'active' : '',
-				'title' => t('Show all connections'),
-			),
 	
 			/*
 			array(
@@ -187,6 +195,13 @@ class Connections extends \Zotlabs\Web\Controller {
 	//			'title' => t('Only show one-way connections'),
 	//		),
 	
+
+			'all' => array(
+				'label' => t('All Connections'),
+				'url'   => z_root() . '/connections', 
+				'sel'   => ($all) ? 'active' : '',
+				'title' => t('Show all connections'),
+			),
 	
 		);
 	
@@ -238,6 +253,7 @@ class Connections extends \Zotlabs\Web\Controller {
 	
 					$status_str = '';
 					$status = array(
+						((intval($rr['abook_active'])) ? t('Active') : ''),
 						((intval($rr['abook_pending'])) ? t('Pending approval') : ''),
 						((intval($rr['abook_archived'])) ? t('Archived') : ''),
 						((intval($rr['abook_hidden'])) ? t('Hidden') : ''),

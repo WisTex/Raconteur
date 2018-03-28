@@ -969,6 +969,10 @@ function import_author_unknown($x) {
 	return false;
 }
 
+function empty_acl($item) {
+	return (($item['allow_cid'] === EMPTY_STR && $item['allow_gid'] === EMPTY_STR && $item['deny_cid'] === EMPTY_STR && $item['deny_gid'] === EMPTY_STR) ? true : false);
+}
+
 function encode_item($item,$mirror = false) {
 	$x = array();
 	$x['type'] = 'activity';
@@ -1973,23 +1977,7 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 	 */
 	call_hooks('post_remote_end', $arr);
 
-	// update the commented timestamp on the parent - unless this is potentially a clone of an older item
-	// which we don't wish to bring to the surface. As the queue only holds deliveries for 3 days, it's
-	// suspected of being an older cloned item if the creation time is older than that.
-
-	if($arr['created'] > datetime_convert('','','now - 4 days')) {
-		$z = q("select max(created) as commented from item where parent_mid = '%s' and uid = %d and item_delayed = 0 ",
-			dbesc($arr['parent_mid']),
-			intval($arr['uid'])
-		);
-
-		q("UPDATE item set commented = '%s', changed = '%s' WHERE id = %d",
-			dbesc(($z) ? $z[0]['commented'] : (datetime_convert())),
-			dbesc(datetime_convert()),
-			intval($parent_id)
-		);
-	}
-
+	item_update_parent_commented($arr);
 
 	// If _creating_ a deleted item, don't propagate it further or send out notifications.
 	// We need to store the item details just in case the delete came in before the original post,
@@ -2320,6 +2308,36 @@ function item_store_update($arr, $allow_exec = false, $deliver = true) {
 	return $ret;
 }
 
+function item_update_parent_commented($item) {
+
+
+	$update_parent = true;
+
+	// update the commented timestamp on the parent 
+	// - unless this is a moderated comment or a potential clone of an older item
+	// which we don't wish to bring to the surface. As the queue only holds deliveries 
+	// for 3 days, it's suspected of being an older cloned item if the creation time 
+	//is older than that.
+
+	if(intval($item['item_blocked']) === ITEM_MODERATED)
+		$update_parent = false;
+ 
+	if($item['created'] < datetime_convert('','','now - 4 days'))
+		$update_parent = false;
+
+	if($update_parent) {
+		$z = q("select max(created) as commented from item where parent_mid = '%s' and uid = %d and item_delayed = 0 ",
+			dbesc($item['parent_mid']),
+			intval($item['uid'])
+		);
+
+		q("UPDATE item set commented = '%s', changed = '%s' WHERE id = %d",
+			dbesc(($z) ? $z[0]['commented'] : datetime_convert()),
+			dbesc(datetime_convert()),
+			intval($item['parent'])
+		);
+	}
+}
 
 
 function send_status_notifications($post_id,$item) {

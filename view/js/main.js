@@ -436,6 +436,14 @@ function handleNotifications(data) {
 		$('.notifications-btn-icon').removeClass('fa-exclamation-triangle');
 		$('.notifications-btn-icon').addClass('fa-exclamation-circle');
 	}
+	if(data.all_events_today) {
+		$('.all_events-update').removeClass('badge-secondary');
+		$('.all_events-update').addClass('badge-danger');
+	}
+	else {
+		$('.all_events-update').removeClass('badge-danger');
+		$('.all_events-update').addClass('badge-secondary');
+	}
 
 	$.each(data, function(index, item) {
 		//do not process those

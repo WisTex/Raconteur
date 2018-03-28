@@ -19,7 +19,7 @@ class Chanview extends \Zotlabs\Web\Controller {
 		}
 		if($_REQUEST['address']) {
 			$r = q("select * from xchan where xchan_addr = '%s' limit 1",
-				dbesc($_REQUEST['address'])
+				dbesc(punify($_REQUEST['address']))
 			);
 		}
 		elseif(local_channel() && intval($_REQUEST['cid'])) {

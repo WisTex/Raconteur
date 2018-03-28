@@ -123,11 +123,13 @@ class Share {
 			$bb = substr($this->item['body'], $pos);
 		} else {
 			$bb = "[share author='".urlencode($this->item['author']['xchan_name']).
-				"' profile='".$this->item['author']['xchan_url'] .
-				"' avatar='".$this->item['author']['xchan_photo_s'].
-				"' link='".$this->item['plink'].
-				"' posted='".$this->item['created'].
-				"' message_id='".$this->item['mid']."']";
+				"' profile='"    . $this->item['author']['xchan_url'] .
+				"' avatar='"     . $this->item['author']['xchan_photo_s'] .
+				"' link='"       . $this->item['plink'] .
+				"' auth='"       . (($this->item['author']['network'] === 'zot') ? 'true' : 'false') .
+				"' posted='"     . $this->item['created'] .
+				"' message_id='" . $this->item['mid'] .
+			"']";
 			if($this->item['title'])
 				$bb .= '[b]'.$this->item['title'].'[/b]'."\r\n";
 			$bb .= (($is_photo) ? $photo_bb . "\r\n" . $this->item['body'] : $this->item['body']);

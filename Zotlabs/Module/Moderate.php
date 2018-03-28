@@ -47,17 +47,26 @@ class Moderate extends \Zotlabs\Web\Controller {
 			);
 
 			if($r) {
+				$item = $r[0];
+
 				if($action === 'approve') {
 					q("update item set item_blocked = 0 where uid = %d and id = %d",
 						intval(local_channel()),
 						intval($post_id)
 					);
+
+					$item['item_blocked'] = 0;
+
+					item_update_parent_commented($item);
+
 					notice( t('Comment approved') . EOL);
 				}
 				elseif($action === 'drop') {
 					drop_item($post_id,false);
 					notice( t('Comment deleted') . EOL);
 				} 
+
+				// refetch the item after changes have been made
 			
 				$r = q("select * from item where id = %d",
 					intval($post_id)

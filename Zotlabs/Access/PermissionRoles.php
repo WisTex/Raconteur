@@ -41,6 +41,24 @@ class PermissionRoles {
 
 				break;
 
+			case 'social_party':
+				$ret['perms_auto'] = false;
+				$ret['default_collection'] = false;
+				$ret['directory_publish'] = true;
+				$ret['online'] = true;
+				$ret['perms_connect'] = [
+					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
+					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments',
+					'post_mail', 'chat', 'post_like', 'republish'
+				];
+				$ret['limits'] = PermissionLimits::Std_Limits();
+				$ret['limits']['post_comments'] = PERMS_AUTHED;
+				$ret['limits']['post_mail'] = PERMS_AUTHED;
+				$ret['limits']['post_like'] = PERMS_AUTHED;
+				$ret['limits']['chat'] = PERMS_AUTHED;
+				break;
+
+
 			case 'social_restricted':
 				$ret['perms_auto'] = false;
 				$ret['default_collection'] = true;
@@ -263,6 +281,7 @@ class PermissionRoles {
 	static public function roles() {
 		$roles = [
 			t('Social Networking') => [
+				'social_party' => t('Social - Party'),
 				'social' => t('Social - Mostly Public'),
 				'social_restricted' => t('Social - Restricted'),
 				'social_private' => t('Social - Private')

@@ -655,7 +655,7 @@ class Profiles extends \Zotlabs\Web\Controller {
 				intval($id),
 				intval(local_channel())
 			);
-			if(! count($r)) {
+			if(! $r) {
 				notice( t('Profile not found.') . EOL);
 				return;
 			}
@@ -712,13 +712,10 @@ class Profiles extends \Zotlabs\Web\Controller {
 	
 			$tpl = get_markup_template("profile_edit.tpl");
 			$o .= replace_macros($tpl,array(
-	
+				'$multi_profiles' => ((feature_enabled(local_channel(),'multi_profiles')) ? true : false),
 				'$form_security_token' => get_form_security_token("profile_edit"),
-				'$profile_clone_link'  => ((feature_enabled(local_channel(),'multi_profiles')) ? 'profiles/clone/' . $r[0]['id'] . '?t=' 
-					. get_form_security_token("profile_clone") : ''),
-				'$profile_drop_link'   => 'profiles/drop/' . $r[0]['id'] . '?t=' 
-					. get_form_security_token("profile_drop"),
-	
+				'$profile_clone_link'  => 'profiles/clone/' . $r[0]['id'] . '?t=' . get_form_security_token("profile_clone"),
+				'$profile_drop_link'   => 'profiles/drop/' . $r[0]['id'] . '?t=' . get_form_security_token("profile_drop"),
 				'$fields'       => $fields,
 				'$vcard'        => $vcard,
 				'$guid'         => $r[0]['profile_guid'],
@@ -786,22 +783,22 @@ class Profiles extends \Zotlabs\Web\Controller {
 				'$channels'     => array('channels', t('My other channels'), $r[0]['channels']),
 				'$extra_fields' => $extra_fields,
 				'$comms'          => t('Communications'),
-                '$tel_label'      => t('Phone'),
-                '$email_label'    => t('Email'),
-                '$impp_label'     => t('Instant messenger'),
-                '$url_label'      => t('Website'),
-                '$adr_label'      => t('Address'),
-                '$note_label'     => t('Note'),
-                '$mobile'         => t('Mobile'),
-                '$home'           => t('Home'),
-                '$work'           => t('Work'),
-                '$other'          => t('Other'),
-                '$add_card'       => t('Add Contact'),
-                '$add_field'      => t('Add Field'),
-                '$create'         => t('Create'),
-                '$update'         => t('Update'),
-                '$delete'         => t('Delete'),
-                '$cancel'         => t('Cancel'),
+				'$tel_label'      => t('Phone'),
+				'$email_label'    => t('Email'),
+				'$impp_label'     => t('Instant messenger'),
+				'$url_label'      => t('Website'),
+				'$adr_label'      => t('Address'),
+				'$note_label'     => t('Note'),
+				'$mobile'         => t('Mobile'),
+				'$home'           => t('Home'),
+				'$work'           => t('Work'),
+				'$other'          => t('Other'),
+				'$add_card'       => t('Add Contact'),
+				'$add_field'      => t('Add Field'),
+				'$create'         => t('Create'),
+				'$update'         => t('Update'),
+				'$delete'         => t('Delete'),
+				'$cancel'         => t('Cancel'),
 			));
 	
 			$arr = array('profile' => $r[0], 'entry' => $o);

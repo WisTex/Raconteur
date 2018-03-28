@@ -333,10 +333,17 @@ function photo_upload($channel, $observer, $args) {
 
 	$lat = $lon = null;
 
-	if($exif && $exif['GPS']) {
-		if(feature_enabled($channel_id,'photo_location')) {
-			$lat = getGps($exif['GPS']['GPSLatitude'], $exif['GPS']['GPSLatitudeRef']);
-			$lon = getGps($exif['GPS']['GPSLongitude'], $exif['GPS']['GPSLongitudeRef']);
+	if($exif && feature_enabled($channel_id,'photo_location')) {
+		$gps = null;
+		if(array_key_exists('GPS',$exif)) {
+			$gps = $exif['GPS'];
+		}
+		elseif(array_key_exists('GPSLatitude',$exif)) {
+			$gps = $exif;
+		}
+		if($gps) {
+			$lat = getGps($gps['GPSLatitude'], $gps['GPSLatitudeRef']);
+			$lon = getGps($gps['GPSLongitude'], $gps['GPSLongitudeRef']);
 		}
 	}
 

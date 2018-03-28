@@ -4,7 +4,7 @@
 			<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				<i class="fa fa-cog"></i>&nbsp;{{$tools_label}}
 			</button>
-			<div class="dropdown-menu">
+			<div class="dropdown-menu dropdown-menu-right">
 				<a class="dropdown-item" href="profile_photo" id="profile-photo_upload-link" title="{{$profpic}}"><i class="fa fa-fw fa-user"></i>&nbsp;{{$profpic}}</a>
 				{{if $is_default}}
 				<a class="dropdown-item" href="cover_photo" id="cover-photo_upload-link" title="{{$coverpic}}"><i class="fa fa-fw fa-picture-o"></i>&nbsp;{{$coverpic}}</a>
@@ -15,7 +15,7 @@
 				<a class="dropdown-item" href="thing" id="profile-edit-thing-link" title="{{$addthing}}"><i class="fa fa-fw fa-plus-circle"></i>&nbsp;{{$addthing}}</a>
 				<div class="dropdown-divider"></div>
 				<a class="dropdown-item" href="profile/{{$profile_id}}/view" id="profile-edit-view-link" title="{{$viewprof}}">{{$viewprof}}</a>
-				{{if $profile_clone_link}}
+				{{if $multi_profiles}}
 				<div class="dropdown-divider"></div>
 				<a class="dropdown-item" href="{{$profile_clone_link}}" id="profile-edit-clone-link" title="{{$cr_prof}}">{{$cl_prof}}</a>
 				{{/if}}
@@ -56,7 +56,11 @@
 					</div>
 					<div id="personal-collapse" class="panel-collapse collapse show" data-parent="#profile-edit-wrapper" role="tabpanel" aria-labelledby="personal">
 						<div class="section-content-tools-wrapper">
+							{{if $multi_profiles}}
 							{{include file="field_input.tpl" field=$profile_name}}
+							{{else}}
+							<input type="hidden" name="{{$profile_name.0}}" value="{{$profile_name.2}}">
+							{{/if}}
 
 							{{include file="field_input.tpl" field=$name}}
 

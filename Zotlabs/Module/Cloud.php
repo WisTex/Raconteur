@@ -60,6 +60,12 @@ class Cloud extends \Zotlabs\Web\Controller {
 		// if we arrived at this path with any query parameters in the url, build a clean url without
 		// them and redirect.
 
+		if(! array_key_exists('cloud_sort',$_SESSION)) {
+			$_SESSION['cloud_sort'] = 'name';
+		}
+
+		$_SESSION['cloud_sort'] = (($_REQUEST['sort']) ? trim(notags($_REQUEST['sort'])) : $_SESSION['cloud_sort']);
+
 		$x = clean_query_string();
 		if($x !== \App::$query_string)
 			goaway(z_root() . '/' . $x);

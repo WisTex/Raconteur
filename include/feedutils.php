@@ -668,6 +668,14 @@ function get_atom_elements($feed, $item) {
 			}
 			$termterm = notags(trim(unxmlify($term)));
 
+			// Mastodon auto generates an nsfw category tag for any 'content-warning' message.
+			// Most people use CW and use both summary/content as a spoiler and we honour that 
+			// construct so the post will already be collapsed. The generated tag is almost 
+			// always wrong and even if it isn't we would already be doing the right thing.
+	
+			if($mastodon && $termterm === 'nsfw' && $summary && $res['body'])
+				continue;
+
 			if($termterm) {
 				$terms[] = array(
 					'otype' => TERM_OBJ_POST,
@@ -926,6 +934,7 @@ function feed_get_reshare(&$res,$item) {
 			"' profile='"    . $share['profile'] .
 			"' avatar='"     . $share['avatar']  .
 			"' link='"       . $share['alternate']    .
+			"' auth='"       . 'false' .
 			"' posted='"     . $share['created'] .
 			"' message_id='" . $share['message_id'] . "']";
 

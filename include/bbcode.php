@@ -311,6 +311,19 @@ function bb_ShareAttributes($match) {
 	if ($matches[1] != "")
 		$posted = $matches[1];
 
+	$auth = "";
+	preg_match("/auth='(.*?)'/ism", $attributes, $matches);
+	if ($matches[1] != "") {
+		if($matches[1] === 'true')
+			$auth = true;
+		else
+			$auth = false;
+	}
+
+	if($auth === EMPTY_STR) {
+		$auth = is_matrix_url($profile);
+	}
+
 	// message_id is never used, do we still need it?
 	$message_id = "";
 	preg_match("/message_id='(.*?)'/ism", $attributes, $matches);
@@ -329,7 +342,7 @@ function bb_ShareAttributes($match) {
 	$headline = '<div class="shared_container"> <div class="shared_header">';
 
 	if ($avatar != "")
-		$headline .= '<a href="' . zid($profile) . '" ><img src="' . $avatar . '" alt="' . $author . '" height="32" width="32" /></a>';
+		$headline .= '<a href="' . (($auth) ? zid($profile) : $profile) . '" ><img src="' . $avatar . '" alt="' . $author . '" height="32" width="32" /></a>';
 
 	if(strpos($link,'/cards/'))
 		$type = t('card');
@@ -341,8 +354,8 @@ function bb_ShareAttributes($match) {
 	// Bob Smith wrote the following post 2 hours ago
 
 	$fmt = sprintf( t('%1$s wrote the following %2$s %3$s'),
-		'<a href="' . zid($profile) . '" >' . $author . '</a>',
-		'<a href="' . zid($link) . '" >' . $type . '</a>',
+		'<a href="' . (($auth) ? zid($profile) : $profile) . '" >' . $author . '</a>',
+		'<a href="' . (($auth) ? zid($link) : $link) . '" >' . $type . '</a>',
 		$reldate
 	);
 
@@ -393,7 +406,7 @@ function bb_ShareAttributesSimple($match) {
 	if ($matches[1] != "")
 		$profile = $matches[1];
 
-	$text = html_entity_decode("&#x2672; ", ENT_QUOTES, 'UTF-8') . ' <a href="' . $profile . '">' . $author . '</a>: div class="reshared-content">' . $match[2] . '</div>';
+	$text = html_entity_decode("&#x2672; ", ENT_QUOTES, 'UTF-8') . ' <a href="' . $profile . '">' . $author . '</a>: <div class="reshared-content">' . $match[2] . '</div>';
 
 	return($text);
 }

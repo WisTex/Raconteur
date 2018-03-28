@@ -35,6 +35,8 @@ class Regmod extends \Zotlabs\Web\Controller {
 		if($cmd === 'allow') {
 			if (! account_allow($hash)) killme();
 		}
+
+		goaway('/admin/accounts');
 	}
 	
 }

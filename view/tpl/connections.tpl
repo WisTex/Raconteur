@@ -9,7 +9,7 @@
 			</button>
 			<div class="dropdown-menu dropdown-menu-right">
 				{{foreach $tabs as $menu}}
-				<a class="dropdown-item" href="{{$menu.url}}">{{$menu.label}}</a>
+				<a class="dropdown-item {{$menu.sel}}" href="{{$menu.url}}">{{$menu.label}}</a>
 				{{/foreach}}
 			</div>
 		</div>

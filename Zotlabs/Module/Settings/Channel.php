@@ -202,7 +202,7 @@ class Channel {
 			$vnotify += intval($_POST['vnotify9']);
 		if(x($_POST,'vnotify10'))
 			$vnotify += intval($_POST['vnotify10']);
-		if(x($_POST,'vnotify11'))
+		if(x($_POST,'vnotify11') && is_site_admin())
 			$vnotify += intval($_POST['vnotify11']);
 		if(x($_POST,'vnotify12'))
 			$vnotify += intval($_POST['vnotify12']);
@@ -569,7 +569,7 @@ class Channel {
 			'$vnotify8'  => array('vnotify8', t('System info messages'), ($vnotify & VNOTIFY_INFO), VNOTIFY_INFO, t('Recommended'), $yes_no),
 			'$vnotify9'  => array('vnotify9', t('System critical alerts'), ($vnotify & VNOTIFY_ALERT), VNOTIFY_ALERT, t('Recommended'), $yes_no),
 			'$vnotify10'  => array('vnotify10', t('New connections'), ($vnotify & VNOTIFY_INTRO), VNOTIFY_INTRO, t('Recommended'), $yes_no),
-			'$vnotify11'  => array('vnotify11', t('System Registrations'), ($vnotify & VNOTIFY_REGISTER), VNOTIFY_REGISTER, '', $yes_no),
+			'$vnotify11'  => ((is_site_admin()) ? array('vnotify11', t('System Registrations'), ($vnotify & VNOTIFY_REGISTER), VNOTIFY_REGISTER, '', $yes_no) : array()),
 			'$vnotify12'  => array('vnotify12', t('Unseen shared files'), ($vnotify & VNOTIFY_FILES), VNOTIFY_FILES, '', $yes_no),
 			'$vnotify13'  => (($disable_discover_tab) ? array() : array('vnotify13', t('Unseen public activity'), ($vnotify & VNOTIFY_PUBS), VNOTIFY_PUBS, '', $yes_no)),
 			'$mailhost' => [ 'mailhost', t('Email notification hub (hostname)'), get_pconfig(local_channel(),'system','email_notify_host',\App::get_hostname()), sprintf( t('If your channel is mirrored to multiple hubs, set this to your preferred location. This will prevent duplicate email notifications. Example: %s'),\App::get_hostname()) ],

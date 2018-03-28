@@ -78,7 +78,11 @@ See Also
 
 [b]Mostly Public[/b]
 
-The channel is a typical social networking profile. By default posts and published items are public, but one can over-ride this when creating the item and restrict it. You are listed in the directory. Your online presence and connections are visible to others. 
+The channel is a typical social networking profile. By default posts and published items are public, but you can over-ride this when creating the item and restrict it. You are listed in the directory. Your online presence and connections are visible to others. Only your immediate connections can comment on your public posts and send you private mail. The permission policies are similar to Facebook.  
+
+[b]Party[/b]
+
+The channel is a permissive social networking profile. The permission policies are similar to Twitter and several free networks such as Diaspora and Mastodon. Anybody in the network can comment on your public posts and send you private mail. By default posts and published items are public, but you can over-ride this when creating the item and restrict it. You are listed in the directory. Your online presence and connections are visible to others. This mode [i]may[/i] increase your exposure to undesired communications and spam.  
 
 
 [b]Restricted[/b]
@@ -94,16 +98,16 @@ By default all posts and published items are sent to your 'Friends' privacy grou
 
 [b]Mostly Public[/b]
 
-The channel is a typical forum. By default posts and published items are public. Members may post by @mention+ or wall-to-wall post. Posting photos and other published items is blocked. The channel is visible in the directory. Members are added automatically.
+The channel is a typical forum. By default posts and published items are public. Members may post by !mention or wall-to-wall post. Posting photos and other published items is blocked. The channel is visible in the directory. Members are added automatically.
 
 
 [b]Restricted[/b]
 
-By default all posts and published items are sent to the channel's 'Friends' privacy group. New friends are added to this privacy group. Members may post by @mention+ or wall-to-wall post, but posts and replies may also be seen by other receipients of the top-level post who are not members. The channel is visible in the directory. Members must be manually added by the forum owner. 
+By default all posts and published items are sent to the channel's 'Friends' privacy group. New friends are added to this privacy group. Members may post by !mention or wall-to-wall post, but posts and replies may also be seen by other receipients of the top-level post who are not members. The channel is visible in the directory. Members must be manually added by the forum owner. 
 
 [b]Private[/b]
 
-By default all posts and published items are sent to your 'Friends' privacy group. New friends are added to this privacy group. The owner can over-ride this and create a public post or public item if desired. Members cannot. You are NOT listed in the directory. Only your connections can see your other connections. Your online presence is hidden. Members must be manually added by the forum owner. Posting by @mention+ is disabled. Posts can only be made via wall-to-wall posts, and sent to members of the 'Friends' privacy group. They are not publicly visible.  
+By default all posts and published items are sent to your 'Friends' privacy group. New friends are added to this privacy group. The owner can over-ride this and create a public post or public item if desired. Members cannot. You are NOT listed in the directory. Only your connections can see your other connections. Your online presence is hidden. Members must be manually added by the forum owner. Posting by !mention is disabled. Posts can only be made via wall-to-wall posts, and sent to members of the 'Friends' privacy group. They are not publicly visible.  
 
 
 [h4]Feed[/h4]
@@ -195,7 +199,7 @@ The process for connecting to channels on other networks (such as GNU-Social, Ma
 Some communications offer more than one protocol. If you wish to connect with somebody on Mastodon (for instance) they can use either the 'ostatus' or the 'activitypub' protocol for communication. Generally the 'activitypub' protocol will provide a better experience than 'ostatus', but $Projectname will often choose the first protocol it discovers and this may not be the one you want. You may connect with somebody over a specific protocol by prepending the protocol name in square brackets to their &quot;webbie&quot;. For example
 
 [code]
-[activitypub]foobar@foo.bar
+[activitypub]https://foo.bar/foobar
 [ostatus]foobar@foo.bar
 [diaspora]foobar@foo.bar
 [zot]foobar@foo.bar

@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Redmatrix\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-03-01 08:51+0100\n"
-"PO-Revision-Date: 2018-03-02 17:15+0000\n"
+"PO-Revision-Date: 2018-03-13 09:54+0000\n"
 "Last-Translator: Manuel Jiménez Friaza <mjfriaza@disroot.org>\n"
 "Language-Team: Spanish (Spain) (http://www.transifex.com/Friendica/red-matrix/language/es_ES/)\n"
 "MIME-Version: 1.0\n"
@@ -12662,19 +12662,19 @@ msgstr "Cambios no guardados. ¿Está seguro de que desea abandonar la página?"
 
 #: ../../include/js_strings.php:31
 msgid "timeago.prefixAgo"
-msgstr "timeago.prefixAgo"
+msgstr "hace "
 
 #: ../../include/js_strings.php:32
 msgid "timeago.prefixFromNow"
-msgstr "timeago.prefixFromNow"
+msgstr "en "
 
 #: ../../include/js_strings.php:33
 msgid "timeago.suffixAgo"
-msgstr "timeago.suffixAgo"
+msgstr "NONE"
 
 #: ../../include/js_strings.php:34
 msgid "timeago.suffixFromNow"
-msgstr "timeago.suffixFromNow"
+msgstr "NONE"
 
 #: ../../include/js_strings.php:37
 msgid "less than a minute"
@@ -13331,7 +13331,7 @@ msgstr "ficha"
 
 #: ../../include/bbcode.php:337
 msgid "article"
-msgstr "artículo"
+msgstr "el artículo"
 
 #: ../../include/bbcode.php:420 ../../include/bbcode.php:428
 msgid "Click to open/close"
@@ -13343,7 +13343,7 @@ msgstr "spoiler"
 
 #: ../../include/bbcode.php:441
 msgid "View article"
-msgstr "Ver artículo"
+msgstr "Ver el artículo"
 
 #: ../../include/bbcode.php:441
 msgid "View summary"

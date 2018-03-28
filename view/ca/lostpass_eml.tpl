@@ -1,35 +1,32 @@
 
 Apreciat/da {{$username}},
-	
-	S'ha rebut una sol·licitud en {{$sitename}} recentment per restablir
-la teva contrasenya. Per confirmar aquesta sol·licitud, per favor seleccioni l'enllaç de
-verificació sota o copia-ho i pega-ho en la barra d'adreces del teu navegador.
+	Recentment hem rebut una petició en {{$sitename}} per canviar la contrasenya  
+del teu compte. Per tal de confirmar aquesta petició, si us plau sel·lecciona l'enllaç de verificació
+de sota o enganxa'l a la barra de direccions del teu navegador. 
 
-Si NO has sol·licitat aquest canvi, per favor NO segueixis l'enllaç indicat i ignora
-i/o elimina aquest missatge.
+Si NO has fet cap petició de canvi, si us plau, NO segueixis l'enllaç
+i ignora i/o esborra aquest missatge. 
 
-La teva contrasenya no es canviarà tret que puguem verificar que ets la teva qui
-va emetre aquesta sol·licitud.
+La teva contrasenya no es modificara mentres no verifiquis que has
+enviat aquesta petició. 
 
 Segueix aquest enllaç per verificar la teva identitat:
 
 {{$reset_link}}
 
-A continuació rebràs un missatge amb la nova contrasenya.
+Rebràs un missatge amb la nova contrasenya.
 
-Després de accedir, podràs canviar la contrasenya del teu compte a la pàgina de
-configuració.
+pots canviar aquesta contrasenya en el teu compte desprès de que hagis accedit.
 
-Les dades d'accés són els següents:
+Les dades d'identificació son les següents:
 
-
-Lloc:	{{$siteurl}}
-Nom:	{{$email}}
+Localització del Lloc Web:	{{$siteurl}}
+Nom Identificatiu:⇥{{$email}}
 
 
 
 
-Salutacions,
-	L'administració de {{$sitename}}
+Atentament,
+	{{$sitename}} Administrador
 
  

@@ -25,6 +25,7 @@ class Appman extends \Zotlabs\Web\Controller {
 				'photo' => escape_tags($_REQUEST['photo']),
 				'version' => escape_tags($_REQUEST['version']),
 				'price' => escape_tags($_REQUEST['price']),
+				'page' => escape_tags($_REQUEST['page']),
 				'requires' => escape_tags($_REQUEST['requires']),
 				'system' => intval($_REQUEST['system']),
 				'plugin' => escape_tags($_REQUEST['plugin']),

@@ -680,7 +680,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 				throw new DAV\Exception\Forbidden('Permission denied.');
 			}
 			else {
-				throw new DAV\Exception\NotFound('A component of the request file path could not be found.');
+				throw new DAV\Exception\NotFound('A component of the requested file path could not be found.');
 			}
 		}
 
@@ -691,7 +691,23 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 		}
 
 		$prefix = '';
-		$suffix = ' order by is_dir desc, filename asc ';
+
+		if(! array_key_exists('cloud_sort',$_SESSION))
+			$_SESSION['cloud_sort'] = 'name';
+
+		switch($_SESSION['cloud_sort']) {
+			case 'size': 
+				$suffix = ' order by is_dir desc, filesize asc ';
+				break;
+			// The following provides inconsistent results for directories because we re-calculate the date for directories based on the most recent change
+			case 'date':
+				$suffix = ' order by is_dir desc, edited asc ';
+				break;
+			case 'name':
+			default:
+				$suffix = ' order by is_dir desc, filename asc ';
+				break;
+		}
 
 		$r = q("select $prefix id, uid, hash, filename, filetype, filesize, revision, folder, flags, is_dir, created, edited from attach where folder = '%s' and uid = %d $perms $suffix",
 			dbesc($folder),
