@@ -102,12 +102,19 @@ class Display extends \Zotlabs\Web\Controller {
 		if($decoded)
 			$item_hash = $decoded;
 
-		$r = q("select id, uid, mid, parent_mid, thr_parent, verb, item_type, item_deleted, item_blocked from item where mid like '%s' limit 1",
+		$r = q("select id, uid, mid, parent_mid, thr_parent, verb, item_type, item_deleted, author_xchan, item_blocked from item where mid like '%s' limit 1",
 			dbesc($item_hash . '%')
 		);
 	
 		if($r) {
 			$target_item = $r[0];
+		}
+
+		$x = q("select * from xchan where xchan_hash = '%s' limit 1",
+			dbesc($target_item['author_xchan'])
+		);
+		if($x) {
+			\App::$poi = $x[0];
 		}
 
 		//if the item is to be moderated redirect to /moderate
@@ -168,6 +175,7 @@ class Display extends \Zotlabs\Web\Controller {
 			 	return '';
 			}
 		}
+		
 		
 		$static = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
 	

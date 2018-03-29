@@ -100,7 +100,6 @@ function vcard_from_xchan($xchan, $observer = null, $mode = '') {
 	if(! $xchan)
 		return;
 
-// FIXME - show connect button to observer if appropriate
 	$connect = false;
 	if(local_channel()) {
 		$r = q("select * from abook where abook_xchan = '%s' and abook_channel = %d limit 1",

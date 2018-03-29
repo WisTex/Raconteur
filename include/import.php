@@ -21,6 +21,11 @@ function import_channel($channel, $account_id, $seize) {
 		$channel['channel_removed'] = (($channel['channel_pageflags'] & 0x8000) ? 1 : 0);
 	}
 
+	if(intval($channel['channel_removed'])) {
+		notice( t('Unable to import a removed channel.') . EOL);
+		return false;
+	}
+
 	// Ignore the hash provided and re-calculate
 
 	$channel['channel_hash'] = make_xchan_hash($channel['channel_guid'],$channel['channel_guid_sig']);

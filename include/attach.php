@@ -948,6 +948,16 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 		return $ret;
 	}
 
+	// Update the folder timestamp @todo recurse to the storage root folder
+
+	if($folder_hash) {
+		q("UPDATE attach set edited = '%s' where hash = '%s' and uid = %d and is_dir = 1",
+			dbesc($edited),
+			dbesc($folder_hash),
+			intval($channel_id)
+		);
+	}
+
 	// Caution: This re-uses $sql_options set further above
 
 	$r = q("select * from attach where uid = %d and hash = '%s' $sql_options limit 1",

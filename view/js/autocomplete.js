@@ -212,6 +212,7 @@ function string2bb(element) {
 			index: 3,
 			search: function(term, callback) { $.getJSON('/hashtags/' + '$f=&t=' + term).done(function(data) { callback($.map(data, function(entry) { return entry.text.indexOf(term) === 0 ? entry : null; })); }); },
 			replace: function(item) { return "$1$2" + item.text + ' '; },
+			context: function(text) { return text.toLowerCase(); },
 			template: tag_format
 		};
 
