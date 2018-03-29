@@ -270,7 +270,8 @@ function locations_by_netid($netid) {
 		dbesc($netid)
 	);
 
-	return array_elm_to_str($locs,'location',', ');
+	
+	return array_elm_to_str($locs,'location',', ','trim_and_unpunify');
 
 }
 
