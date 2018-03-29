@@ -23,6 +23,7 @@ function get_account_by_id($account_id) {
 
 function check_account_email($email) {
 
+	$email = punify($email);
 	$result = array('error' => false, 'message' => '');
 
 	// Caution: empty email isn't counted as an error in this function. 
@@ -139,7 +140,7 @@ function create_account($arr) {
 	$result = array('success' => false, 'email' => '', 'password' => '', 'message' => '');
 
 	$invite_code = ((x($arr,'invite_code'))   ? notags(trim($arr['invite_code']))  : '');
-	$email       = ((x($arr,'email'))         ? notags(trim($arr['email']))        : '');
+	$email       = ((x($arr,'email'))         ? notags(punify(trim($arr['email']))) : '');
 	$password    = ((x($arr,'password'))      ? trim($arr['password'])             : '');
 	$password2   = ((x($arr,'password2'))     ? trim($arr['password2'])            : '');
 	$parent      = ((x($arr,'parent'))        ? intval($arr['parent'])             : 0 );
