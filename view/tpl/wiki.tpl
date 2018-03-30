@@ -11,6 +11,9 @@
 					{{if $renamePage}}
 					<a class="dropdown-item rename-page" href="#"><i class="fa fa-fw fa-edit"></i>&nbsp;{{$renamePage}}</a>
 					{{/if}}
+					{{if $sharePage}}
+					<a class="dropdown-item share-page" href="rpost?f=&body={{$shareLink}}"><i class="fa fa-fw fa-share"></i>&nbsp;{{$sharePage}}</a>
+					{{/if}}
 					<a id="embed-image" class="dropdown-item" href="#"><i class="fa fa-fw fa-picture-o"></i>&nbsp;Embed Image</a>
 				</div>
 			</div>	
