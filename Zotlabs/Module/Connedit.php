@@ -828,7 +828,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 
 			$locstr = locations_by_netid($contact['xchan_hash']);
 			if(! $locstr)
-				$locstr = $contact['xchan_url'];
+				$locstr = unpunify($contact['xchan_url']);
 	
 			$clone_warn = '';
 			$clonable = (in_array($contact['xchan_network'],['zot','rss']) ? true : false);
@@ -852,8 +852,8 @@ class Connedit extends \Zotlabs\Web\Controller {
 				'$permcat'        => [ 'permcat', t('Permission role'), '', '<span class="loading invisible">' . t('Loading') . '<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span></span>',$permcats ],
 				'$permcat_new'    => t('Add permission role'),
 				'$permcat_enable' => feature_enabled(local_channel(),'permcats'),
-				'$addr'           => $contact['xchan_addr'],
-				'$primeurl'       => $contact['xchan_url'],
+				'$addr'           => unpunify($contact['xchan_addr']),
+				'$primeurl'       => unpunify($contact['xchan_url']),
 				'$section'        => $section,
 				'$sections'       => $sections,
 				'$vcard'          => $vcard,

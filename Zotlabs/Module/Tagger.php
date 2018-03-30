@@ -80,6 +80,8 @@ class Tagger extends \Zotlabs\Web\Controller {
 				break;
 		}
 	
+
+		$clean_term = trim($term,'"\' ');
 	
 		$links = array(array('rel' => 'alternate','type' => 'text/html', 
 			'href' => z_root() . '/display/' . gen_link_id($item['mid'])));
@@ -103,15 +105,15 @@ class Tagger extends \Zotlabs\Web\Controller {
 				),
 		));
 	
-		$tagid = z_root() . '/search?tag=' . $term;
+		$tagid = z_root() . '/search?tag=' . $clean_term;
 		$objtype = ACTIVITY_OBJ_TAGTERM;
 	
 		$obj = json_encode(array(
 			'type'    => $objtype,
 			'id'      => $tagid,
 			'link'    => array(array('rel' => 'alternate','type' => 'text/html', 'href' => $tagid)),
-			'title'   => $term,
-			'content' => $term
+			'title'   => $clean_term,
+			'content' => $clean_term
 		));
 	
 		$bodyverb = t('%1$s tagged %2$s\'s %3$s with %4$s');
@@ -119,7 +121,7 @@ class Tagger extends \Zotlabs\Web\Controller {
 		// saving here for reference
 		// also check out x22d5 and x2317 and x0d6b and x0db8 and x24d0 and xff20 !!!
 	
-		$termlink = html_entity_decode('&#x22d5;') . '[zrl=' . z_root() . '/search?tag=' . urlencode($term) . ']'. $term . '[/zrl]';
+		$termlink = html_entity_decode('&#x22d5;') . '[zrl=' . z_root() . '/search?tag=' . urlencode($clean_term) . ']'. $clean_term . '[/zrl]';
 	
 		$channel = \App::get_channel();
 	
@@ -143,8 +145,7 @@ class Tagger extends \Zotlabs\Web\Controller {
 		$arr['obj_type'] = $objtype;
 		$arr['obj'] = $obj;
 		$arr['parent_mid'] = $item['mid'];
-		
-		store_item_tag($item['uid'],$item['id'],TERM_OBJ_POST,TERM_COMMUNITYTAG,$term,$tagid);
+		store_item_tag($item['uid'],$item['id'],TERM_OBJ_POST,TERM_COMMUNITYTAG,$clean_term,$tagid);
 		$ret = post_activity_item($arr);
 
 		if($ret['success']) {
