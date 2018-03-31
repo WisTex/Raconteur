@@ -1491,7 +1491,7 @@ function format_hashtags(&$item) {
 			$term = htmlspecialchars($t['term'], ENT_COMPAT, 'UTF-8', false) ;
 			if(! trim($term))
 				continue;
-			if(strpos($item['body'], $t['url']))
+			if($t['url'] && strpos($item['body'], $t['url']))
 				continue;
 			if($s)
 				$s .= ' ';
@@ -2189,13 +2189,13 @@ function ids_to_querystr($arr,$idx = 'id',$quote = false) {
  * @returns string
  */
 
-function array_elm_to_str($arr,$elm,$delim = ',') {
+function array_elm_to_str($arr,$elm,$delim = ',',$each = 'trim') {
 
 	$tmp = [];
 	if($arr && is_array($arr)) {
 		foreach($arr as $x) {
 			if(is_array($x) && array_key_exists($elm,$x)) {
-				$z = trim($x[$elm]);
+				$z = $each($x[$elm]);
 				if(($z) && (! in_array($z,$tmp))) {
 					$tmp[] = $z;
 				}
@@ -2205,7 +2205,9 @@ function array_elm_to_str($arr,$elm,$delim = ',') {
 	return implode($delim,$tmp);
 }
 
-
+function trim_and_unpunify($s) {
+	return unpunify(trim($s));
+}
 
 
 /**

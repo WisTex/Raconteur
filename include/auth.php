@@ -37,6 +37,7 @@ require_once('include/security.php');
 function account_verify_password($login, $pass) {
 
 	$ret = [ 'account' => null, 'channel' => null, 'xchan' => null ];
+	$login = punify($login);
 
 	$email_verify = get_config('system', 'verify_email');
 	$register_policy = get_config('system', 'register_policy');
@@ -235,7 +236,7 @@ else {
 		$record = null;
 
 		$addon_auth = array(
-			'username' => trim($_POST['username']), 
+			'username' => punify(trim($_POST['username'])), 
 			'password' => trim($_POST['password']),
 			'authenticated' => 0,
 			'user_record' => null
@@ -261,7 +262,7 @@ else {
 			$verify = account_verify_password($_POST['username'], $_POST['password']);
 			if($verify && array_key_exists('reason',$verify) && $verify['reason'] === 'unvalidated') {
 				notice( t('Email validation is incomplete. Please check your email.'));
-				goaway(z_root() . '/email_validation/' . bin2hex(trim(escape_tags($_POST['username']))));
+				goaway(z_root() . '/email_validation/' . bin2hex(punify(trim(escape_tags($_POST['username'])))));
 			}
 			elseif($verify) {
 				$atoken  = $verify['xchan'];

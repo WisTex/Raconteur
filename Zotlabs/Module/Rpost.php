@@ -45,7 +45,9 @@ class Rpost extends \Zotlabs\Web\Controller {
 				$url = get_rpost_path(\App::get_observer());
 				// make sure we're not looping to our own hub
 				if(($url) && (! stristr($url, \App::get_hostname()))) {
-					foreach($_REQUEST as $key => $arg) {
+					foreach($_GET as $key => $arg) {
+						if($key === 'q')
+							continue;
 						$url .= '&' . $key . '=' . $arg;
 					}
 					goaway($url);

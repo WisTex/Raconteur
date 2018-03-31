@@ -95,7 +95,7 @@ class Acl extends \Zotlabs\Web\Controller {
 					. "' IN xchan_name) else position('" . protect_sprintf(dbesc(punify($search))) . "' IN xchan_addr) end, ";
 
 			$col = ((strpos($search,'@') !== false) ? 'xchan_addr' : 'xchan_name' );
-			$sql_extra3 = "AND $col like " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " ";
+			$sql_extra3 = "AND $col like " . protect_sprintf( "'%" . dbesc(($col === 'xchan_addr') ? punify($search) : $search) . "%'" ) . " ";
 	
 		}
 		else {

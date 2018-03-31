@@ -22,8 +22,8 @@ class Uexport extends \Zotlabs\Web\Controller {
 				$month = intval(argv(2));
 			}
 	
-			header('content-type: application/octet_stream');
-			header('content-disposition: attachment; filename="' . $channel['channel_address'] . (($year) ? '-' . $year : '') . (($month) ? '-' . $month : '') . '.json"' );
+			header('content-type: application/json');
+			header('content-disposition: attachment; filename="' . $channel['channel_address'] . (($year) ? '-' . $year : '') . (($month) ? '-' . $month : '') . (($_REQUEST['sections']) ? '-' . $_REQUEST['sections'] : '')  . '.json"' );
 	
 			if($year) {
 				echo json_encode(identity_export_year(local_channel(),$year,$month));
