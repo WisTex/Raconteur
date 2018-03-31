@@ -114,7 +114,8 @@ class Display extends \Zotlabs\Web\Controller {
 			dbesc($target_item['author_xchan'])
 		);
 		if($x) {
-			\App::$poi = $x[0];
+// not yet ready for prime time
+//			\App::$poi = $x[0];
 		}
 
 		//if the item is to be moderated redirect to /moderate
