@@ -1873,7 +1873,7 @@ function probe_api_path($host) {
 		foreach($paths as $path) {
 			$curpath = $scheme . '://' . $host . $path;
 			$x = z_fetch_url($curpath);
-			if($x['success'] && ! strlen($x['body'], 'not implemented'))
+			if($x['success'] && ! strpos($x['body'], 'not implemented'))
 				return str_replace('version', '', $curpath);
 		}
 	}
