@@ -357,7 +357,7 @@ class Wiki extends \Zotlabs\Web\Controller {
 			'$wikiheaderPage' => $wikiheaderPage,
 			'$renamePage' => $renamePage,
 			'$sharePage' => $sharePage,
-			'$shareLink' => urlencode('#^[zrl=' . z_root() . '/wiki/' . argv(1) . '/' . $wikiUrlName . '/' . $pageUrlName . ']' . '[ ' . $owner['channel_name'] . ' ] - ' . $wikiheaderName . ' - ' . $wikiheaderPage . '[/zrl]'),
+			'$shareLink' => urlencode('#^[zrl=' . z_root() . '/wiki/' . argv(1) . '/' . $wikiUrlName . '/' . $pageUrlName . ']' . '[ ' . $owner['channel_name'] . ' ] ' . $wikiheaderName . ' - ' . $wikiheaderPage . '[/zrl]'),
 			'$showPageControls' => $showPageControls,
 			'$editOrSourceLabel' => (($showPageControls) ? t('Edit') : t('Source')),
 			'$tools_label' => 'Page Tools',
