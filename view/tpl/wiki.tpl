@@ -15,6 +15,7 @@
 				</div>
 			</div>	
 			{{/if}}
+			<button type="button" class="btn btn-outline-secondary btn-sm" title="{{$sharePage}}" onclick="window.location.href='rpost?f=&body={{$shareLink}}';"><i class="fa fa-fw fa-share"></i></button>
 			<button id="fullscreen-btn" type="button" class="btn btn-outline-secondary btn-sm" onclick="makeFullScreen(); adjustFullscreenEditorHeight();"><i class="fa fa-expand"></i></button>
 			<button id="inline-btn" type="button" class="btn btn-outline-secondary btn-sm" onclick="makeFullScreen(false); adjustInlineEditorHeight()"><i class="fa fa-compress"></i></button>
 		</div>
