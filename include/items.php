@@ -2551,9 +2551,7 @@ function tag_deliver($uid, $item_id) {
 					$j_obj = json_decode($item['obj'],true);
 					logger('tag_deliver: tag object: ' . print_r($j_obj,true), LOGGER_DATA);
 					if($j_obj && $j_obj['id'] && $j_obj['title']) {
-						if(is_array($j_obj['link']))
-							$taglink = get_rel_link($j_obj['link'],'alternate');
-
+						//COMMUNITYTAG
 						store_item_tag($u[0]['channel_id'],$p[0]['id'],TERM_OBJ_POST,TERM_COMMUNITYTAG,$j_obj['title'],$j_obj['id']);
 						$x = q("update item set edited = '%s', received = '%s', changed = '%s' where mid = '%s' and uid = %d",
 							dbesc(datetime_convert()),
