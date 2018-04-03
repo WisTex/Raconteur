@@ -2735,13 +2735,12 @@ function item_community_tag($channel,$item) {
 	// See if we are the owner of the parent item and have given permission to tag our posts.
 	// If so tag the parent post.
 
-	logger('tag_deliver: community tag activity received');
-
-	// refactor of this code block is in progress and is not yet completed
+	logger('tag_deliver: community tag activity received: channel: ' . $channel['channel_name']);
 
 	$tag_the_post = false;
 	$p = null;
 
+	$j_obj = json_decode($item['obj'],true);
 	$j_tgt = json_decode($item['target'],true);
 	if($j_tgt && $j_tgt['id']) {
 		$p = q("select * from item where mid = '%s' and uid = %d limit 1",
@@ -2753,9 +2752,9 @@ function item_community_tag($channel,$item) {
 		xchan_query($p);
 		$items = fetch_post_tags($p,true);
 		$pitem = $items[0];
-		$auth = get_iconfig($pitem,'system','communitytagauth');
+		$auth = get_iconfig($item,'system','communitytagauth');
 		if($auth) {
-			if(rsa_verify('tagauth.' . $item['mid'],$auth,$pitem['owner']['xchan_pubkey'])) {
+			if(rsa_verify('tagauth.' . $item['mid'],base64url_decode($auth),$pitem['owner']['xchan_pubkey'])) {
 				logger('tag_deliver: tagging the post: ' . $channel['channel_name']);
 				$tag_the_post = true;
 			}
@@ -2765,18 +2764,17 @@ function item_community_tag($channel,$item) {
 				logger('tag_deliver: community tag recipient: ' . $channel['channel_name']);
 				$tag_the_post = true;
 				$sig = rsa_sign('tagauth.' . $item['mid'],$channel['channel_prvkey']);
-				set_iconfig($item['id'],'system','communitytagauth',$sig,1);
+				logger('tag_deliver: setting iconfig for ' . $item['id']);
+				set_iconfig($item['id'],'system','communitytagauth',base64url_encode($sig),1);
 			}
 		}
 
 		if($tag_the_post) {
 			store_item_tag($channel['channel_id'],$pitem['id'],TERM_OBJ_POST,TERM_COMMUNITYTAG,$j_obj['title'],$j_obj['id']);
 		}
-
-	}
-
-	if(! $tag_the_post) {
-		logger('Tag permission denied for ' . $channel['channel_address']);
+		else {
+			logger('Tag permission denied for ' . $channel['channel_address']);
+		}
 	}
 
 }
