@@ -2532,41 +2532,7 @@ function tag_deliver($uid, $item_id) {
 	 */
 
 	if($item['obj_type'] === ACTIVITY_OBJ_TAGTERM) {
-
-		// We received a community tag activity for a post.
-		// See if we are the owner of the parent item and have given permission to tag our posts.
-		// If so tag the parent post.
-
-		logger('tag_deliver: community tag activity received');
-
-		if(($item['owner_xchan'] === $u[0]['channel_hash']) && (! get_pconfig($u[0]['channel_id'],'system','blocktags'))) {
-			logger('tag_deliver: community tag recipient: ' . $u[0]['channel_name']);
-			$j_tgt = json_decode($item['target'],true);
-			if($j_tgt && $j_tgt['id']) {
-				$p = q("select * from item where mid = '%s' and uid = %d limit 1",
-					dbesc($j_tgt['id']),
-					intval($u[0]['channel_id'])
-				);
-				if($p) {
-					$j_obj = json_decode($item['obj'],true);
-					logger('tag_deliver: tag object: ' . print_r($j_obj,true), LOGGER_DATA);
-					if($j_obj && $j_obj['id'] && $j_obj['title']) {
-						//COMMUNITYTAG
-						store_item_tag($u[0]['channel_id'],$p[0]['id'],TERM_OBJ_POST,TERM_COMMUNITYTAG,$j_obj['title'],$j_obj['id']);
-						$x = q("update item set edited = '%s', received = '%s', changed = '%s' where mid = '%s' and uid = %d",
-							dbesc(datetime_convert()),
-							dbesc(datetime_convert()),
-							dbesc(datetime_convert()),
-							dbesc($j_tgt['id']),
-							intval($u[0]['channel_id'])
-						);
-						Zotlabs\Daemon\Master::Summon(array('Notifier','edit_post',$p[0]['id']));
-					}
-				}
-			}
-		}
-		else
-			logger('Tag permission denied for ' . $u[0]['channel_address']);
+		item_community_tag($u[0],$item);
 	}
 
 	/*
@@ -2760,6 +2726,63 @@ function tag_deliver($uid, $item_id) {
 	}
 
 }
+
+
+function item_community_tag($channel,$item) {
+
+
+	// We received a community tag activity for a post.
+	// See if we are the owner of the parent item and have given permission to tag our posts.
+	// If so tag the parent post.
+
+	logger('tag_deliver: community tag activity received');
+
+	// refactor of this code block is in progress and is not yet completed
+
+	$tag_the_post = false;
+	$p = null;
+
+	$j_tgt = json_decode($item['target'],true);
+	if($j_tgt && $j_tgt['id']) {
+		$p = q("select * from item where mid = '%s' and uid = %d limit 1",
+			dbesc($j_tgt['id']),
+			intval($channel['channel_id'])
+		);
+	}
+	if($p) {
+		xchan_query($p);
+		$items = fetch_post_tags($p,true);
+		$pitem = $items[0];
+		$auth = get_iconfig($pitem,'system','communitytagauth');
+		if($auth) {
+			if(rsa_verify('tagauth.' . $item['mid'],$auth,$pitem['owner']['xchan_pubkey'])) {
+				logger('tag_deliver: tagging the post: ' . $channel['channel_name']);
+				$tag_the_post = true;
+			}
+		}
+		else {
+			if(($pitem['owner_xchan'] === $channel['channel_hash']) && (! intval(get_pconfig($channel['channel_id'],'system','blocktags')))) {
+				logger('tag_deliver: community tag recipient: ' . $channel['channel_name']);
+				$tag_the_post = true;
+				$sig = rsa_sign('tagauth.' . $item['mid'],$channel['channel_prvkey']);
+				set_iconfig($item['id'],'system','communitytagauth',$sig,1);
+			}
+		}
+
+		if($tag_the_post) {
+			store_item_tag($channel['channel_id'],$pitem['id'],TERM_OBJ_POST,TERM_COMMUNITYTAG,$j_obj['title'],$j_obj['id']);
+		}
+
+	}
+
+	if(! $tag_the_post) {
+		logger('Tag permission denied for ' . $channel['channel_address']);
+	}
+
+}
+
+
+
 
 /**
  * @brief This function is called pre-deliver to see if a post matches the criteria to be tag delivered.
