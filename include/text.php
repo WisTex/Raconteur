@@ -1588,7 +1588,7 @@ function generate_named_map($location) {
 }
 
 
-function prepare_body(&$item,$attach = false) {
+function prepare_body(&$item,$attach = false,$opts = false) {
 
 	call_hooks('prepare_body_init', $item);
 
@@ -1616,7 +1616,7 @@ function prepare_body(&$item,$attach = false) {
 		$s .= prepare_binary($item);
 	}
 	else {
-		$s .= prepare_text($item['body'],$item['mimetype'], false);
+		$s .= prepare_text($item['body'],$item['mimetype'], $opts);
 	}
 
 	$event = (($item['obj_type'] === ACTIVITY_OBJ_EVENT) ? format_event_obj($item['obj']) : false);
@@ -1698,7 +1698,8 @@ function prepare_binary($item) {
  *
  * @return string
  */
-function prepare_text($text, $content_type = 'text/bbcode', $cache = false) {
+function prepare_text($text, $content_type = 'text/bbcode', $opts = false) {
+
 
 	switch($content_type) {
 		case 'text/plain':
@@ -1742,7 +1743,7 @@ function prepare_text($text, $content_type = 'text/bbcode', $cache = false) {
 			if(stristr($text,'[nosmile]'))
 				$s = bbcode($text, [ 'cache' => $cache ]);
 			else
-				$s = smilies(bbcode($text, [ 'cache' => $cache ]));
+				$s = smilies(bbcode($text, ((is_array($opts)) ? $opts : [] )));
 
 			$s = zidify_links($s);
 

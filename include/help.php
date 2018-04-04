@@ -306,7 +306,7 @@ function store_doc_file($s) {
 
 	require_once('include/html2plain.php');
 
-	$item['body'] = html2plain(prepare_text(file_get_contents($s),$mimetype, true));
+	$item['body'] = html2plain(prepare_text(file_get_contents($s),$mimetype, [ 'cache' => true ]));
 	$item['mimetype'] = 'text/plain';
 
 	$item['plink'] = z_root() . '/' . str_replace('doc','help',$s);
