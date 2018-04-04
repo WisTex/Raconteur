@@ -11,6 +11,8 @@ namespace Zotlabs\Module;
 class OAuth2TestVehicle extends \Zotlabs\Web\Controller {
 
 	function init() {
+
+		killme();
 		
 		// If there is a 'code' and 'state' parameter then this is a client app 
 		// callback issued after the authorization code request
@@ -20,7 +22,7 @@ class OAuth2TestVehicle extends \Zotlabs\Web\Controller {
 			// cookie, and compare it when the user comes back. This ensures your 
 			// redirection endpoint isn't able to be tricked into attempting to 
 			// exchange arbitrary authorization codes."
-		$_SESSION['redirect_uri'] = 'http://hub.localhost/oauth2testvehicle';
+		$_SESSION['redirect_uri'] = z_root() . '/oauth2testvehicle';
 		$_SESSION['authorization_code'] = (x($_REQUEST, 'code') ? $_REQUEST['code'] : $_SESSION['authorization_code']);
 		$_SESSION['state'] = (x($_REQUEST, 'state') ? $_REQUEST['state'] : $_SESSION['state'] );
 		$_SESSION['client_id'] = (x($_REQUEST, 'client_id') ? $_REQUEST['client_id'] : $_SESSION['client_id'] );
