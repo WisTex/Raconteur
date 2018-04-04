@@ -40,6 +40,38 @@
 			<input name="category" id="jot-category" type="text" placeholder="{{$placeholdercategory}}" value="{{$category}}" data-role="cat-tagsinput">
 		</div>
 		{{/if}}
+
+		<script>
+
+			var postSaveTimer = null;
+
+			$(document).on('focusout',"#profile-jot-text",function(e){
+				if(postSaveTimer)
+					clearTimeout(postSaveTimer);
+				postSaveChanges(true);
+				postSaveTimer = null;
+			});
+
+			$(document).on('focusin',"#profile-jot-text",function(e){
+				postSaveTimer = setTimeout(function () {
+					postSaveChanges(false);
+				},10000);
+			});
+
+			function postSaveChanges(isFinal = false, type) {
+				$.post('autosavetext', 
+					{ 
+						'type' : 'post', 
+						'body' : $("#profile-jot-text").val(),
+						'title': $("#jot-title").val()
+					}
+				);
+				if( !isFinal) {
+					postSaveTimer = setTimeout(postSaveChanges,10000);
+				}
+				
+			}
+		</script>
 		<div id="jot-text-wrap">
 			<textarea class="profile-jot-text" id="profile-jot-text" name="body" tabindex="2" placeholder="{{$placeholdtext}}" >{{$content}}</textarea>
 		</div>

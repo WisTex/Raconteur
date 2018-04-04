@@ -1050,6 +1050,10 @@ class Item extends \Zotlabs\Web\Controller {
 	
 		logger('post_complete');
 
+		// Remove auto-saved post text if the post was successfully posted
+		del_pconfig(local_channel(),'autosavetext_post','body');
+		del_pconfig(local_channel(),'autosavetext_post','title');
+		
 		if($moderated) {
 			info(t('Your comment is awaiting approval.') . EOL);
 		}

@@ -1361,8 +1361,16 @@ function status_editor($a, $x, $popup = false) {
 	}
 
 	$sharebutton = (x($x,'button') ? $x['button'] : t('Share'));
-	$placeholdtext = (x($x,'content_label') ? $x['content_label'] : $sharebutton);
-
+	$content = ((x($x,'body')) ? htmlspecialchars($x['body'], ENT_COMPAT,'UTF-8') : '');
+	if(!$content) {
+		$content = get_pconfig(local_channel(),'autosavetext_post','body');
+	}
+	$title = ((x($x, 'title')) ? htmlspecialchars($x['title'], ENT_COMPAT,'UTF-8') : '');
+	if(!$title) {
+		$title = get_pconfig(local_channel(),'autosavetext_post','title');
+	}
+	$placeholdtext = (x($x,'content_label') ? $x['content_label'] : $sharebutton);	
+	
 	$o .= replace_macros($tpl, array(
 		'$return_path' => ((x($x, 'return_path')) ? $x['return_path'] : App::$query_string),
 		'$action' =>  z_root() . '/item',
@@ -1394,14 +1402,14 @@ function status_editor($a, $x, $popup = false) {
 		'$feature_nocomment' => $feature_nocomment,
 		'$nocomment' => ((array_key_exists('item',$x)) ? $x['item']['item_nocomment'] : 0),
 		'$clearloc' => $clearloc,
-		'$title' => ((x($x, 'title')) ? htmlspecialchars($x['title'], ENT_COMPAT,'UTF-8') : ''),
+		'$title' => $title,
 		'$placeholdertitle' => ((x($x, 'placeholdertitle')) ? $x['placeholdertitle'] : t('Title (optional)')),
 		'$catsenabled' => $catsenabled,
 		'$category' => ((x($x, 'category')) ? $x['category'] : ''),
 		'$placeholdercategory' => t('Categories (optional, comma-separated list)'),
 		'$permset' => t('Permission settings'),
 		'$ptyp' => ((x($x, 'ptyp')) ? $x['ptyp'] : ''),
-		'$content' => ((x($x,'body')) ? htmlspecialchars($x['body'], ENT_COMPAT,'UTF-8') : ''),
+		'$content' => $content,
 		'$attachment' => ((x($x, 'attachment')) ? $x['attachment'] : ''),
 		'$post_id' => ((x($x, 'post_id')) ? $x['post_id'] : ''),
 		'$defloc' => $x['default_location'],
