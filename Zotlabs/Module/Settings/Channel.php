@@ -412,12 +412,16 @@ class Channel {
 		));
 	
 		$subdir = ((strlen(\App::get_path())) ? '<br />' . t('or') . ' ' . z_root() . '/channel/' . $nickname : '');
+
+		$webbie = $nickname . '@' . \App::get_hostname();
+		$intl_nickname = unpunify($nickname) . '@' . unpunify(\App::get_hostname());
 	
+
 		$tpl_addr = get_markup_template("settings_nick_set.tpl");
 	
 		$prof_addr = replace_macros($tpl_addr,array(
 			'$desc' => t('Your channel address is'),
-			'$nickname' => $nickname,
+			'$nickname' => (($intl_nickname === $webbie) ? $webbie : $intl_nickname . '&nbsp;(' . $webbie . ')'),
 			'$subdir' => $subdir,
 			'$davdesc' => t('Your files/photos are accessible via WebDAV at'),
 			'$davpath' => ((get_account_techlevel() > 3) ? z_root() . '/dav/' . $nickname : ''),
