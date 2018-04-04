@@ -49,30 +49,6 @@ class OAuth2TestVehicle extends \Zotlabs\Web\Controller {
 			 */
 			'$endpoints' => array(
 				array(
-					'oauth2testvehicle',
-					array(
-						array(
-							'action', 'delete_db'
-						)
-					),
-					'oauth2test_delete_db',
-					'Delete the OAuth2 database tables',
-					'POST',
-					($_SESSION['success'] === 'delete_db'),
-				),
-				array(
-					'oauth2testvehicle',
-					array(
-						array(
-							'action', 'create_db'
-						)
-					),
-					'oauth2test_create_db',
-					'Create the OAuth2 database tables',
-					'POST',
-					($_SESSION['success'] === 'create_db'),
-				),
-				array(
 					'authorize',
 					array(
 						array('response_type', 'code'),
@@ -164,50 +140,6 @@ class OAuth2TestVehicle extends \Zotlabs\Web\Controller {
 					$_SESSION['access_token'] = $response['access_token'];
 				}
 				break;
-/*
-			case 'delete_db':
-				$status = true;
-				// Use the \OAuth2\Storage\Pdo class to create the OAuth2 tables
-				// by passing it the database connection 
-				$pdo = \DBA::$dba->db;
-				$storage = new \Zotlabs\Storage\ZotOauth2Pdo($pdo);
-				foreach ($storage->getConfig() as $key => $table) {
-					$r = q("DROP TABLE %s;", dbesc($table));
-					if (!$r) {
-						$status = false;
-					}
-				}
-				if (!$status) {
-					notice('Errors encountered deleting database tables.' . EOL);
-					$_SESSION['success'] = '';
-				} else {
-					info('Database tables deleted successfully.' . EOL);
-					$_SESSION['success'] = 'delete_db';
-				}
-				break;
-
-			case 'create_db':
-				$status = true;
-				@include('.htconfig.php');
-				$pdo = \DBA::$dba->db;
-				$storage = new \Zotlabs\Storage\ZotOauth2Pdo($pdo);
-				foreach (explode(';', $storage->getBuildSql($db_data)) as $statement) {
-					try {
-						$result = $pdo->exec($statement);
-					} catch (\PDOException $e) {
-						$status = false;
-					}
-				}
-
-				if (!$status) {
-					notice('Errors encountered creating database tables.' . EOL);
-					$_SESSION['success'] = '';
-				} else {
-					info('Database tables created successfully.' . EOL);
-					$_SESSION['success'] = 'create_db';
-				}
-				break;
-*/
 
 			default:
 				break;
