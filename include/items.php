@@ -2754,7 +2754,7 @@ function item_community_tag($channel,$item) {
 		$pitem = $items[0];
 		$auth = get_iconfig($item,'system','communitytagauth');
 		if($auth) {
-			if(rsa_verify('tagauth.' . $item['mid'],base64url_decode($auth),$pitem['owner']['xchan_pubkey'])) {
+			if(rsa_verify('tagauth.' . $item['mid'],base64url_decode($auth),$pitem['owner']['xchan_pubkey']) || rsa_verify('tagauth.' . $item['mid'],base64url_decode($auth),$pitem['author']['xchan_pubkey'])) {
 				logger('tag_deliver: tagging the post: ' . $channel['channel_name']);
 				$tag_the_post = true;
 			}
