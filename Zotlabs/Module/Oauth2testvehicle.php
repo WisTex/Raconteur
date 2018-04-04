@@ -164,6 +164,7 @@ class OAuth2TestVehicle extends \Zotlabs\Web\Controller {
 					$_SESSION['access_token'] = $response['access_token'];
 				}
 				break;
+/*
 			case 'delete_db':
 				$status = true;
 				// Use the \OAuth2\Storage\Pdo class to create the OAuth2 tables
@@ -206,6 +207,7 @@ class OAuth2TestVehicle extends \Zotlabs\Web\Controller {
 					$_SESSION['success'] = 'create_db';
 				}
 				break;
+*/
 
 			default:
 				break;

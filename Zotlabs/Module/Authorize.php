@@ -14,13 +14,13 @@ class Authorize extends \Zotlabs\Web\Controller {
 			// OpenID Connect Dynamic Client Registration 1.0 Client Metadata
 			// http://openid.net/specs/openid-connect-registration-1_0.html
 			$app = array(
-				'name' => (x($_REQUEST, 'client_name') ? urldecode($_REQUEST['client_name']) : 'Unknown App'),
-				'icon' => (x($_REQUEST, 'logo_uri') ? urldecode($_REQUEST['logo_uri']) : z_root() . '/images/icons/plugin.png'),
-				'url' => (x($_REQUEST, 'client_uri') ? urldecode($_REQUEST['client_uri']) : ''),
+				'name' => (x($_REQUEST, 'client_name') ? urldecode($_REQUEST['client_name']) : t('Unknown App')),
+				'icon' => (x($_REQUEST, 'logo_uri')    ? urldecode($_REQUEST['logo_uri']) : z_root() . '/images/icons/plugin.png'),
+				'url'  => (x($_REQUEST, 'client_uri')  ? urldecode($_REQUEST['client_uri']) : ''),
 			);
 			$o .= replace_macros(get_markup_template('oauth_authorize.tpl'), array(
-				'$title' => '',
-				'$authorize' => 'Do you authorize the app <a style="float: none;" href="' . $app['url'] . '">' . $app['name'] . '</a> to access your channel data?',
+				'$title' => t('Authorize'),
+				'$authorize' => sprintf( t('Do you authorize the app %s to access your channel data?'), '<a style="float: none;" href="' . $app['url'] . '">' . $app['name'] . '</a> '),
 				'$app' => $app,
 				'$yes' => t('Allow'),
 				'$no' => t('Deny'),
@@ -33,8 +33,8 @@ class Authorize extends \Zotlabs\Web\Controller {
 	}
 
 	function post() {
-		if (!local_channel()) {
-			return $this->get();
+		if (! local_channel()) {
+			return;
 		}
 
 		$storage = new OAuth2Storage(\DBA::$dba->db);
@@ -85,10 +85,8 @@ class Authorize extends \Zotlabs\Web\Controller {
 		$is_authorized = ($_POST['authorize'] === 'allow');
 		$s->handleAuthorizeRequest($request, $response, $is_authorized, local_channel());
 		if ($is_authorized) {
-			// this is only here so that you get to see your code in the cURL request. Otherwise,
-			// we'd redirect back to the client
 			$code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=') + 5, 40);
-			echo("SUCCESS! Authorization Code: $code");
+			logger('Authorization Code: ' .  $code);
 		}
 
 		$response->send();
