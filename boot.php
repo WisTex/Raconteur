@@ -954,7 +954,10 @@ class App {
 			&& is_array(self::$config['system'])
 			&& array_key_exists('baseurl',self::$config['system'])
 			&& strlen(self::$config['system']['baseurl'])) {
-			$url = punify(self::$config['system']['baseurl']);
+			// get_baseurl() is a heavily used function.
+			// Do not use punify() here until we find a library that performs better than what we have now.
+			//$url = punify(self::$config['system']['baseurl']);
+			$url = self::$config['system']['baseurl'];
 			$url = trim($url,'\\/');
 			return $url;
 		}
