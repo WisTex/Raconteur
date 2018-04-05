@@ -299,9 +299,9 @@ class Directory extends \Zotlabs\Web\Controller {
 										if(strlen($out))
 											$out .= ', ';
 										if($marr && in_arrayi($k,$marr))
-											$out .= '<strong>' . $k . '</strong>';
+											$out .= '<a href="' . z_root() . '/directory/f=&keywords=' . urlencode($k)  .'"><strong>' . $k . '</strong></a>';
 										else
-											$out .= $k;
+											$out .= '<a href="' . z_root() . '/directory/f=&keywords=' . urlencode($k)  .'">' . $k . '</a>';
 									}
 								}
 				

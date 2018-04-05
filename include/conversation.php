@@ -1607,7 +1607,7 @@ function prepare_page($item) {
 	// prepare_body calls unobscure() as a side effect. Do it here so that
 	// the template will get passed an unobscured title.
 
-	$body = prepare_body($item, true);
+	$body = prepare_body($item, [ 'newwin' => false ]);
 	if(App::$page['template'] == 'none') {
 		$tpl = 'page_display_empty.tpl';
 

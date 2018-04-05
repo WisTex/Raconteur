@@ -125,10 +125,16 @@ function datetime_convert($from = 'UTC', $to = 'UTC', $s = 'now', $fmt = "Y-m-d 
  */
 function dob($dob) {
 
+	$y = substr($dob,0,4);
+	if((! ctype_digit($y)) || ($y < 1900))
+		$ignore_year = true;
+	else
+		$ignore_year = false;
+
 	if ($dob === '0000-00-00' || $dob === '')
 		$value = '';
 	else
-		$value = (($year) ? datetime_convert('UTC','UTC',$dob,'Y-m-d') : datetime_convert('UTC','UTC',$dob,'m-d'));
+		$value = (($ignore_year) ? datetime_convert('UTC','UTC',$dob,'m-d') : datetime_convert('UTC','UTC',$dob,'Y-m-d'));
 
 	$o = replace_macros(get_markup_template("field_input.tpl"), [
 		'$field' => [ 'dob', t('Birthday'), $value, ((intval($value)) ? t('Age: ') . age($value,App::$user['timezone'],App::$user['timezone']) : ''), '', 'placeholder="' . t('YYYY-MM-DD or MM-DD') .'"' ]

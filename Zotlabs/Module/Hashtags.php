@@ -18,7 +18,7 @@ class Hashtags extends \Zotlabs\Web\Controller {
 		);
 		if($r) {
 			foreach($r as $rv) {
-				$result[] = [ 'text' => strtolower($rv['term']) ];
+				$result[] = [ 'text' => $rv['term'] ];
 			}
 		}
 

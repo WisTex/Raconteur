@@ -266,7 +266,7 @@ class Chatroom {
 			intval($room_id),
 			dbesc($xchan),
 			dbesc(datetime_convert()),
-			dbesc($arr['chat_text'])
+			dbesc(str_rot47(base64url_encode($arr['chat_text'])))
 		);
 
 		$ret['success'] = true;

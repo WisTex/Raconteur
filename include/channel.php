@@ -780,7 +780,7 @@ function identity_basic_export($channel_id, $sections = null) {
 		}
 	}
 
-	if(in_array('channel',$sections)) {
+	if(in_array('channel',$sections) || in_array('profile',$sections)) {
 		$r = q("select * from profile where uid = %d",
 			intval($channel_id)
 		);
@@ -1573,13 +1573,24 @@ function advanced_profile() {
 			$profile['howlong'] = relative_date(App::$profile['howlong'], t('for %1$d %2$s'));
 		}
 
+		if(App::$profile['keywords']) { 
+			$keywords = str_replace(',',' ', App::$profile['keywords']);
+			$keywords = str_replace('  ',' ', $keywords);
+			$karr = explode(' ', $keywords);
+			if($karr) {
+				for($cnt = 0; $cnt < count($karr); $cnt ++) {
+					$karr[$cnt] = '<a href="' . z_root() . '/directory/f=&keywords=' . trim($karr[$cnt]) . '">' . $karr[$cnt] . '</a>';
+				}
+			}
+			$profile['keywords'] = array( t('Tags:'), implode(' ', $karr));
+		}
+
+
 		if(App::$profile['sexual']) $profile['sexual'] = array( t('Sexual Preference:'), App::$profile['sexual'] );
 
 		if(App::$profile['homepage']) $profile['homepage'] = array( t('Homepage:'), linkify(App::$profile['homepage']) );
 
 		if(App::$profile['hometown']) $profile['hometown'] = array( t('Hometown:'), linkify(App::$profile['hometown']) );
-
-		if(App::$profile['keywords']) $profile['keywords'] = array( t('Tags:'), App::$profile['keywords']);
 
 		if(App::$profile['politic']) $profile['politic'] = array( t('Political Views:'), App::$profile['politic']);
 

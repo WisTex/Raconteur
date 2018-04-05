@@ -198,7 +198,7 @@ function string2bb(element) {
 
 		// Autocomplete forums
 		forums = {
-			match: /(^|\s)(\!)([^ \n]+)$/,
+			match: /(^|\s)(\!\!*)([^ \n]+)$/,
 			index: 3,
 			search: function(term, callback) { contact_search(term, callback, backend_url, 'f', extra_channels, spinelement=false); },
 			replace: editor_replace,
@@ -210,7 +210,7 @@ function string2bb(element) {
 		tags = {
 			match: /(^|\s)(\#)([^ \n]{2,})$/,
 			index: 3,
-			search: function(term, callback) { $.getJSON('/hashtags/' + '$f=&t=' + term).done(function(data) { callback($.map(data, function(entry) { return entry.text.indexOf(term) === 0 ? entry : null; })); }); },
+			search: function(term, callback) { $.getJSON('/hashtags/' + '$f=&t=' + term).done(function(data) { callback($.map(data, function(entry) { return entry.text.toLowerCase().indexOf(term.toLowerCase()) === 0 ? entry : null; })); }); },
 			replace: function(item) { return "$1$2" + item.text + ' '; },
 			context: function(text) { return text.toLowerCase(); },
 			template: tag_format

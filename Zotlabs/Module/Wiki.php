@@ -284,6 +284,8 @@ class Wiki extends \Zotlabs\Web\Controller {
 				$wikiheaderPage = urldecode($pageUrlName);
 
 				$renamePage = (($wikiheaderPage === 'Home') ? '' : t('Rename page'));
+				$sharePage  = t('Share');
+
 				$p = [];
 
 				if(! $ignore_language) {
@@ -354,6 +356,8 @@ class Wiki extends \Zotlabs\Web\Controller {
 			'$wikiheaderName' => $wikiheaderName,
 			'$wikiheaderPage' => $wikiheaderPage,
 			'$renamePage' => $renamePage,
+			'$sharePage' => $sharePage,
+			'$shareLink' => urlencode('#^[zrl=' . z_root() . '/wiki/' . argv(1) . '/' . $wikiUrlName . '/' . $pageUrlName . ']' . '[ ' . $owner['channel_name'] . ' ] ' . $wikiheaderName . ' - ' . $wikiheaderPage . '[/zrl]'),
 			'$showPageControls' => $showPageControls,
 			'$editOrSourceLabel' => (($showPageControls) ? t('Edit') : t('Source')),
 			'$tools_label' => 'Page Tools',
