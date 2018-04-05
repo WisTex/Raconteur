@@ -198,7 +198,7 @@ function string2bb(element) {
 
 		// Autocomplete forums
 		forums = {
-			match: /(^|\s)(\!)([^ \n]+)$/,
+			match: /(^|\s)(\!\!*)([^ \n]+)$/,
 			index: 3,
 			search: function(term, callback) { contact_search(term, callback, backend_url, 'f', extra_channels, spinelement=false); },
 			replace: editor_replace,

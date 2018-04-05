@@ -2577,6 +2577,9 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 
 		// The @! tag will alter permissions
 		$exclusive = (((! $grouptag) && (strpos($tag,'!') === 1) && (! $diaspora)) ? true : false);
+		if(($grouptag) && (strpos($tag,'!!') === 0)) {
+			$exclusive = true;
+		}
 
 		//is it already replaced?
 		if(strpos($tag,'[zrl='))
@@ -2749,8 +2752,8 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 			$profile = str_replace(',','%2c',$profile);
 			$url = $profile;
 			if($grouptag) {
-				$newtag = '!' . '[zrl=' . $profile . ']' . $newname	. '[/zrl]';
-				$body = str_replace('!' . $name, $newtag, $body);
+				$newtag = '!' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. '[/zrl]';
+				$body = str_replace('!' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
 			}
 			else {
 				$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. (($forum &&  ! $trailing_plus_name) ? '+' : '') . '[/zrl]';
@@ -2800,6 +2803,7 @@ function linkify_tags($a, &$body, $uid, $diaspora = false) {
 				continue;
 
 			$success = handle_tag($a, $body, $access_tag, $str_tags, ($uid) ? $uid : App::$profile_uid , $tag, $diaspora);
+
 			$results[] = array('success' => $success, 'access_tag' => $access_tag);
 			if($success['replaced']) $tagged[] = $tag;
 		}
