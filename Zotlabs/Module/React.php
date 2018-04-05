@@ -49,6 +49,7 @@ class React extends \Zotlabs\Web\Controller {
 			$n['aid'] = $channel['channel_account_id'];
 			$n['uid'] = $channel['channel_id'];
 			$n['item_origin'] = true;
+			$n['item_type'] = $i[0]['item_type'];
 			$n['parent'] = $postid;
 			$n['parent_mid'] = $i[0]['mid'];
 			$n['mid'] = item_message_id();

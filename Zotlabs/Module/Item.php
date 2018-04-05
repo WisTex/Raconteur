@@ -468,6 +468,7 @@ class Item extends \Zotlabs\Web\Controller {
 				$private = intval($acl->is_private() || $parent_item['item_private']);
 				$public_policy     = $parent_item['public_policy'];
 				$owner_hash        = $parent_item['owner_xchan'];
+				$webpage           = $parent_item['item_type'];
 			}
 		
 			if((! $allow_empty) && (! strlen($body))) {

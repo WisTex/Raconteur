@@ -419,6 +419,7 @@ class Like extends \Zotlabs\Web\Controller {
 	
 			$arr['item_origin'] = 1;
 			$arr['item_notshown'] = 1;
+			$arr['item_type'] = $item['item_type'];
 	
 			if(intval($item['item_wall']))
 				$arr['item_wall'] = 1;
