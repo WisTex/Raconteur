@@ -296,10 +296,11 @@ class Like extends \Zotlabs\Web\Controller {
 				notice( t('Permission denied') . EOL);
 				killme();
 			}
-	
+
 			$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 				dbesc($item['owner_xchan'])
 			);
+
 			if($r)
 				$thread_owner = $r[0];
 			else
