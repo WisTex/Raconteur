@@ -780,7 +780,7 @@ function identity_basic_export($channel_id, $sections = null) {
 		}
 	}
 
-	if(in_array('channel',$sections)) {
+	if(in_array('channel',$sections) || in_array('profile',$sections)) {
 		$r = q("select * from profile where uid = %d",
 			intval($channel_id)
 		);
