@@ -99,7 +99,7 @@ function import_channel($channel, $account_id, $seize) {
 	}
 
 	if($clean) {
-		create_table_from_array('channel',$clean);
+		channel_store_lowlevel($clean);
 	}
 
 	$r = q("select * from channel where channel_account_id = %d and channel_guid = '%s' limit 1",
