@@ -132,7 +132,7 @@ class Display extends \Zotlabs\Web\Controller {
 			$y = q("select * from iconfig left join item on iconfig.iid = item.id 
 				where item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'WEBPAGE' and item.id = %d limit 1",
 				intval($target_item['uid']),
-				intval($target_item['id'])
+				intval($target_item['parent'])
 			);
 			if($x && $y) {
 				goaway(z_root() . '/page/' . $x[0]['channel_address'] . '/' . $y[0]['v']);
@@ -149,7 +149,7 @@ class Display extends \Zotlabs\Web\Controller {
 			$y = q("select * from iconfig left join item on iconfig.iid = item.id 
 				where item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'ARTICLE' and item.id = %d limit 1",
 				intval($target_item['uid']),
-				intval($target_item['id'])
+				intval($target_item['parent'])
 			);
 			if($x && $y) {
 				goaway(z_root() . '/articles/' . $x[0]['channel_address'] . '/' . $y[0]['v']);
@@ -166,7 +166,7 @@ class Display extends \Zotlabs\Web\Controller {
 			$y = q("select * from iconfig left join item on iconfig.iid = item.id 
 				where item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'CARD' and item.id = %d limit 1",
 				intval($target_item['uid']),
-				intval($target_item['id'])
+				intval($target_item['parent'])
 			);
 			if($x && $y) {
 				goaway(z_root() . '/cards/' . $x[0]['channel_address'] . '/' . $y[0]['v']);

@@ -732,7 +732,7 @@ class Profiles extends \Zotlabs\Web\Controller {
 				'$addthing'     => t('Add profile things'),
 				'$personal'     => t('Personal'),
 				'$location'     => t('Location'),
-				'$relation'     => t('Relation'),
+				'$relation'     => t('Relationship'),
 				'$miscellaneous'=> t('Miscellaneous'),
 				'$exportable'   => feature_enabled(local_channel(),'profile_export'),
 				'$lbl_import'   => t('Import profile from file'),

@@ -3855,11 +3855,14 @@ function process_channel_sync_delivery($sender, $arr, $deliveries) {
 					intval($channel['channel_id'])
 				);
 				if(! $x) {
-					q("insert into profile ( profile_guid, aid, uid ) values ('%s', %d, %d)",
-						dbesc($profile['profile_guid']),
-						intval($channel['channel_account_id']),
-						intval($channel['channel_id'])
+					profile_store_lowlevel(
+						[
+							'aid'          => $channel['channel_account_id'],
+							'uid'          => $channel['channel_id'],
+							'profile_guid' => $profile['profile_guid'],
+						]
 					);
+
 					$x = q("select * from profile where profile_guid = '%s' and uid = %d limit 1",
 						dbesc($profile['profile_guid']),
 						intval($channel['channel_id'])

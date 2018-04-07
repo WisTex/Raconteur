@@ -26,7 +26,6 @@ class Well_known extends \Zotlabs\Web\Controller {
 				killme();
 			}
 	
-	
 			switch(argv(1)) {
 				case 'zot-info':
 					\App::$argc -= 1;
@@ -52,6 +51,10 @@ class Well_known extends \Zotlabs\Web\Controller {
 					$module->init();
 					break;
 	
+				case 'dnt-policy.txt':
+					echo file_get_contents('doc/dnt-policy.txt');
+					killme();
+
 				default:
 					if(file_exists(\App::$cmd)) {
 						echo file_get_contents(\App::$cmd); 

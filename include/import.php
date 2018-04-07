@@ -99,7 +99,7 @@ function import_channel($channel, $account_id, $seize) {
 	}
 
 	if($clean) {
-		create_table_from_array('channel',$clean);
+		channel_store_lowlevel($clean);
 	}
 
 	$r = q("select * from channel where channel_account_id = %d and channel_guid = '%s' limit 1",
@@ -180,7 +180,7 @@ function import_profiles($channel, $profiles) {
 				$profile['thumb'] = z_root() . '/photo/' . basename($profile['thumb']);
 			}
 
-			create_table_from_array('profile', $profile);
+			profile_store_lowlevel($profile);
 		}
 	}
 }

@@ -780,10 +780,16 @@ function parseIdentityAwareHTML($Text) {
 
 function bbcode($Text, $options = []) {
 
+	if(! is_array($options)) {
+		$options = [];
+	}
+
 	$preserve_nl = ((array_key_exists('preserve_nl',$options)) ? $options['preserve_nl'] : false);
 	$tryoembed   = ((array_key_exists('tryoembed',$options)) ? $options['tryoembed'] : true);
 	$cache       = ((array_key_exists('cache',$options)) ? $options['cache'] : false);
+	$newwin      = ((array_key_exists('newwin',$options)) ? $options['newwin'] : true);
 
+	$target = (($newwin) ? ' target="_blank" ' : '');
 
 	call_hooks('bbcode_filter', $Text);
 
@@ -934,7 +940,7 @@ function bbcode($Text, $options = []) {
 		if($tryoembed) {
 			$Text = preg_replace_callback("/([^\]\='".'"'."\/]|^|\#\^)(https?\:\/\/$urlchars+)/ismu", 'tryoembed', $Text);
 		}
-		$Text = preg_replace("/([^\]\='".'"'."\/]|^|\#\^)(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" target="_blank" rel="nofollow noopener">$2</a>', $Text);
+		$Text = preg_replace("/([^\]\='".'"'."\/]|^|\#\^)(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" ' . $target . ' rel="nofollow noopener">$2</a>', $Text);
 	}
 
 	if (strpos($Text,'[/share]') !== false) {
@@ -946,16 +952,16 @@ function bbcode($Text, $options = []) {
 		}
 	}
 	if (strpos($Text,'[/url]') !== false) {
-		$Text = preg_replace("/\#\^\[url\]([$URLSearchString]*)\[\/url\]/ism", '<span class="bookmark-identifier">#^</span><a class="bookmark" href="$1" target="_blank" rel="nofollow noopener" >$1</a>', $Text);
-		$Text = preg_replace("/\#\^\[url\=([$URLSearchString]*)\](.*?)\[\/url\]/ism", '<span class="bookmark-identifier">#^</span><a class="bookmark" href="$1" target="_blank" rel="nofollow noopener" >$2</a>', $Text);
-		$Text = preg_replace("/\[url\]([$URLSearchString]*)\[\/url\]/ism", '<a href="$1" target="_blank" rel="nofollow noopener" >$1</a>', $Text);
-		$Text = preg_replace("/\[url\=([$URLSearchString]*)\](.*?)\[\/url\]/ism", '<a href="$1" target="_blank" rel="nofollow noopener" >$2</a>', $Text);
+		$Text = preg_replace("/\#\^\[url\]([$URLSearchString]*)\[\/url\]/ism", '<span class="bookmark-identifier">#^</span><a class="bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
+		$Text = preg_replace("/\#\^\[url\=([$URLSearchString]*)\](.*?)\[\/url\]/ism", '<span class="bookmark-identifier">#^</span><a class="bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
+		$Text = preg_replace("/\[url\]([$URLSearchString]*)\[\/url\]/ism", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
+		$Text = preg_replace("/\[url\=([$URLSearchString]*)\](.*?)\[\/url\]/ism", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
 	}
 	if (strpos($Text,'[/zrl]') !== false) {
-		$Text = preg_replace("/\#\^\[zrl\]([$URLSearchString]*)\[\/zrl\]/ism", '<span class="bookmark-identifier">#^</span><a class="zrl bookmark" href="$1" target="_blank" rel="nofollow noopener" >$1</a>', $Text);
-		$Text = preg_replace("/\#\^\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '<span class="bookmark-identifier">#^</span><a class="zrl bookmark" href="$1" target="_blank" rel="nofollow noopener" >$2</a>', $Text);
-		$Text = preg_replace("/\[zrl\]([$URLSearchString]*)\[\/zrl\]/ism", '<a class="zrl" href="$1" target="_blank" rel="nofollow noopener" >$1</a>', $Text);
-		$Text = preg_replace("/\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '<a class="zrl" href="$1" target="_blank" rel="nofollow noopener" >$2</a>', $Text);
+		$Text = preg_replace("/\#\^\[zrl\]([$URLSearchString]*)\[\/zrl\]/ism", '<span class="bookmark-identifier">#^</span><a class="zrl bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
+		$Text = preg_replace("/\#\^\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '<span class="bookmark-identifier">#^</span><a class="zrl bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
+		$Text = preg_replace("/\[zrl\]([$URLSearchString]*)\[\/zrl\]/ism", '<a class="zrl" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
+		$Text = preg_replace("/\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '<a class="zrl" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
 	}
 
 	if (get_account_techlevel() < 2)
@@ -963,8 +969,8 @@ function bbcode($Text, $options = []) {
 
 	// Perform MAIL Search
 	if (strpos($Text,'[/mail]') !== false) {
-		$Text = preg_replace("/\[mail\]([$MAILSearchString]*)\[\/mail\]/", '<a href="mailto:$1" target="_blank" rel="nofollow noopener" >$1</a>', $Text);
-		$Text = preg_replace("/\[mail\=([$MAILSearchString]*)\](.*?)\[\/mail\]/", '<a href="mailto:$1" target="_blank" rel="nofollow noopener" >$2</a>', $Text);
+		$Text = preg_replace("/\[mail\]([$MAILSearchString]*)\[\/mail\]/", '<a href="mailto:$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
+		$Text = preg_replace("/\[mail\=([$MAILSearchString]*)\](.*?)\[\/mail\]/", '<a href="mailto:$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
 	}
 
 
@@ -1286,28 +1292,18 @@ function bbcode($Text, $options = []) {
 
 	// if video couldn't be embedded, link to it instead.
 	if (strpos($Text,'[/video]') !== false) {
-		$Text = preg_replace("/\[video\](.*?)\[\/video\]/", '<a href="$1" target="_blank" rel="nofollow noopener" >$1</a>', $Text);
+		$Text = preg_replace("/\[video\](.*?)\[\/video\]/", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
 	}
 	if (strpos($Text,'[/audio]') !== false) {
-		$Text = preg_replace("/\[audio\](.*?)\[\/audio\]/", '<a href="$1" target="_blank" rel="nofollow noopener" >$1</a>', $Text);
+		$Text = preg_replace("/\[audio\](.*?)\[\/audio\]/", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
 	}
 
 	if (strpos($Text,'[/zvideo]') !== false) {
-		$Text = preg_replace("/\[zvideo\](.*?)\[\/zvideo\]/", '<a class="zid" href="$1" target="_blank" rel="nofollow noopener" >$1</a>', $Text);
+		$Text = preg_replace("/\[zvideo\](.*?)\[\/zvideo\]/", '<a class="zid" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
 	}
 	if (strpos($Text,'[/zaudio]') !== false) {
-		$Text = preg_replace("/\[zaudio\](.*?)\[\/zaudio\]/", '<a class="zid" href="$1" target="_blank" rel="nofollow noopener" >$1</a>', $Text);
+		$Text = preg_replace("/\[zaudio\](.*?)\[\/zaudio\]/", '<a class="zid" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
 	}
-
-//	if ($tryoembed){
-//		if (strpos($Text,'[/iframe]') !== false) {
-//			$Text = preg_replace_callback("/\[iframe\](.*?)\[\/iframe\]/ism", 'bb_iframe', $Text);
-//		}
-//	} else {
-//		if (strpos($Text,'[/iframe]') !== false) {
-//			$Text = preg_replace("/\[iframe\](.*?)\[\/iframe\]/ism", '<a href="$1" target="_blank" rel="nofollow noopener" >$1</a>', $Text);
-//		}
-//	}
 
 	// oembed tag
 	$Text = oembed_bbcode2html($Text);
