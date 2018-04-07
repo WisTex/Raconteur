@@ -841,7 +841,7 @@ class Photos extends \Zotlabs\Web\Controller {
 					'$album_id' => $datum,
 					'$album_edit' => array(t('Edit Album'), $album_edit),
 					'$can_post' => $can_post,
-					'$upload' => array(t('Upload'), z_root() . '/photos/' . \App::$data['channel']['channel_address'] . '/upload/' . $datum),
+					'$upload' => array(t('Add Photos'), z_root() . '/photos/' . \App::$data['channel']['channel_address'] . '/upload/' . $datum),
 					'$order' => $order,
 					'$upload_form' => $upload_form,
 					'$usage' => $usage_message
@@ -1378,7 +1378,7 @@ class Photos extends \Zotlabs\Web\Controller {
 				'$title' => t('Recent Photos'),
 				'$album_id' => bin2hex(t('Recent Photos')),
 				'$can_post' => $can_post,
-				'$upload' => array(t('Upload'), z_root().'/photos/'.\App::$data['channel']['channel_address'].'/upload'),
+				'$upload' => array(t('Add Photos'), z_root().'/photos/'.\App::$data['channel']['channel_address'].'/upload'),
 				'$photos' => $photos,
 				'$upload_form' => $upload_form,
 				'$usage' => $usage_message
