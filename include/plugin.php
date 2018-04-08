@@ -37,7 +37,7 @@ function unload_plugin($plugin){
 		$func = $plugin . '_unload';
 		try {
 			$func();
-		} catch ($e) {
+		} catch (Exception $e) {
 			handleerrors_plugin($plugin,"Unable to unload.",$e->getMessage());
 		}
 	}
@@ -62,7 +62,7 @@ function uninstall_plugin($plugin) {
 		$func = $plugin . '_uninstall';
 		try {
 			$func();
-		} catch ($e) {
+		} catch (Exception $e) {
 			handleerrors_plugin($plugin,"Unable to uninstall.","Unable to run _uninstall : ".$e->getMessage());
 		}
 	}
@@ -92,7 +92,7 @@ function install_plugin($plugin) {
 		$func = $plugin . '_install';
 		try {
 			$func();
-		} catch ($e) {
+		} catch (Exception $e) {
 			handleerrors_plugin($plugin,"Install failed.","Install failed : ".$e->getMessage());
 			return;
 		}
@@ -127,7 +127,7 @@ function load_plugin($plugin) {
 		$func = $plugin . '_load';
 		try {
 			$func();
-		} catch ($e) {
+		} catch (Exception $e) {
 			handleerrors_plugin($plugin,"Unable to load.","FAILED loading : ".$e->getMessage());
 			return;
 		}
@@ -198,7 +198,7 @@ function reload_plugins() {
 								$func = $pl . '_unload';
 								try {
         								$func();
-								} catch ($e) {
+								} catch (Exception $e) {
 									handleerrors_plugin($plugin,"","UNLOAD FAILED (uninstalling) : ".$e->getMessage(),true);
                                                                         continue;
 								}
@@ -207,7 +207,7 @@ function reload_plugins() {
 								$func = $pl . '_load';
 								try {
         								$func();
-								} catch ($e) {
+								} catch (Exception $e) {
 									handleerrors_plugin($plugin,"","LOAD FAILED (uninstalling): ".$e->getMessage(),true);
                                                                         continue;
 								}
