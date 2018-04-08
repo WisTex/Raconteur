@@ -7,6 +7,27 @@
 
 
 /**
+ * @brief Handle errors in plugin calls
+ *
+ * @param string $plugin name of the addon
+ * @param string $error_text text of error
+ * @param bool $uninstall uninstall plugin
+ */
+function handleerrors_plugin($plugin,$notice,$log,$uninstall=false){
+        logger("Addons: [" . $plugin . "] Error: ".$log, LOGGER_ERROR);
+        if ($notice != '') {
+                notice("[" . $plugin . "] Error: ".$notice, LOGGER_ERROR);
+        }
+
+        if ($uninstall) {
+                $idx = array_search($plugin, \App::$plugins);
+                unset(\App::$plugins[$idx]);
+                uninstall_plugin($plugin);
+                set_config("system","addon", implode(", ",\App::$plugins));
+        }
+}
+
+/**
  * @brief Unloads an addon.
  *
  * @param string $plugin name of the addon
@@ -17,7 +38,11 @@ function unload_plugin($plugin){
 	@include_once('addon/' . $plugin . '/' . $plugin . '.php');
 	if(function_exists($plugin . '_unload')) {
 		$func = $plugin . '_unload';
-		$func();
+		try {
+			$func();
+		} catch (Exception $e) {
+			handleerrors_plugin($plugin,"Unable to unload.",$e->getMessage());
+		}
 	}
 }
 
@@ -38,7 +63,11 @@ function uninstall_plugin($plugin) {
 	@include_once('addon/' . $plugin . '/' . $plugin . '.php');
 	if(function_exists($plugin . '_uninstall')) {
 		$func = $plugin . '_uninstall';
-		$func();
+		try {
+			$func();
+		} catch (Exception $e) {
+			handleerrors_plugin($plugin,"Unable to uninstall.","Unable to run _uninstall : ".$e->getMessage());
+		}
 	}
 
 	q("DELETE FROM addon WHERE aname = '%s' ",
@@ -64,7 +93,12 @@ function install_plugin($plugin) {
 	@include_once('addon/' . $plugin . '/' . $plugin . '.php');
 	if(function_exists($plugin . '_install')) {
 		$func = $plugin . '_install';
-		$func();
+		try {
+			$func();
+		} catch (Exception $e) {
+			handleerrors_plugin($plugin,"Install failed.","Install failed : ".$e->getMessage());
+			return;
+		}
 	}
 
 	$plugin_admin = (function_exists($plugin . '_plugin_admin') ? 1 : 0);
@@ -94,7 +128,12 @@ function load_plugin($plugin) {
 	@include_once('addon/' . $plugin . '/' . $plugin . '.php');
 	if(function_exists($plugin . '_load')) {
 		$func = $plugin . '_load';
-		$func();
+		try {
+			$func();
+		} catch (Exception $e) {
+			handleerrors_plugin($plugin,"Unable to load.","FAILED loading : ".$e->getMessage(),true);
+			return;
+		}
 
 		// we can add the following with the previous SQL
 		// once most site tables have been updated.
@@ -108,7 +147,7 @@ function load_plugin($plugin) {
 		return true;
 	}
 	else {
-		logger("Addons: FAILED loading " . $plugin);
+		logger("Addons: FAILED loading " . $plugin . " (missing _load function)");
 		return false;
 	}
 }
@@ -160,11 +199,21 @@ function reload_plugins() {
 
 							if(function_exists($pl . '_unload')) {
 								$func = $pl . '_unload';
-								$func();
+								try {
+        								$func();
+								} catch (Exception $e) {
+									handleerrors_plugin($plugin,"","UNLOAD FAILED (uninstalling) : ".$e->getMessage(),true);
+                                                                        continue;
+								}
 							}
 							if(function_exists($pl . '_load')) {
 								$func = $pl . '_load';
-								$func();
+								try {
+        								$func();
+								} catch (Exception $e) {
+									handleerrors_plugin($plugin,"","LOAD FAILED (uninstalling): ".$e->getMessage(),true);
+                                                                        continue;
+								}
 							}
 							q("UPDATE addon SET tstamp = %d WHERE id = %d",
 								intval($t),
