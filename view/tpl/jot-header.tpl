@@ -560,3 +560,58 @@ $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-del
 	}
 });
 </script>
+
+
+<script>
+
+	var postSaveTimer = null;
+
+	$(document).on('focusout',"#profile-jot-wrapper",function(e){
+		if(postSaveTimer)
+			clearTimeout(postSaveTimer);
+		postSaveChanges(true);
+		postSaveTimer = null;
+	});
+
+	$(document).on('focusin',"#profile-jot-wrapper",function(e){
+		postSaveTimer = setTimeout(function () {
+			postSaveChanges(false);
+		},10000);
+	});
+
+	function postSaveChanges(isFinal = false, type) {
+		localStorage.setItem("post_title", $("#jot-title").val());
+		localStorage.setItem("post_body", $("#profile-jot-text").val());
+		localStorage.setItem("post_category", $("#jot-category").val());
+		if( !isFinal) {
+			postSaveTimer = setTimeout(postSaveChanges,10000);
+		}
+
+	}
+
+	$(document).ready(function() {
+		var postTitle = localStorage.getItem("post_title");
+		var postBody = localStorage.getItem("post_body");
+		var postCategory = localStorage.getItem("post_category");
+		var openEditor = false;
+		if(postTitle) {
+			$('#jot-title').val(postTitle);
+			openEditor = true;
+		}
+		if(postBody) {
+			$('#profile-jot-text').val(postBody);
+			openEditor = true;
+		}
+		if(postCategory) {
+			var categories = postCategory.split(',');
+			categories.forEach(function(cat) {
+				$('#jot-category').tagsinput('add', cat);
+			});
+			openEditor = true;
+		}
+		if(openEditor) {
+			initEditor();
+		}
+	});
+
+</script>
