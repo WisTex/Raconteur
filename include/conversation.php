@@ -1301,7 +1301,9 @@ function status_editor($a, $x, $popup = false) {
 		$id_select = '';
 
 	$webpage = ((x($x,'webpage')) ? $x['webpage'] : '');
-
+	
+	$feature_auto_save_draft = ((feature_enabled($x['profile_uid'], 'auto_save_draft')) ? "true" : "false");
+	
 	$tpl = get_markup_template('jot-header.tpl');
 
 	App::$page['htmlhead'] .= replace_macros($tpl, array(
@@ -1323,6 +1325,7 @@ function status_editor($a, $x, $popup = false) {
 		'$modalerroralbum' => t('Error getting album'),
 		'$nocomment_enabled' => t('Comments enabled'),
 		'$nocomment_disabled' => t('Comments disabled'),
+		'$auto_save_draft' => $feature_auto_save_draft,
 	));
 
 	$tpl = get_markup_template('jot.tpl');
