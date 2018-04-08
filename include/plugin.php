@@ -128,7 +128,7 @@ function load_plugin($plugin) {
 		try {
 			$func();
 		} catch (Exception $e) {
-			handleerrors_plugin($plugin,"Unable to load.","FAILED loading : ".$e->getMessage());
+			handleerrors_plugin($plugin,"Unable to load.","FAILED loading : ".$e->getMessage(),true);
 			return;
 		}
 
