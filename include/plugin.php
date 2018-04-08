@@ -20,7 +20,10 @@ function handleerrors_plugin($plugin,$notice,$log,$uninstall=false){
         }
 
         if ($uninstall) {
-                plugin_uninstall($plugin);
+                $idx = array_search($plugin, \App::$plugins);
+                unset(\App::$plugins[$idx]);
+                uninstall_plugin($plugin);
+                set_config("system","addon", implode(", ",\App::$plugins));
         }
 }
 
