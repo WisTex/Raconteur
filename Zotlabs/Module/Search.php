@@ -66,6 +66,10 @@ class Search extends \Zotlabs\Web\Controller {
 			$search = substr($search,1);
 			goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
 		}
+		if(strpos($search,'!') === 0) {
+			$search = substr($search,1);
+			goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
+		}
 		if(strpos($search,'?') === 0) {
 			$search = substr($search,1);
 			goaway(z_root() . '/help' . '?f=1&navsearch=1&search=' . $search);

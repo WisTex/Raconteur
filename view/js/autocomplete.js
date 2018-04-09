@@ -243,8 +243,19 @@ function string2bb(element) {
 			replace: basic_replace,
 			template: contact_format,
 		};
+
+		// Autocomplete forums
+		forums = {
+			match: /(^\!)([^\n]{3,})$/,
+			index: 2,
+			search: function(term, callback) { contact_search(term, callback, backend_url, 'f', [], spinelement='#nav-search-spinner'); },
+			replace: basic_replace,
+			template: contact_format
+		};
+
+
 		this.attr('autocomplete', 'off');
-		var a = this.textcomplete([contacts], {className:'acpopup', maxCount:100, zIndex: 1020, appendTo:'nav'});
+		var a = this.textcomplete([contacts,forums], {className:'acpopup', maxCount:100, zIndex: 1020, appendTo:'nav'});
 		a.on('textComplete:select', function(e, value, strategy) { submit_form(this); });
 	};
 })( jQuery );
