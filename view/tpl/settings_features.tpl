@@ -4,6 +4,13 @@
 	</div>
 	<form action="settings/features" method="post" autocomplete="off">
 	<input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
+	{{if ! $techlock}}
+		<div class="section-content-tools-wrapper">
+		{{include file="field_select.tpl" field=$techlevel}}
+		</div>
+	{{else}}
+		<input type="hidden" name="techlevel" value="{{$techlevel.2}}" />
+	{{/if}}
 	<div class="panel-group" id="settings" role="tablist" aria-multiselectable="true">
 		{{foreach $features as $g => $f}}
 		<div class="panel">

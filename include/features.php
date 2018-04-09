@@ -44,7 +44,7 @@ function feature_level($feature,$def) {
 	return $def;
 }
 
-function get_features($filtered = true) {
+function get_features($filtered = true, $level = (-1)) {
 
 	$account = \App::get_account();
 
@@ -499,7 +499,7 @@ function get_features($filtered = true) {
 
 	$arr = $x['features'];
 
-	$techlevel = get_account_techlevel();
+	$techlevel = (($level >= 0) ? $level : get_account_techlevel());
 
 	// removed any locked features and remove the entire category if this makes it empty
 

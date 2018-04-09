@@ -11,7 +11,13 @@ class Features {
 		// Build list of features and check which are set
 		// We will not create any settings for features that are above our techlevel
 
-		$features = get_features();
+		if(intval($_REQUEST['techlevel']))
+			$level = intval($_REQUEST['techlevel']);
+		else {
+ 			$level = get_account_techlevel();
+		}
+
+		$features = get_features(true,$level);
 		$all_features = array();
 		foreach($features as $k => $v) {
 			foreach($v as $f) 
@@ -28,9 +34,21 @@ class Features {
 	}
 
 	function get() {
-		$arr = array();
-		$features = get_features();
-	
+		
+		$arr = [];
+		if(intval($_REQUEST['techlevel']))
+			$level = intval($_REQUEST['techlevel']);
+		else {
+ 			$level = get_account_techlevel();
+		}
+
+		$techlevels = \Zotlabs\Lib\Techlevels::levels();
+
+		$def_techlevel = \App::$account['account_level'];
+		$techlock = get_config('system','techlevel_lock');
+
+		$features = get_features(true,$level);
+
 		foreach($features as $fname => $fdata) {
 			$arr[$fname] = array();
 			$arr[$fname][0] = $fdata[0];
@@ -43,6 +61,8 @@ class Features {
 		$o .= replace_macros($tpl, array(
 			'$form_security_token' => get_form_security_token("settings_features"),
 			'$title'	=> t('Additional Features'),
+			'$techlevel' => [ 'techlevel', t('Your technical skill level'), $def_techlevel, t('Used to provide a member experience and additional features consistent with your comfort level'), $techlevels ],
+			'$techlock' => $techlock,
 			'$features' => $arr,
 			'$submit'   => t('Submit'),
 		));
