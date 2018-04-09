@@ -2748,7 +2748,7 @@ function anon_identity_init($reqvars) {
 
 		$photo = z_root() . '/' . get_default_profile_photo(300);
 		$photos = import_xchan_photo($photo,$hash);
-		$r = q("update xchan set xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s' where xchan_guid = '%s' and xchan_hash = '%s' and xchan_network = 'unknown' ",
+		$r = q("update xchan set xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s' where xchan_guid = '%s' and xchan_hash = '%s' and xchan_network = 'anon' ",
 			dbesc(datetime_convert()),
 			dbesc($photos[0]),
 			dbesc($photos[1]),
