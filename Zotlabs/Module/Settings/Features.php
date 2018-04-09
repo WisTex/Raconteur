@@ -34,11 +34,16 @@ class Features {
  			$level = get_account_techlevel();
 		}
 
+		if(! intval($level)) {
+			notice( t('Permission denied.') . EOL);
+			return;
+		}
+
 		$techlevels = \Zotlabs\Lib\Techlevels::levels();
 
-		unset($techlevels[0]);
+		// This page isn't accessible at techlevel 0
 
-		logger('techlevels: ' . print_r($techlevels,true));
+		unset($techlevels[0]);
 
 		$def_techlevel = (($level > 0) ? $level : 1);
 		$techlock = get_config('system','techlevel_lock');
