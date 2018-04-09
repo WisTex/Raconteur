@@ -1,3 +1,12 @@
+<script>
+	$(document).ready(function() {
+		$('#id_techlevel').change(function() { 	
+			var techlvl = $('#id_techlevel').val();
+			window.location.href='{{$baseurl}}/settings/features?f=&techlevel=' + techlvl;
+		});
+	});
+</script>
+ 
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
 		<h2>{{$title}}</h2>
@@ -10,6 +19,12 @@
 		</div>
 	{{else}}
 		<input type="hidden" name="techlevel" value="{{$techlevel.2}}" />
+	{{/if}}
+
+	{{if $hiddens}}
+		{{foreach $hiddens as $k => $v}}
+			<input type="hidden" name="feature_{{$k}}" value="{{$v}}" />
+		{{/foreach}}
 	{{/if}}
 	<div class="panel-group" id="settings" role="tablist" aria-multiselectable="true">
 		{{foreach $features as $g => $f}}

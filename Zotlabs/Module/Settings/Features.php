@@ -8,26 +8,16 @@ class Features {
 	function post() {
 		check_form_security_token_redirectOnErr('/settings/features', 'settings_features');
 	
-		// Build list of features and check which are set
-		// We will not create any settings for features that are above our techlevel
+		$features = get_features(false);
 
-		if(intval($_REQUEST['techlevel']))
-			$level = intval($_REQUEST['techlevel']);
-		else {
- 			$level = get_account_techlevel();
-		}
-
-		$features = get_features(true,$level);
-		$all_features = array();
-		foreach($features as $k => $v) {
-			foreach($v as $f) 
-				$all_features[] = $f[0];
-		}
-		foreach($all_features as $k) {
-			if(x($_POST,"feature_$k"))
-				set_pconfig(local_channel(),'feature',$k, 1);
-			else
-				set_pconfig(local_channel(),'feature',$k, 0);
+		foreach($features as $fname => $fdata) {
+			foreach(array_slice($fdata,1) as $f) {
+				$k = $f[0];
+				if(array_key_exists("feature_$k",$_POST))
+					set_pconfig(local_channel(),'feature',$k, (string) $_POST["feature_$k"]);
+				else
+					set_pconfig(local_channel(),'feature', $k, '');
+			}
 		}
 		build_sync_packet();
 		return;
@@ -36,6 +26,8 @@ class Features {
 	function get() {
 		
 		$arr = [];
+		$harr = [];
+
 		if(intval($_REQUEST['techlevel']))
 			$level = intval($_REQUEST['techlevel']);
 		else {
@@ -44,8 +36,20 @@ class Features {
 
 		$techlevels = \Zotlabs\Lib\Techlevels::levels();
 
-		$def_techlevel = \App::$account['account_level'];
+		unset($techlevels[0]);
+
+		logger('techlevels: ' . print_r($techlevels,true));
+
+		$def_techlevel = (($level > 0) ? $level : 1);
 		$techlock = get_config('system','techlevel_lock');
+
+		$all_features_raw = get_features(false);
+
+		foreach($all_features_raw as $fname => $fdata) {
+			foreach(array_slice($fdata,1) as $f) {
+				$harr[$f[0]] = ((intval(feature_enabled(local_channel(),$f[0]))) ? "1" : '');
+			}
+		}
 
 		$features = get_features(true,$level);
 
@@ -53,18 +57,21 @@ class Features {
 			$arr[$fname] = array();
 			$arr[$fname][0] = $fdata[0];
 			foreach(array_slice($fdata,1) as $f) {
-				$arr[$fname][1][] = array('feature_' .$f[0],$f[1],((intval(feature_enabled(local_channel(),$f[0]))) ? "1" : ''),$f[2],array(t('Off'),t('On')));
+				$arr[$fname][1][] = array('feature_' . $f[0],$f[1],((intval(feature_enabled(local_channel(),$f[0]))) ? "1" : ''),$f[2],array(t('Off'),t('On')));
+				unset($harr[$f[0]]);
 			}
 		}
 			
 		$tpl = get_markup_template("settings_features.tpl");
 		$o .= replace_macros($tpl, array(
 			'$form_security_token' => get_form_security_token("settings_features"),
-			'$title'	=> t('Additional Features'),
+			'$title'	 => t('Additional Features'),
 			'$techlevel' => [ 'techlevel', t('Your technical skill level'), $def_techlevel, t('Used to provide a member experience and additional features consistent with your comfort level'), $techlevels ],
-			'$techlock' => $techlock,
-			'$features' => $arr,
-			'$submit'   => t('Submit'),
+			'$techlock'  => $techlock,
+			'$features'  => $arr,
+			'$hiddens'   => $harr,
+			'$baseurl'   => z_root(),
+			'$submit'    => t('Submit'),
 		));
 	
 		return $o;
