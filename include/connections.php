@@ -110,6 +110,12 @@ function vcard_from_xchan($xchan, $observer = null, $mode = '') {
 			$connect = t('Connect');
 	}
 
+	// don't provide a connect button for transient or one-way identities
+
+	if(in_array($xchan['xchan_network'],['rss','anon','unknown']) || strpos($xchan['xchan_addr'],'guest:') === 0) {
+		$connect = false;
+	}
+
 	if(array_key_exists('channel_id',$xchan))
 		App::$profile_uid = $xchan['channel_id'];
 
