@@ -350,6 +350,15 @@ function get_features($filtered = true, $level = (-1)) {
 				feature_level('suppress_duplicates',1),
 			],
 
+			[
+				'auto_save_draft', 
+				t('Auto-save drafts of posts and comments'),  
+				t('Automatically saves post and comment drafts in local browser storage to help prevent accidental loss of compositions'),
+				true,
+				get_config('feature_lock','auto_save_draft'),
+				feature_level('auto_save_draft',1),
+			],
+
 		],
 
 		// Network Tools
