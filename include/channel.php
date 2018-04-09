@@ -2725,7 +2725,7 @@ function anon_identity_init($reqvars) {
 
 	$hash = hash('md5',$anon_email);
 
-	$x = q("select * from xchan where xchan_guid = '%s' and xchan_hash = '%s' and xchan_network = 'unknown' limit 1",
+	$x = q("select * from xchan where xchan_guid = '%s' and xchan_hash = '%s' and xchan_network = 'anon' limit 1",
 		dbesc($anon_email),
 		dbesc($hash)
 	);
@@ -2736,12 +2736,12 @@ function anon_identity_init($reqvars) {
 			'xchan_hash'    => $hash,
 			'xchan_name'    => $anon_name,
 			'xchan_url'     => $anon_url,
-			'xchan_network' => 'unknown',
+			'xchan_network' => 'anon',
 			'xchan_name_date' => datetime_convert()
 		]);
 
 
-		$x = q("select * from xchan where xchan_guid = '%s' and xchan_hash = '%s' and xchan_network = 'unknown' limit 1",
+		$x = q("select * from xchan where xchan_guid = '%s' and xchan_hash = '%s' and xchan_network = 'anon' limit 1",
 			dbesc($anon_email),
 			dbesc($hash)
 		);
