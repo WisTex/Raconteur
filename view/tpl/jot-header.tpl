@@ -563,35 +563,43 @@ $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-del
 
 
 <script>
-
 	var postSaveTimer = null;
 
-	$(document).on('focusout',"#profile-jot-wrapper",function(e){
-		if(postSaveTimer)
-			clearTimeout(postSaveTimer);
-		postSaveChanges(true);
-		postSaveTimer = null;
-	});
-
-	$(document).on('focusin',"#profile-jot-wrapper",function(e){
-		postSaveTimer = setTimeout(function () {
-			postSaveChanges(false);
-		},10000);
-	});
-
-	function postSaveChanges(isFinal = false, type) {
+	function postSaveChanges(action, type) {
 		if({{$auto_save_draft}}) {
-			localStorage.setItem("post_title", $("#jot-title").val());
-			localStorage.setItem("post_body", $("#profile-jot-text").val());
-			localStorage.setItem("post_category", $("#jot-category").val());
-			if( !isFinal) {
-				postSaveTimer = setTimeout(postSaveChanges,10000);
+			console.log(action);
+			if(action != 'clean') {
+				localStorage.setItem("post_title", $("#jot-title").val());
+				localStorage.setItem("post_body", $("#profile-jot-text").val());
+				localStorage.setItem("post_category", $("#jot-category").val());
+			}
+
+			if(action == 'start') {
+				postSaveTimer = setTimeout(function () {
+					postSaveChanges('start');
+				},10000);
+			}
+
+			if(action == 'stop') {
+				clearTimeout(postSaveTimer);
+				postSaveTimer = null;
+			}
+
+			if(action == 'clean') {
+				clearTimeout(postSaveTimer);
+				postSaveTimer = null;
+				localStorage.removeItem("post_title");
+				localStorage.removeItem("post_body");
+				localStorage.removeItem("post_category");
 			}
 		} 
 
 	}
 
 	$(document).ready(function() {
+
+		var cleaned = false;
+
 		if({{$auto_save_draft}}) {
 			var postTitle = localStorage.getItem("post_title");
 			var postBody = localStorage.getItem("post_body");
@@ -616,10 +624,25 @@ $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-del
 				initEditor();
 			}
 		} else {
-			localStorage.removeItem("post_title");
-			localStorage.removeItem("post_body");
-			localStorage.removeItem("post_category");
+			autoSaveCleanup();
 		}
-	});
 
+		$(document).on('submit', '#profile-jot-form', function() {
+			postSaveChanges('clean');
+			cleaned = true;
+		});
+
+		$(document).on('focusout',"#profile-jot-wrapper",function(e){
+			if(! cleaned)
+				postSaveChanges('stop');
+		});
+
+		$(document).on('focusin',"#profile-jot-wrapper",function(e){
+			postSaveTimer = setTimeout(function () {
+				postSaveChanges('start');
+			},10000);
+		});
+
+
+	});
 </script>
