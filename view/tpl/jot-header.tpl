@@ -567,11 +567,12 @@ $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-del
 
 	function postSaveChanges(action, type) {
 		if({{$auto_save_draft}}) {
-			console.log(action);
+
 			if(action != 'clean') {
 				localStorage.setItem("post_title", $("#jot-title").val());
 				localStorage.setItem("post_body", $("#profile-jot-text").val());
-				localStorage.setItem("post_category", $("#jot-category").val());
+				if($("#jot-category").length)
+					localStorage.setItem("post_category", $("#jot-category").val());
 			}
 
 			if(action == 'start') {
@@ -603,8 +604,9 @@ $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-del
 		if({{$auto_save_draft}}) {
 			var postTitle = localStorage.getItem("post_title");
 			var postBody = localStorage.getItem("post_body");
-			var postCategory = localStorage.getItem("post_category");
+			var postCategory = (($("#jot-category").length) ? localStorage.getItem("post_category") : '');
 			var openEditor = false;
+
 			if(postTitle) {
 				$('#jot-title').val(postTitle);
 				openEditor = true;
