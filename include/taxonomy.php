@@ -212,8 +212,9 @@ function card_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0
 	if(! perm_is_allowed($uid,get_observer_hash(),'view_pages'))
 		return array();
 
+	$item_normal = " and item.item_hidden = 0 and item.item_deleted = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_pending_remove = 0
+		and item.item_blocked = 0 and item.obj_type != 'http://purl.org/zot/activity/file' ";
 
-	$item_normal = item_normal();
 	$sql_options = item_permissions_sql($uid);
 	$count = intval($count);
 
@@ -236,15 +237,16 @@ function card_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0
 
 
 	// Fetch tags
+
 	$r = q("select term, count(term) as total from term left join item on term.oid = item.id
 		where term.uid = %d and term.ttype = %d 
-		and otype = %d and item_type = %d and item_private = 0
+		and otype = %d and item_type = %d 
 		$sql_options $item_normal
 		group by term order by total desc %s",
 		intval($uid),
 		intval($type),
 		intval(TERM_OBJ_POST),
-		intval($restrict),
+		intval(ITEM_TYPE_CARD),
 		((intval($count)) ? "limit $count" : '')
 	);
 
@@ -263,7 +265,9 @@ function article_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags 
 		return array();
 
 
-	$item_normal = item_normal();
+	$item_normal = " and item.item_hidden = 0 and item.item_deleted = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_pending_remove = 0
+		and item.item_blocked = 0 and item.obj_type != 'http://purl.org/zot/activity/file' ";
+
 	$sql_options = item_permissions_sql($uid);
 	$count = intval($count);
 
@@ -288,13 +292,13 @@ function article_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags 
 	// Fetch tags
 	$r = q("select term, count(term) as total from term left join item on term.oid = item.id
 		where term.uid = %d and term.ttype = %d 
-		and otype = %d and item_type = %d and item_private = 0
+		and otype = %d and item_type = %d 
 		$sql_options $item_normal
 		group by term order by total desc %s",
 		intval($uid),
 		intval($type),
 		intval(TERM_OBJ_POST),
-		intval($restrict),
+		intval(ITEM_TYPE_ARTICLE),
 		((intval($count)) ? "limit $count" : '')
 	);
 
