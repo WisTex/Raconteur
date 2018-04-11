@@ -115,6 +115,7 @@ class Enotify {
 
 
 	$always_show_in_notices = get_pconfig($recip['channel_id'],'system','always_show_in_notices');
+	$vnotify = get_pconfig($recip['channel_id'],'system','vnotify');
 
 	// e.g. "your post", "David's photo", etc.
 	$possess_desc = t('%s <!item_type!>');
@@ -142,7 +143,7 @@ class Enotify {
 
 		if(array_key_exists('item',$params) && in_array($params['item']['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) {
 
-			if(! $always_show_in_notices) {
+			if(! $always_show_in_notices || !($vnotify & VNOTIFY_LIKE)) {
 				logger('notification: not a visible activity. Ignoring.');
 				pop_lang();
 				return;
@@ -249,7 +250,7 @@ class Enotify {
 		$itemlink =  $params['link'];
 
 		if (array_key_exists('item',$params) && (! activity_match($params['item']['verb'],ACTIVITY_LIKE))) {
-			if(! $always_show_in_notices) {
+			if(! $always_show_in_notices  || !($vnotify & VNOTIFY_LIKE)) {
 				logger('notification: not a visible activity. Ignoring.');
 				pop_lang();
 				return;
