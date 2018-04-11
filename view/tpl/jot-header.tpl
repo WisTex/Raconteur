@@ -626,7 +626,7 @@ $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-del
 				initEditor();
 			}
 		} else {
-			autoSaveCleanup();
+			postSaveChanges('clean');
 		}
 
 		$(document).on('submit', '#profile-jot-form', function() {
