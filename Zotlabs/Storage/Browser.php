@@ -274,7 +274,7 @@ class Browser extends DAV\Browser\Plugin {
 				'$actionspanel' => $output,
 				'$shared' => t('Shared'),
 				'$create' => t('Create'),
-				'$upload' => t('Upload'),
+				'$upload' => t('Add Files'),
 				'$is_owner' => $is_owner,
 				'$parentpath' => $parentpath,
 				'$cpath' => bin2hex(\App::$query_string),

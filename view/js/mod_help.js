@@ -53,7 +53,7 @@ $(document).ready(function () {
 						.removeClass('selected-doco-nav')
 						.eq(i).addClass('selected-doco-nav');
 				if (typeof ($('#doco-side-toc li').eq(i).find('a').attr('href').split('#')[1]) !== 'undefined') {
-					window.history.pushState({}, '', location.href.split('#')[0] + '#' + $('#doco-side-toc li').eq(i).find('a').attr('href').split('#')[1]);
+					window.history.replaceState({}, '', location.href.split('#')[0] + '#' + $('#doco-side-toc li').eq(i).find('a').attr('href').split('#')[1]);
 				}
 			}
 		});
@@ -100,7 +100,7 @@ $(document).ready(function () {
 		
 	}
 	// Update the address bar to reflect the loaded language
-	window.history.pushState({}, '', '/' + pathParts.join('/'));
+	window.history.replaceState({}, '', '/' + pathParts.join('/'));
 	
 	// Highlight the language in the language selector that is currently viewed
 	$('.lang-selector').find('.lang-choice:contains("' + help_language + '")').addClass('active');

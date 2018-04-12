@@ -1,3 +1,6 @@
+		<script>
+			var auto_save_draft = {{$auto_save_draft}};
+		</script>
 		{{if $threaded}}
 		<div class="comment-wwedit-wrapper threaded" id="comment-edit-wrapper-{{$id}}" style="display: block;">
 		{{else}}

@@ -733,6 +733,8 @@ class ThreadItem {
 		$arr = array('comment_buttons' => '','id' => $this->get_id());
 		call_hooks('comment_buttons',$arr);
 		$comment_buttons = $arr['comment_buttons'];
+		
+		$feature_auto_save_draft = ((feature_enabled($conv->get_profile_owner(), 'auto_save_draft')) ? "true" : "false");
 
 		$comment_box = replace_macros($template,array(
 			'$return_path' => '',
@@ -768,7 +770,8 @@ class ThreadItem {
 			'$anoncomments' => ((($conv->get_mode() === 'channel' || $conv->get_mode() === 'display') && perm_is_allowed($conv->get_profile_owner(),'','post_comments')) ? true : false),
 			'$anonname' => [ 'anonname', t('Your full name (required)') ],
 			'$anonmail' => [ 'anonmail', t('Your email address (required)') ],
-			'$anonurl'  => [ 'anonurl',  t('Your website URL (optional)') ]
+			'$anonurl'  => [ 'anonurl',  t('Your website URL (optional)') ],
+			'$auto_save_draft' => $feature_auto_save_draft,
 		));
 
 		return $comment_box;

@@ -123,7 +123,7 @@ class Notifications {
 			];
 		}
 
-		if(get_config('system', 'disable_discover_tab') != 1) {
+		if(can_view_public_stream()) {
 			$notifications[] = [
 				'type' => 'pubs',
 				'icon' => 'globe',

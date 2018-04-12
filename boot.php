@@ -50,7 +50,7 @@ require_once('include/attach.php');
 require_once('include/bbcode.php');
 
 define ( 'PLATFORM_NAME',           'hubzilla' );
-define ( 'STD_VERSION',             '3.3.3' );
+define ( 'STD_VERSION',             '3.3.4' );
 define ( 'ZOT_REVISION',            '6.0a' );
 
 
@@ -404,6 +404,7 @@ define ( 'VNOTIFY_INTRO',      0x0200 );
 define ( 'VNOTIFY_REGISTER',   0x0400 );
 define ( 'VNOTIFY_FILES',      0x0800 );
 define ( 'VNOTIFY_PUBS',       0x1000 );
+define ( 'VNOTIFY_LIKE',       0x2000 );
 
 
 

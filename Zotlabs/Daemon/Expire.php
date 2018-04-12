@@ -34,7 +34,8 @@ class Expire {
 
 		logger('expire: start', LOGGER_DEBUG);
 
-		$site_expire = get_config('system', 'default_expire_days');
+		$site_expire = intval(get_config('system', 'default_expire_days'));
+		$commented_days = intval(get_config('system','active_expire_days'));
 
 		logger('site_expire: ' . $site_expire);
 
@@ -64,7 +65,7 @@ class Expire {
 
 				// if the site or service class expiration is non-zero and less than person expiration, use that
 				logger('Expire: ' . $rr['channel_address'] . ' interval: ' . $expire_days, LOGGER_DEBUG);
-				item_expire($rr['channel_id'], $expire_days);
+				item_expire($rr['channel_id'], $expire_days, $commented_days);
 			}
 		}
 
@@ -85,7 +86,7 @@ class Expire {
 			logger('Expire: sys interval: ' . $expire_days, LOGGER_DEBUG);
 	
 			if ($expire_days)
-				item_expire($x['channel_id'], $expire_days);
+				item_expire($x['channel_id'], $expire_days, $commented_days);
 
 			logger('Expire: sys: done', LOGGER_DEBUG);
 		}

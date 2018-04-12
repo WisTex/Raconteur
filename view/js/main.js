@@ -25,13 +25,14 @@ var liveRecurse = 0;
 var savedTitle = '';
 var initialLoad = true;
 
-// Clear the session storage if we switch channel or log out
+// Clear the session and local storage if we switch channel or log out
 var cache_uid = '';
 if(sessionStorage.getItem('uid') !== null) {
 	cache_uid = sessionStorage.getItem('uid');
 }
 if(cache_uid !== localUser.toString()) {
 	sessionStorage.clear();
+	localStorage.clear();
 	sessionStorage.setItem('uid', localUser.toString());
 }
 
@@ -166,6 +167,16 @@ function handle_comment_form(e) {
 		$('#' + commentElm).addClass('expanded').removeAttr('placeholder');
 		$('#' + commentElm).attr('tabindex','9');
 		$('#' + submitElm).attr('tabindex','10');
+		
+		if(auto_save_draft) {
+			var commentBody = localStorage.getItem("comment_body");
+			if(commentBody && $('#' + commentElm).val() === '') {
+				$('#' + commentElm).val(commentBody);
+			}
+		} else {
+			localStorage.removeItem("comment_body");
+		}
+		
 		form.find(':not(:visible)').show();
 	}
 
@@ -185,6 +196,30 @@ function handle_comment_form(e) {
 			form.find(':not(.comment-edit-text)').hide();
 		}
 	});
+	
+	var commentSaveTimer = null;
+	var emptyCommentElm = form.find('.comment-edit-text').attr('id');
+	$(document).on('focusout','#' + emptyCommentElm,function(e){
+		if(commentSaveTimer)
+			clearTimeout(commentSaveTimer);
+		commentSaveChanges(true);
+		commentSaveTimer = null;
+	});
+
+	$(document).on('focusin','#' + emptyCommentElm,function(e){
+		commentSaveTimer = setTimeout(function () {
+			commentSaveChanges(false);
+		},10000);
+	});
+
+	function commentSaveChanges(isFinal = false) {
+		if(auto_save_draft) {
+			localStorage.setItem("comment_body", $('#' + emptyCommentElm).val());
+			if( !isFinal) {
+				commentSaveTimer = setTimeout(commentSaveChanges,10000);
+			}
+		}
+	}
 }
 
 function commentClose(obj, id) {
@@ -1106,6 +1141,7 @@ function post_comment(id) {
 		$("#comment-edit-form-" + id).serialize(),
 		function(data) {
 			if(data.success) {
+				localStorage.removeItem("comment_body");
 				$("#comment-edit-preview-" + id).hide();
 				$("#comment-edit-wrapper-" + id).hide();
 				$("#comment-edit-text-" + id).val('');

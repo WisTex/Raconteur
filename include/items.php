@@ -3504,11 +3504,14 @@ function item_getfeedattach($item) {
 }
 
 
-function item_expire($uid,$days) {
+function item_expire($uid,$days,$comment_days = 7) {
 
 	if((! $uid) || ($days < 1))
 		return;
 
+	if(! $comment_days)
+		$comment_days = 7;
+	
 	// $expire_network_only = save your own wall posts
 	// and just expire conversations started by others
 	// do not enable this until we can pass bulk delete messages through zot
@@ -3527,6 +3530,7 @@ function item_expire($uid,$days) {
 	$r = q("SELECT id FROM item
 		WHERE uid = %d
 		AND created < %s - INTERVAL %s
+		AND commented < %s - INTERVAL %s
 		AND item_retained = 0
 		AND item_thread_top = 1
 		AND resource_type = ''
@@ -3534,7 +3538,9 @@ function item_expire($uid,$days) {
 		$sql_extra $item_normal LIMIT $expire_limit ",
 		intval($uid),
 		db_utcnow(),
-		db_quoteinterval(intval($days).' DAY')
+		db_quoteinterval(intval($days) . ' DAY'),
+		db_utcnow(),
+		db_quoteinterval(intval($comment_days) . ' DAY')
 	);
 
 	if(! $r)

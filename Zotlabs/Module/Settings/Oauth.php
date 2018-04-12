@@ -23,11 +23,12 @@ class Oauth {
 			
 			check_form_security_token_redirectOnErr('/settings/oauth', 'settings_oauth');
 			
-			$name   	= ((x($_POST,'name')) ? $_POST['name'] : '');
-			$key		= ((x($_POST,'key')) ? $_POST['key'] : '');
-			$secret		= ((x($_POST,'secret')) ? $_POST['secret'] : '');
-			$redirect	= ((x($_POST,'redirect')) ? $_POST['redirect'] : '');
-			$icon		= ((x($_POST,'icon')) ? $_POST['icon'] : '');
+			$name   	= ((x($_POST,'name')) ? escape_tags($_POST['name']) : '');
+			$key		= ((x($_POST,'key')) ? escape_tags($_POST['key']) : '');
+			$secret		= ((x($_POST,'secret')) ? escape_tags($_POST['secret']) : '');
+			$redirect	= ((x($_POST,'redirect')) ? escape_tags($_POST['redirect']) : '');
+			$icon		= ((x($_POST,'icon')) ? escape_tags($_POST['icon']) : '');
+			$oauth2		= ((x($_POST,'oauth2')) ? intval($_POST['oauth2']) : 0);
 			$ok = true;
 			if($name == '') {
 				$ok = false;
