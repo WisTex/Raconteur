@@ -1001,11 +1001,11 @@ function bbcode($Text, $options = []) {
 	}
 	// Check for strike-through text
 	if (strpos($Text,'[s]') !== false) {
-		$Text = preg_replace("(\[s\](.*?)\[\/s\])ism", '<strike>$1</strike>', $Text);
+		$Text = preg_replace("(\[s\](.*?)\[\/s\])ism", '<span style="text-decoration: line-through;">$1</span>', $Text);
 	}
 	// Check for over-line text
 	if (strpos($Text,'[o]') !== false) {
-		$Text = preg_replace("(\[o\](.*?)\[\/o\])ism", '<span class="overline">$1</span>', $Text);
+		$Text = preg_replace("(\[o\](.*?)\[\/o\])ism", '<span style="text-decoration: overline;">$1</span>', $Text);
 	}
 	if (strpos($Text,'[sup]') !== false) {
 		$Text = preg_replace("(\[sup\](.*?)\[\/sup\])ism", '<sup>$1</sup>', $Text);
