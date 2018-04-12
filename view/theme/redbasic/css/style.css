@@ -121,6 +121,8 @@ a:focus,
 input, optgroup, select, textarea {
 	font-size: 0.9rem !important;
 	resize: vertical;
+	background-color: $comment_item_colour;
+	color: $font_colour;
 }
 
 .selected-doco-nav {
@@ -1334,7 +1336,7 @@ img.mail-conv-sender-photo {
 .section-content-tools-wrapper {
 	padding: 7px 10px;
 	background-color: $comment_item_colour;
-	border-bottom: 3px solid comment_item_colour;
+	border-bottom: 3px solid $comment_item_colour;
 }
 
 .section-content-info-wrapper {
