@@ -25,13 +25,14 @@ var liveRecurse = 0;
 var savedTitle = '';
 var initialLoad = true;
 
-// Clear the session storage if we switch channel or log out
+// Clear the session and local storage if we switch channel or log out
 var cache_uid = '';
 if(sessionStorage.getItem('uid') !== null) {
 	cache_uid = sessionStorage.getItem('uid');
 }
 if(cache_uid !== localUser.toString()) {
 	sessionStorage.clear();
+	localStorage.clear();
 	sessionStorage.setItem('uid', localUser.toString());
 }
 
