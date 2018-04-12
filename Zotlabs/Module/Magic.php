@@ -112,6 +112,8 @@ class Magic extends \Zotlabs\Web\Controller {
 				if($r && intval($r[0]['channel_id'])) {
 					$allowed = perm_is_allowed($r[0]['channel_id'],get_observer_hash(),'delegate');
 					if($allowed) {
+						$tmp = $_SESSION;
+						$_SESSION['delegate_push'] = $tmp;
 						$_SESSION['delegate_channel'] = $r[0]['channel_id'];
 						$_SESSION['delegate'] = get_observer_hash();
 						$_SESSION['account_id'] = intval($r[0]['channel_account_id']);

@@ -145,8 +145,17 @@ if((isset($_SESSION)) && (x($_SESSION, 'authenticated')) &&
 		// process logout request
 		$args = array('channel_id' => local_channel());
 		call_hooks('logging_out', $args);
-		App::$session->nuke();
-		info( t('Logged out.') . EOL);
+
+
+		if($_SESSION['delegate'] && $_SESSION['delegate_push']) {
+			$_SESSION = $_SESSION['delegate_push'];
+			info( t('Delegation session ended.') . EOL);
+		}
+		else {	
+			App::$session->nuke();
+			info( t('Logged out.') . EOL);
+		}
+
 		goaway(z_root());
 	}
 
