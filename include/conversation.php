@@ -1039,7 +1039,7 @@ function thread_author_menu($item, $mode = '') {
 	if($posts_link) {
 		$menu[] = [ 
 			'menu' => 'view_posts',
-			'title' => t('Activity/Posts'),
+			'title' => t('Recent Activity'),
 			'icon' => 'fw',
 			'action' => '',
 			'href' => $posts_link
