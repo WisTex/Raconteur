@@ -44,9 +44,9 @@ class WebServer {
 		 * We have to do it here because the session was just now opened.
 		 */
 
-		if(array_key_exists('system_language',$_POST)) {
-			if(strlen($_POST['system_language']))
-				$_SESSION['language'] = $_POST['system_language'];
+		if(array_key_exists('system_language',$_REQUEST)) {
+			if(strlen($_REQUEST['system_language']))
+				$_SESSION['language'] = $_REQUEST['system_language'];
 			else
 				unset($_SESSION['language']);
 		}
