@@ -1075,18 +1075,21 @@ function dostar(ident) {
 		if(data.result == 1) {
 			$('#starred-' + ident).addClass('starred');
 			$('#starred-' + ident).removeClass('unstarred');
-			$('#starred-' + ident).addClass('fa-star-full');
+			$('#starred-' + ident).addClass('fa-star');
 			$('#starred-' + ident).removeClass('fa-star-o');
 			$('#star-' + ident).addClass('hidden');
 			$('#unstar-' + ident).removeClass('hidden');
+			var btn_tpl = '<div class="btn-group" id="star-button-' + ident + '"><button type="button" class="btn btn-outline-secondary btn-sm wall-item-like" onclick="dostar(' + ident + ');"><i class="fa fa-star"></i></button></div>'
+			$('#wall-item-tools-left-' + ident).prepend(btn_tpl);
 		}
 		else {
 			$('#starred-' + ident).addClass('unstarred');
 			$('#starred-' + ident).removeClass('starred');
 			$('#starred-' + ident).addClass('fa-star-o');
-			$('#starred-' + ident).removeClass('fa-star-full');
+			$('#starred-' + ident).removeClass('fa-star');
 			$('#star-' + ident).removeClass('hidden');
 			$('#unstar-' + ident).addClass('hidden');
+			$('#star-button-' + ident).remove();
 		}
 		$('#like-rotator-' + ident).hide();
 	});
