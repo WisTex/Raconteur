@@ -168,15 +168,6 @@ function handle_comment_form(e) {
 		$('#' + commentElm).attr('tabindex','9');
 		$('#' + submitElm).attr('tabindex','10');
 		
-		if(auto_save_draft) {
-			var commentBody = localStorage.getItem("comment_body");
-			if(commentBody && $('#' + commentElm).val() === '') {
-				$('#' + commentElm).val(commentBody);
-			}
-		} else {
-			localStorage.removeItem("comment_body");
-		}
-		
 		form.find(':not(:visible)').show();
 	}
 
@@ -199,24 +190,25 @@ function handle_comment_form(e) {
 	
 	var commentSaveTimer = null;
 	var emptyCommentElm = form.find('.comment-edit-text').attr('id');
+	var convId = emptyCommentElm.replace(/comment-edit-text-/,'');
 	$(document).on('focusout','#' + emptyCommentElm,function(e){
 		if(commentSaveTimer)
 			clearTimeout(commentSaveTimer);
-		commentSaveChanges(true);
+		commentSaveChanges(convId,true);
 		commentSaveTimer = null;
 	});
 
 	$(document).on('focusin','#' + emptyCommentElm,function(e){
 		commentSaveTimer = setTimeout(function () {
-			commentSaveChanges(false);
+			commentSaveChanges(convId,false);
 		},10000);
 	});
 
-	function commentSaveChanges(isFinal = false) {
+	function commentSaveChanges(convId,isFinal = false) {
 		if(auto_save_draft) {
-			localStorage.setItem("comment_body", $('#' + emptyCommentElm).val());
+			localStorage.setItem("comment_body" + convId, $('#' + emptyCommentElm).val());
 			if( !isFinal) {
-				commentSaveTimer = setTimeout(commentSaveChanges,10000);
+				commentSaveTimer = setTimeout(commentSaveChanges,10000,convId);
 			}
 		}
 	}
@@ -600,8 +592,12 @@ function updateConvItems(mode,data) {
 	$('.thread-wrapper.toplevel_item',data).each(function() {
 
 		var ident = $(this).attr('id');
-
+		var convId = ident.replace('thread-wrapper-','');
 		var commentWrap = $('#'+ident+' .collapsed-comments').attr('id');
+
+
+
+
 		var itmId = 0;
 		var isVisible = false;
 
@@ -611,6 +607,9 @@ function updateConvItems(mode,data) {
 				
 		if($('#collapsed-comments-'+itmId).is(':visible'))
 			isVisible = true;
+
+
+
 
 		// insert the content according to the mode and first_page 
 		// and whether or not the content exists already (overwrite it)
@@ -632,6 +631,22 @@ function updateConvItems(mode,data) {
 
 		if(isVisible)
 			showHideComments(itmId);
+
+		var commentBody = localStorage.getItem("comment_body" + convId);
+
+		if(commentBody) {
+			var commentElm = $('#comment-edit-text' + convId);
+			if(auto_save_draft) {
+				if(commentBody && $('#' + commentElm).val() === '') {
+					$('#comment-edit-form-' + convId).show();
+					$('#' + commentElm).val(commentBody);
+				}
+			} else {
+				localStorage.removeItem("comment_body" + convId);
+			}
+		}
+
+
 
 		// trigger the autotime function on all newly created content
 
