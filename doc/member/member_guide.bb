@@ -364,12 +364,14 @@ Note: In previous releases, forums were delivered by using @forum+ with a plus s
 [h4]Private Mentions[/h4]
 If you wish to restrict a post to a single person or a number of people, you can do this by selecting channels or privacy groups from the privacy tool. You can also just tag them with a privacy tag. A privacy tag is a name preceded by the two characters @! - and in addition to tagging these channels, will also change the privacy permissions of the post to only include them. You can have more than one privacy tag, for instance @!bob and @!linda will send the post only to Bob and Linda. This mechanism over-rides the privacy selector.  
 
+Forums may be mentioned in the same way. !!dogs will post to the dogs forum privately. The forum will redeliver the post to all the forum members, but your own followers will not see the post unless they are also members of the dogs forum.
+
 You may also tag privacy groups which are "public". When you create or edit a privacy group, there is a checkbox to allow the group members to be seen by others. If this box is checked for a group and you tag (for instance) @!Friends - the post will be restricted to the Friends group. Check that the group is public before doing this - as there is no way to take back a post except to delete it. The group name will appear in the post and will alert members of that group that they are members of it.    
 
 [h4]Mentions and Comments[/h4]
 The above mechanisms only apply to "top-level" posts you create. Mentioning a channel with any of the above mechanisms has no effect in comments, except that the mentioned channel may receive a notification if they were already included as a recipient in the conversation. 
 
-[h4]Topical Tags[/h4]
+[h4]Topical Tags (also known as Hashtags)[/h4]
 Topical tags are indicated by preceding the tag name with the  # character. This will create a link in the post to a generalised site search for the term provided.  For example, #[zrl=[baseurl]/search?tag=cars]cars[/zrl] will provide a search link for all posts mentioning 'cars' on your site. Topical tags are generally a minimum of three characters in length.  Shorter search terms are not likely to yield any search results, although this depends on the database configuration. 
 
 Topical tags are also not linked if they are purely numeric, e.g. #1. If you wish to use a numeric hashtag, please add some descriptive text such as #2012-elections.
