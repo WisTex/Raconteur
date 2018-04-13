@@ -1165,7 +1165,7 @@ function post_comment(id) {
 		$("#comment-edit-form-" + id).serialize(),
 		function(data) {
 			if(data.success) {
-				localStorage.removeItem("comment_body");
+				localStorage.removeItem("comment_body-" + id);
 				$("#comment-edit-preview-" + id).hide();
 				$("#comment-edit-wrapper-" + id).hide();
 				$("#comment-edit-text-" + id).val('');
