@@ -185,7 +185,7 @@
 
 					{{if $item.responses || $item.attachments}}
 					<div class="wall-item-tools-left btn-group" id="wall-item-tools-left-{{$item.id}}">
-						{{if $item.star.isstarred}}
+						{{if $item.star && $item.star.isstarred}}
 						<div class="btn-group" id="star-button-{{$item.id}}">
 							<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like" onclick="dostar({{$item.id}});"><i class="fa fa-star"></i></button>
 						</div>
