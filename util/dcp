@@ -28,9 +28,14 @@ if($argc < 3) {
 	if(strpos($dstfile,'store/') === 0)
 		$dstfile = substr($dstfile,6);
 
-	$nick = substr($dstfile,0,strpos($dstfile,'/'));
-
-	$dstfile = substr($dstfile,strlen($nick)+1);
+	if(strpos($dstfile,'/'))
+		$nick = substr($dstfile,0,strpos($dstfile,'/'));
+		$dstfile = substr($dstfile,strlen($nick)+1);
+	}
+	else {
+		$nick = $dstfile;
+		$dstfile = '';
+	}
 
 	$channel = channelx_by_nick($nick);
 	if(! $channel)
@@ -43,38 +48,45 @@ if($argc < 3) {
 		}
 	}
 
-
+	$rootdir = ((strlen(trim($dstfile,'/'))) ? false : true);
+		
 	$isadir = false;
 
 	if(($recursive) || ($argc > 3))
 		$isadir = true;
 
 
-	$r = q("select * from attach where display_path = '%s' and uid = %d limit 1",
-		dbesc($dstfile),
-		intval($channel['channel_id'])
-	);
-
-	if($r && $r[0]['is_dir']) {
-		$isadir = true;
-		$basepath = $dstfile;
-		$folder = $r[0]['hash'];
+	if($rootdir) { 
+		$folder = '';
 	}
 	else {
-		$pathname = (($isadir) ? $dstfile : dirname($dstfile));
-		$arr = [
-			'pathname'  => $pathname,
-			'allow_cid' => $channel['channel_allow_cid'],
-			'allow_gid' => $channel['channel_allow_gid'],
-			'deny_cid'  => $channel['channel_deny_cid'],
-			'deny_gid'  => $channel['channel_deny_gid'],
-		];
 
-		$folder = '';
-		if($pathname && $isadir) {
-			$x = attach_mkdirp($channel,$channel['channel_hash'],$arr);
-			if($x['success'])
-				$folder = $x['data']['hash'];
+		$r = q("select * from attach where display_path = '%s' and uid = %d limit 1",
+			dbesc($dstfile),
+			intval($channel['channel_id'])
+		);
+
+		if($r && $r[0]['is_dir']) {
+			$isadir = true;
+			$basepath = $dstfile;
+			$folder = $r[0]['hash'];
+		}
+		else {
+			$pathname = (($isadir) ? $dstfile : dirname($dstfile));
+			$arr = [
+				'pathname'  => $pathname,
+				'allow_cid' => $channel['channel_allow_cid'],
+				'allow_gid' => $channel['channel_allow_gid'],
+				'deny_cid'  => $channel['channel_deny_cid'],
+				'deny_gid'  => $channel['channel_deny_gid'],
+			];
+
+			$folder = '';
+			if($pathname && $isadir) {
+				$x = attach_mkdirp($channel,$channel['channel_hash'],$arr);
+				if($x['success'])
+					$folder = $x['data']['hash'];
+			}
 		}
 	}
 

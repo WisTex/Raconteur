@@ -28,8 +28,16 @@
 				{{/if}}
 				<div class="p-2 clearfix wall-item-head{{if $item.is_new && !$item.title && !$item.event && !$item.is_comment}} wall-item-head-new rounded-top{{/if}}">
 					<div class="wall-item-info" id="wall-item-info-{{$item.id}}" >
-						<div class="wall-item-photo-wrapper{{if $item.owner_url}} wwfrom{{/if}} h-card p-author" id="wall-item-photo-wrapper-{{$item.id}}">
+						<div class="wall-item-photo-wrapper{{if $item.owner_url}} wwfrom{{/if}} h-card p-author" id="wall-item-photo-wrapper-{{$item.id}}" data-toggle="dropdown">
 							<a href="{{$item.profile_url}}" title="{{$item.linktitle}}" class="wall-item-photo-link u-url" id="wall-item-photo-link-{{$item.id}}"><img src="{{$item.thumb}}" class="wall-item-photo{{$item.sparkle}} u-photo p-name" id="wall-item-photo-{{$item.id}}" alt="{{$item.name}}" /></a>
+							{{if $item.thread_author_menu}}
+							<div class="dropdown-menu">
+								{{foreach $item.thread_author_menu as $mitem}}
+								<a class="dropdown-item" {{if $mitem.href}}href="{{$mitem.href}}"{{/if}} {{if $mitem.action}}onclick="{{$mitem.action}}"{{/if}} {{if $mitem.title}}title="{{$mitem.title}}"{{/if}} >{{$mitem.title}}</a>
+								{{/foreach}}
+
+							</div>
+							{{/if}}
 						</div>
 					</div>
 					{{if $item.lock}}
@@ -181,12 +189,7 @@
 									{{if $item.drop.dropping}}
 									<a class="dropdown-item" href="#" onclick="dropItem('item/drop/{{$item.id}}', '#thread-wrapper-{{$item.id}}'); return false;" title="{{$item.drop.delete}}" ><i class="generic-icons-nav fa fa-fw fa-trash-o"></i>{{$item.drop.delete}}</a>
 									{{/if}}
-									{{if $item.thread_author_menu}}
 									<div class="dropdown-divider"></div>
-									{{foreach $item.thread_author_menu as $mitem}}
-									<a class="dropdown-item" {{if $mitem.href}}href="{{$mitem.href}}"{{/if}} {{if $mitem.action}}onclick="{{$mitem.action}}"{{/if}} {{if $mitem.title}}title="{{$mitem.title}}"{{/if}} >{{$mitem.title}}</a>
-									{{/foreach}}
-									{{/if}}
 									{{if $item.edpost && $item.dreport}}
 									<a class="dropdown-item" href="dreport/{{$item.mid}}">{{$item.dreport}}</a>
 									{{/if}}
