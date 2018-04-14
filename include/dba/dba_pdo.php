@@ -100,7 +100,7 @@ class dba_pdo extends dba_driver {
 
 		if($this->debug) {
 			db_logger('dba_pdo: DEBUG: ' . printable($sql) . ' returned ' . count($r) . ' results.', LOGGER_NORMAL, LOG_INFO);
-			if(intval($this->debug) === 1) {
+			if(intval($this->debug) > 1) {
 				db_logger('dba_pdo: ' . printable(print_r($r,true)), LOGGER_NORMAL, LOG_INFO);
 			}
 		}
