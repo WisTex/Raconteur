@@ -117,6 +117,8 @@ class Enotify {
 	$always_show_in_notices = get_pconfig($recip['channel_id'],'system','always_show_in_notices');
 	$vnotify = get_pconfig($recip['channel_id'],'system','vnotify');
 
+	$salutation = $recip['channel_name'];
+
 	// e.g. "your post", "David's photo", etc.
 	$possess_desc = t('%s <!item_type!>');
 
@@ -124,7 +126,7 @@ class Enotify {
 		logger('notification: mail');
 		$subject = 	sprintf( t('[$Projectname:Notify] New mail received at %s'),$sitename);
 
-		$preamble = sprintf( t('%1$s, %2$s sent you a new private message at %3$s.'),$recip['channel_name'], $sender['xchan_name'],$sitename);
+		$preamble = sprintf( t('%1$s sent you a new private message at %2$s.'), $sender['xchan_name'],$sitename);
 		$epreamble = sprintf( t('%1$s sent you %2$s.'),'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]', '[zrl=$itemlink]' . t('a private message') . '[/zrl]');
 		$sitelink = t('Please visit %s to view and/or reply to your private messages.');
 		$tsitelink = sprintf( $sitelink, $siteurl . '/mail/' . $params['item']['id'] );
@@ -196,8 +198,7 @@ class Enotify {
 		//$possess_desc = str_replace('<!item_type!>',$possess_desc);
 
 		// "a post"
-		$dest_str = sprintf(t('%1$s, %2$s %3$s [zrl=%4$s]a %5$s[/zrl]'),
-			$recip['channel_name'],
+		$dest_str = sprintf(t('%1$s %2$s [zrl=%3$s]a %4$s[/zrl]'),
 			'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]',
 			$action,
 			$itemlink,
@@ -205,8 +206,7 @@ class Enotify {
 
 		// "George Bull's post"
 		if($p)
-			$dest_str = sprintf(t('%1$s, %2$s %3$s [zrl=%4$s]%5$s\'s %6$s[/zrl]'),
-				$recip['channel_name'],
+			$dest_str = sprintf(t('%1$s %2$s [zrl=%3$s]%4$s\'s %5$s[/zrl]'),
 				'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]',
 				$action,
 				$itemlink,
@@ -215,8 +215,7 @@ class Enotify {
 		
 		// "your post"
 		if($p[0]['owner']['xchan_name'] == $p[0]['author']['xchan_name'] && intval($p[0]['item_wall']))
-			$dest_str = sprintf(t('%1$s, %2$s %3$s [zrl=%4$s]your %5$s[/zrl]'),
-				$recip['channel_name'],
+			$dest_str = sprintf(t('%1$s %2$s [zrl=%3$s]your %4$s[/zrl]'),
 				'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]',
 				$action,
 				$itemlink,
@@ -231,7 +230,7 @@ class Enotify {
 			$subject = sprintf( t('[$Projectname:Notify] Moderated Comment to conversation #%1$d by %2$s'), $parent_id, $sender['xchan_name']);
 		else
 			$subject = sprintf( t('[$Projectname:Notify] Comment to conversation #%1$d by %2$s'), $parent_id, $sender['xchan_name']);
-		$preamble = sprintf( t('%1$s, %2$s commented on an item/conversation you have been following.'), $recip['channel_name'], $sender['xchan_name']); 
+		$preamble = sprintf( t('%1$s commented on an item/conversation you have been following.'), $sender['xchan_name']); 
 		$epreamble = $dest_str; 
 
 		$sitelink = t('Please visit %s to view and/or reply to the conversation.');
@@ -297,8 +296,7 @@ class Enotify {
 
 		// "your post"
 		if($p[0]['owner']['xchan_name'] == $p[0]['author']['xchan_name'] && intval($p[0]['item_wall']))
-			$dest_str = sprintf(t('%1$s, %2$s liked [zrl=%3$s]your %4$s[/zrl]'),
-				$recip['channel_name'],
+			$dest_str = sprintf(t('%1$s liked [zrl=%2$s]your %3$s[/zrl]'),
 				'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]',
 				$itemlink,
 				$item_post_type);
@@ -313,7 +311,7 @@ class Enotify {
 		// differents subjects for messages on the same thread.
 
 		$subject = sprintf( t('[$Projectname:Notify] Like received to conversation #%1$d by %2$s'), $parent_id, $sender['xchan_name']);
-		$preamble = sprintf( t('%1$s, %2$s liked an item/conversation you created.'), $recip['channel_name'], $sender['xchan_name']); 
+		$preamble = sprintf( t('%1$s liked an item/conversation you created.'), $sender['xchan_name']); 
 		$epreamble = $dest_str; 
 
 		$sitelink = t('Please visit %s to view and/or reply to the conversation.');
@@ -326,10 +324,9 @@ class Enotify {
 	if($params['type'] == NOTIFY_WALL) {
 		$subject = sprintf( t('[$Projectname:Notify] %s posted to your profile wall') , $sender['xchan_name']);
 
-		$preamble = sprintf( t('%1$s, %2$s posted to your profile wall at %3$s') , $recip['channel_name'], $sender['xchan_name'], $sitename);
+		$preamble = sprintf( t('%1$s posted to your profile wall at %2$s') , $sender['xchan_name'], $sitename);
 
-		$epreamble = sprintf( t('%1$s, %2$s posted to [zrl=%3$s]your wall[/zrl]') ,
-			$recip['channel_name'], 
+		$epreamble = sprintf( t('%1$s posted to [zrl=%2$s]your wall[/zrl]') ,
 			'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]',
 			$params['link']); 
 
@@ -353,9 +350,8 @@ class Enotify {
 		}
 	
 		$subject =	sprintf( t('[$Projectname:Notify] %s tagged you') , $sender['xchan_name']);
-		$preamble = sprintf( t('%1$s, %2$s tagged you at %3$s') , $recip['channel_name'], $sender['xchan_name'], $sitename);
-		$epreamble = sprintf( t('%1$s, %2$s [zrl=%3$s]tagged you[/zrl].') ,
-			$recip['channel_name'],
+		$preamble = sprintf( t('%1$s tagged you at %2$s') , $sender['xchan_name'], $sitename);
+		$epreamble = sprintf( t('%1$s [zrl=%2$s]tagged you[/zrl].') ,
 			'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]',
 			$params['link']); 
 
@@ -367,9 +363,8 @@ class Enotify {
 
 	if ($params['type'] == NOTIFY_POKE) {
 		$subject =	sprintf( t('[$Projectname:Notify] %1$s poked you') , $sender['xchan_name']);
-		$preamble = sprintf( t('%1$s, %2$s poked you at %3$s') , $recip['channel_name'], $sender['xchan_name'], $sitename);
-		$epreamble = sprintf( t('%1$s, %2$s [zrl=%2$s]poked you[/zrl].') ,
-			$recip['channel_name'], 
+		$preamble = sprintf( t('%1$s poked you at %2$s') , $sender['xchan_name'], $sitename);
+		$epreamble = sprintf( t('%1$s [zrl=%2$s]poked you[/zrl].') ,
 			'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]',
 			$params['link']); 
 
@@ -385,9 +380,8 @@ class Enotify {
 
 	if ($params['type'] == NOTIFY_TAGSHARE) {
 		$subject =	sprintf( t('[$Projectname:Notify] %s tagged your post') , $sender['xchan_name']);
-		$preamble = sprintf( t('%1$s, %2$s tagged your post at %3$s') , $recip['channel_name'],$sender['xchan_name'], $sitename);
-		$epreamble = sprintf( t('%1$s, %2$s tagged [zrl=%3$s]your post[/zrl]') ,
-			$recip['channel_name'],
+		$preamble = sprintf( t('%1$s tagged your post at %2$s'),$sender['xchan_name'], $sitename);
+		$epreamble = sprintf( t('%1$s tagged [zrl=%2$s]your post[/zrl]') ,
 			'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]',
 			$itemlink); 
 
@@ -399,9 +393,8 @@ class Enotify {
 
 	if ($params['type'] == NOTIFY_INTRO) {
 		$subject = sprintf( t('[$Projectname:Notify] Introduction received'));
-		$preamble = sprintf( t('%1$s, you\'ve received an new connection request from \'%2$s\' at %3$s'), $recip['channel_name'], $sender['xchan_name'], $sitename); 
-		$epreamble = sprintf( t('%1$s, you\'ve received [zrl=%2$s]a new connection request[/zrl] from %3$s.'),
-			$recip['channel_name'],
+		$preamble = sprintf( t('You\'ve received an new connection request from \'%1$s\' at %2$s'), $sender['xchan_name'], $sitename); 
+		$epreamble = sprintf( t('You\'ve received [zrl=%1$s]a new connection request[/zrl] from %2$s.'),
 			$siteurl . '/connections/ifpending',
 			'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]'); 
 		$body = sprintf( t('You may visit their profile at %s'),$sender['xchan_url']);
@@ -414,9 +407,8 @@ class Enotify {
 
 	if ($params['type'] == NOTIFY_SUGGEST) {
 		$subject = sprintf( t('[$Projectname:Notify] Friend suggestion received'));
-		$preamble = sprintf( t('%1$s, you\'ve received a friend suggestion from \'%2$s\' at %3$s'), $recip['channel_name'], $sender['xchan_name'], $sitename); 
-		$epreamble = sprintf( t('%1$s, you\'ve received [zrl=%2$s]a friend suggestion[/zrl] for %3$s from %4$s.'),
-			$recip['channel_name'],
+		$preamble = sprintf( t('You\'ve received a friend suggestion from \'%1$s\' at %2$s'), $sender['xchan_name'], $sitename); 
+		$epreamble = sprintf( t('You\'ve received [zrl=%1$s]a friend suggestion[/zrl] for %2$s from %3$s.'),
 			$itemlink,
 			'[zrl=' . $params['item']['url'] . ']' . $params['item']['name'] . '[/zrl]',
 			'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]'); 
@@ -665,7 +657,7 @@ class Enotify {
 			'$banner'       => $datarray['banner'],
 			'$notify_icon'  => \Zotlabs\Lib\System::get_notify_icon(),
 			'$product'      => $datarray['product'],
-			'$preamble'     => $datarray['preamble'],
+			'$preamble'     => $salutation . '<br><br>' . $datarray['preamble'],
 			'$sitename'     => $datarray['sitename'],
 			'$siteurl'      => $datarray['siteurl'],
 			'$source_name'  => $datarray['source_name'],
@@ -687,7 +679,7 @@ class Enotify {
 		$email_text_body = replace_macros($tpl, array(
 			'$banner'       => $datarray['banner'],
 			'$product'      => $datarray['product'],
-			'$preamble'     => $datarray['preamble'],
+			'$preamble'     => $salutation . "\n\n" . $datarray['preamble'],
 			'$sitename'     => $datarray['sitename'],
 			'$siteurl'      => $datarray['siteurl'],
 			'$source_name'  => $datarray['source_name'],

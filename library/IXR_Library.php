@@ -606,7 +606,7 @@ class IXR_Client
         if (!$path) {
             // Assume we have been given a URL instead
             $bits = parse_url($server);
-            $this->server = $bits['host'];
+            $this->server = $server;
             $this->port = isset($bits['port']) ? $bits['port'] : 80;
             $this->path = isset($bits['path']) ? $bits['path'] : '/';
 
@@ -634,64 +634,39 @@ class IXR_Client
         $request  = "POST {$this->path} HTTP/1.0$r";
 
         // Merged from WP #8145 - allow custom headers
-        $this->headers['Host']          = $this->server;
         $this->headers['Content-Type']  = 'text/xml';
         $this->headers['User-Agent']    = $this->useragent;
         $this->headers['Content-Length']= $length;
 
+
+		$headers = [];
+
         foreach( $this->headers as $header => $value ) {
-            $request .= "{$header}: {$value}{$r}";
-        }
-        $request .= $r;
-
-        $request .= $xml;
-
-        // Now send the request
-        if ($this->debug) {
-            echo '<pre class="ixr_request">'.htmlspecialchars($request)."\n</pre>\n\n";
+            $headers[] .= "{$header}: {$value}";
         }
 
-        if ($this->timeout) {
-            $fp = @fsockopen($this->server, $this->port, $errno, $errstr, $this->timeout);
-        } else {
-            $fp = @fsockopen($this->server, $this->port, $errno, $errstr);
-        }
-        if (!$fp) {
+
+		//logger('server: ' . $this->server);
+		//logger('xml: ' . $xml);
+		//logger('headers: ' . print_r($headers,true));
+
+
+		$retries = 0;
+		$result = z_post_url($this->server,$xml,$retries, [ 'headers' => $headers] );
+
+		// logger('result: ' . print_r($result,true));
+
+        if (! $result['success']) {
             $this->error = new IXR_Error(-32300, 'transport error - could not open socket');
             return false;
         }
-        fputs($fp, $request);
-        $contents = '';
-        $debugContents = '';
-        $gotFirstLine = false;
-        $gettingHeaders = true;
-        while (!feof($fp)) {
-            $line = fgets($fp, 4096);
-            if (!$gotFirstLine) {
-                // Check line for '200'
-                if (strstr($line, '200') === false) {
-                    $this->error = new IXR_Error(-32300, 'transport error - HTTP status code was not 200');
-                    return false;
-                }
-                $gotFirstLine = true;
-            }
-            if (trim($line) == '') {
-                $gettingHeaders = false;
-            }
-            if (!$gettingHeaders) {
-            	// merged from WP #12559 - remove trim
-                $contents .= $line;
-            }
-            if ($this->debug) {
-            	$debugContents .= $line;
-            }
-        }
+
         if ($this->debug) {
-            echo '<pre class="ixr_response">'.htmlspecialchars($debugContents)."\n</pre>\n\n";
+            echo '<pre class="ixr_response">'.htmlspecialchars($result['header'] . "\n\n" . $result['body'])."\n</pre>\n\n";
         }
 
         // Now parse what we've got back
-        $this->message = new IXR_Message($contents);
+        $this->message = new IXR_Message($result['body']);
         if (!$this->message->parse()) {
             // XML error
             $this->error = new IXR_Error(-32700, 'parse error. not well formed');

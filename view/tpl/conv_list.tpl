@@ -28,8 +28,8 @@
 				{{/if}}
 				<div class="p-2 clearfix wall-item-head{{if $item.is_new && !$item.title && !$item.event && !$item.is_comment}} wall-item-head-new rounded-top{{/if}}">
 					<div class="wall-item-info" id="wall-item-info-{{$item.id}}" >
-						<div class="wall-item-photo-wrapper{{if $item.owner_url}} wwfrom{{/if}} h-card p-author" id="wall-item-photo-wrapper-{{$item.id}}" data-toggle="dropdown">
-							<a href="{{$item.profile_url}}" title="{{$item.linktitle}}" class="wall-item-photo-link u-url" id="wall-item-photo-link-{{$item.id}}"><img src="{{$item.thumb}}" class="wall-item-photo{{$item.sparkle}} u-photo p-name" id="wall-item-photo-{{$item.id}}" alt="{{$item.name}}" /></a>
+						<div class="wall-item-photo-wrapper{{if $item.owner_url}} wwfrom{{/if}} h-card p-author" id="wall-item-photo-wrapper-{{$item.id}}">
+							<img src="{{$item.thumb}}" class="fakelink wall-item-photo{{$item.sparkle}} u-photo p-name" id="wall-item-photo-{{$item.id}}" alt="{{$item.name}}" data-toggle="dropdown" /></a>
 							{{if $item.thread_author_menu}}
 							<div class="dropdown-menu">
 								{{foreach $item.thread_author_menu as $mitem}}
@@ -47,7 +47,7 @@
 					</div>
 					{{/if}}
 					<div class="wall-item-author">
-						<a href="{{$item.profile_url}}" title="{{$item.linktitle}}" class="wall-item-name-link"><span class="wall-item-name{{$item.sparkle}}" id="wall-item-name-{{$item.id}}" >{{$item.name}}</span></a>{{if $item.owner_url}}&nbsp;{{$item.via}}&nbsp;<a href="{{$item.owner_url}}" title="{{$item.olinktitle}}" class="wall-item-name-link"><span class="wall-item-name{{$item.osparkle}}" id="wall-item-ownername-{{$item.id}}">{{$item.owner_name}}</span></a>{{/if}}
+						<a href="{{$item.profile_url}}" title="{{$item.linktitle}}" class="wall-item-name-link u-url"><span class="wall-item-name{{$item.sparkle}}" id="wall-item-name-{{$item.id}}" >{{$item.name}}</span></a>{{if $item.owner_url}}&nbsp;{{$item.via}}&nbsp;<a href="{{$item.owner_url}}" title="{{$item.olinktitle}}" class="wall-item-name-link"><span class="wall-item-name{{$item.osparkle}}" id="wall-item-ownername-{{$item.id}}">{{$item.owner_name}}</span></a>{{/if}}
 					</div>
 					<div class="wall-item-ago"  id="wall-item-ago-{{$item.id}}">
 						{{if $item.verified}}<i class="fa fa-check item-verified" title="{{$item.verified}}"></i>&nbsp;{{elseif $item.forged}}<i class="fa fa-exclamation item-forged" title="{{$item.forged}}"></i>&nbsp;{{/if}}{{if $item.location}}<span class="wall-item-location p-location" id="wall-item-location-{{$item.id}}">{{$item.location}},&nbsp;</span>{{/if}}<span class="autotime" title="{{$item.isotime}}"><time class="dt-published" datetime="{{$item.isotime}}">{{$item.localtime}}</time>{{if $item.editedtime}}&nbsp;{{$item.editedtime}}{{/if}}{{if $item.expiretime}}&nbsp;{{$item.expiretime}}{{/if}}</span>{{if $item.editedtime}}&nbsp;<i class="fa fa-pencil"></i>{{/if}}&nbsp;{{if $item.app}}<span class="item.app">{{$item.str_app}}</span>{{/if}}
@@ -67,28 +67,6 @@
 					<div class="body-tags">
 						<span class="tag">{{$item.mentions}} {{$item.tags}} {{$item.categories}} {{$item.folders}}</span>
 					</div>
-				{{**
-					{{if $item.mentions}}
-					<div class="body-tags" id="item-mentions">
-						<span class="tag">{{$item.mentions}}</span>
-					</div>
-					{{/if}}
-					{{if $item.tags}}
-					<div class="body-tags" id="item-tags">
-						<span class="tag">{{$item.tags}}</span>
-					</div>
-					{{/if}}
-					{{if $item.categories}}
-					<div class="body-tags" id="item-categories">
-						<span class="tag p-category">{{$item.categories}}</span>
-					</div>
-					{{/if}}
-					{{if $item.folders}}
-					<div class="body-tags" id="item-folders">
-						<span class="tag">{{$item.folders}}</span>
-					</div>
-					{{/if}}
-				**}}
 				</div>
 				{{/if}}
 				<div class="p-2 clearfix wall-item-tools">
@@ -179,7 +157,7 @@
 									<a class="dropdown-item" href="#" onclick="itemAddToCal({{$item.id}}); return false;"><i id="addtocal-{{$item.id}}" class="generic-icons-nav fa fa-fw fa-calendar" title="{{$item.addtocal}}"></i>{{$item.addtocal}}</a>
 									{{/if}}
 									{{if $item.star}}
-									<a class="dropdown-item" href="#" onclick="dostar({{$item.id}}); return false;"><i id="starred-{{$item.id}}" class="generic-icons-nav fa fa-fw fa-star {{$item.star.isstarred}}" title="{{$item.star.toggle}}"></i>{{$item.star.toggle}}</a>
+									<a class="dropdown-item" href="#" onclick="dostar({{$item.id}}); return false;"><i id="starred-{{$item.id}}" class="generic-icons-nav fa fa-fw{{if $item.star.isstarred}} starred fa-star{{else}} unstarred fa-star-o{{/if}}" title="{{$item.star.toggle}}"></i>{{$item.star.toggle}}</a>
 									{{/if}}
 									{{if $item.thread_action_menu}}
 									{{foreach $item.thread_action_menu as $mitem}}
@@ -198,7 +176,12 @@
 						</div>
 					</div>
 					<div id="like-rotator-{{$item.id}}" class="like-rotator"></div>
-					<div class="wall-item-tools-left{{if $item.unseen_comments || $item.like_count || $item.dislike_count || $item.attachments}} btn-group{{/if}}">
+					<div class="wall-item-tools-left btn-group"  id="wall-item-tools-left-{{$item.id}}">
+						{{if $item.star && $item.star.isstarred}}
+						<div class="btn-group" id="star-button-{{$item.id}}">
+							<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like" onclick="dostar({{$item.id}});"><i class="fa fa-star"></i></button>
+						</div>
+						{{/if}}
 						{{if $item.attachments}}
 						<div class="btn-group">
 							<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle" data-toggle="dropdown" id="attachment-menu-{{$item.id}}"><i class="fa fa-paperclip"></i></button>

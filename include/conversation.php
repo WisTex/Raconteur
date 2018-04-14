@@ -1724,7 +1724,7 @@ function network_tabs() {
 	if(feature_enabled(local_channel(),'star_posts')) {
 		$tabs[] = array(
 			'label' => t('Starred'),
-			'url'=>z_root() . '/' . $cmd . ((x($_GET,'cid')) ? '/?f=&cid=' . $_GET['cid'] : '') . '&star=1',
+			'url'=>z_root() . '/' . $cmd . '/?f=' . ((x($_GET,'cid')) ? '&cid=' . $_GET['cid'] : '') . '&star=1',
 			'sel'=>$starred_active,
 			'title' => t('Favourite Posts'),
 		);

@@ -168,15 +168,6 @@ function handle_comment_form(e) {
 		$('#' + commentElm).attr('tabindex','9');
 		$('#' + submitElm).attr('tabindex','10');
 		
-		if(auto_save_draft) {
-			var commentBody = localStorage.getItem("comment_body");
-			if(commentBody && $('#' + commentElm).val() === '') {
-				$('#' + commentElm).val(commentBody);
-			}
-		} else {
-			localStorage.removeItem("comment_body");
-		}
-		
 		form.find(':not(:visible)').show();
 	}
 
@@ -199,24 +190,31 @@ function handle_comment_form(e) {
 	
 	var commentSaveTimer = null;
 	var emptyCommentElm = form.find('.comment-edit-text').attr('id');
+	var convId = emptyCommentElm.replace('comment-edit-text-','');
 	$(document).on('focusout','#' + emptyCommentElm,function(e){
 		if(commentSaveTimer)
 			clearTimeout(commentSaveTimer);
-		commentSaveChanges(true);
+		commentSaveChanges(convId,true);
 		commentSaveTimer = null;
 	});
 
 	$(document).on('focusin','#' + emptyCommentElm,function(e){
 		commentSaveTimer = setTimeout(function () {
-			commentSaveChanges(false);
+			commentSaveChanges(convId,false);
 		},10000);
 	});
 
-	function commentSaveChanges(isFinal = false) {
+	function commentSaveChanges(convId,isFinal = false) {
 		if(auto_save_draft) {
-			localStorage.setItem("comment_body", $('#' + emptyCommentElm).val());
+			tmp = $('#' + emptyCommentElm).val();
+			if(tmp) {
+				localStorage.setItem("comment_body-" + convId, tmp);
+			}
+			else {
+				localStorage.removeItem("comment_body-" + convId);
+			}
 			if( !isFinal) {
-				commentSaveTimer = setTimeout(commentSaveChanges,10000);
+				commentSaveTimer = setTimeout(commentSaveChanges,10000,convId);
 			}
 		}
 	}
@@ -600,8 +598,10 @@ function updateConvItems(mode,data) {
 	$('.thread-wrapper.toplevel_item',data).each(function() {
 
 		var ident = $(this).attr('id');
-
+		var convId = ident.replace('thread-wrapper-','');
 		var commentWrap = $('#'+ident+' .collapsed-comments').attr('id');
+
+
 		var itmId = 0;
 		var isVisible = false;
 
@@ -611,6 +611,9 @@ function updateConvItems(mode,data) {
 				
 		if($('#collapsed-comments-'+itmId).is(':visible'))
 			isVisible = true;
+
+
+
 
 		// insert the content according to the mode and first_page 
 		// and whether or not the content exists already (overwrite it)
@@ -632,6 +635,24 @@ function updateConvItems(mode,data) {
 
 		if(isVisible)
 			showHideComments(itmId);
+
+		var commentBody = localStorage.getItem("comment_body-" + convId);
+
+		if(commentBody) {
+			var commentElm = $('#comment-edit-text-' + convId);
+			if(auto_save_draft) {
+				if($(commentElm).val() === '') {
+					$('#comment-edit-form-' + convId).show();
+					$(commentElm).addClass("expanded");
+					openMenu("comment-tools-" + convId);
+					$(commentElm).val(commentBody);
+				}
+			} else {
+				localStorage.removeItem("comment_body-" + convId);
+			}
+		}
+
+
 
 		// trigger the autotime function on all newly created content
 
@@ -1075,18 +1096,21 @@ function dostar(ident) {
 		if(data.result == 1) {
 			$('#starred-' + ident).addClass('starred');
 			$('#starred-' + ident).removeClass('unstarred');
-			$('#starred-' + ident).addClass('fa-star-full');
+			$('#starred-' + ident).addClass('fa-star');
 			$('#starred-' + ident).removeClass('fa-star-o');
 			$('#star-' + ident).addClass('hidden');
 			$('#unstar-' + ident).removeClass('hidden');
+			var btn_tpl = '<div class="btn-group" id="star-button-' + ident + '"><button type="button" class="btn btn-outline-secondary btn-sm wall-item-like" onclick="dostar(' + ident + ');"><i class="fa fa-star"></i></button></div>'
+			$('#wall-item-tools-left-' + ident).prepend(btn_tpl);
 		}
 		else {
 			$('#starred-' + ident).addClass('unstarred');
 			$('#starred-' + ident).removeClass('starred');
 			$('#starred-' + ident).addClass('fa-star-o');
-			$('#starred-' + ident).removeClass('fa-star-full');
+			$('#starred-' + ident).removeClass('fa-star');
 			$('#star-' + ident).removeClass('hidden');
 			$('#unstar-' + ident).addClass('hidden');
+			$('#star-button-' + ident).remove();
 		}
 		$('#like-rotator-' + ident).hide();
 	});
@@ -1141,7 +1165,7 @@ function post_comment(id) {
 		$("#comment-edit-form-" + id).serialize(),
 		function(data) {
 			if(data.success) {
-				localStorage.removeItem("comment_body");
+				localStorage.removeItem("comment_body-" + id);
 				$("#comment-edit-preview-" + id).hide();
 				$("#comment-edit-wrapper-" + id).hide();
 				$("#comment-edit-text-" + id).val('');
