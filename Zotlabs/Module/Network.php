@@ -213,7 +213,7 @@ class Network extends \Zotlabs\Web\Controller {
 		$distinct = '';
 		$item_thread_top = ' AND item_thread_top = 1 ';
 	
-		$sql_extra = $sql_options;
+		$sql_extra = '';
 	
 		if($group) {
 			$contact_str = '';
@@ -464,7 +464,7 @@ class Network extends \Zotlabs\Web\Controller {
 				WHERE true $uids $item_normal
 				and (abook.abook_blocked = 0 or abook.abook_flags is null)
 				$simple_update
-				$sql_extra $sql_nets
+				$sql_extra $sql_options $sql_nets
 				$net_query2
 				ORDER BY item.received DESC $pager_sql "
 			);
@@ -493,7 +493,7 @@ class Network extends \Zotlabs\Web\Controller {
 					WHERE true $uids $item_thread_top $item_normal
 					AND item.mid = item.parent_mid
 					and (abook.abook_blocked = 0 or abook.abook_flags is null)
-					$sql_extra3 $sql_extra $sql_nets
+					$sql_extra3 $sql_extra $sql_options $sql_nets
 					$net_query2
 					ORDER BY $ordering DESC $pager_sql "
 				);
@@ -506,7 +506,7 @@ class Network extends \Zotlabs\Web\Controller {
 					$net_query
 					WHERE true $uids $item_normal_update $simple_update
 					and (abook.abook_blocked = 0 or abook.abook_flags is null)
-					$sql_extra3 $sql_extra $sql_nets $net_query2"
+					$sql_extra3 $sql_extra $sql_options $sql_nets $net_query2"
 				);
 				$_SESSION['loadtime'] = datetime_convert();
 			}
