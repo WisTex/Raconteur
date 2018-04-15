@@ -120,6 +120,9 @@ a:focus,
 
 input, optgroup, select, textarea {
 	font-size: 0.9rem !important;
+}
+
+input[type=text], textarea {
 	resize: vertical;
 	background-color: $comment_item_colour;
 	color: $font_colour;
