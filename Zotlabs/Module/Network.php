@@ -210,7 +210,6 @@ class Network extends \Zotlabs\Web\Controller {
 	
 		$sql_nets = '';
 
-		$distinct = '';
 		$item_thread_top = ' AND item_thread_top = 1 ';
 	
 		$sql_extra = '';
@@ -229,7 +228,6 @@ class Network extends \Zotlabs\Web\Controller {
 				$contact_str = ' 0 ';
 				info( t('Privacy group is empty'));
 			}
-			$distinct = ' distinct ';
 			$item_thread_top = '';
 			$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND (( author_xchan IN ( $contact_str ) OR owner_xchan in ( $contact_str )) or allow_gid like '" . protect_sprintf('%<' . dbesc($group_hash) . '>%') . "' ) and id = parent $item_normal ) ";
 	
@@ -254,7 +252,6 @@ class Network extends \Zotlabs\Web\Controller {
 				intval(local_channel())
 			);
 			if($r) {
-				$distinct = ' distinct ';
 				$item_thread_top = '';
 				$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND uid = " . intval(local_channel()) . " AND ( author_xchan = '" . dbesc($r[0]['abook_xchan']) . "' or owner_xchan = '" . dbesc($r[0]['abook_xchan']) . "' ) $item_normal ) ";
 				$title = replace_macros(get_markup_template("section_title.tpl"),array(
@@ -274,7 +271,6 @@ class Network extends \Zotlabs\Web\Controller {
 				dbesc($xchan)
 			);
 			if($r) {
-				$distinct = ' distinct ';
 				$item_thread_top = '';
 				$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND uid = " . intval(local_channel()) . " AND ( author_xchan = '" . dbesc($xchan) . "' or owner_xchan = '" . dbesc($xchan) . "' ) $item_normal ) ";
 				$title = replace_macros(get_markup_template("section_title.tpl"),array(
@@ -381,7 +377,6 @@ class Network extends \Zotlabs\Web\Controller {
 		}
 	
 		if($conv) {
-			$distinct = ' distinct ';
 			$item_thread_top = '';
 			$sql_extra .= sprintf(" AND parent IN (SELECT distinct(parent) from item where ( author_xchan like '%s' or item_mentionsme = 1 )) ",
 				dbesc(protect_sprintf($channel['channel_hash']))
@@ -487,7 +482,7 @@ class Network extends \Zotlabs\Web\Controller {
 			if($load) {
 
 				// Fetch a page full of parent items for this page
-				$r = q("SELECT $distinct item.parent AS item_id FROM item 
+				$r = q("SELECT item.parent AS item_id FROM item 
 					left join abook on ( item.owner_xchan = abook.abook_xchan $abook_uids )
 					$net_query
 					WHERE true $uids $item_thread_top $item_normal
