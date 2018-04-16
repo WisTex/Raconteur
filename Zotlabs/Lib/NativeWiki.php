@@ -171,16 +171,23 @@ class NativeWiki {
 			dbesc(NWIKI_ITEM_RESOURCE_TYPE),
 			dbesc($resource_id)
 		);
+
 		if($r) {
 			$q = q("select * from item where resource_type = 'nwikipage' and resource_id = '%s'",
-				dbesc($r[0]['resource_type'])
+				dbesc($r[0]['resource_id'])
 			);
 			if($q) {
 				$r = array_merge($r,$q);
 			}
 			xchan_query($r);
 			$sync_item = fetch_post_tags($r);
-			build_sync_packet($uid,array('wiki' => array(encode_item($sync_item[0],true))));
+			if($sync_item) {
+				$pkt = [];
+				foreach($sync_item as $w) {
+					$pkt[] = encode_item($w,true);
+				}
+				build_sync_packet($uid,array('wiki' => $pkt));
+			}
 		}
 	}
 
