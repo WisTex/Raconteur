@@ -176,7 +176,7 @@ EOT;
 		$nav['help'] = [$help_url, t('Help'), "", t('Help and documentation'), 'help_nav_btn', $context_help, $enable_context_help];
 	}
 
-	$nav['search'] = ['search', t('Search'), "", t('Search site @name, #tag, ?docs, content')];
+	$nav['search'] = ['search', t('Search'), "", t('Search site @name, !forum, #tag, ?docs, content')];
 
 
 	/**
@@ -287,7 +287,7 @@ EOT;
 		'$is_owner' => $is_owner,
 		'$sel' => App::$nav_sel,
 		'$powered_by' => $powered_by,
-		'$help' => t('@name, #tag, ?doc, content'),
+		'$help' => t('@name, !forum, #tag, ?doc, content'),
 		'$pleasewait' => t('Please wait...'),
 		'$nav_apps' => $nav_apps,
 		'$navbar_apps' => $navbar_apps,
