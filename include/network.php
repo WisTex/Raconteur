@@ -1240,16 +1240,9 @@ function webfinger_rfc7033($webbie, $zot = false) {
 	}
 	logger('fetching url from resource: ' . $rhs . ':' . $webbie);
 
-	// The default curl Accept: header is */*, which is incorrectly handled by Mastodon servers
-	// and results in a 406 (Not Acceptable) response, and will also incorrectly produce an XML
-	// document if you use 'application/jrd+json, */*'. We could set this to application/jrd+json,
-	// but some test webfinger servers may not explicitly set the content type and they would be
-	// blocked. The best compromise until Mastodon is fixed is to remove the Accept header which is
-	// accomplished by setting it to nothing.
-
 	$counter = 0;
 	$s = z_fetch_url('https://' . $rhs . '/.well-known/webfinger?f=&resource=' . $resource . (($zot) ? '&zot=1' : ''),
-		false, $counter, [ 'headers' => [ 'Accept:' ] ]);
+		false, $counter, [ 'headers' => [ 'Accept: application/jrd+json, */*' ] ]);
 
 	if($s['success']) {
 		$j = json_decode($s['body'], true);
