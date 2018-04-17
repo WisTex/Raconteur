@@ -19,6 +19,11 @@ class Permcats {
 		$all_perms = \Zotlabs\Access\Permissions::Perms();
 
 		$name = escape_tags(trim($_POST['name']));
+		if(! $name) {
+			notice( t('Permission Name is required.') . EOL);
+			return;
+		}
+
 
 		$pcarr = [];
 
