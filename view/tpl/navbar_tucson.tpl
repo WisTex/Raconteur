@@ -164,7 +164,7 @@
 				{{$channel_app}}
 				{{/foreach}}
 				<div class="dropdown-divider"></div>
-				<div class="dropdown-header sys-apps-toggle" onclick="$('#dropdown-menu').click(function(e) { e.stopPropagation(); }); openClose('sys_apps');">
+				<div class="dropdown-header text-black-50 sys-apps-toggle" onclick="$('#dropdown-menu').click(function(e) { e.stopPropagation(); }); openClose('sys_apps');">
 					{{$sysapps_toggle}}
 				</div>
 				<div id="sys_apps" style="display:none;">
@@ -190,7 +190,7 @@
 		{{foreach $channel_apps as $channel_app}}
 		{{$channel_app|replace:'dropdown-item':'nav-link'}}
 		{{/foreach}}
-		<div class="dropdown-header sys-apps-toggle" onclick="openClose('sys-apps-collapsed');">
+		<div class="dropdown-header text-white-50 sys-apps-toggle" onclick="openClose('sys-apps-collapsed');">
 			{{$sysapps_toggle}}
 		</div>
 		<div id="sys-apps-collapsed" style="display:none;">
