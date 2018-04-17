@@ -253,9 +253,18 @@ function string2bb(element) {
 			template: contact_format
 		};
 
+		// Autocomplete hashtags
+		tags = {
+			match: /(^\#)([^ \n]{3,})$/,
+			index: 2,
+			search: function(term, callback) { $.getJSON('/hashtags/' + '$f=&t=' + term).done(function(data) { callback($.map(data, function(entry) { return entry.text.toLowerCase().indexOf(term.toLowerCase()) === 0 ? entry : null; })); }); },
+			replace: function(item) { return "$1" + item.text + ' '; },
+			context: function(text) { return text.toLowerCase(); },
+			template: tag_format
+		};
 
 		this.attr('autocomplete', 'off');
-		var a = this.textcomplete([contacts,forums], {className:'acpopup', maxCount:100, zIndex: 1020, appendTo:'nav'});
+		var a = this.textcomplete([contacts,forums,tags], {className:'acpopup', maxCount:100, zIndex: 1020, appendTo:'nav'});
 		a.on('textComplete:select', function(e, value, strategy) { submit_form(this); });
 	};
 })( jQuery );
