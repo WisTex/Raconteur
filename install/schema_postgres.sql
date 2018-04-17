@@ -252,6 +252,7 @@ CREATE TABLE "channel" (
   "channel_dirdate" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "channel_lastpost" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "channel_deleted" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
+  "channel_active" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "channel_max_anon_mail" bigint  NOT NULL DEFAULT '10',
   "channel_max_friend_req" bigint  NOT NULL DEFAULT '10',
   "channel_expire_days" bigint NOT NULL DEFAULT '0',
@@ -284,6 +285,7 @@ create index "channel_guid" on channel ("channel_guid");
 create index "channel_hash" on channel ("channel_hash");
 create index "channel_expire_days" on channel ("channel_expire_days");
 create index "channel_deleted" on channel ("channel_deleted");
+create index "channel_active" on channel ("channel_active");
 create index "channel_dirdate" on channel ("channel_dirdate");
 create index "channel_lastpost" on channel ("channel_lastpost");
 create index "channel_removed" on channel ("channel_removed");

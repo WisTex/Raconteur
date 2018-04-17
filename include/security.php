@@ -266,6 +266,15 @@ function change_channel($change_channel) {
 			$_SESSION['mobile_theme'] = get_pconfig(local_channel(),'system', 'mobile_theme');
 			$_SESSION['cloud_tiles'] = get_pconfig(local_channel(),'system', 'cloud_tiles');
 			date_default_timezone_set($r[0]['channel_timezone']);
+
+			// Update the active timestamp at most once a day
+
+			if(substr($r[0]['channel_active'],0,10) !== substr(datetime_convert(),0,10)) {
+				$z = q("UPDATE channel SET channel_active = '%s' WHERE channel_id = %d",
+					dbesc(datetime_convert()),
+					intval($r[0]['channel_id'])
+				);
+			}
 			$ret = $r[0];
 		}
 		$x = q("select * from xchan where xchan_hash = '%s' limit 1",
