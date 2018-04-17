@@ -224,7 +224,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 					);
 				}
 				else {
-					$r = q("SELECT distinct parent AS item_id, $ordering FROM item
+					$r = q("SELECT parent AS item_id FROM item
 						left join abook on item.author_xchan = abook.abook_xchan
 						$net_query
 						WHERE true $uids $item_normal_update
