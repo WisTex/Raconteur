@@ -28,12 +28,13 @@ class Pubtagcloud {
             $site_firehose = false;
         }
 
+		$safemode = get_xconfig(get_observer_hash(),'directory','safemode',1);
 
 
 
 		$limit = ((array_key_exists('limit', $arr)) ? intval($arr['limit']) : 75);
 
-			return pubtagblock($net_firehose,$site_firehose, $limit, $trending);
+		return pubtagblock($net_firehose,$site_firehose, $limit, $trending, $safemode);
 
 		return '';
 	}

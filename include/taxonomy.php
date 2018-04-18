@@ -312,10 +312,10 @@ function article_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags 
 
 
 
-function pubtagblock($net,$site,$limit,$recent = 0,$type = TERM_HASHTAG) {
+function pubtagblock($net,$site,$limit,$recent = 0,$safemode = 1, $type = TERM_HASHTAG) {
 	$o = '';
 
-	$r = pub_tagadelic($net,$site,$limit,$since,$type);
+	$r = pub_tagadelic($net,$site,$limit,$since,$safemode,$type);
 	$link = z_root() . '/pubstream';
 
 	if($r) {
@@ -329,12 +329,11 @@ function pubtagblock($net,$site,$limit,$recent = 0,$type = TERM_HASHTAG) {
 	return $o;
 }
 
-function pub_tagadelic($net,$site,$limit,$recent,$type) {
+function pub_tagadelic($net,$site,$limit,$recent,$safemode,$type) {
 
 
 	$item_normal = item_normal();
 	$count = intval($limit);
-
 
 	if($site) {
     	$uids = " and item.uid in ( " . stream_perms_api_uids(PERMS_PUBLIC) . " ) and item_private = 0  and item_wall = 1 ";
@@ -347,6 +346,16 @@ function pub_tagadelic($net,$site,$limit,$recent,$type) {
 
 	if($recent)
 		$sql_extra .= " and item.created > '" . datetime_convert('UTC','UTC', 'now - ' . intval($recent) . ' days ') . "' ";   
+
+
+	if($safemode) {
+		$unsafetags = get_config('system','unsafepubtags', [ 'boobs', 'bot', 'girl','girls', 'nsfw', 'sexy', 'nude' ]);
+		if($unsafetags) {
+			stringify_array_elms($unsafetags,true);
+			$sql_extra .= " and not term.term in ( " . implode(",",$unsafetags) . ") ";
+		}
+	}
+				
 
 	// Fetch tags
 	$r = q("select term, count(term) as total from term left join item on term.oid = item.id
