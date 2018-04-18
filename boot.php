@@ -50,7 +50,7 @@ require_once('include/attach.php');
 require_once('include/bbcode.php');
 
 define ( 'PLATFORM_NAME',           'hubzilla' );
-define ( 'STD_VERSION',             '3.3.5' );
+define ( 'STD_VERSION',             '3.4RC' );
 define ( 'ZOT_REVISION',            '6.0a' );
 
 
