@@ -349,7 +349,7 @@ function pub_tagadelic($net,$site,$limit,$recent,$safemode,$type) {
 
 
 	if($safemode) {
-		$unsafetags = get_config('system','unsafepubtags', [ 'boobs', 'bot', 'girl','girls', 'nsfw', 'sexy', 'nude' ]);
+		$unsafetags = get_config('system','unsafepubtags', [ 'boobs', 'bot', 'rss', 'girl','girls', 'nsfw', 'sexy', 'nude' ]);
 		if($unsafetags) {
 			stringify_array_elms($unsafetags,true);
 			$sql_extra .= " and not term.term in ( " . implode(",",$unsafetags) . ") ";
