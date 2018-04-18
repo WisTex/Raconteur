@@ -338,7 +338,7 @@ function pub_tagadelic($net,$site,$limit,$recent,$safemode,$type) {
     else {
         $sys = get_sys_channel();
         $uids = " and item.uid  = " . intval($sys['channel_id']) . " ";
-        $sql_extra = item_permissions_sql($sys['channel_id']);
+		$sql_extra = " and item_private = 0 ";
     }
 
 	if($recent)
