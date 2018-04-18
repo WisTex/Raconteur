@@ -1,3 +1,7 @@
+[region=aside]
+[widget=pubtagcloud][var=trending]15[/var][var=limit]20[/var][/widget]
+[widget=pubtagcloud][/widget]
+[/region]
 [region=right_aside]
 [widget=notifications][/widget]
 [widget=newmember][/widget]

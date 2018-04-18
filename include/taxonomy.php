@@ -312,6 +312,70 @@ function article_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags 
 
 
 
+function pubtagblock($net,$site,$limit,$recent = 0,$type = TERM_HASHTAG) {
+	$o = '';
+
+	$r = pub_tagadelic($net,$site,$limit,$since,$type);
+	$link = z_root() . '/pubstream';
+
+	if($r) {
+		$o = '<div class="tagblock widget"><h3>' . (($recent) ? t('Trending') : t('Tags')) . '</h3><div class="tags" align="center">';
+		foreach($r as $rr) { 
+		  $o .= '<span class="tag'.$rr[2].'">#</span><a href="'.$link .'/' . '?f=&tag=' . urlencode($rr[0]).'" class="tag'.$rr[2].'">'.$rr[0].'</a> ' . "\r\n";
+		}
+		$o .= '</div></div>';
+	}
+
+	return $o;
+}
+
+function pub_tagadelic($net,$site,$limit,$recent,$type) {
+
+
+	$item_normal = item_normal();
+	$count = intval($limit);
+
+
+	if($site) {
+    	$uids = " and item.uid in ( " . stream_perms_api_uids(PERMS_PUBLIC) . " ) and item_private = 0  and item_wall = 1 ";
+	}
+    else {
+        $sys = get_sys_channel();
+        $uids = " and item.uid  = " . intval($sys['channel_id']) . " ";
+        $sql_extra = item_permissions_sql($sys['channel_id']);
+    }
+
+	if($recent)
+		$sql_extra .= " and item.created > '" . datetime_convert('UTC','UTC', 'now - ' . intval($recent) . ' days ') . "' ";   
+
+	// Fetch tags
+	$r = q("select term, count(term) as total from term left join item on term.oid = item.id
+		where term.ttype = %d 
+		and otype = %d and item_type = %d 
+		$sql_extra $uids $item_normal
+		group by term order by total desc %s",
+		intval($type),
+		intval(TERM_OBJ_POST),
+		intval(ITEM_TYPE_POST),
+		((intval($count)) ? "limit $count" : '')
+	);
+
+	if(! $r)
+		return array();
+
+	return Zotlabs\Text\Tagadelic::calc($r);
+
+}
+
+
+
+
+
+
+
+
+
+
 
 function dir_tagadelic($count = 0, $hub = '') {
 
