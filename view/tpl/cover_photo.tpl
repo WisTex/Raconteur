@@ -86,10 +86,11 @@
     <h2>{{$title}}</h2>
     </div>
     <div class="section-content-wrapper">
-
+		{{if $existing}}
+		<img class="cover-photo-review" style="max-width: 100%;" src="{{$existing.url}}" alt="{{t('Cover Photo')}}" />
+		{{/if}}
 		<form enctype="multipart/form-data" action="cover_photo" method="post">
 		<input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
-
 		<div id="profile-photo-upload-wrapper">
 
 			<label id="profile-photo-upload-label" class="form-label" for="profile-photo-upload">{{$lbl_upfile}}</label>
