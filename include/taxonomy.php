@@ -368,15 +368,6 @@ function pub_tagadelic($net,$site,$limit,$recent,$type) {
 }
 
 
-
-
-
-
-
-
-
-
-
 function dir_tagadelic($count = 0, $hub = '') {
 
 	$count = intval($count);

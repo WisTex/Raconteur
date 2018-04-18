@@ -31,7 +31,7 @@ class Pubtagcloud {
 
 
 
-		$limit = ((array_key_exists('limit', $arr)) ? intval($arr['limit']) : 50);
+		$limit = ((array_key_exists('limit', $arr)) ? intval($arr['limit']) : 75);
 
 			return pubtagblock($net_firehose,$site_firehose, $limit, $trending);
 
