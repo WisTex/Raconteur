@@ -174,8 +174,7 @@ function tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0, $re
 		if(! is_array($authors))
 			$authors = array($authors);
 
-		stringify_array_elms($authors,true);
-		$sql_options .= " and author_xchan in (" . implode(',',$authors) . ") "; 
+		$sql_options .= " and author_xchan in (" . stringify_array($authors,true) . ") "; 
 	}
 
 	if($owner) {
@@ -227,8 +226,7 @@ function card_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0
 		if(! is_array($authors))
 			$authors = array($authors);
 
-		stringify_array_elms($authors,true);
-		$sql_options .= " and author_xchan in (" . implode(',',$authors) . ") "; 
+		$sql_options .= " and author_xchan in (" . stringify_array($authors,true) . ") "; 
 	}
 
 	if($owner) {
@@ -280,8 +278,7 @@ function article_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags 
 		if(! is_array($authors))
 			$authors = array($authors);
 
-		stringify_array_elms($authors,true);
-		$sql_options .= " and author_xchan in (" . implode(',',$authors) . ") "; 
+		$sql_options .= " and author_xchan in (" . stringify_array($authors,true) . ") "; 
 	}
 
 	if($owner) {
@@ -351,8 +348,7 @@ function pub_tagadelic($net,$site,$limit,$recent,$safemode,$type) {
 	if($safemode) {
 		$unsafetags = get_config('system','unsafepubtags', [ 'boobs', 'bot', 'rss', 'girl','girls', 'nsfw', 'sexy', 'nude' ]);
 		if($unsafetags) {
-			stringify_array_elms($unsafetags,true);
-			$sql_extra .= " and not term.term in ( " . implode(",",$unsafetags) . ") ";
+			$sql_extra .= " and not term.term in ( " . stringify_array($unsafetags,true) . ") ";
 		}
 	}
 				
@@ -621,9 +617,8 @@ function get_things($profile_hash,$uid) {
 			if(! in_array($rr['obj_obj'],$profile_hashes))
 				$profile_hashes[] = $rr['obj_obj'];
 		}
-		stringify_array_elms($profile_hashes);
 		if(! $profile_hash) {
-			$exp = explode(',',$profile_hashes);
+			$exp = stringify_array($profile_hashes,true);
 			$p = q("select profile_guid as hash, profile_name as name from profile where profile_guid in ( $exp ) ");
 			if($p) {
 				foreach($r as $rr) {
