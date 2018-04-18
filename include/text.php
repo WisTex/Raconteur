@@ -531,7 +531,7 @@ function paginate(&$a) {
 }
 
 
-function alt_pager(&$a, $i, $more = '', $less = '') {
+function alt_pager($i, $more = '', $less = '') {
 
 	if(! $more)
 		$more = t('older');

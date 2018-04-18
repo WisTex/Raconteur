@@ -404,7 +404,7 @@ class Directory extends \Zotlabs\Web\Controller {
 								'$entries' => $entries,
 								'$dirlbl' => $suggest ? t('Channel Suggestions') : $dirtitle,
 								'$submit' => t('Find'),
-								'$next' => alt_pager($a,$j['records'], t('next page'), t('previous page')),
+								'$next' => alt_pager($j['records'], t('next page'), t('previous page')),
 								'$sort' => t('Sort options'),
 								'$normal' => t('Alphabetic'),
 								'$reverse' => t('Reverse Alphabetic'),
