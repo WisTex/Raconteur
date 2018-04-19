@@ -34,6 +34,8 @@ class Pubstream extends \Zotlabs\Web\Controller {
 		}
 
 		$mid = ((x($_REQUEST,'mid')) ? $_REQUEST['mid'] : '');
+		$hashtags   = ((x($_REQUEST,'tag')) ? $_REQUEST['tag'] : '');
+
 
 		if(strpos($mid,'b64.') === 0)
 			$decoded = @base64url_decode(substr($mid,4));
@@ -133,7 +135,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				'$order'   => 'comment',
 				'$file'    => '',
 				'$cats'    => '',
-				'$tags'    => '',
+				'$tags'    => $hashtags,
 				'$dend'    => '',
 				'$mid'     => $mid,
 				'$verb'    => '',
@@ -169,6 +171,10 @@ class Pubstream extends \Zotlabs\Web\Controller {
 		else
 			$page_mode = 'client';
 
+
+		if(x($hashtags)) {
+			$sql_extra .= protect_sprintf(term_query('item', $hashtags, TERM_HASHTAG, TERM_COMMUNITYTAG));
+		}
 
 		$net_query = (($net) ? " left join xchan on xchan_hash = author_xchan " : ''); 
 		$net_query2 = (($net) ? " and xchan_network = '" . protect_sprintf(dbesc($net)) . "' " : '');
@@ -273,7 +279,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 			$o .= '<div id="content-complete"></div>';
 	
 		if(($items) && (! $update))
-			$o .= alt_pager($a,count($items));
+			$o .= alt_pager(count($items));
 
 		return $o;
 	

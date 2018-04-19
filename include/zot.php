@@ -3208,6 +3208,9 @@ function build_sync_packet($uid = 0, $packet = null, $groups_changed = false) {
 
 	$channel = $r[0];
 
+	// don't provide these in the export 
+
+	unset($channel['channel_active']);
 	unset($channel['channel_password']);
 	unset($channel['channel_salt']);
 
@@ -3474,6 +3477,14 @@ function process_channel_sync_delivery($sender, $arr, $deliveries) {
 			continue;
 		}
 
+		// if the clone is active, so are we
+
+		if(substr($channel['channel_active'],0,10) !== substr(datetime_convert(),0,10)) {
+			q("UPDATE channel set channel_active = '%s' where channel_id = %d",
+				dbesc(datetime_convert()),
+				intval($channel['channel_id'])
+			);
+		}
 
 		if(array_key_exists('config',$arr) && is_array($arr['config']) && count($arr['config'])) {
 			foreach($arr['config'] as $cat => $k) {

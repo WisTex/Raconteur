@@ -1795,3 +1795,7 @@ dl.bb-dl > dd > li {
     position: absolute;
     text-shadow: -2px 0 1px #fff, 0 2px 1px#fff, 2px 0 1px #fff, 0 -2px 1px #fff;
 }
+
+.cover-photo-review {
+	margin-bottom: 10px;
+}

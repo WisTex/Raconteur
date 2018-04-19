@@ -14,9 +14,12 @@ class Moderate extends \Zotlabs\Web\Controller {
 			return;
 		}
 
+		\App::set_pager_itemspage(60);
+		$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));               
+
 		//show all items
 		if(argc() == 1) {
-			$r = q("select item.id as item_id, item.* from item where item.uid = %d and item_blocked = %d and item_deleted = 0 order by created desc limit 60",
+			$r = q("select item.id as item_id, item.* from item where item.uid = %d and item_blocked = %d and item_deleted = 0 order by created desc $pager_sql",
 				intval(local_channel()),
 				intval(ITEM_MODERATED)
 			);
@@ -26,7 +29,7 @@ class Moderate extends \Zotlabs\Web\Controller {
 		if(argc() == 2) {
 			$post_id = intval(argv(1));
 
-			$r = q("select item.id as item_id, item.* from item where item.id = %d and item.uid = %d and item_blocked = %d and item_deleted = 0 order by created desc limit 60",
+			$r = q("select item.id as item_id, item.* from item where item.id = %d and item.uid = %d and item_blocked = %d and item_deleted = 0 order by created desc $pager_sql",
 				intval($post_id),
 				intval(local_channel()),
 				intval(ITEM_MODERATED)
@@ -92,6 +95,7 @@ class Moderate extends \Zotlabs\Web\Controller {
 		}
 
 		$o = conversation($items,'moderate',false,'traditional');
+		$o .= alt_pager(count($items));
 		return $o;
 
 	}

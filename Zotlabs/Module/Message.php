@@ -93,7 +93,7 @@ class Message extends \Zotlabs\Web\Controller {
 			));
 	
 	
-			$o .= alt_pager($a,count($r));	
+			$o .= alt_pager(count($r));	
 	
 			return $o;
 	

@@ -565,7 +565,7 @@ class Network extends \Zotlabs\Web\Controller {
 		$o .= conversation($items,$mode,$update,$page_mode);
 	
 		if(($items) && (! $update))
-			$o .= alt_pager($a,count($items));
+			$o .= alt_pager(count($items));
 	
 		return $o;
 	}

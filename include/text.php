@@ -531,7 +531,7 @@ function paginate(&$a) {
 }
 
 
-function alt_pager(&$a, $i, $more = '', $less = '') {
+function alt_pager($i, $more = '', $less = '') {
 
 	if(! $more)
 		$more = t('older');
@@ -2324,6 +2324,23 @@ function stringify_array_elms(&$arr, $escape = false) {
 		$arr[$x] = "'" . (($escape) ? dbesc($arr[$x]) : $arr[$x]) . "'";
 }
 
+
+/**
+ * @brief Similar to stringify_array_elms but returns a string. If $escape is true, dbesc() each element before adding quotes.
+ *
+ * @param array $arr
+ * @param boolean $escape (optional) default false
+ * @return string
+ */
+function stringify_array($arr, $escape = false) {
+	if($arr) {
+		stringify_array_elms($arr);
+		return(implode(',',$arr));
+	}
+	return EMPTY_STR;
+}
+
+
 /**
  * @brief Indents a flat JSON string to make it more human-readable.
  *
@@ -2387,7 +2404,7 @@ function jindent($json) {
  */
 function design_tools() {
 
-	$channel  = App::get_channel();
+	$channel  = channelx_by_n(App::$profile['profile_uid']);
 	$sys = false;
 
 	if(App::$is_sys && is_site_admin()) {

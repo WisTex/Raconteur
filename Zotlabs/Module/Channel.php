@@ -380,7 +380,7 @@ class Channel extends \Zotlabs\Web\Controller {
 		}
 
 		if((! $update) || ($checkjs->disabled())) {
-			$o .= alt_pager($a,count($items));
+			$o .= alt_pager(count($items));
 			if ($mid && $items[0]['title'])
 				\App::$page['title'] = $items[0]['title'] . " - " . \App::$page['title'];
 		}

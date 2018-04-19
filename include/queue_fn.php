@@ -95,6 +95,12 @@ function queue_set_delivered($id,$channel = 0) {
 
 function queue_insert($arr) {
 
+	// do not queue anything with no destination
+
+	if(! (array_key_exists('posturl',$arr) && trim($arr['posturl']))) {
+		return false;
+	}
+
 	$x = q("insert into outq ( outq_hash, outq_account, outq_channel, outq_driver, outq_posturl, outq_async, outq_priority,
 		outq_created, outq_updated, outq_scheduled, outq_notify, outq_msg ) 
 		values ( '%s', %d, %d, '%s', '%s', %d, %d, '%s', '%s', '%s', '%s', '%s' )",

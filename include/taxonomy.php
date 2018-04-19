@@ -174,8 +174,7 @@ function tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0, $re
 		if(! is_array($authors))
 			$authors = array($authors);
 
-		stringify_array_elms($authors,true);
-		$sql_options .= " and author_xchan in (" . implode(',',$authors) . ") "; 
+		$sql_options .= " and author_xchan in (" . stringify_array($authors,true) . ") "; 
 	}
 
 	if($owner) {
@@ -227,8 +226,7 @@ function card_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0
 		if(! is_array($authors))
 			$authors = array($authors);
 
-		stringify_array_elms($authors,true);
-		$sql_options .= " and author_xchan in (" . implode(',',$authors) . ") "; 
+		$sql_options .= " and author_xchan in (" . stringify_array($authors,true) . ") "; 
 	}
 
 	if($owner) {
@@ -280,8 +278,7 @@ function article_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags 
 		if(! is_array($authors))
 			$authors = array($authors);
 
-		stringify_array_elms($authors,true);
-		$sql_options .= " and author_xchan in (" . implode(',',$authors) . ") "; 
+		$sql_options .= " and author_xchan in (" . stringify_array($authors,true) . ") "; 
 	}
 
 	if($owner) {
@@ -311,6 +308,69 @@ function article_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags 
 
 
 
+
+function pubtagblock($net,$site,$limit,$recent = 0,$safemode = 1, $type = TERM_HASHTAG) {
+	$o = '';
+
+	$r = pub_tagadelic($net,$site,$limit,$since,$safemode,$type);
+	$link = z_root() . '/pubstream';
+
+	if($r) {
+		$o = '<div class="tagblock widget"><h3>' . (($recent) ? t('Trending') : t('Tags')) . '</h3><div class="tags" align="center">';
+		foreach($r as $rr) { 
+		  $o .= '<span class="tag'.$rr[2].'">#</span><a href="'.$link .'/' . '?f=&tag=' . urlencode($rr[0]).'" class="tag'.$rr[2].'">'.$rr[0].'</a> ' . "\r\n";
+		}
+		$o .= '</div></div>';
+	}
+
+	return $o;
+}
+
+function pub_tagadelic($net,$site,$limit,$recent,$safemode,$type) {
+
+
+	$item_normal = item_normal();
+	$count = intval($limit);
+
+	if($site) {
+    	$uids = " and item.uid in ( " . stream_perms_api_uids(PERMS_PUBLIC) . " ) and item_private = 0  and item_wall = 1 ";
+	}
+    else {
+        $sys = get_sys_channel();
+        $uids = " and item.uid  = " . intval($sys['channel_id']) . " ";
+		$sql_extra = " and item_private = 0 ";
+    }
+
+	if($recent)
+		$sql_extra .= " and item.created > '" . datetime_convert('UTC','UTC', 'now - ' . intval($recent) . ' days ') . "' ";   
+
+
+	if($safemode) {
+		$unsafetags = get_config('system','unsafepubtags', [ 'boobs', 'bot', 'rss', 'girl','girls', 'nsfw', 'sexy', 'nude' ]);
+		if($unsafetags) {
+			$sql_extra .= " and not term.term in ( " . stringify_array($unsafetags,true) . ") ";
+		}
+	}
+				
+
+	// Fetch tags
+	$r = q("select term, count(term) as total from term left join item on term.oid = item.id
+		where term.ttype = %d 
+		and otype = %d and item_type = %d 
+		$sql_extra $uids $item_normal
+		group by term order by total desc %s",
+		intval($type),
+		intval(TERM_OBJ_POST),
+		intval(ITEM_TYPE_POST),
+		((intval($count)) ? "limit $count" : '')
+	);
+
+	if(! $r)
+		return array();
+
+	return Zotlabs\Text\Tagadelic::calc($r);
+
+}
 
 
 function dir_tagadelic($count = 0, $hub = '') {
@@ -557,9 +617,8 @@ function get_things($profile_hash,$uid) {
 			if(! in_array($rr['obj_obj'],$profile_hashes))
 				$profile_hashes[] = $rr['obj_obj'];
 		}
-		stringify_array_elms($profile_hashes);
 		if(! $profile_hash) {
-			$exp = explode(',',$profile_hashes);
+			$exp = stringify_array($profile_hashes,true);
 			$p = q("select profile_guid as hash, profile_name as name from profile where profile_guid in ( $exp ) ");
 			if($p) {
 				foreach($r as $rr) {

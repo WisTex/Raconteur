@@ -150,9 +150,9 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 
 			// attempt network auto-discovery
 
-			$d = discover_by_webbie($url,$protocol);
+			$wf = discover_by_webbie($url,$protocol);
 
-			if((! $d) && ($is_http)) {
+			if((! $wf) && ($is_http)) {
 
 				// try RSS discovery
 
@@ -167,9 +167,9 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 				}
 			}
 
-			if($d) {
+			if($wf || $d) {
 				$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' limit 1",
-					dbesc($url),
+					dbesc(($wf) ? $wf : $url),
 					dbesc($url)
 				);
 			}
