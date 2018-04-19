@@ -1192,9 +1192,10 @@ function discover_by_webbie($webbie, $protocol = '') {
 	logger('webfinger: ' . print_r($x,true), LOGGER_DATA, LOG_INFO);
 
 	$arr = [
-			'address' => $webbie,
-			'protocol' => $protocol,
-			'success' => false,
+			'address'   => $webbie,
+			'protocol'  => $protocol,
+			'success'   => false,
+			'xchan'     => '',
 			'webfinger' => $x
 	];
 	/**
@@ -1207,7 +1208,7 @@ function discover_by_webbie($webbie, $protocol = '') {
 	 */
 	call_hooks('discover_channel_webfinger', $arr);
 	if($arr['success'])
-		return true;
+		return $arr['xchan'];
 
 	return false;
 }
