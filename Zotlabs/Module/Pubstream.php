@@ -279,7 +279,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 			$o .= '<div id="content-complete"></div>';
 	
 		if(($items) && (! $update))
-			$o .= alt_pager($a,count($items));
+			$o .= alt_pager(count($items));
 
 		return $o;
 	

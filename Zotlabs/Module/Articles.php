@@ -191,7 +191,7 @@ class Articles extends \Zotlabs\Web\Controller {
 			'$title' => t('Articles'),
 			'$editor' => $editor,
 			'$content' => $content,
-			'$pager' => alt_pager($a,$pager_total)
+			'$pager' => alt_pager($pager_total)
 		]);
 
         return $o;
