@@ -2404,7 +2404,7 @@ function jindent($json) {
  */
 function design_tools() {
 
-	$channel  = App::get_channel();
+	$channel  = channelx_by_n(App::$profile['profile_uid']);
 	$sys = false;
 
 	if(App::$is_sys && is_site_admin()) {
