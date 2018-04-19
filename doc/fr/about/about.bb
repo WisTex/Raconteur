@@ -165,3 +165,34 @@ Que faire si votre identité est soumise à la censure du gouvernement ?  Votre 
 Le nom du projet offre de nouvelles possibilités intéressantes pour la protection de la vie privée. Vous pouvez en lire plus à la page &lt;Meilleures pratiques en communications privées&gt;.
 
 Certaines mises en garde s'appliquent. Pour une explication complète du clonage d'identité, lisez la page &lt;Comment cloner mon identité&gt;.
+
+[h4]Sauvegarde de compte[/h4]
+
+Hubzilla offre une simple sauvegarde de votre compte en un seul clic, où vous pouvez télécharger une sauvegarde complète de votre (vos) profil(s). Les sauvegardes peuvent ensuite être utilisées pour cloner ou restaurer un profil.
+
+[h4]Suppression de compte[/h4]
+
+Les comptes peuvent être immédiatement supprimés en cliquant sur un lien. Voilà, c'est tout.  Tout le contenu associé est ensuite supprimé de la grille (y compris les messages et tout autre contenu produit par le profil supprimé). Selon le nombre de connexions que vous avez, le processus de suppression du contenu distant peut prendre un certain temps, mais il est programmé pour se produire aussi rapidement que possible.
+
+[h4]Suppression de contenu[/h4]
+
+Tout contenu créé dans Hubzilla reste sous le contrôle du membre (ou du canal) qui l'a créé à l'origine.  A tout moment, un membre peut supprimer un message ou une série de messages.  Le processus de suppression garantit que le contenu est supprimé, qu'il ait été posté sur le hub d'origine d'un canal ou sur un autre hub, où le canal a été authentifié à distance via Zot (protocole de communication et d'authentification Hubzilla).
+
+[h4]Médias[/h4]
+
+Semblable à tout autre système moderne de blogging, réseau social ou service de micro-blogging, Hubzilla prend en charge le téléchargement de fichiers, l'intégration de vidéos, l'intégration de liens vers des pages web.
+
+[h4]Prévisualisation/Édition[/h4]
+
+Les messages et commentaires peuvent être prévisualisés avant l'envoi et édités après l'envoi.
+
+[h4]Vote/consensus[/h4]
+Les messages peuvent être transformés en éléments de "consensus", ce qui permet aux lecteurs d'offrir un retour d'information, qui est rassemblé en compteurs "d'accord", "en désaccord" et "abstention". Cela vous permet de mesurer l'intérêt pour les idées et de créer des sondages informels.
+
+[h4]Extension de Hubzilla[/h4]
+
+Hubzilla peut être étendu de plusieurs façons, par la personnalisation du site, la personnalisation personnelle, la définition d'options, de thèmes et dde greffons.
+
+[h4]API[/h4]
+
+Une API est disponible pour l'utilisation par des services tiers. Un plugin fournit également une implémentation de base de l'API Twitter (pour laquelle il existe des centaines d'outils tiers). L'accès peut être fourni par login/mot de passe ou OAuth, et l'enregistrement client des applications OAuth est fourni.
