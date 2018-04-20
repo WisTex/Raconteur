@@ -312,7 +312,8 @@ function article_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags 
 function pubtagblock($net,$site,$limit,$recent = 0,$safemode = 1, $type = TERM_HASHTAG) {
 	$o = '';
 
-	$r = pub_tagadelic($net,$site,$limit,$since,$safemode,$type);
+	$r = pub_tagadelic($net,$site,$limit,$recent,$safemode,$type);
+
 	$link = z_root() . '/pubstream';
 
 	if($r) {
