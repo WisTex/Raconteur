@@ -60,7 +60,7 @@ function contact_format(item) {
 		var desc = ((item.label) ? item.nick + ' ' + item.label : item.nick);
 		if(typeof desc === 'undefined') desc = '';
 		if(desc) desc = ' ('+desc+')';
-		return "<div class='{0} dropdown-item dropdown-notification clearfix' title='{4}'><img class='menu-img-2' src='{1}'><span class='contactname'>{2}</span><span class='dropdown-sub-text'>{3}</span></div>".format(item.taggable, item.photo, item.name, desc, item.link);
+		return "<div class='{0} dropdown-item dropdown-notification clearfix' title='{4}'><img class='menu-img-2' src='{1}'><span class='contactname'>{2}</span><span class='dropdown-sub-text'>{3}</span></div>".format(item.taggable, item.photo, item.name, desc, typeof(item.link) !== 'undefined' ? item.link : desc.replace('(','').replace(')',''));
 	}
 	else
 		return "<div>" + item.text + "</div>";
