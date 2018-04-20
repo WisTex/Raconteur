@@ -46,10 +46,7 @@ function get_all_perms($uid, $observer_xchan, $internal_use = true) {
 
 		// First find out what the channel owner declared permissions to be.
 
-		$channel_perm = \Zotlabs\Access\PermissionLimits::Get($uid,$perm_name);
-		if($channel_perm === false) {
-			$channel_perm = 0;
-		}
+		$channel_perm = intval(\Zotlabs\Access\PermissionLimits::Get($uid,$perm_name));
 
 		if(! $channel_checked) {
 			$r = q("select * from channel where channel_id = %d limit 1",
