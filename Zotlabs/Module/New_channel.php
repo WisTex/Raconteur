@@ -150,10 +150,10 @@ class New_channel extends \Zotlabs\Web\Controller {
 	
 		$o = replace_macros(get_markup_template('new_channel.tpl'), array(
 			'$title'        => t('Create Channel'),
-			'$desc'         => t('A channel is your identity on this network. It can represent a person, a blog, or a forum to name a few. Channels can make connections with other channels to share information with highly detailed permissions.'),
+			'$desc'         => t('A channel is a unique network identity. It can represent a person (social network profile), a forum (group), a business or celebrity page, a newsfeed, and many other things. Channels can make connections with other channels to share information with each other.') . ' ' . t('The type of channel you create affects the basic privacy settings, the permissions that are granted to connections/friends, and also the channel\'s visibility across the network.'),
 			'$label_import' => t('or <a href="import">import an existing channel</a> from another location.'),
 			'$name'         => $name,
-			'$role'		=> $role,
+			'$role'		    => $role,
 			'$default_role' => $default_role,
 			'$nickname'     => $nickname,
 			'$validate'     => t('Validate'),

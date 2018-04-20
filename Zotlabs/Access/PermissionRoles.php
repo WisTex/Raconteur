@@ -41,7 +41,7 @@ class PermissionRoles {
 
 				break;
 
-			case 'social_party':
+			case 'social_federation':
 				$ret['perms_auto'] = false;
 				$ret['default_collection'] = false;
 				$ret['directory_publish'] = true;
@@ -281,7 +281,7 @@ class PermissionRoles {
 	static public function roles() {
 		$roles = [
 			t('Social Networking') => [
-				'social_party' => t('Social - Party'),
+				'social_federation' => t('Social - Federation'),
 				'social' => t('Social - Mostly Public'),
 				'social_restricted' => t('Social - Restricted'),
 				'social_private' => t('Social - Private')

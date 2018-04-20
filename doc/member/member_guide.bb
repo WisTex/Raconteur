@@ -22,67 +22,41 @@ Click the link to read the site's [zrl=[baseurl]/help/TermsOfService]Terms of Se
 
 Once you have provided the necessary details, click the 'Register' button. Some sites may require administrator approval before the registration is processed, and you will be alerted if this is the case. Please watch your email (including spam folders) for your registration approval.
 
-[b]Create a Channel[/b]
 
-Next, you will be presented with the &quot;Add a channel&quot; screen. Normally, your first channel will be one that represents you - so using your own name (or psuedonym) as the channel name is a good idea. The channel name should be thought of as a title, or brief description of your channel. The &quot;choose a short nickname&quot; box is similar to a &quot;username&quot; field. We will use whatever you enter here to create a channel address, which other people will use to connect to you, and you will use to log in to other sites. This looks like an email address, and takes the form nickname@siteyouregisteredat.xyz
 
-When your channel is created you will be taken straight to your settings page where you can define permissions, enable features, etc. All these things are covered in the appropriate section of the helpfiles.
+[h3]Channels[/h3]
 
-See Also
-[zrl=[baseurl]/help/accounts_profiles_channels_basics]The Basics about Identities within $Projectname[/zrl]
-[zrl=[baseurl]/help/accounts]Accounts[/zrl]
-[zrl=[baseurl]/help/profiles]Profiles[/zrl]
-[zrl=[baseurl]/help/permissions]Permissions[/zrl]
-[zrl=[baseurl]/help/remove_account]Remove Account[/zrl]
+[h4]What are channels?[/h4]
 
-[b]Profiles[/b]
+Channels are simply collections of content stored in one place. A channel can represent anything. It could represent you, a website, a forum, photo albums, anything. For most people, their first channel with be &quot;Me&quot;.
 
-$Projectname has unlimited profiles. You may use different profiles to show different &quot;sides of yourself&quot; to different audiences. This is different to having different channels. Different channels allow for completely different sets of information. You may have a channel for yourself, a channel for your sports team, a channel for your website, or whatever else. A profile allows for finely graded &quot;sides&quot; of each channel. For example, your default public profile might say &quot;Hello, I'm Fred, and I like laughing&quot;. You may show your close friends a profile that adds &quot;and I also enjoy dwarf tossing&quot;.
+The most important features for a channel that represents &quot;me&quot; are:
+[ul]
+[*]Secure and private &quot;spam free&quot; communications
 
-You always have a profile known as your &quot;default&quot; or &quot;public&quot; profile. This profile is always available to the general public and cannot be hidden (there may be rare exceptions on privately run or disconnected sites). You may, and probably should restrict the information you make available on your public profile.
+[*]Identity and &quot;single-signon&quot; across the entire network
 
-That said, if you want other friends to be able to find you, it helps to have the following information in your public profile...
+[*]Privacy controls and permissions which extend to the entire network
 
-[ul][*]Your real name or at least a nickname everybody knows
-[*]A photo of you
-[*]Your location on the planet, at least to a country level.[/ul]
+[*]Directory services (like a phone book)
+[/ul]
+In short, a channel that represents yourself is &quot;me, on the internet&quot;.
 
-In addition, if you'd like to meet people that share some general interests with you, please take a moment and add some &quot;Keywords&quot; to your profile. Such as &quot;music, linux, photography&quot; or whatever. You can add as many keywords as you like.
 
-To create an alternate profile, first go to [zrl=[baseurl]/settings/features]Settings &gt; Additional Features[/zrl] and enable &quot;Multiple Profiles&quot; there, otherwise you won't have the ability to use more than just your default profile.
 
-Then select &quot;Edit Profiles&quot; from the menu of your $Projectname site. You may edit an existing profile, change the profile photo, add things to a profile or create a new profile. You may also create a &quot;clone&quot; of an existing profile if you only wish to change a few items but don't wish to enter all the information again. To do that, click on the profile you want to clone and choose &quot;Clone this profile&quot; there.
+[h3]Channel Permission Roles[/h3]
 
-In the list of your profiles, you can also choose the contacts who can see a specific profile. Just click on &quot;Edit visibility&quot; next to the profile in question (only available for the profiles that are not your default profile) and then click on specific connections to add them to or remove them from the group of people who can see this profile.
-
-Once a profile has been selected, when the person views your profile, they will see the private profile you have assigned. If they are not authenticated, they will see your public profile.
-
-There is a setting which allows you to publish your profile to a directory and ensure that it can be found by others. You can change this setting on the &quot;Settings&quot; page.
-
-If you do not wish to be found be people unless you give them your channel address, you may leave your profile unpublished.
-
-[b]Keywords and Directory Search[/b]
-
-On the directory page, you may search for people with published profiles. Currently, only the name field and the keywords are searched.  You may also include such keywords in your default profile - which may be used to search for common interests with other members. Keywords are used in the channel suggestion tool and although they aren't visible in the directory, they are shown if people visit your profile page.
-
-On your Connnections page and in the directory there is a link to &quot;Suggestions&quot; or &quot;Channel Suggestions&quot;, respectively. This will find channels who have matching and/or similar keywords. The more keywords you provide, the more relevant the search results that are returned. These are sorted by relevance.
-
-See Also
-
-[zrl=[baseurl]/help/AdvancedSearch]Advanced Searching[/zrl]
-
-[h3]Account Permission Roles[/h3]
-
+When you create a new channel, you will be asked to select a permission role based on how you envision using this channel. The most popular permission roles are the Social Networking roles. You have many other choices, providing options which are analagous to Facebook Groups and Pages, collaborative spaces, newsfeeds, and more. These roles automatically configure several different system variables ranging from what permissions are granted to friends, to your default privacy settings and visibility choices. Advanced configurations are available to let you adjust each of these parameters to your needs, but we've found that most people prefer to "set it and forget it". Thew following describes some of the different roles which are currently available and how they impact your privacy and ability to interact. 
 
 [h4]Social[/h4]
 
+[b]Federation[/b]
+
+The channel is a very permissive social networking profile which is compatible with other federated social networks. The permission policies are similar to Twitter and mostly compatible with Diaspora and Mastodon. Privacy is a lower priority than ease of access and connecting with others. Anybody in the network can comment on your public posts and send you private mail. By default posts and published items are public, but you can over-ride this when creating the item and restrict it. You are listed in the directory. Your online presence and connections are visible to others. This mode [i]may[/i] increase your exposure to undesired communications and spam. This role is not generally recommended [i]unless[/i] you need to interact regularly with members of other networks.  
+
 [b]Mostly Public[/b]
 
-The channel is a typical social networking profile. By default posts and published items are public, but you can over-ride this when creating the item and restrict it. You are listed in the directory. Your online presence and connections are visible to others. Only your immediate connections can comment on your public posts and send you private mail. The permission policies are similar to Facebook.  
-
-[b]Party[/b]
-
-The channel is a permissive social networking profile. The permission policies are similar to Twitter and several free networks such as Diaspora and Mastodon. Anybody in the network can comment on your public posts and send you private mail. By default posts and published items are public, but you can over-ride this when creating the item and restrict it. You are listed in the directory. Your online presence and connections are visible to others. This mode [i]may[/i] increase your exposure to undesired communications and spam.  
+The channel is a typical social networking profile. By default posts and published items are public, but you can over-ride this when creating the item and restrict it. You are listed in the directory. Your online presence and connections are visible to others. Only your immediate connections can comment on your public posts and send you private mail. The permission policies are similar to Facebook.   
 
 
 [b]Restricted[/b]
@@ -140,33 +114,59 @@ A public forum which allows members to post files/photos/webpages.
 Set all the privacy and permissions manually to suit your specific needs. 
 
 
-[h3]Channels[/h3]
+[h3]Creating channels[/h3]
 
-[h4]What are channels?[/h4]
 
-Channels are simply collections of content stored in one place. A channel can represent anything. It could represent you, a website, a forum, photo albums, anything. For most people, their first channel with be &quot;Me&quot;.
+After creating your account, you will be presented with the &quot;Add a channel&quot; screen. Normally, your first channel will be one that represents you - so using your own name (or psuedonym) as the channel name is a good idea. The channel name should be thought of as a title, or brief description of your channel. The &quot;choose a short nickname&quot; box is similar to a &quot;username&quot; field. We will use whatever you enter here to create a channel address, which other people will use to connect to you, and you will use to log in to other sites. This looks like an email address, and takes the form nickname@siteyouregisteredat.xyz
 
-The most important features for a channel that represents &quot;me&quot; are:
-[ul]
-[*]Secure and private &quot;spam free&quot; communications
+See Also
+[zrl=[baseurl]/help/accounts_profiles_channels_basics]The Basics about Identities within $Projectname[/zrl]
+[zrl=[baseurl]/help/accounts]Accounts[/zrl]
+[zrl=[baseurl]/help/profiles]Profiles[/zrl]
+[zrl=[baseurl]/help/permissions]Permissions[/zrl]
+[zrl=[baseurl]/help/remove_account]Remove Account[/zrl]
 
-[*]Identity and &quot;single-signon&quot; across the entire network
 
-[*]Privacy controls and permissions which extend to the entire network
+You can create additonal channels from the &quot;Channel Manager&quot; link.
 
-[*]Directory services (like a phone book)
-[/ul]
-In short, a channel that represents yourself is &quot;me, on the internet&quot;.
+Once you have done this, your channel is ready to use. At [observer=1][observer.url][/observer][observer=0][baseurl]/channel/username[/observer] you will find your channel &quot;stream&quot;. This is where your recent activity will appear, in reverse chronological order. If you post in the box marked &quot;share&quot;, the entry will appear at the top of your stream. You will also find links to all the other communication areas for this channel here. The "hamburger" menu in most themes will provide you with navigation to other system components and apps. The Photos page contain photo albums, and the Events page contains events share by both yourself and your contacts.
 
-[h4]Creating channels[/h4]
+[b]Profiles[/b]
 
-You will be required to create your first channel as part of the sign up process. You can also create additonal channels from the &quot;Select channel&quot; link.
+$Projectname has unlimited profiles. You may use different profiles to show different &quot;sides of yourself&quot; to different audiences. This is different to having different channels. Different channels allow for completely different sets of information. You may have a channel for yourself, a channel for your sports team, a channel for your website, or whatever else. A profile allows for finely graded &quot;sides&quot; of each channel. For example, your default public profile might say &quot;Hello, I'm Fred, and I like laughing&quot;. You may show your close friends a profile that adds &quot;and I also enjoy dwarf tossing&quot;.
 
-You will be asked to provide a channel name, and a short nick name. For a channel that represents yourself, it is a good idea to use your real name here to ensure your friends can find you, and connect to your channel. The short nickname will be used to generate a &quot;webbie&quot;. This is a bit like a username, and will look like an email address, taking the form nickname@domain. You should put a little thought into what you want to use here. Imagine somebody asking for your webbie and having to tell them it is &quot;llamas-are_kewl.123&quot;. &quot;llamasarecool&quot; would be a much better choice.
+You always have a profile known as your &quot;default&quot; or &quot;public&quot; profile. This profile is always available to the general public and cannot be hidden (there may be rare exceptions on privately run or disconnected sites). You may, and probably should restrict the information you make available on your public profile.
 
-Once you have created your channel, you will be taken to the settings page, where you can configure your channel, and set your default permissions.
+That said, if you want other friends to be able to find you, it helps to have the following information in your public profile...
 
-Once you have done this, your channel is ready to use. At [observer=1][observer.url][/observer][observer=0][baseurl]/channel/username[/observer] you will find your channel &quot;stream&quot;. This is where your recent activity will appear, in reverse chronological order. If you post in the box marked &quot;share&quot;, the entry will appear at the top of your stream. You will also find links to all the other communication areas for this channel here. The &quot;About&quot; tab contains your &quot;profile&quot;, the photos page contain photo albums, and the events page contains events share by both yourself and your contacts.
+[ul][*]Your real name or at least a nickname everybody knows
+[*]A photo of you
+[*]Your location on the planet, at least to a country level.[/ul]
+
+In addition, if you'd like to meet people that share some general interests with you, please take a moment and add some &quot;Keywords&quot; to your profile. Such as &quot;music, linux, photography&quot; or whatever. You can add as many keywords as you like.
+
+To create an alternate profile, first go to [zrl=[baseurl]/settings/features]Settings &gt; Additional Features[/zrl] and enable &quot;Multiple Profiles&quot; there, otherwise you won't have the ability to use more than just your default profile.
+
+Then select &quot;Edit Profiles&quot; from the menu of your $Projectname site. You may edit an existing profile, change the profile photo, add things to a profile or create a new profile. You may also create a &quot;clone&quot; of an existing profile if you only wish to change a few items but don't wish to enter all the information again. To do that, click on the profile you want to clone and choose &quot;Clone this profile&quot; there.
+
+In the list of your profiles, you can also choose the contacts who can see a specific profile. Just click on &quot;Edit visibility&quot; next to the profile in question (only available for the profiles that are not your default profile) and then click on specific connections to add them to or remove them from the group of people who can see this profile.
+
+Once a profile has been selected, when the person views your profile, they will see the private profile you have assigned. If they are not authenticated, they will see your public profile.
+
+There is a setting which allows you to publish your profile to a directory and ensure that it can be found by others. You can change this setting on the &quot;Settings&quot; page.
+
+If you do not wish to be found be people unless you give them your channel address, you may leave your profile unpublished.
+
+[b]Keywords and Directory Search[/b]
+
+On the directory page, you may search for people with published profiles. Currently, only the name field and the keywords are searched.  You may also include such keywords in your default profile - which may be used to search for common interests with other members. Keywords are used in the channel suggestion tool and although they aren't visible in the directory, they are shown if people visit your profile page.
+
+On your Connnections page and in the directory there is a link to &quot;Suggestions&quot; or &quot;Channel Suggestions&quot;, respectively. This will find channels who have matching and/or similar keywords. The more keywords you provide, the more relevant the search results that are returned. These are sorted by relevance.
+
+See Also
+
+[zrl=[baseurl]/help/AdvancedSearch]Advanced Searching[/zrl]
+
 
 [h4]The grid, permissions and delegation[/h4]
 
