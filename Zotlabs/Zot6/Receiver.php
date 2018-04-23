@@ -123,7 +123,6 @@ class Receiver {
 				break;
 
 			case 'refresh':
-			case 'force_refresh':
 				$this->handler->Refresh($this->sender,$this->recipients);
 				break;
 

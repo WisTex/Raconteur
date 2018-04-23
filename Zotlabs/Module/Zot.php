@@ -2,7 +2,7 @@
 /**
  * @file Zotlabs/Module/Zot.php
  *
- * @brief Mercury endpoint.
+ * @brief Zot6 endpoint.
  *
  */
 
