@@ -325,8 +325,11 @@ static function zot_encode_locations($channel) {
 			// if this is a local channel that has been deleted, the hubloc is no good - make sure it is marked deleted
 			// so that nobody tries to use it.
 
-			if(intval($channel['channel_removed']) && $hub['hubloc_url'] === z_root())
-				$hub['hubloc_deleted'] = 1;
+			if($hub['hubloc_url'] === z_root()) {
+				if(intval($channel['channel_removed']))
+					$hub['hubloc_deleted'] = 1;
+				$hub['hubloc_callback'] = z_root() . '/zot';
+			}
 
 			$ret[] = [
 				'host'     => $hub['hubloc_host'],
