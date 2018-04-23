@@ -2065,3 +2065,35 @@ function jsonld_document_loader($url) {
 
 	return [];
 }
+
+
+/**
+ * @brief
+ *
+ * @param string $id
+ * @return boolean|string
+ *   false if no pub key found, otherwise return the pub key
+ */
+function get_webfinger_key($id) {
+
+	if(strpos($id,'acct:') === 0) {
+		$x = q("select xchan_pubkey from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' limit 1",
+			dbesc(str_replace('acct:','',$id))
+		);
+	}
+	if(! $x) {
+		$found = discover_by_webbie(str_replace('acct:','',$id));
+		if($found) {
+			$r = q("select xchan_pubkey from xchan left joing hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' limit 1",
+				dbesc(str_replace('acct:','',$id))
+			);
+		}
+	}
+	if($x && $x[0]['xchan_pubkey']) {
+		return ($x[0]['xchan_pubkey']);
+	}
+	return false;
+}
+
+
+
