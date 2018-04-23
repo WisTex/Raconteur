@@ -17,33 +17,15 @@ class Webfinger extends \Zotlabs\Web\Controller {
 	
 		$o .= '<br /><br />';
 		
-		$old = false;
 		if(x($_GET,'addr')) {
 			$addr = trim($_GET['addr']);
-	//		if(strpos($addr,'@') !== false) {
-				$res = webfinger_rfc7033($addr,true);
-				if(! $res) {
-					$res = old_webfinger($addr);
-					$old = true;
-				}
-	//		}
-	//		else {
-	//			if(function_exists('lrdd'))
-	//				$res = lrdd($addr);
-	//		}
-	
-			if($res && $old) {
-				foreach($res as $r) {
-					if($r['@attributes']['rel'] === 'http://microformats.org/profile/hcard') {
-						$hcard = unamp($r['@attributes']['href']);
-						require_once('library/HTML5/Parser.php');
-						$res['vcard'] = scrape_vcard($hcard);
-						break;
-					}
-				}
+
+			$res = webfinger_rfc7033($addr,true);
+			if(! $res) {
+				$res = old_webfinger($addr);
 			}
 	
-	
+		
 			$o .= '<pre>';
 			$o .= str_replace("\n",'<br />',print_r($res,true));
 			$o .= '</pre>';

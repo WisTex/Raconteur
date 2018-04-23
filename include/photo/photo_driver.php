@@ -75,6 +75,7 @@ abstract class photo_driver {
 
 	abstract function imageString();
 
+	abstract function clearexif();
 
 	public function __construct($data, $type='') {
 		$this->types = $this->supportedTypes();

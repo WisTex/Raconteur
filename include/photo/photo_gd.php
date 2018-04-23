@@ -35,6 +35,11 @@ class photo_gd extends photo_driver {
 	}
 
 
+	public function clearexif() {
+		return;
+	}
+
+
 	public function destroy() {
 		if($this->is_valid()) {
 			imagedestroy($this->image);
