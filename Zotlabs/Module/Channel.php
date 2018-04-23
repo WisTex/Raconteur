@@ -60,6 +60,29 @@ class Channel extends \Zotlabs\Web\Controller {
 		// we start loading content
 
 		profile_load($which,$profile);
+
+
+		// handle zot6 channel discovery 
+
+		if(zotvi_is_zot_request()) {
+			$channel = channelx_by_nick($which);
+			if(! $channel)
+				http_status_exit(404, 'Not found');
+
+		
+			$x = \zot6::zotinfo([ 'address' => $channel['channel_address'] ]);
+
+			$headers = [];
+			$headers['Content-Type'] = 'application/x-zot+json' ;
+
+			$ret = json_encode($x);
+			$hash = \Zotlabs\Web\HTTPSig::generate_digest($ret,false);
+			$headers['Digest'] = 'SHA-256=' . $hash;  
+			\Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],z_root() . '/channel/' . $channel['channel_address'],true);
+			echo $ret;
+			killme();
+		}
+
 	}
 
 	function get($update = 0, $load = false) {
