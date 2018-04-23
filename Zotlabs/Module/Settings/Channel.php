@@ -536,7 +536,7 @@ class Channel {
 			'$deny_gid' => acl2json($perm_defaults['deny_gid']),
 			'$suggestme' => $suggestme,
 			'$group_select' => $group_select,
-			'$role' => array('permissions_role' , t('Channel permissions category:'), $permissions_role, '', $perm_roles),
+			'$role' => array('permissions_role' , t('Channel role and privacy'), $permissions_role, '', $perm_roles),
 			'$defpermcat' => [ 'defpermcat', t('Default Permissions Group'), $default_permcat, '', $permcats ],	
 			'$permcat_enable' => feature_enabled(local_channel(),'permcats'),
 			'$profile_in_dir' => $profile_in_dir,
