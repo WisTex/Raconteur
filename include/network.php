@@ -2082,6 +2082,12 @@ function get_webfinger_key($id) {
 		);
 	}
 	if(! $x) {
+		if(strpos($id,'@') === false) {
+			$x = webfinger_rfc7033($id, false);
+			if($x && array_key_exists('properties',$x) && array_key_exists('https://w3id.org/security/v1#publicKeyPem',$x['properties'])) {
+				return $x['properties']['https://w3id.org/security/v1#publicKeyPem'];
+			}
+		}
 		$found = discover_by_webbie(str_replace('acct:','',$id));
 		if($found) {
 			$r = q("select xchan_pubkey from xchan left joing hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' limit 1",

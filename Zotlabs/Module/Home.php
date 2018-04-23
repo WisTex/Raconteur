@@ -14,6 +14,24 @@ class Home extends \Zotlabs\Web\Controller {
 	
 		call_hooks('home_init',$ret);
 	
+
+		if(zotvi_is_zot_request()) {
+
+			$key =  get_config('system','prvkey');
+		
+			$x = \zot6::zot_site_info();
+
+			$headers = [];
+			$headers['Content-Type'] = 'application/x-zot+json' ;
+
+			$ret = json_encode($x);
+			$hash = \Zotlabs\Web\HTTPSig::generate_digest($ret,false);
+			$headers['Digest'] = 'SHA-256=' . $hash;  
+			\Zotlabs\Web\HTTPSig::create_sig('',$headers,$key,z_root(),true);
+			echo $ret;
+			killme();
+		}
+
 		$splash = ((argc() > 1 && argv(1) === 'splash') ? true : false);
 	
 		$channel = \App::get_channel();
