@@ -34,6 +34,15 @@ class Owa extends \Zotlabs\Web\Controller {
 							where hubloc_addr = '%s' ",
 							dbesc(str_replace('acct:','',$keyId))
 						);
+						if(! $r) {
+							$found = discover_by_webbie(str_replace('acct:','',$keyId));
+							if($found) {
+								$r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash 
+									where hubloc_addr = '%s' ",
+									dbesc(str_replace('acct:','',$keyId))
+								);
+							}
+						}
 						if($r) {
 							foreach($r as $hubloc) {
 								$verified = \Zotlabs\Web\HTTPSig::verify('',$hubloc['xchan_pubkey']);	
