@@ -52,7 +52,6 @@
 					</div>
 					<div class="wall-item-ago"  id="wall-item-ago-{{$item.id}}">
 						{{if $item.verified}}<i class="fa fa-check item-verified" title="{{$item.verified}}"></i>&nbsp;{{elseif $item.forged}}<i class="fa fa-exclamation item-forged" title="{{$item.forged}}"></i>&nbsp;{{/if}}{{if $item.location}}<span class="wall-item-location p-location" id="wall-item-location-{{$item.id}}">{{$item.location}},&nbsp;</span>{{/if}}<span class="autotime" title="{{$item.isotime}}"><time class="dt-published" datetime="{{$item.isotime}}">{{$item.localtime}}</time>{{if $item.editedtime}}&nbsp;{{$item.editedtime}}{{/if}}{{if $item.expiretime}}&nbsp;{{$item.expiretime}}{{/if}}</span>{{if $item.editedtime}}&nbsp;<i class="fa fa-pencil"></i>{{/if}}&nbsp;{{if $item.app}}<span class="item.app">{{$item.str_app}}</span>{{/if}}
-{{if $item.plink}}<a href="{{$item.plink.href}}" title="{{$item.plink.title}}"><i class="generic-icons-nav fa fa-fw fa-external-link"></i></a>{{/if}}
 					</div>
 				</div>
 				{{if $item.divider}}
