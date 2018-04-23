@@ -96,6 +96,19 @@ class photo_imagick extends photo_driver {
 	}
 
 
+	public function clearexif() {
+
+		$profiles = $this->image->getImageProfiles("icc", true);
+
+		$this->image->stripImage();
+
+		if(!empty($profiles)) {
+    		$this->image->profileImage("icc", $profiles['icc']);
+		}
+	}
+
+
+
 	public function getImage() {
 		if(!$this->is_valid())
 			return FALSE;

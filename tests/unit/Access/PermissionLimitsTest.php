@@ -66,7 +66,7 @@ class PermissionLimitsTest extends UnitTestCase {
 		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['write_pages']);
 		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['write_wiki']);
 		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['post_wall']);
-		$this->assertEquals(PERMS_PUBLIC,   $stdlimits['post_comments']);
+		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['post_comments']);
 		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['post_mail']);
 		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['post_like']);
 		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['tag_deliver']);

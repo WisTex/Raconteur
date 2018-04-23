@@ -211,6 +211,10 @@ function photo_upload($channel, $observer, $args) {
 		$ph->orient($exif);
 	}
 
+
+	$ph->clearexif();
+
+
 	@unlink($src);
 
 	$max_length = get_config('system','max_image_length');
