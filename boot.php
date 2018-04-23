@@ -48,10 +48,11 @@ require_once('include/xchan.php');
 require_once('include/hubloc.php');
 require_once('include/attach.php');
 require_once('include/bbcode.php');
+require_once('include/zot6.php');
 
 define ( 'PLATFORM_NAME',           'hubzilla' );
 define ( 'STD_VERSION',             '3.5' );
-define ( 'ZOT_REVISION',            '6.0a' );
+define ( 'ZOT_REVISION',            '6.0b' );
 
 
 define ( 'DB_UPDATE_VERSION',       1212 );
