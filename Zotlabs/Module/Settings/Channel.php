@@ -21,6 +21,10 @@ class Channel {
 		$role = ((x($_POST,'permissions_role')) ? notags(trim($_POST['permissions_role'])) : '');
 		$oldrole = get_pconfig(local_channel(),'system','permissions_role');
 
+		// This mapping can be removed after 3.4 release
+		if($oldrole === 'social_party') {
+			$oldrole = 'social_federation';
+		}
 	
 		if(($role != $oldrole) || ($role === 'custom')) {
 	
@@ -471,6 +475,10 @@ class Channel {
 		$permissions_role = get_pconfig(local_channel(),'system','permissions_role');
 		if(! $permissions_role)
 			$permissions_role = 'custom';
+		// compatibility mapping - can be removed after 3.4 release
+		if($permissions_role === 'social_party') 
+			$permissions_role = 'social_federation';
+
 	
 		$permissions_set = (($permissions_role != 'custom') ? true : false);
 
