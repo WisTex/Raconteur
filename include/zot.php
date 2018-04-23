@@ -3811,25 +3811,27 @@ function process_channel_sync_delivery($sender, $arr, $deliveries) {
 					foreach($x as $y) {
 
 						// for each group, loop on members list we just received
-						foreach($members[$y['hash']] as $member) {
-							$found = false;
-							$z = q("select xchan from group_member where gid = %d and uid = %d and xchan = '%s' limit 1",
-								intval($y['id']),
-								intval($channel['channel_id']),
-								dbesc($member)
-							);
-							if($z)
-								$found = true;
-
-							// if somebody is in the group that wasn't before - add them
-
-							if(! $found) {
-								q("INSERT INTO group_member (uid, gid, xchan)
-									VALUES( %d, %d, '%s' ) ",
-									intval($channel['channel_id']),
+						if(isset($y['hash']) && isset($members[$y['hash']])) {
+							foreach($members[$y['hash']] as $member) {
+								$found = false;
+								$z = q("select xchan from group_member where gid = %d and uid = %d and xchan = '%s' limit 1",
 									intval($y['id']),
+									intval($channel['channel_id']),
 									dbesc($member)
 								);
+								if($z)
+									$found = true;
+
+								// if somebody is in the group that wasn't before - add them
+
+								if(! $found) {
+									q("INSERT INTO group_member (uid, gid, xchan)
+										VALUES( %d, %d, '%s' ) ",
+										intval($channel['channel_id']),
+										intval($y['id']),
+										dbesc($member)
+									);
+								}
 							}
 						}
 
