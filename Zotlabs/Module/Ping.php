@@ -143,7 +143,7 @@ class Ping extends \Zotlabs\Web\Controller {
 
 		$sql_extra = '';
 		if(! ($vnotify & VNOTIFY_LIKE))
-			$sql_extra = ' AND verb NOT IN ("' . dbesc(ACTIVITY_LIKE) . '", "' . dbesc(ACTIVITY_DISLIKE) . '") ';
+			$sql_extra = " AND verb NOT IN ('" . dbesc(ACTIVITY_LIKE) . "', '" . dbesc(ACTIVITY_DISLIKE) . "') ";
 
 		$discover_tab_on = can_view_public_stream();
 

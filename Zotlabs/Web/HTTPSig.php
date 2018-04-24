@@ -195,7 +195,9 @@ class HTTPSig {
 		if($x && $x[0]['xchan_pubkey']) {
 			return ($x[0]['xchan_pubkey']);
 		}
-		$r = as_fetch($id);
+
+		if(function_exists('as_fetch'))
+			$r = as_fetch($id);
 
 		if($r) {
 			$j = json_decode($r,true);

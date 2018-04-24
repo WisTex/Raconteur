@@ -21,7 +21,7 @@ $(document).ready(function () {
 		var pageName = url.href.split('/').pop().split('#').shift().split('?').shift();
 		var linkName = $(this).attr('href').split('/').pop();
 		if (pageName === linkName) {
-			var tocUl = $(this).closest('a').append('<ul>').find('ul');
+			var tocUl = $(this).closest('a').after('<ul>').next('ul');
 			tocUl.removeClass();  // Classes are automatically added to <ul> elements by something else
 			tocUl.toc({content: "#doco-content", headings: "h3"});
 			tocUl.addClass('toc-content');

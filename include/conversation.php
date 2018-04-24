@@ -930,7 +930,7 @@ function thread_action_menu($item,$mode = '') {
 		$menu[] = [ 
 			'menu' => 'view_source',
 			'title' => t('View Source'),
-			'icon' => 'eye',
+			'icon' => 'code',
 			'action' => 'viewsrc(' . $item['id'] . '); return false;',
 			'href' => '#'
 		];
