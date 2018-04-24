@@ -822,6 +822,14 @@ function get_tags($s) {
 		}
 	}
 
+	// match bracket mentions
+
+	if(preg_match_all('/([@!]\{.*?\})/',$s,$match)) {
+		foreach($match[1] as $mtch) {
+			$ret[] = $mtch;
+		}
+	}
+
 	// Match full names against @tags including the space between first and last
 	// We will look these up afterward to see if they are full names or not recognisable.
 
@@ -2029,17 +2037,32 @@ function undo_post_tagging($s) {
 	$cnt = preg_match_all('/([@#])(\!*)\[zrl=(.*?)\](.*?)\[\/zrl\]/ism',$s,$matches,PREG_SET_ORDER);
 	if($cnt) {
 		foreach($matches as $mtch) {
-			$s = str_replace($mtch[0], $mtch[1] . $mtch[2] . quote_tag($mtch[4]),$s);
+			$x = q("select xchan_addr, xchan_url from xchan where xchan_url = '%s' limit 1",
+				dbesc($mtch[3])
+			);
+			if($x) {
+				$s = str_replace($mtch[0], $mtch[1] . $mtch[2] . '{' . (($x[0]['xchan_addr']) ? $x[0]['xchan_addr'] : $x[0]['xchan_url']) . '}', $s);
+			}
+			else {
+				$s = str_replace($mtch[0], $mtch[1] . $mtch[2] . quote_tag($mtch[4]),$s);
+			}
 		}
 	}
 	// undo forum tags
 	$cnt = preg_match_all('/\!\[zrl=(.*?)\](.*?)\[\/zrl\]/ism',$s,$matches,PREG_SET_ORDER);
 	if($cnt) {
 		foreach($matches as $mtch) {
-			$s = str_replace($mtch[0], '!' . quote_tag($mtch[2]),$s);
+			$x = q("select xchan_addr, xchan_url from xchan where xchan_url = '%s' limit 1",
+				dbesc($mtch[1])
+			);
+			if($x) {
+				$s = str_replace($mtch[0], '!' . '{' . (($x[0]['xchan_addr']) ? $x[0]['xchan_addr'] : $x[0]['xchan_url']) . '}', $s);
+			}
+			else {
+				$s = str_replace($mtch[0], '!' . quote_tag($mtch[2]),$s);
+			}
 		}
 	}
-
 
 	return $s;
 }
@@ -2615,53 +2638,66 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 		$forum = false;
 		$trailing_plus_name = false;
 
-		// @channel+ is a forum or network delivery tag
-
-		if(substr($newname,-1,1) === '+') {
-			$forum = true;
+		if(substr($name,0,1) === '{' && substr($name,-1,1) === '}') {
+			$newname = substr($name,1);
 			$newname = substr($newname,0,-1);
+
+			$r = q("select * from xchan where xchan_addr = '%s' or xchan_url = '%s' limit 1",
+				dbesc($newname),
+				dbesc($newname)
+			);
 		}
 
-		// Here we're looking for an address book entry as provided by the auto-completer
-		// of the form something+nnn where nnn is an abook_id or the first chars of xchan_hash
+		if(! $r) {
 
+			// @channel+ is a forum or network delivery tag
 
-		// If there's a +nnn in the string make sure there isn't a space preceding it
-
-		$t1 = strpos($newname,' ');
-		$t2 = strrpos($newname,'+');
-
-		if($t1 && $t2 && $t1 < $t2)
-			$t2 = 0;
-
-		if(($t2) && (! $diaspora)) {
-			//get the id
-
-			$tagcid = urldecode(substr($newname,$t2 + 1));
-
-			if(strrpos($tagcid,' '))
-				$tagcid = substr($tagcid,0,strrpos($tagcid,' '));
-
-			if(strlen($tagcid) < 16)
-				$abook_id = intval($tagcid);
-			//remove the next word from tag's name
-			if(strpos($name,' ')) {
-				$name = substr($name,0,strpos($name,' '));
+			if(substr($newname,-1,1) === '+') {
+				$forum = true;
+				$newname = substr($newname,0,-1);
 			}
 
-			if($abook_id) { // if there was an id
-				// select channel with that id from the logged in user's address book
-				$r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash
-					WHERE abook_id = %d AND abook_channel = %d LIMIT 1",
-						intval($abook_id),
-						intval($profile_uid)
-				);
-			}
-			else {
-				$r = q("SELECT * FROM xchan
-					WHERE xchan_hash like '%s%%' LIMIT 1",
-						dbesc($tagcid)
-				);
+			// Here we're looking for an address book entry as provided by the auto-completer
+			// of the form something+nnn where nnn is an abook_id or the first chars of xchan_hash
+
+
+			// If there's a +nnn in the string make sure there isn't a space preceding it
+
+			$t1 = strpos($newname,' ');
+			$t2 = strrpos($newname,'+');
+	
+			if($t1 && $t2 && $t1 < $t2)
+				$t2 = 0;
+
+			if(($t2) && (! $diaspora)) {
+				//get the id
+
+				$tagcid = urldecode(substr($newname,$t2 + 1));
+
+				if(strrpos($tagcid,' '))
+					$tagcid = substr($tagcid,0,strrpos($tagcid,' '));
+
+				if(strlen($tagcid) < 16)
+					$abook_id = intval($tagcid);
+				//remove the next word from tag's name
+				if(strpos($name,' ')) {
+					$name = substr($name,0,strpos($name,' '));
+				}
+
+				if($abook_id) { // if there was an id
+					// select channel with that id from the logged in user's address book
+					$r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash
+						WHERE abook_id = %d AND abook_channel = %d LIMIT 1",
+							intval($abook_id),
+							intval($profile_uid)
+					);
+				}
+				else {
+					$r = q("SELECT * FROM xchan
+						WHERE xchan_hash like '%s%%' LIMIT 1",
+							dbesc($tagcid)
+					);
+				}
 			}
 		}
 
