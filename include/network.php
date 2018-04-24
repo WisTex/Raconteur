@@ -2085,7 +2085,11 @@ function get_webfinger_key($id) {
 		if(strpos($id,'@') === false) {
 			$x = webfinger_rfc7033($id, false);
 			if($x && array_key_exists('properties',$x) && array_key_exists('https://w3id.org/security/v1#publicKeyPem',$x['properties'])) {
-				return $x['properties']['https://w3id.org/security/v1#publicKeyPem'];
+				$key = $x['properties']['https://w3id.org/security/v1#publicKeyPem'];
+				if(strstr($key,'RSA ')) {
+					$key = rsatopem($key);
+				}
+				return $key;
 			}
 		}
 		$found = discover_by_webbie(str_replace('acct:','',$id));
