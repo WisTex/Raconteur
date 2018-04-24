@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 3.4RC\n"
+"Project-Id-Version: 3.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-18 08:37+0200\n"
+"POT-Creation-Date: 2018-04-23 11:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -94,7 +94,7 @@ msgid "Social Networking"
 msgstr ""
 
 #: ../../Zotlabs/Access/PermissionRoles.php:284
-msgid "Social - Party"
+msgid "Social - Federation"
 msgstr ""
 
 #: ../../Zotlabs/Access/PermissionRoles.php:285
@@ -451,15 +451,16 @@ msgstr ""
 #: ../../addon/likebanner/likebanner.php:57
 #: ../../addon/redphotos/redphotos.php:136 ../../addon/irc/irc.php:53
 #: ../../addon/ljpost/ljpost.php:86 ../../addon/startpage/startpage.php:113
-#: ../../addon/diaspora/diaspora.php:823
+#: ../../addon/diaspora/diaspora.php:825
 #: ../../addon/rainbowtag/rainbowtag.php:85 ../../addon/hzfiles/hzfiles.php:84
 #: ../../addon/visage/visage.php:170 ../../addon/nsabait/nsabait.php:161
 #: ../../addon/mailtest/mailtest.php:100
 #: ../../addon/openstreetmap/openstreetmap.php:168
-#: ../../addon/rtof/rtof.php:101 ../../addon/jappixmini/jappixmini.php:371
+#: ../../addon/fuzzloc/fuzzloc.php:191 ../../addon/rtof/rtof.php:101
+#: ../../addon/jappixmini/jappixmini.php:371
 #: ../../addon/superblock/superblock.php:120 ../../addon/nofed/nofed.php:80
 #: ../../addon/redred/redred.php:119 ../../addon/logrot/logrot.php:35
-#: ../../addon/frphotos/frphotos.php:97 ../../addon/pubcrawl/pubcrawl.php:1069
+#: ../../addon/frphotos/frphotos.php:97 ../../addon/pubcrawl/pubcrawl.php:1072
 #: ../../addon/chords/Mod_Chords.php:60 ../../addon/libertree/libertree.php:85
 #: ../../addon/flattrwidget/flattrwidget.php:124
 #: ../../addon/statusnet/statusnet.php:322
@@ -555,7 +556,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Photos.php:817 ../../Zotlabs/Module/Photos.php:1273
 #: ../../Zotlabs/Lib/Apps.php:754 ../../Zotlabs/Lib/Apps.php:833
 #: ../../Zotlabs/Storage/Browser.php:164 ../../Zotlabs/Widget/Portfolio.php:95
-#: ../../Zotlabs/Widget/Album.php:84 ../../addon/pubcrawl/as.php:878
+#: ../../Zotlabs/Widget/Album.php:84 ../../addon/pubcrawl/as.php:891
 #: ../../include/conversation.php:1160
 msgid "Unknown"
 msgstr ""
@@ -716,7 +717,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Connedit.php:910 ../../Zotlabs/Module/Profiles.php:787
 #: ../../addon/openid/MysqlProvider.php:56
 #: ../../addon/openid/MysqlProvider.php:57 ../../addon/rtof/rtof.php:93
-#: ../../addon/redred/redred.php:107 ../../include/network.php:1769
+#: ../../addon/redred/redred.php:107 ../../include/network.php:1770
 msgid "Email"
 msgstr ""
 
@@ -1077,8 +1078,8 @@ msgstr ""
 #: ../../addon/dwpost/dwpost.php:85 ../../addon/ljpost/ljpost.php:70
 #: ../../addon/ljpost/ljpost.php:82 ../../addon/rainbowtag/rainbowtag.php:81
 #: ../../addon/visage/visage.php:166 ../../addon/nsabait/nsabait.php:157
-#: ../../addon/rtof/rtof.php:81 ../../addon/rtof/rtof.php:85
-#: ../../addon/jappixmini/jappixmini.php:309
+#: ../../addon/fuzzloc/fuzzloc.php:178 ../../addon/rtof/rtof.php:81
+#: ../../addon/rtof/rtof.php:85 ../../addon/jappixmini/jappixmini.php:309
 #: ../../addon/jappixmini/jappixmini.php:313
 #: ../../addon/jappixmini/jappixmini.php:343
 #: ../../addon/jappixmini/jappixmini.php:351
@@ -1128,8 +1129,8 @@ msgstr ""
 #: ../../addon/dwpost/dwpost.php:85 ../../addon/ljpost/ljpost.php:70
 #: ../../addon/ljpost/ljpost.php:82 ../../addon/rainbowtag/rainbowtag.php:81
 #: ../../addon/visage/visage.php:166 ../../addon/nsabait/nsabait.php:157
-#: ../../addon/rtof/rtof.php:81 ../../addon/rtof/rtof.php:85
-#: ../../addon/jappixmini/jappixmini.php:309
+#: ../../addon/fuzzloc/fuzzloc.php:178 ../../addon/rtof/rtof.php:81
+#: ../../addon/rtof/rtof.php:85 ../../addon/jappixmini/jappixmini.php:309
 #: ../../addon/jappixmini/jappixmini.php:313
 #: ../../addon/jappixmini/jappixmini.php:343
 #: ../../addon/jappixmini/jappixmini.php:351
@@ -1446,13 +1447,13 @@ msgstr ""
 #: ../../Zotlabs/Module/Subthread.php:111 ../../Zotlabs/Module/Tagger.php:69
 #: ../../Zotlabs/Module/Like.php:384
 #: ../../addon/redphotos/redphotohelper.php:71
-#: ../../addon/diaspora/Receiver.php:1500 ../../addon/pubcrawl/as.php:1388
+#: ../../addon/diaspora/Receiver.php:1500 ../../addon/pubcrawl/as.php:1405
 #: ../../include/conversation.php:116 ../../include/text.php:2005
 msgid "photo"
 msgstr ""
 
 #: ../../Zotlabs/Module/Subthread.php:111 ../../Zotlabs/Module/Like.php:384
-#: ../../addon/diaspora/Receiver.php:1500 ../../addon/pubcrawl/as.php:1388
+#: ../../addon/diaspora/Receiver.php:1500 ../../addon/pubcrawl/as.php:1405
 #: ../../include/conversation.php:144 ../../include/text.php:2011
 msgid "status"
 msgstr ""
@@ -1559,6 +1560,7 @@ msgid ""
 msgstr ""
 
 #: ../../Zotlabs/Module/New_channel.php:149
+#: ../../Zotlabs/Module/Settings/Channel.php:539
 #: ../../Zotlabs/Module/Register.php:257
 msgid "Channel role and privacy"
 msgstr ""
@@ -1579,9 +1581,17 @@ msgstr ""
 
 #: ../../Zotlabs/Module/New_channel.php:153
 msgid ""
-"A channel is your identity on this network. It can represent a person, a "
-"blog, or a forum to name a few. Channels can make connections with other "
-"channels to share information with highly detailed permissions."
+"A channel is a unique network identity. It can represent a person (social "
+"network profile), a forum (group), a business or celebrity page, a newsfeed, "
+"and many other things. Channels can make connections with other channels to "
+"share information with each other."
+msgstr ""
+
+#: ../../Zotlabs/Module/New_channel.php:153
+msgid ""
+"The type of channel you create affects the basic privacy settings, the "
+"permissions that are granted to connections/friends, and also the channel's "
+"visibility across the network."
 msgstr ""
 
 #: ../../Zotlabs/Module/New_channel.php:154
@@ -3337,11 +3347,11 @@ msgctxt "acl"
 msgid "Profile"
 msgstr ""
 
-#: ../../Zotlabs/Module/Moderate.php:62
+#: ../../Zotlabs/Module/Moderate.php:65
 msgid "Comment approved"
 msgstr ""
 
-#: ../../Zotlabs/Module/Moderate.php:66
+#: ../../Zotlabs/Module/Moderate.php:69
 msgid "Comment deleted"
 msgstr ""
 
@@ -3601,10 +3611,6 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Settings/Channel.php:530
 msgid "Profile to assign new connections"
-msgstr ""
-
-#: ../../Zotlabs/Module/Settings/Channel.php:539
-msgid "Channel permissions category:"
 msgstr ""
 
 #: ../../Zotlabs/Module/Settings/Channel.php:540
@@ -4874,7 +4880,7 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Photos.php:1160 ../../Zotlabs/Lib/ThreadItem.php:205
 #: ../../include/conversation.php:1981 ../../include/channel.php:1539
-#: ../../include/taxonomy.php:660
+#: ../../include/taxonomy.php:661
 msgctxt "noun"
 msgid "Like"
 msgid_plural "Likes"
@@ -4917,7 +4923,7 @@ msgid "Close"
 msgstr ""
 
 #: ../../Zotlabs/Module/Photos.php:1365 ../../Zotlabs/Module/Photos.php:1378
-#: ../../Zotlabs/Module/Photos.php:1379 ../../include/photos.php:663
+#: ../../Zotlabs/Module/Photos.php:1379 ../../include/photos.php:667
 msgid "Recent Photos"
 msgstr ""
 
@@ -5218,7 +5224,7 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Profile_photo.php:120
 #: ../../Zotlabs/Module/Profile_photo.php:248
-#: ../../include/photo/photo_driver.php:740
+#: ../../include/photo/photo_driver.php:741
 msgid "Profile Photos"
 msgstr ""
 
@@ -6791,12 +6797,12 @@ msgid "Previous action reversed."
 msgstr ""
 
 #: ../../Zotlabs/Module/Like.php:438 ../../addon/diaspora/Receiver.php:1529
-#: ../../addon/pubcrawl/as.php:1423 ../../include/conversation.php:160
+#: ../../addon/pubcrawl/as.php:1440 ../../include/conversation.php:160
 #, php-format
 msgid "%1$s likes %2$s's %3$s"
 msgstr ""
 
-#: ../../Zotlabs/Module/Like.php:440 ../../addon/pubcrawl/as.php:1425
+#: ../../Zotlabs/Module/Like.php:440 ../../addon/pubcrawl/as.php:1442
 #: ../../include/conversation.php:163
 #, php-format
 msgid "%1$s doesn't like %2$s's %3$s"
@@ -8301,11 +8307,11 @@ msgstr ""
 msgid "Add Tag"
 msgstr ""
 
-#: ../../Zotlabs/Lib/ThreadItem.php:281 ../../include/taxonomy.php:574
+#: ../../Zotlabs/Lib/ThreadItem.php:281 ../../include/taxonomy.php:575
 msgid "like"
 msgstr ""
 
-#: ../../Zotlabs/Lib/ThreadItem.php:282 ../../include/taxonomy.php:575
+#: ../../Zotlabs/Lib/ThreadItem.php:282 ../../include/taxonomy.php:576
 msgid "dislike"
 msgstr ""
 
@@ -8607,9 +8613,9 @@ msgstr ""
 
 #: ../../Zotlabs/Widget/Appcategories.php:40
 #: ../../include/contact_widgets.php:97 ../../include/contact_widgets.php:141
-#: ../../include/contact_widgets.php:186 ../../include/taxonomy.php:408
-#: ../../include/taxonomy.php:490 ../../include/taxonomy.php:510
-#: ../../include/taxonomy.php:531
+#: ../../include/contact_widgets.php:186 ../../include/taxonomy.php:409
+#: ../../include/taxonomy.php:491 ../../include/taxonomy.php:511
+#: ../../include/taxonomy.php:532
 msgid "Categories"
 msgstr ""
 
@@ -8797,8 +8803,8 @@ msgstr ""
 msgid "Click to show more"
 msgstr ""
 
-#: ../../Zotlabs/Widget/Tagcloud.php:22 ../../include/taxonomy.php:319
-#: ../../include/taxonomy.php:448 ../../include/taxonomy.php:469
+#: ../../Zotlabs/Widget/Tagcloud.php:22 ../../include/taxonomy.php:320
+#: ../../include/taxonomy.php:449 ../../include/taxonomy.php:470
 msgid "Tags"
 msgstr ""
 
@@ -10115,38 +10121,38 @@ msgstr ""
 msgid "declared undying love for"
 msgstr ""
 
-#: ../../addon/diaspora/diaspora.php:779
+#: ../../addon/diaspora/diaspora.php:781
 msgid "Diaspora Protocol Settings updated."
 msgstr ""
 
-#: ../../addon/diaspora/diaspora.php:798
+#: ../../addon/diaspora/diaspora.php:800
 msgid ""
 "The Diaspora protocol does not support location independence. Connections "
 "you make within that network may be unreachable from alternate channel "
 "locations."
 msgstr ""
 
-#: ../../addon/diaspora/diaspora.php:801
+#: ../../addon/diaspora/diaspora.php:803
 msgid "Enable the Diaspora protocol for this channel"
 msgstr ""
 
-#: ../../addon/diaspora/diaspora.php:805
+#: ../../addon/diaspora/diaspora.php:807
 msgid "Allow any Diaspora member to comment on your public posts"
 msgstr ""
 
-#: ../../addon/diaspora/diaspora.php:809
+#: ../../addon/diaspora/diaspora.php:811
 msgid "Prevent your hashtags from being redirected to other sites"
 msgstr ""
 
-#: ../../addon/diaspora/diaspora.php:813
+#: ../../addon/diaspora/diaspora.php:815
 msgid "Sign and forward posts and comments with no existing Diaspora signature"
 msgstr ""
 
-#: ../../addon/diaspora/diaspora.php:818
+#: ../../addon/diaspora/diaspora.php:820
 msgid "Followed hashtags (comma separated, do not include the #)"
 msgstr ""
 
-#: ../../addon/diaspora/diaspora.php:823
+#: ../../addon/diaspora/diaspora.php:825
 msgid "Diaspora Protocol Settings"
 msgstr ""
 
@@ -10389,6 +10395,32 @@ msgstr ""
 msgid "text to include in all outgoing posts from this site"
 msgstr ""
 
+#: ../../addon/fuzzloc/fuzzloc.php:148
+msgid "Fuzzloc Settings updated."
+msgstr ""
+
+#: ../../addon/fuzzloc/fuzzloc.php:175
+msgid ""
+"Fuzzloc allows you to blur your precise location if your channel uses "
+"browser location mapping."
+msgstr ""
+
+#: ../../addon/fuzzloc/fuzzloc.php:178
+msgid "Enable Fuzzloc Plugin"
+msgstr ""
+
+#: ../../addon/fuzzloc/fuzzloc.php:182
+msgid "Minimum offset in meters"
+msgstr ""
+
+#: ../../addon/fuzzloc/fuzzloc.php:186
+msgid "Maximum offset in meters"
+msgstr ""
+
+#: ../../addon/fuzzloc/fuzzloc.php:191
+msgid "Fuzzloc Settings"
+msgstr ""
+
 #: ../../addon/rtof/rtof.php:45
 msgid "Post to Friendica"
 msgstr ""
@@ -10591,35 +10623,35 @@ msgstr ""
 msgid "Friendica Login Password"
 msgstr ""
 
-#: ../../addon/pubcrawl/as.php:1129 ../../addon/pubcrawl/as.php:1256
-#: ../../addon/pubcrawl/as.php:1432 ../../include/network.php:1768
+#: ../../addon/pubcrawl/as.php:1146 ../../addon/pubcrawl/as.php:1273
+#: ../../addon/pubcrawl/as.php:1449 ../../include/network.php:1769
 msgid "ActivityPub"
 msgstr ""
 
-#: ../../addon/pubcrawl/pubcrawl.php:1050
+#: ../../addon/pubcrawl/pubcrawl.php:1053
 msgid "ActivityPub Protocol Settings updated."
 msgstr ""
 
-#: ../../addon/pubcrawl/pubcrawl.php:1059
+#: ../../addon/pubcrawl/pubcrawl.php:1062
 msgid ""
 "The ActivityPub protocol does not support location independence. Connections "
 "you make within that network may be unreachable from alternate channel "
 "locations."
 msgstr ""
 
-#: ../../addon/pubcrawl/pubcrawl.php:1062
+#: ../../addon/pubcrawl/pubcrawl.php:1065
 msgid "Enable the ActivityPub protocol for this channel"
 msgstr ""
 
-#: ../../addon/pubcrawl/pubcrawl.php:1065
+#: ../../addon/pubcrawl/pubcrawl.php:1068
 msgid "Send multi-media HTML articles"
 msgstr ""
 
-#: ../../addon/pubcrawl/pubcrawl.php:1065
+#: ../../addon/pubcrawl/pubcrawl.php:1068
 msgid "Not supported by some microblog services such as Mastodon"
 msgstr ""
 
-#: ../../addon/pubcrawl/pubcrawl.php:1069
+#: ../../addon/pubcrawl/pubcrawl.php:1072
 msgid "ActivityPub Protocol Settings"
 msgstr ""
 
@@ -12180,7 +12212,7 @@ msgid "Profile Details"
 msgstr ""
 
 #: ../../include/conversation.php:1837 ../../include/nav.php:404
-#: ../../include/photos.php:662
+#: ../../include/photos.php:666
 msgid "Photo Albums"
 msgstr ""
 
@@ -13362,43 +13394,43 @@ msgstr ""
 msgid "view full size"
 msgstr ""
 
-#: ../../include/network.php:1763 ../../include/network.php:1764
+#: ../../include/network.php:1764 ../../include/network.php:1765
 msgid "Friendica"
 msgstr ""
 
-#: ../../include/network.php:1765
+#: ../../include/network.php:1766
 msgid "OStatus"
 msgstr ""
 
-#: ../../include/network.php:1766
+#: ../../include/network.php:1767
 msgid "GNU-Social"
 msgstr ""
 
-#: ../../include/network.php:1767
+#: ../../include/network.php:1768
 msgid "RSS/Atom"
 msgstr ""
 
-#: ../../include/network.php:1770
+#: ../../include/network.php:1771
 msgid "Diaspora"
 msgstr ""
 
-#: ../../include/network.php:1771
+#: ../../include/network.php:1772
 msgid "Facebook"
 msgstr ""
 
-#: ../../include/network.php:1772
+#: ../../include/network.php:1773
 msgid "Zot"
 msgstr ""
 
-#: ../../include/network.php:1773
+#: ../../include/network.php:1774
 msgid "LinkedIn"
 msgstr ""
 
-#: ../../include/network.php:1774
+#: ../../include/network.php:1775
 msgid "XMPP/IM"
 msgstr ""
 
-#: ../../include/network.php:1775
+#: ../../include/network.php:1776
 msgid "MySpace"
 msgstr ""
 
@@ -13870,35 +13902,35 @@ msgstr ""
 msgid "Provide a personal tag cloud on your channel page"
 msgstr ""
 
-#: ../../include/taxonomy.php:319
+#: ../../include/taxonomy.php:320
 msgid "Trending"
 msgstr ""
 
-#: ../../include/taxonomy.php:551
+#: ../../include/taxonomy.php:552
 msgid "Keywords"
 msgstr ""
 
-#: ../../include/taxonomy.php:572
+#: ../../include/taxonomy.php:573
 msgid "have"
 msgstr ""
 
-#: ../../include/taxonomy.php:572
+#: ../../include/taxonomy.php:573
 msgid "has"
 msgstr ""
 
-#: ../../include/taxonomy.php:573
+#: ../../include/taxonomy.php:574
 msgid "want"
 msgstr ""
 
-#: ../../include/taxonomy.php:573
+#: ../../include/taxonomy.php:574
 msgid "wants"
 msgstr ""
 
-#: ../../include/taxonomy.php:574
+#: ../../include/taxonomy.php:575
 msgid "likes"
 msgstr ""
 
-#: ../../include/taxonomy.php:575
+#: ../../include/taxonomy.php:576
 msgid "dislikes"
 msgstr ""
 
@@ -14136,21 +14168,21 @@ msgstr ""
 msgid "Image file is empty."
 msgstr ""
 
-#: ../../include/photos.php:322
+#: ../../include/photos.php:326
 msgid "Photo storage failed."
 msgstr ""
 
-#: ../../include/photos.php:371
+#: ../../include/photos.php:375
 msgid "a new photo"
 msgstr ""
 
-#: ../../include/photos.php:375
+#: ../../include/photos.php:379
 #, php-format
 msgctxt "photo_upload"
 msgid "%1$s posted %2$s to %3$s"
 msgstr ""
 
-#: ../../include/photos.php:667
+#: ../../include/photos.php:671
 msgid "Upload New Photos"
 msgstr ""
 
@@ -14167,7 +14199,7 @@ msgstr ""
 msgid "Unable to verify site signature for %s"
 msgstr ""
 
-#: ../../include/zot.php:4217
+#: ../../include/zot.php:4219
 msgid "invalid target signature"
 msgstr ""
 

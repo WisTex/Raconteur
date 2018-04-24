@@ -116,7 +116,7 @@ even if we have had our occasional disagreements.
 [li]Simon[/li]
 [li]zottel[/li]
 [li]Christian Vogeley[/li]
-[li]Jeroen van Riet Paap (jeroenpraat)[/li]
+[li]jeroenpraat[/li]
 [li]Michael Vogel[/li]
 [li]erik[/li]
 [li]Zach Prezkuta[/li]
