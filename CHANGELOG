@@ -1,3 +1,73 @@
+Hubzilla 3.4 (????-??-??)
+
+	- Implement trending tags for mod pubstream
+ 	- Relax restrictions to the design tools menu to allow those with write_pages permission
+	- Add alt pager to mod moderate
+	- Show existing cover photo when changing it
+	- Update to bootstrap lib to version 4.1
+	- Provide a higher accuracy method for active channels information
+	- Provide visible star status for starred posts
+	- Move the thread author menu to the wall item photo
+	- Accept system_language through either get or post
+	- Remove recipient name from stored notifications but keep them in emails
+	- Fix issue of being forced to log back in after leaving a delegated channel
+	- Implement last commented expiration setting in mod admin
+	- Create catcloud widget and provide a type option which can include 'cards' or 'articles'
+	- Modified notifications widget to add the public stream when the current user is allowed to see it only
+	- Don't provide a connect button for transient identities
+	- Merge techlevels and features
+	- Implement auto-save posts and comments in browser using localStorage
+	- Display directory server in siteinfo.json
+	- Bring back the dnt policy document
+	- Implement OAuth2
+	- Add basic structure for additional features documentation
+	- Community tag refactor
+	- Obscurify chats
+	- Provide a way to share wiki pages
+	- Update folder timestamp on uploaded files
+	- Code optimisations and de-duplication on updating parent commented timestamp
+	- Turn newmember widget into a feature
+	- Make list mode work in cards and articles
+	- Make alt pager work for articles and cards
+	- Initial support for alternative sort orders on the cloud pages
+	- Add Ochannel module for testing OStatus bad behaviour
+	- Add the social - federation permission role
+	- Update justified gallery lib from 3.6.3 to 3.6.5
+
+	Bugfixes
+	- Fix regression with forum widget unseen count
+	- Fix issue with imagemagick exif info
+	- Aonymous comments in StdLimits shouldn't be allowed
+	- Fix wiki pages not syncing
+	- Show "Unseen public activity" channel setting when site only public streams are activated
+	- Fix channel import failing to provide channel_password value
+	- Fix permalinks to children of articles and cards
+	- Fix missing year on profile birthday input
+	- Fix missing login/out buttons for medium screensize
+	- Preserve existing categories when updating an app from an embed source
+	- Fix app sellpage not being stored
+	- Fix tagadelic being overly protective of permissions
+	- Fix comments not displayed in single card/article view
+	- Fix anonymous comments bump thread
+	- Fix pending registrations visible in admin accounts
+
+	Addons
+	Pubcrawl: fix issues with postgresql
+	Fuzzloc: new addon to blur your browser location
+	Pubcrawl: implement follow by webfinger
+	Cart: new addon which provides online shop functionalities (experimental)
+	Pubcrawl: implement two-way summary functionality
+	Wordpress: upgrade incutio xmlrpc library to use hubzilla curl wrapper
+	Hzfiles: various fixes
+	Diaspora: support full_name attribute in profile messages
+	Frphotos: deprecate plugin (keep it for reference)
+	Webmention: require html5 parser
+	GNU-Social: provide alternative xchan_url
+	Diaspora: fix wrong callback function
+	Diaspora: fix conversion of forum mentions to markdown by providing a !{forum@host} link syntax
+	Diaspora: fix item title not transferred
+
+
 Hubzilla 3.2 (2018-03-09)
 	- Improve rendering of Readme files in plugin settings
 	- Add pdl file for mod moderate
