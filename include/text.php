@@ -2033,13 +2033,16 @@ function item_post_type($item) {
 function undo_post_tagging($s) {
 
 	$matches = null;
+	$x = null;
 	// undo tags and mentions
 	$cnt = preg_match_all('/([@#])(\!*)\[zrl=(.*?)\](.*?)\[\/zrl\]/ism',$s,$matches,PREG_SET_ORDER);
 	if($cnt) {
 		foreach($matches as $mtch) {
-			$x = q("select xchan_addr, xchan_url from xchan where xchan_url = '%s' limit 1",
-				dbesc($mtch[3])
-			);
+			if($mtch[1] === '@') {
+				$x = q("select xchan_addr, xchan_url from xchan where xchan_url = '%s' limit 1",
+					dbesc($mtch[3])
+				);
+			}
 			if($x) {
 				$s = str_replace($mtch[0], $mtch[1] . $mtch[2] . '{' . (($x[0]['xchan_addr']) ? $x[0]['xchan_addr'] : $x[0]['xchan_url']) . '}', $s);
 			}
