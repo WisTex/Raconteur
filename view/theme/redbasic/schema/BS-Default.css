@@ -1,7 +1,4 @@
-.navbar-dark .navbar-toggler {
-	color: rgba(0,0,0,0.7);
-}
-
-#notifications-btn.text-white {
-	color: #777 !important;
+.navbar-dark .navbar-toggler,
+.nav-link.active {
+	color: rgba(0,0,0,0.7) !important;
 }
