@@ -6,15 +6,14 @@ Le projet est maintenu et les décisions sont prises par la "communauté". La st
 
 [ol]
 [*] Consensus paresseux
-
 Si une proposition de projet est soumise à l'un des forums de gouvernance communautaire et qu'il n'y a pas d'objections sérieuses dans un délai "raisonnable" à partir de la date de la proposition (nous accordons généralement 2 à 3 jours pour que toutes les parties intéressées puissent intervenir), aucun vote n'est nécessaire et la proposition sera considérée comme approuvée. Certaines préoccupations peuvent être soulevées à ce moment-là, mais si elles sont abordées au cours de la discussion et des solutions de rechange fournies, elles seront quand même considérées comme approuvées. 
 
-[*] Veto
 
+[*] Veto
 Les promoteurs principaux ayant un historique important d'engagements de projet peuvent opposer leur veto à toute décision. La décision ne peut être prise tant que le veto n'a pas été levé ou qu'une autre proposition n'a pas été présentée.
 
-[*] Vote de la communauté
 
+[*] Vote de la communauté
 Une décision qui n'a pas de mandat clair ou de consensus clair, mais qui ne fait pas l'objet d'un veto, peut être soumise au vote de la communauté. Actuellement, il s'agit d'un simple vote populaire dans l'un des forums communautaires applicables.  À ce moment-là, c'est le vote populaire qui décide du résultat. Cela pourrait changer à l'avenir si la communauté adopte un modèle de gouvernance de "conseil". Ce document sera mis à jour à ce moment-là avec les règles de gouvernance mises à jour. 
 [/ol]
 
@@ -24,7 +23,7 @@ Le vote communautaire n'offre pas toujours un résultat agréable et peut géné
 
 Q : Qui peut voir mon contenu ?
  
-R : Par défaut, N'IMPORTE QUELLE personne sur Internet, à MOINS que vous le restreigniez. Nom du projet vous permet de choisir le niveau de confidentialité que vous désirez. Le contenu restreint ne sera PAS visible pour les "réseaux d'espionnage" et les annonceurs. Il sera protégé contre les écoutes de l'extérieur - au mieux de nos capacités. Les administrateurs de Hub ayant suffisamment de compétences et de patience PEUVENT être en mesure d'écouter certaines communications privées, mais ils doivent déployer des trésors d'efforts pour le faire. Des modes de confidentialité existent au sein de $Projectname qui résistent même à l'écoute par des administrateurs de hub qualifiés et déterminés.    
+R : Par défaut, N'IMPORTE QUELLE personne sur Internet, à MOINS que vous le restreigniez. $Projectname vous permet de choisir le niveau de confidentialité que vous désirez. Le contenu restreint ne sera PAS visible pour les "réseaux d'espionnage" et les annonceurs. Il sera protégé contre les écoutes de l'extérieur - au mieux de nos capacités. Les administrateurs de Hub ayant suffisamment de compétences et de patience PEUVENT être en mesure d'écouter certaines communications privées, mais ils doivent déployer des trésors d'efforts pour le faire. Des modes de confidentialité existent au sein de $Projectname qui résistent même à l'écoute par des administrateurs de hub qualifiés et déterminés.    
 
 Q : Mon contenu peut-il être censuré ?
 
@@ -71,9 +70,9 @@ La confidentialité de votre identité est un autre aspect. Parce que vous avez 
 
 Une identité décentralisée a beaucoup d'avantages et vous donne beaucoup de fonctionnalités intéressantes, mais vous devez être conscient du fait que votre identité est connue par d'autres hubs dans le réseau $Projectname. L'un de ces avantages est que d'autres canaux peuvent vous servir du contenu personnalisé et vous permettre de voir des choses privées (comme des photos privées que d'autres souhaitent partager avec vous). Pour cette raison, ces canaux ont besoin de savoir qui vous êtes. Mais nous comprenons que parfois, ces autres canaux en savent plus de vous que vous ne le souhaiteriez. Par exemple, le plug-in Visage qui peut indiquer au propriétaire d'un canal la dernière fois que vous avez visité son profil. Vous pouvez facilement OPT-OUT de ce bas niveau et nous pensons, le suivi inoffensif.
 
-Vous pouvez activer [Ne pas suivre (DNT)](http://donottrack.us/) dans votre navigateur Web. Nous respectons cette nouvelle proposition de politique de confidentialité. Tous les navigateurs modernes supportent le DNT. Vous le trouverez dans les paramètres de confidentialité de vos navigateurs ou bien vous pouvez consulter le manuel du navigateur Web. Cela n'affectera pas la fonctionnalité de $Projectname. Ce réglage est probablement suffisant pour la plupart des gens.
+Vous pouvez activer [url=http://donottrack.us/]Ne pas suivre (DNT)[/url] dans votre navigateur Web. Nous respectons cette nouvelle proposition de politique de confidentialité. Tous les navigateurs modernes supportent le DNT. Vous le trouverez dans les paramètres de confidentialité de vos navigateurs ou bien vous pouvez consulter le manuel du navigateur Web. Cela n'affectera pas la fonctionnalité de $Projectname. Ce réglage est probablement suffisant pour la plupart des gens.
 
-Vous pouvez [désactiver la publication](settings) de votre chaîne dans notre répertoire de chaînes. Si vous voulez que les gens trouvent votre canal, vous devriez leur donner l'adresse de votre canal directement. Nous pensons que c'est une bonne indication que vous préférez une vie privée supplémentaire et que vous activez automatiquement l'option "Ne pas suivre" si c'est le cas.
+Vous pouvez [url=settings]désactiver la publication[/url] de votre chaîne dans notre répertoire de chaînes. Si vous voulez que les gens trouvent votre canal, vous devriez leur donner l'adresse de votre canal directement. Nous pensons que c'est une bonne indication que vous préférez une vie privée supplémentaire et que vous activez automatiquement l'option "Ne pas suivre" si c'est le cas.
 
 Vous pouvez avoir un hub bloqué. Cela signifie que tous les canaux et le contenu de cette hub ne sont pas publics et ne sont pas visibles pour le monde extérieur. C'est quelque chose que seul votre administrateur de hub peut faire. Nous respectons également ce principe et activons automatiquement l'option "Ne pas suivre" si elle est définie.
 
@@ -85,7 +84,7 @@ $Projectname en tant que fournisseur de réseau n'est pas en mesure de censurer 
 
 $Projectname RECOMMANDE que les administrateurs du concentrateur accordent un délai de grâce de 1 à 2 jours entre l'avertissement au titulaire du compte du contenu qui doit être supprimé et la suppression ou la désactivation physique du compte. Cela donnera au propriétaire du contenu la possibilité d'exporter les métadonnées de son canal et de les importer sur un autre site. Dans de rares cas, le contenu peut être de nature à justifier la résiliation immédiate du compte. Il s'agit d'une décision de hub, pas d'une décision de $Projectname. 
 
-Si vous publiez régulièrement des contenus à caractère adulte ou offensant, nous vous encourageons fortement à marquer votre compte "NSFW" (Not Safe For Work). Ceci empêchera l'affichage de votre photo de profil dans le répertoire, sauf pour les visiteurs qui ont choisi de désactiver le "safe mode". Si votre photo de profil est trouvée par les administrateurs d'annuaire comme étant adulte ou offensante, l'administrateur d'annuaire PEUT marquer votre photo de profil comme NSFW. Il n'existe actuellement aucun mécanisme officiel pour contester ou renverser cette décision, c'est pourquoi vous DEVEZ marquer votre propre compte NSFW s'il est susceptible d'être inapproprié pour le grand public. 
+Si vous publiez régulièrement des contenus à caractère adulte ou offensant, nous vous encourageons fortement à marquer votre compte "NSFW" (Not Safe For Work). Ceci empêchera l'affichage de votre photo de profil dans le répertoire, sauf pour les visiteurs qui ont choisi de désactiver le "mode sans échec". Si votre photo de profil est trouvée par les administrateurs d'annuaire comme étant adulte ou offensante, l'administrateur d'annuaire PEUT marquer votre photo de profil comme NSFW. Il n'existe actuellement aucun mécanisme officiel pour contester ou renverser cette décision, c'est pourquoi vous DEVEZ marquer votre propre compte NSFW s'il est susceptible d'être inapproprié pour le grand public. 
 
 [h3]Remerciements[/h3]
 
