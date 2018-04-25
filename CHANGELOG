@@ -1,5 +1,7 @@
 Hubzilla 3.4 (????-??-??)
-
+	- Rename boxy schema to Focus-Boxy
+	- Rename BS-Default schema to Focus-Light
+	- Mark simple_* schemas unmaintained and deprecated - they will be removed in next release if nobody steps up to maintain them.
 	- Implement trending tags for mod pubstream
  	- Relax restrictions to the design tools menu to allow those with write_pages permission
 	- Add alt pager to mod moderate
