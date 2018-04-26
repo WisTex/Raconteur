@@ -2213,6 +2213,7 @@ function ids_to_querystr($arr,$idx = 'id',$quote = false) {
  * @param $arr array
  * @param $elm array key to extract from sub-array
  * @param $delim string default ','
+ * @param $each filter function to apply to each element before evaluation, default is 'trim'.
  * @returns string
  */
 
