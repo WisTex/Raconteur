@@ -218,15 +218,13 @@ class Network extends \Zotlabs\Web\Controller {
 			$contact_str = '';
 			$contacts = group_get_members($group);
 			if($contacts) {
-				foreach($contacts as $c) {
-					if($contact_str)
-						$contact_str .= ',';
-					$contact_str .= "'" . $c['xchan'] . "'";
-				}
+				$contact_str = ids_to_querystr($contacts,'xchan',true);
 			}
 			else {
-				$contact_str = ' 0 ';
-				info( t('Privacy group is empty'));
+				$contact_str = " '0' ";
+				if(! $update) {
+					info( t('Privacy group is empty'));
+				}
 			}
 			$item_thread_top = '';
 			$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND (( author_xchan IN ( $contact_str ) OR owner_xchan in ( $contact_str )) or allow_gid like '" . protect_sprintf('%<' . dbesc($group_hash) . '>%') . "' ) and id = parent $item_normal ) ";
@@ -480,7 +478,6 @@ class Network extends \Zotlabs\Web\Controller {
 					$ordering = "commented";
 	
 			if($load) {
-
 				// Fetch a page full of parent items for this page
 				$r = q("SELECT item.parent AS item_id FROM item 
 					left join abook on ( item.owner_xchan = abook.abook_xchan $abook_uids )
