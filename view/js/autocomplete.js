@@ -180,6 +180,10 @@ function string2bb(element) {
  */
 (function( $ ) {
 	$.fn.editor_autocomplete = function(backend_url, extra_channels) {
+
+		if(! this.length)
+			return;
+
 		if (typeof extra_channels === 'undefined') extra_channels = false;
 
 		// Autocomplete contacts
@@ -240,6 +244,10 @@ function string2bb(element) {
  */
 (function( $ ) {
 	$.fn.search_autocomplete = function(backend_url) {
+
+		if(! this.length)
+			return;
+
 		// Autocomplete contacts
 		contacts = {
 			match: /(^@)([^\n]{3,})$/,
@@ -285,6 +293,10 @@ function string2bb(element) {
 
 (function( $ ) {
 	$.fn.contact_autocomplete = function(backend_url, typ, autosubmit, onselect) {
+
+		if(! this.length)
+			return;
+
 		if(typeof typ === 'undefined') typ = '';
 		if(typeof autosubmit === 'undefined') autosubmit = false;
 
@@ -317,6 +329,10 @@ function string2bb(element) {
 
 (function( $ ) {
 	$.fn.name_autocomplete = function(backend_url, typ, autosubmit, onselect) {
+
+		if(! this.length)
+			return;
+
 		if(typeof typ === 'undefined') typ = '';
 		if(typeof autosubmit === 'undefined') autosubmit = false;
 
@@ -348,6 +364,9 @@ function string2bb(element) {
 
 (function( $ ) {
 	$.fn.bbco_autocomplete = function(type) {
+
+		if(! this.length)
+			return;
 
 		if(type=='bbcode') {
 			var open_close_elements = ['bold', 'italic', 'underline', 'overline', 'strike', 'superscript', 'subscript', 'quote', 'code', 'open', 'spoiler', 'map', 'nobb', 'list', 'checklist', 'ul', 'ol', 'dl', 'li', 'table', 'tr', 'th', 'td', 'center', 'color', 'font', 'size', 'zrl', 'zmg', 'rpost', 'qr', 'observer', 'observer.language','embed', 'highlight', 'url', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
