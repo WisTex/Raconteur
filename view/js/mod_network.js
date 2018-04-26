@@ -1,4 +1,5 @@
 $(document).ready(function() { 
-	$("#search-text").contact_autocomplete(baseurl + '/search_ac','',true);
+	if($("#search-text").length)
+		$("#search-text").contact_autocomplete(baseurl + '/search_ac','',true);
 }); 
 
