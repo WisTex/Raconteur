@@ -279,7 +279,7 @@ function string2bb(element) {
 
 		textcomplete.register([contacts,forums,tags], {className:'acpopup', maxCount:100, zIndex: 1020, appendTo:'nav'});
 
-		this.on('textComplete:select', function(e, value, strategy) { submit_form(this); });
+		this.on('select', function(e, value, strategy) { submit_form(this); });
 	};
 })( jQuery );
 
@@ -307,10 +307,10 @@ function string2bb(element) {
 		textcomplete.register([contacts], {className:'acpopup', zIndex:1020});
 
 		if(autosubmit)
-			this.on('textComplete:select', function(e,value,strategy) { submit_form(this); });
+			this.on('select', function(e,value,strategy) { submit_form(this); });
 
 		if(typeof onselect !== 'undefined')
-			this.on('textComplete:select', function(e, value, strategy) { onselect(value); });
+			this.on('select', function(e, value, strategy) { onselect(value); });
 	};
 })( jQuery );
 
@@ -339,10 +339,10 @@ function string2bb(element) {
 		textcomplete.register([names], {className:'acpopup', zIndex:1020});
 
 		if(autosubmit)
-			this.on('textComplete:select', function(e,value,strategy) { submit_form(this); });
+			this.on('select', function(e,value,strategy) { submit_form(this); });
 
 		if(typeof onselect !== 'undefined')
-			this.on('textComplete:select', function(e, value, strategy) { onselect(value); });
+			this.on('select', function(e, value, strategy) { onselect(value); });
 	};
 })( jQuery );
 
@@ -413,7 +413,7 @@ function string2bb(element) {
 
 		textcomplete.register([bbco], {className:'acpopup', zIndex:1020});
 
-		this.on('textComplete:select', function(e, value, strategy) { value; });
+		this.on('select', function(e, value, strategy) { value; });
 
 		this.keypress(function(e){
 			if (e.keyCode == 13) {
