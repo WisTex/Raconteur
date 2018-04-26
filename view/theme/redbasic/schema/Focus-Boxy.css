@@ -1,0 +1,15 @@
+.comment .wall-item-body {
+	padding-left: 42px;
+}
+
+.wall-item-content-wrapper.comment {
+	border-bottom: 1px solid #dee2e6;
+}
+
+.widget {
+	border: 1px solid #dee2e6;
+}
+
+#note-text {
+	border: 1px solid transparent;
+}

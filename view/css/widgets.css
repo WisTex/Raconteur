@@ -41,6 +41,7 @@ li:hover .widget-nav-pills-icons {
 /* notes */ 
 
 #note-text {
+	border: 1px solid rgba(0,0,0,.125);
 	padding: 5px;
 	width: 100%;
 	resize: none;
