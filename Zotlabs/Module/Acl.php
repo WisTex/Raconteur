@@ -337,22 +337,21 @@ class Acl extends \Zotlabs\Web\Controller {
 		if($r) {
 			foreach($r as $g) {
 	
-				if(($g['network'] === 'rss') && ($type != 'a'))
+				if(in_array($g['network'],['rss','anon','unknown']) && ($type != 'a'))
 					continue;
 
 				$g['hash'] = urlencode($g['hash']);
 				
 				if(! $g['nick']) {
-					$t = explode(' ',strtolower($g['name']));
-					$g['nick'] = $t[0] . '@';
+					$g['nick'] = $g['url'];
 				}
 
-				if(in_array($g['hash'],$permitted) && in_array($type, [ 'c', 'f' ]) && (! $noforums)) {
+				if(in_array($g['hash'],$permitted) && $type === 'f' && (! $noforums)) {
 					$contacts[] = array(
 						"type"     => "c",
 						"photo"    => "images/twopeople.png",
-						"name"     => $g['name'] . (($type === 'f') ? '' : '+'),
-						"id"	   => urlencode($g['id']) . (($type === 'f') ? '' : '+'),
+						"name"     => $g['name'],
+						"id"	   => urlencode($g['id']),
 						"xid"      => $g['hash'],
 						"link"     => (($g['nick']) ? $g['nick'] : $g['url']),
 						"nick"     => substr($g['nick'],0,strpos($g['nick'],'@')),
@@ -369,7 +368,7 @@ class Acl extends \Zotlabs\Web\Controller {
 						"id"	   => urlencode($g['id']),
 						"xid"      => $g['hash'],
 						"link"     => (($g['nick']) ? $g['nick'] : $g['url']),
-						"nick"     => (($g['nick']) ? substr($g['nick'],0,strpos($g['nick'],'@')) : $g['nick']),
+						"nick"     => ((strpos($g['nick'],'@')) ? substr($g['nick'],0,strpos($g['nick'],'@')) : $g['nick']),
 						"self"     => (intval($g['abook_self']) ? 'abook-self' : ''),
 						"taggable" => '',
 						"label"    => '',
