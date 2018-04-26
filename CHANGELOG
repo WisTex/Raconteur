@@ -21,7 +21,7 @@ Hubzilla 3.4 (????-??-??)
 	- Implement auto-save posts and comments in browser using localStorage
 	- Display directory server in siteinfo.json
 	- Bring back the dnt policy document
-	- Implement OAuth2
+	- Implement OAuth2/OpenIDConnect server
 	- Add basic structure for additional features documentation
 	- Community tag refactor
 	- Obscurify chats
