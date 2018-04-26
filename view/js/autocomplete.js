@@ -231,10 +231,13 @@ function string2bb(element) {
 		this.attr('autocomplete','off');
 
 		var Textarea = Textcomplete.editors.Textarea;
-		var editor = new Textarea(this[0]);
-		var textcomplete = new Textcomplete(editor);
 
-		textcomplete.register([contacts,forums,smilies,tags], {className:'acpopup', zIndex:1020});
+		$(this).each(function() {
+			var editor = new Textarea(this);
+			var textcomplete = new Textcomplete(editor);
+			textcomplete.register([contacts,forums,smilies,tags], {className:'acpopup', zIndex:1020});
+		});
+
 
 	};
 })( jQuery );
@@ -282,10 +285,11 @@ function string2bb(element) {
 		this.attr('autocomplete', 'off');
 
 		var Textarea = Textcomplete.editors.Textarea;
-		var editor = new Textarea(this[0]);
-		var textcomplete = new Textcomplete(editor);
-
-		textcomplete.register([contacts,forums,tags], {className:'acpopup', maxCount:100, zIndex: 1020, appendTo:'nav'});
+		$(this).each(function() {
+			var editor = new Textarea(this);
+			var textcomplete = new Textcomplete(editor);
+			textcomplete.register([contacts,forums,tags], {className:'acpopup', maxCount:100, zIndex: 1020, appendTo:'nav'});
+		});
 
 		this.on('select', function(e, value, strategy) { submit_form(this); });
 	};
@@ -313,10 +317,11 @@ function string2bb(element) {
 		this.attr('autocomplete','off');
 
 		var Textarea = Textcomplete.editors.Textarea;
-		var editor = new Textarea(this[0]);
-		var textcomplete = new Textcomplete(editor);
-
-		textcomplete.register([contacts], {className:'acpopup', zIndex:1020});
+		$(this).each(function() {
+			var editor = new Textarea(this);
+			var textcomplete = new Textcomplete(editor);
+			textcomplete.register([contacts], {className:'acpopup', zIndex:1020});
+		});
 
 		if(autosubmit)
 			this.on('select', function(e,value,strategy) { submit_form(this); });
@@ -349,10 +354,12 @@ function string2bb(element) {
 		this.attr('autocomplete','off');
 
 		var Textarea = Textcomplete.editors.Textarea;
-		var editor = new Textarea(this[0]);
-		var textcomplete = new Textcomplete(editor);
 
-		textcomplete.register([names], {className:'acpopup', zIndex:1020});
+		$(this).each(function() {
+			var editor = new Textarea(this);
+			var textcomplete = new Textcomplete(editor);
+			textcomplete.register([names], {className:'acpopup', zIndex:1020});
+		});
 
 		if(autosubmit)
 			this.on('select', function(e,value,strategy) { submit_form(this); });
@@ -427,10 +434,12 @@ function string2bb(element) {
 		this.attr('autocomplete','off');
 
 		var Textarea = Textcomplete.editors.Textarea;
-		var editor = new Textarea(this[0]);
-		var textcomplete = new Textcomplete(editor);
 
-		textcomplete.register([bbco], {className:'acpopup', zIndex:1020});
+		$(this).each(function() {
+			var editor = new Textarea(this);
+			var textcomplete = new Textcomplete(editor);
+			textcomplete.register([bbco], {className:'acpopup', zIndex:1020});
+		});
 
 		this.on('select', function(e, value, strategy) { value; });
 
