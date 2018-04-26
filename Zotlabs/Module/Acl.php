@@ -271,7 +271,7 @@ class Acl extends \Zotlabs\Web\Controller {
 			if((count($r) < 100) && $type == 'c') {
 				$r2 = q("SELECT substr(xchan_hash,1,18) as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, 0 as abook_their_perms, 0 as abook_flags, 0 as abook_self 
 					FROM xchan 
-					WHERE xchan_deleted = 0 $sql_extra2 order by $order_extra2 xchan_name asc" 
+					WHERE xchan_deleted = 0 and not xchan_network  in ('rss','anon','unknown') $sql_extra2 order by $order_extra2 xchan_name asc" 
 				);
 				if($r2) {
 					$r = array_merge($r,$r2);
