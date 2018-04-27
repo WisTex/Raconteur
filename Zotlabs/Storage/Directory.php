@@ -389,8 +389,12 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 		);
 
 		if ($r) {
+
+			// When initiated from DAV, set the 'force' flag on attach_mkdir(). This will cause the operation to report success even if the 
+			// folder already exists. 
+
 			require_once('include/attach.php');
-			$result = attach_mkdir($r[0], $this->auth->observer, array('filename' => $name, 'folder' => $this->folder_hash));
+			$result = attach_mkdir($r[0], $this->auth->observer, array('filename' => $name, 'folder' => $this->folder_hash, 'force' => true));
 
 			if($result['success']) {
 				$sync = attach_export_data($r[0],$result['data']['hash']);
