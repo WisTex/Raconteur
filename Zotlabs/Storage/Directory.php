@@ -169,7 +169,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 
 		$x = attach_syspaths($this->auth->owner_id,$this->folder_hash);
 
-		$y = q("update attach set display_path = '%s where hash = '%s' and uid = %d",
+		$y = q("update attach set display_path = '%s' where hash = '%s' and uid = %d",
 			dbesc($x['path']),
 			dbesc($this->folder_hash),
 			intval($this->auth->owner_id)
