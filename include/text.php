@@ -3307,6 +3307,7 @@ function cleanup_bbcode($body) {
 	 * First protect any url inside certain bbcode tags so we don't double link it.
 	 */
 
+
 	$body = preg_replace_callback('/\[code(.*?)\[\/(code)\]/ism','\red_escape_codeblock',$body);
 	$body = preg_replace_callback('/\[url(.*?)\[\/(url)\]/ism','\red_escape_codeblock',$body);
 	$body = preg_replace_callback('/\[zrl(.*?)\[\/(zrl)\]/ism','\red_escape_codeblock',$body);
@@ -3335,7 +3336,6 @@ function cleanup_bbcode($body) {
 	$body = preg_replace('/\[\/code\]\s*\[code\]/ism',"\n",$body);
 
 	$body = scale_external_images($body,false);
-
 
 	return $body;
 }
