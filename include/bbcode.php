@@ -85,12 +85,14 @@ function tryoembed($match) {
 function nakedoembed($match) {
 	$url = ((count($match) == 2) ? $match[1] : $match[2]);
 
-	$o = oembed_fetch_url($url);
+	$strip_url = strip_escaped_zids($url);
+
+	$o = oembed_fetch_url($strip_url);
 
 	if ($o['type'] == 'error')
-		return $match[0];
+		return str_replace($url,$strip_url,$match[0]);
 
-	return '[embed]' . $url . '[/embed]';
+	return '[embed]' . $strip_url . '[/embed]';
 }
 
 function tryzrlaudio($match) {
