@@ -180,12 +180,17 @@ function string2bb(element) {
  */
 (function( $ ) {
 	$.fn.editor_autocomplete = function(backend_url, extra_channels) {
+
+		if(! this.length)
+			return;
+
 		if (typeof extra_channels === 'undefined') extra_channels = false;
 
 		// Autocomplete contacts
 		contacts = {
-			match: /(^|\s)(@\!*)([^ \n]+)$/,
+			match: /(^|\s)(@\!*)([^ \n]{3,})$/,
 			index: 3,
+			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, 'c', extra_channels, spinelement=false); },
 			replace: editor_replace,
 			template: contact_format
@@ -193,8 +198,9 @@ function string2bb(element) {
 
 		// Autocomplete forums
 		forums = {
-			match: /(^|\s)(\!\!*)([^ \n]+)$/,
+			match: /(^|\s)(\!\!*)([^ \n]{3,})$/,
 			index: 3,
+			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, 'f', extra_channels, spinelement=false); },
 			replace: editor_replace,
 			template: contact_format
@@ -203,8 +209,9 @@ function string2bb(element) {
 
 		// Autocomplete hashtags
 		tags = {
-			match: /(^|\s)(\#)([^ \n]{2,})$/,
+			match: /(^|\s)(\#)([^ \n]{3,})$/,
 			index: 3,
+			cache: true,
 			search: function(term, callback) { $.getJSON('/hashtags/' + '$f=&t=' + term).done(function(data) { callback($.map(data, function(entry) { return entry.text.toLowerCase().indexOf(term.toLowerCase()) === 0 ? entry : null; })); }); },
 			replace: function(item) { return "$1$2" + item.text + ' '; },
 			context: function(text) { return text.toLowerCase(); },
@@ -215,13 +222,23 @@ function string2bb(element) {
 		smilies = {
 			match: /(^|\s)(:[a-z_:]{2,})$/,
 			index: 2,
+			cache: true,
 			search: function(term, callback) { $.getJSON('/smilies/json').done(function(data) { callback($.map(data, function(entry) { return entry.text.indexOf(term) === 0 ? entry : null; })); }); },
 			//template: function(item) { return item.icon + item.text; },
 			replace: function(item) { return "$1" + item.text + ' '; },
 			template: smiley_format
 		};
 		this.attr('autocomplete','off');
-		this.textcomplete([contacts,forums,smilies,tags], {className:'acpopup', zIndex:1020});
+
+		var Textarea = Textcomplete.editors.Textarea;
+
+		$(this).each(function() {
+			var editor = new Textarea(this);
+			var textcomplete = new Textcomplete(editor);
+			textcomplete.register([contacts,forums,smilies,tags], {className:'acpopup', zIndex:1020});
+		});
+
+
 	};
 })( jQuery );
 
@@ -230,10 +247,15 @@ function string2bb(element) {
  */
 (function( $ ) {
 	$.fn.search_autocomplete = function(backend_url) {
+
+		if(! this.length)
+			return;
+
 		// Autocomplete contacts
 		contacts = {
 			match: /(^@)([^\n]{3,})$/,
 			index: 2,
+			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, 'x', [], spinelement='#nav-search-spinner'); },
 			replace: basic_replace,
 			template: contact_format,
@@ -243,6 +265,7 @@ function string2bb(element) {
 		forums = {
 			match: /(^\!)([^\n]{3,})$/,
 			index: 2,
+			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, 'f', [], spinelement='#nav-search-spinner'); },
 			replace: basic_replace,
 			template: contact_format
@@ -252,6 +275,7 @@ function string2bb(element) {
 		tags = {
 			match: /(^\#)([^ \n]{3,})$/,
 			index: 2,
+			cache: true,
 			search: function(term, callback) { $.getJSON('/hashtags/' + '$f=&t=' + term).done(function(data) { callback($.map(data, function(entry) { return entry.text.toLowerCase().indexOf(term.toLowerCase()) === 0 ? entry : null; })); }); },
 			replace: function(item) { return "$1" + item.text + ' '; },
 			context: function(text) { return text.toLowerCase(); },
@@ -259,64 +283,97 @@ function string2bb(element) {
 		};
 
 		this.attr('autocomplete', 'off');
-		var a = this.textcomplete([contacts,forums,tags], {className:'acpopup', maxCount:100, zIndex: 1020, appendTo:'nav'});
-		a.on('textComplete:select', function(e, value, strategy) { submit_form(this); });
+
+		var Textarea = Textcomplete.editors.Textarea;
+		$(this).each(function() {
+			var editor = new Textarea(this);
+			var textcomplete = new Textcomplete(editor);
+			textcomplete.register([contacts,forums,tags], {className:'acpopup', maxCount:100, zIndex: 1020, appendTo:'nav'});
+		});
+
+		this.on('select', function(e, value, strategy) { submit_form(this); });
 	};
 })( jQuery );
 
 (function( $ ) {
 	$.fn.contact_autocomplete = function(backend_url, typ, autosubmit, onselect) {
+
+		if(! this.length)
+			return;
+
 		if(typeof typ === 'undefined') typ = '';
 		if(typeof autosubmit === 'undefined') autosubmit = false;
 
 		// Autocomplete contacts
 		contacts = {
-			match: /(^)([^\n]+)$/,
+			match: /(^)([^\n]{3,})$/,
 			index: 2,
+			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, typ,[], spinelement=false); },
 			replace: basic_replace,
 			template: contact_format,
 		};
 
 		this.attr('autocomplete','off');
-		var a = this.textcomplete([contacts], {className:'acpopup', zIndex:1020});
+
+		var Textarea = Textcomplete.editors.Textarea;
+		$(this).each(function() {
+			var editor = new Textarea(this);
+			var textcomplete = new Textcomplete(editor);
+			textcomplete.register([contacts], {className:'acpopup', zIndex:1020});
+		});
 
 		if(autosubmit)
-			a.on('textComplete:select', function(e,value,strategy) { submit_form(this); });
+			this.on('select', function(e,value,strategy) { submit_form(this); });
 
 		if(typeof onselect !== 'undefined')
-			a.on('textComplete:select', function(e, value, strategy) { onselect(value); });
+			this.on('select', function(e, value, strategy) { onselect(value); });
 	};
 })( jQuery );
 
 
 (function( $ ) {
 	$.fn.name_autocomplete = function(backend_url, typ, autosubmit, onselect) {
+
+		if(! this.length)
+			return;
+
 		if(typeof typ === 'undefined') typ = '';
 		if(typeof autosubmit === 'undefined') autosubmit = false;
 
 		// Autocomplete contacts
 		names = {
-			match: /(^)([^\n]+)$/,
+			match: /(^)([^\n]{3,})$/,
 			index: 2,
+			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, typ,[], spinelement=false); },
 			replace: trim_replace,
 			template: contact_format,
 		};
 
 		this.attr('autocomplete','off');
-		var a = this.textcomplete([names], {className:'acpopup', zIndex:1020});
+
+		var Textarea = Textcomplete.editors.Textarea;
+
+		$(this).each(function() {
+			var editor = new Textarea(this);
+			var textcomplete = new Textcomplete(editor);
+			textcomplete.register([names], {className:'acpopup', zIndex:1020});
+		});
 
 		if(autosubmit)
-			a.on('textComplete:select', function(e,value,strategy) { submit_form(this); });
+			this.on('select', function(e,value,strategy) { submit_form(this); });
 
 		if(typeof onselect !== 'undefined')
-			a.on('textComplete:select', function(e, value, strategy) { onselect(value); });
+			this.on('select', function(e, value, strategy) { onselect(value); });
 	};
 })( jQuery );
 
 (function( $ ) {
 	$.fn.bbco_autocomplete = function(type) {
+
+		if(! this.length)
+			return;
 
 		if(type=='bbcode') {
 			var open_close_elements = ['bold', 'italic', 'underline', 'overline', 'strike', 'superscript', 'subscript', 'quote', 'code', 'open', 'spoiler', 'map', 'nobb', 'list', 'checklist', 'ul', 'ol', 'dl', 'li', 'table', 'tr', 'th', 'td', 'center', 'color', 'font', 'size', 'zrl', 'zmg', 'rpost', 'qr', 'observer', 'observer.language','embed', 'highlight', 'url', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
@@ -375,11 +432,18 @@ function string2bb(element) {
 		};
 
 		this.attr('autocomplete','off');
-		var a = this.textcomplete([bbco], {className:'acpopup', zIndex:1020});
 
-		a.on('textComplete:select', function(e, value, strategy) { value; });
+		var Textarea = Textcomplete.editors.Textarea;
 
-		a.keypress(function(e){
+		$(this).each(function() {
+			var editor = new Textarea(this);
+			var textcomplete = new Textcomplete(editor);
+			textcomplete.register([bbco], {className:'acpopup', zIndex:1020});
+		});
+
+		this.on('select', function(e, value, strategy) { value; });
+
+		this.keypress(function(e){
 			if (e.keyCode == 13) {
 				var x = listNewLineAutocomplete(this.id);
 				if(x) {
