@@ -60,7 +60,7 @@ function zid($s, $address = '') {
 		$url_match = true;
 
 	if ($mine && $myaddr && (! $url_match))
-		$zurl = $s . (($num_slashes >= 3) ? '' : '/') . $achar . 'zid=' . urlencode($myaddr);
+		$zurl = $s . (($num_slashes >= 3) ? '' : '/') . (($achar === '?') ? '?f=&' : '&') . 'zid=' . urlencode($myaddr);
 	else
 		$zurl = $s;
 
@@ -103,6 +103,10 @@ function strip_zats($s) {
 	return preg_replace('/[\?&]zat=(.*?)(&|$)/ism','$2',$s);
 }
 
+function strip_escaped_zids($s) {
+	$x = preg_replace('/&amp\;zid=(.*?)(&|$)/ism','$2',$s);
+	return strip_query_param($x,'f');
+}
 
 
 function clean_query_string($s = '') {

@@ -568,11 +568,14 @@ $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-del
 	function postSaveChanges(action, type) {
 		if({{$auto_save_draft}}) {
 
+			var doctype = $('#jot-webpage').val();
+			var postid = '-' + doctype + '-' + $('#jot-postid').val();
+
 			if(action != 'clean') {
-				localStorage.setItem("post_title", $("#jot-title").val());
-				localStorage.setItem("post_body", $("#profile-jot-text").val());
+				localStorage.setItem("post_title" + postid, $("#jot-title").val());
+				localStorage.setItem("post_body" + postid, $("#profile-jot-text").val());
 				if($("#jot-category").length)
-					localStorage.setItem("post_category", $("#jot-category").val());
+					localStorage.setItem("post_category + postid", $("#jot-category").val());
 			}
 
 			if(action == 'start') {
@@ -589,9 +592,9 @@ $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-del
 			if(action == 'clean') {
 				clearTimeout(postSaveTimer);
 				postSaveTimer = null;
-				localStorage.removeItem("post_title");
-				localStorage.removeItem("post_body");
-				localStorage.removeItem("post_category");
+				localStorage.removeItem("post_title" + postid);
+				localStorage.removeItem("post_body" + postid);
+				localStorage.removeItem("post_category" + postid);
 			}
 		} 
 
@@ -602,9 +605,11 @@ $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-del
 		var cleaned = false;
 
 		if({{$auto_save_draft}}) {
-			var postTitle = localStorage.getItem("post_title");
-			var postBody = localStorage.getItem("post_body");
-			var postCategory = (($("#jot-category").length) ? localStorage.getItem("post_category") : '');
+			var doctype = $('#jot-webpage').val();
+			var postid = '-' + doctype + '-' + $('#jot-postid').val();
+			var postTitle = localStorage.getItem("post_title" + postid);
+			var postBody = localStorage.getItem("post_body" + postid);
+			var postCategory = (($("#jot-category").length) ? localStorage.getItem("post_category" + postid) : '');
 			var openEditor = false;
 
 			if(postTitle) {

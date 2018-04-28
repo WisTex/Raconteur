@@ -15,11 +15,11 @@
 #jot-title-wrap,
 #jot-pagetitle-wrap,
 #jot-category-wrap {
-	border-bottom: 1px solid #ccc;
+	border-bottom: 1px solid rgba(0, 0, 0, .2);
 }
 
 #jot-attachment-wrap {
-	border-top: 1px solid #ccc;
+	border-top: 1px solid rgba(0, 0, 0, .2);
 }
 
 #jot-title-wrap input,
@@ -65,7 +65,7 @@
 }
 
 #profile-jot-submit-wrapper {
-	border-top: 1px solid #ccc;
+	border-top: 1px solid rgba(0, 0, 0, .2);
 }
 
 /* conversation */
@@ -85,6 +85,23 @@
 
 .wall-item-wrapper {
 	margin-left:10px;
+}
+
+.wall-item-photo-wrapper {
+	position: relative;
+}
+
+.wall-item-photo-caret {
+	position: absolute;
+	left: 3px;
+	bottom: 0px;
+	color: #fff;
+	text-shadow: 1px 1px 3px rgba(0, 0, 0, .5);
+	display: none;
+}
+
+.wall-item-photo-wrapper:hover .wall-item-photo-caret {
+	display: block;
 }
 
 .wall-item-divider {

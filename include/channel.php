@@ -2240,6 +2240,11 @@ function get_zcard_embed($channel, $observer_hash = '', $args = array()) {
  *   - false if no channel with $nick was found
  */
 function channelx_by_nick($nick) {
+
+	// If we are provided a Unicode nickname convert to IDN
+
+	$nick = punify($nick);
+
 	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_address = '%s'  and channel_removed = 0 LIMIT 1",
 		dbesc($nick)
 	);

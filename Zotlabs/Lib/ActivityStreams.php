@@ -9,6 +9,7 @@ namespace Zotlabs\Lib;
  */
 class ActivityStreams {
 
+	public $raw    = null;
 	public $data;
 	public $valid  = false;
 	public $id     = '';
@@ -33,6 +34,7 @@ class ActivityStreams {
 	 */
 	function __construct($string) {
 
+		$this->raw  = $string;
 		$this->data = json_decode($string, true);
 		if($this->data) {
 			$this->valid = true;

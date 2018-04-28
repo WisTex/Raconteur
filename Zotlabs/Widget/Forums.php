@@ -66,8 +66,8 @@ class Forums {
 		for($x = 0; $x < count($r1); $x ++) {
 			$r = q("select sum(item_unseen) as unseen from item 
 				where uid = %d and owner_xchan = '%s' and item_unseen = 1 $perms_sql ",
-				dbesc($r1[$x]['xchan_hash']),
-				intval(local_channel())
+				intval(local_channel()),
+				dbesc($r1[$x]['xchan_hash'])
 			);
 			if($r)
 				$r1[$x]['unseen'] = $r[0]['unseen'];

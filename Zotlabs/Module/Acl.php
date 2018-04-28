@@ -268,15 +268,15 @@ class Acl extends \Zotlabs\Web\Controller {
 					});
 				}
 			}
-			if(intval(get_config('system','taganyone')) || intval(get_pconfig(local_channel(),'system','taganyone'))) {
-				if((count($r) < 100) && $type == 'c') {
-					$r2 = q("SELECT substr(xchan_hash,1,18) as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, 0 as abook_their_perms, 0 as abook_flags, 0 as abook_self 
-						FROM xchan 
-						WHERE xchan_deleted = 0 $sql_extra2 order by $order_extra2 xchan_name asc" 
-					);
-					if($r2)
-						$r = array_merge($r,$r2);
-				}
+			if((count($r) < 100) && $type == 'c') {
+				$r2 = q("SELECT substr(xchan_hash,1,18) as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, 0 as abook_their_perms, 0 as abook_flags, 0 as abook_self 
+					FROM xchan 
+					WHERE xchan_deleted = 0 and not xchan_network  in ('rss','anon','unknown') $sql_extra2 order by $order_extra2 xchan_name asc" 
+				);
+				if($r2) {
+					$r = array_merge($r,$r2);
+					$r = unique_multidim_array($r,'hash');
+				}		
 			}
 		}
 		elseif($type == 'm') {
@@ -337,24 +337,23 @@ class Acl extends \Zotlabs\Web\Controller {
 		if($r) {
 			foreach($r as $g) {
 	
-				if(($g['network'] === 'rss') && ($type != 'a'))
+				if(in_array($g['network'],['rss','anon','unknown']) && ($type != 'a'))
 					continue;
 
 				$g['hash'] = urlencode($g['hash']);
 				
 				if(! $g['nick']) {
-					$t = explode(' ',strtolower($g['name']));
-					$g['nick'] = $t[0] . '@';
+					$g['nick'] = $g['url'];
 				}
 
-				if(in_array($g['hash'],$permitted) && in_array($type, [ 'c', 'f' ]) && (! $noforums)) {
+				if(in_array($g['hash'],$permitted) && $type === 'f' && (! $noforums)) {
 					$contacts[] = array(
 						"type"     => "c",
 						"photo"    => "images/twopeople.png",
-						"name"     => $g['name'] . (($type === 'f') ? '' : '+'),
-						"id"	   => urlencode($g['id']) . (($type === 'f') ? '' : '+'),
+						"name"     => $g['name'],
+						"id"	   => urlencode($g['id']),
 						"xid"      => $g['hash'],
-						"link"     => $g['nick'],
+						"link"     => (($g['nick']) ? $g['nick'] : $g['url']),
 						"nick"     => substr($g['nick'],0,strpos($g['nick'],'@')),
 						"self"     => (intval($g['abook_self']) ? 'abook-self' : ''),
 						"taggable" => 'taggable',
@@ -368,8 +367,8 @@ class Acl extends \Zotlabs\Web\Controller {
 						"name"     => $g['name'],
 						"id"	   => urlencode($g['id']),
 						"xid"      => $g['hash'],
-						"link"     => $g['nick'],
-						"nick"     => (($g['nick']) ? substr($g['nick'],0,strpos($g['nick'],'@')) : $g['nick']),
+						"link"     => (($g['nick']) ? $g['nick'] : $g['url']),
+						"nick"     => ((strpos($g['nick'],'@')) ? substr($g['nick'],0,strpos($g['nick'],'@')) : $g['nick']),
 						"self"     => (intval($g['abook_self']) ? 'abook-self' : ''),
 						"taggable" => '',
 						"label"    => '',

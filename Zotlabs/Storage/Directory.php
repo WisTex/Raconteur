@@ -169,7 +169,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 
 		$x = attach_syspaths($this->auth->owner_id,$this->folder_hash);
 
-		$y = q("update attach set display_path = '%s where hash = '%s' and uid = %d",
+		$y = q("update attach set display_path = '%s' where hash = '%s' and uid = %d",
 			dbesc($x['path']),
 			dbesc($this->folder_hash),
 			intval($this->auth->owner_id)
@@ -389,8 +389,12 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 		);
 
 		if ($r) {
+
+			// When initiated from DAV, set the 'force' flag on attach_mkdir(). This will cause the operation to report success even if the 
+			// folder already exists. 
+
 			require_once('include/attach.php');
-			$result = attach_mkdir($r[0], $this->auth->observer, array('filename' => $name, 'folder' => $this->folder_hash));
+			$result = attach_mkdir($r[0], $this->auth->observer, array('filename' => $name, 'folder' => $this->folder_hash, 'force' => true));
 
 			if($result['success']) {
 				$sync = attach_export_data($r[0],$result['data']['hash']);

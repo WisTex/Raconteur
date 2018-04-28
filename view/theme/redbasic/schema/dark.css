@@ -1,5 +1,4 @@
 .generic-content-wrapper {
-	border: 1px solid #111;
 	background-color: transparent;
 }
 
@@ -148,7 +147,8 @@ option {
 	background-color:#111;
 }
 
-.modal-content {
+.modal-content,
+#notifications_wrapper {
     background-color: #111;
 }
 
