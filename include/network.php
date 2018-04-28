@@ -368,27 +368,6 @@ function z_post_url($url, $params, $redirects = 0, $opts = array()) {
 	return($ret);
 }
 
-/**
- * @brief Like z_post_url() but with an application/json HTTP header.
- *
- * Add a "Content-Type: application/json" HTTP-header to $opts and call z_post_url().
- *
- * @see z_post_url()
- *
- * @param string $url
- * @param array $params
- * @param number $redirects default 0
- * @param array $opts (optional) curl options
- * @return z_post_url()
- */
-function z_post_url_json($url, $params, $redirects = 0, $opts = array()) {
-
-	$opts = array_merge($opts, array('headers' => array('Content-Type: application/json')));
-
-	return z_post_url($url,json_encode($params),$redirects,$opts);
-}
-
-
 function json_return_and_die($x, $content_type = 'application/json') {
 	header("Content-type: $content_type");
 	echo json_encode($x);
@@ -779,7 +758,7 @@ function scale_external_images($s, $include_link = true, $scale_replace = false)
  * @brief xml2array() will convert the given XML text to an array in the XML structure.
  *
  * Link: http://www.bin-co.com/php/scripts/xml2array/
- * Portions significantly re-written by mike@macgirvin.com for Friendica
+ * Portions significantly re-written by mike@macgirvin.com 
  * (namespaces, lowercase tags, get_attribute default changed, more...)
  *
  * Examples: $array =  xml2array(file_get_contents('feed.xml'));
@@ -1159,8 +1138,6 @@ function discover_by_webbie($webbie, $protocol = '') {
 	$result   = [];
 
 	$network  = null;
-
-//	$webbie = strtolower($webbie);
 
 	$x = webfinger_rfc7033($webbie, true);
 	if($x && array_key_exists('links',$x) && $x['links']) {
