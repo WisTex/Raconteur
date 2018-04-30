@@ -8,7 +8,7 @@ class _1209 {
 
 		if(ACTIVE_DBTYPE == DBTYPE_POSTGRES) {
 			$r1 = q("ALTER TABLE poll_elm ADD pelm_order numeric(6) NOT NULL DEFAULT '0' ");
- 			$r2 = q("create index \"pelm_order_idx\" on poll_elm \"pelm_order\"");
+ 			$r2 = q("create index \"pelm_order_idx\" on poll_elm (\"pelm_order\")");
 
 			$r = ($r1 && $r2);
 		}
