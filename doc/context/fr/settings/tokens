@@ -1,0 +1,20 @@
+<dl class="dl-horizontal">
+    <dt><a href="/help/member/member_guide#Guest_Access_Tokens">Jetons d'accès invités</a></dt>
+    <dd>
+        Afin de faciliter le partage de ressources privées avec des non-membres ou des membres de nœuds de fédération à découverte d'identification limitée, Hubzilla devrait fournir aux membres un mécanisme pour créer et gérer des logins temporaires (&laquo;jetables&raquo;), alias &laquo;Zot Access Tokens&raquo;. Ces jetons/accréditations peuvent être utilisés pour s'authentifier sur un site hubzilla dans le seul but d'accéder à des ressources privilégiées ou contrôlées (fichiers, photos, posts, pages web, salons de discussion, etc.
+    </dd>
+    <dt>Créer un jeton</dt>
+        <dd>
+            Le formulaire à créer/éditer accepte trois paramètres, un nom lisible par l'homme, un mot de passe ou un jeton d'accès, et une expiration facultative. Une fois expiré, le jeton d'accès n'est plus valide, ne peut plus être utilisé et sera automatiquement supprimé de la liste des comptes temporaires. Le champ mot de passe dans les formulaires de création/édition affiche le texte du jeton d'accès et non un mot de passe masqué.
+        </dd>
+    <dt>Partager un jeton</dt>
+        <dd>
+            Nous ne spécifions pas de mécanismes pour partager ces jetons avec d'autres. Toute méthode de communication peut être utilisée. Tous les jetons que vous avez créés sont ajoutés au sélecteur de liste de contrôle d'accès et peuvent être utilisés partout où des listes de contrôle d'accès sont fournies.
+
+            <b>Exemple</b> : Un visiteur arrive sur votre site. Elle a un jeton d'accès que vous lui avez fourni et tente de visiter l'un de vos albums photos (qui ne peut être visionné que par vous-même et une identité temporaire). La permission est refusée.
+
+            Le visiteur sélectionne maintenant &laquo;Login&raquo; dans la barre de navigation du menu. Ceci présente une page de connexion. Elle entre le nom et le mot de passe que vous lui avez fournis, et elle peut maintenant voir l'album photo restreint.
+
+            Alternativement, vous pouvez partager un lien vers un fichier protégé en ajoutant un paramètre &laquo;&zat=abc123&raquo; à l'URL, où la chaîne &laquo;abc123&raquo; est la clé d'accès ou le mot de passe pour la connexion temporaire. Aucune autre négociation n'est nécessaire et le dossier est présenté.
+        </dd>
+</dl>
