@@ -127,69 +127,45 @@ class Photo extends \Zotlabs\Web\Controller {
 				  }
 			}
 			
-			$r = q("SELECT uid FROM photo WHERE resource_id = '%s' AND imgscale = %d LIMIT 1",
+			$r = q("SELECT uid, photo_usage FROM photo WHERE resource_id = '%s' AND imgscale = %d LIMIT 1",
 				dbesc($photo),
 				intval($resolution)
 			);
 			if($r) {
+
+				$allowed = (-1);
+
+				if(intval($r[0]['photo_usage'])) {
+					$allowed = 1;
+					if(intval($r[0]['photo_usage']) === PHOTO_COVER) 
+						if($resolution < PHOTO_RES_COVER_1200)
+							$allowed = (-1);
+					if(intval($r[0]['photo_usage']) === PHOTO_PROFILE)
+						if(! in_array($resolution,[4,5,6]))
+							$allowed = (-1);
+				}
+				if($allowed === (-1))
+					$allowed = attach_can_view($r[0]['uid'],$observer_xchan,$photo);
 				
-				$allowed = (($r[0]['uid']) ? perm_is_allowed($r[0]['uid'],$observer_xchan,'view_storage') : true);
-	
-				$sql_extra = permissions_sql($r[0]['uid']);
-
-				if(! $sql_extra)
-					$sql_extra = ' and true ';
-
-				// Only check permissions on normal photos. Those photos we don't check includes
-				// profile photos, xchan photos (which are also profile photos), 'thing' photos,
-				// and cover photos
-	
-				$sql_extra = " and (( photo_usage = 0 $sql_extra ) or photo_usage != 0 )";
-
 				$channel = channelx_by_n($r[0]['uid']);
 
 				// Now we'll see if we can access the photo
-				$r = q("SELECT * FROM photo WHERE resource_id = '%s' AND imgscale = %d $sql_extra LIMIT 1",
+				$e = q("SELECT * FROM photo WHERE resource_id = '%s' AND imgscale = %d $sql_extra LIMIT 1",
 					dbesc($photo),
 					intval($resolution)
 				);
 
-				// viewing cover photos is allowed unless a plugin chooses to block it. 
+				$exists = (($e) ? true : false);
 
-				if($r && intval($r[0]['photo_usage']) === PHOTO_COVER && $resolution >= PHOTO_RES_COVER_1200)
-					$allowed = 1;
- 
-				$d = [ 'imgscale' => $resolution, 'resource_id' => $photo, 'photo' => $r, 'allowed' => $allowed ];
-				call_hooks('get_photo',$d);
-
-				$resolution = $d['imgscale'];
-				$photo      = $d['resource_id'];
-				$r          = $d['photo'];
-				$allowed    = $d['allowed'];
-
-				if($r && $allowed) {
-					$data = dbunescbin($r[0]['content']);
-					$mimetype = $r[0]['mimetype'];
-					if(intval($r[0]['os_storage'])) {
+				if($exists && $allowed) {
+					$data = dbunescbin($e[0]['content']);
+					$mimetype = $e[0]['mimetype'];
+					if(intval($e[0]['os_storage'])) {
 						$streaming = $data;
 					}
 				}
 				else {
-	
-					// Does the picture exist? It may be a remote person with no credentials,
-					// but who should otherwise be able to view it. Show a default image to let 
-					// them know permissions was denied. It may be possible to view the image 
-					// through an authenticated profile visit.
-					// There won't be many completely unauthorised people seeing this because
-					// they won't have the photo link, so there's a reasonable chance that the person
-					// might be able to obtain permission to view it.
-	
-					$r = q("SELECT * FROM photo WHERE resource_id = '%s' AND imgscale = %d LIMIT 1",
-						dbesc($photo),
-						intval($resolution)
-					);
-	 
-					if($r) {
+					if(! $allowed) {
 						logger('mod_photo: forbidden. ' . \App::$query_string);
 						$observer = \App::get_observer();
 						logger('mod_photo: observer = ' . (($observer) ? $observer['xchan_addr'] : '(not authenticated)'));
@@ -201,9 +177,6 @@ class Photo extends \Zotlabs\Web\Controller {
 			}
 		}
 	
-
-
-
 		if(! isset($data)) {
 			if(isset($resolution)) {
 				switch($resolution) {
@@ -295,7 +268,6 @@ class Photo extends \Zotlabs\Web\Controller {
 		}
 
 		killme();
-		// NOTREACHED
 	}
 	
 }
