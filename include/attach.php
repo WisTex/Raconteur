@@ -266,14 +266,12 @@ function attach_by_hash($hash, $observer_hash, $rev = 0) {
 		return $ret;
 	}
 
-	if(! perm_is_allowed($r[0]['uid'], $observer_hash, 'view_storage')) {
+	if(! attach_can_view($r[0]['uid'], $observer_hash, $hash)) {
 		$ret['message'] = t('Permission denied.');
 		return $ret;
 	}
 
-	$sql_extra = permissions_sql($r[0]['uid'],$observer_hash);
-
-	// Now we'll see if we can access the attachment
+	// We've already checked for existence and permissions
 
 	$r = q("SELECT * FROM attach WHERE hash = '%s' and uid = %d $sql_extra LIMIT 1",
 		dbesc($hash),
@@ -281,25 +279,40 @@ function attach_by_hash($hash, $observer_hash, $rev = 0) {
 	);
 
 	if(! $r) {
-		$ret['message'] = t('Permission denied.');
+		$ret['message'] = t('Unknown error.');
 		return $ret;
 	}
 
 	$r[0]['content'] = dbunescbin($r[0]['content']);
-
-	if($r[0]['folder']) {
-		$x = attach_can_view_folder($r[0]['uid'],$observer_hash,$r[0]['folder']);
-		if(! $x) {
-			$ret['message'] = t('Permission denied.');
-			return $ret;
-		}
-	}
 
 	$ret['success'] = true;
 	$ret['data'] = $r[0];
 
 	return $ret;
 }
+
+
+function attach_can_view($uid,$ob_hash,$resource) {
+
+	$sql_extra = permissions_sql($uid,$ob_hash);
+	$hash = $resource;
+
+	if(! perm_is_allowed($uid,$ob_hash,'view_storage')) {
+		return false;
+	}
+
+	$r = q("select folder from attach where hash = '%s' and uid = %d $sql_extra",
+		dbesc($hash),
+		intval($uid)
+	);
+	if(! $r) {
+		return false;
+	}
+
+	return attach_can_view_folder($uid,$ob_hash,$r[0]['folder']);
+
+}
+
 
 
 function attach_can_view_folder($uid,$ob_hash,$folder_hash) {
