@@ -94,7 +94,9 @@
 		<input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
 
 		<div id="profile-photo-upload-wrapper">
-
+			{{if $info}}
+			<div class="section-content-warning-wrapper">{{$info}}</div>
+			{{/if}}
 			{{if $importfile}}
 			<input type="hidden" name="importfile" value="{{$importfile}}">
 			{{else}}

@@ -451,6 +451,7 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 	
 			$o .= replace_macros($tpl,array(
 				'$user' => \App::$channel['channel_address'],
+				'$info' => ((count($profiles) > 1) ? t('Your default profile photo is visible to anybody on the internet. Profile photos for alternate profiles will inherit the permissions of the profile') : t('Your profile photo is visible to anybody on the internet and may be distributed to other websites.')), 
 				'$importfile' => (($importing) ? \App::$data['importfile'] : ''),
 				'$lbl_upfile' => t('Upload File:'),
 				'$lbl_profiles' => t('Select a profile:'),
