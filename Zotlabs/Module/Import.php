@@ -363,11 +363,27 @@ class Import extends \Zotlabs\Web\Controller {
 						continue;
 				}
 
-				abook_store_lowlevel($abook);
+				$r = q("select abook_id from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
+					dbesc($abook['abook_xchan']),
+					intval($channel['channel_id'])
+				);
+				if($r) {
+					foreach($abook as $k => $v) {
+						$r = q("UPDATE abook SET " . TQUOT . "%s" . TQUOT . " = '%s' WHERE abook_xchan = '%s' AND abook_channel = %d",
+							dbesc($k),
+							dbesc($v),
+							dbesc($abook['abook_xchan']),
+							intval($channel['channel_id'])
+						);
+					}
+				}
+				else {
+					abook_store_lowlevel($abook);
 
-				$friends ++;
-				if(intval($abook['abook_feed']))
-					$feeds ++;
+					$friends ++;
+					if(intval($abook['abook_feed']))
+						$feeds ++;
+				}
 
 				translate_abook_perms_inbound($channel,$abook_copy);
 
