@@ -648,6 +648,7 @@ function parse_xml_string($s, $strict = true) {
 
 	libxml_use_internal_errors(true);
 
+
 	$x = @simplexml_load_string($s2);
 	if($x === false) {
 		logger('libxml: parse: error: ' . $s2, LOGGER_DATA);
@@ -660,6 +661,16 @@ function parse_xml_string($s, $strict = true) {
 
 	return $x;
 }
+
+
+function sxml2array ( $xmlObject, $out = array () )
+{
+    foreach ( (array) $xmlObject as $index => $node )
+        $out[$index] = ( is_object ( $node ) ) ? sxml2array ( $node ) : $node;
+
+    return $out;
+}
+
 
 /**
  * @brief Scales an external image.
