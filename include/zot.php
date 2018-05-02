@@ -302,11 +302,13 @@ function zot_zot($url, $data, $channel = null,$crypto = null) {
 		$headers['X-Zot-Token'] = random_string();
 		$hash = \Zotlabs\Web\HTTPSig::generate_digest($data,false);
 		$headers['X-Zot-Digest'] = 'SHA-256=' . $hash;
+		$headers['Content-type'] = 'application/x-zot+json';
+
 		$h = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],'acct:' . $channel['channel_address'] . '@' . \App::get_hostname(),false,false,'sha512',(($crypto) ? $crypto['hubloc_sitekey'] : ''), (($crypto) ? zot_best_algorithm($crypto['site_crypto']) : ''));
 	}
 
 	$redirects = 0;
-	return z_post_url($url, array('data' => $data),$redirects,((empty($h)) ? [] : [ 'headers' => $h ]));
+	return z_post_url($url,$data,$redirects,((empty($h)) ? [] : [ 'headers' => $h ]));
 }
 
 /**

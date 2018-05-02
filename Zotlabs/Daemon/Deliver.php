@@ -31,7 +31,7 @@ class Deliver {
 				// Messages without an outq_msg will need to go via the web, even if it's a
 				// local delivery. This includes conversation requests and refresh packets.
 
-				if(($r[0]['outq_posturl'] === z_root() . '/post') && ($r[0]['outq_msg'])) {
+				if(($r[0]['outq_posturl'] === z_root() . '/zot') && ($r[0]['outq_msg'])) {
 					logger('deliver: local delivery', LOGGER_DEBUG);
 
 					// local delivery
