@@ -86,6 +86,9 @@
     <h2>{{$title}}</h2>
     </div>
     <div class="section-content-wrapper">
+		{{if $info}}
+		<div class="section-content-warning-wrapper">{{$info}}</div>
+		{{/if}}
 		{{if $existing}}
 		<img class="cover-photo-review" style="max-width: 100%;" src="{{$existing.url}}" alt="{{t('Cover Photo')}}" />
 		{{/if}}

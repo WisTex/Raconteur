@@ -355,6 +355,7 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 	
 			$o .= replace_macros($tpl,array(
 				'$user'                => \App::$channel['channel_address'],
+				'$info'                => t('Your cover photo may be visible to anybody on the internet'),
 				'$existing'            => get_cover_photo(local_channel(),'array',PHOTO_RES_COVER_850),
 				'$lbl_upfile'          => t('Upload File:'),
 				'$lbl_profiles'        => t('Select a profile:'),
