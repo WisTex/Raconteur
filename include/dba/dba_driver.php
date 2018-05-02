@@ -460,3 +460,28 @@ function db_logger($s,$level = LOGGER_NORMAL,$syslog = LOG_INFO) {
 	\DBA::$logging = false;
 	\DBA::$dba->debug = $saved;
 }
+
+
+function db_columns($table) {
+
+	if($table) {
+		if(ACTIVE_DBTYPE === DBTYPE_POSTGRES) {
+			$r = q("SELECT column_name as field FROM information_schema.columns WHERE table_schema = 'public' AND table_name = '%s'",
+				dbesc($table)
+			); 
+			if($r) {
+				return ids_to_array($r,'field');
+			}
+		}
+		else {
+			$r = q("show columns in %s",
+				dbesc($table)
+			);
+			if($r) {
+				return ids_to_array($r,'Field');
+			}
+		}
+	}
+
+	return [];
+}

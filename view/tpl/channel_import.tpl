@@ -1,43 +1,35 @@
-<h2>{{$title}}</h2>
+<div class="generic-content-wrapper">
+	<div class="section-title-wrapper">
+		<h2>{{$title}}</h2>
+		<div class="clear"></div>
+	</div>
+	<div class="section-content-wrapper">
 
-<form action="import" method="post" enctype="multipart/form-data" id="import-channel-form">
-	<input type="hidden" name="form_security_token" value="{{$form_security_token}}">
-	<div id="import-desc" class="descriptive-paragraph">{{$desc}}</div>
+		<form action="import" method="post" enctype="multipart/form-data" id="import-channel-form">
+		<input type="hidden" name="form_security_token" value="{{$form_security_token}}">
+		<div id="import-desc" class="section-content-info-wrapper">{{$desc}}</div>
 
-	<label for="import-filename" id="label-import-filename" class="import-label" >{{$label_filename}}</label>
-	<input type="file" name="filename" id="import-filename" class="import-input" value="" />
-	<div id="import-filename-end" class="import-field-end"></div>
+		<label for="import-filename" id="label-import-filename" class="import-label" >{{$label_filename}}</label>
+		<input type="file" name="filename" id="import-filename" class="import-input" value="" />
+		<div id="import-filename-end" class="import-field-end"></div>
 
-	<div id="import-choice" class="descriptive-paragraph">{{$choice}}</div>
+		<div id="import-choice" class="section-content-info-wrapper">{{$choice}}</div>
 
-	<label for="import-old-address" id="label-import-old-address" class="import-label" >{{$label_old_address}}</label>
-	<input type="text" name="old_address" id="import-old-address" class="import-input" value="" />
-	<div id="import-old-address-end" class="import-field-end"></div>
+		{{include file="field_input.tpl" field=$old_address}}
+		{{include file="field_input.tpl" field=$email}}
+		{{include file="field_password.tpl" field=$password}}
+		{{include file="field_checkbox.tpl" field=$import_posts}}
 
-	<label for="import-old-email" id="label-import-old-email" class="import-label" >{{$label_old_email}}</label>
-	<input type="text" name="email" id="import-old-email" class="import-input" value="{{$email}}" />
-	<div id="import-old-email-end" class="import-field-end"></div>
+		<div id="import-common-desc" class="section-content-info-wrapper">{{$common}}</div>
 
-	<label for="import-old-pass" id="label-import-old-pass" class="import-label" >{{$label_old_pass}}</label>
-	<input type="password" name="password" id="import-old-pass" class="import-input" value="{{$pass}}" />
-	<div id="import-old-pass-end" class="import-field-end"></div>
+		{{include file="field_checkbox.tpl" field=$make_primary}}
+		{{include file="field_checkbox.tpl" field=$moving}}
 
-	<input type="checkbox" name="import_posts" id="import-posts" value="1" />
-	<label for="import-posts" id="label-import-posts">{{$label_import_posts}}</label>
-	<div id="import-posts-end" class="import-field-end"></div>
+		<div id="import-common-desc" class="section-content-info-wrapper">{{$pleasewait}}</div>
 
-	<div id="import-common-desc" class="descriptive-paragraph">{{$common}}</div>
+		<input type="submit" class="btn btn-primary" name="submit" id="import-submit-button" value="{{$submit}}" />
+		<div id="import-submit-end" class="import-field-end"></div>
 
-	<input type="checkbox" name="make_primary" id="import-make-primary" value="1" />
-	<label for="import-make-primary" id="label-import-make-primary">{{$label_import_primary}}</label>
-	<div id="import-make-primary-end" class="import-field-end"></div>
-
-	<input type="checkbox" name="moving" id="import-moving" value="1" />
-	<label for="import-moving" id="label-import-moving">{{$label_import_moving}}</label>
-	<div id="import-moving-end" class="import-field-end"></div>
-
-	<input type="submit" name="submit" id="import-submit-button" value="{{$submit}}" />
-	<div id="import-submit-end" class="import-field-end"></div>
-
-	<div id="import-common-desc" class="descriptive-paragraph">{{$pleasewait}}</div>
-</form>
+		</form>
+	</div>
+</div>
