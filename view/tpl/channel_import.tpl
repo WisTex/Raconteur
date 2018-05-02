@@ -24,6 +24,7 @@
 
 		{{include file="field_checkbox.tpl" field=$make_primary}}
 		{{include file="field_checkbox.tpl" field=$moving}}
+		{{include file="field_input.tpl" field=$newname}}
 
 		<div id="import-common-desc" class="section-content-info-wrapper">{{$pleasewait}}</div>
 
