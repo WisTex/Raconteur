@@ -6,6 +6,7 @@ require_once('include/zot.php');
 require_once('include/channel.php');
 require_once('include/import.php');
 require_once('include/perm_upgrade.php');
+require_once('library/urlify/URLify.php');
 
 
 /**
@@ -38,6 +39,7 @@ class Import extends \Zotlabs\Web\Controller {
 		$filename       = basename($_FILES['filename']['name']);
 		$filesize       = intval($_FILES['filename']['size']);
 		$filetype       = $_FILES['filename']['type'];
+		$newname        = trim(strtolower($_REQUEST['newname']));
 
 		// import channel from file
 		if($src) {
@@ -146,7 +148,20 @@ class Import extends \Zotlabs\Web\Controller {
 				}
 			}
 
-			$channel = import_channel($data['channel'], $account_id, $seize);
+            if($newname) {
+	            $x = false;
+
+    	        if(get_config('system','unicode_usernames')) {
+        	        $x = punify(mb_strtolower($newname));
+            	}
+
+	            if((! $x) || strlen($x) > 64) {
+    	            $x = strtolower(\URLify::transliterate($newname));
+				}
+				$newname = $x;
+			}
+
+			$channel = import_channel($data['channel'], $account_id, $seize, $newname);
 		}
 		else {
 			$moving  = false;
@@ -363,11 +378,27 @@ class Import extends \Zotlabs\Web\Controller {
 						continue;
 				}
 
-				abook_store_lowlevel($abook);
+				$r = q("select abook_id from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
+					dbesc($abook['abook_xchan']),
+					intval($channel['channel_id'])
+				);
+				if($r) {
+					foreach($abook as $k => $v) {
+						$r = q("UPDATE abook SET " . TQUOT . "%s" . TQUOT . " = '%s' WHERE abook_xchan = '%s' AND abook_channel = %d",
+							dbesc($k),
+							dbesc($v),
+							dbesc($abook['abook_xchan']),
+							intval($channel['channel_id'])
+						);
+					}
+				}
+				else {
+					abook_store_lowlevel($abook);
 
-				$friends ++;
-				if(intval($abook['abook_feed']))
-					$feeds ++;
+					$friends ++;
+					if(intval($abook['abook_feed']))
+						$feeds ++;
+				}
 
 				translate_abook_perms_inbound($channel,$abook_copy);
 
@@ -516,16 +547,20 @@ class Import extends \Zotlabs\Web\Controller {
 			'$desc' => t('Use this form to import an existing channel from a different server/hub. You may retrieve the channel identity from the old server/hub via the network or provide an export file.'),
 			'$label_filename' => t('File to Upload'),
 			'$choice' => t('Or provide the old server/hub details'),
-			'$label_old_address' => t('Your old identity address (xyz@example.com)'),
-			'$label_old_email' => t('Your old login email address'),
-			'$label_old_pass' => t('Your old login password'),
+
+			'$old_address' => [ 'old_address', t('Your old identity address (xyz@example.com)'), '', ''],
+			'$email' => [ 'email', t('Your old login email address'), '', '' ],
+			'$password' => [ 'password', t('Your old login password'), '', '' ],
+			'$import_posts' => [ 'import_posts', t('Import a few months of posts if possible (limited by available memory'), false, '', [ t('No'), t('Yes') ]],
+
 			'$common' => t('For either option, please choose whether to make this hub your new primary address, or whether your old location should continue this role. You will be able to post from either location, but only one can be marked as the primary location for files, photos, and media.'),
-			'$label_import_primary' => t('Make this hub my primary location'),
-			'$label_import_moving' => t('Move this channel (disable all previous locations)'),
-			'$label_import_posts' => t('Import a few months of posts if possible (limited by available memory'),
+
+			'$make_primary' => [ 'make_primary', t('Make this hub my primary location'), false, '', [ t('No'), t('Yes') ] ],
+			'$moving' => [ 'moving', t('Move this channel (disable all previous locations)'), false, '', [ t('No'), t('Yes') ] ],
+			'$newname' => [ 'newname', t('Use this channel nickname instead of the one provided'), '', t('Leave blank to keep your existing channel nickname. You will be randomly assigned a similar nickname if either name is already allocated on this site.')],
+
 			'$pleasewait' => t('This process may take several minutes to complete. Please submit the form only once and leave this page open until finished.'),
-			'$email' => '',
-			'$pass' => '',
+
 			'$form_security_token' => get_form_security_token('channel_import'),
 			'$submit' => t('Submit')
 		));
