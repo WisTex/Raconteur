@@ -786,16 +786,30 @@ function photos_album_get_db_idstr($channel_id, $album, $remote_xchan = '') {
 		);
 	}
 	if ($r) {
-		$arr = array();
-		foreach ($r as $rr) {
-			$arr[] = "'" . dbesc($rr['hash']) . "'" ;
-		}
-		$str = implode(',',$arr);
-		return $str;
+		return ids_to_querystr($r,'hash',true);
 	}
 
 	return false;
 }
+
+function photos_album_get_db_idstr_admin($channel_id, $album) {
+
+	if(! is_site_admin())
+		return false;
+
+	$r = q("SELECT hash from attach where uid = %d and folder = '%s' ",
+		intval($channel_id),
+		dbesc($album)
+	);
+
+	if ($r) {
+		return ids_to_querystr($r,'hash',true);
+	}
+
+	return false;
+}
+
+
 
 /**
  * @brief Creates a new photo item.

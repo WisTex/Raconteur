@@ -241,7 +241,7 @@ class Browser extends DAV\Browser\Plugin {
 
 			// put the array for this file together
 			$ft['attachId'] = $this->findAttachIdByHash($attachHash);
-			$ft['fileStorageUrl'] = substr($fullPath, 0, strpos($fullPath, "cloud/")) . "filestorage/" . $this->auth->getCurrentUser();
+			$ft['fileStorageUrl'] = substr($fullPath, 0, strpos($fullPath, "cloud/")) . "filestorage/" . $this->auth->owner_nick;
 			$ft['icon'] = $icon;
 			$ft['photo_icon'] = $photo_icon;
 			$ft['attachIcon'] = (($size) ? $attachIcon : '');
@@ -276,6 +276,8 @@ class Browser extends DAV\Browser\Plugin {
 				'$create' => t('Create'),
 				'$upload' => t('Add Files'),
 				'$is_owner' => $is_owner,
+				'$is_admin' => is_site_admin(),
+				'$admin_delete' => t('Admin Delete'),
 				'$parentpath' => $parentpath,
 				'$cpath' => bin2hex(\App::$query_string),
 				'$tiles' => intval($_SESSION['cloud_tiles']),

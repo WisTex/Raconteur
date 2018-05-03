@@ -3561,7 +3561,6 @@ function item_expire($uid,$days,$comment_days = 7) {
 		drop_item($item['id'],false);
 	}
 
-//	Zotlabs\Daemon\Master::Summon(array('Notifier','expire',$uid));
 }
 
 function retain_item($id) {

@@ -141,6 +141,10 @@ class ThreadItem {
 				'delete' => t('Delete'),
 			);
 		}		
+		elseif(is_site_admin()) {
+			$drop = [ 'dropping' => true, 'delete' => t('Admin Delete') ];
+		}
+
 // FIXME
 		if($observer_is_pageowner) {		
 			$multidrop = array(
