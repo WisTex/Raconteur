@@ -72,7 +72,7 @@ class Oep extends \Zotlabs\Web\Controller {
 		$url = $args['url'];
 		$maxwidth  = intval($args['maxwidth']);
 		$maxheight = intval($args['maxheight']);
-	logger('processing display');
+
 		if(preg_match('#//(.*?)/display/(.*?)(&|\?|$)#',$url,$matches)) {
 			$res = $matches[2];
 		}
