@@ -1057,7 +1057,9 @@ function doprofilelike(ident, verb) {
 	$.get('like/' + ident + '?verb=' + verb, function() { window.location.href=window.location.href; });
 }
 
+
 function dropItem(url, object) {
+
 	var confirm = confirmDelete();
 	if(confirm) {
 		$('body').css('cursor', 'wait');

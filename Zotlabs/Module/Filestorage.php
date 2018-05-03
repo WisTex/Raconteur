@@ -66,7 +66,7 @@ class Filestorage extends \Zotlabs\Web\Controller {
 
 		$perms = get_all_perms($owner, $ob_hash);
 
-		if(! $perms['view_storage']) {
+		if(! ($perms['view_storage'] || is_site_admin())){
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
@@ -75,15 +75,29 @@ class Filestorage extends \Zotlabs\Web\Controller {
 		// need to return for anyone other than the owner, despite the perms check for now.
 
 		$is_owner = (((local_channel()) && ($owner  == local_channel())) ? true : false);
-		if(! $is_owner) {
+		if(! ($is_owner || is_site_admin())){
 			info( t('Permission Denied.') . EOL );
 			return;
 		}
 
 		if(argc() > 3 && argv(3) === 'delete') {
+
+			if(argc() > 4 && argv(4) === 'json')
+				$json_return = true;
+
+
+			$admin_delete = false;
+
 			if(! $perms['write_storage']) {
-				notice( t('Permission denied.') . EOL);
-				return;
+				if(is_site_admin()) {
+					$admin_delete = true;
+				}
+				else {
+					notice( t('Permission denied.') . EOL);
+					if($json_return) 
+						json_return_and_die([ 'success' => false ]);
+					return;
+				}
 			}
 
 			$file = intval(argv(2));
@@ -92,21 +106,30 @@ class Filestorage extends \Zotlabs\Web\Controller {
 				intval($owner)
 			);
 			if(! $r) {
+				if($json_return) 
+					json_return_and_die([ 'success' => false ]);
+
 				notice( t('File not found.') . EOL);
 				goaway(z_root() . '/cloud/' . $which);
 			}
 
 			$f = $r[0];
-			$channel = \App::get_channel();
+
+			$channel = channelx_by_n($owner);
 
 			$url = get_cloud_url($channel['channel_id'], $channel['channel_address'], $f['hash']);
 
 			attach_delete($owner, $f['hash']);
 
-			$sync = attach_export_data($channel, $f['hash'], true);
-			if($sync) {
-				build_sync_packet($channel['channel_id'], array('file' => array($sync)));
+			if(! $admin_delete) {
+				$sync = attach_export_data($channel, $f['hash'], true);
+				if($sync) {
+					build_sync_packet($channel['channel_id'], array('file' => array($sync)));
+				}
 			}
+
+			if(json_return)
+				json_return_and_die([ 'success' => true ]);
 
 			goaway(dirname($url));
 		}

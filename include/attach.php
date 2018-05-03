@@ -1585,8 +1585,8 @@ function get_cloud_url($channel_id, $channel_name, $attachHash) {
 		}
 	} while ($parentHash);
 
-	$url = z_root() . '/cloud/' . $channel_name . '/' . $parentFullPath . find_filename_by_hash($channel_id, $attachHash);
 
+	$url = z_root() . '/cloud/' . $channel_name . '/' . $parentFullPath . find_filename_by_hash($channel_id, $attachHash);
 	return $url;
 }
 

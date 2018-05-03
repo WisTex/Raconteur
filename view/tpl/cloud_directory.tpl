@@ -65,10 +65,10 @@
 			<td class="cloud-index-tool">{{$item.attachIcon}}</td>
 			<td class="cloud-index-tool"><div id="file-edit-{{$item.attachId}}" class="spinner-wrapper"><div class="spinner s"></div></div></td>
 			<td class="cloud-index-tool"><i class="fakelink fa fa-pencil" onclick="filestorage(event, '{{$nick}}', {{$item.attachId}});"></i></td>
-			<td class="cloud-index-tool"><a href="#" title="{{$delete}}" onclick="dropItem('{{$item.fileStorageUrl}}/{{$item.attachId}}/delete', '#cloud-index-{{$item.attachId}},#cloud-tools-{{$item.attachId}}'); return false;"><i class="fa fa-trash-o drop-icons"></i></a></td>
+			<td class="cloud-index-tool"><a href="#" title="{{$delete}}" onclick="dropItem('{{$item.fileStorageUrl}}/{{$item.attachId}}/delete/json', '#cloud-index-{{$item.attachId}},#cloud-tools-{{$item.attachId}}'); return false;"><i class="fa fa-trash-o drop-icons"></i></a></td>
 
 	{{else}}
-			<td></td><td></td><td></td><td></td>
+			<td></td><td></td><td></td>{{if $is_admin}}<td class="cloud-index-tool"><a href="#" title="{{$admin_delete}}" onclick="dropItem('{{$item.fileStorageUrl}}/{{$item.attachId}}/delete/json', '#cloud-index-{{$item.attachId}},#cloud-tools-{{$item.attachId}}'); return false;"><i class="fa fa-trash-o drop-icons"></i></a>{{else}}<td>{{/if}}</td>
 	{{/if}}
 			<td>{{*{{$item.type}}*}}</td>
 			<td class="d-none d-md-table-cell">{{$item.sizeFormatted}}</td>
