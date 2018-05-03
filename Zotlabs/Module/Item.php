@@ -1084,7 +1084,7 @@ class Item extends \Zotlabs\Web\Controller {
 		if((argc() == 3) && (argv(1) === 'drop') && intval(argv(2))) {
 	
 			require_once('include/items.php');
-			$i = q("select id, uid, author_xchan, owner_xchan, source_xchan, item_type from item where id = %d limit 1",
+			$i = q("select id, uid, item_origin, author_xchan, owner_xchan, source_xchan, item_type from item where id = %d limit 1",
 				intval(argv(2))
 			);
 	
@@ -1094,14 +1094,21 @@ class Item extends \Zotlabs\Web\Controller {
 				if(local_channel() && local_channel() == $i[0]['uid'])
 					$local_delete = true;
 	
-				$sys = get_sys_channel();
-				if(is_site_admin() && $sys['channel_id'] == $i[0]['uid'])
-					$can_delete = true;
-	
+				// The site admin can delete any post/item on the site.
+				// If the item originated on this site+channel the deletion will propagate downstream. 
+				// Otherwise just the local copy is removed.
+
+				if(is_site_admin()) {
+					$local_delete = true;
+					if(intval($i[0]['item_origin']))
+						$can_delete = true;
+				}
+
 				$ob_hash = get_observer_hash();
-				if($ob_hash && ($ob_hash === $i[0]['author_xchan'] || $ob_hash === $i[0]['owner_xchan'] || $ob_hash === $i[0]['source_xchan']))
+				if($ob_hash && ($ob_hash === $i[0]['author_xchan'] || $ob_hash === $i[0]['owner_xchan'] || $ob_hash === $i[0]['source_xchan'])) {
 					$can_delete = true;
-	
+				}
+
 				if(! ($can_delete || $local_delete)) {
 					notice( t('Permission denied.') . EOL);
 					return;
