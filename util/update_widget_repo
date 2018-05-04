@@ -25,6 +25,10 @@ for a in "${filelist[@]}" ; do
 #		echo 'ignoring git'
 		continue;
 	fi
+	if [ ! -d ../extend/widget/$1/$base ]; then
+#		echo $a 'not a directory'
+		continue;
+	fi
 	if [ -x $base ]; then
 #		echo $base 'file exists'
 		continue;
