@@ -797,7 +797,7 @@ function xml2array($contents, $namespaces = true, $get_attributes=1, $priority =
 	if($namespaces)
 		$parser = @xml_parser_create_ns("UTF-8",':');
 	else
-		$parser = @xml_parser_create('UTF-8');
+		$parser = @xml_parser_create();
 
 	if(! $parser) {
 		logger('xml2array: xml_parser_create: no resource');
@@ -807,7 +807,7 @@ function xml2array($contents, $namespaces = true, $get_attributes=1, $priority =
 	xml_parser_set_option($parser, XML_OPTION_TARGET_ENCODING, "UTF-8");
 	// http://minutillo.com/steve/weblog/2004/6/17/php-xml-and-character-encodings-a-tale-of-sadness-rage-and-data-loss
 	xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
-	xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 0);
+	xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 1);
 	@xml_parse_into_struct($parser, trim($contents), $xml_values);
 	@xml_parser_free($parser);
 
