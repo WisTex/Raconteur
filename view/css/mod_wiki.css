@@ -33,7 +33,7 @@
 	width: 100%;
 }
 
-td i {
+td > i {
 	padding: 7px 5px;
 	cursor: pointer;
 }
