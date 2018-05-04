@@ -353,19 +353,22 @@ function string2bb(element) {
 
 		this.attr('autocomplete','off');
 
+		var aItem;
 		var Textarea = Textcomplete.editors.Textarea;
 
 		$(this).each(function() {
 			var editor = new Textarea(this);
 			var textcomplete = new Textcomplete(editor);
 			textcomplete.register([names], {className:'acpopup', zIndex:1020});
+			textcomplete.on('select', function() { aItem = textcomplete.dropdown.getActiveItem(); });
 		});
 
 		if(autosubmit)
-			this.on('select', function(e,value,strategy) { submit_form(this); });
+			this.on('select', function() { submit_form(this); });
 
 		if(typeof onselect !== 'undefined')
-			this.on('select', function(e, value, strategy) { onselect(value); });
+			this.on('select', function() { onselect(aItem.searchResult.data); });
+
 	};
 })( jQuery );
 
