@@ -528,16 +528,6 @@ class Item extends \Zotlabs\Web\Controller {
 			// and will require alternatives for alternative content-types (text/html, text/markdown, text/plain, etc.)
 			// we may need virtual or template classes to implement the possible alternatives
 			
-			// If we're sending a private top-level message with a single @-taggable channel as a recipient, @-tag it, if our pconfig is set.
-		
-			if((! $parent) && (get_pconfig($profile_uid,'system','tagifonlyrecip')) && (substr_count($str_contact_allow,'<') == 1) && ($str_group_allow == '') && ($str_contact_deny == '') && ($str_group_deny == '')) {
-				$x = q("select abook_id, abconfig.v from abook left join abconfig on abook_xchan = abconfig.xchan and abook_channel = abconfig.chan and cat= 'their_perms' and abconfig.k = 'tag_deliver' and abconfig.v = 1 and abook_xchan = '%s' and abook_channel = %d limit 1",
-					dbesc(str_replace(array('<','>'),array('',''),$str_contact_allow)),
-					intval($profile_uid)
-				);
-				if($x)
-					$body .= "\n\n@group+" . $x[0]['abook_id'] . "\n";
-			}
 
 			$body = cleanup_bbcode($body);
 	

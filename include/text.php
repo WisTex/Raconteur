@@ -830,27 +830,7 @@ function get_tags($s) {
 		}
 	}
 
-	// Match full names against @tags including the space between first and last
-	// We will look these up afterward to see if they are full names or not recognisable.
-
-	// The lookbehind is used to prevent a match in the middle of a word
-	// '=' needs to be avoided because when the replacement is made (in handle_tag()) it has to be ignored there
-	// Feel free to allow '=' if the issue with '=' is solved in handle_tag()
-	// added / ? and [ to avoid issues with hashchars in url paths
-
-	// added ; to single word tags to allow emojis and other unicode character constructs in bbcode
-	// (this would actually be &#xnnnnn; but the ampersand will have been escaped to &amp; by the time we see it.)
-
-	if(preg_match_all('/(?<![a-zA-Z0-9=\pL\/\?])(@[^ \x0D\x0A,:?\[]+ [^ \x0D\x0A@,:?\[]+)/u',$s,$match)) {
-		foreach($match[1] as $mtch) {
-			if(substr($mtch,-1,1) === '.')
-				$ret[] = substr($mtch,0,-1);
-			else
-				$ret[] = $mtch;
-		}
-	}
-
-	// Otherwise pull out single word tags. These can be @nickname, @first_last
+	// Pull out single word tags. These can be @nickname, @first_last
 	// and #hash tags.
 
 	if(preg_match_all('/(?<![a-zA-Z0-9=\pL\/\?\;])([@#\!][^ \x0D\x0A,;:?\[]+)/u',$s,$match)) {
@@ -2543,10 +2523,10 @@ function extra_query_args() {
  * @param[in,out] string &$str_tags string to add the tag to
  * @param int $profile_uid
  * @param string $tag the tag to replace
- * @param boolean $diaspora default false
+ * @param boolean $in_network default true
  * @return boolean true if replaced, false if not replaced
  */
-function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $diaspora = false) {
+function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $in_network = true) {
 
 	$replaced = false;
 	$r = null;
@@ -2579,12 +2559,12 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 				$basetag = substr($tag,7);
 				$basetag = substr($basetag,0,-6);
 			}
-			else
-				$basetag = str_replace('_',' ',substr($tag,1));
 
 			//create text for link
+
 			$url = z_root() . '/search?tag=' . rawurlencode($basetag);
 			$newtag = '#[zrl=' . z_root() . '/search?tag=' . rawurlencode($basetag) . ']' . $basetag . '[/zrl]';
+
 			//replace tag by the link. Make sure to not replace something in the middle of a word
 			// The '=' is needed to not replace color codes if the code is also used as a tag
 			// Much better would be to somehow completely avoiding things in e.g. [color]-tags.
@@ -2620,13 +2600,13 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 	if(strpos($tag,'@') === 0 || $grouptag) {
 
 		// The @! tag will alter permissions
-		$exclusive = (((! $grouptag) && (strpos($tag,'!') === 1) && (! $diaspora)) ? true : false);
+		$exclusive = (((! $grouptag) && (strpos($tag,'!') === 1) && $in_network) ? true : false);
 		if(($grouptag) && (strpos($tag,'!!') === 0)) {
 			$exclusive = true;
 		}
 
 		//is it already replaced?
-		if(strpos($tag,'[zrl='))
+		if(strpos($tag,'[zrl=') || strpos($tag,'[url='))
 			return $replaced;
 
 		//get the person's name
@@ -2654,59 +2634,6 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 
 		if(! $r) {
 
-			// @channel+ is a forum or network delivery tag
-
-			if(substr($newname,-1,1) === '+') {
-				$forum = true;
-				$newname = substr($newname,0,-1);
-			}
-
-			// Here we're looking for an address book entry as provided by the auto-completer
-			// of the form something+nnn where nnn is an abook_id or the first chars of xchan_hash
-
-
-			// If there's a +nnn in the string make sure there isn't a space preceding it
-
-			$t1 = strpos($newname,' ');
-			$t2 = strrpos($newname,'+');
-	
-			if($t1 && $t2 && $t1 < $t2)
-				$t2 = 0;
-
-			if(($t2) && (! $diaspora)) {
-				//get the id
-
-				$tagcid = urldecode(substr($newname,$t2 + 1));
-
-				if(strrpos($tagcid,' '))
-					$tagcid = substr($tagcid,0,strrpos($tagcid,' '));
-
-				if(strlen($tagcid) < 16)
-					$abook_id = intval($tagcid);
-				//remove the next word from tag's name
-				if(strpos($name,' ')) {
-					$name = substr($name,0,strpos($name,' '));
-				}
-
-				if($abook_id) { // if there was an id
-					// select channel with that id from the logged in user's address book
-					$r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash
-						WHERE abook_id = %d AND abook_channel = %d LIMIT 1",
-							intval($abook_id),
-							intval($profile_uid)
-					);
-				}
-				else {
-					$r = q("SELECT * FROM xchan
-						WHERE xchan_hash like '%s%%' LIMIT 1",
-							dbesc($tagcid)
-					);
-				}
-			}
-		}
-
-		if(! $r) {
-
 			// look for matching names in the address book
 
 			// Two ways to deal with spaces - double quote the name or use underscores
@@ -2716,25 +2643,27 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 				$newname = substr($name,6);
 				$newname = substr($newname,0,-6);
 			}
-			else
-				$newname = str_replace('_',' ',$name);
-
-			// do this bit over since we started over with $name
-
-			if(substr($newname,-1,1) === '+') {
-				$forum = true;
-				$newname = substr($newname,0,-1);
-			}
 
 			//select someone from this user's contacts by name
+
 			$r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash
 				WHERE xchan_name = '%s' AND abook_channel = %d LIMIT 1",
 					dbesc($newname),
 					intval($profile_uid)
 			);
 
+			// select anybody by full hubloc_addr
+
+			if((! $r) && strpos($newname,'@')) {
+				$r = q("SELECT * FROM xchan left join hubloc on xchan_hash = hubloc_hash 
+					WHERE hubloc_addr = '%s' LIMIT 1",
+						dbesc($newname)
+				);
+			}
+
+			//select someone by attag or nick and the name passed in
+
 			if(! $r) {
-				//select someone by attag or nick and the name passed in
 				$r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash
 					WHERE xchan_addr like ('%s') AND abook_channel = %d LIMIT 1",
 						dbesc(((strpos($newname,'@')) ? $newname : $newname . '@%')),
@@ -2742,18 +2671,6 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 				);
 			}
 
-			if(! $r) {
-				// it's possible somebody has a name ending with '+', which we stripped off as a forum indicator
-				// This is very rare but we want to get it right.
-
-				$r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash
-					WHERE xchan_name = '%s' AND abook_channel = %d LIMIT 1",
-						dbesc($newname . '+'),
-						intval($profile_uid)
-				);
-				if($r)
-					$trailing_plus_name = true;
-			}
 		}
 
 		// $r is set if we found something
@@ -2813,7 +2730,7 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 				$body = str_replace('!' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
 			}
 			else {
-				$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. (($forum &&  ! $trailing_plus_name) ? '+' : '') . '[/zrl]';
+				$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. '[/zrl]';
 				$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
 			}
 
@@ -2835,7 +2752,7 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 	];
 }
 
-function linkify_tags($a, &$body, $uid, $diaspora = false) {
+function linkify_tags($a, &$body, $uid, $in_network = true) {
 	$str_tags = '';
 	$tagged = array();
 	$results = array();
@@ -2859,7 +2776,7 @@ function linkify_tags($a, &$body, $uid, $diaspora = false) {
 			if($fullnametagged)
 				continue;
 
-			$success = handle_tag($a, $body, $access_tag, $str_tags, ($uid) ? $uid : App::$profile_uid , $tag, $diaspora);
+			$success = handle_tag($a, $body, $access_tag, $str_tags, ($uid) ? $uid : App::$profile_uid , $tag, $in_network);
 
 			$results[] = array('success' => $success, 'access_tag' => $access_tag);
 			if($success['replaced']) $tagged[] = $tag;
