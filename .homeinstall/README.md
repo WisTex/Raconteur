@@ -134,7 +134,7 @@ There are two ways to get a domain...
 
 The cost are around 10,- € once and 1,50 € per month (2017).
 
-### Method 2: Register a free domain
+### Method 2: Register a free subdomain
 
 ...for example register at freedns.afraid.org
 
