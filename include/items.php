@@ -3032,36 +3032,51 @@ function start_delivery_chain($channel, $item, $item_id, $parent) {
  * @param array $item
  */
 function check_item_source($uid, $item) {
+
+	$xchan = (($item['source_xchan']) ?  $item['source_xchan'] : $item['owner_xchan']);
+
 	$r = q("select * from source where src_channel_id = %d and ( src_xchan = '%s' or src_xchan = '*' ) limit 1",
 		intval($uid),
-		dbesc(($item['source_xchan']) ?  $item['source_xchan'] : $item['owner_xchan'])
+		dbesc($xchan)
 	);
 
-	if(! $r)
+	if(! $r) {
+		logger('source: no source record for this channel and source', LOGGER_DEBUG);
 		return false;
+	}
 
-	$x = q("select abook_their_perms, abook_feed from abook where abook_channel = %d and abook_xchan = '%s' limit 1",
+	$x = q("select abook_feed from abook where abook_channel = %d and abook_xchan = '%s' limit 1",
 		intval($uid),
-		dbesc($item['owner_xchan'])
+		dbesc($xchan)
 	);
 
-	if(! $x)
+	if(! $x) {
+		logger('source: not connected to this channel.');
 		return false;
+	}
 
-	if(! get_abconfig($uid,$item['owner_xchan'],'their_perms','republish'))
+	if(! get_abconfig($uid,$xchan,'their_perms','republish')) {
+		logger('source: no republish permission');
 		return false;
+	}
 
-	if($item['item_private'] && (! intval($x[0]['abook_feed'])))
+	if($item['item_private'] && (! intval($x[0]['abook_feed']))) {
+		logger('source: item is private');
 		return false;
+	}
 
-	if($r[0]['src_channel_xchan'] === $item['owner_xchan'])
+	if($r[0]['src_channel_xchan'] === $xchan) {
+		logger('source: cannot source yourself');
 		return false;
+	}
 
 
 	// since we now have connection filters with more features, the source filter is redundant and can probably go away
 
-	if(! $r[0]['src_patt'])
+	if(! $r[0]['src_patt']) {
+		logger('source: success');
 		return true;
+	}
 
 
 	require_once('include/html2plain.php');
@@ -3077,17 +3092,25 @@ function check_item_source($uid, $item) {
 			if(! $w)
 				continue;
 			if(substr($w,0,1) === '#' && $tags) {
-				foreach($tags as $t)
-					if((($t['ttype'] == TERM_HASHTAG) || ($t['ttype'] == TERM_COMMUNITYTAG)) && (($t['term'] === substr($w,1)) || (substr($w,1) === '*')))
+				foreach($tags as $t) {
+					if((($t['ttype'] == TERM_HASHTAG) || ($t['ttype'] == TERM_COMMUNITYTAG)) && (($t['term'] === substr($w,1)) || (substr($w,1) === '*'))) {
+						logger('source: tag filter success');
 						return true;
+					}
+				}
 			}
-			elseif((strpos($w,'/') === 0) && preg_match($w,$text))
+			elseif((strpos($w,'/') === 0) && preg_match($w,$text)) {
+				logger('source: preg filter success');
 				return true;
-			elseif(stristr($text,$w) !== false)
+			}
+			elseif(stristr($text,$w) !== false) {
+				logger('source: text filter success');
 				return true;
+			}
 		}
 	}
 
+	logger('source: filter fail');
 	return false;
 }
 
