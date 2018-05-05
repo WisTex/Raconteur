@@ -374,12 +374,12 @@ The above mechanisms only apply to "top-level" posts you create. Mentioning a ch
 [h4]Topical Tags (also known as Hashtags)[/h4]
 Topical tags are indicated by preceding the tag name with the  # character. This will create a link in the post to a generalised site search for the term provided.  For example, #[zrl=[baseurl]/search?tag=cars]cars[/zrl] will provide a search link for all posts mentioning 'cars' on your site. Topical tags are generally a minimum of three characters in length.  Shorter search terms are not likely to yield any search results, although this depends on the database configuration. 
 
-Topical tags are also not linked if they are purely numeric, e.g. #1. If you wish to use a numeric hashtag, please add some descriptive text such as #2012-elections.
+Topical tags are also not normally linked if they are purely numeric, e.g. #1. If you wish to use a numeric hashtag, please add some descriptive text such as #2012-elections or enclose the entire tag in double quotes (for example #"2012"). Doubles quotes are also required if the tag contains spaces (#"My Tag") and may be required if the tag contains punctuation characters (#"EndsWithPeriod." or #"Exciting!!!"). 
 
 [h4]Bookmarks[/h4]
 Bookmarks indicate a link which can be saved to your bookmark folder. They use the sequence #^ followed by the link. Often these are generated automatically. If the 'bookmarker' addon is installed, this sequence will be converted to a bookmark icon when viewing the post or comment online, and clicking the icon will save the bookmark. If the bookmarker addon is not installed, the post 'dropdown menu' contains a link for saving the bookmark or bookmarks. 
 
-[h4]Spaces in Tags and Mentions[/h4]
+[h4]Manual Mentions[/h4]
 Where possible please use the auto-complete window to select tag and mention recipients, because it will generate a coded tag which uniquely identifies one channel. Names are sometimes ambiguous. However, you can "manually" tag a channel by matching the channel name or address.
 
 [code]
