@@ -3033,6 +3033,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent) {
  */
 function check_item_source($uid, $item) {
 
+	logger('source: uid: ' . $uid, LOGGER_DEBUG);
 	$xchan = (($item['source_xchan']) ?  $item['source_xchan'] : $item['owner_xchan']);
 
 	$r = q("select * from source where src_channel_id = %d and ( src_xchan = '%s' or src_xchan = '*' ) limit 1",
