@@ -797,7 +797,7 @@ function xml2array($contents, $namespaces = true, $get_attributes=1, $priority =
 	if($namespaces)
 		$parser = @xml_parser_create_ns("UTF-8",':');
 	else
-		$parser = @xml_parser_create('UTF-8');
+		$parser = @xml_parser_create();
 
 	if(! $parser) {
 		logger('xml2array: xml_parser_create: no resource');
