@@ -886,7 +886,7 @@ class App {
 
 		// unix style "homedir"
 
-		if(substr(self::$cmd, 0, 1) === '~')
+		if((substr(self::$cmd, 0, 1) === '~') || (substr(self::$cmd, 0, 1) === '@'))
 			self::$cmd = 'channel/' . substr(self::$cmd, 1);
 
 		/*

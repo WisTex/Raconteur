@@ -109,7 +109,8 @@ class Wfinger extends \Zotlabs\Web\Controller {
 	
 			$aliases = array(
 				z_root() . (($pchan) ? '/pchan/' : '/channel/') . $r[0]['channel_address'],
-				z_root() . '/~' . $r[0]['channel_address']
+				z_root() . '/~' . $r[0]['channel_address'],
+				z_root() . '/@' . $r[0]['channel_address']
 			);
 	
 			if($h) {
