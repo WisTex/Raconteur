@@ -1,4 +1,7 @@
-Hubzilla 3.4 (????-??-??)
+Hubzilla 3.4 (2018-05-04)
+	- Provide warnings about profile photo and cover photo permissions
+	- Don't duplicate addressbook entries on repeated channel imports
+	- Where possible strip zid parameter from links that get pasted into posts so that they will get a correct zid when rendered
 	- Rename boxy schema to Focus-Boxy
 	- Rename BS-Default schema to Focus-Light
 	- Mark simple_* schemas unmaintained and deprecated - they will be removed in next release if nobody steps up to maintain them.
@@ -54,6 +57,7 @@ Hubzilla 3.4 (????-??-??)
 	- Fix pending registrations visible in admin accounts
 
 	Addons
+	Pubcrawl: fix issues with "private" messages
 	Pubcrawl: fix issues with postgresql
 	Fuzzloc: new addon to blur your browser location
 	Pubcrawl: implement follow by webfinger

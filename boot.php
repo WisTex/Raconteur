@@ -50,7 +50,7 @@ require_once('include/attach.php');
 require_once('include/bbcode.php');
 
 define ( 'PLATFORM_NAME',           'hubzilla' );
-define ( 'STD_VERSION',             '3.5.2' );
+define ( 'STD_VERSION',             '3.5.3' );
 define ( 'ZOT_REVISION',            '6.0a' );
 
 
@@ -81,7 +81,7 @@ define ( 'DIRECTORY_MODE_STANDALONE',  0x0100); // A detached (off the grid) hub
 // point to go out and find the rest of the world.
 
 define ( 'DIRECTORY_REALM',            'RED_GLOBAL');
-define ( 'DIRECTORY_FALLBACK_MASTER',  'https://gravizot.de');
+define ( 'DIRECTORY_FALLBACK_MASTER',  'https://zotadel.net');
 
 $DIRECTORY_FALLBACK_SERVERS = array(
 	'https://hubzilla.zottel.net',

@@ -2559,6 +2559,8 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $i
 				$basetag = substr($tag,7);
 				$basetag = substr($basetag,0,-6);
 			}
+			else
+				$basetag = substr($tag,1);
 
 			//create text for link
 
@@ -2587,6 +2589,7 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $i
 			'url'      => $url,
 			'contact'  => $r[0]
 		];
+
 	}
 
 	//is it a person tag?
