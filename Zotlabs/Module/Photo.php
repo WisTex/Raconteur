@@ -144,9 +144,11 @@ class Photo extends \Zotlabs\Web\Controller {
 						if(! in_array($resolution,[4,5,6]))
 							$allowed = (-1);
 				}
-				if($allowed === (-1))
+
+				if($allowed === (-1)) {
 					$allowed = attach_can_view($r[0]['uid'],$observer_xchan,$photo);
-				
+				}
+
 				$channel = channelx_by_n($r[0]['uid']);
 
 				// Now we'll see if we can access the photo
@@ -166,13 +168,12 @@ class Photo extends \Zotlabs\Web\Controller {
 				}
 				else {
 					if(! $allowed) {
-						logger('mod_photo: forbidden. ' . \App::$query_string);
-						$observer = \App::get_observer();
-						logger('mod_photo: observer = ' . (($observer) ? $observer['xchan_addr'] : '(not authenticated)'));
-						$data = file_get_contents('images/nosign.png');
-						$mimetype = 'image/png';
-						$prvcachecontrol = true;
+						http_status_exit(403,'forbidden');
 					}
+					if(! $exists) {
+						http_status_exit(404,'not found');
+					}
+
 				}
 			}
 		}
