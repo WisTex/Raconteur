@@ -1103,7 +1103,7 @@ function discover_by_url($url, $arr = null) {
 	if(! $name)
 		$name = notags($feed->get_description());
 
-	if(! $name)
+	if(! trim($name))
 		$name = 'unknown';
 
 	$r = q("select * from xchan where xchan_hash = '%s' limit 1",
