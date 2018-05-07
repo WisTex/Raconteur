@@ -105,6 +105,7 @@ function oembed_action($embedurl) {
 // if the url is embeddable with oembed, return the bbcode link.
 
 function oembed_process($url) {
+
 	$j = oembed_fetch_url($url);
 	logger('oembed_process: ' . print_r($j,true), LOGGER_DATA, LOG_DEBUG);
 	if($j && $j['type'] !== 'error')
@@ -131,6 +132,7 @@ function oembed_fetch_url($embedurl){
 			$action = 'block';
 		}
 	}
+
 
 	$txt = null;
 
@@ -217,10 +219,19 @@ function oembed_fetch_url($embedurl){
 
 	}
 
-	$j = json_decode($txt,true);
+	if(strpos(strtolower($embedurl),'.pdf') !== false) {
+		$action = 'allow';
+		$j = [ 'html' => '<object data="' . $embedurl . '" type="application/pdf" width="500" height="720">' . '<a href="' . $embedurl . '">' . t('View PDF') . '</a></object>', 'width' => 500, 'height' => 720, 'type' => 'pdf' ];
+		
+	}
 
-	if(! $j)
+	if(! $j) {
+		$j = json_decode($txt,true);
+	}
+
+	if(! $j) {
 		$j = [];
+	}
 
 	if($action === 'filter') {
 		if($j['html']) {
@@ -317,6 +328,11 @@ function oembed_format_object($j){
 
 			//$ret = "<a href='".$embedurl."'>".$j['title']."</a>";
 		}; break;  
+		case 'pdf': {
+			$ret = $j['html'];
+			break;
+		}
+
 		case "rich": {
 			// not so safe.. 
 			$ret.= $jhtml;

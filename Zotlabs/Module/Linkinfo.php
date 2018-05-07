@@ -82,6 +82,10 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 						echo $br . '[audio]' . $url . '[/audio]' . $br;
 					killme();
 				}
+				if(strtolower($type) === 'application/pdf' || strtolower($type) === 'application/x-pdf') {
+					echo $br . '[embed]' . $url . '[/embed]' . $br;
+					killme();
+				}
 			}
 		}
 	
