@@ -188,7 +188,7 @@ function string2bb(element) {
 
 		// Autocomplete contacts
 		contacts = {
-			match: /(^|\s)(@\!*)([^ \n]{3,})$/,
+			match: /(^|\s)(@\!*)([^ \n]{2,})$/,
 			index: 3,
 			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, 'c', extra_channels, spinelement=false); },
@@ -198,7 +198,7 @@ function string2bb(element) {
 
 		// Autocomplete forums
 		forums = {
-			match: /(^|\s)(\!\!*)([^ \n]{3,})$/,
+			match: /(^|\s)(\!\!*)([^ \n]{2,})$/,
 			index: 3,
 			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, 'f', extra_channels, spinelement=false); },
@@ -209,7 +209,7 @@ function string2bb(element) {
 
 		// Autocomplete hashtags
 		tags = {
-			match: /(^|\s)(\#)([^ \n]{3,})$/,
+			match: /(^|\s)(\#)([^ \n]{2,})$/,
 			index: 3,
 			cache: true,
 			search: function(term, callback) { $.getJSON('/hashtags/' + '$f=&t=' + term).done(function(data) { callback($.map(data, function(entry) { return entry.text.toLowerCase().indexOf(term.toLowerCase()) === 0 ? entry : null; })); }); },
@@ -253,7 +253,7 @@ function string2bb(element) {
 
 		// Autocomplete contacts
 		contacts = {
-			match: /(^@)([^\n]{3,})$/,
+			match: /(^@)([^\n]{2,})$/,
 			index: 2,
 			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, 'x', [], spinelement='#nav-search-spinner'); },
@@ -263,7 +263,7 @@ function string2bb(element) {
 
 		// Autocomplete forums
 		forums = {
-			match: /(^\!)([^\n]{3,})$/,
+			match: /(^\!)([^\n]{2,})$/,
 			index: 2,
 			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, 'f', [], spinelement='#nav-search-spinner'); },
@@ -273,7 +273,7 @@ function string2bb(element) {
 
 		// Autocomplete hashtags
 		tags = {
-			match: /(^\#)([^ \n]{3,})$/,
+			match: /(^\#)([^ \n]{2,})$/,
 			index: 2,
 			cache: true,
 			search: function(term, callback) { $.getJSON('/hashtags/' + '$f=&t=' + term).done(function(data) { callback($.map(data, function(entry) { return entry.text.toLowerCase().indexOf(term.toLowerCase()) === 0 ? entry : null; })); }); },
@@ -306,7 +306,7 @@ function string2bb(element) {
 
 		// Autocomplete contacts
 		contacts = {
-			match: /(^)([^\n]{3,})$/,
+			match: /(^)([^\n]{2,})$/,
 			index: 2,
 			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, typ,[], spinelement=false); },
@@ -344,7 +344,7 @@ function string2bb(element) {
 
 		// Autocomplete contacts
 		names = {
-			match: /(^)([^\n]{3,})$/,
+			match: /(^)([^\n]{2,})$/,
 			index: 2,
 			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, typ,[], spinelement=false); },
