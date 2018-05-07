@@ -7,21 +7,6 @@ function contact_search(term, callback, backend_url, type, extra_channels, spine
 	if(spinelement) {
 		$(spinelement).show();
 	}
-	// Check if there is a cached result that contains the same information we would get with a full server-side search
-//	var bt = backend_url+type;
-//	if(!(bt in contact_search.cache)) contact_search.cache[bt] = {};
-
-//	var lterm = term.toLowerCase(); // Ignore case
-//	for(var t in contact_search.cache[bt]) {
-//		if(lterm.indexOf(t) >= 0) { // A more broad search has been performed already, so use those results
-//			$(spinelement).hide();
-			// Filter old results locally
-//			var matching = contact_search.cache[bt][t].filter(function (x) { return (x.name.toLowerCase().indexOf(lterm) >= 0 || (typeof x.nick !== 'undefined' && x.nick.toLowerCase().indexOf(lterm) >= 0)); }); // Need to check that nick exists because groups don't have one
-//			matching.unshift({taggable:false, text: term, replace: term});
-//			setTimeout(function() { callback(matching); } , 1); // Use "pseudo-thread" to avoid some problems
-//			return;
-//		}
-//	}
 
 	var postdata = {
 		start:0,
@@ -38,12 +23,7 @@ function contact_search(term, callback, backend_url, type, extra_channels, spine
 		url: backend_url,
 		data: postdata,
 		dataType: 'json',
-		success: function(data){
-			// Cache results if we got them all (more information would not improve results)
-			// data.count represents the maximum number of items
-//			if(data.items.length -1 < data.count) {
-//				contact_search.cache[bt][lterm] = data.items;
-//			}
+		success: function(data) {
 			var items = data.items.slice(0);
 			items.unshift({taggable:false, text: term, replace: term});
 			callback(items);
