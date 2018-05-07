@@ -2493,8 +2493,8 @@ function check_cron_broken() {
  * @return boolean
  */
 function observer_prohibited($allow_account = false) {
-	if($allow_account)
+	if($allow_account) {
 		return (((get_config('system', 'block_public')) && (! get_account_id()) && (! remote_channel())) ? true : false );
-
+	}
 	return (((get_config('system', 'block_public')) && (! local_channel()) && (! remote_channel())) ? true : false );
 }
