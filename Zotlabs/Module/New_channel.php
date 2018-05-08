@@ -124,7 +124,7 @@ class New_channel extends \Zotlabs\Web\Controller {
 				intval($aid)
 			);
 			if($r && (! intval($r[0]['total']))) {
-				$default_role = get_config('system','default_permissions_role');
+				$default_role = get_config('system','default_permissions_role','social');
 			}
 	
 			$limit = account_service_class_fetch(get_account_id(),'total_identities');
@@ -136,21 +136,32 @@ class New_channel extends \Zotlabs\Web\Controller {
 				$channel_usage_message = '';
 			}
 		}
-	
+
+		$name_help = (($default_role) 
+			? t('Your real name is recommended.')
+			: t('Examples: "Bob Jameson", "Lisa and her Horses", "Soccer", "Aviation Group"')
+		); 	
+
+		$nick_help = t('This will be used to create a unique network address (like an email address).');
+
+		if(! get_config('system','unicode_usernames')) {
+			$nick_help .= ' ' . t('Allowed characters are a-z 0-9, - and _');
+		}
+
 		$privacy_role = ((x($_REQUEST,'permissions_role')) ? $_REQUEST['permissions_role'] :  "" );
 
 		$perm_roles = \Zotlabs\Access\PermissionRoles::roles();
 		if((get_account_techlevel() < 4) && $privacy_role !== 'custom')
 			unset($perm_roles[t('Other')]);
 
-		$name = array('name', t('Name or caption'), ((x($_REQUEST,'name')) ? $_REQUEST['name'] : ''), t('Examples: "Bob Jameson", "Lisa and her Horses", "Soccer", "Aviation Group"'), "*");
+		$name = array('name', t('Channel name'), ((x($_REQUEST,'name')) ? $_REQUEST['name'] : ''), $name_help, "*");
 		$nickhub = '@' . \App::get_hostname();
-		$nickname = array('nickname', t('Choose a short nickname'), ((x($_REQUEST,'nickname')) ? $_REQUEST['nickname'] : ''), sprintf( t('Your nickname will be used to create an easy to remember channel address e.g. nickname%s'), $nickhub), "*");
-		$role = array('permissions_role' , t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel role with your privacy requirements.') . ' <a href="help/member/member_guide#Channel_Permission_Roles" target="_blank">' . t('Read more about roles') . '</a>',$perm_roles);
+		$nickname = array('nickname', t('Choose a short nickname'), ((x($_REQUEST,'nickname')) ? $_REQUEST['nickname'] : ''), $nick_help, "*");
+		$role = array('permissions_role' , t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel permission role compatible with your usage needs and privacy requirements.') . '<br>' . '<a href="help/member/member_guide#Channel_Permission_Roles" target="_blank">' . t('Read more about channel permission roles') . '</a>',$perm_roles);
 	
 		$o = replace_macros(get_markup_template('new_channel.tpl'), array(
-			'$title'        => t('Create Channel'),
-			'$desc'         => t('A channel is a unique network identity. It can represent a person (social network profile), a forum (group), a business or celebrity page, a newsfeed, and many other things. Channels can make connections with other channels to share information with each other.') . ' ' . t('The type of channel you create affects the basic privacy settings, the permissions that are granted to connections/friends, and also the channel\'s visibility across the network.'),
+			'$title'        => t('Create a Channel'),
+			'$desc'         => t('A channel is a unique network identity. It can represent a person (social network profile), a forum (group), a business or celebrity page, a newsfeed, and many other things.') , 
 			'$label_import' => t('or <a href="import">import an existing channel</a> from another location.'),
 			'$name'         => $name,
 			'$role'		    => $role,

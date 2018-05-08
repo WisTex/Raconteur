@@ -68,6 +68,7 @@
 	
 	<h3>{{$registration}}</h3>
 	{{include file="field_input.tpl" field=$register_text}}
+	{{include file="field_select_grouped.tpl" field=$role}}
 	{{include file="field_select.tpl" field=$register_policy}}
 	{{include file="field_checkbox.tpl" field=$invite_only}}
 	{{include file="field_input.tpl" field=$minimum_age}}

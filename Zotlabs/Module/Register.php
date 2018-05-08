@@ -251,10 +251,10 @@ class Register extends \Zotlabs\Web\Controller {
 		$password     = array('password', t('Choose a password'), ''); 
 		$password2    = array('password2', t('Please re-enter your password'), ''); 
 		$invite_code  = array('invite_code', t('Please enter your invitation code'), ((x($_REQUEST,'invite_code')) ? strip_tags(trim($_REQUEST['invite_code'])) : ""));
-		$name = array('name', t('Name or caption'), ((x($_REQUEST,'name')) ? $_REQUEST['name'] : ''), t('Examples: "Bob Jameson", "Lisa and her Horses", "Soccer", "Aviation Group"'));
+		$name = array('name', t('Your Name'), ((x($_REQUEST,'name')) ? $_REQUEST['name'] : ''), t('Real names are preferred.'));
 		$nickhub = '@' . str_replace(array('http://','https://','/'), '', get_config('system','baseurl'));
 		$nickname = array('nickname', t('Choose a short nickname'), ((x($_REQUEST,'nickname')) ? $_REQUEST['nickname'] : ''), sprintf( t('Your nickname will be used to create an easy to remember channel address e.g. nickname%s'), $nickhub));
-		$role = array('permissions_role' , t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel role with your privacy requirements.') . ' <a href="help/member/member_guide#Account_Permission_Roles" target="_blank">' . t('Read more about roles') . '</a>',$perm_roles);
+		$role = array('permissions_role' , t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel permission role for your usage needs and privacy requirements.') . ' <a href="help/member/member_guide#Channel_Permission_Roles" target="_blank">' . t('Read more about channel permission roles') . '</a>',$perm_roles);
 		$tos = array('tos', $label_tos, '', '', array(t('no'),t('yes')));
 
 

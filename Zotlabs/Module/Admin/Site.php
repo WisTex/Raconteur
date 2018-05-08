@@ -77,6 +77,8 @@ class Site {
 		$thumbnail_security  = ((x($_POST,'thumbnail_security'))     ? intval($_POST['thumbnail_security'])   : 0);
 		$force_queue       = ((intval($_POST['force_queue']) > 0) ? intval($_POST['force_queue'])   : 3000);
 
+		$permissions_role = escape_tags(trim($_POST['permissions_role']));
+
 		$techlevel         = null;
 		if(array_key_exists('techlevel', $_POST))
 			$techlevel = intval($_POST['techlevel']);
@@ -102,6 +104,7 @@ class Site {
 		set_config('system', 'from_email_name' , $from_email_name);
 		set_config('system', 'imagick_convert_path' , $imagick_path);
 		set_config('system', 'thumbnail_security' , $thumbnail_security);
+		set_config('system', 'default_permissions_role', $permissions_role);
 
 		set_config('system', 'techlevel_lock', $techlevel_lock);
 
@@ -286,6 +289,12 @@ class Site {
 			'5' => t('Wizard - I probably know more than you do')
 		];
 
+		$perm_roles = \Zotlabs\Access\PermissionRoles::roles();
+		$default_role = get_config('system','default_permissions_role','social');
+
+		$role = array('permissions_role' , t('Default permission role for new accounts'), $default_role, t('This role will be used for the first channel created after registration.'),$perm_roles);
+
+
 		$homelogin = get_config('system','login_on_homepage');
 		$enable_context_help = get_config('system','enable_context_help');
 
@@ -321,6 +330,7 @@ class Site {
 			'$minimum_age'		=> array('minimum_age', t("Minimum age"), (x(get_config('system','minimum_age'))?get_config('system','minimum_age'):13), t("Minimum age (in years) for who may register on this site.")),
 			'$access_policy'	=> array('access_policy', t("Which best describes the types of account offered by this hub?"), get_config('system','access_policy'), "This is displayed on the public server site list.", $access_choices),
 			'$register_text'	=> array('register_text', t("Register text"), htmlspecialchars(get_config('system','register_text'), ENT_QUOTES, 'UTF-8'), t("Will be displayed prominently on the registration page.")),
+			'$role'         => $role,
 			'$frontpage'	=> array('frontpage', t("Site homepage to show visitors (default: login box)"), get_config('system','frontpage'), t("example: 'public' to show public stream, 'page/sys/home' to show a system webpage called 'home' or 'include:home.html' to include a file.")),
 			'$mirror_frontpage'	=> array('mirror_frontpage', t("Preserve site homepage URL"), get_config('system','mirror_frontpage'), t('Present the site homepage in a frame at the original location instead of redirecting')),
 			'$abandon_days'     => array('abandon_days', t('Accounts abandoned after x days'), get_config('system','account_abandon_days'), t('Will not waste system resources polling external sites for abandonded accounts. Enter 0 for no time limit.')),
