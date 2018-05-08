@@ -84,10 +84,11 @@ function photo_upload($channel, $observer, $args) {
 				//	logger('imagick thumbnail command: ' . $cmd);
 				for($x = 0; $x < 4; $x ++) {
 					exec($cmd);
-					if(! file_exists($tmp_name)) {
-						logger('imagick scale failed. Retrying.');
-						continue;
+					if(file_exists($tmp_name)) {
+						break;
 					}
+					logger('imagick scale failed. Retrying.');
+					continue;
 				}
 				if(! file_exists($tmp_name)) {
 					logger('imagick scale failed. Abort.');

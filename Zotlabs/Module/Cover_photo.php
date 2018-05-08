@@ -84,10 +84,39 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 			);
 	
 			if($r) {
-	
-				$base_image = $r[0];
-				$base_image['content'] = (($r[0]['os_storage']) ? @file_get_contents(dbunescbin($base_image['content'])) : dbunescbin($base_image['content']));
-			
+
+				$max_thumb = intval(get_config('system','max_thumbnail',1600));
+				$iscaled = false;
+				if(intval($r[0]['height']) > $max_thumb || intval($r[0]['width']) > $max_thumb) { 
+					$imagick_path = get_config('system','imagick_convert_path');
+					if($imagick_path && @file_exists($imagick_path) && intval($r[0]['os_storage'])) {
+						$fname = dbunescbin($r[0]['content']);
+						$tmp_name = $fname . '-001';
+						$newsize = photo_calculate_scale(array_merge(getimagesize($fname),['max' => $max_thumb]));
+						$cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $fname) . ' -thumbnail ' . $newsize . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmp_name);
+						//	logger('imagick thumbnail command: ' . $cmd);
+						for($x = 0; $x < 4; $x ++) {
+							exec($cmd);
+							if(file_exists($tmp_name)) {
+								break;
+							}
+						}
+						if(file_exists($tmp_name)) {
+							$base_image = $r[0];
+							$gis = getimagesize($tmp_name);
+							$base_image['width'] = $gis[0];
+							$base_image['height'] = $gis[1];
+							$base_image['content'] = @file_get_contents($tmp_name);
+							$iscaled = true;
+							@unlink($tmp_name);
+						}
+					}
+				}
+				if(! $iscaled) {
+					$base_image = $r[0];
+					$base_image['content'] = (($r[0]['os_storage']) ? @file_get_contents(dbunescbin($base_image['content'])) : dbunescbin($base_image['content']));
+				}
+
 				$im = photo_factory($base_image['content'], $base_image['mimetype']);
 				if($im->is_valid()) {
 	
