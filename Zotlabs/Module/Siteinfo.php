@@ -12,6 +12,9 @@ class Siteinfo extends \Zotlabs\Web\Controller {
 	}
 		
 	function get() {
+
+		$federated = [];
+		call_hooks('federated_transports',$federated);
 	
 		$siteinfo = replace_macros(get_markup_template('siteinfo.tpl'),
 			[ 
@@ -27,6 +30,9 @@ class Siteinfo extends \Zotlabs\Web\Controller {
 				'$prj_name' => t('This site is powered by $Projectname'),
 				'$prj_transport' => t('Federated and decentralised networking and identity services provided by Zot'),
 				'$transport_link' => '<a href="https://zotlabs.com">https://zotlabs.com</a>',
+
+				'$additional_text' => t('Additional federated transport protocols:'),
+				'$additional_fed' => implode(',',$federated),
 				'$prj_version' => ((get_config('system','hidden_version_siteinfo')) ? '' : sprintf( t('Version %s'), \Zotlabs\Lib\System::get_project_version())),
 				'$prj_linktxt' => t('Project homepage'),
 				'$prj_srctxt' => t('Developer homepage'),

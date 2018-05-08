@@ -38,4 +38,8 @@
 <br><br>
 <div>{{$prj_transport}} ({{$transport_link}})</div>
 
+{{if $additional_fed}}
+<div>{{$additional_text}} {{$additional_fed}}</div>
+{{/if}}
+
 </div>
