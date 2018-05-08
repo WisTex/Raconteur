@@ -90,6 +90,7 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 				if(intval($r[0]['height']) > $max_thumb || intval($r[0]['width']) > $max_thumb) { 
 					$imagick_path = get_config('system','imagick_convert_path');
 					if($imagick_path && @file_exists($imagick_path) && intval($r[0]['os_storage'])) {
+
 						$fname = dbunescbin($r[0]['content']);
 						$tmp_name = $fname . '-001';
 						$newsize = photo_calculate_scale(array_merge(getimagesize($fname),['max' => $max_thumb]));
@@ -104,6 +105,7 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 						if(file_exists($tmp_name)) {
 							$base_image = $r[0];
 							$gis = getimagesize($tmp_name);
+logger('gis: ' . print_r($gis,true));
 							$base_image['width'] = $gis[0];
 							$base_image['height'] = $gis[1];
 							$base_image['content'] = @file_get_contents($tmp_name);
@@ -148,10 +150,10 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 						intval(local_channel())
 					);
 	
-					$orig_srcx = ( $r[0]['width'] / $scaled_width ) * $srcX;
-					$orig_srcy = ( $r[0]['height'] / $scaled_height ) * $srcY;
-	 				$orig_srcw = ( $srcW / $scaled_width ) * $r[0]['width'];
-	 				$orig_srch = ( $srcH / $scaled_height ) * $r[0]['height'];
+					$orig_srcx = ( $base_image['width'] / $scaled_width ) * $srcX;
+					$orig_srcy = ( $base_image['height'] / $scaled_height ) * $srcY;
+	 				$orig_srcw = ( $srcW / $scaled_width ) * $base_image['width'];
+	 				$orig_srch = ( $srcH / $scaled_height ) * $base_image['height'];
 	
 					$im->cropImageRect(1200,435,$orig_srcx, $orig_srcy, $orig_srcw, $orig_srch);
 	
