@@ -719,7 +719,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 		);
 
 		foreach ($r as $rr) {
-			if((strpos($rr['filename'],'.') === 0) && (! get_pconfig($channel_id,'system','show_dot_files')))
+			if(\App::$module === 'cloud' && (strpos($rr['filename'],'.') === 0) && (! get_pconfig($channel_id,'system','show_dot_files')) )
 				continue;
 
 			// @FIXME I don't think we use revisions currently in attach structures.
