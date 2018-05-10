@@ -1282,7 +1282,7 @@ function status_editor($a, $x, $popup = false) {
 	if(x($x, 'hide_weblink'))
 		$weblink = false;
 	
-	$embedPhotos = t('Embed image from photo albums');
+	$embedPhotos = t('Embed (existing) photo from your photo albums');
 
 	$writefiles = (($mimetype === 'text/bbcode') ? perm_is_allowed($x['profile_uid'], get_observer_hash(), 'write_storage') : false);
 	if(x($x, 'hide_attach'))
