@@ -816,7 +816,7 @@ function get_tags($s) {
 
 	// match any double quoted tags
 
-	if(preg_match_all('/([@#!]\&quot\;.*?\&quot\;)/',$s,$match)) {
+	if(preg_match_all('/([@#\!]\&quot\;.*?\&quot\;)/',$s,$match)) {
 		foreach($match[1] as $mtch) {
 			$ret[] = $mtch;
 		}
@@ -833,7 +833,7 @@ function get_tags($s) {
 	// Pull out single word tags. These can be @nickname, @first_last
 	// and #hash tags.
 
-	if(preg_match_all('/(?<![a-zA-Z0-9=\pL\/\?\;])([@#\!][^ \x0D\x0A,;:?\[]+)/u',$s,$match)) {
+	if(preg_match_all('/(?<![a-zA-Z0-9=\pL\/\?\;])([@#\!][^ \x0D\x0A,;:\?\[\{\&]+)/u',$s,$match)) {
 		foreach($match[1] as $mtch) {
 			if(substr($mtch,-1,1) === '.')
 				$mtch = substr($mtch,0,-1);
