@@ -158,7 +158,7 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 
 				$feeds = get_config('system','feed_contacts');
 
-				if(($feeds) && ($protocol === '' || $protocol === 'feed')) {
+				if(($feeds) && ($protocol === '' || $protocol === 'feed' || $protocol === 'rss')) {
 					$d = discover_by_url($url);
 				}
 				else {
