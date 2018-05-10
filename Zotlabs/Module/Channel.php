@@ -248,6 +248,9 @@ class Channel extends \Zotlabs\Web\Controller {
 				$sql_extra2 .= protect_sprintf(sprintf(" AND item.created >= '%s' ", dbesc(datetime_convert(date_default_timezone_get(),'',$datequery2))));
 			}
 
+			if($datequery || $datequery2) {
+				$sql_extra2 .= " and item.item_thread_top != 0 ";
+			}
 
 			$itemspage = get_pconfig(local_channel(),'system','itemspage');
 			\App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
