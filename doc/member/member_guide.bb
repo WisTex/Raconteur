@@ -203,7 +203,7 @@ Some communications offer more than one protocol. If you wish to connect with so
 [ostatus]foobar@foo.bar
 [diaspora]foobar@foo.bar
 [zot]foobar@foo.bar
-[rss]https://foo.bar/foobar
+[feed]https://foo.bar/foobar
 [/code]
 
 
