@@ -39,7 +39,7 @@ Software
   - mkdir -p /var/www
   - cd /var/www
   - git clone https://github.com/redmatrix/hubzilla.git html
-  - cd /html/.homeinstall
+  - cd html/.homeinstall
   - cp hubzilla-config.txt.template hubzilla-config.txt
   - nano hubzilla-config.txt
     - Read the comments carefully
@@ -49,6 +49,20 @@ Software
     - ... wait, wait, wait until the script is finised
   - reboot
 + Open your domain with a browser and step throught the initial configuration of hubzilla.
+
+## Troubleshooting
+
+If the check of the mail address fails when you try to register the very first user in the browser. Do...
+
+    cd /var/www/html
+    util/config system.do_not_check_dns 1
+
+## Optional - Set path to imagemagick
+
+In Admin settings of hubzilla or via terminal
+
+    cd /var/www/html
+    util/config system.imagick_convert_path /usr/bin/convert
 
 # Step-by-Step in Detail
 
@@ -120,7 +134,7 @@ There are two ways to get a domain...
 
 The cost are around 10,- € once and 1,50 € per month (2017).
 
-### Method 2 Register a (free) Subdomain
+### Method 2: Register a free subdomain
 
 ...for example register at freedns.afraid.org
 
@@ -189,9 +203,16 @@ Leave db type "MySQL" untouched.
 
 Follow the instructions in the next pages.
 
+Recommended: Set path to imagemagick
+
+- in admin settings of hubzilla or 
+- via terminal
+
+    util/config system.imagick_convert_path /usr/bin/convert
+
 After the daily script was executed at 05:30 (am)
 
-- look at var/www/html/hubzilla-daily.log
+- look at /var/www/html/hubzilla-daily.log
 - check your backup on the external drive
 - optionally view the daily log under yourdomain.org/admin/logs/
   - set the logfile to var/www/html/hubzilla-daily.log
@@ -212,5 +233,13 @@ It is recommended to run the Raspi without graphical frontend (X-Server). Use...
 to boot the Rapsi to the client console.
 
 DO NOT FORGET TO CHANGE THE DEFAULT PASSWORD FOR USER PI!
+
+On a Raspian Stretch (Debian 9) the validation of the mail address fails for the very first user.
+This used to happen on some *bsd distros but there was some work to fix that a year ago (2017).
+
+So if your system isn't registered in DNS or DNS isn't active do
+
+    cd /var/www/html
+    util/config system.do_not_check_dns 1
 
 
