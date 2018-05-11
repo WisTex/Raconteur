@@ -76,6 +76,8 @@ class Site {
 		$imagick_path      = ((x($_POST,'imagick_path'))     ? trim($_POST['imagick_path'])   : '');
 		$thumbnail_security  = ((x($_POST,'thumbnail_security'))     ? intval($_POST['thumbnail_security'])   : 0);
 		$force_queue       = ((intval($_POST['force_queue']) > 0) ? intval($_POST['force_queue'])   : 3000);
+		$pub_incl = escape_tags(trim($_POST['pub_incl']));
+		$pub_excl = escape_tags(trim($_POST['pub_excl']));
 
 		$permissions_role = escape_tags(trim($_POST['permissions_role']));
 
@@ -105,6 +107,8 @@ class Site {
 		set_config('system', 'imagick_convert_path' , $imagick_path);
 		set_config('system', 'thumbnail_security' , $thumbnail_security);
 		set_config('system', 'default_permissions_role', $permissions_role);
+		set_config('system', 'pubstream_incl',$pub_incl);
+		set_config('system', 'pubstream_excl',$pub_excl);
 
 		set_config('system', 'techlevel_lock', $techlevel_lock);
 
@@ -340,6 +344,10 @@ class Site {
 			'$disable_discover_tab'	=> array('disable_discover_tab', t('Import Public Streams'), $discover_tab, t('Import and allow access to public content pulled from other sites. Warning: this content is unmoderated.')),
 			'$site_firehose'	=> array('site_firehose', t('Site only Public Streams'), get_config('system','site_firehose'), t('Allow access to public content originating only from this site if Imported Public Streams are disabled.')),
 			'$open_pubstream'	=> array('open_pubstream', t('Allow anybody on the internet to access the Public streams'), get_config('system','open_pubstream',1), t('Disable to require authentication before viewing. Warning: this content is unmoderated.')),
+			'$incl'           => array('pub_incl',t('Only import Public stream posts with this text'), $contact['abook_incl'],t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts')),
+			'$excl'           => array('pub_excl',t('Do not import Public stream posts with this text'), $contact['abook_excl'],t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts')),
+
+
 			'$login_on_homepage'	=> array('login_on_homepage', t("Login on Homepage"),((intval($homelogin) || $homelogin === false) ? 1 : '') , t("Present a login box to visitors on the home page if no other content has been configured.")),
 			'$enable_context_help'	=> array('enable_context_help', t("Enable context help"),((intval($enable_context_help) === 1 || $enable_context_help === false) ? 1 : 0) , t("Display contextual help for the current page when the help button is pressed.")),
 
@@ -363,7 +371,7 @@ class Site {
 			'$active_expire_days' => array('active_expire_days', t('Do not expire any posts which have comments less than this many days ago'), intval(get_config('system','active_expire_days',7)), ''),
 
 			'$sellpage' => array('site_sellpage', t('Public servers: Optional landing (marketing) webpage for new registrants'), get_config('system','sellpage',''), sprintf( t('Create this page first. Default is %s/register'),z_root())),
-			'$first_page' => array('first_page', t('Page to display after creating a new channel'), get_config('system','workflow_channel_next','profiles'), t('Recommend: profiles, go, or settings')),
+			'$first_page' => array('first_page', t('Page to display after creating a new channel'), get_config('system','workflow_channel_next','profiles'), t('Default: profiles')),
 
 			'$location' => array('site_location', t('Optional: site location'), get_config('system','site_location',''), t('Region or country')),
 

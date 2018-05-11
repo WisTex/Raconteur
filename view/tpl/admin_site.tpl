@@ -86,6 +86,8 @@
 	{{include file="field_checkbox.tpl" field=$disable_discover_tab}}
 	{{include file="field_checkbox.tpl" field=$site_firehose}}
 	{{include file="field_checkbox.tpl" field=$open_pubstream}}
+	{{include file="field_textarea.tpl" field=$incl}}
+	{{include file="field_textarea.tpl" field=$excl}}
 	
 	<div class="submit"><input type="submit" name="page_site" value="{{$submit}}" /></div>
 	

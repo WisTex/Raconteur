@@ -1332,6 +1332,12 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 					// immediate parent wasn't found. Turn into a top-level post if permissions allow
 					// but save the thread_parent in case we need to refer to it later.
 
+					if($importer['channel_system']) {
+						if( ! \Zotlabs\Lib\MessageFilter::evaluate($datarray,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
+							continue;
+						}
+					}	
+
 					if(! post_is_importable($datarray, $contact))
 						continue;
 
@@ -1481,6 +1487,12 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 					$author['owner_link']   = $contact['url'];
 					$author['owner_avatar'] = $contact['thumb'];
 				}
+
+				if($importer['channel_system']) {
+					if( ! \Zotlabs\Lib\MessageFilter::evaluate($datarray,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
+						continue;
+					}
+				}	
 
 				if(! post_is_importable($datarray, $contact))
 					continue;

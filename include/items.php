@@ -3129,69 +3129,8 @@ function post_is_importable($item,$abook) {
 	if(! ($abook['abook_incl'] || $abook['abook_excl']))
 		return true;
 
-	require_once('include/html2plain.php');
+	return \Zotlabs\Lib\MessageFilter::evaluate($item,$abook['abook_incl'],$abook['abook_excl']);
 
-	unobscure($item);
-
-	$text = prepare_text($item['body'],$item['mimetype']);
-	$text = html2plain(($item['title']) ? $item['title'] . ' ' . $text : $text);
-
-
-	$lang = null;
-
-	if((strpos($abook['abook_incl'],'lang=') !== false) || (strpos($abook['abook_excl'],'lang=') !== false)) {
-		$lang = detect_language($text);
-	}
-	$tags = ((count($item['term'])) ? $item['term'] : false);
-
-	// exclude always has priority
-
-	$exclude = (($abook['abook_excl']) ? explode("\n",$abook['abook_excl']) : null);
-
-	if($exclude) {
-		foreach($exclude as $word) {
-			$word = trim($word);
-			if(! $word)
-				continue;
-			if(substr($word,0,1) === '#' && $tags) {
-				foreach($tags as $t)
-					if((($t['ttype'] == TERM_HASHTAG) || ($t['ttype'] == TERM_COMMUNITYTAG)) && (($t['term'] === substr($word,1)) || (substr($word,1) === '*')))
-						return false;
-			}
-			elseif((strpos($word,'/') === 0) && preg_match($word,$text))
-				return false;
-			elseif((strpos($word,'lang=') === 0) && ($lang) && (strcasecmp($lang,trim(substr($word,5))) == 0))
-				return false;
-			elseif(stristr($text,$word) !== false)
-				return false;
-		}
-	}
-
-	$include = (($abook['abook_incl']) ? explode("\n",$abook['abook_incl']) : null);
-
-	if($include) {
-		foreach($include as $word) {
-			$word = trim($word);
-			if(! $word)
-				continue;
-			if(substr($word,0,1) === '#' && $tags) {
-				foreach($tags as $t)
-					if((($t['ttype'] == TERM_HASHTAG) || ($t['ttype'] == TERM_COMMUNITYTAG)) && (($t['term'] === substr($word,1)) || (substr($word,1) === '*')))
-						return true;
-			}
-			elseif((strpos($word,'/') === 0) && preg_match($word,$text))
-				return true;
-			elseif((strpos($word,'lang=') === 0) && ($lang) && (strcasecmp($lang,trim(substr($word,5))) == 0))
-				return true;
-			elseif(stristr($text,$word) !== false)
-				return true;
-		}
-	}
-	else {
-		return true;
-	}
-
-	return false;
 }
 
 

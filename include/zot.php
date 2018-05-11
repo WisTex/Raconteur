@@ -1787,6 +1787,10 @@ function process_delivery($sender, $arr, $deliveries, $relay, $public = false, $
 				$local_public = false;
 				continue;
 			}
+			if(! \Zotlabs\Lib\MessageFilter::evaluate($arr,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
+				$local_public = false;
+				continue;
+			}
 		}
 
 		$tag_delivery = tgroup_check($channel['channel_id'],$arr);
@@ -1922,6 +1926,7 @@ function process_delivery($sender, $arr, $deliveries, $relay, $public = false, $
 
 			continue;
 		}
+
 
 		$r = q("select * from item where mid = '%s' and uid = %d limit 1",
 			dbesc($arr['mid']),
