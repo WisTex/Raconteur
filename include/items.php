@@ -3071,44 +3071,14 @@ function check_item_source($uid, $item) {
 		return false;
 	}
 
-
-	// since we now have connection filters with more features, the source filter is redundant and can probably go away
-
-	if(! $r[0]['src_patt']) {
+	if (! $r[0]['src_patt']) {
 		logger('source: success');
 		return true;
 	}
 
-
-	require_once('include/html2plain.php');
-	$text = prepare_text($item['body'],$item['mimetype']);
-	$text = html2plain($text);
-
-	$tags = ((count($item['term'])) ? $item['term'] : false);
-
-	$words = explode("\n",$r[0]['src_patt']);
-	if($words) {
-		foreach($words as $word) {
-			$w = trim($word);
-			if(! $w)
-				continue;
-			if(substr($w,0,1) === '#' && $tags) {
-				foreach($tags as $t) {
-					if((($t['ttype'] == TERM_HASHTAG) || ($t['ttype'] == TERM_COMMUNITYTAG)) && (($t['term'] === substr($w,1)) || (substr($w,1) === '*'))) {
-						logger('source: tag filter success');
-						return true;
-					}
-				}
-			}
-			elseif((strpos($w,'/') === 0) && preg_match($w,$text)) {
-				logger('source: preg filter success');
-				return true;
-			}
-			elseif(stristr($text,$w) !== false) {
-				logger('source: text filter success');
-				return true;
-			}
-		}
+	if (\Zotlabs\Lib\MessageFilter::evaluate($item, $r[0]['src_patt'], EMPTY_STR)) {
+		logger('source: text filter success');
+		return true;
 	}
 
 	logger('source: filter fail');
