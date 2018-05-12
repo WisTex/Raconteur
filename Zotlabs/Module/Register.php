@@ -201,6 +201,15 @@ class Register extends \Zotlabs\Web\Controller {
 			$registration_is = t('Registration on this hub is by approval only.');
 			$other_sites = t('<a href="pubsites">Register at another affiliated hub.</a>');
 		}
+
+
+		$invitations = false;
+
+		if(intval(get_config('system','invitation_only'))) {
+			$invitations = true;
+			$registration_is = t('Registration on this hub is by invitation only.');
+			$other_sites = t('<a href="pubsites">Register at another affiliated hub.</a>');
+		}
 	
 		$max_dailies = intval(get_config('system','max_daily_registrations'));
 		if($max_dailies) {
@@ -270,8 +279,7 @@ class Register extends \Zotlabs\Web\Controller {
 			'$reg_is'       => $registration_is,
 			'$registertext' => bbcode(get_config('system','register_text')),
 			'$other_sites'  => $other_sites,
-			'$invitations'  => get_config('system','invitation_only'),
-			'$invite_desc'  => t('Membership on this site is by invitation only.'),
+			'$invitations'  => $invitations,
 			'$invite_code'  => $invite_code,
 			'$auto_create'  => $auto_create,
 			'$name'         => $name,
