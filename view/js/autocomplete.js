@@ -82,11 +82,6 @@ function trim_replace(item) {
 	return '$1'+item.name;
 }
 
-
-function submit_form(e) {
-	$(e).parents('form').submit();
-}
-
 function getWord(text, caretPos) {
 	var index = text.indexOf(caretPos);
 	var postText = text.substring(caretPos, caretPos+13);
@@ -264,14 +259,17 @@ function string2bb(element) {
 
 		this.attr('autocomplete', 'off');
 
+		var textcomplete;
 		var Textarea = Textcomplete.editors.Textarea;
+
 		$(this).each(function() {
 			var editor = new Textarea(this);
-			var textcomplete = new Textcomplete(editor);
+			textcomplete = new Textcomplete(editor);
 			textcomplete.register([contacts,forums,tags], {className:'acpopup', maxCount:100, zIndex: 1020, appendTo:'nav'});
 		});
 
-		this.on('select', function(e, value, strategy) { submit_form(this); });
+		textcomplete.on('selected', function() { this.editor.el.form.submit(); });
+
 	};
 })( jQuery );
 
@@ -296,19 +294,20 @@ function string2bb(element) {
 
 		this.attr('autocomplete','off');
 
+		var textcomplete;
 		var Textarea = Textcomplete.editors.Textarea;
+
 		$(this).each(function() {
 			var editor = new Textarea(this);
-			var textcomplete = new Textcomplete(editor);
+			textcomplete = new Textcomplete(editor);
 			textcomplete.register([contacts], {className:'acpopup', zIndex:1020});
-			textcomplete.on('select', function() { aItem = textcomplete.dropdown.getActiveItem(); });
 		});
 
 		if(autosubmit)
-			this.on('select', function() { submit_form(this); });
+			textcomplete.on('selected', function() { this.editor.el.form.submit(); });
 
 		if(typeof onselect !== 'undefined')
-			this.on('select', function() { onselect(aItem.searchResult.data); });
+			textcomplete.on('select', function() { var item = this.dropdown.getActiveItem(); onselect(item.searchResult.data); });
 	};
 })( jQuery );
 
@@ -334,21 +333,20 @@ function string2bb(element) {
 
 		this.attr('autocomplete','off');
 
-		var aItem;
+		var textcomplete;
 		var Textarea = Textcomplete.editors.Textarea;
 
 		$(this).each(function() {
 			var editor = new Textarea(this);
-			var textcomplete = new Textcomplete(editor);
+			textcomplete = new Textcomplete(editor);
 			textcomplete.register([names], {className:'acpopup', zIndex:1020});
-			textcomplete.on('select', function() { aItem = textcomplete.dropdown.getActiveItem(); });
 		});
 
 		if(autosubmit)
-			this.on('select', function() { submit_form(this); });
+			textcomplete.on('selected', function() { this.editor.el.form.submit(); });
 
 		if(typeof onselect !== 'undefined')
-			this.on('select', function() { onselect(aItem.searchResult.data); });
+			textcomplete.on('select', function() { var item = this.dropdown.getActiveItem(); onselect(item.searchResult.data); });
 
 	};
 })( jQuery );
@@ -424,8 +422,6 @@ function string2bb(element) {
 			var textcomplete = new Textcomplete(editor);
 			textcomplete.register([bbco], {className:'acpopup', zIndex:1020});
 		});
-
-		this.on('select', function(e, value, strategy) { value; });
 
 		this.keypress(function(e){
 			if (e.keyCode == 13) {
