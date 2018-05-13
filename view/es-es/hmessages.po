@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Redmatrix\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-04-23 11:34+0200\n"
-"PO-Revision-Date: 2018-04-24 09:02+0000\n"
+"PO-Revision-Date: 2018-05-06 10:55+0000\n"
 "Last-Translator: Manuel Jiménez Friaza <mjfriaza@disroot.org>\n"
 "Language-Team: Spanish (Spain) (http://www.transifex.com/Friendica/red-matrix/language/es_ES/)\n"
 "MIME-Version: 1.0\n"
@@ -1473,7 +1473,7 @@ msgstr "foto"
 #: ../../addon/diaspora/Receiver.php:1500 ../../addon/pubcrawl/as.php:1405
 #: ../../include/conversation.php:144 ../../include/text.php:2011
 msgid "status"
-msgstr "el mensaje de estado"
+msgstr "el mensaje de estado "
 
 #: ../../Zotlabs/Module/Subthread.php:142
 #, php-format
@@ -4539,7 +4539,7 @@ msgstr "Ocultas"
 #: ../../Zotlabs/Module/Connections.php:75
 #: ../../Zotlabs/Module/Connections.php:178
 msgid "Archived/Unreachable"
-msgstr "Archivado o inaccesible"
+msgstr "Archivadas o inaccesibles"
 
 #: ../../Zotlabs/Module/Connections.php:80
 #: ../../Zotlabs/Module/Connections.php:89 ../../Zotlabs/Module/Menu.php:116
