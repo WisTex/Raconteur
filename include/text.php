@@ -2717,6 +2717,10 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $i
 			}
 		}
 
+		if(($exclusive) && (! $access_tag)) {
+			$access_tag .= 'cid:' . $channel['channel_hash'];
+		}
+
 		// if there is an url for this channel
 
 		if(isset($profile)) {
