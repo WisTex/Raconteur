@@ -2604,6 +2604,7 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $i
 
 	// BEGIN mentions
 
+
 	if ( in_array($termtype, [ TERM_MENTION, TERM_FORUM ] )) {
 
 		// The @! tag and !! tag will alter permissions
@@ -2611,7 +2612,7 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $i
 		// $in_network is set to false to avoid false positives on posts originating
 		// on a network which does not implement privacy tags or implements them differently.
 
-		$exclusive = (((strpos($tag,'!') === 1) && $in_network) ? true : false);
+		$exclusive = (((strpos(substr($tag,1), '!') === 0) && $in_network) ? true : false);
 
 		//is it already replaced?
 		if(strpos($tag,'[zrl=') || strpos($tag,'[url='))
