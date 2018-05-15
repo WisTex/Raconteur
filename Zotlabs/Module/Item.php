@@ -533,7 +533,7 @@ class Item extends \Zotlabs\Web\Controller {
 	
 			// Look for tags and linkify them
 			$results = linkify_tags($a, $body, ($uid) ? $uid : $profile_uid);
-
+logger('linkify: ' . print_r($results,true));
 			if($results) {
 	
 				// Set permissions based on tag replacements
