@@ -23,7 +23,7 @@ class MessageFilter {
 			$lang = detect_language($text);
 		}
 
-		$tags = ((count($item['term'])) ? $item['term'] : false);
+		$tags = ((is_array($item['term']) && count($item['term'])) ? $item['term'] : false);
 
 		// exclude always has priority
 

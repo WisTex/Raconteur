@@ -5,11 +5,12 @@
 	</td>
 	{{if $notself}}
 	<td class="abook-them">
-		{{if $field.2}}<i class="fa fa-check-square-o"></i>{{else}}<i class="fa fa-square-o"></i>{{/if}}
+		{{if $field.2 === 1}}<i class="fa fa-check-square-o"></i>{{/if}}
+		{{if $field.2 === 0}}<i class="fa fa-square-o"></i>{{/if}}
 	</td>
 	{{/if}}
 	<td class="abook-me">
-		{{if $self || !$field.5 || $twocol }}
+		{{if $self || !$field.5 }}
 		<input type="checkbox" name='{{$field.0}}' class='abook-edit-me' id='me_id_{{$field.0}}' value="{{$field.4}}" {{if $field.3}}checked="checked"{{/if}} />
 		{{/if}}
 		{{if $notself && $field.5}}

@@ -331,7 +331,9 @@ function verify_email_address($arr) {
 
 function send_reg_approval_email($arr) {
 
-	$r = q("select * from account where account_roles & " . intval(ACCOUNT_ROLE_ADMIN));
+	$r = q("select * from account where (account_roles & %d) >= 4096",
+		 intval(ACCOUNT_ROLE_ADMIN)
+	);
 	if(! ($r && count($r)))
 		return false;
 
