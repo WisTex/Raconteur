@@ -17,10 +17,10 @@ Ability to create multiple profiles.
 Minimum required technical skill level to see this feature: 3
 
 
-### Permission Groups
+### Permission Categories
 
-Provide alternate connection permission roles.
-<!-- TODO: full description for Permission Groups -->
+Provide alternate connection permission limits.
+<!-- TODO: full description for Permission Categories -->
 
 Minimum required technical skill level to see this feature: 2
 
