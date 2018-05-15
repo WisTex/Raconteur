@@ -89,11 +89,11 @@ class Home extends \Zotlabs\Web\Controller {
 	
 		$sitename = get_config('system','sitename');
 		if($sitename) 
-			$o .= '<h1 class="home-welcome">' . sprintf( t("Welcome to %s") ,$sitename) . '</h1>';
+			$o .= '<h1 class="home-welcome">' . sprintf( t('Welcome to %s') ,$sitename) . '</h1>';
 	
 		$loginbox = get_config('system','login_on_homepage');
 		if(intval($loginbox) || $loginbox === false)
-			$o .= login((\App::$config['system']['register_policy'] == REGISTER_CLOSED) ? 0 : 1);
+			$o .= login(true);
 	
 		return $o;
 	

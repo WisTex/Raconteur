@@ -187,8 +187,8 @@ class Register extends \Zotlabs\Web\Controller {
 		$registration_is = '';
 		$other_sites = '';
 	
-		if(get_config('system','register_policy') == REGISTER_CLOSED) {
-			if(get_config('system','directory_mode') == DIRECTORY_MODE_STANDALONE) {
+		if(intval(get_config('system','register_policy')) === REGISTER_CLOSED) {
+			if(intval(get_config('system','directory_mode')) === DIRECTORY_MODE_STANDALONE) {
 				notice( t('Registration on this hub is disabled.')  . EOL);
 				return;
 			}
@@ -197,7 +197,7 @@ class Register extends \Zotlabs\Web\Controller {
 			return $mod->get();
 		}
 	
-		if(get_config('system','register_policy') == REGISTER_APPROVE) {
+		if(intval(get_config('system','register_policy')) == REGISTER_APPROVE) {
 			$registration_is = t('Registration on this hub is by approval only.');
 			$other_sites = t('<a href="pubsites">Register at another affiliated hub.</a>');
 		}
