@@ -83,7 +83,7 @@ class Photo extends \Zotlabs\Web\Controller {
 					$data = file_get_contents($data);
 			}
 			if(! $data) {
-				$data = file_get_contents($default);
+				$data = fetch_image_from_url($default,$mimetype);
 			}
 			if(! $mimetype) {
 				$mimetype = 'image/png';
@@ -183,16 +183,13 @@ class Photo extends \Zotlabs\Web\Controller {
 				switch($resolution) {
 	
 					case 4:
-						$data = file_get_contents(z_root() . '/' . get_default_profile_photo());
-						$mimetype = 'image/png';
+						$data = fetch_image_from_url(z_root() . '/' . get_default_profile_photo(),$mimetype);
 						break;
 					case 5:
-						$data = file_get_contents(z_root() . '/' . get_default_profile_photo(80));
-						$mimetype = 'image/png';
+						$data = fetch_image_from_url(z_root() . '/' . get_default_profile_photo(80),$mimetype);
 						break;
 					case 6:
-						$data = file_get_contents(z_root() . '/' . get_default_profile_photo(48));
-						$mimetype = 'image/png';
+						$data = fetch_image_from_url(z_root() . '/' . get_default_profile_photo(48),$mimetype);
 						break;
 					default:
 						killme();

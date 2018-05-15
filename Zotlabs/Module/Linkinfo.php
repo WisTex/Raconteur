@@ -55,10 +55,10 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 			$h = explode("\n",$result['header']);
 			foreach ($h as $l) {
 				list($k,$v) = array_map("trim", explode(":", trim($l), 2));
-				$hdrs[$k] = $v;
+				$hdrs[strtolower($k)] = $v;
 			}
-			if (array_key_exists('Content-Type', $hdrs))
-				$type = $hdrs['Content-Type'];
+			if (array_key_exists('content-type', $hdrs))
+				$type = $hdrs['content-type'];
 			if($type) {
 				$zrl = is_matrix_url($url);
 				if(stripos($type,'image/') !== false) {
