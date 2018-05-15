@@ -49,51 +49,91 @@ function account_verify_password($login, $pass) {
 	$channel = null;
 	$xchan   = null;
 
-	if(! strpos($login,'@')) {
-		$channel = channelx_by_nick($login);
-		if(! $channel) {
-			$x = q("select * from atoken where atoken_name = '%s' and atoken_token = '%s' limit 1",
-				dbesc($login),
-				dbesc($pass)
-			);
-			if($x) {
-				$ret['xchan'] = atoken_xchan($x[0]);
-				atoken_create_xchan($ret['xchan']);
+	$addon_auth = [
+		'username'      => $login,
+		'password'      => trim($pass),
+		'authenticated' => 0,
+		'user_record'   => null
+	];
+
+	/**
+	 *
+	 * A plugin indicates successful login by setting 'authenticated' to non-zero value and returning a user record
+	 * Plugins should never set 'authenticated' except to indicate success - as hooks may be chained
+	 * and later plugins should not interfere with an earlier one that succeeded.
+	 *
+	 */
+
+	call_hooks('authenticate', $addon_auth);
+
+	if(($addon_auth['authenticated']) && is_array($addon_auth['user_record']) && (! empty($addon_auth['user_record']))) {
+		$ret['account'] = $addon_auth['user_record'];
+		return $ret;
+	}
+	else {	
+		if(! strpos($login,'@')) {
+			$channel = channelx_by_nick($login);
+			if(! $channel) {
+				$x = q("select * from atoken where atoken_name = '%s' and atoken_token = '%s' limit 1",
+					dbesc($login),
+					dbesc($pass)
+				);
+				if($x) {
+					$ret['xchan'] = atoken_xchan($x[0]);
+					atoken_create_xchan($ret['xchan']);
+					return $ret;
+				}
+			}
+		}
+		if($channel) {
+			$where = " where account_id = " . intval($channel['channel_account_id']) . " ";
+		}
+		else {
+			$where = " where account_email = '" . dbesc($login) . "' ";
+		}
+
+		$a = q("select * from account $where");
+		if(! $a) {
+			return null;
+		}
+
+		$account = $a[0];
+
+		// Currently we only verify email address if there is an open registration policy.
+		// This isn't because of any policy - it's because the workflow gets too complicated if 
+		// you have to verify the email and then go through the account approval workflow before
+		// letting them login.
+
+		if(($email_verify) && ($register_policy == REGISTER_OPEN) && ($account['account_flags'] & ACCOUNT_UNVERIFIED)) {
+			logger('email verification required for ' . $login);
+			return ( [ 'reason' => 'unvalidated' ] );
+		}
+
+		if($channel) {
+			// Try the authentication plugin again since weve determined we are using the channel login instead of account login 
+			$addon_auth = [
+				'username'      => $account['account_email'],
+				'password'      => trim($pass),
+				'authenticated' => 0,
+				'user_record'   => null
+			];
+
+			call_hooks('authenticate', $addon_auth);
+
+			if(($addon_auth['authenticated']) && is_array($addon_auth['user_record']) && (! empty($addon_auth['user_record']))) {
+				$ret['account'] = $addon_auth['user_record'];
 				return $ret;
 			}
 		}
-	}
-	if($channel) {
-		$where = " where account_id = " . intval($channel['channel_account_id']) . " ";
-	}
-	else {
-		$where = " where account_email = '" . dbesc($login) . "' ";
-	}
 
-	$a = q("select * from account $where");
-	if(! $a) {
-		return null;
-	}
-
-	$account = $a[0];
-
-	// Currently we only verify email address if there is an open registration policy.
-	// This isn't because of any policy - it's because the workflow gets too complicated if 
-	// you have to verify the email and then go through the account approval workflow before
-	// letting them login.
-
-	if(($email_verify) && ($register_policy == REGISTER_OPEN) && ($account['account_flags'] & ACCOUNT_UNVERIFIED)) {
-		logger('email verification required for ' . $login);
-		return ( [ 'reason' => 'unvalidated' ] );
-	}
-
-	if(($account['account_flags'] == ACCOUNT_OK) 
-		&& (hash('whirlpool',$account['account_salt'] . $pass) === $account['account_password'])) {
-		logger('password verified for ' . $login);
-		$ret['account'] = $account;
-		if($channel)
-			$ret['channel'] = $channel;
-		return $ret;
+		if(($account['account_flags'] == ACCOUNT_OK) 
+			&& (hash('whirlpool',$account['account_salt'] . $pass) === $account['account_password'])) {
+			logger('password verified for ' . $login);
+			$ret['account'] = $account;
+			if($channel)
+				$ret['channel'] = $channel;
+			return $ret;
+		}
 	}
 
 	$error = 'password failed for ' . $login;
@@ -242,52 +282,29 @@ else {
 
 	if((x($_POST, 'auth-params')) && $_POST['auth-params'] === 'login') {
 
-		$record = null;
-
-		$addon_auth = array(
-			'username' => punify(trim($_POST['username'])), 
-			'password' => trim($_POST['password']),
-			'authenticated' => 0,
-			'user_record' => null
-		);
-
-		/**
-		 *
-		 * A plugin indicates successful login by setting 'authenticated' to non-zero value and returning a user record
-		 * Plugins should never set 'authenticated' except to indicate success - as hooks may be chained
-		 * and later plugins should not interfere with an earlier one that succeeded.
-		 *
-		 */
-
-		call_hooks('authenticate', $addon_auth);
-
 		$atoken  = null;
 		$account = null;
+		$channel = null;
 
-		if(($addon_auth['authenticated']) && (count($addon_auth['user_record']))) {
-			$account = $addon_auth['user_record'];
+		$verify = account_verify_password($_POST['username'], $_POST['password']);
+		if($verify && array_key_exists('reason',$verify) && $verify['reason'] === 'unvalidated') {
+			notice( t('Email validation is incomplete. Please check your email.'));
+			goaway(z_root() . '/email_validation/' . bin2hex(punify(trim(escape_tags($_POST['username'])))));
+		}
+		elseif($verify) {
+			$atoken  = $verify['xchan'];
+			$channel = $verify['channel'];
+			$account = App::$account = $verify['account'];
+		}
+
+		if(App::$account) {
+			$_SESSION['account_id'] = App::$account['account_id'];
+		}
+		elseif($atoken) {
+			atoken_login($atoken);
 		}
 		else {
-			$verify = account_verify_password($_POST['username'], $_POST['password']);
-			if($verify && array_key_exists('reason',$verify) && $verify['reason'] === 'unvalidated') {
-				notice( t('Email validation is incomplete. Please check your email.'));
-				goaway(z_root() . '/email_validation/' . bin2hex(punify(trim(escape_tags($_POST['username'])))));
-			}
-			elseif($verify) {
-				$atoken  = $verify['xchan'];
-				$channel = $verify['channel'];
-				$account = App::$account = $verify['account'];
-			}
-
-			if(App::$account) {
-				$_SESSION['account_id'] = App::$account['account_id'];
-			}
-			elseif($atoken) {
-				atoken_login($atoken);
-			}
-			else {
-				notice( t('Failed authentication') . EOL);
-			}
+			notice( t('Failed authentication') . EOL);
 		}
 
 		if(! ($account || $atoken)) {
@@ -326,8 +343,9 @@ else {
 		// if we haven't failed up this point, log them in.
 
 		$_SESSION['last_login_date'] = datetime_convert();
-		if(! $atoken)
+		if(! $atoken) {
 			authenticate_success($account,$channel,true, true);
+		}
 	}
 }
 
