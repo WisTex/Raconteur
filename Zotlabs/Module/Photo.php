@@ -31,7 +31,7 @@ class Photo extends \Zotlabs\Web\Controller {
 	
 		$observer_xchan = get_observer_hash();
 	
-		$default = get_default_profile_photo();
+		$default = z_root() . '/' . get_default_profile_photo();
 	
 		if(isset($type)) {
 	
@@ -45,11 +45,11 @@ class Photo extends \Zotlabs\Web\Controller {
 	
 					case 'm':
 						$resolution = 5;
-						$default = get_default_profile_photo(80);
+						$default = z_root() . '/' . get_default_profile_photo(80);
 						break;
 					case 's':
 						$resolution = 6;
-						$default = get_default_profile_photo(48);
+						$default = z_root() . '/' . get_default_profile_photo(48);
 						break;
 					case 'l':
 					default:
@@ -183,15 +183,15 @@ class Photo extends \Zotlabs\Web\Controller {
 				switch($resolution) {
 	
 					case 4:
-						$data = file_get_contents(get_default_profile_photo());
+						$data = file_get_contents(z_root() . '/' . get_default_profile_photo());
 						$mimetype = 'image/png';
 						break;
 					case 5:
-						$data = file_get_contents(get_default_profile_photo(80));
+						$data = file_get_contents(z_root() . '/' . get_default_profile_photo(80));
 						$mimetype = 'image/png';
 						break;
 					case 6:
-						$data = file_get_contents(get_default_profile_photo(48));
+						$data = file_get_contents(z_root() . '/' . get_default_profile_photo(48));
 						$mimetype = 'image/png';
 						break;
 					default:

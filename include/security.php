@@ -118,10 +118,10 @@ function atoken_xchan($atoken) {
 			'xchan_network' => 'unknown',
 			'xchan_url' => z_root() . '/guest/' . substr($c['channel_hash'],0,16) . '.' . $atoken['atoken_name'],
 			'xchan_hidden' => 1,
-			'xchan_photo_mimetype' => 'image/jpeg',
-			'xchan_photo_l' => get_default_profile_photo(300),
-			'xchan_photo_m' => get_default_profile_photo(80),
-			'xchan_photo_s' => get_default_profile_photo(48)
+			'xchan_photo_mimetype' => 'image/png',
+			'xchan_photo_l' => z_root() . '/' . get_default_profile_photo(300),
+			'xchan_photo_m' => z_root() . '/' . get_default_profile_photo(80),
+			'xchan_photo_s' => z_root() . '/' . get_default_profile_photo(48)
 		];
 	}
 

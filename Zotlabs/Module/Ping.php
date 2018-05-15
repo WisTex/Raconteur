@@ -401,7 +401,7 @@ class Ping extends \Zotlabs\Web\Controller {
 						'notify_link' => z_root() . '/admin/accounts',
 						'name' => $rr['account_email'],
 						'url' => '',
-						'photo' => get_default_profile_photo(48),
+						'photo' => z_root() . '/' . get_default_profile_photo(48),
 						'when' => relative_date($rr['account_created']),
 						'hclass' => ('notify-unseen'),
 						'message' => t('requires approval')

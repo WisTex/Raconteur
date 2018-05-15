@@ -119,10 +119,10 @@ class Chatsvc extends \Zotlabs\Web\Controller {
 						$rv['xchan_network'] = 'unknown';
 						$rv['xchan_url'] = z_root();
 						$rv['xchan_hidden'] = 1;
-						$rv['xchan_photo_mimetype'] = 'image/jpeg';
-						$rv['xchan_photo_l'] = get_default_profile_photo(300); 
-						$rv['xchan_photo_m'] = get_default_profile_photo(80); 
-						$rv['xchan_photo_s'] = get_default_profile_photo(48); 
+						$rv['xchan_photo_mimetype'] = 'image/png';
+						$rv['xchan_photo_l'] = z_root() . '/' . get_default_profile_photo(300); 
+						$rv['xchan_photo_m'] = z_root() . '/' . get_default_profile_photo(80); 
+						$rv['xchan_photo_s'] = z_root() . '/' . get_default_profile_photo(48); 
 
 					}
 
