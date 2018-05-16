@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 require_once('include/security.php');
 require_once('include/attach.php');
 require_once('include/photo/photo_driver.php');
+require_once('include/photos.php');
 
 
 class Photo extends \Zotlabs\Web\Controller {
