@@ -599,11 +599,6 @@ function sys_boot() {
 	 * installation mode.
 	 */
 
-	// miniApp is a conversion object from old style .htconfig.php files
-
-	$a = new miniApp;
-
-
 	App::$install = ((file_exists('.htconfig.php') && filesize('.htconfig.php')) ? false : true);
 
 	@include('.htconfig.php');
@@ -617,8 +612,6 @@ function sys_boot() {
 	if(array_key_exists('default_timezone',get_defined_vars())) {
 		App::$config['system']['timezone'] = $default_timezone;
 	}
-
-	$a->convert();
 
 	App::$config['system']['server_role'] = 'pro';
 
@@ -663,7 +656,8 @@ function sys_boot() {
 		/**
 		 * @hooks init_1
 		 */
-		call_hooks('init_1');
+		$arr = [];
+		call_hooks('startup',$arr);
 	}
 }
 
@@ -683,26 +677,6 @@ function startup() {
 
 		// Disable transparent Session ID support
 		@ini_set('session.use_trans_sid',    0);
-	}
-}
-
-
-/**
- * class miniApp
- *
- * this is a transient structure which is needed to convert the $a->config settings
- * from older (existing) htconfig files which used a global App ($a) into the updated App structure
- * which is now static (although currently constructed at startup). We are only converting
- * 'system' config settings.
- */
-class miniApp {
-	public $config = array('system' => array());
-
-	public function convert() {
-		if($this->config['system']) {
-			foreach($this->config['system'] as $k => $v)
-				App::$config['system'][$k] = $v;
-		}
 	}
 }
 
@@ -1501,7 +1475,7 @@ function fix_system_urls($oldurl, $newurl) {
 			$y = q("update hubloc set hubloc_addr = '%s', hubloc_url = '%s', hubloc_url_sig = '%s', hubloc_host = '%s', hubloc_callback = '%s' where hubloc_hash = '%s' and hubloc_url = '%s'",
 				dbesc($channel_address . '@' . $rhs),
 				dbesc($newurl),
-				dbesc(base64url_encode(rsa_sign($newurl,$c[0]['channel_prvkey']))),
+				dbesc(zot_sign($newurl,$c[0]['channel_prvkey'])),
 				dbesc($newhost),
 				dbesc($newurl . '/post'),
 				dbesc($rv['xchan_hash']),
