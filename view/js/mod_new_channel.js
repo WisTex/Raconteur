@@ -33,10 +33,6 @@
 			if(! $("#id_nickname").hasClass('is-validated')) {
 				event.preventDefault();
 			}
-			else {
-				event.preventDefault();
-				console.log('channel created');
-			}
 		});
 
 	});
