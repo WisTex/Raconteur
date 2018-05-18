@@ -40,16 +40,16 @@ function zot_new_uid($channel_nick) {
  * @brief Generates a portable hash identifier for a channel.
  *
  * Generates a portable hash identifier for the channel identified by $guid and
- * signed with $guid_sig.
+ * $pubkey.
  *
  * @note This ID is portable across the network but MUST be calculated locally
  * by verifying the signature and can not be trusted as an identity.
  *
  * @param string $guid
- * @param string $guid_sig
+ * @param string $pubkey
  */
-function make_xchan_hash($guid, $guid_sig) {
-	return base64url_encode(hash('whirlpool', $guid . $guid_sig, true));
+function make_xchan_hash($guid, $pubkey) {
+	return base64url_encode(hash('whirlpool', $guid . $pubkey, true));
 }
 
 /**
@@ -192,9 +192,9 @@ function zot6_build_packet($channel, $type = 'notify', $recipients = null, $msg 
 		'type' => $type,
 		'sender' => [
 			'guid' => $channel['channel_guid'],
-			'guid_sig' => 'sha256.' . base64url_encode(rsa_sign($channel['channel_guid'],$channel['channel_prvkey'],$sig_method)),
+			'guid_sig' => zot_sign($channel['channel_guid'],$channel['channel_prvkey'],$sig_method),
 			'url' => z_root(),
-			'url_sig' => 'sha256.' . base64url_encode(rsa_sign(z_root(),$channel['channel_prvkey'],$sig_method)),
+			'url_sig' => zot_sign(z_root(),$channel['channel_prvkey'],$sig_method),
 			'sitekey' => get_config('system','pubkey')
 		],
 		'callback' => '/post',
@@ -216,7 +216,7 @@ function zot6_build_packet($channel, $type = 'notify', $recipients = null, $msg 
 
 	if ($secret) {
 		$data['secret'] = preg_replace('/[^0-9a-fA-F]/','',$secret);
-		$data['secret_sig'] = base64url_encode(rsa_sign($secret,$channel['channel_prvkey'],$sig_method));
+		$data['secret_sig'] = zot_sign($secret,$channel['channel_prvkey'],$sig_method);
 	}
 
 	if ($extra) {
@@ -3986,7 +3986,7 @@ function import_author_zot($x) {
 	// we may only end up with one; which results in posts with no author name or photo and are a bit
 	// of a hassle to repair. If either or both are missing, do a full discovery probe.
 
-	$hash = make_xchan_hash($x['guid'],$x['guid_sig']);
+	$hash = make_xchan_hash($x['guid'],$x['key']);
 
 	// also - this function may get passed a profile url as 'url' and zot_refresh wants a hubloc_url (site baseurl),
 	// so deconstruct the url (if we have one) and rebuild it with just the baseurl components.
