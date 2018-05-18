@@ -261,6 +261,7 @@ function can_comment_on_post($observer_xchan, $item) {
 				return true;
 			break;
 		case 'public':
+		case 'authenticated':
 			// We don't really allow or support public comments yet, but anonymous
 			// folks won't ever reach this point (as $observer_xchan will be empty).
 			// This means the viewer has an xchan and we can identify them.
@@ -268,7 +269,6 @@ function can_comment_on_post($observer_xchan, $item) {
 			break;
 		case 'any connections':
 		case 'contacts':
-		case 'authenticated':
 		case '':
 			if(array_key_exists('owner',$item) && get_abconfig($item['uid'],$item['owner']['abook_xchan'],'their_perms','post_comments')) {
 					return true;
