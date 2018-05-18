@@ -567,8 +567,8 @@ function alt_pager($i, $more = '', $less = '') {
 function item_message_id() {
 	do {
 		$dups = false;
-		$hash = random_string();
-		$mid = $hash . '@' . App::get_hostname();
+		$hash = random_string(48);
+		$mid = z_root() . '/item/' . $hash;
 
 		$r = q("SELECT id FROM item WHERE mid = '%s' LIMIT 1",
 			dbesc($mid));
@@ -584,12 +584,12 @@ function item_message_id() {
  *
  * Safe from birthday paradox.
  *
- * @return string a uniqe hash
+ * @return string a unique hash
  */
 function photo_new_resource() {
 	do {
 		$found = false;
-		$resource = hash('md5', uniqid(mt_rand(), true));
+		$resource = random_string(48);
 
 		$r = q("SELECT id FROM photo WHERE resource_id = '%s' LIMIT 1",
 			dbesc($resource));
@@ -3328,3 +3328,42 @@ function unique_multidim_array($array, $key) {
     }
     return $temp_array;
 } 
+
+
+function print_array($arr, $level = 0) {
+
+	$o = EMPTY_STR;
+	$tabs = EMPTY_STR;
+
+	if(is_array($arr)) {
+		for($x = 0; $x <= $level; $x ++) {
+			$tabs .= "\t";
+		}
+		$o .= '[' . "\n";
+		if(count($arr)) {
+			foreach($arr as $k => $v) {
+				if(is_array($v)) {
+					$o .= $tabs . '[' . $k . '] => ' . print_array($v, $level + 1) . "\n";
+				}
+				else {
+					$o .= $tabs . '[' . $k . '] => ' . print_val($v) . ",\n";  
+				}
+			}
+		}
+		$o .= substr($tabs,0,-1) . ']' . (($level) ? ',' : ';' ). "\n";
+		return $o;
+	}
+	
+}
+
+function print_val($v) {
+	if(is_bool($v)) {
+		if($v) return 'true';
+		return 'false';
+	}
+	if(is_string($v)) {
+		return "'" . $v . "'";
+	}
+	return $v;
+
+}

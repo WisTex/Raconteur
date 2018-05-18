@@ -31,8 +31,8 @@ class Well_known extends \Zotlabs\Web\Controller {
 				case 'webfinger':
 					\App::$argc -= 1;
 					array_shift(\App::$argv);
-					\App::$argv[0] = 'wfinger';
-					$module = new \Zotlabs\Module\Wfinger();
+					\App::$argv[0] = 'webfinger';
+					$module = new \Zotlabs\Module\Webfinger();
 					$module->init();
 					break;
 	

@@ -254,6 +254,8 @@ define ( 'MENU_BOOKMARK',        0x0002 );
 define ( 'NETWORK_FRND',             'friendica-over-diaspora');    // Friendica, Mistpark, other DFRN implementations
 define ( 'NETWORK_DFRN',             'dfrn');    // Friendica, Mistpark, other DFRN implementations
 define ( 'NETWORK_ZOT',              'zot');     // Zot!
+define ( 'NETWORK_ZOT6',             'zot6');
+
 define ( 'NETWORK_OSTATUS',          'stat');    // status.net, identi.ca, GNU-social, other OStatus implementations
 define ( 'NETWORK_GNUSOCIAL',        'gnusoc');    // status.net, identi.ca, GNU-social, other OStatus implementations
 define ( 'NETWORK_FEED',             'rss');    // RSS/Atom feeds with no known "post/notify" protocol
@@ -440,6 +442,7 @@ define ( 'TERM_OBJ_APP',     7 );
  * various namespaces we may need to parse
  */
 define ( 'PROTOCOL_ZOT',              'http://purl.org/zot/protocol' );
+define ( 'PROTOCOL_ZOT6',             'http://purl.org/zot/protocol/6.0' );
 define ( 'NAMESPACE_ZOT',             'http://purl.org/zot' );
 define ( 'NAMESPACE_DFRN' ,           'http://purl.org/macgirvin/dfrn/1.0' );
 define ( 'NAMESPACE_THREAD' ,         'http://purl.org/syndication/thread/1.0' );

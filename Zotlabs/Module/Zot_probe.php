@@ -20,6 +20,11 @@ class Zot_probe extends \Zotlabs\Web\Controller {
 		if(x($_GET,'addr')) {
 			$addr = $_GET['addr'];
 
+
+			$x = \Zotlabs\Lib\Zotfinger::exec($addr);
+			
+			$o .= '<pre>' . htmlspecialchars(print_array($x)) . '</pre>';
+
 			$headers = 'Accept: application/x-zot+json, application/jrd+json, application/json';
 
 			$redirects = 0;

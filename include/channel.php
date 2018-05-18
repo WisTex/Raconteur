@@ -223,8 +223,8 @@ function create_identity($arr) {
 	$guid = zot_new_uid($nick);
 	$key = new_keypair(4096);
 
-	$sig = base64url_encode(rsa_sign($guid,$key['prvkey']));
-	$hash = make_xchan_hash($guid,$sig);
+	$sig = zot_sign($guid,$key['prvkey']);
+	$hash = make_xchan_hash($guid,$key['pubkey']);
 
 	// Force a few things on the short term until we can provide a theme or app with choice
 
@@ -327,7 +327,7 @@ function create_identity($arr) {
 			'hubloc_addr'     => channel_reddress($ret['channel']),
 			'hubloc_primary'  => intval($primary),
 			'hubloc_url'      => z_root(),
-			'hubloc_url_sig'  => base64url_encode(rsa_sign(z_root(),$ret['channel']['channel_prvkey'])),
+			'hubloc_url_sig'  => zot_sign(z_root(),$ret['channel']['channel_prvkey']),
 			'hubloc_host'     => App::get_hostname(),
 			'hubloc_callback' => z_root() . '/post',
 			'hubloc_sitekey'  => get_config('system','pubkey'),

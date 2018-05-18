@@ -1153,7 +1153,7 @@ function discover_by_webbie($webbie, $protocol = '') {
 
 	$network  = null;
 
-	$x = webfinger_rfc7033($webbie, true);
+	$x = webfinger_rfc7033($webbie);
 	if($x && array_key_exists('links',$x) && $x['links']) {
 		foreach($x['links'] as $link) {
 			if(array_key_exists('rel',$link)) {
@@ -1207,11 +1207,10 @@ function discover_by_webbie($webbie, $protocol = '') {
 /**
  * @brief Fetch and return a webfinger for a webbie.
  *
- * @param string $webbie - The webbie
- * @param boolean $zot (optional) default false
+ * @param string $webbie - The resource
  * @return boolean|string false or associative array from result JSON
  */
-function webfinger_rfc7033($webbie, $zot = false) {
+function webfinger_rfc7033($webbie) {
 
 	if(strpos($webbie,'@')) {
 		$lhs = substr($webbie,0,strpos($webbie,'@'));
@@ -2073,7 +2072,7 @@ function get_webfinger_key($id) {
 	}
 	if(! $x) {
 		if(strpos($id,'@') === false) {
-			$x = webfinger_rfc7033($id, false);
+			$x = webfinger_rfc7033($id);
 			if($x && array_key_exists('properties',$x) && array_key_exists('https://w3id.org/security/v1#publicKeyPem',$x['properties'])) {
 				$key = $x['properties']['https://w3id.org/security/v1#publicKeyPem'];
 				if(strstr($key,'RSA ')) {

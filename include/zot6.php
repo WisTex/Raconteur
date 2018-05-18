@@ -215,7 +215,7 @@ class zot6 {
 
 	$ret['guid']           = $e['xchan_guid'];
 	$ret['guid_sig']       = zot_sign($e['xchan_guid'], $e['channel_prvkey']);
-
+	$ret['aliases']        = [ 'acct:' . $e['xchan_addr'], $e['xchan_url'] ]; 
 
 
 	$ret['public_key']     = $e['xchan_pubkey'];

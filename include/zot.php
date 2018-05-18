@@ -192,9 +192,9 @@ function zot6_build_packet($channel, $type = 'notify', $recipients = null, $msg 
 		'type' => $type,
 		'sender' => [
 			'guid' => $channel['channel_guid'],
-			'guid_sig' => base64url_encode(rsa_sign($channel['channel_guid'],$channel['channel_prvkey'],$sig_method)),
+			'guid_sig' => 'sha256.' . base64url_encode(rsa_sign($channel['channel_guid'],$channel['channel_prvkey'],$sig_method)),
 			'url' => z_root(),
-			'url_sig' => base64url_encode(rsa_sign(z_root(),$channel['channel_prvkey'],$sig_method)),
+			'url_sig' => 'sha256.' . base64url_encode(rsa_sign(z_root(),$channel['channel_prvkey'],$sig_method)),
 			'sitekey' => get_config('system','pubkey')
 		],
 		'callback' => '/post',
