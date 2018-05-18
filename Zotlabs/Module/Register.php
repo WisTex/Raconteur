@@ -187,8 +187,8 @@ class Register extends \Zotlabs\Web\Controller {
 		$registration_is = '';
 		$other_sites = '';
 	
-		if(get_config('system','register_policy') == REGISTER_CLOSED) {
-			if(get_config('system','directory_mode') == DIRECTORY_MODE_STANDALONE) {
+		if(intval(get_config('system','register_policy')) === REGISTER_CLOSED) {
+			if(intval(get_config('system','directory_mode')) === DIRECTORY_MODE_STANDALONE) {
 				notice( t('Registration on this hub is disabled.')  . EOL);
 				return;
 			}
@@ -197,8 +197,17 @@ class Register extends \Zotlabs\Web\Controller {
 			return $mod->get();
 		}
 	
-		if(get_config('system','register_policy') == REGISTER_APPROVE) {
+		if(intval(get_config('system','register_policy')) == REGISTER_APPROVE) {
 			$registration_is = t('Registration on this hub is by approval only.');
+			$other_sites = t('<a href="pubsites">Register at another affiliated hub.</a>');
+		}
+
+
+		$invitations = false;
+
+		if(intval(get_config('system','invitation_only'))) {
+			$invitations = true;
+			$registration_is = t('Registration on this hub is by invitation only.');
 			$other_sites = t('<a href="pubsites">Register at another affiliated hub.</a>');
 		}
 	
@@ -251,10 +260,10 @@ class Register extends \Zotlabs\Web\Controller {
 		$password     = array('password', t('Choose a password'), ''); 
 		$password2    = array('password2', t('Please re-enter your password'), ''); 
 		$invite_code  = array('invite_code', t('Please enter your invitation code'), ((x($_REQUEST,'invite_code')) ? strip_tags(trim($_REQUEST['invite_code'])) : ""));
-		$name = array('name', t('Name or caption'), ((x($_REQUEST,'name')) ? $_REQUEST['name'] : ''), t('Examples: "Bob Jameson", "Lisa and her Horses", "Soccer", "Aviation Group"'));
+		$name = array('name', t('Your Name'), ((x($_REQUEST,'name')) ? $_REQUEST['name'] : ''), t('Real names are preferred.'));
 		$nickhub = '@' . str_replace(array('http://','https://','/'), '', get_config('system','baseurl'));
 		$nickname = array('nickname', t('Choose a short nickname'), ((x($_REQUEST,'nickname')) ? $_REQUEST['nickname'] : ''), sprintf( t('Your nickname will be used to create an easy to remember channel address e.g. nickname%s'), $nickhub));
-		$role = array('permissions_role' , t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel role with your privacy requirements.') . ' <a href="help/member/member_guide#Account_Permission_Roles" target="_blank">' . t('Read more about roles') . '</a>',$perm_roles);
+		$role = array('permissions_role' , t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel permission role for your usage needs and privacy requirements.') . ' <a href="help/member/member_guide#Channel_Permission_Roles" target="_blank">' . t('Read more about channel permission roles') . '</a>',$perm_roles);
 		$tos = array('tos', $label_tos, '', '', array(t('no'),t('yes')));
 
 
@@ -270,8 +279,7 @@ class Register extends \Zotlabs\Web\Controller {
 			'$reg_is'       => $registration_is,
 			'$registertext' => bbcode(get_config('system','register_text')),
 			'$other_sites'  => $other_sites,
-			'$invitations'  => get_config('system','invitation_only'),
-			'$invite_desc'  => t('Membership on this site is by invitation only.'),
+			'$invitations'  => $invitations,
 			'$invite_code'  => $invite_code,
 			'$auto_create'  => $auto_create,
 			'$name'         => $name,

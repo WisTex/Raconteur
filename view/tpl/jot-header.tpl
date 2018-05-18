@@ -357,6 +357,14 @@ var activeCommentText = '';
 		}
 	}
 
+	function itemCancel() {
+		$("#jot-title").val('');
+		$("#profile-jot-text").val('');
+		$("#jot-category").val('');
+		postSaveChanges('clean','');
+		window.history.back();
+	}
+
 	function itemFiler(id) {
 		if($('#item-filer-dialog').length)
 			$('#item-filer-dialog').remove();
@@ -575,7 +583,7 @@ $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-del
 				localStorage.setItem("post_title" + postid, $("#jot-title").val());
 				localStorage.setItem("post_body" + postid, $("#profile-jot-text").val());
 				if($("#jot-category").length)
-					localStorage.setItem("post_category + postid", $("#jot-category").val());
+					localStorage.setItem("post_category" + postid, $("#jot-category").val());
 			}
 
 			if(action == 'start') {

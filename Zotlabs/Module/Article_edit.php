@@ -128,6 +128,7 @@ class Article_edit extends \Zotlabs\Web\Controller {
 			'$title' => t('Edit Article'),
 			'$delete' => ((($itm[0]['author_xchan'] === $ob_hash) || ($itm[0]['owner_xchan'] === $ob_hash)) ? t('Delete') : false),
 			'$id' => $itm[0]['id'],
+			'$cancel' => t('Cancel'),
 			'$editor' => $editor
 		));
 

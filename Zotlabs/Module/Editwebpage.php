@@ -166,6 +166,7 @@ class Editwebpage extends \Zotlabs\Web\Controller {
 			'$title' => t('Edit Webpage'),
 			'$delete' => ((($itm[0]['author_xchan'] === $ob_hash) || ($itm[0]['owner_xchan'] === $ob_hash)) ? t('Delete') : false),
 			'$editor' => $editor,
+			'$cancel' => t('Cancel'),
 			'$id' => $itm[0]['id']
 		));
 

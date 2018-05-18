@@ -203,7 +203,7 @@ Some communications offer more than one protocol. If you wish to connect with so
 [ostatus]foobar@foo.bar
 [diaspora]foobar@foo.bar
 [zot]foobar@foo.bar
-[rss]https://foo.bar/foobar
+[feed]https://foo.bar/foobar
 [/code]
 
 
@@ -359,7 +359,7 @@ The [b]![/b] character designates a deliverable mention to a forum or special ch
 !Gardening - mention the Gardening Forum and also post to the Gardening "network" (e.g. send to all the forum members; if you have permission to do so)
 [/code]
 
-Note: In previous releases, forums were delivered by using @forum+ with a plus sign at the end. This mechanism is still used occasionally but is deprecated and !forum is now preferred. 
+Note: In previous releases, forums were delivered by using @forum+ with a plus sign at the end. This mechanism is no longer supported.
 
 [h4]Private Mentions[/h4]
 If you wish to restrict a post to a single person or a number of people, you can do this by selecting channels or privacy groups from the privacy tool. You can also just tag them with a privacy tag. A privacy tag is a name preceded by the two characters @! - and in addition to tagging these channels, will also change the privacy permissions of the post to only include them. You can have more than one privacy tag, for instance @!bob and @!linda will send the post only to Bob and Linda. This mechanism over-rides the privacy selector.  
@@ -374,26 +374,26 @@ The above mechanisms only apply to "top-level" posts you create. Mentioning a ch
 [h4]Topical Tags (also known as Hashtags)[/h4]
 Topical tags are indicated by preceding the tag name with the  # character. This will create a link in the post to a generalised site search for the term provided.  For example, #[zrl=[baseurl]/search?tag=cars]cars[/zrl] will provide a search link for all posts mentioning 'cars' on your site. Topical tags are generally a minimum of three characters in length.  Shorter search terms are not likely to yield any search results, although this depends on the database configuration. 
 
-Topical tags are also not linked if they are purely numeric, e.g. #1. If you wish to use a numeric hashtag, please add some descriptive text such as #2012-elections.
+Topical tags are also not normally linked if they are purely numeric, e.g. #1. If you wish to use a numeric hashtag, please add some descriptive text such as #2012-elections or enclose the entire tag in double quotes (for example #"2012"). Doubles quotes are also required if the tag contains spaces (#"My Tag") and may be required if the tag contains punctuation characters (#"EndsWithPeriod." or #"Exciting!!!"). 
 
 [h4]Bookmarks[/h4]
 Bookmarks indicate a link which can be saved to your bookmark folder. They use the sequence #^ followed by the link. Often these are generated automatically. If the 'bookmarker' addon is installed, this sequence will be converted to a bookmark icon when viewing the post or comment online, and clicking the icon will save the bookmark. If the bookmarker addon is not installed, the post 'dropdown menu' contains a link for saving the bookmark or bookmarks. 
 
-[h4]Spaces in Tags and Mentions[/h4]
+[h4]Manual Mentions[/h4]
 Where possible please use the auto-complete window to select tag and mention recipients, because it will generate a coded tag which uniquely identifies one channel. Names are sometimes ambiguous. However, you can "manually" tag a channel by matching the channel name or address.
 
 [code]
-@Robert Johnson
+@billy
 [/code]
 
-will tag Robert Johnson, but we can only match one space. If the name was "Blind Lemon Jefferson" it won't be found unless you enclose the entire name in double quotes or change the spaces to underscores. 
+will tag a connection whose name or network address is 'billy' (exact match). If you have two connections with a name or network address of billy, for instance billy@server1.hubzilla.org and billy@server2.hubzilla2.org, you will need to supply the complete address or the results will be ambiguous and the wrong person may be tagged.   
 
 [code]
-@"Blind Lemon Jefferson"
-@Blind_Lemon_Jefferson
+@"Robert Johnson"
 [/code]
 
-are both equivalent.  
+will tag Robert Johnson. The double quotes are required if the tagged name contains space characters.
+
 
 [h3]Web Pages[/h3]
 

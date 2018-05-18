@@ -45,6 +45,7 @@
 				<div id="privacy-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="privacy-settings" data-parent="#settings">
 					<div class="section-content-tools-wrapper">
 						{{include file="field_select_grouped.tpl" field=$role}}
+						{{$autoperms}}
 						<div id="advanced-perm" style="display:{{if $permissions_set}}none{{else}}block{{/if}};">
 							<div class="form-group">
 								<button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#apsModal">{{$lbl_p2macro}}</button>

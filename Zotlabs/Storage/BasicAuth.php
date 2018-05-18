@@ -253,11 +253,11 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic {
 	 * @return void
 	 */
 	public function log() {
-		logger('channel_name ' . $this->channel_name, LOGGER_DATA);
-		logger('channel_id ' . $this->channel_id, LOGGER_DATA);
-		logger('channel_hash ' . $this->channel_hash, LOGGER_DATA);
-		logger('observer ' . $this->observer, LOGGER_DATA);
-		logger('owner_id ' . $this->owner_id, LOGGER_DATA);
-		logger('owner_nick ' . $this->owner_nick, LOGGER_DATA);
+//		logger('channel_name ' . $this->channel_name, LOGGER_DATA);
+//		logger('channel_id ' . $this->channel_id, LOGGER_DATA);
+//		logger('channel_hash ' . $this->channel_hash, LOGGER_DATA);
+//		logger('observer ' . $this->observer, LOGGER_DATA);
+//		logger('owner_id ' . $this->owner_id, LOGGER_DATA);
+//		logger('owner_nick ' . $this->owner_nick, LOGGER_DATA);
 	}
 }

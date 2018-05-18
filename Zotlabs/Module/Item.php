@@ -528,22 +528,12 @@ class Item extends \Zotlabs\Web\Controller {
 			// and will require alternatives for alternative content-types (text/html, text/markdown, text/plain, etc.)
 			// we may need virtual or template classes to implement the possible alternatives
 			
-			// If we're sending a private top-level message with a single @-taggable channel as a recipient, @-tag it, if our pconfig is set.
-		
-			if((! $parent) && (get_pconfig($profile_uid,'system','tagifonlyrecip')) && (substr_count($str_contact_allow,'<') == 1) && ($str_group_allow == '') && ($str_contact_deny == '') && ($str_group_deny == '')) {
-				$x = q("select abook_id, abconfig.v from abook left join abconfig on abook_xchan = abconfig.xchan and abook_channel = abconfig.chan and cat= 'their_perms' and abconfig.k = 'tag_deliver' and abconfig.v = 1 and abook_xchan = '%s' and abook_channel = %d limit 1",
-					dbesc(str_replace(array('<','>'),array('',''),$str_contact_allow)),
-					intval($profile_uid)
-				);
-				if($x)
-					$body .= "\n\n@group+" . $x[0]['abook_id'] . "\n";
-			}
 
 			$body = cleanup_bbcode($body);
 	
 			// Look for tags and linkify them
 			$results = linkify_tags($a, $body, ($uid) ? $uid : $profile_uid);
-
+logger('linkify: ' . print_r($results,true));
 			if($results) {
 	
 				// Set permissions based on tag replacements
@@ -1084,24 +1074,36 @@ class Item extends \Zotlabs\Web\Controller {
 		if((argc() == 3) && (argv(1) === 'drop') && intval(argv(2))) {
 	
 			require_once('include/items.php');
-			$i = q("select id, uid, author_xchan, owner_xchan, source_xchan, item_type from item where id = %d limit 1",
+
+
+			$i = q("select id, uid, item_origin, author_xchan, owner_xchan, source_xchan, item_type from item where id = %d limit 1",
 				intval(argv(2))
 			);
 	
 			if($i) {
 				$can_delete = false;
 				$local_delete = false;
-				if(local_channel() && local_channel() == $i[0]['uid'])
+
+				if(local_channel() && local_channel() == $i[0]['uid']) {
 					$local_delete = true;
-	
-				$sys = get_sys_channel();
-				if(is_site_admin() && $sys['channel_id'] == $i[0]['uid'])
-					$can_delete = true;
+				}
 	
 				$ob_hash = get_observer_hash();
-				if($ob_hash && ($ob_hash === $i[0]['author_xchan'] || $ob_hash === $i[0]['owner_xchan'] || $ob_hash === $i[0]['source_xchan']))
+				if($ob_hash && ($ob_hash === $i[0]['author_xchan'] || $ob_hash === $i[0]['owner_xchan'] || $ob_hash === $i[0]['source_xchan'])) {
 					$can_delete = true;
-	
+				}
+
+				// The site admin can delete any post/item on the site.
+				// If the item originated on this site+channel the deletion will propagate downstream. 
+				// Otherwise just the local copy is removed.
+
+				if(is_site_admin()) {
+					$local_delete = true;
+					if(intval($i[0]['item_origin']))
+						$can_delete = true;
+				}
+
+
 				if(! ($can_delete || $local_delete)) {
 					notice( t('Permission denied.') . EOL);
 					return;

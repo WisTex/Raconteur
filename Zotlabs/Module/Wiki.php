@@ -95,7 +95,7 @@ class Wiki extends \Zotlabs\Web\Controller {
 						$owner['channel_deny_gid'])
 						? 'lock' : 'unlock'
 					),
-					'acl' => populate_acl($owner_acl),
+					'acl' => populate_acl($owner_acl, false, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_wiki')),
 					'allow_cid' => acl2json($owner_acl['allow_cid']),
 					'allow_gid' => acl2json($owner_acl['allow_gid']),
 					'deny_cid'  => acl2json($owner_acl['deny_cid']),

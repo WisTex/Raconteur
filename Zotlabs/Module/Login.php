@@ -10,7 +10,7 @@ class Login extends \Zotlabs\Web\Controller {
 		if(remote_channel() && $_SESSION['atoken'])
 			goaway(z_root());
 
-		return login((\App::$config['system']['register_policy'] == REGISTER_CLOSED) ? false : true);
+		return login(true);
 	}
 	
 }

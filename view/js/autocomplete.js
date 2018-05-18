@@ -7,21 +7,6 @@ function contact_search(term, callback, backend_url, type, extra_channels, spine
 	if(spinelement) {
 		$(spinelement).show();
 	}
-	// Check if there is a cached result that contains the same information we would get with a full server-side search
-//	var bt = backend_url+type;
-//	if(!(bt in contact_search.cache)) contact_search.cache[bt] = {};
-
-//	var lterm = term.toLowerCase(); // Ignore case
-//	for(var t in contact_search.cache[bt]) {
-//		if(lterm.indexOf(t) >= 0) { // A more broad search has been performed already, so use those results
-//			$(spinelement).hide();
-			// Filter old results locally
-//			var matching = contact_search.cache[bt][t].filter(function (x) { return (x.name.toLowerCase().indexOf(lterm) >= 0 || (typeof x.nick !== 'undefined' && x.nick.toLowerCase().indexOf(lterm) >= 0)); }); // Need to check that nick exists because groups don't have one
-//			matching.unshift({taggable:false, text: term, replace: term});
-//			setTimeout(function() { callback(matching); } , 1); // Use "pseudo-thread" to avoid some problems
-//			return;
-//		}
-//	}
 
 	var postdata = {
 		start:0,
@@ -38,12 +23,7 @@ function contact_search(term, callback, backend_url, type, extra_channels, spine
 		url: backend_url,
 		data: postdata,
 		dataType: 'json',
-		success: function(data){
-			// Cache results if we got them all (more information would not improve results)
-			// data.count represents the maximum number of items
-//			if(data.items.length -1 < data.count) {
-//				contact_search.cache[bt][lterm] = data.items;
-//			}
+		success: function(data) {
 			var items = data.items.slice(0);
 			items.unshift({taggable:false, text: term, replace: term});
 			callback(items);
@@ -100,11 +80,6 @@ function trim_replace(item) {
 		return '$1'+item.replace;
 
 	return '$1'+item.name;
-}
-
-
-function submit_form(e) {
-	$(e).parents('form').submit();
 }
 
 function getWord(text, caretPos) {
@@ -188,7 +163,7 @@ function string2bb(element) {
 
 		// Autocomplete contacts
 		contacts = {
-			match: /(^|\s)(@\!*)([^ \n]{3,})$/,
+			match: /(^|\s)(@\!*)([^ \n]{2,})$/,
 			index: 3,
 			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, 'c', extra_channels, spinelement=false); },
@@ -198,7 +173,7 @@ function string2bb(element) {
 
 		// Autocomplete forums
 		forums = {
-			match: /(^|\s)(\!\!*)([^ \n]{3,})$/,
+			match: /(^|\s)(\!\!*)([^ \n]{2,})$/,
 			index: 3,
 			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, 'f', extra_channels, spinelement=false); },
@@ -209,7 +184,7 @@ function string2bb(element) {
 
 		// Autocomplete hashtags
 		tags = {
-			match: /(^|\s)(\#)([^ \n]{3,})$/,
+			match: /(^|\s)(\#)([^ \n]{2,})$/,
 			index: 3,
 			cache: true,
 			search: function(term, callback) { $.getJSON('/hashtags/' + '$f=&t=' + term).done(function(data) { callback($.map(data, function(entry) { return entry.text.toLowerCase().indexOf(term.toLowerCase()) === 0 ? entry : null; })); }); },
@@ -253,7 +228,7 @@ function string2bb(element) {
 
 		// Autocomplete contacts
 		contacts = {
-			match: /(^@)([^\n]{3,})$/,
+			match: /(^@)([^\n]{2,})$/,
 			index: 2,
 			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, 'x', [], spinelement='#nav-search-spinner'); },
@@ -263,7 +238,7 @@ function string2bb(element) {
 
 		// Autocomplete forums
 		forums = {
-			match: /(^\!)([^\n]{3,})$/,
+			match: /(^\!)([^\n]{2,})$/,
 			index: 2,
 			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, 'f', [], spinelement='#nav-search-spinner'); },
@@ -273,7 +248,7 @@ function string2bb(element) {
 
 		// Autocomplete hashtags
 		tags = {
-			match: /(^\#)([^ \n]{3,})$/,
+			match: /(^\#)([^ \n]{2,})$/,
 			index: 2,
 			cache: true,
 			search: function(term, callback) { $.getJSON('/hashtags/' + '$f=&t=' + term).done(function(data) { callback($.map(data, function(entry) { return entry.text.toLowerCase().indexOf(term.toLowerCase()) === 0 ? entry : null; })); }); },
@@ -284,14 +259,17 @@ function string2bb(element) {
 
 		this.attr('autocomplete', 'off');
 
+		var textcomplete;
 		var Textarea = Textcomplete.editors.Textarea;
+
 		$(this).each(function() {
 			var editor = new Textarea(this);
-			var textcomplete = new Textcomplete(editor);
+			textcomplete = new Textcomplete(editor);
 			textcomplete.register([contacts,forums,tags], {className:'acpopup', maxCount:100, zIndex: 1020, appendTo:'nav'});
 		});
 
-		this.on('select', function(e, value, strategy) { submit_form(this); });
+		textcomplete.on('selected', function() { this.editor.el.form.submit(); });
+
 	};
 })( jQuery );
 
@@ -306,7 +284,7 @@ function string2bb(element) {
 
 		// Autocomplete contacts
 		contacts = {
-			match: /(^)([^\n]{3,})$/,
+			match: /(^)([^\n]{2,})$/,
 			index: 2,
 			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, typ,[], spinelement=false); },
@@ -316,18 +294,20 @@ function string2bb(element) {
 
 		this.attr('autocomplete','off');
 
+		var textcomplete;
 		var Textarea = Textcomplete.editors.Textarea;
+
 		$(this).each(function() {
 			var editor = new Textarea(this);
-			var textcomplete = new Textcomplete(editor);
+			textcomplete = new Textcomplete(editor);
 			textcomplete.register([contacts], {className:'acpopup', zIndex:1020});
 		});
 
 		if(autosubmit)
-			this.on('select', function(e,value,strategy) { submit_form(this); });
+			textcomplete.on('selected', function() { this.editor.el.form.submit(); });
 
 		if(typeof onselect !== 'undefined')
-			this.on('select', function(e, value, strategy) { onselect(value); });
+			textcomplete.on('select', function() { var item = this.dropdown.getActiveItem(); onselect(item.searchResult.data); });
 	};
 })( jQuery );
 
@@ -343,7 +323,7 @@ function string2bb(element) {
 
 		// Autocomplete contacts
 		names = {
-			match: /(^)([^\n]{3,})$/,
+			match: /(^)([^\n]{2,})$/,
 			index: 2,
 			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, typ,[], spinelement=false); },
@@ -353,19 +333,21 @@ function string2bb(element) {
 
 		this.attr('autocomplete','off');
 
+		var textcomplete;
 		var Textarea = Textcomplete.editors.Textarea;
 
 		$(this).each(function() {
 			var editor = new Textarea(this);
-			var textcomplete = new Textcomplete(editor);
+			textcomplete = new Textcomplete(editor);
 			textcomplete.register([names], {className:'acpopup', zIndex:1020});
 		});
 
 		if(autosubmit)
-			this.on('select', function(e,value,strategy) { submit_form(this); });
+			textcomplete.on('selected', function() { this.editor.el.form.submit(); });
 
 		if(typeof onselect !== 'undefined')
-			this.on('select', function(e, value, strategy) { onselect(value); });
+			textcomplete.on('select', function() { var item = this.dropdown.getActiveItem(); onselect(item.searchResult.data); });
+
 	};
 })( jQuery );
 
@@ -440,8 +422,6 @@ function string2bb(element) {
 			var textcomplete = new Textcomplete(editor);
 			textcomplete.register([bbco], {className:'acpopup', zIndex:1020});
 		});
-
-		this.on('select', function(e, value, strategy) { value; });
 
 		this.keypress(function(e){
 			if (e.keyCode == 13) {

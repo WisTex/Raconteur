@@ -308,6 +308,8 @@ class PermissionRoles {
 			]
 		];
 
+		call_hooks('list_permission_roles',$roles);
+
 		return $roles;
 	}
 

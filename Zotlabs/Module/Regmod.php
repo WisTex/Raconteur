@@ -13,8 +13,7 @@ class Regmod extends \Zotlabs\Web\Controller {
 	
 		if(! local_channel()) {
 			info( t('Please login.') . EOL);
-			$o .= '<br /><br />' . login((\App::$config['system']['register_policy'] == REGISTER_CLOSED) ? 0 : 1);
-			return $o;
+			return login();
 		}
 	
 		if(! is_site_admin()) {

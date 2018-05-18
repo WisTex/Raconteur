@@ -18,9 +18,6 @@
 			{{/if}}
 
 			{{if $invitations}}
-			<div class="section-content-info-wrapper">
-				<div id="register-invite-desc" class="descriptive-paragraph">{{$invite_desc}}</div>
-			</div>
 			{{include file="field_input.tpl" field=$invite_code}}
 			{{/if}}
 

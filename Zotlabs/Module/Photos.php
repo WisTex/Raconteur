@@ -102,14 +102,7 @@ class Photos extends \Zotlabs\Web\Controller {
 	
 			if($_REQUEST['dropalbum'] == t('Delete Album')) {
 	
-	
-				// This is dangerous because we combined file storage and photos into one interface
-				// This function will remove all photos from any directory with the same name since
-				// we have not passed the path value.
-	
-				// The correct solution would be to use a full pathname from your storage root for 'album'
-				// We also need to prevent/block removing the storage root folder.
-	
+		
 				$folder_hash = '';
 	 
 				$r = q("select * from attach where is_dir = 1 and uid = %d and hash = '%s'",
@@ -124,7 +117,8 @@ class Photos extends \Zotlabs\Web\Controller {
 	
 	
 				$res = array();
-	
+				$admin_delete = false;
+
 				// get the list of photos we are about to delete
 	
 				if(remote_channel() && (! local_channel())) {
@@ -132,6 +126,10 @@ class Photos extends \Zotlabs\Web\Controller {
 				}
 				elseif(local_channel()) {
 					$str = photos_album_get_db_idstr(local_channel(),$album);
+				}
+				elseif(is_site_admin()) {
+					$str = photos_album_get_db_idstr_admin($page_owner_uid,$album);
+					$admin_delete = true;
 				}
 				else {
 					$str = null;
@@ -145,7 +143,7 @@ class Photos extends \Zotlabs\Web\Controller {
 				);
 				if($r) {
 					foreach($r as $i) {
-						attach_delete($page_owner_uid, $i['resource_id'], 1 );
+						attach_delete($page_owner_uid, $i['resource_id'], true );
 					}
 				}
 	
@@ -158,12 +156,14 @@ class Photos extends \Zotlabs\Web\Controller {
 				// @FIXME do the same for the linked attach
 	
 				if($folder_hash) {
-					attach_delete($page_owner_uid,$folder_hash, 1);
+					attach_delete($page_owner_uid, $folder_hash, true );
+
+					if(! $admin_delete) {	
+						$sync = attach_export_data(\App::$data['channel'],$folder_hash, true);
 	
-					$sync = attach_export_data(\App::$data['channel'],$folder_hash, true);
-	
-					if($sync) 
-						build_sync_packet($page_owner_uid,array('file' => array($sync)));
+						if($sync) 
+							build_sync_packet($page_owner_uid,array('file' => array($sync)));
+					}
 				}
 	
 			}
@@ -181,17 +181,22 @@ class Photos extends \Zotlabs\Web\Controller {
 			$r = q("SELECT id, resource_id FROM photo WHERE ( xchan = '%s' or uid = %d ) AND resource_id = '%s' LIMIT 1",
 				dbesc($ob_hash),
 				intval(local_channel()),
-				dbesc(\App::$argv[2])
+				dbesc(argv(2))
 			);
 	
 			if($r) {
-				attach_delete($page_owner_uid, $r[0]['resource_id'], 1 );
+				attach_delete($page_owner_uid, $r[0]['resource_id'], true );
 				$sync = attach_export_data(\App::$data['channel'],$r[0]['resource_id'], true);
 	
 				if($sync) 
 					build_sync_packet($page_owner_uid,array('file' => array($sync)));
 			}
-	
+			elseif(is_site_admin()) {
+				// If the admin deletes a photo, don't sync
+				attach_delete($page_owner_uid, argv(2), true);
+			}	
+
+
 			goaway(z_root() . '/photos/' . \App::$data['channel']['channel_address'] . '/album/' . $_SESSION['album_return']);
 		}
 

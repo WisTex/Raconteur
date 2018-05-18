@@ -999,7 +999,7 @@ function discover_by_url($url, $arr = null) {
 			return false;
 
 		$network = (($arr['network']) ? $arr['network'] : 'unknown');
-		$name    = (($arr['name']) ? $arr['name'] : 'unknown');
+		$name    = (trim($arr['name']) ? trim($arr['name']) : 'unknown');
 		$photo   = (($arr['photo']) ? $arr['photo'] : '');
 		$addr    = (($arr['addr']) ? $arr['addr'] : '');
 		$guid    = $url;
@@ -1102,6 +1102,9 @@ function discover_by_url($url, $arr = null) {
 
 	if(! $name)
 		$name = notags($feed->get_description());
+
+	if(! trim($name))
+		$name = 'unknown';
 
 	$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 		dbesc($guid)
@@ -2053,7 +2056,6 @@ function jsonld_document_loader($url) {
 
 	return [];
 }
-
 
 /**
  * @brief

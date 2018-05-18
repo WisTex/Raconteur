@@ -1,10 +1,13 @@
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
-		{{if $delete}}
 		<div class="pull-right">
+			{{if $cancel}}
+			<button id="dbtn-cancel" class="btn btn-warning btn-sm" onclick="itemCancel(); return false;">{{$cancel}}</button>
+			{{/if}}
+			{{if $delete}}
 			<a  href="item/drop/{{$id}}" id="delete-btn" class="btn btn-sm btn-danger" onclick="return confirmDelete();"><i class="fa fa-trash-o"></i>&nbsp;{{$delete}}</a>
+			{{/if}}
 		</div>
-		{{/if}}
 		<h2>{{$title}}</h2>
 		<div class="clear"></div>
 	</div>

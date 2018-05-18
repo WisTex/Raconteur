@@ -201,6 +201,21 @@ class Channel extends \Zotlabs\Web\Controller {
 
 		$simple_update = (($update) ? " AND item_unseen = 1 " : '');
 
+
+		$search = EMPTY_STR;
+		if(x($_GET,'search')) {
+			$search = escape_tags($_GET['search']);
+			if(strpos($search,'#') === 0) {
+				$sql_extra2 .= term_query('item',substr($search,1),TERM_HASHTAG,TERM_COMMUNITYTAG);
+			}
+			else {
+				$sql_extra2 .= sprintf(" AND item.body like '%s' ",
+					dbesc(protect_sprintf('%' . $search . '%'))
+				);
+			}
+		}
+
+
 		head_add_link([ 
 			'rel'   => 'alternate',
 			'type'  => 'application/json+oembed',
@@ -256,6 +271,10 @@ class Channel extends \Zotlabs\Web\Controller {
 				$sql_extra2 .= protect_sprintf(sprintf(" AND item.created >= '%s' ", dbesc(datetime_convert(date_default_timezone_get(),'',$datequery2))));
 			}
 
+			if($datequery || $datequery2) {
+				$sql_extra2 .= " and item.item_thread_top != 0 ";
+			}
+
 			$itemspage = get_pconfig(local_channel(),'system','itemspage');
 			\App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
 			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));
@@ -274,7 +293,7 @@ class Channel extends \Zotlabs\Web\Controller {
 				else {
 					$r = q("SELECT item.parent AS item_id FROM item 
 						left join abook on ( item.author_xchan = abook.abook_xchan $abook_uids )
-						WHERE true and item.uid = %d AND item.item_thread_top = 1 $item_normal
+						WHERE true and item.uid = %d $item_normal
 						AND (abook.abook_blocked = 0 or abook.abook_flags is null)
 						AND item.item_wall = 1 
 						$sql_extra $sql_extra2
@@ -346,7 +365,7 @@ class Channel extends \Zotlabs\Web\Controller {
 				'$fh' => '0',
 				'$static'  => $static,
 				'$page' => ((\App::$pager['page'] != 1) ? \App::$pager['page'] : 1),
-				'$search' => '',
+				'$search' => $search,
 				'$xchan' => '',
 				'$order' => '',
 				'$list' => ((x($_REQUEST,'list')) ? intval($_REQUEST['list']) : 0),

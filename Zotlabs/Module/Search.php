@@ -175,7 +175,7 @@ class Search extends \Zotlabs\Web\Controller {
 						OR ( item.uid = %d )) OR item.owner_xchan = '%s' )
 						$item_normal
 						$sql_extra
-						group by mid order by created desc $pager_sql ",
+						group by mid, created order by created desc $pager_sql ",
 						intval(local_channel()),
 						dbesc($sys['xchan_hash'])
 					);
@@ -188,7 +188,7 @@ class Search extends \Zotlabs\Web\Controller {
 							$pub_sql ) OR owner_xchan = '%s')
 						$item_normal
 						$sql_extra 
-						group by mid order by created desc $pager_sql",
+						group by mid, created order by created desc $pager_sql",
 						dbesc($sys['xchan_hash'])
 					);
 				}

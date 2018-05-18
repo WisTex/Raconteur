@@ -136,17 +136,17 @@ function check_config {
     # backup is important and should be checked
 	if [ -n "$backup_device_name" ]
 	then
-        device_mounted=0
+            if [ ! -d "$backup_mount_point" ]
+            then
+                mkdir "$backup_mount_point"
+	    fi
+            device_mounted=0
 		if fdisk -l | grep -i "$backup_device_name.*linux"
 		then
 		    print_info "ok - filesystem of external device is linux"
 	        if [ -n "$backup_device_pass" ]
 	        then
 	            echo "$backup_device_pass" | cryptsetup luksOpen $backup_device_name cryptobackup
-	            if [ ! -d /media/hubzilla_backup ]
-	            then
-	                mkdir /media/hubzilla_backup
-	            fi
 	            if mount /dev/mapper/cryptobackup /media/hubzilla_backup
 	            then
                     device_mounted=1
@@ -244,6 +244,11 @@ function stop_hubzilla {
 function install_apache {
     print_info "installing apache..."
     nocheck_install "apache2 apache2-utils"
+}
+
+function install_imagemagick {
+    print_info "installing imagemagick..."
+    nocheck_install "imagemagick"
 }
 
 function install_curl {
@@ -801,6 +806,7 @@ update_upgrade
 install_curl
 install_sendmail
 install_apache
+install_imagemagick
 install_php
 install_mysql
 install_phpmyadmin

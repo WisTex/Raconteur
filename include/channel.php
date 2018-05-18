@@ -1776,6 +1776,17 @@ function get_default_profile_photo($size = 300) {
 	if(! $scheme)
 		$scheme = 'rainbow_man';
 
+	if(! is_dir('images/default_profile_photos/' . $scheme)) {
+		$x = [ 'scheme' => $scheme, 'size' => $size, 'url' => '' ];
+		call_hooks('default_profile_photo',$x);
+		if($x['url']) {
+			return $x['url'];
+		}
+		else {
+			$scheme = 'rainbow_man';
+		}
+	}
+
 	return 'images/default_profile_photos/' . $scheme . '/' . $size . '.png';
 }
 

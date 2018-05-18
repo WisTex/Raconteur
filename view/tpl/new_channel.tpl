@@ -3,6 +3,7 @@
 		<h2>{{$title}}</h2>
 	</div>
 	<div class="section-content-wrapper">
+		{{if ! $default_role}}
 		<div class="section-content-info-wrapper">
 			{{$desc}}
 		</div>
@@ -10,6 +11,7 @@
 		<div class="section-content-warning-wrapper">
 			{{$channel_usage_message}}
 		</div>
+		{{/if}}
 		{{/if}}
 		<form action="new_channel" method="post" id="newchannel-form">
 			{{if $default_role}}

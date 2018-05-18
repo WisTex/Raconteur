@@ -816,7 +816,7 @@ function get_tags($s) {
 
 	// match any double quoted tags
 
-	if(preg_match_all('/([@#!]\&quot\;.*?\&quot\;)/',$s,$match)) {
+	if(preg_match_all('/([@#\!]\&quot\;.*?\&quot\;)/',$s,$match)) {
 		foreach($match[1] as $mtch) {
 			$ret[] = $mtch;
 		}
@@ -824,41 +824,28 @@ function get_tags($s) {
 
 	// match bracket mentions
 
-	if(preg_match_all('/([@!]\{.*?\})/',$s,$match)) {
+	if(preg_match_all('/([@!]\!?\{.*?\})/',$s,$match)) {
 		foreach($match[1] as $mtch) {
 			$ret[] = $mtch;
 		}
 	}
 
-	// Match full names against @tags including the space between first and last
-	// We will look these up afterward to see if they are full names or not recognisable.
-
-	// The lookbehind is used to prevent a match in the middle of a word
-	// '=' needs to be avoided because when the replacement is made (in handle_tag()) it has to be ignored there
-	// Feel free to allow '=' if the issue with '=' is solved in handle_tag()
-	// added / ? and [ to avoid issues with hashchars in url paths
-
-	// added ; to single word tags to allow emojis and other unicode character constructs in bbcode
-	// (this would actually be &#xnnnnn; but the ampersand will have been escaped to &amp; by the time we see it.)
-
-	if(preg_match_all('/(?<![a-zA-Z0-9=\pL\/\?])(@[^ \x0D\x0A,:?\[]+ [^ \x0D\x0A@,:?\[]+)/u',$s,$match)) {
-		foreach($match[1] as $mtch) {
-			if(substr($mtch,-1,1) === '.')
-				$ret[] = substr($mtch,0,-1);
-			else
-				$ret[] = $mtch;
-		}
-	}
-
-	// Otherwise pull out single word tags. These can be @nickname, @first_last
+	// Pull out single word tags. These can be @nickname, @first_last
 	// and #hash tags.
 
-	if(preg_match_all('/(?<![a-zA-Z0-9=\pL\/\?\;])([@#\!][^ \x0D\x0A,;:?\[]+)/u',$s,$match)) {
+	if(preg_match_all('/(?<![a-zA-Z0-9=\pL\/\?\;])([@#\!]\!?[^ \x0D\x0A,;:\?\[\{\&]+)/u',$s,$match)) {
 		foreach($match[1] as $mtch) {
+
+			// Cleanup/ignore false positives
+
+			// Just ignore these rather than try and adjust the regex to deal with them
+			if(in_array($mtch,[ '@!', '!!' ]))
+				continue;
+			// likewise for trailing period. Strip it off rather than complicate the regex further.
 			if(substr($mtch,-1,1) === '.')
 				$mtch = substr($mtch,0,-1);
 			// ignore strictly numeric tags like #1 or #^ bookmarks or ## double hash
-			if((strpos($mtch,'#') === 0) && ( ctype_digit(substr($mtch,1)) || substr($mtch,1,1) === '^') || substr($mtch,1,1) === '#')
+			if((strpos($mtch,'#') === 0) && ( ctype_digit(substr($mtch,1)) || in_array(substr($mtch,1,1), [ '^', '#' ])))
 				continue;
 			// or quote remnants from the quoted strings we already picked out earlier
 			if(strpos($mtch,'&quot'))
@@ -883,7 +870,7 @@ function get_tags($s) {
 
 	usort($ret,'tag_sort_length');
 
-//	logger('get_tags: ' . print_r($ret,true));
+	//	logger('get_tags: ' . print_r($ret,true));
 
 	return $ret;
 }
@@ -2543,10 +2530,10 @@ function extra_query_args() {
  * @param[in,out] string &$str_tags string to add the tag to
  * @param int $profile_uid
  * @param string $tag the tag to replace
- * @param boolean $diaspora default false
+ * @param boolean $in_network default true
  * @return boolean true if replaced, false if not replaced
  */
-function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $diaspora = false) {
+function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $in_network = true) {
 
 	$replaced = false;
 	$r = null;
@@ -2557,9 +2544,10 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 	$termtype = ((strpos($tag,'!') === 0)   ? TERM_FORUM    : $termtype);
 	$termtype = ((strpos($tag,'#^[') === 0) ? TERM_BOOKMARK : $termtype);
 
-	//is it a hash tag?
-	if(strpos($tag,'#') === 0) {
-		if(strpos($tag,'#^[') === 0) {
+	// Is it a hashtag of some kind?
+
+	if ( in_array($termtype, [ TERM_HASHTAG, TERM_BOOKMARK ] )) {
+		if($termtype === TERM_BOOKMARK) {
 			if(preg_match('/#\^\[(url|zrl)(.*?)\](.*?)\[\/(url|zrl)\]/',$tag,$match)) {
 				$basetag = $match[3];
 				$url = ((substr($match[2],0,1) === '=') ? substr($match[2],1) : $match[3]);
@@ -2568,33 +2556,35 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 		}
 		// if the tag is already replaced...
 		elseif((strpos($tag,'[zrl=')) || (strpos($tag,'[url='))) {
-			//...do nothing
+			// ...do nothing
 			return $replaced;
 		}
+
 		if(! $replaced) {
 
-			// base tag has the tags name only
+			// double-quoted hashtags: base tag has the htmlentity name only
 
 			if((substr($tag,0,7) === '#&quot;') && (substr($tag,-6,6) === '&quot;')) {
 				$basetag = substr($tag,7);
 				$basetag = substr($basetag,0,-6);
 			}
 			else
-				$basetag = str_replace('_',' ',substr($tag,1));
+				$basetag = substr($tag,1);
 
-			//create text for link
+			// create text for link
+
 			$url = z_root() . '/search?tag=' . rawurlencode($basetag);
 			$newtag = '#[zrl=' . z_root() . '/search?tag=' . rawurlencode($basetag) . ']' . $basetag . '[/zrl]';
-			//replace tag by the link. Make sure to not replace something in the middle of a word
-			// The '=' is needed to not replace color codes if the code is also used as a tag
-			// Much better would be to somehow completely avoiding things in e.g. [color]-tags.
-			// This would allow writing things like "my favourite tag=#foobar".
+
+			// replace tag by the link. Make sure to not replace something in the middle of a word
+
 			$body = preg_replace('/(?<![a-zA-Z0-9=])'.preg_quote($tag,'/').'/', $newtag, $body);
 			$replaced = true;
 		}
-		//is the link already in str_tags?
+
+		// is the link already in str_tags?
 		if(! stristr($str_tags,$newtag)) {
-			//append or set str_tags
+			// append or set str_tags
 			if(strlen($str_tags))
 				$str_tags .= ',';
 
@@ -2605,42 +2595,39 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 			'termtype' => $termtype,
 			'term'     => $basetag,
 			'url'      => $url,
-			'contact'  => $r[0]
+			'contact'  => []
 		];
+
 	}
 
-	//is it a person tag?
+	// END hashtags
 
-	$grouptag = false;
+	// BEGIN mentions
 
-	if(strpos($tag,'!') === 0) {
-		$grouptag = true;
-	}
 
-	if(strpos($tag,'@') === 0 || $grouptag) {
+	if ( in_array($termtype, [ TERM_MENTION, TERM_FORUM ] )) {
 
-		// The @! tag will alter permissions
-		$exclusive = (((! $grouptag) && (strpos($tag,'!') === 1) && (! $diaspora)) ? true : false);
-		if(($grouptag) && (strpos($tag,'!!') === 0)) {
-			$exclusive = true;
-		}
+		// The @! tag and !! tag will alter permissions
+
+		// $in_network is set to false to avoid false positives on posts originating
+		// on a network which does not implement privacy tags or implements them differently.
+
+		$exclusive = (((strpos(substr($tag,1), '!') === 0) && $in_network) ? true : false);
 
 		//is it already replaced?
-		if(strpos($tag,'[zrl='))
+		if(strpos($tag,'[zrl=') || strpos($tag,'[url='))
 			return $replaced;
 
-		//get the person's name
+		// get the channel name
+		// First extract the name or name fragment we are going to replace
 
-		$name = substr($tag,(($exclusive) ? 2 : 1)); // The name or name fragment we are going to replace
-		$newname = $name; // a copy that we can mess with
+		$name = substr($tag,(($exclusive) ? 2 : 1)); 
+		$newname = $name; // make a copy that we can mess with
 		$tagcid = 0;
 
 		$r = null;
 
-		// is it some generated name?
-
-		$forum = false;
-		$trailing_plus_name = false;
+		// is it some generated (autocompleted) name?
 
 		if(substr($name,0,1) === '{' && substr($name,-1,1) === '}') {
 			$newname = substr($name,1);
@@ -2654,87 +2641,38 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 
 		if(! $r) {
 
-			// @channel+ is a forum or network delivery tag
-
-			if(substr($newname,-1,1) === '+') {
-				$forum = true;
-				$newname = substr($newname,0,-1);
-			}
-
-			// Here we're looking for an address book entry as provided by the auto-completer
-			// of the form something+nnn where nnn is an abook_id or the first chars of xchan_hash
-
-
-			// If there's a +nnn in the string make sure there isn't a space preceding it
-
-			$t1 = strpos($newname,' ');
-			$t2 = strrpos($newname,'+');
-	
-			if($t1 && $t2 && $t1 < $t2)
-				$t2 = 0;
-
-			if(($t2) && (! $diaspora)) {
-				//get the id
-
-				$tagcid = urldecode(substr($newname,$t2 + 1));
-
-				if(strrpos($tagcid,' '))
-					$tagcid = substr($tagcid,0,strrpos($tagcid,' '));
-
-				if(strlen($tagcid) < 16)
-					$abook_id = intval($tagcid);
-				//remove the next word from tag's name
-				if(strpos($name,' ')) {
-					$name = substr($name,0,strpos($name,' '));
-				}
-
-				if($abook_id) { // if there was an id
-					// select channel with that id from the logged in user's address book
-					$r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash
-						WHERE abook_id = %d AND abook_channel = %d LIMIT 1",
-							intval($abook_id),
-							intval($profile_uid)
-					);
-				}
-				else {
-					$r = q("SELECT * FROM xchan
-						WHERE xchan_hash like '%s%%' LIMIT 1",
-							dbesc($tagcid)
-					);
-				}
-			}
-		}
-
-		if(! $r) {
-
 			// look for matching names in the address book
 
-			// Two ways to deal with spaces - double quote the name or use underscores
-			// we see this after input filtering so quotes have been html entity encoded
+			// Double quote the entire mentioned term to include special characters
+			// such as spaces and some punctuation.
+
+			// We see this after input filtering so quotes have been html entity encoded
 
 			if((substr($name,0,6) === '&quot;') && (substr($name,-6,6) === '&quot;')) {
 				$newname = substr($name,6);
 				$newname = substr($newname,0,-6);
 			}
-			else
-				$newname = str_replace('_',' ',$name);
 
-			// do this bit over since we started over with $name
+			// select someone from this user's contacts by name
 
-			if(substr($newname,-1,1) === '+') {
-				$forum = true;
-				$newname = substr($newname,0,-1);
-			}
-
-			//select someone from this user's contacts by name
 			$r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash
 				WHERE xchan_name = '%s' AND abook_channel = %d LIMIT 1",
 					dbesc($newname),
 					intval($profile_uid)
 			);
 
+			// select anybody by full hubloc_addr
+
+			if((! $r) && strpos($newname,'@')) {
+				$r = q("SELECT * FROM xchan left join hubloc on xchan_hash = hubloc_hash 
+					WHERE hubloc_addr = '%s' LIMIT 1",
+						dbesc($newname)
+				);
+			}
+
+			// select someone by attag or nick and the name passed in
+
 			if(! $r) {
-				//select someone by attag or nick and the name passed in
 				$r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash
 					WHERE xchan_addr like ('%s') AND abook_channel = %d LIMIT 1",
 						dbesc(((strpos($newname,'@')) ? $newname : $newname . '@%')),
@@ -2742,24 +2680,12 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 				);
 			}
 
-			if(! $r) {
-				// it's possible somebody has a name ending with '+', which we stripped off as a forum indicator
-				// This is very rare but we want to get it right.
-
-				$r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash
-					WHERE xchan_name = '%s' AND abook_channel = %d LIMIT 1",
-						dbesc($newname . '+'),
-						intval($profile_uid)
-				);
-				if($r)
-					$trailing_plus_name = true;
-			}
 		}
 
 		// $r is set if we found something
 
 		$channel = App::get_channel();
-
+ 
 		if($r) {
 			$profile = $r[0]['xchan_url'];
 			$newname = $r[0]['xchan_name'];
@@ -2797,27 +2723,24 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 			}
 		}
 
-		if(($exclusive) && (! $access_tag)) {
-			$access_tag .= 'cid:' . $channel['channel_hash'];
-		}
-
-		// if there is an url for this channel
+		// if there is a url for this channel
 
 		if(isset($profile)) {
 			$replaced = true;
 			//create profile link
 			$profile = str_replace(',','%2c',$profile);
 			$url = $profile;
-			if($grouptag) {
+			if($termtype === TERM_FORUM) {
 				$newtag = '!' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. '[/zrl]';
 				$body = str_replace('!' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
 			}
 			else {
-				$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. (($forum &&  ! $trailing_plus_name) ? '+' : '') . '[/zrl]';
+				// ( $termtype === TERM_MENTION )
+				$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. '[/zrl]';
 				$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
 			}
 
-			//append tag to str_tags
+			// append tag to str_tags
 			if(! stristr($str_tags,$newtag)) {
 				if(strlen($str_tags))
 					$str_tags .= ',';
@@ -2831,14 +2754,14 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $d
 		'termtype' => $termtype,
 		'term'     => $newname,
 		'url'      => $url,
-		'contact'  => $r[0]
+		'contact'  => (($r) ? $r[0] : [])
 	];
 }
 
-function linkify_tags($a, &$body, $uid, $diaspora = false) {
-	$str_tags = '';
-	$tagged = array();
-	$results = array();
+function linkify_tags($a, &$body, $uid, $in_network = true) {
+	$str_tags = EMPTY_STR;
+	$tagged = [];
+	$results = [];
 
 	$tags = get_tags($body);
 
@@ -2846,20 +2769,7 @@ function linkify_tags($a, &$body, $uid, $diaspora = false) {
 		foreach($tags as $tag) {
 			$access_tag = '';
 
-			// If we already tagged 'Robert Johnson', don't try and tag 'Robert'.
-			// Robert Johnson should be first in the $tags array
-
-			$fullnametagged = false;
-			for($x = 0; $x < count($tagged); $x ++) {
-				if(stristr($tagged[$x],$tag . ' ')) {
-					$fullnametagged = true;
-					break;
-				}
-			}
-			if($fullnametagged)
-				continue;
-
-			$success = handle_tag($a, $body, $access_tag, $str_tags, ($uid) ? $uid : App::$profile_uid , $tag, $diaspora);
+			$success = handle_tag($a, $body, $access_tag, $str_tags, ($uid) ? $uid : App::$profile_uid , $tag, $in_network);
 
 			$results[] = array('success' => $success, 'access_tag' => $access_tag);
 			if($success['replaced']) $tagged[] = $tag;
@@ -3313,9 +3223,9 @@ function cleanup_bbcode($body) {
 	$body = preg_replace_callback('/\[zrl(.*?)\[\/(zrl)\]/ism','\red_escape_codeblock',$body);
 
 
-	$body = preg_replace_callback("/([^\]\='".'"'."\/]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\
+	$body = preg_replace_callback("/([^\]\='".'"'."\/\{]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\
 +\,\(\)]+)/ismu", '\nakedoembed', $body);
-	$body = preg_replace_callback("/([^\]\='".'"'."\/]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\
+	$body = preg_replace_callback("/([^\]\='".'"'."\/\{]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\
 +\,\(\)]+)/ismu", '\red_zrl_callback', $body);
 
 	$body = preg_replace_callback('/\[\$b64zrl(.*?)\[\/(zrl)\]/ism','\red_unescape_codeblock',$body);

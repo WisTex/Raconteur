@@ -68,6 +68,7 @@
 	
 	<h3>{{$registration}}</h3>
 	{{include file="field_input.tpl" field=$register_text}}
+	{{include file="field_select_grouped.tpl" field=$role}}
 	{{include file="field_select.tpl" field=$register_policy}}
 	{{include file="field_checkbox.tpl" field=$invite_only}}
 	{{include file="field_input.tpl" field=$minimum_age}}
@@ -85,6 +86,8 @@
 	{{include file="field_checkbox.tpl" field=$disable_discover_tab}}
 	{{include file="field_checkbox.tpl" field=$site_firehose}}
 	{{include file="field_checkbox.tpl" field=$open_pubstream}}
+	{{include file="field_textarea.tpl" field=$incl}}
+	{{include file="field_textarea.tpl" field=$excl}}
 	
 	<div class="submit"><input type="submit" name="page_site" value="{{$submit}}" /></div>
 	

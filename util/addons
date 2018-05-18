@@ -106,9 +106,12 @@ if($argc == 3 && $argv[1] === 'install') {
 
 if($argc == 3 && $argv[1] === 'uninstall') {
 
+	$found = false;
+
 	if($plugins) {
 		foreach($plugins as $p) {
 			if($p[0] === $argv[2]) {
+				$found = true;
 				if(! $p[1])
 					echo $p[0] . ' not installed.' . "\n";
 				elseif($p[2]['disabled'])
@@ -124,6 +127,17 @@ if($argc == 3 && $argv[1] === 'uninstall') {
 			}
 		}
 	} 
+
+	// force uninstall of addon which no longer exists
+
+	if(! $found) {
+		$idx = array_search($argv[2], App::$plugins);
+		if ($idx !== false)
+			unset(App::$plugins[$idx]);
+		uninstall_plugin($argv[2]);
+		set_config("system","addon", implode(", ",App::$plugins));
+		echo $argv[2] . ' uninstalled.' . "\n";
+	}
 
 	killme();
 }

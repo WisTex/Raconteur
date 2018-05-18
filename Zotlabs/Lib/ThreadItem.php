@@ -141,6 +141,10 @@ class ThreadItem {
 				'delete' => t('Delete'),
 			);
 		}		
+		elseif(is_site_admin()) {
+			$drop = [ 'dropping' => true, 'delete' => t('Admin Delete') ];
+		}
+
 // FIXME
 		if($observer_is_pageowner) {		
 			$multidrop = array(
@@ -756,7 +760,7 @@ class ThreadItem {
 			'$edquote' => t('Quote'),
 			'$edcode' => t('Code'),
 			'$edimg' => t('Image'),
-			'$edatt' => t('Attach File'),
+			'$edatt' => t('Attach/Upload file'),
 			'$edurl' => t('Insert Link'),
 			'$edvideo' => t('Video'),
 			'$preview' => t('Preview'), // ((feature_enabled($conv->get_profile_owner(),'preview')) ? t('Preview') : ''),

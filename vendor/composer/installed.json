@@ -657,17 +657,17 @@
     },
     {
         "name": "sabre/vobject",
-        "version": "4.1.5",
-        "version_normalized": "4.1.5.0",
+        "version": "4.1.6",
+        "version_normalized": "4.1.6.0",
         "source": {
             "type": "git",
             "url": "https://github.com/sabre-io/vobject.git",
-            "reference": "0928660e92d46d2d24336a6db320636aa3a75414"
+            "reference": "122cacbdea2c6133ac04db86ec05854beef75adf"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sabre-io/vobject/zipball/0928660e92d46d2d24336a6db320636aa3a75414",
-            "reference": "0928660e92d46d2d24336a6db320636aa3a75414",
+            "url": "https://api.github.com/repos/sabre-io/vobject/zipball/122cacbdea2c6133ac04db86ec05854beef75adf",
+            "reference": "122cacbdea2c6133ac04db86ec05854beef75adf",
             "shasum": ""
         },
         "require": {
@@ -682,7 +682,7 @@
         "suggest": {
             "hoa/bench": "If you would like to run the benchmark scripts"
         },
-        "time": "2018-03-08T21:06:39+00:00",
+        "time": "2018-04-20T07:22:50+00:00",
         "bin": [
             "bin/vobject",
             "bin/generate_vcards"
@@ -886,23 +886,23 @@
     },
     {
         "name": "smarty/smarty",
-        "version": "v3.1.31",
-        "version_normalized": "3.1.31.0",
+        "version": "v3.1.32",
+        "version_normalized": "3.1.32.0",
         "source": {
             "type": "git",
             "url": "https://github.com/smarty-php/smarty.git",
-            "reference": "c7d42e4a327c402897dd587871434888fde1e7a9"
+            "reference": "ac9d4b587e5bf53381e21881820a9830765cb459"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/smarty-php/smarty/zipball/c7d42e4a327c402897dd587871434888fde1e7a9",
-            "reference": "c7d42e4a327c402897dd587871434888fde1e7a9",
+            "url": "https://api.github.com/repos/smarty-php/smarty/zipball/ac9d4b587e5bf53381e21881820a9830765cb459",
+            "reference": "ac9d4b587e5bf53381e21881820a9830765cb459",
             "shasum": ""
         },
         "require": {
             "php": ">=5.2"
         },
-        "time": "2016-12-14T21:57:25+00:00",
+        "time": "2018-04-24T14:53:33+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {

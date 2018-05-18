@@ -55,10 +55,10 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 			$h = explode("\n",$result['header']);
 			foreach ($h as $l) {
 				list($k,$v) = array_map("trim", explode(":", trim($l), 2));
-				$hdrs[$k] = $v;
+				$hdrs[strtolower($k)] = $v;
 			}
-			if (array_key_exists('Content-Type', $hdrs))
-				$type = $hdrs['Content-Type'];
+			if (array_key_exists('content-type', $hdrs))
+				$type = $hdrs['content-type'];
 			if($type) {
 				$zrl = is_matrix_url($url);
 				if(stripos($type,'image/') !== false) {
@@ -80,6 +80,10 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 						echo $br . '[zaudio]' . $url . '[/zaudio]' . $br;
 					else
 						echo $br . '[audio]' . $url . '[/audio]' . $br;
+					killme();
+				}
+				if(strtolower($type) === 'application/pdf' || strtolower($type) === 'application/x-pdf') {
+					echo $br . '[embed]' . $url . '[/embed]' . $br;
 					killme();
 				}
 			}

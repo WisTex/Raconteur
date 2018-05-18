@@ -84,10 +84,11 @@ function photo_upload($channel, $observer, $args) {
 				//	logger('imagick thumbnail command: ' . $cmd);
 				for($x = 0; $x < 4; $x ++) {
 					exec($cmd);
-					if(! file_exists($tmp_name)) {
-						logger('imagick scale failed. Retrying.');
-						continue;
+					if(file_exists($tmp_name)) {
+						break;
 					}
+					logger('imagick scale failed. Retrying.');
+					continue;
 				}
 				if(! file_exists($tmp_name)) {
 					logger('imagick scale failed. Abort.');
@@ -786,16 +787,30 @@ function photos_album_get_db_idstr($channel_id, $album, $remote_xchan = '') {
 		);
 	}
 	if ($r) {
-		$arr = array();
-		foreach ($r as $rr) {
-			$arr[] = "'" . dbesc($rr['hash']) . "'" ;
-		}
-		$str = implode(',',$arr);
-		return $str;
+		return ids_to_querystr($r,'hash',true);
 	}
 
 	return false;
 }
+
+function photos_album_get_db_idstr_admin($channel_id, $album) {
+
+	if(! is_site_admin())
+		return false;
+
+	$r = q("SELECT hash from attach where uid = %d and folder = '%s' ",
+		intval($channel_id),
+		dbesc($album)
+	);
+
+	if ($r) {
+		return ids_to_querystr($r,'hash',true);
+	}
+
+	return false;
+}
+
+
 
 /**
  * @brief Creates a new photo item.
@@ -995,4 +1010,24 @@ function profile_photo_set_profile_perms($uid, $profileid = 0) {
 			);
 		}
 	}
+}
+
+function fetch_image_from_url($url,&$mimetype) {
+
+	$redirects = 0;
+	$x = z_fetch_url($url,true,$redirects,[ 'novalidate' => true ]);
+	if($x['success']) {
+		$hdrs = [];
+		$h = explode("\n",$x['header']);
+		foreach ($h as $l) {
+			list($k,$v) = array_map("trim", explode(":", trim($l), 2));
+			$hdrs[strtolower($k)] = $v;
+		}
+		if (array_key_exists('content-type', $hdrs))
+			$mimetype = $hdrs['content-type'];
+
+		return $x['body'];
+	}
+
+	return EMPTY_STR;
 }

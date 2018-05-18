@@ -49,7 +49,7 @@ class File extends DAV\Node implements DAV\IFile {
 		$this->data = $data;
 		$this->auth = $auth;
 
-		logger(print_r($this->data, true), LOGGER_DATA);
+		// logger(print_r($this->data, true), LOGGER_DATA);
 	}
 
 	/**
