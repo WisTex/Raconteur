@@ -17,15 +17,7 @@ function nav($template = 'default') {
 	if(!(x(App::$page,'nav')))
 		App::$page['nav'] = '';
 
-	$base = z_root();
-
-	App::$page['htmlhead'] .= <<< EOT
-<script>$(document).ready(function() {
-	$("#nav-search-text").search_autocomplete('$base/acl');
-});
-
-</script>
-EOT;
+	App::$page['htmlhead'] .= '<script>$(document).ready(function() { $("#nav-search-text").search_autocomplete(\'' . z_root() . '/acl' . '\');});</script>';
 
 	$is_owner = (((local_channel()) && ((App::$profile_uid == local_channel()) || (App::$profile_uid == 0))) ? true : false);
 
