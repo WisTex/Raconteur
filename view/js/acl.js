@@ -394,6 +394,10 @@ ACL.prototype.get = function(start, count, search) {
 		data: postdata,
 		dataType: 'json',
 		success: that.populate
+	})
+	.done(function() {
+		if(search !== undefined)
+			datasrc2src('#acl-list-content .list-group-item img[data-src]');
 	});
 };
 
