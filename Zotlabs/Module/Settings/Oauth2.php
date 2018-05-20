@@ -132,10 +132,10 @@ class Oauth2 {
 		}
 			
 
-		$r = q("SELECT oauth_clients.*, oauth_access_tokens.access_token as oauth_token, (oauth_clients.user_id = '%s') AS my 
+		$r = q("SELECT oauth_clients.*, oauth_access_tokens.access_token as oauth_token, (oauth_clients.user_id = %d) AS my 
 				FROM oauth_clients
 				LEFT JOIN oauth_access_tokens ON oauth_clients.client_id=oauth_access_tokens.client_id
-				WHERE oauth_clients.user_id IN ('%s',0)",
+				WHERE oauth_clients.user_id IN (%d,0)",
 				dbesc(local_channel()),
 				dbesc(local_channel())
 		);
