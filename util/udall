@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if [ ! -d .git ]; then
 	echo Unable to update `pwd`
 	exit

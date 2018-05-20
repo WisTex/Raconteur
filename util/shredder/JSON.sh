@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # The MIT License
 #
 # Copyright (c) 2011 Dominic Tarr
