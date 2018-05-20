@@ -14,7 +14,8 @@ class Oauth2 {
 			$key = $_POST['remove'];
 			q("DELETE FROM tokens WHERE id='%s' AND uid=%d",
 				dbesc($key),
-				local_channel());
+				intval(local_channel())
+			);
 			goaway(z_root()."/settings/oauth2/");
 			return;			
 		}

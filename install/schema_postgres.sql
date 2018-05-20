@@ -1620,14 +1620,14 @@ CREATE TABLE oauth_clients (
   redirect_uri          VARCHAR(2000),
   grant_types           VARCHAR(80),
   scope                 VARCHAR(4000),
-  user_id               VARCHAR(80),
+  user_id               bigint NOT NULL DEFAULT '0',
   PRIMARY KEY (client_id)
 );
 
 CREATE TABLE oauth_access_tokens (
   access_token         VARCHAR(40)    NOT NULL,
   client_id            VARCHAR(80)    NOT NULL,
-  user_id              VARCHAR(255),
+  user_id              bigint NOT NULL DEFAULT '0',
   expires              TIMESTAMP      NOT NULL,
   scope                VARCHAR(4000),
   PRIMARY KEY (access_token)
@@ -1636,7 +1636,7 @@ CREATE TABLE oauth_access_tokens (
 CREATE TABLE oauth_authorization_codes (
   authorization_code  VARCHAR(40)     NOT NULL,
   client_id           VARCHAR(80)     NOT NULL,
-  user_id             VARCHAR(255),
+  user_id             bigint NOT NULL DEFAULT '0',
   redirect_uri        VARCHAR(2000),
   expires             TIMESTAMP       NOT NULL,
   scope               VARCHAR(4000),
@@ -1647,7 +1647,7 @@ CREATE TABLE oauth_authorization_codes (
 CREATE TABLE oauth_refresh_tokens (
   refresh_token       VARCHAR(40)     NOT NULL,
   client_id           VARCHAR(80)     NOT NULL,
-  user_id             VARCHAR(255),
+  user_id             bigint NOT NULL DEFAULT '0',
   expires             TIMESTAMP       NOT NULL,
   scope               VARCHAR(4000),
   PRIMARY KEY (refresh_token)
