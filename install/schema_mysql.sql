@@ -7,8 +7,7 @@ CREATE TABLE IF NOT EXISTS `abconfig` (
   `k` char(191) NOT NULL DEFAULT '',
   `v` mediumtext NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `chan` (`chan`),
-  KEY `xchan` (`xchan`),
+  KEY `chan_xchan` (`chan`, `xchan`),
   KEY `cat` (`cat`),
   KEY `k` (`k`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
