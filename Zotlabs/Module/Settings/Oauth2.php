@@ -43,24 +43,24 @@ class Oauth2 {
 								redirect_uri = '%s',
 								grant_types = '%s',
 								scope = '%s', 
-								user_id = '%s'
+								user_id = %d
 							WHERE client_id='%s'",
 							dbesc($name),
 							dbesc($secret),
 							dbesc($redirect),
 							dbesc($grant),
 							dbesc($scope),
-							dbesc(local_channel()),
+							intval(local_channel()),
 							dbesc($name));
 				} else {
 					$r = q("INSERT INTO oauth_clients (client_id, client_secret, redirect_uri, grant_types, scope, user_id)
-						VALUES ('%s','%s','%s','%s','%s','%s')",
+						VALUES ('%s','%s','%s','%s','%s',%d)",
 						dbesc($name),
 						dbesc($secret),
 						dbesc($redirect),
 						dbesc($grant),
 						dbesc($scope),
-						dbesc(local_channel())
+						intval(local_channel())
 					);
 					$r = q("INSERT INTO xperm (xp_client, xp_channel, xp_perm) VALUES ('%s', %d, '%s') ",
 						dbesc($name),
@@ -93,9 +93,9 @@ class Oauth2 {
 		}
 			
 		if((argc() > 3) && (argv(2) === 'edit')) {
-			$r = q("SELECT * FROM oauth_clients WHERE client_id='%s' AND user_id= '%s'",
+			$r = q("SELECT * FROM oauth_clients WHERE client_id='%s' AND user_id= %d",
 					dbesc(argv(3)),
-					dbesc(local_channel())
+					intval(local_channel())
 			);
 			
 			if (! $r){
@@ -123,9 +123,9 @@ class Oauth2 {
 		if((argc() > 3) && (argv(2) === 'delete')) {
 			check_form_security_token_redirectOnErr('/settings/oauth2', 'settings_oauth2', 't');
 			
-			$r = q("DELETE FROM oauth_clients WHERE client_id = '%s' AND user_id = '%s'",
+			$r = q("DELETE FROM oauth_clients WHERE client_id = '%s' AND user_id = %d",
 					dbesc(argv(3)),
-					dbesc(local_channel())
+					intval(local_channel())
 			);
 			goaway(z_root()."/settings/oauth2/");
 			return;			
@@ -136,8 +136,8 @@ class Oauth2 {
 				FROM oauth_clients
 				LEFT JOIN oauth_access_tokens ON oauth_clients.client_id=oauth_access_tokens.client_id
 				WHERE oauth_clients.user_id IN (%d,0)",
-				dbesc(local_channel()),
-				dbesc(local_channel())
+				intval(local_channel()),
+				intval(local_channel())
 		);
 			
 		$tpl = get_markup_template("settings_oauth2.tpl");
