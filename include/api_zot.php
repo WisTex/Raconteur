@@ -96,9 +96,10 @@
 			// json_return_and_die(post_activity_item($_REQUEST));
 		}
 		else {
-			$mindate = (($_REQUEST['mindate']) ? datetime_convert('UTC','UTC',$_REQUEST['mindate']) : '');
-        	if(! $mindate)
-            	$mindate = datetime_convert('UTC','UTC', 'now - 14 days');
+			if(array_key_exists('dbegin',$_REQUEST))
+				$_REQUEST['datequery2'] = $_REQUEST['dbegin'];
+			if(array_key_exists('dend',$_REQUEST))
+				$_REQUEST['datequery'] = $_REQUEST['dend'];
 
 			$arr = $_REQUEST;
 			$ret = [];	
