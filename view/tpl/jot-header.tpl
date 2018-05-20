@@ -7,10 +7,11 @@ var pretext = '{{$pretext}}';
 function initEditor(cb){
 	if (editor==false){
 		$("#profile-jot-text-loading").show();
+		$("#profile-jot-reset").removeClass('d-none');
 		{{$geotag}}
 		if(plaintext == 'none') {
 			$("#profile-jot-text-loading").hide();
-			$("#profile-jot-text").css({ 'height': 200 });
+			//$("#profile-jot-text").css({ 'height': 200 });
 			{{if $bbco_autocomplete}}
 			$("#profile-jot-text").bbco_autocomplete('{{$bbco_autocomplete}}'); // autocomplete bbcode
 			{{/if}}
@@ -361,8 +362,16 @@ var activeCommentText = '';
 		$("#jot-title").val('');
 		$("#profile-jot-text").val('');
 		$("#jot-category").val('');
-		postSaveChanges('clean','');
+		postSaveChanges('clean');
+
+		{{if $reset}}
+		$(".jothidden").hide();
+		$("#profile-jot-text").removeClass('jot-expanded');
+		$("#profile-jot-reset").addClass('d-none');
+		editor = false;
+		{{else}}
 		window.history.back();
+		{{/if}}
 	}
 
 	function itemFiler(id) {
@@ -573,7 +582,7 @@ $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-del
 <script>
 	var postSaveTimer = null;
 
-	function postSaveChanges(action, type) {
+	function postSaveChanges(action) {
 		if({{$auto_save_draft}}) {
 
 			var doctype = $('#jot-webpage').val();

@@ -1304,6 +1304,8 @@ function status_editor($a, $x, $popup = false) {
 		$id_select = '';
 
 	$webpage = ((x($x,'webpage')) ? $x['webpage'] : '');
+
+	$reset = ((x($x,'reset')) ? $x['reset'] : '');
 	
 	$feature_auto_save_draft = ((feature_enabled($x['profile_uid'], 'auto_save_draft')) ? "true" : "false");
 	
@@ -1329,6 +1331,7 @@ function status_editor($a, $x, $popup = false) {
 		'$nocomment_enabled' => t('Comments enabled'),
 		'$nocomment_disabled' => t('Comments disabled'),
 		'$auto_save_draft' => $feature_auto_save_draft,
+		'$reset' => $reset
 	));
 
 	$tpl = get_markup_template('jot.tpl');
@@ -1441,7 +1444,8 @@ function status_editor($a, $x, $popup = false) {
 		'$expiryModalCANCEL' => t('Cancel'),
 		'$expanded' => ((x($x, 'expanded')) ? $x['expanded'] : false),
 		'$bbcode' => ((x($x, 'bbcode')) ? $x['bbcode'] : false),
-		'$parent' => ((array_key_exists('parent',$x) && $x['parent']) ? $x['parent'] : 0)
+		'$parent' => ((array_key_exists('parent',$x) && $x['parent']) ? $x['parent'] : 0),
+		'$reset' => $reset
 	));
 
 	if ($popup === true) {
