@@ -308,6 +308,7 @@ var activeCommentText = '';
 		$(".jothidden").hide();
 		$("#profile-jot-text").removeClass('jot-expanded');
 		$("#profile-jot-reset").addClass('d-none');
+		$("#jot-preview-content").html('').hide();
 		editor = false;
 		{{else}}
 		window.history.back();
