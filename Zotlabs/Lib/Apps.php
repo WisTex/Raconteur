@@ -45,6 +45,8 @@ class Apps {
 			}
 		}
 
+		call_hooks('get_system_apps',$ret);
+
 		return $ret;
 
 	}
