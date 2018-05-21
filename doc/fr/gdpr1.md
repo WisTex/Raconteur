@@ -51,19 +51,12 @@ Vos droits
 ===========
 
 En vertu du règlement général sur la protection des données
-(GDPR) et la Loi sur la protection des données 2018 (DPA) 
-vous disposez d'un certain nombre de droits en ce qui concerne vos données personnelles. 
-Vous avez le droit de nous demander l'accès et la rectification ou l'effacement de vos données personnelles,
-le droit de restreindre le traitement, de s'opposer au traitement ainsi que, dans certaines circonstances, le droit à la transformation.
-à la portabilité des données.
+(GDPR) et la Loi sur la protection des données 2018 (DPA) , vous disposez d'un certain nombre de droits en ce qui concerne vos données personnelles. 
+Vous avez le droit de nous demander l'accès et la rectification ou l'effacement de vos données personnelles, le droit de restreindre le traitement, de s'opposer au traitement ainsi que, dans certaines circonstances, le droit à la portabilité des données.
 
-Si vous avez donné votre consentement pour le traitement de vos données, vous avez le droit (dans certains cas, vous pouvez le faire). 
-circonstances) de retirer ce consentement à tout moment, ce qui n'affectera pas la légalité de l'utilisation de la 
-le traitement avant le retrait de votre consentement.
+Si vous avez donné votre consentement au traitement de vos données, vous avez le droit (dans certaines circonstances) de retirer ce consentement à tout moment, ce qui n'affectera pas la licéité du traitement avant le retrait de votre consentement.
 
-Vous avez le droit de déposer une plainte auprès du Commissariat à l'information si vous remplissez les conditions suivantes 
-nous estimons que nous n'avons pas respecté les exigences du GDPR ou de la DPA 18 en ce qui concerne 
-à vos données personnelles.
+Vous avez le droit de déposer une plainte auprès du Commissariat à l'information si vous estimez que nous n'avons pas respecté les exigences du GDPR ou de la DPA 18 en ce qui concerne vos données personnelles.
 
 Identité et coordonnées du responsable du traitement et du délégué à la protection des données
 
