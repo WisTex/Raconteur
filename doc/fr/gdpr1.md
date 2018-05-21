@@ -30,8 +30,7 @@ de notre capacité n'est partagée qu'avec ceux avec qui vous avez choisi de la 
 Nous ne partageons pas vos informations personnelles avec des tiers et n'analysons pas votre comportement ou vos informations personnelles.
 Nous n'avons pas de publicité ou de relations d'affaires avec les annonceurs.  
 
-Nous PEUVONS être invités ou forcés de divulguer les informations que vous nous avez fournies en réponse à des demandes légitimes.
-les procédures pénales et judiciaires. Dans la mesure du possible, nous vous en aviserons si cela se produit. 
+Nous PEUVONS être invités ou forcés de divulguer les informations que vous nous avez fournies en réponse à des procédures pénales et judiciaires légitimes. Dans la mesure du possible, nous vous en aviserons si cela se produit. 
 
 Accès à vos informations
 ==========================
@@ -39,15 +38,11 @@ Accès à vos informations
 Certaines communications sont partagées avec d'autres sites Web. Ceux qui utilisent le même logiciel vont généralement 
 ont des politiques similaires en matière de protection de la vie privée. 
 
-Il se peut que l'on vous montre des vidéos intégrées et des liens fournis pour visiter d'autres sites Web dans le cadre de votre site Web.
-activités quotidiennes à l'aide de ce site Web. Cela peut vous exposer à une surveillance par des services externes, tels que
-(mais sans s'y limiter) Facebook, Twitter et Google. Chaque opérateur de site web est autorisé à configurer si le contenu incorporé est autorisé ou non.
+Il se peut que l'on vous montre des vidéos intégrées et des liens fournis pour visiter d'autres sites Web dans le cadre de vos activités quotidiennes à l'aide de ce site Web. Cette mai vous exposer à la surveillance par des services externes, tels que (mais non limité à) Facebook, Twitter et Google. Chaque opérateur de site Web est autorisé à configurer si le contenu intégré est autorisé ou non.
 
 L'accès à vos données personnelles et aux fichiers stockés est sous votre contrôle.  
 
-Notre stockage de vos données est fourni sous votre consentement implicite par le biais de votre utilisation continue de
-le service. Vous pouvez retirer ce consentement à tout moment et, en cas de suppression de compte, nous supprimerons les informations suivantes
-toutes les données qui vous appartiennent. Le processus de suppression peut prendre plusieurs jours, car nous faisons également tout notre possible pour le supprimer de tous les sites Internet qui ont reçu une copie. 
+Notre stockage de vos données est fourni sous votre consentement implicite par le biais de votre utilisation continue du service. Vous pouvez retirer ce consentement à tout moment et, en cas de suppression de compte, nous supprimerons toutes les toutes les données qui vous appartiennent. Le processus de suppression peut prendre plusieurs jours, car nous faisons également tout notre possible pour le supprimer de tous les sites Internet qui ont reçu une copie. 
 
 Toutes les données et tous les fichiers stockés pour un canal de communication sont à votre disposition pour
 télécharger pour les pupilles d'archives ou pour les transférer sur un autre site Web compatible. 
