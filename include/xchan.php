@@ -63,7 +63,7 @@ function xchan_store($arr) {
 
 
 	if($arr['network'] === 'zot') {
-		if((! $arr['key']) || (! rsa_verify($arr['guid'],base64url_decode($arr['guid_sig']),$arr['key']))) {
+		if((! $arr['key']) || (! zot_verify($arr['guid'],base64url_decode($arr['guid_sig']),$arr['key']))) {
 			logger('Unable to verify signature for ' . $arr['hash']);
 			return false;
 		}

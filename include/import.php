@@ -1210,7 +1210,7 @@ function sync_files($channel, $files) {
 							'time' => $time,
 							'resource' => $att['hash'],
 							'revision' => 0,
-							'signature' => base64url_encode(rsa_sign($channel['channel_hash'] . '.' . $time, $channel['channel_prvkey']))
+							'signature' => zot_sign($channel['channel_hash'] . '.' . $time, $channel['channel_prvkey'])
 						);
 
 						$store_path = $newfname;
@@ -1291,7 +1291,7 @@ function sync_files($channel, $files) {
 							'time' => $time,
 							'resource' => $att['hash'],
 							'revision' => 0,
-							'signature' => base64url_encode(rsa_sign($channel['channel_hash'] . '.' . $time, $channel['channel_prvkey'])),
+							'signature' => zot_sign($channel['channel_hash'] . '.' . $time, $channel['channel_prvkey']),
 							'resolution' => $p['imgscale']
 						);
 

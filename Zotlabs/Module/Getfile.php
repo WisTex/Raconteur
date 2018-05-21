@@ -99,7 +99,7 @@ class Getfile extends \Zotlabs\Web\Controller {
 				killme();
 			}
 	
-			if(! rsa_verify($hash . '.' . $time,base64url_decode($sig),$channel['channel_pubkey'])) {
+			if(! zot_verify($hash . '.' . $time,base64url_decode($sig),$channel['channel_pubkey'])) {
 				logger('verify failed.');
 				killme();
 			}

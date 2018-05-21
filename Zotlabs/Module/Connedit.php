@@ -162,7 +162,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 		if(! $is_self) {
 	
 			$signed = $orig_record[0]['abook_xchan'] . '.' . $rating . '.' . $rating_text;
-			$sig = base64url_encode(rsa_sign($signed,$channel['channel_prvkey']));
+			$sig = zot_sign($signed,$channel['channel_prvkey']);
 
 			$rated = ((intval($rating) || strlen($rating_text)) ? true : false);
 	

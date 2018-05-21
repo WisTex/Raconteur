@@ -498,8 +498,8 @@ function change_channel_keys($channel) {
 
 	$key = new_keypair(4096);
 
-	$sig = base64url_encode(rsa_sign($channel['channel_guid'],$key['prvkey']));
-	$hash = make_xchan_hash($channel['channel_guid'],$sig);
+	$sig = zot_sign($channel['channel_guid'],$key['prvkey']);
+	$hash = make_xchan_hash($channel['channel_guid'],$channel['channel_pubkey']);
 
 	$stored['old_guid']     = $channel['channel_guid'];
 	$stored['old_guid_sig'] = $channel['channel_guid_sig'];
@@ -507,7 +507,7 @@ function change_channel_keys($channel) {
 	$stored['old_hash']     = $channel['channel_hash'];
 
 	$stored['new_key']      = $key['pubkey'];
-	$stored['new_sig']      = base64url_encode(rsa_sign($key['pubkey'],$channel['channel_prvkey']));
+	$stored['new_sig']      = zot_sign($key['pubkey'],$channel['channel_prvkey']);
 
 	// Save this info for the notifier to collect
 
@@ -544,7 +544,7 @@ function change_channel_keys($channel) {
 		foreach($h as $hv) {
 			$hv['hubloc_guid_sig'] = $sig;
 			$hv['hubloc_hash']     = $hash;
-			$hv['hubloc_url_sig']  = base64url_encode(rsa_sign(z_root(),$modifed['channel_prvkey']));
+			$hv['hubloc_url_sig']  = zot_sign(z_root(),$modifed['channel_prvkey']);
 			hubloc_store_lowlevel($hv);
 		}
 	}

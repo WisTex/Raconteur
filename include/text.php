@@ -2937,7 +2937,7 @@ function item_url_replace($channel,&$item,$old,$new,$oldnick = '') {
 	}
 
 	if(string_replace($old,$new,$item['body'])) {
-		$item['sig'] = base64url_encode(rsa_sign($item['body'],$channel['channel_prvkey']));
+		$item['sig'] = zot_sign($item['body'],$channel['channel_prvkey']);
 		$item['item_verified']  = 1;
 	}
 

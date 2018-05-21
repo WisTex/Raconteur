@@ -210,7 +210,7 @@ class Import extends \Zotlabs\Web\Controller {
 					'hubloc_network'  => 'zot',
 					'hubloc_primary'  => (($seize) ? 1 : 0),
 					'hubloc_url'      => z_root(),
-					'hubloc_url_sig'  => base64url_encode(rsa_sign(z_root(),$channel['channel_prvkey'])),
+					'hubloc_url_sig'  => zot_sign(z_root(),$channel['channel_prvkey']),
 					'hubloc_host'     => \App::get_hostname(),
 					'hubloc_callback' => z_root() . '/post',
 					'hubloc_sitekey'  => get_config('system','pubkey'),

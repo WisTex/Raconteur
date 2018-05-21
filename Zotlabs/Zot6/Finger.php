@@ -127,7 +127,7 @@ class Finger {
 		if($x && (! $verify['header_valid'])) {
 			$signed_token = ((is_array($x) && array_key_exists('signed_token', $x)) ? $x['signed_token'] : null);
 			if($signed_token) {
-				$valid = rsa_verify('token.' . self::$token, base64url_decode($signed_token), $x['key']);
+				$valid = zot_verify('token.' . self::$token, base64url_decode($signed_token), $x['key']);
 				if(! $valid) {
 					logger('invalid signed token: ' . $url . $rhs, LOGGER_NORMAL, LOG_ERR);
 

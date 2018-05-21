@@ -1,4 +1,4 @@
-<?php
+\<?php
 /**
  * @file include/items.php
  * @brief Items related functions.
@@ -699,7 +699,7 @@ function get_item_elements($x,$allow_code = false) {
 		);
 		if($r) {
 			if($r[0]['xchan_pubkey']) {
-				if(rsa_verify($x['body'],base64url_decode($arr['sig']),$r[0]['xchan_pubkey'])) {
+				if(zot_verify($x['body'],base64url_decode($arr['sig']),$r[0]['xchan_pubkey'])) {
 					$arr['item_verified'] = 1;
 				}
 				else {
@@ -1533,7 +1533,7 @@ function item_sign(&$item) {
 	if(! $r)
 		return;
 
-	$item['sig'] = base64url_encode(rsa_sign($item['body'], $r[0]['channel_prvkey']));
+	$item['sig'] = zot_sign($item['body'], $r[0]['channel_prvkey']);
 	$item['item_verified'] = 1;
 }
 
@@ -2754,7 +2754,7 @@ function item_community_tag($channel,$item) {
 		$pitem = $items[0];
 		$auth = get_iconfig($item,'system','communitytagauth');
 		if($auth) {
-			if(rsa_verify('tagauth.' . $item['mid'],base64url_decode($auth),$pitem['owner']['xchan_pubkey']) || rsa_verify('tagauth.' . $item['mid'],base64url_decode($auth),$pitem['author']['xchan_pubkey'])) {
+			if(zot_verify('tagauth.' . $item['mid'],base64url_decode($auth),$pitem['owner']['xchan_pubkey']) || zot_verify('tagauth.' . $item['mid'],base64url_decode($auth),$pitem['author']['xchan_pubkey'])) {
 				logger('tag_deliver: tagging the post: ' . $channel['channel_name']);
 				$tag_the_post = true;
 			}
@@ -2763,7 +2763,7 @@ function item_community_tag($channel,$item) {
 			if(($pitem['owner_xchan'] === $channel['channel_hash']) && (! intval(get_pconfig($channel['channel_id'],'system','blocktags')))) {
 				logger('tag_deliver: community tag recipient: ' . $channel['channel_name']);
 				$tag_the_post = true;
-				$sig = rsa_sign('tagauth.' . $item['mid'],$channel['channel_prvkey']);
+				$sig = zot_sign('tagauth.' . $item['mid'],$channel['channel_prvkey']);
 				logger('tag_deliver: setting iconfig for ' . $item['id']);
 				set_iconfig($item['id'],'system','communitytagauth',base64url_encode($sig),1);
 			}

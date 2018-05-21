@@ -66,7 +66,7 @@ class Fhublocs extends \Zotlabs\Web\Controller {
 						'hubloc_network'  => 'zot',
 						'hubloc_primary'  => $primary,
 						'hubloc_url'      => z_root(),
-						'hubloc_url_sig'  => base64url_encode(rsa_sign(z_root(),$rr['channel_prvkey'])),
+						'hubloc_url_sig'  => zot_sign(z_root(),$rr['channel_prvkey']),
 						'hubloc_host'     => \App::get_hostname(),
 						'hubloc_callback' => z_root() . '/post',
 						'hubloc_sitekey'  => $sitekey
