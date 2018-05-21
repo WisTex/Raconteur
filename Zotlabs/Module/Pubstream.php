@@ -77,7 +77,8 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				'editor_autocomplete' => true,
 				'bbco_autocomplete'   => 'bbcode',
 				'bbcode'              => true,
-				'jotnets'             => true
+				'jotnets'             => true,
+				'reset'               => t('Reset form')
 			);
 	
 			$o = '<div id="jot-popup">';

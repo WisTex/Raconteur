@@ -131,7 +131,8 @@ class Hq extends \Zotlabs\Web\Controller {
 				'editor_autocomplete' => true,
 				'bbco_autocomplete'   => 'bbcode',
 				'bbcode'              => true,
-				'jotnets'             => true
+				'jotnets'             => true,
+				'reset'               => t('Reset form')
 			];
 
 			$o = replace_macros(get_markup_template("hq.tpl"),
