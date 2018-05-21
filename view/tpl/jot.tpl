@@ -9,6 +9,7 @@
 	</div>
 	{{/if}}
 	<div class="mb-4" id="profile-jot-wrapper">
+
 		{{if $parent}}
 		<input type="hidden" name="parent" value="{{$parent}}" />
 		{{/if}}
@@ -41,6 +42,11 @@
 		</div>
 		{{/if}}
 		<div id="jot-text-wrap">
+			{{if $reset}}
+			<button id="profile-jot-reset" class="btn btn-outline-secondary btn-sm d-none border-0" title="{{$reset}}" onclick="itemCancel(); return false;">
+				<i class="fa fa-close"></i>
+			</button>
+			{{/if}}
 			<textarea class="profile-jot-text" id="profile-jot-text" name="body" tabindex="2" placeholder="{{$placeholdtext}}" >{{$content}}</textarea>
 		</div>
 		{{if $attachment}}

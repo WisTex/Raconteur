@@ -326,59 +326,61 @@ ACL.prototype.update_view = function(value) {
 		}
 	}
 
-	$("#acl-list-content .acl-list-item").each(function() {
-		$(this).removeClass("groupshow grouphide");
-	});
+	if(value === 'custom') {
+		$("#acl-list-content .acl-list-item").each(function() {
+			$(this).removeClass("groupshow grouphide");
+		});
 
-	$("#acl-list-content .acl-list-item").each(function() {
-		itemid = $(this).attr('id');
-		type = itemid[0];
-		id   = itemid.substr(1);
+		$("#acl-list-content .acl-list-item").each(function() {
+			itemid = $(this).attr('id');
+			type = itemid[0];
+			id   = itemid.substr(1);
 
-		btshow = $(this).children(".acl-button-show").removeClass("btn-success").addClass("btn-outline-success");
-		bthide = $(this).children(".acl-button-hide").removeClass("btn-danger").addClass("btn-outline-danger");
+			btshow = $(this).children(".acl-button-show").removeClass("btn-success").addClass("btn-outline-success");
+			bthide = $(this).children(".acl-button-hide").removeClass("btn-danger").addClass("btn-outline-danger");
 
-		switch(type) {
-			case "g":
-				var uclass = "";
-				if (that.allow_gid.indexOf(id)>=0) {
-					btshow.removeClass("btn-outline-success").addClass("btn-success");
-					bthide.removeClass("btn-danger").addClass("btn-outline-danger");
-					uclass="groupshow";
-				}
-				if (that.deny_gid.indexOf(id)>=0) {
-					btshow.removeClass("btn-success").addClass("btn-outline-success");
-					bthide.removeClass("btn-outline-danger").addClass("btn-danger");
-					uclass = "grouphide";
-				}
-				$(that.group_uids[id]).each(function(i, v) {
-					if(uclass == "grouphide")
-						// we need attr selection here because the id can include an @ (diaspora/friendica xchans)
-						$('[id="c' + v + '"]').removeClass("groupshow");
-					if(uclass !== "") {
-						var cls = $('[id="c' + v + '"]').attr('class');
-						if( cls === undefined)
-							return true;
-						var hiding = cls.indexOf('grouphide');
-						if(hiding == -1)
-							$('[id="c' + v + '"]').addClass(uclass);
-					}
-				});
-				break;
-			case "c":
-				if (that.allow_cid.indexOf(id)>=0){
-					if(!$(this).hasClass("grouphide") ) {
+			switch(type) {
+				case "g":
+					var uclass = "";
+					if (that.allow_gid.indexOf(id)>=0) {
 						btshow.removeClass("btn-outline-success").addClass("btn-success");
 						bthide.removeClass("btn-danger").addClass("btn-outline-danger");
+						uclass="groupshow";
 					}
-				}
-				if (that.deny_cid.indexOf(id)>=0){
-					btshow.removeClass("btn-success").addClass("btn-outline-success");
-					bthide.removeClass("btn-outline-danger").addClass("btn-danger");
-					$(this).removeClass("groupshow");
-				}
-		}
-	});
+					if (that.deny_gid.indexOf(id)>=0) {
+						btshow.removeClass("btn-success").addClass("btn-outline-success");
+						bthide.removeClass("btn-outline-danger").addClass("btn-danger");
+						uclass = "grouphide";
+					}
+					$(that.group_uids[id]).each(function(i, v) {
+						if(uclass == "grouphide")
+							// we need attr selection here because the id can include an @ (diaspora/friendica xchans)
+							$('[id="c' + v + '"]').removeClass("groupshow");
+						if(uclass !== "") {
+							var cls = $('[id="c' + v + '"]').attr('class');
+							if( cls === undefined)
+								return true;
+							var hiding = cls.indexOf('grouphide');
+							if(hiding == -1)
+								$('[id="c' + v + '"]').addClass(uclass);
+						}
+					});
+					break;
+				case "c":
+					if (that.allow_cid.indexOf(id)>=0){
+						if(!$(this).hasClass("grouphide") ) {
+							btshow.removeClass("btn-outline-success").addClass("btn-success");
+							bthide.removeClass("btn-danger").addClass("btn-outline-danger");
+						}
+					}
+					if (that.deny_cid.indexOf(id)>=0){
+						btshow.removeClass("btn-success").addClass("btn-outline-success");
+						bthide.removeClass("btn-outline-danger").addClass("btn-danger");
+						$(this).removeClass("groupshow");
+					}
+			}
+		});
+	}
 };
 
 ACL.prototype.get = function(start, count, search) {
@@ -394,6 +396,10 @@ ACL.prototype.get = function(start, count, search) {
 		data: postdata,
 		dataType: 'json',
 		success: that.populate
+	})
+	.done(function() {
+		if(search !== undefined)
+			datasrc2src('#acl-list-content .list-group-item img[data-src]');
 	});
 };
 
