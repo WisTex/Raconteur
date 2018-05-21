@@ -1216,7 +1216,7 @@ function webfinger_rfc7033($webbie, $zot = false) {
 	if(strpos($webbie,'@')) {
 		$lhs = substr($webbie,0,strpos($webbie,'@'));
 		$rhs = substr($webbie,strpos($webbie,'@')+1);
-		$resource = 'acct:' . $webbie;
+		$resource = urlencode('acct:' . $webbie);
 	}
 	else {
 		$m = parse_url($webbie);
@@ -1234,7 +1234,7 @@ function webfinger_rfc7033($webbie, $zot = false) {
 
 	$counter = 0;
 	$s = z_fetch_url('https://' . $rhs . '/.well-known/webfinger?f=&resource=' . $resource . (($zot) ? '&zot=1' : ''),
-		false, $counter, [ 'headers' => [ 'Accept: application/jrd+json, */*' ] ]);
+		false, $counter, [ 'headers' => [ 'Accept: application/jrd+json, application/json, */*' ] ]);
 
 	if($s['success']) {
 		$j = json_decode($s['body'], true);
