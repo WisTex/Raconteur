@@ -5,34 +5,22 @@ Comment vos informations seront utilisées
 
 Les informations que vous fournissez à ce site Web peuvent être stockées et utilisées pour vous fournir des services.
 
-Nous avons besoin d'une adresse e-mail pour identifier le titulaire du compte. Ceci ne sera pas partagé avec
-tout autre site Web ou service. Il est utilisé pour vous envoyer des notifications concernant votre compte et
-effectuer des tâches administratives telles que la réinitialisation de votre mot de passe. Vous avez la possibilité de 
-vous pouvez choisir de ne pas recevoir toutes les notifications par courriel par le biais de vos paramètres. 
+Nous avons besoin d'une adresse e-mail pour identifier le titulaire du compte. Ceci ne sera pas partagé avec tout autre site Web ou service. Il est utilisé pour vous envoyer des notifications concernant votre compte et effectuer des tâches administratives telles que la réinitialisation de votre mot de passe. Vous avez la possibilité de refuser toutes les notifications par courriel par le biais de vos paramètres. 
 
-Les canaux de communication créés sur ce site web nécessitent un nom et une photo ou un avatar. A
-avatar par défaut sera choisi si vous n'en fournissez pas. Le nom, l'avatar, et un lien vers 
-la page web du canal sera partagée avec d'autres serveurs et services afin de se référer à
-cette identité. Le nom n'a pas besoin d'être votre vrai nom et la photo ou l'avatar le fait.
-pas besoin de te ressembler.
+Les canaux de communication créés sur ce site web nécessitent un nom et une photo ou un avatar. Un avatar par défaut sera choisi si vous n'en fournissez pas. Le nom, l'avatar, et un lien vers la page web du canal sera partagée avec d'autres serveurs et services afin de se référer à cette identité. Le nom n'a pas besoin d'être votre vrai nom et la photo ou l'avatar n'a pas besoin de vous ressembler.
 
 Toutes les autres informations que vous fournissez à ce site Web sont facultatives. 
 
-En tant que service de communication sociale et de stockage dans les nuages, vous utiliserez généralement ce site Web.
-de partager l'information avec d'autres. Nous offrons une gamme d'options de confidentialité pour vous permettre de
-limiter ce partage à ceux que vous choisissez. 
+En tant que service de communication sociale et de stockage dans les nuages, vous utiliserez généralement ce site Web pour partager des informations avec d'autres personnes. Nous fournissons une gamme d'options de confidentialité pour vous permettre de limiter ce partage à ceux que vous choisissez. 
 
 Traitement de vos informations
 ==============================
 
-Notre traitement de vos informations est limité à leur stockage pour que vous puissiez les utiliser. Nous POUVONS tenir des registres
-d'activité pour aider à diagnostiquer les problèmes de logiciel et à maintenir la sécurité du système contre
+Notre traitement de vos informations est limité à leur stockage pour que vous puissiez les utiliser. Nous POUVONS tenir des registres d'activité pour aider à diagnostiquer les problèmes de logiciel et à maintenir la sécurité du système contre
 intrusion. Ces journaux sont régulièrement effacés après quelques jours. 
 
 Nous PEUVONS (si vous avez fourni cette permission) essayer de suggérer des amitiés ou des connexions basées sur des amitiés
-sur l'analyse des informations accessibles au public concernant vos connexions. C'est actuellement le plus grand nombre d'entre eux.
-le "traitement" avancé des données effectué sur ce site Web. Vous pouvez restreindre l'accès à ces informations.
-si ce traitement n'est pas souhaité. 
+sur l'analyse des informations accessibles au public concernant vos connexions. Il s'agit actuellement du "traitement" de données le plus avancé effectué sur ce site Web. Vous pouvez restreindre l'accès à ces informations si ce traitement n'est pas souhaité. 
 
 S'il est fourni, nous PEUVONS utiliser votre sexe pour formuler des messages texte dans votre langue maternelle.
 
