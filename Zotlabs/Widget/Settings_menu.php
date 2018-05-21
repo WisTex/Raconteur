@@ -105,7 +105,7 @@ class Settings_menu {
 
 		if(feature_enabled(local_channel(),'permcats')) {
 			$tabs[] = array(
-				'label' => t('Permission Groups'),
+				'label' => t('Permission Categories'),
 				'url' => z_root() . '/settings/permcats',
 				'selected' => ((argv(1) === 'permcats') ? 'active' : ''),
 			);

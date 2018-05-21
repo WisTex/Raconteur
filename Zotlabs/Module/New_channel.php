@@ -137,16 +137,19 @@ class New_channel extends \Zotlabs\Web\Controller {
 			}
 		}
 
-		$name_help = (($default_role) 
+		$name_help = '<span id="name_help_loading" style="display:none">' . t('Loading') . '</span><span id="name_help_text">';
+		$name_help .= (($default_role) 
 			? t('Your real name is recommended.')
 			: t('Examples: "Bob Jameson", "Lisa and her Horses", "Soccer", "Aviation Group"')
-		); 	
+		);
+		$name_help .= '</span>';
 
-		$nick_help = t('This will be used to create a unique network address (like an email address).');
-
+		$nick_help = '<span id="nick_help_loading" style="display:none">' . t('Loading') . '</span><span id="nick_help_text">';
+		$nick_help .= t('This will be used to create a unique network address (like an email address).');
 		if(! get_config('system','unicode_usernames')) {
 			$nick_help .= ' ' . t('Allowed characters are a-z 0-9, - and _');
 		}
+		$nick_help .= '<span>';
 
 		$privacy_role = ((x($_REQUEST,'permissions_role')) ? $_REQUEST['permissions_role'] :  "" );
 

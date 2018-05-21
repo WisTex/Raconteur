@@ -1583,7 +1583,7 @@ dl.bb-dl > dd > li {
 
 .bootstrap-tagsinput .tag:before {
 	/* Copied from fa-asterisk, is there a better way to do it? */
-	font-family: FontAwesome;
+	font-family: ForkAwesome;
 	font-weight: normal;
 	font-style: normal;
 	text-decoration: inherit;
@@ -1627,7 +1627,7 @@ dl.bb-dl > dd > li {
 .form-group.checkbox > div label {
     display: block; overflow: hidden; cursor: pointer;
     border: 1px solid #ccc;
-    border-radius: $radius;
+    border-radius: 12px;
     margin:0px;
 	-webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
 	-o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;

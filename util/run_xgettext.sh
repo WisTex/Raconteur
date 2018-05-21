@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 FULLPATH=$(dirname $(readlink -f "$0"))
 

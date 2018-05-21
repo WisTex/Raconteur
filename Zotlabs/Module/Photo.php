@@ -14,7 +14,8 @@ class Photo extends \Zotlabs\Web\Controller {
 		$prvcachecontrol = false;
 		$streaming = null;
 		$channel = null;
-	
+		$person = 0;
+
 		switch(argc()) {
 			case 4:
 				$person = argv(3);
@@ -31,7 +32,7 @@ class Photo extends \Zotlabs\Web\Controller {
 		}
 	
 		$observer_xchan = get_observer_hash();
-	
+
 		$default = z_root() . '/' . get_default_profile_photo();
 	
 		if(isset($type)) {
