@@ -12,7 +12,7 @@ class Oauthinfo extends \Zotlabs\Web\Controller {
 			'issuer'                   => z_root(),
 			'authorization_endpoint'   => z_root() . '/authorize',
 			'token_endpoint'           => z_root() . '/token',
-			'response_types_supported' => [ 'code', 'code token' ] 
+			'response_types_supported' => [ 'code', 'token', 'id_token', 'code id_token', 'token id_token' ] 
 		];
 
 
