@@ -1,4 +1,6 @@
-#!/usr/bin/env bash -f
+#!/usr/bin/env bash
+
+set -f
 
 if [ $# -lt 2 ]; then
 	echo usage: $0 repo_url nickname
