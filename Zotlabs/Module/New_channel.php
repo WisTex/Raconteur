@@ -41,7 +41,7 @@ class New_channel extends \Zotlabs\Web\Controller {
 			$test[] = legal_webbie($x);
 			// fullname plus random number
 			$test[] = legal_webbie($x) . mt_rand(1000,9999);
-	
+
 			json_return_and_die(check_webbie($test));
 		}
 	
@@ -49,7 +49,10 @@ class New_channel extends \Zotlabs\Web\Controller {
 			require_once('library/urlify/URLify.php');
 			$result = array('error' => false, 'message' => '');
 			$n = trim($_REQUEST['nick']);
-	
+			if(! $n) {
+				$n = trim($_REQUEST['name']);	
+			}
+
 			$x = false;
 
 			if(get_config('system','unicode_usernames')) {
@@ -58,9 +61,20 @@ class New_channel extends \Zotlabs\Web\Controller {
 
 			if((! $x) || strlen($x) > 64)
 				$x = strtolower(\URLify::transliterate($n));
-	
+
+
 			$test = array();
 	
+			// first name
+			if(strpos($x,' '))
+				$test[] = legal_webbie(substr($x,0,strpos($x,' ')));
+			if($test[0]) {
+				// first name plus first initial of last
+				$test[] = ((strpos($x,' ')) ? $test[0] . legal_webbie(trim(substr($x,strpos($x,' '),2))) : '');
+				// first name plus random number
+				$test[] = $test[0] . mt_rand(1000,9999);
+			}
+
 			$n = legal_webbie($x);
 			if(strlen($n)) {
 				$test[] = $n;
