@@ -12,5 +12,5 @@
 		{{/foreach}}
 	</div>
 	{{/if}}
-<div>
+</div>
 
