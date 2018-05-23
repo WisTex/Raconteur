@@ -572,7 +572,7 @@ function item_message_id() {
 
 		$r = q("SELECT id FROM item WHERE mid = '%s' LIMIT 1",
 			dbesc($mid));
-		if(count($r))
+		if($r)
 			$dups = true;
 	} while($dups == true);
 
@@ -593,7 +593,7 @@ function photo_new_resource() {
 
 		$r = q("SELECT id FROM photo WHERE resource_id = '%s' LIMIT 1",
 			dbesc($resource));
-		if(count($r))
+		if($r)
 			$found = true;
 	} while($found === true);
 
