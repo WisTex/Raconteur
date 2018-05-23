@@ -120,6 +120,12 @@ class HTTPSig {
 			$key = $key($sig_block['keyId']);
 		}
 
+
+		if(! $key) {
+			$result['signer'] = $sig_block['keyId'];
+			$key = self::get_webfinger_key($sig_block['keyId']);
+		}
+
 		if(! $key) {
 			$result['signer'] = $sig_block['keyId'];
 			$key = self::get_activitypub_key($sig_block['keyId']);
@@ -207,6 +213,20 @@ class HTTPSig {
 					return false;
 
 				return($j['publicKey']['publicKeyPem']);
+			}
+		}
+
+		return false;
+	}
+
+
+	function get_webfinger_key($id) {
+
+		$wf = \Zotlabs\Lib\Webfinger::exec($id);
+
+		if($wf && array_key_exists('properties',$wf)) {
+			if(array_key_exists('https://w3id.org/security/v1#publicKeyPem',$wf['properties'])) {
+				return($wf['properties']['https://w3id.org/security/v1#publicKeyPem']);
 			}
 		}
 

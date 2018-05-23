@@ -2096,3 +2096,12 @@ function get_webfinger_key($id) {
 
 
 
+function is_https_request() {
+	$https = false;
+	if(array_key_exists('HTTPS',$_SERVER) && $_SERVER['HTTPS'])
+		$https = true;
+	elseif(array_key_exists('SERVER_PORT',$_SERVER) && intval($_SERVER['SERVER_PORT']) === 443)
+		$https = true;
+	
+	return $https;
+}

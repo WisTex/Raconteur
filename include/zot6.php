@@ -9,21 +9,27 @@ function zot_sign($data,$key,$alg = 'sha256') {
 	return $alg . '.' . base64url_encode($sig);
 }
 
-function zot_verify($data,$sig,$key,$alg = 'sha256') {
+function zot_verify($data,$sig,$key) {
 
 	if(! $key)
 		return false;
 
-	if(intval(OPENSSL_ALGO_SHA256) && $alg === 'sha256')
-		$alg = OPENSSL_ALGO_SHA256;
-	$verify = @openssl_verify($data,$sig,$key,$alg);
+	$verify = 0;
 
-	if($verify === (-1)) {
-		while($msg = openssl_error_string())
-			logger('openssl_verify: ' . $msg,LOGGER_NORMAL,LOG_ERR);
-		btlogger('openssl_verify: key: ' . $key, LOGGER_DEBUG, LOG_ERR); 
+	$separator = strpos($sig,'.');
+
+	if($separator) {
+		$alg = substr($sig,0,$separator);
+		$signature = base64url_decode(substr($sig,$separator+1));
+
+		$verify = @openssl_verify($data,$signature,$key,$alg);
+
+		if($verify === (-1)) {
+			while($msg = openssl_error_string())
+				logger('openssl_verify: ' . $msg,LOGGER_NORMAL,LOG_ERR);
+			btlogger('openssl_verify: key: ' . $key, LOGGER_DEBUG, LOG_ERR); 
+		}
 	}
-
 	return (($verify > 0) ? true : false);
 }
 

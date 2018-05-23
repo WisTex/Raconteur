@@ -78,7 +78,7 @@ class Channel extends \Zotlabs\Web\Controller {
 			$ret = json_encode($x);
 			$hash = \Zotlabs\Web\HTTPSig::generate_digest($ret,false);
 			$headers['Digest'] = 'SHA-256=' . $hash;  
-			\Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'], 'acct:' . $channel['channel_address'] . '@' . \App::get_hostname(),true);
+			\Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'], z_root() . '/channel/' . $channel['channel_address'],true);
 			echo $ret;
 			killme();
 		}

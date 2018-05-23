@@ -36,6 +36,7 @@ function zot_new_uid($channel_nick) {
 	return(base64url_encode(hash('whirlpool', $rawstr, true), true));
 }
 
+
 /**
  * @brief Generates a portable hash identifier for a channel.
  *
@@ -117,13 +118,14 @@ function zot_build_packet($channel, $type = 'notify', $recipients = null, $remot
 	$data = [
 		'type' => $type,
 		'sender' => [
-			'guid' => $channel['channel_guid'],
-			'guid_sig' => zot_sign($channel['channel_guid'],$channel['channel_prvkey'],$sig_method),
-			'url' => z_root(),
-			'url_sig' => zot_sign(z_root(),$channel['channel_prvkey'],$sig_method),
-			'sitekey' => get_config('system','pubkey')
+			'id'            => $channel['channel_guid'],
+			'id_sig'        => zot_sign($channel['channel_guid'],$channel['channel_prvkey'],$sig_method),
+			'id_url'        => z_root() . '/channel/' . $channel['channel_address'],
+			'location'      => z_root(),
+			'location_sig'  => zot_sign(z_root(),$channel['channel_prvkey'],$sig_method),
+			'sitekey'       => get_config('system','pubkey')
 		],
-		'callback' => '/post',
+		'callback' => '/zot',
 		'version' => Zotlabs\Lib\System::get_zot_revision(),
 		'encryption' => crypto_methods(),
 		'signing' => signing_methods()
@@ -191,32 +193,25 @@ function zot6_build_packet($channel, $type = 'notify', $recipients = null, $msg 
 	$data = [
 		'type' => $type,
 		'sender' => [
-			'guid' => $channel['channel_guid'],
-			'guid_sig' => zot_sign($channel['channel_guid'],$channel['channel_prvkey'],$sig_method),
-			'url' => z_root(),
-			'url_sig' => zot_sign(z_root(),$channel['channel_prvkey'],$sig_method),
-			'sitekey' => get_config('system','pubkey')
+			'id'            => $channel['channel_guid'],
+			'id_sig'        => zot_sign($channel['channel_guid'],$channel['channel_prvkey'],$sig_method),
+			'id_url'        => z_root() . '/channel/' . $channel['channel_address'],
+			'location'      => z_root(),
+			'location_sig'  => zot_sign(z_root(),$channel['channel_prvkey'],$sig_method),
+			'sitekey'       => get_config('system','pubkey')
 		],
-		'callback' => '/post',
-		'version' => Zotlabs\Lib\System::get_zot_revision(),
+		'callback'   => '/zot',
+		'version'    => Zotlabs\Lib\System::get_zot_revision(),
 		'encryption' => crypto_methods(),
-		'signing' => signing_methods()
+		'signing'    => signing_methods()
 	];
 
 	if ($recipients) {
-		for ($x = 0; $x < count($recipients); $x ++)
-			unset($recipients[$x]['hash']);
-
 		$data['recipients'] = $recipients;
 	}
 
 	if($msg) {
-		$data['msg'] = $msg;
-	}
-
-	if ($secret) {
-		$data['secret'] = preg_replace('/[^0-9a-fA-F]/','',$secret);
-		$data['secret_sig'] = zot_sign($secret,$channel['channel_prvkey'],$sig_method);
+		$data['data'] = $msg;
 	}
 
 	if ($extra) {
@@ -226,11 +221,11 @@ function zot6_build_packet($channel, $type = 'notify', $recipients = null, $msg 
 
 	logger('zot6_build_packet: ' . print_r($data,true), LOGGER_DATA, LOG_DEBUG);
 
-	// Hush-hush ultra top-secret mode
-
 	if($remote_key) {
 		$algorithm = zot_best_algorithm($methods);
-		$data = crypto_encapsulate(json_encode($data),$remote_key, $algorithm);
+		if($algorithm) {
+			$data = crypto_encapsulate(json_encode($data),$remote_key, $algorithm);
+		}
 	}
 
 	return json_encode($data);
@@ -247,6 +242,7 @@ function zot6_build_packet($channel, $type = 'notify', $recipients = null, $msg 
  * @return string first match from our site method preferences crypto_methods() array
  * of a method which is common to both sites; or 'aes256cbc' if no matches are found.
  */
+
 function zot_best_algorithm($methods) {
 
 	$x = [
@@ -279,7 +275,7 @@ function zot_best_algorithm($methods) {
 		}
 	}
 
-	return 'aes256cbc';
+	return '';
 }
 
 
@@ -643,10 +639,10 @@ function zot_refresh($them, $channel = null, $force = false) {
  */
 function zot_gethub($arr, $multiple = false) {
 
-	if($arr['guid'] && $arr['guid_sig'] && $arr['url'] && $arr['url_sig']) {
+	if($arr['id'] && $arr['id_sig'] && $arr['location'] && $arr['location_sig']) {
 
-		if(! check_siteallowed($arr['url'])) {
-			logger('blacklisted site: ' . $arr['url']);
+		if(! check_siteallowed($arr['location'])) {
+			logger('blacklisted site: ' . $arr['location']);
 			return null;
 		}
 
@@ -657,10 +653,10 @@ function zot_gethub($arr, $multiple = false) {
 				where hubloc_guid = '%s' and hubloc_guid_sig = '%s'
 				and hubloc_url = '%s' and hubloc_url_sig = '%s'
 				$sitekey $limit",
-			dbesc($arr['guid']),
-			dbesc($arr['guid_sig']),
-			dbesc($arr['url']),
-			dbesc($arr['url_sig'])
+			dbesc($arr['id']),
+			dbesc($arr['id_sig']),
+			dbesc($arr['location']),
+			dbesc($arr['location_sig'])
 		);
 		if($r) {
 			logger('Found', LOGGER_DEBUG);
@@ -692,46 +688,45 @@ function zot_gethub($arr, $multiple = false) {
  */
 function zot_register_hub($arr) {
 
-	$result = [ 'success' => false ];
+	$id_hash = false;
+	$valid   = false;
+	$hsig_valid = false;
 
-	if($arr['url'] && $arr['url_sig'] && $arr['guid'] && $arr['guid_sig']) {
+	$result  = [ 'success' => false ];
 
-		$sig_methods = ((array_key_exists('signing',$arr) && is_array($arr['signing'])) ? $arr['signing'] : [ 'sha256' ]);
+	if($arr['id'] && $arr['id_sig'] && $arr['id_url'] && $arr['location'] && $arr['location_sig']) {
+		$record = \Zotlabs\Lib\Zotfinger::exec($arr['id_url']);
 
-		$guid_hash = make_xchan_hash($arr['guid'],$arr['guid_sig']);
+		// Check the HTTP signature
 
-		$url = $arr['url'] . '/.well-known/zot-info/?f=&guid_hash=' . $guid_hash;
+		$hsig = $record['signature'];
+		if($hsig['signer'] === $arr['id_url'] && $hsig['header_valid'] === true && $hsig['content_valid'] === true)
+			$hsig_valid = true;
 
-		logger('zot_register_hub: ' . $url, LOGGER_DEBUG);
+		if(! $hsig_valid) {
+			logger('http signature not valid: ' . print_r($hsig,true));
+			return $result;
+		}
 
-		$x = z_fetch_url($url);
 
-		logger('zot_register_hub: ' . print_r($x,true), LOGGER_DATA, LOG_DEBUG);
+		/*
+		 * We now have a key - only continue registration if our signatures are valid
+		 * AND the guid and guid sig in the returned packet match those provided in
+		 * our current communication.
+		 */
 
-		if($x['success']) {
-			$record = json_decode($x['body'],true);
-
-			/*
-			 * We now have a key - only continue registration if our signatures are valid
-			 * AND the guid and guid sig in the returned packet match those provided in
-			 * our current communication.
-			 */
-
-			foreach($sig_methods as $method) {
-				if((zot_verify($arr['guid'],base64url_decode($arr['guid_sig']),$record['key'],$method))
-				&& (zot_verify($arr['url'],base64url_decode($arr['url_sig']),$record['key'],$method))
-				&& ($arr['guid'] === $record['guid'])
-				&& ($arr['guid_sig'] === $record['guid_sig'])) {
-					$c = import_xchan($record);
-					if($c['success'])
-						$result['success'] = true;
-				}
-				else {
-					logger('Failure to verify returned packet using ' . $method);
-				}
+		if((zot_verify($arr['id'],$arr['id_sig'],$record['data']['public_key']))
+			&& (zot_verify($arr['location'],$arr['location_sig']),$record['data']['public_key']))
+			&& ($arr['id'] === $record['data']['guid'])
+			&& ($arr['id_sig'] === $record['data']['guid_sig'])) {
+				$c = import_xchan($record['data']);
+				if($c['success'])
+					$result['success'] = true;
+			}
+			else {
+				logger('Failure to verify zot packet');
 			}
 		}
-	}
 
 	return $result;
 }
@@ -769,18 +764,12 @@ function import_xchan($arr, $ud_flags = UPDATE_FLAGS_UPDATED, $ud_arr = null) {
 	$changed = false;
 	$what = '';
 
-	if(! (is_array($arr) && array_key_exists('success',$arr) && $arr['success'])) {
-		logger('Invalid data packet: ' . print_r($arr,true));
-		$ret['message'] = t('Invalid data packet');
-		return $ret;
-	}
-
 	if(! ($arr['guid'] && $arr['guid_sig'])) {
 		logger('No identity information provided. ' . print_r($arr,true));
 		return $ret;
 	}
 
-	$xchan_hash = make_xchan_hash($arr['guid'],$arr['guid_sig']);
+	$xchan_hash = make_xchan_hash($arr['guid'],$arr['public_key']);
 	$arr['hash'] = $xchan_hash;
 
 	$import_photos = false;
@@ -788,9 +777,8 @@ function import_xchan($arr, $ud_flags = UPDATE_FLAGS_UPDATED, $ud_arr = null) {
 	$sig_methods = ((array_key_exists('signing',$arr) && is_array($arr['signing'])) ? $arr['signing'] : [ 'sha256' ]);
 	$verified = false;
 
-	foreach($sig_methods as $method) {
-		if(! zot_verify($arr['guid'],base64url_decode($arr['guid_sig']),$arr['key'],$method)) {
-			logger('Unable to verify channel signature for ' . $arr['address'] . ' using ' . $method);
+	if(! zot_verify($arr['guid'],$arr['guid_sig']),$arr['public_key'])) {
+		logger('Unable to verify channel signature for ' . $arr['address']);
 			continue;
 		}
 		else {
@@ -810,9 +798,6 @@ function import_xchan($arr, $ud_flags = UPDATE_FLAGS_UPDATED, $ud_arr = null) {
 
 	if(! array_key_exists('connect_url', $arr))
 		$arr['connect_url'] = '';
-
-	if(strpos($arr['address'],'/') !== false)
-		$arr['address'] = substr($arr['address'],0,strpos($arr['address'],'/'));
 
 	if($r) {
 		if($r[0]['xchan_photo_date'] != $arr['photo_updated'])
@@ -1180,20 +1165,20 @@ function zot_fetch($arr) {
 
 	logger('zot_fetch: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 
-	$url = $arr['sender']['url'] . $arr['callback'];
+	$url = $arr['sender']['location'] . $arr['callback'];
 
 	$import = null;
 	$hubs   = null;
 
 	$zret = zot6_check_sig();
 
-	if($zret['success'] && $zret['hubloc'] && $zret['hubloc']['hubloc_guid'] === $data['sender']['guid'] && $data['msg']) {
+	if($zret['success'] && $zret['hubloc'] && $zret['hubloc']['hubloc_guid'] === $data['sender']['id'] && $data['msg']) {
 		logger('zot6_delivery',LOGGER_DEBUG);
 		logger('zot6_data: ' . print_r($data,true),LOGGER_DATA);
 
 		$ret['collected'] = true;
 
-		$import = [ 'success' => true, 'body' => json_encode( [ 'success' => true, 'pickup' => [ [ 'notify' => $data, 'message' => json_decode($data['msg'],true) ] ] ] ) ];
+		$import = [ 'success' => true, 'body' => json_encode( [ 'success' => true, 'pickup' => [ [ 'notify' => $data, 'message' => json_decode($data['data'],true) ] ] ] ) ];
 		$hubs = [ $zret['hubloc'] ] ;
 	}
 
@@ -1676,6 +1661,7 @@ function allowed_public_recips($msg) {
 			return array();
 	}
 
+//@fixme
 	$hash = make_xchan_hash($msg['notify']['sender']['guid'],$msg['notify']['sender']['guid_sig']);
 
 	if($scope === 'self') {

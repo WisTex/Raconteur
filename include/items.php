@@ -1,4 +1,4 @@
-\<?php
+<?php
 /**
  * @file include/items.php
  * @brief Items related functions.

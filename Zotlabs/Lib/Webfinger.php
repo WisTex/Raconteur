@@ -55,6 +55,11 @@ class Webfinger {
 				return false;
 			}
 		}
+		elseif(strpos($resource,'tag:') === 0) {
+			$arr = explode(':',$resource); // split the tag
+			$h = explode(',',$arr[1]); // split the host,date
+			self::$server = $h[0];
+		}
 		else {
 			$x = explode('@',$resource);
 			$username = $x[0];

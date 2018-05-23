@@ -11,66 +11,28 @@ class Webfinger extends \Zotlabs\Web\Controller {
 		// This is a public resource with relaxed CORS policy. Close the current login session.
 		session_write_close();
 
+		header('Access-Control-Allow-Origin: *');
+
 		$result = [];
-	
-		$scheme = '';
-	
-		if(x($_SERVER,'HTTPS') && $_SERVER['HTTPS'])
-			$scheme = 'https';
-		elseif(x($_SERVER,'SERVER_PORT') && (intval($_SERVER['SERVER_PORT']) == 443))
-			$scheme = 'https';
-	
-		if($scheme !== 'https') {
-			header($_SERVER["SERVER_PROTOCOL"] . ' ' . 500 . ' ' . 'Webfinger requires HTTPS');
+		
+		if(! is_https_request()) {
+			header($_SERVER['SERVER_PROTOCOL'] . ' ' . 500 . ' ' . 'Webfinger requires HTTPS');
 			killme();
 		}
 	
 	
 		$resource = $_REQUEST['resource'];
 
-		logger('webfinger: ' . $resource,LOGGER_DEBUG);
-	
-		$root_resource  = false;
-
-		if(strcasecmp(rtrim($resource,'/'),z_root()) === 0)
-			$root_resource = true;
-
-		$channel_target = null;
-	
-		if(($resource) && (! $root_resource)) {
-	
-			if(strpos($resource,'acct:') === 0) {
-				$channel_nickname = punify(str_replace('acct:','',$resource));
-				if(strpos($channel_nickname,'@') !== false) {
-					$host = punify(substr($channel_nickname,strpos($channel_nickname,'@')+1));
-
-					// If the webfinger address points off site, redirect to the correct site
-
-					if(strcasecmp($host,\App::get_hostname())) {
-						goaway('https://' . $host . '/.well-known/webfinger?f=&resource=' . $resource);
-					}
-					$channel_nickname = substr($channel_nickname,0,strpos($channel_nickname,'@'));
-				}		
-			}
-			if(strpos($resource,'http') === 0) {
-				$channel_nickname = str_replace('~','',basename($resource));
-			}
-	
-			$r = q("select * from channel left join xchan on channel_hash = xchan_hash 
-				where channel_address = '%s' limit 1",
-				dbesc($channel_nickname)
-			);
-			if($r) {
-				$channel_target = $r[0];
-			}
+		if(! $resource) {
+			http_status_exit(404,'Not found');
 		}
 
 
+		logger('webfinger: ' . $resource,LOGGER_DEBUG);
 	
-		header('Access-Control-Allow-Origin: *');
-	
+		// Response for a site resource
 
-		if($root_resource) {
+		if(strcasecmp(rtrim($resource,'/'),z_root()) === 0) {
 			$result['subject'] = $resource;
 			$result['properties'] = [
 					'https://w3id.org/security/v1#publicKeyPem' => get_config('system','pubkey')
@@ -89,10 +51,54 @@ class Webfinger extends \Zotlabs\Web\Controller {
 				],
 
 			];
-	
+		}
+		else {
+
+			// some other resource
+
+			if(strpos($resource,'tag:' === 0)) {
+				$arr = explode(':',$resource);
+				if(count($arr) > 3 && $arr[2] === 'zotid') {
+					$guid = $arr[3];
+					$r = q("select * from channel left join xchan on channel_hash = xchan_hash 
+						where channel_hash = '%s' limit 1",
+						dbesc($guid)
+					);
+					if($r) {
+						$channel_target = $r[0];
+					}
+				}
+			}
+ 
+			if(strpos($resource,'acct:') === 0) {
+				$channel_nickname = punify(str_replace('acct:','',$resource));
+				if(strpos($channel_nickname,'@') !== false) {
+					$host = punify(substr($channel_nickname,strpos($channel_nickname,'@')+1));
+
+					// If the webfinger address points off site, redirect to the correct site
+
+					if(strcasecmp($host,\App::get_hostname())) {
+						goaway('https://' . $host . '/.well-known/webfinger?f=&resource=' . $resource);
+					}
+					$channel_nickname = substr($channel_nickname,0,strpos($channel_nickname,'@'));
+				}		
+			}
+			if(strpos($resource,'http') === 0) {
+				$channel_nickname = str_replace('~','',basename($resource));
+			}
+
+			if($channel_nickname) {	
+				$r = q("select * from channel left join xchan on channel_hash = xchan_hash 
+					where channel_address = '%s' limit 1",
+					dbesc($channel_nickname)
+				);
+				if($r) {
+					$channel_target = $r[0];
+				}
+			}
 		}
 
-		if($resource && $channel_target) {
+		if($channel_target) {
 	
 			$h = q("select hubloc_addr from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
 				dbesc($channel_target['channel_hash'])
@@ -156,7 +162,7 @@ class Webfinger extends \Zotlabs\Web\Controller {
 		}
 
 		if(! $result) {
-			header($_SERVER["SERVER_PROTOCOL"] . ' ' . 400 . ' ' . 'Bad Request');
+			header($_SERVER['SERVER_PROTOCOL'] . ' ' . 400 . ' ' . 'Bad Request');
 			killme();
 		}
 	
