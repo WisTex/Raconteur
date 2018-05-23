@@ -36,7 +36,23 @@ class Well_known extends \Zotlabs\Web\Controller {
 					$module->init();
 					break;
 	
-	
+				case 'host-meta':
+					\App::$argc -= 1;
+					array_shift(\App::$argv);
+					\App::$argv[0] = 'hostxrd';
+					$module = new \Zotlabs\Module\Hostxrd();
+					$module->init();
+					break;
+
+				case 'oauth-authorization-server':
+					\App::$argc -= 1;
+					array_shift(\App::$argv);
+					\App::$argv[0] = 'oauthinfo';
+					$module = new \Zotlabs\Module\Oauthinfo();
+					$module->init();
+					break;
+
+
 				case 'dnt-policy.txt':
 					echo file_get_contents('doc/dnt-policy.txt');
 					killme();

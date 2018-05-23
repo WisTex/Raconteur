@@ -23,6 +23,18 @@
 		'linkurl'     : "{{$linkurl}}",
 		'leavethispage' : "{{$leavethispage}}",
 		'location'    : "{{$location}}",
+		'lovely'      : "{{$lovely}}",
+		'wonderful'   : "{{$wonderful}}",
+		'fantastic'   : "{{$fantastic}}",
+		'great'       : "{{$great}}",
+		'nick_invld1' : "{{$nick_invld1}}",
+		'nick_invld2' : "{{$nick_invld2}}",
+		'nick_valid'  : "{{$nick_valid}}",
+		'name_empty'  : "{{$name_empty}}",
+		'name_ok1'    : "{{$name_ok1}}",
+		'name_ok2'    : "{{$name_ok2}}",
+
+
 
 		't01' : "{{$t01}}",
 		't02' : "{{$t02}}",

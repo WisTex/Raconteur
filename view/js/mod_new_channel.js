@@ -43,19 +43,20 @@
 
 		$("#nick_help_loading").show();
 		$("#nick_help_text").hide();
+		var zreg_name = $("#id_name").val();
 		var zreg_nick = $("#id_nickname").val();
-		$.get("new_channel/checkaddr.json?f=&nick=" + encodeURIComponent(zreg_nick),function(data) {
+		$.get("new_channel/checkaddr.json?f=&nick=" + encodeURIComponent(zreg_nick) + '&name=' + encodeURIComponent(zreg_name),function(data) {
 			$("#id_nickname").val(data);
 			if(data !== zreg_nick) {
 				$("#id_nickname").addClass('is-validated');
 				$("#help_nickname").addClass('text-danger').removeClass('text-muted');
-				$("#help_nickname").html('Your chosen nickname was either already taken or not valid. Please use our suggestion (' + data + ') or enter a new one.');
+				$("#help_nickname").html(aStr['nick_invld1'] + data + aStr['nick_invld2']);
 				$("#id_nickname").focus();
 			}
 			else {
 				$("#id_nickname").addClass('is-validated');
 				$("#help_nickname").addClass('text-success').removeClass('text-muted').removeClass('text-danger');
-				$("#help_nickname").html("Thank you, this nickname is valid.");
+				$("#help_nickname").html(aStr['nick_valid']);
 			}
 			$("#nick_help_loading").hide();
 			$("#nick_help_text").show();
@@ -69,18 +70,18 @@
 		if($("#id_name").hasClass('is-validated'))
 			return true;
 
-		var verbs = ['lovely', 'wonderful', 'gorgeous', 'great'];
+		var verbs = [ aStr['lovely'], aStr['wonderful'], aStr['fantastic'], aStr['great'] ];
 		var verb = verbs[Math.floor((Math.random() * 4) + 0)];
 
 		if(! $("#id_name").val()) {
 			$("#id_name").focus();
 			$("#help_name").addClass('text-danger').removeClass('text-muted');
-			$("#help_name").html("A channel name is required.");
+			$("#help_name").html(aStr['name_empty']);
 			return false;
 		}
 		else {
 			$("#help_name").addClass('text-success').removeClass('text-muted').removeClass('text-danger');
-			$("#help_name").html('This is a ' + verb + ' channel name.');
+			$("#help_name").html(aStr['name_ok1'] + verb + aStr['name_ok2']);
 			$("#id_name").addClass('is-validated');
 			return true;
 		}

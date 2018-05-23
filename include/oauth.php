@@ -79,7 +79,7 @@ class ZotOAuth1DataStore extends OAuth1DataStore {
 			$k = $consumer;
 		}
 
-		$r = q("INSERT INTO tokens (id, secret, client_id, auth_scope, expires) VALUES ('%s','%s','%s','%s', %d)",
+		$r = q("INSERT INTO tokens (id, secret, client_id, auth_scope, expires, uid) VALUES ('%s','%s','%s','%s', %d, 0)",
 				dbesc($key),
 				dbesc($sec),
 				dbesc($k),
