@@ -572,7 +572,7 @@ function item_message_id() {
 
 		$r = q("SELECT id FROM item WHERE mid = '%s' LIMIT 1",
 			dbesc($mid));
-		if(count($r))
+		if($r)
 			$dups = true;
 	} while($dups == true);
 
@@ -593,7 +593,7 @@ function photo_new_resource() {
 
 		$r = q("SELECT id FROM photo WHERE resource_id = '%s' LIMIT 1",
 			dbesc($resource));
-		if(count($r))
+		if($r)
 			$found = true;
 	} while($found === true);
 
@@ -1415,15 +1415,21 @@ function unobscure_mail(&$item) {
 function theme_attachments(&$item) {
 
 	$arr = json_decode($item['attach'],true);
+
 	if(is_array($arr) && count($arr)) {
 		$attaches = array();
 		foreach($arr as $r) {
 
 			$icon = getIconFromType($r['type']);
-			$label = (($r['title']) ? urldecode(htmlspecialchars($r['title'], ENT_COMPAT, 'UTF-8')) : t('Unknown Attachment'));
+			
+			if($r['title'])
+				$label = urldecode(htmlspecialchars($r['title'], ENT_COMPAT, 'UTF-8'));
+
+			if(! $label && $r['href'])
+				$label = basename($r['href']);
 
 			//some feeds provide an attachment where title an empty space
-			if($label  == ' ')
+			if(! $label || $label  == ' ')
 				$label = t('Unknown Attachment');
 
 			$title = t('Size') . ' ' . (($r['length']) ? userReadableSize($r['length']) : t('unknown'));

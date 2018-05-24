@@ -66,8 +66,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				'default_location'    => $channel['channel_location'],
 				'nickname'            => $channel['channel_address'],
 				'lockstate'           => (($group || $cid || $channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
-	
-				'acl'                 => populate_acl($channel_acl),
+				'acl'                 => populate_acl($channel_acl,true, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
 				'permissions'         => $channel_acl,
 				'bang'                => '',
 				'visitor'             => true,
@@ -77,7 +76,8 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				'editor_autocomplete' => true,
 				'bbco_autocomplete'   => 'bbcode',
 				'bbcode'              => true,
-				'jotnets'             => true
+				'jotnets'             => true,
+				'reset'               => t('Reset form')
 			);
 	
 			$o = '<div id="jot-popup">';

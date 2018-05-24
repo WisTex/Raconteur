@@ -23,6 +23,16 @@ function js_strings() {
 		'$linkurl'     => t('Please enter a link URL'),
 		'$leavethispage' => t('Unsaved changes. Are you sure you wish to leave this page?'),
 		'$location'    => t('Location'),
+		'$lovely'      => t('lovely'),
+		'$wonderful'   => t('wonderful'),
+		'$fantastic'   => t('fantastic'),
+		'$great'       => t('great'),
+		'$nick_invld1' => t('Your chosen nickname was either already taken or not valid. Please use our suggestion ('),
+		'$nick_invld2' => t(') or enter a new one.'),
+		'$nick_valid'  => t('Thank you, this nickname is valid.'),
+		'$name_empty'  => t('A channel name is required.'),
+		'$name_ok1'    => t('This is a '),
+		'$name_ok2'    => t(' channel name'),
 
 		// translatable prefix and suffix strings for jquery.timeago -
 		// using the defaults set below if left untranslated, empty strings if

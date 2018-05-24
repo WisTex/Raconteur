@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Redmatrix\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-13 21:54+0200\n"
-"PO-Revision-Date: 2018-04-16 12:24+0000\n"
+"POT-Creation-Date: 2018-04-23 11:34+0200\n"
+"PO-Revision-Date: 2018-05-06 07:46+0000\n"
 "Last-Translator: Philip Wittamore <philip@wittamore.com>\n"
 "Language-Team: French (http://www.transifex.com/Friendica/red-matrix/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -101,8 +101,8 @@ msgid "Social Networking"
 msgstr "Réseau social"
 
 #: ../../Zotlabs/Access/PermissionRoles.php:284
-msgid "Social - Party"
-msgstr "Social - Fête"
+msgid "Social - Federation"
+msgstr "Sociale - Fédération"
 
 #: ../../Zotlabs/Access/PermissionRoles.php:285
 msgid "Social - Mostly Public"
@@ -256,7 +256,7 @@ msgstr "Accès refusé."
 msgid "Block Name"
 msgstr "Nom du Bloc"
 
-#: ../../Zotlabs/Module/Blocks.php:154 ../../include/text.php:2405
+#: ../../Zotlabs/Module/Blocks.php:154 ../../include/text.php:2422
 msgid "Blocks"
 msgstr "Blocs"
 
@@ -425,7 +425,7 @@ msgstr "3. Cliquez sur [Ajouter]"
 #: ../../Zotlabs/Module/Admin/Profs.php:178
 #: ../../Zotlabs/Module/Admin/Account_edit.php:74
 #: ../../Zotlabs/Module/Admin/Security.php:104
-#: ../../Zotlabs/Module/Settings/Permcats.php:110
+#: ../../Zotlabs/Module/Settings/Permcats.php:115
 #: ../../Zotlabs/Module/Settings/Channel.php:495
 #: ../../Zotlabs/Module/Settings/Features.php:79
 #: ../../Zotlabs/Module/Settings/Tokens.php:168
@@ -461,15 +461,16 @@ msgstr "3. Cliquez sur [Ajouter]"
 #: ../../addon/likebanner/likebanner.php:57
 #: ../../addon/redphotos/redphotos.php:136 ../../addon/irc/irc.php:53
 #: ../../addon/ljpost/ljpost.php:86 ../../addon/startpage/startpage.php:113
-#: ../../addon/diaspora/diaspora.php:823
+#: ../../addon/diaspora/diaspora.php:825
 #: ../../addon/rainbowtag/rainbowtag.php:85 ../../addon/hzfiles/hzfiles.php:84
 #: ../../addon/visage/visage.php:170 ../../addon/nsabait/nsabait.php:161
 #: ../../addon/mailtest/mailtest.php:100
 #: ../../addon/openstreetmap/openstreetmap.php:168
-#: ../../addon/rtof/rtof.php:101 ../../addon/jappixmini/jappixmini.php:371
+#: ../../addon/fuzzloc/fuzzloc.php:191 ../../addon/rtof/rtof.php:101
+#: ../../addon/jappixmini/jappixmini.php:371
 #: ../../addon/superblock/superblock.php:120 ../../addon/nofed/nofed.php:80
 #: ../../addon/redred/redred.php:119 ../../addon/logrot/logrot.php:35
-#: ../../addon/frphotos/frphotos.php:97 ../../addon/pubcrawl/pubcrawl.php:1069
+#: ../../addon/frphotos/frphotos.php:97 ../../addon/pubcrawl/pubcrawl.php:1072
 #: ../../addon/chords/Mod_Chords.php:60 ../../addon/libertree/libertree.php:85
 #: ../../addon/flattrwidget/flattrwidget.php:124
 #: ../../addon/statusnet/statusnet.php:322
@@ -569,7 +570,7 @@ msgstr "Sommaire :"
 #: ../../Zotlabs/Module/Photos.php:817 ../../Zotlabs/Module/Photos.php:1273
 #: ../../Zotlabs/Lib/Apps.php:754 ../../Zotlabs/Lib/Apps.php:833
 #: ../../Zotlabs/Storage/Browser.php:164 ../../Zotlabs/Widget/Portfolio.php:95
-#: ../../Zotlabs/Widget/Album.php:84 ../../addon/pubcrawl/as.php:878
+#: ../../Zotlabs/Widget/Album.php:84 ../../addon/pubcrawl/as.php:891
 #: ../../include/conversation.php:1160
 msgid "Unknown"
 msgstr "Inconnu"
@@ -687,7 +688,7 @@ msgstr "Tout supprimer"
 #: ../../Zotlabs/Module/Profile_photo.php:464
 #: ../../Zotlabs/Module/Connedit.php:924 ../../Zotlabs/Module/Fbrowser.php:66
 #: ../../Zotlabs/Module/Fbrowser.php:88 ../../Zotlabs/Module/Profiles.php:801
-#: ../../Zotlabs/Module/Filer.php:55 ../../Zotlabs/Module/Cover_photo.php:365
+#: ../../Zotlabs/Module/Filer.php:55 ../../Zotlabs/Module/Cover_photo.php:366
 #: ../../Zotlabs/Module/Tagrm.php:15 ../../Zotlabs/Module/Tagrm.php:138
 #: ../../include/conversation.php:1389 ../../include/conversation.php:1438
 msgid "Cancel"
@@ -731,7 +732,7 @@ msgstr "Téléphone"
 #: ../../Zotlabs/Module/Connedit.php:910 ../../Zotlabs/Module/Profiles.php:787
 #: ../../addon/openid/MysqlProvider.php:56
 #: ../../addon/openid/MysqlProvider.php:57 ../../addon/rtof/rtof.php:93
-#: ../../addon/redred/redred.php:107 ../../include/network.php:1776
+#: ../../addon/redred/redred.php:107 ../../include/network.php:1770
 msgid "Email"
 msgstr "Courriel"
 
@@ -947,7 +948,7 @@ msgstr "Eléments étiquetés avec&nbsp;: %s"
 msgid "Search results for: %s"
 msgstr "Résultats de recherche pour&nbsp;: %s"
 
-#: ../../Zotlabs/Module/Pubstream.php:93
+#: ../../Zotlabs/Module/Pubstream.php:95
 #: ../../Zotlabs/Widget/Notifications.php:131
 msgid "Public Stream"
 msgstr "Flux public"
@@ -1093,8 +1094,8 @@ msgstr "Utiliser l'authentification distante, quand disponible"
 #: ../../addon/dwpost/dwpost.php:85 ../../addon/ljpost/ljpost.php:70
 #: ../../addon/ljpost/ljpost.php:82 ../../addon/rainbowtag/rainbowtag.php:81
 #: ../../addon/visage/visage.php:166 ../../addon/nsabait/nsabait.php:157
-#: ../../addon/rtof/rtof.php:81 ../../addon/rtof/rtof.php:85
-#: ../../addon/jappixmini/jappixmini.php:309
+#: ../../addon/fuzzloc/fuzzloc.php:178 ../../addon/rtof/rtof.php:81
+#: ../../addon/rtof/rtof.php:85 ../../addon/jappixmini/jappixmini.php:309
 #: ../../addon/jappixmini/jappixmini.php:313
 #: ../../addon/jappixmini/jappixmini.php:343
 #: ../../addon/jappixmini/jappixmini.php:351
@@ -1145,8 +1146,8 @@ msgstr "Non"
 #: ../../addon/dwpost/dwpost.php:85 ../../addon/ljpost/ljpost.php:70
 #: ../../addon/ljpost/ljpost.php:82 ../../addon/rainbowtag/rainbowtag.php:81
 #: ../../addon/visage/visage.php:166 ../../addon/nsabait/nsabait.php:157
-#: ../../addon/rtof/rtof.php:81 ../../addon/rtof/rtof.php:85
-#: ../../addon/jappixmini/jappixmini.php:309
+#: ../../addon/fuzzloc/fuzzloc.php:178 ../../addon/rtof/rtof.php:81
+#: ../../addon/rtof/rtof.php:85 ../../addon/jappixmini/jappixmini.php:309
 #: ../../addon/jappixmini/jappixmini.php:313
 #: ../../addon/jappixmini/jappixmini.php:343
 #: ../../addon/jappixmini/jappixmini.php:351
@@ -1463,13 +1464,13 @@ msgstr "Hub introuvable."
 #: ../../Zotlabs/Module/Subthread.php:111 ../../Zotlabs/Module/Tagger.php:69
 #: ../../Zotlabs/Module/Like.php:384
 #: ../../addon/redphotos/redphotohelper.php:71
-#: ../../addon/diaspora/Receiver.php:1500 ../../addon/pubcrawl/as.php:1388
+#: ../../addon/diaspora/Receiver.php:1500 ../../addon/pubcrawl/as.php:1405
 #: ../../include/conversation.php:116 ../../include/text.php:2005
 msgid "photo"
 msgstr "photo"
 
 #: ../../Zotlabs/Module/Subthread.php:111 ../../Zotlabs/Module/Like.php:384
-#: ../../addon/diaspora/Receiver.php:1500 ../../addon/pubcrawl/as.php:1388
+#: ../../addon/diaspora/Receiver.php:1500 ../../addon/pubcrawl/as.php:1405
 #: ../../include/conversation.php:144 ../../include/text.php:2011
 msgid "status"
 msgstr "état"
@@ -1577,6 +1578,7 @@ msgid ""
 msgstr "Votre pseudo sera utilisé pour créer une adresse de canal facile à mémoriser, par ex. pseudo%s"
 
 #: ../../Zotlabs/Module/New_channel.php:149
+#: ../../Zotlabs/Module/Settings/Channel.php:539
 #: ../../Zotlabs/Module/Register.php:257
 msgid "Channel role and privacy"
 msgstr "Rôle et confidentialité du canal"
@@ -1597,10 +1599,18 @@ msgstr "Créer le canal"
 
 #: ../../Zotlabs/Module/New_channel.php:153
 msgid ""
-"A channel is your identity on this network. It can represent a person, a "
-"blog, or a forum to name a few. Channels can make connections with other "
-"channels to share information with highly detailed permissions."
-msgstr "Un canal est votre identité sur ce réseau. Il peut représenter une personne, un blog, ou un forum par exemple. Les canaux peuvent entrer en contact les uns avec les autres pour partager des informations avec des droits d'accès très fins."
+"A channel is a unique network identity. It can represent a person (social "
+"network profile), a forum (group), a business or celebrity page, a newsfeed,"
+" and many other things. Channels can make connections with other channels to"
+" share information with each other."
+msgstr "Un canal est une identité réseau unique. Il peut représenter une personne (profil de réseau social), un forum (groupe), une page commerciale ou de célébrités, un flux d'informations et bien d'autres choses. Les canaux peuvent établir des connexions avec d'autres canaux pour partager l'information entre eux."
+
+#: ../../Zotlabs/Module/New_channel.php:153
+msgid ""
+"The type of channel you create affects the basic privacy settings, the "
+"permissions that are granted to connections/friends, and also the channel's "
+"visibility across the network."
+msgstr "Le type de canal que vous créez affecte les paramètres de confidentialité de base, les permissions accordées aux connexions/amis, ainsi que la visibilité du canal sur le réseau."
 
 #: ../../Zotlabs/Module/New_channel.php:154
 msgid ""
@@ -2661,7 +2671,7 @@ msgstr "Paramètres du site sauvegardés."
 
 #: ../../Zotlabs/Module/Admin/Site.php:191
 #: ../../view/theme/redbasic_c/php/config.php:15
-#: ../../view/theme/redbasic/php/config.php:15 ../../include/text.php:3089
+#: ../../view/theme/redbasic/php/config.php:15 ../../include/text.php:3106
 msgid "Default"
 msgstr "Défaut"
 
@@ -3028,7 +3038,7 @@ msgstr "Distributions par processus"
 msgid ""
 "Number of deliveries to attempt in a single operating system process. Adjust"
 " if necessary to tune system performance. Recommend: 1-5."
-msgstr "Nombre de distributions à tenter au sein d'un seul processus système. Ajuster si nécessaire pour affiner la performance du système. Recommandé&nbsp;:1-5."
+msgstr "Nombre de distributions à tenter au sein d'un seul processus système. Ajuster si nécessaire pour affiner la performance du système. Recommandé:1-5."
 
 #: ../../Zotlabs/Module/Admin/Site.php:347
 msgid "Queue Threshold"
@@ -3081,7 +3091,7 @@ msgstr "Charge système maximale au-delà de laquelle distribution et scrutation
 
 #: ../../Zotlabs/Module/Admin/Site.php:352
 msgid "Expiration period in days for imported (grid/network) content"
-msgstr "Délai d'expiration pour le contenu importé (réseau)"
+msgstr "Délai d'expiration en jours pour le contenu importé (grille/réseau)"
 
 #: ../../Zotlabs/Module/Admin/Site.php:352
 msgid "0 for no expiration of imported content"
@@ -3365,51 +3375,55 @@ msgctxt "acl"
 msgid "Profile"
 msgstr "Profil"
 
-#: ../../Zotlabs/Module/Moderate.php:62
+#: ../../Zotlabs/Module/Moderate.php:65
 msgid "Comment approved"
 msgstr "Commentaire validé"
 
-#: ../../Zotlabs/Module/Moderate.php:66
+#: ../../Zotlabs/Module/Moderate.php:69
 msgid "Comment deleted"
 msgstr "Commentaire supprimé"
 
-#: ../../Zotlabs/Module/Settings/Permcats.php:37
+#: ../../Zotlabs/Module/Settings/Permcats.php:23
+msgid "Permission Name is required."
+msgstr "Le nom de permission est requis."
+
+#: ../../Zotlabs/Module/Settings/Permcats.php:42
 msgid "Permission category saved."
 msgstr "Profil d'accès enregistré."
 
-#: ../../Zotlabs/Module/Settings/Permcats.php:61
+#: ../../Zotlabs/Module/Settings/Permcats.php:66
 msgid ""
 "Use this form to create permission rules for various classes of people or "
 "connections."
 msgstr "Utilisez ce formulaire pour créer des règles d'accès pour différentes catégories de personnes ou de contacts."
 
-#: ../../Zotlabs/Module/Settings/Permcats.php:94
+#: ../../Zotlabs/Module/Settings/Permcats.php:99
 msgid "Permission Categories"
 msgstr "Profils d'accès"
 
-#: ../../Zotlabs/Module/Settings/Permcats.php:102
+#: ../../Zotlabs/Module/Settings/Permcats.php:107
 msgid "Permission Name"
 msgstr "Nom du droit d'accès"
 
-#: ../../Zotlabs/Module/Settings/Permcats.php:103
+#: ../../Zotlabs/Module/Settings/Permcats.php:108
 #: ../../Zotlabs/Module/Settings/Tokens.php:161
 #: ../../Zotlabs/Module/Connedit.php:891 ../../Zotlabs/Module/Defperms.php:250
 msgid "My Settings"
 msgstr "Mes paramètres"
 
-#: ../../Zotlabs/Module/Settings/Permcats.php:105
+#: ../../Zotlabs/Module/Settings/Permcats.php:110
 #: ../../Zotlabs/Module/Settings/Tokens.php:163
 #: ../../Zotlabs/Module/Connedit.php:886 ../../Zotlabs/Module/Defperms.php:248
 msgid "inherited"
 msgstr "héritée"
 
-#: ../../Zotlabs/Module/Settings/Permcats.php:108
+#: ../../Zotlabs/Module/Settings/Permcats.php:113
 #: ../../Zotlabs/Module/Settings/Tokens.php:166
 #: ../../Zotlabs/Module/Connedit.php:893 ../../Zotlabs/Module/Defperms.php:253
 msgid "Individual Permissions"
 msgstr "Droits d'accès individuels"
 
-#: ../../Zotlabs/Module/Settings/Permcats.php:109
+#: ../../Zotlabs/Module/Settings/Permcats.php:114
 #: ../../Zotlabs/Module/Settings/Tokens.php:167
 #: ../../Zotlabs/Module/Connedit.php:894
 msgid ""
@@ -3628,10 +3642,6 @@ msgstr "Utiliser mon paramètre de publication par défaut pour le type d'objet 
 #: ../../Zotlabs/Module/Settings/Channel.php:530
 msgid "Profile to assign new connections"
 msgstr "Profil pour assigner de nouvelles connexions"
-
-#: ../../Zotlabs/Module/Settings/Channel.php:539
-msgid "Channel permissions category:"
-msgstr "Profils d'accès du canal&nbsp;:"
 
 #: ../../Zotlabs/Module/Settings/Channel.php:540
 msgid "Default Permissions Group"
@@ -4260,7 +4270,7 @@ msgstr "Modifier l'album"
 #: ../../Zotlabs/Module/Embedphotos.php:158
 #: ../../Zotlabs/Module/Photos.php:712
 #: ../../Zotlabs/Module/Profile_photo.php:458
-#: ../../Zotlabs/Module/Cover_photo.php:361
+#: ../../Zotlabs/Module/Cover_photo.php:362
 #: ../../Zotlabs/Storage/Browser.php:384 ../../Zotlabs/Widget/Cdav.php:133
 #: ../../Zotlabs/Widget/Cdav.php:169 ../../Zotlabs/Widget/Portfolio.php:110
 #: ../../Zotlabs/Widget/Album.php:97
@@ -4442,7 +4452,7 @@ msgstr "Authentifier"
 msgid "Permissions denied."
 msgstr "Accès refusés."
 
-#: ../../Zotlabs/Module/Cal.php:344 ../../include/text.php:2429
+#: ../../Zotlabs/Module/Cal.php:344 ../../include/text.php:2446
 msgid "Import"
 msgstr "Import"
 
@@ -4906,7 +4916,7 @@ msgstr "Voir tout"
 
 #: ../../Zotlabs/Module/Photos.php:1160 ../../Zotlabs/Lib/ThreadItem.php:205
 #: ../../include/conversation.php:1981 ../../include/channel.php:1539
-#: ../../include/taxonomy.php:601
+#: ../../include/taxonomy.php:661
 msgctxt "noun"
 msgid "Like"
 msgid_plural "Likes"
@@ -4923,7 +4933,7 @@ msgstr[1] "N'aime pas"
 
 #: ../../Zotlabs/Module/Photos.php:1265
 msgid "Photo Tools"
-msgstr "Ouitls pour photos"
+msgstr "Outils pour photos"
 
 #: ../../Zotlabs/Module/Photos.php:1274
 msgid "In This Photo:"
@@ -4949,7 +4959,7 @@ msgid "Close"
 msgstr "Fermer"
 
 #: ../../Zotlabs/Module/Photos.php:1365 ../../Zotlabs/Module/Photos.php:1378
-#: ../../Zotlabs/Module/Photos.php:1379 ../../include/photos.php:663
+#: ../../Zotlabs/Module/Photos.php:1379 ../../include/photos.php:667
 msgid "Recent Photos"
 msgstr "Photos récentes"
 
@@ -5084,48 +5094,48 @@ msgstr "Intégrer une image de votre album photo"
 
 #: ../../Zotlabs/Module/Wiki.php:380
 #: ../../Zotlabs/Module/Profile_photo.php:465
-#: ../../Zotlabs/Module/Cover_photo.php:366
+#: ../../Zotlabs/Module/Cover_photo.php:367
 #: ../../include/conversation.php:1390 ../../include/conversation.php:1437
 msgid "OK"
 msgstr "OK"
 
 #: ../../Zotlabs/Module/Wiki.php:381
 #: ../../Zotlabs/Module/Profile_photo.php:466
-#: ../../Zotlabs/Module/Cover_photo.php:367
+#: ../../Zotlabs/Module/Cover_photo.php:368
 #: ../../include/conversation.php:1320
 msgid "Choose images to embed"
 msgstr "Choisissez des images à intégrer"
 
 #: ../../Zotlabs/Module/Wiki.php:382
 #: ../../Zotlabs/Module/Profile_photo.php:467
-#: ../../Zotlabs/Module/Cover_photo.php:368
+#: ../../Zotlabs/Module/Cover_photo.php:369
 #: ../../include/conversation.php:1321
 msgid "Choose an album"
 msgstr "Choisir un album"
 
 #: ../../Zotlabs/Module/Wiki.php:383
 #: ../../Zotlabs/Module/Profile_photo.php:468
-#: ../../Zotlabs/Module/Cover_photo.php:369
+#: ../../Zotlabs/Module/Cover_photo.php:370
 msgid "Choose a different album"
 msgstr "Choisissez un autre album"
 
 #: ../../Zotlabs/Module/Wiki.php:384
 #: ../../Zotlabs/Module/Profile_photo.php:469
-#: ../../Zotlabs/Module/Cover_photo.php:370
+#: ../../Zotlabs/Module/Cover_photo.php:371
 #: ../../include/conversation.php:1323
 msgid "Error getting album list"
 msgstr "Erreur venant de la liste de l'album"
 
 #: ../../Zotlabs/Module/Wiki.php:385
 #: ../../Zotlabs/Module/Profile_photo.php:470
-#: ../../Zotlabs/Module/Cover_photo.php:371
+#: ../../Zotlabs/Module/Cover_photo.php:372
 #: ../../include/conversation.php:1324
 msgid "Error getting photo link"
 msgstr "Erreur provenant du lien de la photo"
 
 #: ../../Zotlabs/Module/Wiki.php:386
 #: ../../Zotlabs/Module/Profile_photo.php:471
-#: ../../Zotlabs/Module/Cover_photo.php:372
+#: ../../Zotlabs/Module/Cover_photo.php:373
 #: ../../include/conversation.php:1325
 msgid "Error getting album"
 msgstr "Erreur venant de l'album"
@@ -5262,7 +5272,7 @@ msgstr "L'image a été téléversée, mais le recadrage a échoué."
 
 #: ../../Zotlabs/Module/Profile_photo.php:120
 #: ../../Zotlabs/Module/Profile_photo.php:248
-#: ../../include/photo/photo_driver.php:740
+#: ../../include/photo/photo_driver.php:741
 msgid "Profile Photos"
 msgstr "Photos du profil"
 
@@ -5301,12 +5311,12 @@ msgid "Photo not available."
 msgstr "Photo inaccessible."
 
 #: ../../Zotlabs/Module/Profile_photo.php:455
-#: ../../Zotlabs/Module/Cover_photo.php:358
+#: ../../Zotlabs/Module/Cover_photo.php:359
 msgid "Upload File:"
 msgstr "Téléverser fichier&nbsp;:"
 
 #: ../../Zotlabs/Module/Profile_photo.php:456
-#: ../../Zotlabs/Module/Cover_photo.php:359
+#: ../../Zotlabs/Module/Cover_photo.php:360
 msgid "Select a profile:"
 msgstr "Choisir un profil&nbsp;:"
 
@@ -5324,28 +5334,28 @@ msgstr "Utiliser"
 
 #: ../../Zotlabs/Module/Profile_photo.php:462
 #: ../../Zotlabs/Module/Profile_photo.php:463
-#: ../../Zotlabs/Module/Cover_photo.php:363
 #: ../../Zotlabs/Module/Cover_photo.php:364
+#: ../../Zotlabs/Module/Cover_photo.php:365
 msgid "Use a photo from your albums"
 msgstr "Utiliser une photo de vos albums"
 
 #: ../../Zotlabs/Module/Profile_photo.php:473
-#: ../../Zotlabs/Module/Cover_photo.php:375
+#: ../../Zotlabs/Module/Cover_photo.php:376
 msgid "Select existing photo"
 msgstr "Sélectionner une photo existante"
 
 #: ../../Zotlabs/Module/Profile_photo.php:492
-#: ../../Zotlabs/Module/Cover_photo.php:392
+#: ../../Zotlabs/Module/Cover_photo.php:393
 msgid "Crop Image"
 msgstr "Recadrer l'image"
 
 #: ../../Zotlabs/Module/Profile_photo.php:493
-#: ../../Zotlabs/Module/Cover_photo.php:393
+#: ../../Zotlabs/Module/Cover_photo.php:394
 msgid "Please adjust the image cropping for optimum viewing."
 msgstr "Merci d'ajuster le cadre pour une visualisation optimale."
 
 #: ../../Zotlabs/Module/Profile_photo.php:495
-#: ../../Zotlabs/Module/Cover_photo.php:395
+#: ../../Zotlabs/Module/Cover_photo.php:396
 msgid "Done Editing"
 msgstr "J'ai terminé"
 
@@ -5875,7 +5885,7 @@ msgstr "Le menu pourra être utilisé pour stocker des favoris"
 msgid "Submit and proceed"
 msgstr "Valider et continuer"
 
-#: ../../Zotlabs/Module/Menu.php:107 ../../include/text.php:2406
+#: ../../Zotlabs/Module/Menu.php:107 ../../include/text.php:2423
 msgid "Menus"
 msgstr "Menus"
 
@@ -5927,7 +5937,7 @@ msgstr "Titre du menu tel que vu par les visiteurs"
 msgid "Allow bookmarks"
 msgstr "Autoriser l'usage de favoris"
 
-#: ../../Zotlabs/Module/Layouts.php:184 ../../include/text.php:2407
+#: ../../Zotlabs/Module/Layouts.php:184 ../../include/text.php:2424
 msgid "Layouts"
 msgstr "Mises-en-page"
 
@@ -6014,7 +6024,7 @@ msgid ""
 "Warning: Changing some settings could render your channel inoperable. Please"
 " leave this page unless you are comfortable with and knowledgeable about how"
 " to correctly use this feature."
-msgstr "Attention&nbsp;:modifier certains paramètres peut rendre votre canal inutilisable. Merci d'ignorer cette page à moins d'être suffisamment à l'aise de savoir comment utiliser correctement cette fonctionnalité."
+msgstr "Attention:modifier certains paramètres peut rendre votre canal inutilisable. Merci d'ignorer cette page à moins d'être suffisamment à l'aise de savoir comment utiliser correctement cette fonctionnalité."
 
 #: ../../Zotlabs/Module/Defperms.php:239
 msgid ""
@@ -6295,7 +6305,7 @@ msgstr "Qui (si applicable)"
 
 #: ../../Zotlabs/Module/Profiles.php:762
 msgid "Examples: cathy123, Cathy Williams, cathy@example.com"
-msgstr "Exemples&nbsp;: marie123, Marie Deschamps, marie@exemple.com"
+msgstr "Exemples : marie123, Marie Deschamps, marie@exemple.com"
 
 #: ../../Zotlabs/Module/Profiles.php:763
 msgid "Since (date)"
@@ -6835,12 +6845,12 @@ msgid "Previous action reversed."
 msgstr "Action précédente annulée."
 
 #: ../../Zotlabs/Module/Like.php:438 ../../addon/diaspora/Receiver.php:1529
-#: ../../addon/pubcrawl/as.php:1423 ../../include/conversation.php:160
+#: ../../addon/pubcrawl/as.php:1440 ../../include/conversation.php:160
 #, php-format
 msgid "%1$s likes %2$s's %3$s"
 msgstr "%1$s aime %3$s de %2$s"
 
-#: ../../Zotlabs/Module/Like.php:440 ../../addon/pubcrawl/as.php:1425
+#: ../../Zotlabs/Module/Like.php:440 ../../addon/pubcrawl/as.php:1442
 #: ../../include/conversation.php:163
 #, php-format
 msgid "%1$s doesn't like %2$s's %3$s"
@@ -7353,7 +7363,7 @@ msgstr "%1$s a mis a jour sa %2$s"
 msgid "cover photo"
 msgstr "Photo principale"
 
-#: ../../Zotlabs/Module/Cover_photo.php:360
+#: ../../Zotlabs/Module/Cover_photo.php:361
 msgid "Change Cover Photo"
 msgstr "Changer la photo de couverture"
 
@@ -7422,19 +7432,19 @@ msgstr "forum"
 msgid "Search Results For:"
 msgstr "Résultats de recherche pour&nbsp;:"
 
-#: ../../Zotlabs/Module/Network.php:230
+#: ../../Zotlabs/Module/Network.php:229
 msgid "Privacy group is empty"
 msgstr "Groupe de contacts vide"
 
-#: ../../Zotlabs/Module/Network.php:240
+#: ../../Zotlabs/Module/Network.php:238
 msgid "Privacy group: "
 msgstr "Groupe de contacts&nbsp;:"
 
-#: ../../Zotlabs/Module/Network.php:268
+#: ../../Zotlabs/Module/Network.php:265
 msgid "Invalid connection."
 msgstr "Contact non valide."
 
-#: ../../Zotlabs/Module/Network.php:289 ../../addon/redred/redred.php:65
+#: ../../Zotlabs/Module/Network.php:285 ../../addon/redred/redred.php:65
 msgid "Invalid channel."
 msgstr "Canal invalide."
 
@@ -8273,7 +8283,7 @@ msgstr "a édité un commentaire daté du %s"
 msgid "Wiki updated successfully"
 msgstr "Wiki mis à jour avec succès"
 
-#: ../../Zotlabs/Lib/NativeWiki.php:198
+#: ../../Zotlabs/Lib/NativeWiki.php:205
 msgid "Wiki files deleted successfully"
 msgstr "Fichiers du wiki supprimés avec succès"
 
@@ -8347,11 +8357,11 @@ msgstr "Signature du message incorrecte"
 msgid "Add Tag"
 msgstr "Ajouter une étiquette"
 
-#: ../../Zotlabs/Lib/ThreadItem.php:281 ../../include/taxonomy.php:514
+#: ../../Zotlabs/Lib/ThreadItem.php:281 ../../include/taxonomy.php:575
 msgid "like"
 msgstr "aiment"
 
-#: ../../Zotlabs/Lib/ThreadItem.php:282 ../../include/taxonomy.php:515
+#: ../../Zotlabs/Lib/ThreadItem.php:282 ../../include/taxonomy.php:576
 msgid "dislike"
 msgstr "n'aiment pas"
 
@@ -8508,7 +8518,7 @@ msgstr "Bienvenue %s. L'authentification distante a fonctionné."
 msgid "parent"
 msgstr "retour"
 
-#: ../../Zotlabs/Storage/Browser.php:131 ../../include/text.php:2828
+#: ../../Zotlabs/Storage/Browser.php:131 ../../include/text.php:2845
 msgid "Collection"
 msgstr "Groupe de contacts"
 
@@ -8653,9 +8663,9 @@ msgstr "Sélectionner un carnet d'adresses à importer dans"
 
 #: ../../Zotlabs/Widget/Appcategories.php:40
 #: ../../include/contact_widgets.php:97 ../../include/contact_widgets.php:141
-#: ../../include/contact_widgets.php:186 ../../include/taxonomy.php:348
-#: ../../include/taxonomy.php:430 ../../include/taxonomy.php:450
-#: ../../include/taxonomy.php:471
+#: ../../include/contact_widgets.php:186 ../../include/taxonomy.php:409
+#: ../../include/taxonomy.php:491 ../../include/taxonomy.php:511
+#: ../../include/taxonomy.php:532
 msgid "Categories"
 msgstr "Catégories"
 
@@ -8843,8 +8853,8 @@ msgstr "Dossiers sauvegardés"
 msgid "Click to show more"
 msgstr "Cliquer pour voir plus"
 
-#: ../../Zotlabs/Widget/Tagcloud.php:22 ../../include/taxonomy.php:388
-#: ../../include/taxonomy.php:409
+#: ../../Zotlabs/Widget/Tagcloud.php:22 ../../include/taxonomy.php:320
+#: ../../include/taxonomy.php:449 ../../include/taxonomy.php:470
 msgid "Tags"
 msgstr "Étiquettes"
 
@@ -9144,6 +9154,10 @@ msgstr "Les taches planifiées ne tournent pas."
 #: ../../boot.php:2481 ../../include/datetime.php:238
 msgid "never"
 msgstr "jamais"
+
+#: ../../store/[data]/smarty3/compiled/a0a1289f91f53b2c12e4e0b45ffe8291540ba895_0.file.cover_photo.tpl.php:123
+msgid "Cover Photo"
+msgstr "Photo de couverture"
 
 #: ../../view/theme/redbasic_c/php/config.php:16
 #: ../../view/theme/redbasic_c/php/config.php:19
@@ -10158,39 +10172,39 @@ msgstr "Déclarer un amour éternel pour"
 msgid "declared undying love for"
 msgstr "A déclaré l'amour éternel pour"
 
-#: ../../addon/diaspora/diaspora.php:779
+#: ../../addon/diaspora/diaspora.php:781
 msgid "Diaspora Protocol Settings updated."
 msgstr "Paramètres du protocole Diaspora mis à jour."
 
-#: ../../addon/diaspora/diaspora.php:798
+#: ../../addon/diaspora/diaspora.php:800
 msgid ""
 "The Diaspora protocol does not support location independence. Connections "
 "you make within that network may be unreachable from alternate channel "
 "locations."
 msgstr "Le protocole Diaspora ne gère pas les canaux localisés sur plusieurs serveurs. Vos contacts sur ce réseau peuvent donc être injoignables à partir des autres emplacements (clones) de ce canal."
 
-#: ../../addon/diaspora/diaspora.php:801
+#: ../../addon/diaspora/diaspora.php:803
 msgid "Enable the Diaspora protocol for this channel"
 msgstr "Activer le protocole Diaspora pour ce canal"
 
-#: ../../addon/diaspora/diaspora.php:805
+#: ../../addon/diaspora/diaspora.php:807
 msgid "Allow any Diaspora member to comment on your public posts"
 msgstr "Permettre à tous les membres de Diaspora de commenter vos publications publiques"
 
-#: ../../addon/diaspora/diaspora.php:809
+#: ../../addon/diaspora/diaspora.php:811
 msgid "Prevent your hashtags from being redirected to other sites"
 msgstr "Empêcher la redirection de vos mots-clés (hashtags) vers d'autres sites"
 
-#: ../../addon/diaspora/diaspora.php:813
+#: ../../addon/diaspora/diaspora.php:815
 msgid ""
 "Sign and forward posts and comments with no existing Diaspora signature"
 msgstr "Signer et faire suivre les publications et commentaires n'ayant aucune signature Diaspora"
 
-#: ../../addon/diaspora/diaspora.php:818
+#: ../../addon/diaspora/diaspora.php:820
 msgid "Followed hashtags (comma separated, do not include the #)"
 msgstr "Mots-clés suivis (séparer par une virgule, ne pas mettre le #)"
 
-#: ../../addon/diaspora/diaspora.php:823
+#: ../../addon/diaspora/diaspora.php:825
 msgid "Diaspora Protocol Settings"
 msgstr "Paramètres du protocole Diaspora"
 
@@ -10433,6 +10447,32 @@ msgstr "Inclure un marqueur sur la carte."
 msgid "text to include in all outgoing posts from this site"
 msgstr "Texte à inclure dans tous les messages sortants de ce site"
 
+#: ../../addon/fuzzloc/fuzzloc.php:148
+msgid "Fuzzloc Settings updated."
+msgstr "Paramètres Fuzzloc mis à jour."
+
+#: ../../addon/fuzzloc/fuzzloc.php:175
+msgid ""
+"Fuzzloc allows you to blur your precise location if your channel uses "
+"browser location mapping."
+msgstr "Fuzzloc vous permet de brouiller votre position précise si votre canal utilise la cartographie de position du navigateur."
+
+#: ../../addon/fuzzloc/fuzzloc.php:178
+msgid "Enable Fuzzloc Plugin"
+msgstr "Activer le greffon Fuzzloc"
+
+#: ../../addon/fuzzloc/fuzzloc.php:182
+msgid "Minimum offset in meters"
+msgstr "Décalage minimum en mètres"
+
+#: ../../addon/fuzzloc/fuzzloc.php:186
+msgid "Maximum offset in meters"
+msgstr "Décalage maximum en mètres"
+
+#: ../../addon/fuzzloc/fuzzloc.php:191
+msgid "Fuzzloc Settings"
+msgstr "Paramètres de Fuzzloc"
+
 #: ../../addon/rtof/rtof.php:45
 msgid "Post to Friendica"
 msgstr "Publier sur Friendica"
@@ -10635,35 +10675,35 @@ msgstr "Identifiant de connexion Friendica"
 msgid "Friendica Login Password"
 msgstr "Mot de passe de connexion Friendica"
 
-#: ../../addon/pubcrawl/as.php:1129 ../../addon/pubcrawl/as.php:1256
-#: ../../addon/pubcrawl/as.php:1432 ../../include/network.php:1775
+#: ../../addon/pubcrawl/as.php:1146 ../../addon/pubcrawl/as.php:1273
+#: ../../addon/pubcrawl/as.php:1449 ../../include/network.php:1769
 msgid "ActivityPub"
 msgstr "ActivityPub"
 
-#: ../../addon/pubcrawl/pubcrawl.php:1050
+#: ../../addon/pubcrawl/pubcrawl.php:1053
 msgid "ActivityPub Protocol Settings updated."
 msgstr "Paramètres du protocole ActivityPub Protocol mise à jour."
 
-#: ../../addon/pubcrawl/pubcrawl.php:1059
+#: ../../addon/pubcrawl/pubcrawl.php:1062
 msgid ""
 "The ActivityPub protocol does not support location independence. Connections"
 " you make within that network may be unreachable from alternate channel "
 "locations."
 msgstr "Le protocole ActivityPub ne prend pas en charge l'indépendance de localisation. Les connexions que vous établissez au sein de ce réseau peuvent être inaccessibles à partir d'autres emplacements de canaux."
 
-#: ../../addon/pubcrawl/pubcrawl.php:1062
+#: ../../addon/pubcrawl/pubcrawl.php:1065
 msgid "Enable the ActivityPub protocol for this channel"
 msgstr "Activer le protocole ActivityPub pour ce canal."
 
-#: ../../addon/pubcrawl/pubcrawl.php:1065
+#: ../../addon/pubcrawl/pubcrawl.php:1068
 msgid "Send multi-media HTML articles"
 msgstr "Envoyer des articles HTML multimédia"
 
-#: ../../addon/pubcrawl/pubcrawl.php:1065
+#: ../../addon/pubcrawl/pubcrawl.php:1068
 msgid "Not supported by some microblog services such as Mastodon"
 msgstr "Non pris en charge par certains services de microblog tels que Mastodon."
 
-#: ../../addon/pubcrawl/pubcrawl.php:1069
+#: ../../addon/pubcrawl/pubcrawl.php:1072
 msgid "ActivityPub Protocol Settings"
 msgstr "Paramètres du protocole ActivityPub "
 
@@ -12224,7 +12264,7 @@ msgid "Profile Details"
 msgstr "Détails du profil"
 
 #: ../../include/conversation.php:1837 ../../include/nav.php:404
-#: ../../include/photos.php:662
+#: ../../include/photos.php:666
 msgid "Photo Albums"
 msgstr "Albums photo"
 
@@ -12625,71 +12665,71 @@ msgstr "activité"
 msgid "a-z, 0-9, -, and _ only"
 msgstr "a-z, 0-9, -, -, et _ seulement"
 
-#: ../../include/text.php:2402
+#: ../../include/text.php:2419
 msgid "Design Tools"
 msgstr "Outils de conception"
 
-#: ../../include/text.php:2408
+#: ../../include/text.php:2425
 msgid "Pages"
 msgstr "Pages"
 
-#: ../../include/text.php:2430
+#: ../../include/text.php:2447
 msgid "Import website..."
 msgstr "Importer le site web…"
 
-#: ../../include/text.php:2431
+#: ../../include/text.php:2448
 msgid "Select folder to import"
 msgstr "Sélectionner le dossier à importer"
 
-#: ../../include/text.php:2432
+#: ../../include/text.php:2449
 msgid "Import from a zipped folder:"
 msgstr "Importer à partir d'un dossier zippé :"
 
-#: ../../include/text.php:2433
+#: ../../include/text.php:2450
 msgid "Import from cloud files:"
 msgstr "Importer à partir de fichiers dans le cloud :"
 
-#: ../../include/text.php:2434
+#: ../../include/text.php:2451
 msgid "/cloud/channel/path/to/folder"
 msgstr "/cloud/channel/chemain/du/repertoire"
 
-#: ../../include/text.php:2435
+#: ../../include/text.php:2452
 msgid "Enter path to website files"
 msgstr "Entrer le chemin vers les fichiers du site web"
 
-#: ../../include/text.php:2436
+#: ../../include/text.php:2453
 msgid "Select folder"
 msgstr "Sélectionner un répertoire"
 
-#: ../../include/text.php:2437
+#: ../../include/text.php:2454
 msgid "Export website..."
 msgstr "Exporter le site web…"
 
-#: ../../include/text.php:2438
+#: ../../include/text.php:2455
 msgid "Export to a zip file"
 msgstr "Exporter dans un fichier zip"
 
-#: ../../include/text.php:2439
+#: ../../include/text.php:2456
 msgid "website.zip"
 msgstr "website.zip"
 
-#: ../../include/text.php:2440
+#: ../../include/text.php:2457
 msgid "Enter a name for the zip file."
 msgstr "Entrer un nom pour le fichier zip."
 
-#: ../../include/text.php:2441
+#: ../../include/text.php:2458
 msgid "Export to cloud files"
 msgstr "Exporter dans des fichiers sur le cloud"
 
-#: ../../include/text.php:2442
+#: ../../include/text.php:2459
 msgid "/path/to/export/folder"
 msgstr "/chemin/vers/le/dossier/d'export"
 
-#: ../../include/text.php:2443
+#: ../../include/text.php:2460
 msgid "Enter a path to a cloud files destination."
 msgstr "Entrer le chemin vers le cloud de fichiers"
 
-#: ../../include/text.php:2444
+#: ../../include/text.php:2461
 msgid "Specify folder"
 msgstr "Spécifier un répertoire"
 
@@ -13126,7 +13166,7 @@ msgstr "l'écriture dans la base de données a échoué."
 msgid "Empty path"
 msgstr "Chemin vide"
 
-#: ../../include/security.php:532
+#: ../../include/security.php:541
 msgid ""
 "The form security token was not correct. This probably happened because the "
 "form has been opened for too long (>3 hours) before submitting it."
@@ -13406,43 +13446,43 @@ msgstr "Travail, Fax"
 msgid "view full size"
 msgstr "voir en taille réelle"
 
-#: ../../include/network.php:1770 ../../include/network.php:1771
+#: ../../include/network.php:1764 ../../include/network.php:1765
 msgid "Friendica"
 msgstr "Friendica"
 
-#: ../../include/network.php:1772
+#: ../../include/network.php:1766
 msgid "OStatus"
 msgstr "OStatus"
 
-#: ../../include/network.php:1773
+#: ../../include/network.php:1767
 msgid "GNU-Social"
 msgstr "GNU-Social"
 
-#: ../../include/network.php:1774
+#: ../../include/network.php:1768
 msgid "RSS/Atom"
 msgstr "RSS/Atom"
 
-#: ../../include/network.php:1777
+#: ../../include/network.php:1771
 msgid "Diaspora"
 msgstr "Diaspora"
 
-#: ../../include/network.php:1778
+#: ../../include/network.php:1772
 msgid "Facebook"
 msgstr "Facebook"
 
-#: ../../include/network.php:1779
+#: ../../include/network.php:1773
 msgid "Zot"
 msgstr "Zot"
 
-#: ../../include/network.php:1780
+#: ../../include/network.php:1774
 msgid "LinkedIn"
 msgstr "Linkedin"
 
-#: ../../include/network.php:1781
+#: ../../include/network.php:1775
 msgid "XMPP/IM"
 msgstr "XMPP/IM"
 
-#: ../../include/network.php:1782
+#: ../../include/network.php:1776
 msgid "MySpace"
 msgstr "MySpace"
 
@@ -13601,7 +13641,7 @@ msgstr "Notes privées"
 
 #: ../../include/features.php:115
 msgid "Enables a tool to store notes and reminders (note: not encrypted)"
-msgstr "Active un outil pour stocker des notes et des rappels (note&nbsp;:non chiffré)"
+msgstr "Active un outil pour stocker des notes et des rappels (note:non chiffré)"
 
 #: ../../include/features.php:124
 msgid "Create personal planning cards"
@@ -13685,11 +13725,11 @@ msgstr "Contrôle d'accès et autorisations"
 
 #: ../../include/features.php:221 ../../include/group.php:328
 msgid "Privacy Groups"
-msgstr "Groupes de contacts"
+msgstr "Groupes confidentiels"
 
 #: ../../include/features.php:222
 msgid "Enable management and selection of privacy groups"
-msgstr "Active la gestion et la sélection des groupes de contacts"
+msgstr "Active la gestion et la sélection des groupes confidentiels"
 
 #: ../../include/features.php:230
 msgid "Multiple Profiles"
@@ -13914,31 +13954,35 @@ msgstr "Nuage de tags"
 msgid "Provide a personal tag cloud on your channel page"
 msgstr "Afficher un nuage de vos tags sur votre canal"
 
-#: ../../include/taxonomy.php:491
+#: ../../include/taxonomy.php:320
+msgid "Trending"
+msgstr "Tendance"
+
+#: ../../include/taxonomy.php:552
 msgid "Keywords"
 msgstr "Mots-clefs"
 
-#: ../../include/taxonomy.php:512
+#: ../../include/taxonomy.php:573
 msgid "have"
 msgstr "ont"
 
-#: ../../include/taxonomy.php:512
+#: ../../include/taxonomy.php:573
 msgid "has"
 msgstr "a"
 
-#: ../../include/taxonomy.php:513
+#: ../../include/taxonomy.php:574
 msgid "want"
 msgstr "veulent"
 
-#: ../../include/taxonomy.php:513
+#: ../../include/taxonomy.php:574
 msgid "wants"
 msgstr "veut"
 
-#: ../../include/taxonomy.php:514
+#: ../../include/taxonomy.php:575
 msgid "likes"
 msgstr "aime"
 
-#: ../../include/taxonomy.php:515
+#: ../../include/taxonomy.php:576
 msgid "dislikes"
 msgstr "n'aime pas"
 
@@ -14140,16 +14184,16 @@ msgid "Help and documentation"
 msgstr "Aide et documentation"
 
 #: ../../include/nav.php:179
-msgid "Search site @name, #tag, ?docs, content"
-msgstr "Recherche @nom, #tag, contenu"
+msgid "Search site @name, !forum, #tag, ?docs, content"
+msgstr "Rechercher un site @nom, !forum, #etiquette, ?document, contenu"
 
 #: ../../include/nav.php:199
 msgid "Site Setup and Configuration"
 msgstr "Configuration du site"
 
 #: ../../include/nav.php:290
-msgid "@name, #tag, ?doc, content"
-msgstr "@nom, #étiquette, ?doc, contenu"
+msgid "@name, !forum, #tag, ?doc, content"
+msgstr "@nom, !forum, #etiquette, ?document, contenu"
 
 #: ../../include/nav.php:291
 msgid "Please wait..."
@@ -14176,21 +14220,21 @@ msgstr "L'image dépasse la taille limite de %lu octets"
 msgid "Image file is empty."
 msgstr "L'image est vide."
 
-#: ../../include/photos.php:322
+#: ../../include/photos.php:326
 msgid "Photo storage failed."
 msgstr "Le stockage de l'image a échoué."
 
-#: ../../include/photos.php:371
+#: ../../include/photos.php:375
 msgid "a new photo"
 msgstr "une nouvelle photo"
 
-#: ../../include/photos.php:375
+#: ../../include/photos.php:379
 #, php-format
 msgctxt "photo_upload"
 msgid "%1$s posted %2$s to %3$s"
 msgstr "%1$s a publié %2$s pour %3$s"
 
-#: ../../include/photos.php:667
+#: ../../include/photos.php:671
 msgid "Upload New Photos"
 msgstr "Ajouter des photos"
 
@@ -14207,7 +14251,7 @@ msgstr "Impossible de vérifier la signature du canal"
 msgid "Unable to verify site signature for %s"
 msgstr "Impossible de vérifier la signature de site pour %s"
 
-#: ../../include/zot.php:4206
+#: ../../include/zot.php:4219
 msgid "invalid target signature"
 msgstr "signature de la cible invalide"
 

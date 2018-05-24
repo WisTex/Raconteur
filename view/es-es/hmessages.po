@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Redmatrix\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-04-23 11:34+0200\n"
-"PO-Revision-Date: 2018-04-24 09:02+0000\n"
+"PO-Revision-Date: 2018-05-15 09:50+0000\n"
 "Last-Translator: Manuel Jiménez Friaza <mjfriaza@disroot.org>\n"
 "Language-Team: Spanish (Spain) (http://www.transifex.com/Friendica/red-matrix/language/es_ES/)\n"
 "MIME-Version: 1.0\n"
@@ -1282,7 +1282,7 @@ msgstr "Evento no encontrado."
 #: ../../Zotlabs/Module/Like.php:386 ../../include/conversation.php:119
 #: ../../include/text.php:2008 ../../include/event.php:1153
 msgid "event"
-msgstr "evento"
+msgstr "el/su evento"
 
 #: ../../Zotlabs/Module/Events.php:460
 msgid "Edit event title"
@@ -1473,7 +1473,7 @@ msgstr "foto"
 #: ../../addon/diaspora/Receiver.php:1500 ../../addon/pubcrawl/as.php:1405
 #: ../../include/conversation.php:144 ../../include/text.php:2011
 msgid "status"
-msgstr "el mensaje de estado"
+msgstr "el mensaje de estado "
 
 #: ../../Zotlabs/Module/Subthread.php:142
 #, php-format
@@ -4539,7 +4539,7 @@ msgstr "Ocultas"
 #: ../../Zotlabs/Module/Connections.php:75
 #: ../../Zotlabs/Module/Connections.php:178
 msgid "Archived/Unreachable"
-msgstr "Archivado o inaccesible"
+msgstr "Archivadas o inaccesibles"
 
 #: ../../Zotlabs/Module/Connections.php:80
 #: ../../Zotlabs/Module/Connections.php:89 ../../Zotlabs/Module/Menu.php:116
@@ -8077,7 +8077,7 @@ msgstr "Por favor visite %s para ver y/o responder a su mensaje privado."
 
 #: ../../Zotlabs/Lib/Enotify.php:144
 msgid "commented on"
-msgstr "ha comentado sobre"
+msgstr "ha comentado sobre "
 
 #: ../../Zotlabs/Lib/Enotify.php:155
 msgid "liked"
@@ -8127,12 +8127,12 @@ msgstr "Para ver o comentar la conversación, visite %s"
 #: ../../Zotlabs/Lib/Enotify.php:240 ../../Zotlabs/Lib/Enotify.php:241
 #, php-format
 msgid "Please visit %s to approve or reject this comment."
-msgstr "Por favor, visite %spara aprobar o rechazar este comentario."
+msgstr "Por favor, visite %s para aprobar o rechazar este comentario."
 
 #: ../../Zotlabs/Lib/Enotify.php:299
 #, php-format
 msgid "%1$s liked [zrl=%2$s]your %3$s[/zrl]"
-msgstr "A %1$sle ha gustado [zrl=%2$s]su%3$s [/zrl]"
+msgstr "A %1$sle ha gustado [zrl=%2$s]su %3$s [/zrl]"
 
 #: ../../Zotlabs/Lib/Enotify.php:313
 #, php-format
@@ -8187,7 +8187,7 @@ msgstr "%1$sle ha dado un toque en %2$s"
 #: ../../Zotlabs/Lib/Enotify.php:367
 #, php-format
 msgid "%1$s [zrl=%2$s]poked you[/zrl]."
-msgstr "%1$s [zrl=%2$s]le ha dado un toque[/zrl]."
+msgstr "%1$s [zrl=%2$s] le ha dado un toque[/zrl]."
 
 #: ../../Zotlabs/Lib/Enotify.php:382
 #, php-format
@@ -8272,7 +8272,7 @@ msgstr "ha comentado la entrada de %s"
 #: ../../Zotlabs/Lib/Enotify.php:816
 #, php-format
 msgid "edited a post dated %s"
-msgstr "ha editado una entrada fechada el%s"
+msgstr "ha editado una entrada fechada el %s"
 
 #: ../../Zotlabs/Lib/Enotify.php:820
 #, php-format
@@ -12659,7 +12659,7 @@ msgstr "Tipo de contenido de la página"
 
 #: ../../include/text.php:2018
 msgid "activity"
-msgstr "la actividad"
+msgstr "la/su actividad"
 
 #: ../../include/text.php:2100
 msgid "a-z, 0-9, -, and _ only"
@@ -13956,7 +13956,7 @@ msgstr "Proveer nube de etiquetas personal en su página de canal"
 
 #: ../../include/taxonomy.php:320
 msgid "Trending"
-msgstr "Populares"
+msgstr "Trending"
 
 #: ../../include/taxonomy.php:552
 msgid "Keywords"

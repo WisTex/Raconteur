@@ -38,7 +38,7 @@ class Removeme extends \Zotlabs\Web\Controller {
 		}
 	
 		$global_remove = intval($_POST['global']);
-	
+
 		channel_remove(local_channel(),1 - $global_remove,true);
 	
 	}
