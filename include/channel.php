@@ -323,6 +323,7 @@ function create_identity($arr) {
 		[
 			'hubloc_guid'     => $guid,
 			'hubloc_guid_sig' => $sig,
+			'hubloc_id_url'   => channel_url($ret['channel']),
 			'hubloc_hash'     => $hash,
 			'hubloc_addr'     => channel_reddress($ret['channel']),
 			'hubloc_primary'  => intval($primary),
@@ -351,7 +352,7 @@ function create_identity($arr) {
 			'xchan_photo_m'    => z_root() . "/photo/profile/m/{$newuid}",
 			'xchan_photo_s'    => z_root() . "/photo/profile/s/{$newuid}",
 			'xchan_addr'       => channel_reddress($ret['channel']),
-			'xchan_url'        => z_root() . '/channel/' . $ret['channel']['channel_address'],
+			'xchan_url'        => channel_url($ret['channel']),
 			'xchan_follow'     => z_root() . '/follow?f=&url=%s',
 			'xchan_connurl'    => z_root() . '/poco/' . $ret['channel']['channel_address'],
 			'xchan_name'       => $ret['channel']['channel_name'],
@@ -2796,3 +2797,6 @@ function pchan_to_chan($pchan) {
 	return $chan;
 }
 
+function channel_url($channel) {
+	return (($channel) ? z_root() . '/channel/' . $channel['channel_address'] : z_root());
+}

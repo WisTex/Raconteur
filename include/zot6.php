@@ -60,7 +60,7 @@ class zot6 {
 	$zguid     = ((x($arr,'guid'))       ? $arr['guid']        : '');
 	$zguid_sig = ((x($arr,'guid_sig'))   ? $arr['guid_sig']    : '');
 	$zaddr     = ((x($arr,'address'))    ? $arr['address']     : '');
-	$ztarget   = ((x($arr,'target'))     ? $arr['target']      : '');
+	$ztarget   = ((x($arr,'target_url')) ? $arr['target_url']  : '');
 	$zsig      = ((x($arr,'target_sig')) ? $arr['target_sig']  : '');
 	$zkey      = ((x($arr,'key'))        ? $arr['key']         : '');
 	$mindate   = ((x($arr,'mindate'))    ? $arr['mindate']     : '');
@@ -68,15 +68,27 @@ class zot6 {
 
 	$feed      = ((x($arr,'feed'))       ? intval($arr['feed']) : 0);
 
+
 	if($ztarget) {
-		if((! $zkey) || (! $zsig) || (! rsa_verify($ztarget,base64url_decode($zsig),$zkey))) {
-			logger('zfinger: invalid target signature');
-			$ret['message'] = t("invalid target signature");
-			return($ret);
+		$t = q("select * from hubloc where hubloc_id_url = '%s' limit 1",
+			dbesc($ztarget)
+		);
+		if($t) {
+
+			$ztarget_hash = $t[0]['hubloc_hash'];
+
+		}
+		else {
+			
+			// should probably perform discovery of the requestor (target) but if they actually had
+			// permissions we would know about them and we only want to know who they are to 
+			// enumerate their specific permissions
+		
+			$ztarget_hash = EMPTY_STR;
 		}
 	}
 
-	$ztarget_hash = (($ztarget && $zsig) ? make_xchan_hash($ztarget,$zsig) : '' );
+
 
 	$r = null;
 
@@ -219,8 +231,8 @@ class zot6 {
 	// Communication details
 
 
-	$ret['guid']           = $e['xchan_guid'];
-	$ret['guid_sig']       = zot_sign($e['xchan_guid'], $e['channel_prvkey']);
+	$ret['id']             = $e['xchan_guid'];
+	$ret['id_sig']         = zot_sign($e['xchan_guid'], $e['channel_prvkey']);
 	$ret['aliases']        = [ 'acct:' . $e['xchan_addr'], $e['xchan_url'] ]; 
 
 
@@ -237,10 +249,9 @@ class zot6 {
 	$ret['channel_role'] = get_pconfig($e['channel_id'],'system','permissions_role','custom');
 
 	$ret['url']            = $e['xchan_url'];
-	$ret['connections_url']= (($e['xchan_connurl']) ? $e['xchan_connurl'] : z_root() . '/poco/' . $e['channel_address']);
+	$ret['connections_url']= $e['xchan_connurl'];
 	$ret['follow_url']     = $e['xchan_follow'];
 	$ret['target']         = $ztarget;
-	$ret['target_sig']     = $zsig;
 	$ret['searchable']     = $searchable;
 	$ret['adult_content']  = $adult_channel;
 	$ret['public_forum']   = $public_forum;
@@ -290,13 +301,7 @@ class zot6 {
 		$permissions = implode(',',$concise_perms);
 	}
 
-	// encrypt this with the default aes256cbc since we cannot be sure at this point which
-	// algorithms are preferred for communications with the remote site; notably
-	// because ztarget refers to an xchan and we don't necessarily know the origination
-	// location.
-
-	$ret['permissions'] = (($ztarget && $zkey) ? crypto_encapsulate(json_encode($permissions),$zkey) : $permissions);
-
+	$ret['permissions'] = $permissions;
 
 	// array of (verified) hubs this channel uses
 
@@ -306,8 +311,8 @@ class zot6 {
 
 	$ret['site'] = zot6::zot_site_info();
 
-
 	call_hooks('zot6_finger',$ret);
+
 	return($ret);
 
 }
@@ -340,6 +345,7 @@ static function zot_encode_locations($channel) {
 			$ret[] = [
 				'host'     => $hub['hubloc_host'],
 				'address'  => $hub['hubloc_addr'],
+				'id_url'   => $hub['hubloc_id_url'],
 				'primary'  => (intval($hub['hubloc_primary']) ? true : false),
 				'url'      => $hub['hubloc_url'],
 				'url_sig'  => zot_sign($hub['hubloc_url'],$channel['channel_prvkey']),

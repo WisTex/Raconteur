@@ -31,6 +31,7 @@ require_once('include/perm_upgrade.php');
  * @param string $channel_nick a unique nickname of controlling entity
  * @returns string
  */
+
 function zot_new_uid($channel_nick) {
 	$rawstr = z_root() . '/' . $channel_nick . '.' . mt_rand();
 	return(base64url_encode(hash('whirlpool', $rawstr, true), true));
@@ -49,6 +50,7 @@ function zot_new_uid($channel_nick) {
  * @param string $guid
  * @param string $pubkey
  */
+
 function make_xchan_hash($guid, $pubkey) {
 	return base64url_encode(hash('whirlpool', $guid . $pubkey, true));
 }
@@ -77,6 +79,7 @@ function make_xchan_hash($guid, $pubkey) {
  *  * \b hubloc_updated     datetime
  *  * \b hubloc_connected   datetime
  */
+
 function zot_get_hublocs($hash) {
 
 	/* Only search for active hublocs - e.g. those that haven't been marked deleted */
@@ -186,7 +189,7 @@ function zot_build_packet($channel, $type = 'notify', $recipients = null, $remot
  * @param string $extra
  * @returns string json encoded zot packet
  */
-function zot6_build_packet($channel, $type = 'notify', $recipients = null, $msg = '', $remote_key = null, $methods = '', $secret = null, $extra = null) {
+function zot6_build_packet($channel, $type = 'notify', $recipients = null, $msg = '', $remote_key = null, $methods = '', $extra = null) {
 
 	$sig_method = get_config('system','signature_algorithm','sha256');
 
@@ -286,8 +289,8 @@ function zot_best_algorithm($methods) {
  *
  * @param string $url
  * @param array $data
- * @param array $channel (optional if using zot6 delivery)
- * @param array $crypto (optional if encrypted httpsig, requires hubloc_sitekey and site_crypto elements)
+ * @param array $channel (required if using zot6 delivery)
+ * @param array $crypto (required if encrypted httpsig, requires hubloc_sitekey and site_crypto elements)
  * @return array see z_post_url() for returned data format
  */
 function zot_zot($url, $data, $channel = null,$crypto = null) {
@@ -338,7 +341,7 @@ function zot_zot($url, $data, $channel = null,$crypto = null) {
  */
 function zot_refresh($them, $channel = null, $force = false) {
 
-	if (array_key_exists('xchan_network', $them) && ($them['xchan_network'] !== 'zot')) {
+	if (array_key_exists('xchan_network', $them) && ($them['xchan_network'] !== 'zot6')) {
 		logger('not got zot. ' . $them['xchan_name']);
 		return true;
 	}
@@ -349,8 +352,8 @@ function zot_refresh($them, $channel = null, $force = false) {
 
 	$url = null;
 
-	if ($them['hubloc_url']) {
-		$url = $them['hubloc_url'];
+	if ($them['hubloc_id_url']) {
+		$url = $them['hubloc_id_url'];
 	}
 	else {
 		$r = null;
@@ -360,12 +363,12 @@ function zot_refresh($them, $channel = null, $force = false) {
 		// correct hubloc. If this doesn't work we may have to re-write this section to try them all.
 
 		if(array_key_exists('xchan_addr',$them) && $them['xchan_addr']) {
-			$r = q("select hubloc_url, hubloc_primary from hubloc where hubloc_addr = '%s' order by hubloc_id desc",
+			$r = q("select hubloc_id_url, hubloc_primary from hubloc where hubloc_addr = '%s' order by hubloc_id desc",
 				dbesc($them['xchan_addr'])
 			);
 		}
 		if(! $r) {
-			$r = q("select hubloc_url, hubloc_primary from hubloc where hubloc_hash = '%s' order by hubloc_id desc",
+			$r = q("select hubloc_id_url, hubloc_primary from hubloc where hubloc_hash = '%s' order by hubloc_id desc",
 				dbesc($them['xchan_hash'])
 			);
 		}
@@ -373,12 +376,12 @@ function zot_refresh($them, $channel = null, $force = false) {
 		if ($r) {
 			foreach ($r as $rr) {
 				if (intval($rr['hubloc_primary'])) {
-					$url = $rr['hubloc_url'];
+					$url = $rr['hubloc_id_url'];
 					break;
 				}
 			}
 			if (! $url)
-				$url = $r[0]['hubloc_url'];
+				$url = $r[0]['hubloc_id_url'];
 		}
 	}
 	if (! $url) {
@@ -395,88 +398,43 @@ function zot_refresh($them, $channel = null, $force = false) {
 		return false;
 	}
 
+	$record = \Zotlabs\Lib\Zotfinger($url,$channel);
 
-	$token = random_string();
+	// Check the HTTP signature
 
-	$postvars = [];
+	$hsig = $record['signature'];
+	if($hsig && $hsig['signer'] === $url && $hsig['header_valid'] === true && $hsig['content_valid'] === true)
+		$hsig_valid = true;
 
-	$postvars['token'] = $token;
-
-	if($channel) {
-		$postvars['target']     = $channel['channel_guid'];
-		$postvars['target_sig'] = $channel['channel_guid_sig'];
-		$postvars['key']        = $channel['channel_pubkey'];
+	if(! $hsig_valid) {
+		logger('http signature not valid: ' . print_r($hsig,true));
+		return $result;
 	}
 
-	if (array_key_exists('xchan_addr',$them) && $them['xchan_addr'])
-		$postvars['address'] = $them['xchan_addr'];
-	if (array_key_exists('xchan_hash',$them) && $them['xchan_hash'])
-		$postvars['guid_hash'] = $them['xchan_hash'];
-	if (array_key_exists('xchan_guid',$them) && $them['xchan_guid']
-		&& array_key_exists('xchan_guid_sig',$them) && $them['xchan_guid_sig']) {
-		$postvars['guid'] = $them['xchan_guid'];
-		$postvars['guid_sig'] = $them['xchan_guid_sig'];
-	}
 
-	$rhs = '/.well-known/zot-info';
+	/*
+	 * We now have a key - only continue registration if our signatures are valid
+	 * AND the guid and guid sig in the returned packet match those provided in
+	 * our current communication.
+	 */
 
-	logger('zot_refresh: ' . $url, LOGGER_DATA, LOG_INFO);
+	if((zot_verify($them['guid'],$them['guid_sig'],$record['data']['public_key']))) {
 
+		logger('zot-info: ' . print_r($record,true), LOGGER_DATA, LOG_DEBUG);
 
-	$result = z_post_url($url . $rhs,$postvars);
-
-	if ($result['success']) {
-
-		$j = json_decode($result['body'],true);
-
-		if (! (($j) && ($j['success']))) {
-			logger('Result not decodable');
-			return false;
-		}
-
-		logger('zot-info: ' . print_r($result,true), LOGGER_DATA, LOG_DEBUG);
-
-		$signed_token = ((is_array($j) && array_key_exists('signed_token',$j)) ? $j['signed_token'] : null);
-		if($signed_token) {
-			$valid = zot_verify('token.' . $token,base64url_decode($signed_token),$j['key']);
-			if(! $valid) {
-				logger('invalid signed token: ' . $url . $rhs, LOGGER_NORMAL, LOG_ERR);
-				return false;
-			}
-		}
-		else {
-			logger('No signed token from '  . $url . $rhs, LOGGER_NORMAL, LOG_WARNING);
-			return false;
-		}
-
-		$x = import_xchan($j, (($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
+		$x = import_xchan($record['data'], (($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
 
 		if(! $x['success'])
 			return false;
 
-		if($channel) {
-			if($j['permissions']['data']) {
-				$permissions = crypto_unencapsulate(
-					[
-					'data' => $j['permissions']['data'],
-					'key'  => $j['permissions']['key'],
-					'iv'   => $j['permissions']['iv'],
-					'alg'  => $j['permissions']['alg']
-					],
-					$channel['channel_prvkey']);
-				if($permissions)
-					$permissions = json_decode($permissions,true);
-				logger('decrypted permissions: ' . print_r($permissions,true), LOGGER_DATA, LOG_DEBUG);
-			}
-			else
-				$permissions = $j['permissions'];
+		if($channel && $record['data']['permissions']) {
+			$permissions = $record['data']['permissions'];
 
 			if($permissions && is_array($permissions)) {
-				$old_read_stream_perm = get_abconfig($channel['channel_id'],$x['hash'],'their_perms','view_stream');
-
-				foreach($permissions as $k => $v) {
-					set_abconfig($channel['channel_id'],$x['hash'],'their_perms',$k,$v);
-				}
+				$x = get_abonfig($channel['channel_id'],$x['hash'],'system','their_perms');
+				if(in_array($x,'view_stream'))
+					$old_read_stream_perm = 1;
+				set_abconfig($channel['channel_id'],$x['hash'],'system','their_perms',$permissions);
 			}
 
 			if(array_key_exists('profile',$j) && array_key_exists('next_birthday',$j['profile'])) {
@@ -611,9 +569,12 @@ function zot_refresh($them, $channel = null, $force = false) {
 					}
 				}
 			}
+
 		}
 		return true;
+
 	}
+	
 
 	return false;
 }
@@ -716,7 +677,7 @@ function zot_register_hub($arr) {
 		 */
 
 		if((zot_verify($arr['id'],$arr['id_sig'],$record['data']['public_key']))
-			&& (zot_verify($arr['location'],$arr['location_sig']),$record['data']['public_key']))
+			&& (zot_verify($arr['location'],$arr['location_sig'],$record['data']['public_key']))
 			&& ($arr['id'] === $record['data']['guid'])
 			&& ($arr['id_sig'] === $record['data']['guid_sig'])) {
 				$c = import_xchan($record['data']);
@@ -764,12 +725,12 @@ function import_xchan($arr, $ud_flags = UPDATE_FLAGS_UPDATED, $ud_arr = null) {
 	$changed = false;
 	$what = '';
 
-	if(! ($arr['guid'] && $arr['guid_sig'])) {
+	if(! ($arr['id'] && $arr['id_sig'])) {
 		logger('No identity information provided. ' . print_r($arr,true));
 		return $ret;
 	}
 
-	$xchan_hash = make_xchan_hash($arr['guid'],$arr['public_key']);
+	$xchan_hash = make_xchan_hash($arr['id'],$arr['public_key']);
 	$arr['hash'] = $xchan_hash;
 
 	$import_photos = false;
@@ -777,14 +738,14 @@ function import_xchan($arr, $ud_flags = UPDATE_FLAGS_UPDATED, $ud_arr = null) {
 	$sig_methods = ((array_key_exists('signing',$arr) && is_array($arr['signing'])) ? $arr['signing'] : [ 'sha256' ]);
 	$verified = false;
 
-	if(! zot_verify($arr['guid'],$arr['guid_sig']),$arr['public_key'])) {
+	if(! zot_verify($arr['id'],$arr['id_sig'],$arr['public_key'])) {
 		logger('Unable to verify channel signature for ' . $arr['address']);
-			continue;
-		}
-		else {
-			$verified = true;
-		}
+		return $ret;
 	}
+	else {
+		$verified = true;
+	}
+
 	if(! $verified) {
 		$ret['message'] = t('Unable to verify channel signature');
 		return $ret;
@@ -800,8 +761,9 @@ function import_xchan($arr, $ud_flags = UPDATE_FLAGS_UPDATED, $ud_arr = null) {
 		$arr['connect_url'] = '';
 
 	if($r) {
-		if($r[0]['xchan_photo_date'] != $arr['photo_updated'])
+		if($arr['photo'] && array_key_exists('updated',$arr['photo']) && $r[0]['xchan_photo_date'] != $arr['photo']['updated']) {
 			$import_photos = true;
+		}
 
 		// if we import an entry from a site that's not ours and either or both of us is off the grid - hide the entry.
 		/** @TODO: check if we're the same directory realm, which would mean we are allowed to see it */
@@ -875,8 +837,8 @@ function import_xchan($arr, $ud_flags = UPDATE_FLAGS_UPDATED, $ud_arr = null) {
 		$x = xchan_store_lowlevel(
 			[
 				'xchan_hash'           => $xchan_hash,
-				'xchan_guid'           => $arr['guid'],
-				'xchan_guid_sig'       => $arr['guid_sig'],
+				'xchan_guid'           => $arr['id'],
+				'xchan_guid_sig'       => $arr['id_sig'],
 				'xchan_pubkey'         => $arr['key'],
 				'xchan_photo_mimetype' => $arr['photo_mimetype'],
 				'xchan_photo_l'        => $arr['photo'],
@@ -910,10 +872,10 @@ function import_xchan($arr, $ud_flags = UPDATE_FLAGS_UPDATED, $ud_arr = null) {
 			dbesc($xchan_hash)
 		);
 		if($local) {
-			$ph = z_fetch_url($arr['photo'], true);
+			$ph = z_fetch_url($arr['photo']['url'], true);
 			if($ph['success']) {
 
-				$hash = import_channel_photo($ph['body'], $arr['photo_mimetype'], $local[0]['channel_account_id'], $local[0]['channel_id']);
+				$hash = import_channel_photo($ph['body'], $arr['photo']['type'], $local[0]['channel_account_id'], $local[0]['channel_id']);
 
 				if($hash) {
 					// unless proven otherwise
@@ -951,7 +913,7 @@ function import_xchan($arr, $ud_flags = UPDATE_FLAGS_UPDATED, $ud_arr = null) {
 			}
 		}
 		else {
-			$photos = import_xchan_photo($arr['photo'], $xchan_hash);
+			$photos = import_xchan_photo($arr['photo']['url'], $xchan_hash);
 		}
 		if($photos) {
 			if($photos[4]) {
@@ -2565,10 +2527,11 @@ function sync_locations($sender, $arr, $absolute = false) {
 
 			// match as many fields as possible in case anything at all changed.
 
-			$r = q("select * from hubloc where hubloc_hash = '%s' and hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_url = '%s' and hubloc_url_sig = '%s' and hubloc_host = '%s' and hubloc_addr = '%s' and hubloc_callback = '%s' and hubloc_sitekey = '%s' ",
+			$r = q("select * from hubloc where hubloc_hash = '%s' and hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_id_url = '%s' and hubloc_url = '%s' and hubloc_url_sig = '%s' and hubloc_host = '%s' and hubloc_addr = '%s' and hubloc_callback = '%s' and hubloc_sitekey = '%s' ",
 				dbesc($sender['hash']),
 				dbesc($sender['guid']),
 				dbesc($sender['guid_sig']),
+				dbesc($location['id_url']),
 				dbesc($location['url']),
 				dbesc($location['url_sig']),
 				dbesc($location['host']),
@@ -2685,6 +2648,7 @@ function sync_locations($sender, $arr, $absolute = false) {
 				[
 					'hubloc_guid'      => $sender['guid'],
 					'hubloc_guid_sig'  => $sender['guid_sig'],
+					'hubloc_id_url'    => $location['id_url'],
 					'hubloc_hash'      => $sender['hash'],
 					'hubloc_addr'      => $location['address'],
 					'hubloc_network'   => 'zot',
@@ -2763,6 +2727,7 @@ function zot_encode_locations($channel) {
 			$ret[] = [
 				'host'     => $hub['hubloc_host'],
 				'address'  => $hub['hubloc_addr'],
+				'id_url'   => $hub['hubloc_id_url'],
 				'primary'  => (intval($hub['hubloc_primary']) ? true : false),
 				'url'      => $hub['hubloc_url'],
 				'url_sig'  => $hub['hubloc_url_sig'],

@@ -55,33 +55,41 @@ class Channel extends \Zotlabs\Web\Controller {
 			'href'  => z_root() . '/feed/' . $which . '?f=&top=1'
 		]);
 
+		// handle zot6 channel discovery 
+
+		if(zotvi_is_zot_request()) {
+			$channel = channelx_by_nick($which);
+			if(! $channel) {
+				http_status_exit(404, 'Not found');
+			}
+
+			$sigdata = \Zotlabs\Web\HTTPSig::verify(EMPTY_STR);
+
+			if($sigdata && $sigdata['signer'] && $sigdata['header_valid']) {
+				$data = \zot6::zotinfo([ 'address' => $channel['channel_address'], 'target_url' => $sigdata['signer'] ]);
+				$s = q("select site_crypto, hubloc_sitekey from site left join hubloc on hubloc_url = site_url where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
+					dbesc($sigdata['signer'])
+				);
+				if($s) {
+					$data = crypto_encapsulate($data,$s[0]['hubloc_sitekey'],zot_best_algorithm($s[0]['site_crypto']));
+				}
+			}
+			else {
+				$data = \zot6::zotinfo([ 'address' => $channel['channel_address'] ]);
+			}
+
+			$ret = json_encode($data);
+			$headers = [ 'Content-Type' => 'application/x-zot+json', 'Digest' => \Zotlabs\Web\HTTPSig::generate_digest_header($ret) ];
+			\Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'], z_root() . '/channel/' . $channel['channel_address'],true);
+			echo $ret;
+			killme();
+		}
 
 		// Run profile_load() here to make sure the theme is set before
 		// we start loading content
 
 		profile_load($which,$profile);
 
-
-		// handle zot6 channel discovery 
-
-		if(zotvi_is_zot_request()) {
-			$channel = channelx_by_nick($which);
-			if(! $channel)
-				http_status_exit(404, 'Not found');
-
-		
-			$x = \zot6::zotinfo([ 'address' => $channel['channel_address'] ]);
-
-			$headers = [];
-			$headers['Content-Type'] = 'application/x-zot+json' ;
-
-			$ret = json_encode($x);
-			$hash = \Zotlabs\Web\HTTPSig::generate_digest($ret,false);
-			$headers['Digest'] = 'SHA-256=' . $hash;  
-			\Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'], z_root() . '/channel/' . $channel['channel_address'],true);
-			echo $ret;
-			killme();
-		}
 
 	}
 
@@ -95,6 +103,13 @@ class Channel extends \Zotlabs\Web\Controller {
 		$category = $datequery = $datequery2 = '';
 
 		$mid = ((x($_REQUEST,'mid')) ? $_REQUEST['mid'] : '');
+		if($mid && strpos($mid,'b64.') === 0) {
+			$decoded = @base64url_decode(substr($mid,4));
+			if($decoded) {
+				$mid = $decoded;
+			}
+		}
+
 
 		$datequery = ((x($_GET,'dend') && is_a_date_arg($_GET['dend'])) ? notags($_GET['dend']) : '');
 		$datequery2 = ((x($_GET,'dbegin') && is_a_date_arg($_GET['dbegin'])) ? notags($_GET['dbegin']) : '');

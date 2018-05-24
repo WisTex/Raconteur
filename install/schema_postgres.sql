@@ -477,6 +477,7 @@ CREATE TABLE "hubloc" (
   "hubloc_id" serial  NOT NULL,
   "hubloc_guid" text NOT NULL DEFAULT '',
   "hubloc_guid_sig" text NOT NULL DEFAULT '',
+  "hubloc_id_url" text NOT NULL DEFAULT '',
   "hubloc_hash" text NOT NULL,
   "hubloc_addr" text NOT NULL DEFAULT '',
   "hubloc_network" text NOT NULL DEFAULT '',
@@ -498,6 +499,7 @@ CREATE TABLE "hubloc" (
 );
 create index "hubloc_url" on hubloc ("hubloc_url");
 create index "hubloc_guid" on hubloc ("hubloc_guid");
+create index "hubloc_id_url" on hubloc ("hubloc_id_url");
 create index "hubloc_flags" on hubloc ("hubloc_flags");
 create index "hubloc_connect" on hubloc ("hubloc_connect");
 create index "hubloc_host" on hubloc ("hubloc_host");

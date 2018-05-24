@@ -108,14 +108,11 @@ function CAST5CFB_decrypt($data,$key,$iv) {
 
 
 
-function crypto_encapsulate($data,$pubkey,$alg='aes256cbc') {
-	$fn = strtoupper($alg) . '_encrypt';
-	
-	if($alg === 'aes256cbc')
-		return aes_encapsulate($data,$pubkey);
-
+function crypto_encapsulate($data,$pubkey,$alg='') {
+	if(! $alg) {
+		return $data;
+	}
 	return other_encapsulate($data,$pubkey,$alg);
-
 }
 
 function other_encapsulate($data,$pubkey,$alg) {
@@ -183,7 +180,7 @@ function crypto_methods() {
 	// The actual methods are responsible for deriving the actual key/iv from the provided parameters;
 	// possibly by truncation or segmentation - though many other methods could be used.  
 
-	$r = [ 'aes256ctr.oaep', 'camellia256cfb.oaep', 'cast5cfb.oaep', 'aes256ctr', 'camellia256cfb', 'cast5cfb', 'aes256cbc', 'aes128cbc', 'cast5cbc' ];
+	$r = [ 'aes256ctr.oaep', 'camellia256cfb.oaep', 'cast5cfb.oaep' ];
 	call_hooks('crypto_methods',$r);
 	return $r;
 
@@ -225,12 +222,12 @@ function crypto_unencapsulate($data,$prvkey) {
 	if(! $data)
 		return;
 
-	$alg = ((array_key_exists('alg',$data)) ? $data['alg'] : 'aes256cbc');
-	if($alg === 'aes256cbc')
-		return aes_unencapsulate($data,$prvkey);
+	$alg = ((array_key_exists('alg',$data)) ? $data['alg'] : '');
+	if(! $alg) {
+		return $data;
+	}
 
 	return other_unencapsulate($data,$prvkey,$alg);
-
 }
 
 function other_unencapsulate($data,$prvkey,$alg) {

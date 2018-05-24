@@ -28,6 +28,20 @@ class HTTPSig {
 		return $digest;
 	}
 
+	static function generate_digest_header($body,$alg = 'sha256') {
+
+		$digest = base64_encode(hash($alg, $body, true));
+		switch($alg) {
+			case 'sha512':
+				return 'SHA-512=' . $digest;
+			case 'sha256':
+			default:
+				return 'SHA-256=' . $digest;
+				break;
+		}
+	}
+
+
 	// See draft-cavage-http-signatures-08
 
 	static function verify($data,$key = '') {

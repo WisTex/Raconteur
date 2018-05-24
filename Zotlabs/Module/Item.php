@@ -758,7 +758,7 @@ logger('linkify: ' . print_r($results,true));
 		}
 
 		if ((! $plink) && ($item_thread_top)) {
-			$plink = z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . $mid;
+			$plink = z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . gen_link_id($mid);
 			$plink = substr($plink,0,190);
 		}
 		
