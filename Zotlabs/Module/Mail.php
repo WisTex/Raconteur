@@ -67,42 +67,22 @@ class Mail extends \Zotlabs\Web\Controller {
 		if(! $recipient) {
 			$channel = \App::get_channel();
 	
-			$j = \Zotlabs\Zot\Finger::run(punify($rstr),$channel);
-	
-			if(! $j['success']) {
-				notice( t('Unable to lookup recipient.') . EOL);
-				return;
-			} 
-	
-			logger('message_post: lookup: ' . $rstr . ' ' . print_r($j,true));
-	
-			if(! $j['guid']) {
-				notice( t('Unable to communicate with requested channel.'));
-				return;
+			$wf = \Zotlabs\Lib\Webfinger::exec(punify($rstr));
+			if($wf) {
+				$href = \Zotlabs\Lib\Webfinger::zot_url($wf);
+				if($href) {
+					$zf = \Zotlabs\Lib\Zotfinger($href,$channel);
+				}
+				if($zf && is_array('data',$zf) && is_array('permissions',$zf['data']) && strpos($zf['data']['permissions'],'post_mail') !== false) {
+					$xc = import_xchan($zf['data']);
+					if($xc['success']) {
+						$recipient = $xc['hash'];
+					}
+				}
 			}
-	
-			$x = import_xchan($j);
-	
-			if(! $x['success']) {
-				notice( t('Cannot verify requested channel.'));
-				return;
-			}
-	
-			$recipient = $x['hash'];
-	
-			$their_perms = 0;
-	
-			if($j['permissions']['data']) {
-				$permissions = crypto_unencapsulate($j['permissions'],$channel['channel_prvkey']);
-				if($permissions)
-					$permissions = json_decode($permissions, true);
-				logger('decrypted permissions: ' . print_r($permissions,true), LOGGER_DATA);
-			}
-			else
-				$permissions = $j['permissions'];
-	
-			if(! ($permissions['post_mail'])) {
+			if(! $recipient) {
 	 			notice( t('Selected channel has private message restrictions. Send failed.'));
+
 				// reported issue: let's still save the message and continue. We'll just tell them
 				// that nothing useful is likely to happen. They might have spent hours on it.  
 				//			return;

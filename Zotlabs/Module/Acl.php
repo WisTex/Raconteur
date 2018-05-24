@@ -70,9 +70,9 @@ class Acl extends \Zotlabs\Web\Controller {
 			// These queries require permission checking. We'll create a simple array of xchan_hash for those with
 			// the requisite permissions which we can check against. 
 
-			$x = q("select xchan from abconfig where chan = %d and cat = 'their_perms' and k = '%s' and v = '1'",
+			$x = q("select xchan from abconfig where chan = %d and cat = system and k = 'their_perms' and v like '%s'",
 				intval(local_channel()),
-				dbesc(($type === 'm') ? 'post_mail' : 'tag_deliver')
+				dbesc(($type === 'm') ? '%post_mail%' : '%tag_deliver%')
 			);
 
 			$permitted = ids_to_array($x,'xchan');
@@ -206,7 +206,6 @@ class Acl extends \Zotlabs\Web\Controller {
 							'micro' => $x['xchan_photo_m'],
 							'url' => z_root(),
 							'nick' => $x['xchan_addr'],
-							'abook_their_perms' => 0,
 							'abook_flags' => 0,
 							'abook_self' => 0
 						];
@@ -215,7 +214,7 @@ class Acl extends \Zotlabs\Web\Controller {
 
 				// add connections
 	
-				$r = q("SELECT abook_id as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, abook_their_perms, xchan_pubforum, abook_flags, abook_self 
+				$r = q("SELECT abook_id as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, xchan_pubforum, abook_flags, abook_self 
 					FROM abook left join xchan on abook_xchan = xchan_hash 
 					WHERE (abook_channel = %d $extra_channels_sql) AND abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 $sql_extra2 order by $order_extra2 xchan_name asc" ,
 					intval(local_channel())
@@ -225,7 +224,7 @@ class Acl extends \Zotlabs\Web\Controller {
 
 			}
 			else { // Visitors
-				$r = q("SELECT xchan_hash as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, 0 as abook_their_perms, 0 as abook_flags, 0 as abook_self
+				$r = q("SELECT xchan_hash as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, 0 as abook_flags, 0 as abook_self
 					FROM xchan left join xlink on xlink_link = xchan_hash
 					WHERE xlink_xchan  = '%s' AND xchan_deleted = 0 $sql_extra2 order by $order_extra2 xchan_name asc" ,
 					dbesc(get_observer_hash())
@@ -241,7 +240,7 @@ class Acl extends \Zotlabs\Web\Controller {
 							$known_hashes[] = "'".$rr['hash']."'";
 					$known_hashes_sql = 'AND xchan_hash not in ('.join(',',$known_hashes).')';
 	
-					$r2 = q("SELECT abook_id as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, abook_their_perms, abook_flags, abook_self 
+					$r2 = q("SELECT abook_id as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, abook_flags, abook_self 
 						FROM abook left join xchan on abook_xchan = xchan_hash 
 						WHERE abook_channel IN ($extra_channels_sql) $known_hashes_sql AND abook_blocked = 0 and abook_pending = 0 and abook_hidden = 0 and xchan_deleted = 0 $sql_extra2 order by $order_extra2 xchan_name asc");
 					if($r2)
@@ -269,7 +268,7 @@ class Acl extends \Zotlabs\Web\Controller {
 				}
 			}
 			if((count($r) < 100) && $type == 'c') {
-				$r2 = q("SELECT substr(xchan_hash,1,18) as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, 0 as abook_their_perms, 0 as abook_flags, 0 as abook_self 
+				$r2 = q("SELECT substr(xchan_hash,1,18) as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, 0 as abook_flags, 0 as abook_self 
 					FROM xchan 
 					WHERE xchan_deleted = 0 and not xchan_network  in ('rss','anon','unknown') $sql_extra2 order by $order_extra2 xchan_name asc" 
 				);
@@ -301,7 +300,7 @@ class Acl extends \Zotlabs\Web\Controller {
 		}
 		elseif($type == 'a') {
 	
-			$r = q("SELECT abook_id as id, xchan_name as name, xchan_hash as hash, xchan_addr as nick, xchan_photo_s as micro, xchan_network as network, xchan_url as url, xchan_addr as attag , abook_their_perms FROM abook left join xchan on abook_xchan = xchan_hash
+			$r = q("SELECT abook_id as id, xchan_name as name, xchan_hash as hash, xchan_addr as nick, xchan_photo_s as micro, xchan_network as network, xchan_url as url, xchan_addr as attag FROM abook left join xchan on abook_xchan = xchan_hash
 				WHERE abook_channel = %d
 				and xchan_deleted = 0
 				$sql_extra3

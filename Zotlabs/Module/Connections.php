@@ -263,7 +263,7 @@ class Connections extends \Zotlabs\Web\Controller {
 					);
 
 					$oneway = false;
-					if(! intval(get_abconfig(local_channel(),$rr['xchan_hash'],'their_perms','post_comments'))) {
+					if(! their_perms_contains(local_channel(),$rr['xchan_hash'],'post_comments')) {
 						$oneway = true;
 					}
 	

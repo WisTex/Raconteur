@@ -542,3 +542,13 @@ function site_default_perms() {
 }
 
 
+function their_perms_contains($channel_id,$xchan_hash,$perm) {
+	$x = get_abconfig($channel_id,$xchan_hash,'system','their_perms');
+	if($x) {
+		$y = explode(',',$x);
+		if(in_array($perm,$y)) {
+			return true;
+		}
+	}
+	return false;
+}

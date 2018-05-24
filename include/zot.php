@@ -428,14 +428,8 @@ function zot_refresh($them, $channel = null, $force = false) {
 			return false;
 
 		if($channel && $record['data']['permissions']) {
-			$permissions = $record['data']['permissions'];
-
-			if($permissions && is_array($permissions)) {
-				$x = get_abonfig($channel['channel_id'],$x['hash'],'system','their_perms');
-				if(in_array($x,'view_stream'))
-					$old_read_stream_perm = 1;
-				set_abconfig($channel['channel_id'],$x['hash'],'system','their_perms',$permissions);
-			}
+			$old_read_stream_perm = their_perms_contains($channel['channel_id'],$x['hash'],'view_stream');
+			set_abconfig($channel['channel_id'],$x['hash'],'system','their_perms',$record['data']['permissions']);
 
 			if(array_key_exists('profile',$j) && array_key_exists('next_birthday',$j['profile'])) {
 				$next_birthday = datetime_convert('UTC','UTC',$j['profile']['next_birthday']);
