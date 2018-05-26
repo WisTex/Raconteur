@@ -51,7 +51,7 @@ class Follow extends \Zotlabs\Web\Controller {
 	
 		build_sync_packet(0 /* use the current local_channel */, array('abook' => array($clone)), true);
 	
-		$can_view_stream = intval(get_abconfig($channel['channel_id'],$clone['abook_xchan'],'their_perms','view_stream'));
+		$can_view_stream = their_perms_contains($channel['channel_id'],$clone['abook_xchan'],'view_stream');
 	
 		// If we can view their stream, pull in some posts
 	

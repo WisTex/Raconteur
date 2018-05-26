@@ -148,9 +148,10 @@ class Manage extends \Zotlabs\Web\Controller {
 
 		if(local_channel()) {
 			$delegates = q("select * from abook left join xchan on abook_xchan = xchan_hash where 
-				abook_channel = %d and abook_xchan in ( select xchan from abconfig where chan = %d and cat = 'their_perms' and k = 'delegate' and v = '1' )",
+				abook_channel = %d and abook_xchan in ( select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and v like '%s' )",
 				intval(local_channel()),
-				intval(local_channel())
+				intval(local_channel()),
+				dbesc('%delegate%')
 			);
 		}
 	

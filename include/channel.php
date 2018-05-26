@@ -7,7 +7,6 @@
 require_once('include/zot.php');
 require_once('include/crypto.php');
 require_once('include/menu.php');
-require_once('include/perm_upgrade.php');
 require_once('include/photo/photo_driver.php');
 
 /**
@@ -772,7 +771,6 @@ function identity_basic_export($channel_id, $sections = null) {
 		intval($channel_id)
 	);
 	if($r) {
-		translate_channel_perms_outbound($r[0]);
 		$ret['relocate'] = [ 'channel_address' => $r[0]['channel_address'], 'url' => z_root()];
 		if(in_array('channel',$sections)) {
 			$ret['channel'] = $r[0];
@@ -816,7 +814,6 @@ function identity_basic_export($channel_id, $sections = null) {
 				$abconfig = load_abconfig($channel_id,$ret['abook'][$x]['abook_xchan']);
 				if($abconfig)
 					$ret['abook'][$x]['abconfig'] = $abconfig;
-				translate_abook_perms_outbound($ret['abook'][$x]);
 			}
 			stringify_array_elms($xchans);
 		}

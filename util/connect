@@ -53,7 +53,7 @@ cli_startup();
 		$clone['abconfig'] = $abconfig;
 	build_sync_packet($c['channel_id'], array('abook' => array($clone)), true);
 
-	$can_view_stream = intval(get_abconfig($c['channel_id'],$clone['abook_xchan'],'their_perms','view_stream'));
+	$can_view_stream = their_perms_contains($c['channel_id'],$clone['abook_xchan'],'view_stream');
 
 	// If we can view their stream, pull in some posts
 

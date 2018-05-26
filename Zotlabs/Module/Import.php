@@ -5,7 +5,6 @@ namespace Zotlabs\Module;
 require_once('include/zot.php');
 require_once('include/channel.php');
 require_once('include/import.php');
-require_once('include/perm_upgrade.php');
 require_once('library/urlify/URLify.php');
 
 
@@ -399,8 +398,6 @@ class Import extends \Zotlabs\Web\Controller {
 					if(intval($abook['abook_feed']))
 						$feeds ++;
 				}
-
-				translate_abook_perms_inbound($channel,$abook_copy);
 
 				if($abconfig) {
 					/// @FIXME does not handle sync of del_abconfig

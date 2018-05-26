@@ -3,16 +3,11 @@
  * @file include/zot.php
  * @brief Hubzilla implementation of zot protocol.
  *
- * https://github.com/friendica/red/wiki/zot
- * https://github.com/friendica/red/wiki/Zot---A-High-Level-Overview
- *
  */
 
 require_once('include/crypto.php');
 require_once('include/items.php');
 require_once('include/queue_fn.php');
-require_once('include/perm_upgrade.php');
-
 
 /**
  * @brief Generates a unique string for use as a zot guid.
@@ -3166,12 +3161,6 @@ function build_sync_packet($uid = 0, $packet = null, $groups_changed = false) {
 	unset($channel['channel_password']);
 	unset($channel['channel_salt']);
 
-	translate_channel_perms_outbound($channel);
-	if($packet && array_key_exists('abook',$packet) && $packet['abook']) {
-		for($x = 0; $x < count($packet['abook']); $x ++) {
-			translate_abook_perms_outbound($packet['abook'][$x]);
-		}
-	}
 
 	if(intval($channel['channel_removed']))
 		return;

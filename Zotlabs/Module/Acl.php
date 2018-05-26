@@ -70,7 +70,7 @@ class Acl extends \Zotlabs\Web\Controller {
 			// These queries require permission checking. We'll create a simple array of xchan_hash for those with
 			// the requisite permissions which we can check against. 
 
-			$x = q("select xchan from abconfig where chan = %d and cat = system and k = 'their_perms' and v like '%s'",
+			$x = q("select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and v like '%s'",
 				intval(local_channel()),
 				dbesc(($type === 'm') ? '%post_mail%' : '%tag_deliver%')
 			);

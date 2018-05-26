@@ -3,7 +3,6 @@
 use Zotlabs\Lib\IConfig;
 
 require_once('include/menu.php');
-require_once('include/perm_upgrade.php');
 
 
 /**
@@ -122,7 +121,6 @@ function import_channel($channel, $account_id, $seize, $newname = '') {
 	// translate and store them no matter which they throw at us.
 
 	$channel['channel_id'] = $r[0]['channel_id'];
-	translate_channel_perms_inbound($channel);
 
 	// reset
 	$channel = $r[0];
