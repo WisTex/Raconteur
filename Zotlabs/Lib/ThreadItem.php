@@ -102,6 +102,13 @@ class ThreadItem {
 		if($item['author']['xchan_network'] === 'rss')
 			$shareable = true;
 
+		$privacy_warning = false;
+		if(($item['item_private'] == 1) && ($item['owner']['xchan_network'] === 'activitypub')) {
+			$recips = get_iconfig($item['parent'], 'activitypub', 'recips');
+
+			if(! in_array($observer['xchan_url'], $recips['to']))
+				$privacy_warning = true;
+		}
 
 		$mode = $conv->get_mode();
 
@@ -370,6 +377,7 @@ class ThreadItem {
 			'editedtime' => (($item['edited'] != $item['created']) ? sprintf( t('last edited: %s'), datetime_convert('UTC', date_default_timezone_get(), $item['edited'], 'r')) : ''),
 			'expiretime' => (($item['expires'] > NULL_DATE) ? sprintf( t('Expires: %s'), datetime_convert('UTC', date_default_timezone_get(), $item['expires'], 'r')):''),
 			'lock' => $lock,
+			'privacy_warning' => $privacy_warning,
 			'verified' => $verified,
 			'unverified' => $unverified,
 			'forged' => $forged,
