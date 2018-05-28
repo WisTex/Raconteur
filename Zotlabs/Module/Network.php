@@ -131,7 +131,7 @@ class Network extends \Zotlabs\Web\Controller {
 		if(x($_GET,'search') || x($_GET,'file'))
 			$nouveau = true;
 		if($cid) {
-			$r = q("SELECT abook_xchan FROM abook WHERE abook_id = %d AND abook_channel = %d LIMIT 1",
+			$r = q("SELECT abook_xchan, xchan_addr, xchan_url FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_id = %d AND abook_channel = %d LIMIT 1",
 				intval($cid),
 				intval(local_channel())
 			);
@@ -144,7 +144,7 @@ class Network extends \Zotlabs\Web\Controller {
 				// NOTREACHED
 			}
 			if($_GET['pf'] === '1')
-				$deftag = '!' . t('forum') . '+' . intval($cid);
+				$deftag = '!{' . (($r[0]['xchan_addr']) ? $r[0]['xchan_addr'] : $r[0]['xchan_url']) . '}';
 			else
 				$def_acl = [ 'allow_cid' => '<' . $r[0]['abook_xchan'] . '>', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => '' ];
 		}
