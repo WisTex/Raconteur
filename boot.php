@@ -477,9 +477,27 @@ define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.2' );
 
 define ( 'ACTIVITY_PUBLIC_INBOX', 'https://www.w3.org/ns/activitystreams#Public' );
 
+define ( 'ACTIVITY_POST',        'Create' );
+define ( 'ACTIVITY_UPDATE',      'Update' );
+define ( 'ACTIVITY_LIKE',        'Like' );
+define ( 'ACTIVITY_DISLIKE',     'Dislike' );
+define ( 'ACTIVITY_SHARE',       'Announce' );
+define ( 'ACTIVITY_FOLLOW',      'Follow' );
+define ( 'ACTIVITY_UNFOLLOW',    'Unfollow');
+
+define ( 'ACTIVITY_OBJ_COMMENT', 'Note' );
+define ( 'ACTIVITY_OBJ_NOTE',    'Note' );
+define ( 'ACTIVITY_OBJ_PERSON',  'Person' );
+define ( 'ACTIVITY_OBJ_PHOTO',   'Image');
+define ( 'ACTIVITY_OBJ_P_PHOTO', 'Icon' );
+define ( 'ACTIVITY_OBJ_PROFILE', 'Profile');
+define ( 'ACTIVITY_OBJ_EVENT',   'Event' );
+
+
+
+
+
 define ( 'ACTIVITY_REACT',       NAMESPACE_ZOT   . '/activity/react' );
-define ( 'ACTIVITY_LIKE',        NAMESPACE_ACTIVITY_SCHEMA . 'like' );
-define ( 'ACTIVITY_DISLIKE',     NAMESPACE_ZOT   . '/activity/dislike' );
 define ( 'ACTIVITY_AGREE',       NAMESPACE_ZOT   . '/activity/agree' );
 define ( 'ACTIVITY_DISAGREE',    NAMESPACE_ZOT   . '/activity/disagree' );
 define ( 'ACTIVITY_ABSTAIN',     NAMESPACE_ZOT   . '/activity/abstain' );
@@ -493,14 +511,8 @@ define ( 'ACTIVITY_OBJ_HEART',   NAMESPACE_ZOT   . '/activity/heart' );
 define ( 'ACTIVITY_FRIEND',      NAMESPACE_ACTIVITY_SCHEMA . 'make-friend' );
 define ( 'ACTIVITY_REQ_FRIEND',  NAMESPACE_ACTIVITY_SCHEMA . 'request-friend' );
 define ( 'ACTIVITY_UNFRIEND',    NAMESPACE_ACTIVITY_SCHEMA . 'remove-friend' );
-define ( 'ACTIVITY_FOLLOW',      NAMESPACE_ACTIVITY_SCHEMA . 'follow' );
-define ( 'ACTIVITY_UNFOLLOW',    NAMESPACE_ACTIVITY_SCHEMA . 'stop-following' );
 define ( 'ACTIVITY_JOIN',        NAMESPACE_ACTIVITY_SCHEMA . 'join' );
 
-define ( 'ACTIVITY_POST',        NAMESPACE_ACTIVITY_SCHEMA . 'post' );
-define ( 'ACTIVITY_UPDATE',      NAMESPACE_ACTIVITY_SCHEMA . 'update' );
-define ( 'ACTIVITY_TAG',         NAMESPACE_ACTIVITY_SCHEMA . 'tag' );
-define ( 'ACTIVITY_SHARE',       NAMESPACE_ACTIVITY_SCHEMA . 'share' );
 define ( 'ACTIVITY_FAVORITE',    NAMESPACE_ACTIVITY_SCHEMA . 'favorite' );
 define ( 'ACTIVITY_CREATE',      NAMESPACE_ACTIVITY_SCHEMA . 'create' );
 define ( 'ACTIVITY_DELETE',      NAMESPACE_ACTIVITY_SCHEMA . 'delete' );
@@ -508,23 +520,18 @@ define ( 'ACTIVITY_WIN',         NAMESPACE_ACTIVITY_SCHEMA . 'win' );
 define ( 'ACTIVITY_LOSE',        NAMESPACE_ACTIVITY_SCHEMA . 'lose' );
 define ( 'ACTIVITY_TIE',         NAMESPACE_ACTIVITY_SCHEMA . 'tie' );
 define ( 'ACTIVITY_COMPLETE',    NAMESPACE_ACTIVITY_SCHEMA . 'complete' );
+define ( 'ACTIVITY_TAG',         NAMESPACE_ACTIVITY_SCHEMA . 'tag' );
 
 define ( 'ACTIVITY_POKE',        NAMESPACE_ZOT . '/activity/poke' );
 define ( 'ACTIVITY_MOOD',        NAMESPACE_ZOT . '/activity/mood' );
 
-define ( 'ACTIVITY_OBJ_COMMENT', NAMESPACE_ACTIVITY_SCHEMA . 'comment' );
+
 define ( 'ACTIVITY_OBJ_ACTIVITY',NAMESPACE_ACTIVITY_SCHEMA . 'activity' );
-define ( 'ACTIVITY_OBJ_NOTE',    NAMESPACE_ACTIVITY_SCHEMA . 'note' );
-define ( 'ACTIVITY_OBJ_PERSON',  NAMESPACE_ACTIVITY_SCHEMA . 'person' );
-define ( 'ACTIVITY_OBJ_PHOTO',   NAMESPACE_ACTIVITY_SCHEMA . 'photo' );
-define ( 'ACTIVITY_OBJ_P_PHOTO', NAMESPACE_ACTIVITY_SCHEMA . 'profile-photo' );
 define ( 'ACTIVITY_OBJ_ALBUM',   NAMESPACE_ACTIVITY_SCHEMA . 'photo-album' );
-define ( 'ACTIVITY_OBJ_EVENT',   NAMESPACE_ACTIVITY_SCHEMA . 'event' );
 define ( 'ACTIVITY_OBJ_GROUP',   NAMESPACE_ACTIVITY_SCHEMA . 'group' );
 define ( 'ACTIVITY_OBJ_GAME',    NAMESPACE_ACTIVITY_SCHEMA . 'game' );
 define ( 'ACTIVITY_OBJ_WIKI',    NAMESPACE_ACTIVITY_SCHEMA . 'wiki' );
 define ( 'ACTIVITY_OBJ_TAGTERM', NAMESPACE_ZOT  . '/activity/tagterm' );
-define ( 'ACTIVITY_OBJ_PROFILE', NAMESPACE_ZOT  . '/activity/profile' );
 define ( 'ACTIVITY_OBJ_THING',   NAMESPACE_ZOT  . '/activity/thing' );
 define ( 'ACTIVITY_OBJ_LOCATION',NAMESPACE_ZOT  . '/activity/location' );
 define ( 'ACTIVITY_OBJ_FILE',    NAMESPACE_ZOT  . '/activity/file' );

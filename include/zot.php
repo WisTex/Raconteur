@@ -298,7 +298,7 @@ function zot_zot($url, $data, $channel = null,$crypto = null) {
 		$headers['X-Zot-Digest'] = 'SHA-256=' . $hash;
 		$headers['Content-type'] = 'application/x-zot+json';
 
-		$h = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],'acct:' . $channel['channel_address'] . '@' . \App::get_hostname(),false,false,'sha512',(($crypto) ? $crypto['hubloc_sitekey'] : ''), (($crypto) ? zot_best_algorithm($crypto['site_crypto']) : ''));
+		$h = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],channel_url($channel),false,false,'sha512',(($crypto) ? $crypto['hubloc_sitekey'] : ''), (($crypto) ? zot_best_algorithm($crypto['site_crypto']) : ''));
 	}
 
 	$redirects = 0;
@@ -393,7 +393,7 @@ function zot_refresh($them, $channel = null, $force = false) {
 		return false;
 	}
 
-	$record = \Zotlabs\Lib\Zotfinger($url,$channel);
+	$record = \Zotlabs\Lib\Zotfinger::exec($url,$channel);
 
 	// Check the HTTP signature
 
@@ -837,7 +837,7 @@ function import_xchan($arr, $ud_flags = UPDATE_FLAGS_UPDATED, $ud_arr = null) {
 				'xchan_follow'         => $arr['follow_url'],
 				'xchan_connpage'       => $arr['connect_url'],
 				'xchan_name'           => (($arr['name']) ? $arr['name'] : '-'),
-				'xchan_network'        => 'zot',
+				'xchan_network'        => 'zot6',
 				'xchan_photo_date'     => $arr['photo_updated'],
 				'xchan_name_date'      => $arr['name_updated'],
 				'xchan_hidden'         => intval(1 - intval($arr['searchable'])),
@@ -1121,17 +1121,13 @@ function zot_fetch($arr) {
 	$import = null;
 	$hubs   = null;
 
-	$zret = zot6_check_sig();
 
-	if($zret['success'] && $zret['hubloc'] && $zret['hubloc']['hubloc_guid'] === $data['sender']['id'] && $data['msg']) {
-		logger('zot6_delivery',LOGGER_DEBUG);
-		logger('zot6_data: ' . print_r($data,true),LOGGER_DATA);
+	logger('zot6_delivery',LOGGER_DEBUG);
+	logger('zot6_data: ' . print_r($data,true),LOGGER_DATA);
 
-		$ret['collected'] = true;
+	$ret['collected'] = true;
 
-		$import = [ 'success' => true, 'body' => json_encode( [ 'success' => true, 'pickup' => [ [ 'notify' => $data, 'message' => json_decode($data['data'],true) ] ] ] ) ];
-		$hubs = [ $zret['hubloc'] ] ;
-	}
+	$import = [ 'success' => true, 'body' => json_encode( [ 'success' => true, 'pickup' => [ [ 'notify' => $data, 'message' => json_decode($data['data'],true) ] ] ] ) ];
 
 	if(! $hubs) {
 		// set $multiple param on zot_gethub() to return all matching hubs
@@ -1169,7 +1165,7 @@ function zot_fetch($arr) {
 			$algorithm = zot_best_algorithm($hub['site_crypto']);
 		}
 
-		$result = zot_import($import, $arr['sender']['url']);
+		$result = zot_import($import, $arr['sender']['location']);
 
 		if($result) {
 			$result = crypto_encapsulate(json_encode($result),$hub['hubloc_sitekey'], $algorithm);
@@ -2491,7 +2487,7 @@ function sync_locations($sender, $arr, $absolute = false) {
 			$arr['locations'][0]['primary'] = true;
 
 		foreach($arr['locations'] as $location) {
-			if(! zot_verify($location['url'],base64url_decode($location['url_sig']),$sender['key'])) {
+			if(! zot_verify($location['url'],$location['url_sig'],$sender['public_key'])) {
 				logger('Unable to verify site signature for ' . $location['url']);
 				$ret['message'] .= sprintf( t('Unable to verify site signature for %s'), $location['url']) . EOL;
 				continue;
@@ -2640,7 +2636,7 @@ function sync_locations($sender, $arr, $absolute = false) {
 					'hubloc_id_url'    => $location['id_url'],
 					'hubloc_hash'      => $sender['hash'],
 					'hubloc_addr'      => $location['address'],
-					'hubloc_network'   => 'zot',
+					'hubloc_network'   => 'zot6',
 					'hubloc_primary'   => intval($location['primary']),
 					'hubloc_url'       => $location['url'],
 					'hubloc_url_sig'   => $location['url_sig'],
@@ -4003,7 +3999,7 @@ function import_author_zot($x) {
  * @param array $data
  * @return array
  */
-function zot_reply_message_request($data) {
+function zot_reply_message_request($data,$hubs) {
 	$ret = array('success' => false);
 
 	if (! $data['message_id']) {
@@ -4091,7 +4087,7 @@ function zot_reply_message_request($data) {
 	json_return_and_die($ret);
 }
 
-function zot_rekey_request($sender,$data) {
+function zot_rekey_request($sender,$data,$hubs) {
 
 	$ret = array('success' => false);
 
@@ -4978,7 +4974,7 @@ function zot_reply_auth_check($data,$encrypted_packet) {
  *
  * return json_return_and_die()
  */
-function zot_reply_purge($sender, $recipients) {
+function zot_reply_purge($sender, $recipients,$hubs) {
 
 	$ret = array('success' => false);
 
@@ -5029,7 +5025,7 @@ function zot_reply_purge($sender, $recipients) {
  *
  * @return json_return_and_die()
  */
-function zot_reply_refresh($sender, $recipients) {
+function zot_reply_refresh($sender, $recipients,$hubs) {
 
 	$ret = array('success' => false);
 
@@ -5100,7 +5096,7 @@ function zot6_check_sig() {
 	return $ret;
 }
 
-function zot_reply_notify($data) {
+function zot_reply_notify($data,$hubs) {
 
 	$ret = array('success' => false);
 
@@ -5110,10 +5106,10 @@ function zot_reply_notify($data) {
 
 	if($async) {
 		// add to receive queue
-		// qreceive_add($data);
+		// qreceive_add($data,$hubs);
 	}
 	else {
-		$x = zot_fetch($data);
+		$x = zot_fetch($data,$hubs);
 		$ret['delivery_report'] = $x;
 	}
 

@@ -66,22 +66,22 @@ class Channel extends \Zotlabs\Web\Controller {
 			$sigdata = \Zotlabs\Web\HTTPSig::verify(EMPTY_STR);
 
 			if($sigdata && $sigdata['signer'] && $sigdata['header_valid']) {
-				$data = \zot6::zotinfo([ 'address' => $channel['channel_address'], 'target_url' => $sigdata['signer'] ]);
+				$data = json_encode(\zot6::zotinfo([ 'address' => $channel['channel_address'], 'target_url' => $sigdata['signer'] ]));
 				$s = q("select site_crypto, hubloc_sitekey from site left join hubloc on hubloc_url = site_url where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
 					dbesc($sigdata['signer'])
 				);
+
 				if($s) {
-					$data = crypto_encapsulate($data,$s[0]['hubloc_sitekey'],zot_best_algorithm($s[0]['site_crypto']));
+					$data = json_encode(crypto_encapsulate($data,$s[0]['hubloc_sitekey'],zot_best_algorithm($s[0]['site_crypto'])));
 				}
 			}
 			else {
-				$data = \zot6::zotinfo([ 'address' => $channel['channel_address'] ]);
+				$data = json_encode(\zot6::zotinfo([ 'address' => $channel['channel_address'] ]));
 			}
 
-			$ret = json_encode($data);
-			$headers = [ 'Content-Type' => 'application/x-zot+json', 'Digest' => \Zotlabs\Web\HTTPSig::generate_digest_header($ret) ];
+			$headers = [ 'Content-Type' => 'application/x-zot+json', 'Digest' => \Zotlabs\Web\HTTPSig::generate_digest_header($data) ];
 			\Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'], z_root() . '/channel/' . $channel['channel_address'],true);
-			echo $ret;
+			echo $data;
 			killme();
 		}
 

@@ -67,19 +67,21 @@ class Mail extends \Zotlabs\Web\Controller {
 		if(! $recipient) {
 			$channel = \App::get_channel();
 	
-			$wf = \Zotlabs\Lib\Webfinger::exec(punify($rstr));
-			if($wf) {
-				$href = \Zotlabs\Lib\Webfinger::zot_url($wf);
-				if($href) {
-					$zf = \Zotlabs\Lib\Zotfinger($href,$channel);
-				}
-				if($zf && is_array('data',$zf) && is_array('permissions',$zf['data']) && strpos($zf['data']['permissions'],'post_mail') !== false) {
-					$xc = import_xchan($zf['data']);
-					if($xc['success']) {
-						$recipient = $xc['hash'];
-					}
+			$is_valid = false;
+
+			$href = \Zotlabs\Lib\Webfinger::zot_url(punify($rstr));
+			if($href) {
+				$zf = \Zotlabs\Lib\Zotfinger::exec($href,$channel);
+			}
+
+			if(is_array($zf) && array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href
+            	&& intval($zf['signature']['header_valid']) && array_path_exists('data/permissions',$zf) && strpos($zf['data']['permissions'],'post_mail') !== false) {
+				$xc = import_xchan($zf['data']);
+				if($xc['success']) {
+					$recipient = $xc['hash'];
 				}
 			}
+
 			if(! $recipient) {
 	 			notice( t('Selected channel has private message restrictions. Send failed.'));
 

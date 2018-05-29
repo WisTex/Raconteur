@@ -14,7 +14,7 @@ class Zotfinger {
 
 
 		$headers = [];
-		$headers['Accept'] = 'Accept: application/x-zot+json'; 
+		$headers['Accept'] = 'application/x-zot+json'; 
 
 		$h = $headers;
 
@@ -22,6 +22,8 @@ class Zotfinger {
 			$headers['X-Zot-Token'] = random_string();
 			$h = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],channel_url($channel),false,false);
 		}
+
+logger('headers: ' . print_r($h,true));
 
 		$result = [];
 
@@ -35,8 +37,11 @@ class Zotfinger {
 			$result['data'] = json_decode($x['body'],true);
 
 			if($result['data'] && is_array($result['data']) && array_key_exists('encrypted',$result['data']) && $result['data']['encrypted']) {
-				$result['data'] = crypto_unencapsulate($result['data'],get_config('system','prvkey'));
+				$result['data'] = json_decode(crypto_unencapsulate($result['data'],get_config('system','prvkey')),true);
 			}
+
+logger('result: ' . print_r($result,true));
+
 			return $result;
 		}
 

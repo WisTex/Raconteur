@@ -30,18 +30,20 @@ class Receiver {
 		$json = ltrim(file_get_contents('php://input'));
 
 		if($json) {
-			$this->data = json_decode(json,true);
+			$this->data = json_decode($json,true);
 		}
 		else {
 			$this->error = true;
 			$this->response['message'] = 'no data';
 		}
 
+		logger('received: ' . print_r($this->data,true), LOGGER_DATA);
+
 		if($this->data && is_array($this->data)) {
 			$this->encrypted = ((array_key_exists('encrypted',$this->data)) ? true : false);
 
 			if($this->encrypted && $this->prvkey) {
-				$uncrypted = crypto_unencapsulate($data,$prvkey);
+				$uncrypted = crypto_unencapsulate($this->data,$this->prvkey);
 				if($uncrypted) {
 					$this->data = json_decode($uncrypted,true);
 				}
@@ -77,13 +79,14 @@ class Receiver {
 
 		if($this->sender)
 			$this->ValidateSender();
-
+logger('validate1: ' . intval($this->validated));
 		$this->Dispatch();
 	}
 
 	function ValidateSender() {
-
+		logger('validating');
 		$hubs = zot_gethub($this->sender,true);
+
 		if (! $hubs) {
 
 			/* Have never seen this guid or this guid coming from this location. Check it and register it. */
@@ -100,6 +103,7 @@ class Receiver {
 			update_hub_connected($hub,((array_key_exists('sitekey',$this->sender)) ? $this->sender['sitekey'] : ''));
 		}
 		$this->validated = true;
+		$this->hubs = $hubs;
     }
 
 		
@@ -115,23 +119,23 @@ class Receiver {
 		switch($this->messagetype) {
 
 			case 'request':
-				$this->handler->Request($this->data);
+				$this->handler->Request($this->data,$this->hubs);
 				break;
 
 			case 'purge':
-				$this->handler->Purge($this->sender,$this->recipients);
+				$this->handler->Purge($this->sender,$this->recipients,$this->hubs);
 				break;
 
 			case 'refresh':
-				$this->handler->Refresh($this->sender,$this->recipients);
+				$this->handler->Refresh($this->sender,$this->recipients,$this->hubs);
 				break;
 
 			case 'notify':
-				$this->handler->Notify($this->data);
+				$this->handler->Notify($this->data,$this->hubs);
 				break;
 
 			case 'rekey':
-				$this->handler->Rekey($this->sender, $this->data);
+				$this->handler->Rekey($this->sender, $this->data,$this->hubs);
 				break;
 
 			default:

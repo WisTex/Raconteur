@@ -30,8 +30,7 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 
 	$is_http  = ((strpos($url,'://') !== false) ? true : false);
 
-	if($is_http && substr($url,-1,1) === '/')
-		$url = substr($url,0,-1);
+	$url = rtrim($url,'/');
 
 	if(! allowed_url($url)) {
 		$result['message'] = t('Channel is blocked on this site.');
@@ -58,53 +57,44 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 	}
 
 
-	$arr = array('url' => $url, 'protocol', 'channel' => array());
+	$arr = array('url' => $url, 'protocol' => $protocol, 'channel' => array());
 
 	call_hooks('follow_init', $arr);
 
 	if($arr['channel']['success']) 
 		$ret = $arr['channel'];
-	elseif((! $is_http) && ((! $protocol) || (strtolower($protocol) === 'zot')))
-		$ret = Zotlabs\Zot\Finger::run($url,$channel);
-
-	if($ret && is_array($ret) && $ret['success']) {
-		$is_zot = true;
-		$j = $ret;
+	else {
+		$href = \Zotlabs\Lib\Webfinger::zot_url(punify($url));
+		if($href) {
+			$zf = \Zotlabs\Lib\Zotfinger::exec($href,$channel);
+		}
+		if(is_array($zf) && array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href 
+			&& intval($zf['signature']['header_valid']) && array_path_exists('data/permissions',$zf)) {
+			$x = import_xchan($zf['data']);
+			$j = $zf['data'];
+			$is_zot = true;
+		}
 	}
 
+
 	$p = \Zotlabs\Access\Permissions::connect_perms($uid);
-	$my_perms = $p['perms'];
+	$my_perms = \Zotlabs\Access\Permissions::serialise($p['perms']);
 
-	if($is_zot && $j) {
-
-		logger('follow: ' . $url . ' ' . print_r($j,true), LOGGER_DEBUG);
-
-
-		if(! ($j['success'] && $j['guid'])) {
-			$result['message'] = t('Response from remote channel was incomplete.');
-			logger('mod_follow: ' . $result['message']);
-			return $result;
-		}
+	if($x) {
 
 		// Premium channel, set confirm before callback to avoid recursion
 
-		if(array_key_exists('connect_url',$j) && (! $confirm)) {
-			if($interactive) {
-				goaway(zid($j['connect_url']));
-			}
-			else {
-				$result['message'] = t('Premium channel - please visit:') . ' ' . zid($j['connect_url']);
-				logger('mod_follow: ' . $result['message']);
-				return $result;
-			}
-		}
+//		if(array_key_exists('connect_url',$j) && (! $confirm)) {
+//			if($interactive) {
+//				goaway(zid($j['connect_url']));
+//			}
+//			else {
+//				$result['message'] = t('Premium channel - please visit:') . ' ' . zid($j['connect_url']);
+//				logger('mod_follow: ' . $result['message']);
+//				return $result;
+//			}
+//		}
 				
-				
-
-		// do we have an xchan and hubloc?
-		// If not, create them.	
-
-		$x = import_xchan($j);
 
 		if(array_key_exists('deleted',$j) && intval($j['deleted'])) {
 			$result['message'] = t('Channel was deleted and no longer exists.');
@@ -116,24 +106,10 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 
 		$xchan_hash = $x['hash'];
 
-		if( array_key_exists('permissions',$j) && array_key_exists('data',$j['permissions'])) {
-			$permissions = crypto_unencapsulate(array(
-				'data' => $j['permissions']['data'],
-				'key'  => $j['permissions']['key'],
-				'iv'   => $j['permissions']['iv']),
-				$channel['channel_prvkey']);
-			if($permissions)
-				$permissions = json_decode($permissions,true);
-			logger('decrypted permissions: ' . print_r($permissions,true), LOGGER_DATA);
-		}
-		else
-			$permissions = $j['permissions'];
+		$permissions = $j['permissions'];
 
-		if(is_array($permissions) && $permissions) {
-			foreach($permissions as $k => $v) {
-				set_abconfig($channel['channel_uid'],$xchan_hash,'their_perms',$k,intval($v));
-			}
-		}
+		set_abconfig($channel['channel_uid'],$xchan_hash,'system','their_perms',$j['permissions']);
+
 	}
 	else {
 
@@ -289,9 +265,7 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 		logger('mod_follow: abook creation failed');
 
 	if($my_perms) {
-		foreach($my_perms as $k => $v) {
-			set_abconfig($uid,$xchan_hash,'my_perms',$k,$v);
-		}
+		set_abconfig($uid,$xchan_hash,'system','my_perms',$my_perms);
 	}
 
 	$r = q("select abook.*, xchan.* from abook left join xchan on abook_xchan = xchan_hash 

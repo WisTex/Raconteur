@@ -76,7 +76,9 @@ class Webfinger {
 
 	}
 
-	static function zot_url($arr) {
+	static function zot_url($resource) {
+
+		$arr = self::exec($resource);
 
 		if(is_array($arr) && array_key_exists('links',$arr)) {
 			foreach($arr['links'] as $link) {

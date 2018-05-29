@@ -16,7 +16,7 @@ namespace Zotlabs\Module;
 class Zot extends \Zotlabs\Web\Controller {
 
 	function init() {
-		$zot = new \Zotlabs\Zot6\Receiver(new Zotlabs\Zot6\Zot6Handler());
+		$zot = new \Zotlabs\Zot6\Receiver(new \Zotlabs\Zot6\Zot6Handler());
 		$zot->run();
 		exit;
 	}

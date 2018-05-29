@@ -4,15 +4,15 @@ namespace Zotlabs\Zot6;
 
 interface IHandler {
 
-	function Notify($data);
+	function Notify($data,$hubs);
 
-	function Request($data);
+	function Request($data,$hubs);
 
-	function Rekey($sender,$data);
+	function Rekey($sender,$data,$hubs);
 
-	function Refresh($sender,$recipients);
+	function Refresh($sender,$recipients,$hubs);
 
-	function Purge($sender,$recipients);
+	function Purge($sender,$recipients,$hubs);
 
 }
 
