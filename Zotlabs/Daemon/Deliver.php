@@ -75,6 +75,8 @@ class Deliver {
 						q("delete from dreport where dreport_queue = '%s'",
 							dbesc($argv[$x])
 						);
+					
+						continue;
 					}
 				}
 
