@@ -1485,7 +1485,7 @@ App::$strings["Location:"] = "Emplacement&nbsp;:";
 App::$strings["Description:"] = "Description&nbsp;:";
 App::$strings["Hometown:"] = "Ville natale&nbsp;:";
 App::$strings["About:"] = "À propos&nbsp;:";
-App::$strings["Connect"] = "Ajouter/Suivre";
+App::$strings["Connect"] = "Lier";
 App::$strings["Public Forum:"] = "Forum public&nbsp;:";
 App::$strings["Keywords: "] = "Mots-clefs&nbsp;:";
 App::$strings["Don't suggest"] = "Ne pas suggérer";
@@ -2868,7 +2868,7 @@ App::$strings["%d invitation available"] = array(
 );
 App::$strings["Find Channels"] = "Trouver des canaux";
 App::$strings["Enter name or interest"] = "Saisir nom ou centre d'intérêt";
-App::$strings["Connect/Follow"] = "Ajouter/Suivre";
+App::$strings["Connect/Follow"] = "Lier et suivre";
 App::$strings["Examples: Robert Morgenstein, Fishing"] = "Exemples: Guillaume Martin, Course à pieds";
 App::$strings["Random Profile"] = "Un profil au hasard";
 App::$strings["Invite Friends"] = "Inviter des amis";
