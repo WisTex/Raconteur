@@ -193,7 +193,7 @@ class Notifier {
 						$recipients[] = $r[0]['abook_xchan'];
 						$private = false;
 						$packet_type = 'refresh';
-						$packet_recips = array(array('guid' => $r[0]['xchan_guid'],'guid_sig' => $r[0]['xchan_guid_sig'],'hash' => $r[0]['xchan_hash']));
+						$packet_recips = array(array('id' => $r[0]['xchan_guid'],'id_sig' => $r[0]['xchan_guid_sig'],'hash' => $r[0]['xchan_hash']));
 					}
 				}
 			}
@@ -444,8 +444,8 @@ class Notifier {
 				$recip_list[] = $d['xchan_addr'] . ' (' . $d['xchan_hash'] . ')'; 
 				if($private) {
 					$env_recips[] = [
-						'guid'     => $d['xchan_guid'],
-						'guid_sig' => $d['xchan_guid_sig'],
+						'id'     => $d['xchan_guid'],
+						'id_sig' => $d['xchan_guid_sig'],
 						'hash'     => $d['xchan_hash']
 					];
 				}
@@ -539,7 +539,7 @@ class Notifier {
 			}
 			
 
-			if($hub['hubloc_network'] == 'zot') {
+			if($hub['hubloc_network'] == 'zot6') {
 				if(! in_array($hub['hubloc_sitekey'],$keys)) {
 					$hublist[] = $hub['hubloc_host'] . ' ' . $hub['hubloc_network'];
 					$dhubs[]   = $hub;
@@ -559,7 +559,7 @@ class Notifier {
 
 		foreach($dhubs as $hub) {
 
-			if($hub['hubloc_network'] !== 'zot') {
+			if($hub['hubloc_network'] !== 'zot6') {
 				$narr = [
 					'channel'        => $channel,
 					'upstream'       => $upstream,

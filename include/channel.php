@@ -329,7 +329,7 @@ function create_identity($arr) {
 			'hubloc_url'      => z_root(),
 			'hubloc_url_sig'  => zot_sign(z_root(),$ret['channel']['channel_prvkey']),
 			'hubloc_host'     => App::get_hostname(),
-			'hubloc_callback' => z_root() . '/post',
+			'hubloc_callback' => z_root() . '/zot',
 			'hubloc_sitekey'  => get_config('system','pubkey'),
 			'hubloc_network'  => 'zot6',
 			'hubloc_updated'  => datetime_convert()

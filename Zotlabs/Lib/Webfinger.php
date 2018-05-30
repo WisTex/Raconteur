@@ -26,10 +26,17 @@ class Webfinger {
 			return false;
 		}
 
-		logger('fetching resource from url: ' . self::$resource . ':' . self::$server, LOGGER_DEBUG, LOG_INFO);
+		if(! check_siteallowed(self::$server)) {
+			logger('blacklisted: ' . self::$server);
+			return false;
+		}
+
+		logger('fetching resource: ' . self::$resource . ' from ' . self::$server, LOGGER_DEBUG, LOG_INFO);
+
+		$url = 'https://' . self::$server . '/.well-known/webfinger?f=&resource=' . self::$resource ;
 
 		$counter = 0;
-		$s = z_fetch_url('https://' . self::$server . '/.well-known/webfinger?f=&resource=' . self::$resource, false, $counter, [ 'headers' => [ 'Accept: application/jrd+json, */*' ] ]);
+		$s = z_fetch_url($url, false, $counter, [ 'headers' => [ 'Accept: application/jrd+json, */*' ] ]);
 
 		if($s['success']) {
 			$j = json_decode($s['body'], true);
@@ -75,6 +82,11 @@ class Webfinger {
 		}
 
 	}
+
+	/**
+	 * @brief fetch a webfinger resource and return a zot6 discovery url if present
+	 *
+	 */ 
 
 	static function zot_url($resource) {
 

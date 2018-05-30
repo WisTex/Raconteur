@@ -295,7 +295,7 @@ function zot_zot($url, $data, $channel = null,$crypto = null) {
 	if($channel) {
 		$headers['X-Zot-Token'] = random_string();
 		$hash = \Zotlabs\Web\HTTPSig::generate_digest($data,false);
-		$headers['X-Zot-Digest'] = 'SHA-256=' . $hash;
+		$headers['Digest'] = 'SHA-256=' . $hash;
 		$headers['Content-type'] = 'application/x-zot+json';
 
 		$h = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],channel_url($channel),false,false,'sha512',(($crypto) ? $crypto['hubloc_sitekey'] : ''), (($crypto) ? zot_best_algorithm($crypto['site_crypto']) : ''));
@@ -1123,11 +1123,11 @@ function zot_fetch($arr) {
 
 
 	logger('zot6_delivery',LOGGER_DEBUG);
-	logger('zot6_data: ' . print_r($data,true),LOGGER_DATA);
+	logger('zot6_data: ' . print_r($arr,true),LOGGER_DATA);
 
 	$ret['collected'] = true;
 
-	$import = [ 'success' => true, 'body' => json_encode( [ 'success' => true, 'pickup' => [ [ 'notify' => $data, 'message' => json_decode($data['data'],true) ] ] ] ) ];
+	$import = [ 'success' => true, 'body' => json_encode( [ 'success' => true, 'pickup' => [ [ 'notify' => $arr, 'message' => json_decode($arr['data'],true) ] ] ] ) ];
 
 	if(! $hubs) {
 		// set $multiple param on zot_gethub() to return all matching hubs
@@ -1259,7 +1259,7 @@ function zot_import($arr, $sender_url) {
 			if($message_request)
 				logger('processing message request');
 
-			$i['notify']['sender']['hash'] = make_xchan_hash($i['notify']['sender']['guid'],$i['notify']['sender']['guid_sig']);
+			$i['notify']['sender']['hash'] = $hub['hubloc_hash'];
 			$deliveries = null;
 
 			if(array_key_exists('message',$i) && array_key_exists('type',$i['message']) && $i['message']['type'] === 'rating') {
@@ -1274,7 +1274,7 @@ function zot_import($arr, $sender_url) {
 				$recip_arr = array();
 				foreach($i['notify']['recipients'] as $recip) {
 					if(is_array($recip)) {
-						$recip_arr[] =  make_xchan_hash($recip['guid'],$recip['guid_sig']);
+						$recip_arr[] =  $recip['hash'];
 					}
 				}
 
@@ -2514,8 +2514,8 @@ function sync_locations($sender, $arr, $absolute = false) {
 
 			$r = q("select * from hubloc where hubloc_hash = '%s' and hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_id_url = '%s' and hubloc_url = '%s' and hubloc_url_sig = '%s' and hubloc_host = '%s' and hubloc_addr = '%s' and hubloc_callback = '%s' and hubloc_sitekey = '%s' ",
 				dbesc($sender['hash']),
-				dbesc($sender['guid']),
-				dbesc($sender['guid_sig']),
+				dbesc($sender['id']),
+				dbesc($sender['id_sig']),
 				dbesc($location['id_url']),
 				dbesc($location['url']),
 				dbesc($location['url_sig']),
@@ -2631,8 +2631,8 @@ function sync_locations($sender, $arr, $absolute = false) {
 
 			$r = hubloc_store_lowlevel(
 				[
-					'hubloc_guid'      => $sender['guid'],
-					'hubloc_guid_sig'  => $sender['guid_sig'],
+					'hubloc_guid'      => $sender['id'],
+					'hubloc_guid_sig'  => $sender['id_sig'],
 					'hubloc_id_url'    => $location['id_url'],
 					'hubloc_hash'      => $sender['hash'],
 					'hubloc_addr'      => $location['address'],
@@ -3916,7 +3916,7 @@ function import_author_zot($x) {
 	// we may only end up with one; which results in posts with no author name or photo and are a bit
 	// of a hassle to repair. If either or both are missing, do a full discovery probe.
 
-	$hash = make_xchan_hash($x['guid'],$x['key']);
+	$hash = make_xchan_hash($x['id'],$x['key']);
 
 	// also - this function may get passed a profile url as 'url' and zot_refresh wants a hubloc_url (site baseurl),
 	// so deconstruct the url (if we have one) and rebuild it with just the baseurl components.
@@ -3928,13 +3928,13 @@ function import_author_zot($x) {
 
 	$r1 = q("select hubloc_url, hubloc_updated, site_dead from hubloc left join site on
 		hubloc_url = site_url where hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_primary = 1 limit 1",
-		dbesc($x['guid']),
-		dbesc($x['guid_sig'])
+		dbesc($x['id']),
+		dbesc($x['id_sig'])
 	);
 
 	$r2 = q("select xchan_hash from xchan where xchan_guid = '%s' and xchan_guid_sig = '%s' limit 1",
-		dbesc($x['guid']),
-		dbesc($x['guid_sig'])
+		dbesc($x['id']),
+		dbesc($x['id_sig'])
 	);
 
 	$site_dead = false;
@@ -3975,7 +3975,7 @@ function import_author_zot($x) {
 	}
 
 
-	$them = array('hubloc_url' => $desturl, 'xchan_guid' => $x['guid'], 'xchan_guid_sig' => $x['guid_sig']);
+	$them = array('hubloc_url' => $desturl, 'xchan_guid' => $x['id'], 'xchan_guid_sig' => $x['id_sig']);
 	if(zot_refresh($them))
 		return $hash;
 
@@ -5037,14 +5037,14 @@ function zot_reply_refresh($sender, $recipients,$hubs) {
 			$r = q("select channel.*,xchan.* from channel
 				left join xchan on channel_hash = xchan_hash
 				where channel_guid = '%s' and channel_guid_sig = '%s' limit 1",
-				dbesc($recip['guid']),
-				dbesc($recip['guid_sig'])
+				dbesc($recip['id']),
+				dbesc($recip['id_sig'])
 			);
 
 			$x = zot_refresh(array(
-					'xchan_guid'     => $sender['guid'],
-					'xchan_guid_sig' => $sender['guid_sig'],
-					'hubloc_url'     => $sender['url']
+					'xchan_guid'     => $sender['id'],
+					'xchan_guid_sig' => $sender['id_sig'],
+					'hubloc_url'     => $sender['location']
 			), $r[0], (($msgtype === 'force_refresh') ? true : false));
 		}
 	}
@@ -5052,9 +5052,9 @@ function zot_reply_refresh($sender, $recipients,$hubs) {
 		// system wide refresh
 
 		$x = zot_refresh(array(
-			'xchan_guid'     => $sender['guid'],
-			'xchan_guid_sig' => $sender['guid_sig'],
-			'hubloc_url'     => $sender['url']
+			'xchan_guid'     => $sender['id'],
+			'xchan_guid_sig' => $sender['id_sig'],
+			'hubloc_url'     => $sender['location']
 		), null, (($msgtype === 'force_refresh') ? true : false));
 	}
 
@@ -5100,7 +5100,7 @@ function zot_reply_notify($data,$hubs) {
 
 	$ret = array('success' => false);
 
-	logger('notify received from ' . $data['sender']['url']);
+	logger('notify received from ' . $data['sender']['location']);
 
 	$async = get_config('system','queued_fetch');
 

@@ -16,6 +16,7 @@ class Receiver {
 	protected $response;
 	protected $handler;
 	protected $prvkey;
+	protected $rawdata;
 
 	function __construct($handler) {
 
@@ -25,12 +26,21 @@ class Receiver {
 		$this->response    = [ 'success' => false ];
 		$this->handler     = $handler;
 		$this->data        = null;
+		$this->rawdata     = null;
 		$this->prvkey      = Config::get('system','prvkey');
 
-		$json = ltrim(file_get_contents('php://input'));
+		$this->rawdata = file_get_contents('php://input');
 
-		if($json) {
-			$this->data = json_decode($json,true);
+		if(! $this->Valid_Httpsig()) {
+			logger('signature failed');
+			http_status_exit(400);
+		}
+		else {
+			logger('signature valid');
+		}
+
+		if($this->rawdata) {
+			$this->data = json_decode($this->rawdata,true);
 		}
 		else {
 			$this->error = true;
@@ -79,12 +89,12 @@ class Receiver {
 
 		if($this->sender)
 			$this->ValidateSender();
-logger('validate1: ' . intval($this->validated));
+
 		$this->Dispatch();
 	}
 
 	function ValidateSender() {
-		logger('validating');
+
 		$hubs = zot_gethub($this->sender,true);
 
 		if (! $hubs) {
@@ -106,6 +116,23 @@ logger('validate1: ' . intval($this->validated));
 		$this->hubs = $hubs;
     }
 
+
+	function Valid_Httpsig() {
+
+		$tmp_result = false;
+
+		$verified = \Zotlabs\Web\HTTPSig::verify($this->rawdata);
+		if($verified && $verified['header_signed'] && $verified['header_valid']) {
+			$tmp_result = true;
+			if(($verified['content_signed']) && (! $verified['content_valid'])) {
+					$tmp_result = false;
+			}
+		}
+		if($tmp_result) {
+			return true;
+		}
+		return false;
+	}	
 		
 	function Dispatch() {
 

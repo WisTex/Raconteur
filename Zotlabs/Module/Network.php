@@ -522,6 +522,7 @@ class Network extends \Zotlabs\Web\Controller {
 				xchan_query($items,true);
 				$items = fetch_post_tags($items,true);
 				$items = conv_sort($items,$ordering);
+
 			}
 			else {
 				$items = array();

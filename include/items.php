@@ -699,7 +699,7 @@ function get_item_elements($x,$allow_code = false) {
 		);
 		if($r) {
 			if($r[0]['xchan_pubkey']) {
-				if(zot_verify($x['body'],base64url_decode($arr['sig']),$r[0]['xchan_pubkey'])) {
+				if(zot_verify($x['body'],$arr['sig'],$r[0]['xchan_pubkey'])) {
 					$arr['item_verified'] = 1;
 				}
 				else {
@@ -836,7 +836,7 @@ function import_author_xchan($x) {
 
 	$y = false;
 
-	if((! array_key_exists('network', $x)) || ($x['network'] === 'zot')) {
+	if((! array_key_exists('network', $x)) || ($x['network'] === 'zot6')) {
 		$y = import_author_zot($x);
 	}
 
@@ -1161,8 +1161,9 @@ function encode_item_xchan($xchan) {
 	$ret['url']      = $xchan['xchan_url'];
 	$ret['network']  = $xchan['xchan_network'];
 	$ret['photo']    = [ 'mimetype' => $xchan['xchan_photo_mimetype'], 'src' => $xchan['xchan_photo_m'] ];
-	$ret['guid']     = $xchan['xchan_guid'];
-	$ret['guid_sig'] = $xchan['xchan_guid_sig'];
+	$ret['id']     = $xchan['xchan_guid'];
+	$ret['id_sig'] = $xchan['xchan_guid_sig'];
+	$ret['key']  = $xchan['xchan_pubkey'];
 
 	return $ret;
 }

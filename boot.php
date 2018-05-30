@@ -753,7 +753,8 @@ class App {
 	public static  $is_sys = false;
 	public static  $nav_sel;
 	public static  $comanche;
-
+	public static  $httpheaders = null;
+	public static  $httpsig = null;
 
 	public static $channel_links;
 

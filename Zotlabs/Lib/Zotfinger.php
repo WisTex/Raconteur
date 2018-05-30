@@ -12,6 +12,7 @@ class Zotfinger {
 			return false;
 		}
 
+logger('resource: ' . $resource);
 
 		$headers = [];
 		$headers['Accept'] = 'application/x-zot+json'; 

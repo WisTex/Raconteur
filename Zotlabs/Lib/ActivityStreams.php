@@ -198,6 +198,7 @@ class ActivityStreams {
 	 * @param string $url
 	 * @return NULL|mixed
 	 */
+
 	function fetch_property($url) {
 		$redirects = 0;
 		if(! check_siteallowed($url)) {

@@ -41,6 +41,39 @@ class HTTPSig {
 		}
 	}
 
+	static function find_headers($data) {
+
+		// decide if $data arrived via controller submission or curl
+
+		if(is_array($data) && $data['header']) {
+			if(! $data['success'])
+				return [];
+
+			$h = new \Zotlabs\Web\HTTPHeaders($data['header']);
+			$headers = $h->fetcharr();
+			$body = $data['body'];
+		}
+
+		else {
+			$headers = [];
+			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
+			$headers['content-type'] = $_SERVER['CONTENT_TYPE'];
+
+			foreach($_SERVER as $k => $v) {
+				if(strpos($k,'HTTP_') === 0) {
+					$field = str_replace('_','-',strtolower(substr($k,5)));
+					$headers[$field] = $v;
+				}
+			}
+		}
+
+		//logger('SERVER: ' . print_r($_SERVER,true), LOGGER_ALL);
+
+		//logger('headers: ' . print_r($headers,true), LOGGER_ALL);
+
+		return $headers;
+	}
+
 
 	// See draft-cavage-http-signatures-08
 
@@ -58,34 +91,11 @@ class HTTPSig {
 			'content_valid'  => false
 		];
 
-		// decide if $data arrived via controller submission or curl
-		if(is_array($data) && $data['header']) {
-			if(! $data['success'])
-				return $result;
 
-			$h = new \Zotlabs\Web\HTTPHeaders($data['header']);
-			$headers = $h->fetcharr();
-			$body = $data['body'];
-		}
+		$headers = self::find_headers($data);
 
-		else {
-			$headers = [];
-			$headers['(request-target)'] =
-				strtolower($_SERVER['REQUEST_METHOD']) . ' ' .
-				$_SERVER['REQUEST_URI'];
-			$headers['content-type'] = $_SERVER['CONTENT_TYPE'];
-
-			foreach($_SERVER as $k => $v) {
-				if(strpos($k,'HTTP_') === 0) {
-					$field = str_replace('_','-',strtolower(substr($k,5)));
-					$headers[$field] = $v;
-				}
-			}
-		}
-
-		// logger('SERVER: ' . print_r($_SERVER,true), LOGGER_ALL);
-
-		// logger('headers: ' . print_r($headers,true), LOGGER_ALL);
+		if(! $headers)
+			return $result;
 
 		$sig_block = null;
 
@@ -129,21 +139,12 @@ class HTTPSig {
 			$algorithm = 'sha512';
 		}
 
-		if($key && function_exists($key)) {
-			$result['signer'] = $sig_block['keyId'];
-			$key = $key($sig_block['keyId']);
-		}
+		if(! array_key_exists('keyId',$sig_block))
+			return $result;
 
+		$result['signer'] = $sig_block['keyId'];
 
-		if(! $key) {
-			$result['signer'] = $sig_block['keyId'];
-			$key = self::get_webfinger_key($sig_block['keyId']);
-		}
-
-		if(! $key) {
-			$result['signer'] = $sig_block['keyId'];
-			$key = self::get_activitypub_key($sig_block['keyId']);
-		}
+		$key = self::get_key($key,$result['signer']);
 
 		if(! $key)
 			return $result;
@@ -192,6 +193,26 @@ class HTTPSig {
 		return $result;
 	}
 
+	static function get_key($key,$id) {
+
+		if($key && function_exists($key)) {
+			$key = $key($id);
+		}
+
+		if(! $key) {
+			$key = self::get_webfinger_key($id);
+		}
+
+		if(! $key) {
+			$key = self::get_activitystreams_key($id);
+		}
+
+		return $key;
+
+	}
+
+
+
 	/**
 	 * @brief
 	 *
@@ -199,25 +220,19 @@ class HTTPSig {
 	 * @return boolean|string
 	 *   false if no pub key found, otherwise return the pub key
 	 */
-	function get_activitypub_key($id) {
 
-		if(strpos($id,'acct:') === 0) {
-			$x = q("select xchan_pubkey from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' limit 1",
-				dbesc(str_replace('acct:','',$id))
-			);
-		}
-		else {
-			$x = q("select xchan_pubkey from xchan where xchan_hash = '%s' and xchan_network = 'activitypub' ",
-				dbesc($id)
-			);
-		}
+	function get_activitystreams_key($id) {
+
+		$x = q("select xchan_pubkey from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' limit 1",
+			dbesc(str_replace('acct:','',$id)),
+			dbesc($id)
+		);
 
 		if($x && $x[0]['xchan_pubkey']) {
 			return ($x[0]['xchan_pubkey']);
 		}
 
-		if(function_exists('as_fetch'))
-			$r = as_fetch($id);
+		$r = \Zotlabs\Lib\ActivityStreams::fetch_property($id);
 
 		if($r) {
 			$j = json_decode($r,true);
@@ -235,6 +250,14 @@ class HTTPSig {
 
 
 	function get_webfinger_key($id) {
+
+		$x = q("select xchan_pubkey from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' limit 1",
+			dbesc(str_replace('acct:','',$id)),
+			dbesc($id)
+		);
+		if($x && $x[0]['xchan_pubkey']) {
+			return $x[0]['xchan_pubkey'];
+		}
 
 		$wf = \Zotlabs\Lib\Webfinger::exec($id);
 
@@ -376,6 +399,8 @@ class HTTPSig {
 
 		if(preg_match('/iv="(.*?)"/ism',$header,$matches))
 			$header = self::decrypt_sigheader($header);
+
+logger('decrypted sigheader: ' . print_r($header,true));
 
 		if(preg_match('/keyId="(.*?)"/ism',$header,$matches))
 			$ret['keyId'] = $matches[1];
