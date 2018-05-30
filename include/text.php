@@ -3333,4 +3333,24 @@ function unique_multidim_array($array, $key) {
         $i++;
     }
     return $temp_array;
-} 
+}
+
+function network_qstring($req) {
+
+	$ret = '?f=';
+
+	if(x($req, 'cid'))
+		$ret .= '&cid=' . $req['cid'];
+
+	if(x($req, 'gid'))
+		$ret .= '&gid=' . $req['gid'];
+
+	if(x($req, 'star'))
+		$ret .= '&star=' . $req['star'];
+
+	if(x($req, 'conv'))
+		$ret .= '&conv=' . $req['conv'];
+
+	return $ret;
+
+}

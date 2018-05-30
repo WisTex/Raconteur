@@ -386,21 +386,21 @@ function get_features($filtered = true, $level = (-1)) {
 			],
 
 			[
-				'personal_tab',   
-				t('Network Personal Tab'),		
+				'order_tab',
+				t('Alternate Stream Order'),
+				t('Ability to order the stream by last post date, last comment date or unthreaded activities'),
+				false,
+				get_config('feature_lock','order_tab'),
+				feature_level('order_tab',2),
+			],
+
+			[
+				'personal_tab',
+				t('Network Personal Tab'),
 				t('Enable tab to display only Network posts that you\'ve interacted on'),
 				false,
 				get_config('feature_lock','personal_tab'),
 				feature_level('personal_tab',1),
-			],
-
-			[
-				'new_tab',   		
-				t('Network New Tab'),			
-				t('Enable tab to display all new Network activity'),
-				false,
-				get_config('feature_lock','new_tab'),
-				feature_level('new_tab',2),
 			],
 
 			[

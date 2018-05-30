@@ -1,5 +1,7 @@
 [region=aside]
+[widget=activity_order][/widget]
 [widget=collections][/widget]
+[widget=activity_filter][/widget]
 [widget=forums][/widget]
 [widget=suggestions][/widget]
 [widget=savedsearch][/widget]

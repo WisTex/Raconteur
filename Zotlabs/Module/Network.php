@@ -57,13 +57,26 @@ class Network extends \Zotlabs\Web\Controller {
 	
 		$datequery  = ((x($_GET,'dend') && is_a_date_arg($_GET['dend'])) ? notags($_GET['dend']) : '');
 		$datequery2 = ((x($_GET,'dbegin') && is_a_date_arg($_GET['dbegin'])) ? notags($_GET['dbegin']) : '');
-		$nouveau    = ((x($_GET,'new')) ? intval($_GET['new']) : 0);
 		$static     = ((x($_GET,'static')) ? intval($_GET['static']) : 0); 
 		$gid        = ((x($_GET,'gid')) ? intval($_GET['gid']) : 0);
 		$category   = ((x($_REQUEST,'cat')) ? $_REQUEST['cat'] : '');
 		$hashtags   = ((x($_REQUEST,'tag')) ? $_REQUEST['tag'] : '');
 		$verb       = ((x($_REQUEST,'verb')) ? $_REQUEST['verb'] : '');
-	
+
+
+		$order = get_pconfig(local_channel(), 'mod_network', 'order', 0);
+		switch($order) {
+			case 0:
+				$order = 'comment';
+				break;
+			case 1:
+				$order = 'post';
+				break;
+			case 2:
+				$nouveau = true;
+				break;
+		}
+
 		$search = (($_GET['search']) ? $_GET['search'] : '');
 		if($search) {
 			$_GET['netsearch'] = escape_tags($search);
@@ -84,7 +97,7 @@ class Network extends \Zotlabs\Web\Controller {
 		}
 	
 		if($datequery)
-			$_GET['order'] = 'post';
+			$order = 'post';
 	
 	
 		// filter by collection (e.g. group)
@@ -150,7 +163,7 @@ class Network extends \Zotlabs\Web\Controller {
 		}
 	
 		if(! $update) {
-			$tabs = network_tabs();
+			$tabs = ''; //network_tabs();
 			$o .= $tabs;
 	
 			// search terms header
