@@ -84,6 +84,7 @@ class Channel extends \Zotlabs\Web\Controller {
 		$hashtags = ((x($_REQUEST,'tag')) ? $_REQUEST['tag'] : '');
 		$order    = ((x($_GET,'order')) ? notags($_GET['order']) : 'post');
 		$static   = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
+		$search   = ((x($_GET,'search')) ? $_GET['search'] : EMPTY_STR);
 
 		$groups = array();
 
@@ -119,9 +120,12 @@ class Channel extends \Zotlabs\Web\Controller {
 
 			$static = channel_manual_conv_update(\App::$profile['profile_uid']);
 
-			//$o .= profile_tabs($a, $is_owner, \App::$profile['channel_address']);
-
-			// $o .= common_friends_visitor_widget(\App::$profile['profile_uid']);
+			// search terms header
+			if($search) {
+				$o .= replace_macros(get_markup_template("section_title.tpl"),array(
+					'$title' => t('Search Results For:') . ' ' . htmlspecialchars($search, ENT_COMPAT,'UTF-8')
+				));
+			}
 
 			if($channel && $is_owner) {
 				$channel_acl = array(
@@ -180,15 +184,13 @@ class Channel extends \Zotlabs\Web\Controller {
 
 		$simple_update = (($update) ? " AND item_unseen = 1 " : '');
 
-
-		$search = EMPTY_STR;
-		if(x($_GET,'search')) {
-			$search = escape_tags($_GET['search']);
+		if($search) {
+			$search = escape_tags($search);
 			if(strpos($search,'#') === 0) {
-				$sql_extra2 .= term_query('item',substr($search,1),TERM_HASHTAG,TERM_COMMUNITYTAG);
+				$sql_extra .= term_query('item',substr($search,1),TERM_HASHTAG,TERM_COMMUNITYTAG);
 			}
 			else {
-				$sql_extra2 .= sprintf(" AND item.body like '%s' ",
+				$sql_extra .= sprintf(" AND item.body like '%s' ",
 					dbesc(protect_sprintf('%' . $search . '%'))
 				);
 			}
@@ -255,7 +257,7 @@ class Channel extends \Zotlabs\Web\Controller {
 				$sql_extra2 .= " and item.item_thread_top != 0 ";
 			}
 
-	        if($order === 'post')
+			if($order === 'post')
 				$ordering = "created";
 			else
 				$ordering = "commented";
@@ -282,7 +284,7 @@ class Channel extends \Zotlabs\Web\Controller {
 						WHERE true and item.uid = %d $item_normal
 						AND (abook.abook_blocked = 0 or abook.abook_flags is null)
 						AND item.item_wall = 1 
-						$sql_extra $sql_extra2
+						$sql_extra $sql_extra2 
 						ORDER BY $ordering DESC, id $pager_sql ",
 						intval(\App::$profile['profile_uid'])
 					);
@@ -398,12 +400,13 @@ class Channel extends \Zotlabs\Web\Controller {
 			}
 		}
 
+		$mode = (($search) ? 'search' : 'channel');
 
 		if($checkjs->disabled()) {
-			$o .= conversation($items,'channel',$update,'traditional');
+			$o .= conversation($items,$mode,$update,'traditional');
 		}
 		else {
-			$o .= conversation($items,'channel',$update,$page_mode);
+			$o .= conversation($items,$mode,$update,$page_mode);
 		}
 
 		if((! $update) || ($checkjs->disabled())) {

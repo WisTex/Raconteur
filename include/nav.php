@@ -168,7 +168,19 @@ function nav($template = 'default') {
 		$nav['help'] = [$help_url, t('Help'), "", t('Help and documentation'), 'help_nav_btn', $context_help, $enable_context_help];
 	}
 
-	$nav['search'] = ['search', t('Search'), "", t('Search site @name, !forum, #tag, ?docs, content')];
+	switch(App::$module) {
+		case 'network':
+			$search_form_action = 'network';
+			break;
+		case 'channel':
+			$search_form_action = 'channel';
+			break;
+		default:
+			$search_form_action = 'search';
+	}
+
+
+	$nav['search'] = ['search', t('Search'), "", t('Search site @name, !forum, #tag, ?docs, content'), $search_form_action];
 
 
 	/**

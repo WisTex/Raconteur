@@ -138,6 +138,7 @@ class Network extends \Zotlabs\Web\Controller {
 	
 		if(x($_GET,'search') || x($_GET,'file'))
 			$nouveau = true;
+
 		if($cid) {
 			$r = q("SELECT abook_xchan, xchan_addr, xchan_url FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_id = %d AND abook_channel = %d LIMIT 1",
 				intval($cid),
@@ -567,6 +568,9 @@ class Network extends \Zotlabs\Web\Controller {
 		}
 	
 		$mode = (($nouveau) ? 'network-new' : 'network');
+
+		if($search)
+			$mode = 'search';
 	
 		$o .= conversation($items,$mode,$update,$page_mode);
 	
