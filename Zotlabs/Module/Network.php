@@ -120,16 +120,11 @@ class Network extends \Zotlabs\Web\Controller {
 			$def_acl    = array('allow_gid' => '<' . $r[0]['hash'] . '>');
 		}
 	
-	
 		$default_cmin = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmin',0) : 0);
 		$default_cmax = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmax',99) : 99);
 
-	
-		// if no tabs are selected, defaults to comments
-	
 		$cid      = ((x($_GET,'cid'))   ? intval($_GET['cid'])   : 0);
 		$star     = ((x($_GET,'star'))  ? intval($_GET['star'])  : 0);
-		$order    = ((x($_GET,'order')) ? notags($_GET['order']) : 'comment');
 		$liked    = ((x($_GET,'liked')) ? intval($_GET['liked']) : 0);
 		$conv     = ((x($_GET,'conv'))  ? intval($_GET['conv'])  : 0);
 		$spam     = ((x($_GET,'spam'))  ? intval($_GET['spam'])  : 0);
