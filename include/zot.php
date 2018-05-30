@@ -1392,7 +1392,7 @@ logger('deliveries: ' . print_r($deliveries,true));
 						if($r) {
 							$arr['author_xchan'] = $r[0]['hubloc_hash'];
 						}
-						// @fixme
+						// @fixme (in individual delivery, change owner if needed)
 						$arr['owner_xchan'] = $i['notify']['sender']['hash'];						
 
 					}
