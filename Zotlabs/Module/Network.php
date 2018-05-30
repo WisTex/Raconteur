@@ -15,6 +15,9 @@ class Network extends \Zotlabs\Web\Controller {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
+
+		if(strpos($_GET['search'], ['@', '!', '?']) == 0)
+			goaway('search' . '?f=&search=' . $_GET['search']);
 	
 		if(count($_GET) < 2) {
 			$network_options = get_pconfig(local_channel(),'system','network_page_default');
