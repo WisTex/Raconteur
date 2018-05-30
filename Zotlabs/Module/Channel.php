@@ -82,6 +82,7 @@ class Channel extends \Zotlabs\Web\Controller {
 
 		$category = ((x($_REQUEST,'cat')) ? $_REQUEST['cat'] : '');
 		$hashtags = ((x($_REQUEST,'tag')) ? $_REQUEST['tag'] : '');
+		$order    = ((x($_GET,'order')) ? notags($_GET['order']) : 'post');
 		$static   = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
 
 		$groups = array();
@@ -244,6 +245,7 @@ class Channel extends \Zotlabs\Web\Controller {
 
 			if($datequery) {
 				$sql_extra2 .= protect_sprintf(sprintf(" AND item.created <= '%s' ", dbesc(datetime_convert(date_default_timezone_get(),'',$datequery))));
+				$order = 'post';
 			}
 			if($datequery2) {
 				$sql_extra2 .= protect_sprintf(sprintf(" AND item.created >= '%s' ", dbesc(datetime_convert(date_default_timezone_get(),'',$datequery2))));
@@ -252,6 +254,12 @@ class Channel extends \Zotlabs\Web\Controller {
 			if($datequery || $datequery2) {
 				$sql_extra2 .= " and item.item_thread_top != 0 ";
 			}
+
+	        if($order === 'post')
+				$ordering = "created";
+			else
+				$ordering = "commented";
+
 
 			$itemspage = get_pconfig(local_channel(),'system','itemspage');
 			\App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
@@ -275,7 +283,7 @@ class Channel extends \Zotlabs\Web\Controller {
 						AND (abook.abook_blocked = 0 or abook.abook_flags is null)
 						AND item.item_wall = 1 
 						$sql_extra $sql_extra2
-						ORDER BY created DESC, id $pager_sql ",
+						ORDER BY $ordering DESC, id $pager_sql ",
 						intval(\App::$profile['profile_uid'])
 					);
 				}
@@ -284,7 +292,6 @@ class Channel extends \Zotlabs\Web\Controller {
 				$r = array();
 			}
 		}
-
 		if($r) {
 
 			$parents_str = ids_to_querystr($r,'item_id');
@@ -300,7 +307,7 @@ class Channel extends \Zotlabs\Web\Controller {
 
 			xchan_query($items);
 			$items = fetch_post_tags($items, true);
-			$items = conv_sort($items,'created');
+			$items = conv_sort($items,$ordering);
 
 			if($load && $mid && (! count($items))) {
 				// This will happen if we don't have sufficient permissions
@@ -345,7 +352,7 @@ class Channel extends \Zotlabs\Web\Controller {
 				'$page' => ((\App::$pager['page'] != 1) ? \App::$pager['page'] : 1),
 				'$search' => $search,
 				'$xchan' => '',
-				'$order' => '',
+				'$order' => $order,
 				'$list' => ((x($_REQUEST,'list')) ? intval($_REQUEST['list']) : 0),
 				'$file' => '',
 				'$cats' => (($category) ? urlencode($category) : ''),
