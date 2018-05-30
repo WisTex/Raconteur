@@ -18,7 +18,7 @@ class Channel extends \Zotlabs\Web\Controller {
 
 	function init() {
 
-		if(strpos($_GET['search'], ['@', '!', '?']) == 0)
+		if(strpos($_GET['search'], '@') === 0 || strpos($_GET['search'], '!') === 0 || strpos($_GET['search'], '?') === 0)
 			goaway('search' . '?f=&search=' . $_GET['search']);
 
 		$which = null;

@@ -16,7 +16,7 @@ class Network extends \Zotlabs\Web\Controller {
 			return;
 		}
 
-		if(strpos($_GET['search'], ['@', '!', '?']) == 0)
+		if(strpos($_GET['search'], '@') === 0 || strpos($_GET['search'], '!') === 0 || strpos($_GET['search'], '?') === 0)
 			goaway('search' . '?f=&search=' . $_GET['search']);
 	
 		if(count($_GET) < 2) {
