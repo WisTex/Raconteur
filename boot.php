@@ -478,6 +478,7 @@ define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.2' );
 define ( 'ACTIVITY_PUBLIC_INBOX', 'https://www.w3.org/ns/activitystreams#Public' );
 
 define ( 'ACTIVITY_POST',        'Create' );
+define ( 'ACTIVITY_CREATE',      'Create' );
 define ( 'ACTIVITY_UPDATE',      'Update' );
 define ( 'ACTIVITY_LIKE',        'Like' );
 define ( 'ACTIVITY_DISLIKE',     'Dislike' );
@@ -661,7 +662,7 @@ function sys_boot() {
 		App::$session->init();
 		load_hooks();
 		/**
-		 * @hooks init_1
+		 * @hooks 'startup'
 		 */
 		$arr = [];
 		call_hooks('startup',$arr);
@@ -864,9 +865,7 @@ class App {
 
 		if((x($_SERVER,'QUERY_STRING')) && substr($_SERVER['QUERY_STRING'], 0, 2) === "q=") {
 			self::$query_string = substr($_SERVER['QUERY_STRING'], 2);
-			// removing trailing / - maybe a nginx problem
-			if (substr(self::$query_string, 0, 1) == "/")
-				self::$query_string = substr(self::$query_string, 1);
+			self::$query_string = rtrim(self::$query_string, '/');
 		}
 		if(x($_GET,'q'))
 			self::$cmd = trim($_GET['q'],'/\\');

@@ -354,12 +354,12 @@ class Activity {
 
 		if(intval($i['item_deleted'])) {
 			$ret['type'] = 'Tombstone';
-			$ret['formerType'] = activity_obj_mapper($i['obj_type']);
+			$ret['formerType'] = self::activity_obj_mapper($i['obj_type']);
 			$ret['id'] = ((strpos($i['mid'],'http') === 0) ? $i['mid'] : z_root() . '/item/' . urlencode($i['mid']));
 			return $ret;
 		}
 
-		$ret['type'] = activity_mapper($i['verb']);
+		$ret['type'] = self::activity_mapper($i['verb']);
 		$ret['id']   = ((strpos($i['mid'],'http') === 0) ? $i['mid'] : z_root() . '/activity/' . urlencode($i['mid']));
 
 		if($i['title'])
@@ -1335,6 +1335,131 @@ class Activity {
 		}
 
 	}
+
+
+	static function decode_note($act) {
+
+		$s = [];
+
+		$parent = ((array_key_exists('inReplyTo',$act->obj)) ? urldecode($act->obj['inReplyTo']) : '');
+		if($parent) {
+
+			$s['parent_mid'] = $parent;
+
+		}
+
+		$s['owner_xchan'] = $act->actor['id'];
+		$s['author_xchan'] = $act->actor['id'];
+
+		$content = self::get_content($act->obj);
+
+		if(! $content) {
+			logger('no content');
+			return;
+		}
+
+		$s['aid'] = $channel['channel_account_id'];
+		$s['uid'] = $channel['channel_id'];
+		$s['mid'] = urldecode($act->obj['id']);
+
+
+		if($act->data['published']) {
+			$s['created'] = datetime_convert('UTC','UTC',$act->data['published']);
+		}
+		elseif($act->obj['published']) {
+			$s['created'] = datetime_convert('UTC','UTC',$act->obj['published']);
+		}
+		if($act->data['updated']) {
+			$s['edited'] = datetime_convert('UTC','UTC',$act->data['updated']);
+		}
+		elseif($act->obj['updated']) {
+			$s['edited'] = datetime_convert('UTC','UTC',$act->obj['updated']);
+		}
+
+		if(! $s['created'])
+			$s['created'] = datetime_convert();
+
+		if(! $s['edited'])
+			$s['edited'] = $s['created'];
+
+
+		if(! $s['parent_mid'])
+			$s['parent_mid'] = $s['mid'];
+
+		$summary = self::bb_content($content,'summary');
+
+		if($summary)
+			$summary = '[summary]' . $summary . '[/summary]';
+	
+		$s['title']    = self::bb_content($content,'name');
+		$s['body']     = $summary . self::bb_content($content,'content');
+		$s['verb']     = ACTIVITY_POST;
+		$s['obj_type'] = ACTIVITY_OBJ_NOTE;
+		$s['app']      = t('ActivityPub');
+
+
+		$a = self::decode_taxonomy($act->obj);
+		if($a) {
+			$s['term'] = $a;
+		}
+
+		$a = self::decode_attachment($act->obj);
+		if($a) {
+			$s['attach'] = $a;
+		}
+
+		if($act->obj['type'] === 'Note' && $s['attach']) {
+			$s['body'] .= self::bb_attach($s['attach']);
+		}
+
+		// we will need a hook here to extract magnet links e.g. peertube
+		// right now just link to the largest mp4 we find that will fit in our
+		// standard content region
+
+		if($act->obj['type'] === 'Video') {
+
+			$vtypes = [
+				'video/mp4',
+				'video/ogg',
+				'video/webm'
+			];
+
+			$mps = [];
+			if(array_key_exists('url',$act->obj) && is_array($act->obj['url'])) {
+				foreach($act->obj['url'] as $vurl) {
+					if(in_array($vurl['mimeType'], $vtypes)) {
+						if(! array_key_exists('width',$vurl)) {
+							$vurl['width'] = 0;
+						}
+						$mps[] = $vurl;
+					}
+				}
+			}
+			if($mps) {
+				usort($mps,'as_vid_sort');
+				foreach($mps as $m) {
+					if(intval($m['width']) < 500) {
+						$s['body'] .= "\n\n" . '[video]' . $m['href'] . '[/video]';
+						break;
+					}
+				}
+			}
+		}
+
+		if($act->recips && (! in_array(ACTIVITY_PUBLIC_INBOX,$act->recips)))
+			$s['item_private'] = 1;
+
+		set_iconfig($s,'activitypub','recips',$act->raw_recips);
+
+		if($parent) {
+			set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
+		}
+
+		return $s;
+
+	}
+
+
 
 	static function announce_note($channel,$observer_hash,$act) {
 

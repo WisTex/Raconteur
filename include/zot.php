@@ -1337,6 +1337,8 @@ function zot_import($arr, $sender_url) {
 				}
 			}
 
+logger('deliveries: ' . print_r($deliveries,true));
+
 			// Go through the hash array and remove duplicates. array_unique() won't do this because the array is more than one level.
 
 			$no_dups = array();
@@ -1365,13 +1367,34 @@ function zot_import($arr, $sender_url) {
 
 			if($i['message']) {
 				if($i['message']['type'] === 'activity') {
-					$arr = get_item_elements($i['message']);
 
-					$v = validate_item_elements($i['message'],$arr);
+					if($i['message']['encoding'] === 'zot') {
+						$arr = get_item_elements($i['message']);
 
-					if(! $v['success']) {
-						logger('Activity rejected: ' . $v['message'] . ' ' . print_r($i['message'],true));
-						continue;
+						$v = validate_item_elements($i['message'],$arr);
+				
+						if(! $v['success']) {
+							logger('Activity rejected: ' . $v['message'] . ' ' . print_r($i['message'],true));
+							continue;
+						}
+					}
+					elseif($i['message']['encoding'] === 'activitystreams') {
+
+						$AS = new \Zotlabs\Lib\ActivityStreams($i['message']['content']);
+						if(! $AS->is_valid()) {
+							logger('Activity rejected: ' . print_r($i['message'],true));
+							continue;
+						}
+						$arr = \Zotlabs\Lib\Activity::decode_note($AS);
+						$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
+							dbesc($AS->actor['id'])
+						); 
+						if($r) {
+							$arr['author_xchan'] = $r[0]['hubloc_hash'];
+						}
+						// @fixme
+						$arr['owner_xchan'] = $i['notify']['sender']['hash'];						
+
 					}
 
 					logger('Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
@@ -1483,7 +1506,7 @@ function public_recips($msg) {
 			// by the fact that this activity doesn't have the public forum tag. It's the parent activity that
 			// contains the tag. we'll solve that further below.
 
-			if($msg['notify']['sender']['guid_sig'] != $msg['message']['owner']['guid_sig']) {
+			if($msg['notify']['sender']['id_sig'] != $msg['message']['owner']['id_sig']) {
 				$perm = 'post_comments';
 			}
 		}
@@ -1596,6 +1619,9 @@ function allowed_public_recips($msg) {
 		return $recips;
 
 	if($msg['message']['type'] === 'mail')
+		return $recips;
+
+	if($msg['message']['encoding'] !== 'zot')
 		return $recips;
 
 	if($scope === 'public' || $scope === 'network: red' || $scope === 'authenticated')

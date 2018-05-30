@@ -343,7 +343,10 @@ class Notifier {
 			if($sys && $parent_item['uid'] == $sys['channel_id'])
 				return;
 
-			$encoded_item = encode_item($target_item);
+
+//			$encoded_item = encode_item($target_item);
+
+			$encoded_item = [ 'type' => 'activity', 'encoding' => 'activitystreams', 'content' => \Zotlabs\Lib\Activity::encode_activity($target_item) ];
 		
 			// Send comments to the owner to re-deliver to everybody in the conversation
 			// We only do this if the item in question originated on this site. This prevents looping.

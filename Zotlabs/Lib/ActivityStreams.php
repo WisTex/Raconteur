@@ -35,7 +35,14 @@ class ActivityStreams {
 	function __construct($string) {
 
 		$this->raw  = $string;
-		$this->data = json_decode($string, true);
+
+		if(is_array($string)) {
+			$this->data = $string;
+		}
+		else {
+			$this->data = json_decode($string, true);
+		}
+
 		if($this->data) {
 			$this->valid = true;
 		}
