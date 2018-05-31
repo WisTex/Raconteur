@@ -16,7 +16,7 @@ class Network extends \Zotlabs\Web\Controller {
 			return;
 		}
 
-		if(strpos($_GET['search'], '@') === 0 || strpos($_GET['search'], '!') === 0 || strpos($_GET['search'], '?') === 0)
+		if(in_array(substr($_GET['search'],0,1),[ '@', '!', '?']))
 			goaway('search' . '?f=&search=' . $_GET['search']);
 	
 		if(count($_GET) < 2) {
@@ -389,7 +389,7 @@ class Network extends \Zotlabs\Web\Controller {
 	
 		if($conv) {
 			$item_thread_top = '';
-			$sql_extra .= sprintf(" AND parent IN (SELECT distinct(parent) from item where ( author_xchan like '%s' or item_mentionsme = 1 )) ",
+			$sql_extra .= sprintf(" AND parent IN (SELECT distinct(parent) from item where ( author_xchan = '%s' or item_mentionsme = 1 )) ",
 				dbesc(protect_sprintf($channel['channel_hash']))
 			);
 		}

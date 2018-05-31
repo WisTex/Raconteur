@@ -56,7 +56,7 @@ class Activity_order {
 		// override order for search results and filer results
 		if(x($_GET,'search') || x($_GET,'file')) {
 			$unthreaded_active = 'active';
-			$commentord_active = $postord_active = '';
+			$commentord_active = $postord_active = 'disabled';
 		}
 
 		$cmd = \App::$cmd;
@@ -74,6 +74,9 @@ class Activity_order {
 
 		if(x($_GET,'conv'))
 			$filter .= '&conv=' . $_GET['conv'];
+
+		if(x($_GET,'file'))
+			$filter .= '&file=' . $_GET['file'];
 
 
 		// tabs
