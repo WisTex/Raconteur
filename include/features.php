@@ -73,32 +73,32 @@ function get_features($filtered = true, $level = (-1)) {
 				feature_level('advanced_profiles',1),
 			],
 
-			[
-				'profile_export',      
-				t('Profile Import/Export'),  
-				t('Save and load profile details across sites/channels'),
-				false,
-				get_config('feature_lock','profile_export'),
-				feature_level('profile_export',3),
-			],
+//			[
+//				'profile_export',      
+//				t('Profile Import/Export'),  
+//				t('Save and load profile details across sites/channels'),
+//				false,
+//				get_config('feature_lock','profile_export'),
+//				feature_level('profile_export',3),
+//			],
 
-			[
-				'webpages',            
-				t('Web Pages'),              
-				t('Provide managed web pages on your channel'),
-				false,
-				get_config('feature_lock','webpages'),
-				feature_level('webpages',3),
-			],
+//			[
+//				'webpages',            
+//				t('Web Pages'),              
+//				t('Provide managed web pages on your channel'),
+//				false,
+//				get_config('feature_lock','webpages'),
+//				feature_level('webpages',3),
+//			],
 
-			[
-				'wiki',            
-				t('Wiki'),              
-				t('Provide a wiki for your channel'),
-				false,
-				get_config('feature_lock','wiki'),
-				feature_level('wiki',2),
-			],
+//			[
+//				'wiki',            
+//				t('Wiki'),              
+//				t('Provide a wiki for your channel'),
+//				false,
+//				get_config('feature_lock','wiki'),
+//				feature_level('wiki',2),
+//			],
 /*
 			[
 				'hide_rating',       
@@ -118,14 +118,14 @@ function get_features($filtered = true, $level = (-1)) {
 				feature_level('private_notes',1),
 			],
 
-			[
-				'cards',       
-				t('Cards'),          
-				t('Create personal planning cards'),
-				false,
-				get_config('feature_lock','cards'),
-				feature_level('cards',1),
-			],
+//			[
+//				'cards',       
+//				t('Cards'),          
+//				t('Create personal planning cards'),
+//				false,
+//				get_config('feature_lock','cards'),
+//				feature_level('cards',1),
+//			],
 
 
 			[
@@ -137,14 +137,14 @@ function get_features($filtered = true, $level = (-1)) {
 				feature_level('articles',1),
 			],
 
-			[
-				'nav_channel_select',  
-				t('Navigation Channel Select'), 
-				t('Change channels directly from within the navigation dropdown menu'),
-				false,
-				get_config('feature_lock','nav_channel_select'),
-				feature_level('nav_channel_select',3),
-			],
+//			[
+//				'nav_channel_select',  
+//				t('Navigation Channel Select'), 
+//				t('Change channels directly from within the navigation dropdown menu'),
+//				false,
+//				get_config('feature_lock','nav_channel_select'),
+//				feature_level('nav_channel_select',3),
+//			],
 
 			[
 				'photo_location',       
@@ -155,24 +155,24 @@ function get_features($filtered = true, $level = (-1)) {
 				feature_level('photo_location',2),
 			],
 
-			[
-				'ajaxchat',       
-				t('Access Controlled Chatrooms'),          
-				t('Provide chatrooms and chat services with access control.'),
-				true,
-				get_config('feature_lock','ajaxchat'),
-				feature_level('ajaxchat',1),
-			],
+//			[
+//				'ajaxchat',       
+//				t('Access Controlled Chatrooms'),          
+//				t('Provide chatrooms and chat services with access control.'),
+//				true,
+//				get_config('feature_lock','ajaxchat'),
+//				feature_level('ajaxchat',1),
+//			],
 
 
-			[
-				'smart_birthdays',       
-				t('Smart Birthdays'),          
-				t('Make birthday events timezone aware in case your friends are scattered across the planet.'),
-				true,
-				get_config('feature_lock','smart_birthdays'),
-				feature_level('smart_birthdays',2),
-			],
+//			[
+//				'smart_birthdays',       
+//				t('Smart Birthdays'),          
+//				t('Make birthday events timezone aware in case your friends are scattered across the planet.'),
+//				true,
+//				get_config('feature_lock','smart_birthdays'),
+//				feature_level('smart_birthdays',2),
+//			],
 
 			[
 				'event_tz_select',       
@@ -184,14 +184,14 @@ function get_features($filtered = true, $level = (-1)) {
 			],
 
 
-			[
-				'premium_channel', 
-				t('Premium Channel'), 
-				t('Allows you to set restrictions and terms on those that connect with your channel'),
-				false,
-				get_config('feature_lock','premium_channel'),
-				feature_level('premium_channel',4),
-			],
+//			[
+//				'premium_channel', 
+//				t('Premium Channel'), 
+//				t('Allows you to set restrictions and terms on those that connect with your channel'),
+//				false,
+//				get_config('feature_lock','premium_channel'),
+//				feature_level('premium_channel',4),
+//			],
 
 			[ 
 				'advanced_dirsearch', 
@@ -225,33 +225,33 @@ function get_features($filtered = true, $level = (-1)) {
 				feature_level('groups',0),
 			],
 
-			[
-				'multi_profiles',      
-				t('Multiple Profiles'),      
-				t('Ability to create multiple profiles'), 
-				false, 
-				get_config('feature_lock','multi_profiles'),
-				feature_level('multi_profiles',3),
-			],
+//			[
+//				'multi_profiles',      
+//				t('Multiple Profiles'),      
+//				t('Ability to create multiple profiles'), 
+//				false, 
+//				get_config('feature_lock','multi_profiles'),
+//				feature_level('multi_profiles',3),
+//			],
 
 
-			[
-				'permcats',       
-				t('Permission Categories'),
-				t('Create custom connection permission limits'),
-				false,
-				get_config('feature_lock','permcats'),
-				feature_level('permcats',2),
-			],
+//			[
+//				'permcats',       
+//				t('Permission Categories'),
+//				t('Create custom connection permission limits'),
+//				false,
+//				get_config('feature_lock','permcats'),
+//				feature_level('permcats',2),
+//			],
 
-			[
-				'oauth_clients',       
-				t('OAuth1 Clients'),          
-				t('Manage OAuth1 authenticatication tokens for mobile and remote apps.'),
-				false,
-				get_config('feature_lock','oauth_clients'),
-				feature_level('oauth_clients',1),
-			],
+//			[
+//				'oauth_clients',       
+//				t('OAuth1 Clients'),          
+//				t('Manage OAuth1 authenticatication tokens for mobile and remote apps.'),
+//				false,
+//				get_config('feature_lock','oauth_clients'),
+//				feature_level('oauth_clients',1),
+//			],
 
 			[
 				'oauth2_clients',       
@@ -262,14 +262,14 @@ function get_features($filtered = true, $level = (-1)) {
 				feature_level('oauth2_clients',1),
 			],
 
-			[
-				'access_tokens',       
-				t('Access Tokens'),          
-				t('Create access tokens so that non-members can access private content.'),
-				false,
-				get_config('feature_lock','access_tokens'),
-				feature_level('access_tokens',2),
-			],
+//			[
+//				'access_tokens',       
+//				t('Access Tokens'),          
+//				t('Create access tokens so that non-members can access private content.'),
+//				false,
+//				get_config('feature_lock','access_tokens'),
+//				feature_level('access_tokens',2),
+//			],
 
 		],
 
@@ -278,77 +278,77 @@ function get_features($filtered = true, $level = (-1)) {
 
 			t('Post Composition Features'),
 
-			[
-				'large_photos',   
-				t('Large Photos'),              
-				t('Include large (1024px) photo thumbnails in posts. If not enabled, use small (640px) photo thumbnails'),
-				false,
-				get_config('feature_lock','large_photos'),
-				feature_level('large_photos',1),
-			],
+//			[
+//				'large_photos',   
+//				t('Large Photos'),              
+//				t('Include large (1024px) photo thumbnails in posts. If not enabled, use small (640px) photo thumbnails'),
+//				false,
+//				get_config('feature_lock','large_photos'),
+//				feature_level('large_photos',1),
+//			],
 
-			[
-				'channel_sources', 
-				t('Channel Sources'),          
-				t('Automatically import channel content from other channels or feeds'),
-				false,
-				get_config('feature_lock','channel_sources'),
-				feature_level('channel_sources',3),
-			],
+//			[
+//				'channel_sources', 
+//				t('Channel Sources'),          
+//				t('Automatically import channel content from other channels or feeds'),
+//				false,
+//				get_config('feature_lock','channel_sources'),
+//				feature_level('channel_sources',3),
+//			],
 			
-			[
-				'content_encrypt', 
-				t('Even More Encryption'),          
-				t('Allow optional encryption of content end-to-end with a shared secret key'),
-				false,
-				get_config('feature_lock','content_encrypt'),
-				feature_level('content_encrypt',3),
-			],
+//			[
+//				'content_encrypt', 
+//				t('Even More Encryption'),          
+//				t('Allow optional encryption of content end-to-end with a shared secret key'),
+//				false,
+//				get_config('feature_lock','content_encrypt'),
+//				feature_level('content_encrypt',3),
+//			],
 			
-			[
-				'consensus_tools', 
-				t('Enable Voting Tools'),      
-				t('Provide a class of post which others can vote on'),
-				false,
-				get_config('feature_lock','consensus_tools'),
-				feature_level('consensus_tools',3),
-			],
+//			[
+//				'consensus_tools', 
+//				t('Enable Voting Tools'),      
+//				t('Provide a class of post which others can vote on'),
+//				false,
+//				get_config('feature_lock','consensus_tools'),
+//				feature_level('consensus_tools',3),
+//			],
 
-			[
-				'disable_comments', 
-				t('Disable Comments'),      
-				t('Provide the option to disable comments for a post'),
-				false,
-				get_config('feature_lock','disable_comments'),
-				feature_level('disable_comments',2),
-			],
+//			[
+//				'disable_comments', 
+//				t('Disable Comments'),      
+//				t('Provide the option to disable comments for a post'),
+//				false,
+//				get_config('feature_lock','disable_comments'),
+//				feature_level('disable_comments',2),
+//			],
 
-			[
-				'delayed_posting', 
-				t('Delayed Posting'),      
-				t('Allow posts to be published at a later date'),
-				false,
-				get_config('feature_lock','delayed_posting'),
-				feature_level('delayed_posting',2),
-			],
+//			[
+//				'delayed_posting', 
+//				t('Delayed Posting'),      
+//				t('Allow posts to be published at a later date'),
+//				false,
+//				get_config('feature_lock','delayed_posting'),
+//				feature_level('delayed_posting',2),
+//			],
 
-			[ 	
-				'content_expire',
-				t('Content Expiration'),
-				t('Remove posts/comments and/or private messages at a future time'), 
-				false, 
-				get_config('feature_lock','content_expire'),
-				feature_level('content_expire',1),
-			],
+//			[ 	
+//				'content_expire',
+//				t('Content Expiration'),
+//				t('Remove posts/comments and/or private messages at a future time'), 
+//				false, 
+//				get_config('feature_lock','content_expire'),
+//				feature_level('content_expire',1),
+//			],
 
-			[
-				'suppress_duplicates', 
-				t('Suppress Duplicate Posts/Comments'),  
-				t('Prevent posts with identical content to be published with less than two minutes in between submissions.'),
-				true,
-				get_config('feature_lock','suppress_duplicates'),
-				feature_level('suppress_duplicates',1),
-			],
+//			[
+//				'suppress_duplicates', 
+//				t('Suppress Duplicate Posts/Comments'),  
+//				t('Prevent posts with identical content to be published with less than two minutes in between submissions.'),
+//				true,
+//				get_config('feature_lock','suppress_duplicates'),
+//				feature_level('suppress_duplicates',1),
+//			],
 
 			[
 				'auto_save_draft', 
@@ -483,15 +483,15 @@ function get_features($filtered = true, $level = (-1)) {
 				feature_level('dislike',1),
 			],
 
-			[
-				'star_posts',     
-				t('Star Posts'),				
-				t('Ability to mark special posts with a star indicator'),
-				false,
-				get_config('feature_lock','star_posts'),
-				feature_level('star_posts',1),
-			],
-
+//			[
+//				'star_posts',     
+//				t('Star Posts'),				
+//				t('Ability to mark special posts with a star indicator'),
+//				false,
+//				get_config('feature_lock','star_posts'),
+//				feature_level('star_posts',1),
+//			],
+//
 			[
 				'tagadelic',      
 				t('Tag Cloud'),				    

@@ -41,7 +41,7 @@ class HTTPSig {
 		}
 	}
 
-	static function find_headers($data) {
+	static function find_headers($data,&$body) {
 
 		// decide if $data arrived via controller submission or curl
 
@@ -92,7 +92,7 @@ class HTTPSig {
 		];
 
 
-		$headers = self::find_headers($data);
+		$headers = self::find_headers($data,$body);
 
 		if(! $headers)
 			return $result;
@@ -161,14 +161,13 @@ class HTTPSig {
 
 		if(in_array('digest',$signed_headers)) {
 			$result['content_signed'] = true;
-			$digest = explode('=', $headers['digest']);
+			$digest = explode('=', $headers['digest'], 2);
 			if($digest[0] === 'SHA-256')
 				$hashalg = 'sha256';
 			if($digest[0] === 'SHA-512')
 				$hashalg = 'sha512';
 
-			// The explode operation will have stripped the '=' padding, so compare against unpadded base64
-			if(rtrim(base64_encode(hash($hashalg,$body,true)),'=') === $digest[1]) {
+			if(base64_encode(hash($hashalg,$body,true)) === $digest[1]) {
 				$result['content_valid'] = true;
 			}
 		}
@@ -176,14 +175,13 @@ class HTTPSig {
 
 		if(in_array('x-zot-digest',$signed_headers)) {
 			$result['content_signed'] = true;
-			$digest = explode('=', $headers['x-zot-digest']);
+			$digest = explode('=', $headers['x-zot-digest'],2);
 			if($digest[0] === 'SHA-256')
 				$hashalg = 'sha256';
 			if($digest[0] === 'SHA-512')
 				$hashalg = 'sha512';
 
-			// The explode operation will have stripped the '=' padding, so compare against unpadded base64
-			if(rtrim(base64_encode(hash($hashalg,$_POST['data'],true)),'=') === $digest[1]) {
+			if(base64_encode(hash($hashalg,$_POST['data'],true)) === $digest[1]) {
 				$result['content_valid'] = true;
 			}
 		}

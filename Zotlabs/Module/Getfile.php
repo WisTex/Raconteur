@@ -31,14 +31,13 @@ class Getfile extends \Zotlabs\Web\Controller {
 		$header_verified = false;
 
 		$hash     = $_POST['hash'];
-		$time     = $_POST['time'];
-		$sig      = $_POST['signature'];
 		$resource = $_POST['resource'];
 		$revision = intval($_POST['revision']);
 		$resolution = (-1);
 
-		if(! $hash)
+		if(! $hash) {
 			killme();
+		}
 
 		foreach([ 'REDIRECT_REMOTE_USER', 'HTTP_AUTHORIZATION' ] as $head) {
 			if(array_key_exists($head,$_SERVER) && substr(trim($_SERVER[$head]),0,9) === 'Signature') {
@@ -47,36 +46,26 @@ class Getfile extends \Zotlabs\Web\Controller {
 					continue;
 				}
 
-				$sigblock = \Zotlabs\Web\HTTPSig::parse_sigheader($_SERVER[$head]);
-				if($sigblock) {
-					$keyId = $sigblock['keyId'];
-
-					if($keyId) {
-						$r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash 
-							where hubloc_addr = '%s' limit 1",
-							dbesc(str_replace('acct:','',$keyId))
-						);
-						if($r) {
-							$hubloc = $r[0];
-							$verified = \Zotlabs\Web\HTTPSig::verify('',$hubloc['xchan_pubkey']);	
-							if($verified && $verified['header_signed'] && $verified['header_valid'] && $hash == $hubloc['hubloc_hash']) {
-								$header_verified = true;
-							}
-						}
+				$verified = \Zotlabs\Web\HTTPSig::verify('');	
+				if($verified && $verified['header_signed'] && $verified['header_valid']) {
+					$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' or hubloc_addr = '%s' limit 1",
+						dbesc($verified['signer']),
+						dbesc(str_replace('acct:','',$verified['signer']))
+					);
+					if($r && $r[0]['hubloc_hash'] === $hash) {
+						$header_verified = true;
 					}
 				}
 			}
 		}
 
-
-		logger('post: ' . print_r($_POST,true),LOGGER_DEBUG,LOG_INFO);
-		if($header_verified) {
-				logger('HTTPSig verified');
+		if(! $header_verified) {
+			http_status_exit(403,'Permission denied');
 		}	
-	
+
 		$channel = channelx_by_hash($hash);
 
-		if((! $channel) || (! $time) || (! $sig)) {
+		if(! $channel) {
 			logger('error: missing info');
 			killme();
 		}
@@ -85,25 +74,6 @@ class Getfile extends \Zotlabs\Web\Controller {
 			$resolution = intval(substr($resource,-1,1));
 			$resource = substr($resource,0,-2);
 		}			
-
-		$slop = intval(get_pconfig($channel['channel_id'],'system','getfile_time_slop'));
-		if($slop < 1)
-			$slop = 3;
-	
-		$d1 = datetime_convert('UTC','UTC',"now + $slop minutes");
-		$d2 = datetime_convert('UTC','UTC',"now - $slop minutes");	
-	
-		if(! $header_verified) {
-			if(($time > $d1) || ($time < $d2)) {
-				logger('time outside allowable range');
-				killme();
-			}
-	
-			if(! zot_verify($hash . '.' . $time,base64url_decode($sig),$channel['channel_pubkey'])) {
-				logger('verify failed.');
-				killme();
-			}
-		}
 
 		if($resolution > 0) {
 			$r = q("select * from photo where resource_id = '%s' and uid = %d limit 1",

@@ -47,7 +47,7 @@ class Receiver {
 			$this->response['message'] = 'no data';
 		}
 
-		// logger('received: ' . print_r($this->data,true), LOGGER_DATA);
+		logger('received: ' . print_r($this->data,true), LOGGER_DATA);
 
 		if ($this->data && is_array($this->data)) {
 			$this->encrypted = ((array_key_exists('encrypted',$this->data) && intval($this->data['encrypted'])) ? true : false);

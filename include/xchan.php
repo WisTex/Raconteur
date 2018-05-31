@@ -62,8 +62,8 @@ function xchan_store($arr) {
 		$arr['photo'] = z_root() . '/' . get_default_profile_photo();
 
 
-	if($arr['network'] === 'zot') {
-		if((! $arr['key']) || (! zot_verify($arr['guid'],base64url_decode($arr['guid_sig']),$arr['key']))) {
+	if($arr['network'] === 'zot6') {
+		if((! $arr['key']) || (! zot_verify($arr['id'],$arr['id_sig'],$arr['key']))) {
 			logger('Unable to verify signature for ' . $arr['hash']);
 			return false;
 		}

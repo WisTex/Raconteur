@@ -5067,21 +5067,13 @@ function zot_reply_refresh($sender, $recipients,$hubs) {
 				dbesc($recip['id_sig'])
 			);
 
-			$x = zot_refresh(array(
-					'xchan_guid'     => $sender['id'],
-					'xchan_guid_sig' => $sender['id_sig'],
-					'hubloc_url'     => $sender['location']
-			), $r[0], (($msgtype === 'force_refresh') ? true : false));
+			$x = zot_refresh( [ 'hubloc_id_url' => $sender['id_url'] ], $r[0], (($msgtype === 'force_refresh') ? true : false));
 		}
 	}
 	else {
 		// system wide refresh
 
-		$x = zot_refresh(array(
-			'xchan_guid'     => $sender['id'],
-			'xchan_guid_sig' => $sender['id_sig'],
-			'hubloc_url'     => $sender['location']
-		), null, (($msgtype === 'force_refresh') ? true : false));
+		$x = zot_refresh( [ 'hubloc_id_url' => $sender['id_url'] ], null, (($msgtype === 'force_refresh') ? true : false));
 	}
 
 	$ret['success'] = true;

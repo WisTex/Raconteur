@@ -1222,8 +1222,15 @@ class Activity {
 		$s['body']     = $summary . self::bb_content($content,'content');
 		$s['verb']     = ACTIVITY_POST;
 		$s['obj_type'] = ACTIVITY_OBJ_NOTE;
-		$s['app']      = t('ActivityPub');
 
+		$instrument = $act->get_property_obj('instrument');
+		if(! $instrument)
+			$instrument = $act->get_property_obj('instrument',$act->obj);
+
+		if($instrument && array_key_exists('type',$instrument) 
+			&& $instrument['type'] === 'Service' && array_key_exists('name',$instrument)) {
+			$s['app'] = $instrument['name'];
+		}
 
 		if($channel['channel_system']) {
 			if(! \Zotlabs\Lib\MessageFilter::evaluate($s,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {

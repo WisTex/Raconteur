@@ -228,7 +228,7 @@ function queue_deliver($outq, $immediate = false) {
 
 	$channel = null;
 
-	if($outq['outq_msg'] && $outq['outq_channel']) {
+	if($outq['outq_channel']) {
 		$channel = channelx_by_n($outq['outq_channel']);
 	}
 
