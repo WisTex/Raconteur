@@ -86,19 +86,19 @@ class Activity_order {
 			'label' => t('Commented Date'),
 			'url'=>z_root() . '/' . $cmd . '?f=&order=comment' . $filter,
 			'sel'=> $commentord_active,
-			'title' => t('Sort by Comment Date'),
+			'title' => t('Order by last commented date'),
 		];
 		$tabs[] = [
 			'label' => t('Posted Date'),
 			'url'=>z_root() . '/' . $cmd . '?f=&order=post' . $filter,
 			'sel'=> $postord_active,
-			'title' => t('Sort by Post Date'),
+			'title' => t('Order by last posted date'),
 		];
 		$tabs[] = array(
 			'label' => t('Date Unthreaded'),
 			'url' => z_root() . '/' . $cmd . '?f=&order=unthreaded' . $filter,
 			'sel' => $unthreaded_active,
-			'title' => t('Activity Stream - by date'),
+			'title' => t('Order unthreaded by date'),
 		);
 
 		$arr = ['tabs' => $tabs];
@@ -109,7 +109,7 @@ class Activity_order {
 
 		if($arr['tabs']) {
 			return replace_macros($tpl, [
-				'$title' => t('Order Activity by'),
+				'$title' => t('Activity Order'),
 				'$tabs' => $arr['tabs'],
 			]);
 		}
