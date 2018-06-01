@@ -10,12 +10,14 @@ class Activity_filter {
 			return '';
 
 		$cmd = \App::$cmd;
+		$filter_active = false;
 
 		$tabs = [];
 
 		if(feature_enabled(local_channel(),'personal_tab')) {
 			if(x($_GET,'conv')) {
 				$conv_active = (($_GET['conv'] == 1) ? 'active' : '');
+				$filter_active = true;
 			}
 
 			$tabs[] = [
@@ -30,6 +32,7 @@ class Activity_filter {
 		if(feature_enabled(local_channel(),'star_posts')) {
 			if(x($_GET,'star')) {
 				$starred_active = (($_GET['star'] == 1) ? 'active' : '');
+				$filter_active = true;
 			}
 
 			$tabs[] = [
@@ -50,6 +53,7 @@ class Activity_filter {
 				foreach($groups as $g) {
 					if(x($_GET,'gid')) {
 						$group_active = (($_GET['gid'] == $g['id']) ? 'active' : '');
+						$filter_active = true;
 					}
 
 					$tabs[] = [
@@ -73,6 +77,7 @@ class Activity_filter {
 				foreach($terms as $t) {
 					if(x($_GET,'file')) {
 						$file_active = (($_GET['file'] == $t['term']) ? 'active' : '');
+						$filter_active = true;
 					}
 
 					$tabs[] = [
@@ -84,6 +89,21 @@ class Activity_filter {
 					];
 				}
 			}
+		}
+
+		if(x($_GET,'search')) {
+			$filter_active = true;
+		}
+
+		if($filter_active) {
+			$reset = [
+				'label' => t('Remove Filter'),
+				'icon' => 'remove',
+				'url'=> z_root() . '/' . $cmd,
+				'sel'=> 'active bg-danger',
+				'title' => t('Remove active filter'),
+			];
+			array_unshift($tabs, $reset);
 		}
 
 		$arr = ['tabs' => $tabs];
