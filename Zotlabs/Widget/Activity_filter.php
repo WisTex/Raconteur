@@ -80,7 +80,7 @@ class Activity_filter {
 						'icon' => 'folder',
 						'url' => z_root() . '/' . $cmd . '/?f=&file=' . $t['term'],
 						'sel' => $file_active,
-						'title' => sprintf(t('Show posts that i have filed to %s'), $t['term']),
+						'title' => sprintf(t('Show posts that I have filed to %s'), $t['term']),
 					];
 				}
 			}
