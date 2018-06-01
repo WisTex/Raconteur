@@ -91,8 +91,10 @@ function nav($template = 'default') {
 	if(local_channel()) {
 
  		if(! $_SESSION['delegate']) {
- 			$nav['manage'] = array('manage', t('Channel Manager'), "", t('Manage Your Channels'),'manage_nav_btn');
+			$nav['manage'] = array('manage', t('Manage Channels'), "", t('Manage your channels'),'manage_nav_btn');
  		}
+
+		$nav['group'] = array('group', t('Manage Privacy Groups'),"", t('Add and edit privacy groups'),'group_nav_btn');
 
  		$nav['settings'] = array('settings', t('Settings'),"", t('Account/Channel Settings'),'settings_nav_btn');
 
@@ -181,20 +183,6 @@ function nav($template = 'default') {
 
 
 	$nav['search'] = ['search', t('Search'), "", t('Search site @name, !forum, #tag, ?docs, content'), $search_form_action];
-
-
-	/**
-	 *
-	 * The following nav links are only show to logged in users
-	 *
-	 */
-
-	if(local_channel()) {
-		if(! $_SESSION['delegate']) {
-			$nav['manage'] = array('manage', t('Channel Manager'), "", t('Manage Your Channels'),'manage_nav_btn');
-		}
-		$nav['settings'] = array('settings', t('Settings'),"", t('Account/Channel Settings'),'settings_nav_btn');
-	}
 
 	/**
 	 * Admin page
