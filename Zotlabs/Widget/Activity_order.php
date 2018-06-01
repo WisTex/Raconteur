@@ -105,17 +105,21 @@ class Activity_order {
 
 		call_hooks('network_tabs', $arr);
 
-		$tpl = get_markup_template('common_pills.tpl');
+		$o = '';
 
 		if($arr['tabs']) {
-			return replace_macros($tpl, [
+			$content =  replace_macros(get_markup_template('common_pills.tpl'), [
+				'$pills' => $arr['tabs'],
+			]);
+
+			$o = replace_macros(get_markup_template('common_widget.tpl'), [
 				'$title' => t('Activity Order'),
-				'$tabs' => $arr['tabs'],
+				'$content' => $content,
 			]);
 		}
-		else {
-			return '';
-		}
+
+		return $o;
+
 	}
 
 }

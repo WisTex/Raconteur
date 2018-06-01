@@ -17,7 +17,7 @@ class Activity_filter {
 		if(feature_enabled(local_channel(),'personal_tab')) {
 			if(x($_GET,'conv')) {
 				$conv_active = (($_GET['conv'] == 1) ? 'active' : '');
-				$filter_active = true;
+				$filter_active = 'personal';
 			}
 
 			$tabs[] = [
@@ -32,7 +32,7 @@ class Activity_filter {
 		if(feature_enabled(local_channel(),'star_posts')) {
 			if(x($_GET,'star')) {
 				$starred_active = (($_GET['star'] == 1) ? 'active' : '');
-				$filter_active = true;
+				$filter_active = 'star';
 			}
 
 			$tabs[] = [
@@ -53,17 +53,26 @@ class Activity_filter {
 				foreach($groups as $g) {
 					if(x($_GET,'gid')) {
 						$group_active = (($_GET['gid'] == $g['id']) ? 'active' : '');
-						$filter_active = true;
+						$filter_active = 'group';
 					}
-
-					$tabs[] = [
+					$gsub[] = [
 						'label' => $g['gname'],
-						'icon' => 'users',
+						'icon' => '',
 						'url' => z_root() . '/' . $cmd . '/?f=&gid=' . $g['id'],
 						'sel' => $group_active,
 						'title' => sprintf(t('Show posts related to the %s privacy group'), $g['gname']),
 					];
 				}
+				$tabs[] = [
+					'id' => 'privacy_groups',
+					'label' => t('Privacy Groups'),
+					'icon' => 'users',
+					'url' => '#',
+					'sel' => (($filter_active == 'group') ? true : false),
+					'title' => sprintf(t('Show posts that i have filed to %s'), $t['term']),
+					'sub' => $gsub
+
+				];
 			}
 		}
 
@@ -77,50 +86,64 @@ class Activity_filter {
 				foreach($terms as $t) {
 					if(x($_GET,'file')) {
 						$file_active = (($_GET['file'] == $t['term']) ? 'active' : '');
-						$filter_active = true;
+						$filter_active = 'file';
 					}
-
-					$tabs[] = [
+					$tsub[] = [
 						'label' => $t['term'],
-						'icon' => 'folder',
+						'icon' => '',
 						'url' => z_root() . '/' . $cmd . '/?f=&file=' . $t['term'],
 						'sel' => $file_active,
-						'title' => sprintf(t('Show posts that I have filed to %s'), $t['term']),
+						'title' => '',
 					];
 				}
+
+				$tabs[] = [
+					'label' => t('Saved Folders'),
+					'icon' => 'folder',
+					'url' => '#',
+					'sel' => (($filter_active == 'file') ? true : false),
+					'title' => sprintf(t('Show posts that I have filed to %s'), $t['term']),
+					'sub' => $tsub
+
+				];
 			}
 		}
 
 		if(x($_GET,'search')) {
-			$filter_active = true;
+			$filter_active = 'search';
 		}
 
+		$reset = [];
 		if($filter_active) {
 			$reset = [
-				'label' => t('Remove Filter'),
+				'label' => '',
 				'icon' => 'remove',
 				'url'=> z_root() . '/' . $cmd,
-				'sel'=> 'active bg-danger',
+				'sel'=> '',
 				'title' => t('Remove active filter'),
 			];
-			array_unshift($tabs, $reset);
 		}
 
 		$arr = ['tabs' => $tabs];
 
 		call_hooks('network_tabs', $arr);
 
-		$tpl = get_markup_template('common_pills.tpl');
+		$o = '';
 
 		if($arr['tabs']) {
-			return replace_macros($tpl, [
+			$content =  replace_macros(get_markup_template('common_pills.tpl'), [
+				'$pills' => $arr['tabs'],
+			]);
+
+			$o .= replace_macros(get_markup_template('activity_filter_widget.tpl'), [
 				'$title' => t('Activity Filters'),
-				'$tabs' => $arr['tabs'],
+				'$reset' => $reset,
+				'$content' => $content,
 			]);
 		}
-		else {
-			return '';
-		}
+
+		return $o;
+
 	}
 
 }
