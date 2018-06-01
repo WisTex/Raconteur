@@ -5,7 +5,6 @@ namespace Zotlabs\Module;
 use Zotlabs\Lib\Libzot;
 
 require_once('include/contact_widgets.php');
-require_once('include/items.php');
 require_once("include/bbcode.php");
 require_once('include/security.php');
 require_once('include/conversation.php');

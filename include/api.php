@@ -1,13 +1,11 @@
 <?php /** @file */
 
 require_once("include/bbcode.php");
-require_once("include/datetime.php");
 require_once("include/conversation.php");
 require_once("include/oauth.php");
 require_once("include/html2plain.php");
 require_once('include/security.php');
 require_once('include/photos.php');
-require_once('include/items.php');
 require_once('include/attach.php');
 require_once('include/api_auth.php');
 require_once('include/api_zot.php');

@@ -3,6 +3,7 @@
 namespace Zotlabs\Storage;
 
 use Sabre\DAV;
+use Zotlabs\Lib\Libzot;
 
 /**
  * @brief This class represents a file in DAV.
@@ -106,7 +107,7 @@ class File extends DAV\Node implements DAV\IFile {
 		if($ch) {
 			$sync = attach_export_data($ch,$this->data['hash']);
 			if($sync)
-				build_sync_packet($ch['channel_id'],array('file' => array($sync)));
+				Libzot::build_sync_packet($ch['channel_id'],array('file' => array($sync)));
 		}
 	}
 
@@ -254,7 +255,7 @@ class File extends DAV\Node implements DAV\IFile {
 		$sync = attach_export_data($c[0],$this->data['hash']);
 
 		if($sync)
-			build_sync_packet($c[0]['channel_id'],array('file' => array($sync)));
+			Libzot::build_sync_packet($c[0]['channel_id'],array('file' => array($sync)));
 
 	}
 
@@ -378,7 +379,7 @@ class File extends DAV\Node implements DAV\IFile {
 		if($ch) {
 			$sync = attach_export_data($ch, $this->data['hash'], true);
 			if($sync)
-				build_sync_packet($ch['channel_id'], array('file' => array($sync)));
+				Libzot::build_sync_packet($ch['channel_id'], array('file' => array($sync)));
 		}
 	}
 }

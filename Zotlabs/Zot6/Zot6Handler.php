@@ -191,7 +191,7 @@ class Zot6Handler implements IHandler {
 				 * invoke delivery to send out the notify packet
 				 */
 
-				Zotlabs\Daemon\Master::Summon(array('Deliver', $hash));
+				\Zotlabs\Daemon\Master::Summon(array('Deliver', $hash));
 			}
 		}
 		$ret['success'] = true;

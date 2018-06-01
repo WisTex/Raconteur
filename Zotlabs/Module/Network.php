@@ -1,7 +1,6 @@
 <?php
 namespace Zotlabs\Module;
 
-require_once('include/items.php');
 require_once('include/group.php');
 require_once('include/contact_widgets.php');
 require_once('include/conversation.php');
@@ -462,9 +461,7 @@ class Network extends \Zotlabs\Web\Controller {
 				$net_query2
 				ORDER BY item.received DESC $pager_sql "
 			);
-	
-			require_once('include/items.php');
-	
+		
 			xchan_query($items);
 	
 			$items = fetch_post_tags($items,true);

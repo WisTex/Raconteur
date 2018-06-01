@@ -1,6 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Libzot;
 
 class Pdledit extends \Zotlabs\Web\Controller {
 
@@ -17,7 +18,7 @@ class Pdledit extends \Zotlabs\Web\Controller {
 			goaway(z_root() . '/pdledit');
 		}
 		set_pconfig(local_channel(),'system','mod_' . $_REQUEST['module'] . '.pdl',escape_tags($_REQUEST['content']));
-		build_sync_packet();
+		Libzot::build_sync_packet();
 		info( t('Layout updated.') . EOL);
 		goaway(z_root() . '/pdledit/' . $_REQUEST['module']);
 	}

@@ -3,8 +3,6 @@ namespace Zotlabs\Module;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
-require_once('include/items.php');
-
 
 
 class Filer extends \Zotlabs\Web\Controller {

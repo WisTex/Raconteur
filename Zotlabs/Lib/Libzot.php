@@ -9,7 +9,6 @@ namespace Zotlabs\Lib;
  */
 
 require_once('include/crypto.php');
-require_once('include/items.php');
 require_once('include/queue_fn.php');
 
 
@@ -112,14 +111,14 @@ class Libzot {
 			'type' => $type,
 			'sender' => [
 				'id'            => $channel['channel_guid'],
-				'id_sig'        => zot_sign($channel['channel_guid'],$channel['channel_prvkey'],$sig_method),
+				'id_sig'        => self::sign($channel['channel_guid'],$channel['channel_prvkey'],$sig_method),
 				'id_url'        => z_root() . '/channel/' . $channel['channel_address'],
 				'location'      => z_root(),
-				'location_sig'  => zot_sign(z_root(),$channel['channel_prvkey'],$sig_method),
+				'location_sig'  => self::sign(z_root(),$channel['channel_prvkey'],$sig_method),
 				'sitekey'       => get_config('system','pubkey')
 			],
 			'callback'   => '/zot',
-			'version'    => Zotlabs\Lib\System::get_zot_revision(),
+			'version'    => \Zotlabs\Lib\System::get_zot_revision(),
 			'encryption' => crypto_methods(),
 			'signing'    => signing_methods()
 		];
@@ -390,7 +389,7 @@ class Libzot {
 					else {
 						// if we were just granted read stream permission and didn't have it before, try to pull in some posts
 						if((! $old_read_stream_perm) && (intval($permissions['view_stream'])))
-							Zotlabs\Daemon\Master::Summon(array('Onepoll',$r[0]['abook_id']));
+							\Zotlabs\Daemon\Master::Summon(array('Onepoll',$r[0]['abook_id']));
 					}
 				}
 				else {
@@ -439,8 +438,8 @@ class Libzot {
 
 						if($new_connection) {
 							if(! \Zotlabs\Access\Permissions::PermsCompare($new_perms,$previous_perms))
-								Zotlabs\Daemon\Master::Summon(array('Notifier','permission_create',$new_connection[0]['abook_id']));
-							Zotlabs\Lib\Enotify::submit(
+								\Zotlabs\Daemon\Master::Summon(array('Notifier','permission_create',$new_connection[0]['abook_id']));
+							\Zotlabs\Lib\Enotify::submit(
 								[
 								'type'       => NOTIFY_INTRO,
 								'from_xchan' => $x['hash'],
@@ -452,7 +451,7 @@ class Libzot {
 							if(intval($permissions['view_stream'])) {
 								if(intval(get_pconfig($channel['channel_id'],'perm_limits','send_stream') & PERMS_PENDING)
 									|| (! intval($new_connection[0]['abook_pending'])))
-									Zotlabs\Daemon\Master::Summon(array('Onepoll',$new_connection[0]['abook_id']));
+									\Zotlabs\Daemon\Master::Summon(array('Onepoll',$new_connection[0]['abook_id']));
 							}
 
 
@@ -1522,7 +1521,7 @@ class Libzot {
 		// has a recipient, but in fact we don't require this, so it's technically
 		// possible to send mail to anybody that's listening.
 
-		$recips = public_recips($msg);
+		$recips = self::public_recips($msg);
 
 		if(! $recips)
 			return $recips;
@@ -1604,7 +1603,7 @@ class Libzot {
 		foreach($deliveries as $d) {
 			$local_public = $public;
 
-			$DR = new Zotlabs\Lib\DReport(z_root(),$sender['hash'],$d['hash'],$arr['mid']);
+			$DR = new \Zotlabs\Lib\DReport(z_root(),$sender['hash'],$d['hash'],$arr['mid']);
 
 			$r = q("select * from channel where channel_hash = '%s' limit 1",
 				dbesc($d['hash'])
@@ -1718,7 +1717,7 @@ class Libzot {
 
 					if((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender['hash'],'send_stream')) {
-						Zotlabs\Daemon\Master::Summon(array('Notifier', 'request', $channel['channel_id'], $sender['hash'], $arr['parent_mid']));
+						\Zotlabs\Daemon\Master::Summon(array('Notifier', 'request', $channel['channel_id'], $sender['hash'], $arr['parent_mid']));
 					}
 					continue;
 				}
@@ -1790,7 +1789,7 @@ class Libzot {
 
 				if($relay && $item_id) {
 					logger('process_delivery: invoking relay');
-					Zotlabs\Daemon\Master::Summon(array('Notifier','relay',intval($item_id)));
+					\Zotlabs\Daemon\Master::Summon(array('Notifier','relay',intval($item_id)));
 					$DR->update('relayed');
 					$result[] = $DR->get();
 				}
@@ -1900,7 +1899,7 @@ class Libzot {
 
 			if($relay && $item_id) {
 				logger('Invoking relay');
-				Zotlabs\Daemon\Master::Summon(array('Notifier','relay',intval($item_id)));
+				\Zotlabs\Daemon\Master::Summon(array('Notifier','relay',intval($item_id)));
 				$DR->addto_update('relayed');
 				$result[] = $DR->get();
 			}
@@ -2095,8 +2094,6 @@ class Libzot {
 			return false;
 		}
 
-		require_once('include/items.php');
-
 		if($item_found) {
 			if(intval($r[0]['item_deleted'])) {
 				logger('delete_imported_item: item was already deleted');
@@ -2140,7 +2137,7 @@ class Libzot {
 
 		foreach($deliveries as $d) {
 	
-			$DR = new Zotlabs\Lib\DReport(z_root(),$sender['hash'],$d['hash'],$arr['mid']);
+			$DR = new \Zotlabs\Lib\DReport(z_root(),$sender['hash'],$d['hash'],$arr['mid']);
 
 			$r = q("select * from channel where channel_hash = '%s' limit 1",
 				dbesc($d['hash'])
@@ -3118,7 +3115,7 @@ class Libzot {
 		$synchubs = array();
 
 		foreach($h as $x) {
-			if($x['hubloc_host'] == App::get_hostname())
+			if($x['hubloc_host'] == \App::get_hostname())
 				continue;
 
 			$y = q("select site_dead from site where site_url = '%s' limit 1",
@@ -3226,7 +3223,7 @@ class Libzot {
 			}
 
 
-			Zotlabs\Daemon\Master::Summon(array('Deliver', $hash));
+			\Zotlabs\Daemon\Master::Summon(array('Deliver', $hash));
 			$total = $total - 1;
 
 			if($interval && $total)
@@ -3822,11 +3819,11 @@ class Libzot {
 			// we should probably do this for all items, but usually we only send one.
 
 			if(array_key_exists('item',$arr) && is_array($arr['item'][0])) {
-				$DR = new Zotlabs\Lib\DReport(z_root(),$d['hash'],$d['hash'],$arr['item'][0]['message_id'],'channel sync processed');
+				$DR = new \Zotlabs\Lib\DReport(z_root(),$d['hash'],$d['hash'],$arr['item'][0]['message_id'],'channel sync processed');
 				$DR->addto_recipient($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
 			}
 			else
-				$DR = new Zotlabs\Lib\DReport(z_root(),$d['hash'],$d['hash'],'sync packet','channel sync delivered');
+				$DR = new \Zotlabs\Lib\DReport(z_root(),$d['hash'],$d['hash'],'sync packet','channel sync delivered');
 
 			$result[] = $DR->get();
 		}
@@ -4229,7 +4226,7 @@ class Libzot {
 
 
 		$ret['site']['encryption'] = crypto_methods();
-		$ret['site']['zot'] = Zotlabs\Lib\System::get_zot_revision();
+		$ret['site']['zot'] = \Zotlabs\Lib\System::get_zot_revision();
 
 		// hide detailed site information if you're off the grid
 
@@ -4277,8 +4274,8 @@ class Libzot {
 			$ret['site']['sellpage']   = get_config('system','sellpage');
 			$ret['site']['location']   = get_config('system','site_location');
 			$ret['site']['realm']      = get_directory_realm();
-			$ret['site']['project']    = Zotlabs\Lib\System::get_platform_name() . ' ' . Zotlabs\Lib\System::get_server_role();
-			$ret['site']['version']    = Zotlabs\Lib\System::get_project_version();
+			$ret['site']['project']    = \Zotlabs\Lib\System::get_platform_name() . ' ' . \Zotlabs\Lib\System::get_server_role();
+			$ret['site']['version']    = \Zotlabs\Lib\System::get_project_version();
 
 		}
 

@@ -3,8 +3,6 @@
 namespace Zotlabs\Module;
 
 
-require_once('include/items.php');
-
 class Feed extends \Zotlabs\Web\Controller {
 
 	function init() {

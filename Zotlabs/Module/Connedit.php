@@ -374,7 +374,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 			if($abconfig)
 				$clone['abconfig'] = $abconfig;
 	
-			build_sync_packet(0 /* use the current local_channel */, array('abook' => array($clone)));
+			Libzot::build_sync_packet(0 /* use the current local_channel */, array('abook' => array($clone)));
 	}
 	
 	/* @brief Generate content of connection edit page
@@ -546,7 +546,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 				// PLACEHOLDER
 	
 				contact_remove(local_channel(), $orig_record[0]['abook_id']);
-				build_sync_packet(0 /* use the current local_channel */,
+				Libzot::build_sync_packet(0 /* use the current local_channel */,
 					array('abook' => array(array(
 						'abook_xchan' => $orig_record[0]['abook_xchan'],
 						'entry_deleted' => true))

@@ -8,7 +8,6 @@ use Zotlabs\Lib\Libzot;
 require_once('include/queue_fn.php');
 require_once('include/html2plain.php');
 require_once('include/conversation.php');
-require_once('include/items.php');
 require_once('include/bbcode.php');
 
 

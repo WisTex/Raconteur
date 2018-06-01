@@ -1,5 +1,8 @@
 <?php /** @file */
 
+use Zotlabs\Lib\Libzot;
+
+
 function update_queue_item($id, $add_priority = 0) {
 	logger('queue: requeue item ' . $id,LOGGER_DEBUG);
 	$x = q("select outq_created, outq_posturl from outq where outq_hash = '%s' limit 1",
@@ -245,12 +248,12 @@ function queue_deliver($outq, $immediate = false) {
 
 	$msg = $outq['outq_notify'];
 
-	$result = zot_zot($outq['outq_posturl'],$msg,$channel,$host_crypto);
+	$result = Libzot::zot($outq['outq_posturl'],$msg,$channel,$host_crypto);
 
 
 	if($result['success']) {
 		logger('deliver: remote zot delivery succeeded to ' . $outq['outq_posturl']);
-		zot_process_response($outq['outq_posturl'],$result, $outq);
+		Libzot::process_response($outq['outq_posturl'],$result, $outq);
 	}
 	else {
 		logger('deliver: remote zot delivery failed to ' . $outq['outq_posturl']);

@@ -1,7 +1,6 @@
 <?php
 namespace Zotlabs\Module;
 
-require_once('include/items.php');
 
 
 class Zotfeed extends \Zotlabs\Web\Controller {

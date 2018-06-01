@@ -1,7 +1,6 @@
 <?php
 namespace Zotlabs\Module;
 
-require_once('include/items.php');
 require_once('include/conversation.php');
 
 class Block extends \Zotlabs\Web\Controller {

@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Libzot;
+
 require_once('include/conversation.php');
 
 
@@ -77,7 +79,7 @@ class Moderate extends \Zotlabs\Web\Controller {
 				if($r) {
 					xchan_query($r);
 					$sync_item = fetch_post_tags($r);
-					build_sync_packet(local_channel(),array('item' => array(encode_item($sync_item[0],true))));
+					Libzot::build_sync_packet(local_channel(),array('item' => array(encode_item($sync_item[0],true))));
 				}
 				if($action === 'approve') {
 					\Zotlabs\Daemon\Master::Summon(array('Notifier', 'comment-new', $post_id));

@@ -15,8 +15,6 @@ namespace Zotlabs\Module; /** @file */
  *
  */
 
-require_once('include/items.php');
-
 
 class Poke extends \Zotlabs\Web\Controller {
 

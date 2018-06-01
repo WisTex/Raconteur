@@ -3,9 +3,8 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libzot;
 
-require_once('include/items.php');
-require_once('include/conversation.php');
 
+require_once('include/conversation.php');
 
 
 class Home extends \Zotlabs\Web\Controller {

@@ -2,6 +2,9 @@
 
 /* Private Message backend API */
 
+
+use Zotlabs\Lib\Libzot;
+
 require_once('include/crypto.php');
 require_once('include/attach.php');
 
@@ -493,7 +496,7 @@ function private_messages_drop($channel_id, $messageitem_id, $drop_conversation 
 				intval($channel_id)
 			);
 		}
-		build_sync_packet($channel_id,$m);
+		Libzot::build_sync_packet($channel_id,$m);
 		return true;
 	}
 	else {
@@ -503,7 +506,7 @@ function private_messages_drop($channel_id, $messageitem_id, $drop_conversation 
 			intval($messageitem_id),
 			intval($channel_id)
 		);
-		build_sync_packet($channel_id,array('mail' => array(encode_mail($x,true))));
+		Libzot::build_sync_packet($channel_id,array('mail' => array(encode_mail($x,true))));
 		return true;
 	}
 	return false;

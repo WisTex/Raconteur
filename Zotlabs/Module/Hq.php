@@ -5,7 +5,6 @@ require_once("include/bbcode.php");
 require_once('include/security.php');
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
-require_once('include/items.php');
 
 
 class Hq extends \Zotlabs\Web\Controller {

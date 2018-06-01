@@ -110,7 +110,7 @@ class Mail extends \Zotlabs\Web\Controller {
 
 		if($ret['success']) {
 			xchan_mail_query($ret['mail']);
-			build_sync_packet(0,array('conv' => array($ret['conv']),'mail' => array(encode_mail($ret['mail'],true))));
+			Libzot::build_sync_packet(0,array('conv' => array($ret['conv']),'mail' => array(encode_mail($ret['mail'],true))));
 		}
 		else {
 			notice($ret['message']);
@@ -188,7 +188,7 @@ class Mail extends \Zotlabs\Web\Controller {
 				intval(local_channel())
 			);
 			if($x) {
-				build_sync_packet(local_channel(),array('mail' => encode_mail($x[0],true)));
+				Libzot::build_sync_packet(local_channel(),array('mail' => encode_mail($x[0],true)));
 			}
 	
 			\Zotlabs\Daemon\Master::Summon(array('Notifier','mail',intval(argv(3))));

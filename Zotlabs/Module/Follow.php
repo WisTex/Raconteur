@@ -1,6 +1,8 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Libzot;
+
 
 require_once('include/follow.php');
 
@@ -49,7 +51,7 @@ class Follow extends \Zotlabs\Web\Controller {
 		if($abconfig)
 			$clone['abconfig'] = $abconfig;
 	
-		build_sync_packet(0 /* use the current local_channel */, array('abook' => array($clone)), true);
+		Libzot::build_sync_packet(0 /* use the current local_channel */, array('abook' => array($clone)), true);
 	
 		$can_view_stream = their_perms_contains($channel['channel_id'],$clone['abook_xchan'],'view_stream');
 	

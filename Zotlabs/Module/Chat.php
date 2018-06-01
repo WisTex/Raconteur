@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Module; 
 
+use Zotlabs\Lib\Libzot;
+
 
 require_once('include/bookmarks.php');
 
@@ -74,7 +76,7 @@ class Chat extends \Zotlabs\Web\Controller {
 			intval(local_channel())
 		);
 	
-		build_sync_packet(0, array('chatroom' => $x));
+		Libzot::build_sync_packet(0, array('chatroom' => $x));
 	
 		if($x)
 			goaway(z_root() . '/chat/' . $channel['channel_address'] . '/' . $x[0]['cr_id']);

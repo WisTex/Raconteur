@@ -1,10 +1,10 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Libzot;
+
 require_once('include/security.php');
 require_once('include/bbcode.php');
-require_once('include/items.php');
-
 
 
 class Like extends \Zotlabs\Web\Controller {
@@ -228,7 +228,7 @@ class Like extends \Zotlabs\Web\Controller {
 	
 			if($z) {
 				$z[0]['deleted'] = 1;
-				build_sync_packet($ch[0]['channel_id'],array('likes' => $z));
+				Libzot::build_sync_packet($ch[0]['channel_id'],array('likes' => $z));
 	
 				q("delete from likes where id = %d",
 					intval($z[0]['id'])
@@ -342,7 +342,6 @@ class Like extends \Zotlabs\Web\Controller {
 	
 			if($r) {
 				// already liked it. Drop that item.
-				require_once('include/items.php');
 				foreach($r as $rr) {
 					drop_item($rr['id'],false,DROPITEM_PHASE1);
 					// set the changed timestamp on the parent so we'll see the update without a page reload
@@ -553,7 +552,7 @@ class Like extends \Zotlabs\Web\Controller {
 				dbesc($obj_id)
 			);
 			if($r)
-				build_sync_packet($ch[0]['channel_id'],array('likes' => $r));	
+				Libzot::build_sync_packet($ch[0]['channel_id'],array('likes' => $r));	
 	
 		}
 	

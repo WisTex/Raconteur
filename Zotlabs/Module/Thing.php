@@ -5,7 +5,9 @@
 
 namespace Zotlabs\Module;
 
-require_once('include/items.php');
+
+use Zotlabs\Lib\Libzot;
+
 require_once('include/security.php');
 require_once('include/selectors.php');
 require_once('include/acl_selectors.php');
@@ -124,7 +126,7 @@ class Thing extends \Zotlabs\Web\Controller {
 				dbesc($term_hash)
 			);
 			if($r) {
-				build_sync_packet(0, array('obj' => $r));
+				Libzot::build_sync_packet(0, array('obj' => $r));
 			}
 
 			return;
@@ -180,7 +182,7 @@ class Thing extends \Zotlabs\Web\Controller {
 			dbesc($hash)
 		);
 		if($r) {
-			build_sync_packet(0, array('obj' => $r));
+			Libzot::build_sync_packet(0, array('obj' => $r));
 		}
 
 		if($activity) {
@@ -353,7 +355,7 @@ class Thing extends \Zotlabs\Web\Controller {
 
 			$r[0]['obj_deleted'] = 1;
 
-			build_sync_packet(0,array('obj' => $r));
+			Libzot::build_sync_packet(0,array('obj' => $r));
 
 			return $o;
 		}

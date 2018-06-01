@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Lib;
 
+use Zotlabs\Lib\Libzot;
 
 class Activity {
 
@@ -602,7 +603,7 @@ class Activity {
 				'publicKeyPem' => $p['xchan_pubkey']
 			];
 
-			$locs = zot_encode_locations($c);
+			$locs = Libzot::encode_locations($c);
 			if($locs) {
 				$ret['nomadicLocations'] = [];
 				foreach($locs as $loc) {
@@ -902,7 +903,7 @@ class Activity {
 				if($abconfig)
 					$clone['abconfig'] = $abconfig;
 
-				build_sync_packet($channel['channel_id'], [ 'abook' => array($clone) ] );
+				Libzot::build_sync_packet($channel['channel_id'], [ 'abook' => array($clone) ] );
 			}
 		}
 

@@ -1,6 +1,10 @@
 <?php
 namespace Zotlabs\Module;
 
+require_once("include/bbcode.php");
+require_once('include/security.php');
+require_once('include/conversation.php');
+
 
 class Search extends \Zotlabs\Web\Controller {
 
@@ -24,10 +28,7 @@ class Search extends \Zotlabs\Web\Controller {
 	
 		nav_set_selected('Search');
 	
-		require_once("include/bbcode.php");
-		require_once('include/security.php');
-		require_once('include/conversation.php');
-		require_once('include/items.php');
+
 	
 		$format = (($_REQUEST['format']) ? $_REQUEST['format'] : '');
 		if($format !== '') {

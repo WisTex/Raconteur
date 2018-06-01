@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Module\Settings;
 
+use Zotlabs\Lib\Libzot;
+
 
 class Featured {
 		
@@ -24,7 +26,7 @@ class Featured {
 
 		}
 		
-		build_sync_packet();
+		Libzot::build_sync_packet();
 		return;
 	}
 

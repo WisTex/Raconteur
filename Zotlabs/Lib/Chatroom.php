@@ -1,6 +1,8 @@
 <?php
 namespace Zotlabs\Lib;
 
+use Zotlabs\Lib\Libzot;
+
 /**
  * @brief A class with chatroom related static methods.
  */
@@ -91,7 +93,7 @@ class Chatroom {
 			return $ret;
 		}
 
-		build_sync_packet($channel['channel_id'],array('chatroom' => $r));
+		Libzot::build_sync_packet($channel['channel_id'],array('chatroom' => $r));
 
 		q("delete from chatroom where cr_id = %d",
 			intval($r[0]['cr_id'])

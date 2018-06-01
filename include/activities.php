@@ -8,8 +8,6 @@ function profile_activity($changed, $value) {
 	if(! get_pconfig(local_channel(),'system','post_profilechange'))
 		return;
 
-	require_once('include/items.php');
-
 	$self = App::get_channel();
 
 	if(! count($self))

@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Daemon;
 
+use Zotlabs\Lib\Libzot;
+
 class Cron {
 
 	static public function run($argc,$argv) {
@@ -55,7 +57,6 @@ class Cron {
 			db_utcnow()
 		);
 		if($r) {
-			require_once('include/items.php');
 			foreach($r as $rr)
 				drop_item($rr['id'],false);
 		}
@@ -110,7 +111,7 @@ class Cron {
 					if($z) {
 						xchan_query($z);
 						$sync_item = fetch_post_tags($z);
-						build_sync_packet($sync_item[0]['uid'],
+						Libzot::build_sync_packet($sync_item[0]['uid'],
 							[ 
 								'item' => [ encode_item($sync_item[0],true) ]
 							]

@@ -4,6 +4,8 @@
  * @brief Items related functions.
  */
 
+use Zotlabs\Lib\Libzot;
+
 use Zotlabs\Lib as Zlib;
 
 require_once('include/bbcode.php');
@@ -1534,7 +1536,7 @@ function item_sign(&$item) {
 	if(! $r)
 		return;
 
-	$item['sig'] = zot_sign($item['body'], $r[0]['channel_prvkey']);
+	$item['sig'] = Libzot::sign($item['body'], $r[0]['channel_prvkey']);
 	$item['item_verified'] = 1;
 }
 
@@ -2755,7 +2757,7 @@ function item_community_tag($channel,$item) {
 		$pitem = $items[0];
 		$auth = get_iconfig($item,'system','communitytagauth');
 		if($auth) {
-			if(zot_verify('tagauth.' . $item['mid'],$auth,$pitem['owner']['xchan_pubkey']) || zot_verify('tagauth.' . $item['mid'],$auth,$pitem['author']['xchan_pubkey'])) {
+			if(Libzot::verify('tagauth.' . $item['mid'],$auth,$pitem['owner']['xchan_pubkey']) || Libzot::verify('tagauth.' . $item['mid'],$auth,$pitem['author']['xchan_pubkey'])) {
 				logger('tag_deliver: tagging the post: ' . $channel['channel_name']);
 				$tag_the_post = true;
 			}
@@ -2764,7 +2766,7 @@ function item_community_tag($channel,$item) {
 			if(($pitem['owner_xchan'] === $channel['channel_hash']) && (! intval(get_pconfig($channel['channel_id'],'system','blocktags')))) {
 				logger('tag_deliver: community tag recipient: ' . $channel['channel_name']);
 				$tag_the_post = true;
-				$sig = zot_sign('tagauth.' . $item['mid'],$channel['channel_prvkey']);
+				$sig = Libzot::sign('tagauth.' . $item['mid'],$channel['channel_prvkey']);
 				logger('tag_deliver: setting iconfig for ' . $item['id']);
 				set_iconfig($item['id'],'system','communitytagauth',base64url_encode($sig),1);
 			}
@@ -4527,7 +4529,7 @@ function sync_an_item($channel_id,$item_id) {
 	if($r) {
 		xchan_query($r);
 		$sync_item = fetch_post_tags($r);
-		build_sync_packet($channel_d,array('item' => array(encode_item($sync_item[0],true))));
+		Libzot::build_sync_packet($channel_d,array('item' => array(encode_item($sync_item[0],true))));
 	}
 }
 
@@ -4728,7 +4730,7 @@ function item_create_edit_activity($post) {
 		if($r) {
 			xchan_query($r);
 			$sync_item = fetch_post_tags($r);
-			build_sync_packet($new_item['uid'],array('item' => array(encode_item($sync_item[0],true))));
+			Libzot::build_sync_packet($new_item['uid'],array('item' => array(encode_item($sync_item[0],true))));
 		}
 	}
 

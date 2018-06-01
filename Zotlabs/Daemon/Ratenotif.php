@@ -11,9 +11,6 @@ class Ratenotif {
 
 	static public function run($argc,$argv) {
 
-		require_once("datetime.php");
-		require_once('include/items.php');
-
 		if($argc < 3)
 			return;
 

@@ -1,6 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Libzot;
 
 
 class Starred extends \Zotlabs\Web\Controller {
@@ -37,7 +38,7 @@ class Starred extends \Zotlabs\Web\Controller {
 		if($r) {
 			xchan_query($r);
 			$sync_item = fetch_post_tags($r);
-			build_sync_packet(local_channel(),[ 
+			Libzot::build_sync_packet(local_channel(),[ 
 				'item' => [ 
 					encode_item($sync_item[0],true)
 				]

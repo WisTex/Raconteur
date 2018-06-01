@@ -3,15 +3,11 @@
 namespace Zotlabs\Daemon;
 
 require_once('include/queue_fn.php');
-
+require_once('include/bbcode.php');
 
 class Queue {
 
 	static public function run($argc,$argv) {
-
-		require_once('include/items.php');
-		require_once('include/bbcode.php');
-
 
 		if($argc > 1)
 			$queue_id = $argv[1];

@@ -3,6 +3,8 @@
 
 // Red pconfig utility
 
+use Zotlabs\Lib\Libzot;
+
 
 if(!file_exists('include/cli_startup.php')) {
 	echo 'Run pconfig from the top level Hubzilla web directory, as util/pconfig <args>' . PHP_EOL;
@@ -63,7 +65,7 @@ if($argc > 2 && strpos($argv[2],'.')) {
 
 if($argc > 4) {
 	set_pconfig($argv[1],$argv[2],$argv[3],$argv[4]);
-	build_sync_packet($argv[1]);
+	Libzot::build_sync_packet($argv[1]);
 	echo "pconfig[{$argv[1]}][{$argv[2]}][{$argv[3]}] = " . get_pconfig($argv[1],$argv[2],$argv[3]) . "\n";
 }
 

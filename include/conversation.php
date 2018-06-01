@@ -1,7 +1,5 @@
 <?php /** @file */
 
-require_once('include/items.php');
-
 
 function item_extract_images($body) {
 

@@ -1,6 +1,8 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Libzot;
+
 require_once('include/channel.php');
 require_once('include/selectors.php');
 
@@ -599,7 +601,7 @@ class Profiles extends \Zotlabs\Web\Controller {
 			);
 			if($r) {
 				require_once('include/zot.php');
-				build_sync_packet(local_channel(),array('profile' => $r));
+				Libzot::build_sync_packet(local_channel(),array('profile' => $r));
 			}
 	
 			$channel = \App::get_channel();

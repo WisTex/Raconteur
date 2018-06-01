@@ -17,8 +17,9 @@ namespace Zotlabs\Module;
  *
  */  
 
+use Zotlabs\Lib\Libzot;
+
 require_once('include/crypto.php');
-require_once('include/items.php');
 require_once('include/attach.php');
 require_once('include/bbcode.php');
 require_once('include/security.php');
@@ -69,7 +70,6 @@ class Item extends \Zotlabs\Web\Controller {
 		}
 	
 		if(x($_REQUEST,'dropitems')) {
-			require_once('include/items.php');
 			$arr_drop = explode(',',$_REQUEST['dropitems']);
 			drop_items($arr_drop);
 			$json = array('success' => 1);
@@ -918,7 +918,7 @@ logger('linkify: ' . print_r($results,true));
 				if($r) {
 					xchan_query($r);
 					$sync_item = fetch_post_tags($r);
-					build_sync_packet($profile_uid,array('item' => array(encode_item($sync_item[0],true))));
+					Libzot::build_sync_packet($profile_uid,array('item' => array(encode_item($sync_item[0],true))));
 				}
 			}
 			if(! $nopush)
@@ -1027,7 +1027,7 @@ logger('linkify: ' . print_r($results,true));
 			if($r) {
 				xchan_query($r);
 				$sync_item = fetch_post_tags($r);
-				build_sync_packet($profile_uid,array('item' => array(encode_item($sync_item[0],true))));
+				Libzot::build_sync_packet($profile_uid,array('item' => array(encode_item($sync_item[0],true))));
 			}
 		}
 	
@@ -1073,9 +1073,6 @@ logger('linkify: ' . print_r($results,true));
 		
 		if((argc() == 3) && (argv(1) === 'drop') && intval(argv(2))) {
 	
-			require_once('include/items.php');
-
-
 			$i = q("select id, uid, item_origin, author_xchan, owner_xchan, source_xchan, item_type from item where id = %d limit 1",
 				intval(argv(2))
 			);
@@ -1129,7 +1126,7 @@ logger('linkify: ' . print_r($results,true));
 				if($r) {
 					xchan_query($r);
 					$sync_item = fetch_post_tags($r);
-					build_sync_packet($i[0]['uid'],array('item' => array(encode_item($sync_item[0],true))));
+					Libzot::build_sync_packet($i[0]['uid'],array('item' => array(encode_item($sync_item[0],true))));
 				}
 
 				if($complex) {
