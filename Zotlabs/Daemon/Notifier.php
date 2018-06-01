@@ -2,10 +2,12 @@
 
 namespace Zotlabs\Daemon;
 
+
+use Zotlabs\Lib\Libzot;
+
 require_once('include/queue_fn.php');
 require_once('include/html2plain.php');
 require_once('include/conversation.php');
-require_once('include/zot.php');
 require_once('include/items.php');
 require_once('include/bbcode.php');
 
@@ -231,7 +233,7 @@ class Notifier {
 				}
 			}
 
-			$encoded_item = array('locations' => zot_encode_locations($channel),'type' => 'location', 'encoding' => 'zot');
+			$encoded_item = array('locations' => Libzot::encode_locations($channel),'type' => 'location', 'encoding' => 'zot');
 			$target_item = array('aid' => $channel['channel_account_id'],'uid' => $channel['channel_id']);
 			$private = false;
 			$packet_type = 'location';
@@ -618,15 +620,15 @@ class Notifier {
 			$pmsg   = '';
 
 			if($packet_type === 'refresh' || $packet_type === 'purge') {
-				$packet = zot6_build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null),'');
+				$packet = Libzot::build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null),'');
 			}
 			if($packet_type === 'keychange') {
 				$pmsg = get_pconfig($channel['channel_id'],'system','keychange');
-				$packet = zot6_build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null),'');
+				$packet = Libzot::build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null),'');
 			}
 			elseif($packet_type === 'request') {
 				$env = (($hub_env && $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']]) ? $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] : '');
-				$packet = zot6_build_packet($channel,$packet_type,$env,'',$hub['hubloc_sitekey'],$hub['site_crypto'],
+				$packet = Libzot::build_packet($channel,$packet_type,$env,'',$hub['hubloc_sitekey'],$hub['site_crypto'],
 					$hash, array('message_id' => $request_message_id)
 				);
 			}
@@ -649,7 +651,7 @@ class Notifier {
 				// with before switching to zot6 as the primary zot6 handler checks for the existence of a message delivery report
 				// to trigger dequeue'ing
 
-				$packet = zot6_build_packet($channel,'notify',$env, json_encode($encoded_item), (($private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto']);
+				$packet = Libzot::build_packet($channel,'notify',$env, json_encode($encoded_item), (($private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto']);
 
 				queue_insert(
 					[

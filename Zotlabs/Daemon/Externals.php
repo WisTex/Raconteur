@@ -2,7 +2,9 @@
 
 namespace Zotlabs\Daemon;
 
-require_once('include/zot.php');
+
+use Zotlabs\Lib\Libzot;
+
 require_once('include/channel.php');
 
 
@@ -85,7 +87,7 @@ class Externals {
 						foreach($j['messages'] as $message) {
 							// on these posts, clear any route info. 
 							$message['route'] = '';
-							$results = process_delivery(array('hash' => 'undefined'), get_item_elements($message),
+							$results = Libzot::process_delivery(array('hash' => 'undefined'), get_item_elements($message),
 								array(array('hash' => $sys['xchan_hash'])), false, true);
 							$total ++;
 						}

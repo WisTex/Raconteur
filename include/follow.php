@@ -1,6 +1,8 @@
 <?php /** @file */
 
 
+use Zotlabs\Lib\Libzot;
+
 //
 // Takes a $uid and the channel associated with the uid, and a url/handle and adds a new channel
 
@@ -9,7 +11,7 @@
 //  $return['abook'] Address book entry joined with xchan if successful
 //  $return['message'] error text if success is false.
 
-require_once('include/zot.php');
+
 
 function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) {
 
@@ -70,7 +72,7 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 		}
 		if(is_array($zf) && array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href 
 			&& intval($zf['signature']['header_valid']) && array_path_exists('data/permissions',$zf)) {
-			$x = import_xchan($zf['data']);
+			$x = Libzot::import_xchan($zf['data']);
 			$j = $zf['data'];
 			$is_zot = true;
 		}

@@ -1,6 +1,7 @@
 <?php
 
 use Zotlabs\Lib\IConfig;
+use Zotlabs\Lib\Libzot;
 
 require_once('include/menu.php');
 
@@ -27,7 +28,7 @@ function import_channel($channel, $account_id, $seize, $newname = '') {
 
 	// Ignore the hash provided and re-calculate
 
-	$channel['channel_hash'] = make_xchan_hash($channel['channel_guid'],$channel['channel_guid_sig']);
+	$channel['channel_hash'] = Libzot::make_xchan_hash($channel['channel_guid'],$channel['channel_guid_sig']);
 
 	if($newname) {
 		$channel['channel_address'] = $newname;
@@ -201,7 +202,7 @@ function import_hublocs($channel, $hublocs, $seize, $moving = false) {
 	if($channel && $hublocs) {
 		foreach($hublocs as $hubloc) {
 
-			$hash = make_xchan_hash($hubloc['hubloc_guid'],$hubloc['hubloc_guid_sig']);
+			$hash = Libzot::make_xchan_hash($hubloc['hubloc_guid'],$hubloc['hubloc_guid_sig']);
 			if($hubloc['hubloc_network'] === 'zot' && $hash !== $hubloc['hubloc_hash']) {
 				logger('forged hubloc: ' . print_r($hubloc,true));
 				continue;

@@ -1,8 +1,6 @@
 <?php
 namespace Zotlabs\Module;
 
-require_once('include/zot.php');
-
 class Chanview extends \Zotlabs\Web\Controller {
 
 	function get() {
@@ -62,8 +60,12 @@ class Chanview extends \Zotlabs\Web\Controller {
 			$r = null;
 
 			if($_REQUEST['address']) {
-				$j = \Zotlabs\Zot\Finger::run($_REQUEST['address'],null);
-				if($j['success']) {
+				$href = \Zotlabs\Lib\Webfinger::zot_url(punify($url));
+    	        if($href) {
+        	        $zf = \Zotlabs\Lib\Zotfinger::exec($href,$channel);
+            	}
+				if(is_array($zf) && array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href && intval($zf['signature']['header_valid'])) {
+    	            $xc = import_xchan($zf['data']);
 					import_xchan($j);
 					$r = q("select * from xchan where xchan_addr = '%s' limit 1",
 						dbesc($_REQUEST['address'])

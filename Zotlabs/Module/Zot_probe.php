@@ -2,8 +2,6 @@
 
 namespace Zotlabs\Module;
 
-require_once('include/zot.php');
-require_once('library/jsonld/jsonld.php');
 
 class Zot_probe extends \Zotlabs\Web\Controller {
 

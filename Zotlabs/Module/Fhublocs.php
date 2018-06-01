@@ -1,7 +1,8 @@
 <?php
 namespace Zotlabs\Module;
 
-require_once('include/zot.php');
+use Zotlabs\Lib\Libzot;
+
 require_once('include/crypto.php');
 
 /* fix missing or damaged hublocs */
@@ -23,7 +24,7 @@ class Fhublocs extends \Zotlabs\Web\Controller {
 			foreach($r as $rr) {
 				$found = false;
 				$primary_address = '';
-				$x = zot_get_hublocs($rr['channel_hash']);
+				$x = Libzot::get_hublocs($rr['channel_hash']);
 				if($x) {
 					foreach($x as $xx) {
 						if($xx['hubloc_url'] === z_root() && $xx['hubloc_sitekey'] === $sitekey) {
@@ -66,7 +67,7 @@ class Fhublocs extends \Zotlabs\Web\Controller {
 						'hubloc_network'  => 'zot',
 						'hubloc_primary'  => $primary,
 						'hubloc_url'      => z_root(),
-						'hubloc_url_sig'  => zot_sign(z_root(),$rr['channel_prvkey']),
+						'hubloc_url_sig'  => Libzot::sign(z_root(),$rr['channel_prvkey']),
 						'hubloc_host'     => \App::get_hostname(),
 						'hubloc_callback' => z_root() . '/post',
 						'hubloc_sitekey'  => $sitekey

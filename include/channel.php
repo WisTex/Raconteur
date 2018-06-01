@@ -4,7 +4,8 @@
  * @brief Channel related functions.
  */
 
-require_once('include/zot.php');
+use Zotlabs\Lib\Libzot;
+
 require_once('include/crypto.php');
 require_once('include/menu.php');
 require_once('include/photo/photo_driver.php');
@@ -219,11 +220,11 @@ function create_identity($arr) {
 		return $ret;
 	}
 
-	$guid = zot_new_uid($nick);
+	$guid = Libzot::new_uid($nick);
 	$key = new_keypair(4096);
 
-	$sig = zot_sign($guid,$key['prvkey']);
-	$hash = make_xchan_hash($guid,$key['pubkey']);
+	$sig = Libzot::sign($guid,$key['prvkey']);
+	$hash = Libzot::make_xchan_hash($guid,$key['pubkey']);
 
 	// Force a few things on the short term until we can provide a theme or app with choice
 
@@ -327,7 +328,7 @@ function create_identity($arr) {
 			'hubloc_addr'     => channel_reddress($ret['channel']),
 			'hubloc_primary'  => intval($primary),
 			'hubloc_url'      => z_root(),
-			'hubloc_url_sig'  => zot_sign(z_root(),$ret['channel']['channel_prvkey']),
+			'hubloc_url_sig'  => Libzot::sign(z_root(),$ret['channel']['channel_prvkey']),
 			'hubloc_host'     => App::get_hostname(),
 			'hubloc_callback' => z_root() . '/zot',
 			'hubloc_sitekey'  => get_config('system','pubkey'),
@@ -498,8 +499,8 @@ function change_channel_keys($channel) {
 
 	$key = new_keypair(4096);
 
-	$sig = zot_sign($channel['channel_guid'],$key['prvkey']);
-	$hash = make_xchan_hash($channel['channel_guid'],$channel['channel_pubkey']);
+	$sig = Libzot::sign($channel['channel_guid'],$key['prvkey']);
+	$hash = Libzot::make_xchan_hash($channel['channel_guid'],$channel['channel_pubkey']);
 
 	$stored['old_guid']     = $channel['channel_guid'];
 	$stored['old_guid_sig'] = $channel['channel_guid_sig'];
@@ -507,7 +508,7 @@ function change_channel_keys($channel) {
 	$stored['old_hash']     = $channel['channel_hash'];
 
 	$stored['new_key']      = $key['pubkey'];
-	$stored['new_sig']      = zot_sign($key['pubkey'],$channel['channel_prvkey']);
+	$stored['new_sig']      = Libzot::sign($key['pubkey'],$channel['channel_prvkey']);
 
 	// Save this info for the notifier to collect
 
@@ -544,7 +545,7 @@ function change_channel_keys($channel) {
 		foreach($h as $hv) {
 			$hv['hubloc_guid_sig'] = $sig;
 			$hv['hubloc_hash']     = $hash;
-			$hv['hubloc_url_sig']  = zot_sign(z_root(),$modifed['channel_prvkey']);
+			$hv['hubloc_url_sig']  = Libzot::sign(z_root(),$modifed['channel_prvkey']);
 			hubloc_store_lowlevel($hv);
 		}
 	}

@@ -2,7 +2,7 @@
 
 namespace Zotlabs\Daemon;
 
-require_once('include/zot.php');
+
 require_once('include/dir_fns.php');
 
 

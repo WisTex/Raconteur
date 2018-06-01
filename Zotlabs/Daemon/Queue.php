@@ -3,7 +3,7 @@
 namespace Zotlabs\Daemon;
 
 require_once('include/queue_fn.php');
-require_once('include/zot.php');
+
 
 class Queue {
 

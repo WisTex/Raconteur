@@ -2,7 +2,8 @@
 
 namespace Zotlabs\Module;
 
-require_once('include/zot.php');
+use Zotlabs\Lib\Libzot;
+
 require_once('include/channel.php');
 require_once('include/import.php');
 require_once('library/urlify/URLify.php');
@@ -209,7 +210,7 @@ class Import extends \Zotlabs\Web\Controller {
 					'hubloc_network'  => 'zot',
 					'hubloc_primary'  => (($seize) ? 1 : 0),
 					'hubloc_url'      => z_root(),
-					'hubloc_url_sig'  => zot_sign(z_root(),$channel['channel_prvkey']),
+					'hubloc_url_sig'  => Libzot::sign(z_root(),$channel['channel_prvkey']),
 					'hubloc_host'     => \App::get_hostname(),
 					'hubloc_callback' => z_root() . '/post',
 					'hubloc_sitekey'  => get_config('system','pubkey'),
@@ -268,7 +269,7 @@ class Import extends \Zotlabs\Web\Controller {
 		if($xchans) {
 			foreach($xchans as $xchan) {
 
-				$hash = make_xchan_hash($xchan['xchan_guid'],$xchan['xchan_guid_sig']);
+				$hash = Libzot::make_xchan_hash($xchan['xchan_guid'],$xchan['xchan_guid_sig']);
 				if($xchan['xchan_network'] === 'zot' && $hash !== $xchan['xchan_hash']) {
 					logger('forged xchan: ' . print_r($xchan,true));
 					continue;

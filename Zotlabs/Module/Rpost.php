@@ -6,7 +6,7 @@ require_once('include/crypto.php');
 require_once('include/items.php');
 require_once('include/taxonomy.php');
 require_once('include/conversation.php');
-require_once('include/zot.php');
+
 
 /**
  * remote post

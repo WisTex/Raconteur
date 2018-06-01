@@ -284,24 +284,14 @@ function ping_site($url) {
 
 		$sys = get_sys_channel();
 
-		$m = zot_build_packet($sys, 'ping');
-		$r = zot_zot($url . '/post', $m);
-		if(! $r['success']) {
+
+		$r = Zotlabs\Lib\Zotfinger::exec($url);
+
+		if(! $r['data']) {
 			$ret['message'] = 'no answer from ' . $url;
 			return $ret;
 		}
-		$packet_result = json_decode($r['body'], true);
-		if(! $packet_result['success']) {
-			$ret['message'] = 'packet failure from ' . $url;
-			return $ret;
-		}
 
-		if($packet_result['success']) {
-			$ret['success'] = true;
-		}
-		else {
-			$ret['message'] = 'unknown error from ' . $url;
-		}
-
+		$ret['success'] = true;
 		return $ret;
 }

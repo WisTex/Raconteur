@@ -1,6 +1,8 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Libzot;
+
 require_once('include/items.php');
 require_once('include/conversation.php');
 
@@ -15,11 +17,11 @@ class Home extends \Zotlabs\Web\Controller {
 		call_hooks('home_init',$ret);
 	
 
-		if(zotvi_is_zot_request()) {
+		if(Libzot::is_zot_request()) {
 
 			$key =  get_config('system','prvkey');
 		
-			$x = \zot6::zot_site_info();
+			$x = Libzot::site_info();
 
 			$headers = [];
 			$headers['Content-Type'] = 'application/x-zot+json' ;

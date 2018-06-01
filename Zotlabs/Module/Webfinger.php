@@ -1,8 +1,6 @@
 <?php
 namespace Zotlabs\Module;
 
-require_once('include/zot.php');
-
 
 class Webfinger extends \Zotlabs\Web\Controller {
 

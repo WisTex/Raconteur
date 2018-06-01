@@ -1,4 +1,6 @@
 <?php
+
+use Zotlabs\Lib\Libzot;
 /**
  * @file boot.php
  *
@@ -48,7 +50,7 @@ require_once('include/xchan.php');
 require_once('include/hubloc.php');
 require_once('include/attach.php');
 require_once('include/bbcode.php');
-require_once('include/zot6.php');
+
 
 define ( 'PLATFORM_NAME',           'hubzilla' );
 
@@ -1482,7 +1484,7 @@ function fix_system_urls($oldurl, $newurl) {
 			$y = q("update hubloc set hubloc_addr = '%s', hubloc_url = '%s', hubloc_url_sig = '%s', hubloc_host = '%s', hubloc_callback = '%s' where hubloc_hash = '%s' and hubloc_url = '%s'",
 				dbesc($channel_address . '@' . $rhs),
 				dbesc($newurl),
-				dbesc(zot_sign($newurl,$c[0]['channel_prvkey'])),
+				dbesc(Libzot::sign($newurl,$c[0]['channel_prvkey'])),
 				dbesc($newhost),
 				dbesc($newurl . '/post'),
 				dbesc($rv['xchan_hash']),

@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Libzot;
+
 require_once('include/contact_widgets.php');
 require_once('include/items.php');
 require_once("include/bbcode.php");
@@ -57,7 +59,7 @@ class Channel extends \Zotlabs\Web\Controller {
 
 		// handle zot6 channel discovery 
 
-		if(zotvi_is_zot_request()) {
+		if(Libzot::is_zot_request()) {
 			$channel = channelx_by_nick($which);
 			if(! $channel) {
 				http_status_exit(404, 'Not found');
@@ -72,11 +74,11 @@ class Channel extends \Zotlabs\Web\Controller {
 				);
 
 				if($s) {
-					$data = json_encode(crypto_encapsulate($data,$s[0]['hubloc_sitekey'],zot_best_algorithm($s[0]['site_crypto'])));
+					$data = json_encode(crypto_encapsulate($data,$s[0]['hubloc_sitekey'],Libzot::best_algorithm($s[0]['site_crypto'])));
 				}
 			}
 			else {
-				$data = json_encode(\zot6::zotinfo([ 'address' => $channel['channel_address'] ]));
+				$data = json_encode(Libzot::zotinfo([ 'address' => $channel['channel_address'] ]));
 			}
 
 			$headers = [ 'Content-Type' => 'application/x-zot+json', 'Digest' => \Zotlabs\Web\HTTPSig::generate_digest_header($data) ];

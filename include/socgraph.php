@@ -1,7 +1,8 @@
 <?php /** @file */
 
+use Zotlabs\Lib\Libzot;
+
 require_once('include/dir_fns.php');
-require_once('include/zot.php');
 
 /**
  * poco_load
@@ -152,8 +153,8 @@ function poco_load($xchan = '', $url = null) {
 		if(($x !== false) && (! count($x))) {
 			if($address) {
 				if($network === 'zot') {
-					$j = Zotlabs\Zot\Finger::run($address,null);
-					if($j['success']) {
+					$j = Zotlabs\Lib\Zotfinger::exec($profile_url);
+					if(is_array($j) && array_path_exists('signature/signer',$j) && $j['signature']['signer'] === $profile_url && intval($j['signature']['header_valid'])) {
 						import_xchan($j);
 					}
 					$x = q("select xchan_hash from xchan where xchan_hash = '%s' limit 1",

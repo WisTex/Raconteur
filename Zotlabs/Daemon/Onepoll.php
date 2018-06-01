@@ -2,7 +2,8 @@
 
 namespace Zotlabs\Daemon;
 
-require_once('include/zot.php');
+use Zotlabs\Lib\Libzot;
+
 require_once('include/socgraph.php');
 
 
@@ -74,7 +75,7 @@ class Onepoll {
 
 		// update permissions
 
-		$x = zot_refresh($contact,$importer);
+		$x = Libzot::refresh($contact,$importer);
 
 		$responded = false;
 		$updated   = datetime_convert();
@@ -150,7 +151,7 @@ class Onepoll {
 				$j = json_decode($x['body'],true);
 				if($j['success'] && $j['messages']) {
 					foreach($j['messages'] as $message) {
-						$results = process_delivery(array('hash' => $contact['xchan_hash']), get_item_elements($message),
+						$results = Libzot::process_delivery(array('hash' => $contact['xchan_hash']), get_item_elements($message),
 							array(array('hash' => $importer['xchan_hash'])), false);
 						logger('onepoll: feed_update: process_delivery: ' . print_r($results,true), LOGGER_DATA);
 						$total ++;

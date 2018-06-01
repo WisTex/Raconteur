@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Daemon;
 
-require_once('include/zot.php');
 
 class Addon {
 

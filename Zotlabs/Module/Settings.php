@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Module; /** @file */
 
-require_once('include/zot.php');
+
 require_once('include/security.php');
 
 class Settings extends \Zotlabs\Web\Controller {

@@ -1,6 +1,8 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Libzot;
+
 /* @file connedit.php
  * @brief In this file the connection-editor form is generated and evaluated.
  *
@@ -162,7 +164,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 		if(! $is_self) {
 	
 			$signed = $orig_record[0]['abook_xchan'] . '.' . $rating . '.' . $rating_text;
-			$sig = zot_sign($signed,$channel['channel_prvkey']);
+			$sig = Libzot::sign($signed,$channel['channel_prvkey']);
 
 			$rated = ((intval($rating) || strlen($rating_text)) ? true : false);
 	
@@ -471,7 +473,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 
 			if($cmd === 'refresh') {
 				if($orig_record[0]['xchan_network'] === 'zot') {
-					if(! zot_refresh($orig_record[0],\App::get_channel()))
+					if(! Libzot::refresh($orig_record[0],\App::get_channel()))
 						notice( t('Refresh failed - channel is currently unavailable.') );
 				}
 				else {

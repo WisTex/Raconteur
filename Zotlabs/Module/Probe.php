@@ -1,8 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
-require_once('include/zot.php');
-
+use Zotlabs\Lib\Libzot;
 
 class Probe extends \Zotlabs\Web\Controller {
 
@@ -23,21 +22,11 @@ class Probe extends \Zotlabs\Web\Controller {
 			$addr = trim($_GET['addr']);
 			$do_import = ((intval($_GET['import']) && is_site_admin()) ? true : false);
 			
-			$j = \Zotlabs\Zot\Finger::run($addr,$channel,false);
+			$j = \Zotlabs\Lib\Zotfinger::exec($addr,$channel);
 
 			$o .= '<pre>';
-			if(! $j['success']) {
-				$o .= sprintf( t('Fetching URL returns error: %1$s'),$res['error'] . "\r\n\r\n");
-				$o .= "<strong>https connection failed. Trying again with auto failover to http.</strong>\r\n\r\n";
-				$j = \Zotlabs\Zot\Finger::run($addr,$channel,true);
-				if(! $j['success']) 
-					$o .= sprintf( t('Fetching URL returns error: %1$s'),$res['error'] . "\r\n\r\n");
-	
-			}
 			if($do_import && $j)
-				$x = import_xchan($j);
-			if($j && $j['permissions'] && $j['permissions']['iv'])
-				$j['permissions'] = json_decode(crypto_unencapsulate($j['permissions'],$channel['channel_prvkey']),true);
+				$x = Libzot::import_xchan($j);
 			$o .= str_replace("\n",'<br />',print_r($j,true));
 			$o .= '</pre>';
 		}

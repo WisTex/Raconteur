@@ -3,6 +3,7 @@
 namespace Zotlabs\Zot6;
 
 use Zotlabs\Lib\Config;
+use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
 
 class Receiver {
@@ -96,14 +97,14 @@ class Receiver {
 
 	function ValidateSender() {
 
-		$hubs = zot_gethub($this->sender,true);
+		$hubs = Libzot::gethub($this->sender,true);
 
 		if (! $hubs) {
 
 			/* Have never seen this guid or this guid coming from this location. Check it and register it. */
 			/* (!!) this will validate the sender. */
 
-        	$result = zot_register_hub($this->sender);
+        	$result = Libzot::register_hub($this->sender);
 
         	if ((! $result['success']) || (! ($hubs = zot_gethub($this->sender,true)))) {
             	$this->response['message'] = 'Hub not available.';
@@ -111,7 +112,7 @@ class Receiver {
     	    }
 		}
 		foreach ($hubs as $hub) {
-			update_hub_connected($hub,((array_key_exists('sitekey',$this->sender)) ? $this->sender['sitekey'] : ''));
+			Libzot::update_hub_connected($hub,((array_key_exists('sitekey',$this->sender)) ? $this->sender['sitekey'] : ''));
 		}
 		$this->validated = true;
 		$this->hubs = $hubs;

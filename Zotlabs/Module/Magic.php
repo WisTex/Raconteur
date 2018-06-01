@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
-require_once('include/zot.php');
+
 
 class Magic extends \Zotlabs\Web\Controller {
 
@@ -77,7 +77,7 @@ class Magic extends \Zotlabs\Web\Controller {
 				$headers['Accept'] = 'application/x-zot+json' ;
 				$headers['X-Open-Web-Auth'] = random_string();
 				$headers = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],
-					'acct:' . $channel['channel_address'] . '@' . \App::get_hostname(),false,true,'sha512');
+					channel_url($channel),false,true,'sha512');
 				$x = z_fetch_url($basepath . '/owa',false,$redirects,[ 'headers' => $headers ]);
 
 				if($x['success']) {

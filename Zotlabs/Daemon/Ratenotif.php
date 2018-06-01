@@ -2,7 +2,8 @@
 
 namespace Zotlabs\Daemon;
 
-require_once('include/zot.php');
+use Zotlabs\Lib\Libzot;
+
 require_once('include/queue_fn.php');
 
 
@@ -77,7 +78,7 @@ class Ratenotif {
 						continue;
 
 					$hash = random_string();
-					$n = zot_build_packet($channel,'notify',null,null,'',$hash);
+					$n = Libzot::build_packet($channel,'notify',null,'',null,'',$hash);
 
 					queue_insert(array(
 						'hash'       => $hash,

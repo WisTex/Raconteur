@@ -1,9 +1,10 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Libzot;
+
 require_once('include/acl_selectors.php');
 require_once('include/message.php');
-require_once('include/zot.php');
 require_once("include/bbcode.php");
 
 
@@ -76,7 +77,7 @@ class Mail extends \Zotlabs\Web\Controller {
 
 			if(is_array($zf) && array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href
             	&& intval($zf['signature']['header_valid']) && array_path_exists('data/permissions',$zf) && strpos($zf['data']['permissions'],'post_mail') !== false) {
-				$xc = import_xchan($zf['data']);
+				$xc = Libzot::import_xchan($zf['data']);
 				if($xc['success']) {
 					$recipient = $xc['hash'];
 				}

@@ -2,7 +2,8 @@
 
 namespace Zotlabs\Daemon;
 
-require_once('include/zot.php');
+use Zotlabs\Lib\Libzot;
+
 require_once('include/queue_fn.php');
 
 
@@ -42,12 +43,12 @@ class Deliver {
 						if(array_key_exists('message_list',$m)) {
 							foreach($m['message_list'] as $mm) {
 								$msg = array('body' => json_encode(array('success' => true, 'pickup' => array(array('notify' => $notify,'message' => $mm)))));
-								zot_import($msg,z_root());
+								Libzot::import($msg,z_root());
 							}
 						}	
 						else {	
 							$msg = array('body' => json_encode(array('success' => true, 'pickup' => array(array('notify' => $notify,'message' => $m)))));
-							$dresult = zot_import($msg,z_root());
+							$dresult = Libzot::import($msg,z_root());
 						}
 
 						remove_queue_item($r[0]['outq_hash']);
@@ -58,7 +59,7 @@ class Deliver {
 
 							foreach($dresult as $xx) {
 								if(is_array($xx) && array_key_exists('message_id',$xx)) {
-									if(delivery_report_is_storable($xx)) {
+									if(Libzot::delivery_report_is_storable($xx)) {
 										q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_result, dreport_time, dreport_xchan ) values ( '%s', '%s','%s','%s','%s','%s' ) ",
 											dbesc($xx['message_id']),
 											dbesc($xx['location']),

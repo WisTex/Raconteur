@@ -2,7 +2,9 @@
 
 namespace Zotlabs\Daemon;
 
-require_once('include/zot.php');
+
+use Zotlabs\Lib\Libzot;;
+
 require_once('include/dir_fns.php');
 require_once('include/queue_fn.php');
 
@@ -63,8 +65,8 @@ class Directory {
 
 		// ensure the upstream directory is updated
 
-		$packet = zot_build_packet($channel,(($force) ? 'force_refresh' : 'refresh'));
-		$z = zot_zot($url,$packet);
+		$packet = Libzot::build_packet($channel,(($force) ? 'force_refresh' : 'refresh'));
+		$z = Libzot::zot($url,$packet);
 
 		// re-queue if unsuccessful
 
