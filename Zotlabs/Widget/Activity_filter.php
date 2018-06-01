@@ -111,6 +111,13 @@ class Activity_filter {
 
 		if(x($_GET,'search')) {
 			$filter_active = 'search';
+			$tabs[] = [
+				'label' => t('Search'),
+				'icon' => 'search',
+				'url' => z_root() . '/' . $cmd . '/?f=&search=' . $_GET['search'],
+				'sel' => 'active disabled',
+				'title' => t('Panel search'),
+			];
 		}
 
 		$reset = [];
