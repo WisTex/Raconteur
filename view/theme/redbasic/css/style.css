@@ -1799,3 +1799,11 @@ dl.bb-dl > dd > li {
 .cover-photo-review {
 	margin-bottom: 10px;
 }
+
+.hover-fx-hide  {
+	opacity: 0;
+}
+
+.hover-fx-show:hover .hover-fx-hide {
+	opacity: 1;
+}

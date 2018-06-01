@@ -84,18 +84,21 @@ class Activity_order {
 
 		$tabs[] = [
 			'label' => t('Commented Date'),
+			'icon' => '',
 			'url'=>z_root() . '/' . $cmd . '?f=&order=comment' . $filter,
 			'sel'=> $commentord_active,
 			'title' => t('Order by last commented date'),
 		];
 		$tabs[] = [
 			'label' => t('Posted Date'),
+			'icon' => '',
 			'url'=>z_root() . '/' . $cmd . '?f=&order=post' . $filter,
 			'sel'=> $postord_active,
 			'title' => t('Order by last posted date'),
 		];
 		$tabs[] = array(
 			'label' => t('Date Unthreaded'),
+			'icon' => '',
 			'url' => z_root() . '/' . $cmd . '?f=&order=unthreaded' . $filter,
 			'sel' => $unthreaded_active,
 			'title' => t('Order unthreaded by date'),
