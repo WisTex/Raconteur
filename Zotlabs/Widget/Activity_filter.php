@@ -40,7 +40,7 @@ class Activity_filter {
 				'icon' => 'star',
 				'url'=>z_root() . '/' . $cmd . '/?f=&star=1',
 				'sel'=>$starred_active,
-				'title' => t('Show posts that i have starred')
+				'title' => t('Show posts that I have starred')
 			];
 		}
 
@@ -69,7 +69,7 @@ class Activity_filter {
 					'icon' => 'users',
 					'url' => '#',
 					'sel' => (($filter_active == 'group') ? true : false),
-					'title' => sprintf(t('Show posts that i have filed to %s'), $t['term']),
+					'title' => sprintf(t('Show posts that I have filed to %s'), $t['term']),
 					'sub' => $gsub
 
 				];
@@ -121,7 +121,7 @@ class Activity_filter {
 					$fsub[] = [
 						'label' => $f['xchan_name'],
 						'img' => $f['xchan_photo_s'],
-						'url' => (($f['private_forum']) ? $f['xchan_url'] : z_root() . '/' . $cmd . '/?f=&cid=' . $f['abook_id']),
+						'url' => (($f['private_forum']) ? $f['xchan_url'] : z_root() . '/' . $cmd . '/?f=&pf=1&cid=' . $f['abook_id']),
 						'sel' => $forum_active,
 						'title' => t('Private forum'),
 						'lock' => (($f['private_forum']) ? 'lock' : '')
