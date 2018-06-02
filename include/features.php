@@ -395,9 +395,18 @@ function get_features($filtered = true, $level = (-1)) {
 			],
 
 			[
+				'forums_tab',         
+				t('Forum Filter'),				
+				t('Ability to display only posts of a specific forum'),
+				false,
+				get_config('feature_lock','forums_tab'),
+				feature_level('forums_tab',1),
+			],
+
+			[
 				'personal_tab',
-				t('Network Personal Tab'),
-				t('Enable tab to display only Network posts that you\'ve interacted on'),
+				t('Personal Posts Filter'),
+				t('Ability to display only Network posts that you\'ve interacted on'),
 				false,
 				get_config('feature_lock','personal_tab'),
 				feature_level('personal_tab',1),

@@ -25,7 +25,7 @@ class Activity_filter {
 				'icon' => 'user-circle',
 				'url' => z_root() . '/' . $cmd . '/?f=&conv=1',
 				'sel' => $conv_active,
-				'title' => t('Show posts that mention or involve me'),
+				'title' => t('Show posts that mention or involve me')
 			];
 		}
 
@@ -40,7 +40,7 @@ class Activity_filter {
 				'icon' => 'star',
 				'url'=>z_root() . '/' . $cmd . '/?f=&star=1',
 				'sel'=>$starred_active,
-				'title' => t('Show posts that i have starred'),
+				'title' => t('Show posts that i have starred')
 			];
 		}
 
@@ -60,7 +60,7 @@ class Activity_filter {
 						'icon' => '',
 						'url' => z_root() . '/' . $cmd . '/?f=&gid=' . $g['id'],
 						'sel' => $group_active,
-						'title' => sprintf(t('Show posts related to the %s privacy group'), $g['gname']),
+						'title' => sprintf(t('Show posts related to the %s privacy group'), $g['gname'])
 					];
 				}
 				$tabs[] = [
@@ -93,7 +93,7 @@ class Activity_filter {
 						'icon' => '',
 						'url' => z_root() . '/' . $cmd . '/?f=&file=' . $t['term'],
 						'sel' => $file_active,
-						'title' => '',
+						'title' => ''
 					];
 				}
 
@@ -109,6 +109,38 @@ class Activity_filter {
 			}
 		}
 
+		if(feature_enabled(local_channel(),'forums_tab')) {
+			$forums = get_forum_channels(local_channel());
+
+			if($forums) {
+				foreach($forums as $f) {
+					if(x($_GET,'cid')) {
+						$forum_active = (($_GET['cid'] == $f['abook_id']) ? 'active' : '');
+						$filter_active = 'forums';
+					}
+					$fsub[] = [
+						'label' => $f['xchan_name'],
+						'img' => $f['xchan_photo_s'],
+						'url' => (($f['private_forum']) ? $f['xchan_url'] : z_root() . '/' . $cmd . '/?f=&cid=' . $f['abook_id']),
+						'sel' => $forum_active,
+						'title' => t('Private forum'),
+						'lock' => (($f['private_forum']) ? 'lock' : '')
+					];
+				}
+
+				$tabs[] = [
+					'label' => t('Forums'),
+					'icon' => 'comments-o',
+					'url' => '#',
+					'sel' => (($filter_active == 'forums') ? true : false),
+					'title' => t('Show this forums posts'),
+					'sub' => $fsub
+
+				];
+			}
+		}
+
+
 		if(x($_GET,'search')) {
 			$filter_active = 'search';
 			$tabs[] = [
@@ -116,7 +148,7 @@ class Activity_filter {
 				'icon' => 'search',
 				'url' => z_root() . '/' . $cmd . '/?f=&search=' . $_GET['search'],
 				'sel' => 'active disabled',
-				'title' => t('Panel search'),
+				'title' => t('Panel search')
 			];
 		}
 
@@ -127,7 +159,7 @@ class Activity_filter {
 				'icon' => 'remove',
 				'url'=> z_root() . '/' . $cmd,
 				'sel'=> '',
-				'title' => t('Remove active filter'),
+				'title' => t('Remove active filter')
 			];
 		}
 
@@ -139,13 +171,13 @@ class Activity_filter {
 
 		if($arr['tabs']) {
 			$content =  replace_macros(get_markup_template('common_pills.tpl'), [
-				'$pills' => $arr['tabs'],
+				'$pills' => $arr['tabs']
 			]);
 
 			$o .= replace_macros(get_markup_template('activity_filter_widget.tpl'), [
 				'$title' => t('Activity Filters'),
 				'$reset' => $reset,
-				'$content' => $content,
+				'$content' => $content
 			]);
 		}
 

@@ -91,10 +91,10 @@ function nav($template = 'default') {
 	if(local_channel()) {
 
  		if(! $_SESSION['delegate']) {
-			$nav['manage'] = array('manage', t('Manage Channels'), "", t('Manage your channels'),'manage_nav_btn');
+			$nav['manage'] = array('manage', t('Channel Manager'), "", t('Manage your channels'),'manage_nav_btn');
  		}
 
-		$nav['group'] = array('group', t('Manage Privacy Groups'),"", t('Add and edit privacy groups'),'group_nav_btn');
+		$nav['group'] = array('group', t('Privacy Groups'),"", t('Manage your privacy groups'),'group_nav_btn');
 
  		$nav['settings'] = array('settings', t('Settings'),"", t('Account/Channel Settings'),'settings_nav_btn');
 

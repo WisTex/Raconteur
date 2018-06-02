@@ -3335,22 +3335,54 @@ function unique_multidim_array($array, $key) {
     return $temp_array;
 }
 
-function network_qstring($req) {
+function get_forum_channels($uid) {
 
-	$ret = '?f=';
+	if(! $uid)
+		return;
 
-	if(x($req, 'cid'))
-		$ret .= '&cid=' . $req['cid'];
+	$perms_sql = item_permissions_sql($uid) . item_normal();
 
-	if(x($req, 'gid'))
-		$ret .= '&gid=' . $req['gid'];
+	$xf = false;
 
-	if(x($req, 'star'))
-		$ret .= '&star=' . $req['star'];
+	$x1 = q("select xchan from abconfig where chan = %d and cat = 'their_perms' and k = 'send_stream' and v = '0'",
+		intval($uid)
+	);
+	if($x1) {
+		$xc = ids_to_querystr($x1,'xchan',true);
 
-	if(x($req, 'conv'))
-		$ret .= '&conv=' . $req['conv'];
+		$x2 = q("select xchan from abconfig where chan = %d and cat = 'their_perms' and k = 'tag_deliver' and v = '1' and xchan in (" . $xc . ") ",
+			intval($uid)
+		);
 
-	return $ret;
+		if($x2) { 
+			$xf = ids_to_querystr($x2,'xchan',true);
+
+			// private forums
+			$x3 = q("select xchan from abconfig where chan = %d and cat = 'their_perms' and k = 'post_wall' and v = '1' and xchan in (" . $xc . ") and not xchan in (" . $xf . ") ",
+				intval(local_channel())
+			);
+			if($x3) {
+				$xf = ids_to_querystr(array_merge($x2,$x3),'xchan',true);
+			}
+		}
+	}
+
+	$sql_extra = (($xf) ? " and ( xchan_hash in (" . $xf . ") or xchan_pubforum = 1 ) " : " and xchan_pubforum = 1 "); 
+
+	$r = q("select abook_id, xchan_hash, xchan_name, xchan_url, xchan_photo_s from abook left join xchan on abook_xchan = xchan_hash where xchan_deleted = 0 and abook_channel = %d and abook_pending = 0 and abook_ignored = 0 and abook_blocked = 0 $sql_extra order by xchan_name",
+		intval($uid)
+	);
+
+	for($x = 0; $x < count($r); $x ++) {
+		if($x3) {
+			foreach($x3 as $xx) {
+				if($r[$x]['xchan_hash'] == $xx['xchan']) {
+					$r[$x]['private_forum'] = 1;
+				}
+			}
+		}
+	}
+
+	return $r;
 
 }

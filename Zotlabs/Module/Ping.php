@@ -35,11 +35,12 @@ class Ping extends \Zotlabs\Web\Controller {
 		$result['birthdays_today'] = 0;
 		$result['all_events'] = 0;
 		$result['all_events_today'] = 0;
-		$result['notice'] = array();
-		$result['info'] = array();
+		$result['notice'] = [];
+		$result['info'] = [];
 		$result['pubs'] = 0;
 		$result['files'] = 0;
 		$result['forums'] = 0;
+		$result['forums_sub'] = [];
 
 		if(! $_SESSION['static_loadtime'])
 			$_SESSION['static_loadtime'] = datetime_convert();
@@ -625,75 +626,51 @@ class Ping extends \Zotlabs\Web\Controller {
 
 
 
-#### unseen forum
+		if($vnotify & VNOTIFY_FORUMS) {
+			$forums = get_forum_channels(local_channel());
 
-		$perms_sql = item_permissions_sql(local_channel()) . item_normal();
-
-		$xf = false;
-
-		$x1 = q("select xchan from abconfig where chan = %d and cat = 'their_perms' and k = 'send_stream' and v = '0'",
-			intval(local_channel())
-		);
-		if($x1) {
-			$xc = ids_to_querystr($x1,'xchan',true);
-
-			$x2 = q("select xchan from abconfig where chan = %d and cat = 'their_perms' and k = 'tag_deliver' and v = '1' and xchan in (" . $xc . ") ",
-				intval(local_channel())
-			);
-
-			if($x2) { 
-				$xf = ids_to_querystr($x2,'xchan',true);
-
-				// private forums
-				$x3 = q("select xchan from abconfig where chan = %d and cat = 'their_perms' and k = 'post_wall' and v = '1' and xchan in (" . $xc . ") and not xchan in (" . $xf . ") ",
-					intval(local_channel())
-				);
-				if($x3) {
-					$xf = ids_to_querystr(array_merge($x2,$x3),'xchan',true);
-				}
+			if(! $forums) {
+				$result['forums'] = 0;
 			}
-		}
+			else {
+				$fcount = count($forums);
+				$forums['total'] = 0;
+				for($x = 0; $x < $fcount; $x ++) {
+					$r = q("select sum(item_unseen) as unseen from item 
+						where uid = %d and owner_xchan = '%s' and item_unseen = 1 $perms_sql ",
+						intval(local_channel()),
+						dbesc($forums[$x]['xchan_hash'])
+					);
+					if($r[0]['unseen']) {
+						$forums[$x]['notify_link'] = (($forums[$x]['private_forum']) ? $forums[$x]['xchan_url'] :z_root() . '/network/?f=&cid=' . $forums[$x]['abook_id']);
+						$forums[$x]['name'] = $forums[$x]['xchan_name'];
+						$forums[$x]['url'] = $forums[$x]['xchan_url'];
+						$forums[$x]['photo'] = $forums[$x]['xchan_photo_s'];
+						$forums[$x]['unseen'] = $r[0]['unseen'];
+						$forums[$x]['private_forum'] = (($forums[$x]['private_forum']) ? 'lock' : '');
+						$forums[$x]['message'] = (($forums[$x]['private_forum']) ? t('Private forum') : t('Public forum'));
 
-		$sql_extra = (($xf) ? " and ( xchan_hash in (" . $xf . ") or xchan_pubforum = 1 ) " : " and xchan_pubforum = 1 "); 
+						$forums['total'] = $forums['total'] + $r[0]['unseen'];
 
-		$r1 = q("select abook_id, xchan_hash, xchan_name, xchan_url, xchan_photo_s from abook left join xchan on abook_xchan = xchan_hash where xchan_deleted = 0 and abook_channel = %d and abook_pending = 0 and abook_ignored = 0 and abook_blocked = 0 $sql_extra order by xchan_name",
-			intval(local_channel())
-		);
+						unset($forums[$x]['abook_id']);
+						unset($forums[$x]['xchan_hash']);
+						unset($forums[$x]['xchan_name']);
+						unset($forums[$x]['xchan_url']);
+						unset($forums[$x]['xchan_photo_s']);
 
-		if(! $r1) {
-			$result['forums'] = 0;
-		}
-		else {
-			$fcount = count($r1);
-			$r1['total'] = 0;
-			for($x = 0; $x < $fcount; $x ++) {
-				$r = q("select sum(item_unseen) as unseen from item 
-					where uid = %d and owner_xchan = '%s' and item_unseen = 1 $perms_sql ",
-					intval(local_channel()),
-					dbesc($r1[$x]['xchan_hash'])
-				);
-				if($r[0]['unseen']) {
-					$r1[$x]['notify_link'] = z_root() . '/network/?f=&cid=' . $r1[$x]['abook_id'];
-					$r1[$x]['name'] = $r1[$x]['xchan_name'];
-					$r1[$x]['url'] = $r1[$x]['xchan_url'];
-					$r1[$x]['photo'] = $r1[$x]['xchan_photo_s'];
-					$r1[$x]['unseen'] = $r[0]['unseen'];
-					$r1['total'] = $r1['total'] + $r[0]['unseen'];
+						//if($forums[$x]['private_forum'])
+						//	unset($forums[$x]['private_forum']);
 
-					unset($r1[$x]['abook_id']);
-					unset($r1[$x]['xchan_hash']);
-					unset($r1[$x]['xchan_name']);
-					unset($r1[$x]['xchan_url']);
-					unset($r1[$x]['xchan_photo_s']);
+					}
+					else {
+						unset($forums[$x]);
+					}
 				}
-				else {
-					unset($r1[$x]);
-				}
+				$result['forums'] = $forums['total'];
+				unset($forums['total']);
+
+				$result['forums_sub'] = $forums;
 			}
-			$result['forums'] = $r1['total'];
-			unset($r1['total']);
-
-			$result['forums_sub'] = $r1;
 		}
 
 		$x = json_encode($result);
