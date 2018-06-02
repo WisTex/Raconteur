@@ -374,14 +374,19 @@ function contact_remove($channel_id, $abook_id) {
 		return false;
 
 
-	$r = q("select id from item where (owner_xchan = '%s' or author_xchan = '%s') and uid = %d",
+	$r = q("select id from item where (owner_xchan = '%s' or author_xchan = '%s') and uid = %d and item_retained = 0 and item_starred = 0",
 		dbesc($abook['abook_xchan']),
 		dbesc($abook['abook_xchan']),
 		intval($channel_id)
 	);
 	if($r) {
+		$r = fetch_post_tags($r,true);
+
 		foreach($r as $rr) {
-			drop_item($rr['id'],false);
+			$terms = get_terms_oftype($item['term'],TERM_FILE);
+			if(! $terms) {
+				drop_item($rr['id'],false);
+			}
 		}
 	}
 

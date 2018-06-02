@@ -102,7 +102,7 @@ class Activity_filter {
 					'icon' => 'folder',
 					'url' => '#',
 					'sel' => (($filter_active == 'file') ? true : false),
-					'title' => sprintf(t('Show posts that i have filed to %s'), $t['term']),
+					'title' => sprintf(t('Show posts that I have filed to %s'), $t['term']),
 					'sub' => $tsub
 
 				];
