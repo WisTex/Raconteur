@@ -1,10 +1,10 @@
 <ul class="nav nav-pills flex-column">
 	{{foreach $pills as $p}}
-	<li class="nav-item"{{if $p.id}} id="{{$p.id}}"{{/if}}>
+	<li class="nav-item hover-fx-show"{{if $p.id}} id="{{$p.id}}"{{/if}}>
 		<a class="nav-link{{if $p.sel}} {{$p.sel}}{{/if}}" href="{{$p.url}}"{{if $p.title}} title="{{$p.title}}"{{/if}}{{if $p.sub}} onclick="{{if $p.sel}}closeOpen('{{$p.id}}_sub');{{else}}openClose('{{$p.id}}_sub');{{/if}} return false;"{{/if}}>
 			{{if $p.icon}}<i class="fa fa-fw fa-{{$p.icon}}"></i>{{/if}}
 			{{$p.label}}
-			{{if $p.sub}}<i class="fa fa-fw fa-caret-down"></i>{{/if}}
+			{{if $p.sub}}<i class="fa fa-fw fa-caret-down hover-fx-hide"></i>{{/if}}
 		</a>
 		{{if $p.sub}}
 		<ul class="nav nav-pills flex-column ml-4" id="{{$p.id}}_sub"{{if !$p.sel}} style="display: none;"{{/if}}>

@@ -111,6 +111,21 @@ class Notifications {
 					'label' => t('Mark all notices seen')
 				]
 			];
+
+			$notifications[] = [
+				'type' => 'forums',
+				'icon' => 'comments-o',
+				'severity' => 'secondary',
+				'label' => t('Forums'),
+				'title' => t('Forums'),
+				'viewall' => [
+					//'url' => 'notifications/system',
+					//'label' => t('View all notices')
+				],
+				'markall' => [
+					//'label' => t('Mark all notices seen')
+				]
+			];
 		}
 
 		if(local_channel() && is_site_admin()) {

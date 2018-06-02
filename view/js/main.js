@@ -451,7 +451,7 @@ function notificationsUpdate(cached_data) {
 }
 
 function handleNotifications(data) {
-	if(data.network || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs) {
+	if(data.network || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs || data.forums) {
 		$('.notifications-btn').css('opacity', 1);
 		$('#no_notifications').hide();
 	}
