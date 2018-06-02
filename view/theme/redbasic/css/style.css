@@ -593,7 +593,8 @@ footer {
 	background-color: $comment_item_colour;
 }
 
-#nav-notifications-template {
+#nav-notifications-template,
+#nav-notifications-forums-template {
 	display: none;
 }
 
@@ -835,6 +836,11 @@ div.jGrowl div.jGrowl-notification {
 	text-overflow: ellipsis;
 	display: block;
 	white-space: nowrap;
+}
+
+.notification.notification-forum {
+	font-size: 0.9rem;
+	color: $font_colour;
 }
 
 #acl-search::-webkit-input-placeholder {

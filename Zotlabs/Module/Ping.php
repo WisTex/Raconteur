@@ -673,14 +673,27 @@ class Ping extends \Zotlabs\Web\Controller {
 					dbesc($r1[$x]['xchan_hash'])
 				);
 				if($r[0]['unseen']) {
+					$r1[$x]['notify_link'] = z_root() . '/network/?f=&cid=' . $r1[$x]['abook_id'];
+					$r1[$x]['name'] = $r1[$x]['xchan_name'];
+					$r1[$x]['url'] = $r1[$x]['xchan_url'];
+					$r1[$x]['photo'] = $r1[$x]['xchan_photo_s'];
 					$r1[$x]['unseen'] = $r[0]['unseen'];
 					$r1['total'] = $r1['total'] + $r[0]['unseen'];
+
+					unset($r1[$x]['abook_id']);
+					unset($r1[$x]['xchan_hash']);
+					unset($r1[$x]['xchan_name']);
+					unset($r1[$x]['xchan_url']);
+					unset($r1[$x]['xchan_photo_s']);
 				}
 				else {
 					unset($r1[$x]);
 				}
 			}
 			$result['forums'] = $r1['total'];
+			unset($r1['total']);
+
+			$result['forums_sub'] = $r1;
 		}
 
 		$x = json_encode($result);
