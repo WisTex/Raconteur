@@ -143,11 +143,12 @@ class Network extends \Zotlabs\Web\Controller {
 			$nouveau = true;
 
 		if($cid) {
-			$r = q("SELECT abook_xchan, xchan_addr, xchan_url FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_id = %d AND abook_channel = %d LIMIT 1",
+			$cid_r = q("SELECT abook.abook_xchan, xchan.xchan_addr, xchan.xchan_name, xchan.xchan_url, xchan.xchan_photo_s, xchan.xchan_pubforum from abook left join xchan on abook_xchan = xchan_hash where abook_id = %d and abook_channel = %d and abook_blocked = 0 limit 1",
 				intval($cid),
 				intval(local_channel())
 			);
-			if(! $r) {
+
+			if(! $cid_r) {
 				if($update) {
 					killme();
 				}
@@ -156,9 +157,9 @@ class Network extends \Zotlabs\Web\Controller {
 				// NOTREACHED
 			}
 			if($_GET['pf'] === '1')
-				$deftag = '!{' . (($r[0]['xchan_addr']) ? $r[0]['xchan_addr'] : $r[0]['xchan_url']) . '}';
+				$deftag = '!{' . (($cid_r[0]['xchan_addr']) ? $cid_r[0]['xchan_addr'] : $cid_r[0]['xchan_url']) . '}';
 			else
-				$def_acl = [ 'allow_cid' => '<' . $r[0]['abook_xchan'] . '>', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => '' ];
+				$def_acl = [ 'allow_cid' => '<' . $cid_r[0]['abook_xchan'] . '>', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => '' ];
 		}
 	
 		if(! $update) {
@@ -240,6 +241,7 @@ class Network extends \Zotlabs\Web\Controller {
 				}
 			}
 			$item_thread_top = '';
+
 			$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND (( author_xchan IN ( $contact_str ) OR owner_xchan in ( $contact_str )) or allow_gid like '" . protect_sprintf('%<' . dbesc($group_hash) . '>%') . "' ) and id = parent $item_normal ) ";
 	
 			$x = group_rec_byhash(local_channel(), $group_hash);
@@ -255,27 +257,23 @@ class Network extends \Zotlabs\Web\Controller {
 			$o .= $status_editor;
 	
 		}
-	
-		elseif($cid) {
-	
-			$r = q("SELECT abook.*, xchan.* from abook left join xchan on abook_xchan = xchan_hash where abook_id = %d and abook_channel = %d and abook_blocked = 0 limit 1",
-				intval($cid),
-				intval(local_channel())
-			);
-			if($r) {
-				$item_thread_top = '';
-				$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND uid = " . intval(local_channel()) . " AND ( author_xchan = '" . dbesc($r[0]['abook_xchan']) . "' or owner_xchan = '" . dbesc($r[0]['abook_xchan']) . "' or (body like '" . protect_sprintf('%' . $r[0]['xchan_url'] . '%') . "' and item_thread_top = 1 )) $item_normal ) ";
-				$title = replace_macros(get_markup_template("section_title.tpl"),array(
-					'$title' => '<a href="' . zid($r[0]['xchan_url']) . '" ><img src="' . zid($r[0]['xchan_photo_s'])  . '" alt="' . urlencode($r[0]['xchan_name']) . '" /></a> <a href="' . zid($r[0]['xchan_url']) . '" >' . $r[0]['xchan_name'] . '</a>'
-				));
-				$o = $tabs;
-				$o .= $title;
-				$o .= $status_editor;
+		elseif($cid_r) {
+			$item_thread_top = '';
+
+			if($load || $update) {
+				$p1 = q("SELECT DISTINCT parent FROM item WHERE uid = " . intval(local_channel()) . " AND ( author_xchan = '" . dbesc($cid_r[0]['abook_xchan']) . "' OR owner_xchan = '" . dbesc($cid_r[0]['abook_xchan']) . "' ) $item_normal ORDER BY created DESC");
+				$p2 = q("SELECT oid AS parent FROM term WHERE uid = " . intval(local_channel()) . " AND term = '" . dbesc($cid_r[0]['xchan_name']) . "'");
+				$p_str = ids_to_querystr(array_merge($p1,$p2),'parent');
+				$sql_extra = " AND item.parent IN ( $p_str ) ";
 			}
-			else {
-				notice( t('Invalid connection.') . EOL);
-				goaway(z_root() . '/network');
-			}
+
+			$title = replace_macros(get_markup_template("section_title.tpl"),array(
+				'$title' => '<a href="' . zid($cid_r[0]['xchan_url']) . '" ><img src="' . zid($cid_r[0]['xchan_photo_s'])  . '" alt="' . urlencode($cid_r[0]['xchan_name']) . '" /></a> <a href="' . zid($cid_r[0]['xchan_url']) . '" >' . $cid_r[0]['xchan_name'] . '</a>'
+			));
+
+			$o = $tabs;
+			$o .= $title;
+			$o .= $status_editor;
 		}
 		elseif($xchan) {
 			$r = q("select * from xchan where xchan_hash = '%s'",

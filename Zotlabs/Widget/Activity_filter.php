@@ -114,8 +114,8 @@ class Activity_filter {
 
 			if($forums) {
 				foreach($forums as $f) {
-					if(x($_GET,'cid')) {
-						$forum_active = (($_GET['cid'] == $f['abook_id']) ? 'active' : '');
+					if(x($_GET,'pf') && x($_GET,'cid')) {
+						$forum_active = ((x($_GET,'pf') && $_GET['cid'] == $f['abook_id']) ? 'active' : '');
 						$filter_active = 'forums';
 					}
 					$fsub[] = [
