@@ -282,13 +282,13 @@ class Channel extends \Zotlabs\Web\Controller {
 					}
 				}
 				else {
-					$r = q("SELECT item.parent AS item_id FROM item 
+					$r = q("SELECT DISTINCT item.parent AS item_id, $ordering FROM item 
 						left join abook on ( item.author_xchan = abook.abook_xchan $abook_uids )
 						WHERE true and item.uid = %d $item_normal
 						AND (abook.abook_blocked = 0 or abook.abook_flags is null)
-						AND item.item_wall = 1 
+						AND item.item_wall = 1 AND item.item_thread_top = 1
 						$sql_extra $sql_extra2 
-						ORDER BY $ordering DESC, id $pager_sql ",
+						ORDER BY $ordering DESC $pager_sql ",
 						intval(\App::$profile['profile_uid'])
 					);
 				}
