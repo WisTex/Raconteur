@@ -633,8 +633,11 @@ class Ping extends \Zotlabs\Web\Controller {
 				$result['forums'] = 0;
 			}
 			else {
+
+				$perms_sql = item_permissions_sql(local_channel()) . item_normal();
 				$fcount = count($forums);
 				$forums['total'] = 0;
+
 				for($x = 0; $x < $fcount; $x ++) {
 					$r = q("select sum(item_unseen) as unseen from item 
 						where uid = %d and owner_xchan = '%s' and item_unseen = 1 $perms_sql ",
@@ -642,7 +645,7 @@ class Ping extends \Zotlabs\Web\Controller {
 						dbesc($forums[$x]['xchan_hash'])
 					);
 					if($r[0]['unseen']) {
-						$forums[$x]['notify_link'] = (($forums[$x]['private_forum']) ? $forums[$x]['xchan_url'] :z_root() . '/network/?f=&cid=' . $forums[$x]['abook_id']);
+						$forums[$x]['notify_link'] = (($forums[$x]['private_forum']) ? $forums[$x]['xchan_url'] : z_root() . '/network/?f=&cid=' . $forums[$x]['abook_id']);
 						$forums[$x]['name'] = $forums[$x]['xchan_name'];
 						$forums[$x]['url'] = $forums[$x]['xchan_url'];
 						$forums[$x]['photo'] = $forums[$x]['xchan_photo_s'];

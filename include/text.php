@@ -3340,8 +3340,6 @@ function get_forum_channels($uid) {
 	if(! $uid)
 		return;
 
-	$perms_sql = item_permissions_sql($uid) . item_normal();
-
 	$xf = false;
 
 	$x1 = q("select xchan from abconfig where chan = %d and cat = 'their_perms' and k = 'send_stream' and v = '0'",
