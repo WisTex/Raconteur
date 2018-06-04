@@ -89,6 +89,7 @@ class Activity_filter {
 						$filter_active = 'file';
 					}
 					$tsub[] = [
+						'id' => 'saved_folders',
 						'label' => $t['term'],
 						'icon' => '',
 						'url' => z_root() . '/' . $cmd . '/?f=&file=' . $t['term'],
@@ -119,6 +120,7 @@ class Activity_filter {
 						$filter_active = 'forums';
 					}
 					$fsub[] = [
+						'id' => 'forums',
 						'label' => $f['xchan_name'],
 						'img' => $f['xchan_photo_s'],
 						'url' => (($f['private_forum']) ? $f['xchan_url'] : z_root() . '/' . $cmd . '/?f=&pf=1&cid=' . $f['abook_id']),
