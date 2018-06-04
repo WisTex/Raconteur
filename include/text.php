@@ -3333,7 +3333,7 @@ function unique_multidim_array($array, $key) {
         $i++;
     }
     return $temp_array;
-<<<<<<< HEAD
+
 } 
 
 
@@ -3396,8 +3396,6 @@ function array_path_exists($str,$arr) {
 	return false;
 
 }
-=======
-}
 
 function get_forum_channels($uid) {
 
@@ -3448,4 +3446,3 @@ function get_forum_channels($uid) {
 	return $r;
 
 }
->>>>>>> master
