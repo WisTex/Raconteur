@@ -155,8 +155,9 @@ class Zot6Handler implements IHandler {
 			$ohubs = $r;
 
 			$private = ((array_key_exists('flags', $messages[0]) && in_array('private',$messages[0]['flags'])) ? true : false);
-			if($private)
-				$env_recips = [ 'id' => $sender['id'], 'id_sig' => $sender['id_sig'], 'porttable_id' => $sender_hash);
+			if($private) {
+				$env_recips = [ 'id' => $sender['id'], 'id_sig' => $sender['id_sig'], 'portable_id' => $sender_hash ];
+			}
 
 			$data_packet = json_encode(array('message_list' => $messages));
 
@@ -289,7 +290,7 @@ class Zot6Handler implements IHandler {
 
 			// Unfriend everybody - basically this means the channel has committed suicide
 
-			remove_all_xchan_resources($hubs[0]['hubloc_hash');
+			remove_all_xchan_resources($hubs[0]['hubloc_hash']);
 
 			$ret['success'] = true;
 		}

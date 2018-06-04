@@ -12,26 +12,22 @@ class Zotfinger {
 			return false;
 		}
 
-logger('resource: ' . $resource);
-
-		$headers = [];
-		$headers['Accept'] = 'application/x-zot+json'; 
-
-		$h = $headers;
+		$hd = $headers;
 
 		if($channel) {
+			$headers = [];
+			$headers['Accept'] = 'application/x-zot+json'; 
 			$headers['X-Zot-Token'] = random_string();
 			$h = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],channel_url($channel),false,false);
 		}
-
-logger('headers: ' . print_r($h,true));
-
+		else {
+			$h = [ 'Accept: application/x-zot+json' ]; 
+		}
+				
 		$result = [];
 
 		$redirects = 0;
 		$x = z_fetch_url($resource,false,$redirects, [ 'headers' => $h  ] );
-
-		logger('zotfinger: ' . print_r($x,true));
 
 		if($x['success']) {
 			$result['signature'] = \Zotlabs\Web\HTTPSig::verify($x);    
@@ -40,8 +36,6 @@ logger('headers: ' . print_r($h,true));
 			if($result['data'] && is_array($result['data']) && array_key_exists('encrypted',$result['data']) && $result['data']['encrypted']) {
 				$result['data'] = json_decode(crypto_unencapsulate($result['data'],get_config('system','prvkey')),true);
 			}
-
-logger('result: ' . print_r($result,true));
 
 			return $result;
 		}

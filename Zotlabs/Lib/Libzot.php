@@ -3,7 +3,6 @@
 namespace Zotlabs\Lib;
 
 /**
-
  * @brief implementation of zot6 protocol.
  *
  */
@@ -115,7 +114,7 @@ class Libzot {
 				'id_url'        => z_root() . '/channel/' . $channel['channel_address'],
 				'location'      => z_root(),
 				'location_sig'  => self::sign(z_root(),$channel['channel_prvkey'],$sig_method),
-				'sitekey'       => get_config('system','pubkey')
+				'site_id'       => self::make_xchan_hash(z_root(), get_config('system','pubkey')),
 			],
 			'callback'   => '/zot',
 			'version'    => \Zotlabs\Lib\System::get_zot_revision(),
@@ -395,16 +394,14 @@ class Libzot {
 				else {
 
 					$p = \Zotlabs\Access\Permissions::connect_perms($channel['channel_id']);
+					$my_perms = \Zotlabs\Access\Permissions::serialise($p['perms']);
 
-					$my_perms  = $p['perms'];
 					$automatic = $p['automatic'];
 
 					// new connection
 
 					if($my_perms) {
-						foreach($my_perms as $k => $v) {
-							set_abconfig($channel['channel_id'],$x['hash'],'my_perms',$k,$v);
-						}
+						set_abconfig($channel['channel_id'],$x['hash'],'system','my_perms',$my_perms);
 					}
 
 					$closeness = get_pconfig($channel['channel_id'],'system','new_abook_closeness');
@@ -520,16 +517,16 @@ class Libzot {
 			}
 
 			$limit = (($multiple) ? '' : ' limit 1 ');
-			$sitekey = ((array_key_exists('sitekey',$arr) && $arr['sitekey']) ? " and hubloc_sitekey = '" . dbesc(protect_sprintf($arr['sitekey'])) . "' " : '');
 
 			$r = q("select hubloc.*, site.site_crypto from hubloc left join site on hubloc_url = site_url
 					where hubloc_guid = '%s' and hubloc_guid_sig = '%s'
 					and hubloc_url = '%s' and hubloc_url_sig = '%s'
-					$sitekey $limit",
+					and hubloc_site_id = '%s' $limit",
 				dbesc($arr['id']),
 				dbesc($arr['id_sig']),
 				dbesc($arr['location']),
-				dbesc($arr['location_sig'])
+				dbesc($arr['location_sig']),
+				dbesc($arr['site_id'])
 			);
 			if($r) {
 				logger('Found', LOGGER_DEBUG);
@@ -568,7 +565,7 @@ class Libzot {
 
 		$result  = [ 'success' => false ];
 
-		if($arr['id'] && $arr['id_sig'] && $arr['id_url'] && $arr['location'] && $arr['location_sig']) {
+		if($arr['id'] && $arr['id_sig'] && $arr['id_url'] && $arr['location'] && $arr['location_sig'] && $arr['site_id']) {
 			$record = \Zotlabs\Lib\Zotfinger::exec($arr['id_url']);
 
 			// Check the HTTP signature
@@ -2451,13 +2448,14 @@ class Libzot {
 
 				// match as many fields as possible in case anything at all changed.
 
-				$r = q("select * from hubloc where hubloc_hash = '%s' and hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_id_url = '%s' and hubloc_url = '%s' and hubloc_url_sig = '%s' and hubloc_host = '%s' and hubloc_addr = '%s' and hubloc_callback = '%s' and hubloc_sitekey = '%s' ",
+				$r = q("select * from hubloc where hubloc_hash = '%s' and hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_id_url = '%s' and hubloc_url = '%s' and hubloc_url_sig = '%s' and hubloc_site_id = '%s' and hubloc_host = '%s' and hubloc_addr = '%s' and hubloc_callback = '%s' and hubloc_sitekey = '%s' ",
 					dbesc($sender['hash']),
 					dbesc($sender['id']),
 					dbesc($sender['id_sig']),
 					dbesc($location['id_url']),
 					dbesc($location['url']),
 					dbesc($location['url_sig']),
+					dbesc($location['site_id']),
 					dbesc($location['host']),
 					dbesc($location['address']),
 					dbesc($location['callback']),
@@ -2579,6 +2577,7 @@ class Libzot {
 						'hubloc_primary'   => intval($location['primary']),
 						'hubloc_url'       => $location['url'],
 						'hubloc_url_sig'   => $location['url_sig'],
+						'hubloc_site_id'   => self::make_xchan_hash($location['url'],$location['sitekey']),
 						'hubloc_host'      => $location['host'],
 						'hubloc_callback'  => $location['callback'],
 						'hubloc_sitekey'   => $location['sitekey'],
@@ -2656,6 +2655,7 @@ class Libzot {
 					'primary'  => (intval($hub['hubloc_primary']) ? true : false),
 					'url'      => $hub['hubloc_url'],
 					'url_sig'  => $hub['hubloc_url_sig'],
+					'site_id'  => $hub['hubloc_site_id'],
 					'callback' => $hub['hubloc_callback'],
 					'sitekey'  => $hub['hubloc_sitekey'],
 					'deleted'  => (intval($hub['hubloc_deleted']) ? true : false)
@@ -4111,7 +4111,7 @@ class Libzot {
 
 
 		$ret['id']             = $e['xchan_guid'];
-		$ret['id_sig']         = zot_sign($e['xchan_guid'], $e['channel_prvkey']);
+		$ret['id_sig']         = self::sign($e['xchan_guid'], $e['channel_prvkey']);
 		$ret['aliases']        = [ 'acct:' . $e['xchan_addr'], $e['xchan_url'] ]; 
 
 
@@ -4197,7 +4197,7 @@ class Libzot {
 	}
 
 
-	static function zot_site_info() {
+	static function site_info() {
 
 		$signing_key = get_config('system','prvkey');
 		$sig_method  = get_config('system','signature_algorithm','sha256');
@@ -4205,7 +4205,7 @@ class Libzot {
 		$ret = [];
 		$ret['site'] = [];
 		$ret['site']['url'] = z_root();
-		$ret['site']['site_sig'] = zot_sign(z_root(), $signing_key);
+		$ret['site']['site_sig'] = self::sign(z_root(), $signing_key);
 		$ret['site']['post'] = z_root() . '/zot';
 		$ret['site']['openWebAuth']  = z_root() . '/owa';
 		$ret['site']['authRedirect'] = z_root() . '/magic';
@@ -4261,7 +4261,7 @@ class Libzot {
 			$ret['site']['admin'] = get_config('system','admin_email');
 
 			$visible_plugins = array();
-			if(is_array(App::$plugins) && count(App::$plugins)) {
+			if(is_array(\App::$plugins) && count(\App::$plugins)) {
 				$r = q("select * from addon where hidden = 0");
 				if($r)
 					foreach($r as $rr)

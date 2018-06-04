@@ -19,7 +19,6 @@ class Home extends \Zotlabs\Web\Controller {
 		if(Libzot::is_zot_request()) {
 
 			$key =  get_config('system','prvkey');
-		
 			$x = Libzot::site_info();
 
 			$headers = [];

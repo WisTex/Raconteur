@@ -40,7 +40,7 @@ function get_all_perms($uid, $observer_xchan, $internal_use = true) {
 
 	$ret = array();
 
-	$abperms = (($uid && $observer_xchan) ? load_abconfig($uid,$observer_xchan,'my_perms') : array());
+	$abperms = (($uid && $observer_xchan) ? get_abconfig($uid,$observer_xchan,'system','my_perms','') : '');
 
 	foreach($global_perms as $perm_name => $permission) {
 
@@ -216,13 +216,16 @@ function get_all_perms($uid, $observer_xchan, $internal_use = true) {
 
 		if($channel_perm & PERMS_SPECIFIC) {
 			if($abperms) {
-				foreach($abperms as $ab) {
-					if(($ab['cat'] == 'my_perms') && ($ab['k'] == $perm_name)) {
-						$ret[$perm_name] = (intval($ab['v']) ? true : false);
-						break;
+				$arr = explode(',',$abperms);
+				if($arr) {
+					if (in_array($permname,$arr)) {
+						$ret[$perm_name] = true;
+					}
+					else {
+						$ret[$perm_name] = false;
 					}
 				}
-				continue;
+				continue;	
 			}
 		}
 
@@ -320,7 +323,7 @@ function perm_is_allowed($uid, $observer_xchan, $permission) {
 			}
 
 		}
-		$abperms = load_abconfig($uid,$observer_xchan,'my_perms');
+		$abperms = get_abconfig($uid,$observer_xchan,'system','my_perms','');
 	}
 	
 
@@ -399,12 +402,14 @@ function perm_is_allowed($uid, $observer_xchan, $permission) {
 
 	if(($r) && ($channel_perm & PERMS_SPECIFIC)) {
 		if($abperms) {
-			foreach($abperms as $ab) {
-				if($ab['cat'] == 'my_perms' && $ab['k'] == $permission) {
-					return ((intval($ab['v'])) ? true : false);
+			$arr = explode(',',$abperms);
+			if($arr) {
+				if (in_array($permname,$arr)) {
+					return true;
 				}
 			}
 		}
+		return false;
 	}
 
 	// No permissions allowed.
