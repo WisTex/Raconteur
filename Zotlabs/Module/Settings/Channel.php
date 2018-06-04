@@ -100,14 +100,10 @@ class Channel {
 
 				if($role_permissions['perms_connect']) {	
 					$x = \Zotlabs\Access\Permissions::FilledPerms($role_permissions['perms_connect']);
-					foreach($x as $k => $v) {
-						set_abconfig(local_channel(),$channel['channel_hash'],'my_perms',$k, $v);
-						if($role_permissions['perms_auto']) {
-							set_pconfig(local_channel(),'autoperms',$k,$v);
-						}
-						else {
-							del_pconfig(local_channel(),'autoperms',$k);
-						}
+					$str = \Zotlabs\Access\Permissions::serialise($x);
+					set_abconfig(local_channel(),$channel['channel_hash'],'system','my_perms',$str);
+					if($role_permissions['perms_auto']) {
+						set_pconfig(local_channel(),'system','autoperms',$str);
 					}
 				}	
 

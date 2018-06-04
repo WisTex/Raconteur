@@ -51,16 +51,14 @@ class Item extends \Zotlabs\Web\Controller {
 		$parent_mid = ((x($_REQUEST,'parent_mid')) ? trim($_REQUEST['parent_mid']) : '');
 	
 		$remote_xchan = ((x($_REQUEST,'remote_xchan')) ? trim($_REQUEST['remote_xchan']) : false);
-		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
-			dbesc($remote_xchan)
-		);
-		if($r)
-			$remote_observer = $r[0];
-		else 
+
+		$remote_observer = xchan_match( ['xchan_hash' => $remote_xchan ] );
+
+		if(! $remote_observer) {
 			$remote_xchan = $remote_observer = false;
-	
+		}
+
 		$profile_uid = ((x($_REQUEST,'profile_uid')) ? intval($_REQUEST['profile_uid'])    : 0);
-		require_once('include/channel.php');
 
 		$sys = get_sys_channel();
 		if($sys && $profile_uid && ($sys['channel_id'] == $profile_uid) && is_site_admin()) {

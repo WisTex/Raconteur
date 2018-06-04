@@ -1,4 +1,4 @@
-<?php /** @file */
+<?php 
 
 namespace Zotlabs\Daemon;
 
@@ -194,7 +194,7 @@ class Notifier {
 						$recipients[] = $r[0]['abook_xchan'];
 						$private = false;
 						$packet_type = 'refresh';
-						$packet_recips = array(array('id' => $r[0]['xchan_guid'],'id_sig' => $r[0]['xchan_guid_sig'],'hash' => $r[0]['xchan_hash']));
+						$packet_recips = array(array('id' => $r[0]['xchan_guid'],'id_sig' => $r[0]['xchan_guid_sig'],'portable_id' => $r[0]['xchan_hash']));
 					}
 				}
 			}
@@ -448,9 +448,9 @@ class Notifier {
 				$recip_list[] = $d['xchan_addr'] . ' (' . $d['xchan_hash'] . ')'; 
 				if($private) {
 					$env_recips[] = [
-						'id'     => $d['xchan_guid'],
-						'id_sig' => $d['xchan_guid_sig'],
-						'hash'     => $d['xchan_hash']
+						'id'              => $d['xchan_guid'],
+						'id_sig'          => $d['xchan_guid_sig'],
+						'portable_id'     => $d['xchan_hash']
 					];
 				}
 			}
@@ -533,7 +533,7 @@ class Notifier {
 
 			if($env_recips) {
 				foreach($env_recips as $er) {
-					if($hub['hubloc_hash'] === $er['hash']) {
+					if($hub['hubloc_hash'] === $er['portable_id']) {
 						if(! array_key_exists($hub['hubloc_host'] . $hub['hubloc_sitekey'], $hub_env)) {
 							$hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] = [];
 						}

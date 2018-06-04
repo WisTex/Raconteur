@@ -1182,7 +1182,7 @@ class Libzot {
 					$recip_arr = array();
 					foreach($i['notify']['recipients'] as $recip) {
 						if(is_array($recip)) {
-							$recip_arr[] =  $recip['hash'];
+							$recip_arr[] =  $recip['portable_id'];
 						}
 					}
 

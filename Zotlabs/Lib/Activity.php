@@ -1189,6 +1189,7 @@ class Activity {
 		$s['aid'] = $channel['channel_account_id'];
 		$s['uid'] = $channel['channel_id'];
 		$s['mid'] = urldecode($act->obj['id']);
+		$s['plink'] = urldecode($act->obj['id']);
 
 
 		if($act->data['published']) {
@@ -1497,6 +1498,7 @@ class Activity {
 		$s['aid'] = $channel['channel_account_id'];
 		$s['uid'] = $channel['channel_id'];
 		$s['mid'] = urldecode($act->obj['id']);
+		$s['plink'] = urldecode($act->obj['id']);
 
 		if(! $s['created'])
 			$s['created'] = datetime_convert();

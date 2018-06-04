@@ -103,20 +103,45 @@ function xchan_store($arr) {
 }
 
 
+function xchan_match($arr) {
+
+	if(! $arr)
+		return false;
+
+	$str = '';
+    
+	foreach($arr as $k => $v) {
+        if($str) {
+            $str .= " AND ";
+		}
+		$str .= " " . TQUOT . dbesc($k) . TQUOT . " = '" . dbesc($v) . "' ";
+    }
+
+	$r = q("select * from xchan where $str limit 1");
+	
+	return (($r) ? $r[0] : false);
+
+}
+
+
+
+
+
 function xchan_fetch($arr) {
+
 
 	$key = '';
 	if($arr['hash']) {
 		$key = 'xchan_hash';
-		$v = $arr['hash'];
+		$v = dbesc($arr['hash']);
 	}
 	elseif($arr['guid']) {
 		$key = 'xchan_guid';
-		$v = $arr['guid'];
+		$v = dbesc($arr['guid']);
 	}
 	elseif($arr['address']) {
 		$key = 'xchan_addr';
-		$v = $arr['address'];
+		$v = dbesc($arr['address']);
 	}
 
 	if(! $key)
@@ -126,14 +151,16 @@ function xchan_fetch($arr) {
 	if(! $r)
 		return false;
 
-	$ret = array();
+	$ret = [];
 	foreach($r[0] as $k => $v) {
 		if($k === 'xchan_addr')
 			$ret['address'] = $v;
 		else
 			$ret[str_replace('xchan_','',$k)] = $v;
 	}
+
 	return $ret;
+
 }
 
 

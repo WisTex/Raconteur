@@ -72,9 +72,8 @@ class Zot6Handler implements IHandler {
 			foreach ($recipients as $recip) {
 				$r = q("select channel.*,xchan.* from channel
 					left join xchan on channel_hash = xchan_hash
-					where channel_guid = '%s' and channel_guid_sig = '%s' limit 1",
-					dbesc($recip['id']),
-					dbesc($recip['id_sig'])
+					where channel_hash ='%s' limit 1",
+					dbesc($recip['portable_id'])
 				);
 
 				$x = Libzot::refresh( [ 'hubloc_id_url' => $sender['id_url'] ], $r[0], (($msgtype === 'force_refresh') ? true : false));
@@ -120,16 +119,16 @@ class Zot6Handler implements IHandler {
 		}
 
 		$sender = $data['sender'];
-		$sender_hash = $sender['hash'];
+		$sender_hash = $hubs[0]['hubloc_hash'];
 
 		/*
 		 * Find the local channel in charge of this post (the first and only recipient of the request packet)
 		 */
 
 		$arr = $data['recipients'][0];
-//@fixme		$recip_hash = make_xchan_hash($arr['guid'],$arr['guid_sig']);
+
 		$c = q("select * from channel left join xchan on channel_hash = xchan_hash where channel_hash = '%s' limit 1",
-			dbesc($recip_hash)
+			dbesc($arr['portable_id'])
 		);
 		if (! $c) {
 			logger('recipient channel not found.');
@@ -153,15 +152,15 @@ class Zot6Handler implements IHandler {
 				logger('no hubs');
 				json_return_and_die($ret);
 			}
-			$hubs = $r;
+			$ohubs = $r;
 
 			$private = ((array_key_exists('flags', $messages[0]) && in_array('private',$messages[0]['flags'])) ? true : false);
 			if($private)
-				$env_recips = array('guid' => $sender['guid'], 'guid_sig' => $sender['guid_sig'], 'hash' => $sender_hash);
+				$env_recips = [ 'id' => $sender['id'], 'id_sig' => $sender['id_sig'], 'porttable_id' => $sender_hash);
 
 			$data_packet = json_encode(array('message_list' => $messages));
 
-			foreach($hubs as $hub) {
+			foreach($ohubs as $hub) {
 				$hash = random_string();
 
 				/*
@@ -271,15 +270,13 @@ class Zot6Handler implements IHandler {
 			foreach ($recipients as $recip) {
 				$r = q("select channel.*,xchan.* from channel
 					left join xchan on channel_hash = xchan_hash
-					where channel_guid = '%s' and channel_guid_sig = '%s' limit 1",
-					dbesc($recip['id']),
-					dbesc($recip['id_sig'])
+					where channel_hash = '%s' and channel_guid_sig = '%s' limit 1",
+					dbesc($recip['portable_id'])
 				);
 				if ($r) {
 					$r = q("select abook_id from abook where uid = %d and abook_xchan = '%s' limit 1",
 						intval($r[0]['channel_id']),
-//@fixme
-						dbesc(Libzot::make_xchan_hash($sender['guid'],$sender['guid_sig']))
+						dbesc($hubs[0]['hubloc_hash'])
 					);
 					if ($r) {
 						contact_remove($r[0]['channel_id'],$r[0]['abook_id']);
@@ -289,11 +286,10 @@ class Zot6Handler implements IHandler {
 			$ret['success'] = true;
 		}
 		else {
-			// Unfriend everybody - basically this means the channel has committed suicide
-			$arr = $sender;
-//@fixme			$sender_hash = Libzot::make_xchan_hash($arr['guid'],$arr['guid_sig']);
 
-			remove_all_xchan_resources($sender_hash);
+			// Unfriend everybody - basically this means the channel has committed suicide
+
+			remove_all_xchan_resources($hubs[0]['hubloc_hash');
 
 			$ret['success'] = true;
 		}

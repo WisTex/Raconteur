@@ -471,11 +471,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 	$dosync = ((array_key_exists('nosync',$arr) && $arr['nosync']) ? 0 : 1);
 
 	if($observer_hash) {
-		$x = q("select * from xchan where xchan_hash = '%s' limit 1",
-			dbesc($observer_hash)
-		);
-		if($x)
-			$observer = $x[0];
+		$observer = xchan_match([ 'xchan_hash' => $observer_hash ]);
 	}
 
 	logger('arr: ' . print_r($arr,true), LOGGER_DATA);

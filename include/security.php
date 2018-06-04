@@ -277,14 +277,12 @@ function change_channel($change_channel) {
 			}
 			$ret = $r[0];
 		}
-		$x = q("select * from xchan where xchan_hash = '%s' limit 1",
-			dbesc($hash)
-		);
+		$x = xchan_match([ 'xchan_hash' => $hash ]);
 		if($x) {
-			$_SESSION['my_url'] = $x[0]['xchan_url'];
+			$_SESSION['my_url'] = $x['xchan_url'];
 			$_SESSION['my_address'] = channel_reddress($r[0]);
 
-			App::set_observer($x[0]);
+			App::set_observer($x);
 			App::set_perms(get_all_perms(local_channel(), $hash));
 		}
 		if(! is_dir('store/' . $r[0]['channel_address']))

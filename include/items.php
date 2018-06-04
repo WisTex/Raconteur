@@ -2239,7 +2239,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true) {
 	foreach($arr as $k => $v) {
 		if($str)
 			$str .= ",";
-		$str .= " " . TQUOT . $k . TQUOT . " = '" . $v . "' ";
+		$str .= " " . TQUOT . dbesc($k) . TQUOT . " = '" . dbesc($v) . "' ";
 	}
 
 	$r = dbq("update item set " . $str . " where id = " . $orig_post_id );
