@@ -71,14 +71,18 @@ class Poller {
 
 		$randfunc = db_getfunc('RAND');
 	
-		$contacts = q("SELECT * FROM abook LEFT JOIN xchan on abook_xchan = xchan_hash 
+		$contacts = q("SELECT abook.abook_updated, abook.abook_connected, abook.abook_feed,
+			abook.abook_channel, abook.abook_id, abook.abook_archived, abook.abook_pending,
+			abook.abook_ignored, abook.abook_blocked,
+			xchan.xchan_network,
+			account.account_lastlog, account.account_flags 
+			FROM abook LEFT JOIN xchan on abook_xchan = xchan_hash 
 			LEFT JOIN account on abook_account = account_id
 			where abook_self = 0
 			$sql_extra 
 			AND (( account_flags = %d ) OR ( account_flags = %d )) $abandon_sql ORDER BY $randfunc",
 			intval(ACCOUNT_OK),
 			intval(ACCOUNT_UNVERIFIED)     // FIXME
-
 		);
 
 		if($contacts) {

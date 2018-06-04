@@ -89,6 +89,11 @@ $(document).ready(function() {
 		tagClass: 'badge badge-pill badge-warning text-dark'
 	});
 
+	$('a.disabled').click(function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+	});
+
 	var doctitle = document.title;
 	function checkNotify() {
 		var notifyUpdateElem = document.getElementById('notify-update');

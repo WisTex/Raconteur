@@ -593,7 +593,8 @@ footer {
 	background-color: $comment_item_colour;
 }
 
-#nav-notifications-template {
+#nav-notifications-template,
+#nav-notifications-forums-template {
 	display: none;
 }
 
@@ -835,6 +836,11 @@ div.jGrowl div.jGrowl-notification {
 	text-overflow: ellipsis;
 	display: block;
 	white-space: nowrap;
+}
+
+.notification.notification-forum {
+	font-size: 0.9rem;
+	color: $font_colour;
 }
 
 #acl-search::-webkit-input-placeholder {
@@ -1271,9 +1277,8 @@ img.mail-conv-sender-photo {
 }
 
 .menu-img-1 {
-	height: 1.5em;
-	width: 1.5em;
-	margin-right: 5px;
+	height: 1.28571429em;
+	width: 1.28571429em;
 	border-radius: $radius;
 }
 
@@ -1798,4 +1803,12 @@ dl.bb-dl > dd > li {
 
 .cover-photo-review {
 	margin-bottom: 10px;
+}
+
+.hover-fx-hide  {
+	opacity: 0;
+}
+
+.hover-fx-show:hover .hover-fx-hide {
+	opacity: 1;
 }
