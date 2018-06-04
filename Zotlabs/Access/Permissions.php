@@ -231,6 +231,7 @@ class Permissions {
 			}
 		}
 
+
 		// look up the permission role to see if it specified auto-connect
 		// and if there was no permcat or a default permcat, set the perms
 		// from the role

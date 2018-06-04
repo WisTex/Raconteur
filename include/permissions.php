@@ -218,7 +218,7 @@ function get_all_perms($uid, $observer_xchan, $internal_use = true) {
 			if($abperms) {
 				$arr = explode(',',$abperms);
 				if($arr) {
-					if (in_array($permname,$arr)) {
+					if (in_array($perm_name,$arr)) {
 						$ret[$perm_name] = true;
 					}
 					else {
@@ -404,7 +404,7 @@ function perm_is_allowed($uid, $observer_xchan, $permission) {
 		if($abperms) {
 			$arr = explode(',',$abperms);
 			if($arr) {
-				if (in_array($permname,$arr)) {
+				if (in_array($perm_name,$arr)) {
 					return true;
 				}
 			}

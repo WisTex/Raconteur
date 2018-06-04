@@ -257,10 +257,10 @@ class Libzot {
 
 	static function refresh($them, $channel = null, $force = false) {
 
-		if (array_key_exists('xchan_network', $them) && ($them['xchan_network'] !== 'zot6')) {
-			logger('not got zot. ' . $them['xchan_name']);
-			return true;
-		}
+//		if (array_key_exists('xchan_network', $them) && ($them['xchan_network'] !== 'zot6')) {
+//			logger('not got zot. ' . $them['xchan_name']);
+//			return true;
+//		}
 
 		logger('them: ' . print_r($them,true), LOGGER_DATA, LOG_DEBUG);
 		if ($channel)
@@ -293,11 +293,12 @@ class Libzot {
 				foreach ($r as $rr) {
 					if (intval($rr['hubloc_primary'])) {
 						$url = $rr['hubloc_id_url'];
-						break;
+						$record = $rr;
 					}
 				}
-				if (! $url)
+				if (! $url) {
 					$url = $r[0]['hubloc_id_url'];
+				}
 			}
 		}
 		if (! $url) {
@@ -328,153 +329,143 @@ class Libzot {
 		}
 
 
-		/*
-		 * We now have a key - only continue registration if our signatures are valid
-		 * AND the guid and guid sig in the returned packet match those provided in
-		 * our current communication.
-		 */
+		logger('zot-info: ' . print_r($record,true), LOGGER_DATA, LOG_DEBUG);
 
-		if((self::verify($them['guid'],$them['guid_sig'],$record['data']['public_key']))) {
+		$x = self::import_xchan($record['data'], (($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
 
-			logger('zot-info: ' . print_r($record,true), LOGGER_DATA, LOG_DEBUG);
+		if(! $x['success'])
+			return false;
 
-			$x = self::import_xchan($record['data'], (($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
+		if($channel && $record['data']['permissions']) {
+			$old_read_stream_perm = their_perms_contains($channel['channel_id'],$x['hash'],'view_stream');
+			set_abconfig($channel['channel_id'],$x['hash'],'system','their_perms',$record['data']['permissions']);
 
-			if(! $x['success'])
-				return false;
+			if(array_key_exists('profile',$record['data']) && array_key_exists('next_birthday',$record['data']['profile'])) {
+				$next_birthday = datetime_convert('UTC','UTC',$record['data']['profile']['next_birthday']);
+			}
+			else {
+				$next_birthday = NULL_DATE;
+			}
 
-			if($channel && $record['data']['permissions']) {
-				$old_read_stream_perm = their_perms_contains($channel['channel_id'],$x['hash'],'view_stream');
-				set_abconfig($channel['channel_id'],$x['hash'],'system','their_perms',$record['data']['permissions']);
+			$profile_assign = get_pconfig($channel['channel_id'],'system','profile_assign','');
 
-				if(array_key_exists('profile',$j) && array_key_exists('next_birthday',$j['profile'])) {
-					$next_birthday = datetime_convert('UTC','UTC',$j['profile']['next_birthday']);
-				}
-				else {
-					$next_birthday = NULL_DATE;
-				}
+			// Keep original perms to check if we need to notify them
+			$previous_perms = get_all_perms($channel['channel_id'],$x['hash']);
 
-				$profile_assign = get_pconfig($channel['channel_id'],'system','profile_assign','');
+			$r = q("select * from abook where abook_xchan = '%s' and abook_channel = %d and abook_self = 0 limit 1",
+				dbesc($x['hash']),
+				intval($channel['channel_id'])
+			);
 
-				// Keep original perms to check if we need to notify them
-				$previous_perms = get_all_perms($channel['channel_id'],$x['hash']);
+			if($r) {
 
-				$r = q("select * from abook where abook_xchan = '%s' and abook_channel = %d and abook_self = 0 limit 1",
+				// connection exists
+
+				// if the dob is the same as what we have stored (disregarding the year), keep the one
+				// we have as we may have updated the year after sending a notification; and resetting
+				// to the one we just received would cause us to create duplicated events.
+
+				if(substr($r[0]['abook_dob'],5) == substr($next_birthday,5))
+					$next_birthday = $r[0]['abook_dob'];
+
+				$y = q("update abook set abook_dob = '%s'
+					where abook_xchan = '%s' and abook_channel = %d
+					and abook_self = 0 ",
+					dbescdate($next_birthday),
 					dbesc($x['hash']),
 					intval($channel['channel_id'])
 				);
 
-				if($r) {
+				if(! $y)
+					logger('abook update failed');
+				else {
+					// if we were just granted read stream permission and didn't have it before, try to pull in some posts
+					if((! $old_read_stream_perm) && (intval($permissions['view_stream'])))
+						\Zotlabs\Daemon\Master::Summon(array('Onepoll',$r[0]['abook_id']));
+				}
+			}
+			else {
 
-					// connection exists
+				$p = \Zotlabs\Access\Permissions::connect_perms($channel['channel_id']);
+				$my_perms = \Zotlabs\Access\Permissions::serialise($p['perms']);
 
-					// if the dob is the same as what we have stored (disregarding the year), keep the one
-					// we have as we may have updated the year after sending a notification; and resetting
-					// to the one we just received would cause us to create duplicated events.
+				$automatic = $p['automatic'];
 
-					if(substr($r[0]['abook_dob'],5) == substr($next_birthday,5))
-						$next_birthday = $r[0]['abook_dob'];
+				// new connection
 
-					$y = q("update abook set abook_dob = '%s'
-						where abook_xchan = '%s' and abook_channel = %d
-						and abook_self = 0 ",
-						dbescdate($next_birthday),
+				if($my_perms) {
+					set_abconfig($channel['channel_id'],$x['hash'],'system','my_perms',$my_perms);
+				}
+
+				$closeness = get_pconfig($channel['channel_id'],'system','new_abook_closeness');
+				if($closeness === false)
+					$closeness = 80;
+
+				$y = abook_store_lowlevel(
+					[
+						'abook_account'   => intval($channel['channel_account_id']),
+						'abook_channel'   => intval($channel['channel_id']),
+						'abook_closeness' => intval($closeness),
+						'abook_xchan'     => $x['hash'],
+						'abook_profile'   => $profile_assign,
+						'abook_created'   => datetime_convert(),
+						'abook_updated'   => datetime_convert(),
+						'abook_dob'       => $next_birthday,
+						'abook_pending'   => intval(($automatic) ? 0 : 1)
+					]
+				);
+
+				if($y) {
+					logger("New introduction received for {$channel['channel_name']}");
+					$new_perms = get_all_perms($channel['channel_id'],$x['hash']);
+	
+					// Send a clone sync packet and a permissions update if permissions have changed
+
+					$new_connection = q("select * from abook left join xchan on abook_xchan = xchan_hash where abook_xchan = '%s' and abook_channel = %d and abook_self = 0 order by abook_created desc limit 1",
 						dbesc($x['hash']),
 						intval($channel['channel_id'])
 					);
 
-					if(! $y)
-						logger('abook update failed');
-					else {
-						// if we were just granted read stream permission and didn't have it before, try to pull in some posts
-						if((! $old_read_stream_perm) && (intval($permissions['view_stream'])))
-							\Zotlabs\Daemon\Master::Summon(array('Onepoll',$r[0]['abook_id']));
-					}
-				}
-				else {
-
-					$p = \Zotlabs\Access\Permissions::connect_perms($channel['channel_id']);
-					$my_perms = \Zotlabs\Access\Permissions::serialise($p['perms']);
-
-					$automatic = $p['automatic'];
-
-					// new connection
-
-					if($my_perms) {
-						set_abconfig($channel['channel_id'],$x['hash'],'system','my_perms',$my_perms);
-					}
-
-					$closeness = get_pconfig($channel['channel_id'],'system','new_abook_closeness');
-					if($closeness === false)
-						$closeness = 80;
-
-					$y = abook_store_lowlevel(
-						[
-							'abook_account'   => intval($channel['channel_account_id']),
-							'abook_channel'   => intval($channel['channel_id']),
-							'abook_closeness' => intval($closeness),
-							'abook_xchan'     => $x['hash'],
-							'abook_profile'   => $profile_assign,
-							'abook_created'   => datetime_convert(),
-							'abook_updated'   => datetime_convert(),
-							'abook_dob'       => $next_birthday,
-							'abook_pending'   => intval(($automatic) ? 0 : 1)
-						]
-					);
-
-					if($y) {
-						logger("New introduction received for {$channel['channel_name']}");
-						$new_perms = get_all_perms($channel['channel_id'],$x['hash']);
-	
-						// Send a clone sync packet and a permissions update if permissions have changed
-
-						$new_connection = q("select * from abook left join xchan on abook_xchan = xchan_hash where abook_xchan = '%s' and abook_channel = %d and abook_self = 0 order by abook_created desc limit 1",
-							dbesc($x['hash']),
-							intval($channel['channel_id'])
+					if($new_connection) {
+						if(! \Zotlabs\Access\Permissions::PermsCompare($new_perms,$previous_perms))
+							\Zotlabs\Daemon\Master::Summon(array('Notifier','permission_create',$new_connection[0]['abook_id']));
+						\Zotlabs\Lib\Enotify::submit(
+							[
+							'type'       => NOTIFY_INTRO,
+							'from_xchan' => $x['hash'],
+							'to_xchan'   => $channel['channel_hash'],
+							'link'       => z_root() . '/connedit/' . $new_connection[0]['abook_id']
+							]
 						);
 
-						if($new_connection) {
-							if(! \Zotlabs\Access\Permissions::PermsCompare($new_perms,$previous_perms))
-								\Zotlabs\Daemon\Master::Summon(array('Notifier','permission_create',$new_connection[0]['abook_id']));
-							\Zotlabs\Lib\Enotify::submit(
-								[
-								'type'       => NOTIFY_INTRO,
-								'from_xchan' => $x['hash'],
-								'to_xchan'   => $channel['channel_hash'],
-								'link'       => z_root() . '/connedit/' . $new_connection[0]['abook_id']
-								]
-							);
-
-							if(intval($permissions['view_stream'])) {
-								if(intval(get_pconfig($channel['channel_id'],'perm_limits','send_stream') & PERMS_PENDING)
-									|| (! intval($new_connection[0]['abook_pending'])))
-									\Zotlabs\Daemon\Master::Summon(array('Onepoll',$new_connection[0]['abook_id']));
-							}
-
-
-							// If there is a default group for this channel, add this connection to it
-							// for pending connections this will happens at acceptance time.
-
-							if(! intval($new_connection[0]['abook_pending'])) {
-								$default_group = $channel['channel_default_group'];
-								if($default_group) {
-									require_once('include/group.php');
-									$g = group_rec_byhash($channel['channel_id'],$default_group);
-									if($g)
-										group_add_member($channel['channel_id'],'',$x['hash'],$g['id']);
-								}
-							}
-
-							unset($new_connection[0]['abook_id']);
-							unset($new_connection[0]['abook_account']);
-							unset($new_connection[0]['abook_channel']);
-
-							$abconfig = load_abconfig($channel['channel_id'],$new_connection['abook_xchan']);
-							if($abconfig)
-								$new_connection['abconfig'] = $abconfig;
-
-							self::build_sync_packet($channel['channel_id'], array('abook' => $new_connection));
+						if(intval($permissions['view_stream'])) {
+							if(intval(get_pconfig($channel['channel_id'],'perm_limits','send_stream') & PERMS_PENDING)
+								|| (! intval($new_connection[0]['abook_pending'])))
+								\Zotlabs\Daemon\Master::Summon(array('Onepoll',$new_connection[0]['abook_id']));
 						}
+
+
+						// If there is a default group for this channel, add this connection to it
+						// for pending connections this will happens at acceptance time.
+
+						if(! intval($new_connection[0]['abook_pending'])) {
+							$default_group = $channel['channel_default_group'];
+							if($default_group) {
+								require_once('include/group.php');
+								$g = group_rec_byhash($channel['channel_id'],$default_group);
+								if($g)
+									group_add_member($channel['channel_id'],'',$x['hash'],$g['id']);
+							}
+						}
+
+						unset($new_connection[0]['abook_id']);
+						unset($new_connection[0]['abook_account']);
+						unset($new_connection[0]['abook_channel']);
+						$abconfig = load_abconfig($channel['channel_id'],$new_connection['abook_xchan']);
+						if($abconfig)
+							$new_connection['abconfig'] = $abconfig;
+
+						self::build_sync_packet($channel['channel_id'], array('abook' => $new_connection));
 					}
 				}
 
@@ -858,7 +849,7 @@ class Libzot {
 		// what we are missing for true hub independence is for any changes in the primary hub to
 		// get reflected not only in the hublocs, but also to update the URLs and addr in the appropriate xchan
 
-		$s = sync_locations($arr, $arr);
+		$s = self::sync_locations($arr, $arr);
 
 		if($s) {
 			if($s['change_message'])
@@ -910,7 +901,7 @@ class Libzot {
 		}
 
 		if(array_key_exists('site',$arr) && is_array($arr['site'])) {
-			$profile_changed = import_site($arr['site'],$arr['key']);
+			$profile_changed = self::import_site($arr['site'],$arr['key']);
 			if($profile_changed) {
 				$what .= 'site ';
 				$changed = true;
@@ -2423,7 +2414,7 @@ class Libzot {
 				$arr['locations'][0]['primary'] = true;
 
 			foreach($arr['locations'] as $location) {
-				if(! zot_verify($location['url'],$location['url_sig'],$sender['public_key'])) {
+				if(! self::verify($location['url'],$location['url_sig'],$sender['public_key'])) {
 					logger('Unable to verify site signature for ' . $location['url']);
 					$ret['message'] .= sprintf( t('Unable to verify site signature for %s'), $location['url']) . EOL;
 					continue;
@@ -3947,7 +3938,6 @@ class Libzot {
 
 		$feed      = ((x($arr,'feed'))       ? intval($arr['feed']) : 0);
 
-
 		if($ztarget) {
 			$t = q("select * from hubloc where hubloc_id_url = '%s' limit 1",
 				dbesc($ztarget)
@@ -3966,7 +3956,6 @@ class Libzot {
 				$ztarget_hash = EMPTY_STR;
 			}
 		}
-
 
 
 		$r = null;
@@ -4164,7 +4153,6 @@ class Libzot {
 			if($b)
 				$permissions['connected'] = true;
 		}
-
 
 		if($permissions['view_profile'])
 			$ret['profile']  = $profile;
