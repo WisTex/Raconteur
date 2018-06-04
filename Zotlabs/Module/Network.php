@@ -261,8 +261,11 @@ class Network extends \Zotlabs\Web\Controller {
 			$item_thread_top = '';
 
 			if($load || $update) {
-				$p1 = q("SELECT DISTINCT parent FROM item WHERE uid = " . intval(local_channel()) . " AND ( author_xchan = '" . dbesc($cid_r[0]['abook_xchan']) . "' OR owner_xchan = '" . dbesc($cid_r[0]['abook_xchan']) . "' ) $item_normal ORDER BY created DESC");
-				$p2 = q("SELECT oid AS parent FROM term WHERE uid = " . intval(local_channel()) . " AND term = '" . dbesc($cid_r[0]['xchan_name']) . "'");
+				$ttype = (($cid_r[0]['xchan_pubforum']) ? TERM_FORUM : TERM_MENTION);
+
+				$p1 = q("SELECT DISTINCT parent FROM item WHERE uid = " . intval(local_channel()) . " AND ( author_xchan = '" . dbesc($cid_r[0]['abook_xchan']) . "' OR owner_xchan = '" . dbesc($cid_r[0]['abook_xchan']) . "' ) $item_normal ");
+				$p2 = q("SELECT oid AS parent FROM term WHERE uid = " . intval(local_channel()) . " AND ttype = $ttype AND term = '" . dbesc($cid_r[0]['xchan_name']) . "'");
+
 				$p_str = ids_to_querystr(array_merge($p1,$p2),'parent');
 				$sql_extra = " AND item.parent IN ( $p_str ) ";
 			}
