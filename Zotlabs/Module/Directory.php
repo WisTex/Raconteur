@@ -2,8 +2,9 @@
 
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Libzotdir;
+
 require_once('include/socgraph.php');
-require_once('include/dir_fns.php');
 require_once('include/bbcode.php');
 
 
@@ -71,15 +72,15 @@ class Directory extends \Zotlabs\Web\Controller {
 			
 		$observer = get_observer_hash();
 	
-		$globaldir = get_directory_setting($observer, 'globaldir');
+		$globaldir = Libzotdir::get_directory_setting($observer, 'globaldir');
 
 		// override your personal global search pref if we're doing a navbar search of the directory
 		if(intval($_REQUEST['navsearch']))
 			$globaldir = 1;
 	
-		$safe_mode = get_directory_setting($observer, 'safemode');
+		$safe_mode = Libzotdir::get_directory_setting($observer, 'safemode');
 	
-		$pubforums = get_directory_setting($observer, 'pubforums');
+		$pubforums = Libzotdir::get_directory_setting($observer, 'pubforums');
 	
 		$o = '';
 		nav_set_selected('Directory');
@@ -134,7 +135,7 @@ class Directory extends \Zotlabs\Web\Controller {
 			$url = z_root() . '/dirsearch';
 		}
 		if(! $url) {
-			$directory = find_upstream_directory($dirmode);
+			$directory = Libzotdir::find_upstream_directory($dirmode);
 			if((! $directory) || (! array_key_exists('url',$directory)) || (! $directory['url']))
 				logger('CRITICAL: No directory server URL');
 			$url = $directory['url'] . '/dirsearch';

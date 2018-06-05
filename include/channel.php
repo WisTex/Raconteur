@@ -358,7 +358,7 @@ function create_identity($arr) {
 			'xchan_follow'     => z_root() . '/follow?f=&url=%s',
 			'xchan_connurl'    => z_root() . '/poco/' . $ret['channel']['channel_address'],
 			'xchan_name'       => $ret['channel']['channel_name'],
-			'xchan_network'    => 'zot',
+			'xchan_network'    => 'zot6',
 			'xchan_photo_date' => datetime_convert(),
 			'xchan_name_date'  => datetime_convert(),
 			'xchan_system'     => $system

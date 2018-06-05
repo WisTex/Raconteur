@@ -15,13 +15,7 @@ class Like extends \Zotlabs\Web\Controller {
 
 		$acts = [
 			'like'        => ACTIVITY_LIKE ,
-			'dislike'     => ACTIVITY_DISLIKE ,
-			'agree'       => ACTIVITY_AGREE ,
-			'disagree'    => ACTIVITY_DISAGREE ,
-			'abstain'     => ACTIVITY_ABSTAIN ,
-			'attendyes'   => ACTIVITY_ATTEND ,
-			'attendno'    => ACTIVITY_ATTENDNO ,
-			'attendmaybe' => ACTIVITY_ATTENDMAYBE 
+			'dislike'     => ACTIVITY_DISLIKE 
 		];
 
 		// unlike (etc.) reactions are an undo of positive reactions, rather than a negative action.
@@ -49,18 +43,6 @@ class Like extends \Zotlabs\Web\Controller {
 		$sys_channel_id = (($sys_channel) ? $sys_channel['channel_id'] : 0);
 
 		$observer = \App::get_observer();
-		$interactive = $_REQUEST['interactive'];
-		if($interactive) {
-			$o .= '<h1>' . t('Like/Dislike') . '</h1>';
-			$o .= EOL . EOL;
-	
-			if(! $observer) {
-				$_SESSION['return_url'] = \App::$query_string;
-				$o .= t('This action is restricted to members.') . EOL;
-				$o .= t('Please <a href="rmagic">login with your $Projectname ID</a> or <a href="register">register as a new $Projectname member</a> to continue.') . EOL;
-				return $o;
-			}
-		}
 	
 		$verb = notags(trim($_GET['verb']));
 	
@@ -192,10 +174,6 @@ class Like extends \Zotlabs\Web\Controller {
 				intval($owner_uid)
 			);
 			if(! $ch) {
-				if($interactive) {
-					notice( t('Channel unavailable.') . EOL);
-					return $o;
-				}
 				killme();
 			}
 				
@@ -240,10 +218,7 @@ class Like extends \Zotlabs\Web\Controller {
 					);
 					if($r)
 						drop_item($r[0]['id'],false);
-					if($interactive) {
-						notice( t('Previous action reversed.') . EOL);
-						return $o;
-					}
+
 				}
 				killme();
 			}
@@ -319,18 +294,6 @@ class Like extends \Zotlabs\Web\Controller {
 	
 			$multi_undo = false;		
 	
-			// event participation and consensus items are essentially radio toggles. If you make a subsequent choice,
-			// we need to eradicate your first choice. 
-	
-			if($activity === ACTIVITY_ATTEND || $activity === ACTIVITY_ATTENDNO || $activity === ACTIVITY_ATTENDMAYBE) {
-				$verbs = " '" . dbesc(ACTIVITY_ATTEND) . "','" . dbesc(ACTIVITY_ATTENDNO) . "','" . dbesc(ACTIVITY_ATTENDMAYBE) . "' ";
-				$multi_undo = 1;
-			}
-			if($activity === ACTIVITY_AGREE || $activity === ACTIVITY_DISAGREE || $activity === ACTIVITY_ABSTAIN) {
-				$verbs = " '" . dbesc(ACTIVITY_AGREE) . "','" . dbesc(ACTIVITY_DISAGREE) . "','" . dbesc(ACTIVITY_ABSTAIN) . "' ";
-				$multi_undo = true;
-			}
-	
 			$item_normal = item_normal();
 	
 			$r = q("SELECT id, parent, uid, verb FROM item WHERE verb in ( $verbs ) $item_normal
@@ -362,8 +325,6 @@ class Like extends \Zotlabs\Web\Controller {
 	
 				}
 	
-				if($interactive)
-					return;
 	
 				if(! $multi_undo)
 					killme();
@@ -437,18 +398,6 @@ class Like extends \Zotlabs\Web\Controller {
 			$bodyverb = t('%1$s likes %2$s\'s %3$s');
 		if($verb === 'dislike')
 			$bodyverb = t('%1$s doesn\'t like %2$s\'s %3$s');
-		if($verb === 'agree')
-			$bodyverb = t('%1$s agrees with %2$s\'s %3$s');
-		if($verb === 'disagree')
-			$bodyverb = t('%1$s doesn\'t agree with %2$s\'s %3$s');
-		if($verb === 'abstain')
-			$bodyverb = t('%1$s abstains from a decision on %2$s\'s %3$s');
-		if($verb === 'attendyes')
-			$bodyverb = t('%1$s is attending %2$s\'s %3$s');
-		if($verb === 'attendno')
-			$bodyverb = t('%1$s is not attending %2$s\'s %3$s');
-		if($verb === 'attendmaybe')
-			$bodyverb = t('%1$s may attend %2$s\'s %3$s');
 	
 		if(! isset($bodyverb))
 				killme(); 

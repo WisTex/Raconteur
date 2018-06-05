@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
-require_once('include/dir_fns.php');
+use Zotlabs\Lib\Libzotdir;
 
 
 class Ratings extends \Zotlabs\Web\Controller {
@@ -17,7 +17,7 @@ class Ratings extends \Zotlabs\Web\Controller {
 	
 		$dirmode = intval(get_config('system','directory_mode'));
 	
-		$x = find_upstream_directory($dirmode);
+		$x = Libzotdir::find_upstream_directory($dirmode);
 		if($x)
 			$url = $x['url'];
 	

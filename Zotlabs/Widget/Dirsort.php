@@ -2,10 +2,10 @@
 
 namespace Zotlabs\Widget;
 
-require_once('include/dir_fns.php');
+use Zotlabs\Lib\Libzotdir;
 
 class Dirsort {
 	function widget($arr) {
-		return dir_sort_links();
+		return Libzotdir::dir_sort_links();
 	}
 }

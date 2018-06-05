@@ -9,6 +9,8 @@ namespace Zotlabs\Lib;
 
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Libzotdir;
+use Zotlabs\Lib\System;
 
 require_once('include/crypto.php');
 require_once('include/queue_fn.php');
@@ -120,7 +122,7 @@ class Libzot {
 				'site_id'       => self::make_xchan_hash(z_root(), get_config('system','pubkey')),
 			],
 			'callback'   => '/zot',
-			'version'    => \Zotlabs\Lib\System::get_zot_revision(),
+			'version'    => System::get_zot_revision(),
 			'encryption' => crypto_methods(),
 			'signing'    => signing_methods()
 		];
@@ -885,7 +887,7 @@ class Libzot {
 			// be in directories for the local realm (foo) and also the RED_GLOBAL realm.
 
 			if(array_key_exists('profile',$arr) && is_array($arr['profile']) && (! $other_realm)) {
-				$profile_changed = import_directory_profile($xchan_hash,$arr['profile'],$address,$ud_flags, 1);
+				$profile_changed = Libzotdir::import_directory_profile($xchan_hash,$arr['profile'],$address,$ud_flags, 1);
 				if($profile_changed) {
 					$what .= 'profile ';
 					$changed = true;
@@ -913,7 +915,7 @@ class Libzot {
 
 		if(($changed) || ($ud_flags == UPDATE_FLAGS_FORCED)) {
 			$guid = random_string() . '@' . App::get_hostname();
-			update_modtime($xchan_hash,$guid,$address,$ud_flags);
+			Libzotdir::update_modtime($xchan_hash,$guid,$address,$ud_flags);
 			logger('Changed: ' . $what,LOGGER_DEBUG);
 		}
 		elseif(! $ud_flags) {
@@ -1108,10 +1110,6 @@ class Libzot {
 			return [];
 		}
 
-		if(array_key_exists('encrypted', $data) && intval($data['encrypted'])) {
-			$data = json_decode(crypto_unencapsulate($data,get_config('system','prvkey')),true);
-		}
-
 		if(! is_array($data)) {
 			logger('decode error');
 			return [];
@@ -1136,10 +1134,6 @@ class Libzot {
 
 				$result = null;
 
-				if(array_key_exists('encrypted',$i['notify']) && intval($i['notify']['enctrypted'])) {
-					$i['notify'] = json_decode(crypto_unencapsulate($i['notify'],get_config('system','prvkey')),true);
-				}
-
 				logger('Notify: ' . print_r($i['notify'],true), LOGGER_DATA, LOG_DEBUG);
 
 				if(! is_array($i['notify'])) {
@@ -1160,13 +1154,6 @@ class Libzot {
 
 				$i['notify']['sender']['hash'] = $hub['hubloc_hash'];
 				$deliveries = null;
-
-				if(array_key_exists('message',$i) && array_key_exists('type',$i['message']) && $i['message']['type'] === 'rating') {
-					// rating messages are processed only by directory servers
-					logger('Rating received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
-					$result = process_rating_delivery($i['notify']['sender'],$i['message']);
-					continue;
-				}
 
 				if(array_key_exists('recipients',$i['notify']) && count($i['notify']['recipients'])) {
 					logger('specific recipients');
@@ -1344,6 +1331,18 @@ class Libzot {
 		return $return;
 	}
 
+
+	static function is_top_level($act) {
+		if($act['encoding'] === 'red' && array_key_exists('flags',$act) && in_array('thread_parent', $act['flags'])) {
+			return true;
+		}
+		if($act['encoding'] === 'activitystreams' && array_key_exists('inReplyTo',$act) && $act['inReplyTo']) {
+			return true;
+		}
+		return false;
+	}
+
+
 	/**
 	 * @brief
 	 *
@@ -1374,8 +1373,7 @@ class Libzot {
 
 			$perm = 'send_stream';
 
-			if(array_key_exists('flags',$msg['message']) && in_array('thread_parent', $msg['message']['flags'])) {
-				// check mention recipient permissions on top level posts only
+			if(self::is_top_level($msg['message'])) {
 				$check_mentions = true;
 			}
 			else {
@@ -1512,7 +1510,9 @@ class Libzot {
 		// has a recipient, but in fact we don't require this, so it's technically
 		// possible to send mail to anybody that's listening.
 
+dbg(2);
 		$recips = self::public_recips($msg);
+dbg(0);
 
 		if(! $recips)
 			return $recips;
@@ -2209,63 +2209,6 @@ class Libzot {
 		return $result;
 	}
 
-	/**
-	 * @brief Processes delivery of rating.
-	 *
-	 * @param array $sender
-	 *   * \e string \b hash a xchan_hash
-	 * @param array $arr
-	 */
-
-	static function process_rating_delivery($sender, $arr) {
-
-		logger('process_rating_delivery: ' . print_r($arr,true));
-
-		if(! $arr['target'])
-			return;
-
-		$z = q("select xchan_pubkey from xchan where xchan_hash = '%s' limit 1",
-			dbesc($sender['hash'])
-		);
-
-		if((! $z) || (! zot_verify($arr['target'] . '.' . $arr['rating'] . '.' . $arr['rating_text'], $arr['signature'],$z[0]['xchan_pubkey']))) {
-			logger('failed to verify rating');
-			return;
-		}
-
-		$r = q("select * from xlink where xlink_xchan = '%s' and xlink_link = '%s' and xlink_static = 1 limit 1",
-			dbesc($sender['hash']),
-			dbesc($arr['target'])
-		);
-
-		if($r) {
-			if($r[0]['xlink_updated'] >= $arr['edited']) {
-				logger('rating message duplicate');
-				return;
-			}
-
-			$x = q("update xlink set xlink_rating = %d, xlink_rating_text = '%s', xlink_sig = '%s', xlink_updated = '%s' where xlink_id = %d",
-				intval($arr['rating']),
-				dbesc($arr['rating_text']),
-				dbesc($arr['signature']),
-				dbesc(datetime_convert()),
-				intval($r[0]['xlink_id'])
-			);
-			logger('rating updated');
-		}
-		else {
-			$x = q("insert into xlink ( xlink_xchan, xlink_link, xlink_rating, xlink_rating_text, xlink_sig, xlink_updated, xlink_static )
-				values( '%s', '%s', %d, '%s', '%s', '%s', 1 ) ",
-				dbesc($sender['hash']),
-				dbesc($arr['target']),
-				intval($arr['rating']),
-				dbesc($arr['rating_text']),
-				dbesc($arr['signature']),
-				dbesc(datetime_convert())
-			);
-			logger('rating created');
-		}
-	}
 
 	/**
 	 * @brief Processes delivery of profile.
@@ -2284,8 +2227,9 @@ class Libzot {
 		$r = q("select xchan_addr from xchan where xchan_hash = '%s' limit 1",
 				dbesc($sender['hash'])
 		);
-		if($r)
-			import_directory_profile($sender['hash'], $arr, $r[0]['xchan_addr'], UPDATE_FLAGS_UPDATED, 0);
+		if($r) {
+			Libzotdir::import_directory_profile($sender['hash'], $arr, $r[0]['xchan_addr'], UPDATE_FLAGS_UPDATED, 0);
+		}
 	}
 
 
@@ -2313,7 +2257,7 @@ class Libzot {
 			logger('results: ' . print_r($x,true), LOGGER_DEBUG);
 			if($x['changed']) {
 				$guid = random_string() . '@' . App::get_hostname();
-				update_modtime($sender['hash'],$sender['id'],$arr['locations'][0]['address'],UPDATE_FLAGS_UPDATED);
+				Libzotdir::update_modtime($sender['hash'],$sender['id'],$arr['locations'][0]['address'],UPDATE_FLAGS_UPDATED);
 			}
 		}
 	}
@@ -2397,7 +2341,7 @@ class Libzot {
 			if($absolute)
 				self::check_location_move($sender['hash'],$arr['locations']);
 
-			$xisting = q("select hubloc_id, hubloc_url, hubloc_sitekey from hubloc where hubloc_hash = '%s'",
+			$xisting = q("select * from hubloc where hubloc_hash = '%s'",
 				dbesc($sender['hash'])
 			);
 
@@ -2558,6 +2502,7 @@ class Libzot {
 						dbesc($sender['hash'])
 					);
 				}
+
 				logger('New hub: ' . $location['url']);
 
 				$r = hubloc_store_lowlevel(
@@ -2660,232 +2605,6 @@ class Libzot {
 		return $ret;
 	}
 
-	/**
-	 * @brief Imports a directory profile.
-	 *
-	 * @param string $hash
-	 * @param array $profile
-	 * @param string $addr
-	 * @param number $ud_flags (optional) UPDATE_FLAGS_UPDATED
-	 * @param number $suppress_update (optional) default 0
-	 * @return boolean $updated if something changed
-	 */
-
-	static function import_directory_profile($hash, $profile, $addr, $ud_flags = UPDATE_FLAGS_UPDATED, $suppress_update = 0) {
-
-		logger('import_directory_profile', LOGGER_DEBUG);
-		if (! $hash)
-			return false;
-
-		$arr = array();
-
-		$arr['xprof_hash']         = $hash;
-		$arr['xprof_dob']          = (($profile['birthday'] === '0000-00-00') ? $profile['birthday'] : datetime_convert('','',$profile['birthday'],'Y-m-d')); // !!!! check this for 0000 year
-		$arr['xprof_age']          = (($profile['age'])         ? intval($profile['age']) : 0);
-		$arr['xprof_desc']         = (($profile['description']) ? htmlspecialchars($profile['description'], ENT_COMPAT,'UTF-8',false) : '');	
-		$arr['xprof_gender']       = (($profile['gender'])      ? htmlspecialchars($profile['gender'],      ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_marital']      = (($profile['marital'])     ? htmlspecialchars($profile['marital'],     ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_sexual']       = (($profile['sexual'])      ? htmlspecialchars($profile['sexual'],      ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_locale']       = (($profile['locale'])      ? htmlspecialchars($profile['locale'],      ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_region']       = (($profile['region'])      ? htmlspecialchars($profile['region'],      ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_postcode']     = (($profile['postcode'])    ? htmlspecialchars($profile['postcode'],    ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_country']      = (($profile['country'])     ? htmlspecialchars($profile['country'],     ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_about']        = (($profile['about'])       ? htmlspecialchars($profile['about'],       ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_homepage']     = (($profile['homepage'])    ? htmlspecialchars($profile['homepage'],    ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_hometown']     = (($profile['hometown'])    ? htmlspecialchars($profile['hometown'],    ENT_COMPAT,'UTF-8',false) : '');
-
-		$clean = array();
-		if (array_key_exists('keywords', $profile) and is_array($profile['keywords'])) {
-			self::import_directory_keywords($hash,$profile['keywords']);
-			foreach ($profile['keywords'] as $kw) {
-				$kw = trim(htmlspecialchars($kw,ENT_COMPAT, 'UTF-8', false));
-				$kw = trim($kw, ',');
-				$clean[] = $kw;
-			}
-		}
-
-		$arr['xprof_keywords'] = implode(' ',$clean);
-
-		// Self censored, make it so
-		// These are not translated, so the German "erwachsenen" keyword will not censor the directory profile. Only the English form - "adult".
-
-
-		if(in_arrayi('nsfw',$clean) || in_arrayi('adult',$clean)) {
-			q("update xchan set xchan_selfcensored = 1 where xchan_hash = '%s'",
-				dbesc($hash)
-			);
-		}
-
-		$r = q("select * from xprof where xprof_hash = '%s' limit 1",
-			dbesc($hash)
-		);
-
-		if ($arr['xprof_age'] > 150)
-			$arr['xprof_age'] = 150;
-		if ($arr['xprof_age'] < 0)
-			$arr['xprof_age'] = 0;
-
-		if ($r) {
-			$update = false;
-			foreach ($r[0] as $k => $v) {
-				if ((array_key_exists($k,$arr)) && ($arr[$k] != $v)) {
-					logger('import_directory_profile: update ' . $k . ' => ' . $arr[$k]);
-					$update = true;
-					break;
-				}
-			}
-			if ($update) {
-				q("update xprof set
-					xprof_desc = '%s',
-					xprof_dob = '%s',
-					xprof_age = %d,
-					xprof_gender = '%s',
-					xprof_marital = '%s',
-					xprof_sexual = '%s',
-					xprof_locale = '%s',
-					xprof_region = '%s',
-					xprof_postcode = '%s',
-					xprof_country = '%s',
-					xprof_about = '%s',
-					xprof_homepage = '%s',
-					xprof_hometown = '%s',
-					xprof_keywords = '%s'
-					where xprof_hash = '%s'",
-					dbesc($arr['xprof_desc']),
-					dbesc($arr['xprof_dob']),
-					intval($arr['xprof_age']),
-					dbesc($arr['xprof_gender']),
-					dbesc($arr['xprof_marital']),
-					dbesc($arr['xprof_sexual']),
-					dbesc($arr['xprof_locale']),
-					dbesc($arr['xprof_region']),
-					dbesc($arr['xprof_postcode']),
-					dbesc($arr['xprof_country']),
-					dbesc($arr['xprof_about']),
-					dbesc($arr['xprof_homepage']),
-					dbesc($arr['xprof_hometown']),
-					dbesc($arr['xprof_keywords']),
-					dbesc($arr['xprof_hash'])
-				);
-			}
-		} else {
-			$update = true;
-			logger('New profile');
-			q("insert into xprof (xprof_hash, xprof_desc, xprof_dob, xprof_age, xprof_gender, xprof_marital, xprof_sexual, xprof_locale, xprof_region, xprof_postcode, xprof_country, xprof_about, xprof_homepage, xprof_hometown, xprof_keywords) values ('%s', '%s', '%s', %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s') ",
-				dbesc($arr['xprof_hash']),
-				dbesc($arr['xprof_desc']),
-				dbesc($arr['xprof_dob']),
-				intval($arr['xprof_age']),
-				dbesc($arr['xprof_gender']),
-				dbesc($arr['xprof_marital']),
-				dbesc($arr['xprof_sexual']),
-				dbesc($arr['xprof_locale']),
-				dbesc($arr['xprof_region']),
-				dbesc($arr['xprof_postcode']),
-				dbesc($arr['xprof_country']),
-				dbesc($arr['xprof_about']),
-				dbesc($arr['xprof_homepage']),
-				dbesc($arr['xprof_hometown']),
-				dbesc($arr['xprof_keywords'])
-			);
-		}
-
-		$d = [
-			'xprof' => $arr,
-			'profile' => $profile,
-			'update' => $update
-		];
-		/**
-		 * @hooks import_directory_profile
-		 *   Called when processing delivery of a profile structure from an external source (usually for directory storage).
-		 *   * \e array \b xprof
-		 *   * \e array \b profile
-		 *   * \e boolean \b update
-		 */
-		call_hooks('import_directory_profile', $d);
-
-		if (($d['update']) && (! $suppress_update))
-			self::update_modtime($arr['xprof_hash'],random_string() . '@' . App::get_hostname(), $addr, $ud_flags);
-
-		return $d['update'];
-	}
-
-	/**
-	 * @brief
-	 *
-	 * @param string $hash An xtag_hash
-	 * @param array $keywords
-	 */
-
-	static function import_directory_keywords($hash, $keywords) {
-
-		$existing = array();
-		$r = q("select * from xtag where xtag_hash = '%s' and xtag_flags = 0",
-			dbesc($hash)
-		);
-
-		if($r) {
-			foreach($r as $rr)
-				$existing[] = $rr['xtag_term'];
-		}
-
-		$clean = array();
-		foreach($keywords as $kw) {
-			$kw = trim(htmlspecialchars($kw,ENT_COMPAT, 'UTF-8', false));
-			$kw = trim($kw, ',');
-			$clean[] = $kw;
-		}
-
-		foreach($existing as $x) {
-			if(! in_array($x, $clean))
-				$r = q("delete from xtag where xtag_hash = '%s' and xtag_term = '%s' and xtag_flags = 0",
-					dbesc($hash),
-					dbesc($x)
-				);
-		}
-		foreach($clean as $x) {
-			if(! in_array($x, $existing)) {
-				$r = q("insert into xtag ( xtag_hash, xtag_term, xtag_flags) values ( '%s' ,'%s', 0 )",
-					dbesc($hash),
-					dbesc($x)
-				);
-			}
-		}
-	}
-
-	/**
-	 * @brief
-	 *
-	 * @param string $hash
-	 * @param string $guid
-	 * @param string $addr
-	 * @param int $flags (optional) default 0
-	 */
-
-	static function update_modtime($hash, $guid, $addr, $flags = 0) {
-
-		$dirmode = intval(get_config('system', 'directory_mode'));
-
-		if($dirmode == DIRECTORY_MODE_NORMAL)
-			return;
-
-		if($flags) {
-			q("insert into updates (ud_hash, ud_guid, ud_date, ud_flags, ud_addr ) values ( '%s', '%s', '%s', %d, '%s' )",
-				dbesc($hash),
-				dbesc($guid),
-				dbesc(datetime_convert()),
-				intval($flags),
-				dbesc($addr)
-			);	
-		}
-		else {
-			q("update updates set ud_flags = ( ud_flags | %d ) where ud_addr = '%s' and not (ud_flags & %d)>0 ",
-				intval(UPDATE_FLAGS_UPDATED),
-				dbesc($addr),
-				intval(UPDATE_FLAGS_UPDATED)
-			);
-		}
-	}
 
 	/**
 	 * @brief
@@ -3447,7 +3166,7 @@ class Libzot {
 
 
 		$ret['site']['encryption'] = crypto_methods();
-		$ret['site']['zot'] = \Zotlabs\Lib\System::get_zot_revision();
+		$ret['site']['zot'] = System::get_zot_revision();
 
 		// hide detailed site information if you're off the grid
 
@@ -3495,8 +3214,8 @@ class Libzot {
 			$ret['site']['sellpage']   = get_config('system','sellpage');
 			$ret['site']['location']   = get_config('system','site_location');
 			$ret['site']['realm']      = get_directory_realm();
-			$ret['site']['project']    = \Zotlabs\Lib\System::get_platform_name() . ' ' . \Zotlabs\Lib\System::get_server_role();
-			$ret['site']['version']    = \Zotlabs\Lib\System::get_project_version();
+			$ret['site']['project']    = System::get_platform_name();
+			$ret['site']['version']    = System::get_project_version();
 
 		}
 
@@ -3504,78 +3223,6 @@ class Libzot {
 
 	}
 
-
-	/**
-	 * @brief
-	 *
-	 * @param array $channel
-	 * @param array $locations
-	 * @param[out] array $ret
-	 *   \e array \b locations result of zot_encode_locations()
-	 */
-
-	static function check_zotinfo($channel, $locations, &$ret) {
-
-		//	logger('locations: ' . print_r($locations,true),LOGGER_DATA, LOG_DEBUG);
-
-		// This function will likely expand as we find more things to detect and fix.
-		// 1. Because magic-auth is reliant on it, ensure that the system channel has a valid hubloc
-		//    Force this to be the case if anything is found to be wrong with it.
-
-		/// @FIXME ensure that the system channel exists in the first place and has an xchan
-
-		if($channel['channel_system']) {
-			// the sys channel must have a location (hubloc)
-			$valid_location = false;
-			if((count($locations) === 1) && ($locations[0]['primary']) && (! $locations[0]['deleted'])) {
-				if((self::verify($locations[0]['location'],$locations[0]['location_sig'],$channel['channel_pubkey']))
-					&& ($locations[0]['sitekey'] === get_config('system','pubkey'))
-					&& ($locations[0]['url'] === z_root()))
-					$valid_location = true;
-				else
-					logger('sys channel: invalid url signature');
-			}
-
-			if((! $locations) || (! $valid_location)) {
-
-				logger('System channel locations are not valid. Attempting repair.');
-
-				// Don't trust any existing records. Just get rid of them, but only do this
-				// for the sys channel as normal channels will be trickier.
-
-				q("delete from hubloc where hubloc_hash = '%s'",
-					dbesc($channel['channel_hash'])
-				);
-
-				$r = hubloc_store_lowlevel(
-					[
-						'hubloc_guid'     => $channel['channel_guid'],
-						'hubloc_guid_sig' => $channel['channel_guid_sig'],
-						'hubloc_hash'     => $channel['channel_hash'],
-						'hubloc_addr'     => channel_reddress($channel),
-						'hubloc_network'  => 'zot',
-						'hubloc_primary'  => 1,
-						'hubloc_url'      => z_root(),
-						'hubloc_url_sig'  => self::sign(z_root(),$channel['channel_prvkey']),
-						'hubloc_host'     => App::get_hostname(),
-						'hubloc_callback' => z_root() . '/zot',
-						'hubloc_sitekey'  => get_config('system','pubkey'),
-						'hubloc_updated'  => datetime_convert(),
-					]
-				);
-
-				if($r) {
-					$x = self::encode_locations($channel);
-					if($x) {
-						$ret['locations'] = $x;
-					}
-				}
-				else {
-					logger('Unable to store sys hub location');
-				}
-			}
-		}
-	}
 
 	/**
 	 * @brief

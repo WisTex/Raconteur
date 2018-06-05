@@ -3,6 +3,8 @@
  * @file include/dir_fns.php
  */
 
+use Zotlab\Lib\Libzot;
+
 require_once('include/permissions.php');
 
 /**
@@ -432,5 +434,5 @@ function local_dir_update($uid, $force) {
 	}
 
 	$ud_hash = random_string() . '@' . App::get_hostname();
-	update_modtime($hash, $ud_hash, channel_reddress($p[0]),(($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
+	Libzot::update_modtime($hash, $ud_hash, channel_reddress($p[0]),(($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
 }

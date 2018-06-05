@@ -154,7 +154,7 @@ function get_all_perms($uid, $observer_xchan, $internal_use = true) {
 		// If we're still here, we have an observer, check the network.
 
 		if($channel_perm & PERMS_NETWORK) {
-			if($x && $x[0]['xchan_network'] === 'zot') {
+			if($x && $x[0]['xchan_network'] === 'zot6') {
 				$ret[$perm_name] = true;
 				continue;
 			}
@@ -355,7 +355,7 @@ function perm_is_allowed($uid, $observer_xchan, $permission) {
 	// If we're still here, we have an observer, check the network.
 
 	if($channel_perm & PERMS_NETWORK) {
-		if (($x && $x[0]['xchan_network'] === 'zot') || ($y && $y[0]['xchan_network'] === 'zot'))
+		if (($x && $x[0]['xchan_network'] === 'zot6') || ($y && $y[0]['xchan_network'] === 'zot6'))
 			return true;
 	}
 
@@ -404,7 +404,7 @@ function perm_is_allowed($uid, $observer_xchan, $permission) {
 		if($abperms) {
 			$arr = explode(',',$abperms);
 			if($arr) {
-				if (in_array($perm_name,$arr)) {
+				if (in_array($permission,$arr)) {
 					return true;
 				}
 			}

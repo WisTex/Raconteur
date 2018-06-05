@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Widget;
 
-require_once('include/dir_fns.php');
 
 class Dirtags {
 

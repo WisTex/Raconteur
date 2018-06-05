@@ -55,10 +55,10 @@ class WebServer {
 			load_translation_table(\App::$language);
 		}
 
-		if((x($_GET,'zid')) && (! \App::$install)) {
+		if ((x($_GET,'zid')) && (! \App::$install)) {
 			\App::$query_string = strip_zids(\App::$query_string);
-			if(! local_channel()) {
-				if ($_SESSION['my_address']!=$_GET['zid']) {
+			if (! local_channel()) {
+				if ($_SESSION['my_address'] !== $_GET['zid']) {
 					$_SESSION['my_address'] = $_GET['zid'];
 					$_SESSION['authenticated'] = 0;
 				}
@@ -66,14 +66,14 @@ class WebServer {
 			}
 		}
 
-		if((x($_GET,'zat')) && (! \App::$install)) {
+		if ((x($_GET,'zat')) && (! \App::$install)) {
 			\App::$query_string = strip_zats(\App::$query_string);
 			if(! local_channel()) {
 				zat_init();
 			}
 		}
 
-		if((x($_REQUEST,'owt')) && (! \App::$install)) {
+		if ((x($_REQUEST,'owt')) && (! \App::$install)) {
 			$token = $_REQUEST['owt'];
 			\App::$query_string = strip_query_param(\App::$query_string,'owt');
 			owt_init($token);
@@ -153,14 +153,14 @@ class WebServer {
 		if (( \App::$module === 'channel' ) && argc() > 1) {
 			\App::$channel_links = [
 				[
-					'rel'  => 'lrdd',
-					'type' => 'application/xrd+xml',
-					'url'  => z_root() . '/xrd?f=&uri=acct%3A' . argv(1) . '%40' . \App::get_hostname()
-				],
-				[
 					'rel'  => 'jrd',
 					'type' => 'application/jrd+json',
 					'url'  => z_root() . '/.well-known/webfinger?f=&resource=acct%3A' . argv(1) . '%40' . \App::get_hostname()
+				],
+				[
+					'rel'  => 'zot',
+					'type' => 'application/x-zot+json',
+					'url'  => z_root() . '/channel/' . argv(1)
 				],
 			];
 			$x = [ 'channel_address' => argv(1), 'channel_links' => \App::$channel_links ]; 

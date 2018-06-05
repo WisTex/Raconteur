@@ -4,8 +4,8 @@ namespace Zotlabs\Daemon;
 
 
 use Zotlabs\Lib\Libzot;;
+use Zotlabs\Lib\Libzotdir;
 
-require_once('include/dir_fns.php');
 require_once('include/queue_fn.php');
 
 
@@ -44,7 +44,7 @@ class Directory {
 
 			// this is an in-memory update and we don't need to send a network packet.
 
-			local_dir_update($argv[1],$force);
+			Libzotdir::local_dir_update($argv[1],$force);
 
 			q("update channel set channel_dirdate = '%s' where channel_id = %d",
 				dbesc(datetime_convert()),
@@ -60,7 +60,7 @@ class Directory {
 
 		// otherwise send the changes upstream
 
-		$directory = find_upstream_directory($dirmode);
+		$directory = Libzotdir::find_upstream_directory($dirmode);
 		$url = $directory['url'] . '/post';
 
 		// ensure the upstream directory is updated

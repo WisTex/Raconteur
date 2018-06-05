@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Libzotdir;
+
 require_once 'include/acl_selectors.php';
 require_once 'include/group.php';
 
@@ -422,8 +424,7 @@ class Acl extends \Zotlabs\Web\Controller {
 		}
 	
 		if(! $url) {
-			require_once("include/dir_fns.php");
-			$directory = find_upstream_directory($dirmode);
+			$directory = Libzotdir::find_upstream_directory($dirmode);
 			$url = $directory['url'] . '/dirsearch';
 		}
 

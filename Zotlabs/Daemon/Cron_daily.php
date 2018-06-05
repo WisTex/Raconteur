@@ -1,4 +1,6 @@
-<?php /** @file */
+<?php 
+
+use Zotlabs\Lib\Libzotdir;
 
 namespace Zotlabs\Daemon;
 
@@ -13,10 +15,7 @@ class Cron_daily {
 		 *
 		 */
 
-
-		require_once('include/dir_fns.php');
-		check_upstream_directory();
-
+		Libzotdir::check_upstream_directory();
 
 		// Fire off the Cron_weekly process if it's the correct day.
  
@@ -76,8 +75,7 @@ class Cron_daily {
 		$dirmode = get_config('system','directory_mode');
 
 		if($dirmode == DIRECTORY_MODE_SECONDARY || $dirmode == DIRECTORY_MODE_PRIMARY) {
-			require_once('include/dir_fns.php');
-			sync_directories($dirmode);
+			Libzotdir::sync_directories($dirmode);
 		}
 
 

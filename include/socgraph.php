@@ -1,8 +1,7 @@
 <?php /** @file */
 
 use Zotlabs\Lib\Libzot;
-
-require_once('include/dir_fns.php');
+use Zotlabs\Lib\Libzotdir;
 
 /**
  * poco_load
@@ -300,7 +299,7 @@ function update_suggestions() {
 		$url = z_root() . '/sitelist';
 	}
 	else {
-		$directory = find_upstream_directory($dirmode);
+		$directory = Libzotdir::find_upstream_directory($dirmode);
 		$url = $directory['url'] . '/sitelist';
 	}
 	if(! $url)

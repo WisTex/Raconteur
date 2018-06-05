@@ -1,7 +1,6 @@
 <?php
 namespace Zotlabs\Module;
 
-require_once('include/dir_fns.php');
 
 
 

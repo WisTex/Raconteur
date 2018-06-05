@@ -2,8 +2,7 @@
 
 namespace Zotlabs\Daemon;
 
-
-require_once('include/dir_fns.php');
+use Zotlabs\Lib\Libzotdir;
 
 
 class Onedirsync {
@@ -66,10 +65,10 @@ class Onedirsync {
 		// we might have to pull this out some day, but for now update_directory_entry() 
 		// runs zot_finger() and is kind of zot specific
 
-		if($h && $h[0]['hubloc_network'] !== 'zot')
+		if($h && $h[0]['hubloc_network'] !== 'zot6')
 			return;
 
-		update_directory_entry($r[0]);		
+		Libzotdir::update_directory_entry($r[0]);		
 
 		return;
 	}

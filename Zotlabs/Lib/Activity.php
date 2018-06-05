@@ -4,6 +4,8 @@ namespace Zotlabs\Lib;
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\ActivityStreams;
+
 
 class Activity {
 
@@ -258,11 +260,11 @@ class Activity {
 
 				switch($t['type']) {
 					case 'Hashtag':
-						$ret[] = [ 'ttype' => TERM_HASHTAG, 'url' => $t['href'], 'term' => ((substr($t['name'],0,1) === '#') ? substr($t['name'],1) : $t['name']) ];
+						$ret[] = [ 'ttype' => TERM_HASHTAG, 'url' => $t['href'], 'term' => escape_tags((substr($t['name'],0,1) === '#') ? substr($t['name'],1) : $t['name']) ];
 						break;
 
 					case 'Mention':
-						$ret[] = [ 'ttype' => TERM_MENTION, 'url' => $t['href'], 'term' => ((substr($t['name'],0,1) === '@') ? substr($t['name'],1) : $t['name']) ];
+						$ret[] = [ 'ttype' => TERM_MENTION, 'url' => $t['href'], 'term' => escape_tags((substr($t['name'],0,1) === '@') ? substr($t['name'],1) : $t['name']) ];
 						break;
 	
 					default:
@@ -707,13 +709,6 @@ class Activity {
 		return 'Note';
 
 		//	return false;
-
-	}
-
-
-	static function fetch($url) {
-
-		return \Zotlabs\Lib\ActivityStreams::fetch_property($url);
 
 	}
 
@@ -1232,7 +1227,7 @@ class Activity {
 
 		if($instrument && array_key_exists('type',$instrument) 
 			&& $instrument['type'] === 'Service' && array_key_exists('name',$instrument)) {
-			$s['app'] = $instrument['name'];
+			$s['app'] = escape_tags($instrument['name']);
 		}
 
 		if($channel['channel_system']) {
@@ -1405,8 +1400,16 @@ class Activity {
 		$s['body']     = $summary . self::bb_content($content,'content');
 		$s['verb']     = ACTIVITY_POST;
 		$s['obj_type'] = ACTIVITY_OBJ_NOTE;
-		$s['app']      = t('ActivityPub');
 
+
+		$instrument = $act->get_property_obj('instrument');
+		if(! $instrument)
+			$instrument = $act->get_property_obj('instrument',$act->obj);
+
+		if($instrument && array_key_exists('type',$instrument) 
+			&& $instrument['type'] === 'Service' && array_key_exists('name',$instrument)) {
+			$s['app'] = escape_tags($instrument['name']);
+		}
 
 		$a = self::decode_taxonomy($act->obj);
 		if($a) {
