@@ -1325,20 +1325,23 @@ function sync_files($channel, $files) {
 					);
 
 					if($exists) {
-						if(! dbesc_array($p))
-							continue;
 
 						$str = '';
 						foreach($p as $k => $v) {
+							$matches = false;
+							if(preg_match('/([^a-zA-Z0-9\-\_\.])/',$k,$matches)) {
+								continue;
+							}
+
 							if($str)
 								$str .= ",";
-
-							$str .= " " . TQUOT . $k . TQUOT . " = '" . $v . "' ";
+							
+							$str .= " " . TQUOT . $k . TQUOT . " = '" . (($k === 'content') ? dbescbin($v) : dbesc($v)) . "' ";
 						}
 						$r = dbq("update photo set " . $str . " where id = " . intval($exists[0]['id']) );
 					}
 					else {
-						create_table_from_array('photo',$p);
+						create_table_from_array('photo',$p, [ 'content' ] );
 					}
 				}
 			}

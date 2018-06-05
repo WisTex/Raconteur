@@ -3186,21 +3186,33 @@ function array2XML($obj, $array) {
  *
  * @param string $table
  * @param array $arr
+ * @param array $binary_fields - fields which will be cleansed with dbescbin rather than dbesc; this is critical for postgres
  * @return boolean|PDOStatement
  */
-function create_table_from_array($table, $arr) {
+function create_table_from_array($table, $arr, $binary_fields = []) {
 
 	if(! ($arr && $table))
 		return false;
 
-	if(dbesc_array($arr)) {
-		$r = dbq("INSERT INTO " . TQUOT . $table . TQUOT . " (" . TQUOT
-			. implode(TQUOT . ', ' . TQUOT, array_keys($arr))
-			. TQUOT . ") VALUES ('"
-			. implode("', '", array_values($arr))
-			. "')"
-		);
+	$clean = [];
+	foreach($arr as $k => $v) {
+		$matches = false;
+		if(preg_match('/([^a-zA-Z0-9\-\_\.])/',$k,$matches)) {
+			return false;
+		}
+		if(in_array($k,$binary_fields)) {
+			$clean[$k] = dbescbin($v);
+		}
+		else {
+			$clean[$k] = dbesc($v);
+		}
 	}
+	$r = dbq("INSERT INTO " . TQUOT . $table . TQUOT . " (" . TQUOT
+		. implode(TQUOT . ', ' . TQUOT, array_keys($clean))
+		. TQUOT . ") VALUES ('"
+		. implode("', '", array_values($clean))
+		. "')"
+	);
 
 	return $r;
 }

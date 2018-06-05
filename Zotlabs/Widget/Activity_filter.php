@@ -69,7 +69,7 @@ class Activity_filter {
 					'icon' => 'users',
 					'url' => '#',
 					'sel' => (($filter_active == 'group') ? true : false),
-					'title' => sprintf(t('Show posts that I have filed to %s'), $t['term']),
+					'title' => t('Show my privacy groups'),
 					'sub' => $gsub
 
 				];
@@ -93,16 +93,17 @@ class Activity_filter {
 						'icon' => '',
 						'url' => z_root() . '/' . $cmd . '/?f=&file=' . $t['term'],
 						'sel' => $file_active,
-						'title' => ''
+						'title' => sprintf(t('Show posts that I have filed to %s'), $t['term']),
 					];
 				}
 
 				$tabs[] = [
+					'id' => 'saved_folders',
 					'label' => t('Saved Folders'),
 					'icon' => 'folder',
 					'url' => '#',
 					'sel' => (($filter_active == 'file') ? true : false),
-					'title' => sprintf(t('Show posts that I have filed to %s'), $t['term']),
+					'title' => t('Show filed post categories'),
 					'sub' => $tsub
 
 				];
@@ -123,17 +124,18 @@ class Activity_filter {
 						'img' => $f['xchan_photo_s'],
 						'url' => (($f['private_forum']) ? $f['xchan_url'] : z_root() . '/' . $cmd . '/?f=&pf=1&cid=' . $f['abook_id']),
 						'sel' => $forum_active,
-						'title' => t('Private forum'),
+						'title' => t('Show posts to this forum'),
 						'lock' => (($f['private_forum']) ? 'lock' : '')
 					];
 				}
 
 				$tabs[] = [
+					'id' => 'forums',
 					'label' => t('Forums'),
 					'icon' => 'comments-o',
 					'url' => '#',
 					'sel' => (($filter_active == 'forums') ? true : false),
-					'title' => t('Show this forums posts'),
+					'title' => t('Show forums'),
 					'sub' => $fsub
 
 				];
