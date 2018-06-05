@@ -2,7 +2,7 @@
 
 namespace Zotlabs\Daemon;
 
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 class Importfile {
 
@@ -42,7 +42,7 @@ class Importfile {
 
 		$sync = attach_export_data($channel,$hash);
 		if($sync)
-			Libzot::build_sync_packet($channel['channel_id'],array('file' => array($sync)));
+			Libsync::build_sync_packet($channel['channel_id'],array('file' => array($sync)));
 	
 		return;
 	}

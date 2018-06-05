@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
@@ -228,7 +228,7 @@ class Like extends \Zotlabs\Web\Controller {
 	
 			if($z) {
 				$z[0]['deleted'] = 1;
-				Libzot::build_sync_packet($ch[0]['channel_id'],array('likes' => $z));
+				Libsync::build_sync_packet($ch[0]['channel_id'],array('likes' => $z));
 	
 				q("delete from likes where id = %d",
 					intval($z[0]['id'])
@@ -552,7 +552,7 @@ class Like extends \Zotlabs\Web\Controller {
 				dbesc($obj_id)
 			);
 			if($r)
-				Libzot::build_sync_packet($ch[0]['channel_id'],array('likes' => $r));	
+				Libsync::build_sync_packet($ch[0]['channel_id'],array('likes' => $r));	
 	
 		}
 	

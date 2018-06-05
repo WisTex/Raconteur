@@ -3,7 +3,7 @@
 namespace Zotlabs\Storage;
 
 use Sabre\DAV;
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 /**
  * @brief RedDirectory class.
@@ -180,7 +180,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 		if ($ch) {
 			$sync = attach_export_data($ch, $this->folder_hash);
 			if ($sync)
-				Libzot::build_sync_packet($ch['channel_id'], array('file' => array($sync)));
+				Libsync::build_sync_packet($ch['channel_id'], array('file' => array($sync)));
 		}
 
 		$this->red_path = $new_path;
@@ -369,7 +369,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 		$sync = attach_export_data($c[0], $hash);
 
 		if ($sync)
-			Libzot::build_sync_packet($c[0]['channel_id'], array('file' => array($sync)));
+			Libsync::build_sync_packet($c[0]['channel_id'], array('file' => array($sync)));
 	}
 
 	/**
@@ -402,7 +402,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 				logger('createDirectory: attach_export_data returns $sync:' . print_r($sync, true), LOGGER_DEBUG);
 
 				if($sync) {
-					Libzot::build_sync_packet($r[0]['channel_id'], array('file' => array($sync)));
+					Libsync::build_sync_packet($r[0]['channel_id'], array('file' => array($sync)));
 				}
 			}
 			else {
@@ -433,7 +433,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 		if ($ch) {
 			$sync = attach_export_data($ch, $this->folder_hash, true);
 			if ($sync)
-				Libzot::build_sync_packet($ch['channel_id'], array('file' => array($sync)));
+				Libsync::build_sync_packet($ch['channel_id'], array('file' => array($sync)));
 		}
 	}
 

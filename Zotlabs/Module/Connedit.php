@@ -2,6 +2,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 /* @file connedit.php
  * @brief In this file the connection-editor form is generated and evaluated.
@@ -374,7 +375,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 			if($abconfig)
 				$clone['abconfig'] = $abconfig;
 	
-			Libzot::build_sync_packet(0 /* use the current local_channel */, array('abook' => array($clone)));
+			Libsync::build_sync_packet(0 /* use the current local_channel */, array('abook' => array($clone)));
 	}
 	
 	/* @brief Generate content of connection edit page
@@ -546,7 +547,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 				// PLACEHOLDER
 	
 				contact_remove(local_channel(), $orig_record[0]['abook_id']);
-				Libzot::build_sync_packet(0 /* use the current local_channel */,
+				Libsync::build_sync_packet(0 /* use the current local_channel */,
 					array('abook' => array(array(
 						'abook_xchan' => $orig_record[0]['abook_xchan'],
 						'entry_deleted' => true))

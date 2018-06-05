@@ -2,6 +2,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 require_once('include/acl_selectors.php');
 require_once('include/message.php');
@@ -110,7 +111,7 @@ class Mail extends \Zotlabs\Web\Controller {
 
 		if($ret['success']) {
 			xchan_mail_query($ret['mail']);
-			Libzot::build_sync_packet(0,array('conv' => array($ret['conv']),'mail' => array(encode_mail($ret['mail'],true))));
+			Libsync::build_sync_packet(0,array('conv' => array($ret['conv']),'mail' => array(encode_mail($ret['mail'],true))));
 		}
 		else {
 			notice($ret['message']);
@@ -188,7 +189,7 @@ class Mail extends \Zotlabs\Web\Controller {
 				intval(local_channel())
 			);
 			if($x) {
-				Libzot::build_sync_packet(local_channel(),array('mail' => encode_mail($x[0],true)));
+				Libsync::build_sync_packet(local_channel(),array('mail' => encode_mail($x[0],true)));
 			}
 	
 			\Zotlabs\Daemon\Master::Summon(array('Notifier','mail',intval(argv(3))));

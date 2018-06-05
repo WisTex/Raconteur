@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 require_once('include/photo/photo_driver.php');
 require_once('include/photos.php');
@@ -163,7 +163,7 @@ class Photos extends \Zotlabs\Web\Controller {
 						$sync = attach_export_data(\App::$data['channel'],$folder_hash, true);
 	
 						if($sync) 
-							Libzot::build_sync_packet($page_owner_uid,array('file' => array($sync)));
+							Libsync::build_sync_packet($page_owner_uid,array('file' => array($sync)));
 					}
 				}
 	
@@ -190,7 +190,7 @@ class Photos extends \Zotlabs\Web\Controller {
 				$sync = attach_export_data(\App::$data['channel'],$r[0]['resource_id'], true);
 	
 				if($sync) 
-					Libzot::build_sync_packet($page_owner_uid,array('file' => array($sync)));
+					Libsync::build_sync_packet($page_owner_uid,array('file' => array($sync)));
 			}
 			elseif(is_site_admin()) {
 				// If the admin deletes a photo, don't sync
@@ -211,7 +211,7 @@ class Photos extends \Zotlabs\Web\Controller {
 
 				$sync = attach_export_data(\App::$data['channel'],argv(2),true);
 				if($sync) 
-					Libzot::build_sync_packet($page_owner_uid,array('file' => array($sync)));
+					Libsync::build_sync_packet($page_owner_uid,array('file' => array($sync)));
 
 				if(! ($_POST['desc'] && $_POST['newtag']))
 					goaway(z_root() . '/' . $_SESSION['photo_return']);
@@ -450,7 +450,7 @@ class Photos extends \Zotlabs\Web\Controller {
 			$sync = attach_export_data(\App::$data['channel'],$resource_id);
 	
 			if($sync) 
-				Libzot::build_sync_packet($page_owner_uid,array('file' => array($sync)));
+				Libsync::build_sync_packet($page_owner_uid,array('file' => array($sync)));
 		
 			goaway(z_root() . '/' . $_SESSION['photo_return']);
 			return; // NOTREACHED

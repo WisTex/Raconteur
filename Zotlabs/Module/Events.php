@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 require_once('include/conversation.php');
 require_once('include/bbcode.php');
@@ -233,7 +233,7 @@ class Events extends \Zotlabs\Web\Controller {
 					intval($channel['channel_id'])
 				);
 				if($z) {
-					Libzot::build_sync_packet($channel['channel_id'],array('event_item' => array(encode_item($sync_item[0],true)),'event' => $z));
+					Libsync::build_sync_packet($channel['channel_id'],array('event_item' => array(encode_item($sync_item[0],true)),'event' => $z));
 				}
 			}
 		}
@@ -727,7 +727,7 @@ class Events extends \Zotlabs\Web\Controller {
 						intval(local_channel())
 					);
 					$sync_event['event_deleted'] = 1;
-					Libzot::build_sync_packet(0,array('event' => array($sync_event)));
+					Libsync::build_sync_packet(0,array('event' => array($sync_event)));
 	
 					info( t('Event removed') . EOL);
 				}

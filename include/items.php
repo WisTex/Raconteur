@@ -5,6 +5,7 @@
  */
 
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 use Zotlabs\Lib as Zlib;
 
@@ -4529,7 +4530,7 @@ function sync_an_item($channel_id,$item_id) {
 	if($r) {
 		xchan_query($r);
 		$sync_item = fetch_post_tags($r);
-		Libzot::build_sync_packet($channel_d,array('item' => array(encode_item($sync_item[0],true))));
+		Libsync::build_sync_packet($channel_d,array('item' => array(encode_item($sync_item[0],true))));
 	}
 }
 
@@ -4730,7 +4731,7 @@ function item_create_edit_activity($post) {
 		if($r) {
 			xchan_query($r);
 			$sync_item = fetch_post_tags($r);
-			Libzot::build_sync_packet($new_item['uid'],array('item' => array(encode_item($sync_item[0],true))));
+			Libsync::build_sync_packet($new_item['uid'],array('item' => array(encode_item($sync_item[0],true))));
 		}
 	}
 

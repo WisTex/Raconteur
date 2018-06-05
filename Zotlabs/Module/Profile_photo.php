@@ -2,7 +2,7 @@
 namespace Zotlabs\Module;
 
 
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 /*
  * @file Profile_photo.php
@@ -212,7 +212,7 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 
 					$sync = attach_export_data($channel,$base_image['resource_id']);
 					if($sync)
-						Libzot::build_sync_packet($channel['channel_id'],array('file' => array($sync), 'profile' => $sync_profiles));
+						Libsync::build_sync_packet($channel['channel_id'],array('file' => array($sync), 'profile' => $sync_profiles));
 
 
 					// Similarly, tell the nav bar to bypass the cache and update the avatar image.
@@ -377,7 +377,7 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 
 				$sync = attach_export_data($channel,$resource_id);
 				if($sync)
-					Libzot::build_sync_packet($channel['channel_id'],array('file' => array($sync)));
+					Libsync::build_sync_packet($channel['channel_id'],array('file' => array($sync)));
 
 
 				\Zotlabs\Daemon\Master::Summon(array('Directory',local_channel()));

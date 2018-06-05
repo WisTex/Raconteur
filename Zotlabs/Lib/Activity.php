@@ -3,6 +3,7 @@
 namespace Zotlabs\Lib;
 
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 class Activity {
 
@@ -903,7 +904,7 @@ class Activity {
 				if($abconfig)
 					$clone['abconfig'] = $abconfig;
 
-				Libzot::build_sync_packet($channel['channel_id'], [ 'abook' => array($clone) ] );
+				Libsync::build_sync_packet($channel['channel_id'], [ 'abook' => array($clone) ] );
 			}
 		}
 

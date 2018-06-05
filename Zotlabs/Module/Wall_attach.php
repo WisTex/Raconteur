@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 require_once('include/attach.php');
 require_once('include/photos.php');
@@ -104,7 +104,7 @@ class Wall_attach extends \Zotlabs\Web\Controller {
 
 		$sync = attach_export_data($channel,$r['data']['hash']);
 		if($sync) {
-			Libzot::build_sync_packet($channel['channel_id'],array('file' => array($sync)));
+			Libsync::build_sync_packet($channel['channel_id'],array('file' => array($sync)));
 		}
 
 		if($using_api)

@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 require_once('include/socgraph.php');
 require_once('include/selectors.php');
@@ -157,7 +157,7 @@ class Defperms extends \Zotlabs\Web\Controller {
 			if($abconfig)
 				$clone['abconfig'] = $abconfig;
 	
-			Libzot::build_sync_packet(0 /* use the current local_channel */, array('abook' => array($clone)));
+			Libsync::build_sync_packet(0 /* use the current local_channel */, array('abook' => array($clone)));
 	}
 	
 	/* @brief Generate content of connection default permissions page

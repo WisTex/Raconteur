@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Module; /** @file */
 
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 
 class Notes extends \Zotlabs\Web\Controller {
@@ -31,7 +31,7 @@ class Notes extends \Zotlabs\Web\Controller {
 	
 		if((argc() > 1) && (argv(1) === 'sync')) {
 			require_once('include/zot.php');
-			Libzot::build_sync_packet();
+			Libsync::build_sync_packet();
 		}
 	
 		logger('notes saved.', LOGGER_DEBUG);

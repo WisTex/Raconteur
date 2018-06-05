@@ -2,7 +2,7 @@
 
 namespace Zotlabs\Daemon;
 
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 class Cron {
 
@@ -111,7 +111,7 @@ class Cron {
 					if($z) {
 						xchan_query($z);
 						$sync_item = fetch_post_tags($z);
-						Libzot::build_sync_packet($sync_item[0]['uid'],
+						Libsync::build_sync_packet($sync_item[0]['uid'],
 							[ 
 								'item' => [ encode_item($sync_item[0],true) ]
 							]

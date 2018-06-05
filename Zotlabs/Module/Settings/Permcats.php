@@ -2,7 +2,7 @@
 
 namespace Zotlabs\Module\Settings;
 
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 
 class Permcats {
@@ -38,7 +38,7 @@ class Permcats {
 		
 		\Zotlabs\Lib\Permcat::update(local_channel(),$name,$pcarr);
 
-		Libzot::build_sync_packet();
+		Libsync::build_sync_packet();
 
 		info( t('Permission category saved.') . EOL);
 		
@@ -59,7 +59,7 @@ class Permcats {
 
 		if(argc() > 3 && argv(3) === 'drop') {
 			\Zotlabs\Lib\Permcat::delete(local_channel(),$name);
-			Libzot::build_sync_packet();
+			Libsync::build_sync_packet();
 			json_return_and_die([ 'success' => true ]);
 		}
 

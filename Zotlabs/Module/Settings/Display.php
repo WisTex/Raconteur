@@ -2,7 +2,7 @@
 
 namespace Zotlabs\Module\Settings;
 
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 
 class Display {
@@ -91,7 +91,7 @@ class Display {
 		);
 
 		call_hooks('display_settings_post', $_POST);
-		Libzot::build_sync_packet();
+		Libsync::build_sync_packet();
 		goaway(z_root() . '/settings/display' );
 		return; // NOTREACHED
 	}

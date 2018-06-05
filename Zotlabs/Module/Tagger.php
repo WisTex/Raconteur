@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
@@ -151,7 +151,7 @@ class Tagger extends \Zotlabs\Web\Controller {
 		$ret = post_activity_item($arr);
 
 		if($ret['success']) {
-			Libzot::build_sync_packet(local_channel(),
+			Libsync::build_sync_packet(local_channel(),
 				[ 
 					'item' => [ encode_item($ret['activity'],true) ]
 				]

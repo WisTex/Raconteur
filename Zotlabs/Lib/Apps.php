@@ -2,7 +2,7 @@
 
 namespace Zotlabs\Lib;
 
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 /**
  * Apps
@@ -447,7 +447,7 @@ class Apps {
 							intval(TERM_OBJ_APP),
 							intval($r[0]['id'])
 						);
-						Libzot::build_sync_packet($uid,array('app' => $r[0]));
+						Libsync::build_sync_packet($uid,array('app' => $r[0]));
 					}
 				}
 			}
@@ -485,7 +485,7 @@ class Apps {
 						);
 
 						// we don't sync system apps - they may be completely different on the other system
-						Libzot::build_sync_packet($uid,array('app' => $x));
+						Libsync::build_sync_packet($uid,array('app' => $x));
 					}
 				}
 				else {

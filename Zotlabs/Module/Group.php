@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 
 require_once('include/group.php');
@@ -59,7 +59,7 @@ class Group extends \Zotlabs\Web\Controller {
 				);
 				if($r)
 					info( t('Privacy group updated.') . EOL );
-				Libzot::build_sync_packet(local_channel(),null,true);
+				Libsync::build_sync_packet(local_channel(),null,true);
 			}
 	
 			goaway(z_root() . '/group/' . argv(1) . '/' . argv(2));

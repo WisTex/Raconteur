@@ -3,7 +3,7 @@
 
 // Red pconfig utility
 
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 
 if(!file_exists('include/cli_startup.php')) {
@@ -65,7 +65,7 @@ if($argc > 2 && strpos($argv[2],'.')) {
 
 if($argc > 4) {
 	set_pconfig($argv[1],$argv[2],$argv[3],$argv[4]);
-	Libzot::build_sync_packet($argv[1]);
+	Libsync::build_sync_packet($argv[1]);
 	echo "pconfig[{$argv[1]}][{$argv[2]}][{$argv[3]}] = " . get_pconfig($argv[1],$argv[2],$argv[3]) . "\n";
 }
 

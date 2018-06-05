@@ -17,7 +17,7 @@ namespace Zotlabs\Module;
  *
  */  
 
-use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Libsync;
 
 require_once('include/crypto.php');
 require_once('include/attach.php');
@@ -916,7 +916,7 @@ logger('linkify: ' . print_r($results,true));
 				if($r) {
 					xchan_query($r);
 					$sync_item = fetch_post_tags($r);
-					Libzot::build_sync_packet($profile_uid,array('item' => array(encode_item($sync_item[0],true))));
+					Libsync::build_sync_packet($profile_uid,array('item' => array(encode_item($sync_item[0],true))));
 				}
 			}
 			if(! $nopush)
@@ -1025,7 +1025,7 @@ logger('linkify: ' . print_r($results,true));
 			if($r) {
 				xchan_query($r);
 				$sync_item = fetch_post_tags($r);
-				Libzot::build_sync_packet($profile_uid,array('item' => array(encode_item($sync_item[0],true))));
+				Libsync::build_sync_packet($profile_uid,array('item' => array(encode_item($sync_item[0],true))));
 			}
 		}
 	
@@ -1124,7 +1124,7 @@ logger('linkify: ' . print_r($results,true));
 				if($r) {
 					xchan_query($r);
 					$sync_item = fetch_post_tags($r);
-					Libzot::build_sync_packet($i[0]['uid'],array('item' => array(encode_item($sync_item[0],true))));
+					Libsync::build_sync_packet($i[0]['uid'],array('item' => array(encode_item($sync_item[0],true))));
 				}
 
 				if($complex) {
