@@ -150,7 +150,7 @@ class Libsync {
 
 		foreach($synchubs as $hub) {
 			$hash = random_string();
-			$n = self::build_packet($channel,'notify',$env_recips,json_encode($info),$hub['hubloc_sitekey'],$hub['site_crypto'],$hash);
+			$n = Libzot::build_packet($channel,'notify',$env_recips,json_encode($info),$hub['hubloc_sitekey'],$hub['site_crypto'],$hash);
 			queue_insert(array(
 				'hash'       => $hash,
 				'account_id' => $channel['channel_account_id'],
@@ -220,13 +220,13 @@ class Libsync {
 
 			if($keychange) {
 				// verify the keychange operation
-				if(! self::verify($arr['channel']['channel_pubkey'],$arr['keychange']['new_sig'],$channel['channel_prvkey'])) {
+				if(! Libzot::verify($arr['channel']['channel_pubkey'],$arr['keychange']['new_sig'],$channel['channel_prvkey'])) {
 					logger('sync keychange: verification failed');
 					continue;
 				}
 
-				$sig = self::sign($channel['channel_guid'],$arr['channel']['channel_prvkey']);
-				$hash = self::make_xchan_hash($channel['channel_guid'],$arr['channel']['channel_pubkey']);
+				$sig = Libzot::sign($channel['channel_guid'],$arr['channel']['channel_prvkey']);
+				$hash = Libzot::make_xchan_hash($channel['channel_guid'],$arr['channel']['channel_pubkey']);
 
 
 				$r = q("update channel set channel_prvkey = '%s', channel_pubkey = '%s', channel_guid_sig = '%s',
@@ -262,7 +262,7 @@ class Libsync {
 					foreach($h as $hv) {
 						$hv['hubloc_guid_sig'] = $sig;
 						$hv['hubloc_hash']     = $hash;
-						$hv['hubloc_url_sig']  = self::sign(z_root(),$channel['channel_prvkey']);
+						$hv['hubloc_url_sig']  = Libzot::sign(z_root(),$channel['channel_prvkey']);
 						hubloc_store_lowlevel($hv);
 					}
 				}
@@ -466,7 +466,7 @@ class Libsync {
 					// and import_author_xchan will look them up on all federated networks
 
 					if($abook['abook_xchan'] && $abook['xchan_addr']) {
-						$h = self::get_hublocs($abook['abook_xchan']);
+						$h = Libzot::get_hublocs($abook['abook_xchan']);
 						if(! $h) {
 							$xhash = import_author_xchan(encode_item_xchan($abook));
 							if(! $xhash) {
