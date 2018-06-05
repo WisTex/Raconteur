@@ -136,6 +136,7 @@ class Network extends \Zotlabs\Web\Controller {
 		$file     = ((x($_GET,'file'))  ? $_GET['file']          : '');
 		$xchan    = ((x($_GET,'xchan')) ? $_GET['xchan']         : '');
 		$net      = ((x($_GET,'net'))   ? $_GET['net']           : '');
+		$pf       = ((x($_GET,'pf'))    ? $_GET['pf']            : '');
 		
 		$deftag = '';
 	
@@ -156,7 +157,7 @@ class Network extends \Zotlabs\Web\Controller {
 				goaway(z_root() . '/network');
 				// NOTREACHED
 			}
-			if($_GET['pf'] === '1')
+			if($pf)
 				$deftag = '!{' . (($cid_r[0]['xchan_addr']) ? $cid_r[0]['xchan_addr'] : $cid_r[0]['xchan_url']) . '}';
 			else
 				$def_acl = [ 'allow_cid' => '<' . $cid_r[0]['abook_xchan'] . '>', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => '' ];
@@ -261,7 +262,7 @@ class Network extends \Zotlabs\Web\Controller {
 			$item_thread_top = '';
 
 			if($load || $update) {
-				$ttype = (($cid_r[0]['xchan_pubforum']) ? TERM_FORUM : TERM_MENTION);
+				$ttype = (($pf) ? TERM_FORUM : TERM_MENTION);
 
 				$p1 = q("SELECT DISTINCT parent FROM item WHERE uid = " . intval(local_channel()) . " AND ( author_xchan = '" . dbesc($cid_r[0]['abook_xchan']) . "' OR owner_xchan = '" . dbesc($cid_r[0]['abook_xchan']) . "' ) $item_normal ");
 				$p2 = q("SELECT oid AS parent FROM term WHERE uid = " . intval(local_channel()) . " AND ttype = $ttype AND term = '" . dbesc($cid_r[0]['xchan_name']) . "'");
@@ -350,7 +351,8 @@ class Network extends \Zotlabs\Web\Controller {
 				'$mid'     => '',
 				'$verb'    => $verb,
 				'$net'     => $net,
-				'$dbegin'  => $datequery2
+				'$dbegin'  => $datequery2,
+				'$pf'     => (($pf) ? $pf : '0'),
 			));
 		}
 	
