@@ -11,7 +11,7 @@
 </div>
 {{/if}}
 <div id="menu-creator" class="section-content-tools-wrapper" style="display: {{$display}};">
-	<form id="menuedit" action="menu{{if $menu_id}}/{{$menu_id}}{{/if}}{{if $sys}}?f=&sys=1{{/if}}" method="post" >
+	<form id="menuedit" action="menu/{{$nick}}{{if $menu_id}}/{{$menu_id}}{{/if}}{{if $sys}}?f=&sys=1{{/if}}" method="post" >
 		{{if $menu_id}}
 		<input type="hidden" name="menu_id" value="{{$menu_id}}" />
 		{{/if}}

@@ -25,11 +25,11 @@
 			{{foreach $menus as $m }}
 			<tr id="menu-list-item-{{$m.menu_id}}">
 				<td>{{if $m.bookmark}}<i class="fa fa-bookmark menu-list-tool" title="{{$bmark}}" ></i>{{/if}}</td>
-				<td><a href="mitem/{{$m.menu_id}}{{if $sys}}?f=&sys=1{{/if}}" title="{{$hintcontent}}">{{$m.menu_name}}</a></td>
+				<td><a href="mitem/{{$nick}}/{{$m.menu_id}}{{if $sys}}?f=&sys=1{{/if}}" title="{{$hintcontent}}">{{$m.menu_name}}</a></td>
 				<td>{{$m.menu_desc}}</td>
-				<td class="menu-list-tool"><a href="menu/{{$m.menu_id}}{{if $sys}}?f=&sys=1{{/if}}" title="{{$hintedit}}"><i class="fa fa-pencil"></i></a></td>
+				<td class="menu-list-tool"><a href="menu/{{$nick}}/{{$m.menu_id}}{{if $sys}}?f=&sys=1{{/if}}" title="{{$hintedit}}"><i class="fa fa-pencil"></i></a></td>
 				<td class="menu-list-tool"><a href="rpost?attachment={{$m.element}}" title="{{$share}}"><i class="fa fa-share-square-o"></i></a></td>
-				<td class="menu-list-tool"><a href="#" title="{{$hintdrop}}"  onclick="dropItem('menu/{{$m.menu_id}}/drop{{if $sys}}?f=&sys=1{{/if}}', '#menu-list-item-{{$m.menu_id}}'); return false;"><i class="fa fa-trash-o drop-icons"></i></a></td>
+				<td class="menu-list-tool"><a href="#" title="{{$hintdrop}}"  onclick="dropItem('menu/{{$nick}}/{{$m.menu_id}}/drop{{if $sys}}?f=&sys=1{{/if}}', '#menu-list-item-{{$m.menu_id}}'); return false;"><i class="fa fa-trash-o drop-icons"></i></a></td>
 				<td class="d-none d-md-table-cell">{{$m.menu_created}}</td>
 				<td class="d-none d-md-table-cell">{{$m.menu_edited}}</td>
 			</tr>
