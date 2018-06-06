@@ -7,18 +7,36 @@ require_once('include/channel.php');
 
 class Menu extends \Zotlabs\Web\Controller {
 
+
 	function init() {
-		if (array_key_exists('sys', $_REQUEST) && $_REQUEST['sys'] && is_site_admin()) {
+
+		if(argc() > 1 && argv(1) === 'sys' && is_site_admin()) {
 			$sys = get_sys_channel();
-			if ($sys && intval($sys['channel_id'])) {
+			if($sys && intval($sys['channel_id'])) {
 				\App::$is_sys = true;
 			}
 		}
+
+		if(argc() > 1)
+			$which = argv(1);
+		else
+			return;
+
+		profile_load($which);
+
 	}
+
 	
-		function post() {
+	function post() {
 	
-		$uid = local_channel();
+		if(! \App::$profile) {
+			return;
+		}
+
+		$which = argv(1);
+
+
+		$uid = \App::$profile['channel_id'];
 	
 		if(array_key_exists('sys', $_REQUEST) && $_REQUEST['sys'] && is_site_admin()) {
 			$sys = get_sys_channel();
@@ -43,7 +61,7 @@ class Menu extends \Zotlabs\Web\Controller {
 			if($r) {
 				menu_sync_packet($uid,get_observer_hash(),$menu_id);
 				//info( t('Menu updated.') . EOL);
-				goaway(z_root() . '/mitem/' . $menu_id . ((\App::$is_sys) ? '?f=&sys=1' : '')); 
+				goaway(z_root() . '/mitem/' . $which . '/' . $menu_id . ((\App::$is_sys) ? '?f=&sys=1' : '')); 
 			}
 			else
 				notice( t('Unable to update menu.'). EOL);
@@ -54,7 +72,7 @@ class Menu extends \Zotlabs\Web\Controller {
 				menu_sync_packet($uid,get_observer_hash(),$r);
 	
 				//info( t('Menu created.') . EOL);
-				goaway(z_root() . '/mitem/' . $r . ((\App::$is_sys) ? '?f=&sys=1' : '')); 
+				goaway(z_root() . '/mitem/' . $which . '/' . $r . ((\App::$is_sys) ? '?f=&sys=1' : '')); 
 			}
 			else
 				notice( t('Unable to create menu.'). EOL);
@@ -67,27 +85,71 @@ class Menu extends \Zotlabs\Web\Controller {
 	
 	function get() {
 	
+
+
+		if(! \App::$profile) {
+			notice( t('Requested profile is not available.') . EOL );
+			\App::$error = 404;
+			return;
+		}
+
+		$which = argv(1);
+
+		$_SESSION['return_url'] = \App::$query_string;
+
 		$uid = local_channel();
-	
-		if (\App::$is_sys && is_site_admin()) {
+		$owner = 0;
+		$channel = null;
+		$observer = \App::get_observer();
+
+		$channel = \App::get_channel();
+
+		if(\App::$is_sys && is_site_admin()) {
 			$sys = get_sys_channel();
-			$uid = intval($sys['channel_id']);
+			if($sys && intval($sys['channel_id'])) {
+				$uid = $owner = intval($sys['channel_id']);
+				$channel = $sys;
+				$observer = $sys;
+			}
 		}
-	
-		if(! $uid) {
+
+		if(! $owner) {
+			// Figure out who the page owner is.
+			$r = channelx_by_nick($which);
+			if($r) {
+				$owner = intval($r['channel_id']);
+			}
+		}
+
+		$ob_hash = (($observer) ? $observer['xchan_hash'] : '');
+
+		$perms = get_all_perms($owner,$ob_hash);
+
+		if(! $perms['write_pages']) {
 			notice( t('Permission denied.') . EOL);
-			return '';
+			return;
 		}
+
+		// Get the observer, check their permissions
+
+		$ob_hash = (($observer) ? $observer['xchan_hash'] : '');
+
+		$perms = get_all_perms($owner,$ob_hash);
+
+		if(! $perms['write_pages']) {
+			notice( t('Permission denied.') . EOL);
+			return;
+		}
+
+		if(argc() == 2) {
 	
-		if(argc() == 1) {
-	
-			$channel = (($sys) ? $sys : \App::get_channel());
+			$channel = (($sys) ? $sys : channelx_by_n($owner));
 	
 			// list menus
-			$x = menu_list($uid);
+			$x = menu_list($owner);
 			if($x) {
 				for($y = 0; $y < count($x); $y ++) {
-					$m = menu_fetch($x[$y]['menu_name'],$uid,get_observer_hash());
+					$m = menu_fetch($x[$y]['menu_name'],$owner,get_observer_hash());
 					if($m)
 						$x[$y]['element'] = '[element]' . base64url_encode(json_encode(menu_element($channel,$m))) . '[/element]';
 					$x[$y]['bookmark'] = (($x[$y]['menu_flags'] & MENU_BOOKMARK) ? true : false);
@@ -100,6 +162,7 @@ class Menu extends \Zotlabs\Web\Controller {
 				'$menu_bookmark' => array('menu_bookmark', t('Allow Bookmarks'), 0 , t('Menu may be used to store saved bookmarks'), array(t('No'), t('Yes'))),
 				'$submit' => t('Submit and proceed'),
 				'$sys' => \App::$is_sys,
+				'$nick' => $which,
 				'$display' => 'none'
 			));
 	
@@ -119,6 +182,7 @@ class Menu extends \Zotlabs\Web\Controller {
 				'$hintdrop' => t('Delete this menu'),
 				'$hintcontent' => t('Edit menu contents'),
 				'$hintedit' => t('Edit this menu'),
+				'$nick' => $which,
 				'$sys' => \App::$is_sys
 			));
 	
@@ -126,19 +190,19 @@ class Menu extends \Zotlabs\Web\Controller {
 	
 		}
 	
-		if(argc() > 1) {
-			if(intval(argv(1))) {
+		if(argc() > 2) {
+			if(intval(argv(2))) {
 	
-				if(argc() == 3 && argv(2) == 'drop') {
-					menu_sync_packet($uid,get_observer_hash(),intval(argv(1)),true);
-					$r = menu_delete_id(intval(argv(1)),$uid);
+				if(argc() == 4 && argv(3) == 'drop') {
+					menu_sync_packet($owner,get_observer_hash(),intval(argv(1)),true);
+					$r = menu_delete_id(intval(argv(2)),$owner);
 					if(!$r)
 						notice( t('Menu could not be deleted.'). EOL);
 	
-					goaway(z_root() . '/menu' . ((\App::$is_sys) ? '?f=&sys=1' : ''));
+					goaway(z_root() . '/menu/' . $which . ((\App::$is_sys) ? '?f=&sys=1' : ''));
 				}
 	
-				$m = menu_fetch_id(intval(argv(1)),$uid);
+				$m = menu_fetch_id(intval(argv(2)),$owner);
 	
 				if(! $m) {
 					notice( t('Menu not found.') . EOL);
@@ -148,14 +212,15 @@ class Menu extends \Zotlabs\Web\Controller {
 				$o = replace_macros(get_markup_template('menuedit.tpl'), array(
 					'$header' => t('Edit Menu'),
 					'$sys' => \App::$is_sys,
-					'$menu_id' => intval(argv(1)),
-					'$menu_edit_link' => 'mitem/' . intval(argv(1)) . ((\App::$is_sys) ? '?f=&sys=1' : ''),
+					'$menu_id' => intval(argv(2)),
+					'$menu_edit_link' => 'mitem/' . $which . '/' . intval(argv(1)) . ((\App::$is_sys) ? '?f=&sys=1' : ''),
 					'$hintedit' => t('Add or remove entries to this menu'),
 					'$editcontents' => t('Edit menu contents'),
 					'$menu_name' => array('menu_name', t('Menu name'), $m['menu_name'], t('Must be unique, only seen by you'), '*'),
 					'$menu_desc' => array('menu_desc', t('Menu title'), $m['menu_desc'], t('Menu title as seen by others'), ''),
 					'$menu_bookmark' => array('menu_bookmark', t('Allow bookmarks'), (($m['menu_flags'] & MENU_BOOKMARK) ? 1 : 0), t('Menu may be used to store saved bookmarks'), array(t('No'), t('Yes'))),
 					'$menu_system' => (($m['menu_flags'] & MENU_SYSTEM) ? 1 : 0),
+					'$nick' => $which,
 					'$submit' => t('Submit and proceed')
 				));
 	
