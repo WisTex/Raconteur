@@ -392,9 +392,15 @@ class Network extends \Zotlabs\Web\Controller {
 	
 		if($conv) {
 			$item_thread_top = '';
-			$sql_extra .= sprintf(" AND parent IN (SELECT distinct(parent) from item where ( author_xchan = '%s' or item_mentionsme = 1 )) ",
-				dbesc(protect_sprintf($channel['channel_hash']))
-			);
+
+			if($nouveau) {
+				$sql_extra .= " AND author_xchan = '" . dbesc($channel['channel_hash']) . "' ";
+			}
+			else {
+				$sql_extra .= sprintf(" AND parent IN (SELECT distinct(parent) from item where ( author_xchan = '%s' or item_mentionsme = 1 )) ",
+					dbesc(protect_sprintf($channel['channel_hash']))
+				);
+			}
 		}
 	
 		if($update && ! $load) {
@@ -489,9 +495,9 @@ class Network extends \Zotlabs\Web\Controller {
 			// Normal conversation view
 	
 			if($order === 'post')
-					$ordering = "created";
+				$ordering = "created";
 			else
-					$ordering = "commented";
+				$ordering = "commented";
 	
 			if($load) {
 				// Fetch a page full of parent items for this page
