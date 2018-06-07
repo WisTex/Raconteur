@@ -243,16 +243,9 @@ class ThreadItem {
 			// FIXME check this permission
 			if(($conv->get_profile_owner() == local_channel()) && (! array_key_exists('real_uid',$item))) {
 
-// FIXME we don't need all this stuff, some can be done in the template
-
 				$star = array(
-					'do' => t("Add Star"),
-					'undo' => t("Remove Star"),
 					'toggle' => t("Toggle Star Status"),
-					'classdo' => ((intval($item['item_starred'])) ? "hidden" : ""),
-					'classundo' => ((intval($item['item_starred'])) ? "" : "hidden"),
 					'isstarred' => ((intval($item['item_starred'])) ? true : false),
-					'starred' =>  t('starred'),
 				);
 
 			}
