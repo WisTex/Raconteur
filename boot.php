@@ -876,13 +876,13 @@ class App {
 		set_include_path("include/self::$hostname" . PATH_SEPARATOR . get_include_path());
 
 		if((x($_SERVER,'QUERY_STRING')) && substr($_SERVER['QUERY_STRING'], 0, 2) === "q=") {
-			self::$query_string = substr($_SERVER['QUERY_STRING'], 2);
+			self::$query_string = escape_tags(substr($_SERVER['QUERY_STRING'], 2));
 			// removing trailing / - maybe a nginx problem
 			if (substr(self::$query_string, 0, 1) == "/")
 				self::$query_string = substr(self::$query_string, 1);
 		}
 		if(x($_GET,'q'))
-			self::$cmd = trim($_GET['q'],'/\\');
+			self::$cmd = escape_tags(trim($_GET['q'],'/\\'));
 
 		// unix style "homedir"
 
