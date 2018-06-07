@@ -8,17 +8,17 @@ doing development.
 
 Create your own github account.
 
-You may fork/clone the Red repository from [https://github.com/redmatrix/hubzilla.git](https://github.com/redmatrix/hubzilla.git).
+You may fork/clone the $Projectname repository from [https://framagit.org/hubzilla/core.git](https://framagit.org/hubzilla/core.git).
 
 Follow the instructions provided here: [http://help.github.com/fork-a-repo/](http://help.github.com/fork-a-repo/)
-to create and use your own tracking fork on github
+to create and use your own tracking fork on framagit
 
-Then go to your github page and create a "Pull request" when you are ready
+Then go to your gramagit page and create a "Pull request" when you are ready
 to notify us to merge your work.
 
 **Translations**
 
-Our translations are managed through Transifex. If you wish to help out translating $Projectname to another language, sign up on transifex.com, visit [https://www.transifex.com/projects/p/red-matrix/](https://www.transifex.com/projects/p/red-matrix/) and request to join one of the existing language teams or create a new one. Notify one of the core developers when you have a translation update which requires merging, or ask about merging it yourself if you're comfortable with git and PHP. We have a string file called 'messages.po' which is gettext compliant and a handful of email templates, and from there we automatically generate the application's language files.   
+Our translations are managed through Transifex. If you wish to help out translating $Projectname to another language, sign up on transifex.com, visit [https://www.transifex.com/projects/p/hubzilla/](https://www.transifex.com/projects/p/hubzilla/) and request to join one of the existing language teams or create a new one. Notify one of the core developers when you have a translation update which requires merging, or ask about merging it yourself if you're comfortable with git and PHP. We have a string file called 'messages.po' which is gettext compliant and a handful of email templates, and from there we automatically generate the application's language files.   
 
 [Translations - More Info](help/Translations)
 
