@@ -9,7 +9,7 @@ doing development.
 
 Create your own github account.
 
-You may fork/clone the project repository from [url=https://framagit.org/hubzilla.core.git]https://framagit.org/hubzilla/core.git[/url]
+You may fork/clone the project repository from [url=https://framagit.org/hubzilla/core.git]https://framagit.org/hubzilla/core.git[/url]
 
 Follow the instructions provided here: [url=http://help.github.com/fork-a-repo/]http://help.github.com/fork-a-repo/[/url]
 to create and use your own tracking fork on framagit
