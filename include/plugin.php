@@ -559,7 +559,7 @@ function get_widget_info($widget){
 
 	$checkpaths = [
 		"Zotlabs/SiteWidget/$ucwidget.php",
-		"Zotlibs/Widget/$ucwidget.php",
+		"Zotlabs/Widget/$ucwidget.php",
 		"addon/$ucwidget/$ucwidget.php",
 		"addon/$widget.php"
 	];

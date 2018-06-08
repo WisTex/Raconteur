@@ -365,12 +365,12 @@ var activeCommentText = '';
 		if($('#jot-nocomment').val() > 0) {
 			$('#jot-nocomment').val(0);
 			$('#profile-nocomment, #profile-nocomment-sub').removeClass('fa-comments-o').addClass('fa-comments');
-			$('#profile-nocomment-wrapper').attr('title', '{{$nocomment_enabled}}');
+			$('#profile-nocomment-wrapper').attr('title', '{{$nocomment_enabled|escape:'javascript'}}');
 		}
 		else {
 			$('#jot-nocomment').val(1);
 			$('#profile-nocomment, #profile-nocomment-sub').removeClass('fa-comments').addClass('fa-comments-o');
-			$('#profile-nocomment-wrapper').attr('title', '{{$nocomment_disabled}}');
+			$('#profile-nocomment-wrapper').attr('title', '{{$nocomment_disabled|escape:'javascript'}}');
 		}
 	}
 

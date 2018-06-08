@@ -27,6 +27,9 @@
 		{{foreach $nav.usermenu as $usermenu}}
 		<a class="dropdown-item{{if $usermenu.2}} active{{/if}}"  href="{{$usermenu.0}}" title="{{$usermenu.3}}" role="menuitem" id="{{$usermenu.4}}">{{$usermenu.1}}</a>
 		{{/foreach}}
+		{{if $nav.group}}
+		<a class="dropdown-item" href="{{$nav.group.0}}" title="{{$nav.group.3}}" role="menuitem" id="{{$nav.group.4}}">{{$nav.group.1}}</a>
+		{{/if}}
 		{{if $nav.manage}}
 		<a class="dropdown-item{{if $sel.name == Manage}} active{{/if}}" href="{{$nav.manage.0}}" title="{{$nav.manage.3}}" role="menuitem" id="{{$nav.manage.4}}">{{$nav.manage.1}}</a>
 		{{/if}}	
@@ -119,7 +122,7 @@
 
 	<ul id="nav-right" class="navbar-nav ml-auto">
 		<li class="nav-item collapse clearfix" id="nav-search">
-			<form class="form-inline" method="get" action="search" role="search">
+			<form class="form-inline" method="get" action="{{$nav.search.4}}" role="search">
 				<input class="form-control form-control-sm mt-1 mr-2" id="nav-search-text" type="text" value="" placeholder="{{$help}}" name="search" title="{{$nav.search.3}}" onclick="this.submit();" onblur="closeMenu('nav-search'); openMenu('nav-search-btn');"/>
 			</form>
 			<div id="nav-search-spinner" class="spinner-wrapper">

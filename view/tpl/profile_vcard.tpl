@@ -11,7 +11,7 @@
 		<a class="dropdown-toggle" data-toggle="dropdown" href="#" ><i class="fa fa-pencil" title="{{$editmenu.edit.1}}"></i></a>
 		<div class="dropdown-menu dropdown-menu-right" role="menu">
 			{{foreach $editmenu.menu.entries as $e}}
-			<a href="profiles/{{$e.id}}" class="dropdown-item"><img class="menu-img-1" src='{{$e.photo}}'>{{$e.profile_name}}</a>
+			<a href="profiles/{{$e.id}}" class="dropdown-item"><img class="menu-img-1" src='{{$e.photo}}'> {{$e.profile_name}}</a>
 			{{/foreach}}
 			<a href="profile_photo" class="dropdown-item">{{$editmenu.menu.chg_photo}}</a>
 			{{if $editmenu.menu.cr_new}}<a href="profiles/new" id="profile-listing-new-link" class="dropdown-item">{{$editmenu.menu.cr_new}}</a>{{/if}}

@@ -18,6 +18,9 @@ class Channel extends \Zotlabs\Web\Controller {
 
 	function init() {
 
+		if(in_array(substr($_GET['search'],0,1),[ '@', '!', '?']))	
+			goaway('search' . '?f=&search=' . $_GET['search']);
+
 		$which = null;
 		if(argc() > 1)
 			$which = argv(1);
@@ -82,7 +85,9 @@ class Channel extends \Zotlabs\Web\Controller {
 
 		$category = ((x($_REQUEST,'cat')) ? $_REQUEST['cat'] : '');
 		$hashtags = ((x($_REQUEST,'tag')) ? $_REQUEST['tag'] : '');
+		$order    = ((x($_GET,'order')) ? notags($_GET['order']) : 'post');
 		$static   = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
+		$search   = ((x($_GET,'search')) ? $_GET['search'] : EMPTY_STR);
 
 		$groups = array();
 
@@ -118,9 +123,12 @@ class Channel extends \Zotlabs\Web\Controller {
 
 			$static = channel_manual_conv_update(\App::$profile['profile_uid']);
 
-			//$o .= profile_tabs($a, $is_owner, \App::$profile['channel_address']);
-
-			// $o .= common_friends_visitor_widget(\App::$profile['profile_uid']);
+			// search terms header
+			if($search) {
+				$o .= replace_macros(get_markup_template("section_title.tpl"),array(
+					'$title' => t('Search Results For:') . ' ' . htmlspecialchars($search, ENT_COMPAT,'UTF-8')
+				));
+			}
 
 			if($channel && $is_owner) {
 				$channel_acl = array(
@@ -179,15 +187,13 @@ class Channel extends \Zotlabs\Web\Controller {
 
 		$simple_update = (($update) ? " AND item_unseen = 1 " : '');
 
-
-		$search = EMPTY_STR;
-		if(x($_GET,'search')) {
-			$search = escape_tags($_GET['search']);
+		if($search) {
+			$search = escape_tags($search);
 			if(strpos($search,'#') === 0) {
-				$sql_extra2 .= term_query('item',substr($search,1),TERM_HASHTAG,TERM_COMMUNITYTAG);
+				$sql_extra .= term_query('item',substr($search,1),TERM_HASHTAG,TERM_COMMUNITYTAG);
 			}
 			else {
-				$sql_extra2 .= sprintf(" AND item.body like '%s' ",
+				$sql_extra .= sprintf(" AND item.body like '%s' ",
 					dbesc(protect_sprintf('%' . $search . '%'))
 				);
 			}
@@ -244,6 +250,7 @@ class Channel extends \Zotlabs\Web\Controller {
 
 			if($datequery) {
 				$sql_extra2 .= protect_sprintf(sprintf(" AND item.created <= '%s' ", dbesc(datetime_convert(date_default_timezone_get(),'',$datequery))));
+				$order = 'post';
 			}
 			if($datequery2) {
 				$sql_extra2 .= protect_sprintf(sprintf(" AND item.created >= '%s' ", dbesc(datetime_convert(date_default_timezone_get(),'',$datequery2))));
@@ -252,6 +259,12 @@ class Channel extends \Zotlabs\Web\Controller {
 			if($datequery || $datequery2) {
 				$sql_extra2 .= " and item.item_thread_top != 0 ";
 			}
+
+			if($order === 'post')
+				$ordering = "created";
+			else
+				$ordering = "commented";
+
 
 			$itemspage = get_pconfig(local_channel(),'system','itemspage');
 			\App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
@@ -269,13 +282,13 @@ class Channel extends \Zotlabs\Web\Controller {
 					}
 				}
 				else {
-					$r = q("SELECT item.parent AS item_id FROM item 
+					$r = q("SELECT DISTINCT item.parent AS item_id, $ordering FROM item 
 						left join abook on ( item.author_xchan = abook.abook_xchan $abook_uids )
 						WHERE true and item.uid = %d $item_normal
 						AND (abook.abook_blocked = 0 or abook.abook_flags is null)
-						AND item.item_wall = 1 
-						$sql_extra $sql_extra2
-						ORDER BY created DESC, id $pager_sql ",
+						AND item.item_wall = 1 AND item.item_thread_top = 1
+						$sql_extra $sql_extra2 
+						ORDER BY $ordering DESC $pager_sql ",
 						intval(\App::$profile['profile_uid'])
 					);
 				}
@@ -284,7 +297,6 @@ class Channel extends \Zotlabs\Web\Controller {
 				$r = array();
 			}
 		}
-
 		if($r) {
 
 			$parents_str = ids_to_querystr($r,'item_id');
@@ -300,7 +312,7 @@ class Channel extends \Zotlabs\Web\Controller {
 
 			xchan_query($items);
 			$items = fetch_post_tags($items, true);
-			$items = conv_sort($items,'created');
+			$items = conv_sort($items,$ordering);
 
 			if($load && $mid && (! count($items))) {
 				// This will happen if we don't have sufficient permissions
@@ -345,7 +357,7 @@ class Channel extends \Zotlabs\Web\Controller {
 				'$page' => ((\App::$pager['page'] != 1) ? \App::$pager['page'] : 1),
 				'$search' => $search,
 				'$xchan' => '',
-				'$order' => '',
+				'$order' => $order,
 				'$list' => ((x($_REQUEST,'list')) ? intval($_REQUEST['list']) : 0),
 				'$file' => '',
 				'$cats' => (($category) ? urlencode($category) : ''),
@@ -391,12 +403,13 @@ class Channel extends \Zotlabs\Web\Controller {
 			}
 		}
 
+		$mode = (($search) ? 'search' : 'channel');
 
 		if($checkjs->disabled()) {
-			$o .= conversation($items,'channel',$update,'traditional');
+			$o .= conversation($items,$mode,$update,'traditional');
 		}
 		else {
-			$o .= conversation($items,'channel',$update,$page_mode);
+			$o .= conversation($items,$mode,$update,$page_mode);
 		}
 
 		if((! $update) || ($checkjs->disabled())) {

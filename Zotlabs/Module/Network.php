@@ -15,6 +15,9 @@ class Network extends \Zotlabs\Web\Controller {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
+
+		if(in_array(substr($_GET['search'],0,1),[ '@', '!', '?']))
+			goaway('search' . '?f=&search=' . $_GET['search']);
 	
 		if(count($_GET) < 2) {
 			$network_options = get_pconfig(local_channel(),'system','network_page_default');
@@ -57,13 +60,26 @@ class Network extends \Zotlabs\Web\Controller {
 	
 		$datequery  = ((x($_GET,'dend') && is_a_date_arg($_GET['dend'])) ? notags($_GET['dend']) : '');
 		$datequery2 = ((x($_GET,'dbegin') && is_a_date_arg($_GET['dbegin'])) ? notags($_GET['dbegin']) : '');
-		$nouveau    = ((x($_GET,'new')) ? intval($_GET['new']) : 0);
 		$static     = ((x($_GET,'static')) ? intval($_GET['static']) : 0); 
 		$gid        = ((x($_GET,'gid')) ? intval($_GET['gid']) : 0);
 		$category   = ((x($_REQUEST,'cat')) ? $_REQUEST['cat'] : '');
 		$hashtags   = ((x($_REQUEST,'tag')) ? $_REQUEST['tag'] : '');
 		$verb       = ((x($_REQUEST,'verb')) ? $_REQUEST['verb'] : '');
-	
+
+
+		$order = get_pconfig(local_channel(), 'mod_network', 'order', 0);
+		switch($order) {
+			case 0:
+				$order = 'comment';
+				break;
+			case 1:
+				$order = 'post';
+				break;
+			case 2:
+				$nouveau = true;
+				break;
+		}
+
 		$search = (($_GET['search']) ? $_GET['search'] : '');
 		if($search) {
 			$_GET['netsearch'] = escape_tags($search);
@@ -84,7 +100,7 @@ class Network extends \Zotlabs\Web\Controller {
 		}
 	
 		if($datequery)
-			$_GET['order'] = 'post';
+			$order = 'post';
 	
 	
 		// filter by collection (e.g. group)
@@ -107,16 +123,11 @@ class Network extends \Zotlabs\Web\Controller {
 			$def_acl    = array('allow_gid' => '<' . $r[0]['hash'] . '>');
 		}
 	
-	
 		$default_cmin = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmin',0) : 0);
 		$default_cmax = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmax',99) : 99);
 
-	
-		// if no tabs are selected, defaults to comments
-	
 		$cid      = ((x($_GET,'cid'))   ? intval($_GET['cid'])   : 0);
 		$star     = ((x($_GET,'star'))  ? intval($_GET['star'])  : 0);
-		$order    = ((x($_GET,'order')) ? notags($_GET['order']) : 'comment');
 		$liked    = ((x($_GET,'liked')) ? intval($_GET['liked']) : 0);
 		$conv     = ((x($_GET,'conv'))  ? intval($_GET['conv'])  : 0);
 		$spam     = ((x($_GET,'spam'))  ? intval($_GET['spam'])  : 0);
@@ -125,17 +136,20 @@ class Network extends \Zotlabs\Web\Controller {
 		$file     = ((x($_GET,'file'))  ? $_GET['file']          : '');
 		$xchan    = ((x($_GET,'xchan')) ? $_GET['xchan']         : '');
 		$net      = ((x($_GET,'net'))   ? $_GET['net']           : '');
+		$pf       = ((x($_GET,'pf'))    ? $_GET['pf']            : '');
 		
 		$deftag = '';
 	
 		if(x($_GET,'search') || x($_GET,'file'))
 			$nouveau = true;
+
 		if($cid) {
-			$r = q("SELECT abook_xchan FROM abook WHERE abook_id = %d AND abook_channel = %d LIMIT 1",
+			$cid_r = q("SELECT abook.abook_xchan, xchan.xchan_addr, xchan.xchan_name, xchan.xchan_url, xchan.xchan_photo_s, xchan.xchan_pubforum from abook left join xchan on abook_xchan = xchan_hash where abook_id = %d and abook_channel = %d and abook_blocked = 0 limit 1",
 				intval($cid),
 				intval(local_channel())
 			);
-			if(! $r) {
+
+			if(! $cid_r) {
 				if($update) {
 					killme();
 				}
@@ -143,14 +157,14 @@ class Network extends \Zotlabs\Web\Controller {
 				goaway(z_root() . '/network');
 				// NOTREACHED
 			}
-			if($_GET['pf'] === '1')
-				$deftag = '!' . t('forum') . '+' . intval($cid);
+			if($pf)
+				$deftag = '!{' . (($cid_r[0]['xchan_addr']) ? $cid_r[0]['xchan_addr'] : $cid_r[0]['xchan_url']) . '}';
 			else
-				$def_acl = [ 'allow_cid' => '<' . $r[0]['abook_xchan'] . '>', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => '' ];
+				$def_acl = [ 'allow_cid' => '<' . $cid_r[0]['abook_xchan'] . '>', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => '' ];
 		}
 	
 		if(! $update) {
-			$tabs = network_tabs();
+			$tabs = ''; //network_tabs();
 			$o .= $tabs;
 	
 			// search terms header
@@ -228,6 +242,7 @@ class Network extends \Zotlabs\Web\Controller {
 				}
 			}
 			$item_thread_top = '';
+
 			$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND (( author_xchan IN ( $contact_str ) OR owner_xchan in ( $contact_str )) or allow_gid like '" . protect_sprintf('%<' . dbesc($group_hash) . '>%') . "' ) and id = parent $item_normal ) ";
 	
 			$x = group_rec_byhash(local_channel(), $group_hash);
@@ -243,27 +258,26 @@ class Network extends \Zotlabs\Web\Controller {
 			$o .= $status_editor;
 	
 		}
-	
-		elseif($cid) {
-	
-			$r = q("SELECT abook.*, xchan.* from abook left join xchan on abook_xchan = xchan_hash where abook_id = %d and abook_channel = %d and abook_blocked = 0 limit 1",
-				intval($cid),
-				intval(local_channel())
-			);
-			if($r) {
-				$item_thread_top = '';
-				$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND uid = " . intval(local_channel()) . " AND ( author_xchan = '" . dbesc($r[0]['abook_xchan']) . "' or owner_xchan = '" . dbesc($r[0]['abook_xchan']) . "' or (body like '" . protect_sprintf('%' . $r[0]['xchan_url'] . '%') . "' and item_thread_top = 1 )) $item_normal ) ";
-				$title = replace_macros(get_markup_template("section_title.tpl"),array(
-					'$title' => '<a href="' . zid($r[0]['xchan_url']) . '" ><img src="' . zid($r[0]['xchan_photo_s'])  . '" alt="' . urlencode($r[0]['xchan_name']) . '" /></a> <a href="' . zid($r[0]['xchan_url']) . '" >' . $r[0]['xchan_name'] . '</a>'
-				));
-				$o = $tabs;
-				$o .= $title;
-				$o .= $status_editor;
+		elseif($cid_r) {
+			$item_thread_top = '';
+
+			if($load || $update) {
+				$ttype = (($pf) ? TERM_FORUM : TERM_MENTION);
+
+				$p1 = q("SELECT DISTINCT parent FROM item WHERE uid = " . intval(local_channel()) . " AND ( author_xchan = '" . dbesc($cid_r[0]['abook_xchan']) . "' OR owner_xchan = '" . dbesc($cid_r[0]['abook_xchan']) . "' ) $item_normal ");
+				$p2 = q("SELECT oid AS parent FROM term WHERE uid = " . intval(local_channel()) . " AND ttype = $ttype AND term = '" . dbesc($cid_r[0]['xchan_name']) . "'");
+
+				$p_str = ids_to_querystr(array_merge($p1,$p2),'parent');
+				$sql_extra = " AND item.parent IN ( $p_str ) ";
 			}
-			else {
-				notice( t('Invalid connection.') . EOL);
-				goaway(z_root() . '/network');
-			}
+
+			$title = replace_macros(get_markup_template("section_title.tpl"),array(
+				'$title' => '<a href="' . zid($cid_r[0]['xchan_url']) . '" ><img src="' . zid($cid_r[0]['xchan_photo_s'])  . '" alt="' . urlencode($cid_r[0]['xchan_name']) . '" /></a> <a href="' . zid($cid_r[0]['xchan_url']) . '" >' . $cid_r[0]['xchan_name'] . '</a>'
+			));
+
+			$o = $tabs;
+			$o .= $title;
+			$o .= $status_editor;
 		}
 		elseif($xchan) {
 			$r = q("select * from xchan where xchan_hash = '%s'",
@@ -337,7 +351,8 @@ class Network extends \Zotlabs\Web\Controller {
 				'$mid'     => '',
 				'$verb'    => $verb,
 				'$net'     => $net,
-				'$dbegin'  => $datequery2
+				'$dbegin'  => $datequery2,
+				'$pf'     => (($pf) ? $pf : '0'),
 			));
 		}
 	
@@ -377,9 +392,15 @@ class Network extends \Zotlabs\Web\Controller {
 	
 		if($conv) {
 			$item_thread_top = '';
-			$sql_extra .= sprintf(" AND parent IN (SELECT distinct(parent) from item where ( author_xchan like '%s' or item_mentionsme = 1 )) ",
-				dbesc(protect_sprintf($channel['channel_hash']))
-			);
+
+			if($nouveau) {
+				$sql_extra .= " AND author_xchan = '" . dbesc($channel['channel_hash']) . "' ";
+			}
+			else {
+				$sql_extra .= sprintf(" AND parent IN (SELECT distinct(parent) from item where ( author_xchan = '%s' or item_mentionsme = 1 )) ",
+					dbesc(protect_sprintf($channel['channel_hash']))
+				);
+			}
 		}
 	
 		if($update && ! $load) {
@@ -474,9 +495,9 @@ class Network extends \Zotlabs\Web\Controller {
 			// Normal conversation view
 	
 			if($order === 'post')
-					$ordering = "created";
+				$ordering = "created";
 			else
-					$ordering = "commented";
+				$ordering = "commented";
 	
 			if($load) {
 				// Fetch a page full of parent items for this page
@@ -559,6 +580,9 @@ class Network extends \Zotlabs\Web\Controller {
 		}
 	
 		$mode = (($nouveau) ? 'network-new' : 'network');
+
+		if($search)
+			$mode = 'search';
 	
 		$o .= conversation($items,$mode,$update,$page_mode);
 	

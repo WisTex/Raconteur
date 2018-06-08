@@ -54,7 +54,7 @@ define ( 'STD_VERSION',             '3.5.6' );
 define ( 'ZOT_REVISION',            '6.0a' );
 
 
-define ( 'DB_UPDATE_VERSION',       1214 );
+define ( 'DB_UPDATE_VERSION',       1215 );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 
@@ -85,7 +85,6 @@ define ( 'DIRECTORY_FALLBACK_MASTER',  'https://zotadel.net');
 
 $DIRECTORY_FALLBACK_SERVERS = array(
 	'https://hubzilla.zottel.net',
-	'https://gravizot.de',
 	'https://zotadel.net'
 );
 
@@ -405,6 +404,7 @@ define ( 'VNOTIFY_REGISTER',   0x0400 );
 define ( 'VNOTIFY_FILES',      0x0800 );
 define ( 'VNOTIFY_PUBS',       0x1000 );
 define ( 'VNOTIFY_LIKE',       0x2000 );
+define ( 'VNOTIFY_FORUMS',     0x4000 );
 
 
 
@@ -876,13 +876,13 @@ class App {
 		set_include_path("include/self::$hostname" . PATH_SEPARATOR . get_include_path());
 
 		if((x($_SERVER,'QUERY_STRING')) && substr($_SERVER['QUERY_STRING'], 0, 2) === "q=") {
-			self::$query_string = substr($_SERVER['QUERY_STRING'], 2);
+			self::$query_string = escape_tags(substr($_SERVER['QUERY_STRING'], 2));
 			// removing trailing / - maybe a nginx problem
 			if (substr(self::$query_string, 0, 1) == "/")
 				self::$query_string = substr(self::$query_string, 1);
 		}
 		if(x($_GET,'q'))
-			self::$cmd = trim($_GET['q'],'/\\');
+			self::$cmd = escape_tags(trim($_GET['q'],'/\\'));
 
 		// unix style "homedir"
 

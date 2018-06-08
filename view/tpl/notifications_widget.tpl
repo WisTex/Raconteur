@@ -127,10 +127,18 @@
 		{{$no_notifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 	</div>
 	<div id="nav-notifications-template" rel="template">
-		<a class="list-group-item clearfix notification {5}" href="{0}" title="{2} {3}" data-b64mid="{6}" data-notify_id="{7}" data-thread_top="{8}" data-contact_name="{2}">
+		<a class="list-group-item clearfix notification {5}" href="{0}" title="{2}" data-b64mid="{6}" data-notify_id="{7}" data-thread_top="{8}" data-contact_name="{2}">
 			<img class="menu-img-3" data-src="{1}">
 			<span class="contactname">{2}</span>
 			<span class="dropdown-sub-text">{3}<br>{4}</span>
+		</a>
+	</div>
+	<div id="nav-notifications-forums-template" rel="template">
+		<a class="list-group-item clearfix notification notification-forum" href="{0}" title="{3}" data-b64mid="{6}" data-notify_id="{7}" data-thread_top="{8}" data-contact_name="{2}">
+			<span class="float-right badge badge-{{$notification.severity}}">{9}</span>
+			<img class="menu-img-1" src="{1}">
+			<span class="">{2}</span>
+			<i class="fa fa-{10} text-muted"></i> 
 		</a>
 	</div>
 	<div id="notifications" class="navbar-nav">
@@ -152,14 +160,18 @@
 				</div>
 				{{/if}}
 				{{if $notification.filter}}
+				{{if $notification.filter.posts_label}}
 				<div class="list-group-item cursor-pointer" id="tt-{{$notification.type}}-only">
 					<i class="fa fa-fw fa-filter"></i> {{$notification.filter.posts_label}}
 				</div>
+				{{/if}}
+				{{if $notification.filter.name_label}}
 				<div class="list-group-item clearfix notifications-textinput" id="cn-{{$notification.type}}-only">
 					<div class="text-muted notifications-textinput-filter"><i class="fa fa-fw fa-filter"></i></div>
 					<input id="cn-{{$notification.type}}-input" type="text" class="form-control form-control-sm" placeholder="{{$notification.filter.name_label}}">
 					<div id="cn-{{$notification.type}}-input-clear" class="text-muted notifications-textinput-clear d-none"><i class="fa fa-times"></i></div>
 				</div>
+				{{/if}}
 				{{/if}}
 				<div id="nav-{{$notification.type}}-menu" class="">
 					{{$loading}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
