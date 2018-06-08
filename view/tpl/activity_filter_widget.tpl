@@ -8,4 +8,14 @@
 		{{/if}}
 	</h3>
 	{{$content}}
+	{{if $name}}
+	<div class="notifications-textinput">
+		<form method="get" action="{{$name.url}}" role="search">
+			<div class="text-muted notifications-textinput-filter"><i class="fa fa-fw fa-filter"></i></div>
+			<input id="cid" type="hidden" value="" name="cid" />
+			<input id="cid-filter" class="form-control form-control-sm{{if $name.sel}} {{$name.sel}}{{/if}}" type="text" value="" placeholder="{{$name.label}}" name="name" title="" />
+		</form>
+	</div>
+	{{/if}}
+
 </div>

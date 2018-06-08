@@ -182,6 +182,7 @@ a.wikilist {
 
 .notifications-textinput {
 	padding: .75rem 0.85rem;
+	position: relative;
 }
 
 .notifications-textinput input {

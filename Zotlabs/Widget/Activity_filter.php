@@ -154,6 +154,20 @@ class Activity_filter {
 			];
 		}
 
+		$name = [];
+		if(feature_enabled(local_channel(),'name_tab')) {
+			if(x($_GET,'cid') && ! x($_GET,'pf')) {
+				$filter_active = 'name';
+			}
+			$name = [
+				'label' => x($_GET,'name') ? $_GET['name'] : t('Filter by name'),
+				'icon' => 'filter',
+				'url'=> z_root() . '/' . $cmd . '/',
+				'sel'=> $filter_active == 'name' ? 'is-valid' : '',
+				'title' => ''
+			];
+		}
+
 		$reset = [];
 		if($filter_active) {
 			$reset = [
@@ -179,7 +193,8 @@ class Activity_filter {
 			$o .= replace_macros(get_markup_template('activity_filter_widget.tpl'), [
 				'$title' => t('Activity Filters'),
 				'$reset' => $reset,
-				'$content' => $content
+				'$content' => $content,
+				'$name' => $name
 			]);
 		}
 
