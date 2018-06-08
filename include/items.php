@@ -3060,7 +3060,7 @@ function check_item_source($uid, $item) {
 		return false;
 	}
 
-	if(! get_abconfig($uid,$xchan,'their_perms','republish')) {
+	if(! their_perms_contains($uid,$xchan,'republish')) {
 		logger('source: no republish permission');
 		return false;
 	}

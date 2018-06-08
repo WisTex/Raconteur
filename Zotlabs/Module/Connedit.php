@@ -792,20 +792,19 @@ class Connedit extends \Zotlabs\Web\Controller {
 			if($slide && $multiprofs)
 				$affinity = t('Set Affinity & Profile');
 	
-			$theirs = q("select * from abconfig where chan = %d and xchan = '%s' and cat = 'their_perms'",
-					intval(local_channel()),
-					dbesc($contact['abook_xchan'])
-			);
-			$their_perms = array();
-			if($theirs) {
-				foreach($theirs as $t) {
-					$their_perms[$t['k']] = $t['v'];
-				}
+			
+			$theirs = get_abconfig(local_channel(),$contact['abook_xchan'],'system','their_perms',EMPTY_STR);
+
+			$their_perms = \Zotlabs\Access\Permissions::FilledPerms(explode(',',$theirs));
+			foreach($global_perms as $k => $v) {
+				if(! array_key_exists($k,$their_perms))
+					$their_perms[$k] = 1;
 			}
 
+			$my_perms = explode(',',get_abconfig(local_channel(),$contact['abook_xchan'],'system','my_perms',EMPTY_STR));
+
 			foreach($global_perms as $k => $v) {
-				$thisperm = get_abconfig(local_channel(),$contact['abook_xchan'],'my_perms',$k);
-//fixme
+				$thisperm = ((in_array($k,$my_perms)) ? 1 : 0);
 				
 				$checkinherited = \Zotlabs\Access\PermissionLimits::Get(local_channel(),$k);
 	
@@ -814,9 +813,6 @@ class Connedit extends \Zotlabs\Web\Controller {
 				if((! $self) && ($existing[$k]))
 					$thisperm = "1";
 
-				
-
-	
 				$perms[] = array('perms_' . $k, $v, ((array_key_exists($k,$their_perms)) ? intval($their_perms[$k]) : ''),$thisperm, 1, (($checkinherited & PERMS_SPECIFIC) ? '' : '1'), '', $checkinherited);
 			}
 	

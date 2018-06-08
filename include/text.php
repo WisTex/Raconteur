@@ -3416,28 +3416,32 @@ function get_forum_channels($uid) {
 
 	$xf = false;
 
-	$x1 = q("select xchan from abconfig where chan = %d and cat = 'their_perms' and k = 'send_stream' and v = '0'",
-		intval($uid)
+	$x1 = q("select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and not v like '%s'",
+		intval($uid),
+		dbesc('%send_stream%')
 	);
 	if($x1) {
 		$xc = ids_to_querystr($x1,'xchan',true);
-
-		$x2 = q("select xchan from abconfig where chan = %d and cat = 'their_perms' and k = 'tag_deliver' and v = '1' and xchan in (" . $xc . ") ",
-			intval($uid)
+		$x2 = q("select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and v like '%s' and xchan in (" . $xc . ") ",
+			intval($uid),
+			dbesc('%tag_deliver%')
 		);
 
 		if($x2) { 
 			$xf = ids_to_querystr($x2,'xchan',true);
 
 			// private forums
-			$x3 = q("select xchan from abconfig where chan = %d and cat = 'their_perms' and k = 'post_wall' and v = '1' and xchan in (" . $xc . ") and not xchan in (" . $xf . ") ",
-				intval(local_channel())
+			$x3 = q("select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and v like '%s' and xchan in (" . $xc . ") and not xchan in (" . $xf . ") ",
+				intval($uid),
+				dbesc('%post_wall%')
 			);
 			if($x3) {
 				$xf = ids_to_querystr(array_merge($x2,$x3),'xchan',true);
 			}
 		}
 	}
+
+	$sql_extra = (($xf) ? " and ( xchan_hash in (" . $xf . ") or xchan_pubforum = 1 ) " : " and xchan_pubforum = 1 "); 
 
 	$sql_extra = (($xf) ? " and ( xchan_hash in (" . $xf . ") or xchan_pubforum = 1 ) " : " and xchan_pubforum = 1 "); 
 

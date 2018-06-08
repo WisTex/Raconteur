@@ -71,7 +71,7 @@ class Viewconnections extends \Zotlabs\Web\Controller {
 		foreach($r as $rr) {
 
 			$oneway = false;
-			if(! intval(get_abconfig(\App::$profile['uid'],$rr['xchan_hash'],'their_perms','post_comments'))) {
+			if(! their_perms_contains(\App::$profile['uid'],$rr['xchan_hash'],'post_comments')) {
 				$oneway = true;
 			}
 	

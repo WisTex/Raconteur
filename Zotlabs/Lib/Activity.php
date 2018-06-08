@@ -752,7 +752,8 @@ class Activity {
 		}
 
 		$x = \Zotlabs\Access\PermissionRoles::role_perms('social');
-		$their_perms = \Zotlabs\Access\Permissions::FilledPerms($x['perms_connect']);
+		$p = \Zotlabs\Access\Permissions::FilledPerms($x['perms_connect']);
+		$their_perms = \Zotlabs\Access\Permissions::serialise($p);
 
 		if($contact && $contact['abook_id']) {
 
@@ -779,9 +780,7 @@ class Activity {
 
 					// They accepted our Follow request - set default permissions
 	
-					foreach($their_perms as $k => $v) {
-						set_abconfig($channel['channel_id'],$contact['abook_xchan'],'their_perms',$k,$v);
-					}
+					set_abconfig($channel['channel_id'],$contact['abook_xchan'],'system','their_perms',$their_perms);
 
 					$abook_instance = $contact['abook_instance'];
 	
@@ -829,7 +828,7 @@ class Activity {
 		$ret = $r[0];
 
 		$p = \Zotlabs\Access\Permissions::connect_perms($channel['channel_id']);
-		$my_perms  = $p['perms'];
+		$my_perms  = \Zotlabs\Access\Permissions::serialise($p['perms']);
 		$automatic = $p['automatic'];
 
 		$closeness = get_pconfig($channel['channel_id'],'system','new_abook_closeness');
@@ -852,12 +851,10 @@ class Activity {
 		);
 		
 		if($my_perms)
-			foreach($my_perms as $k => $v)
-				set_abconfig($channel['channel_id'],$ret['xchan_hash'],'my_perms',$k,$v);
+			set_abconfig($channel['channel_id'],$ret['xchan_hash'],'system','my_perms',$my_perms);
 
 		if($their_perms)
-			foreach($their_perms as $k => $v)
-				set_abconfig($channel['channel_id'],$ret['xchan_hash'],'their_perms',$k,$v);
+			set_abconfig($channel['channel_id'],$ret['xchan_hash'],'system','their_perms',$their_perms);
 
 
 		if($r) {
@@ -936,15 +933,8 @@ class Activity {
 				intval($channel['channel_id'])
 			);
 			if($r) {
-				// This is just to get a list of permission names, we don't care about the values
-				$x = \Zotlabs\Access\PermissionRoles::role_perms('social');
-				$my_perms = \Zotlabs\Access\Permissions::FilledPerms($x['perms_connect']);
-
 				// remove all permissions they provided
-
-				foreach($my_perms as $k => $v) {
-					del_abconfig($channel['channel_id'],$r[0]['xchan_hash'],'their_perms',$k);
-				}
+				del_abconfig($channel['channel_id'],$r[0]['xchan_hash'],'system','their_perms',EMPTY_STR);
 			}
 		}
 

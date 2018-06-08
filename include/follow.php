@@ -158,7 +158,7 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 		if($r) {
 			$xchan = $r[0];
 			$xchan_hash = $r[0]['xchan_hash'];
-			$their_perms = 0;
+			$their_perms = EMPTY_STR;
 		}
 	}
 
@@ -208,8 +208,11 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 		// Always set these "remote" permissions for feeds since we cannot interact with them
 		// to negotiate a suitable permission response
 
-		set_abconfig($uid,$xchan_hash,'their_perms','view_stream',1);
-		set_abconfig($uid,$xchan_hash,'their_perms','republish',1);
+		$p = get_abconfig($uid,$xchan_hash,'system','their_perms',EMPTY_STR);
+		if($p)
+			$p .= ',';
+		$p .= 'view_stream,republish';
+		set_abconfig($uid,$xchan_hash,'system','their_perms',$p);
 
 	}
 
