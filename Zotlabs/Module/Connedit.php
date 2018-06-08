@@ -137,27 +137,22 @@ class Connedit extends \Zotlabs\Web\Controller {
 		
 		$all_perms = \Zotlabs\Access\Permissions::Perms();
 
+		$p = EMPTY_STR;
+
 		if($all_perms) {
 			foreach($all_perms as $perm => $desc) {
 				if(array_key_exists('perms_' . $perm, $_POST)) {
-					set_abconfig($channel['channel_id'],$orig_record[0]['abook_xchan'],'my_perms',$perm,
-						intval($_POST['perms_' . $perm]));
-					if($autoperms) {
-						set_pconfig($channel['channel_id'],'autoperms',$perm,intval($_POST['perms_' . $perm]));
-					}
+					if($p)
+						$p .= ',';
+					$p .= $perm;
 				}
-				else {
-					set_abconfig($channel['channel_id'],$orig_record[0]['abook_xchan'],'my_perms',$perm,0);
-					if($autoperms) {
-						set_pconfig($channel['channel_id'],'autoperms',$perm,0);
-					}
-				}
+			}
+			set_abconfig($channel['channel_id'],$orig_record[0]['abook_xchan'],'system','my_perms',$p);
+			if($autoperms) {
+				set_pconfig($channel['channel_id'],'system','autoperms',$p);
 			}
 		}
 
-		if(! is_null($autoperms)) 
-			set_pconfig($channel['channel_id'],'system','autoperms',$autoperms);
-				
 		$new_friend = false;
 	
 		// only store a record and notify the directory if the rating changed

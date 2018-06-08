@@ -1413,8 +1413,6 @@ function check_config() {
 
 	load_hooks();
 
-	check_for_new_perms();
-
 	check_cron_broken();
 
 }
@@ -2378,78 +2376,6 @@ function cert_bad_email() {
 
 }
 
-
-function check_for_new_perms() {
-
-	// Do not execute if we are in the middle of a git update and the relevant versions don't match
-
-	if( \Zotlabs\Access\Permissions::version() != \Zotlabs\Access\PermissionRoles::version())
-		return;
-
-	$pregistered = get_config('system','perms');
-
-	$pcurrent = array_keys(\Zotlabs\Access\Permissions::Perms());
-
-	if(! $pregistered) {
-		set_config('system','perms',$pcurrent);
-		return;
-	}
-
-	$found_new_perm = false;
-
-	foreach($pcurrent as $p) {
-		if(! in_array($p,$pregistered)) {
-
-			$found_new_perm = true;
-			// for all channels
-			$c = q("select channel_id from channel where true");
-			if($c) {
-				foreach($c as $cc) {
-					// get the permission role
-					$r = q("select v from pconfig where uid = %d and cat = 'system' and k = 'permissions_role'",
-						intval($cc['channel_id'])
-					);
-					if($r) {
-						// get a list of connections
-						$x = q("select abook_xchan from abook where abook_channel = %d and abook_self = 0",
-							intval($cc['channel_id'])
-						);
-						// get the permissions role details
-						$rp = \Zotlabs\Access\PermissionRoles::role_perms($r[0]['v']);
-						if($rp) {
-
-							// for custom permission roles we need to customise how we initiate this new permission
-							if(array_key_exists('role',$rp) && ($rp['role'] === 'custom' || $rp['role'] === '')) {
-								\Zotlabs\Access\PermissionRoles::new_custom_perms($cc['channel_id'],$p,$x);
-							}
-							else {
-								// set the channel limits if appropriate or 0
-								if(array_key_exists('limits',$rp) && array_key_exists($p,$rp['limits'])) {
-									\Zotlabs\Access\PermissionLimits::Set($cc['channel_id'],$p,$rp['limits'][$p]);
-								}
-								else {
-									\Zotlabs\Access\PermissionLimits::Set($cc['channel_id'],$p,0);
-								}
-
-								$set = ((array_key_exists('perms_connect',$rp) && in_array($p,$rp['perms_connect'])) ? 1 : 0);
-								// foreach connection set to the perms_connect value
-								if($x) {
-									foreach($x as $xx) {
-										set_abconfig($cc['channel_id'],$xx['abook_xchan'],'my_perms',$p,intval($set));
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	// We should probably call perms_refresh here, but this should get pushed in 24 hours and there is no urgency
-	if($found_new_perm)
-		set_config('system','perms',$pcurrent);
-}
 
 
 /**

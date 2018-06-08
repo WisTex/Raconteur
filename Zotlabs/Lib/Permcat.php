@@ -55,19 +55,9 @@ class Permcat {
 		// if no autoperms it may be a custom role with manual perms
 
 		if(! $perms) {
-			$r = q("select channel_hash from channel where channel_id = %d",
-				intval($channel_id)
-			);
-			if($r) {
-				$x = q("select * from abconfig where chan = %d and xchan = '%s' and cat = 'my_perms'",
-					intval($channel_id),
-					dbesc($r[0]['channel_hash'])
-				);
-				if($x) {
-					foreach($x as $xv) {
-						$perms[$xv['k']] = intval($xv['v']);
-					}
-				}
+			$c = channelx_by_n($channel_id);
+			if($c) {
+				$perms = Permissions::FilledPerms(get_abconfig($channel_id,$c['channel_hash'],'system','my_perms',EMPTY_STR));
 			}
 		}
 

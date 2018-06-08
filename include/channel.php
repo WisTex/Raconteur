@@ -402,10 +402,8 @@ function create_identity($arr) {
 		]
 	);
 
-	$x = \Zotlabs\Access\Permissions::FilledPerms($myperms);
-	foreach($x as $k => $v) {
-		set_abconfig($newuid,$hash,'my_perms',$k,$v);
-	}
+	$x = \Zotlabs\Access\Permissions::serialise(\Zotlabs\Access\Permissions::FilledPerms($myperms));
+	set_abconfig($newuid,$hash,'system','my_perms',$x);
 
 	if(intval($ret['channel']['channel_account_id'])) {
 
@@ -1992,14 +1990,7 @@ function get_channel_default_perms($uid) {
 		intval($uid)
 	);
 	if($r) {
-		$x = load_abconfig($uid,$r[0]['abook_xchan'],'my_perms');
-		if($x) {
-			foreach($x as $xv) {
-				if(intval($xv['v'])) {
-					$ret[] = $xv['k'];
-				}
-			}
-		}
+		$ret = \Zotlabs\Access\Permissions::FilledPerms(get_abconfig($uid,$r[0]['abook_xchan'],'system','my_perms',EMPTY_STR));
 	}
 
 	return $ret;

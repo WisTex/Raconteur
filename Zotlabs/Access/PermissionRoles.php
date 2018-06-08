@@ -209,66 +209,6 @@ class PermissionRoles {
 		return $ret;
 	}
 
-	static public function new_custom_perms($uid,$perm,$abooks) {
-
-		// set permissionlimits for this permission here, for example:
-
-		// if($perm === 'mynewperm')
-		//     \Zotlabs\Access\PermissionLimits::Set($uid,$perm,1);
-
-		if($perm === 'view_wiki')
-			\Zotlabs\Access\PermissionLimits::Set($uid, $perm, PERMS_PUBLIC);
-
-		if($perm === 'write_wiki')
-			\Zotlabs\Access\PermissionLimits::Set($uid, $perm, PERMS_SPECIFIC);
-
-
-		// set autoperms here if applicable
-		// choices are to set to 0, 1, or the value of an existing perm
-
-		if(get_pconfig($uid,'system','autoperms')) {
-
-			$c = channelx_by_n($uid);
-			$value = 0;
-
-			// if($perm === 'mynewperm')
-			//	 $value = get_abconfig($uid,$c['channel_hash'],'autoperms','someexistingperm');
-
-			if($perm === 'view_wiki')
-				$value = get_abconfig($uid,$c['channel_hash'],'autoperms','view_pages');
-
-			if($perm === 'write_wiki')
-				$value = get_abconfig($uid,$c['channel_hash'],'autoperms','write_pages');
-
-			if($c) {
-				set_abconfig($uid,$c['channel_hash'],'autoperms',$perm,$value);
-			}
-		}
-
-		// now set something for all existing connections.
-
-		if($abooks) {
-			foreach($abooks as $ab) {
-				switch($perm) {
-					// case 'mynewperm':
-					// choices are to set to 1, set to 0, or clone an existing perm
-					// set_abconfig($uid,$ab['abook_xchan'],'my_perms',$perm,
-					//		intval(get_abconfig($uid,$ab['abook_xchan'],'my_perms','someexistingperm')));
-
-					case 'view_wiki':
-						set_abconfig($uid,$ab['abook_xchan'],'my_perms',$perm,
-							intval(get_abconfig($uid,$ab['abook_xchan'],'my_perms','view_pages')));
-
-					case 'write_wiki':
-						set_abconfig($uid,$ab['abook_xchan'],'my_perms',$perm,
-							intval(get_abconfig($uid,$ab['abook_xchan'],'my_perms','write_pages')));
-
-					default:
-						break;
-				}
-			}
-		}
-	}
 
 	/**
 	 * @brief Array with translated role names and grouping.

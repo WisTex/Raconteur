@@ -112,7 +112,7 @@ class Onepoll {
 
 			// we haven't given them permission to send us their stream
 
-			$can_send_stream = intval(get_abconfig($importer_uid,$contact['abook_xchan'],'my_perms','send_stream'));
+			$can_send_stream = ((strpos(get_abconfig($importer_uid,$contact['abook_xchan'],'system','my_perms',EMPTY_STR),'send_stream') !== false) ? true : false);
 			
 			if(! $can_send_stream)
 				$fetch_feed = false;
