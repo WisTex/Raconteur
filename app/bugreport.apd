@@ -1,5 +1,5 @@
-version: 1
-url: https://github.com/redmatrix/hubzilla/issues
+version: 2
+url: https://framagit.org/hubzilla/core/issues
 name: Report Bug
 photo: icon:bug
 categories: System
