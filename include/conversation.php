@@ -507,6 +507,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 				. ((x($_GET,'cmax'))   ? '&cmax='   . $_GET['cmax']   : '')
 				. ((x($_GET,'file'))   ? '&file='   . $_GET['file']   : '')
 				. ((x($_GET,'uri'))    ? '&uri='    . $_GET['uri']   : '')
+				. ((x($_GET,'pf'))     ? '&pf='     . $_GET['pf']   : '')
 				. "'; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
 		}
 	}
@@ -688,8 +689,10 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 					'delete' => t('Delete'),
 				);
 
-				$star = false;
-				$isstarred = "unstarred fa-star-o";
+				$star = array(
+					'toggle' => t("Toggle Star Status"),
+					'isstarred' => ((intval($item['item_starred'])) ? true : false),
+				);
 
 				$lock = (($item['item_private'] || strlen($item['allow_cid']) || strlen($item['allow_gid']) || strlen($item['deny_cid']) || strlen($item['deny_gid']))
 					? t('Private Message')
@@ -771,8 +774,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 					'owner_photo' => $owner_photo,
 					'plink' => get_plink($item,false),
 					'edpost' => false,
-					'isstarred' => $isstarred,
-					'star' => $star,
+					'star' => ((feature_enabled(local_channel(),'star_posts')) ? $star : ''),
 					'drop' => $drop,
 					'vote' => $likebuttons,
 					'like' => '',

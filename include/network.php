@@ -1739,7 +1739,7 @@ function deliverable_singleton($channel_id,$xchan) {
 
 function get_repository_version($branch = 'master') {
 
-	$path = "https://raw.githubusercontent.com/redmatrix/hubzilla/$branch/boot.php";
+	$path = "https://framagit.org/hubzilla/core/raw/$branch/boot.php";
 
 	$x = z_fetch_url($path);
 	if($x['success']) {

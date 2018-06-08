@@ -53,29 +53,27 @@ The [url=[baseurl]/help/admin/hub_snapshots]hub snapshots[/url] page provides in
 
 [h3]Translations[/h3]
 
-Our translations are managed through Transifex. If you wish to help out translating $Projectname to another language, sign up on transifex.com, visit [url=https://www.transifex.com/Friendica/red-matrix/]Transifex[/url] and request to join one of the existing language teams or create a new one. Notify one of the core developers when you have a translation update which requires merging, or ask about merging it yourself if you're comfortable with git and PHP. We have a string file called 'messages.po' which is gettext compliant and a handful of email templates, and from there we automatically generate the application's language files.   
+Our translations are managed through Transifex. If you wish to help out translating $Projectname to another language, sign up on transifex.com, visit [url=https://www.transifex.com/Friendica/hubzilla/]Transifex[/url] and request to join one of the existing language teams or create a new one. Notify one of the core developers when you have a translation update which requires merging, or ask about merging it yourself if you're comfortable with git and PHP. We have a string file called 'messages.po' which is gettext compliant and a handful of email templates, and from there we automatically generate the application's language files.   
 
 [h4]Translation Process[/h4]
 
-The strings used in the UI of $Projectname is translated at [url=https://www.transifex.com/Friendica/red-matrix/]Transifex[/url] and then
+The strings used in the UI of $Projectname is translated at [url=https://www.transifex.com/Friendica/hubzilla/]Transifex[/url] and then
 included in the git repository at github. If you want to help with translation
 for any language, be it correcting terms or translating $Projectname to a
 currently not supported language, please register an account at transifex.com
-and contact the Redmatrix translation team there.
+and contact the translation team there.
 
 Translating $Projectname is simple. Just use the online tool at transifex. If you
-don't want to deal with git & co. that is fine, we check the status of the[/td][/tr]
-[tr]ranslations regularly and import them into the source tree at github so that
-others can use them.
+don't want to deal with git & co. that is fine, we check the status of the translations
+regularly and import them into the source tree at github so that others can use them.
 
 We do not include every translation from transifex in the source tree to avoid
 a scattered and disturbed overall experience. As an uneducated guess we have a
 lower limit of 50% translated strings before we include the language. This
-limit is judging only by the amount of translated strings under the assumption[/td][/tr]
-[tr]hat the most prominent strings for the UI will be translated first by a[/td][/tr]
-[tr]ranslation team. If you feel your translation useable before this limit,
-please contact us and we will probably include your teams work in the source[/td][/tr]
-[tr]ree.
+limit is judging only by the amount of translated strings under the assumption
+that the most prominent strings for the UI will be translated first by a translation
+team. If you feel your translation useable before this limit,
+please contact us and we will probably include your teams work in the source tree.
 
 If you want to get your work into the source tree yourself, feel free to do so
 and contact us with and question that arises. The process is simple and
@@ -85,8 +83,8 @@ The location of the translated files in the source tree is
     /view/LNG-CODE/
 where LNG-CODE is the language code used, e.g. de for German or fr for French.
 For the email templates (the *.tpl files) just place them into the directory
-and you are done. The translated strings come as a "hmessages.po" file from[/td][/tr]
-[tr]ransifex which needs to be translated into the PHP file $Projectname uses.  To do
+and you are done. The translated strings come as a "hmessages.po" file from 
+Transifex which needs to be translated into the PHP file $Projectname uses.  To do
 so, place the file in the directory mentioned above and use the "po2php"
 utility from the util directory of your $Projectname installation.
 
@@ -121,8 +119,8 @@ view/de/hmessages.po you would do the following.
 [h4]Utilities[/h4]
 
 Additional to the po2php script there are some more utilities for translation
-in the "util" directory of the $Projectname source tree.  If you only want to[/td][/tr]
-[tr]ranslate $Projectname into another language you wont need any of these tools most
+in the "util" directory of the $Projectname source tree.  If you only want to
+translate $Projectname into another language you wont need any of these tools most
 likely but it gives you an idea how the translation process of $Projectname
 works.
 
