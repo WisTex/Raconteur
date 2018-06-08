@@ -2,7 +2,6 @@
 [zrl=[baseurl]/help/about][b]¿Qué es $Projectname?[/b][/zrl]
 $Projectname est un software de publicación y comunicación descentralizadas que le permite tener el control de sus necesidades y datos. Es ustedm y solo usted, quien decide a quién permite ver sus publicaciones.
 
-
 [zrl=[baseurl]/help/features][b]Funcionaliades de $Projectname[/b][/zrl]
 $Projectname es una red global distribuida que es flexible, pero puede crecer en potencia desde in pequeño sitio personal hasta albergar una comunidad de numerosas personas. 
 
