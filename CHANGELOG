@@ -1,3 +1,27 @@
+Hubzilla 3.4.1 (2018-06-08)
+	- Say bye, bye to GitHub and move sourcecode repositories to #^https://framagit.org/hubzilla
+	- When removing a connection, don't remove items that are starred, filed or replied to
+	- Do not show archived forums in forum widget
+	- Fix potential XSS vulnerabilities
+	- Translation updates
+	- Fix postresql issue with oauth2
+	- Improve abconfig queries
+	- Fix postgresql issue if register mode was set to yes - with approval
+
+	Addons
+	- Diaspora: fix likes of non-contacts not allowed to like allthough diaspora_public_comments is set
+	- Pubcrawl: fix wrong hubloc url
+	- Pubcrawl: fix issues with attachments
+	- Pubcrawl: fetch required item metadata in asfetch_item()
+	- Cavatar: use cavatar for all default profile photos if enabled
+	- Pubcrawl: fix peertube video display
+	- Pubcrawl: fix incoming activitypub comments not getting propagated downstream
+	- Statistics: fix .well-known/nodeinfo
+	- Pubsubhubbub: fix postgresql related issues
+	- Pubcrawl: send the original LD-signature signed activity when distributing comments downstream if we have it
+	- Cavatar: improve the image creation process
+
+
 Hubzilla 3.4 (2018-05-04)
 	- Provide warnings about profile photo and cover photo permissions
 	- Don't duplicate addressbook entries on repeated channel imports
