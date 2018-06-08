@@ -19,7 +19,7 @@ we welcome patches if you manage to get it working.
 ### Where to find more help
 If you encounter problems or have issues not addressed in this documentation, 
 please let us know via the [Github issue
-tracker](https://github.com/redmatrix/hubzilla/issues). Please be as clear as you
+tracker](https://framagit.org/hubzilla/core/issues). Please be as clear as you
 can about your operating environment and provide as much detail as possible
 about any error messages you may see, so that we can prevent it from happening
 in the future. Due to the large variety of operating systems and PHP platforms
@@ -120,7 +120,7 @@ repository rather than to use a packaged tar or zip file.  This makes the
 software much easier to update. The Linux command to clone the repository 
 into a directory "mywebsite" would be:
 
-    git clone https://github.com/redmatrix/hubzilla.git mywebsite
+    git clone https://framagit.org/hubzilla/core.git mywebsite
 
 and then you can pick up the latest changes at any time with:
 
@@ -153,7 +153,7 @@ web-based administrative tools to function:
 Navigate to your website. Then you should clone the addon repository (separately). We'll give this repository a nickname of 'hzaddons'. You can pull in other hubzilla addon repositories by giving them different nicknames::
 
     cd mywebsite
-    util/add_addon_repo https://github.com/redmatrix/hubzilla-addons.git hzaddons
+    util/add_addon_repo https://framagit.org/hubzilla/addons.git hzaddons
 
 ##### Updating
 For keeping the addon tree updated, you should be on your top level website directory and issue an update command for that repository::
@@ -185,7 +185,7 @@ The installation script was originally designed for a small hardware server behi
 1. `apt-get install git`
 1. `mkdir -p /var/www/html`
 1. `cd /var/www/html`
-1. `git clone https://github.com/redmatrix/hubzilla.git .`
+1. `git clone https://framagit.org/hubzilla/core.git .`
 1. `nano .homeinstall/hubzilla-config.txt`
 1. `cd .homeinstall/`
 1. `./hubzilla-setup.sh`
@@ -396,7 +396,7 @@ To immediately clear out all the extra logging stuff you added.  Use the informa
 
 ##### Rotating log files
 
-1. Enable the **logrot** addon in the official [hubzilla-addons](https://github.com/redmatrix/hubzilla-addons) repo
+1. Enable the **logrot** addon in the official [hubzilla-addons](https://framagit.org/hubzilla/core/-addons) repo
 1. Create a directory in your web root called `log` with webserver write permissions
 1. Go to the **logrot** admin settings and enter this folder name as well as the max size and number of retained log files.
 
@@ -407,6 +407,6 @@ When reporting issues, please try to provide as much detail as may be necessary 
 
 We encourage you to try to the best of your abilities to use these logs combined with the source code in your possession to troubleshoot issues and find their cause. The community is often able to help, but only you have access to your site logfiles and it is considered a security risk to share them.   
 
-If a code issue has been uncovered, please report it on the project bugtracker (https://github.com/redmatrix/hubzilla/issues). Again provide as much detail as possible to avoid us going back and forth asking questions about your configuration or how to duplicate the problem, so that we can get right to the problem and figure out what to do about it. You are also welcome to offer your own solutions and submit patches. In fact we encourage this as we are all volunteers and have little spare time available. The more people that help, the easier the workload for everybody. It's OK if your solution isn't perfect. Every little bit helps and perhaps we can improve on it. 
+If a code issue has been uncovered, please report it on the project bugtracker (https://framagit.org/hubzilla/core/issues). Again provide as much detail as possible to avoid us going back and forth asking questions about your configuration or how to duplicate the problem, so that we can get right to the problem and figure out what to do about it. You are also welcome to offer your own solutions and submit patches. In fact we encourage this as we are all volunteers and have little spare time available. The more people that help, the easier the workload for everybody. It's OK if your solution isn't perfect. Every little bit helps and perhaps we can improve on it. 
 
 

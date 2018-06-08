@@ -22,7 +22,7 @@ Una vez que lo haya hecho, cd en el directorio, y añadir un upstream.
 
 [code]
 cd red
-git remote add upstream https://github.com/redmatrix/hubzilla
+git remote add upstream https://framagit.org/hubzilla/core/
 [/code]
 
 A partir de ahora, puede realizar cambios en el upstream con el comando

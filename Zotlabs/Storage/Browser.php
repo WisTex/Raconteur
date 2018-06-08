@@ -12,7 +12,7 @@ use Sabre\DAV;
  *
  * @extends \\Sabre\\DAV\\Browser\\Plugin
  *
- * @link http://github.com/redmatrix/hubzilla
+ * @link http://framagit.org/hubzilla/core/
  * @license http://opensource.org/licenses/mit-license.php The MIT License (MIT)
  */
 class Browser extends DAV\Browser\Plugin {
