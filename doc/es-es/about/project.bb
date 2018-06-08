@@ -1,4 +1,4 @@
-[h3]$Nombre del proyecto Gobernanza[/h3]
+[h3]Gobernanza de $Projectname[/h3]
 
 La gobernanza se relaciona con la gestión de un proyecto y, en particular, con su relación con la resolución de conflictos.
 
@@ -7,7 +7,7 @@ La gobernanza se relaciona con la gestión de un proyecto y, en particular, con 
 El proyecto es mantenido y las decisiones tomadas por la "comunidad". La estructura de gobernanza sigue evolucionando. Hasta que se finalice la estructura, las decisiones se toman en el siguiente orden:
 
 [ol]
-Consenso perezoso
+[*] Consenso perezoso
 
 Si se presenta una propuesta de proyecto a uno de los foros de gobierno de la comunidad y no hay objeciones serias en un plazo "razonable" desde la fecha de la propuesta (por lo general, disponemos de 2 a 3 días para que todas las partes interesadas puedan opinar), no es necesario votar y la propuesta se considerará aprobada. En este momento se pueden plantear algunas preocupaciones, pero si éstas se abordan durante la discusión y se proporcionan soluciones provisionales, se considerarán aprobadas. 
 
@@ -17,12 +17,12 @@ Si se presenta una propuesta de proyecto a uno de los foros de gobierno de la co
 Los desarrolladores senior con un historial significativo de proyectos se comprometen a vetar cualquier decisión. La decisión no podrá adoptarse hasta que se retire el veto o se presente una propuesta alternativa.
 
 
-Voto Comunitario
+[*] Voto Comunitario
 
 Una decisión que no tiene un mandato claro o un consenso claro, pero que no es vetada, puede ser llevada a votación comunitaria. En la actualidad se trata de un simple voto popular en uno de los foros comunitarios aplicables.  En este momento, el voto popular decide el resultado. Esto puede cambiar en el futuro si la comunidad adopta un modelo de gobierno de "consejo". Este documento se actualizará en ese momento con las reglas de gobierno actualizadas. 
 [/ol]
 
-El Voto Comunitario no siempre proporciona un resultado agradable y puede generar facciones polarizadas en la comunidad (de ahí la razón por la que se están considerando otros modelos). Si la propuesta es "rechazada" todavía hay varias cosas que se pueden hacer y la propuesta se vuelve a presentar con parámetros ligeramente diferentes (convertir a un complemento, convertir a una característica opcional que está desactivada por defecto, etc.). Si el interés en la película es alto y la votación es "cercana", puede generar muchos malos sentimientos entre los votantes perdedores. En estas votaciones tan reñidas, se[b]recomienda encarecidamente[/b] que el proponente tome medidas para abordar cualquier inquietud que se haya planteado y vuelva a presentar.
+El Voto Comunitario no siempre proporciona un resultado agradable y puede generar facciones polarizadas en la comunidad (de ahí la razón por la que se están considerando otros modelos). Si la propuesta es "rechazada" todavía hay varias cosas que se pueden hacer y la propuesta se vuelve a presentar con parámetros ligeramente diferentes (convertir a un complemento, convertir a una característica opcional que está desactivada por defecto, etc.). Si el interés en la película es alto y la votación es "cercana", puede generar muchos malos sentimientos entre los votantes perdedores. En estas votaciones tan reñidas, se [b]recomienda encarecidamente[/b] que el proponente tome medidas para abordar cualquier inquietud que se haya planteado y vuelva a presentar.
 
   
 
@@ -30,24 +30,24 @@ El Voto Comunitario no siempre proporciona un resultado agradable y puede genera
 
 P: ¿Quién puede ver mi contenido?
  
-R: Por defecto CUALQUIER PERSONA en Internet, A MENOS que usted lo restrinja. El nombre del proyecto le permite elegir el nivel de privacidad que desea. El contenido restringido NO será visible para las "redes de espionaje" y los anunciantes. Estará protegido contra las escuchas de personas ajenas a la empresa, en la medida de nuestras posibilidades. Los administradores de los hubs con suficientes habilidades y paciencia PUEDEN ser capaces de escuchar a escondidas algunas comunicaciones privadas, pero deben hacer un esfuerzo para hacerlo. Los modos de privacidad existen dentro de $Projectname que son incluso resistentes a las escuchas por parte de administradores de hubs cualificados y decididos.    
+R: Por defecto CUALQUIER PERSONA en Internet, A MENOS que usted lo restrinja. $Projectname le permite elegir el nivel de privacidad que desea. El contenido restringido NO será visible para las "redes de espionaje" y los anunciantes. Estará protegido contra las escuchas de personas ajenas a la empresa, en la medida de nuestras posibilidades. Los administradores de los hubs con suficientes habilidades y paciencia PUEDEN ser capaces de escuchar a escondidas algunas comunicaciones privadas, pero deben hacer un esfuerzo para hacerlo. Los modos de privacidad existen dentro de $Projectname que son incluso resistentes a las escuchas por parte de administradores de hubs cualificados y decididos.    
 
 P: ¿Se puede censurar mi contenido?
 
-R: $Nombre del proyecto (la red) NO PUEDE censurar su contenido. Los administradores de servidores y hubs están sujetos a las leyes locales y PUEDEN eliminar contenido objetable de su sitio o hub. Cualquiera PUEDE convertirse en administrador del hub, incluyéndote a ti; y por lo tanto publicar contenido que de otra manera podría ser censurado. Usted aún PUEDE estar sujeto a las leyes locales.   
+R: $Projectname (la red) NO PUEDE censurar su contenido. Los administradores de servidores y hubs están sujetos a las leyes locales y PUEDEN eliminar contenido objetable de su sitio o hub. Cualquiera PUEDE convertirse en administrador del hub, incluyéndote a ti; y por lo tanto publicar contenido que de otra manera podría ser censurado. Usted aún PUEDE estar sujeto a las leyes locales.   
 
 
 [h5]Definiciones[/h5]
 
-**$$Nombre del proyecto** 
+**$Projectname** 
 
 También conocido como "la red", $Projectname es una colección de ordenadores/servidores individuales (aka **hubs**) que se conectan para formar una red cooperativa más grande. 
 
-*Hub* 
+**Hub** 
 
 Una computadora individual o servidor conectado a $Projectname. Estos son proporcionados por un administrador de **hub y pueden ser públicos o privados, de pago o gratuitos.
 
-El administrador del hub.
+**El administrador del hub**
 
 El operador del sistema de un hub individual. 
 
@@ -82,11 +82,11 @@ La privacidad para su identidad es otro aspecto. Debido a que tiene una identida
 
 Una identidad descentralizada tiene muchas ventajas y le ofrece muchas características interesantes, pero debe tener en cuenta que su identidad es conocida por otros hubs de la red $Projectname. Una de esas ventajas es que otros canales pueden servirte contenido personalizado y permitirte ver cosas privadas (como fotos privadas que otros desean compartir contigo). Por eso esos canales necesitan saber quién eres. Pero entendemos que a veces esos otros canales saben más de ti de lo que deseas. Por ejemplo el plug-in Visage que puede decirle al propietario de un canal la última vez que visites su perfil. Usted puede fácilmente OPT-OUT de este bajo nivel y, pensamos, seguimiento inofensivo.
 
-Puede habilitar [No rastrear (DNT)](http://donottrack.us/) en su navegador web. Respetamos esta nueva propuesta de política de privacidad. Todos los navegadores modernos soportan DNT. Lo encontrarás en la configuración de privacidad de tus navegadores o bien puedes consultar el manual del navegador. Esto no afectará a la funcionalidad de $Projectname. Este ajuste es probablemente suficiente para la mayoría de las personas.
+* Puede habilitar [No rastrear (DNT)](http://donottrack.us/)] en su navegador web. Respetamos esta nueva propuesta de política de privacidad. Todos los navegadores modernos soportan DNT. Lo encontrarás en la configuración de privacidad de tus navegadores o bien puedes consultar el manual del navegador. Esto no afectará a la funcionalidad de $Projectname. Este ajuste es probablemente suficiente para la mayoría de las personas.
 
-Puede [desactivar la publicación](configuración) de su canal en nuestro directorio de canales. Si quieres que la gente encuentre tu canal, debes darles la dirección de tu canal directamente a ellos. Creemos que esto es una buena indicación de que prefieres privacidad extra y habilitar automáticamente "No rastrear" si este es el caso.
+* Puede [desactivar la publicación](configuración) de su canal en nuestro directorio de canales. Si quieres que la gente encuentre tu canal, debes darles la dirección de tu canal directamente a ellos. Creemos que esto es una buena indicación de que prefieres privacidad extra y habilitar automáticamente "No rastrear" si este es el caso.
 
-Puedes tener un hub bloqueado. Esto significa que todos los canales y contenidos de ese hub no son públicos y no son visibles para el mundo exterior. Esto es algo que sólo el administrador del hub puede hacer. También respetamos esto y activamos automáticamente "No rastrear" si está configurado.
+* Puede tener un hub bloqueado. Esto significa que todos los canales y contenidos de ese hub no son públicos y no son visibles para el mundo exterior. Esto es algo que sólo el administrador del hub puede hacer. También respetamos esto y activamos automáticamente "No rastrear" si está configurado.
 
 [h5]Censura[/h5]
 
@@ -96,6 +96,7 @@ El nombre del proyecto como proveedor de red no puede censurar el contenido. Sin
 $Projectname RECOMIENDA que los administradores de hubs proporcionen un período de gracia de 1-2 días entre el aviso al titular de la cuenta del contenido que necesita ser eliminado y la eliminación o desactivación física de la cuenta. Esto le dará al propietario del contenido la oportunidad de exportar los metadatos de su canal e importarlos a otro sitio. En raras ocasiones el contenido puede ser de tal naturaleza que justifique la terminación inmediata de la cuenta. Esta es una decisión de hub, no $Projectname. 
 
 Si usted típica y regularmente publica contenido de naturaleza adulta u ofensiva, se le recomienda encarecidamente que marque su cuenta "NSFW" (No es seguro para el trabajo). Esto evitará que se muestre la foto de tu perfil en el directorio, excepto a los espectadores que hayan optado por desactivar el "modo seguro". Si los administradores del directorio consideran que la foto de tu perfil es adulta u ofensiva, el administrador del directorio PUEDE marcar tu foto de perfil como NSFW. Actualmente no existe ningún mecanismo oficial para impugnar o revertir esta decisión, razón por la cual DEBERÍA usted marcar su propia cuenta NSFW si es probable que sea inapropiada para el público en general. 
+
 
 [h3]Créditos[/h3]
 
