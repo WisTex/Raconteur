@@ -10,7 +10,7 @@
 		"SSO",
 		"ZOT"
 	],
-	"homepage" : "http://github.com/redmatrix/hubzilla",
+	"homepage" : "http://framagit.org/hubzilla/core/",
 	"license" : "MIT",
 	"authors" : [{
 			"name" : "Mike Macgirvin",
@@ -18,8 +18,8 @@
 		}
 	],
 	"support" : {
-		"issues" : "https://github.com/redmatrix/hubzilla/issues",
-		"source" : "https://github.com/redmatrix/hubzilla"
+		"issues" : "https://framagit.org/hubzilla/core/issues",
+		"source" : "https://framagit.org/hubzilla/core/"
 	},
 	"require" : {
 		"php" : ">=5.5",

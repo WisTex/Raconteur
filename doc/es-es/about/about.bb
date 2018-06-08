@@ -15,7 +15,7 @@ Aunque todas estas aplicaciones y servicios se pueden encontrar en otros paquete
  
 [h3]El software[/h3]
 
-$Projectname es, básicamente, una aplicación de servidor web relativamente estándar escrita principalmente en PHP/MySQL [url=https://github.com/redmatrix/hubzilla/blob/master/install/INSTALL.txt][/url], que requiere poco más que un servidor web, una base de datos compatible con MySQL y el lenguaje de scripting PHP. Está diseñado para ser fácilmente instalable por aquellos con habilidades básicas de administración de sitios web en plataformas típicas de alojamiento compartido con una amplia gama de hardware informático. También se puede extender fácilmente a través de plugins y temas y otras herramientas de terceros. 
+$Projectname es, básicamente, una aplicación de servidor web relativamente estándar escrita principalmente en PHP/MySQL [url=https://framagit.org/hubzilla/core/blob/master/install/INSTALL.txt][/url], que requiere poco más que un servidor web, una base de datos compatible con MySQL y el lenguaje de scripting PHP. Está diseñado para ser fácilmente instalable por aquellos con habilidades básicas de administración de sitios web en plataformas típicas de alojamiento compartido con una amplia gama de hardware informático. También se puede extender fácilmente a través de plugins y temas y otras herramientas de terceros. 
 
 [h3]Glosario[/h3]
 

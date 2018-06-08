@@ -153,7 +153,7 @@ Each contributor at this level gets their own $Projectname virtual private serve
 
 We're a handful of volunteers, and we understand that not everyone can contribute by donating money.  There are many other ways you can in getting the Matrix to version 1.0!
 
-First, you can checkout our source code on github: https://github.com/redmatrix/hubzilla
+First, you can checkout our source code on github: https://framagit.org/hubzilla/core/
 
 Maybe you can dive in and help us out with some development.
 
