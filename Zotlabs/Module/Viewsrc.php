@@ -28,7 +28,7 @@ class Viewsrc extends \Zotlabs\Web\Controller {
 		$item_normal = item_normal();
 	
 		if(local_channel() && $item_id) {
-			$r = q("select id, item_flags, mimetype, item_obscured, body from item where uid in (%d , %d) and id = %d $item_normal limit 1",
+			$r = q("select id, item_flags, mimetype, item_obscured, body, llink, plink from item where uid in (%d , %d) and id = %d $item_normal limit 1",
 				intval(local_channel()),
 				intval($sys['channel_id']),
 				intval($item_id)
@@ -52,8 +52,11 @@ class Viewsrc extends \Zotlabs\Web\Controller {
 		}
 	
 		if(is_ajax()) {
-			print '<div><i class="fa fa-pencil"> ' . t('Source of Item') . ' ' . $r[0]['id'] . '</i></div>';
-			echo $o;
+			echo '<div class="p-1">';
+			echo '<div>id: ' . $r[0]['id'] . ' | <a href="' . $r[0]['plink'] . '" target="_blank">plink</a> | <a href="' . $r[0]['llink'] . '" target="_blank">llink</a></div>';
+			echo '<hr>';
+			echo '<pre class="p-1">' . $o . '</pre>';
+			echo '</div>';
 			killme();
 		} 
 	
