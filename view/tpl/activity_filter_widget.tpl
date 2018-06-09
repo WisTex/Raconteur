@@ -16,6 +16,10 @@
 			<input id="cid-filter" class="form-control form-control-sm{{if $name.sel}} {{$name.sel}}{{/if}}" type="text" value="" placeholder="{{$name.label}}" name="name" title="" />
 		</form>
 	</div>
+	<script>
+		$("#cid-filter").name_autocomplete(baseurl + '/acl', 'a', true, function(data) {
+			$("#cid").val(data.id);
+		});
+	</script>
 	{{/if}}
-
 </div>
