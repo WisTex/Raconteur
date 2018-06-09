@@ -140,7 +140,7 @@ class Network extends \Zotlabs\Web\Controller {
 		
 		$deftag = '';
 	
-		if(x($_GET,'search') || x($_GET,'file'))
+		if(x($_GET,'search') || $file || (!$pf && $cid))
 			$nouveau = true;
 
 		if($cid) {
