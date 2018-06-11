@@ -81,6 +81,10 @@ function menu_render($menu, $class='', $edit = false, $var = array()) {
 	if ((! $channel_id) && (local_channel()))
 		$channel_id = local_channel();
 
+	$chan = channelx_by_n($channel_id);
+	if(! $chan)
+		return '';
+
 	$menu_list = menu_list($channel_id);
 	$menu_names = array();
 
@@ -110,6 +114,7 @@ function menu_render($menu, $class='', $edit = false, $var = array()) {
 	$ret = replace_macros(get_markup_template('usermenu.tpl'),array(
 		'$menu' => $menu['menu'],
 		'$class' => $class,
+		'$nick' => $chan['channel_address'],
 		'$edit' => (($edit) ? t("Edit") : ''),
 		'$id' => $menu['menu']['menu_id'],
 		'$items' => $menu['items'],
