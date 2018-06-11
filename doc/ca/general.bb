@@ -7,7 +7,7 @@
 
 [url=https://framagit.org/hubzilla/core/]Lloc Web Principal[/url]
 
-[url=https://framagit.org/hubzilla/core/-addons]Complements del Lloc Web[/url]
+[url=https://framagit.org/hubzilla/addons]Complements del Lloc Web[/url]
 
 [url=[baseurl]/help/credits]Credits en $Projectname[/url]
 
