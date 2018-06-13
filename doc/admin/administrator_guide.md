@@ -396,7 +396,7 @@ To immediately clear out all the extra logging stuff you added.  Use the informa
 
 ##### Rotating log files
 
-1. Enable the **logrot** addon in the official [hubzilla-addons](https://framagit.org/hubzilla/core/-addons) repo
+1. Enable the **logrot** addon in the official [hubzilla-addons](https://framagit.org/hubzilla/addons) repo
 1. Create a directory in your web root called `log` with webserver write permissions
 1. Go to the **logrot** admin settings and enter this folder name as well as the max size and number of retained log files.
 

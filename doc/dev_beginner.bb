@@ -174,8 +174,8 @@ It is a good idea to read the whole manual! Git is different to other version co
 Now you should
 [list]
 [*] create an account at github.com
-[*] fork https://framagit.org/hubzilla/core/
-[*] fork https://framagit.org/hubzilla/core/-addons
+[*] fork https://framagit.org/hubzilla/core
+[*] fork https://framagit.org/hubzilla/addons
 [/list]
 
 If you not want to use GIT from the command line - there is a usefull Eclipse plugin named ""Eclipse Mylyn to GitHub connector".
