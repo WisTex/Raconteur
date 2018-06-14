@@ -8,6 +8,7 @@
 
 	{{include file="field_checkbox.tpl" field=$block_public}}
 	{{include file="field_checkbox.tpl" field=$cloud_noroot}}
+	{{include file="field_checkbox.tpl" field=$cloud_disksize}}
 	{{include file="field_checkbox.tpl" field=$transport_security}}
 	{{include file="field_checkbox.tpl" field=$content_security}}
 	{{include file="field_checkbox.tpl" field=$embed_sslonly}}
