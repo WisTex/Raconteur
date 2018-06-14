@@ -164,7 +164,7 @@ Make the directory for apache and change diretory to it
 
 Clone hubzilla from git ("git pull" will update it later)
 
-    git clone https://github.com/redmatrix/hubzilla html
+    git clone https://framagit.org/hubzilla/core html
 
 Change to the install script
 
