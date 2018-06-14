@@ -1645,11 +1645,12 @@ function shutdown() {
 /**
  * @brief Returns the entity id of locally logged in account or false.
  *
- * Returns numeric account_id if authenticated or 0. It is possible to be
+ * Returns numeric account_id if authenticated or false. It is possible to be
  * authenticated and not connected to a channel.
  *
  * @return int|bool account_id or false
  */
+
 function get_account_id() {
 
 	if(intval($_SESSION['account_id']))
@@ -1672,6 +1673,7 @@ function get_account_id() {
  * @since 2.1
  * @return int|bool channel_id or false
  */
+
 function local_channel() {
 	if(session_id()
 		&& array_key_exists('authenticated',$_SESSION) && $_SESSION['authenticated']
@@ -1929,7 +1931,7 @@ function load_contact_links($uid) {
 		intval($uid)
 	);
 	if($r) {
-		foreach($r as $rv){
+		foreach($r as $rv) {
 			$ret[$rv['xchan_hash']] = $rv;
 		}
 	}
