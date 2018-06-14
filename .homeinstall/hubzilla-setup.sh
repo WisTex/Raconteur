@@ -572,7 +572,7 @@ function check_https {
 function install_hubzilla {
     print_info "installing hubzilla addons..."
     cd /var/www/html/
-    util/add_addon_repo https://github.com/redmatrix/hubzilla-addons.git hzaddons
+    util/add_addon_repo https://framagit.org/hubzilla/addons.git hzaddons
     mkdir -p "store/[data]/smarty3"
     chmod -R 777 store
     touch .htconfig.php
