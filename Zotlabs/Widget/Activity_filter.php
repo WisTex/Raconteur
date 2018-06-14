@@ -76,6 +76,38 @@ class Activity_filter {
 			}
 		}
 
+		if(feature_enabled(local_channel(),'forums_tab')) {
+			$forums = get_forum_channels(local_channel());
+
+			if($forums) {
+				foreach($forums as $f) {
+					if(x($_GET,'pf') && x($_GET,'cid')) {
+						$forum_active = ((x($_GET,'pf') && $_GET['cid'] == $f['abook_id']) ? 'active' : '');
+						$filter_active = 'forums';
+					}
+					$fsub[] = [
+						'label' => $f['xchan_name'],
+						'img' => $f['xchan_photo_s'],
+						'url' => (($f['private_forum']) ? $f['xchan_url'] : z_root() . '/' . $cmd . '/?f=&pf=1&cid=' . $f['abook_id']),
+						'sel' => $forum_active,
+						'title' => t('Show posts to this forum'),
+						'lock' => (($f['private_forum']) ? 'lock' : '')
+					];
+				}
+
+				$tabs[] = [
+					'id' => 'forums',
+					'label' => t('Forums'),
+					'icon' => 'comments-o',
+					'url' => '#',
+					'sel' => (($filter_active == 'forums') ? true : false),
+					'title' => t('Show forums'),
+					'sub' => $fsub
+
+				];
+			}
+		}
+
 		if(feature_enabled(local_channel(),'filing')) {
 			$terms = q("select distinct term from term where uid = %d and ttype = %d order by term asc",
 				intval(local_channel()),
@@ -110,39 +142,6 @@ class Activity_filter {
 			}
 		}
 
-		if(feature_enabled(local_channel(),'forums_tab')) {
-			$forums = get_forum_channels(local_channel());
-
-			if($forums) {
-				foreach($forums as $f) {
-					if(x($_GET,'pf') && x($_GET,'cid')) {
-						$forum_active = ((x($_GET,'pf') && $_GET['cid'] == $f['abook_id']) ? 'active' : '');
-						$filter_active = 'forums';
-					}
-					$fsub[] = [
-						'label' => $f['xchan_name'],
-						'img' => $f['xchan_photo_s'],
-						'url' => (($f['private_forum']) ? $f['xchan_url'] : z_root() . '/' . $cmd . '/?f=&pf=1&cid=' . $f['abook_id']),
-						'sel' => $forum_active,
-						'title' => t('Show posts to this forum'),
-						'lock' => (($f['private_forum']) ? 'lock' : '')
-					];
-				}
-
-				$tabs[] = [
-					'id' => 'forums',
-					'label' => t('Forums'),
-					'icon' => 'comments-o',
-					'url' => '#',
-					'sel' => (($filter_active == 'forums') ? true : false),
-					'title' => t('Show forums'),
-					'sub' => $fsub
-
-				];
-			}
-		}
-
-
 		if(x($_GET,'search')) {
 			$filter_active = 'search';
 			$tabs[] = [
@@ -151,6 +150,20 @@ class Activity_filter {
 				'url' => z_root() . '/' . $cmd . '/?f=&search=' . $_GET['search'],
 				'sel' => 'active disabled',
 				'title' => t('Panel search')
+			];
+		}
+
+		$name = [];
+		if(feature_enabled(local_channel(),'name_tab')) {
+			if(x($_GET,'cid') && ! x($_GET,'pf')) {
+				$filter_active = 'name';
+			}
+			$name = [
+				'label' => x($_GET,'name') ? $_GET['name'] : t('Filter by name'),
+				'icon' => 'filter',
+				'url'=> z_root() . '/' . $cmd . '/',
+				'sel'=> $filter_active == 'name' ? 'is-valid' : '',
+				'title' => ''
 			];
 		}
 
@@ -179,7 +192,8 @@ class Activity_filter {
 			$o .= replace_macros(get_markup_template('activity_filter_widget.tpl'), [
 				'$title' => t('Activity Filters'),
 				'$reset' => $reset,
-				'$content' => $content
+				'$content' => $content,
+				'$name' => $name
 			]);
 		}
 

@@ -136,7 +136,7 @@ a.wall-item-name-link {
 .wall-item-ago,
 .wall-item-ago i {
 	font-size: 0.75rem;
-	line-height: 1;
+	line-height: 1.1;
 }
 
 .wall-item-ago .fa-check {

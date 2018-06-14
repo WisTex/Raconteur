@@ -54,7 +54,7 @@ require_once('include/items.php');
 
 define ( 'PLATFORM_NAME',           'hubzilla' );
 
-define ( 'STD_VERSION',             '3.5.6' );
+define ( 'STD_VERSION',             '3.5.7' );
 define ( 'ZOT_REVISION',            '6.0b' );
 
 

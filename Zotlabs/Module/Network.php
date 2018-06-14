@@ -139,7 +139,7 @@ class Network extends \Zotlabs\Web\Controller {
 		
 		$deftag = '';
 	
-		if(x($_GET,'search') || x($_GET,'file'))
+		if(x($_GET,'search') || $file || (!$pf && $cid))
 			$nouveau = true;
 
 		if($cid) {
@@ -261,13 +261,18 @@ class Network extends \Zotlabs\Web\Controller {
 			$item_thread_top = '';
 
 			if($load || $update) {
-				$ttype = (($pf) ? TERM_FORUM : TERM_MENTION);
+				if(!$pf && $nouveau) {
+					$sql_extra = " AND author_xchan = '" . dbesc($cid_r[0]['abook_xchan']) . "' ";
+				}
+				else {
+					$ttype = (($pf) ? TERM_FORUM : TERM_MENTION);
 
-				$p1 = q("SELECT DISTINCT parent FROM item WHERE uid = " . intval(local_channel()) . " AND ( author_xchan = '" . dbesc($cid_r[0]['abook_xchan']) . "' OR owner_xchan = '" . dbesc($cid_r[0]['abook_xchan']) . "' ) $item_normal ");
-				$p2 = q("SELECT oid AS parent FROM term WHERE uid = " . intval(local_channel()) . " AND ttype = $ttype AND term = '" . dbesc($cid_r[0]['xchan_name']) . "'");
+					$p1 = q("SELECT DISTINCT parent FROM item WHERE uid = " . intval(local_channel()) . " AND ( author_xchan = '" . dbesc($cid_r[0]['abook_xchan']) . "' OR owner_xchan = '" . dbesc($cid_r[0]['abook_xchan']) . "' ) $item_normal ");
+					$p2 = q("SELECT oid AS parent FROM term WHERE uid = " . intval(local_channel()) . " AND ttype = $ttype AND term = '" . dbesc($cid_r[0]['xchan_name']) . "'");
 
-				$p_str = ids_to_querystr(array_merge($p1,$p2),'parent');
-				$sql_extra = " AND item.parent IN ( $p_str ) ";
+					$p_str = ids_to_querystr(array_merge($p1,$p2),'parent');
+					$sql_extra = " AND item.parent IN ( $p_str ) ";
+				}
 			}
 
 			$title = replace_macros(get_markup_template("section_title.tpl"),array(

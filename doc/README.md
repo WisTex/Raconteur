@@ -4,7 +4,7 @@ Hubzilla - Community Server
 ===========================
 
 <p align="center" markdown="1">
-<em><a href="https://github.com/redmatrix/hubzilla/blob/master/install/INSTALL.txt">Installing Hubzilla</a></em> 
+<em><a href="https://framagit.org/hubzilla/core/blob/master/install/INSTALL.txt">Installing Hubzilla</a></em> 
 </p>
 
 

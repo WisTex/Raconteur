@@ -13,7 +13,7 @@ You may fork/clone the $Projectname repository from [https://framagit.org/hubzil
 Follow the instructions provided here: [http://help.github.com/fork-a-repo/](http://help.github.com/fork-a-repo/)
 to create and use your own tracking fork on framagit
 
-Then go to your gramagit page and create a "Pull request" when you are ready
+Then go to your framagit page and create a "Pull request" when you are ready
 to notify us to merge your work.
 
 **Translations**

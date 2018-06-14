@@ -5,8 +5,8 @@
 [h3]Externe Ressourcen[/h3]
 [zrl=[baseurl]/help/external-resource-links]Links zu externen Ressourcen[/zrl]
 
-[url=https://github.com/redmatrix/hubzilla]Haupt-Website[/url]
-[url=https://github.com/redmatrix/hubzilla-addons]Addons-Website[/url]
+[url=https://framagit.org/hubzilla/core/]Haupt-Website[/url]
+[url=https://framagit.org/hubzilla/addons]Addons-Website[/url]
 
 [url=[baseurl]/help/credits]$Projectname Credits[/url]
 

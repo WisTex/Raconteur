@@ -6,8 +6,8 @@
 
 [h3]External resources[/h3]
 [zrl=[baseurl]/help/external-resource-links]List of external resources[/zrl]
-[url=https://github.com/redmatrix/hubzilla]Main Website[/url]
-[url=https://github.com/redmatrix/hubzilla-addons]Addon Website[/url]
+[url=https://framagit.org/hubzilla/core/]Main Website[/url]
+[url=https://framagit.org/hubzilla/addons]Addon Website[/url]
 [url=[baseurl]/help/credits]$Projectname Credits[/url]
 [h3]About this $Projectname hub[/h3]
 [zrl=[baseurl]/help/TermsOfService]Terms of Service For This Hub[/zrl]
