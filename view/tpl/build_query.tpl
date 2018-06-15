@@ -36,8 +36,8 @@
 		var udargs = ((page_load) ? "/load" : "");
 		var bCmd = bParam_cmd + udargs + "?f=" ;
 		if(bParam_uid) bCmd = bCmd + "&p=" + bParam_uid;
-		if(bParam_cmin != 0) bCmd = bCmd + "&cmin=" + bParam_cmin;
-		if(bParam_cmax != 99) bCmd = bCmd + "&cmax=" + bParam_cmax;
+		if(bParam_cmin != (-1)) bCmd = bCmd + "&cmin=" + bParam_cmin;
+		if(bParam_cmax != (-1)) bCmd = bCmd + "&cmax=" + bParam_cmax;
 		if(bParam_gid != 0) { bCmd = bCmd + "&gid=" + bParam_gid; } else
 		if(bParam_cid != 0) { bCmd = bCmd + "&cid=" + bParam_cid; }
 		if(bParam_static != 0) { bCmd = bCmd + "&static=" + bParam_static; }
