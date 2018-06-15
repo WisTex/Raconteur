@@ -705,10 +705,10 @@ class Libzot {
 
 			if(($r[0]['xchan_name_date'] != $arr['name_updated'])
 				|| ($r[0]['xchan_connurl'] != $arr['connections_url'])
-				|| ($r[0]['xchan_addr'] != $arr['address'])
-				|| ($r[0]['xchan_follow'] != $arr['follow_url'])
+				|| ($r[0]['xchan_addr'] != $arr['primary_location']['address'])
+				|| ($r[0]['xchan_follow'] != $arr['primary_location']['follow_url'])
 				|| ($r[0]['xchan_connpage'] != $arr['connect_url'])
-				|| ($r[0]['xchan_url'] != $arr['url'])
+				|| ($r[0]['xchan_url'] != $arr['primary_location']['url'])
 				|| $hidden_changed || $adult_changed || $deleted_changed || $pubforum_changed ) {
 				$rup = q("update xchan set xchan_name = '%s', xchan_name_date = '%s', xchan_connurl = '%s', xchan_follow = '%s',
 					xchan_connpage = '%s', xchan_hidden = %d, xchan_selfcensored = %d, xchan_deleted = %d, xchan_pubforum = %d,
@@ -716,14 +716,14 @@ class Libzot {
 					dbesc(($arr['name']) ? $arr['name'] : '-'),
 					dbesc($arr['name_updated']),
 					dbesc($arr['connections_url']),
-					dbesc($arr['follow_url']),
-					dbesc($arr['connect_url']),
+					dbesc($arr['primary_location']['follow_url']),
+					dbesc($arr['primary_location']['connect_url']),
 					intval(1 - intval($arr['searchable'])),
 					intval($arr['adult_content']),
 					intval($arr['deleted']),
 					intval($arr['public_forum']),
-					dbesc($arr['address']),
-					dbesc($arr['url']),
+					dbesc($arr['primary_location']['address']),
+					dbesc($arr['primary_location']['url']),
 					dbesc($xchan_hash)
 				);
 
@@ -749,10 +749,10 @@ class Libzot {
 					'xchan_pubkey'         => $arr['key'],
 					'xchan_photo_mimetype' => $arr['photo_mimetype'],
 					'xchan_photo_l'        => $arr['photo'],
-					'xchan_addr'           => $arr['address'],
-					'xchan_url'            => $arr['url'],
-					'xchan_connurl'        => $arr['connections_url'],
-					'xchan_follow'         => $arr['follow_url'],
+					'xchan_addr'           => $arr['primary_location']['address'],
+					'xchan_url'            => $arr['primary_location']['url'],
+					'xchan_connurl'        => $arr['primary_location']['connections_url'],
+					'xchan_follow'         => $arr['primary_location']['follow_url'],
 					'xchan_connpage'       => $arr['connect_url'],
 					'xchan_name'           => (($arr['name']) ? $arr['name'] : '-'),
 					'xchan_network'        => 'zot6',
@@ -1510,9 +1510,9 @@ class Libzot {
 		// has a recipient, but in fact we don't require this, so it's technically
 		// possible to send mail to anybody that's listening.
 
-dbg(2);
+
 		$recips = self::public_recips($msg);
-dbg(0);
+
 
 		if(! $recips)
 			return $recips;
@@ -3046,7 +3046,6 @@ dbg(0);
 			}
 		}
 
-		$ret['success'] = true;
 
 		// Communication details
 
@@ -3055,11 +3054,17 @@ dbg(0);
 		$ret['id_sig']         = self::sign($e['xchan_guid'], $e['channel_prvkey']);
 		$ret['aliases']        = [ 'acct:' . $e['xchan_addr'], $e['xchan_url'] ]; 
 
+		$ret['primary_location'] = [ 
+			'address'            =>  $e['xchan_addr'],
+			'url'                =>  $e['xchan_url'],
+			'connections_url'    =>  $e['xchan_connurl'],
+			'follow_url'         =>  $e['xchan_follow'],
+		];
 
 		$ret['public_key']     = $e['xchan_pubkey'];
 		$ret['name']           = $e['xchan_name'];
 		$ret['name_updated']   = $e['xchan_name_date'];
-		$ret['address']        = $e['xchan_addr'];
+		$ret['username']       = $e['channel_address'];
 		$ret['photo'] = [
 			'url'     => $e['xchan_photo_l'],
 			'type'    => $e['xchan_photo_mimetype'],
@@ -3068,10 +3073,6 @@ dbg(0);
 
 		$ret['channel_role'] = get_pconfig($e['channel_id'],'system','permissions_role','custom');
 
-		$ret['url']            = $e['xchan_url'];
-		$ret['connections_url']= $e['xchan_connurl'];
-		$ret['follow_url']     = $e['xchan_follow'];
-		$ret['target']         = $ztarget;
 		$ret['searchable']     = $searchable;
 		$ret['adult_content']  = $adult_channel;
 		$ret['public_forum']   = $public_forum;
@@ -3121,6 +3122,8 @@ dbg(0);
 		}
 
 		$ret['permissions'] = $permissions;
+		$ret['permissions_for']         = $ztarget;
+
 
 		// array of (verified) hubs this channel uses
 
