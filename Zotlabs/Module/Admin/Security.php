@@ -16,7 +16,13 @@ class Security {
 
 		$block_public         = ((x($_POST,'block_public'))		? True	: False);
 		set_config('system','block_public',$block_public);
-	
+
+		$cloud_noroot         = ((x($_POST,'cloud_noroot'))		? 1	: 0);
+		set_config('system','cloud_disable_siteroot',1 - $cloud_noroot);
+
+		$cloud_disksize       = ((x($_POST,'cloud_disksize'))	? 1	: 0);
+		set_config('system','cloud_report_disksize',$cloud_disksize);
+
 		$ws = $this->trim_array_elems(explode("\n",$_POST['whitelisted_sites']));
 		set_config('system','whitelisted_sites',$ws);
 	
@@ -87,6 +93,8 @@ class Security {
 			'$page' => t('Security'),
 			'$form_security_token' => get_form_security_token('admin_security'),
 	        '$block_public'     => array('block_public', t("Block public"), get_config('system','block_public'), t("Check to block public access to all otherwise public personal pages on this site unless you are currently authenticated.")),
+			'$cloud_noroot'     => [ 'cloud_noroot', t('Provide a cloud root directory'), 1 - intval(get_config('system','cloud_disable_siteroot')), t('The cloud root directory lists all channel names which provide public files') ], 
+			'$cloud_disksize'     => [ 'cloud_disksize', t('Show total disk space available to cloud uploads'), intval(get_config('system','cloud_report_disksize')), '' ],
 			'$transport_security' => array('transport_security', t('Set "Transport Security" HTTP header'),intval(get_config('system','transport_security_header')),''),
 			'$content_security' => array('content_security', t('Set "Content Security Policy" HTTP header'),intval(get_config('system','content_security_policy')),''),
 			'$allowed_email'	=> array('allowed_email', t("Allowed email domains"), get_config('system','allowed_email'), t("Comma separated list of domains which are allowed in email addresses for registrations to this site. Wildcards are accepted. Empty to allow any domains")),

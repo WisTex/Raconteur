@@ -35,10 +35,19 @@ class Cloud extends \Zotlabs\Web\Controller {
 		if (argc() > 1)
 			$which = argv(1);
 
+
+		if (argc() < 2 && intval(get_config('system','cloud_disable_siteroot'))) {
+			notice( t('Permission denied.') . EOL);
+			construct_page();
+			killme();
+		}
+
 		$profile = 0;
 
 		if ($which)
 			profile_load( $which, $profile);
+
+
 
 		$auth = new \Zotlabs\Storage\BasicAuth();
 

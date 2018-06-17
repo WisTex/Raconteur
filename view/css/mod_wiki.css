@@ -55,6 +55,7 @@ pre code {
 	padding: 1em 1.5em;
 	display: block;
 	white-space: pre-wrap;
+	word-break: break-all;
 }
 
 code {
@@ -64,6 +65,7 @@ code {
 	display: inline;
 	padding: 0.2em 0.2em;
 	white-space: pre-wrap;
+	word-break: break-all;
 }
 
 #wiki-content-container code {

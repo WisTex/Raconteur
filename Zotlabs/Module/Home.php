@@ -9,7 +9,7 @@ require_once('include/conversation.php');
 class Home extends \Zotlabs\Web\Controller {
 
 	function init() {
-	
+
 		$ret = array();
 	
 		call_hooks('home_init',$ret);

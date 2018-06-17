@@ -123,8 +123,8 @@ class Network extends \Zotlabs\Web\Controller {
 			$def_acl    = array('allow_gid' => '<' . $r[0]['hash'] . '>');
 		}
 	
-		$default_cmin = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmin',0) : 0);
-		$default_cmax = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmax',99) : 99);
+		$default_cmin = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmin',0) : (-1));
+		$default_cmax = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmax',99) : (-1));
 
 		$cid      = ((x($_GET,'cid'))   ? intval($_GET['cid'])   : 0);
 		$star     = ((x($_GET,'star'))  ? intval($_GET['star'])  : 0);
@@ -140,6 +140,7 @@ class Network extends \Zotlabs\Web\Controller {
 		
 		$deftag = '';
 	
+
 		if(x($_GET,'search') || $file || (!$pf && $cid))
 			$nouveau = true;
 
@@ -334,8 +335,8 @@ class Network extends \Zotlabs\Web\Controller {
 				'$uid'     => ((local_channel()) ? local_channel() : '0'),
 				'$gid'     => (($gid) ? $gid : '0'),
 				'$cid'     => (($cid) ? $cid : '0'),
-				'$cmin'    => (($cmin) ? $cmin : '0'),
-				'$cmax'    => (($cmax) ? $cmax : '0'),
+				'$cmin'    => (($cmin) ? $cmin : '(-1)'),
+				'$cmax'    => (($cmax) ? $cmax : '(-1)'),
 				'$star'    => (($star) ? $star : '0'),
 				'$liked'   => (($liked) ? $liked : '0'),
 				'$conv'    => (($conv) ? $conv : '0'),
@@ -420,8 +421,9 @@ class Network extends \Zotlabs\Web\Controller {
 			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));
 		}
 	
-	
-		if(($cmin != 0) || ($cmax != 99)) {
+		// cmin and cmax are both -1 when the affinity tool is disabled
+
+		if(($cmin != (-1)) || ($cmax != (-1))) {
 	
 			// Not everybody who shows up in the network stream will be in your address book.
 			// By default those that aren't are assumed to have closeness = 99; but this isn't

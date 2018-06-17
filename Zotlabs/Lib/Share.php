@@ -107,7 +107,7 @@ class Share {
 	}
 
 	public function bbcode() {
-		$bb = NULL_STR;
+		$bb = EMPTY_STR;
 
 		if(! $this->item)
 			return $bb;
