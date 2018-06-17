@@ -1018,21 +1018,30 @@ function magiclink_url($observer,$myaddr,$url) {
 
 
 
-function micropro($contact, $redirect = false, $class = '', $textmode = false) {
+function micropro($contact, $redirect = false, $class = '', $mode = false) {
 
 	if($contact['click'])
 		$url = '#';
 	else
 		$url = chanlink_hash($contact['xchan_hash']);
 
-	return replace_macros(get_markup_template(($textmode)?'micropro_txt.tpl':'micropro_img.tpl'),array(
+
+	$tpl = 'micropro_img.tpl';
+	if($mode === true)
+		$tpl = 'micropro_txt.tpl';
+	if($mode === 'card')
+		$tpl = 'micropro_card.tpl';
+
+	return replace_macros(get_markup_template($tpl), array(
 		'$click' => (($contact['click']) ? $contact['click'] : ''),
 		'$class' => $class . (($contact['archived']) ? ' archived' : ''),
 		'$oneway' => (($contact['oneway']) ? true : false),
 		'$url' => $url,
 		'$photo' => $contact['xchan_photo_s'],
 		'$name' => $contact['xchan_name'],
+		'$addr' => $contact['xchan_addr'],
 		'$title' => $contact['xchan_name'] . ' [' . $contact['xchan_addr'] . ']',
+		'$network' => sprintf(t('Network: %s'), $contact['xchan_network'])
 	));
 }
 

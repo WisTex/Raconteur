@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/group
+requires: local_channel
+name: Privacy Groups
+photo: icon:users
+categories: Networking

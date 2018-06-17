@@ -7,6 +7,17 @@ require_once('include/group.php');
 
 class Group extends \Zotlabs\Web\Controller {
 
+	function init() {
+		if(! local_channel()) {
+			notice( t('Permission denied.') . EOL);
+			return;
+		}
+
+		\App::$profile_uid = local_channel();
+
+		nav_set_selected('Privacy Groups');
+	}
+
 	function post() {
 	
 		if(! local_channel()) {
@@ -22,12 +33,10 @@ class Group extends \Zotlabs\Web\Controller {
 			$r = group_add(local_channel(),$name,$public);
 			if($r) {
 				info( t('Privacy group created.') . EOL );
-				$r = group_byname(local_channel(),$name);
-				if($r)
-					goaway(z_root() . '/group/' . $r);
 			}
-			else
-				notice( t('Could not create privacy group.') . EOL );	
+			else {
+				notice( t('Could not create privacy group.') . EOL );
+			}
 			goaway(z_root() . '/group');
 	
 		}
@@ -74,30 +83,59 @@ class Group extends \Zotlabs\Web\Controller {
 			notice( t('Permission denied') . EOL);
 			return;
 		}
-	
+
 		// Switch to text mode interface if we have more than 'n' contacts or group members
-	
 		$switchtotext = get_pconfig(local_channel(),'system','groupedit_image_limit');
 		if($switchtotext === false)
 			$switchtotext = get_config('system','groupedit_image_limit');
 		if($switchtotext === false)
 			$switchtotext = 400;
-	
-		$tpl = get_markup_template('group_edit.tpl');
-		$context = array('$submit' => t('Submit'));
-	
-		if((argc() == 2) && (argv(1) === 'new')) {
-			
-			return replace_macros($tpl, $context + array(
-				'$title' => t('Create a group of channels.'),
-				'$gname' => array('groupname',t('Privacy group name: '), '', ''),
-				'$gid' => 'new',
-				'$public' => array('public',t('Members are visible to other channels'), false, ''),
+
+
+		if((argc() == 1) || ((argc() == 2) && (argv(1) === 'new'))) {
+
+			$new = (((argc() == 2) && (argv(1) === 'new')) ? true : false);
+
+			$groups = q("SELECT id, gname FROM groups WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
+				intval(local_channel())
+			);
+
+			$i = 0;
+			foreach($groups as $group) {
+				$entries[$i]['name'] = $group['gname'];
+				$entries[$i]['id'] = $group['id'];
+				$entries[$i]['count'] = count(group_get_members($group['id']));
+				$i++;
+			}
+
+			$tpl = get_markup_template('privacy_groups.tpl');
+			$o = replace_macros($tpl, [
+				'$title' => t('Privacy Groups'),
+				'$add_new_label' => t('Add Group'),
+				'$new' => $new,
+
+				// new group form
+				'$gname' => array('groupname',t('Privacy group name')),
+				'$public' => array('public',t('Members are visible to other channels'), false),
 				'$form_security_token' => get_form_security_token("group_edit"),
-			));
-	
-	
+				'$submit' => t('Submit'),
+
+				// groups list
+				'$title' => t('Privacy Groups'),
+				'$name_label' => t('Name'),
+				'$count_label' => t('Members'),
+				'$entries' => $entries
+			]);
+
+			return $o;
+
 		}
+
+
+
+
+		$context = array('$submit' => t('Submit'));
+		$tpl = get_markup_template('group_edit.tpl');
 	
 		if((argc() == 3) && (argv(1) === 'drop')) {
 			check_form_security_token_redirectOnErr('/group', 'group_drop', 't');
@@ -172,22 +210,17 @@ class Group extends \Zotlabs\Web\Controller {
 						$preselected[] = $member['xchan_hash'];
 				}
 			}
-	
-			$drop_tpl = get_markup_template('group_drop.tpl');
-			$drop_txt = replace_macros($drop_tpl, array(
-				'$id' => $group['id'],
-				'$delete' => t('Delete'),
-				'$form_security_token' => get_form_security_token("group_drop"),
-			));
-	
-			
+
 			$context = $context + array(
-				'$title' => t('Privacy group editor'),
+				'$title' => sprintf(t('Privacy Group: %s'), $group['gname']),
+				'$details_label' => t('Edit'),
 				'$gname' => array('groupname',t('Privacy group name: '),$group['gname'], ''),
 				'$gid' => $group['id'],
 				'$drop' => $drop_txt,
 				'$public' => array('public',t('Members are visible to other channels'), $group['visible'], ''),
-				'$form_security_token' => get_form_security_token('group_edit'),
+				'$form_security_token_edit' => get_form_security_token('group_edit'),
+				'$delete' => t('Delete Group'),
+				'$form_security_token_drop' => get_form_security_token("group_drop"),
 			);
 	
 		}
@@ -196,14 +229,14 @@ class Group extends \Zotlabs\Web\Controller {
 			return;
 	
 		$groupeditor = array(
-			'label_members' => t('Members'),
+			'label_members' => t('Group members'),
 			'members' => array(),
-			'label_contacts' => t('All Connected Channels'),
+			'label_contacts' => t('Not in this group'),
 			'contacts' => array(),
 		);
 			
 		$sec_token = addslashes(get_form_security_token('group_member_change'));
-		$textmode = (($switchtotext && (count($members) > $switchtotext)) ? true : false);
+		$textmode = (($switchtotext && (count($members) > $switchtotext)) ? true : 'card');
 		foreach($members as $member) {
 			if($member['xchan_url']) {
 				$member['archived'] = (intval($member['abook_archived']) ? true : false);
@@ -219,7 +252,7 @@ class Group extends \Zotlabs\Web\Controller {
 		);
 	
 		if(count($r)) {
-			$textmode = (($switchtotext && (count($r) > $switchtotext)) ? true : false);
+			$textmode = (($switchtotext && (count($r) > $switchtotext)) ? true : 'card');
 			foreach($r as $member) {
 				if(! in_array($member['xchan_hash'],$preselected)) {
 					$member['archived'] = (intval($member['abook_archived']) ? true : false);
@@ -230,7 +263,7 @@ class Group extends \Zotlabs\Web\Controller {
 		}
 	
 		$context['$groupeditor'] = $groupeditor;
-		$context['$desc'] = t('Click on a channel to add or remove.');
+		$context['$desc'] = t('Click a channel to toggle membership');
 	
 		if($change) {
 			$tpl = get_markup_template('groupeditor.tpl');
