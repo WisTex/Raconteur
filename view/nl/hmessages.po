@@ -8378,7 +8378,7 @@ msgstr "Afleveringsrapport"
 msgid "%d comment"
 msgid_plural "%d comments"
 msgstr[0] "%d reactie"
-msgstr[1] "%d reacties getoond"
+msgstr[1] "%d reacties"
 
 #: ../../Zotlabs/Lib/ThreadItem.php:343 ../../Zotlabs/Lib/ThreadItem.php:344
 #, php-format
