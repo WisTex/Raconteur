@@ -331,16 +331,6 @@ empty:
 
     util/config system directory_server ""
 
-### Upgrading from RedMatrix to $Projectname
-
-#### How to migrate an individual channel from RedMatrix to $Projectname
-
-1. Clone the channel by opening an account on a $Projectname hub and performing a basic import (not content) from the original RedMatrix hub. Give your new clone time to sync connections and settings.
-1. Export individual channel content from your RedMatrix hub to a set of JSON text files using the red.hub/uexport tool. Do this in monthly increments if necessary.
-1. Import the JSON data files sequentially in chronological order into the $Projectname clone using the new.hub/import_items tool.
-1. Inform your Friendica and Diaspora contacts that your channel moves. They need to reconnect to your new address.  
-1. After successful import (check!) delete your channel on the old RedMatrix Server.
-1. On the $Projectname server visit new.hub/locs and upgrade to your channel to a primary one. And when the old Redmatrix server is still listed delete them here as well. Press "Sync" to inform all other server in the grid.
 
 ### Administration
 
