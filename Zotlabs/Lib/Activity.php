@@ -155,13 +155,7 @@ class Activity {
 			return $ret;
 		}
 
-		$images = false;
-		$has_images = preg_match_all('/\[[zi]mg(.*?)\](.*?)\[/ism',$i['body'],$images,PREG_SET_ORDER); 
-
-		if((! $has_images) || get_pconfig($i['uid'],'activitypub','downgrade_media',true))
-			$ret['type'] = 'Note';
-		else
-			$ret['type'] = 'Article';
+		$ret['type'] = 'Article';
 
 		$ret['id']   = ((strpos($i['mid'],'http') === 0) ? $i['mid'] : z_root() . '/item/' . urlencode($i['mid']));
 
@@ -233,17 +227,6 @@ class Activity {
 		$a = self::encode_attachment($i);
 		if($a) {
 			$ret['attachment'] = $a;
-		}
-
-		if($has_images && $ret['type'] === 'Note') {
-			$img = [];
-			foreach($images as $match) {
-				$img[] =  [ 'type' => 'Image', 'url' => $match[2] ]; 
-			}
-			if(! $ret['attachment'])
-				$ret['attachment'] = [];
-
-			$ret['attachment'] = array_merge($img,$ret['attachment']);
 		}
 
 		return $ret;
@@ -442,74 +425,8 @@ class Activity {
 				return [];
 		}
 
-		if($i['item_private']) {
-			if($reply) {
-				if($i['author_xchan'] == $i['owner_xchan']) {
-					//$ret['to'] = [ $reply_url ];
-					//$ret['cc'] = as_map_acl($i);
-
-					$m = self::map_acl($i,true);
-					$ret['tag'] = (($ret['tag']) ? array_merge($ret['tag'],$m) : $m);
-				}
-				else {
-					if($is_directmessage) {
-						$m = [
-							'type' => 'Mention',
-							'href' => $reply_url,
-							'name' => '@' . $reply_addr
-						];
-						$ret['tag'] = (($ret['tag']) ? array_merge($ret['tag'],$m) : $m);
-					}
-					else {
-						$ret['to'] = [ $reply_url ];
-					}
-				}
-			}
-			else {
-				//$ret['to'] = as_map_acl($i);
-				$m = self::map_acl($i,true);
-				$ret['tag'] = (($ret['tag']) ? array_merge($ret['tag'],$m) : $m);
-			}
-		}
-		else {
-			if($reply) {
-				$ret['to'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
-				$ret['cc'] = [ ACTIVITY_PUBLIC_INBOX ];
-			}
-			else {
-				$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
-				$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
-			}
-/*
-			$mentions = self::map_mentions($i);
-			if(count($mentions) > 0) {
-				if(! $ret['cc']) {
-					$ret['cc'] = $mentions;
-				}
-				else {
-					$ret['cc'] = array_merge($ret['cc'], $mentions);
-				}
-			}
-*/
-		}
-
-		$mentions = self::map_mentions($i);
-		if(count($mentions) > 0) {
-			if(! $ret['cc']) {
-				$ret['cc'] = $mentions;
-			}
-			else {
-				$ret['cc'] = array_merge($ret['cc'], $mentions);
-			}
-		}
-	
-		if(in_array($ret['object']['type'], [ 'Note', 'Article' ])) {
-			if($ret['to'])
-				$ret['object']['to'] = $ret['to'];
-			if($ret['cc'])
-				$ret['object']['cc'] = $ret['cc'];
-			if($ret['tag'])
-				$ret['object']['tag'] = $ret['tag'];
+		if(! $i['item_private']) {
+			$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
 		}
 
 		return $ret;
@@ -592,43 +509,11 @@ class Activity {
 		$c = channelx_by_hash($p['xchan_hash']);
 
 		if($c) {
-
-			$ret['inbox']       = z_root() . '/inbox/'     . $c['channel_address'];
-			$ret['outbox']      = z_root() . '/outbox/'    . $c['channel_address'];
-			$ret['followers']   = z_root() . '/followers/' . $c['channel_address'];
-			$ret['following']   = z_root() . '/following/' . $c['channel_address'];
-	
-			$ret['endpoints']   = [ 'sharedInbox' => z_root() . '/inbox' ];
-
 			$ret['publicKey'] = [
 				'id'           => $p['xchan_url'] . '/public_key_pem',
 				'owner'        => $p['xchan_url'],
 				'publicKeyPem' => $p['xchan_pubkey']
 			];
-
-			$locs = Libzot::encode_locations($c);
-			if($locs) {
-				$ret['nomadicLocations'] = [];
-				foreach($locs as $loc) {
-					$ret['nomadicLocations'][] = [
-						'id'      => $loc['url'] . '/locs/' . substr($loc['address'],0,strpos($loc['address'],'@')),
-						'type'            => 'nomadicLocation',
-						'locationAddress' => 'acct:' . $loc['address'],
-						'locationPrimary' => (boolean) $loc['primary'],
-						'locationDeleted' => (boolean) $loc['deleted']
-					];
-				}
-			}
-		}
-		else {
-			$collections = get_xconfig($p['xchan_hash'],'activitystreams','collections',[]);
-			if($collections) {
-				$ret = array_merge($ret,$collections);
-			}
-			else {
-				$ret['inbox'] = null;
-				$ret['outbox'] = null;
-			}
 		}
 
 		return $ret;
@@ -831,9 +716,7 @@ class Activity {
 		$my_perms  = \Zotlabs\Access\Permissions::serialise($p['perms']);
 		$automatic = $p['automatic'];
 
-		$closeness = get_pconfig($channel['channel_id'],'system','new_abook_closeness');
-		if($closeness === false)
-			$closeness = 80;
+		$closeness = get_pconfig($channel['channel_id'],'system','new_abook_closeness',80);
 
 		$r = abook_store_lowlevel(
 			[

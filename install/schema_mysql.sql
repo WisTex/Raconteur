@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS `abook` (
   `abook_pending` tinyint(4) NOT NULL DEFAULT 0 ,
   `abook_unconnected` tinyint(4) NOT NULL DEFAULT 0 ,
   `abook_self` tinyint(4) NOT NULL DEFAULT 0 ,
+  `abook_rself` tinyint(4) NOT NULL DEFAULT 0 ,
   `abook_feed` tinyint(4) NOT NULL DEFAULT 0 ,
   `abook_not_here` tinyint(4) NOT NULL DEFAULT 0 ,
   `abook_profile` char(191) NOT NULL DEFAULT '',

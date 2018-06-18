@@ -31,6 +31,7 @@ CREATE TABLE "abook" (
   "abook_pending" smallint NOT NULL DEFAULT '0',
   "abook_unconnected" smallint NOT NULL DEFAULT '0',
   "abook_self" smallint NOT NULL DEFAULT '0',
+  "abook_rself" smallint NOT NULL DEFAULT '0',
   "abook_feed" smallint NOT NULL DEFAULT '0',
   "abook_not_here" smallint NOT NULL DEFAULT '0',
   "abook_profile" varchar(64) NOT NULL DEFAULT '',
