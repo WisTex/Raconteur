@@ -279,14 +279,6 @@ function group_side($every="connections",$each="group",$edit = false, $group_id 
 	}
 
 	$groups = array();
-	
-	$groups[] = array(
-		'text' 	=> t('All Channels'),
-		'id' => 0,
-		'selected' => (($group_id == 0) ? 'group-selected' : ''),
-		'href' 	=> $every . (($every === 'network') ? '?f=&gid=0' : ''),
-	);
-
 
 	$r = q("SELECT * FROM groups WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
 		intval($_SESSION['uid'])

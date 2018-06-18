@@ -693,31 +693,6 @@ nav .acpopup {
 	margin-bottom: 15px;
 }
 
-#group-members {
-	margin-top: 20px;
-	padding: 10px;
-	height: 250px;
-	overflow: auto;
-	border: 1px solid #ddd;
-}
-
-#group-separator {
-	margin-top: 10px;
-	margin-bottom: 10px;
-}
-
-#group-all-contacts {
-	padding: 10px;
-	height: 450px;
-	overflow: auto;
-	border: 1px solid #ddd;
-}
-
-#group-edit-desc {
-	margin-top: 15px;
-}
-
-
 #prof-members {
 	margin-top: 20px;
 	padding: 10px;
@@ -830,7 +805,7 @@ div.jGrowl div.jGrowl-notification {
 .dropdown-notification,
 .notification,
 .member-item {
-	line-height: 1.1em;
+	line-height: 1.2em;
 	font-size: 0.75rem;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -1177,6 +1152,7 @@ img.mail-conv-sender-photo {
 .wall-item-ago,
 .dropdown-sub-text {
 	color: #777;
+	display: block;
 }
 
 .wall-item-content,
@@ -1416,6 +1392,9 @@ main.fullscreen .generic-content-wrapper {
 
 main.fullscreen .section-title-wrapper {
 	border-radius: 0px;
+	position: sticky;
+	top: 0;
+	z-index: 1020;
 }
 
 main.fullscreen .section-content-wrapper,
@@ -1429,6 +1408,7 @@ main.fullscreen .section-content-wrapper-np {
 
 .atoken-index-row:hover td,
 .chatroom-index-row:hover td,
+.group-index-row:hover td,
 .wikis-index-row:hover td,
 .locs-index-row:hover td,
 [id^="cloud-index-"]:hover td,
