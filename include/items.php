@@ -2948,6 +2948,18 @@ function start_delivery_chain($channel, $item, $item_id, $parent) {
 				}
 			}
 		}
+
+		// This will change the author to the post owner. Useful for RSS feeds which are to be syndicated
+		// to federated platforms which can't verify the identity of the author. 
+		// This MAY cause you to run afoul of copyright law.
+
+		$rewrite_author = intval(get_abconfig($channel['channel_id'],$item['owner_xchan'],'system','rself'));
+		if($rewrite_author) {
+			$item['author_xchan'] = $item['owner_xchan'];
+			if($item['owner']) {
+				$item['author'] = $item['owner'];
+			}
+		}
 	}
 
 	// Change this copy of the post to a forum head message and deliver to all the tgroup members
