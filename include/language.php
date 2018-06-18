@@ -242,7 +242,7 @@ function tt($singular, $plural, $count, $ctx = ''){
 		if (! function_exists($f))
 			$f = 'string_plural_select_default';
 
-		$k = $f($count);
+		$k = $f(intval($count));
 
 		return is_array($t) ? $t[$k] : $t;
 	}

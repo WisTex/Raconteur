@@ -333,6 +333,7 @@ class Browser extends DAV\Browser\Plugin {
 
 		$aclselect = null;
 		$lockstate = '';
+		$limit = 0;
 
 		if($this->auth->owner_id) {
 			$channel = channelx_by_n($this->auth->owner_id);
@@ -343,10 +344,11 @@ class Browser extends DAV\Browser\Plugin {
 
 				$aclselect = ((local_channel() == $this->auth->owner_id) ? populate_acl($channel_acl,false, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_storage')) : '');
 			}
+
+			// Storage and quota for the account (all channels of the owner of this directory)!
+			$limit = engr_units_to_bytes(service_class_fetch($this->auth->owner_id, 'attach_upload_limit'));
 		}
 
-		// Storage and quota for the account (all channels of the owner of this directory)!
-		$limit = engr_units_to_bytes(service_class_fetch($owner, 'attach_upload_limit'));
 		if((! $limit) && get_config('system','cloud_report_disksize')) {
 			$limit = engr_units_to_bytes(disk_free_space('store'));
 		}
