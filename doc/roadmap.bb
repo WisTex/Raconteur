@@ -1,11 +1,10 @@
 
-
 Roadmap
 
 
 Platform
 
-	Convert E2EE and select Javascript resources to dynamic loading to dynamic loading using jQuery.getScript() [or other methods].
+	Convert E2EE and select Javascript resources to dynamic loading using jQuery.getScript() [or other methods].
 
 Webpages
 
