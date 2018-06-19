@@ -3026,8 +3026,6 @@ function start_delivery_chain($channel, $item, $item_id, $parent) {
 	);
 
 
-
-
 	if($r)
 		Zotlabs\Daemon\Master::Summon(array('Notifier','tgroup',$item_id));
 	else {
