@@ -19,9 +19,10 @@ require_once('include/permissions.php');
  *
  * @param array $item
  * @param[out] boolean $private_envelope
+ * @param boolean $include_groups 
  * @return array containing the recipients
  */
-function collect_recipients($item, &$private_envelope) {
+function collect_recipients($item, &$private_envelope,$include_groups = true) {
 
 	require_once('include/group.php');
 
@@ -34,7 +35,12 @@ function collect_recipients($item, &$private_envelope) {
 
 		$allow_people = expand_acl($item['allow_cid']);
 
-		$allow_groups = expand_groups(expand_acl($item['allow_gid']));
+		if($include_groups) {
+			$allow_groups = expand_groups(expand_acl($item['allow_gid']));
+		}
+		else {
+			$allow_groups = [];
+		}
 
 		$recipients = array_unique(array_merge($allow_people,$allow_groups));
 
