@@ -1,6 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\HTTPSig;
 
 
 class Magic extends \Zotlabs\Web\Controller {
@@ -82,8 +83,7 @@ class Magic extends \Zotlabs\Web\Controller {
 				$headers = [];
 				$headers['Accept'] = 'application/x-zot+json' ;
 				$headers['X-Open-Web-Auth'] = random_string();
-				$headers = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],
-					channel_url($channel),false,true,'sha512');
+				$headers = HTTPSig::create_sig('',$headers,$channel['channel_prvkey'], channel_url($channel),true,'sha512');
 				$x = z_fetch_url($basepath . '/owa',false,$redirects,[ 'headers' => $headers ]);
 
 				if($x['success']) {

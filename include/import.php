@@ -2,6 +2,7 @@
 
 use Zotlabs\Lib\IConfig;
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Web\HTTPSig;
 
 require_once('include/menu.php');
 
@@ -1222,11 +1223,8 @@ function sync_files($channel, $files) {
 						$redirects = 0;
 
 
-						$headers = [];
-						$headers['Accept'] = 'application/x-zot+json' ;
-						$headers['Sigtoken'] = random_string();
-						$headers = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],	'acct:' . $channel['channel_address'] . '@' . \App::get_hostname(),false,true,'sha512');
-
+						$headers = [ 'Accept' => 'application/x-zot+json', 'Sigtoken' => random_string() ];
+						$headers = HTTPSig::create_sig($headers,$channel['channel_prvkey'],	channel_url($channel),true,'sha512');
 						$x = z_post_url($fetch_url,$parr,$redirects,[ 'filep' => $fp, 'headers' => $headers]);
 						fclose($fp);
 
@@ -1303,11 +1301,8 @@ function sync_files($channel, $files) {
 						}
 						$redirects = 0;
 
-
-						$headers = [];
-						$headers['Accept'] = 'application/x-zot+json' ;
-						$headers['Sigtoken'] = random_string();
-						$headers = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],	'acct:' . $channel['channel_address'] . '@' . \App::get_hostname(),false,true,'sha512');
+						$headers = [ 'Accept' => 'application/x-zot+json', 'Sigtoken' => random_string() ];
+						$headers = HTTPSig::create_sig($headers,$channel['channel_prvkey'],	channel_url($channel),true,'sha512');
 
 						$x = z_post_url($fetch_url,$parr,$redirects,[ 'filep' => $fp, 'headers' => $headers]);
 						fclose($fp);

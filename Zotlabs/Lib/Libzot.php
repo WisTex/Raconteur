@@ -11,6 +11,7 @@ namespace Zotlabs\Lib;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\System;
+use Zotlabs\Web\HTTPSig;
 
 require_once('include/crypto.php');
 require_once('include/queue_fn.php');
@@ -216,15 +217,15 @@ class Libzot {
 
 	static function zot($url, $data, $channel = null,$crypto = null) {
 
-		$headers = [];
-
 		if($channel) {
-			$headers['X-Zot-Token'] = random_string();
-			$hash = \Zotlabs\Web\HTTPSig::generate_digest($data,false);
-			$headers['Digest'] = 'SHA-256=' . $hash;
-			$headers['Content-type'] = 'application/x-zot+json';
+			$headers = [ 
+				'X-Zot-Token'  => random_string(), 
+				'Digest'       => HTTPSig::generate_digest_header($data), 
+				'Content-type' => 'application/x-zot+json'
+			];
 
-			$h = \Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'],channel_url($channel),false,false,'sha512',(($crypto) ? $crypto['hubloc_sitekey'] : ''), (($crypto) ? self::best_algorithm($crypto['site_crypto']) : ''));
+			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false,'sha512', 
+				(($crypto) ? [ 'key' => $crypto['hubloc_sitekey'], 'algorithm' => self::best_algorithm($crypto['site_crypto']) ] : false));
 		}
 
 		$redirects = 0;

@@ -3,6 +3,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Web\HTTPSig;
 
 require_once('include/contact_widgets.php');
 require_once("include/bbcode.php");
@@ -67,7 +68,7 @@ class Channel extends \Zotlabs\Web\Controller {
 				http_status_exit(404, 'Not found');
 			}
 
-			$sigdata = \Zotlabs\Web\HTTPSig::verify(EMPTY_STR);
+			$sigdata = HTTPSig::verify(EMPTY_STR);
 
 			if($sigdata && $sigdata['signer'] && $sigdata['header_valid']) {
 				$data = json_encode(Libzot::zotinfo([ 'address' => $channel['channel_address'], 'target_url' => $sigdata['signer'] ]));
@@ -83,8 +84,9 @@ class Channel extends \Zotlabs\Web\Controller {
 				$data = json_encode(Libzot::zotinfo([ 'address' => $channel['channel_address'] ]));
 			}
 
-			$headers = [ 'Content-Type' => 'application/x-zot+json', 'Digest' => \Zotlabs\Web\HTTPSig::generate_digest_header($data) ];
-			\Zotlabs\Web\HTTPSig::create_sig('',$headers,$channel['channel_prvkey'], z_root() . '/channel/' . $channel['channel_address'],true);
+			$headers = [ 'Content-Type' => 'application/x-zot+json', 'Digest' => HTTPSig::generate_digest_header($data) ];
+			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
+			HTTPSig::set_headers($h);
 			echo $data;
 			killme();
 		}

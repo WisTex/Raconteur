@@ -2,7 +2,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libzot;
-
+use Zotlabs\Web\HTTPSig;
 
 require_once('include/conversation.php');
 
@@ -18,16 +18,12 @@ class Home extends \Zotlabs\Web\Controller {
 
 		if(Libzot::is_zot_request()) {
 
-			$key =  get_config('system','prvkey');
-			$x = Libzot::site_info();
+			$key = get_config('system','prvkey');
+			$ret = json_encode(Libzot::site_info());
 
-			$headers = [];
-			$headers['Content-Type'] = 'application/x-zot+json' ;
-
-			$ret = json_encode($x);
-			$hash = \Zotlabs\Web\HTTPSig::generate_digest($ret,false);
-			$headers['Digest'] = 'SHA-256=' . $hash;  
-			\Zotlabs\Web\HTTPSig::create_sig('',$headers,$key,z_root(),true);
+			$headers = [ 'Content-Type' => 'application/x-zot+json', 'Digest' => HTTPSig::generate_digest_header($ret) ];
+			$h = HTTPSig::create_sig(EMPTY_STR, $headers, $key, z_root());
+			HTTPSig::set_headers($h);
 			echo $ret;
 			killme();
 		}
