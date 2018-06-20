@@ -22,9 +22,10 @@ require_once('include/permissions.php');
  *
  * @param array $item
  * @param[out] boolean $private_envelope
+ * @param boolean $include_groups 
  * @return array containing the recipients
  */
-function collect_recipients($item, &$private_envelope) {
+function collect_recipients($item, &$private_envelope,$include_groups = true) {
 
 	require_once('include/group.php');
 
@@ -37,7 +38,12 @@ function collect_recipients($item, &$private_envelope) {
 
 		$allow_people = expand_acl($item['allow_cid']);
 
-		$allow_groups = expand_groups(expand_acl($item['allow_gid']));
+		if($include_groups) {
+			$allow_groups = expand_groups(expand_acl($item['allow_gid']));
+		}
+		else {
+			$allow_groups = [];
+		}
 
 		$recipients = array_unique(array_merge($allow_people,$allow_groups));
 
@@ -2952,6 +2958,18 @@ function start_delivery_chain($channel, $item, $item_id, $parent) {
 				}
 			}
 		}
+
+		// This will change the author to the post owner. Useful for RSS feeds which are to be syndicated
+		// to federated platforms which can't verify the identity of the author. 
+		// This MAY cause you to run afoul of copyright law.
+
+		$rewrite_author = intval(get_abconfig($channel['channel_id'],$item['owner_xchan'],'system','rself'));
+		if($rewrite_author) {
+			$item['author_xchan'] = $item['owner_xchan'];
+			if($item['owner']) {
+				$item['author'] = $item['owner'];
+			}
+		}
 	}
 
 	// Change this copy of the post to a forum head message and deliver to all the tgroup members
@@ -3010,8 +3028,6 @@ function start_delivery_chain($channel, $item, $item_id, $parent) {
 		intval($item_origin),
 		intval($item_id)
 	);
-
-
 
 
 	if($r)

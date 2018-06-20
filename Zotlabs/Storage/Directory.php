@@ -723,14 +723,13 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 	function ChannelList(&$auth) {
 		$ret = array();
 
-		$r = q("SELECT channel_id, channel_address FROM channel WHERE channel_removed = 0
-			AND channel_system = 0 AND (channel_pageflags & %d) = 0",
+		$r = q("SELECT channel_id, channel_address, profile.publish FROM channel left join profile on profile.uid = channel.channel_id WHERE channel_removed = 0 AND channel_system = 0 AND (channel_pageflags & %d) = 0",
 			intval(PAGE_HIDDEN)
 		);
 
 		if ($r) {
 			foreach ($r as $rr) {
-				if (perm_is_allowed($rr['channel_id'], $auth->observer, 'view_storage')) {
+				if (perm_is_allowed($rr['channel_id'], $auth->observer, 'view_storage') && $rr['publish']) {
 					logger('found channel: /cloud/' . $rr['channel_address'], LOGGER_DATA);
 					// @todo can't we drop '/cloud'? It gets stripped off anyway in RedDirectory
 					$ret[] = new Directory('/cloud/' . $rr['channel_address'], $auth);
