@@ -276,15 +276,11 @@ class HTTPSig {
 	/**
 	 * @brief
 	 *
-	 * @param string $request
 	 * @param array $head
 	 * @param string $prvkey
-	 * @param string $keyid (optional, default 'Key')
-	 * @param boolean $send_headers (optional, default false)
-	 *   If set send a HTTP header
+	 * @param string $keyid (optional, default '')
 	 * @param boolean $auth (optional, default false)
 	 * @param string $alg (optional, default 'sha256')
-	 * @param string $crypt_key (optional, default null)
 	 * @param array $encryption [ 'key', 'algorithm' ] or false
 	 * @return array
 	 */
@@ -329,6 +325,14 @@ class HTTPSig {
 		return $return_headers;
 	}
 
+	/**
+	 * @brief set headers
+	 *
+	 * @param array $headers
+	 * @return void
+	 */
+
+
 	static function set_headers($headers) {
 		if($headers && is_array($headers)) {
 			foreach($headers as $h) {
@@ -346,6 +350,7 @@ class HTTPSig {
 	 * @param string $alg (optional) default 'sha256'
 	 * @return array
 	 */
+
 	static function sign($head, $prvkey, $alg = 'sha256') {
 
 		$ret = [];
@@ -383,6 +388,7 @@ class HTTPSig {
 	 *   - \e array  \b headers
 	 *   - \e string \b signature
 	 */
+
 	static function parse_sigheader($header) {
 
 		$ret = [];
@@ -420,6 +426,7 @@ class HTTPSig {
 	 *   - \e string \b alg
 	 *   - \e string \b data
 	 */
+
 	static function decrypt_sigheader($header, $prvkey = null) {
 
 		$iv = $key = $alg = $data = null;
