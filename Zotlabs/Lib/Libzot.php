@@ -227,8 +227,12 @@ class Libzot {
 			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false,'sha512', 
 				(($crypto) ? [ 'key' => $crypto['hubloc_sitekey'], 'algorithm' => self::best_algorithm($crypto['site_crypto']) ] : false));
 		}
+		else {
+			$h = [];
+		}
 
 		$redirects = 0;
+
 		return z_post_url($url,$data,$redirects,((empty($h)) ? [] : [ 'headers' => $h ]));
 	}
 
@@ -879,6 +883,7 @@ class Libzot {
 			&& array_key_exists('realm',$arr['site'])
 			&& (strpos($arr['site']['realm'],$realm) === false))
 			$other_realm = true;
+
 
 		if($dirmode != DIRECTORY_MODE_NORMAL) {
 
@@ -2254,7 +2259,7 @@ class Libzot {
 			$sender['key'] = $r[0]['xchan_pubkey'];
 
 		if(array_key_exists('locations',$arr) && $arr['locations']) {
-			$x = sync_locations($sender,$arr,true);
+			$x = self::sync_locations($sender,$arr,true);
 			logger('results: ' . print_r($x,true), LOGGER_DEBUG);
 			if($x['changed']) {
 				$guid = random_string() . '@' . App::get_hostname();

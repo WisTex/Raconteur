@@ -600,7 +600,6 @@ class Profiles extends \Zotlabs\Web\Controller {
 				intval(local_channel())
 			);
 			if($r) {
-				require_once('include/zot.php');
 				Libsync::build_sync_packet(local_channel(),array('profile' => $r));
 			}
 	

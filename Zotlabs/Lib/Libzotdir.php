@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Lib;
 
-use Zotlab\Lib\Libzot;
+use Zotlabs\Lib\Libzot;
 
 require_once('include/permissions.php');
 
@@ -109,15 +109,15 @@ class Libzotdir {
 	/**
 	 * @brief Called by the directory_sort widget.
 	 */
-	function dir_sort_links() {
+	static function dir_sort_links() {
 
 		$safe_mode = 1;
 
 		$observer = get_observer_hash();
 
-		$safe_mode = get_directory_setting($observer, 'safemode');
-		$globaldir = get_directory_setting($observer, 'globaldir');
-		$pubforums = get_directory_setting($observer, 'pubforums');
+		$safe_mode = self::get_directory_setting($observer, 'safemode');
+		$globaldir = self::get_directory_setting($observer, 'globaldir');
+		$pubforums = self::get_directory_setting($observer, 'pubforums');
 
 		// Build urls without order and pubforums so it's easy to tack on the changed value
 		// Probably there's an easier way to do this
@@ -295,7 +295,7 @@ class Libzotdir {
 				$zf = \Zotlabs\Lib\Zotfinger::exec($href);
 			}
 			if(is_array($zf) && array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href && intval($zf['signature']['header_valid'])) {
-				$xc = import_xchan($zf['data'], 0, $ud);
+				$xc = Libzot::import_xchan($zf['data'], 0, $ud);
 			}
 			else {
 				q("update updates set ud_last = '%s' where ud_addr = '%s'",
@@ -395,7 +395,7 @@ class Libzotdir {
 	
 		}
 
-		$ud_hash = random_string() . '@' . App::get_hostname();
+		$ud_hash = random_string() . '@' . \App::get_hostname();
 		self::update_modtime($hash, $ud_hash, channel_reddress($p[0]),(($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
 	}
 
@@ -546,7 +546,7 @@ class Libzotdir {
 		call_hooks('import_directory_profile', $d);
 
 		if (($d['update']) && (! $suppress_update))
-			self::update_modtime($arr['xprof_hash'],random_string() . '@' . App::get_hostname(), $addr, $ud_flags);
+			self::update_modtime($arr['xprof_hash'],random_string() . '@' . \App::get_hostname(), $addr, $ud_flags);
 
 		return $d['update'];
 	}

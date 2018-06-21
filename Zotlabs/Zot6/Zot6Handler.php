@@ -3,7 +3,7 @@
 namespace Zotlabs\Zot6;
 
 use Zotlabs\Lib\Libzot;
-
+require_once('include/queue_fn.php');
 
 class Zot6Handler implements IHandler {
 
@@ -62,7 +62,6 @@ class Zot6Handler implements IHandler {
 	 */
 
 	static function reply_refresh($sender, $recipients,$hubs) {
-
 		$ret = array('success' => false);
 
 		if($recipients) {
