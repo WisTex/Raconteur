@@ -2961,10 +2961,12 @@ function start_delivery_chain($channel, $item, $item_id, $parent) {
 
 		$rewrite_author = intval(get_abconfig($channel['channel_id'],$item['owner_xchan'],'system','rself'));
 		if($rewrite_author) {
-			$item['author_xchan'] = $item['owner_xchan'];
-			if($item['owner']) {
-				$item['author'] = $item['owner'];
-			}
+			$item['author_xchan'] = $channel['channel_hash'];
+
+			$r = q("update item set author_xchan = '%s' where id = %d",
+				dbesc($item['author_xchan']),
+				intval($item_id)
+			);
 		}
 	}
 
@@ -3024,7 +3026,6 @@ function start_delivery_chain($channel, $item, $item_id, $parent) {
 		intval($item_origin),
 		intval($item_id)
 	);
-
 
 	if($r)
 		Zotlabs\Daemon\Master::Summon(array('Notifier','tgroup',$item_id));
