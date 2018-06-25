@@ -976,10 +976,11 @@ class Libzot {
 
 			foreach($x['delivery_report'] as $xx) {
 				if(is_array($xx) && array_key_exists('message_id',$xx) && self::delivery_report_is_storable($xx)) {
-					q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_result, dreport_time, dreport_xchan ) values ( '%s', '%s','%s','%s','%s','%s' ) ",
+					q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan ) values ( '%s', '%s', '%s','%s','%s','%s','%s' ) ",
 						dbesc($xx['message_id']),
 						dbesc($xx['location']),
 						dbesc($xx['recipient']),
+						dbesc(EMPTY_STR),
 						dbesc($xx['status']),
 						dbesc(datetime_convert($xx['date'])),
 						dbesc($xx['sender'])
@@ -1523,7 +1524,7 @@ class Libzot {
 			}
 
 			$channel = $r[0];
-			$DR->addto_recipient($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
+			$DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
 
 			/* blacklisted channels get a permission denied, no special message to tip them off */
 
@@ -2057,7 +2058,7 @@ class Libzot {
 			}
 
 			$channel = $r[0];
-			$DR->addto_recipient($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
+			$DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
 
 			/* blacklisted channels get a permission denied, no special message to tip them off */
 

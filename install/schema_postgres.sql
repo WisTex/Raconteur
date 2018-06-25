@@ -374,6 +374,7 @@ CREATE TABLE IF NOT EXISTS "dreport" (
   "dreport_mid" varchar(255) NOT NULL DEFAULT '',
   "dreport_site" varchar(255) NOT NULL DEFAULT '',
   "dreport_recip" varchar(255) NOT NULL DEFAULT '',
+  "dreport_name" varchar(255) NOT NULL DEFAULT '',
   "dreport_result" varchar(255) NOT NULL DEFAULT '',
   "dreport_time" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "dreport_xchan" varchar(255) NOT NULL DEFAULT '',

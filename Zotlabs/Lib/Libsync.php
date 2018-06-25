@@ -766,7 +766,7 @@ class Libsync {
 
 			if(array_key_exists('item',$arr) && is_array($arr['item'][0])) {
 				$DR = new \Zotlabs\Lib\DReport(z_root(),$d['hash'],$d['hash'],$arr['item'][0]['message_id'],'channel sync processed');
-				$DR->addto_recipient($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
+				$DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
 			}
 			else
 				$DR = new \Zotlabs\Lib\DReport(z_root(),$d['hash'],$d['hash'],'sync packet','channel sync delivered');

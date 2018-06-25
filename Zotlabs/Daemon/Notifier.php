@@ -660,10 +660,11 @@ class Notifier {
 
 				// only create delivery reports for normal undeleted items
 				if(is_array($target_item) && array_key_exists('postopts',$target_item) && (! $target_item['item_deleted']) && (! get_config('system','disable_dreport'))) {
-					q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_result, dreport_time, dreport_xchan, dreport_queue ) values ( '%s','%s','%s','%s','%s','%s','%s' ) ",
+					q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan, dreport_queue ) values ( '%s', '%s','%s','%s','%s','%s','%s','%s' ) ",
 						dbesc($target_item['mid']),
 						dbesc($hub['hubloc_host']),
 						dbesc($hub['hubloc_host']),
+						dbesc(EMPTY_STR),
 						dbesc('queued'),
 						dbesc(datetime_convert()),
 						dbesc($channel['channel_hash']),

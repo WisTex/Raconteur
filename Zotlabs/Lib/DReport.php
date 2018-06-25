@@ -14,6 +14,7 @@ class DReport {
 		$this->location   = $location;
 		$this->sender     = $sender;
 		$this->recipient  = $recipient;
+		$this->name       = EMPTY_STR;
 		$this->message_id = $message_id;
 		$this->status     = $status;
 		$this->date       = datetime_convert();
@@ -24,8 +25,8 @@ class DReport {
 		$this->date       = datetime_convert();
 	}
 
-	function addto_recipient($name) {
-		$this->recipient = $this->recipient . ' ' . $name;
+	function set_name($name) {
+		$this->name = $name;
 	}
 
 	function addto_update($status) {
@@ -37,6 +38,7 @@ class DReport {
 		$this->location   = $arr['location'];
 		$this->sender     = $arr['sender'];
 		$this->recipient  = $arr['recipient'];
+		$this->name       = $arr['name'];
 		$this->message_id = $arr['message_id'];
 		$this->status     = $arr['status'];
 		$this->date       = $arr['date'];
@@ -47,6 +49,7 @@ class DReport {
 			'location'   => $this->location,
 			'sender'     => $this->sender,
 			'recipient'  => $this->recipient,
+			'name'       => $this->name.
 			'message_id' => $this->message_id,
 			'status'     => $this->status,
 			'date'       => $this->date

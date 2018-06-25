@@ -403,6 +403,7 @@ CREATE TABLE IF NOT EXISTS `dreport` (
   `dreport_mid` char(191) NOT NULL DEFAULT '',
   `dreport_site` char(191) NOT NULL DEFAULT '',
   `dreport_recip` char(191) NOT NULL DEFAULT '',
+  `dreport_name` char(191) NOT NULL DEFAULT '',
   `dreport_result` char(191) NOT NULL DEFAULT '',
   `dreport_time` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `dreport_xchan` char(191) NOT NULL DEFAULT '',
