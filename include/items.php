@@ -980,11 +980,7 @@ function empty_acl($item) {
 }
 
 function encode_item($item,$mirror = false) {
-	$x = array();
-	$x['type'] = 'activity';
-	$x['encoding'] = 'zot';
-
-//	logger('encode_item: ' . print_r($item,true));
+	$x = [];
 
 	$r = q("select channel_id from channel where channel_id = %d limit 1",
 		intval($item['uid'])
@@ -1362,9 +1358,7 @@ function encode_item_flags($item) {
 }
 
 function encode_mail($item,$extended = false) {
-	$x = array();
-	$x['type'] = 'mail';
-	$x['encoding'] = 'zot';
+	$x = [];
 
 	if(array_key_exists('mail_obscured',$item) && intval($item['mail_obscured'])) {
 		if($item['title'])
