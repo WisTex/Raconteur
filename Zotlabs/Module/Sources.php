@@ -12,12 +12,13 @@ class Sources extends \Zotlabs\Web\Controller {
 			return '';
 	
 		$source = intval($_REQUEST['source']);
-		$xchan = $_REQUEST['xchan'];
+		$xchan = escape_tags($_REQUEST['xchan']);
 		$abook = intval($_REQUEST['abook']);
-		$words = $_REQUEST['words'];
+		$words = escape_tags($_REQUEST['words']);
+		$resend = intval($_REQUEST['resend']);
 		$frequency = $_REQUEST['frequency'];
-		$name = $_REQUEST['name'];
-		$tags = $_REQUEST['tags'];
+		$name = escape_tags($_REQUEST['name']);
+		$tags = escape_tags($_REQUEST['tags']);
 	
 		$channel = \App::get_channel();
 	
@@ -37,6 +38,8 @@ class Sources extends \Zotlabs\Web\Controller {
 			notice ( t('Failed to create source. No channel selected.') . EOL);
 			return;
 		}
+
+		set_abconfig(local_channel(),$xchan, 'system','rself',$resend);
 
 		if(! $source) {
 			$r = q("insert into source ( src_channel_id, src_channel_xchan, src_xchan, src_patt, src_tag )
@@ -69,7 +72,7 @@ class Sources extends \Zotlabs\Web\Controller {
 	}
 	
 	
-		function get() {
+	function get() {
 		if(! local_channel()) {
 			notice( t('Permission denied.') . EOL);
 			return '';
@@ -110,7 +113,7 @@ class Sources extends \Zotlabs\Web\Controller {
 				'$words' => array( 'words', t('Only import content with these words (one per line)'),'',t('Leave blank to import all public content')),
 				'$name' => array( 'name', t('Channel Name'), '', ''),
 				'$tags' => array('tags', t('Add the following categories to posts imported from this source (comma separated)'),'',t('Optional')),
-
+				'$resend' => [ 'resend', t('Resend posts with this channel as author'), 0, t('Copyrights may apply'), [ t('No'), t('Yes') ]],  
 				'$submit' => t('Submit')
 			));
 			return $o;
@@ -145,6 +148,8 @@ class Sources extends \Zotlabs\Web\Controller {
 				'$xchan' => $r[0]['src_xchan'],
 				'$abook' => $x[0]['abook_id'],
 				'$tags' => array('tags', t('Add the following categories to posts imported from this source (comma separated)'),$r[0]['src_tag'],t('Optional')),
+				'$resend' => [ 'resend', t('Resend posts with this channel as author'), get_abconfig(local_channel(), $r[0]['xchan_hash'],'system','rself'), t('Copyrights may apply'), [ t('No'), t('Yes') ]],  
+
 				'$name' => array( 'name', t('Channel Name'), $r[0]['xchan_name'], ''),
 				'$submit' => t('Submit')
 			));

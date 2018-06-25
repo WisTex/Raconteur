@@ -19,7 +19,11 @@ class Magic extends \Zotlabs\Web\Controller {
 		$rev  = ((x($_REQUEST,'rev'))  ? intval($_REQUEST['rev'])  : 0);
 		$owa  = ((x($_REQUEST,'owa'))  ? intval($_REQUEST['owa'])  : 0);
 		$delegate = ((x($_REQUEST,'delegate')) ? $_REQUEST['delegate']  : '');
-	
+
+		// Apache(?) appears to perform an htmlentities() operation on this variable
+
+		$dest = html_entity_decode($dest);	
+
 		$parsed = parse_url($dest);
 		if(! $parsed) {
 			if($test) {
@@ -138,6 +142,9 @@ class Magic extends \Zotlabs\Web\Controller {
 			// OpenWebAuth
 
 			if($owa) {
+
+				$dest = strip_zids($dest);
+				$dest = strip_query_param($dest,'f');
 
 				$headers = [];
 				$headers['Accept'] = 'application/x-zot+json' ;

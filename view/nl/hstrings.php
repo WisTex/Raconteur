@@ -1816,7 +1816,7 @@ App::$strings["share"] = "delen";
 App::$strings["Delivery Report"] = "Afleveringsrapport";
 App::$strings["%d comment"] = array(
 	0 => "%d reactie",
-	1 => "%d reacties getoond",
+	1 => "%d reacties",
 );
 App::$strings["View %s's profile - %s"] = "Profiel van %s bekijken - %s";
 App::$strings["to"] = "aan";
