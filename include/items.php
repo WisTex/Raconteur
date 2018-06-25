@@ -980,11 +980,7 @@ function empty_acl($item) {
 }
 
 function encode_item($item,$mirror = false) {
-	$x = array();
-	$x['type'] = 'activity';
-	$x['encoding'] = 'zot';
-
-//	logger('encode_item: ' . print_r($item,true));
+	$x = [];
 
 	$r = q("select channel_id from channel where channel_id = %d limit 1",
 		intval($item['uid'])
@@ -1362,9 +1358,7 @@ function encode_item_flags($item) {
 }
 
 function encode_mail($item,$extended = false) {
-	$x = array();
-	$x['type'] = 'mail';
-	$x['encoding'] = 'zot';
+	$x = [];
 
 	if(array_key_exists('mail_obscured',$item) && intval($item['mail_obscured'])) {
 		if($item['title'])
@@ -2961,10 +2955,12 @@ function start_delivery_chain($channel, $item, $item_id, $parent) {
 
 		$rewrite_author = intval(get_abconfig($channel['channel_id'],$item['owner_xchan'],'system','rself'));
 		if($rewrite_author) {
-			$item['author_xchan'] = $item['owner_xchan'];
-			if($item['owner']) {
-				$item['author'] = $item['owner'];
-			}
+			$item['author_xchan'] = $channel['channel_hash'];
+
+			$r = q("update item set author_xchan = '%s' where id = %d",
+				dbesc($item['author_xchan']),
+				intval($item_id)
+			);
 		}
 	}
 
@@ -3024,7 +3020,6 @@ function start_delivery_chain($channel, $item, $item_id, $parent) {
 		intval($item_origin),
 		intval($item_id)
 	);
-
 
 	if($r)
 		Zotlabs\Daemon\Master::Summon(array('Notifier','tgroup',$item_id));
