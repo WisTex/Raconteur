@@ -679,7 +679,7 @@ function logid() {
 	$x = session_id();
 	if(! $x)
 		$x = getmypid();
-	return hash('crc32',$x);
+	return substr(hash('whirlpool',$x),0,10);
 }
 
 /**
