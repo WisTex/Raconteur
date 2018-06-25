@@ -76,7 +76,6 @@ class HTTPSig {
 
 		$body      = $data;
 		$headers   = null;
-		$spoofable = false;
 
 		$result = [
 			'signer'         => '',
@@ -120,9 +119,6 @@ class HTTPSig {
 			if(array_key_exists($h,$headers)) {
 				$signed_data .= $h . ': ' . $headers[$h] . "\n";
 			}
-			if(strpos($h,'.')) {
-				$spoofable = true;
-			}
 		}
 		$signed_data = rtrim($signed_data,"\n");
 
@@ -151,8 +147,8 @@ class HTTPSig {
 		if(! $x)
 			return $result;
 
-		if(! $spoofable)
-			$result['header_valid'] = true;
+
+		$result['header_valid'] = true;
 
 		if(in_array('digest',$signed_headers)) {
 			$result['content_signed'] = true;
@@ -165,9 +161,9 @@ class HTTPSig {
 			if(base64_encode(hash($hashalg,$body,true)) === $digest[1]) {
 				$result['content_valid'] = true;
 			}
-		}
 
-		logger('Content_Valid: ' . (($result['content_valid']) ? 'true' : 'false'));
+			logger('Content_Valid: ' . (($result['content_valid']) ? 'true' : 'false'));
+		}
 
 		return $result;
 	}

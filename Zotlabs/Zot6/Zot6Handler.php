@@ -7,42 +7,42 @@ require_once('include/queue_fn.php');
 
 class Zot6Handler implements IHandler {
 
-	function Notify($data,$hubs) {
-		self::reply_notify($data,$hubs);
+	function Notify($data) {
+		return self::reply_notify($data);
 	}
 
-	function Request($data,$hubs) {
-		self::reply_message_request($data,$hubs);
+	function Request($data) {
+		return self::reply_message_request($data);
 	}
 
-	function Rekey($sender,$data,$hubs) {
-		self::reply_rekey_request($sender,$data,$hubs);
+	function Rekey($sender,$data) {
+		return self::reply_rekey_request($sender,$data);
 	}
 
-	function Refresh($sender,$recipients,$hubs) {
-		self::reply_refresh($sender,$recipients,$hubs);
+	function Refresh($sender,$recipients) {
+		return self::reply_refresh($sender,$recipients);
 	}
 
-	function Purge($sender,$recipients,$hubs) {
-		self::reply_purge($sender,$recipients,$hubs);
+	function Purge($sender,$recipients) {
+		return self::reply_purge($sender,$recipients);
 	}
 
 	// Implementation of specific methods follows;
 	// These generally do a small amout of validation and call Libzot 
 	// to do any heavy lifting
 
-	static function reply_notify($data,$hubs) {
+	static function reply_notify($data) {
 
 		$ret = [ 'success' => false ];
 
 		logger('notify received from ' . $data['sender']['location']);
 
-		$x = Libzot::fetch($data,$hubs);
+		$x = Libzot::fetch($data);
 		$ret['delivery_report'] = $x;
 	
 
 		$ret['success'] = true;
-		json_return_and_die($ret);
+		return $ret;
 	}
 
 
@@ -61,7 +61,7 @@ class Zot6Handler implements IHandler {
 	 * @return json_return_and_die()
 	 */
 
-	static function reply_refresh($sender, $recipients,$hubs) {
+	static function reply_refresh($sender, $recipients) {
 		$ret = array('success' => false);
 
 		if($recipients) {
@@ -85,7 +85,7 @@ class Zot6Handler implements IHandler {
 		}
 
 		$ret['success'] = true;
-		json_return_and_die($ret);
+		return $ret;
 	}
 
 
@@ -108,17 +108,25 @@ class Zot6Handler implements IHandler {
 	 * @return array
 	 */
 	
-	static function reply_message_request($data,$hubs) {
+	static function reply_message_request($data) {
 		$ret = [ 'success' => false ];
 
 		if (! $data['message_id']) {
 			$ret['message'] = 'no message_id';
 			logger('no message_id');
-			json_return_and_die($ret);
+			return $ret;
 		}
 
 		$sender = $data['sender'];
-		$sender_hash = $hubs[0]['hubloc_hash'];
+
+		$hub = Libzot::gethub($data['sender']);
+		if($hub) {
+			$sender_hash = $hub['hubloc_hash'];
+		}
+		else {
+			$ret['message'] = 'sender not found.' . EOL;
+			return $ret;
+		}
 
 		/*
 		 * Find the local channel in charge of this post (the first and only recipient of the request packet)
@@ -132,7 +140,7 @@ class Zot6Handler implements IHandler {
 		if (! $c) {
 			logger('recipient channel not found.');
 			$ret['message'] .= 'recipient not found.' . EOL;
-			json_return_and_die($ret);
+			return $ret;
 		}
 
 		/*
@@ -149,7 +157,7 @@ class Zot6Handler implements IHandler {
 			);
 			if (! $r) {
 				logger('no hubs');
-				json_return_and_die($ret);
+				return $ret;
 			}
 			$ohubs = $r;
 
@@ -194,10 +202,10 @@ class Zot6Handler implements IHandler {
 			}
 		}
 		$ret['success'] = true;
-		json_return_and_die($ret);
+		return $ret;
 	}
 
-	static function rekey_request($sender,$data,$hubs) {
+	static function rekey_request($sender,$data) {
 
 		$ret = array('success' => false);
 
@@ -209,7 +217,7 @@ class Zot6Handler implements IHandler {
 		// old xchan_hash.
 
 		if((! $data['old_key']) && (! $data['new_key']) && (! $data['new_sig']))
-			json_return_and_die($ret);
+			return $ret;
 
 
 		$old = null;
@@ -221,17 +229,17 @@ class Zot6Handler implements IHandler {
 			);
 		}
 		else 
-			json_return_and_die($ret);
+			return $ret;
 
 
 		if(! $old) {
-			json_return_and_die($ret);
+			return $ret;
 		}
 
 		$xchan = $old[0];
 
 		if(! Libzot::verify($data['new_key'],$data['new_sig'],$xchan['xchan_pubkey'])) {
-			json_return_and_die($ret);
+			return $ret;
 		}
 
 
@@ -248,7 +256,7 @@ class Zot6Handler implements IHandler {
 		xchan_change_key($xchan,$newxchan,$data);
 
 		$ret['success'] = true;
-		json_return_and_die($ret);
+		return $ret;
 	}
 
 
@@ -261,9 +269,14 @@ class Zot6Handler implements IHandler {
 	 * return json_return_and_die()
 	 */
 
-	static function reply_purge($sender, $recipients,$hubs) {
+	static function reply_purge($sender, $recipients) {
 
 		$ret = array('success' => false);
+
+		$hub = Libzot::gethub($data['sender']);
+		if(! $hub) {
+			return $ret;
+		}
 
 		if ($recipients) {
 			// basically this means "unfriend"
@@ -276,7 +289,7 @@ class Zot6Handler implements IHandler {
 				if ($r) {
 					$r = q("select abook_id from abook where uid = %d and abook_xchan = '%s' limit 1",
 						intval($r[0]['channel_id']),
-						dbesc($hubs[0]['hubloc_hash'])
+						dbesc($hub['hubloc_hash'])
 					);
 					if ($r) {
 						contact_remove($r[0]['channel_id'],$r[0]['abook_id']);
@@ -289,12 +302,12 @@ class Zot6Handler implements IHandler {
 
 			// Unfriend everybody - basically this means the channel has committed suicide
 
-			remove_all_xchan_resources($hubs[0]['hubloc_hash']);
+			remove_all_xchan_resources($hub['hubloc_hash']);
 
 			$ret['success'] = true;
 		}
 
-		json_return_and_die($ret);
+		return $ret;
 	}
 
 

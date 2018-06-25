@@ -179,12 +179,6 @@ class Activity {
 				$ret['location']['longitude'] = $l[1];
 			}
 		}
-		$ret['url'] = [
-			'type' => 'Link',
-			'rel'  => 'alternate',
-			'type' => 'text/html',
-			'href' => $i['plink']
-		];
 
 		$ret['attributedTo'] = $i['author']['xchan_url'];
 
@@ -499,22 +493,29 @@ class Activity {
 			'url'       => $p['xchan_photo_l'],
 			'height'    => 300,
 			'width'     => 300,
-    	    ];
+		];
 		$ret['url'] = [
-			'type'      => 'Link',
-			'mediaType' => 'text/html',
-			'href'      => $p['xchan_url']
+			[ 
+				'type'      => 'Link',
+				'mediaType' => 'text/html',
+				'href'      => $p['xchan_url']
+			],
+			[
+				'type'      => 'Link',
+				'mediaType' => 'text/x-zot+json',
+				'href'      => $p['xchan_url']
+			]
 		];
 
-		$c = channelx_by_hash($p['xchan_hash']);
+//		$c = channelx_by_hash($p['xchan_hash']);
 
-		if($c) {
-			$ret['publicKey'] = [
-				'id'           => $p['xchan_url'] . '/public_key_pem',
-				'owner'        => $p['xchan_url'],
-				'publicKeyPem' => $p['xchan_pubkey']
-			];
-		}
+//		if($c) {
+//			$ret['publicKey'] = [
+//				'id'           => $p['xchan_url'] . '/public_key_pem',
+//				'owner'        => $p['xchan_url'],
+//				'publicKeyPem' => $p['xchan_pubkey']
+//			];
+//		}
 
 		return $ret;
 	}

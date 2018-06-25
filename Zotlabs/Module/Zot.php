@@ -2,11 +2,13 @@
 /**
  * @file Zotlabs/Module/Zot.php
  *
- * @brief Zot6 endpoint.
+ * @brief Zot endpoint.
  *
  */
 
 namespace Zotlabs\Module;
+
+use Zotlabs\Zot6 as ZotProtocol;
 
 /**
  * @brief Zot module.
@@ -16,9 +18,8 @@ namespace Zotlabs\Module;
 class Zot extends \Zotlabs\Web\Controller {
 
 	function init() {
-		$zot = new \Zotlabs\Zot6\Receiver(new \Zotlabs\Zot6\Zot6Handler());
-		$zot->run();
-		exit;
+		$zot = new ZotProtocol\Receiver(new ZotProtocol\Zot6Handler());
+		json_return_and_die($zot->run(),'application/x-zot+jzon');
 	}
 
 }

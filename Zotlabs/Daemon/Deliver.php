@@ -26,7 +26,7 @@ class Deliver {
 				dbesc($argv[$x])
 			);
 			if($r) {
-
+/*
 				$notify = json_decode($r[0]['outq_notify'],true);
 
 				// Messages without an outq_msg will need to go via the web, even if it's a
@@ -80,7 +80,7 @@ class Deliver {
 						continue;
 					}
 				}
-
+*/
 				// otherwise it's a remote delivery - call queue_deliver() with the $immediate flag
 
 				queue_deliver($r[0],true);

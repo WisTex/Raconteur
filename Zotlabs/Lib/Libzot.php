@@ -122,10 +122,7 @@ class Libzot {
 				'location_sig'  => self::sign(z_root(),$channel['channel_prvkey'],$sig_method),
 				'site_id'       => self::make_xchan_hash(z_root(), get_config('system','pubkey')),
 			],
-			'callback'   => '/zot',
 			'version'    => System::get_zot_revision(),
-			'encryption' => crypto_methods(),
-			'signing'    => signing_methods()
 		];
 
 		if ($recipients) {
@@ -266,11 +263,6 @@ class Libzot {
 	 */
 
 	static function refresh($them, $channel = null, $force = false) {
-
-//		if (array_key_exists('xchan_network', $them) && ($them['xchan_network'] !== 'zot6')) {
-//			logger('not got zot. ' . $them['xchan_name']);
-//			return true;
-//		}
 
 		logger('them: ' . print_r($them,true), LOGGER_DATA, LOG_DEBUG);
 		if ($channel)
@@ -604,7 +596,7 @@ class Libzot {
 	}
 
 	/**
-	 * @brief Takes an associative array of a fetched discovery packet and updates
+	 * @brief Takes an associative array of a fetch discovery packet and updates
 	 *   all internal data structures which need to be updated as a result.
 	 *
 	 * @param array $arr => json_decoded discovery packet
@@ -955,6 +947,8 @@ class Libzot {
 
 	static function process_response($hub, $arr, $outq) {
 
+		logger('arr: ' . print_r($arr,true));
+
 		if(! $arr['success']) {
 			logger('Failed: ' . $hub);
 			return;
@@ -1042,45 +1036,11 @@ class Libzot {
 
 		logger('zot_fetch: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 
-		$url = $arr['sender']['location'] . $arr['callback'];
-
-		$import = null;
-		$hubs   = null;
+		$import = [ 'notify' => $arr, 'message' => $arr['data'] ] ;
 
 
-		logger('zot6_delivery',LOGGER_DEBUG);
-		logger('zot6_data: ' . print_r($arr,true),LOGGER_DATA);
+		return self::import($arr, $arr['sender']['location']);
 
-		$ret['collected'] = true;
-
-		$import = [ 'success' => true, 'body' => json_encode( [ 'success' => true, 'pickup' => [ [ 'notify' => $arr, 'message' => json_decode($arr['data'],true) ] ] ] ) ];
-
-		if(! $hubs) {
-			// set $multiple param on zot_gethub() to return all matching hubs
-			// This allows us to recover from re-installs when a redundant (but invalid) hubloc for
-			// this identity is widely dispersed throughout the network.
-
-			$hubs = self::gethub($arr['sender'],true);
-		}
-
-		if(! $hubs) {
-			logger('No hub: ' . print_r($arr['sender'],true));
-			return;
-		}
-
-		foreach($hubs as $hub) {
-
-			$algorithm = self::best_algorithm($hub['site_crypto']);
-			$result = self::import($import, $arr['sender']['location']);
-
-			if($result) {
-				$result = crypto_encapsulate(json_encode($result),$hub['hubloc_sitekey'], $algorithm);
-				return $result;
-			}
-
-		}
-
-		return;
 	}
 
 	/**
@@ -1109,231 +1069,181 @@ class Libzot {
 
 	static function import($arr, $sender_url) {
 
-		$data = json_decode($arr['body'], true);
-
-		if(! $data) {
-			logger('Empty body');
-			return [];
-		}
-
-		if(! is_array($data)) {
-			logger('decode error');
-			return [];
-		}
-
-		if(! $data['success']) {
-			if($data['message'])
-				logger('remote pickup failed: ' . $data['message']);
-			return false;
-		}
-
-		$incoming = $data['pickup'];
+		$env = $arr;
 
 		$return = [];
 
-		if(is_array($incoming)) {
-			foreach($incoming as $i) {
-				if(! is_array($i)) {
-					logger('incoming is not an array');
+		$result = null;
+
+		logger('Notify: ' . print_r($env,true), LOGGER_DATA, LOG_DEBUG);
+
+		if(! is_array($env)) {
+			logger('decode error');
+			return;
+		}
+
+
+		$hub = self::gethub($env['sender']);
+		if((! $hub) || ($hub['hubloc_url'] != $sender_url)) {
+			logger('Potential forgery: wrong site for sender: ' . $sender_url . ' != ' . print_r($i['notify'],true));
+			return;
+		}
+
+		$message_request = ((array_key_exists('message_id',$env)) ? true : false);
+		if($message_request)
+			logger('processing message request');
+
+		$env['sender']['hash'] = $hub['hubloc_hash'];
+
+		$has_data = array_key_exists('data',$env) && $env['data'];
+		$data = (($has_data) ? $env['data'] : false);
+		
+		$deliveries = null;
+
+		if(array_key_exists('recipients',$env) && count($env['recipients'])) {
+			logger('specific recipients');
+			$recip_arr = array();
+			foreach($env['recipients'] as $recip) {
+				if(is_array($recip)) {
+					$recip_arr[] =  $recip['portable_id'];
+				}
+			}
+
+			$r = false;
+			if($recip_arr) {
+				stringify_array_elms($recip_arr);
+				$recips = implode(',',$recip_arr);
+				$r = q("select channel_hash as hash from channel where channel_hash in ( " . $recips . " ) and channel_removed = 0 ");
+			}
+
+			if(! $r) {
+				logger('recips: no recipients on this site');
+				return;
+			}
+
+			$deliveries = $r;
+
+			// We found somebody on this site that's in the recipient list.
+		}
+		else {
+
+			logger('public post');
+
+
+			// Public post. look for any site members who are or may be accepting posts from this sender
+			// and who are allowed to see them based on the sender's permissions
+			// @fixme;
+
+			$deliveries = self::allowed_public_recips($env['data']);
+
+			if($has_data && $data['type'] === 'location') {
+				$sys = get_sys_channel();
+				$deliveries = array(array('hash' => $sys['xchan_hash']));
+			}
+
+		}
+
+		// Go through the hash array and remove duplicates. array_unique() won't do this because the array is more than one level.
+
+		$no_dups = array();
+		if($deliveries) {
+			foreach($deliveries as $d) {
+				if(! is_array($d)) {
+					logger('Delivery hash array is not an array: ' . print_r($d,true));
 					continue;
 				}
+				if(! in_array($d['hash'],$no_dups))
+					$no_dups[] = $d['hash'];
+			}
 
-				$result = null;
-
-				logger('Notify: ' . print_r($i['notify'],true), LOGGER_DATA, LOG_DEBUG);
-
-				if(! is_array($i['notify'])) {
-					logger('decode error');
-					continue;
-				}
-
-
-				$hub = self::gethub($i['notify']['sender']);
-				if((! $hub) || ($hub['hubloc_url'] != $sender_url)) {
-					logger('Potential forgery: wrong site for sender: ' . $sender_url . ' != ' . print_r($i['notify'],true));
-					continue;
-				}
-
-				$message_request = ((array_key_exists('message_id',$i['notify'])) ? true : false);
-				if($message_request)
-					logger('processing message request');
-
-				$i['notify']['sender']['hash'] = $hub['hubloc_hash'];
-				$deliveries = null;
-
-				if(array_key_exists('recipients',$i['notify']) && count($i['notify']['recipients'])) {
-					logger('specific recipients');
-					$recip_arr = array();
-					foreach($i['notify']['recipients'] as $recip) {
-						if(is_array($recip)) {
-							$recip_arr[] =  $recip['portable_id'];
-						}
-					}
-
-					$r = false;
-					if($recip_arr) {
-						stringify_array_elms($recip_arr);
-						$recips = implode(',',$recip_arr);
-						$r = q("select channel_hash as hash from channel where channel_hash in ( " . $recips . " ) and channel_removed = 0 ");
-					}
-
-					if(! $r) {
-						logger('recips: no recipients on this site');
-						continue;
-					}
-
-					// It's a specifically targetted post. If we were sent a public_scope hint (likely),
-					// get rid of it so that it doesn't get stored and cause trouble.
-
-					if(($i) && is_array($i) && array_key_exists('message',$i) && is_array($i['message'])
-						&& $i['message']['type'] === 'activity' && array_key_exists('public_scope',$i['message']))
-						unset($i['message']['public_scope']);
-
-					$deliveries = $r;
-
-					// We found somebody on this site that's in the recipient list.
-
-				}
-				else {
-					if(($i['message']) && (array_key_exists('flags',$i['message'])) && (in_array('private',$i['message']['flags'])) && $i['message']['type'] === 'activity') {
-						if(array_key_exists('public_scope',$i['message']) && $i['message']['public_scope'] === 'public') {
-							// This should not happen but until we can stop it...
-							logger('private message was delivered with no recipients.');
-							continue;
-						}
-					}
-
-					logger('public post');
-
-					// Public post. look for any site members who are or may be accepting posts from this sender
-					// and who are allowed to see them based on the sender's permissions
-
-					$deliveries = self::allowed_public_recips($i);
-
-					if($i['message'] && array_key_exists('type',$i['message']) && $i['message']['type'] === 'location') {
-						$sys = get_sys_channel();
-						$deliveries = array(array('hash' => $sys['xchan_hash']));
-					}
-
-					// if the scope is anything but 'public' we're going to store it as private regardless
-					// of the private flag on the post.
-	
-					if($i['message'] && array_key_exists('public_scope',$i['message'])
-						&& $i['message']['public_scope'] !== 'public') {
-
-						if(! array_key_exists('flags',$i['message']))
-							$i['message']['flags'] = array();
-						if(! in_array('private',$i['message']['flags']))
-							$i['message']['flags'][] = 'private';
-					}
-				}
-
-
-				// Go through the hash array and remove duplicates. array_unique() won't do this because the array is more than one level.
-
-				$no_dups = array();
-				if($deliveries) {
-					foreach($deliveries as $d) {
-						if(! is_array($d)) {
-							logger('Delivery hash array is not an array: ' . print_r($d,true));
-							continue;
-						}
-						if(! in_array($d['hash'],$no_dups))
-							$no_dups[] = $d['hash'];
-					}
-
-					if($no_dups) {
-						$deliveries = array();
-						foreach($no_dups as $n) {
-							$deliveries[] = array('hash' => $n);
-						}
-					}
-				}
-
-				if(! $deliveries) {
-					logger('No deliveries on this site');
-					continue;
-				}
-
-				if($i['message']) {
-					if($i['message']['type'] === 'activity') {
-
-						if($i['message']['encoding'] === 'zot') {
-							$arr = get_item_elements($i['message']);
-	
-							$v = validate_item_elements($i['message'],$arr);
-					
-							if(! $v['success']) {
-								logger('Activity rejected: ' . $v['message'] . ' ' . print_r($i['message'],true));
-								continue;
-							}
-						}
-						elseif($i['message']['encoding'] === 'activitystreams') {
-
-							$AS = new \Zotlabs\Lib\ActivityStreams($i['message']['content']);
-							if(! $AS->is_valid()) {
-								logger('Activity rejected: ' . print_r($i['message'],true));
-								continue;
-							}
-							$arr = \Zotlabs\Lib\Activity::decode_note($AS);
-							$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
-								dbesc($AS->actor['id'])
-							); 
-							if($r) {
-								$arr['author_xchan'] = $r[0]['hubloc_hash'];
-							}
-							// @fixme (in individual delivery, change owner if needed)
-							$arr['owner_xchan'] = $i['notify']['sender']['hash'];						
-
-						}
-
-						logger('Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
-						logger('Activity recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
-
-						$relay = ((array_key_exists('flags',$i['message']) && in_array('relay',$i['message']['flags'])) ? true : false);
-						$result = self::process_delivery($i['notify']['sender'],$arr,$deliveries,$relay,false,$message_request);
-					}
-					elseif($i['message']['type'] === 'mail') {
-						$arr = get_mail_elements($i['message']);
-
-						logger('Mail received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
-						logger('Mail recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
-	
-						$result = self::process_mail_delivery($i['notify']['sender'],$arr,$deliveries);
-					}
-					elseif($i['message']['type'] === 'profile') {
-						$arr = get_profile_elements($i['message']);
-
-						logger('Profile received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
-						logger('Profile recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
-	
-						$result = self::process_profile_delivery($i['notify']['sender'],$arr,$deliveries);
-					}
-					elseif($i['message']['type'] === 'channel_sync') {
-						// $arr = get_channelsync_elements($i['message']);
-
-						$arr = $i['message'];
-
-						logger('Channel sync received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
-						logger('Channel sync recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
-
-						$result = Libsync::process_channel_sync_delivery($i['notify']['sender'],$arr,$deliveries);
-					}
-					elseif($i['message']['type'] === 'location') {
-						$arr = $i['message'];
-
-						logger('Location message received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
-						logger('Location message recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
-
-						$result = self::process_location_delivery($i['notify']['sender'],$arr,$deliveries);
-					}
-				}
-				if ($result) {
-					$return = array_merge($return, $result);
+			if($no_dups) {
+				$deliveries = array();
+				foreach($no_dups as $n) {
+					$deliveries[] = array('hash' => $n);
 				}
 			}
 		}
 
+		if(! $deliveries) {
+			logger('No deliveries on this site');
+			return;
+		}
+
+		if($has_data) {
+			if($data['type'] === 'activity') {
+
+				if($data['encoding'] === 'zot') {
+					$arr = get_item_elements($data);
+	
+					$v = validate_item_elements($data,$arr);
+					
+					if(! $v['success']) {
+						logger('Activity rejected: ' . $v['message'] . ' ' . print_r($data,true));
+						return;
+					}
+				}
+				elseif($data['encoding'] === 'activitystreams') {
+
+					$AS = new \Zotlabs\Lib\ActivityStreams($data['content']);
+					if(! $AS->is_valid()) {
+						logger('Activity rejected: ' . print_r($data,true));
+						return;
+					}
+					$arr = \Zotlabs\Lib\Activity::decode_note($AS);
+					$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
+						dbesc($AS->actor['id'])
+					); 
+					if($r) {
+						$arr['author_xchan'] = $r[0]['hubloc_hash'];
+					}
+					// @fixme (in individual delivery, change owner if needed)
+					$arr['owner_xchan'] = $env['sender']['hash'];						
+
+				}
+
+				logger('Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
+				logger('Activity recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
+
+				$relay = ((array_key_exists('flags',$data) && in_array('relay',$data['flags'])) ? true : false);
+				$result = self::process_delivery($env['sender'],$arr,$deliveries,$relay,false,$message_request);
+			}
+			elseif($data['type'] === 'mail') {
+				$arr = get_mail_elements($data);
+				logger('Mail received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
+				logger('Mail recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
+	
+				$result = self::process_mail_delivery($env['sender'],$arr,$deliveries);
+			}
+			elseif($data['type'] === 'profile') {
+				$arr = get_profile_elements($data);
+
+				logger('Profile received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
+				logger('Profile recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
+	
+				$result = self::process_profile_delivery($env['sender'],$arr,$deliveries);
+			}
+			elseif($data['type'] === 'channel_sync') {
+				// $arr = get_channelsync_elements($data);
+
+				$arr = $data;
+
+				logger('Channel sync received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
+				logger('Channel sync recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
+
+				$result = Libsync::process_channel_sync_delivery($env['sender'],$arr,$deliveries);
+			}
+			elseif($data['type'] === 'location') {
+				$arr = $data;
+
+				logger('Location message received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
+				logger('Location message recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
+
+				$result = self::process_location_delivery($env['sender'],$arr,$deliveries);
+			}
+		}
+		if ($result) {
+			$return = array_merge($return, $result);
+		}		
 		return $return;
 	}
 

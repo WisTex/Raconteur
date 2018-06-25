@@ -619,15 +619,15 @@ class Notifier {
 			$pmsg   = '';
 
 			if($packet_type === 'refresh' || $packet_type === 'purge') {
-				$packet = Libzot::build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null),'');
+				$packet = Libzot::build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null), EMPTY_STR);
 			}
 			if($packet_type === 'keychange') {
 				$pmsg = get_pconfig($channel['channel_id'],'system','keychange');
-				$packet = Libzot::build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null),'');
+				$packet = Libzot::build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null),$pmsg);
 			}
 			elseif($packet_type === 'request') {
 				$env = (($hub_env && $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']]) ? $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] : '');
-				$packet = Libzot::build_packet($channel,$packet_type,$env,'',$hub['hubloc_sitekey'],$hub['site_crypto'],
+				$packet = Libzot::build_packet($channel,$packet_type,$env,EMPTY_STR,$hub['hubloc_sitekey'],$hub['site_crypto'],
 					$hash, array('message_id' => $request_message_id)
 				);
 			}
@@ -639,18 +639,13 @@ class Notifier {
 					'channel_id' => $channel['channel_id'],
 					'posturl'    => $hub['hubloc_callback'],
 					'notify'     => $packet,
-					'msg'        => (($pmsg) ? json_encode($pmsg) : '')
+					'msg'        => EMPTY_STR
 				));
 			}
 			else {
 				$env = (($hub_env && $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']]) ? $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] : '');
 
-				// currently zot6 delivery is only performed on normal items and not sync items or mail or anything else
-				// Eventually we will do this for all deliveries, but for now ensure this is precisely what we are dealing 
-				// with before switching to zot6 as the primary zot6 handler checks for the existence of a message delivery report
-				// to trigger dequeue'ing
-
-				$packet = Libzot::build_packet($channel,'notify',$env, json_encode($encoded_item), (($private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto']);
+				$packet = Libzot::build_packet($channel,'notify',$env, $encoded_item, (($private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto']);
 
 				queue_insert(
 					[
@@ -659,7 +654,7 @@ class Notifier {
 						'channel_id' => $target_item['uid'],
 						'posturl'    => $hub['hubloc_callback'],
 						'notify'     => $packet,
-						'msg'        => json_encode($encoded_item)
+						'msg'        => EMPTY_STR
 					]
 				);
 

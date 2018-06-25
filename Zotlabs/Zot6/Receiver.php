@@ -20,7 +20,7 @@ class Receiver {
 	protected $prvkey;
 	protected $rawdata;
 
-	function __construct($handler) {
+	function __construct($handler, $localdata = null) {
 
 		$this->error       = false;
 		$this->validated   = false;
@@ -31,14 +31,22 @@ class Receiver {
 		$this->rawdata     = null;
 		$this->prvkey      = Config::get('system','prvkey');
 
-		$this->rawdata = file_get_contents('php://input');
-
-		// All access to the zot endpoint must use http signatures
-
-		if (! $this->Valid_Httpsig()) {
-			logger('signature failed');
-			http_status_exit(400);
+		if($localdata) {
+			$this->rawdata = $localdata;
 		}
+		else {
+			$this->rawdata = file_get_contents('php://input');
+
+			// All access to the zot endpoint must use http signatures
+
+			if (! $this->Valid_Httpsig()) {
+				logger('signature failed');
+				http_status_exit(400);
+			}
+		}
+
+		logger('received raw: ' . print_r($this->rawdata,true), LOGGER_DATA);
+
 
 		if ($this->rawdata) {
 			$this->data = json_decode($this->rawdata,true);
@@ -47,6 +55,9 @@ class Receiver {
 			$this->error = true;
 			$this->response['message'] = 'no data';
 		}
+
+		logger('received_json: ' . json_encode($this->data,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOGGER_DATA);
+
 
 		logger('received: ' . print_r($this->data,true), LOGGER_DATA);
 
@@ -72,7 +83,7 @@ class Receiver {
 		if ($this->error) {
 			// make timing attacks on the decryption engine a bit more difficult
 			usleep(mt_rand(10000,100000));
-			json_return_and_die($this->response);
+			return($this->response); 
 		}
 
 		if ($this->data) {
@@ -89,33 +100,36 @@ class Receiver {
 		}
 
 		if ($this->sender) {
-			$this->ValidateSender();
+			$result = $this->ValidateSender();
+			if(! $result) {
+				return $this->response;
+			}
 		}
 
-		$this->Dispatch();
+		return $this->Dispatch();
 	}
 
 	function ValidateSender() {
 
-		$hubs = Libzot::gethub($this->sender,true);
+		$hub = Libzot::gethub($this->sender);
 
-		if (! $hubs) {
+		if (! $hub) {
 
 			/* Have never seen this guid or this guid coming from this location. Check it and register it. */
 			/* (!!) this will validate the sender. */
 
         	$result = Libzot::register_hub($this->sender);
 
-        	if ((! $result['success']) || (! ($hubs = zot_gethub($this->sender,true)))) {
+        	if ((! $result['success']) || (! ($hub = Libzot::gethub($this->sender)))) {
             	$this->response['message'] = 'Hub not available.';
-	            json_return_and_die($this->response);
+				return false;
     	    }
 		}
-		foreach ($hubs as $hub) {
-			Libzot::update_hub_connected($hub,((array_key_exists('sitekey',$this->sender)) ? $this->sender['sitekey'] : ''));
-		}
+		Libzot::update_hub_connected($hub,((array_key_exists('sitekey',$this->sender)) ? $this->sender['sitekey'] : ''));
+
 		$this->validated = true;
-		$this->hubs = $hubs;
+		$this->hub = $hub;
+		return true;
     }
 
 
@@ -143,38 +157,50 @@ class Receiver {
 
 		if (! $this->validated) {
 			$this->response['message'] = 'Sender not valid';
-			json_return_and_die($this->response);
+			return($this->response); 
 		}
 
 		switch ($this->messagetype) {
 
 			case 'request':
-				$this->handler->Request($this->data,$this->hubs);
+				$this->response = $this->handler->Request($this->data);
 				break;
 
 			case 'purge':
-				$this->handler->Purge($this->sender,$this->recipients,$this->hubs);
+				$this->response = $this->handler->Purge($this->sender,$this->recipients);
 				break;
 
 			case 'refresh':
-				$this->handler->Refresh($this->sender,$this->recipients,$this->hubs);
+				$this->response = $this->handler->Refresh($this->sender,$this->recipients);
 				break;
 
 			case 'notify':
-				$this->handler->Notify($this->data,$this->hubs);
+				$this->response = $this->handler->Notify($this->data);
 				break;
 
 			case 'rekey':
-				$this->handler->Rekey($this->sender, $this->data,$this->hubs);
+				$this->response = $this->handler->Rekey($this->sender, $this->data);
 				break;
 
 			default:
 				$this->response['message'] = 'Not implemented';
-				json_return_and_die($this->response);
 				break;
 		}
 
+		if($this->encrypted) {
+			$this->EncryptResponse();
+		}
+
+		return($this->response); 
 	}
+
+	function EncryptResponse() {
+		$algorithm = self::best_algorithm($this->hub['site_crypto']);
+		if($algorithm) {
+			$this->response = crypto_encapsulate(json_encode($this->response),$this->hub['hubloc_sitekey'], $algorithm);
+		}
+	}
+
 }
 
 

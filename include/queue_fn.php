@@ -167,11 +167,6 @@ function queue_deliver($outq, $immediate = false) {
 		}
 	}
 
-
-
-	
-
-
 	$arr = array('outq' => $outq, 'base' => $base, 'handled' => false, 'immediate' => $immediate);
 	call_hooks('queue_deliver',$arr);
 	if($arr['handled'])
@@ -229,36 +224,47 @@ function queue_deliver($outq, $immediate = false) {
 
 	logger('deliver: dest: ' . $outq['outq_posturl'], LOGGER_DEBUG);
 
-	$channel = null;
 
-	if($outq['outq_channel']) {
-		$channel = channelx_by_n($outq['outq_channel']);
-	}
-
-	$host_crypto = null;
-
-	if($channel && $base) {
-		$h = q("select hubloc_sitekey, site_crypto from hubloc left join site on hubloc_url = site_url where site_url = '%s' order by hubloc_id desc limit 1",
-			dbesc($base)
-		);
-		if($h) {
-			$host_crypto = $h[0];
-		}
-	}
-
-	$msg = $outq['outq_notify'];
-
-	$result = Libzot::zot($outq['outq_posturl'],$msg,$channel,$host_crypto);
-
-
-	if($result['success']) {
-		logger('deliver: remote zot delivery succeeded to ' . $outq['outq_posturl']);
-		Libzot::process_response($outq['outq_posturl'],$result, $outq);
+	if($outq['outq_posturl'] === z_root() . '/zot') {
+		// local delivery
+		$zot = new \Zotlabs\Zot6\Receiver(new \Zotlabs\Zot6\Zot6Handler(),$outq['outq_notify']);
+		$result = $zot->run(true);
+		logger('returned_json: ' . json_encode($result,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOGGER_DATA);
+		logger('deliver: local zot delivery succeeded to ' . $outq['outq_posturl']);
+		Libzot::process_response($outq['outq_posturl'],[ 'success' => true, 'body' => json_encode($result) ], $outq);
 	}
 	else {
-		logger('deliver: remote zot delivery failed to ' . $outq['outq_posturl']);
-		logger('deliver: remote zot delivery fail data: ' . print_r($result,true), LOGGER_DATA);
-		update_queue_item($outq['outq_hash'],10);
+		logger('remote');
+		$channel = null;
+
+		if($outq['outq_channel']) {
+			$channel = channelx_by_n($outq['outq_channel']);
+		}
+
+		$host_crypto = null;
+
+		if($channel && $base) {
+			$h = q("select hubloc_sitekey, site_crypto from hubloc left join site on hubloc_url = site_url where site_url = '%s' order by hubloc_id desc limit 1",
+				dbesc($base)
+			);
+			if($h) {
+				$host_crypto = $h[0];
+			}
+		}
+
+		$msg = $outq['outq_notify'];
+
+		$result = Libzot::zot($outq['outq_posturl'],$msg,$channel,$host_crypto);
+
+		if($result['success']) {
+			logger('deliver: remote zot delivery succeeded to ' . $outq['outq_posturl']);
+			Libzot::process_response($outq['outq_posturl'],$result, $outq);
+		}
+		else {
+			logger('deliver: remote zot delivery failed to ' . $outq['outq_posturl']);
+			logger('deliver: remote zot delivery fail data: ' . print_r($result,true), LOGGER_DATA);
+			update_queue_item($outq['outq_hash'],10);
+		}
 	}
 	return;
 }
