@@ -24,7 +24,7 @@ class Acl extends \Zotlabs\Web\Controller {
 
 	function init() {
 
-		logger('mod_acl: ' . print_r($_REQUEST,true),LOGGER_DATA);
+		// logger('mod_acl: ' . print_r($_GET,true),LOGGER_DATA);
 
 		$start    = (x($_REQUEST,'start')  ? $_REQUEST['start']  : 0);
 		$count    = (x($_REQUEST,'count')  ? $_REQUEST['count']  : 500);
