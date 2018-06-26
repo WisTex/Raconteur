@@ -257,7 +257,7 @@ class Dirsearch extends \Zotlabs\Web\Controller {
 		else {
 	
 			$r = q("SELECT xchan.*, xprof.* from xchan left join xprof on xchan_hash = xprof_hash 
-				where ( $logic $sql_extra ) $hub_query and xchan_network = 'zot' and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 
+				where ( $logic $sql_extra ) $hub_query and xchan_network = 'zot' and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 
 				$safesql $order $qlimit "
 			);
 	
