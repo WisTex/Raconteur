@@ -13,6 +13,7 @@ class Receiver {
 	protected $error;
 	protected $messagetype;
 	protected $sender;
+	protected $site_id;
 	protected $validated;
 	protected $recipients;
 	protected $response;
@@ -29,6 +30,7 @@ class Receiver {
 		$this->handler     = $handler;
 		$this->data        = null;
 		$this->rawdata     = null;
+		$this->site_id     = null;
 		$this->prvkey      = Config::get('system','prvkey');
 
 		if($localdata) {
@@ -95,8 +97,9 @@ class Receiver {
 				$this->response['message'] = 'no datatype';
 			}
 
-			$this->sender     = ((array_key_exists('sender',$this->data)) ? $this->data['sender'] : null);
+			$this->sender     = ((array_key_exists('sender',$this->data))     ? $this->data['sender'] : null);
 			$this->recipients = ((array_key_exists('recipients',$this->data)) ? $this->data['recipients'] : null);
+			$this->site_id    = ((array_key_exists('site_id',$this->data))    ? $this->data['site_id'] : null);
 		}
 
 		if ($this->sender) {
@@ -111,21 +114,14 @@ class Receiver {
 
 	function ValidateSender() {
 
-		$hub = Libzot::gethub($this->sender);
+		$hub = Libzot::valid_hub($this->sender,$this->site_id);
 
 		if (! $hub) {
-
-			/* Have never seen this guid or this guid coming from this location. Check it and register it. */
-			/* (!!) this will validate the sender. */
-
-        	$result = Libzot::register_hub($this->sender);
-
-        	if ((! $result['success']) || (! ($hub = Libzot::gethub($this->sender)))) {
-            	$this->response['message'] = 'Hub not available.';
-				return false;
-    	    }
+           	$this->response['message'] = 'Hub not available.';
+			return false;
 		}
-		Libzot::update_hub_connected($hub,((array_key_exists('sitekey',$this->sender)) ? $this->sender['sitekey'] : ''));
+
+		Libzot::update_hub_connected($hub,$this->site_id);
 
 		$this->validated = true;
 		$this->hub = $hub;
@@ -140,6 +136,7 @@ class Receiver {
 		$verified = HTTPSig::verify($this->rawdata);
 		if($verified && $verified['header_signed'] && $verified['header_valid']) {
 			$result = true;
+			$this->portable_id = $verified['portable_id'];
 
 			// It is OK to not have signed content - not all messages provide content.
 			// But if it is signed, it has to be valid
@@ -153,8 +150,6 @@ class Receiver {
 		
 	function Dispatch() {
 
-		/* These tasks require sender validation */
-
 		if (! $this->validated) {
 			$this->response['message'] = 'Sender not valid';
 			return($this->response); 
@@ -163,31 +158,29 @@ class Receiver {
 		switch ($this->messagetype) {
 
 			case 'request':
-				$this->response = $this->handler->Request($this->data);
+				$this->response = $this->handler->Request($this->data,$this->hub);
 				break;
 
 			case 'purge':
-				$this->response = $this->handler->Purge($this->sender,$this->recipients);
+				$this->response = $this->handler->Purge($this->sender,$this->recipients,$this->hub);
 				break;
 
 			case 'refresh':
-				$this->response = $this->handler->Refresh($this->sender,$this->recipients);
-				break;
-
-			case 'notify':
-				$this->response = $this->handler->Notify($this->data);
+				$this->response = $this->handler->Refresh($this->sender,$this->recipients,$this->hub);
 				break;
 
 			case 'rekey':
-				$this->response = $this->handler->Rekey($this->sender, $this->data);
+				$this->response = $this->handler->Rekey($this->sender, $this->data,$this->hub);
 				break;
 
+			case 'notify':
 			default:
-				$this->response['message'] = 'Not implemented';
+				$this->response = $this->handler->Notify($this->data,$this->hub);
 				break;
+
 		}
 
-		if($this->encrypted) {
+		if ($this->encrypted) {
 			$this->EncryptResponse();
 		}
 

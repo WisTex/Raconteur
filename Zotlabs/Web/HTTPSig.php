@@ -79,6 +79,7 @@ class HTTPSig {
 
 		$result = [
 			'signer'         => '',
+			'portable_id'    => '',
 			'header_signed'  => false,
 			'header_valid'   => false,
 			'content_signed' => false,
@@ -137,17 +138,17 @@ class HTTPSig {
 
 		$key = self::get_key($key,$result['signer']);
 
-		if(! $key)
+		if(! $key['public_key'])
 			return $result;
 
-		$x = rsa_verify($signed_data,$sig_block['signature'],$key,$algorithm);
+		$x = rsa_verify($signed_data,$sig_block['signature'],$key['public_key'],$algorithm);
 
 		logger('verified: ' . $x, LOGGER_DEBUG);
 
 		if(! $x)
 			return $result;
 
-
+		$result['portable_id'] = $key['portable_id'];
 		$result['header_valid'] = true;
 
 		if(in_array('digest',$signed_headers)) {
@@ -212,13 +213,13 @@ class HTTPSig {
 
 	function get_activitystreams_key($id) {
 
-		$x = q("select xchan_pubkey from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' limit 1",
+		$x = q("select xchan_pubkey, xchan_hash from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' limit 1",
 			dbesc(str_replace('acct:','',$id)),
 			dbesc($id)
 		);
 
 		if($x && $x[0]['xchan_pubkey']) {
-			return ($x[0]['xchan_pubkey']);
+			return [ 'portable_id' => $x[0]['xchan_hash'], 'public_key' => $x[0]['xchan_pubkey'] ];
 		}
 
 		$r = ActivityStreams::fetch_property($id);
@@ -240,32 +241,43 @@ class HTTPSig {
 
 	function get_webfinger_key($id) {
 
-		$x = q("select xchan_pubkey from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' limit 1",
+		$x = q("select xchan_pubkey, xchan_hash from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' limit 1",
 			dbesc(str_replace('acct:','',$id)),
 			dbesc($id)
 		);
 		if($x && $x[0]['xchan_pubkey']) {
-			return $x[0]['xchan_pubkey'];
+			return [ 'portable_id' => $x[0]['xchan_hash'], 'public_key' => $x[0]['xchan_pubkey'] ];
 		}
 
 		$wf = Webfinger::exec($id);
+		$key = [ 'portable_id' => '', 'public_key' => '' ];
 
 		if($wf) {
 		 	if(array_key_exists('properties',$wf) && array_key_exists('https://w3id.org/security/v1#publicKeyPem',$wf['properties'])) {
-				return self::convertKey($wf['properties']['https://w3id.org/security/v1#publicKeyPem']);
+				$key['public_key'] = self::convertKey($wf['properties']['https://w3id.org/security/v1#publicKeyPem']);
 			}
-			else {
-				if(array_key_exists('links', $wf) && is_array($wf['links'])) {
-					foreach($wf['links'] as $l) {
-						if(is_array($l) && array_key_exists('rel',$l) && $l['rel'] === 'magic-public-key' && array_key_exists('href',$l)) {
-							return ((self::convertKey($l['href'])) ?: false);
+			if(array_key_exists('links', $wf) && is_array($wf['links'])) {
+				foreach($wf['links'] as $l) {
+					if(! (is_array($l) && array_key_exists('rel',$l))) {
+						continue;
+					}
+					if($l['rel'] === 'http://purl.org/zot/protocol/6.0' && array_key_exists('href',$l) && $l['href'] !== EMPTY_STR) {
+						$z = \Zotlabs\Lib\Zotfinger::exec($l['href']);
+						if($z) {
+							$i = Zotlabs\Lib\Libzot::import_xchan($z['data']);
+							if($i['success']) {
+								$key['portable_id'] = $i['hash'];
+							}
 						}
+					}
+					if($l['rel'] === 'magic-public-key' && array_key_exists('href',$l) && $key['public_key'] === EMPTY_STR) {
+						$key['public_key'] = self::convertKey($l['href']);
 					}
 				}
 			}
 		}
 
-		return false;
+		return (($key['public_key']) ? $key : false);
 	}
 
 

@@ -207,7 +207,7 @@ class Activity {
 			$ret['content'] = bbcode($i['body']);
 		}
 
-		$actor = self::encode_person($i['author']);
+		$actor = self::encode_person($i['author'],false);
 		if($actor)
 			$ret['actor'] = $actor;
 		else
@@ -390,7 +390,7 @@ class Activity {
 
 		}
 
-		$actor = self::encode_person($i['author']);
+		$actor = self::encode_person($i['author'],false);
 		if($actor)
 			$ret['actor'] = $actor;
 		else
@@ -475,11 +475,16 @@ class Activity {
 	}
 
 
-	static function encode_person($p) {
+	static function encode_person($p, $extended = true) {
+
+
 
 		if(! $p['xchan_url'])
 			return [];
 
+		if(! $extended) {
+			return $p['xchan_url'];
+		}
 		$ret = [];
 
 		$ret['type']  = 'Person';

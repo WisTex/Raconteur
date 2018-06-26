@@ -3,6 +3,8 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Web\HTTPSig;
 
 require_once('include/contact_widgets.php');
@@ -46,6 +48,13 @@ class Channel extends \Zotlabs\Web\Controller {
 			$profile = argv(1);
 		}
 
+		$channel = channelx_by_nick($which);
+		if(! $channel) {
+			http_status_exit(404, 'Not found');
+		}
+
+
+
 		head_add_link( [ 
 			'rel'   => 'alternate', 
 			'type'  => 'application/atom+xml',
@@ -63,11 +72,7 @@ class Channel extends \Zotlabs\Web\Controller {
 		// handle zot6 channel discovery 
 
 		if(Libzot::is_zot_request()) {
-			$channel = channelx_by_nick($which);
-			if(! $channel) {
-				http_status_exit(404, 'Not found');
-			}
-
+	
 			$sigdata = HTTPSig::verify(EMPTY_STR);
 
 			if($sigdata && $sigdata['signer'] && $sigdata['header_valid']) {
@@ -90,6 +95,24 @@ class Channel extends \Zotlabs\Web\Controller {
 			echo $data;
 			killme();
 		}
+
+		if(ActivityStreams::is_as_request()) {
+
+			$x = array_merge(['@context' => [
+				ACTIVITYSTREAMS_JSONLD_REV,
+				'https://w3id.org/security/v1'
+			]], Activity::encode_person($channel));
+
+
+			$headers = [];
+			$headers['Content-Type'] = 'application/activity+json';
+			json_return_and_die($x);
+
+		}
+
+
+
+
 
 		// Run profile_load() here to make sure the theme is set before
 		// we start loading content

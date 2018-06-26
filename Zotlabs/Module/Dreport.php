@@ -137,14 +137,14 @@ class Dreport extends \Zotlabs\Web\Controller {
 		$entries = array();
 		foreach($r as $rr) {
 			$entries[] = [ 
-				'name' => escape_tags($rr['dreport_name'],					
+				'name' => escape_tags($rr['dreport_name']),					
 				'result' => escape_tags($rr['dreport_result']),
 				'time' => escape_tags(datetime_convert('UTC',date_default_timezone_get(),$rr['dreport_time']))
 			];
 		}
 
 		$o = replace_macros(get_markup_template('dreport.tpl'), array(
-			'$title' => sprintf( t('Delivery report for %1$s'),basename($mid) . '...',
+			'$title' => sprintf( t('Delivery report for %1$s'),basename($mid)) . '...',
 			'$table' => $table,
 			'$mid' => urlencode($mid),
 			'$options' => t('Options'),

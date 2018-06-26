@@ -280,4 +280,18 @@ class ActivityStreams {
 		return $x;
 	}
 
+
+	static function is_as_request() {
+
+		$x = getBestSupportedMimeType([
+			'application/ld+json;profile="https://www.w3.org/ns/activitystreams"',
+			'application/activity+json',
+			'application/ld+json;profile="http://www.w3.org/ns/activitystreams"'
+		]);
+
+		return(($x) ? true : false);
+
+	}
+
+
 }

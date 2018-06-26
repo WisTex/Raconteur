@@ -49,7 +49,7 @@ class DReport {
 			'location'   => $this->location,
 			'sender'     => $this->sender,
 			'recipient'  => $this->recipient,
-			'name'       => $this->name.
+			'name'       => $this->name,
 			'message_id' => $this->message_id,
 			'status'     => $this->status,
 			'date'       => $this->date

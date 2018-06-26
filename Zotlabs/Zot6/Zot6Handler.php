@@ -7,35 +7,35 @@ require_once('include/queue_fn.php');
 
 class Zot6Handler implements IHandler {
 
-	function Notify($data) {
-		return self::reply_notify($data);
+	function Notify($data,$hub) {
+		return self::reply_notify($data,$hub);
 	}
 
-	function Request($data) {
-		return self::reply_message_request($data);
+	function Request($data,$hub) {
+		return self::reply_message_request($data,$hub);
 	}
 
-	function Rekey($sender,$data) {
-		return self::reply_rekey_request($sender,$data);
+	function Rekey($sender,$data,$hub) {
+		return self::reply_rekey_request($sender,$data,$hub);
 	}
 
-	function Refresh($sender,$recipients) {
-		return self::reply_refresh($sender,$recipients);
+	function Refresh($sender,$recipients,$hub) {
+		return self::reply_refresh($sender,$recipients,$hub);
 	}
 
-	function Purge($sender,$recipients) {
-		return self::reply_purge($sender,$recipients);
+	function Purge($sender,$recipients,$hub) {
+		return self::reply_purge($sender,$recipients,$hub);
 	}
 
 	// Implementation of specific methods follows;
 	// These generally do a small amout of validation and call Libzot 
 	// to do any heavy lifting
 
-	static function reply_notify($data) {
+	static function reply_notify($data,$hub) {
 
 		$ret = [ 'success' => false ];
 
-		logger('notify received from ' . $data['sender']['location']);
+		logger('notify received from ' . $hub['hubloc_url']);
 
 		$x = Libzot::fetch($data);
 		$ret['delivery_report'] = $x;
@@ -61,7 +61,7 @@ class Zot6Handler implements IHandler {
 	 * @return json_return_and_die()
 	 */
 
-	static function reply_refresh($sender, $recipients) {
+	static function reply_refresh($sender, $recipients,$hub) {
 		$ret = array('success' => false);
 
 		if($recipients) {
@@ -72,16 +72,16 @@ class Zot6Handler implements IHandler {
 				$r = q("select channel.*,xchan.* from channel
 					left join xchan on channel_hash = xchan_hash
 					where channel_hash ='%s' limit 1",
-					dbesc($recip['portable_id'])
+					dbesc($recip)
 				);
 
-				$x = Libzot::refresh( [ 'hubloc_id_url' => $sender['id_url'] ], $r[0], (($msgtype === 'force_refresh') ? true : false));
+				$x = Libzot::refresh( [ 'hubloc_id_url' => $hub['hubloc_id_url'] ], $r[0], (($msgtype === 'force_refresh') ? true : false));
 			}
 		}
 		else {
 			// system wide refresh
 
-			$x = Libzot::refresh( [ 'hubloc_id_url' => $sender['id_url'] ], null, (($msgtype === 'force_refresh') ? true : false));
+			$x = Libzot::refresh( [ 'hubloc_id_url' => $hub['hubloc_id_url'] ], null, (($msgtype === 'force_refresh') ? true : false));
 		}
 
 		$ret['success'] = true;
@@ -108,9 +108,9 @@ class Zot6Handler implements IHandler {
 	 * @return array
 	 */
 	
-	static function reply_message_request($data) {
+	static function reply_message_request($data,$hub) {
 		$ret = [ 'success' => false ];
-
+//@fixme
 		if (! $data['message_id']) {
 			$ret['message'] = 'no message_id';
 			logger('no message_id');
@@ -175,7 +175,7 @@ class Zot6Handler implements IHandler {
 				 * create a notify packet and drop the actual message packet in the queue for pickup
 				 */
 
-				$n = Libzot::build_packet($c[0],'notify',$env_recips,$data_packet,(($private) ? $hub['hubloc_sitekey'] : null),$hub['site_crypto'],$hash,array('message_id' => $data['message_id']));
+				$n = Libzot::build_packet($c[0],'messagelist',$env_recips,$data_packet,'zot',(($private) ? $hub['hubloc_sitekey'] : null),$hub['site_crypto'],$hash,array('message_id' => $data['message_id']));
 
 				queue_insert(array(
 					'hash'       => $hash,
@@ -205,7 +205,7 @@ class Zot6Handler implements IHandler {
 		return $ret;
 	}
 
-	static function rekey_request($sender,$data) {
+	static function rekey_request($sender,$data,$hub) {
 
 		$ret = array('success' => false);
 
@@ -243,12 +243,8 @@ class Zot6Handler implements IHandler {
 		}
 
 
-		if(Libzot::verify($sender['id'],$sender['id_sig'],$data['new_key'])) {
-			$newhash = make_xchan_hash($sender['id'],$data['new_key']);
-		}
-
 		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
-			dbesc($newhash)
+			dbesc($sender)
 		);
 
 		$newxchan = $r[0];
@@ -269,14 +265,9 @@ class Zot6Handler implements IHandler {
 	 * return json_return_and_die()
 	 */
 
-	static function reply_purge($sender, $recipients) {
+	static function reply_purge($sender, $recipients, $hub) {
 
 		$ret = array('success' => false);
-
-		$hub = Libzot::gethub($data['sender']);
-		if(! $hub) {
-			return $ret;
-		}
 
 		if ($recipients) {
 			// basically this means "unfriend"
@@ -284,12 +275,12 @@ class Zot6Handler implements IHandler {
 				$r = q("select channel.*,xchan.* from channel
 					left join xchan on channel_hash = xchan_hash
 					where channel_hash = '%s' and channel_guid_sig = '%s' limit 1",
-					dbesc($recip['portable_id'])
+					dbesc($recip)
 				);
 				if ($r) {
 					$r = q("select abook_id from abook where uid = %d and abook_xchan = '%s' limit 1",
 						intval($r[0]['channel_id']),
-						dbesc($hub['hubloc_hash'])
+						dbesc($sender)
 					);
 					if ($r) {
 						contact_remove($r[0]['channel_id'],$r[0]['abook_id']);
@@ -302,7 +293,7 @@ class Zot6Handler implements IHandler {
 
 			// Unfriend everybody - basically this means the channel has committed suicide
 
-			remove_all_xchan_resources($hub['hubloc_hash']);
+			remove_all_xchan_resources($sender);
 
 			$ret['success'] = true;
 		}

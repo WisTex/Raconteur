@@ -105,7 +105,8 @@ class Notifier {
 		$recipients = array();
 		$url_recipients = array();
 		$normal_mode = true;
-		$packet_type = 'undefined';
+		$packet_type = 'activity';
+		$encoding = 'activitystreams';
 
 		if($cmd === 'mail' || $cmd === 'single_mail') {
 			$normal_mode = false;
@@ -130,7 +131,8 @@ class Notifier {
 			);
 			if($s)
 				$channel = $s[0];
-
+			$packet_type = 'mail';
+			$encoding = 'zot';
 		}
 		elseif($cmd === 'request') {
 			$channel_id = $item_id;
@@ -194,7 +196,7 @@ class Notifier {
 						$recipients[] = $r[0]['abook_xchan'];
 						$private = false;
 						$packet_type = 'refresh';
-						$packet_recips = array(array('id' => $r[0]['xchan_guid'],'id_sig' => $r[0]['xchan_guid_sig'],'portable_id' => $r[0]['xchan_hash']));
+						$packet_recips = [ $r[0]['xchan_hash'] ];
 					}
 				}
 			}
@@ -236,6 +238,7 @@ class Notifier {
 			$target_item = array('aid' => $channel['channel_account_id'],'uid' => $channel['channel_id']);
 			$private = false;
 			$packet_type = 'location';
+			$encoding = 'zot';
 			$location = true;
 		}
 		elseif($cmd === 'purge_all') {
@@ -347,7 +350,7 @@ class Notifier {
 
 //			$encoded_item = encode_item($target_item);
 
-			$encoded_item = [ 'type' => 'activity', 'encoding' => 'activitystreams', 'content' => \Zotlabs\Lib\Activity::encode_activity($target_item) ];
+			$encoded_item = \Zotlabs\Lib\Activity::encode_activity($target_item);
 		
 			// Send comments to the owner to re-deliver to everybody in the conversation
 			// We only do this if the item in question originated on this site. This prevents looping.
@@ -447,11 +450,7 @@ class Notifier {
 
 				$recip_list[] = $d['xchan_addr'] . ' (' . $d['xchan_hash'] . ')'; 
 				if($private) {
-					$env_recips[] = [
-						'id'              => $d['xchan_guid'],
-						'id_sig'          => $d['xchan_guid_sig'],
-						'portable_id'     => $d['xchan_hash']
-					];
+					$env_recips[] = $d['xchan_hash'];
 				}
 			}
 		}
@@ -533,7 +532,7 @@ class Notifier {
 
 			if($env_recips) {
 				foreach($env_recips as $er) {
-					if($hub['hubloc_hash'] === $er['portable_id']) {
+					if($hub['hubloc_hash'] === $er) {
 						if(! array_key_exists($hub['hubloc_host'] . $hub['hubloc_sitekey'], $hub_env)) {
 							$hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] = [];
 						}
@@ -623,7 +622,7 @@ class Notifier {
 			}
 			if($packet_type === 'keychange') {
 				$pmsg = get_pconfig($channel['channel_id'],'system','keychange');
-				$packet = Libzot::build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null),$pmsg);
+				$packet = Libzot::build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null),$pmsg,'red');
 			}
 			elseif($packet_type === 'request') {
 				$env = (($hub_env && $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']]) ? $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] : '');
@@ -645,7 +644,7 @@ class Notifier {
 			else {
 				$env = (($hub_env && $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']]) ? $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] : '');
 
-				$packet = Libzot::build_packet($channel,'notify',$env, $encoded_item, (($private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto']);
+				$packet = Libzot::build_packet($channel, $packet_type, $env, $encoded_item, $encoding, (($private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto']);
 
 				queue_insert(
 					[
