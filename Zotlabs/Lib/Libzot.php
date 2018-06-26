@@ -731,7 +731,7 @@ class Libzot {
 			}
 
 			if(($r[0]['xchan_name_date'] != $arr['name_updated'])
-				|| ($r[0]['xchan_connurl'] != $arr['connections_url'])
+				|| ($r[0]['xchan_connurl'] != $arr['primary_location']['connections_url'])
 				|| ($r[0]['xchan_addr'] != $arr['primary_location']['address'])
 				|| ($r[0]['xchan_follow'] != $arr['primary_location']['follow_url'])
 				|| ($r[0]['xchan_connpage'] != $arr['connect_url'])
@@ -742,7 +742,7 @@ class Libzot {
 					xchan_addr = '%s', xchan_url = '%s' where xchan_hash = '%s'",
 					dbesc(($arr['name']) ? $arr['name'] : '-'),
 					dbesc($arr['name_updated']),
-					dbesc($arr['connections_url']),
+					dbesc($arr['primary_location']['connections_url']),
 					dbesc($arr['primary_location']['follow_url']),
 					dbesc($arr['primary_location']['connect_url']),
 					intval(1 - intval($arr['searchable'])),
@@ -942,7 +942,7 @@ class Libzot {
 		}
 
 		if(($changed) || ($ud_flags == UPDATE_FLAGS_FORCED)) {
-			$guid = random_string() . '@' . App::get_hostname();
+			$guid = random_string() . '@' . \App::get_hostname();
 			Libzotdir::update_modtime($xchan_hash,$guid,$address,$ud_flags);
 			logger('Changed: ' . $what,LOGGER_DEBUG);
 		}
