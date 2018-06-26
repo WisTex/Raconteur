@@ -88,39 +88,14 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 		// by the directives in $item['public_policy'].
 
 		$private_envelope = false;
-		require_once('include/channel.php');
-		//$sys = get_sys_channel();
 
-		if(array_key_exists('public_policy',$item) && $item['public_policy'] !== 'self') {
-			$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
-				intval($item['uid'])
-			);
-			if($r) {
-
-				// filter out restrictive public_policy settings from remote networks
-				// which don't have this concept and will treat them as public.
-
-				$policy = substr($item['public_policy'],0,3);
-				foreach($r as $rr) {
-					switch($policy) {
-						case 'net':
-						case 'aut':
-						case 'sit':
-						case 'any':
-						case 'con':
-							if($rr['xchan_network'] != 'zot')
-								break;
-						case 'pub':
-						case '':
-						default:
-							$recipients[] = $rr['abook_xchan'];
-							break;
-					}
-				}
+		$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
+			intval($item['uid'])
+		);
+		if($r) {
+			foreach($r as $rv) {
+				$recipients[] = $rv['abook_xchan'];
 			}
-// we probably want to check that discovery channel delivery is allowed before uncommenting this.
-//			if($policy === 'pub')
-//				$recipients[] = $sys['xchan_hash'];
 		}
 
 		// Add the authors of any posts in this thread, if they are known to us.
@@ -237,10 +212,11 @@ function can_comment_on_post($observer_xchan, $item) {
 //	logger('Comment_policy: ' . $item['comment_policy'], LOGGER_DEBUG);
 
 	$x = [
-			'observer_hash' => $observer_xchan,
-			'item' => $item,
-			'allowed' => 'unset'
+		'observer_hash' => $observer_xchan,
+		'item' => $item,
+		'allowed' => 'unset'
 	];
+
 	/**
 	 * @hooks can_comment_on_post
 	 *   Called when deciding whether or not to present a comment box for a post.
@@ -248,7 +224,9 @@ function can_comment_on_post($observer_xchan, $item) {
 	 *   * \e array \b item
 	 *   * \e boolean \b allowed - return value
 	 */
+
 	call_hooks('can_comment_on_post', $x);
+
 	if($x['allowed'] !== 'unset')
 		return $x['allowed'];
 
@@ -367,11 +345,6 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 		$ret['message'] = t('Permission denied');
 		return $ret;
 	}
-
-	$arr['public_policy'] = ((array_key_exists('public_policy',$arr)) ? escape_tags($arr['public_policy']) : map_scope(\Zotlabs\Access\PermissionLimits::Get($channel['channel_id'],'view_stream'),true));
-
-	if($arr['public_policy'])
-		$arr['item_private'] = 1;
 
 	if(! array_key_exists('mimetype',$arr))
 		$arr['mimetype'] = 'text/bbcode';
@@ -625,10 +598,6 @@ function get_item_elements($x,$allow_code = false) {
 	$arr['mimetype']     = (($x['mimetype'])       ? htmlspecialchars($x['mimetype'],       ENT_COMPAT,'UTF-8',false) : '');
 	$arr['obj_type']     = (($x['object_type'])    ? htmlspecialchars($x['object_type'],    ENT_COMPAT,'UTF-8',false) : '');
 	$arr['tgt_type']     = (($x['target_type'])    ? htmlspecialchars($x['target_type'],    ENT_COMPAT,'UTF-8',false) : '');
-
-	$arr['public_policy'] = (($x['public_scope']) ? htmlspecialchars($x['public_scope'], ENT_COMPAT,'UTF-8',false) : '');
-	if($arr['public_policy'] === 'public')
-		$arr['public_policy'] = '';
 
 	$arr['comment_policy'] = (($x['comment_scope']) ? htmlspecialchars($x['comment_scope'], ENT_COMPAT,'UTF-8',false) : 'contacts');
 
@@ -994,10 +963,6 @@ function encode_item($item,$mirror = false) {
 	else
 		$comment_scope = 0;
 
-	$scope = $item['public_policy'];
-	if(! $scope)
-		$scope = 'public';
-
 	$c_scope = map_scope($comment_scope);
 
 	$key = get_config('system','prvkey');
@@ -1078,8 +1043,6 @@ function encode_item($item,$mirror = false) {
 
 	if($item['comments_closed'] > NULL_DATE)
 		$x['comments_closed'] = $item['comments_closed'];
-
-	$x['public_scope']    = $scope;
 
 	if($item['item_nocomment'])
 		$x['comment_scope'] = 'none';
@@ -1720,7 +1683,7 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 	$arr['attach']        = ((x($arr,'attach'))        ? notags(trim($arr['attach']))        : '');
 	$arr['app']           = ((x($arr,'app'))           ? notags(trim($arr['app']))           : '');
 
-	$arr['public_policy'] = ((x($arr,'public_policy')) ? notags(trim($arr['public_policy']))  : '' );
+	$arr['public_policy'] = '';
 
 	$arr['comment_policy'] = ((x($arr,'comment_policy')) ? notags(trim($arr['comment_policy']))  : 'contacts' );
 
@@ -1750,7 +1713,6 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 		$allow_gid = $arr['allow_gid'];
 		$deny_cid  = $arr['deny_cid'];
 		$deny_gid  = $arr['deny_gid'];
-		$public_policy = $arr['public_policy'];
 		$comments_closed = $arr['comments_closed'];
 		$arr['item_thread_top'] = 1;
 	}
@@ -1807,7 +1769,6 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 			$allow_gid       = $r[0]['allow_gid'];
 			$deny_cid        = $r[0]['deny_cid'];
 			$deny_gid        = $r[0]['deny_gid'];
-			$public_policy   = $r[0]['public_policy'];
 			$comments_closed = $r[0]['comments_closed'];
 
 			if(intval($r[0]['item_wall']))
@@ -1888,7 +1849,7 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 	}
 
 
- 	if(strlen($allow_cid) || strlen($allow_gid) || strlen($deny_cid) || strlen($deny_gid) || strlen($public_policy))
+ 	if(strlen($allow_cid) || strlen($allow_gid) || strlen($deny_cid) || strlen($deny_gid))
 		$private = 1;
 	else
 		$private = $arr['item_private'];
@@ -1898,7 +1859,6 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 	$arr['allow_gid']       = $allow_gid;
 	$arr['deny_cid']        = $deny_cid;
 	$arr['deny_gid']        = $deny_gid;
-	$arr['public_policy']   = $public_policy;
 	$arr['item_private']    = $private;
 	$arr['comments_closed'] = $comments_closed;
 
@@ -2199,7 +2159,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true) {
 	$arr['sig']           = ((x($arr,'sig'))           ? $arr['sig']                         : '');
 	$arr['layout_mid']    = ((array_key_exists('layout_mid',$arr)) ? dbesc($arr['layout_mid'])           : $orig[0]['layout_mid'] );
 
-	$arr['public_policy'] = ((x($arr,'public_policy')) ? notags(trim($arr['public_policy']))  : $orig[0]['public_policy'] );
+	$arr['public_policy'] = '';
 	$arr['comment_policy'] = ((x($arr,'comment_policy')) ? notags(trim($arr['comment_policy']))  : $orig[0]['comment_policy'] );
 
 	/**
@@ -2974,11 +2934,6 @@ function start_delivery_chain($channel, $item, $item_id, $parent) {
 	$private = (($channel['channel_allow_cid'] || $channel['channel_allow_gid']
 		|| $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
 
-	$new_public_policy = map_scope(\Zotlabs\Access\PermissionLimits::Get($channel['channel_id'],'view_stream'),true);
-
-	if((! $private) && $new_public_policy)
-		$private = 1;
-
 	$item_wall = 1;
 	$item_origin = 1;
 	$item_uplink = 0;
@@ -3006,7 +2961,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent) {
 	$body  = $item['body'];
 
 	$r = q("update item set item_uplink = %d, item_nocomment = %d, item_flags = %d, owner_xchan = '%s', allow_cid = '%s', allow_gid = '%s',
-		deny_cid = '%s', deny_gid = '%s', item_private = %d, public_policy = '%s', comment_policy = '%s', title = '%s', body = '%s', item_wall = %d, item_origin = %d  where id = %d",
+		deny_cid = '%s', deny_gid = '%s', item_private = %d, comment_policy = '%s', title = '%s', body = '%s', item_wall = %d, item_origin = %d  where id = %d",
 		intval($item_uplink),
 		intval($item_nocomment),
 		intval($flag_bits),
@@ -3016,7 +2971,6 @@ function start_delivery_chain($channel, $item, $item_id, $parent) {
 		dbesc($channel['channel_deny_cid']),
 		dbesc($channel['channel_deny_gid']),
 		intval($private),
-		dbesc($new_public_policy),
 		dbesc(map_scope(\Zotlabs\Access\PermissionLimits::Get($channel['channel_id'],'post_comments'))),
 		dbesc($title),
 		dbesc($body),

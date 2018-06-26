@@ -1425,9 +1425,7 @@ class Libzot {
 
 	static function process_delivery($sender, $arr, $deliveries, $relay, $public = false, $request = false) {
 
-		$result = array();
-
-		$result['site'] = z_root();
+		$result = [];
 
 		// We've validated the sender. Now make sure that the sender is the owner or author
 
@@ -1465,7 +1463,7 @@ class Libzot {
 			 * access checks. So far all attempts at identifying this situation precisely
 			 * have caused issues with delivery of relayed comments.
 			 */
-		// @fixme $sender['url'] no loner exists
+		// @fixme $sender['url'] no longer exists
 	//		if(($d === $sender) && ($sender['url'] !== z_root()) && (! $relay)) {
 	//			$DR->update('self delivery ignored');
 	//			$result[] = $DR->get();
