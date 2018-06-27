@@ -27,7 +27,7 @@ class Pdf {
 
 		$imagick_path = get_config('system','imagick_convert_path');
 		if($imagick_path && @file_exists($imagick_path)) {
-			$cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmpfile . '[0]') . ' -thumbnail ' . $width . 'x' . $height . ' ' . escapeshellarg(PROJECT_BASE . '/' . $outfile);
+			$cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmpfile . '[0]') . ' -resize ' . $width . 'x' . $height . ' ' . escapeshellarg(PROJECT_BASE . '/' . $outfile);
 			//  logger('imagick thumbnail command: ' . $cmd);
 			for($x = 0; $x < 4; $x ++) {
 				exec($cmd);
