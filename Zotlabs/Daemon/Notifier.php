@@ -13,14 +13,7 @@ require_once('include/bbcode.php');
 
 
 /*
- * This file was at one time responsible for doing all deliveries, but this caused
- * big problems on shared hosting systems, where the process might get killed by the 
- * hosting provider and nothing would get delivered. 
- * It now only delivers one message under certain cases, and invokes a queued
- * delivery mechanism (include/deliver.php) to deliver individual contacts at 
- * controlled intervals.
- * This has a much better chance of surviving random processes getting killed
- * by the hosting provider. 
+ * Notifier - message dispatch and preparation for delivery
  *
  * The basic flow is:
  *   Identify the type of message
@@ -39,7 +32,7 @@ require_once('include/bbcode.php');
 /*
  * The notifier is typically called with:
  *
- *		Zotlabs\Daemon\Master::Summon(array('Notifier', COMMAND, ITEM_ID));
+ *		Zotlabs\Daemon\Master::Summon( [ 'Notifier', COMMAND, ITEM_ID ] );
  *
  * where COMMAND is one of the following:
  *
@@ -59,26 +52,35 @@ require_once('include/bbcode.php');
  * and ITEM_ID is the id of the item in the database that needs to be sent to others.
  *
  * ZOT 
- *       permission_create      abook_id
- *       permission_accept      abook_id
- *       permission_reject      abook_id
- *       permission_update      abook_id
- *       refresh_all            channel_id
- *       purge_all              channel_id
- *       expire                 channel_id
- *       relay					item_id (item was relayed to owner, we will deliver it as owner)
- *       single_activity        item_id (deliver to a singleton network from the appropriate clone)
- *       single_mail            mail_id (deliver to a singleton network from the appropriate clone)
- *       location               channel_id
- *       request                channel_id            xchan_hash             message_id
- *       rating                 xlink_id
- *       keychange              channel_id
+ *       permissions_create      abook_id
+ *       permissions_accept      abook_id
+ *       permissions_reject      abook_id
+ *       permissions_update      abook_id
+ *       refresh_all             channel_id
+ *       purge_all               channel_id
+ *       expire                  channel_id
+ *       relay		 	 		 item_id (item was relayed to owner, we will deliver it as owner)
+ *       single_activity         item_id (deliver to a singleton network from the appropriate clone)
+ *       single_mail             mail_id (deliver to a singleton network from the appropriate clone)
+ *       location                channel_id
+ *       request                 channel_id            xchan_hash             message_id
+ *       rating                  xlink_id
+ *       keychange               channel_id
  *
  */
 
 
 
 class Notifier {
+
+	static public $deliveries   = [];
+	static public $recipients   = [];
+	static public $env_recips   = [];
+	static public $packet_type  = 'activity';
+	static public $encoding     = 'activitystreams';
+	static public $encoded_item = null;
+	static public $channel      = null;
+	static public $private      = false;
 
 	static public function run($argc,$argv){
 
@@ -96,22 +98,17 @@ class Notifier {
 
 		$sys = get_sys_channel();
 
-		$deliveries = array();
-
-		$request = false;
 		$mail = false;
 		$top_level = false;
-		$location  = false;
-		$recipients = array();
+
 		$url_recipients = array();
 		$normal_mode = true;
-		$packet_type = 'activity';
-		$encoding = 'activitystreams';
+
 
 		if($cmd === 'mail' || $cmd === 'single_mail') {
 			$normal_mode = false;
 			$mail = true;
-			$private = true;
+			self::$private = true;
 			$message = q("SELECT * FROM mail WHERE id = %d LIMIT 1",
 					intval($item_id)
 			);
@@ -119,52 +116,49 @@ class Notifier {
 				return;
 			}
 			xchan_mail_query($message[0]);
-			$uid = $message[0]['channel_id'];
-			$recipients[] = $message[0]['from_xchan']; // include clones
-			$recipients[] = $message[0]['to_xchan'];
+
+			self::$recipients[] = $message[0]['to_xchan'];
 			$item = $message[0];
 
-			$encoded_item = encode_mail($item);
+			self::$encoded_item = encode_mail($item);
 
 			$s = q("select * from channel where channel_id = %d limit 1",
 				intval($item['channel_id'])
 			);
 			if($s)
-				$channel = $s[0];
-			$packet_type = 'mail';
-			$encoding = 'zot';
+				self::$channel = $s[0];
+			self::$packet_type = 'mail';
+			self::$encoding = 'zot';
 		}
 		elseif($cmd === 'request') {
-			$channel_id = $item_id;
+
 			$xchan = $argv[3];
-			$request_message_id = $argv[4];
+			if($argc < 5) {
+				return;
+			}
 
-			$s = q("select * from channel where channel_id = %d limit 1",
-				intval($channel_id)
-			);
-			if($s)
-				$channel = $s[0];
+			self::$channel = channelx_by_n($item_id);
 
-			$private = true;
-			$recipients[] = $xchan;
-			$packet_type = 'request';
+			self::$private = true;
+			self::$recipients[] = $xchan;
+			self::$packet_type = 'request';
 			$normal_mode = false;
 		}
 		elseif($cmd === 'keychange') {
-			$channel = channelx_by_n($item_id);
+			self::$channel = channelx_by_n($item_id);
 			$r = q("select abook_xchan from abook where abook_channel = %d",
 				intval($item_id)
 			);
 			if($r) {
 				foreach($r as $rr) {
-					$recipients[] = $rr['abook_xchan'];
+					self::$recipients[] = $rr['abook_xchan'];
 				}
 			}
-			$private = false;
-			$packet_type = 'keychange';
+			self::$private = false;
+			self::$packet_type = 'keychange';
 			$normal_mode = false;
 		}
-		elseif(in_array($cmd, [ 'permission_update', 'permission_reject', 'permission_accept', 'permission_create' ])) {
+		elseif(in_array($cmd, [ 'permissions_update', 'permissions_reject', 'permissions_accept', 'permissions_create' ])) {
 			// Get the (single) recipient	
 			$r = q("select * from abook left join xchan on abook_xchan = xchan_hash where abook_id = %d and abook_self = 0",
 				intval($item_id)
@@ -172,49 +166,41 @@ class Notifier {
 			if($r) {
 				$uid = $r[0]['abook_channel'];
 				// Get the sender
-				$channel = channelx_by_n($uid);
-				if($channel) {
-					$perm_update = array('sender' => $channel, 'recipient' => $r[0], 'success' => false, 'deliveries' => '');	
-
-					if($cmd === 'permission_create')
-						call_hooks('permissions_create',$perm_update);
-					elseif($cmd === 'permission_accept')
-						call_hooks('permissions_accept',$perm_update);
-					elseif($cmd === 'permission_reject')
-						call_hooks('permissions_reject',$perm_update);
-					else
-						call_hooks('permissions_update',$perm_update);
+				self::$channel = channelx_by_n($uid);
+				if(self::$channel) {
+					$perm_update = array('sender' => self::$channel, 'recipient' => $r[0], 'success' => false, 'deliveries' => '');	
+					call_hooks($cmd,$perm_update);
 
 					if($perm_update['success']) {
 						if($perm_update['deliveries']) {
-							$deliveries[] = $perm_update['deliveries'];
-							do_delivery($deliveries);
+							self::$deliveries[] = $perm_update['deliveries'];
+							do_delivery(self::$deliveries);
 						}
 						return;				
 					}
 					else {
-						$recipients[] = $r[0]['abook_xchan'];
-						$private = false;
-						$packet_type = 'refresh';
-						$packet_recips = [ $r[0]['xchan_hash'] ];
+						self::$recipients[] = $r[0]['abook_xchan'];
+						self::$private = false;
+						self::$packet_type = 'refresh';
+						self::$env_recips = [ $r[0]['xchan_hash'] ];
 					}
 				}
 			}
 		}
 		elseif($cmd === 'refresh_all') {
 			logger('notifier: refresh_all: ' . $item_id);
-			$uid = $item_id;
-			$channel = channelx_by_n($item_id);
+
+			self::$channel = channelx_by_n($item_id);
 			$r = q("select abook_xchan from abook where abook_channel = %d",
 				intval($item_id)
 			);
 			if($r) {
 				foreach($r as $rr) {
-					$recipients[] = $rr['abook_xchan'];
+					self::$recipients[] = $rr['abook_xchan'];
 				}
 			}
-			$private = false;
-			$packet_type = 'refresh';
+			self::$private = false;
+			self::$packet_type = 'refresh';
 		}
 		elseif($cmd === 'location') {
 			logger('notifier: location: ' . $item_id);
@@ -222,24 +208,23 @@ class Notifier {
 				intval($item_id)
 			);
 			if($s)
-				$channel = $s[0];
-			$uid = $item_id;
-			$recipients = array();
+				self::$channel = $s[0];
+
+			self::$recipients = array();
 			$r = q("select abook_xchan from abook where abook_channel = %d",
 				intval($item_id)
 			);
 			if($r) {
 				foreach($r as $rr) {
-					$recipients[] = $rr['abook_xchan'];
+					self::$recipients[] = $rr['abook_xchan'];
 				}
 			}
 
-			$encoded_item = array('locations' => Libzot::encode_locations($channel),'type' => 'location', 'encoding' => 'zot');
-			$target_item = array('aid' => $channel['channel_account_id'],'uid' => $channel['channel_id']);
-			$private = false;
-			$packet_type = 'location';
-			$encoding = 'zot';
-			$location = true;
+			self::$encoded_item = array('locations' => Libzot::encode_locations(self::$channel),'type' => 'location', 'encoding' => 'zot');
+			$target_item = array('aid' => self::$channel['channel_account_id'],'uid' => self::$channel['channel_id']);
+			self::$private = false;
+			self::$packet_type = 'location';
+			self::$encoding = 'zot';
 		}
 		elseif($cmd === 'purge_all') {
 			logger('notifier: purge_all: ' . $item_id);
@@ -247,19 +232,19 @@ class Notifier {
 				intval($item_id)
 			);
 			if($s)
-				$channel = $s[0];
-			$uid = $item_id;
-			$recipients = array();
+				self::$channel = $s[0];
+
+			self::$recipients = array();
 			$r = q("select abook_xchan from abook where abook_channel = %d and abook_self = 0",
 				intval($item_id)
 			);
 			if($r) {
 				foreach($r as $rr) {
-					$recipients[] = $rr['abook_xchan'];
+					self::$recipients[] = $rr['abook_xchan'];
 				}
 			}
-			$private = false;
-			$packet_type = 'purge';
+			self::$private = false;
+			self::$packet_type = 'purge';
 		}
 		else {
 
@@ -309,10 +294,10 @@ class Notifier {
 				intval($target_item['uid'])
 			);
 			if($s)
-				$channel = $s[0];
+				self::$channel = $s[0];
 
-			if($channel['channel_hash'] !== $target_item['author_xchan'] && $channel['channel_hash'] !== $target_item['owner_xchan']) {
-				logger("notifier: Sending channel {$channel['channel_hash']} is not owner {$target_item['owner_xchan']} or author {$target_item['author_xchan']}", LOGGER_NORMAL, LOG_WARNING);
+			if(self::$channel['channel_hash'] !== $target_item['author_xchan'] && self::$channel['channel_hash'] !== $target_item['owner_xchan']) {
+				logger("notifier: Sending channel is not owner {$target_item['owner_xchan']} or author {$target_item['author_xchan']}", LOGGER_NORMAL, LOG_WARNING);
 				return;
 			}
 
@@ -320,8 +305,10 @@ class Notifier {
 			if($target_item['mid'] === $target_item['parent_mid']) {
 				$parent_item = $target_item;
 				$top_level_post = true;
+
 			}
 			else {
+
 				// fetch the parent item
 				$r = q("SELECT * from item where id = %d order by id asc",
 					intval($target_item['parent'])
@@ -348,9 +335,11 @@ class Notifier {
 				return;
 
 
-//			$encoded_item = encode_item($target_item);
+//			self::$encoded_item = encode_item($target_item);
 
-			$encoded_item = \Zotlabs\Lib\Activity::encode_activity($target_item);
+			self::$encoded_item = \Zotlabs\Lib\Activity::encode_activity($target_item);
+
+		logger('encoded: ' . print_r(self::$encoded_item,true));
 		
 			// Send comments to the owner to re-deliver to everybody in the conversation
 			// We only do this if the item in question originated on this site. This prevents looping.
@@ -382,11 +371,8 @@ class Notifier {
 
 			if(($relay_to_owner || $uplink) && ($cmd !== 'relay')) {
 				logger('notifier: followup relay', LOGGER_DEBUG);
-				$recipients = array(($uplink) ? $parent_item['source_xchan'] : $parent_item['owner_xchan']);
-				$private = true;
-				if(! $encoded_item['flags'])
-					$encoded_item['flags'] = array();
-				$encoded_item['flags'][] = 'relay';
+				self::$recipients = [ ($uplink) ? $parent_item['source_xchan'] : $parent_item['owner_xchan'] ];
+				self::$private = true;
 				$upstream = true;
 			}
 			else {
@@ -405,8 +391,8 @@ class Notifier {
 					}
 				}
 
-				$private = false;
-				$recipients = collect_recipients($parent_item,$private);
+				self::$private = false;
+				self::$recipients = collect_recipients($parent_item,self::$private);
 
 				// FIXME add any additional recipients such as mentions, etc.
 
@@ -420,27 +406,28 @@ class Notifier {
 			}
 		}
 
-		$walltowall = (($top_level_post && $channel['xchan_hash'] === $target_item['author_xchan']) ? true : false); 
+		$walltowall = (($top_level_post && self::$channel['xchan_hash'] === $target_item['author_xchan']) ? true : false); 
 
 		// Generic delivery section, we have an encoded item and recipients
 		// Now start the delivery process
 
-		$x = $encoded_item;
+		$x = self::$encoded_item;
 		$x['title'] = 'private';
 		$x['body'] = 'private';
 		logger('notifier: encoded item: ' . print_r($x,true), LOGGER_DATA, LOG_DEBUG);
 
-		stringify_array_elms($recipients);
-		if(! $recipients) {
+		stringify_array_elms(self::$recipients);
+		if(! self::$recipients) {
 			logger('no recipients');
 			return;
 		}
 
-		//	logger('notifier: recipients: ' . print_r($recipients,true), LOGGER_NORMAL, LOG_DEBUG);
+		//	logger('notifier: recipients: ' . print_r(self::$recipients,true), LOGGER_NORMAL, LOG_DEBUG);
 
-		$env_recips = (($private) ? array() : null);
+		if(! count(self::$env_recips))
+			self::$env_recips = ((self::$private) ? [] : null);
 
-		$details = q("select xchan_hash, xchan_instance_url, xchan_network, xchan_addr, xchan_guid, xchan_guid_sig from xchan where xchan_hash in (" . protect_sprintf(implode(',',$recipients)) . ")");
+		$details = q("select xchan_hash, xchan_instance_url, xchan_network, xchan_addr, xchan_guid, xchan_guid_sig from xchan where xchan_hash in (" . protect_sprintf(implode(',',self::$recipients)) . ")");
 
 
 		$recip_list = array();
@@ -449,33 +436,31 @@ class Notifier {
 			foreach($details as $d) {
 
 				$recip_list[] = $d['xchan_addr'] . ' (' . $d['xchan_hash'] . ')'; 
-				if($private) {
-					$env_recips[] = $d['xchan_hash'];
+				if(self::$private) {
+					self::$env_recips[] = $d['xchan_hash'];
 				}
 			}
 		}
 
 
 		$narr = [
-			'channel'        => $channel,
+			'channel'        => self::$channel,
 			'upstream'       => $upstream,
-			'env_recips'     => $env_recips,
-			'packet_recips'  => $packet_recips,
-			'recipients'     => $recipients,
+			'env_recips'     => self::$env_recips,
+			'recipients'     => self::$recipients,
 			'item'           => $item,
 			'target_item'    => $target_item,
 			'parent_item'    => $parent_item,
 			'top_level_post' => $top_level_post,
-			'private'        => $private,
+			'private'        => self::$private,
 			'relay_to_owner' => $relay_to_owner,
 			'uplink'         => $uplink,
 			'cmd'            => $cmd,
 			'mail'           => $mail,
 			'single'         => (($cmd === 'single_mail' || $cmd === 'single_activity') ? true : false),
-			'location'       => $location,
 			'request'        => $request,
 			'normal_mode'    => $normal_mode,
-			'packet_type'    => $packet_type,
+			'packet_type'    => self::$packet_type,
 			'walltowall'     => $walltowall,
 			'queued'         => []
 		];
@@ -483,16 +468,15 @@ class Notifier {
 		call_hooks('notifier_process', $narr);
 		if($narr['queued']) {
 			foreach($narr['queued'] as $pq)
-				$deliveries[] = $pq;
+				self::$deliveries[] = $pq;
 		}
 
 		// notifier_process can alter the recipient list
 
-		$recipients    = $narr['recipients'];
-		$env_recips    = $narr['env_recips'];
-		$packet_recips = $narr['packet_recips'];
+		self::$recipients    = $narr['recipients'];
+		self::$env_recips    = $narr['env_recips'];
 
-		if(($private) && (! $env_recips)) {
+		if((self::$private) && (! self::$env_recips)) {
 			// shouldn't happen
 			logger('notifier: private message with no envelope recipients.' . print_r($argv,true), LOGGER_NORMAL, LOG_NOTICE);
 		}
@@ -503,7 +487,7 @@ class Notifier {
 		// Now we have collected recipients (except for external mentions, FIXME)
 		// Let's reduce this to a set of hubs; checking that the site is not dead.
 
-		$r = q("select hubloc.*, site.site_crypto, site.site_flags from hubloc left join site on site_url = hubloc_url where hubloc_hash in (" . protect_sprintf(implode(',',$recipients)) . ") 
+		$r = q("select hubloc.*, site.site_crypto, site.site_flags from hubloc left join site on site_url = hubloc_url where hubloc_hash in (" . protect_sprintf(implode(',',self::$recipients)) . ") 
 			and hubloc_error = 0 and hubloc_deleted = 0 and ( site_dead = 0 OR site_dead is null ) "
 		);		
  
@@ -530,8 +514,8 @@ class Notifier {
 
 		foreach($hubs as $hub) {
 
-			if($env_recips) {
-				foreach($env_recips as $er) {
+			if(self::$env_recips) {
+				foreach(self::$env_recips as $er) {
 					if($hub['hubloc_hash'] === $er) {
 						if(! array_key_exists($hub['hubloc_host'] . $hub['hubloc_sitekey'], $hub_env)) {
 							$hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] = [];
@@ -564,26 +548,24 @@ class Notifier {
 
 			if($hub['hubloc_network'] !== 'zot6') {
 				$narr = [
-					'channel'        => $channel,
+					'channel'        => self::$channel,
 					'upstream'       => $upstream,
-					'env_recips'     => $env_recips,
-					'packet_recips'  => $packet_recips,
-					'recipients'     => $recipients,
+					'env_recips'     => self::$env_recips,
+					'recipients'     => self::$recipients,
 					'item'           => $item,
 					'target_item'    => $target_item,
 					'parent_item'    => $parent_item,
 					'hub'            => $hub,
 					'top_level_post' => $top_level_post,
-					'private'        => $private,
+					'private'        => self::$private,
 					'relay_to_owner' => $relay_to_owner,
 					'uplink'         => $uplink,
 					'cmd'            => $cmd,
 					'mail'           => $mail,
 					'single'         => (($cmd === 'single_mail' || $cmd === 'single_activity') ? true : false),
-					'location'       => $location,
 					'request'        => $request,
 					'normal_mode'    => $normal_mode,
-					'packet_type'    => $packet_type,
+					'packet_type'    => self::$packet_type,
 					'walltowall'     => $walltowall,
 					'queued'         => []
 				];
@@ -592,7 +574,7 @@ class Notifier {
 				call_hooks('notifier_hub',$narr);
 				if($narr['queued']) {
 					foreach($narr['queued'] as $pq)
-						$deliveries[] = $pq;
+						self::$deliveries[] = $pq;
 				}
 				continue;
 
@@ -617,25 +599,25 @@ class Notifier {
 			$packet = null;
 			$pmsg   = '';
 
-			if($packet_type === 'refresh' || $packet_type === 'purge') {
-				$packet = Libzot::build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null), EMPTY_STR);
+			if(self::$packet_type === 'refresh' || self::$packet_type === 'purge') {
+				$packet = Libzot::build_packet(self::$channel,self::$packet_type,((self::$env_recips) ? self::$env_recips : null), EMPTY_STR);
 			}
-			if($packet_type === 'keychange') {
-				$pmsg = get_pconfig($channel['channel_id'],'system','keychange');
-				$packet = Libzot::build_packet($channel,$packet_type,(($packet_recips) ? $packet_recips : null),$pmsg,'red');
+			if(self::$packet_type === 'keychange') {
+				$pmsg = get_pconfig(self::$channel['channel_id'],'system','keychange');
+				$packet = Libzot::build_packet(self::$channel,self::$packet_type,((self::$env_recips) ? self::$env_recips : null),$pmsg,'zot');
 			}
-			elseif($packet_type === 'request') {
+			elseif(self::$packet_type === 'request') {
 				$env = (($hub_env && $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']]) ? $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] : '');
-				$packet = Libzot::build_packet($channel,$packet_type,$env,EMPTY_STR,$hub['hubloc_sitekey'],$hub['site_crypto'],
-					$hash, array('message_id' => $request_message_id)
+				$packet = Libzot::build_packet(self::$channel,self::$packet_type,$env,EMPTY_STR,$hub['hubloc_sitekey'],$hub['site_crypto'],
+					$hash, array('message_id' => $argv[4])
 				);
 			}
 
 			if($packet) {
 				queue_insert(array(
 					'hash'       => $hash,
-					'account_id' => $channel['channel_account_id'],
-					'channel_id' => $channel['channel_id'],
+					'account_id' => self::$channel['channel_account_id'],
+					'channel_id' => self::$channel['channel_id'],
 					'posturl'    => $hub['hubloc_callback'],
 					'notify'     => $packet,
 					'msg'        => EMPTY_STR
@@ -644,7 +626,7 @@ class Notifier {
 			else {
 				$env = (($hub_env && $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']]) ? $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] : '');
 
-				$packet = Libzot::build_packet($channel, $packet_type, $env, $encoded_item, $encoding, (($private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto']);
+				$packet = Libzot::build_packet(self::$channel, self::$packet_type, $env, self::$encoded_item, self::$encoding, ((self::$private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto']);
 
 				queue_insert(
 					[
@@ -666,13 +648,13 @@ class Notifier {
 						dbesc(EMPTY_STR),
 						dbesc('queued'),
 						dbesc(datetime_convert()),
-						dbesc($channel['channel_hash']),
+						dbesc(self::$channel['channel_hash']),
 						dbesc($hash)
 					);
 				}
 			}
 
-			$deliveries[] = $hash;	
+			self::$deliveries[] = $hash;	
 		}
 	
 		if($normal_mode) {
@@ -682,8 +664,8 @@ class Notifier {
 			}
 		}
 
-		if($deliveries)
-			do_delivery($deliveries);
+		if(self::$deliveries)
+			do_delivery(self::$deliveries);
 
 		logger('notifier: basic loop complete.', LOGGER_DEBUG);
 

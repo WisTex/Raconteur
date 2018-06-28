@@ -11,6 +11,7 @@ namespace Zotlabs\Lib;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\System;
+use Zotlabs\Lib\MessageFilter;
 use Zotlabs\Web\HTTPSig;
 
 require_once('include/crypto.php');
@@ -113,11 +114,11 @@ class Libzot {
 		$sig_method = get_config('system','signature_algorithm','sha256');
 
 		$data = [
-			'type' => $type,
+			'type'     => $type,
 			'encoding' => $encoding,
-			'sender'  => $channel['channel_hash'],
-			'site_id' => self::make_xchan_hash(z_root(), get_config('system','pubkey')),
-			'version'    => System::get_zot_revision(),
+			'sender'   => $channel['channel_hash'],
+			'site_id'  => self::make_xchan_hash(z_root(), get_config('system','pubkey')),
+			'version'  => System::get_zot_revision(),
 		];
 
 		if ($recipients) {
@@ -429,7 +430,7 @@ class Libzot {
 
 					if($new_connection) {
 						if(! \Zotlabs\Access\Permissions::PermsCompare($new_perms,$previous_perms))
-							\Zotlabs\Daemon\Master::Summon(array('Notifier','permission_create',$new_connection[0]['abook_id']));
+							\Zotlabs\Daemon\Master::Summon(array('Notifier','permissions_create',$new_connection[0]['abook_id']));
 						\Zotlabs\Lib\Enotify::submit(
 							[
 							'type'       => NOTIFY_INTRO,
@@ -1060,7 +1061,7 @@ class Libzot {
 
 		logger('zot_fetch: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 
-		return self::import($arr, $arr['sender']['location']);
+		return self::import($arr);
 
 	}
 
@@ -1088,7 +1089,7 @@ class Libzot {
 	 *   * [2] => \e string $address
 	 */
 
-	static function import($arr, $hub) {
+	static function import($arr) {
 
 		$env = $arr;
 
@@ -1114,16 +1115,15 @@ class Libzot {
 
 		if(array_key_exists('recipients',$env) && count($env['recipients'])) {
 			logger('specific recipients');
+logger('recipients: ' . print_r($recipients,true));
 			$recip_arr = array();
 			foreach($env['recipients'] as $recip) {
-				if(is_array($recip)) {
-					$recip_arr[] =  $recip['portable_id'];
-				}
+				$recip_arr[] =  $recip;
 			}
 
 			$r = false;
 			if($recip_arr) {
-				stringify_array_elms($recip_arr);
+				stringify_array_elms($recip_arr,true);
 				$recips = implode(',',$recip_arr);
 				$r = q("select channel_hash as hash from channel where channel_hash in ( " . $recips . " ) and channel_removed = 0 ");
 			}
@@ -1133,7 +1133,7 @@ class Libzot {
 				return;
 			}
 
-			$deliveries = $r;
+			$deliveries = ids_to_array($r,'hash');
 
 			// We found somebody on this site that's in the recipient list.
 		}
@@ -1146,7 +1146,7 @@ class Libzot {
 			// and who are allowed to see them based on the sender's permissions
 			// @fixme;
 
-			$deliveries = self::allowed_public_recips($env['data']);
+			$deliveries = self::public_recips($env);
 
 			if($has_data && $data['type'] === 'location') {
 				$sys = get_sys_channel();
@@ -1201,7 +1201,23 @@ class Libzot {
 				logger('Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 				logger('Activity recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
 
-				$relay = ((array_key_exists('flags',$data) && in_array('relay',$data['flags'])) ? true : false);
+				$relay = false;
+
+				// is this a relayed message?
+				// more specifically a followup with exactly 1 recipient - the post owner
+
+				if($arr['mid'] !== $arr['parent_mid']) {
+					if(count($deliveries) === 1) {
+						$r = q("select * from item where mid = '%s' and owner_xchan = '%s' limit 1",
+							dbesc($arr['parent_mid']),
+							dbesc($deliveries[0])
+						);
+						if($r) {
+							$relay = true;
+						}
+					}
+				}
+
 				$result = self::process_delivery($env['sender'],$arr,$deliveries,$relay,false,$message_request);
 			}
 			elseif($env['type'] === 'mail') {
@@ -1245,12 +1261,12 @@ class Libzot {
 	}
 
 
-	static function is_top_level($act) {
-		if($act['encoding'] === 'red' && array_key_exists('flags',$act) && in_array('thread_parent', $act['flags'])) {
+	static function is_top_level($env) {
+		if($env['encoding'] === 'zot' && array_key_exists('flags',$env) && in_array('thread_parent', $env['flags'])) {
 			return true;
 		}
 		if($act['encoding'] === 'activitystreams') {
-			if(array_key_exists('inReplyTo',$act) && $act['inReplyTo']) {
+			if(array_key_exists('inReplyTo',$act['data']) && $act['data']['inReplyTo']) {
 				return false;
 			}
 			return true;
@@ -1282,51 +1298,21 @@ class Libzot {
 		$check_mentions = false;
 		$include_sys = false;
 
-		if($msg['message']['type'] === 'activity') {
+		if($msg['type'] === 'activity') {
 			$disable_discover_tab = get_config('system','disable_discover_tab') || get_config('system','disable_discover_tab') === false;
 			if(! $disable_discover_tab)
 				$include_sys = true;
 
 			$perm = 'send_stream';
 
-			if(self::is_top_level($msg['message'])) {
+			if(self::is_top_level($msg)) {
 				$check_mentions = true;
 			}
-			else {
-
-				// This doesn't look like it works so I have to explain what happened. These are my
-				// notes (below) from when I got this section of code working. You would think that
-				// we only have to find those with the requisite stream or comment permissions,
-				// depending on whether this is a top-level post or a comment - but you would be wrong.
-
-				// ... so public_recips and allowed_public_recips is working so much better
-				// than before, but was still not quite right. We seem to be getting all the right
-				// results for top-level posts now, but comments aren't getting through on channels
-				// for which we've allowed them to send us their stream, but not comment on our posts.
-				// The reason is we were seeing if they could comment - and we only need to do that if
-				// we own the post. If they own the post, we only need to check if they can send us their stream.
-
-				// if this is a comment and it wasn't sent by the post owner, check to see who is allowing them to comment.
-				// We should have one specific recipient and this step shouldn't be needed unless somebody stuffed up
-				// their software. We may need this step to protect us from bad guys intentionally stuffing up their software.
-				// If it is sent by the post owner, we don't need to do this. We only need to see who is receiving the
-				// owner's stream (which was already set above) - as they control the comment permissions, not us.
-
-				// Note that by doing this we introduce another bug because some public forums have channel_w_stream
-				// permissions set to themselves only. We also need in this function to add these public forums to the
-				// public recipient list based on if they are tagged or not and have tag permissions. This is complicated
-				// by the fact that this activity doesn't have the public forum tag. It's the parent activity that
-				// contains the tag. we'll solve that further below.
-
-				if($msg['notify']['sender']['id_sig'] != $msg['message']['owner']['id_sig']) {
-					$perm = 'post_comments';
-				}
-			}
 		}
-		elseif($msg['message']['type'] === 'mail')
+		elseif($msg['type'] === 'mail')
 			$perm = 'post_mail';
 
-		$r = array();
+		$r = [];
 
 		$c = q("select channel_id, channel_hash from channel where channel_removed = 0");
 		if($c) {
@@ -1337,13 +1323,13 @@ class Libzot {
 			}
 		}
 
-		// logger('message: ' . print_r($msg['message'],true));
-
 		if($include_sys) {
 			$sys = get_sys_channel();
 			if($sys)
 				$r[] = $sys['channel_hash'];
 		}
+
+//@fixme
 
 		// look for any public mentions on this site
 		// They will get filtered by tgroup_check() so we don't need to check permissions now
@@ -1393,23 +1379,6 @@ class Libzot {
 		return $r;
 	}
 
-	/**
-	 * @brief This is the second part of public_recips().
-	 *
-	 * We'll find all the channels willing to accept public posts from us, then
-	 * match them against the sender privacy scope and see who in that list that
-	 * the sender is allowing.
-	 *
-	 * @see public_recipes()
-	 * @param array $msg
-	 * @return array
-	 */
-
-	static function allowed_public_recips($msg) {
-
-		return self::public_recips($msg);
-
-	}
 
 	/**
 	 * @brief
@@ -1437,6 +1406,7 @@ class Libzot {
 		}
 
 		foreach($deliveries as $d) {
+
 			$local_public = $public;
 
 			$DR = new \Zotlabs\Lib\DReport(z_root(),$sender,$d,$arr['mid']);
@@ -1485,7 +1455,7 @@ class Libzot {
 					$local_public = false;
 					continue;
 				}
-				if(! \Zotlabs\Lib\MessageFilter::evaluate($arr,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
+				if(! MessageFilter::evaluate($arr,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
 					$local_public = false;
 					continue;
 				}
@@ -1574,12 +1544,12 @@ class Libzot {
 						$last_prior_route = '';
 					}
 
-					if(in_array('undefined',$existing_route) || $last_hop == 'undefined' || $sender['hash'] == 'undefined')
+					if(in_array('undefined',$existing_route) || $last_hop == 'undefined' || $sender == 'undefined')
 						$last_hop = '';
 
-					$current_route = (($arr['route']) ? $arr['route'] . ',' : '') . $sender['hash'];
+					$current_route = (($arr['route']) ? $arr['route'] . ',' : '') . $sender;
 
-					if($last_hop && $last_hop != $sender['hash']) {
+					if($last_hop && $last_hop != $sender) {
 						logger('comment route mismatch: parent route = ' . $r[0]['route'] . ' expected = ' . $current_route, LOGGER_DEBUG);
 						logger('comment route mismatch: parent msg = ' . $r[0]['id'],LOGGER_DEBUG);
 						$DR->update('comment route mismatch');
@@ -1650,11 +1620,11 @@ class Libzot {
 						$result[] = $DR->get();
 					}
 					else {
-						$item_result = update_imported_item($sender,$arr,$r[0],$channel['channel_id'],$tag_delivery);
+						$item_result = self::update_imported_item($sender,$arr,$r[0],$channel['channel_id'],$tag_delivery);
 						$DR->update('updated');
 						$result[] = $DR->get();
 						if(! $relay)
-							add_source_route($item_id,$sender['hash']);
+							add_source_route($item_id,$sender);
 					}
 				}
 				else {
@@ -1710,7 +1680,7 @@ class Libzot {
 						call_hooks('activity_received', $parr);
 						// don't add a source route if it's a relay or later recipients will get a route mismatch
 						if(! $relay)
-							add_source_route($item_id,$sender['hash']);
+							add_source_route($item_id,$sender);
 					}
 					$DR->update(($item_id) ? 'posted' : 'storage failed: ' . $item_result['message']);
 					$result[] = $DR->get();

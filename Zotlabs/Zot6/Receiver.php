@@ -173,7 +173,11 @@ class Receiver {
 				$this->response = $this->handler->Rekey($this->sender, $this->data,$this->hub);
 				break;
 
-			case 'notify':
+			case 'activity':
+			case 'mail':
+			case 'profile':
+			case 'channel_sync':
+			case 'location':
 			default:
 				$this->response = $this->handler->Notify($this->data,$this->hub);
 				break;

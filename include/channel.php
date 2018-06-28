@@ -2772,23 +2772,6 @@ function anon_identity_init($reqvars) {
 }
 
 
-/**
- * @brief Create a channel array from proxy channel (pchan).
- *
- * @param array $pchan The proxy channel
- * @return array channel array
- */
-function pchan_to_chan($pchan) {
-	$chan = $pchan;
-	$chan['channel_address'] = $pchan['pchan_guid'];
-	$chan['channel_hash']    = $pchan['pchan_hash'];
-	$chan['channel_pubkey']  = $pchan['pchan_pubkey'];
-	$chan['channel_prvkey']  = $pchan['pchan_prvkey'];
-	$chan['channel_name']    = $pchan['xchan_name'];
-
-	return $chan;
-}
-
 function channel_url($channel) {
 	return (($channel) ? z_root() . '/channel/' . $channel['channel_address'] : z_root());
 }

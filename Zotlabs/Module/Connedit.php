@@ -247,12 +247,12 @@ class Connedit extends \Zotlabs\Web\Controller {
 
 		if(! intval(\App::$poi['abook_self'])) {
 			if($new_friend) {
-				\Zotlabs\Daemon\Master::Summon( [ 'Notifier', 'permission_accept', $contact_id ] ); 
+				\Zotlabs\Daemon\Master::Summon( [ 'Notifier', 'permissions_accept', $contact_id ] ); 
 			}
 
 			\Zotlabs\Daemon\Master::Summon( [ 
 				'Notifier', 
-				(($new_friend) ? 'permission_create' : 'permission_update'), 
+				(($new_friend) ? 'permissions_create' : 'permissions_update'), 
 				$contact_id 
 			]);
 		}
@@ -475,7 +475,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 				else {
 	
 					// if you are on a different network we'll force a refresh of the connection basic info
-					\Zotlabs\Daemon\Master::Summon(array('Notifier','permission_update',$contact_id));
+					\Zotlabs\Daemon\Master::Summon(array('Notifier','permissions_update',$contact_id));
 				}
 				goaway(z_root() . '/connedit/' . $contact_id);
 			}

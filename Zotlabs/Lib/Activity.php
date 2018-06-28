@@ -664,7 +664,7 @@ class Activity {
 					// Send an Accept back to them
 
 					set_abconfig($channel['channel_id'],$person_obj['id'],'pubcrawl','their_follow_id', $their_follow_id);
-					\Zotlabs\Daemon\Master::Summon([ 'Notifier', 'permission_accept', $contact['abook_id'] ]);
+					\Zotlabs\Daemon\Master::Summon([ 'Notifier', 'permissions_accept', $contact['abook_id'] ]);
 					return;
 
 				case 'Accept':
@@ -765,9 +765,9 @@ class Activity {
 
 				if($my_perms && $automatic) {
 					// send an Accept for this Follow activity
-					\Zotlabs\Daemon\Master::Summon([ 'Notifier', 'permission_accept', $new_connection[0]['abook_id'] ]);
+					\Zotlabs\Daemon\Master::Summon([ 'Notifier', 'permissions_accept', $new_connection[0]['abook_id'] ]);
 					// Send back a Follow notification to them
-					\Zotlabs\Daemon\Master::Summon([ 'Notifier', 'permission_create', $new_connection[0]['abook_id'] ]);
+					\Zotlabs\Daemon\Master::Summon([ 'Notifier', 'permissions_create', $new_connection[0]['abook_id'] ]);
 				}
 
 				$clone = array();
@@ -1225,26 +1225,13 @@ class Activity {
 
 		$s = [];
 
-		$parent = ((array_key_exists('inReplyTo',$act->obj)) ? urldecode($act->obj['inReplyTo']) : '');
-		if($parent) {
-
-			$s['parent_mid'] = $parent;
-
-		}
-
-		$s['owner_xchan'] = $act->actor['id'];
-		$s['author_xchan'] = $act->actor['id'];
-
 		$content = self::get_content($act->obj);
 
-		if(! $content) {
-			logger('no content');
-			return;
-		}
+		$s['owner_xchan']  = $act->actor['id'];
+		$s['author_xchan'] = $act->actor['id'];
 
-		$s['aid'] = $channel['channel_account_id'];
-		$s['uid'] = $channel['channel_id'];
-		$s['mid'] = urldecode($act->obj['id']);
+		$s['mid']        = $act->id;
+		$s['parent_mid'] = $act->parent_id;
 
 
 		if($act->data['published']) {
@@ -1266,10 +1253,6 @@ class Activity {
 		if(! $s['edited'])
 			$s['edited'] = $s['created'];
 
-
-		if(! $s['parent_mid'])
-			$s['parent_mid'] = $s['mid'];
-
 		$summary = self::bb_content($content,'summary');
 
 		if($summary)
@@ -1277,9 +1260,9 @@ class Activity {
 	
 		$s['title']    = self::bb_content($content,'name');
 		$s['body']     = $summary . self::bb_content($content,'content');
-		$s['verb']     = ACTIVITY_POST;
-		$s['obj_type'] = ACTIVITY_OBJ_NOTE;
-
+		$s['verb']     = self::activity_mapper($act->type);
+		$s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
+		$s['obj']      = $act->obj;
 
 		$instrument = $act->get_property_obj('instrument');
 		if(! $instrument)
@@ -1298,10 +1281,6 @@ class Activity {
 		$a = self::decode_attachment($act->obj);
 		if($a) {
 			$s['attach'] = $a;
-		}
-
-		if($act->obj['type'] === 'Note' && $s['attach']) {
-			$s['body'] .= self::bb_attach($s['attach']);
 		}
 
 		// we will need a hook here to extract magnet links e.g. peertube

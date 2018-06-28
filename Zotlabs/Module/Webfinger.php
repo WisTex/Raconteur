@@ -105,7 +105,7 @@ class Webfinger extends \Zotlabs\Web\Controller {
 			$result['subject'] = $resource;
 	
 			$aliases = array(
-				z_root() . (($pchan) ? '/pchan/' : '/channel/') . $channel_target['channel_address'],
+				z_root() . '/channel/' . $channel_target['channel_address'],
 				z_root() . '/~' . $channel_target['channel_address'],
 				z_root() . '/@' . $channel_target['channel_address']
 
@@ -126,12 +126,12 @@ class Webfinger extends \Zotlabs\Web\Controller {
 					'http://purl.org/zot/federation' => 'zot6'
 			];
 	
-			foreach($aliases as $alias) 
-				if($alias != $resource)
+			foreach($aliases as $alias) { 
+				if($alias != $resource) {
 					$result['aliases'][] = $alias;
+				}
+			}
 	
-
-
 			$result['links'] = [
 
 				[

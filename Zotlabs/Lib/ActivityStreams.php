@@ -9,20 +9,21 @@ namespace Zotlabs\Lib;
  */
 class ActivityStreams {
 
-	public $raw    = null;
-	public $data;
-	public $valid  = false;
-	public $id     = '';
-	public $type   = '';
-	public $actor  = null;
-	public $obj    = null;
-	public $tgt    = null;
-	public $origin = null;
-	public $owner  = null;
-	public $signer = null;
-	public $ldsig  = null;
-	public $sigok  = false;
-	public $recips = null;
+	public $raw        = null;
+	public $data       = null;
+	public $valid      = false;
+	public $id         = '';
+	public $parent_id  = '';
+	public $type       = '';
+	public $actor      = null;
+	public $obj        = null;
+	public $tgt        = null;
+	public $origin     = null;
+	public $owner      = null;
+	public $signer     = null;
+	public $ldsig      = null;
+	public $sigok      = false;
+	public $recips     = null;
 	public $raw_recips = null;
 
 	/**
@@ -64,10 +65,23 @@ class ActivityStreams {
 				}
 			}
 
+			if($this->obj && $this->obj['actor'])
+				$this->obj['actor'] = $this->get_compound_property('actor',$this->obj);
+			if($this->tgt && $this->tgt['actor'])
+				$this->tgt['actor'] = $this->get_compound_property('actor',$this->tgt);
+
+
+
 			if(($this->type === 'Note') && (! $this->obj)) {
 				$this->obj = $this->data;
 				$this->type = 'Create';
 			}
+			
+			$this->parent_id = $this->get_property_obj('inReplyTo');
+			if(! $this->parent_id) {
+				$this->parent_id = $this->id;
+			}
+
 		}
 	}
 

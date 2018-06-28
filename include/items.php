@@ -1629,17 +1629,17 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 
 	if((x($arr,'obj')) && is_array($arr['obj'])) {
 		activity_sanitise($arr['obj']);
-		$arr['obj'] = json_encode($arr['obj']);
+		$arr['obj'] = json_encode($arr['obj'],JSON_UNESCAPED_SLASHES);
 	}
 
 	if((x($arr,'target')) && is_array($arr['target'])) {
 		activity_sanitise($arr['target']);
-		$arr['target'] = json_encode($arr['target']);
+		$arr['target'] = json_encode($arr['target'],JSON_UNESCAPED_SLASHES);
 	}
 
 	if((x($arr,'attach')) && is_array($arr['attach'])) {
 		activity_sanitise($arr['attach']);
-		$arr['attach'] = json_encode($arr['attach']);
+		$arr['attach'] = json_encode($arr['attach'],JSON_UNESCAPED_SLASHES);
 	}
 
 	$arr['aid']           = ((x($arr,'aid'))           ? intval($arr['aid'])                           : 0);
@@ -2068,17 +2068,17 @@ function item_store_update($arr, $allow_exec = false, $deliver = true) {
 
 	if((array_key_exists('obj',$arr)) && is_array($arr['obj'])) {
 		activity_sanitise($arr['obj']);
-		$arr['obj'] = json_encode($arr['obj']);
+		$arr['obj'] = json_encode($arr['obj'],JSON_UNESCAPED_SLASHES);
 	}
 
 	if((array_key_exists('target',$arr)) && is_array($arr['target'])) {
 		activity_sanitise($arr['target']);
-		$arr['target'] = json_encode($arr['target']);
+		$arr['target'] = json_encode($arr['target'],JSON_UNESCAPED_SLASHES);
 	}
 
 	if((array_key_exists('attach',$arr)) && is_array($arr['attach'])) {
 		activity_sanitise($arr['attach']);
-		$arr['attach'] = json_encode($arr['attach']);
+		$arr['attach'] = json_encode($arr['attach'],JSON_UNESCAPED_SLASHES);
 	}
 
 	unset($arr['id']);
@@ -3089,7 +3089,7 @@ function mail_store($arr) {
 
 	if(array_key_exists('attach',$arr)) {
 		if(is_array($arr['attach'])) {
-			$arr['attach'] = json_encode($arr['attach']);
+			$arr['attach'] = json_encode($arr['attach'],JSON_UNESCAPED_SLASHES);
 		}
 	}
 	else {
@@ -4451,7 +4451,7 @@ function send_profile_photo_activity($channel,$photo,$profile) {
 		'type' => $arr['obj_type'],
 		'id' => z_root() . '/photo/profile/l/' . $channel['channel_id'],
 		'link' => array('rel' => 'photo', 'type' => $photo['type'], 'href' => z_root() . '/photo/profile/l/' . $channel['channel_id'])
-	));
+	),JSON_UNESCAPED_SLASHES);
 
 	if(stripos($profile['gender'],t('female')) !== false)
 		$t = t('%1$s updated her %2$s');
@@ -4680,7 +4680,7 @@ function item_create_edit_activity($post) {
 				array('rel' => 'alternate', 'type' => 'text/html', 'href' => $item_author['xchan_url']),
 				array('rel' => 'photo', 'type' => $item_author['xchan_photo_mimetype'], 'href' => $item_author['xchan_photo_m'])),
 			),
-	));
+	),JSON_UNESCAPED_SLASHES);
 
 
 	$x = post_activity_item($new_item);
