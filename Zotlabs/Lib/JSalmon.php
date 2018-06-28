@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Lib;
 
+use Zotlabs\Web\HTTPSig;
 
 class JSalmon {
 
@@ -35,4 +36,36 @@ class JSalmon {
 		]);
 
 	}
+
+	static function verify($x) {
+
+		$ret = [ 'results' => [] ];
+
+		if(! is_array($x)) {
+			return $false;
+		}
+		if(! ( array_key_exists('signed',$x) && $x['signed'])) {
+			return $false;
+		}
+
+		$signed_data = preg_replace('/\s+/','',$x) . '.' . base64url_encode($x['data_type'],false) . '.' . base64url_encode($x['encoding'],false) . '.' . base64url_encode($x['alg'],false);
+
+		foreach($sigs as $sig) {		
+			$key = HTTPSig::get_key(EMPTY_STR,base64url_decode($x['sig']['key_id']));
+			if($key['portable_id'] && $key['public_key']) {
+				if(rsa_verify($signed_data,base64url_decode($x['sigs']['value']),$key['public_key'])) {
+					$ret['results'][] = [ 'success' => true, 'signer' => $key['portable_id'] ];
+				}
+			}
+		}
+
+		return $ret;
+
+	}
+
+	static function unpack($data) {
+		return json_decode(base64url_decode($data),true);
+	}
+
+
 }
