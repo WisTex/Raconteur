@@ -63,6 +63,14 @@ class Activity_filter {
 						'title' => sprintf(t('Show posts related to the %s privacy group'), $g['gname'])
 					];
 				}
+				$gsub[] = [
+					'label' => t('Manage Privacy Groups'),
+					'icon'  => 'gear',
+					'url'   => z_root() . '/group',
+					'sel' => '',
+					'title' => t('Create and edit privacy groups and members')
+				];
+
 				$tabs[] = [
 					'id' => 'privacy_groups',
 					'label' => t('Privacy Groups'),
