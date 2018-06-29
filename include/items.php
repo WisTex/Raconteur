@@ -2566,34 +2566,17 @@ function tag_deliver($uid, $item_id) {
 			$plustagged = false;
 			$matches = array();
 
-			$pattern = '/[\!@]\!?\[zrl\=' . preg_quote($term['url'],'/') . '\]' . preg_quote($term['term'],'/') . '\[\/zrl\]/';
+			$pattern = '/[\!@]\!?\[[uz]rl\=' . preg_quote($term['url'],'/') . '\]' . preg_quote($term['term'],'/') . '\[\/[uz]rl\]/';
 			if(preg_match($pattern,$body,$matches))
 				$tagged = true;
 
-			// original red forum tagging sequence @forumname+
 			// standard forum tagging sequence !forumname
 
-			$pluspattern = '/@\!?\[zrl\=([^\]]*?)\]((?:.(?!\[zrl\=))*?)\+\[\/zrl\]/';
-
-			$forumpattern = '/\!\!?\[zrl\=([^\]]*?)\]((?:.(?!\[zrl\=))*?)\[\/zrl\]/';
+			$forumpattern = '/\!\!?\[[uz]rl\=([^\]]*?)\]((?:.(?!\[[uz]rl\=))*?)\[\/[uz]rl\]/';
 
 			$found = false;
 
 			$matches = array();
-
-			if(preg_match_all($pluspattern,$body,$matches,PREG_SET_ORDER)) {
-				foreach($matches as $match) {
-					$matched_forums ++;
-					if($term['url'] === $match[1] && $term['term'] === $match[2] && intval($term['ttype']) === TERM_MENTION) {
-						if($matched_forums <= $max_forums) {
-							$plustagged = true;
-							$found = true;
-							break;
-						}
-						logger('forum ' . $term['term'] . ' exceeded max_tagged_forums - ignoring');
-					}
-				}
-			}
 
 			if(preg_match_all($forumpattern,$body,$matches,PREG_SET_ORDER)) {
 				foreach($matches as $match) {
@@ -2822,27 +2805,11 @@ function tgroup_check($uid, $item) {
 
 			$body = preg_replace('/\[share(.*?)\[\/share\]/','',$item['body']);
 
-
-			$pluspattern = '/@\!?\[zrl\=([^\]]*?)\]((?:.(?!\[zrl\=))*?)\+\[\/zrl\]/';
-
-			$forumpattern = '/\!\!?\[zrl\=([^\]]*?)\]((?:.(?!\[zrl\=))*?)\[\/zrl\]/';
+			$forumpattern = '/\!\!?\[[uz]rl\=([^\]]*?)\]((?:.(?!\[[uz]rl\=))*?)\[\/[uz]rl\]/';
 
 			$found = false;
 
 			$matches = array();
-
-			if(preg_match_all($pluspattern,$body,$matches,PREG_SET_ORDER)) {
-				foreach($matches as $match) {
-					$matched_forums ++;
-					if($term['url'] === $match[1] && $term['term'] === $match[2] && intval($term['ttype']) === TERM_MENTION) {
-						if($matched_forums <= $max_forums) {
-							$found = true;
-							break;
-						}
-						logger('forum ' . $term['term'] . ' exceeded max_tagged_forums - ignoring');
-					}
-				}
-			}
 
 			if(preg_match_all($forumpattern,$body,$matches,PREG_SET_ORDER)) {
 				foreach($matches as $match) {

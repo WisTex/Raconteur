@@ -126,6 +126,10 @@ class Libzot {
 		}
 
 		if ($msg) {
+			$actor = channel_url($channel);
+			if ($encoding === 'activitystreams' && array_key_exists('actor',$msg) && is_string($msg['actor']) && $actor === $msg['actor']) {
+				$msg = JSalmon::sign($msg,$actor,$channel['channel_prvkey']);
+			}
 			$data['data'] = $msg;
 		}
 		else {
@@ -1115,7 +1119,8 @@ class Libzot {
 
 		if(array_key_exists('recipients',$env) && count($env['recipients'])) {
 			logger('specific recipients');
-logger('recipients: ' . print_r($recipients,true));
+			logger('recipients: ' . print_r($recipients,true),LOGGER_DEBUG);
+
 			$recip_arr = array();
 			foreach($env['recipients'] as $recip) {
 				$recip_arr[] =  $recip;
@@ -1265,8 +1270,8 @@ logger('recipients: ' . print_r($recipients,true));
 		if($env['encoding'] === 'zot' && array_key_exists('flags',$env) && in_array('thread_parent', $env['flags'])) {
 			return true;
 		}
-		if($act['encoding'] === 'activitystreams') {
-			if(array_key_exists('inReplyTo',$act['data']) && $act['data']['inReplyTo']) {
+		if($env['encoding'] === 'activitystreams') {
+			if(array_key_exists('inReplyTo',$env['data']) && $env['data']['inReplyTo']) {
 				return false;
 			}
 			return true;
@@ -1329,25 +1334,26 @@ logger('recipients: ' . print_r($recipients,true));
 				$r[] = $sys['channel_hash'];
 		}
 
-//@fixme
+
 
 		// look for any public mentions on this site
 		// They will get filtered by tgroup_check() so we don't need to check permissions now
 
 		if($check_mentions) {
 			// It's a top level post. Look at the tags. See if any of them are mentions and are on this hub.
-			if($msg['message']['tags']) {
-				if(is_array($msg['message']['tags']) && $msg['message']['tags']) {
-					foreach($msg['message']['tags'] as $tag) {
-						if(($tag['type'] === 'mention' || $tag['type'] === 'forum') && (strpos($tag['url'],z_root()) !== false)) {
-							$address = basename($tag['url']);
+			if(array_path_exists('data/object/tag',$msg)) {
+				if(is_array($msg['data']['object']['tag']) && $msg['data']['object']['tag']) {
+					foreach($msg['data']['object']['tag'] as $tag) {
+						if($tag['type'] === 'Mention' && (strpos($tag['href'],z_root()) !== false)) {
+							$address = basename($tag['href']);
 							if($address) {
 								$z = q("select channel_hash as hash from channel where channel_address = '%s'
 									and channel_removed = 0 limit 1",
 									dbesc($address)
 								);
-								if($z)
-									$r = array_merge($r,$z);
+								if($z) {
+									$r[] = $z[0]['hash'];
+								}
 							}
 						}
 					}
@@ -1359,12 +1365,15 @@ logger('recipients: ' . print_r($recipients,true));
 			// everybody that stored a copy of the parent. This way we know we're covered. We'll check the
 			// comment permissions when we deliver them.
 
-			if($msg['message']['message_top']) {
+			if(array_path_exists('data/inReplyTo',$msg)) {
 				$z = q("select owner_xchan as hash from item where parent_mid = '%s' ",
-					dbesc($msg['message']['message_top'])
+					dbesc($msg['data']['inReplyTo'])
 				);
-				if($z)
-					$r = array_merge($r,$z);
+				if($z) {
+					foreach($z as $zv) {
+						$r[] = $zv['hash'];
+					}
+				}
 			}
 		}
 

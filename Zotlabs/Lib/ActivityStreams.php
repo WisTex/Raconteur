@@ -7,6 +7,7 @@ namespace Zotlabs\Lib;
  *
  * Parses an ActivityStream JSON string.
  */
+
 class ActivityStreams {
 
 	public $raw        = null;
@@ -45,7 +46,27 @@ class ActivityStreams {
 		}
 
 		if($this->data) {
+
+			// verify and unpack JSalmon signature if present
+			
+			if(is_array($this->data) && array_key_exists('signed',$this->data)) {
+				$ret = JSalmon::verify($this->data);
+				$tmp = JSalmon::unpack($this->data['data']);
+				if($ret && $ret['success']) {
+					if($ret['signer']) {
+						$saved = json_encode($this->data,JSON_UNESCAPED_SLASHES);
+						$this->data = $tmp;
+						$this->data['signer'] = $ret['signer'];
+						$this->data['signed_data'] = $saved;
+						if($ret['hubloc']) {
+							$this->data['hubloc'] = $ret['hubloc'];
+						}
+					}
+				}
+			}
+
 			$this->valid = true;
+
 		}
 
 		if($this->is_valid()) {
@@ -247,6 +268,24 @@ class ActivityStreams {
 		$x = $this->get_property_obj($property, $base, $namespace);
 		if($this->is_url($x)) {
 			$x = $this->fetch_property($x);
+		}
+
+		// verify and unpack JSalmon signature if present
+			
+		if(is_array($x) && array_key_exists('signed',$x)) {
+			$ret = JSalmon::verify($x);
+			$tmp = JSalmon::unpack($x['data']);
+			if($ret && $ret['success']) {
+				if($ret['signer']) {
+					$saved = json_encode($x,JSON_UNESCAPED_SLASHES);
+					$x = $tmp;
+					$x['signer'] = $ret['signer'];
+					$x['signed_data'] = $saved;
+					if($ret['hubloc']) {
+						$x['hubloc'] = $ret['hubloc'];
+					}
+				}
+			}
 		}
 
 		return $x;
