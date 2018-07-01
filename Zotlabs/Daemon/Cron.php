@@ -50,14 +50,19 @@ class Cron {
 
 		// expire any expired items
 
-		$r = q("select id from item where expires > '2001-01-01 00:00:00' and expires < %s 
+		$r = q("select id,item_wall from item where expires > '2001-01-01 00:00:00' and expires < %s 
 			and item_deleted = 0 ",
 			db_utcnow()
 		);
 		if($r) {
 			require_once('include/items.php');
-			foreach($r as $rr)
-				drop_item($rr['id'],false);
+			foreach($r as $rr) {
+				drop_item($rr['id'],false,(($rr['item_wall']) ? DROPITEM_PHASE1 : DROPITEM_NORMAL));
+				if($rr['item_wall']) {
+					// The notifier isn't normally invoked unless item_drop is interactive.
+					Zotlabs\Daemon\Master::Summon( [ 'Notifier', 'drop', $rr['id'] ] );
+				}
+			}
 		}
 
 
