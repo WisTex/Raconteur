@@ -72,7 +72,7 @@ class ActivityStreams {
 		if($this->is_valid()) {
 			$this->id     = $this->get_property_obj('id');
 			$this->type   = $this->get_primary_type();
-			$this->actor  = $this->get_compound_property('actor');
+			$this->actor  = $this->get_compound_property('actor','','',true);
 			$this->obj    = $this->get_compound_property('object');
 			$this->tgt    = $this->get_compound_property('target');
 			$this->origin = $this->get_compound_property('origin');
@@ -87,9 +87,9 @@ class ActivityStreams {
 			}
 
 			if($this->obj && $this->obj['actor'])
-				$this->obj['actor'] = $this->get_compound_property('actor',$this->obj);
+				$this->obj['actor'] = $this->get_compound_property('actor',$this->obj,'',true);
 			if($this->tgt && $this->tgt['actor'])
-				$this->tgt['actor'] = $this->get_compound_property('actor',$this->tgt);
+				$this->tgt['actor'] = $this->get_compound_property('actor',$this->tgt,'',true);
 
 
 
@@ -262,9 +262,10 @@ class ActivityStreams {
 	 * @param string $property
 	 * @param array $base
 	 * @param string $namespace (optional) default empty
+	 * @param boolean $first (optional) default false, if true and result is a sequential array return only the first element
 	 * @return NULL|mixed
 	 */
-	function get_compound_property($property, $base = '', $namespace = '') {
+	function get_compound_property($property, $base = '', $namespace = '', $first = false) {
 		$x = $this->get_property_obj($property, $base, $namespace);
 		if($this->is_url($x)) {
 			$x = $this->fetch_property($x);
@@ -286,6 +287,9 @@ class ActivityStreams {
 					}
 				}
 			}
+		}
+		if($first && array_key_exists(0,$x,true)) {
+			return $x[0];
 		}
 
 		return $x;

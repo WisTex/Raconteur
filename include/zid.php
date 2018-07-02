@@ -125,18 +125,17 @@ function clean_query_string($s = '') {
  * because the latter is used for general purpose conversions and the former is used only when preparing text for
  * immediate display.
  *
- * @TODO Issues: Currently the order of HTML parameters in the text is somewhat rigid and inflexible.
- *    We assume it looks like \<a class="zrl" href="xxxxxxxxxx"\> and will not work if zrl and href appear in a different order.
  *
  * @param array $match
  * @return string
  */
+
 function zidify_callback($match) {
 
-	$arr = [ 'zid' => ((strpos($match[1],'zrl')) ? true : false), 'url' => $match[2] ];
+	$arr = [ 'zid' => ((strpos($match[1],'zrl') || strpos($match[3],'zrl')) ? true : false), 'url' => $match[2] ];
 	call_hooks('zidify', $arr);
 
-	$replace = '<a' . $match[1] . ' href="' . (intval($arr['zid']) ? zid($arr['url']) : $arr['url']) . '"';
+	$replace = '<a' . $match[1] . ' href="' . (intval($arr['zid']) ? zid($arr['url']) : $arr['url']) . '"' . $match[3] . '>';
 
 	$x = str_replace($match[0], $replace, $match[0]);
 
@@ -145,10 +144,10 @@ function zidify_callback($match) {
 
 function zidify_img_callback($match) {
 
-	$arr = [ 'zid' => ((strpos($match[1],'zrl')) ? true : false), 'url' => $match[2] ];
+	$arr = [ 'zid' => ((strpos($match[1],'zrl') || strpos($match[3],'zrl')) ? true : false), 'url' => $match[2] ];
 	call_hooks('zidify', $arr);
 
-	$replace = '<img' . $match[1] . ' src="' . (intval($arr['zid']) ? zid($arr['url']) : $arr['url']) . '"';
+	$replace = '<img' . $match[1] . ' src="' . (intval($arr['zid']) ? zid($arr['url']) : $arr['url']) . '"' . $match[3] . '>';
 
 	$x = str_replace($match[0], $replace, $match[0]);
 
@@ -157,8 +156,8 @@ function zidify_img_callback($match) {
 
 
 function zidify_links($s) {
-	$s = preg_replace_callback('/\<a(.*?)href\=\"(.*?)\"/ism','zidify_callback',$s);
-	$s = preg_replace_callback('/\<img(.*?)src\=\"(.*?)\"/ism','zidify_img_callback',$s);
+	$s = preg_replace_callback('/\<a(.*?)href\=\"(.*?)\"(.*?)\>/ism','zidify_callback',$s);
+	$s = preg_replace_callback('/\<img(.*?)src\=\"(.*?)\"(.*?)\>/ism','zidify_img_callback',$s);
 
 	return $s;
 }
@@ -166,7 +165,7 @@ function zidify_links($s) {
 
 function zidify_text_callback($match) {
 	$is_zid = is_matrix_url($match[2]);
-	$replace = '<a' . $match[1] . ' href="' . (($is_zid) ? zid($match[2]) : $match[2]) . '"';
+	$replace = '<a' . $match[1] . ' href="' . (($is_zid) ? zid($match[2]) : $match[2]) . '"' . $match[3] . '>';
 
 	$x = str_replace($match[0], $replace, $match[0]);
 
@@ -175,7 +174,7 @@ function zidify_text_callback($match) {
 
 function zidify_text_img_callback($match) {
 	$is_zid = is_matrix_url($match[2]);
-	$replace = '<img' . $match[1] . ' src="' . (($is_zid) ? zid($match[2]) : $match[2]) . '"';
+	$replace = '<img' . $match[1] . ' src="' . (($is_zid) ? zid($match[2]) : $match[2]) . '"' . $match[3] . '>';
 
 	$x = str_replace($match[0], $replace, $match[0]);
 
@@ -184,8 +183,8 @@ function zidify_text_img_callback($match) {
 
 function zidify_text($s) {
 
-	$s = preg_replace_callback('/\<a(.*?)href\=\"(.*?)\"/ism','zidify_text_callback',$s);
-	$s = preg_replace_callback('/\<img(.*?)src\=\"(.*?)\"/ism','zidify_text_img_callback',$s);
+	$s = preg_replace_callback('/\<a(.*?)href\=\"(.*?)\"(.*?)\>/ism','zidify_text_callback',$s);
+	$s = preg_replace_callback('/\<img(.*?)src\=\"(.*?)\"(.*?)\>/ism','zidify_text_img_callback',$s);
 
 	return $s;
 }
