@@ -36,6 +36,7 @@ class ActivityStreams {
 
 		$this->raw  = $string;
 		$this->data = json_decode($string, true);
+
 		if($this->data) {
 			$this->valid = true;
 		}
@@ -206,7 +207,7 @@ class ActivityStreams {
 		}
 
 		$x = z_fetch_url($url, true, $redirects,
-			['headers' => [ 'Accept: application/ld+json; profile="https://www.w3.org/ns/activitystreams", application/activity+json' ]]);
+			['headers' => [ 'Accept: application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ]]);
 		if($x['success'])
 			return json_decode($x['body'], true);
 
