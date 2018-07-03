@@ -28,7 +28,7 @@ function group_add($uid,$name,$public = 0) {
 
 		do {
 			$dups = false;
-			$hash = random_string() . $name;
+			$hash = random_string(32) . str_replace(['<','>'],['.','.'], $name;
 
 			$r = q("SELECT id FROM groups WHERE hash = '%s' LIMIT 1", dbesc($hash));
 			if($r)
