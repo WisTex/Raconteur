@@ -12,10 +12,11 @@
  */
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Group;
 
 require_once('include/permissions.php');
 require_once('include/security.php');
-require_once('include/group.php');
+
 
 /**
  * @brief Guess the mimetype from file ending.
@@ -1919,7 +1920,7 @@ function attach_recursive_perms($arr_allow_cid, $arr_allow_gid, $arr_deny_cid, $
 
 	//lookup all channels in sharee group and add them to sharee $arr_allow_cid
 	if($arr_allow_gid) {
-		$in_group = expand_groups($arr_allow_gid);
+		$in_group = Group::expand($arr_allow_gid);
 		$arr_allow_cid = array_unique(array_merge($arr_allow_cid, $in_group));
 	}
 
@@ -1991,7 +1992,7 @@ function attach_recursive_perms($arr_allow_cid, $arr_allow_gid, $arr_deny_cid, $
 		//check sharee arr_allow_cid against members of allow_gid of all parent folders
 		foreach($parent_arr['allow_gid'] as $folder_arr_allow_gid) {
 			//get the group members
-			$folder_arr_allow_cid = expand_groups($folder_arr_allow_gid);
+			$folder_arr_allow_cid = Group::expand($folder_arr_allow_gid);
 			foreach($folder_arr_allow_cid as $ac_hash) {
 				$count_values[$ac_hash]++;
 			}

@@ -3,6 +3,7 @@
 namespace Zotlabs\Module\Settings;
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Group;
 
 require_once('include/selectors.php');
 
@@ -70,9 +71,9 @@ class Channel {
 						dbesc( t('Friends') )
 					);
 					if(! $r) {
-						require_once('include/group.php');
-						group_add(local_channel(), t('Friends'));
-						group_add_member(local_channel(),t('Friends'),$channel['channel_hash']);
+
+						Group::add(local_channel(), t('Friends'));
+						Group::member_add(local_channel(),t('Friends'),$channel['channel_hash']);
 						$r = q("select hash from groups where uid = %d and gname = '%s' limit 1",
 							intval(local_channel()),
 							dbesc( t('Friends') )
@@ -455,8 +456,7 @@ class Channel {
 		$acl = new \Zotlabs\Access\AccessList($channel);
 		$perm_defaults = $acl->get();
 	
-		require_once('include/group.php');
-		$group_select = mini_group_select(local_channel(),$channel['channel_default_group']);
+		$group_select = Group::select(local_channel(),$channel['channel_default_group']);
 	
 		require_once('include/menu.php');
 		$m1 = menu_list(local_channel());

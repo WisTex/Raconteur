@@ -3,8 +3,9 @@
  * @file include/text.php
  */
 
-use \Zotlabs\Lib as Zlib;
-use \Michelf\MarkdownExtra;
+use Zotlabs\Lib\MarkdownSoap;
+use Zotlabs\Lib\Group;
+use Michelf\MarkdownExtra;
 
 require_once("include/bbcode.php");
 
@@ -118,7 +119,7 @@ function z_input_filter($s,$type = 'text/bbcode',$allow_code = false) {
 	}
 
 	if($type === 'text/markdown') {
-		$x = new Zlib\MarkdownSoap($s);
+		$x = new MarkdownSoap($s);
 		return $x->clean();
 	}
 
@@ -1728,7 +1729,7 @@ function prepare_text($text, $content_type = 'text/bbcode', $opts = false) {
 			break;
 
 		case 'text/markdown':
-			$text = Zlib\MarkdownSoap::unescape($text);
+			$text = MarkdownSoap::unescape($text);
 			$s = MarkdownExtra::defaultTransform($text);
 			break;
 
@@ -2726,8 +2727,7 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $i
 			// weird - as all the other tags are linked to something.
 
 			if(local_channel() && local_channel() == $profile_uid) {
-				require_once('include/group.php');
-				$grp = group_byname($profile_uid,$name);
+				$grp = Group::byname($profile_uid,$name);
 
 				if($grp) {
 					$g = q("select hash from groups where id = %d and visible = 1 limit 1",

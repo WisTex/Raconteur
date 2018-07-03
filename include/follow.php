@@ -2,6 +2,7 @@
 
 
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Group;
 
 //
 // Takes a $uid and the channel associated with the uid, and a url/handle and adds a new channel
@@ -291,10 +292,10 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 	/** If there is a default group for this channel, add this connection to it */
 
 	if($default_group) {
-		require_once('include/group.php');
-		$g = group_rec_byhash($uid,$default_group);
+
+		$g = Group::rec_byhash($uid,$default_group);
 		if($g)
-			group_add_member($uid,'',$xchan_hash,$g['id']);
+			Group_member_add($uid,'',$xchan_hash,$g['id']);
 	}
 
 	$result['success'] = true;

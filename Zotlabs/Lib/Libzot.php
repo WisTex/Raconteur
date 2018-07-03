@@ -7,7 +7,7 @@ namespace Zotlabs\Lib;
  *
  */
 
-
+use Zotlabs\Lib\Group;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\System;
@@ -457,10 +457,9 @@ class Libzot {
 						if(! intval($new_connection[0]['abook_pending'])) {
 							$default_group = $channel['channel_default_group'];
 							if($default_group) {
-								require_once('include/group.php');
-								$g = group_rec_byhash($channel['channel_id'],$default_group);
+								$g = Group::rec_byhash($channel['channel_id'],$default_group);
 								if($g)
-									group_add_member($channel['channel_id'],'',$x['hash'],$g['id']);
+									Group::member_add($channel['channel_id'],'',$x['hash'],$g['id']);
 							}
 						}
 

@@ -4,8 +4,8 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libzotdir;
 
-require_once 'include/acl_selectors.php';
-require_once 'include/group.php';
+require_once('include/acl_selectors.php');
+
 
 /**
  * @brief ACL selector json backend.
@@ -122,7 +122,7 @@ class Acl extends \Zotlabs\Web\Controller {
 						"name"  => t('Profile','acl') . ' ' . $rv['profile_name'],
 						"id"	=> 'vp' . $rv['id'],
 						"xid"   => 'vp.' . $rv['profile_guid'],
-						"uids"  => group_get_profile_members_xchan(local_channel(), $rv['id']),
+						"uids"  => Zgroup::members_profile_xchan(local_channel(), $rv['id']),
 						"link"  => ''
 					);
 				}
@@ -145,14 +145,14 @@ class Acl extends \Zotlabs\Web\Controller {
 
 			if($r) {	
 				foreach($r as $g){
-		//		logger('acl: group: ' . $g['gname'] . ' members: ' . group_get_members_xchan($g['id']));
+		//		logger('acl: group: ' . $g['gname'] . ' members: ' . ZGroup::members_xchan($g['id']));
 					$groups[] = array(
 						"type"  => "g",
 						"photo" => "images/twopeople.png",
 						"name"  => $g['gname'],
 						"id"	=> $g['id'],
 						"xid"   => $g['hash'],
-						"uids"  => group_get_members_xchan($g['id']),
+						"uids"  => ZGroup::members_xchan($g['id']),
 						"link"  => ''
 					);
 				}

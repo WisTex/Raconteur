@@ -1,7 +1,8 @@
 <?php
 namespace Zotlabs\Module;
 
-require_once('include/group.php');
+
+use Zotlabs\Lib\Group;
 require_once('include/contact_widgets.php');
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
@@ -231,7 +232,7 @@ class Network extends \Zotlabs\Web\Controller {
 	
 		if($group) {
 			$contact_str = '';
-			$contacts = group_get_members($group);
+			$contacts = Group::members($group);
 			if($contacts) {
 				$contact_str = ids_to_querystr($contacts,'xchan',true);
 			}
@@ -245,7 +246,7 @@ class Network extends \Zotlabs\Web\Controller {
 
 			$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND (( author_xchan IN ( $contact_str ) OR owner_xchan in ( $contact_str )) or allow_gid like '" . protect_sprintf('%<' . dbesc($group_hash) . '>%') . "' ) and id = parent $item_normal ) ";
 	
-			$x = group_rec_byhash(local_channel(), $group_hash);
+			$x = Group::rec_byhash(local_channel(), $group_hash);
 	
 			if($x) {
 				$title = replace_macros(get_markup_template("section_title.tpl"),array(

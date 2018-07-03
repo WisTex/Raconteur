@@ -2,7 +2,7 @@
 
 namespace Zotlabs\Widget;
 	
-require_once('include/group.php');
+use Zotlabs\Lib\Group;
 
 class Collections {
 
@@ -49,6 +49,6 @@ class Collections {
 				break;
 		}
 
-		return group_side($every, $each, $edit, $current, $abook_id, $wmode);
+		return Group::widget($every, $each, $edit, $current, $abook_id, $wmode);
 	}
 }

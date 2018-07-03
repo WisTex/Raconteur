@@ -6,6 +6,7 @@
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Group;
 
 require_once('include/crypto.php');
 require_once('include/menu.php');
@@ -434,9 +435,8 @@ function create_identity($arr) {
 		// Create a group with yourself as a member. This allows somebody to use it
 		// right away as a default group for new contacts.
 
-		require_once('include/group.php');
-		group_add($newuid, t('Friends'));
-		group_add_member($newuid,t('Friends'),$ret['channel']['channel_hash']);
+		Group::add($newuid, t('Friends'));
+		Group::member_add($newuid,t('Friends'),$ret['channel']['channel_hash']);
 
 		// if our role_permissions indicate that we're using a default collection ACL, add it.
 

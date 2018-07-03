@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
-require_once('include/group.php');
+use Zotlabs\Lib\Group as ZGroup;
 
 
 class Contactgroup extends \Zotlabs\Web\Controller {
@@ -32,7 +32,7 @@ class Contactgroup extends \Zotlabs\Web\Controller {
 			}
 	
 			$group = $r[0];
-			$members = group_get_members($group['id']);
+			$members = ZGroup::members($group['id']);
 			$preselected = array();
 			if(count($members))	{
 				foreach($members as $member)
@@ -41,10 +41,10 @@ class Contactgroup extends \Zotlabs\Web\Controller {
 	
 			if($change) {
 				if(in_array($change,$preselected)) {
-					group_rmv_member(local_channel(),$group['gname'],$change);
+					ZGroup_member_remove(local_channel(),$group['gname'],$change);
 				}
 				else {
-					group_add_member(local_channel(),$group['gname'],$change);
+					ZGroup::member_add(local_channel(),$group['gname'],$change);
 				}
 			}
 		}

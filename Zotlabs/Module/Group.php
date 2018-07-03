@@ -2,10 +2,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libsync;
-
-
-require_once('include/group.php');
-
+use Zotlabs\Lib\Group as ZGroup;
 
 
 class Group extends \Zotlabs\Web\Controller {
@@ -33,7 +30,7 @@ class Group extends \Zotlabs\Web\Controller {
 			
 			$name = notags(trim($_POST['groupname']));
 			$public = intval($_POST['public']);
-			$r = group_add(local_channel(),$name,$public);
+			$r = ZGroup::add(local_channel(),$name,$public);
 			if($r) {
 				info( t('Privacy group created.') . EOL );
 			}
@@ -107,7 +104,7 @@ class Group extends \Zotlabs\Web\Controller {
 			foreach($groups as $group) {
 				$entries[$i]['name'] = $group['gname'];
 				$entries[$i]['id'] = $group['id'];
-				$entries[$i]['count'] = count(group_get_members($group['id']));
+				$entries[$i]['count'] = count(Zgroup::members($group['id']));
 				$i++;
 			}
 
@@ -149,7 +146,7 @@ class Group extends \Zotlabs\Web\Controller {
 					intval(local_channel())
 				);
 				if($r) 
-					$result = group_rmv(local_channel(),$r[0]['gname']);
+					$result = ZGroup::remove(local_channel(),$r[0]['gname']);
 				if($result)
 					info( t('Privacy group removed.') . EOL);
 				else
@@ -187,7 +184,7 @@ class Group extends \Zotlabs\Web\Controller {
 			$group = $r[0];
 	
 	
-			$members = group_get_members($group['id']);
+			$members = ZGroup::members($group['id']);
 	
 			$preselected = array();
 			if(count($members))	{
@@ -199,13 +196,13 @@ class Group extends \Zotlabs\Web\Controller {
 			if($change) {
 	
 				if(in_array($change,$preselected)) {
-					group_rmv_member(local_channel(),$group['gname'],$change);
+					ZGroup::member_remove(local_channel(),$group['gname'],$change);
 				}
 				else {
-					group_add_member(local_channel(),$group['gname'],$change);
+					ZGroup::member_add(local_channel(),$group['gname'],$change);
 				}
 	
-				$members = group_get_members($group['id']);
+				$members = ZGroup::members($group['id']);
 	
 				$preselected = array();
 				if(count($members))	{
@@ -247,7 +244,7 @@ class Group extends \Zotlabs\Web\Controller {
 				$groupeditor['members'][] = micropro($member,true,'mpgroup', $textmode);
 			}
 			else
-				group_rmv_member(local_channel(),$group['gname'],$member['xchan_hash']);
+				ZGroup::member_remove(local_channel(),$group['gname'],$member['xchan_hash']);
 		}
 	
 		$r = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_channel = %d AND abook_self = 0 and abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 order by xchan_name asc",

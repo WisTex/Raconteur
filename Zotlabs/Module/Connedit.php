@@ -3,6 +3,7 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Group as ZGroup;
 
 /* @file connedit.php
  * @brief In this file the connection-editor form is generated and evaluated.
@@ -13,7 +14,6 @@ use Zotlabs\Lib\Libsync;
 
 require_once('include/socgraph.php');
 require_once('include/selectors.php');
-require_once('include/group.php');
 require_once('include/photos.php');
 
 
@@ -260,10 +260,9 @@ class Connedit extends \Zotlabs\Web\Controller {
 		if($new_friend) {
 			$default_group = $channel['channel_default_group'];
 			if($default_group) {
-				require_once('include/group.php');
-				$g = group_rec_byhash(local_channel(),$default_group);
+				$g = ZGroup::rec_byhash(local_channel(),$default_group);
 				if($g)
-					group_add_member(local_channel(),'',\App::$poi['abook_xchan'],$g['id']);
+					ZGroup::member_add(local_channel(),'',\App::$poi['abook_xchan'],$g['id']);
 			}
 	
 			// Check if settings permit ("post new friend activity" is allowed, and
