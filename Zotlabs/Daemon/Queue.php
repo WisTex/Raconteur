@@ -2,8 +2,8 @@
 
 namespace Zotlabs\Daemon;
 
-require_once('include/queue_fn.php');
-require_once('include/bbcode.php');
+use Zotlabs\Lib as Zlib;
+
 
 class Queue {
 
@@ -66,7 +66,7 @@ class Queue {
 			return;
 
 		foreach($r as $rv) {
-			queue_deliver($rv);
+			Zlib\Queue::deliver($rv);
 		}
 	}
 }

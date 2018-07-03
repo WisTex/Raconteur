@@ -4,8 +4,8 @@ namespace Zotlabs\Daemon;
 
 
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Queue;
 
-require_once('include/queue_fn.php');
 require_once('include/html2plain.php');
 require_once('include/conversation.php');
 require_once('include/bbcode.php');
@@ -614,7 +614,7 @@ class Notifier {
 			}
 
 			if($packet) {
-				queue_insert(array(
+				Queue::insert(array(
 					'hash'       => $hash,
 					'account_id' => self::$channel['channel_account_id'],
 					'channel_id' => self::$channel['channel_id'],
@@ -628,7 +628,7 @@ class Notifier {
 
 				$packet = Libzot::build_packet(self::$channel, self::$packet_type, $env, self::$encoded_item, self::$encoding, ((self::$private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto']);
 
-				queue_insert(
+				Queue::insert(
 					[
 						'hash'       => $hash,
 						'account_id' => $target_item['aid'],

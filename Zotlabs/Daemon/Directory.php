@@ -5,8 +5,8 @@ namespace Zotlabs\Daemon;
 
 use Zotlabs\Lib\Libzot;;
 use Zotlabs\Lib\Libzotdir;
+use Zotlabs\Lib\Queue;
 
-require_once('include/queue_fn.php');
 
 
 class Directory {
@@ -61,7 +61,8 @@ class Directory {
 		// otherwise send the changes upstream
 
 		$directory = Libzotdir::find_upstream_directory($dirmode);
-		$url = $directory['url'] . '/post';
+
+		$url = $directory['url'] . '/zot';
 
 		// ensure the upstream directory is updated
 
@@ -78,7 +79,7 @@ class Directory {
 
 			$hash = random_string();
 
-			queue_insert(array(
+			Queue::insert(array(
 				'hash'       => $hash,
 				'account_id' => $channel['channel_account_id'],
 				'channel_id' => $channel['channel_id'],

@@ -2,7 +2,7 @@
 
 namespace Zotlabs\Module\Admin;
 
-
+use Zotlabs\Lib\Queue;
 
 class Queue {
 
@@ -16,11 +16,11 @@ class Queue {
 	
 		if($_REQUEST['drophub']) {
 			hubloc_mark_as_down($_REQUEST['drophub']);
-			remove_queue_by_posturl($_REQUEST['drophub']);
+			Queue::remove_by_posturl($_REQUEST['drophub']);
 		}
 	
 		if($_REQUEST['emptyhub']) {
-			remove_queue_by_posturl($_REQUEST['emptyhub']);
+			Queue::remove_by_posturl($_REQUEST['emptyhub']);
 		}
 	
 		$r = q("select count(outq_posturl) as total, max(outq_priority) as priority, outq_posturl from outq 

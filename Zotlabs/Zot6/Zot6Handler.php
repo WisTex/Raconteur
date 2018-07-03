@@ -3,7 +3,7 @@
 namespace Zotlabs\Zot6;
 
 use Zotlabs\Lib\Libzot;
-require_once('include/queue_fn.php');
+use Zotlabs\Lib\Queue;
 
 class Zot6Handler implements IHandler {
 
@@ -177,7 +177,7 @@ class Zot6Handler implements IHandler {
 
 				$n = Libzot::build_packet($c[0],'messagelist',$env_recips,$data_packet,'zot',(($private) ? $hub['hubloc_sitekey'] : null),$hub['site_crypto'],$hash,array('message_id' => $data['message_id']));
 
-				queue_insert(array(
+				Queue::insert(array(
 					'hash'       => $hash,
 					'account_id' => $c[0]['channel_account_id'],
 					'channel_id' => $c[0]['channel_id'],
@@ -188,9 +188,9 @@ class Zot6Handler implements IHandler {
 
 
 				$x = q("select count(outq_hash) as total from outq where outq_delivered = 0");
-				if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',300))) {
+				if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',3000))) {
 					logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
-					update_queue_item($hash);
+					Queue::update($hash);
 					continue;
 				}
 

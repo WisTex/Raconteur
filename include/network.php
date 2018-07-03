@@ -1470,10 +1470,10 @@ function do_delivery($deliveries, $force = false) {
 
 
 	$x = q("select count(outq_hash) as total from outq where outq_delivered = 0");
-	if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',300)) && (! $force)) {
+	if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',3000)) && (! $force)) {
 		logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
 		foreach($deliveries as $d) {
-			update_queue_item($d);
+			\Zotlabs\Lib\Queue::update($d);
 		}
 		return;
 	}

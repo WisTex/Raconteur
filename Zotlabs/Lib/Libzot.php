@@ -12,10 +12,10 @@ use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\MessageFilter;
+use Zotlabs\Lib\Queue;
 use Zotlabs\Web\HTTPSig;
 
 require_once('include/crypto.php');
-require_once('include/queue_fn.php');
 
 
 class Libzot {
@@ -982,7 +982,7 @@ class Libzot {
 
 	static function process_response($hub, $arr, $outq) {
 
-		logger('arr: ' . print_r($arr,true));
+		logger('remote: ' . print_r($arr,true),LOGGER_DATA);
 
 		if(! $arr['success']) {
 			logger('Failed: ' . $hub);
@@ -1001,6 +1001,17 @@ class Libzot {
 			$x = json_decode($x,true);
 		}
 
+		if(! $x['success']) {
+
+			// handle remote validation issues
+
+			$b = q("update dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
+				dbesc(($x['message']) ? $x['message'] : 'unknown delivery error'),
+				dbesc(datetime_convert()),
+				dbesc($outq['outq_hash'])
+			);
+		}
+
 		if(array_key_exists('delivery_report',$x) && is_array($x['delivery_report'])) { 
 			foreach($x['delivery_report'] as $xx) {
 				if(is_array($xx) && array_key_exists('message_id',$xx) && self::delivery_report_is_storable($xx)) {
@@ -1015,13 +1026,13 @@ class Libzot {
 					);
 				}
 			}
+
+			// we have a more descriptive delivery report, so discard the per hub 'queue' report.
+
+			q("delete from dreport where dreport_queue = '%s' ",
+				dbesc($outq['outq_hash'])
+			);
 		}
-
-		// we have a more descriptive delivery report, so discard the per hub 'queued' report.
-
-		q("delete from dreport where dreport_queue = '%s' ",
-			dbesc($outq['outq_hash'])
-		);
 
 		// update the timestamp for this site
 
@@ -1034,7 +1045,7 @@ class Libzot {
 		// async messages remain in the queue until processed.
 
 		if(intval($outq['outq_async']))
-			remove_queue_item($outq['outq_hash'],$outq['outq_channel']);
+			Queue::remove($outq['outq_hash'],$outq['outq_channel']);
 
 		logger('zot_process_response: ' . print_r($x,true), LOGGER_DEBUG);
 	}

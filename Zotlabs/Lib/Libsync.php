@@ -3,7 +3,7 @@
 namespace Zotlabs\Lib;
 
 use Zotlabs\Lib\Libzot;
-
+use Zotlabs\Lib\Queue;
 
 
 class Libsync {
@@ -151,7 +151,7 @@ class Libsync {
 		foreach($synchubs as $hub) {
 			$hash = random_string();
 			$n = Libzot::build_packet($channel,'notify',$env_recips,json_encode($info),$hub['hubloc_sitekey'],$hub['site_crypto'],$hash);
-			queue_insert(array(
+			Queue::insert(array(
 				'hash'       => $hash,
 				'account_id' => $channel['channel_account_id'],
 				'channel_id' => $channel['channel_id'],
@@ -162,9 +162,9 @@ class Libsync {
 
 
 			$x = q("select count(outq_hash) as total from outq where outq_delivered = 0");
-			if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',300))) {
+			if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',3000))) {
 				logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
-				update_queue_item($hash);
+				Queue::update($hash);
 				continue;
 			}
 
