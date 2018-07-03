@@ -43,7 +43,9 @@ class Receiver {
 
 			if (! $this->Valid_Httpsig()) {
 				logger('signature failed');
-				http_status_exit(400);
+				$this->error = true;
+				$this->response['message'] = 'signature invalid';
+				return;
 			}
 		}
 
@@ -89,12 +91,14 @@ class Receiver {
 		}
 
 		if ($this->data) {
-			if (array_key_exists('type',$this->data))
+			if (array_key_exists('type',$this->data)) {
 				$this->messagetype = $this->data['type'];
+			}
 
 			if (! $this->messagetype) {
 				$this->error = true;
 				$this->response['message'] = 'no datatype';
+				return $this->response;
 			}
 
 			$this->sender     = ((array_key_exists('sender',$this->data))     ? $this->data['sender'] : null);
@@ -105,6 +109,7 @@ class Receiver {
 		if ($this->sender) {
 			$result = $this->ValidateSender();
 			if(! $result) {
+				$this->error = true;
 				return $this->response;
 			}
 		}
@@ -117,7 +122,17 @@ class Receiver {
 		$hub = Libzot::valid_hub($this->sender,$this->site_id);
 
 		if (! $hub) {
-           	$this->response['message'] = 'Hub not available.';
+           	$this->response['message'] = 'sender unknown';
+			return false;
+		}
+
+		if(! check_siteallowed($hub['hubloc_url'])) {
+			$this->response['message'] = 'forbidden';
+			return false;
+		}
+
+		if(! check_channelallowed($this->sender)) {
+			$this->response['message'] = 'forbidden';
 			return false;
 		}
 
@@ -149,11 +164,6 @@ class Receiver {
 	}	
 		
 	function Dispatch() {
-
-		if (! $this->validated) {
-			$this->response['message'] = 'Sender not valid';
-			return($this->response); 
-		}
 
 		switch ($this->messagetype) {
 
