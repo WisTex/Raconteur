@@ -142,6 +142,8 @@ class Notifier {
 			self::$private = true;
 			self::$recipients[] = $xchan;
 			self::$packet_type = 'request';
+			self::$encoded_item = [ 'message_id' => $argv[4] ];
+			self::$encoding = 'zot';
 			$normal_mode = false;
 		}
 		elseif($cmd === 'keychange') {
@@ -156,6 +158,8 @@ class Notifier {
 			}
 			self::$private = false;
 			self::$packet_type = 'keychange';
+			self::$encoded_item = get_pconfig(self::$channel['channel_id'],'system','keychange');
+			self::$encoding = 'zot';
 			$normal_mode = false;
 		}
 		elseif(in_array($cmd, [ 'permissions_update', 'permissions_reject', 'permissions_accept', 'permissions_create' ])) {
@@ -412,8 +416,6 @@ class Notifier {
 		// Now start the delivery process
 
 		$x = self::$encoded_item;
-		$x['title'] = 'private';
-		$x['body'] = 'private';
 		logger('notifier: encoded item: ' . print_r($x,true), LOGGER_DATA, LOG_DEBUG);
 
 		stringify_array_elms(self::$recipients);
@@ -517,16 +519,16 @@ class Notifier {
 			if(self::$env_recips) {
 				foreach(self::$env_recips as $er) {
 					if($hub['hubloc_hash'] === $er) {
-						if(! array_key_exists($hub['hubloc_host'] . $hub['hubloc_sitekey'], $hub_env)) {
-							$hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] = [];
+						if(! array_key_exists($hub['hubloc_site_id'], $hub_env)) {
+							$hub_env[$hub['hubloc_site_id']] = [];
 						}
-						$hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']][] = $er;
+						$hub_env[$hub['hubloc_site_id']][] = $er;
 					}
 				}
 			}
 			
 
-			if($hub['hubloc_network'] == 'zot6') {
+			if($hub['hubloc_network'] === 'zot6') {
 				if(! in_array($hub['hubloc_sitekey'],$keys)) {
 					$hublist[] = $hub['hubloc_host'] . ' ' . $hub['hubloc_network'];
 					$dhubs[]   = $hub;
@@ -596,62 +598,37 @@ class Notifier {
 			// default: zot protocol
 
 			$hash   = random_string();
-			$packet = null;
-			$pmsg   = '';
 
-			if(self::$packet_type === 'refresh' || self::$packet_type === 'purge') {
-				$packet = Libzot::build_packet(self::$channel,self::$packet_type,((self::$env_recips) ? self::$env_recips : null), EMPTY_STR);
-			}
-			if(self::$packet_type === 'keychange') {
-				$pmsg = get_pconfig(self::$channel['channel_id'],'system','keychange');
-				$packet = Libzot::build_packet(self::$channel,self::$packet_type,((self::$env_recips) ? self::$env_recips : null),$pmsg,'zot');
-			}
-			elseif(self::$packet_type === 'request') {
-				$env = (($hub_env && $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']]) ? $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] : '');
-				$packet = Libzot::build_packet(self::$channel,self::$packet_type,$env,EMPTY_STR,$hub['hubloc_sitekey'],$hub['site_crypto'],
-					$hash, array('message_id' => $argv[4])
-				);
+			$env = (($hub_env && $hub_env[$hub['hubloc_site_id']]) ? $hub_env[$hub['hubloc_site_id']] : '');
+			if((self::$private) && (! $env)) {
+				continue;
 			}
 
-			if($packet) {
-				Queue::insert(array(
+			$packet = Libzot::build_packet(self::$channel, self::$packet_type, $env, self::$encoded_item, self::$encoding, ((self::$private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto']);
+
+			Queue::insert(
+				[
 					'hash'       => $hash,
 					'account_id' => self::$channel['channel_account_id'],
 					'channel_id' => self::$channel['channel_id'],
 					'posturl'    => $hub['hubloc_callback'],
 					'notify'     => $packet,
 					'msg'        => EMPTY_STR
-				));
-			}
-			else {
-				$env = (($hub_env && $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']]) ? $hub_env[$hub['hubloc_host'] . $hub['hubloc_sitekey']] : '');
+				]
+			);
 
-				$packet = Libzot::build_packet(self::$channel, self::$packet_type, $env, self::$encoded_item, self::$encoding, ((self::$private) ? $hub['hubloc_sitekey'] : null), $hub['site_crypto']);
-
-				Queue::insert(
-					[
-						'hash'       => $hash,
-						'account_id' => $target_item['aid'],
-						'channel_id' => $target_item['uid'],
-						'posturl'    => $hub['hubloc_callback'],
-						'notify'     => $packet,
-						'msg'        => EMPTY_STR
-					]
+			// only create delivery reports for normal undeleted items
+			if(is_array($target_item) && array_key_exists('postopts',$target_item) && (! $target_item['item_deleted']) && (! get_config('system','disable_dreport'))) {
+				q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan, dreport_queue ) values ( '%s', '%s','%s','%s','%s','%s','%s','%s' ) ",
+					dbesc($target_item['mid']),
+					dbesc($hub['hubloc_host']),
+					dbesc($hub['hubloc_host']),
+					dbesc(EMPTY_STR),
+					dbesc('queued'),
+					dbesc(datetime_convert()),
+					dbesc(self::$channel['channel_hash']),
+					dbesc($hash)
 				);
-
-				// only create delivery reports for normal undeleted items
-				if(is_array($target_item) && array_key_exists('postopts',$target_item) && (! $target_item['item_deleted']) && (! get_config('system','disable_dreport'))) {
-					q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan, dreport_queue ) values ( '%s', '%s','%s','%s','%s','%s','%s','%s' ) ",
-						dbesc($target_item['mid']),
-						dbesc($hub['hubloc_host']),
-						dbesc($hub['hubloc_host']),
-						dbesc(EMPTY_STR),
-						dbesc('queued'),
-						dbesc(datetime_convert()),
-						dbesc(self::$channel['channel_hash']),
-						dbesc($hash)
-					);
-				}
 			}
 
 			self::$deliveries[] = $hash;	

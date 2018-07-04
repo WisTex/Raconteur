@@ -3,6 +3,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libzotdir;
+use Zotlabs\Lib\Group as ZGroup;
 
 require_once('include/acl_selectors.php');
 

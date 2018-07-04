@@ -288,7 +288,7 @@ class ActivityStreams {
 				}
 			}
 		}
-		if($first && array_key_exists(0,$x,true)) {
+		if($first && array_key_exists(0,$x)) {
 			return $x[0];
 		}
 

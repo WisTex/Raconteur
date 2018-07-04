@@ -7,6 +7,7 @@ namespace Zotlabs\Lib;
  *
  */
 
+use Zotlabs\Lib\DReport;
 use Zotlabs\Lib\Group;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libzotdir;
@@ -94,7 +95,7 @@ class Libzot {
 	 * @param string $type
 	 *   packet type: one of 'ping', 'pickup', 'purge', 'refresh', 'keychange', 'force_refresh', 'notify', 'auth_check'
 	 * @param array $recipients
-	 *   envelope information, array ( 'guid' => string, 'guid_sig' => string ); empty for public posts
+	 *   envelope recipients, array of portable_id's; empty for public posts
 	 * @param string msg
 	 *   optional message
 	 * @param string $remote_key
@@ -102,14 +103,10 @@ class Libzot {
 	 *   NOTE: remote_key and encrypted packets are required for 'auth_check' packets, optional for all others
 	 * @param string $methods
 	 *   optional comma separated list of encryption methods @ref self::best_algorithm()
-	 * @param string $secret
-	 *   random string, required for packets which require verification/callback
-	 *   e.g. 'pickup', 'purge', 'notify', 'auth_check'. Packet types 'ping', 'force_refresh', and 'refresh' do not require verification
-	 * @param string $extra
 	 * @returns string json encoded zot packet
 	 */
 
-	static function build_packet($channel, $type = 'activity', $recipients = null, $msg = '', $encoding = 'activitystreams', $remote_key = null, $methods = '', $extra = null) {
+	static function build_packet($channel, $type = 'activity', $recipients = null, $msg = '', $encoding = 'activitystreams', $remote_key = null, $methods = '') {
 
 		$sig_method = get_config('system','signature_algorithm','sha256');
 
@@ -134,12 +131,6 @@ class Libzot {
 		}
 		else {
 			unset($data['encoding']);
-		}
-
-		if ($extra) {
-			foreach ($extra as $k => $v) {
-				$data[$k] = $v;
-			}
 		}
 
 		logger('packet: ' . print_r($data,true), LOGGER_DATA, LOG_DEBUG);
@@ -169,8 +160,8 @@ class Libzot {
 	static function best_algorithm($methods) {
 
 		$x = [
-				'methods' => $methods,
-				'result' => ''
+			'methods' => $methods,
+			'result' => ''
 		];
 
 		/**
@@ -1013,7 +1004,7 @@ class Libzot {
 
 		if(array_key_exists('delivery_report',$x) && is_array($x['delivery_report'])) { 
 			foreach($x['delivery_report'] as $xx) {
-				if(is_array($xx) && array_key_exists('message_id',$xx) && self::delivery_report_is_storable($xx)) {
+				if(is_array($xx) && array_key_exists('message_id',$xx) && DReport::is_storable($xx)) {
 					q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan ) values ( '%s', '%s', '%s','%s','%s','%s','%s' ) ",
 						dbesc($xx['message_id']),
 						dbesc($xx['location']),
@@ -1106,7 +1097,7 @@ class Libzot {
 	static function import($arr) {
 
 		$env = $arr;
-
+		$private = false;
 		$return = [];
 
 		$result = null;
@@ -1129,9 +1120,9 @@ class Libzot {
 
 		if(array_key_exists('recipients',$env) && count($env['recipients'])) {
 			logger('specific recipients');
-			logger('recipients: ' . print_r($recipients,true),LOGGER_DEBUG);
+			logger('recipients: ' . print_r($env['recipients'],true),LOGGER_DEBUG);
 
-			$recip_arr = array();
+			$recip_arr = [];
 			foreach($env['recipients'] as $recip) {
 				$recip_arr[] =  $recip;
 			}
@@ -1147,7 +1138,7 @@ class Libzot {
 				logger('recips: no recipients on this site');
 				return;
 			}
-
+			$private = true;
 			$deliveries = ids_to_array($r,'hash');
 
 			// We found somebody on this site that's in the recipient list.
@@ -1199,7 +1190,7 @@ class Libzot {
 					}
 					$arr = \Zotlabs\Lib\Activity::decode_note($AS);
 
-					logger($AS->debug());
+					// logger($AS->debug());
 
 					$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
 						dbesc($AS->actor['id'])
@@ -1210,7 +1201,9 @@ class Libzot {
 					}
 					// @fixme (in individual delivery, change owner if needed)
 					$arr['owner_xchan'] = $env['sender'];						
-
+					if($private) {
+						$arr['item_private'] = true;
+					}
 				}
 
 				logger('Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
@@ -2082,7 +2075,7 @@ class Libzot {
 	}
 
 	/**
-	 * @brief Checks for a moved UNO channel and sets the channel_moved flag.
+	 * @brief Checks for a moved channel and sets the channel_moved flag.
 	 *
 	 * Currently the effect of this flag is to turn the channel into 'read-only' mode.
 	 * New content will not be processed (there was still an issue with blocking the
@@ -2092,7 +2085,7 @@ class Libzot {
 	 * are any issues migrating content. This packet will generally be received by the
 	 * original site when the basic channel import has been processed.
 	 *
-	 * This will only be executed on the UNO system which is the old location
+	 * This will only be executed on the old location
 	 * if a new location is reported and there is only one location record.
 	 * The rest of the hubloc syncronisation will be handled within
 	 * sync_locations
@@ -3046,79 +3039,6 @@ class Libzot {
 	}
 
 
-	/**
-	 * @brief
-	 *
-	 * @param array $dr
-	 * @return boolean
-	 */
-
-	static function delivery_report_is_storable($dr) {
-
-		if(get_config('system', 'disable_dreport'))
-			return false;
-
-		/**
-		 * @hooks dreport_is_storable
-		 *   Called before storing a dreport record to determine whether to store it.
-		 *   * \e array
-		 */
-		call_hooks('dreport_is_storable', $dr);
-
-		// let plugins accept or reject - if neither, continue on
-		if(array_key_exists('accept',$dr) && intval($dr['accept']))
-			return true;
-		if(array_key_exists('reject',$dr) && intval($dr['reject']))
-			return false;
-
-		if(! ($dr['sender']))
-			return false;
-
-		// Is the sender one of our channels?
-
-		$c = q("select channel_id from channel where channel_hash = '%s' limit 1",
-			dbesc($dr['sender'])
-		);
-		if(! $c)
-			return false;
-
-
-		// is the recipient one of our connections, or do we want to store every report?
-
-
-		$rxchan = $dr['recipient'];
-		$pcf = get_pconfig($c[0]['channel_id'],'system','dreport_store_all');
-		if($pcf)
-			return true;
-
-		// We always add ourself as a recipient to private and relayed posts
-		// So if a remote site says they can't find us, that's no big surprise
-		// and just creates a lot of extra report noise
-
-		if(($dr['location'] !== z_root()) && ($dr['sender'] === $rxchan) && ($dr['status'] === 'recipient_not_found'))
-			return false;
-
-		// If you have a private post with a recipient list, every single site is going to report
-		// back a failed delivery for anybody on that list that isn't local to them. We're only
-		// concerned about this if we have a local hubloc record which says we expected them to
-		// have a channel on that site.
-
-		$r = q("select hubloc_id from hubloc where hubloc_hash = '%s' and hubloc_url = '%s'",
-			dbesc($rxchan),
-			dbesc($dr['location'])
-		);
-		if((! $r) && ($dr['status'] === 'recipient_not_found'))
-			return false;
-
-		$r = q("select abook_id from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
-			dbesc($rxchan),
-			intval($c[0]['channel_id'])
-		);
-		if($r)
-			return true;
-
-		return false;
-	}
 
 
 	/**
