@@ -17,6 +17,9 @@ class Appcategories {
 
 		// Leaving this line which negates the effect of the two invalid lines prior
 		$srchurl = z_root() . '/apps';
+		if(argc() > 1 && argv(1) === 'available')
+			$srchurl .= '/available';
+
 
 		$terms = array();
 

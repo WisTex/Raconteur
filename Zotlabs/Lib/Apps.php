@@ -13,7 +13,12 @@ require_once('include/channel.php');
 
 class Apps {
 
-	static public $installed_system_apps = null;
+	static public $available_apps = null;
+	static public $installed_apps = null;
+
+	static public $base_apps = null;
+
+
 
 	static public function get_system_apps($translate = true) {
 
@@ -55,22 +60,52 @@ class Apps {
 	static public function import_system_apps() {
 		if(! local_channel())
 			return;
+
+		self::$base_apps = get_config('system','base_apps',[ 
+			'Connections',
+			'Suggest Channels',
+			'Grid',
+			'Settings',
+			'Files',
+			'Channel Home',
+			'View Profile',
+			'Photos',
+			'Events',
+			'Directory',
+			'Search',
+			'Help',
+			'Mail',
+			'Profile Photo'
+		]);
+
 		$apps = self::get_system_apps(false);
 
-		self::$installed_system_apps = q("select * from app where app_system = 1 and app_channel = %d",
+		self::$available_apps = q("select * from app where app_channel = 0");
+
+		self::$installed_apps = q("select * from app where app_channel = %d",
 			intval(local_channel())
 		);
 
 		if($apps) {
 			foreach($apps as $app) {
 				$id = self::check_install_system_app($app);
+
+				// $id will be boolean true or false to install an app, or an integer id to update an existing app
+				if($id !== false) {
+					$app['uid'] = 0;
+					$app['guid'] = hash('whirlpool',$app['name']);
+					$app['system'] = 1;
+					self::app_install(0,$app);
+				}
+
+				$id = self::check_install_personal_app($app);
 				// $id will be boolean true or false to install an app, or an integer id to update an existing app
 				if($id === false)
 					continue;
 				if($id !== true) {
 					// if we already installed this app, but it changed, preserve any categories we created
-					$s = '';
-					$r = q("select * from term where otype = %d and oid = %d",
+					$s = EMPTY_STR;
+					$r = q("select term from term where otype = %d and oid = %d",
 						intval(TERM_OBJ_APP),
 						intval($id)
 					);
@@ -87,6 +122,7 @@ class Apps {
 				$app['guid'] = hash('whirlpool',$app['name']);
 				$app['system'] = 1;
 				self::app_install(local_channel(),$app);
+
 			}
 		}					
 	}
@@ -97,11 +133,11 @@ class Apps {
 	 */
 
 	static public function check_install_system_app($app) {
-		if((! is_array(self::$installed_system_apps)) || (! count(self::$installed_system_apps))) {
+		if((! is_array(self::$available_apps)) || (! count(self::$available_apps))) {
 			return true;
 		}
 		$notfound = true;
-		foreach(self::$installed_system_apps as $iapp) {
+		foreach(self::$available_apps as $iapp) {
 			if($iapp['app_id'] == hash('whirlpool',$app['name'])) {
 				$notfound = false;
 				if(($iapp['app_version'] != $app['version'])
@@ -112,6 +148,28 @@ class Apps {
 		}
 
 		return $notfound;
+	}
+
+
+	/**
+	 * Install the system app if no system apps have been installed, or if a new system app 
+	 * is discovered, or if the version of a system app changes.
+	 */
+
+	static public function check_install_personal_app($app) {
+		foreach(self::$installed_apps as $iapp) {
+			$install = false;
+			if($iapp['app_id'] == hash('whirlpool',$app['name'])) {
+				if(($iapp['app_version'] != $app['version'])
+					|| ($app['plugin'] && (! $iapp['app_plugin']))) {
+					return intval($iapp['app_id']);
+				}
+			}
+		}
+		if(in_array($app['name'],self::$base_apps)) {
+			return true;
+		}
+		return false;
 	}
 
 
@@ -235,7 +293,6 @@ class Apps {
 			'View Bookmarks' => t('View Bookmarks'),
 			'My Chatrooms' => t('My Chatrooms'),
 			'Connections' => t('Connections'),
-			'Firefox Share' => t('Firefox Share'),
 			'Remote Diagnostics' => t('Remote Diagnostics'),
 			'Suggest Channels' => t('Suggest Channels'),
 			'Login' => t('Login'),
@@ -290,6 +347,7 @@ class Apps {
 		 * modes:
 		 *    view: normal mode for viewing an app via bbcode from a conversation or page
 		 *       provides install/update button if you're logged in locally
+		 *    install: like view but does not display app-bin options if they are present
 		 *    list: normal mode for viewing an app on the app page
 		 *       no buttons are shown
 		 *    edit: viewing the app page in editing mode provides a delete button
@@ -302,7 +360,7 @@ class Apps {
 			return;
 
 		if(! $papp['photo'])
-			$papp['photo'] = z_root() . '/' . get_default_profile_photo(80);
+			$papp['photo'] = 'icon:gear';
 
 		self::translate_system_apps($papp);
 
@@ -402,12 +460,15 @@ class Apps {
 			));
 		}
 
+		if($mode === 'install') {
+			$papp['embed'] = true;
+		}
 		return replace_macros(get_markup_template('app.tpl'),array(
 			'$app' => $papp,
 			'$icon' => $icon,
 			'$hosturl' => $hosturl,
 			'$purchase' => (($papp['page'] && (! $installed)) ? t('Purchase') : ''),
-			'$install' => (($hosturl && $mode == 'view') ? $install_action : ''),
+			'$install' => (($hosturl && in_array($mode, ['view','install'])) ? $install_action : ''),
 			'$edit' => ((local_channel() && $installed && $mode == 'edit') ? t('Edit') : ''),
 			'$delete' => ((local_channel() && $installed && $mode == 'edit') ? t('Delete') : ''),
 			'$undelete' => ((local_channel() && $installed && $mode == 'edit') ? t('Undelete') : ''),
@@ -738,11 +799,18 @@ class Apps {
 		$darray = array();
 		$ret = array('success' => false);
 
+		$sys = get_sys_channel();
+
+
 		$darray['app_url']     = ((x($arr,'url')) ? $arr['url'] : '');
 		$darray['app_channel'] = ((x($arr,'uid')) ? $arr['uid'] : 0);
 
-		if((! $darray['app_url']) || (! $darray['app_channel']))
+		if(! $darray['app_url'])
 			return $ret;
+
+		if((! $arr['uid']) && (! $arr['author'])) {
+			$arr['author'] = $sys['channel_hash'];
+		}
 
 		if($arr['photo'] && (strpos($arr['photo'],'icon:') !== 0) && (! strstr($arr['photo'],z_root()))) {
 			$x = import_xchan_photo($arr['photo'],get_observer_hash(),true);
