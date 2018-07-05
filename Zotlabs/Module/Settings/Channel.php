@@ -350,6 +350,9 @@ class Channel {
 					continue;
 				$options[$opt[1]] = $opt[0];
 			}
+			if($k === 'view_stream') {
+				$options = [$perm_opts[7][1] => $perm_opts[7][0]];
+			}
 			$permiss[] = array($k,$perm,$limits[$k],'',$options);			
 		}
 		
@@ -477,9 +480,6 @@ class Channel {
 		$permissions_role = get_pconfig(local_channel(),'system','permissions_role');
 		if(! $permissions_role)
 			$permissions_role = 'custom';
-		// compatibility mapping - can be removed after 3.4 release
-		if($permissions_role === 'social_party') 
-			$permissions_role = 'social_federation';
 
 		if(in_array($permissions_role,['forum','repository'])) 	
 			$autoperms = replace_macros(get_markup_template('field_checkbox.tpl'), [
