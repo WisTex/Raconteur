@@ -480,7 +480,7 @@ class Network extends \Zotlabs\Web\Controller {
 		if($nouveau && $load) {
 			// "New Item View" - show all items unthreaded in reverse created date order
 	
-			$items = q("SELECT item.*, item.id AS item_id, received FROM item 
+			$items = q("SELECT item.*, item.id AS item_id, created FROM item 
 				left join abook on ( item.owner_xchan = abook.abook_xchan $abook_uids )
 				$net_query
 				WHERE true $uids $item_normal
@@ -488,7 +488,7 @@ class Network extends \Zotlabs\Web\Controller {
 				$simple_update
 				$sql_extra $sql_options $sql_nets
 				$net_query2
-				ORDER BY item.received DESC $pager_sql "
+				ORDER BY item.created DESC $pager_sql "
 			);
 		
 			xchan_query($items);

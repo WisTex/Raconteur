@@ -24,7 +24,7 @@ class Admin {
 			'channels'  => array(z_root() . '/admin/channels/', t('Channels'),       'channels'),
 			'security'  => array(z_root() . '/admin/security/', t('Security'),       'security'),
 			'features'  => array(z_root() . '/admin/features/', t('Features'),       'features'),
-			'plugins'   => array(z_root() . '/admin/plugins/',  t('Plugins'),        'plugins'),
+			'addons'    => array(z_root() . '/admin/addons/',   t('Addons'),         'addons'),
 			'themes'    => array(z_root() . '/admin/themes/',   t('Themes'),         'themes'),
 			'queue'     => array(z_root() . '/admin/queue',     t('Inspect queue'),  'queue'),
 			'profs'     => array(z_root() . '/admin/profs',     t('Profile Fields'), 'profs'),
@@ -39,7 +39,7 @@ class Admin {
 		if($r) {
 			foreach ($r as $h){
 				$plugin = $h['aname'];
-				$plugins[] = array(z_root() . '/admin/plugins/' . $plugin, $plugin, 'plugin');
+				$plugins[] = array(z_root() . '/admin/addons/' . $plugin, $plugin, 'plugin');
 				// temp plugins with admin
 				\App::$plugins_admin[] = $plugin;
 			}
@@ -53,7 +53,7 @@ class Admin {
 		$o .= replace_macros(get_markup_template('admin_aside.tpl'), array(
 			'$admin' => $aside,
 			'$admtxt' => t('Admin'),
-			'$plugadmtxt' => t('Plugin Features'),
+			'$plugadmtxt' => t('Addon Features'),
 			'$plugins' => $plugins,
 			'$logtxt' => t('Logs'),
 			'$logs' => $logs,

@@ -79,8 +79,8 @@ function photo_upload($channel, $observer, $args) {
 			if($imagick_path && @file_exists($imagick_path)) {
 				$tmp_name = $args['os_syspath'] . '-001';
 				$newsize = photo_calculate_scale(array_merge($args['getimagesize'],['max' => $max_thumb]));
-				$cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $args['os_syspath']) . ' -thumbnail ' . $newsize . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmp_name);
-				//	logger('imagick thumbnail command: ' . $cmd);
+				$cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $args['os_syspath']) . ' -resize ' . $newsize . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmp_name);
+					logger('imagick thumbnail command: ' . $cmd);
 				for($x = 0; $x < 4; $x ++) {
 					exec($cmd);
 					if(file_exists($tmp_name)) {
@@ -96,7 +96,7 @@ function photo_upload($channel, $observer, $args) {
 
 				$imagedata = @file_get_contents($tmp_name);
 				$filesize = @filesize($args['os_syspath']);
-				@unlink($tmp_name);
+//				@unlink($tmp_name);
 			}
 			else {
 				$imagedata = @file_get_contents($args['os_syspath']);

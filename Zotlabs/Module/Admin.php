@@ -145,7 +145,7 @@ class Admin extends \Zotlabs\Web\Controller {
 			'$accounts' => array( t('Registered accounts'), $accounts),
 			'$pending'  => array( t('Pending registrations'), $pending),
 			'$channels' => array( t('Registered channels'), $channels),
-			'$plugins'  => array( t('Active plugins'), $plugins ),
+			'$plugins'  => array( t('Active addons'), $plugins ),
 			'$version'  => array( t('Version'), STD_VERSION),
 			'$vmaster'  => array( t('Repository version (master)'), $vmaster),
 			'$vdev'     => array( t('Repository version (dev)'), $vdev),

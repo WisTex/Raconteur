@@ -95,7 +95,7 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 						$fname = dbunescbin($r[0]['content']);
 						$tmp_name = $fname . '-001';
 						$newsize = photo_calculate_scale(array_merge(getimagesize($fname),['max' => $max_thumb]));
-						$cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $fname) . ' -thumbnail ' . $newsize . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmp_name);
+						$cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $fname) . ' -resize ' . $newsize . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmp_name);
 						//	logger('imagick thumbnail command: ' . $cmd);
 						for($x = 0; $x < 4; $x ++) {
 							exec($cmd);

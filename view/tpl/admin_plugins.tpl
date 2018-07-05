@@ -77,7 +77,7 @@
       var repoName = $('#id_repoName').val();
       $('#chat-rotator').show();
       $.post(
-        "/admin/plugins/addrepo", {repoURL: repoURL, repoName: repoName}, 
+        "/admin/addons/addrepo", {repoURL: repoURL, repoName: repoName}, 
             function(response) {
                 $('#chat-rotator').hide();
                 if (response.success) {
@@ -104,7 +104,7 @@
       var repoURL = $('#id_repoURL').val();
       var repoName = $('#id_repoName').val();
       $.post(
-        "/admin/plugins/installrepo", {repoURL: repoURL, repoName: repoName}, 
+        "/admin/addons/installrepo", {repoURL: repoURL, repoName: repoName}, 
             function(response) {
                 if (response.success) {
                   $('#generic-modal-title-{{$newRepoModalID}}').html('Addon repo installed');
@@ -137,7 +137,7 @@
   function updateAddonRepo(repoName) {
     if(confirm('Are you sure you want to update the addon repo ' + repoName + '?')) {
       $.post(
-        "/admin/plugins/updaterepo", {repoName: repoName}, 
+        "/admin/addons/updaterepo", {repoName: repoName}, 
             function(response) {
                 if (response.success) {
                   window.console.log('Addon repo '+repoName+' successfully updated :' + response['message']);
@@ -170,7 +170,7 @@
     // TODO: Unlink the addons
     if(confirm('Are you sure you want to remove the addon repo ' + repoName + '?')) {
       $.post(
-        "/admin/plugins/removerepo", {repoName: repoName}, 
+        "/admin/addons/removerepo", {repoName: repoName}, 
             function(response) {
                 if (response.success) {
                   window.console.log('Addon repo '+repoName+' successfully removed :' + response['message']);

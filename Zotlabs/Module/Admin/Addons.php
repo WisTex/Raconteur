@@ -2,10 +2,10 @@
 
 namespace Zotlabs\Module\Admin;
 
-use \Zotlabs\Storage\GitRepo as GitRepo;
+use \Zotlabs\Storage\GitRepo;
 use \Michelf\MarkdownExtra;
 
-class Plugins {
+class Addons {
 
 	/**
 	 * @brief
@@ -20,7 +20,7 @@ class Plugins {
 				$func($a);
 			}
 
-			goaway(z_root() . '/admin/plugins/' . argv(2) );
+			goaway(z_root() . '/admin/addons/' . argv(2) );
 		}
 		elseif(argc() > 2) {
 			switch(argv(2)) {
@@ -243,7 +243,7 @@ class Plugins {
 	}
 
 	/**
-	 * @brief Plugins admin page.
+	 * @brief Addons admin page.
 	 *
 	 * @return string with parsed HTML
 	 */
@@ -278,7 +278,7 @@ class Plugins {
 			$info['disabled'] = 1-intval($x);
 
 			if (x($_GET,"a") && $_GET['a']=="t"){
-				check_form_security_token_redirectOnErr('/admin/plugins', 'admin_plugins', 't');
+				check_form_security_token_redirectOnErr('/admin/addons', 'admin_addons', 't');
 				$pinstalled = false;
 				// Toggle plugin status
 				$idx = array_search($plugin, \App::$plugins);
@@ -298,9 +298,9 @@ class Plugins {
 				if($pinstalled) {
 					@require_once("addon/$plugin/$plugin.php");
 					if(function_exists($plugin.'_plugin_admin'))
-						goaway(z_root() . '/admin/plugins/' . $plugin);
+						goaway(z_root() . '/admin/addons/' . $plugin);
 				}
-				goaway(z_root() . '/admin/plugins' );
+				goaway(z_root() . '/admin/addons' );
 			}
 
 			// display plugin details
@@ -339,7 +339,7 @@ class Plugins {
 			$t = get_markup_template('admin_plugins_details.tpl');
 			return replace_macros($t, array(
 				'$title' => t('Administration'),
-				'$page' => t('Plugins'),
+				'$page' => t('Addons'),
 				'$toggle' => t('Toggle'),
 				'$settings' => t('Settings'),
 				'$baseurl' => z_root(),
@@ -358,11 +358,11 @@ class Plugins {
 				'$disabled' => t('Disabled - version incompatibility'),
 
 				'$admin_form' => $admin_form,
-				'$function' => 'plugins',
+				'$function' => 'addons',
 				'$screenshot' => '',
 				'$readme' => $readme,
 
-				'$form_security_token' => get_form_security_token('admin_plugins'),
+				'$form_security_token' => get_form_security_token('admin_addons'),
 			));
 		}
 
@@ -407,11 +407,11 @@ class Plugins {
 
 		$admin_plugins_add_repo_form= replace_macros(
 			get_markup_template('admin_plugins_addrepo.tpl'), array(
-				'$post' => 'admin/plugins/addrepo',
-				'$desc' => t('Enter the public git repository URL of the plugin repo.'),
-				'$repoURL' => array('repoURL', t('Plugin repo git URL'), '', ''),
+				'$post' => 'admin/addons/addrepo',
+				'$desc' => t('Enter the public git repository URL of the addon repo.'),
+				'$repoURL' => array('repoURL', t('Addon repo git URL'), '', ''),
 				'$repoName' => array('repoName', t('Custom repo name'), '', '', t('(optional)')),
-				'$submit' => t('Download Plugin Repo')
+				'$submit' => t('Download Addon Repo')
 			)
 		);
 		$newRepoModalID = random_string(3);
@@ -434,17 +434,17 @@ class Plugins {
 		$t = get_markup_template('admin_plugins.tpl');
 		return replace_macros($t, array(
 			'$title' => t('Administration'),
-			'$page' => t('Plugins'),
+			'$page' => t('Addons'),
 			'$submit' => t('Submit'),
 			'$baseurl' => z_root(),
-			'$function' => 'plugins',
+			'$function' => 'addons',
 			'$plugins' => $plugins,
 			'$disabled' => t('Disabled - version incompatibility'),
-			'$form_security_token' => get_form_security_token('admin_plugins'),
+			'$form_security_token' => get_form_security_token('admin_addons'),
 			'$allowManageRepos' => $allowManageRepos,
 			'$managerepos' => t('Manage Repos'),
-			'$installedtitle' => t('Installed Plugin Repositories'),
-			'$addnewrepotitle' =>	t('Install a New Plugin Repository'),
+			'$installedtitle' => t('Installed Addon Repositories'),
+			'$addnewrepotitle' =>	t('Install a New Addon Repository'),
 			'$expandform' => false,
 			'$form' => $admin_plugins_add_repo_form,
 			'$newRepoModal' => $newRepoModal,

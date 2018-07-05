@@ -863,8 +863,6 @@ class App {
 				self::$path = $path;
 		}
 
-		set_include_path("include/self::$hostname" . PATH_SEPARATOR . get_include_path());
-
 		if((x($_SERVER,'QUERY_STRING')) && substr($_SERVER['QUERY_STRING'], 0, 2) === "q=") {
 			self::$query_string = escape_tags(substr($_SERVER['QUERY_STRING'], 2));
 			self::$query_string = rtrim(self::$query_string, '/');
