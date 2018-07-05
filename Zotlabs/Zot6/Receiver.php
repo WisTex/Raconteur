@@ -186,7 +186,7 @@ class Receiver {
 			case 'activity':
 			case 'mail':
 			case 'profile':
-			case 'channel_sync':
+			case 'sync':
 			case 'location':
 			default:
 				$this->response = $this->handler->Notify($this->data,$this->hub);

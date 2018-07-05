@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Web;
 
+use Zotlabs\Extend\Route;
 use Exception;
 
 /**
@@ -49,19 +50,22 @@ class Router {
 
 			/*
 			 * We will always have a module name.
-			 * First see if we have a plugin which is masquerading as a module.
+			 * First see if we have a plugin handling this route
 			 */
 
-			if(is_array(\App::$plugins) && in_array($module,\App::$plugins) && file_exists("addon/{$module}/{$module}.php")) {
-				include_once("addon/{$module}/{$module}.php");
-				if(class_exists($modname)) {
-					$this->controller = new $modname;
-					\App::$module_loaded = true;
-				}
-				elseif(function_exists($module . '_module')) {
-					\App::$module_loaded = true;
+			$routes = Route::get();
+			if($routes) {
+				foreach($routes as $route) {
+					if(is_array($route) && strtolower($route[1]) === $module) {
+						include_once($route[0]);
+						if(class_exists($modname)) {
+							$this->controller = new $modname;
+							\App::$module_loaded = true;
+						}
+					}
 				}
 			}
+
 
 			/*
 			 * If the site has a custom module to over-ride the standard module, use it.

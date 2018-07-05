@@ -18,6 +18,7 @@ class Libsync {
 	 * @param array $packet (optional) default null
 	 * @param boolean $groups_changed (optional) default false
 	 */
+
 	static function build_sync_packet($uid = 0, $packet = null, $groups_changed = false) {
 
 		logger('build_sync_packet');
@@ -75,14 +76,7 @@ class Libsync {
 		if(! $synchubs)
 			return;
 
-		$r = q("select xchan_guid, xchan_guid_sig from xchan where xchan_hash  = '%s' limit 1",
-			dbesc($channel['channel_hash'])
-		);
-		if(! $r)
-			return;
-
-		$env_recips = array();
-		$env_recips[] = array('guid' => $r[0]['xchan_guid'],'guid_sig' => $r[0]['xchan_guid_sig']);
+		$env_recips = [ $channel['channel_hash'] ];
 
 		if($packet)
 			logger('packet: ' . print_r($packet, true),LOGGER_DATA, LOG_DEBUG);
@@ -150,14 +144,14 @@ class Libsync {
 
 		foreach($synchubs as $hub) {
 			$hash = random_string();
-			$n = Libzot::build_packet($channel,'notify',$env_recips,json_encode($info),$hub['hubloc_sitekey'],$hub['site_crypto'],$hash);
+			$n = Libzot::build_packet($channel,'sync',$env_recips,json_encode($info),$hub['hubloc_sitekey'],$hub['site_crypto'],$hash);
 			Queue::insert(array(
 				'hash'       => $hash,
 				'account_id' => $channel['channel_account_id'],
 				'channel_id' => $channel['channel_id'],
 				'posturl'    => $hub['hubloc_callback'],
 				'notify'     => $n,
-				'msg'        => json_encode($info)
+				'msg'        => EMPTY_STR
 			));
 
 
@@ -190,9 +184,6 @@ class Libsync {
 
 		require_once('include/import.php');
 
-		/** @FIXME this will sync red structures (channel, pconfig and abook).
-			Eventually we need to make this application agnostic. */
-
 		$result = [];
 
 		$keychange = ((array_key_exists('keychange',$arr)) ? true : false);
@@ -219,89 +210,7 @@ class Libsync {
 			}
 
 			if($keychange) {
-				// verify the keychange operation
-				if(! Libzot::verify($arr['channel']['channel_pubkey'],$arr['keychange']['new_sig'],$channel['channel_prvkey'])) {
-					logger('sync keychange: verification failed');
-					continue;
-				}
-
-				$sig = Libzot::sign($channel['channel_guid'],$arr['channel']['channel_prvkey']);
-				$hash = Libzot::make_xchan_hash($channel['channel_guid'],$arr['channel']['channel_pubkey']);
-
-
-				$r = q("update channel set channel_prvkey = '%s', channel_pubkey = '%s', channel_guid_sig = '%s',
-					channel_hash = '%s' where channel_id = %d",
-					dbesc($arr['channel']['channel_prvkey']),
-					dbesc($arr['channel']['channel_pubkey']),
-					dbesc($sig),
-					dbesc($hash),
-					intval($channel['channel_id'])
-				);
-				if(! $r) {
-					logger('keychange sync: channel update failed');
-					continue;
- 				}
-
-				$r = q("select * from channel where channel_id = %d",
-					intval($channel['channel_id'])
-				);
-
-				if(! $r) {
-					logger('keychange sync: channel retrieve failed');
-					continue;
-				}
-
-				$channel = $r[0];
-
-				$h = q("select * from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' ",
-					dbesc($arr['keychange']['old_hash']),
-					dbesc(z_root())
-				);
-
-				if($h) {
-					foreach($h as $hv) {
-						$hv['hubloc_guid_sig'] = $sig;
-						$hv['hubloc_hash']     = $hash;
-						$hv['hubloc_url_sig']  = Libzot::sign(z_root(),$channel['channel_prvkey']);
-						hubloc_store_lowlevel($hv);
-					}
-				}
-
-				$x = q("select * from xchan where xchan_hash = '%s' ",
-					dbesc($arr['keychange']['old_hash'])
-				);
-
-				$check = q("select * from xchan where xchan_hash = '%s'",
-					dbesc($hash)
-				);
-
-				if(($x) && (! $check)) {
-					$oldxchan = $x[0];
-					foreach($x as $xv) {
-						$xv['xchan_guid_sig']  = $sig;
-						$xv['xchan_hash']      = $hash;
-						$xv['xchan_pubkey']    = $channel['channel_pubkey'];
-						xchan_store_lowlevel($xv);
-						$newxchan = $xv;
-					}
-				}
-
-				$a = q("select * from abook where abook_xchan = '%s' and abook_self = 1",
-					dbesc($arr['keychange']['old_hash'])
-				);
-
-				if($a) {
-					q("update abook set abook_xchan = '%s' where abook_id = %d",
-						dbesc($hash),
-						intval($a[0]['abook_id'])
-					);
-				}
-
-				xchan_change_key($oldxchan,$newxchan,$arr['keychange']);
-
-				// keychange operations can end up in a confused state if you try and sync anything else
-				// besides the channel keys, so ignore any other packets.
-
+				self::keychange($channel,$arr);
 				continue;
 			}
 
@@ -815,7 +724,7 @@ class Libsync {
 				$arr['locations'][0]['primary'] = true;
 
 			foreach($arr['locations'] as $location) {
-				if(! self::verify($location['url'],$location['url_sig'],$sender['public_key'])) {
+				if(! Libzot::verify($location['url'],$location['url_sig'],$sender['public_key'])) {
 					logger('Unable to verify site signature for ' . $location['url']);
 					$ret['message'] .= sprintf( t('Unable to verify site signature for %s'), $location['url']) . EOL;
 					continue;
@@ -1019,6 +928,91 @@ class Libsync {
 	}
 
 
+	static function keychange($channel,$arr) {
+
+				// verify the keychange operation
+				if(! Libzot::verify($arr['channel']['channel_pubkey'],$arr['keychange']['new_sig'],$channel['channel_prvkey'])) {
+					logger('sync keychange: verification failed');
+					continue;
+				}
+
+				$sig = Libzot::sign($channel['channel_guid'],$arr['channel']['channel_prvkey']);
+				$hash = Libzot::make_xchan_hash($channel['channel_guid'],$arr['channel']['channel_pubkey']);
+
+
+				$r = q("update channel set channel_prvkey = '%s', channel_pubkey = '%s', channel_guid_sig = '%s',
+					channel_hash = '%s' where channel_id = %d",
+					dbesc($arr['channel']['channel_prvkey']),
+					dbesc($arr['channel']['channel_pubkey']),
+					dbesc($sig),
+					dbesc($hash),
+					intval($channel['channel_id'])
+				);
+				if(! $r) {
+					logger('keychange sync: channel update failed');
+					continue;
+ 				}
+
+				$r = q("select * from channel where channel_id = %d",
+					intval($channel['channel_id'])
+				);
+
+				if(! $r) {
+					logger('keychange sync: channel retrieve failed');
+					continue;
+				}
+
+				$channel = $r[0];
+
+				$h = q("select * from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' ",
+					dbesc($arr['keychange']['old_hash']),
+					dbesc(z_root())
+				);
+
+				if($h) {
+					foreach($h as $hv) {
+						$hv['hubloc_guid_sig'] = $sig;
+						$hv['hubloc_hash']     = $hash;
+						$hv['hubloc_url_sig']  = Libzot::sign(z_root(),$channel['channel_prvkey']);
+						hubloc_store_lowlevel($hv);
+					}
+				}
+
+				$x = q("select * from xchan where xchan_hash = '%s' ",
+					dbesc($arr['keychange']['old_hash'])
+				);
+
+				$check = q("select * from xchan where xchan_hash = '%s'",
+					dbesc($hash)
+				);
+
+				if(($x) && (! $check)) {
+					$oldxchan = $x[0];
+					foreach($x as $xv) {
+						$xv['xchan_guid_sig']  = $sig;
+						$xv['xchan_hash']      = $hash;
+						$xv['xchan_pubkey']    = $channel['channel_pubkey'];
+						xchan_store_lowlevel($xv);
+						$newxchan = $xv;
+					}
+				}
+
+				$a = q("select * from abook where abook_xchan = '%s' and abook_self = 1",
+					dbesc($arr['keychange']['old_hash'])
+				);
+
+				if($a) {
+					q("update abook set abook_xchan = '%s' where abook_id = %d",
+						dbesc($hash),
+						intval($a[0]['abook_id'])
+					);
+				}
+
+				xchan_change_key($oldxchan,$newxchan,$arr['keychange']);
+
+				// keychange operations can end up in a confused state if you try and sync anything else
+				// besides the channel keys, so ignore any other packets.
+		}
 
 
 }
