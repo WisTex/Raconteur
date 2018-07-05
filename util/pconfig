@@ -14,7 +14,6 @@ if(!file_exists('include/cli_startup.php')) {
 
 
 require_once('include/cli_startup.php');
-require_once('include/zot.php');
 
 cli_startup();
 
