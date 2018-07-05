@@ -737,6 +737,20 @@ CREATE TABLE IF NOT EXISTS `likes` (
   KEY `target_id` (`target_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS `linkid` (
+  `link_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ident` varchar(191) NOT NULL DEFAULT '',
+  `link` varchar(191) NOT NULL DEFAULT '',
+  `ikey` text NOT NULL,
+  `lkey` text NOT NULL,
+  `isig` text NOT NULL,
+  `lsig` text NOT NULL,
+  `sigtype` int(11) NOT NULL DEFAULT 0 ,
+  PRIMARY KEY (`link_id`),
+  KEY `ident` (`ident`),
+  KEY `link` (`link`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS `mail` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `convid` int(10) unsigned NOT NULL DEFAULT 0 ,

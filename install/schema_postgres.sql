@@ -718,6 +718,19 @@ create index "likes_i_mid" on likes ("i_mid");
 create index "likes_verb" on likes ("verb");
 create index "likes_target_type" on likes ("target_type");
 create index "likes_target_id" on likes ("target_id");
+CREATE TABLE "linkid" (
+  "link_id" serial NOT NULL,
+  "ident" text NOT NULL DEFAULT '',
+  "link" text NOT NULL DEFAULT '',
+  "ikey" text NOT NULL,
+  "lkey" text NOT NULL,
+  "isig" text NOT NULL,
+  "lsig" text NOT NULL,
+  "sigtype" smallint NOT NULL DEFAULT '0',
+  PRIMARY KEY ("link_id")
+);
+create index "linkid_ident" on linkid ("ident");
+create index "linkid_link" on linkid ("link");
 CREATE TABLE "mail" (
   "id" serial  NOT NULL,
   "convid" bigint  NOT NULL DEFAULT '0',
