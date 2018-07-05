@@ -3548,15 +3548,12 @@ function process_channel_sync_delivery($sender, $arr, $deliveries) {
 
 
 			if(array_key_exists('channel_pageflags',$arr['channel']) && intval($arr['channel']['channel_pageflags'])) {
-				// These flags cannot be sync'd.
-				// remove the bits from the incoming flags.
+				// Several pageflags are site-specific and cannot be sync'd.
+				// Only allow those bits which are shareable from the remote and then 
+				// logically OR with the local flags
 
-				// These correspond to PAGE_REMOVED and PAGE_SYSTEM on redmatrix
-
-				if($arr['channel']['channel_pageflags'] & 0x8000)
-					$arr['channel']['channel_pageflags'] = $arr['channel']['channel_pageflags'] - 0x8000;
-				if($arr['channel']['channel_pageflags'] & 0x1000)
-					$arr['channel']['channel_pageflags'] = $arr['channel']['channel_pageflags'] - 0x1000;
+				$arr['channel']['channel_pageflags'] = $arr['channel']['channel_pageflags'] & (PAGE_HIDDEN|PAGE_AUTOCONNECT|PAGE_APPLICATION|PAGE_PREMIUM|PAGE_ADULT);
+				$arr['channel']['channel_pageflags'] = $arr['channel']['channel_pageflags'] | $channel['channel_pageflags'];
 			}
 
 			$disallowed = [
