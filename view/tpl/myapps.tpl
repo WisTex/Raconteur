@@ -3,7 +3,7 @@
 		{{if $authed}}
 		{{if $create}}
 		<a href="appman" class="pull-right btn btn-success btn-sm"><i class="fa fa-pencil-square-o"></i>&nbsp;{{$create}}</a>
-		{{else}}
+		{{elseif $manage}}
 		<a href="apps/edit{{if $cat.0}}/?f=&cat={{$cat.0}}{{/if}}" class="pull-right btn btn-primary btn-sm">{{$manage}}</a>
 		{{/if}}
 		{{/if}}

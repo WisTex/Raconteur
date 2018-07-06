@@ -533,13 +533,7 @@ class Apps {
 						intval(TERM_OBJ_APP),
 						intval($x[0]['id'])
 					);
-					if($x[0]['app_system']) {
-						$r = q("update app set app_deleted = 1 where app_id = '%s' and app_channel = %d",
-							dbesc($app['guid']),
-							intval($uid)
-						);
-					}
-					else {
+					if($uid) {
 						$r = q("delete from app where app_id = '%s' and app_channel = %d",
 							dbesc($app['guid']),
 							intval($uid)
@@ -605,6 +599,16 @@ class Apps {
 
 		$r = q("select id from app where app_id = '%s' and app_channel = %d limit 1",
 			dbesc((array_key_exists('guid',$app)) ? $app['guid'] : ''), 
+			intval($uid)
+		);
+		return(($r) ? true : false);
+
+	}
+
+	static public function addon_app_installed($uid,$app) {
+
+		$r = q("select id from app where app_plugin = '%s' and app_channel = %d limit 1",
+			dbesc($app),
 			intval($uid)
 		);
 		return(($r) ? true : false);
