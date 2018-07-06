@@ -91,7 +91,6 @@ class Apps {
 		if($apps) {
 			foreach($apps as $app) {
 				$id = self::check_install_system_app($app);
-
 				// $id will be boolean true or false to install an app, or an integer id to update an existing app
 				if($id !== false) {
 					$app['uid'] = 0;
@@ -159,16 +158,17 @@ class Apps {
 	 */
 
 	static public function check_install_personal_app($app) {
-		foreach(self::$installed_apps as $iapp) {
-			$install = false;
+		$installed = false;
+		foreach(self::$installed_apps as $iapp) {			
 			if($iapp['app_id'] == hash('whirlpool',$app['name'])) {
+				$installed = true;
 				if(($iapp['app_version'] != $app['version'])
 					|| ($app['plugin'] && (! $iapp['app_plugin']))) {
 					return intval($iapp['app_id']);
 				}
 			}
 		}
-		if(in_array($app['name'],self::$base_apps)) {
+		if(! $installed && in_array($app['name'],self::$base_apps)) {
 			return true;
 		}
 		return false;
@@ -489,6 +489,7 @@ class Apps {
 	}
 
 	static public function app_install($uid,$app) {
+
 		$app['uid'] = $uid;
 
 		if(self::app_installed($uid,$app))
@@ -866,6 +867,7 @@ class Apps {
 			$ret['success'] = true;
 			$ret['app_id'] = $darray['app_id'];
 		}
+
 		if($arr['categories']) {
 			$x = q("select id from app where app_id = '%s' and app_channel = %d limit 1",
 				dbesc($darray['app_id']),
@@ -949,9 +951,9 @@ class Apps {
 			intval($darray['app_channel'])
 		);
 
-		// if updating an embed app, don't mess with any existing categories.
+		// if updating an embed app and we don't have a 0 channel_id don't mess with any existing categories
 
-		if(array_key_exists('embed',$arr) && intval($arr['embed']))
+		if(array_key_exists('embed',$arr) && intval($arr['embed']) && (intval($darray['app_channel'])))
 			return $ret;
 
 		if($x) {

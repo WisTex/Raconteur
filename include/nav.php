@@ -212,9 +212,9 @@ function nav($template = 'default') {
 
 	//app bin
 	if($is_owner) {
-		if(get_pconfig(local_channel(), 'system','import_system_apps') !== datetime_convert('UTC','UTC','Y-m-d')) {
+		if(get_pconfig(local_channel(), 'system','import_system_apps') !== datetime_convert('UTC','UTC','now','Y-m-d')) {
 			Zlib\Apps::import_system_apps();
-			set_pconfig(local_channel(), 'system','import_system_apps', datetime_convert('UTC','UTC','Y-m-d'));
+			set_pconfig(local_channel(), 'system','import_system_apps', datetime_convert('UTC','UTC','now','Y-m-d'));
 		}
 
 		$syslist = [];

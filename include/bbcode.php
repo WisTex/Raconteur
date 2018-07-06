@@ -789,6 +789,10 @@ function bbcode($Text, $options = []) {
 	$tryoembed   = ((array_key_exists('tryoembed',$options)) ? $options['tryoembed'] : true);
 	$cache       = ((array_key_exists('cache',$options)) ? $options['cache'] : false);
 	$newwin      = ((array_key_exists('newwin',$options)) ? $options['newwin'] : true);
+	$export      = ((array_key_exists('export',$options)) ? $options['export'] : false);
+
+	if($export)
+		$tryoembed = false;
 
 	$target = (($newwin) ? ' target="_blank" ' : '');
 
@@ -819,7 +823,7 @@ function bbcode($Text, $options = []) {
 	// process [observer] tags before we do anything else because we might
 	// be stripping away stuff that then doesn't need to be worked on anymore
 
-	if($cache)
+	if($cache || $export)
 		$observer = false;
 	else
 		$observer = App::get_observer();
@@ -839,7 +843,7 @@ function bbcode($Text, $options = []) {
 		}
 	}
 
-	if($cache)
+	if($cache || $export)
 		$channel = false;
 	else
 		$channel = App::get_channel();
@@ -859,7 +863,8 @@ function bbcode($Text, $options = []) {
 	$Text = $x['body'];
 	$saved_images = $x['images'];
 
-	$Text = str_replace(array('[baseurl]','[sitename]'),array(z_root(),get_config('system','sitename')),$Text);
+	if(! $export)
+		$Text = str_replace(array('[baseurl]','[sitename]'),array(z_root(),get_config('system','sitename')),$Text);
 
 
 	// Replace any html brackets with HTML Entities to prevent executing HTML or script
@@ -886,7 +891,7 @@ function bbcode($Text, $options = []) {
 	// We'll emulate it.
 
 	$Text = str_replace("\r\n", "\n", $Text);
-	$Text = str_replace(array("\r", "\n"), array('<br />', '<br />'), $Text);
+	$Text = str_replace(array("\r", "\n"), array('<br>', '<br>'), $Text);
 
 	if ($preserve_nl)
 		$Text = str_replace(array("\n", "\r"), array('', ''), $Text);
@@ -978,14 +983,16 @@ function bbcode($Text, $options = []) {
 	// leave open the posibility of [map=something]
 	// this is replaced in prepare_body() which has knowledge of the item location
 
-	if (strpos($Text,'[/map]') !== false) {
-		$Text = preg_replace_callback("/\[map\](.*?)\[\/map\]/ism", 'bb_map_location', $Text);
-	}
-	if (strpos($Text,'[map=') !== false) {
-		$Text = preg_replace_callback("/\[map=(.*?)\]/ism", 'bb_map_coords', $Text);
-	}
-	if (strpos($Text,'[map]') !== false) {
-		$Text = preg_replace("/\[map\]/", '<div class="map"></div>', $Text);
+	if(! $export) {
+		if (strpos($Text,'[/map]') !== false) {
+			$Text = preg_replace_callback("/\[map\](.*?)\[\/map\]/ism", 'bb_map_location', $Text);
+		}
+		if (strpos($Text,'[map=') !== false) {
+			$Text = preg_replace_callback("/\[map=(.*?)\]/ism", 'bb_map_coords', $Text);
+		}
+		if (strpos($Text,'[map]') !== false) {
+			$Text = preg_replace("/\[map\]/", '<div class="map"></div>', $Text);
+		}
 	}
 
 	// Check for bold text
@@ -1307,7 +1314,8 @@ function bbcode($Text, $options = []) {
 	}
 
 	// oembed tag
-	$Text = oembed_bbcode2html($Text);
+	if(! $export)
+		$Text = oembed_bbcode2html($Text);
 
 	// Avoid triple linefeeds through oembed
 	$Text = str_replace("<br style='clear:left'></span><br /><br />", "<br style='clear:left'></span><br />", $Text);
