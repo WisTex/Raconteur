@@ -156,17 +156,20 @@ class Apps {
 	 * is discovered, or if the version of a system app changes.
 	 */
 
+
+
 	static public function check_install_personal_app($app) {
-		foreach(self::$installed_apps as $iapp) {
-			$install = false;
+		$installed = false;
+		foreach(self::$installed_apps as $iapp) {			
 			if($iapp['app_id'] == hash('whirlpool',$app['name'])) {
+				$installed = true;
 				if(($iapp['app_version'] != $app['version'])
 					|| ($app['plugin'] && (! $iapp['app_plugin']))) {
 					return intval($iapp['app_id']);
 				}
 			}
 		}
-		if(in_array($app['name'],self::$base_apps)) {
+		if(! $installed && in_array($app['name'],self::$base_apps)) {
 			return true;
 		}
 		return false;
@@ -531,21 +534,13 @@ class Apps {
 						intval(TERM_OBJ_APP),
 						intval($x[0]['id'])
 					);
-					if($x[0]['app_system']) {
-						$r = q("update app set app_deleted = 1 where app_id = '%s' and app_channel = %d",
-							dbesc($app['guid']),
-							intval($uid)
-						);
-					}
-					else {
-						$r = q("delete from app where app_id = '%s' and app_channel = %d",
-							dbesc($app['guid']),
-							intval($uid)
-						);
+					$r = q("delete from app where app_id = '%s' and app_channel = %d",
+						dbesc($app['guid']),
+						intval($uid)
+					);
 
-						// we don't sync system apps - they may be completely different on the other system
-						build_sync_packet($uid,array('app' => $x));
-					}
+					// we don't sync system apps - they may be completely different on the other system
+					build_sync_packet($uid,array('app' => $x));
 				}
 				else {
 					self::app_undestroy($uid,$app);
@@ -945,7 +940,7 @@ class Apps {
 
 		// if updating an embed app, don't mess with any existing categories.
 
-		if(array_key_exists('embed',$arr) && intval($arr['embed']))
+		if(array_key_exists('embed',$arr) && intval($arr['embed']) && (intval($darray['app_channel'])))
 			return $ret;
 
 		if($x) {
