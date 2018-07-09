@@ -31,10 +31,10 @@ class Pdledit extends \Zotlabs\Web\Controller {
 			return;
 		}
 
-		if(! feature_enabled(local_channel(),'advanced_theming')) {
-			notice( t('Feature disabled.') . EOL);
-			return;
-		}
+//		if(! feature_enabled(local_channel(),'advanced_theming')) {
+//			notice( t('Feature disabled.') . EOL);
+//			return;
+//		}
 
 		if(argc() > 2 && argv(2) === 'reset') {
 			del_pconfig(local_channel(),'system','mod_' . argv(1) . '.pdl');
@@ -70,6 +70,13 @@ class Pdledit extends \Zotlabs\Web\Controller {
 					}
 				}
 			}
+			$addons = glob('addon/*/*.pdl');
+			if($addons) {
+				foreach($addons as $a) {
+					$name = substr(basename($a, '.pdl'),4);
+					$o .= '<a href="pdledit/' . $name . '" >' . $name . '</a>' . ((in_array($name,$edited)) ? ' ' . t('(modified)') . ' <a href="pdledit/' . $name . '/reset" >' . t('Reset') . '</a>': '' ) . '<br />';
+				}
+			}
 
 			$o .= '</div>';
 			
@@ -78,7 +85,12 @@ class Pdledit extends \Zotlabs\Web\Controller {
 		}
 	
 		$t = get_pconfig(local_channel(),'system',$module);
-		$s = file_get_contents(theme_include($module));
+		$s = @file_get_contents(theme_include($module));
+		if(! $s) {
+			$a = glob('addon/*/' . $module);
+			if($a)
+				$s = @file_get_contents($a[0]);
+		}
 		if(! $t) {
 			$t = $s;
 		}	

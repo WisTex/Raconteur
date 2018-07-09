@@ -2078,6 +2078,8 @@ function load_pdl() {
 
 		if((! $s) && (($p = theme_include($n)) != ''))
 			$s = @file_get_contents($p);
+		elseif(file_exists('addon/'. App::$module . '/' . $n))
+			$s = @file_get_contents('addon/'. App::$module . '/' . $n);
 		if($s) {
 			App::$comanche->parse($s);
 			App::$pdl = $s;
