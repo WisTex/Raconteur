@@ -957,14 +957,10 @@ function thread_action_menu($item,$mode = '') {
 
 	}
 
-
-
-
 	$args = [ 'item' => $item, 'mode' => $mode, 'menu' => $menu ];
 	call_hooks('thread_action_menu', $args);
 
 	return $args['menu'];
-
 }
 
 function author_is_pmable($xchan, $abook) {
@@ -974,15 +970,11 @@ function author_is_pmable($xchan, $abook) {
 	if($x['result'] !== 'unset')
 		return $x['result'];
 	
-	if($xchan['xchan_network'] === 'zot' && get_observer_hash())
+	if($xchan['xchan_network'] === 'zot6' && get_observer_hash())
 		return true;
 	return false;
 
 }
-
-
-
-
 
 
 function thread_author_menu($item, $mode = '') {
@@ -1025,9 +1017,6 @@ function thread_author_menu($item, $mode = '') {
 		$clean_url = normalise_link($item['author-link']);
 	}
 
-	$rating_enabled = get_config('system','rating_enabled');
-
-	$ratings_url = (($rating_enabled) ? z_root() . '/ratings/' . urlencode($item['author_xchan']) : '');
 
 	if($profile_link) {
 		$menu[] = [ 
@@ -1079,26 +1068,6 @@ function thread_author_menu($item, $mode = '') {
 		];
 	}
 
-	if($ratings_url) {
-		$menu[] = [ 
-			'menu' => 'ratings',
-			'title' => t('Ratings'),
-			'icon' => 'fw',
-			'action' => '',
-			'href' => $ratings_url
-		];
-	}
-
-	if($poke_link) {
-		$menu[] = [ 
-			'menu' => 'poke',
-			'title' => t('Poke'),
-			'icon' => 'fw',
-			'action' => '',
-			'href' => $poke_link
-		];
-	}
-
 	$args = [ 'item' => $item, 'mode' => $mode, 'menu' => $menu ];
 	call_hooks('thread_author_menu', $args);
 
@@ -1135,15 +1104,6 @@ function builtin_activity_puller($item, &$conv_responses) {
 				break;
 			case 'dislike':
 				$verb = ACTIVITY_DISLIKE;
-				break;
-			case 'agree':
-				$verb = ACTIVITY_AGREE;
-				break;
-			case 'disagree':
-				$verb = ACTIVITY_DISAGREE;
-				break;
-			case 'abstain':
-				$verb = ACTIVITY_ABSTAIN;
 				break;
 			case 'attendyes':
 				$verb = ACTIVITY_ATTEND;
@@ -1245,10 +1205,8 @@ function status_editor($a, $x, $popup = false) {
 
 	$plaintext = true;
 
-//	if(feature_enabled(local_channel(),'richtext'))
-//		$plaintext = false;
 
-	$feature_voting = feature_enabled($x['profile_uid'], 'consensus_tools');
+	$feature_voting = false; // feature_enabled($x['profile_uid'], 'consensus_tools');
 	if(x($x, 'hide_voting'))
 		$feature_voting = false;
 	
@@ -1437,7 +1395,7 @@ function status_editor($a, $x, $popup = false) {
 		'$defpublish' => $defpublish,
 		'$feature_future' => $feature_future,
 		'$future_txt' => t('Set publish date'),
-		'$feature_encrypt' => ((feature_enabled($x['profile_uid'], 'content_encrypt') && (! $webpage)) ? true : false),
+		'$feature_encrypt' => false, // ((feature_enabled($x['profile_uid'], 'content_encrypt') && (! $webpage)) ? true : false),
 		'$encrypt' => t('Encrypt text'),
 		'$cipher' => $cipher,
 		'$expiryModalOK' => t('OK'),

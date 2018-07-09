@@ -89,7 +89,7 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 			}
 		}
 	
-		$template = $br . '#^[url=%s]%s[/url]%s' . $br;
+		$template = $br . '[url=%s]%s[/url]%s' . $br;
 	
 		$arr = array('url' => $url, 'text' => '');
 	

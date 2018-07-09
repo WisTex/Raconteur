@@ -23,11 +23,11 @@ class Admin {
 			'accounts'  => array(z_root() . '/admin/accounts/', t('Accounts'),       'accounts', 'pending-update', t('Member registrations waiting for confirmation')),
 			'channels'  => array(z_root() . '/admin/channels/', t('Channels'),       'channels'),
 			'security'  => array(z_root() . '/admin/security/', t('Security'),       'security'),
-			'features'  => array(z_root() . '/admin/features/', t('Features'),       'features'),
+//			'features'  => array(z_root() . '/admin/features/', t('Features'),       'features'),
 			'addons'    => array(z_root() . '/admin/addons/',   t('Addons'),         'addons'),
 			'themes'    => array(z_root() . '/admin/themes/',   t('Themes'),         'themes'),
 			'queue'     => array(z_root() . '/admin/queue',     t('Inspect queue'),  'queue'),
-			'profs'     => array(z_root() . '/admin/profs',     t('Profile Fields'), 'profs'),
+//			'profs'     => array(z_root() . '/admin/profs',     t('Profile Fields'), 'profs'),
 			'dbsync'    => array(z_root() . '/admin/dbsync/',   t('DB updates'),     'dbsync')
 		];
 

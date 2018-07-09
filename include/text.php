@@ -865,11 +865,11 @@ function get_tags($s) {
 
 	// bookmarks
 
-	if(preg_match_all('/#\^\[(url|zrl)(.*?)\](.*?)\[\/(url|zrl)\]/',$s,$match,PREG_SET_ORDER)) {
-		foreach($match as $mtch) {
-			$ret[] = $mtch[0];
-		}
-	}
+//	if(preg_match_all('/#\^\[(url|zrl)(.*?)\](.*?)\[\/(url|zrl)\]/',$s,$match,PREG_SET_ORDER)) {
+//		foreach($match as $mtch) {
+//			$ret[] = $mtch[0];
+//		}
+//	}
 
 	// make sure the longer tags are returned first so that if two or more have common substrings
 	// we'll replace the longest ones first. Otherwise the common substring would be found in
@@ -2565,20 +2565,20 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $i
 	$termtype = ((strpos($tag,'#') === 0)   ? TERM_HASHTAG  : TERM_UNKNOWN);
 	$termtype = ((strpos($tag,'@') === 0)   ? TERM_MENTION  : $termtype);
 	$termtype = ((strpos($tag,'!') === 0)   ? TERM_FORUM    : $termtype);
-	$termtype = ((strpos($tag,'#^[') === 0) ? TERM_BOOKMARK : $termtype);
+//	$termtype = ((strpos($tag,'#^[') === 0) ? TERM_BOOKMARK : $termtype);
 
 	// Is it a hashtag of some kind?
 
 	if ( in_array($termtype, [ TERM_HASHTAG, TERM_BOOKMARK ] )) {
-		if($termtype === TERM_BOOKMARK) {
-			if(preg_match('/#\^\[(url|zrl)(.*?)\](.*?)\[\/(url|zrl)\]/',$tag,$match)) {
-				$basetag = $match[3];
-				$url = ((substr($match[2],0,1) === '=') ? substr($match[2],1) : $match[3]);
-				$replaced = true;
-			}
-		}
+//		if($termtype === TERM_BOOKMARK) {
+//			if(preg_match('/#\^\[(url|zrl)(.*?)\](.*?)\[\/(url|zrl)\]/',$tag,$match)) {
+//				$basetag = $match[3];
+//				$url = ((substr($match[2],0,1) === '=') ? substr($match[2],1) : $match[3]);
+//				$replaced = true;
+//			}
+//		}
 		// if the tag is already replaced...
-		elseif((strpos($tag,'[zrl=')) || (strpos($tag,'[url='))) {
+		if((strpos($tag,'[zrl=')) || (strpos($tag,'[url='))) {
 			// ...do nothing
 			return $replaced;
 		}

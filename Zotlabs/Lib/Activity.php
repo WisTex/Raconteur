@@ -195,16 +195,10 @@ class Activity {
 			$ret['conversation'] = $cnv;
 		}
 
-		if(strpos($i['body'],'[/summary]') !== false) {
-			$match = '';
-			preg_match("/\[summary\](.*?)\[\/summary\]/ism",$i['body'],$match);
-			$ret['summary'] = $match[1];
 
-			$body_content = preg_replace("/^(.*?)\[summary\](.*?)\[\/summary\](.*?)$/ism", '', $i['body']);
-			$ret['content'] = bbcode(trim($body_content));
-		}
-		else {
+		if($i['mimetype'] === 'text/bbcode') {
 			$ret['content'] = bbcode($i['body']);
+			$ret['source'] = [ 'content' => $i['body'], 'mediaType' => 'text/bbcode' ];
 		}
 
 		$actor = self::encode_person($i['author'],false);
@@ -1268,7 +1262,7 @@ class Activity {
 			$summary = '[summary]' . $summary . '[/summary]';
 	
 		$s['title']    = self::bb_content($content,'name');
-		$s['body']     = $summary . self::bb_content($content,'content');
+		$s['body']     = $summary . (self::bb_content($content,'bbcode') ? : self::bb_content($content,'content'));
 		$s['verb']     = self::activity_mapper($act->type);
 		$s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
 		$s['obj']      = $act->obj;
@@ -1643,7 +1637,12 @@ class Activity {
 			}
 		}
 		else {
-			$ret = html2bbcode($content[$field]);
+			if($field === 'bbcode' && array_key_exists('bbcode',$content)) {
+				$ret = $content[$field];
+			}
+			else {
+				$ret = html2bbcode($content[$field]);
+			}
 		}
 
 		return $ret;
@@ -1659,6 +1658,11 @@ class Activity {
 		foreach([ 'name', 'summary', 'content' ] as $a) {
 			if(($x = self::get_textfield($act,$a)) !== false) {
 				$content[$a] = $x;
+			}
+		}
+		if(array_key_exists('source',$act) && array_key_exists('mediaType',$act['source'])) {
+			if($act['source']['mediaType'] === 'text/bbcode') {
+				$content['bbcode'] = purify_html($act['source']['content']);
 			}
 		}
 
