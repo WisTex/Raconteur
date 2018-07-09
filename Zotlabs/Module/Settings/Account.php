@@ -12,7 +12,6 @@ class Account {
 		$errs = array();
 	
 		$email = ((x($_POST,'email')) ? trim(notags($_POST['email'])) : '');
-		$techlevel = ((array_key_exists('techlevel',$_POST)) ? intval($_POST['techlevel']) : 0);
 
 		$account = \App::get_account();
 		if($email != $account['account_email']) {
@@ -31,13 +30,6 @@ class Account {
 				if(! $r)
 					$errs[] = t('System failure storing new email. Please try again.');
 			}
-		}
-		if($techlevel != $account['account_level']) {
-			$r = q("update account set account_level = %d where account_id = %d",
-				intval($techlevel),
-				intval($account['account_id'])
-			);
-			info( t('Technical skill level updated') . EOL);
 		}
 	
 		if($errs) {
@@ -101,10 +93,6 @@ class Account {
 	
 		$email      = \App::$account['account_email'];
 
-		$techlevels = \Zotlabs\Lib\Techlevels::levels();
-
-		$def_techlevel = \App::$account['account_level'];
-		$techlock = get_config('system','techlevel_lock');
 
 		$tpl = get_markup_template("settings_account.tpl");
 		$o .= replace_macros($tpl, array(
@@ -113,8 +101,6 @@ class Account {
 			'$origpass' => array('origpass', t('Current Password'), ' ',''),
 			'$password1'=> array('npassword', t('Enter New Password'), '', ''),
 			'$password2'=> array('confirm', t('Confirm New Password'), '', t('Leave password fields blank unless changing')),
-			'$techlevel' => [ 'techlevel', t('Your technical skill level'), $def_techlevel, t('Used to provide a member experience and additional features consistent with your comfort level'), $techlevels ],
-			'$techlock' => $techlock,
 			'$submit' 	=> t('Submit'),
 			'$email' 	=> array('email', t('Email Address:'), $email, ''),
 			'$removeme' => t('Remove Account'),

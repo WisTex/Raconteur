@@ -42,9 +42,6 @@
 
 	{{include file="field_input.tpl" field=$sitename}}
 
-	{{include file="field_select.tpl" field=$techlevel}}
-    {{include file="field_checkbox.tpl" field=$techlock}}
-
 	{{include file="field_textarea.tpl" field=$banner}}
 	{{include file="field_textarea.tpl" field=$siteinfo}}
 	{{include file="field_textarea.tpl" field=$admininfo}}

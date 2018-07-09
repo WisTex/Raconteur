@@ -12,12 +12,6 @@
 			{{include file="field_password.tpl" field=$password1}}
 			{{include file="field_password.tpl" field=$password2}}
 
-			{{if ! $techlock}}
-			{{include file="field_select.tpl" field=$techlevel}}
-			{{else}}
-			<input type="hidden" name="techlevel" value="{{$techlevel.2}}" />
-			{{/if}}
-
 			<div class="settings-submit-wrapper" >
 				<button type="submit" name="submit" class="btn btn-primary">{{$submit}}</button>
 			</div>
