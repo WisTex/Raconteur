@@ -2,13 +2,11 @@
 	<div class="section-subtitle-wrapper" role="tab" id="{{$addon.0}}-settings">
 	<form action="{{$addon.0}}" method="post">
 		<h3>
-			<a title="{{$addon.2}}" href="#" aria-controls="{{$addon.0}}-settings-content">
-				{{if $addon.1|substr:0:1 === '<'}}
-				{{$addon.1}}
-				{{else}}
-				<i class="fa fa-gear"></i> {{$addon.1}}
-				{{/if}}
-			</a>
+			{{if $addon.1|substr:0:1 === '<'}}
+			{{$addon.1}}
+			{{else}}
+			<i class="fa fa-gear"></i> {{$addon.1}}
+			{{/if}}
 		</h3>
 	</div>
 	<div id="{{$addon.0}}-settings-content" role="tabpanel" aria-labelledby="{{$addon.0}}-settings" data-parent="#settings">
