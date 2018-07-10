@@ -7,6 +7,7 @@
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Group;
+use Zotlabs\Lib\Activity;
 
 use Zotlabs\Lib as Zlib;
 
@@ -3889,6 +3890,8 @@ function zot_feed($uid, $observer_hash, $arr) {
 
 	require_once('include/security.php');
 
+	$encoding = ((array_key_exists('encoding',$arr)) ? $arr['encoding'] : 'zot');
+		
 	if(array_key_exists('mindate',$arr)) {
 		$mindate = datetime_convert('UTC','UTC',$arr['mindate']);
 	}
@@ -3988,8 +3991,12 @@ function zot_feed($uid, $observer_hash, $arr) {
 
 	logger('zot_feed: number items: ' . count($items),LOGGER_DEBUG);
 
-	foreach($items as $item)
-		$result[] = encode_item($item);
+	foreach($items as $item) {
+		if($encoding === 'zot')
+			$result[] = encode_item($item);
+		elseif(encoding === 'activitystreams') 
+			$result[] = Activity::encode_activity($item);
+	}
 
 	return $result;
 }

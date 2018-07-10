@@ -371,6 +371,7 @@ class Notifier {
 			if(($cmd === 'uplink') && intval($parent_item['item_uplink']) && (! $top_level_post)) {
 				logger('notifier: uplink');			
 				$uplink = true;
+				self::$packet_type = 'response';
 			} 
 
 			if(($relay_to_owner || $uplink) && ($cmd !== 'relay')) {
@@ -378,6 +379,7 @@ class Notifier {
 				self::$recipients = [ ($uplink) ? $parent_item['source_xchan'] : $parent_item['owner_xchan'] ];
 				self::$private = true;
 				$upstream = true;
+				self::$packet_type = 'response';
 			}
 			else {
 				logger('notifier: normal distribution', LOGGER_DEBUG);

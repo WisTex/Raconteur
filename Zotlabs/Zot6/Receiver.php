@@ -184,10 +184,9 @@ class Receiver {
 				break;
 
 			case 'activity':
+			case 'response': // upstream message
 			case 'mail':
-			case 'profile':
 			case 'sync':
-			case 'location':
 			default:
 				$this->response = $this->handler->Notify($this->data,$this->hub);
 				break;

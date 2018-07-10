@@ -1162,7 +1162,7 @@ class Libzot {
 		}
 
 		if($has_data) {
-			if($env['type'] === 'activity') {
+			if(in_array($env['type'],['activity','response'])) {
 
 				if($env['encoding'] === 'zot') {
 					$arr = get_item_elements($data);
@@ -1202,22 +1202,7 @@ class Libzot {
 				logger('Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 				logger('Activity recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
 
-				$relay = false;
-
-				// is this a relayed message?
-				// more specifically a followup with exactly 1 recipient - the post owner
-
-				if($arr['mid'] !== $arr['parent_mid']) {
-					if(count($deliveries) === 1) {
-						$r = q("select * from item where mid = '%s' and owner_xchan = '%s' limit 1",
-							dbesc($arr['parent_mid']),
-							dbesc($deliveries[0])
-						);
-						if($r) {
-							$relay = true;
-						}
-					}
-				}
+				$relay = (($env['type'] === 'response') ? true : false );
 
 				$result = self::process_delivery($env['sender'],$arr,$deliveries,$relay,false,$message_request);
 			}

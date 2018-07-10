@@ -27,6 +27,7 @@ class Zot6Handler implements IHandler {
 		return self::reply_purge($sender,$recipients,$hub);
 	}
 
+
 	// Implementation of specific methods follows;
 	// These generally do a small amout of validation and call Libzot 
 	// to do any heavy lifting
@@ -110,23 +111,28 @@ class Zot6Handler implements IHandler {
 	
 	static function reply_message_request($data,$hub) {
 		$ret = [ 'success' => false ];
-//@fixme
-		if (! $data['message_id']) {
+
+		$message_id = EMPTY_STR;
+
+		if(array_key_exists('data',$data))
+		$ptr = $data['data'];
+		if(is_array($ptr) && array_key_exists(0,$ptr)) {
+			$ptr = $ptr[0];
+		}
+		if(is_string($ptr)) {
+			$message_id = $ptr;
+		}
+		if(is_array($ptr) && array_key_exists('id',$ptr)) {
+			$message_id = $ptr['id'];
+		}
+
+		if (! $message_id) {
 			$ret['message'] = 'no message_id';
 			logger('no message_id');
 			return $ret;
 		}
 
-		$sender = $data['sender'];
-
-		$hub = Libzot::gethub($data['sender']);
-		if($hub) {
-			$sender_hash = $hub['hubloc_hash'];
-		}
-		else {
-			$ret['message'] = 'sender not found.' . EOL;
-			return $ret;
-		}
+		$sender = $hub['hubloc_hash'];
 
 		/*
 		 * Find the local channel in charge of this post (the first and only recipient of the request packet)
@@ -147,62 +153,10 @@ class Zot6Handler implements IHandler {
 		 * fetch the requested conversation
 		 */
 
-		$messages = zot_feed($c[0]['channel_id'],$sender_hash,array('message_id' => $data['message_id']));
+		$messages = zot_feed($c[0]['channel_id'],$sender_hash, [ 'message_id' => $data['message_id'], 'encoding' => 'activitystreams' ]);
 
-		if ($messages) {
-			$env_recips = null;
+		return (($messages) ? : [] );
 
-			$r = q("select hubloc.*, site.site_crypto from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and hubloc_error = 0 and hubloc_deleted = 0 and site.site_dead = 0 ",
-				dbesc($sender_hash)
-			);
-			if (! $r) {
-				logger('no hubs');
-				return $ret;
-			}
-			$ohubs = $r;
-
-			$private = ((array_key_exists('flags', $messages[0]) && in_array('private',$messages[0]['flags'])) ? true : false);
-			if($private) {
-				$env_recips = [ 'id' => $sender['id'], 'id_sig' => $sender['id_sig'], 'portable_id' => $sender_hash ];
-			}
-
-			$data_packet = json_encode(array('message_list' => $messages));
-
-			foreach($ohubs as $hub) {
-				$hash = random_string();
-
-				/*
-				 * create a notify packet and drop the actual message packet in the queue for pickup
-				 */
-
-				$n = Libzot::build_packet($c[0],'messagelist',$env_recips,$data_packet,'zot',(($private) ? $hub['hubloc_sitekey'] : null),$hub['site_crypto'],$hash,array('message_id' => $data['message_id']));
-
-				Queue::insert(array(
-					'hash'       => $hash,
-					'account_id' => $c[0]['channel_account_id'],
-					'channel_id' => $c[0]['channel_id'],
-					'posturl'    => $hub['hubloc_callback'],
-					'notify'     => $n,
-					'msg'        => $data_packet
-				));
-
-
-				$x = q("select count(outq_hash) as total from outq where outq_delivered = 0");
-				if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',3000))) {
-					logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
-					Queue::update($hash);
-					continue;
-				}
-
-				/*
-				 * invoke delivery to send out the notify packet
-				 */
-
-				\Zotlabs\Daemon\Master::Summon(array('Deliver', $hash));
-			}
-		}
-		$ret['success'] = true;
-		return $ret;
 	}
 
 	static function rekey_request($sender,$data,$hub) {
@@ -242,12 +196,15 @@ class Zot6Handler implements IHandler {
 			return $ret;
 		}
 
-
 		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 			dbesc($sender)
 		);
 
 		$newxchan = $r[0];
+
+		// @todo
+		// if ! $update create a linked identity
+
 
 		xchan_change_key($xchan,$newxchan,$data);
 
