@@ -78,7 +78,13 @@ class PermissionLimits {
 	 */
 	static public function Get($channel_id, $perm = '') {
 		if($perm) {
-			return intval(PConfig::Get($channel_id, 'perm_limits', $perm));
+			$x = PConfig::Get($channel_id, 'perm_limits', $perm);
+			if($x === false) {
+				$a = [ 'channel_id' => $channel_id, 'permission' => $perm, 'value' => $x ];
+				call_hooks('permission_limits_get',$a);
+				return intval($a['value']);
+			}
+			return $x;
 		}
 
 		PConfig::Load($channel_id);

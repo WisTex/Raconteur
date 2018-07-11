@@ -529,7 +529,7 @@ class Comanche {
 		$nsname = "\\Zotlabs\\Widget\\" . $clsname;
 
 		$found = false;
-		$widgets = Zotlabs\Extend\Widget::get();
+		$widgets = \Zotlabs\Extend\Widget::get();
 		if($widgets) {
 			foreach($widgets as $widget) {
 				if(is_array($widget) && strtolower($widget[1]) === strtolower($name) && file_exists($widget[0])) {

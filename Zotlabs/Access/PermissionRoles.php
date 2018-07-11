@@ -34,7 +34,7 @@ class PermissionRoles {
 				$ret['online'] = true;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments',
+					'view_pages', 'send_stream', 'post_wall', 'post_comments',
 					'post_mail', 'chat', 'post_like', 'republish'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
@@ -48,7 +48,7 @@ class PermissionRoles {
 				$ret['online'] = true;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments',
+					'view_pages', 'send_stream', 'post_wall', 'post_comments',
 					'post_mail', 'chat', 'post_like', 'republish'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
@@ -66,7 +66,7 @@ class PermissionRoles {
 				$ret['online'] = true;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments',
+					'view_pages', 'send_stream', 'post_wall', 'post_comments',
 					'post_mail', 'chat', 'post_like'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
@@ -80,7 +80,7 @@ class PermissionRoles {
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments',
+					'view_pages', 'send_stream', 'post_wall', 'post_comments',
 					'post_mail', 'post_like'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
@@ -96,7 +96,7 @@ class PermissionRoles {
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'post_wall', 'post_comments', 'tag_deliver',
+					'view_pages', 'post_wall', 'post_comments', 'tag_deliver',
 					'post_mail', 'post_like' , 'republish', 'chat'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
@@ -110,7 +110,7 @@ class PermissionRoles {
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'post_wall', 'post_comments', 'tag_deliver',
+					'view_pages', 'post_wall', 'post_comments', 'tag_deliver',
 					'post_mail', 'post_like' , 'chat' ];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 
@@ -123,7 +123,7 @@ class PermissionRoles {
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'post_wall', 'post_comments',
+					'view_pages', 'post_wall', 'post_comments',
 					'post_mail', 'post_like' , 'chat'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
@@ -131,7 +131,6 @@ class PermissionRoles {
 				$ret['limits']['view_contacts'] = PERMS_SPECIFIC;
 				$ret['limits']['view_storage']  = PERMS_SPECIFIC;
 				$ret['limits']['view_pages']    = PERMS_SPECIFIC;
-				$ret['limits']['view_wiki']     = PERMS_SPECIFIC;
 
 				break;
 
@@ -142,7 +141,7 @@ class PermissionRoles {
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments',
+					'view_pages', 'send_stream', 'post_wall', 'post_comments',
 					'post_mail', 'post_like' , 'republish'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
@@ -156,7 +155,7 @@ class PermissionRoles {
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'send_stream', 'post_wall', 'post_comments',
+					'view_pages', 'send_stream', 'post_wall', 'post_comments',
 					'post_mail', 'post_like' , 'republish'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
@@ -170,7 +169,7 @@ class PermissionRoles {
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'post_like' , 'republish'
+					'view_pages', 'post_like' , 'republish'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 
@@ -183,7 +182,7 @@ class PermissionRoles {
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'view_wiki', 'write_storage', 'write_pages', 'post_wall', 'post_comments', 'tag_deliver',
+					'view_pages', 'write_storage', 'write_pages', 'post_wall', 'post_comments', 'tag_deliver',
 					'post_mail', 'post_like' , 'republish', 'chat', 'write_wiki'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
@@ -204,9 +203,11 @@ class PermissionRoles {
 		 * @hooks get_role_perms
 		 *   * \e array
 		 */
-		call_hooks('get_role_perms', $ret);
+		$x = [ 'role' => $role, 'result' => $ret ];
 
-		return $ret;
+		call_hooks('get_role_perms', $x);
+
+		return $x['result'];
 	}
 
 

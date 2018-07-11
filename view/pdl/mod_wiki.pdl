@@ -1,8 +1,0 @@
-[region=aside]
-[widget=vcard][/widget]
-[widget=wiki_pages][/widget]
-[/region]
-[region=right_aside]
-[widget=notifications][/widget]
-[widget=newmember][/widget]
-[/region]
