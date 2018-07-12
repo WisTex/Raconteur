@@ -204,7 +204,7 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 	$singleton = intval($x['singleton']);
 
 	$aid = $channel['channel_account_id'];
-	$hash = get_observer_hash();
+	$hash = $channel['channel_hash'];
 	$default_group = $channel['channel_default_group'];
 
 	if($hash == $xchan_hash) {
