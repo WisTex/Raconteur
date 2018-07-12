@@ -1590,6 +1590,7 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 	$arr['item_private']  = ((x($arr,'item_private'))  ? intval($arr['item_private'])        : 0 );
 	$arr['item_wall']     = ((x($arr,'item_wall'))     ? intval($arr['item_wall'])           : 0 );
 	$arr['item_type']     = ((x($arr,'item_type'))     ? intval($arr['item_type'])           : 0 );
+	$arr['item_verified'] = ((x($arr,'item_verified')) ? intval($arr['item_verified'])       : 0 );
 
 	// obsolete, but needed so as not to throw not-null constraints on some database driveres
 	$arr['item_flags']    = ((x($arr,'item_flags'))    ? intval($arr['item_flags'])          : 0 );

@@ -339,11 +339,18 @@ class Notifier {
 				return;
 
 
+			$m = get_iconfig($target_item,'activitystreams','signed_data');
+			if($m)
+				self::$encoded_item = json_decode($m,true);
+			else
+				self::$encoded_item = \Zotlabs\Lib\Activity::encode_activity($target_item);
+ 
+			logger('target_item: ' . print_r($target_item,true));
+
 //			self::$encoded_item = encode_item($target_item);
 
-			self::$encoded_item = \Zotlabs\Lib\Activity::encode_activity($target_item);
 
-		logger('encoded: ' . print_r(self::$encoded_item,true));
+			logger('encoded: ' . print_r(self::$encoded_item,true));
 		
 			// Send comments to the owner to re-deliver to everybody in the conversation
 			// We only do this if the item in question originated on this site. This prevents looping.

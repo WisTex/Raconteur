@@ -490,6 +490,7 @@ define ( 'ACTIVITY_UNFOLLOW',    'Unfollow');
 
 define ( 'ACTIVITY_OBJ_COMMENT', 'Note' );
 define ( 'ACTIVITY_OBJ_NOTE',    'Note' );
+define ( 'ACTIVITY_OBJ_ARTICLE', 'Article' );
 define ( 'ACTIVITY_OBJ_PERSON',  'Person' );
 define ( 'ACTIVITY_OBJ_PHOTO',   'Image');
 define ( 'ACTIVITY_OBJ_P_PHOTO', 'Icon' );

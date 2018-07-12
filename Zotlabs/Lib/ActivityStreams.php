@@ -72,7 +72,7 @@ class ActivityStreams {
 		if($this->is_valid()) {
 			$this->id     = $this->get_property_obj('id');
 			$this->type   = $this->get_primary_type();
-			$this->actor  = $this->get_compound_property('actor','','',true);
+			$this->actor  = $this->get_actor('actor','','');
 			$this->obj    = $this->get_compound_property('object');
 			$this->tgt    = $this->get_compound_property('target');
 			$this->origin = $this->get_compound_property('origin');
@@ -87,10 +87,9 @@ class ActivityStreams {
 			}
 
 			if($this->obj && $this->obj['actor'])
-				$this->obj['actor'] = $this->get_compound_property('actor',$this->obj,'',true);
+				$this->obj['actor'] = $this->get_actor('actor',$this->obj);
 			if($this->tgt && $this->tgt['actor'])
-				$this->tgt['actor'] = $this->get_compound_property('actor',$this->tgt,'',true);
-
+				$this->tgt['actor'] = $this->get_actor('actor',$this->tgt);
 
 
 			if(($this->type === 'Note') && (! $this->obj)) {
@@ -102,7 +101,6 @@ class ActivityStreams {
 			if(! $this->parent_id) {
 				$this->parent_id = $this->id;
 			}
-
 		}
 	}
 
@@ -255,6 +253,33 @@ class ActivityStreams {
 
 		return null;
 	}
+
+	/**
+	 * @brief
+	 *
+	 * @param string $property
+	 * @param array $base
+	 * @param string $namespace (optional) default empty
+	 * @return NULL|mixed
+	 */
+
+	function get_actor($property,$base='',$namespace = '') {
+		$x = $this->get_property_obj($property, $base, $namespace);
+		if($this->is_url($x)) {
+
+			// SECURITY: If we have already stored the actor profile, re-generate it 
+			// from cached data - don't refetch it from the network
+
+			$r = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' limit 1",
+				dbesc($x)
+			);
+			if($r) {
+				return Activity::encode_person($r[0]);
+			}
+		}
+		return $this->get_compound_property($property,$base,$namespace,true);
+	}
+
 
 	/**
 	 * @brief

@@ -1131,7 +1131,12 @@ class Libzot {
 				logger('recips: no recipients on this site');
 				return;
 			}
-			$private = true;
+
+			// Response messages will inherit the privacy of the parent
+
+			if($env['type'] !== 'response')
+				$private = true;
+
 			$deliveries = ids_to_array($r,'hash');
 
 			// We found somebody on this site that's in the recipient list.
@@ -1147,10 +1152,6 @@ class Libzot {
 
 			$deliveries = self::public_recips($env);
 
-			if($has_data && $data['type'] === 'location') {
-				$sys = get_sys_channel();
-				$deliveries = [ $sys['xchan_hash'] ];
-			}
 
 		}
 
@@ -1183,7 +1184,7 @@ class Libzot {
 					}
 					$arr = \Zotlabs\Lib\Activity::decode_note($AS);
 
-					// logger($AS->debug());
+					logger($AS->debug());
 
 					$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
 						dbesc($AS->actor['id'])
@@ -1197,6 +1198,14 @@ class Libzot {
 					if($private) {
 						$arr['item_private'] = true;
 					}
+					// @fixme - spoofable
+					if($AS->data['hubloc']) {
+						$arr['item_verified'] = true;
+					}
+					if($AS->data['signed_data']) {
+						IConfig::Set($arr,'activitystreams','signed_data',$AS->data['signed_data'],false);
+					}
+
 				}
 
 				logger('Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);

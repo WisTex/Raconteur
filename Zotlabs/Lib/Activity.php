@@ -20,11 +20,9 @@ class Activity {
 		if($x['type'] === ACTIVITY_OBJ_PROFILE) {
 			return self::fetch_profile($x); 
 		}
-
-		if($x['type'] === ACTIVITY_OBJ_NOTE) {
+		if(in_array($x['type'], [ ACTIVITY_OBJ_NOTE, ACTIVITY_OBJ_ARTICLE ] )) {
 			return self::fetch_item($x); 
 		}
-
 		if($x['type'] === ACTIVITY_OBJ_THING) {
 			return self::fetch_thing($x); 
 		}
@@ -401,6 +399,9 @@ class Activity {
 			return []; 
 
 		if($i['obj']) {
+			if(! is_array($i['obj'])) {
+				$i['obj'] = json_decode($i['obj'],true);
+			}
 			$obj = self::encode_object($i['obj']);
 			if($obj)
 				$ret['object'] = $obj;
@@ -416,15 +417,14 @@ class Activity {
 		}
 
 		if($i['target']) {
+			if(! is_array($i['target'])) {
+				$i['target'] = json_decode($i['target'],true);
+			}
 			$tgt = self::encode_object($i['target']);
 			if($tgt)
 				$ret['target'] = $tgt;
 			else
 				return [];
-		}
-
-		if(! $i['item_private']) {
-			$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
 		}
 
 		return $ret;

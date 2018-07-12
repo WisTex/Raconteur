@@ -370,7 +370,7 @@ function z_post_url($url, $params, $redirects = 0, $opts = array()) {
 
 function json_return_and_die($x, $content_type = 'application/json') {
 	header("Content-type: $content_type");
-	logger('returned_json: ' . json_encode($x,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOGGER_DATA);
+	btlogger('returned_json: ' . json_encode($x,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOGGER_DATA);
 	echo json_encode($x);
 	killme();
 }
