@@ -1720,7 +1720,7 @@ function can_view_public_stream() {
 	if(observer_prohibited(true)) {
 		return false;
 	}
- 
+
 	if(! (intval(get_config('system','open_pubstream',1)))) {
 		if(! get_observer_hash()) {
 			return false;
@@ -2234,8 +2234,35 @@ function construct_page() {
 	if(App::get_scheme() === 'https' && App::$config['system']['transport_security_header'])
 		header("Strict-Transport-Security: max-age=31536000");
 
-	if(App::$config['system']['content_security_policy'])
-		header("Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'");
+	if(App::$config['system']['content_security_policy']) {
+		$cspsettings = Array (
+			'script-src' => Array ("'self'","'unsafe-inline'","'unsafe-eval'"),
+			'style-src' => Array ("'self'","'unsafe-inline'")
+		);
+		call_hooks('content_security_policy',$cspsettings);
+
+		// Legitimate CSP directives (cxref: https://content-security-policy.com/)
+		$validcspdirectives=Array(
+			"default-src", "script-src", "style-src",
+			"img-src", "connect-src", "font-src",
+			"object-src", "media-src", 'frame-src',
+			'sandbox', 'report-uri', 'child-src',
+			'form-action', 'frame-ancestors', 'plugin-types'
+		);
+		$cspheader = "Content-Security-Policy:";
+		foreach ($cspsettings as $cspdirective => $csp) {
+			if (!in_array($cspdirective,$validcspdirectives)) {
+                                logger("INVALID CSP DIRECTIVE: ".$cspdirective,LOGGER_DEBUG);
+				continue;
+			}
+			$cspsettingsarray=array_unique($cspsettings[$cspdirective]);
+			$cspsetpolicy = implode(' ',$cspsettingsarray);
+			if ($cspsetpolicy) {
+				$cspheader .= " ".$cspdirective." ".$cspsetpolicy.";";
+			}
+		}
+		header($cspheader);
+	}
 
 	if(App::$config['system']['x_security_headers']) {
 		header("X-Frame-Options: SAMEORIGIN");
