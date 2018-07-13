@@ -62,6 +62,9 @@ $(document).ready(function() {
 		numbers       : aStr['t17'],
 	};
 
+	//mod_mail only
+	$(".mail-conv-detail .autotime").timeago();
+
 	savedTitle = document.title;
 
 	updateInit();
