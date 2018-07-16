@@ -636,28 +636,6 @@ class Apps {
 
 	}
 
-	static public function addon_app_installed($uid,$app) {
-
-		$r = q("select id from app where app_plugin = '%s' and app_channel = %d limit 1",
-			dbesc($app),
-			intval($uid)
-		);
-		return(($r) ? true : false);
-
-	}
-
-	static public function system_app_installed($uid,$app) {
-
-		$r = q("select id from app where app_id = '%s' and app_channel = %d limit 1",
-			dbesc(hash('whirlpool',$app)),
-			intval($uid)
-		);
-		return(($r) ? true : false);
-
-	}
-
-
-
 	static public function app_list($uid, $deleted = false, $cats = []) {
 		if($deleted) 
 			$sql_extra = "";

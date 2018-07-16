@@ -1,8 +1,7 @@
 <?php 
+namespace Zotlabs\Daemon;
 
 use Zotlabs\Lib\Libzotdir;
-
-namespace Zotlabs\Daemon;
 
 class Cron_daily {
 
