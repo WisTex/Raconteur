@@ -91,6 +91,16 @@ class Apps {
 		if($apps) {
 			foreach($apps as $app) {
 				$id = self::check_install_system_app($app);
+
+				// $id will be boolean true or false to install an app, or an integer id to update an existing app
+				if($id !== false) {
+					$app['uid'] = 0;
+					$app['guid'] = hash('whirlpool',$app['name']);
+					$app['system'] = 1;
+					self::app_install(0,$app);
+				}
+
+				$id = self::check_install_personal_app($app);
 				// $id will be boolean true or false to install an app, or an integer id to update an existing app
 				if($id !== false) {
 					$app['uid'] = 0;
@@ -534,7 +544,7 @@ class Apps {
 						intval(TERM_OBJ_APP),
 						intval($x[0]['id'])
 					);
-					if($uid) {
+					if ($uid) {
 						$r = q("delete from app where app_id = '%s' and app_channel = %d",
 							dbesc($app['guid']),
 							intval($uid)
@@ -625,6 +635,28 @@ class Apps {
 		return(($r) ? true : false);
 
 	}
+
+	static public function addon_app_installed($uid,$app) {
+
+		$r = q("select id from app where app_plugin = '%s' and app_channel = %d limit 1",
+			dbesc($app),
+			intval($uid)
+		);
+		return(($r) ? true : false);
+
+	}
+
+	static public function system_app_installed($uid,$app) {
+
+		$r = q("select id from app where app_id = '%s' and app_channel = %d limit 1",
+			dbesc(hash('whirlpool',$app)),
+			intval($uid)
+		);
+		return(($r) ? true : false);
+
+	}
+
+
 
 	static public function app_list($uid, $deleted = false, $cats = []) {
 		if($deleted) 

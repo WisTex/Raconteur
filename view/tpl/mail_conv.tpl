@@ -6,7 +6,7 @@
 		<div class="mail-conv-detail">
 			{{if $mail.is_recalled}}<strong>{{$mail.is_recalled}}</strong>{{/if}}
 			<div class="wall-item-name"><a class="wall-item-name-link" href="{{$mail.from_url}}">{{$mail.from_name}}</a></div>
-			<div class="autotime wall-item-ago" title="{{$mail.date}}">{{$mail.date}}</div>
+			<div class="autotime wall-item-ago" title="{{$mail.date}}"></div>
 		</div>
 	</div>
 	<div class="clearfix mail-conv-content">
