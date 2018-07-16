@@ -44,3 +44,10 @@ for a in "${filelist[@]}" ; do
 	echo linking $base 
 	ln -s ../extend/addon/$1/$base $base
 done
+
+for x in `ls` ; do 
+	if [ -L "$x" ] && ! [ -e "$x" ]; then 
+		echo "removing dead symlink $x" ; 
+		rm -- "$x"; 
+	fi;
+done
