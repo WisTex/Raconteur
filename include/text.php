@@ -1619,14 +1619,14 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 		$object = json_decode($item['obj'],true);
 
 		// if original photo width is <= 640px prepend it to item body
-		if($object['link'][0]['width'] && $object['link'][0]['width'] <= 640) {
-			$s .= '<div class="inline-photo-item-wrapper"><a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener" ><img class="inline-photo-item" style="max-width:' . $object['link'][0]['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($object['link'][0]['href'])) . '"></a></div>' . $s;
+		if($object['url'][0]['width'] && $object['url'][0]['width'] <= 640) {
+			$s .= '<div class="inline-photo-item-wrapper"><a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener" ><img class="inline-photo-item" style="max-width:' . $object['url'][0]['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($object['url'][0]['href'])) . '"></a></div>' . $s;
 		}
 
 		// if original photo width is > 640px make it a cover photo
-		if($object['link'][0]['width'] && $object['link'][0]['width'] > 640) {
-			$scale = ((($object['link'][1]['width'] == 1024) || ($object['link'][1]['height'] == 1024)) ? 1 : 0);
-			$photo = '<a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener"><img style="max-width:' . $object['link'][$scale]['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($object['link'][$scale]['href'])) . '"></a>';
+		if($object['url'][0]['width'] && $object['url'][0]['width'] > 640) {
+			$scale = ((($object['url'][1]['width'] == 1024) || ($object['url'][1]['height'] == 1024)) ? 1 : 0);
+			$photo = '<a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener"><img style="max-width:' . $object['url'][$scale]['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($object['url'][$scale]['href'])) . '"></a>';
 		}
 	}
 
@@ -1778,7 +1778,7 @@ function create_export_photo_body(&$item) {
 	if(($item['verb'] === ACTIVITY_POST) && ($item['obj_type'] === ACTIVITY_OBJ_PHOTO)) {
 		$j = json_decode($item['obj'],true);
 		if($j) {
-			$item['body'] .= "\n\n" . (($j['body']) ? $j['body'] : $j['bbcode']);
+			$item['body'] .= "\n\n" . (($j['content']) ? $j['content'] : $j['source']['content']);
 			$item['sig'] = '';
 		}
 	}

@@ -255,16 +255,16 @@ function photo_upload($channel, $observer, $args) {
 	if($args['description'])
 		$p['description'] = $args['description'];
 
-	$link   = array();
+	$url = [];
 
 	$r0 = $ph->save($p);
-	$link[0] = array(
-		'rel'  => 'alternate',
-		'type' => 'text/html',
+	$url[0] = [
+		'type' => 'Link',
+		'mediaType' => $type,
 		'href' => z_root() . '/photo/' . $photo_hash . '-0.' . $ph->getExt(),
 		'width' => $width,
 		'height' => $height
-	);
+	];
 	if(! $r0)
 		$errors = true;
 
@@ -278,13 +278,13 @@ function photo_upload($channel, $observer, $args) {
 
 	$p['imgscale'] = 1;
 	$r1 = $ph->save($p);
-	$link[1] = array(
-		'rel'  => 'alternate',
-		'type' => 'text/html',
+	$link[1] = [
+		'type' => 'Link',
+		'mediaType' => $type,
 		'href' => z_root() . '/photo/' . $photo_hash . '-1.' . $ph->getExt(),
 		'width' => $ph->getWidth(),
 		'height' => $ph->getHeight()
-	);
+	];
 	if(! $r1)
 		$errors = true;
 
@@ -293,13 +293,13 @@ function photo_upload($channel, $observer, $args) {
 
 	$p['imgscale'] = 2;
 	$r2 = $ph->save($p);
-	$link[2] = array(
-		'rel'  => 'alternate',
-		'type' => 'text/html',
+	$link[2] = [
+		'type' => 'Link',
+		'mediaType' => $type,
 		'href' => z_root() . '/photo/' . $photo_hash . '-2.' . $ph->getExt(),
 		'width' => $ph->getWidth(),
 		'height' => $ph->getHeight()
-	);
+	];
 	if(! $r2)
 		$errors = true;
 
@@ -308,13 +308,13 @@ function photo_upload($channel, $observer, $args) {
 
 	$p['imgscale'] = 3;
 	$r3 = $ph->save($p);
-	$link[3] = array(
-		'rel'  => 'alternate',
-		'type' => 'text/html',
+	$link[3] = [
+		'type' => 'Link',
+		'mediaType' => $type,
 		'href' => z_root() . '/photo/' . $photo_hash . '-3.' . $ph->getExt(),
 		'width' => $ph->getWidth(),
 		'height' => $ph->getHeight()
-	);
+	];
 	if(! $r3)
 		$errors = true;
 
@@ -385,21 +385,24 @@ function photo_upload($channel, $observer, $args) {
 		. '[/zrl]';
 
 	// Create item object
-	$object = array(
-		'type'    => ACTIVITY_OBJ_PHOTO,
-		'title'   => $title,
-		'created' => $p['created'],
-		'edited'  => $p['edited'],
-		'id'      => z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo_hash,
-		'link'    => $link,
-		'body'    => $obj_body
-	);
+	$object = [
+		'type'      => ACTIVITY_OBJ_PHOTO,
+		'name'      => $title,
+		'summary'   => $p['description'],
+		'published' => datetime_convert('UTC','UTC',$p['created'],ATOM_TIME),
+		'updated'   => datetime_convert('UTC','UTC',$p['edited'],ATOM_TIME),
+		'id'        => z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo_hash,
+		'url'       => $url,
+		'source'    => [ 'content' => $obj_body, 'mediaType' => 'text/bbcode' ],
+		'content'   => bbcode($obj_body)
+	];
 
-	$target = array(
-		'type'    => ACTIVITY_OBJ_ALBUM,
-		'title'   => (($album) ? $album : '/'),
-		'id'      => z_root() . '/photos/' . $channel['channel_address'] . '/album/' . bin2hex($album)
-	);
+// @FIXME - update to collection
+//	$target = array(
+//		'type'    => ACTIVITY_OBJ_ALBUM,
+//		'title'   => (($album) ? $album : '/'),
+//		'id'      => z_root() . '/photos/' . $channel['channel_address'] . '/album/' . bin2hex($album)
+//	);
 
 	// Create item container
 	if($args['item']) {
@@ -415,8 +418,8 @@ function photo_upload($channel, $observer, $args) {
 				$item['obj_type'] = ACTIVITY_OBJ_PHOTO;
 				$item['obj']	= json_encode($object);
 
-				$item['tgt_type'] = ACTIVITY_OBJ_ALBUM;
-				$item['target']	= json_encode($target);
+//				$item['tgt_type'] = ACTIVITY_OBJ_ALBUM;
+//				$item['target']	= json_encode($target);
 
 				$force = true;
 			}
@@ -460,8 +463,8 @@ function photo_upload($channel, $observer, $args) {
 			'verb'            => ACTIVITY_POST,
 			'obj_type'        => ACTIVITY_OBJ_PHOTO,
 			'obj'             => json_encode($object),
-			'tgt_type'        => ACTIVITY_OBJ_ALBUM,
-			'target'	      => json_encode($target),
+//			'tgt_type'        => ACTIVITY_OBJ_ALBUM,
+//			'target'	      => json_encode($target),
 			'item_wall'       => $visible,
 			'item_origin'     => 1,
 			'item_thread_top' => 1,
