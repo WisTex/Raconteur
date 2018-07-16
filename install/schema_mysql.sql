@@ -597,6 +597,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   `source_xchan` char(191) NOT NULL DEFAULT '',
   `mimetype` char(191) NOT NULL DEFAULT '',
   `title` text NOT NULL,
+  `summary` mediumtext NOT NULL,
   `body` mediumtext NOT NULL,
   `html` mediumtext NOT NULL,
   `app` char(191) NOT NULL DEFAULT '',

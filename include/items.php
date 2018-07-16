@@ -1578,8 +1578,9 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 		return $ret;
 	}
 
-	$arr['title'] = ((array_key_exists('title',$arr) && strlen($arr['title']))  ? trim($arr['title']) : '');
-	$arr['body']  = ((array_key_exists('body',$arr) && strlen($arr['body']))    ? trim($arr['body'])  : '');
+	$arr['title']   = ((array_key_exists('title',$arr)   && strlen($arr['title']))    ? trim(escape_tags($arr['title']))   : '');
+	$arr['summary'] = ((array_key_exists('summary',$arr) && strlen($arr['summary']))  ? trim($arr['summary']) : '');
+	$arr['body']    = ((array_key_exists('body',$arr)    && strlen($arr['body']))     ? trim($arr['body'])    : '');
 
 	$arr['allow_cid']     = ((x($arr,'allow_cid'))     ? trim($arr['allow_cid'])             : '');
 	$arr['allow_gid']     = ((x($arr,'allow_gid'))     ? trim($arr['allow_gid'])             : '');
@@ -1600,6 +1601,7 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 
 	// apply the input filter here
 
+	$arr['summary'] = trim(z_input_filter($arr['summary'],$arr['mimetype'],$allow_exec));
 	$arr['body'] = trim(z_input_filter($arr['body'],$arr['mimetype'],$allow_exec));
 
 	item_sign($arr);
@@ -2026,6 +2028,10 @@ function item_store_update($arr, $allow_exec = false, $deliver = true) {
 
 	$arr['item_unseen'] = $orig[0]['item_unseen'];
 
+	$arr['title'] = ((array_key_exists('title',$arr) && strlen($arr['title']))  ? trim(escape_tags($arr['title'])) : '');
+	$arr['body']  = ((array_key_exists('body',$arr) && strlen($arr['body']))    ? trim($arr['body'])  : '');
+	$arr['html']  = ((array_key_exists('html',$arr) && strlen($arr['html']))    ? trim($arr['html'])  : '');
+
 
 	if(array_key_exists('edit',$arr))
 		unset($arr['edit']);
@@ -2042,7 +2048,8 @@ function item_store_update($arr, $allow_exec = false, $deliver = true) {
 
 	// apply the input filter here
 
-	$arr['body'] = trim(z_input_filter($arr['body'],$arr['mimetype'],$allow_exec));
+	$arr['summary'] = trim(z_input_filter($arr['summary'],$arr['mimetype'],$allow_exec));
+	$arr['body']    = trim(z_input_filter($arr['body'],$arr['mimetype'],$allow_exec));
 
 	item_sign($arr);
 
@@ -2131,9 +2138,6 @@ function item_store_update($arr, $allow_exec = false, $deliver = true) {
 	$arr['deny_gid']      = ((array_key_exists('deny_gid',$arr))   ? trim($arr['deny_gid'])  : $orig[0]['deny_gid']);
 	$arr['item_private']  = ((array_key_exists('item_private',$arr)) ? intval($arr['item_private']) : $orig[0]['item_private']);
 
-	$arr['title'] = ((array_key_exists('title',$arr) && strlen($arr['title']))  ? trim($arr['title']) : '');
-	$arr['body']  = ((array_key_exists('body',$arr) && strlen($arr['body']))    ? trim($arr['body'])  : '');
-	$arr['html']  = ((array_key_exists('html',$arr) && strlen($arr['html']))    ? trim($arr['html'])  : '');
 
 	$arr['attach']        = ((array_key_exists('attach',$arr))        ? notags(trim($arr['attach']))        : $orig[0]['attach']);
 	$arr['app']           = ((array_key_exists('app',$arr))           ? notags(trim($arr['app']))           : $orig[0]['app']);

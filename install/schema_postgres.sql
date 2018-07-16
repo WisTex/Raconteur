@@ -566,6 +566,7 @@ CREATE TABLE "item" (
   "source_xchan" text NOT NULL DEFAULT '',
   "mimetype" text NOT NULL DEFAULT '',
   "title" text NOT NULL,
+  "summary" text NOT NULL,
   "body" text NOT NULL,
   "html" text NOT NULL,
   "app" text NOT NULL DEFAULT '',

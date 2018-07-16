@@ -41,8 +41,6 @@ class Notifications extends \Zotlabs\Web\Controller {
 			$notifications_available = 1;
 			foreach ($r as $rr) {
 				$x = strip_tags(bbcode($rr['msg']));
-				if(strpos($x,','))
-					$x = substr($x,strpos($x,',')+1);
 				$notif_content .= replace_macros(get_markup_template('notify.tpl'),array(
 					'$item_link' => z_root().'/notify/view/'. $rr['id'],
 					'$item_image' => $rr['photo'],
