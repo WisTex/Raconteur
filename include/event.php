@@ -1026,28 +1026,19 @@ function event_store_item($arr, $event) {
 	);
 
 	if($r) {
-		$object = json_encode(array(
-			'type'    => ACTIVITY_OBJ_EVENT,
-			'id'      => z_root() . '/event/' . $r[0]['resource_id'],
-			'title'   => $arr['summary'],
-			'dtstart' => $arr['dtstart'],
-			'dtend'  => $arr['dtend'],
-			'nofinish'  => $arr['nofinish'],
-			'description' => $arr['description'],
-			'location'   => $arr['location'],
-			'adjust'   => $arr['adjust'],
-			'content' => format_event_bbcode($arr),
-			'author'  => array(
-				'name'     => $r[0]['xchan_name'],
-				'address'  => $r[0]['xchan_addr'],
-				'guid'     => $r[0]['xchan_guid'],
-				'guid_sig' => $r[0]['xchan_guid_sig'],
-				'link'     => array(
-					array('rel' => 'alternate', 'type' => 'text/html', 'href' => $r[0]['xchan_url']),
-					array('rel' => 'photo', 'type' => $r[0]['xchan_photo_mimetype'], 'href' => $r[0]['xchan_photo_m'])
-				),
-			),
-		));
+		$x = [ 
+			'type'      => 'Event',
+			'id'        => z_root() . '/event/' . $r[0]['resource_id'],
+			'summary'   => bbcode($arr['summary']),
+			'startTime' => datetime_convert('UTC','UTC',$arr['dtstart'], ATOM_TIME),
+			'endTime'   => datetime_convert('UTC','UTC',$arr['dtend'], ATOM_TIME),
+			'content'   => bbcode($arr['description']),
+			'location'  => [ 'type' => 'Place', 'content' => $arr['location']],
+			'content'   => format_event_bbcode($arr),
+			'actor'     => \Zotlabs\Lib\Activity::encode_person($r[0]),
+		];
+
+		$object = json_encode($x);
 
 		$private = (($arr['allow_cid'] || $arr['allow_gid'] || $arr['deny_cid'] || $arr['deny_gid']) ? 1 : 0);
 
@@ -1141,7 +1132,7 @@ function event_store_item($arr, $event) {
 		$item_arr['deny_cid']        = $arr['deny_cid'];
 		$item_arr['deny_gid']        = $arr['deny_gid'];
 		$item_arr['item_private']    = $private;
-		$item_arr['verb']            = ACTIVITY_POST;
+		$item_arr['verb']            = 'Create';
 		$item_arr['item_wall']       = $item_wall;
 		$item_arr['item_origin']     = $item_origin;
 		$item_arr['item_thread_top'] = $item_thread_top;
@@ -1177,27 +1168,19 @@ function event_store_item($arr, $event) {
 				dbesc($arr['event_xchan'])
 		);
 		if($x) {
-			$item_arr['obj'] = json_encode(array(
-				'type'    => ACTIVITY_OBJ_EVENT,
-				'id'      => z_root() . '/event/' . $event['event_hash'],
-				'title'   => $arr['summary'],
-				'dtstart' => $arr['dtstart'],
-				'dtend'  => $arr['dtend'],
-				'nofinish'  => $arr['nofinish'],
-				'description' => $arr['description'],
-				'location'   => $arr['location'],
-				'adjust'   => $arr['adjust'],
-				'content' => format_event_bbcode($arr),
-				'author'  => array(
-					'name'     => $x[0]['xchan_name'],
-					'address'  => $x[0]['xchan_addr'],
-					'guid'     => $x[0]['xchan_guid'],
-					'guid_sig' => $x[0]['xchan_guid_sig'],
-					'link'     => array(
-						array('rel' => 'alternate', 'type' => 'text/html', 'href' => $x[0]['xchan_url']),
-						array('rel' => 'photo', 'type' => $x[0]['xchan_photo_mimetype'], 'href' => $x[0]['xchan_photo_m'])),
-					),
-			));
+			$y = [ 
+				'type'      => 'Event',
+				'id'        => z_root() . '/event/' . $r[0]['resource_id'],
+				'summary'   => bbcode($arr['summary']),
+				'startTime' => datetime_convert('UTC','UTC',$arr['dtstart'], ATOM_TIME),
+				'endTime'   => datetime_convert('UTC','UTC',$arr['dtend'], ATOM_TIME),
+				'content'   => bbcode($arr['description']),
+				'location'  => [ 'type' => 'Place', 'content' => bbcode($arr['location']) ],
+				'content'   => format_event_bbcode($arr),
+				'actor'     => \Zotlabs\Lib\Activity::encode_person($r[0]),
+			];
+
+			$item_arr['obj']  = json_encode($y);
 		}
 
 		// propagate the event resource_id so that posts containing it are easily searchable in downstream copies
