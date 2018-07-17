@@ -3127,7 +3127,7 @@ function flatten_array_recursive($arr) {
  * after further processing. This was done to prevent oembed links from occurring inside code blocks. 
  * See include/bbcode.php
  */
-function text_highlight($s, $lang) {
+function text_highlight($s, $lang, $options) {
 
 	if($lang === 'js')
 		$lang = 'javascript';
@@ -3141,7 +3141,8 @@ function text_highlight($s, $lang) {
 	$arr = [
 			'text' => $s,
 			'language' => $lang,
-			'success' => false
+			'options'  => $options,
+			'success'  => false
 	];
 
 	/**

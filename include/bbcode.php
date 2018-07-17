@@ -667,9 +667,6 @@ function bb_code_options($match) {
 	}
 }
 
-function bb_highlight($match) {
-	return bb_code_protect(text_highlight($match[2],strtolower($match[1])));
-}
 
 function bb_fixtable_lf($match) {
 
@@ -878,7 +875,9 @@ function bbcode($Text, $options = []) {
 	// The highlighter will unescape and re-escape the content.
 
 	if (strpos($Text,'[code=') !== false) {
-		$Text = preg_replace_callback("/\[code=(.*?)\](.*?)\[\/code\]/ism", 'bb_highlight', $Text);
+		$Text = preg_replace_callback("/\[code=(.*?)\](.*?)\[\/code\]/ism", function ($match) use ($options) { 
+			return bb_code_protect(text_highlight($match[2],strtolower($match[1]),$options));
+		}, $Text);
 	}
 
 	$Text = preg_replace_callback("/\[table\](.*?)\[\/table\]/ism",'bb_fixtable_lf',$Text);
