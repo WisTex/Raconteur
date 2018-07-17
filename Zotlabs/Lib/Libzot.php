@@ -2602,7 +2602,6 @@ class Libzot {
 
 		$ret['id']             = $e['xchan_guid'];
 		$ret['id_sig']         = self::sign($e['xchan_guid'], $e['channel_prvkey']);
-		$ret['aliases']        = [ 'acct:' . $e['xchan_addr'], $e['xchan_url'] ]; 
 
 		$ret['primary_location'] = [ 
 			'address'            =>  $e['xchan_addr'],
@@ -2612,9 +2611,9 @@ class Libzot {
 		];
 
 		$ret['public_key']     = $e['xchan_pubkey'];
+		$ret['username']       = $e['channel_address'];
 		$ret['name']           = $e['xchan_name'];
 		$ret['name_updated']   = $e['xchan_name_date'];
-		$ret['username']       = $e['channel_address'];
 		$ret['photo'] = [
 			'url'     => $e['xchan_photo_l'],
 			'type'    => $e['xchan_photo_mimetype'],
@@ -2626,6 +2625,10 @@ class Libzot {
 		$ret['searchable']     = $searchable;
 		$ret['adult_content']  = $adult_channel;
 		$ret['public_forum']   = $public_forum;
+		
+		$ret['comments']       = map_scope(\Zotlabs\Access\PermissionLimits::Get($e['channel_id'],'post_comments'));
+		$ret['mail']           = map_scope(\Zotlabs\Access\PermissionLimits::Get($e['channel_id'],'post_mail'));
+
 		if($deleted)
 			$ret['deleted']        = $deleted;
 

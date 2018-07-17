@@ -59,14 +59,11 @@ class Permissions {
 			'view_contacts' => t('Can view my connections'),
 			'view_storage'  => t('Can view my file storage and photos'),
 			'write_storage' => t('Can upload/modify my file storage and photos'),
-			'view_pages'    => t('Can view my channel webpages'),
-			'write_pages'   => t('Can create/edit my channel webpages'),
 			'post_wall'     => t('Can post on my channel (wall) page'),
 			'post_comments' => t('Can comment on or like my posts'),
 			'post_mail'     => t('Can send me private mail messages'),
 			'post_like'     => t('Can like/dislike profiles and profile things'),
 			'tag_deliver'   => t('Can forward to all my channel connections via ! mentions in posts'),
-			'chat'          => t('Can chat with me'),
 			'republish'     => t('Can source my public posts in derived channels'),
 			'delegate'      => t('Can administer my channel')
 		];

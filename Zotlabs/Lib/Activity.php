@@ -11,7 +11,7 @@ class Activity {
 
 	static function encode_object($x) {
 
-		if((substr(trim($x),0,1)) === '{' ) {
+		if(($x) && (! is_array($x)) && (substr(trim($x),0,1)) === '{' ) {
 			$x = json_decode($x,true);
 		}
 		if($x['type'] === ACTIVITY_OBJ_PERSON) {
@@ -26,6 +26,8 @@ class Activity {
 		if($x['type'] === ACTIVITY_OBJ_THING) {
 			return self::fetch_thing($x); 
 		}
+
+		return $x;
 
 	}
 
@@ -75,6 +77,11 @@ class Activity {
 	}
 
 	static function fetch_item($x) {
+
+		if (array_key_exists('source',$x)) {
+			// This item is already processed and encoded
+			return $x;
+		}
 
 		$r = q("select * from item where mid = '%s' limit 1",
 			dbesc($x['id'])
@@ -148,7 +155,7 @@ class Activity {
 
 		if(intval($i['item_deleted'])) {
 			$ret['type'] = 'Tombstone';
-			$ret['formerType'] = 'Note';
+			$ret['formerType'] = 'Article';
 			$ret['id'] = ((strpos($i['mid'],'http') === 0) ? $i['mid'] : z_root() . '/item/' . urlencode($i['mid']));
 			return $ret;
 		}
@@ -180,21 +187,15 @@ class Activity {
 
 		$ret['attributedTo'] = $i['author']['xchan_url'];
 
-		$cnv = null;
-
 		if($i['id'] != $i['parent']) {
 			$ret['inReplyTo'] = ((strpos($i['parent_mid'],'http') === 0) ? $i['parent_mid'] : z_root() . '/item/' . urlencode($i['parent_mid']));
-			$cnv = get_iconfig($i['parent'],'ostatus','conversation');
 		}
-		if(! $cnv) {
-			$cnv = get_iconfig($i,'ostatus','conversation');
-		}
-		if($cnv) {
-			$ret['conversation'] = $cnv;
-		}
-
 
 		if($i['mimetype'] === 'text/bbcode') {
+			if($i['title'])
+				$ret['name'] = bbcode($i['title']);
+			if($i['summary'])
+				$ret['summary'] = bbcode($i['summary']);
 			$ret['content'] = bbcode($i['body']);
 			$ret['source'] = [ 'content' => $i['body'], 'mediaType' => 'text/bbcode' ];
 		}
@@ -346,7 +347,10 @@ class Activity {
 		$ret['id']   = ((strpos($i['mid'],'http') === 0) ? $i['mid'] : z_root() . '/activity/' . urlencode($i['mid']));
 
 		if($i['title'])
-			$ret['title'] = html2plain(bbcode($i['title']));
+			$ret['name'] = html2plain(bbcode($i['title']));
+
+		if($i['summary'])
+			$ret['summary'] = bbcode($i['summary']);
 
 		$ret['published'] = datetime_convert('UTC','UTC',$i['created'],ATOM_TIME);
 		if($i['created'] !== $i['edited'])
