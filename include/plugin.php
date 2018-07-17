@@ -611,19 +611,19 @@ function check_plugin_versions($info) {
 	if(! is_array($info))
 		return true;
 
-	if(array_key_exists('minversion',$info)) {
+	if(array_key_exists('minversion',$info) && $info['minversion']) {
 		if(! version_compare(STD_VERSION,trim($info['minversion']), '>=')) {
 			logger('minversion limit: ' . $info['name'],LOGGER_NORMAL,LOG_WARNING);
 			return false;
 		}
 	}
-	if(array_key_exists('maxversion',$info)) {
-		if(version_compare(STD_VERSION,trim($info['maxversion']), '>')) {
+	if(array_key_exists('maxversion',$info) && $info['maxversion']) {
+		if(! version_compare(STD_VERSION,trim($info['maxversion']), '<')) {
 			logger('maxversion limit: ' . $info['name'],LOGGER_NORMAL,LOG_WARNING);
 			return false;
 		}
 	}
-	if(array_key_exists('minphpversion',$info)) {
+	if(array_key_exists('minphpversion',$info) && $info['minphpversion']) {
 		if(! version_compare(PHP_VERSION,trim($info['minphpversion']), '>=')) {
 			logger('minphpversion limit: ' . $info['name'],LOGGER_NORMAL,LOG_WARNING);
 			return false;

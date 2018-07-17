@@ -226,7 +226,7 @@ class Site {
 		// avoid older redmatrix servers which don't have modern encryption
 
 		if($dirmode == DIRECTORY_MODE_NORMAL) {
-			$x = q("select site_url from site where site_flags in (%d,%d) and site_realm = '%s' and site_dead = 0 and site_project != 'redmatrix'",
+			$x = q("select site_url from site where site_flags in (%d,%d) and site_realm = '%s' and site_dead = 0",
 				intval(DIRECTORY_MODE_SECONDARY),
 				intval(DIRECTORY_MODE_PRIMARY),
 				dbesc($realm)

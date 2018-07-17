@@ -32,7 +32,7 @@ class Zot_probe extends \Zotlabs\Web\Controller {
 
 				$o .= '<pre>' . htmlspecialchars($x['header']) . '</pre>' . EOL;
 
-				$o .= 'verify returns: ' . str_replace("\n",EOL,print_r(\Zotlabs\Web\HTTPSig::verify($x,'get_webfinger_key'),true)) . EOL;
+				$o .= 'verify returns: ' . str_replace("\n",EOL,print_r(\Zotlabs\Web\HTTPSig::verify($x),true)) . EOL;
 
 				$o .= '<pre>' . htmlspecialchars(json_encode(json_decode($x['body']),JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)) . '</pre>' . EOL;
 

@@ -922,7 +922,7 @@ class Libzot {
 		}
 
 		if(array_key_exists('site',$arr) && is_array($arr['site'])) {
-			$profile_changed = self::import_site($arr['site'],$arr['key']);
+			$profile_changed = self::import_site($arr['site']);
 			if($profile_changed) {
 				$what .= 'site ';
 				$changed = true;
@@ -2170,11 +2170,12 @@ class Libzot {
 	 * @return boolean true if updated or inserted
 	 */
 	
-	static function import_site($arr, $pubkey) {
-		if( (! is_array($arr)) || (! $arr['url']) || (! $arr['url_sig']))
+	static function import_site($arr) {
+
+		if( (! is_array($arr)) || (! $arr['url']) || (! $arr['site_sig']))
 			return false;
 
-		if(! self::verify($arr['url'], $arr['url_sig'], $pubkey)) {
+		if(! self::verify($arr['url'], $arr['site_sig'], $arr['sitekey'])) {
 			logger('Bad url_sig');
 			return false;
 		}

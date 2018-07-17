@@ -1,32 +1,11 @@
 <?php
 
 use Zotlabs\Lib\Libzot;
+
 /**
  * @file boot.php
  *
  * @brief This file defines some global constants and includes the central App class.
- */
-
-/**
- *
- * This is an open source decentralised communications
- * platform combined with a decentralised identity/authentication framework
- * wrapped in an extensible content management system, providing website designers
- * the ability to embed fully decentralised communications and social tools
- * into many traditional website designs (blogs, forums, small business
- * websites, charitable organisations, etc.). Also provided is DNS mobility
- * and internet scale privacy/access control.
- *
- * This allows any individual website to participate in a matrix of linked
- * sites and people and media sharing which is far greater than the reach
- * of an individual site.
- *
- * If you are reading the source code and come across a function
- * or code block which is not documented, but you have a good idea what it
- * does, please add some descriptive comments and push it to the main project.
- * Even if your description isn't perfect, it gives us a base which we
- * can build on and correct - so that eventually everything is fully
- * documented.
  */
 
 // composer autoloader for all namespaced Classes
@@ -52,11 +31,9 @@ require_once('include/attach.php');
 require_once('include/bbcode.php');
 require_once('include/items.php');
 
-define ( 'PLATFORM_NAME',           'hubzilla' );
-define ( 'STD_VERSION',             '3.5.8' );
+define ( 'PLATFORM_NAME',           'zap' );
+define ( 'STD_VERSION',             '0.0.1' );
 define ( 'ZOT_REVISION',            '6.0' );
-
-
 
 define ( 'DB_UPDATE_VERSION',       1215 );
 
@@ -84,13 +61,10 @@ define ( 'DIRECTORY_MODE_STANDALONE',  0x0100); // A detached (off the grid) hub
 // a standalone hub, we need to seed the service with a starting
 // point to go out and find the rest of the world.
 
-define ( 'DIRECTORY_REALM',            'RED_GLOBAL');
-define ( 'DIRECTORY_FALLBACK_MASTER',  'https://zotadel.net');
+define ( 'DIRECTORY_REALM',            'ZAP');
+define ( 'DIRECTORY_FALLBACK_MASTER',  'https://zap.macgirvin.com');
 
-$DIRECTORY_FALLBACK_SERVERS = array(
-	'https://hubzilla.zottel.net',
-	'https://zotadel.net'
-);
+$DIRECTORY_FALLBACK_SERVERS = [ ];
 
 
 /**
