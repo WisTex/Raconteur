@@ -15,7 +15,10 @@ class Like extends \Zotlabs\Web\Controller {
 
 		$acts = [
 			'like'        => ACTIVITY_LIKE ,
-			'dislike'     => ACTIVITY_DISLIKE 
+			'dislike'     => ACTIVITY_DISLIKE,
+			'attendyes'   => 'Accept',
+			'attendno'    => 'Reject',
+			'attendmaybe' => 'TentativeAccept', 
 		];
 
 		// unlike (etc.) reactions are an undo of positive reactions, rather than a negative action.
@@ -326,10 +329,8 @@ class Like extends \Zotlabs\Web\Controller {
 			if($item['obj_type'] === ACTIVITY_OBJ_EVENT)
 				$post_type = t('event');
 	
-			$links = array(array('rel' => 'alternate','type' => 'text/html', 'href' => $item['plink']));
 			$objtype = (($item['resource_type'] === 'photo') ? ACTIVITY_OBJ_PHOTO : ACTIVITY_OBJ_ARTICLE ); 
 
-	
 			$body = $item['body'];
 	
 			$object = json_encode(\Zotlabs\Lib\Activity::fetch_item( [ 'id' => $item['mid'] ]));
@@ -358,6 +359,12 @@ class Like extends \Zotlabs\Web\Controller {
 			$bodyverb = t('%1$s likes %2$s\'s %3$s');
 		if($verb === 'dislike')
 			$bodyverb = t('%1$s doesn\'t like %2$s\'s %3$s');
+		if($verb === 'attendyes')
+			$bodyverb = t('%1$s is attending %2$s\'s %3$s');
+		if($verb === 'attendno')
+			$bodyverb = t('%1$s is not attending %2$s\'s %3$s');
+		if($verb === 'attendmaybe')
+			$bodyverb = t('%1$s may attend %2$s\'s %3$s');
 	
 		if(! isset($bodyverb))
 				killme(); 

@@ -1025,19 +1025,24 @@ function event_store_item($arr, $event) {
 		intval($arr['uid'])
 	);
 
+
 	if($r) {
 		$x = [ 
 			'type'      => 'Event',
 			'id'        => z_root() . '/event/' . $r[0]['resource_id'],
 			'summary'   => bbcode($arr['summary']),
-			'startTime' => datetime_convert('UTC','UTC',$arr['dtstart'], ATOM_TIME),
-			'endTime'   => datetime_convert('UTC','UTC',$arr['dtend'], ATOM_TIME),
+			// RFC3339 Section 4.3
+			'startTime' => (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtstart'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtstart'],'Y-m-d\\TH:i:s-00:00')),
 			'content'   => bbcode($arr['description']),
-			'location'  => [ 'type' => 'Place', 'content' => $arr['location']],
-			'content'   => format_event_bbcode($arr),
+			'location'  => [ 'type' => 'Place', 'content' => $arr['location'] ],
+			'content'   => format_event_html($arr),
+			'source'    => [ 'content' => format_event_bbcode($arr), 'mediaType' => 'text/bbcode' ],
 			'actor'     => \Zotlabs\Lib\Activity::encode_person($r[0]),
 		];
 
+		if(! $arr['nofinish']) {
+			$x['endTime'] = (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtend'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtend'],'Y-m-d\\TH:i:s-00:00'));
+		}
 		$object = json_encode($x);
 
 		$private = (($arr['allow_cid'] || $arr['allow_gid'] || $arr['deny_cid'] || $arr['deny_gid']) ? 1 : 0);
@@ -1094,9 +1099,7 @@ function event_store_item($arr, $event) {
 		return $item_id;
 	} else {
 
-		$z = q("select * from channel where channel_id = %d limit 1",
-			intval($arr['uid'])
-		);
+		$z = channelx_by_n($arr['uid']);
 
 		$private = (($arr['allow_cid'] || $arr['allow_gid'] || $arr['deny_cid'] || $arr['deny_gid']) ? 1 : 0);
 
@@ -1108,7 +1111,7 @@ function event_store_item($arr, $event) {
 			$item_arr['id'] = $item['id'];
 		}
 		else {
-			$wall = (($z[0]['channel_hash'] == $event['event_xchan']) ? true : false);
+			$wall = (($z['channel_hash'] == $event['event_xchan']) ? true : false);
 			$item_thread_top = 1;
 			if($wall) {
 				$item_wall = 1;
@@ -1119,14 +1122,14 @@ function event_store_item($arr, $event) {
 		if(! $arr['mid'])
 			$arr['mid'] = item_message_id();
 
-		$item_arr['aid']             = $z[0]['channel_account_id'];
+		$item_arr['aid']             = $z['channel_account_id'];
 		$item_arr['uid']             = $arr['uid'];
 		$item_arr['author_xchan']    = $arr['event_xchan'];
 		$item_arr['mid']             = $arr['mid'];
 		$item_arr['parent_mid']      = $arr['mid'];
-		$item_arr['owner_xchan']     = (($wall) ? $z[0]['channel_hash'] : $arr['event_xchan']);
+		$item_arr['owner_xchan']     = (($wall) ? $z['channel_hash'] : $arr['event_xchan']);
 		$item_arr['author_xchan']    = $arr['event_xchan'];
-		$item_arr['title']           = $arr['summary'];
+		$item_arr['summary']         = $arr['summary'];
 		$item_arr['allow_cid']       = $arr['allow_cid'];
 		$item_arr['allow_gid']       = $arr['allow_gid'];
 		$item_arr['deny_cid']        = $arr['deny_cid'];
@@ -1160,7 +1163,7 @@ function event_store_item($arr, $event) {
 		// otherwise we'll fallback to /display/$message_id
 
 		if($wall)
-			$item_arr['plink'] = z_root() . '/channel/' . $z[0]['channel_address'] . '/?f=&mid=' . urlencode($item_arr['mid']);
+			$item_arr['plink'] = z_root() . '/channel/' . $z['channel_address'] . '/?f=&mid=' . urlencode($item_arr['mid']);
 		else
 			$item_arr['plink'] = z_root() . '/display/' . gen_link_id($item_arr['mid']);
 
@@ -1170,15 +1173,20 @@ function event_store_item($arr, $event) {
 		if($x) {
 			$y = [ 
 				'type'      => 'Event',
-				'id'        => z_root() . '/event/' . $r[0]['resource_id'],
+				'id'        => z_root() . '/event/' . $event['event_hash'],
 				'summary'   => bbcode($arr['summary']),
-				'startTime' => datetime_convert('UTC','UTC',$arr['dtstart'], ATOM_TIME),
-				'endTime'   => datetime_convert('UTC','UTC',$arr['dtend'], ATOM_TIME),
+				// RFC3339 Section 4.3
+				'startTime' => (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtstart'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtstart'],'Y-m-d\\TH:i:s-00:00')),
 				'content'   => bbcode($arr['description']),
 				'location'  => [ 'type' => 'Place', 'content' => bbcode($arr['location']) ],
-				'content'   => format_event_bbcode($arr),
-				'actor'     => \Zotlabs\Lib\Activity::encode_person($r[0]),
+				'content'   => format_event_html($arr),
+				'source'    => [ 'content' => format_event_bbcode($arr), 'mediaType' => 'text/bbcode' ],
+				'actor'     => \Zotlabs\Lib\Activity::encode_person($z),
 			];
+
+			if(! $arr['nofinish']) {
+				$y['endTime'] = (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtend'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtend'],'Y-m-d\\TH:i:s-00:00'));
+			}
 
 			$item_arr['obj']  = json_encode($y);
 		}
