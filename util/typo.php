@@ -12,25 +12,27 @@
 	
 	App::init();
 
+	$cmd = ((x(App::$config,'system')) && (x(App::$config['system'],'php_path')) && (strlen(App::$config['system']['php_path'])) ? App::$config['system']['php_path'] : 'php') . ' -l ';
+
 
 	echo "Directory: include\n";
 	$files = glob('include/*.php');
 	foreach($files as $file) {
-		echo $file . "\n";
+		echo exec($cmd . $file) . "\n";
 		include_once($file);
 	}
 
 	echo "Directory: include/dba\n";
 	$files = glob('include/dba/*.php');
 	foreach($files as $file) {
-		echo $file . "\n";
+		echo exec($cmd . $file) . "\n";
 		include_once($file);
 	}
 
 	echo "Directory: include/photo\n";
 	$files = glob('include/photo/*.php');
 	foreach($files as $file) {
-		echo $file . "\n";
+		echo exec($cmd . $file) . "\n";
 		include_once($file);
 	}
 
@@ -39,7 +41,7 @@
 	$files = glob('Zotlabs/*/*.php');
 	foreach($files as $file) {
 		if((strpos($file,'SiteModule') === false) || (strpos($file,'SiteWidget') === false)) {
-			echo $file . "\n";
+			echo exec($cmd . $file) . "\n";
 			include_once($file);
 		}
 	}
@@ -47,7 +49,7 @@
 	echo "Directory: Zotlabs/Module (sub-modules)\n";
 	$files = glob('Zotlabs/Module/*/*.php');
 	foreach($files as $file) {
-		echo $file . "\n";
+		echo exec($cmd . $file) . "\n";
 		include_once($file);
 	}
 
@@ -58,7 +60,7 @@
 		$addon = basename($dir);
 		$files = glob($dir . '/' . $addon . '.php');
 		foreach($files as $file) {
-			echo $file . "\n";
+			echo exec($cmd . $file) . "\n";
 			include_once($file);
 		}
 	}
@@ -77,6 +79,6 @@
 	$files = glob('view/*/hstrings.php');
 
 	foreach($files as $file) {
-		echo $file . "\n";
+		echo exec($cmd . $file) . "\n";
 		passthru($phpath . ' util/typohelper.php ' . $file);
 	}
