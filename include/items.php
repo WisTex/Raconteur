@@ -358,9 +358,7 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 	$arr['author_xchan'] = ((x($arr,'author_xchan')) ? $arr['author_xchan'] : $observer['xchan_hash']);
 
 	$arr['verb']         = ((x($arr,'verb')) ? $arr['verb'] : ACTIVITY_POST);
-	$arr['obj_type']     = ((x($arr,'obj_type')) ? $arr['obj_type'] : ACTIVITY_OBJ_NOTE);
-	if(($is_comment) && ($arr['obj_type'] === ACTIVITY_OBJ_NOTE))
-		$arr['obj_type'] = ACTIVITY_OBJ_COMMENT;
+	$arr['obj_type']     = ((x($arr,'obj_type')) ? $arr['obj_type'] : ACTIVITY_OBJ_ARTICLE);
 
 	if(! ( array_key_exists('allow_cid',$arr) || array_key_exists('allow_gid',$arr)
 		|| array_key_exists('deny_cid',$arr) || array_key_exists('deny_gid',$arr))) {

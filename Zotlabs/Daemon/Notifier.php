@@ -321,11 +321,6 @@ class Notifier {
 				if(! $r)
 					return;
 
-				if(strpos($r[0]['postopts'],'nodeliver') !== false) {
-					logger('notifier: target item is undeliverable', LOGGER_DEBUG, LOG_NOTICE);
-					return;
-				}
-
 				xchan_query($r);
 				$r = fetch_post_tags($r);
 		

@@ -151,10 +151,6 @@ class Like extends \Zotlabs\Web\Controller {
 			}
 			
 			if(! ($owner_uid && $r)) {
-				if($interactive) {
-					notice( t('Invalid request.') . EOL);
-					return $o;
-				}
 				killme();
 			}
 	
@@ -163,10 +159,6 @@ class Like extends \Zotlabs\Web\Controller {
 			$perms = get_all_perms($owner_uid,$observer['xchan_hash']);
 	
 			if(! ($perms['post_like'] && $perms['view_profile'])) {
-				if($interactive) {
-					notice( t('Permission denied.') . EOL);
-					return $o;
-				}
 				killme();
 			}
 	
@@ -180,19 +172,8 @@ class Like extends \Zotlabs\Web\Controller {
 			if(! $plink)
 				$plink = '[zrl=' . z_root() . '/profile/' . $ch[0]['channel_address'] . ']' . $post_type . '[/zrl]';
 		
-			$links   = array();
-			$links[] = array('rel' => 'alternate', 'type' => 'text/html',
-				'href' => z_root() . '/profile/' . $ch[0]['channel_address']);
-			$links[] = array('rel' => 'photo', 'type' => $ch[0]['xchan_photo_mimetype'],
-				'href' => $ch[0]['xchan_photo_l']);
 	
-			$object = json_encode(array(
-				'type'  => ACTIVITY_OBJ_PROFILE,
-				'title' => $ch[0]['channel_name'],
-				'id'    => $ch[0]['xchan_url'] . '/' . $ch[0]['xchan_hash'],
-				'link'  => $links
-			));
-	
+			$object = json_encode(\Zotlabs\Lib\Activity::fetch_profile([ 'id' => channel_url($ch[0]) ]));
 	
 			// second like of the same thing is "undo" for the first like
 	
@@ -346,33 +327,12 @@ class Like extends \Zotlabs\Web\Controller {
 				$post_type = t('event');
 	
 			$links = array(array('rel' => 'alternate','type' => 'text/html', 'href' => $item['plink']));
-			$objtype = (($item['resource_type'] === 'photo') ? ACTIVITY_OBJ_PHOTO : ACTIVITY_OBJ_NOTE ); 
-
-			if($objtype === ACTIVITY_OBJ_NOTE && (! intval($item['item_thread_top'])))
-				$objtype = ACTIVITY_OBJ_COMMENT;
+			$objtype = (($item['resource_type'] === 'photo') ? ACTIVITY_OBJ_PHOTO : ACTIVITY_OBJ_ARTICLE ); 
 
 	
 			$body = $item['body'];
 	
-			$object = json_encode(array(
-				'type'    => $objtype,
-				'id'      => $item['mid'],
-				'parent'  => (($item['thr_parent']) ? $item['thr_parent'] : $item['parent_mid']),
-				'link'    => $links,
-				'title'   => $item['title'],
-				'content' => $item['body'],
-				'created' => $item['created'],
-				'edited'  => $item['edited'],
-				'author'  => array(
-					'name'     => $item_author['xchan_name'],
-					'address'  => $item_author['xchan_addr'],
-					'guid'     => $item_author['xchan_guid'],
-					'guid_sig' => $item_author['xchan_guid_sig'],
-					'link'     => array(
-						array('rel' => 'alternate', 'type' => 'text/html', 'href' => $item_author['xchan_url']),
-						array('rel' => 'photo', 'type' => $item_author['xchan_photo_mimetype'], 'href' => $item_author['xchan_photo_m'])),
-					),
-			));
+			$object = json_encode(\Zotlabs\Lib\Activity::fetch_item( [ 'id' => $item['mid'] ]));
 	
 			if(! intval($item['item_thread_top']))
 				$post_type = 'comment';		
@@ -507,12 +467,6 @@ class Like extends \Zotlabs\Web\Controller {
 	
 	
 		\Zotlabs\Daemon\Master::Summon(array('Notifier','like',$post_id));
-	
-		if($interactive) {
-			notice( t('Action completed.') . EOL);
-			$o .= t('Thank you.');
-			return $o;
-		}
 	
 		killme();
 	}
