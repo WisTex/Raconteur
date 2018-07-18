@@ -260,12 +260,6 @@ logger('gis: ' . print_r($gis,true));
 		$arr['obj_type'] = ACTIVITY_OBJ_PHOTO;
 		$arr['verb'] = ACTIVITY_UPDATE;
 	
-		$arr['obj'] = json_encode(array(
-			'type' => $arr['obj_type'],
-			'id' => z_root() . '/photo/' . $photo['resource_id'] . '-7',
-			'link' => array('rel' => 'photo', 'type' => $photo['mimetype'], 'href' => z_root() . '/photo/' . $photo['resource_id'] . '-7')
-		));
-	
 		if($profile && stripos($profile['gender'],t('female')) !== false)
 			$t = t('%1$s updated her %2$s');
 		elseif($profile && stripos($profile['gender'],t('male')) !== false)
@@ -278,7 +272,18 @@ logger('gis: ' . print_r($gis,true));
 		$ltext = '[zrl=' . z_root() . '/profile/' . $channel['channel_address'] . ']' . '[zmg]' . z_root() . '/photo/' . $photo['resource_id'] . '-8[/zmg][/zrl]'; 
 	
 		$arr['body'] = sprintf($t,$channel['channel_name'],$ptext) . "\n\n" . $ltext;
-	
+
+		$arr['obj'] = [ 
+			'type'      => ACTIVITY_OBJ_PHOTO,
+			'published' => datetime_convert('UTC','UTC',$photo['created'],ATOM_TIME),
+			'updated'   => datetime_convert('UTC','UTC',$photo['edited'],ATOM_TIME),
+			'id'        => z_root() . '/photo/' . $photo['resource_id'] . '-7',
+			'url'       => [ 'type' => 'Link', 'mediaType' => $photo['mimetype'], 'href' => z_root() . '/photo/' . $photo['resource_id'] . '-7' ],
+			'source'    => [ 'content' => $arr['body'], 'mediaType' => 'text/bbcode' ],
+			'content'   => bbcode($arr['body']),
+			'actor'     => \Zotlabs\Lib\Activity::encode_person($channel),			
+		];
+
 		$acl = new \Zotlabs\Access\AccessList($channel);
 		$x = $acl->get();
 		$arr['allow_cid'] = $x['allow_cid'];

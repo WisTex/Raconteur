@@ -329,7 +329,7 @@ class Like extends \Zotlabs\Web\Controller {
 			if($item['obj_type'] === ACTIVITY_OBJ_EVENT)
 				$post_type = t('event');
 	
-			$objtype = (($item['resource_type'] === 'photo') ? ACTIVITY_OBJ_PHOTO : ACTIVITY_OBJ_ARTICLE ); 
+			$objtype = $item['obj_type'];
 
 			$body = $item['body'];
 	

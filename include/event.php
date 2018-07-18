@@ -5,6 +5,7 @@
  */
 
 use Sabre\VObject;
+use Zotlabs\Lib\Libsync;
 
 require_once('include/bbcode.php');
 
@@ -574,7 +575,7 @@ function event_addtocal($item_id, $uid) {
 				intval($channel['channel_id'])
 			);
 			if($z) {
-				build_sync_packet($channel['channel_id'],array('event_item' => array(encode_item($sync_item[0],true)),'event' => $z));
+				Libsync::build_sync_packet($channel['channel_id'],array('event_item' => array(encode_item($sync_item[0],true)),'event' => $z));
 			}
 			return true;
 		}
@@ -1097,7 +1098,8 @@ function event_store_item($arr, $event) {
 		call_hooks('event_updated', $event['id']);
 
 		return $item_id;
-	} else {
+	} 
+	else {
 
 		$z = channelx_by_n($arr['uid']);
 

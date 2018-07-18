@@ -201,7 +201,7 @@ class Receiver {
 	}
 
 	function EncryptResponse() {
-		$algorithm = self::best_algorithm($this->hub['site_crypto']);
+		$algorithm = Libzot::best_algorithm($this->hub['site_crypto']);
 		if($algorithm) {
 			$this->response = crypto_encapsulate(json_encode($this->response),$this->hub['hubloc_sitekey'], $algorithm);
 		}

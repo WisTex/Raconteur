@@ -592,11 +592,13 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
 	$items = $cb['items'];
 
-	$conv_responses = array(
-		'like' => array('title' => t('Likes','title')),'dislike' => array('title' => t('Dislikes','title')),
-		'agree' => array('title' => t('Agree','title')),'disagree' => array('title' => t('Disagree','title')), 'abstain' => array('title' => t('Abstain','title')), 
-		'attendyes' => array('title' => t('Attending','title')), 'attendno' => array('title' => t('Not attending','title')), 'attendmaybe' => array('title' => t('Might attend','title'))
-	);
+	$conv_responses = [
+		'like'        => [ 'title' => t('Likes','title') ],
+		'dislike'     => [ 'title' => t('Dislikes','title') ],
+		'attendyes'   => [ 'title' => t('Attending','title') ], 
+		'attendno'    => [ 'title' => t('Not attending','title') ], 
+		'attendmaybe' => [ 'title' => t('Might attend' ,'title') ]
+	];
 
 
 	// array with html for each thread (parent+comments)
@@ -1070,8 +1072,9 @@ function builtin_activity_puller($item, &$conv_responses) {
 
 	// if this item is a post or comment there's nothing for us to do here, just return.
 
-	if(in_array($item['verb'],['Note','Article']))
+	if(in_array($item['verb'],['Create']))
 		return;
+
 
 	foreach($conv_responses as $mode => $v) {
 
@@ -1099,6 +1102,7 @@ function builtin_activity_puller($item, &$conv_responses) {
 		}
 
 		if((activity_match($item['verb'], $verb)) && ($item['id'] != $item['parent'])) {
+
 			$name = (($item['author']['xchan_name']) ? $item['author']['xchan_name'] : t('Unknown'));
 			$url = (($item['author_xchan'] && $item['author']['xchan_photo_s']) 
 				? '<a class="dropdown-item" href="' . chanlink_hash($item['author_xchan']) . '">' . '<img class="menu-img-1" src="' . zid($item['author']['xchan_photo_s'])  . '" alt="' . urlencode($name) . '" /> ' . $name . '</a>' 

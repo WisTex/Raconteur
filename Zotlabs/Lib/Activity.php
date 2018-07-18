@@ -153,14 +153,16 @@ class Activity {
 
 		$ret = [];
 
+		$objtype = self::activity_obj_mapper($i['obj_type']);
+
 		if(intval($i['item_deleted'])) {
 			$ret['type'] = 'Tombstone';
-			$ret['formerType'] = 'Article';
+			$ret['formerType'] = $objtype;
 			$ret['id'] = ((strpos($i['mid'],'http') === 0) ? $i['mid'] : z_root() . '/item/' . urlencode($i['mid']));
 			return $ret;
 		}
 
-		$ret['type'] = 'Article';
+		$ret['type'] = $objtype;
 
 		$ret['id']   = ((strpos($i['mid'],'http') === 0) ? $i['mid'] : z_root() . '/item/' . urlencode($i['mid']));
 
@@ -1097,13 +1099,10 @@ class Activity {
 		if(! $s['parent_mid'])
 			$s['parent_mid'] = $s['mid'];
 
-		$summary = self::bb_content($content,'summary');
-
-		if($summary)
-			$summary = '[summary]' . $summary . '[/summary]';
 	
 		$s['title']    = self::bb_content($content,'name');
-		$s['body']     = $summary . self::bb_content($content,'content');
+		$s['summary']  = self::bb_content($content,'summary'); 
+		$s['body']     = self::bb_content($content,'content');
 		$s['verb']     = ACTIVITY_POST;
 		$s['obj_type'] = ACTIVITY_OBJ_NOTE;
 
@@ -1260,13 +1259,10 @@ class Activity {
 		if(! $s['edited'])
 			$s['edited'] = $s['created'];
 
-		$summary = self::bb_content($content,'summary');
-
-		if($summary)
-			$summary = '[summary]' . $summary . '[/summary]';
 	
 		$s['title']    = self::bb_content($content,'name');
-		$s['body']     = $summary . (self::bb_content($content,'bbcode') ? : self::bb_content($content,'content'));
+		$s['summary']  = self::bb_content($content,'summary');
+		$s['body']     = (self::bb_content($content,'bbcode') ? : self::bb_content($content,'content'));
 		$s['verb']     = self::activity_mapper($act->type);
 		$s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
 		$s['obj']      = $act->obj;
@@ -1653,19 +1649,20 @@ class Activity {
 	}
 
 
-
-
 	static function get_content($act) {
 
 		$content = [];
+		if (! $act) {
+			return $content;
+		}
 
-		foreach([ 'name', 'summary', 'content' ] as $a) {
-			if(($x = self::get_textfield($act,$a)) !== false) {
+		foreach ([ 'name', 'summary', 'content' ] as $a) {
+			if (($x = self::get_textfield($act,$a)) !== false) {
 				$content[$a] = $x;
 			}
 		}
-		if(array_key_exists('source',$act) && array_key_exists('mediaType',$act['source'])) {
-			if($act['source']['mediaType'] === 'text/bbcode') {
+		if (array_key_exists('source',$act) && array_key_exists('mediaType',$act['source'])) {
+			if ($act['source']['mediaType'] === 'text/bbcode') {
 				$content['bbcode'] = purify_html($act['source']['content']);
 			}
 		}
