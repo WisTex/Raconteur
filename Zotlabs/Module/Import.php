@@ -501,7 +501,7 @@ class Import extends \Zotlabs\Web\Controller {
 		// send out refresh requests
 		// notify old server that it may no longer be primary.
 
-		\Zotlabs\Daemon\Master::Summon(array('Notifier','location',$channel['channel_id']));
+		\Zotlabs\Daemon\Master::Summon(array('Notifier','refresh_all',$channel['channel_id']));
 
 		// This will indirectly perform a refresh_all *and* update the directory
 

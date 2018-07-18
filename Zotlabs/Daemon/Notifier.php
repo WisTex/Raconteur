@@ -206,30 +206,6 @@ class Notifier {
 			self::$private = false;
 			self::$packet_type = 'refresh';
 		}
-		elseif($cmd === 'location') {
-			logger('notifier: location: ' . $item_id);
-			$s = q("select * from channel where channel_id = %d limit 1",
-				intval($item_id)
-			);
-			if($s)
-				self::$channel = $s[0];
-
-			self::$recipients = array();
-			$r = q("select abook_xchan from abook where abook_channel = %d",
-				intval($item_id)
-			);
-			if($r) {
-				foreach($r as $rr) {
-					self::$recipients[] = $rr['abook_xchan'];
-				}
-			}
-
-			self::$encoded_item = array('locations' => Libzot::encode_locations(self::$channel),'type' => 'location', 'encoding' => 'zot');
-			$target_item = array('aid' => self::$channel['channel_account_id'],'uid' => self::$channel['channel_id']);
-			self::$private = false;
-			self::$packet_type = 'location';
-			self::$encoding = 'zot';
-		}
 		elseif($cmd === 'purge_all') {
 			logger('notifier: purge_all: ' . $item_id);
 			$s = q("select * from channel where channel_id = %d limit 1",
@@ -275,7 +251,7 @@ class Notifier {
 				$deleted_item = true;
 			}
 
-			if(! in_array(intval($target_item['item_type']), [ ITEM_TYPE_POST ] )) {
+			if(! in_array(intval($target_item['item_type']), [ ITEM_TYPE_POST, ITEM_TYPE_MAIL ] )) {
 				logger('notifier: target item not forwardable: type ' . $target_item['item_type'], LOGGER_DEBUG);
 				return;
 			}
@@ -377,16 +353,19 @@ class Notifier {
 			} 
 
 			if(($relay_to_owner || $uplink) && ($cmd !== 'relay')) {
-				logger('notifier: followup relay', LOGGER_DEBUG);
+				logger('followup relay (upstream delivery)', LOGGER_DEBUG);
 				self::$recipients = [ ($uplink) ? $parent_item['source_xchan'] : $parent_item['owner_xchan'] ];
 				self::$private = true;
 				$upstream = true;
 				self::$packet_type = 'response';
 			}
 			else {
-				logger('notifier: normal distribution', LOGGER_DEBUG);
-				if($cmd === 'relay')
-					logger('notifier: owner relay');
+				if($cmd === 'relay') {
+					logger('owner relay (downstream delivery)');
+				}
+				else {
+					logger('normal (downstream) distribution', LOGGER_DEBUG);
+				}
 				$upstream = false;
 				// if our parent is a tag_delivery recipient, uplink to the original author causing
 				// a delivery fork. 
@@ -414,13 +393,10 @@ class Notifier {
 			}
 		}
 
-		$walltowall = (($top_level_post && self::$channel['xchan_hash'] === $target_item['author_xchan']) ? true : false); 
-
 		// Generic delivery section, we have an encoded item and recipients
 		// Now start the delivery process
 
-		$x = self::$encoded_item;
-		logger('notifier: encoded item: ' . print_r($x,true), LOGGER_DATA, LOG_DEBUG);
+		logger('encoded item: ' . print_r(self::$encoded_item,true), LOGGER_DATA, LOG_DEBUG);
 
 		stringify_array_elms(self::$recipients);
 		if(! self::$recipients) {
@@ -428,7 +404,7 @@ class Notifier {
 			return;
 		}
 
-		//	logger('notifier: recipients: ' . print_r(self::$recipients,true), LOGGER_NORMAL, LOG_DEBUG);
+		//	logger('recipients: ' . print_r(self::$recipients,true), LOGGER_NORMAL, LOG_DEBUG);
 
 		if(! count(self::$env_recips))
 			self::$env_recips = ((self::$private) ? [] : null);
@@ -467,7 +443,6 @@ class Notifier {
 			'request'        => $request,
 			'normal_mode'    => $normal_mode,
 			'packet_type'    => self::$packet_type,
-			'walltowall'     => $walltowall,
 			'queued'         => []
 		];
 
@@ -484,7 +459,8 @@ class Notifier {
 
 		if((self::$private) && (! self::$env_recips)) {
 			// shouldn't happen
-			logger('notifier: private message with no envelope recipients.' . print_r($argv,true), LOGGER_NORMAL, LOG_NOTICE);
+			logger('private message with no envelope recipients.' . print_r($argv,true), LOGGER_NORMAL, LOG_NOTICE);
+			return;
 		}
 	
 		logger('notifier: recipients (may be delivered to more if public): ' . print_r($recip_list,true), LOGGER_DEBUG);
@@ -572,7 +548,6 @@ class Notifier {
 					'request'        => $request,
 					'normal_mode'    => $normal_mode,
 					'packet_type'    => self::$packet_type,
-					'walltowall'     => $walltowall,
 					'queued'         => []
 				];
 
@@ -583,7 +558,6 @@ class Notifier {
 						self::$deliveries[] = $pq;
 				}
 				continue;
-
 			}
 
 			// singleton deliveries by definition 'not got zot'.

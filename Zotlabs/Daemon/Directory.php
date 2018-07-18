@@ -11,7 +11,7 @@ use Zotlabs\Lib\Queue;
 
 class Directory {
 
-	static public function run($argc,$argv){
+	static public function run($argc,$argv) {
 
 		if($argc < 2)
 			return;
@@ -32,13 +32,10 @@ class Directory {
 		if($dirmode === false)
 			$dirmode = DIRECTORY_MODE_NORMAL;
 
-		$x = q("select * from channel where channel_id = %d limit 1",
-			intval($argv[1])
-		);
-		if(! $x)
-			return;
 
-		$channel = $x[0];
+		$channel = channelx_by_n($argv[1]);
+		if(! $channel)
+			return;
 
 		if($dirmode != DIRECTORY_MODE_NORMAL) {
 

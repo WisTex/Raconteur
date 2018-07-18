@@ -1070,7 +1070,7 @@ function builtin_activity_puller($item, &$conv_responses) {
 
 	// if this item is a post or comment there's nothing for us to do here, just return.
 
-	if(activity_match($item['verb'],ACTIVITY_POST))
+	if(in_array($item['verb'],['Note','Article']))
 		return;
 
 	foreach($conv_responses as $mode => $v) {
@@ -1085,13 +1085,13 @@ function builtin_activity_puller($item, &$conv_responses) {
 				$verb = ACTIVITY_DISLIKE;
 				break;
 			case 'attendyes':
-				$verb = ACTIVITY_ATTEND;
+				$verb = 'Accept';
 				break;
 			case 'attendno':
-				$verb = ACTIVITY_ATTENDNO;
+				$verb = 'Reject';
 				break;
 			case 'attendmaybe':
-				$verb = ACTIVITY_ATTENDMAYBE;
+				$verb = 'TentativeAccept';
 				break;
 			default:
 				return;
