@@ -534,13 +534,15 @@ class Apps {
 						intval(TERM_OBJ_APP),
 						intval($x[0]['id'])
 					);
-					$r = q("delete from app where app_id = '%s' and app_channel = %d",
-						dbesc($app['guid']),
-						intval($uid)
-					);
+					if ($uid) {
+						$r = q("delete from app where app_id = '%s' and app_channel = %d",
+							dbesc($app['guid']),
+							intval($uid)
+						);
 
-					// we don't sync system apps - they may be completely different on the other system
-					build_sync_packet($uid,array('app' => $x));
+						// we don't sync system apps - they may be completely different on the other system
+						build_sync_packet($uid,array('app' => $x));
+					}
 				}
 				else {
 					self::app_undestroy($uid,$app);
@@ -603,6 +605,28 @@ class Apps {
 		return(($r) ? true : false);
 
 	}
+
+
+	static public function addon_app_installed($uid,$app) {
+
+		$r = q("select id from app where app_plugin = '%s' and app_channel = %d limit 1",
+			dbesc($app),
+			intval($uid)
+		);
+		return(($r) ? true : false);
+
+	}
+
+	static public function system_app_installed($uid,$app) {
+
+		$r = q("select id from app where app_id = '%s' and app_channel = %d limit 1",
+			dbesc(hash('whirlpool',$app)),
+			intval($uid)
+		);
+		return(($r) ? true : false);
+
+	}
+
 
 
 	static public function app_list($uid, $deleted = false, $cats = []) {
