@@ -413,7 +413,7 @@ function visible_activity($item) {
 		}
 	}
 
-	if(in_array($item['obj_type'],[ 'Event', 'Invite']) && in_array($item['verb'], [ 'Accept', 'Reject', 'TentativeAccept', TentativeReject', 'Ignore' ])) {
+	if(in_array($item['obj_type'],[ 'Event', 'Invite' ]) && in_array($item['verb'], [ 'Accept', 'Reject', 'TentativeAccept', 'TentativeReject', 'Ignore' ])) {
 		return false;
 	}
 
