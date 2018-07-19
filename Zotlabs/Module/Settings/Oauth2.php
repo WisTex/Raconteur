@@ -115,8 +115,8 @@ class Oauth2 {
 				'$name'		=> array('name', t('Name'), $app['client_id'], t('Name of application')),
 				'$secret'	=> array('secret', t('Consumer Secret'), $app['client_secret'], t('Automatically generated - change if desired. Max length 20')),
 				'$redirect'	=> array('redirect', t('Redirect'), $app['redirect_uri'], t('Redirect URI - leave blank unless your application specifically requires this')),
-				'$grant'     => array('grant', t('Grant Types'), $app['grant_types'], t('leave blank unless your application sepcifically requires this')),
-				'$scope'     => array('scope', t('Authorization scope'), $app['scope'], t('leave blank unless your application sepcifically requires this')),
+				'$grant'     => array('grant', t('Grant Types'), $app['grant_types'], t('leave blank unless your application specifically requires this')),
+				'$scope'     => array('scope', t('Authorization scope'), $app['scope'], t('leave blank unless your application specifically requires this')),
 			));
 			return $o;
 		}
