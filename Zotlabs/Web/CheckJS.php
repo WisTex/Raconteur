@@ -18,7 +18,7 @@ class CheckJS {
 			$this->jsdisabled = 0;
 
 		if(! $this->jsdisabled) {
-			$page = urlencode(\App::$query_string);
+			$page = bin2hex(\App::$query_string);
 
 			if($test) {
 				$this->jsdisabled = 1;
