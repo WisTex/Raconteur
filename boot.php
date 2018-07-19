@@ -874,7 +874,7 @@ class App {
 		}
 
 		if((x($_SERVER,'QUERY_STRING')) && substr($_SERVER['QUERY_STRING'], 0, 2) === "q=") {
-			self::$query_string = str_replace(['<','>'],['&lt;','&gt;'],substr($_SERVER['QUERY_STRING'], 2);
+			self::$query_string = str_replace(['<','>'],['&lt;','&gt;'],substr($_SERVER['QUERY_STRING'], 2));
 			// removing trailing / - maybe a nginx problem
 			if (substr(self::$query_string, 0, 1) == "/")
 				self::$query_string = substr(self::$query_string, 1);
