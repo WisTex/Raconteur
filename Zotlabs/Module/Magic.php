@@ -14,15 +14,16 @@ class Magic extends \Zotlabs\Web\Controller {
 		logger('mod_magic: args: ' . print_r($_REQUEST,true),LOGGER_DATA);
 	
 		$addr = ((x($_REQUEST,'addr')) ? $_REQUEST['addr'] : '');
+		$bdest = ((x($_REQUEST,'bdest')) ? $_REQUEST['bdest'] : '');
 		$dest = ((x($_REQUEST,'dest')) ? $_REQUEST['dest'] : '');
 		$test = ((x($_REQUEST,'test')) ? intval($_REQUEST['test']) : 0);
 		$rev  = ((x($_REQUEST,'rev'))  ? intval($_REQUEST['rev'])  : 0);
 		$owa  = ((x($_REQUEST,'owa'))  ? intval($_REQUEST['owa'])  : 0);
 		$delegate = ((x($_REQUEST,'delegate')) ? $_REQUEST['delegate']  : '');
 
-		// Apache(?) appears to perform an htmlentities() operation on this variable
-
-		$dest = html_entity_decode($dest);	
+		
+		if($bdest)
+			$dest = hex2bin($bdest);
 
 		$parsed = parse_url($dest);
 		if(! $parsed) {

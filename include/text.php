@@ -1018,7 +1018,7 @@ function chanlink_cid($d) {
 
 function magiclink_url($observer,$myaddr,$url) {
 	return (($observer)
-		? z_root() . '/magic?f=&owa=1&dest=' . $url . '&addr=' . $myaddr
+		? z_root() . '/magic?f=&owa=1&bdest=' . bin2hex($url) . '&addr=' . $myaddr
 		: $url
 	);
 }
@@ -1454,7 +1454,7 @@ function theme_attachments(&$item) {
 			if(is_foreigner($item['author_xchan']))
 				$url = $r['href'];
 			else
-				$url = z_root() . '/magic?f=&owa=1&hash=' . $item['author_xchan'] . '&dest=' . $r['href'] . '/' . $r['revision'];
+				$url = z_root() . '/magic?f=&owa=1&hash=' . $item['author_xchan'] . '&bdest=' . bin2hex($r['href'] . '/' . $r['revision']);
 
 			//$s .= '<a href="' . $url . '" title="' . $title . '" class="attachlink"  >' . $icon . '</a>';
 			$attaches[] = array('label' => $label, 'url' => $url, 'icon' => $icon, 'title' => $title);

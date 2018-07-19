@@ -156,7 +156,7 @@ class Manage extends \Zotlabs\Web\Controller {
 	
 		if($delegates) {
 			for($x = 0; $x < count($delegates); $x ++) {
-				$delegates[$x]['link'] = 'magic?f=&dest=' . urlencode($delegates[$x]['xchan_url']) 
+				$delegates[$x]['link'] = 'magic?f=&bdest=' . bin2hex($delegates[$x]['xchan_url']) 
 				. '&delegate=' . urlencode($delegates[$x]['xchan_addr']);
 				$delegates[$x]['channel_name'] = $delegates[$x]['xchan_name'];
 				$delegates[$x]['delegate'] = 1;

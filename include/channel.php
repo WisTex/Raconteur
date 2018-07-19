@@ -1712,7 +1712,7 @@ function zid_init() {
 			$query = str_replace(array('?zid=','&zid='),array('?rzid=','&rzid='),$query);
 			$dest = '/' . urlencode($query);
 			if($r && ($r[0]['hubloc_url'] != z_root()) && (! strstr($dest,'/magic')) && (! strstr($dest,'/rmagic'))) {
-				goaway($r[0]['hubloc_url'] . '/magic' . '?f=&rev=1&owa=1&dest=' . z_root() . $dest);
+				goaway($r[0]['hubloc_url'] . '/magic' . '?f=&rev=1&owa=1&bdest=' . bin2hex(z_root() . $dest));
 			}
 			else
 				logger('No hubloc found.');
