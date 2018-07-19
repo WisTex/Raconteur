@@ -1,4 +1,4 @@
-* ZAP
+**ZAP
 
 Zap is a social networking app running under the Zot/6 protocol and the LAMP web stack.
 
@@ -18,7 +18,7 @@ TODO before alpha release:
 
 
 
-*** Things you should know
+***Things you should know
 
 Zap is nomadic and does not federate with any other platform or protocol currently. It will only **ever** federate with nomadic-aware services/protocols. Full stop. 
 
