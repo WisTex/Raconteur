@@ -5,7 +5,7 @@ use Zotlabs\Lib\Libsync;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
-
+require_once('include/event.php');
 
 class Like extends \Zotlabs\Web\Controller {
 
@@ -359,7 +359,7 @@ class Like extends \Zotlabs\Web\Controller {
 			$bodyverb = t('%1$s likes %2$s\'s %3$s');
 		if($verb === 'dislike')
 			$bodyverb = t('%1$s doesn\'t like %2$s\'s %3$s');
-		if($verb === 'attendyes')
+		if($verb === 'attendyes') 
 			$bodyverb = t('%1$s is attending %2$s\'s %3$s');
 		if($verb === 'attendno')
 			$bodyverb = t('%1$s is not attending %2$s\'s %3$s');
@@ -368,9 +368,12 @@ class Like extends \Zotlabs\Web\Controller {
 	
 		if(! isset($bodyverb))
 				killme(); 
-	
+
+// @FIXME Not sure if this is still needed	
+//		if(local_channel() && $verb === 'attendyes') {
+//			event_addtocal($item['id'],$ch[0]['channel_id']);
+//		}
 		
-	
 		if($extended_like) {
 			$ulink = '[zrl=' . $ch[0]['xchan_url'] . ']' . $ch[0]['xchan_name'] . '[/zrl]';
 			$alink = '[zrl=' . $observer['xchan_url'] . ']' . $observer['xchan_name'] . '[/zrl]';
