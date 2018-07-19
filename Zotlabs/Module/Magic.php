@@ -21,7 +21,6 @@ class Magic extends \Zotlabs\Web\Controller {
 		$owa  = ((x($_REQUEST,'owa'))  ? intval($_REQUEST['owa'])  : 0);
 		$delegate = ((x($_REQUEST,'delegate')) ? $_REQUEST['delegate']  : '');
 
-		
 		if($bdest)
 			$dest = hex2bin($bdest);
 
