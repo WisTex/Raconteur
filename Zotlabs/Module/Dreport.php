@@ -17,9 +17,17 @@ class Dreport extends \Zotlabs\Web\Controller {
 		
 		$mid = ((argc() > 1) ? argv(1) : '');
 
+		if(strpos($mid,'b64.') === 0)
+			$mid = @base64url_decode(substr($mid,4));
+
+
 		if($mid === 'push') {
 			$table = 'push';
 			$mid = ((argc() > 2) ? argv(2) : '');
+
+			if(strpos($mid,'b64.') === 0)
+				$mid = @base64url_decode(substr($mid,4));
+
 			if($mid) {	
 				$i = q("select id from item where mid = '%s' and uid = %d and ( author_xchan = '%s' or ( owner_xchan = '%s' and item_wall = 1 )) ",
 					dbesc($mid),
@@ -38,6 +46,9 @@ class Dreport extends \Zotlabs\Web\Controller {
 		if($mid === 'mail') {
 			$table = 'mail';
 			$mid = ((argc() > 2) ? argv(2) : '');
+			if(strpos($mid,'b64.') === 0)
+				$mid = @base64url_decode(substr($mid,4));
+
 		}
 	
 	

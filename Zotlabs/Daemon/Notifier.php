@@ -601,7 +601,7 @@ class Notifier {
 					dbesc($target_item['mid']),
 					dbesc($hub['hubloc_host']),
 					dbesc($hub['hubloc_host']),
-					dbesc(EMPTY_STR),
+					dbesc($hub['hubloc_host']),
 					dbesc('queued'),
 					dbesc(datetime_convert()),
 					dbesc(self::$channel['channel_hash']),

@@ -1002,7 +1002,7 @@ class Libzot {
 						dbesc($xx['message_id']),
 						dbesc($xx['location']),
 						dbesc($xx['recipient']),
-						dbesc(EMPTY_STR),
+						dbesc($xx['name']),
 						dbesc($xx['status']),
 						dbesc(datetime_convert($xx['date'])),
 						dbesc($xx['sender'])

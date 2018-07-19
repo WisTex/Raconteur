@@ -295,9 +295,10 @@ class ThreadItem {
 		if($keep_reports === 0)
 			$keep_reports = 10;
 
-		if((! get_config('system','disable_dreport')) && strcmp(datetime_convert('UTC','UTC',$item['created']),datetime_convert('UTC','UTC',"now - $keep_reports days")) > 0)
+		if((! get_config('system','disable_dreport')) && strcmp(datetime_convert('UTC','UTC',$item['created']),datetime_convert('UTC','UTC',"now - $keep_reports days")) > 0) {
 			$dreport = t('Delivery Report');
-
+			$dreport_link = gen_link_id($item['mid']);
+		}
 		if(strcmp(datetime_convert('UTC','UTC',$item['created']),datetime_convert('UTC','UTC','now - 12 hours')) > 0)
 			$is_new = true;
 
@@ -312,7 +313,7 @@ class ThreadItem {
 		$owner_address = substr($item['owner']['xchan_addr'],0,strpos($item['owner']['xchan_addr'],'@'));
 		$viewthread = $item['llink'];
 		if($conv->get_mode() === 'channel')
-			$viewthread = z_root() . '/channel/' . $owner_address . '?f=&mid=' . urlencode($item['mid']);
+			$viewthread = z_root() . '/channel/' . $owner_address . '?f=&mid=' . urlencode(gen_link_id($item['mid']));
 
 		$comment_count_txt = sprintf( tt('%d comment','%d comments',$total_children),$total_children );
 		$list_unseen_txt = (($unseen_comments) ? sprintf('%d unseen',$unseen_comments) : '');
@@ -356,6 +357,7 @@ class ThreadItem {
 			'thread_action_menu' => thread_action_menu($item,$conv->get_mode()),
 			'thread_author_menu' => thread_author_menu($item,$conv->get_mode()),
 			'dreport' => $dreport,
+			'dreport_link' => $dreport_link,
 			'name' => $profile_name,
 			'thumb' => $profile_avatar,
 			'osparkle' => $osparkle,

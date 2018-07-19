@@ -63,8 +63,6 @@
 						{{include file="field_checkbox.tpl" field=$nosmile}}
 						{{include file="field_checkbox.tpl" field=$channel_menu}}
 						{{include file="field_checkbox.tpl" field=$title_tosource}}
-						{{include file="field_checkbox.tpl" field=$channel_list_mode}}
-						{{include file="field_checkbox.tpl" field=$network_list_mode}}
 						{{include file="field_checkbox.tpl" field=$user_scalable}}
 						{{include file="field_checkbox.tpl" field=$preload_images}}
 						{{if $expert}}
