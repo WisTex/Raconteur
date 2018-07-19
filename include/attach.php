@@ -2322,6 +2322,7 @@ function attach_move($channel_id, $resource_id, $new_folder_hash) {
 			return false;
 
 		$newdirname = $n[0]['filename'];
+		$newalbumname = $n[0]['display_path'];
 		$newstorepath = dbunescbin($n[0]['content']) . '/' . $resource_id;
 	}
 	else {
@@ -2329,6 +2330,7 @@ function attach_move($channel_id, $resource_id, $new_folder_hash) {
 		// root directory
 
 		$newdirname = EMPTY_STR;
+		$newalbumname = EMPTY_STR;
 		$newstorepath = 'store/' . $c['channel_address'] . '/' . $resource_id;
 	}
 
@@ -2416,7 +2418,7 @@ function attach_move($channel_id, $resource_id, $new_folder_hash) {
 	if($r[0]['is_photo']) {
 		$t = q("update photo set album = '%s', filename = '%s', os_path = '%s', display_path = '%s'
 			where resource_id = '%s' and uid = %d",
-			dbesc($newdirname),
+			dbesc($newalbumname),
 			dbesc($filename),
 			dbesc($x['os_path']),
 			dbesc($x['path']),

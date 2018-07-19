@@ -31,6 +31,7 @@ require_once('include/attach.php');
 require_once('include/bbcode.php');
 require_once('include/items.php');
 
+
 define ( 'PLATFORM_NAME',           'zap' );
 define ( 'STD_VERSION',             '0.0.1' );
 define ( 'ZOT_REVISION',            '6.0' );
@@ -844,7 +845,8 @@ class App {
 			self::$query_string = str_replace(['<','>'],['&lt;','&gt;'],substr($_SERVER['QUERY_STRING'], 2));
 			if (substr(self::$query_string, 0, 1) == "/") {
 				self::$query_string = substr(self::$query_string, 1);
-			}
+			// change the first & to ? 
+			self::$query_string = preg_replace('/&/','?',self::$query_string,1);
 		}
 
 		if(x($_GET,'q'))
