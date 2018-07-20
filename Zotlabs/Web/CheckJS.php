@@ -17,9 +17,9 @@ class CheckJS {
 		else
 			$this->jsdisabled = 0;
 
-		if(! $this->jsdisabled) {
-			$page = bin2hex(\App::$query_string);
+		$page = bin2hex(\App::$query_string);
 
+		if(! $this->jsdisabled) {
 			if($test) {
 				$this->jsdisabled = 1;
 				if(array_key_exists('jsdisabled',$_COOKIE))
