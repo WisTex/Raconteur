@@ -332,6 +332,7 @@ class Apps {
 			'Features' => t('Features'),
 			'Language' => t('Language'),
 			'Post' => t('Post'),
+			'ZotPost' => t('ZotPost'),
 			'Profile Photo' => t('Profile Photo')
 		);
 

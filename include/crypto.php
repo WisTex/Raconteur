@@ -453,12 +453,12 @@ function convert_salmon_key($key) {
 
 
 function z_obscure($s) {
-	return json_encode(crypto_encapsulate($s,get_config('system','pubkey')));
+	$algs = crypto_methods();
+	return json_encode(crypto_encapsulate($s,get_config('system','pubkey'),
+		(($algs) ? $algs[0] : '')));
 }
 
 function z_unobscure($s) {
-//	if(strpos($s,"{\"") !== 0)
-//		return $s;
 	return crypto_unencapsulate(json_decode($s,true),get_config('system','prvkey'));
 }
 
