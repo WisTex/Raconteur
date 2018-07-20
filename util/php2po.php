@@ -2,9 +2,9 @@
 
     if(! class_exists('App')) {
         class App {
-                static public $strings = Array();
+            static public $rtl;
+            static public $strings = Array();
         }
-        //$a = new App();
     }
 
 	if ($argc!=2) {
