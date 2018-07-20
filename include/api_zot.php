@@ -389,6 +389,7 @@
 		logger('api_xchan');
 
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {			
+			logger('xchan_store called by ' . api_user());
 			$r = xchan_store($_REQUEST);
 		}
 		$r = xchan_fetch($_REQUEST);

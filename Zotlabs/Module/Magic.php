@@ -76,7 +76,7 @@ class Magic extends \Zotlabs\Web\Controller {
 				return;
 			}
 		}
->>>>>>> red
+
 	
 		// This is ready-made for a plugin that provides a blacklist or "ask me" before blindly authenticating. 
 		// By default, we'll proceed without asking.

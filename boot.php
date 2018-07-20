@@ -845,6 +845,7 @@ class App {
 			self::$query_string = str_replace(['<','>'],['&lt;','&gt;'],substr($_SERVER['QUERY_STRING'], 2));
 			if (substr(self::$query_string, 0, 1) == "/") {
 				self::$query_string = substr(self::$query_string, 1);
+			}
 			// change the first & to ? 
 			self::$query_string = preg_replace('/&/','?',self::$query_string,1);
 		}
