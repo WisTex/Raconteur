@@ -286,7 +286,7 @@ function nav($template = 'default') {
 		'$channel_menu' => get_pconfig(App::$profile_uid,'system','channel_menu',get_config('system','channel_menu')),
 		'$channel_thumb' => ((App::$profile) ? App::$profile['thumb'] : ''),
 		'$channel_apps' => $channel_apps,
-		'$addapps' => t('Add Apps'),
+		'$addapps' => t('Add/Manage Apps'),
 		'$orderapps' => t('Arrange Apps'),
 		'$sysapps_toggle' => t('Toggle System Apps'),
 		'$url' => (($url) ? $url : App::$cmd)
@@ -302,7 +302,6 @@ function nav($template = 'default') {
 		));
 		unset($_SESSION['reload_avatar']);
 	}
-
 
 	call_hooks('page_header', App::$page['nav']);
 }

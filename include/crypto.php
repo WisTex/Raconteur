@@ -222,7 +222,7 @@ function crypto_unencapsulate($data,$prvkey) {
 	if(! $data)
 		return;
 
-	$alg = ((array_key_exists('alg',$data)) ? $data['alg'] : '');
+	$alg = ((is_array($data) && array_key_exists('encrypted',$data)) ? $data['alg'] : '');
 	if(! $alg) {
 		return $data;
 	}
@@ -457,8 +457,8 @@ function z_obscure($s) {
 }
 
 function z_unobscure($s) {
-	if(strpos($s,"{\"") !== 0)
-		return $s;
+//	if(strpos($s,"{\"") !== 0)
+//		return $s;
 	return crypto_unencapsulate(json_decode($s,true),get_config('system','prvkey'));
 }
 
