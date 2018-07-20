@@ -1,11 +1,11 @@
 <?php
 
-	if(! class_exists('App')) {
-		class TmpA {
-			public $strings = Array();
-		}
-		$a = new TmpA();
-	}
+    if(! class_exists('App')) {
+        class App {
+                static public $strings = Array();
+        }
+        //$a = new App();
+    }
 
 	if ($argc!=2) {
 		print "Usage: ".$argv[0]." <hstrings.php>\n\n";
