@@ -1,13 +1,14 @@
-Hey, 
-I'm the web server at {{$sitename}};
+
+Привет, 
+Я веб-сервер {{$sitename}};
    
-The Hubzilla developers released update {{$update}} recently, 
-but when I tried to install it, something went terribly wrong.  
-This needs to be fixed soon and it requires human intervention. 
-Please contact a Red developer if you can not figure out how to 
-fix it on your own. My database might be invalid. 
+Разработчики Hubzilla только что выпустили обновление {{$update}}  
+но когда я попыталась/ся установить его, что-то пошло не так.  
+Это должно быть исправлено в ближайшее время и требует вмешательства человека. 
+Пожалуйста, обратитесь к разработчикам Hubzilla, если вы не можете понять, как 
+исправьте это по своему усмотрению. Моя база данных может быть недействительной. 
 
-The error message is '{{$error}}'.   
+Сообщение ошибки является следующим '{{$}}.   
 
-Apologies for the inconvenience, 
-	your web server at {{$siteurl}}
+Приносим извинения за неудобства, 
+	Ваш веб-сервер {{$siteurl}}
