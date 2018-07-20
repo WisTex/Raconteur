@@ -1,32 +1,35 @@
 
-Dear {{$username}},
-	A request was recently received at {{$sitename}} to reset your account 
-password. In order to confirm this request, please select the verification link
-below or paste it into your web browser address bar. 
+Уважаемый {{$username}},
+	Недавно {{$sitename}}  был получен запрос на сброс пароля вашей 
+учётной записи. Для подтверждения этого запроса, пожалуйста перейдите по ссылке
+проверки ниже или вставьте его в адресную строку вашего браузера. 
 
-If you did NOT request this change, please DO NOT follow the link
-provided and ignore and/or delete this email. 
+Если вы НЕ запрашивали это измнение, пожалуйста НЕ используйте предоставленную
+ссылку и игнорируйте и / или удалите это письмо. 
 
-Your password will not be changed unless we can verify that you
-issued this request. 
+Ваш пароль не будет изменён до тех пор,  пока мы не сможем убедиться что именно 
+вами создан запрос. 
 
-Follow this link to verify your identity:
+Проследуйте по ссылке для подтверждения вашей личности:
 
 {{$reset_link}}
 
-You will then receive a follow-up message containing the new password.
+После этого вы получите email содержащий новый пароль.
 
-You may change that password from your account settings page after logging in.
+Вы можете изменить этот пароль в вашей учётной записи после входа.
 
-The login details are as follows:
+Подробности логина:
 
-Site Location:	{{$siteurl}}
-Login Name:	{{$email}}
-
-
+Расположение сайта: {{$siteurl}}
+Имя для входа: {{$email}}
 
 
-Sincerely,
-	{{$sitename}} Administrator
 
+
+С уважением,
+	администрация {{$sitename}}
+
+--
+Условия использования сервиса:
+{{$siteurl}}/help/TermsOfService
  
