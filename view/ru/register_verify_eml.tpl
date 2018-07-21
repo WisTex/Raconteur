@@ -1,25 +1,24 @@
 
-A new user registration request was received at {{$sitename}} which requires 
-your approval. 
+Был получен запрос на регистрацию нового пользователя на {{$sitename}} 
+что требует вашего подтверждения. 
 
 
-The login details are as follows:
+Детали учётной записи:
 
-Site Location:	{{$siteurl}}
-Login Name:	{{$email}}
-IP Address: {{$details}}
+Адрес сайта:	{{$siteurl}}
+Имя для входа:	{{$email}}
+IP-адрес: {{$details}}
 
-To approve this request please visit the following link:
+Для подтверждения этого запроса пожалуйса перейдите по ссылке:
 
 
 {{$siteurl}}/regmod/allow/{{$hash}} 
 
 
-To deny the request and remove the account, please visit:
+Для отказа и удаления учётной записи перейдите по ссылке:
 
 
 {{$siteurl}}/regmod/deny/{{$hash}}
 
 
-Thank you.
-
+Спасибо.

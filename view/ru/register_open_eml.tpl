@@ -1,19 +1,17 @@
 
-An account has been created at {{$sitename}} for this email address. 
-The login details are as follows:
+Учётная запись была создана на {{$sitename}} для этого адреса электронной почты. 
+Детали учётной записи:
 
-Site Location:	{{$siteurl}}
-Login:	{{$email}}
-Password: (the password which was provided during registration)
+Адрес сайта:	{{$siteurl}}
+Имя для входа:	{{$email}}
+Пароль: (указанный вами при регистрации)
 
-If this account was created without your knowledge and is not desired, you may 
-visit this site and reset the password. This will allow you to remove the 
-account from the links on the Settings page, and we 
-apologise for any inconvenience. 
+Если эта учётная запись была создана без вашего ведома или нежелательна, вы 
+можете посетить сайт и сбросить пароль. Это позволит вам удалить учётную запись
+по ссылке на странице "Настройки". 
+Приносим извинения за любые неудобства. 
 
-Thank you and welcome to {{$sitename}}.
+Спасибо и добро пожаловать на {{$sitename}}!
 
-Sincerely,
-	{{$sitename}} Administrator
-
- 
+С уважением,
+	администрация {{$sitename}}
