@@ -67,7 +67,7 @@ function format_event_obj($jobject) {
 	$object = json_decode($jobject,true);
 
 	//ensure compatibility with older items - this check can be removed at a later point
-	if(array_key_exists('description', $object)) {
+	if(is_array($object) && array_key_exists('description', $object)) {
 
 		$bd_format = t('l F d, Y \@ g:i A'); // Friday January 18, 2011 @ 8:01 AM
 
