@@ -5,6 +5,8 @@
 
 use Zotlabs\Lib\MarkdownSoap;
 use Zotlabs\Lib\Group;
+use Zotlabs\Lib\Libzot;
+
 use Michelf\MarkdownExtra;
 
 require_once("include/bbcode.php");
@@ -2959,7 +2961,7 @@ function item_url_replace($channel,&$item,$old,$new,$oldnick = '') {
 	}
 
 	if(string_replace($old,$new,$item['body'])) {
-		$item['sig'] = zot_sign($item['body'],$channel['channel_prvkey']);
+		$item['sig'] = Libzot::sign($item['body'],$channel['channel_prvkey']);
 		$item['item_verified']  = 1;
 	}
 
