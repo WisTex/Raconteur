@@ -3213,8 +3213,15 @@ function create_table_from_array($table, $arr, $binary_fields = []) {
 	if(! ($arr && $table))
 		return false;
 
+	$columns = db_columns($table);
+
 	$clean = [];
 	foreach($arr as $k => $v) {
+
+		if(! in_array($k,$columns)) {
+			continue;
+		}
+
 		$matches = false;
 		if(preg_match('/([^a-zA-Z0-9\-\_\.])/',$k,$matches)) {
 			return false;

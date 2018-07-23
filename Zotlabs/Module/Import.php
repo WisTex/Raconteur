@@ -201,7 +201,7 @@ class Import extends \Zotlabs\Web\Controller {
 					'hubloc_guid_sig' => $channel['channel_guid_sig'],
 					'hubloc_hash'     => $channel['channel_hash'],
 					'hubloc_addr'     => channel_reddress($channel),
-					'hubloc_network'  => 'zot',
+					'hubloc_network'  => 'zot6',
 					'hubloc_primary'  => (($seize) ? 1 : 0),
 					'hubloc_url'      => z_root(),
 					'hubloc_url_sig'  => Libzot::sign(z_root(),$channel['channel_prvkey']),
@@ -249,7 +249,7 @@ class Import extends \Zotlabs\Web\Controller {
 					'xchan_connurl'        => z_root() . '/poco/' . $channel['channel_address'],
 					'xchan_follow'         => z_root() . '/follow?f=&url=%s',
 					'xchan_name'           => $channel['channel_name'],
-					'xchan_network'        => 'zot',
+					'xchan_network'        => 'zot6',
 					'xchan_photo_date'     => datetime_convert(),
 					'xchan_name_date'      => datetime_convert()
 				]
@@ -263,8 +263,8 @@ class Import extends \Zotlabs\Web\Controller {
 		if($xchans) {
 			foreach($xchans as $xchan) {
 
-				$hash = Libzot::make_xchan_hash($xchan['xchan_guid'],$xchan['xchan_guid_sig']);
-				if($xchan['xchan_network'] === 'zot' && $hash !== $xchan['xchan_hash']) {
+				$hash = Libzot::make_xchan_hash($xchan['xchan_guid'],$xchan['xchan_pubkey']);
+				if($xchan['xchan_network'] === 'zot6' && $hash !== $xchan['xchan_hash']) {
 					logger('forged xchan: ' . print_r($xchan,true));
 					continue;
 				}
