@@ -758,6 +758,7 @@ function identity_basic_export($channel_id, $sections = null) {
 
 	$ret['compatibility'] = [
 		'project' => PLATFORM_NAME,
+		'codebase' => 'zap',
 		'version' => STD_VERSION,
 		'database' => DB_UPDATE_VERSION,
 		'server_role' => Zotlabs\Lib\System::get_server_role()
