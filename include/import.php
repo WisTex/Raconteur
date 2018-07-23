@@ -221,17 +221,16 @@ function import_hublocs($channel, $hublocs, $seize, $moving = false) {
 			}
 
 			$arr = [
-				'guid'     => $hubloc['hubloc_guid'],
-				'guid_sig' => $hubloc['hubloc_guid_sig'],
-				'url'      => $hubloc['hubloc_url'],
-				'url_sig'  => $hubloc['hubloc_url_sig'],
-				'sitekey'  => ((array_key_exists('hubloc_sitekey',$hubloc)) ? $hubloc['hubloc_sitekey'] : '')
+				'id'           => $hubloc['hubloc_guid'],
+				'id_sig'       => $hubloc['hubloc_guid_sig'],
+				'location'     => $hubloc['hubloc_url'],
+				'location_sig' => $hubloc['hubloc_url_sig']
 			];
 
 			if(($hubloc['hubloc_hash'] === $channel['channel_hash']) && intval($hubloc['hubloc_primary']) && ($seize))
 				$hubloc['hubloc_primary'] = 0;
 
-			if(($x = zot_gethub($arr,false)) === false) {
+			if(($x = Libzot::gethub($arr,false)) === false) {
 				unset($hubloc['hubloc_id']);
 				create_table_from_array('hubloc', $hubloc);
 			}
