@@ -464,7 +464,7 @@ class HTTPSig {
 			$data = $matches[1];
 
 		if($iv && $key && $alg && $data) {
-			return crypto_unencapsulate([ 'iv' => $iv, 'key' => $key, 'alg' => $alg, 'data' => $data ] , $prvkey);
+			return crypto_unencapsulate([ 'encrypted' => true, 'iv' => $iv, 'key' => $key, 'alg' => $alg, 'data' => $data ] , $prvkey);
 		}
 
 		return '';

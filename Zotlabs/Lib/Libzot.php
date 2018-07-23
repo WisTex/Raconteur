@@ -988,7 +988,7 @@ class Libzot {
 
 			// handle remote validation issues
 
-			$b = q("update dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
+			$b = q("update dreport set dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
 				dbesc(($x['message']) ? $x['message'] : 'unknown delivery error'),
 				dbesc(datetime_convert()),
 				dbesc($outq['outq_hash'])
