@@ -390,7 +390,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 		$section = ((array_key_exists('section',$_REQUEST)) ? $_REQUEST['section'] : '');
 		$channel = \App::get_channel();
 	
-		$yes_no = array(t('No'),t('Yes'));
+		$yes_no = [ t('No'), t('Yes') ];
 	
 		$connect_perms = \Zotlabs\Access\Permissions::connect_perms(local_channel());
 

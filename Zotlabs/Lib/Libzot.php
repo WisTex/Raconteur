@@ -461,7 +461,7 @@ class Libzot {
 						if($abconfig)
 							$new_connection['abconfig'] = $abconfig;
 
-						self::build_sync_packet($channel['channel_id'], array('abook' => $new_connection));
+						Libsync::build_sync_packet($channel['channel_id'], array('abook' => $new_connection));
 					}
 				}
 
