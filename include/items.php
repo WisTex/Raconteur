@@ -646,18 +646,12 @@ function get_item_elements($x,$allow_code = false) {
 	else
 		return array();
 
-	// save a potentially expensive lookup if author == owner
-
-	if($arr['author_xchan'] === make_xchan_hash($x['owner']['guid'],$x['owner']['guid_sig']))
-		$arr['owner_xchan'] = $arr['author_xchan'];
+	$xchan_hash = import_author_xchan($x['owner']);
+	if($xchan_hash) {
+		$arr['owner_xchan'] = $xchan_hash;
+	}
 	else {
-		$xchan_hash = import_author_xchan($x['owner']);
-		if($xchan_hash) {
-			$arr['owner_xchan'] = $xchan_hash;
-		}
-		else {
-			return array();
-		}
+		return array();
 	}
 
 	// Check signature on the body text received.
