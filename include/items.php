@@ -814,7 +814,7 @@ function import_author_xchan($x) {
 	$y = false;
 
 	if((! array_key_exists('network', $x)) || ($x['network'] === 'zot6')) {
-		$y = import_author_zot($x);
+		$y = Libzot::import_author_zot($x);
 	}
 
 	// if we were told that it's a zot connection, don't probe/import anything else
