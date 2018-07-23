@@ -316,9 +316,9 @@ class HTTPSig {
 
 		if($encryption) {
 			$x = crypto_encapsulate($headerval,$encryption['key'],$encryption['algorithm']);
-			if(! is_array($x))
-				btlogger('bad data: ' . print_r($x,true));
-			$headerval = 'iv="' . $x['iv'] . '",key="' . $x['key'] . '",alg="' . $x['alg'] . '",data="' . $x['data'] . '"';
+			if(is_array($x)) {
+				$headerval = 'iv="' . $x['iv'] . '",key="' . $x['key'] . '",alg="' . $x['alg'] . '",data="' . $x['data'] . '"';
+			}
 		}
 
 		if($auth) {
