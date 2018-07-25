@@ -199,12 +199,14 @@ class Import extends \Zotlabs\Web\Controller {
 				[
 					'hubloc_guid'     => $channel['channel_guid'],
 					'hubloc_guid_sig' => $channel['channel_guid_sig'],
+					'hubloc_id_url'   => channel_url($channel),
 					'hubloc_hash'     => $channel['channel_hash'],
 					'hubloc_addr'     => channel_reddress($channel),
 					'hubloc_network'  => 'zot6',
 					'hubloc_primary'  => (($seize) ? 1 : 0),
 					'hubloc_url'      => z_root(),
 					'hubloc_url_sig'  => Libzot::sign(z_root(),$channel['channel_prvkey']),
+					'hubloc_site_id'  => Libzot::make_xchan_hash(z_root(),get_config('system','pubkey'),
 					'hubloc_host'     => \App::get_hostname(),
 					'hubloc_callback' => z_root() . '/post',
 					'hubloc_sitekey'  => get_config('system','pubkey'),
@@ -264,19 +266,10 @@ class Import extends \Zotlabs\Web\Controller {
 			foreach($xchans as $xchan) {
 
 				$hash = Libzot::make_xchan_hash($xchan['xchan_guid'],$xchan['xchan_pubkey']);
+
 				if($xchan['xchan_network'] === 'zot6' && $hash !== $xchan['xchan_hash']) {
 					logger('forged xchan: ' . print_r($xchan,true));
 					continue;
-				}
-
-				if(! array_key_exists('xchan_hidden',$xchan)) {
-					$xchan['xchan_hidden']       = (($xchan['xchan_flags'] & 0x0001) ? 1 : 0);
-					$xchan['xchan_orphan']       = (($xchan['xchan_flags'] & 0x0002) ? 1 : 0);
-					$xchan['xchan_censored']     = (($xchan['xchan_flags'] & 0x0004) ? 1 : 0);
-					$xchan['xchan_selfcensored'] = (($xchan['xchan_flags'] & 0x0008) ? 1 : 0);
-					$xchan['xchan_system']       = (($xchan['xchan_flags'] & 0x0010) ? 1 : 0);
-					$xchan['xchan_pubforum']     = (($xchan['xchan_flags'] & 0x0020) ? 1 : 0);
-					$xchan['xchan_deleted']      = (($xchan['xchan_flags'] & 0x1000) ? 1 : 0);
 				}
 
 				$r = q("select xchan_hash from xchan where xchan_hash = '%s' limit 1",

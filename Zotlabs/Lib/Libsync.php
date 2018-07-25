@@ -878,7 +878,7 @@ class Libsync {
 						'hubloc_primary'   => intval($location['primary']),
 						'hubloc_url'       => $location['url'],
 						'hubloc_url_sig'   => $location['url_sig'],
-						'hubloc_site_id'   => self::make_xchan_hash($location['url'],$location['sitekey']),
+						'hubloc_site_id'   => Libzot::make_xchan_hash($location['url'],$location['sitekey']),
 						'hubloc_host'      => $location['host'],
 						'hubloc_callback'  => $location['callback'],
 						'hubloc_sitekey'   => $location['sitekey'],

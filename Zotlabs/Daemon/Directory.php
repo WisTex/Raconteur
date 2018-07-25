@@ -59,6 +59,11 @@ class Directory {
 
 		$directory = Libzotdir::find_upstream_directory($dirmode);
 
+		if(! $directory) {
+			logger('no directory');
+			return;
+		}
+
 		$url = $directory['url'] . '/zot';
 
 		// ensure the upstream directory is updated

@@ -19,7 +19,7 @@ class Webfinger {
 		if(! $resource) {
 			return false;
 		}
-return false;
+//return false;
 		self::parse_resource($resource);
 
 		if(! ( self::$server && self::$resource)) {
