@@ -20,6 +20,7 @@ class Receiver {
 	protected $handler;
 	protected $prvkey;
 	protected $rawdata;
+	protected $sigdata;
 
 	function __construct($handler, $localdata = null) {
 
@@ -122,8 +123,14 @@ class Receiver {
 		$hub = Libzot::valid_hub($this->sender,$this->site_id);
 
 		if (! $hub) {
-           	$this->response['message'] = 'sender unknown';
-			return false;
+			$x = register_hub($this->sigdata['signer']);
+			if($x['success']) {
+				$hub = Libzot::valid_hub($this->sender,$this->site_id);
+			}	
+			if(! $hub) {
+	           	$this->response['message'] = 'sender unknown';
+				return false;
+			}
 		}
 
 		if(! check_siteallowed($hub['hubloc_url'])) {
@@ -148,18 +155,14 @@ class Receiver {
 
 		$result = false;
 
-		// use HTTPSig::get_zotfinger_key() to fetch the key as it will
-		// also auto-discover and store any zot discovery records that are found
-
-		$verified = HTTPSig::verify($this->rawdata,'get_zotfinger_key');
-		if($verified && $verified['header_signed'] && $verified['header_valid']) {
+		$this->sigdata = HTTPSig::verify($this->rawdata);
+		if($this->sigdata && $this->sigdata['header_signed'] && $this->sigdata['header_valid']) {
 			$result = true;
-			$this->portable_id = $verified['portable_id'];
 
 			// It is OK to not have signed content - not all messages provide content.
 			// But if it is signed, it has to be valid
 
-			if (($verified['content_signed']) && (! $verified['content_valid'])) {
+			if (($this->sigdata['content_signed']) && (! $this->sigdata['content_valid'])) {
 					$result = false;
 			}
 		}

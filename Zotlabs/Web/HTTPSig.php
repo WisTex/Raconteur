@@ -176,11 +176,6 @@ class HTTPSig {
 			$key = $key($id);
 		}
 
-		if($key && method_exists('\\Zotlabs\\Web\\HTTPSig', $key)) {
-			$fn = [ '\\Zotlabs\\Web\\HTTPSig', $key ] ;
-			$key = $fn($id);
-		}
-
 		if(! $key) {
 			$key = self::get_webfinger_key($id);
 		}

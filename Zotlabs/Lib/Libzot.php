@@ -568,7 +568,7 @@ class Libzot {
 	 *  * \b message (optional) error string only if success is false
 	 */
 
-	static function register_hub($arr) {
+	static function register_hub($id) {
 
 		$id_hash = false;
 		$valid   = false;
@@ -576,39 +576,30 @@ class Libzot {
 
 		$result  = [ 'success' => false ];
 
-		if($arr['id'] && $arr['id_sig'] && $arr['id_url'] && $arr['location'] && $arr['location_sig'] && $arr['site_id']) {
-			$record = Zotfinger::exec($arr['id_url']);
+		if(! $id) {
+			return $result;
+		}
 
-			// Check the HTTP signature
+		$record = Zotfinger::exec($id);
 
-			$hsig = $record['signature'];
-			if($hsig['signer'] === $arr['id_url'] && $hsig['header_valid'] === true && $hsig['content_valid'] === true)
-				$hsig_valid = true;
+		// Check the HTTP signature
 
-			if(! $hsig_valid) {
-				logger('http signature not valid: ' . print_r($hsig,true));
-				return $result;
-			}
+		$hsig = $record['signature'];
+		if($hsig['signer'] === $id && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
+			$hsig_valid = true;
+		}
+		if(! $hsig_valid) {
+			logger('http signature not valid: ' . print_r($hsig,true));
+			return $result;
+		}
 
-
-			/*
-			 * We now have a key - only continue registration if our signatures are valid
-			 * AND the guid and guid sig in the returned packet match those provided in
-			 * our current communication.
-			 */
-
-			if((self::verify($arr['id'],$arr['id_sig'],$record['data']['public_key']))
-				&& (zot_verify($arr['location'],$arr['location_sig'],$record['data']['public_key']))
-				&& ($arr['id'] === $record['data']['id'])
-				&& ($arr['id_sig'] === $record['data']['id_sig'])) {
-					$c = import_xchan($record['data']);
-					if($c['success'])
-						$result['success'] = true;
-				}
-				else {
-					logger('Failure to verify zot packet');
-				}
-			}
+		$c = import_xchan($record['data']);
+		if($c['success']) {
+			$result['success'] = true;
+		}
+		else {
+			logger('Failure to verify zot packet');
+		}
 
 		return $result;
 	}
