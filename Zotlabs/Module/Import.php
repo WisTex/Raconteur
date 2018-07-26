@@ -206,7 +206,7 @@ class Import extends \Zotlabs\Web\Controller {
 					'hubloc_primary'  => (($seize) ? 1 : 0),
 					'hubloc_url'      => z_root(),
 					'hubloc_url_sig'  => Libzot::sign(z_root(),$channel['channel_prvkey']),
-					'hubloc_site_id'  => Libzot::make_xchan_hash(z_root(),get_config('system','pubkey'),
+					'hubloc_site_id'  => Libzot::make_xchan_hash(z_root(),get_config('system','pubkey')),
 					'hubloc_host'     => \App::get_hostname(),
 					'hubloc_callback' => z_root() . '/post',
 					'hubloc_sitekey'  => get_config('system','pubkey'),
@@ -278,7 +278,7 @@ class Import extends \Zotlabs\Web\Controller {
 				if($r)
 					continue;
 
-				create_table_from_array('xchan',$xchan);
+				xchan_store_lowlevel($xchan);
 
 				require_once('include/photo/photo_driver.php');
 

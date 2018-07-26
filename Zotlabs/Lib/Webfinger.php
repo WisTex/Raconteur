@@ -19,7 +19,7 @@ class Webfinger {
 		if(! $resource) {
 			return false;
 		}
-//return false;
+return false;
 		self::parse_resource($resource);
 
 		if(! ( self::$server && self::$resource)) {
@@ -31,7 +31,7 @@ class Webfinger {
 			return false;
 		}
 
-		logger('fetching resource: ' . self::$resource . ' from ' . self::$server, LOGGER_DEBUG, LOG_INFO);
+		btlogger('fetching resource: ' . self::$resource . ' from ' . self::$server, LOGGER_DEBUG, LOG_INFO);
 
 		$url = 'https://' . self::$server . '/.well-known/webfinger?f=&resource=' . self::$resource ;
 

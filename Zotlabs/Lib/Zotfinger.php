@@ -6,12 +6,15 @@ use Zotlabs\Web\HTTPSig;
 
 class Zotfinger {
 
-
 	static function exec($resource,$channel = null) {
 
 		if(! $resource) {
 			return false;
 		}
+		if(self::$instance_resource === $resource) {
+			return false;
+		}
+
 
 		if($channel) {
 			$headers = [ 
@@ -26,11 +29,14 @@ class Zotfinger {
 				
 		$result = [];
 
+
 		$redirects = 0;
 		$x = z_fetch_url($resource,false,$redirects, [ 'headers' => $h  ] );
 
 		if($x['success']) {
-			$result['signature'] = HTTPSig::verify($x);    
+			
+			$result['signature'] = HTTPSig::verify($x);
+    
 			$result['data'] = json_decode($x['body'],true);
 
 			if($result['data'] && is_array($result['data']) && array_key_exists('encrypted',$result['data']) && $result['data']['encrypted']) {

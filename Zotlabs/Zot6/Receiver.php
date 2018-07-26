@@ -148,7 +148,10 @@ class Receiver {
 
 		$result = false;
 
-		$verified = HTTPSig::verify($this->rawdata);
+		// use HTTPSig::get_zotfinger_key() to fetch the key as it will
+		// also auto-discover and store any zot discovery records that are found
+
+		$verified = HTTPSig::verify($this->rawdata,'get_zotfinger_key');
 		if($verified && $verified['header_signed'] && $verified['header_valid']) {
 			$result = true;
 			$this->portable_id = $verified['portable_id'];

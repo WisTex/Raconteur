@@ -176,6 +176,11 @@ class HTTPSig {
 			$key = $key($id);
 		}
 
+		if($key && method_exists('\\Zotlabs\\Web\\HTTPSig', $key)) {
+			$fn = [ '\\Zotlabs\\Web\\HTTPSig', $key ] ;
+			$key = $fn($id);
+		}
+
 		if(! $key) {
 			$key = self::get_webfinger_key($id);
 		}
@@ -240,6 +245,39 @@ class HTTPSig {
 
 
 	function get_webfinger_key($id) {
+
+		$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' limit 1",
+			dbesc(str_replace('acct:','',$id)),
+			dbesc($id)
+		);
+		if($x && $x[0]['xchan_pubkey']) {
+			return [ 'portable_id' => $x[0]['xchan_hash'], 'public_key' => $x[0]['xchan_pubkey'] , 'hubloc' => $x[0] ];
+		}
+
+		$wf = Webfinger::exec($id);
+		$key = [ 'portable_id' => '', 'public_key' => '', 'hubloc' => [] ];
+
+		if($wf) {
+		 	if(array_key_exists('properties',$wf) && array_key_exists('https://w3id.org/security/v1#publicKeyPem',$wf['properties'])) {
+				$key['public_key'] = self::convertKey($wf['properties']['https://w3id.org/security/v1#publicKeyPem']);
+			}
+			if(array_key_exists('links', $wf) && is_array($wf['links'])) {
+				foreach($wf['links'] as $l) {
+					if(! (is_array($l) && array_key_exists('rel',$l))) {
+						continue;
+					}
+					if($l['rel'] === 'magic-public-key' && array_key_exists('href',$l) && $key['public_key'] === EMPTY_STR) {
+						$key['public_key'] = self::convertKey($l['href']);
+					}
+				}
+			}
+		}
+
+		return (($key['public_key']) ? $key : false);
+	}
+
+
+	function get_zotfinger_key($id) {
 
 		$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' limit 1",
 			dbesc(str_replace('acct:','',$id)),
