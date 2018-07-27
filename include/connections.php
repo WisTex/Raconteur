@@ -380,7 +380,7 @@ function contact_remove($channel_id, $abook_id) {
 	);
 	if($r) {
 		foreach($r as $rr) {
-			$x = q("select uid from term where otype = %d and oid = %d ttype = %d limit 1",
+			$x = q("select uid from term where otype = %d and oid = %d and ttype = %d limit 1",
 				intval(TERM_OBJ_POST),
 				intval($rr['id']),
 				intval(TERM_FILE)

@@ -1,3 +1,97 @@
+Hubzilla 3.6 (????-??-??)
+	- Update jquery.timeago library
+	- Implement Hookable CSP
+	- ActivityStreams: accept header changes to support plume 
+	- Streamline inconsistencies in addon naming
+	- SECURITY: hash the session_id in logs
+	- Update justified gallery library
+	- Hide channel in /cloud root if channel is hidden in directory
+	- Add resend option to channel sources tp discard original author.
+	- Provide flag to exclude privacy groups for federation plugin use in collect_recipients()
+	- Upgrading from redmatrix is no longer supported
+	- Deal with htmlentity encoding during authentication workflow
+	- Rework mod group
+	- Make droping posts of removed connections more memory efficient
+	- Refactor getOutainfo() for DAV storage
+	- Optionally report total available space when uploading
+	- SECURITY: provide option to disable the cloud 'root' directory and make the cloud module require a target channel nickname 
+	- Add plink and llink to viewsource
+	- Add new 'filter by name' feature 
+	- Remove network tabs
+	- New activity filter widget
+	- New activity order widget
+	- Make menus editable by visitors with webpage write permissions
+	- Move forum notifications to notifications
+	- Move manage privacy groups to the panel channel menu
+	- Don't remove items that are starred, filed, or that you replied to when removing a connection
+	- Don't deliver local items more than once
+	- Make navbar search use the module search function in /network and /channel
+	- Paint the locks on private activitypub items red. Their privacy model is "slightly" different from hubzillas
+	- Improve new channel creation workflow
+	- Add hook 'get_system_apps'
+	- Implement reset button for jot
+	- Adjust accept header to make pleroma happy
+	- Provide a general purpose GDPR document
+	- Provide function to fetch photo contents from url
+	- Make get_default_profile_photo() pluggable
+	- Refactor tags/mentions
+	- Refactor autocomplete mechanism
+	- Display pubsites link in info area if invite only
+	- Add cancel button to editor
+	- Implement MessageFilter for pubstream and sourced messages
+	- Add supported protocols to siteinfo
+	- Allow pdf embeds
+	- Allow uninstall of plugins which no longer exists via cmdline tool
+	- Improve the homeinstall script
+	- Provide easy access to the autoperms setting for forum and repository channels
+	- Implement admin delete of files, photos and posts
+	- Allow a different username to be used when importing a channel
+	- Provide warnings about profile photo and cover photo permissions
+	- Set the 'force' flag on attach_mkdir when initiated from a DAV operation
+
+	Bugfixes
+	- Fix double file uploads when dropping files into jot
+	- Fix jot collapsing when drag and drop to open jot
+	- Fix wrong album name when moving photos
+	- Fix wrong timestamp localization before first update in mod mail
+	- Fix post exiration not propagated to other networks (which support it)
+	- Fix sys channels visible in dirsearch
+	- Fix remote_self not working correctly
+	- Fix photos not syncing properly if destination is a postgres site
+	- Fix wrong hubloc_url for activitypub hublocs 
+	- Fix z_check_dns() for BSD 
+	- Fix not null violation in oauth1
+	- Fix DB issues with oauth2 on postgresql
+	- Fix 'anybody authenticated' not correctly handled in can_comment_on_post()
+	- Fix postgres issue if register mode is set to yes - with approval
+	- Fix tag search not finding articles
+	- Fix issue with mentions when markdown post addon is enabled
+	- Fix duplicate addressbook entries on repeated channel imports
+
+	Addons
+	- Cart: various display improvements
+	- Cart: make cart work with postgresql DB backend
+	- Cart: add new hzservice for service_classes
+	- Cart: add storewide currency settings
+	- Cart: provide channel app 'Shop' for cart addon
+	- Cart: implement order updating
+	- Cart: use CSP hook for paypals checkout.js
+	- Cart: provide a cancel mechanism for orders
+	- Cart: add paypal button
+	- Gallery: new addon to display photo albums with the photoswipe library
+	- Ldapauth: optionally auto create channel
+	- Pubcrawl: new setting to ignore ActivityPub recipients in privacy groups
+	- Diaspora: fix issue with displaying multiple photos
+	- Pubcrawl: provide plink
+	- Pubcrawl: hubloc_url should be baseurl, not actor url
+	- Pubcrawl: deliver restricted posts from hubzilla as direct messages (there is no other way to address only a subset of followers in mastodon)
+	- Pubcrawl: address comments to a restricted mastodon post to /followers
+
+
+Hubzilla 3.4.2 (2018-07-19)
+	- Compatibility fix for future versions
+
+
 Hubzilla 3.4.1 (2018-06-08)
 	- Say bye, bye to GitHub and move sourcecode repositories to #^https://framagit.org/hubzilla
 	- When removing a connection, don't remove items that are starred, filed or replied to

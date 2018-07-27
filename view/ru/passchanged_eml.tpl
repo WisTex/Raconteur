@@ -1,20 +1,24 @@
 
-Dear {{$username}},
-	Your password has been changed as requested. Please retain this 
-information for your records (or change your password immediately to 
-something that you will remember).
+Дорогой {{$username}},
+	Ваш пароль был изменен, как вы и просили. Пожалуйста, сохраните эту 
+информацию в ваших записях (или смените свой пароль на такой 
+который вы точно не забудете).
 
 
-Your login details are as follows:
+Детали учетной записи:
 
-Site Location:	{{$siteurl}}
-Login Name:	{{$email}}
-Password:	{{$new_password}}
+Адрес сайта:	{{$siteurl}}
+Имя Пользователя:	{{$email}}
+Пароль:	{{$new_password}}
 
-You may change that password from your account settings page after logging in.
+Вы можете сменить этот пароль в настройках учетной записи после того, как войдете в систему.
 
 
-Sincerely,
-	{{$sitename}} Administrator
+С уважением,
+	администрация {{$sitename}}
 
  
+
+--
+Условия предоставления услуг:
+{{$siteurl}}/help/TermsOfService

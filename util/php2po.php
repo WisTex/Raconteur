@@ -1,11 +1,11 @@
 <?php
 
-	if(! class_exists('App')) {
-		class TmpA {
-			public $strings = Array();
-		}
-		$a = new TmpA();
-	}
+    if(! class_exists('App')) {
+        class App {
+            static public $rtl;
+            static public $strings = Array();
+        }
+    }
 
 	if ($argc!=2) {
 		print "Usage: ".$argv[0]." <hstrings.php>\n\n";
@@ -32,17 +32,17 @@
 	
 		if ($k!="" && substr($l,0,7)=="msgstr "){
 			$ink = False;
-			$v = '""';
+			$v = '';
 			//echo "DBG: k:'$k'\n";
 			if (isset(App::$strings[$k])) {
-				$v= '"'.App::$strings[$k].'"';
+				$v= App::$strings[$k];
 				//echo "DBG\n";
 				//var_dump($k, $v, App::$strings[$k], $v);
 				//echo "/DBG\n";
 				
 			}
 			//echo "DBG: v:'$v'\n";
-			$l = "msgstr ".$v."\n";
+			$l = "msgstr \"".str_replace('"','\"',$v)."\"\n";
 		}
 	
 		if (substr($l,0,6)=="msgid_" || substr($l,0,7)=="msgstr[" )$ink = False;;

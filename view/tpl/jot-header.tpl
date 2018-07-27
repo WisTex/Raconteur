@@ -97,6 +97,7 @@ var activeCommentText = '';
 		$('#invisible-comment-upload').fileupload({
 			url: 'wall_attach/{{$nickname}}',
 			dataType: 'json',
+			dropZone: $(),
 			maxChunkSize: 4 * 1024 * 1024,
 			add: function(e,data) {
 
@@ -482,10 +483,13 @@ var activeCommentText = '';
 
     }
 
-    // file drag hover
-    function DragDropUploadFileHover(e) {
-      e.target.className = (e.type == "dragover" ? "hover" : "");
-    }
+	// file drag hover
+	function DragDropUploadFileHover(e) {
+		if(e.type == 'dragover')
+			$(e.target).addClass('hover');
+		else
+			$(e.target).removeClass('hover');
+	}
 
     // file selection
     function DragDropUploadFileSelectHandler(e) {
@@ -494,7 +498,7 @@ var activeCommentText = '';
       DragDropUploadFileHover(e);
       // open editor if it isn't yet initialised
 	  if (!editor) {
-			initEditor();
+			enableOnUser();
 	  }
 	  linkdrop(e);
 
@@ -586,7 +590,7 @@ $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-del
 				openEditor = true;
 			}
 			if(openEditor) {
-				initEditor();
+				enableOnUser();
 			}
 		} else {
 			postSaveChanges('clean');
