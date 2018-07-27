@@ -29,7 +29,7 @@ function import_channel($channel, $account_id, $seize, $newname = '') {
 
 	// Ignore the hash provided and re-calculate
 
-	$channel['channel_hash'] = Libzot::make_xchan_hash($channel['channel_guid'],$channel['channel_guid_sig']);
+	$channel['channel_hash'] = Libzot::make_xchan_hash($channel['channel_guid'],$channel['channel_pubkey']);
 
 	if($newname) {
 		$channel['channel_address'] = $newname;
@@ -203,11 +203,12 @@ function import_hublocs($channel, $hublocs, $seize, $moving = false) {
 	if($channel && $hublocs) {
 		foreach($hublocs as $hubloc) {
 
-			$hash = Libzot::make_xchan_hash($hubloc['hubloc_guid'],$hubloc['hubloc_guid_sig']);
-			if($hubloc['hubloc_network'] === 'zot' && $hash !== $hubloc['hubloc_hash']) {
-				logger('forged hubloc: ' . print_r($hubloc,true));
-				continue;
-			}
+// make sure to check this, but we have to fetch a key from somewhere
+//			$hash = Libzot::make_xchan_hash($hubloc['hubloc_guid'],/* PUBKEY */$hubloc['hubloc_guid_sig']);
+//			if($hubloc['hubloc_network'] === 'zot' && $hash !== $hubloc['hubloc_hash']) {
+//				logger('forged hubloc: ' . print_r($hubloc,true));
+//				continue;
+//			}
 
 			if(! array_key_exists('hubloc_primary',$hubloc)) {
 				$hubloc['hubloc_primary']     = (($hubloc['hubloc_flags']  & 0x0001) ? 1 : 0);
