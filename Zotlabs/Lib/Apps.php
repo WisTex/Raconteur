@@ -56,12 +56,8 @@ class Apps {
 
 	}
 
-
-	static public function import_system_apps() {
-		if(! local_channel())
-			return;
-
-		self::$base_apps = get_config('system','base_apps',[ 
+	static public function get_base_apps() {
+		return get_config('system','base_apps',[ 
 			'Connections',
 			'Suggest Channels',
 			'Grid',
@@ -77,7 +73,16 @@ class Apps {
 			'Mail',
 			'Profile Photo'
 		]);
+	}
 
+
+
+	static public function import_system_apps() {
+		if(! local_channel())
+			return;
+
+		self::$base_apps = self::get_base_apps();
+ 
 		$apps = self::get_system_apps(false);
 
 		self::$available_apps = q("select * from app where app_channel = 0");
@@ -537,8 +542,25 @@ class Apps {
 		return false;
 	}
 
-	static public function app_destroy($uid,$app) {
 
+	static public function can_delete($uid,$app) {
+		if(! $uid) {
+			return false;
+		}
+
+		$base_apps = self::get_base_apps();
+		if($base_apps) {
+			foreach($base_apps as $b) {
+				if($app['guid'] === hash('whirlpool',$b)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+
+	static public function app_destroy($uid,$app) {
 
 		if($uid && $app['guid']) {
 
@@ -549,25 +571,31 @@ class Apps {
 			if($x) {
 				if(! intval($x[0]['app_deleted'])) {
 					$x[0]['app_deleted'] = 1;
-					q("delete from term where otype = %d and oid = %d",
-						intval(TERM_OBJ_APP),
-						intval($x[0]['id'])
-					);
-					if ($uid) {
+					if(self::can_delete($uid,$app)) {
 						$r = q("delete from app where app_id = '%s' and app_channel = %d",
 							dbesc($app['guid']),
 							intval($uid)
 						);
-
-						// we don't sync system apps - they may be completely different on the other system
-						build_sync_packet($uid,array('app' => $x));
+						q("delete from term where otype = %d and oid = %d",
+							intval(TERM_OBJ_APP),
+							intval($x[0]['id'])
+						);
 					}
+					else {
+						$r = q("update app set app_deleted = 1 where app_id = '%s' and app_channel = %d",
+							dbesc($app['guid']),
+							intval($uid)
+						);
+					}
+
+					build_sync_packet($uid,array('app' => $x));
 				}
 				else {
 					self::app_undestroy($uid,$app);
 				}
 			}
 		}
+
 	}
 
 	static public function app_undestroy($uid,$app) {
@@ -874,8 +902,8 @@ class Apps {
 			$arr['author'] = $sys['channel_hash'];
 		}
 
-		if($arr['photo'] && (strpos($arr['photo'],'icon:') !== 0) && (! strstr($arr['photo'],z_root()))) {
-			$x = import_xchan_photo($arr['photo'],get_observer_hash(),true);
+		if($arr['photo'] && (strpos($arr['photo'],'icon:') === false) && (! strstr($arr['photo'],z_root()))) {
+			$x = import_xchan_photo(str_replace('$baseurl',z_root(),$arr['photo']),get_observer_hash(),true);
 			$arr['photo'] = $x[1];
 		}
 
@@ -958,8 +986,8 @@ class Apps {
 		if((! $darray['app_url']) || (! $darray['app_id']))
 			return $ret;
 
-		if($arr['photo'] && (strpos($arr['photo'],'icon:') !== 0) && (! strstr($arr['photo'],z_root()))) {
-			$x = import_xchan_photo($arr['photo'],get_observer_hash(),true);
+		if($arr['photo'] && (strpos($arr['photo'],'icon:') === false) && (! strstr($arr['photo'],z_root()))) {
+			$x = import_xchan_photo(str_replace('$baseurl',z_root(),$arr['photo']),get_observer_hash(),true);
 			$arr['photo'] = $x[1];
 		}
 
