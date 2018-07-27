@@ -527,7 +527,7 @@ class Apps {
 				intval($uid)
 			);
 			if($r) {
-				if(! $r[0]['app_system']) {
+				if(($app['uid']) && (! $r[0]['app_system'])) {
 					if($app['categories'] && (! $app['term'])) {
 						$r[0]['term'] = q("select * from term where otype = %d and oid = %d",
 							intval(TERM_OBJ_APP),
@@ -587,8 +587,9 @@ class Apps {
 							intval($uid)
 						);
 					}
-
-					build_sync_packet($uid,array('app' => $x));
+					if(! intval($x[0]['app_system'])) {
+						build_sync_packet($uid,array('app' => $x));
+					}
 				}
 				else {
 					self::app_undestroy($uid,$app);
