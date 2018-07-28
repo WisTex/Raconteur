@@ -1923,23 +1923,23 @@ function scrape_vcard($url) {
 			$level2 = $item->getElementsByTagName('*');
 			foreach($level2 as $x) {
 				if(attribute_contains($x->getAttribute('id'),'pod_location'))
-					$ret['pod_location'] = $x->textContent;
+					$ret['pod_location'] = escape_tags($x->textContent);
 				if(attribute_contains($x->getAttribute('class'),'fn'))
-					$ret['fn'] = $x->textContent;
+					$ret['fn'] = escape_tags($x->textContent);
 				if(attribute_contains($x->getAttribute('class'),'uid'))
-					$ret['uid'] = $x->textContent;
+					$ret['uid'] = escape_tags($x->textContent);
 				if(attribute_contains($x->getAttribute('class'),'nickname'))
-					$ret['nick'] = $x->textContent;
+					$ret['nick'] = escape_tags($x->textContent);
 				if(attribute_contains($x->getAttribute('class'),'searchable'))
-					$ret['searchable'] = $x->textContent;
+					$ret['searchable'] = escape_tags($x->textContent);
 				if(attribute_contains($x->getAttribute('class'),'key'))
 					$ret['public_key'] = $x->textContent;
 				if(attribute_contains($x->getAttribute('class'),'given_name'))
-					$ret['given_name'] = $x->textContent;
+					$ret['given_name'] = escape_tags($x->textContent);
 				if(attribute_contains($x->getAttribute('class'),'family_name'))
-					$ret['family_name'] = $x->textContent;
+					$ret['family_name'] = escxape_tags($x->textContent);
 				if(attribute_contains($x->getAttribute('class'),'url'))
-					$ret['url'] = $x->textContent;
+					$ret['url'] = escape_tags($x->textContent);
 
 				if((attribute_contains($x->getAttribute('class'),'photo'))
 					|| (attribute_contains($x->getAttribute('class'),'avatar'))) {
