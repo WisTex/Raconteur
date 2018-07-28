@@ -56,12 +56,8 @@ class Apps {
 
 	}
 
-
-	static public function import_system_apps() {
-		if(! local_channel())
-			return;
-
-		self::$base_apps = get_config('system','base_apps',[ 
+	static public function get_base_apps() {
+		return get_config('system','base_apps',[ 
 			'Connections',
 			'Suggest Channels',
 			'Grid',
@@ -77,7 +73,16 @@ class Apps {
 			'Mail',
 			'Profile Photo'
 		]);
+	}
 
+
+
+	static public function import_system_apps() {
+		if(! local_channel())
+			return;
+
+		self::$base_apps = self::get_base_apps();
+ 
 		$apps = self::get_system_apps(false);
 
 		self::$available_apps = q("select * from app where app_channel = 0");
@@ -140,8 +145,13 @@ class Apps {
 		foreach(self::$available_apps as $iapp) {
 			if($iapp['app_id'] == hash('whirlpool',$app['name'])) {
 				$notfound = false;
-				if(($iapp['app_version'] != $app['version'])
+				if(($iapp['app_version'] !== $app['version'])
 					|| ($app['plugin'] && (! $iapp['app_plugin']))) {
+					return intval($iapp['app_id']);
+				}
+
+				if(($iapp['app_url'] !== $app['url'])
+					|| ($iapp['app_photo'] !== $app['photo'])) {
 					return intval($iapp['app_id']);
 				}
 			}
@@ -198,11 +208,10 @@ class Apps {
 		if($lines) {
 			foreach($lines as $x) {
 				if(preg_match('/^([a-zA-Z].*?):(.*?)$/ism',$x,$matches)) {
-					$ret[$matches[1]] = trim(str_replace(array('$baseurl','$nick'),array($baseurl,$address),$matches[2]));
+					$ret[$matches[1]] = trim($matches[2]);
 				}
 			}
 		}	
-
 
 		if(! $ret['photo'])
 			$ret['photo'] = $baseurl . '/' . get_default_profile_photo(80);
@@ -372,8 +381,23 @@ class Apps {
 
 		$papp['papp'] = self::papp_encode($papp);
 
+		// This will catch somebody clicking on a system "available" app that hasn't had the path macros replaced
+		// and they are allowed to see the app
+
+
+		if(strstr($papp['url'],'$baseurl') || strstr($papp['url'],'$nick') || strstr($papp['photo'],'$baseurl') || strstr($pap['photo'],'$nick')) {
+			$view_channel = local_channel();
+			if(! $view_channel) {
+				$sys = get_sys_channel();
+				$view_channel = $sys['channel_id'];
+			}
+			self::app_macros($view_channel,$papp); 
+		}
+
 		if(! strstr($papp['url'],'://'))
 			$papp['url'] = z_root() . ((strpos($papp['url'],'/') === 0) ? '' : '/') . $papp['url'];
+
+
 
 		foreach($papp as $k => $v) {
 			if(strpos($v,'http') === 0 && $k != 'papp') {
@@ -503,7 +527,7 @@ class Apps {
 				intval($uid)
 			);
 			if($r) {
-				if(! $r[0]['app_system']) {
+				if(($app['uid']) && (! $r[0]['app_system'])) {
 					if($app['categories'] && (! $app['term'])) {
 						$r[0]['term'] = q("select * from term where otype = %d and oid = %d",
 							intval(TERM_OBJ_APP),
@@ -518,8 +542,25 @@ class Apps {
 		return false;
 	}
 
-	static public function app_destroy($uid,$app) {
 
+	static public function can_delete($uid,$app) {
+		if(! $uid) {
+			return false;
+		}
+
+		$base_apps = self::get_base_apps();
+		if($base_apps) {
+			foreach($base_apps as $b) {
+				if($app['guid'] === hash('whirlpool',$b)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+
+	static public function app_destroy($uid,$app) {
 
 		if($uid && $app['guid']) {
 
@@ -530,17 +571,23 @@ class Apps {
 			if($x) {
 				if(! intval($x[0]['app_deleted'])) {
 					$x[0]['app_deleted'] = 1;
-					q("delete from term where otype = %d and oid = %d",
-						intval(TERM_OBJ_APP),
-						intval($x[0]['id'])
-					);
-					if ($uid) {
+					if(self::can_delete($uid,$app)) {
 						$r = q("delete from app where app_id = '%s' and app_channel = %d",
 							dbesc($app['guid']),
 							intval($uid)
 						);
-
-						// we don't sync system apps - they may be completely different on the other system
+						q("delete from term where otype = %d and oid = %d",
+							intval(TERM_OBJ_APP),
+							intval($x[0]['id'])
+						);
+					}
+					else {
+						$r = q("update app set app_deleted = 1 where app_id = '%s' and app_channel = %d",
+							dbesc($app['guid']),
+							intval($uid)
+						);
+					}
+					if(! intval($x[0]['app_system'])) {
 						build_sync_packet($uid,array('app' => $x));
 					}
 				}
@@ -549,6 +596,7 @@ class Apps {
 				}
 			}
 		}
+
 	}
 
 	static public function app_undestroy($uid,$app) {
@@ -811,6 +859,29 @@ class Apps {
 	}
 
 
+	static public function app_macros($uid,&$arr) {
+
+		if(! intval($uid))
+			return;
+
+		$baseurl = z_root();
+		$channel = channelx_by_n($uid);
+		$address = (($channel) ? $channel['channel_address'] : '');
+		
+		//future expansion
+
+		$observer = \App::get_observer();
+	
+		$arr['url'] = str_replace(array('$baseurl','$nick'),array($baseurl,$address),$arr['url']);
+		$arr['photo'] = str_replace(array('$baseurl','$nick'),array($baseurl,$address),$arr['photo']);
+
+	}
+
+
+
+
+
+
 	static public function app_store($arr) {
 
 		//logger('app_store: ' . print_r($arr,true));
@@ -820,6 +891,7 @@ class Apps {
 
 		$sys = get_sys_channel();
 
+		self::app_macros($arr['uid'],$arr);
 
 		$darray['app_url']     = ((x($arr,'url')) ? $arr['url'] : '');
 		$darray['app_channel'] = ((x($arr,'uid')) ? $arr['uid'] : 0);
@@ -831,8 +903,8 @@ class Apps {
 			$arr['author'] = $sys['channel_hash'];
 		}
 
-		if($arr['photo'] && (strpos($arr['photo'],'icon:') !== 0) && (! strstr($arr['photo'],z_root()))) {
-			$x = import_xchan_photo($arr['photo'],get_observer_hash(),true);
+		if($arr['photo'] && (strpos($arr['photo'],'icon:') === false) && (! strstr($arr['photo'],z_root()))) {
+			$x = import_xchan_photo(str_replace('$baseurl',z_root(),$arr['photo']),get_observer_hash(),true);
 			$arr['photo'] = $x[1];
 		}
 
@@ -905,15 +977,18 @@ class Apps {
 		$darray = array();
 		$ret = array('success' => false);
 
+		self::app_macros($arr['uid'],$arr);
+
+
 		$darray['app_url']     = ((x($arr,'url')) ? $arr['url'] : '');
 		$darray['app_channel'] = ((x($arr,'uid')) ? $arr['uid'] : 0);
 		$darray['app_id']      = ((x($arr,'guid')) ? $arr['guid'] : 0);
 
-		if((! $darray['app_url']) || (! $darray['app_channel']) || (! $darray['app_id']))
+		if((! $darray['app_url']) || (! $darray['app_id']))
 			return $ret;
 
-		if($arr['photo'] && (strpos($arr['photo'],'icon:') !== 0) && (! strstr($arr['photo'],z_root()))) {
-			$x = import_xchan_photo($arr['photo'],get_observer_hash(),true);
+		if($arr['photo'] && (strpos($arr['photo'],'icon:') === false) && (! strstr($arr['photo'],z_root()))) {
+			$x = import_xchan_photo(str_replace('$baseurl',z_root(),$arr['photo']),get_observer_hash(),true);
 			$arr['photo'] = $x[1];
 		}
 
@@ -996,9 +1071,6 @@ class Apps {
 
 		$ret['type'] = 'personal';
 	
-		if($app['app_id'])
-			$ret['guid'] = $app['app_id'];
-
 		if($app['app_id'])
 			$ret['guid'] = $app['app_id'];
 
