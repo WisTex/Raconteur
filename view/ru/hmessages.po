@@ -3390,7 +3390,7 @@ msgstr "Задания Cron / планировщика не запущены."
 
 #: ../../boot.php:2535 ../../include/datetime.php:238
 msgid "never"
-msgstr "никогд"
+msgstr "никогда"
 
 #: ../../view/theme/redbasic/php/config.php:15 ../../include/text.php:3078
 #: ../../Zotlabs/Module/Admin/Site.php:198
@@ -3733,17 +3733,17 @@ msgstr "Воздерживаюсь"
 #: ../../include/conversation.php:621 ../../Zotlabs/Module/Photos.php:1144
 msgctxt "title"
 msgid "Attending"
-msgstr "Присоединившиеся"
+msgstr "Посещаю"
 
 #: ../../include/conversation.php:621 ../../Zotlabs/Module/Photos.php:1144
 msgctxt "title"
 msgid "Not attending"
-msgstr "Не присоединившиеся"
+msgstr "Не посещаю"
 
 #: ../../include/conversation.php:621 ../../Zotlabs/Module/Photos.php:1144
 msgctxt "title"
 msgid "Might attend"
-msgstr "Могут присоединиться"
+msgstr "Возможно посещу"
 
 #: ../../include/conversation.php:690 ../../Zotlabs/Lib/ThreadItem.php:158
 msgid "Select"
@@ -7365,7 +7365,7 @@ msgstr "Пожалуйста, посетите %s для просмотра и/�
 
 #: ../../Zotlabs/Lib/Enotify.php:144
 msgid "commented on"
-msgstr " прокомментировал в"
+msgstr "прокомментировал"
 
 #: ../../Zotlabs/Lib/Enotify.php:155
 msgid "liked"
@@ -7974,7 +7974,7 @@ msgstr "Настройки аккаунта"
 
 #: ../../Zotlabs/Widget/Settings_menu.php:41
 msgid "Channel settings"
-msgstr "Выбор канала"
+msgstr "Настройки канала"
 
 #: ../../Zotlabs/Widget/Settings_menu.php:50
 msgid "Additional features"
@@ -12844,7 +12844,7 @@ msgstr "Членство одобрено автоматически"
 
 #: ../../Zotlabs/Module/Settings/Channel.php:514
 msgid "Channel Settings"
-msgstr "Выбор канала"
+msgstr "Настройки канала"
 
 #: ../../Zotlabs/Module/Settings/Channel.php:521
 msgid "Basic Settings"
@@ -14753,7 +14753,7 @@ msgstr "Участник сайта (%s)"
 #: ../../Zotlabs/Module/Lostpass.php:44 ../../Zotlabs/Module/Lostpass.php:49
 #, php-format
 msgid "Password reset requested at %s"
-msgstr "Запроше сброс пароля на %s"
+msgstr "Запрошен сброс пароля на %s"
 
 #: ../../Zotlabs/Module/Lostpass.php:68
 msgid ""
@@ -14781,7 +14781,7 @@ msgstr "нажмите здесь чтобы войти"
 msgid ""
 "Your password may be changed from the <em>Settings</em> page after "
 "successful login."
-msgstr "Ваш пароль может быть изменён на странице <em>Настройки</em>после успешного входа."
+msgstr "Ваш пароль может быть изменён на странице <em>Настройки</em> после успешного входа."
 
 #: ../../Zotlabs/Module/Lostpass.php:117
 #, php-format
@@ -14884,3 +14884,4 @@ msgstr "Загрузить файл"
 #: ../../Zotlabs/Storage/Browser.php:404
 msgid "Drop files here to immediately upload"
 msgstr "Поместите файлы сюда для немедленной загрузки"
+
