@@ -31,6 +31,7 @@
         $ink = False;
         foreach ($infile as $l) {
 
+                $l = trim($l, " ");
                 if (!preg_match("/^msgstr\[[1-9]/",$l)) {
                         if ($k!="" && (substr($l,0,7)=="msgstr " || substr($l,0,8)=="msgstr[0")){
                                 $ink = False;
@@ -66,13 +67,13 @@
                         }
 
                         if (substr($l,0,6)=="msgid ") {
-                                preg_match('/^msgid "(.*)"/',$l,$m);
+                                preg_match('/^msgid "(.*)"$/',$l,$m);
                                 $k = $m[1];
                                 $ink = True;
                         }
 
                         if (substr($l,0,8)=="msgctxt ") {
-                                preg_match('/^msgctxt "(.*)"/',$l,$m);
+                                preg_match('/^msgctxt "(.*)"$/',$l,$m);
                                 $c = $m[1];
                         }
 
