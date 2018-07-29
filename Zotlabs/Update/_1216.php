@@ -6,7 +6,7 @@ class _1216 {
 
 	function run() {
 
-		$r = q("UPDATE xchan set xchan_name = 'unknown' where xchan_name like '%<%' ");
+		$r = dbq("UPDATE xchan set xchan_name = 'unknown' where xchan_name like '%<%' ");
 
 		if($r) {
 			return UPDATE_SUCCESS;
