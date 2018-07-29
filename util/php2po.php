@@ -26,7 +26,8 @@
 
         $out = "";
         $infile = file($pofile);
-        $k="";
+        $k = "";
+        $c = "";
         $ink = False;
         foreach ($infile as $l) {
 
@@ -39,8 +40,10 @@
                                         $v = App::$strings[$k];
                                 } else {
                                         $k = "__ctx:".$c."__ ".$k;
-                                        if (isset(App::$strings[$k]))
+                                        if (isset(App::$strings[$k])) {
                                                 $v = App::$strings[$k];
+                                                $c = "";
+                                        }
                                 }
                                 if (!empty($v)) {
                                         if (is_array($v)) {
