@@ -593,7 +593,7 @@ class Libzot {
 			return $result;
 		}
 
-		$c = import_xchan($record['data']);
+		$c = self::import_xchan($record['data']);
 		if($c['success']) {
 			$result['success'] = true;
 		}
@@ -719,7 +719,7 @@ class Libzot {
 				$rup = q("update xchan set xchan_name = '%s', xchan_name_date = '%s', xchan_connurl = '%s', xchan_follow = '%s',
 					xchan_connpage = '%s', xchan_hidden = %d, xchan_selfcensored = %d, xchan_deleted = %d, xchan_pubforum = %d,
 					xchan_addr = '%s', xchan_url = '%s' where xchan_hash = '%s'",
-					dbesc(($arr['name']) ? $arr['name'] : '-'),
+					dbesc(($arr['name']) ? escape_tags($arr['name']) : '-'),
 					dbesc($arr['name_updated']),
 					dbesc($arr['primary_location']['connections_url']),
 					dbesc($arr['primary_location']['follow_url']),
@@ -728,8 +728,8 @@ class Libzot {
 					intval($arr['adult_content']),
 					intval($arr['deleted']),
 					intval($arr['public_forum']),
-					dbesc($arr['primary_location']['address']),
-					dbesc($arr['primary_location']['url']),
+					dbesc(escape_tags($arr['primary_location']['address'])),
+					dbesc(escape_tags($arr['primary_location']['url'])),
 					dbesc($xchan_hash)
 				);
 
@@ -755,12 +755,12 @@ class Libzot {
 					'xchan_pubkey'         => $arr['key'],
 					'xchan_photo_mimetype' => $arr['photo_mimetype'],
 					'xchan_photo_l'        => $arr['photo'],
-					'xchan_addr'           => $arr['primary_location']['address'],
-					'xchan_url'            => $arr['primary_location']['url'],
+					'xchan_addr'           => escape_tags($arr['primary_location']['address']),
+					'xchan_url'            => escape_tags($arr['primary_location']['url']),
 					'xchan_connurl'        => $arr['primary_location']['connections_url'],
 					'xchan_follow'         => $arr['primary_location']['follow_url'],
 					'xchan_connpage'       => $arr['connect_url'],
-					'xchan_name'           => (($arr['name']) ? $arr['name'] : '-'),
+					'xchan_name'           => (($arr['name']) ? escape_tags($arr['name']) : '-'),
 					'xchan_network'        => 'zot6',
 					'xchan_photo_date'     => $arr['photo_updated'],
 					'xchan_name_date'      => $arr['name_updated'],
