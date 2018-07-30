@@ -86,8 +86,8 @@ class Libsync {
 		$info['encoding'] = 'red'; // note: not zot, this packet is very platform specific
 		$info['relocate'] = ['channel_address' => $channel['channel_address'], 'url' => z_root() ];
 
-		if(array_key_exists($uid,App::$config) && array_key_exists('transient',App::$config[$uid])) {
-			$settings = App::$config[$uid]['transient'];
+		if(array_key_exists($uid,\App::$config) && array_key_exists('transient',\App::$config[$uid])) {
+			$settings = \App::$config[$uid]['transient'];
 			if($settings) {
 				$info['config'] = $settings;
 			}
