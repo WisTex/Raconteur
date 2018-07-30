@@ -32,7 +32,7 @@ class Siteinfo extends \Zotlabs\Web\Controller {
 				'$transport_link' => '<a href="https://zotlabs.com">https://zotlabs.com</a>',
 
 				'$additional_text' => t('Additional federated transport protocols:'),
-				'$additional_fed' => implode(',',$federated),
+				'$additional_fed' => implode(', ',array_unique($federated)),
 				'$prj_version' => ((get_config('system','hidden_version_siteinfo')) ? '' : sprintf( t('Version %s'), \Zotlabs\Lib\System::get_project_version())),
 				'$prj_linktxt' => t('Project homepage'),
 				'$prj_srctxt' => t('Developer homepage'),
