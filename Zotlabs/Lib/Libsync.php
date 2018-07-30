@@ -82,7 +82,7 @@ class Libsync {
 			logger('packet: ' . print_r($packet, true),LOGGER_DATA, LOG_DEBUG);
 
 		$info = (($packet) ? $packet : array());
-		$info['type'] = 'channel_sync';
+		$info['type'] = 'sync';
 		$info['encoding'] = 'red'; // note: not zot, this packet is very platform specific
 		$info['relocate'] = ['channel_address' => $channel['channel_address'], 'url' => z_root() ];
 
@@ -144,7 +144,7 @@ class Libsync {
 
 		foreach($synchubs as $hub) {
 			$hash = random_string();
-			$n = Libzot::build_packet($channel,'sync',$env_recips,json_encode($info),$hub['hubloc_sitekey'],$hub['site_crypto'],$hash);
+			$n = Libzot::build_packet($channel,'sync',$env_recips,json_encode($info),'red',$hub['hubloc_sitekey'],$hub['site_crypto']);
 			Queue::insert(array(
 				'hash'       => $hash,
 				'account_id' => $channel['channel_account_id'],
