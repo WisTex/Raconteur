@@ -1153,7 +1153,9 @@ class Libzot {
 			return;
 		}
 
+
 		if($has_data) {
+
 			if(in_array($env['type'],['activity','response'])) {
 
 				if($env['encoding'] === 'zot') {
@@ -1221,10 +1223,10 @@ class Libzot {
 	
 				$result = self::process_profile_delivery($env['sender'],$arr,$deliveries);
 			}
-			elseif($env['type'] === 'channel_sync') {
+			elseif($env['type'] === 'sync') {
 				// $arr = get_channelsync_elements($data);
 
-				$arr = $data;
+				$arr = json_decode($data,true);
 
 				logger('Channel sync received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 				logger('Channel sync recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);

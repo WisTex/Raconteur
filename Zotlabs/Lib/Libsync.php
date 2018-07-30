@@ -190,11 +190,14 @@ class Libsync {
 
 		foreach ($deliveries as $d) {
 			$r = q("select * from channel where channel_hash = '%s' limit 1",
-				dbesc(($keychange) ? $arr['keychange']['old_hash'] : $d['hash'])
+				dbesc($sender)
 			);
 
+			$DR = new \Zotlabs\Lib\DReport(z_root(),$sender,$d,'sync');
+
 			if (! $r) {
-				$result[] = array($d['hash'],'not found');
+				$DR->update('recipient not found');
+				$result[] = $DR->get();
 				continue;
 			}
 
@@ -203,9 +206,10 @@ class Libsync {
 			$max_friends = service_class_fetch($channel['channel_id'],'total_channels');
 			$max_feeds = account_service_class_fetch($channel['channel_account_id'],'total_feeds');
 
-			if($channel['channel_hash'] != $sender['hash']) {
-				logger('Possible forgery. Sender ' . $sender['hash'] . ' is not ' . $channel['channel_hash']);
-				$result[] = array($d['hash'],'channel mismatch',$channel['channel_name'],'');
+			if($channel['channel_hash'] != $sender) {
+				logger('Possible forgery. Sender ' . $sender . ' is not ' . $channel['channel_hash']);
+				$DR->update('channel mismatch');
+				$result[] = $DR->get();
 				continue;
 			}
 
@@ -276,8 +280,6 @@ class Libsync {
 
 				$remote_channel = $arr['channel'];
 				$remote_channel['channel_id'] = $channel['channel_id'];
-				translate_channel_perms_inbound($remote_channel);
-
 
 				if(array_key_exists('channel_pageflags',$arr['channel']) && intval($arr['channel']['channel_pageflags'])) {
 
@@ -440,7 +442,7 @@ class Libsync {
 					// using the raw abook record as passed to us. New-style permissions will fall through
 					// and be set using abconfig
 
-					translate_abook_perms_inbound($channel,$abook);
+					// translate_abook_perms_inbound($channel,$abook);
 
 					if($abconfig) {
 						/// @fixme does not handle sync of del_abconfig
@@ -670,14 +672,7 @@ class Libsync {
 			 */
 			call_hooks('process_channel_sync_delivery', $addon);
 
-			// we should probably do this for all items, but usually we only send one.
-
-			if(array_key_exists('item',$arr) && is_array($arr['item'][0])) {
-				$DR = new \Zotlabs\Lib\DReport(z_root(),$d['hash'],$d['hash'],$arr['item'][0]['message_id'],'channel sync processed');
-				$DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
-			}
-			else
-				$DR = new \Zotlabs\Lib\DReport(z_root(),$d['hash'],$d['hash'],'sync packet','channel sync delivered');
+			$DR = new \Zotlabs\Lib\DReport(z_root(),$d,$d,'sync','channel sync delivered');
 
 			$result[] = $DR->get();
 		}
