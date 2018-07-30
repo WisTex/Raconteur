@@ -208,7 +208,7 @@ class Import extends \Zotlabs\Web\Controller {
 					'hubloc_url_sig'  => Libzot::sign(z_root(),$channel['channel_prvkey']),
 					'hubloc_site_id'  => Libzot::make_xchan_hash(z_root(),get_config('system','pubkey')),
 					'hubloc_host'     => \App::get_hostname(),
-					'hubloc_callback' => z_root() . '/post',
+					'hubloc_callback' => z_root() . '/zot',
 					'hubloc_sitekey'  => get_config('system','pubkey'),
 					'hubloc_updated'  => datetime_convert()
 				]

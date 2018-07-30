@@ -56,8 +56,12 @@ class Libzotdir {
 				set_config('system','directory_server',z_root());
 			}
 		}
-
-		return [ 'url' => $preferred ];
+		if($preferred) {
+			return [ 'url' => $preferred ];
+		}
+		else {
+			return [];
+		}
 	}
 
 

@@ -11,10 +11,6 @@ class Zotfinger {
 		if(! $resource) {
 			return false;
 		}
-		if(self::$instance_resource === $resource) {
-			return false;
-		}
-
 
 		if($channel) {
 			$headers = [ 
