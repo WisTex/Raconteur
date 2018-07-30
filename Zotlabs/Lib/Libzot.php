@@ -1301,6 +1301,7 @@ class Libzot {
 		$r = [];
 
 		$c = q("select channel_id, channel_hash from channel where channel_removed = 0");
+
 		if($c) {
 			foreach($c as $cc) {
 				if(perm_is_allowed($cc['channel_id'],$msg['sender'],$perm)) {

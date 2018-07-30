@@ -123,7 +123,7 @@ class Receiver {
 		$hub = Libzot::valid_hub($this->sender,$this->site_id);
 
 		if (! $hub) {
-			$x = register_hub($this->sigdata['signer']);
+			$x = Libzot::register_hub($this->sigdata['signer']);
 			if($x['success']) {
 				$hub = Libzot::valid_hub($this->sender,$this->site_id);
 			}	
@@ -156,6 +156,7 @@ class Receiver {
 		$result = false;
 
 		$this->sigdata = HTTPSig::verify($this->rawdata);
+
 		if($this->sigdata && $this->sigdata['header_signed'] && $this->sigdata['header_valid']) {
 			$result = true;
 

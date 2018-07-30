@@ -226,8 +226,6 @@ class HTTPSig {
 		$r = ActivityStreams::fetch_property($id);
 
 		if($r) {
-			$j = json_decode($r,true);
-
 			if(array_key_exists('publicKey',$j) && array_key_exists('publicKeyPem',$j['publicKey']) && array_key_exists('id',$j['publicKey'])) {
 				if($j['publicKey']['id'] === $id || $j['id'] === $id) {
 					return [ 'public_key' => self::convertKey($j['publicKey']['publicKeyPem']), 'portable_id' => '', 'hubloc' => [] ];
@@ -245,6 +243,7 @@ class HTTPSig {
 			dbesc(str_replace('acct:','',$id)),
 			dbesc($id)
 		);
+
 		if($x && $x[0]['xchan_pubkey']) {
 			return [ 'portable_id' => $x[0]['xchan_hash'], 'public_key' => $x[0]['xchan_pubkey'] , 'hubloc' => $x[0] ];
 		}
