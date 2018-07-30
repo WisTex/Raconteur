@@ -47,6 +47,9 @@ class Libzotdir {
 			if ($dirmode == DIRECTORY_MODE_NORMAL) {
 				$toss = mt_rand(0,count($DIRECTORY_FALLBACK_SERVERS));
 				$preferred = $DIRECTORY_FALLBACK_SERVERS[$toss];
+				if(! $preferred) {
+					$preferred = DIRECTORY_FALLBACK_MASTER;
+				}
 				set_config('system','directory_server',$preferred);
 			} 
 			else {
