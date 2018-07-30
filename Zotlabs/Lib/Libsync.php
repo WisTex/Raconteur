@@ -203,6 +203,8 @@ class Libsync {
 
 			$channel = $r[0];
 
+			$DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
+
 			$max_friends = service_class_fetch($channel['channel_id'],'total_channels');
 			$max_feeds = account_service_class_fetch($channel['channel_account_id'],'total_feeds');
 
@@ -334,6 +336,8 @@ class Libsync {
 
 				$disallowed = array('abook_id','abook_account','abook_channel','abook_rating','abook_rating_text','abook_not_here');
 
+				$fields = db_columns($abook);
+
 				foreach($arr['abook'] as $abook) {
 
 					$abconfig = null;
@@ -387,8 +391,12 @@ class Libsync {
 					}
 
 					foreach($abook as $k => $v) {
-						if(in_array($k,$disallowed) || (strpos($k,'abook') !== 0))
+						if(in_array($k,$disallowed) || (strpos($k,'abook') !== 0)) {
 							continue;
+						}
+						if(! in_array($k,$fields)) {
+							continue;
+						}
 						$clean[$k] = $v;
 					}
 
@@ -673,6 +681,8 @@ class Libsync {
 			call_hooks('process_channel_sync_delivery', $addon);
 
 			$DR = new \Zotlabs\Lib\DReport(z_root(),$d,$d,'sync','channel sync delivered');
+
+			$DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
 
 			$result[] = $DR->get();
 		}

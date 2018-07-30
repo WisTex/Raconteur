@@ -63,7 +63,6 @@ class Receiver {
 
 		logger('received_json: ' . json_encode($this->data,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOGGER_DATA);
 
-
 		logger('received: ' . print_r($this->data,true), LOGGER_DATA);
 
 		if ($this->data && is_array($this->data)) {
@@ -109,7 +108,7 @@ class Receiver {
 
 		if ($this->sender) {
 			$result = $this->ValidateSender();
-			if(! $result) {
+			if (! $result) {
 				$this->error = true;
 				return $this->response;
 			}
@@ -133,12 +132,12 @@ class Receiver {
 			}
 		}
 
-		if(! check_siteallowed($hub['hubloc_url'])) {
+		if (! check_siteallowed($hub['hubloc_url'])) {
 			$this->response['message'] = 'forbidden';
 			return false;
 		}
 
-		if(! check_channelallowed($this->sender)) {
+		if (! check_channelallowed($this->sender)) {
 			$this->response['message'] = 'forbidden';
 			return false;
 		}
@@ -157,7 +156,7 @@ class Receiver {
 
 		$this->sigdata = HTTPSig::verify($this->rawdata);
 
-		if($this->sigdata && $this->sigdata['header_signed'] && $this->sigdata['header_valid']) {
+		if ($this->sigdata && $this->sigdata['header_signed'] && $this->sigdata['header_valid']) {
 			$result = true;
 
 			// It is OK to not have signed content - not all messages provide content.
@@ -200,6 +199,8 @@ class Receiver {
 
 		}
 
+		logger('response_to_return: ' . print_r($this->response,true),LOGGER_DATA);
+
 		if ($this->encrypted) {
 			$this->EncryptResponse();
 		}
@@ -209,7 +210,7 @@ class Receiver {
 
 	function EncryptResponse() {
 		$algorithm = Libzot::best_algorithm($this->hub['site_crypto']);
-		if($algorithm) {
+		if ($algorithm) {
 			$this->response = crypto_encapsulate(json_encode($this->response),$this->hub['hubloc_sitekey'], $algorithm);
 		}
 	}
