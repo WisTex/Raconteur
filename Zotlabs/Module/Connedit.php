@@ -774,7 +774,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 	
 			$global_perms = \Zotlabs\Access\Permissions::Perms();
 
-			$existing = get_all_perms(local_channel(),$contact['abook_xchan']);
+			$existing = get_all_perms(local_channel(),$contact['abook_xchan'],false);
 	
 			$unapproved = array('pending', t('Approve this connection'), '', t('Accept connection to allow communication'), array(t('No'),('Yes')));
 	

@@ -491,7 +491,7 @@ function zot_refresh($them, $channel = null, $force = false) {
 			$profile_assign = get_pconfig($channel['channel_id'],'system','profile_assign','');
 
 			// Keep original perms to check if we need to notify them
-			$previous_perms = get_all_perms($channel['channel_id'],$x['hash']);
+			$previous_perms = get_all_perms($channel['channel_id'],$x['hash'],false);
 
 			$r = q("select * from abook where abook_xchan = '%s' and abook_channel = %d and abook_self = 0 limit 1",
 				dbesc($x['hash']),
@@ -560,7 +560,7 @@ function zot_refresh($them, $channel = null, $force = false) {
 
 				if($y) {
 					logger("New introduction received for {$channel['channel_name']}");
-					$new_perms = get_all_perms($channel['channel_id'],$x['hash']);
+					$new_perms = get_all_perms($channel['channel_id'],$x['hash'],false);
 
 					// Send a clone sync packet and a permissions update if permissions have changed
 
@@ -4419,7 +4419,7 @@ function zotinfo($arr) {
 	if(! $ret['follow_url'])
 		$ret['follow_url'] = z_root() . '/follow?f=&url=%s';
 
-	$permissions = get_all_perms($e['channel_id'],$ztarget_hash,false);
+	$permissions = get_all_perms($e['channel_id'],$ztarget_hash,false,false);
 
 	if($ztarget_hash) {
 		$permissions['connected'] = false;

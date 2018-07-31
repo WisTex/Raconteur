@@ -16,11 +16,14 @@ require_once('include/security.php');
  *
  * @param int $uid The channel_id associated with the resource owner
  * @param string $observer_xchan The xchan_hash representing the observer
- * @param bool $internal_use (default true)
+ * @param bool $check_siteblock (default true)
+ *          if false, bypass check for "Block Public" on the site
+ * @param bool $default_ignored (default true)
+ *          if false, lie and pretend the ignored person has permissions you are ignoring (used in channel discovery)
  *
  * @returns array of all permissions, key is permission name, value is true or false
  */
-function get_all_perms($uid, $observer_xchan, $internal_use = true) {
+function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_ignored = true) {
 
 	$api = App::get_oauth_key();
 	if($api)
@@ -111,7 +114,7 @@ function get_all_perms($uid, $observer_xchan, $internal_use = true) {
 			$blocked_anon_perms = \Zotlabs\Access\Permissions::BlockedAnonPerms();
 
 
-			if(($x) && ($internal_use) && in_array($perm_name,$blocked_anon_perms) && intval($x[0]['abook_ignored'])) {
+			if(($x) && ($default_ignored) && in_array($perm_name,$blocked_anon_perms) && intval($x[0]['abook_ignored'])) {
 				$ret[$perm_name] = false;
 				continue;
 			}
@@ -119,7 +122,7 @@ function get_all_perms($uid, $observer_xchan, $internal_use = true) {
 
 		// system is blocked to anybody who is not authenticated
 
-		if((! $observer_xchan) && intval(get_config('system', 'block_public'))) {
+		if(($check_siteblock) && (! $observer_xchan) && intval(get_config('system', 'block_public'))) {
 			$ret[$perm_name] = false;
 			continue;
 		}
@@ -251,9 +254,11 @@ function get_all_perms($uid, $observer_xchan, $internal_use = true) {
  * @param int $uid The channel_id associated with the resource owner
  * @param string $observer_xchan The xchan_hash representing the observer
  * @param string $permission
+ * @param boolean $check_siteblock (default true)
+ *     if false bypass check for "Block Public" at the site level
  * @return bool true if permission is allowed for observer on channel
  */
-function perm_is_allowed($uid, $observer_xchan, $permission) {
+function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = true) {
 
 	$api = App::get_oauth_key();
 	if($api)
@@ -326,7 +331,7 @@ function perm_is_allowed($uid, $observer_xchan, $permission) {
 
 	// system is blocked to anybody who is not authenticated
 
-	if((! $observer_xchan) && intval(get_config('system', 'block_public')))
+	if(($check_siteblock) && (! $observer_xchan) && intval(get_config('system', 'block_public')))
 		return false;
 
 	// Check if this $uid is actually the $observer_xchan

@@ -117,7 +117,7 @@ class Tokens {
 		$global_perms = \Zotlabs\Access\Permissions::Perms();
 		$their_perms = [];
 
-		$existing = get_all_perms(local_channel(),(($atoken_xchan) ? $atoken_xchan : ''));
+		$existing = get_all_perms(local_channel(),(($atoken_xchan) ? $atoken_xchan : ''),false);
 
 		if($atoken_xchan) {
 			$theirs = q("select * from abconfig where chan = %d and xchan = '%s' and cat = 'their_perms'",

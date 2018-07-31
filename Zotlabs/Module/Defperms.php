@@ -209,7 +209,6 @@ class Defperms extends \Zotlabs\Web\Controller {
 	
 			$global_perms = \Zotlabs\Access\Permissions::Perms();
 
-			$existing = get_all_perms(local_channel(),$contact['abook_xchan']);
 			$hidden_perms = [];
 	
 			foreach($global_perms as $k => $v) {
