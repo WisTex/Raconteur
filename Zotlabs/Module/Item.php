@@ -729,10 +729,10 @@ logger('linkify: ' . print_r($results,true));
 		$item_thread_top = ((! $parent) ? 1 : 0);
 	
 
-		// fix permalinks for cards
+		// fix permalinks for cards, etc.
 	
 		if($webpage == ITEM_TYPE_CARD) {
-			$plink = z_root() . '/cards/' . $channel['channel_address'] . '/' . (($pagetitle) ? $pagetitle : substr($mid,0,16));
+			$plink = z_root() . '/cards/' . $channel['channel_address'] . '/' . (($pagetitle) ? $pagetitle : substr($mid,-16));
 		}
 		if(($parent_item) && ($parent_item['item_type'] == ITEM_TYPE_CARD)) {
 			$r = q("select v from iconfig where iconfig.cat = 'system' and iconfig.k = 'CARD' and iconfig.iid = %d limit 1",
@@ -744,7 +744,7 @@ logger('linkify: ' . print_r($results,true));
 		}
 
 		if($webpage == ITEM_TYPE_ARTICLE) {
-			$plink = z_root() . '/articles/' . $channel['channel_address'] . '/' . (($pagetitle) ? $pagetitle : substr($mid,0,16));
+			$plink = z_root() . '/articles/' . $channel['channel_address'] . '/' . (($pagetitle) ? $pagetitle : substr($mid,-16));
 		}
 		if(($parent_item) && ($parent_item['item_type'] == ITEM_TYPE_ARTICLE)) {
 			$r = q("select v from iconfig where iconfig.cat = 'system' and iconfig.k = 'ARTICLE' and iconfig.iid = %d limit 1",
@@ -754,6 +754,11 @@ logger('linkify: ' . print_r($results,true));
 				$plink = z_root() . '/articles/' . $channel['channel_address'] . '/' . $r[0]['v'];
 			}
 		}
+
+		if($webpage == ITEM_TYPE_MAIL) {
+			$plink = z_root() . '/mail/' . $channel['channel_address'] . '/' . substr($mid,-16);
+		}
+
 
 		if ((! $plink) && ($item_thread_top)) {
 			$plink = z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . gen_link_id($mid);
@@ -1158,27 +1163,6 @@ logger('linkify: ' . print_r($results,true));
 			return $ret;
 		} 
 
-		// auto-upgrade beginner (techlevel 0) accounts - if they have at least two friends and ten posts
-		// and have uploaded something (like a profile photo), promote them to level 1. 
-
-		$a = q("select account_id, account_level from account where account_id = (select channel_account_id from channel where channel_id = %d limit 1)",
-			intval($channel_id)
-		);
-		if((! intval($a[0]['account_level'])) && intval($r[0]['total']) > 10) {
-			$x = q("select count(abook_id) as total from abook where abook_channel = %d",
-				intval($channel_id)
-			);
-			if($x && intval($x[0]['total']) > 2) {
-				$y = q("select count(id) as total from attach where uid = %d",
-					intval($channel_id)
-				);
-				if($y && intval($y[0]['total']) > 1) {
-					q("update account set account_level = 1 where account_id = %d limit 1",
-						intval($a[0]['account_id'])
-					);
-				}
-			}
-		} 
 
 		if (!$iswebpage) {
 			$max = engr_units_to_bytes(service_class_fetch($channel_id,'total_items'));

@@ -1254,6 +1254,7 @@ function status_editor($a, $x, $popup = false) {
 
 	App::$page['htmlhead'] .= replace_macros($tpl, array(
 		'$baseurl' => z_root(),
+		'$webpage' => $webpage,
 		'$editselect' => (($plaintext) ? 'none' : '/(profile-jot-text|prvmail-text)/'),
 		'$pretext' => ((x($x,'pretext')) ? $x['pretext'] : ''),
 		'$geotag' => $geotag,
@@ -1871,7 +1872,7 @@ function profile_tabs($a, $is_owner = false, $nickname = null){
 
 
 	if ($p['view_wiki']) {
-		if(feature_enabled($uid,'wiki') && (get_account_techlevel($account_id) > 3)) {
+		if(feature_enabled($uid,'wiki')) {
 			$tabs[] = array(
 				'label' => t('Wikis'),
 				'url'   => z_root() . '/wiki/' . $nickname,

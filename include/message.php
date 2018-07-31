@@ -28,16 +28,7 @@ function send_message($uid = 0, $recipient = '', $body = '', $subject = '', $rep
 
 	$observer_hash = get_observer_hash();
 
-	if($uid) {
-		$r = q("select * from channel where channel_id = %d limit 1",
-			intval($uid)
-		);
-		if($r)
-			$channel = $r[0];
-	}
-	else {
-		$channel = App::get_channel();
-	}
+	$channel = (($uid) ? channelx_by_n($uid) : \App::get_channel());
 
 	if(! $channel) {
 		$ret['message'] = t('Unable to determine sender.');

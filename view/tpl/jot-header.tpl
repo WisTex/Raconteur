@@ -58,6 +58,12 @@ var activeCommentText = '';
 		$('#id_mimetype').on('load', jotSetMime);
 		$('#id_mimetype').on('change', jotSetMime);
 
+		{{if $webpage === 8}}
+		$("#jot-pagetitle").name_autocomplete(baseurl + '/acl', 'm', false, function(data) {
+			$("#recip-complete").val(data.xid);
+		});
+		{{/if}}
+
 		function jotSetMime() { 
 			var mtype = $('#id_mimetype').val(); 
 			if(mtype == 'text/bbcode')

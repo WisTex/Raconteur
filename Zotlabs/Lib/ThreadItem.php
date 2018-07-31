@@ -272,7 +272,7 @@ class ThreadItem {
 		$has_bookmarks = false;
 		if(is_array($item['term'])) {
 			foreach($item['term'] as $t) {
-				if((get_account_techlevel() > 0) && ($t['ttype'] == TERM_BOOKMARK))
+				if($t['ttype'] == TERM_BOOKMARK)
 					$has_bookmarks = true;
 			}
 		}

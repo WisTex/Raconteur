@@ -428,7 +428,6 @@ class Channel {
 		$webbie = $nickname . '@' . \App::get_hostname();
 		$intl_nickname = unpunify($nickname) . '@' . unpunify(\App::get_hostname());
 	
-
 		$tpl_addr = get_markup_template("settings_nick_set.tpl");
 	
 		$prof_addr = replace_macros($tpl_addr,array(
@@ -436,10 +435,9 @@ class Channel {
 			'$nickname' => (($intl_nickname === $webbie) ? $webbie : $intl_nickname . '&nbsp;(' . $webbie . ')'),
 			'$subdir' => $subdir,
 			'$davdesc' => t('Your files/photos are accessible via WebDAV at'),
-			'$davpath' => ((get_account_techlevel() > 3) ? z_root() . '/dav/' . $nickname : ''),
+			'$davpath' => z_root() . '/dav/' . $nickname,
 			'$basepath' => \App::get_hostname()
 		));
-
 
 
 		$pcat = new \Zotlabs\Lib\Permcat(local_channel());

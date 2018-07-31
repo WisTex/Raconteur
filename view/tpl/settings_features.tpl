@@ -1,12 +1,3 @@
-<script>
-	$(document).ready(function() {
-		$('#id_techlevel').change(function() { 	
-			var techlvl = $('#id_techlevel').val();
-			window.location.href='{{$baseurl}}/settings/features?f=&techlevel=' + techlvl;
-		});
-	});
-</script>
- 
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
 		<h2>{{$title}}</h2>

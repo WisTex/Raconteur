@@ -31,6 +31,9 @@
 		{{if $webpage}}
 		<div id="jot-pagetitle-wrap" class="jothidden">
 			<input name="pagetitle" id="jot-pagetitle" type="text" placeholder="{{$placeholdpagetitle}}" value="{{$pagetitle}}">
+			{{if $webpage === 8}}
+				<input type="hidden" id="recip-complete" name="recips" value="{{$recips}}">
+			{{/if}}
 		</div>
 		{{/if}}
 		<div id="jot-title-wrap" class="jothidden">

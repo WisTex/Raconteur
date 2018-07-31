@@ -60,7 +60,6 @@ function nav($template = 'default') {
 		//we could additionally use this to display important system notifications e.g. for updates
 	));
 
-	$techlevel = get_account_techlevel();
 
 	// nav links: array of array('href', 'text', 'extra css classes', 'title')
 	$nav = [];
@@ -480,7 +479,7 @@ function channel_apps($is_owner = false, $nickname = null) {
  
 
 	if ($p['view_wiki']) {
-		if(feature_enabled($uid,'wiki') && (get_account_techlevel($account_id) > 3)) {
+		if(feature_enabled($uid,'wiki')) {
 			$tabs[] = [
 				'label' => t('Wikis'),
 				'url'   => z_root() . '/wiki/' . $nickname,
