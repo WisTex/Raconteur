@@ -1,5 +1,7 @@
 <?php
+
 namespace Zotlabs\Module;
+
 /**
  * @file Zotlabs/Module/Setup.php
  *
@@ -7,6 +9,8 @@ namespace Zotlabs\Module;
  *
  * @todo This setup module could need some love and improvements.
  */
+
+use Zotlabs\Lib\System;
 
 
 /**
@@ -130,6 +134,7 @@ class Setup extends \Zotlabs\Web\Controller {
 					'$dbtype'      => $dbtype,
 					'$server_role' => 'pro',
 					'$timezone'    => $timezone,
+					'$platform'    => ucfirst(System::get_platform_name()),
 					'$siteurl'     => $siteurl,
 					'$site_id'     => random_string(),
 					'$phpath'      => $phpath,

@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Lib;
 
 use Zotlabs\Lib\Libzot;
@@ -81,7 +82,7 @@ class Libzotdir {
 		$isadir = true;
 
 		if ($directory) {
-			$j = \Zotlabs\Lib\Zotfinger($directory);
+			$j = Zotfinger::exec($directory);
 			if(array_path_exists('data/directory_mode',$j)) {
 				if ($j['data']['directory_mode'] === 'normal') {
 					$isadir = false;

@@ -31,7 +31,7 @@ App::$config['system']['timezone'] = '{{$timezone}}';
 // What is your site url? DO NOT ADD A TRAILING SLASH!
 
 App::$config['system']['baseurl'] = '{{$siteurl}}';
-App::$config['system']['sitename'] = "Hubzilla";
+App::$config['system']['sitename'] = '{{$platform}}';
 App::$config['system']['location_hash'] = '{{$site_id}}';
 
 // These lines set additional security headers to be sent with all responses
