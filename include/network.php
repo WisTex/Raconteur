@@ -1937,7 +1937,7 @@ function scrape_vcard($url) {
 				if(attribute_contains($x->getAttribute('class'),'given_name'))
 					$ret['given_name'] = escape_tags($x->textContent);
 				if(attribute_contains($x->getAttribute('class'),'family_name'))
-					$ret['family_name'] = escxape_tags($x->textContent);
+					$ret['family_name'] = escape_tags($x->textContent);
 				if(attribute_contains($x->getAttribute('class'),'url'))
 					$ret['url'] = escape_tags($x->textContent);
 

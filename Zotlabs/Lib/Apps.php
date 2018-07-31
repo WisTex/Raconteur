@@ -343,6 +343,11 @@ class Apps {
 			'Post' => t('Post'),
 			'ZotPost' => t('ZotPost'),
 			'Profile Photo' => t('Profile Photo')
+			'Profile' => t('Profile'),
+			'Profiles' => t('Profiles'),
+			'Privacy Groups' => t('Privacy Groups'),
+			'Notifications' => t('Notifications')
+
 		);
 
 		if(array_key_exists('name',$arr)) {

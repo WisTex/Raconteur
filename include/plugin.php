@@ -14,17 +14,17 @@
  * @param bool $uninstall uninstall plugin
  */
 function handleerrors_plugin($plugin,$notice,$log,$uninstall=false){
-        logger("Addons: [" . $plugin . "] Error: ".$log, LOGGER_ERROR);
-        if ($notice != '') {
-                notice("[" . $plugin . "] Error: ".$notice, LOGGER_ERROR);
-        }
+	logger("Addons: [" . $plugin . "] Error: ".$log, LOGGER_ERROR);
+	if ($notice != '') {
+			notice("[" . $plugin . "] Error: ".$notice, LOGGER_ERROR);
+	}
 
-        if ($uninstall) {
-                $idx = array_search($plugin, \App::$plugins);
-                unset(\App::$plugins[$idx]);
-                uninstall_plugin($plugin);
-                set_config("system","addon", implode(", ",\App::$plugins));
-        }
+	if ($uninstall) {
+		$idx = array_search($plugin, \App::$plugins);
+		unset(\App::$plugins[$idx]);
+		uninstall_plugin($plugin);
+		set_config("system","addon", implode(", ",\App::$plugins));
+	}
 }
 
 /**
@@ -206,19 +206,19 @@ function reload_plugins() {
 							if(function_exists($pl . '_unload')) {
 								$func = $pl . '_unload';
 								try {
-        								$func();
+										$func();
 								} catch (Exception $e) {
 									handleerrors_plugin($plugin,"","UNLOAD FAILED (uninstalling) : ".$e->getMessage(),true);
-                                                                        continue;
+																		continue;
 								}
 							}
 							if(function_exists($pl . '_load')) {
 								$func = $pl . '_load';
 								try {
-        								$func();
+										$func();
 								} catch (Exception $e) {
 									handleerrors_plugin($plugin,"","LOAD FAILED (uninstalling): ".$e->getMessage(),true);
-                                                                        continue;
+																		continue;
 								}
 							}
 							q("UPDATE addon SET tstamp = %d WHERE id = %d",
@@ -431,6 +431,7 @@ function insert_hook($hook, $fn, $version = 0, $priority = 0) {
  */
 function call_hooks($name, &$data = null) {
 	$a = 0;
+
 	if((is_array(App::$hooks)) && (array_key_exists($name, App::$hooks))) {
 		foreach(App::$hooks[$name] as $hook) {
 			$origfn = $hook[1];
