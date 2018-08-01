@@ -1,8 +1,14 @@
-**ZAP
+**ZAP**
 
 Zap is a social networking app running under the Zot/6 protocol and the LAMP web stack.
 
 It is based on Red, which in turn is based on Hubzilla. It is otherwise unrelated to those projects and the software has a completely different scope and purpose. 
+
+
+01-August-2018
+==============
+
+Most of the basic functionality is now present and working. This is still "use at your own risk", but it shouldn't burn down the house. 
 
 
 19-July-2018
@@ -18,7 +24,10 @@ TODO before alpha release:
 
 
 
-***Things you should know
+
+
+
+**Things you should know**
 
 Zap is nomadic and does not federate with any other platform or protocol currently. It will only **ever** federate with nomadic-aware services/protocols. Full stop. 
 
