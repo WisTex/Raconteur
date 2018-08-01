@@ -455,8 +455,8 @@ function create_identity($arr) {
 		}
 
 		if(! $system) {
-			set_pconfig($ret['channel']['channel_id'],'system','photo_path', '%Y-%m');
-			set_pconfig($ret['channel']['channel_id'],'system','attach_path','%Y-%m');
+			set_pconfig($ret['channel']['channel_id'],'system','photo_path', '%Y/%Y-%m');
+			set_pconfig($ret['channel']['channel_id'],'system','attach_path','%Y/%Y-%m');
 		}
 
 		// auto-follow any of the hub's pre-configured channel choices.

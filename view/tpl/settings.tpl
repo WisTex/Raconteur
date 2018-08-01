@@ -78,7 +78,7 @@
 						</div>
 						<div class="settings-common-perms">
 							{{$suggestme}}
-							{{include file="field_checkbox.tpl" field=$blocktags}}
+							{{*include file="field_checkbox.tpl" field=$blocktags*}}
 							{{include file="field_input.tpl" field=$expire}}
 						</div>
 						{{if $permcat_enable}}
@@ -118,20 +118,20 @@
 							<h3>{{$lbl_not}}</h3>
 							<div class="group">
 								{{include file="field_intcheckbox.tpl" field=$notify1}}
-								{{include file="field_intcheckbox.tpl" field=$notify2}}
+								{{*include file="field_intcheckbox.tpl" field=$notify2*}}
 								{{include file="field_intcheckbox.tpl" field=$notify3}}
 								{{include file="field_intcheckbox.tpl" field=$notify4}}
 								{{*include file="field_intcheckbox.tpl" field=$notify9*}}
-								{{include file="field_intcheckbox.tpl" field=$notify5}}
-								{{include file="field_intcheckbox.tpl" field=$notify6}}
+								{{*include file="field_intcheckbox.tpl" field=$notify5*}}
+								{{*include file="field_intcheckbox.tpl" field=$notify6*}}
 								{{include file="field_intcheckbox.tpl" field=$notify7}}
-								{{include file="field_intcheckbox.tpl" field=$notify8}}
+								{{*include file="field_intcheckbox.tpl" field=$notify8*}}
 							</div>
 							<h3>{{$lbl_vnot}}</h3>
 							<div class="group">
 								{{include file="field_intcheckbox.tpl" field=$vnotify1}}
 								{{include file="field_intcheckbox.tpl" field=$vnotify2}}
-								{{include file="field_intcheckbox.tpl" field=$vnotify3}}
+								{{*include file="field_intcheckbox.tpl" field=$vnotify3*}}
 								{{include file="field_intcheckbox.tpl" field=$vnotify4}}
 								{{include file="field_intcheckbox.tpl" field=$vnotify5}}
 								{{include file="field_intcheckbox.tpl" field=$vnotify6}}
@@ -142,7 +142,7 @@
 								{{if $vnotify11}}
 									{{include file="field_intcheckbox.tpl" field=$vnotify11}}
 								{{/if}}
-								{{include file="field_intcheckbox.tpl" field=$vnotify12}}
+								{{*include file="field_intcheckbox.tpl" field=$vnotify12*}}
 								{{if $vnotify13}}
 									{{include file="field_intcheckbox.tpl" field=$vnotify13}}
 								{{/if}}

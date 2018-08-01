@@ -69,7 +69,7 @@ class Directory {
 		// ensure the upstream directory is updated
 
 		$packet = Libzot::build_packet($channel,(($force) ? 'force_refresh' : 'refresh'));
-		$z = Libzot::zot($url,$packet);
+		$z = Libzot::zot($url,$packet,$channel);
 
 		// re-queue if unsuccessful
 
