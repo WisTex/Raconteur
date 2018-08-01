@@ -354,6 +354,15 @@ class Activity {
 		if($i['summary'])
 			$ret['summary'] = bbcode($i['summary']);
 
+		if($ret['type'] === 'Announce') {
+			$tmp = preg_replace('/\[share(.*?)\[\/share\]/ism',EMPTY_STR($i['body']));
+			$ret['content'] = bbcode($tmp);
+			$ret['source'] = [
+				'content' => $i['body'],
+				'mediaType' => 'text/bbcode'
+			];
+		}
+
 		$ret['published'] = datetime_convert('UTC','UTC',$i['created'],ATOM_TIME);
 		if($i['created'] !== $i['edited'])
 			$ret['updated'] = datetime_convert('UTC','UTC',$i['edited'],ATOM_TIME);
