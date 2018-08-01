@@ -355,7 +355,7 @@ class Activity {
 			$ret['summary'] = bbcode($i['summary']);
 
 		if($ret['type'] === 'Announce') {
-			$tmp = preg_replace('/\[share(.*?)\[\/share\]/ism',EMPTY_STR($i['body']));
+			$tmp = preg_replace('/\[share(.*?)\[\/share\]/ism',EMPTY_STR, $i['body']);
 			$ret['content'] = bbcode($tmp);
 			$ret['source'] = [
 				'content' => $i['body'],
