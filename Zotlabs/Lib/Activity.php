@@ -1240,6 +1240,9 @@ class Activity {
 
 		$s = [];
 
+
+		$root_content = self::get_content();
+
 		$content = self::get_content($act->obj);
 
 		$s['owner_xchan']  = $act->actor['id'];
@@ -1268,10 +1271,17 @@ class Activity {
 		if(! $s['edited'])
 			$s['edited'] = $s['created'];
 
-	
-		$s['title']    = self::bb_content($content,'name');
-		$s['summary']  = self::bb_content($content,'summary');
-		$s['body']     = (self::bb_content($content,'bbcode') ? : self::bb_content($content,'content'));
+		if(in_array($act->type,['Announce'])) {
+			$s['title']    = self::bb_content($root_content,'name');
+			$s['summary']  = self::bb_content($root_content,'summary');
+			$s['body']     = (self::bb_content($root_content,'bbcode') ? : self::bb_content($root_content,'content'));
+		}
+		else {
+			$s['title']    = self::bb_content($content,'name');
+			$s['summary']  = self::bb_content($content,'summary');
+			$s['body']     = (self::bb_content($content,'bbcode') ? : self::bb_content($content,'content'));
+		}
+
 		$s['verb']     = self::activity_mapper($act->type);
 		$s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
 		$s['obj']      = $act->obj;
