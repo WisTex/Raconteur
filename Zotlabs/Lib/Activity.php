@@ -1241,7 +1241,6 @@ class Activity {
 		$s = [];
 
 
-		$root_content = self::get_content($act->raw);
 
 		$content = self::get_content($act->obj);
 
@@ -1272,9 +1271,29 @@ class Activity {
 			$s['edited'] = $s['created'];
 
 		if(in_array($act->type,['Announce'])) {
+			$root_content = self::get_content($act->raw);
+
 			$s['title']    = self::bb_content($root_content,'name');
 			$s['summary']  = self::bb_content($root_content,'summary');
 			$s['body']     = (self::bb_content($root_content,'bbcode') ? : self::bb_content($root_content,'content'));
+
+			if(strpos($s['body'],'[share') === false) {
+
+				// @fixme - error check and set defaults
+
+				$name = urlencode($act->obj['actor']['name']);
+				$profile = $act->obj['actor']['id'];
+				$photo = $act->obj['icon']['url'];
+
+				$s['body'] .= "\r\n[share author='" . $name .
+					"' profile='" . $profile .
+					"' avatar='" . $photo . 
+					"' link='" . $act->obj['id'] .
+					"' auth='" . ((is_matrix_url($act->obj['id'])) ? 'true' : 'false' ) . 
+					"' posted='" . $act->obj['published'] . 
+					"' message_id='" . $act->obj['id'] . 
+				"']";
+			}
 		}
 		else {
 			$s['title']    = self::bb_content($content,'name');
