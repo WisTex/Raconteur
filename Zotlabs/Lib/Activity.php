@@ -1241,7 +1241,7 @@ class Activity {
 		$s = [];
 
 
-		$root_content = self::get_content();
+		$root_content = self::get_content($act->raw);
 
 		$content = self::get_content($act->obj);
 
