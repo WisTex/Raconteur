@@ -1060,8 +1060,7 @@ class Libzot {
 	 * Process an incoming array of messages which were obtained via pickup, and
 	 * import, update, delete as directed.
 	 *
-	 * The message types handled here are 'activity' (e.g. posts), 'mail',
-	 * 'profile', 'location' and 'channel_sync'.
+	 * The message types handled here are 'activity' (e.g. posts), and 'sync'.
 	 *
 	 * @param array $arr
 	 *  'pickup' structure returned from remote site
@@ -1208,21 +1207,6 @@ class Libzot {
 
 				$result = self::process_delivery($env['sender'],$arr,$deliveries,$relay,false,$message_request);
 			}
-			elseif($env['type'] === 'mail') {
-				$arr = get_mail_elements($data);
-				logger('Mail received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
-				logger('Mail recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
-	
-				$result = self::process_mail_delivery($env['sender'],$arr,$deliveries);
-			}
-			elseif($env['type'] === 'profile') {
-				$arr = get_profile_elements($data);
-
-				logger('Profile received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
-				logger('Profile recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
-	
-				$result = self::process_profile_delivery($env['sender'],$arr,$deliveries);
-			}
 			elseif($env['type'] === 'sync') {
 				// $arr = get_channelsync_elements($data);
 
@@ -1232,14 +1216,6 @@ class Libzot {
 				logger('Channel sync recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
 
 				$result = Libsync::process_channel_sync_delivery($env['sender'],$arr,$deliveries);
-			}
-			elseif($env['type'] === 'location') {
-				$arr = $data;
-
-				logger('Location message received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
-				logger('Location message recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
-
-				$result = self::process_location_delivery($env['sender'],$arr,$deliveries);
 			}
 		}
 		if ($result) {

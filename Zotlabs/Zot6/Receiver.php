@@ -191,7 +191,6 @@ class Receiver {
 
 			case 'activity':
 			case 'response': // upstream message
-			case 'mail':
 			case 'sync':
 			default:
 				$this->response = $this->handler->Notify($this->data,$this->hub);

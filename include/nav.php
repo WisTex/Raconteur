@@ -156,7 +156,7 @@ function nav($template = 'default') {
 	if(((get_config('system','register_policy') == REGISTER_OPEN) || (get_config('system','register_policy') == REGISTER_APPROVE)) && (! $_SESSION['authenticated']))
 		$nav['register'] = ['register',t('Register'), "", t('Create an account'),'register_nav_btn'];
 
-	if(! get_config('system','hide_help')) {
+	if(! get_config('system','hide_help',true)) {
 		$help_url = z_root() . '/help?f=&cmd=' . App::$cmd;
 		$context_help = '';
 		$enable_context_help = ((intval(get_config('system','enable_context_help')) === 1 || get_config('system','enable_context_help') === false) ? true : false);

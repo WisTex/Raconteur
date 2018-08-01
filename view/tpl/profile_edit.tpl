@@ -12,8 +12,10 @@
 				{{if ! $is_default}}
 				<a class="dropdown-item" href="profperm/{{$profile_id}}" id="profile-edit-visibility-link" title="{{$editvis}}"><i class="fa fa-fw fa-pencil"></i>&nbsp;{{$editvis}}</a>
 				{{/if}}
+				{{*
 				<a class="dropdown-item" href="thing" id="profile-edit-thing-link" title="{{$addthing}}"><i class="fa fa-fw fa-plus-circle"></i>&nbsp;{{$addthing}}</a>
 				<div class="dropdown-divider"></div>
+				*}}
 				<a class="dropdown-item" href="profile/{{$profile_id}}/view" id="profile-edit-view-link" title="{{$viewprof}}">{{$viewprof}}</a>
 				{{if $multi_profiles}}
 				<div class="dropdown-divider"></div>
@@ -41,7 +43,7 @@
 		<form id="profile-edit-form" name="form1" action="profiles/{{$profile_id}}" enctype="multipart/form-data" method="post" >
 			<input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
 
-			{{if $is_default}}
+			{{if $is_default && $default}}
 			<div class="section-content-info-wrapper">{{$default}}</div>
 			{{/if}}
 

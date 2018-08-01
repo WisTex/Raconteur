@@ -71,8 +71,6 @@ class Apps {
 			'Events',
 			'Directory',
 			'Search',
-			'Help',
-			'Mail',
 			'Profile Photo'
 		]);
 	}

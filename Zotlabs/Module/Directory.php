@@ -28,6 +28,9 @@ class Directory extends \Zotlabs\Web\Controller {
 	
 		if(array_key_exists('global',$_REQUEST)) {
 			$globaldir = intval($_REQUEST['global']);
+			if(get_config('system','localdir_hide')) {
+				$globaldir = 1;
+			}
 			$global_changed = true;
 		}
 		if($global_changed) {

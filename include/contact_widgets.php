@@ -23,8 +23,8 @@ function findpeople_widget() {
 		'$findthem' => t('Find'),
 		'$suggest' => t('Channel Suggestions'),
 		'$similar' => '', // FIXME and uncomment when mod/match working // t('Similar Interests'),
-		'$random' => t('Random Profile'),
-		'$inv' => t('Invite Friends'),
+		'$random' => '', // t('Random Profile'),
+		'$inv' => '', // t('Invite Friends'),
 		'$advanced_search' => $advanced_search,
 		'$advanced_hint' => "\r\n" . t('Advanced example: name=fred and country=iceland'),
 		'$loggedin' => local_channel()

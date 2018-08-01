@@ -44,7 +44,6 @@ class Newmember {
 			t('Miscellaneous'),
 			[
 				'settings'      => t('Settings'),
-				'help'    	    => t('Documentation'),
 			]
 		];
 

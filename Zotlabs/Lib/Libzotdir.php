@@ -111,6 +111,9 @@ class Libzotdir {
 		if($setting === 'safemode' && $ret === false)
 			$ret = 1;
 
+		if($setting === 'globaldir' && intval(get_config('system','localdir_hide')))
+			$ret = 1;
+
 		return $ret;
 	}
 
@@ -126,6 +129,11 @@ class Libzotdir {
 		$safe_mode = self::get_directory_setting($observer, 'safemode');
 		$globaldir = self::get_directory_setting($observer, 'globaldir');
 		$pubforums = self::get_directory_setting($observer, 'pubforums');
+
+		$hide_local = intval(get_config('system','localdir_hide'));
+		if($hide_local)
+			$globaldir = 1;
+
 
 		// Build urls without order and pubforums so it's easy to tack on the changed value
 		// Probably there's an easier way to do this
@@ -153,6 +161,7 @@ class Libzotdir {
 			'$forumsurl' => $forumsurl,
 			'$safemode'  => array('safemode', t('Safe Mode'),$safe_mode,'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&safe="+(this.checked ? 1 : 0)\''),
 			'$pubforums' => array('pubforums', t('Public Forums Only'),$pubforums,'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&pubforums="+(this.checked ? 1 : 0)\''),
+			'$hide_local' => $hide_local,
 			'$globaldir' => array('globaldir', t('This Website Only'), 1-intval($globaldir),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&global="+(this.checked ? 0 : 1)\''),
 		]);
 
