@@ -18,6 +18,7 @@ namespace Zotlabs\Module;
  */  
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Activity;
 
 require_once('include/crypto.php');
 require_once('include/attach.php');
@@ -823,7 +824,13 @@ logger('linkify: ' . print_r($results,true));
 		$datarray['term']                = $post_tags;
 		$datarray['plink']               = $plink;
 		$datarray['route']               = $route;
-	
+
+
+		if(! array_key_exists('obj',$datarray)) {
+			$copy = $datarray;
+			$copy['author'] = $observer;
+			$datarray['obj'] = Activity::encode_item($copy);
+		}	
 
 		// A specific ACL over-rides public_policy completely
  

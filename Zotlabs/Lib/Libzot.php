@@ -701,7 +701,7 @@ class Libzot {
 
 			if($arr['protocols']) {
 				$protocols = implode(',',$arr['protocols']);
-				if($protocols !== 'zot') {
+				if($protocols !== 'zot6') {
 					set_xconfig($xchan_hash,'system','protocols',$protocols);
 				}
 				else {
@@ -752,7 +752,7 @@ class Libzot {
 					'xchan_hash'           => $xchan_hash,
 					'xchan_guid'           => $arr['id'],
 					'xchan_guid_sig'       => $arr['id_sig'],
-					'xchan_pubkey'         => $arr['key'],
+					'xchan_pubkey'         => $arr['public_key'],
 					'xchan_photo_mimetype' => $arr['photo_mimetype'],
 					'xchan_photo_l'        => $arr['photo'],
 					'xchan_addr'           => escape_tags($arr['primary_location']['address']),
@@ -1391,20 +1391,19 @@ class Libzot {
 			$DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
 
 			/**
-			 * @FIXME: Somehow we need to block normal message delivery from our clones, as the delivered
+			 * We need to block normal top-level message delivery from our clones, as the delivered
 			 * message doesn't have ACL information in it as the cloned copy does. That copy
 			 * will normally arrive first via sync delivery, but this isn't guaranteed.
 			 * There's a chance the current delivery could take place before the cloned copy arrives
 			 * hence the item could have the wrong ACL and *could* be used in subsequent deliveries or
-			 * access checks. So far all attempts at identifying this situation precisely
-			 * have caused issues with delivery of relayed comments.
+			 * access checks. 
 			 */
-		// @fixme $sender['url'] no longer exists
-	//		if(($d === $sender) && ($sender['url'] !== z_root()) && (! $relay)) {
-	//			$DR->update('self delivery ignored');
-	//			$result[] = $DR->get();
-	//			continue;
-	//		}
+
+			if($sender === $channel['channel_hash'] && $arr['author_xchan'] === $channel['channel_hash'] && $arr['mid'] === $arr['parent_mid']) {
+				$DR->update('self delivery ignored');
+				$result[] = $DR->get();
+				continue;
+			}
 
 			// allow public postings to the sys channel regardless of permissions, but not
 			// for comments travelling upstream. Wait and catch them on the way down.
@@ -2334,13 +2333,7 @@ class Libzot {
 
 		$hash = self::make_xchan_hash($x['id'],$x['key']);
 
-		// also - this function may get passed a profile url as 'url' and zot_refresh wants a hubloc_url (site baseurl),
-		// so deconstruct the url (if we have one) and rebuild it with just the baseurl components.
-
-		if(array_key_exists('url',$x)) {
-			$m = parse_url($x['url']);
-			$desturl = $m['scheme'] . '://' . $m['host'];
-		}
+		$desturl = $x['url'];
 
 		$r1 = q("select hubloc_url, hubloc_updated, site_dead from hubloc left join site on
 			hubloc_url = site_url where hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_primary = 1 limit 1",
@@ -2359,9 +2352,9 @@ class Libzot {
 			$site_dead = true;
 		}
 
-		// We have valid and somewhat fresh information.
+		// We have valid and somewhat fresh information. Always true if it is our own site.
 
-		if($r1 && $r2 && $r1[0]['hubloc_updated'] > datetime_convert('UTC','UTC','now - 1 week')) {
+		if($r1 && $r2 && ( $r1[0]['hubloc_updated'] > datetime_convert('UTC','UTC','now - 1 week') || $r1[0]['hubloc_url'] === z_root() ) ) {
 			logger('in cache', LOGGER_DEBUG);
 			return $hash;
 		}
@@ -2377,7 +2370,7 @@ class Libzot {
 		if($site_dead) {
 			logger('dead site - ignoring', LOGGER_DEBUG,LOG_INFO);
 
-			$r = q("select hubloc_url from hubloc left join site on hubloc_url = site_url
+			$r = q("select hubloc_id_url from hubloc left join site on hubloc_url = site_url
 				where hubloc_hash = '%s' and site_dead = 0",
 				dbesc($hash)
 			);
@@ -2390,8 +2383,7 @@ class Libzot {
 			}
 		}
 
-
-		$them = array('hubloc_url' => $desturl, 'xchan_guid' => $x['id'], 'xchan_guid_sig' => $x['id_sig']);
+		$them = [ 'hubloc_id_url' => $desturl ];
 		if(self::refresh($them))
 			return $hash;
 

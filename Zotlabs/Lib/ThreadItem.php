@@ -71,7 +71,7 @@ class ThreadItem {
 	 *      _ false on failure
 	 */
 
-	public function get_template_data($conv_responses, $thread_level=1) {
+	public function get_template_data($conv_responses, $thread_level = 1, $collapse_all = false) {
 	
 		$result = array();
 
@@ -305,6 +305,10 @@ class ThreadItem {
 
 		localize_item($item);
 
+		if($this->is_toplevel() && $collapse_all) {
+			$item['collapse'] = true;
+		}
+
 		$body = prepare_body($item,true);
 
 		// $viewthread (below) is only valid in list mode. If this is a channel page, build the thread viewing link
@@ -318,10 +322,6 @@ class ThreadItem {
 		$comment_count_txt = sprintf( tt('%d comment','%d comments',$total_children),$total_children );
 		$list_unseen_txt = (($unseen_comments) ? sprintf('%d unseen',$unseen_comments) : '');
 		
-		
-
-		
-
 		$children = $this->get_children();
 
 		$has_tags = (($body['tags'] || $body['categories'] || $body['mentions'] || $body['attachments'] || $body['folders']) ? true : false);
@@ -441,22 +441,29 @@ class ThreadItem {
 
 		$result = $arr['output'];
 
+		$censored = false;
+
+		if(strpos($body['html'],"<button id=\"nsfw-wrap-") !== false && $collapse_all === false) {
+			$censored = true;
+		}
+
 		$result['children'] = array();
 		$nb_children = count($children);
 
 		$visible_comments = get_config('system','expanded_comments');
 		if($visible_comments === false)
 			$visible_comments = 3;
-
-//		needed for scroll to comment from notification but needs more work
-//		as we do not want to open all comments unless there is actually an #item_xx anchor
-//		and the url fragment is not sent to the server. 
-//		if(in_array(\App::$module,['display','update_display'])) 
-//			$visible_comments = 99999;
-
+		
+		if($collapse_all) {
+			$visible_comments = 0;
+		}
 		if(($this->get_display_mode() === 'normal') && ($nb_children > 0)) {
 			foreach($children as $child) {
-				$result['children'][] = $child->get_template_data($conv_responses, $thread_level + 1);
+				$xz = $child->get_template_data($conv_responses, $thread_level + 1);
+				if(strpos($xz['body'],"<button id=\"nsfw-wrap-") !== false && $collapse_all === false) {
+					$censored = true;
+				}
+				$result['children'][] = $xz;
 			}
 			// Collapse
 			if(($nb_children > $visible_comments) || ($thread_level > 1)) {
@@ -482,6 +489,12 @@ class ThreadItem {
 		else {
 			$result['flatten'] = true;
 			$result['threaded'] = false;
+		}
+
+
+		if($result['toplevel'] && $censored && (! $collapse_all) && get_pconfig($conv->get_profile_owner(),'nsfw','collapse_all',true)) {
+			$copy = $conv_responses;
+			$result = $this->get_template_data($copy, 1, true);
 		}
 
 		return $result;

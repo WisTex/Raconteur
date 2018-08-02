@@ -670,7 +670,7 @@ function get_item_elements($x,$allow_code = false) {
 		);
 		if($r) {
 			if($r[0]['xchan_pubkey']) {
-				if(zot_verify($x['body'],$arr['sig'],$r[0]['xchan_pubkey'])) {
+				if(Libzot::verify($x['body'],$arr['sig'],$r[0]['xchan_pubkey'])) {
 					$arr['item_verified'] = 1;
 				}
 				else {
@@ -812,7 +812,7 @@ function import_author_xchan($x) {
 	}
 
 	// if we were told that it's a zot connection, don't probe/import anything else
-	if(array_key_exists('network',$x) && $x['network'] === 'zot')
+	if(array_key_exists('network',$x) && $x['network'] === 'zot6')
 		return $y;
 
 	if($x['network'] === 'rss') {
