@@ -38,8 +38,8 @@ class Pubsites extends \Zotlabs\Web\Controller {
 				if($j['sites']) {
 					foreach($j['sites'] as $jj) {
 						$projectname = explode(' ',$jj['project']);
-						if(! \Zotlabs\Lib\System::compatible_project($projectname[0]))
-							continue;
+					//	if(! \Zotlabs\Lib\System::compatible_project($projectname[0]))
+					//		continue;
 						if(strpos($jj['version'],' ')) {
 							$x = explode(' ', $jj['version']);
 							if($x[1])

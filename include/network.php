@@ -1518,7 +1518,7 @@ function get_site_info() {
 
 	$sql_extra = '';
 
-	$r = q("select * from channel left join account on account_id = channel_account_id where ( account_roles & 4096 )>0 and account_default_channel = channel_id");
+	$r = q("select * from channel left join account on account_id = channel_account_id where ( account_roles & 4096 ) > 0 and account_default_channel = channel_id");
 
 
 	if($r) {
@@ -1568,12 +1568,13 @@ function get_site_info() {
 	}
 
 	//Statistics
-	$channels_total_stat = intval(get_config('system','channels_total_stat'));
-	$channels_active_halfyear_stat = intval(get_config('system','channels_active_halfyear_stat'));
-	$channels_active_monthly_stat = intval(get_config('system','channels_active_monthly_stat'));
-	$local_posts_stat = intval(get_config('system','local_posts_stat'));
-	$local_comments_stat = intval(get_config('system','local_comments_stat'));
-	$hide_in_statistics = intval(get_config('system','hide_in_statistics'));
+//	$channels_total_stat = intval(get_config('system','channels_total_stat'));
+//	$channels_active_halfyear_stat = intval(get_config('system','channels_active_halfyear_stat'));
+//	$channels_active_monthly_stat = intval(get_config('system','channels_active_monthly_stat'));
+//	$local_posts_stat = intval(get_config('system','local_posts_stat'));
+//	$local_comments_stat = intval(get_config('system','local_comments_stat'));
+//	$hide_in_statistics = intval(get_config('system','hide_in_statistics'));
+
 	$site_expire = intval(get_config('system', 'default_expire_days'));
 
 	load_config('feature_lock');
@@ -1609,17 +1610,10 @@ function get_site_info() {
 		'admin'                        => $admin,
 		'dbdriver'                     => DBA::$dba->getdriver() . ' ' . ((ACTIVE_DBTYPE == DBTYPE_POSTGRES) ? 'postgres' : 'mysql'),
 		'lastpoll'                     => get_config('system','lastpoll'),
-		'info'                         => (($site_info) ? $site_info : ''),
-		'channels_total'               => $channels_total_stat,
-		'hide_in_statistics'           => $hide_in_statistics
+		'info'                         => (($site_info) ? $site_info : '')
+
 	];
 
-	if(! $hide_in_statistics) {
-		$data['channels_active_halfyear']     = $channels_active_halfyear_stat;
-		$data['channels_active_monthly']      = $channels_active_monthly_stat;
-		$data['local_posts']                  = $local_posts_stat;
-		$data['local_comments']               = $local_comments_stat;
-	}
 
 	return $data;
 }

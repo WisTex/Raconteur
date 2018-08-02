@@ -984,9 +984,9 @@ function thread_author_menu($item, $mode = '') {
 			}
 		}
 	
-		if($item['uid'] > 0 && author_is_pmable($item['author'],$contact)) {
-			$pm_url = z_root() . '/mail/new/?f=&hash=' . urlencode($item['author_xchan']);
-		}
+//		if($item['uid'] > 0 && author_is_pmable($item['author'],$contact)) {
+//			$pm_url = z_root() . '/mail/new/?f=&hash=' . urlencode($item['author_xchan']);
+//		}
 	}
 
 	if($contact) {
