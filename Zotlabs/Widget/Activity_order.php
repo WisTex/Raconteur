@@ -78,6 +78,9 @@ class Activity_order {
 		if(x($_GET,'file'))
 			$filter .= '&file=' . $_GET['file'];
 
+		if(x($_GET,'pf'))
+			$filter .= '&pf=' . $_GET['pf'];
+
 
 		// tabs
 		$tabs = [];
