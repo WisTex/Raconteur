@@ -927,10 +927,11 @@ class Apps {
 		$darray['app_requires'] = ((x($arr,'requires')) ? escape_tags($arr['requires']) : '');
 		$darray['app_system']   = ((x($arr,'system'))   ? intval($arr['system']) : 0);
 		$darray['app_deleted']  = ((x($arr,'deleted'))  ? intval($arr['deleted']) : 0);
+		$darray['app_options']  = ((x($arr,'options')) ? intval($arr['options']) : 0);
 
 		$created = datetime_convert();
 
-		$r = q("insert into app ( app_id, app_sig, app_author, app_name, app_desc, app_url, app_photo, app_version, app_channel, app_addr, app_price, app_page, app_requires, app_created, app_edited, app_system, app_plugin, app_deleted ) values ( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', %d )",
+		$r = q("insert into app ( app_id, app_sig, app_author, app_name, app_desc, app_url, app_photo, app_version, app_channel, app_addr, app_price, app_page, app_requires, app_created, app_edited, app_system, app_plugin, app_deleted, app_options ) values ( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', %d, %d )",
 			dbesc($darray['app_id']),
 			dbesc($darray['app_sig']),
 			dbesc($darray['app_author']),
@@ -948,7 +949,8 @@ class Apps {
 			dbesc($created),
 			intval($darray['app_system']),
 			dbesc($darray['app_plugin']),
-			intval($darray['app_deleted'])
+			intval($darray['app_deleted']),
+			intval($darray['app_options'])
 		);
 
 		if($r) {
@@ -1009,10 +1011,11 @@ class Apps {
 		$darray['app_requires'] = ((x($arr,'requires')) ? escape_tags($arr['requires']) : '');
 		$darray['app_system']   = ((x($arr,'system'))   ? intval($arr['system']) : 0);
 		$darray['app_deleted']  = ((x($arr,'deleted'))  ? intval($arr['deleted']) : 0);
+		$darray['app_options']  = ((x($arr,'options')) ? intval($arr['options']) : 0);
 
 		$edited = datetime_convert();
 
-		$r = q("update app set app_sig = '%s', app_author = '%s', app_name = '%s', app_desc = '%s', app_url = '%s', app_photo = '%s', app_version = '%s', app_addr = '%s', app_price = '%s', app_page = '%s', app_requires = '%s', app_edited = '%s', app_system = %d, app_plugin = '%s', app_deleted = %d where app_id = '%s' and app_channel = %d",
+		$r = q("update app set app_sig = '%s', app_author = '%s', app_name = '%s', app_desc = '%s', app_url = '%s', app_photo = '%s', app_version = '%s', app_addr = '%s', app_price = '%s', app_page = '%s', app_requires = '%s', app_edited = '%s', app_system = %d, app_plugin = '%s', app_deleted = %d, app_options = %d where app_id = '%s' and app_channel = %d",
 			dbesc($darray['app_sig']),
 			dbesc($darray['app_author']),
 			dbesc($darray['app_name']),
@@ -1028,6 +1031,7 @@ class Apps {
 			intval($darray['app_system']),
 			dbesc($darray['app_plugin']),
 			intval($darray['app_deleted']),
+			intval($darray['app_options']),
 			dbesc($darray['app_id']),
 			intval($darray['app_channel'])
 		);
@@ -1116,6 +1120,9 @@ class Apps {
 
 		if($app['app_system'])
 			$ret['system'] = $app['app_system'];
+
+		if($app['app_options'])
+			$ret['options'] = $app['app_options'];
 
 		if($app['app_plugin'])
 			$ret['plugin'] = trim($app['app_plugin']);

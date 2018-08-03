@@ -27,12 +27,11 @@ class Probe extends \Zotlabs\Web\Controller {
 
 			$o .= '<pre>';
 			if(! $j['success']) {
-				$o .= sprintf( t('Fetching URL returns error: %1$s'),$res['error'] . "\r\n\r\n");
 				$o .= "<strong>https connection failed. Trying again with auto failover to http.</strong>\r\n\r\n";
 				$j = \Zotlabs\Zot\Finger::run($addr,$channel,true);
-				if(! $j['success']) 
-					$o .= sprintf( t('Fetching URL returns error: %1$s'),$res['error'] . "\r\n\r\n");
-	
+				if(! $j['success']) {
+					return $o;	
+				}
 			}
 			if($do_import && $j)
 				$x = import_xchan($j);
