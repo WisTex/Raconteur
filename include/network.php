@@ -1,4 +1,9 @@
 <?php
+
+use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Zotfinger;
+
+
 /**
  * @file include/network.php
  * @brief Network related functions.
@@ -1169,6 +1174,27 @@ function discover_by_webbie($webbie, $protocol = '') {
 
 				// If we discover zot - don't search further; grab the info and get out of
 				// here.
+
+				if($link['rel'] === PROTOCOL_ZOT6 && ((! $protocol) || (strtolower($protocol) === 'zot6'))) {
+					logger('zot6 found for ' . $webbie, LOGGER_DEBUG);
+					$record = Zotfinger::exec($link['href']);
+
+					// Check the HTTP signature
+
+					$hsig = $record['signature'];
+					if($hsig && $hsig['signer'] === $url && $hsig['header_valid'] === true && $hsig['content_valid'] === true)
+					$hsig_valid = true;
+
+					if(! $hsig_valid) {
+						logger('http signature not valid: ' . print_r($hsig,true));
+						continue;
+					}
+
+					$x = Libzot::import_xchan($record['data']);
+					if($x['success']) {
+						return true;
+					}
+				}
 
 				if($link['rel'] === PROTOCOL_ZOT && ((! $protocol) || (strtolower($protocol) === 'zot'))) {
 					logger('zot found for ' . $webbie, LOGGER_DEBUG);

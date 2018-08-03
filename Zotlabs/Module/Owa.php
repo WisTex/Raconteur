@@ -47,6 +47,7 @@ class Owa extends \Zotlabs\Web\Controller {
 									dbesc(str_replace('acct:','',$keyId)),
 									dbesc($keyId)
 								);
+
 							}
 						}
 						if($r) {
