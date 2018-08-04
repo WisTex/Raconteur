@@ -1182,7 +1182,7 @@ function discover_by_webbie($webbie, $protocol = '') {
 					// Check the HTTP signature
 
 					$hsig = $record['signature'];
-					if($hsig && $hsig['signer'] === $url && $hsig['header_valid'] === true && $hsig['content_valid'] === true)
+					if($hsig && ($hsig['signer'] === $url || $hsig['signer'] === $link['href']) && $hsig['header_valid'] === true && $hsig['content_valid'] === true)
 					$hsig_valid = true;
 
 					if(! $hsig_valid) {

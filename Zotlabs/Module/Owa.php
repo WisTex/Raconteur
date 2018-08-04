@@ -32,18 +32,18 @@ class Owa extends \Zotlabs\Web\Controller {
 				$sigblock = HTTPSig::parse_sigheader($_SERVER[$head]);
 				if($sigblock) {
 					$keyId = $sigblock['keyId'];
-
 					if($keyId) {
 						$r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash 
-							where ( hubloc_addr = '%s' or hubloc_url = '%s' ) ",
+							where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) ",
 							dbesc(str_replace('acct:','',$keyId)),
 							dbesc($keyId)
 						);
 						if(! $r) {
 							$found = discover_by_webbie(str_replace('acct:','',$keyId));
 							if($found) {
+
 								$r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash 
-									where ( hubloc_addr = '%s' or hubloc_url = '%s' ) ",
+									where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) ",
 									dbesc(str_replace('acct:','',$keyId)),
 									dbesc($keyId)
 								);
@@ -52,7 +52,7 @@ class Owa extends \Zotlabs\Web\Controller {
 						}
 						if($r) {
 							foreach($r as $hubloc) {
-								$verified = HTTPSig::verify('',$hubloc['xchan_pubkey']);	
+								$verified = HTTPSig::verify('');	
 								if($verified && $verified['header_signed'] && $verified['header_valid']) {
 									logger('OWA header: ' . print_r($verified,true),LOGGER_DATA);	
 									logger('OWA success: ' . $hubloc['hubloc_addr'],LOGGER_DATA);
