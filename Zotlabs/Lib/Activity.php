@@ -1302,6 +1302,11 @@ class Activity {
 		}
 
 		$s['verb']     = self::activity_mapper($act->type);
+
+		if($act->type === 'Tombstone') {
+			$s['item_deleted'] = 1;
+		}
+
 		$s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
 		$s['obj']      = $act->obj;
 
