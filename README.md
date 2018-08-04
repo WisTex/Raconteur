@@ -2,7 +2,11 @@
 
 Zap is a social networking app running under the Zot/6 protocol and the LAMP web stack.
 
-It is based on Red, which in turn is based on Hubzilla. It is otherwise unrelated to those projects and the software has a completely different scope and purpose. 
+Protocol documentation is located here:
+
+https://macgirvin.com/wiki/mike/Zot%2BVI/Home
+
+Zap is based on Red, which in turn is based on Hubzilla. It is otherwise unrelated to those projects and the software has a completely different scope and purpose. 
 
 
 01-August-2018
@@ -29,11 +33,11 @@ TODO before alpha release:
 
 **Things you should know**
 
-Zap is nomadic and does not federate with any other platform or protocol currently. It will only **ever** federate with nomadic-aware services/protocols. Full stop. 
+Zap is nomadic and does not federate with any other platform or protocol currently. It will only **ever** federate with nomadic-aware services/protocols. Full stop. Full federation support will eventually be provided by creating bridging identities in a companion project Osada; which provides a bridge between nomadic and non-nomadic networks. Osada identities cannot be nomadic since they federate with non-nomadic services, but they can be linked to Zap nomadic identities using Zot6 identity linking. 
 
 If you are looking for a specific Hubzilla feature, you came to the wrong place.
 
-If you are looking for ActivityPub support, you came to the wrong place.
+If you are looking for ActivityPub support, you came to the wrong place. 
 
 If you are looking for stable software, check back in a few months.
 
