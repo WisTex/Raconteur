@@ -172,13 +172,14 @@ class HTTPSig {
 
 	static function get_key($key,$id) {
 
-		if($key && function_exists($key)) {
-			$key = $key($id);
+		if($key) {
+			if(function_exists($key)) {
+				return $key($id);
+			}
+			return [ 'public_key' => $key ];
 		}
 
-		if(! $key) {
-			$key = self::get_webfinger_key($id);
-		}
+		$key = self::get_webfinger_key($id);
 
 		if(! $key) {
 			$key = self::get_activitystreams_key($id);
