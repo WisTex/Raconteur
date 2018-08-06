@@ -127,14 +127,6 @@ class Connedit extends \Zotlabs\Web\Controller {
 		if($closeness < 0)
 			$closeness = 99;
 	
-		$rating = intval($_POST['rating']);
-		if($rating < (-10))
-			$rating = (-10);
-		if($rating > 10)
-			$rating = 10;
-	
-		$rating_text = trim(escape_tags($_REQUEST['rating_text']));
-		
 		$all_perms = \Zotlabs\Access\Permissions::Perms();
 
 		$p = EMPTY_STR;
@@ -154,58 +146,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 		}
 
 		$new_friend = false;
-	
-		// only store a record and notify the directory if the rating changed
-
-		if(! $is_self) {
-	
-			$signed = $orig_record[0]['abook_xchan'] . '.' . $rating . '.' . $rating_text;
-			$sig = Libzot::sign($signed,$channel['channel_prvkey']);
-
-			$rated = ((intval($rating) || strlen($rating_text)) ? true : false);
-	
-			$record = 0;
-	
-			$z = q("select * from xlink where xlink_xchan = '%s' and xlink_link = '%s' and xlink_static = 1 limit 1",
-				dbesc($channel['channel_hash']),
-				dbesc($orig_record[0]['abook_xchan'])
-			);
-	
-			if($z) {
-				if(($z[0]['xlink_rating'] != $rating) || ($z[0]['xlink_rating_text'] != $rating_text)) {
-					$record = $z[0]['xlink_id'];
-					$w = q("update xlink set xlink_rating = '%d', xlink_rating_text = '%s', xlink_sig = '%s', xlink_updated = '%s'
-						where xlink_id = %d",
-						intval($rating),
-						dbesc($rating_text),
-						dbesc($sig),
-						dbesc(datetime_convert()),
-						intval($record)
-					);
-				}
-			}
-			elseif($rated) {
-				// only create a record if there's something to save
-				$w = q("insert into xlink ( xlink_xchan, xlink_link, xlink_rating, xlink_rating_text, xlink_sig, xlink_updated, xlink_static ) values ( '%s', '%s', %d, '%s', '%s', '%s', 1 ) ",
-					dbesc($channel['channel_hash']),
-					dbesc($orig_record[0]['abook_xchan']),
-					intval($rating),
-					dbesc($rating_text),
-					dbesc($sig),
-					dbesc(datetime_convert())
-				);
-				$z = q("select * from xlink where xlink_xchan = '%s' and xlink_link = '%s' and xlink_static = 1 limit 1",
-					dbesc($channel['channel_hash']),
-					dbesc($orig_record[0]['abook_xchan'])
-				);
-				if($z)
-					$record = $z[0]['xlink_id'];
-			}
-			if($record) {
-				\Zotlabs\Daemon\Master::Summon(array('Ratenotif','rating',$record));
-			}
-		}
-	
+		
 		if(($_REQUEST['pending']) && intval($orig_record[0]['abook_pending'])) {
 
 			$new_friend = true;
@@ -220,7 +161,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 			$p = \Zotlabs\Access\Permissions::connect_perms(local_channel());
 			$my_perms = $p['perms'];
 			if($my_perms) {
-				set_abconfig($channel['channel_id'],$orig_record[0]['abook_xchan'],'system','my_perms',\Zotlabs\Access\Permissions::serialise($my_perms));
+				set_abconfig($channel['channel_id'],$orig_record[0]['abook_xchan'],'system','my_perms',implode(',',$my_perms));
 			}
 		}
 
