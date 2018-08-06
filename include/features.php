@@ -220,7 +220,7 @@ function get_features($filtered = true, $level = (-1)) {
 				'groups',    		
 				t('Privacy Groups'),		
 				t('Enable management and selection of privacy groups'),
-				true,
+				false,
 				get_config('feature_lock','groups'),
 				feature_level('groups',0),
 			],

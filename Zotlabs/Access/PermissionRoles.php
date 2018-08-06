@@ -32,63 +32,12 @@ class PermissionRoles {
 				$ret['default_collection'] = false;
 				$ret['directory_publish'] = true;
 				$ret['online'] = true;
-				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'send_stream', 'post_wall', 'post_comments'
-				];
+				$ret['perms_connect'] = [ 'view_stream', 'view_profile', 'view_contacts', 'view_storage', 'send_stream', 'post_wall', 'post_comments' ];
 				$ret['limits'] = PermissionLimits::Std_Limits();
-				break;
-
-			case 'social_restricted':
-				$ret['perms_auto'] = false;
-				$ret['default_collection'] = true;
-				$ret['directory_publish'] = true;
-				$ret['online'] = true;
-				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'send_stream', 'post_wall', 'post_comments'
-				];
-				$ret['limits'] = PermissionLimits::Std_Limits();
-
-				break;
-
-			case 'forum':
-				$ret['perms_auto'] = true;
-				$ret['default_collection'] = false;
-				$ret['directory_publish'] = true;
-				$ret['online'] = false;
-				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'post_wall', 'post_comments', 'tag_deliver'
-				];
-				$ret['limits'] = PermissionLimits::Std_Limits();
-
-				break;
-
-			case 'forum_restricted':
-				$ret['perms_auto'] = false;
-				$ret['default_collection'] = true;
-				$ret['directory_publish'] = true;
-				$ret['online'] = false;
-				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'post_wall', 'post_comments', 'tag_deliver'
-				];
-				$ret['limits'] = PermissionLimits::Std_Limits();
-				break;
-
-			case 'feed':
-				$ret['perms_auto'] = true;
-				$ret['default_collection'] = false;
-				$ret['directory_publish'] = true;
-				$ret['online'] = false;
-				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'send_stream', 'post_wall', 'post_comments',
-					'republish'
-				];
-				$ret['limits'] = PermissionLimits::Std_Limits();
-
+				$ret['limits']['post_comments'] = PERMS_AUTHED;
+				$ret['limits']['post_mail'] = PERMS_AUTHED;
+				$ret['limits']['post_like'] = PERMS_AUTHED;
+				$ret['limits']['chat'] = PERMS_AUTHED;
 				break;
 
 			default:
@@ -123,18 +72,9 @@ class PermissionRoles {
 	static public function roles() {
 		$roles = [
 			t('Social Networking') => [
-				'social' => t('Social - Mostly Public'),
-				'social_restricted' => t('Social - Restricted')
+				'social' => t('Social - Federation'),
 			],
 
-			t('Community Forum') => [
-				'forum' => t('Forum - Mostly Public'),
-				'forum_restricted' => t('Forum - Restricted')
-			],
-
-			t('Feed Republish') => [
-				'feed' => t('Feed - Mostly Public')
-			]
 		];
 
 		call_hooks('list_permission_roles',$roles);
