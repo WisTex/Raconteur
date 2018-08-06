@@ -496,8 +496,6 @@ class Activity {
 
 	static function encode_person($p, $extended = true) {
 
-
-
 		if(! $p['xchan_url'])
 			return [];
 
@@ -531,15 +529,10 @@ class Activity {
 			]
 		];
 
-//		$c = channelx_by_hash($p['xchan_hash']);
+		$arr = [ 'xchan' => $p, 'encoded' => $ret ];
+		call_hooks('encode_person', $arr);
+		$ret = $arr['encoded'];
 
-//		if($c) {
-//			$ret['publicKey'] = [
-//				'id'           => $p['xchan_url'] . '/public_key_pem',
-//				'owner'        => $p['xchan_url'],
-//				'publicKeyPem' => $p['xchan_pubkey']
-//			];
-//		}
 
 		return $ret;
 	}
