@@ -2072,8 +2072,8 @@ function load_pdl() {
 	if (! count(App::$layout)) {
 
 		$arr = [
-				'module' => App::$module,
-				'layout' => ''
+			'module' => App::$module,
+			'layout' => ''
 		];
 		/**
 		 * @hooks load_pdl
@@ -2095,6 +2095,14 @@ function load_pdl() {
 			$s = @file_get_contents($p);
 		elseif(file_exists('addon/'. App::$module . '/' . $n))
 			$s = @file_get_contents('addon/'. App::$module . '/' . $n);
+
+		$arr = [
+			'module' => App::$module,
+			'layout' => $s
+		];
+		call_hooks('alter_pdl',$arr);
+		$s = $arr['layout'];
+
 		if($s) {
 			App::$comanche->parse($s);
 			App::$pdl = $s;
