@@ -96,25 +96,14 @@ class Channel extends \Zotlabs\Web\Controller {
 			killme();
 		}
 
-		if($accept = ActivityStreams::is_as_request()) {
+		if(ActivityStreams::is_as_request()) {
 
 			$x = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1'
 			]], Activity::encode_person($channel));
 
-			$mimetype = 'application/json';
-
-			if(! is_array($accept)) {
-				if(strpos($accept,'activity+json')) {
-					$mimetype = 'application/activity+json';
-				}
-				else {
-					$mimetype = 'application/ld+json;profile="https://www.w3.org/ns/activitystreams"';
-				}
-			}
-
-			json_return_and_die($x,$mimetype);
+			json_return_and_die($x,'application/activity+json');
 
 		}
 
