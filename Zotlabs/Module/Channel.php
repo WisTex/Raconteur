@@ -96,23 +96,27 @@ class Channel extends \Zotlabs\Web\Controller {
 			killme();
 		}
 
-		if(ActivityStreams::is_as_request()) {
+		if($accept = ActivityStreams::is_as_request()) {
 
 			$x = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1'
 			]], Activity::encode_person($channel));
 
+			$mimetype = 'application/json';
 
-			$headers = [];
-			$headers['Content-Type'] = 'application/activity+json';
-			json_return_and_die($x);
+			if(! is_array($accept)) {
+				if(strpos($accept,'activity+json')) {
+					$mimetype = 'application/activity+json';
+				}
+				else {
+					$mimetype = 'application/ld+json;profile="https://www.w3.org/ns/activitystreams"';
+				}
+			}
+
+			json_return_and_die($x,$mimetype);
 
 		}
-
-
-
-
 
 		// Run profile_load() here to make sure the theme is set before
 		// we start loading content
