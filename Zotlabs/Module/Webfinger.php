@@ -154,7 +154,12 @@ class Webfinger extends \Zotlabs\Web\Controller {
 				[
 					'rel'  => 'http://purl.org/openwebauth/v1',
 					'type' => 'application/x-zot+json',
-					'href' => z_root() . '/owa',
+					'href' => z_root() . '/owa'
+				],
+				
+				[ 
+					'rel' => 'http://ostatus.org/schema/1.0/subscribe',
+					'template' => z_root() . '/follow?url={uri}'
 				],
 			];
 		}
