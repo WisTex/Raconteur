@@ -7,9 +7,9 @@ a alguna que pueda recordar).
 
 Los detalles del inicio de sesión son los siguientes:
 
-Localización del Sitio:	{{$siteurl}}
-Nombre de usuario:	{{$email}}
-Contraseña:	{{$new_password}}
+Localización del sitio:⇥{{$siteurl}}
+Nombre de usuario:⇥{{$email}}
+Contraseña:⇥{{$new_password}}
 
 Puede cambiar esta contraseña desde su cuenta después de iniciar sesión.
 
@@ -18,3 +18,7 @@ Atentamente,
 	Administrador de {{$sitename}}
 
  
+
+--
+Términos del servicio
+{{$siteurl}}/help/TermsOfService

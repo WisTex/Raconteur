@@ -7,9 +7,9 @@ Los detalles del inicio de sesión son los siguientes:
 
 Localización del sitio:⇥{{$siteurl}}
 Nombre de usuario:⇥{{$email}}
-Dirección IP:  {{$details}}
+Dirección IP: {{$details}}
 
-Para aprobar la petición siga el enlace:
+Para aprobar la petición siga el enlace
 
 
 {{$siteurl}}/regmod/allow/{{$hash}} 
