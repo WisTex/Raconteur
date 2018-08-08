@@ -90,7 +90,7 @@ web server platforms.
     exec() and proc_open().
 
     - curl, gd (with at least jpeg and png support), mysqli, mbstring, xml, 
-    xmlreader, zip and openssl extensions. The imagick extension MAY be used 
+    xmlreader (FreeBSD), zip and openssl extensions. The imagick extension MAY be used 
     instead of gd, but is not required and MAY also be disabled via 
     configuration option. 
 
