@@ -36,10 +36,6 @@ class Zfinger extends \Zotlabs\Web\Controller {
 
 		echo $ret;
 		killme();
-
-
-
-		json_return_and_die($x);
 	
 	}
 	

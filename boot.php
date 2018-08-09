@@ -54,7 +54,7 @@ define ( 'STD_VERSION',             '3.7.1' );
 define ( 'ZOT_REVISION',            '6.0a' );
 
 
-define ( 'DB_UPDATE_VERSION',       1216 );
+define ( 'DB_UPDATE_VERSION',       1217 );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 
@@ -2072,8 +2072,8 @@ function load_pdl() {
 	if (! count(App::$layout)) {
 
 		$arr = [
-				'module' => App::$module,
-				'layout' => ''
+			'module' => App::$module,
+			'layout' => ''
 		];
 		/**
 		 * @hooks load_pdl
@@ -2093,6 +2093,16 @@ function load_pdl() {
 
 		if((! $s) && (($p = theme_include($n)) != ''))
 			$s = @file_get_contents($p);
+		elseif(file_exists('addon/'. App::$module . '/' . $n))
+			$s = @file_get_contents('addon/'. App::$module . '/' . $n);
+
+		$arr = [
+			'module' => App::$module,
+			'layout' => $s
+		];
+		call_hooks('alter_pdl',$arr);
+		$s = $arr['layout'];
+
 		if($s) {
 			App::$comanche->parse($s);
 			App::$pdl = $s;

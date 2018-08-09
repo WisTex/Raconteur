@@ -34,6 +34,7 @@ class Activity_order {
 					break;
 				default:
 					$commentord_active = 'active';
+					break;
 			}
 		}
 		else {
