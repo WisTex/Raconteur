@@ -74,8 +74,11 @@ function markdown_to_bb($s, $use_zrl = false, $options = []) {
 
 	// Convert everything that looks like a link to a link
 	if($use_zrl) {
-		$s = str_replace(['[img', '/img]'], ['[zmg', '/zmg]'], $s);
-		$s = preg_replace("/([^\]\=\{]|^)(https?\:\/\/)([a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]+)/ismu", '$1[zrl=$2$3]$2$3[/zrl]',$s);
+		if (strpos($s,'[/img]') !== false) {
+			$s = preg_replace_callback("/\[img\](.*?)\[\/img\]/ism", 'use_zrl_cb_img', $s);
+			$s = preg_replace_callback("/\[img\=([0-9]*)x([0-9]*)\](.*?)\[\/img\]/ism", 'use_zrl_cb_img_x', $s);
+		}
+		$s = preg_replace_callback("/([^\]\=\{]|^)(https?\:\/\/)([a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]+)/ismu", 'use_zrl_cb_link',$s);
 	}
 	else {
 		$s = preg_replace("/([^\]\=\{]|^)(https?\:\/\/)([a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]+)/ismu", '$1[url=$2$3]$2$3[/url]',$s);
@@ -85,7 +88,7 @@ function markdown_to_bb($s, $use_zrl = false, $options = []) {
 	$s = preg_replace("/(\[code\])+(.*?)(\[\/code\])+/ism","[code]$2[/code]", $s);
 
 	// Don't show link to full picture (until it is fixed)
-	$s = scale_external_images($s, false);
+	//$s = scale_external_images($s, false);
 
 	/**
 	 * @hooks markdown_to_bb
@@ -96,6 +99,41 @@ function markdown_to_bb($s, $use_zrl = false, $options = []) {
 	return $s;
 }
 
+function use_zrl_cb_link($match) {
+	$res = '';
+	$is_zid = is_matrix_url(trim($match[0]));
+
+	if($is_zid)
+		$res = $match[1] . '[zrl=' . $match[2] . $match[3] . ']' . $match[2] . $match[3] . '[/zrl]';
+	else
+		$res = $match[1] . '[url=' . $match[2] . $match[3] . ']' . $match[2] . $match[3] . '[/url]';
+
+	return $res;
+}
+
+function use_zrl_cb_img($match) {
+	$res = '';
+	$is_zid = is_matrix_url(trim($match[1]));
+
+	if($is_zid)
+		$res = '[zmg]' . $match[1] . '[/zmg]';
+	else
+		$res = $match[0];
+
+	return $res;
+}
+
+function use_zrl_cb_img_x($match) {
+	$res = '';
+	$is_zid = is_matrix_url(trim($match[3]));
+
+	if($is_zid)
+		$res = '[zmg=' . $match[1] . 'x' . $match[2] . ']' . $match[3] . '[/zmg]';
+	else
+		$res = $match[0];
+
+	return $res;
+}
 
 /**
  * @brief
