@@ -4,7 +4,7 @@ namespace Zotlabs\Identity;
 
 class OAuth2Server extends \OAuth2\Server {
 
-	public function __construct(OAuth2Storage $storage, $config = []) {
+	public function __construct(OAuth2Storage $storage, $config = null) {
 
 		if(! is_array($config)) {
 			$config = [
@@ -19,7 +19,8 @@ class OAuth2Server extends \OAuth2\Server {
 		$this->addGrantType(new \OAuth2\GrantType\ClientCredentials($storage));
 
 		// Add the "Authorization Code" grant type (this is where the oauth magic happens)
-		$this->addGrantType(new \OAuth2\GrantType\AuthorizationCode($storage));
+                // Need to use OpenID\GrantType to return id_token (see:https://github.com/bshaffer/oauth2-server-php/issues/443)
+		$this->addGrantType(new \OAuth2\OpenID\GrantType\AuthorizationCode($storage));
 
 		$keyStorage = new \OAuth2\Storage\Memory( [
 			'keys' => [
