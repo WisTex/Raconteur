@@ -45,14 +45,15 @@ class Oauth2 {
 								grant_types = '%s',
 								scope = '%s', 
 								user_id = %d
-							WHERE client_id='%s'",
+							WHERE client_id='%s' and user_id = %s",
 							dbesc($name),
 							dbesc($secret),
 							dbesc($redirect),
 							dbesc($grant),
 							dbesc($scope),
 							intval(local_channel()),
-							dbesc($name));
+							dbesc($name),
+                                                        intval(local_channel()));
 				} else {
 					$r = q("INSERT INTO oauth_clients (client_id, client_secret, redirect_uri, grant_types, scope, user_id)
 						VALUES ('%s','%s','%s','%s','%s',%d)",
