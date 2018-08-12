@@ -10,10 +10,19 @@ class Oauth2 {
 	
 		if(x($_POST,'remove')){
 			check_form_security_token_redirectOnErr('/settings/oauth2', 'settings_oauth2');
-			
+			$name   	= ((x($_POST,'name')) ? escape_tags(trim($_POST['name'])) : '');
+		logger("REMOVE! ".$name." uid: ".local_channel());	
 			$key = $_POST['remove'];
-			q("DELETE FROM tokens WHERE id='%s' AND uid=%d",
-				dbesc($key),
+			q("DELETE FROM oauth_authorization_codes WHERE client_id='%s' AND user_id=%d",
+				dbesc($name),
+				intval(local_channel())
+			);
+			q("DELETE FROM oauth_access_tokens WHERE client_id='%s' AND user_id=%d",
+				dbesc($name),
+				intval(local_channel())
+			);
+			q("DELETE FROM oauth_refresh_tokens WHERE client_id='%s' AND user_id=%d",
+				dbesc($name),
 				intval(local_channel())
 			);
 			goaway(z_root()."/settings/oauth2/");
@@ -45,14 +54,15 @@ class Oauth2 {
 								grant_types = '%s',
 								scope = '%s', 
 								user_id = %d
-							WHERE client_id='%s'",
+							WHERE client_id='%s' and user_id = %s",
 							dbesc($name),
 							dbesc($secret),
 							dbesc($redirect),
 							dbesc($grant),
 							dbesc($scope),
 							intval(local_channel()),
-							dbesc($name));
+							dbesc($name),
+                                                        intval(local_channel()));
 				} else {
 					$r = q("INSERT INTO oauth_clients (client_id, client_secret, redirect_uri, grant_types, scope, user_id)
 						VALUES ('%s','%s','%s','%s','%s',%d)",
@@ -128,6 +138,18 @@ class Oauth2 {
 					dbesc(argv(3)),
 					intval(local_channel())
 			);
+			$r = q("DELETE FROM oauth_access_tokens WHERE client_id = '%s' AND user_id = %d",
+					dbesc(argv(3)),
+					intval(local_channel())
+			);
+			$r = q("DELETE FROM oauth_authorization_codes WHERE client_id = '%s' AND user_id = %d",
+					dbesc(argv(3)),
+					intval(local_channel())
+			);
+			$r = q("DELETE FROM oauth_refresh_tokens WHERE client_id = '%s' AND user_id = %d",
+					dbesc(argv(3)),
+					intval(local_channel())
+			);
 			goaway(z_root()."/settings/oauth2/");
 			return;			
 		}
@@ -135,7 +157,8 @@ class Oauth2 {
 
 		$r = q("SELECT oauth_clients.*, oauth_access_tokens.access_token as oauth_token, (oauth_clients.user_id = %d) AS my 
 				FROM oauth_clients
-				LEFT JOIN oauth_access_tokens ON oauth_clients.client_id=oauth_access_tokens.client_id
+				LEFT JOIN oauth_access_tokens ON oauth_clients.client_id=oauth_access_tokens.client_id AND
+                                                                 oauth_clients.user_id=oauth_access_tokens.user_id
 				WHERE oauth_clients.user_id IN (%d,0)",
 				intval(local_channel()),
 				intval(local_channel())
