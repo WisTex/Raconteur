@@ -27,11 +27,11 @@ class Token extends \Zotlabs\Web\Controller {
 				$_SERVER['PHP_AUTH_PW'] = $password;
 			}
 		}
-
-		$s = new \Zotlabs\Identity\OAuth2Server(new OAuth2Storage(\DBA::$dba->db));
+                $storage = new OAuth2Storage(\DBA::$dba->db);
+		$s = new \Zotlabs\Identity\OAuth2Server($storage);
 		$request = \OAuth2\Request::createFromGlobals();
-		$s->handleTokenRequest($request)->send();
-
+		$response = $s->handleTokenRequest($request);
+                $response->send();
 		killme();
 	}
 

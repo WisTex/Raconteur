@@ -175,7 +175,7 @@ function nav($template = 'default') {
 			$search_form_action = 'network';
 			break;
 		case 'channel':
-			$search_form_action = 'channel';
+			$search_form_action = 'channel/' . App::$profile['channel_address'];
 			break;
 		default:
 			$search_form_action = 'search';

@@ -89,9 +89,10 @@ web server platforms.
     php.ini file - and with no hosting provider restrictions on the use of 
     exec() and proc_open().
 
-    - curl, gd (with at least jpeg and png support), mysqli, mbstring, xml, zip
-    and openssl extensions. The imagick extension MAY be used instead of gd,
-	but is not required and MAY also be disabled via configuration option. 
+    - curl, gd (with at least jpeg and png support), mysqli, mbstring, xml, 
+    xmlreader (FreeBSD), zip and openssl extensions. The imagick extension MAY be used 
+    instead of gd, but is not required and MAY also be disabled via 
+    configuration option. 
 
     - some form of email server or email gateway such that PHP mail() works.
 
