@@ -64,17 +64,20 @@ class SmartyTemplate implements TemplateEngine {
 	public function get_intltext_template($file, $root='') {
 
 		$lang = \App::$language;
-    
-		if(file_exists("view/$lang/$file"))
-        	$template_file = "view/$lang/$file";
-	    elseif(file_exists("view/en/$file"))
-        	$template_file = "view/en/$file";
-    	else
-        	$template_file = theme_include($file,$root);
+                if ($root != '' && substr($root,-1) != '/' ) {
+                               $root .= '/';
+                }
+                foreach (Array(
+                               $root."view/$lang/$file",
+                               $root."view/en/$file",
+                               ''
+                               ) as $template_file) {
+                        if (is_file($template_file)) { break; }
+                }
+                if ($template_file=='') {$template_file = theme_include($file,$root);}
 		if($template_file) {
 			$template = new SmartyInterface();
 			$template->filename = $template_file;
-
 			return $template;
 		}		
 		return "";
