@@ -5,7 +5,11 @@
  */
 
 use Michelf\MarkdownExtra;
+
 use League\HTMLToMarkdown\HtmlConverter;
+use League\HTMLToMarkdown\Environment;
+use League\HTMLToMarkdown\Converter\ConverterInterface;
+use League\HTMLToMarkdown\ElementInterface;
 
 require_once("include/oembed.php");
 require_once("include/event.php");
@@ -286,9 +290,12 @@ function bb_to_markdown($Text, $options = []) {
  * @param string $html The HTML code to convert
  * @return string Markdown representation of the given HTML text, empty on error
  */
-function html2markdown($html) {
+function html2markdown($html,$options = []) {
 	$markdown = '';
-	$converter = new HtmlConverter();
+ 
+	$environment = Environment::createDefaultEnvironment($options);
+	$environment->addConverter(new TableConverter());
+	$converter = new HtmlConverter($environment);
 
 	try {
 		$markdown = $converter->convert($html);
@@ -297,4 +304,74 @@ function html2markdown($html) {
 	}
 
 	return $markdown;
+}
+
+// Tables are not an official part of the markdown specification.
+// This interface was suggested as a workaround.
+// author: Mark Hamstra
+// https://github.com/Mark-H/Docs
+
+
+class TableConverter implements ConverterInterface
+{
+    /**
+     * @param ElementInterface $element
+     *
+     * @return string
+     */
+    public function convert(ElementInterface $element)
+    {
+        switch ($element->getTagName()) {
+            case 'tr':
+                $line = [];
+                $i = 1;
+                foreach ($element->getChildren() as $td) {
+                    $i++;
+                    $v = $td->getValue();
+                    $v = trim($v);
+                    if ($i % 2 === 0 || $v !== '') {
+                        $line[] = $v;
+                    }
+                }
+                return '| ' . implode(' | ', $line) . " |\n";
+            case 'td':
+            case 'th':
+                return trim($element->getValue());
+            case 'tbody':
+                return trim($element->getValue());
+            case 'thead':
+                $headerLine = reset($element->getChildren())->getValue();
+                $headers = explode(' | ', trim(trim($headerLine, "\n"), '|'));
+                $hr = [];
+                foreach ($headers as $td) {
+                    $length = strlen(trim($td)) + 2;
+                    $hr[] = str_repeat('-', $length > 3 ? $length : 3);
+                }
+                $hr = '|' . implode('|', $hr) . '|';
+                return $headerLine . $hr . "\n";
+            case 'table':
+                $inner = $element->getValue();
+                if (strpos($inner, '-----') === false) {
+                    $inner = explode("\n", $inner);
+                    $single = explode(' | ', trim($inner[0], '|'));
+                    $hr = [];
+                    foreach ($single as $td) {
+                        $length = strlen(trim($td)) + 2;
+                        $hr[] = str_repeat('-', $length > 3 ? $length : 3);
+                    }
+                    $hr = '|' . implode('|', $hr) . '|';
+                    array_splice($inner, 1, 0, $hr);
+                    $inner = implode("\n", $inner);
+                }
+                return trim($inner) . "\n\n";
+        }
+        return $element->getValue();
+    }
+    /**
+     * @return string[]
+     */
+    public function getSupportedTags()
+    {
+        return array('table', 'tr', 'thead', 'td', 'tbody');
+    }
 }
