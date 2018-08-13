@@ -728,6 +728,9 @@ class App {
 	private static $perms      = null;            // observer permissions
 	private static $widgets    = array();         // widgets for this page
 	public  static $config     = array();         // config cache
+        public  static $override_intltext_templates = array();
+        public  static $override_markup_templates = array();
+        public  static $override_templateroot = null;
 
 	public static  $session    = null;
 	public static  $groups;
