@@ -3251,16 +3251,16 @@ function cleanup_bbcode($body) {
 	 * First protect any url inside certain bbcode tags so we don't double link it.
 	 */
 
-
 	$body = preg_replace_callback('/\[code(.*?)\[\/(code)\]/ism','\red_escape_codeblock',$body);
 	$body = preg_replace_callback('/\[url(.*?)\[\/(url)\]/ism','\red_escape_codeblock',$body);
 	$body = preg_replace_callback('/\[zrl(.*?)\[\/(zrl)\]/ism','\red_escape_codeblock',$body);
 
-
 	$body = preg_replace_callback("/([^\]\='".'"'."\/\{]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\
 +\,\(\)]+)/ismu", '\nakedoembed', $body);
+
 	$body = preg_replace_callback("/([^\]\='".'"'."\/\{]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\
 +\,\(\)]+)/ismu", '\red_zrl_callback', $body);
+
 
 	$body = preg_replace_callback('/\[\$b64zrl(.*?)\[\/(zrl)\]/ism','\red_unescape_codeblock',$body);
 	$body = preg_replace_callback('/\[\$b64url(.*?)\[\/(url)\]/ism','\red_unescape_codeblock',$body);
