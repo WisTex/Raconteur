@@ -172,6 +172,11 @@ class Wfinger extends \Zotlabs\Web\Controller {
 						'href' => z_root() . '/hcard/' . $r[0]['channel_address']	
 					],
 
+					[
+						'rel'  => 'http://openid.net/specs/connect/1.0/issuer',
+						'href' => z_root()
+					],
+
 
 					[
 						'rel'  => 'http://webfinger.net/rel/profile-page',
