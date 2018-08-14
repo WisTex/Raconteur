@@ -145,6 +145,11 @@ class Webfinger extends \Zotlabs\Web\Controller {
 					'href' => z_root() . '/channel/' . $channel_target['channel_address'],
 				],
 	
+				[
+					'rel'  => 'http://openid.net/specs/connect/1.0/issuer',
+					'href' => z_root()
+				],
+
 				[ 
 					'rel'  => 'http://purl.org/zot/protocol/6.0', 
 					'type' => 'application/x-zot+json', 

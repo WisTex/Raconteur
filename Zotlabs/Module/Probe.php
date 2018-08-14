@@ -25,6 +25,7 @@ class Probe extends \Zotlabs\Web\Controller {
 			$j = \Zotlabs\Lib\Zotfinger::exec($addr,$channel);
 
 			$o .= '<pre>';
+
 			if($do_import && $j)
 				$x = Libzot::import_xchan($j);
 			$o .= str_replace("\n",'<br />',print_r($j,true));

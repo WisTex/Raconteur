@@ -2062,6 +2062,22 @@ function jsonld_document_loader($url) {
 
 	require_once('library/jsonld/jsonld.php');
 
+	$recursion = 0;
+
+	$x = debug_backtrace();
+	if($x) {
+		foreach($x as $n) {
+			if($n['function'] === __FUNCTION__)  {
+				$recursion ++;
+			}
+		}
+	}
+	if($recursion > 5) {
+		logger('jsonld bomb detected at: ' . $url);
+		killme();
+	}
+
+
 	$cachepath = 'store/[data]/ldcache';
 	if(! is_dir($cachepath))
 		os_mkdir($cachepath, STORAGE_DEFAULT_PERMISSIONS, true);

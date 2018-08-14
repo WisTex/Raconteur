@@ -4,8 +4,6 @@
 </div>
 
 <div class="section-content-tools-wrapper">
-<form action="settings/oauth2" method="post" autocomplete="off">
-<input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
 
 	<div id="profile-edit-links">
 		<ul>
@@ -16,6 +14,9 @@
 	</div>
 
 	{{foreach $apps as $app}}
+<form action="settings/oauth2" method="post" autocomplete="off">
+<input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
+<input type='hidden' name='name' value='{{$app.client_id}}'>
 	<div class='oauthapp'>
 		{{if $app.client_id}}<h4>{{$app.client_id}}</h4>{{else}}<h4>{{$noname}}</h4>{{/if}}
 		{{if $app.my}}
@@ -28,8 +29,8 @@
 		<a href="{{$baseurl}}/settings/oauth2/delete/{{$app.client_id}}?t={{$form_security_token}}" title="{{$delete}}"><i class="fa fa-trash-o btn btn-outline-secondary"></i></a>
 		{{/if}}		
 	</div>
+</form>
 	{{/foreach}}
 
-</form>
 </div>
 </div>

@@ -126,6 +126,7 @@ CREATE TABLE "app" (
   "app_deleted" smallint NOT NULL DEFAULT '0',
   "app_system" smallint NOT NULL DEFAULT '0',
   "app_plugin" text NOT NULL DEFAULT '',
+  "app_options" smallint NOT NULL DEFAULT '0',
   "app_created" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "app_edited" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   PRIMARY KEY ("id")
