@@ -509,9 +509,11 @@ class Activity {
 		if($p['xchan_addr'] && strpos($p['xchan_addr'],'@'))
 			$ret['preferredUsername'] = substr($p['xchan_addr'],0,strpos($p['xchan_addr'],'@'));
 		$ret['name']  = $p['xchan_name'];
+		$ret['updated'] = datetime_convert('UTC','UTC',$p['xchan_name_date'],ATOM_TIME);
 		$ret['icon']  = [
 			'type'      => 'Image',
 			'mediaType' => (($p['xchan_photo_mimetype']) ? $p['xchan_photo_mimetype'] : 'image/png' ),
+			'updated'   => datetime_convert('UTC','UTC',$p['xchan_photo_date'],ATOM_TIME),
 			'url'       => $p['xchan_photo_l'],
 			'height'    => 300,
 			'width'     => 300,
