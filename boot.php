@@ -731,6 +731,8 @@ class App {
         public  static $override_intltext_templates = array();
         public  static $override_markup_templates = array();
         public  static $override_templateroot = null;
+        public  static $override_helproot = null;
+        public  static $override_helpfiles = array();
 
 	public static  $session    = null;
 	public static  $groups;
