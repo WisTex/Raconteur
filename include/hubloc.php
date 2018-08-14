@@ -24,6 +24,8 @@ function hubloc_store_lowlevel($arr) {
 		'hubloc_status'      => ((array_key_exists('hubloc_status',$arr))      ? $arr['hubloc_status']      : 0),
 		'hubloc_url'         => ((array_key_exists('hubloc_url',$arr))         ? $arr['hubloc_url']         : ''),
 		'hubloc_url_sig'     => ((array_key_exists('hubloc_url_sig',$arr))     ? $arr['hubloc_url_sig']     : ''),
+		'hubloc_id_url'      => ((array_key_exists('hubloc_id_url',$arr))      ? $arr['hubloc_id_url']      : ''),
+		'hubloc_site_id'     => ((array_key_exists('hubloc_site_id',$arr))     ? $arr['hubloc_site_id']     : ''),
 		'hubloc_host'        => ((array_key_exists('hubloc_host',$arr))        ? $arr['hubloc_host']        : ''),
 		'hubloc_callback'    => ((array_key_exists('hubloc_callback',$arr))    ? $arr['hubloc_callback']    : ''),
 		'hubloc_connect'     => ((array_key_exists('hubloc_connect',$arr))     ? $arr['hubloc_connect']     : ''),

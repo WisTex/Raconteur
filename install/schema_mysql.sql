@@ -501,10 +501,12 @@ CREATE TABLE IF NOT EXISTS `hook` (
   KEY `hook_version` (`hook_version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
 CREATE TABLE IF NOT EXISTS `hubloc` (
   `hubloc_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `hubloc_guid` char(191) NOT NULL DEFAULT '',
   `hubloc_guid_sig` text NOT NULL,
+  `hubloc_id_url` char(191) NOT NULL DEFAULT '0',
   `hubloc_hash` char(191) NOT NULL DEFAULT '',
   `hubloc_addr` char(191) NOT NULL DEFAULT '',
   `hubloc_network` char(32) NOT NULL DEFAULT '',
@@ -512,6 +514,7 @@ CREATE TABLE IF NOT EXISTS `hubloc` (
   `hubloc_status` int(10) unsigned NOT NULL DEFAULT 0 ,
   `hubloc_url` char(191) NOT NULL DEFAULT '',
   `hubloc_url_sig` text NOT NULL,
+  `hubloc_site_id` char(191) NOT NULL DEFAULT '',
   `hubloc_host` char(191) NOT NULL DEFAULT '',
   `hubloc_callback` char(191) NOT NULL DEFAULT '',
   `hubloc_connect` char(191) NOT NULL DEFAULT '',
@@ -524,7 +527,9 @@ CREATE TABLE IF NOT EXISTS `hubloc` (
   `hubloc_deleted` tinyint(1) NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`hubloc_id`),
   KEY `hubloc_url` (`hubloc_url`),
+  KEY `hubloc_site_id` (`hubloc_site_id`),
   KEY `hubloc_guid` (`hubloc_guid`),
+  KEY `hubloc_id_url` (`hubloc_id_url`),
   KEY `hubloc_hash` (`hubloc_hash`),
   KEY `hubloc_flags` (`hubloc_flags`),
   KEY `hubloc_connect` (`hubloc_connect`),
@@ -539,7 +544,6 @@ CREATE TABLE IF NOT EXISTS `hubloc` (
   KEY `hubloc_deleted` (`hubloc_deleted`),
   KEY `hubloc_error` (`hubloc_error`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
-
 
 CREATE TABLE IF NOT EXISTS `iconfig` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
