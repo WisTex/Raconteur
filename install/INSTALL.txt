@@ -17,7 +17,7 @@ and confirm these with your hosting provider prior to installation. (And
 preferably before entering into a long-term contract.)
 
 If you encounter installation issues, please let us know via the issue 
-tracker at https://framagit.org/hubzilla where you downloaded the software.
+tracker at https://framagit.org/macgirvin/zap where you downloaded the software.
 Please be as clear as you can about your operating environment and provide as
 much detail as possible about any error messages you may see, so that we can
 prevent it from happening in the future. Due to the large variety of operating
@@ -115,7 +115,7 @@ web server platforms.
     software much easier to update. The Linux command to clone the repository 
     into a directory "mywebsite" would be
 
-        git clone https://framagit.org/hubzilla/core.git mywebsite
+        git clone https://framagit.org/macgirvin/zap mywebsite
 
     - and then you can pick up the latest changes at any time with
 
@@ -146,13 +146,13 @@ web server platforms.
          a nickname of 'hzaddons'. You can pull in other hubzilla addon repositories by 
          giving them different nicknames.
 
-            util/add_addon_repo https://framagit.org/hubzilla/addons.git hzaddons
+            util/add_addon_repo https://framagit.org/macgirvin/zapp-addons zaddons
 
     - For keeping the addon tree updated, you should be on your top level website 
 		directory and issue an update command for that repository.
 
             cd mywebsite
-            util/update_addon_repo hzaddons
+            util/update_addon_repo zaddons
 
 	- Once the software is configured and the database installed, create searchable
 		representations of the online documentation. You may do this any time
@@ -241,7 +241,7 @@ You should also be sure that App::$config['system']['php_path'] is set correctly
 in your .htconfig.php file, it should look like (changing it to the correct 
 PHP location):
 
-App::$config['system']['php_path'] = '/usr/local/php56/bin/php';
+App::$config['system']['php_path'] = '/usr/local/php70/bin/php';
   
  
 #####################################################################
@@ -305,7 +305,7 @@ likely that mod-rewrite is not installed in your web server or is not working.
 	On most flavours of Linux,
 
 % a2enmod rewrite
-% /etc/init.d/apache2 restart
+% service apache2 restart
 
 Consult your hosting provider, experts on your particular Linux 
 distribution or (if Windows) the provider of your Apache server software if 
@@ -345,54 +345,6 @@ Retry the installation. As soon as the database has been created,
 ******* this is important *********
 
 % chmod 755 .htconfig.php
-
-#####################################################################
-- Some configurations with "suhosin" security are configured without
-an ability to run external processes. Hubzilla requires this ability.
-Following are some notes provided by one of our members.
-#####################################################################
-
-On my server I use the php protection system Suhosin
-[http://www.hardened-php.net/suhosin/]. One of the things it does is to block
-certain functions like proc_open, as configured in /etc/php5/conf.d/suhosin.ini:
-
- suhosin.executor.func.blacklist = proc_open, ...
-
-For those sites like Hubzilla that really need these functions they can be
-enabled, e.g. in /etc/apache2/sites-available/hubzilla:
-
- <Directory /var/www/hubzilla/>
-  php_admin_value suhosin.executor.func.blacklist none
-  php_admin_value suhosin.executor.eval.blacklist none
- </Directory>
-
-This enables every function for Hubzilla if accessed via browser, but not for
-the cronjob that is called via php command line. I attempted to enable it for
-cron by using something like
-
- */10 * * * * cd /var/www/hubzilla/ && sudo -u www-data /usr/bin/php
--d suhosin.executor.func.blacklist=none -d suhosin.executor.eval.blacklist=none
--f include/poller.php
-
-This worked well for simple test cases, but the cron job still failed with
-a fatal error:
-suhosin[22962]: ALERT - function within blacklist called: proc_open() (attacker
-'REMOTE_ADDR not set', file '/var/www/hubzilla/boot.php', line 1341)
-
-After a while I noticed, that include/poller.php calls further php script via
-proc_open. These scripts themselves also use proc_open and fail, because they
-are NOT called with -d suhosin.executor.func.blacklist=none.
-
-So the simple solution is to put the correct parameters into .htconfig.php:
- // Location of PHP command line processor
- App::$config['system']['php_path'] = '/usr/bin/php -d suhosin.executor.func.blacklist=none
--d suhosin.executor.eval.blacklist=none';
-
-
-This is obvious as soon as you notice that the cron uses proc_open to
-execute php-scripts that also use proc_open, but it took me quite some time to
-find that out. I hope this saves some time for other people using suhosin with
-function blacklists.
 
 #####################################################################
 - Apache processes hanging, using as much CPU as they can
