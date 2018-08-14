@@ -14,9 +14,9 @@ class Authorize extends \Zotlabs\Web\Controller {
 			// OpenID Connect Dynamic Client Registration 1.0 Client Metadata
 			// http://openid.net/specs/openid-connect-registration-1_0.html
 			$app = array(
-				'name' => (x($_REQUEST, 'client_name') ? urldecode($_REQUEST['client_name']) : t('Unknown App')),
-				'icon' => (x($_REQUEST, 'logo_uri')    ? urldecode($_REQUEST['logo_uri']) : z_root() . '/images/icons/plugin.png'),
-				'url'  => (x($_REQUEST, 'client_uri')  ? urldecode($_REQUEST['client_uri']) : ''),
+				'name' => (x($_REQUEST, 'client_id') ? $_REQUEST['client_id'] : t('Unknown App')),
+				'icon' => (x($_REQUEST, 'logo_uri')  ? $_REQUEST['logo_uri'] : z_root() . '/images/icons/plugin.png'),
+				'url'  => (x($_REQUEST, 'client_uri')  ? $_REQUEST['client_uri'] : ''),
 			);
 			$o .= replace_macros(get_markup_template('oauth_authorize.tpl'), array(
 				'$title' => t('Authorize'),

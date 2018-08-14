@@ -12,7 +12,13 @@ function api_login(&$a){
 
 	require_once('include/oauth.php');
 
+
+	if(array_key_exists('REDIRECT_REMOTE_USER',$_SERVER) && (! array_key_exists('HTTP_AUTHORIZATION',$_SERVER))) {
+		$_SERVER['HTTP_AUTHORIZATION'] = $_SERVER['REDIRECT_REMOTE_USER'];
+	}
+
 	// login with oauth
+
 	try {
 		// OAuth 2.0
 		$storage = new \Zotlabs\Identity\OAuth2Storage(\DBA::$dba->db);
@@ -66,32 +72,27 @@ function api_login(&$a){
 		logger($e->getMessage());
 	}
 
-	// workarounds for HTTP-auth in CGI mode
 
-	foreach([ 'REDIRECT_REMOTE_USER', 'HTTP_AUTHORIZATION' ] as $head) {
+	if(array_key_exists('HTTP_AUTHORIZATION',$_SERVER)) {
 
 		/* Basic authentication */
 
-		if(array_key_exists($head,$_SERVER) && substr(trim($_SERVER[$head]),0,5) === 'Basic') {
-			$userpass = @base64_decode(substr(trim($_SERVER[$head]),6)) ;
+		if (substr(trim($_SERVER['HTTP_AUTHORIZATION']),0,5) === 'Basic') {
+			$userpass = @base64_decode(substr(trim($_SERVER['HTTP_AUTHORIZATION']),6)) ;
 			if(strlen($userpass)) {
 				list($name, $password) = explode(':', $userpass);
 				$_SERVER['PHP_AUTH_USER'] = $name;
 				$_SERVER['PHP_AUTH_PW']   = $password;
 			}
-			break;
 		}
 
-		/* Signature authentication */
+		/* OpenWebAuth */
 
-		if(array_key_exists($head,$_SERVER) && substr(trim($_SERVER[$head]),0,9) === 'Signature') {
+		if(substr(trim($_SERVER['HTTP_AUTHORIZATION']),0,9) === 'Signature') {
 
-			if($head !== 'HTTP_AUTHORIZATION') {
-				$_SERVER['HTTP_AUTHORIZATION'] = $_SERVER[$head];
-				continue;
-			}
+			$record = null;
 
-			$sigblock = \Zotlabs\Web\HTTPSig::parse_sigheader($_SERVER[$head]);
+			$sigblock = \Zotlabs\Web\HTTPSig::parse_sigheader($_SERVER['HTTP_AUTHORIZATION']);
 			if($sigblock) {
 				$keyId = str_replace('acct:','',$sigblock['keyId']);
 				if($keyId) {
@@ -108,16 +109,7 @@ function api_login(&$a){
 								$record = [ 'channel' => $c, 'account' => $a[0] ];
 								$channel_login = $c['channel_id'];
 							}
-							else {
-								continue;
-							}
 						}
-						else {
-							continue;
-						}
-					}
-					else {
-						continue;
 					}
 
 					if($record) {					
@@ -125,7 +117,6 @@ function api_login(&$a){
 						if(! ($verified && $verified['header_signed'] && $verified['header_valid'])) {
 							$record = null;
 						}
-						break;
 					}
 				}
 			}
@@ -137,7 +128,7 @@ function api_login(&$a){
 
 	// process normal login request
 
-	if(isset($_SERVER['PHP_AUTH_USER'])) {
+	if(isset($_SERVER['PHP_AUTH_USER']) && (! $record)) {
 		$channel_login = 0;
 		$record = account_verify_password($_SERVER['PHP_AUTH_USER'],$_SERVER['PHP_AUTH_PW']);
 		if($record && $record['channel']) {
