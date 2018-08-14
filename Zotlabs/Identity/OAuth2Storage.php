@@ -55,15 +55,22 @@ class OAuth2Storage extends \OAuth2\Storage\Pdo {
 			return false;
 		}
 
+		$a = q("select * from account where account_id = %d",
+			intval($x['channel_account_id'])
+		);
+
+		$n = explode(' ', $x['channel_name']);
+
 		return( [
-                        'webbie'    => $x['channel_address'].'@'.\App::get_hostname(),
-                        'zothash'   => $x['channel_hash'],
-			'username'  => $x['channel_address'],
-			'user_id'   => $x['channel_id'],
-			'name'      => $x['channel_name'],
-			'firstName' => $x['channel_name'],
-			'lastName'  => '',
-			'password'  => 'NotARealPassword'
+			'webfinger'   => channel_reddress($x),
+			'portable_id' => $x['channel_hash'],
+			'email'       => $a['account_email'],
+			'username'    => $x['channel_address'],
+			'user_id'     => $x['channel_id'],
+			'name'        => $x['channel_name'],
+			'firstName'   => ((count($n) > 1) ? $n[1] : $n[0]),
+			'lastName'    => ((count($n) > 2) ? $n[count($n) - 1] : ''),
+			'picture'     => $x['xchan_photo_l']
 		] );
     }
 
@@ -91,12 +98,16 @@ class OAuth2Storage extends \OAuth2\Storage\Pdo {
 
         $userClaims = Array();
         $claims = explode (' ', trim($claims));
-        $validclaims = Array ("name","preferred_username","zothash");
+        $validclaims = Array ("name","preferred_username","webfinger","portable_id","email","picture","firstName","lastName");
         $claimsmap = Array (
-                            "zotwebbie" => 'webbie',
-                            "zothash" => 'zothash',
+                            "webfinger" => 'webfinger',
+                            "portable_id" => 'portable_id',
                             "name" => 'name',
-                            "preferred_username" => "username"
+							"email" => 'email',
+                            "preferred_username" => 'username',
+							"picture" => 'picture',
+							"given_name" => 'firstName',
+							"family_name" => 'lastName'
                            );
         $userinfo = $this->getUser($user_id);
         foreach ($validclaims as $validclaim) {

@@ -52,6 +52,7 @@ class Well_known extends \Zotlabs\Web\Controller {
 					break;
 
 				case 'oauth-authorization-server':
+				case 'openid-configuration':
 					\App::$argc -= 1;
 					array_shift(\App::$argv);
 					\App::$argv[0] = 'oauthinfo';

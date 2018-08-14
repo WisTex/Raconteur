@@ -474,10 +474,12 @@ create index "hook_idx" on hook ("hook");
 create index "hook_version_idx" on hook ("hook_version");
 create index "hook_priority_idx" on hook ("priority");
 
+
 CREATE TABLE "hubloc" (
   "hubloc_id" serial  NOT NULL,
   "hubloc_guid" text NOT NULL DEFAULT '',
   "hubloc_guid_sig" text NOT NULL DEFAULT '',
+  "hubloc_id_url" text NOT NULL DEFAULT '',
   "hubloc_hash" text NOT NULL,
   "hubloc_addr" text NOT NULL DEFAULT '',
   "hubloc_network" text NOT NULL DEFAULT '',
@@ -485,6 +487,7 @@ CREATE TABLE "hubloc" (
   "hubloc_status" bigint  NOT NULL DEFAULT '0',
   "hubloc_url" text NOT NULL DEFAULT '',
   "hubloc_url_sig" text NOT NULL DEFAULT '',
+  "hubloc_site_id" text NOT NULL DEFAULT '',
   "hubloc_host" text NOT NULL DEFAULT '',
   "hubloc_callback" text NOT NULL DEFAULT '',
   "hubloc_connect" text NOT NULL DEFAULT '',
@@ -498,7 +501,9 @@ CREATE TABLE "hubloc" (
   PRIMARY KEY ("hubloc_id")
 );
 create index "hubloc_url" on hubloc ("hubloc_url");
+create index "hubloc_site_id" on hubloc ("hubloc_site_id");
 create index "hubloc_guid" on hubloc ("hubloc_guid");
+create index "hubloc_id_url" on hubloc ("hubloc_id_url");
 create index "hubloc_flags" on hubloc ("hubloc_flags");
 create index "hubloc_connect" on hubloc ("hubloc_connect");
 create index "hubloc_host" on hubloc ("hubloc_host");
