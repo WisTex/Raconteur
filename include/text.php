@@ -3412,3 +3412,41 @@ function get_forum_channels($uid) {
 	return $r;
 
 }
+
+function print_array($arr, $level = 0) {
+
+	$o = EMPTY_STR;
+	$tabs = EMPTY_STR;
+
+	if(is_array($arr)) {
+		for($x = 0; $x <= $level; $x ++) {
+			$tabs .= "\t";
+		}
+		$o .= '[' . "\n";
+		if(count($arr)) {
+			foreach($arr as $k => $v) {
+				if(is_array($v)) {
+					$o .= $tabs . '[' . $k . '] => ' . print_array($v, $level + 1) . "\n";
+				}
+				else {
+					$o .= $tabs . '[' . $k . '] => ' . print_val($v) . ",\n";  
+				}
+			}
+		}
+		$o .= substr($tabs,0,-1) . ']' . (($level) ? ',' : ';' ). "\n";
+		return $o;
+	}
+	
+}
+
+function print_val($v) {
+	if(is_bool($v)) {
+		if($v) return 'true';
+		return 'false';
+	}
+	if(is_string($v)) {
+		return "'" . $v . "'";
+	}
+	return $v;
+
+}
