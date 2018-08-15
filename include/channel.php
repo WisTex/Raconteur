@@ -2797,3 +2797,6 @@ function pchan_to_chan($pchan) {
 	return $chan;
 }
 
+function channel_url($channel) {
+	return (($channel) ? z_root() . '/channel/' . $channel['channel_address'] : z_root());
+}
