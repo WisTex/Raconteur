@@ -13,14 +13,20 @@ function initEditor(cb){
 			$("#profile-jot-text-loading").hide();
 			$(".jothidden").show();
 			$("#profile-jot-text").addClass('jot-expanded');
+			$("#profile-jot-summary").addClass('jot-expanded');
 			{{if $bbco_autocomplete}}
 			$("#profile-jot-text").bbco_autocomplete('{{$bbco_autocomplete}}'); // autocomplete bbcode
+			$("#profile-jot-summary").bbco_autocomplete('{{$bbco_autocomplete}}'); // autocomplete bbcode
 			{{/if}}
 			{{if $editor_autocomplete}}
-			if(typeof channelId === 'undefined')
+			if(typeof channelId === 'undefined') {
 				$("#profile-jot-text").editor_autocomplete(baseurl+"/acl");
-			else
+				$("#profile-jot-summary").editor_autocomplete(baseurl+"/acl");
+			}
+			else {
 				$("#profile-jot-text").editor_autocomplete(baseurl+"/acl",[channelId]); // Also gives suggestions from current channel's connections
+				$("#profile-jot-summary").editor_autocomplete(baseurl+"/acl",[channelId]); // Also gives suggestions from current channel's connections
+			}
 			{{/if}}
 			editor = true;
 			if (typeof cb!="undefined") cb();

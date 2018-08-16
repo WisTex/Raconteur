@@ -304,7 +304,8 @@ class Connections extends \Zotlabs\Web\Controller {
 						'ignore' => ((! $rr['abook_ignored']) ? t('Ignore') : false),
 						'recent_label' => t('Recent activity'),
 						'recentlink' => z_root() . '/network/?f=&cid=' . intval($rr['abook_id']),
-						'oneway' => $oneway
+						'oneway' => $oneway,
+						'allow_delete' => get_pconfig(local_channel(),'system','connections_quick_delete'),
 					);
 				}
 			}

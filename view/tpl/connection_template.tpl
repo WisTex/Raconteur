@@ -8,7 +8,9 @@
 			<a href="connedit/{{$contact.id}}/ignore" class="btn btn-warning btn-sm" title="{{$contact.ignore_hover}}"><i class="fa fa-ban"></i> {{$contact.ignore}}</a>
 
 			{{/if}}
+			{{if $contact.allow_delete}}
 			<a href="#" class="btn btn-danger btn-sm contact-delete-btn" title="{{$contact.delete_hover}}" onclick="dropItem('{{$contact.deletelink}}', '#contact-entry-wrapper-{{$contact.id}}'); return false;"><i class="fa fa-trash-o"></i> {{$contact.delete}}</a>
+			{{/if}}
 			<a href="{{$contact.link}}" class="btn btn-outline-secondary btn-sm" title="{{$contact.edit_hover}}"><i class="fa fa-pencil"></i> {{$contact.edit}}</a>
 			{{if $contact.approve}}
 			</form>

@@ -1211,6 +1211,8 @@ function status_editor($a, $x, $popup = false) {
 	if(x($x, 'hide_location'))
 		$geotag = $setloc = $clearloc = '';
 
+	$summaryenabled = ((array_key_exists('allow_summary',$x)) ? intval($x['allow_summary']) : false);
+
 	$mimetype = ((x($x,'mimetype')) ? $x['mimetype'] : 'text/bbcode');
 
 	$mimeselect = ((x($x,'mimeselect')) ? $x['mimeselect'] : false);
@@ -1387,6 +1389,9 @@ function status_editor($a, $x, $popup = false) {
 		'$expanded' => ((x($x, 'expanded')) ? $x['expanded'] : false),
 		'$bbcode' => ((x($x, 'bbcode')) ? $x['bbcode'] : false),
 		'$parent' => ((array_key_exists('parent',$x) && $x['parent']) ? $x['parent'] : 0),
+		'$summaryenabled' => $summaryenabled,
+		'$summary' => ((x($x, 'summary')) ? htmlspecialchars($x['summary'], ENT_COMPAT,'UTF-8') : ''),
+		'$placeholdsummary' => t('Summary'), 
 		'$reset' => $reset
 	));
 
