@@ -234,10 +234,11 @@ function can_comment_on_post($observer_xchan, $item) {
 //	logger('Comment_policy: ' . $item['comment_policy'], LOGGER_DEBUG);
 
 	$x = [
-			'observer_hash' => $observer_xchan,
-			'item' => $item,
-			'allowed' => 'unset'
+		'observer_hash' => $observer_xchan,
+		'item' => $item,
+		'allowed' => 'unset'
 	];
+
 	/**
 	 * @hooks can_comment_on_post
 	 *   Called when deciding whether or not to present a comment box for a post.
@@ -245,26 +246,34 @@ function can_comment_on_post($observer_xchan, $item) {
 	 *   * \e array \b item
 	 *   * \e boolean \b allowed - return value
 	 */
+
 	call_hooks('can_comment_on_post', $x);
-	if($x['allowed'] !== 'unset')
+
+	if($x['allowed'] !== 'unset') {
 		return $x['allowed'];
+	}
 
-	if(! $observer_xchan)
+	if(! $observer_xchan) {
 		return false;
+	}
 
-	if($item['comment_policy'] === 'none')
+	if($item['comment_policy'] === 'none') {
 		return false;
+	}
 
-	if(comments_are_now_closed($item))
+	if(comments_are_now_closed($item)) {
 		return false;
+	}
 
-	if($observer_xchan === $item['author_xchan'] || $observer_xchan === $item['owner_xchan'])
+	if($observer_xchan === $item['author_xchan'] || $observer_xchan === $item['owner_xchan']) {
 		return true;
+	}
 
 	switch($item['comment_policy']) {
 		case 'self':
-			if($observer_xchan === $item['author_xchan'] || $observer_xchan === $item['owner_xchan'])
+			if($observer_xchan === $item['author_xchan'] || $observer_xchan === $item['owner_xchan']) {
 				return true;
+			}
 			break;
 		case 'public':
 		case 'authenticated':
@@ -276,17 +285,22 @@ function can_comment_on_post($observer_xchan, $item) {
 		case 'any connections':
 		case 'contacts':
 		case '':
-			if(array_key_exists('owner',$item) && get_abconfig($item['uid'],$item['owner']['abook_xchan'],'their_perms','post_comments')) {
-					return true;
+			if(local_channel() && get_abconfig(local_channel(),$item['owner_xchan'],'their_perms','post_comments')) {
+				return true;
+			}
+			if(intval($item['item_wall']) && perm_is_allowed($item['uid'],$observer_xchan,'post_comments')) {
+				return true;
 			}
 			break;
 		default:
 			break;
 	}
-	if(strstr($item['comment_policy'],'network:') && strstr($item['comment_policy'],'red'))
+	if(strstr($item['comment_policy'],'network:') && strstr($item['comment_policy'],'red')) {
 		return true;
-	if(strstr($item['comment_policy'],'site:') && strstr($item['comment_policy'],App::get_hostname()))
+	}
+	if(strstr($item['comment_policy'],'site:') && strstr($item['comment_policy'],App::get_hostname())) {
 		return true;
+	}
 
 	return false;
 }
