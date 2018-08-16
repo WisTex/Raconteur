@@ -196,7 +196,6 @@ class ThreadStream {
 			$item->set_commentable(false);
 		} 
 
-		require_once('include/channel.php');
 
 		$item->set_conversation($this);
 		$this->threads[] = $item;
