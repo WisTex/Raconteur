@@ -1342,6 +1342,11 @@ function is_ajax() {
 	return (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
 }
 
+function killme_if_ajax() {
+	if(is_ajax()) {
+		killme();
+	}
+}
 
 /**
  * Primarily involved with database upgrade, but also sets the

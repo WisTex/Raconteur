@@ -305,6 +305,7 @@ class Apps {
 	static public function translate_system_apps(&$arr) {
 		$apps = array(
 			'Apps' => t('Apps'),
+			'Affinity Tool' => t('Affinity Tool'),
 			'Articles' => t('Articles'),
 			'Cards' => t('Cards'),
 			'Admin' => t('Site Admin'),
@@ -679,11 +680,12 @@ class Apps {
 	}
 
 	static public function system_app_installed($uid,$app) {
-
+dbg(2);
 		$r = q("select id from app where app_id = '%s' and app_channel = %d limit 1",
 			dbesc(hash('whirlpool',$app)),
 			intval($uid)
 		);
+dbg(0);
 		return(($r) ? true : false);
 
 	}

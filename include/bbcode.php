@@ -782,6 +782,10 @@ function bbcode($Text, $options = []) {
 		$options = [];
 	}
 
+	if(is_array($Text)) {
+		btlogger('Text is array: ' . print_r($Text,true));
+	}
+
 	$preserve_nl = ((array_key_exists('preserve_nl',$options)) ? $options['preserve_nl'] : false);
 	$tryoembed   = ((array_key_exists('tryoembed',$options)) ? $options['tryoembed'] : true);
 	$cache       = ((array_key_exists('cache',$options)) ? $options['cache'] : false);

@@ -3,6 +3,8 @@ namespace Zotlabs\Module;
 
 
 use Zotlabs\Lib\Group;
+use Zotlabs\Lib\Apps;
+
 require_once('include/contact_widgets.php');
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
@@ -123,8 +125,8 @@ class Network extends \Zotlabs\Web\Controller {
 			$def_acl    = array('allow_gid' => '<' . $r[0]['hash'] . '>');
 		}
 	
-		$default_cmin = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmin',0) : (-1));
-		$default_cmax = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmax',99) : (-1));
+		$default_cmin = ((Apps::system_app_installed(local_channel(),'Affinity Tool')) ? get_pconfig(local_channel(),'affinity','cmin',0) : (-1));
+		$default_cmax = ((Apps::system_app_installed(local_channel(),'Affinity Tool')) ? get_pconfig(local_channel(),'affinity','cmax',99) : (-1));
 
 		$cid      = ((x($_GET,'cid'))   ? intval($_GET['cid'])   : 0);
 		$star     = ((x($_GET,'star'))  ? intval($_GET['star'])  : 0);

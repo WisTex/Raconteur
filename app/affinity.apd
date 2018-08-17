@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/affinity
+requires: local_channel
+name: Affinity Tool
+photo: icon:arrows-h
+categories: Networking

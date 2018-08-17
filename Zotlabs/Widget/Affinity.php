@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Widget;
 
+use Zotlabs\Lib\Apps;
+
 class Affinity {
 
 	function widget($arr) {
@@ -9,14 +11,14 @@ class Affinity {
 		if(! local_channel())
 			return '';
 	
-		$default_cmin = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmin',0) : 0);
-		$default_cmax = ((feature_enabled(local_channel(),'affinity')) ? get_pconfig(local_channel(),'affinity','cmax',99) : 99);
+		$default_cmin = ((Apps::system_app_installed(local_channel(),'Affinity Tool')) ? get_pconfig(local_channel(),'affinity','cmin',0) : 0);
+		$default_cmax = ((Apps::system_app_installed(local_channel(),'Affinity Tool')) ? get_pconfig(local_channel(),'affinity','cmax',99) : 99);
 
 		$cmin = ((x($_REQUEST,'cmin')) ? intval($_REQUEST['cmin']) : $default_cmin);
 		$cmax = ((x($_REQUEST,'cmax')) ? intval($_REQUEST['cmax']) : $default_cmax);
 
 
-		if(feature_enabled(local_channel(),'affinity')) {
+		if(Apps::system_app_installed(local_channel(),'Affinity Tool')) {
 
 			$labels = array(
 				t('Me'),
