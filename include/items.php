@@ -258,7 +258,7 @@ function can_comment_on_post($observer_xchan, $item) {
 		case 'any connections':
 		case 'contacts':
 		case '':
-			if(array_key_exists('owner',$item) && their_perms_contains($item['uid'],$item['owner']['abook_xchan'],'post_comments')) {
+			if(local_channel() && array_key_exists('owner',$item) && their_perms_contains(local_channel(),$item['owner']['abook_xchan'],'post_comments')) {
 					return true;
 			}
 			break;

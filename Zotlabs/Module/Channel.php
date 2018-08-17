@@ -53,8 +53,6 @@ class Channel extends \Zotlabs\Web\Controller {
 			http_status_exit(404, 'Not found');
 		}
 
-
-
 		head_add_link( [ 
 			'rel'   => 'alternate', 
 			'type'  => 'application/atom+xml',

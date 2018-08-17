@@ -14,7 +14,8 @@
 
 #jot-title-wrap,
 #jot-pagetitle-wrap,
-#jot-category-wrap {
+#jot-category-wrap,
+#jot-summary-wrap {
 	border-bottom: 1px solid rgba(0, 0, 0, .2);
 }
 
@@ -37,7 +38,8 @@
 	right: 0px;
 }
 
-#profile-jot-text {
+#profile-jot-text,
+#profile-jot-summary {
 	resize: none;
 	border-width: 0px;
 	height: 2.5rem;
@@ -45,6 +47,11 @@
 	padding: 0.5rem;
 	width: 100%;
 	display: inherit;
+}
+
+#profile-jot-summary.jot-expanded {
+	resize: vertical;
+	height: 75px;
 }
 
 #profile-jot-text.jot-expanded {

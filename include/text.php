@@ -1636,7 +1636,12 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 		$s .= prepare_binary($item);
 	}
 	else {
-		$s .= prepare_text($item['body'],$item['mimetype'], $opts);
+		if($item['summary']) {
+			$s .= prepare_text('[summary]' . $item['summary'] . '[/summary]' . $item['body'],$item['mimetype'],$opts);
+		}
+		else {
+			$s .= prepare_text($item['body'],$item['mimetype'], $opts);
+		}
 	}
 
 	$event = (($item['obj_type'] === ACTIVITY_OBJ_EVENT) ? format_event_obj($item['obj']) : false);

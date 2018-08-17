@@ -44,13 +44,18 @@
 			<input name="category" id="jot-category" type="text" placeholder="{{$placeholdercategory}}" value="{{$category}}" data-role="cat-tagsinput">
 		</div>
 		{{/if}}
+		{{if $summaryenabled}}
+		<div id="jot-summary-wrap" class="jothidden">
+			<textarea class="profile-jot-summary" id="profile-jot-summary" name="summary" tabindex="2" placeholder="{{$placeholdsummary}}" >{{$summary}}</textarea>
+		</div>
+		{{/if}}
 		<div id="jot-text-wrap">
 			{{if $reset}}
 			<button id="profile-jot-reset" class="btn btn-outline-secondary btn-sm d-none border-0" title="{{$reset}}" onclick="itemCancel(); return false;">
 				<i class="fa fa-close"></i>
 			</button>
 			{{/if}}
-			<textarea class="profile-jot-text" id="profile-jot-text" name="body" tabindex="2" placeholder="{{$placeholdtext}}" >{{$content}}</textarea>
+			<textarea class="profile-jot-text" id="profile-jot-text" name="body" tabindex="3" placeholder="{{$placeholdtext}}" >{{$content}}</textarea>
 		</div>
 		{{if $attachment}}
 		<div id="jot-attachment-wrap">

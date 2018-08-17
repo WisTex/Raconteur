@@ -3,6 +3,7 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Group as ZGroup;
 
 /* @file connedit.php
@@ -632,7 +633,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 
 			$tpl = get_markup_template("abook_edit.tpl");
 	
-			if(feature_enabled(local_channel(),'affinity')) {
+			if(Apps::system_app_installed(local_channel(),'Affinity Tool')) {
 
 				$sections['affinity'] = [
 					'label' => t('Affinity'),

@@ -2542,7 +2542,7 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 	}
 
 
-	$r = q("select * from iconfig left join item on item.id = iconfig.iid
+	$r = q("select iid from iconfig left join item on item.id = iconfig.iid
 		where item.uid = %d",
 		intval($channel_id)
 	);

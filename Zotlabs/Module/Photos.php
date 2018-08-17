@@ -1,7 +1,10 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\PermissionDescription;
+use Zotlabs\Access\AccessList;
 
 require_once('include/photo/photo_driver.php');
 require_once('include/photos.php');
@@ -21,29 +24,24 @@ class Photos extends \Zotlabs\Web\Controller {
 		}
 	
 		if(argc() > 1) {
-			$nick = argv(1);
+
+			$nick = escape_tags(argv(1));
 	
 			profile_load($nick);
 	
 			$channelx = channelx_by_nick($nick);
+
+			$profile_uid = 0;
 	
-			if(! $channelx)
-				return;
+			if($channelx) {
+				App::$data['channel']  = $channelx;
+				head_set_icon($channelx['xchan_photo_s']);
+				$profile_uid = $channelx['channel_id'];
+			}
 	
-			\App::$data['channel'] = $channelx;
-	
-			$observer = \App::get_observer();
-			\App::$data['observer'] = $observer;
-	
-			$observer_xchan = (($observer) ? $observer['xchan_hash'] : '');
-	
-			head_set_icon(\App::$data['channel']['xchan_photo_s']);
-	
-			\App::$page['htmlhead'] .= "<script> var profile_uid = " . ((\App::$data['channel']) ? \App::$data['channel']['channel_id'] : 0) . "; </script>" ;
-	
+			App::$page['htmlhead'] .= "<script>var profile_uid = $profile_uid;</script>" ;
+			App::$data['observer'] = App::get_observer();
 		}
-	
-		return;
 	}
 	
 	
@@ -61,15 +59,14 @@ class Photos extends \Zotlabs\Web\Controller {
 	
 		$can_post  = false;
 	
-		$page_owner_uid = \App::$data['channel']['channel_id'];
+		$page_owner_uid = App::$data['channel']['channel_id'];
 	
 		if(perm_is_allowed($page_owner_uid,get_observer_hash(),'write_storage'))
 			$can_post = true;
 	
 		if(! $can_post) {
 			notice( t('Permission denied.') . EOL );
-			if(is_ajax())
-				killme();
+			killme_if_ajax();
 			return;
 		}
 	
@@ -78,14 +75,13 @@ class Photos extends \Zotlabs\Web\Controller {
 		if(! $s) {
 			notice( t('Page owner information could not be retrieved.') . EOL);
 			logger('mod_photos: post: unable to locate contact record for page owner. uid=' . $page_owner_uid);
-			if(is_ajax())
-				killme();
+			killme_if_ajax();
 			return;
 		}
 	
 		$owner_record = $s[0];	
 	
-		$acl = new \Zotlabs\Access\AccessList(\App::$data['channel']);
+		$acl = new AccessList(App::$data['channel']);
 	
 		if((argc() > 3) && (argv(2) === 'album')) {
 	
@@ -153,23 +149,22 @@ class Photos extends \Zotlabs\Web\Controller {
 				q("delete from photo where resource_id in ( $str ) and uid = %d",
 					intval($page_owner_uid)
 				);
-	
-				// @FIXME do the same for the linked attach
+
+				q("delete from attach where hash in ( $str ) and uid = %d",
+					intval($page_owner_uid)
+				);
 	
 				if($folder_hash) {
 					attach_delete($page_owner_uid, $folder_hash, true );
-
 					if(! $admin_delete) {	
-						$sync = attach_export_data(\App::$data['channel'],$folder_hash, true);
-	
-						if($sync) 
+						$sync = attach_export_data(App::$data['channel'],$folder_hash, true);
+						if($sync) {
 							Libsync::build_sync_packet($page_owner_uid,array('file' => array($sync)));
+						}
 					}
 				}
-	
-			}
-			
-			goaway(z_root() . '/photos/' . \App::$data['channel']['channel_address']);
+			}			
+			goaway(z_root() . '/photos/' . App::$data['channel']['channel_address']);
 		}
 	
 		if((argc() > 2) && (x($_REQUEST,'delete')) && ($_REQUEST['delete'] === t('Delete Photo'))) {
@@ -187,18 +182,17 @@ class Photos extends \Zotlabs\Web\Controller {
 	
 			if($r) {
 				attach_delete($page_owner_uid, $r[0]['resource_id'], true );
-				$sync = attach_export_data(\App::$data['channel'],$r[0]['resource_id'], true);
-	
-				if($sync) 
+				$sync = attach_export_data(App::$data['channel'],$r[0]['resource_id'], true);
+				if($sync) {
 					Libsync::build_sync_packet($page_owner_uid,array('file' => array($sync)));
+				}
 			}
 			elseif(is_site_admin()) {
 				// If the admin deletes a photo, don't sync
 				attach_delete($page_owner_uid, argv(2), true);
 			}	
 
-
-			goaway(z_root() . '/photos/' . \App::$data['channel']['channel_address'] . '/album/' . $_SESSION['album_return']);
+			goaway(z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/album/' . $_SESSION['album_return']);
 		}
 
 		if((argc() > 2) && array_key_exists('move_to_album',$_POST)) {
@@ -209,7 +203,7 @@ class Photos extends \Zotlabs\Web\Controller {
 			if(($m) && ($m[0]['folder'] != $_POST['move_to_album'])) {
 				attach_move($page_owner_uid,argv(2),$_POST['move_to_album']);			
 
-				$sync = attach_export_data(\App::$data['channel'],argv(2),true);
+				$sync = attach_export_data(App::$data['channel'],argv(2),true);
 				if($sync) 
 					Libsync::build_sync_packet($page_owner_uid,array('file' => array($sync)));
 
@@ -223,102 +217,12 @@ class Photos extends \Zotlabs\Web\Controller {
 			$desc        = ((x($_POST,'desc'))    ? notags(trim($_POST['desc']))    : '');
 			$rawtags     = ((x($_POST,'newtag'))  ? notags(trim($_POST['newtag']))  : '');
 			$item_id     = ((x($_POST,'item_id')) ? intval($_POST['item_id'])       : 0);
-
 			$is_nsfw     = ((x($_POST,'adult'))   ? intval($_POST['adult'])         : 0);
 		
 			$acl->set_from_array($_POST);
 			$perm = $acl->get();
 	
 			$resource_id = argv(2);
-	
-			if((x($_POST,'rotate') !== false) && 
-			   ( (intval($_POST['rotate']) == 1) || (intval($_POST['rotate']) == 2) )) {
-				logger('rotate');
-	
-				$r = q("select * from photo where resource_id = '%s' and uid = %d and imgscale = 0 limit 1",
-					dbesc($resource_id),
-					intval($page_owner_uid)
-				);
-				if(count($r)) {
-					$d = (($r[0]['os_storage']) ? @file_get_contents(dbunescbin($r[0]['content'])) : dbunescbin($r[0]['content']));
-					$ph = photo_factory($d, $r[0]['mimetype']);
-					if($ph->is_valid()) {
-						$rotate_deg = ( (intval($_POST['rotate']) == 1) ? 270 : 90 );
-						$ph->rotate($rotate_deg);
-	
-						$width  = $ph->getWidth();
-						$height = $ph->getHeight();
-						
-						if(intval($r[0]['os_storage'])) {
-							@file_put_contents($r[0]['content'],$ph->imageString());
-							$data = $r[0]['content'];
-							$fsize = @filesize($r[0]['content']);
-							q("update attach set filesize = %d where hash = '%s' and uid = %d",
-								intval($fsize),
-								dbesc($resource_id),
-								intval($page_owner_uid)
-							);
-						}
-						else {
-							$data = $ph->imageString();
-							$fsize = strlen($data);
-						}
-	
-						$x = q("update photo set content = '%s', filesize = %d, height = %d, width = %d where resource_id = '%s' and uid = %d and imgscale = 0",
-							dbescbin($data),
-							intval($fsize),
-							intval($height),
-							intval($width),
-							dbesc($resource_id),
-							intval($page_owner_uid)
-						);
-	
-						if($width > 1024 || $height > 1024) 
-							$ph->scaleImage(1024);
-	
-						$width  = $ph->getWidth();
-						$height = $ph->getHeight();
-	
-						$x = q("update photo set content = '%s', height = %d, width = %d where resource_id = '%s' and uid = %d and imgscale = 1",
-							dbescbin($ph->imageString()),
-							intval($height),
-							intval($width),
-							dbesc($resource_id),
-							intval($page_owner_uid)
-						);
-	
-	
-						if($width > 640 || $height > 640) 
-							$ph->scaleImage(640);
-	
-						$width  = $ph->getWidth();
-						$height = $ph->getHeight();
-	
-						$x = q("update photo set content = '%s', height = %d, width = %d where resource_id = '%s' and uid = %d and imgscale = 2",
-							dbescbin($ph->imageString()),
-							intval($height),
-							intval($width),
-							dbesc($resource_id),
-							intval($page_owner_uid)
-						);
-	
-	
-						if($width > 320 || $height > 320) 
-							$ph->scaleImage(320);
-	
-						$width  = $ph->getWidth();
-						$height = $ph->getHeight();
-	
-						$x = q("update photo set content = '%s', height = %d, width = %d where resource_id = '%s' and uid = %d and imgscale = 3",
-							dbescbin($ph->imageString()),
-							intval($height),
-							intval($width),
-							dbesc($resource_id),
-							intval($page_owner_uid)
-						);
-					}
-				}
-			}
 	
 			$p = q("SELECT mimetype, is_nsfw, description, resource_id, imgscale, allow_cid, allow_gid, deny_cid, deny_gid FROM photo WHERE resource_id = '%s' AND uid = %d ORDER BY imgscale DESC",
 				dbesc($resource_id),
@@ -356,7 +260,7 @@ class Photos extends \Zotlabs\Web\Controller {
 				$visibility = 1;
 	
 			if(! $item_id) {
-				$item_id = photos_create_item(\App::$data['channel'],get_observer_hash(),$p[0],$visibility);
+				$item_id = photos_create_item(App::$data['channel'],get_observer_hash(),$p[0],$visibility);
 	
 			}
 	
@@ -393,9 +297,7 @@ class Photos extends \Zotlabs\Web\Controller {
 					dbesc($resource_id),
 					intval($page_owner_uid)
 			);
-	
-	
-	
+		
 			if(strlen($rawtags)) {
 	
 				$str_tags = '';
@@ -408,7 +310,7 @@ class Photos extends \Zotlabs\Web\Controller {
 					$rawtags = '@' . $rawtags;
 	
 				require_once('include/text.php');
-				$profile_uid = \App::$profile['profile_uid'];
+				$profile_uid = App::$profile['profile_uid'];
 	
 				$results = linkify_tags($a, $rawtags, (local_channel()) ? local_channel() : $profile_uid);
 	
@@ -447,7 +349,7 @@ class Photos extends \Zotlabs\Web\Controller {
 	
 			}
 
-			$sync = attach_export_data(\App::$data['channel'],$resource_id);
+			$sync = attach_export_data(App::$data['channel'],$resource_id);
 	
 			if($sync) 
 				Libsync::build_sync_packet($page_owner_uid,array('file' => array($sync)));
@@ -463,8 +365,8 @@ class Photos extends \Zotlabs\Web\Controller {
 		 * default post action - upload a photo
 		 */
 	
-		$channel  = \App::$data['channel'];
-		$observer = \App::$data['observer'];
+		$channel  = App::$data['channel'];
+		$observer = App::$data['observer'];
 	
 		$_REQUEST['source'] = 'photos';
 		require_once('include/attach.php');
@@ -525,10 +427,10 @@ class Photos extends \Zotlabs\Web\Controller {
 	
 		if(! $r['success']) {
 			notice($r['message'] . EOL);
-			goaway(z_root() . '/photos/' . \App::$data['channel']['channel_address']);
+			goaway(z_root() . '/photos/' . App::$data['channel']['channel_address']);
 		}		
 
-		goaway(z_root() . '/photos/' . \App::$data['channel']['channel_address'] . '/album/' . $r['data']['folder']);
+		goaway(z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/album/' . $r['data']['folder']);
 	
 	}
 	
@@ -553,7 +455,7 @@ class Photos extends \Zotlabs\Web\Controller {
 		require_once('include/security.php');
 		require_once('include/conversation.php');
 	
-		if(! x(\App::$data,'channel')) {
+		if(! x(App::$data,'channel')) {
 			notice( t('No photos selected') . EOL );
 			return;
 		}
@@ -561,13 +463,13 @@ class Photos extends \Zotlabs\Web\Controller {
 		$ph = photo_factory('');
 		$phototypes = $ph->supportedTypes();
 	
-		$_SESSION['photo_return'] = \App::$cmd;
+		$_SESSION['photo_return'] = App::$cmd;
 	
 		//
 		// Parse arguments 
 		//
 	
-		$can_comment = perm_is_allowed(\App::$profile['profile_uid'],get_observer_hash(),'post_comments');
+		$can_comment = perm_is_allowed(App::$profile['profile_uid'],get_observer_hash(),'post_comments');
 	
 		if(argc() > 3) {
 			$datatype = argv(2);
@@ -594,10 +496,10 @@ class Photos extends \Zotlabs\Web\Controller {
 		$visitor        = 0;
 	
 	
-		$owner_uid = \App::$data['channel']['channel_id'];
-		$owner_aid = \App::$data['channel']['channel_account_id'];
+		$owner_uid = App::$data['channel']['channel_id'];
+		$owner_aid = App::$data['channel']['channel_account_id'];
 	
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 	
 		$can_post = perm_is_allowed($owner_uid,$observer['xchan_hash'],'write_storage');
 		$can_view = perm_is_allowed($owner_uid,$observer['xchan_hash'],'view_storage');
@@ -618,13 +520,12 @@ class Photos extends \Zotlabs\Web\Controller {
 			<script src="library/blueimp_upload/js/jquery.fileupload.js"></script>';
 
 
-		$o .= "<script> var profile_uid = " . \App::$profile['profile_uid'] 
-			. "; var netargs = '?f='; var profile_page = " . \App::$pager['page'] . "; </script>\r\n";
+		$o .= "<script> var profile_uid = " . App::$profile['profile_uid'] 
+			. "; var netargs = '?f='; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
 	
 		// tabs
 	
 		$_is_owner = (local_channel() && (local_channel() == $owner_uid));
-		//$o .= profile_tabs($a,$_is_owner, \App::$data['channel']['channel_address']);	
 	
 		/**
 		 * Display upload form
@@ -634,7 +535,7 @@ class Photos extends \Zotlabs\Web\Controller {
 	
 			$uploader = '';
 	
-			$ret = array('post_url' => z_root() . '/photos/' . \App::$data['channel']['channel_address'],
+			$ret = array('post_url' => z_root() . '/photos/' . App::$data['channel']['channel_address'],
 					'addon_text' => $uploader,
 					'default_upload' => true);
 	
@@ -643,11 +544,11 @@ class Photos extends \Zotlabs\Web\Controller {
 			/* Show space usage */
 	
 			$r = q("select sum(filesize) as total from photo where aid = %d and imgscale = 0 ",
-				intval(\App::$data['channel']['channel_account_id'])
+				intval(App::$data['channel']['channel_account_id'])
 			);
 	
 	
-			$limit = engr_units_to_bytes(service_class_fetch(\App::$data['channel']['channel_id'],'photo_upload_limit'));
+			$limit = engr_units_to_bytes(service_class_fetch(App::$data['channel']['channel_id'],'photo_upload_limit'));
 			if($limit !== false) {
 				$usage_message = sprintf( t("%1$.2f MB of %2$.2f MB photo storage used."), $r[0]['total'] / 1024000, $limit / 1024000 );
 			}
@@ -656,15 +557,15 @@ class Photos extends \Zotlabs\Web\Controller {
 	 		}
 	
 			if($_is_owner) {
-				$channel = \App::get_channel();
+				$channel = App::get_channel();
 	
-				$acl = new \Zotlabs\Access\AccessList($channel);
+				$acl = new AccessList($channel);
 				$channel_acl = $acl->get();
 	
 				$lockstate = (($acl->is_private()) ? 'lock' : 'unlock');
 			}
 	
-			$aclselect = (($_is_owner) ? populate_acl($channel_acl,false, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_storage')) : '');
+			$aclselect = (($_is_owner) ? populate_acl($channel_acl,false, PermissionDescription::fromGlobalPermission('view_storage')) : '');
 	
 			// this is wrong but is to work around an issue with js_upload wherein it chokes if these variables
 			// don't exist. They really should be set to a parseable representation of the channel's default permissions 
@@ -682,10 +583,10 @@ class Photos extends \Zotlabs\Web\Controller {
 			}	
 
 	
-			$albums = ((array_key_exists('albums', \App::$data)) ? \App::$data['albums'] : photos_albums_list(\App::$data['channel'],\App::$data['observer']));
+			$albums = ((array_key_exists('albums', App::$data)) ? App::$data['albums'] : photos_albums_list(App::$data['channel'],App::$data['observer']));
 	
 			if(! $selname) {
-				$def_album = get_pconfig(\App::$data['channel']['channel_id'],'system','photo_path');
+				$def_album = get_pconfig(App::$data['channel']['channel_id'],'system','photo_path');
 				if($def_album) {
 					$selname = filepath_macro($def_album);
 					$albums['album'][] = array('text' => $selname);
@@ -697,7 +598,7 @@ class Photos extends \Zotlabs\Web\Controller {
 				'$pagename' => t('Upload Photos'),
 				'$sessid' => session_id(),
 				'$usage' => $usage_message,
-				'$nickname' => \App::$data['channel']['channel_address'],
+				'$nickname' => App::$data['channel']['channel_address'],
 				'$newalbum_label' => t('Enter an album name'),
 				'$newalbum_placeholder' => t('or select an existing album (doubleclick)'),
 				'$visible' => array('visible', t('Create a status post for this upload'), 0,'', array(t('No'), t('Yes')), 'onclick="showHideBodyTextarea();"'),
@@ -734,16 +635,16 @@ class Photos extends \Zotlabs\Web\Controller {
 			head_add_link([ 
 				'rel'   => 'alternate',
 				'type'  => 'application/json+oembed',
-				'href'  => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . \App::$query_string),
+				'href'  => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . App::$query_string),
 				'title' => 'oembed'
 			]);
 
 			if($x = photos_album_exists($owner_uid, get_observer_hash(), $datum)) {
-				\App::set_pager_itemspage(60);
+				App::set_pager_itemspage(60);
 				$album = $x['display_path'];
 			} 
 			else {
-				goaway(z_root() . '/photos/' . \App::$data['channel']['channel_address']);
+				goaway(z_root() . '/photos/' . App::$data['channel']['channel_address']);
 			}
 
 			if($_GET['order'] === 'posted')
@@ -760,8 +661,8 @@ class Photos extends \Zotlabs\Web\Controller {
 				intval(PHOTO_NORMAL),
 				intval(PHOTO_PROFILE),
 				intval($unsafe),
-				intval(\App::$pager['itemspage']),
-				intval(\App::$pager['start'])
+				intval(App::$pager['itemspage']),
+				intval(App::$pager['start'])
 			);
 
 			// edit album name
@@ -769,7 +670,7 @@ class Photos extends \Zotlabs\Web\Controller {
 
 			if($can_post) {
 				$album_e = $album;
-				$albums = ((array_key_exists('albums', \App::$data)) ? \App::$data['albums'] : photos_albums_list(\App::$data['channel'],\App::$data['observer']));
+				$albums = ((array_key_exists('albums', App::$data)) ? App::$data['albums'] : photos_albums_list(App::$data['channel'],App::$data['observer']));
 	
 				// @fixme - syncronise actions with DAV
 		
@@ -777,7 +678,7 @@ class Photos extends \Zotlabs\Web\Controller {
 	//				$album_edit = replace_macros($edit_tpl,array(
 	//					'$nametext' => t('Enter a new album name'),
 	//					'$name_placeholder' => t('or select an existing one (doubleclick)'),
-	//					'$nickname' => \App::$data['channel']['channel_address'],
+	//					'$nickname' => App::$data['channel']['channel_address'],
 	//					'$album' => $album_e,
 	//					'$albums' => $albums['albums'],
 	//					'$hexalbum' => bin2hex($album),
@@ -788,9 +689,9 @@ class Photos extends \Zotlabs\Web\Controller {
 			}
 	
 			if($_GET['order'] === 'posted')
-				$order =  array(t('Show Newest First'), z_root() . '/photos/' . \App::$data['channel']['channel_address'] . '/album/' . $datum);
+				$order =  array(t('Show Newest First'), z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/album/' . $datum);
 			else
-				$order = array(t('Show Oldest First'), z_root() . '/photos/' . \App::$data['channel']['channel_address'] . '/album/' . $datum . '?f=&order=posted');
+				$order = array(t('Show Oldest First'), z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/album/' . $datum . '?f=&order=posted');
 	
 			$photos = array();
 			if(count($r)) {
@@ -807,7 +708,7 @@ class Photos extends \Zotlabs\Web\Controller {
 					$imgalt_e = $rr['filename'];
 					$desc_e = $rr['description'];
 	
-					$imagelink = (z_root() . '/photos/' . \App::$data['channel']['channel_address'] . '/image/' . $rr['resource_id']
+					$imagelink = (z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/image/' . $rr['resource_id']
 					. (($_GET['order'] === 'posted') ? '?f=&order=posted' : ''));
 	
 					$photos[] = array(
@@ -847,22 +748,14 @@ class Photos extends \Zotlabs\Web\Controller {
 					'$album_id' => $datum,
 					'$album_edit' => array(t('Edit Album'), $album_edit),
 					'$can_post' => $can_post,
-					'$upload' => array(t('Add Photos'), z_root() . '/photos/' . \App::$data['channel']['channel_address'] . '/upload/' . $datum),
+					'$upload' => array(t('Add Photos'), z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/upload/' . $datum),
 					'$order' => $order,
 					'$upload_form' => $upload_form,
 					'$usage' => $usage_message
 				));
-	
+
+				return $o;	
 			}
-	
-			if((! $photos) && ($_REQUEST['aj'])) {
-				$o .= '<div id="content-complete"></div>';
-				echo $o;
-				killme();
-			}
-	
-			return $o;
-	
 		}	
 	
 		/** 
@@ -870,9 +763,14 @@ class Photos extends \Zotlabs\Web\Controller {
 		 */
 	
 		if($datatype === 'image') {
-	
-			\App::$page['htmlhead'] .= "\r\n" . '<link rel="alternate" type="application/json+oembed" href="' . z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . \App::$cmd) . '" title="oembed" />' . "\r\n";
-	
+
+			head_add_link([ 
+				'rel'   => 'alternate',
+				'type'  => 'application/json+oembed',
+				'href'  => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . App::$query_string),
+				'title' => 'oembed'
+			]);
+
 			$x = q("select folder from attach where hash = '%s' and uid = %d $sql_attach limit 1",
 				dbesc($datum),
 				intval($owner_uid)
@@ -931,8 +829,8 @@ class Photos extends \Zotlabs\Web\Controller {
 					}
 				}
 	
-				$prevlink = z_root() . '/photos/' . \App::$data['channel']['channel_address'] . '/image/' . $prvnxt[$prv]['hash'] . (($_GET['order'] === 'posted') ? '?f=&order=posted' : '');
-				$nextlink = z_root() . '/photos/' . \App::$data['channel']['channel_address'] . '/image/' . $prvnxt[$nxt]['hash'] . (($_GET['order'] === 'posted') ? '?f=&order=posted' : '');
+				$prevlink = z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/image/' . $prvnxt[$prv]['hash'] . (($_GET['order'] === 'posted') ? '?f=&order=posted' : '');
+				$nextlink = z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/image/' . $prvnxt[$nxt]['hash'] . (($_GET['order'] === 'posted') ? '?f=&order=posted' : '');
 	 		}
 	
 	
@@ -949,7 +847,7 @@ class Photos extends \Zotlabs\Web\Controller {
 				}
 			}
 	
-			$album_link = z_root() . '/photos/' . \App::$data['channel']['channel_address'] . '/album/' . $x[0]['folder'];
+			$album_link = z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/album/' . $x[0]['folder'];
 	 		$tools = Null;
 	 		$lock = Null;
 	 
@@ -966,12 +864,12 @@ class Photos extends \Zotlabs\Web\Controller {
 					? array('lock', t('Private Photo'))
 					: array('unlock', Null));
 	
-			\App::$page['htmlhead'] .= '<script>$(document).keydown(function(event) {' . "\n";
+			App::$page['htmlhead'] .= '<script>$(document).keydown(function(event) {' . "\n";
 			if($prevlink)
-				\App::$page['htmlhead'] .= 'if(event.ctrlKey && event.keyCode == 37) { event.preventDefault(); window.location.href = \'' . $prevlink . '\'; }' . "\n";
+				App::$page['htmlhead'] .= 'if(event.ctrlKey && event.keyCode == 37) { event.preventDefault(); window.location.href = \'' . $prevlink . '\'; }' . "\n";
 			if($nextlink)
-				\App::$page['htmlhead'] .= 'if(event.ctrlKey && event.keyCode == 39) { event.preventDefault(); window.location.href = \'' . $nextlink . '\'; }' . "\n";
-			\App::$page['htmlhead'] .= '});</script>';
+				App::$page['htmlhead'] .= 'if(event.ctrlKey && event.keyCode == 39) { event.preventDefault(); window.location.href = \'' . $nextlink . '\'; }' . "\n";
+			App::$page['htmlhead'] .= '});</script>';
 	
 			if($prevlink)
 				$prevlink = array($prevlink, t('Previous'));
@@ -1053,7 +951,7 @@ class Photos extends \Zotlabs\Web\Controller {
 				$album_e = $ph[0]['album'];
 				$caption_e = $ph[0]['description'];
 				$aclselect_e = (($_is_owner) ? populate_acl($ph[0], true, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_storage')) : '');
-				$albums = ((array_key_exists('albums', \App::$data)) ? \App::$data['albums'] : photos_albums_list(\App::$data['channel'],\App::$data['observer']));
+				$albums = ((array_key_exists('albums', App::$data)) ? App::$data['albums'] : photos_albums_list(App::$data['channel'],App::$data['observer']));
 	
 				$_SESSION['album_return'] = bin2hex($ph[0]['album']);
 
@@ -1062,14 +960,12 @@ class Photos extends \Zotlabs\Web\Controller {
 				$edit = [
 					'edit' => t('Edit photo'),
 					'id' => $link_item['id'],
-					'rotatecw'             => t('Rotate CW (right)'),
-					'rotateccw'            => t('Rotate CCW (left)'),
 					'albums'               => $albums['albums'],
 					'album'                => $album_e,
 					'album_select'         => [ 'move_to_album', t('Move photo to album'), $x[0]['folder'], '', $folder_list ],
 					'newalbum_label'       => t('Enter a new album name'),
 					'newalbum_placeholder' => t('or select an existing one (doubleclick)'),
-					'nickname'             => \App::$data['channel']['channel_address'],
+					'nickname'             => App::$data['channel']['channel_address'],
 					'resource_id'          => $ph[0]['resource_id'],
 					'capt_label'           => t('Title (optional)'),
 					'caption'              => $caption_e,
@@ -1094,7 +990,7 @@ class Photos extends \Zotlabs\Web\Controller {
 	
 				$cmnt_tpl = get_markup_template('comment_item.tpl');
 				$tpl = get_markup_template('photo_item.tpl');
-				$return_url = \App::$cmd;
+				$return_url = App::$cmd;
 	
 				$like_tpl = get_markup_template('like_noshare.tpl');
 	
@@ -1139,14 +1035,13 @@ class Photos extends \Zotlabs\Web\Controller {
 				$like = '';
 				$dislike = '';
 	
-				$conv_responses = array(
-					'like' => array('title' => t('Likes','title')),'dislike' => array('title' => t('Dislikes','title')),
-					'agree' => array('title' => t('Agree','title')),'disagree' => array('title' => t('Disagree','title')), 'abstain' => array('title' => t('Abstain','title')), 
-					'attendyes' => array('title' => t('Attending','title')), 'attendno' => array('title' => t('Not attending','title')), 'attendmaybe' => array('title' => t('Might attend','title'))
-				);
-	
-	
-	
+				$conv_responses = [
+					'like'        => [ 'title' => t('Likes','title') ],
+					'dislike'     => [ 'title' => t('Dislikes','title') ],
+					'attendyes'   => [ 'title' => t('Attending','title') ], 
+					'attendno'    => [ 'title' => t('Not attending','title') ], 
+					'attendmaybe' => [ 'title' => t('Might attend' ,'title') ]
+				];
 	
 				if($r) {
 	
@@ -1188,8 +1083,9 @@ class Photos extends \Zotlabs\Web\Controller {
 						$template = $tpl;
 						$sparkle = '';
 	
-						if(((activity_match($item['verb'],ACTIVITY_LIKE)) || (activity_match($item['verb'],ACTIVITY_DISLIKE))) && ($item['id'] != $item['parent']))
+						if (! visible_activity($item)) {
 							continue;
+						}
 	
 						$redirect_url = z_root() . '/redir/' . $item['cid'] ;
 				
@@ -1252,92 +1148,89 @@ class Photos extends \Zotlabs\Web\Controller {
 				$paginate = paginate($a);
 			}
 			
-			$album_e = array($album_link,$ph[0]['album']);
-			$like_e = $like;
+			$album_e   = [ $album_link, $ph[0]['album'] ];
+			$like_e    = $like;
 			$dislike_e = $dislike;
 	
 	
 			$response_verbs = array('like');
-			if(feature_enabled($owner_uid,'dislike'))
+			if(feature_enabled($owner_uid,'dislike')) {
 				$response_verbs[] = 'dislike';
+			}
 	
 	
 			$responses = get_responses($conv_responses,$response_verbs,'',$link_item);
 	
-			$photo_tpl = get_markup_template('photo_view.tpl');
-			$o .= replace_macros($photo_tpl, array(
-				'$id' => $ph[0]['id'],
-				'$album' => $album_e,
-				'$tools_label' => t('Photo Tools'),
-				'$tools' => $tools,
-				'$lock' => $lockstate[1],
-				'$photo' => $photo,
-				'$prevlink' => $prevlink,
-				'$nextlink' => $nextlink,
-				'$desc' => $ph[0]['description'],
-				'$filename' => $ph[0]['filename'],
-				'$unknown' => t('Unknown'),
-				'$tag_hdr' => t('In This Photo:'),
-				'$tags' => $tags,
-				'responses' => $responses,
-				'$edit' => $edit,	
-				'$map' => $map,
-				'$map_text' => t('Map'),
-				'$likebuttons' => $likebuttons,
-				'$like' => $like_e,
-				'$dislike' => $dislike_e,
-				'$like_count' => $like_count,
-				'$like_list' => $like_list,
-				'$like_list_part' => $like_list_part,
-				'$like_button_label' => $like_button_label,
-				'$like_modal_title' => t('Likes','noun'),
-				'$dislike_modal_title' => t('Dislikes','noun'),
-				'$dislike_count' => $dislike_count,  //((feature_enabled($conv->get_profile_owner(),'dislike')) ? $dislike_count : ''),
-				'$dislike_list' => $dislike_list, //((feature_enabled($conv->get_profile_owner(),'dislike')) ? $dislike_list : ''),
-				'$dislike_list_part' => $dislike_list_part, //((feature_enabled($conv->get_profile_owner(),'dislike')) ? $dislike_list_part : ''),
-				'$dislike_button_label' => $dislike_button_label, //((feature_enabled($conv->get_profile_owner(),'dislike')) ? $dislike_button_label : ''),
-				'$modal_dismiss' => t('Close'),
-				'$comments' => $comments,
-				'$commentbox' => $commentbox,
-				'$paginate' => $paginate,
-			));
+			$o .= replace_macros(get_markup_template('photo_view.tpl'), [
+				'$id'                   => $ph[0]['id'],
+				'$album'                => $album_e,
+				'$tools_label'          => t('Photo Tools'),
+				'$tools'                => $tools,
+				'$lock'                 => $lockstate[1],
+				'$photo'                => $photo,
+				'$prevlink'             => $prevlink,
+				'$nextlink'             => $nextlink,
+				'$desc'                 => $ph[0]['description'],
+				'$filename'             => $ph[0]['filename'],
+				'$unknown'              => t('Unknown'),
+				'$tag_hdr'              => t('In This Photo:'),
+				'$tags'                 => $tags,
+				'responses'             => $responses,
+				'$edit'                 => $edit,	
+				'$map'                  => $map,
+				'$map_text'             => t('Map'),
+				'$likebuttons'          => $likebuttons,
+				'$like'                 => $like_e,
+				'$dislike'              => $dislike_e,
+				'$like_count'           => $like_count,
+				'$like_list'            => $like_list,
+				'$like_list_part'       => $like_list_part,
+				'$like_button_label'    => $like_button_label,
+				'$like_modal_title'     => t('Likes','noun'),
+				'$dislike_modal_title'  => t('Dislikes','noun'),
+				'$dislike_count'        => $dislike_count,
+				'$dislike_list'         => $dislike_list,
+				'$dislike_list_part'    => $dislike_list_part,
+				'$dislike_button_label' => $dislike_button_label,
+				'$modal_dismiss'        => t('Close'),
+				'$comments'             => $comments,
+				'$commentbox'           => $commentbox,
+				'$paginate'             => $paginate,
+			]);
 	
-			\App::$data['photo_html'] = $o;
-			
+			App::$data['photo_html'] = $o;			
 			return $o;
 		}
 	
-		// Default - show recent photos with upload link (if applicable)
-		//$o = '';
+		// Default - show recent photos 
 	
-		\App::$page['htmlhead'] .= "\r\n" . '<link rel="alternate" type="application/json+oembed" href="' . z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . \App::$cmd) . '" title="oembed" />' . "\r\n";
-	
+		head_add_link([ 
+			'rel'   => 'alternate',
+			'type'  => 'application/json+oembed',
+			'href'  => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . \App::$query_string),
+			'title' => 'oembed'
+		]);
 
-		\App::set_pager_itemspage(60);
+		App::set_pager_itemspage(60);
 		
-		$r = q("SELECT p.resource_id, p.id, p.filename, p.mimetype, p.album, p.imgscale, p.created, p.display_path 
-			FROM photo p 
-			INNER JOIN ( SELECT resource_id, max(imgscale) imgscale FROM photo 
-				WHERE photo.uid = %d AND photo_usage IN ( %d, %d ) 
-				AND is_nsfw = %d $sql_extra group by resource_id ) ph 
-			ON (p.resource_id = ph.resource_id and p.imgscale = ph.imgscale) 
+		$r = q("SELECT p.resource_id, p.id, p.filename, p.mimetype, p.album, p.imgscale, p.created, p.display_path FROM photo p 
+			INNER JOIN ( SELECT resource_id, max(imgscale) imgscale FROM photo WHERE photo.uid = %d AND photo_usage IN ( %d, %d ) 
+			AND is_nsfw = %d $sql_extra group by resource_id ) ph ON (p.resource_id = ph.resource_id and p.imgscale = ph.imgscale) 
 			ORDER by p.created DESC LIMIT %d OFFSET %d",
-			intval(\App::$data['channel']['channel_id']),
+			intval(App::$data['channel']['channel_id']),
 			intval(PHOTO_NORMAL),
 			intval(PHOTO_PROFILE),
 			intval($unsafe),
-			intval(\App::$pager['itemspage']),
-			intval(\App::$pager['start'])
+			intval(App::$pager['itemspage']),
+			intval(App::$pager['start'])
 		);
 	
-	
-	
-		$photos = array();
+		$photos = [];
 		if($r) {
 			$twist = 'rotright';
 			foreach($r as $rr) {
 
-				if(! attach_can_view_folder(\App::$data['channel']['channel_id'],get_observer_hash(),$rr['resource_id']))
+				if(! attach_can_view_folder(App::$data['channel']['channel_id'],get_observer_hash(),$rr['resource_id']))
 					continue;
 
 				if($twist == 'rotright')
@@ -1349,27 +1242,24 @@ class Photos extends \Zotlabs\Web\Controller {
 				$alt_e = $rr['filename'];
 				$name_e = dirname($rr['display_path']);
 
-				$photos[] = array(
-					'id'       => $rr['id'],
-					'twist'    => ' ' . $twist . rand(2,4),
-					'link'  	=> z_root() . '/photos/' . \App::$data['channel']['channel_address'] . '/image/' . $rr['resource_id'],
+				$photos[] = [
+					'id'        => $rr['id'],
+					'twist'     => ' ' . $twist . rand(2,4),
+					'link'  	=> z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/image/' . $rr['resource_id'],
 					'title' 	=> t('View Photo'),
 					'src'     	=> z_root() . '/photo/' . $rr['resource_id'] . '-' . ((($rr['imgscale']) == 6) ? 4 : $rr['imgscale']) . '.' . $ext,
 					'alt'     	=> $alt_e,
-					'album'	=> array(
-						'name'  => $name_e,
-					),
-					
-				);
+					'album'	    => [ 'name' => $name_e ],
+				];
 			}
 		}
 		
 		if($_REQUEST['aj']) {
 			if($photos) {
-				$o = replace_macros(get_markup_template('photosajax.tpl'),array(
+				$o = replace_macros(get_markup_template('photosajax.tpl'), [
 					'$photos' => $photos,
 					'$album_id' => bin2hex(t('Recent Photos'))
-				));
+				]);
 			}
 			else {
 				$o = '<div id="content-complete"></div>';
@@ -1378,29 +1268,19 @@ class Photos extends \Zotlabs\Web\Controller {
 			killme();
 		}
 		else {
-			$o .= "<script> var page_query = '" . escape_tags($_GET['q']) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
-			$tpl = get_markup_template('photos_recent.tpl'); 
-			$o .= replace_macros($tpl, array(
-				'$title' => t('Recent Photos'),
-				'$album_id' => bin2hex(t('Recent Photos')),
-				'$can_post' => $can_post,
-				'$upload' => array(t('Add Photos'), z_root().'/photos/'.\App::$data['channel']['channel_address'].'/upload'),
-				'$photos' => $photos,
+			$o .= "<script>var page_query = '" . escape_tags($_GET['q']) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
+
+			$o .= replace_macros(get_markup_template('photos_recent.tpl'), [
+				'$title'       => t('Recent Photos'),
+				'$album_id'    => bin2hex(t('Recent Photos')),
+				'$can_post'    => $can_post,
+				'$upload'      => t('Add Photos'),
+				'$photos'      => $photos,
 				'$upload_form' => $upload_form,
-				'$usage' => $usage_message
-			));
-	
+				'$usage'       => $usage_message
+			]);
+
+			return $o;
 		}
-	
-		if((! $photos) && ($_REQUEST['aj'])) {
-			$o .= '<div id="content-complete"></div>';
-			echo $o;
-			killme();
-		}
-	
-	//	paginate($a);
-		return $o;
 	}
-	
-	
 }

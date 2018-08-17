@@ -1943,7 +1943,7 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
 		$o .= '<summary xmlns="urn:ietf:params:xml:ns:xcal">' . xmlify(bbcode($obj['title'])) . '</summary>' . "\r\n";
 		$o .= '<dtstart xmlns="urn:ietf:params:xml:ns:xcal">' . datetime_convert('UTC','UTC', $obj['dtstart'],'Ymd\\THis' . (($obj['adjust']) ? '\\Z' : '')) .  '</dtstart>' . "\r\n";
 		$o .= '<dtend xmlns="urn:ietf:params:xml:ns:xcal">' . datetime_convert('UTC','UTC', $obj['dtend'],'Ymd\\THis' . (($obj['adjust']) ? '\\Z' : '')) .  '</dtend>' . "\r\n";
-		$o .= '<location xmlns="urn:ietf:params:xml:ns:xcal">' . xmlify(bbcode($obj['location'])) . '</location>' . "\r\n";
+		$o .= '<location xmlns="urn:ietf:params:xml:ns:xcal">' . ((is_array($obj['location'])) ? xmlify(bbcode($obj['location']['content'])) : xmlify(bbcode($obj['location']))) . '</location>' . "\r\n";
 		$o .= '<content type="' . $type . '" >' . xmlify(bbcode($obj['description'])) . '</content>' . "\r\n";
 	}
 	else {

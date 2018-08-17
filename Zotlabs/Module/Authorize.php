@@ -7,27 +7,34 @@ use Zotlabs\Identity\OAuth2Storage;
 class Authorize extends \Zotlabs\Web\Controller {
 
 	function get() {
-		if (!local_channel()) {
+		if (! local_channel()) {
 			return login();
-		} else {
-			// TODO: Fully implement the dynamic client registration protocol:
-			// OpenID Connect Dynamic Client Registration 1.0 Client Metadata
-			// http://openid.net/specs/openid-connect-registration-1_0.html
-			$app = array(
-				'name' => (x($_REQUEST, 'client_name') ? urldecode($_REQUEST['client_name']) : t('Unknown App')),
-				'icon' => (x($_REQUEST, 'logo_uri')    ? urldecode($_REQUEST['logo_uri']) : z_root() . '/images/icons/plugin.png'),
-				'url'  => (x($_REQUEST, 'client_uri')  ? urldecode($_REQUEST['client_uri']) : ''),
-			);
-			$o .= replace_macros(get_markup_template('oauth_authorize.tpl'), array(
-				'$title' => t('Authorize'),
-				'$authorize' => sprintf( t('Do you authorize the app %s to access your channel data?'), '<a style="float: none;" href="' . $app['url'] . '">' . $app['name'] . '</a> '),
-				'$app' => $app,
-				'$yes' => t('Allow'),
-				'$no' => t('Deny'),
-				'$client_id' => (x($_REQUEST, 'client_id') ? $_REQUEST['client_id'] : ''),
+		} 
+		else {
+
+			$name = $_REQUEST['client_name'];
+			if(! $name) {
+				$name = (($_REQUEST['client_id']) ?: t('Unknown App'));
+			}
+
+			$app = [
+				'name' => $name,
+				'icon' => (x($_REQUEST, 'logo_uri')    ? $_REQUEST['logo_uri'] : z_root() . '/images/icons/plugin.png'),
+				'url'  => (x($_REQUEST, 'client_uri')  ? $_REQUEST['client_uri'] : ''),
+			];
+
+			$link = (($app['url']) ? '<a style="float: none;" href="' . $app['url'] . '">' . $app['name'] . '</a> ' : $app['name']);
+
+			$o .= replace_macros(get_markup_template('oauth_authorize.tpl'), [
+				'$title'        => t('Authorize'),
+				'$authorize'    => sprintf( t('Do you authorize the app %s to access your channel data?'), $link ),
+				'$app'          => $app,
+				'$yes'          => t('Allow'),
+				'$no'           => t('Deny'),
+				'$client_id'    => (x($_REQUEST, 'client_id') ? $_REQUEST['client_id'] : ''),
 				'$redirect_uri' => (x($_REQUEST, 'redirect_uri') ? $_REQUEST['redirect_uri'] : ''),
-				'$state' => (x($_REQUEST, 'state') ? $_REQUEST['state'] : ''),
-			));
+				'$state'        => (x($_REQUEST, 'state') ? $_REQUEST['state'] : ''),
+			]);
 			return $o;
 		}
 	}
@@ -60,13 +67,16 @@ class Authorize extends \Zotlabs\Web\Controller {
 		$request = \OAuth2\Request::createFromGlobals();
 		$response = new \OAuth2\Response();
 
+		// Note, "sub" field must match type and content. $user_id is used to populate - make sure it's a string. 
+		$channel = channelx_by_n(local_channel());
+		$user_id = $channel['channel_id'];
+
 		// If the client is not registered, add to the database
 		if (!$client = $storage->getClientDetails($client_id)) {
-			$client_secret = random_string(16);
+			// Until "Dynamic Client Registration" is pursued - allow new clients to assign their own secret in the REQUEST
+			$client_secret = (isset($_REQUEST['client_secret'])) ? $_REQUEST['client_secret'] : random_string(16);
 			// Client apps are registered per channel
-			$user_id = local_channel();
-			$storage->setClientDetails($client_id, $client_secret, $redirect_uri, 'authorization_code', null, $user_id);
-			
+			$storage->setClientDetails($client_id, $client_secret, $redirect_uri, 'authorization_code', $_REQUEST['scope'], $user_id);
 		}
 		if (!$client = $storage->getClientDetails($client_id)) {
 			// There was an error registering the client.
@@ -83,7 +93,7 @@ class Authorize extends \Zotlabs\Web\Controller {
 
 		// print the authorization code if the user has authorized your client
 		$is_authorized = ($_POST['authorize'] === 'allow');
-		$s->handleAuthorizeRequest($request, $response, $is_authorized, local_channel());
+		$s->handleAuthorizeRequest($request, $response, $is_authorized, $user_id);
 		if ($is_authorized) {
 			$code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=') + 5, 40);
 			logger('Authorization Code: ' .  $code);

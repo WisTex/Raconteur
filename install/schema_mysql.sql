@@ -128,6 +128,7 @@ CREATE TABLE IF NOT EXISTS `app` (
   `app_deleted` int(11) NOT NULL DEFAULT 0 ,
   `app_system` int(11) NOT NULL DEFAULT 0 ,
   `app_plugin` char(191) NOT NULL DEFAULT '',
+  `app_options` int(11) NOT NULL DEFAULT 0 ,
   `app_created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `app_edited` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   PRIMARY KEY (`id`),
