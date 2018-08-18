@@ -2047,6 +2047,7 @@ function undo_post_tagging($s) {
 	$cnt = preg_match_all('/([@#])(\!*)\[zrl=(.*?)\](.*?)\[\/zrl\]/ism',$s,$matches,PREG_SET_ORDER);
 	if($cnt) {
 		foreach($matches as $mtch) {
+			$x = false;
 			if($mtch[1] === '@') {
 				$x = q("select xchan_addr, xchan_url from xchan where xchan_url = '%s' limit 1",
 					dbesc($mtch[3])
