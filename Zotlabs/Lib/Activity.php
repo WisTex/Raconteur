@@ -93,20 +93,18 @@ class Activity {
 		}
 	}
 
-	static function encode_item_collection($items,$id,$type,$extra = null) {
+	static function encode_item_collection($items,$id,$type,$activitypub = false) {
 
 		$ret = [
 			'id' => z_root() . '/' . $id,
 			'type' => $type,
 			'totalItems' => count($items),
 		];
-		if($extra)
-			$ret = array_merge($ret,$extra);
 
 		if($items) {
 			$x = [];
 			foreach($items as $i) {
-				$t = self::encode_activity($i);
+				$t = self::encode_activity($i,$activitypub);
 				if($t)
 					$x[] = $t;
 			}
@@ -630,31 +628,33 @@ class Activity {
 			]
 		];
 
-		$c = channelx_by_hash($p['xchan_hash']);
+		if($activitypub) {	
+			$c = channelx_by_hash($p['xchan_hash']);
 
-		if($c) {
-			$ret['inbox']       = z_root() . '/inbox/'     . $c['channel_address'];
-			$ret['outbox']      = z_root() . '/outbox/'    . $c['channel_address'];
-			$ret['followers']   = z_root() . '/followers/' . $c['channel_address'];
-			$ret['following']   = z_root() . '/following/' . $c['channel_address'];
-			$ret['endpoints']   = [ 'sharedInbox' => z_root() . '/inbox' ];
-
-			$ret['publicKey'] = [
-				'id'           => $p['xchan_url'] . '/public_key_pem',
-				'owner'        => $p['xchan_url'],
-				'publicKeyPem' => $p['xchan_pubkey']
-			];
-		}
-		else {
-			$collections = get_xconfig($p['xchan_hash'],'activitystreams','collections',[]);
-			if($collections) {
-				$ret = array_merge($ret,$collections);
+			if($c) {
+				$ret['inbox']       = z_root() . '/inbox/'     . $c['channel_address'];
+				$ret['outbox']      = z_root() . '/outbox/'    . $c['channel_address'];
+				$ret['followers']   = z_root() . '/followers/' . $c['channel_address'];
+				$ret['following']   = z_root() . '/following/' . $c['channel_address'];
+				$ret['endpoints']   = [ 'sharedInbox' => z_root() . '/inbox' ];
+	
+				$ret['publicKey'] = [
+					'id'           => $p['xchan_url'] . '/public_key_pem',
+					'owner'        => $p['xchan_url'],
+					'publicKeyPem' => $p['xchan_pubkey']
+				];
 			}
 			else {
-				$ret['inbox'] = null;
-				$ret['outbox'] = null;
-			}
-    	}
+				$collections = get_xconfig($p['xchan_hash'],'activitystreams','collections',[]);
+				if($collections) {
+					$ret = array_merge($ret,$collections);
+				}
+				else {
+					$ret['inbox'] = null;
+					$ret['outbox'] = null;
+				}
+    		}
+		}
 
 		$arr = [ 'xchan' => $p, 'encoded' => $ret, 'activitypub' => $activitypub ];
 		call_hooks('encode_person', $arr);
