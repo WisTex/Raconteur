@@ -75,7 +75,7 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
 			}
 
 			if(! $abook_checked) {
-				$x = q("select abook_my_perms, abook_blocked, abook_ignored, abook_pending, xchan_network from abook left join xchan on abook_xchan = xchan_hash
+				$x = q("select abook_blocked, abook_ignored, abook_pending, xchan_network from abook left join xchan on abook_xchan = xchan_hash
 					where abook_channel = %d and abook_xchan = '%s' and abook_self = 0 limit 1",
 					intval($uid),
 					dbesc($observer_xchan)
@@ -297,7 +297,7 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
 		if($channel_perm & PERMS_AUTHED)
 			return true;
 
-		$x = q("select abook_my_perms, abook_blocked, abook_ignored, abook_pending, xchan_network from abook left join xchan on abook_xchan = xchan_hash 
+		$x = q("select abook_blocked, abook_ignored, abook_pending, xchan_network from abook left join xchan on abook_xchan = xchan_hash 
 			where abook_channel = %d and abook_xchan = '%s' and abook_self = 0 limit 1",
 			intval($uid),
 			dbesc($observer_xchan)

@@ -404,6 +404,27 @@ class Notifier {
 			return;
 		}
 
+		// add any linked identities
+
+		$l = q("select link from linkid where ident in ((" . protect_sprint(implode(',',self::$recipients)) . ") ");
+		if($l) {
+			foreach($l as $lv) {
+				if(! in_array("'" . $lv['link'] . "'", self::$recipients)) {
+					self::$recipients[] = "'" . $lv['link'] . "'";
+				}
+			}
+		}
+
+		$l = q("select ident from linkid where link in ((" . protect_sprint(implode(',',self::$recipients)) . ") ");
+		if($l) {
+			foreach($l as $lv) {
+				if(! in_array("'" . $lv['ident'] . "'", self::$recipients)) {
+					self::$recipients[] = "'" . $lv['ident'] . "'";
+				}
+			}
+		}
+ 
+
 		//	logger('recipients: ' . print_r(self::$recipients,true), LOGGER_NORMAL, LOG_DEBUG);
 
 		if(! count(self::$env_recips))
