@@ -1,45 +1,22 @@
-**ZAP**
+**OSADA**
 
-Zap is a social networking app running under the Zot/6 protocol and the LAMP web stack.
+Osada is a social networking app and gateway which allows communication between the Zot/6 protocol/network to the ActivityPub protocol/network using the LAMP web stack.
 
-Protocol documentation is located here:
+Zot/6 protocol documentation is located here:
 
 https://macgirvin.com/wiki/mike/Zot%2BVI/Home
 
-Zap is based on Red, which in turn is based on Hubzilla. It is otherwise unrelated to those projects and the software has a completely different scope and purpose. 
+
+ActivityPub and many other protocols do not work well with Zot or Zot/6 because they do not understand the concept of nomadic identity. Osada provides a gateway between these services to smooth out the differences. It is ultimately designed to bridge ActivityPub with Zap, which is a pure Zot/6 social network application. 
+
+Osada is based on Zap which is based on Red, which in turn is based on Hubzilla. It is otherwise unrelated to those projects and the software has a completely different scope and purpose. 
 
 
-01-August-2018
+20-August-2018
 ==============
 
 Most of the basic functionality is now present and working. This is still "use at your own risk", but it shouldn't burn down the house. 
 
-
-19-July-2018
-============
-
-There is a lot more work yet to be done, but the basic Zap application is nearing alpha quality.
-
-TODO before alpha release:
-
-* convert mail to ActivityStreams
-* test nomadic channels
-* correct any links in the documentation and remove the descriptions of Hubzilla features which do not exist in Zap
-
-
-
-
-
-
-**Things you should know**
-
-Zap is nomadic and does not federate with any other platform or protocol currently. It will only **ever** federate with nomadic-aware services/protocols. Full stop. Full federation support will eventually be provided by creating bridging identities in a companion project Osada; which provides a bridge between nomadic and non-nomadic networks. Osada identities cannot be nomadic since they federate with non-nomadic services, but they can be linked to Zap nomadic identities using Zot6 identity linking. 
-
-If you are looking for a specific Hubzilla feature, you came to the wrong place.
-
-If you are looking for ActivityPub support, you came to the wrong place. 
-
-If you are looking for stable software, check back in a few months.
 
 If you encounter issues, fix them and submit a pull request.
 
