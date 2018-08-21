@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Module;
 
+use \App;
+
 require_once('include/contact_widgets.php');
 require_once('include/items.php');
 require_once("include/bbcode.php");
@@ -26,7 +28,7 @@ class Channel extends \Zotlabs\Web\Controller {
 			$which = argv(1);
 		if(! $which) {
 			if(local_channel()) {
-				$channel = \App::get_channel();
+				$channel = App::get_channel();
 				if($channel && $channel['channel_address'])
 				$which = $channel['channel_address'];
 			}
@@ -37,7 +39,7 @@ class Channel extends \Zotlabs\Web\Controller {
 		}
 
 		$profile = 0;
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
 		if((local_channel()) && (argc() > 2) && (argv(2) === 'view')) {
 			$which = $channel['channel_address'];
@@ -70,8 +72,6 @@ class Channel extends \Zotlabs\Web\Controller {
 		if($load)
 			$_SESSION['loadtime'] = datetime_convert();
 
-		$checkjs = new \Zotlabs\Web\CheckJS(1);
-
 		$category = $datequery = $datequery2 = '';
 
 		$mid = ((x($_REQUEST,'mid')) ? $_REQUEST['mid'] : '');
@@ -95,22 +95,22 @@ class Channel extends \Zotlabs\Web\Controller {
 
 		if($update) {
 			// Ensure we've got a profile owner if updating.
-			\App::$profile['profile_uid'] = \App::$profile_uid = $update;
+			App::$profile['profile_uid'] = App::$profile_uid = $update;
 		}
 
-		$is_owner = (((local_channel()) && (\App::$profile['profile_uid'] == local_channel())) ? true : false);
+		$is_owner = (((local_channel()) && (App::$profile['profile_uid'] == local_channel())) ? true : false);
 
-		$channel = \App::get_channel();
-		$observer = \App::get_observer();
+		$channel = App::get_channel();
+		$observer = App::get_observer();
 		$ob_hash = (($observer) ? $observer['xchan_hash'] : '');
 
-		$perms = get_all_perms(\App::$profile['profile_uid'],$ob_hash);
+		$perms = get_all_perms(App::$profile['profile_uid'],$ob_hash);
 
 		if(! $perms['view_stream']) {
 			// We may want to make the target of this redirect configurable
 			if($perms['view_profile']) {
 				notice( t('Insufficient permissions.  Request redirected to profile page.') . EOL);
-				goaway (z_root() . "/profile/" . \App::$profile['channel_address']);
+				goaway (z_root() . "/profile/" . App::$profile['channel_address']);
 			}
 			notice( t('Permission denied.') . EOL);
 			return;
@@ -121,7 +121,7 @@ class Channel extends \Zotlabs\Web\Controller {
 
 			nav_set_selected('Channel Home');
 
-			$static = channel_manual_conv_update(\App::$profile['profile_uid']);
+			$static = channel_manual_conv_update(App::$profile['profile_uid']);
 
 			// search terms header
 			if($search) {
@@ -147,16 +147,16 @@ class Channel extends \Zotlabs\Web\Controller {
 
 				$x = array(
 					'is_owner' => $is_owner,
-					'allow_location' => ((($is_owner || $observer) && (intval(get_pconfig(\App::$profile['profile_uid'],'system','use_browser_location')))) ? true : false),
-					'default_location' => (($is_owner) ? \App::$profile['channel_location'] : ''),
-					'nickname' => \App::$profile['channel_address'],
-					'lockstate' => (((strlen(\App::$profile['channel_allow_cid'])) || (strlen(\App::$profile['channel_allow_gid'])) || (strlen(\App::$profile['channel_deny_cid'])) || (strlen(\App::$profile['channel_deny_gid']))) ? 'lock' : 'unlock'),
+					'allow_location' => ((($is_owner || $observer) && (intval(get_pconfig(App::$profile['profile_uid'],'system','use_browser_location')))) ? true : false),
+					'default_location' => (($is_owner) ? App::$profile['channel_location'] : ''),
+					'nickname' => App::$profile['channel_address'],
+					'lockstate' => (((strlen(App::$profile['channel_allow_cid'])) || (strlen(App::$profile['channel_allow_gid'])) || (strlen(App::$profile['channel_deny_cid'])) || (strlen(App::$profile['channel_deny_gid']))) ? 'lock' : 'unlock'),
 					'acl' => (($is_owner) ? populate_acl($channel_acl,true, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post') : ''),
 					'permissions' => $channel_acl,
 					'showacl' => (($is_owner) ? 'yes' : ''),
 					'bang' => '',
 					'visitor' => (($is_owner || $observer) ? true : false),
-					'profile_uid' => \App::$profile['profile_uid'],
+					'profile_uid' => App::$profile['profile_uid'],
 					'editor_autocomplete' => true,
 					'bbco_autocomplete' => 'bbcode',
 					'bbcode' => true,
@@ -176,14 +176,14 @@ class Channel extends \Zotlabs\Web\Controller {
 
 		$item_normal = item_normal();
 		$item_normal_update = item_normal_update();
-		$sql_extra = item_permissions_sql(\App::$profile['profile_uid']);
+		$sql_extra = item_permissions_sql(App::$profile['profile_uid']);
 
-		if(get_pconfig(\App::$profile['profile_uid'],'system','channel_list_mode') && (! $mid))
+		if(get_pconfig(App::$profile['profile_uid'],'system','channel_list_mode') && (! $mid))
 			$page_mode = 'list';
 		else
 			$page_mode = 'client';
 
-		$abook_uids = " and abook.abook_channel = " . intval(\App::$profile['profile_uid']) . " ";
+		$abook_uids = " and abook.abook_channel = " . intval(App::$profile['profile_uid']) . " ";
 
 		$simple_update = (($update) ? " AND item_unseen = 1 " : '');
 
@@ -203,7 +203,7 @@ class Channel extends \Zotlabs\Web\Controller {
 		head_add_link([ 
 			'rel'   => 'alternate',
 			'type'  => 'application/json+oembed',
-			'href'  => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . \App::$query_string),
+			'href'  => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . App::$query_string),
 			'title' => 'oembed'
 		]);
 
@@ -221,7 +221,7 @@ class Channel extends \Zotlabs\Web\Controller {
 				$r = q("SELECT parent AS item_id from item where mid like '%s' and uid = %d $item_normal_update
 					AND item_wall = 1 $simple_update $sql_extra limit 1",
 					dbesc($mid . '%'),
-					intval(\App::$profile['profile_uid'])
+					intval(App::$profile['profile_uid'])
 				);
 				$_SESSION['loadtime'] = datetime_convert();
 			}
@@ -233,7 +233,7 @@ class Channel extends \Zotlabs\Web\Controller {
 					AND (abook.abook_blocked = 0 or abook.abook_flags is null)
 					$sql_extra
 					ORDER BY created DESC",
-					intval(\App::$profile['profile_uid'])
+					intval(App::$profile['profile_uid'])
 				);
 				$_SESSION['loadtime'] = datetime_convert();
 			}
@@ -242,10 +242,10 @@ class Channel extends \Zotlabs\Web\Controller {
 		else {
 
 			if(x($category)) {
-				$sql_extra2 .= protect_sprintf(term_item_parent_query(\App::$profile['profile_uid'],'item', $category, TERM_CATEGORY));
+				$sql_extra2 .= protect_sprintf(term_item_parent_query(App::$profile['profile_uid'],'item', $category, TERM_CATEGORY));
 			}
 			if(x($hashtags)) {
-				$sql_extra2 .= protect_sprintf(term_item_parent_query(\App::$profile['profile_uid'],'item', $hashtags, TERM_HASHTAG, TERM_COMMUNITYTAG));
+				$sql_extra2 .= protect_sprintf(term_item_parent_query(App::$profile['profile_uid'],'item', $hashtags, TERM_HASHTAG, TERM_COMMUNITYTAG));
 			}
 
 			if($datequery) {
@@ -267,15 +267,15 @@ class Channel extends \Zotlabs\Web\Controller {
 
 
 			$itemspage = get_pconfig(local_channel(),'system','itemspage');
-			\App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
-			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));
+			App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
+			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 
-			if($load || ($checkjs->disabled())) {
+			if((! $update) || ($load)) {
 				if($mid) {
 					$r = q("SELECT parent AS item_id from item where mid like '%s' and uid = %d $item_normal
 						AND item_wall = 1 $sql_extra limit 1",
 						dbesc($mid . '%'),
-						intval(\App::$profile['profile_uid'])
+						intval(App::$profile['profile_uid'])
 					);
 					if (! $r) {
 						notice( t('Permission denied.') . EOL);
@@ -289,7 +289,7 @@ class Channel extends \Zotlabs\Web\Controller {
 						AND item.item_wall = 1 AND item.item_thread_top = 1
 						$sql_extra $sql_extra2 
 						ORDER BY $ordering DESC $pager_sql ",
-						intval(\App::$profile['profile_uid'])
+						intval(App::$profile['profile_uid'])
 					);
 				}
 			}
@@ -306,7 +306,7 @@ class Channel extends \Zotlabs\Web\Controller {
 				WHERE item.uid = %d $item_normal
 				AND item.parent IN ( %s )
 				$sql_extra ",
-				intval(\App::$profile['profile_uid']),
+				intval(App::$profile['profile_uid']),
 				dbesc($parents_str)
 			);
 
@@ -329,19 +329,19 @@ class Channel extends \Zotlabs\Web\Controller {
 			// This is ugly, but we can't pass the profile_uid through the session to the ajax updater,
 			// because browser prefetching might change it on us. We have to deliver it with the page.
 
-			$maxheight = get_pconfig(\App::$profile['profile_uid'],'system','channel_divmore_height');
+			$maxheight = get_pconfig(App::$profile['profile_uid'],'system','channel_divmore_height');
 			if(! $maxheight)
 				$maxheight = 400;
 
 			$o .= '<div id="live-channel"></div>' . "\r\n";
-			$o .= "<script> var profile_uid = " . \App::$profile['profile_uid']
-				. "; var netargs = '?f='; var profile_page = " . \App::$pager['page']
+			$o .= "<script> var profile_uid = " . App::$profile['profile_uid']
+				. "; var netargs = '?f='; var profile_page = " . App::$pager['page']
 				. "; divmore_height = " . intval($maxheight) . "; </script>\r\n";
 
-			\App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),array(
+			App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),array(
 				'$baseurl' => z_root(),
 				'$pgtype' => 'channel',
-				'$uid' => ((\App::$profile['profile_uid']) ? \App::$profile['profile_uid'] : '0'),
+				'$uid' => ((App::$profile['profile_uid']) ? App::$profile['profile_uid'] : '0'),
 				'$gid' => '0',
 				'$cid' => '0',
 				'$cmin' => '(-1)',
@@ -354,7 +354,7 @@ class Channel extends \Zotlabs\Web\Controller {
 				'$wall' => '1',
 				'$fh' => '0',
 				'$static'  => $static,
-				'$page' => ((\App::$pager['page'] != 1) ? \App::$pager['page'] : 1),
+				'$page' => ((App::$pager['page'] != 1) ? App::$pager['page'] : 1),
 				'$search' => $search,
 				'$xchan' => '',
 				'$order' => $order,
@@ -405,17 +405,19 @@ class Channel extends \Zotlabs\Web\Controller {
 
 		$mode = (($search) ? 'search' : 'channel');
 
-		if($checkjs->disabled()) {
-			$o .= conversation($items,$mode,$update,'traditional');
-		}
-		else {
+		if($update) {
 			$o .= conversation($items,$mode,$update,$page_mode);
 		}
-
-		if((! $update) || ($checkjs->disabled())) {
+		else {
+			$o .= '<noscript>';
+			$o .= conversation($items,$mode,$update,'traditional');
 			$o .= alt_pager(count($items));
+			$o .= '</noscript>';
+			$o .= conversation($items,$mode,$update,$page_mode);
+
 			if ($mid && $items[0]['title'])
-				\App::$page['title'] = $items[0]['title'] . " - " . \App::$page['title'];
+				App::$page['title'] = $items[0]['title'] . " - " . App::$page['title'];
+
 		}
 
 		if($mid)
