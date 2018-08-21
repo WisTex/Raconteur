@@ -82,10 +82,10 @@ function markdown_to_bb($s, $use_zrl = false, $options = []) {
 			$s = preg_replace_callback("/\[img\](.*?)\[\/img\]/ism", 'use_zrl_cb_img', $s);
 			$s = preg_replace_callback("/\[img\=([0-9]*)x([0-9]*)\](.*?)\[\/img\]/ism", 'use_zrl_cb_img_x', $s);
 		}
-		$s = preg_replace_callback("/([^\]\=\{]|^)(https?\:\/\/)([a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]+)/ismu", 'use_zrl_cb_link',$s);
+		$s = preg_replace_callback("/([^\]\=\{\/]|^)(https?\:\/\/)([a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]+)/ismu", 'use_zrl_cb_link',$s);
 	}
 	else {
-		$s = preg_replace("/([^\]\=\{]|^)(https?\:\/\/)([a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]+)/ismu", '$1[url=$2$3]$2$3[/url]',$s);
+		$s = preg_replace("/([^\]\=\{\/]|^)(https?\:\/\/)([a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]+)/ismu", '$1[url=$2$3]$2$3[/url]',$s);
 	}
 
 	// remove duplicate adjacent code tags
