@@ -20,6 +20,16 @@ class Cover_photo {
 		if(! $channel_id)
 			return '';
 
+		// only show cover photos once per login session
+
+		if(array_key_exists('channels_visited',$_SESSION) && is_array($_SESSION['channels_visited']) && in_array($channel_id,$_SESSION['channels_visited'])) {
+			return EMPTY_STR;
+		}
+		if(! array_key_exists('channels_visited',$_SESSION)) {
+			$_SESSION['channels_visited'] = [];
+		}
+		$_SESSION['channels_visited'][] = $channel_id;
+
 		$channel = channelx_by_n($channel_id);
 
 		if(array_key_exists('style', $arr) && isset($arr['style']))
