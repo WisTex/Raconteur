@@ -2,6 +2,50 @@
 
 use \Michelf\MarkdownExtra;
 
+
+/**
+ * @brief
+ *
+ * @param string $path
+ * @return string|unknown
+ */
+function get_help_fullpath($path,$suffix=null) {
+
+        $docroot = (\App::$override_helproot) ? \App::$override_helproot : 'doc/';
+        $docroot = (substr($docroot,-1)!='/') ? $docroot .= '/' : $docroot; 
+
+        // Determine the language and modify the path accordingly
+        $x = determine_help_language();
+        $lang = $x['language'];
+        $url_idx = ($x['from_url'] ? 1 : 0);
+        // The English translation is at the root of /doc/. Other languages are in
+        // subfolders named by the language code such as "de", "es", etc.
+        if($lang !== 'en') {
+                $langpath = $lang . '/' . $path;
+        } else {
+                $langpath = $path;
+        }
+
+        $newpath = (isset(\App::$override_helpfiles[$langpath])) ? \App::$override_helpfiles[$langpath] : $langpath;
+        $newpath = ($newpath == $langpath) ? $docroot . $newpath : $newpath;
+
+        if ($suffix) {
+            if (file_exists($newpath . $suffix)) {
+              return $newpath;
+            }
+        } elseif (file_exists($newpath . '.md') ||
+            file_exists($newpath . '.bb') ||
+            file_exists($newpath . '.html')) {
+                return $newpath;
+        }
+
+        $newpath = (isset(\App::$override_helpfiles[$path])) ? \App::$override_helpfiles[$path] : null;
+
+        $newpath = (!$newpath) ? $docroot.$path : $newpath;
+        return $newpath;
+}
+
+
 /**
  * @brief
  *
@@ -9,7 +53,6 @@ use \Michelf\MarkdownExtra;
  * @return string|unknown
  */
 function get_help_content($tocpath = false) {
-
 	global $lang;
 
 	$doctype = 'markdown';
@@ -17,6 +60,8 @@ function get_help_content($tocpath = false) {
 	$text = '';
 
 	$path = (($tocpath !== false) ? $tocpath : '');
+        $docroot = (\App::$override_helproot) ? \App::$override_helproot : 'doc/';
+        $docroot = (substr($docroot,-1)!='/') ? $docroot .= '/' : $docroot; 
 
 	if($tocpath === false && argc() > 1) {
 		$path = '';
@@ -27,8 +72,9 @@ function get_help_content($tocpath = false) {
 		}
 	}
 
-	if($path) {
 
+	if($path) {
+                $fullpath = get_help_fullpath($path);
 		$title = basename($path);
 		if(! $tocpath)
 			\App::$page['title'] = t('Help:') . ' ' . ucwords(str_replace('-',' ',notags($title)));
@@ -39,21 +85,22 @@ function get_help_content($tocpath = false) {
 		// TODO: This is incompatible with the hierarchical TOC construction
 		// defined in /Zotlabs/Widget/Helpindex.php.
 		if($tocpath !== false &&
-			load_doc_file('doc/' . $path . '.md') === '' &&
-			load_doc_file('doc/' . $path . '.bb') === '' &&
-			load_doc_file('doc/' . $path . '.html') === ''
+			load_doc_file($fullpath . '.md') === '' &&
+			load_doc_file($fullpath . '.bb') === '' &&
+			load_doc_file($fullpath . '.html') === ''
 		  ) {
 			$path = $title;
 		}
-		$text = load_doc_file('doc/' . $path . '.md');
+                $fullpath = get_help_fullpath($path);
+		$text = load_doc_file($fullpath . '.md');
 
 		if(! $text) {
-			$text = load_doc_file('doc/' . $path . '.bb');
+			$text = load_doc_file($fullpath . '.bb');
 			if($text)
 				$doctype = 'bbcode';
 		}
 		if(! $text) {
-			$text = load_doc_file('doc/' . $path . '.html');
+			$text = load_doc_file($fullpath . '.html');
 			if($text)
 				$doctype = 'html';
 		}
@@ -64,12 +111,16 @@ function get_help_content($tocpath = false) {
 
 	if($tocpath === false) {
 		if(! $text) {
-			$text = load_doc_file('doc/Site.md');
+                        $path = 'Site';
+                        $fullpath = get_help_fullpath($path,'.md');
+			$text = load_doc_file($fullpath . '.md');
 			\App::$page['title'] = t('Help');
 		}
 		if(! $text) {
 			$doctype = 'bbcode';
-			$text = load_doc_file('doc/main.bb');
+                        $path = 'main';
+                        $fullpath = get_help_fullpath($path,'.md');
+			$text = load_doc_file($fullpath . '.bb');
 			goaway('/help/about/about');
 			\App::$page['title'] = t('Help');
 		}
@@ -146,35 +197,7 @@ function determine_help_language() {
 }
 
 function load_doc_file($s) {
-	$path = 'doc';
-	// Determine the language and modify the path accordingly
-	$x = determine_help_language();
-	$lang = $x['language'];
-	$url_idx = ($x['from_url'] ? 1 : 0);
-	// The English translation is at the root of /doc/. Other languages are in
-	// subfolders named by the language code such as "de", "es", etc.
-	if($lang !== 'en') {
-		$path .= '/' . $lang;
-	}
 
-	$b = basename($s);
-
-	for($i=1+$url_idx; $i<argc()-1; $i++) {
-		$path .= '/' . argv($i);
-	}
-	$c = find_doc_file($path . '/' . $b);
-	if($c)
-		return $c;
-	// Possibly a translation was requested that has not been translated, so fall
-	// back to the English version
-	$path = 'doc';
-	for($i=1+$url_idx; $i<argc()-1; $i++) {
-		$path .= '/' . argv($i);
-	}
-	$c = find_doc_file($path . '/' . $b);
-	if($c)
-		return $c;
-	// Try one last time to find the file at the explicit path input to the function
 	$c = find_doc_file($s);
 	if($c)
 		return $c;

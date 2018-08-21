@@ -959,9 +959,8 @@ function format_js_if_exists($source) {
 function theme_include($file, $root = '') {
 
 	// Make sure $root ends with a slash / if it's not blank
-	if($root !== '' && $root[strlen($root)-1] !== '/')
+	if($root !== '' && substr($root,-1) !== '/')
 		$root = $root . '/';
-
 	$theme_info = App::$theme_info;
 
 	if(array_key_exists('extends',$theme_info))
@@ -992,21 +991,51 @@ function theme_include($file, $root = '') {
 	return '';
 }
 
-
 function get_intltext_template($s, $root = '') {
+        $testroot = ($root=='') ? $testroot = "ROOT" : $root;
+        $t = App::template_engine();
 
-	$t = App::template_engine();
-
-	$template = $t->get_intltext_template($s, $root);
-	return $template;
+        if (isset(\App::$override_intltext_templates[$testroot][$s]["content"])) {
+                return \App::$override_intltext_templates[$testroot][$s]["content"];
+        } else {
+                if (isset(\App::$override_intltext_templates[$testroot][$s]["root"]) && 
+                   isset(\App::$override_intltext_templates[$testroot][$s]["file"])) {
+                        $s = \App::$override_intltext_templates[$testroot][$s]["file"];
+                        $root = \App::$override_intltext_templates[$testroot][$s]["root"];
+                } elseif (\App::$override_templateroot) {
+                   $newroot = \App::$override_templateroot.$root;
+                   if ($newroot != '' && substr($newroot,-1) != '/' ) {
+                           $newroot .= '/';
+                   }
+                   $template = $t->get_intltext_template($s, $newroot);
+                }
+                $template = $t->get_intltext_template($s, $root);
+                return $template;
+        }
 }
 
-
 function get_markup_template($s, $root = '') {
+        $testroot = ($root=='') ? $testroot = "ROOT" : $root;
 
-	$t = App::template_engine();
-	$template = $t->get_markup_template($s, $root);
-	return $template;
+        $t = App::template_engine();
+
+        if (isset(\App::$override_markup_templates[$testroot][$s]["content"])) {
+                return \App::$override_markup_templates[$testroot][$s]["content"];
+        } else {
+                if (isset(\App::$override_markup_templates[$testroot][$s]["root"]) && 
+                   isset(\App::$override_markup_templates[$testroot][$s]["file"])) {
+                        $s = \App::$override_markup_templates[$testroot][$s]["file"];
+                        $root = \App::$override_markup_templates[$testroot][$s]["root"];
+                } elseif (\App::$override_templateroot) {
+                   $newroot = \App::$override_templateroot.$root;
+                   if ($newroot != '' && substr($newroot,-1) != '/' ) {
+                           $newroot .= '/';
+                   }
+                   $template = $t->get_markup_template($s, $newroot);
+                }
+                $template = $t->get_markup_template($s, $root);
+                return $template;
+        }
 }
 
 /**
