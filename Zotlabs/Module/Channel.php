@@ -2,21 +2,23 @@
 
 namespace Zotlabs\Module;
 
-use \App;
 
-require_once('include/contact_widgets.php');
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\PermissionDescription;
+
 require_once('include/items.php');
-require_once("include/bbcode.php");
 require_once('include/security.php');
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
-require_once('include/permissions.php');
+
 
 /**
  * @brief Channel Controller
  *
  */
-class Channel extends \Zotlabs\Web\Controller {
+
+class Channel extends Controller {
 
 	function init() {
 
@@ -151,7 +153,7 @@ class Channel extends \Zotlabs\Web\Controller {
 					'default_location' => (($is_owner) ? App::$profile['channel_location'] : ''),
 					'nickname' => App::$profile['channel_address'],
 					'lockstate' => (((strlen(App::$profile['channel_allow_cid'])) || (strlen(App::$profile['channel_allow_gid'])) || (strlen(App::$profile['channel_deny_cid'])) || (strlen(App::$profile['channel_deny_gid']))) ? 'lock' : 'unlock'),
-					'acl' => (($is_owner) ? populate_acl($channel_acl,true, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post') : ''),
+					'acl' => (($is_owner) ? populate_acl($channel_acl,true, PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post') : ''),
 					'permissions' => $channel_acl,
 					'showacl' => (($is_owner) ? 'yes' : ''),
 					'bang' => '',
