@@ -1790,6 +1790,10 @@ function info($s) {
 		return;
 	if(! x($_SESSION, 'sysmsg_info'))
 		$_SESSION['sysmsg_info'] = array();
+
+	if(in_array($s, $_SESSION['sysmsg_info']))
+		return;
+
 	if(App::$interactive)
 		$_SESSION['sysmsg_info'][] = $s;
 }
