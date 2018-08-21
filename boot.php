@@ -35,7 +35,7 @@ define ( 'PLATFORM_NAME',           'zap' );
 define ( 'STD_VERSION',             '0.0.1' );
 define ( 'ZOT_REVISION',            '6.0' );
 
-define ( 'DB_UPDATE_VERSION',       1217 );
+define ( 'DB_UPDATE_VERSION',       1218 );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 
@@ -694,6 +694,11 @@ class App {
 	private static $perms      = null;            // observer permissions
 	private static $widgets    = array();         // widgets for this page
 	public  static $config     = array();         // config cache
+        public  static $override_intltext_templates = array();
+        public  static $override_markup_templates = array();
+        public  static $override_templateroot = null;
+        public  static $override_helproot = null;
+        public  static $override_helpfiles = array();
 
 	public static  $session    = null;
 	public static  $groups;
@@ -1757,6 +1762,10 @@ function info($s) {
 		return;
 	if(! x($_SESSION, 'sysmsg_info'))
 		$_SESSION['sysmsg_info'] = array();
+
+	if(in_array($s, $_SESSION['sysmsg_info']))
+		return;
+
 	if(App::$interactive)
 		$_SESSION['sysmsg_info'][] = $s;
 }

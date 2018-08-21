@@ -476,6 +476,7 @@ create index "hook_idx" on hook ("hook");
 create index "hook_version_idx" on hook ("hook_version");
 create index "hook_priority_idx" on hook ("priority");
 
+
 CREATE TABLE "hubloc" (
   "hubloc_id" serial  NOT NULL,
   "hubloc_guid" text NOT NULL DEFAULT '',

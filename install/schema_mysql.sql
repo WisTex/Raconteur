@@ -503,6 +503,7 @@ CREATE TABLE IF NOT EXISTS `hook` (
   KEY `hook_version` (`hook_version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
 CREATE TABLE IF NOT EXISTS `hubloc` (
   `hubloc_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `hubloc_guid` char(191) NOT NULL DEFAULT '',
@@ -545,7 +546,6 @@ CREATE TABLE IF NOT EXISTS `hubloc` (
   KEY `hubloc_deleted` (`hubloc_deleted`),
   KEY `hubloc_error` (`hubloc_error`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
-
 
 CREATE TABLE IF NOT EXISTS `iconfig` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
