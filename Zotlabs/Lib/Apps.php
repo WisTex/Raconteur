@@ -336,7 +336,8 @@ class Apps {
 			'Profile' => t('Profile'),
 			'Profiles' => t('Profiles'),
 			'Privacy Groups' => t('Privacy Groups'),
-			'Notifications' => t('Notifications')
+			'Notifications' => t('Notifications'),
+			'Order Apps' => t('Order Apps')
 		);
 
 		if(array_key_exists('name',$arr)) {
