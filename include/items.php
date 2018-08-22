@@ -3782,18 +3782,30 @@ function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
  *
  * @param int $uid
  * @param boolean $wall (optional) default false
+ * hack: $wall = 2 selects articles
  * @return string|boolean date string, otherwise false
  */
 function first_post_date($uid, $wall = false) {
 
-	$wall_sql = (($wall) ? " and item_wall = 1 " : "" );
-	$item_normal = item_normal();
+	$wall_sql = (($wall === 1) ? " and item_wall = 1 " : "" );
+	if($wall === 2) {
+		$wall_sql = " and item_type = 7 ";
+		$item_normal = " and item.item_hidden = 0 and item.item_type = 7 and item.item_deleted = 0
+			and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_pending_remove = 0
+			and item.item_blocked = 0 ";
+
+	}
+	else {
+		$item_normal = item_normal();
+	}
+
 
 	$r = q("select id, created from item
 		where uid = %d and id = parent $item_normal $wall_sql
 		order by created asc limit 1",
 		intval($uid)
 	);
+
 	if($r) {
 //		logger('first_post_date: ' . $r[0]['id'] . ' ' . $r[0]['created'], LOGGER_DATA);
 		return substr(datetime_convert('',date_default_timezone_get(),$r[0]['created']),0,10);
