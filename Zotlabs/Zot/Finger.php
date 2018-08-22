@@ -55,7 +55,7 @@ class Finger {
 
 		$r = q("select xchan.*, hubloc.* from xchan
 			left join hubloc on xchan_hash = hubloc_hash
-			where xchan_addr = '%s' and hubloc_primary = 1 limit 1",
+			where xchan_addr = '%s' and hubloc_primary = 1 and hubloc_deleted = 0 limit 1",
 			dbesc($xchan_addr)
 		);
 

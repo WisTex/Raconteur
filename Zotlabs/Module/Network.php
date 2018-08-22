@@ -1,6 +1,8 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+
 require_once('include/items.php');
 require_once('include/group.php');
 require_once('include/contact_widgets.php');
@@ -25,8 +27,8 @@ class Network extends \Zotlabs\Web\Controller {
 				goaway('network' . '?f=&' . $network_options);
 		}
 	
-		$channel = \App::get_channel();
-		\App::$profile_uid = local_channel();
+		$channel = App::get_channel();
+		App::$profile_uid = local_channel();
 		head_set_icon($channel['xchan_photo_s']);
 	
 	}
@@ -34,7 +36,7 @@ class Network extends \Zotlabs\Web\Controller {
 	function get($update = 0, $load = false) {
 	
 		if(! local_channel()) {
-			$_SESSION['return_url'] = \App::$query_string;
+			$_SESSION['return_url'] = App::$query_string;
 			return login(false);
 		}
 	
@@ -44,11 +46,11 @@ class Network extends \Zotlabs\Web\Controller {
 			$_SESSION['loadtime'] = datetime_convert();
 		}
 
-		$arr = array('query' => \App::$query_string);
+		$arr = array('query' => App::$query_string);
 	
 		call_hooks('network_content_init', $arr);
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 		$item_normal = item_normal();
 		$item_normal_update = item_normal_update();
 	
@@ -326,10 +328,10 @@ class Network extends \Zotlabs\Web\Controller {
 	
 			$o .= '<div id="live-network"></div>' . "\r\n";
 			$o .= "<script> var profile_uid = " . local_channel() 
-				. "; var profile_page = " . \App::$pager['page'] 
+				. "; var profile_page = " . App::$pager['page'] 
 				. "; divmore_height = " . intval($maxheight) . "; </script>\r\n";
 	
-			\App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),array(
+			App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),array(
 				'$baseurl' => z_root(),
 				'$pgtype'  => 'network',
 				'$uid'     => ((local_channel()) ? local_channel() : '0'),
@@ -346,7 +348,7 @@ class Network extends \Zotlabs\Web\Controller {
 				'$wall'    => '0',
 				'$static'  => $static, 
 				'$list'    => ((x($_REQUEST,'list')) ? intval($_REQUEST['list']) : 0),
-				'$page'    => ((\App::$pager['page'] != 1) ? \App::$pager['page'] : 1),
+				'$page'    => ((App::$pager['page'] != 1) ? App::$pager['page'] : 1),
 				'$search'  => (($search) ? $search : ''),
 				'$xchan'   => $xchan,
 				'$order'   => $order,
@@ -417,8 +419,8 @@ class Network extends \Zotlabs\Web\Controller {
 		}
 		else {
 			$itemspage = get_pconfig(local_channel(),'system','itemspage');
-			\App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
-			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));
+			App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
+			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 		}
 	
 		// cmin and cmax are both -1 when the affinity tool is disabled
