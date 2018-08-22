@@ -127,7 +127,10 @@ require_once('include/api_zot.php');
 			}
 
 		}
-	
+
+
+		$x = [ 'path' => App::$query_string ];	
+		call_hooks('api_not_found',$x);
 
 		header('HTTP/1.1 404 Not Found');
 		logger('API call not implemented: ' . App::$query_string . ' - ' . print_r($_REQUEST,true));
