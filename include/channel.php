@@ -1638,14 +1638,14 @@ function advanced_profile() {
 
 //		logger('mod_profile: things: ' . print_r($things,true), LOGGER_DATA);
 
-		$exportlink = ((App::$profile['profile_vcard']) ? zid(z_root() . '/profile/' . App::$profile['channel_address'] . '/vcard') : '');
+//		$exportlink = ((App::$profile['profile_vcard']) ? zid(z_root() . '/profile/' . App::$profile['channel_address'] . '/vcard') : '');
 
 		return replace_macros($tpl, array(
 			'$title' => t('Profile'),
 			'$canlike' => (($profile['canlike'])? true : false),
 			'$likethis' => t('Like this thing'),
 			'$export'   => t('Export'),
-			'$exportlink' => $exportlink,
+			'$exportlink' => '', // $exportlink,
 			'$profile' => $profile,
 			'$fields' => $clean_fields,
 			'$editmenu' => profile_edit_menu(App::$profile['profile_uid']),
