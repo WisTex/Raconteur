@@ -3,6 +3,7 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\ActivityPub;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Group as ZGroup;
 
@@ -481,7 +482,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 				// PLACEHOLDER
 
 				if($orig_record[0]['xchan_network'] === 'activitypub') {
-					\Zotlabs\Lib\Activity::contact_remove(local_channel(), $orig_record[0]['abook_id']);
+					ActivityPub::contact_remove(local_channel(), $orig_record[0]['abook_id']);
 				}
 				contact_remove(local_channel(), $orig_record[0]['abook_id']);
 				Libsync::build_sync_packet(0 /* use the current local_channel */,
