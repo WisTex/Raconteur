@@ -278,7 +278,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$p['imgscale'] = 1;
 	$r1 = $ph->save($p);
-	$link[1] = [
+	$url[1] = [
 		'type' => 'Link',
 		'mediaType' => $type,
 		'href' => z_root() . '/photo/' . $photo_hash . '-1.' . $ph->getExt(),
@@ -293,7 +293,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$p['imgscale'] = 2;
 	$r2 = $ph->save($p);
-	$link[2] = [
+	$url[2] = [
 		'type' => 'Link',
 		'mediaType' => $type,
 		'href' => z_root() . '/photo/' . $photo_hash . '-2.' . $ph->getExt(),
@@ -308,7 +308,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$p['imgscale'] = 3;
 	$r3 = $ph->save($p);
-	$link[3] = [
+	$url[3] = [
 		'type' => 'Link',
 		'mediaType' => $type,
 		'href' => z_root() . '/photo/' . $photo_hash . '-3.' . $ph->getExt(),
@@ -359,14 +359,14 @@ function photo_upload($channel, $observer, $args) {
 
 	if($large_photos) {
 		$scale = 1;
-		$width = $link[1]['width'];
-		$height = $link[1]['height'];
+		$width = $url[1]['width'];
+		$height = $url[1]['height'];
 		$tag = (($r1) ? '[zmg=' . $width . 'x' . $height . ']' : '[zmg]');
 	}
 	else {
 		$scale = 2;
-		$width = $link[2]['width'];
-		$height = $link[2]['height'];
+		$width = $url[2]['width'];
+		$height = $url[2]['height'];
 		$tag = (($r2) ? '[zmg=' . $width . 'x' . $height . ']' : '[zmg]');
 	}
 
@@ -389,6 +389,8 @@ function photo_upload($channel, $observer, $args) {
 		'type'      => ACTIVITY_OBJ_PHOTO,
 		'name'      => $title,
 		'summary'   => $p['description'],
+		'mediaType' => $type,
+		'href'      => $url[1]['href'],
 		'published' => datetime_convert('UTC','UTC',$p['created'],ATOM_TIME),
 		'updated'   => datetime_convert('UTC','UTC',$p['edited'],ATOM_TIME),
 		'id'        => z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo_hash,
