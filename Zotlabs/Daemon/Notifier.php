@@ -406,7 +406,7 @@ class Notifier {
 
 		// add any linked identities
 
-		$l = q("select link from linkid where ident in ((" . protect_sprint(implode(',',self::$recipients)) . ") ");
+		$l = q("select link from linkid where ident in ((" . protect_sprintf(implode(',',self::$recipients)) . ") ");
 		if($l) {
 			foreach($l as $lv) {
 				if(! in_array("'" . $lv['link'] . "'", self::$recipients)) {
@@ -415,7 +415,7 @@ class Notifier {
 			}
 		}
 
-		$l = q("select ident from linkid where link in ((" . protect_sprint(implode(',',self::$recipients)) . ") ");
+		$l = q("select ident from linkid where link in ((" . protect_sprintf(implode(',',self::$recipients)) . ") ");
 		if($l) {
 			foreach($l as $lv) {
 				if(! in_array("'" . $lv['ident'] . "'", self::$recipients)) {
