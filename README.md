@@ -7,7 +7,10 @@ Zot/6 protocol documentation is located here:
 https://macgirvin.com/wiki/mike/Zot%2BVI/Home
 
 
-ActivityPub and many other protocols do not work well with Zot or Zot/6 because they do not understand the concept of nomadic identity. Osada provides a gateway between these services to smooth out the differences. It is ultimately designed to bridge ActivityPub with Zap, which is a pure Zot/6 social network application. 
+
+Osada is ultimately designed to bridge ActivityPub with Zap, which is a pure Zot/6 social network application; however you might find that it is a quite capable ActivityPub client on its own. 
+
+ActivityPub and many other protocols do not work well with Zot or Zot/6 because they do not understand the concept of nomadic identity. 
 
 Osada is based on Zap which is based on Red, which in turn is based on Hubzilla. It is otherwise unrelated to those projects and the software has a completely different scope and purpose. 
 
