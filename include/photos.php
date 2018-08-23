@@ -393,6 +393,7 @@ function photo_upload($channel, $observer, $args) {
 		'href'      => $url[1]['href'],
 		'published' => datetime_convert('UTC','UTC',$p['created'],ATOM_TIME),
 		'updated'   => datetime_convert('UTC','UTC',$p['edited'],ATOM_TIME),
+		// This is a placeholder and will get over-ridden by the item mid, which is critical for sharing as a conversational item over activitypub
 		'id'        => z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo_hash,
 		'url'       => $url,
 		'source'    => [ 'content' => $obj_body, 'mediaType' => 'text/bbcode' ],
@@ -415,6 +416,7 @@ function photo_upload($channel, $observer, $args) {
 
 			if($item['mid'] === $item['parent_mid']) {
 
+				$object['id'] = $item['mid'];
 				$item['body'] = $summary;
 				$item['mimetype'] = 'text/bbcode';
 				$item['obj_type'] = ACTIVITY_OBJ_PHOTO;
@@ -446,6 +448,7 @@ function photo_upload($channel, $observer, $args) {
 	}
 	else {
 		$mid = item_message_id();
+		$object['id'] = $mid;
 
 		$arr = [
 			'aid'             => $account_id,
