@@ -123,7 +123,7 @@ class Webfinger extends \Zotlabs\Web\Controller {
 					'http://webfinger.net/ns/name'   => $channel_target['channel_name'],
 					'http://xmlns.com/foaf/0.1/name' => $channel_target['channel_name'],
 					'https://w3id.org/security/v1#publicKeyPem' => $channel_target['xchan_pubkey'],
-					'http://purl.org/zot/federation' => 'zot6'
+					'http://purl.org/zot/federation' => 'zot6,activitypub'
 			];
 	
 			foreach($aliases as $alias) { 
@@ -166,6 +166,16 @@ class Webfinger extends \Zotlabs\Web\Controller {
 					'rel' => 'http://ostatus.org/schema/1.0/subscribe',
 					'template' => z_root() . '/follow?url={uri}'
 				],
+				[
+					'rel'  => 'self',
+					'type' => 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
+					'href' => z_root() . '/channel/' . $channel_target['channel_address']
+    			],
+				[
+					'rel'  => 'self',
+					'type' => 'application/activity+json',
+					'href' => z_root() . '/channel/' . $channel_target['channel_address']
+    			]
 			];
 		}
 

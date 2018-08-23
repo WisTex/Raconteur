@@ -13,7 +13,7 @@ class Siteinfo extends \Zotlabs\Web\Controller {
 		
 	function get() {
 
-		$federated = [];
+		$federated = [ 'zot6','activitypub' ];
 		call_hooks('federated_transports',$federated);
 	
 		$siteinfo = replace_macros(get_markup_template('siteinfo.tpl'),

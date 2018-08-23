@@ -479,7 +479,10 @@ class Connedit extends \Zotlabs\Web\Controller {
 				// runs in the background there could be a race condition preventing this packet from being sent in all
 				// cases.
 				// PLACEHOLDER
-	
+
+				if($orig_record[0]['xchan_network'] === 'activitypub') {
+					\Zotlabs\Lib\Activity::contact_remove(local_channel(), $orig_record[0]['abook_id']);
+				}
 				contact_remove(local_channel(), $orig_record[0]['abook_id']);
 				Libsync::build_sync_packet(0 /* use the current local_channel */,
 					array('abook' => array(array(

@@ -832,11 +832,57 @@ function import_author_xchan($x) {
 	}
 
 	if(! $y) {
+		$y = import_author_activitypub($x);
+	}
+
+	if(! $y) {
 		$y = import_author_unknown($x);
 	}
 
 	return($y);
 }
+
+
+function import_author_activitypub($x) {
+
+	if(! $x['url'])
+		return false;
+
+    // let somebody upgrade from an 'unknown' connection which has no xchan_addr
+    $r = q("select xchan_hash, xchan_url, xchan_name, xchan_photo_s from xchan where xchan_url = '%s' limit 1",
+        dbesc($x['url'])
+    );
+    if(! $r) {
+        $r = q("select xchan_hash, xchan_url, xchan_name, xchan_photo_s from xchan where xchan_hash = '%s' limit 1",
+            dbesc($x['url'])
+        );
+    }
+    if($r) {
+        logger('in_cache: ' . $r[0]['xchan_name'], LOGGER_DATA);
+        return $r[0]['xchan_hash'];
+    }
+
+    $z = discover_by_webbie($x['url']);
+
+    if($z) {
+        $r = q("select xchan_hash, xchan_url, xchan_name, xchan_photo_s from xchan where xchan_url = '%s' limit 1",
+            dbesc($x['url'])
+        );
+        if(! $r) {
+            $r = q("select xchan_hash, xchan_url, xchan_name, xchan_photo_s from xchan where xchan_hash = '%s' limit 1",
+                dbesc($x['url'])
+            );
+        }
+        if($r) {
+            return $r[0]['xchan_hash'];
+        }
+    }
+
+    return false;
+
+}
+
+
 
 /**
  * @brief Imports an author from a RSS feed.

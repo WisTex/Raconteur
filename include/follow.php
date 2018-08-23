@@ -175,6 +175,11 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 
 	call_hooks('follow_allow',$x);
 
+	if($r[0]['xchan_network'] === 'activitypub') {
+		$x['allowed'] = 1;
+		$x['singleton'] = 1;
+	}
+
 	if(! $x['allowed']) {
 		$result['message'] = t('Protocol disabled.');
 		return $result;

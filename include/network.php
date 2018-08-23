@@ -1168,9 +1168,25 @@ function discover_by_webbie($webbie, $protocol = '') {
 	$network  = null;
 
 	$x = webfinger_rfc7033($webbie);
+
+ 	$address = EMPTY_STR;
+
+	if($x && array_key_exists('subject',$x) && strpos($x['subject'],'acct:') === 0)
+        $address = str_replace('acct:','',$x['subject']);
+    if($x && array_key_exists('aliases',$x) && count($x['aliases'])) {
+        foreach($x['aliases'] as $a) {
+            if(strpos($a,'acct:') === 0) {
+                $address = str_replace('acct:','',$a);
+                break;
+            }
+        }
+    }
+
 	if($x && array_key_exists('links',$x) && $x['links']) {
 		foreach($x['links'] as $link) {
 			if(array_key_exists('rel',$link)) {
+
+				$apurl = null;
 
 				// If we discover zot - don't search further; grab the info and get out of
 				// here.
@@ -1195,7 +1211,7 @@ function discover_by_webbie($webbie, $protocol = '') {
 						return true;
 					}
 				}
-
+				
 				if($link['rel'] === PROTOCOL_ZOT && ((! $protocol) || (strtolower($protocol) === 'zot'))) {
 					logger('zot found for ' . $webbie, LOGGER_DEBUG);
 					if(array_key_exists('zot',$x) && $x['zot']['success']) {
@@ -1207,6 +1223,38 @@ function discover_by_webbie($webbie, $protocol = '') {
 						if($z['success']) {
 							$j = json_decode($z['body'],true);
 							$i = import_xchan($j);
+							return true;
+						}
+					}
+				}
+				if($link['rel'] === 'self' && ($link['type'] === 'application/activity+json' || strpos($link['type'],'ld+json') !== false) && ((! protocol) || (strtolower($protocol) === 'activitypub'))) {
+                    $apurl = $link['href'];
+					if(($apurl) && strpos($apurl,'http') === 0) {
+						$person_obj = null;
+						$ap = ActivityStreams::fetch($apurl);
+						if($ap) {
+							$AS = new ActivityStreams($ap); 
+							if($AS->is_valid()) {
+								if($AS->type === 'Person') {
+									$person_obj = $AS->data;
+								}
+								elseif($AS->obj && $AS->obj['type'] === 'Person') {
+									$person_obj = $AS->obj;
+								}
+							}
+						}
+						if($person_obj) {
+							Activity::actor_store($apurl,$person_obj);
+							if($address) {
+								q("update xchan set xchan_addr = '%s' where xchan_hash = '%s' and xchan_network = 'activitypub'",
+									dbesc($address),
+									dbesc($apurl)
+        						);
+								q("update hubloc set hubloc_addr = '%s' where hubloc_hash = '%s' and hubloc_network = 'activitypub'",
+									dbesc($address),
+	            					dbesc($url)
+								);
+							}
 							return true;
 						}
 					}

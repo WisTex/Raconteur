@@ -339,6 +339,9 @@ function remove_all_xchan_resources($xchan, $channel_id = 0) {
 }
 
 
+
+
+
 function contact_remove($channel_id, $abook_id) {
 
 	if((! $channel_id) || (! $abook_id))

@@ -986,7 +986,11 @@ class Libzot {
 			);
 		}
 
-		if(array_key_exists('delivery_report',$x) && is_array($x['delivery_report'])) { 
+		if(! is_array($x)) {
+			btlogger('failed communication - no response');
+		}
+
+		if(is_array($x) && array_key_exists('delivery_report',$x) && is_array($x['delivery_report'])) { 
 			foreach($x['delivery_report'] as $xx) {
 				if(is_array($xx) && array_key_exists('message_id',$xx) && DReport::is_storable($xx)) {
 					q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan ) values ( '%s', '%s', '%s','%s','%s','%s','%s' ) ",
@@ -2584,7 +2588,7 @@ class Libzot {
 		];
 
 		$ret['channel_role'] = get_pconfig($e['channel_id'],'system','permissions_role','custom');
-
+		$ret['protocols']    = [ 'zot6', 'activitypub' ];
 		$ret['searchable']     = $searchable;
 		$ret['adult_content']  = $adult_channel;
 		$ret['public_forum']   = $public_forum;

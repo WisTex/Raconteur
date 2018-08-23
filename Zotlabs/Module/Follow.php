@@ -2,7 +2,9 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libsync;
-
+use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Activity;
+use Zotlabs\Web\HTTPSignatures;
 
 require_once('include/follow.php');
 
@@ -15,6 +17,49 @@ class Follow extends \Zotlabs\Web\Controller {
 			return;
 		}
 	
+		if(ActivityStreams::is_as_request() && argc() == 2) {                                                                                        			$abook_id = intval(argv(1));
+			if(! $abook_id)
+				return;
+
+			$r = q("select * from abook left join xchan on abook_xchan = xchan_hash where abook_id = %d",
+				intval($abook_id)
+			);
+			if (! $r)
+				return;
+
+			$chan = channelx_by_n($r[0]['abook_channel']);
+
+			if(! $chan)
+				http_status_exit(404, 'Not found');
+
+			$actor = Activity::encode_person($chan);
+			if(! $actor)
+				http_status_exit(404, 'Not found');
+
+			$x = array_merge(['@context' => [
+				ACTIVITYSTREAMS_JSONLD_REV,
+				'https://w3id.org/security/v1',
+				z_root() . ZOT_APSCHEMA_REV
+			]],
+			[
+				'id'     => z_root() . '/follow/' . $r[0]['abook_id'],                                 
+                'type'   => 'Follow',
+                'actor'  => $actor,
+				'object' => $r[0]['xchan_url']
+			]);
+
+	        $headers = [];
+    	    $headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
+        	$x['signature'] = \Zotlabs\Lib\LDSignatures::sign($x,$chan);
+	        $ret = json_encode($x, JSON_UNESCAPED_SLASHES);
+    	    $headers['Digest'] = HTTPSig::generate_digest_header($ret);
+        	$h = HTTPSig::create_sig($headers,$chan['channel_prvkey'],channel_url($chan));
+	        HTTPSig::set_headers($h);
+    	    echo $ret;
+        	killme();
+
+    	}
+
 		$uid = local_channel();
 		$url = notags(trim(punify($_REQUEST['url'])));
 		$return_url = $_SESSION['return_url'];

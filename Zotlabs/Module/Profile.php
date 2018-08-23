@@ -62,8 +62,37 @@ class Profile extends \Zotlabs\Web\Controller {
 			}
 		}
 	
-		profile_load($which,$profile);
-	
+
+		if(ActivityStreams::is_as_request()) {
+			$chan = channelx_by_nick(argv(1));
+			if(! $chan)
+				http_status_exit(404, 'Not found');
+			$p = Activity::encode_person($chan,true,true);
+			if(! $p) {
+				http_status_exit(404, 'Not found');
+			}
+			$x = [
+				'@context' => [
+					ACTIVITYSTREAMS_JSONLD_REV,
+					'https://w3id.org/security/v1',
+					z_root() . ZOT_APSCHEMA_REV
+				],
+				'type' => 'Profile',
+				'describes' => $p
+			];
+
+			$headers = [];
+			$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
+			$x['signature'] = LDSignatures::sign($x,$chan);
+			$ret = json_encode($x, JSON_UNESCAPED_SLASHES);
+			$headers['Digest'] = HTTPSig::generate_digest_header($ret);
+			$h = HTTPSig::create_sig($headers,$chan['channel_prvkey'],channel_url($chan));
+			HTTPSig::set_headers($h);
+			echo $ret;
+			killme();
+		}
+
+		profile_load($which,$profile);	
 	
 	}
 	

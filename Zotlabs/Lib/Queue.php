@@ -3,7 +3,7 @@
 namespace Zotlabs\Lib;
 
 use Zotlabs\Lib\Libzot;
-
+use Zotlabs\Web\HTTPSig;
 
 class Queue {
 
@@ -224,6 +224,57 @@ class Queue {
 					self::update($outq['outq_hash'],10);
 			}
 			return;
+		}
+
+
+		if($outq['outq_driver'] === 'activitypub') {
+
+			$channel = channelx_by_n($outq['outq_channel']);
+
+			$retries = 0;
+
+			$headers = [];
+			$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
+			$ret = $outq['outq_msg'];
+			$headers['Digest'] = HTTPSig::generate_digest_header($ret);
+			$xhead = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
+			$result = z_post_url($outq['outq_posturl'],$outq['outq_msg'],$retries,[ 'headers' => $xhead ]);
+
+			if($result['success'] && $result['return_code'] < 300) {
+				logger('deliver: queue post success to ' . $outq['outq_posturl'], LOGGER_DEBUG);
+				if($base) {
+					q("update site set site_update = '%s', site_dead = 0 where site_url = '%s' ",
+						dbesc(datetime_convert()),
+						dbesc($base)
+					);
+				}
+				q("update dreport set dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
+					dbesc('accepted for delivery'),
+					dbesc(datetime_convert()),
+					dbesc($outq['outq_hash'])
+				);
+				self::remove($outq['outq_hash']);
+
+				// server is responding - see if anything else is going to this destination and is piled up 
+				// and try to send some more. We're relying on the fact that do_delivery() results in an 
+				// immediate delivery otherwise we could get into a queue loop. 
+
+				if(! $immediate) {
+					$x = q("select outq_hash from outq where outq_posturl = '%s' and outq_delivered = 0",
+						dbesc($outq['outq_posturl'])
+					);
+
+					$piled_up = array();
+					if($x) {
+						foreach($x as $xx) {
+							 $piled_up[] = $xx['outq_hash'];
+						}
+					}
+					if($piled_up) {
+						do_delivery($piled_up,true);
+					}
+				}
+			}
 		}
 
 		// normal zot delivery

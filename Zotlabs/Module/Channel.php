@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Web\HTTPSig;
 
 use App;
@@ -103,9 +104,19 @@ class Channel extends Controller {
 			$x = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1'
-			]], Activity::encode_person($channel));
+			]], Activity::encode_person($channel,true,true));
 
-			json_return_and_die($x,'application/activity+json');
+			$headers = [];
+        	$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
+
+        	$x['signature'] = LDSignatures::sign($x,$chan);
+        	$ret = json_encode($x, JSON_UNESCAPED_SLASHES);
+        	$headers['Digest'] = HTTPSig::generate_digest_header($ret);
+        	$h = HTTPSig::create_sig($headers,$chan['channel_prvkey'],channel_url($chan));
+        	HTTPSig::set_headers($h);
+
+        	echo $ret;
+	        killme();
 
 		}
 
