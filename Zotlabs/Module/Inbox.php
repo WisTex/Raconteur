@@ -4,12 +4,11 @@ namespace Zotlabs\Module;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Web\Controller;
 
+require_once('include/items.php');
 
-require_once('addon/activitypub/as.php');
-
-
-class Inbox extends \Zotlabs\Web\Controller {
+class Inbox extends Controller {
 
 	function post() {
 
