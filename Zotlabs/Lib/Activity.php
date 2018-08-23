@@ -1360,8 +1360,6 @@ class Activity {
 
 		$s = [];
 
-
-
 		$content = self::get_content($act->obj);
 
 		$s['owner_xchan']  = $act->actor['id'];
@@ -1883,7 +1881,7 @@ class Activity {
 	static function bb_content($content,$field) {
 
 		require_once('include/html2bbcode.php');
-
+		require_once('include/event.php');
 		$ret = false;
 
 		if(is_array($content[$field])) {
@@ -1899,6 +1897,9 @@ class Activity {
 				$ret = html2bbcode($content[$field]);
 			}
 		}
+		if($field === 'content' && $content['event'] && (! strpos($ret,'[event'))) {
+			$ret .= format_event_bbcode($content['event']);
+		}
 
 		return $ret;
 	}
@@ -1907,20 +1908,51 @@ class Activity {
 	static function get_content($act) {
 
 		$content = [];
+		$event = null;
+
 		if (! $act) {
 			return $content;
 		}
+
+		if($act['type'] === 'Event') {
+			$adjust = false;                                                                                                                              
+			$event = [];                                                                                                                                  
+			$event['event_hash'] = $act['id'];                                                                                                            
+			if(array_key_exists('startTime',$act) && strpos($act['startTime'],-1,1) === 'Z') {                                                            
+				$adjust = true;                                                                                                                           
+				$event['adjust'] = 1;                                                                                                                     
+				$event['dtstart'] = datetime_convert('UTC','UTC',$event['startTime'] . (($adjust) ? '' : 'Z'));                                           
+			}                                                                                                                                             
+			if(array_key_exists('endTime',$act)) {                                                                                                        
+				$event['dtend'] = datetime_convert('UTC','UTC',$event['endTime'] . (($adjust) ? '' : 'Z'));                                               
+			}                                                                                                                                             
+			else {                                                                                                                                        
+				$event['nofinish'] = true;                                                                                                                
+			}                                                                                                                                             
+		}                         
 
 		foreach ([ 'name', 'summary', 'content' ] as $a) {
 			if (($x = self::get_textfield($act,$a)) !== false) {
 				$content[$a] = $x;
 			}
 		}
+
+		if($event) {
+			$event['summary'] = html2bbcode($content['summary']);
+			$event['description'] = html2bbcode($content['content']);
+			if($event['summary'] && $event['dtstart']) {
+				$content['event'] = $event;
+			}
+		}
+
 		if (array_key_exists('source',$act) && array_key_exists('mediaType',$act['source'])) {
 			if ($act['source']['mediaType'] === 'text/bbcode') {
 				$content['bbcode'] = purify_html($act['source']['content']);
 			}
 		}
+
+
+
 
 		return $content;
 	}
