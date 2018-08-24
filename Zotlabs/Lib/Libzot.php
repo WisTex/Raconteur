@@ -7,16 +7,10 @@ namespace Zotlabs\Lib;
  *
  */
 
-use Zotlabs\Lib\DReport;
-use Zotlabs\Lib\Enotify;
-use Zotlabs\Lib\Group;
-use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\Libzotdir;
-use Zotlabs\Lib\System;
-use Zotlabs\Lib\MessageFilter;
-use Zotlabs\Lib\Queue;
-use Zotlabs\Lib\Zotfinger;
 use Zotlabs\Web\HTTPSig;
+use Zotlabs\Access\Permissions;
+use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Daemon\Master;
 
 require_once('include/crypto.php');
 
@@ -378,13 +372,13 @@ class Libzot {
 				else {
 					// if we were just granted read stream permission and didn't have it before, try to pull in some posts
 					if((! $old_read_stream_perm) && (intval($permissions['view_stream'])))
-						\Zotlabs\Daemon\Master::Summon(array('Onepoll',$r[0]['abook_id']));
+						Master::Summon([ 'Onepoll', $r[0]['abook_id'] ]);
 				}
 			}
 			else {
 
-				$p = \Zotlabs\Access\Permissions::connect_perms($channel['channel_id']);
-				$my_perms = \Zotlabs\Access\Permissions::serialise($p['perms']);
+				$p = Permissions::connect_perms($channel['channel_id']);
+				$my_perms = Permissions::serialise($p['perms']);
 
 				$automatic = $p['automatic'];
 
@@ -424,8 +418,8 @@ class Libzot {
 					);
 
 					if($new_connection) {
-						if(! \Zotlabs\Access\Permissions::PermsCompare($new_perms,$previous_perms))
-							\Zotlabs\Daemon\Master::Summon(array('Notifier','permissions_create',$new_connection[0]['abook_id']));
+						if(! Permissions::PermsCompare($new_perms,$previous_perms))
+							Master::Summon([ 'Notifier', 'permissions_create', $new_connection[0]['abook_id'] ]);
 						Enotify::submit(
 							[
 							'type'       => NOTIFY_INTRO,
@@ -438,7 +432,7 @@ class Libzot {
 						if(intval($permissions['view_stream'])) {
 							if(intval(get_pconfig($channel['channel_id'],'perm_limits','send_stream') & PERMS_PENDING)
 								|| (! intval($new_connection[0]['abook_pending'])))
-								\Zotlabs\Daemon\Master::Summon(array('Onepoll',$new_connection[0]['abook_id']));
+								Master::Summon([ 'Onepoll', $new_connection[0]['abook_id'] ]);
 						}
 
 
@@ -1169,12 +1163,12 @@ class Libzot {
 				}
 				elseif($env['encoding'] === 'activitystreams') {
 
-					$AS = new \Zotlabs\Lib\ActivityStreams($data);
+					$AS = new ActivityStreams($data);
 					if(! $AS->is_valid()) {
 						logger('Activity rejected: ' . print_r($data,true));
 						return;
 					}
-					$arr = \Zotlabs\Lib\Activity::decode_note($AS);
+					$arr = Activity::decode_note($AS);
 
 					logger($AS->debug());
 
@@ -1378,7 +1372,7 @@ class Libzot {
 
 			$local_public = $public;
 
-			$DR = new \Zotlabs\Lib\DReport(z_root(),$sender,$d,$arr['mid']);
+			$DR = new DReport(z_root(),$sender,$d,$arr['mid']);
 
 			$channel = channelx_by_hash($d);
 
@@ -1480,7 +1474,7 @@ class Libzot {
 
 					if((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {
-						\Zotlabs\Daemon\Master::Summon(array('Notifier', 'request', $channel['channel_id'], $sender, $arr['parent_mid']));
+						Master::Summon([ 'Notifier', 'request', $channel['channel_id'], $sender, $arr['parent_mid'] ]);
 					}
 					continue;
 				}
@@ -1552,7 +1546,7 @@ class Libzot {
 
 				if($relay && $item_id) {
 					logger('process_delivery: invoking relay');
-					\Zotlabs\Daemon\Master::Summon(array('Notifier','relay',intval($item_id)));
+					Master::Summon([ 'Notifier', 'relay', intval($item_id) ]);
 					$DR->update('relayed');
 					$result[] = $DR->get();
 				}
@@ -1662,7 +1656,7 @@ class Libzot {
 
 			if($relay && $item_id) {
 				logger('Invoking relay');
-				\Zotlabs\Daemon\Master::Summon(array('Notifier','relay',intval($item_id)));
+				Master::Summon([ 'Notifier', 'relay', intval($item_id) ]);
 				$DR->addto_update('relayed');
 				$result[] = $DR->get();
 			}
@@ -1900,7 +1894,7 @@ class Libzot {
 
 		foreach($deliveries as $d) {
 	
-			$DR = new \Zotlabs\Lib\DReport(z_root(),$sender,$d,$arr['mid']);
+			$DR = new DReport(z_root(),$sender,$d,$arr['mid']);
 
 			$r = q("select * from channel where channel_hash = '%s' limit 1",
 				dbesc($d['hash'])
@@ -2502,7 +2496,7 @@ class Libzot {
 		}
 		else {
 			// check if it has characteristics of a public forum based on custom permissions.
-			$m = \Zotlabs\Access\Permissions::FilledAutoperms($e['channel_id']);
+			$m = Permissions::FilledAutoperms($e['channel_id']);
 			if($m) {
 				foreach($m as $k => $v) {
 					if($k == 'tag_deliver' && intval($v) == 1)
@@ -2589,8 +2583,8 @@ class Libzot {
 		$ret['adult_content']  = $adult_channel;
 		$ret['public_forum']   = $public_forum;
 		
-		$ret['comments']       = map_scope(\Zotlabs\Access\PermissionLimits::Get($e['channel_id'],'post_comments'));
-		$ret['mail']           = map_scope(\Zotlabs\Access\PermissionLimits::Get($e['channel_id'],'post_mail'));
+		$ret['comments']       = map_scope(PermissionLimits::Get($e['channel_id'],'post_comments'));
+		$ret['mail']           = map_scope(PermissionLimits::Get($e['channel_id'],'post_mail'));
 
 		if($deleted)
 			$ret['deleted']        = $deleted;
