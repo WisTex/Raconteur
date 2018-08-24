@@ -129,12 +129,17 @@ class Admin extends \Zotlabs\Web\Controller {
 			sort($plugins);
 
 		// Could be extended to provide also other alerts to the admin
+
 		$alertmsg = '';
 
-		$vmaster = get_repository_version('master');
-		$vdev = get_repository_version('dev');
+		$upgrade = EMPTY_STR;
 
-		$upgrade = ((version_compare(STD_VERSION,$vmaster) < 0) ? t('Your software should be updated') : '');
+		if((! defined('PLATFORM_ARCHITECTURE')) || (PLATFORM_ARCHITECTURE === 'red')) {
+			$vmaster = get_repository_version('master');
+			$vdev = get_repository_version('dev');
+
+			$upgrade = ((version_compare(STD_VERSION,$vmaster) < 0) ? t('Your software should be updated') : '');
+		}
 
 		$t = get_markup_template('admin_summary.tpl');
 		return replace_macros($t, array(
