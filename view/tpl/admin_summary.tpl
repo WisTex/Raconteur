@@ -22,22 +22,28 @@
 		<dt>{{$channels.0}}</dt>
 		<dd>{{foreach from=$channels.1 item=ch name=chan}}<span title="{{$ch.label}}">{{$ch.val}} {{$ch.label}}</span>{{if !$smarty.foreach.chan.last}} / {{/if}}{{/foreach}}</dd>
 	</dl>
+	{{if $plugins.1}}
 	<dl>
 		<dt>{{$plugins.0}}</dt>
 		<dd>
 		{{foreach $plugins.1 as $p}} {{$p}} {{/foreach}}
 		</dd>
 	</dl>
+	{{/if}}
 	<dl>
 		<dt>{{$version.0}}</dt>
 		<dd>{{$version.1}} - {{$build}}</dd>
 	</dl>
+	{{if $vmaster.1}}
 	<dl>
 		<dt>{{$vmaster.0}}</dt>
 		<dd>{{$vmaster.1}}</dd>
 	</dl>
+	{{/if}}
+	{{if $vdev.1}}
 	<dl>
 		<dt>{{$vdev.0}}</dt>
 		<dd>{{$vdev.1}}</dd>
 	</dl>
+	{{/if}}
 </div>
