@@ -22,12 +22,12 @@ class Archive {
 			return '';
 
 		$wall = ((array_key_exists('wall', $arr)) ? intval($arr['wall']) : 0);
+		$wall = ((array_key_exists('articles', $arr)) ? 2 : $wall);
+
 		$style = ((array_key_exists('style', $arr)) ? $arr['style'] : 'select');
 		$showend = ((get_pconfig($uid,'system','archive_show_end_date')) ? true : false);
 		$mindate = get_pconfig($uid,'system','archive_mindate');
-		$visible_years = get_pconfig($uid,'system','archive_visible_years');
-		if(! $visible_years)
-			$visible_years = 5;
+		$visible_years = get_pconfig($uid,'system','archive_visible_years',5);
 
 		$url = z_root() . '/' . \App::$cmd;
 
