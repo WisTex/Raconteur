@@ -31,7 +31,10 @@ require_once('include/attach.php');
 require_once('include/bbcode.php');
 require_once('include/items.php');
 
+
 define ( 'PLATFORM_NAME',           'osada' );
+define ( 'PLATFORM_ARCHITECTURE',   'osada' );
+
 define ( 'STD_VERSION',             '0.0.1' );
 define ( 'ZOT_REVISION',            '6.0' );
 
