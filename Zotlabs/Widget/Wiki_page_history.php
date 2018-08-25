@@ -21,9 +21,9 @@ class Wiki_page_history {
 			'$permsWrite'  => $arr['permsWrite'],
 			'$name_lbl'    => t('Name'),
 			'$msg_label'   => t('Message','wiki_history'),
-            '$date_lbl'    => t('Date'),
-            '$revert_btn'  => t('Revert'),
-            '$compare_btn' => t('Compare')
+			'$date_lbl'    => t('Date'),
+			'$revert_btn'  => t('Revert'),
+			'$compare_btn' => t('Compare')
 		));
 
 	}
