@@ -384,8 +384,8 @@ class Wiki extends \Zotlabs\Web\Controller {
 			'$modalerrorlist' => t('Error getting album list'),
 			'$modalerrorlink' => t('Error getting photo link'),
 			'$modalerroralbum' => t('Error getting album'),
-            '$view_lbl' => t('View'),
-            '$history_lbl' => t('History')
+			'$view_lbl' => t('View'),
+			'$history_lbl' => t('History')
 		));
 
 		if($p['pageMimeType'] === 'text/markdown')
