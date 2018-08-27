@@ -510,7 +510,7 @@ class Network extends \Zotlabs\Web\Controller {
 	
 			if($load) {
 				// Fetch a page full of parent items for this page
-				$r = q("SELECT DISTINCT(item.parent) AS item_id FROM item 
+				$r = q("SELECT item.parent AS item_id FROM item 
 					left join abook on ( item.owner_xchan = abook.abook_xchan $abook_uids )
 					$net_query
 					WHERE true $uids $item_thread_top $item_normal
@@ -524,7 +524,7 @@ class Network extends \Zotlabs\Web\Controller {
 			else {
 
 				// this is an update
-				$r = q("SELECT DISTINCT(item.parent) AS item_id FROM item
+				$r = q("SELECT item.parent AS item_id FROM item
 					left join abook on ( item.owner_xchan = abook.abook_xchan $abook_uids )
 					$net_query
 					WHERE true $uids $item_normal_update $simple_update
