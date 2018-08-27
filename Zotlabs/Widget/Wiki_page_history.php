@@ -20,7 +20,10 @@ class Wiki_page_history {
 			'$pageHistory' => $pageHistory['history'],
 			'$permsWrite'  => $arr['permsWrite'],
 			'$name_lbl'    => t('Name'),
-			'$msg_label'   => t('Message','wiki_history')
+			'$msg_label'   => t('Message','wiki_history'),
+			'$date_lbl'    => t('Date'),
+			'$revert_btn'  => t('Revert'),
+			'$compare_btn' => t('Compare')
 		));
 
 	}

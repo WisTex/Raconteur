@@ -43,17 +43,17 @@
   {{foreach $pageHistory as $commit}}
   <tr class="wikis-index-row"><td>
       <table id="rev-{{$commit.revision}}" onclick="$('#details-{{$commit.revision}}').show()" style="width: 100%;">
-        <tr><td width="10%">Date</td><td width="70%">{{$commit.date}}</td>
+        <tr><td width="10%">{{$date_lbl}}</td><td width="70%">{{$commit.date}}</td>
             <td rowspan="3" width="20%" align="right">
-		{{if $permsWrite}}
-              <button id="revert-{{$commit.revision}}" class="btn btn-danger btn-sm" onclick="wiki_revert_page('{{$commit.revision}}')">Revert</button>
+                {{if $permsWrite}}
+              <button id="revert-{{$commit.revision}}" class="btn btn-danger btn-sm" onclick="wiki_revert_page('{{$commit.revision}}')">{{$revert_btn}}</button>
               <br><br>
-		{{/if}}
-              <button id="compare-{{$commit.revision}}" class="btn btn-warning btn-sm" onclick="wiki_compare_page('{{$commit.revision}}')">Compare</button>
+                {{/if}}
+              <button id="compare-{{$commit.revision}}" class="btn btn-warning btn-sm" onclick="wiki_compare_page('{{$commit.revision}}')">{{$compare_btn}}</button>
             </td></tr>
         <tr><td>{{$name_lbl}}</td><td>{{$commit.name}}</td></tr>
         <tr><td>{{$msg_label}}</td><td>{{$commit.title}}</td></tr>
       </table>
     </td></tr>
-  {{/foreach}}          
+  {{/foreach}}
 </table>

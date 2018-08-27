@@ -42,8 +42,8 @@
 	<div id="wiki-content-container" class="section-content-wrapper">
 		<ul class="nav nav-tabs" id="wiki-nav-tabs">
 			<li class="nav-item" id="edit-pane-tab"><a class="nav-link" data-toggle="tab" href="#edit-pane">{{$editOrSourceLabel}}</a></li>
-			<li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#preview-pane" id="wiki-get-preview">View</a></li>
-			<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#page-history-pane" id="wiki-get-history">History</a></li>
+			<li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#preview-pane" id="wiki-get-preview">{{$view_lbl}}</a></li>
+			<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#page-history-pane" id="wiki-get-history">{{$history_lbl}}</a></li>
 		</ul>
 		<div class="tab-content" id="wiki-page-tabs">
 			<div id="edit-pane" class="tab-pane">
