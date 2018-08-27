@@ -325,6 +325,10 @@ class ThreadItem {
 
 		$has_tags = (($body['tags'] || $body['categories'] || $body['mentions'] || $body['attachments'] || $body['folders']) ? true : false);
 
+                $dropdown_extras_arr = [ 'item' => $item , 'dropdown_extras' => '' ];
+                call_hooks('dropdown_extras',$dropdown_extras_arr);
+                $dropdown_extras = $dropdown_extras_arr['dropdown_extras'];
+
 		$tmp_item = array(
 			'template' => $this->get_template(),
 			'mode' => $mode,
@@ -404,6 +408,7 @@ class ThreadItem {
 			'addtocal'  => (($has_event) ? t('Add to Calendar') : ''),
 			'drop'      => $drop,
 			'multidrop' => ((feature_enabled($conv->get_profile_owner(),'multi_delete')) ? $multidrop : ''),
+                        'dropdown_extras' => $dropdown_extras,
 // end toolbar buttons
 
 			'unseen_comments' => $unseen_comments,
