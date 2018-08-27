@@ -133,7 +133,7 @@ function dir_sort_links() {
 	unset($tmp['pubforums']);
 	unset($tmp['global']);
 	unset($tmp['safe']);
-	unset($tmp['req']);
+	unset($tmp['q']);
 	unset($tmp['f']);
 	$forumsurl = $url . http_build_query($tmp) . $suggest;
 

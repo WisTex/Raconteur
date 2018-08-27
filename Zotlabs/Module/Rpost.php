@@ -46,7 +46,7 @@ class Rpost extends \Zotlabs\Web\Controller {
 				// make sure we're not looping to our own hub
 				if(($url) && (! stristr($url, \App::get_hostname()))) {
 					foreach($_GET as $key => $arg) {
-						if($key === 'req')
+						if($key === 'q')
 							continue;
 						$url .= '&' . $key . '=' . $arg;
 					}

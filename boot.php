@@ -878,8 +878,8 @@ class App {
 				self::$path = $path;
 		}
 
-		if((x($_SERVER,'QUERY_STRING')) && substr($_SERVER['QUERY_STRING'], 0, 4) === "req=") {
-			self::$query_string = str_replace(['<','>'],['&lt;','&gt;'],substr($_SERVER['QUERY_STRING'], 4));
+		if((x($_SERVER,'QUERY_STRING')) && substr($_SERVER['QUERY_STRING'], 0, 2) === "q=") {
+			self::$query_string = str_replace(['<','>'],['&lt;','&gt;'],substr($_SERVER['QUERY_STRING'], 2));
 			// removing trailing / - maybe a nginx problem
 			if (substr(self::$query_string, 0, 1) == "/")
 				self::$query_string = substr(self::$query_string, 1);
@@ -887,8 +887,8 @@ class App {
 			self::$query_string = preg_replace('/&/','?',self::$query_string,1);
 		}
 
-		if(x($_GET,'req'))
-			self::$cmd = escape_tags(trim($_GET['req'],'/\\'));
+		if(x($_GET,'q'))
+			self::$cmd = escape_tags(trim($_GET['q'],'/\\'));
 
 		// unix style "homedir"
 

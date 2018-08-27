@@ -20,15 +20,15 @@ AddType audio/ogg .oga
   RewriteRule "(^|/)\.git" - [F]
   RewriteRule "(^|/)store" - [F]
 
-  # Rewrite current-style URLs of the form 'index.php?req=x'.
+  # Rewrite current-style URLs of the form 'index.php?q=x'.
   # Also place auth information into REMOTE_USER for sites running
   # in CGI mode.
 
   RewriteCond %{REQUEST_URI} ^/\.well\-known/.*
-  RewriteRule ^(.*)$ index.php?req=$1 [E=REMOTE_USER:%{HTTP:Authorization},L,QSA]
+  RewriteRule ^(.*)$ index.php?q=$1 [E=REMOTE_USER:%{HTTP:Authorization},L,QSA]
 
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^(.*)$ index.php?req=$1 [E=REMOTE_USER:%{HTTP:Authorization},L,QSA]
+  RewriteRule ^(.*)$ index.php?q=$1 [E=REMOTE_USER:%{HTTP:Authorization},L,QSA]
 </IfModule>
 
