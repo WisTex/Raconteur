@@ -2526,7 +2526,7 @@ function extra_query_args() {
 	if(count($_GET)) {
 		foreach($_GET as $k => $v) {
 			// these are request vars we don't want to duplicate
-			if(! in_array($k, array('q','f','zid','page','PHPSESSID'))) {
+			if(! in_array($k, array('req','f','zid','page','PHPSESSID'))) {
 				$s .= '&' . $k . '=' . urlencode($v);
 			}
 		}
@@ -2534,7 +2534,7 @@ function extra_query_args() {
 	if(count($_POST)) {
 		foreach($_POST as $k => $v) {
 			// these are request vars we don't want to duplicate
-			if(! in_array($k, array('q','f','zid','page','PHPSESSID'))) {
+			if(! in_array($k, array('req','f','zid','page','PHPSESSID'))) {
 				$s .= '&' . $k . '=' . urlencode($v);
 			}
 		}
