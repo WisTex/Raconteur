@@ -152,7 +152,7 @@ class Libzotdir {
 		unset($tmp['pubforums']);
 		unset($tmp['global']);
 		unset($tmp['safe']);
-		unset($tmp['q']);
+		unset($tmp['req']);
 		unset($tmp['f']);
 		$forumsurl = $url . http_build_query($tmp) . $suggest;
 
