@@ -368,7 +368,7 @@ function permissions_sql($owner_id, $remote_observer = null, $table = '') {
 }
 
 /**
- * @brief Creates an addiontal SQL where statement to check permissions for an item.
+ * @brief Creates an additional SQL where statement to check permissions for an item.
  *
  * @param int $owner_id
  * @param bool $remote_observer (optional) use current observer if unset
