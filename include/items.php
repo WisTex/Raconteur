@@ -1987,7 +1987,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	$ret['item_id'] = $current_post;
 
 	if($linkid) {
-		Libsync::build_link_packet($arr['uid'],[ 'item' => $ret['item'] ]);
+		Libsync::build_link_packet($arr['uid'],[ 'item' => [ $ret['item'] ] ]);
 	}
 
 
