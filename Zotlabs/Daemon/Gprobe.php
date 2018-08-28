@@ -3,6 +3,8 @@
 namespace Zotlabs\Daemon;
 
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Webfinger;
+use Zotlabs\Lib\Zotfinger;
 
 // performs zot_finger on $argv[1], which is a hex_encoded webbie/reddress
 
@@ -22,12 +24,12 @@ class Gprobe {
 		);
 
 		if(! $r) {
-			$href = \Zotlabs\Lib\Webfinger::zot_url(punify($url));
+			$href = Webfinger::zot_url(punify($url));
             if($href) {
-                $zf = \Zotlabs\Lib\Zotfinger::exec($href,$channel);
+                $zf = Zotfinger::exec($href,$channel);
             }
 			if(is_array($zf) && array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href && intval($zf['signature']['header_valid'])) {
-                $xc = import_xchan($zf['data']);
+                $xc = Libzot::import_xchan($zf['data']);
 			}
 		}
 
