@@ -35,7 +35,7 @@ class Libsync {
 		if(! $uid)
 			return;
 
-		$channel = $channelx_by_n($uid);
+		$channel = channelx_by_n($uid);
 		if(! $channel)
 			return;
 
