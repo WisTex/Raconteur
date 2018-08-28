@@ -55,7 +55,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 			$allow_groups = [];
 		}
 
-		$recipients = array_unique(array_merge($allow_people,$allow_groups));
+		$recipients = array_values(array_unique(array_merge($allow_people,$allow_groups)));
 
 		// if you specifically deny somebody but haven't allowed anybody, we'll allow everybody in your
 		// address book minus the denied connections. The post is still private and can't be seen publicly
@@ -76,7 +76,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 		$deny_people  = expand_acl($item['deny_cid']);
 		$deny_groups  = Group::expand(expand_acl($item['deny_gid']));
 
-		$deny = array_unique(array_merge($deny_people,$deny_groups));
+		$deny = array_values(array_unique(array_merge($deny_people,$deny_groups)));
 
 		// Don't deny anybody if nobody was allowed (e.g. they were all filtered out)
 		// That would lead to array_diff doing the wrong thing.
@@ -573,12 +573,18 @@ function get_item_elements($x,$allow_code = false) {
 	$arr = array();
 
 	$arr['body'] = $x['body'];
+	$arr['summary'] = $x['summary'];
 
 	$maxlen = get_max_import_size();
 
 	if($maxlen && mb_strlen($arr['body']) > $maxlen) {
 		$arr['body'] = mb_substr($arr['body'],0,$maxlen,'UTF-8');
 		logger('get_item_elements: message length exceeds max_import_size: truncated');
+	}
+
+	if($maxlen && mb_strlen($arr['summary']) > $maxlen) {
+		$arr['summary'] = mb_substr($arr['summary'],0,$maxlen,'UTF-8');
+		logger('get_item_elements: message summary length exceeds max_import_size: truncated');
 	}
 
 	$arr['created']      = datetime_convert('UTC','UTC',$x['created']);
@@ -715,8 +721,10 @@ function get_item_elements($x,$allow_code = false) {
 	// Do this after signature checking as the original signature
 	// was generated on the escaped content.
 
-	if($arr['mimetype'] === 'text/markdown')
-		$arr['body'] = MarkdownSoap::unescape($arr['body']);
+	if($arr['mimetype'] === 'text/markdown') {
+		$arr['summary'] = MarkdownSoap::unescape($arr['summary']);
+		$arr['body']    = MarkdownSoap::unescape($arr['body']);
+	}
 
 	if(array_key_exists('revision',$x)) {
 
@@ -1035,6 +1043,7 @@ function encode_item($item,$mirror = false) {
 	$x['commented']       = $item['commented'];
 	$x['mimetype']        = $item['mimetype'];
 	$x['title']           = $item['title'];
+	$x['summary']         = $item['summary'];
 	$x['body']            = $item['body'];
 	$x['app']             = $item['app'];
 	$x['verb']            = $item['verb'];
@@ -1534,7 +1543,7 @@ function item_sign(&$item) {
  *   * \e boolean \b success
  *   * \e int \b item_id
  */
-function item_store($arr, $allow_exec = false, $deliver = true) {
+function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) {
 
 	$d = [
 			'item' => $arr,
@@ -1976,6 +1985,11 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 
 	$ret['success'] = true;
 	$ret['item_id'] = $current_post;
+
+	if($linkid) {
+		Libsync::build_link_packet($arr['uid'],[ 'item' = $ret['item'] ]);
+	}
+
 
 	return $ret;
 }
