@@ -2033,9 +2033,11 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	$ret['item_id'] = $current_post;
 
 	if($linkid) {
-		Libsync::build_link_packet($arr['uid'],[ 'item' => [ $ret['item'] ] ]);
+		$li = [ $ret['item'] ];
+		xchan_query($li);
+		$sync_item = fetch_post_tags($li);
+		Libsync::build_link_packet($arr['uid'],[ 'item' => [ encode_item($sync_item[0],true) ] ]);
 	}
-
 
 	return $ret;
 }
@@ -2049,7 +2051,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
  * @param boolean $deliver (optional) default true
  * @return array
  */
-function item_store_update($arr, $allow_exec = false, $deliver = true) {
+function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid = true) {
 
 	$d = [
 			'item' => $arr,
@@ -2351,6 +2353,13 @@ function item_store_update($arr, $allow_exec = false, $deliver = true) {
 
 	$ret['success'] = true;
 	$ret['item_id'] = $orig_post_id;
+
+	if($linkid) {
+		$li = [ $ret['item'] ];
+		xchan_query($li);
+		$sync_item = fetch_post_tags($li);
+		Libsync::build_link_packet($arr['uid'],[ 'item' => [ encode_item($sync_item[0],true) ] ]);
+	}
 
 	return $ret;
 }
