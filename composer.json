@@ -37,7 +37,8 @@
 		"pear/text_languagedetect": "^1.0",
 		"commerceguys/intl": "~0.7",
 		"lukasreschke/id3parser": "^0.0.1",
-		"smarty/smarty": "~3.1"
+		"smarty/smarty": "~3.1",
+		"ramsey/uuid": "^3.8"
 	},
 	"require-dev" : {
 		"phpunit/phpunit" : "@stable",
