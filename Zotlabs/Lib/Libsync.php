@@ -2,9 +2,10 @@
 
 namespace Zotlabs\Lib;
 
+use App;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Queue;
-
+use Zotlabs\Daemon\Master;
 
 class Libsync {
 
@@ -34,13 +35,9 @@ class Libsync {
 		if(! $uid)
 			return;
 
-		$r = q("select * from channel where channel_id = %d limit 1",
-			intval($uid)
-		);
-		if(! $r)
+		$channel = $channelx_by_n($uid);
+		if(! $channel)
 			return;
-
-		$channel = $r[0];
 
 		// don't provide these in the export 
 
@@ -62,7 +59,7 @@ class Libsync {
 		$synchubs = array();
 
 		foreach($h as $x) {
-			if($x['hubloc_host'] == \App::get_hostname())
+			if($x['hubloc_host'] == App::get_hostname())
 				continue;
 
 			$y = q("select site_dead from site where site_url = '%s' limit 1",
@@ -86,8 +83,8 @@ class Libsync {
 		$info['encoding'] = 'red'; // note: not zot, this packet is very platform specific
 		$info['relocate'] = ['channel_address' => $channel['channel_address'], 'url' => z_root() ];
 
-		if(array_key_exists($uid,\App::$config) && array_key_exists('transient',\App::$config[$uid])) {
-			$settings = \App::$config[$uid]['transient'];
+		if(array_key_exists($uid,App::$config) && array_key_exists('transient',App::$config[$uid])) {
+			$settings = App::$config[$uid]['transient'];
 			if($settings) {
 				$info['config'] = $settings;
 			}
@@ -163,13 +160,103 @@ class Libsync {
 			}
 
 
-			\Zotlabs\Daemon\Master::Summon(array('Deliver', $hash));
+			Master::Summon([ 'Deliver', $hash ]);
 			$total = $total - 1;
 
 			if($interval && $total)
 				@time_sleep_until(microtime(true) + (float) $interval);
 		}
 	}
+
+
+	static function build_link_packet($uid = 0, $packet = null) {
+
+		logger('build_link_packet');
+
+		if(! $uid)
+			$uid = local_channel();
+
+		if(! $uid)
+			return;
+
+		$channel = $channelx_by_n($uid);
+		if(! $channel)
+			return;
+
+		if(intval($channel['channel_removed']))
+			return;
+
+		$l = q("select link from linkid where ident = '%s' and sigtype = 2",
+			dbesc($channel['channel_hash'])
+		);
+
+		if(! $l)
+			return;
+
+		$hashes = ids_to_querystr($l,'link',true);
+		
+		$h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url where hubloc_hash in (" . protect_sprintf($hashes) . ") and hubloc_deleted = 0");
+
+		if(! $h)
+			return;
+
+		$interval = ((get_config('system','delivery_interval') !== false)
+			? intval(get_config('system','delivery_interval')) : 2 );
+
+
+		foreach($h as $x) {
+			if($x['hubloc_host'] == App::get_hostname()) {
+				continue;
+			}
+
+			$y = q("select site_dead from site where site_url = '%s' limit 1",
+				dbesc($x['hubloc_url'])
+			);
+
+			if(($y) && (intval($y[0]['site_dead']) == 1))
+				$continue;
+
+
+			$env_recips = [ $x['hubloc_hash'] ];
+
+			if($packet)
+				logger('packet: ' . print_r($packet, true),LOGGER_DATA, LOG_DEBUG);
+
+			$info = (($packet) ? $packet : []);
+			$info['type'] = 'sync';
+			$info['encoding'] = 'red'; // note: not zot, this packet is very platform specific
+
+			logger('Packet: ' . print_r($info,true), LOGGER_DATA, LOG_DEBUG);
+
+
+			$hash = random_string();
+			$n = Libzot::build_packet($channel,'sync',$env_recips,json_encode($info),'red',$x['hubloc_sitekey'],$x['site_crypto']);
+			Queue::insert([
+				'hash'       => $hash,
+				'account_id' => $channel['channel_account_id'],
+				'channel_id' => $channel['channel_id'],
+				'posturl'    => $x['hubloc_callback'],
+				'notify'     => $n,
+				'msg'        => EMPTY_STR
+			]);
+
+			$y = q("select count(outq_hash) as total from outq where outq_delivered = 0");
+			if(intval($y[0]['total']) > intval(get_config('system','force_queue_threshold',3000))) {
+				logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
+				Queue::update($hash);
+				continue;
+			}
+
+			Master::Summon([ 'Deliver', $hash ]);
+
+			if($interval && count($h) > 1)
+				@time_sleep_until(microtime(true) + (float) $interval);
+		}
+	}
+
+
+
+
 
 	/**
 	 * @brief
@@ -189,11 +276,25 @@ class Libsync {
 		$keychange = ((array_key_exists('keychange',$arr)) ? true : false);
 
 		foreach ($deliveries as $d) {
+			$linked_channel = false;
+
 			$r = q("select * from channel where channel_hash = '%s' limit 1",
 				dbesc($sender)
 			);
 
 			$DR = new \Zotlabs\Lib\DReport(z_root(),$sender,$d,'sync');
+
+			if(! $r) {
+				$l = q("select ident from linkid where link = '%s' and sigtype = 2 limit 1",
+					dbesc($sender)
+				);
+				if($l) {
+					$linked_channel = true;
+					$r = q("select * from channel where channel_hash = '%s' limit 1",
+						dbesc($l[0]['ident'])
+					);
+				}
+			} 
 
 			if (! $r) {
 				$DR->update('recipient not found');
@@ -208,7 +309,7 @@ class Libsync {
 			$max_friends = service_class_fetch($channel['channel_id'],'total_channels');
 			$max_feeds = account_service_class_fetch($channel['channel_account_id'],'total_feeds');
 
-			if($channel['channel_hash'] != $sender) {
+			if($channel['channel_hash'] != $sender && (! $linked_channel)) {
 				logger('Possible forgery. Sender ' . $sender . ' is not ' . $channel['channel_hash']);
 				$DR->update('channel mismatch');
 				$result[] = $DR->get();

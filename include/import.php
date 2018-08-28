@@ -617,11 +617,6 @@ function import_items($channel, $items, $sync = false, $relocate = null) {
 			if(! $item)
 				continue;
 
-			// deprecated
-
-			if(array_key_exists('diaspora_meta',$item))
-				unset($item['diaspora_meta']);
-
 			if($relocate && $item['mid'] === $item['parent_mid']) {
 				item_url_replace($channel,$item,$relocate['url'],z_root(),$relocate['channel_address']);
 			}
@@ -638,13 +633,13 @@ function import_items($channel, $items, $sync = false, $relocate = null) {
 				if($item['edited'] >= $r[0]['edited']) {
 					$item['id'] = $r[0]['id'];
 					$item['uid'] = $channel['channel_id'];
-					$item_result = item_store_update($item,$allow_code,$deliver);
+					$item_result = item_store_update($item,$allow_code,$deliver,false);
 				}
 			}
 			else {
 				$item['aid'] = $channel['channel_account_id'];
 				$item['uid'] = $channel['channel_id'];
-				$item_result = item_store($item,$allow_code,$deliver);
+				$item_result = item_store($item,$allow_code,$deliver,false);
 			}
 
 			// preserve conversations you've been involved in from being expired
