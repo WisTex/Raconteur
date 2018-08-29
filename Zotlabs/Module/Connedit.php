@@ -161,9 +161,9 @@ class Connedit extends \Zotlabs\Web\Controller {
 			// adjust permissions as desired.
 	
 			$p = \Zotlabs\Access\Permissions::connect_perms(local_channel());
-			$my_perms = $p['perms'];
+			$my_perms = \Zotlabs\Access\Permissions::serialise($p['perms']);
 			if($my_perms) {
-				set_abconfig($channel['channel_id'],$orig_record[0]['abook_xchan'],'system','my_perms',implode(',',$my_perms));
+				set_abconfig($channel['channel_id'],$orig_record[0]['abook_xchan'],'system','my_perms',$my_perms);
 			}
 		}
 
