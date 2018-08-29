@@ -64,6 +64,8 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 
 	call_hooks('follow_init', $arr);
 
+	$x = false;
+
 	if($arr['channel']['success']) 
 		$ret = $arr['channel'];
 	else {

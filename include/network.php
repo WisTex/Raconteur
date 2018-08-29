@@ -2,7 +2,8 @@
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Zotfinger;
-
+use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Activity;
 
 /**
  * @file include/network.php
@@ -1227,7 +1228,7 @@ function discover_by_webbie($webbie, $protocol = '') {
 						}
 					}
 				}
-				if($link['rel'] === 'self' && ($link['type'] === 'application/activity+json' || strpos($link['type'],'ld+json') !== false) && ((! protocol) || (strtolower($protocol) === 'activitypub'))) {
+				if($link['rel'] === 'self' && ($link['type'] === 'application/activity+json' || strpos($link['type'],'ld+json') !== false) && ((! $protocol) || (strtolower($protocol) === 'activitypub'))) {
                     $apurl = $link['href'];
 					if(($apurl) && strpos($apurl,'http') === 0) {
 						$person_obj = null;
@@ -1255,7 +1256,7 @@ function discover_by_webbie($webbie, $protocol = '') {
 	            					dbesc($url)
 								);
 							}
-							return true;
+							return $url;
 						}
 					}
 				}

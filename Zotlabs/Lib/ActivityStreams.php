@@ -240,6 +240,10 @@ class ActivityStreams {
 	 */
 
 	function fetch_property($url) {
+		return self::fetch($url);
+	}
+
+	static function fetch($url) {
 		$redirects = 0;
 		if(! check_siteallowed($url)) {
 			logger('blacklisted: ' . $url);
@@ -253,6 +257,7 @@ class ActivityStreams {
 
 		return null;
 	}
+
 
 	/**
 	 * @brief
