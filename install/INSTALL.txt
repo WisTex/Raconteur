@@ -230,7 +230,7 @@ Change "/base/directory", and "/path/to/php" as appropriate for your situation.
 If you are using a Linux server, run "crontab -e" and add a line like the 
 one shown, substituting for your unique paths and settings:
 
-*/10 * * * *	cd /home/myname/mywebsite; /usr/bin/php Zotlabs/Daemon/Master.php Cron
+*/10 * * * *	cd /home/myname/mywebsite; /usr/bin/php Zotlabs/Daemon/Master.php Cron > /dev/null 2>&1
 
 You can generally find the location of PHP by executing "which php". If you 
 have troubles with this section please contact your hosting provider for 

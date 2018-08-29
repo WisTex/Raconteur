@@ -559,6 +559,8 @@ class Notifier {
 
 		foreach($dhubs as $hub) {
 
+			logger('notifier_hub: ' . $hub['hubloc_url'],LOGGER_DEBUG);
+
 			if($hub['hubloc_network'] !== 'zot') {
 				$narr = [
 					'channel'        => $channel,
