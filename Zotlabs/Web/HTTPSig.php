@@ -179,7 +179,9 @@ class HTTPSig {
 			return [ 'public_key' => $key ];
 		}
 
-		$key = self::get_webfinger_key($id);
+		if(strpos($id,'#') === false) {
+			$key = self::get_webfinger_key($id);
+		}
 
 		if(! $key) {
 			$key = self::get_activitystreams_key($id);
@@ -224,7 +226,7 @@ class HTTPSig {
 			return [ 'portable_id' => $x[0]['xchan_hash'], 'public_key' => $x[0]['xchan_pubkey'] , 'hubloc' => $x[0] ];
 		}
 
-		$r = ActivityStreams::fetch_property($id);
+		$r = ActivityStreams::fetch($id);
 
 		if($r) {
 			if(array_key_exists('publicKey',$j) && array_key_exists('publicKeyPem',$j['publicKey']) && array_key_exists('id',$j['publicKey'])) {

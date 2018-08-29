@@ -251,7 +251,7 @@ class ActivityStreams {
 		}
 
 		$x = z_fetch_url($url, true, $redirects,
-			['headers' => [ 'Accept: application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ]]);
+			[ 'headers' => [ 'Accept: application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ]]);
 		if($x['success'])
 			return json_decode($x['body'], true);
 

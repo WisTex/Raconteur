@@ -275,6 +275,7 @@ class Queue {
 					}
 				}
 			}
+			return;
 		}
 
 		// normal zot delivery
