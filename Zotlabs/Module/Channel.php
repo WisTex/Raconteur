@@ -103,7 +103,7 @@ class Channel extends Controller {
 			$x = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1'
-			]], Activity::encode_person($channel));
+			]], Activity::encode_person($channel,true));
 
 			json_return_and_die($x,'application/activity+json');
 

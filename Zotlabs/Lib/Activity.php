@@ -628,7 +628,10 @@ class Activity {
 			]
 		];
 
+
+
 		if($activitypub) {	
+
 			$c = channelx_by_hash($p['xchan_hash']);
 
 			if($c) {
@@ -654,6 +657,17 @@ class Activity {
 					$ret['outbox'] = null;
 				}
     		}
+		}
+		else {
+
+			$ret['inbox']       = z_root() . '/nullbox';
+			$ret['outbox']      = z_root() . '/nullbox';
+			$ret['publicKey'] = [
+				'id'           => $p['xchan_url'] . '/public_key_pem',
+				'owner'        => $p['xchan_url'],
+				'publicKeyPem' => $p['xchan_pubkey']
+			];
+
 		}
 
 		$arr = [ 'xchan' => $p, 'encoded' => $ret, 'activitypub' => $activitypub ];
