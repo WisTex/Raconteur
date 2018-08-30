@@ -1131,7 +1131,7 @@ class Activity {
 
 	static function like_action($channel,$observer_hash,$act) {
 
-		if(in_array($act->obj['type'], [ 'Note', 'Article', 'Video', 'Photo; ])) {
+		if(in_array($act->obj['type'], [ 'Note', 'Article', 'Video', 'Photo' ])) {
 			self::like_note($channel,$observer_hash,$act);
 		}
 
@@ -1376,10 +1376,10 @@ class Activity {
 
 			// This needs better formatting with proper names
 			if($act->type === 'Like') {
-				$content['body'] = sprintf('%1$s Likes %2$s\'s %3$s',$act->actor[id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['body'];
+				$content['body'] = sprintf('%1$s Likes %2$s\'s %3$s',$act->actor['id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['body'];
 			}
 			if($act->type === 'Dislike') {
-				$content['body'] = sprintf('%1$s Doesn\'t like %2$s\'s %3$s',$act->actor[id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['body'];
+				$content['body'] = sprintf('%1$s Doesn\'t like %2$s\'s %3$s',$act->actor['id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['body'];
 			}
 		}
 
