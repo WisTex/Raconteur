@@ -146,7 +146,7 @@ class Channel {
 		$cntunkmail       = ((x($_POST,'cntunkmail')) ? intval($_POST['cntunkmail']) : 0);
 		$suggestme        = ((x($_POST,'suggestme')) ? intval($_POST['suggestme'])  : 0);  
 		$autoperms        = ((x($_POST,'autoperms')) ? intval($_POST['autoperms'])  : 0);  
-	
+		$public_uploads   = ((isset($_POST['public_uploads'])) ? intval($_POST['public_uploads']) : 0);	
 		$post_newfriend   = (($_POST['post_newfriend'] == 1) ? 1: 0);
 		$post_joingroup   = (($_POST['post_joingroup'] == 1) ? 1: 0);
 		$post_profilechange   = (($_POST['post_profilechange'] == 1) ? 1: 0);
@@ -255,6 +255,7 @@ class Channel {
 		set_pconfig(local_channel(),'system','email_notify_host',$mailhost);
 		set_pconfig(local_channel(),'system','profile_assign',$profile_assign);
 		set_pconfig(local_channel(),'system','autoperms',$autoperms);
+		set_pconfig(local_channel(),'system','force_public_uploads',$public_uploads);
 	
 		$r = q("update channel set channel_name = '%s', channel_pageflags = %d, channel_timezone = '%s', channel_location = '%s', channel_notifyflags = %d, channel_max_anon_mail = %d, channel_max_friend_req = %d, channel_expire_days = %d $set_perms where channel_id = %d",
 			dbesc($username),
@@ -383,6 +384,8 @@ class Channel {
 	
 		$expire_starred = get_pconfig(local_channel(), 'expire','starred');
 		$expire_starred = (($expire_starred===false)? '1' : $expire_starred); // default if not set: 1
+
+		$public_uploads = get_pconfig(local_channel(), 'expire','force_public_uploads',1);
 		
 		$expire_photos = get_pconfig(local_channel(), 'expire','photos');
 		$expire_photos = (($expire_photos===false)? '0' : $expire_photos); // default if not set: 0
@@ -541,6 +544,7 @@ class Channel {
 	
 			'$expire' => array('expire',t('Expire other channel content after this many days'),$expire, t('0 or blank to use the website limit.') . ' ' . ((intval($sys_expire)) ? sprintf( t('This website expires after %d days.'),intval($sys_expire)) : t('This website does not expire imported content.')) . ' ' . t('The website limit takes precedence if lower than your limit.')),
 			'$maxreq' 	=> array('maxreq', t('Maximum Friend Requests/Day:'), intval($channel['channel_max_friend_req']) , t('May reduce spam activity')),
+			'$public_uploads' => [ 'public_uploads', t('Disable access checking on post attachments'), $public_uploads, t('Private media access is only implemented in a very small number of federated networks.'), $yes_no ],  
 			'$permissions' => t('Default Privacy Group'),
 			'$permdesc' => t("\x28click to open/close\x29"),
 			'$aclselect' => populate_acl($perm_defaults, false, \Zotlabs\Lib\PermissionDescription::fromDescription(t('Use my default audience setting for the type of object published'))),

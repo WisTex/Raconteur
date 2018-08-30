@@ -1113,7 +1113,7 @@ class Activity {
 
 	static function create_action($channel,$observer_hash,$act) {
 
-		if(in_array($act->obj['type'], [ 'Note', 'Article', 'Video' ])) {
+		if(in_array($act->obj['type'], [ 'Note', 'Article', 'Video', 'Photo' ])) {
 			self::create_note($channel,$observer_hash,$act);
 		}
 
@@ -1131,7 +1131,7 @@ class Activity {
 
 	static function like_action($channel,$observer_hash,$act) {
 
-		if(in_array($act->obj['type'], [ 'Note', 'Article', 'Video' ])) {
+		if(in_array($act->obj['type'], [ 'Note', 'Article', 'Video', 'Photo; ])) {
 			self::like_note($channel,$observer_hash,$act);
 		}
 
@@ -1371,6 +1371,17 @@ class Activity {
 		$s['mid']        = $act->id;
 		$s['parent_mid'] = $act->parent_id;
 
+		if(in_array($act->type, [ 'Like','Dislike','Announce' ]) && (! $s['parent_mid'])) {
+			$s['parent_mid'] = $act->obj['id'];
+
+			// This needs better formatting with proper names
+			if($act->type === 'Like') {
+				$content['body'] = sprintf('%1$s Likes %2$s\'s %3$s',$act->actor[id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['body'];
+			}
+			if($act->type === 'Dislike') {
+				$content['body'] = sprintf('%1$s Doesn\'t like %2$s\'s %3$s',$act->actor[id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['body'];
+			}
+		}
 
 		if($act->data['published']) {
 			$s['created'] = datetime_convert('UTC','UTC',$act->data['published']);

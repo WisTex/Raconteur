@@ -79,6 +79,7 @@
 						<div class="settings-common-perms">
 							{{$suggestme}}
 							{{*include file="field_checkbox.tpl" field=$blocktags*}}
+							{{include file="field_checkbox.tpl" field=$public_uploads}}
 							{{include file="field_input.tpl" field=$expire}}
 						</div>
 						{{if $permcat_enable}}
