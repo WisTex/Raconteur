@@ -221,6 +221,13 @@ class Activity {
 
 		if($i['id'] != $i['parent']) {
 			$ret['inReplyTo'] = ((strpos($i['parent_mid'],'http') === 0) ? $i['parent_mid'] : z_root() . '/item/' . urlencode($i['parent_mid']));
+			$cnv = get_iconfig($i['parent'],'ostatus','conversation');
+		}
+		if(! $cnv) {
+			$cnv = get_iconfig($i,'ostatus','conversation');
+		}
+		if($cnv) {
+			$ret['conversation'] = $cnv;
 		}
 
 		if($i['mimetype'] === 'text/bbcode') {

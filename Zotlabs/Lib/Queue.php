@@ -236,6 +236,7 @@ class Queue {
 			$headers = [];
 			$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
 			$ret = $outq['outq_msg'];
+			logger('ActivityPub send: ' . $ret, LOGGER_DATA);
 			$headers['Digest'] = HTTPSig::generate_digest_header($ret);
 			$xhead = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
 			$result = z_post_url($outq['outq_posturl'],$outq['outq_msg'],$retries,[ 'headers' => $xhead ]);
