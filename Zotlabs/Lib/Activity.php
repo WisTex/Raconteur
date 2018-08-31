@@ -1366,6 +1366,27 @@ class Activity {
 	}
 
 
+	static function share_bb($obj) {
+		// @fixme - error check and set defaults
+
+		$name = urlencode($obj['actor']['name']);
+		$profile = $obj['actor']['id'];
+		$photo = $obj['icon']['url'];
+
+		$s = "\r\n[share author='" . $name .
+			"' profile='" . $profile .
+			"' avatar='" . $photo . 
+			"' link='" . $act->obj['id'] .
+			"' auth='" . ((is_matrix_url($act->obj['id'])) ? 'true' : 'false' ) . 
+			"' posted='" . $act->obj['published'] . 
+			"' message_id='" . $act->obj['id'] . 
+		"']";
+
+		return $s;
+	}
+
+
+
 	static function decode_note($act) {
 
 		$s = [];
@@ -1378,7 +1399,7 @@ class Activity {
 		$s['mid']        = $act->id;
 		$s['parent_mid'] = $act->parent_id;
 
-		if(in_array($act->type, [ 'Like','Dislike','Announce' ]) && (! $s['parent_mid'])) {
+		if(in_array($act->type, [ 'Like','Dislike','Announce' ]) && $s['parent_mid'] === $s['mid']) {
 			$s['parent_mid'] = $act->obj['id'];
 
 			// This needs better formatting with proper names
@@ -1580,6 +1601,11 @@ class Activity {
 				$item = $a['item'];
 				// if no parent was fetched, turn into a top-level post
 				if(! $a['handled']) {
+					// @TODO we maybe could accept these is we formatted the body correctly with share_bb()
+					// or at least provided a link to the object
+					if(in_array($act->type,[ 'Like','Dislike' ])) {
+						return;
+					}
 					// turn into a top level post
 					$item['parent_mid'] = $item['mid'];
 					$item['thr_parent'] = $item['mid'];
