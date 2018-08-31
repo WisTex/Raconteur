@@ -4526,6 +4526,7 @@ function send_profile_photo_activity($channel,$photo,$profile) {
 	$arr['item_wall'] = 1;
 	$arr['obj_type'] = ACTIVITY_OBJ_PHOTO;
 	$arr['verb'] = ACTIVITY_UPDATE;
+	$arr['mid'] = item_message_id();
 
 	if(stripos($profile['gender'],t('female')) !== false)
 		$t = t('%1$s updated her %2$s');
@@ -4545,7 +4546,7 @@ function send_profile_photo_activity($channel,$photo,$profile) {
 		'type'      => ACTIVITY_OBJ_PHOTO,
 		'published' => datetime_convert('UTC','UTC',$photo['created'],ATOM_TIME),
 		'updated'   => datetime_convert('UTC','UTC',$photo['edited'],ATOM_TIME),
-		'id'        => z_root() . '/photo/profile/l/' . $channel['channel_id'],
+		'id'        => $arr['mid'],
 		'url'       => [ 'type' => 'Link', 'mediaType' => $photo['mimetype'], 'href' => z_root() . '/photo/profile/l/' . $channel['channel_id'] ],
 		'source'    => [ 'content' => $arr['body'], 'mediaType' => 'text/bbcode' ],
 		'content'   => bbcode($arr['body']),

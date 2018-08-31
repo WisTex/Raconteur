@@ -257,6 +257,7 @@ logger('gis: ' . print_r($gis,true));
 		$arr['item_thread_top'] = 1;
 		$arr['item_origin'] = 1;
 		$arr['item_wall'] = 1;
+		$arr['mid'] = item_message_id();
 		$arr['obj_type'] = ACTIVITY_OBJ_PHOTO;
 		$arr['verb'] = ACTIVITY_UPDATE;
 	
@@ -277,7 +278,7 @@ logger('gis: ' . print_r($gis,true));
 			'type'      => ACTIVITY_OBJ_PHOTO,
 			'published' => datetime_convert('UTC','UTC',$photo['created'],ATOM_TIME),
 			'updated'   => datetime_convert('UTC','UTC',$photo['edited'],ATOM_TIME),
-			'id'        => z_root() . '/photo/' . $photo['resource_id'] . '-7',
+			'id'        => $arr['mid'],
 			'url'       => [ 'type' => 'Link', 'mediaType' => $photo['mimetype'], 'href' => z_root() . '/photo/' . $photo['resource_id'] . '-7' ],
 			'source'    => [ 'content' => $arr['body'], 'mediaType' => 'text/bbcode' ],
 			'content'   => bbcode($arr['body']),

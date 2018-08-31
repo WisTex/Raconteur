@@ -1,24 +1,34 @@
 
-S'ha rebut una nova petició de registre en {{$sitename}} la qual cosa requereix 
-la seva aprovació. 
-
+Gràcies per registrar-te a {{$sitename}}.
 
 Les dades d'identificació son les següents:
 
 Localització del Lloc Web:	{{$siteurl}}
 Nom Identificatiu:⇥{{$email}}
-Adreça IP: {{$details}}
 
-Per tal d'aprovar aquesta petició, si us plau, visita el següent enllaç:
+identifica't amb la contrasenya que vas triar durant el registre.
+
+Necessitem verificar la teva adreça de correu per tal de concedir accès total.
+
+El codi de validació és
+
+{{$hash}}
 
 
-{{$siteurl}}/regmod/allow/{{$hash}} 
+Si has registrat tu aquest compte, introdueix el codi de validació quan te'l demanem o visita aquest enllaç:
+
+{{$siteurl}}/regver/allow/{{$hash}} 
 
 
-Per rebutjar la petició i esborrar el compte, si us plau visita:
+Per rebutjar i esborrar el compte, si us plau visita:
 
 
-{{$siteurl}}/regmod/deny/{{$hash}}
+{{$siteurl}}/regver/deny/{{$hash}}
 
 
 Gràcies.
+
+
+--
+Condicions del servei:
+{{$siteurl}}/help/TermsOfService

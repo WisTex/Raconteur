@@ -38,7 +38,7 @@ define ( 'PLATFORM_ARCHITECTURE',   'osada' );
 define ( 'STD_VERSION',             '0.0.1' );
 define ( 'ZOT_REVISION',            '6.0' );
 
-define ( 'DB_UPDATE_VERSION',       1218 );
+define ( 'DB_UPDATE_VERSION',       1219 );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 
