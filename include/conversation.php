@@ -1002,7 +1002,7 @@ function thread_author_menu($item, $mode = '') {
 	if($profile_link) {
 		$menu[] = [ 
 			'menu' => 'view_profile',
-			'title' => t('View Profile'),
+			'title' => t('Visit'),
 			'icon' => 'fw',
 			'action' => '',
 			'href' => $profile_link

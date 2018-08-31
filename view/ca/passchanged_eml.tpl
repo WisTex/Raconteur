@@ -18,3 +18,7 @@ Atentament,
 	{{$sitename}} Administrador
 
  
+
+--
+Condicions del servei:
+{{$siteurl}}/help/TermsOfService

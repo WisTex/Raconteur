@@ -982,6 +982,7 @@ class Libzot {
 
 		if(array_key_exists('delivery_report',$x) && is_array($x['delivery_report'])) { 
 			foreach($x['delivery_report'] as $xx) {
+				call_hooks('dreport_process',$xx);
 				if(is_array($xx) && array_key_exists('message_id',$xx) && DReport::is_storable($xx)) {
 					q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan ) values ( '%s', '%s', '%s','%s','%s','%s','%s' ) ",
 						dbesc($xx['message_id']),

@@ -255,6 +255,9 @@ function bb_to_markdown($Text, $options = []) {
 
 	$Text = html2markdown($Text);
 
+	//html2markdown adds backslashes infront of hashes after a new line. remove them
+	$Text = str_replace("\n\#", "\n#", $Text);
+
 	// It also adds backslashes to our attempt at getting around the html entity preservation for some weird reason.
 
 	//$Text = str_replace(array('&\\_lt\\_;','&\\_gt\\_;','&\\_amp\\_;'),array('&lt;','&gt;','&amp;'),$Text);

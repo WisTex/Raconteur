@@ -432,7 +432,7 @@ function insert_hook($hook, $fn, $version = 0, $priority = 0) {
 function call_hooks($name, &$data = null) {
 	$a = 0;
 
-	if((is_array(App::$hooks)) && (array_key_exists($name, App::$hooks))) {
+	if (isset(App::$hooks[$name])) { 
 		foreach(App::$hooks[$name] as $hook) {
 			$origfn = $hook[1];
 			if($hook[0])
