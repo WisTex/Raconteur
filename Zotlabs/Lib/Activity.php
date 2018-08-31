@@ -1561,11 +1561,38 @@ class Activity {
 			}
 		}
 
+
 		if($act->obj['conversation']) {
 			set_iconfig($item,'ostatus','conversation',$act->obj['conversation'],1);
 		}
 
 		set_iconfig($item,'activitypub','recips',$act->raw_recips);
+
+		if($item['parent_mid'] && $item['parent_mid'] !== $item['mid']) {
+			$p = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
+				dbesc($item['parent_mid']),
+				intval($item['uid'])
+			);
+			if(! $p) {
+				// this allows an addon to perform fetching of remote conversation elements
+				$a = [ 'activity' => $act, 'item' => $item, 'handled' => false ];
+				call_hooks('activity_parent',$a);
+				$item = $a['item'];
+				// if no parent was fetched, turn into a top-level post
+				if(! $a['handled']) {
+					// turn into a top level post
+					$item['parent_mid'] = $item['mid'];
+					$item['thr_parent'] = $item['mid'];
+				}
+			}
+			if($p[0]['parent_mid'] !== $item['parent_mid']) {
+				$item['thr_parent'] = $item['parent_mid'];
+			}
+			else {
+				$item['thr_parent'] = $p[0]['parent_mid'];
+			}
+			$item['parent_mid'] = $p[0]['parent_mid'];
+		}
 
 		$r = q("select created, edited from item where mid = '%s' and uid = %d limit 1",
 			dbesc($item['mid']),
