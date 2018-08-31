@@ -121,7 +121,6 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 		$xchan_hash = '';
 		$sql_options = (($protocol) ? " and xchan_network = '" . dbesc($protocol) . "' " : '');
 		
-
 		$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' $sql_options limit 1",
 			dbesc($url),
 			dbesc($url),
@@ -150,8 +149,9 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 			}
 
 			if($wf || $d) {
-				$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' limit 1",
+				$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' limit 1",
 					dbesc(($wf) ? $wf : $url),
+					dbesc($url),
 					dbesc($url)
 				);
 			}
