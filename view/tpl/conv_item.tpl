@@ -175,6 +175,10 @@
 									{{if $item.drop.dropping}}
 									<a class="dropdown-item" href="#" onclick="dropItem('item/drop/{{$item.id}}', '#thread-wrapper-{{$item.id}}'); return false;" title="{{$item.drop.delete}}" ><i class="generic-icons-nav fa fa-fw fa-trash-o"></i>{{$item.drop.delete}}</a>
 									{{/if}}
+									{{if $item.dropdown_extras}}
+									<div class="dropdown-divider"></div>
+                                                                        {{$item.dropdown_extras}}
+									{{/if}}
 									{{if $item.edpost && $item.dreport}}
 									<div class="dropdown-divider"></div>
 									<a class="dropdown-item" href="dreport/{{$item.dreport_link}}">{{$item.dreport}}</a>
