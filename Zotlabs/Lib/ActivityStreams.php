@@ -92,7 +92,7 @@ class ActivityStreams {
 				$this->tgt['actor'] = $this->get_actor('actor',$this->tgt);
 
 
-			if(($this->type === 'Note') && (! $this->obj)) {
+			if(! $this->obj) {
 				$this->obj = $this->data;
 				$this->type = 'Create';
 			}
