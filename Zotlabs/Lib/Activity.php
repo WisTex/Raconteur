@@ -1508,6 +1508,11 @@ class Activity {
 			$s['attach'] = $a;
 		}
 
+		if($act->obj['type'] === 'Note' && $s['attach']) {
+			$body .= self::bb_attach($s['attach']);
+		}
+
+
 		// we will need a hook here to extract magnet links e.g. peertube
 		// right now just link to the largest mp4 we find that will fit in our
 		// standard content region

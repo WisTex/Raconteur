@@ -896,9 +896,7 @@ function import_author_activitypub($x) {
     }
 
     return false;
-
 }
-
 
 
 /**
