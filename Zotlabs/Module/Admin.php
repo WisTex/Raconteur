@@ -109,7 +109,7 @@ class Admin extends \Zotlabs\Web\Controller {
 
 		// available channels, primary and clones
 		$channels = array();
-		$r = q("SELECT COUNT(*) AS total, COUNT(CASE WHEN channel_primary = 1 THEN 1 ELSE NULL END) AS main, COUNT(CASE WHEN channel_primary = 0 THEN 1 ELSE NULL END) AS clones FROM channel WHERE channel_removed = 0");
+		$r = q("SELECT COUNT(*) AS total, COUNT(CASE WHEN channel_primary = 1 THEN 1 ELSE NULL END) AS main, COUNT(CASE WHEN channel_primary = 0 THEN 1 ELSE NULL END) AS clones FROM channel WHERE channel_removed = 0 and channel_system = 0");
 		if ($r) {
 			$channels['total']  = array('label' => t('Channels'), 'val' => $r[0]['total']);
 			$channels['main']   = array('label' => t('Primary'), 'val' => $r[0]['main']);
