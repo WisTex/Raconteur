@@ -1216,7 +1216,9 @@ class Activity {
 			intval($channel['channel_id'])
 		);
 	
-		$content = self::get_content($act->obj);
+		if(is_array($act->obj)) {
+			$content = self::get_content($act->obj);
+		}
 
 		if(! $content) {
 			logger('no content');
@@ -1405,7 +1407,9 @@ class Activity {
 
 		$s = [];
 
-		$content = self::get_content($act->obj);
+		if(is_array($act->obj)) {
+			$content = self::get_content($act->obj);
+		}
 
 		$s['owner_xchan']  = $act->actor['id'];
 		$s['author_xchan'] = $act->actor['id'];
@@ -1445,7 +1449,8 @@ class Activity {
 			$s['edited'] = $s['created'];
 
 		if(in_array($act->type,['Announce'])) {
-			$root_content = self::get_content($act->raw);
+
+			$root_content = self::get_content($act->data);
 
 			$s['title']    = self::bb_content($root_content,'name');
 			$s['summary']  = self::bb_content($root_content,'summary');
@@ -1551,7 +1556,7 @@ class Activity {
 	}
 
 
-	static function store($channel,$observer_hash,$act,$item) {
+	static function store($channel,$observer_hash,$act,$item,$fetch_parents = true) {
 
 
 		$is_sys_channel = is_sys_channel($channel['channel_id']);
@@ -1567,8 +1572,9 @@ class Activity {
 			return;
 		}
 
-		$content = self::get_content($act->obj);
-
+		if(is_array($act->obj)) {
+			$content = self::get_content($act->obj);
+		}
 		if(! $content) {
 			logger('no content');
 			return;
@@ -1609,12 +1615,9 @@ class Activity {
 				intval($item['uid'])
 			);
 			if(! $p) {
-				// this allows an addon to perform fetching of remote conversation elements
-				$a = [ 'activity' => $act, 'item' => $item, 'handled' => false ];
-				call_hooks('activity_parent',$a);
-				$item = $a['item'];
+				$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
 				// if no parent was fetched, turn into a top-level post
-				if(! $a['handled']) {
+				if(! $a) {
 					// @TODO we maybe could accept these is we formatted the body correctly with share_bb()
 					// or at least provided a link to the object
 					if(in_array($act->type,[ 'Like','Dislike' ])) {
@@ -1670,7 +1673,63 @@ class Activity {
 	}
 
 
+	static public function fetch_and_store_parents($channel,$observer_hash,$act,$item) {
 
+		$p = [];
+
+		$current_act = $act;
+		$current_item = $item;
+
+		while($current_item['parent_mid'] !== $current_item['mid']) {
+			$n = ActivityStreams::fetch($current_item['parent_mid']);
+			if(! $n) { 
+				break;
+			}
+			$a = new ActivityStreams($n);
+			if(! $a->is_valid()) {
+				break;
+			}
+			if(is_array($a->actor) && array_key_exists('id',$a->actor)) {
+				Activity::actor_store($a->actor['id'],$a->actor);
+			}
+
+			$item = null;
+
+			switch($a->type) {
+				case 'Create':
+				case 'Update':
+				case 'Like':
+				case 'Dislike':
+				case 'Announce':
+					$item = Activity::decode_note($a);
+					break;
+				default:
+					break;
+
+			}
+			if(! $item) {
+				break;
+			}
+
+			$p = array_unshift($p,[ $a, $item ]);
+			
+			if($item['parent_mid'] === $item['mid'] || count($p) > 20) {
+				break;
+			}
+
+			$current_act = $a;
+			$current_item = $item;
+		}
+
+		if($p) {
+			foreach($p as $pv) {
+				Activity::store($channel,$observer_hash,$pv[0],$pv[1],false);
+			}
+			return true;
+		}
+
+		return false;
+	}
 
 
 
@@ -1692,8 +1751,9 @@ class Activity {
 			return;
 		}
 
-		$content = self::get_content($act->obj);
-
+		if(is_array($act->obj)) {
+			$content = self::get_content($act->obj);
+		}
 		if(! $content) {
 			logger('no content');
 			return;
@@ -1998,7 +2058,7 @@ class Activity {
 		$content = [];
 		$event = null;
 
-		if (! $act) {
+		if ((! $act) || (! is_array($act))) {
 			return $content;
 		}
 

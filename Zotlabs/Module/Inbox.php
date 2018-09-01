@@ -42,29 +42,16 @@ class Inbox extends Controller {
 		if(! $observer_hash)
 			return;
 
-		if(is_array($AS->actor) && array_key_exists('id',$AS->actor))
+		if(is_array($AS->actor) && array_key_exists('id',$AS->actor)) {
 			Activity::actor_store($AS->actor['id'],$AS->actor);
+		}
 
-		if($AS->type == 'Announce' && is_array($AS->obj) && array_key_exists('attributedTo',$AS->obj)) {
+		if(is_array($AS->obj) && in_array($AS->obj['type'],[ 'Application','Group','Service','Person','Service' ])) {
+			Activity::actor_store($AS->obj['id'],$AS->obj);
+		}
 
-			$arr['author']['url'] = $AS->obj['attributedTo'];
-
-			activitypub_import_author($arr);
-
-			if($arr['result']) {
-				$x['hash'] = $arr['result'];
-			}
-			else {
-				$x['address'] = $AS->obj['attributedTo'];
-			}
-
-			$AS->sharee = xchan_fetch($x);
-			if(! $AS->sharee) {
-				//TODO: what do we do with sharees from other networks (for now mainly gnusocial)?
-				logger('got announce activity but could not import share author');
-				return;
-			}
-
+		if(is_array($AS->obj['actor']) && array_key_exists('id',$AS->obj['actor']) && $AS->obj['actor']['id'] !== $AS->actor['id']) {
+			Activity::actor_store($AS->obj['actor']['id'],$AS->obj['actor']);
 		}
 
 		if($is_public) {
