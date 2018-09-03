@@ -435,7 +435,6 @@ class Like extends \Zotlabs\Web\Controller {
 		$arr['item_private']  = $private;
 	
 		call_hooks('post_local',$arr);
-
 	
 		$post = item_store($arr);	
 		$post_id = $post['item_id'];
@@ -449,7 +448,15 @@ class Like extends \Zotlabs\Web\Controller {
 	
 		call_hooks('post_local_end', $arr);
 	
-	
+		$r = q("select * from item where id = %d",
+			intval($post_id)
+		);
+		if($r) {
+			xchan_query($r);
+			$sync_item = fetch_post_tags($r);
+			Libsync::build_sync_packet($ch[0]['channel_id'], [ 'item' => [ encode_item($sync_item[0],true) ] ]);
+		}
+
 		if($extended_like) {
 			$r = q("insert into likes (channel_id,liker,likee,iid,i_mid,verb,target_type,target_id,target) values (%d,'%s','%s',%d,'%s','%s','%s','%s','%s')",
 				intval($ch[0]['channel_id']),

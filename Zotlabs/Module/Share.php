@@ -1,6 +1,10 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Daemon\Master;
+use Zotlabs\Lib\Libsync;
+
 require_once('include/security.php');
 require_once('include/bbcode.php');
 
@@ -18,9 +22,9 @@ class Share extends \Zotlabs\Web\Controller {
 			killme();
 		}
 
-		$observer = \App::get_observer();	
+		$observer = App::get_observer();	
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
 
 		$r = q("SELECT * from item left join xchan on author_xchan = xchan_hash WHERE id = %d  LIMIT 1",
@@ -110,11 +114,18 @@ class Share extends \Zotlabs\Web\Controller {
 	
 		call_hooks('post_local_end', $arr);
 
-		info(t('Repeated and shared') . EOL);
+		info( t('Post repeated') . EOL);
 
-		// fixme: sync to clones
+		$r = q("select * from item where id = %d",
+			intval($post_id)
+		);
+		if($r) {
+			xchan_query($r);
+			$sync_item = fetch_post_tags($r);
+			Libsync::build_sync_packet($channel['channel_id'], [ 'item' => [ encode_item($sync_item[0],true) ] ]);
+		}
 
-		\Zotlabs\Daemon\Master::Summon(array('Notifier','like',$post_id));
+		Master::Summon([ 'Notifier','like',$post_id ]);
 	
 		killme();
 	
