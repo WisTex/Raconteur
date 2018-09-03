@@ -395,7 +395,7 @@ class Activity {
 		}
 
 		if($ret['type'] === 'Announce') {
-			$tmp = preg_replace('/\[share(.*?)\[\/share\]/ism',EMPTY_STR, $i['body']);
+			$tmp = $i['body'];
 			$ret['content'] = bbcode($tmp);
 			$ret['source'] = [
 				'content' => $i['body'],
@@ -1379,7 +1379,7 @@ class Activity {
 		$s['owner_xchan']  = $act->actor['id'];
 		$s['author_xchan'] = $act->actor['id'];
 
-		$s['mid']        = $act->id;
+		$s['mid']        = $act->obj['id'];
 		$s['parent_mid'] = $act->parent_id;
 
 
@@ -1403,35 +1403,18 @@ class Activity {
 			$s['edited'] = $s['created'];
 
 		if(in_array($act->type,['Announce'])) {
-			$root_content = self::get_content($act->raw);
-
-			$s['title']    = self::bb_content($root_content,'name');
-			$s['summary']  = self::bb_content($root_content,'summary');
-			$s['body']     = (self::bb_content($root_content,'bbcode') ? : self::bb_content($root_content,'content'));
-
-			if(strpos($s['body'],'[share') === false) {
-
-				// @fixme - error check and set defaults
-
-				$name = urlencode($act->obj['actor']['name']);
-				$profile = $act->obj['actor']['id'];
-				$photo = $act->obj['icon']['url'];
-
-				$s['body'] .= "\r\n[share author='" . $name .
-					"' profile='" . $profile .
-					"' avatar='" . $photo . 
-					"' link='" . $act->obj['id'] .
-					"' auth='" . ((is_matrix_url($act->obj['id'])) ? 'true' : 'false' ) . 
-					"' posted='" . $act->obj['published'] . 
-					"' message_id='" . $act->obj['id'] . 
-				"']";
+			$announced_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : ActivityStreams::get_actor('attributedTo', $act['obj']));
+			if(! $announced_actor) {
+				return [];
 			}
+			self::actor_store($announced_actor['id'],$announced_actor);
+			$s['author_xchan'] = $announced_actor['id'];
+
 		}
-		else {
-			$s['title']    = self::bb_content($content,'name');
-			$s['summary']  = self::bb_content($content,'summary');
-			$s['body']     = (self::bb_content($content,'bbcode') ? : self::bb_content($content,'content'));
-		}
+
+		$s['title']    = self::bb_content($content,'name');
+		$s['summary']  = self::bb_content($content,'summary');
+		$s['body']     = (self::bb_content($content,'bbcode') ? : self::bb_content($content,'content'));
 
 		$s['verb']     = self::activity_mapper($act->type);
 

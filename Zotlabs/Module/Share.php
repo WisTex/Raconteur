@@ -14,23 +14,21 @@ class Share extends \Zotlabs\Web\Controller {
 		if(! $post_id)
 			killme();
 	
-		echo '[share=' . $post_id . '][/share]';
-		killme();
-
-
-	/**
-	 * The remaining code is deprecated and handled in Zotlabs/Lib/Share.php at post 
-	 * submission time.
- 	 */
-
-		if(! (local_channel() || remote_channel()))
+		if(! local_channel()) {
 			killme();
-	
+		}
+
+		$observer = \App::get_observer();	
+
+		$channel = \App::get_channel();
+
+
 		$r = q("SELECT * from item left join xchan on author_xchan = xchan_hash WHERE id = %d  LIMIT 1",
 			intval($post_id)
 		);
 		if(! $r)
 			killme();
+
 		if(($r[0]['item_private']) && ($r[0]['xchan_network'] !== 'rss'))
 			killme();
 	
@@ -47,58 +45,79 @@ class Share extends \Zotlabs\Web\Controller {
 		if($r[0]['mimetype'] !== 'text/bbcode')
 			killme();
 	
-		/** @FIXME eventually we want to post remotely via rpost on your home site */
-		// When that works remove this next bit:
-	
-		if(! local_channel())
-			killme();
 	
 		xchan_query($r);
 	
-		$is_photo = (($r[0]['obj_type'] === ACTIVITY_OBJ_PHOTO) ? true : false);
-		if($is_photo) {
-			$object = json_decode($r[0]['obj'],true);
-			$photo_bb = $object['body'];
-		}
-	
-		if (strpos($r[0]['body'], "[/share]") !== false) {
-			$pos = strpos($r[0]['body'], "[share");
-			$o = substr($r[0]['body'], $pos);
-		} else {
-			$o = "[share author='" . urlencode($r[0]['author']['xchan_name']) .
-				"' profile='"    . $r[0]['author']['xchan_url'] .
-				"' avatar='"     . $r[0]['author']['xchan_photo_s'] .
-				"' link='"       . $r[0]['plink'] .
-				"' auth='"       . (($r[0]['author']['network'] === 'zot') ? 'true' : 'false') .
-				"' posted='"     . $r[0]['created'] .
-				"' message_id='" . $r[0]['mid'] . 
-			"']";
-			if($r[0]['title'])
-				$o .= '[b]'.$r[0]['title'].'[/b]'."\r\n";
-			$o .= (($is_photo) ? $photo_bb . "\r\n" . $r[0]['body'] : $r[0]['body']);
-			$o .= "[/share]";
-		}
-	
-		if(local_channel()) {
-			echo $o;
+		$arr = [];
+
+		$item = $r[0];
+
+		$owner_uid = $r[0]['uid'];
+		$owner_aid = $r[0]['aid'];
+
+		$can_comment = false;
+		if((array_key_exists('owner',$item)) && intval($item['owner']['abook_self']))
+			$can_comment = perm_is_allowed($item['uid'],$observer['xchan_hash'],'post_comments');
+		else
+			$can_comment = can_comment_on_post($observer['xchan_hash'],$item);
+
+		if(! $can_comment) {
+			notice( t('Permission denied') . EOL);
 			killme();
 		}
-	
-		$observer = \App::get_observer();
-		$parsed = $observer['xchan_url'];
-		if($parsed) {
-			$post_url = $parsed['scheme'] . '://' . $parsed['host'] . (($parsed['port']) ? ':' . $parsed['port'] : '')
-				. '/rpost';
-	
-			/**
-			 * @FIXME we were probably called from JS so we don't know the return page.
-			 * In fact we won't be able to load the remote page.
-			 * we might need an iframe
-			 */
-	
-			$x = z_post_url($post_url, array('f' => '', 'body' => $o ));
+
+		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
+			dbesc($item['owner_xchan'])
+		);
+
+		if($r)
+			$thread_owner = $r[0];
+		else
 			killme();
-		}
+	
+		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
+			dbesc($item['author_xchan'])
+		);
+		if($r)
+			$item_author = $r[0];
+		else
+			killme();
+	
+
+		$arr['aid'] = $owner_aid;
+		$arr['uid'] = $owner_uid;
+
+		$arr['item_thread_top'] = 1;
+		$arr['item_origin'] = 1;
+		$arr['item_wall'] = 1;
+		$arr['mid'] = item_message_id();
+		$arr['parent_mid'] = $arr['mid'];
+
+		$arr['title']   = $item['title'];
+		$arr['summary'] = $item['summary'];
+		$arr['body']    = $item['body'];
+		$arr['author_xchan'] = $item['author_xchan'];
+		$arr['owner_xchan'] = $channel['channel_hash'];
+		$arr['obj'] = $item['obj'];
+		$arr['obj_type'] = $item['obj_type'];
+		$arr['verb'] = 'Announce';
+
+		$post = item_store($arr);	
+
+		$post_id = $post['item_id'];
+
+		$arr['id'] = $post_id;
+	
+		call_hooks('post_local_end', $arr);
+
+		info(t('Repeated and shared') . EOL);
+
+		// fixme: sync to clones
+
+		\Zotlabs\Daemon\Master::Summon(array('Notifier','like',$post_id));
+	
+		killme();
+	
 	}
 	
 }
