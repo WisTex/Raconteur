@@ -377,7 +377,7 @@ class ThreadItem {
 			'expiretime' => (($item['expires'] > NULL_DATE) ? sprintf( t('Expires: %s'), datetime_convert('UTC', date_default_timezone_get(), $item['expires'], 'r')):''),
 			'lock' => $lock,
 			'privacy_warning' => $privacy_warning,
-			'retweet' => ($item['verb'] === 'Announce'), 
+			'repeated' => ($item['verb'] === 'Announce'), 
 			'verified' => $verified,
 			'unverified' => $unverified,
 			'forged' => $forged,
