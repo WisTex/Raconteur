@@ -394,7 +394,10 @@ class Activity {
 		}
 
 		$ret['type'] = self::activity_mapper($i['verb']);
-		$ret['id']   = ((strpos($i['mid'],'http') === 0) ? $i['mid'] : z_root() . '/activity/' . urlencode($i['mid']));
+
+		if(strpos($i['mid'],z_root() . '/item/') !== false) {
+			$ret['id'] = str_replace('/item/','/activity/',$ret['id']);
+		}
 
 		if($i['title']) {
 			$ret['name'] = $i['title'];
