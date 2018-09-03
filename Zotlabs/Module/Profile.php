@@ -1,5 +1,9 @@
 <?php
-namespace Zotlabs\Module; /** @file */
+namespace Zotlabs\Module;
+
+use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Web\HTTPSig;
 
 require_once('include/contact_widgets.php');
 require_once("include/bbcode.php");
