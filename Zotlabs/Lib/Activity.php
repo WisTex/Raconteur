@@ -1449,7 +1449,6 @@ class Activity {
 			$s['edited'] = $s['created'];
 
 		if(in_array($act->type,['Announce'])) {
-
 			$announced_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : ActivityStreams::get_actor('attributedTo', $act['obj']));
 			if(! $announced_actor) {
 				return [];
