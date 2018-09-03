@@ -1491,7 +1491,7 @@ class Activity {
 		}
 
 		if($act->obj['type'] === 'Note' && $s['attach']) {
-			$body .= self::bb_attach($s['attach']);
+			$s['body'] .= self::bb_attach($s['attach']);
 		}
 
 
