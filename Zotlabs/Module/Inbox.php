@@ -67,6 +67,20 @@ class Inbox extends Controller {
 				$channels = q("SELECT * from channel where channel_id in ( SELECT abook_channel from abook left join xchan on abook_xchan = xchan_hash WHERE xchan_network = 'activitypub' and xchan_hash = '%s' ) and channel_removed = 0 ",
 					dbesc($observer_hash)
 				);
+				if(! $channels) {
+					$channels = [];
+				}
+
+				$parent = $AS->parent_id;
+				if($parent) {
+					//this is a comment - deliver to everybody who owns the parent
+	 				$owners = q("SELECT * from channel where channel_id in ( SELECT uid from item where mid = '%s' ) ",
+						dbesc($parent)
+					);
+					if($owners) {
+						$channels = array_merge($channels,$owners);
+					}
+				}
 			}
 
 			if($channels === false)

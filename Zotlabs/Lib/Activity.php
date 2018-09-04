@@ -1416,7 +1416,7 @@ class Activity {
 		if(is_array($act->obj)) {
 			$content = self::get_content($act->obj);
 		}
-
+			
 		$s['owner_xchan']  = $act->actor['id'];
 		$s['author_xchan'] = $act->actor['id'];
 
@@ -1577,6 +1577,11 @@ class Activity {
 		$item['aid'] = $channel['channel_account_id'];
 		$item['uid'] = $channel['channel_id'];
 
+		if(! ( $item['author_xchan'] && $item['owner_xchan'])) {
+			logger('owner or author missing.');
+			return;
+		}
+
 		if($channel['channel_system']) {
 			if(! \Zotlabs\Lib\MessageFilter::evaluate($item,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
 				logger('post is filtered');
@@ -1610,8 +1615,16 @@ class Activity {
 			);
 			if(! $p) {
 				$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
-				// if no parent was fetched, turn into a top-level post
-				if(! $a) {
+				if($a) {
+					$p = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
+						dbesc($item['parent_mid']),
+						intval($item['uid'])
+					);
+				}
+				else {
+
+					// if no parent was fetched, turn into a top-level post
+
 					// @TODO we maybe could accept these is we formatted the body correctly with share_bb()
 					// or at least provided a link to the object
 					if(in_array($act->type,[ 'Like','Dislike' ])) {
