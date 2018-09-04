@@ -156,7 +156,7 @@ class Activity {
 		if(intval($i['item_deleted'])) {
 			$ret['type'] = 'Tombstone';
 			$ret['formerType'] = $objtype;
-			$ret['id'] = ((strpos($i['mid'],'http') === 0) ? $i['mid'] : z_root() . '/item/' . urlencode($i['mid']));
+			$ret['id'] = $i['mid'];
 			return $ret;
 		}
 
@@ -193,7 +193,7 @@ class Activity {
 			}
 		}
 
-		$ret['id']   = ((strpos($i['mid'],'http') === 0) ? $i['mid'] : z_root() . '/item/' . urlencode($i['mid']));
+		$ret['id']   = $i['mid'];
 
 		$ret['published'] = datetime_convert('UTC','UTC',$i['created'],ATOM_TIME);
 		if($i['created'] !== $i['edited']) {
@@ -216,8 +216,8 @@ class Activity {
 
 		$ret['attributedTo'] = $i['author']['xchan_url'];
 
-		if($i['id'] != $i['parent']) {
-			$ret['inReplyTo'] = ((strpos($i['parent_mid'],'http') === 0) ? $i['parent_mid'] : z_root() . '/item/' . urlencode($i['parent_mid']));
+		if($i['mid'] != $i['parent_mid']) {
+			$ret['inReplyTo'] = $i['parent_mid'];
 		}
 
 		if($i['mimetype'] === 'text/bbcode') {
@@ -379,14 +379,17 @@ class Activity {
 		if(intval($i['item_deleted'])) {
 			$ret['type'] = 'Tombstone';
 			$ret['formerType'] = self::activity_obj_mapper($i['obj_type']);
-			$ret['id'] = ((strpos($i['mid'],'http') === 0) ? $i['mid'] : z_root() . '/item/' . urlencode($i['mid']));
+			$ret['id'] = $i['mid'];
 			return $ret;
 		}
 
 		$ret['type'] = self::activity_mapper($i['verb']);
 
 		if(strpos($i['mid'],z_root() . '/item/') !== false) {
-			$ret['id'] = str_replace('/item/','/activity/',$ret['id']);
+			$ret['id'] = str_replace('/item/','/activity/',$i['mid']);
+		}
+		else {
+			$ret['id'] = $i['mid'];
 		}
 
 		if($i['title']) {
@@ -425,7 +428,7 @@ class Activity {
 		}
 
 		if($i['id'] != $i['parent']) {
-			$ret['inReplyTo'] = ((strpos($i['parent_mid'],'http') === 0) ? $i['parent_mid'] : z_root() . '/item/' . urlencode($i['parent_mid']));
+			$ret['inReplyTo'] = $i['parent_mid'];
 			$reply = true;
 
 			if($i['item_private']) {
@@ -1385,6 +1388,18 @@ class Activity {
 		$s['mid']        = $act->obj['id'];
 		$s['parent_mid'] = $act->parent_id;
 
+		if(in_array($act->type, [ 'Like','Dislike' ]) && $s['parent_mid'] === $s['mid']) {
+			$s['mid'] = $act->id;
+			$s['parent_mid'] = $act->obj['id'];
+
+			// This needs better formatting with proper names
+			if($act->type === 'Like') {
+				$content['body'] = sprintf('%1$s Likes %2$s\'s %3$s',$act->actor['id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['body'];
+			}
+			if($act->type === 'Dislike') {
+				$content['body'] = sprintf('%1$s Doesn\'t like %2$s\'s %3$s',$act->actor['id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['body'];
+			}
+		}
 
 		if($act->data['published']) {
 			$s['created'] = datetime_convert('UTC','UTC',$act->data['published']);
