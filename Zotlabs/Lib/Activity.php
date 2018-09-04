@@ -1456,13 +1456,14 @@ class Activity {
 			$s['edited'] = $s['created'];
 
 		if(in_array($act->type,['Announce'])) {
+			$s['mid'] = $act->id;
+			$s['parent_mid'] = $act->id;
 			$announced_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj));
 			if(! $announced_actor) {
 				return [];
 			}
 			self::actor_store($announced_actor['id'],$announced_actor);
 			$s['author_xchan'] = $announced_actor['id'];
-
 		}
 
 		$s['title']    = self::bb_content($content,'name');
@@ -1644,12 +1645,13 @@ class Activity {
 			$item['parent_mid'] = $p[0]['parent_mid'];
 		}
 
-		$r = q("select created, edited from item where mid = '%s' and uid = %d limit 1",
+		$r = q("select id, created, edited from item where mid = '%s' and uid = %d limit 1",
 			dbesc($item['mid']),
 			intval($item['uid'])
 		);
 		if($r) {
 			if($item['edited'] > $r[0]['edited']) {
+				$item['id'] = $r[0]['id'];
 				$x = item_store_update($item);
 			}
 			else {

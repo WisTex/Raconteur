@@ -254,13 +254,16 @@ class ActivityStreams {
 			logger('blacklisted: ' . $url);
 			return null;
 		}
-
+		logger('fetch: ' . $url, LOGGER_DEBUG);
 		$x = z_fetch_url($url, true, $redirects,
 			[ 'headers' => [ 'Accept: application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ]]);
 		if($x['success']) {
 			$y = json_decode($x['body'],true);
 			logger('returned: ' . json_encode($y,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
 			return json_decode($x['body'], true);
+		}
+		else {
+			logger('fetch failed: ' . $url);
 		}
 		return null;
 	}
