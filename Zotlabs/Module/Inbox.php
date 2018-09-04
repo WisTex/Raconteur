@@ -56,35 +56,21 @@ class Inbox extends Controller {
 
 		if($is_public) {
 
-			$parent = ((is_array($AS->obj) && array_key_exists('inReplyTo',$AS->obj)) ? urldecode($AS->obj['inReplyTo']) : '');
-
-			if($parent) {
-				//this is a comment - deliver to everybody who owns the parent
-				$channels = q("SELECT * from channel where channel_id in ( SELECT uid from item where ( mid = '%s' OR mid = '%s' ) ) and channel_address != '%s'",
-					dbesc($parent),
-					dbesc(basename($parent)),
-					dbesc(str_replace(z_root() . '/channel/', '', $observer_hash))
+			if($AS->type === 'Follow' && $AS->obj && $AS->obj['type'] === 'Person') {
+				$channels = q("SELECT * from channel where channel_address = '%s' and channel_removed = 0 ",
+				dbesc(basename($AS->obj['id']))
 				);
 			}
 			else {
+				// deliver to anybody following $AS->actor
 
-				if($AS->type === 'Follow' && $AS->obj && $AS->obj['type'] === 'Person') {
-					$channels = q("SELECT * from channel where channel_address = '%s' and channel_removed = 0 ",
-					dbesc(basename($AS->obj['id']))
-					);
-				}
-				else {
-					// deliver to anybody following $AS->actor
-
-					$channels = q("SELECT * from channel where channel_id in ( SELECT abook_channel from abook left join xchan on abook_xchan = xchan_hash WHERE xchan_network = 'activitypub' and xchan_hash = '%s' ) and channel_removed = 0 ",
-						dbesc($observer_hash)
-					);
-				}
+				$channels = q("SELECT * from channel where channel_id in ( SELECT abook_channel from abook left join xchan on abook_xchan = xchan_hash WHERE xchan_network = 'activitypub' and xchan_hash = '%s' ) and channel_removed = 0 ",
+					dbesc($observer_hash)
+				);
 			}
 
 			if($channels === false)
 				$channels = [];
-
 
 			if(in_array(ACTIVITY_PUBLIC_INBOX,$AS->recips)) {
 
@@ -103,8 +89,10 @@ class Inbox extends Controller {
 
 		}
 
-		if(! $channels)
+		if(! $channels) {
+			logger('no deliveries on this site');
 			return;
+		}
 
 		$saved_recips = [];
 		foreach( [ 'to', 'cc', 'audience' ] as $x ) {

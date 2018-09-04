@@ -159,7 +159,7 @@ class Activity {
 		if(intval($i['item_deleted'])) {
 			$ret['type'] = 'Tombstone';
 			$ret['formerType'] = $objtype;
-			$ret['id'] = ((strpos($i['mid'],'http') === 0) ? $i['mid'] : z_root() . '/item/' . urlencode($i['mid']));
+			$ret['id'] = $i['mid'];
 			return $ret;
 		}
 
@@ -196,7 +196,7 @@ class Activity {
 			}
 		}
 
-		$ret['id']   = ((strpos($i['mid'],'http') === 0) ? $i['mid'] : z_root() . '/item/' . urlencode($i['mid']));
+		$ret['id'] = $i['mid'];
 
 		$ret['published'] = datetime_convert('UTC','UTC',$i['created'],ATOM_TIME);
 		if($i['created'] !== $i['edited']) {
@@ -219,8 +219,8 @@ class Activity {
 
 		$ret['attributedTo'] = $i['author']['xchan_url'];
 
-		if($i['id'] != $i['parent']) {
-			$ret['inReplyTo'] = ((strpos($i['parent_mid'],'http') === 0) ? $i['parent_mid'] : z_root() . '/item/' . urlencode($i['parent_mid']));
+		if($i['mid'] !== $i['parent_mid']) {
+			$ret['inReplyTo'] = $i['parent_mid'];
 			$cnv = get_iconfig($i['parent'],'ostatus','conversation');
 		}
 		if(! $cnv) {
@@ -396,7 +396,10 @@ class Activity {
 		$ret['type'] = self::activity_mapper($i['verb']);
 
 		if(strpos($i['mid'],z_root() . '/item/') !== false) {
-			$ret['id'] = str_replace('/item/','/activity/',$ret['id']);
+			$ret['id'] = str_replace('/item/','/activity/',$i['mid']);
+		}
+		else {
+			$ret['id'] = $i['mid'];
 		}
 
 		if($i['title']) {
@@ -435,7 +438,7 @@ class Activity {
 		}
 
 		if($i['id'] != $i['parent']) {
-			$ret['inReplyTo'] = ((strpos($i['parent_mid'],'http') === 0) ? $i['parent_mid'] : z_root() . '/item/' . urlencode($i['parent_mid']));
+			$ret['inReplyTo'] = $i['parent_mid'];
 			$reply = true;
 
 			if($i['item_private']) {
@@ -1421,6 +1424,7 @@ class Activity {
 		$s['parent_mid'] = $act->parent_id;
 
 		if(in_array($act->type, [ 'Like','Dislike' ]) && $s['parent_mid'] === $s['mid']) {
+			$s['mid'] = $act->id;
 			$s['parent_mid'] = $act->obj['id'];
 
 			// This needs better formatting with proper names
@@ -1452,7 +1456,7 @@ class Activity {
 			$s['edited'] = $s['created'];
 
 		if(in_array($act->type,['Announce'])) {
-			$announced_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : ActivityStreams::get_actor('attributedTo', $act->obj));
+			$announced_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj));
 			if(! $announced_actor) {
 				return [];
 			}
@@ -1665,6 +1669,8 @@ class Activity {
 
 	static public function fetch_and_store_parents($channel,$observer_hash,$act,$item) {
 
+		logger('fetching parents');
+
 		$p = [];
 
 		$current_act = $act;
@@ -1676,6 +1682,9 @@ class Activity {
 				break;
 			}
 			$a = new ActivityStreams($n);
+
+			logger($a->debug());
+
 			if(! $a->is_valid()) {
 				break;
 			}
