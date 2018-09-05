@@ -1054,14 +1054,20 @@ class Activity {
 			// create a new record
 			$r = xchan_store_lowlevel(
 				[
-					'xchan_hash'         => $url,
-					'xchan_guid'         => $url,
-					'xchan_pubkey'       => $pubkey,
-					'xchan_addr'         => '',
-					'xchan_url'          => $profile,
-					'xchan_name'         => $name,
-					'xchan_name_date'    => datetime_convert(),
-					'xchan_network'      => 'activitypub'
+					'xchan_hash'           => $url,
+					'xchan_guid'           => $url,
+					'xchan_pubkey'         => $pubkey,
+					'xchan_addr'           => '',
+					'xchan_url'            => $profile,
+					'xchan_name'           => $name,
+					'xchan_name_date'      => datetime_convert(),
+					'xchan_network'        => 'activitypub',
+					'xchan_photo_date'     => datetime_convert('UTC','UTC','1968-01-01'),
+					'xchan_photo_l'        => z_rooot() . '/' . get_default_profile_photo(),
+					'xchan_photo_m'        => z_rooot() . '/' . get_default_profile_photo(80),
+					'xchan_photo_s'        => z_rooot() . '/' . get_default_profile_photo(48),
+					'xchan_photo_mimetype' => 'image/png',					
+
 				]
 			);
 		}
@@ -1397,10 +1403,10 @@ class Activity {
 
 			// This needs better formatting with proper names
 			if($act->type === 'Like') {
-				$content['body'] = sprintf('%1$s Likes %2$s\'s %3$s',$act->actor['id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['body'];
+				$content['content'] = sprintf('%1$s Likes %2$s\'s %3$s',$act->actor['id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['content'];
 			}
 			if($act->type === 'Dislike') {
-				$content['body'] = sprintf('%1$s Doesn\'t like %2$s\'s %3$s',$act->actor['id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['body'];
+				$content['content'] = sprintf('%1$s Doesn\'t like %2$s\'s %3$s',$act->actor['id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['content'];
 			}
 		}
 

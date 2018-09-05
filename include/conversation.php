@@ -655,6 +655,13 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 				$profile_link = $item['author']['xchan_url'];
 				$profile_avatar = $item['author']['xchan_photo_m'];
 
+				if($item['mid'] === $item['parent_mid'] && $item['author_xchan'] !== $item['owner_xchan']) {
+					$owner_name = $item['owner']['xchan_name'];
+					$owner_url = $item['owner']['xchan_url'];
+					$owner_photo = $item['owner']['xchan_photo'];
+				}
+
+
 				$location = format_location($item);
 
 				localize_item($item);
@@ -741,6 +748,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 					'has_cats' => (($body['categories']) ? 'true' : ''),
 					'has_folders' => (($body['folders']) ? 'true' : ''),
 					'text' => strip_tags($body['html']),
+					'via' => t('via'),
 					'ago' => relative_date($item['created']),
 					'app' => $item['app'],
 					'str_app' => sprintf( t('from %s'), $item['app']),
