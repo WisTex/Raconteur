@@ -1617,6 +1617,10 @@ class Activity {
 			set_iconfig($item,'ostatus','conversation',$act->obj['conversation'],1);
 		}
 
+		// This isn't perfect but the best we can do for now.
+
+		$item['comment_policy'] = 'authenticated';
+
 		set_iconfig($item,'activitypub','recips',$act->raw_recips);
 
 		if($item['parent_mid'] && $item['parent_mid'] !== $item['mid']) {

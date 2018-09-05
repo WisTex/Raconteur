@@ -265,8 +265,7 @@ function can_comment_on_post($observer_xchan, $item) {
 			break;
 		case 'public':
 		case 'authenticated':
-			// We don't really allow or support public comments yet, but anonymous
-			// folks won't ever reach this point (as $observer_xchan will be empty).
+			// Anonymous folks won't ever reach this point (as $observer_xchan will be empty).
 			// This means the viewer has an xchan and we can identify them.
 			return true;
 			break;
