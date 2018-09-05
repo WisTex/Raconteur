@@ -6,8 +6,11 @@
 use Zotlabs\Lib\MarkdownSoap;
 use Zotlabs\Lib\Group;
 use Zotlabs\Lib\Libzot;
+use App;
 
 use Michelf\MarkdownExtra;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
 
 require_once("include/bbcode.php");
 
@@ -28,8 +31,8 @@ define('RANDOM_STRING_TEXT', 0x01 );
  */
 function replace_macros($s, $r) {
 	$arr = [
-			'template' => $s,
-			'params' => $r
+		'template' => $s,
+		'params' => $r
 	];
 
 	/**
@@ -62,35 +65,20 @@ function random_string($size = 64, $type = RANDOM_STRING_HEX) {
 }
 
 /**
- * @brief This is our primary input filter.
- *
- * The high bit hack only involved some old IE browser, forget which (IE5/Mac?)
- * that had an XSS attack vector due to stripping the high-bit on an 8-bit character
- * after cleansing, and angle chars with the high bit set could get through as markup.
- *
- * This is now disabled because it was interfering with some legitimate unicode sequences
- * and hopefully there aren't a lot of those browsers left.
- *
- * Use this on any text input where angle chars are not valid or permitted
- * They will be replaced with safer brackets. This may be filtered further
- * if these are not allowed either.
+ * @brief Input filter to replace HTML tag characters with something safe.
  *
  * @param string $string Input string
  *
  * @return string Filtered string
  */
 function notags($string) {
-
 	return(str_replace(array("<",">"), array('[',']'), $string));
-
-//  High-bit filter no longer used
-//	return(str_replace(array("<",">","\xBA","\xBC","\xBE"), array('[',']','','',''), $string));
 }
 
 
 /**
- * use this on "body" or "content" input where angle chars shouldn't be removed,
- * and allow them to be safely displayed.
+ * use this on input where angle chars shouldn't be removed,
+ * and allow them to be safely used in HTML.
  *
  * @param string $string
  *
@@ -568,16 +556,25 @@ function alt_pager($i, $more = '', $less = '') {
  * @return string a unique id
  */
 function item_message_id() {
+
+
 	do {
 		$dups = false;
-		$hash = random_string(48);
+
+		try {
+			$hash = Uuid::uuid5(Uuid::NAMESPACE_DNS, App::get_hostname())->toString();
+		} catch (UnsatisfiedDependencyException $e) {
+			$hash = random_string(48);
+		}
+
 		$mid = z_root() . '/item/' . $hash;
 
 		$r = q("SELECT id FROM item WHERE mid = '%s' LIMIT 1",
 			dbesc($mid));
-		if($r)
+		if ($r) {
 			$dups = true;
-	} while($dups == true);
+		}
+	} while ($dups === true);
 
 	return $mid;
 }
@@ -592,15 +589,22 @@ function item_message_id() {
 function photo_new_resource() {
 	do {
 		$found = false;
-		$resource = random_string(48);
+
+		try {
+			$hash = Uuid::uuid5(Uuid::NAMESPACE_DNS, App::get_hostname())->toString();
+		} catch (UnsatisfiedDependencyException $e) {
+			$hash = random_string(48);
+		}
 
 		$r = q("SELECT id FROM photo WHERE resource_id = '%s' LIMIT 1",
-			dbesc($resource));
-		if($r)
+			dbesc($hash)
+		);
+		if ($r) {
 			$found = true;
-	} while($found === true);
+		}
+	} while ($found === true);
 
-	return $resource;
+	return $hash;
 }
 
 /**
