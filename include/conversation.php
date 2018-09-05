@@ -735,6 +735,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 					'verified' => $verified,
 					'unverified' => $unverified,
 					'forged' => $forged,
+					'repeated' => ($item['verb'] === 'Announce'), 
 					'txt_cats' => t('Categories:'),
 					'txt_folders' => t('Filed under:'),
 					'has_cats' => (($body['categories']) ? 'true' : ''),
