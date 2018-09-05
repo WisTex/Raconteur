@@ -808,7 +808,7 @@ class Enotify {
 				? t('created a new post')
 				: sprintf( t('commented on %s\'s post'), $item['owner']['xchan_name']));
 			if($item['verb'] === 'Announce') {
-				$itemem_text = sprintf( t('shared %s\'s post'), $item['owner']['xchan_name']);
+				$itemem_text = sprintf( t('post shared by %s'), $item['owner']['xchan_name']);
 			}
 		}
 
