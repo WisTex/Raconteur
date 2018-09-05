@@ -32,7 +32,8 @@ aside #region_1 {
 	border-right: 1px solid transparent;
 }
 
-aside #left_aside_wrapper {
+aside #left_aside_wrapper,
+aside #right_aside_wrapper {
 	margin-bottom: 10px;
 }
 

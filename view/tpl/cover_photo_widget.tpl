@@ -14,6 +14,7 @@
 		$(document).on('click mouseup keyup', slideUpCover);
 
 		if($(window).width() > 755) {
+			$('#cover-photo').removeClass('d-none');
 			datasrc2src('#cover-photo > img');
 
 			if(hide_cover) {
@@ -87,7 +88,7 @@
 	}
 </script>
 
-<div id="cover-photo" title="{{$hovertitle}}">
+<div class="d-none" id="cover-photo" title="{{$hovertitle}}">
 	{{$photo_html}}
 	<div id="cover-photo-caption">
 		<h1>{{$title}}</h1>
