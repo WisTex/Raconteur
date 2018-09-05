@@ -106,8 +106,6 @@ if(! $top_photo)
 	$top_photo = '2.3rem';
 if(! $reply_photo)
 	$reply_photo = '2.3rem';
-if(! $bottom_margin)
-        $bottom_margin = '200px';
 
 // Apply the settings
 if(file_exists('view/theme/redbasic/css/style.css')) {
@@ -152,9 +150,7 @@ if(file_exists('view/theme/redbasic/css/style.css')) {
 		'$pmenu_top' => $pmenu_top,
 		'$pmenu_reply' => $pmenu_reply,
 		'$main_width' => $main_width,
-		'$aside_width' => $aside_width,
-                '$bottom_margin' => $bottom_margin
-
+		'$aside_width' => $aside_width
 	);
 
 	echo str_replace(array_keys($options), array_values($options), $x);
