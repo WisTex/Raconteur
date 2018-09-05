@@ -2,15 +2,21 @@
 
 namespace Zotlabs\Widget;
 
-class Activity_order {
+use Zotlabs\Lib\Apps;
+use App;
+
+class Stream_order {
 
 	function widget($arr) {
 
 		if(! local_channel())
 			return '';
 
- 		if(! feature_enabled(local_channel(),'order_tab')) {
-			set_pconfig(local_channel(), 'mod_network', 'order', 0);
+		$module = 'mod_' . App::$module;
+
+
+ 		if(! Apps::addon_app_installed(local_channel(),'stream_order')) {
+			set_pconfig(local_channel(), $module, 'order', 0);
 			return '';
 		}
 
@@ -22,15 +28,15 @@ class Activity_order {
 			switch($_GET['order']){
 				case 'post':
 					$postord_active = 'active';
-					set_pconfig(local_channel(), 'mod_network', 'order', 1); 
+					set_pconfig(local_channel(), $module, 'order', 1); 
 					break;
 				case 'comment':
 					$commentord_active = 'active';
-					set_pconfig(local_channel(), 'mod_network', 'order', 0);
+					set_pconfig(local_channel(), $module, 'order', 0);
 					break;
 				case 'unthreaded':
 					$unthreaded_active = 'active';
-					set_pconfig(local_channel(), 'mod_network', 'order', 2);
+					set_pconfig(local_channel(), $module, 'order', 2);
 					break;
 				default:
 					$commentord_active = 'active';
@@ -38,7 +44,7 @@ class Activity_order {
 			}
 		}
 		else {
-			$order = get_pconfig(local_channel(), 'mod_network', 'order', 0);
+			$order = get_pconfig(local_channel(), $module, 'order', 0);
 			switch($order) {
 				case 0:
 					$commentord_active = 'active';
@@ -60,7 +66,7 @@ class Activity_order {
 			$commentord_active = $postord_active = 'disabled';
 		}
 
-		$cmd = \App::$cmd;
+		$cmd = App::$cmd;
 
 		$filter = '';
 
@@ -110,7 +116,7 @@ class Activity_order {
 
 		$arr = ['tabs' => $tabs];
 
-		call_hooks('network_tabs', $arr);
+		call_hooks('stream_order_tabs', $arr);
 
 		$o = '';
 
@@ -120,7 +126,7 @@ class Activity_order {
 			]);
 
 			$o = replace_macros(get_markup_template('common_widget.tpl'), [
-				'$title' => t('Activity Order'),
+				'$title' => t('Stream Order'),
 				'$content' => $content,
 			]);
 		}

@@ -333,6 +333,7 @@ class Apps {
 			'Poke' => t('Poke'),
 			'Chat' => t('Chat'),
 			'Search' => t('Search'),
+			'Stream Order' => t('Stream Order'),
 			'Probe' => t('Probe'),
 			'Suggest' => t('Suggest'),
 			'Random Channel' => t('Random Channel'),

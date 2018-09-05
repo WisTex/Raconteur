@@ -82,24 +82,29 @@ class ActivityStreams {
 			if($this->ldsig) {
 				$this->signer = $this->get_compound_property('creator',$this->ldsig);
 				if($this->signer && $this->signer['publicKey'] && $this->signer['publicKey']['publicKeyPem']) {
-					$this->sigok = \Zotlabs\Lib\LDSignatures::verify($this->data,$this->signer['publicKey']['publicKeyPem']);
+					$this->sigok = LDSignatures::verify($this->data,$this->signer['publicKey']['publicKeyPem']);
 				}
 			}
 
+			if(! $this->obj) {
+				$this->obj = $this->data;
+				$this->type = 'Create';
+				if(! $this->actor) {
+					$this->actor = $this->get_actor('attributedTo',$this->obj);
+				}
+			}
+			
 			if($this->obj && $this->obj['actor'])
 				$this->obj['actor'] = $this->get_actor('actor',$this->obj);
 			if($this->tgt && $this->tgt['actor'])
 				$this->tgt['actor'] = $this->get_actor('actor',$this->tgt);
 
-
-			if(! $this->obj) {
-				$this->obj = $this->data;
-				$this->type = 'Create';
-			}
-			
 			$this->parent_id = $this->get_property_obj('inReplyTo');
 			if(! $this->parent_id) {
-				$this->parent_id = $this->id;
+				$this->parent_id = $this->get_property_obj('inReplyTo',$this->obj);
+			}
+			if(! $this->parent_id) {
+				$this->parent_id = $this->obj['id'];
 			}
 		}
 	}
