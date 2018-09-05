@@ -1808,21 +1808,8 @@ function process_delivery($sender, $arr, $deliveries, $relay, $public = false, $
 		else {
 			$arr['item_wall'] = 0;
 		}
-		
-                $allowed = (perm_is_allowed($channel['channel_id'],$sender['hash'],$perm) && (! $tag_delivery) && (! $local_public));
 
-		if(! $allowed && $perm == 'post_comments') {
-logger("Channel = ".intval($channel['channel_id']));
-                        $parent = q("select * from item where mid = '%s' and uid = %d limit 1",
-                                dbesc($arr['parent_mid']),
-                                intval($channel['channel_id'])
-                        );
-                        if ($parent) {
-                                $allowed = can_comment_on_post($d['hash'],$parent[0]);
-                        }
-                }
-
-                if (! $allowed) {
+		if((! perm_is_allowed($channel['channel_id'],$sender['hash'],$perm)) && (! $tag_delivery) && (! $local_public)) {
 			logger("permission denied for delivery to channel {$channel['channel_id']} {$channel['channel_address']}");
 			$DR->update('permission denied');
 			$result[] = $DR->get();
