@@ -103,6 +103,7 @@ class ActivityStreams {
 			if(! $this->parent_id) {
 				$this->parent_id = $this->get_property_obj('inReplyTo',$this->obj);
 			}
+
 			if(! $this->parent_id) {				
 				$this->parent_id = $this->obj['id'];
 			}

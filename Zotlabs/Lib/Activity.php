@@ -219,6 +219,7 @@ class Activity {
 
 		$ret['attributedTo'] = $i['author']['xchan_url'];
 
+
 		if($i['mid'] !== $i['parent_mid']) {
 			$ret['inReplyTo'] = $i['parent_mid'];
 			$cnv = get_iconfig($i['parent'],'ostatus','conversation');
@@ -389,7 +390,7 @@ class Activity {
 		if(intval($i['item_deleted'])) {
 			$ret['type'] = 'Tombstone';
 			$ret['formerType'] = self::activity_obj_mapper($i['obj_type']);
-			$ret['id'] = ((strpos($i['mid'],'http') === 0) ? $i['mid'] : z_root() . '/item/' . urlencode($i['mid']));
+			$ret['id'] = $i['mid'];
 			return $ret;
 		}
 
