@@ -1023,6 +1023,9 @@ class Activity {
 			else
 				$icon = $person_obj['icon'];
 		}
+		if(! $icon) {
+			$icon = z_root() . '/' . get_default_profile_photo();
+		}
 
 		if(is_array($person_obj['url']) && array_key_exists('href', $person_obj['url']))
 			$profile = $person_obj['url']['href'];
