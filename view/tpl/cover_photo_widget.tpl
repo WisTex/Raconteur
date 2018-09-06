@@ -19,7 +19,6 @@
 
 			if(hide_cover) {
 				hideCover();
-				coverSlid = true;
 			}
 
 			if($(window).scrollTop() < $('#cover-photo').height()) {
@@ -36,7 +35,7 @@
 	});
 
 	$(window).scroll(function () {
-		if($(window).width() > 755 && $(window).scrollTop() >= $('#cover-photo').height()) {
+		if($(window).width() > 755 && $(window).scrollTop() > ($('#cover-photo').height() - 1)) {
 			$('body').css('cursor', '');
 			$('.navbar').addClass('fixed-top');
 			$('main').css('margin-top', '');
