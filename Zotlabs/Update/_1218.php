@@ -7,9 +7,9 @@ class _1218 {
 	function run() {
 
 		if(ACTIVE_DBTYPE == DBTYPE_POSTGRES) {
-			$r1 = q("ALTER TABLE hubloc add hubloc_id_url text NOT NULL");
+			$r1 = q("ALTER TABLE hubloc add hubloc_id_url text NOT NULL DEFAULT ''");
 			$r2 = q("create index \"hubloc_id_url\" on hubloc (\"hubloc_id_url\")");
-			$r3 = q("ALTER TABLE hubloc add hubloc_site_id text NOT NULL");
+			$r3 = q("ALTER TABLE hubloc add hubloc_site_id text NOT NULL DEFAULT ''");
 			$r4 = q("create index \"hubloc_site_id\" on hubloc (\"hubloc_site_id\")");
 
 			$r = $r1 && $r2 && $r3 && $r4;
