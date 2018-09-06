@@ -293,7 +293,11 @@ class Activity {
 							$ret[] = [ 'ttype' => TERM_MENTION, 'url' => $t['href'], 'term' => escape_tags((substr($t['name'],0,1) === '@') ? substr($t['name'],1) : $t['name']) ];
 						}
 						break;
-	
+
+					case 'Emoji':
+						$ret[] = [ 'ttype' => TERM_EMOJI, 'url' => t['icon']['url'], 'term' => escape_tags($t['name']) ];
+						break;
+
 					default:
 						break;
 				}
@@ -1501,6 +1505,13 @@ class Activity {
 		$a = self::decode_taxonomy($act->obj);
 		if($a) {
 			$s['term'] = $a;
+			foreach($a as $b) {
+				if($b['ttype'] === TERM_EMOJI) {
+					$s['title'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['title']);
+					$s['summary'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['summary']);
+					$s['body'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['body']);
+				}
+			}
 		}
 
 		$a = self::decode_attachment($act->obj);
