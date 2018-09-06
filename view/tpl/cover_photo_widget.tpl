@@ -35,7 +35,7 @@
 	});
 
 	$(window).scroll(function () {
-		if($(window).width() > 755 && $(window).scrollTop() > ($('#cover-photo').height() - 1)) {
+		if($(window).width() > 755 && $(window).scrollTop() > $('#cover-photo').height()) {
 			$('body').css('cursor', '');
 			$('.navbar').addClass('fixed-top');
 			$('main').css('margin-top', '');
