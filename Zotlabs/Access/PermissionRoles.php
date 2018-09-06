@@ -40,6 +40,21 @@ class PermissionRoles {
 				$ret['limits']['chat'] = PERMS_AUTHED;
 				break;
 
+			case 'forum':
+				$ret['perms_auto'] = true;
+				$ret['default_collection'] = false;
+				$ret['directory_publish'] = true;
+				$ret['online'] = false;
+				$ret['perms_connect'] = [
+					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
+					'view_pages', 'post_wall', 'post_comments', 'tag_deliver'
+				];
+				$ret['limits'] = PermissionLimits::Std_Limits();
+				$ret['limits']['post_comments'] = PERMS_AUTHED;
+
+				break;
+
+
 			default:
 				break;
 		}
@@ -75,6 +90,9 @@ class PermissionRoles {
 				'social' => t('Social - Federation'),
 			],
 
+			t('Community Forum') => [
+				'forum' => t('Forum - Normal Access'),
+			]
 		];
 
 		call_hooks('list_permission_roles',$roles);
