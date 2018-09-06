@@ -1440,11 +1440,24 @@ class Libzot {
 				$arr['item_wall'] = 0;
 			}
 
-			if((! perm_is_allowed($channel['channel_id'],$sender,$perm)) && (! $tag_delivery) && (! $local_public)) {
-				logger("permission denied for delivery to channel {$channel['channel_id']} {$channel['channel_address']}");
-				$DR->update('permission denied');
-				$result[] = $DR->get();
-				continue;
+			if ((! $tag_delivery) && (! $local_public)) {
+				$allowed = (perm_is_allowed($channel['channel_id'],$sender,$perm));
+				if((! $allowed) && $perm == 'post_comments') {
+					$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
+						dbesc($arr['parent_mid']),
+						intval($channel['channel_id'])
+					);
+					if ($parent) {
+						$allowed = can_comment_on_post($d,$parent[0]);
+					}
+				}
+        
+				if (! $allowed) {
+					logger("permission denied for delivery to channel {$channel['channel_id']} {$channel['channel_address']}");
+					$DR->update('permission denied');
+					$result[] = $DR->get();
+					continue;
+				}
 			}
 
 			if($arr['mid'] != $arr['parent_mid']) {
