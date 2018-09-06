@@ -5,10 +5,14 @@
 	$(document).ready(function() {
 		notifications_parent = $('#notifications_wrapper')[0].parentElement.id;
 		$('.notifications-btn').click(function() {
-			if($('#notifications_wrapper').hasClass('fs'))
+			if($('#notifications_wrapper').hasClass('fs')) {
 				$('#notifications_wrapper').prependTo('#' + notifications_parent);
-			else
+				$('body').css('overflow', 'visible');
+			}
+			else {
 				$('#notifications_wrapper').prependTo('section');
+				$('body').css('overflow', 'hidden');
+			}
 
 			$('#notifications_wrapper').toggleClass('fs');
 			if($('#navbar-collapse-2').hasClass('show')){
