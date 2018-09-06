@@ -29,7 +29,7 @@ use \Zotlabs\Lib as Zlib;
 class Item extends \Zotlabs\Web\Controller {
 
 	function post() {
-	
+
 		// This will change. Figure out who the observer is and whether or not
 		// they have permission to post here. Else ignore the post.
 	
@@ -237,10 +237,12 @@ class Item extends \Zotlabs\Web\Controller {
 		if($parent) {
 			logger('mod_item: item_post parent=' . $parent);
 			$can_comment = false;
-			if((array_key_exists('owner',$parent_item)) && intval($parent_item['owner']['abook_self']))
-				$can_comment = perm_is_allowed($profile_uid,$observer['xchan_hash'],'post_comments');
-			else
-				$can_comment = can_comment_on_post($observer['xchan_hash'],$parent_item);
+
+			$can_comment = can_comment_on_post($observer['xchan_hash'],$parent_item);
+                        if (!$can_comment) {
+                                if((array_key_exists('owner',$parent_item)) && intval($parent_item['owner']['abook_self'])==1 )
+				        $can_comment = perm_is_allowed($profile_uid,$observer['xchan_hash'],'post_comments');
+                        }
 	
 			if(! $can_comment) {
 				notice( t('Permission denied.') . EOL) ;

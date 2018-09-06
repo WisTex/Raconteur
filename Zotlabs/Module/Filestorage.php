@@ -128,7 +128,7 @@ class Filestorage extends \Zotlabs\Web\Controller {
 				}
 			}
 
-			if(json_return)
+			if($json_return)
 				json_return_and_die([ 'success' => true ]);
 
 			goaway(dirname($url));
