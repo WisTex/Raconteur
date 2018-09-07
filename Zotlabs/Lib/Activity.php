@@ -2,13 +2,11 @@
 
 namespace Zotlabs\Lib;
 
-use Zotlabs\Lib\Libzot;
-use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\ActivityStreams;
-use Zotlabs\Lib\Group;
-use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Access\Permissions;
+use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Daemon\Master;
 use Zotlabs\Daemon\Notifier;
+
 
 class Activity {
 
@@ -816,9 +814,9 @@ class Activity {
 			}
 		}
 
-		$x = \Zotlabs\Access\PermissionRoles::role_perms('social');
-		$p = \Zotlabs\Access\Permissions::FilledPerms($x['perms_connect']);
-		$their_perms = \Zotlabs\Access\Permissions::serialise($p);
+		$x = PermissionRoles::role_perms('social');
+		$p = Permissions::FilledPerms($x['perms_connect']);
+		$their_perms = Permissions::serialise($p);
 
 		if($contact && $contact['abook_id']) {
 
@@ -838,7 +836,7 @@ class Activity {
 					// Send an Accept back to them
 
 					set_abconfig($channel['channel_id'],$person_obj['id'],'pubcrawl','their_follow_id', $their_follow_id);
-					\Zotlabs\Daemon\Master::Summon([ 'Notifier', 'permissions_accept', $contact['abook_id'] ]);
+					Master::Summon([ 'Notifier', 'permissions_accept', $contact['abook_id'] ]);
 					return;
 
 				case 'Accept':
@@ -892,8 +890,8 @@ class Activity {
 		}
 		$ret = $r[0];
 
-		$p = \Zotlabs\Access\Permissions::connect_perms($channel['channel_id']);
-		$my_perms  = \Zotlabs\Access\Permissions::serialise($p['perms']);
+		$p = Permissions::connect_perms($channel['channel_id']);
+		$my_perms  = Permissions::serialise($p['perms']);
 		$automatic = $p['automatic'];
 
 		$closeness = get_pconfig($channel['channel_id'],'system','new_abook_closeness',80);
@@ -928,7 +926,7 @@ class Activity {
 				dbesc($ret['xchan_hash'])
 			);
 			if($new_connection) {
-				\Zotlabs\Lib\Enotify::submit(
+				Enotify::submit(
 					[
 						'type'	       => NOTIFY_INTRO,
 						'from_xchan'   => $ret['xchan_hash'],
@@ -939,9 +937,9 @@ class Activity {
 
 				if($my_perms && $automatic) {
 					// send an Accept for this Follow activity
-					\Zotlabs\Daemon\Master::Summon([ 'Notifier', 'permissions_accept', $new_connection[0]['abook_id'] ]);
+					Master::Summon([ 'Notifier', 'permissions_accept', $new_connection[0]['abook_id'] ]);
 					// Send back a Follow notification to them
-					\Zotlabs\Daemon\Master::Summon([ 'Notifier', 'permissions_create', $new_connection[0]['abook_id'] ]);
+					Master::Summon([ 'Notifier', 'permissions_create', $new_connection[0]['abook_id'] ]);
 				}
 
 				$clone = array();
@@ -1139,15 +1137,7 @@ class Activity {
 		if(! $icon)
 			$icon = z_root() . '/' . get_default_profile_photo(300);
 
-		$photos = import_xchan_photo($icon,$url);
-		$r = q("update xchan set xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s' where xchan_hash = '%s'",
-			dbescdate(datetime_convert('UTC','UTC',$arr['photo_updated'])),
-			dbesc($photos[0]),
-			dbesc($photos[1]),
-			dbesc($photos[2]),
-			dbesc($photos[3]),
-			dbesc($url)
-		);
+		Master::Summon( [ 'Xchan_photo', bin2hex($icon), bin2hex($url) ] );
 
 	}
 
@@ -1291,7 +1281,7 @@ class Activity {
 		}
 
 		if($channel['channel_system']) {
-			if(! \Zotlabs\Lib\MessageFilter::evaluate($s,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
+			if(! MessageFilter::evaluate($s,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
 				logger('post is filtered');
 				return;
 			}
@@ -1387,7 +1377,7 @@ class Activity {
 			if($parent) {
 				if($s['owner_xchan'] === $channel['channel_hash']) {
 					// We are the owner of this conversation, so send all received comments back downstream
-					Zotlabs\Daemon\Master::Summon(array('Notifier','comment-import',$x['item_id']));
+					Master::Summon(array('Notifier','comment-import',$x['item_id']));
 				}
 				$r = q("select * from item where id = %d limit 1",
 					intval($x['item_id'])
@@ -1605,7 +1595,7 @@ class Activity {
 		}
 
 		if($channel['channel_system']) {
-			if(! \Zotlabs\Lib\MessageFilter::evaluate($item,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
+			if(! MessageFilter::evaluate($item,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
 				logger('post is filtered');
 				return;
 			}
@@ -1692,7 +1682,7 @@ class Activity {
 			if($parent) {
 				if($item['owner_xchan'] === $channel['channel_hash']) {
 					// We are the owner of this conversation, so send all received comments back downstream
-					Zotlabs\Daemon\Master::Summon(array('Notifier','comment-import',$x['item_id']));
+					Master::Summon(array('Notifier','comment-import',$x['item_id']));
 				}
 				$r = q("select * from item where id = %d limit 1",
 					intval($x['item_id'])
@@ -1819,7 +1809,7 @@ class Activity {
 		$s['app']      = t('ActivityPub');
 
 		if($channel['channel_system']) {
-			if(! \Zotlabs\Lib\MessageFilter::evaluate($s,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
+			if(! MessageFilter::evaluate($s,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
 				logger('post is filtered');
 				return;
 			}
@@ -1900,7 +1890,7 @@ class Activity {
 			if($parent) {
 				if($s['owner_xchan'] === $channel['channel_hash']) {
 					// We are the owner of this conversation, so send all received comments back downstream
-					Zotlabs\Daemon\Master::Summon(array('Notifier','comment-import',$x['item_id']));
+					Master::Summon(array('Notifier','comment-import',$x['item_id']));
 				}
 				$r = q("select * from item where id = %d limit 1",
 					intval($x['item_id'])
@@ -2036,8 +2026,8 @@ class Activity {
 		if($result['success']) {
 			// if the message isn't already being relayed, notify others
 			if(intval($parent_item['item_origin']))
-					Zotlabs\Daemon\Master::Summon(array('Notifier','comment-import',$result['item_id']));
-				sync_an_item($channel['channel_id'],$result['item_id']);
+					Master::Summon(array('Notifier','comment-import',$result['item_id']));
+			sync_an_item($channel['channel_id'],$result['item_id']);
 		}
 
 		return;
