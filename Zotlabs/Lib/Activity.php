@@ -1426,7 +1426,7 @@ class Activity {
 		$s['mid']        = $act->obj['id'];
 		$s['parent_mid'] = $act->parent_id;
 
-		if(in_array($act->type, [ 'Like','Dislike' ]) && $s['parent_mid'] === $s['mid']) {
+		if(in_array($act->type, [ 'Like','Dislike' ])) {
 			$s['mid'] = $act->id;
 			$s['parent_mid'] = $act->obj['id'];
 
