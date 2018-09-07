@@ -420,7 +420,7 @@ class Channel extends Controller {
 				$o .= alt_pager(count($items));
 			}
 			else {
-				$o .= '<div class="section-content-warning-wrapper">' . t('You must enable javascript for your browser to view this content.') . '</div>';
+				$o .= '<div class="section-content-warning-wrapper">' . t('You must enable javascript for your browser to be able to view this content.') . '</div>';
 			}
 			$o .= '</noscript>';
 
