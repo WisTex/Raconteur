@@ -5,7 +5,6 @@ namespace Zotlabs\Lib;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Daemon\Master;
-use Zotlabs\Daemon\Notifier;
 
 
 class Activity {
