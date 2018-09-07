@@ -7,7 +7,7 @@
 		$('.notifications-btn').click(function() {
 			if($('#notifications_wrapper').hasClass('fs')) {
 				$('#notifications_wrapper').prependTo('#' + notifications_parent);
-				$('body').css('overflow', 'visible');
+				$('body').css('overflow', 'auto');
 			}
 			else {
 				$('#notifications_wrapper').prependTo('section');
