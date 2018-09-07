@@ -217,9 +217,13 @@ class HTTPSig {
 
 	function get_activitystreams_key($id) {
 
+		// remove fragment
+
+		$url = ((strpos($id,'#')) ? substr($id,0,strpos($id,'#')) : $id);
+
 		$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' limit 1",
-			dbesc(str_replace('acct:','',$id)),
-			dbesc($id)
+			dbesc(str_replace('acct:','',$url)),
+			dbesc($url)
 		);
 
 		if($x && $x[0]['xchan_pubkey']) {
@@ -231,7 +235,8 @@ class HTTPSig {
 		if($r) {
 			if(array_key_exists('publicKey',$r) && array_key_exists('publicKeyPem',$r['publicKey']) && array_key_exists('id',$r['publicKey'])) {
 				if($r['publicKey']['id'] === $id || $r['id'] === $id) {
-					return [ 'public_key' => self::convertKey($r['publicKey']['publicKeyPem']), 'portable_id' => '', 'hubloc' => [] ];
+					$portable_id = ((array_key_exists('owner',$r['publicKey'])) ? $r['publicKey']['owner'] : EMPTY_STR);
+					return [ 'public_key' => self::convertKey($r['publicKey']['publicKeyPem']), 'portable_id' => $portable_id, 'hubloc' => [] ];
 				}
 			}
 		}

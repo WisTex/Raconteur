@@ -39,8 +39,8 @@ class Inbox extends Controller {
 		if(! $AS->is_valid())
 			return;
 
-		if($hsig['header_valid'] && $hsig['content_valid']) {
-			$observer_hash = $hsig['signer'];
+		if($hsig['header_valid'] && $hsig['content_valid'] && $hsig['portable_id']) {
+			$observer_hash = $hsig['portable_id'];
 		}
 		else {
 			$observer_hash = $AS->actor['id'];
