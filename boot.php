@@ -35,7 +35,7 @@ require_once('include/items.php');
 define ( 'PLATFORM_NAME',           'zap' );
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
 
-define ( 'STD_VERSION',             '0.0.1' );
+define ( 'STD_VERSION',             '1.1' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1219 );
@@ -407,6 +407,7 @@ define ( 'TERM_BOOKMARK',     8 );
 define ( 'TERM_HIERARCHY',    9 );
 define ( 'TERM_COMMUNITYTAG', 10 );
 define ( 'TERM_FORUM',        11 );
+define ( 'TERM_EMOJI',        12 );
 
 define ( 'TERM_OBJ_POST',    1 );
 define ( 'TERM_OBJ_PHOTO',   2 );
