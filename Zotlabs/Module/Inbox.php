@@ -31,13 +31,14 @@ class Inbox extends Controller {
 
 		$hsig = HTTPSig::verify($data);
 
-
 		$AS = new ActivityStreams($data);
 
 		//logger('debug: ' . $AS->debug());
 
 		if(! $AS->is_valid())
 			return;
+
+		// $observer_hash in this case is the sender
 
 		if($hsig['header_valid'] && $hsig['content_valid'] && $hsig['portable_id']) {
 			$observer_hash = $hsig['portable_id'];

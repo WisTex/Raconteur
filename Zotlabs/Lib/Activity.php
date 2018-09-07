@@ -292,7 +292,7 @@ class Activity {
 						break;
 
 					case 'Emoji':
-						$ret[] = [ 'ttype' => TERM_EMOJI, 'url' => t['icon']['url'], 'term' => escape_tags($t['name']) ];
+						$ret[] = [ 'ttype' => TERM_EMOJI, 'url' => $t['icon']['url'], 'term' => escape_tags($t['name']) ];
 						break;
 
 					default:
