@@ -1397,7 +1397,7 @@ class Activity {
 		$s['mid']        = $act->obj['id'];
 		$s['parent_mid'] = $act->parent_id;
 
-		if(in_array($act->type, [ 'Like','Dislike' ]) && $s['parent_mid'] === $s['mid']) {
+		if(in_array($act->type, [ 'Like','Dislike' ])) {
 			$s['mid'] = $act->id;
 			$s['parent_mid'] = $act->obj['id'];
 
@@ -1430,13 +1430,14 @@ class Activity {
 			$s['edited'] = $s['created'];
 
 		if(in_array($act->type,['Announce'])) {
-			$announced_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : ActivityStreams::get_actor('attributedTo', $act->obj));
+			$s['mid'] = $act->id;
+			$s['parent_mid'] = $act->id;
+			$announced_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj));
 			if(! $announced_actor) {
 				return [];
 			}
 			self::actor_store($announced_actor['id'],$announced_actor);
 			$s['author_xchan'] = $announced_actor['id'];
-
 		}
 
 		$s['title']    = self::bb_content($content,'name');
