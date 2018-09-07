@@ -562,7 +562,7 @@ function item_message_id() {
 		$dups = false;
 
 		try {
-			$hash = Uuid::uuid5(Uuid::NAMESPACE_DNS, App::get_hostname())->toString();
+			$hash = Uuid::uuid4(Uuid::NAMESPACE_DNS, App::get_hostname())->toString();
 		} catch (UnsatisfiedDependencyException $e) {
 			$hash = random_string(48);
 		}
@@ -591,7 +591,7 @@ function photo_new_resource() {
 		$found = false;
 
 		try {
-			$hash = Uuid::uuid5(Uuid::NAMESPACE_DNS, App::get_hostname())->toString();
+			$hash = Uuid::uuid4(Uuid::NAMESPACE_DNS, App::get_hostname())->toString();
 		} catch (UnsatisfiedDependencyException $e) {
 			$hash = random_string(48);
 		}
