@@ -6,7 +6,7 @@
 use Zotlabs\Lib\MarkdownSoap;
 use Zotlabs\Lib\Group;
 use Zotlabs\Lib\Libzot;
-use App;
+
 
 use Michelf\MarkdownExtra;
 use Ramsey\Uuid\Uuid;

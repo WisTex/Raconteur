@@ -1063,9 +1063,9 @@ class Activity {
 					'xchan_name_date'      => datetime_convert(),
 					'xchan_network'        => 'activitypub',
 					'xchan_photo_date'     => datetime_convert('UTC','UTC','1968-01-01'),
-					'xchan_photo_l'        => z_rooot() . '/' . get_default_profile_photo(),
-					'xchan_photo_m'        => z_rooot() . '/' . get_default_profile_photo(80),
-					'xchan_photo_s'        => z_rooot() . '/' . get_default_profile_photo(48),
+					'xchan_photo_l'        => z_root() . '/' . get_default_profile_photo(),
+					'xchan_photo_m'        => z_root() . '/' . get_default_profile_photo(80),
+					'xchan_photo_s'        => z_root() . '/' . get_default_profile_photo(48),
 					'xchan_photo_mimetype' => 'image/png',					
 
 				]
