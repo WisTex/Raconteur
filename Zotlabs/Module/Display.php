@@ -12,8 +12,9 @@ class Display extends \Zotlabs\Web\Controller {
 
 	function get($update = 0, $load = false) {
 
-		$module_format = 'html';
+		$noscript_content = get_config('system', 'noscript_content', '1');
 
+		$module_format = 'html';
 
 		if(argc() > 1) {
 			$module_format = substr(argv(1),strrpos(argv(1),'.') + 1);
@@ -251,7 +252,7 @@ class Display extends \Zotlabs\Web\Controller {
 
 		$sql_extra = public_permissions_sql($observer_hash);
 
-		if((! $update) || ($load)) {
+		if($noscript_content || $load) {
 
 			$r = null;
 
@@ -367,7 +368,12 @@ class Display extends \Zotlabs\Web\Controller {
 			}
 			else {
 				$o .= '<noscript>';
-				$o .= conversation($items, 'display', $update, 'traditional');
+				if($noscript_content) {
+					$o .= conversation($items, 'display', $update, 'traditional');
+				}
+				else {
+					$o .= '<div class="section-content-warning-wrapper">' . t('You must enable javascript for your browser to be able to view this content.') . '</div>';
+				}
 				$o .= '</noscript>';
 
 				if ($items[0]['title'])
@@ -429,7 +435,7 @@ class Display extends \Zotlabs\Web\Controller {
 
 		$o .= '<div id="content-complete"></div>';
 
-		if(((! $update) || ($load)) && (! $items))  {
+		if((($update && $load) || $noscript_content) && (! $items)) {
 			
 			$r = q("SELECT id, item_deleted FROM item WHERE mid = '%s' LIMIT 1",
 				dbesc($item_hash)
