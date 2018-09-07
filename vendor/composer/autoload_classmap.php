@@ -1318,6 +1318,7 @@ return array(
     'Zotlabs\\Update\\_1216' => $baseDir . '/Zotlabs/Update/_1216.php',
     'Zotlabs\\Update\\_1217' => $baseDir . '/Zotlabs/Update/_1217.php',
     'Zotlabs\\Update\\_1218' => $baseDir . '/Zotlabs/Update/_1218.php',
+    'Zotlabs\\Update\\_1219' => $baseDir . '/Zotlabs/Update/_1219.php',
     'Zotlabs\\Web\\CheckJS' => $baseDir . '/Zotlabs/Web/CheckJS.php',
     'Zotlabs\\Web\\Controller' => $baseDir . '/Zotlabs/Web/Controller.php',
     'Zotlabs\\Web\\HTTPHeaders' => $baseDir . '/Zotlabs/Web/HTTPHeaders.php',
