@@ -7,11 +7,14 @@
 		$('.notifications-btn').click(function() {
 			if($('#notifications_wrapper').hasClass('fs')) {
 				$('#notifications_wrapper').prependTo('#' + notifications_parent);
-				$('body').css('overflow', 'auto');
+				//undo scrollbar remove
+				$('section').css('height', '');
 			}
 			else {
 				$('#notifications_wrapper').prependTo('section');
-				$('body').css('overflow', 'hidden');
+				//remove superfluous scrollbar
+				//setting overflow to hidden here has issues with some browsers
+				$('section').css('height', '100vh');
 			}
 
 			$('#notifications_wrapper').toggleClass('fs');
