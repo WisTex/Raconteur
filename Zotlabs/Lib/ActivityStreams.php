@@ -100,7 +100,9 @@ class ActivityStreams {
 				$this->tgt['actor'] = $this->get_actor('actor',$this->tgt);
 
 			$this->parent_id = $this->get_property_obj('inReplyTo');
-
+			if(! $this->parent_id) {				
+				$this->parent_id = $this->obj['inReplyTo'];
+			}
 			if(! $this->parent_id) {				
 				$this->parent_id = $this->obj['id'];
 			}
