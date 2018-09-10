@@ -1343,7 +1343,7 @@ function preg_heart($x) {
 
 	$t = '';
 	for($cnt = 0; $cnt < strlen($x[1]); $cnt ++)
-		$t .= '<img class="smiley" src="' . z_root() . '/images/emoticons/smiley-heart.gif" alt="&lt;3" />';
+		$t .= '<img class="smiley" src="' . z_root() . '/images/emoticons/smiley-heart.gif" alt="&lt;&#8203;3" />';
 
 	$r =  str_replace($x[0],$t,$x[0]);
 
