@@ -557,24 +557,13 @@ function alt_pager($i, $more = '', $less = '') {
  */
 function item_message_id() {
 
+	try {
+		$hash = Uuid::uuid4()->toString();
+	} catch (UnsatisfiedDependencyException $e) {
+		$hash = random_string(48);
+	}
 
-	do {
-		$dups = false;
-
-		try {
-			$hash = Uuid::uuid5(Uuid::NAMESPACE_DNS, App::get_hostname())->toString();
-		} catch (UnsatisfiedDependencyException $e) {
-			$hash = random_string(48);
-		}
-
-		$mid = z_root() . '/item/' . $hash;
-
-		$r = q("SELECT id FROM item WHERE mid = '%s' LIMIT 1",
-			dbesc($mid));
-		if ($r) {
-			$dups = true;
-		}
-	} while ($dups === true);
+	$mid = z_root() . '/item/' . $hash;
 
 	return $mid;
 }
@@ -587,22 +576,12 @@ function item_message_id() {
  * @return string a unique hash
  */
 function photo_new_resource() {
-	do {
-		$found = false;
 
-		try {
-			$hash = Uuid::uuid5(Uuid::NAMESPACE_DNS, App::get_hostname())->toString();
-		} catch (UnsatisfiedDependencyException $e) {
-			$hash = random_string(48);
-		}
-
-		$r = q("SELECT id FROM photo WHERE resource_id = '%s' LIMIT 1",
-			dbesc($hash)
-		);
-		if ($r) {
-			$found = true;
-		}
-	} while ($found === true);
+	try {
+		$hash = Uuid::uuid4()->toString();
+	} catch (UnsatisfiedDependencyException $e) {
+		$hash = random_string(48);
+	}
 
 	return $hash;
 }
@@ -1364,7 +1343,7 @@ function preg_heart($x) {
 
 	$t = '';
 	for($cnt = 0; $cnt < strlen($x[1]); $cnt ++)
-		$t .= '<img class="smiley" src="' . z_root() . '/images/emoticons/smiley-heart.gif" alt="&lt;3" />';
+		$t .= '<img class="smiley" src="' . z_root() . '/images/emoticons/smiley-heart.gif" alt="&lt;&#8203;3" />';
 
 	$r =  str_replace($x[0],$t,$x[0]);
 

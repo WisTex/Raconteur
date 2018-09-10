@@ -1225,10 +1225,26 @@ class Libzot {
 			return true;
 		}
 		if($env['encoding'] === 'activitystreams') {
-			if(array_key_exists('inReplyTo',$env['data']) && $env['data']['inReplyTo']) {
+			if((array_key_exists('inReplyTo',$env['data']) && $env['data']['inReplyTo']) || (array_path_exists('object/inReplyTo',$env['data']) && $env['data']['object']['inReplyTo'])) {
+				return false;
+			}
+			if(in_array($env['data']['type'], ['Like','Dislike'])) {
 				return false;
 			}
 			return true;
+		}
+		return false;
+	}
+
+
+	static function find_parent($env) {
+		if($env['encoding'] === 'activitystreams') {
+			if((array_path_exists('object/inReplyTo',$env['data']) && $env['data']['object']['inReplyTo'])) {
+				return $env['data']['object']['inReplyTo'];
+			}
+			if(in_array($env['data']['type'], ['Like','Dislike'])) {
+				return $env['data']['object']['id'];
+			}
 		}
 		return false;
 	}
@@ -1320,9 +1336,12 @@ class Libzot {
 			// everybody that stored a copy of the parent. This way we know we're covered. We'll check the
 			// comment permissions when we deliver them.
 
-			if(array_path_exists('data/inReplyTo',$msg)) {
-				$z = q("select owner_xchan as hash from item where parent_mid = '%s' ",
-					dbesc($msg['data']['inReplyTo'])
+			$thread_parent = self::find_parent($msg);
+
+			if($thread_parent) {
+				$z = q("select channel_hash as hash from channel left join item on channel.channel_id = item.uid where ( item.thr_parent = '%s' OR item.parent_mid = '%s' ) ",
+					dbesc($thread_parent),
+					dbesc($thread_parent)
 				);
 				if($z) {
 					foreach($z as $zv) {
@@ -1336,7 +1355,7 @@ class Libzot {
 		// It's a bit of work since it's a multi-dimensional array
 
 		if($r) {
-			$r = array_unique($r);
+			$r = array_values(array_unique($r));
 		}
 
 		logger('public_recips: ' . print_r($r,true), LOGGER_DATA, LOG_DEBUG);
@@ -1436,15 +1455,32 @@ class Libzot {
 				$arr['item_wall'] = 0;
 			}
 
+			$friendofriend = false;
+
 			if ((! $tag_delivery) && (! $local_public)) {
 				$allowed = (perm_is_allowed($channel['channel_id'],$sender,$perm));
-				if((! $allowed) && $perm == 'post_comments') {
+				if((! $allowed) && $perm === 'post_comments') {
 					$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
 						dbesc($arr['parent_mid']),
 						intval($channel['channel_id'])
 					);
 					if ($parent) {
 						$allowed = can_comment_on_post($d,$parent[0]);
+					}
+				}
+				if((! $allowed) && $perm === 'send_stream') {
+
+					// if this is a message going downstream, and we have a copy of the parent,
+					// we will accept comments even if it is somebody we don't know or have permissions for. 
+					// This is for friend-of-friend transfers
+
+					$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
+						dbesc($arr['parent_mid']),
+						intval($channel['channel_id'])
+					);
+					if ($parent) {
+						$allowed = true;
+						$friendofriend = true;
 					}
 				}
         
@@ -1492,10 +1528,12 @@ class Libzot {
 					}
 					continue;
 				}
-				if($relay) {
+				if($relay || $friendofriend) {
 					// reset the route in case it travelled a great distance upstream
 					// use our parent's route so when we go back downstream we'll match
 					// with whatever route our parent has.
+					// Also friend-of-friend conversations may have been imported without a route,
+					// but we are now getting comments via listener delivery
 					$arr['route'] = $r[0]['route'];
 				}
 				else {
