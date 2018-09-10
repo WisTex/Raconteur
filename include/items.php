@@ -15,6 +15,7 @@ use Zotlabs\Lib\Enotify;
 use Zotlabs\Lib\MarkdownSoap;
 use Zotlabs\Lib\MessageFilter;
 use Zotlabs\Lib\IConfig;
+use Zotlabs\Lib\ThreadListener;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\AccessList;
 use Zotlabs\Daemon\Master;
@@ -107,6 +108,14 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 				$recipients[] = $rv['abook_xchan'];
 			}
 		}
+
+		$r = ThreadListener::fetch_by_target($item['parent_mid']);
+		if($r) {
+			foreach($r as $rv) {
+				$recipients[] = $rv['portable_id'];
+			}
+		}
+
 
 		// Add the authors of any posts in this thread, if they are known to us.
 		// This is specifically designed to forward wall-to-wall posts to the original author,
@@ -3772,6 +3781,8 @@ function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
 		intval($item['id']),
 		intval(TERM_OBJ_POST)
 	);
+
+	ThreadListener::delete_by_target($item['mid']);
 
 	/** @FIXME remove notifications for this item */
 
