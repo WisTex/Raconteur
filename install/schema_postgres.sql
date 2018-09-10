@@ -734,6 +734,17 @@ CREATE TABLE "linkid" (
 );
 create index "linkid_ident" on linkid ("ident");
 create index "linkid_link" on linkid ("link");
+CREATE TABLE listeners (
+  id serial NOT NULL,
+  target_id text NOT NULL,
+  portable_id text NOT NULL,
+  ltype smallint NOT NULL DEFAULT '0',
+  PRIMARY KEY (id)
+);
+create index "target_id_idx" on listeners ("target_id");
+create index "portable_id_idx" on listeners ("portable_id");
+create index "ltype_idx" on listeners ("ltype");
+
 CREATE TABLE "mail" (
   "id" serial  NOT NULL,
   "convid" bigint  NOT NULL DEFAULT '0',
