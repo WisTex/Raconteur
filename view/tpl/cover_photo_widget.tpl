@@ -31,7 +31,7 @@
 	});
 
 	$(window).scroll(function () {
-		if($(window).scrollTop() > cover_height) {
+		if($(window).scrollTop() >= cover_height) {
 			coverHiddenActions();
 			coverSlid = true;
 		}
@@ -42,10 +42,7 @@
 			}
 			else {
 				if($(window).scrollTop() < cover_height) {
-					$('body').css('cursor', 'n-resize');
-					$('.navbar').removeClass('fixed-top');
-					$('main').css('margin-top', - $('nav').outerHeight(true) + 'px');
-					$('main').css('opacity', 0);
+					coverVisibleActions();
 				}
 			}
 		}
@@ -79,6 +76,7 @@
 			return;
 		}
 		window.scrollTo(0, cover_height);
+		return;
 	}
 
 	function coverVisibleActions() {
