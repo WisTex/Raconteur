@@ -22,6 +22,8 @@ use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Web\HTTPSig;
+use Zotlabs\Lib\Libzot;
+
 
 require_once('include/crypto.php');
 require_once('include/attach.php');
@@ -34,6 +36,7 @@ use \Zotlabs\Lib as Zlib;
 class Item extends \Zotlabs\Web\Controller {
 
 	function init() {
+
 		if(ActivityStreams::is_as_request()) {
 			$item_id = argv(1);
 			if(! $item_id)
@@ -43,12 +46,13 @@ class Item extends \Zotlabs\Web\Controller {
 
 			$sql_extra = item_permissions_sql(0);
 
+
 			$r = q("select * from item where mid = '%s' $item_normal $sql_extra limit 1",
 				dbesc(z_root() . '/item/' . $item_id)
 			);
 			if(! $r) {
 				$r = q("select * from item where mid = '%s' $item_normal limit 1",
-					dbesc(z_root() . '/item/' . $item_id . '%')
+					dbesc(z_root() . '/item/' . $item_id)
 				);
 				if($r) {
 					http_status_exit(403, 'Forbidden');
@@ -69,6 +73,7 @@ class Item extends \Zotlabs\Web\Controller {
 				http_status_exit(403, 'Forbidden');
 
 			$i = Activity::encode_item($items[0]);
+
 			if(! $i)
 				http_status_exit(404, 'Not found');
 
@@ -91,9 +96,87 @@ class Item extends \Zotlabs\Web\Controller {
 			killme();
 
 		}
+
+		if(Libzot::is_zot_request()) {
+
+			$conversation = false;
+
+			$item_id = argv(1);
+
+			if(! $item_id)
+				http_status_exit(404, 'Not found');
+
+			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 ";
+
+			$sql_extra = item_permissions_sql(0);
+
+			$r = q("select * from item where mid = '%s' and item_wall = 1 $item_normal $sql_extra limit 1",
+				dbesc(z_root() . '/item/' . $item_id)
+			);
+			if(! $r) {
+				$r = q("select * from item where mid = '%s' $item_normal limit 1",
+					dbesc(z_root() . '/item/' . $item_id)
+				);
+				if($r) {
+					http_status_exit(403, 'Forbidden');
+				}
+				http_status_exit(404, 'Not found');
+			}
+
+			if($r[0]['mid'] === $r[0]['parent_mid']) {
+				$conversation = true;
+				$items = q("select * from item where parent_mid = '%s' and uid = %d $item_normal $sql_extra ",
+					dbesc(z_root() . '/item/' . $item_id),
+					intval($r[0]['uid'])
+				);
+				if(! $items) {
+					http_status_exit(404, 'Not found');
+				}
+				$r = $items;
+			}
+
+			xchan_query($r,true);
+			$items = fetch_post_tags($r,true);
+
+
+			$chan = channelx_by_n($items[0]['uid']);
+
+			if(! $chan)
+				http_status_exit(404, 'Not found');
+
+			if(! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream'))
+				http_status_exit(403, 'Forbidden');
+
+			if($conversation) {
+				$i = Activity::encode_item_collection($items,'conversation/' . $item_id,'OrderedCollection',false);
+			}
+			else {
+				$i = Activity::encode_item($items[0]);
+			}
+
+			if(! $i)
+				http_status_exit(404, 'Not found');
+
+
+			$x = array_merge(['@context' => [
+				ACTIVITYSTREAMS_JSONLD_REV,
+				'https://w3id.org/security/v1',
+				z_root() . ZOT_APSCHEMA_REV
+				]], $i);
+
+
+			$headers = [];
+			$headers['Content-Type'] = 'application/x-zot+json' ;
+			$x['signature'] = LDSignatures::sign($x,$chan);
+			$ret = json_encode($x, JSON_UNESCAPED_SLASHES);
+			$headers['Digest'] = HTTPSig::generate_digest_header($ret);
+			$h = HTTPSig::create_sig($headers,$chan['channel_prvkey'],channel_url($chan));
+			HTTPSig::set_headers($h);
+			echo $ret;
+			killme();
+
+		}
 	}
-
-
 
 
 	function post() {

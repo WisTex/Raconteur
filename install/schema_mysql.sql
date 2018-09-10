@@ -753,6 +753,17 @@ CREATE TABLE IF NOT EXISTS `linkid` (
   KEY `link` (`link`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS listeners (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  target_id varchar(191) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  portable_id varchar(191) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  ltype int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (id),
+  KEY target_id (target_id),
+  KEY portable_id (portable_id),
+  KEY ltype (ltype)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS `mail` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `convid` int(10) unsigned NOT NULL DEFAULT 0 ,
