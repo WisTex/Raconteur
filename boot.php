@@ -54,7 +54,7 @@ define ( 'STD_VERSION',             '3.7.2' );
 define ( 'ZOT_REVISION',            '6.0a' );
 
 
-define ( 'DB_UPDATE_VERSION',       1219 );
+define ( 'DB_UPDATE_VERSION',       1220 );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 
@@ -424,6 +424,7 @@ define ( 'TERM_BOOKMARK',     8 );
 define ( 'TERM_HIERARCHY',    9 );
 define ( 'TERM_COMMUNITYTAG', 10 );
 define ( 'TERM_FORUM',        11 );
+define ( 'TERM_EMOJI',        12 );
 
 define ( 'TERM_OBJ_POST',    1 );
 define ( 'TERM_OBJ_PHOTO',   2 );

@@ -718,6 +718,17 @@ create index "likes_i_mid" on likes ("i_mid");
 create index "likes_verb" on likes ("verb");
 create index "likes_target_type" on likes ("target_type");
 create index "likes_target_id" on likes ("target_id");
+CREATE TABLE listeners (
+  id serial NOT NULL,
+  target_id text NOT NULL,
+  portable_id text NOT NULL,
+  ltype smallint NOT NULL DEFAULT '0',
+  PRIMARY KEY (id)
+);
+create index "target_id_idx" on listeners ("target_id");
+create index "portable_id_idx" on listeners ("portable_id");
+create index "ltype_idx" on listeners ("ltype");
+
 CREATE TABLE "mail" (
   "id" serial  NOT NULL,
   "convid" bigint  NOT NULL DEFAULT '0',

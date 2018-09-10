@@ -3997,6 +3997,7 @@ function zot_feed($uid, $observer_hash, $arr) {
 	$result = array();
 	$mindate = null;
 	$message_id = null;
+	$wall = true;
 
 	require_once('include/security.php');
 
@@ -4006,6 +4007,10 @@ function zot_feed($uid, $observer_hash, $arr) {
 
 	if(array_key_exists('message_id',$arr)) {
 		$message_id = $arr['message_id'];
+	}
+
+	if(array_key_exists('wall',$arr)) {
+		$wall = intval($arr['wall']);
 	}
 
 	if(! $mindate)
@@ -4036,6 +4041,10 @@ function zot_feed($uid, $observer_hash, $arr) {
 		$limit = '';
 	}
 
+	if($wall) {
+		$sql_extra .= " and item_wall = 1 ";
+	}
+
 
 	$items = [];
 
@@ -4048,7 +4057,6 @@ function zot_feed($uid, $observer_hash, $arr) {
 
 		$r = q("SELECT parent, postopts FROM item
 			WHERE uid IN ( %s )
-			AND item_wall = 1
 			AND item_private = 0
 			$item_normal
 			$sql_extra ORDER BY created ASC $limit",
@@ -4058,7 +4066,6 @@ function zot_feed($uid, $observer_hash, $arr) {
 	else {
 		$r = q("SELECT parent, postopts FROM item
 			WHERE uid = %d
-			AND item_wall = 1
 			$item_normal
 			$sql_extra ORDER BY created ASC $limit",
 			intval($uid)
