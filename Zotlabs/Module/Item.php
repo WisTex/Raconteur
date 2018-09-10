@@ -102,9 +102,8 @@ class Item extends \Zotlabs\Web\Controller {
 				z_root() . ZOT_APSCHEMA_REV
 				]], $i);
 
-
 			$headers = [];
-			$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
+			$headers['Content-Type'] = 'application/x-zot+json';
 			$x['signature'] = LDSignatures::sign($x,$chan);
 			$ret = json_encode($x, JSON_UNESCAPED_SLASHES);
 			$headers['Digest'] = HTTPSig::generate_digest_header($ret);
