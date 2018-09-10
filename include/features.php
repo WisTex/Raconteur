@@ -119,16 +119,6 @@ function get_features($filtered = true, $level = (-1)) {
 			],
 
 			[
-				'cards',       
-				t('Cards'),          
-				t('Create personal planning cards'),
-				false,
-				get_config('feature_lock','cards'),
-				feature_level('cards',1),
-			],
-
-
-			[
 				'articles',       
 				t('Articles'),          
 				t('Create interactive articles'),
