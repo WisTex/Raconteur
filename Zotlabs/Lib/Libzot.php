@@ -1524,7 +1524,7 @@ class Libzot {
 
 					if((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {
-						Master::Summon([ 'Notifier', 'request', $channel['channel_id'], $sender, $arr['parent_mid'] ]);
+						self::fetch_conversation($channel['channel_id'],$arr['parent_mid']);
 					}
 					continue;
 				}
@@ -1721,6 +1721,69 @@ class Libzot {
 
 		return $result;
 	}
+
+	static public function fetch_conversation($channel,$mid) {
+
+		// Use Zotfinger to create a signed request
+
+		$a = Zotfinger::exec($mid,$channel);
+
+		if($a['data']['type'] !== 'OrderedCollection') {
+			return;
+		}
+
+		if(! intval($a['data']['totalItems'])) {
+			return;
+		}
+
+		$ret = [];
+
+		foreach($a['data']['orderedItems'] as $activity) {
+
+			$AS = new ActivityStreams($activity);
+			if(! $AS->is_valid()) {
+				logger('FOF Activity rejected: ' . print_r($activity,true));
+				continue;
+			}
+			$arr = Activity::decode_note($AS);
+
+			logger($AS->debug());
+
+			$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
+				dbesc($AS->actor['id'])
+			); 
+
+			if(! $r) {
+				logger('FOF Activity: no actor');
+				continue;
+			}
+
+			if($r) {
+				$arr['author_xchan'] = $r[0]['hubloc_hash'];
+			}
+			// @fixme (in individual delivery, change owner if needed)
+			$arr['owner_xchan'] = $a['signature']['signer'];
+
+			// @fixme - spoofable
+			if($AS->data['hubloc']) {
+				$arr['item_verified'] = true;
+			}
+			if($AS->data['signed_data']) {
+				IConfig::Set($arr,'activitystreams','signed_data',$AS->data['signed_data'],false);
+			}
+
+			logger('FOF Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
+			logger('FOF Activity recipient: ' . $channel['channel_hash'], LOGGER_DATA, LOG_DEBUG);
+
+			$result = self::process_delivery($arr['owner_xchan'],$arr, [ $channel ],false,false,true);
+			if ($result) {
+				$ret = array_merge($ret, $result);
+			}		
+		}
+
+		return $ret;
+	}
+
 
 	/**
 	 * @brief Remove community tag.

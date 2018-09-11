@@ -22,7 +22,7 @@ use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Web\HTTPSig;
-
+use Zotlabs\Lin\ThreadListener;
 
 require_once('include/crypto.php');
 require_once('include/attach.php');
@@ -43,6 +43,13 @@ class Item extends \Zotlabs\Web\Controller {
 
 			if(! $item_id)
 				http_status_exit(404, 'Not found');
+
+			$portable_id = EMPTY_STR;
+
+			$sigdata = HTTPSig::verify(EMPTY_STR);
+			if($sigdata['portable_id'] && $sigdata['header_valid']) {
+				$portable_id = $sigdata['portable_id'];
+			}
 
 			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 ";
 
@@ -76,7 +83,6 @@ class Item extends \Zotlabs\Web\Controller {
 			xchan_query($r,true);
 			$items = fetch_post_tags($r,true);
 
-
 			$chan = channelx_by_n($items[0]['uid']);
 
 			if(! $chan)
@@ -87,6 +93,9 @@ class Item extends \Zotlabs\Web\Controller {
 
 			if($conversation) {
 				$i = Activity::encode_item_collection($items,'conversation/' . $item_id,'OrderedCollection',false);
+				if($portable_id) {
+					ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
+				}
 			}
 			else {
 				$i = Activity::encode_item($items[0]);
