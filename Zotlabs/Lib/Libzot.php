@@ -1717,7 +1717,7 @@ class Libzot {
 
 		$a = Zotfinger::exec($mid,$channel);
 
-		logger('received conversation: ' . print_r($a,true));
+		logger('received conversation: ' . print_r($a,true), LOGGER_DATA);
 
 		if($a['data']['type'] !== 'OrderedCollection') {
 			return;

@@ -386,8 +386,10 @@ class Notifier {
 
 				if($thread_is_public && $cmd === 'hyper') {
 					$rcps = [];
-					$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
-						intval($target_item['uid'])
+					$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 and not abook_xchan in ( '%s', '%s' ) ",
+						intval($target_item['uid']),
+						dbesc($target_item['author_xchan']),
+						dbesc($target_item['owner_xchan'])
 					);
 					if($r) {
 						foreach($r as $rv) {
