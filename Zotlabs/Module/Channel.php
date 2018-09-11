@@ -71,6 +71,8 @@ class Channel extends Controller {
 
 	function get($update = 0, $load = false) {
 
+		$noscript_content = get_config('system', 'noscript_content', '1');
+
 		if($load)
 			$_SESSION['loadtime'] = datetime_convert();
 
@@ -272,7 +274,7 @@ class Channel extends Controller {
 			App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
 			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 
-			if((! $update) || ($load)) {
+			if($noscript_content || $load) {
 				if($mid) {
 					$r = q("SELECT parent AS item_id from item where mid like '%s' and uid = %d $item_normal
 						AND item_wall = 1 $sql_extra limit 1",
@@ -411,10 +413,17 @@ class Channel extends Controller {
 			$o .= conversation($items,$mode,$update,$page_mode);
 		}
 		else {
+
 			$o .= '<noscript>';
-			$o .= conversation($items,$mode,$update,'traditional');
-			$o .= alt_pager(count($items));
+			if($noscript_content) {
+				$o .= conversation($items,$mode,$update,'traditional');
+				$o .= alt_pager(count($items));
+			}
+			else {
+				$o .= '<div class="section-content-warning-wrapper">' . t('You must enable javascript for your browser to be able to view this content.') . '</div>';
+			}
 			$o .= '</noscript>';
+
 			$o .= conversation($items,$mode,$update,$page_mode);
 
 			if ($mid && $items[0]['title'])
