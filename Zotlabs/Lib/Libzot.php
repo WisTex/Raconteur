@@ -1468,20 +1468,9 @@ class Libzot {
 						$allowed = can_comment_on_post($d,$parent[0]);
 					}
 				}
-				if((! $allowed) && $perm === 'send_stream') {
-
-					// if this is a message going downstream, and we have a copy of the parent,
-					// we will accept comments even if it is somebody we don't know or have permissions for. 
-					// This is for friend-of-friend transfers
-
-					$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
-						dbesc($arr['parent_mid']),
-						intval($channel['channel_id'])
-					);
-					if ($parent) {
-						$allowed = true;
-						$friendofriend = true;
-					}
+				if($request) {
+					$allowed = true;
+					$friendofriend = true;
 				}
         
 				if (! $allowed) {
@@ -1524,7 +1513,7 @@ class Libzot {
 
 					if((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {
-						self::fetch_conversation($channel['channel_id'],$arr['parent_mid']);
+						self::fetch_conversation($channel,$arr['parent_mid']);
 					}
 					continue;
 				}
@@ -1728,6 +1717,8 @@ class Libzot {
 
 		$a = Zotfinger::exec($mid,$channel);
 
+		logger('received conversation: ' . print_r($a,true));
+
 		if($a['data']['type'] !== 'OrderedCollection') {
 			return;
 		}
@@ -1775,7 +1766,7 @@ class Libzot {
 			logger('FOF Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 			logger('FOF Activity recipient: ' . $channel['channel_hash'], LOGGER_DATA, LOG_DEBUG);
 
-			$result = self::process_delivery($arr['owner_xchan'],$arr, [ $channel ],false,false,true);
+			$result = self::process_delivery($arr['owner_xchan'],$arr, [ $channel['channel_hash'] ],false,false,true);
 			if ($result) {
 				$ret = array_merge($ret, $result);
 			}		

@@ -22,7 +22,7 @@ use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Web\HTTPSig;
-use Zotlabs\Lin\ThreadListener;
+use Zotlabs\Lib\ThreadListener;
 
 require_once('include/crypto.php');
 require_once('include/attach.php');
