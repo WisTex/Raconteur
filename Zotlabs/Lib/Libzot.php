@@ -969,44 +969,45 @@ class Libzot {
 			$x = json_decode($x,true);
 		}
 
-		if(! $x['success']) {
-
-			// handle remote validation issues
-
-			$b = q("update dreport set dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
-				dbesc(($x['message']) ? $x['message'] : 'unknown delivery error'),
-				dbesc(datetime_convert()),
-				dbesc($outq['outq_hash'])
-			);
-		}
-
 		if(! is_array($x)) {
 			btlogger('failed communication - no response');
 		}
 
-		if(is_array($x) && array_key_exists('delivery_report',$x) && is_array($x['delivery_report'])) { 
-			foreach($x['delivery_report'] as $xx) {
-				call_hooks('dreport_process',$xx);
-				if(is_array($xx) && array_key_exists('message_id',$xx) && DReport::is_storable($xx)) {
-					q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan ) values ( '%s', '%s', '%s','%s','%s','%s','%s' ) ",
-						dbesc($xx['message_id']),
-						dbesc($xx['location']),
-						dbesc($xx['recipient']),
-						dbesc($xx['name']),
-						dbesc($xx['status']),
-						dbesc(datetime_convert($xx['date'])),
-						dbesc($xx['sender'])
-					);
-				}
+		if($x) {
+			if(! $x['success']) {
+
+				// handle remote validation issues
+	
+				$b = q("update dreport set dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
+					dbesc(($x['message']) ? $x['message'] : 'unknown delivery error'),
+					dbesc(datetime_convert()),
+					dbesc($outq['outq_hash'])
+				);
 			}
 
-			// we have a more descriptive delivery report, so discard the per hub 'queue' report.
+			if(is_array($x) && array_key_exists('delivery_report',$x) && is_array($x['delivery_report'])) { 
+				foreach($x['delivery_report'] as $xx) {
+					call_hooks('dreport_process',$xx);
+					if(is_array($xx) && array_key_exists('message_id',$xx) && DReport::is_storable($xx)) {
+						q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan ) values ( '%s', '%s', '%s','%s','%s','%s','%s' ) ",
+							dbesc($xx['message_id']),
+							dbesc($xx['location']),
+							dbesc($xx['recipient']),
+							dbesc($xx['name']),
+							dbesc($xx['status']),
+							dbesc(datetime_convert($xx['date'])),
+							dbesc($xx['sender'])
+						);
+					}
+				}
 
-			q("delete from dreport where dreport_queue = '%s' ",
-				dbesc($outq['outq_hash'])
-			);
+				// we have a more descriptive delivery report, so discard the per hub 'queue' report.
+
+				q("delete from dreport where dreport_queue = '%s' ",
+					dbesc($outq['outq_hash'])
+				);
+			}
 		}
-
 		// update the timestamp for this site
 
 		q("update site set site_dead = 0, site_update = '%s' where site_url = '%s'",
@@ -1472,20 +1473,9 @@ class Libzot {
 						$allowed = can_comment_on_post($d,$parent[0]);
 					}
 				}
-				if((! $allowed) && $perm === 'send_stream') {
-
-					// if this is a message going downstream, and we have a copy of the parent,
-					// we will accept comments even if it is somebody we don't know or have permissions for. 
-					// This is for friend-of-friend transfers
-
-					$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
-						dbesc($arr['parent_mid']),
-						intval($channel['channel_id'])
-					);
-					if ($parent) {
-						$allowed = true;
-						$friendofriend = true;
-					}
+				if($request) {
+					$allowed = true;
+					$friendofriend = true;
 				}
         
 				if (! $allowed) {
@@ -1528,7 +1518,7 @@ class Libzot {
 
 					if((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {
-						self::fetch_conversation($channel['channel_id'],$arr['parent_mid']);
+						self::fetch_conversation($channel,$arr['parent_mid']);
 					}
 					continue;
 				}
@@ -1596,7 +1586,7 @@ class Libzot {
 				$arr['aid'] = $channel['channel_account_id'];
 				$arr['uid'] = $channel['channel_id'];
 	
-				$item_id = delete_imported_item($sender,$arr,$channel['channel_id'],$relay);
+				$item_id = self::delete_imported_item($sender,$arr,$channel['channel_id'],$relay);
 				$DR->update(($item_id) ? 'deleted' : 'delete_failed');
 				$result[] = $DR->get();
 
@@ -1732,6 +1722,8 @@ class Libzot {
 
 		$a = Zotfinger::exec($mid,$channel);
 
+		logger('received conversation: ' . print_r($a,true), LOGGER_DATA);
+
 		if($a['data']['type'] !== 'OrderedCollection') {
 			return;
 		}
@@ -1779,7 +1771,7 @@ class Libzot {
 			logger('FOF Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 			logger('FOF Activity recipient: ' . $channel['channel_hash'], LOGGER_DATA, LOG_DEBUG);
 
-			$result = self::process_delivery($arr['owner_xchan'],$arr, [ $channel ],false,false,true);
+			$result = self::process_delivery($arr['owner_xchan'],$arr, [ $channel['channel_hash'] ],false,false,true);
 			if ($result) {
 				$ret = array_merge($ret, $result);
 			}		

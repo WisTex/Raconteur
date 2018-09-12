@@ -828,6 +828,10 @@ function get_item_elements($x,$allow_code = false) {
 
 function import_author_xchan($x) {
 
+	if(! $x) {
+		return false;
+	}
+
 	$arr = [
 			'xchan' => $x,
 			'xchan_hash' => ''
@@ -836,7 +840,7 @@ function import_author_xchan($x) {
 	 * @hooks import_author_xchan
 	 *   Called when looking up an author of a post by xchan_hash to ensure they have an xchan record on our site.
 	 *   * \e array \b xchan
-	 *   * \e string \b xchan_hash - Thre returned value
+	 *   * \e string \b xchan_hash - The returned value
 	 */
 	call_hooks('import_author_xchan', $arr);
 	if($arr['xchan_hash'])
