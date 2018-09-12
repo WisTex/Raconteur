@@ -969,40 +969,41 @@ class Libzot {
 			$x = json_decode($x,true);
 		}
 
-		if(! $x['success']) {
+		if($x) {
+			if(! $x['success']) {
 
-			// handle remote validation issues
-
-			$b = q("update dreport set dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
-				dbesc(($x['message']) ? $x['message'] : 'unknown delivery error'),
-				dbesc(datetime_convert()),
-				dbesc($outq['outq_hash'])
-			);
-		}
-
-		if(array_key_exists('delivery_report',$x) && is_array($x['delivery_report'])) { 
-			foreach($x['delivery_report'] as $xx) {
-				call_hooks('dreport_process',$xx);
-				if(is_array($xx) && array_key_exists('message_id',$xx) && DReport::is_storable($xx)) {
-					q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan ) values ( '%s', '%s', '%s','%s','%s','%s','%s' ) ",
-						dbesc($xx['message_id']),
-						dbesc($xx['location']),
-						dbesc($xx['recipient']),
-						dbesc($xx['name']),
-						dbesc($xx['status']),
-						dbesc(datetime_convert($xx['date'])),
-						dbesc($xx['sender'])
-					);
-				}
+				// handle remote validation issues
+	
+				$b = q("update dreport set dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
+					dbesc(($x['message']) ? $x['message'] : 'unknown delivery error'),
+					dbesc(datetime_convert()),
+					dbesc($outq['outq_hash'])
+				);
 			}
 
-			// we have a more descriptive delivery report, so discard the per hub 'queue' report.
+			if(is_array($x) && array_key_exists('delivery_report',$x) && is_array($x['delivery_report'])) { 
+				foreach($x['delivery_report'] as $xx) {
+					call_hooks('dreport_process',$xx);
+					if(is_array($xx) && array_key_exists('message_id',$xx) && DReport::is_storable($xx)) {
+						q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan ) values ( '%s', '%s', '%s','%s','%s','%s','%s' ) ",
+							dbesc($xx['message_id']),
+							dbesc($xx['location']),
+							dbesc($xx['recipient']),
+							dbesc($xx['name']),
+							dbesc($xx['status']),
+							dbesc(datetime_convert($xx['date'])),
+							dbesc($xx['sender'])
+						);
+					}
+				}
 
-			q("delete from dreport where dreport_queue = '%s' ",
-				dbesc($outq['outq_hash'])
-			);
+				// we have a more descriptive delivery report, so discard the per hub 'queue' report.
+
+				q("delete from dreport where dreport_queue = '%s' ",
+					dbesc($outq['outq_hash'])
+				);
+			}
 		}
-
 		// update the timestamp for this site
 
 		q("update site set site_dead = 0, site_update = '%s' where site_url = '%s'",
@@ -1581,7 +1582,7 @@ class Libzot {
 				$arr['aid'] = $channel['channel_account_id'];
 				$arr['uid'] = $channel['channel_id'];
 	
-				$item_id = delete_imported_item($sender,$arr,$channel['channel_id'],$relay);
+				$item_id = self::delete_imported_item($sender,$arr,$channel['channel_id'],$relay);
 				$DR->update(($item_id) ? 'deleted' : 'delete_failed');
 				$result[] = $DR->get();
 
