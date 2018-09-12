@@ -281,6 +281,7 @@ class Notifier {
 				return;
 			}
 
+			$thread_is_public = false;
 
 			if($target_item['mid'] === $target_item['parent_mid']) {
 				$parent_item = $target_item;
@@ -302,6 +303,7 @@ class Notifier {
 		
 				$parent_item = $r[0];
 				$top_level_post = false;
+				$thread_is_public = 1 - intval($parent_item['item_private']) ;
 			}
 
 			// avoid looping of discover items 12/4/2014
@@ -332,7 +334,7 @@ class Notifier {
 			// flag on comments for an extended period. So we'll also call comment_local_origin() which looks at
 			// the hostname in the message_id and provides a second (fallback) opinion. 
 
-			$relay_to_owner = (((! $top_level_post) && (intval($target_item['item_origin'])) && comment_local_origin($target_item)) ? true : false);
+			$relay_to_owner = (((! $top_level_post) && (intval($target_item['item_origin'])) && comment_local_origin($target_item) && $cmd !== 'hyper') ? true : false);
 
 
 
@@ -358,6 +360,10 @@ class Notifier {
 				self::$private = true;
 				$upstream = true;
 				self::$packet_type = 'response';
+				if($relay_to_owner && $thread_is_public) {
+					Master::Summon([ 'Notifier' , 'hyper', $item_id ]);
+				}
+						
 			}
 			else {
 				if($cmd === 'relay') {
@@ -378,8 +384,25 @@ class Notifier {
 					}
 				}
 
-				self::$private = false;
-				self::$recipients = collect_recipients($parent_item,self::$private);
+				if($thread_is_public && $cmd === 'hyper') {
+					$rcps = [];
+					$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 and not abook_xchan in ( '%s', '%s' ) ",
+						intval($target_item['uid']),
+						dbesc($target_item['author_xchan']),
+						dbesc($target_item['owner_xchan'])
+					);
+					if($r) {
+						foreach($r as $rv) {
+							$rcps[] = $rv['abook_xchan'];
+						}
+					}
+					self::$private = false;
+					self::$recipients = $rcps;
+				}
+				else {
+					self::$private = false;
+					self::$recipients = collect_recipients($parent_item,self::$private);
+				}
 
 				// FIXME add any additional recipients such as mentions, etc.
 
