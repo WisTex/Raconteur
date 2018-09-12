@@ -2042,12 +2042,12 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	$ret['success'] = true;
 	$ret['item_id'] = $current_post;
 
-	if($linkid) {
-		$li = [ $ret['item'] ];
-		xchan_query($li);
-		$sync_item = fetch_post_tags($li);
-		Libsync::build_link_packet($arr['uid'],[ 'item' => [ encode_item($sync_item[0],true) ] ]);
-	}
+//	if($linkid) {
+//		$li = [ $ret['item'] ];
+//		xchan_query($li);
+//		$sync_item = fetch_post_tags($li);
+//		Libsync::build_link_packet($arr['uid'],[ 'item' => [ encode_item($sync_item[0],true) ] ]);
+//	}
 
 	return $ret;
 }
@@ -2364,12 +2364,12 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 	$ret['success'] = true;
 	$ret['item_id'] = $orig_post_id;
 
-	if($linkid) {
-		$li = [ $ret['item'] ];
-		xchan_query($li);
-		$sync_item = fetch_post_tags($li);
-		Libsync::build_link_packet($arr['uid'],[ 'item' => [ encode_item($sync_item[0],true) ] ]);
-	}
+//	if($linkid) {
+//		$li = [ $ret['item'] ];
+//		xchan_query($li);
+//		$sync_item = fetch_post_tags($li);
+//		Libsync::build_link_packet($arr['uid'],[ 'item' => [ encode_item($sync_item[0],true) ] ]);
+//	}
 
 	return $ret;
 }
