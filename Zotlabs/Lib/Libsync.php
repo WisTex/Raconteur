@@ -420,6 +420,7 @@ class Libsync {
 			}
 
 			if(array_key_exists('abook',$arr) && is_array($arr['abook']) && count($arr['abook'])) {
+
 				$total_friends = 0;
 				$total_feeds = 0;
 
@@ -437,7 +438,7 @@ class Libsync {
 
 				$disallowed = array('abook_id','abook_account','abook_channel','abook_rating','abook_rating_text','abook_not_here');
 
-				$fields = db_columns($abook);
+				$fields = db_columns('abook');
 
 				foreach($arr['abook'] as $abook) {
 
@@ -544,6 +545,7 @@ class Libsync {
 
 							$r = dbq("UPDATE abook set " . dbesc($k) . " = '" . dbesc($v)
 							. "' where abook_xchan = '" . dbesc($clean['abook_xchan']) . "' and abook_channel = " . intval($channel['channel_id']));
+
 						}
 					}
 
