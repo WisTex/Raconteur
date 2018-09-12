@@ -81,24 +81,6 @@ function get_features($filtered = true, $level = (-1)) {
 				get_config('feature_lock','profile_export'),
 				feature_level('profile_export',3),
 			],
-
-			[
-				'webpages',            
-				t('Web Pages'),              
-				t('Provide managed web pages on your channel'),
-				false,
-				get_config('feature_lock','webpages'),
-				feature_level('webpages',3),
-			],
-
-			[
-				'wiki',            
-				t('Wiki'),              
-				t('Provide a wiki for your channel'),
-				false,
-				get_config('feature_lock','wiki'),
-				feature_level('wiki',2),
-			],
 /*
 			[
 				'hide_rating',       
@@ -116,15 +98,6 @@ function get_features($filtered = true, $level = (-1)) {
 				false,
 				get_config('feature_lock','private_notes'),
 				feature_level('private_notes',1),
-			],
-
-			[
-				'articles',       
-				t('Articles'),          
-				t('Create interactive articles'),
-				false,
-				get_config('feature_lock','articles'),
-				feature_level('articles',1),
 			],
 
 			[
