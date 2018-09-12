@@ -1,6 +1,6 @@
-version: 1.2
+version: 1.3
 url: $baseurl/articles/$nick
 name: Articles
-requires: local_channel, articles
+requires: local_channel
 photo: icon:file-text-o
 categories: nav_featured_app, Productivity
