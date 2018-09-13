@@ -212,7 +212,6 @@ class Chat extends \Zotlabs\Web\Controller {
 	
 		require_once('include/conversation.php');
 	
-		//$o = profile_tabs($a,((local_channel() && local_channel() == \App::$profile['profile_uid']) ? true : false),\App::$profile['channel_address']);
 		$o = '';
 	
 		if(! feature_enabled(\App::$profile['profile_uid'],'ajaxchat')) {

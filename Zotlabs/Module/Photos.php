@@ -620,10 +620,7 @@ class Photos extends \Zotlabs\Web\Controller {
 		$o .= "<script> var profile_uid = " . \App::$profile['profile_uid'] 
 			. "; var netargs = '?f='; var profile_page = " . \App::$pager['page'] . "; </script>\r\n";
 	
-		// tabs
-	
 		$_is_owner = (local_channel() && (local_channel() == $owner_uid));
-		//$o .= profile_tabs($a,$_is_owner, \App::$data['channel']['channel_address']);	
 	
 		/**
 		 * Display upload form

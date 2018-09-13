@@ -159,7 +159,7 @@ class Webpages extends Controller {
 	
 
 		$is_owner = ($uid && $uid == $owner);
-		//$o = profile_tabs($a, $is_owner, App::$profile['channel_address']);
+
 		$o = '';
 	
 		$x = array(

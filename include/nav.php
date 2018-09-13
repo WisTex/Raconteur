@@ -490,7 +490,7 @@ function channel_apps($is_owner = false, $nickname = null) {
 	}
 
 	$arr = array('is_owner' => $is_owner, 'nickname' => $nickname, 'tab' => (($tab) ? $tab : false), 'tabs' => $tabs);
-	call_hooks('profile_tabs', $arr);
+
 	call_hooks('channel_apps', $arr);	
 
 	return replace_macros(get_markup_template('profile_tabs.tpl'), 

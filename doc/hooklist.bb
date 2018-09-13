@@ -535,9 +535,6 @@ Hooks allow plugins/addons to "hook into" the code at many points and alter the 
 [zrl=[baseurl]/help/hook/profile_sidebar_enter]profile_sidebar_enter[/zrl]
 	Called before generating the 'channel sidebar' or mini-profile
 
-[zrl=[baseurl]/help/hook/profile_tabs]profile_tabs[/zrl]
-	Called when generating the tabs for channel related pages (channel,profile,files,etc.)
-
 [zrl=[baseurl]/help/hook/queue_deliver]queue_deliver[/zrl]
 	Called when delivering a queued message
  
