@@ -31,6 +31,12 @@ Hooks allow plugins/addons to "hook into" the code at many points and alter the 
 [zrl=[baseurl]/help/hook/account_settings_post]account_settings_post[/zrl]
 	Called when posting from the account settings form
 
+[zrl=[baseurl]/help/hook/activity_filter]activity_filter[/zrl]
+	Called when generating the list of filters for the network page
+
+[zrl=[baseurl]/help/hook/activity_order]activity_order[/zrl]
+	Called when generating the list of order options for the network page
+
 [zrl=[baseurl]/help/hook/activity_received]activity_received[/zrl]
 	Called when an activity (post, comment, like, etc.) has been received from a zot source
 
@@ -393,9 +399,6 @@ Hooks allow plugins/addons to "hook into" the code at many points and alter the 
 
 [zrl=[baseurl]/help/hook/network_ping]network_ping[/zrl]
 	Called during a ping request
-
-[zrl=[baseurl]/help/hook/network_tabs]network_tabs[/zrl]
-	Called when generating the list of tabs for the network page
 
 [zrl=[baseurl]/help/hook/network_to_name]network_to_name[/zrl]
 	Deprecated
