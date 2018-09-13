@@ -50,8 +50,8 @@ class Apps extends \Zotlabs\Web\Controller {
 			'$title' => (($available) ? t('Available Apps') : t('Installed Apps')),
 			'$apps' => $apps,
 			'$authed' => ((local_channel()) ? true : false),
-			'$manage' => (($available) ? '' : t('Manage apps')),
-			'$create' => (($mode == 'edit') ? t('Create new app') : '')
+			'$manage' => (($available) ? '' : t('Manage Apps')),
+			'$create' => (($mode == 'edit') ? t('Create Custom App') : '')
 		));
 	
 	}

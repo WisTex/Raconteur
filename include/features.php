@@ -119,16 +119,6 @@ function get_features($filtered = true, $level = (-1)) {
 			],
 
 			[
-				'ajaxchat',       
-				t('Access Controlled Chatrooms'),          
-				t('Provide chatrooms and chat services with access control.'),
-				true,
-				get_config('feature_lock','ajaxchat'),
-				feature_level('ajaxchat',1),
-			],
-
-
-			[
 				'smart_birthdays',       
 				t('Smart Birthdays'),          
 				t('Make birthday events timezone aware in case your friends are scattered across the planet.'),

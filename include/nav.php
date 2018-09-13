@@ -417,7 +417,7 @@ function channel_apps($is_owner = false, $nickname = null) {
 	}
 
 
-	if ($p['chat'] && feature_enabled($uid,'ajaxchat')) {
+	if ($p['chat'] && Apps::system_app_installed($uid,'Chatrooms')) {
 		$has_chats = Chatroom::list_count($uid);
 		if ($has_chats) {
 			$tabs[] = [

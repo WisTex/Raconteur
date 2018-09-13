@@ -303,7 +303,7 @@ class Apps {
 			'Admin' => t('Site Admin'),
 			'Report Bug' => t('Report Bug'),
 			'View Bookmarks' => t('View Bookmarks'),
-			'My Chatrooms' => t('My Chatrooms'),
+			'Chatrooms' => t('Chatrooms'),
 			'Connections' => t('Connections'),
 			'Remote Diagnostics' => t('Remote Diagnostics'),
 			'Suggest Channels' => t('Suggest Channels'),
