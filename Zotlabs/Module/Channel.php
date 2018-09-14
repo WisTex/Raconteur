@@ -35,8 +35,9 @@ class Channel extends Controller {
 		if(! $which) {
 			if(local_channel()) {
 				$channel = App::get_channel();
-				if($channel && $channel['channel_address'])
-				$which = $channel['channel_address'];
+				if($channel && $channel['channel_address']) {
+					$which = $channel['channel_address'];
+				}
 			}
 		}
 		if(! $which) {
