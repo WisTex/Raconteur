@@ -122,7 +122,7 @@ function poco_load($xchan = '', $url = null) {
 					$profile_url = $url['value'];
 					continue;
 				}
-				if($url['type'] == 'zot') {
+				if($url['type'] == 'zot6') {
 					$network = $url['type'];
 					$address = str_replace('acct:' , '', $url['value']);
 					continue;
@@ -151,7 +151,7 @@ function poco_load($xchan = '', $url = null) {
 
 		if(($x !== false) && (! count($x))) {
 			if($address) {
-				if($network === 'zot') {
+				if($network === 'zot6') {
 					$j = Zotlabs\Lib\Zotfinger::exec($profile_url);
 					if(is_array($j) && array_path_exists('signature/signer',$j) && $j['signature']['signer'] === $profile_url && intval($j['signature']['header_valid'])) {
 						import_xchan($j);

@@ -483,7 +483,7 @@ class Apps {
 		}
 		elseif(remote_channel()) {
 			$observer = \App::get_observer();
-			if($observer && $observer['xchan_network'] === 'zot') {
+			if($observer && $observer['xchan_network'] === 'zot6') {
 				// some folks might have xchan_url redirected offsite, use the connurl
 				$x = parse_url($observer['xchan_connurl']);
 				if($x) {
