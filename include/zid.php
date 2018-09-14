@@ -12,7 +12,7 @@ function is_matrix_url($url) {
 		if(array_key_exists($m['host'],$remembered))
 			return $remembered[$m['host']];
 
-		$r = q("select hubloc_url from hubloc where hubloc_host = '%s' and hubloc_network = 'zot' limit 1",
+		$r = q("select hubloc_url from hubloc where hubloc_host = '%s' and hubloc_network = 'zot6' limit 1",
 			dbesc($m['host'])
 		);
 		if($r) {
