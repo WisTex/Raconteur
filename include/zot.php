@@ -2341,7 +2341,7 @@ function process_mail_delivery($sender, $arr, $deliveries) {
 					intval($r[0]['id']),
 					intval($channel['channel_id'])
 				);
-
+				
 				// If it was a first message in thread
                 $z = q("SELECT * FROM mail WHERE mid = '%s' AND channel_id = %d",
                     dbesc($arr['mid']),
