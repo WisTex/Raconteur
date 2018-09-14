@@ -1745,14 +1745,32 @@ class Libzot {
 
 			logger($AS->debug());
 
+
 			$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
 				dbesc($AS->actor['id'])
 			); 
 
 			if(! $r) {
-				logger('FOF Activity: no actor');
-				continue;
+				$y = import_author_xchan([ 'url' => $AS->actor['id'] ]);
+				if($y) {
+					$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
+						dbesc($AS->actor['id'])
+					);
+				} 
+				if(! $r) {
+					logger('FOF Activity: no actor');
+					continue;
+				}
 			}
+
+			if($AS->obj['actor'] && $AS->obj['actor']['id'] && $AS->obj['actor']['id'] !== $AS->actor['id']) {
+				$y = import_author_xchan([ 'url' => $AS->obj['actor']['id'] ]);
+				if(! $y) {
+					logger('FOF Activity: no object actor');
+					continue;
+				}
+			}
+
 
 			if($r) {
 				$arr['author_xchan'] = $r[0]['hubloc_hash'];
@@ -2435,6 +2453,10 @@ class Libzot {
 		// Check that we have both a hubloc and xchan record - as occasionally storage calls will fail and
 		// we may only end up with one; which results in posts with no author name or photo and are a bit
 		// of a hassle to repair. If either or both are missing, do a full discovery probe.
+
+		if(! array_key_exists('id',$x)) {
+			return import_author_activitypub($x);
+		}
 
 		$hash = self::make_xchan_hash($x['id'],$x['key']);
 
