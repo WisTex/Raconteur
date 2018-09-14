@@ -178,7 +178,7 @@ function localize_item(&$item){
 
 		}
 		else {
-			logger('localize_item like failed: link ' . $author_link . ' name ' . $author_name . ' url ' . $item_url);
+//			logger('localize_item like failed: link ' . $author_link . ' name ' . $author_name . ' url ' . $item_url);
 		}
 
 	}
