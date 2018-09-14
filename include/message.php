@@ -511,14 +511,14 @@ function private_messages_drop($channel_id, $messageitem_id, $drop_conversation 
 		);
 		if (! $z) {
 		    // Get new first message...
-		    $r = q("SELECT mid FROM mail WHERE conv_guid = '%s' AND channel_id = %d ORDER BY id ASC LIMIT 1",
+		    $r = q("SELECT mid, conv_guid FROM mail WHERE conv_guid = '%s' AND channel_id = %d ORDER BY id ASC LIMIT 1",
 			    dbesc($x[0]['conv_guid']),
 			    intval($channel_id)
 		    );
 		    // ...and refer whole thread to it
 		    q("UPDATE mail SET parent_mid = '%s', mail_isreply = abs(mail_isreply - 1) WHERE conv_guid = '%s' AND channel_id = %d",
 		        dbesc($r[0]['mid']),
-		        dbesc($x[0]['conv_guid']),
+		        dbesc($r[0]['conv_guid']),
 		        intval($channel_id)
 		    );
 		}
