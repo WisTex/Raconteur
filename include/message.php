@@ -517,9 +517,9 @@ function private_messages_drop($channel_id, $messageitem_id, $drop_conversation 
 		    );
 		    // ...and refer whole thread to it
 		    q("UPDATE mail SET parent_mid = '%s', mail_isreply = abs(mail_isreply - 1) WHERE conv_guid = '%s' AND channel_id = %d",
-	            dbesc($r[0]['mid']),
-			    dbesc($x[0]['conv_guid']),
-			    intval($channel_id)
+		        dbesc($r[0]['mid']),
+		        dbesc($x[0]['conv_guid']),
+		        intval($channel_id)
 		    );
 		}
 
