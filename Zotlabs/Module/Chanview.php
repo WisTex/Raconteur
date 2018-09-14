@@ -108,7 +108,7 @@ class Chanview extends \Zotlabs\Web\Controller {
 	
 		if (\App::$poi) {
 			$url = \App::$poi['xchan_url'];
-			if(\App::$poi['xchan_network'] === 'zot') {
+			if(\App::$poi['xchan_network'] === 'zot6') {
 				$is_zot = true;
 			}			
 			if(local_channel()) {
