@@ -115,7 +115,7 @@ web server platforms.
     software much easier to update. The Linux command to clone the repository 
     into a directory "mywebsite" would be
 
-        git clone https://framagit.org/macgirvin/osada mywebsite
+        git clone https://framagit.org/macgirvin/osada.git mywebsite
 
     - and then you can pick up the latest changes at any time with
 
@@ -147,7 +147,7 @@ web server platforms.
          giving them different nicknames.
 
 
-            util/add_addon_repo https://framagit.org/macgirvin/osada-addons zaddons
+            util/add_addon_repo https://framagit.org/macgirvin/osada-addons.git zaddons
 
 
     - For keeping the addon tree updated, you should be on your top level website 
