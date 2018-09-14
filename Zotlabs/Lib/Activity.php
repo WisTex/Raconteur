@@ -1429,6 +1429,8 @@ class Activity {
 		$s['owner_xchan']  = $act->actor['id'];
 		$s['author_xchan'] = $act->actor['id'];
 
+		self::actor_store($act->actor['id'],$act->actor);
+
 		$s['mid']        = $act->obj['id'];
 		$s['parent_mid'] = $act->parent_id;
 
