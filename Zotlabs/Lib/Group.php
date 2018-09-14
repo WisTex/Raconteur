@@ -280,16 +280,12 @@ class Group {
 
 		$o = '';
 
-		if(! (local_channel() && feature_enabled(local_channel(),'groups'))) {
-			return '';
-		}
-
-		$groups = array();
+		$groups = [];
 
 		$r = q("SELECT * FROM groups WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
 			intval($_SESSION['uid'])
 		);
-		$member_of = array();
+		$member_of = [];
 		if($cid) {
 			$member_of = self::containing(local_channel(),$cid);
 		} 
