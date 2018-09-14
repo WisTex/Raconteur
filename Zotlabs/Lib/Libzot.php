@@ -1088,13 +1088,27 @@ class Libzot {
 			return;
 		}
 
-		$message_request = ((array_key_exists('message_id',$env)) ? true : false);
-		if($message_request)
-			logger('processing message request');
+		$message_request = false;
+
 
 		$has_data = array_key_exists('data',$env) && $env['data'];
 		$data = (($has_data) ? $env['data'] : false);
-		
+
+		$AS = null;		
+
+		if($env['encoding'] === 'activitystreams') {
+
+				$AS = new ActivityStreams($data);
+				if(! $AS->is_valid()) {
+					logger('Activity rejected: ' . print_r($data,true));
+					return;
+				}
+				$arr = Activity::decode_note($AS);
+
+				logger($AS->debug());
+		}
+
+
 		$deliveries = null;
 
 		if(array_key_exists('recipients',$env) && count($env['recipients'])) {
@@ -1136,7 +1150,7 @@ class Libzot {
 			// and who are allowed to see them based on the sender's permissions
 			// @fixme;
 
-			$deliveries = self::public_recips($env);
+			$deliveries = self::public_recips($env,$AS);
 
 
 		}
@@ -1153,48 +1167,30 @@ class Libzot {
 
 			if(in_array($env['type'],['activity','response'])) {
 
-				if($env['encoding'] === 'zot') {
-					$arr = get_item_elements($data);
-	
-					$v = validate_item_elements($data,$arr);
-					
-					if(! $v['success']) {
-						logger('Activity rejected: ' . $v['message'] . ' ' . print_r($data,true));
-						return;
-					}
+				$arr = Activity::decode_note($AS);
+
+				//logger($AS->debug());
+
+				$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
+					dbesc($AS->actor['id'])
+				); 
+
+				if($r) {
+					$arr['author_xchan'] = $r[0]['hubloc_hash'];
 				}
-				elseif($env['encoding'] === 'activitystreams') {
-
-					$AS = new ActivityStreams($data);
-					if(! $AS->is_valid()) {
-						logger('Activity rejected: ' . print_r($data,true));
-						return;
-					}
-					$arr = Activity::decode_note($AS);
-
-					logger($AS->debug());
-
-					$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
-						dbesc($AS->actor['id'])
-					); 
-
-					if($r) {
-						$arr['author_xchan'] = $r[0]['hubloc_hash'];
-					}
-					// @fixme (in individual delivery, change owner if needed)
-					$arr['owner_xchan'] = $env['sender'];						
-					if($private) {
-						$arr['item_private'] = true;
-					}
-					// @fixme - spoofable
-					if($AS->data['hubloc']) {
-						$arr['item_verified'] = true;
-					}
-					if($AS->data['signed_data']) {
-						IConfig::Set($arr,'activitystreams','signed_data',$AS->data['signed_data'],false);
-					}
-
+				// @fixme (in individual delivery, change owner if needed)
+				$arr['owner_xchan'] = $env['sender'];						
+				if($private) {
+					$arr['item_private'] = true;
 				}
+				// @fixme - spoofable
+				if($AS->data['hubloc']) {
+					$arr['item_verified'] = true;
+				}
+				if($AS->data['signed_data']) {
+					IConfig::Set($arr,'activitystreams','signed_data',$AS->data['signed_data'],false);
+				}
+
 
 				logger('Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 				logger('Activity recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
@@ -1221,30 +1217,30 @@ class Libzot {
 	}
 
 
-	static function is_top_level($env) {
+	static function is_top_level($env,$act) {
 		if($env['encoding'] === 'zot' && array_key_exists('flags',$env) && in_array('thread_parent', $env['flags'])) {
 			return true;
 		}
-		if($env['encoding'] === 'activitystreams') {
-			if((array_key_exists('inReplyTo',$env['data']) && $env['data']['inReplyTo']) || (array_path_exists('object/inReplyTo',$env['data']) && $env['data']['object']['inReplyTo'])) {
+		if($act) {
+			if(in_array($act->type, ['Like','Dislike'])) {
 				return false;
 			}
-			if(in_array($env['data']['type'], ['Like','Dislike'])) {
-				return false;
+			$x = self::find_parent($env,$act);
+			if($x === $act->id || $x === $act->obj['id']) {
+				return true;
 			}
-			return true;
 		}
 		return false;
 	}
 
 
-	static function find_parent($env) {
-		if($env['encoding'] === 'activitystreams') {
-			if((array_path_exists('object/inReplyTo',$env['data']) && $env['data']['object']['inReplyTo'])) {
-				return $env['data']['object']['inReplyTo'];
+	static function find_parent($env,$act) {
+		if($act) {
+			if(in_array($act->type, ['Like','Dislike'])) {
+				return $act->obj['id'];
 			}
-			if(in_array($env['data']['type'], ['Like','Dislike'])) {
-				return $env['data']['object']['id'];
+			if($act->parent_id) {
+				return $act->parent_id;
 			}
 		}
 		return false;
@@ -1267,7 +1263,7 @@ class Libzot {
 	 * @return NULL|array
 	 */
 
-	static function public_recips($msg) {
+	static function public_recips($msg, $act) {
 
 		require_once('include/channel.php');
 
@@ -1281,7 +1277,7 @@ class Libzot {
 
 			$perm = 'send_stream';
 
-			if(self::is_top_level($msg)) {
+			if(self::is_top_level($msg,$act)) {
 				$check_mentions = true;
 			}
 		}
@@ -1313,9 +1309,9 @@ class Libzot {
 
 		if($check_mentions) {
 			// It's a top level post. Look at the tags. See if any of them are mentions and are on this hub.
-			if(array_path_exists('data/object/tag',$msg)) {
-				if(is_array($msg['data']['object']['tag']) && $msg['data']['object']['tag']) {
-					foreach($msg['data']['object']['tag'] as $tag) {
+			if($act && $act->obj) {
+				if(is_array($act->obj['tag']) && $act->obj['tag']) {
+					foreach($act->obj['tag'] as $tag) {
 						if($tag['type'] === 'Mention' && (strpos($tag['href'],z_root()) !== false)) {
 							$address = basename($tag['href']);
 							if($address) {
@@ -1337,7 +1333,7 @@ class Libzot {
 			// everybody that stored a copy of the parent. This way we know we're covered. We'll check the
 			// comment permissions when we deliver them.
 
-			$thread_parent = self::find_parent($msg);
+			$thread_parent = self::find_parent($msg,$act);
 
 			if($thread_parent) {
 				$z = q("select channel_hash as hash from channel left join item on channel.channel_id = item.uid where ( item.thr_parent = '%s' OR item.parent_mid = '%s' ) ",
@@ -1766,7 +1762,6 @@ class Libzot {
 					continue;
 				}
 			}
-
 
 			if($r) {
 				$arr['author_xchan'] = $r[0]['hubloc_hash'];

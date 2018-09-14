@@ -120,8 +120,8 @@ class Permissions {
 	 * @return array
 	 */
 	static public function FilledPerms($arr) {
-		if(is_null($arr)) {
-			btlogger('FilledPerms: null');
+		if(is_null($arr) || (! is_array($arr))) {
+			btlogger('FilledPerms: ' . print_r($arr,true));
 			$arr = [];
 		}
 
