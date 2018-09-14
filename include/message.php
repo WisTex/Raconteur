@@ -503,6 +503,26 @@ function private_messages_drop($channel_id, $messageitem_id, $drop_conversation 
 			intval($messageitem_id),
 			intval($channel_id)
 		);
+		
+		// If it was a first message in thread
+		$z = q("SELECT * FROM mail WHERE mid = '%s' AND channel_id = %d",
+			dbesc($x[0]['parent_mid']),
+			intval($channel_id)
+		);
+		if (! $z) {
+		    // Get new first message...
+		    $r = q("SELECT * FROM mail WHERE conv_guid = '%s' AND channel_id = %d ORDER BY id ASC LIMIT 1",
+			    dbesc($x[0]['conv_guid']),
+			    intval($channel_id)
+		    );
+		    // ...and refer whole thread to it
+		    q("UPDATE mail SET parent_mid = '%s', mail_isreply = abs(mail_isreply - 1) WHERE conv_guid = '%s' AND channel_id = %d",
+	            dbesc($r[0]['mid']),
+			    dbesc($x[0]['conv_guid']),
+			    intval($channel_id)
+		    );
+		}
+
 		build_sync_packet($channel_id,array('mail' => array(encode_mail($x,true))));
 		return true;
 	}
