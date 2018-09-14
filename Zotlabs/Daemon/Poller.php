@@ -110,7 +110,7 @@ class Poller {
 				}
 
 
-				if($contact['xchan_network'] !== 'zot')
+				if($contact['xchan_network'] !== 'zot6')
 					continue;
 
 				if($c == $t) {
