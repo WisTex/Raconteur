@@ -2341,6 +2341,26 @@ function process_mail_delivery($sender, $arr, $deliveries) {
 					intval($r[0]['id']),
 					intval($channel['channel_id'])
 				);
+
+				// If it was a first message in thread
+                $z = q("SELECT * FROM mail WHERE mid = '%s' AND channel_id = %d",
+                    dbesc($arr['mid']),
+                    intval($channel['channel_id'])
+                );
+                if (! $z) {
+                    // Get new first message...
+                    $r = q("SELECT mid, conv_guid FROM mail WHERE parent_mid = '%s' AND channel_id = %d ORDER BY id ASC LIMIT 1",
+                        dbesc($arr['mid']),
+                        intval($channel['channel_id'])
+                    );
+                    // ...and refer whole thread to it
+                    q("UPDATE mail SET parent_mid = '%s', mail_isreply = abs(mail_isreply - 1) WHERE conv_guid = '%s' AND channel_id = %d",
+                        dbesc($r[0]['mid']),
+                        dbesc($r[0]['conv_guid']),
+                        intval($channel['channel_id'])
+                    );
+                }
+
 				$DR->update('mail recalled');
 				$result[] = $DR->get();
 				logger('mail_recalled');
