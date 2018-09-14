@@ -511,7 +511,7 @@ function private_messages_drop($channel_id, $messageitem_id, $drop_conversation 
 		);
 		if (! $z) {
 		    // Get new first message...
-		    $r = q("SELECT * FROM mail WHERE conv_guid = '%s' AND channel_id = %d ORDER BY id ASC LIMIT 1",
+		    $r = q("SELECT mid FROM mail WHERE conv_guid = '%s' AND channel_id = %d ORDER BY id ASC LIMIT 1",
 			    dbesc($x[0]['conv_guid']),
 			    intval($channel_id)
 		    );
