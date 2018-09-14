@@ -591,7 +591,7 @@ function get_atom_elements($feed, $item) {
 		$res['title'] = '';
 	}
 	elseif($res['plink'] && $res['title']) {
-		$res['body'] = '#^[url=' . $res['plink'] . ']' . $res['title'] . '[/url]' . "\n\n" . $res['body'];
+		$res['body'] = '[url=' . $res['plink'] . ']' . $res['title'] . '[/url]' . "\n\n" . $res['body'];
 		$terms = array();
 		$terms[] = array(
 			'otype' => TERM_OBJ_POST,
@@ -601,7 +601,7 @@ function get_atom_elements($feed, $item) {
 		);
 	}
 	elseif($res['plink']) {
-		$res['body'] = '#^[url]' . $res['plink'] . '[/url]' . "\n\n" . $res['body'];
+		$res['body'] = '[url]' . $res['plink'] . '[/url]' . "\n\n" . $res['body'];
 		$terms = array();
 		$terms[] = array(
 			'otype' => TERM_OBJ_POST,
