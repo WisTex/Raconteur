@@ -1006,7 +1006,7 @@ function email_header_encode($in_str, $charset = 'UTF-8') {
  *
  * @return boolean
  */
-function discover_by_url($url, $arr = null) {
+function discover_feed($url, $arr = null) {
 
 	$x = scrape_feed($url);
 	if(! $x) {
@@ -1209,23 +1209,7 @@ function discover_by_webbie($webbie, $protocol = '') {
 
 					$x = Libzot::import_xchan($record['data']);
 					if($x['success']) {
-						return true;
-					}
-				}
-				
-				if($link['rel'] === PROTOCOL_ZOT && ((! $protocol) || (strtolower($protocol) === 'zot'))) {
-					logger('zot found for ' . $webbie, LOGGER_DEBUG);
-					if(array_key_exists('zot',$x) && $x['zot']['success']) {
-						$i = import_xchan($x['zot']);
-						return true;
-					}
-					else {
-						$z = z_fetch_url($link['href']);
-						if($z['success']) {
-							$j = json_decode($z['body'],true);
-							$i = import_xchan($j);
-							return true;
-						}
+						return $x['hash'];
 					}
 				}
 				if($link['rel'] === 'self' && ($link['type'] === 'application/activity+json' || strpos($link['type'],'ld+json') !== false) && ((! $protocol) || (strtolower($protocol) === 'activitypub'))) {
