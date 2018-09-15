@@ -3,13 +3,14 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Web\Controller;
 
 require_once('include/event.php');
 
 require_once('include/auth.php');
 require_once('include/security.php');
 
-class Cdav extends \Zotlabs\Web\Controller {
+class Cdav extends Controller {
 
 	function init() {
 
