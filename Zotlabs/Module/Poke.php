@@ -1,6 +1,10 @@
 <?php
 namespace Zotlabs\Module; /** @file */
 
+use App;
+use Zotlabs\Lib\Apps;
+use Zotlabs\Web\Controller;
+
 /**
  *
  * Poke, prod, finger, or otherwise do unspeakable things to somebody - who must be a connection in your address book
@@ -18,15 +22,19 @@ namespace Zotlabs\Module; /** @file */
 require_once('include/items.php');
 
 
-class Poke extends \Zotlabs\Web\Controller {
+class Poke extends Controller {
 
 	function init() {
 	
 		if(! local_channel())
 			return;
+
+		if(! Apps::system_app_installed(local_channel(), 'Poke')) {
+			return;
+		}
 	
 		$uid = local_channel();
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 		$verb = notags(trim($_REQUEST['verb']));
 		
@@ -148,6 +156,15 @@ class Poke extends \Zotlabs\Web\Controller {
 		if(! local_channel()) {
 			notice( t('Permission denied.') . EOL);
 			return;
+		}
+
+		if(! Apps::system_app_installed(local_channel(), 'Poke')) {
+			//Do not display any associated widgets at this point
+			App::$pdl = '';
+
+			$o = '<b>Poke App (Not Installed):</b><br>';
+			$o .= t('Poke somebody in your addressbook');
+			return $o;
 		}
 
 		nav_set_selected('Poke');
