@@ -21,6 +21,10 @@ class Invite extends Controller {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
+
+		if(! Apps::system_app_installed(local_channel(), 'Invite')) {
+			return;
+		}
 	
 		check_form_security_token_redirectOnErr('/', 'send_invite');
 	
