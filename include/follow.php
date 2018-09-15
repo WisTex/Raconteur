@@ -73,14 +73,16 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 
 		$wf = discover_by_webbie($url,$protocol);
 
-		$feeds = get_config('system','feed_contacts');
+		if(! $wf) {
+			$feeds = get_config('system','feed_contacts');
 
-		if(($feeds) && ($protocol === '' || $protocol === 'feed' || $protocol === 'rss')) {
-			$d = discover_feed($url);
-		}
-		else {
-			$result['message'] = t('Remote channel or protocol unavailable.');
-			return $result;
+			if(($feeds) && ($protocol === '' || $protocol === 'feed' || $protocol === 'rss')) {
+				$d = discover_feed($url);
+			}
+			else {
+				$result['message'] = t('Remote channel or protocol unavailable.');
+				return $result;
+			}
 		}
 	}
 
