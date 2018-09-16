@@ -22,7 +22,6 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 	$is_zot   = false;
 	$protocol = '';
 
-	
 	if(substr($url,0,1) === '[') {
 		$x = strpos($url,']');
 		if($x) {
@@ -30,8 +29,6 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 			$url = substr($url,$x+1);
 		}
 	}
-
-	$is_http  = ((strpos($url,'://') !== false) ? true : false);
 
 	$url = rtrim($url,'/');
 
@@ -44,7 +41,6 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 		$result['message'] = t('Channel location missing.');
 		return $result;
 	}
-
 
 	// check service class limits
 
@@ -59,108 +55,51 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 		return $result;
 	}
 
-
-	$arr = array('url' => $url, 'protocol' => $protocol, 'channel' => array());
-
-	call_hooks('follow_init', $arr);
-
-	if($arr['channel']['success']) 
-		$ret = $arr['channel'];
-	else {
-		$href = \Zotlabs\Lib\Webfinger::zot_url(punify($url));
-		if($href) {
-			$zf = \Zotlabs\Lib\Zotfinger::exec($href,$channel);
-		}
-		if(is_array($zf) && array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href 
-			&& intval($zf['signature']['header_valid']) && array_path_exists('data/permissions',$zf)) {
-			$x = Libzot::import_xchan($zf['data']);
-			$j = $zf['data'];
-			$is_zot = true;
-		}
-	}
-
-
-	$p = \Zotlabs\Access\Permissions::connect_perms($uid);
-	$my_perms = \Zotlabs\Access\Permissions::serialise($p['perms']);
-
-	if($x) {
-
-		// Premium channel, set confirm before callback to avoid recursion
-
-//		if(array_key_exists('connect_url',$j) && (! $confirm)) {
-//			if($interactive) {
-//				goaway(zid($j['connect_url']));
-//			}
-//			else {
-//				$result['message'] = t('Premium channel - please visit:') . ' ' . zid($j['connect_url']);
-//				logger('mod_follow: ' . $result['message']);
-//				return $result;
-//			}
-//		}
-				
-
-		if(array_key_exists('deleted',$j) && intval($j['deleted'])) {
-			$result['message'] = t('Channel was deleted and no longer exists.');
-			return $result;
-		}
-
-		if(! $x['success']) 
-			return $x;
-
-		$xchan_hash = $x['hash'];
-
-		$permissions = $j['permissions'];
-
-		set_abconfig($channel['channel_uid'],$xchan_hash,'system','their_perms',$j['permissions']);
-
-	}
-	else {
-
-		$xchan_hash = '';
-		$sql_options = (($protocol) ? " and xchan_network = '" . dbesc($protocol) . "' " : '');
+	$xchan_hash = '';
+	$sql_options = (($protocol) ? " and xchan_network = '" . dbesc($protocol) . "' " : '');
 		
+	$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' $sql_options limit 1",
+		dbesc($url),
+		dbesc($url),
+		dbesc($url)
+	);
 
-		$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' $sql_options limit 1",
+	$singleton = false;
+	$d = false;
+
+	if(! $r) {
+
+		// try RSS discovery
+
+		$wf = discover_by_webbie($url,$protocol);
+
+		if(! $wf) {
+			$feeds = get_config('system','feed_contacts');
+
+			if(($feeds) && ($protocol === '' || $protocol === 'feed' || $protocol === 'rss')) {
+				$d = discover_feed($url);
+			}
+			else {
+				$result['message'] = t('Remote channel or protocol unavailable.');
+				return $result;
+			}
+		}
+	}
+
+	if($wf || $d) {
+		$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' limit 1",
+			dbesc(($wf) ? $wf : $url),
 			dbesc($url),
 			dbesc($url)
 		);
+	}
 
-		if(! $r) {
+	// if discovery was a success we should have an xchan record in $r
 
-			// attempt network auto-discovery
-
-			$wf = discover_by_webbie($url,$protocol);
-
-			if((! $wf) && ($is_http)) {
-
-				// try RSS discovery
-
-				$feeds = get_config('system','feed_contacts');
-
-				if(($feeds) && ($protocol === '' || $protocol === 'feed' || $protocol === 'rss')) {
-					$d = discover_by_url($url);
-				}
-				else {
-					$result['message'] = t('Remote channel or protocol unavailable.');
-					return $result;
-				}
-			}
-
-			if($wf || $d) {
-				$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' limit 1",
-					dbesc(($wf) ? $wf : $url),
-					dbesc($url)
-				);
-			}
-		}
-
-		// if discovery was a success we should have an xchan record in $r
-
-		if($r) {
-			$xchan = $r[0];
-			$xchan_hash = $r[0]['xchan_hash'];
-			$their_perms = EMPTY_STR;
-		}
+	if($r) {
+		$xchan = $r[0];
+		$xchan_hash = $r[0]['xchan_hash'];
+		$their_perms = EMPTY_STR;
 	}
 
 	if(! $xchan_hash) {
@@ -168,19 +107,6 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 		logger('follow: ' . $result['message']);
 		return $result;
 	}
-
-	$allowed = (($is_zot || $r[0]['xchan_network'] === 'rss') ? 1 : 0);
-
-	$x = array('channel_id' => $uid, 'follow_address' => $url, 'xchan' => $r[0], 'allowed' => $allowed, 'singleton' => 0);
-
-	call_hooks('follow_allow',$x);
-
-	if(! $x['allowed']) {
-		$result['message'] = t('Protocol disabled.');
-		return $result;
-	}
-
-	$singleton = intval($x['singleton']);
 
 	$aid = $channel['channel_account_id'];
 	$hash = $channel['channel_hash'];
@@ -216,6 +142,9 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 		set_abconfig($uid,$xchan_hash,'system','their_perms',$p);
 
 	}
+
+	$p = \Zotlabs\Access\Permissions::connect_perms($uid);
+	$my_perms = \Zotlabs\Access\Permissions::serialise($p['perms']);
 
 	$profile_assign = get_pconfig($uid,'system','profile_assign','');
 
@@ -268,7 +197,7 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 	}
 
 	if(! $r)
-		logger('mod_follow: abook creation failed');
+		logger('abook creation failed');
 
 	if($my_perms) {
 		set_abconfig($uid,$xchan_hash,'system','my_perms',$my_perms);
@@ -282,20 +211,20 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 
 	if($r) {
 		$result['abook'] = $r[0];
-		Zotlabs\Daemon\Master::Summon(array('Notifier', 'permissions_create', $result['abook']['abook_id']));
+		Zotlabs\Daemon\Master::Summon([ 'Notifier', 'permissions_create', $result['abook']['abook_id'] ]);
 	}
 
-	$arr = array('channel_id' => $uid, 'channel' => $channel, 'abook' => $result['abook']);
+	$arr = [ 'channel_id' => $uid, 'channel' => $channel, 'abook' => $result['abook'] ];
 
 	call_hooks('follow', $arr);
 
 	/** If there is a default group for this channel, add this connection to it */
 
 	if($default_group) {
-
 		$g = Group::rec_byhash($uid,$default_group);
-		if($g)
-			Group_member_add($uid,'',$xchan_hash,$g['id']);
+		if($g) {
+			Group::member_add($uid,'',$xchan_hash,$g['id']);
+		}
 	}
 
 	$result['success'] = true;
