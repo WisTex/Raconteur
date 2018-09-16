@@ -1237,10 +1237,10 @@ function discover_by_webbie($webbie, $protocol = '') {
         						);
 								q("update hubloc set hubloc_addr = '%s' where hubloc_hash = '%s' and hubloc_network = 'activitypub'",
 									dbesc($address),
-	            					dbesc($url)
+	            					dbesc($apurl)
 								);
 							}
-							return $url;
+							return $apurl;
 						}
 					}
 				}
