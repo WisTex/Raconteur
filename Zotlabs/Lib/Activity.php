@@ -1182,7 +1182,7 @@ class Activity {
 
 	// sort function width decreasing
 
-	static function as_vid_sort($a,$b) {
+	static function vid_sort($a,$b) {
 		if($a['width'] === $b['width'])
 			return 0;
 		return (($a['width'] > $b['width']) ? -1 : 1);
@@ -1348,7 +1348,7 @@ class Activity {
 				}
 			}
 			if($mps) {
-				usort($mps,'as_vid_sort');
+				usort($mps,[ __CLASS__, 'vid_sort' ]);
 				foreach($mps as $m) {
 					if(intval($m['width']) < 500) {
 						$s['body'] .= "\n\n" . '[video]' . $m['href'] . '[/video]';
@@ -1551,7 +1551,7 @@ class Activity {
 				}
 			}
 			if($mps) {
-				usort($mps,'as_vid_sort');
+				usort($mps,[ __CLASS__, 'vid_sort' ]);
 				foreach($mps as $m) {
 					if(intval($m['width']) < 500) {
 						$s['body'] .= "\n\n" . '[video]' . $m['href'] . '[/video]';
