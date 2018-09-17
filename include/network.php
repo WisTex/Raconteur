@@ -1213,38 +1213,19 @@ function discover_by_webbie($webbie, $protocol = '') {
 					}
 				}
 				if($link['rel'] === 'self' && ($link['type'] === 'application/activity+json' || strpos($link['type'],'ld+json') !== false) && ((! $protocol) || (strtolower($protocol) === 'activitypub'))) {
-                    $apurl = $link['href'];
-					if(($apurl) && strpos($apurl,'http') === 0) {
-						$person_obj = null;
-						$ap = ActivityStreams::fetch($apurl);
-						if($ap) {
-							$AS = new ActivityStreams($ap); 
-							if($AS->is_valid()) {
-								if($AS->type === 'Person') {
-									$person_obj = $AS->data;
-								}
-								elseif($AS->obj && $AS->obj['type'] === 'Person') {
-									$person_obj = $AS->obj;
-								}
-							}
-						}
-						if($person_obj) {
-							Activity::actor_store($apurl,$person_obj);
-							if($address) {
-								q("update xchan set xchan_addr = '%s' where xchan_hash = '%s' and xchan_network = 'activitypub'",
-									dbesc($address),
-									dbesc($apurl)
-        						);
-								q("update hubloc set hubloc_addr = '%s' where hubloc_hash = '%s' and hubloc_network = 'activitypub'",
-									dbesc($address),
-	            					dbesc($apurl)
-								);
-							}
-							return $apurl;
-						}
+					$ap = ActivityPub::discover($link['href']);
+					if($ap) {
+						return $ap;
 					}
 				}
 			}
+		}
+	}
+
+	if(strpos($url,'http') === 0) {
+		$ap = ActivityPub::discover($link['href']);
+		if($ap) {
+			return $ap;
 		}
 	}
 

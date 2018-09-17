@@ -2,6 +2,7 @@
 namespace Zotlabs\Lib;
 
 use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Queue;
 use Zotlabs\Daemon\Master;
@@ -392,4 +393,27 @@ class ActivityPub {
 			}
 		}	
 	}
+
+	static function discover($apurl) {
+
+		$person_obj = null;
+		$ap = ActivityStreams::fetch($apurl);
+		if($ap) {
+			$AS = new ActivityStreams($ap); 
+			if($AS->is_valid()) {
+				if(ActivityStreams::is_an_actor($AS->type)) {
+					$person_obj = $AS->data;
+				}
+				elseif($AS->obj && ActivityStreams::is_an_actor($AS->obj['type'])) {
+					$person_obj = $AS->obj;
+				}
+			}
+		}
+		if($person_obj) {
+			Activity::actor_store($apurl,$person_obj);
+			return $apurl;
+		}
+		return false;
+	}
+
 }
