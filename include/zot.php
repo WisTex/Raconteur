@@ -2338,7 +2338,7 @@ function process_mail_delivery($sender, $arr, $deliveries) {
 		);
 		if($r) {
 			if(intval($arr['mail_recalled'])) {
-                msg_drop(intval($r[0]['id']), intval($channel['channel_id']), dbesc($r[0]['conv_guid']));
+                msg_drop($r[0]['id'], $channel['channel_id'], $r[0]['conv_guid']);
 				$DR->update('mail recalled');
 				$result[] = $DR->get();
 				logger('mail_recalled');
