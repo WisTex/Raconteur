@@ -317,7 +317,7 @@ class Apps {
 			'Suggest Channels' => t('Suggest Channels'),
 			'Login' => t('Login'),
 			'Channel Manager' => t('Channel Manager'), 
-			'Grid' => t('Activity'), 
+			'Network' => t('Stream'), 
 			'Settings' => t('Settings'),
 			'Files' => t('Files'),
 			'Webpages' => t('Webpages'),
