@@ -722,6 +722,9 @@ class Apps {
 		);
 
 		if($r) {
+                        $hookinfo = Array('uid'=>$uid,'deleted'=>$deleted,'cats'=>$cats,'apps'=>$r);
+			call_hooks('app_list',$hookinfo);
+			$r = $hookinfo['apps'];
 			for($x = 0; $x < count($r); $x ++) {
 				if(! $r[$x]['app_system'])
 					$r[$x]['type'] = 'personal';
