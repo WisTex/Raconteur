@@ -81,24 +81,6 @@ function get_features($filtered = true, $level = (-1)) {
 				get_config('feature_lock','profile_export'),
 				feature_level('profile_export',3),
 			],
-
-			[
-				'webpages',            
-				t('Web Pages'),              
-				t('Provide managed web pages on your channel'),
-				false,
-				get_config('feature_lock','webpages'),
-				feature_level('webpages',3),
-			],
-
-			[
-				'wiki',            
-				t('Wiki'),              
-				t('Provide a wiki for your channel'),
-				false,
-				get_config('feature_lock','wiki'),
-				feature_level('wiki',2),
-			],
 /*
 			[
 				'hide_rating',       
@@ -119,15 +101,6 @@ function get_features($filtered = true, $level = (-1)) {
 			],
 
 			[
-				'articles',       
-				t('Articles'),          
-				t('Create interactive articles'),
-				false,
-				get_config('feature_lock','articles'),
-				feature_level('articles',1),
-			],
-
-			[
 				'nav_channel_select',  
 				t('Navigation Channel Select'), 
 				t('Change channels directly from within the navigation dropdown menu'),
@@ -144,16 +117,6 @@ function get_features($filtered = true, $level = (-1)) {
 				get_config('feature_lock','photo_location'),
 				feature_level('photo_location',2),
 			],
-
-			[
-				'ajaxchat',       
-				t('Access Controlled Chatrooms'),          
-				t('Provide chatrooms and chat services with access control.'),
-				true,
-				get_config('feature_lock','ajaxchat'),
-				feature_level('ajaxchat',1),
-			],
-
 
 			[
 				'smart_birthdays',       

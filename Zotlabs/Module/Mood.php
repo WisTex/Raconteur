@@ -1,21 +1,29 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Lib\Apps;
+use Zotlabs\Web\Controller;
+
 require_once('include/security.php');
 require_once('include/bbcode.php');
 require_once('include/items.php');
 
 
 
-class Mood extends \Zotlabs\Web\Controller {
+class Mood extends Controller {
 
 	function init() {
 	
 		if(! local_channel())
 			return;
+
+		if(! Apps::system_app_installed(local_channel(), 'Mood')) {
+			return;
+		}
 	
 		$uid = local_channel();
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 		$verb = notags(trim($_GET['verb']));
 		
 		if(! $verb) 
@@ -60,7 +68,7 @@ class Mood extends \Zotlabs\Web\Controller {
 			$deny_gid      =  $channel['channel_deny_gid'];
 		}
 	
-		$poster = \App::get_observer();
+		$poster = App::get_observer();
 	
 		$mid = item_message_id();
 	
@@ -115,6 +123,15 @@ class Mood extends \Zotlabs\Web\Controller {
 		if(! local_channel()) {
 			notice( t('Permission denied.') . EOL);
 			return;
+		}
+
+		if(! Apps::system_app_installed(local_channel(), 'Mood')) {
+			//Do not display any associated widgets at this point
+			App::$pdl = '';
+
+			$o = '<b>Mood App (Not Installed):</b><br>';
+			$o .= t('Set your current mood and tell your friends');
+			return $o;
 		}
 
 		nav_set_selected('Mood');

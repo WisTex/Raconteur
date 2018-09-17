@@ -157,7 +157,7 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
 
 	if($http_code == 301 || $http_code == 302 || $http_code == 303 || $http_code == 307 || $http_code == 308) {
 		$matches = array();
-		preg_match('/(Location:|URI:)(.*?)\n/', $header, $matches);
+		preg_match('/(Location:|URI:)(.*?)\n/i', $header, $matches);
 		$newurl = trim(array_pop($matches));
 		if(strpos($newurl,'/') === 0)
 			$newurl = $url . $newurl;

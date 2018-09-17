@@ -110,7 +110,7 @@ class Activity_order {
 
 		$arr = ['tabs' => $tabs];
 
-		call_hooks('network_tabs', $arr);
+		call_hooks('activity_order', $arr);
 
 		$o = '';
 

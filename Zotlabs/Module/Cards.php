@@ -40,8 +40,11 @@ class Cards extends Controller {
 		}
 
 		if(! Apps::system_app_installed(App::$profile_uid, 'Cards')) {
-			$o = '<b>Cards App - Not Installed:</b><br>';
-			$o .= 'Create personal planning cards';
+			//Do not display any associated widgets at this point
+			App::$pdl = '';
+
+			$o = '<b>Cards App (Not Installed):</b><br>';
+			$o .= t('Create personal planning cards');
 			return $o;
 		}
 

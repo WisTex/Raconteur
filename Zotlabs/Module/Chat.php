@@ -1,13 +1,19 @@
 <?php /** @file */
 
-namespace Zotlabs\Module; 
+namespace Zotlabs\Module;
+
+use App;
+use Zotlabs\Lib\Apps;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Chatroom;
+use Zotlabs\Access\AccessList;
+
+
 
 
 require_once('include/bookmarks.php');
 
-use \Zotlabs\Lib as Zlib;
-
-class Chat extends \Zotlabs\Web\Controller {
+class Chat extends Controller {
 
 	function init() {
 	
@@ -16,7 +22,7 @@ class Chat extends \Zotlabs\Web\Controller {
 			$which = argv(1);
 		if(! $which) {
 			if(local_channel()) {
-				$channel = \App::get_channel();
+				$channel = App::get_channel();
 				if($channel && $channel['channel_address'])
 				$which = $channel['channel_address'];
 			}
@@ -27,7 +33,7 @@ class Chat extends \Zotlabs\Web\Controller {
 		}
 	
 		$profile = 0;
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 		if((local_channel()) && (argc() > 2) && (argv(2) === 'view')) {
 			$which = $channel['channel_address'];
@@ -49,16 +55,16 @@ class Chat extends \Zotlabs\Web\Controller {
 		if((! $room) || (! local_channel()))
 			return;
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 	
 		if($_POST['action'] === 'drop') {
 			logger('delete chatroom');
-			Zlib\Chatroom::destroy($channel,array('cr_name' => $room));
+			Chatroom::destroy($channel,array('cr_name' => $room));
 			goaway(z_root() . '/chat/' . $channel['channel_address']);
 		}
 	
-		$acl = new \Zotlabs\Access\AccessList($channel);
+		$acl = new AccessList($channel);
 		$acl->set_from_array($_REQUEST);
 	
 		$arr = $acl->get();
@@ -67,7 +73,7 @@ class Chat extends \Zotlabs\Web\Controller {
 		if(intval($arr['expire']) < 0)
 			$arr['expire'] = 0;
 	
-		Zlib\Chatroom::create($channel,$arr);
+		Chatroom::create($channel,$arr);
 	
 		$x = q("select * from chatroom where cr_name = '%s' and cr_uid = %d limit 1",
 			dbesc($room),
@@ -88,26 +94,35 @@ class Chat extends \Zotlabs\Web\Controller {
 	
 	
 	function get() {
+
+		if(! Apps::system_app_installed(App::$profile_uid, 'Chatrooms')) {
+			//Do not display any associated widgets at this point
+			App::$pdl = '';
+
+			$o = '<b>Chatrooms App (Not Installed):</b><br>';
+			$o .= t('Access Controlled Chatrooms');
+			return $o;
+		}
 	
 		if(local_channel()) {
-			$channel = \App::get_channel();
-			nav_set_selected('My Chatrooms');
+			$channel = App::get_channel();
+			nav_set_selected('Chatrooms');
 		}
 
-		$ob = \App::get_observer();
+		$ob = App::get_observer();
 		$observer = get_observer_hash();
 		if(! $observer) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
 	
-		if(! perm_is_allowed(\App::$profile['profile_uid'],$observer,'chat')) {
+		if(! perm_is_allowed(App::$profile['profile_uid'],$observer,'chat')) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
 		
 		if((argc() > 3) && intval(argv(2)) && (argv(3) === 'leave')) {
-			Zlib\Chatroom::leave($observer,argv(2),$_SERVER['REMOTE_ADDR']);
+			Chatroom::leave($observer,argv(2),$_SERVER['REMOTE_ADDR']);
 			goaway(z_root() . '/channel/' . argv(1));
 		}
 	
@@ -160,16 +175,16 @@ class Chat extends \Zotlabs\Web\Controller {
 			$room_id = intval(argv(2));
 			$bookmark_link = get_bookmark_link($ob);
 	
-			$x = Zlib\Chatroom::enter($observer,$room_id,'online',$_SERVER['REMOTE_ADDR']);
+			$x = Chatroom::enter($observer,$room_id,'online',$_SERVER['REMOTE_ADDR']);
 			if(! $x)
 				return;
 			$x = q("select * from chatroom where cr_id = %d and cr_uid = %d $sql_extra limit 1",
 				intval($room_id),
-				intval(\App::$profile['profile_uid'])
+				intval(App::$profile['profile_uid'])
 			);
 	
 			if($x) {
-				$acl = new \Zotlabs\Access\AccessList(false);
+				$acl = new AccessList(false);
 				$acl->set($x[0]);
 	
 				$private = $acl->is_private();
@@ -208,19 +223,12 @@ class Chat extends \Zotlabs\Web\Controller {
 			));
 			return $o;
 		}
-	
-	
+
 		require_once('include/conversation.php');
 	
-		//$o = profile_tabs($a,((local_channel() && local_channel() == \App::$profile['profile_uid']) ? true : false),\App::$profile['channel_address']);
 		$o = '';
-	
-		if(! feature_enabled(\App::$profile['profile_uid'],'ajaxchat')) {
-			notice( t('Feature disabled.') . EOL);
-			return $o;
-		}
 
-		$acl = new \Zotlabs\Access\AccessList($channel);
+		$acl = new AccessList($channel);
 		$channel_acl = $acl->get();
 
 		$lockstate = (($channel_acl['allow_cid'] || $channel_acl['allow_gid'] || $channel_acl['deny_cid'] || $channel_acl['deny_gid']) ? 'lock' : 'unlock');
@@ -244,17 +252,17 @@ class Chat extends \Zotlabs\Web\Controller {
 			));
 		}
 
-		$rooms = Zlib\Chatroom::roomlist(\App::$profile['profile_uid']);
+		$rooms = Chatroom::roomlist(App::$profile['profile_uid']);
 	
 		$o .= replace_macros(get_markup_template('chatrooms.tpl'), array(
-			'$header' => sprintf( t('%1$s\'s Chatrooms'), \App::$profile['fullname']),
+			'$header' => sprintf( t('%1$s\'s Chatrooms'), App::$profile['fullname']),
 			'$name' => t('Name'),
 			'$baseurl' => z_root(),
-			'$nickname' => \App::$profile['channel_address'],
+			'$nickname' => App::$profile['channel_address'],
 			'$rooms' => $rooms,
 			'$norooms' => t('No chatrooms available'),
 			'$newroom' => t('Create New'),
-			'$is_owner' => ((local_channel() && local_channel() == \App::$profile['profile_uid']) ? 1 : 0),
+			'$is_owner' => ((local_channel() && local_channel() == App::$profile['profile_uid']) ? 1 : 0),
 			'$chatroom_new' => $chatroom_new,
 			'$expire' => t('Expiration'),
 			'$expire_unit' => t('min') //minutes

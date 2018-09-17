@@ -197,7 +197,8 @@ class Channel extends Controller {
 				$sql_extra .= term_query('item',substr($search,1),TERM_HASHTAG,TERM_COMMUNITYTAG);
 			}
 			else {
-				$sql_extra .= sprintf(" AND item.body like '%s' ",
+				$sql_extra .= sprintf(" AND (item.body like '%s' OR item.title like '%s') ",
+					dbesc(protect_sprintf('%' . $search . '%')),
 					dbesc(protect_sprintf('%' . $search . '%'))
 				);
 			}
