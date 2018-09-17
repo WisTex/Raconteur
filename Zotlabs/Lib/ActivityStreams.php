@@ -237,6 +237,7 @@ class ActivityStreams {
 		return ((array_key_exists($propname, $base)) ? $base[$propname] : null);
 	}
 
+
 	/**
 	 * @brief Fetches a property from an URL.
 	 *
@@ -267,6 +268,16 @@ class ActivityStreams {
 		}
 		return null;
 	}
+
+	static function is_an_actor($s) {
+		return(in_array($s,[ 'Application','Group','Service','Person','Service' ]));
+	}
+
+
+	static function is_an_actor($s) {
+		return(in_array($s,[ 'Application','Group','Service','Person','Service' ]));
+	}
+
 
 
 	/**

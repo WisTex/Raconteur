@@ -531,13 +531,20 @@ class Setup extends \Zotlabs\Web\Controller {
 			$ck_funcs[0]['status'] = false;
 			$ck_funcs[0]['help'] = t('Error: libCURL PHP module required but not installed.');
 		}
-		if(! function_exists('imagecreatefromjpeg')) {
+		if((! function_exists('imagecreatefromjpeg')) || (! class_exists('Imagick'))) {
 			$ck_funcs[1]['status'] = false;
-			$ck_funcs[1]['help'] = t('Error: GD graphics PHP module with JPEG support required but not installed.');
+			$ck_funcs[1]['help'] = t('Error: GD PHP module with JPEG support or ImageMagick graphics library required but not installed.');
 		}
 		if(! function_exists('openssl_public_encrypt')) {
 			$ck_funcs[2]['status'] = false;
 			$ck_funcs[2]['help'] = t('Error: openssl PHP module required but not installed.');
+		}
+		if(class_exists('PDO')) {
+			$x = PDO::getAvailableDrivers();
+			if((! in_array('mysql',$x)) && (! in_array('pgsql',$x))) {
+				$ck_funcs[3]['status'] = false;
+				$ck_funcs[3]['help'] = t('Error: PDO database PHP module missing a driver for either mysql or pgsql.');
+			}
 		}
 		if(! class_exists('PDO')) {
 			$ck_funcs[3]['status'] = false;
