@@ -4,6 +4,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Zotfinger;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\ActivityPub;
 
 /**
  * @file include/network.php
@@ -1222,8 +1223,8 @@ function discover_by_webbie($webbie, $protocol = '') {
 		}
 	}
 
-	if(strpos($url,'http') === 0) {
-		$ap = ActivityPub::discover($link['href']);
+	if(strpos($webbie,'http') === 0) {
+		$ap = ActivityPub::discover($webbie);
 		if($ap) {
 			return $ap;
 		}
