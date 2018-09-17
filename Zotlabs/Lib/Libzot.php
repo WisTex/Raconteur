@@ -1178,8 +1178,20 @@ class Libzot {
 				if($r) {
 					$arr['author_xchan'] = $r[0]['hubloc_hash'];
 				}
-				// @fixme (in individual delivery, change owner if needed)
-				$arr['owner_xchan'] = $env['sender'];						
+
+
+				$s = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
+					dbesc($env['sender'])
+				); 
+
+				// in individual delivery, change owner if needed
+				if($s) {
+					$arr['owner_xchan'] = $s[0]['hubloc_hash'];
+				}
+				else {
+					$arr['owner_xchan'] = $env['sender'];						
+				}
+
 				if($private) {
 					$arr['item_private'] = true;
 				}
@@ -1766,8 +1778,17 @@ class Libzot {
 			if($r) {
 				$arr['author_xchan'] = $r[0]['hubloc_hash'];
 			}
-			// @fixme (in individual delivery, change owner if needed)
-			$arr['owner_xchan'] = $a['signature']['signer'];
+
+			$s = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
+				dbesc($a['signature']['signer'])
+			); 
+
+			if($s) {
+				$arr['owner_xchan'] = $s[0]['hubloc_hash'];
+			}
+			else {
+				$arr['owner_xchan'] = $a['signature']['signer'];
+			}
 
 			// @fixme - spoofable
 			if($AS->data['hubloc']) {
