@@ -500,7 +500,7 @@ function private_messages_drop($channel_id, $messageitem_id, $drop_conversation 
 	else {
 		xchan_mail_query($x[0]);
 		$x[0]['mail_deleted'] = true;
-		msg_drop(intval($messageitem_id), intval($channel_id), dbesc($x[0]['conv_guid']));
+		msg_drop($messageitem_id, $channel_id, $x[0]['conv_guid']);
 		build_sync_packet($channel_id,array('mail' => array(encode_mail($x,true))));
 		return true;
 	}
