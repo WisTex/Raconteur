@@ -45,7 +45,7 @@ class Articles extends Controller {
 			return $o;
 		}
 
-		nav_set_selected(t('Articles'));
+		nav_set_selected('Articles');
 
 		head_add_link([ 
 			'rel'   => 'alternate',
