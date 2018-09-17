@@ -1007,6 +1007,12 @@ class Activity {
 		if(! $name)
 			$name = t('Unknown');
 
+		$username = $person_obj['preferredUsername'];
+		$h = parse_url($url);
+		if($h && $h['host']) {
+			$username .= '@' . $h['host'];
+		}
+
 		if($person_obj['icon']) {
 			if(is_array($person_obj['icon'])) {
 				if(array_key_exists('url',$person_obj['icon']))
@@ -1062,7 +1068,7 @@ class Activity {
 					'xchan_hash'           => $url,
 					'xchan_guid'           => $url,
 					'xchan_pubkey'         => $pubkey,
-					'xchan_addr'           => '',
+					'xchan_addr'           => ((strpos($username,'@')) ? $username : ''),
 					'xchan_url'            => $profile,
 					'xchan_name'           => $name,
 					'xchan_name_date'      => datetime_convert(),
@@ -1115,7 +1121,7 @@ class Activity {
 				[
 					'hubloc_guid'     => $url,
 					'hubloc_hash'     => $url,
-					'hubloc_addr'     => '',
+					'hubloc_addr'     => ((strpos($username,'@')) ? $username : ''),
 					'hubloc_network'  => 'activitypub',
 					'hubloc_url'      => $baseurl,
 					'hubloc_host'     => $hostname,
