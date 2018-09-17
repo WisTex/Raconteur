@@ -177,7 +177,7 @@ class Network extends \Zotlabs\Web\Controller {
 				));
 			}
 	
-			nav_set_selected('Grid');
+			nav_set_selected('Stream');
 
 			$channel_acl = array(
 				'allow_cid' => $channel['channel_allow_cid'], 
