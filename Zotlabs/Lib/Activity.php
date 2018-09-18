@@ -1058,7 +1058,7 @@ class Activity {
 				$collections['followers'] = $person_obj['followers'];
 			if($person_obj['following'])
 				$collections['following'] = $person_obj['following'];
-			if($person_obj['endpoints'] && $person_obj['endpoints']['sharedInbox'])
+			if($person_obj['endpoints'] && is_array($person_obj['endpoints']) && $person_obj['endpoints']['sharedInbox'])
 				$collections['sharedInbox'] = $person_obj['endpoints']['sharedInbox'];
 		}
 
