@@ -162,6 +162,11 @@ class ActivityPub {
 
 		$dest_url = $recip['hubloc_callback'];
 
+		if(strpos($dest_url,'http') === false) {
+			logger('destination is not a url: ' . $dest_url);
+			return false;
+		}
+
     	logger('URL: ' . $dest_url, LOGGER_DEBUG);
 		logger('DATA: ' . jindent($msg), LOGGER_DATA);
 
