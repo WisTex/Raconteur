@@ -49,7 +49,7 @@ class Activity {
 		if(! $r)
 			return [];
 
-		return self::encode_person($r[0]);
+		return self::encode_person($r[0],false);
 
 	}
 

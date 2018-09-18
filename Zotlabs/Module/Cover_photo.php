@@ -1,6 +1,9 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Activity;
+use Zotlabs\Access\AccessList;
+
 /* 
    @file cover_photo.php
    @brief Module-file with functions for handling of cover-photos
@@ -258,7 +261,7 @@ logger('gis: ' . print_r($gis,true));
 		$arr['item_origin'] = 1;
 		$arr['item_wall'] = 1;
 		$arr['mid'] = item_message_id();
-		$arr['obj_type'] = ACTIVITY_OBJ_PHOTO;
+		$arr['obj_type'] = ACTIVITY_OBJ_NOTE;
 		$arr['verb'] = ACTIVITY_UPDATE;
 	
 		if($profile && stripos($profile['gender'],t('female')) !== false)
@@ -275,17 +278,17 @@ logger('gis: ' . print_r($gis,true));
 		$arr['body'] = sprintf($t,$channel['channel_name'],$ptext) . "\n\n" . $ltext;
 
 		$arr['obj'] = [ 
-			'type'      => ACTIVITY_OBJ_PHOTO,
+			'type'      => ACTIVITY_OBJ_NOTE,
 			'published' => datetime_convert('UTC','UTC',$photo['created'],ATOM_TIME),
 			'updated'   => datetime_convert('UTC','UTC',$photo['edited'],ATOM_TIME),
 			'id'        => $arr['mid'],
 			'url'       => [ 'type' => 'Link', 'mediaType' => $photo['mimetype'], 'href' => z_root() . '/photo/' . $photo['resource_id'] . '-7' ],
 			'source'    => [ 'content' => $arr['body'], 'mediaType' => 'text/bbcode' ],
 			'content'   => bbcode($arr['body']),
-			'actor'     => \Zotlabs\Lib\Activity::encode_person($channel),			
+			'actor'     => Activity::encode_person($channel,false),			
 		];
 
-		$acl = new \Zotlabs\Access\AccessList($channel);
+		$acl = new AccessList($channel);
 		$x = $acl->get();
 		$arr['allow_cid'] = $x['allow_cid'];
 	

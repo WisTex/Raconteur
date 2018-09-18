@@ -4543,7 +4543,7 @@ function send_profile_photo_activity($channel,$photo,$profile) {
 	$arr['item_thread_top'] = 1;
 	$arr['item_origin'] = 1;
 	$arr['item_wall'] = 1;
-	$arr['obj_type'] = ACTIVITY_OBJ_PHOTO;
+	$arr['obj_type'] = ACTIVITY_OBJ_NOTE;
 	$arr['verb'] = ACTIVITY_UPDATE;
 	$arr['mid'] = item_message_id();
 
@@ -4562,14 +4562,14 @@ function send_profile_photo_activity($channel,$photo,$profile) {
 
 
 	$arr['obj'] = [
-		'type'      => ACTIVITY_OBJ_PHOTO,
+		'type'      => ACTIVITY_OBJ_NOTE,
 		'published' => datetime_convert('UTC','UTC',$photo['created'],ATOM_TIME),
 		'updated'   => datetime_convert('UTC','UTC',$photo['edited'],ATOM_TIME),
 		'id'        => $arr['mid'],
 		'url'       => [ 'type' => 'Link', 'mediaType' => $photo['mimetype'], 'href' => z_root() . '/photo/profile/l/' . $channel['channel_id'] ],
 		'source'    => [ 'content' => $arr['body'], 'mediaType' => 'text/bbcode' ],
 		'content'   => bbcode($arr['body']),
-		'actor'     => \Zotlabs\Lib\Activity::encode_person($channel),
+		'actor'     => Activity::encode_person($channel,false),
 	];
 
 	$acl = new AccessList($channel);
