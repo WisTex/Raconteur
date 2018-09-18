@@ -1428,6 +1428,8 @@ function attach_delete($channel_id, $resource, $is_photo = 0) {
 
 	if(! $r) {
 		attach_drop_photo($channel_id,$resource);
+                $arr = ['channel_id' => $channel_id, 'resource' => $resource, 'is_photo'=>$is_photo];
+                call_hooks("attach_delete",$arr);
 		return;
 	}
 
@@ -1485,6 +1487,9 @@ function attach_delete($channel_id, $resource, $is_photo = 0) {
 		dbesc($r[0]['folder']),
 		intval($channel_id)
 	);
+
+        $arr = ['channel_id' => $channel_id, 'resource' => $resource, 'is_photo'=>$is_photo];
+        call_hooks("attach_delete",$arr);
 
 	file_activity($channel_id, $object, $object['allow_cid'], $object['allow_gid'], $object['deny_cid'], $object['deny_gid'], 'update', true);
 

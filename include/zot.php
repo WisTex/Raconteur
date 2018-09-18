@@ -12,6 +12,7 @@ require_once('include/crypto.php');
 require_once('include/items.php');
 require_once('include/queue_fn.php');
 require_once('include/perm_upgrade.php');
+require_once('include/msglib.php');
 
 
 /**
@@ -2331,16 +2332,13 @@ function process_mail_delivery($sender, $arr, $deliveries) {
 		}
 
 
-		$r = q("select id from mail where mid = '%s' and channel_id = %d limit 1",
+		$r = q("select id, conv_guid from mail where mid = '%s' and channel_id = %d limit 1",
 			dbesc($arr['mid']),
 			intval($channel['channel_id'])
 		);
 		if($r) {
 			if(intval($arr['mail_recalled'])) {
-				$x = q("delete from mail where id = %d and channel_id = %d",
-					intval($r[0]['id']),
-					intval($channel['channel_id'])
-				);
+                msg_drop($r[0]['id'], $channel['channel_id'], $r[0]['conv_guid']);
 				$DR->update('mail recalled');
 				$result[] = $DR->get();
 				logger('mail_recalled');
