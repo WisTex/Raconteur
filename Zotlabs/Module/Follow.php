@@ -5,6 +5,7 @@ use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Web\HTTPSignatures;
+use Zotlabs\Lib\LDSignatures;
 
 require_once('include/follow.php');
 
@@ -17,7 +18,8 @@ class Follow extends \Zotlabs\Web\Controller {
 			return;
 		}
 	
-		if(ActivityStreams::is_as_request() && argc() == 2) {                                                                                        			$abook_id = intval(argv(1));
+		if(ActivityStreams::is_as_request() && argc() == 2) {
+			$abook_id = intval(argv(1));
 			if(! $abook_id)
 				return;
 
@@ -32,7 +34,7 @@ class Follow extends \Zotlabs\Web\Controller {
 			if(! $chan)
 				http_status_exit(404, 'Not found');
 
-			$actor = Activity::encode_person($chan);
+			$actor = Activity::encode_person($chan,true,true);
 			if(! $actor)
 				http_status_exit(404, 'Not found');
 
@@ -50,7 +52,7 @@ class Follow extends \Zotlabs\Web\Controller {
 
 	        $headers = [];
     	    $headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
-        	$x['signature'] = \Zotlabs\Lib\LDSignatures::sign($x,$chan);
+        	$x['signature'] = LDSignatures::sign($x,$chan);
 	        $ret = json_encode($x, JSON_UNESCAPED_SLASHES);
     	    $headers['Digest'] = HTTPSig::generate_digest_header($ret);
         	$h = HTTPSig::create_sig($headers,$chan['channel_prvkey'],channel_url($chan));
