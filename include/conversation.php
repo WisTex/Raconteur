@@ -988,8 +988,8 @@ function thread_author_menu($item, $mode = '') {
 			$contact = App::$contacts[$item['author_xchan']];
 		}
 		else {
-			if($local_channel && $item['author']['xchan_addr'] && (! in_array($item['author']['xchan_network'],[ 'rss', 'anon','unknown' ]))) {
-				$follow_url = z_root() . '/follow/?f=&url=' . urlencode($item['author']['xchan_addr']) . '&interactive=0';
+			if($local_channel && (! in_array($item['author']['xchan_network'],[ 'rss', 'anon','unknown' ]))) {
+				$follow_url = z_root() . '/follow/?f=&url=' . urlencode(($item['author']['xchan_addr']) ? $item['author']['xchan_addr'] : $item['author']['xchan_url']) . '&interactive=0';
 			}
 		}
 	
