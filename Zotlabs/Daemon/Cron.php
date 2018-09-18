@@ -60,7 +60,7 @@ class Cron {
 				drop_item($rr['id'],false,(($rr['item_wall']) ? DROPITEM_PHASE1 : DROPITEM_NORMAL));
 				if($rr['item_wall']) {
 					// The notifier isn't normally invoked unless item_drop is interactive.
-					Zotlabs\Daemon\Master::Summon( [ 'Notifier', 'drop', $rr['id'] ] );
+					Master::Summon( [ 'Notifier', 'drop', $rr['id'] ] );
 				}
 			}
 		}
