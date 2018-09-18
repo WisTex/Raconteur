@@ -6,6 +6,7 @@
 
 use Sabre\VObject;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Activity;
 
 require_once('include/bbcode.php');
 
@@ -1038,7 +1039,7 @@ function event_store_item($arr, $event) {
 			'location'  => [ 'type' => 'Place', 'content' => $arr['location'] ],
 			'content'   => format_event_html($arr),
 			'source'    => [ 'content' => format_event_bbcode($arr), 'mediaType' => 'text/bbcode' ],
-			'actor'     => \Zotlabs\Lib\Activity::encode_person($r[0]),
+			'actor'     => Activity::encode_person($r[0],false),
 		];
 
 		if(! $arr['nofinish']) {
@@ -1183,7 +1184,7 @@ function event_store_item($arr, $event) {
 				'location'  => [ 'type' => 'Place', 'content' => bbcode($arr['location']) ],
 				'content'   => format_event_html($arr),
 				'source'    => [ 'content' => format_event_bbcode($arr), 'mediaType' => 'text/bbcode' ],
-				'actor'     => \Zotlabs\Lib\Activity::encode_person($z),
+				'actor'     => Activity::encode_person($z,false),
 			];
 
 			if(! $arr['nofinish']) {
