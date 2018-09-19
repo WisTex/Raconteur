@@ -1,12 +1,16 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Lib\Apps;
+use Zotlabs\Web\Controller;
+
 require_once('include/event.php');
 
 require_once('include/auth.php');
 require_once('include/security.php');
 
-class Cdav extends \Zotlabs\Web\Controller {
+class Cdav extends Controller {
 
 	function init() {
 
@@ -126,8 +130,18 @@ class Cdav extends \Zotlabs\Web\Controller {
 			$auth->setRealm(ucfirst(\Zotlabs\Lib\System::get_platform_name()) . 'CalDAV/CardDAV');
 
 			if (local_channel()) {
+
 				logger('loggedin');
-				$channel = \App::get_channel();
+
+				if((argv(1) == 'calendars') && (!Apps::system_app_installed(local_channel(), 'CalDAV'))) {
+					killme();
+				}
+
+				if((argv(1) == 'addressbooks') && (!Apps::system_app_installed(local_channel(), 'CardDAV'))) {
+					killme();
+				}
+
+				$channel = App::get_channel();
 				$auth->setCurrentUser($channel['channel_address']);
 				$auth->channel_id = $channel['channel_id'];
 				$auth->channel_hash = $channel['channel_hash'];
@@ -161,11 +175,14 @@ class Cdav extends \Zotlabs\Web\Controller {
 			$nodes = [
 				// /principals
 				new \Sabre\CalDAV\Principal\Collection($principalBackend),
+
 				// /calendars
 				new \Sabre\CalDAV\CalendarRoot($principalBackend, $caldavBackend),
+
 				// /addressbook
-				new \Sabre\CardDAV\AddressBookRoot($principalBackend, $carddavBackend),
+				new \Sabre\CardDAV\AddressBookRoot($principalBackend, $carddavBackend)
 			];
+
 
 			// The object tree needs in turn to be passed to the server class
 
@@ -204,7 +221,15 @@ class Cdav extends \Zotlabs\Web\Controller {
 		if(! local_channel())
 			return;
 
-		$channel = \App::get_channel();
+		if((argv(1) === 'calendar') && (! Apps::system_app_installed(local_channel(), 'CalDAV'))) {
+			return;
+		}
+
+		if((argv(1) === 'addressbook') && (! Apps::system_app_installed(local_channel(), 'CardDAV'))) {
+			return;
+		}
+
+		$channel = App::get_channel();
 		$principalUri = 'principals/' . $channel['channel_address'];
 
 		if(!cdav_principal($principalUri))
@@ -807,7 +832,25 @@ class Cdav extends \Zotlabs\Web\Controller {
 		if(!local_channel())
 			return;
 
-		$channel = \App::get_channel();
+		if((argv(1) === 'calendar') && (! Apps::system_app_installed(local_channel(), 'CalDAV'))) {
+			//Do not display any associated widgets at this point
+			App::$pdl = '';
+
+			$o = '<b>CalDAV App (Not Installed):</b><br>';
+			$o .= t('CalDAV capable calendar');
+			return $o;
+		}
+
+		if((argv(1) === 'addressbook') && (! Apps::system_app_installed(local_channel(), 'CardDAV'))) {
+			//Do not display any associated widgets at this point
+			App::$pdl = '';
+
+			$o = '<b>CardDAV App (Not Installed):</b><br>';
+			$o .= t('CalDAV capable addressbook');
+			return $o;
+		}
+
+		$channel = App::get_channel();
 		$principalUri = 'principals/' . $channel['channel_address'];
 
 		$pdo = \DBA::$dba->db;
@@ -874,7 +917,7 @@ class Cdav extends \Zotlabs\Web\Controller {
 			$o .= replace_macros(get_markup_template('cdav_calendar.tpl'), [
 				'$sources' => $sources,
 				'$color' => $color,
-				'$lang' => \App::$language,
+				'$lang' => App::$language,
 				'$first_day' => $first_day,
 				'$prev'	=> t('Previous'),
 				'$next'	=> t('Next'),

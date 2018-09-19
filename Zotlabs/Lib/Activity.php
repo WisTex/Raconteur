@@ -8,6 +8,8 @@ use Zotlabs\Daemon\Master;
 
 class Activity {
 
+	static $ACTOR_CACHE_DAYS = 3;
+
 	static function encode_object($x) {
 
 		if(($x) && (! is_array($x)) && (substr(trim($x),0,1)) === '{' ) {
@@ -1001,6 +1003,14 @@ class Activity {
 		if(! is_array($person_obj))
 			return;
 
+		// We may have been passed a cached entry. If it is, and the cache duration has expired
+		// fetch a fresh copy before continuing.
+
+		if(array_key_exists($person_obj['cached']) && array_key_exists($person_obj['updated']) && $person_obj['updated'] < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days')) {
+			$person_obj = ActivityStreams::fetch($url);
+		}
+
+
 		$name = $person_obj['name'];
 		if(! $name)
 			$name = $person_obj['preferredUsername'];
@@ -1084,12 +1094,12 @@ class Activity {
 		}
 		else {
 
-			// Record exists. Cache existing records for one week at most
+			// Record exists. Cache existing records for a set number of days
 			// then refetch to catch updated profile photos, names, etc. 
 
-			$d = datetime_convert('UTC','UTC','now - 1 week');
-			if($r[0]['xchan_name_date'] > $d)
+			if($r[0]['xchan_name_date'] >= datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days')) {
 				return;
+			}
 
 			// update existing record
 			$r = q("update xchan set xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s' where xchan_hash = '%s'",

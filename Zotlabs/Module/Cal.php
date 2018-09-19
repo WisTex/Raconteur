@@ -88,9 +88,6 @@ class Cal extends \Zotlabs\Web\Controller {
 	
 		$o = '';
 	
-		//$tabs = profile_tabs($a, True, $channel['channel_address']);
-		$tabs = '';
-	
 		$mode = 'view';
 		$y = 0;
 		$m = 0;
@@ -347,8 +344,7 @@ class Cal extends \Zotlabs\Web\Controller {
 				'$next'		=> t('Next'),
 				'$today'	=> t('Today'),
 				'$form'		=> $form,
-				'$expandform'	=> ((x($_GET,'expandform')) ? true : false),
-				'$tabs'		=> $tabs
+				'$expandform'	=> ((x($_GET,'expandform')) ? true : false)
 			));
 			
 			if (x($_GET,'id')){ echo $o; killme(); }

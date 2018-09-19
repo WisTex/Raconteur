@@ -295,6 +295,8 @@ function bb_to_markdown($Text, $options = []) {
  */
 function html2markdown($html,$options = []) {
 	$markdown = '';
+
+	$html = htmlspecialchars($html);
  
 	$environment = Environment::createDefaultEnvironment($options);
 	$environment->addConverter(new TableConverter());
