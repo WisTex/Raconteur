@@ -2283,12 +2283,6 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 		unset($arr['iconfig']);
 	}
 
-
-	if(! dbesc_array($arr)) {
-		$ret['message'] = 'DB array malformed';
-		return $ret;
-	}
-
 	logger('item_store_update: ' . print_r($arr,true), LOGGER_DATA);
 
 	$str = '';
