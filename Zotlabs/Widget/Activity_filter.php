@@ -176,7 +176,7 @@ class Activity_filter {
 
 		$arr = ['tabs' => $tabs];
 
-		call_hooks('network_tabs', $arr);
+		call_hooks('activity_filter', $arr);
 
 		$o = '';
 

@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Web;
 
+use Zotlabs\Extend\Route;
+
 /*
  * @brief
  *
@@ -31,8 +33,22 @@ class SubModule {
 
 		$filename = 'Zotlabs/Module/' . ucfirst(argv(0)) . '/'. ucfirst(argv($whicharg)) . '.php';
 		$modname = '\\Zotlabs\\Module\\' . ucfirst(argv(0)) . '\\' . ucfirst(argv($whicharg));
+
 		if(file_exists($filename)) {
 			$this->controller = new $modname();
+		}
+
+		$routes = Route::get();
+
+		if($routes) {
+			foreach($routes as $route) {
+				if(is_array($route) && strtolower($route[1]) === strtolower(argv(0)) . '/' . strtolower(argv($whicharg))) {
+					include_once($route[0]);
+					if(class_exists($modname)) {
+						$this->controller = new $modname;
+					}
+				}
+			}
 		}
 	}
 
@@ -43,6 +59,7 @@ class SubModule {
 	 * @return boolean|mixed
 	 */
 	function call($method) {
+
 		if(! $this->controller)
 			return false;
 

@@ -73,6 +73,7 @@ function get_features($filtered = true, $level = (-1)) {
 				feature_level('advanced_profiles',1),
 			],
 
+
 //			[
 //				'profile_export',      
 //				t('Profile Import/Export'),  
@@ -99,6 +100,7 @@ function get_features($filtered = true, $level = (-1)) {
 //				get_config('feature_lock','wiki'),
 //				feature_level('wiki',2),
 //			],
+
 /*
 			[
 				'hide_rating',       
@@ -117,6 +119,7 @@ function get_features($filtered = true, $level = (-1)) {
 				get_config('feature_lock','private_notes'),
 				feature_level('private_notes',1),
 			],
+
 
 //			[
 //				'cards',       
@@ -154,6 +157,7 @@ function get_features($filtered = true, $level = (-1)) {
 				get_config('feature_lock','photo_location'),
 				feature_level('photo_location',2),
 			],
+
 
 //			[
 //				'ajaxchat',       

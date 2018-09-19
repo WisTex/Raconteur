@@ -35,7 +35,7 @@
                 if (!preg_match("/^msgstr\[[1-9]/",$l)) {
                         if ($k!="" && (substr($l,0,7)=="msgstr " || substr($l,0,8)=="msgstr[0")){
                                 $ink = False;
-                                $k = stripslashes($k);
+                                $k = stripcslashes($k);
                                 $v = "";
                                 if (isset(App::$strings[$k])) {
                                         $v = App::$strings[$k];
