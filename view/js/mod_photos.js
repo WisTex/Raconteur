@@ -13,7 +13,7 @@ $(document).ready(function() {
 	});
 	
 	$(".comment-edit-form  textarea").editor_autocomplete(baseurl+"/acl?f=&n=1");
-//	$('textarea').bbco_autocomplete('bbcode');
+	$('textarea').bbco_autocomplete('bbcode');
 	showHideBodyTextarea();
 
 });
