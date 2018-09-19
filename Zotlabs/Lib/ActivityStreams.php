@@ -293,7 +293,9 @@ class ActivityStreams {
 				dbesc($x)
 			);
 			if($r) {
-				return Activity::encode_person($r[0]);
+				$y = Activity::encode_person($r[0]);
+				$y['cached'] = true;
+				return $y;
 			}
 		}
 		return $this->get_compound_property($property,$base,$namespace,true);

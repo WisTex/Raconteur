@@ -5,10 +5,17 @@
 	$(document).ready(function() {
 		notifications_parent = $('#notifications_wrapper')[0].parentElement.id;
 		$('.notifications-btn').click(function() {
-			if($('#notifications_wrapper').hasClass('fs'))
+			if($('#notifications_wrapper').hasClass('fs')) {
 				$('#notifications_wrapper').prependTo('#' + notifications_parent);
-			else
+				//undo scrollbar remove
+				$('section').css('height', '');
+			}
+			else {
 				$('#notifications_wrapper').prependTo('section');
+				//remove superfluous scrollbar
+				//setting overflow to hidden here has issues with some browsers
+				$('section').css('height', '100vh');
+			}
 
 			$('#notifications_wrapper').toggleClass('fs');
 			if($('#navbar-collapse-2').hasClass('show')){

@@ -10,8 +10,8 @@ class Appstore {
 		return replace_macros(get_markup_template('appstore.tpl'), [ 
 			'$title' => t('App Collections'),
 			'$options' => [
-				[ z_root() . '/apps/available', t('Available Apps'), $store ],
-				[ z_root() . '/apps',           t('Installed apps'), 1 - $store ]
+				[ z_root() . '/apps',           t('Installed apps'), 1 - $store ],
+				[ z_root() . '/apps/available', t('Available Apps'), $store ]
 			]
 		]);
 	}

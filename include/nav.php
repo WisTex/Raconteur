@@ -1,10 +1,10 @@
 <?php /** @file */
 
-use \Zotlabs\Lib as Zlib;
+use \Zotlabs\Lib\Apps;
+use \Zotlabs\Lib\Chatroom;
 
 require_once('include/security.php');
 require_once('include/menu.php');
-
 
 function nav($template = 'default') {
 
@@ -212,26 +212,27 @@ function nav($template = 'default') {
 	//app bin
 	if($is_owner) {
 		if(get_pconfig(local_channel(), 'system','import_system_apps') !== datetime_convert('UTC','UTC','now','Y-m-d')) {
-			Zlib\Apps::import_system_apps();
+			Apps::import_system_apps();
 			set_pconfig(local_channel(), 'system','import_system_apps', datetime_convert('UTC','UTC','now','Y-m-d'));
 		}
 
-		$syslist = [];
-		$list = Zlib\Apps::app_list(local_channel(), false, ['nav_featured_app', 'nav_pinned_app']);
+		$syslist = array();
+		$list = Apps::app_list(local_channel(), false, ['nav_featured_app', 'nav_pinned_app']);
+
 		if($list) {
 			foreach($list as $li) {
-				$syslist[] = Zlib\Apps::app_encode($li);
+				$syslist[] = Apps::app_encode($li);
 			}
 		}
-		Zlib\Apps::translate_system_apps($syslist);
+		Apps::translate_system_apps($syslist);
 	}
 	else {
-		$syslist = Zlib\Apps::get_system_apps(true);
+		$syslist = Apps::get_system_apps(true);
 	}
 
 	usort($syslist,'Zotlabs\\Lib\\Apps::app_name_compare');
 
-	$syslist = Zlib\Apps::app_order(local_channel(),$syslist);
+	$syslist = Apps::app_order(local_channel(),$syslist);
 
 	foreach($syslist as $app) {
 		if(\App::$nav_sel['name'] == $app['name'])
@@ -239,18 +240,18 @@ function nav($template = 'default') {
 
 		if($is_owner) {
 			if(strpos($app['categories'],'nav_pinned_app') !== false) {
-				$navbar_apps[] = Zlib\Apps::app_render($app,'navbar');
+				$navbar_apps[] = Apps::app_render($app,'navbar');
 			}
 			else {
-				$nav_apps[] = Zlib\Apps::app_render($app,'nav');
+				$nav_apps[] = Apps::app_render($app,'nav');
 			}
 		}
 		elseif(! $is_owner && strpos($app['requires'], 'local_channel') === false) {
 			if(strpos($app['categories'],'nav_pinned_app') !== false) {
-				$navbar_apps[] = Zlib\Apps::app_render($app,'navbar');
+				$navbar_apps[] = Apps::app_render($app,'navbar');
 			}
 			else {
-				$nav_apps[] = Zlib\Apps::app_render($app,'nav');
+				$nav_apps[] = Apps::app_render($app,'nav');
 			}
 		}
 	}
@@ -312,11 +313,9 @@ function nav($template = 'default') {
 function nav_set_selected($item){
 	App::$nav_sel['raw_name'] = $item;
 	$item = ['name' => $item];
-	Zlib\Apps::translate_system_apps($item);
+	Apps::translate_system_apps($item);
 	App::$nav_sel['name'] = $item['name'];
 }
-
-
 
 function channel_apps($is_owner = false, $nickname = null) {
 
@@ -417,8 +416,8 @@ function channel_apps($is_owner = false, $nickname = null) {
 	}
 
 
-	if ($p['chat'] && feature_enabled($uid,'ajaxchat')) {
-		$has_chats = ZLib\Chatroom::list_count($uid);
+	if ($p['chat'] && Apps::system_app_installed($uid,'Chatrooms')) {
+		$has_chats = Chatroom::list_count($uid);
 		if ($has_chats) {
 			$tabs[] = [
 				'label' => t('Chatrooms'),
@@ -443,7 +442,7 @@ function channel_apps($is_owner = false, $nickname = null) {
 		];
 	}
 
-	if($p['view_pages'] && feature_enabled($uid,'cards')) {
+	if($p['view_pages'] && Apps::system_app_installed($uid, 'Cards')) {
 		$tabs[] = [
 			'label' => t('Cards'),
 			'url'   => z_root() . '/cards/' . $nickname ,
@@ -454,7 +453,7 @@ function channel_apps($is_owner = false, $nickname = null) {
 		];
 	}
 
-	if($p['view_pages'] && feature_enabled($uid,'articles')) {
+	if($p['view_pages'] && Apps::system_app_installed($uid, 'Articles')) {
 		$tabs[] = [
 			'label' => t('Articles'),
 			'url'   => z_root() . '/articles/' . $nickname ,
@@ -466,7 +465,7 @@ function channel_apps($is_owner = false, $nickname = null) {
 	}
 
 
-	if($has_webpages && feature_enabled($uid,'webpages')) {
+	if($has_webpages && Apps::system_app_installed($uid, 'Webpages')) {
 		$tabs[] = [
 			'label' => t('Webpages'),
 			'url'   => z_root() . '/page/' . $nickname . '/home',
@@ -478,21 +477,20 @@ function channel_apps($is_owner = false, $nickname = null) {
 	}
  
 
-	if ($p['view_wiki']) {
-		if(feature_enabled($uid,'wiki')) {
-			$tabs[] = [
-				'label' => t('Wikis'),
-				'url'   => z_root() . '/wiki/' . $nickname,
-				'sel'   => ((argv(0) == 'wiki') ? 'active' : ''),
-				'title' => t('Wiki'),
-				'id'    => 'wiki-tab',
-				'icon'  => 'pencil-square-o'
-			];
-		}
+	if ($p['view_wiki'] && Apps::system_app_installed($uid, 'Wiki')) {
+		$tabs[] = [
+			'label' => t('Wikis'),
+			'url'   => z_root() . '/wiki/' . $nickname,
+			'sel'   => ((argv(0) == 'wiki') ? 'active' : ''),
+			'title' => t('Wiki'),
+			'id'    => 'wiki-tab',
+			'icon'  => 'pencil-square-o'
+		];
+
 	}
 
 	$arr = array('is_owner' => $is_owner, 'nickname' => $nickname, 'tab' => (($tab) ? $tab : false), 'tabs' => $tabs);
-	call_hooks('profile_tabs', $arr);
+
 	call_hooks('channel_apps', $arr);	
 
 	return replace_macros(get_markup_template('profile_tabs.tpl'), 

@@ -7,6 +7,7 @@ use Zotlabs\Lib\Libsync;
 
 require_once('include/crypto.php');
 require_once('include/attach.php');
+require_once('include/msglib.php');
 
 
 function mail_prepare_binary($item) {
@@ -492,6 +493,7 @@ function private_messages_drop($channel_id, $messageitem_id, $drop_conversation 
 	}
 	else {
 		xchan_mail_query($x[0]);
+
 		$x[0]['mail_deleted'] = true;		
 		$r = q("DELETE FROM mail WHERE id = %d AND channel_id = %d",
 			intval($messageitem_id),

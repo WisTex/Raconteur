@@ -116,7 +116,7 @@ class Stream_order {
 
 		$arr = ['tabs' => $tabs];
 
-		call_hooks('stream_order_tabs', $arr);
+		call_hooks('activity_order', $arr);
 
 		$o = '';
 
