@@ -11,7 +11,8 @@ $(document).ready(function() {
 	$("#photo-edit-newtag").contact_autocomplete(baseurl + '/acl', 'a', false, function(data) {
 		$("#photo-edit-newtag").val('@' + data.name);
 	});
-
+	
+	$(".comment-edit-form  textarea").editor_autocomplete(baseurl+"/acl?f=&n=1");
 	$('textarea').bbco_autocomplete('bbcode');
 	showHideBodyTextarea();
 

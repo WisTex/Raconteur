@@ -1,19 +1,25 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\PermissionDescription;
+use Zotlabs\Lib\ExtendedZip;
+use ZipArchive;
+
 require_once('include/channel.php');
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
 
-
-class Webpages extends \Zotlabs\Web\Controller {
+class Webpages extends Controller {
 
 	function init() {
 	
 		if(argc() > 1 && argv(1) === 'sys' && is_site_admin()) {
 			$sys = get_sys_channel();
 			if($sys && intval($sys['channel_id'])) {
-				\App::$is_sys = true;
+				App::$is_sys = true;
 			}
 		}
 	
@@ -29,23 +35,32 @@ class Webpages extends \Zotlabs\Web\Controller {
 	
 	function get() {
 	
-		if(! \App::$profile) {
+		if(! App::$profile) {
 			notice( t('Requested profile is not available.') . EOL );
-			\App::$error = 404;
+			App::$error = 404;
 			return;
+		}
+
+		if(! Apps::system_app_installed(App::$profile_uid, 'Webpages')) {
+			//Do not display any associated widgets at this point
+			App::$pdl = '';
+
+			$o = '<b>Webpages App (Not Installed):</b><br>';
+			$o .= t('Provide managed web pages on your channel');
+			return $o;
 		}
 
 		nav_set_selected('Webpages');
 
 		$which = argv(1);
 		
-		$_SESSION['return_url'] = \App::$query_string;
+		$_SESSION['return_url'] = App::$query_string;
 	
 		$uid = local_channel();
 		$owner = 0;
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
 		switch ($_SESSION['action']) {
         case 'import':
@@ -91,7 +106,7 @@ class Webpages extends \Zotlabs\Web\Controller {
 		}
 		
 		
-		if(\App::$is_sys && is_site_admin()) {
+		if(App::$is_sys && is_site_admin()) {
 			$sys = get_sys_channel();
 			if($sys && intval($sys['channel_id'])) {
 				$uid = $owner = intval($sys['channel_id']);
@@ -127,8 +142,8 @@ class Webpages extends \Zotlabs\Web\Controller {
 		// Nickname is set to the observers xchan, and profile_uid to the owner's.  
 		// This lets you post pages at other people's channels.
 	
-		if((! $channel) && ($uid) && ($uid == \App::$profile_uid)) {
-			$channel = \App::get_channel();
+		if((! $channel) && ($uid) && ($uid == App::$profile_uid)) {
+			$channel = App::get_channel();
 		}
 		if($channel) {
 			$channel_acl = array(
@@ -144,15 +159,15 @@ class Webpages extends \Zotlabs\Web\Controller {
 	
 
 		$is_owner = ($uid && $uid == $owner);
-		//$o = profile_tabs($a, $is_owner, \App::$profile['channel_address']);
+
 		$o = '';
 	
 		$x = array(
 			'webpage' => ITEM_TYPE_WEBPAGE,
 			'is_owner' => true,
-			'nickname' => \App::$profile['channel_address'],
+			'nickname' => App::$profile['channel_address'],
 			'lockstate' => (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
-			'acl' => (($is_owner) ? populate_acl($channel_acl,false, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_pages')) : ''),
+			'acl' => (($is_owner) ? populate_acl($channel_acl,false, PermissionDescription::fromGlobalPermission('view_pages')) : ''),
 			'permissions' => $channel_acl,
 			'showacl' => (($is_owner) ? true : false),
 			'visitor' => true,
@@ -280,7 +295,7 @@ class Webpages extends \Zotlabs\Web\Controller {
 							notice( t('Invalid file type.') . EOL);
 							return;
 						}
-						$zip = new \ZipArchive();
+						$zip = new ZipArchive();
 						if ($zip->open($source) === true) {
 							$tmp_folder_name = random_string(5);
 							$website = dirname($source) . '/' . $tmp_folder_name;
@@ -297,7 +312,7 @@ class Webpages extends \Zotlabs\Web\Controller {
 					// Website files are to be imported from the channel cloud files
 					if (($_POST) && array_key_exists('path',$_POST) && isset($_POST['cloudsubmit'])) {
 
-						$channel = \App::get_channel();
+						$channel = App::get_channel();
 						$dirpath = get_dirpath_by_cloudpath($channel, $_POST['path']);
 						if(!$dirpath) {
 							notice( t('Invalid folder path.') . EOL);
@@ -343,7 +358,7 @@ class Webpages extends \Zotlabs\Web\Controller {
 					
 				case 'importselected':
 						require_once('include/import.php');
-						$channel = \App::get_channel();
+						$channel = App::get_channel();
 						
 						// Import layout first so that pages that reference new layouts will find
 						// the mid of layout items in the database						
@@ -438,7 +453,7 @@ class Webpages extends \Zotlabs\Web\Controller {
 				case 'cloud':
 				case 'zipfile':
 						
-						$channel = \App::get_channel();
+						$channel = App::get_channel();
 						
 						$tmp_folder_name = random_string(10);
 						$zip_folder_name = random_string(10);
@@ -657,7 +672,7 @@ class Webpages extends \Zotlabs\Web\Controller {
             }
 						if($action === 'zipfile') {
 								// Generate the zip file
-								\Zotlabs\Lib\ExtendedZip::zipTree($tmp_folderpath, $zip_filepath, \ZipArchive::CREATE);
+								ExtendedZip::zipTree($tmp_folderpath, $zip_filepath, ZipArchive::CREATE);
 								// Output the file for download
 								header('Content-disposition: attachment; filename="' . $zip_filename . '"');
 								header("Content-Type: application/zip");
@@ -666,7 +681,7 @@ class Webpages extends \Zotlabs\Web\Controller {
 								if(isset($_SESSION['exportcloudpath'])) {
 										require_once('include/attach.php');
 										$cloudpath = urldecode($_SESSION['exportcloudpath']);
-										$channel = \App::get_channel();
+										$channel = App::get_channel();
 										$dirpath = get_dirpath_by_cloudpath($channel, $cloudpath);
 										if(!$dirpath) {
 												$x = attach_mkdirp($channel, $channel['channel_hash'], array('pathname' => $cloudpath));

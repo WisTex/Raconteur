@@ -441,7 +441,7 @@ class Comanche {
 				$path = 'view/js/jquery.js';
 				break;
 			case 'bootstrap':
-				$path = 'library/bootstrap/js/bootstrap.min.js';
+				$path = 'vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js';
 				break;
 			case 'foundation':
 				$path = 'library/foundation/js/foundation.js';
@@ -466,7 +466,7 @@ class Comanche {
 
 		switch($s) {
 			case 'bootstrap':
-				$path = 'library/bootstrap/css/bootstrap.min.css';
+				$path = 'vendor/twbs/bootstrap/dist/css/bootstrap.min.css';
 				break;
 			case 'foundation':
 				$path = 'library/foundation/css/foundation.min.css';
