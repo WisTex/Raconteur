@@ -18,25 +18,11 @@ $(document).ready(function() {
 	$('#css3-calc').remove(); // Remove the test element
 
 	if($(window).width() >= 992) {
-		$('#left_aside_wrapper').stick_in_parent({
+		$('#left_aside_wrapper, #right_aside_wrapper').stick_in_parent({
 			offset_top: parseInt($('aside').css('padding-top')),
-			parent: 'main',
-			spacer: '#left_aside_spacer'
+			parent: 'main'
 		});
 	}
-
-	if($(window).width() >= 992) {
-		$('#right_aside_wrapper').stick_in_parent({
-			offset_top: parseInt($('aside').css('padding-top')),
-			parent: 'main',
-			spacer: '#right_aside_spacer'
-		});
-	}
-
-
-	$('#notifications_wrapper.fs #notifications').stick_in_parent({
-		parent: '#notifications_wrapper'
-	});
 
 	$('#expand-aside').on('click', toggleAside);
 

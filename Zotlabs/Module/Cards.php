@@ -1,12 +1,16 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Lib\Apps;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\PermissionDescription;
+
 require_once('include/channel.php');
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
 
-
-class Cards extends \Zotlabs\Web\Controller {
+class Cards extends Controller {
 
 	function init() {
 
@@ -29,22 +33,27 @@ class Cards extends \Zotlabs\Web\Controller {
 			return login();
 		}
 
-		if(! \App::$profile) {
+		if(! App::$profile) {
 			notice( t('Requested profile is not available.') . EOL );
-			\App::$error = 404;
+			App::$error = 404;
 			return;
 		}
 
-		if(! feature_enabled(\App::$profile_uid, 'cards')) {
-			return;
+		if(! Apps::system_app_installed(App::$profile_uid, 'Cards')) {
+			//Do not display any associated widgets at this point
+			App::$pdl = '';
+
+			$o = '<b>Cards App (Not Installed):</b><br>';
+			$o .= t('Create personal planning cards');
+			return $o;
 		}
 
-		nav_set_selected(t('Cards'));
+		nav_set_selected('Cards');
 
 		head_add_link([
 			'rel'   => 'alternate',
 			'type'  => 'application/json+oembed',
-			'href'  => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . \App::$query_string),
+			'href'  => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . App::$query_string),
 			'title' => 'oembed'
 		]);
 
@@ -52,7 +61,7 @@ class Cards extends \Zotlabs\Web\Controller {
 		$category = (($_REQUEST['cat']) ? escape_tags(trim($_REQUEST['cat'])) : '');
 
 		if($category) {
-			$sql_extra2 .= protect_sprintf(term_item_parent_query(\App::$profile['profile_uid'], 'item', $category, TERM_CATEGORY));
+			$sql_extra2 .= protect_sprintf(term_item_parent_query(App::$profile['profile_uid'], 'item', $category, TERM_CATEGORY));
 		}
 
 
@@ -60,11 +69,11 @@ class Cards extends \Zotlabs\Web\Controller {
 
 		$selected_card = ((argc() > 2) ? argv(2) : '');
 
-		$_SESSION['return_url'] = \App::$query_string;
+		$_SESSION['return_url'] = App::$query_string;
 
 		$uid      = local_channel();
-		$owner    = \App::$profile_uid;
-		$observer = \App::get_observer();
+		$owner    = App::$profile_uid;
+		$observer = App::get_observer();
 
 		$ob_hash = (($observer) ? $observer['xchan_hash'] : '');
 
@@ -101,8 +110,8 @@ class Cards extends \Zotlabs\Web\Controller {
 				'nickname'          => $channel['channel_address'],
 				'lockstate'         => (($channel['channel_allow_cid'] || $channel['channel_allow_gid']
 					|| $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
-				'acl'               => (($is_owner) ? populate_acl($channel_acl, false,
-					\Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_pages')) : ''),
+				'acl'               => (($is_owner) ? populate_acl($channel_acl, false, 
+					PermissionDescription::fromGlobalPermission('view_pages')) : ''),
 				'permissions'       => $channel_acl,
 				'showacl'           => (($is_owner) ? true : false),
 				'visitor'           => true,
@@ -132,8 +141,8 @@ class Cards extends \Zotlabs\Web\Controller {
 
 
 		$itemspage = get_pconfig(local_channel(),'system','itemspage');
-		\App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
-		$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));
+		App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
+		$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 
 
 		$sql_extra = item_permissions_sql($owner);
@@ -171,7 +180,7 @@ class Cards extends \Zotlabs\Web\Controller {
 				WHERE item.uid = %d $item_normal
 				AND item.parent IN ( %s )
 				$sql_extra $sql_extra2 ",
-				intval(\App::$profile['profile_uid']),
+				intval(App::$profile['profile_uid']),
 				dbesc($parents_str)
 			);
 			if($items) {

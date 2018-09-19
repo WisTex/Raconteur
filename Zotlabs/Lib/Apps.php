@@ -311,7 +311,7 @@ class Apps {
 			'Admin' => t('Site Admin'),
 			'Report Bug' => t('Report Bug'),
 			'View Bookmarks' => t('View Bookmarks'),
-			'My Chatrooms' => t('My Chatrooms'),
+			'Chatrooms' => t('Chatrooms'),
 			'Connections' => t('Connections'),
 			'Remote Diagnostics' => t('Remote Diagnostics'),
 			'Suggest Channels' => t('Suggest Channels'),
@@ -510,7 +510,8 @@ class Apps {
 			'$icon' => $icon,
 			'$hosturl' => $hosturl,
 			'$purchase' => (($papp['page'] && (! $installed)) ? t('Purchase') : ''),
-			'$install' => (($hosturl && in_array($mode, ['view','install'])) ? $install_action : ''),
+			'$installed' => $installed,
+			'$action_label' => (($hosturl && in_array($mode, ['view','install'])) ? $install_action : ''),
 			'$edit' => ((local_channel() && $installed && $mode == 'edit') ? t('Edit') : ''),
 			'$delete' => ((local_channel() && $installed && $mode == 'edit') ? t('Delete') : ''),
 			'$undelete' => ((local_channel() && $installed && $mode == 'edit') ? t('Undelete') : ''),
@@ -729,6 +730,9 @@ class Apps {
 		);
 
 		if($r) {
+                        $hookinfo = Array('uid'=>$uid,'deleted'=>$deleted,'cats'=>$cats,'apps'=>$r);
+			call_hooks('app_list',$hookinfo);
+			$r = $hookinfo['apps'];
 			for($x = 0; $x < count($r); $x ++) {
 				if(! $r[$x]['app_system'])
 					$r[$x]['type'] = 'personal';

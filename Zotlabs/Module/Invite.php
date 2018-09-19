@@ -1,6 +1,10 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Lib\Apps;
+use Zotlabs\Web\Controller;
+
 /**
  * module: invite.php
  *
@@ -9,12 +13,16 @@ namespace Zotlabs\Module;
  */
 
 
-class Invite extends \Zotlabs\Web\Controller {
+class Invite extends Controller {
 
 	function post() {
 	
 		if(! local_channel()) {
 			notice( t('Permission denied.') . EOL);
+			return;
+		}
+
+		if(! Apps::system_app_installed(local_channel(), 'Invite')) {
 			return;
 		}
 	
@@ -57,7 +65,7 @@ class Invite extends \Zotlabs\Web\Controller {
 			else
 				$nmessage = $message;
 	
-			$account = \App::get_account();
+			$account = App::get_account();
 	
 			$res = z_mail(
 				[ 
@@ -95,6 +103,15 @@ class Invite extends \Zotlabs\Web\Controller {
 			return;
 		}
 
+		if(! Apps::system_app_installed(local_channel(), 'Invite')) {
+			//Do not display any associated widgets at this point
+			App::$pdl = '';
+
+			$o = '<b>Invite App (Not Installed):</b><br>';
+			$o .= t('Send email invitations to join this network');
+			return $o;
+		}
+
 		nav_set_selected('Invite');
 	
 		$tpl = get_markup_template('invite.tpl');
@@ -127,11 +144,11 @@ class Invite extends \Zotlabs\Web\Controller {
 				}
 			}
 	
-		$ob = \App::get_observer();
+		$ob = App::get_observer();
 		if(! $ob)
 			return $o;
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 		$o = replace_macros($tpl, array(
 			'$form_security_token' => get_form_security_token("send_invite"),

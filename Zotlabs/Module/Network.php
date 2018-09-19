@@ -167,8 +167,6 @@ class Network extends \Zotlabs\Web\Controller {
 		}
 	
 		if(! $update) {
-			$tabs = ''; //network_tabs();
-			$o .= $tabs;
 	
 			// search terms header
 			if($search) {
@@ -256,8 +254,7 @@ class Network extends \Zotlabs\Web\Controller {
 				));
 			}
 	
-			$o = $tabs;
-			$o .= $title;
+			$o = $title;
 			$o .= $status_editor;
 	
 		}
@@ -283,8 +280,7 @@ class Network extends \Zotlabs\Web\Controller {
 				'$title' => '<a href="' . zid($cid_r[0]['xchan_url']) . '" ><img src="' . zid($cid_r[0]['xchan_photo_s'])  . '" alt="' . urlencode($cid_r[0]['xchan_name']) . '" /></a> <a href="' . zid($cid_r[0]['xchan_url']) . '" >' . $cid_r[0]['xchan_name'] . '</a>'
 			));
 
-			$o = $tabs;
-			$o .= $title;
+			$o = $title;
 			$o .= $status_editor;
 		}
 		elseif($xchan) {
@@ -297,8 +293,8 @@ class Network extends \Zotlabs\Web\Controller {
 				$title = replace_macros(get_markup_template("section_title.tpl"),array(
 					'$title' => '<a href="' . zid($r[0]['xchan_url']) . '" ><img src="' . zid($r[0]['xchan_photo_s'])  . '" alt="' . urlencode($r[0]['xchan_name']) . '" /></a> <a href="' . zid($r[0]['xchan_url']) . '" >' . $r[0]['xchan_name'] . '</a>'
 				));
-				$o = $tabs;
-				$o .= $title;
+
+				$o = $title;
 				$o .= $status_editor;
 
 			}
@@ -382,7 +378,8 @@ class Network extends \Zotlabs\Web\Controller {
 				$sql_extra .= term_query('item',substr($search,1),TERM_HASHTAG,TERM_COMMUNITYTAG);
 			}
 			else {
-				$sql_extra .= sprintf(" AND item.body like '%s' ",
+				$sql_extra .= sprintf(" AND (item.body like '%s' OR item.title like '%s') ",
+					dbesc(protect_sprintf('%' . $search . '%')),
 					dbesc(protect_sprintf('%' . $search . '%'))
 				);
 			}

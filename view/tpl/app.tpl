@@ -11,11 +11,11 @@
 		<a href="{{$app.page}}" class="btn btn-outline-secondary" title="{{$purchase}}" ><i class="fa fa-external"></i></a>
 	</div>
 	{{/if}}
-	{{if $install || $update || $delete || $feature}}
+	{{if $action_label || $update || $delete || $feature}}
 	<div class="text-center app-tools">
 		<form action="{{$hosturl}}appman" method="post">
 		<input type="hidden" name="papp" value="{{$app.papp}}" />
-		{{if $install}}<button type="submit" name="install" value="{{$install}}" class="btn btn-outline-secondary btn-sm" title="{{$install}}" ><i class="fa fa-fw fa-arrow-circle-o-down" ></i></button>{{/if}}
+		{{if $action_label}}<button type="submit" name="install" value="{{$action_label}}" class="btn btn-outline-{{if $installed}}secondary{{else}}success{{/if}} btn-sm" title="{{$action_label}}" ><i class="fa fa-fw {{if $installed}}fa-refresh{{else}}fa-arrow-circle-o-down{{/if}}" ></i> {{$action_label}}</button>{{/if}}
 		{{if $edit}}<input type="hidden" name="appid" value="{{$app.guid}}" /><button type="submit" name="edit" value="{{$edit}}" class="btn btn-outline-secondary btn-sm" title="{{$edit}}" ><i class="fa fa-fw fa-pencil" ></i></button>{{/if}}
 		{{if $delete}}<button type="submit" name="delete" value="{{if $deleted}}{{$undelete}}{{else}}{{$delete}}{{/if}}" class="btn btn-outline-secondary btn-sm" title="{{if $deleted}}{{$undelete}}{{else}}{{$delete}}{{/if}}" ><i class="fa fa-fw fa-trash-o drop-icons"></i></button>{{/if}}
 		{{if $feature}}<button type="submit" name="feature" value="nav_featured_app" class="btn btn-outline-secondary btn-sm" title="{{if $featured}}{{$remove}}{{else}}{{$add}}{{/if}}"><i class="fa fa-fw fa-star{{if $featured}} text-warning{{/if}}"></i></button>{{/if}}
