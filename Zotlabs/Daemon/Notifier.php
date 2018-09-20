@@ -167,15 +167,19 @@ class Notifier {
 			$normal_mode = false;
 		}
 		elseif(in_array($cmd, [ 'permissions_update', 'permissions_reject', 'permissions_accept', 'permissions_create' ])) {
+
 			// Get the (single) recipient	
+
 			$r = q("select * from abook left join xchan on abook_xchan = xchan_hash where abook_id = %d and abook_self = 0",
 				intval($item_id)
 			);
+
 			if($r) {
 				$uid = $r[0]['abook_channel'];
 				// Get the sender
 				self::$channel = channelx_by_n($uid);
 				if(self::$channel) {
+
 					$perm_update = array('sender' => self::$channel, 'recipient' => $r[0], 'success' => false, 'deliveries' => '');	
 
 					switch($cmd) {
@@ -183,6 +187,7 @@ class Notifier {
 							ActivityPub::permissions_create($perm_update);
 							break;
 						case 'permissions_accept':
+
 							ActivityPub::permissions_accept($perm_update);
 							break;
 						default:
