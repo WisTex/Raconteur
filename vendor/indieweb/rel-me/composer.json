@@ -1,0 +1,16 @@
+{
+	"name": "indieweb/rel-me",
+	"description": "Functions for discovering, consuming and verifying rel-me microformat",
+	"license": "MIT",
+	"require": {
+		"php": ">=5.3",
+		"mf2/mf2": "0.2.*"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "*",
+		"barnabywalters/mf-cleaner": "*"
+	},
+	"autoload": {
+		"files": ["RelMe.php"]
+	}
+}
