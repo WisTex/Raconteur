@@ -155,18 +155,55 @@
         ]
     },
     {
-        "name": "league/html-to-markdown",
-        "version": "4.7.0",
-        "version_normalized": "4.7.0.0",
+        "name": "indieweb/rel-me",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
-            "url": "https://github.com/thephpleague/html-to-markdown.git",
-            "reference": "76c076483cef89860d32a3fd25312f5a42848a8c"
+            "url": "https://github.com/indieweb/rel-me.git",
+            "reference": "6a6c9de41f5b18ef99243340a365949f2c47df0e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/76c076483cef89860d32a3fd25312f5a42848a8c",
-            "reference": "76c076483cef89860d32a3fd25312f5a42848a8c",
+            "url": "https://api.github.com/repos/indieweb/rel-me/zipball/6a6c9de41f5b18ef99243340a365949f2c47df0e",
+            "reference": "6a6c9de41f5b18ef99243340a365949f2c47df0e",
+            "shasum": ""
+        },
+        "require": {
+            "mf2/mf2": "0.2.*",
+            "php": ">=5.3"
+        },
+        "require-dev": {
+            "barnabywalters/mf-cleaner": "*",
+            "phpunit/phpunit": "*"
+        },
+        "time": "2016-09-08T17:20:47+00:00",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "files": [
+                "RelMe.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "description": "Functions for discovering, consuming and verifying rel-me microformat"
+    },
+    {
+        "name": "league/html-to-markdown",
+        "version": "4.8.0",
+        "version_normalized": "4.8.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/thephpleague/html-to-markdown.git",
+            "reference": "f9a879a068c68ff47b722de63f58bec79e448f9d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/f9a879a068c68ff47b722de63f58bec79e448f9d",
+            "reference": "f9a879a068c68ff47b722de63f58bec79e448f9d",
             "shasum": ""
         },
         "require": {
@@ -179,14 +216,14 @@
             "phpunit/phpunit": "4.*",
             "scrutinizer/ocular": "~1.1"
         },
-        "time": "2018-05-19T23:47:12+00:00",
+        "time": "2018-09-18T12:18:08+00:00",
         "bin": [
             "bin/html-to-markdown"
         ],
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "4.8-dev"
+                "dev-master": "4.9-dev"
             }
         },
         "installation-source": "dist",
@@ -201,16 +238,16 @@
         ],
         "authors": [
             {
-                "name": "Colin O'Dell",
-                "email": "colinodell@gmail.com",
-                "homepage": "http://www.colinodell.com",
-                "role": "Lead Developer"
-            },
-            {
                 "name": "Nick Cernis",
                 "email": "nick@cern.is",
                 "homepage": "http://modernnerd.net",
                 "role": "Original Author"
+            },
+            {
+                "name": "Colin O'Dell",
+                "email": "colinodell@gmail.com",
+                "homepage": "https://www.colinodell.com",
+                "role": "Lead Developer"
             }
         ],
         "description": "An HTML-to-markdown conversion helper for PHP",
@@ -255,6 +292,61 @@
             "codecs",
             "php",
             "tags"
+        ]
+    },
+    {
+        "name": "mf2/mf2",
+        "version": "v0.2.12",
+        "version_normalized": "0.2.12.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/indieweb/php-mf2.git",
+            "reference": "6701504876d6c9242eb310b35f41d40d9785ab4e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/indieweb/php-mf2/zipball/6701504876d6c9242eb310b35f41d40d9785ab4e",
+            "reference": "6701504876d6c9242eb310b35f41d40d9785ab4e",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "3.7.*"
+        },
+        "suggest": {
+            "barnabywalters/mf-cleaner": "To more easily handle the canonical data php-mf2 gives you"
+        },
+        "time": "2015-07-12T14:10:01+00:00",
+        "bin": [
+            "bin/fetch-mf2",
+            "bin/parse-mf2"
+        ],
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "Mf2/Parser.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Barnaby Walters",
+                "homepage": "http://waterpigs.co.uk"
+            }
+        ],
+        "description": "A pure, generic microformats2 parser — makes HTML as easy to consume as a JSON API",
+        "keywords": [
+            "html",
+            "microformats",
+            "microformats 2",
+            "parser",
+            "semantic"
         ]
     },
     {
@@ -1029,23 +1121,23 @@
     },
     {
         "name": "smarty/smarty",
-        "version": "v3.1.32",
-        "version_normalized": "3.1.32.0",
+        "version": "v3.1.33",
+        "version_normalized": "3.1.33.0",
         "source": {
             "type": "git",
             "url": "https://github.com/smarty-php/smarty.git",
-            "reference": "ac9d4b587e5bf53381e21881820a9830765cb459"
+            "reference": "dd55b23121e55a3b4f1af90a707a6c4e5969530f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/smarty-php/smarty/zipball/ac9d4b587e5bf53381e21881820a9830765cb459",
-            "reference": "ac9d4b587e5bf53381e21881820a9830765cb459",
+            "url": "https://api.github.com/repos/smarty-php/smarty/zipball/dd55b23121e55a3b4f1af90a707a6c4e5969530f",
+            "reference": "dd55b23121e55a3b4f1af90a707a6c4e5969530f",
             "shasum": ""
         },
         "require": {
             "php": ">=5.2"
         },
-        "time": "2018-04-24T14:53:33+00:00",
+        "time": "2018-09-12T20:54:16+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
