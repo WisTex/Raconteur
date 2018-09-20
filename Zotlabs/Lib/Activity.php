@@ -1006,7 +1006,7 @@ class Activity {
 		// We may have been passed a cached entry. If it is, and the cache duration has expired
 		// fetch a fresh copy before continuing.
 
-		if(array_key_exists($person_obj['cached']) && array_key_exists($person_obj['updated']) && $person_obj['updated'] < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days')) {
+		if(array_key_exists($person_obj['cached']) && array_key_exists('updated',$person_obj) && $person_obj['updated'] < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days')) {
 			$person_obj = ActivityStreams::fetch($url);
 		}
 
