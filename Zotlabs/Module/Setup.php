@@ -531,7 +531,7 @@ class Setup extends \Zotlabs\Web\Controller {
 			$ck_funcs[0]['status'] = false;
 			$ck_funcs[0]['help'] = t('Error: libCURL PHP module required but not installed.');
 		}
-		if((! function_exists('imagecreatefromjpeg')) || (! class_exists('\\Imagick'))) {
+		if((! function_exists('imagecreatefromjpeg')) && (! class_exists('\\Imagick'))) {
 			$ck_funcs[1]['status'] = false;
 			$ck_funcs[1]['help'] = t('Error: GD PHP module with JPEG support or ImageMagick graphics library required but not installed.');
 		}
