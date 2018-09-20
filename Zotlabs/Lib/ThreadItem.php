@@ -798,6 +798,7 @@ class ThreadItem {
 			'$myphoto' => $observer['xchan_photo_s'],
 			'$comment' => t('Comment'),
 			'$submit' => t('Submit'),
+			'$edat' => t('Add Conversation Mentions'),
 			'$edbold' => t('Bold'),
 			'$editalic' => t('Italic'),
 			'$eduline' => t('Underline'),
