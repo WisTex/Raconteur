@@ -196,7 +196,6 @@ class Item extends \Zotlabs\Web\Controller {
 		}
 	}
 
-
 	function post() {
 
 		// This will change. Figure out who the observer is and whether or not
