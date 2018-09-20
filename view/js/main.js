@@ -258,6 +258,21 @@ function commentInsert(obj, id) {
 	$("#comment-edit-text-" + id).val(tmpStr + ins);
 }
 
+function commentAuthors(id) {
+	var auths = $("#thread-authors-" + id).html();
+	if(typeof(auths) != 'undefined') {
+		var tmpStr = $("#comment-edit-text-" + id).val();
+		if(tmpStr == '$comment') {
+			tmpStr = '';
+			$("#comment-edit-text-" + id).addClass("expanded");
+			openMenu("comment-tools-" + id);
+		}
+		$("#comment-edit-text-" + id).val(tmpStr + auths);
+	}
+}
+
+
+
 function insertbbcomment(comment, BBcode, id) {
 	// allow themes to override this
 	if(typeof(insertFormatting) != 'undefined')
