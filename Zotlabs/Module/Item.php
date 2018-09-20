@@ -185,6 +185,15 @@ class Item extends \Zotlabs\Web\Controller {
 			killme();
 
 		}
+
+		if(argc() > 1 && argv(1) !== 'drop') {
+			$x = q("select plink from item where mid = '%s' limit 1",
+				dbesc(z_root() . '/item/' . argv(1))
+			);
+			if($x) {
+				goaway($x[0]['plink']);
+			}
+		}
 	}
 
 
