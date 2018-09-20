@@ -165,6 +165,9 @@ class ThreadItem {
 		$profile_link   = chanlink_hash($item['author_xchan']);
 		$profile_name   = $item['author']['xchan_name'];
 
+		$profile_addr = $item['author']['xchan_addr'] ? : $item['author']['xchan_url'];
+
+
 		$location = format_location($item);
 		$isevent = false;
 		$attend = null;
@@ -453,7 +456,12 @@ class ThreadItem {
 			$censored = true;
 		}
 
-		$result['children'] = array();
+		$result['children'] = [];
+
+		// place to store all the author addresses (links if not available) in the thread so we can auto-mention them in JS. 
+		$result['authors'] = [];
+		$result['authors'][] = $profile_addr;
+
 		$nb_children = count($children);
 
 		$visible_comments = get_config('system','expanded_comments');
@@ -468,6 +476,10 @@ class ThreadItem {
 				$xz = $child->get_template_data($conv_responses, $thread_level + 1);
 				if(strpos($xz['body'],"<button id=\"nsfw-wrap-") !== false && $collapse_all === false) {
 					$censored = true;
+				}
+				$author = $child->get_author();
+				if($author && ! in_array($author,$result['authors'])) {
+					$result['authors'][] = $author;
 				}
 				$result['children'][] = $xz;
 			}
@@ -485,6 +497,8 @@ class ThreadItem {
 			}
 		}
 		
+		logger('authors: ' . print_r($result['authors'],true));
+
 		$result['private'] = $item['item_private'];
 		$result['toplevel'] = ($this->is_toplevel() ? 'toplevel_item' : '');
 
@@ -520,6 +534,14 @@ class ThreadItem {
 
 	public function is_threaded() {
 		return $this->threaded;
+	}
+
+	public function get_author() {
+		$xchan = $this->get_data_value('author');
+		if($xchan['xchan_addr']) {
+			return $xchan['xchan_addr'];
+		}
+		return $xchan['xchan_url'];
 	}
 
 	public function set_reload($val) {

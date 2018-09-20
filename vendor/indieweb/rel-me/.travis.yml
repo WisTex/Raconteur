@@ -1,0 +1,10 @@
+language: php
+php:
+- 5.3
+- 5.4
+- 5.5
+- nightly
+sudo: false
+before_script:
+- composer self-update
+- composer install --prefer-dist --no-interaction
