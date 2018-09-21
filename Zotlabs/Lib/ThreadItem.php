@@ -129,6 +129,10 @@ class ThreadItem {
 		else
 			$edpost = false;
 
+		if($item['verb'] === 'Announce') {
+			$edpost = false;
+		}
+
 
 		if($observer['xchan_hash'] == $this->get_data_value('author_xchan') 
 			|| $observer['xchan_hash'] == $this->get_data_value('owner_xchan') 
@@ -497,7 +501,7 @@ class ThreadItem {
 			}
 		}
 		
-		logger('authors: ' . print_r($result['authors'],true));
+		//logger('authors: ' . print_r($result['authors'],true));
 
 		$result['private'] = $item['item_private'];
 		$result['toplevel'] = ($this->is_toplevel() ? 'toplevel_item' : '');

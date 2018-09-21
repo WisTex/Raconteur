@@ -235,6 +235,10 @@ class ActivityStreams {
 		$base = (($base) ? $base : $this->data);
 		$propname = (($prefix) ? $prefix . ':' : '') . $property;
 
+		if(! is_array($base)) {
+			btlogger('not an array: ' . print_r($base,true));
+		}
+
 		return ((array_key_exists($propname, $base)) ? $base[$propname] : null);
 	}
 
