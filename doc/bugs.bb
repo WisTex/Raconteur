@@ -1,5 +1,5 @@
 [h2]Bugs, Issues, and things that go bump in the night...[/h2]
-[h3]Something went wrong! Who is charge of fixing it?[/h3]
+[h3]Something went wrong! Who is in charge of fixing it?[/h3]
 
 [b]$Projectname Community Server[/b]
 
@@ -21,9 +21,9 @@ If you get a blank white screen when doing something, this is almost always a co
 
 [h3]I'm stumped. I can't figure out what is wrong.[/h3]
 
-At this point it might be worthwhile discussing the issue on one of the online forums. There may be several of these and some may be more suited to your spoken language. At this time, the 'Hubzilla Support' channel (support@gravizot.de) is the recommended forum for discussing bugs. 
+At this point it might be worthwhile discussing the issue on one of the online forums. There may be several of these and some may be more suited to your spoken language.
 
-If community members with software engineering training/expertise can't help you right away, understand that they are volunteers and may have a lot of other work and demands on their time. At this point you need to file a bug report. You will need an account on github.com to do this. So register, and then visit https://framagit.org/hubzilla/core/issues . Create an issue here and provide all the same information that you provided online. Don't leave out anything. 
+If community members with software engineering training/expertise can't help you right away, understand that they are volunteers and may have a lot of other work and demands on their time. At this point you need to file a bug report. You will need an account on framagit.org to do this. So register, and then visit https://framagit.org/macgirvin/osada/issues . Create an issue here and provide all the same information that you provided online. Don't leave out anything. 
 
 Then you wait. If it's a high profile issue, it may get fixed quickly. But nobody is in charge of fixing bugs. If it lingers without resolution, please spend some more time investigating the problem. Ask about anything you don't understand related to the behaviour. You will learn more about how the software works and quite possibly figure out why it isn't working now. Ultimately it is somebody in the community who is going to fix this and you are a member of the community; and this is how the open source process works. 
 

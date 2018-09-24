@@ -204,7 +204,7 @@ class Directory extends \Zotlabs\Web\Controller {
 			logger('mod_directory: query: ' . $query);
 	
 			$x = z_fetch_url($query);
-			logger('directory: return from upstream: ' . print_r($x,true), LOGGER_DATA);
+			// logger('directory: return from upstream: ' . print_r($x,true), LOGGER_DATA);
 	
 			if($x['success']) {
 				$t = 0;
@@ -379,7 +379,7 @@ class Directory extends \Zotlabs\Web\Controller {
 							\App::$data['directory_keywords'] = $j['keywords'];
 						}
 	
-						logger('mod_directory: entries: ' . print_r($entries,true), LOGGER_DATA);
+						// logger('mod_directory: entries: ' . print_r($entries,true), LOGGER_DATA);
 	
 	
 						if($_REQUEST['aj']) {

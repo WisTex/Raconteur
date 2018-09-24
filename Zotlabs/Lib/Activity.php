@@ -1050,11 +1050,36 @@ class Activity {
 			$icon = z_root() . '/' . get_default_profile_photo();
 		}
 
-		if(is_array($person_obj['url']) && array_key_exists('href', $person_obj['url']))
-			$profile = $person_obj['url']['href'];
-		else
-			$profile = $url;
 
+		$links = false;
+		$profile = false;
+
+		if(is_array($person_obj['url'])) {
+			if(! array_key_exists(0,$person_obj['url'])) {
+				$links = [ $person_obj['url'] ];
+			}
+			else {
+				$links = $person_obj['url'];
+			}
+		}
+
+		if($links) {
+			foreach($links as $link) {
+				if(array_key_exists('mediaType',$link) && $link['mediaType'] === 'text/html') {
+					$profile = $link['href'];
+				}
+			}
+			if(! $profile) {
+				$profile = $links[0]['href'];
+			}
+		}
+		elseif(array_key_exists('url',$person_obj) && is_string($person_obj['url'])) {
+			$profile = $person_obj['url'];
+		}
+
+		if(! $profile) {
+			$profile = $url;
+		}
 
 		$inbox = $person_obj['inbox'];
 
@@ -1165,7 +1190,7 @@ class Activity {
 
 	static function create_action($channel,$observer_hash,$act) {
 
-		if(in_array($act->obj['type'], [ 'Note', 'Article', 'Video', 'Photo' ])) {
+		if(in_array($act->obj['type'], [ 'Note', 'Article', 'Video', 'Audio', 'Image' ])) {
 			self::create_note($channel,$observer_hash,$act);
 		}
 
@@ -1183,7 +1208,7 @@ class Activity {
 
 	static function like_action($channel,$observer_hash,$act) {
 
-		if(in_array($act->obj['type'], [ 'Note', 'Article', 'Video', 'Photo' ])) {
+		if(in_array($act->obj['type'], [ 'Note', 'Article', 'Video', 'Audio', 'Image' ])) {
 			self::like_note($channel,$observer_hash,$act);
 		}
 
@@ -1445,8 +1470,6 @@ class Activity {
 		$s['owner_xchan']  = $act->actor['id'];
 		$s['author_xchan'] = $act->actor['id'];
 
-//		self::actor_store($act->actor['id'],$act->actor);
-
 		$s['mid']        = $act->obj['id'];
 		$s['parent_mid'] = $act->parent_id;
 
@@ -1570,6 +1593,37 @@ class Activity {
 				}
 			}
 		}
+
+		if($act->obj['type'] === 'Audio') {
+
+			$atypes = [
+				'audio/mpeg',
+				'audio/ogg',
+				'audio/wav'
+			];
+
+			if(array_key_exists('url',$act->obj) && is_array($act->obj['url'])) {
+				foreach($act->obj['url'] as $vurl) {
+					if(in_array($vurl['mimeType'], $atypes)) {
+						$s['body'] .= "\n\n" . '[audio]' . $vurl['href'] . '[/audio]';
+						break;
+					}
+				}
+			}
+		}
+
+		if($act->obj['type'] === 'Image') {
+			if(array_key_exists('url',$act->obj) && is_array($act->obj['url'])) {
+				foreach($act->obj['url'] as $vurl) {
+					if(strpos($s['body'],$vurl['href']) === false) {
+						$s['body'] .= "\n\n" . '[zmg]' . $vurl['href'] . '[/zmg]';
+						break;
+					}
+				}
+			}
+		}
+
+
 
 		if($act->recips && (! in_array(ACTIVITY_PUBLIC_INBOX,$act->recips)))
 			$s['item_private'] = 1;
