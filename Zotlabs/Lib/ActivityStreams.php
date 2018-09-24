@@ -237,6 +237,7 @@ class ActivityStreams {
 
 		if(! is_array($base)) {
 			btlogger('not an array: ' . print_r($base,true));
+			return null;
 		}
 
 		return ((array_key_exists($propname, $base)) ? $base[$propname] : null);
