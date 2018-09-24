@@ -94,17 +94,17 @@ class ActivityStreams {
 				}
 			}
 			
-			if($this->obj && $this->obj['actor'])
+			if($this->obj && is_array($this->obj) && $this->obj['actor'])
 				$this->obj['actor'] = $this->get_actor('actor',$this->obj);
-			if($this->tgt && $this->tgt['actor'])
+			if($this->tgt && is_array($this->tgt) && $this->tgt['actor'])
 				$this->tgt['actor'] = $this->get_actor('actor',$this->tgt);
 
 			$this->parent_id = $this->get_property_obj('inReplyTo');
 
-			if(! $this->parent_id) {				
+			if((! $this->parent_id) && is_array($this->obj)) {				
 				$this->parent_id = $this->obj['inReplyTo'];
 			}
-			if(! $this->parent_id) {				
+			if((! $this->parent_id) && is_array($this->obj)) {				
 				$this->parent_id = $this->obj['id'];
 			}
 		}

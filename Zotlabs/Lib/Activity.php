@@ -1050,11 +1050,36 @@ class Activity {
 			$icon = z_root() . '/' . get_default_profile_photo();
 		}
 
-		if(is_array($person_obj['url']) && array_key_exists('href', $person_obj['url']))
-			$profile = $person_obj['url']['href'];
-		else
-			$profile = $url;
 
+		$links = false;
+		$profile = false;
+
+		if(is_array($person_obj['url'])) {
+			if(! array_key_exists(0,$person_obj['url'])) {
+				$links = [ $person_obj['url'] ];
+			}
+			else {
+				$links = $person_obj['url'];
+			}
+		}
+
+		if($links) {
+			foreach($links as $link) {
+				if(array_key_exists('mediaType',$link) && $link['mediaType'] === 'text/html') {
+					$profile = $link['href'];
+				}
+			}
+			if(! $profile) {
+				$profile = $links[0]['href'];
+			}
+		}
+		elseif(array_key_exists('url',$person_obj) && is_string($person_obj['url'])) {
+			$profile = $person_obj['url'];
+		}
+
+		if(! $profile) {
+			$profile = $url;
+		}
 
 		$inbox = $person_obj['inbox'];
 

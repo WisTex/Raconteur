@@ -215,8 +215,8 @@ var activeCommentText = '';
 		$('#like-rotator-' + id).show();
 		$.get('{{$baseurl}}/share/' + id, function(data) {
 			$('#like-rotator-' + id).hide();
+			notificationsUpdate();
 		});
-		notificationsUpdate();
 	}
 
 
