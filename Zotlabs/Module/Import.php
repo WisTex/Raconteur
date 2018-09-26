@@ -411,9 +411,9 @@ class Import extends \Zotlabs\Web\Controller {
 				unset($group['id']);
 				$group['uid'] = $channel['channel_id'];
 
-				create_table_from_array('groups', $group);
+				create_table_from_array('pgrp', $group);
 			}
-			$r = q("select * from groups where uid = %d",
+			$r = q("select * from pgrp where uid = %d",
 				intval($channel['channel_id'])
 			);
 			if($r) {
@@ -433,7 +433,7 @@ class Import extends \Zotlabs\Web\Controller {
 					if($x['old'] == $group_member['gid'])
 						$group_member['gid'] = $x['new'];
 				}
-				create_table_from_array('group_member', $group_member);
+				create_table_from_array('pgrp_member', $group_member);
 			}
 		}
 

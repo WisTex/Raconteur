@@ -296,7 +296,7 @@ function remove_all_xchan_resources($xchan, $channel_id = 0) {
 		$r = q("delete from event where event_xchan = '%s'",
 			dbesc($xchan)
 		);
-		$r = q("delete from group_member where xchan = '%s'",
+		$r = q("delete from pgrp_member where xchan = '%s'",
 			dbesc($xchan)
 		);
 		$r = q("delete from mail where ( from_xchan = '%s' or to_xchan = '%s' )",
@@ -405,7 +405,7 @@ function contact_remove($channel_id, $abook_id) {
 		intval($channel_id)
 	);
 
-	$r = q("delete from group_member where xchan = '%s' and uid = %d",
+	$r = q("delete from pgrp_member where xchan = '%s' and uid = %d",
 		dbesc($abook['abook_xchan']),
 		intval($channel_id)
 	);

@@ -251,7 +251,7 @@ function xchan_change_key($oldx,$newx,$data) {
 	$tables = [
 		'abook'        => 'abook_xchan',
 		'abconfig'     => 'xchan',
-		'group_member' => 'xchan',
+		'pgrp_member'  => 'xchan',
 		'chat'         => 'chat_xchan',
 		'chatpresence' => 'cp_xchan',
 		'event'        => 'event_xchan',
