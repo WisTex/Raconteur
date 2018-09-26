@@ -118,7 +118,7 @@ class Lockview extends \Zotlabs\Web\Controller {
 		}
 
 		if(count($allowed_groups)) {
-			$r = q("SELECT gname FROM groups WHERE hash IN ( " . implode(', ', $allowed_groups) . " )");
+			$r = q("SELECT gname FROM pgrp WHERE hash IN ( " . implode(', ', $allowed_groups) . " )");
 			if($r)
 				foreach($r as $rr) 
 					$l[] = '<div class="dropdown-item"><b>' . $rr['gname'] . '</b></div>';
@@ -156,7 +156,7 @@ class Lockview extends \Zotlabs\Web\Controller {
 
 
 		if(count($deny_groups)) {
-			$r = q("SELECT gname FROM groups WHERE hash IN ( " . implode(', ', $deny_groups) . " )");
+			$r = q("SELECT gname FROM pgrp WHERE hash IN ( " . implode(', ', $deny_groups) . " )");
 			if($r)
 				foreach($r as $rr) 
 					$l[] = '<div class="dropdown-item"><b><strike>' . $rr['gname'] . '</strike></b></div>';

@@ -89,7 +89,7 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 		}
 	}
 
-	$r = q("SELECT id, hash, gname FROM groups WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
+	$r = q("SELECT id, hash, gname FROM pgrp WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
 		intval(local_channel())
 	);
 
