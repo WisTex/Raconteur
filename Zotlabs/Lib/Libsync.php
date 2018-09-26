@@ -49,7 +49,7 @@ class Libsync {
 		if(intval($channel['channel_removed']))
 			return;
 
-		$h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url where hubloc_hash = '%s' and hubloc_netwoor = 'zot6' and hubloc_deleted = 0",
+		$h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url where hubloc_hash = '%s' and hubloc_network = 'zot6' and hubloc_deleted = 0",
 			dbesc(($keychange) ? $packet['keychange']['old_hash'] : $channel['channel_hash'])
 		);
 
