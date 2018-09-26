@@ -1590,23 +1590,36 @@ class Activity {
 			];
 
 			$mps = [];
-			if(array_key_exists('url',$act->obj) && is_array($act->obj['url'])) {
-				foreach($act->obj['url'] as $vurl) {
-					if(in_array($vurl['mimeType'], $vtypes)) {
-						if(! array_key_exists('width',$vurl)) {
-							$vurl['width'] = 0;
+			$ptr = null;
+
+			if(array_key_exists('url',$act->obj)) {
+				if(is_array($act->obj['url'])) {
+					if(array_key_exists(0,$act->obj['url'])) {				
+						$ptr = $act->obj['url'];
+					}
+					else {
+						$ptr = [ $act->obj['url'] ];
+					}
+					foreach($ptr as $vurl) {
+						if(in_array($vurl['mediaType'], $vtypes)) {
+							if(! array_key_exists('width',$vurl)) {
+								$vurl['width'] = 0;
+							}
+							$mps[] = $vurl;
 						}
-						$mps[] = $vurl;
 					}
 				}
-			}
-			if($mps) {
-				usort($mps,[ __CLASS__, 'vid_sort' ]);
-				foreach($mps as $m) {
-					if(intval($m['width']) < 500) {
-						$s['body'] .= "\n\n" . '[video]' . $m['href'] . '[/video]';
-						break;
+				if($mps) {
+					usort($mps,[ __CLASS__, 'vid_sort' ]);
+					foreach($mps as $m) {
+						if(intval($m['width']) < 500) {
+							$s['body'] .= "\n\n" . '[video]' . $m['href'] . '[/video]';
+							break;
+						}
 					}
+				}
+				elseif(is_string($act->obj['url'])) {
+					$s['body'] .= "\n\n" . '[video]' . $act->obj['url'] . '[/video]';
 				}
 			}
 		}
@@ -1619,28 +1632,84 @@ class Activity {
 				'audio/wav'
 			];
 
-			if(array_key_exists('url',$act->obj) && is_array($act->obj['url'])) {
-				foreach($act->obj['url'] as $vurl) {
-					if(in_array($vurl['mimeType'], $atypes)) {
-						$s['body'] .= "\n\n" . '[audio]' . $vurl['href'] . '[/audio]';
-						break;
+			$ptr = null;
+
+			if(array_key_exists('url',$act->obj)) {
+				if(is_array($act->obj['url'])) {
+					if(array_key_exists(0,$act->obj['url'])) {				
+						$ptr = $act->obj['url'];
+					}
+					else {
+						$ptr = [ $act->obj['url'] ];
+					}
+					foreach($ptr as $vurl) {
+						if(in_array($vurl['mediaType'], $atypes)) {
+							$s['body'] .= "\n\n" . '[audio]' . $vurl['href'] . '[/audio]';
+							break;
+						}
 					}
 				}
+				elseif(is_string($act->obj['url'])) {
+					$s['body'] .= "\n\n" . '[audio]' . $act->obj['url'] . '[/audio]';
+				}
 			}
+
 		}
 
 		if($act->obj['type'] === 'Image') {
-			if(array_key_exists('url',$act->obj) && is_array($act->obj['url'])) {
-				foreach($act->obj['url'] as $vurl) {
-					if(strpos($s['body'],$vurl['href']) === false) {
-						$s['body'] .= "\n\n" . '[zmg]' . $vurl['href'] . '[/zmg]';
-						break;
+
+			$ptr = null;
+
+			if(array_key_exists('url',$act->obj)) {
+				if(is_array($act->obj['url'])) {
+					if(array_key_exists(0,$act->obj['url'])) {				
+						$ptr = $act->obj['url'];
+					}
+					else {
+						$ptr = [ $act->obj['url'] ];
+					}
+					foreach($ptr as $vurl) {
+						if(strpos($s['body'],$vurl['href']) === false) {
+							$s['body'] .= "\n\n" . '[zmg]' . $vurl['href'] . '[/zmg]';
+							break;
+						}
+					}
+				}
+				elseif(is_string($act->obj['url'])) {
+					if(strpos($s['body'],$act->obj['url']) === false) {
+						$s['body'] .= "\n\n" . '[zmg]' . $act->obj['url'] . '[/zmg]';
 					}
 				}
 			}
 		}
 
+		if(in_array($act->obj['type'],[ 'Note','Article' ])) {
+			$ptr = null;
 
+			if(array_key_exists('url',$act->obj)) {
+				if(is_array($act->obj['url'])) {
+					if(array_key_exists(0,$act->obj['url'])) {				
+						$ptr = $act->obj['url'];
+					}
+					else {
+						$ptr = [ $act->obj['url'] ];
+					}
+					foreach($ptr as $vurl) {
+						if(array_key_exists('mediaType',$vurl) && $vurl['mediaType'] === 'text/plain') {
+							$s['plink'] = $vurl['href'];
+							break;
+						}
+					}
+				}
+				elseif(is_string($act->obj['url'])) {
+					$s['plink'] = $act->obj['url'];
+				}
+			}
+		}
+
+		if(! $s['plink']) {
+			$s['plink'] = $s['mid'];
+		}
 
 		if($act->recips && (! in_array(ACTIVITY_PUBLIC_INBOX,$act->recips)))
 			$s['item_private'] = 1;
