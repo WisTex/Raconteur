@@ -43,7 +43,7 @@ class Group extends \Zotlabs\Web\Controller {
 		if((argc() == 2) && (intval(argv(1)))) {
 			check_form_security_token_redirectOnErr('/group', 'group_edit');
 			
-			$r = q("SELECT * FROM groups WHERE id = %d AND uid = %d LIMIT 1",
+			$r = q("SELECT * FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
 				intval(argv(1)),
 				intval(local_channel())
 			);
@@ -57,7 +57,7 @@ class Group extends \Zotlabs\Web\Controller {
 			$public = intval($_POST['public']);
 	
 			if((strlen($groupname))  && (($groupname != $group['gname']) || ($public != $group['visible']))) {
-				$r = q("UPDATE groups SET gname = '%s', visible = %d  WHERE uid = %d AND id = %d",
+				$r = q("UPDATE pgrp SET gname = '%s', visible = %d  WHERE uid = %d AND id = %d",
 					dbesc($groupname),
 					intval($public),
 					intval(local_channel()),
@@ -96,7 +96,7 @@ class Group extends \Zotlabs\Web\Controller {
 
 			$new = (((argc() == 2) && (argv(1) === 'new')) ? true : false);
 
-			$groups = q("SELECT id, gname FROM groups WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
+			$groups = q("SELECT id, gname FROM pgrp WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
 				intval(local_channel())
 			);
 
@@ -141,7 +141,7 @@ class Group extends \Zotlabs\Web\Controller {
 			check_form_security_token_redirectOnErr('/group', 'group_drop', 't');
 			
 			if(intval(argv(2))) {
-				$r = q("SELECT gname FROM groups WHERE id = %d AND uid = %d LIMIT 1",
+				$r = q("SELECT gname FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
 					intval(argv(2)),
 					intval(local_channel())
 				);
@@ -173,7 +173,7 @@ class Group extends \Zotlabs\Web\Controller {
 		if((argc() > 1) && (intval(argv(1)))) {
 	
 			require_once('include/acl_selectors.php');
-			$r = q("SELECT * FROM groups WHERE id = %d AND uid = %d AND deleted = 0 LIMIT 1",
+			$r = q("SELECT * FROM pgrp WHERE id = %d AND uid = %d AND deleted = 0 LIMIT 1",
 				intval(argv(1)),
 				intval(local_channel())
 			);

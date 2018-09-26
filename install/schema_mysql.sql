@@ -464,7 +464,7 @@ CREATE TABLE IF NOT EXISTS `event` (
   KEY `event_priority` (`event_priority`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `groups` (
+CREATE TABLE IF NOT EXISTS `pgrp` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `hash` char(191) NOT NULL DEFAULT '',
   `uid` int(10) unsigned NOT NULL DEFAULT 0 ,
@@ -479,7 +479,7 @@ CREATE TABLE IF NOT EXISTS `groups` (
   KEY `gname` (`gname`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `group_member` (
+CREATE TABLE IF NOT EXISTS `pgrp_member` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `uid` int(10) unsigned NOT NULL DEFAULT 0 ,
   `gid` int(10) unsigned NOT NULL DEFAULT 0 ,

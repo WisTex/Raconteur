@@ -448,7 +448,7 @@ function create_identity($arr) {
 		// if our role_permissions indicate that we're using a default collection ACL, add it.
 
 		if(is_array($role_permissions) && $role_permissions['default_collection']) {
-			$r = q("select hash from groups where uid = %d and gname = '%s' limit 1",
+			$r = q("select hash from pgrp where uid = %d and gname = '%s' limit 1",
 				intval($newuid),
 				dbesc( t('Friends') )
 			);
@@ -837,14 +837,14 @@ function identity_basic_export($channel_id, $sections = null) {
 				$ret['hubloc'] = $r;
 		}
 
-		$r = q("select * from groups where uid = %d ",
+		$r = q("select * from pgrp where uid = %d ",
 			intval($channel_id)
 		);
 
 		if($r)
 			$ret['group'] = $r;
 
-		$r = q("select * from group_member where uid = %d ",
+		$r = q("select * from pgrp_member where uid = %d ",
 			intval($channel_id)
 		);
 		if($r)
@@ -2566,8 +2566,8 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 	q("DELETE FROM chatroom WHERE cr_uid = %d", intval($channel_id));
 	q("DELETE FROM conv WHERE uid = %d", intval($channel_id));
 
-	q("DELETE FROM groups WHERE uid = %d", intval($channel_id));
-	q("DELETE FROM group_member WHERE uid = %d", intval($channel_id));
+	q("DELETE FROM pgrp WHERE uid = %d", intval($channel_id));
+	q("DELETE FROM pgrp_member WHERE uid = %d", intval($channel_id));
 	q("DELETE FROM event WHERE uid = %d", intval($channel_id));
 	q("DELETE FROM mail WHERE channel_id = %d", intval($channel_id));
 	q("DELETE FROM menu WHERE menu_channel_id = %d", intval($channel_id));

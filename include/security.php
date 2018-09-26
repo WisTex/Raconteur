@@ -542,7 +542,7 @@ function init_groups_visitor($contact_id) {
 
 	// physical groups this channel is a member of
 
-	$r = q("SELECT hash FROM groups left join group_member on groups.id = group_member.gid WHERE xchan = '%s' ",
+	$r = q("SELECT hash FROM pgrp left join pgrp_member on pgrp.id = pgrp_member.gid WHERE xchan = '%s' ",
 		dbesc($contact_id)
 	);
 	if($r) {

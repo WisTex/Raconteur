@@ -350,20 +350,20 @@
 		$r = null;
 
 		if($_REQUEST['group_id']) {
-			$r = q("select * from groups where uid = %d and id = %d limit 1",
+			$r = q("select * from pgrp where uid = %d and id = %d limit 1",
 				intval(api_user()),
 				intval($_REQUEST['group_id'])
 			);
 		}
 		elseif($_REQUEST['group_name']) {
-			$r = q("select * from groups where uid = %d and gname = '%s' limit 1",
+			$r = q("select * from pgrp where uid = %d and gname = '%s' limit 1",
 				intval(api_user()),
 				dbesc($_REQUEST['group_name'])
 			);
 		}
 
 		if($r) {
-			$x = q("select * from group_member left join abook on abook_xchan = xchan and abook_channel = group_member.uid left join xchan on group_member.xchan = xchan.xchan_hash 
+			$x = q("select * from pgrp_member left join abook on abook_xchan = xchan and abook_channel = pgrp_member.uid left join xchan on pgrp_member.xchan = xchan.xchan_hash 
 				where gid = %d",
 				intval($r[0]['id'])
 			);
@@ -376,7 +376,7 @@
 		if(api_user() === false)
 			return false;
 
-		$r = q("select * from groups where uid = %d",
+		$r = q("select * from pgrp where uid = %d",
 			intval(api_user())
 		);
 		json_return_and_die($r);

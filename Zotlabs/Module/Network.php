@@ -108,7 +108,7 @@ class Network extends \Zotlabs\Web\Controller {
 		// filter by collection (e.g. group)
 	
 		if($gid) {
-			$r = q("SELECT * FROM groups WHERE id = %d AND uid = %d LIMIT 1",
+			$r = q("SELECT * FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
 				intval($gid),
 				intval(local_channel())
 			);

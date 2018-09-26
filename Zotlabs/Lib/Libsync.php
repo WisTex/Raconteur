@@ -119,13 +119,13 @@ class Libsync {
 		}
 
 		if($groups_changed) {
-			$r = q("select hash as collection, visible, deleted, gname as name from groups where uid = %d",
+			$r = q("select hash as collection, visible, deleted, gname as name from pgrp where uid = %d",
 				intval($uid)
 			);
 			if($r)
 				$info['collections'] = $r;
 
-			$r = q("select groups.hash as collection, group_member.xchan as member from groups left join group_member on groups.id = group_member.gid where group_member.uid = %d",
+			$r = q("select pgrp.hash as collection, pgrp_member.xchan as member from pgrp left join pgrp_member on pgrp.id = pgrp_member.gid where pgrp_member.uid = %d",
 				intval($uid)
 			);
 			if($r)
@@ -567,7 +567,7 @@ class Libsync {
 			// sync collections (privacy groups) oh joy...
 
 			if(array_key_exists('collections',$arr) && is_array($arr['collections']) && count($arr['collections'])) {
-				$x = q("select * from groups where uid = %d",
+				$x = q("select * from pgrp where uid = %d",
 					intval($channel['channel_id'])
 				);
 				foreach($arr['collections'] as $cl) {
@@ -583,7 +583,7 @@ class Libsync {
 							if(($y['gname'] != $cl['name'])
 								|| ($y['visible'] != $cl['visible'])
 								|| ($y['deleted'] != $cl['deleted'])) {
-								q("update groups set gname = '%s', visible = %d, deleted = %d where hash = '%s' and uid = %d",
+								q("update pgrp set gname = '%s', visible = %d, deleted = %d where hash = '%s' and uid = %d",
 									dbesc($cl['name']),
 									intval($cl['visible']),
 									intval($cl['deleted']),
@@ -592,14 +592,14 @@ class Libsync {
 								);
 							}
 							if(intval($cl['deleted']) && (! intval($y['deleted']))) {
-								q("delete from group_member where gid = %d",
+								q("delete from pgrp_member where gid = %d",
 									intval($y['id'])
 								);
 							}
 						}
 					}
 					if(! $found) {
-						$r = q("INSERT INTO groups ( hash, uid, visible, deleted, gname )
+						$r = q("INSERT INTO pgrp ( hash, uid, visible, deleted, gname )
 							VALUES( '%s', %d, %d, %d, '%s' ) ",
 							dbesc($cl['collection']),
 							intval($channel['channel_id']),
@@ -623,10 +623,10 @@ class Libsync {
 								}
 							}
 							if(! $found_local) {
-								q("delete from group_member where gid = %d",
+								q("delete from pgrp_member where gid = %d",
 									intval($y['id'])
 								);
-								q("update groups set deleted = 1 where id = %d and uid = %d",
+								q("update pgrp set deleted = 1 where id = %d and uid = %d",
 									intval($y['id']),
 									intval($channel['channel_id'])
 								);
@@ -636,7 +636,7 @@ class Libsync {
 				}
 
 				// reload the group list with any updates
-				$x = q("select * from groups where uid = %d",
+				$x = q("select * from pgrp where uid = %d",
 					intval($channel['channel_id'])
 				);
 
@@ -663,7 +663,7 @@ class Libsync {
 							if(isset($y['hash']) && isset($members[$y['hash']])) {
 								foreach($members[$y['hash']] as $member) {
 									$found = false;
-									$z = q("select xchan from group_member where gid = %d and uid = %d and xchan = '%s' limit 1",
+									$z = q("select xchan from pgrp_member where gid = %d and uid = %d and xchan = '%s' limit 1",
 										intval($y['id']),
 										intval($channel['channel_id']),
 										dbesc($member)
@@ -674,7 +674,7 @@ class Libsync {
 									// if somebody is in the group that wasn't before - add them
 	
 									if(! $found) {
-										q("INSERT INTO group_member (uid, gid, xchan)
+										q("INSERT INTO pgrp_member (uid, gid, xchan)
 											VALUES( %d, %d, '%s' ) ",
 											intval($channel['channel_id']),
 											intval($y['id']),
@@ -685,7 +685,7 @@ class Libsync {
 							}
 	
 							// now retrieve a list of members we have on this site
-							$m = q("select xchan from group_member where gid = %d and uid = %d",
+							$m = q("select xchan from pgrp_member where gid = %d and uid = %d",
 								intval($y['id']),
 								intval($channel['channel_id'])
 							);
@@ -693,7 +693,7 @@ class Libsync {
 								foreach($m as $mm) {
 									// if the local existing member isn't in the list we just received - remove them
 									if(! in_array($mm['xchan'],$members[$y['hash']])) {
-										q("delete from group_member where xchan = '%s' and gid = %d and uid = %d",
+										q("delete from pgrp_member where xchan = '%s' and gid = %d and uid = %d",
 											dbesc($mm['xchan']),
 											intval($y['id']),
 											intval($channel['channel_id'])

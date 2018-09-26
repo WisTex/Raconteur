@@ -84,7 +84,7 @@ class Acl extends \Zotlabs\Web\Controller {
 
 
 		if($search) {
-			$sql_extra = " AND groups.gname LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " ";
+			$sql_extra = " AND pgrp.gname LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " ";
 			$sql_extra2 = "AND ( xchan_name LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " OR xchan_addr LIKE " . protect_sprintf( "'%" . dbesc(punify($search)) . ((strpos($search,'@') === false) ? "%@%'"  : "%'")) . ") ";
 	
 			// This horrible mess is needed because position also returns 0 if nothing is found. 
@@ -131,13 +131,13 @@ class Acl extends \Zotlabs\Web\Controller {
 
 			// Normal privacy groups
 
-			$r = q("SELECT groups.id, groups.hash, groups.gname
-					FROM groups, group_member 
-					WHERE groups.deleted = 0 AND groups.uid = %d 
-					AND group_member.gid = groups.id
+			$r = q("SELECT pgrp.id, pgrp.hash, pgrp.gname
+					FROM pgrp, pgrp_member 
+					WHERE pgrp.deleted = 0 AND pgrp.uid = %d 
+					AND pgrp_member.gid = pgrp.id
 					$sql_extra
-					GROUP BY groups.id
-					ORDER BY groups.gname 
+					GROUP BY pgrp.id
+					ORDER BY pgrp.gname 
 					LIMIT %d OFFSET %d",
 				intval(local_channel()),
 				intval($count),
