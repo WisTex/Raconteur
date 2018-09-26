@@ -267,7 +267,7 @@ function commentAuthors(id) {
 			$("#comment-edit-text-" + id).addClass("expanded");
 			openMenu("comment-tools-" + id);
 		}
-		$("#comment-edit-text-" + id).val(tmpStr + auths);
+		$("#comment-edit-text-" + id).val(auths + ' ' + tmpStr);
 	}
 }
 
