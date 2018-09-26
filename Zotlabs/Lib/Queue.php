@@ -239,6 +239,11 @@ class Queue {
 			logger('ActivityPub send: ' . $ret, LOGGER_DATA);
 			$headers['Digest'] = HTTPSig::generate_digest_header($ret);
 			$xhead = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
+			if(strpos($outq['outq_posturl'],'http') !== 0) {
+				logger('bad url: ' . $outq['outq_posturl']);
+				self::remove($outq['outq_hash']);
+			}
+
 			$result = z_post_url($outq['outq_posturl'],$outq['outq_msg'],$retries,[ 'headers' => $xhead ]);
 
 			if($result['success'] && $result['return_code'] < 300) {
