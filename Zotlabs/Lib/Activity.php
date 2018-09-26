@@ -1473,19 +1473,6 @@ class Activity {
 		$s['mid']        = $act->obj['id'];
 		$s['parent_mid'] = $act->parent_id;
 
-		if(in_array($act->type, [ 'Like','Dislike' ])) {
-			$s['mid'] = $act->id;
-			$s['parent_mid'] = $act->obj['id'];
-
-			// This needs better formatting with proper names
-			if($act->type === 'Like') {
-				$content['content'] = sprintf('%1$s Likes %2$s\'s %3$s',$act->actor['id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['content'];
-			}
-			if($act->type === 'Dislike') {
-				$content['content'] = sprintf('%1$s Doesn\'t like %2$s\'s %3$s',$act->actor['id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['content'];
-			}
-		}
-
 		if($act->data['published']) {
 			$s['created'] = datetime_convert('UTC','UTC',$act->data['published']);
 		}
@@ -1499,15 +1486,39 @@ class Activity {
 			$s['edited'] = datetime_convert('UTC','UTC',$act->obj['updated']);
 		}
 
-		if(! $s['created'])
-			$s['created'] = datetime_convert();
 
-		if(! $s['edited'])
-			$s['edited'] = $s['created'];
+		if(in_array($act->type, [ 'Like','Dislike' ])) {
+			$s['mid'] = $act->id;
+			$s['parent_mid'] = $act->obj['id'];
+
+			// over-ride the object timestamp with the activity
+
+			if($act->data['published']) {
+				$s['created'] = datetime_convert('UTC','UTC',$act->data['published']);
+			}
+
+			// This needs better formatting with proper names
+			if($act->type === 'Like') {
+				$content['content'] = sprintf('%1$s Likes %2$s\'s %3$s',$act->actor['id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['content'];
+			}
+			if($act->type === 'Dislike') {
+				$content['content'] = sprintf('%1$s Doesn\'t like %2$s\'s %3$s',$act->actor['id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['content'];
+			}
+		}
 
 		if(in_array($act->type,['Announce'])) {
 			$s['mid'] = $act->id;
 			$s['parent_mid'] = $act->id;
+
+			// over-ride the object timestamp with the activity
+
+			if($act->data['published']) {
+				$s['created'] = datetime_convert('UTC','UTC',$act->data['published']);
+			}
+			if($act->data['updated']) {
+				$s['edited'] = datetime_convert('UTC','UTC',$act->data['updated']);
+			}
+
 			$announced_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj));
 			if(! $announced_actor) {
 				return [];
@@ -1515,6 +1526,12 @@ class Activity {
 			self::actor_store($announced_actor['id'],$announced_actor);
 			$s['author_xchan'] = $announced_actor['id'];
 		}
+
+		if(! $s['created'])
+			$s['created'] = datetime_convert();
+
+		if(! $s['edited'])
+			$s['edited'] = $s['created'];
 
 		$s['title']    = self::bb_content($content,'name');
 		$s['summary']  = self::bb_content($content,'summary');
