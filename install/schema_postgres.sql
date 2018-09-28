@@ -443,9 +443,9 @@ CREATE TABLE "pgrp_member" (
   "xchan" text NOT NULL DEFAULT '',
   PRIMARY KEY ("id")
 );
-create index "groupmember_uid" on group_member ("uid");
-create index "groupmember_gid" on group_member ("gid");
-create index "groupmember_xchan" on group_member ("xchan");
+create index "groupmember_uid" on pgrp_member ("uid");
+create index "groupmember_gid" on pgrp_member ("gid");
+create index "groupmember_xchan" on pgrp_member ("xchan");
 
 CREATE TABLE "pgrp" (
   "id" serial  NOT NULL,
@@ -457,10 +457,10 @@ CREATE TABLE "pgrp" (
   PRIMARY KEY ("id")
 
 );
-create index "groups_uid_idx" on groups ("uid");
-create index "groups_visible_idx" on groups  ("visible");
-create index "groups_deleted_idx" on groups ("deleted");
-create index "groups_hash_idx" on groups ("hash");
+create index "groups_uid_idx" on pgrp ("uid");
+create index "groups_visible_idx" on pgrp  ("visible");
+create index "groups_deleted_idx" on pgrp ("deleted");
+create index "groups_hash_idx" on pgrp ("hash");
 
 CREATE TABLE "hook" (
   "id" serial NOT NULL,
