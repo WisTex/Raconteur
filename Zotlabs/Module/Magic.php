@@ -2,6 +2,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\HTTPSig;
+use Zotlabs\Lib\Libzot;
 
 
 class Magic extends \Zotlabs\Web\Controller {
@@ -53,7 +54,7 @@ class Magic extends \Zotlabs\Web\Controller {
 	
 			$j = \Zotlabs\Zot\Finger::run((($addr) ? $addr : '[system]@' . $parsed['host']),null);
 			if($j['success']) {
-				import_xchan($j);
+				Libzot::import_xchan($j);
 	
 				// Now try again
 	
