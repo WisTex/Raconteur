@@ -162,17 +162,22 @@ class WebServer {
 					'type' => 'application/x-zot+json',
 					'url'  => z_root() . '/channel/' . argv(1)
 				],
-				[
-					'rel'  => 'self',
-					'type' => 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
-					'href' => z_root() . '/channel/' . argv(1)
-				],
-				[
-					'rel'  => 'self',
-					'type' => 'application/activity+json',
-					'href' => z_root() . '/channel/' . argv(1)
- 				]
 			];
+
+			if(! defined('NOMADIC')) {
+				\App::$channel_links[] = 
+					[
+						'rel'  => 'self',
+						'type' => 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
+						'href' => z_root() . '/channel/' . argv(1)
+					];
+				\App::$channel_links[] = 
+					[
+						'rel'  => 'self',
+						'type' => 'application/activity+json',
+						'href' => z_root() . '/channel/' . argv(1)
+ 					];
+			}
 			$x = [ 'channel_address' => argv(1), 'channel_links' => \App::$channel_links ]; 
 			call_hooks('channel_links', $x );
 			\App::$channel_links = $x['channel_links'];

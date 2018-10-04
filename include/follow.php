@@ -3,6 +3,8 @@
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Group;
+use Zotlabs\Access\Permissions;
+use Zotlabs\Daemon\Master;
 
 //
 // Takes a $uid and the channel associated with the uid, and a url/handle and adds a new channel
@@ -110,6 +112,10 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 
 	if($r[0]['xchan_network'] === 'activitypub') {
 		$singleton = 1;
+		if(defined('NOMADIC')) {
+			$result['message'] = t('Protocol not supported');
+			return $result;
+		}
 	}
 
 	$aid = $channel['channel_account_id'];
@@ -147,8 +153,8 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 
 	}
 
-	$p = \Zotlabs\Access\Permissions::connect_perms($uid);
-	$my_perms = \Zotlabs\Access\Permissions::serialise($p['perms']);
+	$p = Permissions::connect_perms($uid);
+	$my_perms = Permissions::serialise($p['perms']);
 
 	$profile_assign = get_pconfig($uid,'system','profile_assign','');
 
@@ -215,7 +221,7 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 
 	if($r) {
 		$result['abook'] = $r[0];
-		Zotlabs\Daemon\Master::Summon([ 'Notifier', 'permissions_create', $result['abook']['abook_id'] ]);
+		Master::Summon([ 'Notifier', 'permissions_create', $result['abook']['abook_id'] ]);
 	}
 
 	$arr = [ 'channel_id' => $uid, 'channel' => $channel, 'abook' => $result['abook'] ];

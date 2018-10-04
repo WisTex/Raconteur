@@ -91,7 +91,7 @@ class Activity {
 		if($r) {
 			xchan_query($r,true);
 			$r = fetch_post_tags($r,true);
-			return self::encode_item($r[0]);
+			return self::encode_item($r[0],((defined('NOMADIC')) ? false : true));
 		}
 	}
 
@@ -490,7 +490,7 @@ class Activity {
 				return [];
 		}
 		else {
-			$obj = self::encode_item($i);
+			$obj = self::encode_item($i,$activitypub);
 			if($obj)
 				$ret['object'] = $obj;
 			else

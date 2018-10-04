@@ -12,6 +12,10 @@ class Inbox extends Controller {
 
 	function post() {
 
+		if(defined('NOMADIC')) {
+			return;
+		}
+
 		$sys_disabled = ((get_config('system','disable_discover_tab') || get_config('system','disable_activitypub_discover_tab'))  ? true : false);
 
 		$is_public = false;

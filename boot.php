@@ -32,8 +32,14 @@ require_once('include/bbcode.php');
 require_once('include/items.php');
 
 
-define ( 'PLATFORM_NAME',           'osada' );
-define ( 'PLATFORM_ARCHITECTURE',   'osada' );
+if(defined('NOMADIC')) {
+	define ( 'PLATFORM_NAME',           'zap' );
+	define ( 'PLATFORM_ARCHITECTURE',   'zap' );
+}
+else {
+	define ( 'PLATFORM_NAME',           'osada' );
+	define ( 'PLATFORM_ARCHITECTURE',   'osada' );
+}
 
 define ( 'STD_VERSION',             '1.3' );
 define ( 'ZOT_REVISION',            '6.0' );

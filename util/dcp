@@ -28,7 +28,7 @@ if($argc < 3) {
 	if(strpos($dstfile,'store/') === 0)
 		$dstfile = substr($dstfile,6);
 
-	if(strpos($dstfile,'/'))
+	if(strpos($dstfile,'/')) {
 		$nick = substr($dstfile,0,strpos($dstfile,'/'));
 		$dstfile = substr($dstfile,strlen($nick)+1);
 	}

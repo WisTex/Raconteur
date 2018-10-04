@@ -105,7 +105,7 @@ class Channel extends Controller {
 			$x = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1'
-			]], Activity::encode_person($channel,true,true));
+			]], Activity::encode_person($channel,true,((defined('NOMADIC')) ? false : true)));
 
 			$headers = [];
         	$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;

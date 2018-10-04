@@ -15,6 +15,10 @@ class Outbox extends \Zotlabs\Web\Controller {
 
 	function get() {
 
+		if(defined('NOMADIC')) {
+			http_status_exit(403,'Permission denied');
+		}
+
 		if(observer_prohibited(true)) {
 			killme();
 		}

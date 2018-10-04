@@ -74,6 +74,7 @@ class Setup extends \Zotlabs\Web\Controller {
 				$dbpass = trim($_POST['dbpass']);
 				$dbdata = trim($_POST['dbdata']);
 				$dbtype = intval(trim($_POST['dbtype']));
+				$servertype = intval(trim($_POST['servertype']));
 				$phpath = trim($_POST['phpath']);
 				$adminmail = trim($_POST['adminmail']);
 				$siteurl = trim($_POST['siteurl']);
@@ -100,6 +101,7 @@ class Setup extends \Zotlabs\Web\Controller {
 				$dbpass = trim($_POST['dbpass']);
 				$dbdata = trim($_POST['dbdata']);
 				$dbtype = intval(trim($_POST['dbtype']));
+				$servertype = intval(trim($_POST['servertype']));
 				$phpath = trim($_POST['phpath']);
 				$timezone = trim($_POST['timezone']);
 				$adminmail = trim($_POST['adminmail']);
@@ -132,6 +134,7 @@ class Setup extends \Zotlabs\Web\Controller {
 					'$dbpass'      => $dbpass,
 					'$dbdata'      => $dbdata,
 					'$dbtype'      => $dbtype,
+					'$servertype' => ((! $servertype) ? "define('NOMADIC',1);" : ''),
 					'$server_role' => 'pro',
 					'$timezone'    => $timezone,
 					'$platform'    => ucfirst(System::get_platform_name()),
@@ -172,7 +175,7 @@ class Setup extends \Zotlabs\Web\Controller {
 
 		$o = '';
 		$wizard_status = '';
-		$install_title = t('$Projectname Server - Setup');
+		$install_title = t('Zap/Osada Server - Setup');
 
 		if(x(\App::$data, 'db_conn_failed')) {
 			$this->install_wizard_pass = 2;
@@ -284,12 +287,13 @@ class Setup extends \Zotlabs\Web\Controller {
 				$phpath = trim($_POST['phpath']);
 				$adminmail = trim($_POST['adminmail']);
 				$siteurl = trim($_POST['siteurl']);
+				$servertype = intval(trim($_POST['servertype']));
 
 				$tpl = get_markup_template('install_db.tpl');
 				$o .= replace_macros($tpl, array(
 					'$title' => $install_title,
 					'$pass' => t('Database connection'),
-					'$info_01' => t('In order to install $Projectname we need to know how to connect to your database.'),
+					'$info_01' => t('In order to install this software we need to know how to connect to your database.'),
 					'$info_02' => t('Please contact your hosting provider or site administrator if you have questions about these settings.'),
 					'$info_03' => t('The database you specify below should already exist. If it does not, please create it before continuing.'),
 
@@ -305,6 +309,10 @@ class Setup extends \Zotlabs\Web\Controller {
 					'$adminmail' => array('adminmail', t('Site administrator email address'), $adminmail, t('Your account email address must match this in order to use the web admin panel.')),
 					'$siteurl' => array('siteurl', t('Website URL'), z_root(), t('Please use SSL (https) URL if available.')),
 					'$lbl_10' => t('Please select a default timezone for your website'),
+
+					'$server_choice' => t('Please select the type of service you wish to provide.') . EOL . t('Zap is a nomadic server with enhanced privacy but no federation.') . EOL . t('Osada is an ActivityPub server which also communicates with Zap, however channel mirroring and enhanced privacy modes are not provided.'),
+
+					'$servertype' => array('servertype', t('Server Type'), $servertype, '', array( 0=>'Zap (Zot6)', 1=>'Osada (ActivityPub)' )),
 
 					'$baseurl' => z_root(),
 

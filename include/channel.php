@@ -2526,6 +2526,12 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 
 	if(! $local) {
 
+		if(intval($r[0]['channel_removed'])) {
+			// already removed. do not propagate deletion of a channel which
+			// may have been removed locally at some previous time.
+			return;
+		}
+
 		$r = q("update channel set channel_deleted = '%s', channel_removed = 1 where channel_id = %d",
 			dbesc(datetime_convert()),
 			intval($channel_id)

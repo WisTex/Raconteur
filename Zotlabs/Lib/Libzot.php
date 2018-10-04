@@ -2728,7 +2728,7 @@ class Libzot {
 		];
 
 		$ret['channel_role'] = get_pconfig($e['channel_id'],'system','permissions_role','custom');
-		$ret['protocols']    = [ 'zot6', 'activitypub' ];
+		$ret['protocols']    = ((defined('NOMADIC')) ? [ 'zot6' ] : [ 'zot6', 'activitypub' ]);
 		$ret['searchable']     = $searchable;
 		$ret['adult_content']  = $adult_channel;
 		$ret['public_forum']   = $public_forum;

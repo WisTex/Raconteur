@@ -73,7 +73,7 @@ class Item extends \Zotlabs\Web\Controller {
 			if(! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream'))
 				http_status_exit(403, 'Forbidden');
 
-			$i = Activity::encode_item($items[0]);
+			$i = Activity::encode_item($items[0],((defined('NOMADIC')) ? false : true));
 
 			if(! $i)
 				http_status_exit(404, 'Not found');

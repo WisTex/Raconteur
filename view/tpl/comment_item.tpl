@@ -25,9 +25,11 @@
 				<div id="comment-tools-{{$id}}" class="pt-2 comment-tools">
 					<div id="comment-edit-bb-{{$id}}" class="btn-toolbar pull-left">
 						<div class="btn-group mr-2">
+							{{if $edat}}
 							<button class="btn btn-outline-secondary btn-sm" title="{{$edat}}" onclick="commentAuthors({{$id}}); return false;">
 								<i class="fa fa-user-plus comment-icon"></i>
 							</button>
+							{{/if}}
 							<button class="btn btn-outline-secondary btn-sm" title="{{$edbold}}" onclick="insertbbcomment('{{$comment}}','b', {{$id}}); return false;">
 								<i class="fa fa-bold comment-icon"></i>
 							</button>

@@ -166,17 +166,22 @@ class Webfinger extends \Zotlabs\Web\Controller {
 					'rel' => 'http://ostatus.org/schema/1.0/subscribe',
 					'template' => z_root() . '/follow?url={uri}'
 				],
+			];
+		}
+
+		if(! defined('NOMADIC')) {
+			$result['links'][] = 
 				[
 					'rel'  => 'self',
 					'type' => 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
 					'href' => z_root() . '/channel/' . $channel_target['channel_address']
-    			],
+    			];
+			$result['links'][] = 	
 				[
 					'rel'  => 'self',
 					'type' => 'application/activity+json',
 					'href' => z_root() . '/channel/' . $channel_target['channel_address']
-    			]
-			];
+    			];
 		}
 
 		if(! $result) {

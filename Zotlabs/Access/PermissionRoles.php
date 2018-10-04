@@ -26,37 +26,110 @@ class PermissionRoles {
 
 		$ret['role'] = $role;
 
-		switch($role) {
-			case 'social':
-				$ret['perms_auto'] = false;
-				$ret['default_collection'] = false;
-				$ret['directory_publish'] = true;
-				$ret['online'] = true;
-				$ret['perms_connect'] = [ 'view_stream', 'view_profile', 'view_contacts', 'view_storage', 'send_stream', 'post_wall', 'post_comments' ];
-				$ret['limits'] = PermissionLimits::Std_Limits();
-				$ret['limits']['post_comments'] = PERMS_AUTHED;
-				$ret['limits']['post_mail'] = PERMS_AUTHED;
-				$ret['limits']['post_like'] = PERMS_AUTHED;
-				$ret['limits']['chat'] = PERMS_AUTHED;
-				break;
 
-			case 'forum':
-				$ret['perms_auto'] = true;
-				$ret['default_collection'] = false;
-				$ret['directory_publish'] = true;
-				$ret['online'] = false;
-				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'post_wall', 'post_comments', 'tag_deliver'
-				];
-				$ret['limits'] = PermissionLimits::Std_Limits();
-				$ret['limits']['post_comments'] = PERMS_AUTHED;
+		if(defined('NOMADIC')) {
+			switch($role) {
+				case 'social':
+					$ret['perms_auto'] = false;
+					$ret['default_collection'] = false;
+					$ret['directory_publish'] = true;
+					$ret['online'] = true;
+					$ret['perms_connect'] = [
+						'view_stream', 'view_profile', 'view_contacts', 'view_storage',
+						'view_pages', 'send_stream', 'post_wall', 'post_comments'
+					];
+					$ret['limits'] = PermissionLimits::Std_Limits();
+					break;
 
-				break;
+				case 'social_restricted':
+					$ret['perms_auto'] = false;
+					$ret['default_collection'] = true;
+					$ret['directory_publish'] = true;
+					$ret['online'] = true;
+					$ret['perms_connect'] = [
+						'view_stream', 'view_profile', 'view_contacts', 'view_storage',
+						'view_pages', 'send_stream', 'post_wall', 'post_comments'
+					];
+					$ret['limits'] = PermissionLimits::Std_Limits();
+	
+					break;
 
+				case 'forum':
+					$ret['perms_auto'] = true;
+					$ret['default_collection'] = false;
+					$ret['directory_publish'] = true;
+					$ret['online'] = false;
+					$ret['perms_connect'] = [
+						'view_stream', 'view_profile', 'view_contacts', 'view_storage',
+						'view_pages', 'post_wall', 'post_comments', 'tag_deliver'
+					];
+					$ret['limits'] = PermissionLimits::Std_Limits();
+	
+					break;
 
-			default:
-				break;
+				case 'forum_restricted':
+					$ret['perms_auto'] = false;
+					$ret['default_collection'] = true;
+					$ret['directory_publish'] = true;
+					$ret['online'] = false;
+					$ret['perms_connect'] = [
+						'view_stream', 'view_profile', 'view_contacts', 'view_storage',
+						'view_pages', 'post_wall', 'post_comments', 'tag_deliver'
+					];
+					$ret['limits'] = PermissionLimits::Std_Limits();
+					break;
+
+				case 'feed':
+					$ret['perms_auto'] = true;
+					$ret['default_collection'] = false;
+					$ret['directory_publish'] = true;
+					$ret['online'] = false;
+					$ret['perms_connect'] = [
+						'view_stream', 'view_profile', 'view_contacts', 'view_storage',
+						'view_pages', 'send_stream', 'post_wall', 'post_comments',
+						'republish'
+					];
+					$ret['limits'] = PermissionLimits::Std_Limits();
+
+					break;
+
+				default:
+					break;
+			}
+		}
+		else {
+
+			switch($role) {
+				case 'social':
+					$ret['perms_auto'] = false;
+					$ret['default_collection'] = false;
+					$ret['directory_publish'] = true;
+					$ret['online'] = true;
+					$ret['perms_connect'] = [ 'view_stream', 'view_profile', 'view_contacts', 'view_storage', 'send_stream', 'post_wall', 'post_comments' ];
+					$ret['limits'] = PermissionLimits::Std_Limits();
+					$ret['limits']['post_comments'] = PERMS_AUTHED;
+					$ret['limits']['post_mail'] = PERMS_AUTHED;
+					$ret['limits']['post_like'] = PERMS_AUTHED;
+					$ret['limits']['chat'] = PERMS_AUTHED;
+					break;
+
+				case 'forum':
+					$ret['perms_auto'] = true;
+					$ret['default_collection'] = false;
+					$ret['directory_publish'] = true;
+					$ret['online'] = false;
+					$ret['perms_connect'] = [
+						'view_stream', 'view_profile', 'view_contacts', 'view_storage',
+						'view_pages', 'post_wall', 'post_comments', 'tag_deliver'
+					];
+					$ret['limits'] = PermissionLimits::Std_Limits();
+					$ret['limits']['post_comments'] = PERMS_AUTHED;
+
+					break;
+
+				default:
+					break;
+			}
 		}
 
 		$x = get_config('system','role_perms');
@@ -85,15 +158,34 @@ class PermissionRoles {
 	 * @return array
 	 */
 	static public function roles() {
-		$roles = [
-			t('Social Networking') => [
-				'social' => t('Social - Federation'),
-			],
+		if(defined('NOMADIC')) {
+			$roles = [
+				t('Social Networking') => [
+					'social' => t('Social - Normal'),
+					'social_restricted' => t('Social - Restricted')
+				],
 
-			t('Community Forum') => [
-				'forum' => t('Forum - Normal Access'),
-			]
-		];
+				t('Community Forum') => [
+					'forum' => t('Forum - Normal'),
+					'forum_restricted' => t('Forum - Restricted')
+				],
+
+				t('Feed Republish') => [
+					'feed' => t('Feed Republish')
+				]
+			];
+		}
+		else {
+			$roles = [
+				t('Social Networking') => [
+					'social' => t('Social - Federation'),
+				],
+
+				t('Community Forum') => [
+					'forum' => t('Forum - Normal'),
+				]
+			];
+		}
 
 		call_hooks('list_permission_roles',$roles);
 
