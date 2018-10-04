@@ -764,10 +764,10 @@ function identity_basic_export($channel_id, $sections = null) {
 	// with a non-standard platform and version.
 
 	$ret['compatibility'] = [
-		'project' => PLATFORM_NAME,
-		'codebase' => 'osada',
-		'version' => STD_VERSION,
-		'database' => DB_UPDATE_VERSION,
+		'project'     => PLATFORM_NAME,
+		'codebase'    => ((defined('NOMADIC')) ? 'zap' : 'osada'),
+		'version'     => STD_VERSION,
+		'database'    => DB_UPDATE_VERSION,
 		'server_role' => System::get_server_role()
 	];
 

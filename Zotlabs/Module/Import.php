@@ -116,7 +116,9 @@ class Import extends \Zotlabs\Web\Controller {
 				return;
 		}
 
-		if((! array_path_exists('compatibility/codebase',$data)) || $data['compatibility']['codebase'] !== 'osada') {
+		$codebase = ((defined('NOMADIC')) ? 'zap' : 'osada');
+
+		if((! array_path_exists('compatibility/codebase',$data)) || $data['compatibility']['codebase'] !== $codebase) {
 			notice('Data export format is not compatible with this software');
 			return;
 		}
