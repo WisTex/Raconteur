@@ -137,7 +137,7 @@ class Setup extends \Zotlabs\Web\Controller {
 					'$servertype' => ((! $servertype) ? "define('NOMADIC',1);" : ''),
 					'$server_role' => 'pro',
 					'$timezone'    => $timezone,
-					'$platform'    => ucfirst(System::get_platform_name()),
+					'$platform'    => ((! $servertype) ? 'Zap' : 'Osada'),
 					'$siteurl'     => $siteurl,
 					'$site_id'     => random_string(),
 					'$phpath'      => $phpath,
