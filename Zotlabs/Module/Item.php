@@ -1006,7 +1006,7 @@ class Item extends \Zotlabs\Web\Controller {
 		if(! array_key_exists('obj',$datarray)) {
 			$copy = $datarray;
 			$copy['author'] = $observer;
-			$datarray['obj'] = Activity::encode_item($copy);
+			$datarray['obj'] = Activity::encode_item($copy,((defined('NOMADIC')) ? false : true));
 		}	
 
 		// A specific ACL over-rides public_policy completely

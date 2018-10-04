@@ -182,6 +182,7 @@ class Activity {
 		$images = false;
 
 		if($activitypub && $ret['type'] === 'Note') {
+
 			$bbtags = false;
 			$num_bbtags = preg_match_all('/\[([a-z]?)(.*?)/ism',$i['body'],$bbtags,PREG_SET_ORDER);
 			if($num_bbtags) {
@@ -192,7 +193,9 @@ class Activity {
 					$convert_to_article = true;
 				}
 			} 
+
 			$has_images = preg_match_all('/\[[zi]mg(.*?)\](.*?)\[/ism',$i['body'],$images,PREG_SET_ORDER);
+
 			if($has_images > 1) {
 				$convert_to_article = true;
 			}
