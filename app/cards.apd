@@ -1,6 +1,0 @@
-version: 1.2
-url: $baseurl/cards/$nick
-name: Cards
-requires: local_channel
-photo: icon:list
-categories: nav_featured_app, Productivity

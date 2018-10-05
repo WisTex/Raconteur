@@ -243,8 +243,8 @@ class Activity {
 			if($i['title'])
 				$ret['name'] = $i['title'];
 			if($i['summary'])
-				$ret['summary'] = bbcode($i['summary']);
-			$ret['content'] = bbcode($i['body']);
+				$ret['summary'] = bbcode($i['summary'], [ 'export' => true ]);
+			$ret['content'] = bbcode($i['body'], [ 'export' => true ]);
 			$ret['source'] = [ 'content' => $i['body'], 'summary' => $i['summary'], 'mediaType' => 'text/bbcode' ];
 		}
 
@@ -420,12 +420,12 @@ class Activity {
 		}
 
 		if($i['summary']) {
-			$ret['summary'] = bbcode($i['summary']);
+			$ret['summary'] = bbcode($i['summary'], [ 'export' => true ]);
 		}
 
 		if($ret['type'] === 'Announce') {
 			$tmp = $i['body'];
-			$ret['content'] = bbcode($tmp);
+			$ret['content'] = bbcode($tmp, [ 'export' => true ]);
 			$ret['source'] = [
 				'content' => $i['body'],
 				'mediaType' => 'text/bbcode'

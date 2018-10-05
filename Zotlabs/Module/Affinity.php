@@ -13,7 +13,7 @@ class Affinity extends \Zotlabs\Web\Controller {
             return;
         }
 
-		if($_POST['affinity_slider-submit']) {
+		if($_POST['affinity-submit']) {
 			$cmax = intval($_POST['affinity_cmax']);
 			if($cmax < 0 || $cmax > 99)
 				$cmax = 99;
@@ -23,7 +23,7 @@ class Affinity extends \Zotlabs\Web\Controller {
 			set_pconfig(local_channel(),'affinity','cmin',$cmin);
 			set_pconfig(local_channel(),'affinity','cmax',$cmax);
 
-			info( t('Affinity Slider settings updated.') . EOL);
+			info( t('Affinity Tool settings updated.') . EOL);
 
 		}
 		
@@ -58,7 +58,7 @@ class Affinity extends \Zotlabs\Web\Controller {
 		));
 
 		$s .= replace_macros(get_markup_template('generic_app_settings.tpl'), array(
-			'$addon'    => array('affinity_slider', '' . t('Affinity Tool Settings'), '', t('Submit')),
+			'$addon'    => array('affinity', '' . t('Affinity Tool Settings'), '', t('Submit')),
 			'$content'  => $setting_fields
 		));
 
