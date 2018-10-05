@@ -58,7 +58,7 @@ class Inbox extends Controller {
 			Activity::actor_store($AS->actor['id'],$AS->actor);
 		}
 
-		if(is_array($AS->obj) && in_array($AS->obj['type'],[ 'Application','Group','Service','Person','Service' ])) {
+		if(is_array($AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])) {
 			Activity::actor_store($AS->obj['id'],$AS->obj);
 		}
 
@@ -68,7 +68,7 @@ class Inbox extends Controller {
 
 		if($is_public) {
 
-			if($AS->type === 'Follow' && $AS->obj && $AS->obj['type'] === 'Person') {
+			if($AS->type === 'Follow' && $AS->obj && ActivityStreams::is_an_actor($AS->obj['type'])) {
 				$channels = q("SELECT * from channel where channel_address = '%s' and channel_removed = 0 ",
 				dbesc(basename($AS->obj['id']))
 				);
@@ -133,7 +133,7 @@ class Inbox extends Controller {
 
 			switch($AS->type) {
 				case 'Follow':
-					if($AS->obj & $AS->obj['type'] === 'Person') {
+					if($AS->obj & ActivityStreams::is_an_actor($AS->obj['type'])) {
 						// do follow activity
 						Activity::follow($channel,$AS);
 						continue;

@@ -622,15 +622,26 @@ class Activity {
 
 	static function encode_person($p, $extended = true, $activitypub = false) {
 
+		$ret = [];
+
 		if(! $p['xchan_url'])
-			return [];
+			return $ret;
 
 		if(! $extended) {
 			return $p['xchan_url'];
 		}
-		$ret = [];
+
+		$c = ((array_key_exists('channel_id',$p)) ? $p : channelx_by_hash($p['xchan_hash']));
 
 		$ret['type']  = 'Person';
+
+		if($c) {
+			$role = get_pconfig($c['channel_id'],'system','permissions_role');
+			if(strpos($role,'forum') !== false) {
+				$ret['type'] = 'Group';
+			}
+		}
+
 		$ret['id']    = $p['xchan_url'];
 		if($p['xchan_addr'] && strpos($p['xchan_addr'],'@'))
 			$ret['preferredUsername'] = substr($p['xchan_addr'],0,strpos($p['xchan_addr'],'@'));
@@ -658,10 +669,7 @@ class Activity {
 		];
 
 
-
 		if($activitypub) {	
-
-			$c = channelx_by_hash($p['xchan_hash']);
 
 			if($c) {
 				$ret['inbox']       = z_root() . '/inbox/'     . $c['channel_address'];
@@ -1490,7 +1498,7 @@ class Activity {
 		}
 
 
-		if(in_array($act->type, [ 'Like','Dislike' ])) {
+		if(in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block' ])) {
 			$s['mid'] = $act->id;
 			$s['parent_mid'] = $act->obj['id'];
 
