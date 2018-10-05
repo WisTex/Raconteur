@@ -184,10 +184,11 @@ class Activity {
 		if($activitypub && $ret['type'] === 'Note') {
 
 			$bbtags = false;
-			$num_bbtags = preg_match_all('/\[([a-z]?)(.*?)/ism',$i['body'],$bbtags,PREG_SET_ORDER);
+			$num_bbtags = preg_match_all('/\[([a-z]+)(.*?)/ism',$i['body'],$bbtags,PREG_SET_ORDER);
 			if($num_bbtags) {
+
 				foreach($bbtags as $t) {
-					if(in_array($t[1],['url','zrl','img','zmg'])) {
+					if((! $t[1]) || (in_array($t[1],['url','zrl','img','zmg']))) {
 						continue;
 					}
 					$convert_to_article = true;
