@@ -105,15 +105,6 @@ class Apps {
 
 				$id = self::check_install_personal_app($app);
 				// $id will be boolean true or false to install an app, or an integer id to update an existing app
-				if($id !== false) {
-					$app['uid'] = 0;
-					$app['guid'] = hash('whirlpool',$app['name']);
-					$app['system'] = 1;
-					self::app_install(0,$app);
-				}
-
-				$id = self::check_install_personal_app($app);
-				// $id will be boolean true or false to install an app, or an integer id to update an existing app
 				if($id === false)
 					continue;
 				if($id !== true) {
@@ -278,6 +269,10 @@ class Apps {
 						if(! can_view_public_stream())
 							unset($ret);
 						break;
+					case 'custom_role':
+						if(get_pconfig(local_channel(),'system','permissions_role') !== 'custom')
+							unset($ret);
+						break;
 					case 'observer':
 						if(! $observer)
 							unset($ret);
@@ -347,7 +342,21 @@ class Apps {
 			'Profiles' => t('Profiles'),
 			'Privacy Groups' => t('Privacy Groups'),
 			'Notifications' => t('Notifications'),
-			'Order Apps' => t('Order Apps')
+			'Order Apps' => t('Order Apps'),
+			'CalDAV' => t('CalDAV'),
+			'CardDAV' => t('CardDAV'),
+			'Channel Sources' => t('Channel Sources'),
+			'Gallery' => t('Gallery'),
+			'Guest Access' => t('Guest Access'),
+			'Notes' => t('Notes'),
+			'OAuth Apps Manager' => t('OAuth Apps Manager'),
+			'OAuth2 Apps Manager' => t('OAuth2 Apps Manager'),
+			'PDL Editor' => t('PDL Editor'),
+			'Permission Categories' => t('Permission Categories'),
+			'Premium Channel' => t('Premium Channel'),
+			'Public Stream' => t('Public Stream'),
+			'My Chatrooms' => t('My Chatrooms')
+
 		);
 
 		if(array_key_exists('name',$arr)) {
@@ -360,9 +369,12 @@ class Apps {
 				if(array_key_exists($arr[$x]['name'],$apps)) {
 					$arr[$x]['name'] = $apps[$arr[$x]['name']];
 				}
+				else {
+					// Try to guess by app name if not in list
+					$arr[$x]['name'] = t(trim($arr[$x]['name']));
+				}
 			}
 		}
-				
 	}
 
 
@@ -400,13 +412,19 @@ class Apps {
 		// and they are allowed to see the app
 
 
-		if(strstr($papp['url'],'$baseurl') || strstr($papp['url'],'$nick') || strstr($papp['photo'],'$baseurl') || strstr($pap['photo'],'$nick')) {
+		if(strpos($papp['url'],'$baseurl') !== false || strpos($papp['url'],'$nick') !== false || strpos($papp['photo'],'$baseurl') !== false || strpos($papp['photo'],'$nick') !== false) {
 			$view_channel = local_channel();
 			if(! $view_channel) {
 				$sys = get_sys_channel();
 				$view_channel = $sys['channel_id'];
 			}
 			self::app_macros($view_channel,$papp); 
+		}
+
+		if(strpos($papp['url'], ',')) {
+			$urls = explode(',', $papp['url']);
+			$papp['url'] = trim($urls[0]);
+			$papp['settings_url'] = trim($urls[1]);
 		}
 
 		if(! strstr($papp['url'],'://'))
@@ -457,6 +475,10 @@ class Apps {
 							if(! can_view_public_stream())
 								return '';
 							break;
+						case 'custom_role':
+							if(get_pconfig(local_channel(),'system','permissions_role') != 'custom')
+								return '';
+							break;
 						case 'observer':
 							$observer = \App::get_observer();
 							if(! $observer)
@@ -478,7 +500,9 @@ class Apps {
 		$hosturl = '';
 
 		if(local_channel()) {
-			$installed = self::app_installed(local_channel(),$papp);
+			if(self::app_installed(local_channel(),$papp) && !$papp['deleted'])
+				$installed = true;
+
 			$hosturl = z_root() . '/';
 		}
 		elseif(remote_channel()) {
@@ -512,16 +536,17 @@ class Apps {
 			'$purchase' => (($papp['page'] && (! $installed)) ? t('Purchase') : ''),
 			'$installed' => $installed,
 			'$action_label' => (($hosturl && in_array($mode, ['view','install'])) ? $install_action : ''),
-			'$edit' => ((local_channel() && $installed && $mode == 'edit') ? t('Edit') : ''),
-			'$delete' => ((local_channel() && $installed && $mode == 'edit') ? t('Delete') : ''),
-			'$undelete' => ((local_channel() && $installed && $mode == 'edit') ? t('Undelete') : ''),
+			'$edit' => ((local_channel() && $installed && $mode === 'edit') ? t('Edit') : ''),
+			'$delete' => ((local_channel() && $installed && $mode === 'edit') ? t('Delete') : ''),
+			'$undelete' => ((local_channel() && $installed && $mode === 'edit') ? t('Undelete') : ''),
+			'$settings_url' => ((local_channel() && $installed && $mode === 'list') ? $papp['settings_url'] : ''),
 			'$deleted' => $papp['deleted'],
-			'$feature' => (($papp['embed']) ? false : true),
-			'$pin' => (($papp['embed']) ? false : true),
+			'$feature' => (($papp['embed'] || $mode === 'edit') ? false : true),
+			'$pin' => (($papp['embed'] || $mode === 'edit') ? false : true),
 			'$featured' => ((strpos($papp['categories'], 'nav_featured_app') === false) ? false : true),
 			'$pinned' => ((strpos($papp['categories'], 'nav_pinned_app') === false) ? false : true),
-			'$navapps' => (($mode == 'nav') ? true : false),
-			'$order' => (($mode == 'nav-order') ? true : false),
+			'$navapps' => (($mode === 'nav') ? true : false),
+			'$order' => (($mode === 'nav-order') ? true : false),
 			'$add' => t('Add to app-tray'),
 			'$remove' => t('Remove from app-tray'),
 			'$add_nav' => t('Pin to navbar'),
@@ -531,9 +556,19 @@ class Apps {
 
 	static public function app_install($uid,$app) {
 
+		if(! is_array($app)) {
+			$r = q("select * from app where app_name = '%s' and app_channel = 0",
+				dbesc($app)
+			);
+			if(! $r)
+				return false;
+
+			$app = self::app_encode($r[0]);
+		}
+
 		$app['uid'] = $uid;
 
-		if(self::app_installed($uid,$app))
+		if(self::app_installed($uid,$app,true))
 			$x = self::app_update($app);
 		else
 			$x = self::app_store($app);
@@ -597,6 +632,7 @@ class Apps {
 							intval(TERM_OBJ_APP),
 							intval($x[0]['id'])
 						);
+						call_hooks('app_destroy',$x[0]);
 					}
 					else {
 						$r = q("update app set app_deleted = 1 where app_id = '%s' and app_channel = %d",
@@ -661,32 +697,62 @@ class Apps {
 		}
 	}
 
-	static public function app_installed($uid,$app) {
+	static public function app_installed($uid,$app,$bypass_filter = false) {
 
 		$r = q("select id from app where app_id = '%s' and app_channel = %d limit 1",
 			dbesc((array_key_exists('guid',$app)) ? $app['guid'] : ''), 
 			intval($uid)
 		);
+		if (!$bypass_filter) {
+			$filter_arr = [
+				'uid'=>$uid,
+				'app'=>$app,
+				'installed'=>$r
+			];
+			call_hooks('app_installed_filter',$filter_arr);
+			$r = $filter_arr['installed'];
+		}
+
 		return(($r) ? true : false);
 
 	}
 
-	static public function addon_app_installed($uid,$app) {
+	static public function addon_app_installed($uid,$app,$bypass_filter = false) {
 
 		$r = q("select id from app where app_plugin = '%s' and app_channel = %d limit 1",
 			dbesc($app),
 			intval($uid)
 		);
+		if (!$bypass_filter) {
+			$filter_arr = [
+				'uid'=>$uid,
+				'app'=>$app,
+				'installed'=>$r
+			];
+			call_hooks('addon_app_installed_filter',$filter_arr);
+			$r = $filter_arr['installed'];
+		}
+
 		return(($r) ? true : false);
 
 	}
 
-	static public function system_app_installed($uid,$app) {
+	static public function system_app_installed($uid,$app,$bypass_filter = false) {
 
 		$r = q("select id from app where app_id = '%s' and app_channel = %d limit 1",
 			dbesc(hash('whirlpool',$app)),
 			intval($uid)
 		);
+		if (!$bypass_filter) {
+			$filter_arr = [
+				'uid'=>$uid,
+				'app'=>$app,
+				'installed'=>$r
+			];
+			call_hooks('system_app_installed_filter',$filter_arr);
+			$r = $filter_arr['installed'];
+		}
+
 		return(($r) ? true : false);
 
 	}
@@ -920,7 +986,7 @@ class Apps {
 			$arr['author'] = $sys['channel_hash'];
 		}
 
-		if($arr['photo'] && (strpos($arr['photo'],'icon:') === false) && (! strstr($arr['photo'],z_root()))) {
+		if($arr['photo'] && (strpos($arr['photo'],'icon:') === false) && (strpos($arr['photo'],z_root()) !== false)) {
 			$x = import_xchan_photo(str_replace('$baseurl',z_root(),$arr['photo']),get_observer_hash(),true);
 			$arr['photo'] = $x[1];
 		}
@@ -1007,7 +1073,7 @@ class Apps {
 		if((! $darray['app_url']) || (! $darray['app_id']))
 			return $ret;
 
-		if($arr['photo'] && (strpos($arr['photo'],'icon:') === false) && (! strstr($arr['photo'],z_root()))) {
+		if($arr['photo'] && (strpos($arr['photo'],'icon:') === false) && (strpos($arr['photo'],z_root()) !== false)) {
 			$x = import_xchan_photo(str_replace('$baseurl',z_root(),$arr['photo']),get_observer_hash(),true);
 			$arr['photo'] = $x[1];
 		}

@@ -113,9 +113,10 @@ class Appman extends \Zotlabs\Web\Controller {
 			if($r) {
 				$app = $r[0];
 
-				$term = q("select * from term where otype = %d and oid = %d",
+				$term = q("select * from term where otype = %d and oid = %d and uid = %d",
 					intval(TERM_OBJ_APP),
-					intval($r[0]['id'])
+					intval($r[0]['id']),
+					intval(local_channel())
 				);
 				if($term) {
 					$app['categories'] = '';
