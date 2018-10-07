@@ -14,20 +14,19 @@ class Activity_filter {
 
 		$tabs = [];
 
-		if(feature_enabled(local_channel(),'personal_tab')) {
-			if(x($_GET,'conv')) {
-				$conv_active = (($_GET['conv'] == 1) ? 'active' : '');
-				$filter_active = 'personal';
-			}
 
-			$tabs[] = [
-				'label' => t('Personal Posts'),
-				'icon' => 'user-circle',
-				'url' => z_root() . '/' . $cmd . '/?conv=1',
-				'sel' => $conv_active,
-				'title' => t('Show posts that mention or involve me')
-			];
+		if(x($_GET,'conv')) {
+			$conv_active = (($_GET['conv'] == 1) ? 'active' : '');
+			$filter_active = 'personal';
 		}
+
+		$tabs[] = [
+			'label' => t('Personal Posts'),
+			'icon' => 'user-circle',
+			'url' => z_root() . '/' . $cmd . '/?conv=1',
+			'sel' => $conv_active,
+			'title' => t('Show posts that mention or involve me')
+		];
 
 		if(feature_enabled(local_channel(),'star_posts')) {
 			if(x($_GET,'star')) {

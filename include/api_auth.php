@@ -96,7 +96,8 @@ function api_login(&$a){
 			if($sigblock) {
 				$keyId = str_replace('acct:','',$sigblock['keyId']);
 				if($keyId) {
-					$r = q("select * from hubloc where hubloc_addr = '%s' limit 1",
+					$r = q("select * from hubloc where hubloc_addr = '%s' or hubloc_id_url = '%s' limit 1",
+						dbesc($keyId),
 						dbesc($keyId)
 					);
 					if($r) {
