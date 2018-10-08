@@ -1707,7 +1707,7 @@ class Activity {
 						$ptr = [ $act->obj['url'] ];
 					}
 					foreach($ptr as $vurl) {
-						if(array_key_exists('mediaType',$vurl) && $vurl['mediaType'] === 'text/plain') {
+						if(array_key_exists('mediaType',$vurl) && $vurl['mediaType'] === 'text/html') {
 							$s['plink'] = $vurl['href'];
 							break;
 						}
