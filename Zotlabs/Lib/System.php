@@ -2,59 +2,78 @@
 
 namespace Zotlabs\Lib;
 
+use App;
+
 class System {
 
 	static public function get_platform_name() {
-		if(is_array(\App::$config) && is_array(\App::$config['system']) && array_key_exists('platform_name',\App::$config['system']))
-			return \App::$config['system']['platform_name'];
+		if(is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('platform_name',App::$config['system']))
+			return App::$config['system']['platform_name'];
 		return PLATFORM_NAME;
 	}
 
 	static public function get_site_name() {
-		if(is_array(\App::$config) && is_array(\App::$config['system']) && \App::$config['system']['sitename'])
-			return \App::$config['system']['sitename'];
+		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['sitename'])
+			return App::$config['system']['sitename'];
 		return '';
 	}
 
+	static public function get_banner() {
+
+		if(is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('banner',App::$config['system']))
+			return App::$config['system']['banner'];
+
+		if(defined('NOMADIC')) {
+			$banner = '<a href="' . App::get_baseurl() . '"><i class="fa fa-fw fa-bolt"></i></a>';
+		}
+		else {
+			$banner = '<a href="' . App::get_baseurl() . '"><i class="fa fa-fw fa-rebel"></i></a>';
+		}
+
+		return $banner;
+	}
+
+
+
 	static public function get_project_version() {
-		if(is_array(\App::$config) && is_array(\App::$config['system']) && \App::$config['system']['hide_version'])
+		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['hide_version'])
 			return '';
-		if(is_array(\App::$config) && is_array(\App::$config['system']) && array_key_exists('std_version',\App::$config['system']))
-			return \App::$config['system']['std_version'];
+		if(is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('std_version',App::$config['system']))
+			return App::$config['system']['std_version'];
 
 		return self::get_std_version();
 	}
 
 	static public function get_update_version() {
-		if(is_array(\App::$config) && is_array(\App::$config['system']) && \App::$config['system']['hide_version'])
+		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['hide_version'])
 			return '';
 		return DB_UPDATE_VERSION;
 	}
 
 
 	static public function get_notify_icon() {
-		if(is_array(\App::$config) && is_array(\App::$config['system']) && \App::$config['system']['email_notify_icon_url'])
-			return \App::$config['system']['email_notify_icon_url'];
+		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['email_notify_icon_url'])
+			return App::$config['system']['email_notify_icon_url'];
 		return z_root() . DEFAULT_NOTIFY_ICON;
 	}
 
 	static public function get_site_icon() {
-		if(is_array(\App::$config) && is_array(\App::$config['system']) && \App::$config['system']['site_icon_url'])
-			return \App::$config['system']['site_icon_url'];
+		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['site_icon_url'])
+			return App::$config['system']['site_icon_url'];
 		return z_root() . DEFAULT_PLATFORM_ICON ;
 	}
 
 
 	static public function get_project_link() {
-		if(is_array(\App::$config) && is_array(\App::$config['system']) && \App::$config['system']['project_link'])
-			return \App::$config['system']['project_link'];
-		return 'https://framagit.org/macgirvin/zap';
+		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['project_link'])
+			return App::$config['system']['project_link'];
+		return 'https://framagit.org/macgirvin/osada';
 	}
 
 	static public function get_project_srclink() {
-		if(is_array(\App::$config) && is_array(\App::$config['system']) && \App::$config['system']['project_srclink'])
-			return \App::$config['system']['project_srclink'];
-		return 'https://framagit.org/macgirvin/zap';
+		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['project_srclink'])
+			return App::$config['system']['project_srclink'];
+		return 'https://framagit.org/macgirvin/osada';
 	}
 
 	static public function get_server_role() {
@@ -78,7 +97,7 @@ class System {
 
 		if(get_directory_realm() != DIRECTORY_REALM)
 			return true;
-		if(in_array(strtolower($p),['hubzilla','zap','red']))
+		if(in_array(strtolower($p),['hubzilla','zap','red','osada']))
 			return true;
 		return false;
 	}

@@ -1,7 +1,9 @@
 <?php /** @file */
 
-use \Zotlabs\Lib\Apps;
-use \Zotlabs\Lib\Chatroom;
+use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\Chatroom;
+use Zotlabs\Lib\System;
+
 
 require_once('include/security.php');
 require_once('include/menu.php');
@@ -44,24 +46,7 @@ function nav($template = 'default') {
 
 	$channel_apps[] = channel_apps($is_owner, App::$profile['channel_address']);
 
-
-	/**
-	 *
-	 * Provide a banner/logo/whatever
-	 *
-	 */
-
-	$banner = get_config('system','banner');
-
-	if(! $banner) {
-		if(defined('NOMADIC')) {
-			$banner = '<a href="' . App::get_baseurl() . '"><i class="fa fa-fw fa-bolt"></i></a>';
-		}
-		else {
-			$banner = '<a href="' . App::get_baseurl() . '"><i class="fa fa-fw fa-rebel"></i></a>';
-		}
-	}
-
+	$banner = System::get_banner();
 
 	App::$page['header'] .= replace_macros(get_markup_template('hdr.tpl'), array(
 		//we could additionally use this to display important system notifications e.g. for updates
