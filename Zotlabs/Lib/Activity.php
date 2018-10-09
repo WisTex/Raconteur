@@ -1028,6 +1028,8 @@ class Activity {
 		if(! is_array($person_obj))
 			return;
 
+//		logger('person_obj: ' . print_r($person_obj,true));
+
 		// We may have been passed a cached entry. If it is, and the cache duration has expired
 		// fetch a fresh copy before continuing.
 
