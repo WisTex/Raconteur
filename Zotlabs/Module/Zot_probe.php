@@ -19,10 +19,10 @@ class Zot_probe extends \Zotlabs\Web\Controller {
 	
 		if(x($_GET,'addr')) {
 			$addr = $_GET['addr'];
+			$channel = (($_GET['auth']) ? \App::get_channel() : null);
 
+			$x = Zotfinger::exec($addr,$channel);
 
-			$x = Zotfinger::exec($addr);
-			
 			$o .= '<pre>' . htmlspecialchars(print_array($x)) . '</pre>';
 
 			$headers = 'Accept: application/x-zot+json, application/jrd+json, application/json';

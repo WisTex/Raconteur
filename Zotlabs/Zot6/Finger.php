@@ -62,7 +62,7 @@ class Finger {
 		if($r) {
 			$url = $r[0]['hubloc_url'];
 
-			if($r[0]['hubloc_network'] && $r[0]['hubloc_network'] !== 'zot') {
+			if($r[0]['hubloc_network'] && (! in_array($r[0]['hubloc_network'], ['zot','zot6']))) {
 				logger('zot_finger: alternate network: ' . $webbie);
 				logger('url: ' . $url . ', net: ' . var_export($r[0]['hubloc_network'],true), LOGGER_DATA, LOG_DEBUG);
 				return $ret;

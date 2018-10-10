@@ -52,8 +52,8 @@ class Owa extends \Zotlabs\Web\Controller {
 						}
 						if($r) {
 							foreach($r as $hubloc) {
-								$verified = HTTPSig::verify('');	
-								if($verified && $verified['header_signed'] && $verified['header_valid']) {
+								$verified = HTTPSig::verify(file_get_contents('php://input'));	
+								if($verified && $verified['header_signed'] && $verified['header_valid'] && ( $verified['content_valid'] || (! $verified['content_signed']))) {
 									logger('OWA header: ' . print_r($verified,true),LOGGER_DATA);	
 									logger('OWA success: ' . $hubloc['hubloc_addr'],LOGGER_DATA);
 									$ret['success'] = true;

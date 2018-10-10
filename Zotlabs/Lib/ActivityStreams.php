@@ -13,6 +13,7 @@ class ActivityStreams {
 	public $raw        = null;
 	public $data       = null;
 	public $valid      = false;
+	public $deleted    = false;
 	public $id         = '';
 	public $parent_id  = '';
 	public $type       = '';
@@ -66,6 +67,13 @@ class ActivityStreams {
 			}
 
 			$this->valid = true;
+
+			if(array_key_exists('type',$this->data) && array_key_exists('actor',$this->data) && array_key_exists('object',$this->data)) {
+				if($this->data['type'] === 'Delete' && $this->data['actor'] === $this->data['object']) {
+					$this->deleted = $this->data['actor'];
+					$this->valid = false;
+				}
+			}
 
 		}
 

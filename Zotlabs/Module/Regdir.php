@@ -1,6 +1,9 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Zotfinger;
+use Zotlabs\Web\Controller;
+
 /**
  * With args, register a directory server for this realm.
  * With no args, return a JSON array of directory servers for this realm.
@@ -14,7 +17,7 @@ namespace Zotlabs\Module;
  * @param App &$a
  */
 
-class Regdir extends \Zotlabs\Web\Controller {
+class Regdir extends Controller {
 
 	function init() {
 	
@@ -25,7 +28,7 @@ class Regdir extends \Zotlabs\Web\Controller {
 		$valid = 0;
 	
 		// we probably don't need the realm as we will find out in the probe.
-		// What we may want to die is throw an error if you're trying to register in a different realm
+		// What we may want to do is throw an error if you're trying to register in a different realm
 		// so this configuration issue can be discovered.
 	
 		$realm = $_REQUEST['realm'];
@@ -59,34 +62,28 @@ class Regdir extends \Zotlabs\Web\Controller {
 				json_return_and_die($result);
 			}
 	
-			$j = \Zotlabs\Zot\Finger::run('[system]@' . $m['host']);
-			if($j['success'] && $j['guid']) {
-				$x = import_xchan($j);
-				if($x['success']) {
-					$result['success'] = true;
-				}
+			$j = Zotfinger::exec($url);
+			if($j) {
+				$result['success'] = true;
 			}
-	
-			if(! $result['success'])
+			else {
 				$valid = 0;
-	
+			}
+
 			q("update site set site_valid = %d where site_url = '%s'",
 				intval($valid),
 				strtolower($url)
 			);
 	
 			json_return_and_die($result);
-		} else {
+
+		} 
+		else {
 	
-			// We can put this in the sql without the condition after 31 august 2015 assuming
-			// most directory servers will have updated by then
-			// This just makes sure it happens if I forget
-	
-			$sql_extra = ((datetime_convert() > datetime_convert('UTC','UTC','2015-08-31')) ? ' and site_valid = 1 ' : '' );
 			if ($dirmode == DIRECTORY_MODE_STANDALONE) {
 				$r = array(array('site_url' => z_root()));
 			} else {
-				$r = q("select site_url from site where site_flags in ( 1, 2 ) and site_realm = '%s' and site_type = %d $sql_extra ",
+				$r = q("select site_url from site where site_flags in ( 1, 2 ) and site_realm = '%s' and site_type = %d and site_valid = 1 ",
 					dbesc(get_directory_realm()),
 					intval(SITE_TYPE_ZOT)
 				);
