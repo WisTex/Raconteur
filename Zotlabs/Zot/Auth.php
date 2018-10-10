@@ -86,7 +86,7 @@ class Auth {
 
 		if(! $x) {
 			// finger them if they can't be found.
-			$j = Finger::run($address, null);
+			$j = false; // Finger::run($address, null);
 			if ($j['success']) {
 				import_xchan($j);
 				$x = q("select * from hubloc left join xchan on xchan_hash = hubloc_hash 

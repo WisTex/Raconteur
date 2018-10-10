@@ -12,10 +12,18 @@ class Zotfinger {
 			return false;
 		}
 
-		if($channel) {
+		$m = parse_url($resource);
+
+		$data = json_encode([ 'zot_token' => random_string() ]);
+
+		if($channel && $m) {
+
 			$headers = [ 
-				'Accept'      => 'application/x-zot+json', 
-				'X-Zot-Token' => random_string(),
+				'Accept'       => 'application/x-zot+json', 
+				'Content-Type' => 'application/x-zot+json',
+				'X-Zot-Token'  => random_string(),
+				'Digest'       => HTTPSig::generate_digest_header($data),
+				'Host'         => $m['host'],
 			];
 			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false);
 		}
@@ -27,7 +35,7 @@ class Zotfinger {
 
 
 		$redirects = 0;
-		$x = z_fetch_url($resource,false,$redirects, [ 'headers' => $h  ] );
+		$x = z_post_url($resource,$data,$redirects, [ 'headers' => $h  ] );
 
 		if($x['success']) {
 			

@@ -120,6 +120,21 @@ class HTTPSig {
 			if(array_key_exists($h,$headers)) {
 				$signed_data .= $h . ': ' . $headers[$h] . "\n";
 			}
+			if($h === 'host' && (strpos(strtolower(\App::get_hostname()),strtolower($headers[$h])) === false)) {
+				logger('bad host: ' . $sig_block['keyId'] . ' != ' . $headers[$h]);
+				return $result;
+			}
+			if($h === 'date') {
+				$d = new \DateTime($headers[$h]);
+				$d->setTimeZone(new \DateTimeZone('UTC'));
+				$dplus = datetime_convert('UTC','UTC','now + 1 day');
+				$dminus = datetime_convert('UTC','UTC','now - 1 day');
+				$c = $d->format('Y-m-d H:i:s');
+				if($c > $dplus || $c < $dminus) {
+					logger('bad time: ' . $c);
+					return $result;
+				}
+			}
 		}
 		$signed_data = rtrim($signed_data,"\n");
 

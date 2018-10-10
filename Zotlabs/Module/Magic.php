@@ -25,6 +25,7 @@ class Magic extends \Zotlabs\Web\Controller {
 			$dest = hex2bin($bdest);
 
 		$parsed = parse_url($dest);
+
 		if(! $parsed) {
 			if($test) {
 				$ret['message'] .= 'could not parse ' . $dest . EOL;
@@ -35,56 +36,12 @@ class Magic extends \Zotlabs\Web\Controller {
 	
 		$basepath = $parsed['scheme'] . '://' . $parsed['host'] . (($parsed['port']) ? ':' . $parsed['port'] : ''); 
 	
-		$x = q("select * from hubloc where hubloc_url = '%s' order by hubloc_connected desc limit 1",
-			dbesc($basepath)
-		);
-		
-		if(! $x) {
-	
-			/*
-			 * We have no records for, or prior communications with this hub. 
-			 * If an address was supplied, let's finger them to create a hub record. 
-			 * Otherwise we'll use the special address '[system]' which will return
-			 * either a system channel or the first available normal channel. We don't
-			 * really care about what channel is returned - we need the hub information 
-			 * from that response so that we can create signed auth packets destined 
-			 * for that hub.
-			 *
-			 */
-	
-			$j = \Zotlabs\Zot\Finger::run((($addr) ? $addr : '[system]@' . $parsed['host']),null);
-			if($j['success']) {
-				Libzot::import_xchan($j);
-	
-				// Now try again
-	
-				$x = q("select * from hubloc where hubloc_url = '%s' order by hubloc_connected desc limit 1",
-					dbesc($basepath)
-				);
-			}
-		}
-	
-		if(! $x) {
-			if($rev)
-				goaway($dest);
-			else {
-				logger('mod_magic: no channels found for requested hub.' . print_r($_REQUEST,true));
-				if($test) {
-					$ret['message'] .= 'This site has no previous connections with ' . $basepath . EOL;
-					return $ret;
-				} 
-				notice( t('Hub not found.') . EOL);
-				return;
-			}
-		}
-
 	
 		// This is ready-made for a plugin that provides a blacklist or "ask me" before blindly authenticating. 
 		// By default, we'll proceed without asking.
 	
 		$arr = array(
 			'channel_id'  => local_channel(),
-			'xchan'       => $x[0],
 			'destination' => $dest, 
 			'proceed'     => true
 		);
@@ -137,11 +94,16 @@ class Magic extends \Zotlabs\Web\Controller {
 				$dest = strip_zids($dest);
 				$dest = strip_query_param($dest,'f');
 
+				$data = json_encode([ 'OpenWebAuth' => random_string() ]);
+				
 				$headers = [];
 				$headers['Accept'] = 'application/x-zot+json' ;
 				$headers['X-Open-Web-Auth'] = random_string();
+				$headers['Digest'] = HTTPSig::generate_digest_header($data);
+				$headers['Host'] = $parsed['host'];
+
 				$headers = HTTPSig::create_sig($headers,$channel['channel_prvkey'], channel_url($channel),true,'sha512');
-				$x = z_fetch_url($basepath . '/owa',false,$redirects,[ 'headers' => $headers ]);
+				$x = z_post_url($basepath . '/owa',$data,$redirects,[ 'headers' => $headers ]);
 
 				if($x['success']) {
 					$j = json_decode($x['body'],true);

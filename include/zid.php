@@ -278,17 +278,20 @@ function owt_init($token) {
 	}
 
 	$r = q("select * from hubloc left join xchan on xchan_hash = hubloc_hash
-		where hubloc_addr = '%s' order by hubloc_id desc",
+		where hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s' order by hubloc_id desc",
+		dbesc($ob_hash),
+		dbesc($ob_hash),
 		dbesc($ob_hash)
 	);
 
 	if(! $r) {
 		// finger them if they can't be found.
-		$j = \Zotlabs\Zot\Finger::run($ob_hash, null);
-		if ($j['success']) {
-			import_xchan($j);
+		$wf = discover_by_webbie($ob_hash);
+		if($wf) {
 			$r = q("select * from hubloc left join xchan on xchan_hash = hubloc_hash
-				where hubloc_addr = '%s' order by hubloc_id desc",
+				where hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s' order by hubloc_id desc",
+				dbesc($ob_hash),
+				dbesc($ob_hash),
 				dbesc($ob_hash)
 			);
 		}

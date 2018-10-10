@@ -39,8 +39,19 @@ class Inbox extends Controller {
 
 		//logger('debug: ' . $AS->debug());
 
-		if(! $AS->is_valid())
+		if(! $AS->is_valid()) {
+			if($AS->deleted) {
+				// process mastodon user deletion activities, but only if we can validate the signature
+				if($hsig['header_valid'] && $hsig['content_valid'] && $hsig['portable_id']) {
+					logger('removing deleted actor');
+					remove_all_xchan_resources($hsig['portable_id']);
+				}
+				else {
+					logger('ignoring deleted actor');		
+				}
+			}
 			return;
+		}
 
 		// $observer_hash in this case is the sender
 

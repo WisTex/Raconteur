@@ -64,13 +64,13 @@ function process_command($line) {
 			fresh_help();
 			break;	
 
-		case 'finger':
-			if(argv(1)) {
-				$x = Zotlabs\Zot\Finger::run(argv(1),$channel);
-				if($x['success'])
-					echo jindent($x);
-			}
-			break;
+//		case 'finger':
+//			if(argv(1)) {
+//				$x = Zotlabs\Zot\Finger::run(argv(1),$channel);
+//				if($x['success'])
+//					echo jindent($x);
+//			}
+//			break;
 
 		case 'login':
 			if(argv(1)) {
