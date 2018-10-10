@@ -98,6 +98,7 @@ class Magic extends \Zotlabs\Web\Controller {
 				
 				$headers = [];
 				$headers['Accept'] = 'application/x-zot+json' ;
+				$headers['Content-Type'] = 'application/x-zot+json' ;
 				$headers['X-Open-Web-Auth'] = random_string();
 				$headers['Digest'] = HTTPSig::generate_digest_header($data);
 				$headers['Host'] = $parsed['host'];

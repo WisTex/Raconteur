@@ -1509,12 +1509,14 @@ class Activity {
 				$s['created'] = datetime_convert('UTC','UTC',$act->data['published']);
 			}
 
+			$obj_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj));
+
 			// This needs better formatting with proper names
 			if($act->type === 'Like') {
-				$content['content'] = sprintf('%1$s Likes %2$s\'s %3$s',$act->actor['id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['content'];
+				$content['content'] = sprintf('@{%1$s} Likes @{%2$s}\'s %3$s',$act->actor['id'],$obj_actor['id'],$act->obj['type']) . "\n\n" . $content['content'];
 			}
 			if($act->type === 'Dislike') {
-				$content['content'] = sprintf('%1$s Doesn\'t like %2$s\'s %3$s',$act->actor['id'],$act->obj['actor']['id'],$act->obj['type']) . "\n\n" . $content['content'];
+				$content['content'] = sprintf('@{%1$s} Doesn\'t like @{%2$s}\'s %3$s',$act->actor['id'],$obj_actor['id'],$act->obj['type']) . "\n\n" . $content['content'];
 			}
 		}
 
