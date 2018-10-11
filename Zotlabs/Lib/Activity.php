@@ -1414,7 +1414,7 @@ class Activity {
 		}
 
 		if($act->obj['type'] === 'Note' && $s['attach']) {
-			$s['body'] .= self::bb_attach($s['attach']);
+			$s['body'] .= self::bb_attach($s['attach'],$s['body']);
 		}
 
 		// we will need a hook here to extract magnet links e.g. peertube
@@ -1633,7 +1633,7 @@ class Activity {
 		}
 
 		if($act->obj['type'] === 'Note' && $s['attach']) {
-			$s['body'] .= self::bb_attach($s['attach']);
+			$s['body'] .= self::bb_attach($s['attach'],$s['body']);
 		}
 
 
@@ -2079,7 +2079,7 @@ class Activity {
 		$body .= self::bb_content($content,'content');
 
 		if($act->obj['type'] === 'Note' && $s['attach']) {
-			$body .= self::bb_attach($s['attach']);
+			$body .= self::bb_attach($s['attach'],body);
 		}
 
 		$body .= "[/share]";
@@ -2257,19 +2257,25 @@ class Activity {
 	}
 
 
-	static function bb_attach($attach) {
+	static function bb_attach($attach,$body) {
 
 		$ret = false;
 
 		foreach($attach as $a) {
 			if(strpos($a['type'],'image') !== false) {
-				$ret .= "\n\n" . '[img]' . $a['href'] . '[/img]';
+				if(strpos($body,$a['href']) === false) {
+					$ret .= "\n\n" . '[img]' . $a['href'] . '[/img]';
+				}
 			}
 			if(array_key_exists('type',$a) && strpos($a['type'], 'video') === 0) {
-				$ret .= "\n\n" . '[video]' . $a['href'] . '[/video]';
+				if(strpos($body,$a['href']) === false) {
+					$ret .= "\n\n" . '[video]' . $a['href'] . '[/video]';
+				}
 			}
 			if(array_key_exists('type',$a) && strpos($a['type'], 'audio') === 0) {
-				$ret .= "\n\n" . '[audio]' . $a['href'] . '[/audio]';
+				if(strpos($body,$a['href']) === false) {
+					$ret .= "\n\n" . '[audio]' . $a['href'] . '[/audio]';
+				}
 			}
 		}
 
