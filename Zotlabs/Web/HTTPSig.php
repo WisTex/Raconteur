@@ -47,6 +47,7 @@ class HTTPSig {
 			$h = new HTTPHeaders($data['header']);
 			$headers = $h->fetcharr();
 			$body = $data['body'];
+			$headers['(request-target)'] = $data['request_target'];
 		}
 
 		else {
@@ -120,10 +121,6 @@ class HTTPSig {
 			if(array_key_exists($h,$headers)) {
 				$signed_data .= $h . ': ' . $headers[$h] . "\n";
 			}
-			if($h === 'host' && (strpos(strtolower(\App::get_hostname()),strtolower($headers[$h])) === false)) {
-				logger('bad host: ' . $sig_block['keyId'] . ' != ' . $headers[$h]);
-				return $result;
-			}
 			if($h === 'date') {
 				$d = new \DateTime($headers[$h]);
 				$d->setTimeZone(new \DateTimeZone('UTC'));
@@ -161,8 +158,10 @@ class HTTPSig {
 
 		logger('verified: ' . $x, LOGGER_DEBUG);
 
-		if(! $x)
+		if(! $x) {
+			logger('verify failed for ' . $result['signer'] . ' alg=' . $algorithm . (($key['public_key']) ? '' : ' no key'));
 			return $result;
+		}
 
 		$result['portable_id'] = $key['portable_id'];
 		$result['header_valid'] = true;

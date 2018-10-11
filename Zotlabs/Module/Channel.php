@@ -93,7 +93,11 @@ class Channel extends Controller {
 				$data = json_encode(Libzot::zotinfo([ 'address' => $channel['channel_address'] ]));
 			}
 
-			$headers = [ 'Content-Type' => 'application/x-zot+json', 'Digest' => HTTPSig::generate_digest_header($data) ];
+			$headers = [ 
+				'Content-Type'     => 'application/x-zot+json', 
+				'Digest'           => HTTPSig::generate_digest_header($data),
+				'(request-target)' => strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI']
+			 ];
 			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
 			HTTPSig::set_headers($h);
 			echo $data;
@@ -113,6 +117,7 @@ class Channel extends Controller {
         	$x['signature'] = LDSignatures::sign($x,$channel);
         	$ret = json_encode($x, JSON_UNESCAPED_SLASHES);
         	$headers['Digest'] = HTTPSig::generate_digest_header($ret);
+			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
         	$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
         	HTTPSig::set_headers($h);
 

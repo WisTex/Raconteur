@@ -205,9 +205,10 @@ class Libzot {
 
 		if($channel) {
 			$headers = [ 
-				'X-Zot-Token'  => random_string(), 
-				'Digest'       => HTTPSig::generate_digest_header($data), 
-				'Content-type' => 'application/x-zot+json'
+				'X-Zot-Token'      => random_string(), 
+				'Digest'           => HTTPSig::generate_digest_header($data), 
+				'Content-type'     => 'application/x-zot+json',
+				'(request-target)' => 'post ' . get_request_string($url)
 			];
 
 			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false,'sha512', 

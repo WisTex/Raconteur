@@ -102,6 +102,7 @@ class Magic extends \Zotlabs\Web\Controller {
 				$headers['X-Open-Web-Auth'] = random_string();
 				$headers['Digest'] = HTTPSig::generate_digest_header($data);
 				$headers['Host'] = $parsed['host'];
+				$headers['(request-target)'] = 'get ' . '/owa';
 
 				$headers = HTTPSig::create_sig($headers,$channel['channel_prvkey'], channel_url($channel),true,'sha512');
 				$x = z_post_url($basepath . '/owa',$data,$redirects,[ 'headers' => $headers ]);

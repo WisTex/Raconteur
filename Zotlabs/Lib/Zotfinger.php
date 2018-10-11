@@ -19,11 +19,12 @@ class Zotfinger {
 		if($channel && $m) {
 
 			$headers = [ 
-				'Accept'       => 'application/x-zot+json', 
-				'Content-Type' => 'application/x-zot+json',
-				'X-Zot-Token'  => random_string(),
-				'Digest'       => HTTPSig::generate_digest_header($data),
-				'Host'         => $m['host'],
+				'Accept'           => 'application/x-zot+json', 
+				'Content-Type'     => 'application/x-zot+json',
+				'X-Zot-Token'      => random_string(),
+				'Digest'           => HTTPSig::generate_digest_header($data),
+				'Host'             => $m['host'],
+				'(request-target)' => 'post ' . get_request_string($resource)
 			];
 			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false);
 		}

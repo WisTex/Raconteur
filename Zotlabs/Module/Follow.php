@@ -55,6 +55,7 @@ class Follow extends \Zotlabs\Web\Controller {
         	$x['signature'] = LDSignatures::sign($x,$chan);
 	        $ret = json_encode($x, JSON_UNESCAPED_SLASHES);
     	    $headers['Digest'] = HTTPSig::generate_digest_header($ret);
+			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
         	$h = HTTPSig::create_sig($headers,$chan['channel_prvkey'],channel_url($chan));
 	        HTTPSig::set_headers($h);
     	    echo $ret;
