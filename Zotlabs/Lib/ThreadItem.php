@@ -464,7 +464,13 @@ class ThreadItem {
 
 		// place to store all the author addresses (links if not available) in the thread so we can auto-mention them in JS. 
 		$result['authors'] = [];
-		$result['authors'][] = $profile_addr;
+		$add_top_author = true;
+		if($observer && ($profile_addr === $observer['xchan_hash'] || $profile_addr === $observer['xchan_addr'])) {
+			$add_top_author = false;
+		}
+		if($add_top_author) {
+			$result['authors'][] = $profile_addr;
+		}
 
 		$nb_children = count($children);
 
@@ -483,6 +489,9 @@ class ThreadItem {
 				}
 				$author = $child->get_author();
 				if($author && ! in_array($author,$result['authors'])) {
+					if($observer && ($author === $observer['xchan_hash'] || $author === $observer['xchan_addr'])) {
+						continue;
+					}
 					$result['authors'][] = $author;
 				}
 				$result['children'][] = $xz;
@@ -500,7 +509,13 @@ class ThreadItem {
 				}
 			}
 		}
-		
+
+		if(count($result['authors']) > 6) {
+			$slice = array_slice($result['authors'],0,3);
+			$slice2 = array_slice($result['authors'],-3,3);
+			$result['authors'] = array_merge($slice,$slice2);
+		}		
+
 		//logger('authors: ' . print_r($result['authors'],true));
 
 		$result['private'] = $item['item_private'];
