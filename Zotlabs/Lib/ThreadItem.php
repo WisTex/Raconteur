@@ -490,9 +490,11 @@ class ThreadItem {
 				$author = $child->get_author();
 				if($author && ! in_array($author,$result['authors'])) {
 					if($observer && ($author === $observer['xchan_hash'] || $author === $observer['xchan_addr'])) {
-						continue;
+						// do nothing
 					}
-					$result['authors'][] = $author;
+					else {
+						$result['authors'][] = $author;
+					}
 				}
 				$result['children'][] = $xz;
 			}

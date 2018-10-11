@@ -356,7 +356,7 @@ class Display extends \Zotlabs\Web\Controller {
 		else {
 			$items = array();
 		}
-	
+
 
 		switch($module_format) {
 			
