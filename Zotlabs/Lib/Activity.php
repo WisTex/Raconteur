@@ -2263,17 +2263,17 @@ class Activity {
 
 		foreach($attach as $a) {
 			if(strpos($a['type'],'image') !== false) {
-				if(strpos($body,$a['href']) === false) {
+				if(self::media_not_in_body($a['href'],$body)) {
 					$ret .= "\n\n" . '[img]' . $a['href'] . '[/img]';
 				}
 			}
 			if(array_key_exists('type',$a) && strpos($a['type'], 'video') === 0) {
-				if(strpos($body,$a['href']) === false) {
+				if(self::media_not_in_body($a['href'],$body)) {
 					$ret .= "\n\n" . '[video]' . $a['href'] . '[/video]';
 				}
 			}
 			if(array_key_exists('type',$a) && strpos($a['type'], 'audio') === 0) {
-				if(strpos($body,$a['href']) === false) {
+				if(self::media_not_in_body($a['href'],$body)) {
 					$ret .= "\n\n" . '[audio]' . $a['href'] . '[/audio]';
 				}
 			}
@@ -2282,6 +2282,18 @@ class Activity {
 		return $ret;
 	}
 
+
+	// check for the existence of existing media link in body
+
+	static function media_not_in_body($s,$body) {
+		
+		if((strpos($body,']' . $s . '[/img]') === false) && 
+			(strpos($body,']' . $s . '[/video]') === false) && 
+			(strpos($body,']' . $s . '[/audio]') === false)) {
+			return true;
+		}
+		return false;
+	}
 
 
 	static function bb_content($content,$field) {
