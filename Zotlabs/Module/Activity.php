@@ -51,6 +51,8 @@ class Activity extends \Zotlabs\Web\Controller {
 			$x['signature'] = LDSignatures::sign($x,$channel);
 			$ret = json_encode($x, JSON_UNESCAPED_SLASHES);
 			$headers['Digest'] = HTTPSig::generate_digest_header($ret);
+			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
+
 			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
 			HTTPSig::set_headers($h);
 			echo $ret;

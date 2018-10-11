@@ -22,6 +22,7 @@ class Home extends \Zotlabs\Web\Controller {
 			$ret = json_encode(Libzot::site_info());
 
 			$headers = [ 'Content-Type' => 'application/x-zot+json', 'Digest' => HTTPSig::generate_digest_header($ret) ];
+			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
 			$h = HTTPSig::create_sig($headers, $key, z_root());
 			HTTPSig::set_headers($h);
 			echo $ret;

@@ -238,6 +238,8 @@ class Queue {
 			$ret = $outq['outq_msg'];
 			logger('ActivityPub send: ' . $ret, LOGGER_DATA);
 			$headers['Digest'] = HTTPSig::generate_digest_header($ret);
+			$headers['(request-target)'] = 'post ' . get_request_string($outq['outq_posturl']);
+
 			$xhead = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
 			if(strpos($outq['outq_posturl'],'http') !== 0) {
 				logger('bad url: ' . $outq['outq_posturl']);

@@ -16,6 +16,16 @@ class Inbox extends Controller {
 			return;
 		}
 
+		// This SHOULD be handled by the webserver, but in the RFC it is only indicated as
+		// a SHOULD and not a MUST, so some webservers fail to reject appropriately.
+
+		logger('accepting: ' . $_SERVER['HTTP_ACCEPT'],LOGGER_DEBUG);
+
+		if((array_key_exists('HTTP_ACCEPT',$_SERVER)) && ($_SERVER['HTTP_ACCEPT']) 
+			&& (strpos($_SERVER['HTTP_ACCEPT'],'*') === false) && (! ActivityStreams::is_as_request())) {
+			http_status_exit(406,'not acceptable');
+		}
+
 		$sys_disabled = ((get_config('system','disable_discover_tab') || get_config('system','disable_activitypub_discover_tab'))  ? true : false);
 
 		$is_public = false;
