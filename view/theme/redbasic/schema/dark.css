@@ -152,6 +152,7 @@ option {
     background-color: #111;
 }
 
+.dropdown-header.text-black-50,
 .nav-link.active {
 	color:#fff !important;
 }
@@ -373,7 +374,7 @@ pre {
 }
 
 .dropdown-menu >li > a {
-	color: #ccc;
+	color: #ccc !important;
 }
 
 .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {

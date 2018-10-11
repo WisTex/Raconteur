@@ -195,6 +195,8 @@ class Inbox extends Controller {
 						break;
 					}
 				case 'Delete':
+					Activity::drop($channel,$observer_hash,$AS);
+					break;
 				case 'Add':
 				case 'Remove':
 				default:

@@ -401,10 +401,35 @@ class Activity {
 		$reply = false;
 
 		if(intval($i['item_deleted'])) {
-			$ret['type'] = 'Tombstone';
-			$ret['formerType'] = self::activity_obj_mapper($i['obj_type']);
-			$ret['id'] = $i['mid'];
+			$ret['type'] = 'Delete';
+			$ret['id'] = str_replace('/item/','/activity/',$i['mid']) . '#delete';
+			$actor = self::encode_person($i['author'],false);
+			if($actor)
+				$ret['actor'] = $actor;
+			else
+				return []; 
+
+			if($i['obj']) {
+				if(! is_array($i['obj'])) {
+					$i['obj'] = json_decode($i['obj'],true);
+				}
+				$obj = self::encode_object($i['obj']);
+				if($obj)
+					$ret['object'] = $obj;
+				else
+					return [];
+			}
+			else {
+				$obj = self::encode_item($i,$activitypub);
+				if($obj)
+					$ret['object'] = $obj;
+				else
+					return [];
+			}
+
+			$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
 			return $ret;
+
 		}
 
 		$ret['type'] = self::activity_mapper($i['verb']);
@@ -1198,6 +1223,25 @@ class Activity {
 			$icon = z_root() . '/' . get_default_profile_photo(300);
 
 		Master::Summon( [ 'Xchan_photo', bin2hex($icon), bin2hex($url) ] );
+
+	}
+
+	static function drop($channel,$observer,$act) {
+		$r = q("select * from item where mid = '%s' and uid = %d limit 1",
+			$act->obj['id'],
+			$channel['channel_id']
+		);
+
+		if(! $r) {
+			return;
+		}
+
+		if(in_array($observer,[ $r[0]['author_xchan'], $r[0]['owner_xchan'] ])) {
+			drop_item($r[0]['id'],false);
+		}
+		elseif(in_array($act->actor['id'],[ $r[0]['author_xchan'], $r[0]['owner_xchan'] ])) {
+			drop_item($r[0]['id'],false);
+		}
 
 	}
 
