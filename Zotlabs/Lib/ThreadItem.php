@@ -468,7 +468,7 @@ class ThreadItem {
 		if($observer && ($profile_addr === $observer['xchan_hash'] || $profile_addr === $observer['xchan_addr'])) {
 			$add_top_author = false;
 		}
-		if($add_top_author) {
+		if($add_top_author && (! defined('NOMADIC'])) {
 			$result['authors'][] = $profile_addr;
 		}
 
@@ -492,7 +492,7 @@ class ThreadItem {
 					if($observer && ($author === $observer['xchan_hash'] || $author === $observer['xchan_addr'])) {
 						// do nothing
 					}
-					else {
+					elseif(! defined('NOMADIC')) {
 						$result['authors'][] = $author;
 					}
 				}
