@@ -155,6 +155,7 @@ option {
 .dropdown-header.text-black-50,
 .nav-link.active {
 	color:#fff !important;
+	background-color: #444 !important;
 }
 
 a.btn, aside a {
