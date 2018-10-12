@@ -1585,6 +1585,13 @@ class Activity {
 			}
 			self::actor_store($announced_actor['id'],$announced_actor);
 			$s['author_xchan'] = $announced_actor['id'];
+
+			// Set the following to make this item act like a sourced item; comments will then be relayed to the sender
+			// as well as back to the original author
+
+			$s['source_xchan'] = $announced_actor['id'];
+			$s['item_uplink'] = 1;
+
 		}
 
 		if(! $s['created'])

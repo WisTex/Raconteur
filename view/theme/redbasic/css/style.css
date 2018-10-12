@@ -106,10 +106,6 @@ a,
   color: $link_colour;
 }
 
-.nav-link.active, .show > .nav-link {
-    background-color: $link_colour !important;
-}
-
 a:hover,
 a:focus,
 .fakelink:hover,

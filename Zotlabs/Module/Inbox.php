@@ -83,7 +83,7 @@ class Inbox extends Controller {
 			Activity::actor_store($AS->obj['id'],$AS->obj);
 		}
 
-		if(is_array($AS->obj['actor']) && array_key_exists('id',$AS->obj['actor']) && $AS->obj['actor']['id'] !== $AS->actor['id']) {
+		if(is_array($AS->obj) && is_array($AS->obj['actor']) && array_key_exists('id',$AS->obj['actor']) && $AS->obj['actor']['id'] !== $AS->actor['id']) {
 			Activity::actor_store($AS->obj['actor']['id'],$AS->obj['actor']);
 		}
 
@@ -186,7 +186,13 @@ class Inbox extends Controller {
 				case 'Like':
 				case 'Dislike':
 				case 'Announce':
-					$item = Activity::decode_note($AS);
+					// These require a resolvable object structure
+					if(is_array($AS->obj)) {
+						$item = Activity::decode_note($AS);
+					}
+					else {
+						logger('unresolved object: ' . print_r($AS->obj,true));
+					}
 					break;
 				case 'Undo':
 					if($AS->obj & $AS->obj['type'] === 'Follow') {
