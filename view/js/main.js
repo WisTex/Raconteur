@@ -165,6 +165,7 @@ function handle_comment_form(e) {
 
 	if(form.find('.comment-edit-text').length) {
 		var commentElm = form.find('.comment-edit-text').attr('id');
+		var commentId = commentElm.replace('comment-edit-text-','');
 		var submitElm = commentElm.replace(/text/,'submit');
 
 		$('#' + commentElm).addClass('expanded').removeAttr('placeholder');
@@ -172,6 +173,7 @@ function handle_comment_form(e) {
 		$('#' + submitElm).attr('tabindex','10');
 		
 		form.find(':not(:visible)').show();
+		commentAuthors(commentId);
 	}
 
 	// handle click outside of form (close empty forms)
@@ -194,6 +196,7 @@ function handle_comment_form(e) {
 	var commentSaveTimer = null;
 	var emptyCommentElm = form.find('.comment-edit-text').attr('id');
 	var convId = emptyCommentElm.replace('comment-edit-text-','');
+
 	$(document).on('focusout','#' + emptyCommentElm,function(e){
 		if(commentSaveTimer)
 			clearTimeout(commentSaveTimer);
@@ -262,12 +265,9 @@ function commentAuthors(id) {
 	var auths = $("#thread-authors-" + id).html();
 	if(typeof(auths) != 'undefined') {
 		var tmpStr = $("#comment-edit-text-" + id).val();
-		if(tmpStr == '$comment') {
-			tmpStr = '';
-			$("#comment-edit-text-" + id).addClass("expanded");
-			openMenu("comment-tools-" + id);
+		if(tmpStr == '') {
+			$("#comment-edit-text-" + id).val(auths);
 		}
-		$("#comment-edit-text-" + id).val(auths + ' ' + tmpStr);
 	}
 }
 

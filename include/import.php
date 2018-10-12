@@ -234,7 +234,7 @@ function import_hublocs($channel, $hublocs, $seize, $moving = false) {
 
 			if(($x = Libzot::gethub($arr,false)) === false) {
 				unset($hubloc['hubloc_id']);
-				create_table_from_array('hubloc', $hubloc);
+				hubloc_store_lowlevel($hubloc);
 			}
 			else {
 				q("UPDATE hubloc set hubloc_primary = %d, hubloc_deleted = %d where hubloc_id = %d",

@@ -1181,13 +1181,29 @@ function format_like($cnt, $arr, $type, $id) {
 	return $o;
 }
 
+
+/**
+ * Wrapper to allow addons to replace the status editor if desired.
+ */
+function status_editor($a, $x, $popup = false, $module='') {
+    $hook_info = ['editor_html' => '', 'x' => $x, 'popup' => $popup, 'module' => $module];
+    call_hooks('status_editor',$hook_info);
+    if ($hook_info['editor_html'] == '') {
+		return z_status_editor($a, $x, $popup);
+    } 
+	else {
+		return $hook_info['editor_html'];
+    }
+}
+
+
 /**
  * This is our general purpose content editor. 
  * It was once nicknamed "jot" and you may see references to "jot" littered throughout the code.
  * They are referring to the content editor or components thereof. 
  */
 
-function status_editor($a, $x, $popup = false) {
+function z_status_editor($a, $x, $popup = false) {
 
 	$o = '';
 

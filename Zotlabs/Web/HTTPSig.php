@@ -54,6 +54,7 @@ class HTTPSig {
 			$headers = [];
 			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
 			$headers['content-type'] = $_SERVER['CONTENT_TYPE'];
+			$headers['content-length'] = $_SERVER['CONTENT_LENGTH'];
 
 			foreach($_SERVER as $k => $v) {
 				if(strpos($k,'HTTP_') === 0) {
@@ -160,6 +161,12 @@ class HTTPSig {
 
 		if(! $x) {
 			logger('verify failed for ' . $result['signer'] . ' alg=' . $algorithm . (($key['public_key']) ? '' : ' no key'));
+
+			$sig_block['signature'] = base64url_encode($sig_block['signature']);
+			logger('affected sigblock: ' . print_r($sig_block,true));
+			logger('headers: ' . print_r($headers,true));
+			logger('server: ' . print_r($_SERVER,true));
+
 			return $result;
 		}
 

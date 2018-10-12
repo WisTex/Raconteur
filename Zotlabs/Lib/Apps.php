@@ -355,8 +355,8 @@ class Apps {
 			'Permission Categories' => t('Permission Categories'),
 			'Premium Channel' => t('Premium Channel'),
 			'Public Stream' => t('Public Stream'),
-			'My Chatrooms' => t('My Chatrooms')
-
+			'My Chatrooms' => t('My Chatrooms'),
+			'File Storage Import' => t('File Storage Import')
 		);
 
 		if(array_key_exists('name',$arr)) {

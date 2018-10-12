@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Module\Admin;
 
+use Zotlabs\Lib\System;
+
 
 class Site {
 
@@ -241,9 +243,7 @@ class Site {
 
 		/* Banner */
 
-		$banner = get_config('system', 'banner');
-		if($banner === false)
-			$banner = get_config('system','sitename');
+		$banner = System::get_banner();
 
 		$banner = htmlspecialchars($banner);
 

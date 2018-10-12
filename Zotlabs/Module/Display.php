@@ -11,7 +11,7 @@ class Display extends \Zotlabs\Web\Controller {
 
 	function get($update = 0, $load = false) {
 
-		$noscript_content = get_config('system', 'noscript_content', '1');
+		$noscript_content = (get_config('system', 'noscript_content', '1') && (! $update));
 
 		$module_format = 'html';
 
@@ -356,7 +356,7 @@ class Display extends \Zotlabs\Web\Controller {
 		else {
 			$items = array();
 		}
-	
+
 
 		switch($module_format) {
 			

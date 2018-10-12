@@ -101,7 +101,9 @@ class Share extends \Zotlabs\Web\Controller {
 		$arr['summary'] = $item['summary'];
 		$arr['body']    = $item['body'];
 		$arr['author_xchan'] = $item['author_xchan'];
-		$arr['owner_xchan'] = $channel['channel_hash'];
+		$arr['owner_xchan']  = $channel['channel_hash'];
+		$arr['source_xchan'] = $item['author_xchan'];
+		$arr['item_uplink']  = 1;
 		$arr['obj'] = $item['obj'];
 		$arr['obj_type'] = $item['obj_type'];
 		$arr['verb'] = 'Announce';

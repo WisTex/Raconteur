@@ -1,9 +1,12 @@
 .app-container {
 	float: left;
-	width: 148px;
-	margin: 20px;
+	width: 177px;
+	margin: 35px;
 }
 
 .app-name {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	margin: 10px 0px;
 }

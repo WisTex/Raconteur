@@ -401,10 +401,35 @@ class Activity {
 		$reply = false;
 
 		if(intval($i['item_deleted'])) {
-			$ret['type'] = 'Tombstone';
-			$ret['formerType'] = self::activity_obj_mapper($i['obj_type']);
-			$ret['id'] = $i['mid'];
+			$ret['type'] = 'Delete';
+			$ret['id'] = str_replace('/item/','/activity/',$i['mid']) . '#delete';
+			$actor = self::encode_person($i['author'],false);
+			if($actor)
+				$ret['actor'] = $actor;
+			else
+				return []; 
+
+			if($i['obj']) {
+				if(! is_array($i['obj'])) {
+					$i['obj'] = json_decode($i['obj'],true);
+				}
+				$obj = self::encode_object($i['obj']);
+				if($obj)
+					$ret['object'] = $obj;
+				else
+					return [];
+			}
+			else {
+				$obj = self::encode_item($i,$activitypub);
+				if($obj)
+					$ret['object'] = $obj;
+				else
+					return [];
+			}
+
+			$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
 			return $ret;
+
 		}
 
 		$ret['type'] = self::activity_mapper($i['verb']);
@@ -1028,6 +1053,8 @@ class Activity {
 		if(! is_array($person_obj))
 			return;
 
+//		logger('person_obj: ' . print_r($person_obj,true));
+
 		// We may have been passed a cached entry. If it is, and the cache duration has expired
 		// fetch a fresh copy before continuing.
 
@@ -1196,6 +1223,25 @@ class Activity {
 			$icon = z_root() . '/' . get_default_profile_photo(300);
 
 		Master::Summon( [ 'Xchan_photo', bin2hex($icon), bin2hex($url) ] );
+
+	}
+
+	static function drop($channel,$observer,$act) {
+		$r = q("select * from item where mid = '%s' and uid = %d limit 1",
+			$act->obj['id'],
+			$channel['channel_id']
+		);
+
+		if(! $r) {
+			return;
+		}
+
+		if(in_array($observer,[ $r[0]['author_xchan'], $r[0]['owner_xchan'] ])) {
+			drop_item($r[0]['id'],false);
+		}
+		elseif(in_array($act->actor['id'],[ $r[0]['author_xchan'], $r[0]['owner_xchan'] ])) {
+			drop_item($r[0]['id'],false);
+		}
 
 	}
 
@@ -1368,7 +1414,7 @@ class Activity {
 		}
 
 		if($act->obj['type'] === 'Note' && $s['attach']) {
-			$s['body'] .= self::bb_attach($s['attach']);
+			$s['body'] .= self::bb_attach($s['attach'],$s['body']);
 		}
 
 		// we will need a hook here to extract magnet links e.g. peertube
@@ -1539,6 +1585,13 @@ class Activity {
 			}
 			self::actor_store($announced_actor['id'],$announced_actor);
 			$s['author_xchan'] = $announced_actor['id'];
+
+			// Set the following to make this item act like a sourced item; comments will then be relayed to the sender
+			// as well as back to the original author
+
+			$s['source_xchan'] = $announced_actor['id'];
+			$s['item_uplink'] = 1;
+
 		}
 
 		if(! $s['created'])
@@ -1587,7 +1640,7 @@ class Activity {
 		}
 
 		if($act->obj['type'] === 'Note' && $s['attach']) {
-			$s['body'] .= self::bb_attach($s['attach']);
+			$s['body'] .= self::bb_attach($s['attach'],$s['body']);
 		}
 
 
@@ -1709,7 +1762,7 @@ class Activity {
 						$ptr = [ $act->obj['url'] ];
 					}
 					foreach($ptr as $vurl) {
-						if(array_key_exists('mediaType',$vurl) && $vurl['mediaType'] === 'text/plain') {
+						if(array_key_exists('mediaType',$vurl) && $vurl['mediaType'] === 'text/html') {
 							$s['plink'] = $vurl['href'];
 							break;
 						}
@@ -2033,7 +2086,7 @@ class Activity {
 		$body .= self::bb_content($content,'content');
 
 		if($act->obj['type'] === 'Note' && $s['attach']) {
-			$body .= self::bb_attach($s['attach']);
+			$body .= self::bb_attach($s['attach'],body);
 		}
 
 		$body .= "[/share]";
@@ -2211,25 +2264,43 @@ class Activity {
 	}
 
 
-	static function bb_attach($attach) {
+	static function bb_attach($attach,$body) {
 
 		$ret = false;
 
 		foreach($attach as $a) {
 			if(strpos($a['type'],'image') !== false) {
-				$ret .= "\n\n" . '[img]' . $a['href'] . '[/img]';
+				if(self::media_not_in_body($a['href'],$body)) {
+					$ret .= "\n\n" . '[img]' . $a['href'] . '[/img]';
+				}
 			}
 			if(array_key_exists('type',$a) && strpos($a['type'], 'video') === 0) {
-				$ret .= "\n\n" . '[video]' . $a['href'] . '[/video]';
+				if(self::media_not_in_body($a['href'],$body)) {
+					$ret .= "\n\n" . '[video]' . $a['href'] . '[/video]';
+				}
 			}
 			if(array_key_exists('type',$a) && strpos($a['type'], 'audio') === 0) {
-				$ret .= "\n\n" . '[audio]' . $a['href'] . '[/audio]';
+				if(self::media_not_in_body($a['href'],$body)) {
+					$ret .= "\n\n" . '[audio]' . $a['href'] . '[/audio]';
+				}
 			}
 		}
 
 		return $ret;
 	}
 
+
+	// check for the existence of existing media link in body
+
+	static function media_not_in_body($s,$body) {
+		
+		if((strpos($body,']' . $s . '[/img]') === false) && 
+			(strpos($body,']' . $s . '[/video]') === false) && 
+			(strpos($body,']' . $s . '[/audio]') === false)) {
+			return true;
+		}
+		return false;
+	}
 
 
 	static function bb_content($content,$field) {

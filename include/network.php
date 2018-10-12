@@ -186,8 +186,14 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
 	if(! $ret['success']) {
 		$ret['error'] = curl_error($ch);
 		$ret['debug'] = $curl_info;
+		$dbg = [ 
+			'url' => $ret['debug']['url'],
+			'content_type' => $ret['debug']['content_type'],
+			'error_code'  => $ret['debug']['error_code'],
+			'request_header' => $ret['debug']['request_header']
+		];
 		logger('z_fetch_url: error: ' . $url . ': ' . $ret['error'], LOGGER_DEBUG);
-		logger('z_fetch_url: debug: ' . print_r($curl_info,true), LOGGER_DATA);
+		logger('z_fetch_url: debug: ' . print_r($dbg,true), LOGGER_DATA);
 	}
 	$ret['body'] = substr($s,strlen($header));
 	$ret['header'] = $header;
@@ -371,8 +377,14 @@ function z_post_url($url, $params, $redirects = 0, $opts = array()) {
 	if(! $ret['success']) {
 		$ret['error'] = curl_error($ch);
 		$ret['debug'] = $curl_info;
+		$dbg = [ 
+			'url' => $ret['debug']['url'],
+			'content_type' => $ret['debug']['content_type'],
+			'error_code'  => $ret['debug']['error_code'],
+			'request_header' => $ret['debug']['request_header']
+		];
 		logger('z_post_url: error: ' . $url . ': ' . $ret['error'], LOGGER_DEBUG);
-		logger('z_post_url: debug: ' . print_r($curl_info,true), LOGGER_DATA);
+		logger('z_post_url: debug: ' . print_r($dbg,true), LOGGER_DATA);
 	}
 
 	$ret['body'] = substr($s, strlen($header));

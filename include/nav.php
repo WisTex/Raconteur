@@ -1,7 +1,9 @@
 <?php /** @file */
 
-use \Zotlabs\Lib\Apps;
-use \Zotlabs\Lib\Chatroom;
+use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\Chatroom;
+use Zotlabs\Lib\System;
+
 
 require_once('include/security.php');
 require_once('include/menu.php');
@@ -44,17 +46,7 @@ function nav($template = 'default') {
 
 	$channel_apps[] = channel_apps($is_owner, App::$profile['channel_address']);
 
-
-	/**
-	 *
-	 * Provide a banner/logo/whatever
-	 *
-	 */
-
-	$banner = get_config('system','banner');
-
-	if($banner === false) 
-		$banner = get_config('system','sitename');
+	$banner = System::get_banner();
 
 	App::$page['header'] .= replace_macros(get_markup_template('hdr.tpl'), array(
 		//we could additionally use this to display important system notifications e.g. for updates
@@ -279,7 +271,7 @@ function nav($template = 'default') {
 		'$is_owner' => $is_owner,
 		'$sel' => App::$nav_sel,
 		'$powered_by' => $powered_by,
-		'$help' => t('@name, !forum, #tag, ?doc, content'),
+		'$help' => t('@name, !forum, #tag, content'), // t('@name, !forum, #tag, ?doc, content'),
 		'$pleasewait' => t('Please wait...'),
 		'$nav_apps' => $nav_apps,
 		'$navbar_apps' => $navbar_apps,

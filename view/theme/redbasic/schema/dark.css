@@ -152,8 +152,10 @@ option {
     background-color: #111;
 }
 
+.dropdown-header.text-black-50,
 .nav-link.active {
 	color:#fff !important;
+	background-color: #444 !important;
 }
 
 a.btn, aside a {
@@ -373,7 +375,7 @@ pre {
 }
 
 .dropdown-menu >li > a {
-	color: #ccc;
+	color: #ccc !important;
 }
 
 .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
