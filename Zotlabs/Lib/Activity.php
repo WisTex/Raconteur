@@ -1515,9 +1515,26 @@ class Activity {
 		return $s;
 	}
 
+	static function get_actor_bbmention($id) {
+
+		$x = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_hash = '%s' or hubloc_id_url = '%s' limit 1",
+			dbesc($id),
+			dbesc($id)
+		);
+
+		if($x) {
+			return sprintf('@[zrl=%s]%s[/zrl]',$x[0]['xchan_url'],$x[0]['xchan_name']);		
+		}
+		return '@{' . $id . '}';
+
+	}
+
+
 
 
 	static function decode_note($act) {
+
+		$response_activity = false;
 
 		$s = [];
 
@@ -1545,7 +1562,10 @@ class Activity {
 		}
 
 
-		if(in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block' ])) {
+		if(in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block', 'Announce' ])) {
+
+			$response_activity = true;
+
 			$s['mid'] = $act->id;
 			$s['parent_mid'] = $act->obj['id'];
 
@@ -1555,43 +1575,27 @@ class Activity {
 				$s['created'] = datetime_convert('UTC','UTC',$act->data['published']);
 			}
 
-			$obj_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj));
-
-			// This needs better formatting with proper names
-			if($act->type === 'Like') {
-				$content['content'] = sprintf('@{%1$s} Likes @{%2$s}\'s %3$s',$act->actor['id'],$obj_actor['id'],$act->obj['type']) . "\n\n" . $content['content'];
-			}
-			if($act->type === 'Dislike') {
-				$content['content'] = sprintf('@{%1$s} Doesn\'t like @{%2$s}\'s %3$s',$act->actor['id'],$obj_actor['id'],$act->obj['type']) . "\n\n" . $content['content'];
-			}
-		}
-
-		if(in_array($act->type,['Announce'])) {
-			$s['mid'] = $act->id;
-			$s['parent_mid'] = $act->id;
-
-			// over-ride the object timestamp with the activity
-
-			if($act->data['published']) {
-				$s['created'] = datetime_convert('UTC','UTC',$act->data['published']);
-			}
 			if($act->data['updated']) {
 				$s['edited'] = datetime_convert('UTC','UTC',$act->data['updated']);
 			}
 
-			$announced_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj));
-			if(! $announced_actor) {
-				return [];
+			$obj_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj));
+			// ensure we store the original actor
+			self::actor_store($obj_actor['id'],$obj_actor);
+
+			$mention = self::get_actor_bbmention($obj_actor['id']);
+
+			// This needs better formatting with proper names
+			if($act->type === 'Like') {
+				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
 			}
-			self::actor_store($announced_actor['id'],$announced_actor);
-			$s['author_xchan'] = $announced_actor['id'];
+			if($act->type === 'Dislike') {
+				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+			}
 
-			// Set the following to make this item act like a sourced item; comments will then be relayed to the sender
-			// as well as back to the original author
-
-			$s['source_xchan'] = $announced_actor['id'];
-			$s['item_uplink'] = 1;
-
+			if($act->type === 'Announce') {
+				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\s %2$s'), $mention, $act->obj['type']);
+			}
 		}
 
 		if(! $s['created'])
@@ -1614,29 +1618,33 @@ class Activity {
 		$s['obj']      = $act->obj;
 
 		$instrument = $act->get_property_obj('instrument');
-		if(! $instrument)
+		if((! $instrument) && (! $response_activity)) {
 			$instrument = $act->get_property_obj('instrument',$act->obj);
+		}
 
 		if($instrument && array_key_exists('type',$instrument) 
 			&& $instrument['type'] === 'Service' && array_key_exists('name',$instrument)) {
 			$s['app'] = escape_tags($instrument['name']);
 		}
 
-		$a = self::decode_taxonomy($act->obj);
-		if($a) {
-			$s['term'] = $a;
-			foreach($a as $b) {
-				if($b['ttype'] === TERM_EMOJI) {
-					$s['title'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['title']);
-					$s['summary'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['summary']);
-					$s['body'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['body']);
+
+		if(! $response_activity) {
+			$a = self::decode_taxonomy($act->obj);
+			if($a) {
+				$s['term'] = $a;
+				foreach($a as $b) {
+					if($b['ttype'] === TERM_EMOJI) {
+						$s['title'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['title']);
+						$s['summary'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['summary']);
+						$s['body'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['body']);
+					}
 				}
 			}
-		}
 
-		$a = self::decode_attachment($act->obj);
-		if($a) {
-			$s['attach'] = $a;
+			$a = self::decode_attachment($act->obj);
+			if($a) {
+				$s['attach'] = $a;
+			}
 		}
 
 		if($act->obj['type'] === 'Note' && $s['attach']) {
@@ -1648,107 +1656,111 @@ class Activity {
 		// right now just link to the largest mp4 we find that will fit in our
 		// standard content region
 
-		if($act->obj['type'] === 'Video') {
+		if(! $response_activity) {
+			if($act->obj['type'] === 'Video') {
 
-			$vtypes = [
-				'video/mp4',
-				'video/ogg',
-				'video/webm'
-			];
+				$vtypes = [
+					'video/mp4',
+					'video/ogg',
+					'video/webm'
+				];
 
-			$mps = [];
-			$ptr = null;
+				$mps = [];
+				$ptr = null;
 
-			if(array_key_exists('url',$act->obj)) {
-				if(is_array($act->obj['url'])) {
-					if(array_key_exists(0,$act->obj['url'])) {				
-						$ptr = $act->obj['url'];
-					}
-					else {
-						$ptr = [ $act->obj['url'] ];
-					}
-					foreach($ptr as $vurl) {
-						if(in_array($vurl['mediaType'], $vtypes)) {
-							if(! array_key_exists('width',$vurl)) {
-								$vurl['width'] = 0;
+				if(array_key_exists('url',$act->obj)) {
+					if(is_array($act->obj['url'])) {
+						if(array_key_exists(0,$act->obj['url'])) {				
+							$ptr = $act->obj['url'];
+						}
+						else {
+							$ptr = [ $act->obj['url'] ];
+						}
+						foreach($ptr as $vurl) {
+							if(in_array($vurl['mediaType'], $vtypes)) {
+								if(! array_key_exists('width',$vurl)) {
+									$vurl['width'] = 0;
+								}
+								$mps[] = $vurl;
 							}
-							$mps[] = $vurl;
 						}
 					}
-				}
-				if($mps) {
-					usort($mps,[ __CLASS__, 'vid_sort' ]);
-					foreach($mps as $m) {
-						if(intval($m['width']) < 500) {
-							$s['body'] .= "\n\n" . '[video]' . $m['href'] . '[/video]';
-							break;
+					if($mps) {
+						usort($mps,[ __CLASS__, 'vid_sort' ]);
+						foreach($mps as $m) {
+							if(intval($m['width']) < 500) {
+								$s['body'] .= "\n\n" . '[video]' . $m['href'] . '[/video]';
+								break;
+							}
 						}
 					}
+					elseif(is_string($act->obj['url'])) {
+						$s['body'] .= "\n\n" . '[video]' . $act->obj['url'] . '[/video]';
+					}
 				}
-				elseif(is_string($act->obj['url'])) {
-					$s['body'] .= "\n\n" . '[video]' . $act->obj['url'] . '[/video]';
+			}
+
+			if($act->obj['type'] === 'Audio') {
+
+				$atypes = [
+					'audio/mpeg',
+					'audio/ogg',
+					'audio/wav'
+				];
+
+				$ptr = null;
+
+				if(array_key_exists('url',$act->obj)) {
+					if(is_array($act->obj['url'])) {
+						if(array_key_exists(0,$act->obj['url'])) {				
+							$ptr = $act->obj['url'];
+						}
+						else {
+							$ptr = [ $act->obj['url'] ];
+						}
+						foreach($ptr as $vurl) {
+							if(in_array($vurl['mediaType'], $atypes)) {
+								$s['body'] .= "\n\n" . '[audio]' . $vurl['href'] . '[/audio]';
+								break;
+							}
+						}
+					}
+					elseif(is_string($act->obj['url'])) {
+						$s['body'] .= "\n\n" . '[audio]' . $act->obj['url'] . '[/audio]';
+					}
+				}
+
+			}
+
+			if($act->obj['type'] === 'Image') {
+
+				$ptr = null;
+
+				if(array_key_exists('url',$act->obj)) {
+					if(is_array($act->obj['url'])) {
+						if(array_key_exists(0,$act->obj['url'])) {				
+							$ptr = $act->obj['url'];
+						}
+						else {
+							$ptr = [ $act->obj['url'] ];
+						}
+						foreach($ptr as $vurl) {
+							if(strpos($s['body'],$vurl['href']) === false) {
+								$s['body'] .= "\n\n" . '[zmg]' . $vurl['href'] . '[/zmg]';
+								break;
+							}
+						}
+					}
+					elseif(is_string($act->obj['url'])) {
+						if(strpos($s['body'],$act->obj['url']) === false) {
+							$s['body'] .= "\n\n" . '[zmg]' . $act->obj['url'] . '[/zmg]';
+						}
+					}
 				}
 			}
 		}
 
-		if($act->obj['type'] === 'Audio') {
 
-			$atypes = [
-				'audio/mpeg',
-				'audio/ogg',
-				'audio/wav'
-			];
-
-			$ptr = null;
-
-			if(array_key_exists('url',$act->obj)) {
-				if(is_array($act->obj['url'])) {
-					if(array_key_exists(0,$act->obj['url'])) {				
-						$ptr = $act->obj['url'];
-					}
-					else {
-						$ptr = [ $act->obj['url'] ];
-					}
-					foreach($ptr as $vurl) {
-						if(in_array($vurl['mediaType'], $atypes)) {
-							$s['body'] .= "\n\n" . '[audio]' . $vurl['href'] . '[/audio]';
-							break;
-						}
-					}
-				}
-				elseif(is_string($act->obj['url'])) {
-					$s['body'] .= "\n\n" . '[audio]' . $act->obj['url'] . '[/audio]';
-				}
-			}
-
-		}
-
-		if($act->obj['type'] === 'Image') {
-
-			$ptr = null;
-
-			if(array_key_exists('url',$act->obj)) {
-				if(is_array($act->obj['url'])) {
-					if(array_key_exists(0,$act->obj['url'])) {				
-						$ptr = $act->obj['url'];
-					}
-					else {
-						$ptr = [ $act->obj['url'] ];
-					}
-					foreach($ptr as $vurl) {
-						if(strpos($s['body'],$vurl['href']) === false) {
-							$s['body'] .= "\n\n" . '[zmg]' . $vurl['href'] . '[/zmg]';
-							break;
-						}
-					}
-				}
-				elseif(is_string($act->obj['url'])) {
-					if(strpos($s['body'],$act->obj['url']) === false) {
-						$s['body'] .= "\n\n" . '[zmg]' . $act->obj['url'] . '[/zmg]';
-					}
-				}
-			}
-		}
 
 		if(in_array($act->obj['type'],[ 'Note','Article' ])) {
 			$ptr = null;
@@ -1873,7 +1885,7 @@ class Activity {
 
 					// @TODO we maybe could accept these is we formatted the body correctly with share_bb()
 					// or at least provided a link to the object
-					if(in_array($act->type,[ 'Like','Dislike' ])) {
+					if(in_array($act->type,[ 'Like','Dislike','Announce' ])) {
 						return;
 					}
 					// turn into a top level post
