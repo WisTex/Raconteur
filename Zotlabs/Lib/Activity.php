@@ -1594,7 +1594,7 @@ class Activity {
 			}
 
 			if($act->type === 'Announce') {
-				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\s %2$s'), $mention, $act->obj['type']);
+				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $act->obj['type']);
 			}
 		}
 
