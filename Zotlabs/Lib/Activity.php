@@ -1606,7 +1606,7 @@ class Activity {
 
 		$s['title']    = self::bb_content($content,'name');
 		$s['summary']  = self::bb_content($content,'summary');
-		$s['body']     = (self::bb_content($content,'bbcode') ? : self::bb_content($content,'content'));
+		$s['body']     = ((self::bb_content($content,'bbcode') && (! $response_activity)) ? self::bb_content($content,'bbcode') : self::bb_content($content,'content'));
 
 		$s['verb']     = self::activity_mapper($act->type);
 
