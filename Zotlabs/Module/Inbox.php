@@ -211,6 +211,7 @@ class Inbox extends Controller {
 			}
 
 			if($item) {
+				logger('parsed_item: ' . print_r($item,true),LOGGER_DATA);
 				Activity::store($channel,$observer_hash,$AS,$item);
 			}
 
