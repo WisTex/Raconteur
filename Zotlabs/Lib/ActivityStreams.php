@@ -312,7 +312,14 @@ class ActivityStreams {
 				return $y;
 			}
 		}
-		return $this->get_compound_property($property,$base,$namespace,true);
+		$actor = $this->get_compound_property($property,$base,$namespace,true);
+		if(is_array($actor) && self::is_an_actor($actor)) {
+			if(array_key_exists('id',$actor) && (! array_key_exists('inbox',$actor))) {
+				$actor = $this->fetch_property($actor['id']);
+			}
+			return $actor;
+		}
+		return null;
 	}
 
 

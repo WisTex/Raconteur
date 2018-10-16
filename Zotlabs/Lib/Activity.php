@@ -1677,11 +1677,22 @@ class Activity {
 							$ptr = [ $act->obj['url'] ];
 						}
 						foreach($ptr as $vurl) {
-							if(in_array($vurl['mediaType'], $vtypes)) {
-								if(! array_key_exists('width',$vurl)) {
-									$vurl['width'] = 0;
+							// peertube uses the non-standard element name 'mimeType' here
+							if(array_key_exists('mimeType',$vurl)) {
+								if(in_array($vurl['mimeType'], $vtypes)) {
+									if(! array_key_exists('width',$vurl)) {
+										$vurl['width'] = 0;
+									}
+									$mps[] = $vurl;
 								}
-								$mps[] = $vurl;
+							}
+							elseif(array_key_exists('mediaType',$vurl)) {
+								if(in_array($vurl['mediaType'], $vtypes)) {
+									if(! array_key_exists('width',$vurl)) {
+										$vurl['width'] = 0;
+									}
+									$mps[] = $vurl;
+								}
 							}
 						}
 					}
