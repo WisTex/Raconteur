@@ -437,6 +437,9 @@ class Activity {
 		if(strpos($i['mid'],z_root() . '/item/') !== false) {
 			$ret['id'] = str_replace('/item/','/activity/',$i['mid']);
 		}
+		elseif(strpos($i['mid'],z_root() . '/event/') !== false) {
+			$ret['id'] = str_replace('/event/','/activity/',$i['mid']);
+		}
 		else {
 			$ret['id'] = $i['mid'];
 		}
@@ -1562,7 +1565,7 @@ class Activity {
 		}
 
 
-		if(in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block', 'Announce' ])) {
+		if(in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block', 'Announce', 'Accept', 'Reject', 'TentativeAccept' ])) {
 
 			$response_activity = true;
 
@@ -1592,7 +1595,15 @@ class Activity {
 			if($act->type === 'Dislike') {
 				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
 			}
-
+			if($act->type === 'Accept') {
+				$content['content'] = sprintf( t('Accept (is attending) %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+			}
+			if($act->type === 'Reject') {
+				$content['content'] = sprintf( t('Reject (is not attending) %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+			}
+			if($act->type === 'TentativeAccept') {
+				$content['content'] = sprintf( t('Tentative (may attend) %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+			}
 			if($act->type === 'Announce') {
 				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $act->obj['type']);
 			}
