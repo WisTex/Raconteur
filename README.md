@@ -15,4 +15,7 @@ Osada
 Osada is a full featured social network application running under the ActivityPub protocol. It also communicates with and inter-operates with servers on the Zot6 network (such as Zap). Due to limitations in the ActivityPub protocol, Osada does **not** offer nomadic identity or enhanced privacy modes. 
 
 
+Installation
+============
 
+Read `/install/INSTALL.txt` for installation instructions.
