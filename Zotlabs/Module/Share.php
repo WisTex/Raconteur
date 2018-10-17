@@ -94,11 +94,12 @@ class Share extends \Zotlabs\Web\Controller {
 		$arr['item_origin'] = 1;
 		$arr['item_wall'] = $item['item_wall'];
 		$arr['mid'] = item_message_id();
+		$arr['mid'] = str_replace('/item/','/activity/',$arr['mid']);
 		$arr['parent_mid'] = $item['mid'];
 
-		$arr['title']   = $item['title'];
-		$arr['summary'] = $item['summary'];
-		$arr['body']    = $item['body'];
+		$mention = '@[zrl=' . $item['author']['xchan_url'] . ']' . $item['author']['xchan_name'] . '[/zrl]';
+		$arr['body'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $item['obj_type']);
+
 		$arr['author_xchan'] = $channel['channel_hash'];
 		$arr['owner_xchan']  = $item['author_xchan'];
 		$arr['obj'] = $item['obj'];
