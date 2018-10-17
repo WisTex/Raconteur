@@ -1588,21 +1588,20 @@ class Activity {
 
 			$mention = self::get_actor_bbmention($obj_actor['id']);
 
-			// This needs better formatting with proper names
 			if($act->type === 'Like') {
 				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
 			}
 			if($act->type === 'Dislike') {
 				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
 			}
-			if($act->type === 'Accept') {
-				$content['content'] = sprintf( t('Accept (is attending) %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+			if($act->type === 'Accept' && $act->obj['type'] === 'Event' ) {
+				$content['content'] = sprintf( t('Will attend %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
 			}
-			if($act->type === 'Reject') {
-				$content['content'] = sprintf( t('Reject (is not attending) %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+			if($act->type === 'Reject' && $act->obj['type'] === 'Event' ) {
+				$content['content'] = sprintf( t('Will not attend %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
 			}
-			if($act->type === 'TentativeAccept') {
-				$content['content'] = sprintf( t('Tentative (may attend) %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+			if($act->type === 'TentativeAccept' && $act->obj['type'] === 'Event' ) {
+				$content['content'] = sprintf( t('May attend %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
 			}
 			if($act->type === 'Announce') {
 				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $act->obj['type']);
