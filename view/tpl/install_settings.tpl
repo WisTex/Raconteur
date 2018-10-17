@@ -17,6 +17,7 @@
 		<input type="hidden" name="dbpass" value="{{$dbpass}}" />
 		<input type="hidden" name="dbdata" value="{{$dbdata}}" />
 		<input type="hidden" name="dbtype" value="{{$dbtype}}" />
+		<input type="hidden" name="servertype" value="{{$servertype}}" />
 		<input type="hidden" name="pass" value="4" />
 
 		{{include file="field_input.tpl" field=$adminmail}}

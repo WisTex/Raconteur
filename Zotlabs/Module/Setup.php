@@ -331,6 +331,7 @@ class Setup extends \Zotlabs\Web\Controller {
 				$dbdata = trim($_POST['dbdata']);
 				$dbtype = intval(trim($_POST['dbtype']));
 				$phpath = trim($_POST['phpath']);
+				$servertype = intval(trim($_POST['servertype']));
 
 				$adminmail = trim($_POST['adminmail']);
 				$siteurl = trim($_POST['siteurl']);
@@ -350,6 +351,7 @@ class Setup extends \Zotlabs\Web\Controller {
 					'$dbdata' => $dbdata,
 					'$phpath' => $phpath,
 					'$dbtype' => $dbtype,
+					'$servertype' => $servertype,
 
 					'$adminmail' => array('adminmail', t('Site administrator email address'), $adminmail, t('Your account email address must match this in order to use the web admin panel.')),
 
