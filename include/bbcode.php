@@ -282,6 +282,110 @@ function translate_design_element($type) {
 }
 
 
+function getAttachmentData($body) {
+	$data = [];
+
+	if (!preg_match("/(.*)\[attachment(.*?)\](.*?)\[\/attachment\](.*)/ism", $body, $match)) {
+		return null;
+	}
+
+	$attributes = $match[2];
+
+	$data["text"] = trim($match[1]);
+
+	$type = "";
+	preg_match("/type='(.*?)'/ism", $attributes, $matches);
+	if (x($matches, 1)) {
+		$type = strtolower($matches[1]);
+	}
+
+	preg_match('/type="(.*?)"/ism', $attributes, $matches);
+	if (x($matches, 1)) {
+		$type = strtolower($matches[1]);
+	}
+
+	if ($type == "") {
+		return [];
+	}
+
+	if (!in_array($type, ["link", "audio", "photo", "video"])) {
+		return [];
+	}
+
+	if ($type != "") {
+		$data["type"] = $type;
+	}
+	$url = "";
+	preg_match("/url='(.*?)'/ism", $attributes, $matches);
+	if (x($matches, 1)) {
+		$url = $matches[1];
+	}
+
+	preg_match('/url="(.*?)"/ism', $attributes, $matches);
+	if (x($matches, 1)) {
+		$url = $matches[1];
+	}
+
+	if ($url != "") {
+		$data["url"] = html_entity_decode($url, ENT_QUOTES, 'UTF-8');
+	}
+
+	$title = "";
+	preg_match("/title='(.*?)'/ism", $attributes, $matches);
+	if (x($matches, 1)) {
+		$title = $matches[1];
+	}
+
+	preg_match('/title="(.*?)"/ism', $attributes, $matches);
+	if (x($matches, 1)) {
+		$title = $matches[1];
+	}
+	if ($title != "") {
+//		$title = self::convert(html_entity_decode($title, ENT_QUOTES, 'UTF-8'), false, true);
+		$title = html_entity_decode($title, ENT_QUOTES, 'UTF-8');
+		$title = str_replace(["[", "]"], ["&#91;", "&#93;"], $title);
+		$data["title"] = $title;
+	}
+
+	$image = "";
+	preg_match("/image='(.*?)'/ism", $attributes, $matches);
+	if (x($matches, 1)) {
+		$image = $matches[1];
+	}
+
+	preg_match('/image="(.*?)"/ism', $attributes, $matches);
+	if (x($matches, 1)) {
+		$image = $matches[1];
+	}
+
+	if ($image != "") {
+		$data["image"] = html_entity_decode($image, ENT_QUOTES, 'UTF-8');
+	}
+
+	$preview = "";
+	preg_match("/preview='(.*?)'/ism", $attributes, $matches);
+	if (x($matches, 1)) {
+		$preview = $matches[1];
+	}
+
+	preg_match('/preview="(.*?)"/ism', $attributes, $matches);
+	if (x($matches, 1)) {
+		$preview = $matches[1];
+	}
+	if ($preview != "") {
+		$data["preview"] = html_entity_decode($preview, ENT_QUOTES, 'UTF-8');
+	}
+
+	$data["description"] = trim($match[3]);
+
+	$data["after"] = trim($match[4]);
+
+	return $data;
+}
+
+
+
+
 function bb_ShareAttributes($match) {
 
 	$matches = array();
@@ -517,7 +621,7 @@ function bb_sanitize_style($input) {
 	// whitelist array: property => limits (0 = no limitation)
 	$w = array(
 			// color properties
-			"color"            => 0,
+			"color"	        => 0,
 			"background-color" => 0,
 			// box properties
 			"padding"          => array("px"=>100, "%"=>0, "em"=>2, "ex"=>2, "mm"=>0, "cm"=>0, "in"=>0, "pt"=>0, "pc"=>0),

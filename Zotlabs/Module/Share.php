@@ -91,19 +91,16 @@ class Share extends \Zotlabs\Web\Controller {
 		$arr['aid'] = $owner_aid;
 		$arr['uid'] = $owner_uid;
 
-		$arr['item_thread_top'] = 1;
 		$arr['item_origin'] = 1;
-		$arr['item_wall'] = 1;
+		$arr['item_wall'] = $item['item_wall'];
 		$arr['mid'] = item_message_id();
-		$arr['parent_mid'] = $arr['mid'];
+		$arr['parent_mid'] = $item['mid'];
 
 		$arr['title']   = $item['title'];
 		$arr['summary'] = $item['summary'];
 		$arr['body']    = $item['body'];
-		$arr['author_xchan'] = $item['author_xchan'];
-		$arr['owner_xchan']  = $channel['channel_hash'];
-		$arr['source_xchan'] = $item['author_xchan'];
-		$arr['item_uplink']  = 1;
+		$arr['author_xchan'] = $channel['channel_hash'];
+		$arr['owner_xchan']  = $item['author_xchan'];
 		$arr['obj'] = $item['obj'];
 		$arr['obj_type'] = $item['obj_type'];
 		$arr['verb'] = 'Announce';
