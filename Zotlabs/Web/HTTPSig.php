@@ -433,6 +433,8 @@ class HTTPSig {
 		$headers = '';
 		$fields  = '';
 
+		logger('signing: ' . print_r($head,true), LOGGER_DATA);
+
 		if($head) {
 			foreach($head as $k => $v) {
 				$headers .= strtolower($k) . ': ' . trim($v) . "\n";
