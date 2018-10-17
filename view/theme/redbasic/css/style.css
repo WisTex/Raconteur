@@ -12,6 +12,22 @@ html {
 	font-size: $font_size;
 }
 
+.project-banner {
+	float: left;
+	font-size: 2.0rem;
+	margin-right: 0.5rem;
+}
+
+.project-banner a {
+	color: $banner_colour;
+}
+
+.project-banner a:hover {
+	color: $banner_colour;
+	text-decoration: none;
+}
+
+
 body {
 	font-size: 0.9rem;
 	background-color: $bgcolour;

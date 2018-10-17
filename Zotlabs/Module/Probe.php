@@ -27,7 +27,7 @@ class Probe extends \Zotlabs\Web\Controller {
 			$o .= '<pre>';
 
 			if($do_import && $j)
-				$x = Libzot::import_xchan($j);
+				$x = Libzot::import_xchan($j['data']);
 			$o .= str_replace("\n",'<br />',print_r($j,true));
 			$o .= '</pre>';
 		}

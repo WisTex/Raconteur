@@ -8,6 +8,10 @@ use Sabre\VObject;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Activity;
 
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
+
+
 require_once('include/bbcode.php');
 
 /**
@@ -67,26 +71,48 @@ function format_event_obj($jobject) {
 
 	$object = json_decode($jobject,true);
 
-	//ensure compatibility with older items - this check can be removed at a later point
-	if(is_array($object) && array_key_exists('description', $object)) {
+/*******
+	This is our encoded format
+
+		$x = [ 
+			'type'      => 'Event',
+			'id'        => z_root() . '/event/' . $r[0]['resource_id'],
+			'summary'   => bbcode($arr['summary']),
+			// RFC3339 Section 4.3
+			'startTime' => (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtstart'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtstart'],'Y-m-d\\TH:i:s-00:00')),
+			'content'   => bbcode($arr['description']),
+			'location'  => [ 'type' => 'Place', 'content' => $arr['location'] ],
+			'content'   => format_event_html($arr),
+			'source'    => [ 'content' => format_event_bbcode($arr), 'mediaType' => 'text/bbcode' ],
+			'actor'     => Activity::encode_person($r[0],false),
+		];
+		if(! $arr['nofinish']) {
+			$x['endTime'] = (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtend'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtend'],'Y-m-d\\TH:i:s-00:00'));
+		}
+
+
+******/
+
+	if(is_array($object) && array_key_exists('summary', $object)) {
 
 		$bd_format = t('l F d, Y \@ g:i A'); // Friday January 18, 2011 @ 8:01 AM
+		$dtend = ((array_key_exists('endTime',$object)) ? $object['endTime'] : NULL_DATE);
 
 		$event['header'] = replace_macros(get_markup_template('event_item_header.tpl'),array(
-			'$title'	 => zidify_links(smilies(bbcode($object['title']))),
+			'$title'	 => zidify_links(smilies(bbcode($object['summary']))),
 			'$dtstart_label' => t('Starts:'),
-			'$dtstart_title' => datetime_convert('UTC', 'UTC', $object['dtstart'], (($object['adjust']) ? ATOM_TIME : 'Y-m-d\TH:i:s' )),
-			'$dtstart_dt'	 => (($object['adjust']) ? day_translate(datetime_convert('UTC', date_default_timezone_get(), $object['dtstart'] , $bd_format )) : day_translate(datetime_convert('UTC', 'UTC', $object['dtstart'] , $bd_format))),
-			'$finish'	 => (($object['nofinish']) ? false : true),
+			'$dtstart_title' => datetime_convert('UTC', 'UTC', $object['startTime'], ((strpos($object['startTime'],'Z')) ? ATOM_TIME : 'Y-m-d\TH:i:s' )),
+			'$dtstart_dt'	 => ((strpos($object['startTime'],'Z')) ? day_translate(datetime_convert('UTC', date_default_timezone_get(), $object['startTime'] , $bd_format )) : day_translate(datetime_convert('UTC', 'UTC', $object['startTime'] , $bd_format))),
+			'$finish'	 => ((array_key_exists('endTime',$object)) ? true : false),
 			'$dtend_label'	 => t('Finishes:'),
-			'$dtend_title'	 => datetime_convert('UTC','UTC',$object['dtend'], (($object['adjust']) ? ATOM_TIME : 'Y-m-d\TH:i:s' )),
-			'$dtend_dt'	 => (($object['adjust']) ? day_translate(datetime_convert('UTC', date_default_timezone_get(), $object['dtend'] , $bd_format )) :  day_translate(datetime_convert('UTC', 'UTC', $object['dtend'] , $bd_format )))
+			'$dtend_title'	 => datetime_convert('UTC','UTC',$dtend, ((strpos($object['startTime'],'Z')) ? ATOM_TIME : 'Y-m-d\TH:i:s' )),
+			'$dtend_dt'	 => ((strpos($object['startTime'],'Z')) ? day_translate(datetime_convert('UTC', date_default_timezone_get(), $dtend , $bd_format )) :  day_translate(datetime_convert('UTC', 'UTC', $dtend , $bd_format )))
 		));
 
 		$event['content'] = replace_macros(get_markup_template('event_item_content.tpl'),array(
-			'$description'	  => zidify_links(smilies(bbcode($object['description']))),
+			'$description'	  => $object['content'],
 			'$location_label' => t('Location:'),
-			'$location'	  => zidify_links(smilies(bbcode($object['location'])))
+			'$location'	  => ((array_path_exists('location/content',$object)) ? zidify_links(smilies(bbcode($object['location']['content']))) : EMPTY_STR)
 		));
 
 	}
@@ -465,9 +491,14 @@ function event_store_event($arr) {
 			$hash = $arr['external_id'];
 		elseif(array_key_exists('event_hash',$arr))
 			$hash = $arr['event_hash'];
-		else
-			$hash = random_string() . '@' . App::get_hostname();
-
+		else {
+			try {
+				$hash = Uuid::uuid4()->toString();
+			} catch (UnsatisfiedDependencyException $e) {
+				$hash = random_string(48);
+			}
+		}
+		
 		$r = q("INSERT INTO event ( uid,aid,event_xchan,event_hash,created,edited,dtstart,dtend,summary,description,location,etype,
 			adjust,nofinish, event_status, event_status_date, event_percent, event_repeat, event_sequence, event_priority, event_vdata, allow_cid,allow_gid,deny_cid,deny_gid)
 			VALUES ( %d, %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %d, %d, '%s', '%s', %d, '%s', %d, %d, '%s', '%s', '%s', '%s', '%s' ) ",
@@ -1123,7 +1154,7 @@ function event_store_item($arr, $event) {
 		}
 
 		if(! $arr['mid'])
-			$arr['mid'] = item_message_id();
+			$arr['mid'] = z_root() . '/event/' . $event['event_hash'];
 
 		$item_arr['aid']             = $z['channel_account_id'];
 		$item_arr['uid']             = $arr['uid'];

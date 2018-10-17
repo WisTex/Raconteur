@@ -23,16 +23,18 @@ class System {
 		if(is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('banner',App::$config['system']))
 			return App::$config['system']['banner'];
 
-		if(defined('NOMADIC')) {
-			$banner = '<a href="' . App::get_baseurl() . '"><i class="fa fa-fw fa-bolt"></i></a>';
-		}
-		else {
-			$banner = '<a href="' . App::get_baseurl() . '"><i class="fa fa-fw fa-rebel"></i></a>';
-		}
 
-		return $banner;
+		return EMPTY_STR;
 	}
 
+	static public function get_project_icon() {
+		if(defined('NOMADIC')) {
+			return '&#x26A1;';
+		}
+		else {
+			return '&#x2638;';
+		}
+	}
 
 
 	static public function get_project_version() {

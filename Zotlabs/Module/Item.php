@@ -701,6 +701,17 @@ class Item extends \Zotlabs\Web\Controller {
 			// and will require alternatives for alternative content-types (text/html, text/markdown, text/plain, etc.)
 			// we may need virtual or template classes to implement the possible alternatives
 			
+
+			if(strpos($body,'[/summary]') !== false) {
+				$match = '';
+				$cnt = preg_match("/\[summary\](.*?)\[\/summary\]/ism",$body,$match);
+				if($cnt) {
+					$summary .= $match[1];
+				}
+				$body_content = preg_replace("/^(.*?)\[summary\](.*?)\[\/summary\](.*?)$/ism", '',$body);
+				$body = trim($body_content);
+			}
+
 			$summary = cleanup_bbcode($summary);
 			$body = cleanup_bbcode($body);
 	

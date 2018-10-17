@@ -102,11 +102,11 @@ class Magic extends \Zotlabs\Web\Controller {
 				$headers['X-Open-Web-Auth'] = random_string();
 				$headers['Digest'] = HTTPSig::generate_digest_header($data);
 				$headers['Host'] = $parsed['host'];
-				$headers['(request-target)'] = 'get ' . '/owa';
+				$headers['(request-target)'] = 'post ' . '/owa';
 
 				$headers = HTTPSig::create_sig($headers,$channel['channel_prvkey'], channel_url($channel),true,'sha512');
 				$x = z_post_url($basepath . '/owa',$data,$redirects,[ 'headers' => $headers ]);
-
+				logger('owa fetch returned: ' . print_r($x,true),LOGGER_DATA);
 				if($x['success']) {
 					$j = json_decode($x['body'],true);
 					if($j['success'] && $j['encrypted_token']) {

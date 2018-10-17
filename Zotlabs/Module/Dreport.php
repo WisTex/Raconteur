@@ -148,7 +148,7 @@ class Dreport extends \Zotlabs\Web\Controller {
 		$entries = array();
 		foreach($r as $rr) {
 			$entries[] = [ 
-				'name' => escape_tags($rr['dreport_name']),					
+				'name' => escape_tags($rr['dreport_name'] ?: $rr['dreport_recip']),					
 				'result' => escape_tags($rr['dreport_result']),
 				'time' => escape_tags(datetime_convert('UTC',date_default_timezone_get(),$rr['dreport_time']))
 			];

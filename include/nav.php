@@ -46,6 +46,8 @@ function nav($template = 'default') {
 
 	$channel_apps[] = channel_apps($is_owner, App::$profile['channel_address']);
 
+	$project_icon = System::get_project_icon();
+
 	$banner = System::get_banner();
 
 	App::$page['header'] .= replace_macros(get_markup_template('hdr.tpl'), array(
@@ -261,6 +263,8 @@ function nav($template = 'default') {
 
 	App::$page['nav'] .= replace_macros($tpl, array(
 		'$baseurl' => z_root(),
+		'$project_icon' => $project_icon,
+		'$project_title' => t('Powered by $Projectname'),
 		'$fulldocs' => t('Help'),
 		'$sitelocation' => $sitelocation,
 		'$nav' => $x['nav'],

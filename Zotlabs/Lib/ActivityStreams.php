@@ -89,7 +89,7 @@ class ActivityStreams {
 			$this->ldsig = $this->get_compound_property('signature');
 			if($this->ldsig) {
 				$this->signer = $this->get_compound_property('creator',$this->ldsig);
-				if($this->signer && $this->signer['publicKey'] && $this->signer['publicKey']['publicKeyPem']) {
+				if($this->signer && is_array($this->signer) && array_key_exists('publicKey',$this->signer) && is_array($this->signer['publicKey']) && $this->signer['publicKey']['publicKeyPem']) {
 					$this->sigok = LDSignatures::verify($this->data,$this->signer['publicKey']['publicKeyPem']);
 				}
 			}
@@ -312,7 +312,14 @@ class ActivityStreams {
 				return $y;
 			}
 		}
-		return $this->get_compound_property($property,$base,$namespace,true);
+		$actor = $this->get_compound_property($property,$base,$namespace,true);
+		if(is_array($actor) && self::is_an_actor($actor['type'])) {
+			if(array_key_exists('id',$actor) && (! array_key_exists('inbox',$actor))) {
+				$actor = $this->fetch_property($actor['id']);
+			}
+			return $actor;
+		}
+		return null;
 	}
 
 
