@@ -158,6 +158,8 @@ class Activity {
 	static function encode_item($i, $activitypub = false) {
 
 		$ret = [];
+		$reply = false;
+		$is_directmessage = false;
 
 		$objtype = self::activity_obj_mapper($i['obj_type']);
 
@@ -165,6 +167,7 @@ class Activity {
 			$ret['type'] = 'Tombstone';
 			$ret['formerType'] = $objtype;
 			$ret['id'] = $i['mid'];
+			$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
 			return $ret;
 		}
 
@@ -232,6 +235,26 @@ class Activity {
 		if($i['mid'] !== $i['parent_mid']) {
 			$ret['inReplyTo'] = $i['parent_mid'];
 			$cnv = get_iconfig($i['parent'],'ostatus','conversation');
+			$reply = true;
+
+			if($i['item_private']) {
+				$d = q("select xchan_url, xchan_addr, xchan_name from item left join xchan on xchan_hash = author_xchan where id = %d limit 1",
+					intval($i['parent'])
+				);
+				if($d) {
+					$recips = get_iconfig($i['parent'], 'activitypub', 'recips');
+
+					if(in_array($i['author']['xchan_url'], $recips['to'])) {
+						$reply_url = $d[0]['xchan_url'];
+						$is_directmessage = true;
+					}
+				else {
+					$reply_url = z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@'));
+					}
+
+					$reply_addr = (($d[0]['xchan_addr']) ? $d[0]['xchan_addr'] : $d[0]['xchan_name']);
+				}
+			}
 		}
 		if(! $cnv) {
 			$cnv = get_iconfig($i,'ostatus','conversation');
@@ -275,6 +298,55 @@ class Activity {
 
         	$ret['attachment'] = array_merge($img,$ret['attachment']);
     	}
+
+		if($activitypub) {
+			if($i['item_private']) {
+				if($reply) {
+					if($i['author_xchan'] === $i['owner_xchan']) {
+						$m = self::map_acl($i,(($i['allow_gid']) ? false : true));
+						$ret['tag'] = (($ret['tag']) ? array_merge($ret['tag'],$m) : $m);
+					}
+					else {
+						if($is_directmessage) {
+							$m = [
+								'type' => 'Mention',
+								'href' => $reply_url,
+								'name' => '@' . $reply_addr
+							];
+							$ret['tag'] = (($ret['tag']) ? array_merge($ret['tag'],$m) : $m);
+						}
+						else {
+							$ret['to'] = [ $reply_url ];
+						}
+					}
+				}
+				else {
+					/* Add mentions only if the targets are individuals */
+					$m = self::map_acl($i,(($i['allow_gid']) ? false : true));
+					$ret['tag'] = (($ret['tag']) ? array_merge($ret['tag'],$m) : $m);
+				}
+			}
+			else {
+				if($reply) {
+					$ret['to'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
+					$ret['cc'] = [ ACTIVITY_PUBLIC_INBOX ];
+				}
+				else {
+					$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
+					$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
+				}
+			}
+			$mentions = self::map_mentions($i);
+			if(count($mentions) > 0) {
+				if(! $ret['cc']) {
+					$ret['cc'] = $mentions;
+				}
+				else {
+					$ret['cc'] = array_merge($ret['cc'], $mentions);
+				}
+			}	
+
+		}
 
 		return $ret;
 	}
@@ -586,13 +658,6 @@ class Activity {
 					$ret['cc'] = array_merge($ret['cc'], $mentions);
 				}
 			}	
-
-			if($ret['to'])
-				$ret['object']['to'] = $ret['to'];
-			if($ret['cc'])
-				$ret['object']['cc'] = $ret['cc'];
-			if($ret['tag'])
-				$ret['object']['tag'] = $ret['tag'];
 
 		}
 
