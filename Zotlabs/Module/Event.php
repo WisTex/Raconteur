@@ -4,7 +4,8 @@ namespace Zotlabs\Module;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
-
+use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Web\HTTPSig;
 
 class Event extends Controller {
 
@@ -22,11 +23,12 @@ class Event extends Controller {
 			$sql_extra = item_permissions_sql(0);
 
 			$r = q("select * from item where mid like '%s' $item_normal $sql_extra limit 1",
-				dbesc($item_id . '%')
+				dbesc(z_root() . '/event/' . $item_id . '%')
 			);
+
 			if(! $r) {
 				$r = q("select * from item where mid like '%s' $item_normal limit 1",
-					dbesc($item_id . '%')
+					dbesc(z_root() . '/event/' . $item_id . '%')
 				);
 
 				if($r) {
@@ -53,8 +55,6 @@ class Event extends Controller {
 				z_root() . ZOT_APSCHEMA_REV
 				]], $obj );
 
-
-
 			$headers = [];
 			$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
 			$x['signature'] = LDSignatures::sign($x,$channel);
@@ -64,6 +64,7 @@ class Event extends Controller {
 
 			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
 			HTTPSig::set_headers($h);
+
 			echo $ret;
 			killme();
 
