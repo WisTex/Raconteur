@@ -655,7 +655,7 @@ class Enotify {
 		$tpl = get_markup_template('email_notify_html.tpl');
 		$email_html_body = replace_macros($tpl,array(
 			'$banner'       => $datarray['banner'],
-			'$notify_icon'  => \Zotlabs\Lib\System::get_notify_icon(),
+			'$notify_icon'  => \Zotlabs\Lib\System::get_project_icon(),
 			'$product'      => $datarray['product'],
 			'$preamble'     => $salutation . '<br><br>' . $datarray['preamble'],
 			'$sitename'     => $datarray['sitename'],

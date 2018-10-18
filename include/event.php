@@ -22,6 +22,8 @@ require_once('include/bbcode.php');
  */
 function format_event_html($ev) {
 
+	logger('event: ' . print_r($ev,true));
+	logger('timezone: ' . date_default_timezone_get());
 
 	if(! ((is_array($ev)) && count($ev)))
 		return '';
@@ -82,7 +84,6 @@ function format_event_obj($jobject) {
 			'startTime' => (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtstart'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtstart'],'Y-m-d\\TH:i:s-00:00')),
 			'content'   => bbcode($arr['description']),
 			'location'  => [ 'type' => 'Place', 'content' => $arr['location'] ],
-			'content'   => format_event_html($arr),
 			'source'    => [ 'content' => format_event_bbcode($arr), 'mediaType' => 'text/bbcode' ],
 			'actor'     => Activity::encode_person($r[0],false),
 		];
@@ -1068,7 +1069,6 @@ function event_store_item($arr, $event) {
 			'startTime' => (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtstart'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtstart'],'Y-m-d\\TH:i:s-00:00')),
 			'content'   => bbcode($arr['description']),
 			'location'  => [ 'type' => 'Place', 'content' => $arr['location'] ],
-			'content'   => format_event_html($arr),
 			'source'    => [ 'content' => format_event_bbcode($arr), 'mediaType' => 'text/bbcode' ],
 			'actor'     => Activity::encode_person($r[0],false),
 		];
@@ -1213,7 +1213,6 @@ function event_store_item($arr, $event) {
 				'startTime' => (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtstart'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtstart'],'Y-m-d\\TH:i:s-00:00')),
 				'content'   => bbcode($arr['description']),
 				'location'  => [ 'type' => 'Place', 'content' => bbcode($arr['location']) ],
-				'content'   => format_event_html($arr),
 				'source'    => [ 'content' => format_event_bbcode($arr), 'mediaType' => 'text/bbcode' ],
 				'actor'     => Activity::encode_person($z,false),
 			];
