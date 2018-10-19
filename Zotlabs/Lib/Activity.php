@@ -355,7 +355,7 @@ class Activity {
 
 		$ret = [];
 
-		if($item['tag']) {
+		if($item['tag'] && is_array($item['tag'])) {
 			foreach($item['tag'] as $t) {
 				if(! array_key_exists('type',$t))
 					$t['type'] = 'Hashtag';
