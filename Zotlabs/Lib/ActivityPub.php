@@ -98,15 +98,16 @@ class ActivityPub {
 			foreach($r as $contact) {
 
 				// is $contact connected with this channel - and if the channel is cloned, also on this hub?
-				$single = deliverable_singleton($arr['channel']['channel_id'],$contact);
+				// 2018-10-19 this probably doesn't apply to activitypub anymore, just send the thing.
+				// They'll reject it if they don't like it. 
+				// $single = deliverable_singleton($arr['channel']['channel_id'],$contact);
 
 				if(! $arr['normal_mode'])
 					continue;
 
-				if($single) {
-					$qi = self::queue_message($jmsg,$arr['channel'],$contact,$target_item['mid']);
-					if($qi)
-						$arr['queued'][] = $qi;
+				$qi = self::queue_message($jmsg,$arr['channel'],$contact,$target_item['mid']);
+				if($qi) {
+					$arr['queued'][] = $qi;
 				}
 				continue;
 			}
@@ -141,12 +142,12 @@ class ActivityPub {
 		
 				foreach($r as $contact) {
 
-					$single = deliverable_singleton($arr['channel']['channel_id'],$contact);
+					// $single = deliverable_singleton($arr['channel']['channel_id'],$contact);
 
-					if($single) {
-						$qi = self::queue_message($jmsg,$arr['channel'],$contact,$target_item['mid']);
-						if($qi)
-							$arr['queued'][] = $qi;
+
+					$qi = self::queue_message($jmsg,$arr['channel'],$contact,$target_item['mid']);
+					if($qi) {
+						$arr['queued'][] = $qi;
 					}
 				}	
 			}
@@ -231,14 +232,11 @@ class ActivityPub {
 
 		$jmsg = json_encode($msg, JSON_UNESCAPED_SLASHES);
 
-		// is $contact connected with this channel - and if the channel is cloned, also on this hub?
-		$single = deliverable_singleton($x['sender']['channel_id'],$x['recipient']);
-
 		$h = q("select * from hubloc where hubloc_hash = '%s' limit 1",
 			dbesc($x['recipient']['xchan_hash'])
 		);
 
-		if($single && $h) {
+		if($h) {
 			$qi = self::queue_message($jmsg,$x['sender'],$h[0]);
 			if($qi)
 				$x['deliveries'] = $qi;
@@ -289,14 +287,11 @@ class ActivityPub {
 
 		$jmsg = json_encode($msg, JSON_UNESCAPED_SLASHES);
 
-		// is $contact connected with this channel - and if the channel is cloned, also on this hub?
-		$single = deliverable_singleton($x['sender']['channel_id'],$x['recipient']);
-
 		$h = q("select * from hubloc where hubloc_hash = '%s' limit 1",
 			dbesc($x['recipient']['xchan_hash'])
 		);
 
-		if($single && $h) {
+		if($h) {
 			$qi = self::queue_message($jmsg,$x['sender'],$h[0]);
 			if($qi)
 				$x['deliveries'] = $qi;
@@ -379,14 +374,11 @@ class ActivityPub {
 
 		$jmsg = json_encode($msg, JSON_UNESCAPED_SLASHES);
 
-		// is $contact connected with this channel - and if the channel is cloned, also on this hub?
-		$single = deliverable_singleton($channel['channel_id'],$recip[0]);
-
 		$h = q("select * from hubloc where hubloc_hash = '%s' limit 1",
 			dbesc($recip[0]['xchan_hash'])
 		);
 
-		if($single && $h) {
+		if($h) {
 			$qi = self::queue_message($jmsg,$channel,$h[0]);
 			if($qi) {
 				Master::Summon([ 'Deliver' , $qi ]);
