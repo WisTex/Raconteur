@@ -2393,6 +2393,7 @@ class Activity {
 	static function media_not_in_body($s,$body) {
 		
 		if((strpos($body,']' . $s . '[/img]') === false) && 
+			(strpos($body,']' . $s . '[/zmg]') === false) && 
 			(strpos($body,']' . $s . '[/video]') === false) && 
 			(strpos($body,']' . $s . '[/audio]') === false)) {
 			return true;

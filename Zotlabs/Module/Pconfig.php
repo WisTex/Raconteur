@@ -68,8 +68,10 @@ class Pconfig extends \Zotlabs\Web\Controller {
 		if(argc() == 2) {
 			$content .= '<a href="pconfig">pconfig[' . local_channel() . ']</a>' . EOL;
 			load_pconfig(local_channel(),escape_tags(argv(1)));
-			foreach(\App::$config[local_channel()][escape_tags(argv(1))] as $k => $x) {
-				$content .= '<a href="pconfig/' . escape_tags(argv(1)) . '/' . $k . '" >pconfig[' . local_channel() . '][' . escape_tags(argv(1)) . '][' . $k . ']</a> = ' . escape_tags($x) . EOL;
+			if(\App::$config[local_channel()][escape_tags(argv(1))]) {
+				foreach(\App::$config[local_channel()][escape_tags(argv(1))] as $k => $x) {
+					$content .= '<a href="pconfig/' . escape_tags(argv(1)) . '/' . $k . '" >pconfig[' . local_channel() . '][' . escape_tags(argv(1)) . '][' . $k . ']</a> = ' . escape_tags($x) . EOL;
+				}
 			}
 		}
 	
