@@ -624,7 +624,7 @@ function sys_boot() {
 		define( 'DEFAULT_NOTIFY_ICON', '/images/hz-white-64.png' );
 	}
 
-	App::head_set_icon(DEFAULT_PLATFORM_ICON);
+//	App::head_set_icon(DEFAULT_PLATFORM_ICON);
 
 	/*
 	 * Try to open the database;
@@ -1101,7 +1101,10 @@ class App {
 
 		self::$meta->set('generator', Zotlabs\Lib\System::get_platform_name());
 
-		head_add_link(['rel' => 'shortcut icon', 'href' => head_get_icon()]);
+		$i = head_get_icon();
+		if($i) {
+			head_add_link(['rel' => 'shortcut icon', 'href' => head_get_icon()]);
+		}
 
 		$x = [ 'header' => '' ];
 		/**
@@ -1224,7 +1227,7 @@ class App {
 
 	public static function head_get_icon() {
 		$icon = self::$data['pageicon'];
-		if(! strpos($icon,'://'))
+		if($icon && ! strpos($icon,'://'))
 			$icon = z_root() . $icon;
 		return $icon;
 	}
@@ -2312,7 +2315,7 @@ function head_set_icon($icon) {
 function head_get_icon() {
 
 	$icon = App::$data['pageicon'];
-	if(! strpos($icon, '://'))
+	if($icon && ! strpos($icon, '://'))
 		$icon = z_root() . $icon;
 
 	return $icon;

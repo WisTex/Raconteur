@@ -1,4 +1,4 @@
-<?php /** @file */
+<?php
 
 function update_channels_total_stat() {
 	$r = q("select count(channel_id) as channels_total from channel left join account on account_id = channel_account_id
@@ -13,7 +13,7 @@ function update_channels_total_stat() {
 
 function update_channels_active_halfyear_stat() {
 	$r = q("select channel_id from channel left join account on account_id = channel_account_id
-			where account_flags = 0 and account_lastlog > %s - INTERVAL %s",
+			where account_flags = 0 and channel_active > %s - INTERVAL %s",
 		db_utcnow(), db_quoteinterval('6 MONTH')
 	);
 	if($r) {
@@ -26,7 +26,7 @@ function update_channels_active_halfyear_stat() {
 
 function update_channels_active_monthly_stat() {
 	$r = q("select channel_id from channel left join account on account_id = channel_account_id
-			where account_flags = 0 and account_lastlog > %s - INTERVAL %s",
+			where account_flags = 0 and channel_active > %s - INTERVAL %s",
 		db_utcnow(), db_quoteinterval('1 MONTH')
 	);
 	if($r) {

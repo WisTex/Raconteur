@@ -1894,6 +1894,7 @@ class Activity {
 
 
 		$is_sys_channel = is_sys_channel($channel['channel_id']);
+		$parent = false;
 
 		// Mastodon only allows visibility in public timelines if the public inbox is listed in the 'to' field.
 		// They are hidden in the public timeline if the public inbox is listed in the 'cc' field.
@@ -1953,6 +1954,7 @@ class Activity {
 		set_iconfig($item,'activitypub','recips',$act->raw_recips);
 
 		if($item['parent_mid'] && $item['parent_mid'] !== $item['mid']) {
+			$parent = true;
 			$p = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
 				dbesc($item['parent_mid']),
 				intval($item['uid'])
@@ -2393,6 +2395,7 @@ class Activity {
 	static function media_not_in_body($s,$body) {
 		
 		if((strpos($body,']' . $s . '[/img]') === false) && 
+			(strpos($body,']' . $s . '[/zmg]') === false) && 
 			(strpos($body,']' . $s . '[/video]') === false) && 
 			(strpos($body,']' . $s . '[/audio]') === false)) {
 			return true;

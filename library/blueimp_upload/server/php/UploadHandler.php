@@ -10,7 +10,7 @@
  * https://opensource.org/licenses/MIT
  */
 
-class UploadHandler
+class UploadHandlerA
 {
 
     protected $options;
