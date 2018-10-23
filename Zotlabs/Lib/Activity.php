@@ -2412,7 +2412,9 @@ class Activity {
 
 		if(is_array($content[$field])) {
 			foreach($content[$field] as $k => $v) {
-				$ret .= '[language=' . $k . ']' . html2bbcode($v) . '[/language]';
+				$ret .= html2bbcode($v);
+				// save this for auto-translate or dynamic filtering
+				// $ret .= '[language=' . $k . ']' . html2bbcode($v) . '[/language]';
 			}
 		}
 		else {
