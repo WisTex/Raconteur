@@ -1,4 +1,5 @@
 <?php
+exit;
 /*
  * jQuery File Upload Plugin PHP Example
  * https://github.com/blueimp/jQuery-File-Upload
