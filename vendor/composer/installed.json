@@ -1,5 +1,62 @@
 [
     {
+        "name": "blueimp/jquery-file-upload",
+        "version": "v9.23.0",
+        "version_normalized": "9.23.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/vkhramtsov/jQuery-File-Upload.git",
+            "reference": "3c3cdcad290d5cca0e0c4a2a8c88e88c2d824548"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/vkhramtsov/jQuery-File-Upload/zipball/3c3cdcad290d5cca0e0c4a2a8c88e88c2d824548",
+            "reference": "3c3cdcad290d5cca0e0c4a2a8c88e88c2d824548",
+            "shasum": ""
+        },
+        "time": "2018-10-15T09:30:44+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "server/php/UploadHandler.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Sebastian Tschan",
+                "homepage": "https://blueimp.net"
+            }
+        ],
+        "description": "File Upload widget for jQuery.",
+        "homepage": "https://github.com/blueimp/jQuery-File-Upload",
+        "keywords": [
+            "bootstrap",
+            "chunk",
+            "cross-domain",
+            "cross-site",
+            "drag",
+            "drop",
+            "file",
+            "gae",
+            "go",
+            "jquery",
+            "multiple",
+            "php",
+            "preview",
+            "progress",
+            "python",
+            "resume",
+            "selection",
+            "upload",
+            "widget"
+        ]
+    },
+    {
         "name": "bshaffer/oauth2-server-php",
         "version": "v1.10.0",
         "version_normalized": "1.10.0.0",
@@ -625,17 +682,17 @@
     },
     {
         "name": "sabre/dav",
-        "version": "3.2.2",
-        "version_normalized": "3.2.2.0",
+        "version": "3.2.3",
+        "version_normalized": "3.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/sabre-io/dav.git",
-            "reference": "e987775e619728f12205606c9cc3ee565ffb1516"
+            "reference": "a9780ce4f35560ecbd0af524ad32d9d2c8954b80"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sabre-io/dav/zipball/e987775e619728f12205606c9cc3ee565ffb1516",
-            "reference": "e987775e619728f12205606c9cc3ee565ffb1516",
+            "url": "https://api.github.com/repos/sabre-io/dav/zipball/a9780ce4f35560ecbd0af524ad32d9d2c8954b80",
+            "reference": "a9780ce4f35560ecbd0af524ad32d9d2c8954b80",
             "shasum": ""
         },
         "require": {
@@ -666,7 +723,7 @@
             "ext-curl": "*",
             "ext-pdo": "*"
         },
-        "time": "2017-02-15T03:06:08+00:00",
+        "time": "2018-10-19T09:58:27+00:00",
         "bin": [
             "bin/sabredav",
             "bin/naturalselection"

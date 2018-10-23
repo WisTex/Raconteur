@@ -40,7 +40,8 @@
 		"smarty/smarty": "~3.1",
 		"ramsey/uuid": "^3.8",
 		"twbs/bootstrap": "4.1.3",
-		"indieweb/rel-me": "dev-master"
+		"indieweb/rel-me": "dev-master",
+		"blueimp/jquery-file-upload": "^9.23"
 	},
 	"require-dev" : {
 		"phpunit/phpunit" : "@stable",

@@ -515,9 +515,9 @@ class Photos extends \Zotlabs\Web\Controller {
 
 		nav_set_selected('Photos');
 	
-		$o = '<script src="library/blueimp_upload/js/vendor/jquery.ui.widget.js"></script>
-			<script src="library/blueimp_upload/js/jquery.iframe-transport.js"></script>
-			<script src="library/blueimp_upload/js/jquery.fileupload.js"></script>';
+		$o = '<script src="vendor/blueimp/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
+			<script src="vendor/blueimp/jquery-file-upload/js/jquery.iframe-transport.js"></script>
+			<script src="vendor/blueimp/jquery-file-upload/js/jquery.fileupload.js"></script>';
 
 
 		$o .= "<script> var profile_uid = " . App::$profile['profile_uid'] 
