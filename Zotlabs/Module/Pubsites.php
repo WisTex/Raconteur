@@ -31,45 +31,64 @@ class Pubsites extends \Zotlabs\Web\Controller {
 		if($ret['success']) {
 			$j = json_decode($ret['body'],true);
 			if($j) {
-				$o .= '<table class="table table-striped table-hover"><tr><td>' . t('Hub URL') . '</td><td>' . t('Access Type') . '</td><td>' . t('Registration Policy') . '</td><!--td>' . t('Stats') . '</td--><td>' . t('Software') . '</td>';
-				if($rating_enabled)
-					$o .= '<td colspan="2">' . t('Ratings') . '</td>';
-				$o .= '</tr>';
 				if($j['sites']) {
-					foreach($j['sites'] as $jj) {
-						$projectname = explode(' ',$jj['project']);
-					//	if(! \Zotlabs\Lib\System::compatible_project($projectname[0]))
-					//		continue;
-						if(strpos($jj['version'],' ')) {
-							$x = explode(' ', $jj['version']);
-							if($x[1])
-								$jj['version'] = $x[1];
-						}
-						$m = parse_url($jj['url']);
-						$host = strtolower(substr($jj['url'],strpos($jj['url'],'://')+3));
-						$rate_links = ((local_channel()) ? '<td><a href="rate?f=&target=' . $host . '" class="btn-btn-default"><i class="fa fa-check-square-o"></i> ' . t('Rate') . '</a></td>' : '');
-						$location = '';
-						if(!empty($jj['location'])) { 
-							$location = '<p title="' . t('Location') . '" style="margin: 5px 5px 0 0; text-align: right"><i class="fa fa-globe"></i> ' . $jj['location'] . '</p>'; 
-							}
-						else {
-							$location = '<br />&nbsp;';
-							}
-						$urltext = str_replace(array('https://'), '', $jj['url']);
-						$o .= '<tr><td><a href="'. (($jj['sellpage']) ? $jj['sellpage'] : $jj['url'] . '/register' ) . '" ><i class="fa fa-link"></i> ' . $urltext . '</a>' . $location . '</td><td>' . $jj['access'] . '</td><td>' . $jj['register'] . '</td><!--td>' . '<a target="stats" href="https://hubchart-tarine.rhcloud.com/hub.jsp?hubFqdn=' . $m['host'] . '"><i class="fa fa-area-chart"></i></a></td--><td>' . ucwords($jj['project']) . (($jj['version']) ? ' ' . $jj['version'] : '') . '</td>';
+					$projects = $this->sort_sites($j['sites']);
+					foreach($projects as $p => $v) {
+						$o .= '<strong>' . ucfirst($p) . '</strong>' . EOL;
+						$o .= '<table class="table table-striped table-hover"><tr><td>' . t('Hub URL') . '</td><td>' . t('Access Type') . '</td><td>' . t('Registration Policy') . '</td><!--td>' . t('Stats') . '</td--><td>' . t('Software') . '</td>';
 						if($rating_enabled)
-							$o .= '<td><a href="ratings/' . $host . '" class="btn-btn-default"><i class="fa fa-eye"></i> ' . t('View') . '</a></td>' . $rate_links ;
-						$o .=  '</tr>';
+							$o .= '<td colspan="2">' . t('Ratings') . '</td>';
+						$o .= '</tr>';
+						foreach($v as $jj) {
+							$projectname = explode(' ',$jj['project']);
+
+							if(strpos($jj['version'],' ')) {
+								$x = explode(' ', $jj['version']);
+								if($x[1])
+									$jj['version'] = $x[1];
+							}
+							$m = parse_url($jj['url']);
+							$host = strtolower(substr($jj['url'],strpos($jj['url'],'://')+3));
+							$rate_links = ((local_channel()) ? '<td><a href="rate?f=&target=' . $host . '" class="btn-btn-default"><i class="fa fa-check-square-o"></i> ' . t('Rate') . '</a></td>' : '');
+							$location = '';
+							if(!empty($jj['location'])) { 
+								$location = '<p title="' . t('Location') . '" style="margin: 5px 5px 0 0; text-align: right"><i class="fa fa-globe"></i> ' . $jj['location'] . '</p>'; 
+							}
+							else {
+								$location = '<br />&nbsp;';
+							}
+							$urltext = str_replace(array('https://'), '', $jj['url']);
+							$o .= '<tr><td><a href="'. (($jj['sellpage']) ? $jj['sellpage'] : $jj['url'] . '/register' ) . '" ><i class="fa fa-link"></i> ' . $urltext . '</a>' . $location . '</td><td>' . $jj['access'] . '</td><td>' . $jj['register'] . '</td><!--td>' . '<a target="stats" href="https://hubchart-tarine.rhcloud.com/hub.jsp?hubFqdn=' . $m['host'] . '"><i class="fa fa-area-chart"></i></a></td--><td>' . ucwords($jj['project']) . (($jj['version']) ? ' ' . $jj['version'] : '') . '</td>';
+							if($rating_enabled)
+								$o .= '<td><a href="ratings/' . $host . '" class="btn-btn-default"><i class="fa fa-eye"></i> ' . t('View') . '</a></td>' . $rate_links ;
+							$o .=  '</tr>';
+						}
+						$o .= '</table>';
+						$o .= '<br><br>';
 					}
-				}
-		
-				$o .= '</table>';
-	
+				}				
 				$o .= '</div></div>';
-	
 			}
 		}
 		return $o;
+
+	}
+
+	function sort_sites($a) {
+		$ret = [];
+		if($a) {
+			foreach($a as $e) {
+				$projectname = explode(' ',$e['project']);
+				$ret[$projectname[0]][] = $e;
+			}
+		}
+		$projects = array_keys($ret);
+		sort($projects);
+		$newret = [];
+		foreach($projects as $p) {
+			$newret[$p] = $ret[$p];
+		}
+		return $newret;
 	}
 	
 }
