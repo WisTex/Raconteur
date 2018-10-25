@@ -928,7 +928,15 @@ class Activity {
 
 		$x = PermissionRoles::role_perms('social');
 		$p = Permissions::FilledPerms($x['perms_connect']);
+		
+		// add tag_deliver permissions to remote groups
+
+		if(is_array($person_obj) && $person_obj['type'] === 'Group') {
+			$p['tag_deliver'] = 1;
+		}
+
 		$their_perms = Permissions::serialise($p);
+
 
 		if($contact && $contact['abook_id']) {
 
