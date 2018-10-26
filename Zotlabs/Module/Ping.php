@@ -192,7 +192,10 @@ class Ping extends \Zotlabs\Web\Controller {
 				xchan_query($r);
 				foreach($r as $rr) {
 					$rr['llink'] = str_replace('display/', 'pubstream/?f=&mid=', $rr['llink']);
-					$result[] = \Zotlabs\Lib\Enotify::format($rr);
+					$z = \Zotlabs\Lib\Enotify::format($rr);
+					if($z) {
+						$result[] = $z;
+					}
 				}
 			}
 
@@ -358,7 +361,10 @@ class Ping extends \Zotlabs\Web\Controller {
 				foreach($r as $item) {
 					if((argv(1) === 'home') && (! intval($item['item_wall'])))
 						continue;
-					$result[] = \Zotlabs\Lib\Enotify::format($item);
+					$z = \Zotlabs\Lib\Enotify::format($item);
+					if($z) {
+						$result[] = $z;
+					}
 				}
 			}
 //			logger('ping (network||home): ' . print_r($result, true), LOGGER_DATA);
