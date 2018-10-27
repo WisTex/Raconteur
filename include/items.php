@@ -2188,6 +2188,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 	unset($arr['created']);
 	unset($arr['author_xchan']);
 	unset($arr['owner_xchan']);
+	unset($arr['source_xchan']);
 	unset($arr['thr_parent']);
 	unset($arr['llink']);
 
@@ -2550,7 +2551,7 @@ function tag_deliver($uid, $item_id) {
 		// Just start the second delivery chain to deliver the updated post
 		// after resetting ownership and permission bits
 		logger('updating edited tag_deliver post for ' . $u[0]['channel_address']);
-		start_delivery_chain($u[0], $item, $item_id, 0);
+		start_delivery_chain($u[0], $item, $item_id, 0, true);
 		return;
 	}
 
@@ -2944,7 +2945,7 @@ function tgroup_check($uid, $item) {
  * @param int $item_id
  * @param boolean $parent
  */
-function start_delivery_chain($channel, $item, $item_id, $parent) {
+function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false) {
 
 	$sourced = check_item_source($channel['channel_id'],$item);
 
@@ -2953,7 +2954,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent) {
 			intval($channel['channel_id']),
 			dbesc(($item['source_xchan']) ?  $item['source_xchan'] : $item['owner_xchan'])
 		);
-		if($r) {
+		if($r && ! $edit) {
 			$t = trim($r[0]['src_tag']);
 			if($t) {
 				$tags = explode(',',$t);
@@ -3016,9 +3017,11 @@ function start_delivery_chain($channel, $item, $item_id, $parent) {
 	}
 	else {
 		$item_uplink = 1;
-		$r = q("update item set source_xchan = owner_xchan where id = %d",
-			intval($item_id)
-		);
+		if(! $edit) {
+			$r = q("update item set source_xchan = owner_xchan where id = %d",
+				intval($item_id)
+			);
+		}
 	}
 
 	$title = $item['title'];
