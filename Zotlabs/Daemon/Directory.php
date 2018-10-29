@@ -79,7 +79,7 @@ class Directory {
 			 * the directory packet. That means we'll try again on the next poll run.
 			 */
 
-			$hash = random_string();
+			$hash = new_uuid();
 
 			Queue::insert(array(
 				'hash'       => $hash,

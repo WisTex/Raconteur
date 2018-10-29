@@ -395,8 +395,6 @@ function photo_upload($channel, $observer, $args) {
 		'type'      => ACTIVITY_OBJ_PHOTO,
 		'name'      => $title,
 		'summary'   => $p['description'],
-		'mediaType' => $type,
-		'href'      => $url[1]['href'],
 		'published' => datetime_convert('UTC','UTC',$p['created'],ATOM_TIME),
 		'updated'   => datetime_convert('UTC','UTC',$p['edited'],ATOM_TIME),
 		// This is a placeholder and will get over-ridden by the item mid, which is critical for sharing as a conversational item over activitypub

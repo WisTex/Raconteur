@@ -627,7 +627,7 @@ class Notifier {
 
 			// default: zot protocol
 
-			$hash   = random_string();
+			$hash   = new_uuid();
 
 			$env = (($hub_env && $hub_env[$hub['hubloc_site_id']]) ? $hub_env[$hub['hubloc_site_id']] : '');
 			if((self::$private) && (! $env)) {
