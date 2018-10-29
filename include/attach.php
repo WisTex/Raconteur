@@ -738,7 +738,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 	}
 
 	if(! $hash)
-		$hash = random_string();
+		$hash = new_uuid();
 
 	// Check storage limits
 	if($options !== 'update') {
@@ -1121,7 +1121,7 @@ function attach_mkdir($channel, $observer_hash, $arr = null) {
 		return $ret;
 	}
 
-	$arr['hash'] = (($arr['hash']) ? $arr['hash'] : random_string());
+	$arr['hash'] = (($arr['hash']) ? $arr['hash'] : new_uuid());
 
 	// Check for duplicate name.
 	// Check both the filename and the hash as we will be making use of both.

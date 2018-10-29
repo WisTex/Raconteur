@@ -338,11 +338,11 @@ class Activity {
 			}
 			$mentions = self::map_mentions($i);
 			if(count($mentions) > 0) {
-				if(! $ret['cc']) {
-					$ret['cc'] = $mentions;
+				if(! $ret['to']) {
+					$ret['to'] = $mentions;
 				}
 				else {
-					$ret['cc'] = array_merge($ret['cc'], $mentions);
+					$ret['to'] = array_merge($ret['to'], $mentions);
 				}
 			}	
 
@@ -651,11 +651,11 @@ class Activity {
 			}
 			$mentions = self::map_mentions($i);
 			if(count($mentions) > 0) {
-				if(! $ret['cc']) {
-					$ret['cc'] = $mentions;
+				if(! $ret['to']) {
+					$ret['to'] = $mentions;
 				}
 				else {
-					$ret['cc'] = array_merge($ret['cc'], $mentions);
+					$ret['to'] = array_merge($ret['to'], $mentions);
 				}
 			}	
 

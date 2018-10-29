@@ -39,9 +39,23 @@ class Embedphotos extends \Zotlabs\Web\Controller {
 				json_return_and_die(array('errormsg' => 'Error retrieving link ' . $href, 'status' => false));
 			}
 			$resource_id = array_pop(explode("/", $href));
-			// we could use a link to albums here.
-			$photolink = "\n\n" . '[zmg]' . z_root() . '/photo/' . $resource_id . '-2' . '[/zmg]';
+
+
+			$r = q("SELECT obj from item where resource_type = 'photo' and resource_id = '%s' limit 1",
+ 				dbesc($resource_id)
+ 			); 			
+			if(!$r) { 				
+				json_return_and_die(array('errormsg' => 'Error retrieving resource ' . $resource_id, 'status' => false));
+ 			}
+ 			$obj = json_decode($r[0]['obj'], true);
+ 			if(array_path_exists('source/content',$obj)) {
+ 				$photolink = $obj['source']['content'];
+ 			} 
+			else { 				
+				json_return_and_die(array('errormsg' => 'Error retrieving resource ' . $resource_id, 'status' => false)); 			
+			} 			
 			json_return_and_die(array('status' => true, 'photolink' => $photolink, 'resource_id' => $resource_id));
+
 		}
 	}
 

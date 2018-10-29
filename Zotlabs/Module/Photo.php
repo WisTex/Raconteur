@@ -1,6 +1,11 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Web\HTTPSig;
+
 require_once('include/security.php');
 require_once('include/attach.php');
 require_once('include/photo/photo_driver.php');
@@ -11,6 +16,45 @@ class Photo extends \Zotlabs\Web\Controller {
 
 	function init() {
 	
+
+		if(ActivityStreams::is_as_request()) {
+			$observer_xchan = get_observer_hash();
+			$allowed = false;
+
+			$r = q("select * from item where resource_type = 'photo' and resource_id = '%s' limit 1",
+				dbesc(argv(1))
+			);
+			if($r) {
+				$allowed = attach_can_view($r[0]['uid'],$observer_xchan,argv(1));
+			}
+			if(! $allowed) {
+				http_status_exit(404,'Permission denied.');
+			}
+			$channel = channelx_by_n($r[0]['uid']);
+		
+			$obj = json_decode($r[0]['obj'],true);
+			$obj['actor'] = Activity::encode_person($channel,true,((defined('NOMADIC')) ? false : true));
+
+			$x = array_merge(['@context' => [
+				ACTIVITYSTREAMS_JSONLD_REV,
+				'https://w3id.org/security/v1'
+			]], $obj );
+
+			$headers = [];
+        	$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
+
+        	$x['signature'] = LDSignatures::sign($x,$channel);
+        	$ret = json_encode($x, JSON_UNESCAPED_SLASHES);
+        	$headers['Digest'] = HTTPSig::generate_digest_header($ret);
+			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
+        	$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
+        	HTTPSig::set_headers($h);
+
+        	echo $ret;
+	        killme();
+
+		}
+
 		$prvcachecontrol = false;
 		$streaming = null;
 		$channel = null;

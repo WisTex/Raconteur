@@ -333,6 +333,12 @@ function photo_upload($channel, $observer, $args) {
 		return $ret;
 	}
 
+	$url[] = [ 
+		'type'      => 'Link',
+		'mediaType' => 'text/html',
+		'href'      => z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo_hash
+	];
+
 	$item_hidden = (($visible) ? 0 : 1 );
 
 	$lat = $lon = null;
@@ -394,7 +400,7 @@ function photo_upload($channel, $observer, $args) {
 		'published' => datetime_convert('UTC','UTC',$p['created'],ATOM_TIME),
 		'updated'   => datetime_convert('UTC','UTC',$p['edited'],ATOM_TIME),
 		// This is a placeholder and will get over-ridden by the item mid, which is critical for sharing as a conversational item over activitypub
-		'id'        => z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo_hash,
+		'id'        => z_root() . '/photo/' . $photo_hash,
 		'url'       => $url,
 		'source'    => [ 'content' => $obj_body, 'mediaType' => 'text/bbcode' ],
 		'content'   => bbcode($obj_body)

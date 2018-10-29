@@ -592,6 +592,23 @@ function photo_new_resource() {
 	return $hash;
 }
 
+
+/**
+ * @brief Generate a unique ID.
+ *
+ * @return string
+ */
+function new_uuid() {
+
+	try {
+		$hash = Uuid::uuid4()->toString();
+	} catch (UnsatisfiedDependencyException $e) {
+		$hash = random_string(48);
+	}
+
+	return $hash;
+}
+
 /**
  * @brief
  *
