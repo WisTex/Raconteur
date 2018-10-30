@@ -21,6 +21,7 @@ return array(
     'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
     'Michelf\\' => array($vendorDir . '/michelf/php-markdown/Michelf'),
     'League\\HTMLToMarkdown\\' => array($vendorDir . '/league/html-to-markdown/src'),
+    'League\\Flysystem\\' => array($vendorDir . '/league/flysystem/src'),
     'ID3Parser\\' => array($vendorDir . '/lukasreschke/id3parser/src'),
     'Hubzilla\\' => array($baseDir . '/include'),
     'CommerceGuys\\Intl\\' => array($vendorDir . '/commerceguys/intl/src'),
