@@ -1782,13 +1782,13 @@ class Activity {
 					if($mps) {
 						usort($mps,[ __CLASS__, 'vid_sort' ]);
 						foreach($mps as $m) {
-							if(intval($m['width']) < 500) {
+							if(intval($m['width']) < 500 && self::media_not_in_body($m['href'],$s['body'])) {
 								$s['body'] .= "\n\n" . '[video]' . $m['href'] . '[/video]';
 								break;
 							}
 						}
 					}
-					elseif(is_string($act->obj['url'])) {
+					elseif(is_string($act->obj['url']) && self::media_not_in_body($act->obj['url'],$s['body'])) {
 						$s['body'] .= "\n\n" . '[video]' . $act->obj['url'] . '[/video]';
 					}
 				}
@@ -1813,13 +1813,13 @@ class Activity {
 							$ptr = [ $act->obj['url'] ];
 						}
 						foreach($ptr as $vurl) {
-							if(in_array($vurl['mediaType'], $atypes)) {
+							if(in_array($vurl['mediaType'], $atypes) && self::media_not_in_body($vurl['href'],$s['body'])) {
 								$s['body'] .= "\n\n" . '[audio]' . $vurl['href'] . '[/audio]';
 								break;
 							}
 						}
 					}
-					elseif(is_string($act->obj['url'])) {
+					elseif(is_string($act->obj['url']) && self::media_not_in_body($act->obj['url'],$s['body'])) {
 						$s['body'] .= "\n\n" . '[audio]' . $act->obj['url'] . '[/audio]';
 					}
 				}

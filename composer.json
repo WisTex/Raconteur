@@ -1,16 +1,17 @@
 {
-	"name" : "zotlabs/hubzilla",
+	"name" : "zotlabs/osada",
 	"type" : "application",
-	"description" : "Hubzilla is a powerful platform for creating interconnected websites featuring a decentralized identity, communications, and permissions framework built using common webserver technology.",
+	"description" : "ActivityPub and Zot6 server",
 	"keywords" : [
-		"CMS",
 		"identity",
 		"decentralisation",
 		"permission",
 		"SSO",
-		"ZOT"
+		"ZOT",
+		"ZOT6",
+		"ActivityPub",
 	],
-	"homepage" : "http://framagit.org/hubzilla/core/",
+	"homepage" : "http://framagit.org/macgirvin/osada/",
 	"license" : "MIT",
 	"authors" : [{
 			"name" : "Mike Macgirvin",
@@ -18,11 +19,11 @@
 		}
 	],
 	"support" : {
-		"issues" : "https://framagit.org/hubzilla/core/issues",
-		"source" : "https://framagit.org/hubzilla/core/"
+		"issues" : "https://framagit.org/macgirvin/osada/issues",
+		"source" : "https://framagit.org/macgirvin/osada/"
 	},
 	"require" : {
-		"php" : ">=5.5",
+		"php" : ">=7.0",
 		"ext-curl" : "*",
 		"ext-gd" : "*",
 		"ext-mbstring" : "*",
