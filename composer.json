@@ -41,7 +41,8 @@
 		"ramsey/uuid": "^3.8",
 		"twbs/bootstrap": "4.1.3",
 		"indieweb/rel-me": "dev-master",
-		"blueimp/jquery-file-upload": "^9.23"
+		"blueimp/jquery-file-upload": "^9.23",
+		"league/flysystem": "^1.0"
 	},
 	"require-dev" : {
 		"phpunit/phpunit" : "@stable",
