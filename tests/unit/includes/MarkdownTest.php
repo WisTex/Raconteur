@@ -52,10 +52,12 @@ class MarkdownTest extends UnitTestCase {
 						' &nbsp;',
 						''
 				],
+
 				'strong, b, em, i, bib' => [
 						'<strong>strong</strong> <b>bold</b> <em>em</em> <i>italic</i>  <b>bo<i>italic</i>ld</b>',
-						'**strong** **bold** _em_ _italic_ **bo_italic_ld**'
+						'**strong** **bold** *em* *italic* **bo*italic*ld**'
 				],
+
 				'empty tags' => [
 						'text1 <b></b> text2 <i></i>',
 						'text1  text2'
@@ -67,10 +69,6 @@ class MarkdownTest extends UnitTestCase {
 				'escaped HTML entities' => [
 						'&amp; lt &lt; gt &gt;',
 						'& lt < gt >'
-				],
-				'our escaped HTML entities' => [
-						'&_lt_; &_gt_; &_amp_;',
-						'&\_lt\_; &\_gt\_; &\_amp\_;'
 				],
 				'linebreak' => [
 						"line1<br>line2\nline3",
@@ -117,8 +115,8 @@ class MarkdownTest extends UnitTestCase {
 						'`<p>HTML text</p>`'
 				],
 				'pre' => [
-						'<pre>   line with  spaces   </pre>',
-						'`   line with  spaces   `'
+						'<pre>  one line with spaces  </pre>',
+						"```\n  one line with spaces  \n```"
 				],
 				'div p' => [
 						'<div>div</div><div><p>p</p></div>',
