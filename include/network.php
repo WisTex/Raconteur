@@ -733,14 +733,13 @@ function scale_external_images($s, $include_link = true, $scale_replace = false)
 		foreach($matches as $mtch) {
 			logger('data: ' . $mtch[2] . ' ' . $mtch[3]);
 
-			if(substr($mtch[1],0,1) == '=') {
+			if(substr($mtch[2],0,1) === '=') {
 				$owidth = intval(substr($mtch[2],1));
-				if(intval($owidth) > 0 && intval($owidth) < 1024)
+				if($owidth > 0 && $owidth < 1024)
 					continue;
 			}
 
-			$hostname = str_replace('www.','',substr(z_root(),strpos(z_root(),'://')+3));
-			if(stristr($mtch[3],$hostname))
+			if(stristr($mtch[3],App::get_hostname()))
 				continue;
 
 			// $scale_replace, if passed, is an array of two elements. The

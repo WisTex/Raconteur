@@ -1852,11 +1852,37 @@ class Activity {
 					}
 				}
 			}
+
+
+			if($act->obj['type'] === 'Page' && ! $s['body'])  {
+
+				$ptr = null;
+
+				if(array_key_exists('url',$act->obj)) {
+					if(is_array($act->obj['url'])) {
+						if(array_key_exists(0,$act->obj['url'])) {				
+							$ptr = $act->obj['url'];
+						}
+						else {
+							$ptr = [ $act->obj['url'] ];
+						}
+						foreach($ptr as $vurl) {
+							if(array_key_exists('mediaType',$vurl) && $vurl['mediaType'] === 'text/html') {
+								$s['body'] .= "\n\n" . $vurl['href'];
+								break;
+							}
+						}
+					}
+					elseif(is_string($act->obj['url'])) {
+						$s['body'] = "\n\n" . $act->obj['url'];
+					}
+				}
+			}
 		}
 
 
 
-		if(in_array($act->obj['type'],[ 'Note','Article' ])) {
+		if(in_array($act->obj['type'],[ 'Note','Article','Page' ])) {
 			$ptr = null;
 
 			if(array_key_exists('url',$act->obj)) {
