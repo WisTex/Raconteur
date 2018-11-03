@@ -1188,7 +1188,8 @@ class Activity {
 				$profile = $links[0]['href'];
 			}
 		}
-		elseif(array_key_exists('url',$person_obj) && is_string($person_obj['url'])) {
+		elseif(isset($person_obj['url']) && is_string($person_obj['url'])) {
+		//elseif(array_key_exists('url',$person_obj) && is_string($person_obj['url'])) {
 			$profile = $person_obj['url'];
 		}
 
@@ -1212,7 +1213,8 @@ class Activity {
 				$collections['sharedInbox'] = $person_obj['endpoints']['sharedInbox'];
 		}
 
-		if(array_key_exists('publicKey',$person_obj) && array_key_exists('publicKeyPem',$person_obj['publicKey'])) {
+		if(isset($person_obj['publicKey']['publicKeyPem']) {
+		//if(array_key_exists('publicKey',$person_obj) && array_key_exists('publicKeyPem',$person_obj['publicKey'])) {
 			if($person_obj['id'] === $person_obj['publicKey']['owner']) {
 				$pubkey = $person_obj['publicKey']['publicKeyPem'];
 				if(strstr($pubkey,'RSA ')) {
