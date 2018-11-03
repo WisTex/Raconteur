@@ -1213,7 +1213,7 @@ class Activity {
 				$collections['sharedInbox'] = $person_obj['endpoints']['sharedInbox'];
 		}
 
-		if(isset($person_obj['publicKey']['publicKeyPem']) {
+		if(isset($person_obj['publicKey']['publicKeyPem'])) {
 		//if(array_key_exists('publicKey',$person_obj) && array_key_exists('publicKeyPem',$person_obj['publicKey'])) {
 			if($person_obj['id'] === $person_obj['publicKey']['owner']) {
 				$pubkey = $person_obj['publicKey']['publicKeyPem'];
