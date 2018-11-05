@@ -1441,7 +1441,7 @@ class Libzot {
 				$local_public = true;
 
 				$r = q("select xchan_selfcensored from xchan where xchan_hash = '%s' limit 1",
-					dbesc($sender['hash'])
+					dbesc($sender)
 				);
 				// don't import sys channel posts from selfcensored authors
 				if($r && (intval($r[0]['xchan_selfcensored']))) {
