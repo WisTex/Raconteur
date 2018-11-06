@@ -1936,7 +1936,7 @@ class Activity {
 		// They are hidden in the public timeline if the public inbox is listed in the 'cc' field.
 		// This is not part of the activitypub protocol - we might change this to show all public posts in pubstream at some point.
 
-		$pubstream = ((is_array($act->obj) && array_key_exists('to', $act->obj) && in_array(ACTIVITY_PUBLIC_INBOX, $act->obj['to'])) ? true : false);
+		$pubstream = ((is_array($act->obj) && array_key_exists('to', $act->obj) && is_array($act->obj['to']) && in_array(ACTIVITY_PUBLIC_INBOX, $act->obj['to'])) ? true : false);
 
 		if(! perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') && ! ($is_sys_channel && $pubstream)) {
 			logger('no permission');
