@@ -97,7 +97,7 @@ class Channel extends Controller {
 				'Content-Type'     => 'application/x-zot+json', 
 				'Digest'           => HTTPSig::generate_digest_header($data),
 				'(request-target)' => strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI']
-			 ];
+			];
 			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
 			HTTPSig::set_headers($h);
 			echo $data;

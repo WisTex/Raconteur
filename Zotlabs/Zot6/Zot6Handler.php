@@ -231,7 +231,7 @@ class Zot6Handler implements IHandler {
 			foreach ($recipients as $recip) {
 				$r = q("select channel.*,xchan.* from channel
 					left join xchan on channel_hash = xchan_hash
-					where channel_hash = '%s' and channel_guid_sig = '%s' limit 1",
+					where channel_hash = '%s' limit 1",
 					dbesc($recip)
 				);
 				if ($r) {
