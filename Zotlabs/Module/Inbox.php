@@ -181,8 +181,15 @@ class Inbox extends Controller {
 			$item = null;
 
 			switch($AS->type) {
-				case 'Create':
 				case 'Update':
+					if(is_array($AS->obj) && array_key_exists('type',$AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])) {
+						// pretend this is an old cache entry to force an update of all the actor details
+						$AS->obj['cached'] = true;
+						$AS->obj['updated'] = datetime_convert('UTC','UTC','1980-01-01', ATOM_TIME);
+						Activity::actor_store($AS->obj['id'],$AS->obj);
+						break;
+					}
+				case 'Create':
 				case 'Like':
 				case 'Dislike':
 				case 'Announce':
