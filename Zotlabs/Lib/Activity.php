@@ -404,11 +404,13 @@ class Activity {
 						break;
 
 					case TERM_FORUM:
-						$ret[] = [ 'type' => 'Mention', 'href' => $t['url'], 'name' => '!' . $t['term'] ];
+						$term = self::lookup_term_addr($t['url'],$t['term']);
+						$ret[] = [ 'type' => 'Mention', 'href' => $t['url'], 'name' => '!' . (($term) ? $term : $t['term']) ];
 						break;
 
 					case TERM_MENTION:
-						$ret[] = [ 'type' => 'Mention', 'href' => $t['url'], 'name' => '@' . $t['term'] ];
+						$term = self::lookup_term_addr($t['url'],$t['term']);
+						$ret[] = [ 'type' => 'Mention', 'href' => $t['url'], 'name' => '@' . (($term) ? $term : $t['term']) ];
 						break;
 	
 					default:
@@ -419,6 +421,59 @@ class Activity {
 
 		return $ret;
 	}
+
+
+	static function lookup_term_addr($url,$name) {
+
+		// The visible mention in our activities is always the full name.
+		// In the object taxonomy change this to the webfinger handle in case
+		// platforms expect the Mastodon form in order to generate notifications
+		// Try a couple of different things in case the url provided isn't the canonical id. 
+		// If all else fails, try to match the name. 
+
+		$r = false;
+
+		if($url) {
+			$r = q("select xchan_addr from xchan where ( xchan_url = '%s' OR xchan_hash = '%s' ) limit 1",
+				dbesc($url),
+				dbesc($url)
+			);
+
+			if($r) {
+				return $r[0]['xchan_addr'];
+			}
+		}		
+		if($name) {
+			$r = q("select xchan_addr from xchan where xchan_name = '%s' limit 1",
+				dbesc($name)
+			);
+			if($r) {
+				return $r[0]['xchan_addr'];
+			}
+
+		}
+
+		return EMPTY_STR;
+	}
+
+
+
+	static function lookup_term_url($url) {
+
+		// The xchan_url for mastodon is a text/html rendering. This is called from map_mentions where we need
+		// to convert the mention url to an ActivityPub id. If this fails for any reason, return the url we have
+
+		$r = q("select hubloc_id_url from hubloc left join xchan_hash on hubloc_hash = xchan_hash where xchan_url = '%s' and hubloc_primary = 1 limit 1",
+			dbesc($url)
+		);
+
+		if($r) {
+			return $r[0]['hubloc_id_url'];
+		}
+
+		return EMPTY_STR;
+	}
+
 
 	static function encode_attachment($item) {
 
@@ -673,7 +728,8 @@ class Activity {
 
 		foreach ($i['term'] as $t) {
 			if($t['ttype'] == TERM_MENTION) {
-				$list[] = $t['url'];
+				$url = self::lookup_term_url($t['url']);
+				$list[] = (($url) ? $url : $t['url']);
 			}
 		}
 
@@ -1286,6 +1342,7 @@ class Activity {
 				[
 					'hubloc_guid'     => $url,
 					'hubloc_hash'     => $url,
+					'hubloc_id_url'   => $url,
 					'hubloc_addr'     => ((strpos($username,'@')) ? $username : ''),
 					'hubloc_network'  => 'activitypub',
 					'hubloc_url'      => $baseurl,
