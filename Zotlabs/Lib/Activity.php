@@ -1190,8 +1190,13 @@ class Activity {
 		// We may have been passed a cached entry. If it is, and the cache duration has expired
 		// fetch a fresh copy before continuing.
 
-		if(array_key_exists('cached',$person_obj) && array_key_exists('updated',$person_obj) && $person_obj['updated'] < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days')) {
-			$person_obj = ActivityStreams::fetch($url);
+		if(array_key_exists('cached',$person_obj)) {
+			if(array_key_exists('updated',$person_obj) && $person_obj['updated'] < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days')) {
+				$person_obj = ActivityStreams::fetch($url);
+			}
+			else {
+				return;
+			}
 		}
 
 
@@ -1245,7 +1250,6 @@ class Activity {
 			}
 		}
 		elseif(isset($person_obj['url']) && is_string($person_obj['url'])) {
-		//elseif(array_key_exists('url',$person_obj) && is_string($person_obj['url'])) {
 			$profile = $person_obj['url'];
 		}
 
@@ -1254,6 +1258,13 @@ class Activity {
 		}
 
 		$inbox = $person_obj['inbox'];
+
+		// either an invalid identity or a cached entry of some kind which didn't get caught above
+
+		if((! $inbox) || strpos($inbox,z_root()) !== false) {
+			return;
+		} 
+
 
 		$collections = [];
 
