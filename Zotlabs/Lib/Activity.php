@@ -792,7 +792,7 @@ class Activity {
 			}
 		}
 
-		$ret['id']    = $p['xchan_url'];
+		$ret['id']    = ((strpos($p['xchan_hash'],'http') === 0) ? $p['xchan_hash'] : $p['xchan_url']);
 		if($p['xchan_addr'] && strpos($p['xchan_addr'],'@'))
 			$ret['preferredUsername'] = substr($p['xchan_addr'],0,strpos($p['xchan_addr'],'@'));
 		$ret['name']  = $p['xchan_name'];
@@ -1191,7 +1191,7 @@ class Activity {
 		// fetch a fresh copy before continuing.
 
 		if(array_key_exists('cached',$person_obj)) {
-			if(array_key_exists('updated',$person_obj) && $person_obj['updated'] < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days')) {
+			if(array_key_exists('updated',$person_obj) && datetime_convert('UTC','UTC',$person_obj['updated']) < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days')) {
 				$person_obj = ActivityStreams::fetch($url);
 			}
 			else {
@@ -1199,6 +1199,7 @@ class Activity {
 			}
 		}
 
+		$url = $person_obj['id'];
 
 		$name = $person_obj['name'];
 		if(! $name)
@@ -1264,6 +1265,11 @@ class Activity {
 		if((! $inbox) || strpos($inbox,z_root()) !== false) {
 			return;
 		} 
+
+
+		if(strpos($url,'@') !== false) {
+			btlogger('actor@: ' . $url . ' ' . print_r($person_obj,true));
+		}
 
 
 		$collections = [];
