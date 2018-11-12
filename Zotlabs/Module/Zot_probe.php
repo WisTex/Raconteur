@@ -3,7 +3,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Zotfinger;
-use Zotlabs\Zot6\HTTPSig;
+use Zotlabs\Web\HTTPSig;
 
 class Zot_probe extends \Zotlabs\Web\Controller {
 
