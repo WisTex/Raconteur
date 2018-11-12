@@ -5,6 +5,9 @@ use Zotlabs\Lib\Zotfinger;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityPub;
+use Zotlabs\Lib\Queue;
+use Zotlabs\Lib\System;
+use Zotlabs\Daemon\Master;
 
 /**
  * @file include/network.php
@@ -1537,7 +1540,7 @@ function do_delivery($deliveries, $force = false) {
 	if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',3000)) && (! $force)) {
 		logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
 		foreach($deliveries as $d) {
-			\Zotlabs\Lib\Queue::update($d);
+			Queue::update($d);
 		}
 		return;
 	}
@@ -1561,7 +1564,7 @@ function do_delivery($deliveries, $force = false) {
 		$deliver[] = $d;
 
 		if(count($deliver) >= $deliveries_per_process) {
-			Zotlabs\Daemon\Master::Summon(array('Deliver',$deliver));
+			Master::Summon(array('Deliver',$deliver));
 			$deliver = array();
 			if($interval)
 				@time_sleep_until(microtime(true) + (float) $interval);
@@ -1570,8 +1573,9 @@ function do_delivery($deliveries, $force = false) {
 
 	// catch any stragglers
 
-	if($deliver)
-		Zotlabs\Daemon\Master::Summon(array('Deliver',$deliver));
+	if($deliver) {
+		Master::Summon(array('Deliver',$deliver));
+	}
 }
 
 
@@ -1617,8 +1621,8 @@ function get_site_info() {
 	$site_info = get_config('system','info');
 	$site_name = get_config('system','sitename');
 	if(! get_config('system','hidden_version_siteinfo')) {
-		$version = Zotlabs\Lib\System::get_project_version();
-		$tag = Zotlabs\Lib\System::get_std_version();
+		$version = System::get_project_version();
+		$tag = System::get_std_version();
 
 		if(@is_dir('.git') && function_exists('shell_exec')) {
 			$commit = trim( @shell_exec('git log -1 --format="%h"'));
@@ -1655,11 +1659,11 @@ function get_site_info() {
 
 	$data = [
 		'url'                          => z_root(),
-		'platform'                     => Zotlabs\Lib\System::get_platform_name(),
+		'platform'                     => System::get_platform_name(),
 		'site_name'                    => (($site_name) ? $site_name : ''),
 		'version'                      => $version,
 		'version_tag'                  => $tag,
-		'server_role'                  => Zotlabs\Lib\System::get_server_role(),
+		'server_role'                  => System::get_server_role(),
 		'commit'                       => $commit,
 		'plugins'                      => $visible_plugins,
 		'register_policy'              =>  $register_policy[get_config('system','register_policy')],
@@ -1868,7 +1872,7 @@ function z_mail($params) {
 	if(! $params['fromName']) {
 		$params['fromName'] = get_config('system','from_email_name');
 		if(! $params['fromName'])
-			$params['fromName'] = Zotlabs\Lib\System::get_site_name();
+			$params['fromName'] = System::get_site_name();
 	}
 	if(! $params['replyTo']) {
 		$params['replyTo'] = get_config('system','reply_address');
