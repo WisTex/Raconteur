@@ -24,7 +24,7 @@ use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\ThreadListener;
-
+use App;
 
 require_once('include/crypto.php');
 require_once('include/attach.php');
@@ -364,7 +364,7 @@ class Item extends \Zotlabs\Web\Controller {
 				// create a copy of the parent in your stream
 
 				if($r[0]['uid'] === $sys['channel_id'] && local_channel()) {
-					$r = [ copy_of_pubitem(\App::get_channel(), $r[0]['mid']) ];
+					$r = [ copy_of_pubitem(App::get_channel(), $r[0]['mid']) ];
 				}
 			}
 
@@ -393,7 +393,7 @@ class Item extends \Zotlabs\Web\Controller {
 		$moderated = false;
 	
 		if(! $observer) {
-			$observer = \App::get_observer();
+			$observer = App::get_observer();
 			if(! $observer) {
 				$observer = anon_identity_init($_REQUEST);
 				if($observer) {
@@ -475,7 +475,7 @@ class Item extends \Zotlabs\Web\Controller {
 	
 		if(! $channel) {
 			if($uid && $uid == $profile_uid) {
-				$channel = \App::get_channel();
+				$channel = App::get_channel();
 			}
 			else {
 				// posting as yourself but not necessarily to a channel you control
