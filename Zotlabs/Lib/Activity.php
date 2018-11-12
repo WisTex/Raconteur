@@ -463,7 +463,7 @@ class Activity {
 		// The xchan_url for mastodon is a text/html rendering. This is called from map_mentions where we need
 		// to convert the mention url to an ActivityPub id. If this fails for any reason, return the url we have
 
-		$r = q("select hubloc_id_url from hubloc left join xchan_hash on hubloc_hash = xchan_hash where xchan_url = '%s' and hubloc_primary = 1 limit 1",
+		$r = q("select hubloc_id_url from hubloc left join xchan on hubloc_hash = xchan_hash where xchan_url = '%s' and hubloc_primary = 1 limit 1",
 			dbesc($url)
 		);
 
