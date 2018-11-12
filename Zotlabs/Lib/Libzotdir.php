@@ -97,19 +97,18 @@ class Libzotdir {
 
 	static function get_directory_setting($observer, $setting) {
 
+
 		if ($observer)
 			$ret = get_xconfig($observer, 'directory', $setting);
 		else
 			$ret = ((array_key_exists($setting,$_SESSION)) ? intval($_SESSION[$setting]) : false);
 
-		if($ret === false)
+		if($ret === false) {
 			$ret = get_config('directory', $setting);
-
-
-		// 'safemode' is the default if there is no observer or no established preference. 
-
-		if($setting === 'safemode' && $ret === false)
-			$ret = 1;
+			if($ret === false) {
+				$default = (in_array($setting,['globaldir','safemode']) ? 1 : 0);
+			}
+		}
 
 		if($setting === 'globaldir' && intval(get_config('system','localdir_hide')))
 			$ret = 1;
