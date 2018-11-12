@@ -272,6 +272,7 @@ function oembed_fetch_url($embedurl){
 	}
 
 	$j['embedurl'] = $embedurl;
+	$j['zrl'] = $is_matrix;
 
 	// logger('fetch return: ' . print_r($j,true));
 
@@ -333,10 +334,14 @@ function oembed_format_object($j){
 			break;
 		}
 
-		case "rich": {
-			// not so safe.. 
-			$ret.= $jhtml;
-		}; break;
+		case "rich": 
+			if($j['zrl']) {
+				$ret = ((preg_match('/^<div[^>]+>(.*?)<\/div>$/is',$j['html'],$o)) ? $o[1] : $j['html']);
+			} 
+			else {
+				$ret.= $jhtml;
+			}
+			break;
 	}
 
 	// add link to source if not present in "rich" type

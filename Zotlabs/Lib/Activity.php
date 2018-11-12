@@ -338,11 +338,11 @@ class Activity {
 			}
 			$mentions = self::map_mentions($i);
 			if(count($mentions) > 0) {
-				if(! $ret['cc']) {
-					$ret['cc'] = $mentions;
+				if(! $ret['to']) {
+					$ret['to'] = $mentions;
 				}
 				else {
-					$ret['cc'] = array_merge($ret['cc'], $mentions);
+					$ret['to'] = array_merge($ret['to'], $mentions);
 				}
 			}	
 
@@ -404,11 +404,13 @@ class Activity {
 						break;
 
 					case TERM_FORUM:
-						$ret[] = [ 'type' => 'Mention', 'href' => $t['url'], 'name' => '!' . $t['term'] ];
+						$term = self::lookup_term_addr($t['url'],$t['term']);
+						$ret[] = [ 'type' => 'Mention', 'href' => $t['url'], 'name' => '!' . (($term) ? $term : $t['term']) ];
 						break;
 
 					case TERM_MENTION:
-						$ret[] = [ 'type' => 'Mention', 'href' => $t['url'], 'name' => '@' . $t['term'] ];
+						$term = self::lookup_term_addr($t['url'],$t['term']);
+						$ret[] = [ 'type' => 'Mention', 'href' => $t['url'], 'name' => '@' . (($term) ? $term : $t['term']) ];
 						break;
 	
 					default:
@@ -419,6 +421,59 @@ class Activity {
 
 		return $ret;
 	}
+
+
+	static function lookup_term_addr($url,$name) {
+
+		// The visible mention in our activities is always the full name.
+		// In the object taxonomy change this to the webfinger handle in case
+		// platforms expect the Mastodon form in order to generate notifications
+		// Try a couple of different things in case the url provided isn't the canonical id. 
+		// If all else fails, try to match the name. 
+
+		$r = false;
+
+		if($url) {
+			$r = q("select xchan_addr from xchan where ( xchan_url = '%s' OR xchan_hash = '%s' ) limit 1",
+				dbesc($url),
+				dbesc($url)
+			);
+
+			if($r) {
+				return $r[0]['xchan_addr'];
+			}
+		}		
+		if($name) {
+			$r = q("select xchan_addr from xchan where xchan_name = '%s' limit 1",
+				dbesc($name)
+			);
+			if($r) {
+				return $r[0]['xchan_addr'];
+			}
+
+		}
+
+		return EMPTY_STR;
+	}
+
+
+
+	static function lookup_term_url($url) {
+
+		// The xchan_url for mastodon is a text/html rendering. This is called from map_mentions where we need
+		// to convert the mention url to an ActivityPub id. If this fails for any reason, return the url we have
+
+		$r = q("select hubloc_id_url from hubloc left join xchan_hash on hubloc_hash = xchan_hash where xchan_url = '%s' and hubloc_primary = 1 limit 1",
+			dbesc($url)
+		);
+
+		if($r) {
+			return $r[0]['hubloc_id_url'];
+		}
+
+		return EMPTY_STR;
+	}
+
 
 	static function encode_attachment($item) {
 
@@ -651,11 +706,11 @@ class Activity {
 			}
 			$mentions = self::map_mentions($i);
 			if(count($mentions) > 0) {
-				if(! $ret['cc']) {
-					$ret['cc'] = $mentions;
+				if(! $ret['to']) {
+					$ret['to'] = $mentions;
 				}
 				else {
-					$ret['cc'] = array_merge($ret['cc'], $mentions);
+					$ret['to'] = array_merge($ret['to'], $mentions);
 				}
 			}	
 
@@ -673,7 +728,8 @@ class Activity {
 
 		foreach ($i['term'] as $t) {
 			if($t['ttype'] == TERM_MENTION) {
-				$list[] = $t['url'];
+				$url = self::lookup_term_url($t['url']);
+				$list[] = (($url) ? $url : $t['url']);
 			}
 		}
 
@@ -736,7 +792,7 @@ class Activity {
 			}
 		}
 
-		$ret['id']    = $p['xchan_url'];
+		$ret['id']    = ((strpos($p['xchan_hash'],'http') === 0) ? $p['xchan_hash'] : $p['xchan_url']);
 		if($p['xchan_addr'] && strpos($p['xchan_addr'],'@'))
 			$ret['preferredUsername'] = substr($p['xchan_addr'],0,strpos($p['xchan_addr'],'@'));
 		$ret['name']  = $p['xchan_name'];
@@ -928,7 +984,15 @@ class Activity {
 
 		$x = PermissionRoles::role_perms('social');
 		$p = Permissions::FilledPerms($x['perms_connect']);
+		
+		// add tag_deliver permissions to remote groups
+
+		if(is_array($person_obj) && $person_obj['type'] === 'Group') {
+			$p['tag_deliver'] = 1;
+		}
+
 		$their_perms = Permissions::serialise($p);
+
 
 		if($contact && $contact['abook_id']) {
 
@@ -1126,10 +1190,16 @@ class Activity {
 		// We may have been passed a cached entry. If it is, and the cache duration has expired
 		// fetch a fresh copy before continuing.
 
-		if(array_key_exists('cached',$person_obj) && array_key_exists('updated',$person_obj) && $person_obj['updated'] < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days')) {
-			$person_obj = ActivityStreams::fetch($url);
+		if(array_key_exists('cached',$person_obj)) {
+			if(array_key_exists('updated',$person_obj) && datetime_convert('UTC','UTC',$person_obj['updated']) < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days')) {
+				$person_obj = ActivityStreams::fetch($url);
+			}
+			else {
+				return;
+			}
 		}
 
+		$url = $person_obj['id'];
 
 		$name = $person_obj['name'];
 		if(! $name)
@@ -1180,7 +1250,7 @@ class Activity {
 				$profile = $links[0]['href'];
 			}
 		}
-		elseif(array_key_exists('url',$person_obj) && is_string($person_obj['url'])) {
+		elseif(isset($person_obj['url']) && is_string($person_obj['url'])) {
 			$profile = $person_obj['url'];
 		}
 
@@ -1189,6 +1259,18 @@ class Activity {
 		}
 
 		$inbox = $person_obj['inbox'];
+
+		// either an invalid identity or a cached entry of some kind which didn't get caught above
+
+		if((! $inbox) || strpos($inbox,z_root()) !== false) {
+			return;
+		} 
+
+
+		if(strpos($url,'@') !== false) {
+			btlogger('actor@: ' . $url . ' ' . print_r($person_obj,true));
+		}
+
 
 		$collections = [];
 
@@ -1204,7 +1286,8 @@ class Activity {
 				$collections['sharedInbox'] = $person_obj['endpoints']['sharedInbox'];
 		}
 
-		if(array_key_exists('publicKey',$person_obj) && array_key_exists('publicKeyPem',$person_obj['publicKey'])) {
+		if(isset($person_obj['publicKey']['publicKeyPem'])) {
+		//if(array_key_exists('publicKey',$person_obj) && array_key_exists('publicKeyPem',$person_obj['publicKey'])) {
 			if($person_obj['id'] === $person_obj['publicKey']['owner']) {
 				$pubkey = $person_obj['publicKey']['publicKeyPem'];
 				if(strstr($pubkey,'RSA ')) {
@@ -1276,6 +1359,7 @@ class Activity {
 				[
 					'hubloc_guid'     => $url,
 					'hubloc_hash'     => $url,
+					'hubloc_id_url'   => $url,
 					'hubloc_addr'     => ((strpos($username,'@')) ? $username : ''),
 					'hubloc_network'  => 'activitypub',
 					'hubloc_url'      => $baseurl,
@@ -1774,13 +1858,13 @@ class Activity {
 					if($mps) {
 						usort($mps,[ __CLASS__, 'vid_sort' ]);
 						foreach($mps as $m) {
-							if(intval($m['width']) < 500) {
+							if(intval($m['width']) < 500 && self::media_not_in_body($m['href'],$s['body'])) {
 								$s['body'] .= "\n\n" . '[video]' . $m['href'] . '[/video]';
 								break;
 							}
 						}
 					}
-					elseif(is_string($act->obj['url'])) {
+					elseif(is_string($act->obj['url']) && self::media_not_in_body($act->obj['url'],$s['body'])) {
 						$s['body'] .= "\n\n" . '[video]' . $act->obj['url'] . '[/video]';
 					}
 				}
@@ -1805,13 +1889,13 @@ class Activity {
 							$ptr = [ $act->obj['url'] ];
 						}
 						foreach($ptr as $vurl) {
-							if(in_array($vurl['mediaType'], $atypes)) {
+							if(in_array($vurl['mediaType'], $atypes) && self::media_not_in_body($vurl['href'],$s['body'])) {
 								$s['body'] .= "\n\n" . '[audio]' . $vurl['href'] . '[/audio]';
 								break;
 							}
 						}
 					}
-					elseif(is_string($act->obj['url'])) {
+					elseif(is_string($act->obj['url']) && self::media_not_in_body($act->obj['url'],$s['body'])) {
 						$s['body'] .= "\n\n" . '[audio]' . $act->obj['url'] . '[/audio]';
 					}
 				}
@@ -1844,11 +1928,37 @@ class Activity {
 					}
 				}
 			}
+
+
+			if($act->obj['type'] === 'Page' && ! $s['body'])  {
+
+				$ptr = null;
+
+				if(array_key_exists('url',$act->obj)) {
+					if(is_array($act->obj['url'])) {
+						if(array_key_exists(0,$act->obj['url'])) {				
+							$ptr = $act->obj['url'];
+						}
+						else {
+							$ptr = [ $act->obj['url'] ];
+						}
+						foreach($ptr as $vurl) {
+							if(array_key_exists('mediaType',$vurl) && $vurl['mediaType'] === 'text/html') {
+								$s['body'] .= "\n\n" . $vurl['href'];
+								break;
+							}
+						}
+					}
+					elseif(is_string($act->obj['url'])) {
+						$s['body'] = "\n\n" . $act->obj['url'];
+					}
+				}
+			}
 		}
 
 
 
-		if(in_array($act->obj['type'],[ 'Note','Article' ])) {
+		if(in_array($act->obj['type'],[ 'Note','Article','Page' ])) {
 			$ptr = null;
 
 			if(array_key_exists('url',$act->obj)) {
@@ -1900,7 +2010,7 @@ class Activity {
 		// They are hidden in the public timeline if the public inbox is listed in the 'cc' field.
 		// This is not part of the activitypub protocol - we might change this to show all public posts in pubstream at some point.
 
-		$pubstream = ((is_array($act->obj) && array_key_exists('to', $act->obj) && in_array(ACTIVITY_PUBLIC_INBOX, $act->obj['to'])) ? true : false);
+		$pubstream = ((is_array($act->obj) && array_key_exists('to', $act->obj) && is_array($act->obj['to']) && in_array(ACTIVITY_PUBLIC_INBOX, $act->obj['to'])) ? true : false);
 
 		if(! perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') && ! ($is_sys_channel && $pubstream)) {
 			logger('no permission');
@@ -2412,7 +2522,9 @@ class Activity {
 
 		if(is_array($content[$field])) {
 			foreach($content[$field] as $k => $v) {
-				$ret .= '[language=' . $k . ']' . html2bbcode($v) . '[/language]';
+				$ret .= html2bbcode($v);
+				// save this for auto-translate or dynamic filtering
+				// $ret .= '[language=' . $k . ']' . html2bbcode($v) . '[/language]';
 			}
 		}
 		else {

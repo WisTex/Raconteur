@@ -1,7 +1,9 @@
 ZAP/OSADA
 =========
 
-This repository contains the working code for the Zap and Osada social network servers. The type of server you wish to run is chosen during site installation. 
+This repository contains the working code for the Zap and Osada social network servers. 
+These are two completely different projects with different features and capabilities. They share a common code repository for maintenance purposes.  
+The type of server you wish to run is chosen during site installation. 
 
 Zap
 ===

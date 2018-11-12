@@ -407,8 +407,8 @@ class ActivityPub {
 			}
 		}
 		if($person_obj) {
-			Activity::actor_store($apurl,$person_obj);
-			return $apurl;
+			Activity::actor_store($person_obj['id'],$person_obj);
+			return $person_obj['id'];
 		}
 		return false;
 	}

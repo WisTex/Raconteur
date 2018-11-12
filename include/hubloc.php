@@ -186,29 +186,28 @@ function hubloc_change_primary($hubloc) {
 		logger('no hubloc');
 		return false;
 	}
+
+	logger('setting primary: ' . $hubloc['hubloc_url'] . ((intval($hubloc['hubloc_primary'])) ? '  true' : ' false'));
+
+	// See if this is a local hubloc and if so update the primary for the corresponding channel record. 
+
+	if($hubloc['hubloc_url'] === z_root()) {
+		$r = q("select channel_id from channel where channel_hash = '%s' limit 1",
+			dbesc($hubloc['hubloc_hash'])
+		);
+		if($r) {
+			q("update channel set channel_primary = %d where channel_id = %d",
+				intval($hubloc['hubloc_primary']),
+				intval($r[0]['channel_id'])
+			);
+		}
+	}
+
+	// we only need to proceed further if this particular hubloc is now primary 
+
 	if(! (intval($hubloc['hubloc_primary']))) {
 		logger('not primary: ' . $hubloc['hubloc_url']);
 		return false;
-	}
-
-	logger('setting primary: ' . $hubloc['hubloc_url']);
-
-	// See if there's a local channel
-
-	$r = q("select channel_id, channel_primary from channel where channel_hash = '%s' limit 1",
-		dbesc($hubloc['hubloc_hash'])
-	);
-	if($r) {
-		if(! $r[0]['channel_primary']) {
-			q("update channel set channel_primary = 1 where channel_id = %d",
-				intval($r[0]['channel_id'])
-			);
-		}
-		else {
-			q("update channel set channel_primary = 0 where channel_id = %d",
-				intval($r[0]['channel_id'])
-			);
-		}
 	}
 
 	// do we even have an xchan for this hubloc and if so is it already set as primary?

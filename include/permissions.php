@@ -562,3 +562,14 @@ function their_perms_contains($channel_id,$xchan_hash,$perm) {
 	}
 	return false;
 }
+
+function my_perms_contains($channel_id,$xchan_hash,$perm) {
+	$x = get_abconfig($channel_id,$xchan_hash,'system','my_perms');
+	if($x) {
+		$y = explode(',',$x);
+		if(in_array($perm,$y)) {
+			return true;
+		}
+	}
+	return false;
+}

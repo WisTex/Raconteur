@@ -192,7 +192,10 @@ class Ping extends \Zotlabs\Web\Controller {
 				xchan_query($r);
 				foreach($r as $rr) {
 					$rr['llink'] = str_replace('display/', 'pubstream/?f=&mid=', $rr['llink']);
-					$result[] = \Zotlabs\Lib\Enotify::format($rr);
+					$z = \Zotlabs\Lib\Enotify::format($rr);
+					if($z) {
+						$result[] = $z;
+					}
 				}
 			}
 
@@ -358,7 +361,10 @@ class Ping extends \Zotlabs\Web\Controller {
 				foreach($r as $item) {
 					if((argv(1) === 'home') && (! intval($item['item_wall'])))
 						continue;
-					$result[] = \Zotlabs\Lib\Enotify::format($item);
+					$z = \Zotlabs\Lib\Enotify::format($item);
+					if($z) {
+						$result[] = $z;
+					}
 				}
 			}
 //			logger('ping (network||home): ' . print_r($result, true), LOGGER_DATA);
@@ -629,18 +635,21 @@ class Ping extends \Zotlabs\Web\Controller {
 		if($vnotify & VNOTIFY_FORUMS) {
 			$forums = get_forum_channels(local_channel());
 
-			if(! $forums) {
-				$result['forums'] = 0;
-			}
-			else {
+			if($forums) {
 
 				$perms_sql = item_permissions_sql(local_channel()) . item_normal();
 				$fcount = count($forums);
 				$forums['total'] = 0;
 
 				for($x = 0; $x < $fcount; $x ++) {
+					$ttype = TERM_FORUM;
+					$p = q("SELECT oid AS parent FROM term WHERE uid = " . intval(local_channel()) . " AND ttype = $ttype AND term = '" . protect_sprintf(dbesc($forums[$x]['xchan_name'])) . "'");
+	
+					$p = ids_to_querystr($p, 'parent');	
+					$pquery = (($p) ? "OR parent IN ( $p )" : '');
+
 					$r = q("select sum(item_unseen) as unseen from item 
-						where uid = %d and owner_xchan = '%s' and item_unseen = 1 $perms_sql ",
+						where uid = %d and ( owner_xchan = '%s' $pquery ) and item_unseen = 1 $perms_sql ",
 						intval(local_channel()),
 						dbesc($forums[$x]['xchan_hash'])
 					);

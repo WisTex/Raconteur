@@ -147,7 +147,18 @@ class Item extends \Zotlabs\Web\Controller {
 			xchan_query($r,true);
 			$items = fetch_post_tags($r,true);
 
-			$chan = channelx_by_n($items[0]['uid']);
+			$observer = App::get_observer();
+			$parent = $items[0];
+			$recips = (($parent['owner']['xchan_network'] === 'activitypub') ? get_iconfig($parent['id'],'activitypub','recips', []) : []);
+			$to = (($recips && array_key_exists('to',$recips) && is_array($recips['to'])) ? $recips['to'] : null);
+			$nitems = [];
+			foreach($items as $i) {
+				if(intval($i['item_private']) && $to && (! in_array($observer['xchan_url'],$to)))
+					continue;
+				$nitems[] = $i;
+			}
+
+			$chan = channelx_by_n($nitems[0]['uid']);
 
 			if(! $chan)
 				http_status_exit(404, 'Not found');
@@ -156,13 +167,13 @@ class Item extends \Zotlabs\Web\Controller {
 				http_status_exit(403, 'Forbidden');
 
 			if($conversation) {
-				$i = Activity::encode_item_collection($items,'conversation/' . $item_id,'OrderedCollection',false);
+				$i = Activity::encode_item_collection($nitems,'conversation/' . $item_id,'OrderedCollection',false);
 				if($portable_id) {
 					ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
 				}
 			}
 			else {
-				$i = Activity::encode_item($items[0]);
+				$i = Activity::encode_item($nitems[0]);
 			}
 
 			if(! $i)

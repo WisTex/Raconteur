@@ -225,7 +225,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 		}
 
 		$filesize = 0;
-		$hash = random_string();
+		$hash = new_uuid();
 
 		$f = 'store/' . $this->auth->owner_nick . '/' . (($this->os_path) ? $this->os_path . '/' : '') . $hash;
 

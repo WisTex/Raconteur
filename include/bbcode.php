@@ -281,25 +281,56 @@ function translate_design_element($type) {
 	return $ret;
 }
 
+function bb_format_attachdata($body) {
+
+	$data = getAttachmentData($body);
+
+	
+	if($data) {
+		$txt = '';
+		if($data['url'] && $data['title']) {
+			$txt .= "\n\n" . '[url=' . $data['url'] . ']' . $data['title'] . '[/url]';
+		}
+		else {
+			if($data['url']) {
+				$txt .= "\n\n" . $data['url'];
+			}
+			if($data['title']) {
+				$txt .= "\n\n" . $data['title'];
+			}
+		}
+		if($data['preview']) {
+			$txt .= "\n\n" . '[img]' . $data['preview'] . '[/img]';
+		}
+		
+		$txt .= "\n\n" . $data['text'];
+		return preg_replace('/\[attachment(.*?)\](.*?)\[\/attachment\]/ism',$txt,$body);
+	}
+	return $body;
+}
+
+
+
 
 function getAttachmentData($body) {
 	$data = [];
 
-	if (!preg_match("/(.*)\[attachment(.*?)\](.*?)\[\/attachment\](.*)/ism", $body, $match)) {
+	if (! preg_match("/\[attachment(.*?)\](.*?)\[\/attachment\]/ism", $body, $match)) {
 		return null;
 	}
 
-	$attributes = $match[2];
+	$attributes = $match[1];
 
-	$data["text"] = trim($match[1]);
+	$data["text"] = trim($match[2]);
 
 	$type = "";
 	preg_match("/type='(.*?)'/ism", $attributes, $matches);
+
 	if (x($matches, 1)) {
 		$type = strtolower($matches[1]);
 	}
 
-	preg_match('/type="(.*?)"/ism', $attributes, $matches);
+	preg_match('/type=\&quot\;(.*?)\&quot\;/ism', $attributes, $matches);
 	if (x($matches, 1)) {
 		$type = strtolower($matches[1]);
 	}
@@ -321,7 +352,7 @@ function getAttachmentData($body) {
 		$url = $matches[1];
 	}
 
-	preg_match('/url="(.*?)"/ism', $attributes, $matches);
+	preg_match('/url=\&quot\;(.*?)\&quot\;/ism', $attributes, $matches);
 	if (x($matches, 1)) {
 		$url = $matches[1];
 	}
@@ -336,12 +367,11 @@ function getAttachmentData($body) {
 		$title = $matches[1];
 	}
 
-	preg_match('/title="(.*?)"/ism', $attributes, $matches);
+	preg_match('/title=\&quot\;(.*?)\&quot\;/ism', $attributes, $matches);
 	if (x($matches, 1)) {
 		$title = $matches[1];
 	}
 	if ($title != "") {
-//		$title = self::convert(html_entity_decode($title, ENT_QUOTES, 'UTF-8'), false, true);
 		$title = html_entity_decode($title, ENT_QUOTES, 'UTF-8');
 		$title = str_replace(["[", "]"], ["&#91;", "&#93;"], $title);
 		$data["title"] = $title;
@@ -353,7 +383,7 @@ function getAttachmentData($body) {
 		$image = $matches[1];
 	}
 
-	preg_match('/image="(.*?)"/ism', $attributes, $matches);
+	preg_match('/image=\&quot\;(.*?)\&quot\;/ism', $attributes, $matches);
 	if (x($matches, 1)) {
 		$image = $matches[1];
 	}
@@ -368,7 +398,7 @@ function getAttachmentData($body) {
 		$preview = $matches[1];
 	}
 
-	preg_match('/preview="(.*?)"/ism', $attributes, $matches);
+	preg_match('/preview=\&quot\;(.*?)\&quot\;/ism', $attributes, $matches);
 	if (x($matches, 1)) {
 		$preview = $matches[1];
 	}
@@ -556,7 +586,9 @@ function bb_summary($match) {
 	$rnd3 = mt_rand();
 	$rnd4 = mt_rand();
 
-	return $match[1] . '<div style="display: block;" id="opendiv-' . $rnd2 . '">' . $match[2] . '</div><div style="display: block;" id="opendiv-' . $rnd3 . '" onclick="openClose(\'opendiv-' . $rnd1 . '\'); openClose(\'opendiv-' . $rnd2 . '\'); openClose(\'opendiv-' . $rnd3 . '\'); openClose(\'opendiv-' . $rnd4 . '\'); return false;" class="fakelink view-article">' . t('View article') . '</div><div style="display: none;" id="opendiv-' . $rnd4 . '" onclick="openClose(\'opendiv-' . $rnd1 . '\'); openClose(\'opendiv-' . $rnd2 . '\'); openClose(\'opendiv-' . $rnd3 . '\'); openClose(\'opendiv-' . $rnd4 . '\'); return false;" class="fakelink view-summary">' . t('View summary') . '</div><div id="opendiv-' . $rnd1 . '" style="display: none;">' . $match[3] . '</div>';
+	return $match[1] . $match[2] . EOL . EOL . $match[3];
+
+//	return $match[1] . '<div style="display: block;" id="opendiv-' . $rnd2 . '">' . $match[2] . '</div><div style="display: block;" id="opendiv-' . $rnd3 . '" onclick="openClose(\'opendiv-' . $rnd1 . '\'); openClose(\'opendiv-' . $rnd2 . '\'); openClose(\'opendiv-' . $rnd3 . '\'); openClose(\'opendiv-' . $rnd4 . '\'); return false;" class="fakelink view-article">' . t('View article') . '</div><div style="display: none;" id="opendiv-' . $rnd4 . '" onclick="openClose(\'opendiv-' . $rnd1 . '\'); openClose(\'opendiv-' . $rnd2 . '\'); openClose(\'opendiv-' . $rnd3 . '\'); openClose(\'opendiv-' . $rnd4 . '\'); return false;" class="fakelink view-summary">' . t('View summary') . '</div><div id="opendiv-' . $rnd1 . '" style="display: none;">' . $match[3] . '</div>';
 }
 
 
@@ -913,6 +945,8 @@ function bbcode($Text, $options = []) {
 	if (strpos($Text,'[pre]') !== false) {
 		$Text = preg_replace_callback("/\[pre\](.*?)\[\/pre\]/ism", 'bb_spacefy',$Text);
 	}
+
+	$Text = bb_format_attachdata($Text);
 
 	// If we find any event code, turn it into an event.
 	// After we're finished processing the bbcode we'll

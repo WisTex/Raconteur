@@ -379,7 +379,7 @@ function create_identity($arr) {
 		[
 			'aid'          => intval($ret['channel']['channel_account_id']),
 			'uid'          => intval($newuid),
-			'profile_guid' => random_string(),
+			'profile_guid' => new_uuid(),
 			'profile_name' => t('Default Profile'),
 			'is_default'   => 1,
 			'publish'      => $publish,

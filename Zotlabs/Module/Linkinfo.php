@@ -139,7 +139,7 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 	
 		$image = "";
 	
-		if(sizeof($siteinfo["images"]) > 0){
+		if(isset($siteinfo['images']) && sizeof($siteinfo["images"]) > 0){
 			/* Execute below code only if image is present in siteinfo */
 	
 			$total_images = 0;
@@ -228,8 +228,13 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 	
 		$header = $result['header'];
 		$body   = $result['body'];
-	
-		$body   = mb_convert_encoding($body, 'UTF-8', 'UTF-8');
+		
+		// Check codepage in HTTP headers or HTML if not exist
+		$cp = (preg_match('/Content-Type: text\/html; charset=(.+)\r\n/i', $header, $o) ? $o[1] : '');
+		if(empty($cp))
+		    $cp = (preg_match('/meta.+content=["|\']text\/html; charset=([^"|\']+)/i', $body, $o) ? $o[1] : 'AUTO');
+
+		$body   = mb_convert_encoding($body, 'UTF-8', $cp);
 		$body   = mb_convert_encoding($body, 'HTML-ENTITIES', "UTF-8");
 	
 		$doc    = new \DOMDocument();
@@ -265,20 +270,43 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 			$attr["content"] = html_entity_decode($attr["content"], ENT_QUOTES, "UTF-8");
 	
 			switch (strtolower($attr["name"])) {
-				case 'generator':
-					$siteinfo['generator'] = $attr['content'];
-					break;
 				case "fulltitle":
-					$siteinfo["title"] = $attr["content"];
+					$siteinfo["title"] = trim($attr["content"]);
 					break;
 				case "description":
-					$siteinfo["text"] = $attr["content"];
+					$siteinfo["text"] = trim($attr["content"]);
+					break;
+				case "thumbnail":
+					$siteinfo["image"] = $attr["content"];
+					break;
+				case "twitter:image":
+					$siteinfo["image"] = $attr["content"];
+					break;
+				case "twitter:image:src":
+					$siteinfo["image"] = $attr["content"];
+					break;
+				case "twitter:card":
+					if (($siteinfo["type"] == "") || ($attr["content"] == "photo")) {
+						$siteinfo["type"] = $attr["content"];
+					}
+					break;
+				case "twitter:description":
+					$siteinfo["text"] = trim($attr["content"]);
+					break;
+				case "twitter:title":
+					$siteinfo["title"] = trim($attr["content"]);
 					break;
 				case "dc.title":
-					$siteinfo["title"] = $attr["content"];
+					$siteinfo["title"] = trim($attr["content"]);
 					break;
 				case "dc.description":
-					$siteinfo["text"] = $attr["content"];
+					$siteinfo["text"] = trim($attr["content"]);
+					break;
+				case "keywords":
+					$keywords = explode(",", $attr["content"]);
+					break;
+				case "news_keywords":
+					$keywords = explode(",", $attr["content"]);
 					break;
 			}
 		}

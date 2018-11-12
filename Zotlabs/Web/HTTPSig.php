@@ -161,8 +161,8 @@ class HTTPSig {
 
 		if(! $x) {
 			logger('verify failed for ' . $result['signer'] . ' alg=' . $algorithm . (($key['public_key']) ? '' : ' no key'));
+			$sig_block['signature'] = base64_encode($sig_block['signature']);
 
-			$sig_block['signature'] = base64url_encode($sig_block['signature']);
 			logger('affected sigblock: ' . print_r($sig_block,true));
 			logger('headers: ' . print_r($headers,true));
 			logger('server: ' . print_r($_SERVER,true));

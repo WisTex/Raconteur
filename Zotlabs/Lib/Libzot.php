@@ -1441,7 +1441,7 @@ class Libzot {
 				$local_public = true;
 
 				$r = q("select xchan_selfcensored from xchan where xchan_hash = '%s' limit 1",
-					dbesc($sender['hash'])
+					dbesc($sender)
 				);
 				// don't import sys channel posts from selfcensored authors
 				if($r && (intval($r[0]['xchan_selfcensored']))) {
@@ -1503,7 +1503,7 @@ class Libzot {
 				// As a side effect we will also do a preliminary check that we have the top-level-post, otherwise
 				// processing it is pointless.
 	
-				$r = q("select route, id from item where mid = '%s' and uid = %d limit 1",
+				$r = q("select route, id, owner_xchan, item_private from item where mid = '%s' and uid = %d limit 1",
 					dbesc($arr['parent_mid']),
 					intval($channel['channel_id'])
 				);
@@ -1531,13 +1531,17 @@ class Libzot {
 					}
 					continue;
 				}
-				if($relay || $friendofriend) {
+				
+				if($relay || $friendofriend || (intval($r[0]['item_private']) === 0 && intval($arr['item_private']) === 0)) {
 					// reset the route in case it travelled a great distance upstream
 					// use our parent's route so when we go back downstream we'll match
 					// with whatever route our parent has.
 					// Also friend-of-friend conversations may have been imported without a route,
 					// but we are now getting comments via listener delivery
+					// and if there is no privacy on this or the parent, we don't care about the route, 
+					// so just set the owner and route accordingly.
 					$arr['route'] = $r[0]['route'];
+					$arr['owner_xchan'] = $r[0]['owner_xchan'];
 				}
 				else {
 

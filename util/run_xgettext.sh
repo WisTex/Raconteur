@@ -4,7 +4,7 @@ FULLPATH=$(dirname $(readlink -f "$0"))
 
 VINFO=`echo "<?php include 'boot.php'; echo PLATFORM_NAME . \" \" . STD_VERSION . \"\\n\";" | php`
 
-PROJECTNAME=`echo $VINFO | awk '{print $1;}'`
+PROJECTNAME=osada
 F9KVERSION=`echo $VINFO | awk '{print $2;}'`
 
 

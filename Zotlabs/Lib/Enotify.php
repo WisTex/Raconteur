@@ -826,9 +826,10 @@ class Enotify {
 		}
 
 
+
 		// convert this logic into a json array just like the system notifications
 
-		return array(
+		$x = array(
 			'notify_link' => $item['llink'],
 			'name' => $item['author']['xchan_name'],
 			'url' => $item['author']['xchan_url'],
@@ -838,9 +839,19 @@ class Enotify {
 			'b64mid' => ((in_array($item['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) ? 'b64.' . base64url_encode($item['thr_parent']) : 'b64.' . base64url_encode($item['mid'])),
 			'notify_id' => 'undefined',
 			'thread_top' => (($item['item_thread_top']) ? true : false),
-			'message' => strip_tags(bbcode($itemem_text))
+			'message' => strip_tags(bbcode($itemem_text)),
+			// these are for the superblock addon
+			'hash' => $item['author']['xchan_hash'],
+			'uid' => local_channel(),
+			'display' => true
 		);
 
+		call_hooks('enotify_format',$x);
+		if(! $x['display']) {
+			return [];
+		}
+
+		return $x;
 	}
 
 }

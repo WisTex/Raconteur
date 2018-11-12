@@ -25,6 +25,7 @@ $(document).ready(function() {
 	var slideTimer = null;
 	function networkRefresh() {
 
+
 		$("#profile-jot-text-loading").show();
 
 		if((document.readyState !== "complete") || (slideTimer !== null))

@@ -248,9 +248,6 @@ function bb_to_markdown($Text, $options = []) {
 	// Convert it to HTML - don't try oembed
 	$Text = bbcode($Text, [ 'tryoembed' => false ]);
 
-	// Markdownify does not preserve previously escaped html entities such as <> and &.
-	//$Text = str_replace(array('&lt;','&gt;','&amp;'),array('&_lt_;','&_gt_;','&_amp_;'),$Text);
-
 	// Now convert HTML to Markdown
 
 	$Text = html2markdown($Text);
@@ -258,9 +255,6 @@ function bb_to_markdown($Text, $options = []) {
 	//html2markdown adds backslashes infront of hashes after a new line. remove them
 	$Text = str_replace("\n\#", "\n#", $Text);
 
-	// It also adds backslashes to our attempt at getting around the html entity preservation for some weird reason.
-
-	//$Text = str_replace(array('&\\_lt\\_;','&\\_gt\\_;','&\\_amp\\_;'),array('&lt;','&gt;','&amp;'),$Text);
 
 	// If the text going into bbcode() has a plain URL in it, i.e.
 	// with no [url] tags around it, it will come out of parseString()
@@ -296,7 +290,18 @@ function bb_to_markdown($Text, $options = []) {
 function html2markdown($html,$options = []) {
 	$markdown = '';
 
-	$html = htmlspecialchars($html);
+	if(! $options) {
+		$options = [
+			'header_style' => 'setext', // Set to 'atx' to output H1 and H2 headers as # Header1 and ## Header2
+			'suppress_errors' => true,  // Set to false to show warnings when loading malformed HTML
+			'strip_tags' => false,      // Set to true to strip tags that don't have markdown equivalents. N.B. Strips tags, not their content. Useful to clean MS Word HTML output.
+			'bold_style' => '**',       // DEPRECATED: Set to '__' if you prefer the underlined style
+			'italic_style' => '*',      // DEPRECATED: Set to '_' if you prefer the underlined style
+			'remove_nodes' => '',       // space-separated list of dom nodes that should be removed. example: 'meta style script'
+			'hard_break' => false,      // Set to true to turn <br> into `\n` instead of `  \n`
+			'list_item_style' => '-',   // Set the default character for each <li> in a <ul>. Can be '-', '*', or '+'
+		];	
+	}
  
 	$environment = Environment::createDefaultEnvironment($options);
 	$environment->addConverter(new TableConverter());
@@ -319,64 +324,64 @@ function html2markdown($html,$options = []) {
 
 class TableConverter implements ConverterInterface
 {
-    /**
-     * @param ElementInterface $element
-     *
-     * @return string
-     */
-    public function convert(ElementInterface $element)
-    {
-        switch ($element->getTagName()) {
-            case 'tr':
-                $line = [];
-                $i = 1;
-                foreach ($element->getChildren() as $td) {
-                    $i++;
-                    $v = $td->getValue();
-                    $v = trim($v);
-                    if ($i % 2 === 0 || $v !== '') {
-                        $line[] = $v;
-                    }
-                }
-                return '| ' . implode(' | ', $line) . " |\n";
-            case 'td':
-            case 'th':
-                return trim($element->getValue());
-            case 'tbody':
-                return trim($element->getValue());
-            case 'thead':
-                $headerLine = reset($element->getChildren())->getValue();
-                $headers = explode(' | ', trim(trim($headerLine, "\n"), '|'));
-                $hr = [];
-                foreach ($headers as $td) {
-                    $length = strlen(trim($td)) + 2;
-                    $hr[] = str_repeat('-', $length > 3 ? $length : 3);
-                }
-                $hr = '|' . implode('|', $hr) . '|';
-                return $headerLine . $hr . "\n";
-            case 'table':
-                $inner = $element->getValue();
-                if (strpos($inner, '-----') === false) {
-                    $inner = explode("\n", $inner);
-                    $single = explode(' | ', trim($inner[0], '|'));
-                    $hr = [];
-                    foreach ($single as $td) {
-                        $length = strlen(trim($td)) + 2;
-                        $hr[] = str_repeat('-', $length > 3 ? $length : 3);
-                    }
-                    $hr = '|' . implode('|', $hr) . '|';
-                    array_splice($inner, 1, 0, $hr);
-                    $inner = implode("\n", $inner);
-                }
-                return trim($inner) . "\n\n";
-        }
-        return $element->getValue();
-    }
-    /**
-     * @return string[]
-     */
-    public function getSupportedTags()
-    {
-        return array('table', 'tr', 'thead', 'td', 'tbody');
-    }
+	/**
+	 * @param ElementInterface $element
+	 *
+	 * @return string
+	 */
+	public function convert(ElementInterface $element)
+	{
+		switch ($element->getTagName()) {
+			case 'tr':
+				$line = [];
+				$i = 1;
+				foreach ($element->getChildren() as $td) {
+					$i++;
+					$v = $td->getValue();
+					$v = trim($v);
+					if ($i % 2 === 0 || $v !== '') {
+						$line[] = $v;
+					}
+				}
+				return '| ' . implode(' | ', $line) . " |\n";
+			case 'td':
+			case 'th':
+				return trim($element->getValue());
+			case 'tbody':
+				return trim($element->getValue());
+			case 'thead':
+				$headerLine = reset($element->getChildren())->getValue();
+				$headers = explode(' | ', trim(trim($headerLine, "\n"), '|'));
+				$hr = [];
+				foreach ($headers as $td) {
+					$length = strlen(trim($td)) + 2;
+					$hr[] = str_repeat('-', $length > 3 ? $length : 3);
+				}
+				$hr = '|' . implode('|', $hr) . '|';
+				return $headerLine . $hr . "\n";
+			case 'table':
+				$inner = $element->getValue();
+				if (strpos($inner, '-----') === false) {
+					$inner = explode("\n", $inner);
+					$single = explode(' | ', trim($inner[0], '|'));
+					$hr = [];
+					foreach ($single as $td) {
+						$length = strlen(trim($td)) + 2;
+						$hr[] = str_repeat('-', $length > 3 ? $length : 3);
+					}
+					$hr = '|' . implode('|', $hr) . '|';
+					array_splice($inner, 1, 0, $hr);
+					$inner = implode("\n", $inner);
+				}
+				return trim($inner) . "\n\n";
+		}
+		return $element->getValue();
+	}
+	/**
+	 * @return string[]
+	 */
+	public function getSupportedTags()
+	{
+		return array('table', 'tr', 'thead', 'td', 'tbody');
+	}
 }
