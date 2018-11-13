@@ -1947,6 +1947,10 @@ class Activity {
 								$s['body'] .= "\n\n" . $vurl['href'];
 								break;
 							}
+							elseif(array_key_exists('mimeType',$vurl) && $vurl['mimeType'] === 'text/html') {
+								$s['body'] .= "\n\n" . $vurl['href'];
+								break;
+							}
 						}
 					}
 					elseif(is_string($act->obj['url'])) {
