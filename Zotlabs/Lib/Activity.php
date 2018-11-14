@@ -1201,6 +1201,10 @@ class Activity {
 
 		$url = $person_obj['id'];
 
+		if(! $url) {
+			return;
+		}
+
 		$name = $person_obj['name'];
 		if(! $name)
 			$name = $person_obj['preferredUsername'];
@@ -1337,6 +1341,14 @@ class Activity {
 				dbesc(datetime_convert()),
 				dbesc($url)
 			);
+
+			if(strpos($username,'@') && ($r[0]['xchan_addr'] !== $username)) {
+				$r = q("update xchan set xchan_addr = '%s' where xchan_hash = '%s'",
+					dbesc($username),
+					dbesc($url)
+				);
+			}
+
 		}
 
 		if($collections) {
@@ -1369,6 +1381,14 @@ class Activity {
 					'hubloc_primary'  => 1
 				]
 			);
+		}
+		else {
+			if(strpos($username,'@') && ($r[0]['hubloc_addr'] !== $username)) {
+				$r = q("update hubloc set hubloc_addr = '%s' where hubloc_hash = '%s'",
+					dbesc($username),
+					dbesc($url)
+				);
+			}
 		}
 
 		if(! $icon)
@@ -1932,7 +1952,8 @@ class Activity {
 
 			if($act->obj['type'] === 'Page' && ! $s['body'])  {
 
-				$ptr = null;
+				$ptr  = null;
+				$purl = EMPTY_STR;
 
 				if(array_key_exists('url',$act->obj)) {
 					if(is_array($act->obj['url'])) {
@@ -1944,17 +1965,26 @@ class Activity {
 						}
 						foreach($ptr as $vurl) {
 							if(array_key_exists('mediaType',$vurl) && $vurl['mediaType'] === 'text/html') {
-								$s['body'] .= "\n\n" . $vurl['href'];
+								$purl = $vurl['href'];
 								break;
 							}
 							elseif(array_key_exists('mimeType',$vurl) && $vurl['mimeType'] === 'text/html') {
-								$s['body'] .= "\n\n" . $vurl['href'];
+								$purl = $vurl['href'];
 								break;
 							}
 						}
 					}
 					elseif(is_string($act->obj['url'])) {
-						$s['body'] = "\n\n" . $act->obj['url'];
+						$purl = $act->obj['url'];
+					}
+					if($purl) {
+						$li = z_fetch_url(z_root() . '/linkinfo?binurl=' . bin2hex($purl));
+						if($li['success'] && $li['body']) {
+							$s['body'] .= "\n" . $li['body'];
+						}
+						else {
+							$s['body'] .= "\n\n" . $purl;
+						}
 					}
 				}
 			}
