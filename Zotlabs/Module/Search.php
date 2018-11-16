@@ -10,7 +10,7 @@ class Search extends \Zotlabs\Web\Controller {
 
 	function init() {
 		if(x($_REQUEST,'search'))
-			\App::$data['search'] = $_REQUEST['search'];
+			\App::$data['search'] = escape_tags($_REQUEST['search']);
 	}
 	
 	
@@ -47,12 +47,12 @@ class Search extends \Zotlabs\Web\Controller {
 		if(x(\App::$data,'search'))
 			$search = trim(\App::$data['search']);
 		else
-			$search = ((x($_GET,'search')) ? trim(rawurldecode($_GET['search'])) : '');
+			$search = ((x($_GET,'search')) ? trim(escape_tags(rawurldecode($_GET['search']))) : '');
 	
 		$tag = false;
 		if(x($_GET,'tag')) {
 			$tag = true;
-			$search = ((x($_GET,'tag')) ? trim(rawurldecode($_GET['tag'])) : '');
+			$search = ((x($_GET,'tag')) ? trim(escape_tags(rawurldecode($_GET['tag']))) : '');
 		}
 
 		$static = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
@@ -228,9 +228,9 @@ class Search extends \Zotlabs\Web\Controller {
 		}
 	
 		if($tag) 
-			$o .= '<h2>' . sprintf( t('Items tagged with: %s'),htmlspecialchars($search, ENT_COMPAT,'UTF-8')) . '</h2>';
+			$o .= '<h2>' . sprintf( t('Items tagged with: %s'), $search) . '</h2>';
 		else
-			$o .= '<h2>' . sprintf( t('Search results for: %s'),htmlspecialchars($search, ENT_COMPAT,'UTF-8')) . '</h2>';
+			$o .= '<h2>' . sprintf( t('Search results for: %s'), $search) . '</h2>';
 	
 		$o .= conversation($items,'search',$update,'client');
 	
