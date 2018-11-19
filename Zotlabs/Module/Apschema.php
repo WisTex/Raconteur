@@ -14,31 +14,10 @@ class Apschema extends \Zotlabs\Web\Controller {
 				'zot'              => z_root() . '/apschema#',
 				'id'               => '@id',
 				'type'             => '@type',
-				'meData'           => 'zot:meData',
-				'meDataType'       => 'zot:meDataType',
-				'meEncoding'       => 'zot:meEncoding',
-				'meAlgorithm'      => 'zot:meAlgorithm',
-				'meCreator'        => 'zot:meCreator',
-				'meSignatureValue' => 'zot:meSignatureValue',
-				'locationAddress'  => 'zot:locationAddress',
-				'locationPrimary'  => 'zot:locationPrimary',
-				'locationDeleted'  => 'zot:locationDeleted',
-				'nomadicLocation'  => 'zot:nomadicLocation',
-				'nomadicHubs'      => 'zot:nomadicHubs',
-
-				'magicEnv' => [
-					'@id'   => 'zot:magicEnv',
-					'@type' => '@id'
-				],
-
-				'nomadicLocations' => [
-					'@id'   => 'zot:nomadicLocations',
-					'@type' => '@id'
-				],
-
-				'ostatus'      => 'http://ostatus.org#',
-				'conversation' => 'ostatus:conversation'
-
+				'ostatus'          => 'http://ostatus.org#',
+				'conversation'     => 'ostatus:conversation',
+				'sensitive'        => 'as:sensitive',
+				'inheritPrivacy'   => 'as:inheritPrivacy'
 			]
 		];
 

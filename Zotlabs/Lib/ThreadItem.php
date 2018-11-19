@@ -37,6 +37,8 @@ class ThreadItem {
 		$this->data = $data;
 		$this->toplevel = ($this->get_id() == $this->get_data_value('parent'));
 
+		$observer = \App::get_observer();
+
 		// Prepare the children
 		if($data['children']) {
 			foreach($data['children'] as $item) {
@@ -48,6 +50,26 @@ class ThreadItem {
 				if((! visible_activity($item)) || array_key_exists('blocked',$item)) {
 					continue;
 				}
+
+				// this is a quick hack to hide ActivityPub DMs that we aren't allowed to see
+				// but may have been forwarded as part of a conversation
+
+//				if(($item['item_private'] == 1) && ($item['owner']['xchan_network'] === 'activitypub')) {
+//					$present = false;
+//					$recips = get_iconfig($item['id'], 'activitypub', 'recips');
+//					if($recips) {
+//						if($recips['to'] && (in_array($observer['xchan_url'], $recips['to']))) {
+//							$present = true;
+//						}
+//						if($recips['cc'] && (in_array($observer['xchan_url'], $recips['cc']))) {
+//							$present = true;
+//						}						
+//					}
+//					if(! $present) {
+//						continue;
+//					}
+//				}
+
 
 				$child = new ThreadItem($item);
 				$this->add_child($child);

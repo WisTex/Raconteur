@@ -19,7 +19,7 @@ class Zot extends \Zotlabs\Web\Controller {
 
 	function init() {
 		$zot = new ZotProtocol\Receiver(new ZotProtocol\Zot6Handler());
-		json_return_and_die($zot->run(),'application/x-zot+jzon');
+		json_return_and_die($zot->run(),'application/x-zot+json');
 	}
 
 }

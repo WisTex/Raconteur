@@ -439,7 +439,7 @@ define ( 'NAMESPACE_YMEDIA',          'http://search.yahoo.com/mrss/' );
 
 // We should be using versioned jsonld contexts so that signatures will be slightly more reliable.
 // Why signatures are unreliable by design is a problem nobody seems to care about
-// "because it's a proposed W3C standard". .
+// "because it's a W3C standard". .
 
 // Anyway, if you use versioned contexts, communication with Mastodon fails. Have not yet investigated
 // the reason for the dependency but for the current time, use the standard non-versioned context.
@@ -447,7 +447,7 @@ define ( 'NAMESPACE_YMEDIA',          'http://search.yahoo.com/mrss/' );
 
 define ( 'ACTIVITYSTREAMS_JSONLD_REV', 'https://www.w3.org/ns/activitystreams' );
 
-define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.2' );
+define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.3' );
 /**
  * activity stream defines
  */

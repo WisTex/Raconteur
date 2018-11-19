@@ -605,11 +605,6 @@ function get_item_elements($x,$allow_code = false) {
 	$arr['created']      = datetime_convert('UTC','UTC',$x['created']);
 	$arr['edited']       = datetime_convert('UTC','UTC',$x['edited']);
 
-	if($arr['created'] > datetime_convert())
-		$arr['created']  = datetime_convert();
-	if($arr['edited'] > datetime_convert())
-		$arr['edited']   = datetime_convert();
-
 	$arr['expires']      = ((x($x,'expires') && $x['expires'])
 								? datetime_convert('UTC','UTC',$x['expires'])
 								: NULL_DATE);

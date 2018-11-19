@@ -229,6 +229,8 @@ class Activity {
 			}
 		}
 
+		$ret['inheritPrivacy'] = true;
+
 		$ret['attributedTo'] = $i['author']['xchan_url'];
 
 
@@ -631,6 +633,8 @@ class Activity {
 			}
 
 		}
+
+		$ret['inheritPrivacy'] = true;
 
 		$actor = self::encode_person($i['author'],false);
 		if($actor)
@@ -1334,7 +1338,7 @@ class Activity {
 			}
 
 			// update existing record
-			$r = q("update xchan set xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s' where xchan_hash = '%s'",
+			$u = q("update xchan set xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s' where xchan_hash = '%s'",
 				dbesc($name),
 				dbesc($pubkey),
 				dbesc('activitypub'),
@@ -1348,7 +1352,6 @@ class Activity {
 					dbesc($url)
 				);
 			}
-
 		}
 
 		if($collections) {
@@ -2038,7 +2041,7 @@ class Activity {
 
 
 		$is_sys_channel = is_sys_channel($channel['channel_id']);
-		$parent = false;
+		$is_child_node = false;
 
 		// Mastodon only allows visibility in public timelines if the public inbox is listed in the 'to' field.
 		// They are hidden in the public timeline if the public inbox is listed in the 'cc' field.
@@ -2046,7 +2049,29 @@ class Activity {
 
 		$pubstream = ((is_array($act->obj) && array_key_exists('to', $act->obj) && is_array($act->obj['to']) && in_array(ACTIVITY_PUBLIC_INBOX, $act->obj['to'])) ? true : false);
 
-		if(! perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') && ! ($is_sys_channel && $pubstream)) {
+		if($item['parent_mid'] && $item['parent_mid'] !== $item['mid']) {
+			$is_child_node = true;
+		}
+		
+		$allowed = false;
+
+		if ($is_child_node) {
+			$allowed = perm_is_allowed($channel['channel_id'],$observer_hash,'post_comments');
+			if (! $allowed) {
+				$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
+					dbesc($item['parent_mid']),
+					intval($channel['channel_id'])
+				);
+				if ($parent) {
+					$allowed = can_comment_on_post($observer_hash,$parent[0]);
+				}
+			}
+		}
+		elseif (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') || ($is_sys_channel && $pubstream)) {
+			$allowed = true;
+		}
+
+		if(! $allowed) {
 			logger('no permission');
 			return;
 		}
@@ -2097,8 +2122,15 @@ class Activity {
 
 		set_iconfig($item,'activitypub','recips',$act->raw_recips);
 
-		if($item['parent_mid'] && $item['parent_mid'] !== $item['mid']) {
-			$parent = true;
+		if(! (isset($act->data['inheritPrivacy']) && $act->data['inheritPrivacy'])) {				
+			if($item['item_private']) {
+				$item['item_restrict'] = 1;
+				logger('restricted');
+			}				
+		}
+
+		if($is_child_node) {
+
 			$p = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
 				dbesc($item['parent_mid']),
 				intval($item['uid'])
@@ -2153,7 +2185,7 @@ class Activity {
 
 
 		if(is_array($x) && $x['item_id']) {
-			if($parent) {
+			if($is_child_node) {
 				if($item['owner_xchan'] === $channel['channel_hash']) {
 					// We are the owner of this conversation, so send all received comments back downstream
 					Master::Summon(array('Notifier','comment-import',$x['item_id']));
