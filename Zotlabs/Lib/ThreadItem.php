@@ -57,7 +57,7 @@ class ThreadItem {
 				if(intval($item['item_private']) && intval($item['item_restrict']) && $item['mid'] !== $item['parent_mid']) {
 					if(! $observer)
 						continue;
-					if($item['allow_cid'] !== '<' . observer['xchan_hash'] . '>')
+					if($item['allow_cid'] !== '<' . $observer['xchan_hash'] . '>')
 						continue;
 				}
 
