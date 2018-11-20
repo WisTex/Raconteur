@@ -8,17 +8,19 @@
 
 namespace Zotlabs\Module;
 
-use Zotlabs\Zot6 as ZotProtocol;
+use Zotlabs\Web\Controller;
+use Zotlabs\Zot6\Receiver;
+use Zotlabs\Zot6\Zot6Handler;
 
 /**
  * @brief Zot module.
  *
  */
 
-class Zot extends \Zotlabs\Web\Controller {
+class Zot extends Controller {
 
 	function init() {
-		$zot = new ZotProtocol\Receiver(new ZotProtocol\Zot6Handler());
+		$zot = new Receiver(new Zot6Handler());
 		json_return_and_die($zot->run(),'application/x-zot+json');
 	}
 

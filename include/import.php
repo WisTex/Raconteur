@@ -290,6 +290,8 @@ function import_objs($channel, $objs) {
 function sync_objs($channel, $objs) {
 
 	if($channel && $objs) {
+		$columns = db_columns('obj');
+
 		foreach($objs as $obj) {
 
 			if(array_key_exists('obj_deleted',$obj) && $obj['obj_deleted'] && $obj['obj_obj']) {
@@ -334,9 +336,18 @@ function sync_objs($channel, $objs) {
 
 			$hash = $obj['obj_obj'];
 
+
+
 			if($exists) {
 				unset($obj['obj_obj']);
+
+
 				foreach($obj as $k => $v) {
+
+					if(! in_array($k,$columns)) {
+						continue;
+					}	
+
 					$r = q("UPDATE obj SET " . TQUOT . "%s" . TQUOT . " = '%s' WHERE obj_obj = '%s' AND obj_channel = %d",
 						dbesc($k),
 						dbesc($v),
@@ -407,6 +418,9 @@ function import_apps($channel, $apps) {
 function sync_apps($channel, $apps) {
 
 	if($channel && $apps) {
+
+		$columns = db_columns('app');
+
 		foreach($apps as $app) {
 
 			$exists = false;
@@ -474,6 +488,11 @@ function sync_apps($channel, $apps) {
 			if($exists) {
 				unset($app['app_id']);
 				foreach($app as $k => $v) {
+
+					if(! in_array($k,$columns)) {
+						continue;
+					}
+
 					$r = q("UPDATE app SET " . TQUOT . "%s" . TQUOT . " = '%s' WHERE app_id = '%s' AND app_channel = %d",
 						dbesc($k),
 						dbesc($v),
@@ -538,6 +557,9 @@ function import_chatrooms($channel, $chatrooms) {
 function sync_chatrooms($channel, $chatrooms) {
 
 	if($channel && $chatrooms) {
+
+		$columns = db_columns('chatroom');
+
 		foreach($chatrooms as $chatroom) {
 
 			if(! $chatroom['cr_name'])
@@ -579,6 +601,11 @@ function sync_chatrooms($channel, $chatrooms) {
 
 			if($exists) {
 				foreach($chatroom as $k => $v) {
+
+					if(! in_array($k,$columns)) {
+						continue;
+					}
+
 					$r = q("UPDATE chatroom SET " . TQUOT . "%s" . TQUOT . " = '%s' WHERE cr_name = '%s' AND cr_uid = %d",
 						dbesc($k),
 						dbesc($v),
@@ -737,6 +764,9 @@ function import_events($channel, $events) {
 function sync_events($channel, $events) {
 
 	if($channel && $events) {
+
+		$columns = db_columns('event');
+
 		foreach($events as $event) {
 
 			if((! $event['event_hash']) || (! $event['start']))
@@ -774,6 +804,11 @@ function sync_events($channel, $events) {
 
 			if($exists) {
 				foreach($event as $k => $v) {
+
+					if(! in_array($k,$columns)) {
+						continue;
+					}
+
 					$r = q("UPDATE event SET " . TQUOT . "%s" . TQUOT . " = '%s' WHERE event_hash = '%s' AND uid = %d",
 						dbesc($k),
 						dbesc($v),
@@ -856,6 +891,8 @@ function import_menus($channel, $menus) {
 function sync_menus($channel, $menus) {
 
 	if($channel && $menus) {
+
+
 		foreach($menus as $menu) {
 			$m = array();
 			$m['menu_channel_id'] = $channel['channel_id'];

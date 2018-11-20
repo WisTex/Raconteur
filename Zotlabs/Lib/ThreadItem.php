@@ -51,25 +51,15 @@ class ThreadItem {
 					continue;
 				}
 
-				// this is a quick hack to hide ActivityPub DMs that we aren't allowed to see
+				// this is a quick hack to hide ActivityPub DMs that we should not be allowed to see
 				// but may have been forwarded as part of a conversation
 
-//				if(($item['item_private'] == 1) && ($item['owner']['xchan_network'] === 'activitypub')) {
-//					$present = false;
-//					$recips = get_iconfig($item['id'], 'activitypub', 'recips');
-//					if($recips) {
-//						if($recips['to'] && (in_array($observer['xchan_url'], $recips['to']))) {
-//							$present = true;
-//						}
-//						if($recips['cc'] && (in_array($observer['xchan_url'], $recips['cc']))) {
-//							$present = true;
-//						}						
-//					}
-//					if(! $present) {
-//						continue;
-//					}
-//				}
-
+				if(intval($item['item_private']) && intval($item['item_restrict']) && $item['mid'] !== $item['parent_mid']) {
+					if(! $observer)
+						continue;
+					if($item['allow_cid'] !== '<' . observer['xchan_hash'] . '>')
+						continue;
+				}
 
 				$child = new ThreadItem($item);
 				$this->add_child($child);
@@ -126,6 +116,10 @@ class ThreadItem {
 
 		$privacy_warning = false;
 		if(($item['item_private'] == 1) && ($item['owner']['xchan_network'] === 'activitypub')) {
+			if(intval($item['item_restrict']) & 1) {
+				$privacy_warning = true;
+			}
+
 			$recips = get_iconfig($item['parent'], 'activitypub', 'recips');
 
 			if(! in_array($observer['xchan_url'], $recips['to']))

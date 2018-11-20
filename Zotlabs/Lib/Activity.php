@@ -2056,16 +2056,8 @@ class Activity {
 		$allowed = false;
 
 		if ($is_child_node) {
-			$allowed = perm_is_allowed($channel['channel_id'],$observer_hash,'post_comments');
-			if (! $allowed) {
-				$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
-					dbesc($item['parent_mid']),
-					intval($channel['channel_id'])
-				);
-				if ($parent) {
-					$allowed = can_comment_on_post($observer_hash,$parent[0]);
-				}
-			}
+			// in ActivityPub, anybody can post comments
+			$allowed = true;
 		}
 		elseif (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') || ($is_sys_channel && $pubstream)) {
 			$allowed = true;
@@ -2125,6 +2117,10 @@ class Activity {
 		if(! (isset($act->data['inheritPrivacy']) && $act->data['inheritPrivacy'])) {				
 			if($item['item_private']) {
 				$item['item_restrict'] = 1;
+				if($is_child_node) {
+					$item['allow_cid'] = '<' . $channel['channel_hash'] . '>';
+					$item['allow_gid'] = $item['deny_cid'] = $item['deny_gid'] = '';
+				}
 				logger('restricted');
 			}				
 		}
