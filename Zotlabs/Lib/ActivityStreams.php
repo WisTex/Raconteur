@@ -309,6 +309,7 @@ class ActivityStreams {
 			if($r) {
 				$y = Activity::encode_person($r[0]);
 				$y['cached'] = true;
+				$y['updated'] = datetime_convert('UTC','UTC',$r[0]['hubloc_updated'],ATOM_TIME);
 				return $y;
 			}
 		}
