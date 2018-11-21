@@ -75,6 +75,13 @@ class Inbox extends Controller {
 		if(! $observer_hash)
 			return;
 
+		$m = parse_url($observer_hash);
+		if($m && $m['scheme'] && $m['host']) {
+			if(! check_siteallowed($m['scheme'] . '://' . $m['host'])) {
+				http_status_exit(404,'Permission denied');
+			}
+		}
+
 		if(is_array($AS->actor) && array_key_exists('id',$AS->actor)) {
 			Activity::actor_store($AS->actor['id'],$AS->actor);
 		}
@@ -86,6 +93,12 @@ class Inbox extends Controller {
 		if(is_array($AS->obj) && is_array($AS->obj['actor']) && array_key_exists('id',$AS->obj['actor']) && $AS->obj['actor']['id'] !== $AS->actor['id']) {
 			Activity::actor_store($AS->obj['actor']['id'],$AS->obj['actor']);
 		}
+
+		q("update hubloc set hubloc_connected = '%s' where hubloc_hash = '%s' and hubloc_network = 'activitypub'",
+			dbesc(datetime_convert()),
+			dbesc($observer_hash)
+		);
+
 
 		if($is_public) {
 

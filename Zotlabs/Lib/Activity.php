@@ -1392,6 +1392,10 @@ class Activity {
 					dbesc($url)
 				);
 			}
+			$r = q("update hubloc set hubloc_updated = '%s' where hubloc_hash = '%s'",
+				dbesc(datetime_convert()),
+				dbesc($url)
+			);
 		}
 
 		if(! $icon)

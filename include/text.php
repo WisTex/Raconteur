@@ -3510,5 +3510,6 @@ function serialise($x) {
 }
 
 function unserialise($x) {
-	return((substr($x,0,5) === 'json:') ? json_decode(substr($x,5),true) : $x);
+	$y = ((substr($x,0,5) === 'json:') ? json_decode(substr($x,5),true) : '');
+	return ((is_array($y)) ? $y : $x);
 }

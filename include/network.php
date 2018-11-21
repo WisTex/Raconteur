@@ -1711,7 +1711,7 @@ function check_siteallowed($url) {
 	$bl1 = get_config('system','whitelisted_sites');
 	if(is_array($bl1) && $bl1) {
 		foreach($bl1 as $bl) {
-			if($bl1 === '*')
+			if($bl === '*')
 				$retvalue = true;
 			if($bl && strpos($url,$bl) !== false)
 				return true;
@@ -1720,7 +1720,7 @@ function check_siteallowed($url) {
 	$bl1 = get_config('system','blacklisted_sites');
 	if(is_array($bl1) && $bl1) {
 		foreach($bl1 as $bl) {
-			if($bl1 === '*')
+			if($bl === '*')
 				$retvalue = false;
 			if($bl && strpos($url,$bl) !== false) {
 				return false;
@@ -1756,7 +1756,7 @@ function check_channelallowed($hash) {
 	$bl1 = get_config('system','whitelisted_channels');
 	if(is_array($bl1) && $bl1) {
 		foreach($bl1 as $bl) {
-			if($bl1 === '*')
+			if($bl === '*')
 				$retvalue = true;
 			if($bl && strpos($hash,$bl) !== false)
 				return true;
@@ -1765,7 +1765,7 @@ function check_channelallowed($hash) {
 	$bl1 = get_config('system','blacklisted_channels');
 	if(is_array($bl1) && $bl1) {
 		foreach($bl1 as $bl) {
-			if($bl1 === '*')
+			if($bl === '*')
 				$retvalue = false;
 			if($bl && strpos($hash,$bl) !== false) {
 				return false;
