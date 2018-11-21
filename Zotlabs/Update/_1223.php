@@ -6,13 +6,14 @@ class _1223 {
 	
 	function run() {
 		foreach( [ 'abconfig','config','pconfig','xconfig','iconfig' ] as $tbl) {
-			$r = q("select id, v from %s where v like 'a:%' ",
-				dbesc($tbl)
+			$r = q("select id, v from %s where v like '%s' ",
+				dbesc($tbl),
+				dbesc('a:%')
 			);
 			if($r) {
 				foreach($r as $rv) {
 					$s = unserialize($rv['v']);
-					if(is_array($s))
+					if($s && is_array($s))
 						$s = serialise($s);
 					else
 						$s = $rv['v'];
