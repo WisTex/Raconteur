@@ -43,7 +43,7 @@ class IConfig {
 			dbesc($key)
 		);
 		if($r) {
-			$r[0]['v'] = ((preg_match('|^a:[0-9]+:{.*}$|s',$r[0]['v'])) ? unserialize($r[0]['v']) : $r[0]['v']);
+			$r[0]['v'] = unserialise($r[0]['v']);
 			if($is_item)
 				$item['iconfig'][] = $r[0];
 			return $r[0]['v'];
@@ -71,7 +71,7 @@ class IConfig {
 
 	static public function Set(&$item, $family, $key, $value, $sharing = false) {
 
-		$dbvalue = ((is_array($value))  ? serialize($value) : $value);
+		$dbvalue = ((is_array($value))  ? serialise($value) : $value);
 		$dbvalue = ((is_bool($dbvalue)) ? intval($dbvalue)  : $dbvalue);
 
 		$is_item = false;

@@ -48,7 +48,7 @@ class Config {
 	 */
 	static public function Set($family, $key, $value) {
 		// manage array value
-		$dbvalue = ((is_array($value))  ? serialize($value) : $value);
+		$dbvalue = ((is_array($value))  ? serialise($value) : $value);
 		$dbvalue = ((is_bool($dbvalue)) ? intval($dbvalue)  : $dbvalue);
 
 		if(self::Get($family, $key) === false || (! self::get_from_storage($family, $key))) {
@@ -104,10 +104,7 @@ class Config {
 			if(! array_key_exists($key, \App::$config[$family])) {
 				return $default;
 			}
-			return ((! is_array(\App::$config[$family][$key])) && (preg_match('|^a:[0-9]+:{.*}$|s', \App::$config[$family][$key]))
-				? unserialize(\App::$config[$family][$key])
-				: \App::$config[$family][$key]
-			);
+			return unserialise(\App::$config[$family][$key]);
 		}
 
 		return $default;

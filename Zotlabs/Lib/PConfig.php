@@ -91,10 +91,7 @@ class PConfig {
 		if((! array_key_exists($family, \App::$config[$uid])) || (! array_key_exists($key, \App::$config[$uid][$family])))
 			return $default;
 
-		return ((! is_array(\App::$config[$uid][$family][$key])) && (preg_match('|^a:[0-9]+:{.*}$|s', \App::$config[$uid][$family][$key]))
-			? unserialize(\App::$config[$uid][$family][$key])
-			: \App::$config[$uid][$family][$key]
-		);
+		return unserialise(\App::$config[$uid][$family][$key]);
 	}
 
 	/**
@@ -127,7 +124,7 @@ class PConfig {
 		}
 
 		// manage array value
-		$dbvalue = ((is_array($value))  ? serialize($value) : $value);
+		$dbvalue = ((is_array($value))  ? serialise($value) : $value);
 		$dbvalue = ((is_bool($dbvalue)) ? intval($dbvalue)  : $dbvalue);
 
 		if(self::Get($uid, $family, $key) === false) {

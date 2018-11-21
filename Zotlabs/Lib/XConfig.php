@@ -88,10 +88,7 @@ class XConfig {
 		if((! array_key_exists($family, \App::$config[$xchan])) || (! array_key_exists($key, \App::$config[$xchan][$family])))
 			return $default;
 
-		return ((! is_array(\App::$config[$xchan][$family][$key])) && (preg_match('|^a:[0-9]+:{.*}$|s', \App::$config[$xchan][$family][$key]))
-			? unserialize(\App::$config[$xchan][$family][$key])
-			: \App::$config[$xchan][$family][$key]
-		);
+		return unserialise(\App::$config[$xchan][$family][$key]);
 	}
 
 	/**
@@ -113,7 +110,7 @@ class XConfig {
 	static public function Set($xchan, $family, $key, $value) {
 
 		// manage array value
-		$dbvalue = ((is_array($value))  ? serialize($value) : $value);
+		$dbvalue = ((is_array($value))  ? serialise($value) : $value);
 		$dbvalue = ((is_bool($dbvalue)) ? intval($dbvalue)  : $dbvalue);
 
 		if(self::Get($xchan, $family, $key) === false) {

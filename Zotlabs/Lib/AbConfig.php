@@ -24,7 +24,7 @@ class AbConfig {
 			dbesc($key)		
 		);
 		if($r) {
-			return ((preg_match('|^a:[0-9]+:{.*}$|s', $r[0]['v'])) ? unserialize($r[0]['v']) : $r[0]['v']);
+			return unserialise($r[0]['v']);
 		}
 		return $default;
 	}
@@ -32,7 +32,7 @@ class AbConfig {
 
 	static public function Set($chan,$xhash,$family,$key,$value) {
 
-		$dbvalue = ((is_array($value))  ? serialize($value) : $value);
+		$dbvalue = ((is_array($value))  ? serialise($value) : $value);
 		$dbvalue = ((is_bool($dbvalue)) ? intval($dbvalue)  : $dbvalue);
 
 		if(self::Get($chan,$xhash,$family,$key) === false) {
