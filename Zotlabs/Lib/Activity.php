@@ -2116,7 +2116,7 @@ class Activity {
 
 		if(! (isset($act->data['inheritPrivacy']) && $act->data['inheritPrivacy'])) {				
 			if($item['item_private']) {
-				$item['item_restrict'] = 1;
+				$item['item_restrict'] = $item['item_restrict'] & 1;
 				if($is_child_node) {
 					$item['allow_cid'] = '<' . $channel['channel_hash'] . '>';
 					$item['allow_gid'] = $item['deny_cid'] = $item['deny_gid'] = '';

@@ -54,10 +54,8 @@ class ThreadItem {
 				// this is a quick hack to hide ActivityPub DMs that we should not be allowed to see
 				// but may have been forwarded as part of a conversation
 
-				if(intval($item['item_private']) && intval($item['item_restrict']) && $item['mid'] !== $item['parent_mid']) {
+				if(intval($item['item_private']) && (intval($item['item_restrict']) & 1 ) && $item['mid'] !== $item['parent_mid']) {
 					if(! $observer)
-						continue;
-					if($item['allow_cid'] !== '<' . $observer['xchan_hash'] . '>')
 						continue;
 				}
 
@@ -115,10 +113,12 @@ class ThreadItem {
 			$shareable = true;
 
 		$privacy_warning = false;
+
+		if(intval($item['item_restrict']) & 1) {
+			$privacy_warning = true;
+		}
+
 		if(($item['item_private'] == 1) && ($item['owner']['xchan_network'] === 'activitypub')) {
-			if(intval($item['item_restrict']) & 1) {
-				$privacy_warning = true;
-			}
 
 			$recips = get_iconfig($item['parent'], 'activitypub', 'recips');
 

@@ -3503,3 +3503,12 @@ function get_forum_channels($uid) {
 	return $r;
 
 }
+
+
+function serialise($x) {
+	return ((is_array($x)) ? 'json:' . json_encode($x) : $x);
+}
+
+function unserialise($x) {
+	return((substr($x,0,5) === 'json:') ? json_decode(substr($x,5),true) : $x);
+}

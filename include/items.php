@@ -773,55 +773,9 @@ function get_item_elements($x,$allow_code = false) {
 		$arr['item_delayed'] = $x['item_delayed'];
 		$arr['item_pending_remove'] = $x['item_pending_remove'];
 		$arr['item_blocked'] = $x['item_blocked'];
-		if(array_key_exists('item_flags',$x)) {
-			if($x['item_flags'] & 0x0004)
-				$arr['item_starred'] = 1;
-			if($x['item_flags'] & 0x0008)
-				$arr['item_uplink'] = 1;
-			if($x['item_flags'] & 0x0010)
-				$arr['item_consensus'] = 1;
-			if($x['item_flags'] & 0x0020)
-				$arr['item_wall'] = 1;
-			if($x['item_flags'] & 0x0040)
-				$arr['item_thread_top'] = 1;
-			if($x['item_flags'] & 0x0080)
-				$arr['item_notshown'] = 1;
-			if($x['item_flags'] & 0x0100)
-				$arr['item_nsfw'] = 1;
-			if($x['item_flags'] & 0x0400)
-				$arr['item_mentionsme'] = 1;
-			if($x['item_flags'] & 0x0800)
-				$arr['item_nocomment'] = 1;
-			if($x['item_flags'] & 0x4000)
-				$arr['item_retained'] = 1;
-			if($x['item_flags'] & 0x8000)
-				$arr['item_rss'] = 1;
+		$arr['item_restrict'] = $x['item_restrict'];
+		$arr['item_flags'] = $x['item_flags'];
 
-		}
-		if(array_key_exists('item_restrict',$x)) {
-			if($x['item_restrict'] & 0x0001)
-				$arr['item_hidden'] = 1;
-			if($x['item_restrict'] & 0x0002)
-				$arr['item_blocked'] = 1;
-			if($x['item_restrict'] & 0x0010)
-				$arr['item_deleted'] = 1;
-			if($x['item_restrict'] & 0x0020)
-				$arr['item_unpublished'] = 1;
-			if($x['item_restrict'] & 0x0040)
-				$arr['item_type'] = ITEM_TYPE_WEBPAGE;
-			if($x['item_restrict'] & 0x0080)
-				$arr['item_delayed'] = 1;
-			if($x['item_restrict'] & 0x0100)
-				$arr['item_type'] = ITEM_TYPE_BLOCK;
-			if($x['item_restrict'] & 0x0200)
-				$arr['item_type'] = ITEM_TYPE_PDL;
-			if($x['item_restrict'] & 0x0400)
-				$arr['item_type'] = ITEM_TYPE_BUG;
-			if($x['item_restrict'] & 0x0800)
-				$arr['item_pending_remove'] = 1;
-			if($x['item_restrict'] & 0x1000)
-				$arr['item_type'] = ITEM_TYPE_DOC;
-		}
 	}
 
 	return $arr;
@@ -1853,10 +1807,17 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 
 			$parent_id       = $r[0]['id'];
 			$parent_deleted  = $r[0]['item_deleted'];
-			$allow_cid       = $r[0]['allow_cid'];
-			$allow_gid       = $r[0]['allow_gid'];
-			$deny_cid        = $r[0]['deny_cid'];
-			$deny_gid        = $r[0]['deny_gid'];
+
+			// item_restrict indicates an activitypub reply with a different 
+			// delivery algorithm than the "parent-relay" or inherited privacy mode
+
+			if(! (intval($arr['item_restrict']) & 1)) {
+				$allow_cid       = $r[0]['allow_cid'];
+				$allow_gid       = $r[0]['allow_gid'];
+				$deny_cid        = $r[0]['deny_cid'];
+				$deny_gid        = $r[0]['deny_gid'];
+			}
+
 			$comments_closed = $r[0]['comments_closed'];
 
 			if(intval($r[0]['item_wall']))

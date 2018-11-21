@@ -2,19 +2,18 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Web\Controller;
 
 
 
-
-class Pconfig extends \Zotlabs\Web\Controller {
+class Pconfig extends Controller {
 
 	function post() {
 	
 		if(! local_channel())
 			return;
 	
-	
-	   if($_SESSION['delegate'])
+		if($_SESSION['delegate'])
 	        return;
 	
 		check_form_security_token_redirectOnErr('/pconfig', 'pconfig');
@@ -22,7 +21,14 @@ class Pconfig extends \Zotlabs\Web\Controller {
 		$cat = trim(escape_tags($_POST['cat']));
 		$k = trim(escape_tags($_POST['k']));
 		$v = trim($_POST['v']);
+		$aj = intval($_POST['aj']);	
+
+		// Do not store "serialized" data received in the $_POST
 	
+		if (preg_match('|^a:[0-9]+:{.*}$|s',$v)) {
+			return;
+		}
+			
 		if(in_array(argv(2),$this->disallowed_pconfig())) {
 			notice( t('This setting requires special processing and editing has been blocked.') . EOL);
 			return;
@@ -35,12 +41,16 @@ class Pconfig extends \Zotlabs\Web\Controller {
 		set_pconfig(local_channel(),$cat,$k,$v);
 		Libsync::build_sync_packet();
 	
+		if($aj) {
+			killme();
+		}
+
 		goaway(z_root() . '/pconfig/' . $cat . '/' .  $k);
 	
 	}
 	
 	
-		function get() {
+	function get() {
 	
 		if(! local_channel()) {
 			return login();
