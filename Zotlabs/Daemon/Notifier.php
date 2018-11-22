@@ -345,7 +345,7 @@ class Notifier {
 					]], Activity::encode_activity($target_item)
 				);
 				if(! defined('NOMADIC')) {
-					self::$encoded_item['signature'] = LDSignatures::sign($self::$encoded_item,self::$channel);
+					self::$encoded_item['signature'] = LDSignatures::sign(self::$encoded_item,self::$channel);
 				}
 			}
 
