@@ -1208,6 +1208,9 @@ class Libzot {
 					IConfig::Set($arr,'activitystreams','signed_data',$AS->data['signed_data'],false);
 				}
 
+				// set this regardless. We will unset it later if we don't need it.
+				$d = ((isset($AS->data['signed_data'])) ? $AS->data['signed_data'] : $AS->data);
+				IConfig::Set($arr,'activitystreams','rawmsg',$d,true);
 
 				logger('Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 				logger('Activity recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
@@ -1455,6 +1458,12 @@ class Libzot {
 			}
 
 			$tag_delivery = tgroup_check($channel['channel_id'],$arr);
+
+			// only keep the signed message if there's a chance we require it.
+
+			if(! (($arr['mid'] === $arr['parent_mid']) && ($tag_delivery))) {
+				IConfig::Delete($arr,'activitypub','rawmsg');
+			}
 
 			$perm = 'send_stream';
 			if(($arr['mid'] !== $arr['parent_mid']) && ($relay))

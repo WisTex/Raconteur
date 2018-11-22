@@ -144,6 +144,8 @@ class IConfig {
 						unset($item['iconfig'][$x]);
 					}
 				}
+				// re-order the array index
+				$item['iconfig'] = array_values($item['iconfig']);
 			}
 			return true;
 		}

@@ -338,7 +338,7 @@ class Notifier {
 			if($m)
 				self::$encoded_item = json_decode($m,true);
 			else
-				self::$encoded_item = \Zotlabs\Lib\Activity::encode_activity($target_item);
+				self::$encoded_item = \Zotlabs\Lib\Activity::encode_activity($target_item, ((defined('NOMADIC')) ? false : true));
  
 			logger('target_item: ' . print_r($target_item,true));
 

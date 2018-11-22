@@ -2067,6 +2067,13 @@ class Activity {
 			$allowed = true;
 		}
 
+		if (tgroup_check($channel['channel_id'],$item) && (! $is_child_node)) {
+			// for forum deliveries, make sure we keep a copy of the signed original
+			set_iconfig($item,'activitypub','rawmsg',$act->raw,1);
+			$allowed = true;
+		}
+
+
 		if(! $allowed) {
 			logger('no permission');
 			return;

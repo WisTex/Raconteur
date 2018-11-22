@@ -43,6 +43,7 @@ class ActivityPub {
 			// inconclusive and the behaviour varied. 
 
 			if(($arr['channel']['channel_hash'] != $arr['target_item']['author_xchan']) && (! $signed_msg)) {
+				logger('relayed post with no signed message');
 				return;
 			}
 		
