@@ -2630,6 +2630,12 @@ function tag_deliver($uid, $item_id) {
 			if(preg_match($pattern,$body,$matches))
 				$tagged = true;
 
+			$pattern = '/\[[uz]rl\=' . preg_quote($term['url'],'/') . '\][\!@](.*?)\[\/[uz]rl\]/';
+			if(preg_match($pattern,$body,$matches))
+				$tagged = true;
+
+
+
 			// standard forum tagging sequence !forumname
 
 			$forumpattern = '/\!\!?\[[uz]rl\=([^\]]*?)\]((?:.(?!\[[uz]rl\=))*?)\[\/[uz]rl\]/';
@@ -2672,7 +2678,7 @@ function tag_deliver($uid, $item_id) {
 
 				// allow @mentions for forums
 
-				$forumpattern = '/\@\!?\[[uz]rl\=([^\]]*?)\]((?:.(?!\[[uz]rl\=))*?)\[\/[uz]rl\]/';
+				$forumpattern = '/@\!?\[[uz]rl\=([^\]]*?)\]((?:.(?!\[[uz]rl\=))*?)\[\/[uz]rl\]/';
 	
 				$matches = array();
 
@@ -2689,7 +2695,7 @@ function tag_deliver($uid, $item_id) {
 					}
 				}
 
-				$forumpattern = '/\[[uz]rl\=([^\]]*?)\]\@((?:.(?!\[[uz]rl\=))*?)\[\/[uz]rl\]/';
+				$forumpattern = '/\[[uz]rl\=([^\]]*?)\]@((?:.(?!\[[uz]rl\=))*?)\[\/[uz]rl\]/';
 	
 				$matches = array();
 

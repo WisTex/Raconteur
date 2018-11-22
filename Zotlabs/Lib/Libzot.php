@@ -1208,7 +1208,7 @@ class Libzot {
 					IConfig::Set($arr,'activitypub','signed_data',$AS->data['signed_data'],false);
 					$j = json_decode($AS->data['signed_data'],true);
 					if($j) {
-						IConfig::Set($arr,'activitypub','rawmsg',JSalmon::unpack($j['data']),true);
+						IConfig::Set($arr,'activitypub','rawmsg',json_encode(JSalmon::unpack($j['data'])),true);
 					}
 				}
 
@@ -1461,12 +1461,6 @@ class Libzot {
 			}
 
 			$tag_delivery = tgroup_check($channel['channel_id'],$arr);
-
-			// only keep the signed message if there's a chance we require it.
-
-			if(! (($arr['mid'] === $arr['parent_mid']) && ($tag_delivery))) {
-				IConfig::Delete($arr,'activitypub','rawmsg');
-			}
 
 			$perm = 'send_stream';
 			if(($arr['mid'] !== $arr['parent_mid']) && ($relay))
