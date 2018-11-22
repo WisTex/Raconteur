@@ -337,8 +337,18 @@ class Notifier {
 			$m = get_iconfig($target_item,'activitystreams','signed_data');
 			if($m)
 				self::$encoded_item = json_decode($m,true);
-			else
-				self::$encoded_item = \Zotlabs\Lib\Activity::encode_activity($target_item, ((defined('NOMADIC')) ? false : true));
+			else {
+				self::$encoded_item = array_merge(['@context' => [
+					ACTIVITYSTREAMS_JSONLD_REV,
+					'https://w3id.org/security/v1',
+					z_root() . ZOT_APSCHEMA_REV
+					]], Activity::encode_activity($target_item)
+				);
+				if(! defined('NOMADIC')) {
+					self::$encoded_item['signature'] = LDSignatures::sign($self::$encoded_item,self::$channel);
+				}
+			}
+
  
 			logger('target_item: ' . print_r($target_item,true));
 
