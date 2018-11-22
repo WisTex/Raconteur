@@ -334,7 +334,7 @@ class Notifier {
 				return;
 
 
-			$m = get_iconfig($target_item,'activitystreams','signed_data');
+			$m = get_iconfig($target_item,'activitypub','signed_data');
 			if($m)
 				self::$encoded_item = json_decode($m,true);
 			else {

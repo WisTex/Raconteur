@@ -42,7 +42,7 @@ class ActivityPub {
 			// It is unclear if Mastodon supports the federation delivery model. Initial tests were
 			// inconclusive and the behaviour varied. 
 
-			if(($arr['channel']['channel_hash'] != $arr['target_item']['author_xchan']) && (! $signed_msg)) {
+			if(($arr['channel']['channel_hash'] !== $arr['target_item']['author_xchan']) && (! $signed_msg)) {
 				logger('relayed post with no signed message');
 				return;
 			}

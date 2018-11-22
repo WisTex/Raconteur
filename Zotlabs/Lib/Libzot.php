@@ -1205,12 +1205,15 @@ class Libzot {
 					$arr['item_verified'] = true;
 				}
 				if($AS->data['signed_data']) {
-					IConfig::Set($arr,'activitystreams','signed_data',$AS->data['signed_data'],false);
+					IConfig::Set($arr,'activitypub','signed_data',$AS->data['signed_data'],false);
+					$j = json_decode($AS->data['signed_data'],true);
+					if($j) {
+						IConfig::Set($arr,'activitypub','rawmsg',JSalmon::unpack($j['data']),true);
+					}
 				}
 
 				// set this regardless. We will unset it later if we don't need it.
 				$d = ((isset($AS->data['signed_data'])) ? $AS->data['signed_data'] : $AS->data);
-				IConfig::Set($arr,'activitystreams','rawmsg',$d,true);
 
 				logger('Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 				logger('Activity recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);

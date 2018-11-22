@@ -839,7 +839,7 @@ class Activity {
 				];
 			}
 			else {
-				$collections = get_xconfig($p['xchan_hash'],'activitystreams','collections',[]);
+				$collections = get_xconfig($p['xchan_hash'],'activitypub','collections',[]);
 				if($collections) {
 					$ret = array_merge($ret,$collections);
 				}
