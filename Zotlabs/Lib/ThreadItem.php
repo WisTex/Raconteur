@@ -122,7 +122,7 @@ class ThreadItem {
 
 			$recips = get_iconfig($item['parent'], 'activitypub', 'recips');
 
-			if(! in_array($observer['xchan_url'], $recips['to']))
+			if(is_array($recips) && array_key_exists('to',$recips) && (! in_array($observer['xchan_url'], $recips['to'])))
 				$privacy_warning = true;
 		}
 

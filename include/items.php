@@ -2503,6 +2503,7 @@ function tag_deliver($uid, $item_id) {
 	if(! $i)
 		return;
 
+	xchan_query($i,true);
 	$i = fetch_post_tags($i);
 
 	$item = $i[0];
@@ -3076,6 +3077,58 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 			);
 		}
 	}
+
+/*******
+
+	// @todo handle edit and parent correctly
+
+	if((! $parent) && (! defined('NOMADIC'))) {
+
+		$arr = [];
+
+		$arr['aid'] = $channel['channel_account_id'];
+		$arr['uid'] = $channel['channel_id'];
+
+		$arr['item_uplink'] = 1;
+		$arr['source_xchan'] = $item['owner_xchan'];
+
+		$arr['item_private'] = (($channel['channel_allow_cid'] || $channel['channel_allow_gid']
+		|| $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
+
+
+		$arr['item_origin'] = 1;
+		$arr['item_wall'] = 1;
+		$arr['mid'] = item_message_id();
+		$arr['mid'] = str_replace('/item/','/activity/',$arr['mid']);
+		$arr['parent_mid'] = $item['mid'];
+
+		$mention = '@[zrl=' . $item['author']['xchan_url'] . ']' . $item['author']['xchan_name'] . '[/zrl]';
+		$arr['body'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $item['obj_type']);
+
+		$arr['author_xchan'] = $channel['channel_hash'];
+		$arr['owner_xchan']  = $item['author_xchan'];
+		$arr['obj'] = $item['obj'];
+		$arr['obj_type'] = $item['obj_type'];
+		$arr['verb'] = 'Announce';
+		$arr['item_restrict'] = 1;
+
+		$arr['allow_cid'] = $channel['channel_allow_cid'];
+		$arr['allow_gid'] = $channel['channel_allow_gid'];
+		$arr['deny_cid']  = $channel['channel_deny_cid'];
+		$arr['deny_gid']  = $channel['channel_deny_gid'];
+		$arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
+
+		$post = item_store($arr);	
+
+		$post_id = $post['item_id'];
+
+		if($post_id) {
+			Master::Summon([ 'Notifier','tgroup',$post_id ]);
+			return;
+		}
+	}
+
+*******/
 
 	// Change this copy of the post to a forum head message and deliver to all the tgroup members
 	// also reset all the privacy bits to the forum default permissions
