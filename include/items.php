@@ -3078,11 +3078,13 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 		}
 	}
 
-/*******
-
 	// @todo handle edit and parent correctly
 
 	if((! $parent) && (! defined('NOMADIC'))) {
+
+		if($edit) {
+			return;
+		}
 
 		$arr = [];
 
@@ -3128,7 +3130,6 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 		}
 	}
 
-*******/
 
 	// Change this copy of the post to a forum head message and deliver to all the tgroup members
 	// also reset all the privacy bits to the forum default permissions
