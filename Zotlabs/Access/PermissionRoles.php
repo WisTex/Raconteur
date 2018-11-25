@@ -105,7 +105,7 @@ class PermissionRoles {
 					$ret['default_collection'] = false;
 					$ret['directory_publish'] = true;
 					$ret['online'] = true;
-					$ret['perms_connect'] = [ 'view_stream', 'view_profile', 'view_contacts', 'view_storage', 'send_stream', 'post_wall', 'post_comments' ];
+					$ret['perms_connect'] = [ 'view_stream', 'view_profile', 'view_contacts', 'view_storage', 'send_stream', 'post_comments' ];
 					$ret['limits'] = PermissionLimits::Std_Limits();
 					$ret['limits']['post_comments'] = PERMS_AUTHED;
 					$ret['limits']['post_mail'] = PERMS_AUTHED;
@@ -120,7 +120,7 @@ class PermissionRoles {
 					$ret['online'] = false;
 					$ret['perms_connect'] = [
 						'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-						'view_pages', 'post_wall', 'post_comments', 'tag_deliver'
+						'view_pages', 'post_comments', 'tag_deliver'
 					];
 					$ret['limits'] = PermissionLimits::Std_Limits();
 					$ret['limits']['post_comments'] = PERMS_AUTHED;
