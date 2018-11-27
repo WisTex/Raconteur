@@ -1,11 +1,13 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
+use App;
 
-class Webfinger extends \Zotlabs\Web\Controller {
+class Webfinger extends Controller {
 
 	function init() {
-	
+
 		// This is a public resource with relaxed CORS policy. Close the current login session.
 		session_write_close();
 
@@ -75,7 +77,7 @@ class Webfinger extends \Zotlabs\Web\Controller {
 
 					// If the webfinger address points off site, redirect to the correct site
 
-					if(strcasecmp($host,\App::get_hostname())) {
+					if(strcasecmp($host,App::get_hostname())) {
 						goaway('https://' . $host . '/.well-known/webfinger?f=&resource=' . $resource);
 					}
 					$channel_nickname = substr($channel_nickname,0,strpos($channel_nickname,'@'));
@@ -123,7 +125,7 @@ class Webfinger extends \Zotlabs\Web\Controller {
 					'http://webfinger.net/ns/name'   => $channel_target['channel_name'],
 					'http://xmlns.com/foaf/0.1/name' => $channel_target['channel_name'],
 					'https://w3id.org/security/v1#publicKeyPem' => $channel_target['xchan_pubkey'],
-					'http://purl.org/zot/federation' => 'zot6,activitypub'
+					'http://purl.org/zot/federation' => ((defined('NOMADIC')) ? 'zot6' : 'zot6,activitypub')
 			];
 	
 			foreach($aliases as $alias) { 

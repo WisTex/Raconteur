@@ -2136,6 +2136,10 @@ class Activity {
 			}				
 		}
 
+		if(intval($act->sigok)) {
+			$item['item_verified'] = 1;
+		}
+
 		if($is_child_node) {
 
 			$p = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
