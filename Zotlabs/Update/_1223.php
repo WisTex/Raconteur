@@ -6,11 +6,14 @@ class _1223 {
 	
 	function run() {
 		foreach( [ 'abconfig','config','pconfig','xconfig','iconfig' ] as $tbl) {
-			$r = q("select id, v from %s where v like '%s' ",
-				dbesc($tbl),
-				dbesc('a:%')
-			);
-			if($r) {
+			while(1) {
+				$r = q("select id, v from %s where v like '%s' limit 100 ",
+					dbesc($tbl),
+					dbesc('a:%')
+				);
+				if(! $r) {
+					break;
+				}
 				foreach($r as $rv) {
 					$s = unserialize($rv['v']);
 					if($s && is_array($s))
