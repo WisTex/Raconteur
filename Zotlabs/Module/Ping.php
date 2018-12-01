@@ -328,6 +328,7 @@ class Ping extends \Zotlabs\Web\Controller {
 					$notifs[] = array(
 						'notify_link' => z_root() . '/mail/' . $zz['id'],
 						'name' => $zz['xchan_name'],
+						'addr' => $zz['xchan_addr'],
 						'url' => $zz['xchan_url'],
 						'photo' => $zz['xchan_photo_s'],
 						'when' => relative_date($zz['created']),
@@ -384,6 +385,7 @@ class Ping extends \Zotlabs\Web\Controller {
 					$result[] = array(
 						'notify_link' => z_root() . '/connections/ifpending',
 						'name' => $rr['xchan_name'],
+						'addr' => $rr['xchan_addr'],
 						'url' => $rr['xchan_url'],
 						'photo' => $rr['xchan_photo_s'],
 						'when' => relative_date($rr['abook_created']),
@@ -408,6 +410,7 @@ class Ping extends \Zotlabs\Web\Controller {
 					$result[] = array(
 						'notify_link' => z_root() . '/admin/accounts',
 						'name' => $rr['account_email'],
+						'addr' => $rr['account_email'],
 						'url' => '',
 						'photo' => z_root() . '/' . get_default_profile_photo(48),
 						'when' => relative_date($rr['account_created']),
@@ -445,6 +448,7 @@ class Ping extends \Zotlabs\Web\Controller {
 					$result[] = array(
 						'notify_link' => z_root() . '/events', /// @FIXME this takes you to an edit page and it may not be yours, we really want to just view the single event  --> '/events/event/' . $rr['event_hash'],
 						'name'        => $rr['xchan_name'],
+						'addr'        => $rr['xchan_addr'],
 						'url'         => $rr['xchan_url'],
 						'photo'       => $rr['xchan_photo_s'],
 						'when'        => $when,
@@ -461,7 +465,7 @@ class Ping extends \Zotlabs\Web\Controller {
 		if(argc() > 1 && (argv(1) === 'files')) {
 			$result = array();
 
-			$r = q("SELECT item.created, xchan.xchan_name, xchan.xchan_url, xchan.xchan_photo_s FROM item 
+			$r = q("SELECT item.created, xchan.xchan_name, xchan.xchan_addr, xchan.xchan_url, xchan.xchan_photo_s FROM item 
 				LEFT JOIN xchan on author_xchan = xchan_hash
 				WHERE item.verb = '%s'
 				AND item.obj_type = '%s'
@@ -478,6 +482,7 @@ class Ping extends \Zotlabs\Web\Controller {
 					$result[] = array(
 						'notify_link' => z_root() . '/sharedwithme',
 						'name' => $rr['xchan_name'],
+						'addr' => $rr['xchan_addr'],
 						'url' => $rr['xchan_url'],
 						'photo' => $rr['xchan_photo_s'],
 						'when' => relative_date($rr['created']),
@@ -656,6 +661,7 @@ class Ping extends \Zotlabs\Web\Controller {
 					if($r[0]['unseen']) {
 						$forums[$x]['notify_link'] = (($forums[$x]['private_forum']) ? $forums[$x]['xchan_url'] : z_root() . '/network/?f=&pf=1&cid=' . $forums[$x]['abook_id']);
 						$forums[$x]['name'] = $forums[$x]['xchan_name'];
+						$forums[$x]['addr'] = $forums[$x]['xchan_addr'];
 						$forums[$x]['url'] = $forums[$x]['xchan_url'];
 						$forums[$x]['photo'] = $forums[$x]['xchan_photo_s'];
 						$forums[$x]['unseen'] = $r[0]['unseen'];

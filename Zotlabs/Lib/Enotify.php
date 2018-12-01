@@ -832,6 +832,7 @@ class Enotify {
 		$x = array(
 			'notify_link' => $item['llink'],
 			'name' => $item['author']['xchan_name'],
+			'addr' => $item['author']['xchan_addr'],
 			'url' => $item['author']['xchan_url'],
 			'photo' => $item['author']['xchan_photo_s'],
 			'when' => relative_date(($edit)? $item['edited'] : $item['created']), 

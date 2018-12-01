@@ -32,7 +32,7 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 		}
 	}
 
-	$url = rtrim($url,'/');
+//	$url = rtrim($url,'/');
 
 	if(! allowed_url($url)) {
 		$result['message'] = t('Channel is blocked on this site.');

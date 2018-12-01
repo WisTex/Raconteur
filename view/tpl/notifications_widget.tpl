@@ -105,8 +105,9 @@
 
 		$("#nav-{{$notification.type}}-menu .notification").each(function(i, el){
 			var cn = $(el).data('contact_name').toString().toLowerCase();
+			var ca = $(el).data('contact_addr').toString().toLowerCase();
 
-			if(cn.indexOf(val) === -1)
+			if(cn.indexOf(val) === -1 && ca.indexOf(val) === -1)
 				$(this).addClass('d-none');
 			else
 				$(this).removeClass('d-none');
@@ -134,18 +135,18 @@
 		{{$no_notifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 	</div>
 	<div id="nav-notifications-template" rel="template">
-		<a class="list-group-item clearfix notification {5}" href="{0}" title="{2}" data-b64mid="{6}" data-notify_id="{7}" data-thread_top="{8}" data-contact_name="{2}">
+		<a class="list-group-item clearfix notification {6}" href="{0}" title="{2}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}">
 			<img class="menu-img-3" data-src="{1}">
 			<span class="contactname">{2}</span>
-			<span class="dropdown-sub-text">{3}<br>{4}</span>
+			<span class="dropdown-sub-text">{4}<br>{5}</span>
 		</a>
 	</div>
 	<div id="nav-notifications-forums-template" rel="template">
-		<a class="list-group-item clearfix notification notification-forum" href="{0}" title="{3}" data-b64mid="{6}" data-notify_id="{7}" data-thread_top="{8}" data-contact_name="{2}">
-			<span class="float-right badge badge-{{$notification.severity}}">{9}</span>
+		<a class="list-group-item clearfix notification notification-forum" href="{0}" title="{4}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}">
+			<span class="float-right badge badge-{{$notification.severity}}">{10}</span>
 			<img class="menu-img-1" src="{1}">
 			<span class="">{2}</span>
-			<i class="fa fa-{10} text-muted"></i> 
+			<i class="fa fa-{11} text-muted"></i> 
 		</a>
 	</div>
 	<div id="notifications" class="navbar-nav">
