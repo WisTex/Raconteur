@@ -36,6 +36,7 @@ class ThreadItem {
 				
 		$this->data = $data;
 		$this->toplevel = ($this->get_id() == $this->get_data_value('parent'));
+		$this->threaded = get_config('system','thread_allow',((defined('NOMADIC')) ? false : true));
 
 		$observer = \App::get_observer();
 
@@ -409,6 +410,7 @@ class ThreadItem {
 			'attend_title' => t('Attendance Options'),
 			'vote_label' => t('Vote'),
 			'vote_title' => t('Voting Options'),
+			'comment_lbl' => (($this->is_commentable() && $observer) ? t('Comment') : ''),
 			'is_comment' => $is_comment,
 			'is_new' => $is_new,
 			'owner_url' => $this->get_owner_url(),
@@ -798,7 +800,7 @@ class ThreadItem {
 	 */
 	private function get_comment_box($indent) {
 
-		if(!$this->is_toplevel() && !get_config('system','thread_allow')) {
+		if(!$this->is_toplevel() && !get_config('system','thread_allow',((defined('NOMADIC')) ? false : true))) {
 			return '';
 		}
 		

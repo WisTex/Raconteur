@@ -120,9 +120,9 @@ function toggleAside() {
 		$('main').addClass('region_1-on')
 		$('<div id="overlay"></div>').appendTo('section');
 		$('#left_aside_wrapper').stick_in_parent({
-			offset_top: $('nav').outerHeight(true) + 10,
-			parent: '#region_1',
-			spacer: '#left_aside_spacer'
+			offset_top: parseInt($('aside').css('padding-top')),
+			parent: 'main',
+			spacer: '.aside_spacer'
 		});
 	}
 }

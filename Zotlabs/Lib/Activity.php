@@ -235,8 +235,12 @@ class Activity {
 
 
 		if($i['mid'] !== $i['parent_mid']) {
-			$ret['inReplyTo'] = $i['parent_mid'];
+			$ret['inReplyTo'] = $i['thr_parent'];
 			$cnv = get_iconfig($i['parent'],'ostatus','conversation');
+			if(! $cnv) {
+				$cnv = $ret['parent_mid'];
+			}
+
 			$reply = true;
 
 			if($i['item_private']) {
@@ -608,8 +612,13 @@ class Activity {
 			}
 		}
 
-		if($i['id'] != $i['parent']) {
-			$ret['inReplyTo'] = $i['parent_mid'];
+		if($i['mid'] != $i['parent_mid']) {
+			$ret['inReplyTo'] = $i['thr_parent'];
+			$cnv = get_iconfig($i['parent'],'ostatus','conversation');
+			if(! $cnv) {
+				$cnv = $ret['parent_mid'];
+			}
+
 			$reply = true;
 
 			if($i['item_private']) {
@@ -632,6 +641,13 @@ class Activity {
 				}
 			}
 
+		}
+
+		if(! $cnv) {
+			$cnv = get_iconfig($i,'ostatus','conversation');
+		}
+		if($cnv) {
+			$ret['conversation'] = $cnv;
 		}
 
 		$ret['inheritPrivacy'] = true;

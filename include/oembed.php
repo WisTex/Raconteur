@@ -221,8 +221,11 @@ function oembed_fetch_url($embedurl){
 
 	if(strpos(strtolower($embedurl),'.pdf') !== false) {
 		$action = 'allow';
-		$j = [ 'html' => '<object data="' . $embedurl . '" type="application/pdf" width="500" height="720">' . '<a href="' . $embedurl . '">' . t('View PDF') . '</a></object>', 'width' => 500, 'height' => 720, 'type' => 'pdf' ];
-		
+		$j = [
+			'html' => '<object data="' . $embedurl . '" type="application/pdf" style="width: 100%; height: 300px;"></object>',
+			'title' => t('View PDF'),
+			'type' => 'pdf'
+		];		
 	}
 
 	if(! $j) {

@@ -103,6 +103,11 @@
 								<i class="fa fa-thumbs-o-down{{if $item.my_responses.dislike}} ivoted{{/if}}" ></i>
 							</button>
 							{{/if}}
+							{{if $item.comment && $item.thread_level > 1}}
+							<button type="button" title="{{$item.comment_lbl}}" class="btn btn-outline-secondary btn-sm" onclick="openClose('wall-item-comment-wrapper-{{$item.id}}'); $('#comment-edit-text-{{$item.id}}').click(); return false;">
+								<i class="fa fa-comment-o"></i>
+							</button>
+							{{/if}}
 							{{if $item.isevent}}
 							<div class="btn-group">
 								<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" id="wall-item-attend-menu-{{$item.id}}" title="{{$item.attend_title}}">
@@ -240,7 +245,7 @@
 		{{/foreach}}
 		{{/if}}
 		{{if $item.comment}}
-		<div class="p-2 wall-item-comment-wrapper{{if $item.children}} wall-item-comment-wrapper-wc{{/if}}" >
+		<div id="wall-item-comment-wrapper-{{$item.id}}" class="p-2 wall-item-comment-wrapper{{if $item.children}} wall-item-comment-wrapper-wc{{/if}}" {{if $item.thread_level > 1}} style="display:none;"{{/if}}>
 			{{$item.comment}}
 		</div>
 		{{/if}}
