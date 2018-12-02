@@ -410,7 +410,7 @@ class ThreadItem {
 			'attend_title' => t('Attendance Options'),
 			'vote_label' => t('Vote'),
 			'vote_title' => t('Voting Options'),
-			'comment_lbl' => (($this->is_commentable() && $observer) ? t('Comment') : ''),
+			'comment_lbl' => (($this->is_commentable() && $observer) ? t('Reply') : ''),
 			'is_comment' => $is_comment,
 			'is_new' => $is_new,
 			'owner_url' => $this->get_owner_url(),
