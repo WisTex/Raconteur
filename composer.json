@@ -9,7 +9,7 @@
 		"SSO",
 		"ZOT",
 		"ZOT6",
-		"ActivityPub",
+		"ActivityPub"
 	],
 	"homepage" : "http://framagit.org/macgirvin/osada/",
 	"license" : "MIT",
