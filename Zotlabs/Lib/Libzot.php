@@ -1514,7 +1514,7 @@ class Libzot {
 				}
 			}
 
-			if($arr['mid'] != $arr['parent_mid']) {
+			if($arr['mid'] !== $arr['parent_mid']) {
 
 				// check source route.
 				// We are only going to accept comments from this sender if the comment has the same route as the top-level-post,
@@ -1546,7 +1546,12 @@ class Libzot {
 
 					if((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {
-						self::fetch_conversation($channel,$arr['parent_mid']);
+						$f = self::fetch_conversation($channel,$arr['parent_mid']);
+						if($f === false) {
+							// This might be an ActivityPub conversation and not a Zot6 conversation. 
+							Activity::fetch_and_store_parents($channel,$sender,null,$arr);
+						}
+
 					}
 					continue;
 				}
@@ -1756,12 +1761,16 @@ class Libzot {
 
 		logger('received conversation: ' . print_r($a,true), LOGGER_DATA);
 
+		if(! $a) {
+			return false;
+		}
+
 		if($a['data']['type'] !== 'OrderedCollection') {
-			return;
+			return false;
 		}
 
 		if(! intval($a['data']['totalItems'])) {
-			return;
+			return false;
 		}
 
 		$ret = [];

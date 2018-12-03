@@ -1291,11 +1291,6 @@ class Activity {
 		} 
 
 
-		if(strpos($url,'@') !== false) {
-			btlogger('actor@: ' . $url . ' ' . print_r($person_obj,true));
-		}
-
-
 		$collections = [];
 
 		if($inbox) {
@@ -2275,7 +2270,7 @@ class Activity {
 
 			array_unshift($p,[ $a, $item ]);
 			
-			if($item['parent_mid'] === $item['mid'] || count($p) > 20) {
+			if($item['parent_mid'] === $item['mid'] || count($p) > 30) {
 				break;
 			}
 
@@ -2285,7 +2280,9 @@ class Activity {
 
 		if($p) {
 			foreach($p as $pv) {
-				Activity::store($channel,$observer_hash,$pv[0],$pv[1],false);
+				if($pv[0]->is_valid()) {
+					Activity::store($channel,$observer_hash,$pv[0],$pv[1],false);
+				}
 			}
 			return true;
 		}
