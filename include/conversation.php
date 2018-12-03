@@ -1470,6 +1470,47 @@ function add_children_to_list($children, &$arr) {
 	}
 }
 
+function flatten_conversation($parent) {
+	if (!isset($parent['children']) || count($parent['children']) == 0) {
+		return $parent;
+	}
+
+	for ($i = 0; $i < count($parent['children']); $i++) {
+		$child = $parent['children'][$i];
+
+		if (isset($child['children']) && count($child['children'])) {
+			// This helps counting only the regular posts
+			$count_post_closure = function($var) {
+				return in_array($var['verb'], ['Create','Update'] );
+			};
+
+			$child_post_count = count(array_filter($child['children'], $count_post_closure));
+
+			$remaining_post_count = count(array_filter(array_slice($parent['children'], $i), $count_post_closure));
+
+			// If there's only one child's children post and this is the last child post
+			if ($child_post_count == 1 && $remaining_post_count == 1) {
+
+				// Searches the post item in the children
+				$j = 0;
+				while((! in_array($child['children'][$j]['verb'], ['Create','Update' ])) && $j < count($child['children'])) {
+					$j ++;
+				}
+
+				$moved_item = $child['children'][$j];
+				unset($parent['children'][$i]['children'][$j]);
+				$parent['children'][] = $moved_item;
+			} else {
+				$parent['children'][$i] = flatten_conversation($child);
+			}
+		}
+	}
+
+	return $parent;
+}
+
+
+
 function conv_sort($arr, $order) {
 
 	if((!(is_array($arr) && count($arr))))
@@ -1503,7 +1544,12 @@ function conv_sort($arr, $order) {
 				$parents[$k]['children'] = sort_item_children($parents[$k]['children']);
 			}
 		}
+
+//		foreach ($parents as $i => $parent) {
+//			$parents[$i] = flatten_conversation($parent);
+//		}
 	}
+
 
 	$ret = array();
 	if(count($parents)) {
