@@ -1435,10 +1435,10 @@ function get_item_children($arr, $parent) {
 			if(get_config('system','thread_allow',((defined('NOMADIC')) ? false : true))) {
 				// Fallback to parent_mid if thr_parent is not set
 				$thr_parent = $item['thr_parent'];
-				if($thr_parent == '')
+				if($thr_parent === '')
 					$thr_parent = $item['parent_mid'];
 				
-				if($thr_parent == $parent['mid']) {
+				if($thr_parent === $parent['mid']) {
 					$item['children'] = get_item_children($arr, $item);
 					$children[] = $item;
 				}
@@ -1477,9 +1477,11 @@ function conv_sort($arr, $order) {
 
 	$parents = array();
 
-	foreach($arr as $x)
-		if($x['id'] == $x['parent'])
+	foreach($arr as $x) {
+		if($x['id'] == $x['parent']) {
 				$parents[] = $x;
+		}
+	}
 
 	if(stristr($order,'created'))
 		usort($parents,'sort_thr_created');

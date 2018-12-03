@@ -239,7 +239,7 @@
 				</div>
 			</div>
 		</div>
-		{{if $item.toplevel}}
+		{{if $item.toplevel || $item.thread_level > 1 }}
 		{{foreach $item.children as $child}}
 			{{include file="{{$child.template}}" item=$child}}
 		{{/foreach}}

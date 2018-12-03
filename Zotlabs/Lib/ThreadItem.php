@@ -56,8 +56,9 @@ class ThreadItem {
 				// but may have been forwarded as part of a conversation
 
 				if(intval($item['item_private']) && (intval($item['item_restrict']) & 1 ) && $item['mid'] !== $item['parent_mid']) {
-					if(! $observer)
+					if(! $observer) {
 						continue;
+					}
 				}
 
 				$child = new ThreadItem($item);
@@ -102,6 +103,12 @@ class ThreadItem {
 
 		$conv = $this->get_conversation();
 		$observer = $conv->get_observer();
+
+//		if($thread_level > 1) {
+//			logger('thread_level: ' . $thread_level);
+//			logger('item: ' . $item['mid']);
+//			logger('parent: ' . $item['thr_parent']);
+//		}
 
 		$lock = ((($item['item_private'] == 1) || (($item['uid'] == local_channel()) && (strlen($item['allow_cid']) || strlen($item['allow_gid']) 
 			|| strlen($item['deny_cid']) || strlen($item['deny_gid']))))
@@ -348,6 +355,7 @@ class ThreadItem {
 		
 		$children = $this->get_children();
 
+
 		$has_tags = (($body['tags'] || $body['categories'] || $body['mentions'] || $body['attachments'] || $body['folders']) ? true : false);
 
                 $dropdown_extras_arr = [ 'item' => $item , 'dropdown_extras' => '' ];
@@ -516,16 +524,16 @@ class ThreadItem {
 				$result['children'][] = $xz;
 			}
 			// Collapse
-			if(($nb_children > $visible_comments) || ($thread_level > 1)) {
+			if($nb_children > $visible_comments && $thread_level === 1 ) {
 				$result['children'][0]['comment_firstcollapsed'] = true;
 				$result['children'][0]['num_comments'] = $comment_count_txt;
 				$result['children'][0]['hide_text'] = sprintf( t('%s show all'), '<i class="fa fa-chevron-down"></i>');
-				if($thread_level > 1) {
-					$result['children'][$nb_children - 1]['comment_lastcollapsed'] = true;
-				}
-				else {
+//				if($thread_level > 1) {
+//					$result['children'][$nb_children - 1]['comment_lastcollapsed'] = true;
+//				}
+//				else {
 					$result['children'][$nb_children - ($visible_comments + 1)]['comment_lastcollapsed'] = true;
-				}
+//				}
 			}
 		}
 

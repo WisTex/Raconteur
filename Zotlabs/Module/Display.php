@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 require_once("include/bbcode.php");
@@ -339,7 +340,7 @@ class Display extends \Zotlabs\Web\Controller {
 		else {
 			$r = array();
 		}
-	
+
 		if($r) {
 			$parents_str = ids_to_querystr($r,'item_id');
 			if($parents_str) {

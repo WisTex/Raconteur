@@ -1522,11 +1522,18 @@ class Libzot {
 				// As a side effect we will also do a preliminary check that we have the top-level-post, otherwise
 				// processing it is pointless.
 	
-				$r = q("select route, id, owner_xchan, item_private from item where mid = '%s' and uid = %d limit 1",
+				$r = q("select route, id, parent_mid, mid, owner_xchan, item_private from item where mid = '%s' and uid = %d limit 1",
 					dbesc($arr['parent_mid']),
 					intval($channel['channel_id'])
 				);
-				if(! $r) {
+				if($r) {
+					// if this is a multi-threaded conversation, preserve the threading information
+					if($r[0]['parent_mid'] !== $r[0]['mid']) {
+						$arr['thr_parent'] = $arr['parent_mid'];
+						$arr['parent_mid'] = $r[0]['parent_mid'];
+					}	
+				}
+				else {
 					$DR->update('comment parent not found');
 					$result[] = $DR->get();
 
@@ -1551,11 +1558,12 @@ class Libzot {
 							// This might be an ActivityPub conversation and not a Zot6 conversation. 
 							Activity::fetch_and_store_parents($channel,$sender,null,$arr);
 						}
-
 					}
 					continue;
 				}
-				
+								
+
+
 				if($relay || $friendofriend || (intval($r[0]['item_private']) === 0 && intval($arr['item_private']) === 0)) {
 					// reset the route in case it travelled a great distance upstream
 					// use our parent's route so when we go back downstream we'll match
