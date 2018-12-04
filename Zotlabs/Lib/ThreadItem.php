@@ -104,11 +104,17 @@ class ThreadItem {
 		$conv = $this->get_conversation();
 		$observer = $conv->get_observer();
 
-//		if($thread_level > 1) {
+//		if($thread_level == 1) {
+//			$this->label_descendants();
+//		}
+
+		if($thread_level > 1) {
+
+
 //			logger('thread_level: ' . $thread_level);
 //			logger('item: ' . $item['mid']);
 //			logger('parent: ' . $item['thr_parent']);
-//		}
+		}
 
 		$lock = ((($item['item_private'] == 1) || (($item['uid'] == local_channel()) && (strlen($item['allow_cid']) || strlen($item['allow_gid']) 
 			|| strlen($item['deny_cid']) || strlen($item['deny_gid']))))
@@ -524,16 +530,16 @@ class ThreadItem {
 				$result['children'][] = $xz;
 			}
 			// Collapse
-			if($nb_children > $visible_comments && $thread_level === 1 ) {
+			if($nb_children > $visible_comments) {
 				$result['children'][0]['comment_firstcollapsed'] = true;
 				$result['children'][0]['num_comments'] = $comment_count_txt;
 				$result['children'][0]['hide_text'] = sprintf( t('%s show all'), '<i class="fa fa-chevron-down"></i>');
-//				if($thread_level > 1) {
-//					$result['children'][$nb_children - 1]['comment_lastcollapsed'] = true;
-//				}
-//				else {
+				if($thread_level > 1) {
+					$result['children'][$nb_children - 1]['comment_lastcollapsed'] = true;
+				}
+				else {
 					$result['children'][$nb_children - ($visible_comments + 1)]['comment_lastcollapsed'] = true;
-//				}
+				}
 			}
 		}
 
@@ -773,6 +779,31 @@ class ThreadItem {
 			}
 		}
 		return $total;
+	}
+
+	private function label_descendants($count = 0) {
+		if(! array_key_exists('sequence',$this->data)) {
+			if($count) {
+				$count ++;
+			}
+			$this->data['sequence'] = $count;
+		}
+		logger('labelled: ' . print_r($this->data,true), LOGGER_DATA);
+		$children = $this->get_children();
+		$total = count($children);
+		if($total > 0) {
+			foreach($children as $child) {
+				if((! visible_activity($child->data)) || array_key_exists('blocked',$child->data)) {
+					continue;
+				}
+				if(! array_key_exists('sequence',$this->data)) {
+					$count ++;
+					$child->data['sequence'] = $count;
+					logger('labelled_child: ' . print_r($child->data,true), LOGGER_DATA);
+				}
+				$child->label_descendants($count);
+			}
+		}
 	}
 
 	private function count_unseen_descendants() {

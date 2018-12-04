@@ -72,15 +72,15 @@ class Webfinger extends Controller {
  
 			if(strpos($resource,'acct:') === 0) {
 				$channel_nickname = punify(str_replace('acct:','',$resource));
-				if(strpos($channel_nickname,'@') !== false) {
-					$host = punify(substr($channel_nickname,strpos($channel_nickname,'@')+1));
+				if(strrpos($channel_nickname,'@') !== false) {
+					$host = punify(substr($channel_nickname,strrpos($channel_nickname,'@')+1));
 
 					// If the webfinger address points off site, redirect to the correct site
 
 					if(strcasecmp($host,App::get_hostname())) {
 						goaway('https://' . $host . '/.well-known/webfinger?f=&resource=' . $resource);
 					}
-					$channel_nickname = substr($channel_nickname,0,strpos($channel_nickname,'@'));
+					$channel_nickname = substr($channel_nickname,0,strrpos($channel_nickname,'@'));
 				}		
 			}
 			if(strpos($resource,'http') === 0) {

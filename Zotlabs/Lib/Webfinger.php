@@ -69,6 +69,10 @@ class Webfinger {
 		}
 		else {
 			$x = explode('@',$resource);
+			if(! strlen($x[0])) {
+				// e.g. @dan@pixelfed.org
+				array_shift($x);
+			}
 			$username = $x[0];
 			if(count($x) > 1) {
 				self::$server = $x[1];
