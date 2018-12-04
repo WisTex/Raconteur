@@ -1418,6 +1418,12 @@ class Activity {
 					dbesc($url)
 				);
 			}
+			if($inbox !== $r[0]['hubloc_callback']) {
+				$r = q("update hubloc set hubloc_callback = '%s' where hubloc_hash = '%s'",
+					dbesc($inbox),
+					dbesc($url)
+				);
+			}
 			$r = q("update hubloc set hubloc_updated = '%s' where hubloc_hash = '%s'",
 				dbesc(datetime_convert()),
 				dbesc($url)
