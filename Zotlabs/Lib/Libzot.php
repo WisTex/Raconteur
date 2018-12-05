@@ -1537,8 +1537,6 @@ class Libzot {
 					$DR->update('comment parent not found');
 					$result[] = $DR->get();
 
-					$fetch_ap = false;
-
 					// We don't seem to have a copy of this conversation or at least the parent
 					// - so request a copy of the entire conversation to date.
 					// Don't do this if it's a relay post as we're the ones who are supposed to
@@ -1557,24 +1555,10 @@ class Libzot {
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {
 						$f = self::fetch_conversation($channel,$arr['parent_mid']);
 						if($f === false) {
-							// This might be an ActivityPub conversation and not a Zot6 conversation. 
-							Activity::fetch_and_store_parents($channel,$sender,null,$arr);
-							$fetch_ap = true;
+							$f = self::fetch_conversation($channel,$arr['mid']);
 						}
 					}
-					if($fetch_ap) {
-						// If we're fetching via activitypub we won't have stored the current item
-						// check again for existence and if we now have a parent, continue so we can store it
-
-						$fap = q("select route, id, parent_mid, mid, owner_xchan, item_private from item where mid = '%s' and uid = %d limit 1",
-							dbesc($arr['parent_mid']),
-							intval($channel['channel_id'])
-						);
-					}
-					if(! $fap) {
-						continue;
-					}
-					$r = $fap;
+					continue;
 				}
 								
 				if($relay || $friendofriend || (intval($r[0]['item_private']) === 0 && intval($arr['item_private']) === 0)) {

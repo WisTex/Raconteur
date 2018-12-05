@@ -111,7 +111,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 
 		// Forward to thread listeners, *unless* there is even a remote hint that the item
 		// might have some privacy attached. This could be (for instance) an ActivityPub DM
-		// in the mioddle fo a public thread. Unless we can guarantee beyond all doubt that
+		// in the middle of a public thread. Unless we can guarantee beyond all doubt that
 		// this is public, don't allow it to go to thread listeners.
 
 		if(! intval($item['item_private'])) {

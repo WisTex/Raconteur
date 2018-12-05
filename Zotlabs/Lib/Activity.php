@@ -853,6 +853,21 @@ class Activity {
 					'owner'        => $p['xchan_url'],
 					'publicKeyPem' => $p['xchan_pubkey']
 				];
+
+				$cp = get_cover_photo($c['channel_id'],'array');
+				if($cp) {
+					$ret['image'] = [
+						'type' => 'Image',
+						'mediaType' => $cp['type'],
+						'url' => $cp['url']
+					];
+				}
+				$dp = q("select about from profile where uid = %d and is_default = 1",
+					intval($c['channel_id'])
+				);
+				if($dp && $dp[0]['about']) {
+					$ret['summary'] = bbcode($dp[0]['about'],['export' => true ]);
+				}	
 			}
 			else {
 				$collections = get_xconfig($p['xchan_hash'],'activitypub','collections',[]);
@@ -1400,6 +1415,12 @@ class Activity {
 			if(strpos($username,'@') && ($r[0]['hubloc_addr'] !== $username)) {
 				$r = q("update hubloc set hubloc_addr = '%s' where hubloc_hash = '%s'",
 					dbesc($username),
+					dbesc($url)
+				);
+			}
+			if($inbox !== $r[0]['hubloc_callback']) {
+				$r = q("update hubloc set hubloc_callback = '%s' where hubloc_hash = '%s'",
+					dbesc($inbox),
 					dbesc($url)
 				);
 			}

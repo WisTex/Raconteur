@@ -122,7 +122,7 @@ class Item extends Controller {
 
 			$sql_extra = item_permissions_sql(0);
 
-			$r = q("select * from item where mid = '%s' and item_wall = 1 $item_normal $sql_extra limit 1",
+			$r = q("select * from item where mid = '%s' $item_normal $sql_extra limit 1",
 				dbesc(z_root() . '/item/' . $item_id)
 			);
 			if(! $r) {
@@ -135,17 +135,15 @@ class Item extends Controller {
 				http_status_exit(404, 'Not found');
 			}
 
-			if($r[0]['mid'] === $r[0]['parent_mid']) {
-				$conversation = true;
-				$items = q("select * from item where parent_mid = '%s' and uid = %d $item_normal $sql_extra ",
-					dbesc(z_root() . '/item/' . $item_id),
-					intval($r[0]['uid'])
-				);
-				if(! $items) {
-					http_status_exit(404, 'Not found');
-				}
-				$r = $items;
+			$items = q("select * from item where parent_mid = '%s' and uid = %d $item_normal $sql_extra ",
+				dbesc(z_root() . '/item/' . $item_id),
+				intval($r[0]['uid'])
+			);
+			if(! $items) {
+				http_status_exit(404, 'Not found');
 			}
+
+			$r = $items;
 
 			xchan_query($r,true);
 			$items = fetch_post_tags($r,true);
@@ -156,8 +154,14 @@ class Item extends Controller {
 			$to = (($recips && array_key_exists('to',$recips) && is_array($recips['to'])) ? $recips['to'] : null);
 			$nitems = [];
 			foreach($items as $i) {
-				if(intval($i['item_private']) && $to && (! in_array($observer['xchan_url'],$to)))
-					continue;
+				if(intval($i['item_private'])) {
+					if(! $observer) {
+						continue;
+					}
+					if($to && (! in_array($observer['xchan_url'],$to))) {
+						continue;
+					}
+				}
 				$nitems[] = $i;
 			}
 
@@ -169,19 +173,13 @@ class Item extends Controller {
 			if(! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream'))
 				http_status_exit(403, 'Forbidden');
 
-			if($conversation) {
-				$i = Activity::encode_item_collection($nitems,'conversation/' . $item_id,'OrderedCollection',false);
-				if($portable_id) {
-					ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
-				}
-			}
-			else {
-				$i = Activity::encode_item($nitems[0]);
+			$i = Activity::encode_item_collection($nitems,'conversation/' . $item_id,'OrderedCollection',false);
+			if($portable_id) {
+				ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
 			}
 
 			if(! $i)
 				http_status_exit(404, 'Not found');
-
 
 			$x = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,

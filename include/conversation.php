@@ -844,6 +844,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 				logger('[ERROR] conversation : Failed to get template data.', LOGGER_DEBUG);
 				$threads = array();
 			}
+			//logger('threads: ' . print_r($threads,true), LOGGER_DATA);
 		}
 	}
 
