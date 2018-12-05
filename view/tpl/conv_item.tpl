@@ -9,6 +9,7 @@
 		<a name="item_{{$item.id}}" ></a>
 		<div class="wall-item-outside-wrapper{{if $item.is_comment}} comment{{/if}}{{if $item.previewing}} preview{{/if}}" id="wall-item-outside-wrapper-{{$item.id}}" >
 			<div class="clearfix wall-item-content-wrapper{{if $item.is_comment}} comment{{/if}}" id="wall-item-content-wrapper-{{$item.id}}">
+				{{for $x=3 to $item.thread_level}}<i class="fa fa-caret-right threadlevel"></i>{{/for}}
 				{{if $item.photo}}
 				<div class="wall-photo-item" id="wall-photo-item-{{$item.id}}">
 					{{$item.photo}}
@@ -193,7 +194,6 @@
 							</div>
 						</div>
 					</div>
-
 					{{if $item.responses || $item.attachments}}
 					<div class="wall-item-tools-left btn-group" id="wall-item-tools-left-{{$item.id}}">
 						{{if $item.star && $item.star.isstarred}}

@@ -111,6 +111,7 @@ class Item extends Controller {
 			if(! $item_id)
 				http_status_exit(404, 'Not found');
 
+
 			$portable_id = EMPTY_STR;
 
 			$sigdata = HTTPSig::verify(EMPTY_STR);
@@ -126,6 +127,8 @@ class Item extends Controller {
 				dbesc(z_root() . '/item/' . $item_id)
 			);
 			if(! $r) {
+
+
 				$r = q("select * from item where mid = '%s' $item_normal limit 1",
 					dbesc(z_root() . '/item/' . $item_id)
 				);
@@ -135,8 +138,9 @@ class Item extends Controller {
 				http_status_exit(404, 'Not found');
 			}
 
-			$items = q("select * from item where parent_mid = '%s' and uid = %d $item_normal $sql_extra ",
-				dbesc(z_root() . '/item/' . $item_id),
+
+			$items = q("select parent as item_id from item where mid = '%s' and uid = %d $item_normal $sql_extra ",
+				dbesc($r[0]['parent_mid']),
 				intval($r[0]['uid'])
 			);
 			if(! $items) {
@@ -145,6 +149,17 @@ class Item extends Controller {
 
 			$r = $items;
 
+			$parents_str = ids_to_querystr($r,'item_id');
+	
+			$items = q("SELECT item.*, item.id AS item_id FROM item WHERE item.parent IN ( %s ) $item_normal $sql_extra ",
+				dbesc($parents_str)
+			);
+
+			if(! $items) {
+				http_status_exit(404, 'Not found');
+			}
+
+			$r = $items;
 			xchan_query($r,true);
 			$items = fetch_post_tags($r,true);
 
@@ -164,6 +179,9 @@ class Item extends Controller {
 				}
 				$nitems[] = $i;
 			}
+
+			if(! $nitems)
+				http_status_exit(404, 'Not found');
 
 			$chan = channelx_by_n($nitems[0]['uid']);
 
