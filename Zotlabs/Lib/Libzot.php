@@ -1537,8 +1537,6 @@ class Libzot {
 					$DR->update('comment parent not found');
 					$result[] = $DR->get();
 
-					$fetch_ap = false;
-
 					// We don't seem to have a copy of this conversation or at least the parent
 					// - so request a copy of the entire conversation to date.
 					// Don't do this if it's a relay post as we're the ones who are supposed to
