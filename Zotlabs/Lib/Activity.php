@@ -1384,7 +1384,7 @@ class Activity {
 			set_xconfig($url,'activitypub','collections',$collections);
 		}
 
-		$r = q("select * from hubloc where hubloc_hash = '%s' limit 1",
+		$h = q("select * from hubloc where hubloc_hash = '%s' limit 1",
 			dbesc($url)
 		);
 
@@ -1395,7 +1395,7 @@ class Activity {
 			$baseurl = $m['scheme'] . '://' . $m['host'] . (($m['port']) ? ':' . $m['port'] : '');
 		}
 
-		if(! $r) {
+		if(! $h) {
 			$r = hubloc_store_lowlevel(
 				[
 					'hubloc_guid'     => $url,
@@ -1412,13 +1412,13 @@ class Activity {
 			);
 		}
 		else {
-			if(strpos($username,'@') && ($r[0]['hubloc_addr'] !== $username)) {
+			if(strpos($username,'@') && ($h[0]['hubloc_addr'] !== $username)) {
 				$r = q("update hubloc set hubloc_addr = '%s' where hubloc_hash = '%s'",
 					dbesc($username),
 					dbesc($url)
 				);
 			}
-			if($inbox !== $r[0]['hubloc_callback']) {
+			if($inbox !== $h[0]['hubloc_callback']) {
 				$r = q("update hubloc set hubloc_callback = '%s' where hubloc_hash = '%s'",
 					dbesc($inbox),
 					dbesc($url)
