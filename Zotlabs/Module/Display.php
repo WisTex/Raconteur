@@ -2,13 +2,18 @@
 
 namespace Zotlabs\Module;
 
+
+use App;
+use Zotlabs\Lib\System;
+use Zotlabs\Web\Controller;
+
 require_once("include/bbcode.php");
 require_once('include/security.php');
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
 
 
-class Display extends \Zotlabs\Web\Controller {
+class Display extends Controller {
 
 	function get($update = 0, $load = false) {
 
@@ -41,7 +46,7 @@ class Display extends \Zotlabs\Web\Controller {
 			$item_hash = $_REQUEST['mid'];
 
 		if(! $item_hash) {
-			\App::$error = 404;
+			App::$error = 404;
 			notice( t('Item not found.') . EOL);
 			return;
 		}
@@ -204,9 +209,9 @@ class Display extends \Zotlabs\Web\Controller {
 
 			$o .= '<div id="live-display"></div>' . "\r\n";
 			$o .= "<script> var profile_uid = " . ((intval(local_channel())) ? local_channel() : (-1))
-				. "; var netargs = '?f='; var profile_page = " . \App::$pager['page'] . "; </script>\r\n";
+				. "; var netargs = '?f='; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
 	
-			\App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),array(
+			App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),array(
 				'$baseurl' => z_root(),
 				'$pgtype'  => 'display',
 				'$uid'     => '0',
@@ -222,7 +227,7 @@ class Display extends \Zotlabs\Web\Controller {
 				'$nouveau' => '0',
 				'$wall'    => '0',
 				'$static'  => $static,
-				'$page'    => ((\App::$pager['page'] != 1) ? \App::$pager['page'] : 1),
+				'$page'    => ((App::$pager['page'] != 1) ? App::$pager['page'] : 1),
 				'$list'    => ((x($_REQUEST,'list')) ? intval($_REQUEST['list']) : 0),
 				'$search'  => '',
 				'$xchan'   => '',
@@ -376,8 +381,7 @@ class Display extends \Zotlabs\Web\Controller {
 				}
 				$o .= '</noscript>';
 
-				if ($items[0]['title'])
-					\App::$page['title'] = $items[0]['title'] . " - " . \App::$page['title'];
+				App::$page['title'] = (($items[0]['title']) ? $items[0]['title'] . " - " . App::$page['title'] : App::$page['title']);
 
 				$o .= conversation($items, 'display', $update, 'client');
 			} 
@@ -387,10 +391,10 @@ class Display extends \Zotlabs\Web\Controller {
 		case 'atom':
 
 			$atom = replace_macros(get_markup_template('atom_feed.tpl'), array(
-				'$version'       => xmlify(\Zotlabs\Lib\System::get_project_version()),
-				'$generator'     => xmlify(\Zotlabs\Lib\System::get_platform_name()),
+				'$version'       => xmlify(System::get_project_version()),
+				'$generator'     => xmlify(System::get_platform_name()),
 				'$generator_uri' => 'https://hubzilla.org',
-				'$feed_id'       => xmlify(\App::$cmd),
+				'$feed_id'       => xmlify(App::$cmd),
 				'$feed_title'    => xmlify(t('Article')),
 				'$feed_updated'  => xmlify(datetime_convert('UTC', 'UTC', 'now', ATOM_TIME)),
 				'$author'        => '',
