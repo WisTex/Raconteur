@@ -345,6 +345,9 @@ class Ping extends \Zotlabs\Web\Controller {
 		if(argc() > 1 && (argv(1) === 'network' || argv(1) === 'home')) {
 			$result = array();
 
+			if(argv(1) === 'home') {
+				$sql_extra .= " and item_wall = 1 ";
+			}
 			$r = q("SELECT * FROM item 
 				WHERE uid = %d
 				AND item_unseen = 1
@@ -356,13 +359,11 @@ class Ping extends \Zotlabs\Web\Controller {
 				intval(local_channel()),
 				dbesc($ob_hash)
 			);
-
 			if($r) {
 				xchan_query($r);
 				foreach($r as $item) {
-					if((argv(1) === 'home') && (! intval($item['item_wall'])))
-						continue;
 					$z = \Zotlabs\Lib\Enotify::format($item);
+
 					if($z) {
 						$result[] = $z;
 					}
@@ -543,10 +544,12 @@ class Ping extends \Zotlabs\Web\Controller {
 				call_hooks('network_ping', $arr);
 
 				foreach ($r as $it) {
-					if(intval($it['item_wall']))
+					if(intval($it['item_wall'])) {
 						$result['home'] ++;
-					else
+					}
+					else {
 						$result['network'] ++;
+					}
 				}
 			}
 		}
