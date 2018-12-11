@@ -1666,7 +1666,7 @@ class Libzot {
 				elseif($arr['edited'] > $r[0]['edited']) {
 					$arr['id'] = $r[0]['id'];
 					$arr['uid'] = $channel['channel_id'];
-					if(($arr['mid'] == $arr['parent_mid']) && (! post_is_importable($arr,$abook))) {
+					if(($arr['mid'] == $arr['parent_mid']) && (! post_is_importable($channel['channel_id'],$arr,$abook))) {
 						$DR->update('update ignored');
 						$result[] = $DR->get();
 					}
@@ -1706,7 +1706,7 @@ class Libzot {
 
 				$item_id = 0;
 
-				if(($arr['mid'] == $arr['parent_mid']) && (! post_is_importable($arr,$abook))) {
+				if(($arr['mid'] == $arr['parent_mid']) && (! post_is_importable($arr['uid'],$arr,$abook))) {
 					$DR->update('post ignored');
 					$result[] = $DR->get();
 				}

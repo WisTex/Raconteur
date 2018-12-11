@@ -1603,11 +1603,9 @@ class Activity {
 		}
 
 
-		if($abook) {
-			if(! post_is_importable($s,$abook[0])) {
-				logger('post is filtered');
-				return;
-			}
+		if(! post_is_importable($channel['channel_id'],$s,$abook[0])) {
+			logger('post is filtered');
+			return;
 		}
 
 		if($act->obj['conversation']) {
@@ -2139,13 +2137,11 @@ class Activity {
 			intval($channel['channel_id'])
 		);
 
-		if($abook) {
-			if(! post_is_importable($item,$abook[0])) {
-				logger('post is filtered');
-				return;
-			}
-		}
 
+		if(! post_is_importable($channel['channel_id'],$item,$abook[0])) {
+			logger('post is filtered');
+			return;
+		}
 
 		if($act->obj['conversation']) {
 			set_iconfig($item,'ostatus','conversation',$act->obj['conversation'],1);
@@ -2374,11 +2370,9 @@ class Activity {
 			intval($channel['channel_id'])
 		);
 
-		if($abook) {
-			if(! post_is_importable($s,$abook[0])) {
-				logger('post is filtered');
-				return;
-			}
+		if(! post_is_importable($channel['channel_id'],$s,$abook[0])) {
+			logger('post is filtered');
+			return;
 		}
 
 		if($act->obj['conversation']) {

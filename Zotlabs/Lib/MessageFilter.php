@@ -16,10 +16,9 @@ class MessageFilter {
 		$text = prepare_text($item['body'],$item['mimetype']);
 		$text = html2plain(($item['title']) ? $item['title'] . ' ' . $text : $text);
 
-
 		$lang = null;
 
-		if((strpos($incl,'lang=') !== false) || (strpos($excl,'lang=') !== false)) {
+		if((strpos($incl,'lang=') !== false) || (strpos($excl,'lang=') !== false) || (strpos($incl,'lang!=') !== false) || (strpos($excl,'lang!=') !== false)) {
 			$lang = detect_language($text);
 		}
 

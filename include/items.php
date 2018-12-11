@@ -3261,25 +3261,26 @@ function check_item_source($uid, $item) {
 	return false;
 }
 
-function post_is_importable($item,$abook) {
+function post_is_importable($channel_id,$item,$abook) {
 
-	if(! $abook)
-		return true;
+	if(! $item)
+		return false;
 
-	$incl = PConfig::get($abook['abook_channel'],'system','message_filter_incl',EMPTY_STR);
-	$excl = PConfig::get($abook['abook_channel'],'system','message_filter_excl',EMPTY_STR);
+	$incl = PConfig::get($channel_id,'system','message_filter_incl',EMPTY_STR);
+	$excl = PConfig::get($channel_id,'system','message_filter_excl',EMPTY_STR);
 	if($incl || $excl) {
 		$x = MessageFilter::evaluate($item,$incl,$excl);
 		if(! $x) {
+			logger('MessageFilter: channel blocked content',LOGGER_DEBUG,LOG_INFO);
 			return false;
 		}
 	}
 
-	if(($abook['abook_channel']) && (! feature_enabled($abook['abook_channel'],'connfilter')))
+	if(($channel_id) && (! feature_enabled($channel_id,'connfilter')))
 		return true;
 
-	if(! $item)
-		return false;
+	if(! $abook)
+		return true;
 
 	if(! ($abook['abook_incl'] || $abook['abook_excl']))
 		return true;
