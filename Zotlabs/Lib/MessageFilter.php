@@ -43,6 +43,8 @@ class MessageFilter {
 					return false;
 				elseif((strpos($word,'lang=') === 0) && ($lang) && (strcasecmp($lang,trim(substr($word,5))) == 0))
 					return false;
+				elseif((strpos($word,'lang!=') === 0) && ($lang) && (strcasecmp($lang,trim(substr($word,6))) != 0))
+					return false;
 				elseif(stristr($text,$word) !== false)
 					return false;
 			}
@@ -63,6 +65,8 @@ class MessageFilter {
 				elseif((strpos($word,'/') === 0) && preg_match($word,$text))
 					return true;
 				elseif((strpos($word,'lang=') === 0) && ($lang) && (strcasecmp($lang,trim(substr($word,5))) == 0))
+					return true;
+				elseif((strpos($word,'lang!=') === 0) && ($lang) && (strcasecmp($lang,trim(substr($word,6))) != 0))
 					return true;
 				elseif(stristr($text,$word) !== false)
 					return true;

@@ -15,6 +15,7 @@ use Zotlabs\Lib\Enotify;
 use Zotlabs\Lib\MarkdownSoap;
 use Zotlabs\Lib\MessageFilter;
 use Zotlabs\Lib\IConfig;
+use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\ThreadListener;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\AccessList;
@@ -3264,6 +3265,15 @@ function post_is_importable($item,$abook) {
 
 	if(! $abook)
 		return true;
+
+	$incl = PConfig::get($abook['abook_channel'],'system','message_filter_incl',EMPTY_STR);
+	$excl = PConfig::get($abook['abook_channel'],'system','message_filter_excl',EMPTY_STR);
+	if($incl || $excl) {
+		$x = MessageFilter::evaluate($item,$incl,$excl);
+		if(! $x) {
+			return false;
+		}
+	}
 
 	if(($abook['abook_channel']) && (! feature_enabled($abook['abook_channel'],'connfilter')))
 		return true;
