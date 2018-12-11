@@ -1551,6 +1551,10 @@ class Libzot {
 					// the top level post is unlikely to be imported and
 					// this is just an exercise in futility.
 
+					if(! get_pconfig($channel['channel_id'],'system','hyperdrive',true)) {
+						continue;
+					}
+
 					if((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {
 						$f = self::fetch_conversation($channel,$arr['parent_mid']);

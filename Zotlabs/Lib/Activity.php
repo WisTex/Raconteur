@@ -2179,7 +2179,10 @@ class Activity {
 				intval($item['uid'])
 			);
 			if(! $p) {
-				$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
+				$a = false;
+				if(get_pconfig('system','hyperdrive',true)) {
+					$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
+				}
 				if($a) {
 					$p = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
 						dbesc($item['parent_mid']),
