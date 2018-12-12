@@ -2120,10 +2120,20 @@ class Activity {
 		$item['aid'] = $channel['channel_account_id'];
 		$item['uid'] = $channel['channel_id'];
 
+
+		// Some authors may be zot6 authors in which case we want to store their nomadic identity
+		// instead of their ActivityPub identity
+
+		$item['author_xchan'] = self::find_best_identity($item['author_xchan']);
+		$item['owner_xchan']  = self::find_best_identity($item['owner_xchan']);
+
 		if(! ( $item['author_xchan'] && $item['owner_xchan'])) {
 			logger('owner or author missing.');
 			return;
 		}
+
+
+
 
 		if($channel['channel_system']) {
 			if(! MessageFilter::evaluate($item,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
@@ -2242,6 +2252,18 @@ class Activity {
 			sync_an_item($channel['channel_id'],$x['item_id']);
 		}
 
+	}
+
+
+	static public function find_best_identity($xchan) {
+		
+		$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
+			dbesc($xchan)
+		);
+		if($r) {
+			return $r[0]['hubloc_hash'];
+		}
+		return $xchan;
 	}
 
 

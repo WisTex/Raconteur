@@ -834,32 +834,48 @@ function import_author_activitypub($x) {
 	if(! $x['url'])
 		return false;
 
-    // let somebody upgrade from an 'unknown' connection which has no xchan_addr
-    $r = q("select xchan_hash, xchan_url, xchan_name, xchan_photo_s from xchan where xchan_url = '%s' limit 1",
+    // let somebody upgrade from an 'unknown' connection which has no xchan_addr and resolve issues with identities from multiple protocols using the same url
+
+    $r = q("select xchan_hash, xchan_url, xchan_network, xchan_name, xchan_photo_s from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s'",
         dbesc($x['url'])
     );
     if(! $r) {
-        $r = q("select xchan_hash, xchan_url, xchan_name, xchan_photo_s from xchan where xchan_hash = '%s' limit 1",
+        $r = q("select xchan_hash, xchan_url, xchan_network, xchan_name, xchan_photo_s from xchan where xchan_hash = '%s' ",
             dbesc($x['url'])
         );
     }
     if($r) {
-        logger('in_cache: ' . $r[0]['xchan_name'], LOGGER_DATA);
-        return $r[0]['xchan_hash'];
+		$ptr = null;
+		foreach($r as $rv) {
+			if (strpos($rv['xchan_network'],'zot') !== false) {
+				$ptr = $rv;
+			}
+		}
+		if(! $ptr) {
+			$ptr = $r[0];
+		}
+
+        logger('in_cache: ' . $ptr['xchan_name'], LOGGER_DATA);
+        return $ptr['xchan_hash'];
     }
 
     $z = discover_by_webbie($x['url']);
 
     if($z) {
-        $r = q("select xchan_hash, xchan_url, xchan_name, xchan_photo_s from xchan where xchan_url = '%s' limit 1",
+	    $r = q("select xchan_hash, xchan_url, xchan_network, xchan_name, xchan_photo_s from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s'",
             dbesc($x['url'])
         );
         if(! $r) {
-            $r = q("select xchan_hash, xchan_url, xchan_name, xchan_photo_s from xchan where xchan_hash = '%s' limit 1",
+            $r = q("select xchan_hash, xchan_url, xchan_name, xchan_photo_s from xchan where xchan_hash = '%s' ",
                 dbesc($x['url'])
             );
         }
         if($r) {
+			foreach($r as $rv) {
+				if (strpos($rv['xchan_network'],'zot') !== false) {
+					return $rv['xchan_hash'];
+				}
+			}
             return $r[0]['xchan_hash'];
         }
     }

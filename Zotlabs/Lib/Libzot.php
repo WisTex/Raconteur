@@ -1412,6 +1412,12 @@ class Libzot {
 
 		$result = [];
 
+		// If an upstream hop used ActivityPub, set the identities to zot6 nomadic identities where applicable
+		// else things could easily get confused
+
+		$arr['author_xchan'] = Activity::find_best_identity($arr['author_xchan']);
+		$arr['owner_xchan']  = Activity::find_best_identity($arr['owner_xchan']);
+
 		// We've validated the sender. Now make sure that the sender is the owner or author
 
 		if(! $public) {
