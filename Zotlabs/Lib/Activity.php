@@ -806,7 +806,7 @@ class Activity {
 		$ret['type']  = 'Person';
 
 		if($c) {
-			$role = get_pconfig($c['channel_id'],'system','permissions_role');
+			$role = PConfig::Get($c['channel_id'],'system','permissions_role');
 			if(strpos($role,'forum') !== false) {
 				$ret['type'] = 'Group';
 			}
@@ -1105,7 +1105,7 @@ class Activity {
 		$my_perms  = Permissions::serialise($p['perms']);
 		$automatic = $p['automatic'];
 
-		$closeness = get_pconfig($channel['channel_id'],'system','new_abook_closeness',80);
+		$closeness = PConfig::Get($channel['channel_id'],'system','new_abook_closeness',80);
 
 		$r = abook_store_lowlevel(
 			[
@@ -1123,10 +1123,10 @@ class Activity {
 		);
 		
 		if($my_perms)
-			set_abconfig($channel['channel_id'],$ret['xchan_hash'],'system','my_perms',$my_perms);
+			AbConfig:Set($channel['channel_id'],$ret['xchan_hash'],'system','my_perms',$my_perms);
 
 		if($their_perms)
-			set_abconfig($channel['channel_id'],$ret['xchan_hash'],'system','their_perms',$their_perms);
+			AbConfig::Set($channel['channel_id'],$ret['xchan_hash'],'system','their_perms',$their_perms);
 
 
 		if($r) {
@@ -2186,7 +2186,7 @@ class Activity {
 			);
 			if(! $p) {
 				$a = false;
-				if(get_pconfig('system','hyperdrive',true)) {
+				if(PConfig::Get($channel['channel_id'],'system','hyperdrive',true)) {
 					$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
 				}
 				if($a) {
