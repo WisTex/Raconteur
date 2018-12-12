@@ -4,6 +4,8 @@ namespace Zotlabs\Web;
 
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Webfinger;
+use Zotlabs\Lib\Zotfinger;
+use Zotlabs\Lib\Libzot;
 
 /**
  * @brief Implements HTTP Signatures per draft-cavage-http-signatures-10.
@@ -240,13 +242,17 @@ class HTTPSig {
 
 		$url = ((strpos($id,'#')) ? substr($id,0,strpos($id,'#')) : $id);
 
-		$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' limit 1",
+		$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' ",
 			dbesc(str_replace('acct:','',$url)),
 			dbesc($url)
 		);
 
-		if($x && $x[0]['xchan_pubkey']) {
-			return [ 'portable_id' => $x[0]['xchan_hash'], 'public_key' => $x[0]['xchan_pubkey'] , 'hubloc' => $x[0] ];
+		if($x) {
+			$best = Libzot::zot_record_preferred($best);
+		}
+
+		if($best && $best['xchan_pubkey']) {
+			return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'hubloc' => $best ];
 		}
 
 		$r = ActivityStreams::fetch($id);
@@ -265,13 +271,17 @@ class HTTPSig {
 
 	function get_webfinger_key($id) {
 
-		$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' limit 1",
+		$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' ",
 			dbesc(str_replace('acct:','',$id)),
 			dbesc($id)
 		);
 
-		if($x && $x[0]['xchan_pubkey']) {
-			return [ 'portable_id' => $x[0]['xchan_hash'], 'public_key' => $x[0]['xchan_pubkey'] , 'hubloc' => $x[0] ];
+		if($x) {
+			$best = Libzot::zot_record_preferred($best);
+		}
+
+		if($best && $best['xchan_pubkey']) {
+			return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'hubloc' => $best ];
 		}
 
 		$wf = Webfinger::exec($id);
@@ -299,13 +309,19 @@ class HTTPSig {
 
 	function get_zotfinger_key($id) {
 
-		$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' limit 1",
+		$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' ",
 			dbesc(str_replace('acct:','',$id)),
 			dbesc($id)
 		);
-		if($x && $x[0]['xchan_pubkey']) {
-			return [ 'portable_id' => $x[0]['xchan_hash'], 'public_key' => $x[0]['xchan_pubkey'] , 'hubloc' => $x[0] ];
+
+		if($x) {
+			$best = Libzot::zot_record_preferred($best);
 		}
+
+		if($best && $best['xchan_pubkey']) {
+			return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'hubloc' => $best ];
+		}
+
 
 		$wf = Webfinger::exec($id);
 		$key = [ 'portable_id' => '', 'public_key' => '', 'hubloc' => [] ];
@@ -320,9 +336,9 @@ class HTTPSig {
 						continue;
 					}
 					if($l['rel'] === 'http://purl.org/zot/protocol/6.0' && array_key_exists('href',$l) && $l['href'] !== EMPTY_STR) {
-						$z = \Zotlabs\Lib\Zotfinger::exec($l['href']);
+						$z = Zotfinger::exec($l['href']);
 						if($z) {
-							$i = Zotlabs\Lib\Libzot::import_xchan($z['data']);
+							$i = Libzot::import_xchan($z['data']);
 							if($i['success']) {
 								$key['portable_id'] = $i['hash'];
 

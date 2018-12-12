@@ -3038,4 +3038,24 @@ class Libzot {
 		return(($x) ? true : false);
 	}
 
+
+	static public function zot_record_preferred($arr, $check = 'hubloc_network') {
+
+		if(! $arr) {
+			return $arr;
+		}
+
+		foreach($arr as $v) {
+			if($v[$check] === 'zot6') {
+				return $v;
+			}
+		}
+
+		return $arr[0];
+
+	}
+
+
+
+
 }
