@@ -1820,7 +1820,7 @@ class Activity {
 		if(! $s['edited'])
 			$s['edited'] = $s['created'];
 
-		$s['title']    = self::bb_content($content,'name');
+		$s['title']    = (($response_activity) ? EMPTY_STR : self::bb_content($content,'name'));
 		$s['summary']  = self::bb_content($content,'summary');
 		$s['body']     = ((self::bb_content($content,'bbcode') && (! $response_activity)) ? self::bb_content($content,'bbcode') : self::bb_content($content,'content'));
 
