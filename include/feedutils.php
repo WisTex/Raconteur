@@ -1338,7 +1338,7 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 						}
 					}	
 
-					if(! post_is_importable($datarray, $contact))
+					if(! post_is_importable($importer['channel_id'],$datarray, $contact))
 						continue;
 
 					$datarray['parent_mid'] = $datarray['mid'];
@@ -1494,7 +1494,7 @@ function consume_feed($xml, $importer, &$contact, $pass = 0) {
 					}
 				}	
 
-				if(! post_is_importable($datarray, $contact))
+				if(! post_is_importable($importer['channel_id'],$datarray, $contact))
 					continue;
 
 				logger('author: ' . print_r($author, true), LOGGER_DEBUG);

@@ -1412,6 +1412,12 @@ class Libzot {
 
 		$result = [];
 
+		// If an upstream hop used ActivityPub, set the identities to zot6 nomadic identities where applicable
+		// else things could easily get confused
+
+		$arr['author_xchan'] = Activity::find_best_identity($arr['author_xchan']);
+		$arr['owner_xchan']  = Activity::find_best_identity($arr['owner_xchan']);
+
 		// We've validated the sender. Now make sure that the sender is the owner or author
 
 		if(! $public) {
@@ -1551,6 +1557,10 @@ class Libzot {
 					// the top level post is unlikely to be imported and
 					// this is just an exercise in futility.
 
+					if(! get_pconfig($channel['channel_id'],'system','hyperdrive',true)) {
+						continue;
+					}
+
 					if((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {
 						$f = self::fetch_conversation($channel,$arr['parent_mid']);
@@ -1662,7 +1672,7 @@ class Libzot {
 				elseif($arr['edited'] > $r[0]['edited']) {
 					$arr['id'] = $r[0]['id'];
 					$arr['uid'] = $channel['channel_id'];
-					if(($arr['mid'] == $arr['parent_mid']) && (! post_is_importable($arr,$abook))) {
+					if(($arr['mid'] == $arr['parent_mid']) && (! post_is_importable($channel['channel_id'],$arr,$abook))) {
 						$DR->update('update ignored');
 						$result[] = $DR->get();
 					}
@@ -1702,7 +1712,7 @@ class Libzot {
 
 				$item_id = 0;
 
-				if(($arr['mid'] == $arr['parent_mid']) && (! post_is_importable($arr,$abook))) {
+				if(($arr['mid'] == $arr['parent_mid']) && (! post_is_importable($arr['uid'],$arr,$abook))) {
 					$DR->update('post ignored');
 					$result[] = $DR->get();
 				}
@@ -3027,5 +3037,25 @@ class Libzot {
 		$x = getBestSupportedMimeType([ 'application/x-zot+json' ]);
 		return(($x) ? true : false);
 	}
+
+
+	static public function zot_record_preferred($arr, $check = 'hubloc_network') {
+
+		if(! $arr) {
+			return $arr;
+		}
+
+		foreach($arr as $v) {
+			if($v[$check] === 'zot6') {
+				return $v;
+			}
+		}
+
+		return $arr[0];
+
+	}
+
+
+
 
 }

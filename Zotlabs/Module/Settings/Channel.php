@@ -147,6 +147,7 @@ class Channel {
 		$suggestme        = ((x($_POST,'suggestme')) ? intval($_POST['suggestme'])  : 0);  
 		$autoperms        = ((x($_POST,'autoperms')) ? intval($_POST['autoperms'])  : 0);  
 		$anymention       = ((x($_POST,'anymention')) ? intval($_POST['anymention'])  : 0);  
+		$hyperdrive       = ((x($_POST,'hyperdrive')) ? intval($_POST['hyperdrive'])  : 0);  
 		$public_uploads   = ((isset($_POST['public_uploads'])) ? intval($_POST['public_uploads']) : 0);	
 		$post_newfriend   = (($_POST['post_newfriend'] == 1) ? 1: 0);
 		$post_joingroup   = (($_POST['post_joingroup'] == 1) ? 1: 0);
@@ -257,6 +258,7 @@ class Channel {
 		set_pconfig(local_channel(),'system','profile_assign',$profile_assign);
 		set_pconfig(local_channel(),'system','autoperms',$autoperms);
 		set_pconfig(local_channel(),'system','anymention',$anymention);
+		set_pconfig(local_channel(),'system','hyperdrive',$hyperdrive);
 		set_pconfig(local_channel(),'system','force_public_uploads',$public_uploads);
 	
 		$r = q("update channel set channel_name = '%s', channel_pageflags = %d, channel_timezone = '%s', channel_location = '%s', channel_notifyflags = %d, channel_max_anon_mail = %d, channel_max_friend_req = %d, channel_expire_days = %d $set_perms where channel_id = %d",
@@ -495,6 +497,8 @@ class Channel {
 			$anymention = '<input type="hidden" name="anymention" value="' . intval(get_pconfig(local_channel(),'system','anymention')) . '" />';
 		}
 
+		$hyperdrive = [ 'hyperdrive', t('Enable hyperdrive'), ((get_pconfig(local_channel(),'system','hyperdrive',true)) ? 1 : 0), t('Dramatically increases the content available in your stream.'), $yes_no ];
+
 		$permissions_set = (($permissions_role != 'custom') ? true : false);
 
 		$perm_roles = \Zotlabs\Access\PermissionRoles::roles();
@@ -575,6 +579,7 @@ class Channel {
 			
 			'$autoperms' => $autoperms,			
 			'$anymention' => $anymention,			
+			'$hyperdrive' => $hyperdrive,
 			'$h_not' 	=> t('Notification Settings'),
 			'$activity_options' => t('By default post a status message when:'),
 			'$post_newfriend' => array('post_newfriend',  t('accepting a friend request'), $post_newfriend, '', $yes_no),

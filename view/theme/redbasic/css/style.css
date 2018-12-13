@@ -1807,3 +1807,7 @@ dl.bb-dl > dd > li {
 .hover-fx-show:hover .hover-fx-hide {
 	opacity: 1;
 }
+
+.threadlevel.even {
+	color: #888;
+} 
