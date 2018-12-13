@@ -83,6 +83,9 @@ class System {
 	}
 
 	static public function ebs() {
+		if(defined('EBSSTATE')) {
+			return EBSSTATE;
+		}
 		return 'armed';
 	}
 
