@@ -82,6 +82,9 @@ class System {
 		return 'pro';
 	}
 
+	static public function ebs() {
+		return 'armed';
+	}
 
 	static public function get_zot_revision() {
 		$x = [ 'revision' => ZOT_REVISION ]; 

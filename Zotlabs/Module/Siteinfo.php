@@ -1,8 +1,10 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\System;
+use Zotlabs\Web\Controller;
 
-class Siteinfo extends \Zotlabs\Web\Controller {
+class Siteinfo extends Controller {
 
 	function init() {
 		if (argv(1) === 'json' || $_REQUEST['module_format'] === 'json') {
@@ -20,13 +22,14 @@ class Siteinfo extends \Zotlabs\Web\Controller {
 			$federated = [ 'zot6','activitypub' ];
 		}
 
+
 		call_hooks('federated_transports',$federated);
 	
 		$siteinfo = replace_macros(get_markup_template('siteinfo.tpl'),
 			[ 
 				'$title' => t('About this site'),
 				'$sitenametxt' => t('Site Name'),
-				'$sitename' => \Zotlabs\Lib\System::get_site_name(),
+				'$sitename' => System::get_site_name(),
 				'$headline' => t('Site Information'),
 				'$site_about' => bbcode(get_config('system','siteinfo')),
 				'$admin_headline' => t('Administrator'),
@@ -37,13 +40,14 @@ class Siteinfo extends \Zotlabs\Web\Controller {
 				'$prj_transport' => t('Federated and decentralised networking and identity services provided by Zot'),
 				'$transport_link' => '<a href="https://zotlabs.com">https://zotlabs.com</a>',
 
+				'$ebs' => System::ebs(),
 				'$additional_text' => t('Additional federated transport protocols:'),
 				'$additional_fed' => implode(', ',array_unique($federated)),
-				'$prj_version' => ((get_config('system','hidden_version_siteinfo')) ? '' : sprintf( t('Version %s'), \Zotlabs\Lib\System::get_project_version())),
+				'$prj_version' => ((get_config('system','hidden_version_siteinfo')) ? '' : sprintf( t('Version %s'), System::get_project_version())),
 				'$prj_linktxt' => t('Project homepage'),
 				'$prj_srctxt' => t('Developer homepage'),
-				'$prj_link' => \Zotlabs\Lib\System::get_project_link(),
-				'$prj_src' => \Zotlabs\Lib\System::get_project_srclink(),
+				'$prj_link' => System::get_project_link(),
+				'$prj_src' => System::get_project_srclink(),
 			]
 		);
 
