@@ -3,8 +3,6 @@
 
 <h3>{{$sitenametxt}}</h3>
 
-{{if $ebs !== 'armed'}}<h3>Tamper switch has been triggered!</h3>{{/if}}
-
 <div>{{$sitename}}</div>
 
 <h3>{{$headline}}</h3>

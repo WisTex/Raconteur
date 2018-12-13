@@ -1678,6 +1678,7 @@ function get_site_info() {
 		'admin'                        => $admin,
 		'dbdriver'                     => DBA::$dba->getdriver() . ' ' . ((ACTIVE_DBTYPE == DBTYPE_POSTGRES) ? 'postgres' : 'mysql'),
 		'lastpoll'                     => get_config('system','lastpoll'),
+		'ebs'                          => System::ebs(),
 		'info'                         => (($site_info) ? $site_info : '')
 
 	];
