@@ -1123,7 +1123,7 @@ class Activity {
 		);
 		
 		if($my_perms)
-			AbConfig:Set($channel['channel_id'],$ret['xchan_hash'],'system','my_perms',$my_perms);
+			AbConfig::Set($channel['channel_id'],$ret['xchan_hash'],'system','my_perms',$my_perms);
 
 		if($their_perms)
 			AbConfig::Set($channel['channel_id'],$ret['xchan_hash'],'system','their_perms',$their_perms);
