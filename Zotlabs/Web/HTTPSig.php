@@ -248,7 +248,7 @@ class HTTPSig {
 		);
 
 		if($x) {
-			$best = Libzot::zot_record_preferred($best);
+			$best = Libzot::zot_record_preferred($x);
 		}
 
 		if($best && $best['xchan_pubkey']) {
@@ -277,7 +277,7 @@ class HTTPSig {
 		);
 
 		if($x) {
-			$best = Libzot::zot_record_preferred($best);
+			$best = Libzot::zot_record_preferred($x);
 		}
 
 		if($best && $best['xchan_pubkey']) {
@@ -315,7 +315,7 @@ class HTTPSig {
 		);
 
 		if($x) {
-			$best = Libzot::zot_record_preferred($best);
+			$best = Libzot::zot_record_preferred($x);
 		}
 
 		if($best && $best['xchan_pubkey']) {
