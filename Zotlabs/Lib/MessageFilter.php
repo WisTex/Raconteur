@@ -16,10 +16,9 @@ class MessageFilter {
 		$text = prepare_text($item['body'],$item['mimetype']);
 		$text = html2plain(($item['title']) ? $item['title'] . ' ' . $text : $text);
 
-
 		$lang = null;
 
-		if((strpos($incl,'lang=') !== false) || (strpos($excl,'lang=') !== false)) {
+		if((strpos($incl,'lang=') !== false) || (strpos($excl,'lang=') !== false) || (strpos($incl,'lang!=') !== false) || (strpos($excl,'lang!=') !== false)) {
 			$lang = detect_language($text);
 		}
 
@@ -43,6 +42,8 @@ class MessageFilter {
 					return false;
 				elseif((strpos($word,'lang=') === 0) && ($lang) && (strcasecmp($lang,trim(substr($word,5))) == 0))
 					return false;
+				elseif((strpos($word,'lang!=') === 0) && ($lang) && (strcasecmp($lang,trim(substr($word,6))) != 0))
+					return false;
 				elseif(stristr($text,$word) !== false)
 					return false;
 			}
@@ -63,6 +64,8 @@ class MessageFilter {
 				elseif((strpos($word,'/') === 0) && preg_match($word,$text))
 					return true;
 				elseif((strpos($word,'lang=') === 0) && ($lang) && (strcasecmp($lang,trim(substr($word,5))) == 0))
+					return true;
+				elseif((strpos($word,'lang!=') === 0) && ($lang) && (strcasecmp($lang,trim(substr($word,6))) != 0))
 					return true;
 				elseif(stristr($text,$word) !== false)
 					return true;

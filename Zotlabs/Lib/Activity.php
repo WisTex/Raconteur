@@ -806,7 +806,7 @@ class Activity {
 		$ret['type']  = 'Person';
 
 		if($c) {
-			$role = get_pconfig($c['channel_id'],'system','permissions_role');
+			$role = PConfig::Get($c['channel_id'],'system','permissions_role');
 			if(strpos($role,'forum') !== false) {
 				$ret['type'] = 'Group';
 			}
@@ -1105,7 +1105,7 @@ class Activity {
 		$my_perms  = Permissions::serialise($p['perms']);
 		$automatic = $p['automatic'];
 
-		$closeness = get_pconfig($channel['channel_id'],'system','new_abook_closeness',80);
+		$closeness = PConfig::Get($channel['channel_id'],'system','new_abook_closeness',80);
 
 		$r = abook_store_lowlevel(
 			[
@@ -1123,10 +1123,10 @@ class Activity {
 		);
 		
 		if($my_perms)
-			set_abconfig($channel['channel_id'],$ret['xchan_hash'],'system','my_perms',$my_perms);
+			AbConfig:Set($channel['channel_id'],$ret['xchan_hash'],'system','my_perms',$my_perms);
 
 		if($their_perms)
-			set_abconfig($channel['channel_id'],$ret['xchan_hash'],'system','their_perms',$their_perms);
+			AbConfig::Set($channel['channel_id'],$ret['xchan_hash'],'system','their_perms',$their_perms);
 
 
 		if($r) {
@@ -1603,11 +1603,9 @@ class Activity {
 		}
 
 
-		if($abook) {
-			if(! post_is_importable($s,$abook[0])) {
-				logger('post is filtered');
-				return;
-			}
+		if(! post_is_importable($channel['channel_id'],$s,$abook[0])) {
+			logger('post is filtered');
+			return;
 		}
 
 		if($act->obj['conversation']) {
@@ -1822,7 +1820,7 @@ class Activity {
 		if(! $s['edited'])
 			$s['edited'] = $s['created'];
 
-		$s['title']    = self::bb_content($content,'name');
+		$s['title']    = (($response_activity) ? EMPTY_STR : self::bb_content($content,'name'));
 		$s['summary']  = self::bb_content($content,'summary');
 		$s['body']     = ((self::bb_content($content,'bbcode') && (! $response_activity)) ? self::bb_content($content,'bbcode') : self::bb_content($content,'content'));
 
@@ -2122,10 +2120,20 @@ class Activity {
 		$item['aid'] = $channel['channel_account_id'];
 		$item['uid'] = $channel['channel_id'];
 
+
+		// Some authors may be zot6 authors in which case we want to store their nomadic identity
+		// instead of their ActivityPub identity
+
+		$item['author_xchan'] = self::find_best_identity($item['author_xchan']);
+		$item['owner_xchan']  = self::find_best_identity($item['owner_xchan']);
+
 		if(! ( $item['author_xchan'] && $item['owner_xchan'])) {
 			logger('owner or author missing.');
 			return;
 		}
+
+
+
 
 		if($channel['channel_system']) {
 			if(! MessageFilter::evaluate($item,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
@@ -2139,13 +2147,11 @@ class Activity {
 			intval($channel['channel_id'])
 		);
 
-		if($abook) {
-			if(! post_is_importable($item,$abook[0])) {
-				logger('post is filtered');
-				return;
-			}
-		}
 
+		if(! post_is_importable($channel['channel_id'],$item,$abook[0])) {
+			logger('post is filtered');
+			return;
+		}
 
 		if($act->obj['conversation']) {
 			set_iconfig($item,'ostatus','conversation',$act->obj['conversation'],1);
@@ -2179,7 +2185,10 @@ class Activity {
 				intval($item['uid'])
 			);
 			if(! $p) {
-				$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
+				$a = false;
+				if(PConfig::Get($channel['channel_id'],'system','hyperdrive',true)) {
+					$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
+				}
 				if($a) {
 					$p = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
 						dbesc($item['parent_mid']),
@@ -2243,6 +2252,18 @@ class Activity {
 			sync_an_item($channel['channel_id'],$x['item_id']);
 		}
 
+	}
+
+
+	static public function find_best_identity($xchan) {
+		
+		$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
+			dbesc($xchan)
+		);
+		if($r) {
+			return $r[0]['hubloc_hash'];
+		}
+		return $xchan;
 	}
 
 
@@ -2371,11 +2392,9 @@ class Activity {
 			intval($channel['channel_id'])
 		);
 
-		if($abook) {
-			if(! post_is_importable($s,$abook[0])) {
-				logger('post is filtered');
-				return;
-			}
+		if(! post_is_importable($channel['channel_id'],$s,$abook[0])) {
+			logger('post is filtered');
+			return;
 		}
 
 		if($act->obj['conversation']) {

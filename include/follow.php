@@ -60,11 +60,19 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 	$xchan_hash = '';
 	$sql_options = (($protocol) ? " and xchan_network = '" . dbesc($protocol) . "' " : '');
 		
-	$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' $sql_options limit 1",
+	$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' $sql_options ",
 		dbesc($url),
 		dbesc($url),
 		dbesc($url)
 	);
+
+	if($r) {
+
+		// reset results to the best record or the first if we don't have the best
+
+		$r = Libzot::zot_record_preferred($r,'xchan_network');
+	}
+
 
 	$singleton = false;
 	$d = false;
@@ -99,8 +107,8 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 	// if discovery was a success we should have an xchan record in $r
 
 	if($r) {
-		$xchan = $r[0];
-		$xchan_hash = $r[0]['xchan_hash'];
+		$xchan = $r;
+		$xchan_hash = $r['xchan_hash'];
 		$their_perms = EMPTY_STR;
 	}
 
