@@ -17,25 +17,28 @@ class Apporder extends \Zotlabs\Web\Controller {
 
 		nav_set_selected('Order Apps');
 
-		$syslist = array();
-		$list = Zlib\Apps::app_list(local_channel(), false, ['nav_featured_app', 'nav_pinned_app']);
-		if($list) {
-			foreach($list as $li) {
-				$syslist[] = Zlib\Apps::app_encode($li);
+		foreach( [ 'nav_featured_app', 'nav_pinned_app' ] as $l ) {
+			$syslist = [];
+			$list = Zlib\Apps::app_list(local_channel(), false, [ $l ]);
+			if($list) {
+				foreach($list as $li) {
+					$syslist[] = Zlib\Apps::app_encode($li);
+				}
 			}
-		}
-		Zlib\Apps::translate_system_apps($syslist);
+		
+			Zlib\Apps::translate_system_apps($syslist);
 
-		usort($syslist,'Zotlabs\\Lib\\Apps::app_name_compare');
+			usort($syslist,'Zotlabs\\Lib\\Apps::app_name_compare');
 
-		$syslist = Zlib\Apps::app_order(local_channel(),$syslist);
+			$syslist = Zlib\Apps::app_order(local_channel(),$syslist, $l);
 
-		foreach($syslist as $app) {
-			if(strpos($app['categories'],'nav_pinned_app') !== false) {
-				$navbar_apps[] = Zlib\Apps::app_render($app,'nav-order');
-			}
-			else {
-				$nav_apps[] = Zlib\Apps::app_render($app,'nav-order');
+			foreach($syslist as $app) {
+				if($l === 'nav_pinned_app') {
+					$navbar_apps[] = Zlib\Apps::app_render($app,'nav-order');
+				}
+				elseif(strpos($app['categories'],'nav_pinned_app') === false) {
+					$nav_apps[] = Zlib\Apps::app_render($app,'nav-order');
+				}
 			}
 		}
 
