@@ -8,11 +8,11 @@ class Crypto {
 
 	static public function new_keypair($bits) {
 
-		$openssl_options = array(
+		$openssl_options = [
 			'digest_alg'       => 'sha1',
 			'private_key_bits' => $bits,
 			'encrypt_key'      => false 
-		);
+		];
 
 		$conf = get_config('system','openssl_conf_file');
 	
@@ -53,6 +53,7 @@ class Crypto {
 		return $sig;
 	}
 
+
 	static public function verify($data,$sig,$key,$alg = 'sha256') {
 
 		if (! $key) {
@@ -75,25 +76,5 @@ class Crypto {
 
 		return (($verify > 0) ? true : false);
 	}
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

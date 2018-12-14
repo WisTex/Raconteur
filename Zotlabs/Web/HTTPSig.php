@@ -6,6 +6,7 @@ use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Webfinger;
 use Zotlabs\Lib\Zotfinger;
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Crypto;
 
 /**
  * @brief Implements HTTP Signatures per draft-cavage-http-signatures-10.
@@ -157,7 +158,7 @@ class HTTPSig {
 			return $result;
 		}
 
-		$x = rsa_verify($signed_data,$sig_block['signature'],$key['public_key'],$algorithm);
+		$x = Crypto::verify($signed_data,$sig_block['signature'],$key['public_key'],$algorithm);
 
 		logger('verified: ' . $x, LOGGER_DEBUG);
 
@@ -463,7 +464,7 @@ class HTTPSig {
 			$headers = rtrim($headers,"\n");
 		}
 
-		$sig = base64_encode(rsa_sign($headers,$prvkey,$alg));
+		$sig = base64_encode(Crypto::sign($headers,$prvkey,$alg));
 
 		$ret['headers']   = $fields;
 		$ret['signature'] = $sig;
