@@ -7,6 +7,7 @@ use Zotlabs\Lib\Webfinger;
 use Zotlabs\Lib\Zotfinger;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Crypto;
+use Zotlabs\Lib\Keyutils;
 
 /**
  * @brief Implements HTTP Signatures per draft-cavage-http-signatures-10.
@@ -217,10 +218,10 @@ class HTTPSig {
 	function convertKey($key) {
 
 		if(strstr($key,'RSA ')) { 
-			return rsatopem($key);
+			return Keyutils::rsatopem($key);
 		}
 		elseif(substr($key,0,5) === 'data:') {
-			return convert_salmon_key($key);
+			return Keyutils::convert_salmon_key($key);
 		}
 		else {
 			return $key;

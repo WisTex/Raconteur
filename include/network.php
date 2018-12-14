@@ -7,6 +7,7 @@ use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityPub;
 use Zotlabs\Lib\Queue;
 use Zotlabs\Lib\System;
+use Zotlabs\Lib\Keyutils;
 use Zotlabs\Daemon\Master;
 
 /**
@@ -2164,7 +2165,7 @@ function get_webfinger_key($id) {
 			if($x && array_key_exists('properties',$x) && array_key_exists('https://w3id.org/security/v1#publicKeyPem',$x['properties'])) {
 				$key = $x['properties']['https://w3id.org/security/v1#publicKeyPem'];
 				if(strstr($key,'RSA ')) {
-					$key = rsatopem($key);
+					$key = Keyutils::rsatopem($key);
 				}
 				return $key;
 			}
