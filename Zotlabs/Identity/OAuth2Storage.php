@@ -64,7 +64,7 @@ class OAuth2Storage extends \OAuth2\Storage\Pdo {
 		return( [
 			'webfinger'   => channel_reddress($x),
 			'portable_id' => $x['channel_hash'],
-			'email'       => $a['account_email'],
+			'email'       => $a[0]['account_email'],
 			'username'    => $x['channel_address'],
 			'user_id'     => $x['channel_id'],
 			'name'        => $x['channel_name'],
