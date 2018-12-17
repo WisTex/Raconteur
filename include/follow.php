@@ -195,9 +195,7 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 		}
 	}
 	else {
-		$closeness = get_pconfig($uid,'system','new_abook_closeness');
-		if($closeness === false)
-			$closeness = 80;
+		$closeness = get_pconfig($uid,'system','new_abook_closeness',80);
 
 		$r = abook_store_lowlevel(
 			[
