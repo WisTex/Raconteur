@@ -45,7 +45,7 @@ class Zotfinger {
 			$result['data'] = json_decode($x['body'],true);
 
 			if($result['data'] && is_array($result['data']) && array_key_exists('encrypted',$result['data']) && $result['data']['encrypted']) {
-				$result['data'] = json_decode(crypto_unencapsulate($result['data'],get_config('system','prvkey')),true);
+				$result['data'] = json_decode(Crypto::unencapsulate($result['data'],get_config('system','prvkey')),true);
 			}
 
 			return $result;

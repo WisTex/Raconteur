@@ -12,8 +12,6 @@ use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Daemon\Master;
 
-require_once('include/crypto.php');
-
 
 class Libzot {
 
@@ -134,7 +132,7 @@ class Libzot {
 		if ($remote_key) {
 			$algorithm = self::best_algorithm($methods);
 			if ($algorithm) {
-				$data = crypto_encapsulate(json_encode($data),$remote_key, $algorithm);
+				$data = Crypto::encapsulate(json_encode($data),$remote_key, $algorithm);
 			}
 		}
 
@@ -173,7 +171,7 @@ class Libzot {
 		if($methods) {
 			$x = explode(',', $methods);
 			if($x) {
-				$y = crypto_methods();
+				$y = Crypto::methods();
 				if($y) {
 					foreach($y as $yv) {
 						$yv = trim($yv);
@@ -965,7 +963,7 @@ class Libzot {
 			logger('Headers: ' . print_r($arr['header'], true), LOGGER_DATA, LOG_DEBUG);
 		}
 
-		$x = crypto_unencapsulate($x, get_config('system','prvkey'));
+		$x = Crypto::unencapsulate($x, get_config('system','prvkey'));
 		if(! is_array($x)) {
 			$x = json_decode($x,true);
 		}
@@ -2874,7 +2872,7 @@ class Libzot {
 			$ret['site']['directory_url'] = z_root() . '/dirsearch';
 
 
-		$ret['site']['encryption'] = crypto_methods();
+		$ret['site']['encryption'] = Crypto::methods();
 		$ret['site']['zot'] = System::get_zot_revision();
 
 		// hide detailed site information if you're off the grid

@@ -391,7 +391,7 @@ class HTTPSig {
 		$headerval = 'keyId="' . $keyid . '",algorithm="' . $algorithm . '",headers="' . $x['headers'] . '",signature="' . $x['signature'] . '"';
 
 		if($encryption) {
-			$x = crypto_encapsulate($headerval,$encryption['key'],$encryption['algorithm']);
+			$x = Crypto::encapsulate($headerval,$encryption['key'],$encryption['algorithm']);
 			if(is_array($x)) {
 				$headerval = 'iv="' . $x['iv'] . '",key="' . $x['key'] . '",alg="' . $x['alg'] . '",data="' . $x['data'] . '"';
 			}
@@ -542,7 +542,7 @@ class HTTPSig {
 			$data = $matches[1];
 
 		if($iv && $key && $alg && $data) {
-			return crypto_unencapsulate([ 'encrypted' => true, 'iv' => $iv, 'key' => $key, 'alg' => $alg, 'data' => $data ] , $prvkey);
+			return Crypto::unencapsulate([ 'encrypted' => true, 'iv' => $iv, 'key' => $key, 'alg' => $alg, 'data' => $data ] , $prvkey);
 		}
 
 		return '';

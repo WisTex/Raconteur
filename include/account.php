@@ -12,7 +12,6 @@ require_once('include/plugin.php');
 require_once('include/text.php');
 require_once('include/language.php');
 require_once('include/datetime.php');
-require_once('include/crypto.php');
 require_once('include/channel.php');
 
 

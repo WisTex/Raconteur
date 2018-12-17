@@ -1424,7 +1424,6 @@ function check_config() {
 
 function fix_system_urls($oldurl, $newurl) {
 
-	require_once('include/crypto.php');
 
 	logger('fix_system_urls: renaming ' . $oldurl . '  to ' . $newurl);
 

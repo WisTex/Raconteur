@@ -2,7 +2,7 @@
 
 namespace Zotlabs\Lib;
 
-
+require_once('library/ASNValue.class.php');
 require_once('library/asn1.php');
 
 /**
@@ -22,7 +22,7 @@ class Keyutils {
 	    // Get title:
 	    $title = $Private? 'RSA PRIVATE KEY' : 'PUBLIC KEY';
     	// Add wrapping:
-		$return "-----BEGIN {$title}-----\n" . $body . "\n" . "-----END {$title}-----\n";
+		return "-----BEGIN {$title}-----\n" . $body . "\n" . "-----END {$title}-----\n";
 	}
 
 	static public function DerToRsa($Der) {
@@ -34,7 +34,7 @@ class Keyutils {
     	// Get title:
 	    $title = 'RSA PUBLIC KEY';
     	// Add wrapping:
-		$return "-----BEGIN {$title}-----\n" . $body . "\n" . "-----END {$title}-----\n";
+		return "-----BEGIN {$title}-----\n" . $body . "\n" . "-----END {$title}-----\n";
 	}
 
 

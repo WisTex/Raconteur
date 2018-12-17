@@ -15,7 +15,6 @@ use Zotlabs\Daemon\Master;
 use Zotlabs\Lib\System;
 use Zotlabs\Render\Comanche;
 
-require_once('include/crypto.php');
 require_once('include/menu.php');
 require_once('include/photo/photo_driver.php');
 
