@@ -2186,7 +2186,7 @@ class Activity {
 			);
 			if(! $p) {
 				$a = false;
-				if(PConfig::Get($channel['channel_id'],'system','hyperdrive',true)) {
+				if(PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce') {
 					$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
 				}
 				if($a) {

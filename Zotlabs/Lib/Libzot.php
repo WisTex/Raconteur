@@ -1553,7 +1553,7 @@ class Libzot {
 					// the top level post is unlikely to be imported and
 					// this is just an exercise in futility.
 
-					if(! get_pconfig($channel['channel_id'],'system','hyperdrive',true)) {
+					if((! get_pconfig($channel['channel_id'],'system','hyperdrive',true)) || (! $arr['verb'] === 'Announce')) {
 						continue;
 					}
 
