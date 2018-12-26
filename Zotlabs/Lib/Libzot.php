@@ -629,6 +629,11 @@ class Libzot {
 		$changed = false;
 		$what = '';
 
+		if(! is_array($arr)) {
+			logger('Not an array: ' . print_r($arr,true), LOGGER_DEBUG);
+			return $ret;
+		}
+
 		if(! ($arr['id'] && $arr['id_sig'])) {
 			logger('No identity information provided. ' . print_r($arr,true));
 			return $ret;
@@ -1559,10 +1564,15 @@ class Libzot {
 
 					if((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {
+						// This will fail if the conversation originated on ActivityPub. 
 						$f = self::fetch_conversation($channel,$arr['parent_mid']);
-						if($f === false) {
-							$f = self::fetch_conversation($channel,$arr['mid']);
-						}
+
+						// This was provided to fetch third-party ActivityPub conversations from Zot6 sources
+						// Commented out because it causes a number of permission paradoxes
+
+						//if($f === false) {
+						//	$f = self::fetch_conversation($channel,$arr['mid']);
+						//}
 					}
 					continue;
 				}
@@ -1762,6 +1772,17 @@ class Libzot {
 		logger('Local results: ' . print_r($result, true), LOGGER_DEBUG);
 
 		return $result;
+	}
+
+	static public function hyperdrive_enabled($channel,$item) {
+
+		if(get_pconfig($channel['channel_id'],'system','hyperdrive',true)) {
+			return true;
+		}
+		if($item['verb'] === 'Announce' && get_pconfig($channel['channel_id'],'system','hyperdrive_announce',true)) {
+			return true;
+		}
+		return false;
 	}
 
 	static public function fetch_conversation($channel,$mid) {

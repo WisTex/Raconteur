@@ -251,7 +251,7 @@ function oembed_fetch_url($embedurl){
 				$orig = $j['html'] = $x['body'];
 			}
 
-			logger('frame src: ' . $j['html'], LOGGER_DATA);
+			// logger('frame src: ' . $j['html'], LOGGER_DATA);
 		
 			$j['html'] = purify_html($j['html'],$allow_position);
 			if($j['html'] != $orig) {

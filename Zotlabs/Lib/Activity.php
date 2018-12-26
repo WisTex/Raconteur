@@ -1832,6 +1832,11 @@ class Activity {
 
 		$s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
 		$s['obj']      = $act->obj;
+		if(is_array($obj) && array_path_exists('actor/id',$s['obj'])) {
+			$s['obj']['actor'] = $s['obj']['actor']['id'];
+		}
+
+		// @todo add target if present
 
 		$instrument = $act->get_property_obj('instrument');
 		if((! $instrument) && (! $response_activity)) {
