@@ -1,38 +1,34 @@
 <div id="main-slider" class="slider" >
-	<input id="main-range" type="text" name="cminmax" value="{{$val}}" />
+	<i class="fa fa-fw fa-user range-icon"></i>
+	<input id="main-range" title="{{$cmax}}" type="range" min="0" max="99" name="cmax" value="{{$cmax}}" list="affinity_labels" >
+	<i class="fa fa-fw fa-users range-icon"></i>
+	<datalist id="affinity_labels">
+	{{foreach $labels as $k => $v}}
+		<option value={{$k}} label="{{$v}}">
+	{{/foreach}}
+	</datalist>
 	<div id="profile-jot-text-loading" class="spinner-wrapper">
 		<div class="spinner m"></div>
 	</div>
 </div>
+
 <script>
 $(document).ready(function() {
+
 	var old_cmin = 0;
 	var old_cmax = 99;
-
-	$("#main-range").jRange({ isRange: true, from: 0, to: 99, step: 1, scale: [{{$labels}}], width:'100%', showLabels: false,  onstatechange: function(v) { 
-		var carr = v.split(",");
-		if(carr[0] != bParam_cmin) {
-			old_cmin = bParam_cmin;
-	 		bParam_cmin = carr[0];
-		}
-		if(carr[1] != bParam_cmax) {
-			old_cmax = bParam_cmax; 
-			bParam_cmax = carr[1];
-		}
-		networkRefresh();
- 	} });
-
 	var slideTimer = null;
+
+	$("#main-range").change(function() { 
+		bParam_cmax = $("#main-range").val();
+		$("#main-range").attr('title',bParam_cmax);
+		networkRefresh();
+	});
+
 	function networkRefresh() {
-
-
+		if(slideTimer !== null)
+			return;
 		$("#profile-jot-text-loading").show();
-
-		if((document.readyState !== "complete") || (slideTimer !== null))
-			return;
-		if((bParam_cmin == old_cmin) && (bParam_cmax == old_cmax))
-			return;
-
 		slideTimer = setTimeout(networkTimerRefresh,2000);
 	}
 

@@ -21,32 +21,23 @@ class Affinity {
 		if(Apps::system_app_installed(local_channel(),'Affinity Tool')) {
 
 			$labels = array(
-				t('Me'),
-				t('Family'),
-				t('Friends'),
-				t('Acquaintances'),
-				t('All')
+				0  => t('Me'),
+				20 => t('Family'),
+				40 => t('Friends'),
+				60 => t('Peers'),
+				80 => t('Connections'),
+				99 => t('All')
 			);
 			call_hooks('affinity_labels',$labels);
-			$label_str = '';
-
-			if($labels) {
-				foreach($labels as $l) {
-					if($label_str) {
-						$label_str .= ", '|'";
-						$label_str .= ", '" . $l . "'";
-					}
-					else
-						$label_str .= "'" . $l . "'";
-				}
-			}
 
 			$tpl = get_markup_template('main_slider.tpl');
-			$x = replace_macros($tpl,array(
-				'$val' => $cmin . ',' . $cmax,
+			$x = replace_macros($tpl, [
+				'$cmin' => $cmin,
+				'$cmax' => $cmax,
+				'$lbl'  => t('Friend zoom in/out'),
 				'$refresh' => t('Refresh'),
-				'$labels' => $label_str,
-			));
+				'$labels' => $labels,
+			]);
 		
 			$arr = array('html' => $x);
 			call_hooks('main_slider',$arr);
