@@ -1,12 +1,14 @@
 <div id="main-slider" class="slider" >
+	<div id="slider-container">
 	<i class="fa fa-fw fa-user range-icon"></i>
 	<input id="main-range" title="{{$cmax}}" type="range" min="0" max="99" name="cmax" value="{{$cmax}}" list="affinity_labels" >
-	<i class="fa fa-fw fa-users range-icon"></i>
 	<datalist id="affinity_labels">
 	{{foreach $labels as $k => $v}}
 		<option value={{$k}} label="{{$v}}">
 	{{/foreach}}
 	</datalist>
+	<i class="fa fa-fw fa-users range-icon"></i>
+	</div>
 	<div id="profile-jot-text-loading" class="spinner-wrapper">
 		<div class="spinner m"></div>
 	</div>

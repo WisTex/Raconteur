@@ -67,11 +67,21 @@ li:hover .widget-nav-pills-icons {
 	}
 }
 
+#slider-container {
+	display: flex;
+	flex-wrap: no-wrap;
+	justify-content: flex-center;
+}
+
 #main-range {
-	width: 94%;
+	background-color: #EEF;
+	border-radius: 0.25rem;
+	width: 90%;
+	
 }
 
 .range-icon {
+	margin: 4px;
 	font-size: 12px;
 	color: #777;
 }

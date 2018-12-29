@@ -3113,10 +3113,12 @@ function pdl_selector($uid, $current='') {
  * @return one-dimensional array
  */
 function flatten_array_recursive($arr) {
-	$ret = array();
 
-	if(! $arr)
+	$ret = [];
+
+	if(! ($arr && is_array($arr))) {
 		return $ret;
+	}
 
 	foreach($arr as $a) {
 		if(is_array($a)) {
