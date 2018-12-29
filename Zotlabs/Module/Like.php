@@ -209,6 +209,10 @@ class Like extends \Zotlabs\Web\Controller {
 		}
 		else {
 	
+			if(! $observer) {
+				killme();
+			}
+
 			// this is used to like an item or comment
 	
 			$item_id = ((argc() == 2) ? notags(trim(argv(1))) : 0);

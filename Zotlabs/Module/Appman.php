@@ -90,12 +90,12 @@ class Appman extends \Zotlabs\Web\Controller {
 
 		$channel = \App::get_channel();
 
-		if(argc() > 2) {
+		if(argc() > 3) {
 			if(argv(2) === 'moveup') {
-				Zlib\Apps::moveup(local_channel(),argv(1));
+				Zlib\Apps::moveup(local_channel(),argv(1),argv(3));
 			}
 			if(argv(2) === 'movedown') {
-				Zlib\Apps::movedown(local_channel(),argv(1));
+				Zlib\Apps::movedown(local_channel(),argv(1),argv(3));
 			}
 			goaway(z_root() . '/apporder');
 		}

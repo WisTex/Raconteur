@@ -29,7 +29,6 @@ use Zotlabs\Lib\IConfig;
 use Zotlabs\Lib\Enotify;
 use App;
 
-require_once('include/crypto.php');
 require_once('include/attach.php');
 require_once('include/bbcode.php');
 require_once('include/security.php');

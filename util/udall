@@ -7,7 +7,7 @@ git pull
 
 if [ -d extend ] ; then
 	for a in  theme addon widget ; do
-		if [ -d $a ]; then
+		if [ -d extend/$a ]; then
 			for b in  `ls extend/$a` ; do
 				echo Updating $b
 				'util/update_'$a'_repo' $b

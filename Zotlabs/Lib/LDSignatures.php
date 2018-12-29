@@ -12,7 +12,7 @@ class LDSignatures {
 		$ohash = self::hash(self::signable_options($data['signature']));
 		$dhash = self::hash(self::signable_data($data));
 
-		$x = rsa_verify($ohash . $dhash,base64_decode($data['signature']['signatureValue']), $pubkey);
+		$x = Crypto::verify($ohash . $dhash,base64_decode($data['signature']['signatureValue']), $pubkey);
 		logger('LD-verify: ' . intval($x));
 
 		return $x;
@@ -35,7 +35,7 @@ class LDSignatures {
 
 		$ohash = self::hash(self::signable_options($options));
 		$dhash = self::hash(self::signable_data($data));
-		$options['signatureValue'] = base64_encode(rsa_sign($ohash . $dhash,$channel['channel_prvkey']));
+		$options['signatureValue'] = base64_encode(Crypto::sign($ohash . $dhash,$channel['channel_prvkey']));
 
 		$signed = array_merge([
 			'@context' => [ 
@@ -116,7 +116,7 @@ class LDSignatures {
 
 		$precomputed = '.' . base64url_encode($data_type,false) . '.YmFzZTY0dXJs.UlNBLVNIQTI1Ng==';
 
-		$signature  = base64url_encode(rsa_sign($data . $precomputed,$channel['channel_prvkey']));
+		$signature  = base64url_encode(Crypto::sign($data . $precomputed,$channel['channel_prvkey']));
 
 		return ([
 			'id'          => $arr['id'],

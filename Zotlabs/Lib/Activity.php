@@ -1123,7 +1123,7 @@ class Activity {
 		);
 		
 		if($my_perms)
-			AbConfig:Set($channel['channel_id'],$ret['xchan_hash'],'system','my_perms',$my_perms);
+			AbConfig::Set($channel['channel_id'],$ret['xchan_hash'],'system','my_perms',$my_perms);
 
 		if($their_perms)
 			AbConfig::Set($channel['channel_id'],$ret['xchan_hash'],'system','their_perms',$their_perms);
@@ -1325,7 +1325,7 @@ class Activity {
 			if($person_obj['id'] === $person_obj['publicKey']['owner']) {
 				$pubkey = $person_obj['publicKey']['publicKeyPem'];
 				if(strstr($pubkey,'RSA ')) {
-					$pubkey = rsatopem($pubkey);
+					$pubkey = Keyutils::rsatopem($pubkey);
 				}
 			}
 		}
@@ -1832,6 +1832,11 @@ class Activity {
 
 		$s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
 		$s['obj']      = $act->obj;
+		if(is_array($obj) && array_path_exists('actor/id',$s['obj'])) {
+			$s['obj']['actor'] = $s['obj']['actor']['id'];
+		}
+
+		// @todo add target if present
 
 		$instrument = $act->get_property_obj('instrument');
 		if((! $instrument) && (! $response_activity)) {
@@ -2186,7 +2191,7 @@ class Activity {
 			);
 			if(! $p) {
 				$a = false;
-				if(PConfig::Get($channel['channel_id'],'system','hyperdrive',true)) {
+				if(PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce') {
 					$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
 				}
 				if($a) {

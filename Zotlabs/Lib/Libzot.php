@@ -12,8 +12,6 @@ use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Daemon\Master;
 
-require_once('include/crypto.php');
-
 
 class Libzot {
 
@@ -134,7 +132,7 @@ class Libzot {
 		if ($remote_key) {
 			$algorithm = self::best_algorithm($methods);
 			if ($algorithm) {
-				$data = crypto_encapsulate(json_encode($data),$remote_key, $algorithm);
+				$data = Crypto::encapsulate(json_encode($data),$remote_key, $algorithm);
 			}
 		}
 
@@ -173,7 +171,7 @@ class Libzot {
 		if($methods) {
 			$x = explode(',', $methods);
 			if($x) {
-				$y = crypto_methods();
+				$y = Crypto::methods();
 				if($y) {
 					foreach($y as $yv) {
 						$yv = trim($yv);
@@ -389,9 +387,7 @@ class Libzot {
 					set_abconfig($channel['channel_id'],$x['hash'],'system','my_perms',$my_perms);
 				}
 
-				$closeness = get_pconfig($channel['channel_id'],'system','new_abook_closeness');
-				if($closeness === false)
-					$closeness = 80;
+				$closeness = get_pconfig($channel['channel_id'],'system','new_abook_closeness',80);
 
 				$y = abook_store_lowlevel(
 					[
@@ -632,6 +628,11 @@ class Libzot {
 
 		$changed = false;
 		$what = '';
+
+		if(! is_array($arr)) {
+			logger('Not an array: ' . print_r($arr,true), LOGGER_DEBUG);
+			return $ret;
+		}
 
 		if(! ($arr['id'] && $arr['id_sig'])) {
 			logger('No identity information provided. ' . print_r($arr,true));
@@ -965,7 +966,7 @@ class Libzot {
 			logger('Headers: ' . print_r($arr['header'], true), LOGGER_DATA, LOG_DEBUG);
 		}
 
-		$x = crypto_unencapsulate($x, get_config('system','prvkey'));
+		$x = Crypto::unencapsulate($x, get_config('system','prvkey'));
 		if(! is_array($x)) {
 			$x = json_decode($x,true);
 		}
@@ -1557,16 +1558,21 @@ class Libzot {
 					// the top level post is unlikely to be imported and
 					// this is just an exercise in futility.
 
-					if(! get_pconfig($channel['channel_id'],'system','hyperdrive',true)) {
+					if((! get_pconfig($channel['channel_id'],'system','hyperdrive',true)) || (! $arr['verb'] === 'Announce')) {
 						continue;
 					}
 
 					if((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {
+						// This will fail if the conversation originated on ActivityPub. 
 						$f = self::fetch_conversation($channel,$arr['parent_mid']);
-						if($f === false) {
-							$f = self::fetch_conversation($channel,$arr['mid']);
-						}
+
+						// This was provided to fetch third-party ActivityPub conversations from Zot6 sources
+						// Commented out because it causes a number of permission paradoxes
+
+						//if($f === false) {
+						//	$f = self::fetch_conversation($channel,$arr['mid']);
+						//}
 					}
 					continue;
 				}
@@ -1766,6 +1772,17 @@ class Libzot {
 		logger('Local results: ' . print_r($result, true), LOGGER_DEBUG);
 
 		return $result;
+	}
+
+	static public function hyperdrive_enabled($channel,$item) {
+
+		if(get_pconfig($channel['channel_id'],'system','hyperdrive',true)) {
+			return true;
+		}
+		if($item['verb'] === 'Announce' && get_pconfig($channel['channel_id'],'system','hyperdrive_announce',true)) {
+			return true;
+		}
+		return false;
 	}
 
 	static public function fetch_conversation($channel,$mid) {
@@ -2874,7 +2891,7 @@ class Libzot {
 			$ret['site']['directory_url'] = z_root() . '/dirsearch';
 
 
-		$ret['site']['encryption'] = crypto_methods();
+		$ret['site']['encryption'] = Crypto::methods();
 		$ret['site']['zot'] = System::get_zot_revision();
 
 		// hide detailed site information if you're off the grid

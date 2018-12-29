@@ -7,6 +7,7 @@
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Group;
+use Zotlabs\Lib\Crypto;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\Permissions;
@@ -14,7 +15,6 @@ use Zotlabs\Daemon\Master;
 use Zotlabs\Lib\System;
 use Zotlabs\Render\Comanche;
 
-require_once('include/crypto.php');
 require_once('include/menu.php');
 require_once('include/photo/photo_driver.php');
 
@@ -103,8 +103,7 @@ function create_sys_channel() {
 	// Ensure that there is a host keypair.
 
 	if ((! get_config('system', 'pubkey')) && (! get_config('system', 'prvkey'))) {
-		require_once('include/crypto.php');
-		$hostkey = new_keypair(4096);
+		$hostkey = Crypto::new_keypair(4096);
 		set_config('system', 'pubkey', $hostkey['pubkey']);
 		set_config('system', 'prvkey', $hostkey['prvkey']);
 	}
@@ -229,7 +228,7 @@ function create_identity($arr) {
 	}
 
 	$guid = Libzot::new_uid($nick);
-	$key = new_keypair(4096);
+	$key = Crypto::new_keypair(4096);
 
 	$sig = Libzot::sign($guid,$key['prvkey']);
 	$hash = Libzot::make_xchan_hash($guid,$key['pubkey']);
@@ -504,7 +503,7 @@ function change_channel_keys($channel) {
 
 	$stored = [];
 
-	$key = new_keypair(4096);
+	$key = Crypto::new_keypair(4096);
 
 	$sig = Libzot::sign($channel['channel_guid'],$key['prvkey']);
 	$hash = Libzot::make_xchan_hash($channel['channel_guid'],$channel['channel_pubkey']);

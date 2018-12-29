@@ -5,7 +5,6 @@
 
 use Zotlabs\Lib\Libsync;
 
-require_once('include/crypto.php');
 require_once('include/attach.php');
 require_once('include/msglib.php');
 

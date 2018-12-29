@@ -4,13 +4,14 @@
  * @brief Somme account related functions.
  */
 
+use Zotlabs\Lib\Crypto;
+
 require_once('include/config.php');
 require_once('include/network.php');
 require_once('include/plugin.php');
 require_once('include/text.php');
 require_once('include/language.php');
 require_once('include/datetime.php');
-require_once('include/crypto.php');
 require_once('include/channel.php');
 
 
@@ -177,7 +178,7 @@ function create_account($arr) {
 	// Ensure that there is a host keypair.
 
 	if ((! get_config('system', 'pubkey')) && (! get_config('system', 'prvkey'))) {
-		$hostkey = new_keypair(4096);
+		$hostkey = Crypto::new_keypair(4096);
 		set_config('system', 'pubkey', $hostkey['pubkey']);
 		set_config('system', 'prvkey', $hostkey['prvkey']);
 	}

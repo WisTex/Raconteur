@@ -203,6 +203,9 @@ function nav($template = 'default') {
 		}
 	}
 
+	$pinned_list = [];
+	$syslist = [];
+
 	//app bin
 	if($is_owner) {
 		if(get_pconfig(local_channel(), 'system','import_system_apps') !== datetime_convert('UTC','UTC','now','Y-m-d')) {
@@ -210,8 +213,21 @@ function nav($template = 'default') {
 			set_pconfig(local_channel(), 'system','import_system_apps', datetime_convert('UTC','UTC','now','Y-m-d'));
 		}
 
-		$syslist = array();
-		$list = Apps::app_list(local_channel(), false, ['nav_featured_app', 'nav_pinned_app']);
+		$list = Apps::app_list(local_channel(), false, [ 'nav_pinned_app' ]);
+		if($list) {
+			foreach($list as $li) {
+				$pinned_list[] = Apps::app_encode($li);
+			}
+		}
+		Apps::translate_system_apps($pinned_list);
+
+		usort($pinned_list,'Zotlabs\\Lib\\Apps::app_name_compare');
+
+		$pinned_list = Apps::app_order(local_channel(),$pinned_list, 'nav_pinned_app');
+
+
+		$syslist = [];
+		$list = Apps::app_list(local_channel(), false, [ 'nav_featured_app' ]);
 
 		if($list) {
 			foreach($list as $li) {
@@ -219,6 +235,8 @@ function nav($template = 'default') {
 			}
 		}
 		Apps::translate_system_apps($syslist);
+
+
 	}
 	else {
 		$syslist = Apps::get_system_apps(true);
@@ -226,26 +244,38 @@ function nav($template = 'default') {
 
 	usort($syslist,'Zotlabs\\Lib\\Apps::app_name_compare');
 
-	$syslist = Apps::app_order(local_channel(),$syslist);
+	$syslist = Apps::app_order(local_channel(),$syslist, 'nav_featured_app');
 
-	foreach($syslist as $app) {
-		if(\App::$nav_sel['name'] == $app['name'])
-			$app['active'] = true;
 
-		if($is_owner) {
-			if(strpos($app['categories'],'nav_pinned_app') !== false) {
+	if($pinned_list) {
+		foreach($pinned_list as $app) {
+			if(\App::$nav_sel['name'] == $app['name'])
+				$app['active'] = true;
+
+			if($is_owner) {
 				$navbar_apps[] = Apps::app_render($app,'navbar');
 			}
-			else {
-				$nav_apps[] = Apps::app_render($app,'nav');
+			elseif(! $is_owner && strpos($app['requires'], 'local_channel') === false) {
+				$navbar_apps[] = Apps::app_render($app,'navbar');
 			}
 		}
-		elseif(! $is_owner && strpos($app['requires'], 'local_channel') === false) {
-			if(strpos($app['categories'],'nav_pinned_app') !== false) {
-				$navbar_apps[] = Apps::app_render($app,'navbar');
+	}
+
+
+	if($syslist) {
+		foreach($syslist as $app) {
+			if(\App::$nav_sel['name'] == $app['name'])
+				$app['active'] = true;
+
+			if($is_owner) {
+				if(strpos($app['categories'],'nav_pinned_app') === false) {
+					$nav_apps[] = Apps::app_render($app,'nav');
+				}
 			}
-			else {
-				$nav_apps[] = Apps::app_render($app,'nav');
+			elseif(! $is_owner && strpos($app['requires'], 'local_channel') === false) {
+				if(strpos($app['categories'],'nav_pinned_app') === false) {
+					$nav_apps[] = Apps::app_render($app,'nav');
+				}
 			}
 		}
 	}

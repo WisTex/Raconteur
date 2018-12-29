@@ -24,7 +24,6 @@ use Zotlabs\Daemon\Master;
 
 require_once('include/bbcode.php');
 require_once('include/oembed.php');
-require_once('include/crypto.php');
 require_once('include/message.php');
 require_once('include/feedutils.php');
 require_once('include/photo/photo_driver.php');
