@@ -16,7 +16,7 @@ class _1225 {
 				$app['uid'] = 0;
 				$app['guid'] = hash('whirlpool',$app['name']);
 				$app['system'] = 1;
-				self::app_install(0,$app);
+				Apps::app_install(0,$app);
 			}
 		}
 
