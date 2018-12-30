@@ -655,25 +655,14 @@ class Connedit extends \Zotlabs\Web\Controller {
 				];
 	
 				$labels = [
-					t('Me'),
-					t('Family'),
-					t('Friends'),
-					t('Acquaintances'),
-					t('All')
+					0  => t('Me'),
+					20 => t('Family'),
+					40 => t('Friends'),
+					60 => t('Peers'),
+					80 => t('Connections'),
+					99 => t('All')
 				];
 				call_hooks('affinity_labels',$labels);
-				$label_str = '';
-	
-				if($labels) {
-					foreach($labels as $l) {
-						if($label_str) {
-							$label_str .= ", '|'";
-							$label_str .= ", '" . $l . "'";
-						}
-						else
-							$label_str .= "'" . $l . "'";
-					}
-				}
 	
 				$slider_tpl = get_markup_template('contact_slider.tpl');
 				
@@ -682,7 +671,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 				$slide = replace_macros($slider_tpl,array(
 					'$min' => 1,
 					'$val' => $slideval,
-					'$labels' => $label_str,
+					'$labels' => $labels,
 				));
 			}
 

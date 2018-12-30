@@ -35,6 +35,12 @@ $(document).ready(function() {
 		networkRefresh();
 	}
 
+	// "de-bounce" circuit
+	// when a change occurs, indicate "busy", but wait (2 seconds) 
+	// before loading fresh content. This allows the slider value to
+	// change further during that time and avoids a network fetch for 
+	// every individual integer value change. 
+
 	function networkRefresh() {
 		if(slideTimer !== null)
 			return;

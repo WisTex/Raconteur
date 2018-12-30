@@ -111,8 +111,21 @@
 					<div class="section-content-tools-wrapper">
 						{{if $slide}}
 						<div class="form-group"><strong>{{$lbl_slider}}</strong></div>
-						{{$slide}}
-						<input id="contact-closeness-mirror" type="hidden" name="closeness" value="{{$close}}" />
+							<div id="contact-slider" class="slider form-group">
+							{{$slide}}
+								<div id="slider-container">
+								<i class="fa fa-fw fa-user range-icon"></i>
+								<input id="contact-range" title="{{$close}}" type="range" min="0" max="99" name="closeness" value="{{$close}}" list="affinity_labels" >
+								<datalist id="affinity_labels">
+								{{foreach $labels as $k => $v}}
+								<option value={{$k}} label="{{$v}}">
+								{{/foreach}}
+								</datalist>
+								<i class="fa fa-fw fa-users range-icon"></i>
+								<span class="range-value">{{$close}}</span>
+								</div>
+							</div>
+						</div>
 						{{/if}}
 
 						{{if $multiprofs}}

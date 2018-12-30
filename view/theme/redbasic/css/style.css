@@ -111,6 +111,10 @@ h6, .h6 {
 	font-family: sans-serif, arial, freesans;
 }
 
+#contact-range {
+	width: 80%;
+}
+
 abbr {
 	border-bottom: none;
 }
