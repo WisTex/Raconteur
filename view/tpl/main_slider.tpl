@@ -8,6 +8,7 @@
 	{{/foreach}}
 	</datalist>
 	<i class="fa fa-fw fa-users range-icon"></i>
+	<span class="range-value">{{$cmax}}</span>
 	</div>
 	<div id="profile-jot-text-loading" class="spinner-wrapper">
 		<div class="spinner m"></div>
@@ -18,14 +19,27 @@
 $(document).ready(function() {
 
 	var old_cmin = 0;
-	var old_cmax = 99;
+	var old_cmax = {{$cmax}};
 	var slideTimer = null;
 
-	$("#main-range").change(function() { 
+	$("#main-range").on('input', function() { sliderUpdate(); });
+	$("#main-range").on('change', function() { sliderUpdate(); });
+
+	function sliderUpdate() {
 		bParam_cmax = $("#main-range").val();
+		if(bParam_cmax == old_cmax) 
+			return;
+		old_cmax = bParam_cmax;
 		$("#main-range").attr('title',bParam_cmax);
+		$(".range-value").html(bParam_cmax);
 		networkRefresh();
-	});
+	}
+
+	// "de-bounce" circuit
+	// when a change occurs, indicate "busy", but wait (2 seconds) 
+	// before loading fresh content. This allows the slider value to
+	// change further during that time and avoids a network fetch for 
+	// every individual integer value change. 
 
 	function networkRefresh() {
 		if(slideTimer !== null)
