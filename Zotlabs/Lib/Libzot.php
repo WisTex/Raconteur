@@ -1466,6 +1466,30 @@ class Libzot {
 			if(intval($channel['channel_system']) && (! $arr['item_private']) && (! $relay)) {
 				$local_public = true;
 
+				if(! check_pubstream_channelallowed($sender)) {
+					$local_public = false;
+					continue;
+				}
+
+				// don't allow pubstream posts if the sender even has a clone on a pubstream blacklisted site
+
+				$siteallowed = true;
+				$h = q("select hubloc_url from hubloc where hubloc_hash = '%s'",
+					dbesc($sender)
+				);
+				if($h) {
+					foreach($h as $hub) {
+						if(! check_pubstream_siteallowed($hub['hubloc_url'])) {
+							$siteallowed = false;
+							break;
+						}
+					}
+				}
+				if(! $siteallowed) {
+					$local_public = false;
+					continue;
+				}
+
 				$r = q("select xchan_selfcensored from xchan where xchan_hash = '%s' limit 1",
 					dbesc($sender)
 				);

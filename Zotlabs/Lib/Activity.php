@@ -2108,6 +2108,25 @@ class Activity {
 			$allowed = true;
 		}
 
+		if(intval($channel['channel_system'])) {
+
+			if(! check_pubstream_channelallowed($observer_hash)) {
+				$allowed = false;
+			}
+			// don't allow pubstream posts if the sender even has a clone on a pubstream blacklisted site
+
+			$h = q("select hubloc_url from hubloc where hubloc_hash = '%s'",
+				dbesc($observer_hash)
+			);
+			if($h) {
+				foreach($h as $hub) {
+					if(! check_pubstream_siteallowed($hub['hubloc_url'])) {
+						$allowed = false;
+						break;
+					}
+				}
+			}
+		}	
 
 		if(! $allowed) {
 			logger('no permission');
