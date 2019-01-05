@@ -3136,6 +3136,11 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 		$arr['deny_gid']  = $channel['channel_deny_gid'];
 		$arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
 
+		q("update item set comment_policy = 'authenticated' where mid = '%s' and uid = %d",
+			dbesc($arr['parent_mid']),
+			intval($arr['uid'])
+		);
+
 		$post = item_store($arr);	
 
 		$post_id = $post['item_id'];
