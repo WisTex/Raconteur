@@ -1875,7 +1875,7 @@ class Libzot {
 
 			if($signer) {
 				$s = q("select site_project from site where site_url = '%s' limit 1",
-					dbesc($hubloc['hubloc_url'])
+					dbesc($signer[0]['hubloc_url'])
 				);
 				if((! $s) || (in_array($s[0]['site_project'],[ '', 'osada' ]))) {
 					$arr['comment_policy'] = 'authenticated';
