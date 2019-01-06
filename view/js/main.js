@@ -868,7 +868,7 @@ function liveUpdate(notify_id) {
 
 	if((src === null) || (stopped) || (! profile_uid)) { $('.like-rotator').hide(); return; }
 
-	if(($('.comment-edit-text.expanded').length) || (in_progress) || (mediaPlaying)) {
+	if(in_progress || mediaPlaying) {
 		if(livetime) {
 			clearTimeout(livetime);
 		}
