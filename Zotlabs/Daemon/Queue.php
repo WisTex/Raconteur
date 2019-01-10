@@ -9,6 +9,16 @@ class Queue {
 
 	static public function run($argc,$argv) {
 
+                switch (DBTYPE_ACTIVE) {
+                        case DBTYPE_MYSQL:
+				$sqlrandfunc = "RAND()";
+                                break;
+
+                        case DBTYPE_POSTGRESQL:
+				$sqlrandfunc = "RANDOM()";
+                                break;
+                }
+
 		if($argc > 1)
 			$queue_id = $argv[1];
 		else
@@ -58,14 +68,14 @@ class Queue {
 			// the site is permanently down, there's no reason to attempt delivery at all, or at most not more than once 
 			// or twice a day. 
 
-			$r = q("SELECT *,RAND() as rn FROM outq WHERE outq_delivered = 0 and outq_scheduled < %s order by rn limit 1",
+			$r = q("SELECT *,$sqlrandfunc as rn FROM outq WHERE outq_delivered = 0 and outq_scheduled < %s order by rn limit 1",
 				db_utcnow()
 			);
 			while ($r) {
 				foreach($r as $rv) {
 					queue_deliver($rv);
 				}
-				$r = q("SELECT *,RAND() as rn FROM outq WHERE outq_delivered = 0 and outq_scheduled < %s order by rn limit 1",
+				$r = q("SELECT *,$sqlrandfunc as rn FROM outq WHERE outq_delivered = 0 and outq_scheduled < %s order by rn limit 1",
 					db_utcnow()
 				);
 			}
