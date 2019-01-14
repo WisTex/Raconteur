@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Lib;
 
+use Zotlabs\Web\HTTPSig;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Daemon\Master;
@@ -32,6 +33,45 @@ class Activity {
 		return $x;
 
 	}
+
+
+
+	static function fetch($url,$channel = null) {
+		$redirects = 0;
+		if(! check_siteallowed($url)) {
+			logger('blacklisted: ' . $url);
+			return null;
+		}
+		if(! $channel) {
+			$channel = get_sys_channel();
+		}
+		if($channel) {
+			$m = parse_url($url);
+			$headers = [
+				'Accept'           => 'application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
+				'Host'             => $m['host'],
+				'(request-target)' => 'get ' . get_request_string($url),
+				'Date'             => datetime_convert('UTC','UTC','now','D, d M Y H:i:s') . ' UTC'
+			];
+			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false);
+		}
+		else {
+			$h = [ 'Accept: application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ];
+		}
+
+		logger('fetch: ' . $url, LOGGER_DEBUG);
+		$x = z_fetch_url($url, true, $redirects, [ 'headers' => $h ] );
+		if($x['success']) {
+			$y = json_decode($x['body'],true);
+			logger('returned: ' . json_encode($y,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+			return json_decode($x['body'], true);
+		}
+		else {
+			logger('fetch failed: ' . $url);
+		}
+		return null;
+	}
+
 
 
 	static function fetch_person($x) {
@@ -1227,7 +1267,7 @@ class Activity {
 
 		if(array_key_exists('cached',$person_obj)) {
 			if(array_key_exists('updated',$person_obj) && datetime_convert('UTC','UTC',$person_obj['updated']) < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days')) {
-				$person_obj = ActivityStreams::fetch($url);
+				$person_obj = self::fetch($url);
 			}
 			else {
 				return;
@@ -2301,7 +2341,7 @@ class Activity {
 		$current_item = $item;
 
 		while($current_item['parent_mid'] !== $current_item['mid']) {
-			$n = ActivityStreams::fetch($current_item['parent_mid']);
+			$n = self::fetch($current_item['parent_mid']);
 			if(! $n) { 
 				break;
 			}
