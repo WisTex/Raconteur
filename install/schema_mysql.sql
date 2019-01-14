@@ -586,6 +586,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   `parent` int(10) unsigned NOT NULL DEFAULT 0 ,
   `parent_mid` char(191) NOT NULL DEFAULT '',
   `thr_parent` char(191) NOT NULL DEFAULT '',
+  `item_level` int(10) unsigned NOT NULL DEFAULT 0,
   `created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `edited` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `expires` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',

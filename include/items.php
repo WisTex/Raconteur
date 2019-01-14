@@ -1773,16 +1773,29 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 		$deny_gid  = $arr['deny_gid'];
 		$comments_closed = $arr['comments_closed'];
 		$arr['item_thread_top'] = 1;
+		$arr['item_level'] = 0;
 	}
 	else {
 
 		// find the parent and snarf the item id and ACL's
 		// and anything else we need to inherit
 
+		$r = q("SELECT item_level FROM item WHERE mid = '%s' AND uid = %d ORDER BY id ASC LIMIT 1",
+			dbesc($arr['thr_parent']),
+			intval($arr['uid'])
+		);
+		if($r) {
+			$arr['item_level'] = intval($r[0]['item_level']) + 1;
+		}
+		else {
+			$arr['item_level'] = 1;
+		}
+
 		$r = q("SELECT * FROM item WHERE mid = '%s' AND uid = %d ORDER BY id ASC LIMIT 1",
 			dbesc($arr['parent_mid']),
 			intval($arr['uid'])
 		);
+
 
 		if($r) {
 

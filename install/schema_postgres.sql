@@ -556,6 +556,7 @@ CREATE TABLE "item" (
   "parent" bigint  NOT NULL DEFAULT '0',
   "parent_mid" text  NOT NULL DEFAULT '',
   "thr_parent" text NOT NULL DEFAULT '',
+  "item_level" bigint NOT NULL DEFAULT '0',
   "created" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "edited" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "expires" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
