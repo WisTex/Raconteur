@@ -25,6 +25,10 @@ var liveRecurse = 0;
 var savedTitle = '';
 var initialLoad = true;
 
+$.ajaxPrefilter(function( options, original_Options, jqXHR ) {
+    options.async = true;
+});
+
 // Clear the session and local storage if we switch channel or log out
 var cache_uid = '';
 if(sessionStorage.getItem('uid') !== null) {
@@ -912,7 +916,7 @@ function liveUpdate(notify_id) {
 	}
 
 	var dstart = new Date();
-	console.log('LOADING data...');
+	console.log('LOADING data...' + update_url);
 	$.get(update_url, function(data) {
 
 		// on shared hosts occasionally the live update process will be killed

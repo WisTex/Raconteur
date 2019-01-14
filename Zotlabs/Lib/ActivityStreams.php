@@ -2,6 +2,9 @@
 
 namespace Zotlabs\Lib;
 
+use Zotlabs\Web\HTTPSig;
+
+
 /**
  * @brief ActivityStreams class.
  *
@@ -256,22 +259,39 @@ class ActivityStreams {
 	 * @brief Fetches a property from an URL.
 	 *
 	 * @param string $url
+	 * @param array $channel (signing channel, default system channel)
 	 * @return NULL|mixed
 	 */
 
-	function fetch_property($url) {
-		return self::fetch($url);
+	function fetch_property($url,$channel = null) {
+		return self::fetch($url,$channel);
 	}
 
-	static function fetch($url) {
+	static function fetch($url,$channel = null) {
 		$redirects = 0;
 		if(! check_siteallowed($url)) {
 			logger('blacklisted: ' . $url);
 			return null;
 		}
+		if(! $channel) {
+			$channel = get_sys_channel();
+		}
+		if($channel) {
+			$m = parse_url($url);
+			$headers = [
+				'Accept'           => 'application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
+				'Host'             => $m['host'],
+				'(request-target)' => 'get ' . get_request_string($url),
+				'Date'             => datetime_convert('UTC','UTC','now','D, d M Y H:i:s') . ' UTC'
+			];
+			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false);
+		}
+		else {
+			$h = [ 'Accept: application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ];
+		}
+
 		logger('fetch: ' . $url, LOGGER_DEBUG);
-		$x = z_fetch_url($url, true, $redirects,
-			[ 'headers' => [ 'Accept: application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ]]);
+		$x = z_fetch_url($url, true, $redirects, [ 'headers' => $h ] );
 		if($x['success']) {
 			$y = json_decode($x['body'],true);
 			logger('returned: ' . json_encode($y,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
