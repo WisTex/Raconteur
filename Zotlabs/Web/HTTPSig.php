@@ -3,6 +3,7 @@
 namespace Zotlabs\Web;
 
 use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Webfinger;
 use Zotlabs\Lib\Zotfinger;
 use Zotlabs\Lib\Libzot;

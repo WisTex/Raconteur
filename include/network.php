@@ -2239,45 +2239,6 @@ function jsonld_document_loader($url) {
 	return [];
 }
 
-/**
- * @brief
- *
- * @param string $id
- * @return boolean|string
- *   false if no pub key found, otherwise return the pub key
- */
-function get_webfinger_key($id) {
-
-	if(strpos($id,'acct:') === 0) {
-		$x = q("select xchan_pubkey from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' limit 1",
-			dbesc(str_replace('acct:','',$id))
-		);
-	}
-	if(! $x) {
-		if(strpos($id,'@') === false) {
-			$x = webfinger_rfc7033($id);
-			if($x && array_key_exists('properties',$x) && array_key_exists('https://w3id.org/security/v1#publicKeyPem',$x['properties'])) {
-				$key = $x['properties']['https://w3id.org/security/v1#publicKeyPem'];
-				if(strstr($key,'RSA ')) {
-					$key = Keyutils::rsatopem($key);
-				}
-				return $key;
-			}
-		}
-		$found = discover_by_webbie(str_replace('acct:','',$id));
-		if($found) {
-			$r = q("select xchan_pubkey from xchan left joing hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' limit 1",
-				dbesc(str_replace('acct:','',$id))
-			);
-		}
-	}
-	if($x && $x[0]['xchan_pubkey']) {
-		return ($x[0]['xchan_pubkey']);
-	}
-	return false;
-}
-
-
 
 function is_https_request() {
 	$https = false;

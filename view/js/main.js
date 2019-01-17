@@ -437,6 +437,9 @@ function notificationsUpdate(cached_data) {
 	else {
 		$.get(pingCmd,function(data) {
 
+			if(! data)
+				return;
+
 			// Put the object into storage
 			sessionStorage.setItem('notifications_cache', JSON.stringify(data));
 
