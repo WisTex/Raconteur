@@ -2,14 +2,17 @@
 
 namespace Zotlabs\Module;
 
+use DBA;
+use Zotlabs\Web\Controller;
 use Zotlabs\Identity\OAuth2Storage;
+use Zotlabs\Identity\OAuth2Server;
+use OAuth2\Request;
 
-
-class Userinfo extends \Zotlabs\Web\Controller {
+class Userinfo extends Controller {
 
 	function init() {
-		$s = new \Zotlabs\Identity\OAuth2Server(new OAuth2Storage(\DBA::$dba->db));
-		$request = \OAuth2\Request::createFromGlobals();
+		$s = new OAuth2Server(new OAuth2Storage(DBA::$dba->db));
+		$request = Request::createFromGlobals();
 		$s->handleUserInfoRequest($request)->send();
 		killme();
 	}

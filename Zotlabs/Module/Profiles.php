@@ -1,13 +1,13 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 
-require_once('include/channel.php');
-require_once('include/selectors.php');
+use Sabre\VObject\Reader;
 
-
-class Profiles extends \Zotlabs\Web\Controller {
+class Profiles extends Controller {
 
 	function init() {
 	
@@ -146,7 +146,7 @@ class Profiles extends \Zotlabs\Web\Controller {
 			);
 			if(! $r1) {
 				notice( t('Profile unavailable to export.') . EOL);
-				\App::$error = 404;
+				App::$error = 404;
 				return;
 			}
 			header('content-type: application/octet_stream');
@@ -170,7 +170,7 @@ class Profiles extends \Zotlabs\Web\Controller {
 		// we start loading content
 		if(((argc() > 1) && (intval(argv(1)))) || !feature_enabled(local_channel(),'multi_profiles')) {
 			if(feature_enabled(local_channel(),'multi_profiles'))
-				$id = \App::$argv[1];
+				$id = argv(1);
 			else {
 				$x = q("select id from profile where uid = %d and is_default = 1",
 					intval(local_channel())
@@ -184,11 +184,11 @@ class Profiles extends \Zotlabs\Web\Controller {
 			);
 			if(! count($r)) {
 				notice( t('Profile not found.') . EOL);
-				\App::$error = 404;
+				App::$error = 404;
 				return;
 			}
 	
-			$chan = \App::get_channel();
+			$chan = App::get_channel();
 	
 			profile_load($chan['channel_address'],$r[0]['id']);
 		}
@@ -200,11 +200,8 @@ class Profiles extends \Zotlabs\Web\Controller {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
-	
-		require_once('include/activities.php');
-	
+		
 		$namechanged = false;
-	
 	
 		// import from json export file.
 	 	// Only import fields that are allowed on this hub
@@ -236,7 +233,7 @@ class Profiles extends \Zotlabs\Web\Controller {
 	
 		if((argc() > 1) && (argv(1) !== "new") && intval(argv(1))) {
 			$orig = q("SELECT * FROM profile WHERE id = %d AND uid = %d LIMIT 1",
-				intval(\App::$argv[1]),
+				intval(argv(1)),
 				intval(local_channel())
 			);
 			if(! count($orig)) {
@@ -255,7 +252,7 @@ class Profiles extends \Zotlabs\Web\Controller {
 				return;
 			}
 	
-			$dob = $_POST['dob'] ? escape_tags(trim($_POST['dob'])) : '0000-00-00'; // FIXME: Needs to be validated?
+			$dob = $_POST['dob'] ? escape_tags(trim($_POST['dob'])) : '0000-00-00'; 
 	
 			$y = substr($dob,0,4);
 			if((! ctype_digit($y)) || ($y < 1900))
@@ -263,7 +260,7 @@ class Profiles extends \Zotlabs\Web\Controller {
 			else
 				$ignore_year = false;
 	
-			if($dob != '0000-00-00') {
+			if($dob !== '0000-00-00') {
 				if(strpos($dob,'0000-') === 0) {
 					$ignore_year = true;
 					$dob = substr($dob,5);
@@ -302,25 +299,26 @@ class Profiles extends \Zotlabs\Web\Controller {
 			$politic      = escape_tags(trim($_POST['politic']));
 			$religion     = escape_tags(trim($_POST['religion']));
 	
-			$likes        = fix_mce_lf(escape_tags(trim($_POST['likes'])));
-			$dislikes     = fix_mce_lf(escape_tags(trim($_POST['dislikes'])));
+			$likes        = escape_tags(trim($_POST['likes']));
+			$dislikes     = escape_tags(trim($_POST['dislikes']));
 	
-			$about        = fix_mce_lf(escape_tags(trim($_POST['about'])));
-			$interest     = fix_mce_lf(escape_tags(trim($_POST['interest'])));
-			$contact      = fix_mce_lf(escape_tags(trim($_POST['contact'])));
-			$channels     = fix_mce_lf(escape_tags(trim($_POST['channels'])));
-			$music        = fix_mce_lf(escape_tags(trim($_POST['music'])));
-			$book         = fix_mce_lf(escape_tags(trim($_POST['book'])));
-			$tv           = fix_mce_lf(escape_tags(trim($_POST['tv'])));
-			$film         = fix_mce_lf(escape_tags(trim($_POST['film'])));
-			$romance      = fix_mce_lf(escape_tags(trim($_POST['romance'])));
-			$work         = fix_mce_lf(escape_tags(trim($_POST['work'])));
-			$education    = fix_mce_lf(escape_tags(trim($_POST['education'])));
+			$about        = escape_tags(trim($_POST['about']));
+			$interest     = escape_tags(trim($_POST['interest']));
+			$contact      = escape_tags(trim($_POST['contact']));
+			$channels     = escape_tags(trim($_POST['channels']));
+			$music        = escape_tags(trim($_POST['music']));
+			$book         = escape_tags(trim($_POST['book']));
+			$tv           = escape_tags(trim($_POST['tv']));
+			$film         = escape_tags(trim($_POST['film']));
+			$romance      = escape_tags(trim($_POST['romance']));
+			$work         = escape_tags(trim($_POST['work']));
+			$education    = escape_tags(trim($_POST['education']));
 	
 			$hide_friends = ((intval($_POST['hide_friends'])) ? 1: 0);
 	
-// start fresh and create a new vcard. TODO: preserve the original guid or whatever else needs saving
-//			$orig_vcard = (($orig[0]['profile_vcard']) ? \Sabre\VObject\Reader::read($orig[0]['profile_vcard']) : null); 
+			// start fresh and create a new vcard. 
+			// @TODO: preserve the original guid or whatever else needs saving
+			// $orig_vcard = (($orig[0]['profile_vcard']) ? Reader::read($orig[0]['profile_vcard']) : null); 
 
 			$orig_vcard = null;
 
@@ -350,7 +348,7 @@ class Profiles extends \Zotlabs\Web\Controller {
 				
 			$profile_vcard = update_vcard($defcard,$orig_vcard);
 
-			$orig_vcard = \Sabre\VObject\Reader::read($profile_vcard);
+			$orig_vcard = Reader::read($profile_vcard);
 
 			$profile_vcard = update_vcard($_REQUEST,$orig_vcard);
 
@@ -372,7 +370,7 @@ class Profiles extends \Zotlabs\Web\Controller {
 			linkify_tags($a, $education, local_channel());
 	
 	
-			$with         = ((x($_POST,'with')) ? escape_tags(trim($_POST['with'])) : '');
+			$with = ((x($_POST,'with')) ? escape_tags(trim($_POST['with'])) : '');
 	
 			if(! strlen($howlong))
 				$howlong = NULL_DATE;
@@ -514,7 +512,7 @@ class Profiles extends \Zotlabs\Web\Controller {
 					$value = $locality . $comma1 . $region . $comma2 . $country_name;
 				}
 	
-				profile_activity($changes,$value);
+				self::profile_activity($changes,$value);
 	
 			}			
 				
@@ -630,7 +628,7 @@ class Profiles extends \Zotlabs\Web\Controller {
 	
 		$o = '';
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 		if(! local_channel()) {
 			notice( t('Permission denied.') . EOL);
@@ -644,7 +642,7 @@ class Profiles extends \Zotlabs\Web\Controller {
 	
 		if(((argc() > 1) && (intval(argv(1)))) || !feature_enabled(local_channel(),'multi_profiles')) {
 			if(feature_enabled(local_channel(),'multi_profiles'))
-				$id = \App::$argv[1];
+				$id = argv(1);
 			else {
 				$x = q("select id from profile where uid = %d and is_default = 1",
 					intval(local_channel())
@@ -663,7 +661,7 @@ class Profiles extends \Zotlabs\Web\Controller {
 	
 			$editselect = 'none';
 	
-			\App::$page['htmlhead'] .= replace_macros(get_markup_template('profed_head.tpl'), array(
+			App::$page['htmlhead'] .= replace_macros(get_markup_template('profed_head.tpl'), array(
 				'$baseurl'    => z_root(),
 				'$editselect' => $editselect,
 			));
@@ -699,10 +697,10 @@ class Profiles extends \Zotlabs\Web\Controller {
 				}
 			}
 	
-	//logger('extra_fields: ' . print_r($extra_fields,true));
+			//logger('extra_fields: ' . print_r($extra_fields,true));
 
 			$vc = $r[0]['profile_vcard'];
-			$vctmp = (($vc) ? \Sabre\VObject\Reader::read($vc) : null); 
+			$vctmp = (($vc) ? Reader::read($vc) : null); 
 			$vcard = (($vctmp) ? get_vcard_array($vctmp,$r[0]['id']) : [] );
 	
 			$f = get_config('system','birthday_input_format');
@@ -756,14 +754,14 @@ class Profiles extends \Zotlabs\Web\Controller {
 				'$region'       => array('region', t('Region/State'), $r[0]['region']),
 				'$postal_code'  => array('postal_code', t('Postal/Zip code'), $r[0]['postal_code']),
 				'$country_name' => array('country_name', t('Country'), $r[0]['country_name']),
-				'$gender'       => gender_selector($r[0]['gender']),
-				'$gender_min'   => gender_selector_min($r[0]['gender']),
-				'$marital'      => marital_selector($r[0]['marital']),
-				'$marital_min'  => marital_selector_min($r[0]['marital']),
+				'$gender'       => self::gender_selector($r[0]['gender']),
+				'$gender_min'   => self::gender_selector_min($r[0]['gender']),
+				'$marital'      => self::marital_selector($r[0]['marital']),
+				'$marital_min'  => self::marital_selector_min($r[0]['marital']),
 				'$with'         => array('with', t("Who (if applicable)"), $r[0]['partner'], t('Examples: cathy123, Cathy Williams, cathy@example.com')),
 				'$howlong'      => array('howlong', t('Since (date)'), ($r[0]['howlong'] <= NULL_DATE ? '' : datetime_convert('UTC',date_default_timezone_get(),$r[0]['howlong']))),
-				'$sexual'       => sexpref_selector($r[0]['sexual']),
-				'$sexual_min'   => sexpref_selector_min($r[0]['sexual']),
+				'$sexual'       => self::sexpref_selector($r[0]['sexual']),
+				'$sexual_min'   => self::sexpref_selector_min($r[0]['sexual']),
 				'$about'        => array('about', t('Tell us about yourself'), $r[0]['about']),
 				'$homepage'     => array('homepage', t('Homepage URL'), $r[0]['homepage']),
 				'$hometown'     => array('hometown', t('Hometown'), $r[0]['hometown']),
@@ -839,5 +837,204 @@ class Profiles extends \Zotlabs\Web\Controller {
 		}
 	
 	}
+
+	static function profile_activity($changed, $value) {
+
+		if(! local_channel() || ! is_array($changed) || ! count($changed))
+			return;
+
+		if(! get_pconfig(local_channel(),'system','post_profilechange'))
+			return;
+
+		$self = App::get_channel();
+
+		if(! $self)
+			return;
+
+		$arr = array();
+		$arr['mid']         = $arr['parent_mid'] = item_message_id();
+		$arr['uid']         = local_channel();
+		$arr['aid']         = $self['channel_account_id'];
+		$arr['owner_xchan'] = $arr['author_xchan'] = $self['xchan_hash'];
+
+		$arr['item_wall'] = 1;
+		$arr['item_origin'] = 1;
+		$arr['item_thread_top'] = 1;
+		$arr['verb']        = ACTIVITY_UPDATE;
+		$arr['obj_type']    = ACTIVITY_OBJ_PROFILE;
+
+		$arr['plink'] = z_root() . '/channel/' . $self['channel_address'] . '/?f=&mid=' . urlencode($arr['mid']);
+				
+		$A = '[url=' . z_root() . '/channel/' . $self['channel_address'] . ']' . $self['channel_name'] . '[/url]';
+
+
+		$changes = '';
+		$t = count($changed);
+		$z = 0;
+		foreach($changed as $ch) {
+			if(strlen($changes)) {
+				if ($z == ($t - 1))
+					$changes .= t(' and ');
+				else
+					$changes .= t(', ');
+			}
+			$z ++;
+			$changes .= $ch;
+		}
+
+		$prof = '[url=' . z_root() . '/profile/' . $self['channel_address'] . ']' . t('public profile') . '[/url]';	
+
+		if($t == 1 && strlen($value)) {
+			// if it's a url, the HTML quotes will mess it up, so link it and don't try and zidify it because we don't know what it points to.
+	 		$value = preg_replace_callback("/([^\]\='".'"'."]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\+\,]+)/ismu", 'red_zrl_callback', $value);
+			// take out the bookmark indicator
+			if(substr($value,0,2) === '#^')
+				$value = str_replace('#^','',$value);
+
+			$message = sprintf( t('%1$s changed %2$s to &ldquo;%3$s&rdquo;'), $A, $changes, $value);
+			$message .= "\n\n" . sprintf( t('Visit %1$s\'s %2$s'), $A, $prof);
+		}
+		else {
+			$message = 	sprintf( t('%1$s has an updated %2$s, changing %3$s.'), $A, $prof, $changes);
+		}
+
+		$arr['body'] = $message;  
+
+		$arr['obj'] = [
+			'type'    => ACTIVITY_OBJ_PROFILE,
+			'summary' => bbcode($message),
+			'source'  => [ 'mediaType' => 'text/bbcode', 'summary' => $message ],
+			'id'      => $self['xchan_url'],
+			'url'     => z_root() . '/profile/' . $self['channel_address']
+		];
+
+	
+		$arr['allow_cid'] = $self['channel_allow_cid'];
+		$arr['allow_gid'] = $self['channel_allow_gid'];
+		$arr['deny_cid']  = $self['channel_deny_cid'];
+		$arr['deny_gid']  = $self['channel_deny_gid'];
+
+		$res = item_store($arr);
+		$i = $res['item_id'];
+
+		if($i) {
+			// FIXME - limit delivery in notifier.php to those specificed in the perms argument
+	   		Zotlabs\Daemon\Master::Summon(array('Notifier','activity', $i, 'PERMS_R_PROFILE'));
+		}
+
+	}
+
+	static function gender_selector($current="",$suffix="") {
+	$o = '';
+	$select = array('', t('Male'), t('Female'), t('Currently Male'), t('Currently Female'), t('Mostly Male'), t('Mostly Female'), t('Transgender'), t('Intersex'), t('Transsexual'), t('Hermaphrodite'), t('Neuter'), t('Non-specific'), t('Other'), t('Undecided'));
+
+	call_hooks('gender_selector', $select);
+
+	$o .= "<select class=\"form-control\" name=\"gender$suffix\" id=\"gender-select$suffix\" size=\"1\" >";
+	foreach($select as $selection) {
+		if($selection !== 'NOTRANSLATION') {
+			$selected = (($selection == $current) ? ' selected="selected" ' : '');
+			$o .= "<option value=\"$selection\" $selected >$selection</option>";
+		}
+	}
+	$o .= '</select>';
+	return $o;
+}	
+
+static function gender_selector_min($current="",$suffix="") {
+	$o = '';
+	$select = array('', t('Male'), t('Female'), t('Other'));
+
+	call_hooks('gender_selector_min', $select);
+
+	$o .= "<select class=\"form-control\" name=\"gender$suffix\" id=\"gender-select$suffix\" size=\"1\" >";
+	foreach($select as $selection) {
+		if($selection !== 'NOTRANSLATION') {
+			$selected = (($selection == $current) ? ' selected="selected" ' : '');
+			$o .= "<option value=\"$selection\" $selected >$selection</option>";
+		}
+	}
+	$o .= '</select>';
+	return $o;
+}	
+
+
+
+
+
+static function sexpref_selector($current="",$suffix="") {
+	$o = '';
+	$select = array('', t('Males'), t('Females'), t('Gay'), t('Lesbian'), t('No Preference'), t('Bisexual'), t('Autosexual'), t('Abstinent'), t('Virgin'), t('Deviant'), t('Fetish'), t('Oodles'), t('Nonsexual'));
+
+
+	call_hooks('sexpref_selector', $select);
+
+	$o .= "<select class=\"form-control\" name=\"sexual$suffix\" id=\"sexual-select$suffix\" size=\"1\" >";
+	foreach($select as $selection) {
+		if($selection !== 'NOTRANSLATION') {
+			$selected = (($selection == $current) ? ' selected="selected" ' : '');
+			$o .= "<option value=\"$selection\" $selected >$selection</option>";
+		}
+	}
+	$o .= '</select>';
+	return $o;
+}	
+
+
+static function sexpref_selector_min($current="",$suffix="") {
+	$o = '';
+	$select = array('', t('Males'), t('Females'), t('Other'));
+
+	call_hooks('sexpref_selector_min', $select);
+
+	$o .= "<select class=\"form-control\" name=\"sexual$suffix\" id=\"sexual-select$suffix\" size=\"1\" >";
+	foreach($select as $selection) {
+		if($selection !== 'NOTRANSLATION') {
+			$selected = (($selection == $current) ? ' selected="selected" ' : '');
+			$o .= "<option value=\"$selection\" $selected >$selection</option>";
+		}
+	}
+	$o .= '</select>';
+	return $o;
+}	
+
+
+
+static function marital_selector($current="",$suffix="") {
+	$o = '';
+	$select = array('', t('Single'), t('Lonely'), t('Available'), t('Unavailable'), t('Has crush'), t('Infatuated'), t('Dating'), t('Unfaithful'), t('Sex Addict'), t('Friends'), t('Friends/Benefits'), t('Casual'), t('Engaged'), t('Married'), t('Imaginarily married'), t('Partners'), t('Cohabiting'), t('Common law'), t('Happy'), t('Not looking'), t('Swinger'), t('Betrayed'), t('Separated'), t('Unstable'), t('Divorced'), t('Imaginarily divorced'), t('Widowed'), t('Uncertain'), t('It\'s complicated'), t('Don\'t care'), t('Ask me') );
+
+	call_hooks('marital_selector', $select);
+
+	$o .= "<select class=\"form-control\" name=\"marital\" id=\"marital-select\" size=\"1\" >";
+	foreach($select as $selection) {
+		if($selection !== 'NOTRANSLATION') {
+			$selected = (($selection == $current) ? ' selected="selected" ' : '');
+			$o .= "<option value=\"$selection\" $selected >$selection</option>";
+		}
+	}
+	$o .= '</select>';
+	return $o;
+}	
+
+static function marital_selector_min($current="",$suffix="") {
+	$o = '';
+	$select = array('', t('Single'), t('Dating'), t('Cohabiting'), t('Married'), t('Separated'), t('Divorced'), t('Widowed'), t('It\'s complicated'), t('Other'));
+
+	call_hooks('marital_selector_min', $select);
+
+	$o .= "<select class=\"form-control\" name=\"marital\" id=\"marital-select\" size=\"1\" >";
+	foreach($select as $selection) {
+		if($selection !== 'NOTRANSLATION') {
+			$selected = (($selection == $current) ? ' selected="selected" ' : '');
+			$o .= "<option value=\"$selection\" $selected >$selection</option>";
+		}
+	}
+	$o .= '</select>';
+	return $o;
+}	
+
+
+
 	
 }

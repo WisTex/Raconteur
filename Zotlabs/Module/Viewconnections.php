@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
-require_once('include/selectors.php');
+
 
 class Viewconnections extends \Zotlabs\Web\Controller {
 

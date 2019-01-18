@@ -5,7 +5,7 @@ use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Web\HTTPSig;
 
-require_once('include/contact_widgets.php');
+
 require_once("include/bbcode.php");
 require_once('include/security.php');
 require_once('include/conversation.php');

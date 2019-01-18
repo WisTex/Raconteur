@@ -4,7 +4,7 @@ namespace Zotlabs\Module;
 use Zotlabs\Lib\Libsync;
 
 require_once('include/socgraph.php');
-require_once('include/selectors.php');
+
 require_once('include/photos.php');
 
 

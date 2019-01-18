@@ -170,14 +170,12 @@ class Inbox extends Controller {
 					if($AS->obj & ActivityStreams::is_an_actor($AS->obj['type'])) {
 						// do follow activity
 						Activity::follow($channel,$AS);
-						continue;
 					}
 					break;
 				case 'Accept':
 					if($AS->obj & $AS->obj['type'] === 'Follow') {
 						// do follow activity
 						Activity::follow($channel,$AS);
-						continue;
 					}
 					break;
 

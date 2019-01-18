@@ -23,6 +23,12 @@
 	{{include file="field_textarea.tpl" field=$whitelisted_channels}}
 	{{include file="field_textarea.tpl" field=$blacklisted_channels}}
 
+	{{include file="field_textarea.tpl" field=$pswhitelisted_sites}}
+	{{include file="field_textarea.tpl" field=$psblacklisted_sites}}
+
+	{{include file="field_textarea.tpl" field=$pswhitelisted_channels}}
+	{{include file="field_textarea.tpl" field=$psblacklisted_channels}}
+
 	{{include file="field_textarea.tpl" field=$embed_allow}}
 	{{include file="field_textarea.tpl" field=$embed_deny}}
 

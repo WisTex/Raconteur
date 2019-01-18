@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Lib;
 
+use Zotlabs\Web\HTTPSig;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Daemon\Master;
@@ -32,6 +33,45 @@ class Activity {
 		return $x;
 
 	}
+
+
+
+	static function fetch($url,$channel = null) {
+		$redirects = 0;
+		if(! check_siteallowed($url)) {
+			logger('blacklisted: ' . $url);
+			return null;
+		}
+		if(! $channel) {
+			$channel = get_sys_channel();
+		}
+		if($channel) {
+			$m = parse_url($url);
+			$headers = [
+				'Accept'           => 'application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
+				'Host'             => $m['host'],
+				'(request-target)' => 'get ' . get_request_string($url),
+				'Date'             => datetime_convert('UTC','UTC','now','D, d M Y H:i:s') . ' UTC'
+			];
+			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false);
+		}
+		else {
+			$h = [ 'Accept: application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ];
+		}
+
+		logger('fetch: ' . $url, LOGGER_DEBUG);
+		$x = z_fetch_url($url, true, $redirects, [ 'headers' => $h ] );
+		if($x['success']) {
+			$y = json_decode($x['body'],true);
+			logger('returned: ' . json_encode($y,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+			return json_decode($x['body'], true);
+		}
+		else {
+			logger('fetch failed: ' . $url);
+		}
+		return null;
+	}
+
 
 
 	static function fetch_person($x) {
@@ -1227,7 +1267,7 @@ class Activity {
 
 		if(array_key_exists('cached',$person_obj)) {
 			if(array_key_exists('updated',$person_obj) && datetime_convert('UTC','UTC',$person_obj['updated']) < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days')) {
-				$person_obj = ActivityStreams::fetch($url);
+				$person_obj = self::fetch($url);
 			}
 			else {
 				return;
@@ -1325,7 +1365,7 @@ class Activity {
 			if($person_obj['id'] === $person_obj['publicKey']['owner']) {
 				$pubkey = $person_obj['publicKey']['publicKeyPem'];
 				if(strstr($pubkey,'RSA ')) {
-					$pubkey = rsatopem($pubkey);
+					$pubkey = Keyutils::rsatopem($pubkey);
 				}
 			}
 		}
@@ -1832,6 +1872,11 @@ class Activity {
 
 		$s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
 		$s['obj']      = $act->obj;
+		if(is_array($obj) && array_path_exists('actor/id',$s['obj'])) {
+			$s['obj']['actor'] = $s['obj']['actor']['id'];
+		}
+
+		// @todo add target if present
 
 		$instrument = $act->get_property_obj('instrument');
 		if((! $instrument) && (! $response_activity)) {
@@ -2103,6 +2148,25 @@ class Activity {
 			$allowed = true;
 		}
 
+		if(intval($channel['channel_system'])) {
+
+			if(! check_pubstream_channelallowed($observer_hash)) {
+				$allowed = false;
+			}
+			// don't allow pubstream posts if the sender even has a clone on a pubstream blacklisted site
+
+			$h = q("select hubloc_url from hubloc where hubloc_hash = '%s'",
+				dbesc($observer_hash)
+			);
+			if($h) {
+				foreach($h as $hub) {
+					if(! check_pubstream_siteallowed($hub['hubloc_url'])) {
+						$allowed = false;
+						break;
+					}
+				}
+			}
+		}	
 
 		if(! $allowed) {
 			logger('no permission');
@@ -2186,7 +2250,7 @@ class Activity {
 			);
 			if(! $p) {
 				$a = false;
-				if(PConfig::Get($channel['channel_id'],'system','hyperdrive',true)) {
+				if(PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce') {
 					$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
 				}
 				if($a) {
@@ -2277,7 +2341,7 @@ class Activity {
 		$current_item = $item;
 
 		while($current_item['parent_mid'] !== $current_item['mid']) {
-			$n = ActivityStreams::fetch($current_item['parent_mid']);
+			$n = self::fetch($current_item['parent_mid']);
 			if(! $n) { 
 				break;
 			}

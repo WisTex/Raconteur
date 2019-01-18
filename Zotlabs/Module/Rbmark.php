@@ -1,8 +1,7 @@
 <?php
-namespace Zotlabs\Module; /** @file */
+namespace Zotlabs\Module;
 
 require_once('include/acl_selectors.php');
-require_once('include/crypto.php');
 require_once('include/taxonomy.php');
 require_once('include/conversation.php');
 require_once('include/bookmarks.php');

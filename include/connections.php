@@ -743,3 +743,24 @@ function vcard_query(&$r) {
 		}
 	}
 }
+
+
+function contact_profile_assign($current) {
+
+	$o = '';
+
+	$o .= "<select id=\"contact-profile-selector\" name=\"profile_assign\" class=\"form-control\"/>\r\n";
+
+	$r = q("SELECT profile_guid, profile_name FROM profile WHERE uid = %d",
+		intval($_SESSION['uid']));
+
+	if($r) {
+		foreach($r as $rr) {
+			$selected = (($rr['profile_guid'] == $current) ? " selected=\"selected\" " : "");
+			$o .= "<option value=\"{$rr['profile_guid']}\" $selected >{$rr['profile_name']}</option>\r\n";
+		}
+	}
+	$o .= "</select>\r\n";
+	return $o;
+}
+

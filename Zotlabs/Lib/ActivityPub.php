@@ -390,7 +390,7 @@ class ActivityPub {
 	static function discover($apurl) {
 
 		$person_obj = null;
-		$ap = ActivityStreams::fetch($apurl);
+		$ap = Activity::fetch($apurl);
 		if($ap) {
 			$AS = new ActivityStreams($ap); 
 			if($AS->is_valid()) {

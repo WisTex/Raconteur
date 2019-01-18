@@ -4,6 +4,7 @@ namespace Zotlabs\Zot6;
 
 use Zotlabs\Lib\Config;
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Crypto;
 use Zotlabs\Web\HTTPSig;
 
 class Receiver {
@@ -69,7 +70,7 @@ class Receiver {
 			$this->encrypted = ((array_key_exists('encrypted',$this->data) && intval($this->data['encrypted'])) ? true : false);
 
 			if ($this->encrypted && $this->prvkey) {
-				$uncrypted = crypto_unencapsulate($this->data,$this->prvkey);
+				$uncrypted = Crypto::unencapsulate($this->data,$this->prvkey);
 				if ($uncrypted) {
 					$this->data = json_decode($uncrypted,true);
 				}
@@ -210,7 +211,7 @@ class Receiver {
 	function EncryptResponse() {
 		$algorithm = Libzot::best_algorithm($this->hub['site_crypto']);
 		if ($algorithm) {
-			$this->response = crypto_encapsulate(json_encode($this->response),$this->hub['hubloc_sitekey'], $algorithm);
+			$this->response = Crypto::encapsulate(json_encode($this->response),$this->hub['hubloc_sitekey'], $algorithm);
 		}
 	}
 

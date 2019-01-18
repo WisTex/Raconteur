@@ -15,7 +15,7 @@ use Zotlabs\Lib\Group as ZGroup;
 
 
 require_once('include/socgraph.php');
-require_once('include/selectors.php');
+
 require_once('include/photos.php');
 
 
@@ -104,7 +104,8 @@ class Connedit extends \Zotlabs\Web\Controller {
 		}
 	
 	
-		$profile_id = $_POST['profile_assign'];
+		$profile_id = ((array_key_exists('profile_assign',$_POST)) ? $_POST['profile_assign'] : $orig_record[0]['abook_profile']);
+
 		if($profile_id) {
 			$r = q("SELECT profile_guid FROM profile WHERE profile_guid = '%s' AND uid = %d LIMIT 1",
 				dbesc($profile_id),
@@ -116,18 +117,23 @@ class Connedit extends \Zotlabs\Web\Controller {
 			}
 		}
 	
-		$abook_incl = escape_tags($_POST['abook_incl']);
-		$abook_excl = escape_tags($_POST['abook_excl']);
-	
+		$abook_incl = ((array_key_exists('abook_incl',$_POST)) ? escape_tags($_POST['abook_incl']) : $orig_record[0]['abook_incl']);
+		$abook_excl = ((array_key_exists('abook_excl',$_POST)) ? escape_tags($_POST['abook_excl']) : $orig_record[0]['abook_excl']);
+
+
 		$hidden = intval($_POST['hidden']);
 	
 		$priority = intval($_POST['poll']);
 		if($priority > 5 || $priority < 0)
 			$priority = 0;
 	
+		if(! array_key_exists('closeness',$_POST)) {
+			$_POST['closeness'] = 80;
+		}
 		$closeness = intval($_POST['closeness']);
-		if($closeness < 0)
-			$closeness = 99;
+		if($closeness < 0 || $closeness > 99) {
+			$closeness = 80;
+		}
 	
 		$all_perms = \Zotlabs\Access\Permissions::Perms();
 
@@ -168,6 +174,8 @@ class Connedit extends \Zotlabs\Web\Controller {
 		}
 
 		$abook_pending = (($new_friend) ? 0 : $orig_record[0]['abook_pending']);
+
+
 	
 		$r = q("UPDATE abook SET abook_profile = '%s', abook_closeness = %d, abook_pending = %d,
 			abook_incl = '%s', abook_excl = '%s'
@@ -647,31 +655,23 @@ class Connedit extends \Zotlabs\Web\Controller {
 				];
 	
 				$labels = [
-					t('Me'),
-					t('Family'),
-					t('Friends'),
-					t('Acquaintances'),
-					t('All')
+					0  => t('Me'),
+					20 => t('Family'),
+					40 => t('Friends'),
+					60 => t('Peers'),
+					80 => t('Connections'),
+					99 => t('All')
 				];
 				call_hooks('affinity_labels',$labels);
-				$label_str = '';
-	
-				if($labels) {
-					foreach($labels as $l) {
-						if($label_str) {
-							$label_str .= ", '|'";
-							$label_str .= ", '" . $l . "'";
-						}
-						else
-							$label_str .= "'" . $l . "'";
-					}
-				}
 	
 				$slider_tpl = get_markup_template('contact_slider.tpl');
+				
+				$slideval = intval($contact['abook_closeness']);
+				
 				$slide = replace_macros($slider_tpl,array(
 					'$min' => 1,
-					'$val' => (($contact['abook_closeness']) ? $contact['abook_closeness'] : 99),
-					'$labels' => $label_str,
+					'$val' => $slideval,
+					'$labels' => $labels,
 				));
 			}
 
@@ -823,7 +823,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 				'$inherited'      => t('inherited'),
 				'$submit'         => t('Submit'),
 				'$lbl_vis2'       => sprintf( t('Please choose the profile you would like to display to %s when viewing your profile securely.'), $contact['xchan_name']),
-				'$close'          => $contact['abook_closeness'],
+				'$close'          => (($contact['abook_closeness']) ? $contact['abook_closeness'] : 80),
 				'$them'           => t('Their Settings'),
 				'$me'             => t('My Settings'),
 				'$perms'          => $perms,

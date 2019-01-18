@@ -12,8 +12,6 @@ use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Daemon\Master;
 
-require_once('include/crypto.php');
-
 
 class Libzot {
 
@@ -134,7 +132,7 @@ class Libzot {
 		if ($remote_key) {
 			$algorithm = self::best_algorithm($methods);
 			if ($algorithm) {
-				$data = crypto_encapsulate(json_encode($data),$remote_key, $algorithm);
+				$data = Crypto::encapsulate(json_encode($data),$remote_key, $algorithm);
 			}
 		}
 
@@ -173,7 +171,7 @@ class Libzot {
 		if($methods) {
 			$x = explode(',', $methods);
 			if($x) {
-				$y = crypto_methods();
+				$y = Crypto::methods();
 				if($y) {
 					foreach($y as $yv) {
 						$yv = trim($yv);
@@ -389,9 +387,7 @@ class Libzot {
 					set_abconfig($channel['channel_id'],$x['hash'],'system','my_perms',$my_perms);
 				}
 
-				$closeness = get_pconfig($channel['channel_id'],'system','new_abook_closeness');
-				if($closeness === false)
-					$closeness = 80;
+				$closeness = get_pconfig($channel['channel_id'],'system','new_abook_closeness',80);
 
 				$y = abook_store_lowlevel(
 					[
@@ -632,6 +628,11 @@ class Libzot {
 
 		$changed = false;
 		$what = '';
+
+		if(! is_array($arr)) {
+			logger('Not an array: ' . print_r($arr,true), LOGGER_DEBUG);
+			return $ret;
+		}
 
 		if(! ($arr['id'] && $arr['id_sig'])) {
 			logger('No identity information provided. ' . print_r($arr,true));
@@ -965,7 +966,7 @@ class Libzot {
 			logger('Headers: ' . print_r($arr['header'], true), LOGGER_DATA, LOG_DEBUG);
 		}
 
-		$x = crypto_unencapsulate($x, get_config('system','prvkey'));
+		$x = Crypto::unencapsulate($x, get_config('system','prvkey'));
 		if(! is_array($x)) {
 			$x = json_decode($x,true);
 		}
@@ -1174,7 +1175,7 @@ class Libzot {
 
 				$arr = Activity::decode_note($AS);
 
-				//logger($AS->debug());
+				logger($AS->debug());
 
 				$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
 					dbesc($AS->actor['id'])
@@ -1465,6 +1466,30 @@ class Libzot {
 			if(intval($channel['channel_system']) && (! $arr['item_private']) && (! $relay)) {
 				$local_public = true;
 
+				if(! check_pubstream_channelallowed($sender)) {
+					$local_public = false;
+					continue;
+				}
+
+				// don't allow pubstream posts if the sender even has a clone on a pubstream blacklisted site
+
+				$siteallowed = true;
+				$h = q("select hubloc_url from hubloc where hubloc_hash = '%s'",
+					dbesc($sender)
+				);
+				if($h) {
+					foreach($h as $hub) {
+						if(! check_pubstream_siteallowed($hub['hubloc_url'])) {
+							$siteallowed = false;
+							break;
+						}
+					}
+				}
+				if(! $siteallowed) {
+					$local_public = false;
+					continue;
+				}
+
 				$r = q("select xchan_selfcensored from xchan where xchan_hash = '%s' limit 1",
 					dbesc($sender)
 				);
@@ -1557,16 +1582,21 @@ class Libzot {
 					// the top level post is unlikely to be imported and
 					// this is just an exercise in futility.
 
-					if(! get_pconfig($channel['channel_id'],'system','hyperdrive',true)) {
+					if((! get_pconfig($channel['channel_id'],'system','hyperdrive',true)) || (! $arr['verb'] === 'Announce')) {
 						continue;
 					}
 
 					if((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {
+						// This will fail if the conversation originated on ActivityPub. 
 						$f = self::fetch_conversation($channel,$arr['parent_mid']);
-						if($f === false) {
-							$f = self::fetch_conversation($channel,$arr['mid']);
-						}
+
+						// This was provided to fetch third-party ActivityPub conversations from Zot6 sources
+						// Commented out because it causes a number of permission paradoxes
+
+						//if($f === false) {
+						//	$f = self::fetch_conversation($channel,$arr['mid']);
+						//}
 					}
 					continue;
 				}
@@ -1768,9 +1798,23 @@ class Libzot {
 		return $result;
 	}
 
+	static public function hyperdrive_enabled($channel,$item) {
+
+		if(get_pconfig($channel['channel_id'],'system','hyperdrive',true)) {
+			return true;
+		}
+		if($item['verb'] === 'Announce' && get_pconfig($channel['channel_id'],'system','hyperdrive_announce',true)) {
+			return true;
+		}
+		return false;
+	}
+
 	static public function fetch_conversation($channel,$mid) {
 
 		// Use Zotfinger to create a signed request
+
+		logger('fetching conversation: ' . $mid, LOGGER_DEBUG);
+
 
 		$a = Zotfinger::exec($mid,$channel);
 
@@ -1790,6 +1834,12 @@ class Libzot {
 
 		$ret = [];
 
+
+		$signer = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' limit 1",
+			dbesc($a['signature']['signer'])
+		); 
+
+
 		foreach($a['data']['orderedItems'] as $activity) {
 
 			$AS = new ActivityStreams($activity);
@@ -1799,7 +1849,7 @@ class Libzot {
 			}
 			$arr = Activity::decode_note($AS);
 
-			logger($AS->debug());
+			// logger($AS->debug());
 
 
 			$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
@@ -1832,21 +1882,34 @@ class Libzot {
 				$arr['author_xchan'] = $r[0]['hubloc_hash'];
 			}
 
-			$s = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
-				dbesc($a['signature']['signer'])
-			); 
 
-			if($s) {
-				$arr['owner_xchan'] = $s[0]['hubloc_hash'];
+			if($signer) {
+				$arr['owner_xchan'] = $signer[0]['hubloc_hash'];
 			}
 			else {
 				$arr['owner_xchan'] = $a['signature']['signer'];
 			}
 
-			// @fixme - spoofable
-			if($AS->data['hubloc']) {
+			if($AS->data['hubloc'] || $arr['author_xchan'] === $arr['owner_xchan']) {
 				$arr['item_verified'] = true;
 			}
+
+			// set comment policy depending on source hub. Unknown or osada is ActivityPub.
+			// Anything else we'll say is zot - which could have a range of project names
+
+			if($signer) {
+				$s = q("select site_project from site where site_url = '%s' limit 1",
+					dbesc($signer[0]['hubloc_url'])
+				);
+				if((! $s) || (in_array($s[0]['site_project'],[ '', 'osada' ]))) {
+					$arr['comment_policy'] = 'authenticated';
+				}
+				else {
+					$arr['comment_policy'] = 'contacts';
+				}				
+
+			}
+
 			if($AS->data['signed_data']) {
 				IConfig::Set($arr,'activitystreams','signed_data',$AS->data['signed_data'],false);
 			}
@@ -2874,7 +2937,7 @@ class Libzot {
 			$ret['site']['directory_url'] = z_root() . '/dirsearch';
 
 
-		$ret['site']['encryption'] = crypto_methods();
+		$ret['site']['encryption'] = Crypto::methods();
 		$ret['site']['zot'] = System::get_zot_revision();
 
 		// hide detailed site information if you're off the grid

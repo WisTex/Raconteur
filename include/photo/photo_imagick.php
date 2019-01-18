@@ -31,8 +31,14 @@ class photo_imagick extends photo_driver {
 		if(! $data)
 			return;
 
-		$this->image->readImageBlob($data);
 
+		try {
+			$this->image->readImageBlob($data);
+		}
+		catch (Exception $e) {
+			logger('imagick readImageBlob() exception:' . print_r($e,true));
+			return;
+		}
 
 		/**
 		 * Setup the image to the format it will be saved to

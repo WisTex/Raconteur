@@ -36,7 +36,7 @@ require_once('include/items.php');
 define ( 'STD_VERSION',             '2.0.1' );
 define ( 'ZOT_REVISION',            '6.0' );
 
-define ( 'DB_UPDATE_VERSION',       1223 );
+define ( 'DB_UPDATE_VERSION',       1226 );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 
@@ -1425,7 +1425,6 @@ function check_config() {
 
 function fix_system_urls($oldurl, $newurl) {
 
-	require_once('include/crypto.php');
 
 	logger('fix_system_urls: renaming ' . $oldurl . '  to ' . $newurl);
 

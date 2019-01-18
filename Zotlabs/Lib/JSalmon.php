@@ -18,7 +18,7 @@ class JSalmon {
 
 		$precomputed = '.' . base64url_encode($data_type,true) . '.YmFzZTY0dXJs.UlNBLVNIQTI1Ng';
 
-		$signature  = base64url_encode(rsa_sign($data . $precomputed, $key), true);
+		$signature  = base64url_encode(Crypto::sign($data . $precomputed, $key), true);
 
 		return ([
 			'signed'    => true,
@@ -54,7 +54,7 @@ class JSalmon {
 		$key = HTTPSig::get_key(EMPTY_STR,base64url_decode($x['sigs']['key_id']));
 		 logger('key: ' . print_r($key,true));
 		if($key['portable_id'] && $key['public_key']) {
-			if(rsa_verify($signed_data,base64url_decode($x['sigs']['value']),$key['public_key'])) {
+			if(Crypto::verify($signed_data,base64url_decode($x['sigs']['value']),$key['public_key'])) {
 				logger('verified');
 				$ret = [ 'success' => true, 'signer' => $key['portable_id'], 'hubloc' => $key['hubloc'] ];
 			}
