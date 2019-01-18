@@ -82,10 +82,7 @@ if($argc == 1) {
 function printable_config($x) {
 	$s = '';
 	if(is_array($x)) {
-		foreach($x as $v) {
-			$s .= $v . "\n";
-		}
-		return $s;
+		return serialise($x);
 	}
 	else
 		return $x;

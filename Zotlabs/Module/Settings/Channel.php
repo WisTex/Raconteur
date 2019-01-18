@@ -5,8 +5,6 @@ namespace Zotlabs\Module\Settings;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Group;
 
-require_once('include/selectors.php');
-
 
 class Channel {
 
