@@ -269,12 +269,12 @@ class Libzot {
 			// correct hubloc. If this doesn't work we may have to re-write this section to try them all.
 
 			if(array_key_exists('xchan_addr',$them) && $them['xchan_addr']) {
-				$r = q("select hubloc_id_url, hubloc_primary from hubloc where hubloc_addr = '%s' order by hubloc_id desc",
+				$r = q("select hubloc_id_url, hubloc_primary from hubloc where hubloc_addr = '%s' and hubloc_network = 'zot6' order by hubloc_id desc",
 					dbesc($them['xchan_addr'])
 				);
 			}
 			if(! $r) {
-				$r = q("select hubloc_id_url, hubloc_primary from hubloc where hubloc_hash = '%s' order by hubloc_id desc",
+				$r = q("select hubloc_id_url, hubloc_primary from hubloc where hubloc_hash = '%s' and hubloc_network = 'zot6' order by hubloc_id desc",
 					dbesc($them['xchan_hash'])
 				);
 			}
@@ -496,7 +496,8 @@ class Libzot {
 			$r = q("select hubloc.*, site.site_crypto from hubloc left join site on hubloc_url = site_url
 					where hubloc_guid = '%s' and hubloc_guid_sig = '%s'
 					and hubloc_url = '%s' and hubloc_url_sig = '%s'
-					and hubloc_site_id = '%s' $limit",
+					and hubloc_site_id = '%s' and hubloc_network = 'zot6' 
+					$limit",
 				dbesc($arr['id']),
 				dbesc($arr['id_sig']),
 				dbesc($arr['location']),
@@ -1177,7 +1178,7 @@ class Libzot {
 
 				logger($AS->debug());
 
-				$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
+				$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
 					dbesc($AS->actor['id'])
 				); 
 
@@ -1186,7 +1187,7 @@ class Libzot {
 				}
 
 
-				$s = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
+				$s = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
 					dbesc($env['sender'])
 				); 
 
@@ -1835,7 +1836,7 @@ class Libzot {
 		$ret = [];
 
 
-		$signer = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' limit 1",
+		$signer = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
 			dbesc($a['signature']['signer'])
 		); 
 
@@ -2661,7 +2662,7 @@ class Libzot {
 		$feed      = ((x($arr,'feed'))       ? intval($arr['feed']) : 0);
 
 		if($ztarget) {
-			$t = q("select * from hubloc where hubloc_id_url = '%s' limit 1",
+			$t = q("select * from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
 				dbesc($ztarget)
 			);
 			if($t) {
