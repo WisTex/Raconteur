@@ -1529,7 +1529,7 @@ class Libzot {
 						intval($channel['channel_id'])
 					);
 					if ($parent) {
-						$allowed = can_comment_on_post($d,$parent[0]);
+						$allowed = can_comment_on_post($sender,$parent[0]);
 					}
 				}
 				if($request) {
