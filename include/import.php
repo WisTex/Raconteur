@@ -1067,8 +1067,8 @@ function import_mail($channel, $mails, $sync = false) {
 			if(! $m)
 				continue;
 
-			$m['aid'] = $channel['channel_account_id'];
-			$m['uid'] = $channel['channel_id'];
+			$m['account_id'] = $channel['channel_account_id'];
+			$m['channel_id'] = $channel['channel_id'];
 			$mail_id = mail_store($m);
 			if($sync && $mail_id) {
 				Zotlabs\Daemon\Master::Summon(array('Notifier','single_mail',$mail_id));

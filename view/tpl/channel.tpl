@@ -37,10 +37,6 @@
 	<div class="channel-notifications-wrapper">
 		{{if !$channel.delegate}}
 		<div class="channel-notification">
-			<i class="fa fa-fw fa-envelope{{if $channel.mail != 0}} text-danger{{/if}}"></i>
-			{{if $channel.mail != 0}}<a href="manage/{{$channel.channel_id}}/mail/combined">{{/if}}{{$channel.mail|string_format:$mail_format}}{{if $channel.mail != 0}}</a>{{/if}}
-		</div>
-		<div class="channel-notification">
 			<i class="fa fa-fw fa-user{{if $channel.intros != 0}} text-danger{{/if}}"></i>
 			{{if $channel.intros != 0}}<a href='manage/{{$channel.channel_id}}/connections/ifpending'>{{/if}}{{$channel.intros|string_format:$intros_format}}{{if $channel.intros != 0}}</a>{{/if}}
 		</div>

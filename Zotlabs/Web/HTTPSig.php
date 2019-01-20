@@ -3,6 +3,7 @@
 namespace Zotlabs\Web;
 
 use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Webfinger;
 use Zotlabs\Lib\Zotfinger;
 use Zotlabs\Lib\Libzot;
@@ -257,7 +258,7 @@ class HTTPSig {
 			return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'hubloc' => $best ];
 		}
 
-		$r = ActivityStreams::fetch($id);
+		$r = Activity::fetch($id);
 
 		if($r) {
 			if(array_key_exists('publicKey',$r) && array_key_exists('publicKeyPem',$r['publicKey']) && array_key_exists('id',$r['publicKey'])) {

@@ -25,6 +25,10 @@ var liveRecurse = 0;
 var savedTitle = '';
 var initialLoad = true;
 
+$.ajaxPrefilter(function( options, original_Options, jqXHR ) {
+    options.async = true;
+});
+
 // Clear the session and local storage if we switch channel or log out
 var cache_uid = '';
 if(sessionStorage.getItem('uid') !== null) {
@@ -278,8 +282,6 @@ function insertbbcomment(comment, BBcode, id) {
 	if(typeof(insertFormatting) != 'undefined')
 		return(insertFormatting(comment, BBcode, id));
 
-	var urlprefix = ((BBcode == 'url') ? '#^' : '');
-
 	var tmpStr = $("#comment-edit-text-" + id).val();
 	if(tmpStr == comment) {
 		tmpStr = "";
@@ -292,11 +294,11 @@ function insertbbcomment(comment, BBcode, id) {
 	if (document.selection) {
 		textarea.focus();
 		selected = document.selection.createRange();
-		selected.text = urlprefix+"["+BBcode+"]" + selected.text + "[/"+BBcode+"]";
+		selected.text = "["+BBcode+"]" + selected.text + "[/"+BBcode+"]";
 	} else if (textarea.selectionStart || textarea.selectionStart == "0") {
 		var start = textarea.selectionStart;
 		var end = textarea.selectionEnd;
-		textarea.value = textarea.value.substring(0, start) + urlprefix+"["+BBcode+"]" + textarea.value.substring(start, end) + "[/"+BBcode+"]" + textarea.value.substring(end, textarea.value.length);
+		textarea.value = textarea.value.substring(0, start) + "["+BBcode+"]" + textarea.value.substring(start, end) + "[/"+BBcode+"]" + textarea.value.substring(end, textarea.value.length);
 	}
 	return true;
 }
@@ -434,6 +436,9 @@ function notificationsUpdate(cached_data) {
 	}
 	else {
 		$.get(pingCmd,function(data) {
+
+			if(! data)
+				return;
 
 			// Put the object into storage
 			sessionStorage.setItem('notifications_cache', JSON.stringify(data));
@@ -870,7 +875,7 @@ function liveUpdate(notify_id) {
 
 	if((src === null) || (stopped) || (! profile_uid)) { $('.like-rotator').hide(); return; }
 
-	if(($('.comment-edit-text.expanded').length) || (in_progress) || (mediaPlaying)) {
+	if(in_progress || mediaPlaying) {
 		if(livetime) {
 			clearTimeout(livetime);
 		}
@@ -914,7 +919,7 @@ function liveUpdate(notify_id) {
 	}
 
 	var dstart = new Date();
-	console.log('LOADING data...');
+	console.log('LOADING data...' + update_url);
 	$.get(update_url, function(data) {
 
 		// on shared hosts occasionally the live update process will be killed

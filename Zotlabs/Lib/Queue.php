@@ -283,6 +283,11 @@ class Queue {
 					}
 				}
 			}
+			else {
+				logger('deliver: queue post returned ' . $result['return_code'] 
+					. ' from ' . $outq['outq_posturl'],LOGGER_DEBUG);
+					self::update($outq['outq_hash'],10);
+			}
 			return;
 		}
 

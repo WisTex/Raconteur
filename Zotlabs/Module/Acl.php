@@ -7,7 +7,6 @@ use Zotlabs\Lib\Group as ZGroup;
 
 require_once('include/acl_selectors.php');
 
-
 /**
  * @brief ACL selector json backend.
  *

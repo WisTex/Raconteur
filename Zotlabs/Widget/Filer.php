@@ -2,7 +2,7 @@
 
 namespace Zotlabs\Widget;
 
-require_once('include/contact_widgets.php');
+
 
 class Filer {
 
@@ -33,4 +33,5 @@ class Filer {
 			'$base' => z_root() . '/' . \App::$cmd
 		));
 	}
+
 }

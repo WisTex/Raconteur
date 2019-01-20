@@ -2,7 +2,7 @@
 namespace Zotlabs\Module;
 
 require_once('include/socgraph.php');
-require_once('include/contact_widgets.php');
+
 
 
 class Suggest extends \Zotlabs\Web\Controller {

@@ -15,7 +15,7 @@ use Zotlabs\Lib\Group as ZGroup;
 
 
 require_once('include/socgraph.php');
-require_once('include/selectors.php');
+
 require_once('include/photos.php');
 
 

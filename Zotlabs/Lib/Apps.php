@@ -59,7 +59,7 @@ class Apps {
 	}
 
 	static public function get_base_apps() {
-		return get_config('system','base_apps',[ 
+		$x = get_config('system','base_apps',[ 
 			'Connections',
 			'Suggest Channels',
 			'Network',
@@ -73,6 +73,8 @@ class Apps {
 			'Search',
 			'Profile Photo'
 		]);
+		call_hooks('get_base_apps',$x);
+		return $x;
 	}
 
 

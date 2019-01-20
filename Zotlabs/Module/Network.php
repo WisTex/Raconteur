@@ -5,7 +5,7 @@ use Zotlabs\Lib\Group;
 use Zotlabs\Lib\Apps;
 use App;
 
-require_once('include/contact_widgets.php');
+
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
 

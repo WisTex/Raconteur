@@ -109,7 +109,7 @@ class Crypto {
 
 	static public function encapsulate($data,$pubkey,$alg) {
 
-		if (! ($alg && $key)) {
+		if (! ($alg && $pubkey)) {
 			return $data;
 		}
 

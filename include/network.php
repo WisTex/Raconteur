@@ -1736,6 +1736,53 @@ function check_siteallowed($url) {
 /**
  * @brief
  *
+ * @param string $url
+ * @return boolean
+ */
+function check_pubstream_siteallowed($url) {
+
+	$retvalue = true;
+
+	$arr = array('url' => $url);
+	/**
+	 * @hooks check_siteallowed
+	 *   Used to over-ride or bypass the site black/white block lists.
+	 *   * \e string \b url
+	 *   * \e boolean \b allowed - optional return value set in hook
+	 */
+	call_hooks('pubstream_check_siteallowed', $arr);
+
+	if(array_key_exists('allowed',$arr))
+		return $arr['allowed'];
+
+	$bl1 = get_config('system','pubstream_whitelisted_sites');
+	if(is_array($bl1) && $bl1) {
+		foreach($bl1 as $bl) {
+			if($bl === '*')
+				$retvalue = true;
+			if($bl && strpos($url,$bl) !== false)
+				return true;
+		}
+	}
+	$bl1 = get_config('system','pubstream_blacklisted_sites');
+	if(is_array($bl1) && $bl1) {
+		foreach($bl1 as $bl) {
+			if($bl === '*')
+				$retvalue = false;
+			if($bl && strpos($url,$bl) !== false) {
+				return false;
+			}
+		}
+	}
+
+	return $retvalue;
+}
+
+
+
+/**
+ * @brief
+ *
  * @param string $hash
  * @return boolean
  */
@@ -1777,6 +1824,53 @@ function check_channelallowed($hash) {
 
 	return $retvalue;
 }
+
+
+/**
+ * @brief
+ *
+ * @param string $hash
+ * @return boolean
+ */
+function check_pubstream_channelallowed($hash) {
+
+	$retvalue = true;
+
+	$arr = array('hash' => $hash);
+	/**
+	 * @hooks check_channelallowed
+	 *   Used to over-ride or bypass the channel black/white block lists.
+	 *   * \e string \b hash
+	 *   * \e boolean \b allowed - optional return value set in hook
+	 */
+	call_hooks('check_pubstream_channelallowed', $arr);
+
+	if(array_key_exists('allowed',$arr))
+		return $arr['allowed'];
+
+	$bl1 = get_config('system','pubstream_whitelisted_channels');
+	if(is_array($bl1) && $bl1) {
+		foreach($bl1 as $bl) {
+			if($bl === '*')
+				$retvalue = true;
+			if($bl && strpos($hash,$bl) !== false)
+				return true;
+		}
+	}
+	$bl1 = get_config('system','pubstream_blacklisted_channels');
+	if(is_array($bl1) && $bl1) {
+		foreach($bl1 as $bl) {
+			if($bl === '*')
+				$retvalue = false;
+			if($bl && strpos($hash,$bl) !== false) {
+				return false;
+			}
+		}
+	}
+
+	return $retvalue;
+}
+
 
 function deliverable_singleton($channel_id,$xchan) {
 
@@ -2144,45 +2238,6 @@ function jsonld_document_loader($url) {
 
 	return [];
 }
-
-/**
- * @brief
- *
- * @param string $id
- * @return boolean|string
- *   false if no pub key found, otherwise return the pub key
- */
-function get_webfinger_key($id) {
-
-	if(strpos($id,'acct:') === 0) {
-		$x = q("select xchan_pubkey from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' limit 1",
-			dbesc(str_replace('acct:','',$id))
-		);
-	}
-	if(! $x) {
-		if(strpos($id,'@') === false) {
-			$x = webfinger_rfc7033($id);
-			if($x && array_key_exists('properties',$x) && array_key_exists('https://w3id.org/security/v1#publicKeyPem',$x['properties'])) {
-				$key = $x['properties']['https://w3id.org/security/v1#publicKeyPem'];
-				if(strstr($key,'RSA ')) {
-					$key = Keyutils::rsatopem($key);
-				}
-				return $key;
-			}
-		}
-		$found = discover_by_webbie(str_replace('acct:','',$id));
-		if($found) {
-			$r = q("select xchan_pubkey from xchan left joing hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' limit 1",
-				dbesc(str_replace('acct:','',$id))
-			);
-		}
-	}
-	if($x && $x[0]['xchan_pubkey']) {
-		return ($x[0]['xchan_pubkey']);
-	}
-	return false;
-}
-
 
 
 function is_https_request() {

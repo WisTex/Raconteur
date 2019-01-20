@@ -65,18 +65,18 @@ if($argc > 2 && strpos($argv[2],'.')) {
 if($argc > 4) {
 	set_pconfig($argv[1],$argv[2],$argv[3],$argv[4]);
 	Libsync::build_sync_packet($argv[1]);
-	echo "pconfig[{$argv[1]}][{$argv[2]}][{$argv[3]}] = " . get_pconfig($argv[1],$argv[2],$argv[3]) . "\n";
+	echo "pconfig[{$argv[1]}][{$argv[2]}][{$argv[3]}] = " . printable_config(get_pconfig($argv[1],$argv[2],$argv[3])) . "\n";
 }
 
 if($argc == 4) {
-	echo "pconfig[{$argv[1]}][{$argv[2]}][{$argv[3]}] = " . get_pconfig($argv[1],$argv[2],$argv[3]) . "\n";
+	echo "pconfig[{$argv[1]}][{$argv[2]}][{$argv[3]}] = " . printable_config(get_pconfig($argv[1],$argv[2],$argv[3])) . "\n";
 }
 
 if($argc == 3) {
 	load_pconfig($argv[1],$argv[2]);
 	if(App::$config[$argv[1]][$argv[2]]) {
 		foreach(App::$config[$argv[1]][$argv[2]] as $k => $x) {
-			echo "pconfig[{$argv[1]}][{$argv[2]}][{$k}] = " . $x . "\n";
+			echo "pconfig[{$argv[1]}][{$argv[2]}][{$k}] = " . printable_config($x) . "\n";
 		}
 	}
 }
@@ -85,7 +85,7 @@ if($argc == 2) {
 	$r = q("select * from pconfig where uid = " . intval($argv[1]));
 	if($r) {
 		foreach($r as $rr) {
-			echo "pconfig[{$rr['uid']}][{$rr['cat']}][{$rr['k']}] = " . $rr['v'] . "\n";
+			echo "pconfig[{$rr['uid']}][{$rr['cat']}][{$rr['k']}] = " . printable_config($rr['v']) . "\n";
 		}
 	}
 }
@@ -97,4 +97,14 @@ if($argc == 1) {
 			echo sprintf('%4u %s', $rr['channel_id'], $rr['channel_name']) . PHP_EOL;
 		}
 	}
+}
+
+
+function printable_config($x) {
+	$s = '';
+	if(is_array($x)) {
+		return serialise($x);
+	}
+	else
+		return $x;
 }

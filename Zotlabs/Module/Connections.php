@@ -3,7 +3,7 @@ namespace Zotlabs\Module;
 
 
 require_once('include/socgraph.php');
-require_once('include/selectors.php');
+
 
 class Connections extends \Zotlabs\Web\Controller {
 
