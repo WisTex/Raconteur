@@ -32,7 +32,9 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 		}
 	}
 
-//	$url = rtrim($url,'/');
+	// This turned out to have issues on an activitypub project (forgot which at the moment) that requires a trailing slash.
+
+	//	$url = rtrim($url,'/');
 
 	if(! allowed_url($url)) {
 		$result['message'] = t('Channel is blocked on this site.');
@@ -69,6 +71,7 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 	if($r) {
 
 		// reset results to the best record or the first if we don't have the best
+		// note: this is a single record and not an array of results
 
 		$r = Libzot::zot_record_preferred($r,'xchan_network');
 	}
@@ -86,7 +89,7 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 		if(! $wf) {
 			$feeds = get_config('system','feed_contacts');
 
-			if(($feeds) && ($protocol === '' || $protocol === 'feed' || $protocol === 'rss')) {
+			if(($feeds) && (in_array($protocol, [ '', 'feed', 'rss' ]))) {
 				$d = discover_feed($url);
 			}
 			else {
@@ -97,11 +100,20 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 	}
 
 	if($wf || $d) {
-		$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' limit 1",
+
+		// find the record which was just created.
+
+		$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' $sql_options",
 			dbesc(($wf) ? $wf : $url),
 			dbesc($url),
 			dbesc($url)
 		);
+
+		// convert to a single record (once again preferring a zot solution in the case of multiples)
+
+		if($r) {
+			$r = Libzot::zot_record_preferred($r,'xchan_network');
+		}
 	}
 
 	// if discovery was a success we should have an xchan record in $r
@@ -118,7 +130,7 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 		return $result;
 	}
 
-	if($r[0]['xchan_network'] === 'activitypub') {
+	if($r['xchan_network'] === 'activitypub') {
 		$singleton = 1;
 		if(defined('NOMADIC')) {
 			$result['message'] = t('Protocol not supported');
@@ -139,11 +151,11 @@ function new_contact($uid,$url,$channel,$interactive = false, $confirm = false) 
 
 		// check service class feed limits
 
-		$r = q("select count(*) as total from abook where abook_account = %d and abook_feed = 1 ",
+		$t = q("select count(*) as total from abook where abook_account = %d and abook_feed = 1 ",
 			intval($aid)
 		);
-		if($r)
-			$total_feeds = $r[0]['total'];
+		if($t)
+			$total_feeds = $t[0]['total'];
 
 		if(! service_class_allows($uid,'total_feeds',$total_feeds)) {
 			$result['message'] = upgrade_message();
