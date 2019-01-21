@@ -17,7 +17,7 @@ and confirm these with your hosting provider prior to installation. (And
 preferably before entering into a long-term contract.)
 
 If you encounter installation issues, please let us know via the issue 
-tracker at https://framagit.org/macgirvin/zap where you downloaded the software.
+tracker at https://framagit.org/macgirvin/osada where you downloaded the software.
 Please be as clear as you can about your operating environment and provide as
 much detail as possible about any error messages you may see, so that we can
 prevent it from happening in the future. Due to the large variety of operating
@@ -169,7 +169,11 @@ password, database name). The PDO database libraries will fallback to socket
 communication if the hostname is 'localhost' and some people have reported
 issues with the socket implementation. Use it if your requirements mandate. 
 Otherwise if the database is served on the local server, use '127.0.0.1' for
-the hostname. 
+the hostname. When using MySQL or MariaDB, please set the database character
+encoding to utf8mb4 to avoid encoding issues with emojis. All the internal
+tables are created with utf8mb4_general_ci encoding, but issues have been 
+encountered when using these in a database that was configured for 'utf8'
+and not utf8mb4.   
 
 Internally we now use the PDO library for database connections. If you 
 encounter a database configuration which cannot be expressed on the setup form
