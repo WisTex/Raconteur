@@ -56,6 +56,14 @@ class Receiver {
 
 		if ($this->rawdata) {
 			$this->data = json_decode($this->rawdata,true);
+			if(($this->data) && (! is_array($this->data)) && (substr($this->data,0,1) === "{")) {
+
+				// Multiple json encoding has been seen in the wild and needs to be fixed on the sending side.
+				// Proceed anyway and log the event with a backtrace.
+
+				btlogger('multiple encoding detected');
+				$this->data = json_decode($this->data,true);
+			}
 		}
 		else {
 			$this->error = true;
