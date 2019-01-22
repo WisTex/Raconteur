@@ -8,6 +8,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Group;
 use Zotlabs\Lib\Crypto;
+use Zotlabs\Lib\Connect;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\Permissions;
@@ -472,13 +473,39 @@ function create_identity($arr) {
 
 		$accts = get_config('system','auto_follow');
 		if(($accts) && (! $total_identities)) {
-			require_once('include/follow.php');
 			if(! is_array($accts))
 				$accts = array($accts);
 
 			foreach($accts as $acct) {
-				if(trim($acct))
-					new_contact($newuid,trim($acct),$ret['channel'],false);
+				if(trim($acct)) {
+					$f = Connect::connect($ret['channel'],trim($acct));
+					if($f['success']) {
+						$clone = [];
+						foreach($f['abook'] as $k => $v) {
+							if(strpos($k,'abook_') === 0) {
+								$clone[$k] = $v;
+							}
+						}
+						unset($clone['abook_id']);
+						unset($clone['abook_account']);
+						unset($clone['abook_channel']);
+	
+						$abconfig = load_abconfig($ret['channel']['channel_id'],$clone['abook_xchan']);
+						if($abconfig) {
+							$clone['abconfig'] = $abconfig;
+						}	
+
+						Libsync::build_sync_packet(0, [ 'abook' => [ $clone ] ], true);
+
+						$can_view_stream = their_perms_contains($ret['channel']['channel_id'],$clone['abook_xchan'],'view_stream');
+
+						// If we can view their stream, pull in some posts
+
+						if(($can_view_stream) || ($f['abook']['xchan_network'] === 'rss')) {
+							Master::Summon([ 'Onepoll',$f['abook']['abook_id'] ]);
+						}
+					}
+				}				
 			}
 		}
 

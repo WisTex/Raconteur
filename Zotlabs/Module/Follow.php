@@ -1,16 +1,17 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Web\HTTPSignatures;
 use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Lib\Connect;
+use Zotlabs\Daemon\Master;
 
-require_once('include/follow.php');
-
-
-class Follow extends \Zotlabs\Web\Controller {
+class Follow extends Controller {
 
 	function init() {
 	
@@ -68,9 +69,9 @@ class Follow extends \Zotlabs\Web\Controller {
 		$return_url = $_SESSION['return_url'];
 		$confirm = intval($_REQUEST['confirm']);
 		$interactive = (($_REQUEST['interactive']) ? intval($_REQUEST['interactive']) : 1);	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
-		$result = new_contact($uid,$url,$channel,$interactive,$confirm);
+		$result = Connect::connect($channel,$url);
 		
 		if($result['success'] == false) {
 			if($result['message'])
@@ -99,17 +100,17 @@ class Follow extends \Zotlabs\Web\Controller {
 		if($abconfig)
 			$clone['abconfig'] = $abconfig;
 	
-		Libsync::build_sync_packet(0 /* use the current local_channel */, array('abook' => array($clone)), true);
+		Libsync::build_sync_packet(0, [ 'abook' => [ $clone ] ], true);
 	
 		$can_view_stream = their_perms_contains($channel['channel_id'],$clone['abook_xchan'],'view_stream');
 	
 		// If we can view their stream, pull in some posts
 	
 		if(($can_view_stream) || ($result['abook']['xchan_network'] === 'rss'))
-			\Zotlabs\Daemon\Master::Summon(array('Onepoll',$result['abook']['abook_id']));
+			Master::Summon([ 'Onepoll', $result['abook']['abook_id'] ]);
 	
 		if($interactive) {
-			goaway(z_root() . '/connedit/' . $result['abook']['abook_id'] . '?f=&follow=1');
+			goaway(z_root() . '/connedit/' . $result['abook']['abook_id'] . '?follow=1');
 		}
 		else {
 			json_return_and_die([ 'success' => true ]);
