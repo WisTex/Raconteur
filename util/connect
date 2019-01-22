@@ -4,6 +4,8 @@
 // connect utility
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Connect;
+use Zotlabs\Daemon\Master;
 
 if(! file_exists('include/cli_startup.php')) {
     echo t('Run from the top level $Projectname web directory, as util/connect <args>') . PHP_EOL;
@@ -11,7 +13,6 @@ if(! file_exists('include/cli_startup.php')) {
 }
 
 require_once('include/cli_startup.php');
-require_once('include/follow.php');
 
 cli_startup();
 
@@ -33,7 +34,7 @@ cli_startup();
 		exit(1);
 	}
 
-	$result = new_contact($c['channel_id'],$argv[2],$c,false,false);
+	$result = Connect::connect($c,$argv[2]);
 
 	if($result['success'] == false) {
 		echo $result['message'];
@@ -59,8 +60,8 @@ cli_startup();
 
 	// If we can view their stream, pull in some posts
 
-	if(($can_view_stream) || ($result['abook']['xchan_network'] === 'rss'))
-		\Zotlabs\Daemon\Master::Summon(array('Onepoll',$result['abook']['abook_id']));
-
+	if(($can_view_stream) || ($result['abook']['xchan_network'] === 'rss')) {
+		Master::Summon([ 'Onepoll',$result['abook']['abook_id'] ]);
+	}
 
 	exit(0);
