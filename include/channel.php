@@ -1428,10 +1428,12 @@ function profile_sidebar($profile, $block = 0, $show_connect = true, $zcard = fa
 	$gender   = ((x($profile,'gender')   == 1) ? t('Gender:')   : False);
 	$marital  = ((x($profile,'marital')  == 1) ? t('Status:')   : False);
 	$homepage = ((x($profile,'homepage') == 1) ? t('Homepage:') : False);
-	$profile['online']   = (($profile['online_status'] === 'online') ? t('Online Now') : False);
 
-//	logger('online: ' . $profile['online']);
+	// zap/osada do not have a realtime chat system at this time so don't show online state
+	//	$profile['online']   = (($profile['online_status'] === 'online') ? t('Online Now') : False);
+	//	logger('online: ' . $profile['online']);
 
+	$profile['online'] = false;
 
 	if(($profile['hidewall'] && (! local_channel()) && (! remote_channel())) || $block ) {
 		$location = $reddress = $pdesc = $gender = $marital = $homepage = False;
@@ -1486,8 +1488,8 @@ function profile_sidebar($profile, $block = 0, $show_connect = true, $zcard = fa
 	));
 
 	$arr = [
-			'profile' => $profile,
-			'entry' => $o
+		'profile' => $profile,
+		'entry' => $o
 	];
 
 	/**
