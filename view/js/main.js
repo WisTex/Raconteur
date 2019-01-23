@@ -819,10 +819,11 @@ function collapseHeight() {
 	});
 
 	var collapsedContentHeight = Math.ceil($("#region_2").height());
-	contentHeightDiff = origContentHeight - collapsedContentHeight;
+	contentHeightDiff = liking ? 0 : origContentHeight - collapsedContentHeight;
+
 	console.log('collapseHeight() - contentHeightDiff: ' + contentHeightDiff + 'px');
 
-	if(i){
+	if(i && ! liking){
 		var sval = position - cDiff + ($(".divgrow-showmore").outerHeight() * i);
 		console.log('collapsed above viewport count: ' + i);
 		$(window).scrollTop(sval);

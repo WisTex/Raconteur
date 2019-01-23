@@ -4,11 +4,11 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Verify;
-
+use Zotlabs\Web\Controller;
 
 /**
  * OpenWebAuth verifier and token generator
- * See https://macgirvin.com/wiki/mike/OpenWebAuth/Home
+ * See spec/OpenWebAuth/Home.md
  * Requests to this endpoint should be signed using HTTP Signatures
  * using the 'Authorization: Signature' authentication method
  * If the signature verifies a token is returned. 
@@ -16,57 +16,52 @@ use Zotlabs\Lib\Verify;
  * This token may be exchanged for an authenticated cookie. 
  */
 
-class Owa extends \Zotlabs\Web\Controller {
+class Owa extends Controller {
 
 	function init() {
 
 		$ret = [ 'success' => false ];
 
-		foreach([ 'REDIRECT_REMOTE_USER', 'HTTP_AUTHORIZATION' ] as $head) {
-			if(array_key_exists($head,$_SERVER) && substr(trim($_SERVER[$head]),0,9) === 'Signature') {
-				if($head !== 'HTTP_AUTHORIZATION') {
-					$_SERVER['HTTP_AUTHORIZATION'] = $_SERVER[$head];
-					continue;
-				}
+		if (array_key_exists('REDIRECT_REMOTE_USER',$_SERVER) && (! array_key_exists('HTTP_AUTHORIZATION',$_SERVER))) {
+			$_SERVER['HTTP_AUTHORIZATION'] = $_SERVER['REDIRECT_REMOTE_USER'];
+		}
+	
 
-				$sigblock = HTTPSig::parse_sigheader($_SERVER[$head]);
-				if($sigblock) {
-					$keyId = $sigblock['keyId'];
-					if($keyId) {
-						$r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash 
-							where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) ",
-							dbesc(str_replace('acct:','',$keyId)),
-							dbesc($keyId)
-						);
-						if(! $r) {
-							$found = discover_by_webbie(str_replace('acct:','',$keyId));
-							if($found) {
-
-								$r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash 
-									where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) ",
-									dbesc(str_replace('acct:','',$keyId)),
-									dbesc($keyId)
-								);
-
-							}
+		if (array_key_exists('HTTP_AUTHORIZATION',$_SERVER) && substr(trim($_SERVER['HTTP_AUTHORIZATION']),0,9) === 'Signature') {
+			$sigblock = HTTPSig::parse_sigheader($_SERVER['HTTP_AUTHORIZATION']);
+			if ($sigblock) {
+				$keyId = $sigblock['keyId'];
+				if ($keyId) {
+					$r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash 
+						where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) ",
+						dbesc(str_replace('acct:','',$keyId)),
+						dbesc($keyId)
+					);
+					if (! $r) {
+						$found = discover_by_webbie(str_replace('acct:','',$keyId));
+						if ($found) {
+							$r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash 
+								where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) ",
+								dbesc(str_replace('acct:','',$keyId)),
+								dbesc($keyId)
+							);
 						}
-						if($r) {
-							foreach($r as $hubloc) {
-								$verified = HTTPSig::verify(file_get_contents('php://input'));	
-								if($verified && $verified['header_signed'] && $verified['header_valid'] && ( $verified['content_valid'] || (! $verified['content_signed']))) {
-									logger('OWA header: ' . print_r($verified,true),LOGGER_DATA);	
-									logger('OWA success: ' . $hubloc['hubloc_addr'],LOGGER_DATA);
-									$ret['success'] = true;
-									$token = random_string(32);
-									Verify::create('owt',0,$token,$hubloc['hubloc_addr']);
-									$result = '';
-									openssl_public_encrypt($token,$result,$hubloc['xchan_pubkey']);
-									$ret['encrypted_token'] = base64url_encode($result);
-									break;
-								}
-								else {
-									logger('OWA fail: ' . $hubloc['hubloc_id'] . ' ' . $hubloc['hubloc_addr']);
-								}
+					}
+					if ($r) {
+						foreach ($r as $hubloc) {
+							$verified = HTTPSig::verify(file_get_contents('php://input'));	
+							if ($verified && $verified['header_signed'] && $verified['header_valid'] && ($verified['content_valid'] || (! $verified['content_signed']))) {
+								logger('OWA header: ' . print_r($verified,true),LOGGER_DATA);	
+								logger('OWA success: ' . $hubloc['hubloc_addr'],LOGGER_DATA);
+								$ret['success'] = true;
+								$token = random_string(32);
+								Verify::create('owt',0,$token,$hubloc['hubloc_addr']);
+								$result = '';
+								openssl_public_encrypt($token,$result,$hubloc['xchan_pubkey']);
+								$ret['encrypted_token'] = base64url_encode($result);
+								break;
+							} else {
+								logger('OWA fail: ' . $hubloc['hubloc_id'] . ' ' . $hubloc['hubloc_addr']);
 							}
 						}
 					}

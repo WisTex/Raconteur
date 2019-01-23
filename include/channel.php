@@ -424,18 +424,6 @@ function create_identity($arr) {
 			if(array_key_exists('perms_auto',$role_permissions)) {
 				$autoperms = intval($role_permissions['perms_auto']);
 				set_pconfig($newuid,'system','autoperms',$autoperms);
-				if($autoperms) {
-					$x = Permissions::FilledPerms($role_permissions['perms_connect']);
-					foreach($x as $k => $v) {
-						set_pconfig($newuid,'autoperms',$k,$v);
-					}
-				}
-				// as this is a new channel, this shouldn't do anything and probaby is not needed
-				else {
-					$r = q("delete from pconfig where uid = %d and cat = 'autoperms'",
-						intval($newuid)
-					);
-				}
 			}
 		}
 
