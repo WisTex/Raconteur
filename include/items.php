@@ -9,6 +9,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Group;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\Apps;
 
 use Zotlabs\Lib as Zlib;
 use Zotlabs\Lib\Enotify;
@@ -3170,6 +3171,11 @@ function post_is_importable($channel_id,$item,$abook) {
 	if(! $item)
 		return false;
 
+	if(! Apps::system_app_installed($channel_id,'Content Filter')) {
+		return true;
+	}
+
+
 	$incl = PConfig::get($channel_id,'system','message_filter_incl',EMPTY_STR);
 	$excl = PConfig::get($channel_id,'system','message_filter_excl',EMPTY_STR);
 	if($incl || $excl) {
@@ -3180,8 +3186,6 @@ function post_is_importable($channel_id,$item,$abook) {
 		}
 	}
 
-	if(($channel_id) && (! feature_enabled($channel_id,'connfilter')))
-		return true;
 
 	if(! $abook)
 		return true;

@@ -495,7 +495,7 @@ function create_identity($arr) {
 							$clone['abconfig'] = $abconfig;
 						}	
 
-						Libsync::build_sync_packet(0, [ 'abook' => [ $clone ] ], true);
+						Libsync::build_sync_packet($ret['channel']['channel_id'], [ 'abook' => [ $clone ] ], true);
 
 						$can_view_stream = their_perms_contains($ret['channel']['channel_id'],$clone['abook_xchan'],'view_stream');
 

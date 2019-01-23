@@ -830,6 +830,9 @@ function get_tags($s) {
 	// ignore anything in [color= ], because it may contain color codes which are mistaken for tags
 	$s = preg_replace('/\[color=(.*?)\]/sm','',$s);
 
+	// skip anchors in URL
+	$s = preg_replace('/\[url=(.*?)\]/sm','',$s);
+
 	// match any double quoted tags
 
 	if(preg_match_all('/([@#\!]\&quot\;.*?\&quot\;)/',$s,$match)) {

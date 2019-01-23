@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/content_filter
+requires: local_channel
+name: Content Filter
+photo: icon:filter
+categories: Networking

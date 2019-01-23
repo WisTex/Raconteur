@@ -675,7 +675,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 				));
 			}
 
-			if(feature_enabled(local_channel(),'connfilter')) {
+			if(Apps::system_app_installed(local_channel(),'Content Filter')) {
 				$sections['filter'] = [
 					'label' => t('Filter'),
 					'url'   => z_root() . '/connedit/' . $contact['abook_id'] . '/?f=&section=filter',
@@ -807,7 +807,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 				'$lbl_rating'     => t('Rating'),
 				'$lbl_rating_label' => t('Slide to adjust your rating'),
 				'$lbl_rating_txt' => t('Optionally explain your rating'),
-				'$connfilter'     => feature_enabled(local_channel(),'connfilter'),
+				'$connfilter'     => Apps::system_app_installed(local_channel(),'Content Filter'),
 				'$connfilter_label' => t('Custom Filter'),
 				'$incl'           => array('abook_incl',t('Only import posts with this text'), $contact['abook_incl'],t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts')),
 				'$excl'           => array('abook_excl',t('Do not import posts with this text'), $contact['abook_excl'],t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts')),
