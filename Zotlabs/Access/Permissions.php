@@ -226,6 +226,7 @@ class Permissions {
 			}
 		}
 
+		$automatic = intval(get_pconfig($channel_id,'system','autoperms'));
 
 		// look up the permission role to see if it specified auto-connect
 		// and if there was no permcat or a default permcat, set the perms
@@ -234,8 +235,6 @@ class Permissions {
 		$role = get_pconfig($channel_id,'system','permissions_role');
 		if($role) {
 			$xx = PermissionRoles::role_perms($role);
-			if($xx['perms_auto'])
-				$automatic = 1;
 
 			if((! $my_perms) && ($xx['perms_connect'])) {
 				$default_perms = $xx['perms_connect'];
@@ -250,7 +249,6 @@ class Permissions {
 		if(! $my_perms) {
 			$m = Permissions::FilledAutoperms($channel_id);
 			if($m) {
-				$automatic = 1;
 				$my_perms = $m;
 			}
 		}
