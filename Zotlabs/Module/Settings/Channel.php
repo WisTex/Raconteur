@@ -146,6 +146,8 @@ class Channel {
 		$autoperms        = ((x($_POST,'autoperms')) ? intval($_POST['autoperms'])  : 0);  
 		$anymention       = ((x($_POST,'anymention')) ? intval($_POST['anymention'])  : 0);  
 		$hyperdrive       = ((x($_POST,'hyperdrive')) ? intval($_POST['hyperdrive'])  : 0);  
+
+
 		$public_uploads   = ((isset($_POST['public_uploads'])) ? intval($_POST['public_uploads']) : 0);	
 		$post_newfriend   = (($_POST['post_newfriend'] == 1) ? 1: 0);
 		$post_joingroup   = (($_POST['post_joingroup'] == 1) ? 1: 0);
@@ -578,6 +580,7 @@ class Channel {
 			'$autoperms' => $autoperms,			
 			'$anymention' => $anymention,			
 			'$hyperdrive' => $hyperdrive,
+
 			'$h_not' 	=> t('Notification Settings'),
 			'$activity_options' => t('By default post a status message when:'),
 			'$post_newfriend' => array('post_newfriend',  t('accepting a friend request'), $post_newfriend, '', $yes_no),
