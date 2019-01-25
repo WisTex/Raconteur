@@ -61,7 +61,6 @@ class Permissions {
 			'write_storage' => t('Can upload/modify my file storage and photos'),
 			'post_wall'     => t('Can post on my channel (wall) page'),
 			'post_comments' => t('Can comment on or like my posts'),
-			'post_mail'     => t('Can send me private mail messages'),
 			'post_like'     => t('Can like/dislike profiles and profile things'),
 			'tag_deliver'   => t('Can forward to all my channel connections via ! mentions in posts'),
 			'republish'     => t('Can source my public posts in derived channels'),
