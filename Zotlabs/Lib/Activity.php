@@ -2004,7 +2004,7 @@ class Activity {
 
 			}
 
-			if($act->obj['type'] === 'Image') {
+			if($act->obj['type'] === 'Image' && strpos($s['body'],'zrl=' === false) {
 
 				$ptr = null;
 
