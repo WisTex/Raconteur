@@ -315,7 +315,7 @@ class Libzot {
 
 		if(! $hsig_valid) {
 			logger('http signature not valid: ' . print_r($hsig,true));
-			return $result;
+			return false;
 		}
 
 

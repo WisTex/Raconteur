@@ -11,10 +11,6 @@ class Zot6Handler implements IHandler {
 		return self::reply_notify($data,$hub);
 	}
 
-	function Request($data,$hub) {
-		return self::reply_message_request($data,$hub);
-	}
-
 	function Rekey($sender,$data,$hub) {
 		return self::reply_rekey_request($sender,$data,$hub);
 	}
@@ -89,75 +85,6 @@ class Zot6Handler implements IHandler {
 		return $ret;
 	}
 
-
-
-	/**
-	 * @brief Process a message request.
-	 *
-	 * If a site receives a comment to a post but finds they have no parent to attach it with, they
-	 * may send a 'request' packet containing the message_id of the missing parent. This is the handler
-	 * for that packet. We will create a message_list array of the entire conversation starting with
-	 * the missing parent and invoke delivery to the sender of the packet.
-	 *
-	 * Zotlabs/Daemon/Deliver.php (for local delivery) and 
-	 * mod/post.php???? @fixme (for web delivery) detect the existence of
-	 * this 'message_list' at the destination and split it into individual messages which are
-	 * processed/delivered in order.
-	 *
-	 *
-	 * @param array $data
-	 * @return array
-	 */
-	
-	static function reply_message_request($data,$hub) {
-		$ret = [ 'success' => false ];
-
-		$message_id = EMPTY_STR;
-
-		if(array_key_exists('data',$data))
-		$ptr = $data['data'];
-		if(is_array($ptr) && array_key_exists(0,$ptr)) {
-			$ptr = $ptr[0];
-		}
-		if(is_string($ptr)) {
-			$message_id = $ptr;
-		}
-		if(is_array($ptr) && array_key_exists('id',$ptr)) {
-			$message_id = $ptr['id'];
-		}
-
-		if (! $message_id) {
-			$ret['message'] = 'no message_id';
-			logger('no message_id');
-			return $ret;
-		}
-
-		$sender = $hub['hubloc_hash'];
-
-		/*
-		 * Find the local channel in charge of this post (the first and only recipient of the request packet)
-		 */
-
-		$arr = $data['recipients'][0];
-
-		$c = q("select * from channel left join xchan on channel_hash = xchan_hash where channel_hash = '%s' limit 1",
-			dbesc($arr['portable_id'])
-		);
-		if (! $c) {
-			logger('recipient channel not found.');
-			$ret['message'] .= 'recipient not found.' . EOL;
-			return $ret;
-		}
-
-		/*
-		 * fetch the requested conversation
-		 */
-
-		$messages = zot_feed($c[0]['channel_id'],$sender_hash, [ 'message_id' => $data['message_id'], 'encoding' => 'activitystreams' ]);
-
-		return (($messages) ? : [] );
-
-	}
 
 	static function rekey_request($sender,$data,$hub) {
 

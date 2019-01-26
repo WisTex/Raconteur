@@ -182,10 +182,6 @@ class Receiver {
 
 		switch ($this->messagetype) {
 
-			case 'request':
-				$this->response = $this->handler->Request($this->data,$this->hub);
-				break;
-
 			case 'purge':
 				$this->response = $this->handler->Purge($this->sender,$this->recipients,$this->hub);
 				break;
