@@ -315,7 +315,7 @@ class Libzot {
 
 		if(! $hsig_valid) {
 			logger('http signature not valid: ' . print_r($hsig,true));
-			return $result;
+			return false;
 		}
 
 
@@ -1178,14 +1178,18 @@ class Libzot {
 
 				logger($AS->debug());
 
-				$r = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
+				$r = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s'",
 					dbesc($AS->actor['id'])
 				); 
 
 				if($r) {
-					$arr['author_xchan'] = $r[0]['hubloc_hash'];
+					$r = zot_record_preferred($r);
+					$arr['author_xchan'] = $record['hubloc_hash'];
 				}
-
+				if(! $arr['author_xchan']) {
+					logger('No author!');
+					return;
+				}
 
 				$s = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
 					dbesc($env['sender'])

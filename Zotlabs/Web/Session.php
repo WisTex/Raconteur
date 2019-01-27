@@ -15,7 +15,7 @@ class Session {
 
 	private $handler = null;
 	private $session_started = false;
-
+	private $custom_handler = false;
 	public function init() {
 
 		$gc_probability = 50;
@@ -23,25 +23,39 @@ class Session {
 		ini_set('session.gc_probability', $gc_probability);
 		ini_set('session.use_only_cookies', 1);
 		ini_set('session.cookie_httponly', 1);
-	
+
+		$this->custom_handler = boolval(get_config('system', 'session_custom', false));
+				
 		/*
 		 * Set our session storage functions.
 		 */
+		
+		if ($this->custom_handler) {
+		   /* Custom handler (files, memached, redis..) */
 
-		$handler = new \Zotlabs\Web\SessionHandler();
+		   $session_save_handler = strval(get_config('system', 'session_save_handler', Null));
+		   $session_save_path = strval(get_config('system', 'session_save_path', Null));
+		   if (!$session_save_handler || !$session_save_path) {
+		   	logger('Session save handler or path not set.',LOGGER_NORMAL,LOG_ERR);
+		   } else {
+		   	ini_set('session.save_handler', $session_save_handler);
+                	ini_set('session.save_path', $session_save_path);
+		   }
+		} else {
+			$handler = new \Zotlabs\Web\SessionHandler();
 
-		$this->handler = $handler;
+			$this->handler = $handler;
 
-		$x = session_set_save_handler($handler,false);
-		if(! $x)
-			logger('Session save handler initialisation failed.',LOGGER_NORMAL,LOG_ERR);
-
+		   	$x = session_set_save_handler($handler,false);
+		   	if(! $x)
+		   		logger('Session save handler initialisation failed.',LOGGER_NORMAL,LOG_ERR);
+		};
 		// Force cookies to be secure (https only) if this site is SSL enabled. 
 		// Must be done before session_start().
 
 
 		$arr = session_get_cookie_params();
-
+		
 		// Note when setting cookies: set the domain to false which creates a single domain
 		// cookie. If you use a hostname it will create a .domain.com wildcard which will
 		// have some nasty side effects if you have any other subdomains running hubzilla. 
@@ -86,14 +100,15 @@ class Session {
 
 		$arr = session_get_cookie_params();
 
-		if($this->handler && $this->session_started) {
+		if(($this->handler || $this->custom_handler) && $this->session_started) {
 
 			session_regenerate_id(true);
 
 			// force SessionHandler record creation with the new session_id
 			// which occurs as a side effect of read()
-
-			$this->handler->read(session_id());
+			if (! $this->custom_handler) {
+				$this->handler->read(session_id());
+			}
 		}
 		else 
 			logger('no session handler');
