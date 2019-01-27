@@ -1,14 +1,10 @@
 #!/usr/bin/env php
 <?php
 
-// Red pconfig utility
-
-
 if(!file_exists('include/cli_startup.php')) {
-	echo 'Run pconfig from the top level Hubzilla web directory, as util/pconfig <args>' . PHP_EOL;
+	echo 'Run admins from the top level web directory, as util/admins <args>' . PHP_EOL;
 	exit(1);
 }
-
 
 
 require_once('include/cli_startup.php');
