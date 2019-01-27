@@ -1183,7 +1183,7 @@ class Libzot {
 				); 
 
 				if($r) {
-					$r = zot_record_preferred($r);
+					$r = self::zot_record_preferred($r);
 					$arr['author_xchan'] = $record['hubloc_hash'];
 				}
 				if(! $arr['author_xchan']) {
