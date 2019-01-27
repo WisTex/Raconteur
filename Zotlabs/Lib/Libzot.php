@@ -1184,7 +1184,7 @@ class Libzot {
 
 				if($r) {
 					$r = self::zot_record_preferred($r);
-					$arr['author_xchan'] = $record['hubloc_hash'];
+					$arr['author_xchan'] = $r['hubloc_hash'];
 				}
 				if(! $arr['author_xchan']) {
 					logger('No author!');
