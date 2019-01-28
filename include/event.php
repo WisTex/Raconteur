@@ -85,6 +85,7 @@ function format_event_obj($jobject) {
 			'content'   => bbcode($arr['description']),
 			'location'  => [ 'type' => 'Place', 'content' => $arr['location'] ],
 			'source'    => [ 'content' => format_event_bbcode($arr), 'mediaType' => 'text/bbcode' ],
+			'url'       => [ [ 'mediaType' => 'text/calendar', 'href' => z_root() . '/events/ical/' . $event['event_hash'] ] ],
 			'actor'     => Activity::encode_person($r[0],false),
 		];
 		if(! $arr['nofinish']) {
@@ -1070,6 +1071,7 @@ function event_store_item($arr, $event) {
 			'content'   => bbcode($arr['description']),
 			'location'  => [ 'type' => 'Place', 'content' => $arr['location'] ],
 			'source'    => [ 'content' => format_event_bbcode($arr), 'mediaType' => 'text/bbcode' ],
+			'url'       => [ [ 'mediaType' => 'text/calendar', 'href' => z_root() . '/events/ical/' . $event['event_hash'] ] ],
 			'actor'     => Activity::encode_person($r[0],false),
 		];
 
@@ -1214,6 +1216,7 @@ function event_store_item($arr, $event) {
 				'content'   => bbcode($arr['description']),
 				'location'  => [ 'type' => 'Place', 'content' => bbcode($arr['location']) ],
 				'source'    => [ 'content' => format_event_bbcode($arr), 'mediaType' => 'text/bbcode' ],
+				'url'       => [ [ 'mediaType' => 'text/calendar', 'href' => z_root() . '/events/ical/' . $event['event_hash'] ] ],
 				'actor'     => Activity::encode_person($z,false),
 			];
 

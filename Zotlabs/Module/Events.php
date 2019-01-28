@@ -103,7 +103,7 @@ class Events extends \Zotlabs\Web\Controller {
 	
 		//$action = ($event_hash == '') ? 'new' : "event/" . $event_hash;
 	
-		//fixme: this url gives a wsod if there is a linebreak detected in one of the variables ($desc or $location)
+		//@fixme: this url gives a wsod if there is a linebreak detected in one of the variables ($desc or $location)
 		//$onerror_url = z_root() . "/events/" . $action . "?summary=$summary&description=$desc&location=$location&start=$start_text&finish=$finish_text&adjust=$adjust&nofinish=$nofinish&type=$type";
 		$onerror_url = z_root() . "/events";
 	
