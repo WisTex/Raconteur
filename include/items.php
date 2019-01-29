@@ -1893,6 +1893,13 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 
 	item_update_parent_commented($arr);
 
+
+	if(strpos($arr['body'],'[embed]') !== false) {
+		Master::Summon([ 'Cache_embeds', $current_post ]);
+	}
+
+
+
 	// If _creating_ a deleted item, don't propagate it further or send out notifications.
 	// We need to store the item details just in case the delete came in before the original post,
 	// so that we have an item in the DB that's marked deleted and won't store a fresh post
@@ -2214,6 +2221,12 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 	 *   Called after processing a remote post that involved an edit or update.
 	 */
 	call_hooks('post_remote_update_end', $arr);
+
+
+	if(strpos($arr['body'],'[embed]') !== false) {
+		Master::Summon([ 'Cache_embeds', $orig_post_id ]);
+	}
+
 
 	if($deliver) {
 		send_status_notifications($orig_post_id,$arr);
