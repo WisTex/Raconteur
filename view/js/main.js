@@ -703,6 +703,7 @@ function updateConvItems(mode,data) {
 				title.replace(/\s+$/, '');
 				if (title) {
 					savedTitle = title + " " + savedTitle;
+					document.title = title;
 				}
 			}
 		}

@@ -219,6 +219,14 @@ var activeCommentText = '';
 		});
 	}
 
+	function jotEmbed(id,post_type) {
+		$('#like-rotator-' + id).show();
+		$.get('{{$baseurl}}/embed/' + id, function(data) {
+			$('#like-rotator-' + id).hide();
+			notificationsUpdate();
+		});
+	}
+
 
 	function linkdropper(event) {
 		var linkFound = ((event.dataTransfer.types.indexOf("text/uri-list") > -1) ? true : false);

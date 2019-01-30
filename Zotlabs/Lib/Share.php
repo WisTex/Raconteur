@@ -56,52 +56,18 @@ class Share {
 
 		$obj['type']         = $this->item['obj_type'];
 		$obj['id']           = $this->item['mid'];
-		$obj['content']      = $this->item['body'];
-		$obj['content_type'] = $this->item['mimetype'];
-		$obj['title']        = $this->item['title'];
-		$obj['created']      = $this->item['created'];
-		$obj['edited']       = $this->item['edited'];
-		$obj['author'] = [
-			'name'     => $this->item['author']['xchan_name'],
-			'address'  => $this->item['author']['xchan_addr'],
-			'network'  => $this->item['author']['xchan_network'],
-			'link'     => [
-				[ 
-					'rel'  => 'alternate', 
-					'type' => 'text/html', 
-					'href' => $this->item['author']['xchan_url']
-				],
-				[
-					'rel'  => 'photo', 
-					'type' => $this->item['author']['xchan_photo_mimetype'], 
-					'href' => $this->item['author']['xchan_photo_m']
-				]
-			]
+		$obj['content']      = bbcode($this->item['body']);
+		$obj['source'] = [ 
+			'mediaType' => $this->item['mimetype'], 
+			'content' => $this->item['body'] 
 		];
 
-		$obj['owner'] = [
-			'name'     => $this->item['owner']['xchan_name'],
-			'address'  => $this->item['owner']['xchan_addr'],
-			'network'  => $this->item['owner']['xchan_network'],
-			'link'     => [
-				[ 
-					'rel'  => 'alternate', 
-					'type' => 'text/html', 
-					'href' => $this->item['owner']['xchan_url']
-				],
-				[
-					'rel'  => 'photo', 
-					'type' => $this->item['owner']['xchan_photo_mimetype'], 
-					'href' => $this->item['owner']['xchan_photo_m']
-				]
-			]
-		];
-
-		$obj['link'] = [
-			'rel'  => 'alternate',
-			'type' => 'text/html',
-			'href' => $this->item['plink']
-		];
+		$obj['name']          = $this->item['title'];
+		$obj['published']     = $this->item['created'];
+		$obj['updated']       = $this->item['edited'];
+		$obj['attributedTo']  =  ((strpos($this->item['author']['xchan_hash'],'http') === 0) 
+			? $this->item['author']['xchan_hash'] 
+			: $this->item['author']['xchan_url']);
 
 		return $obj;
 	}
