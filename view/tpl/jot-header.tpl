@@ -220,13 +220,20 @@ var activeCommentText = '';
 	}
 
 	function jotEmbed(id,post_type) {
+
+		if ($('#jot-popup').length != 0) $('#jot-popup').show();
+
 		$('#like-rotator-' + id).show();
 		$.get('{{$baseurl}}/embed/' + id, function(data) {
-			$('#like-rotator-' + id).hide();
-			notificationsUpdate();
+			if (!editor) $("#profile-jot-text").val("");
+			initEditor(function(){
+				addeditortext(data);
+				$('#like-rotator-' + id).hide();
+				$(window).scrollTop(0);
+			});
 		});
-	}
 
+	}
 
 	function linkdropper(event) {
 		var linkFound = ((event.dataTransfer.types.indexOf("text/uri-list") > -1) ? true : false);
