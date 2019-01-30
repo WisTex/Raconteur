@@ -168,13 +168,29 @@ class Item extends Controller {
 			$to = (($recips && array_key_exists('to',$recips) && is_array($recips['to'])) ? $recips['to'] : null);
 			$nitems = [];
 			foreach($items as $i) {
+
+				$mids = [];
+
 				if(intval($i['item_private'])) {
 					if(! $observer) {
 						continue;
 					}
-					if($to && (! in_array($observer['xchan_url'],$to))) {
+					// ignore private reshare, possibly from hubzilla
+					if($i['verb'] === 'Announce') {
+						if(! in_array($i['thr_parent'],$mids)) {
+							$mids[] = $i['thr_parent'];
+						}
 						continue;
 					}
+					// also ignore any children of the private reshares
+					if(in_array($i['thr_parent'],$mids)) {
+						continue;
+					}
+
+					if((! $to) || (! in_array($observer['xchan_url'],$to))) {
+						continue;
+					}
+
 				}
 				$nitems[] = $i;
 			}
