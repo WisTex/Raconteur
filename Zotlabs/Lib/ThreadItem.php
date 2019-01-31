@@ -324,8 +324,8 @@ class ThreadItem {
 		}
 
 		if ($shareable) {
-			$share = [ t('Share This'), t('share') ];
-			$embed = [ t('Embed this'), t('embed') ];
+			$share = t('Repeat This');
+			$embed = t('Share this');
 		}
 
 		$dreport = '';

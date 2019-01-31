@@ -643,6 +643,14 @@ function get_item_elements($x,$allow_code = false) {
 
 	$arr['sig']          = (($x['signature']) ? htmlspecialchars($x['signature'],  ENT_COMPAT,'UTF-8',false) : '');
 
+	// fix old-style signatures imported from hubzilla via polling and zot_feed
+	// so they verify. 
+
+	if($arr['sig'] && (! strpos($arr['sig'],'.'))) {
+		$arr['sig'] = 'sha256.' . $arr['sig'];
+	}
+
+
 	$arr['obj']          = activity_sanitise($x['object']);
 	$arr['target']       = activity_sanitise($x['target']);
 
@@ -728,6 +736,13 @@ function get_item_elements($x,$allow_code = false) {
 				unset($arr['sig']);
 			}
 		}
+	}
+
+	// Strip old-style hubzilla bookmarks
+	// Do this after signature verification
+
+	if(strpos($x['body'],"#^[") !== false) {
+		$x['body'] = str_replace("#^[","[",$x['body']);
 	}
 
 	// if the input is markdown, remove one level of html escaping.
