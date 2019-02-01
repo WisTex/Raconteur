@@ -140,6 +140,13 @@ class ThreadItem {
 				$privacy_warning = true;
 		}
 
+
+		if($lock && $privacy_warning) {
+			$lock = t('Privacy conflict. Discretion advised.');
+		}
+
+
+
 		$mode = $conv->get_mode();
 
 		switch($item['item_type']) {
@@ -324,8 +331,8 @@ class ThreadItem {
 		}
 
 		if ($shareable) {
-			$share = [ t('Share This'), t('share') ];
-			$embed = [ t('Embed this'), t('embed') ];
+			$share = t('Repeat This');
+			$embed = t('Share this');
 		}
 
 		$dreport = '';
