@@ -1864,7 +1864,7 @@ class Activity {
 		$s['summary']  = self::bb_content($content,'summary');
 		$s['body']     = ((self::bb_content($content,'bbcode') && (! $response_activity)) ? self::bb_content($content,'bbcode') : self::bb_content($content,'content'));
 
-		if($act->type === 'Tombstone' || ($act->type === 'Create' && $act->obj['type'] === 'Tombstone') {
+		if($act->type === 'Tombstone' || ($act->type === 'Create' && $act->obj['type'] === 'Tombstone')) {
 			$s['item_deleted'] = 1;
 		}
 
