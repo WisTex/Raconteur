@@ -1864,17 +1864,19 @@ class Activity {
 		$s['summary']  = self::bb_content($content,'summary');
 		$s['body']     = ((self::bb_content($content,'bbcode') && (! $response_activity)) ? self::bb_content($content,'bbcode') : self::bb_content($content,'content'));
 
-		$s['verb']     = self::activity_mapper($act->type);
-
-		if($act->type === 'Tombstone') {
+		if($act->type === 'Tombstone' || ($act->type === 'Create' && $act->obj['type'] === 'Tombstone') {
 			$s['item_deleted'] = 1;
 		}
+
+		$s['verb']     = self::activity_mapper($act->type);
 
 		$s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
 		$s['obj']      = $act->obj;
 		if(is_array($obj) && array_path_exists('actor/id',$s['obj'])) {
 			$s['obj']['actor'] = $s['obj']['actor']['id'];
 		}
+
+
 
 		// @todo add target if present
 
