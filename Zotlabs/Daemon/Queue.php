@@ -65,7 +65,7 @@ class Queue {
 			);
 			while ($r) {
 				foreach($r as $rv) {
-					queue_deliver($rv);
+					Zlib\Queue::deliver($rv);
 				}
 				$r = q("SELECT *,$sqlrandfunc as rn FROM outq WHERE outq_delivered = 0 and outq_scheduled < %s order by rn limit 1",
 					db_utcnow()
