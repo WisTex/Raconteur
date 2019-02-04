@@ -106,10 +106,9 @@ class GetTagsTest extends PHPUnit_Framework_TestCase {
 
 		$tags=get_tags($text);
 
-		$inform=''; 
 		$str_tags='';
 		foreach($tags as $tag) {
-			handle_tag($this->a, $text, $inform, $str_tags, 11, $tag);
+			handle_tag($text, $str_tags, 11, $tag);
 		}
 
 		//correct tags found?
@@ -117,7 +116,6 @@ class GetTagsTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(in_array("@Mike", $tags));
 		
 		//correct output from handle_tag?
-		$this->assertEquals("cid:15", $inform); 
 		$this->assertEquals("@[url=http://justatest.de]Mike Lastname[/url]", $str_tags);
 		$this->assertEquals("hi @[url=http://justatest.de]Mike Lastname[/url]", $text);
 	}
@@ -135,9 +133,8 @@ class GetTagsTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(1, count($tags));
 		$this->assertTrue(in_array("@Mike.because", $tags));
 		
-		$inform='';
 		$str_tags='';
-		handle_tag($this->a, $text, $inform, $str_tags, 11, $tags[0]);
+		handle_tag($text, $str_tags, 11, $tags[0]);
 	
 		// (mike) - This is a tricky case.
 		// we support mentions as in @mike@example.com - which contains a period.
@@ -149,7 +146,6 @@ class GetTagsTest extends PHPUnit_Framework_TestCase {
 //		$this->assertEquals("@[url=http://justatest.de]Mike Lastname[/url]", $str_tags);
 //		$this->assertEquals("hi @[url=http://justatest.de]Mike Lastname[/url].because", $text);
 
-		$this->assertEquals("", $inform); 
 		$this->assertEquals("", $str_tags);
 
 	}
@@ -195,13 +191,11 @@ class GetTagsTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(in_array("@Mike This", $tags));
 		$this->assertTrue(in_array("#test_case", $tags));
 
-		$inform='';
 		$str_tags='';
 		foreach($tags as $tag) {
-			handle_tag($this->a, $text, $inform, $str_tags, 11, $tag);
+			handle_tag($text, $str_tags, 11, $tag);
 		}
 		
-		$this->assertEquals("cid:15", $inform); 
 		$this->assertEquals("@[url=http://justatest.de]Mike Lastname[/url],#[url=baseurl/search?tag=test%20case]test case[/url]", $str_tags);
 		$this->assertEquals("hi @[url=http://justatest.de]Mike Lastname[/url] This is a #[url=baseurl/search?tag=test%20case]test case[/url]", $text); 
 		
@@ -255,16 +249,13 @@ class GetTagsTest extends PHPUnit_Framework_TestCase {
 		//happens right now, but it shouldn't be necessary
 		$this->assertTrue(in_array("@mike+15 id", $tags));
 		
-		$inform='';
 		$str_tags='';
 		foreach($tags as $tag) {
-			handle_tag($this->a, $text, $inform, $str_tags, 11, $tag);
+			handle_tag($text, $str_tags, 11, $tag);
 		}
 		
 		$this->assertEquals("Test with @[url=http://justatest.de]Mike Lastname[/url] id tag", $text);
 		$this->assertEquals("@[url=http://justatest.de]Mike Lastname[/url]", $str_tags);
-		// this test may produce two cid:15 entries - which is OK because duplicates are pruned before delivery
-		$this->assertContains("cid:15",$inform);
 	}
 	
 	/**
