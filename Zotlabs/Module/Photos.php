@@ -312,7 +312,7 @@ class Photos extends \Zotlabs\Web\Controller {
 				require_once('include/text.php');
 				$profile_uid = App::$profile['profile_uid'];
 	
-				$results = linkify_tags($a, $rawtags, (local_channel()) ? local_channel() : $profile_uid);
+				$results = linkify_tags($rawtags, (local_channel()) ? local_channel() : $profile_uid);
 	
 				$success = $results['success'];
 				$post_tags = array();

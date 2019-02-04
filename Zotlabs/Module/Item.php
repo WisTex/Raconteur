@@ -761,8 +761,8 @@ class Item extends Controller {
 			$body = cleanup_bbcode($body);
 	
 			// Look for tags and linkify them
-			$results = linkify_tags($a, $summary, ($uid) ? $uid : $profile_uid);
-			$results = linkify_tags($a, $body, ($uid) ? $uid : $profile_uid);
+			$results = linkify_tags($summary, ($uid) ? $uid : $profile_uid);
+			$results = linkify_tags($body, ($uid) ? $uid : $profile_uid);
 
 
 			if($results) {
