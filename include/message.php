@@ -36,7 +36,7 @@ function send_message($uid = 0, $recipient = '', $body = '', $subject = '', $rep
 
 
 	$body = cleanup_bbcode($body);
-	$results = linkify_tags($a, $body, $uid);
+	$results = linkify_tags($body, $uid);
 
 	if(! $raw) {
 		if(preg_match_all("/\[attachment\](.*?)\[\/attachment\]/",((strpos($body,'[/crypt]')) ? $_POST['media_str'] : $body),$match)) {

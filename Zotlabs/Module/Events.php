@@ -98,8 +98,8 @@ class Events extends \Zotlabs\Web\Controller {
 		$type     = escape_tags(trim($_POST['type']));
 	
 		require_once('include/text.php');
-		linkify_tags($a, $desc, local_channel());
-		linkify_tags($a, $location, local_channel());
+		linkify_tags($desc, local_channel());
+		linkify_tags($location, local_channel());
 	
 		//$action = ($event_hash == '') ? 'new' : "event/" . $event_hash;
 	

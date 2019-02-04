@@ -4418,7 +4418,7 @@ function set_linkified_perms($linkified, &$str_contact_allow, &$str_group_allow,
 	$first_access_tag = true;
 
 	foreach($linkified as $x) {
-		$access_tag = $x['access_tag'];
+		$access_tag = $x['success']['access_tag'];
 		if(($access_tag) && (! $parent_item)) {
 			logger('access_tag: ' . $tag . ' ' . print_r($access_tag,true), LOGGER_DATA);
 			if ($first_access_tag && (! get_pconfig($profile_uid,'system','no_private_mention_acl_override'))) {

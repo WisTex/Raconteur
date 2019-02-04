@@ -2580,8 +2580,9 @@ function extra_query_args() {
  * @param boolean $in_network default true
  * @return boolean true if replaced, false if not replaced
  */
-function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $in_network = true) {
+function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) {
 
+	$channel = App::get_channel();
 	$replaced = false;
 	$r = null;
 	$match = array();
@@ -2637,20 +2638,19 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $i
 
 			$str_tags .= $newtag;
 		}
-		return [
-			'replaced' => $replaced,
-			'termtype' => $termtype,
-			'term'     => $basetag,
-			'url'      => $url,
-			'contact'  => []
-		];
-
+		return [ [
+			'replaced'   => $replaced,
+			'termtype'   => $termtype,
+			'term'       => $basetag,
+			'url'        => $url,
+			'contact'    => [],
+			'access_tag' => '',
+		]];
 	}
 
 	// END hashtags
 
 	// BEGIN mentions
-
 
 	if ( in_array($termtype, [ TERM_MENTION, TERM_FORUM ] )) {
 
@@ -2662,7 +2662,7 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $i
 		$exclusive = (((strpos(substr($tag,1), '!') === 0) && $in_network) ? true : false);
 
 		//is it already replaced?
-		if(strpos($tag,'[zrl=') || strpos($tag,'[url='))
+		if(strpos($tag,"[zrl=") || strpos($tag,"[url="))
 			return $replaced;
 
 		// get the channel name
@@ -2680,7 +2680,7 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $i
 			$newname = substr($name,1);
 			$newname = substr($newname,0,-1);
 
-			$r = q("select * from xchan where xchan_addr = '%s' or xchan_url = '%s' limit 1",
+			$r = q("select * from xchan where xchan_addr = '%s' or xchan_url = '%s'",
 				dbesc($newname),
 				dbesc($newname)
 			);
@@ -2703,7 +2703,7 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $i
 			// select someone from this user's contacts by name
 
 			$r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash
-				WHERE xchan_name = '%s' AND abook_channel = %d LIMIT 1",
+				WHERE xchan_name = '%s' AND abook_channel = %d ",
 					dbesc($newname),
 					intval($profile_uid)
 			);
@@ -2712,7 +2712,7 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $i
 
 			if((! $r) && strpos($newname,'@')) {
 				$r = q("SELECT * FROM xchan left join hubloc on xchan_hash = hubloc_hash 
-					WHERE hubloc_addr = '%s' LIMIT 1",
+					WHERE hubloc_addr = '%s' ",
 						dbesc($newname)
 				);
 			}
@@ -2721,7 +2721,7 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $i
 
 			if(! $r) {
 				$r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash
-					WHERE xchan_addr like ('%s') AND abook_channel = %d LIMIT 1",
+					WHERE xchan_addr like ('%s') AND abook_channel = %d ",
 						dbesc(((strpos($newname,'@')) ? $newname : $newname . '@%')),
 						intval($profile_uid)
 				);
@@ -2729,96 +2729,141 @@ function handle_tag($a, &$body, &$access_tag, &$str_tags, $profile_uid, $tag, $i
 
 		}
 
-		// $r is set if we found something
 
-		$channel = App::get_channel();
- 
-		if($r) {
-			$profile = $r[0]['xchan_url'];
-			$newname = $r[0]['xchan_name'];
-			// add the channel's xchan_hash to $access_tag if exclusive
-			if($exclusive) {
-				$access_tag .= 'cid:' . $r[0]['xchan_hash'];
-			}
-		}
-		else {
+        $fn_results = [];
+        $access_tag = EMPTY_STR;
 
-			// check for a group/collection exclusion tag
 
-			// note that we aren't setting $replaced even though we're replacing text.
-			// This tag isn't going to get a term attached to it. It's only used for
-			// access control. The link points to out own channel just so it doesn't look
-			// weird - as all the other tags are linked to something.
+        // $r is set if we found something
 
-			if(local_channel() && local_channel() == $profile_uid) {
-				$grp = Group::byname($profile_uid,$name);
+        if($r) {
+            foreach($r as $xc) {
+                $profile = $xc['xchan_url'];
+                $newname = $xc['xchan_name'];
+                // add the channel's xchan_hash to $access_tag if exclusive
+                if($exclusive) {
+                    $access_tag = 'cid:' . $xc['xchan_hash'];
+                }
 
-				if($grp) {
-					$g = q("select hash from pgrp where id = %d and visible = 1 limit 1",
-						intval($grp)
-					);
-					if($g && $exclusive) {
+                // if there is a url for this channel
+
+                if(isset($profile)) {
+                    $replaced = true;
+                    //create profile link
+                    $profile = str_replace(',','%2c',$profile);
+                    $url = $profile;
+                    if($termtype === TERM_FORUM) {
+                        $newtag = '!' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname . '[/zrl]';
+                        $body = str_replace('!' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
+                    }
+                    else {
+                        // ( $termtype === TERM_MENTION )
+                        $newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname . '[/zrl]';
+                        $body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
+                    }
+
+                    // append tag to str_tags
+                    if(! stristr($str_tags,$newtag)) {
+                        if(strlen($str_tags))
+                            $str_tags .= ',';
+                        $str_tags .= $newtag;
+                    }
+                }
+
+
+                $fn_results[] =  [
+                    'replaced'   => $replaced,
+                    'termtype'   => $termtype,
+                    'term'       => $newname,
+                    'url'        => $url,
+                    'access_tag' => $access_tag,
+                    'contact'    => (($r) ? $xc : []),
+                ];
+
+           }
+
+        }
+        else {
+
+            // check for a group/collection exclusion tag
+
+            // note that we aren't setting $replaced even though we're replacing text.
+            // This tag isn't going to get a term attached to it. It's only used for
+            // access control. The link points to out own channel just so it doesn't look
+            // weird - as all the other tags are linked to something.
+
+            if(local_channel() && local_channel() == $profile_uid) {
+                $grp = Group::byname($profile_uid,$name);
+
+                if($grp) {
+                    $g = q("select hash from pgrp where id = %d and visible = 1 limit 1",
+                        intval($grp)
+                    );
+                    if($g && $exclusive) {
 						$access_tag .= 'gid:' . $g[0]['hash'];
-					}
-					$channel = App::get_channel();
-					if($channel) {
-						$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . z_root() . '/channel/' . $channel['channel_address'] . ']' . $newname . '[/zrl]';
-						$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
-					}
-				}
-			}
-		}
+                    }
+                    $channel = App::get_channel();
+                    if($channel) {
+                        $newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . z_root() . '/channel/' . $channel['channel_address'] . ']' . $newname . '[/zrl]';
+                        $body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
+                    }
+                }
+            }
 
-		// if there is a url for this channel
+            // if there is a url for this channel
 
-		if(isset($profile)) {
-			$replaced = true;
-			//create profile link
-			$profile = str_replace(',','%2c',$profile);
-			$url = $profile;
-			if($termtype === TERM_FORUM) {
-				$newtag = '!' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. '[/zrl]';
-				$body = str_replace('!' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
-			}
-			else {
-				// ( $termtype === TERM_MENTION )
-				$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. '[/zrl]';
-				$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
-			}
+            if(isset($profile)) {
+                $replaced = true;
+                //create profile link
+                $profile = str_replace(',','%2c',$profile);
+                $url = $profile;
+                if($termtype === TERM_FORUM) {
+                    $newtag = '!' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname . '[/zrl]';
+                    $body = str_replace('!' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
+                }
+                else {
+                    // ( $termtype === TERM_MENTION )
+                    $newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname . '[/zrl]';
+                    $body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
+                }
 
-			// append tag to str_tags
-			if(! stristr($str_tags,$newtag)) {
-				if(strlen($str_tags))
-					$str_tags .= ',';
-				$str_tags .= $newtag;
-			}
-		}
-	}
+                // append tag to str_tags
+                if(! stristr($str_tags,$newtag)) {
+                    if(strlen($str_tags))
+                        $str_tags .= ',';
+                    $str_tags .= $newtag;
+                }
+            }
 
-	return [
-		'replaced' => $replaced,
-		'termtype' => $termtype,
-		'term'     => $newname,
-		'url'      => $url,
-		'contact'  => (($r) ? $r[0] : [])
-	];
+            $fn_results[] = [
+                'replaced'   => $replaced,
+                'termtype'   => $termtype,
+                'term'       => $newname,
+                'url'        => $url,
+                'access_tag' => $access_tag,
+                'contact'    => [],
+            ];
+        }
+    }
+
+    return $fn_results;
+
 }
 
-function linkify_tags($a, &$body, $uid, $in_network = true) {
+function linkify_tags(&$body, $uid, $in_network = true) {
 	$str_tags = EMPTY_STR;
-	$tagged = [];
 	$results = [];
 
 	$tags = get_tags($body);
 
 	if(count($tags)) {
 		foreach($tags as $tag) {
-			$access_tag = '';
 
-			$success = handle_tag($a, $body, $access_tag, $str_tags, ($uid) ? $uid : App::$profile_uid , $tag, $in_network);
+			$success = handle_tag($body, $str_tags, ($uid) ? $uid : App::$profile_uid , $tag, $in_network);
 
-			$results[] = array('success' => $success, 'access_tag' => $access_tag);
-			if($success['replaced']) $tagged[] = $tag;
+			foreach($success as $handled_tag) {
+				$results[] = [ 'success' => $handled_tag ];
+			}
 		}
 	}
 

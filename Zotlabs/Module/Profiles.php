@@ -354,20 +354,20 @@ class Profiles extends Controller {
 
 
 			require_once('include/text.php');
-			linkify_tags($a, $likes, local_channel());
-			linkify_tags($a, $dislikes, local_channel());
-			linkify_tags($a, $about, local_channel());
-			linkify_tags($a, $interest, local_channel());
-			linkify_tags($a, $interest, local_channel());
-			linkify_tags($a, $contact, local_channel());
-			linkify_tags($a, $channels, local_channel());
-			linkify_tags($a, $music, local_channel());
-			linkify_tags($a, $book, local_channel());
-			linkify_tags($a, $tv, local_channel());
-			linkify_tags($a, $film, local_channel());
-			linkify_tags($a, $romance, local_channel());
-			linkify_tags($a, $work, local_channel());
-			linkify_tags($a, $education, local_channel());
+			linkify_tags($likes, local_channel());
+			linkify_tags($dislikes, local_channel());
+			linkify_tags($about, local_channel());
+			linkify_tags($interest, local_channel());
+			linkify_tags($interest, local_channel());
+			linkify_tags($contact, local_channel());
+			linkify_tags($channels, local_channel());
+			linkify_tags($music, local_channel());
+			linkify_tags($book, local_channel());
+			linkify_tags($tv, local_channel());
+			linkify_tags($film, local_channel());
+			linkify_tags($romance, local_channel());
+			linkify_tags($work, local_channel());
+			linkify_tags($education, local_channel());
 	
 	
 			$with = ((x($_POST,'with')) ? escape_tags(trim($_POST['with'])) : '');

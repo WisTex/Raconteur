@@ -361,7 +361,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$large_photos = feature_enabled($channel['channel_id'], 'large_photos');
 
-	linkify_tags($a, $args['body'], $channel_id);
+	linkify_tags($args['body'], $channel_id);
 
 	if($large_photos) {
 		$scale = 1;

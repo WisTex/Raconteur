@@ -80,6 +80,10 @@ li:hover .widget-nav-pills-icons {
 	
 }
 
+input[type=range]::-moz-range-track {
+  background-color: #444;
+}
+
 .range-icon {
 	margin: 4px;
 	font-size: 12px;

@@ -121,7 +121,7 @@ class Site {
 			del_config('system', 'admininfo');
 		} else {
 			require_once('include/text.php');
-			linkify_tags($a, $admininfo, local_channel());
+			linkify_tags($admininfo, local_channel());
 			set_config('system', 'admininfo', $admininfo);
 		}
 		set_config('system','siteinfo',$siteinfo);
