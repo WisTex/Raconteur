@@ -2244,7 +2244,8 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 
 
 	if($deliver) {
-		send_status_notifications($orig_post_id,$arr);
+		// don't send notify_comment for edits
+		// send_status_notifications($orig_post_id,$arr);
 		tag_deliver($uid,$orig_post_id);
 	}
 
