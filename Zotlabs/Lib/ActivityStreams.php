@@ -147,6 +147,9 @@ class ActivityStreams {
 		foreach($fields as $f) {
 			$y = $this->get_compound_property($f, $base, $namespace);
 			if($y) {
+				if(! is_array($y)) {
+					$y = [ $y ];
+				}
 				$x = array_merge($x, $y);
 				if(! is_array($this->raw_recips))
 					$this->raw_recips = [];
