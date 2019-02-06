@@ -1528,7 +1528,7 @@ class Libzot {
 
 			if ((! $tag_delivery) && (! $local_public)) {
 				$allowed = (perm_is_allowed($channel['channel_id'],$sender,$perm));
-				if((! $allowed) && $perm === 'post_comments') {
+				if ((! $allowed) && $perm === 'post_comments') {
 					$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
 						dbesc($arr['parent_mid']),
 						intval($channel['channel_id'])
@@ -1537,8 +1537,30 @@ class Libzot {
 						$allowed = can_comment_on_post($sender,$parent[0]);
 					}
 				}
-				if($request) {
-					$allowed = true;
+				if ($request) {
+
+					// Conversation fetches (e.g. $request == true) take place for 
+					//   a) new comments on expired posts
+					//   b) hyperdrive (friend-of-friend) conversations
+					//   c) Repeats of posts by others
+
+
+					// over-ride normal connection permissions for hyperdrive (friend-of-friend) conversations
+					// (if hyperdrive is enabled) and repeated posts by a friend.
+ 					// If $allowed is already true, this is probably the conversation of a direct friend or a
+					// conversation fetch for a new comment on an expired post
+					// Comments of all these activities are allowed and will only be rejected (later) if the parent
+					// doesn't exist. 
+
+					if ($perm === 'send_stream') {
+						if (get_pconfig($channel['channel_id'],'system','hyperdrive',true) || $arr['verb'] === 'Announce') {
+							$allowed = true;
+						}
+					}
+					else {
+						$allowed = true;
+					}
+
 					$friendofriend = true;
 				}
         
@@ -1579,29 +1601,15 @@ class Libzot {
 					// have the copy and we don't want the request to loop.
 					// Also don't do this if this comment came from a conversation request packet.
 					// It's possible that comments are allowed but posting isn't and that could
-					// cause a conversation fetch loop. We can detect these packets since they are
-					// delivered via a 'notify' packet type that has a message_id element in the
-					// initial zot packet (just like the corresponding 'request' packet type which
-					// makes the request).
+					// cause a conversation fetch loop. 
 					// We'll also check the send_stream permission - because if it isn't allowed,
 					// the top level post is unlikely to be imported and
 					// this is just an exercise in futility.
 
-					if((! get_pconfig($channel['channel_id'],'system','hyperdrive',true)) || (! $arr['verb'] === 'Announce')) {
-						continue;
-					}
-
 					if((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {
-						// This will fail if the conversation originated on ActivityPub. 
-						$f = self::fetch_conversation($channel,$arr['parent_mid']);
+						self::fetch_conversation($channel,$arr['parent_mid']);
 
-						// This was provided to fetch third-party ActivityPub conversations from Zot6 sources
-						// Commented out because it causes a number of permission paradoxes
-
-						//if($f === false) {
-						//	$f = self::fetch_conversation($channel,$arr['mid']);
-						//}
 					}
 					continue;
 				}
@@ -1752,6 +1760,12 @@ class Libzot {
 					$result[] = $DR->get();
 				}
 				else {
+
+					// Strip old-style hubzilla bookmarks
+					if(strpos($arr['body'],"#^[") !== false) {
+						$arr['body'] = str_replace("#^[","[",$arr['body']);
+					}
+
 					$item_result = item_store($arr);
 					if($item_result['success']) {
 						$item_id = $item_result['item_id'];
@@ -2078,9 +2092,9 @@ class Libzot {
 
 		$r = q("select id, author_xchan, owner_xchan, source_xchan, item_deleted from item where ( author_xchan = '%s' or owner_xchan = '%s' or source_xchan = '%s' )
 			and mid = '%s' and uid = %d limit 1",
-			dbesc($sender['hash']),
-			dbesc($sender['hash']),
-			dbesc($sender['hash']),
+			dbesc($sender),
+			dbesc($sender),
+			dbesc($sender),
 			dbesc($item['mid']),
 			intval($uid)
 		);

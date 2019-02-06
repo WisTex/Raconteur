@@ -17,7 +17,8 @@ class Apschema extends \Zotlabs\Web\Controller {
 				'ostatus'          => 'http://ostatus.org#',
 				'conversation'     => 'ostatus:conversation',
 				'sensitive'        => 'as:sensitive',
-				'inheritPrivacy'   => 'as:inheritPrivacy'
+				'inheritPrivacy'   => 'as:inheritPrivacy',
+				'commentPolicy'    => 'as:commentPolicy'
 			]
 		];
 
