@@ -1,6 +1,6 @@
 ## Zot/6 aka Zot 2018
 
-This document describes version 6 ofthe Zot protocol. This is a living document, last modified on 2018-09-14.
+This document describes version 6 of the Zot protocol. This is a living document, last modified on 2018-09-14.
 
 Zot is a **WebMTA** which provides a decentralised identity and communications protocol using HTTPS/JSON. 
 
@@ -8,7 +8,7 @@ Earlier revisions of the zot protocol dealt with the creation of nomadic identit
 
 Zot/6 builds on those concepts and streamlines many of the interactions, applying lessons learned over decades of building decentralised systems.
 
-A reference implementation (a social media app) is provided at https://framagit.org/macgirvin/osada ; the reference implementation is not yet 100% spec compliant or complete but may be used for basic compatibility testing and development purposes. For questions and/or protocol discussion please contact mike@z.macgirvin.com on Zap; and/or search for 'macgirvin' on many fediverse implementations.  
+A reference implementation (a social media app) is provided at https://framagit.org/zot/zap ; the reference implementation is not yet 100% spec compliant or complete but may be used for basic compatibility testing and development purposes. 
 
 ### Differences from earlier Zot versions
 
