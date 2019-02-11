@@ -1112,7 +1112,17 @@ class Libzot {
 				}
 				$arr = Activity::decode_note($AS);
 
-				logger($AS->debug());
+				logger($AS->debug(), LOGGER_DATA);
+		}
+
+		// There is nothing inherently wrong with getting a message-id which isn't a canonical URI/URL, but 
+		// at the present time (2019/02) during the Hubzilla transition to zot6 it is likely to cause lots of duplicates for 
+		// messages arriving from different protocols and sources with different message-id semantics. This
+		// restriction can be relaxed once most Hubzilla sites are upgraded to > 4.0. 
+
+		if($arr && (strpos($arr['mid'],'http') === false)) {
+			logger('activity rejected: legacy message-id');
+			return;
 		}
 
 
@@ -1173,10 +1183,6 @@ class Libzot {
 		if($has_data) {
 
 			if(in_array($env['type'],['activity','response'])) {
-
-				$arr = Activity::decode_note($AS);
-
-				logger($AS->debug());
 
 				$r = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s'",
 					dbesc($AS->actor['id'])
@@ -1552,14 +1558,14 @@ class Libzot {
 					// Comments of all these activities are allowed and will only be rejected (later) if the parent
 					// doesn't exist. 
 
-					if ($perm === 'send_stream') {
-						if (get_pconfig($channel['channel_id'],'system','hyperdrive',true) || $arr['verb'] === 'Announce') {
-							$allowed = true;
-						}
-					}
-					else {
+//					if ($perm === 'send_stream') {
+//						if (get_pconfig($channel['channel_id'],'system','hyperdrive',true) || $arr['verb'] === 'Announce') {
+//							$allowed = true;
+//						}
+//					}
+//					else {
 						$allowed = true;
-					}
+//					}
 
 					$friendofriend = true;
 				}

@@ -189,7 +189,6 @@
 						</div>
 						{{/if}}
 						{{include file="field_checkbox.tpl" field=$cal_first_day}}
-						{{include file="field_checkbox.tpl" field=$hyperdrive}}
 						{{if $misc_addon}}
 						{{$misc_addon}}
 						{{/if}}
