@@ -1558,14 +1558,14 @@ class Libzot {
 					// Comments of all these activities are allowed and will only be rejected (later) if the parent
 					// doesn't exist. 
 
-					if ($perm === 'send_stream') {
-						if (get_pconfig($channel['channel_id'],'system','hyperdrive',true) || $arr['verb'] === 'Announce') {
-							$allowed = true;
-						}
-					}
-					else {
+//					if ($perm === 'send_stream') {
+//						if (get_pconfig($channel['channel_id'],'system','hyperdrive',true) || $arr['verb'] === 'Announce') {
+//							$allowed = true;
+//						}
+//					}
+//					else {
 						$allowed = true;
-					}
+//					}
 
 					$friendofriend = true;
 				}
