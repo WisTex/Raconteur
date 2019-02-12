@@ -28,7 +28,7 @@ class ThreadListener {
 	}
 
 	static public function fetch_by_target($target_id,$ltype = 0) {
-		$x = q("select * from listeners where target_id = '%s' and ltype = %d limit 1",
+		$x = q("select * from listeners where target_id = '%s' and ltype = %d",
 			dbesc($target_id),
 			intval($ltype)
 		);
