@@ -11,7 +11,8 @@ namespace Zotlabs\Module;
  */
 
 use Zotlabs\Lib\System;
-
+use App;
+use DBA;
 
 /**
  * @brief Initialisation for the setup module.
@@ -67,7 +68,7 @@ class Setup extends \Zotlabs\Web\Controller {
 				return;
 				// implied break;
 			case 3:
-				$urlpath = \App::get_path();
+				$urlpath = App::get_path();
 				$dbhost = trim($_POST['dbhost']);
 				$dbport = intval(trim($_POST['dbport']));
 				$dbuser = trim($_POST['dbuser']);
@@ -85,16 +86,16 @@ class Setup extends \Zotlabs\Web\Controller {
 
 				require_once('include/dba/dba_driver.php');
 
-				$db = \DBA::dba_factory($dbhost, $dbport, $dbuser, $dbpass, $dbdata, $dbtype, true);
+				$db = DBA::dba_factory($dbhost, $dbport, $dbuser, $dbpass, $dbdata, $dbtype, true);
 
-				if(! \DBA::$dba->connected) {
-					echo 'Database Connect failed: ' . \DBA::$dba->error;
+				if(! DBA::$dba->connected) {
+					echo 'Database Connect failed: ' . DBA::$dba->error;
 					killme();
 				}
 				return;
 				// implied break;
 			case 4:
-				$urlpath = \App::get_path();
+				$urlpath = App::get_path();
 				$dbhost = trim($_POST['dbhost']);
 				$dbport = intval(trim($_POST['dbport']));
 				$dbuser = trim($_POST['dbuser']);
@@ -110,18 +111,18 @@ class Setup extends \Zotlabs\Web\Controller {
 				if($siteurl != z_root()) {
 					$test = z_fetch_url($siteurl."/setup/testrewrite");
 					if((! $test['success']) || ($test['body'] != 'ok'))  {
-						\App::$data['url_fail'] = true;
-						\App::$data['url_error'] = $test['error'];
+						App::$data['url_fail'] = true;
+						App::$data['url_error'] = $test['error'];
 						return;
 					}
 				}
 
-				if(! \DBA::$dba->connected) {
+				if(! DBA::$dba->connected) {
 					// connect to db
-					$db = \DBA::dba_factory($dbhost, $dbport, $dbuser, $dbpass, $dbdata, $dbtype, true);
+					$db = DBA::dba_factory($dbhost, $dbport, $dbuser, $dbpass, $dbdata, $dbtype, true);
 				}
 
-				if(! \DBA::$dba->connected) {
+				if(! DBA::$dba->connected) {
 					echo 'CRITICAL: DB not connected.';
 					killme();
 				}
@@ -134,7 +135,7 @@ class Setup extends \Zotlabs\Web\Controller {
 					'$dbpass'      => $dbpass,
 					'$dbdata'      => $dbdata,
 					'$dbtype'      => $dbtype,
-					'$servertype' => ((! $servertype) ? "define('NOMADIC',1);" : ''),
+					'$servertype'  => "define('NOMADIC',1);",
 					'$server_role' => 'pro',
 					'$timezone'    => $timezone,
 					'$platform'    => ((! $servertype) ? 'Zap' : 'Osada'),
@@ -152,9 +153,9 @@ class Setup extends \Zotlabs\Web\Controller {
 				$errors = $this->load_database($db);
 
 				if($errors)
-					\App::$data['db_failed'] = $errors;
+					App::$data['db_failed'] = $errors;
 				else
-					\App::$data['db_installed'] = true;
+					App::$data['db_installed'] = true;
 
 				return;
 				// implied break;
@@ -175,39 +176,39 @@ class Setup extends \Zotlabs\Web\Controller {
 
 		$o = '';
 		$wizard_status = '';
-		$install_title = t('Zap/Osada Server - Setup');
+		$install_title = t('Zap Server - Setup');
 
-		if(x(\App::$data, 'db_conn_failed')) {
+		if(x(App::$data, 'db_conn_failed')) {
 			$this->install_wizard_pass = 2;
 			$wizard_status =  t('Could not connect to database.');
 		}
-		if(x(\App::$data, 'url_fail')) {
+		if(x(App::$data, 'url_fail')) {
 			$this->install_wizard_pass = 3;
 			$wizard_status =  t('Could not connect to specified site URL. Possible SSL certificate or DNS issue.');
-			if(\App::$data['url_error'])
-				$wizard_status .= ' ' . \App::$data['url_error'];
+			if(App::$data['url_error'])
+				$wizard_status .= ' ' . App::$data['url_error'];
 		}
 
-		if(x(\App::$data, 'db_create_failed')) {
+		if(x(App::$data, 'db_create_failed')) {
 			$this->install_wizard_pass = 2;
 			$wizard_status =  t('Could not create table.');
 		}
 		$db_return_text = '';
-		if(x(\App::$data, 'db_installed')) {
+		if(x(App::$data, 'db_installed')) {
 			$pass = 'Installation succeeded!';
 			$icon = 'check';
 			$txt = t('Your site database has been installed.') . EOL;
 			$db_return_text .= $txt;
 		}
-		if(x(\App::$data, 'db_failed')) {
+		if(x(App::$data, 'db_failed')) {
 			$pass = 'Database install failed!';
 			$icon = 'exclamation-triangle';
 			$txt = t('You may need to import the file "install/schema_xxx.sql" manually using a database client.') . EOL;
 			$txt .= t('Please see the file "install/INSTALL.txt".') . EOL ."<hr>" ;
-			$txt .= "<pre>" . \App::$data['db_failed'] . "</pre>". EOL ;
+			$txt .= "<pre>" . App::$data['db_failed'] . "</pre>". EOL ;
 			$db_return_text .= $txt;
 		}
-		if(\DBA::$dba && \DBA::$dba->connected) {
+		if(DBA::$dba && DBA::$dba->connected) {
 			$r = q("SELECT COUNT(*) as total FROM account");
 			if($r && count($r) && $r[0]['total']) {
 				$tpl = get_markup_template('install.tpl');
@@ -220,7 +221,7 @@ class Setup extends \Zotlabs\Web\Controller {
 			}
 		}
 
-		if(x(\App::$data, 'txt') && strlen(\App::$data['txt'])) {
+		if(x(App::$data, 'txt') && strlen(App::$data['txt'])) {
 			$db_return_text .= $this->manual_config($a);
 		}
 
@@ -310,10 +311,6 @@ class Setup extends \Zotlabs\Web\Controller {
 					'$siteurl' => array('siteurl', t('Website URL'), z_root(), t('Please use SSL (https) URL if available.')),
 					'$lbl_10' => t('Please select a default timezone for your website'),
 
-					'$server_choice' => t('Please select the type of service you wish to provide.') . EOL . t('Zap is a nomadic server with enhanced privacy but no federation.') . EOL . t('Osada is an ActivityPub server which also communicates with Zap, however channel mirroring and enhanced privacy modes are not provided.'),
-
-					'$servertype' => array('servertype', t('Server Type'), $servertype, '', array( 0=>'Zap (Zot6)', 1=>'Osada (ActivityPub)' )),
-
 					'$baseurl' => z_root(),
 
 					'$phpath' => $phpath,
@@ -331,7 +328,7 @@ class Setup extends \Zotlabs\Web\Controller {
 				$dbdata = trim($_POST['dbdata']);
 				$dbtype = intval(trim($_POST['dbtype']));
 				$phpath = trim($_POST['phpath']);
-				$servertype = intval(trim($_POST['servertype']));
+				$servertype = 0;
 
 				$adminmail = trim($_POST['adminmail']);
 				$siteurl = trim($_POST['siteurl']);
@@ -701,7 +698,7 @@ class Setup extends \Zotlabs\Web\Controller {
 	 * @return string with paresed HTML
 	 */
 	function manual_config(&$a) {
-		$data = htmlspecialchars(\App::$data['txt'], ENT_COMPAT, 'UTF-8');
+		$data = htmlspecialchars(App::$data['txt'], ENT_COMPAT, 'UTF-8');
 		$o = t('The database configuration file ".htconfig.php" could not be written. Please use the enclosed text to create a configuration file in your web server root.');
 		$o .= "<textarea rows=\"24\" cols=\"80\" >$data</textarea>";
 
@@ -719,7 +716,7 @@ class Setup extends \Zotlabs\Web\Controller {
 
 
 	function load_database($db) {
-		$str = file_get_contents(\DBA::$dba->get_install_script());
+		$str = file_get_contents(DBA::$dba->get_install_script());
 		$arr = explode(';', $str);
 		$errors = false;
 		foreach($arr as $a) {

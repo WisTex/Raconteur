@@ -84,10 +84,12 @@ class Activity_filter {
 				$fsub[] = [
 					'label' => $f['xchan_name'],
 					'img' => $f['xchan_photo_s'],
-					'url' => (($f['private_forum']) ? $f['xchan_url'] : z_root() . '/' . $cmd . '/?f=&pf=1&cid=' . $f['abook_id']),
+					'url' => z_root() . '/' . $cmd . '/?f=&pf=1&cid=' . $f['abook_id'],
 					'sel' => $forum_active,
 					'title' => t('Show posts to this forum'),
-					'lock' => (($f['private_forum']) ? 'lock' : '')
+					'lock' => (($f['private_forum']) ? 'lock' : ''),
+					'edit' => t('New post'),
+					'edit_url' => $f['xchan_url']
 				];
 			}
 

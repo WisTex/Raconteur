@@ -210,7 +210,7 @@ function string2bb(element) {
 		$(this).each(function() {
 			var editor = new Textarea(this);
 			var textcomplete = new Textcomplete(editor);
-			textcomplete.register([contacts,forums,smilies,tags], {className:'acpopup', zIndex:1020});
+			textcomplete.register([contacts,smilies,tags], {className:'acpopup', zIndex:1020});
 		});
 
 
@@ -265,7 +265,7 @@ function string2bb(element) {
 		$(this).each(function() {
 			var editor = new Textarea(this);
 			textcomplete = new Textcomplete(editor);
-			textcomplete.register([contacts,forums,tags], {className:'acpopup', maxCount:100, zIndex: 1020, appendTo:'nav'});
+			textcomplete.register([contacts,tags], {className:'acpopup', maxCount:100, zIndex: 1020, appendTo:'nav'});
 		});
 
 		textcomplete.on('selected', function() { this.editor.el.form.submit(); });
