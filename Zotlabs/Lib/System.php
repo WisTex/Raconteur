@@ -69,13 +69,13 @@ class System {
 	static public function get_project_link() {
 		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['project_link'])
 			return App::$config['system']['project_link'];
-		return 'https://framagit.org/macgirvin/osada';
+		return 'https://framagit.org/zot/zap';
 	}
 
 	static public function get_project_srclink() {
 		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['project_srclink'])
 			return App::$config['system']['project_srclink'];
-		return 'https://framagit.org/macgirvin/osada';
+		return 'https://framagit.org/zot/zap';
 	}
 
 	static public function get_server_role() {

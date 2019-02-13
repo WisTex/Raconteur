@@ -1898,7 +1898,7 @@ function deliverable_singleton($channel_id,$xchan) {
 
 function get_repository_version($branch = 'master') {
 
-	$path = "https://framagit.org/hubzilla/core/raw/$branch/boot.php";
+	$path = "https://framagit.org/zot/zap/raw/$branch/boot.php";
 
 	$x = z_fetch_url($path);
 	if($x['success']) {
