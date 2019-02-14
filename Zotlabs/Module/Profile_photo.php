@@ -122,7 +122,9 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 						'filename'     => $base_image['filename'], 
 						'album'        => t('Profile Photos'),
 						'os_path'      => $base_image['os_path'],
-						'display_path' => $base_image['display_path']
+						'display_path' => $base_image['display_path'],
+						'created'      => $base_image['created'],
+						'edited'       => $base_image['edited']
 					];
 	
 					$p['imgscale']    = PHOTO_RES_PROFILE_300;

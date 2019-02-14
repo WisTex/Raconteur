@@ -170,7 +170,9 @@ logger('gis: ' . print_r($gis,true));
 						'filename'     => $base_image['filename'], 
 						'album'        => t('Cover Photos'),
 						'os_path'      => $base_image['os_path'],
-						'display_path' => $base_image['display_path']
+						'display_path' => $base_image['display_path'],
+						'created'      => $base_image['created'],
+						'edited'       => $base_image['edited']
 					];
 	
 					$p['imgscale'] = 7;

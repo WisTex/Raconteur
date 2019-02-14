@@ -4478,7 +4478,7 @@ function send_profile_photo_activity($channel,$photo,$profile) {
 	$arr['item_origin'] = 1;
 	$arr['item_wall'] = 1;
 	$arr['obj_type'] = ACTIVITY_OBJ_NOTE;
-	$arr['verb'] = ACTIVITY_UPDATE;
+	$arr['verb'] = ACTIVITY_CREATE;
 	$arr['mid'] = item_message_id();
 
 	if(stripos($profile['gender'],t('female')) !== false)
