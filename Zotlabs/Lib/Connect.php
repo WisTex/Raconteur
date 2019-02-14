@@ -37,9 +37,6 @@ class Connect {
 			}
 		}
 
-		// This turned out to have issues on an activitypub project (forgot which at the moment) that requires a trailing slash.
-		//	$url = rtrim($url,'/');
-
 		if(! allowed_url($url)) {
 			$result['message'] = t('Channel is blocked on this site.');
 			return $result;
@@ -141,12 +138,9 @@ class Connect {
 		// Now start processing the new connection
 
 		if($r['xchan_network'] === 'activitypub') {
-			$singleton = 1;
-			if(defined('NOMADIC')) {
-				// ActivityPub is not nomadic
-				$result['message'] = t('Protocol not supported');
-				return $result;
-			}
+			// ActivityPub is not nomadic
+			$result['message'] = t('Protocol not supported');
+			return $result;
 		}
 
 		$aid = $channel['channel_account_id'];

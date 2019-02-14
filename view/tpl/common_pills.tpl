@@ -15,6 +15,7 @@
 				{{if $ps.icon}}<i class="fa fa-fw fa-{{$ps.icon}}"></i>{{/if}}
 				{{if $ps.img}}<img class="menu-img-1" src="{{$ps.img}}">{{/if}}
 				{{$ps.label}}
+				{{if $ps.lock}}<i class="fa fa-{{$ps.lock}} text-muted"></i>{{/if}}
 				</a>
 			</li>
 			{{/foreach}}
