@@ -3,7 +3,7 @@
 namespace Zotlabs\Module\Settings;
 
 use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\Group;
+use Zotlabs\Lib\AccessList;
 
 
 class Channel {
@@ -70,8 +70,8 @@ class Channel {
 					);
 					if(! $r) {
 
-						Group::add(local_channel(), t('Friends'));
-						Group::member_add(local_channel(),t('Friends'),$channel['channel_hash']);
+						AccessList::add(local_channel(), t('Friends'));
+						AccessList::member_add(local_channel(),t('Friends'),$channel['channel_hash']);
 						$r = q("select hash from pgrp where uid = %d and gname = '%s' limit 1",
 							intval(local_channel()),
 							dbesc( t('Friends') )
@@ -85,7 +85,7 @@ class Channel {
 						);
 					}
 					else {
-						notice( sprintf('Default privacy group \'%s\' not found. Please create and re-submit permission change.', t('Friends')) . EOL);
+						notice( sprintf('Default access list \'%s\' not found. Please create and re-submit permission change.', t('Friends')) . EOL);
 						return;
 					}
 				}
@@ -468,7 +468,7 @@ class Channel {
 		$acl = new \Zotlabs\Access\AccessList($channel);
 		$perm_defaults = $acl->get();
 	
-		$group_select = Group::select(local_channel(),$channel['channel_default_group']);
+		$group_select = AccessList::select(local_channel(),$channel['channel_default_group']);
 	
 		require_once('include/menu.php');
 		$m1 = menu_list(local_channel());
@@ -560,8 +560,8 @@ class Channel {
 			'$expire' => array('expire',t('Expire other channel content after this many days'),$expire, t('0 or blank to use the website limit.') . ' ' . ((intval($sys_expire)) ? sprintf( t('This website expires after %d days.'),intval($sys_expire)) : t('This website does not expire imported content.')) . ' ' . t('The website limit takes precedence if lower than your limit.')),
 			'$maxreq' 	=> array('maxreq', t('Maximum Friend Requests/Day:'), intval($channel['channel_max_friend_req']) , t('May reduce spam activity')),
 			'$public_uploads' => [ 'public_uploads', t('Disable access checking on post attachments'), $public_uploads, t('Private media access is only implemented in a very small number of federated networks.'), $yes_no ],  
-			'$permissions' => t('Default Privacy Group'),
-			'$permdesc' => t("\x28click to open/close\x29"),
+			'$permissions' => t('Default Access List'),
+			'$permdesc' => t("(click to open/close)"),
 			'$aclselect' => populate_acl($perm_defaults, false, \Zotlabs\Lib\PermissionDescription::fromDescription(t('Use my default audience setting for the type of object published'))),
 			'$profseltxt' => t('Profile to assign new connections'),
 			'$profselect' => ((feature_enabled(local_channel(),'multi_profiles')) ? contact_profile_assign(get_pconfig(local_channel(),'system','profile_assign','')) : ''),

@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
-use Zotlabs\Lib\Group as ZGroup;
+use Zotlabs\Lib\AccessList;
 
 
 class Contactgroup extends \Zotlabs\Web\Controller {
@@ -32,7 +32,7 @@ class Contactgroup extends \Zotlabs\Web\Controller {
 			}
 	
 			$group = $r[0];
-			$members = ZGroup::members($group['id']);
+			$members = AccessList::members($group['id']);
 			$preselected = array();
 			if(count($members))	{
 				foreach($members as $member)
@@ -41,10 +41,10 @@ class Contactgroup extends \Zotlabs\Web\Controller {
 	
 			if($change) {
 				if(in_array($change,$preselected)) {
-					ZGroup_member_remove(local_channel(),$group['gname'],$change);
+					AccessList::member_remove(local_channel(),$group['gname'],$change);
 				}
 				else {
-					ZGroup::member_add(local_channel(),$group['gname'],$change);
+					AccessList::member_add(local_channel(),$group['gname'],$change);
 				}
 			}
 		}

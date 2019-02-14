@@ -264,7 +264,7 @@ logger('gis: ' . print_r($gis,true));
 		$arr['item_wall'] = 1;
 		$arr['mid'] = item_message_id();
 		$arr['obj_type'] = ACTIVITY_OBJ_NOTE;
-		$arr['verb'] = ACTIVITY_UPDATE;
+		$arr['verb'] = ACTIVITY_CREATE;
 	
 		if($profile && stripos($profile['gender'],t('female')) !== false)
 			$t = t('%1$s updated her %2$s');

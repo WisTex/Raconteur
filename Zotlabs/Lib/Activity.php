@@ -1217,9 +1217,9 @@ class Activity {
 		/* If there is a default group for this channel and permissions are automatic, add this member to it */
 
 		if($channel['channel_default_group'] && $automatic) {
-			$g = Group::rec_byhash($channel['channel_id'],$channel['channel_default_group']);
+			$g = AccessList::rec_byhash($channel['channel_id'],$channel['channel_default_group']);
 			if($g)
-				Group::member_add($channel['channel_id'],'',$ret['xchan_hash'],$g['id']);
+				AccessList::member_add($channel['channel_id'],'',$ret['xchan_hash'],$g['id']);
 		}
 
 

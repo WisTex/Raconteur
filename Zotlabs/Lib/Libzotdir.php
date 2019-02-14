@@ -159,7 +159,7 @@ class Libzotdir {
 			'$header'    => t('Directory Options'),
 			'$forumsurl' => $forumsurl,
 			'$safemode'  => array('safemode', t('Safe Mode'),$safe_mode,'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&safe="+(this.checked ? 1 : 0)\''),
-			'$pubforums' => array('pubforums', t('Public Forums Only'),$pubforums,'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&pubforums="+(this.checked ? 1 : 0)\''),
+			'$pubforums' => array('pubforums', t('Public Groups Only'),$pubforums,'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&pubforums="+(this.checked ? 1 : 0)\''),
 			'$hide_local' => $hide_local,
 			'$globaldir' => array('globaldir', t('This Website Only'), 1-intval($globaldir),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&global="+(this.checked ? 0 : 1)\''),
 		]);

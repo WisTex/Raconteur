@@ -343,7 +343,7 @@ class Apps {
 			'Profile Photo' => t('Profile Photo'),
 			'Profile' => t('Profile'),
 			'Profiles' => t('Profiles'),
-			'Privacy Groups' => t('Privacy Groups'),
+			'Privacy Groups' => t('Access Lists'),
 			'Notifications' => t('Notifications'),
 			'Order Apps' => t('Order Apps'),
 			'CalDAV' => t('CalDAV'),

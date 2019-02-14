@@ -6,7 +6,7 @@
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\Group;
+use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Crypto;
 use Zotlabs\Lib\Connect;
 use Zotlabs\Access\PermissionRoles;
@@ -430,8 +430,8 @@ function create_identity($arr) {
 		// Create a group with yourself as a member. This allows somebody to use it
 		// right away as a default group for new contacts.
 
-		Group::add($newuid, t('Friends'));
-		Group::member_add($newuid,t('Friends'),$ret['channel']['channel_hash']);
+		AccessList::add($newuid, t('Friends'));
+		AccessList::member_add($newuid,t('Friends'),$ret['channel']['channel_hash']);
 
 		// if our role_permissions indicate that we're using a default collection ACL, add it.
 

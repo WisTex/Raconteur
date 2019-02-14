@@ -7,7 +7,7 @@
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\Group;
+use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Apps;
 
@@ -19,7 +19,7 @@ use Zotlabs\Lib\IConfig;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\ThreadListener;
 use Zotlabs\Access\PermissionLimits;
-use Zotlabs\Access\AccessList;
+use Zotlabs\Access\AccessList as ZACL;
 use Zotlabs\Daemon\Master;
 
 
@@ -51,7 +51,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 		$allow_people = expand_acl($item['allow_cid']);
 
 		if($include_groups) {
-			$allow_groups = Group::expand(expand_acl($item['allow_gid']));
+			$allow_groups = AccessList::expand(expand_acl($item['allow_gid']));
 		}
 		else {
 			$allow_groups = [];
@@ -76,7 +76,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 		}
 
 		$deny_people  = expand_acl($item['deny_cid']);
-		$deny_groups  = Group::expand(expand_acl($item['deny_gid']));
+		$deny_groups  = AccessList::expand(expand_acl($item['deny_gid']));
 
 		$deny = array_values(array_unique(array_merge($deny_people,$deny_groups)));
 
@@ -3360,9 +3360,9 @@ function compare_permissions($obj1,$obj2) {
 function enumerate_permissions($obj) {
 
 	$allow_people = expand_acl($obj['allow_cid']);
-	$allow_groups = Group::expand(expand_acl($obj['allow_gid']));
+	$allow_groups = AccessList::expand(expand_acl($obj['allow_gid']));
 	$deny_people  = expand_acl($obj['deny_cid']);
-	$deny_groups  = Group::expand(expand_acl($obj['deny_gid']));
+	$deny_groups  = AccessList::expand(expand_acl($obj['deny_gid']));
 	$recipients   = array_unique(array_merge($allow_people,$allow_groups));
 	$deny         = array_unique(array_merge($deny_people,$deny_groups));
 	$recipients   = array_diff($recipients,$deny);
@@ -4115,7 +4115,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 
 		$contact_str = '';
 
-		$contacts = Group::members($r[0]['id']);
+		$contacts = AccessList::members($r[0]['id']);
 		if ($contacts) {
 			foreach($contacts as $c) {
 				if($contact_str)
@@ -4131,7 +4131,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 
 		$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND (( author_xchan IN ( $contact_str ) OR owner_xchan in ( $contact_str)) or allow_gid like '" . protect_sprintf('%<' . dbesc($r[0]['hash']) . '>%') . "' ) and id = parent $item_normal ) ";
 
-		$x = Group::rec_byhash($uid,$r[0]['hash']);
+		$x = AccessList::rec_byhash($uid,$r[0]['hash']);
 		$result['headline'] = sprintf( t('Privacy group: %s'),$x['gname']);
 	}
 	elseif($arr['cid'] && $uid) {
@@ -4506,7 +4506,7 @@ function send_profile_photo_activity($channel,$photo,$profile) {
 		'actor'     => Activity::encode_person($channel,false),
 	];
 
-	$acl = new AccessList($channel);
+	$acl = new ZACL($channel);
 	$x = $acl->get();
 	$arr['allow_cid'] = $x['allow_cid'];
 

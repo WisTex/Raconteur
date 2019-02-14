@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
-use Zotlabs\Lib\Group;
+use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Apps;
 use App;
 
@@ -232,25 +232,25 @@ class Network extends \Zotlabs\Web\Controller {
 	
 		if($group) {
 			$contact_str = '';
-			$contacts = Group::members($group);
+			$contacts = AccessList::members($group);
 			if($contacts) {
 				$contact_str = ids_to_querystr($contacts,'xchan',true);
 			}
 			else {
 				$contact_str = " '0' ";
 				if(! $update) {
-					info( t('Privacy group is empty'));
+					info( t('Access list is empty'));
 				}
 			}
 			$item_thread_top = '';
 
 			$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND (( author_xchan IN ( $contact_str ) OR owner_xchan in ( $contact_str )) or allow_gid like '" . protect_sprintf('%<' . dbesc($group_hash) . '>%') . "' ) and id = parent $item_normal ) ";
 	
-			$x = Group::rec_byhash(local_channel(), $group_hash);
+			$x = AccessList::rec_byhash(local_channel(), $group_hash);
 	
 			if($x) {
 				$title = replace_macros(get_markup_template("section_title.tpl"),array(
-					'$title' => t('Privacy group: ') . $x['gname']
+					'$title' => t('Access list: ') . $x['gname']
 				));
 			}
 	

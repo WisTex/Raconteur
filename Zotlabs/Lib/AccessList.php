@@ -5,7 +5,7 @@ namespace Zotlabs\Lib;
 use Zotlabs\Lib\Libsync;
 
 
-class Group {
+class AccessList {
 	
 	static function add($uid,$name,$public = 0) {
 
@@ -15,17 +15,17 @@ class Group {
 			if($r !== false) {
 
 				// This could be a problem. 
-				// Let's assume we've just created a group which we once deleted
-				// all the old members are gone, but the group remains so we don't break any security
-				// access lists. What we're doing here is reviving the dead group, but old content which
-				// was restricted to this group may now be seen by the new group members. 
+				// Let's assume we've just created a list which we once deleted
+				// all the old members are gone, but the list remains so we don't break any security
+				// access lists. What we're doing here is reviving the dead list, but old content which
+				// was restricted to this list may now be seen by the new list members. 
 
 				$z = q("SELECT * FROM pgrp WHERE id = %d LIMIT 1",
 					intval($r)
 				);
 				if(($z) && $z[0]['deleted']) {
 					q('UPDATE pgrp SET deleted = 0 WHERE id = %d', intval($z[0]['id']));
-					notice( t('A deleted group with this name was revived. Existing item permissions <strong>may</strong> apply to this group and any future members. If this is not what you intended, please create another group with a different name.') . EOL); 
+					notice( t('A deleted list with this name was revived. Existing item permissions <strong>may</strong> apply to this list and any future members. If this is not what you intended, please create another list with a different name.') . EOL); 
 				}
 				return true;
 			}
@@ -267,7 +267,7 @@ class Group {
 		logger('select: ' . print_r($grps,true), LOGGER_DATA);
 
 		$o = replace_macros(get_markup_template('group_selection.tpl'), array(
-			'$label' => t('Add new connections to this privacy group'),
+			'$label' => t('Add new connections to this access list'),
 			'$groups' => $grps 
 		));
 		return $o;
@@ -295,7 +295,7 @@ class Group {
 				$selected = (($group_id == $rr['id']) ? ' group-selected' : '');
 			
 				if ($edit) {
-					$groupedit = [ 'href' => "group/".$rr['id'], 'title' => t('edit') ];
+					$groupedit = [ 'href' => "alist/".$rr['id'], 'title' => t('edit') ];
 				} 
 				else {
 					$groupedit = null;
@@ -317,10 +317,10 @@ class Group {
 	
 		$tpl = get_markup_template("group_side.tpl");
 		$o = replace_macros($tpl, array(
-			'$title'		=> t('Privacy Groups'),
-			'$edittext'     => t('Edit group'),
-			'$createtext' 	=> t('Add privacy group'),
-			'$ungrouped'    => (($every === 'contacts') ? t('Channels not in any privacy group') : ''),
+			'$title'		=> t('Access Lists'),
+			'$edittext'     => t('Edit list'),
+			'$createtext' 	=> t('Create new list'),
+			'$ungrouped'    => (($every === 'contacts') ? t('Channels not in any access list') : ''),
 			'$groups'		=> $groups,
 			'$add'			=> t('add'),
 		));

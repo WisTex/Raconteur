@@ -4,7 +4,7 @@
  */
 
 use Zotlabs\Lib\MarkdownSoap;
-use Zotlabs\Lib\Group;
+use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Libzot;
 
 
@@ -2754,7 +2754,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
             // weird - as all the other tags are linked to something.
 
             if(local_channel() && local_channel() == $profile_uid) {
-                $grp = Group::byname($profile_uid,$name);
+                $grp = AccessList::byname($profile_uid,$name);
 
                 if($grp) {
                     $g = q("select hash from pgrp where id = %d and visible = 1 limit 1",

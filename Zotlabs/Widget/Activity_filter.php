@@ -59,16 +59,16 @@ class Activity_filter {
 					'icon' => '',
 					'url' => z_root() . '/' . $cmd . '/?f=&gid=' . $g['id'],
 					'sel' => $group_active,
-					'title' => sprintf(t('Show posts related to the %s privacy group'), $g['gname'])
+					'title' => sprintf(t('Show posts related to the %s access list'), $g['gname'])
 				];
 			}
 			$tabs[] = [
 				'id' => 'privacy_groups',
-				'label' => t('Privacy Groups'),
+				'label' => t('Access Lists'),
 				'icon' => 'users',
 				'url' => '#',
 				'sel' => (($filter_active == 'group') ? true : false),
-				'title' => t('Show my privacy groups'),
+				'title' => t('Show my access lists'),
 				'sub' => $gsub
 			];
 		}
@@ -95,11 +95,11 @@ class Activity_filter {
 
 			$tabs[] = [
 				'id' => 'forums',
-				'label' => t('Forums'),
+				'label' => t('Groups'),
 				'icon' => 'comments-o',
 				'url' => '#',
 				'sel' => (($filter_active == 'forums') ? true : false),
-				'title' => t('Show forums'),
+				'title' => t('Show groups'),
 				'sub' => $fsub
 			];
 		}
