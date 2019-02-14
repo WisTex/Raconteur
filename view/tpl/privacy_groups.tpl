@@ -20,7 +20,7 @@
 
 		{{foreach $entries as $group}}
 		<tr id="groups-index-{{$group.id}}" class="group-index-row">
-			<td><a href="group/{{$group.id}}">{{$group.name}}</a></td>
+			<td><a href="alist/{{$group.id}}">{{$group.name}}</a></td>
 			<td>{{$group.count}}</td>
 		</tr>
 		{{/foreach}}
