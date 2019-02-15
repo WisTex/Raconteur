@@ -2774,27 +2774,15 @@ class Libzot {
 		if($deleted || $censored || $sys_channel)
 			$searchable = false;
 
+		// now all forums (public, restricted, and private) set the public_forum flag. So it really means "is a group"
+		// and has nothing to do with accessibility.  
+
 		$public_forum = false;
 
 		$role = get_pconfig($e['channel_id'],'system','permissions_role');
-		if($role === 'forum' || $role === 'repository') {
+		if(in_array($role, ['forum','forum_restricted','repository'])) {
 			$public_forum = true;
 		}
-		else {
-			// check if it has characteristics of a public forum based on custom permissions.
-			$m = Permissions::FilledAutoperms($e['channel_id']);
-			if($m) {
-				foreach($m as $k => $v) {
-					if($k == 'tag_deliver' && intval($v) == 1)
-						$ch ++;
-					if($k == 'send_stream' && intval($v) == 0)
-						$ch ++;
-				}
-				if($ch == 2)
-					$public_forum = true;
-			}
-		}
-
 
 		//  This is for birthdays and keywords, but must check access permissions
 		$p = q("select * from profile where uid = %d and is_default = 1",
