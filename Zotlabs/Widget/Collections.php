@@ -2,7 +2,7 @@
 
 namespace Zotlabs\Widget;
 	
-use Zotlabs\Lib\Group;
+use Zotlabs\Lib\AccessList;
 
 class Collections {
 
@@ -49,6 +49,6 @@ class Collections {
 				break;
 		}
 
-		return Group::widget($every, $each, $edit, $current, $abook_id, $wmode);
+		return AccessList::widget($every, $each, $edit, $current, $abook_id, $wmode);
 	}
 }

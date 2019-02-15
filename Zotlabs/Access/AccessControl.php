@@ -3,16 +3,16 @@
 namespace Zotlabs\Access;
 
 /**
- * @brief AccessList class which represents individual content ACLs.
+ * @brief AccessControl class which represents individual content ACLs.
  *
- * A class to hold an AccessList object with allowed and denied contacts and
+ * A class to hold an AccessControl object with allowed and denied contacts and
  * groups.
  *
  * After evaluating @ref ::Zotlabs::Access::PermissionLimits "PermissionLimits"
  * and @ref ::Zotlabs::Lib::Permcat "Permcat"s individual content ACLs are evaluated.
  * These answer the question "Can Joe view *this* album/photo?".
  */
-class AccessList {
+class AccessControl {
 	/**
 	 * @brief Allow contacts
 	 * @var string

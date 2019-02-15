@@ -4,7 +4,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\PermissionDescription;
-use Zotlabs\Access\AccessList;
+use Zotlabs\Access\AccessControl;
 
 require_once('include/photo/photo_driver.php');
 require_once('include/photos.php');
@@ -81,7 +81,7 @@ class Photos extends \Zotlabs\Web\Controller {
 	
 		$owner_record = $s[0];	
 	
-		$acl = new AccessList(App::$data['channel']);
+		$acl = new AccessControl(App::$data['channel']);
 	
 		if((argc() > 3) && (argv(2) === 'album')) {
 	
@@ -557,7 +557,7 @@ class Photos extends \Zotlabs\Web\Controller {
 			if($_is_owner) {
 				$channel = App::get_channel();
 	
-				$acl = new AccessList($channel);
+				$acl = new AccessControl($channel);
 				$channel_acl = $acl->get();
 	
 				$lockstate = (($acl->is_private()) ? 'lock' : 'unlock');

@@ -2,10 +2,10 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\Group as ZGroup;
+use Zotlabs\Lib\AccessList;
 
 
-class Group extends \Zotlabs\Web\Controller {
+class Alist extends \Zotlabs\Web\Controller {
 
 	function init() {
 		if(! local_channel()) {
@@ -15,7 +15,7 @@ class Group extends \Zotlabs\Web\Controller {
 
 		\App::$profile_uid = local_channel();
 
-		nav_set_selected('Privacy Groups');
+		nav_set_selected('Access Lists');
 	}
 
 	function post() {
@@ -26,29 +26,29 @@ class Group extends \Zotlabs\Web\Controller {
 		}
 	
 		if((argc() == 2) && (argv(1) === 'new')) {
-			check_form_security_token_redirectOnErr('/group/new', 'group_edit');
+			check_form_security_token_redirectOnErr('/alist/new', 'group_edit');
 			
 			$name = notags(trim($_POST['groupname']));
 			$public = intval($_POST['public']);
-			$r = ZGroup::add(local_channel(),$name,$public);
+			$r = AccessList::add(local_channel(),$name,$public);
 			if($r) {
-				info( t('Privacy group created.') . EOL );
+				info( t('Access list created.') . EOL );
 			}
 			else {
-				notice( t('Could not create privacy group.') . EOL );
+				notice( t('Could not create access list.') . EOL );
 			}
-			goaway(z_root() . '/group');
+			goaway(z_root() . '/alist');
 	
 		}
 		if((argc() == 2) && (intval(argv(1)))) {
-			check_form_security_token_redirectOnErr('/group', 'group_edit');
+			check_form_security_token_redirectOnErr('/alist', 'group_edit');
 			
 			$r = q("SELECT * FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
 				intval(argv(1)),
 				intval(local_channel())
 			);
 			if(! $r) {
-				notice( t('Privacy group not found.') . EOL );
+				notice( t('Access list not found.') . EOL );
 				goaway(z_root() . '/connections');
 	
 			}
@@ -64,11 +64,11 @@ class Group extends \Zotlabs\Web\Controller {
 					intval($group['id'])
 				);
 				if($r)
-					info( t('Privacy group updated.') . EOL );
+					info( t('Access list updated.') . EOL );
 				Libsync::build_sync_packet(local_channel(),null,true);
 			}
 	
-			goaway(z_root() . '/group/' . argv(1) . '/' . argv(2));
+			goaway(z_root() . '/alist/' . argv(1) . '/' . argv(2));
 		}
 		return;	
 	}
@@ -77,7 +77,7 @@ class Group extends \Zotlabs\Web\Controller {
 
 		$change = false;
 	
-		logger('mod_group: ' . \App::$cmd,LOGGER_DEBUG);
+		logger('mod_alist: ' . \App::$cmd,LOGGER_DEBUG);
 		
 		if(! local_channel()) {
 			notice( t('Permission denied') . EOL);
@@ -104,24 +104,24 @@ class Group extends \Zotlabs\Web\Controller {
 			foreach($groups as $group) {
 				$entries[$i]['name'] = $group['gname'];
 				$entries[$i]['id'] = $group['id'];
-				$entries[$i]['count'] = count(Zgroup::members($group['id']));
+				$entries[$i]['count'] = count(AccessList::members($group['id']));
 				$i++;
 			}
 
 			$tpl = get_markup_template('privacy_groups.tpl');
 			$o = replace_macros($tpl, [
-				'$title' => t('Privacy Groups'),
-				'$add_new_label' => t('Add Group'),
+				'$title' => t('Access Lists'),
+				'$add_new_label' => t('Create access list'),
 				'$new' => $new,
 
 				// new group form
-				'$gname' => array('groupname',t('Privacy group name')),
+				'$gname' => array('groupname',t('Access list name')),
 				'$public' => array('public',t('Members are visible to other channels'), false),
 				'$form_security_token' => get_form_security_token("group_edit"),
 				'$submit' => t('Submit'),
 
 				// groups list
-				'$title' => t('Privacy Groups'),
+				'$title' => t('Access Lists'),
 				'$name_label' => t('Name'),
 				'$count_label' => t('Members'),
 				'$entries' => $entries
@@ -138,7 +138,7 @@ class Group extends \Zotlabs\Web\Controller {
 		$tpl = get_markup_template('group_edit.tpl');
 	
 		if((argc() == 3) && (argv(1) === 'drop')) {
-			check_form_security_token_redirectOnErr('/group', 'group_drop', 't');
+			check_form_security_token_redirectOnErr('/alist', 'group_drop', 't');
 			
 			if(intval(argv(2))) {
 				$r = q("SELECT gname FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
@@ -146,13 +146,13 @@ class Group extends \Zotlabs\Web\Controller {
 					intval(local_channel())
 				);
 				if($r) 
-					$result = ZGroup::remove(local_channel(),$r[0]['gname']);
+					$result = AccessList::remove(local_channel(),$r[0]['gname']);
 				if($result)
-					info( t('Privacy group removed.') . EOL);
+					info( t('Access list removed.') . EOL);
 				else
-					notice( t('Unable to remove privacy group.') . EOL);
+					notice( t('Unable to remove access list.') . EOL);
 			}
-			goaway(z_root() . '/group');
+			goaway(z_root() . '/alist');
 			// NOTREACHED
 		}
 	
@@ -178,13 +178,13 @@ class Group extends \Zotlabs\Web\Controller {
 				intval(local_channel())
 			);
 			if(! $r) {
-				notice( t('Privacy group not found.') . EOL );
+				notice( t('Access list not found.') . EOL );
 				goaway(z_root() . '/connections');
 			}
 			$group = $r[0];
 	
 	
-			$members = ZGroup::members($group['id']);
+			$members = AccessList::members($group['id']);
 	
 			$preselected = array();
 			if(count($members))	{
@@ -196,13 +196,13 @@ class Group extends \Zotlabs\Web\Controller {
 			if($change) {
 	
 				if(in_array($change,$preselected)) {
-					ZGroup::member_remove(local_channel(),$group['gname'],$change);
+					AccessList::member_remove(local_channel(),$group['gname'],$change);
 				}
 				else {
-					ZGroup::member_add(local_channel(),$group['gname'],$change);
+					AccessList::member_add(local_channel(),$group['gname'],$change);
 				}
 	
-				$members = ZGroup::members($group['id']);
+				$members = AccessList::members($group['id']);
 	
 				$preselected = array();
 				if(count($members))	{
@@ -212,14 +212,14 @@ class Group extends \Zotlabs\Web\Controller {
 			}
 
 			$context = $context + array(
-				'$title' => sprintf(t('Privacy Group: %s'), $group['gname']),
+				'$title' => sprintf(t('Access List: %s'), $group['gname']),
 				'$details_label' => t('Edit'),
-				'$gname' => array('groupname',t('Privacy group name: '),$group['gname'], ''),
+				'$gname' => array('groupname',t('Access list name: '),$group['gname'], ''),
 				'$gid' => $group['id'],
 				'$drop' => $drop_txt,
 				'$public' => array('public',t('Members are visible to other channels'), $group['visible'], ''),
 				'$form_security_token_edit' => get_form_security_token('group_edit'),
-				'$delete' => t('Delete Group'),
+				'$delete' => t('Delete access list'),
 				'$form_security_token_drop' => get_form_security_token("group_drop"),
 			);
 	
@@ -229,9 +229,9 @@ class Group extends \Zotlabs\Web\Controller {
 			return;
 	
 		$groupeditor = array(
-			'label_members' => t('Group members'),
+			'label_members' => t('List members'),
 			'members' => array(),
-			'label_contacts' => t('Not in this group'),
+			'label_contacts' => t('Not in this list'),
 			'contacts' => array(),
 		);
 			
@@ -244,7 +244,7 @@ class Group extends \Zotlabs\Web\Controller {
 				$groupeditor['members'][] = micropro($member,true,'mpgroup', $textmode);
 			}
 			else
-				ZGroup::member_remove(local_channel(),$group['gname'],$member['xchan_hash']);
+				AccessList::member_remove(local_channel(),$group['gname'],$member['xchan_hash']);
 		}
 	
 		$r = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_channel = %d AND abook_self = 0 and abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 order by xchan_name asc",

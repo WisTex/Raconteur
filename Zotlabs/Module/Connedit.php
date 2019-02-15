@@ -5,7 +5,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\ActivityPub;
 use Zotlabs\Lib\Apps;
-use Zotlabs\Lib\Group as ZGroup;
+use Zotlabs\Lib\AccessList;
 
 /* @file connedit.php
  * @brief In this file the connection-editor form is generated and evaluated.
@@ -209,9 +209,9 @@ class Connedit extends \Zotlabs\Web\Controller {
 		if($new_friend) {
 			$default_group = $channel['channel_default_group'];
 			if($default_group) {
-				$g = ZGroup::rec_byhash(local_channel(),$default_group);
+				$g = AccessList::rec_byhash(local_channel(),$default_group);
 				if($g)
-					ZGroup::member_add(local_channel(),'',\App::$poi['abook_xchan'],$g['id']);
+					AccessList::member_add(local_channel(),'',\App::$poi['abook_xchan'],$g['id']);
 			}
 	
 			// Check if settings permit ("post new friend activity" is allowed, and

@@ -4,7 +4,7 @@
 		<h2>{{$title}}</h2>
 	</div>
 	<div id="group_tools" class="clearfix section-content-tools-wrapper"{{if ! $new}} style="display: none"{{/if}}>
-		<form action="group/new" id="group-edit-form" method="post" >
+		<form action="alist/new" id="group-edit-form" method="post" >
 			<input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
 			{{include file="field_input.tpl" field=$gname}}
 			{{include file="field_checkbox.tpl" field=$public}}
@@ -20,7 +20,7 @@
 
 		{{foreach $entries as $group}}
 		<tr id="groups-index-{{$group.id}}" class="group-index-row">
-			<td><a href="group/{{$group.id}}">{{$group.name}}</a></td>
+			<td><a href="alist/{{$group.id}}">{{$group.name}}</a></td>
 			<td>{{$group.count}}</td>
 		</tr>
 		{{/foreach}}

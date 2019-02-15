@@ -59,16 +59,16 @@ class Activity_filter {
 					'icon' => '',
 					'url' => z_root() . '/' . $cmd . '/?f=&gid=' . $g['id'],
 					'sel' => $group_active,
-					'title' => sprintf(t('Show posts related to the %s privacy group'), $g['gname'])
+					'title' => sprintf(t('Show posts related to the %s access list'), $g['gname'])
 				];
 			}
 			$tabs[] = [
 				'id' => 'privacy_groups',
-				'label' => t('Privacy Groups'),
+				'label' => t('Access Lists'),
 				'icon' => 'users',
 				'url' => '#',
 				'sel' => (($filter_active == 'group') ? true : false),
-				'title' => t('Show my privacy groups'),
+				'title' => t('Show my access lists'),
 				'sub' => $gsub
 			];
 		}
@@ -84,20 +84,22 @@ class Activity_filter {
 				$fsub[] = [
 					'label' => $f['xchan_name'],
 					'img' => $f['xchan_photo_s'],
-					'url' => (($f['private_forum']) ? $f['xchan_url'] : z_root() . '/' . $cmd . '/?f=&pf=1&cid=' . $f['abook_id']),
+					'url' => z_root() . '/' . $cmd . '/?f=&pf=1&cid=' . $f['abook_id'],
 					'sel' => $forum_active,
 					'title' => t('Show posts to this forum'),
-					'lock' => (($f['private_forum']) ? 'lock' : '')
+					'lock' => (($f['private_forum']) ? 'lock' : ''),
+					'edit' => t('New post'),
+					'edit_url' => $f['xchan_url']
 				];
 			}
 
 			$tabs[] = [
 				'id' => 'forums',
-				'label' => t('Forums'),
+				'label' => t('Groups'),
 				'icon' => 'comments-o',
 				'url' => '#',
 				'sel' => (($filter_active == 'forums') ? true : false),
-				'title' => t('Show forums'),
+				'title' => t('Show groups'),
 				'sub' => $fsub
 			];
 		}

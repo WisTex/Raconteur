@@ -572,7 +572,7 @@ class Item extends Controller {
 			}
 		}
 	
-		$acl = new \Zotlabs\Access\AccessList($channel);
+		$acl = new \Zotlabs\Access\AccessControl($channel);
 
 		$view_policy = \Zotlabs\Access\PermissionLimits::Get($channel['channel_id'],'view_stream');	
 		$comment_policy = \Zotlabs\Access\PermissionLimits::Get($channel['channel_id'],'post_comments');

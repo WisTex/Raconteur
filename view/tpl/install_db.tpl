@@ -25,11 +25,6 @@
 		{{include file="field_input.tpl" field=$dbdata}}
 		{{include file="field_select.tpl" field=$dbtype}}
 
-		{{$server_choice}}
-
-		{{include file="field_select.tpl" field=$servertype}}
-
-
 
 		<button class="btn btn-primary" id="install-submit" type="submit" name="submit" value="{{$submit}}">{{$submit}}</button> 
 	</form>

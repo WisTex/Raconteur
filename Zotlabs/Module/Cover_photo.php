@@ -2,7 +2,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Activity;
-use Zotlabs\Access\AccessList;
+use Zotlabs\Access\AccessControl;
 
 /* 
    @file cover_photo.php
@@ -170,7 +170,9 @@ logger('gis: ' . print_r($gis,true));
 						'filename'     => $base_image['filename'], 
 						'album'        => t('Cover Photos'),
 						'os_path'      => $base_image['os_path'],
-						'display_path' => $base_image['display_path']
+						'display_path' => $base_image['display_path'],
+						'created'      => $base_image['created'],
+						'edited'       => $base_image['edited']
 					];
 	
 					$p['imgscale'] = 7;
@@ -262,7 +264,7 @@ logger('gis: ' . print_r($gis,true));
 		$arr['item_wall'] = 1;
 		$arr['mid'] = item_message_id();
 		$arr['obj_type'] = ACTIVITY_OBJ_NOTE;
-		$arr['verb'] = ACTIVITY_UPDATE;
+		$arr['verb'] = ACTIVITY_CREATE;
 	
 		if($profile && stripos($profile['gender'],t('female')) !== false)
 			$t = t('%1$s updated her %2$s');
@@ -288,7 +290,7 @@ logger('gis: ' . print_r($gis,true));
 			'actor'     => Activity::encode_person($channel,false),			
 		];
 
-		$acl = new AccessList($channel);
+		$acl = new AccessControl($channel);
 		$x = $acl->get();
 		$arr['allow_cid'] = $x['allow_cid'];
 	

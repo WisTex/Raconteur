@@ -71,6 +71,11 @@ class Follow extends Controller {
 		$interactive = (($_REQUEST['interactive']) ? intval($_REQUEST['interactive']) : 1);	
 		$channel = App::get_channel();
 
+		if(strpos($url,'@') === false && strpos($url,'/') === false) {
+			$url = $url . '@' . App::get_hostname();
+		}
+
+
 		$result = Connect::connect($channel,$url);
 		
 		if($result['success'] == false) {

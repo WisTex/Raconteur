@@ -4,7 +4,7 @@
  */
 
 use Zotlabs\Lib\MarkdownSoap;
-use Zotlabs\Lib\Group;
+use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Libzot;
 
 
@@ -852,7 +852,7 @@ function get_tags($s) {
 	// Pull out single word tags. These can be @nickname, @first_last
 	// and #hash tags.
 
-	if(preg_match_all('/(?<![a-zA-Z0-9=\pL\/\?\;])([@#\!]\!?[^ \x0D\x0A,;:\?\[\{\&]+)/u',$s,$match)) {
+	if(preg_match_all('/(?<![a-zA-Z0-9=\pL\/\?\;])([@#]\!?[^ \x0D\x0A,;:\?\[\{\&]+)/u',$s,$match)) {
 		foreach($match[1] as $mtch) {
 
 			// Cleanup/ignore false positives
@@ -873,14 +873,6 @@ function get_tags($s) {
 			$ret[] = $mtch;
 		}
 	}
-
-	// bookmarks
-
-//	if(preg_match_all('/#\^\[(url|zrl)(.*?)\](.*?)\[\/(url|zrl)\]/',$s,$match,PREG_SET_ORDER)) {
-//		foreach($match as $mtch) {
-//			$ret[] = $mtch[0];
-//		}
-//	}
 
 	// make sure the longer tags are returned first so that if two or more have common substrings
 	// we'll replace the longest ones first. Otherwise the common substring would be found in
@@ -2085,22 +2077,6 @@ function undo_post_tagging($s) {
 			}
 		}
 	}
-	// undo forum tags
-	$cnt = preg_match_all('/\!\[zrl=(.*?)\](.*?)\[\/zrl\]/ism',$s,$matches,PREG_SET_ORDER);
-	if($cnt) {
-		foreach($matches as $mtch) {
-			$x = q("select xchan_addr, xchan_url from xchan where xchan_url = '%s' limit 1",
-				dbesc($mtch[1])
-			);
-			if($x) {
-				$s = str_replace($mtch[0], '!' . '{' . (($x[0]['xchan_addr']) ? $x[0]['xchan_addr'] : $x[0]['xchan_url']) . '}', $s);
-			}
-			else {
-				$s = str_replace($mtch[0], '!' . quote_tag($mtch[2]),$s);
-			}
-		}
-	}
-
 	return $s;
 }
 
@@ -2589,19 +2565,10 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 
 	$termtype = ((strpos($tag,'#') === 0)   ? TERM_HASHTAG  : TERM_UNKNOWN);
 	$termtype = ((strpos($tag,'@') === 0)   ? TERM_MENTION  : $termtype);
-	$termtype = ((strpos($tag,'!') === 0)   ? TERM_FORUM    : $termtype);
-//	$termtype = ((strpos($tag,'#^[') === 0) ? TERM_BOOKMARK : $termtype);
 
 	// Is it a hashtag of some kind?
 
-	if ( in_array($termtype, [ TERM_HASHTAG, TERM_BOOKMARK ] )) {
-//		if($termtype === TERM_BOOKMARK) {
-//			if(preg_match('/#\^\[(url|zrl)(.*?)\](.*?)\[\/(url|zrl)\]/',$tag,$match)) {
-//				$basetag = $match[3];
-//				$url = ((substr($match[2],0,1) === '=') ? substr($match[2],1) : $match[3]);
-//				$replaced = true;
-//			}
-//		}
+	if ( in_array($termtype, [ TERM_HASHTAG ] )) {
 		// if the tag is already replaced...
 		if((strpos($tag,'[zrl=')) || (strpos($tag,'[url='))) {
 			// ...do nothing
@@ -2652,16 +2619,16 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 
 	// BEGIN mentions
 
-	if ( in_array($termtype, [ TERM_MENTION, TERM_FORUM ] )) {
+	if ( in_array($termtype, [ TERM_MENTION ] )) {
 
-		// The @! tag and !! tag will alter permissions
+		// The @! tag will alter permissions
 
 		// $in_network is set to false to avoid false positives on posts originating
 		// on a network which does not implement privacy tags or implements them differently.
 
 		$exclusive = (((strpos(substr($tag,1), '!') === 0) && $in_network) ? true : false);
 
-		//is it already replaced?
+		// is it already replaced?
 		if(strpos($tag,"[zrl=") || strpos($tag,"[url="))
 			return $replaced;
 
@@ -2752,15 +2719,9 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
                     //create profile link
                     $profile = str_replace(',','%2c',$profile);
                     $url = $profile;
-                    if($termtype === TERM_FORUM) {
-                        $newtag = '!' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname . '[/zrl]';
-                        $body = str_replace('!' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
-                    }
-                    else {
-                        // ( $termtype === TERM_MENTION )
-                        $newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname . '[/zrl]';
-                        $body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
-                    }
+					$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname . '[/zrl]';
+					$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
+
 
                     // append tag to str_tags
                     if(! stristr($str_tags,$newtag)) {
@@ -2793,7 +2754,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
             // weird - as all the other tags are linked to something.
 
             if(local_channel() && local_channel() == $profile_uid) {
-                $grp = Group::byname($profile_uid,$name);
+                $grp = AccessList::byname($profile_uid,$name);
 
                 if($grp) {
                     $g = q("select hash from pgrp where id = %d and visible = 1 limit 1",
@@ -2817,15 +2778,9 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
                 //create profile link
                 $profile = str_replace(',','%2c',$profile);
                 $url = $profile;
-                if($termtype === TERM_FORUM) {
-                    $newtag = '!' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname . '[/zrl]';
-                    $body = str_replace('!' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
-                }
-                else {
-                    // ( $termtype === TERM_MENTION )
-                    $newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname . '[/zrl]';
-                    $body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
-                }
+
+                $newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname . '[/zrl]';
+                $body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
 
                 // append tag to str_tags
                 if(! stristr($str_tags,$newtag)) {
@@ -3509,51 +3464,9 @@ function get_forum_channels($uid) {
 	if(! $uid)
 		return;
 
-
-
-	$xf = false;
-
-	$x1 = q("select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and not v like '%s'",
-		intval($uid),
-		dbesc('%send_stream%')
-	);
-	if($x1) {
-		$xc = ids_to_querystr($x1,'xchan',true);
-		$x2 = q("select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and v like '%s' and xchan in (" . $xc . ") ",
-			intval($uid),
-			dbesc('%tag_deliver%')
-		);
-
-		if($x2) { 
-			$xf = ids_to_querystr($x2,'xchan',true);
-
-			// private forums
-			$x3 = q("select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and v like '%s' and xchan in (" . $xc . ") and not xchan in (" . $xf . ") ",
-				intval($uid),
-				dbesc('%post_wall%')
-			);
-			if($x3) {
-				$xf = ids_to_querystr(array_merge($x2,$x3),'xchan',true);
-			}
-		}
-	}
-
-	$sql_extra = (($xf) ? " and ( xchan_hash in (" . $xf . ") or xchan_pubforum = 1 ) " : " and xchan_pubforum = 1 "); 
-
-
-	$r = q("select abook_id, xchan_hash, xchan_name, xchan_url, xchan_photo_s from abook left join xchan on abook_xchan = xchan_hash where xchan_deleted = 0 and abook_channel = %d and abook_pending = 0 and abook_ignored = 0 and abook_blocked = 0 and abook_archived = 0 $sql_extra order by xchan_name",
+	$r = q("select abook_id, xchan_hash, xchan_name, xchan_url, xchan_photo_s from abook left join xchan on abook_xchan = xchan_hash where xchan_deleted = 0 and abook_channel = %d and abook_pending = 0 and abook_ignored = 0 and abook_blocked = 0 and abook_archived = 0 and xchan_pubforum = 1 order by xchan_name",
 		intval($uid)
 	);
-
-	for($x = 0; $x < count($r); $x ++) {
-		if($x3) {
-			foreach($x3 as $xx) {
-				if($r[$x]['xchan_hash'] == $xx['xchan']) {
-					$r[$x]['private_forum'] = 1;
-				}
-			}
-		}
-	}
 
 	return $r;
 

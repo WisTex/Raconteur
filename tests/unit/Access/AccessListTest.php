@@ -24,12 +24,12 @@
 namespace Zotlabs\Tests\Unit\Access;
 
 use Zotlabs\Tests\Unit\UnitTestCase;
-use Zotlabs\Access\AccessList;
+use Zotlabs\Access\AccessControl;
 
 /**
  * @brief Unit Test case for AccessList class.
  *
- * @covers Zotlabs\Access\AccessList
+ * @covers Zotlabs\Access\AccessControl
  */
 class AccessListTest extends UnitTestCase {
 
@@ -54,7 +54,7 @@ class AccessListTest extends UnitTestCase {
 				'channel_deny_gid' => '<dgid><dgid2>'
 		];
 
-		$accessList = new AccessList($channel);
+		$accessList = new AccessControl($channel);
 
 		$this->assertEquals($this->expectedResult, $accessList->get());
 		$this->assertFalse($accessList->get_explicit());
@@ -64,12 +64,12 @@ class AccessListTest extends UnitTestCase {
 	 * @expectedException PHPUnit\Framework\Error\Error
 	 */
 	public function testPHPErrorOnInvalidConstructor() {
-		$accessList = new AccessList('invalid');
+		$accessList = new AccessControl('invalid');
 		// Causes: "Illegal string offset 'channel_allow_cid'"
 	}
 
 	public function testDefaultGetExplicit() {
-		$accessList = new AccessList([]);
+		$accessList = new AccessControl([]);
 
 		$this->assertFalse($accessList->get_explicit());
 	}
@@ -82,7 +82,7 @@ class AccessListTest extends UnitTestCase {
 				'deny_gid'  => ''
 		];
 
-		$accessList = new AccessList([]);
+		$accessList = new AccessControl([]);
 
 		$this->assertEquals($arr, $accessList->get());
 	}
@@ -94,7 +94,7 @@ class AccessListTest extends UnitTestCase {
 				'deny_cid'  => '',
 				'deny_gid'  => '<dgid><dgid2>'
 		];
-		$accessList = new AccessList([]);
+		$accessList = new AccessControl([]);
 
 		// default explicit true
 		$accessList->set($arr);
@@ -113,7 +113,7 @@ class AccessListTest extends UnitTestCase {
 	 * @expectedException PHPUnit\Framework\Error\Error
 	 */
 	public function testPHPErrorOnInvalidSet() {
-		$accessList = new AccessList([]);
+		$accessList = new AccessControl([]);
 
 		$accessList->set('invalid');
 		// Causes: "Illegal string offset 'allow_cid'"
@@ -133,7 +133,7 @@ class AccessListTest extends UnitTestCase {
 				'contact_deny'  => [],
 				'group_deny'    => ['dgid', 'dgid2']
 		];
-		$accessList = new AccessList([]);
+		$accessList = new AccessControl([]);
 		$accessList->set_from_array($arraySetFromArray);
 
 		$this->assertEquals($this->expectedResult, $accessList->get());
@@ -147,7 +147,7 @@ class AccessListTest extends UnitTestCase {
 				'contact_deny'  => '',
 				'group_deny'    => 'dgid, dgid2'
 		];
-		$accessList2 = new AccessList([]);
+		$accessList2 = new AccessControl([]);
 		$accessList2->set_from_array($stringSetFromArray, false);
 
 		$this->assertEquals($this->expectedResult, $accessList2->get());
@@ -158,10 +158,10 @@ class AccessListTest extends UnitTestCase {
 	 * @dataProvider isprivateProvider
 	 */
 	public function testIsPrivate($channel) {
-		$accessListPublic = new AccessList([]);
+		$accessListPublic = new AccessControl([]);
 		$this->assertFalse($accessListPublic->is_private());
 
-		$accessListPrivate = new AccessList($channel);
+		$accessListPrivate = new AccessControl($channel);
 		$this->assertTrue($accessListPrivate->is_private());
 	}
 

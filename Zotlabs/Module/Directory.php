@@ -340,7 +340,7 @@ class Directory extends \Zotlabs\Web\Controller {
 								'about' => $about,
 								'about_label' => t('About:'),
 								'conn_label' => t('Connect'),
-								'forum_label' => t('Public Forum:'), 
+								'forum_label' => t('Public Group:'), 
 								'connect' => $connect_link,
 								'online' => $online,
 								'kw' => (($out) ? t('Keywords: ') : ''),

@@ -62,7 +62,6 @@ class Permissions {
 			'post_wall'     => t('Can post on my channel (wall) page'),
 			'post_comments' => t('Can comment on or like my posts'),
 			'post_like'     => t('Can like/dislike profiles and profile things'),
-			'tag_deliver'   => t('Can forward to all my channel connections via ! mentions in posts'),
 			'republish'     => t('Can source my public posts in derived channels'),
 			'delegate'      => t('Can administer my channel')
 		];

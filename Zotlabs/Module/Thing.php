@@ -76,7 +76,7 @@ class Thing extends \Zotlabs\Web\Controller {
 		if((! $name) || (! $translated_verb))
 			return;
 
-		$acl = new \Zotlabs\Access\AccessList($channel);
+		$acl = new \Zotlabs\Access\AccessControl($channel);
 
 		if(array_key_exists('contact_allow',$_REQUEST)
 			|| array_key_exists('group_allow',$_REQUEST)
@@ -283,7 +283,7 @@ class Thing extends \Zotlabs\Web\Controller {
 			return;
 		}
 
-		$acl = new \Zotlabs\Access\AccessList($channel);
+		$acl = new \Zotlabs\Access\AccessControl($channel);
 		$channel_acl = $acl->get();
 
 		$lockstate = (($acl->is_private()) ? 'lock' : 'unlock');
