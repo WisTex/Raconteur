@@ -128,9 +128,9 @@ class PermissionRoles {
 				'social_restricted' => t('Social - Restricted')
 			],
 
-			t('Community Forum') => [
-				'forum' => t('Forum - Normal'),
-				'forum_restricted' => t('Forum - Restricted')
+			t('Community Group') => [
+				'forum' => t('Group - Normal'),
+				'forum_restricted' => t('Group - Restricted')
 			],
 
 			t('Feed Republish') => [
