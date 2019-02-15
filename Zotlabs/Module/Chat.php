@@ -6,7 +6,7 @@ use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Chatroom;
-use Zotlabs\Access\AccessList;
+use Zotlabs\Access\AccessControl;
 
 use Zotlabs\Lib\Libsync;
 
@@ -66,7 +66,7 @@ class Chat extends Controller {
 			goaway(z_root() . '/chat/' . $channel['channel_address']);
 		}
 	
-		$acl = new AccessList($channel);
+		$acl = new AccessControl($channel);
 		$acl->set_from_array($_REQUEST);
 	
 		$arr = $acl->get();

@@ -582,7 +582,7 @@ function event_addtocal($item_id, $uid) {
 		if($ev->private)
 			$ev['allow_cid'] = '<' . $channel['channel_hash'] . '>';
 		else {
-			$acl = new Zotlabs\Access\AccessList($channel);
+			$acl = new Zotlabs\Access\AccessControl($channel);
 			$x = $acl->get();
 			$ev['allow_cid'] = $x['allow_cid'];
 			$ev['allow_gid'] = $x['allow_gid'];

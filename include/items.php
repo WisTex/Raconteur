@@ -19,7 +19,7 @@ use Zotlabs\Lib\IConfig;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\ThreadListener;
 use Zotlabs\Access\PermissionLimits;
-use Zotlabs\Access\AccessList as ZACL;
+use Zotlabs\Access\AccessControl;
 use Zotlabs\Daemon\Master;
 
 
@@ -4506,7 +4506,7 @@ function send_profile_photo_activity($channel,$photo,$profile) {
 		'actor'     => Activity::encode_person($channel,false),
 	];
 
-	$acl = new ZACL($channel);
+	$acl = new AccessControl($channel);
 	$x = $acl->get();
 	$arr['allow_cid'] = $x['allow_cid'];
 

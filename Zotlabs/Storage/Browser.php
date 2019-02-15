@@ -338,7 +338,7 @@ class Browser extends DAV\Browser\Plugin {
 		if($this->auth->owner_id) {
 			$channel = channelx_by_n($this->auth->owner_id);
 			if($channel) {
-				$acl = new \Zotlabs\Access\AccessList($channel);
+				$acl = new \Zotlabs\Access\AccessControl($channel);
 				$channel_acl = $acl->get();
 				$lockstate = (($acl->is_private()) ? 'lock' : 'unlock');
 

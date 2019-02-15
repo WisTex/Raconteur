@@ -30,7 +30,7 @@ class Filestorage extends \Zotlabs\Web\Controller {
 
 		$channel = \App::get_channel();
 
-		$acl = new \Zotlabs\Access\AccessList($channel);
+		$acl = new \Zotlabs\Access\AccessControl($channel);
 		$acl->set_from_array($_POST);
 		$x = $acl->get();
 

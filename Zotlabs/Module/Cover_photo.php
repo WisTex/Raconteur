@@ -2,7 +2,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Activity;
-use Zotlabs\Access\AccessList;
+use Zotlabs\Access\AccessControl;
 
 /* 
    @file cover_photo.php
@@ -290,7 +290,7 @@ logger('gis: ' . print_r($gis,true));
 			'actor'     => Activity::encode_person($channel,false),			
 		];
 
-		$acl = new AccessList($channel);
+		$acl = new AccessControl($channel);
 		$x = $acl->get();
 		$arr['allow_cid'] = $x['allow_cid'];
 	

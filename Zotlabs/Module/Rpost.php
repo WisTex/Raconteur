@@ -101,7 +101,7 @@ class Rpost extends \Zotlabs\Web\Controller {
 		$channel = \App::get_channel();
 	
 	
-		$acl = new \Zotlabs\Access\AccessList($channel);
+		$acl = new \Zotlabs\Access\AccessControl($channel);
 	
 		$channel_acl = $acl->get();
 	

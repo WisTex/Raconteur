@@ -43,7 +43,7 @@ class Channel {
 				foreach($global_perms as $k => $v) {
 					\Zotlabs\Access\PermissionLimits::Set(local_channel(),$k,intval($_POST[$k]));
 				}
-				$acl = new \Zotlabs\Access\AccessList($channel);
+				$acl = new \Zotlabs\Access\AccessControl($channel);
 				$acl->set_from_array($_POST);
 				$x = $acl->get();
 	
@@ -465,7 +465,7 @@ class Channel {
 	
 		$stpl = get_markup_template('settings.tpl');
 	
-		$acl = new \Zotlabs\Access\AccessList($channel);
+		$acl = new \Zotlabs\Access\AccessControl($channel);
 		$perm_defaults = $acl->get();
 	
 		$group_select = AccessList::select(local_channel(),$channel['channel_default_group']);

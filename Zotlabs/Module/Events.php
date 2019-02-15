@@ -131,7 +131,7 @@ class Events extends \Zotlabs\Web\Controller {
 
 		$channel = \App::get_channel();
 	
-		$acl = new \Zotlabs\Access\AccessList(false);
+		$acl = new \Zotlabs\Access\AccessControl(false);
 	
 		if($event_id) {
 			$x = q("select * from event where id = %d and uid = %d limit 1",
@@ -444,7 +444,7 @@ class Events extends \Zotlabs\Web\Controller {
 	
 			require_once('include/acl_selectors.php');
 	
-			$acl = new \Zotlabs\Access\AccessList($channel);
+			$acl = new \Zotlabs\Access\AccessControl($channel);
 			$perm_defaults = $acl->get();
 
 			$permissions = ((x($orig_event)) ? $orig_event : $perm_defaults);
