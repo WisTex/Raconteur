@@ -2,6 +2,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Web\HTTPSig;
 
