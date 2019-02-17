@@ -7,13 +7,7 @@ use Zotlabs\Lib\Apps;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Chatroom;
 use Zotlabs\Access\AccessControl;
-
 use Zotlabs\Lib\Libsync;
-
-
-
-
-require_once('include/bookmarks.php');
 
 class Chat extends Controller {
 
@@ -175,7 +169,6 @@ class Chat extends Controller {
 		if(argc() > 2 && intval(argv(2))) {
 	
 			$room_id = intval(argv(2));
-			$bookmark_link = get_bookmark_link($ob);
 	
 			$x = Chatroom::enter($observer,$room_id,'online',$_SERVER['REMOTE_ADDR']);
 			if(! $x)
@@ -191,8 +184,6 @@ class Chat extends Controller {
 	
 				$private = $acl->is_private();
 				$room_name = $x[0]['cr_name'];
-				if($bookmark_link)
-					$bookmark_link .= '&url=' . z_root() . '/chat/' . argv(1) . '/' . argv(2) . '&title=' . urlencode($x[0]['cr_name']) . (($private) ? '&private=1' : '') . '&ischat=1'; 
 			}
 			else {
 				notice( t('Room not found') . EOL);
@@ -215,8 +206,6 @@ class Chat extends Controller {
 				'$drop' => t('Delete Room'),
 				'$away' => t('I am away right now'),
 				'$online' => t('I am online'),
-				'$bookmark_link' => $bookmark_link,
-				'$bookmark' => t('Bookmark this room'),
 				'$feature_encrypt' => ((feature_enabled(local_channel(),'content_encrypt')) ? true : false),
 				'$cipher' => $cipher,
 				'$linkurl' => t('Please enter a link URL:'),
