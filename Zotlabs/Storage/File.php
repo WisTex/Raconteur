@@ -130,6 +130,24 @@ class File extends DAV\Node implements DAV\IFile {
 		$album = '';
 		$os_path = '';
 
+
+		// This hidden config allows you to protect your dav contents from cryptolockers by preventing over-write
+		// and delete from a networked operating system. In this case you are only allowed to over-write the file
+		// if it is empty. Some DAV clients create the file and then store the contents so these would be allowed. 
+
+		if(get_pconfig($this->auth->owner_id,'system','os_delete_prohibit') && \App::$module == 'dav') {
+			$r = q("select filesize from attach where hash = '%s' and uid = %d limit 1",
+				dbesc($this->data['hash']),
+				intval($c[0]['channel_id'])
+			);
+			if($r && intval($r[0]['filesize'])) { 	
+				throw new DAV\Exception\Forbidden('Permission denied.');
+			}
+		}
+
+
+
+
 		$r = q("SELECT flags, folder, os_storage, os_path, display_path, filename, is_photo FROM attach WHERE hash = '%s' AND uid = %d LIMIT 1",
 			dbesc($this->data['hash']),
 			intval($c[0]['channel_id'])
