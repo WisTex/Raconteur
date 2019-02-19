@@ -36,7 +36,7 @@ class Activity {
 
 
 
-	static function fetch($url,$channel = null) {
+	static function fetch($url,$channel = null,$hub = null) {
 		$redirects = 0;
 		if(! check_siteallowed($url)) {
 			logger('blacklisted: ' . $url);
@@ -49,7 +49,7 @@ class Activity {
 		logger('fetch: ' . $url, LOGGER_DEBUG);
 
 		if(strpos($url,'x-zot:') === 0) {
-			$x = ZotURL::fetch($url,$channel);
+			$x = ZotURL::fetch($url,$channel,$hub);
 		}
 		else {
 			$m = parse_url($url);

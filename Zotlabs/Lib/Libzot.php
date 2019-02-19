@@ -1049,11 +1049,11 @@ class Libzot {
 	 * @return array from zot_import()
 	 */
 
-	static function fetch($arr) {
+	static function fetch($arr,$hub = null) {
 
 		logger('zot_fetch: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 
-		return self::import($arr);
+		return self::import($arr,$hub);
 
 	}
 
@@ -1080,7 +1080,7 @@ class Libzot {
 	 *   * [2] => \e string $address
 	 */
 
-	static function import($arr) {
+	static function import($arr,$hub = null) {
 
 		$env = $arr;
 		$private = false;
@@ -1110,6 +1110,7 @@ class Libzot {
 					logger('Activity rejected: ' . print_r($data,true));
 					return;
 				}
+
 				$arr = Activity::decode_note($AS);
 
 				logger($AS->debug(), LOGGER_DATA);
