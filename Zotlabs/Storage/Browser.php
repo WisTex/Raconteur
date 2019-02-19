@@ -261,7 +261,6 @@ class Browser extends DAV\Browser\Plugin {
 			$ft['iconFromType'] = getIconFromType($type);
 
 			$f[] = $ft;
-logger('f:' . print_r($ft,true));
 
 		}
 
