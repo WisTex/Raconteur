@@ -351,7 +351,8 @@ function store_doc_file($s) {
 		$x = item_store_update($item);
 	}
 	else {
-		$item['mid'] = $item['parent_mid'] = item_message_id();
+		$item['uuid'] = new_uuid();
+		$item['mid'] = $item['parent_mid'] = z_root() . '/item/' . $item['uuid'];
 		$x = item_store($item);
 	}
 

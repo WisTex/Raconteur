@@ -852,7 +852,11 @@ class Profiles extends Controller {
 			return;
 
 		$arr = array();
-		$arr['mid']         = $arr['parent_mid'] = item_message_id();
+		$uuid = new_uuid();
+		$mid = z_root() . '/item/' . $uuid;
+
+		$arr['uuid']        = $uuid;
+		$arr['mid']         = $arr['parent_mid'] = $mid;
 		$arr['uid']         = local_channel();
 		$arr['aid']         = $self['channel_account_id'];
 		$arr['owner_xchan'] = $arr['author_xchan'] = $self['xchan_hash'];

@@ -551,6 +551,7 @@ create index "issue_component" on issue ("issue_component");
 CREATE TABLE "item" (
   "id" serial  NOT NULL,
   "mid" text  NOT NULL DEFAULT '',
+  "uuid" text  NOT NULL DEFAULT '',
   "aid" bigint  NOT NULL DEFAULT '0',
   "uid" bigint  NOT NULL DEFAULT '0',
   "parent" bigint  NOT NULL DEFAULT '0',
@@ -652,6 +653,7 @@ create index "item_expires" on item ("expires");
 create index "item_revision" on item ("revision");
 create index "item_mimetype" on item ("mimetype");
 create index "item_mid" on item ("mid");
+create index "item_uuid" on item ("uuid");
 create index "item_parent_mid" on item ("parent_mid");
 create index "item_uid_mid" on item ("mid","uid");
 create index "item_public_policy" on item ("public_policy");

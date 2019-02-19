@@ -262,7 +262,8 @@ logger('gis: ' . print_r($gis,true));
 		$arr['item_thread_top'] = 1;
 		$arr['item_origin'] = 1;
 		$arr['item_wall'] = 1;
-		$arr['mid'] = item_message_id();
+		$arr['uuid'] = new_uuid();
+		$arr['mid'] = z_root() . '/item/' . $arr['uuid'];
 		$arr['obj_type'] = ACTIVITY_OBJ_NOTE;
 		$arr['verb'] = ACTIVITY_CREATE;
 	

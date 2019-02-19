@@ -939,7 +939,8 @@ class Item extends Controller {
 		$notify_type = (($parent) ? 'comment-new' : 'wall-new' );
 	
 		if(! $mid) {
-			$mid = (($message_id) ? $message_id : item_message_id());
+			$uuid = (($message_id) ? $message_id : new_uuid());
+			$mid = z_root() . '/item/' . $uuid;
 		}
 
 
@@ -964,7 +965,7 @@ class Item extends Controller {
 		// fix permalinks for cards, etc.
 	
 		if($webpage == ITEM_TYPE_CARD) {
-			$plink = z_root() . '/cards/' . $channel['channel_address'] . '/' . (($pagetitle) ? $pagetitle : substr($mid,-16));
+			$plink = z_root() . '/cards/' . $channel['channel_address'] . '/' . (($pagetitle) ? $pagetitle : $uuid);
 		}
 		if(($parent_item) && ($parent_item['item_type'] == ITEM_TYPE_CARD)) {
 			$r = q("select v from iconfig where iconfig.cat = 'system' and iconfig.k = 'CARD' and iconfig.iid = %d limit 1",
@@ -976,7 +977,7 @@ class Item extends Controller {
 		}
 
 		if($webpage == ITEM_TYPE_ARTICLE) {
-			$plink = z_root() . '/articles/' . $channel['channel_address'] . '/' . (($pagetitle) ? $pagetitle : substr($mid,-16));
+			$plink = z_root() . '/articles/' . $channel['channel_address'] . '/' . (($pagetitle) ? $pagetitle : $uuid);
 		}
 		if(($parent_item) && ($parent_item['item_type'] == ITEM_TYPE_ARTICLE)) {
 			$r = q("select v from iconfig where iconfig.cat = 'system' and iconfig.k = 'ARTICLE' and iconfig.iid = %d limit 1",
@@ -999,6 +1000,7 @@ class Item extends Controller {
 		
 		$datarray['aid']                 = $channel['channel_account_id'];
 		$datarray['uid']                 = $profile_uid;
+		$datarray['uuid']                = $uuid;
 		$datarray['owner_xchan']         = (($owner_hash) ? $owner_hash : $owner_xchan['xchan_hash']);
 		$datarray['author_xchan']        = $observer['xchan_hash'];
 		$datarray['created']             = $created;
