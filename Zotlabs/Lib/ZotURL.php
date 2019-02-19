@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Lib;
 
+use Zotlabs\Web\HTTPSig;
+
 
 class ZotURL {
 
@@ -19,22 +21,17 @@ class ZotURL {
 		}
 
 		$portable_url = substr($url,6);
-		$u = explode('/',$url);		
+		$u = explode('/',$portable_url);		
 		$portable_id = $u[0];
-		if(count($u) > 1) {
-			$object = $u[1];
-		}
-		else {
-			$object = EMPTY_STR;
-		}
 
 		$hosts = self::lookup($portable_id);
+
 		if(! $hosts) {
 			return $ret;
 		}
 
 		foreach($hosts as $h) {
-			$newurl = $h . '/id/' . (($object) ? $object : $portable_id);
+			$newurl = $h . '/id/' . $portable_url;
 
 			$m = parse_url($newurl);
 
@@ -58,9 +55,8 @@ class ZotURL {
 				
 			$result = [];
 
-
 			$redirects = 0;
-			$x = z_post_url($resource,$data,$redirects, [ 'headers' => $h  ] );
+			$x = z_post_url($newurl,$data,$redirects, [ 'headers' => $h  ] );
 			if($x['success']) {
 				return $x;
 			}
@@ -71,9 +67,11 @@ class ZotURL {
 	}
 
 	static public function lookup($portable_id) {
+
 		$r = q("select * from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and site_dead = 0 order by hubloc_primary desc",
 			dbesc($portable_id)
 		);
+
 		if(! $r) {
 			// extend to network lookup
 			return false;

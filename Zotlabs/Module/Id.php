@@ -4,17 +4,10 @@ namespace Zotlabs\Module;
 
 /**
  *
- * This is the POST destination for most all locally posted
- * text stuff. This function handles status, wall-to-wall status, 
- * local comments, and remote coments that are posted on this site 
- * (as opposed to being delivered in a feed).
- * Also processed here are posts and comments coming through the 
- * statusnet/twitter API. 
- * All of these become an "item" which is our basic unit of 
- * information.
- * Posts that originate externally or do not fall into the above 
- * posting categories go through item_store() instead of this function. 
- *
+ * Controller for responding to x-zot: protocol requests
+ * x-zot:_jkfRG85nJ-714zn-LW_VbTFW8jSjGAhAydOcJzHxqHkvEHWG2E0RbA_pbch-h4R63RG1YJZifaNzgccoLa3MQ/453c1678-1a79-4af7-ab65-6b012f6cab77
+
+ *  
  */  
 
 use Zotlabs\Lib\Libsync;
@@ -42,10 +35,10 @@ class Id extends Controller {
 
 			$conversation = false;
 
-			$item_id = argv(1);
-
-			if(! $item_id)
-				http_status_exit(404, 'Not found');
+			$request_portable_id = argv(1);
+			if(argc() > 2) {
+				$item_id = argv(2);
+			}
 
 			$portable_id = EMPTY_STR;
 
@@ -54,18 +47,37 @@ class Id extends Controller {
 				$portable_id = $sigdata['portable_id'];
 			}
 
+			$r = q("select channel_id, channel_address from channel where channel_hash = '%s' limit 1",
+				dbesc($request_portable_id)
+			);
+			if($r) {
+				$channel_id = $r[0]['channel_id'];
+				if(! $item_id) {
+					$handler = new Channel();
+					App::$argc = 2;
+					App::$argv[0] = 'channel';
+					App::$argv[1] = $r[0]['channel_address'];
+					$handler->init();
+				}
+			}
+			else {
+				http_status_exit(404, 'Not found');
+			}
+
+
 			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 ";
 
 			$sql_extra = item_permissions_sql(0);
 
-			$r = q("select * from item where mid like '%s' $item_normal $sql_extra limit 1",
-				dbesc('%/' . $item_id)
+			$r = q("select * from item where mid like '%s' $item_normal $sql_extra and uid = %d limit 1",
+				dbesc('%/' . $item_id),
+				intval($channel_id)
 			);
 			if(! $r) {
 
-
-				$r = q("select * from item where mid like '%s' $item_normal limit 1",
-					dbesc('%/' . $item_id)
+				$r = q("select * from item where mid like '%s' $item_normal and uid = %d limit 1",
+					dbesc('%/' . $item_id),
+					intval($channel_id)
 				);
 				if($r) {
 					http_status_exit(403, 'Forbidden');
@@ -169,14 +181,8 @@ class Id extends Controller {
 
 		}
 
-		if(argc() > 1 && argv(1) !== 'drop') {
-			$x = q("select plink from item where mid = '%s' limit 1",
-				dbesc(z_root() . '/item/' . argv(1))
-			);
-			if($x) {
-				goaway($x[0]['plink']);
-			}
-		}
 	}
 
 }
+
+
