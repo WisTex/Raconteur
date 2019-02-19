@@ -69,7 +69,7 @@ class Categories {
 		);
 		if($r && count($r)) {
 			foreach($r as $rr)
-				$terms[] = array('name' => $rr['term'], 'selected' => (($selected == $rr['term']) ? 'selected' : ''));
+				$terms[] = array('name' => urlencode($rr['term']), 'selected' => (($selected == $rr['term']) ? 'selected' : ''));
 
 			return replace_macros(get_markup_template('categories_widget.tpl'),array(
 				'$title' => t('Categories'),
@@ -113,7 +113,7 @@ class Categories {
 		);
 		if($r && count($r)) {
 			foreach($r as $rr)
-				$terms[] = array('name' => $rr['term'], 'selected' => (($selected == $rr['term']) ? 'selected' : ''));
+				$terms[] = array('name' => urlencode($rr['term']), 'selected' => (($selected == $rr['term']) ? 'selected' : ''));
 
 			return replace_macros(get_markup_template('categories_widget.tpl'),array(
 				'$title' => t('Categories'),
@@ -160,7 +160,7 @@ class Categories {
 		);
 		if($r && count($r)) {
 			foreach($r as $rr)
-				$terms[] = array('name' => $rr['term'], 'selected' => (($selected == $rr['term']) ? 'selected' : ''));
+				$terms[] = array('name' => urlencode($rr['term']), 'selected' => (($selected == $rr['term']) ? 'selected' : ''));
 
 			return replace_macros(get_markup_template('categories_widget.tpl'),array(
 				'$title' => t('Categories'),

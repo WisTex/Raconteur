@@ -2,7 +2,9 @@
 
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\ZotURL;
 use Zotlabs\Lib\Zotfinger;
+
 use Zotlabs\Web\HTTPSig;
 
 class Zot_probe extends \Zotlabs\Web\Controller {
@@ -21,14 +23,19 @@ class Zot_probe extends \Zotlabs\Web\Controller {
 			$addr = $_GET['addr'];
 			$channel = (($_GET['auth']) ? \App::get_channel() : null);
 
-			$x = Zotfinger::exec($addr,$channel);
+			if(strpos($addr,'x-zot:') === 0) {
+				$x = ZotURL::fetch($addr,$channel);
+			}
+			else {
+				$x = Zotfinger::exec($addr,$channel);
 
-			$o .= '<pre>' . htmlspecialchars(print_array($x)) . '</pre>';
+				$o .= '<pre>' . htmlspecialchars(print_array($x)) . '</pre>';
 
-			$headers = 'Accept: application/x-zot+json, application/jrd+json, application/json';
+				$headers = 'Accept: application/x-zot+json, application/jrd+json, application/json';
 
-			$redirects = 0;
-		    $x = z_fetch_url($addr,true,$redirects, [ 'headers' => [ $headers ]]);
+				$redirects = 0;
+		    	$x = z_fetch_url($addr,true,$redirects, [ 'headers' => [ $headers ]]);
+			}
 
 	    	if($x['success']) {
 

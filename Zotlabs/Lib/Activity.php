@@ -45,7 +45,13 @@ class Activity {
 		if(! $channel) {
 			$channel = get_sys_channel();
 		}
-		if($channel) {
+
+		logger('fetch: ' . $url, LOGGER_DEBUG);
+
+		if(strpos($url,'x-zot:') === 0) {
+			$x = ZotURL::fetch($url,$channel);
+		}
+		else {
 			$m = parse_url($url);
 			$headers = [
 				'Accept'           => 'application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
@@ -54,13 +60,9 @@ class Activity {
 				'Date'             => datetime_convert('UTC','UTC','now','D, d M Y H:i:s') . ' UTC'
 			];
 			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false);
-		}
-		else {
-			$h = [ 'Accept: application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ];
+			$x = z_fetch_url($url, true, $redirects, [ 'headers' => $h ] );
 		}
 
-		logger('fetch: ' . $url, LOGGER_DEBUG);
-		$x = z_fetch_url($url, true, $redirects, [ 'headers' => $h ] );
 		if($x['success']) {
 			$y = json_decode($x['body'],true);
 			logger('returned: ' . json_encode($y,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
