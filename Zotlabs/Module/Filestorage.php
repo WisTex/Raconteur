@@ -74,14 +74,6 @@ class Filestorage extends \Zotlabs\Web\Controller {
 			return;
 		}
 
-		// Since we have ACL'd files in the wild, but don't have ACL here yet, we
-		// need to return for anyone other than the owner, despite the perms check for now.
-
-		$is_owner = (((local_channel()) && ($owner  == local_channel())) ? true : false);
-		if(! ($is_owner || is_site_admin())){
-			info( t('Permission Denied.') . EOL );
-			return;
-		}
 
 		if(argc() > 3 && argv(3) === 'delete') {
 
@@ -104,17 +96,30 @@ class Filestorage extends \Zotlabs\Web\Controller {
 			}
 
 			$file = intval(argv(2));
-			$r = q("SELECT hash FROM attach WHERE id = %d AND uid = %d LIMIT 1",
+			$r = q("SELECT hash, creator FROM attach WHERE id = %d AND uid = %d LIMIT 1",
 				dbesc($file),
 				intval($owner)
 			);
 			if(! $r) {
+				notice( t('File not found.') . EOL);
+
 				if($json_return) 
 					json_return_and_die([ 'success' => false ]);
 
-				notice( t('File not found.') . EOL);
 				goaway(z_root() . '/cloud/' . $which);
 			}
+
+			if(local_channel() !== $owner) {
+				if($r[0]['creator'] && $r[0]['creator'] !== $ob_hash) {
+					notice( t('Permission denied.') . EOL);
+
+					if($json_return) 
+						json_return_and_die([ 'success' => false ]);
+
+					goaway(z_root() . '/cloud/' . $which);
+				}
+			}
+
 
 			$f = $r[0];
 
@@ -136,6 +141,19 @@ class Filestorage extends \Zotlabs\Web\Controller {
 
 			goaway(dirname($url));
 		}
+
+
+
+
+		// Since we have ACL'd files in the wild, but don't have ACL here yet, we
+		// need to return for anyone other than the owner, despite the perms check for now.
+
+		$is_owner = (((local_channel()) && ($owner  == local_channel())) ? true : false);
+		if(! ($is_owner || is_site_admin())){
+			info( t('Permission Denied.') . EOL );
+			return;
+		}
+
 
 		if(argc() > 3 && argv(3) === 'edit') {
 			require_once('include/acl_selectors.php');
