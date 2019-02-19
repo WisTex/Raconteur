@@ -1841,19 +1841,19 @@ class Activity {
 			$mention = self::get_actor_bbmention($obj_actor['id']);
 
 			if($act->type === 'Like') {
-				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
 			}
 			if($act->type === 'Dislike') {
-				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
 			}
 			if($act->type === 'Accept' && $act->obj['type'] === 'Event' ) {
-				$content['content'] = sprintf( t('Will attend %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+				$content['content'] = sprintf( t('Will attend %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
 			}
 			if($act->type === 'Reject' && $act->obj['type'] === 'Event' ) {
-				$content['content'] = sprintf( t('Will not attend %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+				$content['content'] = sprintf( t('Will not attend %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
 			}
 			if($act->type === 'TentativeAccept' && $act->obj['type'] === 'Event' ) {
-				$content['content'] = sprintf( t('May attend %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+				$content['content'] = sprintf( t('May attend %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
 			}
 			if($act->type === 'Announce') {
 				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $act->obj['type']);

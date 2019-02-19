@@ -112,7 +112,7 @@ class ZotURL {
 			return false;
 		}
 		$a = json_decode($arr['body'],true);
-		if($a['success']) {
+		if($a['success'] && array_key_exists('results', $a) && is_array($a['results']) && count($a['results'])) {
 			foreach($a['results'] as $b) {
 				$m = discover_by_webbie($b);
 				if($m) {
