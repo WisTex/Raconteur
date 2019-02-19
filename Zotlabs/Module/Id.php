@@ -69,14 +69,14 @@ class Id extends Controller {
 
 			$sql_extra = item_permissions_sql(0);
 
-			$r = q("select * from item where mid like '%s' $item_normal $sql_extra and uid = %d limit 1",
-				dbesc('%/' . $item_id),
+			$r = q("select * from item where uuid = '%s' $item_normal $sql_extra and uid = %d limit 1",
+				dbesc($item_id),
 				intval($channel_id)
 			);
 			if(! $r) {
 
-				$r = q("select * from item where mid like '%s' $item_normal and uid = %d limit 1",
-					dbesc('%/' . $item_id),
+				$r = q("select * from item where uuid = '%s' $item_normal and uid = %d limit 1",
+					dbesc($item_id),
 					intval($channel_id)
 				);
 				if($r) {

@@ -319,9 +319,13 @@ class Like extends \Zotlabs\Web\Controller {
 			}
 		}
 	
-		$mid = item_message_id();
+		$uuid = new_uuid();
 	
 		$arr = array();
+
+		$arr['uuid']  = $uuid;
+        $arr['mid'] = z_root() . '/item/' . $uuid;
+
 	
 		if($extended_like) {
 			$arr['item_thread_top'] = 1;

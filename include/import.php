@@ -1546,7 +1546,8 @@ function import_webpage_element($element, $channel, $type) {
 	}
 	else { // otherwise, generate the creation times and unique id
 		$arr['created'] = datetime_convert('UTC', 'UTC');
-		$arr['mid'] = $arr['parent_mid'] = item_message_id();
+		$arr['uuid'] = new_uuid();
+		$arr['mid'] = $arr['parent_mid'] = z_root() . '/item/' . $arr['uuid'];
 	}
 	// Update the edited time whether or not the element already exists
 	$arr['edited'] = datetime_convert('UTC', 'UTC');

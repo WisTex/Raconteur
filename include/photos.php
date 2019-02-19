@@ -451,12 +451,16 @@ function photo_upload($channel, $observer, $args) {
 		}
 	}
 	else {
-		$mid = item_message_id();
+		
+		$uuid = new_uuid();
+		$mid = z_root() . '/item/' . $uuid;
+
 		$object['id'] = $mid;
 
 		$arr = [
 			'aid'             => $account_id,
 			'uid'             => $channel_id,
+			'uuid'            => $uuid,
 			'mid'             => $mid,
 			'parent_mid'      => $mid,
 			'item_hidden'     => $item_hidden,
@@ -838,12 +842,14 @@ function photos_create_item($channel, $creator_hash, $photo, $visible = false) {
 
 	$item_hidden = (($visible) ? 0 : 1 );
 
-	$mid = item_message_id();
+	$uuid = new_uuid();
+	$mid = z_root() . '/item/' . $uuid;
 
 	$arr = array();
 
 	$arr['aid']             = $channel['channel_account_id'];
 	$arr['uid']             = $channel['channel_id'];
+	$arr['uuid']            = $uuid;
 	$arr['mid']             = $mid;
 	$arr['parent_mid']      = $mid;
 	$arr['item_wall']       = 1;

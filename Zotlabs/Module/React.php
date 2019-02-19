@@ -52,7 +52,8 @@ class React extends \Zotlabs\Web\Controller {
 			$n['item_type'] = $i[0]['item_type'];
 			$n['parent'] = $postid;
 			$n['parent_mid'] = $i[0]['mid'];
-			$n['mid'] = item_message_id();
+			$n['uuid'] = new_uuid();
+			$n['mid'] = z_root() . '/item/' . $n['uuid'];
 			$n['verb'] = ACTIVITY_REACT . '#' . $emoji;
 			$n['body'] = "\n\n[zmg=32x32]" . z_root() . '/images/emoji/' . $emoji . '.png[/zmg]' . "\n\n";
 			$n['author_xchan'] = $channel['channel_hash'];
