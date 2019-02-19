@@ -66,6 +66,15 @@ class ZotURL {
 
 	}
 
+	static public function is_zoturl($s) {
+
+		if(strpos($url,'x-zot:') === 0) {
+			return true;
+		}
+		return false;
+	}
+
+
 	static public function lookup($portable_id) {
 
 		$r = q("select * from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and site_dead = 0 order by hubloc_primary desc",
