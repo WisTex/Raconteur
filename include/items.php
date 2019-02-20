@@ -2075,6 +2075,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 	unset($arr['id']);
 	unset($arr['uid']);
 	unset($arr['aid']);
+	unset($arr['uuid']);
 	unset($arr['mid']);
 	unset($arr['parent']);
 	unset($arr['parent_mid']);
@@ -2103,7 +2104,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 	$arr['route']         = ((array_key_exists('route',$arr)) ? trim($arr['route'])          : $orig[0]['route']);
 
 	$arr['location']      = ((x($arr,'location'))      ? notags(trim($arr['location']))      : $orig[0]['location']);
-   $arr['uuid']          = ((x($arr,'uuid'))          ? notags(trim($arr['uuid']))           : $orig[0]['uuid']);
+	$arr['uuid']          = ((x($arr,'uuid'))          ? notags(trim($arr['uuid']))          : $orig[0]['uuid']);
 	$arr['coord']         = ((x($arr,'coord'))         ? notags(trim($arr['coord']))         : $orig[0]['coord']);
 	$arr['verb']          = ((x($arr,'verb'))          ? notags(trim($arr['verb']))          : $orig[0]['verb']);
 	$arr['obj_type']      = ((x($arr,'obj_type'))      ? notags(trim($arr['obj_type']))      : $orig[0]['obj_type']);
