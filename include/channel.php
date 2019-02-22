@@ -1073,7 +1073,7 @@ function identity_export_year($channel_id, $year, $month = 0) {
 	else
 		$maxdate = datetime_convert('UTC', 'UTC', $year+1 . '-01-01 00:00:00');
 
-	return channel_export_items($channel_id,$mindate,$maxdate);
+	return channel_export_items_date($channel_id,$mindate,$maxdate);
 
 }
 
@@ -1088,7 +1088,7 @@ function identity_export_year($channel_id, $year, $month = 0) {
  * @return array
  */
 
-function channel_export_items($channel_id, $start, $finish) {
+function channel_export_items_date($channel_id, $start, $finish) {
 
 	if(! $start)
 		return array();
@@ -1123,6 +1123,60 @@ function channel_export_items($channel_id, $start, $finish) {
 
 	return $ret;
 }
+
+
+
+/**
+ * @brief Export items with pagination
+ *
+ *
+ * @param int $channel_id The channel ID
+ * @param int $page
+ * @param int $limit (default 50)
+ * @return array
+ */
+
+function channel_export_items_page($channel_id, $page = 0, $limit = 50) {
+
+	if(intval($page) < 1) {
+		$page = 0;
+	}
+
+	if(intval($limit) < 1) {
+		$limit = 1;
+	}
+
+	if(intval($limit) > 5000) {
+		$limit = 5000;
+	}
+
+	$offset = intval($limit) * intval($page);
+
+	$ret = [];
+
+	$ch = channelx_by_n($channel_id);
+	if($ch) {
+		$ret['relocate'] = [ 'channel_address' => $ch['channel_address'], 'url' => z_root()];
+	}
+
+	$r = q("select * from item where ( item_wall = 1 or item_type != %d ) and item_deleted = 0 and uid = %d and resource_type = '' order by created limit %d offset %d",
+		intval(ITEM_TYPE_POST),
+		intval($channel_id),
+		intval($limit),
+		intval($offset)
+	);
+
+	if($r) {
+		$ret['item'] = array();
+		xchan_query($r);
+		$r = fetch_post_tags($r, true);
+		foreach($r as $rr)
+			$ret['item'][] = encode_item($rr, true);
+	}
+
+	return $ret;
+}
+
 
 
 /**

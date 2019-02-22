@@ -6,6 +6,8 @@
 		api_register_func('api/export/basic','api_export_basic', true);
 		api_register_func('api/red/channel/export/basic','api_export_basic', true);
 		api_register_func('api/z/1.0/channel/export/basic','api_export_basic', true);
+		api_register_func('api/red/item/export/page','api_item_export_page', true);
+		api_register_func('api/z/1.0/item/export/page','api_item_export_page', true);
 		api_register_func('api/red/channel/list','api_channel_list', true);
 		api_register_func('api/z/1.0/channel/list','api_channel_list', true);
 		api_register_func('api/red/channel/stream','api_channel_stream', true);
@@ -63,7 +65,7 @@
 
 
 	/*
-	 * Red basic channel export
+	 * basic channel export
 	 */
 
 	function api_export_basic($type) {
@@ -78,6 +80,20 @@
 		}
 
 		json_return_and_die(identity_basic_export(api_user(),$sections));
+	}
+
+	function api_item_export_page($type) {
+		if(api_user() === false) {
+			logger('api_export_basic: no user');
+			return false;
+		}
+		$page = intval($_REQUEST['page']);
+		$records = intval($_REQUEST['records']);
+		if(! $records) {
+			$records = 50;
+		}
+
+		json_return_and_die(channel_export_items_page(api_user(),$page,$records));
 	}
 
 
