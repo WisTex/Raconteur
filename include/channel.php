@@ -1136,7 +1136,7 @@ function channel_export_items_date($channel_id, $start, $finish) {
  * @return array
  */
 
-function channel_export_items_page($channel_id, $page = 0, $limit = 50) {
+function channel_export_items_page($channel_id, $start, $finish, $page = 0, $limit = 50) {
 
 	if(intval($page) < 1) {
 		$page = 0;
@@ -1150,6 +1150,15 @@ function channel_export_items_page($channel_id, $page = 0, $limit = 50) {
 		$limit = 5000;
 	}
 
+	if(! $start)
+		$start = NULL_DATE;
+	else
+		$start = datetime_convert('UTC', 'UTC', $start);
+
+	$finish = datetime_convert('UTC', 'UTC', (($finish) ? $finish : 'now'));
+	if($finish < $start)
+		return [];
+
 	$offset = intval($limit) * intval($page);
 
 	$ret = [];
@@ -1159,9 +1168,11 @@ function channel_export_items_page($channel_id, $page = 0, $limit = 50) {
 		$ret['relocate'] = [ 'channel_address' => $ch['channel_address'], 'url' => z_root()];
 	}
 
-	$r = q("select * from item where ( item_wall = 1 or item_type != %d ) and item_deleted = 0 and uid = %d and resource_type = '' order by created limit %d offset %d",
+	$r = q("select * from item where ( item_wall = 1 or item_type != %d ) and item_deleted = 0 and uid = %d and resource_type = '' and created >= '%s' and created <= '%s' order by created limit %d offset %d",
 		intval(ITEM_TYPE_POST),
 		intval($channel_id),
+		intval($start),
+		intval($finish),
 		intval($limit),
 		intval($offset)
 	);
