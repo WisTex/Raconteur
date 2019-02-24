@@ -160,9 +160,6 @@ class Display {
 		$nosmile = get_pconfig(local_channel(),'system','no_smilies');
 		$nosmile = (($nosmile===false)? '0': $nosmile); // default if not set: 0
 
-		$title_tosource = get_pconfig(local_channel(),'system','title_tosource');
-		$title_tosource = (($title_tosource===false)? '0': $title_tosource); // default if not set: 0
-
 		$theme_config = "";
 		if(($themeconfigfile = $this->get_theme_config_file($theme)) != null){
 			require_once($themeconfigfile);

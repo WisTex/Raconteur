@@ -84,7 +84,7 @@
 
 	function api_item_export_page($type) {
 		if(api_user() === false) {
-			logger('api_export_basic: no user');
+			logger('api_item_export_page: no user');
 			return false;
 		}
 		$page = intval($_REQUEST['page']);
