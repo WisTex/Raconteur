@@ -1171,8 +1171,8 @@ function channel_export_items_page($channel_id, $start, $finish, $page = 0, $lim
 	$r = q("select * from item where ( item_wall = 1 or item_type != %d ) and item_deleted = 0 and uid = %d and resource_type = '' and created >= '%s' and created <= '%s' order by created limit %d offset %d",
 		intval(ITEM_TYPE_POST),
 		intval($channel_id),
-		intval($start),
-		intval($finish),
+		dbesc($start),
+		dbesc($finish),
 		intval($limit),
 		intval($offset)
 	);

@@ -6,8 +6,8 @@
 		api_register_func('api/export/basic','api_export_basic', true);
 		api_register_func('api/red/channel/export/basic','api_export_basic', true);
 		api_register_func('api/z/1.0/channel/export/basic','api_export_basic', true);
-		api_register_func('api/red/item/export/page','api_item_export_page', true);
-		api_register_func('api/z/1.0/item/export/page','api_item_export_page', true);
+		api_register_func('api/red/item/export_page','api_item_export_page', true);
+		api_register_func('api/z/1.0/item/export_page','api_item_export_page', true);
 		api_register_func('api/red/channel/list','api_channel_list', true);
 		api_register_func('api/z/1.0/channel/list','api_channel_list', true);
 		api_register_func('api/red/channel/stream','api_channel_stream', true);
@@ -95,9 +95,9 @@
 		if(! $_REQUEST['since'])
 			$start = NULL_DATE;
 		else {
-			$start = datetime_convert('UTC','UTC', $_REQUEST['since']);
+			$start = datetime_convert(date_default_timezone_get(),'UTC', $_REQUEST['since']);
 		}
-		$finish = datetime_convert('UTC','UTC', (($_REQUEST['until']) ? $_REQUEST['until'] : 'now'));
+		$finish = datetime_convert(date_default_timezone_get(),'UTC', (($_REQUEST['until']) ? $_REQUEST['until'] : 'now'));
 
 		json_return_and_die(channel_export_items_page(api_user(),$start,$finish,$page,$records));
 	}
@@ -178,9 +178,9 @@
 			json_return_and_die(post_activity_item($_REQUEST));
 		}
 		else {
-			$mindate = (($_REQUEST['mindate']) ? datetime_convert('UTC','UTC',$_REQUEST['mindate']) : '');
+			$mindate = (($_REQUEST['mindate']) ? datetime_convert(date_default_timezone_get(),'UTC',$_REQUEST['mindate']) : '');
         	if(! $mindate)
-            	$mindate = datetime_convert('UTC','UTC', 'now - 14 days');
+            	$mindate = datetime_convert(date_defualt_timezone_get(),'UTC', 'now - 14 days');
 
 			json_return_and_die(zot_feed($channel['channel_id'],$channel['channel_hash'],[ 'mindate' => $mindate ]));
 		}
