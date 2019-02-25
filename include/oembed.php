@@ -25,7 +25,7 @@ function oembed_action($embedurl) {
 
 	$embedurl = trim(str_replace('&amp;','&', $embedurl));
 
-	logger('oembed_action: ' . $embedurl, LOGGER_DEBUG, LOG_INFO);
+	//logger('oembed_action: ' . $embedurl, LOGGER_DEBUG, LOG_INFO);
 
 	if(strpos($embedurl,'http://') === 0) {
 		if(intval(get_config('system','embed_sslonly'))) {
@@ -96,7 +96,7 @@ function oembed_action($embedurl) {
 	$arr = array('url' => $embedurl, 'action' => $action);
 	call_hooks('oembed_action',$arr);
 
-	logger('action: ' . $arr['action'] . ' url: ' . $arr['url'], LOGGER_DEBUG,LOG_DEBUG); 
+	//logger('action: ' . $arr['action'] . ' url: ' . $arr['url'], LOGGER_DEBUG,LOG_DEBUG); 
 
 	return $arr;
 
