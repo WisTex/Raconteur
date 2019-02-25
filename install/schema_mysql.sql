@@ -581,6 +581,7 @@ CREATE TABLE IF NOT EXISTS `issue` (
 CREATE TABLE IF NOT EXISTS `item` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `mid` char(191) NOT NULL DEFAULT '',
+  `uuid` char(191) NOT NULL DEFAULT '',
   `aid` int(10) unsigned NOT NULL DEFAULT 0 ,
   `uid` int(10) unsigned NOT NULL DEFAULT 0 ,
   `parent` int(10) unsigned NOT NULL DEFAULT 0 ,
@@ -681,6 +682,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `revision` (`revision`),
   KEY `mimetype` (`mimetype`),
   KEY `mid` (`mid`),
+  KEY `uuid` (`uuid`),
   KEY `parent_mid` (`parent_mid`),
   KEY `uid_mid` (`mid`,`uid`),
   KEY `comment_policy` (`comment_policy`),

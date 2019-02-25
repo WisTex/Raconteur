@@ -7,7 +7,7 @@ use Zotlabs\Web\HTTPSig;
 
 class ZotURL {
 
-	static public function fetch($url,$channel) {
+	static public function fetch($url,$channel,$hub = null) {
 
 		$ret = [ 'success' => false ];
 
@@ -24,7 +24,7 @@ class ZotURL {
 		$u = explode('/',$portable_url);		
 		$portable_id = $u[0];
 
-		$hosts = self::lookup($portable_id);
+		$hosts = self::lookup($portable_id,$hub);
 
 		if(! $hosts) {
 			return $ret;
@@ -75,17 +75,52 @@ class ZotURL {
 	}
 
 
-	static public function lookup($portable_id) {
+	static public function lookup($portable_id,$hub) {
 
 		$r = q("select * from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and site_dead = 0 order by hubloc_primary desc",
 			dbesc($portable_id)
 		);
 
 		if(! $r) {
+
 			// extend to network lookup
+
+			$path = '/q/' . $portable_id;			
+
+			// first check sending hub since they have recently communicated with this object
+
+			$redirects = 0;
+
+			if($hub) {
+				$x = z_fetch_url($hub['hubloc_url'] . $path, false, $redirects);
+				$u = self::parse_response($x);
+				if($u) {
+					return $u;
+				}
+			}
+
+			// If this fails, fallback on directory servers
+
 			return false;
 		}
 		return ids_to_array($r,'hubloc_url');
+	}
+
+
+	static public function parse_response($arr) {
+		if(! $arr['success']) {
+			return false;
+		}
+		$a = json_decode($arr['body'],true);
+		if($a['success'] && array_key_exists('results', $a) && is_array($a['results']) && count($a['results'])) {
+			foreach($a['results'] as $b) {
+				$m = discover_by_webbie($b);
+				if($m) {
+					return([ $b ]);
+				}
+			}
+		}
+		return false;
 	}
 
 }

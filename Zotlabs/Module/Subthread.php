@@ -105,7 +105,8 @@ class Subthread extends \Zotlabs\Web\Controller {
 	
 	
 	
-		$mid = item_message_id();
+		$uuid = new_uuid();
+		$mid = z_root() . '/item/' . $uuid;
 	
 		$post_type = (($item['resource_type'] === 'photo') ? t('photo') : t('status'));
 	
@@ -143,7 +144,8 @@ class Subthread extends \Zotlabs\Web\Controller {
 			$bodyverb = t('%1$s stopped following %2$s\'s %3$s');
 	
 		$arr = array();
-	
+
+		$arr['uuid']          = $uuid;	
 		$arr['mid']           = $mid;
 		$arr['aid']           = $owner_aid;
 		$arr['uid']           = $owner_uid;

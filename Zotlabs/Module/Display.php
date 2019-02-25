@@ -275,7 +275,7 @@ class Display extends Controller {
 				}
 			}
 
-			if(! $r) {
+			if($r === null) {
 
 				// in case somebody turned off public access to sys channel content using permissions
 				// make that content unsearchable by ensuring the owner uid can't match

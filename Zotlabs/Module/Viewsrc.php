@@ -25,7 +25,7 @@ class Viewsrc extends \Zotlabs\Web\Controller {
 			notice( t('Item not found.') . EOL);
 		}
 	
-		$item_normal = item_normal();
+		$item_normal = item_normal_search();
 	
 		if(local_channel() && $item_id) {
 			$r = q("select id, item_flags, mimetype, item_obscured, body, llink, plink from item where uid in (%d , %d) and id = %d $item_normal limit 1",

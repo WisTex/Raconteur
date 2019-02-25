@@ -12,9 +12,9 @@ resembles an email server than a web server. For reliability and performance,
 messages are delivered in the background and are queued for later delivery 
 when sites are down. This kind of functionality requires a bit more of the
 host system than the typical blog. Not every PHP/MySQL hosting provider will
-be able to support Hubzilla. Many will - but please review the requirements
-and confirm these with your hosting provider prior to installation. (And 
-preferably before entering into a long-term contract.)
+be able to support these requirements. Many will - but please review the
+requirements and confirm these with your hosting provider prior to 
+installation. (And preferably before entering into a long-term contract.)
 
 If you encounter installation issues, please let us know via the issue 
 tracker at https://framagit.org/zot/zap where you downloaded the software.
@@ -36,35 +36,16 @@ sub-domain, and can not be installed using alternate TCP ports. These
 restrictions may be relaxed in the future, but will be inconvenient to work
 with, so we still STRONGLY recommend you abide by them. 
 
-Decide if you will use SSL and obtain an SSL certificate before software
-installation.  You SHOULD use SSL. If you use SSL, you MUST use a
-"browser-valid" certificate.  You MUST NOT use self-signed certificates!
+SSL is REQUIRED and you MUST use a "browser-valid" certificate. You MUST NOT
+use self-signed certificates!
 
 Please test your certificate prior to installation. A web tool for testing your
 certificate is available at "http://www.digicert.com/help/". When visiting your
-site for the first time, please use the SSL ("https://") URL if SSL is
-available. This will avoid problems later. The installation routine will not
-allow you to use a non browser-valid certificate.
-
-This restriction is incorporated because public posts from you may contain 
-references to images on your own hub. Other members viewing their stream on
-other hubs will get warnings if your certificate is not trusted by their web
-browser. This will confuse many people because this is a decentralised network
-and they will get the warning about your hub while viewing their own hub and
-may think their own hub has an issue. These warnings are very technical and 
-scary to some folks, many of whom will not know how to proceed except to
-follow the browser advice. This is disruptive to the community. That said, we
-recognise the issues surrounding the current certificate infrastructure and
-agree there are many problems, but that doesn't change the requirement. 
+site for the first time, please use the SSL ("https://") URL. This will avoid
+problems later. 
 
 Free "browser-valid" certificates are available from providers such as StartSSL
 and LetsEncrypt. 
-
-If you do NOT use SSL, there may be a delay of up to a minute for the initial
-install script - while we check the SSL port to see if anything responds there.
-When communicating with new sites, Hubzilla always attempts connection on the
-SSL port first, before falling back to a less secure connection.  If you do not
-use SSL, your webserver MUST NOT listen on port 443 at all.
 
 If you use LetsEncrypt to provide certificates and create a file under 
 .well-known/acme-challenge so that LetsEncrypt can verify your domain
@@ -84,15 +65,15 @@ web server platforms.
 	Example config scripts are available for these platforms in the install 
 	directory. Apache and nginx have the most support. 
 
-    - PHP 7.0 or later. 
+    - PHP 7.1 or later. 
 
     - PHP *command line* access with register_argc_argv set to true in the 
     php.ini file - and with no hosting provider restrictions on the use of 
     exec() and proc_open().
 
     - curl, gd (with at least jpeg and png support), mysqli, mbstring, xml, 
-    xmlreader (FreeBSD), zip and openssl extensions. The imagick extension MAY be used 
-    instead of gd, but is not required and MAY also be disabled via 
+    xmlreader (FreeBSD), zip and openssl extensions. The imagick extension MAY
+    be used instead of gd, but is not required and MAY also be disabled via 
     configuration option. 
 
     - some form of email server or email gateway such that PHP mail() works.
@@ -239,13 +220,14 @@ one shown, substituting for your unique paths and settings:
 
 You can generally find the location of PHP by executing "which php". If you 
 have troubles with this section please contact your hosting provider for 
-assistance. Hubzilla will not work correctly if you cannot perform this step.
+assistance. The software will not work correctly if you cannot perform this
+step.
 
-You should also be sure that App::$config['system']['php_path'] is set correctly 
-in your .htconfig.php file, it should look like (changing it to the correct 
-PHP location):
+You should also be sure that App::$config['system']['php_path'] is set
+correctly in your .htconfig.php file, it should look like (changing it to the
+correct PHP location):
 
-App::$config['system']['php_path'] = '/usr/local/php70/bin/php';
+App::$config['system']['php_path'] = '/usr/local/php72/bin/php';
   
  
 #####################################################################
@@ -287,7 +269,7 @@ generally be world-readable.
 
 Ensure that mod-rewite is installed and working, and that your
 .htaccess file is being used. To verify the latter, create a file test.out
-containing the word "test" in the top directory of the Hubzilla, make it world 
+containing the word "test" in the top web directory, make it world 
 readable and point your web browser to
 
 http://yoursitenamehere.com/test.out
@@ -386,13 +368,14 @@ However, in /etc/mysql/my.cnf the maximum number of connection is set to
 150 workers are a lot and probably too much for small servers. However you
 set those values, make sure that the number of Apache workers is smaller
 than the number of connections MySQL accepts, leaving some room for other
-stuff on your server that might access MySQL, and Hubzilla's poller which
-needs MySQL access, too. A good setting for a medium-sized hub might be to
-keep MySQL's max_connections at 100 and set mpm_prefork's
-MaxRequestWorkers to 70.
+stuff on your server that might access MySQL, and the communication poller
+whichneeds MySQL access, too. A good setting for a medium-sized hub might be
+to keep MySQL's max_connections at 100 and set mpm_prefork's MaxRequestWorkers
+to 70.
 
 Here you can read more about Apache performance tuning:
 https://httpd.apache.org/docs/2.4/misc/perf-tuning.html
 
-There are tons of scripts to help you with fine-tuning your Apache installation. 
-Just search with your favorite search engine 'apache fine-tuning script'.
+There are tons of scripts to help you with fine-tuning your Apache
+installation. Just search with your favorite search engine 
+'apache fine-tuning script'.

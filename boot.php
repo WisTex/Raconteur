@@ -35,7 +35,7 @@ require_once('include/items.php');
 define ( 'STD_VERSION',             '2.4' );
 define ( 'ZOT_REVISION',            '6.0' );
 
-define ( 'DB_UPDATE_VERSION',       1226 );
+define ( 'DB_UPDATE_VERSION',       1227 );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 

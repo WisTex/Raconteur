@@ -15,6 +15,7 @@ class ActivityStreams {
 
 	public $raw        = null;
 	public $data       = null;
+	public $hub        = null;
 	public $valid      = false;
 	public $deleted    = false;
 	public $id         = '';
@@ -38,9 +39,10 @@ class ActivityStreams {
 	 *
 	 * @param string $string
 	 */
-	function __construct($string) {
+	function __construct($string,$hub = null) {
 
 		$this->raw  = $string;
+		$this->hub  = $hub;
 
 		if(is_array($string)) {
 			$this->data = $string;
@@ -266,8 +268,8 @@ class ActivityStreams {
 	 * @return NULL|mixed
 	 */
 
-	function fetch_property($url,$channel = null) {
-		return Activity::fetch($url,$channel);
+	function fetch_property($url,$channel = null,$hub = null) {
+		return Activity::fetch($url,$channel,$hub);
 	}
 
 	static function is_an_actor($s) {

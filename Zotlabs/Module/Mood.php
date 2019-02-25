@@ -68,7 +68,8 @@ class Mood extends Controller {
 	
 		$poster = App::get_observer();
 	
-		$mid = item_message_id();
+		$uuid = new_uuid();
+		$mid = z_root() . '/item/' . $uuid;
 	
 		$action = sprintf( t('%1$s is %2$s','mood'), '[zrl=' . $poster['xchan_url'] . ']' . $poster['xchan_name'] . '[/zrl]' , $verbs[$verb]); 
 	
@@ -76,6 +77,7 @@ class Mood extends Controller {
 	
 		$arr['aid']           = get_account_id();
 		$arr['uid']           = $uid;
+		$arr['uuid']          = $uuid;
 		$arr['mid']           = $mid;
 		$arr['parent_mid']    = (($parent_mid) ? $parent_mid : $mid);
 		$arr['author_xchan']  = $poster['xchan_hash'];

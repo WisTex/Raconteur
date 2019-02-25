@@ -19,12 +19,12 @@ class Activity extends \Zotlabs\Web\Controller {
 
 			$sql_extra = item_permissions_sql(0);
 
-			$r = q("select * from item where mid like '%s' $item_normal $sql_extra limit 1",
-				dbesc($item_id . '%')
+			$r = q("select * from item where uuid = '%s' $item_normal $sql_extra limit 1",
+				dbesc($item_id)
 			);
 			if(! $r) {
-				$r = q("select * from item where mid like '%s' $item_normal limit 1",
-					dbesc($item_id . '%')
+				$r = q("select * from item where uuid = '%s' $item_normal limit 1",
+					dbesc($item_id)
 				);
 
 				if($r) {

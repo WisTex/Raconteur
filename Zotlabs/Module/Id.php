@@ -47,16 +47,16 @@ class Id extends Controller {
 				$portable_id = $sigdata['portable_id'];
 			}
 
-			$r = q("select channel_id, channel_address from channel where channel_hash = '%s' limit 1",
-				dbesc($request_portable_id)
-			);
-			if($r) {
-				$channel_id = $r[0]['channel_id'];
+
+			$chan = channelx_by_hash($request_portable_id);
+
+			if($chan) {
+				$channel_id = $chan['channel_id'];
 				if(! $item_id) {
 					$handler = new Channel();
 					App::$argc = 2;
 					App::$argv[0] = 'channel';
-					App::$argv[1] = $r[0]['channel_address'];
+					App::$argv[1] = $chan['channel_address'];
 					$handler->init();
 				}
 			}
@@ -69,14 +69,14 @@ class Id extends Controller {
 
 			$sql_extra = item_permissions_sql(0);
 
-			$r = q("select * from item where mid like '%s' $item_normal $sql_extra and uid = %d limit 1",
-				dbesc('%/' . $item_id),
+			$r = q("select * from item where uuid = '%s' $item_normal $sql_extra and uid = %d limit 1",
+				dbesc($item_id),
 				intval($channel_id)
 			);
 			if(! $r) {
 
-				$r = q("select * from item where mid like '%s' $item_normal and uid = %d limit 1",
-					dbesc('%/' . $item_id),
+				$r = q("select * from item where uuid = '%s' $item_normal and uid = %d limit 1",
+					dbesc($item_id),
 					intval($channel_id)
 				);
 				if($r) {
@@ -85,79 +85,13 @@ class Id extends Controller {
 				http_status_exit(404, 'Not found');
 			}
 
-
-			$items = q("select parent as item_id from item where mid = '%s' and uid = %d $item_normal $sql_extra ",
-				dbesc($r[0]['parent_mid']),
-				intval($r[0]['uid'])
-			);
-			if(! $items) {
-				http_status_exit(404, 'Not found');
-			}
-
-			$r = $items;
-
-			$parents_str = ids_to_querystr($r,'item_id');
-	
-			$items = q("SELECT item.*, item.id AS item_id FROM item WHERE item.parent IN ( %s ) $item_normal $sql_extra ",
-				dbesc($parents_str)
-			);
-
-			if(! $items) {
-				http_status_exit(404, 'Not found');
-			}
-
-			$r = $items;
-			xchan_query($r,true);
-			$items = fetch_post_tags($r,true);
-
-			$observer = App::get_observer();
-			$parent = $items[0];
-			$recips = (($parent['owner']['xchan_network'] === 'activitypub') ? get_iconfig($parent['id'],'activitypub','recips', []) : []);
-			$to = (($recips && array_key_exists('to',$recips) && is_array($recips['to'])) ? $recips['to'] : null);
-			$nitems = [];
-			foreach($items as $i) {
-
-				$mids = [];
-
-				if(intval($i['item_private'])) {
-					if(! $observer) {
-						continue;
-					}
-					// ignore private reshare, possibly from hubzilla
-					if($i['verb'] === 'Announce') {
-						if(! in_array($i['thr_parent'],$mids)) {
-							$mids[] = $i['thr_parent'];
-						}
-						continue;
-					}
-					// also ignore any children of the private reshares
-					if(in_array($i['thr_parent'],$mids)) {
-						continue;
-					}
-
-					if((! $to) || (! in_array($observer['xchan_url'],$to))) {
-						continue;
-					}
-
-				}
-				$nitems[] = $i;
-			}
-
-			if(! $nitems)
-				http_status_exit(404, 'Not found');
-
-			$chan = channelx_by_n($nitems[0]['uid']);
-
-			if(! $chan)
-				http_status_exit(404, 'Not found');
-
 			if(! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream'))
 				http_status_exit(403, 'Forbidden');
 
-			$i = Activity::encode_item_collection($nitems,'conversation/' . $item_id,'OrderedCollection',( defined('NOMADIC') ? false : true));
-			if($portable_id) {
-				ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
-			}
+			xchan_query($r,true);
+			$items = fetch_post_tags($r,true);
+
+			$i = Activity::encode_item($items[0],( defined('NOMADIC') ? false : true));
 
 			if(! $i)
 				http_status_exit(404, 'Not found');
@@ -170,7 +104,6 @@ class Id extends Controller {
 
 			$headers = [];
 			$headers['Content-Type'] = 'application/x-zot+json' ;
-			$x['signature'] = LDSignatures::sign($x,$chan);
 			$ret = json_encode($x, JSON_UNESCAPED_SLASHES);
 			$headers['Digest'] = HTTPSig::generate_digest_header($ret);
 			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];

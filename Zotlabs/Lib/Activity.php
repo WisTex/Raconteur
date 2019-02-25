@@ -36,7 +36,7 @@ class Activity {
 
 
 
-	static function fetch($url,$channel = null) {
+	static function fetch($url,$channel = null,$hub = null) {
 		$redirects = 0;
 		if(! check_siteallowed($url)) {
 			logger('blacklisted: ' . $url);
@@ -49,7 +49,7 @@ class Activity {
 		logger('fetch: ' . $url, LOGGER_DEBUG);
 
 		if(strpos($url,'x-zot:') === 0) {
-			$x = ZotURL::fetch($url,$channel);
+			$x = ZotURL::fetch($url,$channel,$hub);
 		}
 		else {
 			$m = parse_url($url);
@@ -1841,19 +1841,19 @@ class Activity {
 			$mention = self::get_actor_bbmention($obj_actor['id']);
 
 			if($act->type === 'Like') {
-				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
 			}
 			if($act->type === 'Dislike') {
-				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
 			}
 			if($act->type === 'Accept' && $act->obj['type'] === 'Event' ) {
-				$content['content'] = sprintf( t('Will attend %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+				$content['content'] = sprintf( t('Will attend %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
 			}
 			if($act->type === 'Reject' && $act->obj['type'] === 'Event' ) {
-				$content['content'] = sprintf( t('Will not attend %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+				$content['content'] = sprintf( t('Will not attend %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
 			}
 			if($act->type === 'TentativeAccept' && $act->obj['type'] === 'Event' ) {
-				$content['content'] = sprintf( t('May attend %1$s\'s %2$s'),$mention,$act->obj['type']) . "\n\n" . $content['content'];
+				$content['content'] = sprintf( t('May attend %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
 			}
 			if($act->type === 'Announce') {
 				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $act->obj['type']);

@@ -1,6 +1,6 @@
 INPUT = README.md index.php boot.php include/ install/ util/ view/ Zotlabs/
 RECURSIVE = YES
-PROJECT_NAME = "The Hubzilla"
+PROJECT_NAME = "Hubzilla"
 PROJECT_LOGO = images/rm-64.png
 EXCLUDE = .htconfig.php library/ doc/ store/ vendor/ .git/ util/zotsh/easywebdav/ util/generate-hooks-index/
 EXCLUDE_PATTERNS = *smarty3* *strings.php *.out *test*

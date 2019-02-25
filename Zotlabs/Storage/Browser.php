@@ -205,17 +205,21 @@ class Browser extends DAV\Browser\Plugin {
 			// upload access. system.thumbnail_security should be set to 1 if you want to include these 
 			// types 
 
+			$is_creator = false;
 			$photo_icon = '';
 			$preview_style = intval(get_config('system','thumbnail_security',0));
 
-			$r = q("select content from attach where hash = '%s' and uid = %d limit 1",
+			$r = q("select content, creator from attach where hash = '%s' and uid = %d limit 1",
 				dbesc($attachHash),
 				intval($owner)
 			);
 
-			if($r && file_exists(dbunescbin($r[0]['content']) . '.thumb')) {
-				$photo_icon = 'data:image/jpeg;base64,' . base64_encode(file_get_contents(dbunescbin($r[0]['content']) . '.thumb'));
-//				logger('found thumb: ' . $photo_icon);
+			if($r) {
+				$is_creator = (($r[0]['creator'] === get_observer_hash()) ? true : false);
+			 	if(file_exists(dbunescbin($r[0]['content']) . '.thumb')) {
+					$photo_icon = 'data:image/jpeg;base64,' . base64_encode(file_get_contents(dbunescbin($r[0]['content']) . '.thumb'));
+//					logger('found thumb: ' . $photo_icon);
+				}
 			}
 
 			if(strpos($type,'image/') === 0 && $attachHash) {
@@ -247,6 +251,7 @@ class Browser extends DAV\Browser\Plugin {
 			$ft['attachIcon'] = (($size) ? $attachIcon : '');
 			// @todo Should this be an item value, not a global one?
 			$ft['is_owner'] = $is_owner;
+			$ft['is_creator'] = $is_creator;
 			$ft['fullPath'] = $fullPath;
 			$ft['displayName'] = $displayName;
 			$ft['type'] = $type;
@@ -256,6 +261,7 @@ class Browser extends DAV\Browser\Plugin {
 			$ft['iconFromType'] = getIconFromType($type);
 
 			$f[] = $ft;
+
 		}
 
 

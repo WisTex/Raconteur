@@ -1,18 +1,20 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
 
-class Uexport extends \Zotlabs\Web\Controller {
+class Uexport extends Controller {
 
 	function init() {
 		if(! local_channel())
-			killme();
+			return;
 	
 		if(argc() > 1) {
 
 			$sections = (($_REQUEST['sections']) ? explode(',',$_REQUEST['sections']) : '');
 
-			$channel = \App::get_channel();
+			$channel = App::get_channel();
 
 			if(argc() > 1 && intval(argv(1)) > 1900) {
 				$year = intval(argv(1));

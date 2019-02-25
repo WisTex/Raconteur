@@ -390,7 +390,11 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 	if(! array_key_exists('mimetype',$arr))
 		$arr['mimetype'] = 'text/bbcode';
 
-	$arr['mid']          = ((x($arr,'mid')) ? $arr['mid'] : item_message_id());
+    if(! $arr['mid']) {
+        $arr['uuid']         = ((x($arr,'uuid')) ? $arr['uuid'] : new_uuid());
+    }
+    $arr['mid']          = ((x($arr,'mid')) ? $arr['mid'] : z_root() . '/item/' . $arr['uuid']);
+
 	$arr['parent_mid']   = ((x($arr,'parent_mid')) ? $arr['parent_mid'] : $arr['mid']);
 	$arr['thr_parent']   = ((x($arr,'thr_parent')) ? $arr['thr_parent'] : $arr['mid']);
 
@@ -625,6 +629,7 @@ function get_item_elements($x,$allow_code = false) {
 	if(mb_strlen($arr['title']) > 255)
 		$arr['title'] = mb_substr($arr['title'],0,255);
 
+    $arr['uuid']         = (($x['uuid'])           ? htmlspecialchars($x['uuid'],           ENT_COMPAT,'UTF-8',false) : '');
 	$arr['app']          = (($x['app'])            ? htmlspecialchars($x['app'],            ENT_COMPAT,'UTF-8',false) : '');
 	$arr['route']        = (($x['route'])          ? htmlspecialchars($x['route'],          ENT_COMPAT,'UTF-8',false) : '');
 	$arr['mid']          = (($x['message_id'])     ? htmlspecialchars($x['message_id'],     ENT_COMPAT,'UTF-8',false) : '');
@@ -1080,6 +1085,7 @@ function encode_item($item,$mirror = false) {
 		$x['item_blocked'] = $item['item_blocked'];
 	}
 
+	$x['uuid']            = $item['uuid'];
 	$x['message_id']      = $item['mid'];
 	$x['message_top']     = $item['parent_mid'];
 	$x['message_parent']  = $item['thr_parent'];
@@ -1525,6 +1531,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	$arr['deny_gid']      = ((x($arr,'deny_gid'))      ? trim($arr['deny_gid'])              : '');
 	$arr['postopts']      = ((x($arr,'postopts'))      ? trim($arr['postopts'])              : '');
 	$arr['route']         = ((x($arr,'route'))         ? trim($arr['route'])                 : '');
+    $arr['uuid']          = ((x($arr,'uuid'))          ? trim($arr['uuid'])                  : '');
 	$arr['item_private']  = ((x($arr,'item_private'))  ? intval($arr['item_private'])        : 0 );
 	$arr['item_wall']     = ((x($arr,'item_wall'))     ? intval($arr['item_wall'])           : 0 );
 	$arr['item_type']     = ((x($arr,'item_type'))     ? intval($arr['item_type'])           : 0 );
@@ -2068,6 +2075,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 	unset($arr['id']);
 	unset($arr['uid']);
 	unset($arr['aid']);
+	unset($arr['uuid']);
 	unset($arr['mid']);
 	unset($arr['parent']);
 	unset($arr['parent_mid']);
@@ -2096,6 +2104,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 	$arr['route']         = ((array_key_exists('route',$arr)) ? trim($arr['route'])          : $orig[0]['route']);
 
 	$arr['location']      = ((x($arr,'location'))      ? notags(trim($arr['location']))      : $orig[0]['location']);
+	$arr['uuid']          = ((x($arr,'uuid'))          ? notags(trim($arr['uuid']))          : $orig[0]['uuid']);
 	$arr['coord']         = ((x($arr,'coord'))         ? notags(trim($arr['coord']))         : $orig[0]['coord']);
 	$arr['verb']          = ((x($arr,'verb'))          ? notags(trim($arr['verb']))          : $orig[0]['verb']);
 	$arr['obj_type']      = ((x($arr,'obj_type'))      ? notags(trim($arr['obj_type']))      : $orig[0]['obj_type']);
@@ -2951,7 +2960,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 
 		$arr['item_origin'] = 1;
 		$arr['item_wall'] = 1;
-		$arr['mid'] = item_message_id();
+		$arr['uuid'] = new_uuid();
 		$arr['mid'] = str_replace('/item/','/activity/',$arr['mid']);
 		$arr['parent_mid'] = $item['mid'];
 
@@ -4400,7 +4409,8 @@ function send_profile_photo_activity($channel,$photo,$profile) {
 	$arr['item_wall'] = 1;
 	$arr['obj_type'] = ACTIVITY_OBJ_NOTE;
 	$arr['verb'] = ACTIVITY_CREATE;
-	$arr['mid'] = item_message_id();
+	$arr['uuid'] = new_uuid();
+	$arr['mid'] = z_root() . '/item/' . $arr['uuid'];
 
 	if(stripos($profile['gender'],t('female')) !== false)
 		$t = t('%1$s updated her %2$s');
@@ -4610,7 +4620,8 @@ function item_create_edit_activity($post) {
 
 	$new_item['id'] = 0;
 	$new_item['parent'] = 0;
-	$new_item['mid'] = item_message_id();
+	$new_item['uuid'] = new_uuid();
+	$new_item['mid'] = z_root() . '/item/' . $new_item['uuid'];
 
 	$new_item['body'] = sprintf( t('[Edited %s]'), (($update_item['item_thread_top']) ? t('Post','edit_activity') : t('Comment','edit_activity')));
 

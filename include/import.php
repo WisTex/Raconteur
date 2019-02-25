@@ -1111,9 +1111,8 @@ function sync_files($channel, $files) {
 				continue;
 
 			if($f['attach']) {
-				$attachment_stored = false;
 				foreach($f['attach'] as $att) {
-
+					$attachment_stored = false;
 					convert_oldfields($att,'data','content');
 
 					if($att['deleted']) {
@@ -1201,12 +1200,14 @@ function sync_files($channel, $files) {
 
 						// process/sync a remote rename/move operation
 
-						if($orig_attach['content'] !== $newfname) {
+						if($orig_attach && $orig_attach['content'] && $orig_attach['content'] !== $newfname) {
+							logger('rename: ' . $orig_attach['content'] . ' -> ' . $newfname);
 							rename($orig_attach['content'],$newfname);
 						}
 
-						if(! dbesc_array($att))
+						if(! dbesc_array($att)) {
 							continue;
+						}
 
 						$str = '';
 						foreach($att as $k => $v) {
@@ -1222,6 +1223,7 @@ function sync_files($channel, $files) {
 						create_table_from_array('attach',$att);
 					}
 
+
 					// is this a directory?
 
 					if($att['filetype'] === 'multipart/mixed' && $att['is_dir']) {
@@ -1230,6 +1232,7 @@ function sync_files($channel, $files) {
 						continue;
 					}
 					else {
+
 						// it's a file
 						// for the sync version of this algorithm (as opposed to 'offline import')
 						// we will fetch the actual file from the source server so it can be
@@ -1242,22 +1245,27 @@ function sync_files($channel, $files) {
 							'time' => $time,
 							'resource' => $att['hash'],
 							'revision' => 0,
-							'signature' => zot_sign($channel['channel_hash'] . '.' . $time, $channel['channel_prvkey'])
+							'signature' => Libzot::sign($channel['channel_hash'] . '.' . $time, $channel['channel_prvkey'])
 						);
 
 						$store_path = $newfname;
 
+
 						$fp = fopen($newfname,'w');
+
 						if(! $fp) {
 							logger('failed to open storage file.',LOGGER_NORMAL,LOG_ERR);
 							continue;
 						}
+
 						$redirects = 0;
 
 
 						$headers = [ 'Accept' => 'application/x-zot+json', 'Sigtoken' => random_string() ];
 						$headers = HTTPSig::create_sig($headers,$channel['channel_prvkey'],	channel_url($channel),true,'sha512');
+
 						$x = z_post_url($fetch_url,$parr,$redirects,[ 'filep' => $fp, 'headers' => $headers]);
+
 						fclose($fp);
 
 						if($x['success']) {
@@ -1546,7 +1554,8 @@ function import_webpage_element($element, $channel, $type) {
 	}
 	else { // otherwise, generate the creation times and unique id
 		$arr['created'] = datetime_convert('UTC', 'UTC');
-		$arr['mid'] = $arr['parent_mid'] = item_message_id();
+		$arr['uuid'] = new_uuid();
+		$arr['mid'] = $arr['parent_mid'] = z_root() . '/item/' . $arr['uuid'];
 	}
 	// Update the edited time whether or not the element already exists
 	$arr['edited'] = datetime_convert('UTC', 'UTC');
