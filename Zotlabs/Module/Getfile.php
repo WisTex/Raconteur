@@ -35,6 +35,13 @@ class Getfile extends \Zotlabs\Web\Controller {
 		$revision = intval($_POST['revision']);
 		$resolution = (-1);
 
+		if(argc() > 1) {
+			$verify_hash = argv(1);
+			if($verify_hash !== $hash) {
+				killme();
+			}
+		}
+
 		if(! $hash) {
 			killme();
 		}

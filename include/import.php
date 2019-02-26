@@ -1260,11 +1260,18 @@ function sync_files($channel, $files) {
 
 						$redirects = 0;
 
+						$m = parse_url($fetch_url);
 
-						$headers = [ 'Accept' => 'application/x-zot+json', 'Sigtoken' => random_string() ];
+						$headers = [ 
+							'Accept'           => 'application/x-zot+json', 
+							'Sigtoken'         => random_string(),
+							'Host'             => $m['host'],
+							'(request-target)' => 'post ' . $fetch_url . '/' . $att['hash']
+						];
+
 						$headers = HTTPSig::create_sig($headers,$channel['channel_prvkey'],	channel_url($channel),true,'sha512');
 
-						$x = z_post_url($fetch_url,$parr,$redirects,[ 'filep' => $fp, 'headers' => $headers]);
+						$x = z_post_url($fetch_url . '/' . $att['hash'],$parr,$redirects,[ 'filep' => $fp, 'headers' => $headers]);
 
 						fclose($fp);
 
@@ -1341,11 +1348,22 @@ function sync_files($channel, $files) {
 						}
 						$redirects = 0;
 
-						$headers = [ 'Accept' => 'application/x-zot+json', 'Sigtoken' => random_string() ];
+
+						$m = parse_url($fetch_url);
+
+						$headers = [ 
+							'Accept'           => 'application/x-zot+json', 
+							'Sigtoken'         => random_string(),
+							'Host'             => $m['host'],
+							'(request-target)' => 'post ' . $fetch_url . '/' . $att['hash']
+						];
+
 						$headers = HTTPSig::create_sig($headers,$channel['channel_prvkey'],	channel_url($channel),true,'sha512');
 
-						$x = z_post_url($fetch_url,$parr,$redirects,[ 'filep' => $fp, 'headers' => $headers]);
+						$x = z_post_url($fetch_url . '/' . $att['hash'],$parr,$redirects,[ 'filep' => $fp, 'headers' => $headers]);
+
 						fclose($fp);
+
 						$p['content'] = file_get_contents($stored_image);
 						unlink($stored_image);
 					}
