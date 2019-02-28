@@ -385,11 +385,13 @@ class Notifier {
 
 			if(($relay_to_owner || $uplink) && ($cmd !== 'relay')) {
 				logger('followup relay (upstream delivery)', LOGGER_DEBUG);
-				self::$recipients = [ ($uplink) ? $parent_item['source_xchan'] : $parent_item['owner_xchan'] ];
+				$sendto = ($uplink) ? $parent_item['source_xchan'] : $parent_item['owner_xchan'];
+				self::$recipients = [ $sendto ];
 				self::$private = true;
 				$upstream = true;
 				self::$packet_type = 'response';
-				if($relay_to_owner && $thread_is_public) {
+				$is_moderated = their_perms_contains($parent_item['uid'],$sendto,'moderated');
+				if($relay_to_owner && $thread_is_public && (! $is_moderated)) {
 					Master::Summon([ 'Notifier' , 'hyper', $item_id ]);
 				}
 						

@@ -451,10 +451,11 @@ class Item extends Controller {
 			$can_comment = false;
 
 			$can_comment = can_comment_on_post($observer['xchan_hash'],$parent_item);
-                        if (!$can_comment) {
-                                if((array_key_exists('owner',$parent_item)) && intval($parent_item['owner']['abook_self'])==1 )
-				        $can_comment = perm_is_allowed($profile_uid,$observer['xchan_hash'],'post_comments');
-                        }
+			if (! $can_comment) {
+				if ((array_key_exists('owner',$parent_item)) && intval($parent_item['owner']['abook_self']) == 1 ) {
+					$can_comment = perm_is_allowed($profile_uid,$observer['xchan_hash'],'post_comments');
+				}
+			}
 	
 			if(! $can_comment) {
 				notice( t('Permission denied.') . EOL) ;
@@ -476,7 +477,15 @@ class Item extends Controller {
 			}
 		}
 	
+		if ($moderated === false && intval($uid) !== intval($profile_uid)) {
+			$moderated = perm_is_allowed($profile_uid,$observer['xchan_hash'],'moderated');
+		}
 	
+		$remote_moderated = (($parent) ? their_perms_contains($profile_uid,$parent_item['owner_xchan'],'moderated') : false);
+		if($remote_moderated) {
+			notice( t('Comment may be moderated.') . EOL);
+		}
+
 		// is this an edited post?
 	
 		$orig_post = null;
@@ -1286,7 +1295,7 @@ class Item extends Controller {
 		logger('post_complete');
 
 		if($moderated) {
-			info(t('Your comment is awaiting approval.') . EOL);
+			info(t('Your post/comment is awaiting approval.') . EOL);
 		}
 	
 		// figure out how to return, depending on from whence we came

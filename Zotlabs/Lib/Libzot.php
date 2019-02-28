@@ -1581,6 +1581,11 @@ class Libzot {
 
 			if($arr['mid'] !== $arr['parent_mid']) {
 
+				if(perm_is_allowed($channel['channel_id'],$sender,'moderated')) {
+					$arr['item_blocked'] = ITEM_MODERATED;
+				}
+
+
 				// check source route.
 				// We are only going to accept comments from this sender if the comment has the same route as the top-level-post,
 				// this is so that permissions mismatches between senders apply to the entire conversation

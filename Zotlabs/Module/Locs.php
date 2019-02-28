@@ -1,16 +1,19 @@
 <?php
-namespace Zotlabs\Module; /** @file */
+namespace Zotlabs\Module; 
+
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Daemon\Master;
 
 
-
-class Locs extends \Zotlabs\Web\Controller {
+class Locs extends Controller {
 
 	function post() {
 	
 		if(! local_channel())
 			return;
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 		if($_REQUEST['primary']) {
 			$hubloc_id = intval($_REQUEST['primary']);
@@ -34,7 +37,7 @@ class Locs extends \Zotlabs\Web\Controller {
 					dbesc($channel['channel_hash'])
 				);
 	
-				\Zotlabs\Daemon\Master::Summon(array('Notifier','refresh_all',$channel['channel_id']));
+				Master::Summon( [ 'Notifier', 'refresh_all', $channel['channel_id'] ] );
 				return;
 			}			
 		}
@@ -72,7 +75,7 @@ class Locs extends \Zotlabs\Web\Controller {
 					intval($hubloc_id),
 					dbesc($channel['channel_hash'])
 				);
-				\Zotlabs\Daemon\Master::Summon(array('Notifier','refresh_all',$channel['channel_id']));
+				Master::Summon( [ 'Notifier', 'refresh_all', $channel['channel_id'] ] );
 				return;
 			}			
 		}
@@ -88,11 +91,11 @@ class Locs extends \Zotlabs\Web\Controller {
 			return;
 		}
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 		if($_REQUEST['sync']) {
-			\Zotlabs\Daemon\Master::Summon(array('Notifier','refresh_all',$channel['channel_id']));
-			info( t('Syncing locations') . EOL);
+			Master::Summon( [ 'Notifier', 'refresh_all', $channel['channel_id'] ] );
+			info( t('Pushing location info') . EOL);
 			goaway(z_root() . '/locs');
 		}
 	
@@ -112,19 +115,19 @@ class Locs extends \Zotlabs\Web\Controller {
 			$r[$x]['deleted'] = (intval($r[$x]['hubloc_deleted']) ? true : false);
 		}
 	
-		$o = replace_macros(get_markup_template('locmanage.tpl'), array(
+		$o = replace_macros(get_markup_template('locmanage.tpl'), [
 			'$header' => t('Manage Channel Locations'),
 			'$loc' => t('Location'),
 			'$addr' => t('Address'),
 			'$mkprm' => t('Primary'),
 			'$drop' => t('Drop'),
 			'$submit' => t('Submit'),
-			'$sync' => t('Sync Now'),
+			'$sync' => t('Publish these settings'),
 			'$sync_text' => t('Please wait several minutes between consecutive operations.'),
 			'$drop_text' => t('When possible, drop a location by logging into that website/hub and removing your channel.'),
 			'$last_resort' => t('Use this form to drop the location if the hub is no longer operating.'),
 			'$hubs' => $r
-		));
+		] );
 	
 		return $o;
 	}

@@ -2340,6 +2340,22 @@ function channelx_by_hash($hash) {
 }
 
 /**
+ * @brief Get a channel array by a channel_address.
+ *
+ * @param string $address
+ * @return array|boolean false if channel ID not found, otherwise the channel array
+ */
+function channelx_by_address($address) {
+	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_address = '%s' and channel_removed = 0 LIMIT 1",
+		dbesc($address)
+	);
+
+	return(($r) ? $r[0] : false);
+}
+
+
+
+/**
  * @brief Get a channel array by a channel ID.
  *
  * @param int $id A channel ID

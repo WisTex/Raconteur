@@ -233,6 +233,10 @@ class Enotify {
 		$preamble = sprintf( t('%1$s commented on an item/conversation you have been following.'), $sender['xchan_name']); 
 		$epreamble = $dest_str; 
 
+		if ($moderated) {
+			$epreamble .= ' ' . t('(Moderated)');
+		}
+
 		$sitelink = t('Please visit %s to view and/or reply to the conversation.');
 		$tsitelink = sprintf( $sitelink, $siteurl );
 		$hsitelink = sprintf( $sitelink, '<a href="' . $siteurl . '">' . $sitename . '</a>');

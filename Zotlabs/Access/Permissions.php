@@ -63,6 +63,7 @@ class Permissions {
 			'post_comments' => t('Can comment on or like my posts'),
 			'post_like'     => t('Can like/dislike profiles and profile things'),
 			'republish'     => t('Can source my public posts in derived channels'),
+			'moderated'     => t('Comments are moderated'),
 			'delegate'      => t('Can administer my channel')
 		];
 
