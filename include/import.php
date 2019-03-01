@@ -684,7 +684,8 @@ function import_items($channel, $items, $sync = false, $relocate = null) {
 			if($sync && $item['item_wall']) {
 				// deliver singletons if we have any
 				if($item_result && $item_result['success']) {
-					Zotlabs\Daemon\Master::Summon( [ 'Notifier','single_activity',$item_result['item_id'] ]);
+					// Not applicable to Zap as it does not federate with singletons. 
+					// Zotlabs\Daemon\Master::Summon( [ 'Notifier','single_activity',$item_result['item_id'] ]);
 				}
 			}
 		}
@@ -1071,7 +1072,8 @@ function import_mail($channel, $mails, $sync = false) {
 			$m['channel_id'] = $channel['channel_id'];
 			$mail_id = mail_store($m);
 			if($sync && $mail_id) {
-				Zotlabs\Daemon\Master::Summon(array('Notifier','single_mail',$mail_id));
+				// Not applicable to Zap which does not federate with singletons
+				// Zotlabs\Daemon\Master::Summon(array('Notifier','single_mail',$mail_id));
 			}
  		}
 	}
