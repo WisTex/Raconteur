@@ -1339,6 +1339,14 @@ class Libzot {
 
 		if($c) {
 			foreach($c as $cc) {
+
+				// top level activity sent to ourself: ignore. Clones will get a sync activity
+				// which is a true clone of the original item. Everything else is a duplicate.
+
+				if ($check_mentions && $cc['channel_hash'] === $msg['sender']) {
+					continue;
+				}
+
 				if(perm_is_allowed($cc['channel_id'],$msg['sender'],$perm)) {
 					$r[] = $cc['channel_hash'];
 				}
@@ -1350,8 +1358,6 @@ class Libzot {
 			if($sys)
 				$r[] = $sys['channel_hash'];
 		}
-
-
 
 		// look for any public mentions on this site
 		// They will get filtered by tgroup_check() so we don't need to check permissions now
@@ -1365,8 +1371,9 @@ class Libzot {
 							$address = basename($tag['href']);
 							if($address) {
 								$z = q("select channel_hash as hash from channel where channel_address = '%s'
-									and channel_removed = 0 limit 1",
-									dbesc($address)
+									and channel_hash != '%s' and channel_removed = 0 limit 1",
+									dbesc($address),
+									dbesc($msg['sender'])						
 								);
 								if($z) {
 									$r[] = $z[0]['hash'];

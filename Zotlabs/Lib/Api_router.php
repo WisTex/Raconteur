@@ -12,8 +12,16 @@ class Api_router {
 	}
 
 	static function find($path) {
-		if(array_key_exists($path,self::$routes))
+		if (array_key_exists($path,self::$routes)) {
 			return self::$routes[$path];
+		}
+
+		$with_params = dirname($path) . '/[id]';
+
+		if (array_key_exists($with_params,self::$routes)) {
+			return self::$routes[$with_params];
+		}
+
 		return null;
 	}
 

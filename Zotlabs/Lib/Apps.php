@@ -310,6 +310,7 @@ class Apps {
 			'Report Bug' => t('Report Bug'),
 			'View Bookmarks' => t('View Bookmarks'),
 			'Chatrooms' => t('Chatrooms'),
+			'Content Import' => t('Content Import'),
 			'Connections' => t('Connections'),
 			'Remote Diagnostics' => t('Remote Diagnostics'),
 			'Suggest Channels' => t('Suggest Channels'),

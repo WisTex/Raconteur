@@ -4592,7 +4592,7 @@ function fix_attached_file_permissions($channel,$observer_hash,$body,
 					'hash'      => $hash,
 					'revision'  => $rev,
 					'allow_cid' => $str_contact_allow,
-					'allow_gid'  => $str_group_allow,
+					'allow_gid' => $str_group_allow,
 					'deny_cid'  => $str_contact_deny,
 					'deny_gid'  => $str_group_deny
 				));

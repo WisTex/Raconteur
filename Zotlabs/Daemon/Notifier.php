@@ -438,6 +438,12 @@ class Notifier {
 
 				// FIXME add any additional recipients such as mentions, etc.
 
+				if ($top_level_post) {
+					// remove clones who will receive the post via sync
+					self::$recipients = array_diff(self::$recipients, [ $target_item['owner_xchan'] ]);
+				} 
+
+
 				// don't send deletions onward for other people's stuff
 				// TODO verify this is needed - copied logic from same place in old code
 
@@ -629,6 +635,8 @@ class Notifier {
 			// is running it will receive a sync packet. On receipt of this sync packet it
 			// will invoke a delivery to those connections which are connected to just that
 			// hub instance.
+
+			// Note: Legacy Hubzilla and Osada code. In Zap this should never happen.
 
 			if($cmd === 'single_mail' || $cmd === 'single_activity') {
 				continue;

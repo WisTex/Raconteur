@@ -451,7 +451,7 @@ class Oep extends \Zotlabs\Web\Controller {
 	
 		if(preg_match('|//(.*?)/(.*?)/(.*?)/album/|',$url,$matches)) {
 			$chn = $matches[3];
-			$res = hex2bin(basename($url));
+			$res = basename($url);
 		}
 	
 		if(! ($chn && $res))
