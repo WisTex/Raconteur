@@ -1297,7 +1297,7 @@ CREATE TABLE "xchan" (
   "xchan_censored" smallint NOT NULL DEFAULT '0',
   "xchan_selfcensored" smallint NOT NULL DEFAULT '0',
   "xchan_system" smallint NOT NULL DEFAULT '0',
-  "xchan_pubforum" smallint NOT NULL DEFAULT '0',
+  "xchan_type" smallint NOT NULL DEFAULT '0',
   "xchan_deleted" smallint NOT NULL DEFAULT '0',
   PRIMARY KEY ("xchan_hash")
 );
@@ -1315,7 +1315,7 @@ create index "xchan_orphan" on xchan ("xchan_orphan");
 create index "xchan_censored" on xchan ("xchan_censored");
 create index "xchan_selfcensored" on xchan ("xchan_selfcensored");
 create index "xchan_system" on xchan ("xchan_system");
-create index "xchan_pubforum" on xchan ("xchan_pubforum");
+create index "xchan_type" on xchan ("xchan_type");
 create index "xchan_deleted" on xchan ("xchan_deleted");
 
 CREATE TABLE "xchat" (

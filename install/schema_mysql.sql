@@ -1310,7 +1310,7 @@ CREATE TABLE IF NOT EXISTS `xchan` (
   `xchan_censored` tinyint(1) NOT NULL DEFAULT 0 ,
   `xchan_selfcensored` tinyint(1) NOT NULL DEFAULT 0 ,
   `xchan_system` tinyint(1) NOT NULL DEFAULT 0 ,
-  `xchan_pubforum` tinyint(1) NOT NULL DEFAULT 0 ,
+  `xchan_type` tinyint(1) NOT NULL DEFAULT 0 ,
   `xchan_deleted` tinyint(1) NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`xchan_hash`),
   KEY `xchan_guid` (`xchan_guid`),
@@ -1327,7 +1327,7 @@ CREATE TABLE IF NOT EXISTS `xchan` (
   KEY `xchan_censored` (`xchan_censored`),
   KEY `xchan_selfcensored` (`xchan_selfcensored`),
   KEY `xchan_system` (`xchan_system`),
-  KEY `xchan_pubforum` (`xchan_pubforum`),
+  KEY `xchan_type` (`xchan_type`),
   KEY `xchan_deleted` (`xchan_deleted`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
