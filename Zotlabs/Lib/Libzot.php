@@ -791,7 +791,7 @@ class Libzot {
 					'xchan_hidden'         => intval(1 - intval($arr['searchable'])),
 					'xchan_selfcensored'   => $arr['adult_content'],
 					'xchan_deleted'        => $arr['deleted'],
-					'xchan_pubforum'       => $channel_type;
+					'xchan_pubforum'       => $channel_type
 				]
 			);
 
