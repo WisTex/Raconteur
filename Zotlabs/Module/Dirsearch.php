@@ -77,6 +77,7 @@ class Dirsearch extends \Zotlabs\Web\Controller {
 		$agele    = ((x($_REQUEST,'agele'))    ? intval($_REQUEST['agele']) : 0 );
 		$kw       = ((x($_REQUEST,'kw'))       ? intval($_REQUEST['kw'])    : 0 );
 		$forums   = ((array_key_exists('pubforums',$_REQUEST)) ? intval($_REQUEST['pubforums']) : 0);
+		$collections   = ((array_key_exists('collections',$_REQUEST)) ? intval($_REQUEST['collections']) : 0);
 	
 		if(get_config('system','disable_directory_keywords'))
 			$kw = 0;

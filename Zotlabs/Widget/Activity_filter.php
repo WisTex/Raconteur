@@ -73,7 +73,7 @@ class Activity_filter {
 			];
 		}
 
-		$forums = get_forum_channels(local_channel());
+		$forums = get_forum_channels(local_channel(),1);
 
 		if($forums) {
 			foreach($forums as $f) {
@@ -86,7 +86,7 @@ class Activity_filter {
 					'img' => $f['xchan_photo_s'],
 					'url' => z_root() . '/' . $cmd . '/?f=&pf=1&cid=' . $f['abook_id'],
 					'sel' => $forum_active,
-					'title' => t('Show posts to this forum'),
+					'title' => t('Show posts to this group'),
 					'lock' => (($f['private_forum']) ? 'lock' : ''),
 					'edit' => t('New post'),
 					'edit_url' => $f['xchan_url']
@@ -103,6 +103,39 @@ class Activity_filter {
 				'sub' => $fsub
 			];
 		}
+
+		$forums = get_forum_channels(local_channel(),2);
+
+		if($forums) {
+			foreach($forums as $f) {
+				if(x($_GET,'pf') && x($_GET,'cid')) {
+					$forum_active = ((x($_GET,'pf') && $_GET['cid'] == $f['abook_id']) ? 'active' : '');
+					$filter_active = 'forums';
+				}
+				$fsub[] = [
+					'label' => $f['xchan_name'],
+					'img' => $f['xchan_photo_s'],
+					'url' => z_root() . '/' . $cmd . '/?f=&pf=1&cid=' . $f['abook_id'],
+					'sel' => $forum_active,
+					'title' => t('Show posts to this collection'),
+					'lock' => (($f['private_forum']) ? 'lock' : ''),
+					'edit' => t('New post'),
+					'edit_url' => $f['xchan_url']
+				];
+			}
+
+			$tabs[] = [
+				'id' => 'collections',
+				'label' => t('Collections'),
+				'icon' => 'comments-o',
+				'url' => '#',
+				'sel' => (($filter_active == 'collections') ? true : false),
+				'title' => t('Show collections'),
+				'sub' => $fsub
+			];
+		}
+
+
 
 
 		if(feature_enabled(local_channel(),'filing')) {

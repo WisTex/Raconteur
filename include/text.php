@@ -3459,13 +3459,21 @@ function array_path_exists($str,$arr) {
 
 }
 
-function get_forum_channels($uid) {
+function get_forum_channels($uid,$collections = 0) {
 
 	if(! $uid)
 		return;
 
-	$r = q("select abook_id, xchan_hash, xchan_name, xchan_url, xchan_photo_s from abook left join xchan on abook_xchan = xchan_hash where xchan_deleted = 0 and abook_channel = %d and abook_pending = 0 and abook_ignored = 0 and abook_blocked = 0 and abook_archived = 0 and xchan_pubforum = 1 order by xchan_name",
-		intval($uid)
+	if($collections) {
+		$pagetype = $collections;
+	}
+	else {
+		$pagetype = 1;
+	}
+
+	$r = q("select abook_id, xchan_hash, xchan_name, xchan_url, xchan_photo_s from abook left join xchan on abook_xchan = xchan_hash where xchan_deleted = 0 and abook_channel = %d and abook_pending = 0 and abook_ignored = 0 and abook_blocked = 0 and abook_archived = 0 and xchan_pubforum = %d order by xchan_name",
+		intval($uid),
+		intval($pagetype)
 	);
 
 	return $r;

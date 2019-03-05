@@ -693,8 +693,27 @@ class Libzot {
 				$adult_changed = 1;
 			if(intval($r[0]['xchan_deleted']) != intval($arr['deleted']))
 				$deleted_changed = 1;
-			if(intval($r[0]['xchan_pubforum']) != intval($arr['public_forum']))
+
+			$pf = intval($r[0]['xchan_pubforum']);
+			if($pf == 2 && ! intval($arr['collection'])) {
 				$pubforum_changed = 1;
+				$px = 0;
+			}			
+			if($pf == 1 && ! intval($arr['public_forum'])) {
+				$pubforum_changed = 1;
+				$px = 0;
+			}
+			if($pf == 0 && intval($arr['public_forum'])) {
+				$pubforum_changed = 1;
+				$px = 1;
+			}
+
+			if($pf == 0 && intval($arr['collection'])) {
+				$pubforum_changed = 1;
+				$px = 2;
+			}
+
+				
 
 			if($arr['protocols']) {
 				$protocols = implode(',',$arr['protocols']);
@@ -724,7 +743,7 @@ class Libzot {
 					intval(1 - intval($arr['searchable'])),
 					intval($arr['adult_content']),
 					intval($arr['deleted']),
-					intval($arr['public_forum']),
+					intval($px),
 					dbesc(escape_tags($arr['primary_location']['address'])),
 					dbesc(escape_tags($arr['primary_location']['url'])),
 					dbesc($xchan_hash)
@@ -743,6 +762,14 @@ class Libzot {
 					|| ($dirmode & DIRECTORY_MODE_STANDALONE))
 					&& ($arr['site']['url'] != z_root()))
 				$arr['searchable'] = false;
+
+			$channel_type = 0;
+			if($arr['public_forum']) {
+				$channel_type = 1;
+			}
+			if($arr['collection']) {
+				$channel_type = 2;
+			}
 
 			$x = xchan_store_lowlevel(
 				[
@@ -764,9 +791,11 @@ class Libzot {
 					'xchan_hidden'         => intval(1 - intval($arr['searchable'])),
 					'xchan_selfcensored'   => $arr['adult_content'],
 					'xchan_deleted'        => $arr['deleted'],
-					'xchan_pubforum'       => $arr['public_forum']
+					'xchan_pubforum'       => $channel_type;
 				]
 			);
+
+
 
 			$what .= 'new_xchan';
 			$changed = true;
@@ -2791,10 +2820,14 @@ class Libzot {
 		// and has nothing to do with accessibility.  
 
 		$public_forum = false;
+		$collection = false;
 
 		$role = get_pconfig($e['channel_id'],'system','permissions_role');
 		if(in_array($role, ['forum','forum_restricted','repository'])) {
 			$public_forum = true;
+		}
+		if(in_array($role, ['collection','collection_restricted'])) {
+			$collection = true;
 		}
 
 		//  This is for birthdays and keywords, but must check access permissions
@@ -2869,6 +2902,7 @@ class Libzot {
 		$ret['searchable']     = $searchable;
 		$ret['adult_content']  = $adult_channel;
 		$ret['public_forum']   = $public_forum;
+		$ret['collection']     = $collection;
 		
 		$ret['comments']       = map_scope(PermissionLimits::Get($e['channel_id'],'post_comments'));
 		$ret['mail']           = map_scope(PermissionLimits::Get($e['channel_id'],'post_mail'));

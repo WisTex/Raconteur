@@ -77,6 +77,35 @@ class PermissionRoles {
 				$ret['limits'] = PermissionLimits::Std_Limits();
 				break;
 
+			case 'collection':
+				$ret['perms_auto'] = true;
+				$ret['default_collection'] = false;
+				$ret['directory_publish'] = true;
+				$ret['online'] = false;
+				$ret['perms_connect'] = [
+					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
+					'view_pages', 'post_comments'
+				];
+				$ret['limits'] = PermissionLimits::Std_Limits();
+	
+				break;
+
+			case 'collection_restricted':
+				$ret['perms_auto'] = false;
+				$ret['default_collection'] = true;
+				$ret['directory_publish'] = true;
+				$ret['online'] = false;
+				$ret['perms_connect'] = [
+					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
+					'view_pages', 'post_comments'
+				];
+				$ret['limits'] = PermissionLimits::Std_Limits();
+				break;
+
+
+
+
+
 			case 'feed':
 				$ret['perms_auto'] = true;
 				$ret['default_collection'] = false;
@@ -131,6 +160,11 @@ class PermissionRoles {
 			t('Community Group') => [
 				'forum' => t('Group - Normal'),
 				'forum_restricted' => t('Group - Restricted')
+			],
+
+			t('Collection') => [
+				'collection' => t('Collection - Normal'),
+				'collection_restricted' => t('Collection - Restricted')
 			],
 
 			t('Feed Republish') => [
