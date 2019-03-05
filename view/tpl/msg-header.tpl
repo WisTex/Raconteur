@@ -10,7 +10,7 @@
 			url: 'wall_attach/{{$nickname}}',
 			dataType: 'json',
 			dropZone: $('#prvmail-text'),
-			maxChunkSize: 4 * 1024 * 1024,
+			maxChunkSize: 2 * 1024 * 1024,
 			add: function(e,data) {
 				$('#prvmail-rotator').show();
 				data.submit();
