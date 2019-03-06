@@ -913,6 +913,18 @@ function identity_basic_export($channel_id, $sections = null) {
 			}
 			$ret['app'] = $r;
 		}
+		$r = q("select * from app where app_channel = %d and app_system = 1",
+			intval($channel_id)
+		);
+		if($r) {
+			for($x = 0; $x < count($r); $x ++) {
+				$r[$x]['term'] = q("select * from term where otype = %d and oid = %d",
+					intval(TERM_OBJ_APP),
+					intval($r[$x]['id'])
+				);
+			}
+			$ret['sysapp'] = $r;
+		}
 	}
 
 	if(in_array('chatrooms',$sections)) {

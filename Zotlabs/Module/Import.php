@@ -456,6 +456,9 @@ class Import extends \Zotlabs\Web\Controller {
 		if(is_array($data['app']))
 			import_apps($channel,$data['app']);
 
+		if(is_array($data['sysapp']))
+			import_sysapps($channel,$data['sysapp']);
+
 		if(is_array($data['chatroom']))
 			import_chatrooms($channel,$data['chatroom']);
 

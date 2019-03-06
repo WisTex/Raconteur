@@ -376,7 +376,7 @@ function import_apps($channel, $apps) {
 	if($channel && $apps) {
 		foreach($apps as $app) {
 
-			if(array_key_exists('app_system',$app) && intval($app['system']))
+			if(array_key_exists('app_system',$app) && intval($app['app_system']))
 				continue;
 
 			$term = ((array_key_exists('term',$app) && is_array($app['term'])) ? $app['term'] : null);
@@ -431,7 +431,7 @@ function sync_apps($channel, $apps) {
 			$exists = false;
 			$term = ((array_key_exists('term',$app)) ? $app['term'] : null);
 
-			if(array_key_exists('app_system',$app) && intval($app['system']))
+			if(array_key_exists('app_system',$app) && intval($app['app_system']))
 				continue;
 
 			$x = q("select * from app where app_id = '%s' and app_channel = %d limit 1",
@@ -529,6 +529,84 @@ function sync_apps($channel, $apps) {
 		}
 	}
 }
+
+
+
+/**
+ * @brief Import system apps.
+ * System apps from the original server may not exist on this system 
+ *   (e.g. apps associated with addons that are not installed here).
+ *   Check the system apps that were provided in the import file to see if they
+ *   exist here and if so, install them locally. Preserve categories that
+ *   might have been added by this channel on the other server.
+ *   Do not use any paths from the original as they will point to a different server. 
+ * @param array $channel
+ * @param array $apps
+ */
+function import_sysapps($channel, $apps) {
+
+	if($channel && $apps) {
+
+		$sysapps = \Zotlabs\Lib\Apps::get_system_apps(false);
+
+		foreach($apps as $app) {
+
+			if(array_key_exists('app_system',$app) && (! intval($app['app_system'])))
+				continue;
+
+			$term = ((array_key_exists('term',$app) && is_array($app['term'])) ? $app['term'] : null);
+
+			foreach($sysapps as $sysapp) {
+				if($app['app_id'] === hash('whirlpool',$sysapp['app_name'])) {
+					// install this app on this server
+					$newapp = $sysapp;
+					$newapp['uid'] = $channel['channel_id'];
+					$newapp['guid'] = hash('whirlpool',$newapp['name']);
+
+					$installed = q("select id from app where app_id = '%s' and app_channel = %d limit 1",
+						dbesc($newapp['guid']),
+						intval($channel['channel_id'])
+					);
+					if($installed) {
+						break;
+					}
+
+					$newapp['system'] = 1;
+					if($term) {
+						$s = EMPTY_STR;
+						foreach($term as $t) {
+							if($s) {
+								$s .= ',';
+							}
+							$s .= $t['term'];
+						}
+						$newapp['categories'] = $s;
+					}
+					\Zotlabs\Lib\Apps::app_install($channel['channel_id'],$newapp);
+				}
+			}
+		}
+	}
+}
+
+/**
+ * @brief Sync system apps.
+ *
+ * @param array $channel
+ * @param array $apps
+ */
+function sync_sysapps($channel, $apps) {
+
+	if($channel && $apps) {
+
+		// we do not currently sync system apps
+
+	}
+}
+
+
+
+
 
 /**
  * @brief Import chatrooms.
