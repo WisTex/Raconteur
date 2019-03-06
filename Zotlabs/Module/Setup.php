@@ -746,6 +746,12 @@ class Setup extends \Zotlabs\Web\Controller {
 		// install the standard theme
 		set_config('system', 'allowed_themes', 'redbasic');
 
+		// if imagick converter is installed, use it
+		if(@is_executable('/usr/bin/convert')) {
+			set_config('system','imagick_convert_path','/usr/bin/convert');
+		}
+
+
 		// Set a lenient list of ciphers if using openssl. Other ssl engines
 		// (e.g. NSS used in RedHat) require different syntax, so hopefully
 		// the default curl cipher list will work for most sites. If not,
