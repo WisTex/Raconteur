@@ -76,8 +76,7 @@ class Dirsearch extends \Zotlabs\Web\Controller {
 		$agege    = ((x($_REQUEST,'agege'))    ? intval($_REQUEST['agege']) : 0 );
 		$agele    = ((x($_REQUEST,'agele'))    ? intval($_REQUEST['agele']) : 0 );
 		$kw       = ((x($_REQUEST,'kw'))       ? intval($_REQUEST['kw'])    : 0 );
-		$forums   = ((array_key_exists('pubforums',$_REQUEST)) ? intval($_REQUEST['pubforums']) : 0);
-		$collections   = ((array_key_exists('collections',$_REQUEST)) ? intval($_REQUEST['collections']) : 0);
+		$type     = ((array_key_exists('type',$_REQUEST)) ? intval($_REQUEST['type']) : 0);
 	
 		if(get_config('system','disable_directory_keywords'))
 			$kw = 0;
@@ -180,8 +179,8 @@ class Dirsearch extends \Zotlabs\Web\Controller {
 		if($safe < 0)
 			$safesql = " and ( xchan_censored = 1 OR xchan_selfcensored = 1 ) ";
 	
-		if($forums)
-			$safesql .= " and xchan_pubforum = " . ((intval($forums)) ? '1 ' : '0 ');
+		if($type)
+			$safesql .= " and xchan_type = " . intval($type);
 	
 		if($limit) 
 			$qlimit = " LIMIT $limit ";
@@ -287,8 +286,7 @@ class Dirsearch extends \Zotlabs\Web\Controller {
 				$entry['name']        = $rr['xchan_name'];
 				$entry['hash']        = $rr['xchan_hash'];
 	
-				$entry['public_forum'] = (intval($rr['xchan_pubforum']) ? true : false);
-	
+				$entry['type']        = $rr['xchan_type'];
 				$entry['url']         = $rr['xchan_url'];
 				$entry['photo_l']     = $rr['xchan_photo_l'];
 				$entry['photo']       = $rr['xchan_photo_m'];

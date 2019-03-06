@@ -102,10 +102,6 @@ class PermissionRoles {
 				$ret['limits'] = PermissionLimits::Std_Limits();
 				break;
 
-
-
-
-
 			case 'feed':
 				$ret['perms_auto'] = true;
 				$ret['default_collection'] = false;
@@ -162,10 +158,10 @@ class PermissionRoles {
 				'forum_restricted' => t('Group - Restricted')
 			],
 
-			t('Collection') => [
-				'collection' => t('Collection - Normal'),
-				'collection_restricted' => t('Collection - Restricted')
-			],
+//			t('Collection') => [
+//				'collection' => t('Collection - Normal'),
+//				'collection_restricted' => t('Collection - Restricted')
+//			],
 
 			t('Feed Republish') => [
 				'feed' => t('Feed Republish')

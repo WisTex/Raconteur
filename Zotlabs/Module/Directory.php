@@ -24,7 +24,7 @@ class Directory extends \Zotlabs\Web\Controller {
 		$observer = get_observer_hash();
 		$global_changed = false;
 		$safe_changed = false;
-		$pubforums_changed = false;
+		$type_changed = false;
 	
 		if(array_key_exists('global',$_REQUEST)) {
 			$globaldir = intval($_REQUEST['global']);
@@ -50,14 +50,14 @@ class Directory extends \Zotlabs\Web\Controller {
 		}
 	
 	
-		if(array_key_exists('pubforums',$_REQUEST)) {
-			$pubforums = intval($_REQUEST['pubforums']);
-			$pubforums_changed = true;
+		if(array_key_exists('type',$_REQUEST)) {
+			$type = intval($_REQUEST['type']);
+			$type_changed = true;
 		}
-		if($pubforums_changed) {
-			$_SESSION['pubforums'] = $pubforums;
+		if($type_changed) {
+			$_SESSION['chantype'] = $type;
 			if($observer)
-				set_xconfig($observer,'directory','pubforums',$pubforums);
+				set_xconfig($observer,'directory','chantype',$type);
 		}
 	}
 	
@@ -83,7 +83,7 @@ class Directory extends \Zotlabs\Web\Controller {
 	
 		$safe_mode = Libzotdir::get_directory_setting($observer, 'safemode');
 	
-		$pubforums = Libzotdir::get_directory_setting($observer, 'pubforums');
+		$type = Libzotdir::get_directory_setting($observer, 'chantype');
 	
 		$o = '';
 		nav_set_selected('Directory');
@@ -186,8 +186,8 @@ class Directory extends \Zotlabs\Web\Controller {
 				$query .= '&keywords=' . urlencode($keywords);
 			if($advanced)
 				$query .= '&query=' . urlencode($advanced);
-			if(! is_null($pubforums))
-				$query .= '&pubforums=' . intval($pubforums);
+			if(! is_null($type))
+				$query .= '&type=' . intval($type);
 	
 			$directory_sort_order = get_config('system','directory_sort_order');
 			if(! $directory_sort_order)
@@ -314,7 +314,7 @@ class Directory extends \Zotlabs\Web\Controller {
 							$entry = array(
 								'id' => ++$t,
 								'profile_link' => $profile_link,
-								'public_forum' => $rr['public_forum'],
+								'type' => $rr['type'],
 								'photo' => $rr['photo'],
 								'hash' => $rr['hash'],
 								'alttext' => $rr['name'] . ((local_channel() || remote_channel()) ? ' ' . $rr['address'] : ''),
@@ -340,7 +340,8 @@ class Directory extends \Zotlabs\Web\Controller {
 								'about' => $about,
 								'about_label' => t('About:'),
 								'conn_label' => t('Connect'),
-								'forum_label' => t('Public Group:'), 
+								'forum_label' => t('Group:'), 
+								'collections_label' => t('Collection:'), 
 								'connect' => $connect_link,
 								'online' => $online,
 								'kw' => (($out) ? t('Keywords: ') : ''),

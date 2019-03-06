@@ -685,7 +685,7 @@ class Libzot {
 
 			$hidden = (1 - intval($arr['searchable']));
 
-			$hidden_changed = $adult_changed = $deleted_changed = $pubforum_changed = 0;
+			$hidden_changed = $adult_changed = $deleted_changed = $type_changed = 0;
 
 			if(intval($r[0]['xchan_hidden']) != (1 - intval($arr['searchable'])))
 				$hidden_changed = 1;
@@ -694,28 +694,24 @@ class Libzot {
 			if(intval($r[0]['xchan_deleted']) != intval($arr['deleted']))
 				$deleted_changed = 1;
 
-			$pf = intval($r[0]['xchan_pubforum']);
-			if($pf == 2 && ! intval($arr['collection'])) {
-				$pubforum_changed = 1;
-				$px = 0;
-			}			
-			if($pf == 1 && ! intval($arr['public_forum'])) {
-				$pubforum_changed = 1;
+			if ($arr['channel_type'] === 'collection') {
+				$px = 2;
+			}
+			elseif ($arr['channel_type'] === 'group') {
+				$px = 1;
+			}
+			else {
 				$px = 0;
 			}
-			if($pf == 0 && intval($arr['public_forum'])) {
-				$pubforum_changed = 1;
+			if (array_key_exists('public_forum',$arr) && intval($arr['public_forum'])) {
 				$px = 1;
 			}
 
-			if($pf == 0 && intval($arr['collection'])) {
-				$pubforum_changed = 1;
-				$px = 2;
+			if (intval($r[0]['xchan_type']) !== $px) {
+				$type_changed = true;
 			}
 
-				
-
-			if($arr['protocols']) {
+			if ($arr['protocols']) {
 				$protocols = implode(',',$arr['protocols']);
 				if($protocols !== 'zot6') {
 					set_xconfig($xchan_hash,'system','protocols',$protocols);
@@ -731,9 +727,9 @@ class Libzot {
 				|| ($r[0]['xchan_follow'] != $arr['primary_location']['follow_url'])
 				|| ($r[0]['xchan_connpage'] != $arr['connect_url'])
 				|| ($r[0]['xchan_url'] != $arr['primary_location']['url'])
-				|| $hidden_changed || $adult_changed || $deleted_changed || $pubforum_changed ) {
+				|| $hidden_changed || $adult_changed || $deleted_changed || $type_changed ) {
 				$rup = q("update xchan set xchan_name = '%s', xchan_name_date = '%s', xchan_connurl = '%s', xchan_follow = '%s',
-					xchan_connpage = '%s', xchan_hidden = %d, xchan_selfcensored = %d, xchan_deleted = %d, xchan_pubforum = %d,
+					xchan_connpage = '%s', xchan_hidden = %d, xchan_selfcensored = %d, xchan_deleted = %d, xchan_type = %d,
 					xchan_addr = '%s', xchan_url = '%s' where xchan_hash = '%s'",
 					dbesc(($arr['name']) ? escape_tags($arr['name']) : '-'),
 					dbesc($arr['name_updated']),
@@ -763,12 +759,19 @@ class Libzot {
 					&& ($arr['site']['url'] != z_root()))
 				$arr['searchable'] = false;
 
-			$channel_type = 0;
-			if($arr['public_forum']) {
-				$channel_type = 1;
+
+			if ($arr['channel_type'] === 'collection') {
+				$px = 2;
 			}
-			if($arr['collection']) {
-				$channel_type = 2;
+			elseif ($arr['channel_type'] === 'group') {
+				$px = 1;
+			}
+			else {
+				$px = 0;
+			}
+
+			if (array_key_exists('public_forum',$arr) && intval($arr['public_forum'])) {
+				$px = 1;
 			}
 
 			$x = xchan_store_lowlevel(
@@ -791,7 +794,7 @@ class Libzot {
 					'xchan_hidden'         => intval(1 - intval($arr['searchable'])),
 					'xchan_selfcensored'   => $arr['adult_content'],
 					'xchan_deleted'        => $arr['deleted'],
-					'xchan_pubforum'       => $channel_type
+					'xchan_type'           => $px
 				]
 			);
 
@@ -2819,15 +2822,14 @@ class Libzot {
 		// now all forums (public, restricted, and private) set the public_forum flag. So it really means "is a group"
 		// and has nothing to do with accessibility.  
 
-		$public_forum = false;
-		$collection = false;
+		$channel_type = 'normal';
 
 		$role = get_pconfig($e['channel_id'],'system','permissions_role');
 		if(in_array($role, ['forum','forum_restricted','repository'])) {
-			$public_forum = true;
+			$channel_type = 'group';
 		}
 		if(in_array($role, ['collection','collection_restricted'])) {
-			$collection = true;
+			$channel_type = 'collection';
 		}
 
 		//  This is for birthdays and keywords, but must check access permissions
@@ -2897,15 +2899,13 @@ class Libzot {
 			'updated' => $e['xchan_photo_date']
 		];
 
-		$ret['channel_role'] = get_pconfig($e['channel_id'],'system','permissions_role','custom');
-		$ret['protocols']    = ((defined('NOMADIC')) ? [ 'zot6' ] : [ 'zot6', 'activitypub' ]);
+		$ret['channel_role']   = get_pconfig($e['channel_id'],'system','permissions_role','custom');
+		$ret['channel_type']   = $channel_type;
+		$ret['protocols']      = [ 'zot6' ];
 		$ret['searchable']     = $searchable;
 		$ret['adult_content']  = $adult_channel;
-		$ret['public_forum']   = $public_forum;
-		$ret['collection']     = $collection;
 		
 		$ret['comments']       = map_scope(PermissionLimits::Get($e['channel_id'],'post_comments'));
-		$ret['mail']           = map_scope(PermissionLimits::Get($e['channel_id'],'post_mail'));
 
 		if($deleted)
 			$ret['deleted']        = $deleted;

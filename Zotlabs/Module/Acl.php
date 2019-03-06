@@ -215,7 +215,7 @@ class Acl extends \Zotlabs\Web\Controller {
 
 				// add connections
 	
-				$r = q("SELECT abook_id as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, xchan_pubforum, abook_flags, abook_self 
+				$r = q("SELECT abook_id as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, xchan_type, abook_flags, abook_self 
 					FROM abook left join xchan on abook_xchan = xchan_hash 
 					WHERE (abook_channel = %d $extra_channels_sql) AND abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 $sql_extra2 order by $order_extra2 xchan_name asc" ,
 					intval(local_channel())
