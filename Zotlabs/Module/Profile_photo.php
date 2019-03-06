@@ -294,6 +294,10 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 			$res = attach_store(\App::get_channel(), get_observer_hash(), '', array('album' => t('Profile Photos'), 'hash' => $hash));
 	
 			logger('attach_store: ' . print_r($res,true));
+
+			json_return_and_die([ 'message' => $hash ]);
+
+
 		}
 	
 		if(($res && intval($res['data']['is_photo'])) || $importing) {

@@ -109,6 +109,9 @@
 			{{if $importfile}}
 			<input type="hidden" name="importfile" value="{{$importfile}}">
 			{{else}}
+			<div id="profile-photo-upload-spinner" class="spinner-wrapper">
+				<div class="spinner m"></div>
+			</div>
 			<!--label id="profile-photo-upload-label" class="form-label" for="profile-photo-upload">{{$lbl_upfile}}</label>
 			<input name="userfile" class="form-input" type="file" id="profile-photo-upload" size="48" / -->
 			{{/if}}
@@ -151,17 +154,18 @@
    $('#invisible-photos-file-upload').fileupload({
           url: 'profile_photo',
             dataType: 'json',
-			// dropZone: filedrag,
+			dropZone: $('#profile-photo-content'),
             maxChunkSize: 2 * 1024 * 1024,
 
             add: function(e,data) {
                 data.formData = $('#profile-photo-form').serializeArray();
                 data.submit();
+				$('#profile-photo-upload-spinner').show();
             },
 
-
-            stop: function(e,data) {
-                window.location.href = window.location.href;
+            done: function(e,data) {
+				$('#profile-photo-upload-spinner').hide();
+                window.location.href = window.location.href + '/use/' + data.result.message;
             }
 
         });

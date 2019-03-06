@@ -8,12 +8,13 @@ namespace Zotlabs\Daemon;
 
 class Delxitems {
 
-	static public function run($argc,$argv){
+	static public function run($argc,$argv) {
 
 		cli_startup();
 
 		if($argc != 3) {
 			killme();
+		}
 
 		remove_abook_items($argv[1],$argv[2]);
 
