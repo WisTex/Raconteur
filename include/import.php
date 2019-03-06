@@ -146,7 +146,9 @@ function import_config($channel, $configs) {
 		foreach($configs as $config) {
 			unset($config['id']);
 			$config['uid'] = $channel['channel_id'];
-
+			if($config['cat'] === 'system' && $config['k'] === 'import_system_apps') {
+				continue;
+			}
 			create_table_from_array('pconfig', $config);
 		}
 
@@ -374,6 +376,9 @@ function import_apps($channel, $apps) {
 	if($channel && $apps) {
 		foreach($apps as $app) {
 
+			if(array_key_exists('app_system',$app) && intval($app['system']))
+				continue;
+
 			$term = ((array_key_exists('term',$app) && is_array($app['term'])) ? $app['term'] : null);
 
 			unset($app['id']);
@@ -425,6 +430,9 @@ function sync_apps($channel, $apps) {
 
 			$exists = false;
 			$term = ((array_key_exists('term',$app)) ? $app['term'] : null);
+
+			if(array_key_exists('app_system',$app) && intval($app['system']))
+				continue;
 
 			$x = q("select * from app where app_id = '%s' and app_channel = %d limit 1",
 				dbesc($app['app_id']),
