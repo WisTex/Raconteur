@@ -359,7 +359,7 @@ class ActivityStreams {
 	 * @return boolean
 	 */
 	function is_url($url) {
-		if(($url) && (! is_array($url)) && (strpos($url, 'http') === 0)) {
+		if(($url) && (! is_array($url)) && ((strpos($url, 'http') === 0) || (strpos($url,'x-zot') === 0))) {
 			return true;
 		}
 

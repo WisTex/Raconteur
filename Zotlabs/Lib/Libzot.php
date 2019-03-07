@@ -1143,6 +1143,12 @@ class Libzot {
 					return;
 				}
 
+				if(! is_array($AS->obj)) {
+					logger('Activity object missing or fetch failed: ' . print_r($data,true));
+					return;
+				}
+
+
 				$arr = Activity::decode_note($AS);
 
 				logger($AS->debug(), LOGGER_DATA);
