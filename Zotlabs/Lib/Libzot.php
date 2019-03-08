@@ -1090,10 +1090,9 @@ class Libzot {
 	}
 
 	/**
-	 * @brief Process incoming array of messages.
+	 * @brief Process incoming messages.
 	 *
-	 * Process an incoming array of messages which were obtained via pickup, and
-	 * import, update, delete as directed.
+	 * Process incoming messages and import, update, delete as directed
 	 *
 	 * The message types handled here are 'activity' (e.g. posts), and 'sync'.
 	 *
@@ -1222,7 +1221,7 @@ class Libzot {
 
 			if(in_array($env['type'],['activity','response'])) {
 
-				$r = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s'",
+				$r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s'",
 					dbesc($AS->actor['id'])
 				); 
 
@@ -1230,6 +1229,7 @@ class Libzot {
 					$r = self::zot_record_preferred($r);
 					$arr['author_xchan'] = $r['hubloc_hash'];
 				}
+
 				if(! $arr['author_xchan']) {
 					logger('No author!');
 					return;
@@ -3190,6 +3190,7 @@ class Libzot {
 
 		foreach($arr as $v) {
 			if($v[$check] === 'zot6') {
+
 				return $v;
 			}
 		}
