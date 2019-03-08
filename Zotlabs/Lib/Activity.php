@@ -1782,8 +1782,6 @@ class Activity {
 	}
 
 
-
-
 	static function decode_note($act) {
 
 		$response_activity = false;
