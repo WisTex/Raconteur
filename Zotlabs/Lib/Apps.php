@@ -20,8 +20,6 @@ class Apps {
 
 	static public $base_apps = null;
 
-
-
 	static public function get_system_apps($translate = true) {
 
 		$ret = array();

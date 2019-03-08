@@ -1138,18 +1138,17 @@ class Libzot {
 		if($env['encoding'] === 'activitystreams') {
 
 				$AS = new ActivityStreams($data);
-				if(! $AS->is_valid()) {
+				if (! $AS->is_valid()) {
 					logger('Activity rejected: ' . print_r($data,true));
 					return;
 				}
 
-				if(! is_array($AS->obj)) {
-					logger('Activity object missing or fetch failed: ' . print_r($data,true));
-					return;
+				if (is_array($AS->obj)) {
+					$arr = Activity::decode_note($AS);
 				}
-
-
-				$arr = Activity::decode_note($AS);
+				else {
+					$arr = [];
+				}
 
 				logger($AS->debug(), LOGGER_DATA);
 		}
@@ -1276,18 +1275,14 @@ class Libzot {
 					}
 				}
 
-				// set this regardless. We will unset it later if we don't need it.
-				$d = ((isset($AS->data['signed_data'])) ? $AS->data['signed_data'] : $AS->data);
-
 				logger('Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 				logger('Activity recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
 
 				$relay = (($env['type'] === 'response') ? true : false );
 
-				$result = self::process_delivery($env['sender'],$arr,$deliveries,$relay,false,$message_request);
+				$result = self::process_delivery($env['sender'],$AS,$arr,$deliveries,$relay,false,$message_request);
 			}
 			elseif($env['type'] === 'sync') {
-				// $arr = get_channelsync_elements($data);
 
 				$arr = json_decode($data,true);
 
@@ -1466,7 +1461,7 @@ class Libzot {
 	 * @return array
 	 */
 
-	static function process_delivery($sender, $arr, $deliveries, $relay, $public = false, $request = false) {
+	static function process_delivery($sender, $act, $arr, $deliveries, $relay, $public = false, $request = false) {
 
 		$result = [];
 
@@ -1500,6 +1495,25 @@ class Libzot {
 			}
 
 			$DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
+
+			if(($act) && ($act->obj) && (! is_array($act->obj))) {
+
+				// The initial object fetch failed using the sys channel credentials. 
+				// Try again using the delivery channel credentials.
+				// We will also need to re-parse the $item array, 
+				// but preserve any values that were set during anonymous parsing.
+				
+				$o = Activity::fetch($act->obj,$channel);
+				if($o) {
+					$act->obj = $o;
+					$arr = array_merge(Activity::decode_note($act),$arr);
+				}
+				else {
+					$DR->update('Incomplete or corrupt activity');
+					$result[] = $DR->get();
+					continue;
+				}
+			}	
 
 			/**
 			 * We need to block normal top-level message delivery from our clones, as the delivered
@@ -1993,7 +2007,7 @@ class Libzot {
 			logger('FOF Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 			logger('FOF Activity recipient: ' . $channel['channel_hash'], LOGGER_DATA, LOG_DEBUG);
 
-			$result = self::process_delivery($arr['owner_xchan'],$arr, [ $channel['channel_hash'] ],false,false,true);
+			$result = self::process_delivery($arr['owner_xchan'],$AS,$arr, [ $channel['channel_hash'] ],false,false,true);
 			if ($result) {
 				$ret = array_merge($ret, $result);
 			}		
