@@ -325,7 +325,10 @@ class ActivityStreams {
 	function get_compound_property($property, $base = '', $namespace = '', $first = false) {
 		$x = $this->get_property_obj($property, $base, $namespace);
 		if($this->is_url($x)) {
-			$x = $this->fetch_property($x);
+			$y = $this->fetch_property($x);
+			if (is_array($y)) {
+				$x = $y;
+			}
 		}
 
 		// verify and unpack JSalmon signature if present
