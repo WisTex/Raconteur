@@ -48,6 +48,12 @@ class Item extends Controller {
 			$sigdata = HTTPSig::verify(EMPTY_STR);
 			if($sigdata['portable_id'] && $sigdata['header_valid']) {
 				$portable_id = $sigdata['portable_id'];
+				if(! check_channelallowed($portable_id)) {
+					http_status_exit(403, 'Permission denied');
+				}
+				if(! check_siteallowed($sigdata['signer'])) {
+					http_status_exit(403, 'Permission denied');
+				}
 				observer_auth($portable_id);
 			}
 
@@ -122,6 +128,12 @@ class Item extends Controller {
 			$sigdata = HTTPSig::verify(EMPTY_STR);
 			if($sigdata['portable_id'] && $sigdata['header_valid']) {
 				$portable_id = $sigdata['portable_id'];
+				if(! check_channelallowed($portable_id)) {
+					http_status_exit(403, 'Permission denied');
+				}
+				if(! check_siteallowed($sigdata['signer'])) {
+					http_status_exit(403, 'Permission denied');
+				}
 				observer_auth($portable_id);
 			}
 
