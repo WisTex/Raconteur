@@ -25,6 +25,7 @@ use Zotlabs\Web\HTTPSig;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\ThreadListener;
+use Zotlabs\Lib\Config;
 use Zotlabs\Lib\IConfig;
 use Zotlabs\Lib\Enotify;
 use App;
@@ -46,15 +47,18 @@ class Item extends Controller {
 				http_status_exit(404, 'Not found');
 
 			$sigdata = HTTPSig::verify(EMPTY_STR);
-			if($sigdata['portable_id'] && $sigdata['header_valid']) {
+			if ($sigdata['portable_id'] && $sigdata['header_valid']) {
 				$portable_id = $sigdata['portable_id'];
-				if(! check_channelallowed($portable_id)) {
+				if (! check_channelallowed($portable_id)) {
 					http_status_exit(403, 'Permission denied');
 				}
-				if(! check_siteallowed($sigdata['signer'])) {
+				if (! check_siteallowed($sigdata['signer'])) {
 					http_status_exit(403, 'Permission denied');
 				}
 				observer_auth($portable_id);
+			}
+			elseif (! Config::get('system','require_authenticated_fetch',false)) {
+				http_status_exit(403,'Permission denied');
 			}
 
 			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 ";
@@ -126,15 +130,18 @@ class Item extends Controller {
 			$portable_id = EMPTY_STR;
 
 			$sigdata = HTTPSig::verify(EMPTY_STR);
-			if($sigdata['portable_id'] && $sigdata['header_valid']) {
+			if ($sigdata['portable_id'] && $sigdata['header_valid']) {
 				$portable_id = $sigdata['portable_id'];
-				if(! check_channelallowed($portable_id)) {
+				if (! check_channelallowed($portable_id)) {
 					http_status_exit(403, 'Permission denied');
 				}
-				if(! check_siteallowed($sigdata['signer'])) {
+				if (! check_siteallowed($sigdata['signer'])) {
 					http_status_exit(403, 'Permission denied');
 				}
 				observer_auth($portable_id);
+			}
+			elseif (! Config::get('system','require_authenticated_fetch',false)) {
+				http_status_exit(403,'Permission denied');
 			}
 
 			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 ";
@@ -150,7 +157,7 @@ class Item extends Controller {
 				$r = q("select * from item where mid = '%s' $item_normal limit 1",
 					dbesc(z_root() . '/item/' . $item_id)
 				);
-				if($r) {
+				if ($r) {
 					http_status_exit(403, 'Forbidden');
 				}
 				http_status_exit(404, 'Not found');
