@@ -470,9 +470,9 @@ function item_permissions_sql($owner_id, $remote_observer = null) {
 
 			$regexop = db_getfunc('REGEXP');
 			$sql = sprintf(
-				" AND (( NOT (deny_cid regexop '%s' OR deny_gid $regexop '%s')
+				" OR (( NOT (deny_cid regexop '%s' OR deny_gid $regexop '%s')
 				  AND ( allow_cid regexop '%s' OR allow_gid $regexop '%s' OR ( allow_cid = '' AND allow_gid = '' AND item_private = 0 ))
-				  ) OR ( item_private = 1 $scope ))
+				  ))
 				",
 				dbesc($cs),
 				dbesc($gs),
