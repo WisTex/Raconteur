@@ -433,7 +433,6 @@ function item_permissions_sql($owner_id, $remote_observer = null) {
 
         if($observer) {
 
-			$scope = scopes_sql($owner_id,$observer);
 			$sec = get_security_ids($owner_id,$observer);
 
 			// always allow the channel owner, even if authenticated as a visitor
