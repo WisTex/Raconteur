@@ -1207,9 +1207,9 @@ function encode_item_xchan($xchan) {
 	$ret['url']      = $xchan['xchan_url'];
 	$ret['network']  = $xchan['xchan_network'];
 	$ret['photo']    = [ 'mimetype' => $xchan['xchan_photo_mimetype'], 'src' => $xchan['xchan_photo_m'] ];
-	$ret['id']     = $xchan['xchan_guid'];
-	$ret['id_sig'] = $xchan['xchan_guid_sig'];
-	$ret['key']  = $xchan['xchan_pubkey'];
+	$ret['id']       = $xchan['xchan_guid'];
+	$ret['id_sig']   = $xchan['xchan_guid_sig'];
+	$ret['key']      = $xchan['xchan_pubkey'];
 
 	return $ret;
 }
