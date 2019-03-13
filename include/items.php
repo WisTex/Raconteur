@@ -3833,7 +3833,7 @@ function fetch_post_tags($items, $link = false) {
 					if($i['iid'] == $items[$x]['item_id']) {
 						if(! is_array($items[$x]['iconfig']))
 							$items[$x]['iconfig'] = array();
-						$i['v'] = ((preg_match('|^a:[0-9]+:{.*}$|s',$i['v'])) ? unserialize($i['v']) : $i['v']);
+						$i['v'] = unserialise($i['v']);
 						$items[$x]['iconfig'][] = $i;
 					}
 				}
@@ -3841,7 +3841,7 @@ function fetch_post_tags($items, $link = false) {
 					if($i['iid'] == $items[$x]['id']) {
 						if(! is_array($items[$x]['iconfig']))
 							$items[$x]['iconfig'] = array();
-						$i['v'] = ((preg_match('|^a:[0-9]+:{.*}$|s',$i['v'])) ? unserialize($i['v']) : $i['v']);
+						$i['v'] = unserialise($i['v']);
 						$items[$x]['iconfig'][] = $i;
 					}
 				}
