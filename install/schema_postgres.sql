@@ -653,6 +653,7 @@ create index "item_expires" on item ("expires");
 create index "item_revision" on item ("revision");
 create index "item_mimetype" on item ("mimetype");
 create index "item_mid" on item ("mid");
+create index "item_thr_parent" on item ("thr_parent");
 create index "item_uuid" on item ("uuid");
 create index "item_parent_mid" on item ("parent_mid");
 create index "item_uid_mid" on item ("mid","uid");

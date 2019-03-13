@@ -666,6 +666,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `mid` (`mid`),
   KEY `uuid` (`uuid`),
   KEY `parent_mid` (`parent_mid`),
+  KEY `thr_parent` (`thr_parent`),
   KEY `uid_mid` (`mid`,`uid`),
   KEY `comment_policy` (`comment_policy`),
   KEY `layout_mid` (`layout_mid`),
