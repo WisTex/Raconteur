@@ -46,6 +46,26 @@ class Item extends Controller {
 			if(! $item_id)
 				http_status_exit(404, 'Not found');
 
+			$portable_id = EMPTY_STR;
+
+			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 ";
+
+			$i = null;
+
+			// do we have the item (at all)?
+
+			$r = q("select * from item where mid = '%s' or uuid = '%s' $item_normal limit 1",
+				dbesc(z_root() . '/item/' . $item_id),
+				dbesc($item_id)
+			);
+
+			if (! $r) {
+				http_status_exit(404,'Not found');
+			}
+
+			// process an authenticated fetch
+
+
 			$sigdata = HTTPSig::verify(EMPTY_STR);
 			if ($sigdata['portable_id'] && $sigdata['header_valid']) {
 				$portable_id = $sigdata['portable_id'];
@@ -56,32 +76,34 @@ class Item extends Controller {
 					http_status_exit(403, 'Permission denied');
 				}
 				observer_auth($portable_id);
+
+				$i = q("select id as item_id from item where mid = '%s' $item_normal and owner_xchan = '%s' limit 1 ",
+					dbesc($r[0]['parent_mid']),
+					dbesc($portable_id)
+				);
 			}
 			elseif (! Config::get('system','require_authenticated_fetch',false)) {
 				http_status_exit(403,'Permission denied');
 			}
 
-			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 ";
+			// if we don't have a parent id belonging to the signer see if we can obtain one as a visitor that we have permission to access
 
 			$sql_extra = item_permissions_sql(0);
 
-
-			$r = q("select * from item where mid = '%s' $item_normal $sql_extra limit 1",
-				dbesc(z_root() . '/item/' . $item_id)
-			);
-			if(! $r) {
-				$r = q("select * from item where mid = '%s' $item_normal limit 1",
-					dbesc(z_root() . '/item/' . $item_id)
+			if (! $i) {
+				$i = q("select id as item_id from item where mid = '%s' $item_normal $sql_extra limit 1",
+					dbesc($r[0]['parent_mid'])
 				);
-				if($r) {
-					http_status_exit(403, 'Forbidden');
-				}
-				http_status_exit(404, 'Not found');
 			}
+
+			if(! $i) {
+				http_status_exit(403,'Forbidden');
+			}
+
+			// If we get to this point we have determined we can access the original in $r (fetched much further above), so use it.
 
 			xchan_query($r,true);
 			$items = fetch_post_tags($r,true);
-
 
 			$chan = channelx_by_n($items[0]['uid']);
 
@@ -126,8 +148,24 @@ class Item extends Controller {
 			if(! $item_id)
 				http_status_exit(404, 'Not found');
 
-
 			$portable_id = EMPTY_STR;
+
+			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 ";
+
+			$i = null;
+
+			// do we have the item (at all)?
+
+			$r = q("select * from item where mid = '%s' $item_normal limit 1",
+				dbesc(z_root() . '/item/' . $item_id)
+			);
+
+			if (! $r) {
+				http_status_exit(404,'Not found');
+			}
+
+			// process an authenticated fetch
+
 
 			$sigdata = HTTPSig::verify(EMPTY_STR);
 			if ($sigdata['portable_id'] && $sigdata['header_valid']) {
@@ -139,44 +177,33 @@ class Item extends Controller {
 					http_status_exit(403, 'Permission denied');
 				}
 				observer_auth($portable_id);
+
+				$i = q("select id as item_id from item where mid = '%s' $item_normal and owner_xchan = '%s' limit 1",
+					dbesc($r[0]['parent_mid']),
+					dbesc($portable_id)
+				);
 			}
 			elseif (! Config::get('system','require_authenticated_fetch',false)) {
 				http_status_exit(403,'Permission denied');
 			}
 
-			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 ";
+			// if we don't have a parent id belonging to the signer see if we can obtain one as a visitor that we have permission to access
 
 			$sql_extra = item_permissions_sql(0);
 
-			$r = q("select * from item where mid = '%s' $item_normal $sql_extra limit 1",
-				dbesc(z_root() . '/item/' . $item_id)
-			);
-			if(! $r) {
-
-
-				$r = q("select * from item where mid = '%s' $item_normal limit 1",
-					dbesc(z_root() . '/item/' . $item_id)
+			if (! $i) {
+				$i = q("select id as item_id from item where mid = '%s' $item_normal $sql_extra limit 1",
+					dbesc($r[0]['parent_mid'])
 				);
-				if ($r) {
-					http_status_exit(403, 'Forbidden');
-				}
-				http_status_exit(404, 'Not found');
 			}
 
-
-			$items = q("select parent as item_id from item where mid = '%s' and uid = %d $item_normal $sql_extra ",
-				dbesc($r[0]['parent_mid']),
-				intval($r[0]['uid'])
-			);
-			if(! $items) {
-				http_status_exit(404, 'Not found');
+			if(! $i) {
+				http_status_exit(403,'Forbidden');
 			}
 
-			$r = $items;
-
-			$parents_str = ids_to_querystr($r,'item_id');
+			$parents_str = ids_to_querystr($i,'item_id');
 	
-			$items = q("SELECT item.*, item.id AS item_id FROM item WHERE item.parent IN ( %s ) $item_normal $sql_extra ",
+			$items = q("SELECT item.*, item.id AS item_id FROM item WHERE item.parent IN ( %s ) $item_normal ",
 				dbesc($parents_str)
 			);
 
@@ -184,9 +211,8 @@ class Item extends Controller {
 				http_status_exit(404, 'Not found');
 			}
 
-			$r = $items;
-			xchan_query($r,true);
-			$items = fetch_post_tags($r,true);
+			xchan_query($items,true);
+			$items = fetch_post_tags($items,true);
 
 			$observer = App::get_observer();
 			$parent = $items[0];
