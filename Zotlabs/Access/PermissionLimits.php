@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Access;
 
+use App;
 use Zotlabs\Lib\PConfig;
 
 /**
@@ -89,8 +90,8 @@ class PermissionLimits {
 
 		PConfig::Load($channel_id);
 		if(array_key_exists($channel_id, \App::$config)
-				&& array_key_exists('perm_limits', \App::$config[$channel_id]))
-			return \App::$config[$channel_id]['perm_limits'];
+				&& array_key_exists('perm_limits', App::$config[$channel_id]))
+			return App::$config[$channel_id]['perm_limits'];
 
 		return false;
 	}

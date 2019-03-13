@@ -353,9 +353,15 @@ class Import extends \Zotlabs\Web\Controller {
 				} 
 
 				if($abook['abook_self']) {
+					$ctype = 0;
 					$role = get_pconfig($channel['channel_id'],'system','permissions_role');
-					if(($role === 'forum') || ($abook['abook_my_perms'] & PERMS_W_TAGWALL)) {
-						q("update xchan set xchan_pubforum = 1 where xchan_hash = '%s' ",
+					if(strpos($role,'collection' !== false))
+						$ctype = 2;
+					elseif(strpos($role,'group') !== false)
+						$ctype = 1;
+					if($ctype) {
+						q("update xchan set xchan_type = %d where xchan_hash = '%s' ",
+							intval($ctype),
 							dbesc($abook['abook_xchan'])
 						);
 					}
@@ -449,6 +455,9 @@ class Import extends \Zotlabs\Web\Controller {
 
 		if(is_array($data['app']))
 			import_apps($channel,$data['app']);
+
+		if(is_array($data['sysapp']))
+			import_sysapps($channel,$data['sysapp']);
 
 		if(is_array($data['chatroom']))
 			import_chatrooms($channel,$data['chatroom']);

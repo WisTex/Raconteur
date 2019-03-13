@@ -20,8 +20,6 @@ class Apps {
 
 	static public $base_apps = null;
 
-
-
 	static public function get_system_apps($translate = true) {
 
 		$ret = array();
@@ -307,9 +305,11 @@ class Apps {
 			'Cards' => t('Cards'),
 			'Admin' => t('Site Admin'),
 			'Content Filter' => t('Content Filter'),
+			'Content Import' => t('Content Import'),
 			'Report Bug' => t('Report Bug'),
 			'View Bookmarks' => t('View Bookmarks'),
 			'Chatrooms' => t('Chatrooms'),
+			'Content Import' => t('Content Import'),
 			'Connections' => t('Connections'),
 			'Remote Diagnostics' => t('Remote Diagnostics'),
 			'Suggest Channels' => t('Suggest Channels'),
@@ -358,8 +358,7 @@ class Apps {
 			'Permission Categories' => t('Permission Categories'),
 			'Premium Channel' => t('Premium Channel'),
 			'Public Stream' => t('Public Stream'),
-			'My Chatrooms' => t('My Chatrooms'),
-			'File Storage Import' => t('File Storage Import')
+			'My Chatrooms' => t('My Chatrooms')
 		);
 
 		if(array_key_exists('name',$arr)) {

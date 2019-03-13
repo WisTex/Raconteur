@@ -1207,9 +1207,9 @@ function encode_item_xchan($xchan) {
 	$ret['url']      = $xchan['xchan_url'];
 	$ret['network']  = $xchan['xchan_network'];
 	$ret['photo']    = [ 'mimetype' => $xchan['xchan_photo_mimetype'], 'src' => $xchan['xchan_photo_m'] ];
-	$ret['id']     = $xchan['xchan_guid'];
-	$ret['id_sig'] = $xchan['xchan_guid_sig'];
-	$ret['key']  = $xchan['xchan_pubkey'];
+	$ret['id']       = $xchan['xchan_guid'];
+	$ret['id_sig']   = $xchan['xchan_guid_sig'];
+	$ret['key']      = $xchan['xchan_pubkey'];
 
 	return $ret;
 }
@@ -4592,7 +4592,7 @@ function fix_attached_file_permissions($channel,$observer_hash,$body,
 					'hash'      => $hash,
 					'revision'  => $rev,
 					'allow_cid' => $str_contact_allow,
-					'allow_gid'  => $str_group_allow,
+					'allow_gid' => $str_group_allow,
 					'deny_cid'  => $str_contact_deny,
 					'deny_gid'  => $str_group_deny
 				));

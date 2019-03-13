@@ -1,3 +1,8 @@
+<script src="vendor/blueimp/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
+<script src="vendor/blueimp/jquery-file-upload/js/jquery.iframe-transport.js"></script>
+<script src="vendor/blueimp/jquery-file-upload/js/jquery.fileupload.js"></script>
+
+
 <script>
     var initializeEmbedPhotoDialog = function () {
         $('.embed-photo-selected-photo').each(function (index) {
@@ -81,6 +86,8 @@
     };
 </script>
 
+<input id="invisible-photos-file-upload" type="file" name="files" style="visibility:hidden;position:absolute;top:-50;left:-50;width:0;height:0;" >
+
 <div id="profile-photo-content" class="generic-content-wrapper">
     <div class="section-title-wrapper">
     <h2>{{$title}}</h2>
@@ -92,12 +99,14 @@
 		{{if $existing}}
 		<img class="cover-photo-review" style="max-width: 100%;" src="{{$existing.url}}" alt="{{t('Cover Photo')}}" />
 		{{/if}}
-		<form enctype="multipart/form-data" action="cover_photo" method="post">
+		<form enctype="multipart/form-data" id="cover-photo-form" action="cover_photo" method="post">
 		<input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
 		<div id="profile-photo-upload-wrapper">
-
-			<label id="profile-photo-upload-label" class="form-label" for="profile-photo-upload">{{$lbl_upfile}}</label>
-			<input name="userfile" class="form-input" type="file" id="profile-photo-upload" size="48" />
+			<div id="profile-photo-upload-spinner" class="spinner-wrapper">
+				<div class="spinner m"></div>
+			</div>
+			<!--label id="profile-photo-upload-label" class="form-label" for="profile-photo-upload">{{$lbl_upfile}}</label>
+			<input name="userfile" class="form-input" type="file" id="profile-photo-upload" size="48" / -->
 			<div class="clear"></div>
 			<br />
 			<br />
@@ -115,6 +124,31 @@
 		</div>
 	</div>
 </div>
+
+<script>
+   $('#invisible-photos-file-upload').fileupload({
+          url: 'cover_photo',
+            dataType: 'json',
+			dropZone: $('#profile-photo-content'),
+            maxChunkSize: 2 * 1024 * 1024,
+
+            add: function(e,data) {
+                data.formData = $('#cover-photo-form').serializeArray();
+                data.submit();
+				$('#profile-photo-upload-spinner').show();
+            },
+
+            done: function(e,data) {
+				$('#profile-photo-upload-spinner').hide();
+                window.location.href = window.location.href + '/use/' + data.result.message;
+            }
+
+        });
+
+        $('#profile-photo-submit').click(function(event) { event.preventDefault(); $('#invisible-photos-file-upload').trigger('click'); return false;});
+
+</script>
+
 <div class="modal" id="embedPhotoModal" tabindex="-1" role="dialog" aria-labelledby="embedPhotoLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">

@@ -304,6 +304,8 @@ function change_channel($change_channel) {
  *
  * @return string additional SQL where statement
  */
+
+
 function permissions_sql($owner_id, $remote_observer = null, $table = '') {
 
 	$local_channel = local_channel();
@@ -314,7 +316,7 @@ function permissions_sql($owner_id, $remote_observer = null, $table = '') {
 	 * default permissions - anonymous user
 	 */
 
-	if($table)
+	if ($table)
 		$table .= '.';
 
 	$sql = " AND {$table}allow_cid = ''
@@ -327,38 +329,63 @@ function permissions_sql($owner_id, $remote_observer = null, $table = '') {
 	 * Profile owner - everything is visible
 	 */
 
-	if(($local_channel) && ($local_channel == $owner_id)) {
-		$sql = '';
+	if (($local_channel) && ($local_channel == $owner_id)) {
+		return EMPTY_STR;
 	}
 
 	/**
-	 * Authenticated visitor. Unless pre-verified,
-	 * check that the contact belongs to this $owner_id
-	 * and load the groups the visitor belongs to.
-	 * If pre-verified, the caller is expected to have already
-	 * done this and passed the groups into this function.
+	 * Authenticated visitor. 
 	 */
 
 	else {
+
 		$observer = ((! is_null($remote_observer)) ? $remote_observer : get_observer_hash());
-		if($observer) {
-			$groups = init_groups_visitor($observer);
 
-			$gs = '<<>>'; // should be impossible to match
+		if ($observer) {
 
-			if(is_array($groups) && count($groups)) {
-				foreach($groups as $g)
-					$gs .= '|<' . $g . '>';
+			$sec = get_security_ids($owner_id,$observer);
+
+			// always allow the channel owner, even if authenticated as a visitor
+
+			if ($sec['channel_id']) {
+				foreach ($sec['channel_id'] as $ch) {
+					if ($observer === $ch) {
+						return EMPTY_STR;
+					}
+				}
+			}						
+
+			if (is_array($sec['allow_cid']) && count($sec['allow_cid'])) {
+				$ca = [];
+				foreach ($sec['allow_cid'] as $c) {
+					$ca[] = '<' . $c . '>';
+				}
+				$cs = implode('|',$ca);
 			}
+			else {
+				$cs = '<<>>'; // should be impossible to match
+			}
+
+			if (is_array($sec['allow_gid']) && count($sec['allow_gid'])) {
+				$ga = [];
+				foreach ($sec['allow_gid'] as $g) {
+					$ga[] = '<' . $g . '>';
+				}
+				$gs = implode('|',$ga);
+			}
+			else {
+				$gs = '<<>>'; // should be impossible to match
+			}
+
 			$regexop = db_getfunc('REGEXP');
 			$sql = sprintf(
-				" AND ( NOT ({$table}deny_cid like '%s' OR {$table}deny_gid $regexop '%s')
-				  AND ( {$table}allow_cid like '%s' OR {$table}allow_gid $regexop '%s' OR ( {$table}allow_cid = '' AND {$table}allow_gid = '') )
+				" AND ( NOT ({$table}deny_cid $regexop '%s' OR {$table}deny_gid $regexop '%s')
+				  AND ( {$table}allow_cid $regexop '%s' OR {$table}allow_gid $regexop '%s' OR ( {$table}allow_cid = '' AND {$table}allow_gid = '') )
 				  )
 				",
-				dbesc(protect_sprintf( '%<' . $observer . '>%')),
+				dbesc($cs),
 				dbesc($gs),
-				dbesc(protect_sprintf( '%<' . $observer . '>%')),
+				dbesc($cs),
 				dbesc($gs)
 			);
 		}
@@ -375,6 +402,7 @@ function permissions_sql($owner_id, $remote_observer = null, $table = '') {
  *
  * @return string additional SQL where statement
  */
+
 function item_permissions_sql($owner_id, $remote_observer = null) {
 
 	$local_channel = local_channel();
@@ -396,35 +424,58 @@ function item_permissions_sql($owner_id, $remote_observer = null) {
 	}
 
 	/**
-	 * Authenticated visitor. Unless pre-verified,
-	 * check that the contact belongs to this $owner_id
-	 * and load the groups the visitor belongs to.
-	 * If pre-verified, the caller is expected to have already
-	 * done this and passed the groups into this function.
+	 * Authenticated visitor. 
 	 */
 
 	else {
-		$observer = (($remote_observer) ? $remote_observer : get_observer_hash());
 
-		if($observer) {
+        $observer = (($remote_observer) ? $remote_observer : get_observer_hash());
 
-			$groups = init_groups_visitor($observer);
+        if($observer) {
 
-			$gs = '<<>>'; // should be impossible to match
+			$sec = get_security_ids($owner_id,$observer);
 
-			if(is_array($groups) && count($groups)) {
-				foreach($groups as $g)
-					$gs .= '|<' . $g . '>';
+			// always allow the channel owner, even if authenticated as a visitor
+
+			if($sec['channel_id']) {
+				foreach($sec['channel_id'] as $ch) {
+					if($observer === $ch) {
+						return EMPTY_STR;
+					}
+				}
+			}						
+
+			if (is_array($sec['allow_cid']) && count($sec['allow_cid'])) {
+				$ca = [];
+				foreach ($sec['allow_cid'] as $c) {
+					$ca[] = '<' . $c . '>';
+				}
+				$cs = implode('|',$ca);
 			}
+			else {
+				$cs = '<<>>'; // should be impossible to match
+			}
+
+			if (is_array($sec['allow_gid']) && count($sec['allow_gid'])) {
+				$ga = [];
+				foreach ($sec['allow_gid'] as $g) {
+					$ga[] = '<' . $g . '>';
+				}
+				$gs = implode('|',$ga);
+			}
+			else {
+				$gs = '<<>>'; // should be impossible to match
+			}
+
 			$regexop = db_getfunc('REGEXP');
 			$sql = sprintf(
-				" AND (( NOT (deny_cid like '%s' OR deny_gid $regexop '%s')
-				  AND ( allow_cid like '%s' OR allow_gid $regexop '%s' OR ( allow_cid = '' AND allow_gid = '' AND item_private = 0 ))
+				" OR (( NOT (deny_cid $regexop '%s' OR deny_gid $regexop '%s')
+				  AND ( allow_cid $regexop '%s' OR allow_gid $regexop '%s' OR ( allow_cid = '' AND allow_gid = '' AND item_private = 0 ))
 				  ))
 				",
-				dbesc(protect_sprintf( '%<' . $observer . '>%')),
+				dbesc($cs),
 				dbesc($gs),
-				dbesc(protect_sprintf( '%<' . $observer . '>%')),
+				dbesc($cs),
 				dbesc($gs)
 			);
 		}
@@ -433,41 +484,60 @@ function item_permissions_sql($owner_id, $remote_observer = null) {
 	return $sql;
 }
 
-
-
 /**
  * @param string $observer_hash
  *
  * @return string additional SQL where statement
  */
+
 function public_permissions_sql($observer_hash) {
 
-	$groups = init_groups_visitor($observer_hash);
+	$owner_id = 0;
 
-	$gs = '<<>>'; // should be impossible to match
+	if ($observer_hash) {
 
-	if(is_array($groups) && count($groups)) {
-		foreach($groups as $g)
-			$gs .= '|<' . $g . '>';
-	}
-	$sql = '';
-	if($observer_hash) {
+		$sec = get_security_ids($owner_id,$observer_hash);
+
+		if (is_array($sec['allow_cid']) && count($sec['allow_cid'])) {
+			$ca = [];
+			foreach ($sec['allow_cid'] as $c) {
+				$ca[] = '<' . $c . '>';
+			}
+			$cs = implode('|',$ca);
+		}
+		else {
+			$cs = '<<>>'; // should be impossible to match
+		}
+
+		if (is_array($sec['allow_gid']) && count($sec['allow_gid'])) {
+			$ga = [];
+			foreach ($sec['allow_gid'] as $g) {
+				$ga[] = '<' . $g . '>';
+			}
+			$gs = implode('|',$ga);
+		}
+		else {
+			$gs = '<<>>'; // should be impossible to match
+		}
+
 		$regexop = db_getfunc('REGEXP');
 		$sql = sprintf(
-			" OR (( NOT (deny_cid like '%s' OR deny_gid $regexop '%s')
-			  AND ( allow_cid like '%s' OR allow_gid $regexop '%s' OR ( allow_cid = '' AND allow_gid = '' AND item_private = 0 ) )
-			  ))
+			" AND ( NOT (deny_cid $regexop '%s' OR deny_gid $regexop '%s')
+			  AND ( allow_cid $regexop '%s' OR allow_gid $regexop '%s' OR ( allow_cid = '' AND allow_gid = '' AND item_private = 0) )
+			  )
 			",
-			dbesc(protect_sprintf( '%<' . $observer_hash . '>%')),
+			dbesc($cs),
 			dbesc($gs),
-			dbesc(protect_sprintf( '%<' . $observer_hash . '>%')),
+			dbesc($cs),
 			dbesc($gs)
 		);
+	}
+	else {
+		$sql = EMPTY_STR;
 	}
 
 	return $sql;
 }
-
 
 /*
  * Functions used to protect against Cross-Site Request Forgery
@@ -550,6 +620,68 @@ function init_groups_visitor($contact_id) {
 			$groups[] = $rr['hash'];
 	}
 	return $groups;
+}
+
+
+function get_security_ids($channel_id, $ob_hash) {
+
+	$ret = [ 
+		'channel_id' => [], 
+		'allow_cid'  => [], 
+		'allow_gid'  => [] 
+	];
+
+	if($channel_id) {
+		$ch = q("select channel_hash from channel where channel_id = %d",
+			intval($channel_id)
+		);
+		if($ch) {
+			$ret['channel_id'][] = $ch[0]['channel_hash'];
+		}
+	}
+
+	$groups = [];
+
+	$x = q("select * from xchan where xchan_hash = '%s'",
+		dbesc($ob_hash)
+	);
+
+	if ($x) {
+
+		// include xchans for all zot-like networks
+
+		$xchans = q("select xchan_hash from xchan where xchan_hash = '%s' OR ( xchan_guid = '%s' AND xchan_pubkey = '%s' ) ",
+			dbesc($ob_hash),
+			dbesc($x[0]['xchan_guid']),
+			dbesc($x[0]['xchan_pubkey'])
+		);
+
+		if ($xchans) {
+			$ret['allow_cid'] = ids_to_array($xchans,'xchan_hash');
+			$hashes = ids_to_querystr($xchans,'xchan_hash',true);
+
+			// private profiles are treated as a virtual group
+
+			$r = q("SELECT abook_profile from abook where abook_xchan in ( " . protect_sprintf($hashes) . " ) and abook_profile != '' ");
+			if($r) {
+				foreach ($r as $rv) {
+					$groups[] = 'vp.' . $rv['abook_profile'];
+				}
+			}
+
+			// physical groups this identity is a member of
+
+			$r = q("SELECT hash FROM pgrp left join pgrp_member on pgrp.id = pgrp_member.gid WHERE xchan in ( " . protect_sprintf($hashes) . " ) ");
+			if($r) {
+				foreach ($r as $rv) {
+					$groups[] = $rv['hash'];
+				}
+			}
+			$ret['allow_gid'] = $groups;
+		}
+	}
+
+	return $ret;
 }
 
 

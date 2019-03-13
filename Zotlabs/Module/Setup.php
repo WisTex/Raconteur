@@ -455,11 +455,17 @@ class Setup extends \Zotlabs\Web\Controller {
 		$help = '';
 
 		$result = getPhpiniUploadLimits();
+		if($result['post_max_size'] < (2 * 1024 * 1024) || $result['max_upload_filesize'] < (2 * 1024 * 1024)) {
+			$mem_warning = '<strong>' . t('This is not sufficient to upload larger images or files. You should be able to upload at least 2MB (2097152 bytes) at once.') . '</strong>';
+        }
+
 		$help = sprintf(t('Your max allowed total upload size is set to %s. Maximum size of one file to upload is set to %s. You are allowed to upload up to %d files at once.'),
 				userReadableSize($result['post_max_size']),
 				userReadableSize($result['max_upload_filesize']),
 				$result['max_file_uploads']
 				);
+
+		$help .= (($mem_warning) ? $mem_warning : EMPTY_STR);
 		$help .= '<br><br>' . t('You can adjust these settings in the server php.ini file.');
 
 		$this->check_add($checks, t('PHP upload limits'), true, false, $help);
@@ -739,6 +745,12 @@ class Setup extends \Zotlabs\Web\Controller {
 	function what_next() {
 		// install the standard theme
 		set_config('system', 'allowed_themes', 'redbasic');
+
+		// if imagick converter is installed, use it
+		if(@is_executable('/usr/bin/convert')) {
+			set_config('system','imagick_convert_path','/usr/bin/convert');
+		}
+
 
 		// Set a lenient list of ciphers if using openssl. Other ssl engines
 		// (e.g. NSS used in RedHat) require different syntax, so hopefully

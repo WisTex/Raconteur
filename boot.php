@@ -32,10 +32,11 @@ require_once('include/bbcode.php');
 require_once('include/items.php');
 
 
+
 define ( 'STD_VERSION',             '2.6' );
 define ( 'ZOT_REVISION',            '6.0' );
 
-define ( 'DB_UPDATE_VERSION',       1227 );
+define ( 'DB_UPDATE_VERSION',       1229 );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 

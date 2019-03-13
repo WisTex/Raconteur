@@ -23,7 +23,7 @@ function UploadInit() {
 			url: 'file_upload',
 			dataType: 'json',
 			dropZone: filedrag,
-			maxChunkSize: 4 * 1024 * 1024,
+			maxChunkSize: 2 * 1024 * 1024,
 
 			add: function(e,data) {
 				$(data.files).each( function() { this.count = ++ count; prepareHtml(this); }); 

@@ -118,8 +118,16 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
 		@curl_setopt($ch, CURLOPT_TIMEOUT, intval($opts['timeout']));
 	}
 	else {
-		$curl_time = intval(@get_config('system','curl_timeout'));
-		@curl_setopt($ch, CURLOPT_TIMEOUT, (($curl_time !== false) ? $curl_time : 60));
+		$curl_time = intval(@get_config('system','curl_timeout',60));
+		@curl_setopt($ch, CURLOPT_TIMEOUT, $curl_time);
+	}
+
+	if(x($opts,'connecttimeout') && intval($opts['connecttimeout'])) {
+		@curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, intval($opts['connecttimeout']));
+	}
+	else {
+		$curl_contime = intval(@get_config('system','curl_connecttimeout',30));
+		@curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $curl_contime);
 	}
 
 
@@ -291,13 +299,20 @@ function z_post_url($url, $params, $redirects = 0, $opts = array()) {
 		@curl_setopt($ch, CURLOPT_POST,0);
 	}
 
-
 	if(x($opts,'timeout') && intval($opts['timeout'])) {
-		@curl_setopt($ch, CURLOPT_TIMEOUT, $opts['timeout']);
+		@curl_setopt($ch, CURLOPT_TIMEOUT, intval($opts['timeout']));
 	}
 	else {
-		$curl_time = intval(@get_config('system','curl_timeout'));
-		@curl_setopt($ch, CURLOPT_TIMEOUT, (($curl_time !== false) ? $curl_time : 60));
+		$curl_time = intval(@get_config('system','curl_timeout',60));
+		@curl_setopt($ch, CURLOPT_TIMEOUT, $curl_time);
+	}
+
+	if(x($opts,'connecttimeout') && intval($opts['connecttimeout'])) {
+		@curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, intval($opts['connecttimeout']));
+	}
+	else {
+		$curl_contime = intval(@get_config('system','curl_connecttimeout',30));
+		@curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $curl_contime);
 	}
 
 	if(x($opts,'http_auth')) {

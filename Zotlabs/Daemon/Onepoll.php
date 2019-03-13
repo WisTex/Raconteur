@@ -151,7 +151,7 @@ class Onepoll {
 				$j = json_decode($x['body'],true);
 				if($j['success'] && $j['messages']) {
 					foreach($j['messages'] as $message) {
-						$results = Libzot::process_delivery($contact['xchan_hash'], get_item_elements($message), [ $importer['xchan_hash'] ], false);
+						$results = Libzot::process_delivery($contact['xchan_hash'], null, get_item_elements($message), [ $importer['xchan_hash'] ], false);
 						logger('onepoll: feed_update: process_delivery: ' . print_r($results,true), LOGGER_DATA);
 						$total ++;
 					}

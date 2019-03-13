@@ -2,7 +2,7 @@
 
 namespace Zotlabs\Widget;
 
-class Forums {
+class Groups {
 
 	function widget($arr) {
 
@@ -50,7 +50,7 @@ class Forums {
 			}
 		}
 
-		$sql_extra = (($xf) ? " and ( xchan_hash in (" . $xf . ") or xchan_pubforum = 1 ) " : " and xchan_pubforum = 1 "); 
+		$sql_extra = (($xf) ? " and ( xchan_hash in (" . $xf . ") or xchan_type = 1 ) " : " and xchan_type = 1 "); 
 
 
 
@@ -100,7 +100,7 @@ class Forums {
 
 		if($r1) {
 			$o .= '<div class="widget">';
-			$o .= '<h3>' . t('Forums') . '</h3><ul class="nav nav-pills flex-column">';
+			$o .= '<h3>' . t('Groups') . '</h3><ul class="nav nav-pills flex-column">';
 
 			foreach($r1 as $rr) {
 

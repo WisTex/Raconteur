@@ -87,7 +87,7 @@ class Externals {
 						foreach($j['messages'] as $message) {
 							// on these posts, clear any route info. 
 							$message['route'] = '';
-							$results = Libzot::process_delivery('undefined', get_item_elements($message), [ $sys['xchan_hash'] ], false, true);
+							$results = Libzot::process_delivery('undefined', null, get_item_elements($message), [ $sys['xchan_hash'] ], false, true);
 							$total ++;
 						}
 						logger('externals: import_public_posts: ' . $total . ' messages imported', LOGGER_DEBUG);

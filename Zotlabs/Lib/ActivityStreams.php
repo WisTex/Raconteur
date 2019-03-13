@@ -325,7 +325,10 @@ class ActivityStreams {
 	function get_compound_property($property, $base = '', $namespace = '', $first = false) {
 		$x = $this->get_property_obj($property, $base, $namespace);
 		if($this->is_url($x)) {
-			$x = $this->fetch_property($x);
+			$y = $this->fetch_property($x);
+			if (is_array($y)) {
+				$x = $y;
+			}
 		}
 
 		// verify and unpack JSalmon signature if present
@@ -359,7 +362,7 @@ class ActivityStreams {
 	 * @return boolean
 	 */
 	function is_url($url) {
-		if(($url) && (! is_array($url)) && (strpos($url, 'http') === 0)) {
+		if(($url) && (! is_array($url)) && ((strpos($url, 'http') === 0) || (strpos($url,'x-zot') === 0))) {
 			return true;
 		}
 

@@ -82,7 +82,7 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 				$profile = $r[0];
 			}
 	
-			$r = q("SELECT * FROM photo WHERE resource_id = '%s' AND uid = %d AND imgscale = 0 LIMIT 1",
+			$r = q("SELECT * FROM photo WHERE resource_id = '%s' AND uid = %d AND imgscale > 0 order by imgscale asc LIMIT 1",
 				dbesc($image_id),
 				intval(local_channel())
 			);
@@ -220,39 +220,53 @@ logger('gis: ' . print_r($gis,true));
 	
 		require_once('include/attach.php');
 	
+		$matches = [];
+		$partial = false;
+
+		if(array_key_exists('HTTP_CONTENT_RANGE',$_SERVER)) {
+			$pm = preg_match('/bytes (\d*)\-(\d*)\/(\d*)/',$_SERVER['HTTP_CONTENT_RANGE'],$matches);
+			if($pm) {
+				logger('Content-Range: ' . print_r($matches,true));
+				$partial = true;
+			}
+		}
+
+		if($partial) {
+			$x = save_chunk($channel,$matches[1],$matches[2],$matches[3]);
+
+			if($x['partial']) {
+				header('Range: bytes=0-' . (($x['length']) ? $x['length'] - 1 : 0));
+				json_return_and_die($result);
+			}
+			else {
+				header('Range: bytes=0-' . (($x['size']) ? $x['size'] - 1 : 0));
+
+				$_FILES['userfile'] = [
+					'name'     => $x['name'],
+					'type'     => $x['type'],
+					'tmp_name' => $x['tmp_name'],
+					'error'    => $x['error'],
+					'size'     => $x['size']
+				];
+			}
+		}
+		else {	
+			if(! array_key_exists('userfile',$_FILES)) {
+				$_FILES['userfile'] = [
+					'name'     => $_FILES['files']['name'],
+					'type'     => $_FILES['files']['type'],
+					'tmp_name' => $_FILES['files']['tmp_name'],
+					'error'    => $_FILES['files']['error'],
+					'size'     => $_FILES['files']['size']
+				];
+			}
+		}
+
 		$res = attach_store(\App::get_channel(), get_observer_hash(), '', array('album' => t('Cover Photos'), 'hash' => $hash));
 	
 		logger('attach_store: ' . print_r($res,true));
-	
-		if($res && intval($res['data']['is_photo'])) {
-			$i = q("select * from photo where resource_id = '%s' and uid = %d and imgscale = 0",
-				dbesc($hash),
-				intval(local_channel())
-			);
-	
-			if(! $i) {
-				notice( t('Image upload failed.') . EOL );
-				return;
-			}
-			$os_storage = false;
-	
-			foreach($i as $ii) {
-				$smallest   = intval($ii['imgscale']);
-				$os_storage = intval($ii['os_storage']);
-				$imagedata  = $ii['content'];
-				$filetype   = $ii['mimetype'];
-			}
-		}
-	
-		$imagedata = (($os_storage) ? @file_get_contents(dbunescbin($imagedata)) : dbunescbin($imagedata));
-		$ph = photo_factory($imagedata, $filetype);
-	
-		if(! $ph->is_valid()) {
-			notice( t('Unable to process image.') . EOL );
-			return;
-		}
-	
-		return $this->cover_photo_crop_ui_head($a, $ph, $hash, $smallest);
+
+		json_return_and_die([ 'message' => $hash ]);
 		
 	}
 	
@@ -343,7 +357,7 @@ logger('gis: ' . print_r($gis,true));
 	        
 			$resource_id = argv(2);
 	
-			$r = q("SELECT id, album, imgscale FROM photo WHERE uid = %d AND resource_id = '%s' ORDER BY imgscale ASC",
+			$r = q("SELECT id, album, imgscale FROM photo WHERE uid = %d AND resource_id = '%s' and imgscale > 0 ORDER BY imgscale ASC",
 				intval(local_channel()),
 				dbesc($resource_id)
 			);

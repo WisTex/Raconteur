@@ -385,11 +385,13 @@ class Notifier {
 
 			if(($relay_to_owner || $uplink) && ($cmd !== 'relay')) {
 				logger('followup relay (upstream delivery)', LOGGER_DEBUG);
-				self::$recipients = [ ($uplink) ? $parent_item['source_xchan'] : $parent_item['owner_xchan'] ];
+				$sendto = ($uplink) ? $parent_item['source_xchan'] : $parent_item['owner_xchan'];
+				self::$recipients = [ $sendto ];
 				self::$private = true;
 				$upstream = true;
 				self::$packet_type = 'response';
-				if($relay_to_owner && $thread_is_public) {
+				$is_moderated = their_perms_contains($parent_item['uid'],$sendto,'moderated');
+				if($relay_to_owner && $thread_is_public && (! $is_moderated)) {
 					Master::Summon([ 'Notifier' , 'hyper', $item_id ]);
 				}
 						
@@ -435,6 +437,12 @@ class Notifier {
 				}
 
 				// FIXME add any additional recipients such as mentions, etc.
+
+				if ($top_level_post) {
+					// remove clones who will receive the post via sync
+					self::$recipients = array_diff(self::$recipients, [ $target_item['owner_xchan'] ]);
+				} 
+
 
 				// don't send deletions onward for other people's stuff
 				// TODO verify this is needed - copied logic from same place in old code
@@ -627,6 +635,8 @@ class Notifier {
 			// is running it will receive a sync packet. On receipt of this sync packet it
 			// will invoke a delivery to those connections which are connected to just that
 			// hub instance.
+
+			// Note: Legacy Hubzilla and Osada code. In Zap this should never happen.
 
 			if($cmd === 'single_mail' || $cmd === 'single_activity') {
 				continue;
