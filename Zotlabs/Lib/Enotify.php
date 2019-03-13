@@ -704,16 +704,28 @@ class Enotify {
 
 		// use the EmailNotification library to send the message
 
-		self::send(array(
-			'fromName'             => $sender_name,
-			'fromEmail'            => $sender_email,
-			'replyTo'              => $reply_email,
-			'toEmail'              => $recip['account_email'],
-			'messageSubject'       => $datarray['subject'],
-			'htmlVersion'          => $email_html_body,
-			'textVersion'          => $email_text_body,
-			'additionalMailHeader' => $datarray['headers'],
-		));
+		$to_email = $recip['account_email'];
+
+		$e = get_pconfig($recip['channel_id'],'system','notification_email', false);
+		if ($e) {
+			$to_email = $e;
+		}
+
+		$addrs = explode(',', $to_email);
+
+		foreach($addrs as $addr) {
+
+			self::send(array(
+				'fromName'             => $sender_name,
+				'fromEmail'            => $sender_email,
+				'replyTo'              => $reply_email,
+				'toEmail'              => $addr,
+				'messageSubject'       => $datarray['subject'],
+				'htmlVersion'          => $email_html_body,
+				'textVersion'          => $email_text_body,
+				'additionalMailHeader' => $datarray['headers'],
+			));
+		}
 	}
 
 	pop_lang();
