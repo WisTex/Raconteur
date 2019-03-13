@@ -31,7 +31,6 @@ class Channel {
 	
 			if($role === 'custom') {
 				$hide_presence    = (((x($_POST,'hide_presence')) && (intval($_POST['hide_presence']) == 1)) ? 1: 0);
-				$publish          = (((x($_POST,'profile_in_directory')) && (intval($_POST['profile_in_directory']) == 1)) ? 1: 0);
 				$def_group        = ((x($_POST,'group-selection')) ? notags(trim($_POST['group-selection'])) : '');
 				$r = q("update channel set channel_default_group = '%s' where channel_id = %d",
 					dbesc($def_group),
@@ -118,7 +117,8 @@ class Channel {
 			set_pconfig(local_channel(),'system','hide_online_status',$hide_presence);
 			set_pconfig(local_channel(),'system','permissions_role',$role);
 		}
-	
+
+		$publish          = (((x($_POST,'profile_in_directory')) && (intval($_POST['profile_in_directory']) == 1)) ? 1: 0);
 		$username         = ((x($_POST,'username'))   ? notags(trim($_POST['username']))     : '');
 		$timezone         = ((x($_POST,'timezone_select'))   ? notags(trim($_POST['timezone_select']))     : '');
 		$defloc           = ((x($_POST,'defloc'))     ? notags(trim($_POST['defloc']))       : '');

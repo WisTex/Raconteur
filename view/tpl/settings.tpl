@@ -75,9 +75,9 @@
 							</div>
 							{{$group_select}}
 							{{include file="field_checkbox.tpl" field=$hide_presence}}
-							{{$profile_in_dir}}
 						</div>
 						<div class="settings-common-perms">
+							{{$profile_in_dir}}
 							{{$suggestme}}
 							{{*include file="field_checkbox.tpl" field=$blocktags*}}
 							{{include file="field_checkbox.tpl" field=$public_uploads}}
