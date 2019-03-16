@@ -2010,8 +2010,8 @@ function z_mail($params) {
 
 	$messageHeader =
 		$params['additionalMailHeader'] .
-		"From: $fromName <{$params['fromEmail']}>\n" .
-		"Reply-To: $fromName <{$params['replyTo']}>\n" .
+		"From: $fromName <{$params['fromEmail']}>\r\n" .
+		"Reply-To: $fromName <{$params['replyTo']}>\r\n" .
 		"Content-Type: text/plain; charset=UTF-8";
 
 	// send the message
