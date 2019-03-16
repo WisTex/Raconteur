@@ -758,9 +758,9 @@ class Enotify {
 		// generate a multipart/alternative message header
 		$messageHeader =
 			$params['additionalMailHeader'] .
-			"From: $fromName <{$params['fromEmail']}>\r\n" .
-			"Reply-To: $fromName <{$params['replyTo']}>\r\n" .
-			"MIME-Version: 1.0\r\n" .
+			"From: $fromName <{$params['fromEmail']}>\n" .
+			"Reply-To: $fromName <{$params['replyTo']}>\n" .
+			"MIME-Version: 1.0\n" .
 			"Content-Type: multipart/alternative; boundary=\"{$mimeBoundary}\"";
 
 		// assemble the final multipart message body with the text and html types included
@@ -768,14 +768,14 @@ class Enotify {
 		$htmlBody = chunk_split(base64_encode($params['htmlVersion']));
 
 		$multipartMessageBody =
-			"--" . $mimeBoundary . "\r\n" .					// plain text section
-			"Content-Type: text/plain; charset=UTF-8\r\n" .
-			"Content-Transfer-Encoding: base64\r\n\r\n" .
-			$textBody . "\r\n" .
-			"--" . $mimeBoundary . "\r\n" .					// text/html section
-			"Content-Type: text/html; charset=UTF-8\r\n" .
-			"Content-Transfer-Encoding: base64\r\n\r\n" .
-			$htmlBody . "\r\n" .
+			"--" . $mimeBoundary . "\n" .					// plain text section
+			"Content-Type: text/plain; charset=UTF-8\n" .
+			"Content-Transfer-Encoding: base64\n\n" .
+			$textBody . "\n" .
+			"--" . $mimeBoundary . "\n" .					// text/html section
+			"Content-Type: text/html; charset=UTF-8\n" .
+			"Content-Transfer-Encoding: base64\n\n" .
+			$htmlBody . "\n" .
 			"--" . $mimeBoundary . "--\n";					// message ending
 
 		// send the message
