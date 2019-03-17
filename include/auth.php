@@ -1,4 +1,6 @@
 <?php
+
+
 /**
  * @file include/auth.php
  * @brief Functions and inline functionality for authentication.
@@ -8,6 +10,8 @@
  * also handles logout.
  * Also provides a function for OpenID identiy matching.
  */
+
+use Zotlabs\Lib\Libzot;
 
 require_once('include/api_auth.php');
 require_once('include/security.php');
@@ -224,12 +228,13 @@ if((isset($_SESSION)) && (x($_SESSION, 'authenticated')) &&
 				$r = array(atoken_xchan($y[0]));
 		}
 		else {
-			$r = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where xchan_hash = '%s' limit 1",
+			$r = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where xchan_hash = '%s' ",
 				dbesc($_SESSION['visitor_id'])
 			);
 		}
 		if($r) {
-			App::set_observer($r[0]);
+			$r = Libzot::zot_record_preferred($r);
+			App::set_observer($r);
 		}
 		else {
 			unset($_SESSION['visitor_id']);
