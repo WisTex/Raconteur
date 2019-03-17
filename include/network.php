@@ -2011,6 +2011,7 @@ function z_mail($params) {
 
 	$messageHeader =
 		$params['additionalMailHeader'] .
+
 		"From: $fromName <{$params['fromEmail']}>" .PHP_EOL .
 		"Reply-To: $fromName <{$params['replyTo']}>" . PHP_EOL .
 		"Content-Type: text/plain; charset=UTF-8";
