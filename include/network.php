@@ -1009,7 +1009,7 @@ function email_header_encode($in_str, $charset = 'UTF-8', $header = 'Subject') {
 		// define start delimimter, end delimiter and spacer
 		$end = "?=";
 		$start = "=?" . $charset . "?B?";
-		$spacer = $end . "\r\n " . $start;
+		$spacer = $end . PHP_EOL . " " . $start;
 
 		// determine length of encoded text within chunks
 		// and ensure length is even
@@ -2011,8 +2011,8 @@ function z_mail($params) {
 
 	$messageHeader =
 		$params['additionalMailHeader'] .
-		"From: $fromName <{$params['fromEmail']}>\n" .
-		"Reply-To: $fromName <{$params['replyTo']}>\n" .
+		"From: $fromName <{$params['fromEmail']}>" .PHP_EOL .
+		"Reply-To: $fromName <{$params['replyTo']}>" . PHP_EOL .
 		"Content-Type: text/plain; charset=UTF-8";
 
 	// send the message
