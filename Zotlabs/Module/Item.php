@@ -286,12 +286,21 @@ class Item extends Controller {
 		}
 
 		if(argc() > 1 && argv(1) !== 'drop') {
-			$x = q("select plink from item where mid = '%s' limit 1",
+			$x = q("select uid, item_wall, llink, mid from item where mid = '%s' ",
 				dbesc(z_root() . '/item/' . argv(1))
 			);
 			if($x) {
-				goaway($x[0]['plink']);
+				foreach($x as $xv) {
+					if (intval($xv['item_wall'])) {
+						$c = channelx_by_n($xv['uid']);
+						if ($c) {
+							goaway(channel_address($c[0]) . '?mid=' . gen_link_id($xv['mid']));
+						}
+					}
+				}
+				goaway($x[0]['llink']);
 			}
+			http_status_exit(404, 'Not found');
 		}
 	}
 

@@ -169,7 +169,7 @@ class PermissionRoles {
 
 			t('Community Group') => [
 				'forum' => t('Group - Normal'),
-				'forum_restricted' => t('Group - Restricted')
+				'forum_restricted' => t('Group - Restricted'),
 				'forum_moderated' => t('Group - Moderated')
 			],
 

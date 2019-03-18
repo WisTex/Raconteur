@@ -1,5 +1,6 @@
 <?php
 
+use Zotlabs\Lib\Libzot;
 
 function is_matrix_url($url) {
 
@@ -300,7 +301,10 @@ function owt_init($token) {
 		logger('owt: unable to finger ' . $ob_hash);
 		return;
 	}
-	$hubloc = $r[0];
+
+	$r = Libzot::zot_record_preferred($r);
+
+	$hubloc = $r;
 
 	$_SESSION['authenticated'] = 1;
 

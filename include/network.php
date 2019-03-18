@@ -990,13 +990,14 @@ function xml2array($contents, $namespaces = true, $get_attributes=1, $priority =
 }
 
 
-function email_header_encode($in_str, $charset = 'UTF-8') {
+function email_header_encode($in_str, $charset = 'UTF-8', $header = 'Subject') {
 	$out_str = $in_str;
 	$need_to_convert = false;
 
 	for($x = 0; $x < strlen($in_str); $x ++) {
 		if((ord($in_str[$x]) == 0) || ((ord($in_str[$x]) > 128))) {
 			$need_to_convert = true;
+			break;
 		}
 	}
 
@@ -1008,11 +1009,11 @@ function email_header_encode($in_str, $charset = 'UTF-8') {
 		// define start delimimter, end delimiter and spacer
 		$end = "?=";
 		$start = "=?" . $charset . "?B?";
-		$spacer = $end . "\r\n " . $start;
+		$spacer = $end . PHP_EOL . " " . $start;
 
 		// determine length of encoded text within chunks
 		// and ensure length is even
-		$length = 75 - strlen($start) - strlen($end);
+		$length = 75 - strlen($start) - strlen($end) - (strlen($header) + 2);
 
 		/*
 			[EDIT BY danbrown AT php DOT net: The following
@@ -2010,8 +2011,9 @@ function z_mail($params) {
 
 	$messageHeader =
 		$params['additionalMailHeader'] .
-		"From: $fromName <{$params['fromEmail']}>\n" .
-		"Reply-To: $fromName <{$params['replyTo']}>\n" .
+
+		"From: $fromName <{$params['fromEmail']}>" .PHP_EOL .
+		"Reply-To: $fromName <{$params['replyTo']}>" . PHP_EOL .
 		"Content-Type: text/plain; charset=UTF-8";
 
 	// send the message
