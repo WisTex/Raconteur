@@ -10,22 +10,15 @@ use Zotlabs\Daemon\Master;
 class Connect extends Controller {
 
 	function init() {
-		if(argc() > 1)
-			$which = argv(1);
+		if(argc() > 1) {
+			App::$data['channel'] = channelx_by_address(argv(1));
+			profile_load(argv(1),EMPTY_STR);
+		}
 		else {
 			notice( t('Requested profile is not available.') . EOL );
 			App::$error = 404;
 			return;
 		}
-	
-		$r = q("select * from channel where channel_address = '%s' limit 1",
-			dbesc($which)
-		);
-	
-		if($r)
-			App::$data['channel'] = $r[0];
-	
-		profile_load($which,'');
 	}
 	
 	function post() {
@@ -33,7 +26,7 @@ class Connect extends Controller {
 		if(! array_key_exists('channel', App::$data))
 			return;
 	
-		$edit = ((local_channel() && (local_channel() == \App::$data['channel']['channel_id'])) ? true : false);
+		$edit = ((local_channel() && (local_channel() == App::$data['channel']['channel_id'])) ? true : false);
 	
 		if($edit) {
 			$has_premium = ((App::$data['channel']['channel_pageflags'] & PAGE_PREMIUM) ? 1 : 0);
@@ -55,7 +48,7 @@ class Connect extends Controller {
 	
 		}
 	
-		$url = '';
+		$url = EMPTY_STR;
 		$observer = App::get_observer();
 		if(($observer) && ($_POST['submit'] === t('Continue'))) {
 			if($observer['xchan_follow'])
@@ -87,8 +80,8 @@ class Connect extends Controller {
 	
 			$o = replace_macros(get_markup_template('sellpage_edit.tpl'),array(
 				'$header' => t('Premium Channel Setup'),
-				'$address' => \App::$data['channel']['channel_address'],
-				'$premium' => array('premium', t('Enable premium channel connection restrictions'),((\App::$data['channel']['channel_pageflags'] & PAGE_PREMIUM) ? '1' : ''),''),
+				'$address' => App::$data['channel']['channel_address'],
+				'$premium' => array('premium', t('Enable premium channel connection restrictions'),((App::$data['channel']['channel_pageflags'] & PAGE_PREMIUM) ? '1' : ''),''),
 				'$lbl_about' => t('Please enter your restrictions or conditions, such as paypal receipt, usage guidelines, etc.'),
 	 			'$text' => $text,
 				'$desc' => t('This channel may require additional steps or acknowledgement of the following conditions prior to connecting:'),
@@ -119,7 +112,7 @@ class Connect extends Controller {
 	
 			));
 	
-			$arr = array('channel' => App::$data['channel'],'observer' => \App::get_observer(), 'sellpage' => $o, 'submit' => $submit);
+			$arr = array('channel' => App::$data['channel'],'observer' => App::get_observer(), 'sellpage' => $o, 'submit' => $submit);
 			call_hooks('connect_premium', $arr);
 			$o = $arr['sellpage'];
 	

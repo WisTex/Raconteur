@@ -913,6 +913,18 @@ function identity_basic_export($channel_id, $sections = null) {
 			}
 			$ret['app'] = $r;
 		}
+		$r = q("select * from app where app_channel = %d and app_system = 1",
+			intval($channel_id)
+		);
+		if($r) {
+			for($x = 0; $x < count($r); $x ++) {
+				$r[$x]['term'] = q("select * from term where otype = %d and oid = %d",
+					intval(TERM_OBJ_APP),
+					intval($r[$x]['id'])
+				);
+			}
+			$ret['sysapp'] = $r;
+		}
 	}
 
 	if(in_array('chatrooms',$sections)) {
@@ -1802,6 +1814,7 @@ function zat_init() {
 	);
 	if($r) {
 		$xchan = atoken_xchan($r[0]);
+		atoken_create_xchan($xchan);
 		atoken_login($xchan);
 	}
 }
@@ -2338,6 +2351,22 @@ function channelx_by_hash($hash) {
 
 	return(($r) ? $r[0] : false);
 }
+
+/**
+ * @brief Get a channel array by a channel_address.
+ *
+ * @param string $address
+ * @return array|boolean false if channel ID not found, otherwise the channel array
+ */
+function channelx_by_address($address) {
+	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_address = '%s' and channel_removed = 0 LIMIT 1",
+		dbesc($address)
+	);
+
+	return(($r) ? $r[0] : false);
+}
+
+
 
 /**
  * @brief Get a channel array by a channel ID.

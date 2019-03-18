@@ -376,24 +376,10 @@ function contact_remove($channel_id, $abook_id) {
 	if(intval($abook['abook_self']))
 		return false;
 
-	$r = q("select id from item where (owner_xchan = '%s' or author_xchan = '%s') and uid = %d and item_retained = 0 and item_starred = 0",
-		dbesc($abook['abook_xchan']),
-		dbesc($abook['abook_xchan']),
-		intval($channel_id)
-	);
-	if($r) {
-		foreach($r as $rr) {
-			$x = q("select uid from term where otype = %d and oid = %d and ttype = %d limit 1",
-				intval(TERM_OBJ_POST),
-				intval($rr['id']),
-				intval(TERM_FILE)
-			);
-			if($x) {
-				continue;
-			}
-			drop_item($rr['id'],false);
-		}
-	}
+	// remove items in the background as this can take some time
+
+	\Zotlabs\Daemon\Master::Summon( [ 'Delxitems', $channel_id, $abook['abook_xchan'] ] );
+
 	
 	q("delete from abook where abook_id = %d and abook_channel = %d",
 		intval($abook['abook_id']),
@@ -424,6 +410,28 @@ function contact_remove($channel_id, $abook_id) {
 	return true;
 }
 
+function remove_abook_items($channel_id,$xchan_hash) {
+
+	$r = q("select id from item where (owner_xchan = '%s' or author_xchan = '%s') and uid = %d and item_retained = 0 and item_starred = 0",
+		dbesc($abook['xchan_hash']),
+		dbesc($abook['xchan_hash']),
+		intval($channel_id)
+	);
+	if($r) {
+		foreach($r as $rr) {
+			$x = q("select uid from term where otype = %d and oid = %d and ttype = %d limit 1",
+				intval(TERM_OBJ_POST),
+				intval($rr['id']),
+				intval(TERM_FILE)
+			);
+			if($x) {
+				continue;
+			}
+			drop_item($rr['id'],false);
+		}
+	}
+
+}
 
 
 function random_profile() {

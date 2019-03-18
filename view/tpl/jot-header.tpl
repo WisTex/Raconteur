@@ -82,7 +82,7 @@ var activeCommentText = '';
 			url: 'wall_attach/{{$nickname}}',
 			dataType: 'json',
 			dropZone: $('#profile-jot-text'),
-			maxChunkSize: 4 * 1024 * 1024,
+			maxChunkSize: 2 * 1024 * 1024,
 			add: function(e,data) {
 				$('#profile-rotator').show();
 				data.submit();
@@ -110,7 +110,7 @@ var activeCommentText = '';
 			url: 'wall_attach/{{$nickname}}',
 			dataType: 'json',
 			dropZone: $(),
-			maxChunkSize: 4 * 1024 * 1024,
+			maxChunkSize: 2 * 1024 * 1024,
 			add: function(e,data) {
 
 				var tmpStr = $("#comment-edit-text-" + activeCommentID).val();

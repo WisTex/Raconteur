@@ -233,6 +233,10 @@ class Enotify {
 		$preamble = sprintf( t('%1$s commented on an item/conversation you have been following.'), $sender['xchan_name']); 
 		$epreamble = $dest_str; 
 
+		if ($moderated) {
+			$epreamble .= ' ' . t('(Moderated)');
+		}
+
 		$sitelink = t('Please visit %s to view and/or reply to the conversation.');
 		$tsitelink = sprintf( $sitelink, $siteurl );
 		$hsitelink = sprintf( $sitelink, '<a href="' . $siteurl . '">' . $sitename . '</a>');
@@ -700,16 +704,28 @@ class Enotify {
 
 		// use the EmailNotification library to send the message
 
-		self::send(array(
-			'fromName'             => $sender_name,
-			'fromEmail'            => $sender_email,
-			'replyTo'              => $reply_email,
-			'toEmail'              => $recip['account_email'],
-			'messageSubject'       => $datarray['subject'],
-			'htmlVersion'          => $email_html_body,
-			'textVersion'          => $email_text_body,
-			'additionalMailHeader' => $datarray['headers'],
-		));
+		$to_email = $recip['account_email'];
+
+		$e = get_pconfig($recip['channel_id'],'system','notification_email', false);
+		if ($e) {
+			$to_email = $e;
+		}
+
+		$addrs = explode(',', $to_email);
+
+		foreach($addrs as $addr) {
+
+			self::send(array(
+				'fromName'             => $sender_name,
+				'fromEmail'            => $sender_email,
+				'replyTo'              => $reply_email,
+				'toEmail'              => $addr,
+				'messageSubject'       => $datarray['subject'],
+				'htmlVersion'          => $email_html_body,
+				'textVersion'          => $email_text_body,
+				'additionalMailHeader' => $datarray['headers'],
+			));
+		}
 	}
 
 	pop_lang();
@@ -754,9 +770,9 @@ class Enotify {
 		// generate a multipart/alternative message header
 		$messageHeader =
 			$params['additionalMailHeader'] .
-			"From: $fromName <{$params['fromEmail']}>\n" .
-			"Reply-To: $fromName <{$params['replyTo']}>\n" .
-			"MIME-Version: 1.0\n" .
+			"From: $fromName <{$params['fromEmail']}>" . PHP_EOL .
+			"Reply-To: $fromName <{$params['replyTo']}>" . PHP_EOL .
+			"MIME-Version: 1.0" . PHP_EOL .
 			"Content-Type: multipart/alternative; boundary=\"{$mimeBoundary}\"";
 
 		// assemble the final multipart message body with the text and html types included
@@ -764,15 +780,15 @@ class Enotify {
 		$htmlBody = chunk_split(base64_encode($params['htmlVersion']));
 
 		$multipartMessageBody =
-			"--" . $mimeBoundary . "\n" .					// plain text section
-			"Content-Type: text/plain; charset=UTF-8\n" .
-			"Content-Transfer-Encoding: base64\n\n" .
-			$textBody . "\n" .
-			"--" . $mimeBoundary . "\n" .					// text/html section
-			"Content-Type: text/html; charset=UTF-8\n" .
-			"Content-Transfer-Encoding: base64\n\n" .
-			$htmlBody . "\n" .
-			"--" . $mimeBoundary . "--\n";					// message ending
+			"--" . $mimeBoundary . PHP_EOL .					// plain text section
+			"Content-Type: text/plain; charset=UTF-8" . PHP_EOL .
+			"Content-Transfer-Encoding: base64" . PHP_EOL . PHP_EOL . 
+			$textBody . PHP_EOL .
+			"--" . $mimeBoundary . PHP_EOL .					// text/html section
+			"Content-Type: text/html; charset=UTF-8" . PHP_EOL .
+			"Content-Transfer-Encoding: base64" . PHP_EOL . PHP_EOL .
+			$htmlBody . PHP_EOL .
+			"--" . $mimeBoundary . "--" . PHP_EOL;					// message ending
 
 		// send the message
 		$res = mail(

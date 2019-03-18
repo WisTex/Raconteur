@@ -685,7 +685,7 @@ class Libzot {
 
 			$hidden = (1 - intval($arr['searchable']));
 
-			$hidden_changed = $adult_changed = $deleted_changed = $pubforum_changed = 0;
+			$hidden_changed = $adult_changed = $deleted_changed = $type_changed = 0;
 
 			if(intval($r[0]['xchan_hidden']) != (1 - intval($arr['searchable'])))
 				$hidden_changed = 1;
@@ -693,10 +693,25 @@ class Libzot {
 				$adult_changed = 1;
 			if(intval($r[0]['xchan_deleted']) != intval($arr['deleted']))
 				$deleted_changed = 1;
-			if(intval($r[0]['xchan_pubforum']) != intval($arr['public_forum']))
-				$pubforum_changed = 1;
 
-			if($arr['protocols']) {
+			if ($arr['channel_type'] === 'collection') {
+				$px = 2;
+			}
+			elseif ($arr['channel_type'] === 'group') {
+				$px = 1;
+			}
+			else {
+				$px = 0;
+			}
+			if (array_key_exists('public_forum',$arr) && intval($arr['public_forum'])) {
+				$px = 1;
+			}
+
+			if (intval($r[0]['xchan_type']) !== $px) {
+				$type_changed = true;
+			}
+
+			if ($arr['protocols']) {
 				$protocols = implode(',',$arr['protocols']);
 				if($protocols !== 'zot6') {
 					set_xconfig($xchan_hash,'system','protocols',$protocols);
@@ -712,9 +727,9 @@ class Libzot {
 				|| ($r[0]['xchan_follow'] != $arr['primary_location']['follow_url'])
 				|| ($r[0]['xchan_connpage'] != $arr['connect_url'])
 				|| ($r[0]['xchan_url'] != $arr['primary_location']['url'])
-				|| $hidden_changed || $adult_changed || $deleted_changed || $pubforum_changed ) {
+				|| $hidden_changed || $adult_changed || $deleted_changed || $type_changed ) {
 				$rup = q("update xchan set xchan_name = '%s', xchan_name_date = '%s', xchan_connurl = '%s', xchan_follow = '%s',
-					xchan_connpage = '%s', xchan_hidden = %d, xchan_selfcensored = %d, xchan_deleted = %d, xchan_pubforum = %d,
+					xchan_connpage = '%s', xchan_hidden = %d, xchan_selfcensored = %d, xchan_deleted = %d, xchan_type = %d,
 					xchan_addr = '%s', xchan_url = '%s' where xchan_hash = '%s'",
 					dbesc(($arr['name']) ? escape_tags($arr['name']) : '-'),
 					dbesc($arr['name_updated']),
@@ -724,7 +739,7 @@ class Libzot {
 					intval(1 - intval($arr['searchable'])),
 					intval($arr['adult_content']),
 					intval($arr['deleted']),
-					intval($arr['public_forum']),
+					intval($px),
 					dbesc(escape_tags($arr['primary_location']['address'])),
 					dbesc(escape_tags($arr['primary_location']['url'])),
 					dbesc($xchan_hash)
@@ -743,6 +758,21 @@ class Libzot {
 					|| ($dirmode & DIRECTORY_MODE_STANDALONE))
 					&& ($arr['site']['url'] != z_root()))
 				$arr['searchable'] = false;
+
+
+			if ($arr['channel_type'] === 'collection') {
+				$px = 2;
+			}
+			elseif ($arr['channel_type'] === 'group') {
+				$px = 1;
+			}
+			else {
+				$px = 0;
+			}
+
+			if (array_key_exists('public_forum',$arr) && intval($arr['public_forum'])) {
+				$px = 1;
+			}
 
 			$x = xchan_store_lowlevel(
 				[
@@ -764,9 +794,11 @@ class Libzot {
 					'xchan_hidden'         => intval(1 - intval($arr['searchable'])),
 					'xchan_selfcensored'   => $arr['adult_content'],
 					'xchan_deleted'        => $arr['deleted'],
-					'xchan_pubforum'       => $arr['public_forum']
+					'xchan_type'           => $px
 				]
 			);
+
+
 
 			$what .= 'new_xchan';
 			$changed = true;
@@ -1058,10 +1090,9 @@ class Libzot {
 	}
 
 	/**
-	 * @brief Process incoming array of messages.
+	 * @brief Process incoming messages.
 	 *
-	 * Process an incoming array of messages which were obtained via pickup, and
-	 * import, update, delete as directed.
+	 * Process incoming messages and import, update, delete as directed
 	 *
 	 * The message types handled here are 'activity' (e.g. posts), and 'sync'.
 	 *
@@ -1106,12 +1137,17 @@ class Libzot {
 		if($env['encoding'] === 'activitystreams') {
 
 				$AS = new ActivityStreams($data);
-				if(! $AS->is_valid()) {
+				if (! $AS->is_valid()) {
 					logger('Activity rejected: ' . print_r($data,true));
 					return;
 				}
 
-				$arr = Activity::decode_note($AS);
+				if (is_array($AS->obj)) {
+					$arr = Activity::decode_note($AS);
+				}
+				else {
+					$arr = [];
+				}
 
 				logger($AS->debug(), LOGGER_DATA);
 		}
@@ -1185,7 +1221,7 @@ class Libzot {
 
 			if(in_array($env['type'],['activity','response'])) {
 
-				$r = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s'",
+				$r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s'",
 					dbesc($AS->actor['id'])
 				); 
 
@@ -1193,6 +1229,7 @@ class Libzot {
 					$r = self::zot_record_preferred($r);
 					$arr['author_xchan'] = $r['hubloc_hash'];
 				}
+
 				if(! $arr['author_xchan']) {
 					logger('No author!');
 					return;
@@ -1238,18 +1275,14 @@ class Libzot {
 					}
 				}
 
-				// set this regardless. We will unset it later if we don't need it.
-				$d = ((isset($AS->data['signed_data'])) ? $AS->data['signed_data'] : $AS->data);
-
 				logger('Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 				logger('Activity recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
 
 				$relay = (($env['type'] === 'response') ? true : false );
 
-				$result = self::process_delivery($env['sender'],$arr,$deliveries,$relay,false,$message_request);
+				$result = self::process_delivery($env['sender'],$AS,$arr,$deliveries,$relay,false,$message_request);
 			}
 			elseif($env['type'] === 'sync') {
-				// $arr = get_channelsync_elements($data);
 
 				$arr = json_decode($data,true);
 
@@ -1339,6 +1372,14 @@ class Libzot {
 
 		if($c) {
 			foreach($c as $cc) {
+
+				// top level activity sent to ourself: ignore. Clones will get a sync activity
+				// which is a true clone of the original item. Everything else is a duplicate.
+
+				if ($check_mentions && $cc['channel_hash'] === $msg['sender']) {
+					continue;
+				}
+
 				if(perm_is_allowed($cc['channel_id'],$msg['sender'],$perm)) {
 					$r[] = $cc['channel_hash'];
 				}
@@ -1350,8 +1391,6 @@ class Libzot {
 			if($sys)
 				$r[] = $sys['channel_hash'];
 		}
-
-
 
 		// look for any public mentions on this site
 		// They will get filtered by tgroup_check() so we don't need to check permissions now
@@ -1365,8 +1404,9 @@ class Libzot {
 							$address = basename($tag['href']);
 							if($address) {
 								$z = q("select channel_hash as hash from channel where channel_address = '%s'
-									and channel_removed = 0 limit 1",
-									dbesc($address)
+									and channel_hash != '%s' and channel_removed = 0 limit 1",
+									dbesc($address),
+									dbesc($msg['sender'])						
 								);
 								if($z) {
 									$r[] = $z[0]['hash'];
@@ -1421,7 +1461,7 @@ class Libzot {
 	 * @return array
 	 */
 
-	static function process_delivery($sender, $arr, $deliveries, $relay, $public = false, $request = false) {
+	static function process_delivery($sender, $act, $arr, $deliveries, $relay, $public = false, $request = false) {
 
 		$result = [];
 
@@ -1455,6 +1495,25 @@ class Libzot {
 			}
 
 			$DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
+
+			if(($act) && ($act->obj) && (! is_array($act->obj))) {
+
+				// The initial object fetch failed using the sys channel credentials. 
+				// Try again using the delivery channel credentials.
+				// We will also need to re-parse the $item array, 
+				// but preserve any values that were set during anonymous parsing.
+				
+				$o = Activity::fetch($act->obj,$channel);
+				if($o) {
+					$act->obj = $o;
+					$arr = array_merge(Activity::decode_note($act),$arr);
+				}
+				else {
+					$DR->update('Incomplete or corrupt activity');
+					$result[] = $DR->get();
+					continue;
+				}
+			}	
 
 			/**
 			 * We need to block normal top-level message delivery from our clones, as the delivered
@@ -1580,6 +1639,11 @@ class Libzot {
 			}
 
 			if($arr['mid'] !== $arr['parent_mid']) {
+
+				if(perm_is_allowed($channel['channel_id'],$sender,'moderated')) {
+					$arr['item_blocked'] = ITEM_MODERATED;
+				}
+
 
 				// check source route.
 				// We are only going to accept comments from this sender if the comment has the same route as the top-level-post,
@@ -1943,7 +2007,7 @@ class Libzot {
 			logger('FOF Activity received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 			logger('FOF Activity recipient: ' . $channel['channel_hash'], LOGGER_DATA, LOG_DEBUG);
 
-			$result = self::process_delivery($arr['owner_xchan'],$arr, [ $channel['channel_hash'] ],false,false,true);
+			$result = self::process_delivery($arr['owner_xchan'],$AS,$arr, [ $channel['channel_hash'] ],false,false,true);
 			if ($result) {
 				$ret = array_merge($ret, $result);
 			}		
@@ -2778,11 +2842,14 @@ class Libzot {
 		// now all forums (public, restricted, and private) set the public_forum flag. So it really means "is a group"
 		// and has nothing to do with accessibility.  
 
-		$public_forum = false;
+		$channel_type = 'normal';
 
 		$role = get_pconfig($e['channel_id'],'system','permissions_role');
 		if(in_array($role, ['forum','forum_restricted','repository'])) {
-			$public_forum = true;
+			$channel_type = 'group';
+		}
+		if(in_array($role, ['collection','collection_restricted'])) {
+			$channel_type = 'collection';
 		}
 
 		//  This is for birthdays and keywords, but must check access permissions
@@ -2852,14 +2919,13 @@ class Libzot {
 			'updated' => $e['xchan_photo_date']
 		];
 
-		$ret['channel_role'] = get_pconfig($e['channel_id'],'system','permissions_role','custom');
-		$ret['protocols']    = ((defined('NOMADIC')) ? [ 'zot6' ] : [ 'zot6', 'activitypub' ]);
+		$ret['channel_role']   = get_pconfig($e['channel_id'],'system','permissions_role','custom');
+		$ret['channel_type']   = $channel_type;
+		$ret['protocols']      = [ 'zot6' ];
 		$ret['searchable']     = $searchable;
 		$ret['adult_content']  = $adult_channel;
-		$ret['public_forum']   = $public_forum;
 		
 		$ret['comments']       = map_scope(PermissionLimits::Get($e['channel_id'],'post_comments'));
-		$ret['mail']           = map_scope(PermissionLimits::Get($e['channel_id'],'post_mail'));
 
 		if($deleted)
 			$ret['deleted']        = $deleted;
@@ -3124,6 +3190,7 @@ class Libzot {
 
 		foreach($arr as $v) {
 			if($v[$check] === 'zot6') {
+
 				return $v;
 			}
 		}
