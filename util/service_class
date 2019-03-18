@@ -93,7 +93,7 @@ if($argc == 1) {
 	if(is_array(App::$config['service_class']) && App::$config['service_class']) {
 		foreach(App::$config['service_class'] as $class=>$props) {
 			echo "$class:\n";
-			$d = unserialize($props);
+			$d = unserialise($props);
 			if(is_array($d) && $d) {
 				foreach($d as $k => $v) {
 					echo "\t$k = $v\n";
