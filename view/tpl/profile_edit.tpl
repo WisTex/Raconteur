@@ -70,11 +70,11 @@
 							{{include file="field_input.tpl" field=$pdesc}}
 							{{/if}}
 
-							{{if $fields.gender}}
+							{{if $fields.basic_gender || $fields.advanced_gender || $fields.gender}}
 							<div id="profile-edit-gender-wrapper" class="form-group field select" >
 							<label id="profile-edit-gender-label" for="gender-select" >{{$lbl_gender}}</label>
-							{{if $advanced}}
-							{{$gender}}
+							{{if ($advanced && $fields.gender) || $fields.advanced_gender}}
+							{{if $gender_text}}{{$gender_text}}{{else}}{{$gender}}{{/if}}
 							{{else}}
 							{{$gender_min}}
 							{{/if}}

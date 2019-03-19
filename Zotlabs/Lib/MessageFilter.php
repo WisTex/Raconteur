@@ -38,6 +38,11 @@ class MessageFilter {
 						if((($t['ttype'] == TERM_HASHTAG) || ($t['ttype'] == TERM_COMMUNITYTAG)) && (($t['term'] === substr($word,1)) || (substr($word,1) === '*')))
 							return false;
 				}
+				elseif(substr($word,0,1) === '$' && $tags) {
+					foreach($tags as $t)
+						if(($t['ttype'] == TERM_CATEGORY) && (($t['term'] === substr($word,1)) || (substr($word,1) === '*')))
+							return false;
+				}
 				elseif((strpos($word,'/') === 0) && preg_match($word,$text))
 					return false;
 				elseif((strpos($word,'lang=') === 0) && ($lang) && (strcasecmp($lang,trim(substr($word,5))) == 0))
@@ -59,6 +64,11 @@ class MessageFilter {
 				if(substr($word,0,1) === '#' && $tags) {
 					foreach($tags as $t)
 						if((($t['ttype'] == TERM_HASHTAG) || ($t['ttype'] == TERM_COMMUNITYTAG)) && (($t['term'] === substr($word,1)) || (substr($word,1) === '*')))
+							return true;
+				}
+				elseif(substr($word,0,1) === '$' && $tags) {
+					foreach($tags as $t)
+						if(($t['ttype'] == TERM_CATEGORY) && (($t['term'] === substr($word,1)) || (substr($word,1) === '*')))
 							return true;
 				}
 				elseif((strpos($word,'/') === 0) && preg_match($word,$text))
