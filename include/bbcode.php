@@ -116,6 +116,26 @@ function tryzrlvideo($match) {
 	return '<video ' . $poster . ' controls="controls" preload="none" src="' . str_replace(' ','%20',$link) . '" style="width:100%; max-width:' . App::$videowidth . 'px"><a href="' . str_replace(' ','%20',$link) . '">' . $link . '</a></video>';
 }
 
+function videowithopts($match) {
+	$link = $match[2];
+	$zrl = is_matrix_url($link);
+	if($zrl)
+		$link = zid($link);
+
+	$attributes = $match[1];
+
+	$poster = "";
+
+	preg_match("/poster='(.*?)'/ism", $attributes, $matches);
+	if ($matches[1] != "")
+		$poster = 'poster="' . (($zrl) ? zid($matches[1]) : $matches[1]) . '"';
+
+	return '<video ' . $poster . ' controls="controls" preload="none" src="' . str_replace(' ','%20',$link) . '" style="width:100%; max-width:' . App::$videowidth . 'px"><a href="' . str_replace(' ','%20',$link) . '">' . $link . '</a></video>';
+}
+
+
+
+
 // [noparse][i]italic[/i][/noparse] turns into
 // [noparse][ i ]italic[ /i ][/noparse],
 // to hide them from parser.
@@ -1412,12 +1432,14 @@ function bbcode($Text, $options = []) {
 
 	// html5 video and audio
 	if (strpos($Text,'[/video]') !== false) {
+		$Text = preg_replace_callback("/\[video (.*?)\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg))\[\/video\]/ism", 'videowithopts', $Text);
 		$Text = preg_replace_callback("/\[video\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg))\[\/video\]/ism", 'tryzrlvideo', $Text);
 	}
 	if (strpos($Text,'[/audio]') !== false) {
 		$Text = preg_replace_callback("/\[audio\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mp3|opus|m4a))\[\/audio\]/ism", 'tryzrlaudio', $Text);
 	}
 	if (strpos($Text,'[/zvideo]') !== false) {
+		$Text = preg_replace_callback("/\[zvideo (.*?)\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg))\[\/zvideo\]/ism", 'videowithopts', $Text);
 		$Text = preg_replace_callback("/\[zvideo\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg))\[\/zvideo\]/ism", 'tryzrlvideo', $Text);
 	}
 	if (strpos($Text,'[/zaudio]') !== false) {

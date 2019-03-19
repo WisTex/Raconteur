@@ -239,7 +239,7 @@ class Display extends Controller {
 				'$dbegin'  => '',
 				'$verb'    => '',
 				'$net'     => '',
-				'$mid'     => $mid
+				'$mid'     => (($mid) ? urlencode($mid) : '')
 			));
 
 			head_add_link([ 

@@ -294,7 +294,7 @@ class Item extends Controller {
 					if (intval($xv['item_wall'])) {
 						$c = channelx_by_n($xv['uid']);
 						if ($c) {
-							goaway(channel_address($c[0]) . '?mid=' . gen_link_id($xv['mid']));
+							goaway($c['xchan_url'] . '?mid=' . gen_link_id($xv['mid']));
 						}
 					}
 				}
@@ -1009,8 +1009,13 @@ class Item extends Controller {
 		$notify_type = (($parent) ? 'comment-new' : 'wall-new' );
 	
 		if(! $mid) {
-			$uuid = (($message_id) ? $message_id : new_uuid());
-			$mid = z_root() . '/item/' . $uuid;
+			if($message_id) {
+				$mid = $message_id;
+			}
+			else {
+				$uuid = new_uuid();
+				$mid = z_root() . '/item/' . $uuid;
+			}
 		}
 
 

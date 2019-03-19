@@ -2002,7 +2002,7 @@ function get_profile_fields_basic($filter = 0) {
 	$profile_fields_basic = (($filter == 0) ? get_config('system','profile_fields_basic') : null);
 
 	if(! $profile_fields_basic)
-		$profile_fields_basic = array('fullname','pdesc','chandesc','gender','dob','dob_tz','region','country_name','marital','sexual','homepage','hometown','keywords','about','contact');
+		$profile_fields_basic = array('fullname','pdesc','chandesc','basic_gender','dob','dob_tz','region','country_name','marital','sexual','homepage','hometown','keywords','about','contact');
 
 	$x = array();
 	if($profile_fields_basic)
@@ -2017,7 +2017,7 @@ function get_profile_fields_advanced($filter = 0) {
 	$basic = get_profile_fields_basic($filter);
 	$profile_fields_advanced = (($filter == 0) ? get_config('system','profile_fields_advanced') : null);
 	if(! $profile_fields_advanced)
-		$profile_fields_advanced = array('comms', 'address','locality','postal_code','partner','howlong','politic','religion','likes','dislikes','interest','channels','music','book','film','tv','romance','employment','education');
+		$profile_fields_advanced = array('comms', 'address','locality','postal_code','advanced_gender', 'partner','howlong','politic','religion','likes','dislikes','interest','channels','music','book','film','tv','romance','employment','education');
 
 	$x = array();
 	if($basic)

@@ -756,6 +756,7 @@ class Profiles extends Controller {
 				'$country_name' => array('country_name', t('Country'), $r[0]['country_name']),
 				'$gender'       => self::gender_selector($r[0]['gender']),
 				'$gender_min'   => self::gender_selector_min($r[0]['gender']),
+				'$gender_text'  => self::gender_text($r[0]['gender']),
 				'$marital'      => self::marital_selector($r[0]['marital']),
 				'$marital_min'  => self::marital_selector_min($r[0]['marital']),
 				'$with'         => array('with', t("Who (if applicable)"), $r[0]['partner'], t('Examples: cathy123, Cathy Williams, cathy@example.com')),
@@ -959,6 +960,16 @@ static function gender_selector_min($current="",$suffix="") {
 		}
 	}
 	$o .= '</select>';
+	return $o;
+}	
+
+static function gender_text($current="",$suffix="") {
+	$o = '';
+
+	if(! get_config('system','profile_gender_textfield'))
+		return $o;
+
+	$o .= "<input type = \"text\" class=\"form-control\" name=\"gender$suffix\" id=\"gender-select$suffix\" value=\"" . urlencode($current) . "\" >";
 	return $o;
 }	
 

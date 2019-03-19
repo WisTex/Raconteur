@@ -738,7 +738,7 @@ class Photos extends \Zotlabs\Web\Controller {
 				killme();
 			}
 			else {
-				$o .= "<script> var page_query = '" . escape_tags($_GET['req']) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
+				$o .= "<script> var page_query = '" . escape_tags(urlencode($_GET['req'])) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
 				$tpl = get_markup_template('photo_album.tpl');
 				$o .= replace_macros($tpl, array(
 					'$photos' => $photos,

@@ -193,7 +193,7 @@ class Hq extends \Zotlabs\Web\Controller {
 				'$dbegin'  => '',
 				'$verb'    => '',
 				'$net'     => '',
-				'$mid'     => $mid
+				'$mid'     => (($mid) ? urlencode($mid) : '')
 			]);
 		}
 
