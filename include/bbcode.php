@@ -128,7 +128,7 @@ function videowithopts($match) {
 
 	preg_match("/poster='(.*?)'/ism", $attributes, $matches);
 	if ($matches[1] != "")
-		$poster = (($zrl) ? zid($matches[1]) : $matches[1]);
+		$poster = 'poster="' . (($zrl) ? zid($matches[1]) : $matches[1]) . '"';
 
 	return '<video ' . $poster . ' controls="controls" preload="none" src="' . str_replace(' ','%20',$link) . '" style="width:100%; max-width:' . App::$videowidth . 'px"><a href="' . str_replace(' ','%20',$link) . '">' . $link . '</a></video>';
 }
