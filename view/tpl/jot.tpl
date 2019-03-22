@@ -304,6 +304,28 @@
 </div><!-- /.modal -->
 {{/if}}
 
+{{if $link_modal}}
+<div class="modal" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="linkModalLabel">{{$link_label}}</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			</div>
+			<div class="modal-body form-group" style="width:90%">
+					<input type="text" name="link_url" id="id_link_url" class="form-control" >
+					<input type="radio" name="link_style" class="form-control" value="0" >{{$link_style.0}}</input>
+					<input type="radio" name="link_style" class="form-control" value="1" selected="selected" >{{$link_style.1}}</input>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$linkModalCANCEL}}</button>
+				<button id="link-modal-OKButton" type="button" class="btn btn-primary">{{$linkModalOK}}</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{{/if}}
+
 {{if $content || $attachment || $expanded}}
 <script>initEditor();</script>
 {{/if}}

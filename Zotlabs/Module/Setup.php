@@ -11,6 +11,7 @@ namespace Zotlabs\Module;
  */
 
 use Zotlabs\Lib\System;
+use Zotlabs\Web\Controller;
 use App;
 use DBA;
 
@@ -18,7 +19,7 @@ use DBA;
  * @brief Initialisation for the setup module.
  *
  */
-class Setup extends \Zotlabs\Web\Controller {
+class Setup extends Controller {
 
 	private static $install_wizard_pass = 1;
 

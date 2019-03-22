@@ -587,7 +587,12 @@ class Apps {
 							intval(TERM_OBJ_APP),
 							intval($r[0]['id'])
 						);
-						Libsync::build_sync_packet($uid,array('app' => $r[0]));
+						if(intval($r[0]['app_system'])) {
+							Libsync::build_sync_packet($uid,array('sysapp' => $r[0]));
+						}
+						else {
+							Libsync::build_sync_packet($uid,array('app' => $r[0]));
+						}
 					}
 				}
 			}
@@ -642,7 +647,10 @@ class Apps {
 							intval($uid)
 						);
 					}
-					if(! intval($x[0]['app_system'])) {
+					if(intval($x[0]['app_system'])) {
+						Libsync::build_sync_packet($uid,array('sysapp' => $x));
+					}
+					else {
 						Libsync::build_sync_packet($uid,array('app' => $x));
 					}
 				}

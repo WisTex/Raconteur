@@ -1069,8 +1069,10 @@ class Item extends Controller {
 
 
 		if ((! $plink) && ($item_thread_top)) {
-			$plink = z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . gen_link_id($mid);
-			$plink = substr($plink,0,190);
+//			$plink = z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . gen_link_id($mid);
+//			$plink = substr($plink,0,190);
+
+			$plink = z_root() . '/item/' . $uuid;
 		}
 		
 		$datarray['aid']                 = $channel['channel_account_id'];
