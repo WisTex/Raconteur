@@ -1,5 +1,7 @@
 <?php /** @file */
 
+use Zotlabs\Lib\Apps;
+
 // post categories and "save to file" use the same item.file table for storage.
 // We will differentiate the different uses by wrapping categories in angle brackets
 // and save to file categories in square brackets.
