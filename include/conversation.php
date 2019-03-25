@@ -1224,7 +1224,7 @@ function z_status_editor($a, $x, $popup = false) {
 	if(x($x, 'disable_comments'))
 		$feature_nocomment = false;
 
-	$feature_expire = ((feature_enabled($x['profile_uid'], 'content_expire') && (! $webpage)) ? true : false);
+	$feature_expire = ((Apps::system_app_installed($x['profile_uid'], 'Expire Posts') && (! $webpage)) ? true : false);
 	if(x($x, 'hide_expire'))
 		$feature_expire = false;
 

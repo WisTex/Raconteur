@@ -28,6 +28,7 @@ use Zotlabs\Lib\ThreadListener;
 use Zotlabs\Lib\Config;
 use Zotlabs\Lib\IConfig;
 use Zotlabs\Lib\Enotify;
+use Zotlabs\Lib\Apps;
 use App;
 
 require_once('include/attach.php');
@@ -771,7 +772,7 @@ class Item extends Controller {
 		
 	
 	
-		if(feature_enabled($profile_uid,'content_expire')) {
+		if(Apps::system_app_installed($profile_uid,'Expire Posts')) {
 			if(x($_REQUEST,'expire')) {
 				$expires = datetime_convert(date_default_timezone_get(),'UTC', $_REQUEST['expire']);
 				if($expires <= datetime_convert())

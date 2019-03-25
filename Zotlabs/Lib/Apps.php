@@ -312,6 +312,7 @@ class Apps {
 			'Chatrooms' => t('Chatrooms'),
 			'Content Import' => t('Content Import'),
 			'Connections' => t('Connections'),
+			'Expire Posts' => t('Expire Posts'),
 			'Remote Diagnostics' => t('Remote Diagnostics'),
 			'Suggest Channels' => t('Suggest Channels'),
 			'Login' => t('Login'),
