@@ -303,6 +303,7 @@ class Apps {
 			'Affinity Tool' => t('Affinity Tool'),
 			'Articles' => t('Articles'),
 			'Cards' => t('Cards'),
+			'Categories' => t('Categories'),
 			'Admin' => t('Site Admin'),
 			'Content Filter' => t('Content Filter'),
 			'Content Import' => t('Content Import'),
