@@ -481,6 +481,10 @@ function wtagblock($uid,$count = 0,$authors = '',$owner = '', $flags = 0,$restri
 function catblock($uid,$count = 0,$authors = '',$owner = '', $flags = 0,$restrict = 0,$type = TERM_CATEGORY) {
 	$o = '';
 
+	if(! Apps::system_app_installed($uid,'Categories')) {
+		return $o;
+	}
+
 	$r = tagadelic($uid,$count,$authors,$owner,$flags,$restrict,$type);
 
 	if($r) {

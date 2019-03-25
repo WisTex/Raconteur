@@ -1,6 +1,8 @@
 <?php
 namespace Zotlabs\Module; /** @file */
 
+use Zotlabs\Lib\Apps;
+
 require_once('include/acl_selectors.php');
 require_once('include/taxonomy.php');
 require_once('include/conversation.php');
@@ -51,7 +53,7 @@ class Editpost extends \Zotlabs\Web\Controller {
 		$channel = \App::get_channel();
 
 		$category = '';
-		$catsenabled = ((feature_enabled($owner_uid,'categories')) ? 'categories' : '');
+		$catsenabled = ((Apps::system_app_installed($owner_uid,'Categories')) ? 'categories' : '');
 
 		if ($catsenabled){
 		        $itm = fetch_post_tags($itm);

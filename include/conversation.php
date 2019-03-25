@@ -1,5 +1,6 @@
 <?php /** @file */
 
+use Zotlabs\Lib\Apps;
 
 function item_extract_images($body) {
 
@@ -1325,7 +1326,7 @@ function z_status_editor($a, $x, $popup = false) {
 	if(array_key_exists('catsenabled',$x))
 		$catsenabled = $x['catsenabled'];
 	else
-		$catsenabled = ((feature_enabled($x['profile_uid'], 'categories') && (! $webpage)) ? 'categories' : '');
+		$catsenabled = ((Apps::system_app_installed($x['profile_uid'], 'Categories') && (! $webpage)) ? 'categories' : '');
 
 	// avoid illegal offset errors
 	if(! array_key_exists('permissions',$x)) 

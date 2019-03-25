@@ -123,7 +123,7 @@ class Cards extends Controller {
 				'layoutselect'      => false,
 				'expanded'          => false,
 				'novoting'          => false,
-				'catsenabled'       => feature_enabled($owner, 'categories'),
+				'catsenabled'       => Apps::system_app_installed($owner, 'Categories'),
 				'bbco_autocomplete' => 'bbcode',
 				'bbcode'            => true
 			];
