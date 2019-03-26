@@ -167,7 +167,7 @@ class Acl extends \Zotlabs\Web\Controller {
 			if($extra_channels) {
 				foreach($extra_channels as $channel) {
 					if(perm_is_allowed(intval($channel), get_observer_hash(),'view_contacts')) {
-						if($extra_channel_sql)
+						if($extra_channels_sql)
 							$extra_channels_sql .= ',';
 						$extra_channels_sql .= intval($channel);
 					}
