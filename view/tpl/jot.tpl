@@ -304,18 +304,20 @@
 </div><!-- /.modal -->
 {{/if}}
 
-{{if $link_modal}}
+{{if $weblink}}
 <div class="modal" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title" id="linkModalLabel">{{$link_label}}</h4>
+				<h4 class="modal-title" id="linkModalLabel">{{$linkurl}}</h4>
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			</div>
 			<div class="modal-body form-group" style="width:90%">
 					<input type="text" name="link_url" id="id_link_url" class="form-control" >
-					<input type="radio" name="link_style" class="form-control" value="0" >{{$link_style.0}}</input>
-					<input type="radio" name="link_style" class="form-control" value="1" selected="selected" >{{$link_style.1}}</input>
+					<ul style="list-style: none; margin-top: 5px;">
+					<li><input type="radio" name="link_style" value="0" > {{$weblink_style.0}}</li>
+					<li><input type="radio" name="link_style" value="1" checked > {{$weblink_style.1}}</li>
+					</ul>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$linkModalCANCEL}}</button>
