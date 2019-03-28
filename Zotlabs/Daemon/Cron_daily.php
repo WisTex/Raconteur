@@ -33,7 +33,7 @@ class Cron_daily {
 		// expire any read notifications over a month old
 
 		q("delete from notify where seen = 1 and created < %s - INTERVAL %s",
-			db_utcnow(), db_quoteinterval('30 DAY')
+			db_utcnow(), db_quoteinterval('60 DAY')
 		);
 
 		// expire any unread notifications over a year old
