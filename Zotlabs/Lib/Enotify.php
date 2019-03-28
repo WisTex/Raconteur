@@ -340,9 +340,20 @@ class Enotify {
 			'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]',
 			$itemlink); 
 
+
+		if($moderated) {
+			$subject .= t(' - ') . t('Moderated');
+			$epreamble .= t(' - ') . t('Moderated');
+		}
+
 		$sitelink = t('Please visit %s to view and/or reply to the conversation.');
 		$tsitelink = sprintf( $sitelink, $siteurl );
 		$hsitelink = sprintf( $sitelink, '<a href="' . $siteurl . '">' . $sitename . '</a>');
+
+		if($moderated) {
+			$tsitelink .= "\n\n" . sprintf( t('Please visit %s to approve or reject this post.'), z_root() . '/moderate' );
+			$hsitelink .= "<br><br>" . sprintf( t('Please visit %s to approve or reject this post.'), '<a href="' . z_root() . '/moderate">' . z_root() . '/moderate</a>' );
+		}
 
 	}
 
@@ -520,6 +531,11 @@ class Enotify {
 		if (($params['type'] == NOTIFY_WALL) || ($params['type'] == NOTIFY_MAIL) || ($params['type'] == NOTIFY_INTRO)) {
 			$seen = 1;
 		}
+		// set back to unseen for moderated wall posts
+		if($params['type'] == NOTIFY_WALL && $params['item']['item_blocked'] == ITEM_MODERATED) {
+			$seen = 0;
+		}
+
 	}
 
 	$r = q("insert into notify (hash,xname,url,photo,created,msg,aid,uid,link,parent,seen,ntype,verb,otype)
