@@ -165,16 +165,27 @@ var activeCommentText = '';
                             textarea.value = textarea.value.substring(0, start) + "[url=" + reply + "]" + textarea.value.substring(start, end) + "[/url]" + textarea.value.substring(end, textarea.value.length);
                         }
                     } else {
-                        reply = prompt("{{$linkurl}}");
-                        if(reply && reply.length) {
-                            reply = bin2hex(reply);
-                            $('#profile-rotator').show();
-                            $.get('{{$baseurl}}/linkinfo?f=&binurl=' + reply, function(data) {
-                                    addeditortext(data);
-									preview_post();
-                                    $('#profile-rotator').hide();
-                            });
-                        }
+						$('#linkModal').modal();
+						$('#id_link_url').focus();
+						$('#link-modal-OKButton').on('click', function() {
+							reply=$('#id_link_url').val();
+							if(reply && reply.length) {
+								radioValue = $("input[name='link_style']:checked"). val();
+								if(radioValue == '0') {
+									reply = '!' + reply;
+								}
+        	                    reply = bin2hex(reply);
+            	                $('#profile-rotator').show();
+                	            $.get('{{$baseurl}}/linkinfo?f=&binurl=' + reply, function(data) {
+                    	                addeditortext(data);
+										preview_post();
+										$('#id_link_url').val('');
+                                	    $('#profile-rotator').hide();
+	                            });
+	
+								$('#linkModal').modal('hide');
+							}
+						})
                     }
             }
 	}

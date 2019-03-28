@@ -554,6 +554,9 @@ function import_sysapps($channel, $apps) {
 			if(array_key_exists('app_system',$app) && (! intval($app['app_system'])))
 				continue;
 
+			if(array_key_exists('app_deleted',$app) && (intval($app['app_deleted'])))
+				continue;
+
 			$term = ((array_key_exists('term',$app) && is_array($app['term'])) ? $app['term'] : null);
 
 			foreach($sysapps as $sysapp) {
@@ -597,10 +600,51 @@ function import_sysapps($channel, $apps) {
  */
 function sync_sysapps($channel, $apps) {
 
+	$sysapps = \Zotlabs\Lib\Apps::get_system_apps(false);
+
 	if($channel && $apps) {
 
-		// we do not currently sync system apps
+		$columns = db_columns('app');
 
+		foreach($apps as $app) {
+
+
+			$exists = false;
+			$term = ((array_key_exists('term',$app)) ? $app['term'] : null);
+
+			if(array_key_exists('app_system',$app) && (! intval($app['app_system'])))
+				continue;
+
+			foreach($sysapps as $sysapp) {
+				if($app['app_id'] === hash('whirlpool',$sysapp['app_name'])) {
+					if(array_key_exists('app_deleted',$app) && $app['app_deleted'] && $app['app_id']) {
+						q("update app set app_deleted = 1 where app_id = '%s' and app_channel = %d",
+							dbesc($app['app_id']),
+							intval($channel['channel_id'])
+						);
+					}
+					else {
+						// install this app on this server
+						$newapp = $sysapp;
+						$newapp['uid'] = $channel['channel_id'];
+						$newapp['guid'] = hash('whirlpool',$newapp['name']);
+
+						$newapp['system'] = 1;
+						if($term) {
+							$s = EMPTY_STR;
+							foreach($term as $t) {
+								if($s) {
+									$s .= ',';
+								}
+								$s .= $t['term'];
+							}
+							$newapp['categories'] = $s;
+						}
+						\Zotlabs\Lib\Apps::app_install($channel['channel_id'],$newapp);
+					}
+				}
+			}
+		}
 	}
 }
 

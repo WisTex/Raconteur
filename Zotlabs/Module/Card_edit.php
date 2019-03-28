@@ -1,6 +1,8 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Apps;
+
 require_once('include/channel.php');
 require_once('include/acl_selectors.php');
 require_once('include/conversation.php');
@@ -59,7 +61,7 @@ class Card_edit extends \Zotlabs\Web\Controller {
 
 
 		$category = '';
-		$catsenabled = ((feature_enabled($owner,'categories')) ? 'categories' : '');
+		$catsenabled = ((Apps::system_app_installed($owner,'Categories')) ? 'categories' : '');
 
 		if ($catsenabled){
 		        $itm = fetch_post_tags($itm);

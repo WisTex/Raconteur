@@ -106,7 +106,7 @@ class DReport {
 		// So if a remote site says they can't find us, that's no big surprise
 		// and just creates a lot of extra report noise
 
-		if(($dr['location'] !== z_root()) && ($dr['sender'] === $rxchan) && ($dr['status'] === 'recipient_not_found'))
+		if(($dr['location'] !== z_root()) && ($dr['sender'] === $rxchan) && ($dr['status'] === 'recipient not found'))
 			return false;
 
 		// If you have a private post with a recipient list, every single site is going to report
@@ -118,7 +118,7 @@ class DReport {
 			dbesc($rxchan),
 			dbesc($dr['location'])
 		);
-		if((! $r) && ($dr['status'] === 'recipient_not_found'))
+		if((! $r) && ($dr['status'] === 'recipient not found'))
 			return false;
 
 		$r = q("select abook_id from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
