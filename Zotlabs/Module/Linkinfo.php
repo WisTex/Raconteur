@@ -147,7 +147,7 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 	
 		$image = "";
 	
-		if(isset($siteinfo['images']) && sizeof($siteinfo["images"]) > 0){
+		if(isset($siteinfo['images']) && is_array($siteinfo['images']) && count($siteinfo["images"])) {
 			/* Execute below code only if image is present in siteinfo */
 	
 			$total_images = 0;

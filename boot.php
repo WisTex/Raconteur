@@ -591,8 +591,17 @@ function sys_boot() {
 
 	@include('.htconfig.php');
 
-	define ( 'PLATFORM_NAME',           'zap' );
-	define ( 'PLATFORM_ARCHITECTURE',   'zap' );
+
+
+	if(defined('NOMADIC')) {
+		define ( 'PLATFORM_NAME',           'zap' );
+		define ( 'PLATFORM_ARCHITECTURE',   'zap' );
+	}
+	else {
+		define ( 'PLATFORM_NAME',           'osada' );
+		define ( 'PLATFORM_ARCHITECTURE',   'osada' );
+	}
+
 
 	// allow somebody to set some initial settings just in case they can't
 	// install without special fiddling

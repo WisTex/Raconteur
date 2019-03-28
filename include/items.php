@@ -200,6 +200,12 @@ function item_normal_update() {
 		and item.item_blocked = 0 and item.obj_type != '" . ACTIVITY_OBJ_FILE . "' ";
 }
 
+function item_normal_moderate() {
+	return " and item.item_hidden = 0 and item.item_type = 0 and item.item_deleted = 0
+		and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_pending_remove = 0
+		and item.item_blocked in (0, 4) and item.obj_type != '" . ACTIVITY_OBJ_FILE . "' ";
+}
+
 
 /**
  * @brief
