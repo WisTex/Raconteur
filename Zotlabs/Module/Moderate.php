@@ -25,6 +25,10 @@ class Moderate extends \Zotlabs\Web\Controller {
 				intval(local_channel()),
 				intval(ITEM_MODERATED)
 			);
+			if(! $r) {
+				info( t('No entries.') . EOL);
+			}
+
 		}
 
 		//show a single item
