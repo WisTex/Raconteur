@@ -135,7 +135,7 @@ class Enotify {
 	}
 
 	if ($params['type'] == NOTIFY_COMMENT) {
-		//logger("notification: params = " . print_r($params, true), LOGGER_DEBUG);
+		// logger("notification: params = " . print_r($params, true), LOGGER_DEBUG);
 
 		$moderated = (($params['item']['item_blocked'] == ITEM_MODERATED) ? true : false);
 
@@ -226,8 +226,10 @@ class Enotify {
 		// Before this we have the name of the replier on the subject rendering 
 		// differents subjects for messages on the same thread.
 
-		if($moderated)
+		if($moderated) {
 			$subject = sprintf( t('[$Projectname:Notify] Moderated Comment to conversation #%1$d by %2$s'), $parent_id, $sender['xchan_name']);
+			$itemlink = z_root() . '/moderate/' . gen_link_id($params['item']['mid']);
+		} 
 		else
 			$subject = sprintf( t('[$Projectname:Notify] Comment to conversation #%1$d by %2$s'), $parent_id, $sender['xchan_name']);
 		$preamble = sprintf( t('%1$s commented on an item/conversation you have been following.'), $sender['xchan_name']); 
@@ -328,16 +330,31 @@ class Enotify {
 	if($params['type'] == NOTIFY_WALL) {
 		$subject = sprintf( t('[$Projectname:Notify] %s posted to your profile wall') , $sender['xchan_name']);
 
+		$moderated = (($params['item']['item_blocked'] == ITEM_MODERATED) ? true : false);
+
+		$itemlink =  (($moderated) ? z_root() . '/moderate/' . gen_link_id($params['item']['mid']) : $params['link']);
+
 		$preamble = sprintf( t('%1$s posted to your profile wall at %2$s') , $sender['xchan_name'], $sitename);
 
 		$epreamble = sprintf( t('%1$s posted to [zrl=%2$s]your wall[/zrl]') ,
 			'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]',
-			$params['link']); 
+			$itemlink); 
+
+
+		if($moderated) {
+			$subject .= t(' - ') . t('Moderated');
+			$epreamble .= t(' - ') . t('Moderated');
+		}
 
 		$sitelink = t('Please visit %s to view and/or reply to the conversation.');
 		$tsitelink = sprintf( $sitelink, $siteurl );
 		$hsitelink = sprintf( $sitelink, '<a href="' . $siteurl . '">' . $sitename . '</a>');
-		$itemlink =  $params['link'];
+
+		if($moderated) {
+			$tsitelink .= "\n\n" . sprintf( t('Please visit %s to approve or reject this post.'), z_root() . '/moderate' );
+			$hsitelink .= "<br><br>" . sprintf( t('Please visit %s to approve or reject this post.'), '<a href="' . z_root() . '/moderate">' . z_root() . '/moderate</a>' );
+		}
+
 	}
 
 	if ($params['type'] == NOTIFY_TAGSELF) {
@@ -514,6 +531,11 @@ class Enotify {
 		if (($params['type'] == NOTIFY_WALL) || ($params['type'] == NOTIFY_MAIL) || ($params['type'] == NOTIFY_INTRO)) {
 			$seen = 1;
 		}
+		// set back to unseen for moderated wall posts
+		if($params['type'] == NOTIFY_WALL && $params['item']['item_blocked'] == ITEM_MODERATED) {
+			$seen = 0;
+		}
+
 	}
 
 	$r = q("insert into notify (hash,xname,url,photo,created,msg,aid,uid,link,parent,seen,ntype,verb,otype)

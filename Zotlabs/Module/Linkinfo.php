@@ -13,7 +13,7 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 	
 		$text = null;
 		$str_tags = '';
-		$process_oembed = true;	
+		$process_embed = true;	
 	
 		$br = "\n";
 	
@@ -23,7 +23,7 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 			$url = trim($_GET['url']);
 	
 		if(substr($url,0,1) === '!') {
-			$process_oembed = false;
+			$process_embed = false;
 			$url = substr($url,1);
 		}
 
@@ -100,12 +100,20 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 			killme();
 		}
 
-		if($process_oembed) {
-			$x = oembed_process($url);
-			if($x) {
-				echo $x;
-				killme();
+		if(! $process_embed) {
+			if($zrl) {
+				echo $br . '[zrl]' . $url . '[/zrl]' . $br;
 			}
+			else {
+				echo $br . '[url]' . $url . '[/url]' . $br;
+			}
+			killme();
+		}
+
+		$x = oembed_process($url);
+		if($x) {
+			echo $x;
+			killme();
 		}
 	
 		if($url && $title && $text) {
@@ -139,7 +147,7 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 	
 		$image = "";
 	
-		if(isset($siteinfo['images']) && sizeof($siteinfo["images"]) > 0){
+		if(isset($siteinfo['images']) && is_array($siteinfo['images']) && count($siteinfo["images"])) {
 			/* Execute below code only if image is present in siteinfo */
 	
 			$total_images = 0;

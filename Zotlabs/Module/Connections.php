@@ -97,11 +97,6 @@ class Connections extends \Zotlabs\Web\Controller {
 						unset(\App::$argv[1]);
 					}
 					break;
-	//			case 'unconnected':
-	//				$search_flags = " and abook_unconnected = 1 ";
-	//				$head = t('Unconnected');
-	//				$unconnected = true;
-	//				break;
 	
 				case 'all':
 					$head = t('All');
@@ -126,14 +121,6 @@ class Connections extends \Zotlabs\Web\Controller {
 		$search = ((x($_REQUEST,'search')) ? notags(trim($_REQUEST['search'])) : '');
 	
 		$tabs = array(
-			/*
-			array(
-				'label' => t('Suggestions'),
-				'url'   => z_root() . '/suggest', 
-				'sel'   => '',
-				'title' => t('Suggest new connections'),
-			),
-			*/
 	
 			'active' => array(
 				'label' => t('Active Connections'),
@@ -148,16 +135,6 @@ class Connections extends \Zotlabs\Web\Controller {
 				'sel'   => ($pending) ? 'active' : '',
 				'title' => t('Show pending (new) connections'),
 			),
-	
-	
-			/*
-			array(
-				'label' => t('Unblocked'),
-				'url'   => z_root() . '/connections',
-				'sel'   => (($unblocked) && (! $search) && (! $nets)) ? 'active' : '',
-				'title' => t('Only show unblocked connections'),
-			),
-			*/
 	
 			'blocked' => array(
 				'label' => t('Blocked'),
@@ -187,14 +164,6 @@ class Connections extends \Zotlabs\Web\Controller {
 				'title' => t('Only show hidden connections'),
 			),
 	
-	//		array(
-	//			'label' => t('Unconnected'),
-	//			'url'   => z_root() . '/connections/unconnected',
-	//			'sel'   => ($unconnected) ? 'active' : '',
-	//			'title' => t('Only show one-way connections'),
-	//		),
-	
-
 			'all' => array(
 				'label' => t('All Connections'),
 				'url'   => z_root() . '/connections', 
@@ -203,9 +172,6 @@ class Connections extends \Zotlabs\Web\Controller {
 			),
 	
 		);
-	
-		//$tab_tpl = get_markup_template('common_tabs.tpl');
-		//$t = replace_macros($tab_tpl, array('$tabs'=>$tabs));
 	
 		$searching = false;
 		if($search) {

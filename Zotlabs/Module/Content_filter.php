@@ -50,7 +50,7 @@ class Content_filter extends Controller {
 				'message_filter_incl',
 				t('Only import posts with this text'), 
 				get_pconfig(local_channel(),'system','message_filter_incl',''),
-				t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts')
+				t('words one per line or #tags, $categories, /patterns/, lang=xx, lang!=xx - leave blank to import all posts')
 			]
 		));
 		$setting_fields .= replace_macros(get_markup_template('field_textarea.tpl'), array(
@@ -58,7 +58,7 @@ class Content_filter extends Controller {
 				'message_filter_excl',
 				t('Only import posts with this text'), 
 				get_pconfig(local_channel(),'system','message_filter_excl',''),
-				t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts')
+				t('words one per line or #tags, $categories, /patterns/, lang=xx, lang!=xx - leave blank to import all posts')
 			]
 		));
 

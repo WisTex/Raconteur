@@ -33,10 +33,10 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '2.8.1' );
+define ( 'STD_VERSION',             '2.8.2' );
 define ( 'ZOT_REVISION',            '6.0' );
 
-define ( 'DB_UPDATE_VERSION',       1229 );
+define ( 'DB_UPDATE_VERSION',       1230 );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 
@@ -592,8 +592,17 @@ function sys_boot() {
 
 	@include('.htconfig.php');
 
-	define ( 'PLATFORM_NAME',           'zap' );
-	define ( 'PLATFORM_ARCHITECTURE',   'zap' );
+
+
+	if(defined('NOMADIC')) {
+		define ( 'PLATFORM_NAME',           'zap' );
+		define ( 'PLATFORM_ARCHITECTURE',   'zap' );
+	}
+	else {
+		define ( 'PLATFORM_NAME',           'osada' );
+		define ( 'PLATFORM_ARCHITECTURE',   'osada' );
+	}
+
 
 	// allow somebody to set some initial settings just in case they can't
 	// install without special fiddling

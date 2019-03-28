@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/categories
+requires: local_channel
+name: Categories
+photo: icon:tags
+categories: Networking

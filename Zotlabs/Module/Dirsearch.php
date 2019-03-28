@@ -115,12 +115,12 @@ class Dirsearch extends \Zotlabs\Web\Controller {
 			$sql_extra .= $this->dir_query_build($joiner,'xchan_name',$name);
 		if($address)
 			$sql_extra .= $this->dir_query_build($joiner,'xchan_addr',$address);
-		if($city)
-			$sql_extra .= $this->dir_query_build($joiner,'xprof_locale',$city);
+		if($locale)
+			$sql_extra .= $this->dir_query_build($joiner,'xprof_locale',$locale);
 		if($region)
 			$sql_extra .= $this->dir_query_build($joiner,'xprof_region',$region);
-		if($post)
-			$sql_extra .= $this->dir_query_build($joiner,'xprof_postcode',$post);
+		if($postcode)
+			$sql_extra .= $this->dir_query_build($joiner,'xprof_postcode',$postcode);
 		if($country)
 			$sql_extra .= $this->dir_query_build($joiner,'xprof_country',$country);
 		if($gender)

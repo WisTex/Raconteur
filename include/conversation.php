@@ -1,5 +1,6 @@
 <?php /** @file */
 
+use Zotlabs\Lib\Apps;
 
 function item_extract_images($body) {
 
@@ -1223,7 +1224,7 @@ function z_status_editor($a, $x, $popup = false) {
 	if(x($x, 'disable_comments'))
 		$feature_nocomment = false;
 
-	$feature_expire = ((feature_enabled($x['profile_uid'], 'content_expire') && (! $webpage)) ? true : false);
+	$feature_expire = ((Apps::system_app_installed($x['profile_uid'], 'Expire Posts') && (! $webpage)) ? true : false);
 	if(x($x, 'hide_expire'))
 		$feature_expire = false;
 
@@ -1325,7 +1326,7 @@ function z_status_editor($a, $x, $popup = false) {
 	if(array_key_exists('catsenabled',$x))
 		$catsenabled = $x['catsenabled'];
 	else
-		$catsenabled = ((feature_enabled($x['profile_uid'], 'categories') && (! $webpage)) ? 'categories' : '');
+		$catsenabled = ((Apps::system_app_installed($x['profile_uid'], 'Categories') && (! $webpage)) ? 'categories' : '');
 
 	// avoid illegal offset errors
 	if(! array_key_exists('permissions',$x)) 
@@ -1360,6 +1361,8 @@ function z_status_editor($a, $x, $popup = false) {
 		'$code' => t('Code'),
 		'$attach' => t('Attach/Upload file'),
 		'$weblink' => $weblink,
+		'$linkurl' => t('Please enter a link location (URL)'),
+		'$weblink_style' => [ t('Insert link only'), t('Embed content if possible') ],
 		'$embedPhotos' => $embedPhotos,
 		'$embedPhotosModalTitle' => t('Embed an image from your albums'),
 		'$embedPhotosModalCancel' => t('Cancel'),
@@ -1412,6 +1415,8 @@ function z_status_editor($a, $x, $popup = false) {
 		'$cipher' => $cipher,
 		'$expiryModalOK' => t('OK'),
 		'$expiryModalCANCEL' => t('Cancel'),
+		'$linkModalOK' => t('OK'),
+		'$linkModalCANCEL' => t('Cancel'),
 		'$expanded' => ((x($x, 'expanded')) ? $x['expanded'] : false),
 		'$bbcode' => ((x($x, 'bbcode')) ? $x['bbcode'] : false),
 		'$parent' => ((array_key_exists('parent',$x) && $x['parent']) ? $x['parent'] : 0),

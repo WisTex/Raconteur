@@ -31,7 +31,7 @@ class Changeaddr extends \Zotlabs\Web\Controller {
 	
 		if($account['account_password_changed'] > NULL_DATE) {
 			$d1 = datetime_convert('UTC','UTC','now - 48 hours');
-			if($account['account_password_changed'] > d1) {
+			if($account['account_password_changed'] > $d1) {
 				notice( t('Channel name changes are not allowed within 48 hours of changing the account password.') . EOL);
 				return;
 			}

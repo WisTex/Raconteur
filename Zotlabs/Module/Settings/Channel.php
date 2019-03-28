@@ -142,7 +142,7 @@ class Channel {
 		$unkmail          = (((x($_POST,'unkmail')) && (intval($_POST['unkmail']) == 1)) ? 1: 0);
 		$cntunkmail       = ((x($_POST,'cntunkmail')) ? intval($_POST['cntunkmail']) : 0);
 		$suggestme        = ((x($_POST,'suggestme')) ? intval($_POST['suggestme'])  : 0);  
-		$anymention       = ((x($_POST,'anymention')) ? intval($_POST['anymention'])  : 0);  
+//		$anymention       = ((x($_POST,'anymention')) ? intval($_POST['anymention'])  : 0);  
 //		$hyperdrive       = ((x($_POST,'hyperdrive')) ? intval($_POST['hyperdrive'])  : 0);  
 
 
@@ -260,7 +260,7 @@ class Channel {
 		set_pconfig(local_channel(),'system','default_permcat',$defpermcat);
 		set_pconfig(local_channel(),'system','email_notify_host',$mailhost);
 		set_pconfig(local_channel(),'system','profile_assign',$profile_assign);
-		set_pconfig(local_channel(),'system','anymention',$anymention);
+//		set_pconfig(local_channel(),'system','anymention',$anymention);
 //		set_pconfig(local_channel(),'system','hyperdrive',$hyperdrive);
 		set_pconfig(local_channel(),'system','force_public_uploads',$public_uploads);
 		set_pconfig(local_channel(),'system','autoperms',$autoperms);
@@ -493,12 +493,12 @@ class Channel {
 		if(in_array($permissions_role,['forum','repository'])) {	
 			$autoperms = replace_macros(get_markup_template('field_checkbox.tpl'), [
 				'$field' =>  [ 'autoperms',t('Automatic membership approval'), ((get_pconfig(local_channel(),'system','autoperms',0)) ? 1 : 0), t('If enabled, connection requests will be approved without your interaction'), $yes_no ]]);
-			$anymention = replace_macros(get_markup_template('field_checkbox.tpl'), [
-				'$field' =>  [ 'anymention', t('Allow forum delivery with @mentions'), ((get_pconfig(local_channel(),'system','anymention')) ? 1 : 0), t('Allows delivery from projects which do not support !mentions for forums.'), $yes_no ]]);
+//			$anymention = replace_macros(get_markup_template('field_checkbox.tpl'), [
+//				'$field' =>  [ 'anymention', t('Allow forum delivery with @mentions'), ((get_pconfig(local_channel(),'system','anymention')) ? 1 : 0), t('Allows delivery from projects which do not support !mentions for forums.'), $yes_no ]]);
 		}
 		else {
 			$autoperms  = '<input type="hidden" name="autoperms"  value="' . intval(get_pconfig(local_channel(),'system','autoperms'))  . '" />';
-			$anymention = '<input type="hidden" name="anymention" value="' . intval(get_pconfig(local_channel(),'system','anymention')) . '" />';
+//			$anymention = '<input type="hidden" name="anymention" value="' . intval(get_pconfig(local_channel(),'system','anymention')) . '" />';
 		}
 
 //		$hyperdrive = [ 'hyperdrive', t('Enable hyperdrive'), ((get_pconfig(local_channel(),'system','hyperdrive',true)) ? 1 : 0), t('Dramatically increases the content available in your stream.'), $yes_no ];
@@ -582,7 +582,7 @@ class Channel {
 			'$cntunkmail' 	=> array('cntunkmail', t('Maximum private messages per day from unknown people:'), intval($channel['channel_max_anon_mail']) ,t("Useful to reduce spamming")),
 			
 			'$autoperms' => $autoperms,			
-			'$anymention' => $anymention,			
+//			'$anymention' => $anymention,			
 //			'$hyperdrive' => $hyperdrive,
 
 			'$h_not' 	=> t('Notification Settings'),

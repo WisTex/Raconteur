@@ -42,7 +42,7 @@ class Categories {
 
 	static function articlecategories_widget($baseurl,$selected = '') {
 	
-		if(! feature_enabled(App::$profile['profile_uid'],'categories'))
+		if(! Apps::system_app_installed(App::$profile['profile_uid'],'Categories'))
 			return '';
 
 		$sql_extra = item_permissions_sql(App::$profile['profile_uid']);
@@ -86,7 +86,7 @@ class Categories {
 
 	static function cardcategories_widget($baseurl,$selected = '') {
 	
-		if(! feature_enabled(App::$profile['profile_uid'],'categories'))
+		if(! Apps::system_app_installed(App::$profile['profile_uid'],'Categories'))
 			return '';
 
 		$sql_extra = item_permissions_sql(App::$profile['profile_uid']);
@@ -131,7 +131,7 @@ class Categories {
 
 	static function categories_widget($baseurl,$selected = '') {
 	
-		if(! feature_enabled(App::$profile['profile_uid'],'categories'))
+		if(! Apps::system_app_installed(App::$profile['profile_uid'],'Categories'))
 			return '';
 
 		require_once('include/security.php');
