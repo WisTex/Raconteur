@@ -1484,8 +1484,8 @@ class Libzot {
 
 			$local_public = $public;
 
-			// if any further changes are to be made, change a copy
-			$arr = msg_arr;
+			// if any further changes are to be made, change a copy and not the original
+			$arr = $msg_arr;
 
 			$DR = new DReport(z_root(),$sender,$d,$arr['mid']);
 
