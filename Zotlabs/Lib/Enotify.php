@@ -538,6 +538,19 @@ class Enotify {
 
 	}
 
+	$e = q("select * from notify where otype = '%s' and xname = '%s' and verb = '%s' and link = '%s' and ntype = %d limit 1",
+		dbesc($datarray['otype']), 
+		dbesc($datarray['xname']),
+		dbesc($datarray['verb']),
+		dbesc($datarray['link']),
+		intval($datarray['ntype'])
+	);
+	if($e) {
+		logger('duplicated notification');
+		pop_lang();
+		return;
+	}
+ 
 	$r = q("insert into notify (hash,xname,url,photo,created,msg,aid,uid,link,parent,seen,ntype,verb,otype)
 		values('%s','%s','%s','%s','%s','%s',%d,%d,'%s','%s',%d,%d,'%s','%s')",
 		dbesc($datarray['hash']),

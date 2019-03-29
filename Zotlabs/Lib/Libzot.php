@@ -1643,7 +1643,7 @@ class Libzot {
 
 			if($arr['mid'] !== $arr['parent_mid']) {
 
-				if(perm_is_allowed($channel['channel_id'],$sender,'moderated')) {
+				if(perm_is_allowed($channel['channel_id'],$sender,'moderated') && $relay) {
 					$arr['item_blocked'] = ITEM_MODERATED;
 				}
 
