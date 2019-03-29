@@ -650,6 +650,13 @@ function get_item_elements($x,$allow_code = false) {
 	$arr['obj_type']     = (($x['object_type'])    ? htmlspecialchars($x['object_type'],    ENT_COMPAT,'UTF-8',false) : '');
 	$arr['tgt_type']     = (($x['target_type'])    ? htmlspecialchars($x['target_type'],    ENT_COMPAT,'UTF-8',false) : '');
 
+
+	// convert AS1 namespaced elements to AS-JSONLD
+
+	$arr['verb'] = Activity::activity_mapper($arr['verb']);
+	$arr['obj_type'] = Activity::activity_obj_mapper($arr['obj_type']);
+	$arr['tgt_type'] = Activity::activity_obj_mapper($arr['tgt_type']);
+
 	$arr['comment_policy'] = (($x['comment_scope']) ? htmlspecialchars($x['comment_scope'], ENT_COMPAT,'UTF-8',false) : 'contacts');
 
 	$arr['sig']          = (($x['signature']) ? htmlspecialchars($x['signature'],  ENT_COMPAT,'UTF-8',false) : '');
@@ -661,9 +668,17 @@ function get_item_elements($x,$allow_code = false) {
 		$arr['sig'] = 'sha256.' . $arr['sig'];
 	}
 
-
 	$arr['obj']          = activity_sanitise($x['object']);
+
+	if($arr['obj'] && is_array($arr['obj']) && array_key_exists('asld',$arr['obj'])) {
+		$arr['obj'] = $arr['obj']['asld'];
+	}
+
 	$arr['target']       = activity_sanitise($x['target']);
+
+	if($arr['target'] && is_array($arr['target']) && array_key_exists('asld',$arr['target'])) {
+		$arr['target'] = $arr['target']['asld'];
+	}
 
 	$arr['attach']       = activity_sanitise($x['attach']);
 	$arr['term']         = decode_tags($x['tags']);
