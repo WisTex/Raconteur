@@ -239,6 +239,7 @@ CREATE TABLE "channel" (
   "channel_account_id" bigint  NOT NULL DEFAULT '0',
   "channel_primary" numeric(1)  NOT NULL DEFAULT '0',
   "channel_name" text NOT NULL DEFAULT '',
+  "channel_parent" text NOT NULL DEFAULT '',
   "channel_address" text NOT NULL DEFAULT '',
   "channel_guid" text NOT NULL DEFAULT '',
   "channel_guid_sig" text NOT NULL,
@@ -275,6 +276,7 @@ CREATE TABLE "channel" (
 create index "channel_account_id" on channel ("channel_account_id");
 create index "channel_primary" on channel ("channel_primary");
 create index "channel_name" on channel ("channel_name");
+create index "channel_parent" on channel ("channel_parent");
 create index "channel_timezone" on channel ("channel_timezone");
 create index "channel_location" on channel ("channel_location");
 create index "channel_theme" on channel ("channel_theme");
@@ -1289,8 +1291,6 @@ CREATE TABLE "xchan" (
   "xchan_connpage" text NOT NULL DEFAULT '',
   "xchan_name" text NOT NULL DEFAULT '',
   "xchan_network" text NOT NULL DEFAULT '',
-  "xchan_instance_url" text NOT NULL DEFAULT '',
-  "xchan_flags" bigint  NOT NULL DEFAULT '0',
   "xchan_photo_date" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "xchan_name_date" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "xchan_hidden" smallint NOT NULL DEFAULT '0',
@@ -1307,9 +1307,7 @@ create index "xchan_addr" on xchan ("xchan_addr");
 create index "xchan_name" on xchan ("xchan_name");
 create index "xchan_network" on xchan ("xchan_network");
 create index "xchan_url" on xchan ("xchan_url");
-create index "xchan_flags" on xchan ("xchan_flags");
 create index "xchan_connurl" on xchan ("xchan_connurl");
-create index "xchan_instance_url" on xchan ("xchan_instance_url");
 create index "xchan_follow" on xchan ("xchan_follow");
 create index "xchan_hidden" on xchan ("xchan_hidden");
 create index "xchan_orphan" on xchan ("xchan_orphan");

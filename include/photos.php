@@ -478,7 +478,7 @@ function photo_upload($channel, $observer, $args) {
 			'obj'             => json_encode($object),
 //			'tgt_type'        => ACTIVITY_OBJ_ALBUM,
 //			'target'	      => json_encode($target),
-			'item_wall'       => $visible,
+			'item_wall'       => 1,
 			'item_origin'     => 1,
 			'item_thread_top' => 1,
 			'item_private'    => intval($acl->is_private()),

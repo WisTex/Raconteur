@@ -1,19 +1,19 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
 
 
 
-
-class Linkinfo extends \Zotlabs\Web\Controller {
+class Linkinfo extends Controller {
 
 	function get() {
 	
-		logger('linkinfo: ' . print_r($_REQUEST,true));
+		logger('linkinfo: ' . print_r($_REQUEST,true), LOGGER_DEBUG);
 	
 		$text = null;
 		$str_tags = '';
-		$process_oembed = true;	
+		$process_embed = true;	
 	
 		$br = "\n";
 	
@@ -23,7 +23,7 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 			$url = trim($_GET['url']);
 	
 		if(substr($url,0,1) === '!') {
-			$process_oembed = false;
+			$process_embed = false;
 			$url = substr($url,1);
 		}
 
@@ -47,8 +47,20 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 			}
 		}
 	
-		logger('linkinfo: ' . $url);
+		logger('linkinfo: ' . $url, LOGGER_DEBUG);
 	
+		$zrl = is_matrix_url($url);
+
+		if(! $process_embed) {
+			if($zrl) {
+				echo $br . '[zrl]' . $url . '[/zrl]' . $br;
+			}
+			else {
+				echo $br . '[url]' . $url . '[/url]' . $br;
+			}
+			killme();
+		}
+
 		$result = z_fetch_url($url,false,0,array('novalidate' => true, 'nobody' => true));
 		if($result['success']) {
 			$hdrs=array();
@@ -60,7 +72,6 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 			if (array_key_exists('content-type', $hdrs))
 				$type = $hdrs['content-type'];
 			if($type) {
-				$zrl = is_matrix_url($url);
 				if(stripos($type,'image/') !== false) {
 					if($zrl)
 						echo $br . '[zmg]' . $url . '[/zmg]' . $br;
@@ -100,12 +111,11 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 			killme();
 		}
 
-		if($process_oembed) {
-			$x = oembed_process($url);
-			if($x) {
-				echo $x;
-				killme();
-			}
+
+		$x = oembed_process($url);
+		if($x) {
+			echo $x;
+			killme();
 		}
 	
 		if($url && $title && $text) {
@@ -139,7 +149,7 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 	
 		$image = "";
 	
-		if(isset($siteinfo['images']) && sizeof($siteinfo["images"]) > 0){
+		if(isset($siteinfo['images']) && is_array($siteinfo['images']) && count($siteinfo["images"])) {
 			/* Execute below code only if image is present in siteinfo */
 	
 			$total_images = 0;

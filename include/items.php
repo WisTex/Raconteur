@@ -200,6 +200,12 @@ function item_normal_update() {
 		and item.item_blocked = 0 and item.obj_type != '" . ACTIVITY_OBJ_FILE . "' ";
 }
 
+function item_normal_moderate() {
+	return " and item.item_hidden = 0 and item.item_type = 0 and item.item_deleted = 0
+		and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_pending_remove = 0
+		and item.item_blocked in (0, 4) and item.obj_type != '" . ACTIVITY_OBJ_FILE . "' ";
+}
+
 
 /**
  * @brief
@@ -644,6 +650,13 @@ function get_item_elements($x,$allow_code = false) {
 	$arr['obj_type']     = (($x['object_type'])    ? htmlspecialchars($x['object_type'],    ENT_COMPAT,'UTF-8',false) : '');
 	$arr['tgt_type']     = (($x['target_type'])    ? htmlspecialchars($x['target_type'],    ENT_COMPAT,'UTF-8',false) : '');
 
+
+	// convert AS1 namespaced elements to AS-JSONLD
+
+	$arr['verb'] = Activity::activity_mapper($arr['verb']);
+	$arr['obj_type'] = Activity::activity_obj_mapper($arr['obj_type']);
+	$arr['tgt_type'] = Activity::activity_obj_mapper($arr['tgt_type']);
+
 	$arr['comment_policy'] = (($x['comment_scope']) ? htmlspecialchars($x['comment_scope'], ENT_COMPAT,'UTF-8',false) : 'contacts');
 
 	$arr['sig']          = (($x['signature']) ? htmlspecialchars($x['signature'],  ENT_COMPAT,'UTF-8',false) : '');
@@ -655,9 +668,17 @@ function get_item_elements($x,$allow_code = false) {
 		$arr['sig'] = 'sha256.' . $arr['sig'];
 	}
 
-
 	$arr['obj']          = activity_sanitise($x['object']);
+
+	if($arr['obj'] && is_array($arr['obj']) && array_key_exists('asld',$arr['obj'])) {
+		$arr['obj'] = $arr['obj']['asld'];
+	}
+
 	$arr['target']       = activity_sanitise($x['target']);
+
+	if($arr['target'] && is_array($arr['target']) && array_key_exists('asld',$arr['target'])) {
+		$arr['target'] = $arr['target']['asld'];
+	}
 
 	$arr['attach']       = activity_sanitise($x['attach']);
 	$arr['term']         = decode_tags($x['tags']);
@@ -1265,7 +1286,7 @@ function decode_item_meta($meta) {
  * @return string
  */
 function termtype($t) {
-	$types = array('unknown','hashtag','mention','category','private_category','file','search','thing','bookmark', 'hierarchy', 'communitytag', 'forum');
+	$types = array('unknown','hashtag','mention','category','personal_category','file','search','thing','bookmark', 'hierarchy', 'communitytag', 'forum');
 
 	return(($types[$t]) ? $types[$t] : 'unknown');
 }
@@ -1296,7 +1317,7 @@ function decode_tags($t) {
 				case 'category':
 					$tag['ttype'] = TERM_CATEGORY;
 					break;
-				case 'private_category':
+				case 'personal_category':
 					$tag['ttype'] = TERM_PCATEGORY;
 					break;
 				case 'file':
@@ -2529,7 +2550,7 @@ function tag_deliver($uid, $item_id) {
 	 * Now we've got those out of the way. Let's see if this is a post that's tagged for re-delivery
 	 */
 
-	$terms = array_merge(get_terms_oftype($item['term'],TERM_MENTION),get_terms_oftype($item['term'],TERM_FORUM));
+	$terms = array_merge(get_terms_oftype($item['term'],TERM_MENTION),get_terms_oftype($item['term'],TERM_PCATEGORY));
 
 	if($terms)
 		logger('Post mentions: ' . print_r($terms,true), LOGGER_DATA);
@@ -2544,6 +2565,7 @@ function tag_deliver($uid, $item_id) {
 
 	if($terms) {
 		foreach($terms as $term) {
+
 			if(! link_compare($term['url'],$link)) {
 				continue;
 			}
@@ -2563,7 +2585,7 @@ function tag_deliver($uid, $item_id) {
 			$body = preg_replace('/\[share(.*?)\[\/share\]/','',$item['body']);
 
 			$tagged = false;
-			$plustagged = false;
+			$ptagged = false;
 			$matches = array();
 
 			$pattern = '/[\!@]\!?\[[uz]rl\=' . preg_quote($term['url'],'/') . '\]' . preg_quote($term['term'],'/') . '\[\/[uz]rl\]/';
@@ -2575,15 +2597,15 @@ function tag_deliver($uid, $item_id) {
 				$tagged = true;
 
 
-			if(! ($tagged || $plustagged)) {
+			if(! ($tagged || $ptagged)) {
 				logger('Mention was in a reshare or exceeded max_tagged_forums - ignoring');
 				continue;
 			}
 
 			$arr = [
-					'channel_id' => $uid,
-					'item' => $item,
-					'body' => $body
+				'channel_id' => $uid,
+				'item' => $item,
+				'body' => $body
 			];
 			/**
 			 * @hooks tagged
@@ -2610,14 +2632,14 @@ function tag_deliver($uid, $item_id) {
 
 			// Just a normal tag?
 
-			if(! $plustagged) {
-				logger('Not a plus tag', LOGGER_DEBUG);
+			if(! $ptagged) {
+				logger('Not a ptag', LOGGER_DEBUG);
 				continue;
 			}
 
-			// plustagged - keep going, next check permissions
-
-			if(! perm_is_allowed($uid,$item['author_xchan'],'tag_deliver')) {
+			// ptagged - keep going, next check permissions
+			// @fixme
+			if(! perm_is_allowed($uid,$item['author_xchan'],'write_collection')) {
 				logger('tag_delivery denied for uid ' . $uid . ' and xchan ' . $item['author_xchan']);
 				continue;
 			}
@@ -2762,7 +2784,7 @@ function tgroup_check($uid, $item) {
 		return false;
 
 
-	$terms = array_merge(get_terms_oftype($item['term'],TERM_MENTION),get_terms_oftype($item['term'],TERM_FORUM));
+	$terms = array_merge(get_terms_oftype($item['term'],TERM_MENTION),get_terms_oftype($item['term'],TERM_PCATEGORY));
 
 	if($terms)
 		logger('tgroup_check: post mentions: ' . print_r($terms,true), LOGGER_DATA);

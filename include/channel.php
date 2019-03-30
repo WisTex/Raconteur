@@ -2435,6 +2435,7 @@ function channel_store_lowlevel($arr) {
 		'channel_account_id'      => ((array_key_exists('channel_account_id',$arr))      ? $arr['channel_account_id']      : '0'),
 		'channel_primary'         => ((array_key_exists('channel_primary',$arr))         ? $arr['channel_primary']         : '0'),
 		'channel_name'            => ((array_key_exists('channel_name',$arr))            ? $arr['channel_name']            : ''),
+		'channel_parent'          => ((array_key_exists('channel_parent',$arr))          ? $arr['channel_parent']          : ''),
 		'channel_address'         => ((array_key_exists('channel_address',$arr))         ? $arr['channel_address']         : ''),
 		'channel_guid'            => ((array_key_exists('channel_guid',$arr))            ? $arr['channel_guid']            : ''),
 		'channel_guid_sig'        => ((array_key_exists('channel_guid_sig',$arr))        ? $arr['channel_guid_sig']        : ''),

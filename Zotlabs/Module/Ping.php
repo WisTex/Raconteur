@@ -29,6 +29,7 @@ class Ping extends \Zotlabs\Web\Controller {
 		$result['intros'] = 0;
 		$result['mail'] = 0;
 		$result['register'] = 0;
+		$result['moderate'] = 0;
 		$result['events'] = 0;
 		$result['events_today'] = 0;
 		$result['birthdays'] = 0;
@@ -344,15 +345,17 @@ class Ping extends \Zotlabs\Web\Controller {
 
 		if(argc() > 1 && (argv(1) === 'network' || argv(1) === 'home')) {
 			$result = array();
+			$item_normal_moderate = $item_normal;
 
 			if(argv(1) === 'home') {
 				$sql_extra .= " and item_wall = 1 ";
+				$item_normal_moderate = item_normal_moderate();
 			}
 			$r = q("SELECT * FROM item 
 				WHERE uid = %d
 				AND item_unseen = 1
 				AND author_xchan != '%s'
-				$item_normal
+				$item_normal_moderate
 				$sql_extra
 				ORDER BY created DESC
 				LIMIT 300",

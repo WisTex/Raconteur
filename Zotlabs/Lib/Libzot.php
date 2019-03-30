@@ -1005,7 +1005,7 @@ class Libzot {
 		}
 
 		if(! is_array($x)) {
-			btlogger('failed communication - no response');
+			btlogger('failed communication - no useful response: ' . $x);
 		}
 
 		if($x) {
@@ -1308,7 +1308,7 @@ class Libzot {
 				return false;
 			}
 			$x = self::find_parent($env,$act);
-			if($x === $act->id || $x === $act->obj['id']) {
+			if($x === $act->id || (is_array($act->obj) && array_key_exists('id',$act->obj) && $x === $act->obj['id'])) {
 				return true;
 			}
 		}
@@ -1461,21 +1461,21 @@ class Libzot {
 	 * @return array
 	 */
 
-	static function process_delivery($sender, $act, $arr, $deliveries, $relay, $public = false, $request = false) {
+	static function process_delivery($sender, $act, $msg_arr, $deliveries, $relay, $public = false, $request = false) {
 
 		$result = [];
 
 		// If an upstream hop used ActivityPub, set the identities to zot6 nomadic identities where applicable
 		// else things could easily get confused
 
-		$arr['author_xchan'] = Activity::find_best_identity($arr['author_xchan']);
-		$arr['owner_xchan']  = Activity::find_best_identity($arr['owner_xchan']);
+		$msg_arr['author_xchan'] = Activity::find_best_identity($msg_arr['author_xchan']);
+		$msg_arr['owner_xchan']  = Activity::find_best_identity($msg_arr['owner_xchan']);
 
 		// We've validated the sender. Now make sure that the sender is the owner or author
 
 		if(! $public) {
-			if($sender != $arr['owner_xchan'] && $sender != $arr['author_xchan']) {
-				logger("Sender $sender is not owner {$arr['owner_xchan']} or author {$arr['author_xchan']} - mid {$arr['mid']}");
+			if($sender != $msg_arr['owner_xchan'] && $sender != $msg_arr['author_xchan']) {
+				logger("Sender $sender is not owner {$msg_arr['owner_xchan']} or author {$msg_arr['author_xchan']} - mid {$msg_arr['mid']}");
 				return;
 			}
 		}
@@ -1483,6 +1483,9 @@ class Libzot {
 		foreach($deliveries as $d) {
 
 			$local_public = $public;
+
+			// if any further changes are to be made, change a copy and not the original
+			$arr = $msg_arr;
 
 			$DR = new DReport(z_root(),$sender,$d,$arr['mid']);
 
@@ -1640,10 +1643,9 @@ class Libzot {
 
 			if($arr['mid'] !== $arr['parent_mid']) {
 
-				if(perm_is_allowed($channel['channel_id'],$sender,'moderated')) {
+				if(perm_is_allowed($channel['channel_id'],$sender,'moderated') && $relay) {
 					$arr['item_blocked'] = ITEM_MODERATED;
 				}
-
 
 				// check source route.
 				// We are only going to accept comments from this sender if the comment has the same route as the top-level-post,

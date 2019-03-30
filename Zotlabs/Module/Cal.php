@@ -1,6 +1,8 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Apps;
+
 require_once('include/conversation.php');
 require_once('include/bbcode.php');
 require_once('include/datetime.php');
@@ -152,7 +154,7 @@ class Cal extends \Zotlabs\Web\Controller {
 			if(! $f)
 				$f = 'ymd';
 	
-			$catsenabled = feature_enabled($channel['channel_id'],'categories');
+			$catsenabled = Apps::system_app_installed(local_channel(),'Categories');
 	
 	
 			$show_bd = perm_is_allowed($channel['channel_id'], get_observer_hash(), 'view_contacts');

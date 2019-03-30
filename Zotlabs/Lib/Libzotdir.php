@@ -306,7 +306,7 @@ class Libzotdir {
 		if ($ud['ud_addr'] && (! ($ud['ud_flags'] & UPDATE_FLAGS_DELETED))) {
 			$success = false;
 
-			$href = \Zotlabs\Lib\Webfinger::zot_url(punify($url));
+			$href = \Zotlabs\Lib\Webfinger::zot_url(punify($ud['ud_addr']));
 			if($href) {
 				$zf = \Zotlabs\Lib\Zotfinger::exec($href);
 			}

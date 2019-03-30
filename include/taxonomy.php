@@ -1,5 +1,7 @@
 <?php /** @file */
 
+use Zotlabs\Lib\Apps;
+
 // post categories and "save to file" use the same item.file table for storage.
 // We will differentiate the different uses by wrapping categories in angle brackets
 // and save to file categories in square brackets.
@@ -480,6 +482,10 @@ function wtagblock($uid,$count = 0,$authors = '',$owner = '', $flags = 0,$restri
 
 function catblock($uid,$count = 0,$authors = '',$owner = '', $flags = 0,$restrict = 0,$type = TERM_CATEGORY) {
 	$o = '';
+
+	if(! Apps::system_app_installed($uid,'Categories')) {
+		return $o;
+	}
 
 	$r = tagadelic($uid,$count,$authors,$owner,$flags,$restrict,$type);
 

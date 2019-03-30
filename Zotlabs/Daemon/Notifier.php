@@ -470,7 +470,7 @@ class Notifier {
 		if(! count(self::$env_recips))
 			self::$env_recips = ((self::$private) ? [] : null);
 
-		$details = q("select xchan_hash, xchan_instance_url, xchan_network, xchan_addr, xchan_guid, xchan_guid_sig from xchan where xchan_hash in (" . protect_sprintf(implode(',',self::$recipients)) . ")");
+		$details = q("select xchan_hash, xchan_network, xchan_addr, xchan_guid, xchan_guid_sig from xchan where xchan_hash in (" . protect_sprintf(implode(',',self::$recipients)) . ")");
 
 
 		$recip_list = array();

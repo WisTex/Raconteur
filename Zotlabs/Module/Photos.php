@@ -5,6 +5,7 @@ use App;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Access\AccessControl;
+use Zotlabs\Daemon\Master;
 
 require_once('include/photo/photo_driver.php');
 require_once('include/photos.php');
@@ -224,7 +225,7 @@ class Photos extends \Zotlabs\Web\Controller {
 	
 			$resource_id = argv(2);
 	
-			$p = q("SELECT mimetype, is_nsfw, description, resource_id, imgscale, allow_cid, allow_gid, deny_cid, deny_gid FROM photo WHERE resource_id = '%s' AND uid = %d ORDER BY imgscale DESC",
+			$p = q("SELECT mimetype, is_nsfw, filename, description, resource_id, imgscale, allow_cid, allow_gid, deny_cid, deny_gid FROM photo WHERE resource_id = '%s' AND uid = %d ORDER BY imgscale DESC",
 				dbesc($resource_id),
 				intval($page_owner_uid)
 			);
@@ -263,7 +264,9 @@ class Photos extends \Zotlabs\Web\Controller {
 				$item_id = photos_create_item(App::$data['channel'],get_observer_hash(),$p[0],$visibility);
 	
 			}
-	
+
+			$obj = EMPTY_STR;
+
 			if($item_id) {
 				$r = q("SELECT * FROM item WHERE id = %d AND uid = %d LIMIT 1",
 					intval($item_id),
@@ -274,16 +277,28 @@ class Photos extends \Zotlabs\Web\Controller {
 					$old_tag    = $r[0]['tag'];
 					$old_inform = $r[0]['inform'];
 				}
+
+				if($r[0]['obj']) {
+					$obj = json_decode($r[0]['obj'],true);
+					$obj['name'] = (($desc) ? $desc : $p[0]['filename']);
+					$obj['updated'] = datetime_convert('UTC','UTC','now',ATOM_TIME);
+					$obj = json_encode($obj);
+				}
 			}
+
+
 	
 	
 			// make sure the linked item has the same permissions as the photo regardless of any other changes
-			$x = q("update item set allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', item_private = %d
+			$x = q("update item set allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', title = '%s', obj = '%s', edited = '%s', item_private = %d
 				where id = %d",
 					dbesc($perm['allow_cid']),
 					dbesc($perm['allow_gid']),
 					dbesc($perm['deny_cid']),
 					dbesc($perm['deny_gid']),
+					dbesc(($desc) ? $desc : $p[0]['filename']),
+					dbesc($obj),
+					dbesc(datetime_convert()),
 					intval($acl->is_private()),
 					intval($item_id)
 			);
@@ -347,6 +362,10 @@ class Photos extends \Zotlabs\Web\Controller {
 					item_store_update($datarray,$execflag);
 				}
 	
+			}
+
+			if($visibility) {
+				Master::Summon(array('Notifier','edit_post',$item_id));
 			}
 
 			$sync = attach_export_data(App::$data['channel'],$resource_id);

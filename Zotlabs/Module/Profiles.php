@@ -929,7 +929,7 @@ class Profiles extends Controller {
 
 	}
 
-	static function gender_selector($current="",$suffix="") {
+static function gender_selector($current="",$suffix="") {
 	$o = '';
 	$select = array('', t('Male'), t('Female'), t('Currently Male'), t('Currently Female'), t('Mostly Male'), t('Mostly Female'), t('Transgender'), t('Intersex'), t('Transsexual'), t('Hermaphrodite'), t('Neuter'), t('Non-specific'), t('Other'), t('Undecided'));
 
