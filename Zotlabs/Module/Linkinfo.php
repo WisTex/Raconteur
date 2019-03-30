@@ -1,15 +1,15 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
 
 
 
-
-class Linkinfo extends \Zotlabs\Web\Controller {
+class Linkinfo extends Controller {
 
 	function get() {
 	
-		logger('linkinfo: ' . print_r($_REQUEST,true));
+		logger('linkinfo: ' . print_r($_REQUEST,true), LOGGER_DEBUG);
 	
 		$text = null;
 		$str_tags = '';
@@ -47,8 +47,20 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 			}
 		}
 	
-		logger('linkinfo: ' . $url);
+		logger('linkinfo: ' . $url, LOGGER_DEBUG);
 	
+		$zrl = is_matrix_url($url);
+
+		if(! $process_embed) {
+			if($zrl) {
+				echo $br . '[zrl]' . $url . '[/zrl]' . $br;
+			}
+			else {
+				echo $br . '[url]' . $url . '[/url]' . $br;
+			}
+			killme();
+		}
+
 		$result = z_fetch_url($url,false,0,array('novalidate' => true, 'nobody' => true));
 		if($result['success']) {
 			$hdrs=array();
@@ -60,7 +72,6 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 			if (array_key_exists('content-type', $hdrs))
 				$type = $hdrs['content-type'];
 			if($type) {
-				$zrl = is_matrix_url($url);
 				if(stripos($type,'image/') !== false) {
 					if($zrl)
 						echo $br . '[zmg]' . $url . '[/zmg]' . $br;
@@ -100,15 +111,6 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 			killme();
 		}
 
-		if(! $process_embed) {
-			if($zrl) {
-				echo $br . '[zrl]' . $url . '[/zrl]' . $br;
-			}
-			else {
-				echo $br . '[url]' . $url . '[/url]' . $br;
-			}
-			killme();
-		}
 
 		$x = oembed_process($url);
 		if($x) {

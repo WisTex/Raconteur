@@ -224,7 +224,7 @@ class Photos extends \Zotlabs\Web\Controller {
 	
 			$resource_id = argv(2);
 	
-			$p = q("SELECT mimetype, is_nsfw, description, resource_id, imgscale, allow_cid, allow_gid, deny_cid, deny_gid FROM photo WHERE resource_id = '%s' AND uid = %d ORDER BY imgscale DESC",
+			$p = q("SELECT mimetype, is_nsfw, filename, description, resource_id, imgscale, allow_cid, allow_gid, deny_cid, deny_gid FROM photo WHERE resource_id = '%s' AND uid = %d ORDER BY imgscale DESC",
 				dbesc($resource_id),
 				intval($page_owner_uid)
 			);
@@ -278,12 +278,13 @@ class Photos extends \Zotlabs\Web\Controller {
 	
 	
 			// make sure the linked item has the same permissions as the photo regardless of any other changes
-			$x = q("update item set allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', item_private = %d
+			$x = q("update item set allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', title = '%s', item_private = %d
 				where id = %d",
 					dbesc($perm['allow_cid']),
 					dbesc($perm['allow_gid']),
 					dbesc($perm['deny_cid']),
 					dbesc($perm['deny_gid']),
+					dbesc(($desc) ? $desc : $p[0]['filename']),
 					intval($acl->is_private()),
 					intval($item_id)
 			);
