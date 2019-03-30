@@ -1231,6 +1231,9 @@ function sync_files($channel, $files) {
 	require_once('include/attach.php');
 
 	if($channel && $files) {
+
+		$limit = service_class_fetch($channel['channel_id'], 'attach_upload_limit');
+
 		foreach($files as $f) {
 			if(! $f)
 				continue;
@@ -1352,6 +1355,17 @@ function sync_files($channel, $files) {
 					}
 					else {
 						logger('sync_files attach does not exists: ' . print_r($att,true), LOGGER_DEBUG);
+
+				        if($limit !== false) {
+				            $r = q("select sum(filesize) as total from attach where aid = %d ",
+                				intval($channel['channel_account_id'])
+            				);
+				            if(($r) &&  (($r[0]['total'] + $att['filesize']) > $limit)) {
+								logger('service class limit exceeded');
+                				continue;
+							}
+						}
+
 						create_table_from_array('attach',$att);
 					}
 
