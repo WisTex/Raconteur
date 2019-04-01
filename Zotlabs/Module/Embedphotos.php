@@ -40,24 +40,47 @@ class Embedphotos extends \Zotlabs\Web\Controller {
 			}
 			$resource_id = array_pop(explode("/", $href));
 
-
-			$r = q("SELECT obj from item where resource_type = 'photo' and resource_id = '%s' limit 1",
- 				dbesc($resource_id)
- 			); 			
-			if(!$r) { 				
-				json_return_and_die(array('errormsg' => 'Error retrieving resource ' . $resource_id, 'status' => false));
- 			}
- 			$obj = json_decode($r[0]['obj'], true);
- 			if(array_path_exists('source/content',$obj)) {
- 				$photolink = $obj['source']['content'];
- 			} 
-			else { 				
-				json_return_and_die(array('errormsg' => 'Error retrieving resource ' . $resource_id, 'status' => false)); 			
-			} 			
-			json_return_and_die(array('status' => true, 'photolink' => $photolink, 'resource_id' => $resource_id));
+			$x = self::photolink($resource_id);
+			if($x) 
+				json_return_and_die(array('status' => true, 'photolink' => $x, 'resource_id' => $resource_id));
+			json_return_and_die(array('errormsg' => 'Error retrieving resource ' . $resource_id, 'status' => false));
 
 		}
 	}
+
+
+	protected static function photolink($resource) {
+		$channel = \App::get_channel();
+		$output = EMPTY_STR;
+		if($channel) {
+			$resolution = ((feature_enabled($channel['channel_id'],'large_photos')) ? 2 : 3);
+			$r = q("select mimetype, height, width from photo where resource_id = '%s' and $resolution = %d and uid = %d limit 1",
+				dbesc($resource),
+				intval($resolution),
+				intval($channel['channel_id'])
+			);
+			if(! $r)
+				return $output;
+
+			if($r[0]['mimetype'] === 'image/jpeg')
+				$ext = '.jpg';
+			elseif($r[0]['mimetype'] === 'image/png')
+				$ext = '.png';
+			elseif($r[0]['mimetype'] === 'image/gif')
+				$ext = '.gif';
+			else
+				$ext = EMPTY_STR;
+
+			$output = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $resource . ']' .
+				'[zmg=' . $r[0]['width'] . 'x' . $r[0]['height'] . ']' . z_root() . '/photo/' . $resource . '-' . $resolution .  $ext . '[/zmg][/zrl]';
+
+			return $output;
+		}
+	}
+
+
+
+
 
 	/**
 	 * Copied from include/widgets.php::widget_album() with a modification to get the profile_uid from
