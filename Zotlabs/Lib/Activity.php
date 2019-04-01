@@ -273,6 +273,16 @@ class Activity {
 
 		$ret['inheritPrivacy'] = true;
 
+		if(intval($i['item_wall']) && $i['mid'] === $i['parent_mid']) {
+			$ret['commentPolicy'] = map_scope(PermissionLimits::Get($i['uid'],'post_comments'));
+		}
+
+		if($i['comments_closed'] !== NULL_DATE) {
+			if($ret['commentPolicy']) {
+				$ret['commentPolicy'] .= ' ';
+			}
+			$ret['commentPolicy'] .= 'until=' . datetime_convert('UTC','UTC',$i['comments_closed'],ATOM_TIME);
+		}
 		$ret['attributedTo'] = $i['author']['xchan_url'];
 
 

@@ -1152,15 +1152,25 @@ class Libzot {
 				logger($AS->debug(), LOGGER_DATA);
 		}
 
+
 		// There is nothing inherently wrong with getting a message-id which isn't a canonical URI/URL, but 
 		// at the present time (2019/02) during the Hubzilla transition to zot6 it is likely to cause lots of duplicates for 
 		// messages arriving from different protocols and sources with different message-id semantics. This
 		// restriction can be relaxed once most Hubzilla sites are upgraded to > 4.0. 
 
-		if($arr && (strpos($arr['mid'],'http') === false)) {
-			logger('activity rejected: legacy message-id');
-			return;
+		if($arr) {
+			if(strpos($arr['mid'],'http') === false && strpos($arr['mid'],'x-zot') === false) {
+				logger('activity rejected: legacy message-id');
+				return;
+			}
+
+			if($arr['verb'] === 'Create' && ActivityStreams::is_an_actor($arr['obj_type'])) {
+				logger('activity rejected: create actor');
+				return;
+			}
+
 		}
+
 
 
 		$deliveries = null;
@@ -1250,22 +1260,36 @@ class Libzot {
 				if($private) {
 					$arr['item_private'] = true;
 				}
+				if($arr['mid'] === $arr['parent_mid']) {
+					if(is_array($AS->obj) && array_key_exists('commentPolicy',$AS->obj)) {
+						$p = strstr($AS->obj['commentPolicy'],'until=');
+						if($p !== false) {
+							$arr['comments_closed'] = datetime_convert('UTC','UTC', substr($p,6));
+							$arr['comment_policy'] = trim(str_replace($p,'',$AS->obj['commentPolicy']));
+						}
+						else {
+							$arr['comment_policy'] = $AS->obj['commentPolicy'];
+						}
+					}
+				}
 				// @fixme - spoofable
 				if($AS->data['hubloc']) {
 					$arr['item_verified'] = true;
 
-					// set comment policy depending on source hub. Unknown or osada is ActivityPub.
-					// Anything else we'll say is zot - which could have a range of project names
-					$s = q("select site_project from site where site_url = '%s' limit 1",
-						dbesc($r[0]['hubloc_url'])
-					);
+					if(! array_key_exists('comment_policy',$arr)) {
+						// set comment policy depending on source hub. Unknown or osada is ActivityPub.
+						// Anything else we'll say is zot - which could have a range of project names
+						$s = q("select site_project from site where site_url = '%s' limit 1",
+							dbesc($r[0]['hubloc_url'])
+						);
 
-					if((! $s) || (in_array($s[0]['site_project'],[ '', 'osada' ]))) {
-						$arr['comment_policy'] = 'authenticated';
+						if((! $s) || (in_array($s[0]['site_project'],[ '', 'osada' ]))) {
+							$arr['comment_policy'] = 'authenticated';
+						}
+						else {
+							$arr['comment_policy'] = 'contacts';
+						}				
 					}
-					else {
-						$arr['comment_policy'] = 'contacts';
-					}				
 				}
 				if($AS->data['signed_data']) {
 					IConfig::Set($arr,'activitypub','signed_data',$AS->data['signed_data'],false);

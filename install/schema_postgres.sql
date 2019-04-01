@@ -239,6 +239,7 @@ CREATE TABLE "channel" (
   "channel_account_id" bigint  NOT NULL DEFAULT '0',
   "channel_primary" numeric(1)  NOT NULL DEFAULT '0',
   "channel_name" text NOT NULL DEFAULT '',
+  "channel_parent" text NOT NULL DEFAULT '',
   "channel_address" text NOT NULL DEFAULT '',
   "channel_guid" text NOT NULL DEFAULT '',
   "channel_guid_sig" text NOT NULL,
@@ -275,6 +276,7 @@ CREATE TABLE "channel" (
 create index "channel_account_id" on channel ("channel_account_id");
 create index "channel_primary" on channel ("channel_primary");
 create index "channel_name" on channel ("channel_name");
+create index "channel_parent" on channel ("channel_parent");
 create index "channel_timezone" on channel ("channel_timezone");
 create index "channel_location" on channel ("channel_location");
 create index "channel_theme" on channel ("channel_theme");
