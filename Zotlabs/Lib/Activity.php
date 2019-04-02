@@ -5,6 +5,7 @@ namespace Zotlabs\Lib;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionRoles;
+use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Daemon\Master;
 
 
