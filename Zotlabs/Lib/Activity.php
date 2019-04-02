@@ -278,7 +278,7 @@ class Activity {
 			$ret['commentPolicy'] = map_scope(PermissionLimits::Get($i['uid'],'post_comments'));
 		}
 
-		if($i['comments_closed'] !== NULL_DATE) {
+		if(array_key_exists('comments_closed',$i) && $i['comments_closed'] !== EMPTY_STR && $i['comments_closed'] !== NULL_DATE) {
 			if($ret['commentPolicy']) {
 				$ret['commentPolicy'] .= ' ';
 			}
