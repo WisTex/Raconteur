@@ -57,12 +57,12 @@ li:hover .widget-nav-pills-icons {
 
 
 /*  affinity slider */
-#main-slider {
+#main-slider, #affinity_slider {
 	margin: 10px 7px 2rem 7px;
 }
 
 @media screen and (max-width: 767px) {
-	#main-slider {
+	#main-slider, #affinity_slider {
 		margin: 4rem 7px 2rem 7px;
 	}
 }
@@ -73,7 +73,7 @@ li:hover .widget-nav-pills-icons {
 	justify-content: flex-center;
 }
 
-#main-range, #contact-range {
+#main-range, #affinity-range, #contact-range {
 	background-color: #EEE;
 	border-radius: 0.25rem;
 	width: 90%;
