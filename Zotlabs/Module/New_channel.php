@@ -1,12 +1,16 @@
 <?php
 namespace Zotlabs\Module;
 
+
+use App;
+use Zotlabs\Web\Controller;
+
 require_once('include/channel.php');
 require_once('include/permissions.php');
 
 
 
-class New_channel extends \Zotlabs\Web\Controller {
+class New_channel extends Controller {
 
 	function init() {
 
@@ -94,7 +98,15 @@ class New_channel extends \Zotlabs\Web\Controller {
 	
 		$arr = $_POST;
 	
-		$acc = \App::get_account();
+		$acc = App::get_account();
+		
+		if(local_channel()) {
+			$parent_channel = App::get_channel();
+			if($parent_channel) {
+				$arr['parent_hash'] = $parent_channel['channel_hash'];
+			}
+		}
+
 		$arr['account_id'] = get_account_id();
 	
 		// prevent execution by delegated channels as well as those not logged in. 
@@ -124,7 +136,7 @@ class New_channel extends \Zotlabs\Web\Controller {
 	
 	function get() {
 	
-		$acc = \App::get_account();
+		$acc = App::get_account();
 	
 		if((! $acc) || $acc['account_id'] != get_account_id()) {
 			notice( t('Permission denied.') . EOL);

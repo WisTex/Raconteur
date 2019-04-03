@@ -242,9 +242,13 @@ function create_identity($arr) {
 		$publish = intval($arr['publish']);
 
 	$role_permissions = null;
+	$parent_channel_hash = EMPTY_STR;
 
 	if(array_key_exists('permissions_role',$arr) && $arr['permissions_role']) {
 		$role_permissions = PermissionRoles::role_perms($arr['permissions_role']);
+		if(strpos($arr['permissions_role'],'collection') !== false) {
+			$parent_channel_hash = $arr['parent_hash'];
+		}			
 	}
 
 	if($role_permissions && array_key_exists('directory_publish',$role_permissions))
@@ -262,6 +266,7 @@ function create_identity($arr) {
 			'channel_account_id'  => intval($arr['account_id']),
 			'channel_primary'     => intval($primary),
 			'channel_name'        => $name,
+			'channel_parent'      => $parent_channel_hash,
 			'channel_address'     => $nick,
 			'channel_guid'        => $guid,
 			'channel_guid_sig'    => $sig,
@@ -454,6 +459,15 @@ function create_identity($arr) {
 			set_pconfig($ret['channel']['channel_id'],'system','attach_path','%Y/%Y-%m');
 		}
 
+		// If this channel has a parent, auto follow them.
+
+		if($parent_channel_hash) {
+			$ch = channelx_by_hash($parent_channel_hash);
+			if($ch) {
+				connect_and_sync($ret['channel'],channel_reddress($ch));
+			}
+		}
+
 		// auto-follow any of the hub's pre-configured channel choices.
 		// Only do this if it's the first channel for this account;
 		// otherwise it could get annoying. Don't make this list too big
@@ -466,26 +480,10 @@ function create_identity($arr) {
 
 			foreach($accts as $acct) {
 				if(trim($acct)) {
-					$f = Connect::connect($ret['channel'],trim($acct));
+					$f = $connect_and_sync($ret['channel'],trim($acct));
 					if($f['success']) {
-						$clone = [];
-						foreach($f['abook'] as $k => $v) {
-							if(strpos($k,'abook_') === 0) {
-								$clone[$k] = $v;
-							}
-						}
-						unset($clone['abook_id']);
-						unset($clone['abook_account']);
-						unset($clone['abook_channel']);
-	
-						$abconfig = load_abconfig($ret['channel']['channel_id'],$clone['abook_xchan']);
-						if($abconfig) {
-							$clone['abconfig'] = $abconfig;
-						}	
 
-						Libsync::build_sync_packet($ret['channel']['channel_id'], [ 'abook' => [ $clone ] ], true);
-
-						$can_view_stream = their_perms_contains($ret['channel']['channel_id'],$clone['abook_xchan'],'view_stream');
+						$can_view_stream = their_perms_contains($ret['channel']['channel_id'],$f['abook']['abook_xchan'],'view_stream');
 
 						// If we can view their stream, pull in some posts
 
@@ -493,8 +491,9 @@ function create_identity($arr) {
 							Master::Summon([ 'Onepoll',$f['abook']['abook_id'] ]);
 						}
 					}
-				}				
+				}
 			}
+
 		}
 
 		/**
@@ -502,6 +501,7 @@ function create_identity($arr) {
 		 *   Called when creating a channel.
 		 *   * \e int - The UID of the created identity
 		 */
+
 		call_hooks('create_identity', $newuid);
 
 		Master::Summon(array('Directory', $ret['channel']['channel_id']));
@@ -510,6 +510,37 @@ function create_identity($arr) {
 	$ret['success'] = true;
 	return $ret;
 }
+
+
+
+function connect_and_sync($channel,$address) {
+
+	if((! $channel) || (! $address)) {
+		return false;
+	}
+
+	$f = Connect::connect($channel,$address);
+	if($f['success']) {
+		$clone = [];
+		foreach($f['abook'] as $k => $v) {
+			if(strpos($k,'abook_') === 0) {
+				$clone[$k] = $v;
+			}
+		}
+		unset($clone['abook_id']);
+		unset($clone['abook_account']);
+		unset($clone['abook_channel']);
+	
+		$abconfig = load_abconfig($channel['channel_id'],$clone['abook_xchan']);
+		if($abconfig) {
+			$clone['abconfig'] = $abconfig;
+		}	
+
+		Libsync::build_sync_packet($channel['channel_id'], [ 'abook' => [ $clone ] ], true);
+		return $f;
+	}
+	return false;
+}	
 
 
 function change_channel_keys($channel) {
