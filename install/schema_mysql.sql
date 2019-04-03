@@ -692,19 +692,6 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `item_pending_remove_changed` (`item_pending_remove`, `changed`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `item_id` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `iid` int(11) NOT NULL DEFAULT 0 ,
-  `uid` int(11) NOT NULL DEFAULT 0 ,
-  `sid` char(191) NOT NULL DEFAULT '',
-  `service` char(191) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `uid` (`uid`),
-  KEY `sid` (`sid`),
-  KEY `service` (`service`),
-  KEY `iid` (`iid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
-
 CREATE TABLE IF NOT EXISTS `likes` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `channel_id` int(10) unsigned NOT NULL DEFAULT 0 ,
@@ -1088,21 +1075,6 @@ CREATE TABLE IF NOT EXISTS `profile` (
   KEY `country_name` (`country_name`),
   KEY `profile_guid` (`profile_guid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS `profile_check` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `uid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `cid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `dfrn_id` char(191) NOT NULL DEFAULT '',
-  `sec` char(191) NOT NULL DEFAULT '',
-  `expire` int(11) NOT NULL DEFAULT 0 ,
-  PRIMARY KEY (`id`),
-  KEY `uid` (`uid`),
-  KEY `cid` (`cid`),
-  KEY `dfrn_id` (`dfrn_id`),
-  KEY `sec` (`sec`),
-  KEY `expire` (`expire`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `register` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,

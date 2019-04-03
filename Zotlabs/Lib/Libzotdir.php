@@ -127,7 +127,7 @@ class Libzotdir {
 
 		$safe_mode = self::get_directory_setting($observer, 'safemode');
 		$globaldir = self::get_directory_setting($observer, 'globaldir');
-		$pubforums = self::get_directory_setting($observer, 'pubforums');
+		$pubforums = self::get_directory_setting($observer, 'chantype');
 
 		$hide_local = intval(get_config('system','localdir_hide'));
 		if($hide_local)
@@ -149,6 +149,7 @@ class Libzotdir {
 		$tmp = array_merge($_GET,$_POST);
 		unset($tmp['suggest']);
 		unset($tmp['pubforums']);
+		unset($tmp['type']);
 		unset($tmp['global']);
 		unset($tmp['safe']);
 		unset($tmp['req']);
@@ -159,7 +160,8 @@ class Libzotdir {
 			'$header'    => t('Directory Options'),
 			'$forumsurl' => $forumsurl,
 			'$safemode'  => array('safemode', t('Safe Mode'),$safe_mode,'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&safe="+(this.checked ? 1 : 0)\''),
-			'$pubforums' => array('pubforums', t('Public Groups Only'),$pubforums,'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&pubforums="+(this.checked ? 1 : 0)\''),
+			'$pubforums' => array('pubforums', t('Public Groups Only'),(($pubforums == 1) ? true : false),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&type="+(this.checked ? 1 : 0)\''),
+			'$collections' => array('collections', t('Collections Only'),(($pubforums == 2) ? true : false),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&type="+(this.checked ? 2 : 0)\''),
 			'$hide_local' => $hide_local,
 			'$globaldir' => array('globaldir', t('This Website Only'), 1-intval($globaldir),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&global="+(this.checked ? 0 : 1)\''),
 		]);
