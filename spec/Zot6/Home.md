@@ -13,7 +13,7 @@ A reference implementation (a social media app) is provided at https://framagit.
 ### Differences from earlier Zot versions
 
 1. Streamlined communications using direct (push) transfer. Earlier versions used a 'notify/pickup' delivery model.
-2. The authentication component (Magic-Auth) has been spun off into a separate and independent specification ['OpenWebAuth'](spec/OpenWebAuth/Home).
+2. The authentication component (Magic-Auth) has been spun off into a separate and independent specification ['OpenWebAuth'](spec/OpenWebAuth/Home.md).
 3. Inclusion of ActivityStreams (JSON-LD) as a supported (primary) serialisation.
 4. Dropping the requirements for implementations to support secondary serialisations.
 5. Moving service discovery to "Accept-header" based service endpoints; where different representations can be selected by modification of the HTTPS request Accept: header. 
