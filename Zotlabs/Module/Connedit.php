@@ -222,8 +222,8 @@ class Connedit extends \Zotlabs\Web\Controller {
 				intval($channel['channel_id'])
 			);
 			if(($pr) && (! intval($orig_record[0]['abook_hidden'])) && (intval(get_pconfig($channel['channel_id'],'system','post_newfriend')))) {
-				$xarr = array();
-				$xarr['verb'] = ACTIVITY_FRIEND;
+				$xarr = [];
+
 				$xarr['item_wall'] = 1;
 				$xarr['item_origin'] = 1;
 				$xarr['item_thread_top'] = 1;
@@ -233,17 +233,6 @@ class Connedit extends \Zotlabs\Web\Controller {
 				$xarr['deny_cid'] = $channel['channel_deny_cid'];
 				$xarr['deny_gid'] = $channel['channel_deny_gid'];
 				$xarr['item_private'] = (($xarr['allow_cid']||$xarr['allow_gid']||$xarr['deny_cid']||$xarr['deny_gid']) ? 1 : 0);
-				$obj = array(
-					'type' => ACTIVITY_OBJ_PERSON,
-					'title' => \App::$poi['xchan_name'],
-					'id' => \App::$poi['xchan_hash'],
-					'link' => array(
-						array('rel' => 'alternate', 'type' => 'text/html', 'href' => \App::$poi['xchan_url']),
-						array('rel' => 'photo', 'type' => \App::$poi['xchan_photo_mimetype'], 'href' => \App::$poi['xchan_photo_l'])
-	       			),
-	   			);
-				$xarr['obj'] = json_encode($obj);
-				$xarr['obj_type'] = ACTIVITY_OBJ_PERSON;
 	
 				$xarr['body'] = '[zrl=' . $channel['xchan_url'] . ']' . $channel['xchan_name'] . '[/zrl]' . ' ' . t('is now connected to') . ' ' . '[zrl=' . \App::$poi['xchan_url'] . ']' . \App::$poi['xchan_name'] . '[/zrl]';
 	

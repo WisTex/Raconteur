@@ -2,14 +2,13 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Daemon\Master;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
 require_once('include/event.php');
 
 class Like extends \Zotlabs\Web\Controller {
-
-
 
 	private function reaction_to_activity($reaction) {
 
@@ -309,7 +308,7 @@ class Like extends \Zotlabs\Web\Controller {
 					// drop_item was not done interactively, so we need to invoke the notifier
 					// in order to push the changes to connections
 	
-					\Zotlabs\Daemon\Master::Summon(array('Notifier','drop',$rr['id']));
+					Master::Summon(array('Notifier','drop',$rr['id']));
 	
 				}
 	
@@ -353,12 +352,13 @@ class Like extends \Zotlabs\Web\Controller {
 			if(intval($item['item_wall']))
 				$arr['item_wall'] = 1;
 	
-			// if this was a linked photo and was hidden, unhide it.
+			// if this was a linked photo and was hidden, unhide it and distribute it.
 	
 			if(intval($item['item_hidden'])) {
 				$r = q("update item set item_hidden = 0 where id = %d",
 					intval($item['id'])
 				);
+				Master::Summon(array('Notifier','wall-new',$item['id']));
 			}	
 	
 		}

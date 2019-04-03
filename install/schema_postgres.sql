@@ -239,6 +239,7 @@ CREATE TABLE "channel" (
   "channel_account_id" bigint  NOT NULL DEFAULT '0',
   "channel_primary" numeric(1)  NOT NULL DEFAULT '0',
   "channel_name" text NOT NULL DEFAULT '',
+  "channel_parent" text NOT NULL DEFAULT '',
   "channel_address" text NOT NULL DEFAULT '',
   "channel_guid" text NOT NULL DEFAULT '',
   "channel_guid_sig" text NOT NULL,
@@ -275,6 +276,7 @@ CREATE TABLE "channel" (
 create index "channel_account_id" on channel ("channel_account_id");
 create index "channel_primary" on channel ("channel_primary");
 create index "channel_name" on channel ("channel_name");
+create index "channel_parent" on channel ("channel_parent");
 create index "channel_timezone" on channel ("channel_timezone");
 create index "channel_location" on channel ("channel_location");
 create index "channel_theme" on channel ("channel_theme");
@@ -691,19 +693,6 @@ create index "item_allow_gid" on item ("allow_gid");
 create index "item_deny_cid" on item ("deny_cid");
 create index "item_deny_gid" on item ("deny_gid");
 
-CREATE TABLE "item_id" (
-  "id" serial  NOT NULL,
-  "iid" bigint NOT NULL,
-  "uid" bigint NOT NULL,
-  "sid" text NOT NULL,
-  "service" text NOT NULL,
-  PRIMARY KEY ("id")
-
-);
-create index "itemid_uid" on item_id ("uid");
-create index "itemid_sid" on item_id ("sid");
-create index "itemid_service" on item_id ("service");
-create index "itemid_iid" on item_id ("iid");
 CREATE TABLE "likes" (
   "id" serial  NOT NULL,
   "channel_id" bigint  NOT NULL DEFAULT '0',
@@ -1083,20 +1072,6 @@ create index "profile_hide_friends" on profile ("hide_friends");
 create index "profile_postal_code" on profile ("postal_code");
 create index "profile_country_name" on profile ("country_name");
 create index "profile_guid" on profile ("profile_guid");
-CREATE TABLE "profile_check" (
-  "id" serial  NOT NULL,
-  "uid" bigint  NOT NULL,
-  "cid" bigint  NOT NULL DEFAULT '0',
-  "dfrn_id" text NOT NULL,
-  "sec" text NOT NULL,
-  "expire" bigint NOT NULL,
-  PRIMARY KEY ("id")
-);
-create index "pc_uid" on profile_check ("uid");
-create index "pc_cid" on profile_check ("cid");
-create index "pc_dfrn_id" on profile_check ("dfrn_id");
-create index "pc_sec" on profile_check ("sec");
-create index "pc_expire" on profile_check ("expire");
 
 CREATE TABLE "register" (
   "id" serial  NOT NULL,

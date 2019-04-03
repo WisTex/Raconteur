@@ -273,6 +273,9 @@ class ActivityStreams {
 	}
 
 	static function is_an_actor($s) {
+		if (! $s) {
+			return false;
+		}
 		return(in_array($s,[ 'Application','Group','Organization','Person','Service' ]));
 	}
 
