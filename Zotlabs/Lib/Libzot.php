@@ -7,6 +7,7 @@ namespace Zotlabs\Lib;
  *
  */
 
+use App;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
@@ -1426,6 +1427,20 @@ class Libzot {
 					foreach($act->obj['tag'] as $tag) {
 						if($tag['type'] === 'Mention' && (strpos($tag['href'],z_root()) !== false)) {
 							$address = basename($tag['href']);
+							if($address) {
+								$z = q("select channel_hash as hash from channel where channel_address = '%s'
+									and channel_hash != '%s' and channel_removed = 0 limit 1",
+									dbesc($address),
+									dbesc($msg['sender'])						
+								);
+								if($z) {
+									$r[] = $z[0]['hash'];
+								}
+							}
+						}
+
+						if($tag['type'] === 'topicalCollection' && strpos($tag['name'],App::get_hostname())) {
+							$address = substr($tag['name'],0,strpos($tag['name'],'@'));
 							if($address) {
 								$z = q("select channel_hash as hash from channel where channel_address = '%s'
 									and channel_hash != '%s' and channel_removed = 0 limit 1",

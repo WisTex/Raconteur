@@ -2550,18 +2550,17 @@ function tag_deliver($uid, $item_id) {
 	 * Now we've got those out of the way. Let's see if this is a post that's tagged for re-delivery
 	 */
 
-	$terms = array_merge(get_terms_oftype($item['term'],TERM_MENTION),get_terms_oftype($item['term'],TERM_PCATEGORY));
+	$terms = get_terms_oftype($item['term'],TERM_MENTION);
+
+	$pterms = get_terms_oftype($item['term'],TERM_PCATEGORY);
 
 	if($terms)
 		logger('Post mentions: ' . print_r($terms,true), LOGGER_DATA);
 
-
-	$max_forums = get_config('system','max_tagged_forums',2);
-	$matched_forums = 0;
-
+	if($pterms)
+		logger('Post collections: ' . print_r($pterms,true), LOGGER_DATA);
 
 	$link = normalise_link($u[0]['xchan_url']);
-
 
 	if($terms) {
 		foreach($terms as $term) {
@@ -2585,7 +2584,6 @@ function tag_deliver($uid, $item_id) {
 			$body = preg_replace('/\[share(.*?)\[\/share\]/','',$item['body']);
 
 			$tagged = false;
-			$ptagged = false;
 			$matches = array();
 
 			$pattern = '/[\!@]\!?\[[uz]rl\=' . preg_quote($term['url'],'/') . '\]' . preg_quote($term['term'],'/') . '\[\/[uz]rl\]/';
@@ -2597,8 +2595,8 @@ function tag_deliver($uid, $item_id) {
 				$tagged = true;
 
 
-			if(! ($tagged || $ptagged)) {
-				logger('Mention was in a reshare or exceeded max_tagged_forums - ignoring');
+			if(! $tagged ) {
+				logger('Mention was in a reshare - ignoring');
 				continue;
 			}
 
@@ -2630,30 +2628,31 @@ function tag_deliver($uid, $item_id) {
 				'otype'        => 'item'
 			));
 
-			// Just a normal tag?
+		}
+	}
+	if($pterms) {
+		foreach($pterms as $term) {
 
-			if(! $ptagged) {
-				logger('Not a ptag', LOGGER_DEBUG);
+			$ptagged = false;
+
+			if(! link_compare($term['url'],$link)) {
 				continue;
 			}
+
+			$ptagged = true;
+
+			logger('Collection post found for ' . $u[0]['channel_name']);
 
 			// ptagged - keep going, next check permissions
-			// @fixme
-			if(! perm_is_allowed($uid,$item['author_xchan'],'write_collection')) {
+
+			if((! perm_is_allowed($uid,$item['author_xchan'],'write_collection')) && ($item['author_xchan'] !== $u[0]['channel_parent'])) {
 				logger('tag_delivery denied for uid ' . $uid . ' and xchan ' . $item['author_xchan']);
-				continue;
-			}
-
-
-			if(! $mention) {
-				logger('No mention for ' . $u[0]['channel_name']);
 				continue;
 			}
 
 			// tgroup delivery - setup a second delivery chain
 			// prevent delivery looping - only proceed
 			// if the message originated elsewhere and is a top-level post
-
 
 			if(intval($item['item_wall']) || intval($item['item_origin']) || (! intval($item['item_thread_top'])) || ($item['id'] != $item['parent'])) {
 				logger('Item was local or a comment. rejected.');
@@ -2773,9 +2772,6 @@ function tgroup_check($uid, $item) {
 	if($r)
 		return true;
 
-	if(! perm_is_allowed($uid,$item['author_xchan'],'tag_deliver'))
-		return false;
-
 	$u = q("select * from channel left join xchan on channel_hash = xchan_hash where channel_id = %d limit 1",
 		intval($uid)
 	);
@@ -2783,14 +2779,16 @@ function tgroup_check($uid, $item) {
 	if(! $u)
 		return false;
 
+	if((! perm_is_allowed($uid,$item['author_xchan'],'write_collection')) && ($item['author_xchan'] !== $u[0]['channel_parent'])) {
+		logger('tgroup_check delivery denied for uid ' . $uid . ' and xchan ' . $item['author_xchan']);
+		return false;
+	}
 
-	$terms = array_merge(get_terms_oftype($item['term'],TERM_MENTION),get_terms_oftype($item['term'],TERM_PCATEGORY));
+	$terms = get_terms_oftype($item['term'],TERM_PCATEGORY);
 
 	if($terms)
 		logger('tgroup_check: post mentions: ' . print_r($terms,true), LOGGER_DATA);
 
-	$max_forums = get_config('system','max_tagged_forums',2);
-	$matched_forums = 0;
 
 	$link = normalise_link($u[0]['xchan_url']);
 
@@ -2800,106 +2798,13 @@ function tgroup_check($uid, $item) {
 				continue;
 			}
 
-			$mention = true;
 			logger('tgroup_check: mention found for ' . $u[0]['channel_name']);
-
-			// At this point we've determined that the person receiving this post was mentioned in it.
-			// Now let's check if this mention was inside a reshare so we don't spam a forum
-			// note: $term has been set to the matching term
-
-
-			$body = preg_replace('/\[share(.*?)\[\/share\]/','',$item['body']);
-
-			$forumpattern = '/\!\!?\[[uz]rl\=([^\]]*?)\]((?:.(?!\[[uz]rl\=))*?)\[\/[uz]rl\]/';
-
-			$found = false;
-
-			$matches = array();
-
-			if(preg_match_all($forumpattern,$body,$matches,PREG_SET_ORDER)) {
-				foreach($matches as $match) {
-					$matched_forums ++;
-					if($term['url'] === $match[1] && intval($term['ttype']) === TERM_FORUM) {
-						if($matched_forums <= $max_forums) {
-							$found = true;
-							break;
-						}
-						logger('forum ' . $term['term'] . ' exceeded max_tagged_forums - ignoring');
-					}
-				}
-			}
-
-			$forumpattern = '/\[[uz]rl\=([^\]]*?)\]\!((?:.(?!\[[uz]rl\=))*?)\[\/[uz]rl\]/';
-
-			$matches = array();
-
-			if(preg_match_all($forumpattern,$body,$matches,PREG_SET_ORDER)) {
-				foreach($matches as $match) {
-					$matched_forums ++;
-					if($term['url'] === $match[1] && intval($term['ttype']) === TERM_FORUM) {
-						if($matched_forums <= $max_forums) {
-							$found = true;
-							break;
-						}
-						logger('forum ' . $term['term'] . ' exceeded max_tagged_forums - ignoring');
-					}
-				}
-			}
-
-
-
-			if(intval(get_pconfig($uid,'system','anymention'))) {
-
-				// allow @mentions for forums
-
-				$forumpattern = '/\@\!?\[[uz]rl\=([^\]]*?)\]((?:.(?!\[[uz]rl\=))*?)\[\/[uz]rl\]/';
-	
-				$matches = array();
-
-				if(preg_match_all($forumpattern,$body,$matches,PREG_SET_ORDER)) {
-					foreach($matches as $match) {
-						$matched_forums ++;
-						if($term['url'] === $match[1] && intval($term['ttype']) === TERM_MENTION) {
-							if($matched_forums <= $max_forums) {
-								$found = true;
-								break;
-							}
-							logger('forum ' . $term['term'] . ' exceeded max_tagged_forums - ignoring');
-						}
-					}
-				}
-
-				$forumpattern = '/\[[uz]rl\=([^\]]*?)\]\@((?:.(?!\[[uz]rl\=))*?)\[\/[uz]rl\]/';
-	
-				$matches = array();
-
-				if(preg_match_all($forumpattern,$body,$matches,PREG_SET_ORDER)) {
-					foreach($matches as $match) {
-						$matched_forums ++;
-						if($term['url'] === $match[1] && intval($term['ttype']) === TERM_MENTION) {
-							if($matched_forums <= $max_forums) {
-								$found = true;
-								break;
-							}
-							logger('forum ' . $term['term'] . ' exceeded max_tagged_forums - ignoring');
-						}
-					}
-				}
-
-			}
-
-
-			if(! $found) {
-				logger('tgroup_check: mention was in a reshare or exceeded max_tagged_forums - ignoring');
-				continue;
-			}
 
 			return true;
 		}
 	}
 
 	return false;
-
 }
 
 /**

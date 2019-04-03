@@ -122,7 +122,7 @@ class Acl extends \Zotlabs\Web\Controller {
 						"name"  => t('Profile','acl') . ' ' . $rv['profile_name'],
 						"id"	=> 'vp' . $rv['id'],
 						"xid"   => 'vp.' . $rv['profile_guid'],
-						"uids"  => Zgroup::members_profile_xchan(local_channel(), $rv['id']),
+						"uids"  => AccessList::members_profile_xchan(local_channel(), $rv['id']),
 						"link"  => ''
 					);
 				}

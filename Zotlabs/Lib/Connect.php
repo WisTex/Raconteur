@@ -20,7 +20,7 @@ class Connect {
 	 * This function does NOT send sync packets to clones. The caller is responsible for doing this
 	 */
 
-	static function connect($channel,$url) {
+	static function connect($channel, $url, $sub_channel = false) {
 
 		$uid = $channel['channel_id'];
 
@@ -188,8 +188,20 @@ class Connect {
 
 
 		$p = Permissions::connect_perms($uid);
-		$my_perms = Permissions::serialise($p['perms']);
 
+		// parent channels have unencumbered write permission
+
+		if ($sub_channel) {
+			$p['perms']['post_wall']     = 1;
+			$p['perms']['post_comments'] = 1;
+			$p['perms']['write_storage'] = 1;
+			$p['perms']['post_like']     = 1;
+			$p['perms']['delegate']      = 1;
+			$p['perms']['moderated']     = 0;
+		}
+
+		$my_perms = Permissions::serialise($p['perms']);
+		
 		$profile_assign = get_pconfig($uid,'system','profile_assign','');
 
 

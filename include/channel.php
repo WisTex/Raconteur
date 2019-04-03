@@ -464,7 +464,7 @@ function create_identity($arr) {
 		if($parent_channel_hash) {
 			$ch = channelx_by_hash($parent_channel_hash);
 			if($ch) {
-				connect_and_sync($ret['channel'],channel_reddress($ch));
+				connect_and_sync($ret['channel'],channel_reddress($ch), true);
 			}
 		}
 
@@ -513,13 +513,13 @@ function create_identity($arr) {
 
 
 
-function connect_and_sync($channel,$address) {
+function connect_and_sync($channel,$address, $sub_channel = false) {
 
 	if((! $channel) || (! $address)) {
 		return false;
 	}
 
-	$f = Connect::connect($channel,$address);
+	$f = Connect::connect($channel,$address, $sub_channel);
 	if($f['success']) {
 		$clone = [];
 		foreach($f['abook'] as $k => $v) {

@@ -1335,7 +1335,7 @@ function z_status_editor($a, $x, $popup = false) {
 	$jotplugins = '';
 	call_hooks('jot_tool', $jotplugins);
 
-	$jotnets = '';
+	$jotnets = jot_collections($c,((array_key_exists('collections',$x)) ? $x['collections'] : []));
 	if(x($x,'jotnets')) {
 		call_hooks('jot_networks', $jotnets);
 	}
@@ -1433,6 +1433,29 @@ function z_status_editor($a, $x, $popup = false) {
 	return $o;
 }
 
+
+function jot_collections($channel,$collections) {
+
+	$output = EMPTY_STR;
+
+	$r = q("select * from channel where channel_parent = '%s' and channel_removed = 0",
+		dbesc($channel['channel_hash'])
+	);
+	if(! $r) {
+		return $output;
+	}
+
+	$output .= t('Post to Collections'); 
+	$output .= '<select size="1" class="form-control" name="collections[]" multiple>';
+	foreach($r as $rv) {
+		$selected = ((is_array($collections) && in_array(channel_reddress($rv),$collections)) ? " selected " : "");
+		$output .= '<option value="' . channel_reddress($rv) . '"' . $selected . '>' . $rv['channel_name'] . '</option>';
+	}
+	$output .= '</select>';
+
+	return $output;
+
+}
 
 function get_item_children($arr, $parent) {
 	$children = array();

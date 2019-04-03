@@ -415,6 +415,26 @@ class Item extends Controller {
 			$pagetitle = strtolower(\URLify::transliterate($pagetitle));
 		}
 	
+
+		if (array_key_exists('collections',$_REQUEST) && is_array($_REQUEST['collections']) && count($_REQUEST['collections'])) {
+			foreach ($_REQUEST['collections'] as $clct) {
+				$r = q("select xchan_url from xchan left join hubloc on hubloc_hash = xchan_hash where hubloc_addr = '%s' limit 1",
+					dbesc($clct)
+				);
+				if ($r) { 
+					if (! isset($post_tags)) {
+						$post_tags = [];
+					}
+					$post_tags[] = [
+						'uid'   => $profile_uid, 
+						'ttype' => TERM_PCATEGORY,
+						'otype' => TERM_OBJ_POST,
+						'term'  => $clct,
+						'url'   => $r[0]['xchan_url']
+					]; 				
+				}
+			}
+		}
 	
 		$item_flags = $item_restrict = 0;
 		$expires = NULL_DATE;
@@ -841,7 +861,9 @@ class Item extends Controller {
 				// Set permissions based on tag replacements
 				set_linkified_perms($results, $str_contact_allow, $str_group_allow, $profile_uid, $parent_item, $private);
 	
-				$post_tags = array();
+				if (! isset($post_tags)) {
+					$post_tags = [];
+				}
 				foreach($results as $result) {
 					$success = $result['success'];
 					if($success['replaced']) {
@@ -933,7 +955,10 @@ class Item extends Controller {
 	// BBCODE end alert
 	
 		if(strlen($categories)) {
-
+			if (! isset($post_tags)) {
+				$post_tags = [];
+			}
+	
 			$cats = explode(',',$categories);
 			foreach($cats as $cat) {
 
@@ -968,6 +993,10 @@ class Item extends Controller {
 				intval(TERM_COMMUNITYTAG)
 			);
 			if($t) {
+				if (! isset($post_tags)) {
+					$post_tags = [];
+				}
+
 				foreach($t as $t1) {
 					$post_tags[] = array(
 						'uid'   => $profile_uid, 
