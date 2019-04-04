@@ -415,10 +415,9 @@ class Item extends Controller {
 			$pagetitle = strtolower(\URLify::transliterate($pagetitle));
 		}
 	
-
 		if (array_key_exists('collections',$_REQUEST) && is_array($_REQUEST['collections']) && count($_REQUEST['collections'])) {
 			foreach ($_REQUEST['collections'] as $clct) {
-				$r = q("select xchan_url from xchan left join hubloc on hubloc_hash = xchan_hash where hubloc_addr = '%s' limit 1",
+				$r = q("select xchan_url, xchan_hash from xchan left join hubloc on hubloc_hash = xchan_hash where hubloc_addr = '%s' limit 1",
 					dbesc($clct)
 				);
 				if ($r) { 
@@ -431,7 +430,7 @@ class Item extends Controller {
 						'otype' => TERM_OBJ_POST,
 						'term'  => $clct,
 						'url'   => $r[0]['xchan_url']
-					]; 				
+					];
 				}
 			}
 		}

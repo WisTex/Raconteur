@@ -1335,7 +1335,12 @@ function z_status_editor($a, $x, $popup = false) {
 	$jotplugins = '';
 	call_hooks('jot_tool', $jotplugins);
 
-	$jotnets = jot_collections($c,((array_key_exists('collections',$x)) ? $x['collections'] : []));
+	$jotcoll = jot_collections($c,((array_key_exists('collections',$x)) ? $x['collections'] : []));
+	if(! $jotcoll) {
+		$jotcoll = EMPTY_STR;
+	}
+
+	$jotnets = EMPTY_STR;
 	if(x($x,'jotnets')) {
 		call_hooks('jot_networks', $jotnets);
 	}
@@ -1402,8 +1407,10 @@ function z_status_editor($a, $x, $popup = false) {
 		'$preview' => $preview,
 		'$source' => ((x($x, 'source')) ? $x['source'] : ''),
 		'$jotplugins' => $jotplugins,
+		'$jotcoll' => $jotcoll,
 		'$jotnets' => $jotnets,
 		'$jotnets_label' => t('Other networks and post services'),
+		'$jotcoll_label' => t('Collections'),
 		'$defexpire' => $defexpire,
 		'$feature_expire' => $feature_expire,
 		'$expires' => t('Set expiration date'),
@@ -1417,6 +1424,7 @@ function z_status_editor($a, $x, $popup = false) {
 		'$expiryModalCANCEL' => t('Cancel'),
 		'$linkModalOK' => t('OK'),
 		'$linkModalCANCEL' => t('Cancel'),
+		'$close' => t('Close'),
 		'$expanded' => ((x($x, 'expanded')) ? $x['expanded'] : false),
 		'$bbcode' => ((x($x, 'bbcode')) ? $x['bbcode'] : false),
 		'$parent' => ((array_key_exists('parent',$x) && $x['parent']) ? $x['parent'] : 0),
