@@ -3492,3 +3492,13 @@ function unserialise($x) {
 	$y = ((substr($x,0,5) === 'json:') ? json_decode(substr($x,5),true) : '');
 	return ((is_array($y)) ? $y : $x);
 }
+
+
+function obscurify($s) {
+	return str_rot47(base64url_encode($s));
+}
+
+
+function unobscurify($s) {
+	return base64url_decode(str_rot47($s));
+}

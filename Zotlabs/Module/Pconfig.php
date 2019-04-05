@@ -35,7 +35,7 @@ class Pconfig extends Controller {
 		}
 		
 		if(strpos($k,'password') !== false) {
-			$v = z_obscure($v);
+			$v = obscurify($v);
 		}
 	
 		set_pconfig(local_channel(),$cat,$k,$v);
@@ -106,7 +106,7 @@ class Pconfig extends Controller {
 	
 		$v = get_pconfig(local_channel(),$cat,$k);
 		if(strpos($k,'password') !== false) 
-			$v = z_unobscure($v);
+			$v = unobscurify($v);
 	
 		$o .= '<input type="hidden" name="cat" value="' . $cat . '" />';
 		$o .= '<input type="hidden" name="k" value="' . $k . '" />';

@@ -1453,7 +1453,7 @@ function jot_collections($channel,$collections) {
 		return $output;
 	}
 
-	$size = ((count($r) < 4) ? $count($r) : 4);
+	$size = ((count($r) < 4) ? count($r) : 4);
 
 	$output .= t('Post to Collections'); 
 	$output .= '<select size="' . $size . '" class="form-control" name="collections[]" multiple>';
