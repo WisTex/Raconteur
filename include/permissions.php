@@ -192,7 +192,7 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
 
 		// They are in your address book, but haven't been approved
 
-		if($channel_perm & PERMS_PENDING) {
+		if($channel_perm & PERMS_PENDING && (! intval($x[0]['abook_pseudo']))) {
 			$ret[$perm_name] = true;
 			continue;
 		}
@@ -385,7 +385,7 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
 
 	// They are in your address book, but haven't been approved
 
-	if($channel_perm & PERMS_PENDING) {
+	if($channel_perm & PERMS_PENDING && (! intval($x[0]['abook_pseudo']))) {
 		return true;
 	}
 
