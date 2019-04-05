@@ -16,14 +16,15 @@
 		{{/if}}
 	</div>
 	<h3>
-		{{if $selected == $channel.channel_id}}
+		{{*if $selected == $channel.channel_id}}
 		<i class="fa fa-circle text-success" title="{{$msg_selected}}"></i>
-		{{/if}}
+		{{/if*}}
 		{{if $channel.delegate}}
 		<i class="fa fa-arrow-circle-right" title="{{$delegated_desc}}"></i>
 		{{/if}}
+		{{if $channel.xchan_type == 2}}<i class="fa fa-tags" title="{{$channel.collections_label}}"></i>&nbsp;{{elseif $channel.xchan_type == 1}}<i class="fa fa-comments-o" title="{{$channel.forum_label}}"></i>&nbsp;{{/if}}
 		{{if $selected != $channel.channel_id}}<a href="{{$channel.link}}" title="{{$channel.channel_name}}">{{/if}}
-			{{$channel.channel_name}}
+		{{$channel.channel_name}}
 		{{if $selected != $channel.channel_id}}</a>{{/if}}
 	</h3>
 	<div class="clear"></div>
@@ -31,7 +32,7 @@
 <div class="section-content-wrapper">
 	<div class="channel-photo-wrapper">
 		{{if $selected != $channel.channel_id}}<a href="{{$channel.link}}" class="channel-selection-photo-link" title="{{$channel.channel_name}}">{{/if}}
-			<img class="channel-photo" src="{{$channel.xchan_photo_m}}" alt="{{$channel.channel_name}}" />
+			<img class="channel-photo{{if $selected == $channel.channel_id}} channel-active{{/if}}" src="{{$channel.xchan_photo_m}}" alt="{{$channel.channel_name}}" />
 		{{if $selected != $channel.channel_id}}</a>{{/if}}
 	</div>
 	<div class="channel-notifications-wrapper">
