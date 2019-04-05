@@ -1446,15 +1446,17 @@ function jot_collections($channel,$collections) {
 
 	$output = EMPTY_STR;
 
-	$r = q("select * from channel where channel_parent = '%s' and channel_removed = 0",
+	$r = q("select channel_address, channel_name from channel where channel_parent = '%s' and channel_removed = 0 order by channel_name asc",
 		dbesc($channel['channel_hash'])
 	);
 	if(! $r) {
 		return $output;
 	}
 
+	$size = ((count($r) < 4) ? $count($r) : 4);
+
 	$output .= t('Post to Collections'); 
-	$output .= '<select size="1" class="form-control" name="collections[]" multiple>';
+	$output .= '<select size="' . $size . '" class="form-control" name="collections[]" multiple>';
 	foreach($r as $rv) {
 		$selected = ((is_array($collections) && in_array(channel_reddress($rv),$collections)) ? " selected " : "");
 		$output .= '<option value="' . channel_reddress($rv) . '"' . $selected . '>' . $rv['channel_name'] . '</option>';
