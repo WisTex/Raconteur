@@ -196,7 +196,7 @@ class Connect {
 			$p['perms']['post_comments'] = 1;
 			$p['perms']['write_storage'] = 1;
 			$p['perms']['post_like']     = 1;
-			$p['perms']['delegate']      = 1;
+			$p['perms']['delegate']      = 0;
 			$p['perms']['moderated']     = 0;
 		}
 
