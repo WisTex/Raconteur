@@ -1,8 +1,12 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Access\AccessControl;
+use Zotlabs\Daemon\Master;
 
 require_once('include/conversation.php');
 require_once('include/bbcode.php');
@@ -10,7 +14,7 @@ require_once('include/datetime.php');
 require_once('include/event.php');
 require_once('include/html2plain.php');
 
-class Events extends \Zotlabs\Web\Controller {
+class Events extends Controller {
 
 	function post() {
 	
@@ -130,9 +134,9 @@ class Events extends \Zotlabs\Web\Controller {
 
 		$share = 1;	
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
-		$acl = new \Zotlabs\Access\AccessControl(false);
+		$acl = new AccessControl(false);
 	
 		if($event_id) {
 			$x = q("select * from event where id = %d and uid = %d limit 1",
@@ -172,7 +176,7 @@ class Events extends \Zotlabs\Web\Controller {
 		}
 	
 		$post_tags = array();
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 		$ac = $acl->get();
 	
 		if(strlen($categories)) {
@@ -234,13 +238,13 @@ class Events extends \Zotlabs\Web\Controller {
 					intval($channel['channel_id'])
 				);
 				if($z) {
-					Libsync::build_sync_packet($channel['channel_id'],array('event_item' => array(encode_item($sync_item[0],true)),'event' => $z));
+					Libsync::build_sync_packet($channel['channel_id'], [ 'event_item' => [ encode_item($sync_item[0],true)],'event' => $z ]);
 				}
 			}
 		}
 	
 		if($share)
-			\Zotlabs\Daemon\Master::Summon(array('Notifier','event',$item_id));
+			Master::Summon(array('Notifier','event',$item_id));
 	
 	}
 	
@@ -294,7 +298,7 @@ class Events extends \Zotlabs\Web\Controller {
 		$first_day = (($first_day) ? $first_day : 0);
 	
 		$htpl = get_markup_template('event_head.tpl');
-		\App::$page['htmlhead'] .= replace_macros($htpl,array(
+		App::$page['htmlhead'] .= replace_macros($htpl,array(
 			'$baseurl' => z_root(),
 			'$module_url' => '/events',
 			'$modparams' => 1,
@@ -304,7 +308,7 @@ class Events extends \Zotlabs\Web\Controller {
 	
 		$o = '';
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 		$mode = 'view';
 		$y = 0;
@@ -312,7 +316,7 @@ class Events extends \Zotlabs\Web\Controller {
 		$ignored = ((x($_REQUEST,'ignored')) ? " and dismissed = " . intval($_REQUEST['ignored']) . " "  : '');
 	
 	
-		// logger('args: ' . print_r(\App::$argv,true));
+		// logger('args: ' . print_r(App::$argv,true));
 	
 	
 	
@@ -445,7 +449,7 @@ class Events extends \Zotlabs\Web\Controller {
 	
 			require_once('include/acl_selectors.php');
 	
-			$acl = new \Zotlabs\Access\AccessControl($channel);
+			$acl = new AccessControl($channel);
 			$perm_defaults = $acl->get();
 
 			$permissions = ((x($orig_event)) ? $orig_event : $perm_defaults);
