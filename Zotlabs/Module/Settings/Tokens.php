@@ -2,13 +2,15 @@
 
 namespace Zotlabs\Module\Settings;
 
-
+use App;
+use Zotlabs\Access\Permissions;
+use Zotlabs\Access\PermissionLimits;
 
 class Tokens {
 
 	function post() {
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
 		check_form_security_token_redirectOnErr('/settings/tokens', 'settings_tokens');
 		$token_errs = 0;
@@ -60,7 +62,7 @@ class Tokens {
 
 		$atoken_xchan = substr($channel['channel_hash'],0,16) . '.' . $name;
 
-		$all_perms = \Zotlabs\Access\Permissions::Perms();
+		$all_perms = Permissions::Perms();
 
 		$p = EMPTY_STR;
 
@@ -117,7 +119,7 @@ class Tokens {
 		$desc2 = t('You may also provide <em>dropbox</em> style access links to friends and associates by adding the Login Password to any specific site URL as shown. Examples:');
 
 
-		$global_perms = \Zotlabs\Access\Permissions::Perms();
+		$global_perms = Permissions::Perms();
 		$existing = get_all_perms(local_channel(),(($atoken_xchan) ? $atoken_xchan : EMPTY_STR));
 
 		$theirs = get_abconfig(local_channel(),$atoken_xchan,'system','their_perms',EMPTY_STR);
@@ -133,7 +135,7 @@ class Tokens {
 		foreach($global_perms as $k => $v) {
 			$thisperm = ((in_array($k,$my_perms)) ? 1 : 0);
 				
-			$checkinherited = \Zotlabs\Access\PermissionLimits::Get(local_channel(),$k);
+			$checkinherited = PermissionLimits::Get(local_channel(),$k);
 	
 			// For auto permissions (when $self is true) we don't want to look at existing
 			// permissions because they are enabled for the channel owner
@@ -151,6 +153,7 @@ class Tokens {
 			'$desc2' => $desc2,
 			'$tokens' => $t,
 			'$atoken' => $atoken,
+			'$atoken_xchan' => $atoken_chan,
 			'$url1' => z_root() . '/channel/' . $channel['channel_address'],
 			'$url2' => z_root() . '/photos/' . $channel['channel_address'],
 			'$name' => array('name', t('Login Name') . ' <span class="required">*</span>', (($atoken) ? $atoken['atoken_name'] : ''),''),

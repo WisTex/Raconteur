@@ -424,6 +424,10 @@ class Activity {
 						$ret[] = [ 'ttype' => TERM_HASHTAG, 'url' => $t['href'], 'term' => escape_tags((substr($t['name'],0,1) === '#') ? substr($t['name'],1) : $t['name']) ];
 						break;
 
+					case 'topicalCollection':
+						$ret[] = [ 'ttype' => TERM_PCATEGORY, 'url' => $t['href'], 'term' => escape_tags($t['name']) ];
+						break;
+
 					case 'Mention':
 						$mention_type = substr($t['name'],0,1);
 						if($mention_type === '!') {
@@ -459,6 +463,12 @@ class Activity {
 						// An id is required so if we don't have a url in the taxonomy, ignore it and keep going.
 						if($t['url']) {
 							$ret[] = [ 'id' => $t['url'], 'name' => '#' . $t['term'] ];
+						}
+						break;
+
+					case TERM_PCATEGORY:
+						if($t['url'] && $t['term']) {
+							$ret[] = [ 'type' => 'topicalCollection', 'href' => $t['url'], 'name' => $t['term'] ];
 						}
 						break;
 

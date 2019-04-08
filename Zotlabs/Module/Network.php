@@ -160,9 +160,7 @@ class Network extends \Zotlabs\Web\Controller {
 				goaway(z_root() . '/network');
 				// NOTREACHED
 			}
-			if($pf)
-				$deftag = '!{' . (($cid_r[0]['xchan_addr']) ? $cid_r[0]['xchan_addr'] : $cid_r[0]['xchan_url']) . '}';
-			else
+			if(! $pf)
 				$def_acl = [ 'allow_cid' => '<' . $cid_r[0]['abook_xchan'] . '>', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => '' ];
 		}
 	

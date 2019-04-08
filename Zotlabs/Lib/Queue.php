@@ -303,6 +303,22 @@ class Queue {
 			logger('returned_json: ' . json_encode($result,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOGGER_DATA);
 			logger('deliver: local zot delivery succeeded to ' . $outq['outq_posturl']);
 			Libzot::process_response($outq['outq_posturl'],[ 'success' => true, 'body' => json_encode($result) ], $outq);
+
+			if(! $immediate) {
+				$x = q("select outq_hash from outq where outq_posturl = '%s' and outq_delivered = 0",
+					dbesc($outq['outq_posturl'])
+				);
+
+				$piled_up = array();
+				if($x) {
+					foreach($x as $xx) {
+						 $piled_up[] = $xx['outq_hash'];
+					}
+				}
+				if($piled_up) {
+					do_delivery($piled_up,true);
+				}
+			}
 		}
 		else {
 			logger('remote');

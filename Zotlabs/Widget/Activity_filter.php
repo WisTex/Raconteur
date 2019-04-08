@@ -112,7 +112,7 @@ class Activity_filter {
 					$forum_active = ((x($_GET,'pf') && $_GET['cid'] == $f['abook_id']) ? 'active' : '');
 					$filter_active = 'forums';
 				}
-				$fsub[] = [
+				$csub[] = [
 					'label' => $f['xchan_name'],
 					'img' => $f['xchan_photo_s'],
 					'url' => z_root() . '/' . $cmd . '/?f=&pf=1&cid=' . $f['abook_id'],
@@ -131,7 +131,7 @@ class Activity_filter {
 				'url' => '#',
 				'sel' => (($filter_active == 'collections') ? true : false),
 				'title' => t('Show collections'),
-				'sub' => $fsub
+				'sub' => $csub
 			];
 		}
 

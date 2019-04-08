@@ -376,14 +376,21 @@ function pub_tagadelic($net,$site,$limit,$recent,$safemode,$type) {
 }
 
 
-function dir_tagadelic($count = 0, $hub = '') {
+function dir_tagadelic($count = 0, $hub = '', $type = 0) {
 
 	$count = intval($count);
+
+	$sql_extra = EMPTY_STR;
+
+	if($type) {
+		return [];
+	}	
 
 	if($hub) {
 		$r = q("select xtag_term as term, count(xtag_term) as total from xtag 
 			left join hubloc on xtag_hash = hubloc_hash 
 			where xtag_flags = 0  and xtag_hash in (select hubloc_hash from hubloc where hubloc_host =  '%s' )
+			$sql_extra
 			group by xtag_term order by total desc %s",
 			dbesc($hub),
 			((intval($count)) ? "limit $count" : '')
@@ -391,6 +398,7 @@ function dir_tagadelic($count = 0, $hub = '') {
 	}
 	else {
 		$r = q("select xtag_term as term, count(xtag_term) as total from xtag where xtag_flags = 0
+			$sql_extra
 			group by xtag_term order by total desc %s",
 			((intval($count)) ? "limit $count" : '')
 		);

@@ -18,7 +18,8 @@ class Apschema extends \Zotlabs\Web\Controller {
 				'conversation'     => 'ostatus:conversation',
 				'sensitive'        => 'as:sensitive',
 				'inheritPrivacy'   => 'as:inheritPrivacy',
-				'commentPolicy'    => 'as:commentPolicy'
+				'commentPolicy'    => 'as:commentPolicy',
+				'topicalCollection'  => 'as:topicalCollection'
 			]
 		];
 

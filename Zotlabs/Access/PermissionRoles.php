@@ -173,10 +173,10 @@ class PermissionRoles {
 				'forum_moderated' => t('Group - Moderated')
 			],
 
-//			t('Collection') => [
-//				'collection' => t('Collection - Normal'),
-//				'collection_restricted' => t('Collection - Restricted')
-//			],
+			t('Collection') => [
+				'collection' => t('Collection - Normal'),
+				'collection_restricted' => t('Collection - Restricted')
+			],
 
 			t('Feed Republish') => [
 				'feed' => t('Feed Republish')

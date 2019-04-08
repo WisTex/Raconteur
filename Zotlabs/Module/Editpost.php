@@ -53,18 +53,27 @@ class Editpost extends \Zotlabs\Web\Controller {
 		$channel = \App::get_channel();
 
 		$category = '';
+		$collections = [];
 		$catsenabled = ((Apps::system_app_installed($owner_uid,'Categories')) ? 'categories' : '');
 
-		if ($catsenabled){
-		        $itm = fetch_post_tags($itm);
-	
-	                $cats = get_terms_oftype($itm[0]['term'], TERM_CATEGORY);
-	
-		        foreach ($cats as $cat) {
-		                if (strlen($category))
-		                        $category .= ', ';
-		                $category .= $cat['term'];
-		        }
+		$itm = fetch_post_tags($itm);
+
+		if($catsenabled) {
+			$cats = get_terms_oftype($itm[0]['term'], TERM_CATEGORY);
+			if($cats) {
+				foreach ($cats as $cat) {
+					if (strlen($category))
+						$category .= ', ';
+					$category .= $cat['term'];
+				}
+			}
+		}
+		
+		$clcts = get_terms_oftype($itm[0]['term'], TERM_PCATEGORY);
+		if($clcts) {
+			foreach ($clcts as $clct) {
+				$collections[] = $clct['term'];
+			}
 		}
 
 		if($itm[0]['attach']) {
@@ -98,6 +107,8 @@ class Editpost extends \Zotlabs\Web\Controller {
 			'showacl' => false,
 			'profile_uid' => $owner_uid,
 			'catsenabled' => $catsenabled,
+			'collections' => $collections,
+			'jotnets' => true,
 			'hide_expire' => true,
 			'bbcode' => true
 		);

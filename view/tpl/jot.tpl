@@ -191,6 +191,11 @@
 					<i class="fa fa-share-alt jot-icons"></i>
 				</button>
 				{{/if}}
+				{{if $jotcoll}}
+				<button id="dbtn-jotcoll" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#jotcollModal" type="button" title="{{$jotcoll_label}}">
+					<i class="fa fa-tags jot-icons"></i>
+				</button>
+				{{/if}}
 				{{if $showacl}}
 				<button id="dbtn-acl" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#aclModal" title="{{$permset}}" type="button" data-form_id="profile-jot-form">
 					<i id="jot-perms-icon" class="fa fa-{{$lockstate}} jot-icons{{if $bang}} jot-lock-warn{{/if}}"></i>
@@ -209,14 +214,32 @@
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h4 class="modal-title" id="expiryModalLabel">{{$jotnets_label}}</h4>
+							<h4 class="modal-title" id="jotnetsModalLabel">{{$jotnets_label}}</h4>
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 						</div>
 						<div class="modal-body">
 							{{$jotnets}}
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$close}}</button>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+			{{/if}}
+			{{if $jotcoll}}
+			<div class="modal" id="jotcollModal" tabindex="-1" role="dialog" aria-labelledby="jotcollModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title" id="jotcollModalLabel">{{$jotcoll_label}}</h4>
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						</div>
+						<div class="modal-body">
+							{{$jotcoll}}
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$close}}</button>
 						</div>
 					</div><!-- /.modal-content -->
 				</div><!-- /.modal-dialog -->

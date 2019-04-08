@@ -11,7 +11,7 @@ class Manage extends \Zotlabs\Web\Controller {
 			return;
 		}
 
-		nav_set_selected('Channel Manager');
+		nav_set_selected('Channels');
 	
 		require_once('include/security.php');
 	
@@ -60,7 +60,8 @@ class Manage extends \Zotlabs\Web\Controller {
 				$channels[$x]['link'] = 'manage/' . intval($channels[$x]['channel_id']);
 				$channels[$x]['default'] = (($channels[$x]['channel_id'] == $account['account_default_channel']) ? "1" : ''); 
 				$channels[$x]['default_links'] = '1';
-	
+				$channels[$x]['collections_label'] = t('Collection');	
+				$channels[$x]['forum_label'] = t('Group');	
 	
 				$c = q("SELECT id, item_wall FROM item
 					WHERE item_unseen = 1 and uid = %d " . item_normal(),
@@ -161,6 +162,9 @@ class Manage extends \Zotlabs\Web\Controller {
 				. '&delegate=' . urlencode($delegates[$x]['xchan_addr']);
 				$delegates[$x]['channel_name'] = $delegates[$x]['xchan_name'];
 				$delegates[$x]['delegate'] = 1;
+				$delegates[$x]['collections_label'] = t('Collection');	
+				$delegates[$x]['forum_label'] = t('Group');	
+
 			}
 		}
 		else {
@@ -168,7 +172,7 @@ class Manage extends \Zotlabs\Web\Controller {
 		}
 	
 		$o = replace_macros(get_markup_template('channels.tpl'), array(
-			'$header'           => t('Channel Manager'),
+			'$header'           => t('Channels'),
 			'$msg_selected'     => t('Current Channel'),
 			'$selected'         => local_channel(),
 			'$desc'             => t('Switch to one of your channels by selecting it.'),

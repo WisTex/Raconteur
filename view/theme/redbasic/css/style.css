@@ -1815,3 +1815,7 @@ dl.bb-dl > dd > li {
 .threadlevel.even {
 	color: #888;
 } 
+
+.channel-active {
+	border: 3px solid #0275d8;
+}

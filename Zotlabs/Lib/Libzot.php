@@ -7,6 +7,7 @@ namespace Zotlabs\Lib;
  *
  */
 
+use App;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
@@ -389,6 +390,22 @@ class Libzot {
 
 				$closeness = get_pconfig($channel['channel_id'],'system','new_abook_closeness',80);
 
+				// check if it is a sub-channel (collection) and auto-friend if it is
+
+				$is_collection = false;
+
+				$cl = q("select channel_id from channel where channel_hash = '%s' and channel_parent = '%s' and channel_account_id = %d limit 1",
+					dbesc($x['hash']),
+					dbesc($channel['channel_hash']),
+					intval($channel['channel_account_id'])
+				);
+				if($cl) {
+					$is_collection = true;
+					$automatic = true;
+					$closeness = 10;
+				}
+
+
 				$y = abook_store_lowlevel(
 					[
 						'abook_account'   => intval($channel['channel_account_id']),
@@ -417,14 +434,17 @@ class Libzot {
 					if($new_connection) {
 						if(! Permissions::PermsCompare($new_perms,$previous_perms))
 							Master::Summon([ 'Notifier', 'permissions_create', $new_connection[0]['abook_id'] ]);
-						Enotify::submit(
-							[
-							'type'       => NOTIFY_INTRO,
-							'from_xchan' => $x['hash'],
-							'to_xchan'   => $channel['channel_hash'],
-							'link'       => z_root() . '/connedit/' . $new_connection[0]['abook_id']
-							]
-						);
+
+						if(! $is_collection) {
+							Enotify::submit(
+								[
+								'type'       => NOTIFY_INTRO,
+								'from_xchan' => $x['hash'],
+								'to_xchan'   => $channel['channel_hash'],
+								'link'       => z_root() . '/connedit/' . $new_connection[0]['abook_id']
+								]
+							);
+						}
 
 						if(intval($permissions['view_stream'])) {
 							if(intval(get_pconfig($channel['channel_id'],'perm_limits','send_stream') & PERMS_PENDING)
@@ -1426,6 +1446,20 @@ class Libzot {
 					foreach($act->obj['tag'] as $tag) {
 						if($tag['type'] === 'Mention' && (strpos($tag['href'],z_root()) !== false)) {
 							$address = basename($tag['href']);
+							if($address) {
+								$z = q("select channel_hash as hash from channel where channel_address = '%s'
+									and channel_hash != '%s' and channel_removed = 0 limit 1",
+									dbesc($address),
+									dbesc($msg['sender'])						
+								);
+								if($z) {
+									$r[] = $z[0]['hash'];
+								}
+							}
+						}
+
+						if($tag['type'] === 'topicalCollection' && strpos($tag['name'],App::get_hostname())) {
+							$address = substr($tag['name'],0,strpos($tag['name'],'@'));
 							if($address) {
 								$z = q("select channel_hash as hash from channel where channel_address = '%s'
 									and channel_hash != '%s' and channel_removed = 0 limit 1",
