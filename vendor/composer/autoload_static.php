@@ -41,6 +41,8 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         ),
         'R' => 
         array (
+            'Recurr\\Test\\' => 12,
+            'Recurr\\' => 7,
             'Ramsey\\Uuid\\' => 12,
         ),
         'P' => 
@@ -63,6 +65,10 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'H' => 
         array (
             'Hubzilla\\' => 9,
+        ),
+        'D' => 
+        array (
+            'Doctrine\\Common\\Collections\\' => 28,
         ),
         'C' => 
         array (
@@ -115,6 +121,14 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         array (
             0 => __DIR__ . '/..' . '/sabre/dav/lib/CalDAV',
         ),
+        'Recurr\\Test\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/simshaun/recurr/tests',
+        ),
+        'Recurr\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr',
+        ),
         'Ramsey\\Uuid\\' => 
         array (
             0 => __DIR__ . '/..' . '/ramsey/uuid/src',
@@ -142,6 +156,10 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Hubzilla\\' => 
         array (
             0 => __DIR__ . '/../..' . '/include',
+        ),
+        'Doctrine\\Common\\Collections\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections',
         ),
         'CommerceGuys\\Intl\\' => 
         array (
@@ -211,6 +229,18 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'CommerceGuys\\Intl\\NumberFormat\\NumberFormatInterface' => __DIR__ . '/..' . '/commerceguys/intl/src/NumberFormat/NumberFormatInterface.php',
         'CommerceGuys\\Intl\\NumberFormat\\NumberFormatRepository' => __DIR__ . '/..' . '/commerceguys/intl/src/NumberFormat/NumberFormatRepository.php',
         'CommerceGuys\\Intl\\NumberFormat\\NumberFormatRepositoryInterface' => __DIR__ . '/..' . '/commerceguys/intl/src/NumberFormat/NumberFormatRepositoryInterface.php',
+        'Doctrine\\Common\\Collections\\AbstractLazyCollection' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/AbstractLazyCollection.php',
+        'Doctrine\\Common\\Collections\\ArrayCollection' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/ArrayCollection.php',
+        'Doctrine\\Common\\Collections\\Collection' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Collection.php',
+        'Doctrine\\Common\\Collections\\Criteria' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Criteria.php',
+        'Doctrine\\Common\\Collections\\Expr\\ClosureExpressionVisitor' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Expr/ClosureExpressionVisitor.php',
+        'Doctrine\\Common\\Collections\\Expr\\Comparison' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Expr/Comparison.php',
+        'Doctrine\\Common\\Collections\\Expr\\CompositeExpression' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Expr/CompositeExpression.php',
+        'Doctrine\\Common\\Collections\\Expr\\Expression' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Expr/Expression.php',
+        'Doctrine\\Common\\Collections\\Expr\\ExpressionVisitor' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Expr/ExpressionVisitor.php',
+        'Doctrine\\Common\\Collections\\Expr\\Value' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Expr/Value.php',
+        'Doctrine\\Common\\Collections\\ExpressionBuilder' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/ExpressionBuilder.php',
+        'Doctrine\\Common\\Collections\\Selectable' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Selectable.php',
         'HTMLPurifier' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.php',
         'HTMLPurifier_Arborize' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Arborize.php',
         'HTMLPurifier_AttrCollections' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/AttrCollections.php',
@@ -601,6 +631,9 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Psr\\Log\\LoggerInterface' => __DIR__ . '/..' . '/psr/log/Psr/Log/LoggerInterface.php',
         'Psr\\Log\\LoggerTrait' => __DIR__ . '/..' . '/psr/log/Psr/Log/LoggerTrait.php',
         'Psr\\Log\\NullLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/NullLogger.php',
+        'Psr\\Log\\Test\\DummyTest' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/LoggerInterfaceTest.php',
+        'Psr\\Log\\Test\\LoggerInterfaceTest' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/LoggerInterfaceTest.php',
+        'Psr\\Log\\Test\\TestLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/TestLogger.php',
         'Ramsey\\Uuid\\BinaryUtils' => __DIR__ . '/..' . '/ramsey/uuid/src/BinaryUtils.php',
         'Ramsey\\Uuid\\Builder\\DefaultUuidBuilder' => __DIR__ . '/..' . '/ramsey/uuid/src/Builder/DefaultUuidBuilder.php',
         'Ramsey\\Uuid\\Builder\\DegradedUuidBuilder' => __DIR__ . '/..' . '/ramsey/uuid/src/Builder/DegradedUuidBuilder.php',
@@ -647,6 +680,59 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Ramsey\\Uuid\\UuidFactory' => __DIR__ . '/..' . '/ramsey/uuid/src/UuidFactory.php',
         'Ramsey\\Uuid\\UuidFactoryInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/UuidFactoryInterface.php',
         'Ramsey\\Uuid\\UuidInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/UuidInterface.php',
+        'Recurr\\DateExclusion' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/DateExclusion.php',
+        'Recurr\\DateInclusion' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/DateInclusion.php',
+        'Recurr\\DateInfo' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/DateInfo.php',
+        'Recurr\\DateUtil' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/DateUtil.php',
+        'Recurr\\DaySet' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/DaySet.php',
+        'Recurr\\Exception' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Exception.php',
+        'Recurr\\Exception\\InvalidArgument' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Exception/InvalidArgument.php',
+        'Recurr\\Exception\\InvalidRRule' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Exception/InvalidRRule.php',
+        'Recurr\\Exception\\InvalidWeekday' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Exception/InvalidWeekday.php',
+        'Recurr\\Frequency' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Frequency.php',
+        'Recurr\\Recurrence' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Recurrence.php',
+        'Recurr\\RecurrenceCollection' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/RecurrenceCollection.php',
+        'Recurr\\Rule' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Rule.php',
+        'Recurr\\Test\\RecurrenceCollectionTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/RecurrenceCollectionTest.php',
+        'Recurr\\Test\\RuleTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/RuleTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerBase' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerBase.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerByDayTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerByDayTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerByHourTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerByHourTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerByMinuteTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerByMinuteTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerByMonthDayTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerByMonthDayTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerByMonthTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerByMonthTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerBySecondTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerBySecondTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerBySetPositionTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerBySetPositionTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerByWeekDayTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerByWeekDayTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerByWeekNumberTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerByWeekNumberTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerByYearDayTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerByYearDayTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerConstraintTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerConstraintTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerDtendTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerDtendTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerExDateTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerExDateTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerHoursTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerHourlyTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerMinutesTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerMinutelyTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerMonthlyTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerMonthlyTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerRDateTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerRDateTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerSecondlyTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerSecondlyTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerWeeklyTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerWeeklyTest.php',
+        'Recurr\\Test\\Transformer\\ArrayTransformerYearlyTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/ArrayTransformerYearlyTest.php',
+        'Recurr\\Test\\Transformer\\Filter\\AfterConstraintTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/Constraint/AfterConstraintTest.php',
+        'Recurr\\Test\\Transformer\\Filter\\BeforeConstraintTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/Constraint/BeforeConstraintTest.php',
+        'Recurr\\Test\\Transformer\\Filter\\BetweenConstraintTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/Constraint/BetweenConstraintTest.php',
+        'Recurr\\Test\\Transformer\\TextTransformerTest' => __DIR__ . '/..' . '/simshaun/recurr/tests/Recurr/Test/Transformer/TextTransformerTest.php',
+        'Recurr\\Time' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Time.php',
+        'Recurr\\Transformer\\ArrayTransformer' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Transformer/ArrayTransformer.php',
+        'Recurr\\Transformer\\ArrayTransformerConfig' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Transformer/ArrayTransformerConfig.php',
+        'Recurr\\Transformer\\Constraint' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Transformer/Constraint.php',
+        'Recurr\\Transformer\\ConstraintInterface' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Transformer/ConstraintInterface.php',
+        'Recurr\\Transformer\\Constraint\\AfterConstraint' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Transformer/Constraint/AfterConstraint.php',
+        'Recurr\\Transformer\\Constraint\\BeforeConstraint' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Transformer/Constraint/BeforeConstraint.php',
+        'Recurr\\Transformer\\Constraint\\BetweenConstraint' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Transformer/Constraint/BetweenConstraint.php',
+        'Recurr\\Transformer\\TextTransformer' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Transformer/TextTransformer.php',
+        'Recurr\\Transformer\\Translator' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Transformer/Translator.php',
+        'Recurr\\Transformer\\TranslatorInterface' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Transformer/TranslatorInterface.php',
+        'Recurr\\Weekday' => __DIR__ . '/..' . '/simshaun/recurr/src/Recurr/Weekday.php',
         'Sabre\\CalDAV\\Backend\\AbstractBackend' => __DIR__ . '/..' . '/sabre/dav/lib/CalDAV/Backend/AbstractBackend.php',
         'Sabre\\CalDAV\\Backend\\BackendInterface' => __DIR__ . '/..' . '/sabre/dav/lib/CalDAV/Backend/BackendInterface.php',
         'Sabre\\CalDAV\\Backend\\NotificationSupport' => __DIR__ . '/..' . '/sabre/dav/lib/CalDAV/Backend/NotificationSupport.php',
@@ -1552,6 +1638,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Update\\_1228' => __DIR__ . '/../..' . '/Zotlabs/Update/_1228.php',
         'Zotlabs\\Update\\_1229' => __DIR__ . '/../..' . '/Zotlabs/Update/_1229.php',
         'Zotlabs\\Update\\_1230' => __DIR__ . '/../..' . '/Zotlabs/Update/_1230.php',
+        'Zotlabs\\Update\\_1231' => __DIR__ . '/../..' . '/Zotlabs/Update/_1231.php',
         'Zotlabs\\Web\\CheckJS' => __DIR__ . '/../..' . '/Zotlabs/Web/CheckJS.php',
         'Zotlabs\\Web\\Controller' => __DIR__ . '/../..' . '/Zotlabs/Web/Controller.php',
         'Zotlabs\\Web\\HTTPHeaders' => __DIR__ . '/../..' . '/Zotlabs/Web/HTTPHeaders.php',

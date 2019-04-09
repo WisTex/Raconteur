@@ -17,6 +17,8 @@ return array(
     'Sabre\\DAVACL\\' => array($vendorDir . '/sabre/dav/lib/DAVACL'),
     'Sabre\\CardDAV\\' => array($vendorDir . '/sabre/dav/lib/CardDAV'),
     'Sabre\\CalDAV\\' => array($vendorDir . '/sabre/dav/lib/CalDAV'),
+    'Recurr\\Test\\' => array($vendorDir . '/simshaun/recurr/tests'),
+    'Recurr\\' => array($vendorDir . '/simshaun/recurr/src/Recurr'),
     'Ramsey\\Uuid\\' => array($vendorDir . '/ramsey/uuid/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
     'Michelf\\' => array($vendorDir . '/michelf/php-markdown/Michelf'),
@@ -24,5 +26,6 @@ return array(
     'League\\Flysystem\\' => array($vendorDir . '/league/flysystem/src'),
     'ID3Parser\\' => array($vendorDir . '/lukasreschke/id3parser/src'),
     'Hubzilla\\' => array($baseDir . '/include'),
+    'Doctrine\\Common\\Collections\\' => array($vendorDir . '/doctrine/collections/lib/Doctrine/Common/Collections'),
     'CommerceGuys\\Intl\\' => array($vendorDir . '/commerceguys/intl/src'),
 );
