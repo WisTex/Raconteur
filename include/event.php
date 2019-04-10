@@ -263,6 +263,9 @@ function format_event_bbcode($ev) {
 	if($ev['location'])
 		$o .= '[event-location]' . $ev['location'] . '[/event-location]';
 
+	if($ev['event_repeat'])
+		$o .= '[event-repeat]' . $ev['event_repeat'] . '[/event-repeat]';
+
 	if($ev['event_hash'])
 		$o .= '[event-id]' . $ev['event_hash'] . '[/event-id]';
 
@@ -310,6 +313,9 @@ function bbtoevent($s) {
 	$match = '';
 	if(preg_match("/\[event\-location\](.*?)\[\/event\-location\]/is",$s,$match))
 		$ev['location'] = $match[1];
+	$match = '';
+	if(preg_match("/\[event\-repeat\](.*?)\[\/event\-repeat\]/is",$s,$match))
+		$ev['event_repeat'] = $match[1];
 	$match = '';
 	if(preg_match("/\[event\-id\](.*?)\[\/event\-id\]/is",$s,$match))
 		$ev['event_hash'] = $match[1];
@@ -1081,6 +1087,9 @@ function event_store_item($arr, $event) {
 		if(! $arr['nofinish']) {
 			$x['endTime'] = (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtend'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtend'],'Y-m-d\\TH:i:s-00:00'));
 		}
+		if($event['event_repeat']) {
+			$x['rrule'] = $event['event_repeat'];
+		}
 		$object = json_encode($x);
 
 		$private = (($arr['allow_cid'] || $arr['allow_gid'] || $arr['deny_cid'] || $arr['deny_gid']) ? 1 : 0);
@@ -1227,6 +1236,9 @@ function event_store_item($arr, $event) {
 
 			if(! $arr['nofinish']) {
 				$y['endTime'] = (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtend'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtend'],'Y-m-d\\TH:i:s-00:00'));
+			}
+			if($arr['event_repeat']) {
+				$y['rrule'] = $arr['event_repeat'];
 			}
 
 			$item_arr['obj']  = json_encode($y);

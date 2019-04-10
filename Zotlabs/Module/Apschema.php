@@ -11,15 +11,17 @@ class Apschema extends \Zotlabs\Web\Controller {
 
 		$arr = [
 			'@context' => [
-				'zot'              => z_root() . '/apschema#',
-				'id'               => '@id',
-				'type'             => '@type',
-				'ostatus'          => 'http://ostatus.org#',
-				'conversation'     => 'ostatus:conversation',
-				'sensitive'        => 'as:sensitive',
-				'inheritPrivacy'   => 'as:inheritPrivacy',
-				'commentPolicy'    => 'as:commentPolicy',
-				'topicalCollection'  => 'as:topicalCollection'
+				'zot'                => z_root() . '/apschema#',
+				'id'                 => '@id',
+				'type'               => '@type',
+				'ostatus'            => 'http://ostatus.org#',
+				'ical'               => 'http://www.w3.org/2002/12/cal#',
+				'conversation'       => 'ostatus:conversation',
+				'sensitive'          => 'as:sensitive',
+				'inheritPrivacy'     => 'as:inheritPrivacy',
+				'commentPolicy'      => 'zot:commentPolicy',
+				'topicalCollection'  => 'zot:topicalCollection',
+				'rrule'              => 'ical:rrule',
 			]
 		];
 
