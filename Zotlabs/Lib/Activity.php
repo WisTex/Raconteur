@@ -549,7 +549,7 @@ class Activity {
 		$ret = [];
 
 		if($item['attach']) {
-			$atts = ((is_array($item['attach'])) ? $item['attach'] : json_decode($item['attach'],true);
+			$atts = ((is_array($item['attach'])) ? $item['attach'] : json_decode($item['attach'],true));
 			if($atts) {
 				foreach($atts as $att) {
 					if(strpos($att['type'],'image')) {
