@@ -90,6 +90,8 @@ define ( 'LANGUAGE_DETECT_MIN_LENGTH',     128 );
 define ( 'LANGUAGE_DETECT_MIN_CONFIDENCE', 0.01 );
 
 
+define ('MAX_EVENT_REPEAT_COUNT', 512);
+
 /**
  * Default permissions for file-based storage (webDAV, etc.)
  * These files will be owned by the webserver who will need write

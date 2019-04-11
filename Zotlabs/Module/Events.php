@@ -101,7 +101,24 @@ class Events extends Controller {
 		$desc     = escape_tags(trim($_POST['desc']));
 		$location = escape_tags(trim($_POST['location']));
 		$type     = escape_tags(trim($_POST['type']));
-	
+
+		$repeat   = ((array_key_exists('repeat',$_REQUEST) && intval($_REQUEST['repeat'])) ? 1 : 0);
+		$freq     = ((array_key_exists('freq',$_REQUEST) && $_REQUEST['freq']) ? escape_tags(trim($_REQUEST['freq'])) : EMPTY_STR);
+		$interval = ((array_key_exists('interval',$_REQUEST) && intval($_REQUEST['interval'])) ? 1 : 0);
+		$count    = ((array_key_exists('count',$_REQUEST) && intval($_REQUEST['count'])) ? intval($_REQUEST['count']) : 0);
+		$until    = ((array_key_exists('until',$_REQUEST) && $_REQUEST['until']) ? datetime_convert(date_default_timezone_get(), 'UTC', $_REQUEST['until']) : NULL_DATE);
+		$byday    = [];
+
+		if((! $freq) || (! in_array($freq, [ 'DAILY','WEEKLY','MONTHLY','YEARLY' ]))) {
+			$repeat = 0;
+		}
+		if($count < 0) {
+			$count = 0;
+		}
+		if($count > MAX_EVENT_REPEAT_COUNT) {
+			$count = MAX_EVENT_REPEAT_COUNT;
+		}
+
 		require_once('include/text.php');
 		linkify_tags($desc, local_channel());
 		linkify_tags($location, local_channel());
@@ -454,6 +471,14 @@ class Events extends Controller {
 
 			$permissions = ((x($orig_event)) ? $orig_event : $perm_defaults);
 
+			$freq_options = [
+				'DAILY'   => t('day(s)'),
+				'WEEKLY'  => t('week(s)'),
+				'MONTHLY' => t('month(s)'),
+				'YEARLY'  => t('year(s)')
+			];
+			
+
 			$tpl = get_markup_template('event_form.tpl');
 	
 			$form = replace_macros($tpl,array(
@@ -497,8 +522,15 @@ class Events extends Controller {
 				'$lockstate' => (($acl->is_private()) ? 'lock' : 'unlock'),
 
 				'$submit' => t('Submit'),
-				'$advanced' => t('Advanced Options')
-	
+				'$advanced' => t('Advanced Options'),
+
+				'$repeat'   => [ 'repeat' , t('Event repeat'), false, '', [ t('No'), t('Yes') ] ],
+				'$freq'     => [ 'freq' , t('Repeat frequency') , '', '', $freq_options ],
+				'$interval' => [ 'interval', t('Repeat every'), 1 , '' ],
+				'$count'    => [ 'count', t('Number of total repeats'), 10, '' ],
+				'$until'    => '',
+				'$byday'    => '',
+				
 			));
 			/* end edit/create form */
 	

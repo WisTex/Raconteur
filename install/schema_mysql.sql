@@ -1198,7 +1198,8 @@ CREATE TABLE IF NOT EXISTS `term` (
   KEY `aid` (`aid`),
   KEY `imgurl` (`imgurl`),
   KEY `term_hash` (`term_hash`),
-  KEY `parent_hash` (`parent_hash`)
+  KEY `parent_hash` (`parent_hash`),
+  KEY `term_ttype` (`term`,`ttype`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `tokens` (

@@ -1088,7 +1088,7 @@ function event_store_item($arr, $event) {
 			$x['endTime'] = (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtend'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtend'],'Y-m-d\\TH:i:s-00:00'));
 		}
 		if($event['event_repeat']) {
-			$x['rrule'] = $event['event_repeat'];
+			$x['eventRepeat'] = $event['event_repeat'];
 		}
 		$object = json_encode($x);
 
@@ -1238,7 +1238,7 @@ function event_store_item($arr, $event) {
 				$y['endTime'] = (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtend'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtend'],'Y-m-d\\TH:i:s-00:00'));
 			}
 			if($arr['event_repeat']) {
-				$y['rrule'] = $arr['event_repeat'];
+				$y['eventRepeat'] = $arr['event_repeat'];
 			}
 
 			$item_arr['obj']  = json_encode($y);
