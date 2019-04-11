@@ -127,7 +127,7 @@ class Activity_filter {
 			$tabs[] = [
 				'id' => 'collections',
 				'label' => t('Collections'),
-				'icon' => 'comments-o',
+				'icon' => 'tags',
 				'url' => '#',
 				'sel' => (($filter_active == 'collections') ? true : false),
 				'title' => t('Show collections'),
