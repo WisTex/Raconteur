@@ -210,32 +210,19 @@ function mark_orphan_hubsxchans() {
 	if($dirmode == DIRECTORY_MODE_NORMAL)
 		return;
 
-	$r = q("update hubloc set hubloc_error = 1 where hubloc_error = 0 
+	$r = q("update hubloc set hubloc_deleted = 1 where hubloc_deleted = 0 
 		and hubloc_network = 'zot6' and hubloc_connected < %s - interval %s",
 		db_utcnow(), db_quoteinterval('36 day')
 	);
 
-//	$realm = get_directory_realm();
-//	if($realm == DIRECTORY_REALM) {
-//		$r = q("select * from site where site_access != 0 and site_register !=0 and ( site_realm = '%s' or site_realm = '') order by rand()",
-//			dbesc($realm)
-//		);
-//	}
-//	else {
-//		$r = q("select * from site where site_access != 0 and site_register !=0 and site_realm = '%s' order by rand()",
-//			dbesc($realm)
-//		);
-//	}
-
-
-	$r = q("select hubloc_id, hubloc_hash from hubloc where hubloc_error = 0 and hubloc_orphancheck = 0");
+	$r = q("select hubloc_id, hubloc_hash from hubloc where hubloc_deleted = 1 and hubloc_orphancheck = 0");
 
 	if($r) {
 		foreach($r as $rr) {
 
 			// see if any other hublocs are still alive for this channel
 
-			$x = q("select * from hubloc where hubloc_hash = '%s' and hubloc_error = 0",
+			$x = q("select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
 				dbesc($rr['hubloc_hash'])
 			);
 			if($x) {

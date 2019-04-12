@@ -212,13 +212,6 @@ function import_hublocs($channel, $hublocs, $seize, $moving = false) {
 //				continue;
 //			}
 
-			if(! array_key_exists('hubloc_primary',$hubloc)) {
-				$hubloc['hubloc_primary']     = (($hubloc['hubloc_flags']  & 0x0001) ? 1 : 0);
-				$hubloc['hubloc_orphancheck'] = (($hubloc['hubloc_flags']  & 0x0004) ? 1 : 0);
-				$hubloc['hubloc_error']       = (($hubloc['hubloc_status'] & 0x0003) ? 1 : 0);
-				$hubloc['hubloc_deleted']     = (($hubloc['hubloc_flags']  & 0x1000) ? 1 : 0);
-			}
-
 			if($moving && $hubloc['hubloc_hash'] === $channel['channel_hash'] && $hubloc['hubloc_url'] !== z_root()) {
 				$hubloc['hubloc_deleted'] = 1;
 			}

@@ -3183,8 +3183,8 @@ class Libzot {
 
 		// a dead hub came back to life - reset any tombstones we might have
 
-		if (intval($hub['hubloc_error'])) {
-			q("update hubloc set hubloc_error = 0 where hubloc_id = %d and hubloc_site_id = '%s' ",
+		if (intval($hub['hubloc_error']) || intval($hub['hubloc_deleted'])) {
+			q("update hubloc set hubloc_error = 0, hubloc_deleted = 0 where hubloc_id = %d and hubloc_site_id = '%s' ",
 				intval($hub['hubloc_id']),
 				dbesc($site_id)
 			);

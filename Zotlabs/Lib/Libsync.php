@@ -889,8 +889,8 @@ class Libsync {
 						$current_site = true;
 					}
 
-					if($current_site && intval($r[0]['hubloc_error'])) {
-						q("update hubloc set hubloc_error = 0 where hubloc_id = %d",
+					if($current_site && (intval($r[0]['hubloc_error']) || intval($r[0]['hubloc_deleted']))) {
+						q("update hubloc set hubloc_error = 0, hubloc_deleted = 0 where hubloc_id = %d",
 							intval($r[0]['hubloc_id'])
 						);
 						if(intval($r[0]['hubloc_orphancheck'])) {
