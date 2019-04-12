@@ -2,11 +2,25 @@
 
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Web\Controller;
+use Zotlabs\Render\Comanche;
 
 class Categories extends Controller {
+
+	function init() {
+
+		if(local_channel()) {
+			$channel = App::get_channel();
+			if($channel && $channel['channel_address']) {
+				$which = $channel['channel_address'];
+			}
+			profile_load($which,0);
+		}
+
+	}
 
 
 	function get() {
@@ -18,6 +32,9 @@ class Categories extends Controller {
         if(! ( local_channel() && Apps::system_app_installed(local_channel(),'Categories'))) {
             return $text;
         }
+
+		$c = new Comanche;
+		return $c->widget('catcloud',EMPTY_STR);
 
 	}
 
