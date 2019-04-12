@@ -411,7 +411,6 @@ class Item extends Controller {
 		}
 	
 		if($pagetitle) {
-			require_once('library/urlify/URLify.php');
 			$pagetitle = strtolower(\URLify::transliterate($pagetitle));
 		}
 	

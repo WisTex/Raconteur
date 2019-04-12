@@ -6,7 +6,6 @@ use Zotlabs\Lib\Libzot;
 
 require_once('include/channel.php');
 require_once('include/import.php');
-require_once('library/urlify/URLify.php');
 
 
 /**
