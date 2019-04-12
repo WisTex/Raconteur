@@ -168,6 +168,13 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
     );
 
     public static $prefixesPsr0 = array (
+        'U' => 
+        array (
+            'URLify' => 
+            array (
+                0 => __DIR__ . '/..' . '/jbroadway/urlify',
+            ),
+        ),
         'T' => 
         array (
             'Text' => 
@@ -1112,6 +1119,8 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Text_LanguageDetect_Exception' => __DIR__ . '/..' . '/pear/text_languagedetect/Text/LanguageDetect/Exception.php',
         'Text_LanguageDetect_ISO639' => __DIR__ . '/..' . '/pear/text_languagedetect/Text/LanguageDetect/ISO639.php',
         'Text_LanguageDetect_Parser' => __DIR__ . '/..' . '/pear/text_languagedetect/Text/LanguageDetect/Parser.php',
+        'URLify' => __DIR__ . '/..' . '/jbroadway/urlify/URLify.php',
+        'URLifyTest' => __DIR__ . '/..' . '/jbroadway/urlify/tests/URLifyTest.php',
         'UploadHandler' => __DIR__ . '/..' . '/blueimp/jquery-file-upload/server/php/UploadHandler.php',
         'Zotlabs\\Access\\AccessControl' => __DIR__ . '/../..' . '/Zotlabs/Access/AccessControl.php',
         'Zotlabs\\Access\\PermissionLimits' => __DIR__ . '/../..' . '/Zotlabs/Access/PermissionLimits.php',
@@ -1176,6 +1185,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Lib\\Libsync' => __DIR__ . '/../..' . '/Zotlabs/Lib/Libsync.php',
         'Zotlabs\\Lib\\Libzot' => __DIR__ . '/../..' . '/Zotlabs/Lib/Libzot.php',
         'Zotlabs\\Lib\\Libzotdir' => __DIR__ . '/../..' . '/Zotlabs/Lib/Libzotdir.php',
+        'Zotlabs\\Lib\\Markdown' => __DIR__ . '/../..' . '/Zotlabs/Lib/Markdown.php',
         'Zotlabs\\Lib\\MarkdownSoap' => __DIR__ . '/../..' . '/Zotlabs/Lib/MarkdownSoap.php',
         'Zotlabs\\Lib\\MessageFilter' => __DIR__ . '/../..' . '/Zotlabs/Lib/MessageFilter.php',
         'Zotlabs\\Lib\\PConfig' => __DIR__ . '/../..' . '/Zotlabs/Lib/PConfig.php',
@@ -1186,6 +1196,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Lib\\Share' => __DIR__ . '/../..' . '/Zotlabs/Lib/Share.php',
         'Zotlabs\\Lib\\SuperCurl' => __DIR__ . '/../..' . '/Zotlabs/Lib/SuperCurl.php',
         'Zotlabs\\Lib\\System' => __DIR__ . '/../..' . '/Zotlabs/Lib/System.php',
+        'Zotlabs\\Lib\\TableConverter' => __DIR__ . '/../..' . '/Zotlabs/Lib/Markdown.php',
         'Zotlabs\\Lib\\Techlevels' => __DIR__ . '/../..' . '/Zotlabs/Lib/Techlevels.php',
         'Zotlabs\\Lib\\ThreadItem' => __DIR__ . '/../..' . '/Zotlabs/Lib/ThreadItem.php',
         'Zotlabs\\Lib\\ThreadListener' => __DIR__ . '/../..' . '/Zotlabs/Lib/ThreadListener.php',
@@ -1222,7 +1233,6 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Module\\Authorize' => __DIR__ . '/../..' . '/Zotlabs/Module/Authorize.php',
         'Zotlabs\\Module\\Block' => __DIR__ . '/../..' . '/Zotlabs/Module/Block.php',
         'Zotlabs\\Module\\Blocks' => __DIR__ . '/../..' . '/Zotlabs/Module/Blocks.php',
-        'Zotlabs\\Module\\Branchtopic' => __DIR__ . '/../..' . '/Zotlabs/Module/Branchtopic.php',
         'Zotlabs\\Module\\Cal' => __DIR__ . '/../..' . '/Zotlabs/Module/Cal.php',
         'Zotlabs\\Module\\Card_edit' => __DIR__ . '/../..' . '/Zotlabs/Module/Card_edit.php',
         'Zotlabs\\Module\\Cards' => __DIR__ . '/../..' . '/Zotlabs/Module/Cards.php',
