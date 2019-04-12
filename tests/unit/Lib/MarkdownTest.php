@@ -25,8 +25,7 @@ namespace Zotlabs\Tests\Unit\includes;
 
 use Zotlabs\Tests\Unit\UnitTestCase;
 use phpmock\phpunit\PHPMock;
-
-require_once 'include/markdown.php';
+use Zotlabs\Lib\Markdown;
 
 /**
  * @brief Unit Test case for markdown functions.
@@ -39,7 +38,7 @@ class MarkdownTest extends UnitTestCase {
 	 * @dataProvider html2markdownProvider
 	 */
 	public function testHtml2markdown($html, $markdown) {
-		$this->assertEquals($markdown, html2markdown($html));
+		$this->assertEquals($markdown, Markdown::from_html($html));
 	}
 
 	public function html2markdownProvider() {
@@ -128,7 +127,7 @@ class MarkdownTest extends UnitTestCase {
 	/*public function testHtml2markdownException() {
 		//$this->expectException(\InvalidArgumentException::class);
 		// need to stub logger() for this to work
-		$this->assertEquals('', html2markdown('<<invalid'));
+		$this->assertEquals('', Markdown::from_html('<<invalid'));
 	}*/
 
 /*	public function testBB2diasporaMardown() {
@@ -141,7 +140,7 @@ class MarkdownTest extends UnitTestCase {
 		$bbc = $this->getFunctionMock(__NAMESPACE__, "bbcode");
 		$bbc->expects($this->once())->willReturn('test<b>bold</b><br><i>i</i><ul><li>li1</li><li>li2</li></ul><br>');
 
-		$this->assertEquals($bb1, bb2diaspora($html1));
+		$this->assertEquals($bb1, Markdown::from_bbcode($html1));
 	}
 */
 }
