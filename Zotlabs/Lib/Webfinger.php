@@ -16,17 +16,17 @@ class Webfinger {
 
 	static function exec($resource) {
 
-		if(! $resource) {
+		if (! $resource) {
 			return false;
 		}
 
 		self::parse_resource($resource);
 
-		if(! ( self::$server && self::$resource)) {
+		if (! ( self::$server && self::$resource)) {
 			return false;
 		}
 
-		if(! check_siteallowed(self::$server)) {
+		if (! check_siteallowed(self::$server)) {
 			logger('blacklisted: ' . self::$server);
 			return false;
 		}
@@ -38,7 +38,7 @@ class Webfinger {
 		$counter = 0;
 		$s = z_fetch_url($url, false, $counter, [ 'headers' => [ 'Accept: application/jrd+json, */*' ] ]);
 
-		if($s['success']) {
+		if ($s['success']) {
 			$j = json_decode($s['body'], true);
 			return($j);
 		}
@@ -50,10 +50,10 @@ class Webfinger {
 
 		self::$resource = urlencode($resource);
 
-		if(strpos($resource,'http') === 0) {
+		if (strpos($resource,'http') === 0) {
 			$m = parse_url($resource);
-			if($m) {
-				if($m['scheme'] !== 'https') {
+			if ($m) {
+				if ($m['scheme'] !== 'https') {
 					return false;
 				}
 				self::$server = $m['host'] . (($m['port']) ? ':' . $m['port'] : '');
@@ -62,29 +62,28 @@ class Webfinger {
 				return false;
 			}
 		}
-		elseif(strpos($resource,'tag:') === 0) {
+		elseif (strpos($resource,'tag:') === 0) {
 			$arr = explode(':',$resource); // split the tag
 			$h = explode(',',$arr[1]); // split the host,date
 			self::$server = $h[0];
 		}
 		else {
 			$x = explode('@',$resource);
-			if(! strlen($x[0])) {
+			if (! strlen($x[0])) {
 				// e.g. @dan@pixelfed.org
 				array_shift($x);
 			}
 			$username = $x[0];
-			if(count($x) > 1) {
+			if (count($x) > 1) {
 				self::$server = $x[1];
 			}
 			else {
 				return false;
 			}
-			if(strpos($resource,'acct:') !== 0) {
+			if (strpos($resource,'acct:') !== 0) {
 				self::$resource = urlencode('acct:' . $resource);
 			}
 		}
-
 	}
 
 	/**
@@ -96,10 +95,10 @@ class Webfinger {
 
 		$arr = self::exec($resource);
 
-		if(is_array($arr) && array_key_exists('links',$arr)) {
-			foreach($arr['links'] as $link) {
-				if(array_key_exists('rel',$link) && $link['rel'] === PROTOCOL_ZOT6) {
-					if(array_key_exists('href',$link) && $link['href'] !== EMPTY_STR) {
+		if (is_array($arr) && array_key_exists('links',$arr)) {
+			foreach ($arr['links'] as $link) {
+				if (array_key_exists('rel',$link) && $link['rel'] === PROTOCOL_ZOT6) {
+					if (array_key_exists('href',$link) && $link['href'] !== EMPTY_STR) {
 						return $link['href'];
 					}
 				}
@@ -107,7 +106,4 @@ class Webfinger {
 		}
 		return false;
 	}
-
-
-
 }
