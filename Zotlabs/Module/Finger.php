@@ -1,31 +1,34 @@
 <?php
+
 namespace Zotlabs\Module;
 
+/*
+ * Finger diagnostic tool.
+ * Input a webfinger resource via an input form and
+ * view the results as an array.
+ *
+ */
 
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Webfinger;
 
-
-class Finger extends \Zotlabs\Web\Controller {
+class Finger extends Controller {
 
 	function get() {
-	
-	
-		$o .= '<h3>Webfinger Diagnostic</h3>';
-	
-		$o .= '<form action="finger" method="get">';
-		$o .= 'Lookup address: <input type="text" style="width: 250px;" name="addr" value="' . $_GET['addr'] .'" />';
-		$o .= '<input type="submit" name="submit" value="Submit" /></form>'; 
-	
-		$o .= '<br /><br />';
-		
-		if(x($_GET,'addr')) {
-			$addr = trim($_GET['addr']);
 
-			$res = \Zotlabs\Lib\Webfinger::exec($addr);
-	
+		$o = replace_macros(get_markup_template('finger.tpl'), [
+			'$page_title' => t('Webfinger Diagnostic'),
+			'$resource'   => [ 'resource', t('Lookup address or URL') , $_GET['resource'], EMPTY_STR ],
+			'$submit'     => t('Submit')
+		]);
 		
-			$o .= '<pre>';
-			$o .= str_replace("\n",'<br />',print_r($res,true));
-			$o .= '</pre>';
+		if($_GET['resource']) {
+
+			$resource = trim(escape_tags($_GET['resource']));
+
+			$result = Webfinger::exec($resource);
+			
+			$o .= '<pre>' . str_replace("\n",'<br>',print_array($result)) . '</pre>';
 		}
 		return $o;
 	}

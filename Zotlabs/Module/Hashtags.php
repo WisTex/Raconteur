@@ -2,8 +2,14 @@
 
 namespace Zotlabs\Module;
 
+/*
+ * Hashtag autocomplete controller
+ *
+ */
 
-class Hashtags extends \Zotlabs\Web\Controller {
+use Zotlabs\Web\Controller;
+
+class Hashtags extends Controller {
 
 	function init() {
 		$result = [];
