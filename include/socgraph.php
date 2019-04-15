@@ -327,7 +327,7 @@ function update_suggestions() {
 }
 
 
-function poco($a,$extended = false) {
+function poco() {
 
 	$system_mode = false;
 
