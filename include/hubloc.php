@@ -292,3 +292,11 @@ function ping_site($url) {
 		$ret['success'] = true;
 		return $ret;
 }
+
+
+function get_hubloc_addrs_by_hash($hash) {
+
+	return q("select hubloc_addr from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
+		dbesc($hash)
+	);
+}

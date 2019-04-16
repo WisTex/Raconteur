@@ -57,14 +57,8 @@ class Webfinger extends Controller {
 			if (strpos($resource,'tag:' === 0)) {
 				$arr = explode(':',$resource);
 				if (count($arr) > 3 && $arr[2] === 'zotid') {
-					$guid = $arr[3];
-					$r = q("select * from channel left join xchan on channel_hash = xchan_hash 
-						where channel_hash = '%s' limit 1",
-						dbesc($guid)
-					);
-					if ($r) {
-						$channel_target = $r[0];
-					}
+					$hash = $arr[3];
+					$channel_target = channelx_by_hash($hash);
 				}
 			}
  
@@ -86,21 +80,13 @@ class Webfinger extends Controller {
 			}
 
 			if ($channel_nickname) {	
-				$r = q("select * from channel left join xchan on channel_hash = xchan_hash 
-					where channel_address = '%s' limit 1",
-					dbesc($channel_nickname)
-				);
-				if ($r) {
-					$channel_target = array_shift($r);
-				}
+				$channel_target = channelx_by_nick($channel_nickname);
 			}
 		}
 
-		if($channel_target) {
+		if ($channel_target) {
 	
-			$h = q("select hubloc_addr from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
-				dbesc($channel_target['channel_hash'])
-			);
+			$h = get_hubloc_addrs_by_hash($channel_target['channel_hash']);
 	
 			$result['subject'] = $resource;
 	

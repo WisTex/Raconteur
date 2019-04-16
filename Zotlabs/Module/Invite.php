@@ -17,8 +17,7 @@ class Invite extends Controller {
 
 	function post() {
 	
-		if(! local_channel()) {
-			notice( t('Permission denied.') . EOL);
+		if (! local_channel()) {
 			return;
 		}
 
@@ -28,9 +27,7 @@ class Invite extends Controller {
 	
 		check_form_security_token_redirectOnErr('/', 'send_invite');
 	
-		$max_invites = intval(get_config('system','max_invites'));
-		if(! $max_invites)
-			$max_invites = 50;
+		$max_invites = intval(get_config('system','max_invites'), 20);
 	
 		$current_invites = intval(get_pconfig(local_channel(),'system','sent_invites'));
 		if($current_invites > $max_invites) {
@@ -44,14 +41,14 @@ class Invite extends Controller {
 	
 		$total = 0;
 	
-		if(get_config('system','invitation_only')) {
+		if (get_config('system','invitation_only')) {
 			$invonly = true;
 			$x = get_pconfig(local_channel(),'system','invites_remaining');
-			if((! $x) && (! is_site_admin()))
+			if ((! $x) && (! is_site_admin()))
 				return;
 		}
 	
-		foreach($recips as $recip) {
+		foreach ($recips as $recip) {
 	
 			$recip = trim($recip);
 			if(! $recip)
@@ -69,11 +66,11 @@ class Invite extends Controller {
 	
 			$res = z_mail(
 				[ 
-				'toEmail'        => $recip,
-				'fromName'       => ' ',
-				'fromEmail'      => $account['account_email'],
-				'messageSubject' => t('Please join us on $Projectname'),
-				'textVersion'    => $nmessage,
+					'toEmail'        => $recip,
+					'fromName'       => ' ',
+					'fromEmail'      => $account['account_email'],
+					'messageSubject' => t('Please join us on $Projectname'),
+					'textVersion'    => $nmessage,
 				]
 			);
 	
@@ -126,23 +123,23 @@ class Invite extends Controller {
 			}
 		}
 	
-			if($invonly && ($x || is_site_admin())) {
-				$invite_code = autoname(8) . rand(1000,9999);
-				$nmessage = str_replace('$invite_code',$invite_code,$message);
+		if($invonly && ($x || is_site_admin())) {
+			$invite_code = autoname(8) . rand(1000,9999);
+			$nmessage = str_replace('$invite_code',$invite_code,$message);
 	
-				$r = q("INSERT INTO register (hash,created,uid,password,lang) VALUES ('%s', '%s',0,'','') ",
-					dbesc($invite_code),
-					dbesc(datetime_convert())
-				);
+			$r = q("INSERT INTO register (hash,created,uid,password,lang) VALUES ('%s', '%s',0,'','') ",
+				dbesc($invite_code),
+				dbesc(datetime_convert())
+			);
 	
-				if(! is_site_admin()) {
-					$x --;
-					if($x >= 0)
-						set_pconfig(local_channel(),'system','invites_remaining',$x);
-					else
-						return;
-				}
+			if(! is_site_admin()) {
+				$x --;
+				if($x >= 0)
+					set_pconfig(local_channel(),'system','invites_remaining',$x);
+				else
+					return;
 			}
+		}
 	
 		$ob = App::get_observer();
 		if(! $ob)

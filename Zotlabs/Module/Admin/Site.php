@@ -3,7 +3,7 @@
 namespace Zotlabs\Module\Admin;
 
 use Zotlabs\Lib\System;
-use Zotalbs\Access\PermissionRoles;
+use Zotlabs\Access\PermissionRoles;
 
 class Site {
 
