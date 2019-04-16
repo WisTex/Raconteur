@@ -352,6 +352,7 @@ abstract class photo_driver {
 		$p['deny_gid'] = (($arr['deny_gid']) ? $arr['deny_gid'] : '');
 		$p['created'] = (($arr['created']) ? $arr['created'] : datetime_convert());
 		$p['edited'] = (($arr['edited']) ? $arr['edited'] : $p['created']);
+		$p['expires'] = (($arr['expires']) ? $arr['expires'] : NULL_DATE);
 		$p['title'] = (($arr['title']) ? $arr['title'] : '');
 		$p['description'] = (($arr['description']) ? $arr['description'] : '');
 		$p['photo_usage'] = intval($arr['photo_usage']);
@@ -379,6 +380,7 @@ abstract class photo_driver {
 				resource_id = '%s',
 				created = '%s',
 				edited = '%s',
+				expires = '%s',
 				filename = '%s',
 				mimetype = '%s',
 				album = '%s',
@@ -405,6 +407,7 @@ abstract class photo_driver {
 				dbesc($p['resource_id']),
 				dbesc($p['created']),
 				dbesc($p['edited']),
+				dbesc($p['expires']),
 				dbesc(basename($p['filename'])),
 				dbesc($this->getType()),
 				dbesc($p['album']),
