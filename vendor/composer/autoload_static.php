@@ -29,6 +29,8 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'S' => 
         array (
             'Symfony\\Polyfill\\Ctype\\' => 23,
+            'Symfony\\Component\\Process\\' => 26,
+            'Symfony\\Component\\OptionsResolver\\' => 34,
             'Sabre\\Xml\\' => 10,
             'Sabre\\VObject\\' => 14,
             'Sabre\\Uri\\' => 10,
@@ -84,6 +86,14 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Symfony\\Polyfill\\Ctype\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
+        ),
+        'Symfony\\Component\\Process\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/process',
+        ),
+        'Symfony\\Component\\OptionsResolver\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/options-resolver',
         ),
         'Sabre\\Xml\\' => 
         array (
@@ -203,6 +213,10 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
                 0 => __DIR__ . '/..' . '/ezyang/htmlpurifier/library',
             ),
         ),
+    );
+
+    public static $fallbackDirsPsr0 = array (
+        0 => __DIR__ . '/..' . '/kzykhys/git/src',
     );
 
     public static $classMap = array (
@@ -630,6 +644,37 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'OAuth2\\TokenType\\Bearer' => __DIR__ . '/..' . '/bshaffer/oauth2-server-php/src/OAuth2/TokenType/Bearer.php',
         'OAuth2\\TokenType\\Mac' => __DIR__ . '/..' . '/bshaffer/oauth2-server-php/src/OAuth2/TokenType/Mac.php',
         'OAuth2\\TokenType\\TokenTypeInterface' => __DIR__ . '/..' . '/bshaffer/oauth2-server-php/src/OAuth2/TokenType/TokenTypeInterface.php',
+        'PHPGit\\Command' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command.php',
+        'PHPGit\\Command\\AddCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/AddCommand.php',
+        'PHPGit\\Command\\ArchiveCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/ArchiveCommand.php',
+        'PHPGit\\Command\\BranchCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/BranchCommand.php',
+        'PHPGit\\Command\\CatCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/CatCommand.php',
+        'PHPGit\\Command\\CheckoutCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/CheckoutCommand.php',
+        'PHPGit\\Command\\CloneCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/CloneCommand.php',
+        'PHPGit\\Command\\CommitCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/CommitCommand.php',
+        'PHPGit\\Command\\ConfigCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/ConfigCommand.php',
+        'PHPGit\\Command\\DescribeCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/DescribeCommand.php',
+        'PHPGit\\Command\\FetchCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/FetchCommand.php',
+        'PHPGit\\Command\\InitCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/InitCommand.php',
+        'PHPGit\\Command\\LogCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/LogCommand.php',
+        'PHPGit\\Command\\MergeCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/MergeCommand.php',
+        'PHPGit\\Command\\MvCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/MvCommand.php',
+        'PHPGit\\Command\\PullCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/PullCommand.php',
+        'PHPGit\\Command\\PushCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/PushCommand.php',
+        'PHPGit\\Command\\RebaseCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/RebaseCommand.php',
+        'PHPGit\\Command\\RemoteCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/RemoteCommand.php',
+        'PHPGit\\Command\\Remote\\SetBranchesCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/Remote/SetBranchesCommand.php',
+        'PHPGit\\Command\\Remote\\SetHeadCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/Remote/SetHeadCommand.php',
+        'PHPGit\\Command\\Remote\\SetUrlCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/Remote/SetUrlCommand.php',
+        'PHPGit\\Command\\ResetCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/ResetCommand.php',
+        'PHPGit\\Command\\RmCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/RmCommand.php',
+        'PHPGit\\Command\\ShowCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/ShowCommand.php',
+        'PHPGit\\Command\\StashCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/StashCommand.php',
+        'PHPGit\\Command\\StatusCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/StatusCommand.php',
+        'PHPGit\\Command\\TagCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/TagCommand.php',
+        'PHPGit\\Command\\TreeCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/TreeCommand.php',
+        'PHPGit\\Exception\\GitException' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Exception/GitException.php',
+        'PHPGit\\Git' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Git.php',
         'Psr\\Log\\AbstractLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/AbstractLogger.php',
         'Psr\\Log\\InvalidArgumentException' => __DIR__ . '/..' . '/psr/log/Psr/Log/InvalidArgumentException.php',
         'Psr\\Log\\LogLevel' => __DIR__ . '/..' . '/psr/log/Psr/Log/LogLevel.php',
@@ -1114,6 +1159,35 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'SimplePie_Source' => __DIR__ . '/..' . '/simplepie/simplepie/library/SimplePie/Source.php',
         'SimplePie_XML_Declaration_Parser' => __DIR__ . '/..' . '/simplepie/simplepie/library/SimplePie/XML/Declaration/Parser.php',
         'SimplePie_gzdecode' => __DIR__ . '/..' . '/simplepie/simplepie/library/SimplePie/gzdecode.php',
+        'Symfony\\Component\\OptionsResolver\\Debug\\OptionsResolverIntrospector' => __DIR__ . '/..' . '/symfony/options-resolver/Debug/OptionsResolverIntrospector.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\AccessException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/AccessException.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/ExceptionInterface.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/InvalidArgumentException.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\InvalidOptionsException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/InvalidOptionsException.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\MissingOptionsException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/MissingOptionsException.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\NoConfigurationException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/NoConfigurationException.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\NoSuchOptionException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/NoSuchOptionException.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\OptionDefinitionException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/OptionDefinitionException.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\UndefinedOptionsException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/UndefinedOptionsException.php',
+        'Symfony\\Component\\OptionsResolver\\Options' => __DIR__ . '/..' . '/symfony/options-resolver/Options.php',
+        'Symfony\\Component\\OptionsResolver\\OptionsResolver' => __DIR__ . '/..' . '/symfony/options-resolver/OptionsResolver.php',
+        'Symfony\\Component\\Process\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/symfony/process/Exception/ExceptionInterface.php',
+        'Symfony\\Component\\Process\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/symfony/process/Exception/InvalidArgumentException.php',
+        'Symfony\\Component\\Process\\Exception\\LogicException' => __DIR__ . '/..' . '/symfony/process/Exception/LogicException.php',
+        'Symfony\\Component\\Process\\Exception\\ProcessFailedException' => __DIR__ . '/..' . '/symfony/process/Exception/ProcessFailedException.php',
+        'Symfony\\Component\\Process\\Exception\\ProcessSignaledException' => __DIR__ . '/..' . '/symfony/process/Exception/ProcessSignaledException.php',
+        'Symfony\\Component\\Process\\Exception\\ProcessTimedOutException' => __DIR__ . '/..' . '/symfony/process/Exception/ProcessTimedOutException.php',
+        'Symfony\\Component\\Process\\Exception\\RuntimeException' => __DIR__ . '/..' . '/symfony/process/Exception/RuntimeException.php',
+        'Symfony\\Component\\Process\\ExecutableFinder' => __DIR__ . '/..' . '/symfony/process/ExecutableFinder.php',
+        'Symfony\\Component\\Process\\InputStream' => __DIR__ . '/..' . '/symfony/process/InputStream.php',
+        'Symfony\\Component\\Process\\PhpExecutableFinder' => __DIR__ . '/..' . '/symfony/process/PhpExecutableFinder.php',
+        'Symfony\\Component\\Process\\PhpProcess' => __DIR__ . '/..' . '/symfony/process/PhpProcess.php',
+        'Symfony\\Component\\Process\\Pipes\\AbstractPipes' => __DIR__ . '/..' . '/symfony/process/Pipes/AbstractPipes.php',
+        'Symfony\\Component\\Process\\Pipes\\PipesInterface' => __DIR__ . '/..' . '/symfony/process/Pipes/PipesInterface.php',
+        'Symfony\\Component\\Process\\Pipes\\UnixPipes' => __DIR__ . '/..' . '/symfony/process/Pipes/UnixPipes.php',
+        'Symfony\\Component\\Process\\Pipes\\WindowsPipes' => __DIR__ . '/..' . '/symfony/process/Pipes/WindowsPipes.php',
+        'Symfony\\Component\\Process\\Process' => __DIR__ . '/..' . '/symfony/process/Process.php',
+        'Symfony\\Component\\Process\\ProcessUtils' => __DIR__ . '/..' . '/symfony/process/ProcessUtils.php',
         'Symfony\\Polyfill\\Ctype\\Ctype' => __DIR__ . '/..' . '/symfony/polyfill-ctype/Ctype.php',
         'Text_LanguageDetect' => __DIR__ . '/..' . '/pear/text_languagedetect/Text/LanguageDetect.php',
         'Text_LanguageDetect_Exception' => __DIR__ . '/..' . '/pear/text_languagedetect/Text/LanguageDetect/Exception.php',
@@ -1331,7 +1405,6 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Module\\Poco' => __DIR__ . '/../..' . '/Zotlabs/Module/Poco.php',
         'Zotlabs\\Module\\Poke' => __DIR__ . '/../..' . '/Zotlabs/Module/Poke.php',
         'Zotlabs\\Module\\Pretheme' => __DIR__ . '/../..' . '/Zotlabs/Module/Pretheme.php',
-        'Zotlabs\\Module\\Probe' => __DIR__ . '/../..' . '/Zotlabs/Module/Probe.php',
         'Zotlabs\\Module\\Profile' => __DIR__ . '/../..' . '/Zotlabs/Module/Profile.php',
         'Zotlabs\\Module\\Profile_photo' => __DIR__ . '/../..' . '/Zotlabs/Module/Profile_photo.php',
         'Zotlabs\\Module\\Profiles' => __DIR__ . '/../..' . '/Zotlabs/Module/Profiles.php',
@@ -1393,11 +1466,11 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Module\\Webpages' => __DIR__ . '/../..' . '/Zotlabs/Module/Webpages.php',
         'Zotlabs\\Module\\Well_known' => __DIR__ . '/../..' . '/Zotlabs/Module/Well_known.php',
         'Zotlabs\\Module\\Xchan' => __DIR__ . '/../..' . '/Zotlabs/Module/Xchan.php',
-        'Zotlabs\\Module\\Xpoco' => __DIR__ . '/../..' . '/Zotlabs/Module/Xpoco.php',
         'Zotlabs\\Module\\Xref' => __DIR__ . '/../..' . '/Zotlabs/Module/Xref.php',
         'Zotlabs\\Module\\Zot' => __DIR__ . '/../..' . '/Zotlabs/Module/Zot.php',
         'Zotlabs\\Module\\Zot_probe' => __DIR__ . '/../..' . '/Zotlabs/Module/Zot_probe.php',
         'Zotlabs\\Module\\Zotfeed' => __DIR__ . '/../..' . '/Zotlabs/Module/Zotfeed.php',
+        'Zotlabs\\Module\\Zotfinger' => __DIR__ . '/../..' . '/Zotlabs/Module/Zotfinger.php',
         'Zotlabs\\Render\\Comanche' => __DIR__ . '/../..' . '/Zotlabs/Render/Comanche.php',
         'Zotlabs\\Render\\SimpleTemplate' => __DIR__ . '/../..' . '/Zotlabs/Render/SimpleTemplate.php',
         'Zotlabs\\Render\\SmartyInterface' => __DIR__ . '/../..' . '/Zotlabs/Render/SmartyInterface.php',
@@ -1731,6 +1804,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
             $loader->prefixLengthsPsr4 = ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d::$fallbackDirsPsr0;
             $loader->classMap = ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d::$classMap;
 
         }, null, ClassLoader::class);

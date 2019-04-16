@@ -4,7 +4,6 @@ namespace Zotlabs\Storage;
 
 use PHPGit\Git as PHPGit;
 
-require __DIR__ . '/../../library/PHPGit.autoload.php'; // Load PHPGit dependencies
 
 /**
  * Wrapper class for PHPGit class for git repositories managed by Hubzilla
@@ -27,7 +26,7 @@ class GitRepo {
 			return null;
 		}
 
-		$this->repoBasePath = __DIR__ . '/../../store/git';
+		$this->repoBasePath = 'store/git';
 		$this->channel = $channel;
 		$this->git = new PHPGit();
 

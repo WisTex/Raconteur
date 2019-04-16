@@ -11,4 +11,5 @@ return array(
     'SimplePie' => array($vendorDir . '/simplepie/simplepie/library'),
     'OAuth2' => array($vendorDir . '/bshaffer/oauth2-server-php/src'),
     'HTMLPurifier' => array($vendorDir . '/ezyang/htmlpurifier/library'),
+    '' => array($vendorDir . '/kzykhys/git/src'),
 );
