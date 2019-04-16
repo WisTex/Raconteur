@@ -2,13 +2,19 @@
 
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Enotify;
+
 require_once('include/bbcode.php');
 
 /**
  * @brief Ping Controller.
+ * Called from the client at regular intervals to check for updates from the server
  *
  */
-class Ping extends \Zotlabs\Web\Controller {
+
+class Ping extends Controller {
 
 	/**
 	 * @brief do several updates when pinged.
@@ -18,10 +24,11 @@ class Ping extends \Zotlabs\Web\Controller {
 	 *
 	 * @result JSON
 	 */
+
 	function init() {
 
-		$result = array();
-		$notifs = array();
+		$result = [];
+		$notifs = [];
 
 		$result['notify'] = 0;
 		$result['home'] = 0;
@@ -42,29 +49,29 @@ class Ping extends \Zotlabs\Web\Controller {
 		$result['files'] = 0;
 		$result['forums'] = 0;
 		$result['forums_sub'] = [];
-
-		if(! $_SESSION['static_loadtime'])
+		$result['reports'] = 0;
+		
+		if (! $_SESSION['static_loadtime']) {
 			$_SESSION['static_loadtime'] = datetime_convert();
-
-		$t0 = dba_timer();
-
-		header("content-type: application/json");
-
+		}
+		
 		$vnotify = false;
 
 		$item_normal = item_normal();
 
-		if(local_channel()) {
+		if (local_channel()) {
 			$vnotify = get_pconfig(local_channel(),'system','vnotify');
 			$evdays = intval(get_pconfig(local_channel(),'system','evdays'));
 			$ob_hash = get_observer_hash();
 		}
 
 		// if unset show all visual notification types
-		if($vnotify === false)
+		if ($vnotify === false) {
 			$vnotify = (-1);
-		if($evdays < 1)
+		}
+		if ($evdays < 1) {
 			$evdays = 3;
+		}
 
 		/**
 		 * If you have several windows open to this site and switch to a different channel
@@ -84,46 +91,50 @@ class Ping extends \Zotlabs\Web\Controller {
 		 * will popup on the current page (no matter what page it is)
 		 */
 
-		if(x($_SESSION, 'sysmsg')){
-			foreach ($_SESSION['sysmsg'] as $m){
+		if (x($_SESSION, 'sysmsg')) {
+			foreach ($_SESSION['sysmsg'] as $m) {
 				$result['notice'][] = array('message' => $m);
 			}
 			unset($_SESSION['sysmsg']);
 		}
-		if(x($_SESSION, 'sysmsg_info')){
-			foreach ($_SESSION['sysmsg_info'] as $m){
+		if (x($_SESSION, 'sysmsg_info')) {
+			foreach ($_SESSION['sysmsg_info'] as $m) {
 				$result['info'][] = array('message' => $m);
 			}
 			unset($_SESSION['sysmsg_info']);
 		}
-		if(! ($vnotify & VNOTIFY_INFO))
+		if (! ($vnotify & VNOTIFY_INFO)) {
 			$result['info'] = array();
-		if(! ($vnotify & VNOTIFY_ALERT))
+		}
+		if (! ($vnotify & VNOTIFY_ALERT)) {
 			$result['notice'] = array();
+		}
 
-		if(\App::$install) {
-			echo json_encode($result);
-			killme();
+		// If we're currently installing, there won't be a populated database.
+		// So just send back what we have and stop here.
+		
+		if (App::$install) {
+			json_return_and_die($result);
 		}
 
 		/**
 		 * Update chat presence indication (if applicable)
 		 */
 
-		if(get_observer_hash() && (! $result['invalid'])) {
+		if (get_observer_hash() && (! $result['invalid'])) {
 			$r = q("select cp_id, cp_room from chatpresence where cp_xchan = '%s' and cp_client = '%s' and cp_room = 0 limit 1",
 				dbesc(get_observer_hash()),
 				dbesc($_SERVER['REMOTE_ADDR'])
 			);
 			$basic_presence = false;
-			if($r) {
+			if ($r) {
 				$basic_presence = true;
 				q("update chatpresence set cp_last = '%s' where cp_id = %d",
 					dbesc(datetime_convert()),
 					intval($r[0]['cp_id'])
 				);
 			}
-			if(! $basic_presence) {
+			if (! $basic_presence) {
 				q("insert into chatpresence ( cp_xchan, cp_last, cp_status, cp_client)
 					values( '%s', '%s', '%s', '%s' ) ",
 					dbesc(get_observer_hash()),
@@ -145,16 +156,17 @@ class Ping extends \Zotlabs\Web\Controller {
 
 
 		$sql_extra = '';
-		if(! ($vnotify & VNOTIFY_LIKE))
+		if (! ($vnotify & VNOTIFY_LIKE)) {
 			$sql_extra = " AND verb NOT IN ('" . dbesc(ACTIVITY_LIKE) . "', '" . dbesc(ACTIVITY_DISLIKE) . "') ";
+		}
 
 		$discover_tab_on = can_view_public_stream();
 
 		$notify_pubs = ((local_channel()) ? ($vnotify & VNOTIFY_PUBS) && $discover_tab_on : $discover_tab_on);
 
-		if($notify_pubs) {
-			$sys = get_sys_channel();
+		$sys = get_sys_channel();
 
+		if ($notify_pubs) {
 			$pubs = q("SELECT count(id) as total from item
 				WHERE uid = %d
 				AND item_unseen = 1
@@ -166,15 +178,14 @@ class Ping extends \Zotlabs\Web\Controller {
 				dbesc(get_observer_hash())
 			);
 
-			if($pubs)
+			if ($pubs) {
 				$result['pubs'] = intval($pubs[0]['total']);
+			}
 		}
+		
+		if ((argc() > 1) && (argv(1) === 'pubs') && ($notify_pubs)) {
 
-
-
-		if((argc() > 1) && (argv(1) === 'pubs') && ($notify_pubs)) {
-			$sys = get_sys_channel();
-			$result = array();
+			$local_result = [];
 
 			$r = q("SELECT * FROM item
 				WHERE uid = %d
@@ -189,27 +200,22 @@ class Ping extends \Zotlabs\Web\Controller {
 				dbesc(get_observer_hash())
 			);
 
-			if($r) {
+			if ($r) {
 				xchan_query($r);
-				foreach($r as $rr) {
+				foreach ($r as $rr) {
 					$rr['llink'] = str_replace('display/', 'pubstream/?f=&mid=', $rr['llink']);
-					$z = \Zotlabs\Lib\Enotify::format($rr);
-					if($z) {
-						$result[] = $z;
+					$z = Enotify::format($rr);
+					if ($z) {
+						$local_result[] = $z;
 					}
 				}
 			}
 
-//			logger('ping (network||home): ' . print_r($result, true), LOGGER_DATA);
-			echo json_encode(array('notify' => $result));
-			killme();
+			json_return_and_die( [ 'notify' => $local_result ] );
 		}
 
-		$t1 = dba_timer();
-
-		if((! local_channel()) || ($result['invalid'])) {
-			echo json_encode($result);
-			killme();
+		if ((! local_channel()) || ($result['invalid'])) {
+			json_return_and_die($result);
 		}
 
 		/**
@@ -221,8 +227,8 @@ class Ping extends \Zotlabs\Web\Controller {
 		 */
 
 		// mark all items read
-		if(x($_REQUEST, 'markRead') && local_channel()) {
-			switch($_REQUEST['markRead']) {
+		if (x($_REQUEST, 'markRead') && local_channel()) {
+			switch ($_REQUEST['markRead']) {
 				case 'network':
 					$r = q("UPDATE item SET item_unseen = 0 WHERE uid = %d AND item_unseen = 1",
 						intval(local_channel())
@@ -258,7 +264,7 @@ class Ping extends \Zotlabs\Web\Controller {
 			}
 		}
 
-		if(x($_REQUEST, 'markItemRead') && local_channel()) {
+		if (x($_REQUEST, 'markItemRead') && local_channel()) {
 			$r = q("UPDATE item SET item_unseen = 0 WHERE  uid = %d AND parent = %d",
 				intval(local_channel()),
 				intval($_REQUEST['markItemRead'])
@@ -269,22 +275,24 @@ class Ping extends \Zotlabs\Web\Controller {
 		 * URL ping/something will return detail for "something", e.g. a json list with which to populate a notification
 		 * dropdown menu.
 		 */
-		if(argc() > 1 && argv(1) === 'notify') {
+		 
+		if (argc() > 1 && argv(1) === 'notify') {
+
 			$t = q("SELECT * FROM notify WHERE uid = %d AND seen = 0 ORDER BY CREATED DESC",
 				intval(local_channel())
 			);
 
-			if($t) {
-				foreach($t as $tt) {
+			if ($t) {
+				foreach ($t as $tt) {
 					$message = trim(strip_tags(bbcode($tt['msg'])));
 
-					if(strpos($message, $tt['xname']) === 0)
+					if (strpos($message, $tt['xname']) === 0)
 						$message = substr($message, strlen($tt['xname']) + 1);
 
 
 					$mid = basename($tt['link']);
 
-					if(in_array($tt['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) {
+					if (in_array($tt['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) {
 						// we need the thread parent
 						$r = q("select thr_parent from item where mid = '%s' and uid = %d limit 1",
 							dbesc($mid),
@@ -311,12 +319,11 @@ class Ping extends \Zotlabs\Web\Controller {
 				}
 			}
 
-			echo json_encode(array('notify' => $notifs));
-			killme();
+			json_return_and_die( [ 'notify' => $notifs ] );
 		}
 
-		if(argc() > 1 && argv(1) === 'mail') {
-			$channel = \App::get_channel();
+		if (argc() > 1 && argv(1) === 'mail') {
+			$channel = App::get_channel();
 			$t = q("select mail.*, xchan.* from mail left join xchan on xchan_hash = from_xchan
 				where channel_id = %d and mail_seen = 0 and mail_deleted = 0
 				and from_xchan != '%s' order by created desc limit 50",
@@ -324,8 +331,8 @@ class Ping extends \Zotlabs\Web\Controller {
 				dbesc($channel['channel_hash'])
 			);
 
-			if($t) {
-				foreach($t as $zz) {
+			if ($t) {
+				foreach ($t as $zz) {
 					$notifs[] = array(
 						'notify_link' => z_root() . '/mail/' . $zz['id'],
 						'name' => $zz['xchan_name'],
@@ -339,15 +346,15 @@ class Ping extends \Zotlabs\Web\Controller {
 				}
 			}
 
-			echo json_encode(array('notify' => $notifs));
-			killme();
+			json_return_and_die( [ 'notify' => $notifs ] );
+
 		}
 
-		if(argc() > 1 && (argv(1) === 'network' || argv(1) === 'home')) {
-			$result = array();
+		if (argc() > 1 && (argv(1) === 'network' || argv(1) === 'home')) {
+			$local_result = array();
 			$item_normal_moderate = $item_normal;
 
-			if(argv(1) === 'home') {
+			if (argv(1) === 'home') {
 				$sql_extra .= " and item_wall = 1 ";
 				$item_normal_moderate = item_normal_moderate();
 			}
@@ -362,55 +369,53 @@ class Ping extends \Zotlabs\Web\Controller {
 				intval(local_channel()),
 				dbesc($ob_hash)
 			);
-			if($r) {
+			if ($r) {
 				xchan_query($r);
-				foreach($r as $item) {
-					$z = \Zotlabs\Lib\Enotify::format($item);
+				foreach ($r as $item) {
+					$z = Enotify::format($item);
 
 					if($z) {
-						$result[] = $z;
+						$local_result[] = $z;
 					}
 				}
 			}
-//			logger('ping (network||home): ' . print_r($result, true), LOGGER_DATA);
-			echo json_encode(array('notify' => $result));
-			killme();
+
+			json_return_and_die( [ 'notify' => $local_result ] );
 		}
 
-		if(argc() > 1 && (argv(1) === 'intros')) {
-			$result = array();
+		if (argc() > 1 && (argv(1) === 'intros')) {
+			$local_result = array();
 
 			$r = q("SELECT * FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash where abook_channel = %d and abook_pending = 1 and abook_self = 0 and abook_ignored = 0 and xchan_deleted = 0 and xchan_orphan = 0 ORDER BY abook_created DESC LIMIT 50",
 				intval(local_channel())
 			);
 
-			if($r) {
-				foreach($r as $rr) {
-					$result[] = array(
+			if ($r) {
+				foreach ($r as $rr) {
+					$local_result[] = [
 						'notify_link' => z_root() . '/connections/ifpending',
-						'name' => $rr['xchan_name'],
-						'addr' => $rr['xchan_addr'],
-						'url' => $rr['xchan_url'],
-						'photo' => $rr['xchan_photo_s'],
-						'when' => relative_date($rr['abook_created']),
-						'hclass' => ('notify-unseen'),
-						'message' => t('added your channel')
-					);
+						'name'        => $rr['xchan_name'],
+						'addr'        => $rr['xchan_addr'],
+						'url'         => $rr['xchan_url'],
+						'photo'       => $rr['xchan_photo_s'],
+						'when'        => relative_date($rr['abook_created']),
+						'hclass'      => ('notify-unseen'),
+						'message'     => t('added your channel')
+					];
 				}
 			}
-			logger('ping (intros): ' . print_r($result, true), LOGGER_DATA);
-			echo json_encode(array('notify' => $result));
-			killme();
+
+			json_return_and_die( [ 'notify' => $local_result ] );
 		}
 
-		if((argc() > 1 && (argv(1) === 'register')) && is_site_admin()) {
+		if( (argc() > 1 && (argv(1) === 'register')) && is_site_admin()) {
 			$result = array();
 
 			$r = q("SELECT account_email, account_created from account where (account_flags & %d) > 0",
 				intval(ACCOUNT_PENDING)
 			);
-			if($r) {
-				foreach($r as $rr) {
+			if ($r) {
+				foreach ($r as $rr) {
 					$result[] = array(
 						'notify_link' => z_root() . '/admin/accounts',
 						'name' => $rr['account_email'],
@@ -423,12 +428,11 @@ class Ping extends \Zotlabs\Web\Controller {
 					);
 				}
 			}
-			logger('ping (register): ' . print_r($result, true), LOGGER_DATA);
-			echo json_encode(array('notify' => $result));
-			killme();
+
+			json_return_and_die( [ 'notify' => $result ] );
 		}
 
-		if(argc() > 1 && (argv(1) === 'all_events')) {
+		if (argc() > 1 && (argv(1) === 'all_events')) {
 			$bd_format = t('g A l F d') ; // 8 AM Friday January 18
 
 			$result = array();
@@ -442,8 +446,8 @@ class Ping extends \Zotlabs\Web\Controller {
 				dbesc(datetime_convert('UTC', date_default_timezone_get(), 'now - 1 days'))
 			);
 
-			if($r) {
-				foreach($r as $rr) {
+			if ($r) {
+				foreach ($r as $rr) {
 
 					$strt = datetime_convert('UTC', (($rr['adjust']) ? date_default_timezone_get() : 'UTC'), $rr['dtstart']);
 					$today = ((substr($strt, 0, 10) === datetime_convert('UTC', date_default_timezone_get(), 'now', 'Y-m-d')) ? true : false);
@@ -461,12 +465,11 @@ class Ping extends \Zotlabs\Web\Controller {
 					);
 				}
 			}
-			logger('ping (all_events): ' . print_r($result, true), LOGGER_DATA);
-			echo json_encode(array('notify' => $result));
-			killme();
+
+			json_return_and_die( [ 'notify' => $result ] );
 		}
 
-		if(argc() > 1 && (argv(1) === 'files')) {
+		if (argc() > 1 && (argv(1) === 'files')) {
 			$result = array();
 
 			$r = q("SELECT item.created, xchan.xchan_name, xchan.xchan_addr, xchan.xchan_url, xchan.xchan_photo_s FROM item 
@@ -481,8 +484,8 @@ class Ping extends \Zotlabs\Web\Controller {
 				intval(local_channel()),
 				dbesc($ob_hash)
 			);
-			if($r) {
-				foreach($r as $rr) {
+			if ($r) {
+				foreach ($r as $rr) {
 					$result[] = array(
 						'notify_link' => z_root() . '/sharedwithme',
 						'name' => $rr['xchan_name'],
@@ -495,25 +498,54 @@ class Ping extends \Zotlabs\Web\Controller {
 					);
 				}
 			}
-			logger('ping (files): ' . print_r($result, true), LOGGER_DATA);
-			echo json_encode(array('notify' => $result));
-			killme();
+
+			json_return_and_die( [ 'notify' => $result ] );
 		}
+
+		if (argc() > 1 && (argv(1) === 'reports') && is_site_admin()) {
+
+			$local_result = [];
+
+			$r = q("SELECT item.created, xchan.xchan_name, xchan.xchan_addr, xchan.xchan_url, xchan.xchan_photo_s FROM item 
+				LEFT JOIN xchan on author_xchan = xchan_hash
+				WHERE item.type = '%s' AND item.item_unseen = 1",
+				dbesc(ITEM_TYPE_REPORT)
+			);
+
+			if ($r) {
+				foreach ($r as $rv) {
+					$result[] = [
+						'notify_link' => z_root() . '/reports',
+						'name'        => $rv['xchan_name'],
+						'addr'        => $rv['xchan_addr'],
+						'url'         => $rv['xchan_url'],
+						'photo'       => $rv['xchan_photo_s'],
+						'when'        => relative_date($rv['created']),
+						'hclass'      => ('notify-unseen'),
+						'message'     => t('reported content')
+					];
+				}
+			}
+
+			json_return_and_die( [ 'notify' => $result ] );
+		}
+
+
+
 
 		/**
 		 * Normal ping - just the counts, no detail
 		 */
-		if($vnotify & VNOTIFY_SYSTEM) {
+		 
+		if ($vnotify & VNOTIFY_SYSTEM) {
 			$t = q("select count(*) as total from notify where uid = %d and seen = 0",
 				intval(local_channel())
 			);
-			if($t)
+			if ($t)
 				$result['notify'] = intval($t[0]['total']);
 		}
 
-		$t2 = dba_timer();
-
-		if($vnotify & VNOTIFY_FILES) {
+		if ($vnotify & VNOTIFY_FILES) {
 			$files = q("SELECT count(id) as total FROM item
 				WHERE verb = '%s'
 				AND obj_type = '%s'
@@ -525,13 +557,12 @@ class Ping extends \Zotlabs\Web\Controller {
 				intval(local_channel()),
 				dbesc($ob_hash)
 			);
-			if($files)
+			if ($files)
 				$result['files'] = intval($files[0]['total']);
 		}
 
-		$t3 = dba_timer();
 
-		if($vnotify & (VNOTIFY_NETWORK|VNOTIFY_CHANNEL)) {
+		if ($vnotify & (VNOTIFY_NETWORK|VNOTIFY_CHANNEL)) {
 
 			$r = q("SELECT id, item_wall FROM item 
 				WHERE uid = %d and item_unseen = 1 
@@ -547,7 +578,7 @@ class Ping extends \Zotlabs\Web\Controller {
 				call_hooks('network_ping', $arr);
 
 				foreach ($r as $it) {
-					if(intval($it['item_wall'])) {
+					if (intval($it['item_wall'])) {
 						$result['home'] ++;
 					}
 					else {
@@ -556,50 +587,55 @@ class Ping extends \Zotlabs\Web\Controller {
 				}
 			}
 		}
-		if(! ($vnotify & VNOTIFY_NETWORK))
+		if (! ($vnotify & VNOTIFY_NETWORK))
 			$result['network'] = 0;
-		if(! ($vnotify & VNOTIFY_CHANNEL))
+		if (! ($vnotify & VNOTIFY_CHANNEL))
 			$result['home'] = 0;
 
-		$t4 = dba_timer();
 
-		if($vnotify & VNOTIFY_INTRO) {
+		if ($vnotify & VNOTIFY_INTRO) {
 			$intr = q("SELECT COUNT(abook.abook_id) AS total FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash where abook_channel = %d and abook_pending = 1 and abook_self = 0 and abook_ignored = 0 and xchan_deleted = 0 and xchan_orphan = 0 ",
 				intval(local_channel())
 			);
 
-			$t5 = dba_timer();
-
-			if($intr)
+			if ($intr)
 				$result['intros'] = intval($intr[0]['total']);
 		}
 
-		$t6 = dba_timer();
-		$channel = \App::get_channel();
 
-		if($vnotify & VNOTIFY_MAIL) {
+		$channel = App::get_channel();
+
+		if ($vnotify & VNOTIFY_MAIL) {
 			$mails = q("SELECT count(id) as total from mail
 				WHERE channel_id = %d AND mail_seen = 0 and from_xchan != '%s' ",
 				intval(local_channel()),
 				dbesc($channel['channel_hash'])
 			);
-			if($mails)
+			if ($mails)
 				$result['mail'] = intval($mails[0]['total']);
 		}
 
-		if($vnotify & VNOTIFY_REGISTER) {
-			if (\App::$config['system']['register_policy'] == REGISTER_APPROVE && is_site_admin()) {
+		if ($vnotify & VNOTIFY_REGISTER) {
+			if (App::$config['system']['register_policy'] == REGISTER_APPROVE && is_site_admin()) {
 				$regs = q("SELECT count(account_id) as total from account where (account_flags & %d) > 0",
 					intval(ACCOUNT_PENDING)
 				);
-				if($regs)
+				if ($regs)
 					$result['register'] = intval($regs[0]['total']);
 			}
 		}
 
-		$t7 = dba_timer();
+		if ($vnotify & VNOTIFY_REPORTS) {
+			if (is_site_admin()) {
+				$reps = q("SELECT count(id) as total from item where item_type = %d",
+					intval(ITEM_TYPE_REPORT)
+				);
+				if ($reps)
+					$result['reports'] = intval($reps[0]['total']);
+			}
+		}
 
-		if($vnotify & (VNOTIFY_EVENT|VNOTIFY_EVENTTODAY|VNOTIFY_BIRTHDAY)) {
+		if ($vnotify & (VNOTIFY_EVENT|VNOTIFY_EVENTTODAY|VNOTIFY_BIRTHDAY)) {
 			$events = q("SELECT etype, dtstart, adjust FROM event
 				WHERE event.uid = %d AND dtstart < '%s' AND dtstart > '%s' and dismissed = 0
 				and etype in ( 'event', 'birthday' )
@@ -609,21 +645,21 @@ class Ping extends \Zotlabs\Web\Controller {
 					dbesc(datetime_convert('UTC', date_default_timezone_get(), 'now - 1 days'))
 			);
 
-			if($events) {
+			if ($events) {
 				$result['all_events'] = count($events);
 
-				if($result['all_events']) {
+				if ($result['all_events']) {
 					$str_now = datetime_convert('UTC', date_default_timezone_get(), 'now', 'Y-m-d');
-					foreach($events as $x) {
+					foreach ($events as $x) {
 						$bd = false;
-						if($x['etype'] === 'birthday') {
+						if ($x['etype'] === 'birthday') {
 							$result['birthdays'] ++;
 							$bd = true;
 						}
 						else {
 							$result['events'] ++;
 						}
-						if(datetime_convert('UTC', ((intval($x['adjust'])) ? date_default_timezone_get() : 'UTC'), $x['dtstart'], 'Y-m-d') === $str_now) {
+						if (datetime_convert('UTC', ((intval($x['adjust'])) ? date_default_timezone_get() : 'UTC'), $x['dtstart'], 'Y-m-d') === $str_now) {
 							$result['all_events_today'] ++;
 							if($bd)
 								$result['birthdays_today'] ++;
@@ -634,25 +670,26 @@ class Ping extends \Zotlabs\Web\Controller {
 				}
 			}
 		}
-		if(! ($vnotify & VNOTIFY_EVENT))
+
+		if (! ($vnotify & VNOTIFY_EVENT))
 			$result['all_events'] = $result['events'] = 0;
-		if(! ($vnotify & VNOTIFY_EVENTTODAY))
+		if (! ($vnotify & VNOTIFY_EVENTTODAY))
 			$result['all_events_today'] = $result['events_today'] = 0;
-		if(! ($vnotify & VNOTIFY_BIRTHDAY))
+		if (! ($vnotify & VNOTIFY_BIRTHDAY))
 			$result['birthdays'] = 0;
 
 
 
-		if($vnotify & VNOTIFY_FORUMS) {
+		if ($vnotify & VNOTIFY_FORUMS) {
 			$forums = get_forum_channels(local_channel());
 
-			if($forums) {
+			if ($forums) {
 
 				$perms_sql = item_permissions_sql(local_channel()) . item_normal();
 				$fcount = count($forums);
 				$forums['total'] = 0;
 
-				for($x = 0; $x < $fcount; $x ++) {
+				for ($x = 0; $x < $fcount; $x ++) {
 					$ttype = TERM_FORUM;
 					$p = q("SELECT oid AS parent FROM term WHERE uid = " . intval(local_channel()) . " AND ttype = $ttype AND term = '" . protect_sprintf(dbesc($forums[$x]['xchan_name'])) . "'");
 	
@@ -664,7 +701,7 @@ class Ping extends \Zotlabs\Web\Controller {
 						intval(local_channel()),
 						dbesc($forums[$x]['xchan_hash'])
 					);
-					if($r[0]['unseen']) {
+					if ($r[0]['unseen']) {
 						$forums[$x]['notify_link'] = (($forums[$x]['private_forum']) ? $forums[$x]['xchan_url'] : z_root() . '/network/?f=&pf=1&cid=' . $forums[$x]['abook_id']);
 						$forums[$x]['name'] = $forums[$x]['xchan_name'];
 						$forums[$x]['addr'] = $forums[$x]['xchan_addr'];
@@ -682,9 +719,6 @@ class Ping extends \Zotlabs\Web\Controller {
 						unset($forums[$x]['xchan_url']);
 						unset($forums[$x]['xchan_photo_s']);
 
-						//if($forums[$x]['private_forum'])
-						//	unset($forums[$x]['private_forum']);
-
 					}
 					else {
 						unset($forums[$x]);
@@ -697,14 +731,7 @@ class Ping extends \Zotlabs\Web\Controller {
 			}
 		}
 
-		$x = json_encode($result);
-
-		$t8 = dba_timer();
-
-//		logger('ping timer: ' . sprintf('%01.4f %01.4f %01.4f %01.4f %01.4f %01.4f %01.4f %01.4f',$t8 - $t7, $t7 - $t6, $t6 - $t5, $t5 - $t4, $t4 - $t3, $t3 - $t2, $t2 - $t1, $t1 - $t0));
-
-		echo $x;
-		killme();
+		json_return_and_die($result);
 	}
 
 }

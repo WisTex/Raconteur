@@ -396,7 +396,7 @@ define ( 'VNOTIFY_FILES',      0x0800 );
 define ( 'VNOTIFY_PUBS',       0x1000 );
 define ( 'VNOTIFY_LIKE',       0x2000 );
 define ( 'VNOTIFY_FORUMS',     0x4000 );
-
+define ( 'VNOTIFY_REPORTS',    0x8000 );
 
 
 /**
@@ -577,7 +577,7 @@ define ( 'ITEM_TYPE_DOC',        5 );
 define ( 'ITEM_TYPE_CARD',       6 );
 define ( 'ITEM_TYPE_ARTICLE',    7 );
 define ( 'ITEM_TYPE_MAIL',       8 );
-
+define ( 'ITEM_TYPE_REPORT',     9 );
 
 define ( 'ITEM_IS_STICKY',       1000 );
 

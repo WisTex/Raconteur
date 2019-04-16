@@ -1137,8 +1137,16 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace("/\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '<a class="zrl" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
 	}
 
-//	if (get_account_techlevel() < 2)
-//		$Text = str_replace('<span class="bookmark-identifier">#^</span>', '', $Text);
+	// named anchors do not work well in conversational text, as it is often collapsed by a "showmore" script.
+	// Included here for completeness.
+	
+	if (strpos($Text,'[/anchor]') !== false) {
+		$Text = preg_replace("/\[anchor\](.*?)\[\/anchor\]/ism", '<a name="$1"></a>', $Text);
+	}
+
+	if (strpos($Text,'[/goto]') !== false) {
+		$Text = preg_replace("/\[goto=(.*?)\](.*?)\[\/goto\]/ism", '<a href="#$1">$2</a>', $Text);
+	}
 
 	// Perform MAIL Search
 	if (strpos($Text,'[/mail]') !== false) {
