@@ -150,6 +150,9 @@
 								{{/if}}
 								{{include file="field_intcheckbox.tpl" field=$vnotify14}}
 								{{include file="field_intcheckbox.tpl" field=$vnotify15}}
+								{{if $vnotify16}}
+									{{include file="field_intcheckbox.tpl" field=$vnotify16}}
+								{{/if}}
 								{{include file="field_intcheckbox.tpl" field=$always_show_in_notices}}
 								{{include file="field_input.tpl" field=$evdays}}
 							</div>

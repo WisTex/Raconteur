@@ -3,7 +3,7 @@
 namespace Zotlabs\Module\Admin;
 
 use Zotlabs\Lib\System;
-
+use Zotalbs\Access\PermissionRoles;
 
 class Site {
 
@@ -69,7 +69,7 @@ class Site {
 		$proxy             = ((x($_POST,'proxy'))            ? notags(trim($_POST['proxy']))      : '');
 		$timeout           = ((x($_POST,'timeout'))          ? intval(trim($_POST['timeout']))    : 60);
 		$delivery_interval = ((x($_POST,'delivery_interval'))? intval(trim($_POST['delivery_interval'])) : 0);
-		$delivery_batch_count = ((x($_POST,'delivery_batch_count') && $_POST['delivery_batch_count'] > 0)? intval(trim($_POST['delivery_batch_count'])) : 1);
+		$delivery_batch_count = ((x($_POST,'delivery_batch_count') && $_POST['delivery_batch_count'] > 0)? intval(trim($_POST['delivery_batch_count'])) : 3);
 		$poll_interval     = ((x($_POST,'poll_interval'))    ? intval(trim($_POST['poll_interval'])) : 0);
 		$maxloadavg        = ((x($_POST,'maxloadavg'))       ? intval(trim($_POST['maxloadavg'])) : 50);
 		$feed_contacts     = ((x($_POST,'feed_contacts'))    ? intval($_POST['feed_contacts'])    : 0);
@@ -108,18 +108,21 @@ class Site {
 		set_config('system', 'pubstream_excl',$pub_excl);
 
 
-		if($directory_server)
+		if ($directory_server) {
 			set_config('system','directory_server',$directory_server);
-
+		}
+		
 		if ($banner == '') {
 			del_config('system', 'banner');
-		} else {
+		}
+		else {
 			set_config('system', 'banner', $banner);
 		}
 
-		if ($admininfo == ''){
+		if ($admininfo == '') {
 			del_config('system', 'admininfo');
-		} else {
+		}
+		else {
 			require_once('include/text.php');
 			linkify_tags($admininfo, local_channel());
 			set_config('system', 'admininfo', $admininfo);
@@ -127,11 +130,6 @@ class Site {
 		set_config('system','siteinfo',$siteinfo);
 		set_config('system', 'language', $language);
 		set_config('system', 'theme', $theme);
-//		if ( $theme_mobile === '---' ) {
-//			del_config('system', 'mobile_theme');
-//		} else {
-//			set_config('system', 'mobile_theme', $theme_mobile);
-//		}
 	//	set_config('system','site_channel', $site_channel);
 		set_config('system','maximagesize', $maximagesize);
 
@@ -227,7 +225,7 @@ class Site {
 		// directory server should not be set or settable unless we are a directory client
 		// avoid older redmatrix servers which don't have modern encryption
 
-		if($dirmode == DIRECTORY_MODE_NORMAL) {
+		if ($dirmode == DIRECTORY_MODE_NORMAL) {
 			$x = q("select site_url from site where site_flags in (%d,%d) and site_realm = '%s' and site_dead = 0",
 				intval(DIRECTORY_MODE_SECONDARY),
 				intval(DIRECTORY_MODE_PRIMARY),
@@ -248,22 +246,23 @@ class Site {
 		$banner = htmlspecialchars($banner);
 
 		/* Admin Info */
+		
 		$admininfo = get_config('system', 'admininfo');
 
 		/* Register policy */
-		$register_choices = Array(
+		$register_choices = [
 			REGISTER_CLOSED  => t("No"),
 			REGISTER_APPROVE => t("Yes - with approval"),
 			REGISTER_OPEN    => t("Yes")
-		);
+		];
 
 		/* Acess policy */
-		$access_choices = Array(
+		$access_choices = [
 			ACCESS_PRIVATE => t("My site is not a public server"),
-			ACCESS_PAID => t("My site has paid access only"),
-			ACCESS_FREE => t("My site has free access only"),
-			ACCESS_TIERED => t("My site offers free accounts with optional paid upgrades")
-		);
+			ACCESS_PAID    => t("My site has paid access only"),
+			ACCESS_FREE    => t("My site has free access only"),
+			ACCESS_TIERED  => t("My site offers free accounts with optional paid upgrades")
+		];
 
 		$discover_tab = get_config('system','disable_discover_tab');
 
@@ -274,7 +273,7 @@ class Site {
 		$discover_tab = (1 - $discover_tab);
 
 
-		$perm_roles = \Zotlabs\Access\PermissionRoles::roles();
+		$perm_roles = PermissionRoles::roles();
 		$default_role = get_config('system','default_permissions_role','social');
 
 		$role = array('permissions_role' , t('Default permission role for new accounts'), $default_role, t('This role will be used for the first channel created after registration.'),$perm_roles);
@@ -338,7 +337,7 @@ class Site {
 			'$proxy'			=> array('proxy', t("Proxy URL"), get_config('system','proxy'), ""),
 			'$timeout'			=> array('timeout', t("Network timeout"), (x(get_config('system','curl_timeout'))?get_config('system','curl_timeout'):60), t("Value is in seconds. Set to 0 for unlimited (not recommended).")),
 			'$delivery_interval'			=> array('delivery_interval', t("Delivery interval"), (x(get_config('system','delivery_interval'))?get_config('system','delivery_interval'):2), t("Delay background delivery processes by this many seconds to reduce system load. Recommend: 4-5 for shared hosts, 2-3 for virtual private servers. 0-1 for large dedicated servers.")),
-			'$delivery_batch_count' => array('delivery_batch_count', t('Deliveries per process'),(x(get_config('system','delivery_batch_count'))?get_config('system','delivery_batch_count'):1), t("Number of deliveries to attempt in a single operating system process. Adjust if necessary to tune system performance. Recommend: 1-5.")),
+			'$delivery_batch_count' => array('delivery_batch_count', t('Deliveries per process'),(x(get_config('system','delivery_batch_count'))?get_config('system','delivery_batch_count'):3), t("Number of deliveries to attempt in a single operating system process. Adjust if necessary to tune system performance. Recommend: 1-5.")),
 			'$force_queue'			=> array('force_queue', t("Queue Threshold"), get_config('system','force_queue_threshold',3000), t("Always defer immediate delivery if queue contains more than this number of entries.")),
 			'$poll_interval'			=> array('poll_interval', t("Poll interval"), (x(get_config('system','poll_interval'))?get_config('system','poll_interval'):2), t("Delay background polling processes by this many seconds to reduce system load. If 0, use delivery interval.")),
 			'$imagick_path'			=> array('imagick_path', t("Path to ImageMagick convert program"), get_config('system','imagick_convert_path'), t("If set, use this program to generate photo thumbnails for huge images ( > 4000 pixels in either dimension), otherwise memory exhaustion may occur. Example: /usr/bin/convert")),
