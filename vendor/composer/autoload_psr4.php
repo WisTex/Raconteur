@@ -24,6 +24,7 @@ return array(
     'Ramsey\\Uuid\\' => array($vendorDir . '/ramsey/uuid/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
     'Michelf\\' => array($vendorDir . '/michelf/php-markdown/Michelf'),
+    'Masterminds\\' => array($vendorDir . '/masterminds/html5/src'),
     'League\\HTMLToMarkdown\\' => array($vendorDir . '/league/html-to-markdown/src'),
     'League\\Flysystem\\' => array($vendorDir . '/league/flysystem/src'),
     'ID3Parser\\' => array($vendorDir . '/lukasreschke/id3parser/src'),
