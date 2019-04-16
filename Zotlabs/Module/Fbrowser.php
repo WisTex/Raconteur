@@ -6,11 +6,8 @@ namespace Zotlabs\Module;
  * @author		Fabio Comuni <fabrixxm@kirgroup.com>
  */
 
-require_once('include/photo/photo_driver.php');
+require_once('include/photo_factory.php');
 
-/**
- * @param App $a
- */
 
 class Fbrowser extends \Zotlabs\Web\Controller {
 

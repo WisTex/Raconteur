@@ -177,7 +177,7 @@ class Import extends \Zotlabs\Web\Controller {
 
 		if(array_key_exists('channel',$data)) {
 			if($data['photo']) {
-				require_once('include/photo/photo_driver.php');
+				require_once('include/photo_factory.php');
 				import_channel_photo(base64url_decode($data['photo']['data']),$data['photo']['type'],$account_id,$channel['channel_id']);
 			}
 
@@ -281,7 +281,7 @@ class Import extends \Zotlabs\Web\Controller {
 
 				xchan_store_lowlevel($xchan);
 
-				require_once('include/photo/photo_driver.php');
+				require_once('include/photo_fatcory.php');
 
 				if($xchan['xchan_hash'] === $channel['channel_hash']) {
 					$r = q("update xchan set xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s' where xchan_hash = '%s'",

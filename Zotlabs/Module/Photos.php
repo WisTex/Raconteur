@@ -7,7 +7,7 @@ use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Daemon\Master;
 
-require_once('include/photo/photo_driver.php');
+require_once('include/photo_factory.php');
 require_once('include/photos.php');
 require_once('include/acl_selectors.php');
 require_once('include/bbcode.php');

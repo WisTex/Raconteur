@@ -29,12 +29,12 @@
 		include_once($file);
 	}
 
-	echo "Directory: include/photo\n";
-	$files = glob('include/photo/*.php');
-	foreach($files as $file) {
-		echo exec($cmd . $file) . "\n";
-		include_once($file);
-	}
+//	echo "Directory: include/photo\n";
+//	$files = glob('include/photo/*.php');
+//	foreach($files as $file) {
+//		echo exec($cmd . $file) . "\n";
+//		include_once($file);
+//	}
 
 
 	echo "Directory: Zotlabs\n";

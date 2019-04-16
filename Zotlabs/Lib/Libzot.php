@@ -826,7 +826,7 @@ class Libzot {
 
 		if($import_photos) {
 
-			require_once('include/photo/photo_driver.php');
+			require_once('include/photo_factory.php');
 
 			// see if this is a channel clone that's hosted locally - which we treat different from other xchans/connections
 

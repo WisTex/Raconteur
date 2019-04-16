@@ -748,7 +748,7 @@ function scale_external_images($s, $include_link = true, $scale_replace = false)
 	$matches = null;
 	$c = preg_match_all('/\[([zi])mg(.*?)\](.*?)\[\/[zi]mg\]/ism', $s, $matches, PREG_SET_ORDER);
 	if($c) {
-		require_once('include/photo/photo_driver.php');
+		require_once('include/photo_factory.php');
 
 		foreach($matches as $mtch) {
 			logger('data: ' . $mtch[2] . ' ' . $mtch[3]);
