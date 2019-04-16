@@ -9,6 +9,7 @@ use Zotlabs\Lib\Queue;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Keyutils;
 use Zotlabs\Daemon\Master;
+use Masterminds\HTML5;
 
 /**
  * @file include/network.php
@@ -1450,7 +1451,7 @@ function fetch_xrd_links($url) {
  */
 
 function scrape_feed($url) {
-	require_once('library/HTML5/Parser.php');
+
 
 	$ret = array();
 	$level = 0;
@@ -1491,8 +1492,9 @@ function scrape_feed($url) {
 		}
 	}
 
+	$html5 = new HTML5();
 	try {
-		$dom = HTML5_Parser::parse($s);
+		$dom = $html5->loadHTML($s);
 	} catch (DOMException $e) {
 		logger('Parse error: ' . $e);
 	}
@@ -2054,7 +2056,6 @@ function probe_api_path($host) {
 
 function scrape_vcard($url) {
 
-	require_once('library/HTML5/Parser.php');
 
 	$ret = array();
 
@@ -2079,8 +2080,10 @@ function scrape_vcard($url) {
 		}
 	}
 
+	$html5 = new HTML5();
+
 	try {
-		$dom = HTML5_Parser::parse($s);
+		$dom = $html5->loadHTML($s);
 	} catch (DOMException $e) {
 		logger('Parse error: ' . $e);
 	}
