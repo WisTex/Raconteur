@@ -8,6 +8,8 @@ class Webfinger extends Controller {
 
 	function init() {
 
+		logger('webfinger from ' . $_SERVER['REMOTE_ADDR']);
+
 		// This is a public resource with relaxed CORS policy. Close the current login session.
 		session_write_close();
 

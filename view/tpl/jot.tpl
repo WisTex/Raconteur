@@ -341,6 +341,14 @@
 					<li><input type="radio" name="link_style" value="0" > {{$weblink_style.0}}</li>
 					<li><input type="radio" name="link_style" value="1" checked > {{$weblink_style.1}}</li>
 					</ul>
+					<div class="clearfix form-group">
+					<label for="id_oembed">Discover oEmbed</label>
+					<div class="float-right"><input type="checkbox" name='oembed' id='id_oembed' value="1" checked="checked" ></div>
+					</div>
+					<div class="clearfix form-group">
+					<label for="id_zotobj">Discover ZotObjects</label>
+					<div class="float-right"><input type="checkbox" name='zotobj' id='id_zotobj' value="1" checked="checked" ></div>
+					</div>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$linkModalCANCEL}}</button>
