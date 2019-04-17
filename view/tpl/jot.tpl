@@ -335,13 +335,12 @@
 				<h4 class="modal-title" id="linkModalLabel">{{$linkurl}}</h4>
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			</div>
-			<div class="modal-body form-group" style="width:90%">
+			<div class="modal-body form-group" style="width:100%">
 					<input type="text" name="link_url" id="id_link_url" class="form-control" >
-					<ul style="list-style: none; margin-top: 5px;">
-					<li><input type="radio" name="link_style" value="0" > {{$weblink_style.0}}</li>
-					<li><input type="radio" name="link_style" value="1" checked > {{$weblink_style.1}}</li>
-					</ul>
-					<div id="linkmodaldiscover">
+					<div style="margin-top: 10px;"><input type="radio" name="link_style" value="0" > {{$weblink_style.0}}</div>
+					<div style="margin-top: 5px;"><input type="radio" name="link_style" value="1" checked > {{$weblink_style.1}}</div>
+
+					<div id="linkmodaldiscover" style="margin-top: 10px;">
 						<div class="clearfix form-group">
 							<label for="id_oembed">{{$discombed}}</label>
 							<div class="float-right"><input type="checkbox" name='oembed' id='id_oembed' value="1" checked ></div>
