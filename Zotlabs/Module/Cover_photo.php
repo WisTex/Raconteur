@@ -2,7 +2,9 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\Libprofile;
 use Zotlabs\Access\AccessControl;
+use Zotlabs\Web\Controller;
 
 /* 
    @file cover_photo.php
@@ -31,7 +33,7 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 		}
 	
 		$channel = \App::get_channel();
-		profile_load($channel['channel_address']);	
+		Libprofile::load($channel['channel_address']);	
 	}
 	
 	/**

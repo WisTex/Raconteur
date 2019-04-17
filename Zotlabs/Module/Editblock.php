@@ -1,11 +1,15 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Lib\Libprofile;
+use Zotlabs\Web\Controller;
+
 require_once('include/channel.php');
 require_once('include/acl_selectors.php');
 require_once('include/conversation.php');
 
-class Editblock extends \Zotlabs\Web\Controller {
+class Editblock extends Controller {
 
 	function init() {
 
@@ -21,7 +25,7 @@ class Editblock extends \Zotlabs\Web\Controller {
 		else
 			return;
 
-		profile_load($which);
+		Libprofile::load($which);
 
 	}
 

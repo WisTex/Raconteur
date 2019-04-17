@@ -3,7 +3,9 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\PermissionDescription;
+use Zotlabs\Web\Controller;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Daemon\Master;
 
@@ -16,7 +18,7 @@ require_once('include/attach.php');
 require_once('include/text.php');
 
 
-class Photos extends \Zotlabs\Web\Controller {
+class Photos extends Controller {
 
 	function init() {
 	
@@ -28,7 +30,7 @@ class Photos extends \Zotlabs\Web\Controller {
 
 			$nick = escape_tags(argv(1));
 	
-			profile_load($nick);
+			Libprofile::load($nick);
 	
 			$channelx = channelx_by_nick($nick);
 

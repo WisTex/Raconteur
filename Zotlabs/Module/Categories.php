@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Libprofile;
 use Zotlabs\Web\Controller;
 use Zotlabs\Render\Comanche;
 
@@ -17,7 +18,7 @@ class Categories extends Controller {
 			if($channel && $channel['channel_address']) {
 				$which = $channel['channel_address'];
 			}
-			profile_load($which,0);
+			Libprofile::load($which,0);
 		}
 
 	}

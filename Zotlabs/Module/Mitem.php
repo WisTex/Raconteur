@@ -1,11 +1,15 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Libprofile;
+
 require_once('include/menu.php');
 require_once('include/acl_selectors.php');
 
 
-class Mitem extends \Zotlabs\Web\Controller {
+class Mitem extends Controller {
 
 	function init() {
 
@@ -21,7 +25,7 @@ class Mitem extends \Zotlabs\Web\Controller {
 		else
 			return;
 
-		profile_load($which);
+		Libprofile::load($which);
 	
 		if(argc() < 3)
 			return;

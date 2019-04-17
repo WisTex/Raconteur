@@ -1,8 +1,11 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Libprofile;
 
-class Hcard extends \Zotlabs\Web\Controller {
+class Hcard extends Controller {
 
 	function init() {
 	
@@ -55,7 +58,7 @@ class Hcard extends \Zotlabs\Web\Controller {
 	        }
 	    }
 	
-		profile_load($which,$profile);
+		Libprofile::load($which,$profile);
 	
 	
 	}

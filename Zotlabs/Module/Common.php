@@ -1,10 +1,14 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Lib\Libprofile;
+use Zotlabs\Web\Controller;
+
 require_once('include/socgraph.php');
 
 
-class Common extends \Zotlabs\Web\Controller {
+class Common extends Controller {
 
 	function init() {
 	
@@ -21,7 +25,7 @@ class Common extends \Zotlabs\Web\Controller {
 		);
 	
 		if($x)
-			profile_load($x[0]['channel_address'],0);
+			Libprofile::load($x[0]['channel_address'],0);
 	
 	}
 	

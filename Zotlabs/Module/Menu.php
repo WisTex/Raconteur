@@ -1,11 +1,14 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Libprofile;
+
 require_once('include/menu.php');
-require_once('include/channel.php');
 
 
-class Menu extends \Zotlabs\Web\Controller {
+class Menu extends Controller {
 
 
 	function init() {
@@ -22,7 +25,7 @@ class Menu extends \Zotlabs\Web\Controller {
 		else
 			return;
 
-		profile_load($which);
+		Libprofile::load($which);
 
 	}
 

@@ -8,7 +8,9 @@ namespace Zotlabs\Module;
  */
 
 use Sabre\DAV as SDAV;
-use \Zotlabs\Storage;
+use Zotlabs\Storage;
+use Zotlabs\Lib\Libprofile;
+use Zotlabs\Web\Controller;
 
 // composer autoloader for SabreDAV
 require_once('vendor/autoload.php');
@@ -20,7 +22,7 @@ require_once('include/attach.php');
  * @brief Cloud Module.
  *
  */
-class Cloud extends \Zotlabs\Web\Controller {
+class Cloud extends Controller {
 
 	/**
 	 * @brief Fires up the SabreDAV server.
@@ -45,7 +47,7 @@ class Cloud extends \Zotlabs\Web\Controller {
 		$profile = 0;
 
 		if ($which)
-			profile_load( $which, $profile);
+			Libprofile::load( $which, $profile);
 
 
 

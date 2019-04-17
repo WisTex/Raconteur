@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\Crypto;
@@ -127,10 +128,10 @@ class Channel extends Controller {
 
 		}
 
-		// Run profile_load() here to make sure the theme is set before
+		// Run Libprofile::load() here to make sure the theme is set before
 		// we start loading content
 
-		profile_load($which,$profile);
+		Libprofile::load($which,$profile);
 
 	}
 

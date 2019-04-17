@@ -1,6 +1,9 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\LDSignatures;
@@ -98,7 +101,7 @@ class Profile extends \Zotlabs\Web\Controller {
 			killme();
 		}
 
-		profile_load($which,$profile);	
+		Libprofile::load($which,$profile);	
 	
 	}
 	
