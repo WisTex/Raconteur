@@ -73,6 +73,16 @@ function abook_connections($channel_id, $sql_conditions = '') {
 	return(($r) ? $r : array());
 }	
 
+
+function abook_by_hash($channel_id, $hash) {
+	$r = q("select * from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d
+		and abook_self = 0 and abook_xchan = '%s'",
+		intval($channel_id),
+		dbesc($hash)
+	);
+	return(($r) ? array_shift($r) : false);
+}	
+
 function abook_self($channel_id) {
 	$r = q("select * from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d
 		and abook_self = 1 limit 1",

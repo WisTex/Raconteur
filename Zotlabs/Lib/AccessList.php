@@ -136,6 +136,23 @@ class AccessList {
 		return false;
 	}
 
+	static function by_id($uid,$id) {
+		if((! $uid) || (! $id)) {
+			return false;
+		}
+		
+		$r = q("SELECT * FROM pgrp WHERE uid = %d AND id = %d and deleted = 0",
+			intval($uid),
+			intval($id)
+		);
+		if($r) {
+			return array_shift($r);
+		}
+		
+		return false;
+	}
+
+
 
 	static function rec_byhash($uid,$hash) {
 		if((! $uid) || (! strlen($hash)))
