@@ -13,7 +13,9 @@ class Linkinfo extends Controller {
 	
 		$text = null;
 		$str_tags = '';
-		$process_embed = true;	
+		$process_embed = true;
+		$process_oembed = (($_GET['oembed']) ? true : false);	
+		$process_zotobj = (($_GET['zotobj']) ? true : false);	
 	
 		$br = "\n";
 	
@@ -111,13 +113,14 @@ class Linkinfo extends Controller {
 			killme();
 		}
 
-
-		$x = oembed_process($url);
-		if($x) {
-			echo $x;
-			killme();
+		if($process_oembed) {
+			$x = oembed_process($url);
+			if($x) {
+				echo $x;
+				killme();
+			}
 		}
-	
+		
 		if($url && $title && $text) {
 	
 			$text = $br . '[quote]' . trim($text) . '[/quote]' . $br;

@@ -1431,6 +1431,8 @@ function z_status_editor($a, $x, $popup = false) {
 		'$summaryenabled' => $summaryenabled,
 		'$summary' => ((x($x, 'summary')) ? htmlspecialchars($x['summary'], ENT_COMPAT,'UTF-8') : ''),
 		'$placeholdsummary' => t('Summary'), 
+		'$discombed' => t('find remote media players (oEmbed)'),
+		'$disczot' => t('find shareable objects (Zot)'),
 		'$reset' => $reset
 	));
 
