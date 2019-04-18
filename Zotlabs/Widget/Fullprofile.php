@@ -2,15 +2,18 @@
 
 namespace Zotlabs\Widget;
 
+use App;
+use Zotlabs\Lib\Libprofile;
+
+
 class Fullprofile {
 
 	function widget($arr) {
 
-		if(! \App::$profile['profile_uid'])
-			return;
+		if (! App::$profile['profile_uid']) {
+			return EMPTY_STR;
+		}
 
-		$block = observer_prohibited();
-
-		return profile_sidebar(\App::$profile, $block);
+		return Libprofile::widget(App::$profile, observer_prohibited());
 	}
 }

@@ -146,7 +146,7 @@ class Profile extends \Zotlabs\Web\Controller {
 			'title' => 'oembed'
 		]);
 
-		$o .= advanced_profile();
+		$o .= Libprofile::advanced();
 		call_hooks('profile_advanced',$o);
 		return $o;
 	

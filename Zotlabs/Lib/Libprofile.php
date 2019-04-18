@@ -21,7 +21,7 @@ class Libprofile {
 	 * The channel default theme is also selected for use, unless over-riden elsewhere.
 	 *
 	 * @param string $nickname
-	 * @param string $profile
+	 * @param string $profile_guid
 	 */
 
 	static function load($nickname, $profile = '') {
@@ -44,22 +44,22 @@ class Libprofile {
 
 		// Can the observer see our profile?
 		require_once('include/permissions.php');
-		if(! perm_is_allowed($channel['channel_id'],$observer['xchan_hash'],'view_profile')) {
+		if (! perm_is_allowed($channel['channel_id'],$observer['xchan_hash'],'view_profile')) {
 			$can_view_profile = false;
 		}
 
-		if(! $profile) {
+		if (! $profile) {
 			$r = q("SELECT abook_profile FROM abook WHERE abook_xchan = '%s' and abook_channel = '%d' limit 1",
 				dbesc($observer['xchan_hash']),
 				intval($channel['channel_id'])
 			);
-			if($r)
+			if ($r)
 				$profile = $r[0]['abook_profile'];
 		}
 
 		$p = null;
 
-		if($profile) {
+		if ($profile) {
 			$p = q("SELECT profile.uid AS profile_uid, profile.*, channel.* FROM profile
 					LEFT JOIN channel ON profile.uid = channel.channel_id
 					WHERE channel.channel_address = '%s' AND profile.profile_guid = '%s' LIMIT 1",
@@ -68,7 +68,7 @@ class Libprofile {
 			);
 		}
 
-		if(! $p) {
+		if (! $p) {
 			$p = q("SELECT profile.uid AS profile_uid, profile.*, channel.* FROM profile
 				LEFT JOIN channel ON profile.uid = channel.channel_id
 				WHERE channel.channel_address = '%s' and channel_removed = 0
@@ -77,7 +77,7 @@ class Libprofile {
 			);
 		}
 
-		if(! $p) {
+		if (! $p) {
 			logger('profile error: ' . App::$query_string, LOGGER_DEBUG);
 			notice( t('Requested profile is not available.') . EOL );
 			App::$error = 404;
@@ -88,7 +88,7 @@ class Libprofile {
 			dbesc($p[0]['profile_guid']),
 			intval($p[0]['profile_uid'])
 		);
-		if($q) {
+		if ($q) {
 
 			$extra_fields = array();
 
@@ -96,14 +96,14 @@ class Libprofile {
 			$profile_fields_advanced = get_profile_fields_advanced();
 
 			$advanced = ((feature_enabled(local_channel(),'advanced_profiles')) ? true : false);
-			if($advanced)
+			if ($advanced)
 				$fields = $profile_fields_advanced;
 			else
 				$fields = $profile_fields_basic;
 
-			foreach($q as $qq) {
-				foreach($fields as $k => $f) {
-					if($k == $qq['k']) {
+			foreach ($q as $qq) {
+				foreach ($fields as $k => $f) {
+					if ($k == $qq['k']) {
 						$p[0][$k] = $qq['v'];
 						$extra_fields[] = $k;
 						break;
@@ -117,24 +117,24 @@ class Libprofile {
 		$z = q("select xchan_photo_date, xchan_addr from xchan where xchan_hash = '%s' limit 1",
 			dbesc($p[0]['channel_hash'])
 		);
-		if($z) {
+		if ($z) {
 			$p[0]['picdate'] = $z[0]['xchan_photo_date'];
 			$p[0]['reddress'] = str_replace('@','&#x40;',unpunify($z[0]['xchan_addr']));
 		}
 
 		// fetch user tags if this isn't the default profile
 
-		if(! $p[0]['is_default']) {
+		if (! $p[0]['is_default']) {
 			$x = q("select keywords from profile where uid = %d and is_default = 1 limit 1",
 					intval($p[0]['profile_uid'])
 			);
-			if($x && $can_view_profile)
+			if ($x && $can_view_profile)
 				$p[0]['keywords'] = $x[0]['keywords'];
 		}
 
-		if($p[0]['keywords']) {
+		if ($p[0]['keywords']) {
 			$keywords = str_replace(array('#',',',' ',',,'),array('',' ',',',','),$p[0]['keywords']);
-			if(strlen($keywords) && $can_view_profile)
+			if (strlen($keywords) && $can_view_profile)
 				App::$page['htmlhead'] .= '<meta name="keywords" content="' . htmlentities($keywords,ENT_COMPAT,'UTF-8') . '" />' . "\r\n" ;
 		}
 
@@ -144,12 +144,12 @@ class Libprofile {
 
 		App::$profile['permission_to_view'] = $can_view_profile;
 
-		if($can_view_profile) {
+		if ($can_view_profile) {
 			$online = get_online_status($nickname);
 			App::$profile['online_status'] = $online['result'];
 		}
 
-		if(local_channel()) {
+		if (local_channel()) {
 			App::$profile['channel_mobile_theme'] = get_pconfig(local_channel(),'system', 'mobile_theme');
 			$_SESSION['mobile_theme'] = App::$profile['channel_mobile_theme'];
 		}
@@ -162,27 +162,27 @@ class Libprofile {
 
 	}
 
-	static function profile_edit_menu($uid) {
+	static function edit_menu($uid) {
 
-		$ret = array();
+		$ret = [];
 
 		$is_owner = (($uid == local_channel()) ? true : false);
 
 		// show edit profile to profile owner
-		if($is_owner) {
+		if ($is_owner) {
 			$ret['menu'] = array(
 				'chg_photo' => t('Change profile photo'),
 				'entries' => array(),
 			);
 
 			$multi_profiles = feature_enabled(local_channel(), 'multi_profiles');
-			if($multi_profiles) {
+			if ($multi_profiles) {
 				$ret['multi'] = 1;
-				$ret['edit'] = array(z_root(). '/profiles', t('Edit Profiles'), '', t('Edit'));
+				$ret['edit'] = [ z_root(). '/profiles', t('Edit Profiles'), '', t('Edit') ];
 				$ret['menu']['cr_new'] = t('Create New Profile');
 			}
 			else {
-				$ret['edit'] = array(z_root() . '/profiles/' . $uid, t('Edit Profile'), '', t('Edit'));
+				$ret['edit'] = [ z_root() . '/profiles/' . $uid, t('Edit Profile'), '', t('Edit') ];
 			}
 
 			$r = q("SELECT * FROM profile WHERE uid = %d",
@@ -194,7 +194,7 @@ class Libprofile {
 					if(!($multi_profiles || $rr['is_default']))
 						 continue;
 
-					$ret['menu']['entries'][] = array(
+					$ret['menu']['entries'][] = [
 						'photo'                => $rr['thumb'],
 						'id'                   => $rr['id'],
 						'alt'                  => t('Profile Image'),
@@ -202,7 +202,7 @@ class Libprofile {
 						'isdefault'            => $rr['is_default'],
 						'visible_to_everybody' => t('Visible to everybody'),
 						'edit_visibility'      => t('Edit visibility'),
-					);
+					];
 				}
 			}
 		}
@@ -225,7 +225,7 @@ class Libprofile {
 	 * Exceptions: Returns empty string if passed $profile is wrong type or not populated
 	 */
 
-	static function profile_sidebar($profile, $block = 0, $show_connect = true, $zcard = false) {
+	static function widget($profile, $block = 0, $show_connect = true, $zcard = false) {
 
 		$observer = App::get_observer();
 
@@ -293,7 +293,7 @@ class Libprofile {
 		}
 
 		if($profile['gender']) {
-			$profile['gender_icon'] = gender_icon($profile['gender']);
+			$profile['gender_icon'] = self::gender_icon($profile['gender']);
 		}
 
 		$firstname = ((strpos($profile['channel_name'],' '))
@@ -337,7 +337,7 @@ class Libprofile {
 			'$rating'        => '',
 			'$contact_block' => $contact_block,
 			'$change_photo'  => t('Change your profile photo'),
-			'$editmenu'      => profile_edit_menu($profile['uid'])
+			'$editmenu'      => self::edit_menu($profile['uid'])
 		));
 
 		$arr = [
@@ -538,7 +538,7 @@ class Libprofile {
 				'$exportlink' => '', // $exportlink,
 				'$profile' => $profile,
 				'$fields' => $clean_fields,
-				'$editmenu' => profile_edit_menu(App::$profile['profile_uid']),
+				'$editmenu' => self::edit_menu(App::$profile['profile_uid']),
 				'$things' => $things
 			));
 		}
