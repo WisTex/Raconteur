@@ -23,7 +23,7 @@ class Profiles extends Controller {
 				intval(argv(2)),
 				intval(local_channel())
 			);
-			if(! count($r)) {
+			if(! $r) {
 				notice( t('Profile not found.') . EOL);
 				goaway(z_root() . '/profiles');
 				return; // NOTREACHED
