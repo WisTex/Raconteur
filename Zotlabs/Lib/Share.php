@@ -13,6 +13,11 @@ class Share {
 		if(! $post_id)
 			return;
 	
+		if(is_array($post_id)) {
+			$this->item = $post_id;
+			return;
+		}
+		
 		if(! (local_channel() || remote_channel()))
 			return;
 	
@@ -75,8 +80,17 @@ class Share {
 	public function bbcode() {
 		$bb = EMPTY_STR;
 
-		if(! $this->item)
+		if (! $this->item)
 			return $bb;
+
+		if (! $this->item['author']) {
+			$author = q("select * from xchan where xchan_hash = '%s' limit 1",
+					dbesc($this->item['author_xchan'])
+			);
+			if ($author) {
+				$this->item['author'] = array_shift($author);
+			}
+		}
 
 		$is_photo = (($this->item['obj_type'] === ACTIVITY_OBJ_PHOTO) ? true : false);
 		if($is_photo) {

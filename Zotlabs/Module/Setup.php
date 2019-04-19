@@ -10,15 +10,16 @@ namespace Zotlabs\Module;
  * @todo This setup module could need some love and improvements.
  */
 
-use Zotlabs\Lib\System;
-use Zotlabs\Web\Controller;
 use App;
 use DBA;
+use Zotlabs\Lib\System;
+use Zotlabs\Web\Controller;
 
 /**
  * @brief Initialisation for the setup module.
  *
  */
+
 class Setup extends Controller {
 
 	private static $install_wizard_pass = 1;
@@ -27,6 +28,7 @@ class Setup extends Controller {
 	 * {@inheritDoc}
 	 * @see \\Zotlabs\\Web\\Controller::init()
 	 */
+
 	function init() {
 		// Ensure that if somebody hasn't read the install documentation and doesn't have all
 		// the required modules or has a totally borked shared hosting provider and they can't
@@ -63,7 +65,7 @@ class Setup extends Controller {
 	 */
 	function post() {
 
-		switch($this->install_wizard_pass) {
+		switch ($this->install_wizard_pass) {
 			case 1:
 			case 2:
 				return;
@@ -148,7 +150,7 @@ class Setup extends Controller {
 
 				$result = file_put_contents('.htconfig.php', $txt);
 				if(! $result) {
-					\App::$data['txt'] = $txt;
+					App::$data['txt'] = $txt;
 				}
 
 				$errors = $this->load_database($db);
@@ -376,12 +378,12 @@ class Setup extends Controller {
 	 * @param string $help optional help string
 	 */
 	function check_add(&$checks, $title, $status, $required, $help = '') {
-		$checks[] = array(
+		$checks[] = [
 			'title'    => $title,
 			'status'   => $status,
 			'required' => $required,
 			'help'     => $help
-		);
+		];
 	}
 
 	/**
@@ -395,7 +397,7 @@ class Setup extends Controller {
 
 		if(version_compare(PHP_VERSION, '7.1') < 0) {
 			$help .= t('PHP version 7.1 or greater is required.');
-			$this->check_add($checks, t('PHP version'), false, false, $help);
+			$this->check_add($checks, t('PHP version'), false, true, $help);
 		}
 
 		if (strlen($phpath)) {
@@ -412,7 +414,7 @@ class Setup extends Controller {
 
 		if(!$passed) {
 			$help .= t('Could not find a command line version of PHP in the web server PATH.'). EOL;
-			$help .= t('If you don\'t have a command line version of PHP installed on server, you will not be able to run background polling via cron.') . EOL;
+			$help .= t('If you do not have a command line version of PHP installed on server, you will not be able to run background tasks - including message delivery.') . EOL;
 			$help .= EOL;
 			$tpl = get_markup_template('field_input.tpl');
 			$help .= replace_macros($tpl, array(

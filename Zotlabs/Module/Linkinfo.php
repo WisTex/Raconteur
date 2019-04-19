@@ -1,8 +1,12 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Web\Controller;
-
+use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib as Zlib;
 
 
 class Linkinfo extends Controller {
@@ -19,31 +23,31 @@ class Linkinfo extends Controller {
 	
 		$br = "\n";
 	
-		if(x($_GET,'binurl'))
+		if (x($_GET,'binurl'))
 			$url = trim(hex2bin($_GET['binurl']));
 		else
 			$url = trim($_GET['url']);
 	
-		if(substr($url,0,1) === '!') {
+		if (substr($url,0,1) === '!') {
 			$process_embed = false;
 			$url = substr($url,1);
 		}
 
 		$url = strip_zids($url);
 	
-		if((substr($url,0,1) != '/') && (substr($url,0,4) != 'http'))
+		if ((substr($url,0,1) != '/') && (substr($url,0,4) != 'http'))
 			$url = 'http://' . $url;
 	
 	
-		if($_GET['title'])
+		if ($_GET['title'])
 			$title = strip_tags(trim($_GET['title']));
 	
-		if($_GET['description'])
+		if ($_GET['description'])
 			$text = strip_tags(trim($_GET['description']));
 	
-		if($_GET['tags']) {
+		if ($_GET['tags']) {
 			$arr_tags = str_getcsv($_GET['tags']);
-			if(count($arr_tags)) {
+			if (count($arr_tags)) {
 				array_walk($arr_tags,'self::arr_add_hashes');
 				$str_tags = $br . implode(' ',$arr_tags) . $br;
 			}
@@ -53,8 +57,8 @@ class Linkinfo extends Controller {
 	
 		$zrl = is_matrix_url($url);
 
-		if(! $process_embed) {
-			if($zrl) {
+		if (! $process_embed) {
+			if ($zrl) {
 				echo $br . '[zrl]' . $url . '[/zrl]' . $br;
 			}
 			else {
@@ -64,7 +68,7 @@ class Linkinfo extends Controller {
 		}
 
 		$result = z_fetch_url($url,false,0,array('novalidate' => true, 'nobody' => true));
-		if($result['success']) {
+		if ($result['success']) {
 			$hdrs=array();
 			$h = explode("\n",$result['header']);
 			foreach ($h as $l) {
@@ -73,29 +77,29 @@ class Linkinfo extends Controller {
 			}
 			if (array_key_exists('content-type', $hdrs))
 				$type = $hdrs['content-type'];
-			if($type) {
-				if(stripos($type,'image/') !== false) {
-					if($zrl)
+			if ($type) {
+				if (stripos($type,'image/') !== false) {
+					if ($zrl)
 						echo $br . '[zmg]' . $url . '[/zmg]' . $br;
 					else
 						echo $br . '[img]' . $url . '[/img]' . $br;
 					killme();
 				}
-				if(stripos($type,'video/') !== false) {
-					if($zrl)
+				if (stripos($type,'video/') !== false) {
+					if ($zrl)
 						echo $br . '[zvideo]' . $url . '[/zvideo]' . $br;
 					else
 						echo $br . '[video]' . $url . '[/video]' . $br;
 					killme();
 				}
-				if(stripos($type,'audio/') !== false) {
-					if($zrl)
+				if (stripos($type,'audio/') !== false) {
+					if ($zrl)
 						echo $br . '[zaudio]' . $url . '[/zaudio]' . $br;
 					else
 						echo $br . '[audio]' . $url . '[/audio]' . $br;
 					killme();
 				}
-				if(strtolower($type) === 'application/pdf' || strtolower($type) === 'application/x-pdf') {
+				if (strtolower($type) === 'application/pdf' || strtolower($type) === 'application/x-pdf') {
 					echo $br . '[embed]' . $url . '[/embed]' . $br;
 					killme();
 				}
@@ -108,20 +112,48 @@ class Linkinfo extends Controller {
 	
 		call_hooks('parse_link', $arr);
 	
-		if(strlen($arr['text'])) {
+		if (strlen($arr['text'])) {
 			echo $arr['text'];
 			killme();
 		}
 
-		if($process_oembed) {
+		if ($process_oembed) {
 			$x = oembed_process($url);
-			if($x) {
+			if ($x) {
 				echo $x;
 				killme();
 			}
 		}
 		
-		if($url && $title && $text) {
+		if ($process_zotobj) {
+			$x = Activity::fetch($url);
+			if (is_array($x)) {
+				$y = new ActivityStreams($x);
+				if ($y->is_valid()) {
+					$z = Activity::decode_note($y);
+					$r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_hash = '%s' OR hubloc_id_url = '%s'",
+						dbesc(is_array($y->actor) ? $y->actor['id'] : $y->actor),
+						dbesc(is_array($y->actor) ? $y->actor['id'] : $y->actor)
+					); 
+
+					if ($r) {
+						$r = Libzot::zot_record_preferred($r);
+						if ($z) {
+							$z['author_xchan'] = $r['hubloc_hash'];
+						}
+					}
+
+					if ($z) {
+						$s = new Zlib\Share($z);
+						echo $s->bbcode();
+						killme();
+					}
+				}
+			}
+		}
+
+
+		if ($url && $title && $text) {
 	
 			$text = $br . '[quote]' . trim($text) . '[/quote]' . $br;
 	
@@ -139,10 +171,10 @@ class Linkinfo extends Controller {
 	
 		// If the site uses this platform, use zrl rather than url so they get zids sent to them by default
 	
-		if(is_matrix_url($url))
+		if (is_matrix_url($url))
 			$template = str_replace('url','zrl',$template);
 	
-		if($siteinfo["title"] == "") {
+		if ($siteinfo["title"] == "") {
 			echo sprintf($template,$url,$url,'') . $str_tags;
 			killme();
 		} else {
@@ -152,12 +184,12 @@ class Linkinfo extends Controller {
 	
 		$image = "";
 	
-		if(isset($siteinfo['images']) && is_array($siteinfo['images']) && count($siteinfo["images"])) {
+		if (isset($siteinfo['images']) && is_array($siteinfo['images']) && count($siteinfo["images"])) {
 			/* Execute below code only if image is present in siteinfo */
 	
 			$total_images = 0;
 			$max_images = get_config('system','max_bookmark_images');
-			if($max_images === false)
+			if ($max_images === false)
 				$max_images = 2;
 			else
 				$max_images = intval($max_images);
@@ -172,16 +204,16 @@ class Linkinfo extends Controller {
 	                        }
 	                        $image .= "\n";
 				$total_images ++;
-				if($max_images && $max_images >= $total_images)
+				if ($max_images && $max_images >= $total_images)
 					break;
 	        }
 		}
 	
-		if(strlen($text)) {
+		if (strlen($text)) {
 			$text = $br.'[quote]'.trim($text).'[/quote]'.$br ;
 		}
 	
-		if($image) {
+		if ($image) {
 			$text = $br.$br.$image.$text;
 		}
 		$title = str_replace(array("\r","\n"),array('',''),$title);
@@ -216,7 +248,7 @@ class Linkinfo extends Controller {
 	        if ($schemearr["port"] != "")
 	                $complete .= ":".$schemearr["port"];
 	
-			if(strpos($urlarr['path'],'/') !== 0)
+			if (strpos($urlarr['path'],'/') !== 0)
 				$complete .= '/';
 	
 	        $complete .= $urlarr["path"];
@@ -236,7 +268,7 @@ class Linkinfo extends Controller {
 	
 	
 		$result = z_fetch_url($url,false,0,array('novalidate' => true));
-		if(! $result['success'])
+		if (! $result['success'])
 			return $siteinfo;
 	
 		$header = $result['header'];
@@ -244,7 +276,7 @@ class Linkinfo extends Controller {
 		
 		// Check codepage in HTTP headers or HTML if not exist
 		$cp = (preg_match('/Content-Type: text\/html; charset=(.+)\r\n/i', $header, $o) ? $o[1] : '');
-		if(empty($cp))
+		if (empty($cp))
 		    $cp = (preg_match('/meta.+content=["|\']text\/html; charset=([^"|\']+)/i', $body, $o) ? $o[1] : 'AUTO');
 
 		$body   = mb_convert_encoding($body, 'UTF-8', $cp);
