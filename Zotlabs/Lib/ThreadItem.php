@@ -200,7 +200,7 @@ class ThreadItem {
 			);
 		}
 
-		$filer = ((($conv->get_profile_owner() == local_channel()) && (! array_key_exists('real_uid',$item))) ? t("Save to Folder") : false);
+		$filer = ((($conv->get_profile_owner() == local_channel()) && (! array_key_exists('real_uid',$item))) ? t('Save to Folder') : false);
 
 		$profile_avatar = $item['author']['xchan_photo_m'];
 		$profile_link   = chanlink_hash($item['author_xchan']);
@@ -216,7 +216,7 @@ class ThreadItem {
 
 		// process action responses - e.g. like/dislike/attend/agree/whatever
 		$response_verbs = array('like');
-		if(feature_enabled($conv->get_profile_owner(),'dislike'))
+//		if(feature_enabled($conv->get_profile_owner(),'dislike'))
 			$response_verbs[] = 'dislike';
 		if($item['obj_type'] === ACTIVITY_OBJ_EVENT) {
 			$response_verbs[] = 'attendyes';
@@ -239,8 +239,8 @@ class ThreadItem {
 			}
 		}
 
-		if(! feature_enabled($conv->get_profile_owner(),'dislike'))
-			unset($conv_responses['dislike']);
+//		if(! feature_enabled($conv->get_profile_owner(),'dislike'))
+//			unset($conv_responses['dislike']);
   
 		$responses = get_responses($conv_responses,$response_verbs,$this,$item);
 

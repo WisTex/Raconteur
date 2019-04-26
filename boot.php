@@ -19,6 +19,10 @@ use Zotlabs\Daemon\Master;
 // composer autoloader for all namespaced Classes
 require_once('vendor/autoload.php');
 
+if(file_exists('addon/vendor/autoload.php')) {
+	require_once('addon/vendor/autoload.php');
+}
+
 require_once('include/config.php');
 require_once('include/network.php');
 require_once('include/plugin.php');
@@ -1493,9 +1497,10 @@ function fix_system_urls($oldurl, $newurl) {
 				dbesc($rv['xchan_hash'])
 			);
 
-			$y = q("update hubloc set hubloc_addr = '%s', hubloc_url = '%s', hubloc_url_sig = '%s', hubloc_host = '%s', hubloc_callback = '%s' where hubloc_hash = '%s' and hubloc_url = '%s'",
+			$y = q("update hubloc set hubloc_addr = '%s', hubloc_url = '%s', hubloc_id_url = '%s', hubloc_url_sig = '%s', hubloc_host = '%s', hubloc_callback = '%s' where hubloc_hash = '%s' and hubloc_url = '%s'",
 				dbesc($channel_address . '@' . $rhs),
 				dbesc($newurl),
+				dbesc(str_replace($oldurl,$newurl,$rv['hubloc_id_url'])),
 				dbesc(Libzot::sign($newurl,$c[0]['channel_prvkey'])),
 				dbesc($newhost),
 				dbesc($newurl . '/post'),
