@@ -98,15 +98,28 @@ class Wall_attach extends \Zotlabs\Web\Controller {
 			$s = "\n\n" . $r['body'] . "\n\n";
 		}
 		else {
-			$s =  "\n\n" . '[attachment]' . $r['data']['hash'] . ',' . $r['data']['revision'] . '[/attachment]' . "\n";
+			
+			if(strpos($r['data']['filetype'],'video') === 0) {
+				// give a wee bit of time for the background thumbnail processor to do its thing
+				// or else we'll never see a video poster
+				sleep(3);
+				$url = z_root() . '/cloud/' . $channel['channel_address'] . '/' . $r['data']['display_path'];
+				$thumb = Linkinfo::get_video_poster($url);
+				if($thumb) {
+					$s = "\n\n" . '[zvideo poster=\'' . $thumb . '\']' . $url . '[/zvideo]' . "\n\n";
+				}
+				else {
+					$s = "\n\n" . '[zvideo]' . $url . '[/zvideo]' . "\n\n";
+				}
+			}
+			if(strpos($r['data']['filetype'],'audio') === 0) {
+				$url = z_root() . '/cloud/' . $channel['channel_address'] . '/' . $r['data']['display_path'];
+				echo "\n\n" . '[zaudio]' . $url . '[/zaudio]' . "\n\n";
+			}
+			
+			$s .=  "\n\n" . '[attachment]' . $r['data']['hash'] . ',' . $r['data']['revision'] . '[/attachment]' . "\n";
 		}
 	
-
-		$sync = attach_export_data($channel,$r['data']['hash']);
-		if($sync) {
-			Libsync::build_sync_packet($channel['channel_id'],array('file' => array($sync)));
-		}
-
 		if($using_api)
 			return $s;
 

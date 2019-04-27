@@ -8,6 +8,7 @@ use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib as Zlib;
 
+require_once('include/security.php');
 
 class Linkinfo extends Controller {
 
@@ -86,6 +87,14 @@ class Linkinfo extends Controller {
 					killme();
 				}
 				if (stripos($type,'video/') !== false) {
+					$thumb = self::get_video_poster($url);
+					if($thumb) {
+						if ($zrl)
+							echo $br . '[zvideo poster=\'' . $thumb . '\']' . $url . '[/zvideo]' . $br;
+						else
+							echo $br . '[video poster=\'' . $thumb . '\']' . $url . '[/video]' . $br;
+						killme();
+					}
 					if ($zrl)
 						echo $br . '[zvideo]' . $url . '[/zvideo]' . $br;
 					else
@@ -261,7 +270,42 @@ class Linkinfo extends Controller {
 	
 	        return($complete);
 	}
-	
+
+	public static function get_video_poster($url) {
+
+		if(strpos($url,z_root() . '/cloud/') === false) {
+			return EMPTY_STR;
+		}
+		$m = parse_url($url,PHP_URL_PATH);
+		if($m) {
+			// strip leading '/cloud/'
+			$m = substr($m,7);
+		}
+		$nick = substr($m,0,strpos($m,'/'));
+		$p = substr($m,strpos($m,'/')+1);
+
+		// get the channel to check permissions
+		
+		$u = channelx_by_nick($nick);
+
+		if($u && $p) {
+
+			$sql_extra = permissions_sql(intval($u['channel_id']));
+
+			$r = q("select hash, content from attach where display_path = '%s' and uid = %d and os_storage = 1 $sql_extra limit 1",
+				dbesc($p),
+				intval($u['channel_id'])
+			);
+			if($r) {
+				$path = dbunescbin($r[0]['content']);
+				if($path && @file_exists($path . '.thumb')) {
+					return z_root() . '/poster/' . $nick . '/' . $r[0]['hash'];
+				}
+			}
+		}
+		return EMPTY_STR;
+	}
+
 	
 	public static function parseurl_getsiteinfo($url) {
 		$siteinfo = array();
