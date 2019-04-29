@@ -58,9 +58,26 @@ class Inspect extends Controller {
 					$item['attach'] = json_decode($item['attach'],true);
 				}				
 
-				$output = '<pre>' . print_array($item) . '</pre>' . EOL . EOL;
+				$output .= '<pre>' . print_array($item) . '</pre>' . EOL . EOL;
 			}
 		}
+
+		if ($item_type === 'xchan') {
+			$items = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_hash = '%s' or hubloc_addr = '%s' ",
+				dbesc($item_id),
+				dbesc($item_id)
+			);
+	
+			if(! $items) {
+				return $output;
+			}
+
+			foreach ($items as $item) {
+				$output .= '<pre>' . print_array($item) . '</pre>' . EOL . EOL;
+			}
+		}
+
+
 
 		return $output;
 	}
