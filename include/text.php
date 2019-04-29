@@ -3398,8 +3398,12 @@ function unique_multidim_array($array, $key) {
 
 } 
 
+// Much prettier formatting than print_r()
+// This assumes the output will be a web page and escapes angle-chars appropriately.
+// If this assumption changes the function will require a flag to conditionally escape. 
 
-function print_array($arr, $level = 0) {
+
+function print_array($arr, $escape = true, $level = 0) {
 
 	$o = EMPTY_STR;
 	$tabs = EMPTY_STR;
@@ -3412,10 +3416,10 @@ function print_array($arr, $level = 0) {
 		if(count($arr)) {
 			foreach($arr as $k => $v) {
 				if(is_array($v)) {
-					$o .= $tabs . '[' . $k . '] => ' . print_array($v, $level + 1) . "\n";
+					$o .= $tabs . '[' . (($escape) ? escape_tags($k) : $k) . '] => ' . print_array($v, $escape, $level + 1) . "\n";
 				}
 				else {
-					$o .= $tabs . '[' . $k . '] => ' . print_val($v) . ",\n";  
+					$o .= $tabs . '[' . (($escape) ? escape_tags($k) : $k)  . '] => ' . print_val($v, $escape) . ",\n";  
 				}
 			}
 		}
@@ -3425,13 +3429,13 @@ function print_array($arr, $level = 0) {
 	
 }
 
-function print_val($v) {
+function print_val($v, $escape = true) {
 	if(is_bool($v)) {
 		if($v) return 'true';
 		return 'false';
 	}
 	if(is_string($v)) {
-		return "'" . $v . "'";
+		return "'" . (($escape) ? escape_tags($v) : $v) . "'";
 	}
 	return $v;
 

@@ -1,4 +1,4 @@
-<?php /** @file */
+<?php
 
 namespace Zotlabs\Lib;
 
