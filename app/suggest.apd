@@ -1,5 +1,5 @@
-version: 1
-url: $baseurl/suggest
+version: 2
+url: $baseurl/suggestions
 requires: local_channel
 name: Suggest Channels
 photo: icon:lightbulb-o

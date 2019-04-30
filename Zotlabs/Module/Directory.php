@@ -3,6 +3,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libzotdir;
+use Zotlabs\Lib\Libsync;
 
 require_once('include/socgraph.php');
 require_once('include/bbcode.php');
@@ -13,11 +14,14 @@ class Directory extends \Zotlabs\Web\Controller {
 	function init() {
 		\App::set_pager_itemspage(60);
 	
-		if(x($_GET,'ignore')) {
+		if(x($_GET,'ignore') && local_channel()) {
 			q("insert into xign ( uid, xchan ) values ( %d, '%s' ) ",
 				intval(local_channel()),
 				dbesc($_GET['ignore'])
 			);
+			
+			Libsync::build_sync_packet(local_channel(), [ 'xign' => [ [ 'uid' => local_channel(), 'xchan' => $_GET['ignore'] ]]] );
+			
 			goaway(z_root() . '/directory?f=&suggest=1');
 		}
 	
