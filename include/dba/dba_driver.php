@@ -491,7 +491,7 @@ function db_indexes($table) {
 
 	if($table) {
 		if(ACTIVE_DBTYPE === DBTYPE_POSTGRES) {
-			$r = q("SELECT indexname from pg_indexes where tablename = '%s',
+			$r = q("SELECT indexname from pg_indexes where tablename = '%s'",
 				dbesc($table)
 			); 
 			if($r) {
