@@ -335,25 +335,43 @@ function insertCommentAttach(comment,id) {
 }
 
 function insertCommentURL(comment, id) {
-	reply = prompt(aStr.linkurl);
-	if(reply && reply.length) {
-		reply = bin2hex(reply);
-		$('body').css('cursor', 'wait');
-		$.get('linkinfo?f=&binurl=' + reply, function(data) {
-			var tmpStr = $("#comment-edit-text-" + id).val();
-			if(tmpStr == comment) {
-				tmpStr = "";
+	$('#linkModal').modal();
+	$('#id_link_url').focus();
+	$('#link-modal-OKButton').on('click', function() {
+		reply=$('#id_link_url').val();
+		if(reply && reply.length) {
+			var radioValue = $("input[name='link_style']:checked"). val();
+			if(radioValue == '0') {
+				reply = '!' + reply;
+			}
+			var optstr = '';
+			var opts =  $("input[name='oembed']:checked"). val();
+			if(opts) {
+				optstr = optstr + '&oembed=1';
+			}
+			var opts =  $("input[name='zotobj']:checked"). val();
+			if(opts) {
+				optstr = optstr + '&zotobj=1';
+			}
+			reply = bin2hex(reply);
+			$('body').css('cursor', 'wait');
+			$.get('linkinfo?f=&binurl=' + reply + optstr, function(data) {
+				$('#linkModal').modal('hide');
+				$("#comment-edit-text-" + id).focus();
 				$("#comment-edit-text-" + id).addClass("expanded");
 				openMenu("comment-tools-" + id);
-				$("#comment-edit-text-" + id).val(tmpStr);
-			}
 
-			textarea = document.getElementById("comment-edit-text-" +id);
-			textarea.value = textarea.value + data;
-			preview_comment(id);
-			$('body').css('cursor', 'auto');
-		});
-	}
+				var tmpStr = $("#comment-edit-text-" + id).val();
+
+				textarea = document.getElementById("comment-edit-text-" +id);
+				textarea.value = textarea.value + data;
+				preview_comment(id);
+				$('#id_link_url').val('');
+				$('body').css('cursor', 'auto');
+			});
+		}
+	});
+
 	return true;
 }
 
