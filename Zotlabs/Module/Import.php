@@ -281,7 +281,7 @@ class Import extends \Zotlabs\Web\Controller {
 
 				xchan_store_lowlevel($xchan);
 
-				require_once('include/photo_fatcory.php');
+				require_once('include/photo_factory.php');
 
 				if($xchan['xchan_hash'] === $channel['channel_hash']) {
 					$r = q("update xchan set xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s' where xchan_hash = '%s'",
@@ -445,6 +445,9 @@ class Import extends \Zotlabs\Web\Controller {
 		}
 
 		logger('import step 9');
+
+		if(is_array($data['xign']))
+			import_xign($channel,$data['xign']);
 
 		if(is_array($data['obj']))
 			import_objs($channel,$data['obj']);

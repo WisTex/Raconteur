@@ -156,6 +156,48 @@ function import_config($channel, $configs) {
 	}
 }
 
+
+function import_xign($channel, $xigns) {
+
+	if($channel && $xigns) {
+		foreach($xigns as $xign) {
+			unset($xign['id']);
+			$xign['uid'] = $channel['channel_id'];
+			create_table_from_array('xign', $xign);
+		}
+	}
+}
+
+
+function sync_xign($channel, $xigns) {
+
+	if($channel && $xigns) {
+		foreach($xigns as $xign) {
+			unset($xign['id']);
+			$xign['uid'] = $channel['channel_id'];
+			if(! $xign['xchan'])
+				continue;
+			if($xign['deleted']) {
+				q("delete from xign where uid = %d and xchan = '%s' ",
+					intval($xign['uid']),
+					dbesc($xign['xchan'])
+				);
+				continue;
+			}
+
+			$r = q("select * from xign where uid = %d and xchan = '%s' ",
+				intval($xign['uid']),
+				dbesc($xign['xchan'])
+			);
+			if(! $r)
+				create_table_from_array('xign', $xign);
+		}
+	}
+}
+
+
+
+
 /**
  * @brief Import profiles.
  *

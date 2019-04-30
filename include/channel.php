@@ -894,6 +894,13 @@ function identity_basic_export($channel_id, $sections = null) {
 		);
 		if($r)
 			$ret['group_member'] = $r;
+
+		$r = q("select * from xign where uid = %d ",
+			intval($channel_id)
+		);
+		if($r)
+			$ret['xign'] = $r;
+			
 	}
 
 	if(in_array('config',$sections)) {

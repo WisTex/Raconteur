@@ -2,8 +2,13 @@
 
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Activity;
+use Zotlabs\Daemon\Master;
 
-class React extends \Zotlabs\Web\Controller {
+
+
+class React extends Controller {
 
 	function get() {
 
@@ -45,7 +50,7 @@ class React extends \Zotlabs\Web\Controller {
 			}
 
 
-			$n = array();
+			$n = [] ;
 			$n['aid'] = $channel['channel_account_id'];
 			$n['uid'] = $channel['channel_id'];
 			$n['item_origin'] = true;
@@ -58,13 +63,15 @@ class React extends \Zotlabs\Web\Controller {
 			$n['body'] = "\n\n[zmg=32x32]" . z_root() . '/images/emoji/' . $emoji . '.png[/zmg]' . "\n\n";
 			$n['author_xchan'] = $channel['channel_hash'];
 
+			$object = json_encode(Activity::fetch_item( [ 'id' => $item['mid'] ] ));
+
 			$x = item_store($n); 
 
 			retain_item($postid);
 
 			if($x['success']) {
 				$nid = $x['item_id'];
-				 \Zotlabs\Daemon\Master::Summon(array('Notifier','like',$nid));
+				Master::Summon( [ 'Notifier', 'like', $nid ] );
 			}
 
 		}

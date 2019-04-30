@@ -337,6 +337,10 @@ class Libsync {
 				}
 			}
 
+
+			if(array_key_exists('xign',$arr) && $arr['xign'])
+				sync_xign($channel,$arr['xign']);
+
 			if(array_key_exists('obj',$arr) && $arr['obj'])
 				sync_objs($channel,$arr['obj']);
 
