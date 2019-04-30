@@ -42,7 +42,11 @@
 		"twbs/bootstrap": "4.1.3",
 		"indieweb/rel-me": "dev-master",
 		"blueimp/jquery-file-upload": "^9.23",
-		"league/flysystem": "^1.0"
+		"league/flysystem": "^1.0",
+		"simshaun/recurr": "^4.0",
+		"jbroadway/urlify": "^1.1",
+		"kzykhys/git": "^0.1.2",
+		"masterminds/html5": "^2.6"
 	},
 	"require-dev" : {
 		"phpunit/phpunit" : "@stable",

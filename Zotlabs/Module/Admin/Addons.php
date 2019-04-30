@@ -112,7 +112,6 @@ class Addons {
 					}
 				case 'installrepo':
 					if (array_key_exists('repoURL', $_REQUEST)) {
-						require_once('library/PHPGit.autoload.php');			// Load PHPGit dependencies
 						$repoURL = $_REQUEST['repoURL'];
 						$extendDir = 'store/[data]/git/sys/extend';
 						$addonDir = $extendDir . '/addon';
@@ -173,7 +172,6 @@ class Addons {
 					}
 				case 'addrepo':
 					if (array_key_exists('repoURL', $_REQUEST)) {
-						require_once('library/PHPGit.autoload.php');	 // Load PHPGit dependencies
 						$repoURL = $_REQUEST['repoURL'];
 						$extendDir = 'store/[data]/git/sys/extend';
 						$addonDir = $extendDir . '/addon';

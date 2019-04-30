@@ -69,7 +69,8 @@ function format_event_html($ev) {
 }
 
 function format_event_obj($jobject) {
-	$event = array();
+
+	$event = [];
 
 	$object = json_decode($jobject,true);
 
@@ -262,6 +263,9 @@ function format_event_bbcode($ev) {
 	if($ev['location'])
 		$o .= '[event-location]' . $ev['location'] . '[/event-location]';
 
+	if($ev['event_repeat'])
+		$o .= '[event-repeat]' . $ev['event_repeat'] . '[/event-repeat]';
+
 	if($ev['event_hash'])
 		$o .= '[event-id]' . $ev['event_hash'] . '[/event-id]';
 
@@ -309,6 +313,9 @@ function bbtoevent($s) {
 	$match = '';
 	if(preg_match("/\[event\-location\](.*?)\[\/event\-location\]/is",$s,$match))
 		$ev['location'] = $match[1];
+	$match = '';
+	if(preg_match("/\[event\-repeat\](.*?)\[\/event\-repeat\]/is",$s,$match))
+		$ev['event_repeat'] = $match[1];
 	$match = '';
 	if(preg_match("/\[event\-id\](.*?)\[\/event\-id\]/is",$s,$match))
 		$ev['event_hash'] = $match[1];
@@ -1073,10 +1080,15 @@ function event_store_item($arr, $event) {
 			'source'    => [ 'content' => format_event_bbcode($arr), 'mediaType' => 'text/bbcode' ],
 			'url'       => [ [ 'mediaType' => 'text/calendar', 'href' => z_root() . '/events/ical/' . $event['event_hash'] ] ],
 			'actor'     => Activity::encode_person($r[0],false),
+			'attachment' => Activity::encode_attachment($r[0]),
+			'tag'       => Activity::encode_taxonomy($r[0])
 		];
 
 		if(! $arr['nofinish']) {
 			$x['endTime'] = (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtend'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtend'],'Y-m-d\\TH:i:s-00:00'));
+		}
+		if($event['event_repeat']) {
+			$x['eventRepeat'] = $event['event_repeat'];
 		}
 		$object = json_encode($x);
 
@@ -1208,20 +1220,25 @@ function event_store_item($arr, $event) {
 		);
 		if($x) {
 			$y = [ 
-				'type'      => 'Event',
-				'id'        => z_root() . '/event/' . $event['event_hash'],
-				'summary'   => bbcode($arr['summary']),
+				'type'       => 'Event',
+				'id'         => z_root() . '/event/' . $event['event_hash'],
+				'summary'    => bbcode($arr['summary']),
 				// RFC3339 Section 4.3
-				'startTime' => (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtstart'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtstart'],'Y-m-d\\TH:i:s-00:00')),
-				'content'   => bbcode($arr['description']),
-				'location'  => [ 'type' => 'Place', 'content' => bbcode($arr['location']) ],
-				'source'    => [ 'content' => format_event_bbcode($arr), 'mediaType' => 'text/bbcode' ],
-				'url'       => [ [ 'mediaType' => 'text/calendar', 'href' => z_root() . '/events/ical/' . $event['event_hash'] ] ],
-				'actor'     => Activity::encode_person($z,false),
+				'startTime'  => (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtstart'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtstart'],'Y-m-d\\TH:i:s-00:00')),
+				'content'    => bbcode($arr['description']),
+				'location'   => [ 'type' => 'Place', 'content' => bbcode($arr['location']) ],
+				'source'     => [ 'content' => format_event_bbcode($arr), 'mediaType' => 'text/bbcode' ],
+				'url'        => [ [ 'mediaType' => 'text/calendar', 'href' => z_root() . '/events/ical/' . $event['event_hash'] ] ],
+				'actor'      => Activity::encode_person($z,false),
+				'attachment' => Activity::encode_attachment($item_arr),
+				'tag'        => Activity::encode_taxonomy($item_arr)
 			];
 
 			if(! $arr['nofinish']) {
 				$y['endTime'] = (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtend'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtend'],'Y-m-d\\TH:i:s-00:00'));
+			}
+			if($arr['event_repeat']) {
+				$y['eventRepeat'] = $arr['event_repeat'];
 			}
 
 			$item_arr['obj']  = json_encode($y);

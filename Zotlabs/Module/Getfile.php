@@ -83,9 +83,10 @@ class Getfile extends \Zotlabs\Web\Controller {
 		}			
 
 		if($resolution > 0) {
-			$r = q("select * from photo where resource_id = '%s' and uid = %d limit 1",
+			$r = q("select * from photo where resource_id = '%s' and uid = %d and imgscale = %d limit 1",
 				dbesc($resource),
-				intval($channel['channel_id'])
+				intval($channel['channel_id']),
+				intval($resolution)
 			);
 			if($r) {
 				header('Content-type: ' . $r[0]['mimetype']);

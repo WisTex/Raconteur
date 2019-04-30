@@ -5,7 +5,7 @@
  */
 
 require_once('include/permissions.php');
-require_once('include/photo/photo_driver.php');
+require_once('include/photo_factory.php');
 require_once('include/text.php');
 
 /**

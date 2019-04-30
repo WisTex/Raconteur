@@ -70,6 +70,16 @@ var activeCommentText = '';
 		});
 		{{/if}}
 
+		$("input[name='link_style']").change(function() {
+			var radioValue = $("input[name='link_style']:checked"). val();
+			if(radioValue == '0') {
+				$("#linkmodaldiscover").hide();
+			}
+			else {
+				$("#linkmodaldiscover").show();
+			}
+		});
+
 		function jotSetMime() { 
 			var mtype = $('#id_mimetype').val(); 
 			if(mtype == 'text/bbcode')
@@ -170,13 +180,23 @@ var activeCommentText = '';
 						$('#link-modal-OKButton').on('click', function() {
 							reply=$('#id_link_url').val();
 							if(reply && reply.length) {
-								radioValue = $("input[name='link_style']:checked"). val();
+								var radioValue = $("input[name='link_style']:checked"). val();
 								if(radioValue == '0') {
 									reply = '!' + reply;
 								}
-        	                    reply = bin2hex(reply);
+								var optstr = '';
+								var opts =  $("input[name='oembed']:checked"). val();
+								if(opts) {
+									optstr = optstr + '&oembed=1';
+								}
+								var opts =  $("input[name='zotobj']:checked"). val();
+								if(opts) {
+									optstr = optstr + '&zotobj=1';
+								}
+								
+								reply = bin2hex(reply);
             	                $('#profile-rotator').show();
-                	            $.get('{{$baseurl}}/linkinfo?f=&binurl=' + reply, function(data) {
+                	            $.get('{{$baseurl}}/linkinfo?f=&binurl=' + reply + optstr, function(data) {
                     	                addeditortext(data);
 										preview_post();
 										$('#id_link_url').val('');

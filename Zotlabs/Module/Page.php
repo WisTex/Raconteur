@@ -2,17 +2,21 @@
 namespace Zotlabs\Module;
 
 
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Libprofile;
+
 require_once('include/conversation.php');
 
 
-class Page extends \Zotlabs\Web\Controller {
+class Page extends Controller {
 
 	function init() {
 		// We need this to make sure the channel theme is always loaded.
 	
 		$which = argv(1);
 		$profile = 0;
-		profile_load($which,$profile);
+		Libprofile::load($which,$profile);
 	
 	
 	

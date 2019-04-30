@@ -1,20 +1,20 @@
 [
     {
         "name": "blueimp/jquery-file-upload",
-        "version": "v9.25.1",
-        "version_normalized": "9.25.1.0",
+        "version": "v9.28.0",
+        "version_normalized": "9.28.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/vkhramtsov/jQuery-File-Upload.git",
-            "reference": "28891f9b2bc339bcc1ca8d548e5401e8563bf04b"
+            "reference": "ff5accfe2e5c4a522777faa980a90cf86a636d1d"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/vkhramtsov/jQuery-File-Upload/zipball/28891f9b2bc339bcc1ca8d548e5401e8563bf04b",
-            "reference": "28891f9b2bc339bcc1ca8d548e5401e8563bf04b",
+            "url": "https://api.github.com/repos/vkhramtsov/jQuery-File-Upload/zipball/ff5accfe2e5c4a522777faa980a90cf86a636d1d",
+            "reference": "ff5accfe2e5c4a522777faa980a90cf86a636d1d",
             "shasum": ""
         },
-        "time": "2018-10-26T07:21:48+00:00",
+        "time": "2018-11-13T05:41:39+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -58,17 +58,17 @@
     },
     {
         "name": "bshaffer/oauth2-server-php",
-        "version": "v1.10.0",
-        "version_normalized": "1.10.0.0",
+        "version": "v1.11.1",
+        "version_normalized": "1.11.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/bshaffer/oauth2-server-php.git",
-            "reference": "d158878425392fe5a0cc34f15dbaf46315ae0ed9"
+            "reference": "5a0c8000d4763b276919e2106f54eddda6bc50fa"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/bshaffer/oauth2-server-php/zipball/d158878425392fe5a0cc34f15dbaf46315ae0ed9",
-            "reference": "d158878425392fe5a0cc34f15dbaf46315ae0ed9",
+            "url": "https://api.github.com/repos/bshaffer/oauth2-server-php/zipball/5a0c8000d4763b276919e2106f54eddda6bc50fa",
+            "reference": "5a0c8000d4763b276919e2106f54eddda6bc50fa",
             "shasum": ""
         },
         "require": {
@@ -89,7 +89,7 @@
             "predis/predis": "Required to use Redis storage",
             "thobbs/phpcassa": "Required to use Cassandra storage"
         },
-        "time": "2017-11-15T01:41:02+00:00",
+        "time": "2018-12-04T00:29:32+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -161,6 +161,78 @@
             }
         ],
         "description": "Internationalization library powered by CLDR data."
+    },
+    {
+        "name": "doctrine/collections",
+        "version": "v1.6.1",
+        "version_normalized": "1.6.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/doctrine/collections.git",
+            "reference": "d2ae4ef05e25197343b6a39bae1d3c427a2f6956"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/doctrine/collections/zipball/d2ae4ef05e25197343b6a39bae1d3c427a2f6956",
+            "reference": "d2ae4ef05e25197343b6a39bae1d3c427a2f6956",
+            "shasum": ""
+        },
+        "require": {
+            "php": "^7.1.3"
+        },
+        "require-dev": {
+            "doctrine/coding-standard": "^6.0",
+            "phpstan/phpstan-shim": "^0.9.2",
+            "phpunit/phpunit": "^7.0",
+            "vimeo/psalm": "^3.2.2"
+        },
+        "time": "2019-03-25T19:03:48+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.6.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Doctrine\\Common\\Collections\\": "lib/Doctrine/Common/Collections"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Roman Borschel",
+                "email": "roman@code-factory.org"
+            },
+            {
+                "name": "Benjamin Eberlei",
+                "email": "kontakt@beberlei.de"
+            },
+            {
+                "name": "Guilherme Blanco",
+                "email": "guilhermeblanco@gmail.com"
+            },
+            {
+                "name": "Jonathan Wage",
+                "email": "jonwage@gmail.com"
+            },
+            {
+                "name": "Johannes Schmitt",
+                "email": "schmittjoh@gmail.com"
+            }
+        ],
+        "description": "PHP Doctrine Collections library that adds additional functionality on top of PHP arrays.",
+        "homepage": "https://www.doctrine-project.org/projects/collections.html",
+        "keywords": [
+            "array",
+            "collections",
+            "iterators",
+            "php"
+        ]
     },
     {
         "name": "ezyang/htmlpurifier",
@@ -249,18 +321,125 @@
         "description": "Functions for discovering, consuming and verifying rel-me microformat"
     },
     {
-        "name": "league/flysystem",
-        "version": "1.0.48",
-        "version_normalized": "1.0.48.0",
+        "name": "jbroadway/urlify",
+        "version": "1.1.2-stable",
+        "version_normalized": "1.1.2.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/thephpleague/flysystem.git",
-            "reference": "a6ded5b2f6055e2db97b4b859fdfca2b952b78aa"
+            "url": "https://github.com/jbroadway/urlify.git",
+            "reference": "78118277ba31189fef18323bb78e9c1b89254dcc"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/a6ded5b2f6055e2db97b4b859fdfca2b952b78aa",
-            "reference": "a6ded5b2f6055e2db97b4b859fdfca2b952b78aa",
+            "url": "https://api.github.com/repos/jbroadway/urlify/zipball/78118277ba31189fef18323bb78e9c1b89254dcc",
+            "reference": "78118277ba31189fef18323bb78e9c1b89254dcc",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^4.8.36 || ^5.7 || ^6.5"
+        },
+        "time": "2018-12-08T15:51:20+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "URLify": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause-Clear"
+        ],
+        "authors": [
+            {
+                "name": "Johnny Broadway",
+                "email": "johnny@johnnybroadway.com",
+                "homepage": "http://www.johnnybroadway.com/"
+            }
+        ],
+        "description": "PHP port of URLify.js from the Django project. Transliterates non-ascii characters for use in URLs.",
+        "homepage": "https://github.com/jbroadway/urlify",
+        "keywords": [
+            "encode",
+            "iconv",
+            "link",
+            "slug",
+            "translit",
+            "transliterate",
+            "transliteration",
+            "url",
+            "urlify"
+        ]
+    },
+    {
+        "name": "kzykhys/git",
+        "version": "v0.1.2",
+        "version_normalized": "0.1.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/kzykhys/PHPGit.git",
+            "reference": "3c4db987494c38eac300593719a4a7832abddadd"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/kzykhys/PHPGit/zipball/3c4db987494c38eac300593719a4a7832abddadd",
+            "reference": "3c4db987494c38eac300593719a4a7832abddadd",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.2",
+            "symfony/options-resolver": ">=2.3",
+            "symfony/process": ">=2.3"
+        },
+        "require-dev": {
+            "symfony/filesystem": ">=2.3"
+        },
+        "time": "2014-02-15T06:18:00+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Kazuyuki Hayashi",
+                "email": "hayashi@valnur.net"
+            }
+        ],
+        "description": "A Git wrapper for PHP5.3+"
+    },
+    {
+        "name": "league/flysystem",
+        "version": "1.0.51",
+        "version_normalized": "1.0.51.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/thephpleague/flysystem.git",
+            "reference": "755ba7bf3fb9031e6581d091db84d78275874396"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/755ba7bf3fb9031e6581d091db84d78275874396",
+            "reference": "755ba7bf3fb9031e6581d091db84d78275874396",
             "shasum": ""
         },
         "require": {
@@ -290,7 +469,7 @@
             "spatie/flysystem-dropbox": "Allows you to use Dropbox storage",
             "srmklive/flysystem-dropbox-v2": "Allows you to use Dropbox storage for PHP 5 applications"
         },
-        "time": "2018-10-15T13:53:10+00:00",
+        "time": "2019-03-30T13:22:34+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -336,17 +515,17 @@
     },
     {
         "name": "league/html-to-markdown",
-        "version": "4.8.0",
-        "version_normalized": "4.8.0.0",
+        "version": "4.8.1",
+        "version_normalized": "4.8.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/html-to-markdown.git",
-            "reference": "f9a879a068c68ff47b722de63f58bec79e448f9d"
+            "reference": "250d1bf45f80d15594fb6b316df777d6d4c97ad1"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/f9a879a068c68ff47b722de63f58bec79e448f9d",
-            "reference": "f9a879a068c68ff47b722de63f58bec79e448f9d",
+            "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/250d1bf45f80d15594fb6b316df777d6d4c97ad1",
+            "reference": "250d1bf45f80d15594fb6b316df777d6d4c97ad1",
             "shasum": ""
         },
         "require": {
@@ -359,7 +538,7 @@
             "phpunit/phpunit": "4.*",
             "scrutinizer/ocular": "~1.1"
         },
-        "time": "2018-09-18T12:18:08+00:00",
+        "time": "2018-12-24T17:21:44+00:00",
         "bin": [
             "bin/html-to-markdown"
         ],
@@ -435,6 +614,75 @@
             "codecs",
             "php",
             "tags"
+        ]
+    },
+    {
+        "name": "masterminds/html5",
+        "version": "2.6.0",
+        "version_normalized": "2.6.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Masterminds/html5-php.git",
+            "reference": "c961ca6a0a81dc6b55b6859b3f9ea7f402edf9ad"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/c961ca6a0a81dc6b55b6859b3f9ea7f402edf9ad",
+            "reference": "c961ca6a0a81dc6b55b6859b3f9ea7f402edf9ad",
+            "shasum": ""
+        },
+        "require": {
+            "ext-ctype": "*",
+            "ext-dom": "*",
+            "ext-libxml": "*",
+            "php": ">=5.3.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^4.8.35",
+            "sami/sami": "~2.0",
+            "satooshi/php-coveralls": "1.0.*"
+        },
+        "time": "2019-03-10T11:41:28+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.6-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Masterminds\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Matt Butcher",
+                "email": "technosophos@gmail.com"
+            },
+            {
+                "name": "Asmir Mustafic",
+                "email": "goetas@gmail.com"
+            },
+            {
+                "name": "Matt Farina",
+                "email": "matt@mattfarina.com"
+            }
+        ],
+        "description": "An HTML5 parser and serializer.",
+        "homepage": "http://masterminds.github.io/html5-php",
+        "keywords": [
+            "HTML5",
+            "dom",
+            "html",
+            "parser",
+            "querypath",
+            "serializer",
+            "xml"
         ]
     },
     {
@@ -635,23 +883,23 @@
     },
     {
         "name": "psr/log",
-        "version": "1.0.2",
-        "version_normalized": "1.0.2.0",
+        "version": "1.1.0",
+        "version_normalized": "1.1.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/php-fig/log.git",
-            "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d"
+            "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/php-fig/log/zipball/4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
-            "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
+            "url": "https://api.github.com/repos/php-fig/log/zipball/6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
+            "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2016-10-10T12:19:37+00:00",
+        "time": "2018-11-20T15:27:04+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1023,17 +1271,17 @@
     },
     {
         "name": "sabre/vobject",
-        "version": "4.1.6",
-        "version_normalized": "4.1.6.0",
+        "version": "4.2.0",
+        "version_normalized": "4.2.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/sabre-io/vobject.git",
-            "reference": "122cacbdea2c6133ac04db86ec05854beef75adf"
+            "reference": "bd500019764e434ff65872d426f523e7882a0739"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sabre-io/vobject/zipball/122cacbdea2c6133ac04db86ec05854beef75adf",
-            "reference": "122cacbdea2c6133ac04db86ec05854beef75adf",
+            "url": "https://api.github.com/repos/sabre-io/vobject/zipball/bd500019764e434ff65872d426f523e7882a0739",
+            "reference": "bd500019764e434ff65872d426f523e7882a0739",
             "shasum": ""
         },
         "require": {
@@ -1042,13 +1290,12 @@
             "sabre/xml": ">=1.5 <3.0"
         },
         "require-dev": {
-            "phpunit/phpunit": "> 4.8.35, <6.0.0",
-            "sabre/cs": "^1.0.0"
+            "phpunit/phpunit": "> 4.8.35, <6.0.0"
         },
         "suggest": {
             "hoa/bench": "If you would like to run the benchmark scripts"
         },
-        "time": "2018-04-20T07:22:50+00:00",
+        "time": "2019-02-19T13:05:37+00:00",
         "bin": [
             "bin/vobject",
             "bin/generate_vcards"
@@ -1122,17 +1369,17 @@
     },
     {
         "name": "sabre/xml",
-        "version": "1.5.0",
-        "version_normalized": "1.5.0.0",
+        "version": "1.5.1",
+        "version_normalized": "1.5.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/sabre-io/xml.git",
-            "reference": "59b20e5bbace9912607481634f97d05a776ffca7"
+            "reference": "a367665f1df614c3b8fefc30a54de7cd295e444e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sabre-io/xml/zipball/59b20e5bbace9912607481634f97d05a776ffca7",
-            "reference": "59b20e5bbace9912607481634f97d05a776ffca7",
+            "url": "https://api.github.com/repos/sabre-io/xml/zipball/a367665f1df614c3b8fefc30a54de7cd295e444e",
+            "reference": "a367665f1df614c3b8fefc30a54de7cd295e444e",
             "shasum": ""
         },
         "require": {
@@ -1144,10 +1391,10 @@
             "sabre/uri": ">=1.0,<3.0.0"
         },
         "require-dev": {
-            "phpunit/phpunit": "*",
+            "phpunit/phpunit": "~4.8|~5.7",
             "sabre/cs": "~1.0.0"
         },
-        "time": "2016-10-09T22:57:52+00:00",
+        "time": "2019-01-09T13:51:57+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1263,6 +1510,63 @@
         }
     },
     {
+        "name": "simshaun/recurr",
+        "version": "v4.0",
+        "version_normalized": "4.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/simshaun/recurr.git",
+            "reference": "e7bccac5704b9710c8512fdd7cf78fb5445523a2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/simshaun/recurr/zipball/e7bccac5704b9710c8512fdd7cf78fb5445523a2",
+            "reference": "e7bccac5704b9710c8512fdd7cf78fb5445523a2",
+            "shasum": ""
+        },
+        "require": {
+            "doctrine/collections": "~1.3",
+            "php": ">=5.5.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4.5"
+        },
+        "time": "2019-02-24T03:15:15+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Recurr\\": "src/Recurr/",
+                "Recurr\\Test\\": "tests/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Shaun Simmons",
+                "email": "shaun@envysphere.com",
+                "homepage": "http://envysphere.com"
+            }
+        ],
+        "description": "PHP library for working with recurrence rules",
+        "homepage": "https://github.com/simshaun/recurr",
+        "keywords": [
+            "dates",
+            "events",
+            "recurrence",
+            "recurring",
+            "rrule"
+        ]
+    },
+    {
         "name": "smarty/smarty",
         "version": "v3.1.33",
         "version_normalized": "3.1.33.0",
@@ -1318,18 +1622,74 @@
         ]
     },
     {
-        "name": "symfony/polyfill-ctype",
-        "version": "v1.9.0",
-        "version_normalized": "1.9.0.0",
+        "name": "symfony/options-resolver",
+        "version": "v4.2.5",
+        "version_normalized": "4.2.5.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/symfony/polyfill-ctype.git",
-            "reference": "e3d826245268269cd66f8326bd8bc066687b4a19"
+            "url": "https://github.com/symfony/options-resolver.git",
+            "reference": "3896e5a7d06fd15fa4947694c8dcdd371ff147d1"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/e3d826245268269cd66f8326bd8bc066687b4a19",
-            "reference": "e3d826245268269cd66f8326bd8bc066687b4a19",
+            "url": "https://api.github.com/repos/symfony/options-resolver/zipball/3896e5a7d06fd15fa4947694c8dcdd371ff147d1",
+            "reference": "3896e5a7d06fd15fa4947694c8dcdd371ff147d1",
+            "shasum": ""
+        },
+        "require": {
+            "php": "^7.1.3"
+        },
+        "time": "2019-02-23T15:17:42+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "4.2-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Component\\OptionsResolver\\": ""
+            },
+            "exclude-from-classmap": [
+                "/Tests/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony OptionsResolver Component",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "config",
+            "configuration",
+            "options"
+        ]
+    },
+    {
+        "name": "symfony/polyfill-ctype",
+        "version": "v1.11.0",
+        "version_normalized": "1.11.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/polyfill-ctype.git",
+            "reference": "82ebae02209c21113908c229e9883c419720738a"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/82ebae02209c21113908c229e9883c419720738a",
+            "reference": "82ebae02209c21113908c229e9883c419720738a",
             "shasum": ""
         },
         "require": {
@@ -1338,11 +1698,11 @@
         "suggest": {
             "ext-ctype": "For best performance"
         },
-        "time": "2018-08-06T14:22:27+00:00",
+        "time": "2019-02-06T07:57:58+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.9-dev"
+                "dev-master": "1.11-dev"
             }
         },
         "installation-source": "dist",
@@ -1365,7 +1725,7 @@
             },
             {
                 "name": "Gert de Pagter",
-                "email": "BackEndTea@gmail.com"
+                "email": "backendtea@gmail.com"
             }
         ],
         "description": "Symfony polyfill for ctype functions",
@@ -1376,6 +1736,57 @@
             "polyfill",
             "portable"
         ]
+    },
+    {
+        "name": "symfony/process",
+        "version": "v4.2.5",
+        "version_normalized": "4.2.5.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/process.git",
+            "reference": "1e6cbb41dadcaf29e0db034d6ad0d039a9df06e6"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/process/zipball/1e6cbb41dadcaf29e0db034d6ad0d039a9df06e6",
+            "reference": "1e6cbb41dadcaf29e0db034d6ad0d039a9df06e6",
+            "shasum": ""
+        },
+        "require": {
+            "php": "^7.1.3"
+        },
+        "time": "2019-03-10T20:07:02+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "4.2-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Component\\Process\\": ""
+            },
+            "exclude-from-classmap": [
+                "/Tests/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony Process Component",
+        "homepage": "https://symfony.com"
     },
     {
         "name": "twbs/bootstrap",

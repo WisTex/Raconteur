@@ -669,7 +669,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `uuid` (`uuid`),
   KEY `parent_mid` (`parent_mid`),
   KEY `thr_parent` (`thr_parent`),
-  KEY `uid_mid` (`mid`,`uid`),
+  KEY `uid_mid` (`uid`,`mid`),
   KEY `comment_policy` (`comment_policy`),
   KEY `layout_mid` (`layout_mid`),
   KEY `public_policy` (`public_policy`),
@@ -677,6 +677,9 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `changed` (`changed`),
   KEY `item_origin` (`item_origin`),
   KEY `item_wall` (`item_wall`),
+  KEY `item_hidden` (`item_hidden`),
+  KEY `item_unpublished` (`item_unpublished`),
+  KEY `item_delayed` (`item_delayed`),
   KEY `item_unseen` (`item_unseen`),
   KEY `item_uplink` (`item_uplink`),
   KEY `item_notshown` (`item_notshown`),
@@ -922,6 +925,7 @@ CREATE TABLE IF NOT EXISTS `photo` (
   `resource_id` char(191) NOT NULL DEFAULT '',
   `created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `edited` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+  `expires` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `title` char(191) NOT NULL DEFAULT '',
   `description` text NOT NULL,
   `album` char(191) NOT NULL DEFAULT '',
@@ -948,6 +952,7 @@ CREATE TABLE IF NOT EXISTS `photo` (
   KEY `album` (`album`),
   KEY `imgscale` (`imgscale`),
   KEY `profile` (`profile`),
+  KEY `expires` (`expires`),
   KEY `photo_flags` (`photo_flags`),
   KEY `mimetype` (`mimetype`),
   KEY `aid` (`aid`),
@@ -1198,7 +1203,8 @@ CREATE TABLE IF NOT EXISTS `term` (
   KEY `aid` (`aid`),
   KEY `imgurl` (`imgurl`),
   KEY `term_hash` (`term_hash`),
-  KEY `parent_hash` (`parent_hash`)
+  KEY `parent_hash` (`parent_hash`),
+  KEY `term_ttype` (`term`,`ttype`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `tokens` (

@@ -31,7 +31,7 @@ class Id extends Controller {
 
 	function init() {
 
-		if(Libzot::is_zot_request()) {
+		if (Libzot::is_zot_request()) {
 
 			$conversation = false;
 
@@ -43,16 +43,15 @@ class Id extends Controller {
 			$portable_id = EMPTY_STR;
 
 			$sigdata = HTTPSig::verify(EMPTY_STR);
-			if($sigdata['portable_id'] && $sigdata['header_valid']) {
+			if ($sigdata['portable_id'] && $sigdata['header_valid']) {
 				$portable_id = $sigdata['portable_id'];
 			}
 
-
 			$chan = channelx_by_hash($request_portable_id);
 
-			if($chan) {
+			if ($chan) {
 				$channel_id = $chan['channel_id'];
-				if(! $item_id) {
+				if (! $item_id) {
 					$handler = new Channel();
 					App::$argc = 2;
 					App::$argv[0] = 'channel';

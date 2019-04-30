@@ -1,6 +1,12 @@
 <?php
 namespace Zotlabs\Module;
 
+
+
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Libprofile;
+
 use Zotlabs\Lib\Apps;
 
 require_once('include/conversation.php');
@@ -10,7 +16,7 @@ require_once('include/event.php');
 require_once('include/html2plain.php');
 
 
-class Cal extends \Zotlabs\Web\Controller {
+class Cal extends Controller {
 
 	function init() {
 		if(observer_prohibited()) {
@@ -22,7 +28,7 @@ class Cal extends \Zotlabs\Web\Controller {
 		if(argc() > 1) {
 			$nick = argv(1);
 	
-			profile_load($nick);
+			Libprofile::load($nick);
 	
 			$channelx = channelx_by_nick($nick);
 	

@@ -1,8 +1,10 @@
 <?php
 namespace Zotlabs\Module;
 
-
+use App;
+use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
+use Zotlabss\Lib\Libprofile;
 
 /*
  * @file Profile_photo.php
@@ -11,18 +13,12 @@ use Zotlabs\Lib\Libsync;
  */
 
 
-require_once('include/photo/photo_driver.php');
+require_once('include/photo_factory.php');
 require_once('include/photos.php');
-require_once('include/channel.php');
-
-/* @brief Function for sync'ing  permissions of profile-photos and their profile
-*
-*  @param $profileid The id number of the profile to sync
-*  @return void
-*/
 
 
-class Profile_photo extends \Zotlabs\Web\Controller {
+
+class Profile_photo extends Controller {
 
 	
 	/* @brief Initalize the profile-photo edit view
@@ -38,7 +34,7 @@ class Profile_photo extends \Zotlabs\Web\Controller {
 		}
 	
 		$channel = \App::get_channel();
-		profile_load($channel['channel_address']);
+		Libprofile::load($channel['channel_address']);
 	
 	}
 	

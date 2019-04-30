@@ -1,6 +1,8 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Libprofile;
+
 require_once('include/conversation.php');
 
 class Block extends \Zotlabs\Web\Controller {
@@ -9,7 +11,7 @@ class Block extends \Zotlabs\Web\Controller {
 	
 		$which = argv(1);
 		$profile = 0;
-		profile_load($which,$profile);
+		Libprofile::load($which,$profile);
 	
 		if(\App::$profile['profile_uid'])
 			head_set_icon(\App::$profile['thumb']);

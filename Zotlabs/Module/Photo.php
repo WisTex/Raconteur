@@ -8,7 +8,7 @@ use Zotlabs\Web\HTTPSig;
 
 require_once('include/security.php');
 require_once('include/attach.php');
-require_once('include/photo/photo_driver.php');
+require_once('include/photo_factory.php');
 require_once('include/photos.php');
 
 

@@ -2,12 +2,18 @@
 
 namespace Zotlabs\Widget;
 
+use App;
+use Zotlabs\Lib\Libprofile;
 
 class Profile {
 
 	function widget($args) {
-		$block = observer_prohibited();
-		return profile_sidebar(\App::$profile, $block, true);
+
+		if (! App::$profile['profile_uid']) {
+			return EMPTY_STR;
+		}
+		
+		return Libprofile::widget(App::$profile, observer_prohibited(), true);
 	}
 
 }

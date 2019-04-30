@@ -6,8 +6,9 @@ use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Chatroom;
-use Zotlabs\Access\AccessControl;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Libprofile;
+use Zotlabs\Access\AccessControl;
 
 class Chat extends Controller {
 
@@ -36,10 +37,10 @@ class Chat extends Controller {
 			$profile = argv(1);		
 		}
 		
-		// Run profile_load() here to make sure the theme is set before
+		// Run Libprofile::load() here to make sure the theme is set before
 		// we start loading content
 	
-		profile_load($which,$profile);
+		Libprofile::load($which,$profile);
 	
 	}
 	

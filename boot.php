@@ -1,6 +1,14 @@
 <?php
 
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Web\Session;
+use Zotlabs\Web\HttpMeta;
+use Zotlabs\Render\SmartyTemplate;
+use Zotlabs\Render\Comanche;
+use Zotlabs\Render\Theme;
+use Zotlabs\Lib\DB_Upgrade;
+use Zotlabs\Lib\System;
+use Zotlabs\Daemon\Master;
 
 /**
  * @file boot.php
@@ -10,6 +18,10 @@ use Zotlabs\Lib\Libzot;
 
 // composer autoloader for all namespaced Classes
 require_once('vendor/autoload.php');
+
+if(file_exists('addon/vendor/autoload.php')) {
+	require_once('addon/vendor/autoload.php');
+}
 
 require_once('include/config.php');
 require_once('include/network.php');
@@ -33,10 +45,10 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '2.10' );
+define ( 'STD_VERSION',             '2.12' );
 define ( 'ZOT_REVISION',            '6.0' );
 
-define ( 'DB_UPDATE_VERSION',       1231 );
+define ( 'DB_UPDATE_VERSION',       1232 );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 
@@ -89,6 +101,8 @@ define ( 'PNG_QUALITY',             8  );
 define ( 'LANGUAGE_DETECT_MIN_LENGTH',     128 );
 define ( 'LANGUAGE_DETECT_MIN_CONFIDENCE', 0.01 );
 
+
+define ('MAX_EVENT_REPEAT_COUNT', 512);
 
 /**
  * Default permissions for file-based storage (webDAV, etc.)
@@ -386,7 +400,7 @@ define ( 'VNOTIFY_FILES',      0x0800 );
 define ( 'VNOTIFY_PUBS',       0x1000 );
 define ( 'VNOTIFY_LIKE',       0x2000 );
 define ( 'VNOTIFY_FORUMS',     0x4000 );
-
+define ( 'VNOTIFY_REPORTS',    0x8000 );
 
 
 /**
@@ -448,7 +462,7 @@ define ( 'NAMESPACE_YMEDIA',          'http://search.yahoo.com/mrss/' );
 
 define ( 'ACTIVITYSTREAMS_JSONLD_REV', 'https://www.w3.org/ns/activitystreams' );
 
-define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.5' );
+define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.6' );
 /**
  * activity stream defines
  */
@@ -567,7 +581,7 @@ define ( 'ITEM_TYPE_DOC',        5 );
 define ( 'ITEM_TYPE_CARD',       6 );
 define ( 'ITEM_TYPE_ARTICLE',    7 );
 define ( 'ITEM_TYPE_MAIL',       8 );
-
+define ( 'ITEM_TYPE_REPORT',     9 );
 
 define ( 'ITEM_IS_STICKY',       1000 );
 
@@ -591,8 +605,6 @@ function sys_boot() {
 	App::$install = ((file_exists('.htconfig.php') && filesize('.htconfig.php')) ? false : true);
 
 	@include('.htconfig.php');
-
-
 
 	if(defined('NOMADIC')) {
 		define ( 'PLATFORM_NAME',           'zap' );
@@ -628,7 +640,6 @@ function sys_boot() {
 		define( 'DEFAULT_NOTIFY_ICON', '/images/hz-white-64.png' );
 	}
 
-//	App::head_set_icon(DEFAULT_PLATFORM_ICON);
 
 	/*
 	 * Try to open the database;
@@ -651,7 +662,7 @@ function sys_boot() {
 		load_config('system');
 		load_config('feature');
 
-		App::$session = new Zotlabs\Web\Session();
+		App::$session = new Session();
 		App::$session->init();
 		load_hooks();
 		/**
@@ -669,7 +680,7 @@ function startup() {
 	// Some hosting providers block/disable this
 	@set_time_limit(0);
 
-	if(function_exists ('ini_set')) {
+	if (function_exists ('ini_set')) {
 		// This has to be quite large to deal with embedded private photos
 		@ini_set('pcre.backtrack_limit', 500000);
 
@@ -703,16 +714,17 @@ class App {
 	public  static $profile_uid = 0;              // If applicable, the channel_id of the "page owner"
 	public  static $poi        = null;            // "person of interest", generally a referenced connection
 	private static $oauth_key  = null;            // consumer_id of oauth request, if used
-	public  static $layout     = array();         // Comanche parsed template
+	public  static $layout     = [];              // Comanche parsed template
 	public  static $pdl        = null;            // Comanche page description
 	private static $perms      = null;            // observer permissions
-	private static $widgets    = array();         // widgets for this page
-	public  static $config     = array();         // config cache
-        public  static $override_intltext_templates = array();
-        public  static $override_markup_templates = array();
-        public  static $override_templateroot = null;
-        public  static $override_helproot = null;
-        public  static $override_helpfiles = array();
+	private static $widgets    = [];              // widgets for this page
+	public  static $config     = [];              // config cache
+	
+	public  static $override_intltext_templates = [];
+	public  static $override_markup_templates = [];
+	public  static $override_templateroot = null;
+	public  static $override_helproot = null;
+	public  static $override_helpfiles = [];
 
 	public static  $session    = null;
 	public static  $groups;
@@ -729,7 +741,7 @@ class App {
 	public static  $contact;
 	public static  $contacts;
 	public static  $content;
-	public static  $data = array();
+	public static  $data = [];
 	public static  $error = false;
 	public static  $emojitab = false;
 	public static  $cmd;
@@ -743,21 +755,18 @@ class App {
 	public static  $timezone;
 	public static  $interactive = true;
 	public static  $plugins;
-	private static $apps = array();
+	private static $apps = [];
 	public static  $identities;
-	public static  $css_sources = array();
-	public static  $js_sources = array();
-	public static  $linkrel = array();
-	public static  $theme_info = array();
+	public static  $css_sources = [];
+	public static  $js_sources = [];
+	public static  $linkrel = [];
+	public static  $theme_info = [];
 	public static  $is_sys = false;
 	public static  $nav_sel;
 	public static  $comanche;
 	public static  $httpheaders = null;
 	public static  $httpsig = null;
-
-	public static $channel_links;
-
-
+	public static  $channel_links;
 	public static  $category;
 
 	// Allow themes to control internal parameters
@@ -775,33 +784,33 @@ class App {
 	 * Mostly unimplemented yet. Only options 'template_engine' and
 	 * beyond are used.
 	 */
-	private static $theme = array(
-		'sourcename' => '',
-		'videowidth' => 425,
-		'videoheight' => 350,
+	private static $theme = [
+		'sourcename'      => '',
+		'videowidth'      => 425,
+		'videoheight'     => 350,
 		'force_max_items' => 0,
-		'thread_allow' => true,
-		'stylesheet' => '',
+		'thread_allow'    => true,
+		'stylesheet'      => '',
 		'template_engine' => 'smarty3',
-	);
+	];
 
 	/**
 	 * @brief An array of registered template engines ('name'=>'class name')
 	 */
-	public static $template_engines = array();
+	public static $template_engines = [];
 	/**
 	 * @brief An array of instanced template engines ('name'=>'instance')
 	 */
-	public static $template_engine_instance = array();
+	public static $template_engine_instance = [];
 
-	private static $ldelim = array(
+	private static $ldelim = [
 		'internal' => '',
 		'smarty3' => '{{'
-	);
-	private static $rdelim = array(
+	];
+	private static $rdelim = [
 		'internal' => '',
 		'smarty3' => '}}'
-	);
+	];
 
 	// These represent the URL which was used to access the page
 
@@ -823,9 +832,11 @@ class App {
 		// we'll reset this after we read our config file
 		date_default_timezone_set('UTC');
 
-		self::$config = array('system'=>array());
-		self::$page = array();
-		self::$pager= array();
+		self::$config = [
+			'system' => []
+		];
+		self::$page = [];
+		self::$pager= [];
 
 		self::$query_string = '';
 
@@ -917,24 +928,22 @@ class App {
 		 * pagination
 		 */
 
-		self::$pager['page'] = ((x($_GET,'page') && intval($_GET['page']) > 0) ? intval($_GET['page']) : 1);
+		self::$pager['page']      = ((x($_GET,'page') && intval($_GET['page']) > 0) ? intval($_GET['page']) : 1);
 		self::$pager['itemspage'] = 60;
-		self::$pager['start'] = (self::$pager['page'] * self::$pager['itemspage']) - self::$pager['itemspage'];
-		if(self::$pager['start'] < 0)
+		self::$pager['start']     = (self::$pager['page'] * self::$pager['itemspage']) - self::$pager['itemspage'];
+		self::$pager['total']     = 0;
+
+		if (self::$pager['start'] < 0) {
 			self::$pager['start'] = 0;
-		self::$pager['total'] = 0;
+		}
+
+		self::$meta = new HttpMeta();
 
 		/*
-		 * register template engines
+		 * register template engines (probably just smarty, but this can be extended)
 		 */
 
-		self::$meta= new Zotlabs\Web\HttpMeta();
-
-		// create an instance of the smarty template engine so we can register it.
-
-		$smarty = new Zotlabs\Render\SmartyTemplate();
-		/// @todo validate if this is still the desired behavior
-		self::register_template_engine(get_class($smarty));
+		self::register_template_engine(get_class(new SmartyTemplate));
 
 	}
 
@@ -946,7 +955,7 @@ class App {
 			&& strlen(self::$config['system']['baseurl'])) {
 			// get_baseurl() is a heavily used function.
 			// Do not use punify() here until we find a library that performs better than what we have now.
-			//$url = punify(self::$config['system']['baseurl']);
+			// $url = punify(self::$config['system']['baseurl']);
 			$url = self::$config['system']['baseurl'];
 			$url = trim($url,'\\/');
 			return $url;
@@ -1007,9 +1016,9 @@ class App {
 	public static function get_channel_links() {
 		$s = '';
 		$x = self::$channel_links;
-		if($x && is_array($x) && count($x)) {
-			foreach($x as $y) {
-				if($s) {
+		if ($x && is_array($x) && count($x)) {
+			foreach ($x as $y) {
+				if ($s) {
 					$s .= ',';
 				}
 				$s .= '<' . $y['url'] . '>; rel="' . $y['rel'] . '"; type="' . $y['type'] . '"';
@@ -1103,7 +1112,7 @@ class App {
 		if(! self::$meta->get_field('og:title'))
 			self::$meta->set('og:title',self::$page['title']);
 
-		self::$meta->set('generator', Zotlabs\Lib\System::get_platform_name());
+		self::$meta->set('generator', System::get_platform_name());
 
 		$i = head_get_icon();
 		if($i) {
@@ -1177,8 +1186,8 @@ class App {
 	*
 	* @return object Template Engine instance
 	*/
-	public static function template_engine($name = ''){
-		if($name !== '') {
+	public static function template_engine($name = '') {
+		if ($name !== '') {
 			$template_engine = $name;
 		}
 		else {
@@ -1188,8 +1197,8 @@ class App {
 			}
 		}
 
-		if(isset(self::$template_engines[$template_engine])){
-			if(isset(self::$template_engine_instance[$template_engine])){
+		if (isset(self::$template_engines[$template_engine])) {
+			if (isset(self::$template_engine_instance[$template_engine])) {
 				return self::$template_engine_instance[$template_engine];
 			}
 			else {
@@ -1200,6 +1209,8 @@ class App {
 			}
 		}
 
+		// If we fell through to this step, it is considered fatal.
+		
 		echo "template engine <tt>$template_engine</tt> is not registered!\n";
 		killme();
 	}
@@ -1231,7 +1242,7 @@ class App {
 
 	public static function head_get_icon() {
 		$icon = self::$data['pageicon'];
-		if($icon && ! strpos($icon,'://'))
+		if ($icon && ! strpos($icon,'://'))
 			$icon = z_root() . $icon;
 		return $icon;
 	}
@@ -1320,7 +1331,7 @@ function z_root() {
  * @return string
  */
 function absurl($path) {
-	if(strpos($path, '/') === 0)
+	if (strpos($path, '/') === 0)
 		return z_path() . $path;
 
 	return $path;
@@ -1341,14 +1352,14 @@ function os_mkdir($path, $mode = 0777, $recursive = false) {
  * @return boolean
  */
 function rrmdir($path) {
-	if(is_dir($path) === true) {
+	if (is_dir($path) === true) {
 		$files = array_diff(scandir($path), array('.', '..'));
-		foreach($files as $file) {
+		foreach ($files as $file) {
 			rrmdir(realpath($path) . '/' . $file);
 		}
 		return rmdir($path);
 	}
-	elseif(is_file($path) === true) {
+	elseif (is_file($path) === true) {
 		return unlink($path);
 	}
 
@@ -1366,7 +1377,7 @@ function is_ajax() {
 }
 
 function killme_if_ajax() {
-	if(is_ajax()) {
+	if (is_ajax()) {
 		killme();
 	}
 }
@@ -1379,9 +1390,10 @@ function killme_if_ajax() {
 function check_config() {
 
 	$saved = get_config('system','urlverify');
-	if(! $saved)
-		set_config('system','urlverify',bin2hex(z_root()));
-
+	if (! $saved) {
+		set_config('system','urlverify', bin2hex(z_root()));
+	}
+	
 	if(($saved) && ($saved != bin2hex(z_root()))) {
 		// our URL changed. Do something.
 
@@ -1414,8 +1426,7 @@ function check_config() {
 	if (! $syschan_exists)
 		create_sys_channel();
 
-	$x = new \Zotlabs\Lib\DB_Upgrade(DB_UPDATE_VERSION);
-
+	$x = new DB_Upgrade(DB_UPDATE_VERSION);
 
 	plugins_sync();
 
@@ -1486,9 +1497,10 @@ function fix_system_urls($oldurl, $newurl) {
 				dbesc($rv['xchan_hash'])
 			);
 
-			$y = q("update hubloc set hubloc_addr = '%s', hubloc_url = '%s', hubloc_url_sig = '%s', hubloc_host = '%s', hubloc_callback = '%s' where hubloc_hash = '%s' and hubloc_url = '%s'",
+			$y = q("update hubloc set hubloc_addr = '%s', hubloc_url = '%s', hubloc_id_url = '%s', hubloc_url_sig = '%s', hubloc_host = '%s', hubloc_callback = '%s' where hubloc_hash = '%s' and hubloc_url = '%s'",
 				dbesc($channel_address . '@' . $rhs),
 				dbesc($newurl),
+				dbesc(str_replace($oldurl,$newurl,$rv['hubloc_id_url'])),
 				dbesc(Libzot::sign($newurl,$c[0]['channel_prvkey'])),
 				dbesc($newhost),
 				dbesc($newurl . '/post'),
@@ -1515,7 +1527,7 @@ function fix_system_urls($oldurl, $newurl) {
 				}
 			}
 
-			Zotlabs\Daemon\Master::Summon(array('Notifier', 'refresh_all', $c[0]['channel_id']));
+			Master::Summon( [ 'Notifier', 'refresh_all', $c[0]['channel_id'] ]);
 		}
 	}
 
@@ -1714,12 +1726,12 @@ function remote_channel() {
 
 function can_view_public_stream() {
 
-	if(observer_prohibited(true)) {
+	if (observer_prohibited(true)) {
 		return false;
 	}
 
-	if(! (intval(get_config('system','open_pubstream',1)))) {
-		if(! get_observer_hash()) {
+	if (! (intval(get_config('system','open_pubstream',1)))) {
+		if (! local_channel()) {
 			return false;
 		}
 	}
@@ -1727,12 +1739,11 @@ function can_view_public_stream() {
 	$site_firehose = ((intval(get_config('system','site_firehose',0))) ? true : false);
 	$net_firehose  = ((get_config('system','disable_discover_tab',1)) ? false : true);
 
-	if(! ($site_firehose || $net_firehose)) {
+	if (! ($site_firehose || $net_firehose)) {
 		return false;
 	}
 
 	return true;
-
 }
 
 
@@ -1750,7 +1761,7 @@ function notice($s) {
 	if(! session_id())
 		return;
 
-	if(! x($_SESSION, 'sysmsg')) $_SESSION['sysmsg'] = array();
+	if(! x($_SESSION, 'sysmsg')) $_SESSION['sysmsg'] = [];
 
 	// ignore duplicated error messages which haven't yet been displayed
 	// - typically seen as multiple 'permission denied' messages
@@ -1778,7 +1789,7 @@ function info($s) {
 	if(! session_id())
 		return;
 	if(! x($_SESSION, 'sysmsg_info'))
-		$_SESSION['sysmsg_info'] = array();
+		$_SESSION['sysmsg_info'] = [];
 
 	if(in_array($s, $_SESSION['sysmsg_info']))
 		return;
@@ -1810,11 +1821,9 @@ function get_max_import_size() {
  *
  * $cmd and string args are surrounded with ""
  */
-function proc_run(){
+function proc_run() {
 
 	$args = func_get_args();
-
-	$newargs = array();
 
 	if(! count($args))
 		return;
@@ -1822,51 +1831,37 @@ function proc_run(){
 	$args = flatten_array_recursive($args);
 
 	$arr =  [
-			'args' => $args,
-			'run_cmd' => true
+		'args' => $args,
+		'run_cmd' => true
 	];
+
 	/**
 	 * @hooks proc_run
 	 *   Called when invoking PHP sub processes.
 	 *   * \e array \b args
 	 *   * \e boolean \b run_cmd
 	 */
+
 	call_hooks('proc_run', $arr);
 
-	if(! $arr['run_cmd'])
+	if (! $arr['run_cmd'])
 		return;
 
-	if(count($args) && $args[0] === 'php')
+	if (count($args) && $args[0] === 'php')
 		$args[0] = ((x(App::$config,'system')) && (x(App::$config['system'],'php_path')) && (strlen(App::$config['system']['php_path'])) ? App::$config['system']['php_path'] : 'php');
 
-
-	// redirect proc_run statements of legacy daemon processes to the newer Daemon Master object class
-	// We will keep this interface until everybody has transitioned. (2016-05-20)
-
-	if(strstr($args[1],'include/')) {
-		// convert 'include/foo.php' to 'Foo'
-		$orig = substr(ucfirst(substr($args[1],8)),0,-4);
-		logger('proc_run_redirect: ' . $orig);
-		if(file_exists('Zotlabs/Daemon/' . $orig . '.php')) {
-			array_shift($args); // daemons are all run by php, pop it off the top of the array
-			$args[0] = $orig;   // replace with the new daemon name
-			logger('Redirecting old proc_run interface: ' . print_r($args,true), LOGGER_DEBUG, LOG_DEBUG);
-			\Zotlabs\Daemon\Master::Summon($args); // summon the daemon
-			return;
-		}
-	}
 
 	$args = array_map('escapeshellarg',$args);
 	$cmdline = implode($args," ");
 
-	if(is_windows()) {
+	if (is_windows()) {
 		$cwd = getcwd();
 		$cmd = "cmd /c start \"title\" /D \"$cwd\" /b $cmdline";
-		proc_close(proc_open($cmd, array(), $foo));
+		proc_close(proc_open($cmd, [], $foo));
 	}
 	else {
-		if(get_config('system','use_proc_open'))
-			proc_close(proc_open($cmdline ." &", array(), $foo));
+		if (get_config('system','use_proc_open'))
+			proc_close(proc_open($cmdline ." &", [], $foo));
 		else
 			exec($cmdline . ' > /dev/null &');
 	}
@@ -1931,7 +1926,7 @@ function is_developer() {
 
 function load_contact_links($uid) {
 
-	$ret = array();
+	$ret = [];
 
 	if(! $uid || x(App::$contacts,'empty'))
 		return;
@@ -2065,7 +2060,7 @@ function get_custom_nav($navname) {
  */
 function load_pdl() {
 
-	App::$comanche = new Zotlabs\Render\Comanche();
+	App::$comanche = new Comanche();
 
 	if (! count(App::$layout)) {
 
@@ -2150,10 +2145,10 @@ function construct_page() {
 	}
 
 
-	$current_theme = Zotlabs\Render\Theme::current();
+	$current_theme = Theme::current();
 
 	// logger('current_theme: ' . print_r($current_theme,true));
-	// Zotlabs\Render\Theme::debug();
+	// Theme::debug();
 
 	if (($p = theme_include($current_theme[0] . '.js')) != '')
 		head_add_js('/' . $p);
@@ -2171,7 +2166,7 @@ function construct_page() {
 	if (($p = theme_include('mod_' . App::$module . '.css')) != '')
 		head_add_css('mod_' . App::$module . '.css');
 
-	head_add_css(Zotlabs\Render\Theme::url($installing));
+	head_add_css(Theme::url($installing));
 
 	if (($p = theme_include('mod_' . App::$module . '.js')) != '')
 		head_add_js('mod_' . App::$module . '.js');
@@ -2412,7 +2407,7 @@ function z_check_cert() {
 function cert_bad_email() {
 	return z_mail(
 		[
-			'toEmail'        => \App::$config['system']['admin_email'],
+			'toEmail'        => App::$config['system']['admin_email'],
 			'messageSubject' => sprintf(t('[$Projectname] Website SSL error for %s'), App::get_hostname()),
 			'textVersion'    => replace_macros(get_intltext_template('cert_bad_eml.tpl'),
 				[
@@ -2436,7 +2431,7 @@ function check_cron_broken() {
 	$d = get_config('system','lastcron');
 
 	if((! $d) || ($d < datetime_convert('UTC','UTC','now - 4 hours'))) {
-		Zotlabs\Daemon\Master::Summon(array('Cron'));
+		Master::Summon(array('Cron'));
 		set_config('system','lastcron',datetime_convert());
 	}
 
@@ -2461,7 +2456,7 @@ function check_cron_broken() {
 
 	return z_mail(
 		[
-			'toEmail'        => \App::$config['system']['admin_email'],
+			'toEmail'        => App::$config['system']['admin_email'],
 			'messageSubject' => sprintf(t('[$Projectname] Cron tasks not running on %s'), App::get_hostname()),
 			'textVersion'    => replace_macros(get_intltext_template('cron_bad_eml.tpl'),
 				[

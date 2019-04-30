@@ -156,6 +156,48 @@ function import_config($channel, $configs) {
 	}
 }
 
+
+function import_xign($channel, $xigns) {
+
+	if($channel && $xigns) {
+		foreach($xigns as $xign) {
+			unset($xign['id']);
+			$xign['uid'] = $channel['channel_id'];
+			create_table_from_array('xign', $xign);
+		}
+	}
+}
+
+
+function sync_xign($channel, $xigns) {
+
+	if($channel && $xigns) {
+		foreach($xigns as $xign) {
+			unset($xign['id']);
+			$xign['uid'] = $channel['channel_id'];
+			if(! $xign['xchan'])
+				continue;
+			if($xign['deleted']) {
+				q("delete from xign where uid = %d and xchan = '%s' ",
+					intval($xign['uid']),
+					dbesc($xign['xchan'])
+				);
+				continue;
+			}
+
+			$r = q("select * from xign where uid = %d and xchan = '%s' ",
+				intval($xign['uid']),
+				dbesc($xign['xchan'])
+			);
+			if(! $r)
+				create_table_from_array('xign', $xign);
+		}
+	}
+}
+
+
+
+
 /**
  * @brief Import profiles.
  *
@@ -211,13 +253,6 @@ function import_hublocs($channel, $hublocs, $seize, $moving = false) {
 //				logger('forged hubloc: ' . print_r($hubloc,true));
 //				continue;
 //			}
-
-			if(! array_key_exists('hubloc_primary',$hubloc)) {
-				$hubloc['hubloc_primary']     = (($hubloc['hubloc_flags']  & 0x0001) ? 1 : 0);
-				$hubloc['hubloc_orphancheck'] = (($hubloc['hubloc_flags']  & 0x0004) ? 1 : 0);
-				$hubloc['hubloc_error']       = (($hubloc['hubloc_status'] & 0x0003) ? 1 : 0);
-				$hubloc['hubloc_deleted']     = (($hubloc['hubloc_flags']  & 0x1000) ? 1 : 0);
-			}
 
 			if($moving && $hubloc['hubloc_hash'] === $channel['channel_hash'] && $hubloc['hubloc_url'] !== z_root()) {
 				$hubloc['hubloc_deleted'] = 1;

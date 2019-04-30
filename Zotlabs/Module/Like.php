@@ -2,13 +2,15 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Activity;
+use Zotlabs\Web\Controller;
 use Zotlabs\Daemon\Master;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
 require_once('include/event.php');
 
-class Like extends \Zotlabs\Web\Controller {
+class Like extends Controller {
 
 	private function reaction_to_activity($reaction) {
 
@@ -175,7 +177,7 @@ class Like extends \Zotlabs\Web\Controller {
 				$plink = '[zrl=' . z_root() . '/profile/' . $ch[0]['channel_address'] . ']' . $post_type . '[/zrl]';
 		
 	
-			$object = json_encode(\Zotlabs\Lib\Activity::fetch_profile([ 'id' => channel_url($ch[0]) ]));
+			$object = json_encode(Activity::fetch_profile([ 'id' => channel_url($ch[0]) ]));
 	
 			// second like of the same thing is "undo" for the first like
 	
@@ -340,7 +342,7 @@ class Like extends \Zotlabs\Web\Controller {
 
 			$body = $item['body'];
 	
-			$object = json_encode(\Zotlabs\Lib\Activity::fetch_item( [ 'id' => $item['mid'] ]));
+			$object = json_encode(Activity::fetch_item( [ 'id' => $item['mid'] ]));
 	
 			if(! intval($item['item_thread_top']))
 				$post_type = 'comment';		

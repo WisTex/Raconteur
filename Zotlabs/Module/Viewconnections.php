@@ -1,6 +1,9 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Libprofile;
 
 
 class Viewconnections extends \Zotlabs\Web\Controller {
@@ -12,7 +15,7 @@ class Viewconnections extends \Zotlabs\Web\Controller {
 		}
 
 		if(argc() > 1) {
-			profile_load(argv(1));
+			Libprofile::load(argv(1));
 		}
 
 	}

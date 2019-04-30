@@ -143,7 +143,6 @@ class Impel extends \Zotlabs\Web\Controller {
 	
 	
 			if($j['pagetitle']) {
-				require_once('library/urlify/URLify.php');
 				$pagetitle = strtolower(\URLify::transliterate($j['pagetitle']));
 			}
 		

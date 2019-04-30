@@ -58,9 +58,14 @@ class DB_Upgrade {
 					
 
 					$c =  new $cls();
+
 					$retval = $c->run();
 
 					if($retval != UPDATE_SUCCESS) {
+
+
+						$source = t('Source code of failed update: ') . "\n\n" . @file_get_contents('Zotlabs/Update/' . $s . '.php');
+												
 
 						// Prevent sending hundreds of thousands of emails by creating
 						// a lockfile.  
@@ -86,7 +91,9 @@ class DB_Upgrade {
 										'$sitename' => \App::$config['system']['sitename'],
 										'$siteurl' =>  z_root(),
 										'$update' => $x,
-										'$error' => sprintf( t('Update %s failed. See error logs.'), $x)
+										'$error' => sprintf( t('Update %s failed. See error logs.'), $x),
+										'$baseurl' => z_root(),
+										'$source' => $source
 									]
 								)
 							]

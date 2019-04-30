@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\ExtendedZip;
 use ZipArchive;
@@ -28,7 +29,7 @@ class Webpages extends Controller {
 		else
 			return;
 	
-		profile_load($which);
+		Libprofile::load($which);
 	
 	}
 	

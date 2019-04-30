@@ -164,7 +164,7 @@ class Cron {
 			db_quoteinterval('1 DAY')
 		);
 		if($r) {
-			require_once('include/photo/photo_driver.php');
+			require_once('include/photo_factory.php');
 			foreach($r as $rr) {
 				$photos = import_xchan_photo($rr['xchan_photo_l'],$rr['xchan_hash']);
 				$x = q("update xchan set xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'

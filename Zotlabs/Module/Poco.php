@@ -1,13 +1,19 @@
 <?php
 namespace Zotlabs\Module;
 
+/*
+ * Portable Contacts server
+ */
+ 
+
+use Zotlabs\Web\Controller;
+
 require_once('include/socgraph.php');
 
-
-class Poco extends \Zotlabs\Web\Controller {
+class Poco extends Controller {
 
 	function init() {
-		poco($a,false);
+		poco();
 	}
 	
 }

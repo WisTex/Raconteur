@@ -1,12 +1,14 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 
 require_once('include/attach.php');
 require_once('include/photos.php');
 
-class Wall_attach extends \Zotlabs\Web\Controller {
+class Wall_attach extends Controller {
 
 	function init() {
 		logger('request_method: ' . $_SERVER['REQUEST_METHOD'],LOGGER_DATA,LOG_INFO);
@@ -23,37 +25,38 @@ class Wall_attach extends \Zotlabs\Web\Controller {
 
 		$result = [];	
 
-		if($_REQUEST['api_source'] && array_key_exists('media',$_FILES)) {
+		if ($_REQUEST['api_source'] && array_key_exists('media',$_FILES)) {
 			$using_api = true;
 		}
 
-		if($using_api) {
+		if ($using_api) {
 			require_once('include/api.php');
-			if(api_user())
+			if (api_user()) {
 				$channel = channelx_by_n(api_user());
+			}
 		}
 		else {
-			if(argc() > 1)
+			if (argc() > 1)
 				$channel = channelx_by_nick(argv(1));
 		}
 
-		if(! $channel)
+		if (! $channel)
 			killme();
 
 		$matches = [];
 		$partial = false;
 
-		if(array_key_exists('HTTP_CONTENT_RANGE',$_SERVER)) {
+		if (array_key_exists('HTTP_CONTENT_RANGE',$_SERVER)) {
 			$pm = preg_match('/bytes (\d*)\-(\d*)\/(\d*)/',$_SERVER['HTTP_CONTENT_RANGE'],$matches);
-			if($pm) {
+			if ($pm) {
 				// logger('Content-Range: ' . print_r($matches,true));
 				$partial = true;
 			}
 		}
 
-		if($partial) {
+		if ($partial) {
 			$x = save_chunk($channel,$matches[1],$matches[2],$matches[3]);
-			if($x['partial']) {
+			if ($x['partial']) {
 				header('Range: bytes=0-' . (($x['length']) ? $x['length'] - 1 : 0));
 				json_return_and_die($result);
 			}
@@ -70,7 +73,7 @@ class Wall_attach extends \Zotlabs\Web\Controller {
 			}
 		}
 		else {	
-			if(! array_key_exists('userfile',$_FILES)) {
+			if (! array_key_exists('userfile',$_FILES)) {
 				$_FILES['userfile'] = [
 					'name'     => $_FILES['files']['name'],
 					'type'     => $_FILES['files']['type'],
@@ -81,39 +84,55 @@ class Wall_attach extends \Zotlabs\Web\Controller {
 			}
 		}
 
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 	
 	
 		$def_album  = get_pconfig($channel['channel_id'],'system','photo_path');
 		$def_attach = get_pconfig($channel['channel_id'],'system','attach_path');
 	
-		$r = attach_store($channel,(($observer) ? $observer['xchan_hash'] : ''),'', array('source' => 'editor', 'visible' => 0, 'album' => $def_album, 'directory' => $def_attach, 'allow_cid' => '<' . $channel['channel_hash'] . '>'));
+		$r = attach_store($channel, (($observer) ? $observer['xchan_hash'] : ''), '', [
+			'source'    => 'editor',
+			'visible'   => 0,
+			'album'     => $def_album,
+			'directory' => $def_attach,
+			'allow_cid' => '<' . $channel['channel_hash'] . '>'
+		]);
 	
-		if(! $r['success']) {
+		if (! $r['success']) {
 			notice( $r['message'] . EOL);
 			killme();
 		}
 	
-		if(intval($r['data']['is_photo'])) {
+		if (intval($r['data']['is_photo'])) {
 			$s = "\n\n" . $r['body'] . "\n\n";
 		}
 		else {
-			$s =  "\n\n" . '[attachment]' . $r['data']['hash'] . ',' . $r['data']['revision'] . '[/attachment]' . "\n";
+
+			$url = z_root() . '/cloud/' . $channel['channel_address'] . '/' . $r['data']['display_path'];
+
+			if (strpos($r['data']['filetype'],'video') === 0) {
+				// give a wee bit of time for the background thumbnail processor to do its thing
+				// or else we'll never see a video poster
+				sleep(3);
+				$thumb = Linkinfo::get_video_poster($url);
+				if ($thumb) {
+					$s = "\n\n" . '[zvideo poster=\'' . $thumb . '\']' . $url . '[/zvideo]' . "\n\n";
+				}
+				else {
+					$s = "\n\n" . '[zvideo]' . $url . '[/zvideo]' . "\n\n";
+				}
+			}
+			if (strpos($r['data']['filetype'],'audio') === 0) {
+				$s = "\n\n" . '[zaudio]' . $url . '[/zaudio]' . "\n\n";
+			}
+			
+			$s .=  "\n\n" . '[attachment]' . $r['data']['hash'] . ',' . $r['data']['revision'] . '[/attachment]' . "\n";
 		}
 	
-
-		$sync = attach_export_data($channel,$r['data']['hash']);
-		if($sync) {
-			Libsync::build_sync_packet($channel['channel_id'],array('file' => array($sync)));
-		}
-
-		if($using_api)
+		if ($using_api)
 			return $s;
 
 		$result['message'] = $s;
-		json_return_and_die($result);
-		
+		json_return_and_die($result);		
 	}
-	
-
 }

@@ -1,8 +1,12 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Access\AccessControl;
+use Zotlabs\Daemon\Master;
 
 require_once('include/conversation.php');
 require_once('include/bbcode.php');
@@ -10,7 +14,7 @@ require_once('include/datetime.php');
 require_once('include/event.php');
 require_once('include/html2plain.php');
 
-class Events extends \Zotlabs\Web\Controller {
+class Events extends Controller {
 
 	function post() {
 	
@@ -97,7 +101,24 @@ class Events extends \Zotlabs\Web\Controller {
 		$desc     = escape_tags(trim($_POST['desc']));
 		$location = escape_tags(trim($_POST['location']));
 		$type     = escape_tags(trim($_POST['type']));
-	
+
+		$repeat   = ((array_key_exists('repeat',$_REQUEST) && intval($_REQUEST['repeat'])) ? 1 : 0);
+		$freq     = ((array_key_exists('freq',$_REQUEST) && $_REQUEST['freq']) ? escape_tags(trim($_REQUEST['freq'])) : EMPTY_STR);
+		$interval = ((array_key_exists('interval',$_REQUEST) && intval($_REQUEST['interval'])) ? 1 : 0);
+		$count    = ((array_key_exists('count',$_REQUEST) && intval($_REQUEST['count'])) ? intval($_REQUEST['count']) : 0);
+		$until    = ((array_key_exists('until',$_REQUEST) && $_REQUEST['until']) ? datetime_convert(date_default_timezone_get(), 'UTC', $_REQUEST['until']) : NULL_DATE);
+		$byday    = [];
+
+		if((! $freq) || (! in_array($freq, [ 'DAILY','WEEKLY','MONTHLY','YEARLY' ]))) {
+			$repeat = 0;
+		}
+		if($count < 0) {
+			$count = 0;
+		}
+		if($count > MAX_EVENT_REPEAT_COUNT) {
+			$count = MAX_EVENT_REPEAT_COUNT;
+		}
+
 		require_once('include/text.php');
 		linkify_tags($desc, local_channel());
 		linkify_tags($location, local_channel());
@@ -130,9 +151,9 @@ class Events extends \Zotlabs\Web\Controller {
 
 		$share = 1;	
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
-		$acl = new \Zotlabs\Access\AccessControl(false);
+		$acl = new AccessControl(false);
 	
 		if($event_id) {
 			$x = q("select * from event where id = %d and uid = %d limit 1",
@@ -172,7 +193,7 @@ class Events extends \Zotlabs\Web\Controller {
 		}
 	
 		$post_tags = array();
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 		$ac = $acl->get();
 	
 		if(strlen($categories)) {
@@ -234,13 +255,13 @@ class Events extends \Zotlabs\Web\Controller {
 					intval($channel['channel_id'])
 				);
 				if($z) {
-					Libsync::build_sync_packet($channel['channel_id'],array('event_item' => array(encode_item($sync_item[0],true)),'event' => $z));
+					Libsync::build_sync_packet($channel['channel_id'], [ 'event_item' => [ encode_item($sync_item[0],true)],'event' => $z ]);
 				}
 			}
 		}
 	
 		if($share)
-			\Zotlabs\Daemon\Master::Summon(array('Notifier','event',$item_id));
+			Master::Summon(array('Notifier','event',$item_id));
 	
 	}
 	
@@ -294,7 +315,7 @@ class Events extends \Zotlabs\Web\Controller {
 		$first_day = (($first_day) ? $first_day : 0);
 	
 		$htpl = get_markup_template('event_head.tpl');
-		\App::$page['htmlhead'] .= replace_macros($htpl,array(
+		App::$page['htmlhead'] .= replace_macros($htpl,array(
 			'$baseurl' => z_root(),
 			'$module_url' => '/events',
 			'$modparams' => 1,
@@ -304,7 +325,7 @@ class Events extends \Zotlabs\Web\Controller {
 	
 		$o = '';
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 		$mode = 'view';
 		$y = 0;
@@ -312,7 +333,7 @@ class Events extends \Zotlabs\Web\Controller {
 		$ignored = ((x($_REQUEST,'ignored')) ? " and dismissed = " . intval($_REQUEST['ignored']) . " "  : '');
 	
 	
-		// logger('args: ' . print_r(\App::$argv,true));
+		// logger('args: ' . print_r(App::$argv,true));
 	
 	
 	
@@ -445,10 +466,18 @@ class Events extends \Zotlabs\Web\Controller {
 	
 			require_once('include/acl_selectors.php');
 	
-			$acl = new \Zotlabs\Access\AccessControl($channel);
+			$acl = new AccessControl($channel);
 			$perm_defaults = $acl->get();
 
 			$permissions = ((x($orig_event)) ? $orig_event : $perm_defaults);
+
+			$freq_options = [
+				'DAILY'   => t('day(s)'),
+				'WEEKLY'  => t('week(s)'),
+				'MONTHLY' => t('month(s)'),
+				'YEARLY'  => t('year(s)')
+			];
+			
 
 			$tpl = get_markup_template('event_form.tpl');
 	
@@ -493,8 +522,15 @@ class Events extends \Zotlabs\Web\Controller {
 				'$lockstate' => (($acl->is_private()) ? 'lock' : 'unlock'),
 
 				'$submit' => t('Submit'),
-				'$advanced' => t('Advanced Options')
-	
+				'$advanced' => t('Advanced Options'),
+
+				'$repeat'   => [ 'repeat' , t('Event repeat'), false, '', [ t('No'), t('Yes') ] ],
+				'$freq'     => [ 'freq' , t('Repeat frequency') , '', '', $freq_options ],
+				'$interval' => [ 'interval', t('Repeat every'), 1 , '' ],
+				'$count'    => [ 'count', t('Number of total repeats'), 10, '' ],
+				'$until'    => '',
+				'$byday'    => '',
+				
 			));
 			/* end edit/create form */
 	

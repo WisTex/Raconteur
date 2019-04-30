@@ -71,7 +71,6 @@ function UploadInit() {
            progress: function(e,data) {
 
                 // there will only be one file, the one we are looking for                                                                                                                       
-
                 $(data.files).each( function() {
                     var idx = this.count;
 
@@ -84,7 +83,6 @@ function UploadInit() {
 
             },
 
-
             stop: function(e,data) {
                 window.location.href = window.location.href;
             }
@@ -93,34 +91,18 @@ function UploadInit() {
 
         $('#dbtn-submit').click(function(event) { event.preventDefault(); $('#invisible-photos-file-upload').trigger('click'); return false;});
 
-
-
-
-	// is XHR2 available?
-//	var xhr = new XMLHttpRequest();
-//	if (xhr.upload) {
-
-		// file select
-//		fileselect.attr("multiple", 'multiple');
-//		fileselect.on("change", UploadFileSelectHandler);
-
-		// file submit
-//		submit.on("click", fileselect, UploadFileSelectHandler);
-
+		$('.generic-content-wrapper').on("dragover", function(e) {
+			$('#photo-upload-form').show();
+		});
+	
 		// file drop
-//		filedrag.on("dragover", DragDropUploadFileHover);
-//		filedrag.on("dragleave", DragDropUploadFileHover);
-//		filedrag.on("drop", DragDropUploadFileSelectHandler);
-//	}
+		filedrag.on("dragover", DragDropUploadFileHover);
+		filedrag.on("dragleave", DragDropUploadFileHover);
 
-//	window.filesToUpload = 0;
-//	window.fileUploadsCompleted = 0;
 }
 
 // file drag hover
 function DragDropUploadFileHover(e) {
-	e.stopPropagation();
-	e.preventDefault();
 	e.currentTarget.className = (e.type == "dragover" ? "hover" : "");
 }
 

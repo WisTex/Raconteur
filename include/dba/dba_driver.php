@@ -485,3 +485,28 @@ function db_columns($table) {
 
 	return [];
 }
+
+
+function db_indexes($table) {
+
+	if($table) {
+		if(ACTIVE_DBTYPE === DBTYPE_POSTGRES) {
+			$r = q("SELECT indexname from pg_indexes where tablename = '%s'",
+				dbesc($table)
+			); 
+			if($r) {
+				return ids_to_array($r,'indexname');
+			}
+		}
+		else {
+			$r = q("show index from %s",
+				dbesc($table)
+			);
+			if($r) {
+				return ids_to_array($r,'Key_name');
+			}
+		}
+	}
+
+	return [];
+}

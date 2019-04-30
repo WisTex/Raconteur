@@ -10,15 +10,16 @@ namespace Zotlabs\Module;
  * @todo This setup module could need some love and improvements.
  */
 
-use Zotlabs\Lib\System;
-use Zotlabs\Web\Controller;
 use App;
 use DBA;
+use Zotlabs\Lib\System;
+use Zotlabs\Web\Controller;
 
 /**
  * @brief Initialisation for the setup module.
  *
  */
+
 class Setup extends Controller {
 
 	private static $install_wizard_pass = 1;
@@ -27,6 +28,7 @@ class Setup extends Controller {
 	 * {@inheritDoc}
 	 * @see \\Zotlabs\\Web\\Controller::init()
 	 */
+
 	function init() {
 		// Ensure that if somebody hasn't read the install documentation and doesn't have all
 		// the required modules or has a totally borked shared hosting provider and they can't
@@ -63,7 +65,7 @@ class Setup extends Controller {
 	 */
 	function post() {
 
-		switch($this->install_wizard_pass) {
+		switch ($this->install_wizard_pass) {
 			case 1:
 			case 2:
 				return;
@@ -148,7 +150,7 @@ class Setup extends Controller {
 
 				$result = file_put_contents('.htconfig.php', $txt);
 				if(! $result) {
-					\App::$data['txt'] = $txt;
+					App::$data['txt'] = $txt;
 				}
 
 				$errors = $this->load_database($db);
@@ -376,12 +378,12 @@ class Setup extends Controller {
 	 * @param string $help optional help string
 	 */
 	function check_add(&$checks, $title, $status, $required, $help = '') {
-		$checks[] = array(
+		$checks[] = [
 			'title'    => $title,
 			'status'   => $status,
 			'required' => $required,
 			'help'     => $help
-		);
+		];
 	}
 
 	/**
@@ -395,7 +397,7 @@ class Setup extends Controller {
 
 		if(version_compare(PHP_VERSION, '7.1') < 0) {
 			$help .= t('PHP version 7.1 or greater is required.');
-			$this->check_add($checks, t('PHP version'), false, false, $help);
+			$this->check_add($checks, t('PHP version'), false, true, $help);
 		}
 
 		if (strlen($phpath)) {
@@ -412,7 +414,7 @@ class Setup extends Controller {
 
 		if(!$passed) {
 			$help .= t('Could not find a command line version of PHP in the web server PATH.'). EOL;
-			$help .= t('If you don\'t have a command line version of PHP installed on server, you will not be able to run background polling via cron.') . EOL;
+			$help .= t('If you do not have a command line version of PHP installed on server, you will not be able to run background tasks - including message delivery.') . EOL;
 			$help .= EOL;
 			$tpl = get_markup_template('field_input.tpl');
 			$help .= replace_macros($tpl, array(
@@ -451,11 +453,10 @@ class Setup extends Controller {
 	 * @param[out] array &$checks
 	 */
 	function check_phpconfig(&$checks) {
-		require_once 'include/environment.php';
 
 		$help = '';
 
-		$result = getPhpiniUploadLimits();
+		$result = self::getPhpiniUploadLimits();
 		if($result['post_max_size'] < (2 * 1024 * 1024) || $result['max_upload_filesize'] < (2 * 1024 * 1024)) {
 			$mem_warning = '<strong>' . t('This is not sufficient to upload larger images or files. You should be able to upload at least 2MB (2097152 bytes) at once.') . '</strong>';
         }
@@ -796,6 +797,68 @@ class Setup extends Controller {
 			$v = $v && $c['status'];
 
 		return $v;
+	}
+
+	/**
+	 * @brief Get some upload related limits from php.ini.
+	 *
+	 * This function returns values from php.ini like \b post_max_size,
+	 * \b max_file_uploads, \b upload_max_filesize.
+	 *
+	 * @return array associative array
+	 *   * \e int \b post_max_size the maximum size of a complete POST in bytes
+	 *   * \e int \b upload_max_filesize the maximum size of one file in bytes
+	 *   * \e int \b max_file_uploads maximum number of files in one POST
+	 *   * \e int \b max_upload_filesize min(post_max_size, upload_max_filesize)
+	 */
+
+	static private function getPhpiniUploadLimits() {
+	    $ret = array();
+
+    	// max size of the complete POST
+	    $ret['post_max_size'] = self::phpiniSizeToBytes(ini_get('post_max_size'));
+	    // max size of one file
+    	$ret['upload_max_filesize'] = self::phpiniSizeToBytes(ini_get('upload_max_filesize'));
+	    // catch a configuration error where post_max_size < upload_max_filesize
+    	$ret['max_upload_filesize'] = min(
+        	    $ret['post_max_size'],
+            	$ret['upload_max_filesize']
+		);
+	    // maximum number of files in one POST
+    	$ret['max_file_uploads'] = intval(ini_get('max_file_uploads'));
+
+	    return $ret;
+	}
+
+	/**
+	 * @brief Parses php_ini size settings to bytes.
+	 *
+	 * This function parses common size setting from php.ini files to bytes.
+	 * e.g. post_max_size = 8M ==> 8388608
+	 *
+	 * \note This method does not recognise other human readable formats like
+	 * 8MB, etc.
+	 *
+	 * @todo Make this function more universal useable. MB, T, etc.
+	 *
+	 * @param string $val value from php.ini e.g. 2M, 8M
+	 * @return int size in bytes
+	 */
+	static private function phpiniSizeToBytes($val) {
+    	$val = trim($val);
+	    $unit = strtolower($val[strlen($val)-1]);
+    	switch($unit) {
+        	case 'g':
+            	$val *= 1024;
+	        case 'm':
+    	        $val *= 1024;
+        	case 'k':
+            	$val *= 1024;
+	        default:
+    	        break;
+    	}
+
+    	return (int)$val;
 	}
 
 }

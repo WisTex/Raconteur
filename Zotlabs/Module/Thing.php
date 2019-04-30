@@ -1,19 +1,24 @@
 <?php
-/**
- * @file Zotlabs/Module/Thing.php
- */
 
 namespace Zotlabs\Module;
 
 
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Libsync;
+
+
+/**
+ * @file Zotlabs/Module/Thing.php
+ */
 
 require_once('include/security.php');
 
 require_once('include/acl_selectors.php');
 
 
-class Thing extends \Zotlabs\Web\Controller {
+class Thing extends Controller {
 
 	function init() {
 
@@ -23,7 +28,7 @@ class Thing extends \Zotlabs\Web\Controller {
 		$channel    = \App::get_channel();
 
 		if($_SERVER['REQUEST_METHOD'] === 'GET' && argc() < 2) {
-			profile_load($channel['channel_address']);
+			Libprofile::load($channel['channel_address']);
 		}
 
 

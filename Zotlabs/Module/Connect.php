@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Daemon\Master;
+use Zotlabs\Lib\Libprofile;
 
 
 class Connect extends Controller {
@@ -12,7 +13,7 @@ class Connect extends Controller {
 	function init() {
 		if(argc() > 1) {
 			App::$data['channel'] = channelx_by_address(argv(1));
-			profile_load(argv(1),EMPTY_STR);
+			Libprofile::load(argv(1),EMPTY_STR);
 		}
 		else {
 			notice( t('Requested profile is not available.') . EOL );

@@ -8,15 +8,17 @@
 
 namespace Zotlabs\Module;
 
-use \Sabre\DAV as SDAV;
-use \Zotlabs\Storage;
+use Sabre\DAV as SDAV;
+use Zotlabs\Storage;
+use Zotlabs\Lib\Libprofile;
+use Zotlabs\Web\Controller;
 
 require_once('include/attach.php');
 require_once('include/auth.php');
 require_once('include/security.php');
 
 
-class Dav extends \Zotlabs\Web\Controller {
+class Dav extends Controller {
 
 	/**
 	 * @brief Fires up the SabreDAV server.
@@ -90,7 +92,7 @@ class Dav extends \Zotlabs\Web\Controller {
 			os_mkdir('store', STORAGE_DEFAULT_PERMISSIONS, false);
 
 		if (argc() > 1)
-			profile_load(argv(1),0);
+			Libprofile::load(argv(1),0);
 
 
 		$auth = new \Zotlabs\Storage\BasicAuth();

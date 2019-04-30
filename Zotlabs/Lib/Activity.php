@@ -549,7 +549,7 @@ class Activity {
 		$ret = [];
 
 		if($item['attach']) {
-			$atts = json_decode($item['attach'],true);
+			$atts = ((is_array($item['attach'])) ? $item['attach'] : json_decode($item['attach'],true));
 			if($atts) {
 				foreach($atts as $att) {
 					if(strpos($att['type'],'image')) {
@@ -2774,20 +2774,24 @@ class Activity {
 		}
 
 		if($act['type'] === 'Event') {
-			$adjust = false;                                                                                                                              
-			$event = [];                                                                                                                                  
-			$event['event_hash'] = $act['id'];                                                                                                            
-			if(array_key_exists('startTime',$act) && strpos($act['startTime'],-1,1) === 'Z') {                                                            
-				$adjust = true;                                                                                                                           
-				$event['adjust'] = 1;                                                                                                                     
-				$event['dtstart'] = datetime_convert('UTC','UTC',$event['startTime'] . (($adjust) ? '' : 'Z'));                                           
-			}                                                                                                                                             
-			if(array_key_exists('endTime',$act)) {                                                                                                        
-				$event['dtend'] = datetime_convert('UTC','UTC',$event['endTime'] . (($adjust) ? '' : 'Z'));                                               
-			}                                                                                                                                             
-			else {                                                                                                                                        
-				$event['nofinish'] = true;                                                                                                                
-			}                                                                                                                                             
+			$adjust = false;
+			$event = [];
+			$event['event_hash'] = $act['id'];
+			if(array_key_exists('startTime',$act) && strpos($act['startTime'],-1,1) === 'Z') {
+				$adjust = true;
+				$event['adjust'] = 1;
+				$event['dtstart'] = datetime_convert('UTC','UTC',$event['startTime'] . (($adjust) ? '' : 'Z'));
+			}
+			if(array_key_exists('endTime',$act)) {
+				$event['dtend'] = datetime_convert('UTC','UTC',$event['endTime'] . (($adjust) ? '' : 'Z'));
+			}
+			else {
+				$event['nofinish'] = true;
+			}
+
+			if(array_key_exists('eventRepeat',$act)) {
+				$event['event_repeat'] = $act['eventRepeat'];
+			}
 		}                         
 
 		foreach ([ 'name', 'summary', 'content' ] as $a) {

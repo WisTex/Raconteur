@@ -2,10 +2,14 @@
 namespace Zotlabs\Module;
 
 
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Libprofile;
+
 require_once('include/photos.php');
 
 
-class Profperm extends \Zotlabs\Web\Controller {
+class Profperm extends Controller {
 
 	function init() {
 	
@@ -17,7 +21,7 @@ class Profperm extends \Zotlabs\Web\Controller {
 	
 		$profile = \App::$argv[1];
 	
-		profile_load($which,$profile);
+		Libprofile::load($which,$profile);
 	
 	}
 	

@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Libprofile;
 
 use Sabre\VObject\Reader;
 
@@ -22,7 +23,7 @@ class Profiles extends Controller {
 				intval(argv(2)),
 				intval(local_channel())
 			);
-			if(! count($r)) {
+			if(! $r) {
 				notice( t('Profile not found.') . EOL);
 				goaway(z_root() . '/profiles');
 				return; // NOTREACHED
@@ -166,7 +167,7 @@ class Profiles extends Controller {
 	
 	
 	
-		// Run profile_load() here to make sure the theme is set before
+		// Run Libprofile::load() here to make sure the theme is set before
 		// we start loading content
 		if(((argc() > 1) && (intval(argv(1)))) || !feature_enabled(local_channel(),'multi_profiles')) {
 			if(feature_enabled(local_channel(),'multi_profiles'))
@@ -190,7 +191,7 @@ class Profiles extends Controller {
 	
 			$chan = App::get_channel();
 	
-			profile_load($chan['channel_address'],$r[0]['id']);
+			Libprofile::load($chan['channel_address'],$r[0]['id']);
 		}
 	}
 	
@@ -617,7 +618,7 @@ class Profiles extends Controller {
 	
 			if($is_default) {
 				// reload the info for the sidebar widget - why does this not work?
-				profile_load($channel['channel_address']);
+				Libprofile::load($channel['channel_address']);
 				\Zotlabs\Daemon\Master::Summon(array('Directory',local_channel()));
 			}
 		}

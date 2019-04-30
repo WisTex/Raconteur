@@ -17,7 +17,6 @@ This document assumes you're an administrator.
   [*= system.display_friend_count ] Set the number of connections to display in the connections profile  widget.
   [*= system.do_not_track ] As the browser header.  This will break many identity based features.   You should really just set permissions that make sense.
   [*= system.forcepublicuploads ] Force uploaded photos to be public when uploaded as wall items.  It makes far more sense to just set your permissions properly in the first place.  Do that instead.
-  [*= system.network_page_default ] Set default params when viewing the network page.  This should contain the same querystring as manual filtering.
   [*= system.paranoia ] Sets the security level of IP checking. If the IP address of a logged-in session changes apply this level to determine if the account should be logged out as a security breach.     
 Options are:
         0 &mdash; no IP checking             

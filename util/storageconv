@@ -1,0 +1,131 @@
+#!/usr/bin/env php
+<?php
+
+// Hubzilla thumbnails storage convertor
+function usage() {
+	echo <<< EOT
+Hubzilla thumbnails storage convertor
+
+Usage:
+	util/storageconv stats  # show current stats
+	util/storageconv fs     # move thumbnails from SQL to filesystem
+	util/storageconv db     # move thumbnails from filesystem to SQL
+
+EOT;
+}
+
+require_once('include/cli_startup.php');
+
+cli_startup();
+
+if($argc == 1) {
+	usage();
+	killme();
+}
+
+if($argc == 2) {
+	
+	$storage = (intval(get_config('system','filesystem_storage_thumbnails', 0)) > 0 ? 1 : 0);
+	echo 'Current storage set to: ' . ($storage ? 'filesystem' : 'SQL database') . PHP_EOL;
+	switch($argv[1]) {
+		case 'stats':
+			$x = q("SELECT COUNT(resource_id) AS qty FROM photo WHERE photo_usage = 0 AND os_storage = 1 AND imgscale = 0");
+			echo 'Local images: ' . $x[0]['qty'] . PHP_EOL;
+			$x = q("SELECT COUNT(id) AS qty FROM photo WHERE resource_id IN (SELECT DISTINCT resource_id FROM photo WHERE photo_usage = 0 and os_storage = 1) AND imgscale > 0");
+			echo 'Thumbnails total: ' . $x[0]['qty'] . PHP_EOL;
+			$x = q("SELECT COUNT(id) AS qty FROM photo WHERE resource_id IN (SELECT DISTINCT resource_id FROM photo WHERE photo_usage = 0 and os_storage = 1) AND os_storage != %d AND imgscale > 0",
+				$storage
+			);
+			echo 'Thumbnails to convert: ' . $x[0]['qty'] . PHP_EOL;
+			break;
+			
+		case 'fs':
+			if($storage == 0) {
+				echo 'Please set system.filesystem_storage_thumbnails to 1 before move thumbnails to filesystem storage' . PHP_EOL;
+				break;
+			}
+
+			$x = q("SELECT DISTINCT resource_id, content FROM photo WHERE photo_usage = 0 AND os_storage = 1 AND imgscale = 0");
+			
+			if($x) {
+				foreach($x as $xx) {
+					
+					$n = q("SELECT id, imgscale, content FROM photo WHERE resource_id = '%s' AND os_storage != %d AND imgscale > 0",
+						dbesc($xx['resource_id']),
+						$storage
+					);
+					
+					foreach($n as $nn) {
+						
+						echo '.';
+						
+						$filename = dbunescbin($xx['content']) . '-' . $nn['imgscale'];
+						if(! file_put_contents($filename, dbunescbin($nn['content']))) {
+							echo 'Failed to save file ' . $filename . PHP_EOL;
+							continue;
+						}
+					
+						$z = q("UPDATE photo SET content = '%s', os_storage = 1 WHERE id = %d",
+							dbescbin($filename),
+							intval($nn['id'])
+						);
+						if(! $z) {
+							@unlink($filename);
+							echo 'Failed to update metadata for saved file ' . $filename . PHP_EOL;
+						}
+
+					}
+				}
+			}
+			break;
+			
+		case 'db':
+			if($storage == 1) {
+				echo 'Please set system.filesystem_storage_thumbnails to 0 before move thumbnails to SQL database storage' . PHP_EOL;
+				break;
+			}
+
+			$x = q("SELECT DISTINCT resource_id FROM photo WHERE photo_usage = 0 AND os_storage = 1 AND imgscale = 0");
+			
+			if($x) {
+				foreach($x as $xx) {
+
+					$n = q("SELECT id, content FROM photo WHERE resource_id = '%s' AND os_storage != %d AND imgscale > 0",
+						dbesc($xx['resource_id']),
+						$storage
+					);
+				
+					foreach($n as $nn) {
+						
+						echo '.';
+						
+						$filename = dbunescbin($nn['content']);
+						$content = file_get_contents($filename);
+						if($content) {
+						
+							$z = q("UPDATE photo SET content = '%s', os_storage = 0 WHERE id = %d",
+								dbescbin($content),
+								intval($nn['id'])
+							);
+							if(! $z) {
+								echo 'Failed to update stored file metadata ' . $filename . PHP_EOL;
+								continue;
+							}
+					
+							@unlink($filename);
+						}
+						else
+							echo 'Can not read file contents ' . $filename . PHP_EOL;
+					}
+				}
+			}
+			break;
+			
+		default:
+			usage();
+			return;
+
+	}
+	
+	echo PHP_EOL;
+}

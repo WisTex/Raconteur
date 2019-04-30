@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file include/bbcode.php
  * @brief BBCode related functions for parsing, etc.
@@ -947,13 +948,9 @@ function bbcode($Text, $options = []) {
 	}
 
 	$preserve_nl = ((array_key_exists('preserve_nl',$options)) ? $options['preserve_nl'] : false);
-	$tryoembed   = ((array_key_exists('tryoembed',$options)) ? $options['tryoembed'] : true);
 	$cache       = ((array_key_exists('cache',$options)) ? $options['cache'] : false);
 	$newwin      = ((array_key_exists('newwin',$options)) ? $options['newwin'] : true);
 	$export      = ((array_key_exists('export',$options)) ? $options['export'] : false);
-
-	if($export)
-		$tryoembed = false;
 
 	$target = (($newwin) ? ' target="_blank" ' : '');
 
@@ -1108,19 +1105,11 @@ function bbcode($Text, $options = []) {
 	$urlchars = '[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]';
 
 	if (strpos($Text,'http') !== false) {
-		if($tryoembed) {
-			$Text = preg_replace_callback("/([^\]\='".'"'."\/]|^|\#\^)(https?\:\/\/$urlchars+)/ismu", 'tryoembed', $Text);
-		}
 		$Text = preg_replace("/([^\]\='".'"'."\/])(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" ' . $target . ' rel="nofollow noopener">$2</a>', $Text);
 	}
 
 	if (strpos($Text,'[/share]') !== false) {
 		$Text = preg_replace_callback("/\[share(.*?)\](.*?)\[\/share\]/ism", 'bb_ShareAttributes', $Text);
-	}
-	if($tryoembed) {
-		if (strpos($Text,'[/url]') !== false) {
-			$Text = preg_replace_callback("/[^\^]\[url\]([$URLSearchString]*)\[\/url\]/ism", 'tryoembed', $Text);
-		}
 	}
 
 	if (strpos($Text,'[/url]') !== false) {
@@ -1137,8 +1126,16 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace("/\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '<a class="zrl" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
 	}
 
-//	if (get_account_techlevel() < 2)
-//		$Text = str_replace('<span class="bookmark-identifier">#^</span>', '', $Text);
+	// named anchors do not work well in conversational text, as it is often collapsed by a "showmore" script.
+	// Included here for completeness.
+	
+	if (strpos($Text,'[/anchor]') !== false) {
+		$Text = preg_replace("/\[anchor\](.*?)\[\/anchor\]/ism", '<a name="$1"></a>', $Text);
+	}
+
+	if (strpos($Text,'[/goto]') !== false) {
+		$Text = preg_replace("/\[goto=(.*?)\](.*?)\[\/goto\]/ism", '<a href="#$1">$2</a>', $Text);
+	}
 
 	// Perform MAIL Search
 	if (strpos($Text,'[/mail]') !== false) {
@@ -1448,23 +1445,6 @@ function bbcode($Text, $options = []) {
 	}
 	if (strpos($Text,'[/zaudio]') !== false) {
 		$Text = preg_replace_callback("/\[zaudio\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mp3|opus|m4a))\[\/zaudio\]/ism", 'tryzrlaudio', $Text);
-	}
-
-	// Try to Oembed
-	if ($tryoembed) {
-		if (strpos($Text,'[/video]') !== false) {
-			$Text = preg_replace_callback("/\[video\](.*?)\[\/video\]/ism", 'tryoembed', $Text);
-		}
-		if (strpos($Text,'[/audio]') !== false) {
-			$Text = preg_replace_callback("/\[audio\](.*?)\[\/audio\]/ism", 'tryoembed', $Text);
-		}
-
-		if (strpos($Text,'[/zvideo]') !== false) {
-			$Text = preg_replace_callback("/\[zvideo\](.*?)\[\/zvideo\]/ism", 'tryoembed', $Text);
-		}
-		if (strpos($Text,'[/zaudio]') !== false) {
-			$Text = preg_replace_callback("/\[zaudio\](.*?)\[\/zaudio\]/ism", 'tryoembed', $Text);
-		}
 	}
 
 	// if video couldn't be embedded, link to it instead.

@@ -1,5 +1,12 @@
 <?php
-namespace Zotlabs\Module; /** @file */
+namespace Zotlabs\Module;
+
+
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Access\AccessControl;
+use Zotlabs\Lib\PermissionDescription;
+
 
 require_once('include/acl_selectors.php');
 require_once('include/items.php');
@@ -26,9 +33,7 @@ require_once('include/conversation.php');
  */
 
 
-
-
-class Rpost extends \Zotlabs\Web\Controller {
+class Rpost extends Controller {
 
 	function get() {
 	
@@ -41,9 +46,9 @@ class Rpost extends \Zotlabs\Web\Controller {
 				// by the wretched beast called 'suhosin'. All the browsers now allow long GET requests, but suhosin
 				// blocks them.
 	
-				$url = get_rpost_path(\App::get_observer());
+				$url = get_rpost_path(App::get_observer());
 				// make sure we're not looping to our own hub
-				if(($url) && (! stristr($url, \App::get_hostname()))) {
+				if(($url) && (! stristr($url, App::get_hostname()))) {
 					foreach($_GET as $key => $arg) {
 						if($key === 'req')
 							continue;
@@ -98,15 +103,15 @@ class Rpost extends \Zotlabs\Web\Controller {
 			$_REQUEST['body'] = html2bbcode($_REQUEST['body']); 
 		}
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 	
-		$acl = new \Zotlabs\Access\AccessControl($channel);
+		$acl = new AccessControl($channel);
 	
 		$channel_acl = $acl->get();
 	
 		if($_REQUEST['url']) {
-			$x = z_fetch_url(z_root() . '/linkinfo?f=&url=' . urlencode($_REQUEST['url']));
+			$x = z_fetch_url(z_root() . '/linkinfo?f=&url=' . urlencode($_REQUEST['url']) . '&oembed=1&zotobj=1');
 			if($x['success'])
 				$_REQUEST['body'] = $_REQUEST['body'] . $x['body'];
 		}
@@ -115,13 +120,13 @@ class Rpost extends \Zotlabs\Web\Controller {
 			$_REQUEST['body'] .= '[share=' . intval($_REQUEST['post_id']) . '][/share]';
 		}
 	
-		$x = array(
+		$x = [
 			'is_owner'            => true,
 			'allow_location'      => ((intval(get_pconfig($channel['channel_id'],'system','use_browser_location'))) ? '1' : ''),
 			'default_location'    => $channel['channel_location'],
 			'nickname'            => $channel['channel_address'],
 			'lockstate'           => (($acl->is_private()) ? 'lock' : 'unlock'),
-			'acl'                 => populate_acl($channel_acl, true, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
+			'acl'                 => populate_acl($channel_acl, true, PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
 			'permissions'         => $channel_acl,
 			'bang'                => '',
 			'visitor'             => true,
@@ -135,20 +140,16 @@ class Rpost extends \Zotlabs\Web\Controller {
 			'editor_autocomplete' => true,
 			'bbcode'              => true,
 			'jotnets'             => true
-		);
+		];
 	
 		$editor = status_editor($a,$x);
 	
-		$o .= replace_macros(get_markup_template('edpost_head.tpl'), array(
+		$o .= replace_macros(get_markup_template('edpost_head.tpl'), [
 			'$title' => t('Edit post'),
 			'$cancel' => '',
 			'$editor' => $editor
-		));
-	
+		]);
+
 		return $o;
-	
 	}
-	
-	
-	
 }
