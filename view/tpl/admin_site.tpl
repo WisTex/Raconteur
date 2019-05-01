@@ -86,12 +86,12 @@
 			</div>
 			<div id="reg-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="reg-settings" data-parent="#settings">
 				<div class="section-content-tools-wrapper">
-					{{include file="field_input.tpl" field=$register_text}}
-					{{include file="field_select_grouped.tpl" field=$role}}
 					{{include file="field_select.tpl" field=$register_policy}}
 					{{include file="field_checkbox.tpl" field=$invite_only}}
-					{{include file="field_input.tpl" field=$minimum_age}}
 					{{include file="field_select.tpl" field=$access_policy}}
+					{{include file="field_input.tpl" field=$register_text}}
+					{{include file="field_select_grouped.tpl" field=$role}}
+					{{include file="field_input.tpl" field=$minimum_age}}
 					{{include file="field_input.tpl" field=$location}}
 					{{include file="field_input.tpl" field=$sellpage}}
 					{{include file="field_input.tpl" field=$first_page}}

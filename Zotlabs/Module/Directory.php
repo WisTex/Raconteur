@@ -216,12 +216,17 @@ class Directory extends \Zotlabs\Web\Controller {
 				if($j) {
 	
 					if($j['results']) {
-	
+
+						$results = $j['results'];
+						if($suggest) {
+							$results = self::reorder_results($results,$addresses);
+						}
+
 						$entries = array();
 	
 						$photo = 'thumb';
 	
-						foreach($j['results'] as $rr) {
+						foreach($results as $rr) {
 	
 							$profile_link = chanlink_url($rr['url']);
 			
@@ -442,6 +447,26 @@ class Directory extends \Zotlabs\Web\Controller {
 		}
 		return $o;
 	}
-	
+
+
+	static public function reorder_results($results,$suggests) {
+
+//		return $results;
+
+		if(! $suggests)
+			return $results;
+
+		$out = [];
+		foreach($suggests as $k => $v) {
+			foreach($results as $rv) {
+				if($k == $rv['address']) {
+					$out[intval($v)] = $rv;
+					break;
+				}
+			}
+		}
+
+		return $out;
+	}
 	
 }

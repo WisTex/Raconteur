@@ -245,10 +245,6 @@ function suggestion_query($uid, $myxchan, $start = 0, $limit = 80) {
 	if((! $uid) || (! $myxchan))
 		return array();
 
-
-
-
-
 	$r = q("SELECT count(xlink_xchan) as total, xchan.* from xchan
 		left join xlink on xlink_link = xchan_hash
 		where xlink_xchan in ( select abook_xchan from abook where abook_channel = %d )

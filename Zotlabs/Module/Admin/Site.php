@@ -265,9 +265,9 @@ class Site {
 		/* Acess policy */
 		$access_choices = [
 			ACCESS_PRIVATE => t("My site is not a public server"),
-			ACCESS_PAID    => t("My site has paid access only"),
-			ACCESS_FREE    => t("My site has free access only"),
-			ACCESS_TIERED  => t("My site offers free accounts with optional paid upgrades")
+			ACCESS_FREE    => t("My site provides free public access"),
+			ACCESS_PAID    => t("My site provides paid public access"),
+			ACCESS_TIERED  => t("My site provides free public access and premium paid plans")
 		];
 
 		$discover_tab = get_config('system','disable_discover_tab');
@@ -276,7 +276,7 @@ class Site {
 		if($discover_tab === false)
 			$discover_tab = 1;
 		// now invert the logic for the setting.
-		$discover_tab = (1 - $discover_tab);
+		$discover_tab = (1 - intval($discover_tab));
 
 
 		$perm_roles = PermissionRoles::roles();
@@ -309,9 +309,9 @@ class Site {
 			'$feed_contacts'        => [ 'feed_contacts', t('Allow Feeds as Connections'),get_config('system','feed_contacts'),t('(Heavy system resource usage)') ],
 			'$maximagesize'         => [ 'maximagesize', t("Maximum image size"), intval(get_config('system','maximagesize')), t("Maximum size in bytes of uploaded images. Default is 0, which means no limits.") ],
 			'$register_policy'      => [ 'register_policy', t("Does this site allow new member registration?"), get_config('system','register_policy'), "", $register_choices ],
-			'$invite_only'          => [ 'invite_only', t("Invitation only"), get_config('system','invitation_only'), t("Only allow new member registrations with an invitation code. Above register policy must be set to Yes.") ],
+			'$invite_only'          => [ 'invite_only', t("Invitation only"), get_config('system','invitation_only'), t("Only allow new member registrations with an invitation code. New member registration must be allowed for this to work.") ],
 			'$minimum_age'          => [ 'minimum_age', t("Minimum age"), (x(get_config('system','minimum_age'))?get_config('system','minimum_age'):13), t("Minimum age (in years) for who may register on this site.") ],
-			'$access_policy'        => [ 'access_policy', t("Which best describes the types of account offered by this hub?"), get_config('system','access_policy'), t("This is displayed on the public server site list."), $access_choices ],
+			'$access_policy'        => [ 'access_policy', t("Which best describes the types of account offered by this hub?"), get_config('system','access_policy'), t("If a public server policy is selected, this information may be displayed on the public server site list."), $access_choices ],
 			'$register_text'        => [ 'register_text', t("Register text"), htmlspecialchars(get_config('system','register_text'), ENT_QUOTES, 'UTF-8'), t("Will be displayed prominently on the registration page.") ],
 			'$role'                 => $role,
 			'$frontpage'	        => [ 'frontpage', t("Site homepage to show visitors (default: login box)"), get_config('system','frontpage'), t("example: 'public' to show public stream, 'page/sys/home' to show a system webpage called 'home' or 'include:home.html' to include a file.") ],

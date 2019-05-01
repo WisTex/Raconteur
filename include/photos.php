@@ -4,6 +4,9 @@
  * @brief Functions related to photo handling.
  */
 
+
+use Zotlabs\Access\AccessControl;
+
 require_once('include/permissions.php');
 require_once('include/photo_factory.php');
 require_once('include/text.php');
@@ -16,6 +19,7 @@ require_once('include/text.php');
  * @param array $args
  * @return array
  */
+
 function photo_upload($channel, $observer, $args) {
 
 	$ret = array('success' => false);
@@ -47,7 +51,7 @@ function photo_upload($channel, $observer, $args) {
 	// all other settings. 'allow_cid' being passed from an external source takes priority over channel settings.
 	// ...messy... needs re-factoring once the photos/files integration stabilises
 
-	$acl = new Zotlabs\Access\AccessControl($channel);
+	$acl = new AccessControl($channel);
 	if(array_key_exists('directory',$args) && $args['directory'])
 		$acl->set($args['directory']);
 	if(array_key_exists('allow_cid',$args))
@@ -67,7 +71,6 @@ function photo_upload($channel, $observer, $args) {
 		$width = $args['getimagesize'][0];
 		$height = $args['getimagesize'][1];
 	}
-
 
 	$os_storage = 0;
 
@@ -214,6 +217,13 @@ function photo_upload($channel, $observer, $args) {
 
 	$ph->clearexif();
 
+	if(get_pconfig($channel_id,'system','clearexif',false)) {
+	
+		// only do this on the original if it was uploaded by some method other than WebDAV.
+		// Otherwise Microsoft Windows will note the file size mismatch, erase the file and
+		// upload it again and again. 
+
+	}
 
 	@unlink($src);
 

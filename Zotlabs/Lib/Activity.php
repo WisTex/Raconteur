@@ -745,10 +745,9 @@ class Activity {
 				$i['target'] = json_decode($i['target'],true);
 			}
 			$tgt = self::encode_object($i['target']);
-			if($tgt)
+			if($tgt) {
 				$ret['target'] = $tgt;
-			else
-				return [];
+			}
 		}
 
 		if($activitypub) {
