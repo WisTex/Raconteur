@@ -2,17 +2,20 @@
 
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\Libsync;
 
 require_once('include/socgraph.php');
 require_once('include/bbcode.php');
 
+define( 'DIRECTORY_PAGESIZE', 60);
 
-class Directory extends \Zotlabs\Web\Controller {
+class Directory extends Controller {
 
 	function init() {
-		\App::set_pager_itemspage(60);
+		App::set_pager_itemspage(DIRECTORY_PAGESIZE);
 	
 		if(x($_GET,'ignore') && local_channel()) {
 			q("insert into xign ( uid, xchan ) values ( %d, '%s' ) ",
@@ -30,6 +33,8 @@ class Directory extends \Zotlabs\Web\Controller {
 		$safe_changed = false;
 		$type_changed = false;
 	
+
+
 		if(array_key_exists('global',$_REQUEST)) {
 			$globaldir = intval($_REQUEST['global']);
 			if(get_config('system','localdir_hide')) {
@@ -107,8 +112,19 @@ class Directory extends \Zotlabs\Web\Controller {
 		$suggest = (local_channel() && x($_REQUEST,'suggest')) ? $_REQUEST['suggest'] : '';
 	
 		if($suggest) {
-	
-			$r = suggestion_query(local_channel(),get_observer_hash());
+
+			// the directory options have no effect in suggestion mode
+			
+			$globaldir = 1;
+			$safe_mode = 1;
+			$type = 0;
+
+
+			// only return DIRECTORY_PAGESIZE suggestions as the suggestion sorting
+			// only works if the suggestion query and the directory query have the
+			// same number of results
+
+			$r = suggestion_query(local_channel(),get_observer_hash(),0,DIRECTORY_PAGESIZE);
 
 			if(! $r) {
 				notice( t('No default suggestions were found.') . EOL);
@@ -180,7 +196,7 @@ class Directory extends \Zotlabs\Web\Controller {
 				$query .= '&t=' . $token;
 	
 			if(! $globaldir)
-				$query .= '&hub=' . \App::get_hostname();
+				$query .= '&hub=' . App::get_hostname();
 	
 			if($search)
 				$query .= '&name=' . urlencode($search) . '&keywords=' . urlencode($search);
@@ -202,7 +218,7 @@ class Directory extends \Zotlabs\Web\Controller {
 			if($sort_order)
 				$query .= '&order=' . urlencode($sort_order);
 				
-			if(\App::$pager['page'] != 1)
+			if(App::$pager['page'] != 1)
 				$query .= '&p=' . \App::$pager['page'];
 	
 			logger('mod_directory: query: ' . $query);
@@ -219,6 +235,7 @@ class Directory extends \Zotlabs\Web\Controller {
 
 						$results = $j['results'];
 						if($suggest) {
+							// change order to "number of common friends descending"
 							$results = self::reorder_results($results,$addresses);
 						}
 
