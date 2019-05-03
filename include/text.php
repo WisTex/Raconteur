@@ -3399,8 +3399,7 @@ function unique_multidim_array($array, $key) {
 } 
 
 // Much prettier formatting than print_r()
-// This assumes the output will be a web page and escapes angle-chars appropriately.
-// If this assumption changes the function will require a flag to conditionally escape. 
+// This assumes the output will be a web page and escapes angle-chars appropriately by default.
 
 
 function print_array($arr, $escape = true, $level = 0) {
@@ -3430,26 +3429,31 @@ function print_array($arr, $escape = true, $level = 0) {
 }
 
 function print_val($v, $escape = true) {
-	if(is_bool($v)) {
-		if($v) return 'true';
+	if (is_bool($v)) {
+		if ($v) {
+			return 'true';
+		}
 		return 'false';
 	}
-	if(is_string($v)) {
+	if (is_string($v)) {
 		return "'" . (($escape) ? escape_tags($v) : $v) . "'";
 	}
 	return $v;
-
 }
 
 
 function array_path_exists($str,$arr) {
 
+	if (! $arr) {
+		return false;
+	}
+
 	$ptr = $arr;
 	$search = explode('/', $str);
 
-	if($search) {
-		foreach($search as $s) {
-			if(array_key_exists($s,$ptr)) {
+	if ($search) {
+		foreach ($search as $s) {
+			if (array_key_exists($s,$ptr)) {
 				$ptr = $ptr[$s];
 			}
 			else {
@@ -3458,9 +3462,7 @@ function array_path_exists($str,$arr) {
 		}
 		return true;
 	}
-
 	return false;
-
 }
 
 function get_forum_channels($uid,$collections = 0) {
