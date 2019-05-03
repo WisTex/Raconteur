@@ -1835,7 +1835,7 @@ class Activity {
 		}
 
 
-		if(in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block', 'Announce', 'Accept', 'Reject', 'TentativeAccept' ])) {
+		if(in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block', 'Announce', 'Accept', 'Reject', 'TentativeAccept', 'emojiReaction' ])) {
 
 			$response_activity = true;
 
@@ -1899,8 +1899,6 @@ class Activity {
 		if(is_array($obj) && array_path_exists('actor/id',$s['obj'])) {
 			$s['obj']['actor'] = $s['obj']['actor']['id'];
 		}
-
-
 
 		// @todo add target if present
 

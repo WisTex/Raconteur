@@ -49,22 +49,26 @@ class React extends Controller {
 				return;
 			}
 
+			$item = array_shift($i);
 
 			$n = [] ;
 			$n['aid'] = $channel['channel_account_id'];
 			$n['uid'] = $channel['channel_id'];
 			$n['item_origin'] = true;
-			$n['item_type'] = $i[0]['item_type'];
+			$n['item_type'] = $item['item_type'];
 			$n['parent'] = $postid;
-			$n['parent_mid'] = $i[0]['mid'];
+			$n['parent_mid'] = $item['mid'];
 			$n['uuid'] = new_uuid();
 			$n['mid'] = z_root() . '/item/' . $n['uuid'];
-			$n['verb'] = ACTIVITY_REACT . '#' . $emoji;
-			$n['body'] = "\n\n[zmg=32x32]" . z_root() . '/images/emoji/' . $emoji . '.png[/zmg]' . "\n\n";
+			$n['verb'] = 'emojiReaction';
+			$n['body'] = "\n\n[size=48]" . '&#x' . $emoji . ';[/size]' . "\n\n";
 			$n['author_xchan'] = $channel['channel_hash'];
 
-			$object = json_encode(Activity::fetch_item( [ 'id' => $item['mid'] ] ));
-
+			$n['obj'] = Activity::fetch_item( [ 'id' => $item['mid'] ] );
+			$n['obj_type'] = ((array_path_exists('obj/type',$n)) ? $n['obj']['type'] : EMPTY_STR);
+			// This needs more work to provide an ActivityPub compatible object, if that is ever desired
+			$n['target'] = [ 'name' => $emoji ];
+			
 			$x = item_store($n); 
 
 			retain_item($postid);
