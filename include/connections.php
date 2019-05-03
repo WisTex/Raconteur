@@ -416,12 +416,29 @@ function remove_abook_items($channel_id,$xchan_hash) {
 	);
 	if($r) {
 		foreach($r as $rr) {
-			$x = q("select uid from term where otype = %d and oid = %d and ttype = %d limit 1",
+			$w = $x = $y = null;
+			
+			// if this isn't the parent, see if the conversation was retained
+			if($rr['id'] != $rr['parent']) {
+				$w = q("select id from item where parent = %d and item_retained = 0",
+					intval($rr['parent'])
+				);
+				if($w) {
+					// see if the conversation was filed
+					$x = q("select uid from term where otype = %d and oid = %d and ttype = %d limit 1",
+						intval(TERM_OBJ_POST),
+						intval($w[0]['id']),
+						intval(TERM_FILE)
+					);
+				}
+			}
+			// see if this item was filed
+			$y = q("select uid from term where otype = %d and oid = %d and ttype = %d limit 1",
 				intval(TERM_OBJ_POST),
 				intval($rr['id']),
 				intval(TERM_FILE)
 			);
-			if($x) {
+			if($w || $x || $y) {
 				continue;
 			}
 			drop_item($rr['id'],false);
