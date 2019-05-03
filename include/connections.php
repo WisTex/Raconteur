@@ -414,37 +414,48 @@ function remove_abook_items($channel_id,$xchan_hash) {
 		dbesc($abook['xchan_hash']),
 		intval($channel_id)
 	);
-	if($r) {
-		foreach($r as $rr) {
-			$w = $x = $y = null;
-			
-			// if this isn't the parent, see if the conversation was retained
-			if($rr['id'] != $rr['parent']) {
-				$w = q("select id from item where id = %d and item_retained = 0",
-					intval($rr['parent'])
-				);
-				if($w) {
-					// see if the conversation was filed
-					$x = q("select uid from term where otype = %d and oid = %d and ttype = %d limit 1",
-						intval(TERM_OBJ_POST),
-						intval($w[0]['id']),
-						intval(TERM_FILE)
-					);
-				}
-			}
-			// see if this item was filed
-			$y = q("select uid from term where otype = %d and oid = %d and ttype = %d limit 1",
-				intval(TERM_OBJ_POST),
-				intval($rr['id']),
-				intval(TERM_FILE)
-			);
-			if($w || $x || $y) {
-				continue;
-			}
-			drop_item($rr['id'],false);
-		}
+	if (! $r) {
+		return;
 	}
 
+	$already_saved = [];
+	foreach($r as $rr) {
+		$w = $x = $y = null;
+			
+		// optimise so we only process newly seen parent items
+		if (in_array($rr['parent'],$already_saved)) {
+			continue;
+		}
+		// if this isn't the parent, fetch the parent's item_retained  and item_starred to see if the conversation
+		// should be retained
+		if ($rr['id'] != $rr['parent']) {
+			$w = q("select id, item_retained, item_starred from item where id = %d",
+				intval($rr['parent'])
+			);
+			if ($w) {
+				// see if the conversation was filed
+				$x = q("select uid from term where otype = %d and oid = %d and ttype = %d limit 1",
+					intval(TERM_OBJ_POST),
+					intval($w[0]['id']),
+					intval(TERM_FILE)
+				);
+				if (intval($w[0]['item_retained']) || intval($w[0]['item_starred']) || $x) {
+					$already_saved[] = $rr['parent'];
+					continue;
+				}
+			}
+		}
+		// see if this item was filed
+		$y = q("select uid from term where otype = %d and oid = %d and ttype = %d limit 1",
+			intval(TERM_OBJ_POST),
+			intval($rr['id']),
+			intval(TERM_FILE)
+		);
+		if ($y) {
+			continue;
+		}
+		drop_item($rr['id'],false);
+	}
 }
 
 

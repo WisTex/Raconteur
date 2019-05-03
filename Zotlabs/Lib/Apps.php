@@ -751,7 +751,7 @@ class Apps {
 
 	static public function system_app_installed($uid,$app,$bypass_filter = false) {
 
-		$r = q("select id from app where app_id = '%s' and app_channel = %d limit 1",
+		$r = q("select id from app where app_id = '%s' and app_channel = %d and app_deleted = 0 limit 1",
 			dbesc(hash('whirlpool',$app)),
 			intval($uid)
 		);
