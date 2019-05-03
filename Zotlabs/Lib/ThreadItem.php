@@ -259,7 +259,7 @@ class ThreadItem {
 		}
 		$like_button_label = tt('Like','Likes',$like_count,'noun');
 
-		if (feature_enabled($conv->get_profile_owner(),'dislike')) {
+//		if (feature_enabled($conv->get_profile_owner(),'dislike')) {
 			$dislike_count = ((x($conv_responses['dislike'],$item['mid'])) ? $conv_responses['dislike'][$item['mid']] : '');
 			$dislike_list = ((x($conv_responses['dislike'],$item['mid'])) ? $conv_responses['dislike'][$item['mid'] . '-l'] : '');
 			$dislike_button_label = tt('Dislike','Dislikes',$dislike_count,'noun');
@@ -269,10 +269,10 @@ class ThreadItem {
 			} else {
 				$dislike_list_part = '';
 			}
-		}
+//		}
 
 		$showlike    = ((x($conv_responses['like'],$item['mid'])) ? format_like($conv_responses['like'][$item['mid']],$conv_responses['like'][$item['mid'] . '-l'],'like',$item['mid']) : '');
-		$showdislike = ((x($conv_responses['dislike'],$item['mid']) && feature_enabled($conv->get_profile_owner(),'dislike'))  
+		$showdislike = ((x($conv_responses['dislike'],$item['mid']))  
 				? format_like($conv_responses['dislike'][$item['mid']],$conv_responses['dislike'][$item['mid'] . '-l'],'dislike',$item['mid']) : '');
 
 		/*
@@ -475,10 +475,10 @@ class ThreadItem {
 			'like_button_label' => $like_button_label,
 			'like_modal_title' => t('Likes','noun'),
 			'dislike_modal_title' => t('Dislikes','noun'),
-			'dislike_count' => ((feature_enabled($conv->get_profile_owner(),'dislike')) ? $dislike_count : ''),
-			'dislike_list' => ((feature_enabled($conv->get_profile_owner(),'dislike')) ? $dislike_list : ''),
-			'dislike_list_part' => ((feature_enabled($conv->get_profile_owner(),'dislike')) ? $dislike_list_part : ''),
-			'dislike_button_label' => ((feature_enabled($conv->get_profile_owner(),'dislike')) ? $dislike_button_label : ''),
+			'dislike_count' => $dislike_count,
+			'dislike_list' => $dislkie_list,
+			'dislike_list_part' => $dislike_list_part,
+			'dislike_button_label' => $dislike_button_label,
 			'modal_dismiss' => t('Close'),
 			'showlike' => $showlike,
 			'showdislike' => $showdislike,
