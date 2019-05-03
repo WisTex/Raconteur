@@ -21,6 +21,7 @@ class Apschema extends \Zotlabs\Web\Controller {
 				'commentPolicy'      => 'zot:commentPolicy',
 				'topicalCollection'  => 'zot:topicalCollection',
 				'eventRepeat'        => 'zot:eventRepeat',
+				'emojiReaction'      => 'zot:emojiReaction',
 			]
 		];
 

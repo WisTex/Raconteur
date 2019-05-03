@@ -7,13 +7,13 @@
 <body>
 <table style="border:1px solid #ccc; background-color: #FFFFFF; color: #000000;">
 	<tbody>
-	<tr><td colspan="2" style="background:#43488A; color:#FFFFFF; font-weight:bold; font-family:'lucida grande', tahoma, verdana,arial, sans-serif; padding: 4px 8px; vertical-align: middle; font-size:16px; letter-spacing: -0.03em; text-align: left;"><span style="font-size:32px; float:left;">{{$notify_icon}}</span><div style="padding:7px; margin-left: 5px; float:left; font-size:18px;letter-spacing:1px;">{{$product}}</div><div style="clear: both;"></div></td></tr>
+	<tr><td colspan="2" style="background:#43488A; color:#FFFFFF; font-weight:bold; font-family:'lucida grande', tahoma, verdana,arial, sans-serif; padding: 4px 8px; vertical-align: middle; font-size:16px; letter-spacing: -0.03em; text-align: left;"><span style="font-size:32px; float:left;"><img src="{{$notify_icon}}" style="height:32px;width:32px;border:0;" alt="logo"></span><div style="padding:7px; margin-left: 5px; float:left; font-size:18px;letter-spacing:1px;">{{$product}}</div><div style="clear: both;"></div></td></tr>
 
 
 	<tr><td style="padding-top:22px;" colspan="2">{{$preamble}}</td></tr>
 
 
-	<tr><td style="padding-left:22px;padding-top:22px;width:60px;" valign="top" rowspan=3><a href="{{$source_link}}"><img style="border:0px;width:48px;height:48px;" src="{{$source_photo}}"></a></td>
+	<tr><td style="padding-left:22px;padding-top:22px;width:60px;" valign="top" rowspan=3><a href="{{$source_link}}"><img style="border:0px;width:48px;height:48px;" src="{{$source_photo}}" alt="photo"></a></td>
 		<td style="padding-top:22px;"><a href="{{$source_link}}">{{$source_name}}</a></td></tr>
 	<tr><td style="font-weight:bold;padding-bottom:5px;">{{$title}}</td></tr>
 	<tr><td style="padding-right:22px;">{{$htmlversion}}</td></tr>

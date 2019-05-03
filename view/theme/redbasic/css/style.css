@@ -18,6 +18,11 @@ html {
 	margin-right: 0.5rem;
 }
 
+.project-banner img {
+	height: 1.5rem;
+	width: 1.5rem;
+}
+
 .project-banner a {
 	color: $banner_colour;
 }
@@ -475,6 +480,7 @@ footer {
 	margin-bottom: 15px;
 }
 
+
 .app-name {
 	overflow: none;
 }
@@ -696,10 +702,14 @@ nav .acpopup {
 	font-weight: bold;
 }
 
+.suggest-connect-btn {
+	margin-top: 1em;
+}
+
 .profile-match-wrapper {
     float: left;
     width: 120px;
-    height: 150px;
+    height: 110px;
     padding: 10px;
     margin: 8px 10px 0 0;
     border-top: 1px solid #eee;
@@ -1602,7 +1612,6 @@ dl.bb-dl > dd > li {
 	display: inline-block;
 	border-radius: $radius;
 	cursor: text;
-	padding: 0px 10px;
 	width: 100%;
 }
 

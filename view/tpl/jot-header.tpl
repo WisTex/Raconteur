@@ -119,7 +119,6 @@ var activeCommentText = '';
 		$('#invisible-comment-upload').fileupload({
 			url: 'wall_attach/{{$nickname}}',
 			dataType: 'json',
-			dropZone: $(),
 			maxChunkSize: 2 * 1024 * 1024,
 			add: function(e,data) {
 
