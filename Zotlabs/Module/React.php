@@ -61,13 +61,19 @@ class React extends Controller {
 			$n['uuid'] = new_uuid();
 			$n['mid'] = z_root() . '/item/' . $n['uuid'];
 			$n['verb'] = 'emojiReaction';
-			$n['body'] = "\n\n[size=48]" . '&#x' . $emoji . ';[/size]' . "\n\n";
+			$n['body'] = "\n\n" . '[img=32x32]' . z_root() . '/images/emoji/' . $emoji . '.png[/img]' . "\n\n";
 			$n['author_xchan'] = $channel['channel_hash'];
 
 			$n['obj'] = Activity::fetch_item( [ 'id' => $item['mid'] ] );
 			$n['obj_type'] = ((array_path_exists('obj/type',$n)) ? $n['obj']['type'] : EMPTY_STR);
-			// This needs more work to provide an ActivityPub compatible object, if that is ever desired
-			$n['target'] = [ 'name' => $emoji ];
+
+			$n['tgt_type'] = 'Image';
+			
+			$n['target'] = [
+				'type' => 'Image',
+				'name' => $emoji,
+				'url'  => z_root() . '/images/emoji/' . $emoji . '.png'
+			];
 			
 			$x = item_store($n); 
 
