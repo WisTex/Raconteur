@@ -1172,11 +1172,7 @@ class Photos extends Controller {
 			$dislike_e = $dislike;
 	
 	
-			$response_verbs = array('like');
-			if(feature_enabled($owner_uid,'dislike')) {
-				$response_verbs[] = 'dislike';
-			}
-	
+			$response_verbs = array('like','dislike');
 	
 			$responses = get_responses($conv_responses,$response_verbs,'',$link_item);
 	
