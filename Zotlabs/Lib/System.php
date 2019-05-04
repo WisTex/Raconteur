@@ -29,7 +29,7 @@ class System {
 
 	static public function get_project_icon() {
 
-		return z_root() . '/images/bolt-64.png';
+		return z_root() . '/images/zap4-64.png';
 
 		if(defined('NOMADIC')) {
 			return '&#x26A1;';
