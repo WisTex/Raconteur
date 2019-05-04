@@ -4,7 +4,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
-use Zotlabss\Lib\Libprofile;
+use Zotlabs\Lib\Libprofile;
 
 /*
  * @file Profile_photo.php
