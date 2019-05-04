@@ -71,7 +71,7 @@
 					{{include file="field_select.tpl" field=$directory_server}}
 					{{/if}}
 					<div class="settings-submit-wrapper" >
-						<button type="submit" name="page_site" class="btn btn-primary">{{$submit}}</button>
+						<button type="submit" name="page_site" class="btn btn-primary" value="1" >{{$submit}}</button>
 					</div>
 				</div>
 			</div>
@@ -96,7 +96,7 @@
 					{{include file="field_input.tpl" field=$sellpage}}
 					{{include file="field_input.tpl" field=$first_page}}
 					<div class="settings-submit-wrapper" >
-						<button type="submit" name="page_site" class="btn btn-primary">{{$submit}}</button>
+						<button type="submit" name="page_site" class="btn btn-primary" value="1" >{{$submit}}</button>
 					</div>
 				</div>
 			</div>
@@ -120,7 +120,7 @@
 					{{include file="field_textarea.tpl" field=$incl}}
 					{{include file="field_textarea.tpl" field=$excl}}
 					<div class="settings-submit-wrapper" >
-						<button type="submit" name="page_site" class="btn btn-primary">{{$submit}}</button>
+						<button type="submit" name="page_site" class="btn btn-primary" value="1" >{{$submit}}</button>
 					</div>
 				</div>
 			</div>
@@ -149,7 +149,7 @@
 					{{include file="field_input.tpl" field=$default_expire_days}}
 					{{include file="field_input.tpl" field=$active_expire_days}}
 					<div class="settings-submit-wrapper" >
-						<button type="submit" name="page_site" class="btn btn-primary">{{$submit}}</button>
+						<button type="submit" name="page_site" class="btn btn-primary" value="1" >{{$submit}}</button>
 					</div>
 				</div>
 			</div>
