@@ -9,6 +9,7 @@ use Zotlabs\Lib\Libsync;
 
 require_once('include/socgraph.php');
 require_once('include/bbcode.php');
+require_once('include/html2plain.php');
 
 define( 'DIRECTORY_PAGESIZE', 60);
 
@@ -298,12 +299,15 @@ class Directory extends Controller {
 							$marital = ((x($profile,'marital') == 1) ?  t('Status: ') . $profile['marital']: False);
 			
 							$homepage = ((x($profile,'homepage') == 1) ?  t('Homepage: ') : False);
-							$homepageurl = ((x($profile,'homepage') == 1) ?  $profile['homepage'] : ''); 
+							$homepageurl = ((x($profile,'homepage') == 1) ?  html2plain($profile['homepage']) : ''); 
 	
-							$hometown = ((x($profile,'hometown') == 1) ? $profile['hometown']  : False);
+							$hometown = ((x($profile,'hometown') == 1) ? html2plain($profile['hometown'])  : False);
 	
 							$about = ((x($profile,'about') == 1) ? zidify_links(bbcode($profile['about'])) : False);
-	
+							if ($about && $safe_mode) {
+								$about = html2plain($about);
+							}
+							
 							$keywords = ((x($profile,'keywords')) ? $profile['keywords'] : '');
 	
 
@@ -360,7 +364,7 @@ class Directory extends Controller {
 								'pdesc_label' => t('Description:'),
 								'marital'  => $marital,
 								'homepage' => $homepage,
-								'homepageurl' => linkify($homepageurl),
+								'homepageurl' => (($safe_mode) ? $homepageurl : linkify($homepageurl)),
 								'hometown' => $hometown,
 								'hometown_label' => t('Hometown:'),
 								'about' => $about,
