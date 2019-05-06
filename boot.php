@@ -1115,8 +1115,11 @@ class App {
 		self::$meta->set('generator', System::get_platform_name());
 
 		$i = head_get_icon();
+		if (! $i) {
+			$i = System::get_project_icon();
+		}
 		if($i) {
-			head_add_link(['rel' => 'shortcut icon', 'href' => head_get_icon()]);
+			head_add_link(['rel' => 'shortcut icon', 'href' => $i ]);
 		}
 
 		$x = [ 'header' => '' ];
