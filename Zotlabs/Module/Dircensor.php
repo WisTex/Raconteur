@@ -33,8 +33,6 @@ class Dircensor extends Controller {
 		}
 
 		$val = (($r[0]['xchan_censored']) ? 0 : 1);
-			$val = 0;
-		}
 
 		q("update xchan set xchan_censored = $val where xchan_hash = '%s'",
 			dbesc($xchan)
