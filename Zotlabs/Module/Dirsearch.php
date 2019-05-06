@@ -1,14 +1,15 @@
 <?php
+
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
 
 
-
-class Dirsearch extends \Zotlabs\Web\Controller {
+class Dirsearch extends Controller {
 
 	function init() {
-		\App::set_pager_itemspage(60);
-	
+		App::set_pager_itemspage(60);
 	}
 	
 	function get() {
@@ -24,7 +25,8 @@ class Dirsearch extends \Zotlabs\Web\Controller {
 			$ret['message'] = t('This site is not a directory server');
 			json_return_and_die($ret);
 		}
-	
+
+
 		$access_token = $_REQUEST['t'];
 	
 		$token = get_config('system','realm_token');
@@ -283,28 +285,29 @@ class Dirsearch extends \Zotlabs\Web\Controller {
 				else
 					$entry['total_ratings'] = 0;
 	
-				$entry['name']        = $rr['xchan_name'];
-				$entry['hash']        = $rr['xchan_hash'];
-	
-				$entry['type']        = $rr['xchan_type'];
-				$entry['url']         = $rr['xchan_url'];
-				$entry['photo_l']     = $rr['xchan_photo_l'];
-				$entry['photo']       = $rr['xchan_photo_m'];
-				$entry['address']     = $rr['xchan_addr'];
-				$entry['description'] = $rr['xprof_desc'];
-				$entry['locale']      = $rr['xprof_locale'];
-				$entry['region']      = $rr['xprof_region'];
-				$entry['postcode']    = $rr['xprof_postcode'];
-				$entry['country']     = $rr['xprof_country'];
-				$entry['birthday']    = $rr['xprof_dob'];
-				$entry['age']         = $rr['xprof_age'];
-				$entry['gender']      = $rr['xprof_gender'];
-				$entry['marital']     = $rr['xprof_marital'];
-				$entry['sexual']      = $rr['xprof_sexual'];
-				$entry['about']       = $rr['xprof_about'];
-				$entry['homepage']    = $rr['xprof_homepage'];
-				$entry['hometown']    = $rr['xprof_hometown'];
-				$entry['keywords']    = $rr['xprof_keywords'];
+				$entry['name']         = $rr['xchan_name'];
+				$entry['hash']         = $rr['xchan_hash'];
+				$entry['censored']     = $rr['xchan_censored'];
+				$entry['selfcensored'] = $rr['xchan_selfcensored'];
+				$entry['type']         = $rr['xchan_type'];
+				$entry['url']          = $rr['xchan_url'];
+				$entry['photo_l']      = $rr['xchan_photo_l'];
+				$entry['photo']        = $rr['xchan_photo_m'];
+				$entry['address']      = $rr['xchan_addr'];
+				$entry['description']  = $rr['xprof_desc'];
+				$entry['locale']       = $rr['xprof_locale'];
+				$entry['region']       = $rr['xprof_region'];
+				$entry['postcode']     = $rr['xprof_postcode'];
+				$entry['country']      = $rr['xprof_country'];
+				$entry['birthday']     = $rr['xprof_dob'];
+				$entry['age']          = $rr['xprof_age'];
+				$entry['gender']       = $rr['xprof_gender'];
+				$entry['marital']      = $rr['xprof_marital'];
+				$entry['sexual']       = $rr['xprof_sexual'];
+				$entry['about']        = $rr['xprof_about'];
+				$entry['homepage']     = $rr['xprof_homepage'];
+				$entry['hometown']     = $rr['xprof_hometown'];
+				$entry['keywords']     = $rr['xprof_keywords'];
 	
 				$entries[] = $entry;
 	

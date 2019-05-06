@@ -154,14 +154,20 @@ class Directory extends Controller {
 		$tpl = get_markup_template('directory_header.tpl');
 	
 		$dirmode = intval(get_config('system','directory_mode'));
-	
-		if(($dirmode == DIRECTORY_MODE_PRIMARY) || ($dirmode == DIRECTORY_MODE_STANDALONE)) {
+
+		$directory_admin = false;
+
+		if (($dirmode == DIRECTORY_MODE_PRIMARY) || ($dirmode == DIRECTORY_MODE_STANDALONE)) {
 			$url = z_root() . '/dirsearch';
+			if (is_site_admin()) {
+				$directory_admin = true;
+			}
 		}
-		if(! $url) {
+		if (! $url) {
 			$directory = Libzotdir::find_upstream_directory($dirmode);
-			if((! $directory) || (! array_key_exists('url',$directory)) || (! $directory['url']))
+			if ((! $directory) || (! array_key_exists('url',$directory)) || (! $directory['url'])) {
 				logger('CRITICAL: No directory server URL');
+			}
 			$url = $directory['url'] . '/dirsearch';
 		}
 	
@@ -220,7 +226,7 @@ class Directory extends Controller {
 				$query .= '&order=' . urlencode($sort_order);
 				
 			if(App::$pager['page'] != 1)
-				$query .= '&p=' . \App::$pager['page'];
+				$query .= '&p=' . App::$pager['page'];
 	
 			logger('mod_directory: query: ' . $query);
 	
@@ -362,6 +368,8 @@ class Directory extends Controller {
 								'canrate' => (($rating_enabled && local_channel()) ? true : false),
 								'pdesc'	=> $pdesc,
 								'pdesc_label' => t('Description:'),
+								'censor' => (($directory_admin) ? 'dircensor/' . $rr['hash'] : ''),
+								'censor_label' => (($rr['censored']) ? t('Uncensor') : t('Censor')),
 								'marital'  => $marital,
 								'homepage' => $homepage,
 								'homepageurl' => (($safe_mode) ? $homepageurl : linkify($homepageurl)),
@@ -407,7 +415,7 @@ class Directory extends Controller {
 						ksort($entries); // Sort array by key so that foreach-constructs work as expected
 	
 						if($j['keywords']) {
-							\App::$data['directory_keywords'] = $j['keywords'];
+							App::$data['directory_keywords'] = $j['keywords'];
 						}
 	
 						// logger('mod_directory: entries: ' . print_r($entries,true), LOGGER_DATA);
