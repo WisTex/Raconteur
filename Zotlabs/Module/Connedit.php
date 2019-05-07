@@ -9,7 +9,11 @@ use Zotlabs\Lib\ActivityPub;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\AccessList;
 use Zotlabs\Access\Permissions;
+use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Lib\Permcat;
 use Zotlabs\Daemon\Master;
+use Zotlabs\Web\HTTPHeaders;
+use Sabre\VObject\Reader;
 
 /* @file connedit.php
  * @brief In this file the connection-editor form is generated and evaluated.
@@ -93,7 +97,7 @@ class Connedit extends Controller {
 		call_hooks('contact_edit_post', $_POST);
 	
 		$vc = get_abconfig(local_channel(),$orig_record['abook_xchan'],'system','vcard');
-		$vcard = (($vc) ? \Sabre\VObject\Reader::read($vc) : null); 
+		$vcard = (($vc) ? Reader::read($vc) : null); 
 		$serialised_vcard = update_vcard($_REQUEST,$vcard);
 		if($serialised_vcard)
 			set_abconfig(local_channel(),$orig_record[0]['abook_xchan'],'system','vcard',$serialised_vcard);
@@ -213,7 +217,7 @@ class Connedit extends Controller {
 			if($default_group) {
 				$g = AccessList::rec_byhash(local_channel(),$default_group);
 				if($g)
-					AccessList::member_add(local_channel(),'',\App::$poi['abook_xchan'],$g['id']);
+					AccessList::member_add(local_channel(),'',App::$poi['abook_xchan'],$g['id']);
 			}
 	
 			// Check if settings permit ("post new friend activity" is allowed, and
@@ -263,7 +267,7 @@ class Connedit extends Controller {
 		}
 	
 		if($new_friend) {
-			$arr = array('channel_id' => local_channel(), 'abook' => \App::$poi);
+			$arr = array('channel_id' => local_channel(), 'abook' => App::$poi);
 			call_hooks('accept_follow', $arr);
 		}
 	
@@ -328,7 +332,7 @@ class Connedit extends Controller {
 		}
 	
 		$section = ((array_key_exists('section',$_REQUEST)) ? $_REQUEST['section'] : '');
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 		$yes_no = [ t('No'), t('Yes') ];
 	
@@ -377,14 +381,14 @@ class Connedit extends Controller {
 				$recurse = 0;
 				$x = z_fetch_url(zid($url),false,$recurse,['session' => true]);
 				if($x['success']) {
-					$h = new \Zotlabs\Web\HTTPHeaders($x['header']);
+					$h = new HTTPHeaders($x['header']);
 					$fields = $h->fetch();
 					if($fields) {
 						foreach($fields as $y) {
 							 if(array_key_exists('content-type',$y)) {
 								$type = explode(';',trim($y['content-type']));
 								if($type && $type[0] === 'text/vcard' && $x['body']) {
-									$vc = \Sabre\VObject\Reader::read($x['body']);
+									$vc = Reader::read($x['body']);
 									$vcard = $vc->serialize();
 									if($vcard) {
 										set_abconfig(local_channel(),$orig_record[0]['abook_xchan'],'system','vcard',$vcard);
@@ -408,7 +412,7 @@ class Connedit extends Controller {
 
 			if($cmd === 'refresh') {
 				if($orig_record[0]['xchan_network'] === 'zot6') {
-					if(! Libzot::refresh($orig_record[0],\App::get_channel()))
+					if(! Libzot::refresh($orig_record[0], App::get_channel()))
 						notice( t('Refresh failed - channel is currently unavailable.') );
 				}
 				else {
@@ -625,7 +629,7 @@ class Connedit extends Controller {
 	
 			$vc = get_abconfig(local_channel(),$contact['abook_xchan'],'system','vcard');
 
-			$vctmp = (($vc) ? \Sabre\VObject\Reader::read($vc) : null); 
+			$vctmp = (($vc) ? Reader::read($vc) : null); 
 			$vcard = (($vctmp) ? get_vcard_array($vctmp,$contact['abook_id']) : [] );
 			if(! $vcard)
 				$vcard['fn'] = $contact['xchan_name'];
@@ -732,7 +736,7 @@ class Connedit extends Controller {
 			foreach($global_perms as $k => $v) {
 				$thisperm = ((in_array($k,$my_perms)) ? 1 : 0);
 				
-				$checkinherited = \Zotlabs\Access\PermissionLimits::Get(local_channel(),$k);
+				$checkinherited = PermissionLimits::Get(local_channel(),$k);
 	
 				// For auto permissions (when $self is true) we don't want to look at existing
 				// permissions because they are enabled for the channel owner
@@ -742,7 +746,7 @@ class Connedit extends Controller {
 				$perms[] = array('perms_' . $k, $v, ((array_key_exists($k,$their_perms)) ? intval($their_perms[$k]) : ''),$thisperm, 1, (($checkinherited & PERMS_SPECIFIC) ? '' : '1'), '', $checkinherited);
 			}
 	
-			$pcat = new \Zotlabs\Lib\Permcat(local_channel());
+			$pcat = new Permcat(local_channel());
 			$pcatlist = $pcat->listing();
 			$permcats = [];
 			if($pcatlist) {
