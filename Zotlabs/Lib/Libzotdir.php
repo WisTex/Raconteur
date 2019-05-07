@@ -3,6 +3,8 @@
 namespace Zotlabs\Lib;
 
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Webfinger;
+use Zotlabs\Lib\Zotfinger;
 
 require_once('include/permissions.php');
 
@@ -272,6 +274,8 @@ class Libzotdir {
 						$ud_flags |= UPDATE_FLAGS_DELETED;
 					if (is_array($t['flags']) && in_array('forced',$t['flags']))
 						$ud_flags |= UPDATE_FLAGS_FORCED;
+					if (is_array($t['flags']) && in_array('censored',$t['flags']))
+						$ud_flags |= UPDATE_FLAGS_CENSORED;
 	
 					$z = q("insert into updates ( ud_hash, ud_guid, ud_date, ud_flags, ud_addr )
 						values ( '%s', '%s', '%s', %d, '%s' ) ",
@@ -308,9 +312,9 @@ class Libzotdir {
 		if ($ud['ud_addr'] && (! ($ud['ud_flags'] & UPDATE_FLAGS_DELETED))) {
 			$success = false;
 
-			$href = \Zotlabs\Lib\Webfinger::zot_url(punify($ud['ud_addr']));
+			$href = Webfinger::zot_url(punify($ud['ud_addr']));
 			if($href) {
-				$zf = \Zotlabs\Lib\Zotfinger::exec($href);
+				$zf = Zotfinger::exec($href);
 			}
 			if(is_array($zf) && array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href && intval($zf['signature']['header_valid'])) {
 				$xc = Libzot::import_xchan($zf['data'], 0, $ud);
@@ -639,7 +643,7 @@ class Libzotdir {
 			);	
 		}
 		else {
-			q("update updates set ud_flags = ( ud_flags | %d ) where ud_addr = '%s' and not (ud_flags & %d)>0 ",
+			q("update updates set ud_flags = ( ud_flags | %d ) where ud_addr = '%s' and (ud_flags & %d) = 0 ",
 				intval(UPDATE_FLAGS_UPDATED),
 				dbesc($addr),
 				intval(UPDATE_FLAGS_UPDATED)

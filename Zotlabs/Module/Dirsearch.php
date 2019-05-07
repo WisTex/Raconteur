@@ -245,17 +245,22 @@ class Dirsearch extends Controller {
 	
 	
 		if ($sync) {
+
+			// generate sync packet for directory mirrors
+
 			$spkt = array('transactions' => [] );
 			$r = q("select * from updates where ud_date >= '%s' and ud_guid != '' order by ud_date desc",
 				dbesc($sync)
 			);
 			if ($r) {
 				foreach ($r as $rr) {
-					$flags = array();
+					$flags = [];
 					if ($rr['ud_flags'] & UPDATE_FLAGS_DELETED)
 						$flags[] = 'deleted';
 					if ($rr['ud_flags'] & UPDATE_FLAGS_FORCED)
 						$flags[] = 'forced';
+					if ($rr['ud_flags'] & UPDATE_FLAGS_CENSORED)
+						$flags[] = 'censored';
 	
 					$spkt['transactions'][] = [
 						'hash'           => $rr['ud_hash'],
@@ -289,18 +294,17 @@ class Dirsearch extends Controller {
 			}
 			json_return_and_die($spkt);
 		}
-		else {
-			// normal directory query
-			$r = q("SELECT xchan.*, xprof.* from xchan left join xprof on xchan_hash = xprof_hash 
-				where ( $logic $sql_extra ) $hub_query and xchan_network = 'zot6' and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 
-				$safesql $order $qlimit "
-			);
+
+
+		// normal directory query
+
+		$r = q("SELECT xchan.*, xprof.* from xchan left join xprof on xchan_hash = xprof_hash 
+			where ( $logic $sql_extra ) $hub_query and xchan_network = 'zot6' and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 
+			$safesql $order $qlimit "
+		);
 		
-			$ret['page'] = $page + 1;
-			$ret['records'] = count($r);		
-		}
-	
-	
+		$ret['page'] = $page + 1;
+		$ret['records'] = count($r);		
 	
 		if ($r) {
 	

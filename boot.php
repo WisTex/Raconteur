@@ -342,6 +342,7 @@ define ( 'POLL_OVERWRITE',       0x8000);  // If you vote twice remove the prior
 
 define ( 'UPDATE_FLAGS_UPDATED',  0x0001);
 define ( 'UPDATE_FLAGS_FORCED',   0x0002);
+define ( 'UPDATE_FLAGS_CENSORED', 0x0004);
 define ( 'UPDATE_FLAGS_DELETED',  0x1000);
 
 
