@@ -1,5 +1,8 @@
 <?php
 
+
+use Zotlabs\Lib\Libzot;
+
 /**
  * @file include/bbcode.php
  * @brief BBCode related functions for parsing, etc.
@@ -573,9 +576,9 @@ function bb_ShareAttributesSimple($match) {
 
 function rpost_callback($match) {
 	if ($match[2]) {
-		return str_replace($match[0], get_rpost_path(App::get_observer()) . '&title=' . urlencode($match[2]) . '&body=' . urlencode($match[3]), $match[0]);
+		return str_replace($match[0], Libzot::get_rpost_path(App::get_observer()) . '&title=' . urlencode($match[2]) . '&body=' . urlencode($match[3]), $match[0]);
 	} else {
-		return str_replace($match[0], get_rpost_path(App::get_observer()) . '&body=' . urlencode($match[3]), $match[0]);
+		return str_replace($match[0], Libzot::get_rpost_path(App::get_observer()) . '&body=' . urlencode($match[3]), $match[0]);
 	}
 }
 
