@@ -148,7 +148,6 @@ function create_account($arr) {
 	$flags       = ((x($arr,'account_flags')) ? intval($arr['account_flags'])      : ACCOUNT_OK);
 	$roles       = ((x($arr,'account_roles')) ? intval($arr['account_roles'])      : 0 );
 	$expires     = ((x($arr,'expires'))       ? intval($arr['expires'])            : NULL_DATE);
-	$techlevel   = ((array_key_exists('techlevel',$arr)) ? intval($arr['techlevel']) : intval(get_config('system','techlevel')));
 
 	$default_service_class = get_config('system','default_service_class');
 
@@ -216,7 +215,6 @@ function create_account($arr) {
 			'account_created'       => datetime_convert(),
 			'account_flags'         => intval($flags),
 			'account_roles'         => intval($roles),
-			'account_level'         => intval($techlevel),
 			'account_expires'       => $expires,
 			'account_service_class' => $default_service_class
 		]
@@ -820,15 +818,3 @@ function upgrade_bool_message($bbcode = false) {
 }
 
 
-function get_account_techlevel($account_id = 0) {
-
-	if(! $account_id) {
-		$x = \App::get_account();
-	}
-	else { 
-		$x = get_account_by_id($account_id);
-	}
-
-	return (($x) ? intval($x['account_level']) : 0);
-
-}

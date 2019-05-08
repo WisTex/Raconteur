@@ -178,8 +178,6 @@ class New_channel extends Controller {
 		$privacy_role = ((x($_REQUEST,'permissions_role')) ? $_REQUEST['permissions_role'] :  "" );
 
 		$perm_roles = \Zotlabs\Access\PermissionRoles::roles();
-		if((get_account_techlevel() < 4) && $privacy_role !== 'custom')
-			unset($perm_roles[t('Other')]);
 
 		$name = array('name', t('Channel name'), ((x($_REQUEST,'name')) ? $_REQUEST['name'] : ''), $name_help, "*");
 		$nickhub = '@' . \App::get_hostname();

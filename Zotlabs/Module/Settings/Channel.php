@@ -508,11 +508,6 @@ class Channel {
 		$permissions_set = (($permissions_role != 'custom') ? true : false);
 
 		$perm_roles = \Zotlabs\Access\PermissionRoles::roles();
-		if((get_account_techlevel() < 4) && $permissions_role !== 'custom')
-			unset($perm_roles[t('Other')]);
-
-
-		
 
 		$vnotify = get_pconfig(local_channel(),'system','vnotify');
 		$always_show_in_notices = get_pconfig(local_channel(),'system','always_show_in_notices');

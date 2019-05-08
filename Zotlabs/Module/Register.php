@@ -227,11 +227,6 @@ class Register extends \Zotlabs\Web\Controller {
 
 		$perm_roles = \Zotlabs\Access\PermissionRoles::roles();
 
-		// A new account will not have a techlevel, but accounts can also be created by the administrator.
-
-		if((get_account_techlevel() < 4) && $privacy_role !== 'custom')
-			unset($perm_roles[t('Other')]);
-	
 		// Configurable terms of service link
 	
 		$tosurl = get_config('system','tos_url');

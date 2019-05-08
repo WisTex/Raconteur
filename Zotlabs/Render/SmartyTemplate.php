@@ -34,8 +34,6 @@ class SmartyTemplate implements TemplateEngine {
 		// these are available for use in all templates
 
 		$r['$z_baseurl']     = z_root();
-		$r['$z_server_role'] = \Zotlabs\Lib\System::get_server_role();
-		$r['$z_techlevel']   = get_account_techlevel();
 
 		if(gettype($s) === 'string') {
 			$template = $s;

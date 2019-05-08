@@ -530,8 +530,6 @@ function get_features($filtered = true, $level = (-1)) {
 
 	$arr = $x['features'];
 
-	$techlevel = (($level >= 0) ? $level : get_account_techlevel());
-
 	// removed any locked features and remove the entire category if this makes it empty
 
 	if($filtered) {
@@ -542,9 +540,6 @@ function get_features($filtered = true, $level = (-1)) {
 			for($y = 0; $y < count($arr[$k]); $y ++) {
 				$disabled = false;
 				if(is_array($arr[$k][$y])) {
-					if($arr[$k][$y][5] > $techlevel) {
-						$disabled = true;
-					}
 					if($arr[$k][$y][4] !== false) { 
 						$disabled = true;
 					}
