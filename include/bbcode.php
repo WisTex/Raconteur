@@ -90,12 +90,11 @@ function nakedoembed($match) {
 
 	$strip_url = strip_escaped_zids($url);
 
-	$o = oembed_fetch_url($strip_url);
-
-	if ($o['type'] == 'error')
-		return str_replace($url,$strip_url,$match[0]);
-
-	return '[embed]' . $strip_url . '[/embed]';
+	// this function no longer performs oembed on naked links
+	// because they author may have created naked links intentionally.
+	// Now it just strips zids on naked links.
+	
+	return str_replace($url,$strip_url,$match[0]);
 }
 
 function tryzrlaudio($match) {
