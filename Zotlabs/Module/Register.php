@@ -1,10 +1,11 @@
 <?php
 namespace Zotlabs\Module;
 
-require_once('include/channel.php');
+use Zotlabs\Web\Controller;
 
+require_once('include/security.php');
 
-class Register extends \Zotlabs\Web\Controller {
+class Register extends Controller {
 
 	function init() {
 	
@@ -39,7 +40,9 @@ class Register extends \Zotlabs\Web\Controller {
 	
 	
 	function post() {
-	
+
+		check_form_security_token_redirectOnErr('/register', 'register');
+
 		$max_dailies = intval(get_config('system','max_daily_registrations'));
 		if($max_dailies) {
 			$r = q("select count(account_id) as total from account where account_created > %s - INTERVAL %s",
@@ -269,7 +272,8 @@ class Register extends \Zotlabs\Web\Controller {
 		require_once('include/bbcode.php');
 	
 		$o = replace_macros(get_markup_template('register.tpl'), array(
-	
+
+			'$form_security_token' => get_form_security_token("register"),
 			'$title'        => t('Registration'),
 			'$reg_is'       => $registration_is,
 			'$registertext' => bbcode(get_config('system','register_text')),
