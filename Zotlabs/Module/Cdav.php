@@ -2,11 +2,15 @@
 namespace Zotlabs\Module;
 
 use App;
+use DBA;
+use DateTime;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Web\Controller;
+use Zotlabs\Web\HTTPSig;
+use Zotlabs\Storage\BasicAuth;
+use Zotlabs\Lib\System;
 
 require_once('include/event.php');
-
 require_once('include/auth.php');
 require_once('include/security.php');
 
@@ -41,7 +45,7 @@ class Cdav extends Controller {
 						continue;
 					}
 
-					$sigblock = \Zotlabs\Web\HTTPSig::parse_sigheader($_SERVER[$head]);
+					$sigblock = HTTPSig::parse_sigheader($_SERVER[$head]);
 					if($sigblock) {
 						$keyId = str_replace('acct:','',$sigblock['keyId']);
 						if($keyId) {
@@ -64,7 +68,7 @@ class Cdav extends Controller {
 								continue;
 
 							if($record) {
-								$verified = \Zotlabs\Web\HTTPSig::verify('',$record['channel']['channel_pubkey']);
+								$verified = HTTPSig::verify('',$record['channel']['channel_pubkey']);
 								if(! ($verified && $verified['header_signed'] && $verified['header_valid'])) {
 									$record = null;
 								}
@@ -114,7 +118,7 @@ class Cdav extends Controller {
 			 *
 			 */
 
-			$pdo = \DBA::$dba->db;
+			$pdo = DBA::$dba->db;
 
 			// Autoloader
 			require_once 'vendor/autoload.php';
@@ -126,14 +130,14 @@ class Cdav extends Controller {
 			 * own backend systems.
 			 */
 
-			$auth = new \Zotlabs\Storage\BasicAuth();
-			$auth->setRealm(ucfirst(\Zotlabs\Lib\System::get_platform_name()) . 'CalDAV/CardDAV');
+			$auth = new BasicAuth();
+			$auth->setRealm(ucfirst(System::get_platform_name()) . ' ' . 'CalDAV/CardDAV');
 
 			if (local_channel()) {
 
 				logger('loggedin');
 
-				if((argv(1) == 'addressbooks') && (!Apps::system_app_installed(local_channel(), 'CardDAV'))) {
+				if ((argv(1) == 'addressbooks') && (! Apps::system_app_installed(local_channel(), 'CardDAV'))) {
 					killme();
 				}
 
@@ -142,14 +146,15 @@ class Cdav extends Controller {
 				$auth->channel_id = $channel['channel_id'];
 				$auth->channel_hash = $channel['channel_hash'];
 				$auth->channel_account_id = $channel['channel_account_id'];
-				if($channel['channel_timezone'])
+				if ($channel['channel_timezone']) {
 					$auth->setTimezone($channel['channel_timezone']);
+				}
 				$auth->observer = $channel['channel_hash'];
 
 				$principalUri = 'principals/' . $channel['channel_address'];
-				if(!cdav_principal($principalUri)) {
+				if (!cdav_principal($principalUri)) {
 					$this->activate($pdo, $channel);
-					if(!cdav_principal($principalUri)) {
+					if (!cdav_principal($principalUri)) {
 						return;
 					}
 				}
@@ -184,8 +189,9 @@ class Cdav extends Controller {
 
 			$server = new \Sabre\DAV\Server($nodes);
 
-			if(isset($baseUri))
+			if (isset($baseUri)) {
 				$server->setBaseUri($baseUri);
+			}
 
 			// Plugins
 			$server->addPlugin(new \Sabre\DAV\Auth\Plugin($auth));
@@ -214,30 +220,31 @@ class Cdav extends Controller {
 	}
 
 	function post() {
-		if(! local_channel())
+
+		if (! local_channel())
 			return;
 
-		if((argv(1) === 'addressbook') && (! Apps::system_app_installed(local_channel(), 'CardDAV'))) {
+		if ((argv(1) === 'addressbook') && (! Apps::system_app_installed(local_channel(), 'CardDAV'))) {
 			return;
 		}
 
 		$channel = App::get_channel();
 		$principalUri = 'principals/' . $channel['channel_address'];
 
-		if(!cdav_principal($principalUri))
+		if (!cdav_principal($principalUri))
 			return;
 
-		$pdo = \DBA::$dba->db;
+		$pdo = DBA::$dba->db;
 
 		require_once 'vendor/autoload.php';
 
-		if(argc() == 2 && argv(1) === 'calendar') {
+		if (argc() == 2 && argv(1) === 'calendar') {
 
 			$caldavBackend = new \Sabre\CalDAV\Backend\PDO($pdo);
 			$calendars = $caldavBackend->getCalendarsForUser($principalUri);
 
-			//create new calendar
-			if($_REQUEST['{DAV:}displayname'] && $_REQUEST['create']) {
+			// create new calendar
+			if ($_REQUEST['{DAV:}displayname'] && $_REQUEST['create']) {
 				do {
 					$duplicate = false;
 					$calendarUri = random_string(40);
@@ -247,8 +254,9 @@ class Cdav extends Controller {
 						dbesc($calendarUri)
 					);
 
-					if (count($r))
+					if ($r) {
 						$duplicate = true;
+					}
 				} while ($duplicate == true);
 
 				$properties = [
@@ -264,19 +272,19 @@ class Cdav extends Controller {
 			}
 
 			//create new calendar object via ajax request
-			if($_REQUEST['submit'] === 'create_event' && $_REQUEST['title'] && $_REQUEST['target'] && $_REQUEST['dtstart']) {
+			if ($_REQUEST['submit'] === 'create_event' && $_REQUEST['title'] && $_REQUEST['target'] && $_REQUEST['dtstart']) {
 
 				$id = explode(':', $_REQUEST['target']);
 
-				if(!cdav_perms($id[0],$calendars,true))
+				if (!cdav_perms($id[0],$calendars,true))
 					return;
 
 				$title = $_REQUEST['title'];
 				$start = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtstart']);
-				$dtstart = new \DateTime($start);
-				if($_REQUEST['dtend']) {
+				$dtstart = new DateTime($start);
+				if ($_REQUEST['dtend']) {
 					$end = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtend']);
-					$dtend = new \DateTime($end);
+					$dtend = new DateTime($end);
 				}
 				$description = $_REQUEST['description'];
 				$location = $_REQUEST['location'];
@@ -319,13 +327,14 @@ class Cdav extends Controller {
 				killme();
 			}
 
-			//edit calendar name and color
-			if($_REQUEST['{DAV:}displayname'] && $_REQUEST['edit'] && $_REQUEST['id']) {
+			// edit calendar name and color
+			if ($_REQUEST['{DAV:}displayname'] && $_REQUEST['edit'] && $_REQUEST['id']) {
 
 				$id = explode(':', $_REQUEST['id']);
 
-				if(! cdav_perms($id[0],$calendars))
+				if (! cdav_perms($id[0],$calendars)) {
 					return;
+				}
 
 				$mutations = [
 					'{DAV:}displayname' => $_REQUEST['{DAV:}displayname'],
@@ -337,24 +346,23 @@ class Cdav extends Controller {
 				$caldavBackend->updateCalendar($id, $patch);
 
 				$patch->commit();
-
 			}
 
-			//edit calendar object via ajax request
-			if($_REQUEST['submit'] === 'update_event' && $_REQUEST['uri'] && $_REQUEST['title'] && $_REQUEST['target'] && $_REQUEST['dtstart']) {
+			// edit calendar object via ajax request
+			if ($_REQUEST['submit'] === 'update_event' && $_REQUEST['uri'] && $_REQUEST['title'] && $_REQUEST['target'] && $_REQUEST['dtstart']) {
 
 				$id = explode(':', $_REQUEST['target']);
 
-				if(!cdav_perms($id[0],$calendars,true))
+				if (!cdav_perms($id[0],$calendars,true))
 					return;
 
 				$uri = $_REQUEST['uri'];
 				$title = $_REQUEST['title'];
 				$start = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtstart']);
-				$dtstart = new \DateTime($start);
-				if($_REQUEST['dtend']) {
+				$dtstart = new DateTime($start);
+				if ($_REQUEST['dtend']) {
 					$end = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtend']);
-					$dtend = new \DateTime($end);
+					$dtend = new DateTime($end);
 				}
 				$description = $_REQUEST['description'];
 				$location = $_REQUEST['location'];
@@ -363,65 +371,71 @@ class Cdav extends Controller {
 
 				$vcalendar = \Sabre\VObject\Reader::read($object['calendardata']);
 
-				if($title)
+				if ($title) {
 					$vcalendar->VEVENT->SUMMARY = $title;
-				if($dtstart)
+				}
+				if ($dtstart) {
 					$vcalendar->VEVENT->DTSTART = $dtstart;
-				if($dtend)
+				}
+				if ($dtend) {
 					$vcalendar->VEVENT->DTEND = $dtend;
-				else
+				}
+				else {
 					unset($vcalendar->VEVENT->DTEND);
-				if($description)
+				}
+				if ($description) {
 					$vcalendar->VEVENT->DESCRIPTION = $description;
-				if($location)
+				}
+				if ($location) {
 					$vcalendar->VEVENT->LOCATION = $location;
+				}
 
 				$calendarData = $vcalendar->serialize();
 
 				$caldavBackend->updateCalendarObject($id, $uri, $calendarData);
-
 				killme();
 			}
 
-			//delete calendar object via ajax request
-			if($_REQUEST['delete'] && $_REQUEST['uri'] && $_REQUEST['target']) {
+			// delete calendar object via ajax request
+			if ($_REQUEST['delete'] && $_REQUEST['uri'] && $_REQUEST['target']) {
 
 				$id = explode(':', $_REQUEST['target']);
 
-				if(!cdav_perms($id[0],$calendars,true))
+				if (!cdav_perms($id[0],$calendars,true)) {
 					return;
+				}
 
 				$uri = $_REQUEST['uri'];
 
 				$caldavBackend->deleteCalendarObject($id, $uri);
-
 				killme();
 			}
 
-			//edit calendar object date/timeme via ajax request (drag and drop)
-			if($_REQUEST['update'] && $_REQUEST['id'] && $_REQUEST['uri']) {
+			// edit calendar object date/timeme via ajax request (drag and drop)
+			if ($_REQUEST['update'] && $_REQUEST['id'] && $_REQUEST['uri']) {
 
 				$id = [$_REQUEST['id'][0], $_REQUEST['id'][1]];
 
-				if(!cdav_perms($id[0],$calendars,true))
+				if (! cdav_perms($id[0],$calendars,true)) {
 					return;
+				}
 
 				$uri = $_REQUEST['uri'];
 				$start = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtstart']);
-				$dtstart = new \DateTime($start);
+				$dtstart = new DateTime($start);
 				if($_REQUEST['dtend']) {
 					$end = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtend']);
-					$dtend = new \DateTime($end);
+					$dtend = new DateTime($end);
 				}
 
 				$object = $caldavBackend->getCalendarObject($id, $uri);
 
 				$vcalendar = \Sabre\VObject\Reader::read($object['calendardata']);
 
-				if($dtstart) {
+				if ($dtstart) {
 					$vcalendar->VEVENT->DTSTART = $dtstart;
 				}
-				if($dtend) {
+				if ($dtend) {
 					$vcalendar->VEVENT->DTEND = $dtend;
 				}
 				else {
@@ -435,13 +449,14 @@ class Cdav extends Controller {
 				killme();
 			}
 
-			//share a calendar - this only works on local system (with channels on the same server)
-			if($_REQUEST['sharee'] && $_REQUEST['share']) {
+			// share a calendar - this only works on local system (with channels on the same server)
+			if ($_REQUEST['sharee'] && $_REQUEST['share']) {
 
 				$id = [intval($_REQUEST['calendarid']), intval($_REQUEST['instanceid'])];
 
-				if(! cdav_perms($id[0],$calendars))
+				if (! cdav_perms($id[0],$calendars)) {
 					return;
+				}
 
 				$hash = $_REQUEST['sharee'];
 
@@ -458,13 +473,13 @@ class Cdav extends Controller {
 			}
 		}
 
-		if(argc() >= 2 && argv(1) === 'addressbook') {
+		if (argc() >= 2 && argv(1) === 'addressbook') {
 
 			$carddavBackend = new \Sabre\CardDAV\Backend\PDO($pdo);
 			$addressbooks = $carddavBackend->getAddressBooksForUser($principalUri);
 
-			//create new addressbook
-			if($_REQUEST['{DAV:}displayname'] && $_REQUEST['create']) {
+			// create new addressbook
+			if ($_REQUEST['{DAV:}displayname'] && $_REQUEST['create']) {
 				do {
 					$duplicate = false;
 					$addressbookUri = random_string(20);
@@ -474,8 +489,9 @@ class Cdav extends Controller {
 						dbesc($addressbookUri)
 					);
 
-					if (count($r))
+					if ($r) {
 						$duplicate = true;
+					}
 				} while ($duplicate == true);
 
 				$properties = ['{DAV:}displayname' => $_REQUEST['{DAV:}displayname']];
@@ -483,13 +499,14 @@ class Cdav extends Controller {
 				$carddavBackend->createAddressBook($principalUri, $addressbookUri, $properties);
 			}
 
-			//edit addressbook
-			if($_REQUEST['{DAV:}displayname'] && $_REQUEST['edit'] && intval($_REQUEST['id'])) {
+			// edit addressbook
+			if ($_REQUEST['{DAV:}displayname'] && $_REQUEST['edit'] && intval($_REQUEST['id'])) {
 
 				$id = $_REQUEST['id'];
 
-				if(! cdav_perms($id,$addressbooks))
+				if (! cdav_perms($id,$addressbooks)) {
 					return;
+				}
 
 				$mutations = [
 					'{DAV:}displayname' => $_REQUEST['{DAV:}displayname']
@@ -502,8 +519,8 @@ class Cdav extends Controller {
 				$patch->commit();
 			}
 
-			//create addressbook card
-			if($_REQUEST['create'] && $_REQUEST['target'] && $_REQUEST['fn']) {
+			// create addressbook card
+			if ($_REQUEST['create'] && $_REQUEST['target'] && $_REQUEST['fn']) {
 				$id = $_REQUEST['target'];
 
 				do {
@@ -515,11 +532,13 @@ class Cdav extends Controller {
 						dbesc($uri)
 					);
 
-					if (count($r))
+					if ($r) {
 						$duplicate = true;
+					}
 				} while ($duplicate == true);
 
-				//TODO: this mostly duplictes the procedure in update addressbook card. should move this part to a function to avoid duplication
+				// TODO: this mostly duplictes the procedure in update addressbook card.
+				// Should move this part to a function to avoid duplication
 				$fn = $_REQUEST['fn'];
 
 				$vcard = new \Sabre\VObject\Component\VCard([
@@ -528,21 +547,21 @@ class Cdav extends Controller {
 				]);
 
 				$org = $_REQUEST['org'];
-				if($org) {
+				if ($org) {
 					$vcard->ORG = $org;
 				}
 
 				$title = $_REQUEST['title'];
-				if($title) {
+				if ($title) {
 					$vcard->TITLE = $title;
 				}
 
 				$tel = $_REQUEST['tel'];
 				$tel_type = $_REQUEST['tel_type'];
-				if($tel) {
+				if ($tel) {
 					$i = 0;
-					foreach($tel as $item) {
-						if($item) {
+					foreach ($tel as $item) {
+						if ($item) {
 							$vcard->add('TEL', $item, ['type' => $tel_type[$i]]);
 						}
 						$i++;
@@ -551,10 +570,10 @@ class Cdav extends Controller {
 
 				$email = $_REQUEST['email'];
 				$email_type = $_REQUEST['email_type'];
-				if($email) {
+				if ($email) {
 					$i = 0;
-					foreach($email as $item) {
-						if($item) {
+					foreach ($email as $item) {
+						if ($item) {
 							$vcard->add('EMAIL', $item, ['type' => $email_type[$i]]);
 						}
 						$i++;
@@ -563,10 +582,10 @@ class Cdav extends Controller {
 
 				$impp = $_REQUEST['impp'];
 				$impp_type = $_REQUEST['impp_type'];
-				if($impp) {
+				if ($impp) {
 					$i = 0;
-					foreach($impp as $item) {
-						if($item) {
+					foreach ($impp as $item) {
+						if ($item) {
 							$vcard->add('IMPP', $item, ['type' => $impp_type[$i]]);
 						}
 						$i++;
@@ -575,10 +594,10 @@ class Cdav extends Controller {
 
 				$url = $_REQUEST['url'];
 				$url_type = $_REQUEST['url_type'];
-				if($url) {
+				if ($url) {
 					$i = 0;
-					foreach($url as $item) {
-						if($item) {
+					foreach ($url as $item) {
+						if ($item) {
 							$vcard->add('URL', $item, ['type' => $url_type[$i]]);
 						}
 						$i++;
@@ -588,10 +607,10 @@ class Cdav extends Controller {
 				$adr = $_REQUEST['adr'];
 				$adr_type = $_REQUEST['adr_type'];
 
-				if($adr) {
+				if ($adr) {
 					$i = 0;
-					foreach($adr as $item) {
-						if($item) {
+					foreach ($adr as $item) {
+						if ($item) {
 							$vcard->add('ADR', $item, ['type' => $adr_type[$i]]);
 						}
 						$i++;
@@ -599,7 +618,7 @@ class Cdav extends Controller {
 				}
 
 				$note = $_REQUEST['note'];
-				if($note) {
+				if ($note) {
 					$vcard->NOTE = $note;
 				}
 
@@ -609,13 +628,14 @@ class Cdav extends Controller {
 
 			}
 
-			//edit addressbook card
-			if($_REQUEST['update'] && $_REQUEST['uri'] && $_REQUEST['target']) {
+			// edit addressbook card
+			if ($_REQUEST['update'] && $_REQUEST['uri'] && $_REQUEST['target']) {
 
 				$id = $_REQUEST['target'];
 
-				if(!cdav_perms($id,$addressbooks))
+				if (!cdav_perms($id,$addressbooks)) {
 					return;
+				}
 
 				$uri = $_REQUEST['uri'];
 
@@ -623,13 +643,13 @@ class Cdav extends Controller {
 				$vcard = \Sabre\VObject\Reader::read($object['carddata']);
 
 				$fn = $_REQUEST['fn'];
-				if($fn) {
+				if ($fn) {
 					$vcard->FN = $fn;
 					$vcard->N = array_reverse(explode(' ', $fn));
 				}
 
 				$org = $_REQUEST['org'];
-				if($org) {
+				if ($org) {
 					$vcard->ORG = $org;
 				}
 				else {
@@ -637,7 +657,7 @@ class Cdav extends Controller {
 				}
 
 				$title = $_REQUEST['title'];
-				if($title) {
+				if ($title) {
 					$vcard->TITLE = $title;
 				}
 				else {
@@ -646,11 +666,11 @@ class Cdav extends Controller {
 
 				$tel = $_REQUEST['tel'];
 				$tel_type = $_REQUEST['tel_type'];
-				if($tel) {
+				if ($tel) {
 					$i = 0;
 					unset($vcard->TEL);
-					foreach($tel as $item) {
-						if($item) {
+					foreach ($tel as $item) {
+						if ($item) {
 							$vcard->add('TEL', $item, ['type' => $tel_type[$i]]);
 						}
 						$i++;
@@ -662,11 +682,11 @@ class Cdav extends Controller {
 
 				$email = $_REQUEST['email'];
 				$email_type = $_REQUEST['email_type'];
-				if($email) {
+				if ($email) {
 					$i = 0;
 					unset($vcard->EMAIL);
-					foreach($email as $item) {
-						if($item) {
+					foreach ($email as $item) {
+						if ($item) {
 							$vcard->add('EMAIL', $item, ['type' => $email_type[$i]]);
 						}
 						$i++;
@@ -678,11 +698,11 @@ class Cdav extends Controller {
 
 				$impp = $_REQUEST['impp'];
 				$impp_type = $_REQUEST['impp_type'];
-				if($impp) {
+				if ($impp) {
 					$i = 0;
 					unset($vcard->IMPP);
-					foreach($impp as $item) {
-						if($item) {
+					foreach ($impp as $item) {
+						if ($item) {
 							$vcard->add('IMPP', $item, ['type' => $impp_type[$i]]);
 						}
 						$i++;
@@ -694,11 +714,11 @@ class Cdav extends Controller {
 
 				$url = $_REQUEST['url'];
 				$url_type = $_REQUEST['url_type'];
-				if($url) {
+				if ($url) {
 					$i = 0;
 					unset($vcard->URL);
-					foreach($url as $item) {
-						if($item) {
+					foreach ($url as $item) {
+						if ($item) {
 							$vcard->add('URL', $item, ['type' => $url_type[$i]]);
 						}
 						$i++;
@@ -710,11 +730,11 @@ class Cdav extends Controller {
 
 				$adr = $_REQUEST['adr'];
 				$adr_type = $_REQUEST['adr_type'];
-				if($adr) {
+				if ($adr) {
 					$i = 0;
 					unset($vcard->ADR);
-					foreach($adr as $item) {
-						if($item) {
+					foreach ($adr as $item) {
+						if ($item) {
 							$vcard->add('ADR', $item, ['type' => $adr_type[$i]]);
 						}
 						$i++;
@@ -725,7 +745,7 @@ class Cdav extends Controller {
 				}
 
 				$note = $_REQUEST['note'];
-				if($note) {
+				if ($note) {
 					$vcard->NOTE = $note;
 				}
 				else {
@@ -737,13 +757,14 @@ class Cdav extends Controller {
 				$carddavBackend->updateCard($id, $uri, $cardData);
 			}
 
-			//delete addressbook card
-			if($_REQUEST['delete'] && $_REQUEST['uri'] && $_REQUEST['target']) {
+			// delete addressbook card
+			if ($_REQUEST['delete'] && $_REQUEST['uri'] && $_REQUEST['target']) {
 
 				$id = $_REQUEST['target'];
 
-				if(!cdav_perms($id,$addressbooks))
+				if (!cdav_perms($id,$addressbooks)) {
 					return;
+				}
 
 				$uri = $_REQUEST['uri'];
 
@@ -751,20 +772,22 @@ class Cdav extends Controller {
 			}
 		}
 
-		//Import calendar or addressbook
-		if(($_FILES) && array_key_exists('userfile',$_FILES) && intval($_FILES['userfile']['size']) && $_REQUEST['target']) {
+		// Import calendar or addressbook
+		if (($_FILES) && array_key_exists('userfile',$_FILES) && intval($_FILES['userfile']['size']) && $_REQUEST['target']) {
 
 			$src = $_FILES['userfile']['tmp_name'];
 
-			if($src) {
+			if ($src) {
 
-				if($_REQUEST['c_upload']) {
-					if($_REQUEST['target'] == 'calendar') {
+				if ($_REQUEST['c_upload']) {
+					if ($_REQUEST['target'] == 'calendar') {
 						$result = parse_ical_file($src,local_channel());
-						if($result)
+						if ($result) {
 							info( t('Calendar entries imported.') . EOL);
-						else
+						}
+						else {
 							notice( t('No calendar entries found.') . EOL);
+						}
 
 						@unlink($src);
 						return;
@@ -779,7 +802,7 @@ class Cdav extends Controller {
 					$backend = new \Sabre\CalDAV\Backend\PDO($pdo);
 				}
 
-				if($_REQUEST['a_upload']) {
+				if ($_REQUEST['a_upload']) {
 					$id[] = intval($_REQUEST['target']);
 					$ext = 'vcf';
 					$table = 'cards';
@@ -791,17 +814,17 @@ class Cdav extends Controller {
 
 				while ($object = $objects->getNext()) {
 
-					if($_REQUEST['a_upload']) {
+					if ($_REQUEST['a_upload']) {
 						$object = $object->convert(\Sabre\VObject\Document::VCARD40);
 					}
 
 					$ret = $object->validate($profile & \Sabre\VObject\Node::REPAIR);
 
-					//level 3 Means that the document is invalid,
-					//level 2 means a warning. A warning means it's valid but it could cause interopability issues,
-					//level 1 means that there was a problem earlier, but the problem was automatically repaired.
+					// level 3 Means that the document is invalid,
+					// level 2 means a warning. A warning means it's valid but it could cause interopability issues,
+					// level 1 means that there was a problem earlier, but the problem was automatically repaired.
 
-					if($ret[0]['level'] < 3) {
+					if ($ret[0]['level'] < 3) {
 						do {
 							$duplicate = false;
 							$objectUri = random_string(40) . '.' . $ext;
@@ -811,20 +834,21 @@ class Cdav extends Controller {
 								dbesc($objectUri)
 							);
 
-							if (count($r))
+							if ($r) {
 								$duplicate = true;
+							}
 						} while ($duplicate == true);
 
-						if($_REQUEST['c_upload']) {
+						if ($_REQUEST['c_upload']) {
 							$backend->createCalendarObject($id, $objectUri, $object->serialize());
 						}
 
-						if($_REQUEST['a_upload']) {
+						if ($_REQUEST['a_upload']) {
 							$backend->createCard($id[0], $objectUri, $object->serialize());
 						}
 					}
 					else {
-						if($_REQUEST['c_upload']) {
+						if ($_REQUEST['c_upload']) {
 							notice( '<strong>' . t('INVALID EVENT DISMISSED!') . '</strong>' . EOL .
 								'<strong>' . t('Summary: ') . '</strong>' . (($object->VEVENT->SUMMARY) ? $object->VEVENT->SUMMARY : t('Unknown')) . EOL .
 								'<strong>' . t('Date: ') . '</strong>' . (($object->VEVENT->DTSTART) ? $object->VEVENT->DTSTART : t('Unknown')) . EOL .
@@ -832,7 +856,7 @@ class Cdav extends Controller {
 							);
 						}
 
-						if($_REQUEST['a_upload']) {
+						if ($_REQUEST['a_upload']) {
 							notice( '<strong>' . t('INVALID CARD DISMISSED!') . '</strong>' . EOL .
 								'<strong>' . t('Name: ') . '</strong>' . (($object->FN) ? $object->FN : t('Unknown')) . EOL .
 								'<strong>' . t('Reason: ') . '</strong>' . $ret[0]['message'] . EOL
@@ -847,11 +871,12 @@ class Cdav extends Controller {
 
 	function get() {
 
-		if(!local_channel())
+		if (! local_channel()) {
 			return;
+		}
 
-		if((argv(1) === 'addressbook') && (! Apps::system_app_installed(local_channel(), 'CardDAV'))) {
-			//Do not display any associated widgets at this point
+		if ((argv(1) === 'addressbook') && (! Apps::system_app_installed(local_channel(), 'CardDAV'))) {
+			// Do not display any associated widgets at this point
 			App::$pdl = '';
 
 			$o = '<b>' . t('CardDAV App') . ' (' . t('Not Installed') . '):</b><br>';
@@ -864,26 +889,26 @@ class Cdav extends Controller {
 		$channel = App::get_channel();
 		$principalUri = 'principals/' . $channel['channel_address'];
 
-		$pdo = \DBA::$dba->db;
+		$pdo = DBA::$dba->db;
 
 		require_once 'vendor/autoload.php';
 
 		head_add_css('cdav.css');
 
-		if(!cdav_principal($principalUri)) {
+		if (! cdav_principal($principalUri)) {
 			$this->activate($pdo, $channel);
-			if(!cdav_principal($principalUri)) {
+			if (! cdav_principal($principalUri)) {
 				return;
 			}
 		}
 
-		if(argv(1) === 'calendar') {
+		if (argv(1) === 'calendar') {
 			nav_set_selected('Calendar');
 			$caldavBackend = new \Sabre\CalDAV\Backend\PDO($pdo);
 			$calendars = $caldavBackend->getCalendarsForUser($principalUri);
 		}
 
-		//Display calendar(s) here
+		// Display calendar(s) here
 		if(argc() <= 3 && argv(1) === 'calendar') {
 
 			head_add_css('/library/fullcalendar/packages/core/main.min.css');
@@ -902,16 +927,17 @@ class Cdav extends Controller {
 			$resource_id = '';
 			$resource = null;
 
-			if(argc() == 3)
+			if (argc() == 3) {
 				$resource_id = argv(2);
+			}
 
-			if($resource_id) {
+			if ($resource_id) {
 				$r = q("SELECT event.*, item.author_xchan, item.owner_xchan, item.plink, item.id as item_id FROM event LEFT JOIN item ON event.event_hash = item.resource_id
 					WHERE event.uid = %d AND event.event_hash = '%s' LIMIT 1",
 					intval(local_channel()),
 					dbesc($resource_id)
 				);
-				if($r) {
+				if ($r) {
 					xchan_query($r);
 					$r = fetch_post_tags($r,true);
 
@@ -922,20 +948,16 @@ class Cdav extends Controller {
 
 					$resource = $r[0];
 
-					$catsenabled = feature_enabled(local_channel(),'categories');
+					$catsenabled = Apps::system_app_installed($x['profile_uid'], 'Categories');
+
 					$categories = '';
-					if($catsenabled){
+					if ($catsenabled){
 						if($r[0]['term']) {
-							$cats = get_terms_oftype($r[0]['term'], TERM_CATEGORY);
-							foreach ($cats as $cat) {
-								if(strlen($categories))
-									$categories .= ', ';
-								$categories .= $cat['term'];
-							}
+							$categories = array_elm_to_str(get_terms_oftype($r[0]['term'], TERM_CATEGORY), 'term');
 						}
 					}
 
-					if($r[0]['dismissed'] == 0) {
+					if ($r[0]['dismissed'] == 0) {
 						q("UPDATE event SET dismissed = 1 WHERE event.uid = %d AND event.event_hash = '%s'",
 							intval(local_channel()),
 							dbesc($resource_id)
@@ -944,7 +966,7 @@ class Cdav extends Controller {
 				}
 			}
 
-			if(get_pconfig(local_channel(), 'cdav_calendar', 'calendar')) {
+			if (get_pconfig(local_channel(), 'cdav_calendar', 'calendar')) {
 				$sources .= '{
 					id: \'calendar\',
 					url: \'/calendar/json/\',
@@ -957,12 +979,12 @@ class Cdav extends Controller {
 				'id' => 'calendar'
 			];
 
-			foreach($calendars as $calendar) {
+			foreach ($calendars as $calendar) {
 				$editable = (($calendar['share-access'] == 2) ? 'false' : 'true');  // false/true must be string since we're passing it to javascript
 				$color = (($calendar['{http://apple.com/ns/ical/}calendar-color']) ? $calendar['{http://apple.com/ns/ical/}calendar-color'] : '#6cad39');
 				$sharer = (($calendar['share-access'] == 3) ? $calendar['{urn:ietf:params:xml:ns:caldav}calendar-description'] : '');
 				$switch = get_pconfig(local_channel(), 'cdav_calendar', $calendar['id'][0]);
-				if($switch) {
+				if ($switch) {
 					$sources .= '{
 						id: ' . $calendar['id'][0] . ',
 						url: \'/cdav/calendar/json/' . $calendar['id'][0] . '/' . $calendar['id'][1] . '\',
@@ -970,7 +992,7 @@ class Cdav extends Controller {
 					 }, ';
 				}
 
-				if($calendar['share-access'] != 2) {
+				if ($calendar['share-access'] != 2) {
 					$writable_calendars[] = [
 						'displayname' => $calendar['{DAV:}displayname'],
 						'sharer' => $sharer,
@@ -990,17 +1012,15 @@ class Cdav extends Controller {
 			$description = ['description', t('Description')];
 			$location = ['location', t('Location')];
 
-			$catsenabled = feature_enabled(local_channel(), 'categories');
+			$catsenabled = Apps::system_app_installed($x['profile_uid'], 'Categories');
 
 			require_once('include/acl_selectors.php');
 	
 			$accesslist = new \Zotlabs\Access\AccessControl($channel);
 			$perm_defaults = $accesslist->get();
 
-			//$acl = (($orig_event['event_xchan']) ? '' : populate_acl(((x($orig_event)) ? $orig_event : $perm_defaults), false, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_stream')));
 			$acl = populate_acl($perm_defaults, false, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_stream'));
 
-			//$permissions = ((x($orig_event)) ? $orig_event : $perm_defaults);
 			$permissions = $perm_defaults;
 
 			$o .= replace_macros(get_markup_template('cdav_calendar.tpl'), [
@@ -1054,20 +1074,23 @@ class Cdav extends Controller {
 
 		}
 
-		//Provide json data for calendar
-		if(argc() == 5 && argv(1) === 'calendar' && argv(2) === 'json'  && intval(argv(3)) && intval(argv(4))) {
+		// Provide json data for calendar
+		if (argc() == 5 && argv(1) === 'calendar' && argv(2) === 'json'  && intval(argv(3)) && intval(argv(4))) {
 
 			$events = [];
 
 			$id = [argv(3), argv(4)];
 
-			if(! cdav_perms($id[0],$calendars))
+			if (! cdav_perms($id[0],$calendars)) {
 				json_return_and_die($events);
+			}
 
-			if (x($_GET,'start'))
+			if (x($_GET,'start')) {
 				$start = new \DateTime($_GET['start']);
-			if (x($_GET,'end'))
+			}
+			if (x($_GET,'end')) {
 				$end = new \DateTime($_GET['end']);
+			}
 
 			$filters['name'] = 'VCALENDAR';
 			$filters['prop-filters'][0]['name'] = 'VEVENT';
@@ -1077,20 +1100,20 @@ class Cdav extends Controller {
 
 			$uris = $caldavBackend->calendarQuery($id, $filters);
 
-			if($uris) {
+			if ($uris) {
 				$objects = $caldavBackend->getMultipleCalendarObjects($id, $uris);
-				foreach($objects as $object) {
+				foreach ($objects as $object) {
 
 					$vcalendar = \Sabre\VObject\Reader::read($object['calendardata']);
 
-					if(isset($vcalendar->VEVENT->RRULE)) {
+					if (isset($vcalendar->VEVENT->RRULE)) {
 						// expanding recurrent events seems to loose timezone info
 						// save it here so we can add it later
 						$recurrent_timezone = (string)$vcalendar->VEVENT->DTSTART['TZID'];
 						$vcalendar = $vcalendar->expand($start, $end);
 					}
 
-					foreach($vcalendar->VEVENT as $vevent) {
+					foreach ($vcalendar->VEVENT as $vevent) {
 						$title = (string)$vevent->SUMMARY;
 						$dtstart = (string)$vevent->DTSTART;
 						$dtend = (string)$vevent->DTEND;
@@ -1101,7 +1124,7 @@ class Cdav extends Controller {
 						$editable = $rw ? true : false;
 						$recurrent = ((isset($vevent->{'RECURRENCE-ID'})) ? true : false);
 
-						if($recurrent) {
+						if ($recurrent) {
 							$editable = false;
 							$timezone = $recurrent_timezone;
 						}
@@ -1109,10 +1132,12 @@ class Cdav extends Controller {
 						$allDay = false;
 
 						// allDay event rules
-						if(!strpos($dtstart, 'T') && !strpos($dtend, 'T'))
+						if (!strpos($dtstart, 'T') && !strpos($dtend, 'T')) {
 							$allDay = true;
-						if(strpos($dtstart, 'T000000') && strpos($dtend, 'T000000'))
+						}
+						if (strpos($dtstart, 'T000000') && strpos($dtend, 'T000000')) {
 							$allDay = true;
+						}
 
 						$events[] = [
 							'calendar_id' => $id,
@@ -1133,36 +1158,39 @@ class Cdav extends Controller {
 			json_return_and_die($events);
 		}
 
-		//enable/disable calendars
-		if(argc() == 5 && argv(1) === 'calendar' && argv(2) === 'switch'  && argv(3) && (argv(4) == 1 || argv(4) == 0)) {
+		// enable/disable calendars
+		if (argc() == 5 && argv(1) === 'calendar' && argv(2) === 'switch'  && argv(3) && (argv(4) == 1 || argv(4) == 0)) {
 			$id = argv(3);
 
-			if(! cdav_perms($id,$calendars))
+			if (! cdav_perms($id,$calendars)) {
 				killme();
+			}
 
 			set_pconfig(local_channel(), 'cdav_calendar' , argv(3), argv(4));
 			killme();
 		}
 
-		//drop calendar
-		if(argc() == 5 && argv(1) === 'calendar' && argv(2) === 'drop' && intval(argv(3)) && intval(argv(4))) {
+		// drop calendar
+		if (argc() == 5 && argv(1) === 'calendar' && argv(2) === 'drop' && intval(argv(3)) && intval(argv(4))) {
 			$id = [argv(3), argv(4)];
 
-			if(! cdav_perms($id[0],$calendars))
+			if (! cdav_perms($id[0],$calendars)) {
 				killme();
+			}
 
 			$caldavBackend->deleteCalendar($id);
 			killme();
 		}
 
-		//drop sharee
-		if(argc() == 6 && argv(1) === 'calendar' && argv(2) === 'dropsharee'  && intval(argv(3)) && intval(argv(4))) {
+		// drop sharee
+		if (argc() == 6 && argv(1) === 'calendar' && argv(2) === 'dropsharee'  && intval(argv(3)) && intval(argv(4))) {
 
 			$id = [argv(3), argv(4)];
 			$hash = argv(5);
 
-			if(! cdav_perms($id[0],$calendars))
+			if (! cdav_perms($id[0],$calendars)) {
 				killme();
+			}
 
 			$sharee_arr = channelx_by_hash($hash);
 
@@ -1177,41 +1205,42 @@ class Cdav extends Controller {
 		}
 
 
-		if(argv(1) === 'addressbook') {
+		if (argv(1) === 'addressbook') {
 			nav_set_selected('CardDAV');
 			$carddavBackend = new \Sabre\CardDAV\Backend\PDO($pdo);
 			$addressbooks = $carddavBackend->getAddressBooksForUser($principalUri);
 		}
 
-		//Display Adressbook here
-		if(argc() == 3 && argv(1) === 'addressbook' && intval(argv(2))) {
+		// Display Adressbook here
+		if (argc() == 3 && argv(1) === 'addressbook' && intval(argv(2))) {
 
 			$id = argv(2);
 
 			$displayname = cdav_perms($id,$addressbooks);
 
-			if(!$displayname)
+			if (! $displayname) {
 				return;
+			}
 
 			head_add_css('cdav_addressbook.css');
 
 			$o = '';
 
 			$sabrecards = $carddavBackend->getCards($id);
-			foreach($sabrecards as $sabrecard) {
+			foreach ($sabrecards as $sabrecard) {
 				$uris[] = $sabrecard['uri'];
 			}
 
-			if($uris) {
+			if ($uris) {
 				$objects = $carddavBackend->getMultipleCards($id, $uris);
 
-				foreach($objects as $object) {
+				foreach ($objects as $object) {
 					$vcard = \Sabre\VObject\Reader::read($object['carddata']);
 
 					$photo = '';
-					if($vcard->PHOTO) {
+					if ($vcard->PHOTO) {
 						$photo_value = strtolower($vcard->PHOTO->getValueType()); // binary or uri
-						if($photo_value === 'binary') {
+						if ($photo_value === 'binary') {
 							$photo_type = strtolower($vcard->PHOTO['TYPE']); // mime jpeg, png or gif
 							$photo = 'data:image/' . $photo_type . ';base64,' . base64_encode((string)$vcard->PHOTO);
 						}
@@ -1222,23 +1251,23 @@ class Cdav extends Controller {
 					}
 
 					$fn = '';
-					if($vcard->FN) {
+					if ($vcard->FN) {
 						$fn = (string)$vcard->FN;
 					}
 
 					$org = '';
-					if($vcard->ORG) {
+					if ($vcard->ORG) {
 						$org = (string)$vcard->ORG;
 					}
 
 					$title = '';
-					if($vcard->TITLE) {
+					if ($vcard->TITLE) {
 						$title = (string)$vcard->TITLE;
 					}
 
 					$tels = [];
-					if($vcard->TEL) {
-						foreach($vcard->TEL as $tel) {
+					if ($vcard->TEL) {
+						foreach ($vcard->TEL as $tel) {
 							$type = (($tel['TYPE']) ? translate_type((string)$tel['TYPE']) : '');
 							$tels[] = [
 								'type' => $type,
@@ -1248,8 +1277,8 @@ class Cdav extends Controller {
 					}
 
 					$emails = [];
-					if($vcard->EMAIL) {
-						foreach($vcard->EMAIL as $email) {
+					if ($vcard->EMAIL) {
+						foreach ($vcard->EMAIL as $email) {
 							$type = (($email['TYPE']) ? translate_type((string)$email['TYPE']) : '');
 							$emails[] = [
 								'type' => $type,
@@ -1259,8 +1288,8 @@ class Cdav extends Controller {
 					}
 
 					$impps = [];
-					if($vcard->IMPP) {
-						foreach($vcard->IMPP as $impp) {
+					if ($vcard->IMPP) {
+						foreach ($vcard->IMPP as $impp) {
 							$type = (($impp['TYPE']) ? translate_type((string)$impp['TYPE']) : '');
 							$impps[] = [
 								'type' => $type,
@@ -1270,8 +1299,8 @@ class Cdav extends Controller {
 					}
 
 					$urls = [];
-					if($vcard->URL) {
-						foreach($vcard->URL as $url) {
+					if ($vcard->URL) {
+						foreach ($vcard->URL as $url) {
 							$type = (($url['TYPE']) ? translate_type((string)$url['TYPE']) : '');
 							$urls[] = [
 								'type' => $type,
@@ -1281,8 +1310,8 @@ class Cdav extends Controller {
 					}
 
 					$adrs = [];
-					if($vcard->ADR) {
-						foreach($vcard->ADR as $adr) {
+					if ($vcard->ADR) {
+						foreach ($vcard->ADR as $adr) {
 							$type = (($adr['TYPE']) ? translate_type((string)$adr['TYPE']) : '');
 							$adrs[] = [
 								'type' => $type,
@@ -1292,14 +1321,13 @@ class Cdav extends Controller {
 					}
 
 					$note = '';
-					if($vcard->NOTE) {
+					if ($vcard->NOTE) {
 						$note = (string)$vcard->NOTE;
 					}
 
 					$cards[] = [
 						'id' => $object['id'],
 						'uri' => $object['uri'],
-
 						'photo' => $photo,
 						'fn' => $fn,
 						'org' => $org,
@@ -1351,12 +1379,13 @@ class Cdav extends Controller {
 			return $o;
 		}
 
-		//delete addressbook
-		if(argc() > 3 && argv(1) === 'addressbook' && argv(2) === 'drop' && intval(argv(3))) {
+		// delete addressbook
+		if (argc() > 3 && argv(1) === 'addressbook' && argv(2) === 'drop' && intval(argv(3))) {
 			$id = argv(3);
 
-			if(! cdav_perms($id,$addressbooks))
+			if (! cdav_perms($id,$addressbooks)) {
 				return;
+			}
 
 			$carddavBackend->deleteAddressBook($id);
 			killme();
@@ -1366,8 +1395,9 @@ class Cdav extends Controller {
 
 	function activate($pdo, $channel) {
 
-		if(! $channel)
+		if (! $channel) {
 			return;
+		}
 
 		$uri = 'principals/' . $channel['channel_address'];
 		
@@ -1389,7 +1419,7 @@ class Cdav extends Controller {
 				dbesc($channel['channel_name'])
 			);
 
-			//create default calendar
+			// create default calendar
 			$caldavBackend = new \Sabre\CalDAV\Backend\PDO($pdo);
 			$properties = [
 				'{DAV:}displayname' => t('Default Calendar'),
@@ -1401,13 +1431,12 @@ class Cdav extends Controller {
 			set_pconfig(local_channel(), 'cdav_calendar' , $id[0], 1);
 			set_pconfig(local_channel(), 'cdav_calendar' , 'calendar', 1);
 
-			//create default addressbook
+			// create default addressbook
 			$carddavBackend = new \Sabre\CardDAV\Backend\PDO($pdo);
 			$properties = ['{DAV:}displayname' => t('Default Addressbook')];
 			$carddavBackend->createAddressBook($uri, 'default', $properties);
 
 		}
 	}
-
 
 }
