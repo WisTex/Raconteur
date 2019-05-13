@@ -1,8 +1,12 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\AccessControl;
+use Zotlabs\Lib\Apps;
+use Zotlabs\Daemon\Master;
 
 
 require_once('include/conversation.php');
@@ -11,6 +15,7 @@ require_once('include/datetime.php');
 require_once('include/event.php');
 require_once('include/items.php');
 require_once('include/html2plain.php');
+require_once('include/security.php');
 
 class Calendar extends Controller {
 
@@ -98,9 +103,9 @@ class Calendar extends Controller {
 			killme();
 		}
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
-		$acl = new \Zotlabs\Access\AccessControl(false);
+		$acl = new AccessControl(false);
 	
 		if ($event_id) {
 			$x = q("select * from event where id = %d and uid = %d limit 1",
@@ -127,7 +132,7 @@ class Calendar extends Controller {
 		}
 	
 		$post_tags = array();
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 		$ac = $acl->get();
 	
 		if (strlen($categories)) {
@@ -143,28 +148,29 @@ class Calendar extends Controller {
 			}
 		}
 	
-		$datarray = array();
-		$datarray['dtstart'] = $start;
-		$datarray['dtend'] = $finish;
-		$datarray['summary'] = $summary;
-		$datarray['description'] = $desc;
-		$datarray['location'] = $location;
-		$datarray['etype'] = $type;
-		$datarray['adjust'] = $adjust;
-		$datarray['nofinish'] = $nofinish;
-		$datarray['uid'] = local_channel();
-		$datarray['account'] = get_account_id();
-		$datarray['event_xchan'] = $channel['channel_hash'];
-		$datarray['allow_cid'] = $ac['allow_cid'];
-		$datarray['allow_gid'] = $ac['allow_gid'];
-		$datarray['deny_cid'] = $ac['deny_cid'];
-		$datarray['deny_gid'] = $ac['deny_gid'];
-		$datarray['private'] = (($acl->is_private()) ? 1 : 0);
-		$datarray['id'] = $event_id;
-		$datarray['created'] = $created;
-		$datarray['edited'] = $edited;
+		$datarray = [ 
+			'dtstart'     => $start,
+			'dtend'       => $finish,
+			'summary'     => $summary,
+			'description' => $desc,
+			'location'    => $location,
+			'etype'       => $type,
+			'adjust'      => $adjust,
+			'nofinish'    => $nofinish,
+			'uid'         => local_channel(),
+			'account'     => get_account_id(),
+			'event_xchan' => $channel['channel_hash'],
+			'allow_cid'   => $ac['allow_cid'],
+			'allow_gid'   => $ac['allow_gid'],
+			'deny_cid'    => $ac['deny_cid'],
+			'deny_gid'    => $ac['deny_gid'],
+			'private'     => (($acl->is_private()) ? 1 : 0),
+			'id'          => $event_id,
+			'created'     => $created,
+			'edited'      => $edited
+		];
 	
-		if(intval($_REQUEST['preview'])) {
+		if (intval($_REQUEST['preview'])) {
 			$html = format_event_html($datarray);
 			echo $html;
 			killme();
@@ -172,30 +178,30 @@ class Calendar extends Controller {
 	
 		$event = event_store_event($datarray);
 	
-		if($post_tags)	
+		if ($post_tags)	{
 			$datarray['term'] = $post_tags;
+		}
 	
 		$item_id = event_store_item($datarray,$event);
 	
-		if($item_id) {
+		if ($item_id) {
 			$r = q("select * from item where id = %d",
 				intval($item_id)
 			);
-			if($r) {
+			if ($r) {
 				xchan_query($r);
 				$sync_item = fetch_post_tags($r);
 				$z = q("select * from event where event_hash = '%s' and uid = %d limit 1",
 					dbesc($r[0]['resource_id']),
 					intval($channel['channel_id'])
 				);
-				if($z) {
-					Libsync::build_sync_packet($channel['channel_id'],array('event_item' => array(encode_item($sync_item[0],true)),'event' => $z));
+				if ($z) {
+					Libsync::build_sync_packet($channel['channel_id'], [ 'event_item' => [ encode_item($sync_item[0],true) ], 'event' => $z]);
 				}
 			}
 		}
 	
-		\Zotlabs\Daemon\Master::Summon(array('Notifier','event',$item_id));
-
+		Master::Summon( [ 'Notifier', 'event', $item_id ] );
 		killme();
 	
 	}
@@ -204,16 +210,15 @@ class Calendar extends Controller {
 	
 	function get() {
 	
-		if(argc() > 2 && argv(1) == 'ical') {
+		if (argc() > 2 && argv(1) == 'ical') {
 			$event_id = argv(2);
 	
-			require_once('include/security.php');
 			$sql_extra = permissions_sql(local_channel());
 	
 			$r = q("select * from event where event_hash = '%s' $sql_extra limit 1",
 				dbesc($event_id)
 			);
-			if($r) { 
+			if ($r) { 
 				header('Content-type: text/calendar');
 				header('content-disposition: attachment; filename="' . t('event') . '-' . $event_id . '.ics"' );
 				echo ical_wrapper($r);
@@ -225,49 +230,46 @@ class Calendar extends Controller {
 			}
 		}
 	
-		if(! local_channel()) {
+		if (! local_channel()) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
 
-		if((argc() > 2) && (argv(1) === 'ignore') && intval(argv(2))) {
+		if ((argc() > 2) && (argv(1) === 'ignore') && intval(argv(2))) {
 			$r = q("update event set dismissed = 1 where id = %d and uid = %d",
 				intval(argv(2)),
 				intval(local_channel())
 			);
 		}
 	
-		if((argc() > 2) && (argv(1) === 'unignore') && intval(argv(2))) {
+		if ((argc() > 2) && (argv(1) === 'unignore') && intval(argv(2))) {
 			$r = q("update event set dismissed = 0 where id = %d and uid = %d",
 				intval(argv(2)),
 				intval(local_channel())
 			);
 		}
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
-		$mode = 'view';
+		$mode   = 'view';
 		$export = false;
-		//$y = 0;
-		//$m = 0;
+
 		$ignored = ((x($_REQUEST,'ignored')) ? " and dismissed = " . intval($_REQUEST['ignored']) . " "  : '');
 
-		if(argc() > 1) {
-			if(argc() > 2 && argv(1) === 'add') {
+		if (argc() > 1) {
+			if (argc() > 2 && argv(1) === 'add') {
 				$mode = 'add';
 				$item_id = intval(argv(2));
 			}
-			if(argc() > 2 && argv(1) === 'drop') {
+			if (argc() > 2 && argv(1) === 'drop') {
 				$mode = 'drop';
 				$event_id = argv(2);
 			}
-			if(argc() <= 2 && argv(1) === 'export') {
+			if (argc() <= 2 && argv(1) === 'export') {
 				$export = true;
 			}
-			if(argc() > 2 && intval(argv(1)) && intval(argv(2))) {
+			if (argc() > 2 && intval(argv(1)) && intval(argv(2))) {
 				$mode = 'view';
-				//$y = intval(argv(1));
-				//$m = intval(argv(2));
 			}
 			if(argc() <= 2) {
 				$mode = 'view';
@@ -275,110 +277,33 @@ class Calendar extends Controller {
 			}
 		}
 	
-		if($mode === 'add') {
+		if ($mode === 'add') {
 			event_addtocal($item_id,local_channel());
 			killme();
 		}
 	
-		if($mode == 'view') {
+		if ($mode == 'view') {
 	
 			/* edit/create form */
-			if($event_id) {
+			if ($event_id) {
 				$r = q("SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
 					dbesc($event_id),
 					intval(local_channel())
 				);
-				if(count($r))
+				if ($r) {
 					$orig_event = $r[0];
+				}
 			}
 	
-			$channel = \App::get_channel();
-
-/*	
-			// Passed parameters overrides anything found in the DB
-			if(!x($orig_event))
-				$orig_event = array();
-	
-			$n_checked = ((x($orig_event) && $orig_event['nofinish']) ? ' checked="checked" ' : '');
-			$a_checked = ((x($orig_event) && $orig_event['adjust']) ? ' checked="checked" ' : '');
-			$t_orig = ((x($orig_event)) ? $orig_event['summary'] : '');
-			$d_orig = ((x($orig_event)) ? $orig_event['description'] : '');
-			$l_orig = ((x($orig_event)) ? $orig_event['location'] : '');
-			$eid = ((x($orig_event)) ? $orig_event['id'] : 0);
-			$event_xchan = ((x($orig_event)) ? $orig_event['event_xchan'] : $channel['channel_hash']);
-			$mid = ((x($orig_event)) ? $orig_event['mid'] : '');
-	
-			$sdt = ((x($orig_event)) ? $orig_event['dtstart'] : 'now');
-	
-			$fdt = ((x($orig_event)) ? $orig_event['dtend'] : '+1 hour');
-	
-			$tz = date_default_timezone_get();
-			if(x($orig_event))
-				$tz = (($orig_event['adjust']) ? date_default_timezone_get() : 'UTC');
-	
-			$syear = datetime_convert('UTC', $tz, $sdt, 'Y');
-			$smonth = datetime_convert('UTC', $tz, $sdt, 'm');
-			$sday = datetime_convert('UTC', $tz, $sdt, 'd');
-			$shour = datetime_convert('UTC', $tz, $sdt, 'H');
-			$sminute = datetime_convert('UTC', $tz, $sdt, 'i');
-	
-			$stext = datetime_convert('UTC',$tz,$sdt);
-			$stext = substr($stext,0,14) . "00:00";
-	
-			$fyear = datetime_convert('UTC', $tz, $fdt, 'Y');
-			$fmonth = datetime_convert('UTC', $tz, $fdt, 'm');
-			$fday = datetime_convert('UTC', $tz, $fdt, 'd');
-			$fhour = datetime_convert('UTC', $tz, $fdt, 'H');
-			$fminute = datetime_convert('UTC', $tz, $fdt, 'i');
-	
-			$ftext = datetime_convert('UTC',$tz,$fdt);
-			$ftext = substr($ftext,0,14) . "00:00";
-	
-			$type = ((x($orig_event)) ? $orig_event['etype'] : 'event');
-	
-			$f = get_config('system','event_input_format');
-			if(! $f)
-				$f = 'ymd';
-
-			$thisyear = datetime_convert('UTC',date_default_timezone_get(),'now','Y');
-			$thismonth = datetime_convert('UTC',date_default_timezone_get(),'now','m');
-			if(! $y)
-				$y = intval($thisyear);
-			if(! $m)
-				$m = intval($thismonth);
-	
-
-			// Put some limits on dates. The PHP date functions don't seem to do so well before 1900.
-			// An upper limit was chosen to keep search engines from exploring links millions of years in the future. 
-	
-			if($y < 1901)
-				$y = 1900;
-			if($y > 2099)
-				$y = 2100;
-	
-			$nextyear = $y;
-			$nextmonth = $m + 1;
-			if($nextmonth > 12) {
-					$nextmonth = 1;
-				$nextyear ++;
-			}
-	
-			$prevyear = $y;
-			if($m > 1)
-				$prevmonth = $m - 1;
-			else {
-				$prevmonth = 12;
-				$prevyear --;
-			}
-				
-			$dim    = get_dim($y,$m);
-			$start  = sprintf('%d-%d-%d %d:%d:%d',$y,$m,1,0,0,0);
-			$finish = sprintf('%d-%d-%d %d:%d:%d',$y,$m,$dim,23,59,59);
-*/	
+			$channel = App::get_channel();
 	
 			if (argv(1) === 'json'){
-				if (x($_GET,'start'))	$start = $_GET['start'];
-				if (x($_GET,'end'))	$finish = $_GET['end'];
+				if (x($_GET,'start')) {
+					$start = $_GET['start'];
+				}
+				if (x($_GET,'end'))	{
+					$finish = $_GET['end'];
+				}
 			}
 	
 			$start  = datetime_convert('UTC','UTC',$start);
@@ -395,7 +320,7 @@ class Calendar extends Controller {
 					intval($_GET['id'])
 				);
 			}
-			elseif($export) {
+			elseif ($export) {
 				$r = q("SELECT * from event where uid = %d",
 					intval(local_channel())
 				);
@@ -419,81 +344,53 @@ class Calendar extends Controller {
 				);
 
 			}
-	
-			//$links = [];
-	
+		
 			if($r && ! $export) {
 				xchan_query($r);
 				$r = fetch_post_tags($r,true);
 
 				$r = sort_by_date($r);
 			}
-
-/*	
-			if($r) {
-				foreach($r as $rr) {
-					$j = (($rr['adjust']) ? datetime_convert('UTC',date_default_timezone_get(),$rr['dtstart'], 'j') : datetime_convert('UTC','UTC',$rr['dtstart'],'j'));
-					if(! x($links,$j)) 
-						$links[$j] = z_root() . '/' . \App::$cmd . '#link-' . $j;
-				}
-			}
-*/
 	
 			$events = [];
+		
+			if ($r) {
 	
-			//$last_date = '';
-			//$fmt = t('l, F j');
-	
-			if($r) {
-	
-				foreach($r as $rr) {
-					//$j = (($rr['adjust']) ? datetime_convert('UTC',date_default_timezone_get(),$rr['dtstart'], 'j') : datetime_convert('UTC','UTC',$rr['dtstart'],'j'));
-					//$d = (($rr['adjust']) ? datetime_convert('UTC',date_default_timezone_get(),$rr['dtstart'], $fmt) : datetime_convert('UTC','UTC',$rr['dtstart'],$fmt));
-					//$d = day_translate($d);
-					
+				foreach ($r as $rr) {					
 					$start = (($rr['adjust']) ? datetime_convert('UTC',date_default_timezone_get(),$rr['dtstart'], 'c') : datetime_convert('UTC','UTC',$rr['dtstart'],'c'));
-					if ($rr['nofinish']){
+					if ($rr['nofinish']) {
 						$end = null;
-					} else {
+					}
+					else {
 						$end = (($rr['adjust']) ? datetime_convert('UTC',date_default_timezone_get(),$rr['dtend'], 'c') : datetime_convert('UTC','UTC',$rr['dtend'],'c'));
 
 						// give a fake end to birthdays so they get crammed into a 
 						// single day on the calendar
 
-						if($rr['etype'] === 'birthday')
+						if ($rr['etype'] === 'birthday')
 							$end = null;
 					}
 
-					$catsenabled = feature_enabled(local_channel(),'categories');
+					$catsenabled = Apps::system_app_installed($x['profile_uid'], 'Categories');
 					$categories = '';
-					if($catsenabled){
-						if($rr['term']) {
-							$cats = get_terms_oftype($rr['term'], TERM_CATEGORY);
-							foreach ($cats as $cat) {
-								if(strlen($categories))
-									$categories .= ', ';
-								$categories .= $cat['term'];
-							}
+					if ($catsenabled){
+						if ($rr['term']) {
+							$categories = array_elm_to_str(get_terms_oftype($rr['term'], TERM_CATEGORY), 'term');
 						}
 					}
 
 					$allDay = false;
 
 					// allDay event rules
-					if(!strpos($start, 'T') && !strpos($end, 'T'))
+					if (!strpos($start, 'T') && !strpos($end, 'T'))
 						$allDay = true;
-					if(strpos($start, 'T00:00:00') && strpos($end, 'T00:00:00'))
+					if (strpos($start, 'T00:00:00') && strpos($end, 'T00:00:00'))
 						$allDay = true;
-
-					//$is_first = ($d !== $last_date);
-						
-					//$last_date = $d;
 	
 					$edit = ((local_channel() && $rr['author_xchan'] == get_observer_hash()) ? array(z_root().'/events/'.$rr['event_hash'].'?expandform=1',t('Edit event'),'','') : false);
 	
-					$drop = array(z_root().'/events/drop/'.$rr['event_hash'],t('Delete event'),'','');
+					$drop = [ z_root() . '/events/drop/' . $rr['event_hash'], t('Delete event'), '', '' ];
 	
-
 					$events[] = [
 						'calendar_id' => 'calendar',
 						'rw'          => true,
@@ -518,20 +415,20 @@ class Calendar extends Controller {
 				}
 			}
 			
-			if($export) {
+			if ($export) {
 				header('Content-type: text/calendar');
 				header('content-disposition: attachment; filename="' . t('calendar') . '-' . $channel['channel_address'] . '.ics"' );
 				echo ical_wrapper($r);
 				killme();
 			}
 	
-			if (\App::$argv[1] === 'json'){
+			if (App::$argv[1] === 'json'){
 				json_return_and_die($events);
 			}
 		}
 
 	
-		if($mode === 'drop' && $event_id) {
+		if ($mode === 'drop' && $event_id) {
 			$r = q("SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
 				dbesc($event_id),
 				intval(local_channel())
@@ -539,18 +436,18 @@ class Calendar extends Controller {
 	
 			$sync_event = $r[0];
 	
-			if($r) {
+			if ($r) {
 				$r = q("delete from event where event_hash = '%s' and uid = %d",
 					dbesc($event_id),
 					intval(local_channel())
 				);
-				if($r) {
+				if ($r) {
 					$r = q("update item set resource_type = '', resource_id = '' where resource_type = 'event' and resource_id = '%s' and uid = %d",
 						dbesc($event_id),
 						intval(local_channel())
 					);
 					$sync_event['event_deleted'] = 1;
-					build_sync_packet(0,array('event' => array($sync_event)));
+					Libsync::build_sync_packet(0, [ 'event' => [ $sync_event ] ]);
 					killme();
 				}
 				notice( t('Failed to remove event' ) . EOL);
