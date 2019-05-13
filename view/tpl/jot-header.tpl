@@ -392,7 +392,7 @@ var activeCommentText = '';
 	}
 
 	function itemAddToCal(id) {
-		$.get('{{$baseurl}}/events/add/' + id);
+		$.get('{{$baseurl}}/calendar/add/' + id);
 		if(timer) clearTimeout(timer);
 		timer = setTimeout(updateInit,1000);
 	}

@@ -133,10 +133,6 @@ class Cdav extends Controller {
 
 				logger('loggedin');
 
-				if((argv(1) == 'calendars') && (!Apps::system_app_installed(local_channel(), 'CalDAV'))) {
-					killme();
-				}
-
 				if((argv(1) == 'addressbooks') && (!Apps::system_app_installed(local_channel(), 'CardDAV'))) {
 					killme();
 				}
@@ -221,10 +217,6 @@ class Cdav extends Controller {
 		if(! local_channel())
 			return;
 
-		if((argv(1) === 'calendar') && (! Apps::system_app_installed(local_channel(), 'CalDAV'))) {
-			return;
-		}
-
 		if((argv(1) === 'addressbook') && (! Apps::system_app_installed(local_channel(), 'CardDAV'))) {
 			return;
 		}
@@ -280,9 +272,12 @@ class Cdav extends Controller {
 					return;
 
 				$title = $_REQUEST['title'];
-				$dtstart = new \DateTime($_REQUEST['dtstart']);
-				if($_REQUEST['dtend'])
-					$dtend = new \DateTime($_REQUEST['dtend']);
+				$start = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtstart']);
+				$dtstart = new \DateTime($start);
+				if($_REQUEST['dtend']) {
+					$end = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtend']);
+					$dtend = new \DateTime($end);
+				}
 				$description = $_REQUEST['description'];
 				$location = $_REQUEST['location'];
 
@@ -306,12 +301,16 @@ class Cdav extends Controller {
 					'DTSTART' => $dtstart
 				    ]
 				]);
-				if($dtend)
+				if($dtend) {
 					$vcalendar->VEVENT->add('DTEND', $dtend);
+					$vcalendar->VEVENT->DTEND['TZID'] = App::$timezone;
+				}
 				if($description)
 					$vcalendar->VEVENT->add('DESCRIPTION', $description);
 				if($location)
 					$vcalendar->VEVENT->add('LOCATION', $location);
+
+				$vcalendar->VEVENT->DTSTART['TZID'] = App::$timezone;
 
 				$calendarData = $vcalendar->serialize();
 
@@ -351,8 +350,12 @@ class Cdav extends Controller {
 
 				$uri = $_REQUEST['uri'];
 				$title = $_REQUEST['title'];
-				$dtstart = new \DateTime($_REQUEST['dtstart']);
-				$dtend = $_REQUEST['dtend'] ? new \DateTime($_REQUEST['dtend']) : '';
+				$start = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtstart']);
+				$dtstart = new \DateTime($start);
+				if($_REQUEST['dtend']) {
+					$end = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtend']);
+					$dtend = new \DateTime($end);
+				}
 				$description = $_REQUEST['description'];
 				$location = $_REQUEST['location'];
 
@@ -404,8 +407,12 @@ class Cdav extends Controller {
 					return;
 
 				$uri = $_REQUEST['uri'];
-				$dtstart = new \DateTime($_REQUEST['dtstart']);
-				$dtend = $_REQUEST['dtend'] ? new \DateTime($_REQUEST['dtend']) : '';
+				$start = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtstart']);
+				$dtstart = new \DateTime($start);
+				if($_REQUEST['dtend']) {
+					$end = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtend']);
+					$dtend = new \DateTime($end);
+				}
 
 				$object = $caldavBackend->getCalendarObject($id, $uri);
 
@@ -747,16 +754,27 @@ class Cdav extends Controller {
 		//Import calendar or addressbook
 		if(($_FILES) && array_key_exists('userfile',$_FILES) && intval($_FILES['userfile']['size']) && $_REQUEST['target']) {
 
-			$src = @file_get_contents($_FILES['userfile']['tmp_name']);
+			$src = $_FILES['userfile']['tmp_name'];
 
 			if($src) {
 
 				if($_REQUEST['c_upload']) {
+					if($_REQUEST['target'] == 'calendar') {
+						$result = parse_ical_file($src,local_channel());
+						if($result)
+							info( t('Calendar entries imported.') . EOL);
+						else
+							notice( t('No calendar entries found.') . EOL);
+
+						@unlink($src);
+						return;
+					}
+
 					$id = explode(':', $_REQUEST['target']);
 					$ext = 'ics';
 					$table = 'calendarobjects';
 					$column = 'calendarid';
-					$objects = new \Sabre\VObject\Splitter\ICalendar($src);
+					$objects = new \Sabre\VObject\Splitter\ICalendar(@file_get_contents($src));
 					$profile = \Sabre\VObject\Node::PROFILE_CALDAV;
 					$backend = new \Sabre\CalDAV\Backend\PDO($pdo);
 				}
@@ -766,7 +784,7 @@ class Cdav extends Controller {
 					$ext = 'vcf';
 					$table = 'cards';
 					$column = 'addressbookid';
-					$objects = new \Sabre\VObject\Splitter\VCard($src);
+					$objects = new \Sabre\VObject\Splitter\VCard(@file_get_contents($src));
 					$profile = \Sabre\VObject\Node::PROFILE_CARDDAV;
 					$backend = new \Sabre\CardDAV\Backend\PDO($pdo);
 				}
@@ -832,23 +850,16 @@ class Cdav extends Controller {
 		if(!local_channel())
 			return;
 
-		if((argv(1) === 'calendar') && (! Apps::system_app_installed(local_channel(), 'CalDAV'))) {
-			//Do not display any associated widgets at this point
-			App::$pdl = '';
-
-			$o = '<b>CalDAV App (Not Installed):</b><br>';
-			$o .= t('CalDAV capable calendar');
-			return $o;
-		}
-
 		if((argv(1) === 'addressbook') && (! Apps::system_app_installed(local_channel(), 'CardDAV'))) {
 			//Do not display any associated widgets at this point
 			App::$pdl = '';
 
-			$o = '<b>CardDAV App (Not Installed):</b><br>';
+			$o = '<b>' . t('CardDAV App') . ' (' . t('Not Installed') . '):</b><br>';
 			$o .= t('CalDAV capable addressbook');
 			return $o;
 		}
+
+		App::$profile_uid = local_channel();
 
 		$channel = App::get_channel();
 		$principalUri = 'principals/' . $channel['channel_address'];
@@ -867,28 +878,93 @@ class Cdav extends Controller {
 		}
 
 		if(argv(1) === 'calendar') {
-			nav_set_selected('CalDAV');
+			nav_set_selected('Calendar');
 			$caldavBackend = new \Sabre\CalDAV\Backend\PDO($pdo);
 			$calendars = $caldavBackend->getCalendarsForUser($principalUri);
 		}
 
 		//Display calendar(s) here
-		if(argc() == 2 && argv(1) === 'calendar') {
+		if(argc() <= 3 && argv(1) === 'calendar') {
 
-			head_add_css('/library/fullcalendar/fullcalendar.css');
+			head_add_css('/library/fullcalendar/packages/core/main.min.css');
+			head_add_css('/library/fullcalendar/packages/daygrid/main.min.css');
+			head_add_css('/library/fullcalendar/packages/timegrid/main.min.css');
+			head_add_css('/library/fullcalendar/packages/list/main.min.css');
 			head_add_css('cdav_calendar.css');
 
-			head_add_js('/library/moment/moment.min.js', 1);
-			head_add_js('/library/fullcalendar/fullcalendar.min.js', 1);
-			head_add_js('/library/fullcalendar/locale-all.js', 1);
+			head_add_js('/library/fullcalendar/packages/core/main.min.js');
+			head_add_js('/library/fullcalendar/packages/interaction/main.min.js');
+			head_add_js('/library/fullcalendar/packages/daygrid/main.min.js');
+			head_add_js('/library/fullcalendar/packages/timegrid/main.min.js');
+			head_add_js('/library/fullcalendar/packages/list/main.min.js');
+
+			$sources = '';
+			$resource_id = '';
+			$resource = null;
+
+			if(argc() == 3)
+				$resource_id = argv(2);
+
+			if($resource_id) {
+				$r = q("SELECT event.*, item.author_xchan, item.owner_xchan, item.plink, item.id as item_id FROM event LEFT JOIN item ON event.event_hash = item.resource_id
+					WHERE event.uid = %d AND event.event_hash = '%s' LIMIT 1",
+					intval(local_channel()),
+					dbesc($resource_id)
+				);
+				if($r) {
+					xchan_query($r);
+					$r = fetch_post_tags($r,true);
+
+					$r[0]['dtstart'] = (($r[0]['adjust']) ? datetime_convert('UTC',date_default_timezone_get(),$r[0]['dtstart'], 'c') : datetime_convert('UTC','UTC',$r[0]['dtstart'],'c'));
+					$r[0]['dtend'] = (($r[0]['adjust']) ? datetime_convert('UTC',date_default_timezone_get(),$r[0]['dtend'], 'c') : datetime_convert('UTC','UTC',$r[0]['dtend'],'c'));
+
+					$r[0]['plink'] = [$r[0]['plink'], t('Link to source')];
+
+					$resource = $r[0];
+
+					$catsenabled = feature_enabled(local_channel(),'categories');
+					$categories = '';
+					if($catsenabled){
+						if($r[0]['term']) {
+							$cats = get_terms_oftype($r[0]['term'], TERM_CATEGORY);
+							foreach ($cats as $cat) {
+								if(strlen($categories))
+									$categories .= ', ';
+								$categories .= $cat['term'];
+							}
+						}
+					}
+
+					if($r[0]['dismissed'] == 0) {
+						q("UPDATE event SET dismissed = 1 WHERE event.uid = %d AND event.event_hash = '%s'",
+							intval(local_channel()),
+							dbesc($resource_id)
+						);
+					}
+				}
+			}
+
+			if(get_pconfig(local_channel(), 'cdav_calendar', 'calendar')) {
+				$sources .= '{
+					id: \'calendar\',
+					url: \'/calendar/json/\',
+					color: \'#3a87ad\'
+				}, ';
+			}
+
+			$calendars[] = [
+				'displayname' => $channel['channel_name'],
+				'id' => 'calendar'
+			];
 
 			foreach($calendars as $calendar) {
 				$editable = (($calendar['share-access'] == 2) ? 'false' : 'true');  // false/true must be string since we're passing it to javascript
-				$color = (($calendar['{http://apple.com/ns/ical/}calendar-color']) ? $calendar['{http://apple.com/ns/ical/}calendar-color'] : '#3a87ad');
+				$color = (($calendar['{http://apple.com/ns/ical/}calendar-color']) ? $calendar['{http://apple.com/ns/ical/}calendar-color'] : '#6cad39');
 				$sharer = (($calendar['share-access'] == 3) ? $calendar['{urn:ietf:params:xml:ns:caldav}calendar-description'] : '');
 				$switch = get_pconfig(local_channel(), 'cdav_calendar', $calendar['id'][0]);
 				if($switch) {
 					$sources .= '{
+						id: ' . $calendar['id'][0] . ',
 						url: \'/cdav/calendar/json/' . $calendar['id'][0] . '/' . $calendar['id'][1] . '\',
 						color: \'' . $color . '\'
 					 }, ';
@@ -905,19 +981,33 @@ class Cdav extends Controller {
 
 			$sources = rtrim($sources, ', ');
 
-			$first_day = get_pconfig(local_channel(),'system','cal_first_day');
+			$first_day = feature_enabled(local_channel(), 'cal_first_day');
 			$first_day = (($first_day) ? $first_day : 0);
 
 			$title = ['title', t('Event title')];
-			$dtstart = ['dtstart', t('Start date and time'), '', t('Example: YYYY-MM-DD HH:mm')];
-			$dtend = ['dtend', t('End date and time'), '', t('Example: YYYY-MM-DD HH:mm')];
+			$dtstart = ['dtstart', t('Start date and time')];
+			$dtend = ['dtend', t('End date and time')];
 			$description = ['description', t('Description')];
 			$location = ['location', t('Location')];
+
+			$catsenabled = feature_enabled(local_channel(), 'categories');
+
+			require_once('include/acl_selectors.php');
+	
+			$accesslist = new \Zotlabs\Access\AccessControl($channel);
+			$perm_defaults = $accesslist->get();
+
+			//$acl = (($orig_event['event_xchan']) ? '' : populate_acl(((x($orig_event)) ? $orig_event : $perm_defaults), false, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_stream')));
+			$acl = populate_acl($perm_defaults, false, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_stream'));
+
+			//$permissions = ((x($orig_event)) ? $orig_event : $perm_defaults);
+			$permissions = $perm_defaults;
 
 			$o .= replace_macros(get_markup_template('cdav_calendar.tpl'), [
 				'$sources' => $sources,
 				'$color' => $color,
 				'$lang' => App::$language,
+				'$timezone' => App::$timezone,
 				'$first_day' => $first_day,
 				'$prev'	=> t('Previous'),
 				'$next'	=> t('Next'),
@@ -929,6 +1019,7 @@ class Cdav extends Controller {
 				'$list_week' => t('List week'),
 				'$list_day' => t('List day'),
 				'$title' => $title,
+				'$calendars' => $calendars,
 				'$writable_calendars' => $writable_calendars,
 				'$dtstart' => $dtstart,
 				'$dtend' => $dtend,
@@ -936,11 +1027,27 @@ class Cdav extends Controller {
 				'$location' => $location,
 				'$more' => t('More'),
 				'$less' => t('Less'),
+				'$update' => t('Update'),
 				'$calendar_select_label' => t('Select calendar'),
+				'$calendar_optiopns_label' => [t('Channel Calendars'), t('CalDAV Calendars')],
 				'$delete' => t('Delete'),
 				'$delete_all' => t('Delete all'),
 				'$cancel' => t('Cancel'),
-				'$recurrence_warning' => t('Sorry! Editing of recurrent events is not yet implemented.')
+				'$create' => t('Create'),
+				'$recurrence_warning' => t('Sorry! Editing of recurrent events is not yet implemented.'),
+
+				'$channel_hash' => $channel['channel_hash'],
+				'$acl' => $acl,
+				'$lockstate' => (($accesslist->is_private()) ? 'lock' : 'unlock'),
+				'$allow_cid' => acl2json($permissions['allow_cid']),
+				'$allow_gid' => acl2json($permissions['allow_gid']),
+				'$deny_cid' => acl2json($permissions['deny_cid']),
+				'$deny_gid' => acl2json($permissions['deny_gid']),
+				'$catsenabled' => $catsenabled,
+				'$categories_label' => t('Categories'),
+
+				'$resource' => json_encode($resource),
+				'$categories' => $categories
 			]);
 
 			return $o;
@@ -950,10 +1057,12 @@ class Cdav extends Controller {
 		//Provide json data for calendar
 		if(argc() == 5 && argv(1) === 'calendar' && argv(2) === 'json'  && intval(argv(3)) && intval(argv(4))) {
 
+			$events = [];
+
 			$id = [argv(3), argv(4)];
 
 			if(! cdav_perms($id[0],$calendars))
-				killme();
+				json_return_and_die($events);
 
 			if (x($_GET,'start'))
 				$start = new \DateTime($_GET['start']);
@@ -967,16 +1076,19 @@ class Cdav extends Controller {
 			$filters['comp-filters'][0]['time-range']['end'] = $end;
 
 			$uris = $caldavBackend->calendarQuery($id, $filters);
+
 			if($uris) {
-
 				$objects = $caldavBackend->getMultipleCalendarObjects($id, $uris);
-
 				foreach($objects as $object) {
 
 					$vcalendar = \Sabre\VObject\Reader::read($object['calendardata']);
 
-					if(isset($vcalendar->VEVENT->RRULE))
+					if(isset($vcalendar->VEVENT->RRULE)) {
+						// expanding recurrent events seems to loose timezone info
+						// save it here so we can add it later
+						$recurrent_timezone = (string)$vcalendar->VEVENT->DTSTART['TZID'];
 						$vcalendar = $vcalendar->expand($start, $end);
+					}
 
 					foreach($vcalendar->VEVENT as $vevent) {
 						$title = (string)$vevent->SUMMARY;
@@ -984,14 +1096,15 @@ class Cdav extends Controller {
 						$dtend = (string)$vevent->DTEND;
 						$description = (string)$vevent->DESCRIPTION;
 						$location = (string)$vevent->LOCATION;
-
+						$timezone = (string)$vevent->DTSTART['TZID'];
 						$rw = ((cdav_perms($id[0],$calendars,true)) ? true : false);
+						$editable = $rw ? true : false;
 						$recurrent = ((isset($vevent->{'RECURRENCE-ID'})) ? true : false);
 
-						$editable = $rw ? true : false;
-
-						if($recurrent)
+						if($recurrent) {
 							$editable = false;
+							$timezone = $recurrent_timezone;
+						}
 
 						$allDay = false;
 
@@ -1005,8 +1118,8 @@ class Cdav extends Controller {
 							'calendar_id' => $id,
 							'uri' => $object['uri'],
 							'title' => $title,
-							'start' => $dtstart,
-							'end' => $dtend,
+							'start' => datetime_convert($timezone, $timezone, $dtstart, 'c'),
+							'end' => (($dtend) ? datetime_convert($timezone, $timezone, $dtend, 'c') : ''),
 							'description' => $description,
 							'location' => $location,
 							'allDay' => $allDay,
@@ -1016,15 +1129,12 @@ class Cdav extends Controller {
 						];
 					}
 				}
-				json_return_and_die($events);
 			}
-			else {
-				killme();
-			}
+			json_return_and_die($events);
 		}
 
 		//enable/disable calendars
-		if(argc() == 5 && argv(1) === 'calendar' && argv(2) === 'switch'  && intval(argv(3)) && (argv(4) == 1 || argv(4) == 0)) {
+		if(argc() == 5 && argv(1) === 'calendar' && argv(2) === 'switch'  && argv(3) && (argv(4) == 1 || argv(4) == 0)) {
 			$id = argv(3);
 
 			if(! cdav_perms($id,$calendars))
@@ -1283,12 +1393,13 @@ class Cdav extends Controller {
 			$caldavBackend = new \Sabre\CalDAV\Backend\PDO($pdo);
 			$properties = [
 				'{DAV:}displayname' => t('Default Calendar'),
-				'{http://apple.com/ns/ical/}calendar-color' => '#3a87ad',
+				'{http://apple.com/ns/ical/}calendar-color' => '#6cad39',
 				'{urn:ietf:params:xml:ns:caldav}calendar-description' => $channel['channel_name']
 			];
 
 			$id = $caldavBackend->createCalendar($uri, 'default', $properties);
 			set_pconfig(local_channel(), 'cdav_calendar' , $id[0], 1);
+			set_pconfig(local_channel(), 'cdav_calendar' , 'calendar', 1);
 
 			//create default addressbook
 			$carddavBackend = new \Sabre\CardDAV\Backend\PDO($pdo);

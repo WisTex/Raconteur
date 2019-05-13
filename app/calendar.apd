@@ -1,6 +1,6 @@
 version: 1
 url: $baseurl/cdav/calendar
 requires: local_channel
-name: CalDAV
+name: Calendar
 photo: icon:calendar
-categories: Productivity, Personal
+categories: Productivity, nav_featured_app

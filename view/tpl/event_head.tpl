@@ -1,7 +1,7 @@
-<link rel='stylesheet' type='text/css' href='{{$baseurl}}/library/fullcalendar/fullcalendar.css' />
+<link rel='stylesheet' type='text/css' href='{{$baseurl}}/library/fullcalendar.old/fullcalendar.css' />
 <script language="javascript" type="text/javascript" src="{{$baseurl}}/library/moment/moment.min.js"></script>
-<script language="javascript" type="text/javascript" src="{{$baseurl}}/library/fullcalendar/fullcalendar.min.js"></script>
-<script language="javascript" type="text/javascript" src="{{$baseurl}}/library/fullcalendar/locale-all.js"></script>
+<script language="javascript" type="text/javascript" src="{{$baseurl}}/library/fullcalendar.old/fullcalendar.min.js"></script>
+<script language="javascript" type="text/javascript" src="{{$baseurl}}/library/fullcalendar.old/locale-all.js"></script>
 
 <script>
 	function showEvent(eventid) {

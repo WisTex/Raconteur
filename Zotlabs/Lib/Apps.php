@@ -66,7 +66,7 @@ class Apps {
 			'Channel Home',
 			'View Profile',
 			'Photos',
-			'Events',
+			'Calendar',
 			'Directory',
 			'Search',
 			'Profile Photo'
@@ -303,6 +303,7 @@ class Apps {
 			'Affinity Tool' => t('Affinity Tool'),
 			'Articles' => t('Articles'),
 			'Cards' => t('Cards'),
+			'Calendar' => t('Calendar'),
 			'Categories' => t('Categories'),
 			'Admin' => t('Site Admin'),
 			'Content Filter' => t('Content Filter'),

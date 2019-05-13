@@ -1188,13 +1188,16 @@ function event_store_item($arr, $event) {
 		$item_arr['item_origin']     = $item_origin;
 		$item_arr['item_thread_top'] = $item_thread_top;
 
-		$attach = array(array(
-			'href' => z_root() . '/events/ical/' .  urlencode($event['event_hash']),
-			'length' => 0,
-			'type' => 'text/calendar',
-			'title' => t('event') . '-' . $event['event_hash'],
-			'revision' => ''
-		));
+		$attach = [
+			[
+				'href'     => z_root() . '/calendar/ical/' .  urlencode($event['event_hash']),
+				'length'   => 0,
+				'type'     => 'text/calendar',
+				'title'    => t('event') . '-' . $event['event_hash'],
+				'revision' => ''
+			]
+		];
+
 
 		$item_arr['attach'] = $attach;
 
@@ -1211,7 +1214,7 @@ function event_store_item($arr, $event) {
 		// otherwise we'll fallback to /display/$message_id
 
 		if($wall)
-			$item_arr['plink'] = z_root() . '/channel/' . $z['channel_address'] . '/?f=&mid=' . urlencode($item_arr['mid']);
+			$item_arr['plink'] = z_root() . '/channel/' . $z['channel_address'] . '/?f=&mid=' . gen_link_id($item_arr['mid']);
 		else
 			$item_arr['plink'] = z_root() . '/display/' . gen_link_id($item_arr['mid']);
 
@@ -1311,9 +1314,14 @@ function cdav_principal($uri) {
 }
 
 function cdav_perms($needle, $haystack, $check_rw = false) {
+
+	if ($needle === 'calendar') {
+		return true;
+	}
+	
 	foreach ($haystack as $item) {
-		if($check_rw) {
-			if(is_array($item['id'])) {
+		if ($check_rw) {
+			if (is_array($item['id'])) {
 				if ($item['id'][0] == $needle && $item['share-access'] != 2) {
 					return $item['{DAV:}displayname'];
 				}
@@ -1325,7 +1333,7 @@ function cdav_perms($needle, $haystack, $check_rw = false) {
 			}
 		}
 		else {
-			if(is_array($item['id'])) {
+			if (is_array($item['id'])) {
 				if ($item['id'][0] == $needle) {
 					return $item['{DAV:}displayname'];
 				}

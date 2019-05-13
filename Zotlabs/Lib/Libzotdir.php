@@ -85,7 +85,7 @@ class Libzotdir {
 
 		if ($directory) {
 			$j = Zotfinger::exec($directory);
-			if(array_path_exists('data/directory_mode',$j)) {
+			if (array_path_exists('data/directory_mode',$j)) {
 				if ($j['data']['directory_mode'] === 'normal') {
 					$isadir = false;
 				}
@@ -240,7 +240,6 @@ class Libzotdir {
 
 			// for brand new directory servers, only load the last couple of days.
 			// It will take about a month for a new directory to obtain the full current repertoire of channels.
-			/** @FIXME Go back and pick up earlier ratings if this is a new directory server. These do not get refreshed. */
 
 			$token = get_config('system','realm_token');
 
@@ -266,9 +265,10 @@ class Libzotdir {
 					$r = q("select * from updates where ud_guid = '%s' limit 1",
 						dbesc($t['transaction_id'])
 					);
-					if($r)
+					if ($r) {
 						continue;
-
+					}
+					
 					$ud_flags = 0;
 					if (is_array($t['flags']) && in_array('deleted',$t['flags']))
 						$ud_flags |= UPDATE_FLAGS_DELETED;
@@ -344,7 +344,7 @@ class Libzotdir {
 	
 		logger('local_dir_update: uid: ' . $uid, LOGGER_DEBUG);
 
-		$p = q("select channel.channel_hash, channel_address, channel_timezone, profile.* from profile left join channel on channel_id = uid where uid = %d and is_default = 1",
+		$p = q("select channel_hash, channel_address, channel_timezone, profile.* from profile left join channel on channel_id = uid where uid = %d and is_default = 1",
 			intval($uid)
 		);
 
@@ -384,7 +384,7 @@ class Libzotdir {
 
 			$hidden = (1 - intval($p[0]['publish']));
 
-			logger('hidden: ' . $hidden);
+			// logger('hidden: ' . $hidden);
 
 			$r = q("select xchan_hidden from xchan where xchan_hash = '%s' limit 1",
 				dbesc($p[0]['channel_hash'])
@@ -554,10 +554,11 @@ class Libzotdir {
 		}
 
 		$d = [
-			'xprof' => $arr,
+			'xprof'   => $arr,
 			'profile' => $profile,
-			'update' => $update
+			'update'  => $update
 		];
+
 		/**
 		 * @hooks import_directory_profile
 		 *   Called when processing delivery of a profile structure from an external source (usually for directory storage).
@@ -565,11 +566,13 @@ class Libzotdir {
 		 *   * \e array \b profile
 		 *   * \e boolean \b update
 		 */
+
 		call_hooks('import_directory_profile', $d);
 
-		if (($d['update']) && (! $suppress_update))
-			self::update_modtime($arr['xprof_hash'],random_string() . '@' . \App::get_hostname(), $addr, $ud_flags);
-
+		if (($d['update']) && (! $suppress_update)) {
+			self::update_modtime($arr['xprof_hash'], new_uuid(), $addr, $ud_flags);
+		}
+		
 		return $d['update'];
 	}
 

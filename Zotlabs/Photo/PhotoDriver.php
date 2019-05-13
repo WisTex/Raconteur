@@ -508,7 +508,7 @@ abstract class PhotoDriver {
 	
 	    $arr['imgscale'] = $scale;
 	    
-		if(boolval(get_config('system','filesystem_storage_thumbnails', 0)) && $scale > 0) {
+		if(boolval(get_config('system','filesystem_storage_thumbnails', 1)) && $scale > 0) {
 			$channel = \App::get_channel();
 			$arr['os_storage'] = 1;
 			$arr['os_syspath'] = 'store/' . $channel['channel_address'] . '/' . $arr['os_path'] . '-' . $scale;
