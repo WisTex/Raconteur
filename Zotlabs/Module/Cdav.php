@@ -948,7 +948,7 @@ class Cdav extends Controller {
 
 					$resource = $r[0];
 
-					$catsenabled = Apps::system_app_installed($x['profile_uid'], 'Categories');
+					$catsenabled = Apps::system_app_installed(local_channel(), 'Categories');
 
 					$categories = '';
 					if ($catsenabled){
@@ -1012,7 +1012,7 @@ class Cdav extends Controller {
 			$description = ['description', t('Description')];
 			$location = ['location', t('Location')];
 
-			$catsenabled = Apps::system_app_installed($x['profile_uid'], 'Categories');
+			$catsenabled = Apps::system_app_installed(local_channel(), 'Categories');
 
 			require_once('include/acl_selectors.php');
 	
@@ -1055,7 +1055,6 @@ class Cdav extends Controller {
 				'$cancel' => t('Cancel'),
 				'$create' => t('Create'),
 				'$recurrence_warning' => t('Sorry! Editing of recurrent events is not yet implemented.'),
-
 				'$channel_hash' => $channel['channel_hash'],
 				'$acl' => $acl,
 				'$lockstate' => (($accesslist->is_private()) ? 'lock' : 'unlock'),
@@ -1065,7 +1064,6 @@ class Cdav extends Controller {
 				'$deny_gid' => acl2json($permissions['deny_gid']),
 				'$catsenabled' => $catsenabled,
 				'$categories_label' => t('Categories'),
-
 				'$resource' => json_encode($resource),
 				'$categories' => $categories
 			]);

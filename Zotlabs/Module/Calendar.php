@@ -14,6 +14,7 @@ require_once('include/bbcode.php');
 require_once('include/datetime.php');
 require_once('include/event.php');
 require_once('include/items.php');
+require_once('include/text.php');
 require_once('include/html2plain.php');
 require_once('include/security.php');
 
@@ -42,12 +43,14 @@ class Calendar extends Controller {
 		$tz          = (($timezone) ? $timezone : date_default_timezone_get());
 		$categories  = escape_tags(trim($_POST['categories']));
 	
+
 		// only allow editing your own events. 
 	
 		if (($xchan) && ($xchan !== get_observer_hash())) {
 			return;
 		}
-	
+
+
 		if ($start_text) {
 			$start = $start_text;
 		}
@@ -79,7 +82,6 @@ class Calendar extends Controller {
 			}
 		}
 
-		linkify_tags($desc, local_channel());
 		linkify_tags($location, local_channel());
 
 		// Don't allow the event to finish before it begins.
@@ -104,7 +106,6 @@ class Calendar extends Controller {
 		}
 
 		$channel = App::get_channel();
-	
 		$acl = new AccessControl(false);
 	
 		if ($event_id) {
@@ -131,15 +132,43 @@ class Calendar extends Controller {
 			$acl->set_from_array($_POST);
 		}
 	
-		$post_tags = array();
-		$channel = App::get_channel();
+		$post_tags = [];
 		$ac = $acl->get();
+
+		$str_contact_allow = $ac['allow_cid'];
+		$str_group_allow   = $ac['allow_gid'];
+		$str_contact_deny  = $ac['deny_cid'];
+		$str_group_deny    = $ac['deny_gid'];
 	
+		$private = $acl->is_private();
+	
+		$results = linkify_tags($desc, local_channel());
+
+		if ($results) {
+			// Set permissions based on tag replacements
+	
+			set_linkified_perms($results, $str_contact_allow, $str_group_allow, local_channel(), false, $private);
+
+			foreach ($results as $result) {
+				$success = $result['success'];
+				if ($success['replaced']) {
+					$post_tags[] = [
+						'uid'   => local_channel(),
+						'ttype' => $success['termtype'],
+						'otype' => TERM_OBJ_POST,
+						'term'  => $success['term'],
+						'url'   => $success['url']
+					];	
+				}
+			}
+		}
+
+
 		if (strlen($categories)) {
 			$cats = explode(',',$categories);
 			foreach ($cats as $cat) {
 				$post_tags[] = array(
-					'uid'   => $profile_uid, 
+					'uid'   => local_channel(), 
 					'ttype' => TERM_CATEGORY,
 					'otype' => TERM_OBJ_POST,
 					'term'  => trim($cat),
@@ -160,11 +189,11 @@ class Calendar extends Controller {
 			'uid'         => local_channel(),
 			'account'     => get_account_id(),
 			'event_xchan' => $channel['channel_hash'],
-			'allow_cid'   => $ac['allow_cid'],
-			'allow_gid'   => $ac['allow_gid'],
-			'deny_cid'    => $ac['deny_cid'],
-			'deny_gid'    => $ac['deny_gid'],
-			'private'     => (($acl->is_private()) ? 1 : 0),
+			'allow_cid'   => $str_contact_allow,
+			'allow_gid'   => $str_group_allow,
+			'deny_cid'    => $str_contact_deny,
+			'deny_gid'    => $str_group_deny,
+			'private'     => intval($private),
 			'id'          => $event_id,
 			'created'     => $created,
 			'edited'      => $edited
