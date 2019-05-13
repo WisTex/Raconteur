@@ -2,6 +2,8 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Libsync;
+
 
 require_once('include/conversation.php');
 require_once('include/bbcode.php');
@@ -16,87 +18,81 @@ class Calendar extends Controller {
 	
 		logger('post: ' . print_r($_REQUEST,true), LOGGER_DATA);
 	
-		if(! local_channel())
+		if (! local_channel())
 			return;
 	
-		$event_id = ((x($_POST,'event_id')) ? intval($_POST['event_id']) : 0);
-		$event_hash = ((x($_POST,'event_hash')) ? $_POST['event_hash'] : '');
-	
-		$xchan = ((x($_POST,'xchan')) ? dbesc($_POST['xchan']) : '');
-		$uid      = local_channel();
-	
-		$start_text = escape_tags($_REQUEST['dtstart']);
+		$event_id    = ((x($_POST,'event_id')) ? intval($_POST['event_id']) : 0);
+		$event_hash  = ((x($_POST,'event_hash')) ? $_POST['event_hash'] : '');
+		$xchan       = ((x($_POST,'xchan')) ? dbesc($_POST['xchan']) : '');
+		$summary     = escape_tags(trim($_POST['summary']));
+		$desc        = escape_tags(trim($_POST['desc']));
+		$location    = escape_tags(trim($_POST['location']));
+		$type        = escape_tags(trim($_POST['type']));
+		$start_text  = escape_tags($_REQUEST['dtstart']);
 		$finish_text = escape_tags($_REQUEST['dtend']);
-
-		$adjust   = intval($_POST['adjust']);
-		$nofinish = intval($_POST['nofinish']);
-	
-		$timezone = ((x($_POST,'timezone_select')) ? notags(trim($_POST['timezone_select']))     : '');
-
-		$tz = (($timezone) ? $timezone : date_default_timezone_get());
-
-		$categories = escape_tags(trim($_POST['categories']));
+		$adjust      = intval($_POST['adjust']);
+		$nofinish    = intval($_POST['nofinish']);
+		$uid         = local_channel();
+		$timezone    = ((x($_POST,'timezone_select')) ? notags(trim($_POST['timezone_select']))     : '');
+		$tz          = (($timezone) ? $timezone : date_default_timezone_get());
+		$categories  = escape_tags(trim($_POST['categories']));
 	
 		// only allow editing your own events. 
 	
-		if(($xchan) && ($xchan !== get_observer_hash()))
+		if (($xchan) && ($xchan !== get_observer_hash())) {
 			return;
+		}
 	
-		if($start_text) {
+		if ($start_text) {
 			$start = $start_text;
 		}
 		else {
 			$start = sprintf('%d-%d-%d %d:%d:0',$startyear,$startmonth,$startday,$starthour,$startminute);
 		}
 
-		if($finish_text) {
+		if ($finish_text) {
 			$finish = $finish_text;
 		}
 		else {
 			$finish = sprintf('%d-%d-%d %d:%d:0',$finishyear,$finishmonth,$finishday,$finishhour,$finishminute);
 		}
 
-		if($nofinish) {
+		if ($nofinish) {
 			$finish = NULL_DATE;
 		}
 
-		if($adjust) {
+		if ($adjust) {
 			$start = datetime_convert($tz,'UTC',$start);
-			if(! $nofinish)
+			if (! $nofinish) {
 				$finish = datetime_convert($tz,'UTC',$finish);
+			}
 		}
 		else {
 			$start = datetime_convert('UTC','UTC',$start);
-			if(! $nofinish)
+			if (! $nofinish) {
 				$finish = datetime_convert('UTC','UTC',$finish);
+			}
 		}
 
+		linkify_tags($desc, local_channel());
+		linkify_tags($location, local_channel());
 
 		// Don't allow the event to finish before it begins.
 		// It won't hurt anything, but somebody will file a bug report
 		// and we'll waste a bunch of time responding to it. Time that 
 		// could've been spent doing something else. 
-	
-		$summary  = escape_tags(trim($_POST['summary']));
-		$desc     = escape_tags(trim($_POST['desc']));
-		$location = escape_tags(trim($_POST['location']));
-		$type     = escape_tags(trim($_POST['type']));
 
-		require_once('include/text.php');
-		linkify_tags($desc, local_channel());
-		linkify_tags($location, local_channel());
-	
-		if(strcmp($finish,$start) < 0 && !$nofinish) {
+		if (strcmp($finish,$start) < 0 && (! $nofinish)) {
 			notice( t('Event can not end before it has started.') . EOL);
-			if(intval($_REQUEST['preview'])) {
+			if (intval($_REQUEST['preview'])) {
 				echo( t('Unable to generate preview.'));
 			}
 			killme();
 		}
 	
-		if((! $summary) || (! $start)) {
+		if ((! $summary) || (! $start)) {
 			notice( t('Event title and start time are required.') . EOL);
-			if(intval($_REQUEST['preview'])) {
+			if (intval($_REQUEST['preview'])) {
 				echo( t('Unable to generate preview.'));
 			}
 			killme();
@@ -104,16 +100,16 @@ class Calendar extends Controller {
 
 		$channel = \App::get_channel();
 	
-		$acl = new \Zotlabs\Access\AccessList(false);
+		$acl = new \Zotlabs\Access\AccessControl(false);
 	
-		if($event_id) {
+		if ($event_id) {
 			$x = q("select * from event where id = %d and uid = %d limit 1",
 				intval($event_id),
 				intval(local_channel())
 			);
-			if(! $x) {
+			if (! $x) {
 				notice( t('Event not found.') . EOL);
-				if(intval($_REQUEST['preview'])) {
+				if (intval($_REQUEST['preview'])) {
 					echo( t('Unable to generate preview.'));
 					killme();
 				}
@@ -134,9 +130,9 @@ class Calendar extends Controller {
 		$channel = \App::get_channel();
 		$ac = $acl->get();
 	
-		if(strlen($categories)) {
+		if (strlen($categories)) {
 			$cats = explode(',',$categories);
-			foreach($cats as $cat) {
+			foreach ($cats as $cat) {
 				$post_tags[] = array(
 					'uid'   => $profile_uid, 
 					'ttype' => TERM_CATEGORY,
@@ -193,7 +189,7 @@ class Calendar extends Controller {
 					intval($channel['channel_id'])
 				);
 				if($z) {
-					build_sync_packet($channel['channel_id'],array('event_item' => array(encode_item($sync_item[0],true)),'event' => $z));
+					Libsync::build_sync_packet($channel['channel_id'],array('event_item' => array(encode_item($sync_item[0],true)),'event' => $z));
 				}
 			}
 		}
