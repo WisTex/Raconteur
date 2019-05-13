@@ -946,7 +946,12 @@ class Activity {
 		else {
 
 			$ret['inbox']       = z_root() . '/nullbox';
-			$ret['outbox']      = z_root() . '/nullbox';
+			if ($c) {
+				$ret['outbox']      = z_root() . '/outbox/'    . $c['channel_address'];
+			}
+			else {
+				$ret['outbox']      = z_root() . '/nullbox';
+			}
 			$ret['publicKey'] = [
 				'id'           => $p['xchan_url'] . '/public_key_pem',
 				'owner'        => $p['xchan_url'],
