@@ -123,6 +123,7 @@ class Oep extends \Zotlabs\Web\Controller {
 	        
 		$o = "[share author='".urlencode($p[0]['author']['xchan_name']).
             "' profile='".$p[0]['author']['xchan_url'] .
+            "' portable_id='".$p[0]['author']['xchan_hash'] .
             "' avatar='".$p[0]['author']['xchan_photo_s'].
             "' link='".$p[0]['plink'].
 			"' auth='".(($p[0]['author']['network'] === 'zot6') ? 'true' : 'false') .
@@ -208,6 +209,7 @@ class Oep extends \Zotlabs\Web\Controller {
 	        
 		$o = "[share author='".urlencode($p[0]['author']['xchan_name']).
             "' profile='".$p[0]['author']['xchan_url'] .
+            "' portable_id='".$p[0]['author']['xchan_hash'] .
             "' avatar='".$p[0]['author']['xchan_photo_s'].
             "' link='".$p[0]['plink'].
 			"' auth='".(($p[0]['author']['network'] === 'zot6') ? 'true' : 'false') .
@@ -292,6 +294,7 @@ class Oep extends \Zotlabs\Web\Controller {
 	        
 		$o = "[share author='".urlencode($p[0]['author']['xchan_name']).
             "' profile='".$p[0]['author']['xchan_url'] .
+            "' portable_id='".$p[0]['author']['xchan_hash'] .
             "' avatar='".$p[0]['author']['xchan_photo_s'].
             "' link='".$p[0]['plink'].
 			"' auth='".(($p[0]['author']['network'] === 'zot6') ? 'true' : 'false') .
@@ -367,6 +370,7 @@ class Oep extends \Zotlabs\Web\Controller {
 			
 		$o = "[share author='".urlencode($p[0]['author']['xchan_name']).
 			"' profile='".$p[0]['author']['xchan_url'] .
+            "' portable_id='".$p[0]['author']['xchan_hash'] .
 			"' avatar='".$p[0]['author']['xchan_photo_s'].
 			"' link='".$p[0]['plink'].
 			"' auth='".(($p[0]['author']['network'] === 'zot6') ? 'true' : 'false') .

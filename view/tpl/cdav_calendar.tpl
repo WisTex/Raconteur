@@ -569,6 +569,8 @@ function exportDate() {
 					{{/foreach}}
 					</optgroup>
 				</select>
+				{{include file="field_input.tpl" field=$dtstart}}
+				{{include file="field_input.tpl" field=$dtend}}
 				<div id="more_block" style="display: none;">
 					{{if $catsenabled}}
 					<div id="id_categories_wrapper" class="form-group">
@@ -576,8 +578,6 @@ function exportDate() {
 						<input name="categories" id="id_categories" class="form-control" type="text" value="{{$categories}}" data-role="cat-tagsinput" />
 					</div>
 					{{/if}}
-					{{include file="field_input.tpl" field=$dtstart}}
-					{{include file="field_input.tpl" field=$dtend}}
 					{{include file="field_textarea.tpl" field=$description}}
 					{{include file="field_textarea.tpl" field=$location}}
 				</div>
