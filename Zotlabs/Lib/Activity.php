@@ -1017,8 +1017,8 @@ class Activity {
  
 		logger('Unmapped activity: ' . $verb);
 		return 'Create';
-	//	return false;
-}
+		//	return false;
+	}
 
 
 	static function activity_obj_mapper($obj) {
@@ -1905,7 +1905,17 @@ class Activity {
 		$s['summary']  = self::bb_content($content,'summary');
 		$s['body']     = ((self::bb_content($content,'bbcode') && (! $response_activity)) ? self::bb_content($content,'bbcode') : self::bb_content($content,'content'));
 
-		if ($act->type === 'Tombstone' || ($act->type === 'Create' && $act->obj['type'] === 'Tombstone')) {
+		// handle some of the more widely used of the numerous and varied ways of deleting something
+		
+		if ($act->type === 'Tombstone') {
+			$s['item_deleted'] = 1;
+		}
+		
+		if ($act->type === 'Create' && $act->obj['type'] === 'Tombstone') {
+			$s['item_deleted'] = 1;
+		}
+		
+		if ($act->type === 'Delete' && $act->obj['type'] === 'Tombstone') {
 			$s['item_deleted'] = 1;
 		}
 
