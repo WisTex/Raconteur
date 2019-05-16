@@ -67,7 +67,8 @@ class Apps {
 			'View Profile',
 			'Photos',
 			'Calendar',
-			'Directory',
+//			'Directory',
+			'Events',
 			'Search',
 			'Profile Photo'
 		]);

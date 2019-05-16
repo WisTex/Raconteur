@@ -4,7 +4,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\AccessControl;
+use Zotlabs\Access\AccessControl;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Daemon\Master;
 

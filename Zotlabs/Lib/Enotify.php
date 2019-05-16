@@ -12,7 +12,7 @@ class Enotify {
 	/**
 	 * @brief
 	 *
-	 * @param array $params an assoziative array with:
+	 * @param array $params an associative array with:
 	 *  * \e string \b from_xchan sender xchan hash
 	 *  * \e string \b to_xchan recipient xchan hash
 	 *  * \e array \b item an assoziative array
@@ -52,6 +52,8 @@ class Enotify {
 			logger('recip: ' . $params['to_xchan']);
 			return;
 		}
+
+
 
 		// from here on everything is in the recipients language
 
@@ -840,6 +842,9 @@ class Enotify {
 
 		$ret = '';
 
+		$expire = get_config('system','default_expire_days');
+		$expire_date = (($expire) ? datetime_convert('UTC','UTC','now() - ' . $expire . ' days') : NULL_DATE);
+
 		require_once('include/conversation.php');
 
 		// Call localize_item to get a one line status for activities. 
@@ -897,6 +902,11 @@ class Enotify {
 			'uid' => local_channel(),
 			'display' => true
 		);
+
+		$post_date = (($edit)? $item['edited'] : $item['created']);
+		if($post_date && $post_date < $expire_date) {
+			return [];
+		}
 
 		call_hooks('enotify_format',$x);
 		if(! $x['display']) {
