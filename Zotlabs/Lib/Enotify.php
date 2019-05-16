@@ -903,10 +903,10 @@ class Enotify {
 			'display' => true
 		);
 
-		$post_date = (($edit)? $item['edited'] : $item['created']);
-		if($post_date && $post_date < $expire_date) {
-			return [];
-		}
+//		$post_date = (($edit)? $item['edited'] : $item['created']);
+//		if($post_date && $post_date < $expire_date) {
+//			return [];
+//		}
 
 		call_hooks('enotify_format',$x);
 		if(! $x['display']) {
