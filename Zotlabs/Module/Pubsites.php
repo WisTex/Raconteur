@@ -42,9 +42,8 @@ class Pubsites extends \Zotlabs\Web\Controller {
 						$o .= '<table class="table table-striped table-hover"><tr><td>' . t('Hub URL') . '</td><td>' . t('Access Type') . '</td><td>' . t('Registration Policy') . '</td><td>' . t('Software') . '</td>';
 						$o .= '</tr>';
 
+						usort($v, [ $this, 'sort_versions' ]);
 						foreach ($v as $jj) {
-							$projectname = explode(' ',$jj['project']);
-
 							if(strpos($jj['version'],' ')) {
 								$x = explode(' ', $jj['version']);
 								if($x[1])
@@ -83,15 +82,17 @@ class Pubsites extends \Zotlabs\Web\Controller {
 			}
 		}
 		$projects = array_keys($ret);
-		usort($projects, [ self, 'sort_versions']);
+
 		$newret = [];
 		foreach($projects as $p) {
+
 			$newret[$p] = $ret[$p];
 		}
+
 		return $newret;
 	}
 
-	static function sort_versions($a,$b) {
-
+	function sort_versions($a,$b) {
+		return version_compare($b['version'],$a['version']);
 	}
 }

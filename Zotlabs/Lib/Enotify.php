@@ -842,8 +842,8 @@ class Enotify {
 
 		$ret = '';
 
-		$expire = get_config('system','default_expire_days');
-		$expire_date = (($expire) ? datetime_convert('UTC','UTC','now() - ' . $expire . ' days') : NULL_DATE);
+		$expire = intval(get_config('system','default_expire_days'));
+		$expire_date = (($expire) ? datetime_convert('UTC','UTC','now - ' . $expire . ' days') : NULL_DATE);
 
 		require_once('include/conversation.php');
 
@@ -903,10 +903,10 @@ class Enotify {
 			'display' => true
 		);
 
-//		$post_date = (($edit)? $item['edited'] : $item['created']);
-//		if($post_date && $post_date < $expire_date) {
-//			return [];
-//		}
+		$post_date = (($edit)? $item['edited'] : $item['created']);
+		if($post_date && $post_date < $expire_date) {
+			return [];
+		}
 
 		call_hooks('enotify_format',$x);
 		if(! $x['display']) {
