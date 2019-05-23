@@ -335,6 +335,19 @@ function insertCommentAttach(comment,id) {
 }
 
 function insertCommentURL(comment, id) {
+	textarea = document.getElementById("comment-edit-text-" +id);
+    if (textarea.selectionStart || textarea.selectionStart == "0") {
+       var start = textarea.selectionStart;
+       var end = textarea.selectionEnd;	
+       if (end > start) {
+          reply = prompt(aStr['linkurl']);
+          if(reply && reply.length) {
+            textarea.value = textarea.value.substring(0, start) + "[url=" + reply + "]" + textarea.value.substring(start, end) + "[/url]" + textarea.value.substring(end, textarea.value.length);
+          }
+		   return true; 
+       }
+	}
+
 	$('#linkModal').modal();
 	$('#id_link_url').focus();
 	$('#link-modal-OKButton').on('click', function() {
@@ -360,9 +373,9 @@ function insertCommentURL(comment, id) {
 				$("#comment-edit-text-" + id).focus();
 				$("#comment-edit-text-" + id).addClass("expanded");
 				openMenu("comment-tools-" + id);
-
+	
 				var tmpStr = $("#comment-edit-text-" + id).val();
-
+	
 				textarea = document.getElementById("comment-edit-text-" +id);
 				textarea.value = textarea.value + data;
 				preview_comment(id);
@@ -371,7 +384,7 @@ function insertCommentURL(comment, id) {
 			});
 		}
 	});
-
+	
 	return true;
 }
 

@@ -164,49 +164,50 @@ var activeCommentText = '';
 	}
 
 	function jotGetLink() {
-            textarea = document.getElementById('profile-jot-text');
-            if (textarea.selectionStart || textarea.selectionStart == "0") {
-                    var start = textarea.selectionStart;
-                    var end = textarea.selectionEnd;	
-                    if (end > start) {
-                        reply = prompt("{{$linkurl}}");
-                        if(reply && reply.length) {
-                            textarea.value = textarea.value.substring(0, start) + "[url=" + reply + "]" + textarea.value.substring(start, end) + "[/url]" + textarea.value.substring(end, textarea.value.length);
-                        }
-                    } else {
-						$('#linkModal').modal();
-						$('#id_link_url').focus();
-						$('#link-modal-OKButton').on('click', function() {
-							reply=$('#id_link_url').val();
-							if(reply && reply.length) {
-								var radioValue = $("input[name='link_style']:checked"). val();
-								if(radioValue == '0') {
-									reply = '!' + reply;
-								}
-								var optstr = '';
-								var opts =  $("input[name='oembed']:checked"). val();
-								if(opts) {
-									optstr = optstr + '&oembed=1';
-								}
-								var opts =  $("input[name='zotobj']:checked"). val();
-								if(opts) {
-									optstr = optstr + '&zotobj=1';
-								}
-								
-								reply = bin2hex(reply);
-            	                $('#profile-rotator').show();
-                	            $.get('{{$baseurl}}/linkinfo?f=&binurl=' + reply + optstr, function(data) {
-                    	                addeditortext(data);
-										preview_post();
-										$('#id_link_url').val('');
-                                	    $('#profile-rotator').hide();
-	                            });
+		textarea = document.getElementById('profile-jot-text');
+		if (textarea.selectionStart || textarea.selectionStart == "0") {
+			var start = textarea.selectionStart;
+			var end = textarea.selectionEnd;	
+			if (end > start) {
+				reply = prompt("{{$linkurl}}");
+				if(reply && reply.length) {
+					textarea.value = textarea.value.substring(0, start) + "[url=" + reply + "]" + textarea.value.substring(start, end) + "[/url]" + textarea.value.substring(end, textarea.value.length);
+				}
+				return true;
+			}
+		}
 	
-								$('#linkModal').modal('hide');
-							}
-						})
-                    }
-            }
+		$('#linkModal').modal();
+		$('#id_link_url').focus();
+		$('#link-modal-OKButton').on('click', function() {
+			reply=$('#id_link_url').val();
+			if(reply && reply.length) {
+				var radioValue = $("input[name='link_style']:checked"). val();
+				if(radioValue == '0') {
+					reply = '!' + reply;
+				}
+				var optstr = '';
+				var opts =  $("input[name='oembed']:checked"). val();
+				if(opts) {
+					optstr = optstr + '&oembed=1';
+				}
+				var opts =  $("input[name='zotobj']:checked"). val();
+				if(opts) {
+					optstr = optstr + '&zotobj=1';
+				}
+								
+				reply = bin2hex(reply);
+				$('#profile-rotator').show();
+				$.get('{{$baseurl}}/linkinfo?f=&binurl=' + reply + optstr, function(data) {
+					addeditortext(data);
+					preview_post();
+					$('#id_link_url').val('');
+					$('#profile-rotator').hide();
+				});
+	
+				$('#linkModal').modal('hide');
+			}
+		})
 	}
 
 	function jotGetLocation() {
@@ -435,7 +436,7 @@ var activeCommentText = '';
 	}
 
 
-    var initializeEmbedPhotoDialog = function () {
+	var initializeEmbedPhotoDialog = function () {
         $('.embed-photo-selected-photo').each(function (index) {
             $(this).removeClass('embed-photo-selected-photo');
         });

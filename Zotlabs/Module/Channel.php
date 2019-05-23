@@ -29,21 +29,22 @@ class Channel extends Controller {
 
 	function init() {
 
-		if(in_array(substr($_GET['search'],0,1),[ '@', '!', '?']))	
+		if (in_array(substr($_GET['search'],0,1),[ '@', '!', '?']))	
 			goaway('search' . '?f=&search=' . $_GET['search']);
 
 		$which = null;
-		if(argc() > 1)
+		if (argc() > 1) {
 			$which = argv(1);
-		if(! $which) {
-			if(local_channel()) {
+		}
+		if (! $which) {
+			if (local_channel()) {
 				$channel = App::get_channel();
-				if($channel && $channel['channel_address']) {
+				if ($channel && $channel['channel_address']) {
 					$which = $channel['channel_address'];
 				}
 			}
 		}
-		if(! $which) {
+		if (! $which) {
 			notice( t('You must be logged in to see this page.') . EOL );
 			return;
 		}
@@ -51,13 +52,13 @@ class Channel extends Controller {
 		$profile = 0;
 		$channel = App::get_channel();
 
-		if((local_channel()) && (argc() > 2) && (argv(2) === 'view')) {
+		if ((local_channel()) && (argc() > 2) && (argv(2) === 'view')) {
 			$which = $channel['channel_address'];
 			$profile = argv(1);
 		}
 
 		$channel = channelx_by_nick($which);
-		if(! $channel) {
+		if (! $channel) {
 			http_status_exit(404, 'Not found');
 		}
 
@@ -249,23 +250,25 @@ class Channel extends Controller {
 
 
 		/**
-		 * Get permissions SQL - if $remote_contact is true, our remote user has been pre-verified and we already have fetched his/her groups
+		 * Get permissions SQL
 		 */
 
 		$item_normal = item_normal();
 		$item_normal_update = item_normal_update();
 		$sql_extra = item_permissions_sql(App::$profile['profile_uid']);
 
-		if(get_pconfig(App::$profile['profile_uid'],'system','channel_list_mode') && (! $mid))
+		if (get_pconfig(App::$profile['profile_uid'],'system','channel_list_mode') && (! $mid)) {
 			$page_mode = 'list';
-		else
+		}
+		else {
 			$page_mode = 'client';
-
+		}
+		
 		$abook_uids = " and abook.abook_channel = " . intval(App::$profile['profile_uid']) . " ";
 
 		$simple_update = (($update) ? " AND item_unseen = 1 " : '');
 
-		if($search) {
+		if ($search) {
 			$search = escape_tags($search);
 			if(strpos($search,'#') === 0) {
 				$sql_extra .= term_query('item',substr($search,1),TERM_HASHTAG,TERM_COMMUNITYTAG);
@@ -286,17 +289,20 @@ class Channel extends Controller {
 			'title' => 'oembed'
 		]);
 
-		if($update && $_SESSION['loadtime'])
+		if ($update && $_SESSION['loadtime']) {
 			$simple_update = " AND (( item_unseen = 1 AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' )  OR item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' ) ";
-		if($load)
+		}
+		if ($load) {
 			$simple_update = '';
-
-		if($static && $simple_update)
+		}
+		
+		if ($static && $simple_update) {
 			$simple_update .= " and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
+		}
+		
+		if (($update) && (! $load)) {
 
-		if(($update) && (! $load)) {
-
-			if($mid) {
+			if ($mid) {
 				$r = q("SELECT parent AS item_id from item where mid like '%s' and uid = %d $item_normal_update
 					AND item_wall = 1 $simple_update $sql_extra limit 1",
 					dbesc($mid . '%'),
@@ -320,37 +326,38 @@ class Channel extends Controller {
 		}
 		else {
 
-			if(x($category)) {
+			if (x($category)) {
 				$sql_extra2 .= protect_sprintf(term_item_parent_query(App::$profile['profile_uid'],'item', $category, TERM_CATEGORY));
 			}
-			if(x($hashtags)) {
+			if (x($hashtags)) {
 				$sql_extra2 .= protect_sprintf(term_item_parent_query(App::$profile['profile_uid'],'item', $hashtags, TERM_HASHTAG, TERM_COMMUNITYTAG));
 			}
 
-			if($datequery) {
+			if ($datequery) {
 				$sql_extra2 .= protect_sprintf(sprintf(" AND item.created <= '%s' ", dbesc(datetime_convert(date_default_timezone_get(),'',$datequery))));
 				$order = 'post';
 			}
-			if($datequery2) {
+			if ($datequery2) {
 				$sql_extra2 .= protect_sprintf(sprintf(" AND item.created >= '%s' ", dbesc(datetime_convert(date_default_timezone_get(),'',$datequery2))));
 			}
 
-			if($datequery || $datequery2) {
+			if ($datequery || $datequery2) {
 				$sql_extra2 .= " and item.item_thread_top != 0 ";
 			}
 
-			if($order === 'post')
+			if ($order === 'post') {
 				$ordering = "created";
-			else
+			}
+			else {
 				$ordering = "commented";
-
+			}
 
 			$itemspage = get_pconfig(local_channel(),'system','itemspage');
 			App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
 			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 
-			if($noscript_content || $load) {
-				if($mid) {
+			if ($noscript_content || $load) {
+				if ($mid) {
 					$r = q("SELECT parent AS item_id from item where mid like '%s' and uid = %d $item_normal
 						AND item_wall = 1 $sql_extra limit 1",
 						dbesc($mid . '%'),
@@ -373,10 +380,10 @@ class Channel extends Controller {
 				}
 			}
 			else {
-				$r = array();
+				$r = [];
 			}
 		}
-		if($r) {
+		if ($r) {
 
 			$parents_str = ids_to_querystr($r,'item_id');
 
@@ -393,17 +400,18 @@ class Channel extends Controller {
 			$items = fetch_post_tags($items, true);
 			$items = conv_sort($items,$ordering);
 
-			if($load && $mid && (! count($items))) {
+			if ($load && $mid && (! count($items))) {
 				// This will happen if we don't have sufficient permissions
 				// to view the parent item (or the item itself if it is toplevel)
 				notice( t('Permission denied.') . EOL);
 			}
 
-		} else {
-			$items = array();
+		}
+		else {
+			$items = [];
 		}
 
-		if((! $update) && (! $load)) {
+		if ((! $update) && (! $load)) {
 
 			// This is ugly, but we can't pass the profile_uid through the session to the ajax updater,
 			// because browser prefetching might change it on us. We have to deliver it with the page.
@@ -452,7 +460,7 @@ class Channel extends Controller {
 
 		$update_unseen = '';
 
-		if($page_mode === 'list') {
+		if ($page_mode === 'list') {
 
 			/**
 			 * in "list mode", only mark the parent item and any like activities as "seen".
@@ -461,21 +469,21 @@ class Channel extends Controller {
 			 * comment likes could also get somewhat hairy.
 			 */
 
-			if($parents_str) {
+			if ($parents_str) {
 				$update_unseen = " AND ( id IN ( " . dbesc($parents_str) . " )";
 				$update_unseen .= " OR ( parent IN ( " . dbesc($parents_str) . " ) AND verb in ( '" . dbesc(ACTIVITY_LIKE) . "','" . dbesc(ACTIVITY_DISLIKE) . "' ))) ";
 			}
 		}
 		else {
-			if($parents_str) {
+			if ($parents_str) {
 				$update_unseen = " AND parent IN ( " . dbesc($parents_str) . " )";
 			}
 		}
 
-		if($is_owner && $update_unseen) {
+		if ($is_owner && $update_unseen) {
 			$x = [ 'channel_id' => local_channel(), 'update' => 'unset' ];
 			call_hooks('update_unseen',$x);
-			if($x['update'] === 'unset' || intval($x['update'])) {
+			if ($x['update'] === 'unset' || intval($x['update'])) {
 				$r = q("UPDATE item SET item_unseen = 0 where item_unseen = 1 and item_wall = 1 AND uid = %d $update_unseen",
 					intval(local_channel())
 				);
@@ -490,7 +498,7 @@ class Channel extends Controller {
 		else {
 
 			$o .= '<noscript>';
-			if($noscript_content) {
+			if ($noscript_content) {
 				$o .= conversation($items,$mode,$update,'traditional');
 				$o .= alt_pager(count($items));
 			}
