@@ -19,7 +19,7 @@ use Zotlabs\Daemon\Master;
 // composer autoloader for all namespaced Classes
 require_once('vendor/autoload.php');
 
-if(file_exists('addon/vendor/autoload.php')) {
+if (file_exists('addon/vendor/autoload.php')) {
 	require_once('addon/vendor/autoload.php');
 }
 
@@ -1594,6 +1594,12 @@ function login($register = false, $form_id = 'main-login', $hiddens = false, $lo
 	// your site.
 
 
+	// If the site supports SSL and this isn't a secure connection, reload the page using https
+	
+	if (intval($_SERVER['SERVER_PORT']) === 80 && strpos(z_root(), 'https://') !== false) {
+		goaway(z_root() . '/' . App::$query_string);
+	}
+
 	$register_policy = get_config('system','register_policy');
 
 	$reglink = get_config('system', 'register_link', z_root() . '/' . ((intval($register_policy) === REGISTER_CLOSED) ? 'pubsites' : 'register'));
@@ -1609,29 +1615,29 @@ function login($register = false, $form_id = 'main-login', $hiddens = false, $lo
 	$dest_url = z_root() . '/' . App::$query_string;
 
 	if(local_channel()) {
-		$tpl = get_markup_template("logout.tpl");
+		$tpl = get_markup_template('logout.tpl');
 	}
 	else {
-		$tpl = get_markup_template("login.tpl");
+		$tpl = get_markup_template('login.tpl');
 		if(strlen(App::$query_string))
 			$_SESSION['login_return_url'] = App::$query_string;
 	}
 
-	$o .= replace_macros($tpl,array(
+	$o .= replace_macros($tpl, [
 		'$dest_url'     => $dest_url,
 		'$login_page'   => $login_page,
 		'$logout'       => t('Logout'),
 		'$login'        => t('Login'),
 		'$remote_login' => t('Remote Authentication'),
 		'$form_id'      => $form_id,
-		'$lname'        => array('username', t('Login/Email') , '', ''),
-		'$lpassword'    => array('password', t('Password'), '', ''),
-		'$remember_me'  => array((($login_page) ? 'remember' : 'remember_me'), t('Remember me'), '', '',array(t('No'),t('Yes'))),
+		'$lname'        => [ 'username', t('Login/Email') , '', '' ],
+		'$lpassword'    => [ 'password', t('Password'), '', '' ],
+		'$remember_me'  => [ (($login_page) ? 'remember' : 'remember_me'), t('Remember me'), '', '', [ t('No'),t('Yes') ] ],
 		'$hiddens'      => $hiddens,
 		'$register'     => $reg,
 		'$lostpass'     => t('Forgot your password?'),
 		'$lostlink'     => t('Password Reset'),
-	));
+	]);
 
 	/**
 	 * @hooks login_hook

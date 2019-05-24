@@ -2,11 +2,14 @@
 
 namespace Zotlabs\Photo;
 
+use App;
+
 /**
  * @brief Abstract photo driver class.
  *
  * Inheritance seems not to be the best design pattern for such photo drivers.
  */
+
 abstract class PhotoDriver {
 
 	/**
@@ -72,6 +75,7 @@ abstract class PhotoDriver {
 	 *  false on failure, a PHP image resource for GD driver, an \Imagick object
 	 *  for ImageMagick driver.
 	 */
+
 	abstract public function getImage();
 
 	abstract public function doScaleImage($new_width, $new_height);
@@ -504,21 +508,24 @@ abstract class PhotoDriver {
 	 * @param scale int
 	 * @return boolean|array
 	 */
+
 	public function storeThumbnail($arr, $scale = 0) {
 	
 	    $arr['imgscale'] = $scale;
 	    
-		if(boolval(get_config('system','filesystem_storage_thumbnails', 1)) && $scale > 0) {
-			$channel = \App::get_channel();
+		if (boolval(get_config('system','filesystem_storage_thumbnails', 1)) && $scale > 0) {
+			$channel = channelx_by_n($arr['uid']);
 			$arr['os_storage'] = 1;
 			$arr['os_syspath'] = 'store/' . $channel['channel_address'] . '/' . $arr['os_path'] . '-' . $scale;
-			if(! $this->saveImage($arr['os_syspath']))
+			if (! $this->saveImage($arr['os_syspath'])) {
 				return false;
+			}
 		}
 		
-		if(! $this->save($arr)) {
-			if(array_key_exists('os_syspath', $arr))
+		if (! $this->save($arr)) {
+			if (array_key_exists('os_syspath', $arr)) {
 				@unlink($arr['os_syspath']);
+			}
 			return false;
 		}
 		
