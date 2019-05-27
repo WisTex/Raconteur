@@ -261,7 +261,7 @@ class Register extends Controller {
 		$name = array('name', t('Your Name'), ((x($_REQUEST,'name')) ? $_REQUEST['name'] : ''), t('Real names are preferred.'));
 		$nickhub = '@' . str_replace(array('http://','https://','/'), '', get_config('system','baseurl'));
 		$nickname = array('nickname', t('Choose a short nickname'), ((x($_REQUEST,'nickname')) ? $_REQUEST['nickname'] : ''), sprintf( t('Your nickname will be used to create an easy to remember channel address e.g. nickname%s'), $nickhub));
-		$role = array('permissions_role' , t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel permission role for your usage needs and privacy requirements.') . ' <a href="help/member/member_guide#Channel_Permission_Roles" target="_blank">' . t('Read more about channel permission roles') . '</a>',$perm_roles);
+		$role = array('permissions_role' , t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel permission role for your usage needs and privacy requirements.'),$perm_roles);
 		$tos = array('tos', $label_tos, '', '', array(t('no'),t('yes')));
 
 
