@@ -850,6 +850,21 @@ class Apps {
 		return ($r);
 	}
 
+
+	static public function app_search_available($str) {
+
+		// not yet finished
+		// somehow need to account for translations
+
+		$r = q("select * from app where app_channel = 0 $sql_extra order by app_name asc",
+			intval($uid)
+		);
+
+		return ($r);
+	}
+
+
+
 	static public function app_order($uid,$apps,$menu) {
 
 		if (! $apps)

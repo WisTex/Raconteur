@@ -1,17 +1,15 @@
 <?php
-namespace Zotlabs\Module; /** @file */
+namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
 
-class Online extends \Zotlabs\Web\Controller {
+class Online extends Controller {
 
 	function init() {
-	
-		$ret = array('result' => false);
-		if(argc() != 2)
+		$ret = [ 'result' => false ];
+		if (argc() != 2) {
 			json_return_and_die($ret);
-	
-		$ret = get_online_status(argv(1));
-		json_return_and_die($ret);
+		}
+		json_return_and_die(get_online_status(argv(1)));
 	} 
-	
 }

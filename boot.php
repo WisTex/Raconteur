@@ -463,13 +463,13 @@ define ( 'NAMESPACE_YMEDIA',          'http://search.yahoo.com/mrss/' );
 
 define ( 'ACTIVITYSTREAMS_JSONLD_REV', 'https://www.w3.org/ns/activitystreams' );
 
-define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.7' );
+define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.8' );
 /**
  * activity stream defines
  */
 
 define ( 'ACTIVITY_PUBLIC_INBOX',  'https://www.w3.org/ns/activitystreams#Public' );
-define ( 'ACTIVITY_AUTHENTICATED', 'https://www.w3.org/ns/activitystreams#Authenticated' );
+
 
 define ( 'ACTIVITY_POST',        'Create' );
 define ( 'ACTIVITY_CREATE',      'Create' );
