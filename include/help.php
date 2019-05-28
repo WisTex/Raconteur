@@ -62,10 +62,10 @@ function get_help_content($tocpath = false) {
 	$path = argv(1);
 
 	$fullpath = get_help_fullpath($path,'.md');
-logger('fullpath: ' . $fullpath);
+
 
 	$text = load_doc_file($fullpath . '.md');
-logger('text = ' . $text);
+
 	App::$page['title'] = t('Help');
 
 
@@ -147,7 +147,7 @@ function find_doc_file($s) {
 function search_doc_files($s) {
 
 
-	\App::set_pager_itemspage(60);
+	App::set_pager_itemspage(60);
 	$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));
 
 	$regexop = db_getfunc('REGEXP');
@@ -182,7 +182,7 @@ function search_doc_files($s) {
 			$r[$x]['rank'] ++;
 		$r[$x]['rank'] += substr_count(strtolower($r[$x]['text']), strtolower($s));
 		// bias the results to the observer's native language
-		if($r[$x]['lang'] === \App::$language)
+		if($r[$x]['lang'] === App::$language)
 			$r[$x]['rank'] = $r[$x]['rank'] + 10;
 
 	}
