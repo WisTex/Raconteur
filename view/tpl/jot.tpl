@@ -264,7 +264,7 @@
 			</div>
 			<div class="modal-body form-group" style="width:90%">
 				<div class="date">
-					<input type="text" placeholder="yyyy-mm-dd HH:MM" name="start_text" id="expiration-date" class="form-control" />
+					<input type="text" placeholder="yyyy-mm-dd HH:MM" name="start_text" value="{{$defexpire}}" id="expiration-date" class="form-control" />
 				</div>
 				<script>
 					$(function () {
