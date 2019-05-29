@@ -268,7 +268,7 @@ class Activity {
 			$ret['expires'] = datetime_convert('UTC','UTC',$i['expires'],ATOM_TIME);
 		}
 		if ($i['app']) {
-			$ret['instrument'] = [ 'type' => 'Service', 'name' => $i['app'] ];
+			$ret['generator'] = [ 'type' => 'Application', 'name' => $i['app'] ];
 		}
 		if ($i['location'] || $i['coord']) {
 			$ret['location'] = [ 'type' => 'Place' ];
@@ -674,7 +674,7 @@ class Activity {
 		if ($i['created'] !== $i['edited'])
 			$ret['updated'] = datetime_convert('UTC','UTC',$i['edited'],ATOM_TIME);
 		if ($i['app']) {
-			$ret['instrument'] = [ 'type' => 'Service', 'name' => $i['app'] ];
+			$ret['generator'] = [ 'type' => 'Application', 'name' => $i['app'] ];
 		}
 		if ($i['location'] || $i['coord']) {
 			$ret['location'] = [ 'type' => 'Place' ];
@@ -1666,13 +1666,13 @@ class Activity {
 		$s['verb']     = ACTIVITY_POST;
 		$s['obj_type'] = ACTIVITY_OBJ_NOTE;
 
-		$instrument = $act->get_property_obj('instrument');
-		if (! $instrument)
-			$instrument = $act->get_property_obj('instrument',$act->obj);
+		$generator = $act->get_property_obj('generator');
+		if (! $generator)
+			$generator = $act->get_property_obj('generator',$act->obj);
 
-		if ($instrument && array_key_exists('type',$instrument) 
-			&& $instrument['type'] === 'Service' && array_key_exists('name',$instrument)) {
-			$s['app'] = escape_tags($instrument['name']);
+		if ($generator && array_key_exists('type',$generator) 
+			&& in_array($generator['type'], ['Application', 'Service' ] ) && array_key_exists('name',$generator)) {
+			$s['app'] = escape_tags($generator['name']);
 		}
 
 		if ($channel['channel_system']) {
@@ -1858,7 +1858,8 @@ class Activity {
 		}
 
 
-		if (in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block', 'Announce', 'Accept', 'Reject', 'TentativeAccept', 'emojiReaction' ])) {
+		if (in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block', 'Announce', 'Accept', 'Reject',
+			'TentativeAccept', 'TentativeReject', 'emojiReaction' ])) {
 
 			$response_activity = true;
 
@@ -1895,6 +1896,9 @@ class Activity {
 			}
 			if ($act->type === 'TentativeAccept' && $act->obj['type'] === 'Event' ) {
 				$content['content'] = sprintf( t('May attend %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
+			}
+			if ($act->type === 'TentativeReject' && $act->obj['type'] === 'Event' ) {
+				$content['content'] = sprintf( t('May not attend %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
 			}
 			if ($act->type === 'Announce') {
 				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $act->obj['type']);
@@ -1938,14 +1942,14 @@ class Activity {
 
 		// @todo add target if present
 
-		$instrument = $act->get_property_obj('instrument');
-		if ((! $instrument) && (! $response_activity)) {
-			$instrument = $act->get_property_obj('instrument',$act->obj);
+		$generator = $act->get_property_obj('generator');
+		if ((! $generator) && (! $response_activity)) {
+			$generator = $act->get_property_obj('generator',$act->obj);
 		}
 
-		if ($instrument && array_key_exists('type',$instrument) 
-			&& $instrument['type'] === 'Service' && array_key_exists('name',$instrument)) {
-			$s['app'] = escape_tags($instrument['name']);
+		if ($generator && array_key_exists('type',$generator) 
+			&& in_array($generator['type'], [ 'Application','Service' ] ) && array_key_exists('name',$generator)) {
+			$s['app'] = escape_tags($generator['name']);
 		}
 
 
