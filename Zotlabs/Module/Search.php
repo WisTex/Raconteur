@@ -1,6 +1,9 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
+
 require_once("include/bbcode.php");
 require_once('include/security.php');
 require_once('include/conversation.php');
@@ -9,48 +12,46 @@ require_once('include/conversation.php');
 class Search extends \Zotlabs\Web\Controller {
 
 	function init() {
-		if(x($_REQUEST,'search'))
-			\App::$data['search'] = escape_tags($_REQUEST['search']);
+		if (x($_REQUEST,'search')) {
+			App::$data['search'] = escape_tags($_REQUEST['search']);
+		}
 	}
 	
 	
 	function get($update = 0, $load = false) {
 	
-		if((get_config('system','block_public')) || (get_config('system','block_public_search'))) {
+		if ((get_config('system','block_public')) || (get_config('system','block_public_search',1))) {
 			if ((! local_channel()) && (! remote_channel())) {
 				notice( t('Public access denied.') . EOL);
 				return;
 			}
 		}
 	
-		if($load)
+		if ($load) {
 			$_SESSION['loadtime'] = datetime_convert();
-	
+		}
 		nav_set_selected('Search');
 	
-
-	
 		$format = (($_REQUEST['format']) ? $_REQUEST['format'] : '');
-		if($format !== '') {
+		if ($format !== '') {
 			$update = $load = 1;
 		}
 	
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 		$observer_hash = (($observer) ? $observer['xchan_hash'] : '');
 	
 		$o = '<div id="live-search"></div>' . "\r\n";
-	
-	        $o = '<div class="generic-content-wrapper-styled">' . "\r\n";
-	
+		$o .= '<div class="generic-content-wrapper-styled">' . "\r\n";
 		$o .= '<h3>' . t('Search') . '</h3>';
 	
-		if(x(\App::$data,'search'))
-			$search = trim(\App::$data['search']);
-		else
+		if (x(App::$data,'search')) {
+			$search = trim(App::$data['search']);
+		}
+		else {
 			$search = ((x($_GET,'search')) ? trim(escape_tags(rawurldecode($_GET['search']))) : '');
-	
+		}
 		$tag = false;
-		if(x($_GET,'tag')) {
+		if (x($_GET,'tag')) {
 			$tag = true;
 			$search = ((x($_GET,'tag')) ? trim(escape_tags(rawurldecode($_GET['tag']))) : '');
 		}
@@ -59,32 +60,33 @@ class Search extends \Zotlabs\Web\Controller {
 	
 		$o .= search($search,'search-box','/search',((local_channel()) ? true : false));
 	
-		if(strpos($search,'#') === 0) {
+		if (strpos($search,'#') === 0) {
 			$tag = true;
 			$search = substr($search,1);
 		}
-		if(strpos($search,'@') === 0) {
+		if (strpos($search,'@') === 0) {
 			$search = substr($search,1);
 			goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
 		}
-		if(strpos($search,'!') === 0) {
+		if (strpos($search,'!') === 0) {
 			$search = substr($search,1);
 			goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
 		}
-		if(strpos($search,'?') === 0) {
+		if (strpos($search,'?') === 0) {
 			$search = substr($search,1);
 			goaway(z_root() . '/help' . '?f=1&navsearch=1&search=' . $search);
 		}
 	
 		// look for a naked webbie
-		if(strpos($search,'@') !== false) {
+		if (strpos($search,'@') !== false) {
 			goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
 		}
 	
-		if(! $search)
+		if (! $search) {
 			return $o;
+		}
 	
-		if($tag) {
+		if ($tag) {
 			$wildtag = str_replace('*','%',$search);
 			$sql_extra = sprintf(" AND item.id IN (select oid from term where otype = %d and ttype in ( %d , %d) and term like '%s') ",
 				intval(TERM_OBJ_POST),
@@ -104,7 +106,7 @@ class Search extends \Zotlabs\Web\Controller {
 		// No items will be shown if the member has a blocked profile wall. 
 	
 
-		if((! $update) && (! $load)) {
+		if ((! $update) && (! $load)) {
 	
 			$static  = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 0);
 
@@ -114,12 +116,12 @@ class Search extends \Zotlabs\Web\Controller {
 	
 			$o .= '<div id="live-search"></div>' . "\r\n";
 			$o .= "<script> var profile_uid = " . ((intval(local_channel())) ? local_channel() : (-1))
-				. "; var netargs = '?f='; var profile_page = " . \App::$pager['page'] . "; </script>\r\n";
+				. "; var netargs = '?f='; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
 	
-			\App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),array(
+			App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"), [
 				'$baseurl' => z_root(),
 				'$pgtype' => 'search',
-				'$uid' => ((\App::$profile['profile_uid']) ? \App::$profile['profile_uid'] : '0'),
+				'$uid' => ((\App::$profile['profile_uid']) ? App::$profile['profile_uid'] : '0'),
 				'$gid' => '0',
 				'$cid' => '0',
 				'$cmin' => '(-1)',
@@ -133,7 +135,7 @@ class Search extends \Zotlabs\Web\Controller {
 				'$wall' => '0',
 				'$static' => $static,
 				'$list' => ((x($_REQUEST,'list')) ? intval($_REQUEST['list']) : 0),
-				'$page' => ((\App::$pager['page'] != 1) ? \App::$pager['page'] : 1),
+				'$page' => ((App::$pager['page'] != 1) ? App::$pager['page'] : 1),
 				'$search' => (($tag) ? urlencode('#') : '') . $search,
 				'$xchan' => '',
 				'$order' => '',
@@ -145,32 +147,30 @@ class Search extends \Zotlabs\Web\Controller {
 				'$net' => '',
 				'$dend' => '',
 				'$dbegin' => ''
-			));
+			]);
 	
 	
 		}
 	
 		$item_normal = item_normal_search();
 		$pub_sql = public_permissions_sql($observer_hash);
-	
-		require_once('include/channel.php');
-	
+		
 		$sys = get_sys_channel();
 	
-		if(($update) && ($load)) {
+		if (($update) && ($load)) {
 			$itemspage = get_pconfig(local_channel(),'system','itemspage');
-			\App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
+			App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
 			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));
 	
 			// in case somebody turned off public access to sys channel content with permissions
 	
-			if(! perm_is_allowed($sys['channel_id'],$observer_hash,'view_stream'))
+			if (! perm_is_allowed($sys['channel_id'],$observer_hash,'view_stream'))
 				$sys['xchan_hash'] .= 'disabled';
 	
-			if($load) {
+			if ($load) {
 				$r = null;
 						
-				if(local_channel()) {
+				if (local_channel()) {
 					$r = q("SELECT mid, MAX(id) as item_id from item
 						WHERE ((( item.allow_cid = ''  AND item.allow_gid = '' AND item.deny_cid  = '' AND item.deny_gid  = '' AND item_private = 0 ) 
 						OR ( item.uid = %d )) OR item.owner_xchan = '%s' )
@@ -181,7 +181,7 @@ class Search extends \Zotlabs\Web\Controller {
 						dbesc($sys['xchan_hash'])
 					);
 				}
-				if($r === null) {
+				if ($r === null) {
 					$r = q("SELECT mid, MAX(id) as item_id from item
 						WHERE (((( item.allow_cid = ''  AND item.allow_gid = '' AND item.deny_cid  = ''
 						AND item.deny_gid  = '' AND item_private = 0 )
@@ -193,32 +193,28 @@ class Search extends \Zotlabs\Web\Controller {
 						dbesc($sys['xchan_hash'])
 					);
 				}
-				if($r) {
+				if ($r) {
 					$str = ids_to_querystr($r,'item_id');
 					$r = q("select *, id as item_id from item where id in ( " . $str . ") order by created desc ");
 				}
 			}
 			else {
-				$r = array();
+				$r = [];
 			}
 		
-
-
-
 		}
 	
-		if($r) {
+		if ($r) {
 			xchan_query($r);
 			$items = fetch_post_tags($r,true);
 		} else {
-			$items = array();
+			$items = [];
 		}
-	
-	
-		if($format == 'json') {
+
+		if ($format == 'json') {
 			$result = array();
 			require_once('include/conversation.php');
-			foreach($items as $item) {
+			foreach ($items as $item) {
 				$item['html'] = zidify_links(bbcode($item['body']));
 				$x = encode_item($item);
 				$x['html'] = prepare_text($item['body'],$item['mimetype']);
@@ -227,7 +223,7 @@ class Search extends \Zotlabs\Web\Controller {
 			json_return_and_die(array('success' => true,'messages' => $result));
 		}
 	
-		if($tag) 
+		if ($tag) 
 			$o .= '<h2>' . sprintf( t('Items tagged with: %s'), $search) . '</h2>';
 		else
 			$o .= '<h2>' . sprintf( t('Search results for: %s'), $search) . '</h2>';
@@ -238,6 +234,5 @@ class Search extends \Zotlabs\Web\Controller {
 	
 		return $o;
 	}
-	
 	
 }
