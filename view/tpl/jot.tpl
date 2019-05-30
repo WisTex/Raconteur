@@ -352,7 +352,7 @@
 					</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$linkModalCANCEL}}</button>
+				<button id="link-modal-CancelButton" type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$linkModalCANCEL}}</button>
 				<button id="link-modal-OKButton" type="button" class="btn btn-primary">{{$linkModalOK}}</button>
 			</div>
 		</div><!-- /.modal-content -->
