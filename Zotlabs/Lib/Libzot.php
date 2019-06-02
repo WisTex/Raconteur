@@ -1177,8 +1177,9 @@ class Libzot {
 		// at the present time (2019/02) during the Hubzilla transition to zot6 it is likely to cause lots of duplicates for 
 		// messages arriving from different protocols and sources with different message-id semantics. This
 		// restriction can be relaxed once most Hubzilla sites are upgraded to > 4.0. 
-
-		if($arr) {
+		// Don't check sync packets since they have a different encoding
+		
+		if($arr && $env['type'] !== 'sync') {
 			if(strpos($arr['mid'],'http') === false && strpos($arr['mid'],'x-zot') === false) {
 				logger('activity rejected: legacy message-id');
 				return;

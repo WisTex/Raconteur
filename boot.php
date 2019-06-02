@@ -116,7 +116,7 @@ define ('MAX_EVENT_REPEAT_COUNT', 512);
  * either more or less restrictive.
  */
 
-if(! defined('STORAGE_DEFAULT_PERMISSIONS')) {
+if (! defined('STORAGE_DEFAULT_PERMISSIONS')) {
 	define ( 'STORAGE_DEFAULT_PERMISSIONS',   0770 );
 }
 
@@ -830,6 +830,7 @@ class App {
 	/**
 	 * App constructor.
 	 */
+
 	public static function init() {
 		// we'll reset this after we read our config file
 		date_default_timezone_set('UTC');
@@ -848,8 +849,8 @@ class App {
 		set_include_path(
 			'include' . PATH_SEPARATOR
 			. 'library' . PATH_SEPARATOR
-			. 'library/langdet' . PATH_SEPARATOR
-			. '.' );
+			. '.'
+		);
 
 		self::$scheme = 'http';
 		if(x($_SERVER,'HTTPS') && $_SERVER['HTTPS'])
