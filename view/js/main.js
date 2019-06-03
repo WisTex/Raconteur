@@ -334,6 +334,10 @@ function insertCommentAttach(comment,id) {
 
 }
 
+// used by link modal to pass data to callbacks and still allow handler removal
+var currentComment = null;
+var currentID = null;
+
 function insertCommentURL(comment, id) {
 	textarea = document.getElementById("comment-edit-text-" +id);
     if (textarea.selectionStart || textarea.selectionStart == "0") {
@@ -347,11 +351,16 @@ function insertCommentURL(comment, id) {
 		   return true; 
        }
 	}
+	
+	if ($('#jot-popup').length != 0) $('#jot-popup').show();
 
+	currentComment = comment;
+	currentID = id;
+	
 	$('#linkModal').modal();
 	$('#id_link_url').focus();
-	$('#link-modal-OKButton').on('click', commentgetlinkmodal);
 	$('#link-modal-CancelButton').on('click', commentclearlinkmodal);
+	$('#link-modal-OKButton').on('click', commentgetlinkmodal);
 
 	return true;
 }
@@ -381,14 +390,14 @@ function commentgetlinkmodal() {
 		$('body').css('cursor', 'wait');
 		$.get('linkinfo?f=&binurl=' + reply + optstr, function(data) {
 			$('#linkModal').modal('hide');
-			$("#comment-edit-text-" + id).focus();
-			$("#comment-edit-text-" + id).addClass("expanded");
-			openMenu("comment-tools-" + id);
-			var tmpStr = $("#comment-edit-text-" + id).val();
+			$("#comment-edit-text-" + currentID).focus();
+			$("#comment-edit-text-" + currentID).addClass("expanded");
+			openMenu("comment-tools-" + currentID);
+			var tmpStr = $("#comment-edit-text-" + currentID).val();
 	
-			textarea = document.getElementById("comment-edit-text-" +id);
+			textarea = document.getElementById("comment-edit-text-" + currentID);
 			textarea.value = textarea.value + data;
-			preview_comment(id);
+			preview_comment(currentID);
 			$('#link-modal-OKButton').off('click', commentgetlinkmodal);
 			$('#link-modal-CancelButton').off('click', commentclearlinkmodal);
 			$('#id_link_url').val('');
