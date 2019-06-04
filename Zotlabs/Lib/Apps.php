@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Lib;
 
+use App;
 use Zotlabs\Lib\Libsync;
 
 /**
@@ -22,27 +23,29 @@ class Apps {
 
 	static public function get_system_apps($translate = true) {
 
-		$ret = array();
-		if(is_dir('apps'))
+		$ret = [];
+		if (is_dir('apps')) {
 			$files = glob('apps/*.apd');
-		else
+		}
+		else {
 			$files = glob('app/*.apd');
-		if($files) {
-			foreach($files as $f) {
+		}
+		if ($files) {
+			foreach ($files as $f) {
 				$x = self::parse_app_description($f,$translate);
-				if($x) {
+				if ($x) {
 					$ret[] = $x;
 				}
 			}
 		}
 		$files = glob('addon/*/*.apd');
-		if($files) {
-			foreach($files as $f) {
+		if ($files) {
+			foreach ($files as $f) {
 				$path = explode('/',$f);
 				$plugin = trim($path[1]);
-				if(plugin_is_installed($plugin)) {
+				if (plugin_is_installed($plugin)) {
 					$x = self::parse_app_description($f,$translate);
-					if($x) {
+					if ($x) {
 						$x['plugin'] = $plugin;
 						$ret[] = $x;
 					}
@@ -66,10 +69,12 @@ class Apps {
 			'Channel Home',
 			'View Profile',
 			'Photos',
-			'Events',
+//			'Calendar',
 			'Directory',
+			'Events',
 			'Search',
-			'Profile Photo'
+			'Profile Photo',
+			'Access Lists'
 		]);
 		call_hooks('get_base_apps',$x);
 		return $x;
@@ -78,8 +83,9 @@ class Apps {
 
 
 	static public function import_system_apps() {
-		if(! local_channel())
+		if (! local_channel()) {
 			return;
+		}
 
 		self::$base_apps = self::get_base_apps();
  
@@ -91,12 +97,12 @@ class Apps {
 			intval(local_channel())
 		);
 
-		if($apps) {
-			foreach($apps as $app) {
+		if ($apps) {
+			foreach ($apps as $app) {
 				$id = self::check_install_system_app($app);
 
 				// $id will be boolean true or false to install an app, or an integer id to update an existing app
-				if($id !== false) {
+				if ($id !== false) {
 					$app['uid'] = 0;
 					$app['guid'] = hash('whirlpool',$app['name']);
 					$app['system'] = 1;
@@ -105,22 +111,17 @@ class Apps {
 
 				$id = self::check_install_personal_app($app);
 				// $id will be boolean true or false to install an app, or an integer id to update an existing app
-				if($id === false)
+				if ($id === false) {
 					continue;
-				if($id !== true) {
+				}
+				if ($id !== true) {
 					// if we already installed this app, but it changed, preserve any categories we created
-					$s = EMPTY_STR;
 					$r = q("select term from term where otype = %d and oid = %d",
 						intval(TERM_OBJ_APP),
 						intval($id)
 					);
-					if($r) {
-						foreach($r as $t) {
-							if($s)
-								$s .= ',';
-							$s .= $t['term'];
-						}
-						$app['categories'] = $s;
+					if ($r) {
+						$app['categories'] = array_elm_to_str($r,'term');
 					}
 				}
 				$app['uid'] = local_channel();
@@ -138,19 +139,19 @@ class Apps {
 	 */
 
 	static public function check_install_system_app($app) {
-		if((! is_array(self::$available_apps)) || (! count(self::$available_apps))) {
+		if ((! is_array(self::$available_apps)) || (! count(self::$available_apps))) {
 			return true;
 		}
 		$notfound = true;
-		foreach(self::$available_apps as $iapp) {
-			if($iapp['app_id'] == hash('whirlpool',$app['name'])) {
+		foreach (self::$available_apps as $iapp) {
+			if ($iapp['app_id'] == hash('whirlpool',$app['name'])) {
 				$notfound = false;
-				if(($iapp['app_version'] !== $app['version'])
+				if (($iapp['app_version'] !== $app['version'])
 					|| ($app['plugin'] && (! $iapp['app_plugin']))) {
 					return intval($iapp['app_id']);
 				}
 
-				if(($iapp['app_url'] !== $app['url'])
+				if (($iapp['app_url'] !== $app['url'])
 					|| ($iapp['app_photo'] !== $app['photo'])) {
 					return intval($iapp['app_id']);
 				}
@@ -168,16 +169,16 @@ class Apps {
 
 	static public function check_install_personal_app($app) {
 		$installed = false;
-		foreach(self::$installed_apps as $iapp) {			
-			if($iapp['app_id'] == hash('whirlpool',$app['name'])) {
+		foreach (self::$installed_apps as $iapp) {			
+			if ($iapp['app_id'] == hash('whirlpool',$app['name'])) {
 				$installed = true;
-				if(($iapp['app_version'] != $app['version'])
+				if (($iapp['app_version'] != $app['version'])
 					|| ($app['plugin'] && (! $iapp['app_plugin']))) {
 					return intval($iapp['app_id']);
 				}
 			}
 		}
-		if(! $installed && in_array($app['name'],self::$base_apps)) {
+		if (! $installed && in_array($app['name'],self::$base_apps)) {
 			return true;
 		}
 		return false;
@@ -194,103 +195,115 @@ class Apps {
 		$ret = array();
 
 		$baseurl = z_root();
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 		$address = (($channel) ? $channel['channel_address'] : '');
 		
 		//future expansion
 
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 	
 
 		$lines = @file($f);
-		if($lines) {
-			foreach($lines as $x) {
-				if(preg_match('/^([a-zA-Z].*?):(.*?)$/ism',$x,$matches)) {
+		if ($lines) {
+			foreach ($lines as $x) {
+				if (preg_match('/^([a-zA-Z].*?):(.*?)$/ism',$x,$matches)) {
 					$ret[$matches[1]] = trim($matches[2]);
 				}
 			}
 		}	
 
-		if(! $ret['photo'])
+		if (! $ret['photo']) {
 			$ret['photo'] = $baseurl . '/' . get_default_profile_photo(80);
+		}
 
 		$ret['type'] = 'system';
 
-		foreach($ret as $k => $v) {
-			if(strpos($v,'http') === 0) {
-				if(! (local_channel() && strpos($v,z_root()) === 0)) {
+		foreach ($ret as $k => $v) {
+			if (strpos($v,'http') === 0) {
+				if (! (local_channel() && strpos($v,z_root()) === 0)) {
 					$ret[$k] = zid($v);
 				}
 			}
 		}
 
-		if(array_key_exists('desc',$ret))
+		if (array_key_exists('desc',$ret)) {
 			$ret['desc'] = str_replace(array('\'','"'),array('&#39;','&dquot;'),$ret['desc']);
-
-		if(array_key_exists('target',$ret))
+		}
+		if (array_key_exists('target',$ret)) {
 			$ret['target'] = str_replace(array('\'','"'),array('&#39;','&dquot;'),$ret['target']);
-
-		if(array_key_exists('version',$ret))
+		}
+		if (array_key_exists('version',$ret)) {
 			$ret['version'] = str_replace(array('\'','"'),array('&#39;','&dquot;'),$ret['version']);
-
-		if(array_key_exists('categories',$ret))
+		}
+		if (array_key_exists('categories',$ret)) {
 			$ret['categories'] = str_replace(array('\'','"'),array('&#39;','&dquot;'),$ret['categories']);
-
-		if(array_key_exists('requires',$ret)) {
+		}
+		if (array_key_exists('requires',$ret)) {
 			$requires = explode(',',$ret['requires']);
-			foreach($requires as $require) {
+			foreach ($requires as $require) {
 				$require = trim(strtolower($require));
 				$config = false;
 
-				if(substr($require, 0, 7) == 'config:') {
+				if (substr($require, 0, 7) == 'config:') {
 					$config = true;
 					$require = ltrim($require, 'config:');
 					$require = explode('=', $require);
 				}
 
-				switch($require) {
+				switch ($require) {
 					case 'nologin':
-						if(local_channel())
+						if (local_channel()) {
 							unset($ret);
+						}
 						break;
 					case 'admin':
-						if(! is_site_admin())
+						if (! is_site_admin()) {
 							unset($ret);
+						}
 						break;
 					case 'local_channel':
-						if(! local_channel())
+						if (! local_channel()) {
 							unset($ret);
+						}
 						break;
 					case 'public_profile':
-						if(! is_public_profile())
+						if (! is_public_profile()) {
 							unset($ret);
+						}
 						break;
 					case 'public_stream':
-						if(! can_view_public_stream())
+						if (! can_view_public_stream()) {
 							unset($ret);
+						}
 						break;
 					case 'custom_role':
-						if(get_pconfig(local_channel(),'system','permissions_role') !== 'custom')
+						if (get_pconfig(local_channel(),'system','permissions_role') !== 'custom') {
 							unset($ret);
+						}
 						break;
 					case 'observer':
-						if(! $observer)
+						if (! $observer) {
 							unset($ret);
+						}
 						break;
 					default:
-						if($config)
+						if ($config) {
 							$unset = ((get_config('system', $require[0]) == $require[1]) ? false : true);
-						else
+						}
+						else {
 							$unset = ((local_channel() && feature_enabled(local_channel(),$require)) ? false : true);
-						if($unset)
+						}
+						if ($unset) {
 							unset($ret);
+						}
 						break;
 				}
 			}
 		}
-		if($ret) {
-			if($translate)
+		if ($ret) {
+			if ($translate) {
 				self::translate_system_apps($ret);
+			}
 			return $ret;
 		}
 		return false;
@@ -303,6 +316,7 @@ class Apps {
 			'Affinity Tool' => t('Affinity Tool'),
 			'Articles' => t('Articles'),
 			'Cards' => t('Cards'),
+			'Calendar' => t('Calendar'),
 			'Categories' => t('Categories'),
 			'Admin' => t('Site Admin'),
 			'Content Filter' => t('Content Filter'),
@@ -345,7 +359,7 @@ class Apps {
 			'Profile Photo' => t('Profile Photo'),
 			'Profile' => t('Profile'),
 			'Profiles' => t('Profiles'),
-			'Privacy Groups' => t('Access Lists'),
+			'Access Lists' => t('Access Lists'),
 			'Notifications' => t('Notifications'),
 			'Order Apps' => t('Order Apps'),
 			'CalDAV' => t('CalDAV'),
@@ -363,14 +377,14 @@ class Apps {
 			'My Chatrooms' => t('My Chatrooms')
 		);
 
-		if(array_key_exists('name',$arr)) {
-			if(array_key_exists($arr['name'],$apps)) {
+		if (array_key_exists('name',$arr)) {
+			if (array_key_exists($arr['name'],$apps)) {
 				$arr['name'] = $apps[$arr['name']];
 			}
 		}
 		else {
-			for($x = 0; $x < count($arr); $x++) {
-				if(array_key_exists($arr[$x]['name'],$apps)) {
+			for ($x = 0; $x < count($arr); $x++) {
+				if (array_key_exists($arr[$x]['name'],$apps)) {
 					$arr[$x]['name'] = $apps[$arr[$x]['name']];
 				}
 				else {
@@ -399,16 +413,19 @@ class Apps {
 
 		$installed = false;
 
-		if(! $papp)
+		if (! $papp) {
 			return;
+		}
 
-		if(! $papp['photo'])
+		if (! $papp['photo']) {
 			$papp['photo'] = 'icon:gear';
+		}
 
 		self::translate_system_apps($papp);
 
-		if(trim($papp['plugin']) && (! plugin_is_installed(trim($papp['plugin']))))
+		if (trim($papp['plugin']) && (! plugin_is_installed(trim($papp['plugin'])))) {
 			return '';
+		}
 
 		$papp['papp'] = self::papp_encode($papp);
 
@@ -416,85 +433,96 @@ class Apps {
 		// and they are allowed to see the app
 
 
-		if(strpos($papp['url'],'$baseurl') !== false || strpos($papp['url'],'$nick') !== false || strpos($papp['photo'],'$baseurl') !== false || strpos($papp['photo'],'$nick') !== false) {
+		if (strpos($papp['url'],'$baseurl') !== false || strpos($papp['url'],'$nick') !== false || strpos($papp['photo'],'$baseurl') !== false || strpos($papp['photo'],'$nick') !== false) {
 			$view_channel = local_channel();
-			if(! $view_channel) {
+			if (! $view_channel) {
 				$sys = get_sys_channel();
 				$view_channel = $sys['channel_id'];
 			}
 			self::app_macros($view_channel,$papp); 
 		}
 
-		if(strpos($papp['url'], ',')) {
+		if (strpos($papp['url'], ',')) {
 			$urls = explode(',', $papp['url']);
 			$papp['url'] = trim($urls[0]);
 			$papp['settings_url'] = trim($urls[1]);
 		}
 
-		if(! strstr($papp['url'],'://'))
+		if (! strstr($papp['url'],'://')) {
 			$papp['url'] = z_root() . ((strpos($papp['url'],'/') === 0) ? '' : '/') . $papp['url'];
+		}
 
 
-
-		foreach($papp as $k => $v) {
-			if(strpos($v,'http') === 0 && $k != 'papp') {
-				if(! (local_channel() && strpos($v,z_root()) === 0)) {
+		foreach ($papp as $k => $v) {
+			if (strpos($v,'http') === 0 && $k != 'papp') {
+				if (! (local_channel() && strpos($v,z_root()) === 0)) {
 					$papp[$k] = zid($v);
 				}
 			}
-			if($k === 'desc')
+			if ($k === 'desc') {
 				$papp['desc'] = str_replace(array('\'','"'),array('&#39;','&dquot;'),$papp['desc']);
+			}
 
-			if($k === 'requires') {
+			if ($k === 'requires') {
 				$requires = explode(',',$v);
 
-				foreach($requires as $require) {
+				foreach ($requires as $require) {
 					$require = trim(strtolower($require));
 					$config = false;
 
-					if(substr($require, 0, 7) == 'config:') {
+					if (substr($require, 0, 7) == 'config:') {
 						$config = true;
 						$require = ltrim($require, 'config:');
 						$require = explode('=', $require);
 					}
 
-					switch($require) {
+					switch ($require) {
 						case 'nologin':
-							if(local_channel())
+							if (local_channel()) {
 								return '';
+							}
 							break;
 						case 'admin':
-							if(! is_site_admin())
+							if (! is_site_admin()) {
 								return '';
+							}
 							break;
 						case 'local_channel':
-							if(! local_channel())
+							if (! local_channel()) {
 								return '';
+							}
 							break;
 						case 'public_profile':
-							if(! is_public_profile())
+							if (! is_public_profile()) {
 								return '';
+							}
 							break;
 						case 'public_stream':
-							if(! can_view_public_stream())
+							if (! can_view_public_stream()) {
 								return '';
+							}
 							break;
 						case 'custom_role':
-							if(get_pconfig(local_channel(),'system','permissions_role') != 'custom')
+							if (get_pconfig(local_channel(),'system','permissions_role') != 'custom') {
 								return '';
+							}
 							break;
 						case 'observer':
-							$observer = \App::get_observer();
-							if(! $observer)
+							$observer = App::get_observer();
+							if (! $observer) {
 								return '';
+							}
 							break;
 						default:
-							if($config)
+							if ($config) {
 								$unset = ((get_config('system', $require[0]) === $require[1]) ? false : true);
-							else
+							}
+							else {
 								$unset = ((local_channel() && feature_enabled(local_channel(),$require)) ? false : true);
-							if($unset)
+							}
+							if ($unset) {
 								return '';
+							}
 							break;
 					}
 				}
@@ -503,18 +531,19 @@ class Apps {
 
 		$hosturl = '';
 
-		if(local_channel()) {
-			if(self::app_installed(local_channel(),$papp) && !$papp['deleted'])
+		if (local_channel()) {
+			if (self::app_installed(local_channel(),$papp) && !$papp['deleted']) {
 				$installed = true;
+			}
 
 			$hosturl = z_root() . '/';
 		}
-		elseif(remote_channel()) {
-			$observer = \App::get_observer();
-			if($observer && $observer['xchan_network'] === 'zot6') {
+		elseif (remote_channel()) {
+			$observer = App::get_observer();
+			if ($observer && $observer['xchan_network'] === 'zot6') {
 				// some folks might have xchan_url redirected offsite, use the connurl
 				$x = parse_url($observer['xchan_connurl']);
-				if($x) {
+				if ($x) {
 					$hosturl = $x['scheme'] . '://' . $x['host'] . '/';
 				}
 			} 
@@ -523,17 +552,17 @@ class Apps {
 		$install_action = (($installed) ? t('Update') : t('Install'));
 		$icon = ((strpos($papp['photo'],'icon:') === 0) ? substr($papp['photo'],5) : '');
 
-		if($mode === 'navbar') {
-			return replace_macros(get_markup_template('app_nav.tpl'),array(
+		if ($mode === 'navbar') {
+			return replace_macros(get_markup_template('app_nav.tpl'), [
 				'$app' => $papp,
 				'$icon' => $icon,
-			));
+			]);
 		}
 
-		if($mode === 'install') {
+		if ($mode === 'install') {
 			$papp['embed'] = true;
 		}
-		return replace_macros(get_markup_template('app.tpl'),array(
+		return replace_macros(get_markup_template('app.tpl'), [
 			'$app' => $papp,
 			'$icon' => $icon,
 			'$hosturl' => $hosturl,
@@ -555,41 +584,44 @@ class Apps {
 			'$remove' => t('Remove from app-tray'),
 			'$add_nav' => t('Pin to navbar'),
 			'$remove_nav' => t('Unpin from navbar')
-		));
+		]);
 	}
 
 	static public function app_install($uid,$app) {
 
-		if(! is_array($app)) {
+		if (! is_array($app)) {
 			$r = q("select * from app where app_name = '%s' and app_channel = 0",
 				dbesc($app)
 			);
-			if(! $r)
+			if (! $r) {
 				return false;
+			}
 
 			$app = self::app_encode($r[0]);
 		}
 
 		$app['uid'] = $uid;
 
-		if(self::app_installed($uid,$app,true))
+		if (self::app_installed($uid,$app,true)) {
 			$x = self::app_update($app);
-		else
+		}
+		else {
 			$x = self::app_store($app);
+		}
 
-		if($x['success']) {
+		if ($x['success']) {
 			$r = q("select * from app where app_id = '%s' and app_channel = %d limit 1",
 				dbesc($x['app_id']),
 				intval($uid)
 			);
-			if($r) {
-				if(($app['uid']) && (! $r[0]['app_system'])) {
-					if($app['categories'] && (! $app['term'])) {
+			if ($r) {
+				if (($app['uid']) && (! $r[0]['app_system'])) {
+					if ($app['categories'] && (! $app['term'])) {
 						$r[0]['term'] = q("select * from term where otype = %d and oid = %d",
 							intval(TERM_OBJ_APP),
 							intval($r[0]['id'])
 						);
-						if(intval($r[0]['app_system'])) {
+						if (intval($r[0]['app_system'])) {
 							Libsync::build_sync_packet($uid,array('sysapp' => $r[0]));
 						}
 						else {
@@ -605,14 +637,14 @@ class Apps {
 
 
 	static public function can_delete($uid,$app) {
-		if(! $uid) {
+		if (! $uid) {
 			return false;
 		}
 
 		$base_apps = self::get_base_apps();
-		if($base_apps) {
-			foreach($base_apps as $b) {
-				if($app['guid'] === hash('whirlpool',$b)) {
+		if ($base_apps) {
+			foreach ($base_apps as $b) {
+				if ($app['guid'] === hash('whirlpool',$b)) {
 					return false;
 				}
 			}
@@ -623,16 +655,16 @@ class Apps {
 
 	static public function app_destroy($uid,$app) {
 
-		if($uid && $app['guid']) {
+		if ($uid && $app['guid']) {
 
 			$x = q("select * from app where app_id = '%s' and app_channel = %d limit 1",
 				dbesc($app['guid']),
 				intval($uid)
 			);
-			if($x) {
-				if(! intval($x[0]['app_deleted'])) {
+			if ($x) {
+				if (! intval($x[0]['app_deleted'])) {
 					$x[0]['app_deleted'] = 1;
-					if(self::can_delete($uid,$app)) {
+					if (self::can_delete($uid,$app)) {
 						$r = q("delete from app where app_id = '%s' and app_channel = %d",
 							dbesc($app['guid']),
 							intval($uid)
@@ -649,7 +681,7 @@ class Apps {
 							intval($uid)
 						);
 					}
-					if(intval($x[0]['app_system'])) {
+					if (intval($x[0]['app_system'])) {
 						Libsync::build_sync_packet($uid,array('sysapp' => $x));
 					}
 					else {
@@ -668,14 +700,14 @@ class Apps {
 
 		// undelete a system app
 		
-		if($uid && $app['guid']) {
+		if ($uid && $app['guid']) {
 
 			$x = q("select * from app where app_id = '%s' and app_channel = %d limit 1",
 				dbesc($app['guid']),
 				intval($uid)
 			);
-			if($x) {
-				if($x[0]['app_system']) {
+			if ($x) {
+				if ($x[0]['app_system']) {
 					$r = q("update app set app_deleted = 0 where app_id = '%s' and app_channel = %d",
 						dbesc($app['guid']),
 						intval($uid)
@@ -697,7 +729,7 @@ class Apps {
 			dbesc($term)
 		);
 
-		if($x) {
+		if ($x) {
 			q("delete from term where otype = %d and oid = %d and term = '%s'",
 				intval(TERM_OBJ_APP),
 				intval($x[0]['oid']),
@@ -715,7 +747,7 @@ class Apps {
 			dbesc((array_key_exists('guid',$app)) ? $app['guid'] : ''), 
 			intval($uid)
 		);
-		if (!$bypass_filter) {
+		if (! $bypass_filter) {
 			$filter_arr = [
 				'uid'=>$uid,
 				'app'=>$app,
@@ -725,7 +757,7 @@ class Apps {
 			$r = $filter_arr['installed'];
 		}
 
-		return(($r) ? true : false);
+		return (($r) ? true : false);
 
 	}
 
@@ -735,7 +767,7 @@ class Apps {
 			dbesc($app),
 			intval($uid)
 		);
-		if (!$bypass_filter) {
+		if (! $bypass_filter) {
 			$filter_arr = [
 				'uid'=>$uid,
 				'app'=>$app,
@@ -745,7 +777,7 @@ class Apps {
 			$r = $filter_arr['installed'];
 		}
 
-		return(($r) ? true : false);
+		return (($r) ? true : false);
 
 	}
 
@@ -755,7 +787,7 @@ class Apps {
 			dbesc(hash('whirlpool',$app)),
 			intval($uid)
 		);
-		if (!$bypass_filter) {
+		if (! $bypass_filter) {
 			$filter_arr = [
 				'uid'=>$uid,
 				'app'=>$app,
@@ -765,22 +797,22 @@ class Apps {
 			$r = $filter_arr['installed'];
 		}
 
-		return(($r) ? true : false);
-
+		return (($r) ? true : false);
 	}
 
 	static public function app_list($uid, $deleted = false, $cats = []) {
-		if($deleted) 
+		if ($deleted) {
 			$sql_extra = "";
-		else
+		}
+		else {
 			$sql_extra = " and app_deleted = 0 ";
-
-		if($cats) {
+		}
+		if ($cats) {
 
 			$cat_sql_extra = " and ( ";
 
-			foreach($cats as $cat) {
-				if(strpos($cat_sql_extra, 'term'))
+			foreach ($cats as $cat) {
+				if (strpos($cat_sql_extra, 'term'))
 					$cat_sql_extra .= "or ";
 
 				$cat_sql_extra .= "term = '" . dbesc($cat) . "' ";
@@ -791,29 +823,24 @@ class Apps {
 			$r = q("select oid from term where otype = %d $cat_sql_extra",
 				intval(TERM_OBJ_APP)
 			);
-			if(! $r)
+			if (! $r) {
 				return $r;
-			$sql_extra .= " and app.id in ( ";
-			$s = '';
-			foreach($r as $rr) {
-				if($s)
-					$s .= ',';
-				$s .= intval($rr['oid']);
 			}
-			$sql_extra .= $s . ') ';
+			$sql_extra .= " and app.id in ( " .  array_elm_to_str($r,'oid') . ') ';
 		}
 
 		$r = q("select * from app where app_channel = %d $sql_extra order by app_name asc",
 			intval($uid)
 		);
 
-		if($r) {
+		if ($r) {
 			$hookinfo = [ 'uid' => $uid, 'deleted' => $deleted, 'cats' => $cats, 'apps' => $r ];
 			call_hooks('app_list',$hookinfo);
 			$r = $hookinfo['apps'];
-			for($x = 0; $x < count($r); $x ++) {
-				if(! $r[$x]['app_system'])
+			for ($x = 0; $x < count($r); $x ++) {
+				if (! $r[$x]['app_system']) {
 					$r[$x]['type'] = 'personal';
+				}
 				$r[$x]['term'] = q("select * from term where otype = %d and oid = %d",
 					intval(TERM_OBJ_APP),
 					intval($r[$x]['id'])
@@ -821,35 +848,51 @@ class Apps {
 			}
 		}
 
-		return($r);
+		return ($r);
 	}
+
+
+	static public function app_search_available($str) {
+
+		// not yet finished
+		// somehow need to account for translations
+
+		$r = q("select * from app where app_channel = 0 $sql_extra order by app_name asc",
+			intval($uid)
+		);
+
+		return ($r);
+	}
+
+
 
 	static public function app_order($uid,$apps,$menu) {
 
-		if(! $apps)
+		if (! $apps)
 			return $apps;
 
 		$conf = (($menu === 'nav_featured_app') ? 'app_order' : 'app_pin_order');
 
 		$x = (($uid) ? get_pconfig($uid,'system',$conf) : get_config('system',$conf));
-		if(($x) && (! is_array($x))) {
+		if (($x) && (! is_array($x))) {
 			$y = explode(',',$x);
 			$y = array_map('trim',$y);
 			$x = $y;
 		}
 
-		if(! (is_array($x) && ($x)))
+		if (! (is_array($x) && ($x))) {
 			return $apps;
+		}
 
 		$ret = [];
-		foreach($x as $xx) {
+		foreach ($x as $xx) {
 			$y = self::find_app_in_array($xx,$apps);
-			if($y) {
+			if ($y) {
 				$ret[] = $y;
 			}
 		}
-		foreach($apps as $ap) {
-			if(! self::find_app_in_array($ap['name'],$ret)) {
+		foreach ($apps as $ap) {
+			if (! self::find_app_in_array($ap['name'],$ret)) {
 				$ret[] = $ap;
 			}
 		}
@@ -858,26 +901,27 @@ class Apps {
 	}
 
 	static function find_app_in_array($name,$arr) {
-		if(! $arr)
+		if (! $arr) {
 			return false;
-		foreach($arr as $x) {
-			if($x['name'] === $name) {
-					return $x;
+		}
+		foreach ($arr as $x) {
+			if ($x['name'] === $name) {
+				return $x;
 			}
 		}
 		return false;
 	}
 
 	static function moveup($uid,$guid,$menu) {
-		$syslist = array();
+		$syslist = [];
 
 		$conf = (($menu === 'nav_featured_app') ? 'app_order' : 'app_pin_order');
 
 		$list = self::app_list($uid, false, [ $menu ]);
-		if($list) {
-			foreach($list as $li) {
+		if ($list) {
+			foreach ($list as $li) {
 				$papp = self::app_encode($li);
-				if($menu !== 'nav_pinned_app' && strpos($papp['categories'],'nav_pinned_app') !== false)
+				if ($menu !== 'nav_pinned_app' && strpos($papp['categories'],'nav_pinned_app') !== false)
 					continue;
 				$syslist[] = $papp;
 			}
@@ -888,26 +932,28 @@ class Apps {
 
 		$syslist = self::app_order($uid,$syslist,$menu);
 
-		if(! $syslist)
+		if (! $syslist) {
 			return;
+		}
 
 		$newlist = [];
 
-		foreach($syslist as $k => $li) {
-			if($li['guid'] === $guid) {
+		foreach ($syslist as $k => $li) {
+			if ($li['guid'] === $guid) {
 				$position = $k;
 				break;
 			}
 		}
-		if(! $position)
+		if (! $position) {
 			return;
+		}
 		$dest_position = $position - 1;
 		$saved = $syslist[$dest_position];
 		$syslist[$dest_position] = $syslist[$position];
 		$syslist[$position] = $saved;
 
 		$narr = [];
-		foreach($syslist as $x) {
+		foreach ($syslist as $x) {
 			$narr[] = $x['name'];
 		}
 
@@ -921,11 +967,12 @@ class Apps {
 		$conf = (($menu === 'nav_featured_app') ? 'app_order' : 'app_pin_order');
 
 		$list = self::app_list($uid, false, [ $menu ]);
-		if($list) {
-			foreach($list as $li) {
+		if ($list) {
+			foreach ($list as $li) {
 				$papp = self::app_encode($li);
-				if($menu !== 'nav_pinned_app' && strpos($papp['categories'],'nav_pinned_app') !== false)
+				if ($menu !== 'nav_pinned_app' && strpos($papp['categories'],'nav_pinned_app') !== false) {
 					continue;
+				}
 				$syslist[] = $papp;
 			}
 		}
@@ -935,26 +982,28 @@ class Apps {
 
 		$syslist = self::app_order($uid,$syslist,$menu);
 
-		if(! $syslist)
+		if (! $syslist) {
 			return;
+		}
 
 		$newlist = [];
 
-		foreach($syslist as $k => $li) {
-			if($li['guid'] === $guid) {
+		foreach ($syslist as $k => $li) {
+			if ($li['guid'] === $guid) {
 				$position = $k;
 				break;
 			}
 		}
-		if($position >= count($syslist) - 1)
+		if ($position >= count($syslist) - 1) {
 			return;
+		}
 		$dest_position = $position + 1;
 		$saved = $syslist[$dest_position];
 		$syslist[$dest_position] = $syslist[$position];
 		$syslist[$position] = $saved;
 
 		$narr = [];
-		foreach($syslist as $x) {
+		foreach ($syslist as $x) {
 			$narr[] = $x['name'];
 		}
 
@@ -970,16 +1019,17 @@ class Apps {
 
 	static public function app_macros($uid,&$arr) {
 
-		if(! intval($uid))
+		if (! intval($uid)) {
 			return;
+		}
 
 		$baseurl = z_root();
 		$channel = channelx_by_n($uid);
 		$address = (($channel) ? $channel['channel_address'] : '');
 		
-		//future expansion
+		// future expansion
 
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 	
 		$arr['url'] = str_replace(array('$baseurl','$nick'),array($baseurl,$address),$arr['url']);
 		$arr['photo'] = str_replace(array('$baseurl','$nick'),array($baseurl,$address),$arr['photo']);
@@ -987,16 +1037,12 @@ class Apps {
 	}
 
 
-
-
-
-
 	static public function app_store($arr) {
 
-		//logger('app_store: ' . print_r($arr,true));
+		// logger('app_store: ' . print_r($arr,true));
 
-		$darray = array();
-		$ret = array('success' => false);
+		$darray = [];
+		$ret = [ 'success' => false ];
 
 		$sys = get_sys_channel();
 
@@ -1005,14 +1051,15 @@ class Apps {
 		$darray['app_url']     = ((x($arr,'url')) ? $arr['url'] : '');
 		$darray['app_channel'] = ((x($arr,'uid')) ? $arr['uid'] : 0);
 
-		if(! $darray['app_url'])
+		if (! $darray['app_url']) {
 			return $ret;
+		}
 
-		if((! $arr['uid']) && (! $arr['author'])) {
+		if ((! $arr['uid']) && (! $arr['author'])) {
 			$arr['author'] = $sys['channel_hash'];
 		}
 
-		if($arr['photo'] && (strpos($arr['photo'],'icon:') === false) && (strpos($arr['photo'],z_root()) !== false)) {
+		if ($arr['photo'] && (strpos($arr['photo'],'icon:') === false) && (strpos($arr['photo'],z_root()) !== false)) {
 			$x = import_xchan_photo(str_replace('$baseurl',z_root(),$arr['photo']),get_observer_hash(),true);
 			$arr['photo'] = $x[1];
 		}
@@ -1058,21 +1105,21 @@ class Apps {
 			intval($darray['app_options'])
 		);
 
-		if($r) {
+		if ($r) {
 			$ret['success'] = true;
 			$ret['app_id'] = $darray['app_id'];
 		}
 
-		if($arr['categories']) {
+		if ($arr['categories']) {
 			$x = q("select id from app where app_id = '%s' and app_channel = %d limit 1",
 				dbesc($darray['app_id']),
 				intval($darray['app_channel'])
 			);
 			$y = explode(',',$arr['categories']);
-			if($y) {
-				foreach($y as $t) {
+			if ($y) {
+				foreach ($y as $t) {
 					$t = trim($t);
-					if($t) {
+					if ($t) {
 						store_item_tag($darray['app_channel'],$x[0]['id'],TERM_OBJ_APP,TERM_CATEGORY,escape_tags($t),escape_tags(z_root() . '/apps/?f=&cat=' . escape_tags($t)));
 					}
 				}
@@ -1085,9 +1132,9 @@ class Apps {
 
 	static public function app_update($arr) {
 
-		//logger('app_update: ' . print_r($arr,true));
-		$darray = array();
-		$ret = array('success' => false);
+		// logger('app_update: ' . print_r($arr,true));
+		$darray = [];
+		$ret = [ 'success' => false ];
 
 		self::app_macros($arr['uid'],$arr);
 
@@ -1096,10 +1143,11 @@ class Apps {
 		$darray['app_channel'] = ((x($arr,'uid')) ? $arr['uid'] : 0);
 		$darray['app_id']      = ((x($arr,'guid')) ? $arr['guid'] : 0);
 
-		if((! $darray['app_url']) || (! $darray['app_id']))
+		if ((! $darray['app_url']) || (! $darray['app_id'])) {
 			return $ret;
+		}
 
-		if($arr['photo'] && (strpos($arr['photo'],'icon:') === false) && (strpos($arr['photo'],z_root()) !== false)) {
+		if ($arr['photo'] && (strpos($arr['photo'],'icon:') === false) && (strpos($arr['photo'],z_root()) !== false)) {
 			$x = import_xchan_photo(str_replace('$baseurl',z_root(),$arr['photo']),get_observer_hash(),true);
 			$arr['photo'] = $x[1];
 		}
@@ -1141,7 +1189,7 @@ class Apps {
 			dbesc($darray['app_id']),
 			intval($darray['app_channel'])
 		);
-		if($r) {
+		if ($r) {
 			$ret['success'] = true;
 			$ret['app_id'] = $darray['app_id'];
 		}
@@ -1153,20 +1201,20 @@ class Apps {
 
 		// if updating an embed app and we don't have a 0 channel_id don't mess with any existing categories
 
-		if(array_key_exists('embed',$arr) && intval($arr['embed']) && (intval($darray['app_channel'])))
+		if (array_key_exists('embed',$arr) && intval($arr['embed']) && (intval($darray['app_channel'])))
 			return $ret;
 
-		if($x) {
+		if ($x) {
 			q("delete from term where otype = %d and oid = %d",
 				intval(TERM_OBJ_APP),
 				intval($x[0]['id'])
 			);
-			if($arr['categories']) {
+			if ($arr['categories']) {
 				$y = explode(',',$arr['categories']);
-				if($y) {
-					foreach($y as $t) {
+				if ($y) {
+					foreach ($y as $t) {
 						$t = trim($t);
-						if($t) {
+						if ($t) {
 							store_item_tag($darray['app_channel'],$x[0]['id'],TERM_OBJ_APP,TERM_CATEGORY,escape_tags($t),escape_tags(z_root() . '/apps/?f=&cat=' . escape_tags($t)));
 						}
 					}
@@ -1185,75 +1233,70 @@ class Apps {
 
 		$ret['type'] = 'personal';
 	
-		if($app['app_id'])
+		if ($app['app_id']) {
 			$ret['guid'] = $app['app_id'];
-
-		if($app['app_sig'])
+		}
+		if ($app['app_sig']) {
 			$ret['sig'] = $app['app_sig'];
-
-		if($app['app_author'])
+		}
+		if ($app['app_author']) {
 			$ret['author'] = $app['app_author'];
-
-		if($app['app_name'])
+		}
+		if ($app['app_name']) {
 			$ret['name'] = $app['app_name'];
-
-		if($app['app_desc'])
+		}
+		if ($app['app_desc']) {
 			$ret['desc'] = $app['app_desc'];
-
-		if($app['app_url'])
+		}
+		if ($app['app_url']) {
 			$ret['url'] = $app['app_url'];
-
-		if($app['app_photo'])
+		}
+		if ($app['app_photo']) {
 			$ret['photo'] = $app['app_photo'];
-
-		if($app['app_icon'])
+		}
+		if ($app['app_icon']) {
 			$ret['icon'] = $app['app_icon'];
-
-		if($app['app_version'])
+		}
+		if ($app['app_version']) {
 			$ret['version'] = $app['app_version'];
-
-		if($app['app_addr'])
+		}
+		if ($app['app_addr']) {
 			$ret['addr'] = $app['app_addr'];
-
-		if($app['app_price'])
+		}
+		if ($app['app_price']) {
 			$ret['price'] = $app['app_price'];
-	
-		if($app['app_page'])
+		}
+		if ($app['app_page']) {
 			$ret['page'] = $app['app_page'];
-
-		if($app['app_requires'])
+		}
+		if ($app['app_requires']) {
 			$ret['requires'] = $app['app_requires'];
-
-		if($app['app_system'])
+		}
+		if ($app['app_system']) {
 			$ret['system'] = $app['app_system'];
-
-		if($app['app_options'])
+		}
+		if ($app['app_options']) {
 			$ret['options'] = $app['app_options'];
-
-		if($app['app_plugin'])
+		}
+		if ($app['app_plugin']) {
 			$ret['plugin'] = trim($app['app_plugin']);
-
-		if($app['app_deleted'])
+		}
+		if ($app['app_deleted']) {
 			$ret['deleted'] = $app['app_deleted'];
-
-		if($app['term']) {
-			$s = '';
-			foreach($app['term'] as $t) {
-				if($s)
-					$s .= ',';
-				$s .= $t['term'];
-			}
-			$ret['categories'] = $s;
+		}
+		if ($app['term']) {
+			$ret['categories'] = array_elm_to_str($app['term'],'term');
 		}
 
 
-		if(! $embed)
+		if (! $embed) {
 			return $ret;
-
+		}
 		$ret['embed'] = true;
 
-		if(array_key_exists('categories',$ret))
+		if (array_key_exists('categories',$ret)) {
 			unset($ret['categories']);
+		}
 	
 		$j = json_encode($ret);
 		return '[app]' . chunk_split(base64_encode($j),72,"\n") . '[/app]';
@@ -1263,7 +1306,6 @@ class Apps {
 
 	static public function papp_encode($papp) {
 		return chunk_split(base64_encode(json_encode($papp)),72,"\n");
-
 	}
 
 }

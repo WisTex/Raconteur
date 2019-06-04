@@ -9,6 +9,7 @@ use Zotlabs\Lib\Libsync;
 
 require_once('include/socgraph.php');
 require_once('include/bbcode.php');
+require_once('include/html2plain.php');
 
 define( 'DIRECTORY_PAGESIZE', 60);
 
@@ -153,14 +154,20 @@ class Directory extends Controller {
 		$tpl = get_markup_template('directory_header.tpl');
 	
 		$dirmode = intval(get_config('system','directory_mode'));
-	
-		if(($dirmode == DIRECTORY_MODE_PRIMARY) || ($dirmode == DIRECTORY_MODE_STANDALONE)) {
+
+		$directory_admin = false;
+
+		if (($dirmode == DIRECTORY_MODE_PRIMARY) || ($dirmode == DIRECTORY_MODE_STANDALONE)) {
 			$url = z_root() . '/dirsearch';
+			if (is_site_admin()) {
+				$directory_admin = true;
+			}
 		}
-		if(! $url) {
+		if (! $url) {
 			$directory = Libzotdir::find_upstream_directory($dirmode);
-			if((! $directory) || (! array_key_exists('url',$directory)) || (! $directory['url']))
+			if ((! $directory) || (! array_key_exists('url',$directory)) || (! $directory['url'])) {
 				logger('CRITICAL: No directory server URL');
+			}
 			$url = $directory['url'] . '/dirsearch';
 		}
 	
@@ -219,7 +226,7 @@ class Directory extends Controller {
 				$query .= '&order=' . urlencode($sort_order);
 				
 			if(App::$pager['page'] != 1)
-				$query .= '&p=' . \App::$pager['page'];
+				$query .= '&p=' . App::$pager['page'];
 	
 			logger('mod_directory: query: ' . $query);
 	
@@ -298,12 +305,15 @@ class Directory extends Controller {
 							$marital = ((x($profile,'marital') == 1) ?  t('Status: ') . $profile['marital']: False);
 			
 							$homepage = ((x($profile,'homepage') == 1) ?  t('Homepage: ') : False);
-							$homepageurl = ((x($profile,'homepage') == 1) ?  $profile['homepage'] : ''); 
+							$homepageurl = ((x($profile,'homepage') == 1) ?  html2plain($profile['homepage']) : ''); 
 	
-							$hometown = ((x($profile,'hometown') == 1) ? $profile['hometown']  : False);
+							$hometown = ((x($profile,'hometown') == 1) ? html2plain($profile['hometown'])  : False);
 	
 							$about = ((x($profile,'about') == 1) ? zidify_links(bbcode($profile['about'])) : False);
-	
+							if ($about && $safe_mode) {
+								$about = html2plain($about);
+							}
+							
 							$keywords = ((x($profile,'keywords')) ? $profile['keywords'] : '');
 	
 
@@ -358,9 +368,11 @@ class Directory extends Controller {
 								'canrate' => (($rating_enabled && local_channel()) ? true : false),
 								'pdesc'	=> $pdesc,
 								'pdesc_label' => t('Description:'),
+								'censor' => (($directory_admin) ? 'dircensor/' . $rr['hash'] : ''),
+								'censor_label' => (($rr['censored']) ? t('Uncensor') : t('Censor')),
 								'marital'  => $marital,
 								'homepage' => $homepage,
-								'homepageurl' => linkify($homepageurl),
+								'homepageurl' => (($safe_mode) ? $homepageurl : linkify($homepageurl)),
 								'hometown' => $hometown,
 								'hometown_label' => t('Hometown:'),
 								'about' => $about,
@@ -403,7 +415,7 @@ class Directory extends Controller {
 						ksort($entries); // Sort array by key so that foreach-constructs work as expected
 	
 						if($j['keywords']) {
-							\App::$data['directory_keywords'] = $j['keywords'];
+							App::$data['directory_keywords'] = $j['keywords'];
 						}
 	
 						// logger('mod_directory: entries: ' . print_r($entries,true), LOGGER_DATA);

@@ -1,59 +1,41 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Activity;
 
-require_once('library/jsonld/jsonld.php');
 
-class Ap_probe extends \Zotlabs\Web\Controller {
+class Ap_probe extends Controller {
 
 	function get() {
-	
-		$o .= '<h3>ActivityPub Probe Diagnostic</h3>';
-	
-		$o .= '<form action="ap_probe" method="post">';
-		$o .= 'Lookup URI: <input type="text" style="width: 250px;" name="addr" value="' . $_REQUEST['addr'] .'" /><br>';
-		$o .= 'or paste text: <textarea style="width: 250px;" name="text">' . htmlspecialchars($_REQUEST['text']) . '</textarea><br>';
-		$o .= '<input type="submit" name="submit" value="Submit" /></form>'; 
-	
-		$o .= '<br /><br />';
-	
-		if(x($_REQUEST,'addr')) {
-			$addr = $_REQUEST['addr'];
 
-			$headers = 'Accept: application/ld+json; profile="https://www.w3.org/ns/activitystreams", application/activity+json, application/ld+json';
+		$channel = null;
 
+		$o = replace_macros(get_markup_template('ap_probe.tpl'), [
+			'$page_title' => t('ActivityPub Probe Diagnostic'),
+			'$resource'   => [ 'resource', t('Object URL') , $_REQUEST['resource'], EMPTY_STR ],
+			'$authf'      => [ 'authf', t('Authenticated fetch'), $_REQUEST['authf'], EMPTY_STR, [ t('No'), t('Yes') ] ],
+			'$submit'     => t('Submit')
+		]);
 
-			$redirects = 0;
-		    $x = z_fetch_url($addr,true,$redirects, [ 'headers' => [ $headers ]]);
-	    	if($x['success'])
-
-				$o .= '<pre>' . htmlspecialchars($x['header']) . '</pre>' . EOL;
-
-
-				$o .= '<pre>' . htmlspecialchars($x['body']) . '</pre>' . EOL;
-				
-				$o .= 'verify returns: ' . str_replace("\n",EOL,print_r(HTTPSig::verify($x),true)) . EOL;
-				$text = $x['body'];
-			}
-			else {
-				$text = $_REQUEST['text'];
+		if (x($_REQUEST,'resource')) {
+			$resource = $_REQUEST['resource'];
+			if ($_REQUEST['authf']) {
+				$channel = App::get_channel();
+				if (! $channel) {
+					$channel = get_sys_channel();
+				}
 			}
 
-			if($text) {
+			$x = Activity::fetch($resource,$channel);
 
-//				if($text && json_decode($text)) {
-//					$normalized1 = jsonld_normalize(json_decode($text),[ 'algorithm' => 'URDNA2015', 'format' => 'application/nquads' ]);
-//					$o .= str_replace("\n",EOL,htmlentities(var_export($normalized1,true))); 
+			if ($x) {
+				$o .= '<pre>' . str_replace('\\n',"\n",htmlspecialchars(json_encode($x,JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT))) . '</pre>';
+			}
 
-	//				$o .= '<pre>' . json_encode($normalized1, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . '</pre>';
-//				}
-
-				$o .= '<pre>' . str_replace(['\\n','\\'],["\n",''],htmlspecialchars(jindent($text))) . '</pre>';
-
-				$AP = new ActivityStreams($text);	
-				$o .= '<pre>' . htmlspecialchars($AP->debug()) . '</pre>';
 		}
 
 		return $o;

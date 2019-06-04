@@ -37,13 +37,6 @@ class Connect {
 			}
 		}
 
-		$category = null;
-		if(strpos($url,'$') !== false) {
-		
-
-
-		}
-
 		if(! allowed_url($url)) {
 			$result['message'] = t('Channel is blocked on this site.');
 			return $result;

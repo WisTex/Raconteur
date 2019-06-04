@@ -3467,10 +3467,10 @@ function array_path_exists($str,$arr) {
 
 function get_forum_channels($uid,$collections = 0) {
 
-	if(! $uid)
+	if (! $uid)
 		return;
 
-	if($collections) {
+	if ($collections) {
 		$pagetype = $collections;
 	}
 	else {

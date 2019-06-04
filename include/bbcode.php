@@ -1,5 +1,8 @@
 <?php
 
+
+use Zotlabs\Lib\Libzot;
+
 /**
  * @file include/bbcode.php
  * @brief BBCode related functions for parsing, etc.
@@ -87,12 +90,11 @@ function nakedoembed($match) {
 
 	$strip_url = strip_escaped_zids($url);
 
-	$o = oembed_fetch_url($strip_url);
-
-	if ($o['type'] == 'error')
-		return str_replace($url,$strip_url,$match[0]);
-
-	return '[embed]' . $strip_url . '[/embed]';
+	// this function no longer performs oembed on naked links
+	// because they author may have created naked links intentionally.
+	// Now it just strips zids on naked links.
+	
+	return str_replace($url,$strip_url,$match[0]);
 }
 
 function tryzrlaudio($match) {
@@ -573,9 +575,9 @@ function bb_ShareAttributesSimple($match) {
 
 function rpost_callback($match) {
 	if ($match[2]) {
-		return str_replace($match[0], get_rpost_path(App::get_observer()) . '&title=' . urlencode($match[2]) . '&body=' . urlencode($match[3]), $match[0]);
+		return str_replace($match[0], Libzot::get_rpost_path(App::get_observer()) . '&title=' . urlencode($match[2]) . '&body=' . urlencode($match[3]), $match[0]);
 	} else {
-		return str_replace($match[0], get_rpost_path(App::get_observer()) . '&body=' . urlencode($match[3]), $match[0]);
+		return str_replace($match[0], Libzot::get_rpost_path(App::get_observer()) . '&body=' . urlencode($match[3]), $match[0]);
 	}
 }
 
@@ -1147,7 +1149,11 @@ function bbcode($Text, $options = []) {
 	// leave open the posibility of [map=something]
 	// this is replaced in prepare_body() which has knowledge of the item location
 
-	if(! $export) {
+	if ($export) {
+		$Text = str_replace( [ '[map]','[/map]' ], [ '','' ] , $Text);
+		$Text = preg_replace("/\[map=(.*?)\]/ism", '$1', $Text);
+	}
+	else {
 		if (strpos($Text,'[/map]') !== false) {
 			$Text = preg_replace_callback("/\[map\](.*?)\[\/map\]/ism", 'bb_map_location', $Text);
 		}

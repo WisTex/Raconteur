@@ -7,32 +7,33 @@ use Zotlabs\Web\Controller;
 class Uexport extends Controller {
 
 	function init() {
-		if(! local_channel())
+		if (! local_channel()) {
 			return;
+		}
 	
-		if(argc() > 1) {
+		if (argc() > 1) {
 
 			$sections = (($_REQUEST['sections']) ? explode(',',$_REQUEST['sections']) : '');
 
 			$channel = App::get_channel();
 
-			if(argc() > 1 && intval(argv(1)) > 1900) {
+			if (argc() > 1 && intval(argv(1)) > 1900) {
 				$year = intval(argv(1));
 			}
 	
-			if(argc() > 2 && intval(argv(2)) > 0 && intval(argv(2)) <= 12) {
+			if (argc() > 2 && intval(argv(2)) > 0 && intval(argv(2)) <= 12) {
 				$month = intval(argv(2));
 			}
 	
 			header('content-type: application/json');
 			header('content-disposition: attachment; filename="' . $channel['channel_address'] . (($year) ? '-' . $year : '') . (($month) ? '-' . $month : '') . (($_REQUEST['sections']) ? '-' . $_REQUEST['sections'] : '')  . '.json"' );
 	
-			if($year) {
+			if ($year) {
 				echo json_encode(identity_export_year(local_channel(),$year,$month));
 				killme();
 			}
 	
-			if(argc() > 1 && argv(1) === 'basic') {
+			if (argc() > 1 && argv(1) === 'basic') {
 				echo json_encode(identity_basic_export(local_channel(),$sections));
 				killme();
 			}

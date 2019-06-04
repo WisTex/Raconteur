@@ -5,7 +5,8 @@ namespace Zotlabs\Widget;
 class Helpindex {
 
 	function widget($arr) {
-
+		return EMPTY_STR;
+		
 		$o .= '<div class="widget">';
 
 		$level_0 = get_help_content('sitetoc');

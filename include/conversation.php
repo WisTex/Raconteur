@@ -1314,6 +1314,12 @@ function z_status_editor($a, $x, $popup = false) {
 	$defexpire = ((($z = get_pconfig($x['profile_uid'], 'system', 'default_post_expire')) && (! $webpage)) ? $z : '');
 	if($defexpire)
 		$defexpire = datetime_convert('UTC',date_default_timezone_get(),$defexpire,'Y-m-d H:i');
+	else {
+		$defexpire = ((($z = intval(get_pconfig($x['profile_uid'], 'system', 'selfexpiredays'))) && (! $webpage)) ? $z : '');
+		if($defexpire)
+			$defexpire = datetime_convert('UTC',date_default_timezone_get(),"now + $defexpire days",'Y-m-d H:i');
+	}
+
 
 	$defpublish = ((($z = get_pconfig($x['profile_uid'], 'system', 'default_post_publish')) && (! $webpage)) ? $z : '');
 	if($defpublish)

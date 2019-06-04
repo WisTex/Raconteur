@@ -1,20 +1,20 @@
 [
     {
         "name": "blueimp/jquery-file-upload",
-        "version": "v9.28.0",
-        "version_normalized": "9.28.0.0",
+        "version": "v9.30.0",
+        "version_normalized": "9.30.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/vkhramtsov/jQuery-File-Upload.git",
-            "reference": "ff5accfe2e5c4a522777faa980a90cf86a636d1d"
+            "reference": "1fceec556879403e5c1ae32a7c448aa12b8c3558"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/vkhramtsov/jQuery-File-Upload/zipball/ff5accfe2e5c4a522777faa980a90cf86a636d1d",
-            "reference": "ff5accfe2e5c4a522777faa980a90cf86a636d1d",
+            "url": "https://api.github.com/repos/vkhramtsov/jQuery-File-Upload/zipball/1fceec556879403e5c1ae32a7c448aa12b8c3558",
+            "reference": "1fceec556879403e5c1ae32a7c448aa12b8c3558",
             "shasum": ""
         },
-        "time": "2018-11-13T05:41:39+00:00",
+        "time": "2019-04-22T09:21:57+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -429,17 +429,17 @@
     },
     {
         "name": "league/flysystem",
-        "version": "1.0.51",
-        "version_normalized": "1.0.51.0",
+        "version": "1.0.52",
+        "version_normalized": "1.0.52.0",
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/flysystem.git",
-            "reference": "755ba7bf3fb9031e6581d091db84d78275874396"
+            "reference": "c5a5097156387970e6f0ccfcdf03f752856f3391"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/755ba7bf3fb9031e6581d091db84d78275874396",
-            "reference": "755ba7bf3fb9031e6581d091db84d78275874396",
+            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/c5a5097156387970e6f0ccfcdf03f752856f3391",
+            "reference": "c5a5097156387970e6f0ccfcdf03f752856f3391",
             "shasum": ""
         },
         "require": {
@@ -469,7 +469,7 @@
             "spatie/flysystem-dropbox": "Allows you to use Dropbox storage",
             "srmklive/flysystem-dropbox-v2": "Allows you to use Dropbox storage for PHP 5 applications"
         },
-        "time": "2019-03-30T13:22:34+00:00",
+        "time": "2019-05-20T20:21:14+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1623,23 +1623,23 @@
     },
     {
         "name": "symfony/options-resolver",
-        "version": "v4.2.5",
-        "version_normalized": "4.2.5.0",
+        "version": "v4.2.8",
+        "version_normalized": "4.2.8.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/options-resolver.git",
-            "reference": "3896e5a7d06fd15fa4947694c8dcdd371ff147d1"
+            "reference": "fd4a5f27b7cd085b489247b9890ebca9f3e10044"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/options-resolver/zipball/3896e5a7d06fd15fa4947694c8dcdd371ff147d1",
-            "reference": "3896e5a7d06fd15fa4947694c8dcdd371ff147d1",
+            "url": "https://api.github.com/repos/symfony/options-resolver/zipball/fd4a5f27b7cd085b489247b9890ebca9f3e10044",
+            "reference": "fd4a5f27b7cd085b489247b9890ebca9f3e10044",
             "shasum": ""
         },
         "require": {
             "php": "^7.1.3"
         },
-        "time": "2019-02-23T15:17:42+00:00",
+        "time": "2019-04-10T16:20:36+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1739,23 +1739,23 @@
     },
     {
         "name": "symfony/process",
-        "version": "v4.2.5",
-        "version_normalized": "4.2.5.0",
+        "version": "v4.2.8",
+        "version_normalized": "4.2.8.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/process.git",
-            "reference": "1e6cbb41dadcaf29e0db034d6ad0d039a9df06e6"
+            "reference": "8cf39fb4ccff793340c258ee7760fd40bfe745fe"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/process/zipball/1e6cbb41dadcaf29e0db034d6ad0d039a9df06e6",
-            "reference": "1e6cbb41dadcaf29e0db034d6ad0d039a9df06e6",
+            "url": "https://api.github.com/repos/symfony/process/zipball/8cf39fb4ccff793340c258ee7760fd40bfe745fe",
+            "reference": "8cf39fb4ccff793340c258ee7760fd40bfe745fe",
             "shasum": ""
         },
         "require": {
             "php": "^7.1.3"
         },
-        "time": "2019-03-10T20:07:02+00:00",
+        "time": "2019-04-10T16:20:36+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {

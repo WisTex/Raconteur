@@ -189,7 +189,7 @@ class Layouts extends Controller {
 		$o .= replace_macros(get_markup_template('layoutlist.tpl'), array(
 			'$title'   => t('Layouts'),
 			'$create'  => t('Create'),
-			'$help'    => array('text' => t('Help'), 'url' => 'help/comanche', 'title' => t('Comanche page description language help')),
+			'$help'    => '', // array('text' => t('Help'), 'url' => 'help/comanche', 'title' => t('Comanche page description language help')),
 			'$editor'  => $editor,
 			'$baseurl' => $url,
 			'$name' => t('Layout Name'),

@@ -1,10 +1,11 @@
 ZAP
 ===
 
-Zap is a full featured social network application running under the Zot6 protocol. It provides enhanced privacy modes and identity/content mirroring across multiple servers ("nomadic identity"). It does not "federate" with non-nomadic servers, protocols, or projects. 
+Zap is a decentralised social network server application with a number of powerful features, yet very easy to use.
+
 
 
 Installation
 ============
 
-Read `/install/INSTALL.txt` for installation instructions.
+Read `install/INSTALL.txt` for installation instructions.

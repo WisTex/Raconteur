@@ -1,5 +1,7 @@
 <?php /** @file */
 
+use Zotlabs\Daemon\Master;
+
 
 function abook_store_lowlevel($arr) {
 
@@ -375,7 +377,7 @@ function contact_remove($channel_id, $abook_id) {
 
 	// remove items in the background as this can take some time
 
-	\Zotlabs\Daemon\Master::Summon( [ 'Delxitems', $channel_id, $abook['abook_xchan'] ] );
+	Master::Summon( [ 'Delxitems', $channel_id, $abook['abook_xchan'] ] );
 
 	
 	q("delete from abook where abook_id = %d and abook_channel = %d",

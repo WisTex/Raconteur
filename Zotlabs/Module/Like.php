@@ -154,7 +154,7 @@ class Like extends Controller {
 	
 			}
 			
-			if(! ($owner_uid && $r)) {
+			if (! ($owner_uid && $r)) {
 				killme();
 			}
 	
@@ -404,14 +404,13 @@ class Like extends Controller {
 		}
 		
 	
-		$arr['mid']          = $mid;
 		$arr['aid']          = (($extended_like) ? $ch[0]['channel_account_id'] : $owner_aid);
 		$arr['uid']          = $owner_uid;
 
 
 		$arr['item_flags']   = $item_flags;
 		$arr['item_wall']    = $item_wall;
-		$arr['parent_mid']   = (($extended_like) ? $mid : $item['mid']);
+		$arr['parent_mid']   = (($extended_like) ? $arr['mid'] : $item['mid']);
 		$arr['owner_xchan']  = (($extended_like) ? $ch[0]['xchan_hash'] : $thread_owner['xchan_hash']);
 		$arr['author_xchan'] = $observer['xchan_hash'];
 	

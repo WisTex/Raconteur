@@ -29,25 +29,6 @@ class Features {
 		$arr = [];
 		$harr = [];
 
-		if(intval($_REQUEST['techlevel']))
-			$level = intval($_REQUEST['techlevel']);
-		else {
- 			$level = get_account_techlevel();
-		}
-
-		if(! intval($level)) {
-			notice( t('Permission denied.') . EOL);
-			return;
-		}
-
-		$techlevels = \Zotlabs\Lib\Techlevels::levels();
-
-		// This page isn't accessible at techlevel 0
-
-		unset($techlevels[0]);
-
-		$def_techlevel = (($level > 0) ? $level : 1);
-		$techlock = get_config('system','techlevel_lock');
 
 		$all_features_raw = get_features(false);
 
@@ -57,7 +38,7 @@ class Features {
 			}
 		}
 
-		$features = get_features(true,$level);
+		$features = get_features(true);
 
 		foreach($features as $fname => $fdata) {
 			$arr[$fname] = array();
@@ -72,8 +53,6 @@ class Features {
 		$o .= replace_macros($tpl, array(
 			'$form_security_token' => get_form_security_token("settings_features"),
 			'$title'	 => t('Additional Features'),
-			'$techlevel' => [ 'techlevel', t('Your technical skill level'), $def_techlevel, t('Used to provide a member experience and additional features consistent with your comfort level'), $techlevels ],
-			'$techlock'  => $techlock,
 			'$features'  => $arr,
 			'$hiddens'   => $harr,
 			'$baseurl'   => z_root(),

@@ -61,6 +61,7 @@ require_once('include/bbcode.php');
  *       permissions_reject      abook_id
  *       permissions_update      abook_id
  *       refresh_all             channel_id
+ *       purge                   xchan_hash
  *       purge_all               channel_id
  *       expire                  channel_id
  *       relay		 	 		 item_id (item was relayed to owner, we will deliver it as owner)
@@ -228,13 +229,21 @@ class Notifier {
 			self::$private = false;
 			self::$packet_type = 'refresh';
 		}
+		elseif($cmd === 'purge') {
+			$xchan = argv(3);
+			logger('notifier: purge: ' . $item_id . ' => ' . $xchan);
+			if (! $xchan) {
+				return;
+			}
+			
+			self::$channel     = channelx_by_n($item_id);
+			self::$recipients  = [ $xchan ];
+			self::$private     = true;
+			self::$packet_type = 'purge';
+		}
 		elseif($cmd === 'purge_all') {
 			logger('notifier: purge_all: ' . $item_id);
-			$s = q("select * from channel where channel_id = %d limit 1",
-				intval($item_id)
-			);
-			if($s)
-				self::$channel = $s[0];
+			self::$channel = channelx_by_n($item_id);
 
 			self::$recipients = array();
 			$r = q("select abook_xchan from abook where abook_channel = %d and abook_self = 0",

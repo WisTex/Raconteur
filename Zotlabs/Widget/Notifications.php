@@ -1,14 +1,15 @@
 <?php
-
 namespace Zotlabs\Widget;
+
+use App;
 
 class Notifications {
 
 	function widget($arr) {
 
-		$channel = \App::get_channel();
-
 		if(local_channel()) {
+			$channel = App::get_channel();
+
 			$notifications[] = [
 				'type' => 'network',
 				'icon' => 'th',
@@ -116,8 +117,8 @@ class Notifications {
 				'type' => 'forums',
 				'icon' => 'comments-o',
 				'severity' => 'secondary',
-				'label' => t('Forums'),
-				'title' => t('Forums'),
+				'label' => t('Groups'),
+				'title' => t('Groups'),
 				'filter' => [
 					'name_label' => t('Filter by name')
 				]
@@ -156,7 +157,7 @@ class Notifications {
 		}
 
 		$o = replace_macros(get_markup_template('notifications_widget.tpl'), array(
-			'$module' => \App::$module,
+			'$module' => App::$module,
 			'$notifications' => $notifications,
 			'$no_notifications' => t('Sorry, you have got no notifications at the moment'),
 			'$loading' => t('Loading'),

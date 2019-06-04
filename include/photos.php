@@ -22,11 +22,11 @@ require_once('include/text.php');
 
 function photo_upload($channel, $observer, $args) {
 
-	$ret = array('success' => false);
+	$ret = [ 'success' => false ];
 	$channel_id = $channel['channel_id'];
 	$account_id = $channel['channel_account_id'];
 
-	if(! perm_is_allowed($channel_id, $observer['xchan_hash'], 'write_storage')) {
+	if (! perm_is_allowed($channel_id, $observer['xchan_hash'], 'write_storage')) {
 		$ret['message'] = t('Permission denied.');
 		return $ret;
 	}
@@ -37,14 +37,15 @@ function photo_upload($channel, $observer, $args) {
 
 	$album    = $args['album'];
 
-	if(intval($args['visible']) || $args['visible'] === 'true')
+	if (intval($args['visible']) || $args['visible'] === 'true') {
 		$visible = 1;
-	else
+	}
+	else {
 		$visible = 0;
+	}
 
-	$deliver = true;
-	if(array_key_exists('deliver',$args))
-		$deliver = intval($args['deliver']);
+	$deliver = ((array_key_exists('deliver', $args)) ? intval($args['deliver']) : 1 ); 
+
 
 	// Set to default channel permissions. If the parent directory (album) has permissions set,
 	// use those instead. If we have specific permissions supplied, they take precedence over
@@ -52,11 +53,13 @@ function photo_upload($channel, $observer, $args) {
 	// ...messy... needs re-factoring once the photos/files integration stabilises
 
 	$acl = new AccessControl($channel);
-	if(array_key_exists('directory',$args) && $args['directory'])
+	if (array_key_exists('directory',$args) && $args['directory']) {
 		$acl->set($args['directory']);
-	if(array_key_exists('allow_cid',$args))
+	}
+	if (array_key_exists('allow_cid',$args)) {
 		$acl->set($args);
-	if( (array_key_exists('group_allow',$args))
+	}
+	if ((array_key_exists('group_allow',$args))
 		|| (array_key_exists('contact_allow',$args))
 		|| (array_key_exists('group_deny',$args))
 		|| (array_key_exists('contact_deny',$args))) {
@@ -68,7 +71,7 @@ function photo_upload($channel, $observer, $args) {
 	$width = $height = 0;
 
 	if($args['getimagesize']) {
-		$width = $args['getimagesize'][0];
+		$width  = $args['getimagesize'][0];
 		$height = $args['getimagesize'][1];
 	}
 

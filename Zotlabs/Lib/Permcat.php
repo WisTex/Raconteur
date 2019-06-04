@@ -20,6 +20,7 @@ use Zotlabs\Access\Permissions;
  * content ACLs are evaluated (@ref ::Zotlabs::Access::AccessList "AccessList").
  * These answer the question "Can Joe view *this* album/photo?".
  */
+
 class Permcat {
 
 	/**

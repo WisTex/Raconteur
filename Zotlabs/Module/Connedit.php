@@ -1,11 +1,19 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\ActivityPub;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\AccessList;
+use Zotlabs\Access\Permissions;
+use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Lib\Permcat;
+use Zotlabs\Daemon\Master;
+use Zotlabs\Web\HTTPHeaders;
+use Sabre\VObject\Reader;
 
 /* @file connedit.php
  * @brief In this file the connection-editor form is generated and evaluated.
@@ -19,7 +27,7 @@ require_once('include/socgraph.php');
 require_once('include/photos.php');
 
 
-class Connedit extends \Zotlabs\Web\Controller {
+class Connedit extends Controller {
 
 	/* @brief Initialize the connection-editor
 	 *
@@ -39,15 +47,15 @@ class Connedit extends \Zotlabs\Web\Controller {
 				intval(argv(1))
 			);
 			if($r) {
-				\App::$poi = array_shift($r);
+				App::$poi = array_shift($r);
 			}
 		}
 	
 
-		$channel = \App::get_channel();
-		if($channel)
+		$channel = App::get_channel();
+		if ($channel) {
 			head_set_icon($channel['xchan_photo_s']);
-	
+		}
 	}
 
 	
@@ -64,7 +72,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 		if(! $contact_id)
 			return;
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 		// TODO if configured for hassle-free permissions, we'll post the form with ajax as soon as the
 		// connection enable is toggled to a special autopost url and set permissions immediately, leaving
@@ -89,7 +97,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 		call_hooks('contact_edit_post', $_POST);
 	
 		$vc = get_abconfig(local_channel(),$orig_record['abook_xchan'],'system','vcard');
-		$vcard = (($vc) ? \Sabre\VObject\Reader::read($vc) : null); 
+		$vcard = (($vc) ? Reader::read($vc) : null); 
 		$serialised_vcard = update_vcard($_REQUEST,$vcard);
 		if($serialised_vcard)
 			set_abconfig(local_channel(),$orig_record[0]['abook_xchan'],'system','vcard',$serialised_vcard);
@@ -135,7 +143,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 			$closeness = 80;
 		}
 	
-		$all_perms = \Zotlabs\Access\Permissions::Perms();
+		$all_perms = Permissions::Perms();
 
 		$p = EMPTY_STR;
 
@@ -166,17 +174,15 @@ class Connedit extends \Zotlabs\Web\Controller {
 			// request. The workaround is to approve the connection, then go back and
 			// adjust permissions as desired.
 	
-			$p = \Zotlabs\Access\Permissions::connect_perms(local_channel());
-			$my_perms = \Zotlabs\Access\Permissions::serialise($p['perms']);
-			if($my_perms) {
+			$p = Permissions::connect_perms(local_channel());
+			$my_perms = Permissions::serialise($p['perms']);
+			if ($my_perms) {
 				set_abconfig($channel['channel_id'],$orig_record[0]['abook_xchan'],'system','my_perms',$my_perms);
 			}
 		}
 
 		$abook_pending = (($new_friend) ? 0 : $orig_record[0]['abook_pending']);
 
-
-	
 		$r = q("UPDATE abook SET abook_profile = '%s', abook_closeness = %d, abook_pending = %d,
 			abook_incl = '%s', abook_excl = '%s'
 			where abook_id = %d AND abook_channel = %d",
@@ -194,12 +200,12 @@ class Connedit extends \Zotlabs\Web\Controller {
 		else
 			notice( t('Failed to update connection record.') . EOL);
 
-		if(! intval(\App::$poi['abook_self'])) {
+		if(! intval(App::$poi['abook_self'])) {
 			if($new_friend) {
-				\Zotlabs\Daemon\Master::Summon( [ 'Notifier', 'permissions_accept', $contact_id ] ); 
+				Master::Summon( [ 'Notifier', 'permissions_accept', $contact_id ] ); 
 			}
 
-			\Zotlabs\Daemon\Master::Summon( [ 
+			Master::Summon( [ 
 				'Notifier', 
 				(($new_friend) ? 'permissions_create' : 'permissions_update'), 
 				$contact_id 
@@ -211,7 +217,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 			if($default_group) {
 				$g = AccessList::rec_byhash(local_channel(),$default_group);
 				if($g)
-					AccessList::member_add(local_channel(),'',\App::$poi['abook_xchan'],$g['id']);
+					AccessList::member_add(local_channel(),'',App::$poi['abook_xchan'],$g['id']);
 			}
 	
 			// Check if settings permit ("post new friend activity" is allowed, and
@@ -234,9 +240,9 @@ class Connedit extends \Zotlabs\Web\Controller {
 				$xarr['deny_gid'] = $channel['channel_deny_gid'];
 				$xarr['item_private'] = (($xarr['allow_cid']||$xarr['allow_gid']||$xarr['deny_cid']||$xarr['deny_gid']) ? 1 : 0);
 	
-				$xarr['body'] = '[zrl=' . $channel['xchan_url'] . ']' . $channel['xchan_name'] . '[/zrl]' . ' ' . t('is now connected to') . ' ' . '[zrl=' . \App::$poi['xchan_url'] . ']' . \App::$poi['xchan_name'] . '[/zrl]';
+				$xarr['body'] = '[zrl=' . $channel['xchan_url'] . ']' . $channel['xchan_name'] . '[/zrl]' . ' ' . t('is now connected to') . ' ' . '[zrl=' . App::$poi['xchan_url'] . ']' . App::$poi['xchan_name'] . '[/zrl]';
 	
-				$xarr['body'] .= "\n\n\n" . '[zrl=' . \App::$poi['xchan_url'] . '][zmg=80x80]' . \App::$poi['xchan_photo_m'] . '[/zmg][/zrl]';
+				$xarr['body'] .= "\n\n\n" . '[zrl=' . App::$poi['xchan_url'] . '][zmg=80x80]' . App::$poi['xchan_photo_m'] . '[/zmg][/zrl]';
 	
 				post_activity_item($xarr);
 	
@@ -244,7 +250,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 	
 	
 			// pull in a bit of content if there is any to pull in
-			\Zotlabs\Daemon\Master::Summon(array('Onepoll',$contact_id));
+			Master::Summon( [ 'Onepoll', $contact_id ]);
 	
 		}
 	
@@ -257,11 +263,11 @@ class Connedit extends \Zotlabs\Web\Controller {
 			intval($contact_id)
 		);
 		if($r) {
-			\App::$poi = $r[0];
+			App::$poi = $r[0];
 		}
 	
 		if($new_friend) {
-			$arr = array('channel_id' => local_channel(), 'abook' => \App::$poi);
+			$arr = array('channel_id' => local_channel(), 'abook' => App::$poi);
 			call_hooks('accept_follow', $arr);
 		}
 	
@@ -281,23 +287,23 @@ class Connedit extends \Zotlabs\Web\Controller {
 	
 	function connedit_clone(&$a) {
 	
-			if(! \App::$poi)
+			if(! App::$poi)
 				return;
 	
 	
-			$channel = \App::get_channel();
+			$channel = App::get_channel();
 	
 			$r = q("SELECT abook.*, xchan.*
 				FROM abook left join xchan on abook_xchan = xchan_hash
 				WHERE abook_channel = %d and abook_id = %d LIMIT 1",
 				intval(local_channel()),
-				intval(\App::$poi['abook_id'])
+				intval(App::$poi['abook_id'])
 			);
 			if($r) {
-				\App::$poi = array_shift($r);
+				App::$poi = array_shift($r);
 			}
 	
-			$clone = \App::$poi;
+			$clone = App::$poi;
 	
 			unset($clone['abook_id']);
 			unset($clone['abook_account']);
@@ -326,11 +332,11 @@ class Connedit extends \Zotlabs\Web\Controller {
 		}
 	
 		$section = ((array_key_exists('section',$_REQUEST)) ? $_REQUEST['section'] : '');
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 		$yes_no = [ t('No'), t('Yes') ];
 	
-		$connect_perms = \Zotlabs\Access\Permissions::connect_perms(local_channel());
+		$connect_perms = Permissions::connect_perms(local_channel());
 
 		$o .= "<script>function connectDefaultShare() {
 		\$('.abook-edit-me').each(function() {
@@ -365,7 +371,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 	
 			if($cmd === 'update') {
 				// pull feed and consume it, which should subscribe to the hub.
-				\Zotlabs\Daemon\Master::Summon(array('Poller',$contact_id));
+				Master::Summon( [ 'Poller', $contact_id ]);
 				goaway(z_root() . '/connedit/' . $contact_id);
 	
 			}
@@ -375,14 +381,14 @@ class Connedit extends \Zotlabs\Web\Controller {
 				$recurse = 0;
 				$x = z_fetch_url(zid($url),false,$recurse,['session' => true]);
 				if($x['success']) {
-					$h = new \Zotlabs\Web\HTTPHeaders($x['header']);
+					$h = new HTTPHeaders($x['header']);
 					$fields = $h->fetch();
 					if($fields) {
 						foreach($fields as $y) {
 							 if(array_key_exists('content-type',$y)) {
 								$type = explode(';',trim($y['content-type']));
 								if($type && $type[0] === 'text/vcard' && $x['body']) {
-									$vc = \Sabre\VObject\Reader::read($x['body']);
+									$vc = Reader::read($x['body']);
 									$vcard = $vc->serialize();
 									if($vcard) {
 										set_abconfig(local_channel(),$orig_record[0]['abook_xchan'],'system','vcard',$vcard);
@@ -406,13 +412,13 @@ class Connedit extends \Zotlabs\Web\Controller {
 
 			if($cmd === 'refresh') {
 				if($orig_record[0]['xchan_network'] === 'zot6') {
-					if(! Libzot::refresh($orig_record[0],\App::get_channel()))
+					if(! Libzot::refresh($orig_record[0], App::get_channel()))
 						notice( t('Refresh failed - channel is currently unavailable.') );
 				}
 				else {
 	
 					// if you are on a different network we'll force a refresh of the connection basic info
-					\Zotlabs\Daemon\Master::Summon(array('Notifier','permissions_update',$contact_id));
+					Master::Summon( [ 'Notifier', 'permissions_update', $contact_id ]);
 				}
 				goaway(z_root() . '/connedit/' . $contact_id);
 			}
@@ -470,18 +476,15 @@ class Connedit extends \Zotlabs\Web\Controller {
 	
 			if($cmd === 'drop') {
 	
-	
-				// @FIXME
-				// We need to send either a purge or a refresh packet to the other side (the channel being unfriended).
-				// The issue is that the abook DB record _may_ get destroyed when we call contact_remove. As the notifier
-				// runs in the background there could be a race condition preventing this packet from being sent in all
-				// cases.
-				// PLACEHOLDER
-
 				if($orig_record[0]['xchan_network'] === 'activitypub') {
 					ActivityPub::contact_remove(local_channel(), $orig_record[0]);
 				}
 				contact_remove(local_channel(), $orig_record[0]['abook_id']);
+
+				// The purge notification is sent to the xchan_hash as the abook record will have just been removed
+				
+				Master::Summon( [ 'Notifier' , 'purge', $orig_record[0]['xchan_hash'] ] );
+				
 				Libsync::build_sync_packet(0 /* use the current local_channel */,
 					array('abook' => array(array(
 						'abook_xchan' => $orig_record[0]['abook_xchan'],
@@ -497,13 +500,13 @@ class Connedit extends \Zotlabs\Web\Controller {
 			}
 		}
 	
-		if(\App::$poi) {
+		if(App::$poi) {
 	
 			$abook_prev = 0;
 			$abook_next = 0;
 
-			$contact_id = \App::$poi['abook_id'];
-			$contact = \App::$poi;
+			$contact_id = App::$poi['abook_id'];
+			$contact = App::$poi;
 
 			$cn = q("SELECT abook_id, xchan_name from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and xchan_deleted = 0 order by xchan_name",
 				intval(local_channel())
@@ -626,7 +629,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 	
 			$vc = get_abconfig(local_channel(),$contact['abook_xchan'],'system','vcard');
 
-			$vctmp = (($vc) ? \Sabre\VObject\Reader::read($vc) : null); 
+			$vctmp = (($vc) ? Reader::read($vc) : null); 
 			$vcard = (($vctmp) ? get_vcard_array($vctmp,$contact['abook_id']) : [] );
 			if(! $vcard)
 				$vcard['fn'] = $contact['xchan_name'];
@@ -700,9 +703,9 @@ class Connedit extends \Zotlabs\Web\Controller {
 	
 	
 			$perms = array();
-			$channel = \App::get_channel();
+			$channel = App::get_channel();
 	
-			$global_perms = \Zotlabs\Access\Permissions::Perms();
+			$global_perms = Permissions::Perms();
 
 			$existing = get_all_perms(local_channel(),$contact['abook_xchan'],false);
 	
@@ -722,7 +725,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 			
 			$theirs = get_abconfig(local_channel(),$contact['abook_xchan'],'system','their_perms',EMPTY_STR);
 
-			$their_perms = \Zotlabs\Access\Permissions::FilledPerms(explode(',',$theirs));
+			$their_perms = Permissions::FilledPerms(explode(',',$theirs));
 			foreach($global_perms as $k => $v) {
 				if(! array_key_exists($k,$their_perms))
 					$their_perms[$k] = 1;
@@ -733,7 +736,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 			foreach($global_perms as $k => $v) {
 				$thisperm = ((in_array($k,$my_perms)) ? 1 : 0);
 				
-				$checkinherited = \Zotlabs\Access\PermissionLimits::Get(local_channel(),$k);
+				$checkinherited = PermissionLimits::Get(local_channel(),$k);
 	
 				// For auto permissions (when $self is true) we don't want to look at existing
 				// permissions because they are enabled for the channel owner
@@ -743,7 +746,7 @@ class Connedit extends \Zotlabs\Web\Controller {
 				$perms[] = array('perms_' . $k, $v, ((array_key_exists($k,$their_perms)) ? intval($their_perms[$k]) : ''),$thisperm, 1, (($checkinherited & PERMS_SPECIFIC) ? '' : '1'), '', $checkinherited);
 			}
 	
-			$pcat = new \Zotlabs\Lib\Permcat(local_channel());
+			$pcat = new Permcat(local_channel());
 			$pcatlist = $pcat->listing();
 			$permcats = [];
 			if($pcatlist) {

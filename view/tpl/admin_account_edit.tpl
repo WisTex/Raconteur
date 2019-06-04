@@ -8,7 +8,6 @@
 
 {{include file="field_password.tpl" field=$pass1}}
 {{include file="field_password.tpl" field=$pass2}}
-{{include file="field_select.tpl" field=$account_level}}
 {{include file="field_select.tpl" field=$account_language}}
 {{include file="field_input.tpl" field=$service_class}}
 

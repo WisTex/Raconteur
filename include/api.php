@@ -95,7 +95,7 @@ require_once('include/api_zot.php');
 		if($info) {
 
 			if ($info['auth'] === true && api_user() === false) {
-					api_login($a);
+				api_login();
 			}
 
 			load_contact_links(api_user());
