@@ -23,7 +23,7 @@ class Catcloud {
 
 				case 'articles':
 			
-					if(! perm_is_allowed(\App::$profile['profile_uid'], get_observer_hash(), 'view_pages'))
+					if(! perm_is_allowed(\App::$profile['profile_uid'], get_observer_hash(), 'view_articles'))
 						return '';
 
 					return article_catblock(\App::$profile['profile_uid'], $limit, '', \App::$profile['channel_hash']);

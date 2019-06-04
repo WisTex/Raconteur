@@ -757,13 +757,6 @@ function parse_ical_file($f,$uid) {
 
 	$s = @file_get_contents($f);
 
-	// Change the current timezone to something besides UTC.
-	// Doesn't matter what it is, as long as it isn't UTC.
-	// Save the current timezone so we can reset it when we're done processing.
-
-	$saved_timezone = date_default_timezone_get();
-	date_default_timezone_set('Australia/Sydney');
-
 	$ical = VObject\Reader::read($s);
 
 	if($ical) {
@@ -778,8 +771,6 @@ function parse_ical_file($f,$uid) {
 			}
 		}
 	}
-
-	date_default_timezone_set($saved_timezone);
 
 	if($ical)
 		return true;
