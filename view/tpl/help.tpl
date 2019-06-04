@@ -26,6 +26,3 @@
 		{{$content}}
 	</div>
 </div>
-<script>
-	var help_language = '{{$language}}'
-</script>

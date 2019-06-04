@@ -8,7 +8,7 @@
 define('REQUEST_TOKEN_DURATION', 300);
 define('ACCESS_TOKEN_DURATION', 31536000);
 
-require_once("library/OAuth1.php");
+require_once('library/OAuth1.php');
 
 
 class ZotOAuth1DataStore extends OAuth1DataStore {
@@ -33,7 +33,7 @@ class ZotOAuth1DataStore extends OAuth1DataStore {
 
 	function lookup_token($consumer, $token_type, $token) {
 
-		logger(__function__.":".$consumer.", ". $token_type.", ".$token, LOGGER_DEBUG);
+		logger(__function__ . ':' . $consumer . ', ' . $token_type . ', ' . $token, LOGGER_DEBUG);
 
 		$r = q("SELECT id, secret, auth_scope, expires, uid  FROM tokens WHERE client_id = '%s' AND auth_scope = '%s' AND id = '%s'",
 			dbesc($consumer->key),
@@ -41,9 +41,9 @@ class ZotOAuth1DataStore extends OAuth1DataStore {
 			dbesc($token)
 		);
 
-		if (count($r)){
-			$ot=new OAuth1Token($r[0]['id'],$r[0]['secret']);
-			$ot->scope=$r[0]['auth_scope'];
+		if ($r) {
+			$ot = new OAuth1Token($r[0]['id'],$r[0]['secret']);
+			$ot->scope = $r[0]['auth_scope'];
 			$ot->expires = $r[0]['expires'];
 			$ot->uid = $r[0]['uid'];
 			return $ot;
@@ -59,21 +59,23 @@ class ZotOAuth1DataStore extends OAuth1DataStore {
 			intval($timestamp)
 		);
 
-		if (count($r))
+		if ($r) {
 			return new OAuth1Token($r[0]['id'],$r[0]['secret']);
+		}
 		return null;
 	}
 
 	function new_request_token($consumer, $callback = null) {
 
-		logger(__function__.":".$consumer.", ". $callback, LOGGER_DEBUG);
+		logger(__function__ . ':' . $consumer . ', ' . $callback, LOGGER_DEBUG);
 
 		$key = $this->gen_token();
 		$sec = $this->gen_token();
 		
 		if ($consumer->key){
 			$k = $consumer->key;
-		} else {
+		}
+		else {
 			$k = $consumer;
 		}
 
@@ -84,26 +86,27 @@ class ZotOAuth1DataStore extends OAuth1DataStore {
 				'request',
 				time()+intval(REQUEST_TOKEN_DURATION));
 
-		if(! $r)
+		if (! $r) {
 			return null;
+		}
 		return new OAuth1Token($key,$sec);
 	}
 
 	function new_access_token($token, $consumer, $verifier = null) {
 
-		logger(__function__.":".$token.", ". $consumer.", ". $verifier, LOGGER_DEBUG);
+		logger(__function__ . ':' . $token . ', ' . $consumer .', ' . $verifier, LOGGER_DEBUG);
     
 		// return a new access token attached to this consumer
 		// for the user associated with this token if the request token
 		// is authorized
 		// should also invalidate the request token
 	
-		$ret=Null;
+		$ret = null;
 	
 		// get user for this verifier
 		$uverifier = get_config("oauth", $verifier);
-		logger(__function__.":".$verifier.",".$uverifier, LOGGER_DEBUG);
-		if (is_null($verifier) || ($uverifier!==false)) {
+		logger(__function__ . ':' . $verifier . ', ' . $uverifier, LOGGER_DEBUG);
+		if (is_null($verifier) || ($uverifier !== false)) {
 		
 			$key = $this->gen_token();
 			$sec = $this->gen_token();
@@ -116,21 +119,17 @@ class ZotOAuth1DataStore extends OAuth1DataStore {
 				time()+intval(ACCESS_TOKEN_DURATION),
 				intval($uverifier));
 
-			if ($r)
-				$ret = new OAuth1Token($key,$sec);		
+			if ($r) {
+				$ret = new OAuth1Token($key,$sec);
+			}
 		}
 		
 		
 		q("DELETE FROM tokens WHERE id='%s'", $token->key);
 	
 	
-		if (!is_null($ret) && $uverifier!==false) {
-			del_config("oauth", $verifier);
-	
-			//	$apps = get_pconfig($uverifier, "oauth", "apps");
-			//	if ($apps===false) $apps=array();
-			//  $apps[] = $consumer->key;
-			// set_pconfig($uverifier, "oauth", "apps", $apps);
+		if (! is_null($ret) && $uverifier !== false) {
+			del_config('oauth', $verifier);
 		}
 		return $ret;
 	}
@@ -144,16 +143,17 @@ class ZotOAuth1 extends OAuth1Server {
 		$this->add_signature_method(new OAuth1SignatureMethod_HMAC_SHA1());
 	}
 	
-	function loginUser($uid){
+	function loginUser($uid) {
 
 		logger("ZotOAuth1::loginUser $uid");
 
 		$r = q("SELECT * FROM channel WHERE channel_id = %d LIMIT 1",
 			intval($uid)
 		);
-		if(count($r)){
+		if ($r) {
 			$record = $r[0];
-		} else {
+		}
+		else {
 			logger('ZotOAuth1::loginUser failure: ' . print_r($_SERVER,true), LOGGER_DEBUG);
 			header('HTTP/1.0 401 Unauthorized');
 			echo('This api requires login');
@@ -166,7 +166,7 @@ class ZotOAuth1 extends OAuth1Server {
 		$x = q("select * from account where account_id = %d limit 1",
 			intval($record['channel_account_id'])
 		);
-		if($x) {
+		if ($x) {
 			require_once('include/security.php');
 			authenticate_success($x[0],null,true,false,true,true);
 			$_SESSION['allow_api'] = true;

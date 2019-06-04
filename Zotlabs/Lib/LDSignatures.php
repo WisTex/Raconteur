@@ -40,8 +40,10 @@ class LDSignatures {
 		$signed = array_merge([
 			'@context' => [ 
 				ACTIVITYSTREAMS_JSONLD_REV, 
-				'https://w3id.org/security/v1' ],
-			],$options);
+				'https://w3id.org/security/v1',
+				z_root() . ZOT_APSCHEMA_REV
+			],
+		],$options);
 
 		return $signed;
 	}

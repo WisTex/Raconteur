@@ -9,16 +9,16 @@ class Pubsites extends \Zotlabs\Web\Controller {
 
 		$dirmode = intval(get_config('system','directory_mode'));
 	
-		if(($dirmode == DIRECTORY_MODE_PRIMARY) || ($dirmode == DIRECTORY_MODE_STANDALONE)) {
+		if (($dirmode == DIRECTORY_MODE_PRIMARY) || ($dirmode == DIRECTORY_MODE_STANDALONE)) {
 			$url = z_root() . '/dirsearch';
 		}
-		if(! $url) {
+		
+		if (! $url) {
 			$directory = Libzotdir::find_upstream_directory($dirmode);
 			$url = $directory['url'] . '/dirsearch';
 		}
+		
 		$url .= '/sites';
-
-		$rating_enabled = get_config('system','rating_enabled');
 
 		$o .= '<div class="generic-content-wrapper">';
 	
@@ -34,14 +34,16 @@ class Pubsites extends \Zotlabs\Web\Controller {
 				if($j['sites']) {
 					$projects = $this->sort_sites($j['sites']);
 					foreach($projects as $p => $v) {
+						if (ucfirst($p) === 'Osada') {
+							// deprecated
+							continue;
+						}
 						$o .= '<strong>' . ucfirst($p) . '</strong>' . EOL;
-						$o .= '<table class="table table-striped table-hover"><tr><td>' . t('Hub URL') . '</td><td>' . t('Access Type') . '</td><td>' . t('Registration Policy') . '</td><!--td>' . t('Stats') . '</td--><td>' . t('Software') . '</td>';
-						if($rating_enabled)
-							$o .= '<td colspan="2">' . t('Ratings') . '</td>';
+						$o .= '<table class="table table-striped table-hover"><tr><td>' . t('Hub URL') . '</td><td>' . t('Access Type') . '</td><td>' . t('Registration Policy') . '</td><td>' . t('Software') . '</td>';
 						$o .= '</tr>';
-						foreach($v as $jj) {
-							$projectname = explode(' ',$jj['project']);
 
+						usort($v, [ $this, 'sort_versions' ]);
+						foreach ($v as $jj) {
 							if(strpos($jj['version'],' ')) {
 								$x = explode(' ', $jj['version']);
 								if($x[1])
@@ -49,7 +51,6 @@ class Pubsites extends \Zotlabs\Web\Controller {
 							}
 							$m = parse_url($jj['url']);
 							$host = strtolower(substr($jj['url'],strpos($jj['url'],'://')+3));
-							$rate_links = ((local_channel()) ? '<td><a href="rate?f=&target=' . $host . '" class="btn-btn-default"><i class="fa fa-check-square-o"></i> ' . t('Rate') . '</a></td>' : '');
 							$location = '';
 							if(!empty($jj['location'])) { 
 								$location = '<p title="' . t('Location') . '" style="margin: 5px 5px 0 0; text-align: right"><i class="fa fa-globe"></i> ' . $jj['location'] . '</p>'; 
@@ -58,9 +59,7 @@ class Pubsites extends \Zotlabs\Web\Controller {
 								$location = '<br />&nbsp;';
 							}
 							$urltext = str_replace(array('https://'), '', $jj['url']);
-							$o .= '<tr><td><a href="'. (($jj['sellpage']) ? $jj['sellpage'] : $jj['url'] . '/register' ) . '" ><i class="fa fa-link"></i> ' . $urltext . '</a>' . $location . '</td><td>' . $jj['access'] . '</td><td>' . $jj['register'] . '</td><!--td>' . '<a target="stats" href="https://hubchart-tarine.rhcloud.com/hub.jsp?hubFqdn=' . $m['host'] . '"><i class="fa fa-area-chart"></i></a></td--><td>' . ucwords($jj['project']) . (($jj['version']) ? ' ' . $jj['version'] : '') . '</td>';
-							if($rating_enabled)
-								$o .= '<td><a href="ratings/' . $host . '" class="btn-btn-default"><i class="fa fa-eye"></i> ' . t('View') . '</a></td>' . $rate_links ;
+							$o .= '<tr><td><a href="'. (($jj['sellpage']) ? $jj['sellpage'] : $jj['url'] . '/register' ) . '" ><i class="fa fa-link"></i> ' . $urltext . '</a>' . $location . '</td><td>' . $jj['access'] . '</td><td>' . $jj['register'] . '</td><td>' . ucwords($jj['project']) . (($jj['version']) ? ' ' . $jj['version'] : '') . '</td>';
 							$o .=  '</tr>';
 						}
 						$o .= '</table>';
@@ -83,12 +82,17 @@ class Pubsites extends \Zotlabs\Web\Controller {
 			}
 		}
 		$projects = array_keys($ret);
-		sort($projects);
+
 		$newret = [];
 		foreach($projects as $p) {
+
 			$newret[$p] = $ret[$p];
 		}
+
 		return $newret;
 	}
-	
+
+	function sort_versions($a,$b) {
+		return version_compare($b['version'],$a['version']);
+	}
 }

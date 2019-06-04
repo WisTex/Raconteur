@@ -2,9 +2,10 @@
 namespace Zotlabs\Module; /** @file */
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Web\Controller;
 
 
-class Notes extends \Zotlabs\Web\Controller {
+class Notes extends Controller {
 
 	function init() {
 	
@@ -30,7 +31,6 @@ class Notes extends \Zotlabs\Web\Controller {
 		// push updates to channel clones
 	
 		if((argc() > 1) && (argv(1) === 'sync')) {
-			require_once('include/zot.php');
 			Libsync::build_sync_packet();
 		}
 	

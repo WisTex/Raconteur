@@ -11,24 +11,23 @@ use \Michelf\MarkdownExtra;
  */
 function get_help_fullpath($path,$suffix=null) {
 
-        $docroot = (\App::$override_helproot) ? \App::$override_helproot : 'doc/';
-        $docroot = (substr($docroot,-1)!='/') ? $docroot .= '/' : $docroot; 
+        $docroot = 'doc/';
 
         // Determine the language and modify the path accordingly
-        $x = determine_help_language();
-        $lang = $x['language'];
-        $url_idx = ($x['from_url'] ? 1 : 0);
+//        $x = determine_help_language();
+  //      $lang = $x['language'];
+    //    $url_idx = ($x['from_url'] ? 1 : 0);
         // The English translation is at the root of /doc/. Other languages are in
         // subfolders named by the language code such as "de", "es", etc.
-        if($lang !== 'en') {
-                $langpath = $lang . '/' . $path;
-        } else {
-                $langpath = $path;
-        }
+  //      if($lang !== 'en') {
+    //            $langpath = $lang . '/' . $path;
+      //  } else {
+        //        $langpath = $path;
+    //    }
 
-        $newpath = (isset(\App::$override_helpfiles[$langpath])) ? \App::$override_helpfiles[$langpath] : $langpath;
-        $newpath = ($newpath == $langpath) ? $docroot . $newpath : $newpath;
 
+		$newpath = $docroot . $path;
+		
         if ($suffix) {
             if (file_exists($newpath . $suffix)) {
               return $newpath;
@@ -39,9 +38,7 @@ function get_help_fullpath($path,$suffix=null) {
                 return $newpath;
         }
 
-        $newpath = (isset(\App::$override_helpfiles[$path])) ? \App::$override_helpfiles[$path] : null;
 
-        $newpath = (!$newpath) ? $docroot.$path : $newpath;
         return $newpath;
 }
 
@@ -53,100 +50,30 @@ function get_help_fullpath($path,$suffix=null) {
  * @return string|unknown
  */
 function get_help_content($tocpath = false) {
-	global $lang;
+
 
 	$doctype = 'markdown';
 
 	$text = '';
 
-	$path = (($tocpath !== false) ? $tocpath : '');
-        $docroot = (\App::$override_helproot) ? \App::$override_helproot : 'doc/';
-        $docroot = (substr($docroot,-1)!='/') ? $docroot .= '/' : $docroot; 
+	$path = '';
+	$docroot = 'doc/';
 
-	if($tocpath === false && argc() > 1) {
-		$path = '';
-		for($x = 1; $x < argc(); $x ++) {
-			if(strlen($path))
-				$path .= '/';
-			$path .= argv($x);
-		}
-	}
+	$path = argv(1);
+
+	$fullpath = get_help_fullpath($path,'.md');
 
 
-	if($path) {
-                $fullpath = get_help_fullpath($path);
-		$title = basename($path);
-		if(! $tocpath)
-			\App::$page['title'] = t('Help:') . ' ' . ucwords(str_replace('-',' ',notags($title)));
+	$text = load_doc_file($fullpath . '.md');
 
-		// Check that there is a "toc" or "sitetoc" located at the specified path.
-		// If there is not, then there was not a translation of the table of contents
-		// available and so default back to the English TOC at /doc/toc.{html,bb,md}
-		// TODO: This is incompatible with the hierarchical TOC construction
-		// defined in /Zotlabs/Widget/Helpindex.php.
-		if($tocpath !== false &&
-			load_doc_file($fullpath . '.md') === '' &&
-			load_doc_file($fullpath . '.bb') === '' &&
-			load_doc_file($fullpath . '.html') === ''
-		  ) {
-			$path = $title;
-		}
-                $fullpath = get_help_fullpath($path);
-		$text = load_doc_file($fullpath . '.md');
+	App::$page['title'] = t('Help');
 
-		if(! $text) {
-			$text = load_doc_file($fullpath . '.bb');
-			if($text)
-				$doctype = 'bbcode';
-		}
-		if(! $text) {
-			$text = load_doc_file($fullpath . '.html');
-			if($text)
-				$doctype = 'html';
-		}
-	}
 
-	if(($tocpath) && (! $text))
-		return '';
-
-	if($tocpath === false) {
-		if(! $text) {
-                        $path = 'Site';
-                        $fullpath = get_help_fullpath($path,'.md');
-			$text = load_doc_file($fullpath . '.md');
-			\App::$page['title'] = t('Help');
-		}
-		if(! $text) {
-			$doctype = 'bbcode';
-                        $path = 'main';
-                        $fullpath = get_help_fullpath($path,'.md');
-			$text = load_doc_file($fullpath . '.bb');
-			goaway('/help/about/about');
-			\App::$page['title'] = t('Help');
-		}
-
-		if(! $text) {
-			header($_SERVER["SERVER_PROTOCOL"] . ' 404 ' . t('Not Found'));
-			$tpl = get_markup_template("404.tpl");
-			return replace_macros($tpl, array(
-				'$message' => t('Page not found.')
-			));
-		}
-	}
-
-	if($doctype === 'html')
-		$content = parseIdentityAwareHTML($text);
 	if($doctype === 'markdown') {
 		# escape #include tags
 		$text = preg_replace('/#include/ism', '%%include', $text);
 		$content = MarkdownExtra::defaultTransform($text);
 		$content = preg_replace('/%%include/ism', '#include', $content);
-	}
-	if($doctype === 'bbcode') {
-		require_once('include/bbcode.php');
-		$content = zidify_links(bbcode($text));
-		// bbcode retargets external content to new windows. This content is internal.
-		$content = str_replace(' target="_blank"', '', $content);
 	}
 
 	$content = preg_replace_callback("/#include (.*?)\;/ism", 'preg_callback_help_include', $content);
@@ -220,7 +147,7 @@ function find_doc_file($s) {
 function search_doc_files($s) {
 
 
-	\App::set_pager_itemspage(60);
+	App::set_pager_itemspage(60);
 	$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));
 
 	$regexop = db_getfunc('REGEXP');
@@ -255,7 +182,7 @@ function search_doc_files($s) {
 			$r[$x]['rank'] ++;
 		$r[$x]['rank'] += substr_count(strtolower($r[$x]['text']), strtolower($s));
 		// bias the results to the observer's native language
-		if($r[$x]['lang'] === \App::$language)
+		if($r[$x]['lang'] === App::$language)
 			$r[$x]['rank'] = $r[$x]['rank'] + 10;
 
 	}

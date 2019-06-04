@@ -1,7 +1,8 @@
 <?php
 
 namespace Zotlabs\Widget;
-	
+
+use App;
 use Zotlabs\Lib\AccessList;
 
 class Collections {
@@ -41,7 +42,7 @@ class Collections {
 					$each = 'group';
 					$edit = false;
 					$current = 0;
-					$abook_id = \App::$poi['abook_xchan'];
+					$abook_id = App::$poi['abook_xchan'];
 					$wmode = 1;
 					break;
 			default:

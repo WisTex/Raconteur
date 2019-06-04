@@ -251,12 +251,11 @@ class Network extends Controller {
 				));
 			}
 	
-			$o = $title;
-			$o .= $status_editor;
+			$o = $title . $status_editor;
 	
 		}
 		elseif ($cid_r) {
-			$item_thread_top = '';
+			$item_thread_top = EMPTY_STR;
 
 			if ($load || $update) {
 				if (!$pf && $nouveau) {

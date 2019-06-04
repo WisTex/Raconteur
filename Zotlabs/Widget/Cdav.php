@@ -22,7 +22,7 @@ class Cdav {
 
 		$o = '';
 
-		if(argc() == 2 && argv(1) === 'calendar') {
+		if(argc() <= 3 && argv(1) === 'calendar') {
 
 			$caldavBackend = new \Sabre\CalDAV\Backend\PDO($pdo);
 
@@ -57,7 +57,7 @@ class Cdav {
 
 				$switch = get_pconfig(local_channel(), 'cdav_calendar', $sabrecal['id'][0]);
 
-				$color = (($sabrecal['{http://apple.com/ns/ical/}calendar-color']) ? $sabrecal['{http://apple.com/ns/ical/}calendar-color'] : '#3a87ad');
+				$color = (($sabrecal['{http://apple.com/ns/ical/}calendar-color']) ? $sabrecal['{http://apple.com/ns/ical/}calendar-color'] : '#6cad39');
 
 				$editable = (($sabrecal['share-access'] == 2) ? 'false' : 'true'); // false/true must be string since we're passing it to javascript
 
@@ -113,10 +113,22 @@ class Cdav {
 				}
 			}
 
+			$calendars[] = [
+				'ownernick' => $channel['channel_address'],
+				'displayname' => $channel['channel_name'],
+				'calendarid' => 'calendar',
+				'json_source' => '/calendar/json',
+				'color' => '#3a87ad',
+				'editable' => true,
+				'switch' => get_pconfig(local_channel(), 'cdav_calendar', 'calendar')
+			];
+
 			$o .= replace_macros(get_markup_template('cdav_widget_calendar.tpl'), [
-				'$my_calendars_label' => t('My Calendars'),
+				'$calendars_label' => t('Channel Calendar'),
+				'$calendars' => $calendars,
+				'$my_calendars_label' => t('CalDAV Calendars'),
 				'$my_calendars' => $my_calendars,
-				'$shared_calendars_label' => t('Shared Calendars'),
+				'$shared_calendars_label' => t('Shared CalDAV Calendars'),
 				'$shared_calendars' => $shared_calendars,
 				'$sharee_options' => $sharee_options,
 				'$access_options' => $access_options,
@@ -124,10 +136,11 @@ class Cdav {
 				'$share' => t('Share'),
 				'$edit_label' => t('Calendar name and color'),
 				'$edit' => t('Edit'),
-				'$create_label' => t('Create new calendar'),
+				'$create_label' => t('Create new CalDAV calendar'),
 				'$create' => t('Create'),
 				'$create_placeholder' => t('Calendar Name'),
 				'$tools_label' => t('Calendar Tools'),
+				'$tools_options_label' => [t('Channel Calendars'), t('CalDAV Calendars')],
 				'$import_label' => t('Import calendar'),
 				'$import_placeholder' => t('Select a calendar to import to'),
 				'$upload' => t('Upload'),

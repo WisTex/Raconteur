@@ -1,6 +1,9 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\System;
+
 require_once('include/help.php');
 
 /**
@@ -12,7 +15,7 @@ require_once('include/help.php');
  *
  * The syntax is somewhat strict.
  */
-class Help extends \Zotlabs\Web\Controller {
+class Help extends Controller {
 
 	function get() {
 		nav_set_selected('Help');
@@ -35,7 +38,7 @@ class Help extends \Zotlabs\Web\Controller {
 
 					$o .= '<li><a href="help/' . (($path) ? $path . '/' : '') . $fname . '" >' . ucwords(str_replace('_',' ',notags($fname))) . '</a><br>'
 						. '<b><i>' . 'help/' . (($path) ? $path . '/' : '') . $fname . '</i></b><br>'
-						. '...' . str_replace('$Projectname', \Zotlabs\Lib\System::get_platform_name(), $rr['text']) . '...<br><br></li>';
+						. '...' . str_replace('$Projectname', System::get_platform_name(), $rr['text']) . '...<br><br></li>';
 				}
 				$o .= '</ul>';
 				$o .= '</div>';

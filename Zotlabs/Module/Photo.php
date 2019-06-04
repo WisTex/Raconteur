@@ -37,7 +37,8 @@ class Photo extends \Zotlabs\Web\Controller {
 
 			$x = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
-				'https://w3id.org/security/v1'
+				'https://w3id.org/security/v1',
+				z_root() . ZOT_APSCHEMA_REV
 			]], $obj );
 
 			$headers = [];

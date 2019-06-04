@@ -101,10 +101,6 @@ class Import_items extends \Zotlabs\Web\Controller {
 			import_items($channel,$data['item'],false,((array_key_exists('relocate',$data)) ? $data['relocate'] : null));
 		}
 
-		if(array_key_exists('item_id',$data) && $data['item_id']) {
-			import_item_ids($channel,$data['item_id']);
-		}
-
 		info( t('Import completed') . EOL);
 	}
 

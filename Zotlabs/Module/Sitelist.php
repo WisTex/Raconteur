@@ -1,8 +1,11 @@
 <?php
-namespace Zotlabs\Module; /** @file */
+namespace Zotlabs\Module;
+
+use Zotlabs\Web\Controller;
 
 
-class Sitelist extends \Zotlabs\Web\Controller {
+
+class Sitelist extends Controller {
 
 	function init() {
 	
@@ -14,31 +17,38 @@ class Sitelist extends \Zotlabs\Web\Controller {
 	
 		$sql_order = " order by site_url ";
 		$rand = db_getfunc('rand');
-		if($order == 'random')
+
+		if ($order == 'random') {
 			$sql_order = " order by $rand ";
-	
+		}
+		
 		$sql_limit = " LIMIT $limit OFFSET $start ";
 	
 		$sql_extra = "";
-		if($open)
+
+		if ($open) {
+			// only return sites with open registration
 			$sql_extra = " and site_register = " . intval(REGISTER_OPEN) . " ";
-	
+		}
+		
 		$realm = get_directory_realm();
-		if($realm == DIRECTORY_REALM) {
+
+		if ($realm == DIRECTORY_REALM) {
 			$sql_extra .= " and ( site_realm = '" . dbesc($realm) . "' or site_realm = '') ";
 		}
 		else
 			$sql_extra .= " and site_realm = '" . dbesc($realm) . "' ";
 	
-		$result = array('success' => false);
+		$result = [ 'success' => false ];
 	
 		$r = q("select count(site_url) as total from site where site_type = %d and site_dead = 0 $sql_extra ",
 			intval(SITE_TYPE_ZOT)
 		);
 		
-		if($r)
+		if ($r) {
 			$result['total'] = intval($r[0]['total']);
-	
+		}
+		
 		$result['start'] = $start;
 		$result['limit'] = $limit;	
 	
@@ -53,15 +63,12 @@ class Sitelist extends \Zotlabs\Web\Controller {
 			$result['success'] = true;		
 			$result['results'] = count($r);
 			
-			foreach($r as $rr) {
-				$result['entries'][] = array('url' => $rr['site_url']);
+			foreach ($r as $rv) {
+				$result['entries'][] = [ 'url' => $rv['site_url'] ];
 			}
 	
 		}
 	
-		echo json_encode($result);
-		killme();
-				
-	
+		json_return_and_die($result);
 	}
 }

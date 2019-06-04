@@ -1,6 +1,6 @@
 <?php /** @file */
 
-use Zotlabs\Lib as Zlib;
+use Zotlabs\Lib\Cache;
 
 
 function oembed_replacecb($matches){
@@ -133,7 +133,6 @@ function oembed_fetch_url($embedurl){
 		}
 	}
 
-
 	$txt = null;
 
 	// we should try to cache this and avoid a lookup on each render
@@ -143,10 +142,22 @@ function oembed_fetch_url($embedurl){
 
 	$furl = ((local_channel() && $zrl) ? zid($embedurl) : $embedurl);
 
-	if($action !== 'block') {
-		$txt = Zlib\Cache::get('[' . App::$videowidth . '] ' . $furl);
+	if($action !== 'block' && (! get_config('system','oembed_cache_disable'))) {
+		$txt = Cache::get('[' . App::$videowidth . '] ' . $furl);
 	}
+
+	if(strpos(strtolower($embedurl),'.pdf') !== false) {
+		$action = 'allow';
+		$j = [
+			'html' => '<object data="' . $embedurl . '" type="application/pdf" style="width: 100%; height: 300px;"></object>',
+			'title' => t('View PDF'),
+			'type' => 'pdf'
+		];
 		
+		// set $txt to something so that we don't attempt to fetch what could be a lengthy pdf.
+		$txt = EMPTY_STR;		
+	}
+
 	if(is_null($txt)) {
 
 		$txt = "";
@@ -215,18 +226,10 @@ function oembed_fetch_url($embedurl){
 		// save in cache
 
 		if(! get_config('system','oembed_cache_disable'))
-			Zlib\Cache::set('[' . App::$videowidth . '] ' . $furl, $txt);
+			Cache::set('[' . App::$videowidth . '] ' . $furl, $txt);
 
 	}
 
-	if(strpos(strtolower($embedurl),'.pdf') !== false) {
-		$action = 'allow';
-		$j = [
-			'html' => '<object data="' . $embedurl . '" type="application/pdf" style="width: 100%; height: 300px;"></object>',
-			'title' => t('View PDF'),
-			'type' => 'pdf'
-		];		
-	}
 
 	if(! $j) {
 		$j = json_decode($txt,true);

@@ -334,45 +334,76 @@ function insertCommentAttach(comment,id) {
 
 }
 
+// used by link modal to pass data to callbacks and still allow handler removal
+var currentComment = null;
+var currentID = null;
+
 function insertCommentURL(comment, id) {
+	textarea = document.getElementById("comment-edit-text-" +id);
+    if (textarea.selectionStart || textarea.selectionStart == "0") {
+       var start = textarea.selectionStart;
+       var end = textarea.selectionEnd;	
+       if (end > start) {
+          reply = prompt(aStr['linkurl']);
+          if(reply && reply.length) {
+            textarea.value = textarea.value.substring(0, start) + "[url=" + reply + "]" + textarea.value.substring(start, end) + "[/url]" + textarea.value.substring(end, textarea.value.length);
+          }
+		   return true; 
+       }
+	}
+	
+	if ($('#jot-popup').length != 0) $('#jot-popup').show();
+
+	currentComment = comment;
+	currentID = id;
+	
 	$('#linkModal').modal();
 	$('#id_link_url').focus();
-	$('#link-modal-OKButton').on('click', function() {
-		reply=$('#id_link_url').val();
-		if(reply && reply.length) {
-			var radioValue = $("input[name='link_style']:checked"). val();
-			if(radioValue == '0') {
-				reply = '!' + reply;
-			}
-			var optstr = '';
-			var opts =  $("input[name='oembed']:checked"). val();
-			if(opts) {
-				optstr = optstr + '&oembed=1';
-			}
-			var opts =  $("input[name='zotobj']:checked"). val();
-			if(opts) {
-				optstr = optstr + '&zotobj=1';
-			}
-			reply = bin2hex(reply);
-			$('body').css('cursor', 'wait');
-			$.get('linkinfo?f=&binurl=' + reply + optstr, function(data) {
-				$('#linkModal').modal('hide');
-				$("#comment-edit-text-" + id).focus();
-				$("#comment-edit-text-" + id).addClass("expanded");
-				openMenu("comment-tools-" + id);
-
-				var tmpStr = $("#comment-edit-text-" + id).val();
-
-				textarea = document.getElementById("comment-edit-text-" +id);
-				textarea.value = textarea.value + data;
-				preview_comment(id);
-				$('#id_link_url').val('');
-				$('body').css('cursor', 'auto');
-			});
-		}
-	});
+	$('#link-modal-CancelButton').on('click', commentclearlinkmodal);
+	$('#link-modal-OKButton').on('click', commentgetlinkmodal);
 
 	return true;
+}
+
+function commentclearlinkmodal() {
+	$('#link-modal-OKButton').off('click', commentgetlinkmodal);
+	$('#link-modal-CancelButton').off('click', commentclearlinkmodal);
+}
+
+function commentgetlinkmodal() {
+	var reply=$('#id_link_url').val();
+	if(reply && reply.length) {
+		var radioValue = $("input[name='link_style']:checked"). val();
+		if(radioValue == '0') {
+			reply = '!' + reply;
+		}
+		var optstr = '';
+		var opts =  $("input[name='oembed']:checked"). val();
+		if(opts) {
+			optstr = optstr + '&oembed=1';
+		}
+		var opts =  $("input[name='zotobj']:checked"). val();
+		if(opts) {
+			optstr = optstr + '&zotobj=1';
+		}
+		reply = bin2hex(reply);
+		$('body').css('cursor', 'wait');
+		$.get('linkinfo?f=&binurl=' + reply + optstr, function(data) {
+			$('#linkModal').modal('hide');
+			$("#comment-edit-text-" + currentID).focus();
+			$("#comment-edit-text-" + currentID).addClass("expanded");
+			openMenu("comment-tools-" + currentID);
+			var tmpStr = $("#comment-edit-text-" + currentID).val();
+	
+			textarea = document.getElementById("comment-edit-text-" + currentID);
+			textarea.value = textarea.value + data;
+			preview_comment(currentID);
+			$('#link-modal-OKButton').off('click', commentgetlinkmodal);
+			$('#link-modal-CancelButton').off('click', commentclearlinkmodal);
+			$('#id_link_url').val('');
+			$('body').css('cursor', 'auto');
+		});
+	}
 }
 
 function doFollowAuthor(url) {

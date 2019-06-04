@@ -4,6 +4,7 @@
 	</div>
 	<div class="section-content-wrapper">
 		<form action="register" method="post" id="register-form">
+			<input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
 			{{if $reg_is}}
 			<div class="section-content-warning-wrapper">
 				<div id="register-desc" class="descriptive-paragraph">{{$reg_is}}</div>

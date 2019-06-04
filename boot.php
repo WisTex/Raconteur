@@ -19,7 +19,7 @@ use Zotlabs\Daemon\Master;
 // composer autoloader for all namespaced Classes
 require_once('vendor/autoload.php');
 
-if(file_exists('addon/vendor/autoload.php')) {
+if (file_exists('addon/vendor/autoload.php')) {
 	require_once('addon/vendor/autoload.php');
 }
 
@@ -45,7 +45,7 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '2.14' );
+define ( 'STD_VERSION',             '2.16' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1232 );
@@ -116,7 +116,7 @@ define ('MAX_EVENT_REPEAT_COUNT', 512);
  * either more or less restrictive.
  */
 
-if(! defined('STORAGE_DEFAULT_PERMISSIONS')) {
+if (! defined('STORAGE_DEFAULT_PERMISSIONS')) {
 	define ( 'STORAGE_DEFAULT_PERMISSIONS',   0770 );
 }
 
@@ -342,6 +342,7 @@ define ( 'POLL_OVERWRITE',       0x8000);  // If you vote twice remove the prior
 
 define ( 'UPDATE_FLAGS_UPDATED',  0x0001);
 define ( 'UPDATE_FLAGS_FORCED',   0x0002);
+define ( 'UPDATE_FLAGS_CENSORED', 0x0004);
 define ( 'UPDATE_FLAGS_DELETED',  0x1000);
 
 
@@ -462,12 +463,13 @@ define ( 'NAMESPACE_YMEDIA',          'http://search.yahoo.com/mrss/' );
 
 define ( 'ACTIVITYSTREAMS_JSONLD_REV', 'https://www.w3.org/ns/activitystreams' );
 
-define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.7' );
+define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.8' );
 /**
  * activity stream defines
  */
 
-define ( 'ACTIVITY_PUBLIC_INBOX', 'https://www.w3.org/ns/activitystreams#Public' );
+define ( 'ACTIVITY_PUBLIC_INBOX',  'https://www.w3.org/ns/activitystreams#Public' );
+
 
 define ( 'ACTIVITY_POST',        'Create' );
 define ( 'ACTIVITY_CREATE',      'Create' );
@@ -828,6 +830,7 @@ class App {
 	/**
 	 * App constructor.
 	 */
+
 	public static function init() {
 		// we'll reset this after we read our config file
 		date_default_timezone_set('UTC');
@@ -846,8 +849,8 @@ class App {
 		set_include_path(
 			'include' . PATH_SEPARATOR
 			. 'library' . PATH_SEPARATOR
-			. 'library/langdet' . PATH_SEPARATOR
-			. '.' );
+			. '.'
+		);
 
 		self::$scheme = 'http';
 		if(x($_SERVER,'HTTPS') && $_SERVER['HTTPS'])
@@ -1115,8 +1118,11 @@ class App {
 		self::$meta->set('generator', System::get_platform_name());
 
 		$i = head_get_icon();
+		if (! $i) {
+			$i = System::get_project_icon();
+		}
 		if($i) {
-			head_add_link(['rel' => 'shortcut icon', 'href' => head_get_icon()]);
+			head_add_link(['rel' => 'shortcut icon', 'href' => $i ]);
 		}
 
 		$x = [ 'header' => '' ];
@@ -1590,6 +1596,12 @@ function login($register = false, $form_id = 'main-login', $hiddens = false, $lo
 	// your site.
 
 
+	// If the site supports SSL and this isn't a secure connection, reload the page using https
+	
+	if (intval($_SERVER['SERVER_PORT']) === 80 && strpos(z_root(), 'https://') !== false) {
+		goaway(z_root() . '/' . App::$query_string);
+	}
+
 	$register_policy = get_config('system','register_policy');
 
 	$reglink = get_config('system', 'register_link', z_root() . '/' . ((intval($register_policy) === REGISTER_CLOSED) ? 'pubsites' : 'register'));
@@ -1605,29 +1617,29 @@ function login($register = false, $form_id = 'main-login', $hiddens = false, $lo
 	$dest_url = z_root() . '/' . App::$query_string;
 
 	if(local_channel()) {
-		$tpl = get_markup_template("logout.tpl");
+		$tpl = get_markup_template('logout.tpl');
 	}
 	else {
-		$tpl = get_markup_template("login.tpl");
+		$tpl = get_markup_template('login.tpl');
 		if(strlen(App::$query_string))
 			$_SESSION['login_return_url'] = App::$query_string;
 	}
 
-	$o .= replace_macros($tpl,array(
+	$o .= replace_macros($tpl, [
 		'$dest_url'     => $dest_url,
 		'$login_page'   => $login_page,
 		'$logout'       => t('Logout'),
 		'$login'        => t('Login'),
 		'$remote_login' => t('Remote Authentication'),
 		'$form_id'      => $form_id,
-		'$lname'        => array('username', t('Login/Email') , '', ''),
-		'$lpassword'    => array('password', t('Password'), '', ''),
-		'$remember_me'  => array((($login_page) ? 'remember' : 'remember_me'), t('Remember me'), '', '',array(t('No'),t('Yes'))),
+		'$lname'        => [ 'username', t('Login/Email') , '', '' ],
+		'$lpassword'    => [ 'password', t('Password'), '', '' ],
+		'$remember_me'  => [ (($login_page) ? 'remember' : 'remember_me'), t('Remember me'), '', '', [ t('No'),t('Yes') ] ],
 		'$hiddens'      => $hiddens,
 		'$register'     => $reg,
 		'$lostpass'     => t('Forgot your password?'),
 		'$lostlink'     => t('Password Reset'),
-	));
+	]);
 
 	/**
 	 * @hooks login_hook

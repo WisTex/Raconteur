@@ -1,10 +1,11 @@
 <?php
 namespace Zotlabs\Module;
 
-require_once('include/channel.php');
+use Zotlabs\Web\Controller;
 
+require_once('include/security.php');
 
-class Register extends \Zotlabs\Web\Controller {
+class Register extends Controller {
 
 	function init() {
 	
@@ -39,7 +40,9 @@ class Register extends \Zotlabs\Web\Controller {
 	
 	
 	function post() {
-	
+
+		check_form_security_token_redirectOnErr('/register', 'register');
+
 		$max_dailies = intval(get_config('system','max_daily_registrations'));
 		if($max_dailies) {
 			$r = q("select count(account_id) as total from account where account_created > %s - INTERVAL %s",
@@ -227,11 +230,6 @@ class Register extends \Zotlabs\Web\Controller {
 
 		$perm_roles = \Zotlabs\Access\PermissionRoles::roles();
 
-		// A new account will not have a techlevel, but accounts can also be created by the administrator.
-
-		if((get_account_techlevel() < 4) && $privacy_role !== 'custom')
-			unset($perm_roles[t('Other')]);
-	
 		// Configurable terms of service link
 	
 		$tosurl = get_config('system','tos_url');
@@ -263,7 +261,7 @@ class Register extends \Zotlabs\Web\Controller {
 		$name = array('name', t('Your Name'), ((x($_REQUEST,'name')) ? $_REQUEST['name'] : ''), t('Real names are preferred.'));
 		$nickhub = '@' . str_replace(array('http://','https://','/'), '', get_config('system','baseurl'));
 		$nickname = array('nickname', t('Choose a short nickname'), ((x($_REQUEST,'nickname')) ? $_REQUEST['nickname'] : ''), sprintf( t('Your nickname will be used to create an easy to remember channel address e.g. nickname%s'), $nickhub));
-		$role = array('permissions_role' , t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel permission role for your usage needs and privacy requirements.') . ' <a href="help/member/member_guide#Channel_Permission_Roles" target="_blank">' . t('Read more about channel permission roles') . '</a>',$perm_roles);
+		$role = array('permissions_role' , t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel permission role for your usage needs and privacy requirements.'),$perm_roles);
 		$tos = array('tos', $label_tos, '', '', array(t('no'),t('yes')));
 
 
@@ -274,7 +272,8 @@ class Register extends \Zotlabs\Web\Controller {
 		require_once('include/bbcode.php');
 	
 		$o = replace_macros(get_markup_template('register.tpl'), array(
-	
+
+			'$form_security_token' => get_form_security_token("register"),
 			'$title'        => t('Registration'),
 			'$reg_is'       => $registration_is,
 			'$registertext' => bbcode(get_config('system','register_text')),

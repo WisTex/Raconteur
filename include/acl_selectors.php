@@ -123,7 +123,7 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 		'$aclModalTitle'   => t('Permissions'),
 		'$aclModalDesc'    => $dialog_description,
 		'$aclModalDismiss' => t('Close'),
-		'$helpUrl'         => (($context_help == '') ? '' : (z_root() . '/help/' . $context_help))
+//		'$helpUrl'         => (($context_help == '') ? '' : (z_root() . '/help/' . $context_help))
 	));
 
 	return $o;
@@ -147,11 +147,11 @@ function get_post_aclDialogDescription() {
 	// *shown* the post, istead of who is able to see the post, i.e. make it clear that clicking
 	// the "Show"  button on a group does not post it to the feed of people in that group, it
 	// mearly allows those people to view the post if they are viewing/following this channel.
-	$description = t('Post permissions %s cannot be changed %s after a post is shared.</br />These permissions set who is allowed to view the post.');
+	$description = t('Post permissions cannot be changed after a post is shared.</br />These permissions set who is allowed to view the post.');
 
 	// Lets keep the emphasis styling seperate from the translation. It may change.
 	$emphasisOpen  = '<b><a href="' . z_root() . '/help/acl_dialog_post" target="hubzilla-help">';
 	$emphasisClose = '</a></b>';
 
-	return sprintf($description, $emphasisOpen, $emphasisClose);
+	return $description;
 }

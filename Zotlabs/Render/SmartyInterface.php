@@ -2,7 +2,10 @@
 
 namespace Zotlabs\Render;
 
-class SmartyInterface extends \Smarty {
+use Smarty;
+use App;
+
+class SmartyInterface extends Smarty {
 
 	public $filename;
 
@@ -16,26 +19,27 @@ class SmartyInterface extends \Smarty {
 		// The order is thus very important here
 
 		$template_dirs = array('theme' => "view/theme/$thname/tpl/");
-		if( x(\App::$theme_info,"extends") )
+		if ( x(App::$theme_info,"extends") ) {
 			$template_dirs = $template_dirs + array('extends' => "view/theme/" . \App::$theme_info["extends"] . "/tpl/");
+		}
 		$template_dirs = $template_dirs + array('base' => 'view/tpl/');
 		$this->setTemplateDir($template_dirs);
 
-        $basecompiledir = \App::$config['system']['smarty3_folder'];
+        $basecompiledir = App::$config['system']['smarty3_folder'];
         
 		$this->setCompileDir($basecompiledir.'/compiled/');
 		$this->setConfigDir($basecompiledir.'/config/');
 		$this->setCacheDir($basecompiledir.'/cache/');
 
-		$this->left_delimiter = \App::get_template_ldelim('smarty3');
-		$this->right_delimiter = \App::get_template_rdelim('smarty3');
+		$this->left_delimiter = App::get_template_ldelim('smarty3');
+		$this->right_delimiter = App::get_template_rdelim('smarty3');
 
 		// Don't report errors so verbosely
 		$this->error_reporting = E_ALL & (~E_NOTICE);
 	}
 
 	function parsed($template = '') {
-		if($template) {
+		if ($template) {
 			return $this->fetch('string:' . $template);
 		}
 		return $this->fetch('file:' . $this->filename);

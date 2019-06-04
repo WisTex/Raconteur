@@ -64,7 +64,7 @@ class Share {
 		$obj['content']      = bbcode($this->item['body']);
 		$obj['source'] = [ 
 			'mediaType' => $this->item['mimetype'], 
-			'content' => $this->item['body'] 
+			'content'   => $this->item['body'] 
 		];
 
 		$obj['name']          = $this->item['title'];
@@ -102,13 +102,14 @@ class Share {
 			$pos = strpos($this->item['body'], "[share");
 			$bb = substr($this->item['body'], $pos);
 		} else {
-			$bb = "[share author='".urlencode($this->item['author']['xchan_name']).
-				"' profile='"    . $this->item['author']['xchan_url'] .
-				"' avatar='"     . $this->item['author']['xchan_photo_s'] .
-				"' link='"       . $this->item['plink'] .
-				"' auth='"       . (($this->item['author']['network'] === 'zot') ? 'true' : 'false') .
-				"' posted='"     . $this->item['created'] .
-				"' message_id='" . $this->item['mid'] .
+			$bb = "[share author='" . urlencode($this->item['author']['xchan_name']).
+				"' profile='"       . $this->item['author']['xchan_url'] .
+				"' portable_id='"   . $this->item['author']['xchan_hash'] . 
+				"' avatar='"        . $this->item['author']['xchan_photo_s'] .
+				"' link='"          . $this->item['plink'] .
+				"' auth='"          . (($this->item['author']['network'] === 'zot') ? 'true' : 'false') .
+				"' posted='"        . $this->item['created'] .
+				"' message_id='"    . $this->item['mid'] .
 			"']";
 			if($this->item['title'])
 				$bb .= '[b]'.$this->item['title'].'[/b]'."\r\n";

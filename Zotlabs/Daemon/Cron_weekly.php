@@ -52,7 +52,8 @@ class Cron_weekly {
 		Master::Summon(array('Checksites'));
 			
 		// update searchable doc indexes
-		Master::Summon(array('Importdoc'));
+		// disabled until help system regenerated
+		// Master::Summon(array('Importdoc'));
 
 		/**
 		 * End Cron Weekly

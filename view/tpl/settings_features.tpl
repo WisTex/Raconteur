@@ -4,14 +4,6 @@
 	</div>
 	<form action="settings/features" method="post" autocomplete="off">
 	<input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
-	{{if ! $techlock}}
-		<div class="section-content-tools-wrapper">
-		{{include file="field_select.tpl" field=$techlevel}}
-		</div>
-	{{else}}
-		<input type="hidden" name="techlevel" value="{{$techlevel.2}}" />
-	{{/if}}
-
 	{{if $hiddens}}
 		{{foreach $hiddens as $k => $v}}
 			<input type="hidden" name="feature_{{$k}}" value="{{$v}}" />

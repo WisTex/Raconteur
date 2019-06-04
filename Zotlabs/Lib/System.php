@@ -28,15 +28,11 @@ class System {
 	}
 
 	static public function get_project_icon() {
+		if(is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('icon',App::$config['system'])) {
+			return App::$config['system']['icon'];
+		}		
+		return z_root() . '/images/z-64.png';
 
-		return z_root() . '/images/zap4-64.png';
-
-		if(defined('NOMADIC')) {
-			return '&#x26A1;';
-		}
-		else {
-			return '&#x2638;';
-		}
 	}
 
 
