@@ -2040,7 +2040,10 @@ function account_remove($account_id, $local = true, $unset_session = true) {
 
 	logger('account_remove: ' . $account_id);
 
-	if(! intval($account_id)) {
+	// Global removal (all clones) not currently supported
+	$local = true;
+
+	if (! intval($account_id)) {
 		logger('No account.');
 		return false;
 	}
@@ -2051,7 +2054,7 @@ function account_remove($account_id, $local = true, $unset_session = true) {
 		intval(ACCOUNT_ROLE_ADMIN)
 	);
 
-	if($r !== false && count($r) == 1 && $r[0]['account_id'] == $account_id) {
+	if ($r !== false && count($r) == 1 && $r[0]['account_id'] == $account_id) {
 		logger("Unable to remove the only remaining admin account");
 		return false;
 	}
@@ -2059,18 +2062,19 @@ function account_remove($account_id, $local = true, $unset_session = true) {
 	$r = q("select * from account where account_id = %d limit 1",
 		intval($account_id)
 	);
-	$account_email=$r[0]['account_email'];
-
-	if(! $r) {
+	
+	if (! $r) {
 		logger('No account with id: ' . $account_id);
 		return false;
 	}
 
+	$account_email = $r[0]['account_email'];
+
 	$x = q("select channel_id from channel where channel_account_id = %d",
 		intval($account_id)
 	);
-	if($x) {
-		foreach($x as $xx) {
+	if ($x) {
+		foreach ($x as $xx) {
 			channel_remove($xx['channel_id'],$local,false);
 		}
 	}
@@ -2097,14 +2101,21 @@ function account_remove($account_id, $local = true, $unset_session = true) {
  */
 function channel_remove($channel_id, $local = true, $unset_session = false) {
 
-	if(! $channel_id)
+	if (! $channel_id) {
 		return;
+	}
+
+	// global removal (all clones) not currently supported
+	// hence this operation _may_ leave orphan data on remote servers
+	
+	$local = true;
 
 	logger('Removing channel: ' . $channel_id);
 	logger('local only: ' . intval($local));
 
+	
 	$r = q("select * from channel where channel_id = %d limit 1", intval($channel_id));
-	if(! $r) {
+	if (! $r) {
 		logger('channel not found: ' . $channel_id);
 		return;
 	}
@@ -2118,9 +2129,12 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 	 */
 	call_hooks('channel_remove', $r[0]);
 
-	if(! $local) {
+	
+	if (! $local) {
 
-		if(intval($r[0]['channel_removed'])) {
+		// global removal (all clones) not currently supported
+
+		if (intval($r[0]['channel_removed'])) {
 			// already removed. do not propagate deletion of a channel which
 			// may have been removed locally at some previous time.
 			return;
@@ -2131,7 +2145,7 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 			intval($channel_id)
 		);
 
-		q("delete from pconfig where uid = %d",
+		$r = q("delete from pconfig where uid = %d",
 			intval($channel_id)
 		);
 
@@ -2153,8 +2167,8 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 		where item.uid = %d",
 		intval($channel_id)
 	);
-	if($r) {
-		foreach($r as $rr) {
+	if ($r) {
+		foreach ($r as $rr) {
 			q("delete from iconfig where iid = %d",
 				intval($rr['iid'])
 			);
@@ -2183,21 +2197,18 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 	q("DELETE FROM source WHERE src_channel_id = %d", intval($channel_id));
 
 	$r = q("select hash FROM attach WHERE uid = %d", intval($channel_id));
-	if($r) {
-		foreach($r as $rv) {
+	if ($r) {
+		foreach ($r as $rv) {
 			attach_delete($channel_id,$rv['hash']);
 		}
 	}
 	
-
-
 	$r = q("select id from item where uid = %d", intval($channel_id));
-	if($r) {
-		foreach($r as $rv) {
+	if ($r) {
+		foreach ($r as $rv) {
 			drop_item($rv['id'],false);
 		}
 	}
-
 
 	q("delete from abook where abook_xchan = '%s' and abook_self = 1 ",
 		dbesc($channel['channel_hash'])
@@ -2209,15 +2220,15 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 	);
 
 	// if this was the default channel, set another one as default
-	if(App::$account['account_default_channel'] == $channel_id) {
+	if (App::$account['account_default_channel'] == $channel_id) {
 		$r = q("select channel_id from channel where channel_account_id = %d and channel_removed = 0 limit 1",
 			intval(App::$account['account_id']),
 			intval(PAGE_REMOVED));
 		if ($r) {
 			$rr = q("update account set account_default_channel = %d where account_id = %d",
 				intval($r[0]['channel_id']),
-				intval(App::$account['account_id']));
-
+				intval(App::$account['account_id'])
+			);
 			logger("Default channel deleted, changing default to channel_id " . $r[0]['channel_id']);
 		}
 		else {
@@ -2241,17 +2252,16 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 	$r = q("select hubloc_id from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
 		dbesc($channel['channel_hash'])
 	);
-	if($r)
+	if ($r)
 		$hublocs = count($r);
 
-	if(! $hublocs) {
+	if (! $hublocs) {
 		$r = q("update xchan set xchan_deleted = 1 where xchan_hash = '%s' ",
 			dbesc($channel['channel_hash'])
 		);
 	}
 
 	//remove from file system
-
 
 	$f = 'store/' . $channel['channel_address'];
 	if(is_dir($f)) {
@@ -2260,7 +2270,7 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 
 	Master::Summon([ 'Directory', $channel_id ]);
 
-	if($channel_id == local_channel() && $unset_session) {
+	if ($channel_id == local_channel() && $unset_session) {
 		App::$session->nuke();
 		goaway(z_root());
 	}
@@ -2274,7 +2284,6 @@ function channel_remove_final($channel_id) {
 	q("delete from abconfig where chan = %d", intval($channel_id));
 	q("delete from pconfig where uid = %d", intval($channel_id));
 	
-
 }
 
 

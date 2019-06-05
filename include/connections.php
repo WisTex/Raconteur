@@ -270,12 +270,10 @@ function mark_orphan_hubsxchans() {
 
 function remove_all_xchan_resources($xchan, $channel_id = 0) {
 
-	if(intval($channel_id)) {
+	// $channel_id is reserved for future use.
 
 
-
-	}
-	else {
+	if(intval($channel_id) === 0) {
 
 		if (! $xchan) {
 			return;
@@ -283,16 +281,26 @@ function remove_all_xchan_resources($xchan, $channel_id = 0) {
 
 		$dirmode = intval(get_config('system','directory_mode'));
 
+		// This removes photos this person posted to the photo albums of others.
+		// it isn't a common activity and there typically won't be any except for
+		// repository or group permission roles which allow uploads. 
 
-		$r = q("delete from photo where xchan = '%s'",
-			dbesc($xchan)
-		);
+		// Repeating the above check that $xchan isn't empty because this is the query
+		// we really need to protect from an empty xchan. Yes it is redundant but please do
+		// not remove it or this documentation about why it is here.  
+
+		if ($xchan) {
+			$r = q("delete from photo where xchan = '%s' and photo_usage = 0",
+				dbesc($xchan)
+			);
+		}
+
 		$r = q("select resource_id, resource_type, uid, id from item where ( author_xchan = '%s' or owner_xchan = '%s' ) ",
 			dbesc($xchan),
 			dbesc($xchan)
 		);
-		if($r) {
-			foreach($r as $rr) {
+		if ($r) {
+			foreach ($r as $rr) {
 				drop_item($rr,false);
 			}
 		}
@@ -316,7 +324,7 @@ function remove_all_xchan_resources($xchan, $channel_id = 0) {
 		);
 
 
-		if($dirmode === false || $dirmode == DIRECTORY_MODE_NORMAL) {
+		if ($dirmode === false || $dirmode == DIRECTORY_MODE_NORMAL) {
 
 			$r = q("delete from xchan where xchan_hash = '%s'",
 				dbesc($xchan)
@@ -347,18 +355,22 @@ function remove_all_xchan_resources($xchan, $channel_id = 0) {
 
 function contact_remove($channel_id, $abook_id) {
 
-	if((! $channel_id) || (! $abook_id))
+	if ((! $channel_id) || (! $abook_id)) {
 		return false;
+	}
 
-	logger('removing contact ' . $abook_id . ' for channel ' . $channel_id,LOGGER_DEBUG);
+	logger('removing connection ' . $abook_id . ' for channel ' . $channel_id,LOGGER_DEBUG);
 
 
-	$x = [ 'channel_id' => $channel_id, 'abook_id' => $abook_id ];
+	$x = [
+		'channel_id' => $channel_id,
+		'abook_id'   => $abook_id
+	];
+	
 	call_hooks('connection_remove',$x);
 
-
 	$archive = get_pconfig($channel_id, 'system','archive_removed_contacts');
-	if($archive) {
+	if ($archive) {
 		q("update abook set abook_archived = 1 where abook_id = %d and abook_channel = %d",
 			intval($abook_id),
 			intval($channel_id)
@@ -371,20 +383,22 @@ function contact_remove($channel_id, $abook_id) {
 		intval($channel_id)
 	);
 
-	if(! $r)
+	if (! $r) {
 		return false;
-
+	}
+	
 	$abook = $r[0];
 
-	if(intval($abook['abook_self']))
+	if (intval($abook['abook_self'])) {
 		return false;
+	}
 
 	// remove items in the background as this can take some time
 
 	Master::Summon( [ 'Delxitems', $channel_id, $abook['abook_xchan'] ] );
 
 	
-	q("delete from abook where abook_id = %d and abook_channel = %d",
+	$r = q("delete from abook where abook_id = %d and abook_channel = %d",
 		intval($abook['abook_id']),
 		intval($channel_id)
 	);
@@ -425,7 +439,7 @@ function remove_abook_items($channel_id,$xchan_hash) {
 	}
 
 	$already_saved = [];
-	foreach($r as $rr) {
+	foreach ($r as $rr) {
 		$w = $x = $y = null;
 			
 		// optimise so we only process newly seen parent items
