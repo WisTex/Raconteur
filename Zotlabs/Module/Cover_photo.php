@@ -179,18 +179,17 @@ logger('gis: ' . print_r($gis,true));
 					$p['imgscale'] = 7;
 					$p['photo_usage'] = PHOTO_COVER;
 	
-					$r1 = $im->save($p);
-	
+					$r1 = $im->storeThumbnail($p, PHOTO_RES_COVER_1200);
+
 					$im->doScaleImage(850,310);
 					$p['imgscale'] = 8;
-	
-					$r2 = $im->save($p);
-	
+
+					$r2 = $im->storeThumbnail($p, PHOTO_RES_COVER_850);
 	
 					$im->doScaleImage(425,160);
 					$p['imgscale'] = 9;
 	
-					$r3 = $im->save($p);
+					$r3 = $im->storeThumbnail($p, PHOTO_RES_COVER_425);
 				
 					if($r1 === false || $r2 === false || $r3 === false) {
 						// if one failed, delete them all so we can start over.

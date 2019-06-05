@@ -290,7 +290,7 @@ function photo_upload($channel, $observer, $args) {
 		$ph->scaleImage(1024);
 
 	$p['imgscale'] = 1;
-	$r1 = $ph->save($p);
+	$r1 = $ph->storeThumbnail($p, PHOTO_RES_1024);
 	$url[1] = [
 		'type' => 'Link',
 		'mediaType' => $type,
@@ -305,7 +305,7 @@ function photo_upload($channel, $observer, $args) {
 		$ph->scaleImage(640);
 
 	$p['imgscale'] = 2;
-	$r2 = $ph->save($p);
+	$r2 = $ph->storeThumbnail($p, PHOTO_RES_640);
 	$url[2] = [
 		'type' => 'Link',
 		'mediaType' => $type,
@@ -320,7 +320,7 @@ function photo_upload($channel, $observer, $args) {
 		$ph->scaleImage(320);
 
 	$p['imgscale'] = 3;
-	$r3 = $ph->save($p);
+	$r3 = $ph->storeThumbnail($p, PHOTO_RES_320);
 	$url[3] = [
 		'type' => 'Link',
 		'mediaType' => $type,

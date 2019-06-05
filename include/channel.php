@@ -2145,7 +2145,7 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 			dbesc($channel['channel_hash'])
 		);
 
-		Master::Summon(array('Notifier','purge_all',$channel_id));
+		Master::Summon( [ 'Notifier', 'purge_all', $channel_id ] );
 	}
 
 

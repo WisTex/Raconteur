@@ -277,6 +277,10 @@ function remove_all_xchan_resources($xchan, $channel_id = 0) {
 	}
 	else {
 
+		if (! $xchan) {
+			return;
+		}
+
 		$dirmode = intval(get_config('system','directory_mode'));
 
 

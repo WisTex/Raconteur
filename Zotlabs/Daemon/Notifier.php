@@ -230,7 +230,7 @@ class Notifier {
 			self::$packet_type = 'refresh';
 		}
 		elseif($cmd === 'purge') {
-			$xchan = argv(3);
+			$xchan = $argv[3];
 			logger('notifier: purge: ' . $item_id . ' => ' . $xchan);
 			if (! $xchan) {
 				return;
