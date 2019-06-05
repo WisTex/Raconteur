@@ -24,7 +24,11 @@ class Removeaccount extends \Zotlabs\Web\Controller {
 	
 		$account = \App::get_account();
 		$account_id = get_account_id();
-	
+
+		if (! $account_id) {
+			return;
+		}
+
 		$x = account_verify_password($account['account_email'],$_POST['qxz_password']);
 		if(! ($x && $x['account']))
 			return;

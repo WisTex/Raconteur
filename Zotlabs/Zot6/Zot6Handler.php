@@ -76,8 +76,8 @@ class Zot6Handler implements IHandler {
 			}
 		}
 		else {
-			// system wide refresh
 
+			// system wide refresh
 			$x = Libzot::refresh( [ 'hubloc_id_url' => $hub['hubloc_id_url'] ], null, (($msgtype === 'force_refresh') ? true : false));
 		}
 
@@ -153,6 +153,10 @@ class Zot6Handler implements IHandler {
 
 		$ret = array('success' => false);
 
+		if (! $sender) {
+			return $ret;
+		}
+
 		if ($recipients) {
 			// basically this means "unfriend"
 			foreach ($recipients as $recip) {
@@ -184,10 +188,5 @@ class Zot6Handler implements IHandler {
 
 		return $ret;
 	}
-
-
-
-
-
 
 }

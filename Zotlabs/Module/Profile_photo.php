@@ -126,17 +126,17 @@ class Profile_photo extends Controller {
 					$p['imgscale']    = PHOTO_RES_PROFILE_300;
 					$p['photo_usage'] = (($is_default_profile) ? PHOTO_PROFILE : PHOTO_NORMAL);
 	
-					$r1 = $im->save($p);
+					$r1 = $im->storeThumbnail($p, PHOTO_RES_PROFILE_300);
 	
 					$im->scaleImage(80);
 					$p['imgscale'] = PHOTO_RES_PROFILE_80;
 	
-					$r2 = $im->save($p);
+					$r2 = $im->storeThumbnail($p, PHOTO_RES_PROFILE_80);
 				
 					$im->scaleImage(48);
 					$p['imgscale'] = PHOTO_RES_PROFILE_48;
 	
-					$r3 = $im->save($p);
+					$r3 = $im->storeThumbnail($p, PHOTO_RES_PROFILE_48);
 				
 					if($r1 === false || $r2 === false || $r3 === false) {
 						// if one failed, delete them all so we can start over.
