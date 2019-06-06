@@ -279,29 +279,28 @@ function remove_all_xchan_resources($xchan, $channel_id = 0) {
 			return;
 		}
 
-		$dirmode = intval(get_config('system','directory_mode'));
+		// this function is only to be executed on remote servers where only the xchan exists and there is no associated channel.
+		
+		$c = q("select channel_id from channel where channel_hash = '%s'",
+			dbesc($xchan)
+		);
 
-		// This removes photos this person posted to the photo albums of others.
-		// it isn't a common activity and there typically won't be any except for
-		// repository or group permission roles which allow uploads. 
-
-		// Repeating the above check that $xchan isn't empty because this is the query
-		// we really need to protect from an empty xchan. Yes it is redundant but please do
-		// not remove it or this documentation about why it is here.  
-
-		if ($xchan) {
-			$r = q("delete from photo where xchan = '%s' and photo_usage = 0",
-				dbesc($xchan)
-			);
+		if ($c) {
+			return;
 		}
 
-		$r = q("select resource_id, resource_type, uid, id from item where ( author_xchan = '%s' or owner_xchan = '%s' ) ",
+		$dirmode = intval(get_config('system','directory_mode'));
+
+		// note: we will not remove "guest" submitted files/photos this xchan created in the file spaces of others.
+		// We will however remove all their posts and comments.
+		
+		$r = q("select id from item where ( author_xchan = '%s' or owner_xchan = '%s' ) ",
 			dbesc($xchan),
 			dbesc($xchan)
 		);
 		if ($r) {
 			foreach ($r as $rr) {
-				drop_item($rr,false);
+				drop_item($rr['id'],false);
 			}
 		}
 		$r = q("delete from event where event_xchan = '%s'",
@@ -310,10 +309,7 @@ function remove_all_xchan_resources($xchan, $channel_id = 0) {
 		$r = q("delete from pgrp_member where xchan = '%s'",
 			dbesc($xchan)
 		);
-		$r = q("delete from mail where ( from_xchan = '%s' or to_xchan = '%s' )",
-			dbesc($xchan),
-			dbesc($xchan)
-		);
+
 		$r = q("delete from xlink where ( xlink_xchan = '%s' or xlink_link = '%s' )",
 			dbesc($xchan),
 			dbesc($xchan)
@@ -323,6 +319,9 @@ function remove_all_xchan_resources($xchan, $channel_id = 0) {
 			dbesc($xchan)
 		);
 
+		$r = q("delete from abconfig where xchan = '%s'",
+			dbesc($xchan)
+		);
 
 		if ($dirmode === false || $dirmode == DIRECTORY_MODE_NORMAL) {
 

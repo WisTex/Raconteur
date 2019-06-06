@@ -2127,41 +2127,8 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 	 *   Called when removing a channel.
 	 *   * \e array with entry from channel tabel for $channel_id
 	 */
-	call_hooks('channel_remove', $r[0]);
 
-	
-	if (! $local) {
-
-		// global removal (all clones) not currently supported
-
-		if (intval($r[0]['channel_removed'])) {
-			// already removed. do not propagate deletion of a channel which
-			// may have been removed locally at some previous time.
-			return;
-		}
-
-		$r = q("update channel set channel_deleted = '%s', channel_removed = 1 where channel_id = %d",
-			dbesc(datetime_convert()),
-			intval($channel_id)
-		);
-
-		$r = q("delete from pconfig where uid = %d",
-			intval($channel_id)
-		);
-
-		logger('deleting hublocs',LOGGER_DEBUG);
-
-		$r = q("update hubloc set hubloc_deleted = 1 where hubloc_hash = '%s'",
-			dbesc($channel['channel_hash'])
-		);
-
-		$r = q("update xchan set xchan_deleted = 1 where xchan_hash = '%s'",
-			dbesc($channel['channel_hash'])
-		);
-
-		Master::Summon( [ 'Notifier', 'purge_all', $channel_id ] );
-	}
-
+	call_hooks('channel_remove', $channel);
 
 	$r = q("select iid from iconfig left join item on item.id = iconfig.iid
 		where item.uid = %d",
@@ -2183,7 +2150,6 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 	q("DELETE FROM pgrp WHERE uid = %d", intval($channel_id));
 	q("DELETE FROM pgrp_member WHERE uid = %d", intval($channel_id));
 	q("DELETE FROM event WHERE uid = %d", intval($channel_id));
-	q("DELETE FROM mail WHERE channel_id = %d", intval($channel_id));
 	q("DELETE FROM menu WHERE menu_channel_id = %d", intval($channel_id));
 	q("DELETE FROM menu_item WHERE mitem_channel_id = %d", intval($channel_id));
 
@@ -2220,6 +2186,7 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 	);
 
 	// if this was the default channel, set another one as default
+
 	if (App::$account['account_default_channel'] == $channel_id) {
 		$r = q("select channel_id from channel where channel_account_id = %d and channel_removed = 0 limit 1",
 			intval(App::$account['account_id']),
@@ -2252,19 +2219,23 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 	$r = q("select hubloc_id from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
 		dbesc($channel['channel_hash'])
 	);
-	if ($r)
+	if ($r) {
 		$hublocs = count($r);
-
+	}
+	
 	if (! $hublocs) {
 		$r = q("update xchan set xchan_deleted = 1 where xchan_hash = '%s' ",
 			dbesc($channel['channel_hash'])
 		);
+		// send a cleanup message to other servers
+		Master::Summon( [ 'Notifier', 'purge_all', $channel_id ] );
 	}
 
 	//remove from file system
 
 	$f = 'store/' . $channel['channel_address'];
-	if(is_dir($f)) {
+	// This shouldn't happen but make sure the address isn't empty because that could do bad things
+	if (is_dir($f) && $channel['channel_address']) {
 		@rrmdir($f);
 	}
 
@@ -2283,10 +2254,8 @@ function channel_remove_final($channel_id) {
 	q("delete from abook where abook_channel = %d", intval($channel_id));
 	q("delete from abconfig where chan = %d", intval($channel_id));
 	q("delete from pconfig where uid = %d", intval($channel_id));
-	
+	q("delete from channel where channel_id = %d", intval($channel_id));	
 }
-
-
 
 
 /**

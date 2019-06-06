@@ -57,7 +57,7 @@ define ( 'PROJECT_BASE',   __DIR__ );
  *
  * Contains a HTML line break (br) element and a real carriage return with line
  * feed for the source.
- * This can be used in HTML and JavaScript where needed a line break.
+ * This can be used in HTML and JavaScript wherever a line break is required.
  */
 define ( 'EOL',                    '<br>' . "\r\n"        );
 define ( 'EMPTY_STR',              ''                     );
