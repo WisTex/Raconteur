@@ -1257,6 +1257,9 @@ function z_status_editor($a, $x, $popup = false) {
 	$writefiles = (($mimetype === 'text/bbcode') ? perm_is_allowed($x['profile_uid'], get_observer_hash(), 'write_storage') : false);
 	if(x($x, 'hide_attach'))
 		$writefiles = false;
+	if(perm_is_allowed($x['profile_uid'],get_observer_hash(),'moderated')) {
+		$writefiles = false;
+	}
 
 	$layout = ((x($x,'layout')) ? $x['layout'] : '');
 
