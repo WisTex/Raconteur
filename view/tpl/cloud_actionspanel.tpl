@@ -8,7 +8,7 @@
 		<input id="files-mkdir" type="text" name="filename" class="form-control form-group">
 		<div class="pull-right btn-group">
 			<div class="btn-group">
-				{{if $lockstate}}
+				{{if $lockstate && $aclselect}}
 				<button class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#aclModal" type="button">
 					<i class="jot-perms-icon fa fa-{{$lockstate}}"></i>
 				</button>
@@ -30,7 +30,7 @@
 		{{include file="field_checkbox.tpl" field=$notify}}
 		<div class="pull-right btn-group">
 			<div class="btn-group">
-				{{if $lockstate}}
+				{{if $lockstate && $aclselect}}
 				<button class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#aclModal" type="button">
 					<i class="jot-perms-icon fa fa-{{$lockstate}}"></i>
 				</button>
