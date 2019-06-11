@@ -1424,12 +1424,13 @@ function sync_files($channel, $files) {
 
 						$time = datetime_convert();
 
-						$parr = array('hash' => $channel['channel_hash'],
-							'time' => $time,
-							'resource' => $att['hash'],
-							'revision' => 0,
+						$parr = [
+							'hash'      => $channel['channel_hash'],
+							'time'      => $time,
+							'resource'  => $att['hash'],
+							'revision'  => 0,
 							'signature' => Libzot::sign($channel['channel_hash'] . '.' . $time, $channel['channel_prvkey'])
-						);
+						];
 
 						$store_path = $newfname;
 
@@ -1504,23 +1505,25 @@ function sync_files($channel, $files) {
 						);
 					}
 
-					if (intval($p['imgscale']) === 0 && $p['os_storage']) {
-						$p['content'] = $store_path;
+					if (intval($p['os_storage'])) {
+						$p['content'] = $store_path . ((intval($p['imgscale'])) ? '-' . $p['imgscale'] : EMPTY_STR);
 					}
 					else {
-						$p['content'] = (($p['content'])? base64_decode($p['content']) : '');
+						$p['content'] = (($p['content']) ? base64_decode($p['content']) : '');
 					}
+
 					if (intval($p['imgscale']) && (! $p['content'])) {
 
 						$time = datetime_convert();
 
-						$parr = array('hash' => $channel['channel_hash'],
-							'time' => $time,
-							'resource' => $att['hash'],
-							'revision' => 0,
-							'signature' => zot_sign($channel['channel_hash'] . '.' . $time, $channel['channel_prvkey']),
+						$parr = [
+							'hash'       => $channel['channel_hash'],
+							'time'       => $time,
+							'resource'   => $att['hash'],
+							'revision'   => 0,
+							'signature'  => Libzot::sign($channel['channel_hash'] . '.' . $time, $channel['channel_prvkey']),
 							'resolution' => $p['imgscale']
-						);
+						];
 
 						$stored_image = $newfname . '-' . intval($p['imgscale']);
 

@@ -1,6 +1,9 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
+use Zotlabs\Web\HTTPSig;
+
 /**
  * module: getfile
  * 
@@ -24,7 +27,8 @@ namespace Zotlabs\Module;
 require_once('include/attach.php');
 
 
-class Getfile extends \Zotlabs\Web\Controller {
+
+class Getfile extends Controller {
 
 	function post() {
 
@@ -53,7 +57,7 @@ class Getfile extends \Zotlabs\Web\Controller {
 					continue;
 				}
 
-				$verified = \Zotlabs\Web\HTTPSig::verify('');	
+				$verified = HTTPSig::verify('');	
 				if($verified && $verified['header_signed'] && $verified['header_valid']) {
 					$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' or hubloc_addr = '%s' limit 1",
 						dbesc($verified['signer']),
