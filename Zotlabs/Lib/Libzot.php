@@ -1681,24 +1681,23 @@ class Libzot {
 					// Conversation fetches (e.g. $request == true) take place for 
 					//   a) new comments on expired posts
 					//   b) hyperdrive (friend-of-friend) conversations
-					//   c) Repeats of posts by others
 
 
 					// over-ride normal connection permissions for hyperdrive (friend-of-friend) conversations
-					// (if hyperdrive is enabled) and repeated posts by a friend.
+					// (if hyperdrive is enabled).
  					// If $allowed is already true, this is probably the conversation of a direct friend or a
 					// conversation fetch for a new comment on an expired post
 					// Comments of all these activities are allowed and will only be rejected (later) if the parent
 					// doesn't exist. 
 
-//					if ($perm === 'send_stream') {
-//						if (get_pconfig($channel['channel_id'],'system','hyperdrive',true) || $arr['verb'] === 'Announce') {
-//							$allowed = true;
-//						}
-//					}
-//					else {
+					if ($perm === 'send_stream') {
+						if (get_pconfig($channel['channel_id'],'system','hyperdrive',true)) {
+							$allowed = true;
+						}
+					}
+					else {
 						$allowed = true;
-//					}
+					}
 
 					$friendofriend = true;
 				}
@@ -1965,9 +1964,6 @@ class Libzot {
 	static public function hyperdrive_enabled($channel,$item) {
 
 		if (get_pconfig($channel['channel_id'],'system','hyperdrive',true)) {
-			return true;
-		}
-		if ($item['verb'] === 'Announce' && get_pconfig($channel['channel_id'],'system','hyperdrive_announce',true)) {
 			return true;
 		}
 		return false;

@@ -936,6 +936,25 @@ class ThreadItem {
 			$this->owner_name = $this->data['owner']['xchan_name'];
 			$this->wall_to_wall = true;
 		}
+
+		// present friend-of-friend conversations from hyperdrive as relayed posts from the first friend
+		// we find among the respondents.
+		
+		if($this->is_toplevel() && (! ($this->data['author']['abook_id'] && $this->data['owner']['abook_id']))) {
+			$children = $this->data['children'];
+			if($children) {
+				foreach($children as $child) {
+					if($child['author']['abook_id']) {
+						$this->owner_url = chanlink_hash($child['author']['xchan_hash']);
+						$this->owner_photo = $child['author']['xchan_photo_m'];
+						$this->owner_name = $child['author']['xchan_name'];
+						$this->wall_to_wall = true;
+						break;
+					}
+				}
+			}
+		}
+
 	}
 
 	private function is_wall_to_wall() {

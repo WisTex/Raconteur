@@ -136,9 +136,6 @@
 									<i class="fa fa-cog"></i>
 								</button>
 								<div class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="wall-item-menu-{{$item.id}}">
-									{{if $item.share}}
-									<a class="dropdown-item" href="#" onclick="jotShare({{$item.id}},{{$item.item_type}}); return false"><i class="generic-icons-nav fa fa-fw fa-retweet" title="{{$item.share}}"></i>{{$item.share}}</a>
-									{{/if}}
 									{{if $item.embed}}
 									<a class="dropdown-item" href="#" onclick="jotEmbed({{$item.id}},{{$item.item_type}}); return false"><i class="generic-icons-nav fa fa-fw fa-share" title="{{$item.embed}}"></i>{{$item.embed}}</a>
 									{{/if}}

@@ -4398,10 +4398,6 @@ function sync_an_item($channel_id,$item_id) {
 function fix_attached_photo_permissions($uid,$xchan_hash,$body,
 	$str_contact_allow,$str_group_allow,$str_contact_deny,$str_group_deny) {
 
-	if(get_pconfig($uid,'system','force_public_uploads',1)) {
-		$str_contact_allow = $str_group_allow = $str_contact_deny = $str_group_deny = '';
-	}
-
 	$match = null;
 	// match img and zmg image links
 	if(preg_match_all("/\[[zi]mg(.*?)\](.*?)\[\/[zi]mg\]/",$body,$match)) {
@@ -4502,10 +4498,6 @@ function fix_attached_photo_permissions($uid,$xchan_hash,$body,
 
 function fix_attached_file_permissions($channel,$observer_hash,$body,
 	$str_contact_allow,$str_group_allow,$str_contact_deny,$str_group_deny) {
-
-	if(get_pconfig($channel['channel_id'],'system','force_public_uploads',1)) {
-		$str_contact_allow = $str_group_allow = $str_contact_deny = $str_group_deny = '';
-	}
 
 	$match = false;
 
