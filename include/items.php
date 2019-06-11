@@ -3408,6 +3408,13 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 
 	if($ok_to_delete) {
 
+		if ($item['resource_type'] === 'event') {
+			$x = q("delete from event where event_hash = '%s' and uid = %d",
+				dbesc($item['resource_id']),
+				intval($item['uid'])
+			);
+		}
+		
 		// set the deleted flag immediately on this item just in case the
 		// hook calls a remote process which loops. We'll delete it properly in a second.
 

@@ -1932,6 +1932,7 @@ class Activity {
 			$s['item_deleted'] = 1;
 		}
 
+
 		$s['verb']     = self::activity_mapper($act->type);
 
 		$s['obj_type'] = self::activity_obj_mapper($act->obj['type']);

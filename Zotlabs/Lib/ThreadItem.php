@@ -193,7 +193,6 @@ class ThreadItem {
 			$drop = [ 'dropping' => true, 'delete' => t('Admin Delete') ];
 		}
 
-// FIXME
 		if($observer_is_pageowner) {		
 			$multidrop = array(
 				'select' => t('Select'), 
@@ -215,9 +214,8 @@ class ThreadItem {
 		$canvote = false;
 
 		// process action responses - e.g. like/dislike/attend/agree/whatever
-		$response_verbs = array('like');
-//		if(feature_enabled($conv->get_profile_owner(),'dislike'))
-			$response_verbs[] = 'dislike';
+		$response_verbs = [ 'like', 'dislike' ];
+
 		if($item['obj_type'] === ACTIVITY_OBJ_EVENT) {
 			$response_verbs[] = 'attendyes';
 			$response_verbs[] = 'attendno';
@@ -239,9 +237,6 @@ class ThreadItem {
 			}
 		}
 
-//		if(! feature_enabled($conv->get_profile_owner(),'dislike'))
-//			unset($conv_responses['dislike']);
-  
 		$responses = get_responses($conv_responses,$response_verbs,$this,$item);
 
 		$my_responses = [];
@@ -259,17 +254,17 @@ class ThreadItem {
 		}
 		$like_button_label = tt('Like','Likes',$like_count,'noun');
 
-//		if (feature_enabled($conv->get_profile_owner(),'dislike')) {
-			$dislike_count = ((x($conv_responses['dislike'],$item['mid'])) ? $conv_responses['dislike'][$item['mid']] : '');
-			$dislike_list = ((x($conv_responses['dislike'],$item['mid'])) ? $conv_responses['dislike'][$item['mid'] . '-l'] : '');
-			$dislike_button_label = tt('Dislike','Dislikes',$dislike_count,'noun');
-			if (($dislike_list) && (count($dislike_list) > MAX_LIKERS)) {
-				$dislike_list_part = array_slice($dislike_list, 0, MAX_LIKERS);
-				array_push($dislike_list_part, '<a class="dropdown-item" href="#" data-toggle="modal" data-target="#dislikeModal-' . $this->get_id() . '"><b>' . t('View all') . '</b></a>');
-			} else {
-				$dislike_list_part = '';
-			}
-//		}
+
+		$dislike_count = ((x($conv_responses['dislike'],$item['mid'])) ? $conv_responses['dislike'][$item['mid']] : '');
+		$dislike_list = ((x($conv_responses['dislike'],$item['mid'])) ? $conv_responses['dislike'][$item['mid'] . '-l'] : '');
+		$dislike_button_label = tt('Dislike','Dislikes',$dislike_count,'noun');
+		if (($dislike_list) && (count($dislike_list) > MAX_LIKERS)) {
+			$dislike_list_part = array_slice($dislike_list, 0, MAX_LIKERS);
+			array_push($dislike_list_part, '<a class="dropdown-item" href="#" data-toggle="modal" data-target="#dislikeModal-' . $this->get_id() . '"><b>' . t('View all') . '</b></a>');
+		} else {
+			$dislike_list_part = '';
+		}
+
 
 		$showlike    = ((x($conv_responses['like'],$item['mid'])) ? format_like($conv_responses['like'][$item['mid']],$conv_responses['like'][$item['mid'] . '-l'],'like',$item['mid']) : '');
 		$showdislike = ((x($conv_responses['dislike'],$item['mid']))  
@@ -284,7 +279,6 @@ class ThreadItem {
 		$this->check_wall_to_wall();
 		
 		if($this->is_toplevel()) {
-			// FIXME check this permission
 			if(($conv->get_profile_owner() == local_channel()) && (! array_key_exists('real_uid',$item))) {
 
 				$star = array(
@@ -304,8 +298,6 @@ class ThreadItem {
 		$unverified = '' ; // (($this->is_wall_to_wall() && (! intval($item['item_verified']))) ? t('Message cannot be verified') : '');
 
 
-
-		// FIXME - check this permission
 		if($conv->get_profile_owner() == local_channel()) {
 			$tagger = array(
 				'tagit' => t("Add Tag"),

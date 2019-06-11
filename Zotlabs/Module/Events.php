@@ -759,7 +759,64 @@ class Events extends Controller {
 					dbesc($event_id),
 					intval(local_channel())
 				);
-				if($r) {
+				if ($r) {
+					$i = q("select * from item where resource_type = 'event' and resource_id = '%s' and uid = %d",
+						dbesc($event_id),
+						intval(local_channel())
+					);
+
+					if ($i) {
+
+						$can_delete = false;
+						$local_delete = true;
+
+						$ob_hash = get_observer_hash();
+						if($ob_hash && ($ob_hash === $i[0]['author_xchan'] || $ob_hash === $i[0]['owner_xchan'] || $ob_hash === $i[0]['source_xchan'])) {
+							$can_delete = true;
+						}
+
+						// The site admin can delete any post/item on the site.
+						// If the item originated on this site+channel the deletion will propagate downstream. 
+						// Otherwise just the local copy is removed.
+
+						if(is_site_admin()) {
+							$local_delete = true;
+							if(intval($i[0]['item_origin']))
+								$can_delete = true;
+						}
+
+
+						if($can_delete || $local_delete) {
+	
+							// if this is a different page type or it's just a local delete
+							// but not by the item author or owner, do a simple deletion
+
+							$complex = false;	
+
+							if(intval($i[0]['item_type']) || ($local_delete && (! $can_delete))) {
+								drop_item($i[0]['id']);
+							}
+							else {
+								// complex deletion that needs to propagate and be performed in phases
+								drop_item($i[0]['id'],true,DROPITEM_PHASE1);
+								$complex = true;
+							}
+
+							$ii = q("select * from item where id = %d",
+								intval($i[0]['id'])
+							);
+							if($ii) {
+								xchan_query($ii);
+								$sync_item = fetch_post_tags($ii);
+								Libsync::build_sync_packet($i[0]['uid'],array('item' => array(encode_item($sync_item[0],true))));
+							}
+
+							if($complex) {
+								tag_deliver($i[0]['uid'],$i[0]['id']);
+							}
+						}
+					}
+
 					$r = q("update item set resource_type = '', resource_id = '' where resource_type = 'event' and resource_id = '%s' and uid = %d",
 						dbesc($event_id),
 						intval(local_channel())

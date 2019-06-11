@@ -1817,7 +1817,7 @@ class Libzot {
 
 				// remove_community_tag is a no-op if this isn't a community tag activity
 				self::remove_community_tag($sender,$arr,$channel['channel_id']);
-	
+
 				// set these just in case we need to store a fresh copy of the deleted post.
 				// This could happen if the delete got here before the original post did.
 
