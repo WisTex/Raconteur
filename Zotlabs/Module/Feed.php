@@ -1,9 +1,11 @@
 <?php
-
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
 
-class Feed extends \Zotlabs\Web\Controller {
+require_once('include/feedutils.php');
+
+class Feed extends Controller {
 
 	function init() {
 	
@@ -20,21 +22,20 @@ class Feed extends \Zotlabs\Web\Controller {
 		$params['cat']       = ((x($_REQUEST,'cat'))        ? escape_tags($_REQUEST['cat']) : '');
 		$params['compat']    = ((x($_REQUEST,'compat'))     ? intval($_REQUEST['compat'])   : 0);	
 
-		if(! in_array($params['direction'],['asc','desc'])) {
+		if (! in_array($params['direction'],['asc','desc'])) {
 			$params['direction'] = 'desc';
 		}
 
-		if(argc() > 1) {
+		if (argc() > 1) {
 
-			if(observer_prohibited(true)) {
+			if (observer_prohibited(true)) {
 				killme();
 			}
 
 			$channel = channelx_by_nick(argv(1));
-			if(! $channel) {
+			if (! $channel) {
 				killme();
-			}
-	
+			}	
 	 
 			logger('public feed request from ' . $_SERVER['REMOTE_ADDR'] . ' for ' . $channel['channel_address']);
 	

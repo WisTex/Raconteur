@@ -74,7 +74,3 @@ These are handled in a similar fashion to their counterparts in the Unix shell
 or C/C++ languages. Do not confuse the argc(),argv() functions with the
 global variables $argc,$argv which are passed to command line programs. These 
 are handled separately by command line and Zotlabs/Daemon class functions. 
-
-
-
- 
