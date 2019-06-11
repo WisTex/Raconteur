@@ -34,6 +34,8 @@ class Getfile extends Controller {
 
 		$header_verified = false;
 
+		logger('getfile_args: ' . print_r($_POST,true));
+
 		$hash     = $_POST['hash'];
 		$resource = $_POST['resource'];
 		$revision = intval($_POST['revision']);
