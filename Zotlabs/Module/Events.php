@@ -22,7 +22,9 @@ class Events extends Controller {
 	
 		if(! local_channel())
 			return;
-	
+
+		$channel = App::get_channel();
+
 		if(($_FILES) && array_key_exists('userfile',$_FILES) && intval($_FILES['userfile']['size'])) {
 			$src = $_FILES['userfile']['tmp_name'];
 			if($src) {
@@ -151,7 +153,6 @@ class Events extends Controller {
 
 		$share = 1;	
 
-		$channel = App::get_channel();
 	
 		$acl = new AccessControl(false);
 	
@@ -193,7 +194,7 @@ class Events extends Controller {
 		}
 	
 		$post_tags = array();
-		$channel = App::get_channel();
+
 		$ac = $acl->get();
 	
 		if(strlen($categories)) {
@@ -269,6 +270,7 @@ class Events extends Controller {
 	
 	function get() {
 	
+		
 		if(argc() > 2 && argv(1) == 'ical') {
 			$event_id = argv(2);
 	
@@ -295,6 +297,8 @@ class Events extends Controller {
 			return;
 		}
 	
+		$channel = App::get_channel();
+
 		nav_set_selected('Events');
 	
 		if((argc() > 2) && (argv(1) === 'ignore') && intval(argv(2))) {
@@ -324,8 +328,6 @@ class Events extends Controller {
 		));
 	
 		$o = '';
-	
-		$channel = App::get_channel();
 	
 		$mode = 'view';
 		$y = 0;
@@ -751,7 +753,7 @@ class Events extends Controller {
 				dbesc($event_id),
 				intval(local_channel())
 			);
-	
+
 			$sync_event = $r[0];
 	
 			if($r) {
@@ -784,7 +786,6 @@ class Events extends Controller {
 							if(intval($i[0]['item_origin']))
 								$can_delete = true;
 						}
-
 
 						if($can_delete || $local_delete) {
 	
