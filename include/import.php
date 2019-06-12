@@ -921,7 +921,7 @@ function sync_events($channel, $events) {
 
 		foreach ($events as $event) {
 
-			if ((! $event['event_hash']) || (! $event['start'])) {
+			if ((! $event['event_hash']) || (! $event['dtstart'])) {
 				continue;
 			}
 
