@@ -930,6 +930,13 @@ function sync_events($channel, $events) {
 					dbesc($event['event_hash']),
 					intval($channel['channel_id'])
 				);
+				$r = q("select id from item where resource_type = 'event' and resource_id = '%s' and uid = %d",
+					dbesc($event['event_hash']),
+					intval($channel['channel_id'])
+				);
+				if ($r) {
+					drop_item($r[0]['id'],false,(($event['event_xchan'] === $channel['channel_hash']) ? DROPITEM_PHASE1 : DROPITEM_NORMAL));
+				}
 				continue;
 			}
 
