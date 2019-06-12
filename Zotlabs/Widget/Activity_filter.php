@@ -28,6 +28,19 @@ class Activity_filter {
 			'title' => t('Show posts that mention or involve me')
 		];
 
+		if(x($_GET,'verb')) {
+			$verb_active = (($_GET['verb'] == 1) ? 'active' : '');
+			$filter_active = 'events';
+		}
+
+		$tabs[] = [
+			'label' => t('Events'),
+			'icon' => 'calendar',
+			'url' => z_root() . '/' . $cmd . '/?verb=%2EEvent',
+			'sel' => $verb_active,
+			'title' => t('Show posts that include events')
+		];
+
 		if(feature_enabled(local_channel(),'star_posts')) {
 			if(x($_GET,'star')) {
 				$starred_active = (($_GET['star'] == 1) ? 'active' : '');
