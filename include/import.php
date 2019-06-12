@@ -1286,7 +1286,8 @@ function sync_files($channel, $files) {
 					$attachment_stored = false;
 					convert_oldfields($att,'data','content');
 
-					if ($att['deleted']) {
+					if (intval($att['deleted'])) {
+						logger('deleting attachment');
 						attach_delete($channel,$att['hash']);
 						continue;
 					}
