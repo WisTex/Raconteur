@@ -43,12 +43,14 @@ class Getfile extends Controller {
 
 		if(argc() > 1) {
 			$verify_hash = argv(1);
-			if($verify_hash !== $hash) {
+			if($verify_hash !== $resource) {
+				logger('resource mismatch');
 				killme();
 			}
 		}
 
 		if(! $hash) {
+			logger('no sender hash');
 			killme();
 		}
 

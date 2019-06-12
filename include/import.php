@@ -4,6 +4,7 @@ use Zotlabs\Lib\IConfig;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Daemon\Master;
 
 require_once('include/menu.php');
 
@@ -862,7 +863,7 @@ function import_items($channel, $items, $sync = false, $relocate = null) {
 				// deliver singletons if we have any
 				if ($item_result && $item_result['success']) {
 					// Not applicable to Zap as it does not federate with singletons. 
-					// Zotlabs\Daemon\Master::Summon( [ 'Notifier','single_activity',$item_result['item_id'] ]);
+					// Master::Summon( [ 'Notifier','single_activity',$item_result['item_id'] ]);
 				}
 			}
 		}
@@ -1237,7 +1238,7 @@ function import_mail($channel, $mails, $sync = false) {
 			$mail_id = mail_store($m);
 			if ($sync && $mail_id) {
 				// Not applicable to Zap which does not federate with singletons
-				// Zotlabs\Daemon\Master::Summon(array('Notifier','single_mail',$mail_id));
+				// Master::Summon(array('Notifier','single_mail',$mail_id));
 			}
  		}
 	}
@@ -1449,7 +1450,7 @@ function sync_files($channel, $files) {
 							'Accept'           => 'application/x-zot+json', 
 							'Sigtoken'         => random_string(),
 							'Host'             => $m['host'],
-							'(request-target)' => 'post ' . $fetch_url . '/' . $att['hash']
+							'(request-target)' => 'post ' . $m['path'] . '/' . $att['hash']
 						];
 
 						$headers = HTTPSig::create_sig($headers,$channel['channel_prvkey'],	channel_url($channel),true,'sha512');
@@ -1525,7 +1526,10 @@ function sync_files($channel, $files) {
 							'resolution' => $p['imgscale']
 						];
 
+
 						$stored_image = $newfname . '-' . intval($p['imgscale']);
+
+						logger('fetching_photo: ' . $stored_image);
 
 						$fp = fopen($stored_image,'w');
 						if (! $fp) {
@@ -1534,14 +1538,13 @@ function sync_files($channel, $files) {
 						}
 						$redirects = 0;
 
-
 						$m = parse_url($fetch_url);
 
 						$headers = [ 
 							'Accept'           => 'application/x-zot+json', 
 							'Sigtoken'         => random_string(),
 							'Host'             => $m['host'],
-							'(request-target)' => 'post ' . $fetch_url . '/' . $att['hash']
+							'(request-target)' => 'post ' . $m['path'] . '/' . $att['hash']
 						];
 
 						$headers = HTTPSig::create_sig($headers,$channel['channel_prvkey'],	channel_url($channel),true,'sha512');
@@ -1550,8 +1553,10 @@ function sync_files($channel, $files) {
 
 						fclose($fp);
 
-						$p['content'] = file_get_contents($stored_image);
-						unlink($stored_image);
+						if (! intval($p['os_storage'])) {
+							$p['content'] = file_get_contents($stored_image);
+							unlink($stored_image);
+						}
 					}
 
 					if (!isset($p['display_path'])) {
@@ -1586,7 +1591,7 @@ function sync_files($channel, $files) {
 				}
 			}
 
-			\Zotlabs\Daemon\Master::Summon([ 'Thumbnail' , $att['hash'] ]);
+			Master::Summon([ 'Thumbnail' , $att['hash'] ]);
 
 			if ($f['item']) {
 				sync_items($channel,$f['item'],
