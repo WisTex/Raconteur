@@ -1281,6 +1281,8 @@ function sync_files($channel, $files) {
 				continue;
 			}
 
+			$has_undeleted_attachments = false;
+			
 			if ($f['attach']) {
 				foreach ($f['attach'] as $att) {
 					$attachment_stored = false;
@@ -1288,10 +1290,11 @@ function sync_files($channel, $files) {
 
 					if (intval($att['deleted'])) {
 						logger('deleting attachment');
-						attach_delete($channel,$att['hash']);
+						attach_delete($channel['channel_id'],$att['hash']);
 						continue;
 					}
 
+					$has_undeleted_attachments = true;
 					$attach_exists = false;
 					$x = attach_by_hash($att['hash'],$channel['channel_hash']);
 					logger('sync_files duplicate check: attach_exists=' . $attach_exists, LOGGER_DEBUG);
@@ -1467,7 +1470,7 @@ function sync_files($channel, $files) {
 					}
 				}
 			}
-			if (! $attachment_stored) {
+			if (($has_undeleted_attachments) && (! $attachment_stored)) {
 				/// @TODO should we queue this and retry or delete everything or what?
 				logger('attachment store failed',LOGGER_NORMAL,LOG_ERR);
 			}
