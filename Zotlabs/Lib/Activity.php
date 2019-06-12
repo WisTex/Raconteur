@@ -1928,7 +1928,7 @@ class Activity {
 			$s['item_deleted'] = 1;
 		}
 		
-		if ($act->type === 'Delete' && $act->obj['type'] === 'Tombstone') {
+		if ($act->type === 'Delete') {
 			$s['item_deleted'] = 1;
 		}
 
