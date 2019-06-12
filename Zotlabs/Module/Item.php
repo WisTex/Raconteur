@@ -1422,7 +1422,7 @@ class Item extends Controller {
 		
 		if((argc() == 3) && (argv(1) === 'drop') && intval(argv(2))) {
 	
-			$i = q("select id, uid, item_origin, author_xchan, owner_xchan, source_xchan, item_type from item where id = %d limit 1",
+			$i = q("select id, uid, item_origin, resource_type, resource_id, author_xchan, owner_xchan, source_xchan, item_type from item where id = %d limit 1",
 				intval(argv(2))
 			);
 	
@@ -1454,7 +1454,24 @@ class Item extends Controller {
 					notice( t('Permission denied.') . EOL);
 					return;
 				}
-	
+
+				if ($i[0]['resource_type'] === 'event') {
+					// delete and sync the event separately
+					$r = q("SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
+						dbesc($i[0]['resource_id']),
+						intval($i[0]['uid'])
+					);
+					if ($r) {
+						$sync_event = $r[0];
+						q("delete from event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
+							dbesc($i[0]['resource_id']),
+							intval($i[0]['uid'])
+						);
+						$sync_event['event_deleted'] = 1;
+						Libsync::build_sync_packet($i[0]['uid'],array('event' => array($sync_event)));
+					}
+				}
+
 				// if this is a different page type or it's just a local delete
 				// but not by the item author or owner, do a simple deletion
 
