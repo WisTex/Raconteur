@@ -340,6 +340,7 @@ class Apps {
 			'View Profile' => t('View Profile'),
 			'Photos' => t('Photos'), 
 			'Events' => t('Events'), 
+			'No Comment' => t('No Comment'),
 			'Directory' => t('Directory'), 
 			'Help' => t('Help'),
 			'Mail' => t('Mail'),
