@@ -2276,7 +2276,7 @@ class Libzot {
 				intval($uid)
 			);
 			if ($i) {
-				if ($i[0]['event_xchan']) === $sender) {
+				if ($i[0]['event_xchan'] === $sender) {
 					q("delete from event where event_hash = '%s' and uid = %d",
 						dbesc($item['resource_id']),
 						intval($uid)
