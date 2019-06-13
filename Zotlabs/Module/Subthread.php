@@ -115,7 +115,7 @@ class Subthread extends Controller {
 	
 		$body = $item['body'];
 
-		$obj = Activity::fetch_item( [ 'id' => $item['mid'] ]));
+		$obj = Activity::fetch_item( [ 'id' => $item['mid'] ] );
 		$objtype = $obj['type'];
 
 		if (! intval($item['item_thread_top']))
