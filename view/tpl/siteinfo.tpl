@@ -20,7 +20,7 @@
 
 <h2>{{$prj_header}}</h2>
 
-<div>{{$prj_name}} ({{$z_server_role}})</div>
+<div>{{$prj_name}}</div>
 
 {{if $prj_version}}
 <div>{{$prj_version}}</div>
@@ -29,11 +29,11 @@
 
 <h3>{{$prj_linktxt}}</h3>
 
-<div>{{$prj_link}}</div>
+<div><a href="{{$prj_link}}">{{$prj_link}}</a></div>
 
 <h3>{{$prj_srctxt}}</h3>
 
-<div>{{$prj_src}}</div>
+<div><a href="{{$prj_src}}">{{$prj_src}}</a></div>
 
 <br><br>
 <div>{{$prj_transport}} ({{$transport_link}})</div>
