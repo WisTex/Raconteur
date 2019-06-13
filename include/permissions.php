@@ -123,10 +123,15 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
 		// if you've moved elsewhere, you will only have read only access
 
 		if(($observer_xchan) && ($r[0]['channel_hash'] === $observer_xchan)) {
+
 			if($r[0]['channel_moved'] && (in_array($perm_name,$blocked_anon_perms)))
 				$ret[$perm_name] = false;
 			else
 				$ret[$perm_name] = true;
+			// moderated is a negative permission, don't moderate your own posts	
+			if($perm_name === 'moderated')
+				$ret[$perm_name] = false;
+
 			continue;
 		}
 
@@ -318,6 +323,9 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
 	// in which case you will have read_only access
 
 	if($r[0]['channel_hash'] === $observer_xchan) {
+		// moderated is a negative permission
+		if($permission === 'moderated')
+			return false;
 		if($r[0]['channel_moved'] && (in_array($permission,$blocked_anon_perms)))
 			return false;
 		else

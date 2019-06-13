@@ -79,9 +79,8 @@
 						<div class="settings-common-perms">
 							{{$profile_in_dir}}
 							{{$suggestme}}
-							{{*include file="field_checkbox.tpl" field=$blocktags*}}
-							{{include file="field_checkbox.tpl" field=$public_uploads}}
 							{{include file="field_input.tpl" field=$expire}}
+							{{include file="field_checkbox.tpl" field=$hyperdrive}}
 						</div>
 						{{if $permcat_enable}}
 						{{include file="field_select.tpl" field=$defpermcat}}

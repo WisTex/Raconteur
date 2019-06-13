@@ -43,13 +43,13 @@ class PermissionRoles {
 				$ret['perms_auto'] = false;
 				$ret['default_collection'] = true;
 				$ret['directory_publish'] = true;
-				$ret['online'] = true;
+				$ret['online'] = false;
 				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
+					'view_stream', 'view_profile', 'view_storage',
 					'view_pages', 'send_stream', 'post_wall', 'post_comments'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
-
+				$ret['limits']['view_contacts'] = PERMS_SPECIFIC;
 				break;
 
 			case 'forum':
@@ -58,7 +58,7 @@ class PermissionRoles {
 				$ret['directory_publish'] = true;
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
+					'view_stream', 'view_profile', 'view_contacts', 'view_storage', 'write_storage',
 					'view_pages', 'post_wall', 'post_comments'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
@@ -85,10 +85,11 @@ class PermissionRoles {
 				$ret['directory_publish'] = true;
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
+					'view_stream', 'view_profile', 'view_contacts', 'view_storage', 'write_storage',
 					'view_pages', 'post_wall', 'post_comments'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
+				$ret['limits']['view_contacts'] = PERMS_SPECIFIC;
 				break;
 
 			case 'collection':
@@ -110,10 +111,11 @@ class PermissionRoles {
 				$ret['directory_publish'] = true;
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
+					'view_stream', 'view_profile', 'view_storage',
 					'view_pages', 'post_comments'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
+				$ret['limits']['view_contacts'] = PERMS_SPECIFIC;
 				break;
 
 			case 'feed':

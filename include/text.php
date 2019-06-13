@@ -1649,6 +1649,14 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 
 	$event = (($item['obj_type'] === ACTIVITY_OBJ_EVENT) ? format_event_obj($item['obj']) : false);
 
+	// This is not the most pleasant UI element possible, but this is difficult to add to one of the templates.
+	// Eventually we may wish to add/remove to/from calendar in the message title area but it will take a chunk
+	// of code re-factoring to make that happen.
+
+	if($event['header'] && $item['resource_id']) {
+		$event['header'] .= '<i class="fa fa-asterisk" title="' . t('Added to your calendar') . '"></i>';
+	}
+
 	$prep_arr = array(
 		'item' => $item,
 		'html' => $event ? $event['content'] : $s,

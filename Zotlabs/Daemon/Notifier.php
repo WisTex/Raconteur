@@ -245,15 +245,17 @@ class Notifier {
 			logger('notifier: purge_all: ' . $item_id);
 			self::$channel = channelx_by_n($item_id);
 
-			self::$recipients = array();
+			self::$recipients = [];
 			$r = q("select abook_xchan from abook where abook_channel = %d and abook_self = 0",
 				intval($item_id)
 			);
-			if($r) {
-				foreach($r as $rr) {
-					self::$recipients[] = $rr['abook_xchan'];
-				}
+			if (! $r) {
+				return;
 			}
+			foreach ($r as $rr) {
+				self::$recipients[] = $rr['abook_xchan'];
+			}
+
 			self::$private = false;
 			self::$packet_type = 'purge';
 		}

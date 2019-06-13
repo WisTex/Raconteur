@@ -1,6 +1,7 @@
-<?php /** @file */
+<?php
 
-require_once("include/bbcode.php");
+use Zotlabs\Lib\Api_router;
+
 require_once("include/conversation.php");
 require_once("include/oauth.php");
 require_once("include/html2plain.php");
@@ -12,14 +13,14 @@ require_once('include/api_zot.php');
 
 	/*
 	 *
-	 * Hubzilla API. 
+	 * Zot API. 
 	 *
 	 */
 
 
 	$API = array();
 
-	$called_api = Null;
+	$called_api = null;
 
 	// All commands which require authentication accept a "channel" parameter
 	// which is the left hand side of the channel address/nickname.
@@ -31,33 +32,34 @@ require_once('include/api_zot.php');
 		$aid = get_account_id();
 		$channel = App::get_channel();
 		
-		if(($aid) && (x($_REQUEST,'channel'))) {
+		if (($aid) && (x($_REQUEST,'channel'))) {
 
 			// Only change channel if it is different than the current channel
 
-			if($channel && x($channel,'channel_address') && $channel['channel_address'] != $_REQUEST['channel']) {
+			if ($channel && x($channel,'channel_address') && $channel['channel_address'] != $_REQUEST['channel']) {
 				$c = q("select channel_id from channel where channel_address = '%s' and channel_account_id = %d limit 1",
 					dbesc($_REQUEST['channel']),
 					intval($aid)
 				);
-				if((! $c) || (! change_channel($c[0]['channel_id'])))
+				if ((! $c) || (! change_channel($c[0]['channel_id'])))
 					return false;
 			}
 		}			
-		if ($_SESSION['allow_api'])
+		if ($_SESSION['allow_api']) {
 			return local_channel();
+		}
 		return false;
 	}
 
 
-	function api_date($str){
-		//Wed May 23 06:01:13 +0000 2007
+	function api_date($str) {
+		// Wed May 23 06:01:13 +0000 2007
 		return datetime_convert('UTC', 'UTC', $str, 'D M d H:i:s +0000 Y' );
 	}
 
 
 	function api_register_func($path, $func, $auth = false) {
-		\Zotlabs\Lib\Api_router::register($path,$func,$auth);
+		Api_router::register($path,$func,$auth);
 	}
 
 	
@@ -65,14 +67,14 @@ require_once('include/api_zot.php');
 	 *  MAIN API ENTRY POINT  *
 	 **************************/
 
-	function api_call(){
+	function api_call() {
 
 		$p    = App::$cmd;
 		$type = null;
 
-		if(strrpos($p,'.')) {
+		if (strrpos($p,'.')) {
 			$type = substr($p,strrpos($p,'.')+1);
-			if(strpos($type,'/') === false) {
+			if (strpos($type,'/') === false) {
 				$p = substr($p,0,strrpos($p,'.'));
 				// recalculate App argc,argv since we just extracted the type from it
 				App::$argv = explode('/',$p);
@@ -80,19 +82,20 @@ require_once('include/api_zot.php');
 			}
 		}
 
-		if((! $type) || (! in_array($type, [ 'json', 'xml', 'rss', 'as', 'atom' ])))
+		if ((! $type) || (! in_array($type, [ 'json', 'xml', 'rss', 'as', 'atom' ]))) {
 			$type = 'json';
+		}
 
-		$info = \Zotlabs\Lib\Api_router::find($p);
+		$info = Api_router::find($p);
 
-		if(in_array($type, [ 'rss', 'atom', 'as' ])) {
+		if (in_array($type, [ 'rss', 'atom', 'as' ])) {
 			// These types no longer supported.
 			$info = false;
 		}
 
 		logger('API info: ' . $p . ' type: ' . $type . ' ' . print_r($info,true), LOGGER_DEBUG,LOG_INFO);
 
-		if($info) {
+		if ($info) {
 
 			if ($info['auth'] === true && api_user() === false) {
 				api_login();
@@ -107,10 +110,11 @@ require_once('include/api_zot.php');
 
 			$r = call_user_func($info['func'],$type);
 
-			if($r === false) 
+			if ($r === false) {
 				return;
+			}
 
-			switch($type) {
+			switch ($type) {
 				case 'xml':
 					header ('Content-Type: text/xml');
 					return $r; 
@@ -118,8 +122,9 @@ require_once('include/api_zot.php');
 				case 'json':
 					header ('Content-Type: application/json');
 					// Lookup JSONP to understand these lines. They provide cross-domain AJAX ability.
-					if ($_GET['callback'])
+					if ($_GET['callback']) {
 						$r = $_GET['callback'] . '(' . $r . ')' ;
+					}
 					return $r; 
 					break;
 			}
@@ -133,7 +138,7 @@ require_once('include/api_zot.php');
 		header('HTTP/1.1 404 Not Found');
 		logger('API call not implemented: ' . App::$query_string . ' - ' . print_r($_REQUEST,true));
 		$r = '<status><error>not implemented</error></status>';
-		switch($type){
+		switch ($type){
 			case 'xml':
 				header ('Content-Type: text/xml');
 				return '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . $r;
@@ -159,17 +164,17 @@ require_once('include/api_zot.php');
 
 	function api_apply_template($templatename, $type, $data){
 
-		switch($type){
+		switch ($type){
 			case 'xml':
-				if($data) {
-					foreach($data as $k => $v)
+				if ($data) {
+					foreach ($data as $k => $v)
 						$ret = arrtoxml(str_replace('$','',$k),$v);
 				}
 				break;
 			case 'json':
 			default:
-				if($data) {
-					foreach($data as $rv) {
+				if ($data) {
+					foreach ($data as $rv) {
 						$ret = json_encode($rv);
 					}
 				}
@@ -180,20 +185,21 @@ require_once('include/api_zot.php');
 	}
 	
 
-
-
 	function api_client_register($type) {
 
-		$ret = array();
+		$ret = [];
 		$key = random_string(16);
 		$secret = random_string(16);
 		$name = trim(escape_tags($_REQUEST['application_name']));
-		if(! $name)
+		if (! $name) {
 			json_return_and_die($ret);
-		if(is_array($_REQUEST['redirect_uris']))
+		}
+		if (is_array($_REQUEST['redirect_uris'])) {
 			$redirect = trim($_REQUEST['redirect_uris'][0]);
-		else
+		}
+		else {
 			$redirect = trim($_REQUEST['redirect_uris']);
+		}
 		$grant_types = trim($_REQUEST['grant_types']);
 		$scope = trim($_REQUEST['scope']);
 		$icon = trim($_REQUEST['logo_uri']);
@@ -213,15 +219,14 @@ require_once('include/api_zot.php');
 		json_return_and_die($ret);
 	}
 
-
-
-	function api_oauth_request_token( $type){
-		try{
+	function api_oauth_request_token($type) {
+		try {
 			$oauth = new ZotOAuth1();
 			$req = OAuth1Request::from_request();
 			logger('Req: ' . var_export($req,true),LOGGER_DATA);
 			$r = $oauth->fetch_request_token($req);
-		}catch(Exception $e){
+		}
+		catch(Exception $e) {
 			logger('oauth_exception: ' . print_r($e->getMessage(),true));
 			echo 'error=' . OAuth1Util::urlencode_rfc3986($e->getMessage()); 
 			killme();
@@ -230,8 +235,8 @@ require_once('include/api_zot.php');
 		killme();	
 	}
 
-	function api_oauth_access_token( $type){
-		try{
+	function api_oauth_access_token($type) {
+		try {
 			$oauth = new ZotOAuth1();
 			$req   = OAuth1Request::from_request();
 			$r     = $oauth->fetch_access_token($req);

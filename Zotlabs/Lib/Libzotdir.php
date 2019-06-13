@@ -132,16 +132,18 @@ class Libzotdir {
 		$pubforums = self::get_directory_setting($observer, 'chantype');
 
 		$hide_local = intval(get_config('system','localdir_hide'));
-		if($hide_local)
+		if ($hide_local) {
 			$globaldir = 1;
+		}
 
 
 		// Build urls without order and pubforums so it's easy to tack on the changed value
 		// Probably there's an easier way to do this
 
 		$directory_sort_order = get_config('system','directory_sort_order');
-		if(! $directory_sort_order)
+		if (! $directory_sort_order) {
 			$directory_sort_order = 'date';
+		}
 
 		$current_order = (($_REQUEST['order']) ? $_REQUEST['order'] : $directory_sort_order);
 		$suggest = (($_REQUEST['suggest']) ? '&suggest=' . $_REQUEST['suggest'] : '');

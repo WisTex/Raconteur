@@ -3384,6 +3384,9 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 
 	$item = $r[0];
 
+	// logger('dropped_item: ' . print_r($item,true),LOGGER_ALL);
+
+
 	$linked_item = (($item['resource_id'] && $item['resource_type'] && in_array($item['resource_type'], $linked_resource_types)) ? true : false);
 
 	$ok_to_delete = false;
@@ -3407,7 +3410,7 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 		$ok_to_delete = true;
 
 	if($ok_to_delete) {
-
+		
 		// set the deleted flag immediately on this item just in case the
 		// hook calls a remote process which loops. We'll delete it properly in a second.
 
@@ -3419,6 +3422,13 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 		else {
 			$r = q("UPDATE item SET item_deleted = 1 WHERE id = %d",
 				intval($item['id'])
+			);
+		}
+
+		if ($item['resource_type'] === 'event' ) {
+			q("delete from event where event_hash = '%s' and uid = %d",
+				dbesc($item['resource_id']),
+				intval($item['uid'])
 			);
 		}
 
@@ -3484,7 +3494,7 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
  */
 function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
 
-	$linked_item = (($item['resource_id']) ? true : false);
+	$linked_item = (($item['resource_id'] && in_array($item['resource_type'],['photo'])) ? true : false);
 
 	logger('item: ' . $item['id'] . ' stage: ' . $stage . ' force: ' . $force, LOGGER_DATA);
 
@@ -4398,10 +4408,6 @@ function sync_an_item($channel_id,$item_id) {
 function fix_attached_photo_permissions($uid,$xchan_hash,$body,
 	$str_contact_allow,$str_group_allow,$str_contact_deny,$str_group_deny) {
 
-	if(get_pconfig($uid,'system','force_public_uploads',1)) {
-		$str_contact_allow = $str_group_allow = $str_contact_deny = $str_group_deny = '';
-	}
-
 	$match = null;
 	// match img and zmg image links
 	if(preg_match_all("/\[[zi]mg(.*?)\](.*?)\[\/[zi]mg\]/",$body,$match)) {
@@ -4502,10 +4508,6 @@ function fix_attached_photo_permissions($uid,$xchan_hash,$body,
 
 function fix_attached_file_permissions($channel,$observer_hash,$body,
 	$str_contact_allow,$str_group_allow,$str_contact_deny,$str_group_deny) {
-
-	if(get_pconfig($channel['channel_id'],'system','force_public_uploads',1)) {
-		$str_contact_allow = $str_group_allow = $str_contact_deny = $str_group_deny = '';
-	}
 
 	$match = false;
 

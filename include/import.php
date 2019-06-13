@@ -4,6 +4,7 @@ use Zotlabs\Lib\IConfig;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Daemon\Master;
 
 require_once('include/menu.php');
 
@@ -862,7 +863,7 @@ function import_items($channel, $items, $sync = false, $relocate = null) {
 				// deliver singletons if we have any
 				if ($item_result && $item_result['success']) {
 					// Not applicable to Zap as it does not federate with singletons. 
-					// Zotlabs\Daemon\Master::Summon( [ 'Notifier','single_activity',$item_result['item_id'] ]);
+					// Master::Summon( [ 'Notifier','single_activity',$item_result['item_id'] ]);
 				}
 			}
 		}
@@ -920,7 +921,7 @@ function sync_events($channel, $events) {
 
 		foreach ($events as $event) {
 
-			if ((! $event['event_hash']) || (! $event['start'])) {
+			if ((! $event['event_hash']) || (! $event['dtstart'])) {
 				continue;
 			}
 
@@ -929,6 +930,13 @@ function sync_events($channel, $events) {
 					dbesc($event['event_hash']),
 					intval($channel['channel_id'])
 				);
+				$r = q("select id from item where resource_type = 'event' and resource_id = '%s' and uid = %d",
+					dbesc($event['event_hash']),
+					intval($channel['channel_id'])
+				);
+				if ($r) {
+					drop_item($r[0]['id'],false,(($event['event_xchan'] === $channel['channel_hash']) ? DROPITEM_PHASE1 : DROPITEM_NORMAL));
+				}
 				continue;
 			}
 
@@ -1237,7 +1245,7 @@ function import_mail($channel, $mails, $sync = false) {
 			$mail_id = mail_store($m);
 			if ($sync && $mail_id) {
 				// Not applicable to Zap which does not federate with singletons
-				// Zotlabs\Daemon\Master::Summon(array('Notifier','single_mail',$mail_id));
+				// Master::Summon(array('Notifier','single_mail',$mail_id));
 			}
  		}
 	}
@@ -1280,16 +1288,20 @@ function sync_files($channel, $files) {
 				continue;
 			}
 
+			$has_undeleted_attachments = false;
+			
 			if ($f['attach']) {
 				foreach ($f['attach'] as $att) {
 					$attachment_stored = false;
 					convert_oldfields($att,'data','content');
 
-					if ($att['deleted']) {
-						attach_delete($channel,$att['hash']);
+					if (intval($att['deleted'])) {
+						logger('deleting attachment');
+						attach_delete($channel['channel_id'],$att['hash']);
 						continue;
 					}
 
+					$has_undeleted_attachments = true;
 					$attach_exists = false;
 					$x = attach_by_hash($att['hash'],$channel['channel_hash']);
 					logger('sync_files duplicate check: attach_exists=' . $attach_exists, LOGGER_DEBUG);
@@ -1424,12 +1436,13 @@ function sync_files($channel, $files) {
 
 						$time = datetime_convert();
 
-						$parr = array('hash' => $channel['channel_hash'],
-							'time' => $time,
-							'resource' => $att['hash'],
-							'revision' => 0,
+						$parr = [
+							'hash'      => $channel['channel_hash'],
+							'time'      => $time,
+							'resource'  => $att['hash'],
+							'revision'  => 0,
 							'signature' => Libzot::sign($channel['channel_hash'] . '.' . $time, $channel['channel_prvkey'])
-						);
+						];
 
 						$store_path = $newfname;
 
@@ -1448,7 +1461,7 @@ function sync_files($channel, $files) {
 							'Accept'           => 'application/x-zot+json', 
 							'Sigtoken'         => random_string(),
 							'Host'             => $m['host'],
-							'(request-target)' => 'post ' . $fetch_url . '/' . $att['hash']
+							'(request-target)' => 'post ' . $m['path'] . '/' . $att['hash']
 						];
 
 						$headers = HTTPSig::create_sig($headers,$channel['channel_prvkey'],	channel_url($channel),true,'sha512');
@@ -1464,7 +1477,7 @@ function sync_files($channel, $files) {
 					}
 				}
 			}
-			if (! $attachment_stored) {
+			if (($has_undeleted_attachments) && (! $attachment_stored)) {
 				/// @TODO should we queue this and retry or delete everything or what?
 				logger('attachment store failed',LOGGER_NORMAL,LOG_ERR);
 			}
@@ -1504,25 +1517,30 @@ function sync_files($channel, $files) {
 						);
 					}
 
-					if (intval($p['imgscale']) === 0 && $p['os_storage']) {
-						$p['content'] = $store_path;
+					if (intval($p['os_storage'])) {
+						$p['content'] = $store_path . ((intval($p['imgscale'])) ? '-' . $p['imgscale'] : EMPTY_STR);
 					}
 					else {
-						$p['content'] = (($p['content'])? base64_decode($p['content']) : '');
+						$p['content'] = (($p['content']) ? base64_decode($p['content']) : '');
 					}
-					if (intval($p['imgscale']) && (! $p['content'])) {
+
+					if (intval($p['imgscale']) && ((intval($p['os_storage'])) || (! $p['content']))) {
 
 						$time = datetime_convert();
 
-						$parr = array('hash' => $channel['channel_hash'],
-							'time' => $time,
-							'resource' => $att['hash'],
-							'revision' => 0,
-							'signature' => zot_sign($channel['channel_hash'] . '.' . $time, $channel['channel_prvkey']),
+						$parr = [
+							'hash'       => $channel['channel_hash'],
+							'time'       => $time,
+							'resource'   => $att['hash'],
+							'revision'   => 0,
+							'signature'  => Libzot::sign($channel['channel_hash'] . '.' . $time, $channel['channel_prvkey']),
 							'resolution' => $p['imgscale']
-						);
+						];
+
 
 						$stored_image = $newfname . '-' . intval($p['imgscale']);
+
+						logger('fetching_photo: ' . $stored_image);
 
 						$fp = fopen($stored_image,'w');
 						if (! $fp) {
@@ -1531,14 +1549,13 @@ function sync_files($channel, $files) {
 						}
 						$redirects = 0;
 
-
 						$m = parse_url($fetch_url);
 
 						$headers = [ 
 							'Accept'           => 'application/x-zot+json', 
 							'Sigtoken'         => random_string(),
 							'Host'             => $m['host'],
-							'(request-target)' => 'post ' . $fetch_url . '/' . $att['hash']
+							'(request-target)' => 'post ' . $m['path'] . '/' . $att['hash']
 						];
 
 						$headers = HTTPSig::create_sig($headers,$channel['channel_prvkey'],	channel_url($channel),true,'sha512');
@@ -1547,8 +1564,10 @@ function sync_files($channel, $files) {
 
 						fclose($fp);
 
-						$p['content'] = file_get_contents($stored_image);
-						unlink($stored_image);
+						if (! intval($p['os_storage'])) {
+							$p['content'] = file_get_contents($stored_image);
+							unlink($stored_image);
+						}
 					}
 
 					if (!isset($p['display_path'])) {
@@ -1583,7 +1602,7 @@ function sync_files($channel, $files) {
 				}
 			}
 
-			\Zotlabs\Daemon\Master::Summon([ 'Thumbnail' , $att['hash'] ]);
+			Master::Summon([ 'Thumbnail' , $att['hash'] ]);
 
 			if ($f['item']) {
 				sync_items($channel,$f['item'],

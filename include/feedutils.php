@@ -1953,7 +1953,7 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
 		$o .= '<content type="' . $type . '" >' . xmlify(prepare_text($body,$item['mimetype'])) . '</content>' . "\r\n";
 	}
 
-	$o .= '<id>' . 'X-ZOT:' . xmlify($item['mid']) . '</id>' . "\r\n";
+	$o .= '<id>' . xmlify($item['mid']) . '</id>' . "\r\n";
 	$o .= '<published>' . xmlify(datetime_convert('UTC','UTC',$item['created'] . '+00:00',ATOM_TIME)) . '</published>' . "\r\n";
 	$o .= '<updated>' . xmlify(datetime_convert('UTC','UTC',$item['edited'] . '+00:00',ATOM_TIME)) . '</updated>' . "\r\n";
 

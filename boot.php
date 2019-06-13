@@ -45,7 +45,7 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '2.16' );
+define ( 'STD_VERSION',             '3.0' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1232 );
@@ -57,7 +57,7 @@ define ( 'PROJECT_BASE',   __DIR__ );
  *
  * Contains a HTML line break (br) element and a real carriage return with line
  * feed for the source.
- * This can be used in HTML and JavaScript where needed a line break.
+ * This can be used in HTML and JavaScript wherever a line break is required.
  */
 define ( 'EOL',                    '<br>' . "\r\n"        );
 define ( 'EMPTY_STR',              ''                     );

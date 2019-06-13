@@ -382,9 +382,17 @@ class Network extends Controller {
 		}
 	
 		if ($verb) {
-			$sql_extra .= sprintf(" AND item.verb like '%s' ",
-				dbesc(protect_sprintf('%' . $verb . '%'))
-			);
+			if (substr($verb,0,1) === '.') {
+				$verb = substr($verb,1);
+				$sql_extra .= sprintf(" AND item.obj_type like '%s' ",
+					dbesc(protect_sprintf('%' . $verb . '%'))
+				);				
+			}
+			else {
+				$sql_extra .= sprintf(" AND item.verb like '%s' ",
+					dbesc(protect_sprintf('%' . $verb . '%'))
+				);
+			}
 		}
 	
 		if (strlen($file)) {
