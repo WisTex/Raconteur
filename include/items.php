@@ -3384,6 +3384,9 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 
 	$item = $r[0];
 
+	// logger('dropped_item: ' . print_r($item,true),LOGGER_ALL);
+
+
 	$linked_item = (($item['resource_id'] && $item['resource_type'] && in_array($item['resource_type'], $linked_resource_types)) ? true : false);
 
 	$ok_to_delete = false;
@@ -3491,7 +3494,7 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
  */
 function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
 
-	$linked_item = (($item['resource_id']) ? true : false);
+	$linked_item = (($item['resource_id'] && in_array($item['resource_type'],['photo'])) ? true : false);
 
 	logger('item: ' . $item['id'] . ' stage: ' . $stage . ' force: ' . $force, LOGGER_DATA);
 
