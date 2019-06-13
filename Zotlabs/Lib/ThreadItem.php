@@ -448,7 +448,7 @@ class ThreadItem {
 			'tagger'    => ((feature_enabled($conv->get_profile_owner(),'commtag')) ? $tagger : ''),
 			'filer'     => ((feature_enabled($conv->get_profile_owner(),'filing')) ? $filer : ''),
 			'bookmark'  => (($conv->get_profile_owner() == local_channel() && local_channel() && $has_bookmarks) ? t('Save Bookmarks') : ''),
-			'addtocal'  => (($has_event) ? t('Add to Calendar') : ''),
+			'addtocal'  => (($has_event && ! $item['resource_id']) ? t('Add to Calendar') : ''),
 			'drop'      => $drop,
 			'multidrop' => ((feature_enabled($conv->get_profile_owner(),'multi_delete')) ? $multidrop : ''),
                         'dropdown_extras' => $dropdown_extras,

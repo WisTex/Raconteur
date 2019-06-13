@@ -1220,7 +1220,7 @@ function z_status_editor($a, $x, $popup = false) {
 	if(x($x, 'hide_voting'))
 		$feature_voting = false;
 	
-	$feature_nocomment = feature_enabled($x['profile_uid'], 'disable_comments');
+	$feature_nocomment = Apps::system_app_installed($x['profile_uid'], 'No Comment');
 	if(x($x, 'disable_comments'))
 		$feature_nocomment = false;
 

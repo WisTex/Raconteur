@@ -110,6 +110,7 @@ function format_event_obj($jobject) {
 			'$dtend_label'	 => t('Finishes:'),
 			'$dtend_title'	 => datetime_convert('UTC','UTC',$dtend, ((strpos($object['startTime'],'Z')) ? ATOM_TIME : 'Y-m-d\TH:i:s' )),
 			'$dtend_dt'	 => ((strpos($object['startTime'],'Z')) ? day_translate(datetime_convert('UTC', date_default_timezone_get(), $dtend , $bd_format )) :  day_translate(datetime_convert('UTC', 'UTC', $dtend , $bd_format )))
+
 		));
 
 		$event['content'] = replace_macros(get_markup_template('event_item_content.tpl'),array(

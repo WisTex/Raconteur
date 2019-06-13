@@ -1649,6 +1649,10 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 
 	$event = (($item['obj_type'] === ACTIVITY_OBJ_EVENT) ? format_event_obj($item['obj']) : false);
 
+	if($event['header'] && $item['resource_id']) {
+		$event['header'] .= '<i class="fa fa-asterisk" title="' . t('Added to your calendar') . '"></i>';
+	}
+
 	$prep_arr = array(
 		'item' => $item,
 		'html' => $event ? $event['content'] : $s,
