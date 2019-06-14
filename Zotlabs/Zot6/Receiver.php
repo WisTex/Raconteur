@@ -198,7 +198,10 @@ class Receiver {
 			case 'response': // upstream message
 			case 'sync':
 			default:
-				$this->response = $this->handler->Notify($this->data,$this->hub);
+				// Only accept these message types with a valid sender
+				if ($this->sender) {
+					$this->response = $this->handler->Notify($this->data,$this->hub);
+				}					
 				break;
 
 		}
