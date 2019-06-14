@@ -8,12 +8,12 @@
     }
 
         if ($argc!=2) {
-                print "Usage: ".$argv[0]." <hstrings.php>\n\n";
+                print "Usage: ".$argv[0]." <strings.php>\n\n";
                 return;
         }
 
         $phpfile = $argv[1];
-        $pofile = dirname($phpfile)."/hmessages.po";
+        $pofile = dirname($phpfile)."/messages.po";
 
         if (!file_exists($phpfile)){
                 print "Unable to find '$phpfile'\n";

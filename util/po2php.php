@@ -10,7 +10,7 @@ function po2php_run($argc,$argv) {
 	$rtl = false;	
 
 	$pofile = $argv[1];
-	$outfile = dirname($pofile)."/hstrings.php";
+	$outfile = dirname($pofile)."/strings.php";
 
 	if($argc > 2) {
 		if($argv[2] === 'rtl')
