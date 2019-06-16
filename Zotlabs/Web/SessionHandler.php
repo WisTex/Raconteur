@@ -2,8 +2,9 @@
 
 namespace Zotlabs\Web;
 
+use SessionHandlerInterface;
 
-class SessionHandler implements \SessionHandlerInterface {
+class SessionHandler implements SessionHandlerInterface {
 
 
 	function open ($s, $n) {
