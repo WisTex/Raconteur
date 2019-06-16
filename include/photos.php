@@ -399,6 +399,8 @@ function photo_upload($channel, $observer, $args) {
 
 	$summary = (($args['body']) ? $args['body'] : '') . '[footer]' . $activity_format . '[/footer]';
 
+	// If uploaded into a post, this is the text that is returned to the webapp for inclusion in the post.
+
 	$obj_body =  '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo_hash . ']'
 		. $tag . z_root() . "/photo/{$photo_hash}-{$scale}." . $ph->getExt() . '[/zmg]'
 		. '[/zrl]';
@@ -413,8 +415,8 @@ function photo_upload($channel, $observer, $args) {
 		// This is a placeholder and will get over-ridden by the item mid, which is critical for sharing as a conversational item over activitypub
 		'id'        => z_root() . '/photo/' . $photo_hash,
 		'url'       => $url,
-		'source'    => [ 'content' => $obj_body, 'mediaType' => 'text/bbcode' ],
-		'content'   => bbcode($obj_body)
+		'source'    => [ 'content' => $summary, 'mediaType' => 'text/bbcode' ],
+		'content'   => bbcode($summary)
 	];
 
 // @FIXME - update to collection
