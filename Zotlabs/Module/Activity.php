@@ -1,28 +1,32 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
 use Zotlabs\Lib\ActivityStreams;
-use Zotlabs\Lib\Activity as ZActivity;
+use Zotlabs\Lib\Activity as ZlibActivity;
 
 
-class Activity extends \Zotlabs\Web\Controller {
+class Activity extends Controller {
 
 	function init() {
 
-		if(ActivityStreams::is_as_request()) {
+		if (ActivityStreams::is_as_request()) {
 			$item_id = argv(1);
-			if(! $item_id)
+
+			if (! $item_id) {
 				return;
+			}
 
 			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 
 				and item.item_delayed = 0 and item.item_blocked = 0 ";
 
+			// if passed an owner_id of 0, we force "guest access" or observer checking
 			$sql_extra = item_permissions_sql(0);
 
 			$r = q("select * from item where uuid = '%s' $item_normal $sql_extra limit 1",
 				dbesc($item_id)
 			);
-			if(! $r) {
+			if (! $r) {
 				$r = q("select * from item where uuid = '%s' $item_normal limit 1",
 					dbesc($item_id)
 				);
@@ -38,11 +42,11 @@ class Activity extends \Zotlabs\Web\Controller {
 
 			$channel = channelx_by_n($items[0]['uid']);
 
-			$x = array_merge(['@context' => [
+			$x = array_merge( ['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1',
 				z_root() . ZOT_APSCHEMA_REV
-				]], ZActivity::encode_activity($items[0]));
+				]], ZlibActivity::encode_activity($items[0]));
 
 
 
