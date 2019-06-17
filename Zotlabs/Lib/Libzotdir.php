@@ -148,7 +148,7 @@ class Libzotdir {
 		$current_order = (($_REQUEST['order']) ? $_REQUEST['order'] : $directory_sort_order);
 		$suggest = (($_REQUEST['suggest']) ? '&suggest=' . $_REQUEST['suggest'] : '');
 
-		$url = 'directory?f=';
+		$url = 'directory?f=&';
 
 		$tmp = array_merge($_GET,$_POST);
 		unset($tmp['suggest']);
