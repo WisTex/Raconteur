@@ -1422,13 +1422,14 @@ class Item extends Controller {
 		
 		if((argc() == 3) && (argv(1) === 'drop') && intval(argv(2))) {
 	
-			$i = q("select id, uid, item_origin, resource_type, resource_id, author_xchan, owner_xchan, source_xchan, item_type from item where id = %d limit 1",
+			$i = q("select * from item where id = %d limit 1",
 				intval(argv(2))
 			);
 	
 			if($i) {
 				$can_delete = false;
 				$local_delete = false;
+				$regular_delete = false;
 
 				if(local_channel() && local_channel() == $i[0]['uid']) {
 					$local_delete = true;
@@ -1437,6 +1438,7 @@ class Item extends Controller {
 				$ob_hash = get_observer_hash();
 				if($ob_hash && ($ob_hash === $i[0]['author_xchan'] || $ob_hash === $i[0]['owner_xchan'] || $ob_hash === $i[0]['source_xchan'])) {
 					$can_delete = true;
+					$regular_delete = true;
 				}
 
 				// The site admin can delete any post/item on the site.
@@ -1461,7 +1463,7 @@ class Item extends Controller {
 						dbesc($i[0]['resource_id']),
 						intval($i[0]['uid'])
 					);
-					if ($r) {
+					if ($r && $regular_delete) {
 						$sync_event = $r[0];
 						q("delete from event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
 							dbesc($i[0]['resource_id']),
@@ -1471,6 +1473,18 @@ class Item extends Controller {
 						Libsync::build_sync_packet($i[0]['uid'],array('event' => array($sync_event)));
 					}
 				}
+
+				if ($i[0]['resource_type'] === 'photo') {
+					attach_delete($i[0]['uid'], $i[0]['resource_id'], true );
+					$ch = channelx_by_n($i[0]['uid']);
+					if ($ch && $regular_delete) {
+						$sync = attach_export_data($ch,$i[0]['resource_id'], true);
+						if ($sync) {
+							Libsync::build_sync_packet($i[0]['uid'],array('file' => array($sync)));
+						}
+					}
+				}
+
 
 				// if this is a different page type or it's just a local delete
 				// but not by the item author or owner, do a simple deletion
