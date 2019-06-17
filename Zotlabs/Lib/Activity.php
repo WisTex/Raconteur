@@ -82,19 +82,19 @@ class Activity {
 	}
 
 	static function fetch_profile($x) {
-		$r = q("select * from xchan where xchan_url like '%s' limit 1",
-			dbesc($x['id'] . '/%')
+		$r = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' limit 1",
+			dbesc($x['id'])
 		);
 		if (! $r) {
 			$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 				dbesc($x['id'])
 			);
 
-		} 
+		}
 		if (! $r) {
 			return [];
 		}
-		
+
 		return self::encode_person($r[0],false);
 	}
 
@@ -1877,16 +1877,24 @@ class Activity {
 			}
 
 			$obj_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj));
+
+			// if the object is an actor it is not really a response activity, reset a couple of things
+			
+			if (ActivityStreams::is_an_actor($act->obj['type'])) {
+				$obj_actor = $act->actor;
+				$s['parent_mid'] = $s['mid'];
+			}
+
 			// ensure we store the original actor
 			self::actor_store($obj_actor['id'],$obj_actor);
 
 			$mention = self::get_actor_bbmention($obj_actor['id']);
 
 			if ($act->type === 'Like') {
-				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
+				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $content['content'];
 			}
 			if ($act->type === 'Dislike') {
-				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
+				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $content['content'];
 			}
 			if ($act->type === 'Accept' && $act->obj['type'] === 'Event' ) {
 				$content['content'] = sprintf( t('Will attend %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];

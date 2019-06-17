@@ -179,7 +179,7 @@ class Like extends Controller {
 		
 	
 			$object = json_encode(Activity::fetch_profile([ 'id' => channel_url($ch[0]) ]));
-	
+
 			// second like of the same thing is "undo" for the first like
 	
 			$z = q("select * from likes where channel_id = %d and liker = '%s' and verb = '%s' and target_type = '%s' and target_id = '%s' limit 1",
