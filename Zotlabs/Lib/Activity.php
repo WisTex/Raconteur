@@ -2322,30 +2322,34 @@ class Activity {
 				intval($item['uid'])
 			);
 			if (! $p) {
-				$a = false;
-				if (PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce') {
-					$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
-				}
-				if ($a) {
-					$p = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
-						dbesc($item['parent_mid']),
-						intval($item['uid'])
-					);
-				}
-				else {
-
-					// if no parent was fetched, turn into a top-level post
-
-					// @TODO we maybe could accept these is we formatted the body correctly with share_bb()
-					// or at least provided a link to the object
-					if (in_array($act->type,[ 'Like','Dislike','Announce' ])) {
-						return;
-					}
-					// turn into a top level post
-					$item['parent_mid'] = $item['mid'];
-					$item['thr_parent'] = $item['mid'];
-				}
+				return;
+			
+				//$a = false;
+				// hyperdrive over activitypub; this is a remnant of Osada - disable for now. Leave here for reference.
+				// if (PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce') {
+				//	$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
+				// }
+				//if ($a) {
+				//	$p = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
+				//		dbesc($item['parent_mid']),
+				//		intval($item['uid'])
+				//	);
+				//}
+				//else {
+				//
+				//	// if no parent was fetched, turn into a top-level post
+				//
+				//	// @TODO we maybe could accept these is we formatted the body correctly with share_bb()
+				//	// or at least provided a link to the object
+				//	if (in_array($act->type,[ 'Like','Dislike','Announce' ])) {
+				//		return;
+				//	}
+				//	// turn into a top level post
+				//	$item['parent_mid'] = $item['mid'];
+				//	$item['thr_parent'] = $item['mid'];
+				//}
 			}
+			
 			if ($p[0]['parent_mid'] !== $item['parent_mid']) {
 				$item['thr_parent'] = $item['parent_mid'];
 			}
