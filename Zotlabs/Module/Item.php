@@ -687,9 +687,9 @@ class Item extends Controller {
 				$private           = $orig_post['item_private'];
 			}
 	
-			if($private || $public_policy || $acl->is_private())
-				$private = 1;
-	
+			if($public_policy || $acl->is_private()) {
+				$private = (($private) ? $private : 1);
+			}	
 	
 			$location          = $orig_post['location'];
 			$coord             = $orig_post['coord'];
@@ -766,14 +766,14 @@ class Item extends Controller {
 
 			$allow_empty       = ((array_key_exists('allow_empty',$_REQUEST)) ? intval($_REQUEST['allow_empty']) : 0);	
 
-			$private = intval($acl->is_private() || ($public_policy));
+			$private = (($private) ? $private : intval($acl->is_private() || ($public_policy)));
 	
 			// If this is a comment, set the permissions from the parent.
 	
 			if($parent_item) {
 				$private = 0;
 				$acl->set($parent_item);
-				$private = intval($acl->is_private() || $parent_item['item_private']);
+				$private = ((intval($parent_item['item_private']) ? $parent_item['item_private'] : $acl->is_private()));
 				$public_policy     = $parent_item['public_policy'];
 				$owner_hash        = $parent_item['owner_xchan'];
 				$webpage           = $parent_item['item_type'];
@@ -1105,7 +1105,7 @@ class Item extends Controller {
 
 			$plink = z_root() . '/item/' . $uuid;
 		}
-		
+
 		$datarray['aid']                 = $channel['channel_account_id'];
 		$datarray['uid']                 = $profile_uid;
 		$datarray['uuid']                = $uuid;

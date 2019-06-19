@@ -1842,10 +1842,13 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	}
 
 
- 	if(strlen($allow_cid) || strlen($allow_gid) || strlen($deny_cid) || strlen($deny_gid))
-		$private = 1;
-	else
-		$private = $arr['item_private'];
+	$private = intval($arr['item_private']);
+
+	if (! $private) {
+	 	if (strlen($allow_cid) || strlen($allow_gid) || strlen($deny_cid) || strlen($deny_gid)) {
+			$private = 1;
+		}
+	}
 
 	$arr['parent']          = $parent_id;
 	$arr['allow_cid']       = $allow_cid;
@@ -2881,9 +2884,12 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 		$arr['item_uplink'] = 1;
 		$arr['source_xchan'] = $item['owner_xchan'];
 
-		$arr['item_private'] = (($channel['channel_allow_cid'] || $channel['channel_allow_gid']
-		|| $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
 
+		$arr['item_private'] = $item['item_private'];
+		if(! intval($arr['item_private'])) {
+			$arr['item_private'] = (($channel['channel_allow_cid'] || $channel['channel_allow_gid']
+			|| $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
+		}
 
 		$arr['item_origin'] = 1;
 		$arr['item_wall'] = 1;
@@ -4275,12 +4281,12 @@ function set_linkified_perms($linkified, &$str_contact_allow, &$str_group_allow,
 			if(strpos($access_tag,'cid:') === 0) {
 				$str_contact_allow .= '<' . substr($access_tag,4) . '>';
 				$access_tag = '';
-				$private = 1;
+				$private = 2;
 			}
 			elseif(strpos($access_tag,'gid:') === 0) {
 				$str_group_allow .= '<' . substr($access_tag,4) . '>';
 				$access_tag = '';
-				$private = 1;
+				$private = 2;
 			}
 		}
 	}

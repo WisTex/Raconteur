@@ -178,6 +178,7 @@ class Hq extends \Zotlabs\Web\Controller {
 				'$conv'    => '0',
 				'$spam'    => '0',
 				'$fh'      => '0',
+				'$dm'      => '0',
 				'$nouveau' => '0',
 				'$wall'    => '0',
 				'$static'  => $static,

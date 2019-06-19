@@ -17,6 +17,7 @@
 	var bParam_wall = {{$wall}};
 	var bParam_list = {{$list}};
 	var bParam_fh = {{$fh}};
+	var bParam_dm = {{$dm}};
 	var bParam_static = {{$static}};
 
 	var bParam_search = "{{$search}}";
@@ -49,6 +50,7 @@
 		if(bParam_wall != 0) bCmd = bCmd + "&wall=" + bParam_wall;
 		if(bParam_list != 0) bCmd = bCmd + "&list=" + bParam_list;
 		if(bParam_fh != 0) bCmd = bCmd + "&fh=" + bParam_fh;
+		if(bParam_dm != 0) bCmd = bCmd + "&dm=" + bParam_dm;
 		if(bParam_search != "") bCmd = bCmd + "&search=" + bParam_search;
 		if(bParam_xchan != "") bCmd = bCmd + "&xchan=" + bParam_xchan;
 		if(bParam_order != "") bCmd = bCmd + "&order=" + bParam_order;

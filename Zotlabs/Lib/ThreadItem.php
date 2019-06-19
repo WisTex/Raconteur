@@ -116,7 +116,7 @@ class ThreadItem {
 //			logger('parent: ' . $item['thr_parent']);
 		}
 
-		$lock = ((($item['item_private'] == 1) || (($item['uid'] == local_channel()) && (strlen($item['allow_cid']) || strlen($item['allow_gid']) 
+		$lock = (((intval($item['item_private'])) || (($item['uid'] == local_channel()) && (strlen($item['allow_cid']) || strlen($item['allow_gid']) 
 			|| strlen($item['deny_cid']) || strlen($item['deny_gid']))))
 			? t('Private Message')
 			: false);
@@ -132,7 +132,7 @@ class ThreadItem {
 			$privacy_warning = true;
 		}
 
-		if(($item['item_private'] == 1) && ($item['owner']['xchan_network'] === 'activitypub')) {
+		if(intval($item['item_private']) && ($item['owner']['xchan_network'] === 'activitypub')) {
 
 			$recips = get_iconfig($item['parent'], 'activitypub', 'recips');
 

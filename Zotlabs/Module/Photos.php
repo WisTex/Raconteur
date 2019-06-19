@@ -215,6 +215,71 @@ class Photos extends Controller {
 			}
 		}
 
+		// this still needs some work
+		
+		if(defined('FIXED')) {
+		if((x($_POST,'rotate') !== false) && ( (intval($_POST['rotate']) == 1) || (intval($_POST['rotate']) == 2) )) {
+			logger('rotate');
+
+			$resource_id = argv(2);
+
+			$r = q("select * from photo where resource_id = '%s' and uid = %d and imgscale = 0 limit 1",
+				dbesc($resource_id),
+				intval($page_owner_uid)
+			);
+			if($r) {
+					
+				$ph = photo_factory(@file_get_contents(dbunescbin($r[0]['content'])), $r[0]['mimetype']);
+				if($ph->is_valid()) {
+					$rotate_deg = ( (intval($_POST['rotate']) == 1) ? 270 : 90 );
+					$ph->rotate($rotate_deg);
+
+					$edited = datetime_convert();
+
+					q("update attach set filesize = %d, edited = '%s' where hash = '%s' and uid = %d",
+						strlen($ph->imageString()),
+						dbescdate($edited),
+						dbesc($resource_id),
+						intval($page_owner_uid)
+					);
+						
+					$ph->saveImage(dbunescbin($r[0]['content']));
+					
+					$arr = [ 
+						'aid'          => get_account_id(),
+						'uid'          => intval($page_owner_uid), 
+						'resource_id'  => dbesc($resource_id),
+						'filename'     => $r[0]['filename'],
+						'imgscale'	   => 0,
+						'album'        => $r[0]['album'],
+						'os_path'      => $r[0]['os_path'],
+						'os_storage'   => 1,
+						'os_syspath'   => dbunescbin($r[0]['content']),
+						'display_path' => $r[0]['display_path'],
+						'photo_usage'  => PHOTO_NORMAL,
+						'edited'	   => dbescdate($edited)
+					];
+
+					$ph->save($arr);
+
+					unset($arr['os_syspath']);
+
+					if($width > 1024 || $height > 1024) 
+						$ph->scaleImage(1024);
+					$ph->storeThumbnail($arr, PHOTO_RES_1024);
+
+					if($width > 640 || $height > 640) 
+						$ph->scaleImage(640);
+					$ph->storeThumbnail($arr, PHOTO_RES_640);
+
+					if($width > 320 || $height > 320) 
+						$ph->scaleImage(320);
+					$ph->storeThumbnail($arr, PHOTO_RES_320);
+				}
+			}
+		}}
+
+
 		if((argc() > 2) && ((x($_POST,'desc') !== false) || (x($_POST,'newtag') !== false))) {
 	
 			$desc        = ((x($_POST,'desc'))    ? notags(trim($_POST['desc']))    : '');

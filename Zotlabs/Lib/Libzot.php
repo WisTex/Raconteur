@@ -1289,8 +1289,8 @@ class Libzot {
 					$arr['owner_xchan'] = $env['sender'];						
 				}
 
-				if ($private) {
-					$arr['item_private'] = true;
+				if ($private && (! intval($arr['item_private']))) {
+					$arr['item_private'] = 1;
 				}
 				if ($arr['mid'] === $arr['parent_mid']) {
 					if (is_array($AS->obj) && array_key_exists('commentPolicy',$AS->obj)) {

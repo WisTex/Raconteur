@@ -125,6 +125,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				'$conv'    => '0',
 				'$spam'    => '0',
 				'$fh'      => '1',
+				'$dm'      => '0',
 				'$nouveau' => '0',
 				'$wall'    => '0',
 				'$list'    => '0',
