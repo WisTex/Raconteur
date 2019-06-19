@@ -3387,8 +3387,6 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 	// logger('dropped_item: ' . print_r($item,true),LOGGER_ALL);
 
 
-	$linked_item = (($item['resource_id'] && $item['resource_type'] && in_array($item['resource_type'], $linked_resource_types)) ? true : false);
-
 	$ok_to_delete = false;
 
 	// system deletion
@@ -3411,25 +3409,19 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 
 	if($ok_to_delete) {
 		
-		// set the deleted flag immediately on this item just in case the
-		// hook calls a remote process which loops. We'll delete it properly in a second.
-
-		if(($linked_item) && (! $force)) {
-			$r = q("UPDATE item SET item_hidden = 1 WHERE id = %d",
-				intval($item['id'])
-			);
-		}
-		else {
-			$r = q("UPDATE item SET item_deleted = 1 WHERE id = %d",
-				intval($item['id'])
-			);
-		}
+		$r = q("UPDATE item SET item_deleted = 1 WHERE id = %d",
+			intval($item['id'])
+		);
 
 		if ($item['resource_type'] === 'event' ) {
 			q("delete from event where event_hash = '%s' and uid = %d",
 				dbesc($item['resource_id']),
 				intval($item['uid'])
 			);
+		}
+
+		if ($item['resource_type'] === 'photo' ) {
+			attach_delete($item['uid'],$item['resource_id'],true);
 		}
 
 		$arr = [
@@ -3494,7 +3486,6 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
  */
 function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
 
-	$linked_item = (($item['resource_id'] && in_array($item['resource_type'],['photo'])) ? true : false);
 
 	logger('item: ' . $item['id'] . ' stage: ' . $stage . ' force: ' . $force, LOGGER_DATA);
 
@@ -3509,39 +3500,19 @@ function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
 			break;
 
 		case DROPITEM_PHASE1:
-			if($linked_item && ! $force) {
-				$r = q("UPDATE item SET item_hidden = 1,
-					changed = '%s', edited = '%s'  WHERE id = %d",
-					dbesc(datetime_convert()),
-					dbesc(datetime_convert()),
-					intval($item['id'])
-				);
-			}
-			else {
-				$r = q("UPDATE item set item_deleted = 1, changed = '%s', edited = '%s' where id = %d",
-					dbesc(datetime_convert()),
-					dbesc(datetime_convert()),
-					intval($item['id'])
-				);
-			}
+			$r = q("UPDATE item set item_deleted = 1, changed = '%s', edited = '%s' where id = %d",
+				dbesc(datetime_convert()),
+				dbesc(datetime_convert()),
+				intval($item['id'])
+			);
 
 			break;
 
 		case DROPITEM_NORMAL:
 		default:
-			if($linked_item && ! $force) {
-				$r = q("UPDATE item SET item_hidden = 1,
-					changed = '%s', edited = '%s'  WHERE id = %d",
-					dbesc(datetime_convert()),
-					dbesc(datetime_convert()),
-					intval($item['id'])
-				);
-			}
-			else {
-				$r = q("DELETE FROM item WHERE id = %d",
-					intval($item['id'])
-				);
-			}
+			$r = q("DELETE FROM item WHERE id = %d",
+				intval($item['id'])
+			);
 			break;
 	}
 

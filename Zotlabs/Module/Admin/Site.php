@@ -177,10 +177,10 @@ class Site {
 
 		/* Installed langs */
 		$lang_choices = array();
-		$langs = glob('view/*/hstrings.php');
+		$langs = glob('view/*/strings.php');
 
 		if (is_array($langs) && count($langs)) {
-			if (! in_array('view/en/hstrings.php',$langs))
+			if (! in_array('view/en/strings.php',$langs))
 				$langs[] = 'view/en/';
 			asort($langs);
 			foreach ($langs as $l) {

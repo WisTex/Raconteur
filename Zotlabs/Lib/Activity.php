@@ -82,19 +82,19 @@ class Activity {
 	}
 
 	static function fetch_profile($x) {
-		$r = q("select * from xchan where xchan_url like '%s' limit 1",
-			dbesc($x['id'] . '/%')
+		$r = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' limit 1",
+			dbesc($x['id'])
 		);
 		if (! $r) {
 			$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 				dbesc($x['id'])
 			);
 
-		} 
+		}
 		if (! $r) {
 			return [];
 		}
-		
+
 		return self::encode_person($r[0],false);
 	}
 
@@ -1877,16 +1877,24 @@ class Activity {
 			}
 
 			$obj_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj));
+
+			// if the object is an actor it is not really a response activity, reset a couple of things
+			
+			if (ActivityStreams::is_an_actor($act->obj['type'])) {
+				$obj_actor = $act->actor;
+				$s['parent_mid'] = $s['mid'];
+			}
+
 			// ensure we store the original actor
 			self::actor_store($obj_actor['id'],$obj_actor);
 
 			$mention = self::get_actor_bbmention($obj_actor['id']);
 
 			if ($act->type === 'Like') {
-				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
+				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $content['content'];
 			}
 			if ($act->type === 'Dislike') {
-				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
+				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $content['content'];
 			}
 			if ($act->type === 'Accept' && $act->obj['type'] === 'Event' ) {
 				$content['content'] = sprintf( t('Will attend %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
@@ -2314,30 +2322,35 @@ class Activity {
 				intval($item['uid'])
 			);
 			if (! $p) {
-				$a = false;
-				if (PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce') {
-					$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
-				}
-				if ($a) {
-					$p = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
-						dbesc($item['parent_mid']),
-						intval($item['uid'])
-					);
+				if (defined('NOMADIC')) {
+					return;
 				}
 				else {
-
-					// if no parent was fetched, turn into a top-level post
-
-					// @TODO we maybe could accept these is we formatted the body correctly with share_bb()
-					// or at least provided a link to the object
-					if (in_array($act->type,[ 'Like','Dislike','Announce' ])) {
-						return;
+					$a = false;
+					if (PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce') {
+						$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
 					}
-					// turn into a top level post
-					$item['parent_mid'] = $item['mid'];
-					$item['thr_parent'] = $item['mid'];
+					if ($a) {
+						$p = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
+							dbesc($item['parent_mid']),
+							intval($item['uid'])
+						);
+					}
+					else {
+						// if no parent was fetched, turn into a top-level post
+				
+						// @TODO we maybe could accept these is we formatted the body correctly with share_bb()
+						// or at least provided a link to the object
+						if (in_array($act->type,[ 'Like','Dislike','Announce' ])) {
+							return;
+						}
+						// turn into a top level post
+						$item['parent_mid'] = $item['mid'];
+						$item['thr_parent'] = $item['mid'];
+					}
 				}
 			}
+			
 			if ($p[0]['parent_mid'] !== $item['parent_mid']) {
 				$item['thr_parent'] = $item['parent_mid'];
 			}

@@ -1487,8 +1487,8 @@ function attach_delete($channel_id, $resource, $is_photo = 0) {
 		intval($channel_id)
 	);
 
-        $arr = ['channel_id' => $channel_id, 'resource' => $resource, 'is_photo'=>$is_photo];
-        call_hooks("attach_delete",$arr);
+	$arr = ['channel_id' => $channel_id, 'resource' => $resource, 'is_photo'=>$is_photo];
+	call_hooks("attach_delete",$arr);
 
 	file_activity($channel_id, $object, $object['allow_cid'], $object['allow_gid'], $object['deny_cid'], $object['deny_gid'], 'update', true);
 
@@ -1498,7 +1498,7 @@ function attach_delete($channel_id, $resource, $is_photo = 0) {
 
 function attach_drop_photo($channel_id,$resource) {
 
-	$x = q("select id, item_hidden from item where resource_id = '%s' and resource_type = 'photo' and uid = %d",
+	$x = q("select id, item_hidden from item where resource_id = '%s' and resource_type = 'photo' and uid = %d and item_deleted = 0",
 		dbesc($resource),
 		intval($channel_id)
 	);

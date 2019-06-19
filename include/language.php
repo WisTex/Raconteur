@@ -158,10 +158,7 @@ function load_translation_table($lang, $install = false) {
 
 	App::$strings = array();
 
-	if(file_exists("view/$lang/hstrings.php")) {
-		include("view/$lang/hstrings.php");
-	}
-	elseif(file_exists("view/$lang/strings.php")) {
+	if(file_exists("view/$lang/strings.php")) {
 		include("view/$lang/strings.php");
 	}
 
@@ -170,10 +167,7 @@ function load_translation_table($lang, $install = false) {
 		if ($plugins !== false) {
 			foreach($plugins as $p) {
 				$name = $p['aname'];
-				if(file_exists("addon/$name/lang/$lang/hstrings.php")) {
-					include("addon/$name/lang/$lang/hstrings.php");
-				}
-				elseif(file_exists("addon/$name/lang/$lang/strings.php")) {
+				if(file_exists("addon/$name/lang/$lang/strings.php")) {
 					include("addon/$name/lang/$lang/strings.php");
 				}
 			}
@@ -183,10 +177,7 @@ function load_translation_table($lang, $install = false) {
 	// Allow individual strings to be over-ridden on this site
 	// Either for the default language or for all languages
 
-	if(file_exists("view/local-$lang/hstrings.php")) {
-		include("view/local-$lang/hstrings.php");
-	}
-	elseif(file_exists("view/local-$lang/strings.php")) {
+	if(file_exists("view/local-$lang/strings.php")) {
 		include("view/local-$lang/strings.php");
 	}
 }
@@ -362,13 +353,13 @@ function get_language_name($s, $l = null) {
 
 function language_list() {
 
-	$langs = glob('view/*/hstrings.php');
+	$langs = glob('view/*/strings.php');
 
 	$lang_options = array();
 	$selected = "";
 
 	if(is_array($langs) && count($langs)) {
-		if(! in_array('view/en/hstrings.php',$langs))
+		if(! in_array('view/en/strings.php',$langs))
 			$langs[] = 'view/en/';
 		asort($langs);
 		foreach($langs as $l) {
@@ -382,14 +373,14 @@ function language_list() {
 
 function lang_selector() {
 
-	$langs = glob('view/*/hstrings.php');
+	$langs = glob('view/*/strings.php');
 
 	$lang_options = array();
 	$selected = "";
 
 	if(is_array($langs) && count($langs)) {
 		$langs[] = '';
-		if(! in_array('view/en/hstrings.php',$langs))
+		if(! in_array('view/en/strings.php',$langs))
 			$langs[] = 'view/en/';
 		asort($langs);
 		foreach($langs as $l) {

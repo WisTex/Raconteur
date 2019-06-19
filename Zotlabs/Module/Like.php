@@ -1,6 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Web\Controller;
@@ -46,7 +47,7 @@ class Like extends Controller {
 		$sys_channel = get_sys_channel();
 		$sys_channel_id = (($sys_channel) ? $sys_channel['channel_id'] : 0);
 
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 	
 		$verb = notags(trim($_GET['verb']));
 	
@@ -178,7 +179,7 @@ class Like extends Controller {
 		
 	
 			$object = json_encode(Activity::fetch_profile([ 'id' => channel_url($ch[0]) ]));
-	
+
 			// second like of the same thing is "undo" for the first like
 	
 			$z = q("select * from likes where channel_id = %d and liker = '%s' and verb = '%s' and target_type = '%s' and target_id = '%s' limit 1",
@@ -234,7 +235,7 @@ class Like extends Controller {
 
 			if($r) {
 				if($r[0]['uid'] === $sys_channel['channel_id'] && local_channel()) {
-					$r = [ copy_of_pubitem(\App::get_channel(), $r[0]['mid']) ];
+					$r = [ copy_of_pubitem(App::get_channel(), $r[0]['mid']) ];
 				}
 			}
 
@@ -283,8 +284,10 @@ class Like extends Controller {
 	
 			$multi_undo = false;		
 	
-			$item_normal = item_normal();
-	
+			$item_normal = " and item.item_deleted = 0 and item.item_unpublished = 0 and item.item_delayed = 0
+				and item.item_pending_remove = 0 and item.item_blocked = 0 and item.obj_type != '" . ACTIVITY_OBJ_FILE . "' ";
+
+
 			$r = q("SELECT id, parent, uid, verb FROM item WHERE verb in ( $verbs ) $item_normal
 				AND author_xchan = '%s' AND thr_parent = '%s' and uid = %d ",
 				dbesc($observer['xchan_hash']),
@@ -360,6 +363,16 @@ class Like extends Controller {
 				$r = q("update item set item_hidden = 0 where id = %d",
 					intval($item['id'])
 				);
+
+				$r = q("select * from item where id = %d",
+					intval($item['id'])
+				);
+				if($r) {
+					xchan_query($r);
+					$sync_item = fetch_post_tags($r);
+					Libsync::build_sync_packet($ch[0]['channel_id'], [ 'item' => [ encode_item($sync_item[0],true) ] ]);
+				}
+
 				Master::Summon(array('Notifier','wall-new',$item['id']));
 			}	
 	

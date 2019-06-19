@@ -1,116 +1,113 @@
-<?php /** @file */
+<?php
 
 namespace Zotlabs\Module; 
 
-//require_once('include/apps.php');
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Apps;
 
-use \Zotlabs\Lib as Zlib;
-
-class Appman extends \Zotlabs\Web\Controller {
+class Appman extends Controller {
 
 	function post() {
 	
-		if(! local_channel())
+		if (! local_channel()) {
 			return;
+		}
 	
-		if($_POST['url']) {
-			$arr = array(
-				'uid' => intval($_REQUEST['uid']),
-				'url' => escape_tags($_REQUEST['url']),
-				'guid' => escape_tags($_REQUEST['guid']),
-				'author' => escape_tags($_REQUEST['author']),
-				'addr' => escape_tags($_REQUEST['addr']),
-				'name' => escape_tags($_REQUEST['name']),
-				'desc' => escape_tags($_REQUEST['desc']),
-				'photo' => escape_tags($_REQUEST['photo']),
-				'version' => escape_tags($_REQUEST['version']),
-				'price' => escape_tags($_REQUEST['price']),
-				'page' => escape_tags($_REQUEST['page']),
-				'requires' => escape_tags($_REQUEST['requires']),
-				'system' => intval($_REQUEST['system']),
-				'plugin' => escape_tags($_REQUEST['plugin']),
-				'sig' => escape_tags($_REQUEST['sig']),
+		if ($_POST['url']) {
+			$arr = [
+				'uid'        => intval($_REQUEST['uid']),
+				'url'        => escape_tags($_REQUEST['url']),
+				'guid'       => escape_tags($_REQUEST['guid']),
+				'author'     => escape_tags($_REQUEST['author']),
+				'addr'       => escape_tags($_REQUEST['addr']),
+				'name'       => escape_tags($_REQUEST['name']),
+				'desc'       => escape_tags($_REQUEST['desc']),
+				'photo'      => escape_tags($_REQUEST['photo']),
+				'version'    => escape_tags($_REQUEST['version']),
+				'price'      => escape_tags($_REQUEST['price']),
+				'page'       => escape_tags($_REQUEST['sellpage']), // do not use 'page' as a request variable here as it conflicts with pagination
+				'requires'   => escape_tags($_REQUEST['requires']),
+				'system'     => intval($_REQUEST['system']),
+				'plugin'     => escape_tags($_REQUEST['plugin']),
+				'sig'        => escape_tags($_REQUEST['sig']),
 				'categories' => escape_tags($_REQUEST['categories'])
-			);
+			];
 	
-			$_REQUEST['appid'] = Zlib\Apps::app_install(local_channel(),$arr);
+			$_REQUEST['appid'] = Apps::app_install(local_channel(),$arr);
 	
-			if(Zlib\Apps::app_installed(local_channel(),$arr))
+			if (Apps::app_installed(local_channel(),$arr)) {
 				info( t('App installed.') . EOL);
+			}
 
 			goaway(z_root() . '/apps');
-			return; //not reached
 		}
 	
 	
-		$papp = Zlib\Apps::app_decode($_POST['papp']);
+		$papp = Apps::app_decode($_POST['papp']);
 	
-		if(! is_array($papp)) {
+		if (! is_array($papp)) {
 			notice( t('Malformed app.') . EOL);
 			return;
 		}
 	
-		if($_POST['install']) {
-			Zlib\Apps::app_install(local_channel(),$papp);
-			if(Zlib\Apps::app_installed(local_channel(),$papp))
+		if ($_POST['install']) {
+			Apps::app_install(local_channel(),$papp);
+			if (Apps::app_installed(local_channel(),$papp))
 				info( t('App installed.') . EOL);
 		}
 	
-		if($_POST['delete']) {
-			Zlib\Apps::app_destroy(local_channel(),$papp);
+		if ($_POST['delete']) {
+			Apps::app_destroy(local_channel(),$papp);
 		}
 
-		if($_POST['edit']) {
+		if ($_POST['edit']) {
 			return;
 		}
 
-		if($_POST['feature']) {
-			Zlib\Apps::app_feature(local_channel(), $papp, $_POST['feature']);
+		if ($_POST['feature']) {
+			Apps::app_feature(local_channel(), $papp, $_POST['feature']);
 		}
 
-		if($_POST['pin']) {
-			Zlib\Apps::app_feature(local_channel(), $papp, $_POST['pin']);
+		if ($_POST['pin']) {
+			Apps::app_feature(local_channel(), $papp, $_POST['pin']);
 		}
 
-		if($_SESSION['return_url']) 
+		if ($_SESSION['return_url']) {
 			goaway(z_root() . '/' . $_SESSION['return_url']);
-
+		}
+		
 		goaway(z_root() . '/apps');
-	
-	
 	}
 	
 	
 	function get() {
 	
-		if(! local_channel()) {
+		if (! local_channel()) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
-		if(argc() > 3) {
+		if (argc() > 3) {
 			if(argv(2) === 'moveup') {
-				Zlib\Apps::moveup(local_channel(),argv(1),argv(3));
+				Apps::moveup(local_channel(),argv(1),argv(3));
 			}
 			if(argv(2) === 'movedown') {
-				Zlib\Apps::movedown(local_channel(),argv(1),argv(3));
+				Apps::movedown(local_channel(),argv(1),argv(3));
 			}
 			goaway(z_root() . '/apporder');
 		}
 
-
-
-
 		$app = null;
 		$embed = null;
-		if($_REQUEST['appid']) {
+		if ($_REQUEST['appid']) {
 			$r = q("select * from app where app_id = '%s' and app_channel = %d limit 1",
 				dbesc($_REQUEST['appid']),
 				dbesc(local_channel())
 			);
-			if($r) {
+			if ($r) {
 				$app = $r[0];
 
 				$term = q("select * from term where otype = %d and oid = %d and uid = %d",
@@ -118,41 +115,34 @@ class Appman extends \Zotlabs\Web\Controller {
 					intval($r[0]['id']),
 					intval(local_channel())
 				);
-				if($term) {
-					$app['categories'] = '';
-					foreach($term as $t) {
-						if($app['categories'])
-							$app['categories'] .= ',';
-						$app['categories'] .= $t['term'];
-					}
+				if ($term) {
+					$app['categories'] = array_elm_to_str($term,'term');
 				}
 			}
 
-			$embed = array('embed', t('Embed code'), Zlib\Apps::app_encode($app,true),'', 'onclick="this.select();"');
-	
+			$embed = [ 'embed', t('Embed code'), Apps::app_encode($app,true), EMPTY_STR, 'onclick="this.select();"' ];
 		}
 				
-		return replace_macros(get_markup_template('app_create.tpl'), array(
-	
-			'$banner' => (($app) ? t('Edit App') : t('Create App')),
-			'$app' => $app,
-			'$guid' => (($app) ? $app['app_id'] : ''),
-			'$author' => (($app) ? $app['app_author'] : $channel['channel_hash']),
-			'$addr' => (($app) ? $app['app_addr'] : $channel['xchan_addr']),
-			'$name' => array('name', t('Name of app'),(($app) ? $app['app_name'] : ''), t('Required')),
-			'$url' => array('url', t('Location (URL) of app'),(($app) ? $app['app_url'] : ''), t('Required')),
-	 		'$desc' => array('desc', t('Description'),(($app) ? $app['app_desc'] : ''), ''),
-			'$photo' => array('photo', t('Photo icon URL'),(($app) ? $app['app_photo'] : ''), t('80 x 80 pixels - optional')),
-			'$categories' => array('categories',t('Categories (optional, comma separated list)'),(($app) ? $app['categories'] : ''),''),
-			'$version' => array('version', t('Version ID'),(($app) ? $app['app_version'] : ''), ''),
-			'$price' => array('price', t('Price of app'),(($app) ? $app['app_price'] : ''), ''),
-			'$page' => array('page', t('Location (URL) to purchase app'),(($app) ? $app['app_page'] : ''), ''),
-			'$system' => (($app) ? intval($app['app_system']) : 0),
-			'$plugin' => (($app) ? $app['app_plugin'] : ''),
-			'$requires' => (($app) ? $app['app_requires'] : ''),
-			'$embed' => $embed,
-			'$submit' => t('Submit')
-		));
+		return replace_macros(get_markup_template('app_create.tpl'), [
+			'$banner'     => (($app) ? t('Edit App') : t('Create App')),
+			'$app'        => $app,
+			'$guid'       => (($app) ? $app['app_id'] : EMPTY_STR),
+			'$author'     => (($app) ? $app['app_author'] : $channel['channel_hash']),
+			'$addr'       => (($app) ? $app['app_addr'] : $channel['xchan_addr']),
+			'$name'       => [ 'name', t('Name of app'),(($app) ? $app['app_name'] : EMPTY_STR), t('Required') ],
+			'$url'        => [ 'url', t('Location (URL) of app'),(($app) ? $app['app_url'] : EMPTY_STR), t('Required') ],
+	 		'$desc'       => [ 'desc', t('Description'),(($app) ? $app['app_desc'] : EMPTY_STR), EMPTY_STR],
+			'$photo'      => [ 'photo', t('Photo icon URL'),(($app) ? $app['app_photo'] : EMPTY_STR), t('80 x 80 pixels - optional') ],
+			'$categories' => [ 'categories',t('Categories (optional, comma separated list)'),(($app) ? $app['categories'] : EMPTY_STR), EMPTY_STR ],
+			'$version'    => [ 'version', t('Version ID'),(($app) ? $app['app_version'] : EMPTY_STR), EMPTY_STR ],
+			'$price'      => [ 'price', t('Price of app'),(($app) ? $app['app_price'] : EMPTY_STR), EMPTY_STR ],
+			'$page'       => [ 'sellpage', t('Location (URL) to purchase app'),(($app) ? $app['app_page'] : EMPTY_STR), EMPTY_STR ],
+			'$system'     => (($app) ? intval($app['app_system']) : 0),
+			'$plugin'     => (($app) ? $app['app_plugin'] : EMPTY_STR),
+			'$requires'   => (($app) ? $app['app_requires'] : EMPTY_STR),
+			'$embed'      => $embed,
+			'$submit'     => t('Submit')
+		]);
 	
 	}
 	

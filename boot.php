@@ -45,10 +45,13 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '3.0' );
+define ( 'STD_VERSION',             '3.1' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1232 );
+
+define ( 'PLATFORM_NAME',           'zap' );
+define ( 'PLATFORM_ARCHITECTURE',   'zap' );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 
@@ -607,16 +610,6 @@ function sys_boot() {
 	App::$install = ((file_exists('.htconfig.php') && filesize('.htconfig.php')) ? false : true);
 
 	@include('.htconfig.php');
-
-	if(defined('NOMADIC')) {
-		define ( 'PLATFORM_NAME',           'zap' );
-		define ( 'PLATFORM_ARCHITECTURE',   'zap' );
-	}
-	else {
-		define ( 'PLATFORM_NAME',           'osada' );
-		define ( 'PLATFORM_ARCHITECTURE',   'osada' );
-	}
-
 
 	// allow somebody to set some initial settings just in case they can't
 	// install without special fiddling

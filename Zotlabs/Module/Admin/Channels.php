@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Module\Admin;
 
+use Zotlabs\Daemon\Master;
+
 /**
  * @brief Admin Module for Channels.
  *
@@ -26,7 +28,7 @@ class Channels {
 					intval(PAGE_CENSORED),
 					intval( $uid )
 				);
-				\Zotlabs\Daemon\Master::Summon(array('Directory', $uid, 'nopush'));
+				Master::Summon( [ 'Directory', $uid, 'nopush' ] );
 			}
 			notice( sprintf( tt("%s channel censored/uncensored", "%s channels censored/uncensored", count($channels)), count($channels)) );
 		}
@@ -82,7 +84,7 @@ class Channels {
 						intval($pflags),
 						intval( $uid )
 					);
-					\Zotlabs\Daemon\Master::Summon(array('Directory',$uid,'nopush'));
+					Master::Summon( [ 'Directory', $uid, 'nopush' ]);
 
 					notice( sprintf( (($pflags & PAGE_CENSORED) ? t("Channel '%s' censored"): t("Channel '%s' uncensored")) , $channel[0]['channel_name'] . ' (' . $channel[0]['channel_address'] . ')' ) . EOL);
 				}; break;
