@@ -429,12 +429,12 @@ class Calendar extends Controller {
 						'end'         => $end,
 						'drop'        => $drop,
 						'allDay'      => $allDay,
-						'title'       => htmlentities($rr['summary'], ENT_COMPAT, 'UTF-8'),
+						'title'       => html_entity_decode($rr['summary'], ENT_COMPAT, 'UTF-8'),
 						'editable'    => $edit ? true : false,
 						'item'        => $rr,
 						'plink'       => [ $rr['plink'], t('Link to source') ],
-						'description' => htmlentities($rr['description'], ENT_COMPAT, 'UTF-8'),
-						'location'    => htmlentities($rr['location'], ENT_COMPAT, 'UTF-8'),
+						'description' => htmlentities($rr['description'], ENT_COMPAT, 'UTF-8',false),
+						'location'    => htmlentities($rr['location'], ENT_COMPAT, 'UTF-8',false),
 						'allow_cid'   => expand_acl($rr['allow_cid']),
 						'allow_gid'   => expand_acl($rr['allow_gid']),
 						'deny_cid'    => expand_acl($rr['deny_cid']),
@@ -443,7 +443,7 @@ class Calendar extends Controller {
 					];
 				}
 			}
-			
+
 			if ($export) {
 				header('Content-type: text/calendar');
 				header('content-disposition: attachment; filename="' . t('calendar') . '-' . $channel['channel_address'] . '.ics"' );

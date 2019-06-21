@@ -1,11 +1,15 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\PermissionDescription;
+
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
 
 
-class Pubstream extends \Zotlabs\Web\Controller {
+class Pubstream extends Controller {
 
 	function get($update = 0, $load = false) {
 
@@ -51,7 +55,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 
 		if(local_channel() && (! $update)) {
 	
-			$channel = \App::get_channel();
+			$channel = App::get_channel();
 
 			$channel_acl = array(
 				'allow_cid' => $channel['channel_allow_cid'], 
@@ -66,7 +70,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				'default_location'    => $channel['channel_location'],
 				'nickname'            => $channel['channel_address'],
 				'lockstate'           => (($group || $cid || $channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
-				'acl'                 => populate_acl($channel_acl,true, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
+				'acl'                 => populate_acl($channel_acl,true,PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
 				'permissions'         => $channel_acl,
 				'bang'                => '',
 				'visitor'             => true,
@@ -105,14 +109,14 @@ class Pubstream extends \Zotlabs\Web\Controller {
 	
 			$o .= '<div id="live-pubstream"></div>' . "\r\n";
 			$o .= "<script> var profile_uid = " . ((intval(local_channel())) ? local_channel() : (-1)) 
-				. "; var profile_page = " . \App::$pager['page'] 
+				. "; var profile_page = " . App::$pager['page'] 
 				. "; divmore_height = " . intval($maxheight) . "; </script>\r\n";
 	
 			//if we got a decoded hash we must encode it again before handing to javascript 
 			if($decoded)
 				$mid = 'b64.' . base64url_encode($mid);
 
-			\App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),array(
+			App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),array(
 				'$baseurl' => z_root(),
 				'$pgtype'  => 'pubstream',
 				'$uid'     => ((local_channel()) ? local_channel() : '0'),
@@ -130,7 +134,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				'$wall'    => '0',
 				'$list'    => '0',
 				'$static'  => $static,
-				'$page'    => ((\App::$pager['page'] != 1) ? \App::$pager['page'] : 1),
+				'$page'    => ((App::$pager['page'] != 1) ? App::$pager['page'] : 1),
 				'$search'  => '',
 				'$xchan'   => '',
 				'$order'   => 'comment',
@@ -150,8 +154,8 @@ class Pubstream extends \Zotlabs\Web\Controller {
 			$pager_sql = '';
 		}
 		else {
-			\App::set_pager_itemspage(20);
-			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));
+			App::set_pager_itemspage(20);
+			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 		}
 	
 		require_once('include/channel.php');
@@ -164,7 +168,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 			$sys = get_sys_channel();
 			$uids = " and item.uid  = " . intval($sys['channel_id']) . " ";
 			$sql_extra = item_permissions_sql($sys['channel_id']);
-			\App::$data['firehose'] = intval($sys['channel_id']);
+			App::$data['firehose'] = intval($sys['channel_id']);
 		}
 	
 		if(get_config('system','public_list_mode'))
@@ -180,7 +184,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 		$net_query = (($net) ? " left join xchan on xchan_hash = author_xchan " : ''); 
 		$net_query2 = (($net) ? " and xchan_network = '" . protect_sprintf(dbesc($net)) . "' " : '');
 
-		$abook_uids = " and abook.abook_channel = " . intval(\App::$profile['profile_uid']) . " ";
+		$abook_uids = " and abook.abook_channel = " . intval(App::$profile['profile_uid']) . " ";
 	
 		$simple_update = (($_SESSION['loadtime']) ? " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' " : '');
 	
