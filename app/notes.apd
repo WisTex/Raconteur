@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/notes
+requires: local_channel
+name: Notes
+photo: icon:pencil
+categories: Productivity

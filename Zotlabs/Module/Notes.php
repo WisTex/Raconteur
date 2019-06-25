@@ -3,7 +3,7 @@ namespace Zotlabs\Module; /** @file */
 
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Web\Controller;
-
+use Zotlabs\Lib\Apps;
 
 class Notes extends Controller {
 
@@ -26,17 +26,38 @@ class Notes extends Controller {
 					set_pconfig(local_channel(),'notes','text.bak',$old_text);
 			}
 			set_pconfig(local_channel(),'notes','text',$body);
-		}
+
 	
-		// push updates to channel clones
+			// push updates to channel clones
 	
-		if((argc() > 1) && (argv(1) === 'sync')) {
-			Libsync::build_sync_packet();
-		}
+			if((argc() > 1) && (argv(1) === 'sync')) {
+				Libsync::build_sync_packet();
+			}
 	
-		logger('notes saved.', LOGGER_DEBUG);
-		json_return_and_die($ret);
+			logger('notes saved.', LOGGER_DEBUG);
+			json_return_and_die($ret);
 		
+		}
 	}
+
+	function get() {
+
+        $desc = t('This app allows you to create private notes for your personal use.');
+
+        $text = '<div class="section-content-info-wrapper">' . $desc . '</div>';
+
+        if(! ( local_channel() && Apps::system_app_installed(local_channel(),'Notes'))) {
+            return $text;
+        }
+
+        $desc = t('This app is installed. The Notes tool can be found on your network stream page.');
+
+        $text = '<div class="section-content-info-wrapper">' . $desc . '</div>';
+
+        return $text;
+
+    }
+
+
 	
 }

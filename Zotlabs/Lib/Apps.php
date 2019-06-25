@@ -331,6 +331,7 @@ class Apps {
 			'Suggest Channels' => t('Suggest Channels'),
 			'Login' => t('Login'),
 			'Channel Manager' => t('Channel Manager'), 
+			'Notes' => t('Notes'),
 			'Network' => t('Stream'), 
 			'Settings' => t('Settings'),
 			'Files' => t('Files'),
