@@ -1,16 +1,16 @@
 <div class="widget">
 	<h3>{{$banner}}</h3>
-	<textarea name="note_text" id="note-text">{{$text}}</textarea>
+	<textarea name="note_text" style="height: 250px;" id="note-text">{{$text}}</textarea>
 	<script>
 		var noteSaveTimer = null;
 		var noteText = $('#note-text');
 
-		$(document).ready(function(e){
-			noteText.on('change keyup keydown paste cut', function () {
-				noteText.height(0).height(noteText[0].scrollHeight);
-				$(document.body).trigger("sticky_kit:recalc");
-			}).change();
-		});
+//		$(document).ready(function(e){
+//			noteText.on('change keyup keydown paste cut', function () {
+//				noteText.height(0).height(noteText[0].scrollHeight);
+//				// $(document.body).trigger("sticky_kit:recalc");
+//			}).change();
+//		});
 
 		$(document).on('focusout',"#note-text",function(e){
 			if(noteSaveTimer)
