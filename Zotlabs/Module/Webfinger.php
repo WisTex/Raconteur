@@ -12,7 +12,7 @@ class Webfinger extends Controller {
 
 		// This is a public resource with relaxed CORS policy. Close the current login session.
 		session_write_close();
-
+		
 		header('Access-Control-Allow-Origin: *');
 
 		$result = [];

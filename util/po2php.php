@@ -10,7 +10,7 @@ function po2php_run($argc,$argv) {
 	$rtl = false;	
 
 	$pofile = $argv[1];
-	$outfile = dirname($pofile)."/hstrings.php";
+	$outfile = dirname($pofile)."/strings.php";
 
 	if($argc > 2) {
 		if($argv[2] === 'rtl')
@@ -82,7 +82,7 @@ function po2php_run($argc,$argv) {
 			}			
 			if (!$arr) {
 				$arr=True;
-				$out .= "array(\n";
+				$out .= "[\n";
 			}
 			$match=Array();
 			preg_match("|\[([0-9]*)\] (.*)|", $l, $match);
@@ -106,7 +106,7 @@ function po2php_run($argc,$argv) {
 		
 		if (substr($l,0,6)=="msgid "){
 			if ($inv) {	$inv = False; $out .= '"'.$v.'"'; }
-			if ($k!="") $out .= $arr?");\n":";\n";
+			if ($k!="") $out .= $arr?"];\n":";\n";
 			$arr=False;
 			$k = str_replace("msgid ","",$l);
 			$k = trim_message($k);
@@ -133,7 +133,7 @@ function po2php_run($argc,$argv) {
 	}
 
 	if ($inv) {	$inv = False; $out .= '"'.$v.'"'; }
-	if ($k!="") $out .= $arr?");\n":";\n";
+	if ($k!="") $out .= $arr?"];\n":";\n";
 	
 	file_put_contents($outfile, $out);
 	

@@ -2,6 +2,9 @@
 
 namespace Zotlabs\Widget;
 
+use App;
+
+
 class Activity_filter {
 
 	function widget($arr) {
@@ -9,11 +12,23 @@ class Activity_filter {
 		if(! local_channel())
 			return '';
 
-		$cmd = \App::$cmd;
+		$cmd = App::$cmd;
 		$filter_active = false;
 
 		$tabs = [];
 
+		if(x($_GET,'dm')) {
+			$dm_active = (($_GET['dm'] == 1) ? 'active' : '');
+			$filter_active = 'dm';
+		}
+
+		$tabs[] = [
+			'label' => t('Direct Messages'),
+			'icon' => 'envelope-o',
+			'url' => z_root() . '/' . $cmd . '/?dm=1',
+			'sel' => $dm_active,
+			'title' => t('Show direct (private) messages')
+		];
 
 		if(x($_GET,'conv')) {
 			$conv_active = (($_GET['conv'] == 1) ? 'active' : '');
@@ -28,6 +43,7 @@ class Activity_filter {
 			'title' => t('Show posts that mention or involve me')
 		];
 
+
 		if(x($_GET,'verb')) {
 			$verb_active = (($_GET['verb'] == 1) ? 'active' : '');
 			$filter_active = 'events';
@@ -40,6 +56,7 @@ class Activity_filter {
 			'sel' => $verb_active,
 			'title' => t('Show posts that include events')
 		];
+
 
 		if(feature_enabled(local_channel(),'star_posts')) {
 			if(x($_GET,'star')) {

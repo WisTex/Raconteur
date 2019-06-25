@@ -440,6 +440,7 @@ class Channel extends Controller {
 				'$nouveau' => '0',
 				'$wall' => '1',
 				'$fh' => '0',
+				'$dm' => '0',
 				'$static'  => $static,
 				'$page' => ((App::$pager['page'] != 1) ? App::$pager['page'] : 1),
 				'$search' => $search,

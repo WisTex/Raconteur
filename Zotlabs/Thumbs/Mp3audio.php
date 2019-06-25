@@ -2,7 +2,7 @@
 
 namespace Zotlabs\Thumbs;
 
-use \ID3Parser\ID3Parser;
+use ID3Parser\ID3Parser;
 
 class Mp3audio {
 

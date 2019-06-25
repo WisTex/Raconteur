@@ -376,7 +376,7 @@ function pub_tagadelic($net,$site,$limit,$recent,$safemode,$type) {
 }
 
 
-function dir_tagadelic($count = 0, $hub = '', $type = 0) {
+function dir_tagadelic($count = 0, $hub = '', $type = 0, $safe = '') {
 
 	$count = intval($count);
 
@@ -397,8 +397,8 @@ function dir_tagadelic($count = 0, $hub = '', $type = 0) {
 		);
 	}
 	else {
-		$r = q("select xtag_term as term, count(xtag_term) as total from xtag where xtag_flags = 0
-			$sql_extra
+		$r = q("select xtag_term as term, count(xtag_term) as total from xtag left join xchan on xtag_hash = xchan_hash where xtag_flags = 0
+			$sql_extra $safe
 			group by xtag_term order by total desc %s",
 			((intval($count)) ? "limit $count" : '')
 		);
