@@ -50,12 +50,12 @@ class HttpMeta {
 		$o = '';
 		if($this->vars) {
 			foreach($this->vars as $k => $v) {
-				$o .= '<meta property="' . $k . '" content="' . urlencode($v) . '" />' . "\r\n" ;
+				$o .= '<meta property="' . htmlspecialchars($k,ENT_COMPAT,'UTF-8',false) . '" content="' . htmlspecialchars($v,ENT_COMPAT,'UTF-8',false) . '" />' . "\r\n" ;
 			}
 		}
 		if($this->check_required()) {
 			foreach($this->og as $k => $v) {
-				$o .= '<meta property="' . $k . '" content="' . urlencode($v) . '" />' . "\r\n" ;
+				$o .= '<meta property="' . htmlspecialchars($k,ENT_COMPAT,'UTF-8',false) . '" content="' . htmlspecialchars($v,ENT_COMPAT,'UTF-8',false) . '" />' . "\r\n" ;
 			}
 		}
 		if($o)

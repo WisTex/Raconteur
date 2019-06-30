@@ -773,6 +773,8 @@ class App {
 	public static  $force_max_items = 0;
 	public static  $theme_thread_allow = true;
 
+	public static $meta;
+	
 	/**
 	 * @brief An array for all theme-controllable parameters
 	 *
@@ -817,8 +819,6 @@ class App {
 	// to access the page
 
 	private static $baseurl;
-
-	private static $meta;
 
 	/**
 	 * App constructor.
