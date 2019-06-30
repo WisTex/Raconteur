@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/tasks
+requires: local_channel
+name: Tasks
+photo: icon:list
+categories: Productivity
