@@ -148,7 +148,7 @@ class Libzotdir {
 		$current_order = (($_REQUEST['order']) ? $_REQUEST['order'] : $directory_sort_order);
 		$suggest = (($_REQUEST['suggest']) ? '&suggest=' . $_REQUEST['suggest'] : '');
 
-		$url = 'directory?f=&';
+		$url = 'directory?f=';
 
 		$tmp = array_merge($_GET,$_POST);
 		unset($tmp['suggest']);
@@ -158,7 +158,8 @@ class Libzotdir {
 		unset($tmp['safe']);
 		unset($tmp['req']);
 		unset($tmp['f']);
-		$forumsurl = $url . http_build_query($tmp) . $suggest;
+		$q = http_build_query($tmp);
+		$forumsurl = $url . (($q) ? '&' . $q : '') . $suggest;
 
 		$o = replace_macros(get_markup_template('dir_sort_links.tpl'), [
 			'$header'    => t('Directory Options'),

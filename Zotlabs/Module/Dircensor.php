@@ -42,10 +42,10 @@ class Dircensor extends Controller {
 			info( t('Entry censored') . EOL);
 		}
 		else {
-			info( t('Entry censored') . EOL);
+			info( t('Entry uncensored') . EOL);
 		}
 		
-		return;
+		goaway(z_root() . '/directory');
 
 	}
 
