@@ -17,7 +17,7 @@ class Photomap extends Controller {
             return $text;
         }
 
-		return $text . '<br><br>' . t('This app is currently installed');
+		return $text . '<br><br>' . t('This app is currently installed.');
 	}
 
 
