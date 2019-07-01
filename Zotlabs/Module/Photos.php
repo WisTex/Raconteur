@@ -2,6 +2,7 @@
 namespace Zotlabs\Module;
 
 use App;
+use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\PermissionDescription;
@@ -1018,7 +1019,7 @@ class Photos extends Controller {
 					);
 				}
 	
-				if($link_item['coord']) {
+				if($link_item['coord'] && Apps::system_app_installed($owner_uid,'Photomap')) {
 					$map = generate_map($link_item['coord']);
 				}
 			}

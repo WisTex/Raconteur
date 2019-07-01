@@ -340,6 +340,7 @@ class Apps {
 			'Channel Home' => t('Channel Home'), 
 			'View Profile' => t('View Profile'),
 			'Photos' => t('Photos'), 
+			'Photomap' => t('Photomap'), 
 			'Events' => t('Events'), 
 			'Tasks' => t('Tasks'),
 			'No Comment' => t('No Comment'),
