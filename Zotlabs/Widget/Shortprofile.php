@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Widget;
 
+use Zotlabs\Lib\Libprofile;
+
 class Shortprofile {
 
 	function widget($arr) {
@@ -11,7 +13,7 @@ class Shortprofile {
 
 		$block = observer_prohibited();
 
-		return profile_sidebar(\App::$profile, $block, true, true);
+		return Libprofile::widget(\App::$profile, $block, true, true);
 	}
 
 }
