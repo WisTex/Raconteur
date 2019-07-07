@@ -46,7 +46,8 @@
 		"simshaun/recurr": "^4.0",
 		"jbroadway/urlify": "^1.1",
 		"kzykhys/git": "^0.1.2",
-		"masterminds/html5": "^2.6"
+		"masterminds/html5": "^2.6",
+		"league/oauth2-client": "^2.4"
 	},
 	"require-dev" : {
 		"phpunit/phpunit" : "@stable",
