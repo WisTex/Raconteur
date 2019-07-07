@@ -1137,6 +1137,12 @@ img.mail-conv-sender-photo {
 	border-top-left-radius: 0px;
 }
 
+/*
+.thread-wrapper.u-comment {
+	border-left: 8px solid $item_colour;
+	border-right: 8px solid $item_colour;
+}
+*/
 .hide-comments-outer {
 	background-color: $comment_item_colour;
 	border-top-color: #ccc;

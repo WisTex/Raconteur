@@ -362,7 +362,16 @@ class Item extends Controller {
 	
 		$consensus = intval($_REQUEST['consensus']);
 		$nocomment = intval($_REQUEST['nocomment']);
-	
+
+		$qtype = intval($_REQUEST['qtype']);
+		if($_REQUEST['answers'] && is_array($_REQUEST['answers'])) {
+			$pollchoices = [];
+			foreach($_REQUEST['answers'] as $q) {
+				$pollchoices[] = escape_tags($q);
+			}
+			$_REQUEST['obj_type'] = ACTIVITY_OBJ_POLL;
+		}
+
 		// 'origin' (if non-zero) indicates that this network is where the message originated,
 		// for the purpose of relaying comments to other conversation members. 
 		// If using the API from a device (leaf node) you must set origin to 1 (default) or leave unset.

@@ -491,6 +491,7 @@ define ( 'ACTIVITY_OBJ_PHOTO',   'Image');
 define ( 'ACTIVITY_OBJ_P_PHOTO', 'Icon' );
 define ( 'ACTIVITY_OBJ_PROFILE', 'Profile');
 define ( 'ACTIVITY_OBJ_EVENT',   'Event' );
+define ( 'ACTIVITY_OBJ_POLL',    'Question');
 
 
 

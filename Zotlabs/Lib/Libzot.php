@@ -1535,6 +1535,8 @@ class Libzot {
 
 		$result = [];
 
+		//logger('msg_arr: ' . print_r($msg_arr,true),LOGGER_ALL);
+
 		// If an upstream hop used ActivityPub, set the identities to zot6 nomadic identities where applicable
 		// else things could easily get confused
 

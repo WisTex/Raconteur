@@ -1660,8 +1660,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 
 	$arr['comment_policy'] = ((x($arr,'comment_policy')) ? notags(trim($arr['comment_policy']))  : 'contacts' );
 
-	if(! array_key_exists('item_unseen',$arr))
-		$arr['item_unseen'] = 1;
+	$arr['item_unseen'] = ((array_key_exists('item_unseen',$arr)) ? intval($arr['item_unseen']) : 1 );
 
 	if((! array_key_exists('item_nocomment',$arr)) && ($arr['comment_policy'] == 'none'))
 		$arr['item_nocomment'] = 1;

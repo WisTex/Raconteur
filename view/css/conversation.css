@@ -105,6 +105,12 @@
 	margin-left:10px;
 }
 
+/*
+.wall-item-outside-wrapper.comment {
+	margin-left:20px;
+}
+*/
+
 .wall-item-photo-wrapper {
 	position: relative;
 }

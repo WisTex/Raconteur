@@ -430,7 +430,7 @@ class Dirsearch extends Controller {
 						$quoted_string = false;
 					}
 					else
-						$curr['value'] .= ' ' . trim(q);
+						$curr['value'] .= ' ' . trim($q);
 				}
 			}
 		}
