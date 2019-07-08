@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Lib;
 
+use App;
+
 require_once('include/text.php');
 
 /**
@@ -36,9 +38,10 @@ class ThreadItem {
 				
 		$this->data = $data;
 		$this->toplevel = ($this->get_id() == $this->get_data_value('parent'));
-		$this->threaded = get_config('system','thread_allow',((defined('NOMADIC')) ? false : true));
+//		$this->threaded = get_config('system','thread_allow',((defined('NOMADIC')) ? false : true));
+		$this->threaded = get_config('system','thread_allow',true);
 
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 
 		// Prepare the children
 		if($data['children']) {
@@ -841,7 +844,7 @@ class ThreadItem {
 	 */
 	private function get_comment_box($indent) {
 
-		if(!$this->is_toplevel() && !get_config('system','thread_allow',((defined('NOMADIC')) ? false : true))) {
+		if(!$this->is_toplevel() && !get_config('system','thread_allow',true)) {
 			return '';
 		}
 		
@@ -893,7 +896,7 @@ class ThreadItem {
 			'$feature_encrypt' => ((feature_enabled($conv->get_profile_owner(),'content_encrypt')) ? true : false),
 			'$encrypt' => t('Encrypt text'),
 			'$cipher' => $conv->get_cipher(),
-			'$sourceapp' => \App::$sourcename,
+			'$sourceapp' => App::$sourcename,
 			'$observer' => get_observer_hash(),
 			'$anoncomments' => ((($conv->get_mode() === 'channel' || $conv->get_mode() === 'display') && perm_is_allowed($conv->get_profile_owner(),'','post_comments')) ? true : false),
 			'$anonname' => [ 'anonname', t('Your full name (required)') ],
