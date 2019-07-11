@@ -2063,3 +2063,18 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
 
 	return $x['entry'];
 }
+
+function get_mentions($item,$tags) {
+	$o = '';
+
+	if(! count($tags))
+		return $o;
+
+	foreach($tags as $x) {
+		if($x['ttype'] == TERM_MENTION) {
+			$o .= "\t\t" . '<link rel="mentioned" href="' . $x['url'] . '" />' . "\r\n";
+			$o .= "\t\t" . '<link rel="ostatus:attention" href="' . $x['url'] . '" />' . "\r\n";
+		}
+	}
+	return $o;
+}

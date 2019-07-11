@@ -4,12 +4,14 @@ namespace Zotlabs\Module;
 
 /**
  *
- * This is the POST destination for most all locally posted
+ * As a GET request, this module answers to activitypub and zot6 item fetches and
+ * acts as a permalink for local content.
+ *
+ * Otherwise this is the POST destination for most all locally posted
  * text stuff. This function handles status, wall-to-wall status, 
  * local comments, and remote coments that are posted on this site 
  * (as opposed to being delivered in a feed).
- * Also processed here are posts and comments coming through the 
- * statusnet/twitter API. 
+ * Also processed here are posts and comments coming through the API. 
  * All of these become an "item" which is our basic unit of 
  * information.
  * Posts that originate externally or do not fall into the above 
@@ -29,7 +31,10 @@ use Zotlabs\Lib\Config;
 use Zotlabs\Lib\IConfig;
 use Zotlabs\Lib\Enotify;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Access\AccessControl;
 use App;
+use URLify;
 
 require_once('include/attach.php');
 require_once('include/bbcode.php');
@@ -289,12 +294,16 @@ class Item extends Controller {
 
 		}
 
-		if(argc() > 1 && argv(1) !== 'drop') {
+		// if it isn't a drop command and isn't a post method and wasn't handled already,
+		// the default action is a browser request for a persistent uri and this should return
+		// the text/html page of the item.
+		
+		if (argc() > 1 && argv(1) !== 'drop') {
 			$x = q("select uid, item_wall, llink, mid from item where mid = '%s' ",
 				dbesc(z_root() . '/item/' . argv(1))
 			);
-			if($x) {
-				foreach($x as $xv) {
+			if ($x) {
+				foreach ($x as $xv) {
 					if (intval($xv['item_wall'])) {
 						$c = channelx_by_n($xv['uid']);
 						if ($c) {
@@ -310,11 +319,19 @@ class Item extends Controller {
 
 	function post() {
 
-		// This will change. Figure out who the observer is and whether or not
-		// they have permission to post here. Else ignore the post.
-	
 		if((! local_channel()) && (! remote_channel()) && (! x($_REQUEST,'anonname')))
 			return;
+
+		// drop an array of items.
+		
+		if (x($_REQUEST,'dropitems')) {
+			$arr_drop = explode(',',$_REQUEST['dropitems']);
+			drop_items($arr_drop);
+			$json = array('success' => 1);
+			echo json_encode($json);
+			killme();
+		}
+
 
 		$uid = local_channel();
 		$channel = null;
@@ -326,34 +343,35 @@ class Item extends Controller {
 		 * Is this a reply to something?
 		 */
 	
-		$parent = ((x($_REQUEST,'parent')) ? intval($_REQUEST['parent']) : 0);
+		$parent     = ((x($_REQUEST,'parent'))     ? intval($_REQUEST['parent'])   : 0);
 		$parent_mid = ((x($_REQUEST,'parent_mid')) ? trim($_REQUEST['parent_mid']) : '');
 	
-		$remote_xchan = ((x($_REQUEST,'remote_xchan')) ? trim($_REQUEST['remote_xchan']) : false);
 
+		/**
+		 * Who is viewing this page and posting this thing
+		 */
+		 
+		$remote_xchan = ((x($_REQUEST,'remote_xchan')) ? trim($_REQUEST['remote_xchan']) : false);
 		$remote_observer = xchan_match( ['xchan_hash' => $remote_xchan ] );
 
-		if(! $remote_observer) {
+		if (! $remote_observer) {
 			$remote_xchan = $remote_observer = false;
 		}
 
+		// This is the local channel representing who the posted item will belong to.
+
 		$profile_uid = ((x($_REQUEST,'profile_uid')) ? intval($_REQUEST['profile_uid'])    : 0);
 
+		// *If* you are logged in as the site admin you are allowed to create items for the sys channel.
+		// This would typically be a webpage or webpage element.
+		
 		$sys = get_sys_channel();
-		if($sys && $profile_uid && ($sys['channel_id'] == $profile_uid) && is_site_admin()) {
+		if ($sys && $profile_uid && ($sys['channel_id'] == $profile_uid) && is_site_admin()) {
 			$uid = intval($sys['channel_id']);
 			$channel = $sys;
 			$observer = $sys;
 		}
-	
-		if(x($_REQUEST,'dropitems')) {
-			$arr_drop = explode(',',$_REQUEST['dropitems']);
-			drop_items($arr_drop);
-			$json = array('success' => 1);
-			echo json_encode($json);
-			killme();
-		}
-	
+
 		call_hooks('post_local_start', $_REQUEST);
 	
 		// logger('postvars ' . print_r($_REQUEST,true), LOGGER_DATA);
@@ -363,6 +381,8 @@ class Item extends Controller {
 		$consensus = intval($_REQUEST['consensus']);
 		$nocomment = intval($_REQUEST['nocomment']);
 
+		// If this is a poll, grab the poll data
+		
 		$qtype = intval($_REQUEST['qtype']);
 		if($_REQUEST['answers'] && is_array($_REQUEST['answers'])) {
 			$pollchoices = [];
@@ -422,8 +442,8 @@ class Item extends Controller {
 			}
 		}
 	
-		if($pagetitle) {
-			$pagetitle = strtolower(\URLify::transliterate($pagetitle));
+		if ($pagetitle) {
+			$pagetitle = strtolower(URLify::transliterate($pagetitle));
 		}
 	
 		if (array_key_exists('collections',$_REQUEST) && is_array($_REQUEST['collections']) && count($_REQUEST['collections'])) {
@@ -455,21 +475,27 @@ class Item extends Controller {
 		$thr_parent = '';
 		$parid = 0;
 		$r = false;
+
+
+		// If this is a comment, find the parent and preset some stuff
+
+		if ($parent || $parent_mid) {
 	
-		if($parent || $parent_mid) {
-	
-			if(! x($_REQUEST,'type'))
+			if (! x($_REQUEST,'type')) {
 				$_REQUEST['type'] = 'net-comment';
-	
-			if($obj_type == ACTIVITY_OBJ_NOTE)
+			}
+			if ($obj_type == ACTIVITY_OBJ_NOTE) {
 				$obj_type = ACTIVITY_OBJ_COMMENT;
-	
-			if($parent) {
+			}
+
+			// fetch the parent item
+			
+			if ($parent) {
 				$r = q("SELECT * FROM item WHERE id = %d LIMIT 1",
 					intval($parent)
 				);
 			}
-			elseif($parent_mid && $uid) {
+			elseif ($parent_mid && $uid) {
 				// This is coming from an API source, and we are logged in
 				$r = q("SELECT * FROM item WHERE mid = '%s' AND uid = %d LIMIT 1",
 					dbesc($parent_mid),
@@ -477,29 +503,31 @@ class Item extends Controller {
 				);
 			}
 			// if this isn't the real parent of the conversation, find it
-			if($r) {
+			if ($r) {
 				$parid = $r[0]['parent'];
 				$parent_mid = $r[0]['mid'];
-				if($r[0]['id'] != $r[0]['parent']) {
+				if ($r[0]['id'] != $r[0]['parent']) {
 					$r = q("SELECT * FROM item WHERE id = parent AND parent = %d LIMIT 1",
 						intval($parid)
 					);
 				}
 
-				// if interacting with a pubstream item, 
+				// if interacting with a pubstream item (owned by the sys channel), 
 				// create a copy of the parent in your stream
 
-				if($r[0]['uid'] === $sys['channel_id'] && local_channel()) {
+				if ($r[0]['uid'] === $sys['channel_id'] && local_channel()) {
 					$r = [ copy_of_pubitem(App::get_channel(), $r[0]['mid']) ];
 				}
 			}
 
-			if(! $r) {
+			if (! $r) {
 				notice( t('Unable to locate original post.') . EOL);
-				if($api_source)
-					return ( [ 'success' => false, 'message' => 'invalid post id' ] );	
-				if(x($_REQUEST,'return')) 
+				if ($api_source) {
+					return ( [ 'success' => false, 'message' => 'invalid post id' ] );
+				}
+				if (x($_REQUEST,'return')) { 
 					goaway(z_root() . "/" . $return_path );
+				}
 				killme();
 			}
 
@@ -518,27 +546,30 @@ class Item extends Controller {
 
 		$moderated = false;
 	
-		if(! $observer) {
+		if (! $observer) {
 			$observer = App::get_observer();
-			if(! $observer) {
+			if (! $observer) {
+				// perhaps we're allowing moderated comments from anonymous viewers
 				$observer = anon_identity_init($_REQUEST);
-				if($observer) {
+				if ($observer) {
 					$moderated = true;
 					$remote_xchan = $remote_observer = $observer;
 				}
 			}
 		} 			
 	
-		if(! $observer) {
+		if (! $observer) {
 			notice( t('Permission denied.') . EOL) ;
-			if($api_source)
-				return ( [ 'success' => false, 'message' => 'permission denied' ] );	
-			if(x($_REQUEST,'return')) 
+			if ($api_source) {
+				return ( [ 'success' => false, 'message' => 'permission denied' ] );
+			}
+			if (x($_REQUEST,'return')) {
 				goaway(z_root() . "/" . $return_path );
+			}
 			killme();
 		}
 
-		if($parent) {
+		if ($parent) {
 			logger('mod_item: item_post parent=' . $parent);
 			$can_comment = false;
 
@@ -559,6 +590,7 @@ class Item extends Controller {
 			}
 		}
 		else {
+			// fixme - $webpage could also be a wiki page or article and require a different permission to be checked.	
 			if(! perm_is_allowed($profile_uid,$observer['xchan_hash'],($webpage) ? 'write_pages' : 'post_wall')) {
 				notice( t('Permission denied.') . EOL) ;
 				if($api_source)
@@ -568,13 +600,16 @@ class Item extends Controller {
 				killme();
 			}
 		}
-	
+
+		// check if this author is being moderated through the 'moderated' (negative) permission
+		// when posting wall-to-wall
 		if ($moderated === false && intval($uid) !== intval($profile_uid)) {
 			$moderated = perm_is_allowed($profile_uid,$observer['xchan_hash'],'moderated');
 		}
-	
+
+		// If this is a comment, check the moderated permission of the parent; who may be on another site	
 		$remote_moderated = (($parent) ? their_perms_contains($profile_uid,$parent_item['owner_xchan'],'moderated') : false);
-		if($remote_moderated) {
+		if ($remote_moderated) {
 			notice( t('Comment may be moderated.') . EOL);
 		}
 
@@ -582,7 +617,7 @@ class Item extends Controller {
 	
 		$orig_post = null;
 	
-		if($namespace && $remote_id) {
+		if ($namespace && $remote_id) {
 			// It wasn't an internally generated post - see if we've got an item matching this remote service id
 			$i = q("select iid from iconfig where cat = 'system' and k = '%s' and v = '%s' limit 1",
 				dbesc($namespace),
@@ -673,10 +708,10 @@ class Item extends Controller {
 			}
 		}
 	
-		$acl = new \Zotlabs\Access\AccessControl($channel);
+		$acl = new AccessControl($channel);
 
-		$view_policy = \Zotlabs\Access\PermissionLimits::Get($channel['channel_id'],'view_stream');	
-		$comment_policy = \Zotlabs\Access\PermissionLimits::Get($channel['channel_id'],'post_comments');
+		$view_policy = PermissionLimits::Get($channel['channel_id'],'view_stream');	
+		$comment_policy = PermissionLimits::Get($channel['channel_id'],'post_comments');
 	
 		$public_policy = ((x($_REQUEST,'public_policy')) ? escape_tags($_REQUEST['public_policy']) : map_scope($view_policy,true));
 		if($webpage)

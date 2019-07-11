@@ -142,7 +142,7 @@ class Import extends Controller {
 			$max_identities = account_service_class_fetch($account_id,'total_identities');
 
 			if ($max_identities !== false) {
-				$r = q("select channel_id from channel where channel_account_id = %d",
+				$r = q("select channel_id from channel where channel_account_id = %d and channel_removed = 0 ",
 					intval($account_id)
 				);
 				if ($r && count($r) > $max_identities) {
@@ -160,6 +160,9 @@ class Import extends Controller {
 
 	            if ((! $x) || strlen($x) > 64) {
     	            $x = strtolower(URLify::transliterate($newname));
+				}
+				else {
+					$x = $newname;
 				}
 				$newname = $x;
 			}

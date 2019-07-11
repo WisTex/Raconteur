@@ -3336,6 +3336,8 @@ function retain_item($id) {
 	);
 }
 
+// Items is array of item.id
+
 function drop_items($items,$interactive = false,$stage = DROPITEM_NORMAL,$force = false) {
 	$uid = 0;
 
