@@ -63,7 +63,7 @@ class Connect {
 
 		$xchan_hash = '';
 		$sql_options = (($protocol) ? " and xchan_network = '" . dbesc($protocol) . "' " : '');
-		
+
 		$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' $sql_options ",
 			dbesc($url),
 			dbesc($url),
@@ -76,6 +76,13 @@ class Connect {
 			// note: this is a single record and not an array of results
 
 			$r = Libzot::zot_record_preferred($r,'xchan_network');
+
+			// Some Hubzilla records were originally stored as activitypub. If we find one, force rediscovery
+			// since Zap cannot connect with them.
+			
+			if($r['xchan_network'] === 'activitypub') {
+				$r = null;
+			}
 		}
 
 
@@ -100,7 +107,6 @@ class Connect {
 				}
 			}
 		}
-
 
 		if($wf || $d) {
 

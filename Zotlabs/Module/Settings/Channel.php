@@ -286,6 +286,10 @@ class Channel {
 				intval($publish),
 				intval(local_channel())
 			);
+			$r = q("UPDATE xchan SET xchan_hidden = %d WHERE xchan_hash = '%s'",
+				intval(1 - $publish),
+				intval($channel['channel_hash'])
+			);
 		}
 	
 		if($name_change) {

@@ -17,7 +17,6 @@ class Viewconnections extends Controller {
 		if (argc() > 1) {
 			Libprofile::load(argv(1));
 		}
-
 	}
 	
 	function get() {
@@ -29,7 +28,7 @@ class Viewconnections extends Controller {
 			return;
 		}
 
-		if (((! count(App::$profile)) || (App::$profile['hide_friends']))) {
+		if (((! (is_array(App::$profile) && count(App::$profile))) || (App::$profile['hide_friends']))) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		} 
