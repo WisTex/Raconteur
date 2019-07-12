@@ -17,7 +17,7 @@ class PermissionRoles {
 	 * @return number
 	 */
 	static public function version() {
-		return 2;
+		return 3;
 	}
 
 	static function role_perms($role) {
@@ -62,6 +62,7 @@ class PermissionRoles {
 					'view_pages', 'post_wall', 'post_comments'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
+				$ret['channel_type'] = 'group';
 	
 				break;
 
@@ -76,6 +77,7 @@ class PermissionRoles {
 					'view_pages', 'post_wall', 'post_comments', 'moderated'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
+				$ret['channel_type'] = 'group';
 	
 				break;
 
@@ -90,6 +92,7 @@ class PermissionRoles {
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 				$ret['limits']['view_contacts'] = PERMS_SPECIFIC;
+				$ret['channel_type'] = 'group';
 				break;
 
 			case 'collection':
@@ -102,6 +105,7 @@ class PermissionRoles {
 					'view_pages', 'post_comments'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
+				$ret['channel_type'] = 'collection';
 	
 				break;
 
@@ -116,6 +120,7 @@ class PermissionRoles {
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 				$ret['limits']['view_contacts'] = PERMS_SPECIFIC;
+				$ret['channel_type'] = 'collection';
 				break;
 
 			case 'feed':
@@ -131,6 +136,10 @@ class PermissionRoles {
 				$ret['limits'] = PermissionLimits::Std_Limits();
 
 				break;
+
+			case 'repository':
+				//Legacy settings to cover all channel_types previously in Libzot.php
+				$ret['channel_type'] = 'group';
 
 			default:
 				break;

@@ -39,7 +39,7 @@ class PermissionRolesTest extends UnitTestCase {
 	use PHPMock;
 
 	public function testVersion() {
-		$expectedVersion = 2;
+		$expectedVersion = 3;
 
 		$this->assertEquals($expectedVersion, PermissionRoles::version());
 
