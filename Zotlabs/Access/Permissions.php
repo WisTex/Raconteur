@@ -53,18 +53,18 @@ class Permissions {
 	static public function Perms($filter = '') {
 
 		$perms = [
-			'view_stream'   => t('Can view my channel stream and posts'),
-			'send_stream'   => t('Can send me their channel stream and posts'),
-			'view_profile'  => t('Can view my default channel profile'),
-			'view_contacts' => t('Can view my connections'),
-			'view_storage'  => t('Can view my file storage and photos'),
-			'write_storage' => t('Can upload/modify my file storage and photos'),
-			'post_wall'     => t('Can post on my channel (wall) page'),
-			'post_comments' => t('Can comment on or like my posts'),
+			'view_stream'   => t('Can view your channel stream and posts'),
+			'send_stream'   => t('Can send you their channel stream and posts'),
+			'view_profile'  => t('Can view your default channel profile'),
+			'view_contacts' => t('Can view your connections'),
+			'view_storage'  => t('Can view your file storage and photos'),
+			'write_storage' => t('Can upload/modify your file storage and photos'),
+			'post_wall'     => t('Can post on your channel (wall) page'),
+			'post_comments' => t('Can comment on or like your posts'),
 			'post_like'     => t('Can like/dislike profiles and profile things'),
-			'republish'     => t('Can source my public posts in derived channels'),
+			'republish'     => t('Can source your public posts in derived channels'),
 			'moderated'     => t('Comments are moderated'),
-			'delegate'      => t('Can administer my channel')
+			'delegate'      => t('Can administer your channel')
 		];
 
 		$x = [
