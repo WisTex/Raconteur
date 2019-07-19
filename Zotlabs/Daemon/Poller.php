@@ -29,8 +29,8 @@ class Poller {
 			return;
 		}
 	
-		// Create a lockfile.  Needs two vars, but $x doesn't need to contain anything.
-		file_put_contents($lockfile, $x);
+		// Create a lockfile.  
+		file_put_contents($lockfile, EMPTY_STR);
 
 		logger('poller: start');
 	

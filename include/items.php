@@ -3400,14 +3400,15 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 	if(! $interactive)
 		$ok_to_delete = true;
 
+	// admin deletion
+	
+	if(is_site_admin())
+		$ok_to_delete = true;
+
 	// owner deletion
 	if(local_channel() && local_channel() == $item['uid'])
 		$ok_to_delete = true;
 
-	// sys owned item, requires site admin to delete
-	$sys = get_sys_channel();
-	if(is_site_admin() && $sys['channel_id'] == $item['uid'])
-		$ok_to_delete = true;
 
 	// author deletion
 	$observer = App::get_observer();
