@@ -11,6 +11,7 @@ use App;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Daemon\Master;
 
 
@@ -2952,15 +2953,10 @@ class Libzot {
 		// now all forums (public, restricted, and private) set the public_forum flag. So it really means "is a group"
 		// and has nothing to do with accessibility.  
 
-		$channel_type = 'normal';
-
 		$role = get_pconfig($e['channel_id'],'system','permissions_role');
-		if (in_array($role, ['forum','forum_restricted','repository'])) {
-			$channel_type = 'group';
-		}
-		if (in_array($role, ['collection','collection_restricted'])) {
-			$channel_type = 'collection';
-		}
+		$rolesettings = PermissionRoles::role_perms($role);
+
+		$channel_type = isset($rolesettings['channel_type']) ? $rolesettings['channel_type'] : 'normal';
 
 		//  This is for birthdays and keywords, but must check access permissions
 		$p = q("select * from profile where uid = %d and is_default = 1",
