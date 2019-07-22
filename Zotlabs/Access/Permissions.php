@@ -41,7 +41,7 @@ class Permissions {
 	 * @return number
 	 */
 	static public function version() {
-		return 2;
+		return 3;
 	}
 
 	/**
