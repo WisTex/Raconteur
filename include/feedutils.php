@@ -2078,3 +2078,47 @@ function get_mentions($item,$tags) {
 	}
 	return $o;
 }
+
+/**
+ * @brief Return atom link elements for all of our hubs.
+ *
+ * @return string
+ */
+function feed_hublinks() {
+	$hub = get_config('system', 'huburl');
+
+	$hubxml = '';
+	if(strlen($hub)) {
+		$hubs = explode(',', $hub);
+		if(count($hubs)) {
+			foreach($hubs as $h) {
+				$h = trim($h);
+				if(! strlen($h))
+					continue;
+
+				$hubxml .= '<link rel="hub" href="' . xmlify($h) . '" />' . "\n" ;
+			}
+		}
+	}
+
+	return $hubxml;
+}
+
+/**
+ * @brief Return atom link elements for salmon endpoints
+ *
+ * @param string $nick
+ * @return string
+ */
+function feed_salmonlinks($nick) {
+
+	$salmon  = '<link rel="salmon" href="' . xmlify(z_root() . '/salmon/' . $nick) . '" />' . "\n" ;
+
+	// old style links that status.net still needed as of 12/2010
+
+	$salmon .= '  <link rel="http://salmon-protocol.org/ns/salmon-replies" href="' . xmlify(z_root() . '/salmon/' . $nick) . '" />' . "\n" ;
+	$salmon .= '  <link rel="http://salmon-protocol.org/ns/salmon-mention" href="' . xmlify(z_root() . '/salmon/' . $nick) . '" />' . "\n" ;
+
+	return $salmon;
+}
+
