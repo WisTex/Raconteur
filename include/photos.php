@@ -4,7 +4,7 @@
  * @brief Functions related to photo handling.
  */
 
-
+use Zotlabs\Lib\Apps;
 use Zotlabs\Access\AccessControl;
 
 require_once('include/permissions.php');
@@ -356,7 +356,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$lat = $lon = null;
 
-	if($exif && feature_enabled($channel_id,'photo_location')) {
+	if($exif && Apps::system_app_installed($channel_id,'Photomap')) {
 		$gps = null;
 		if(array_key_exists('GPS',$exif)) {
 			$gps = $exif['GPS'];

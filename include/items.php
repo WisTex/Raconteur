@@ -1660,8 +1660,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 
 	$arr['comment_policy'] = ((x($arr,'comment_policy')) ? notags(trim($arr['comment_policy']))  : 'contacts' );
 
-	if(! array_key_exists('item_unseen',$arr))
-		$arr['item_unseen'] = 1;
+	$arr['item_unseen'] = ((array_key_exists('item_unseen',$arr)) ? intval($arr['item_unseen']) : 1 );
 
 	if((! array_key_exists('item_nocomment',$arr)) && ($arr['comment_policy'] == 'none'))
 		$arr['item_nocomment'] = 1;
@@ -3337,6 +3336,8 @@ function retain_item($id) {
 	);
 }
 
+// Items is array of item.id
+
 function drop_items($items,$interactive = false,$stage = DROPITEM_NORMAL,$force = false) {
 	$uid = 0;
 
@@ -3399,14 +3400,15 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 	if(! $interactive)
 		$ok_to_delete = true;
 
+	// admin deletion
+	
+	if(is_site_admin())
+		$ok_to_delete = true;
+
 	// owner deletion
 	if(local_channel() && local_channel() == $item['uid'])
 		$ok_to_delete = true;
 
-	// sys owned item, requires site admin to delete
-	$sys = get_sys_channel();
-	if(is_site_admin() && $sys['channel_id'] == $item['uid'])
-		$ok_to_delete = true;
 
 	// author deletion
 	$observer = App::get_observer();

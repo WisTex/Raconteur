@@ -2,16 +2,22 @@
 
 namespace Zotlabs\Module\Settings;
 
+use App;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\AccessList;
-
+use Zotlabs\Access\Permissions;
+use Zotlabs\Access\PermissionRoles;
+use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Access\AccessControl;
+use Zotlabs\Daemon\Master;
+use Zotlabs\Lib\Permcat;
 
 class Channel {
 
 
 	function post() {
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
 		check_form_security_token_redirectOnErr('/settings', 'settings');
 		
@@ -22,11 +28,7 @@ class Channel {
 		$role = ((x($_POST,'permissions_role')) ? notags(trim($_POST['permissions_role'])) : '');
 		$oldrole = get_pconfig(local_channel(),'system','permissions_role');
 
-		// This mapping can be removed after 3.4 release
-		if($oldrole === 'social_party') {
-			$oldrole = 'social_federation';
-		}
-	
+
 		if(($role != $oldrole) || ($role === 'custom')) {
 	
 			if($role === 'custom') {
@@ -37,12 +39,12 @@ class Channel {
 					intval(local_channel())
 				);	
 	
-				$global_perms = \Zotlabs\Access\Permissions::Perms();
+				$global_perms = Permissions::Perms();
 	
 				foreach($global_perms as $k => $v) {
-					\Zotlabs\Access\PermissionLimits::Set(local_channel(),$k,intval($_POST[$k]));
+					PermissionLimits::Set(local_channel(),$k,intval($_POST[$k]));
 				}
-				$acl = new \Zotlabs\Access\AccessControl($channel);
+				$acl = new AccessControl($channel);
 				$acl->set_from_array($_POST);
 				$x = $acl->get();
 	
@@ -56,7 +58,7 @@ class Channel {
 				);
 			}
 			else {
-			   	$role_permissions = \Zotlabs\Access\PermissionRoles::role_perms($_POST['permissions_role']);
+			   	$role_permissions = PermissionRoles::role_perms($_POST['permissions_role']);
 				if(! $role_permissions) {
 					notice('Permissions category could not be found.');
 					return;
@@ -97,8 +99,8 @@ class Channel {
 				}
 
 				if($role_permissions['perms_connect']) {	
-					$x = \Zotlabs\Access\Permissions::FilledPerms($role_permissions['perms_connect']);
-					$str = \Zotlabs\Access\Permissions::serialise($x);
+					$x = Permissions::FilledPerms($role_permissions['perms_connect']);
+					$str = Permissions::serialise($x);
 					set_abconfig(local_channel(),$channel['channel_hash'],'system','my_perms',$str);
 
 					$autoperms = intval($role_permissions['perms_auto']);
@@ -106,7 +108,7 @@ class Channel {
 
 				if($role_permissions['limits']) {
 					foreach($role_permissions['limits'] as $k => $v) {
-						\Zotlabs\Access\PermissionLimits::Set(local_channel(),$k,$v);
+						PermissionLimits::Set(local_channel(),$k,$v);
 					}
 				}
 				if(array_key_exists('directory_publish',$role_permissions)) {
@@ -117,6 +119,12 @@ class Channel {
 			set_pconfig(local_channel(),'system','hide_online_status',$hide_presence);
 			set_pconfig(local_channel(),'system','permissions_role',$role);
 		}
+
+		// The post_comments permission is critical to privacy so we always allow you to set it, no matter what
+		// permission role is in place.
+		
+		$post_comments   = array_key_exists('post_comments',$_POST) ? intval($_POST['post_comments']) : PERMS_SPECIFIC;
+		PermissionLimits::Set(local_channel(),'post_comments',$post_comments);
 
 		$publish          = (((x($_POST,'profile_in_directory')) && (intval($_POST['profile_in_directory']) == 1)) ? 1: 0);
 		$username         = ((x($_POST,'username'))   ? notags(trim($_POST['username']))     : '');
@@ -284,6 +292,10 @@ class Channel {
 				intval($publish),
 				intval(local_channel())
 			);
+			$r = q("UPDATE xchan SET xchan_hidden = %d WHERE xchan_hash = '%s'",
+				intval(1 - $publish),
+				intval($channel['channel_hash'])
+			);
 		}
 	
 		if($name_change) {
@@ -298,12 +310,12 @@ class Channel {
 			);
 		}
 	
-		\Zotlabs\Daemon\Master::Summon(array('Directory',local_channel()));
+		Master::Summon( [ 'Directory', local_channel() ] );
 	
 		Libsync::build_sync_packet();
 	
 	
-		if($email_changed && \App::$config['system']['register_policy'] == REGISTER_VERIFY) {
+		if($email_changed && App::$config['system']['register_policy'] == REGISTER_VERIFY) {
 	
 			// FIXME - set to un-verified, blocked and redirect to logout
 			// Q: Why? Are we verifying people or email addresses?
@@ -320,7 +332,7 @@ class Channel {
 		require_once('include/permissions.php');
 
 
-		$yes_no = array(t('No'),t('Yes'));
+		$yes_no = [ t('No'), t('Yes') ];
 	
 	
 		$p = q("SELECT * FROM profile WHERE is_default = 1 AND uid = %d LIMIT 1",
@@ -331,13 +343,13 @@ class Channel {
 	
 		load_pconfig(local_channel(),'expire');
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
-		$global_perms = \Zotlabs\Access\Permissions::Perms();
+		$global_perms = Permissions::Perms();
 
-		$permiss = array();
+		$permiss = [];
 	
-		$perm_opts = array(
+		$perm_opts = [
 			array( t('Nobody except yourself'), 0),
 			array( t('Only those you specifically allow'), PERMS_SPECIFIC), 
 			array( t('Approved connections'), PERMS_CONTACTS),
@@ -346,13 +358,13 @@ class Channel {
 			array( t('Anybody in this network'), PERMS_NETWORK),
 			array( t('Anybody authenticated'), PERMS_AUTHED),
 			array( t('Anybody on the internet'), PERMS_PUBLIC)
-		);
+		];
 	
-		$limits = \Zotlabs\Access\PermissionLimits::Get(local_channel());
+		$limits = PermissionLimits::Get(local_channel());
 		$anon_comments = get_config('system','anonymous_comments',true);
 	
 		foreach($global_perms as $k => $perm) {
-			$options = array();
+			$options = [];
 			$can_be_public = ((strstr($k,'view') || ($k === 'post_comments' && $anon_comments)) ? true : false);
 			foreach($perm_opts as $opt) {
 				if($opt[1] == PERMS_PUBLIC && (! $can_be_public))
@@ -362,7 +374,12 @@ class Channel {
 			if($k === 'view_stream') {
 				$options = [$perm_opts[7][1] => $perm_opts[7][0]];
 			}
-			$permiss[] = array($k,$perm,$limits[$k],'',$options);			
+			if($k === 'post_comments') {
+				$comment_perms = [ $k, $perm, $limits[$k],'',$options ];
+			}
+			else {
+				$permiss[] = array($k,$perm,$limits[$k],'',$options);			
+			}
 		}
 		
 		//		logger('permiss: ' . print_r($permiss,true));
@@ -378,12 +395,8 @@ class Channel {
 		$adult_flag = intval($channel['channel_pageflags'] & PAGE_ADULT);
 		$sys_expire = get_config('system','default_expire_days');
 	
-//		$unkmail    = \App::$user['unkmail'];
-//		$cntunkmail = \App::$user['cntunkmail'];
-	
 		$hide_presence = intval(get_pconfig(local_channel(), 'system','hide_online_status'));
-	
-	
+
 		$expire_items = get_pconfig(local_channel(), 'expire','items');
 		$expire_items = (($expire_items===false)? '1' : $expire_items); // default if not set: 1
 		
@@ -436,7 +449,7 @@ class Channel {
 		$subdir = ((strlen(\App::get_path())) ? '<br />' . t('or') . ' ' . z_root() . '/channel/' . $nickname : '');
 
 		$webbie = $nickname . '@' . \App::get_hostname();
-		$intl_nickname = unpunify($nickname) . '@' . unpunify(\App::get_hostname());
+		$intl_nickname = unpunify($nickname) . '@' . unpunify(App::get_hostname());
 	
 		$tpl_addr = get_markup_template("settings_nick_set.tpl");
 	
@@ -446,11 +459,11 @@ class Channel {
 			'$subdir' => $subdir,
 			'$davdesc' => t('Your files/photos are accessible via WebDAV at'),
 			'$davpath' => z_root() . '/dav/' . $nickname,
-			'$basepath' => \App::get_hostname()
+			'$basepath' => App::get_hostname()
 		));
 
 
-		$pcat = new \Zotlabs\Lib\Permcat(local_channel());
+		$pcat = new Permcat(local_channel());
 		$pcatlist = $pcat->listing();
 		$permcats = [];
 		if($pcatlist) {
@@ -464,7 +477,7 @@ class Channel {
 	
 		$stpl = get_markup_template('settings.tpl');
 	
-		$acl = new \Zotlabs\Access\AccessControl($channel);
+		$acl = new AccessControl($channel);
 		$perm_defaults = $acl->get();
 	
 		$group_select = AccessList::select(local_channel(),$channel['channel_default_group']);
@@ -492,19 +505,16 @@ class Channel {
 		if(in_array($permissions_role,['forum','repository'])) {	
 			$autoperms = replace_macros(get_markup_template('field_checkbox.tpl'), [
 				'$field' =>  [ 'autoperms',t('Automatic membership approval'), ((get_pconfig(local_channel(),'system','autoperms',0)) ? 1 : 0), t('If enabled, connection requests will be approved without your interaction'), $yes_no ]]);
-//			$anymention = replace_macros(get_markup_template('field_checkbox.tpl'), [
-//				'$field' =>  [ 'anymention', t('Allow forum delivery with @mentions'), ((get_pconfig(local_channel(),'system','anymention')) ? 1 : 0), t('Allows delivery from projects which do not support !mentions for forums.'), $yes_no ]]);
 		}
 		else {
 			$autoperms  = '<input type="hidden" name="autoperms"  value="' . intval(get_pconfig(local_channel(),'system','autoperms'))  . '" />';
-//			$anymention = '<input type="hidden" name="anymention" value="' . intval(get_pconfig(local_channel(),'system','anymention')) . '" />';
 		}
 
 		$hyperdrive = [ 'hyperdrive', t('Enable hyperdrive'), ((get_pconfig(local_channel(),'system','hyperdrive',true)) ? 1 : 0), t('Import public third-party conversations in which your connections participate.'), $yes_no ];
 
 		$permissions_set = (($permissions_role != 'custom') ? true : false);
 
-		$perm_roles = \Zotlabs\Access\PermissionRoles::roles();
+		$perm_roles = PermissionRoles::roles();
 
 		$vnotify = get_pconfig(local_channel(),'system','vnotify');
 		$always_show_in_notices = get_pconfig(local_channel(),'system','always_show_in_notices');
@@ -547,6 +557,9 @@ class Channel {
 			'$pmacro1'    => t('Private - <em>default private, never open or public</em>'),
 			'$pmacro0'    => t('Blocked - <em>default blocked to/from everybody</em>'),
 			'$permiss_arr' => $permiss,
+			'$comment_perms' => $comment_perms,
+
+
 			'$blocktags' => array('blocktags',t('Allow others to tag your posts'), 1-$blocktags, t('Often used by the community to retro-actively flag inappropriate content'), $yes_no),
 	
 			'$lbl_p2macro' => t('Channel Permission Limits'),

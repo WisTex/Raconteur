@@ -19,24 +19,24 @@ class Pdf {
 
 		$istream = fopen($file,'rb');
 		$ostream = fopen($tmpfile,'wb');
-		if($istream && $ostream) {
+		if ($istream && $ostream) {
 			pipe_streams($istream,$ostream);
 			fclose($istream);
 			fclose($ostream);
 		}
 
 		$imagick_path = get_config('system','imagick_convert_path');
-		if($imagick_path && @file_exists($imagick_path)) {
+		if ($imagick_path && @file_exists($imagick_path)) {
 			$cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmpfile . '[0]') . ' -resize ' . $width . 'x' . $height . ' ' . escapeshellarg(PROJECT_BASE . '/' . $outfile);
 			//  logger('imagick thumbnail command: ' . $cmd);
-			for($x = 0; $x < 4; $x ++) {
+			for ($x = 0; $x < 4; $x ++) {
 				exec($cmd);
-				if(! file_exists($outfile)) {
+				if (! file_exists($outfile)) {
 					logger('imagick scale failed. Retrying.');
 					continue;
 				}
 			}
-			if(! file_exists($outfile)) {
+			if (! file_exists($outfile)) {
 				logger('imagick scale failed.');
 			}
 			else {

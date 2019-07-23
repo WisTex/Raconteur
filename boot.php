@@ -45,7 +45,7 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '3.2' );
+define ( 'STD_VERSION',             '3.4' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1232 );
@@ -491,6 +491,7 @@ define ( 'ACTIVITY_OBJ_PHOTO',   'Image');
 define ( 'ACTIVITY_OBJ_P_PHOTO', 'Icon' );
 define ( 'ACTIVITY_OBJ_PROFILE', 'Profile');
 define ( 'ACTIVITY_OBJ_EVENT',   'Event' );
+define ( 'ACTIVITY_OBJ_POLL',    'Question');
 
 
 
@@ -773,6 +774,8 @@ class App {
 	public static  $force_max_items = 0;
 	public static  $theme_thread_allow = true;
 
+	public static $meta;
+	
 	/**
 	 * @brief An array for all theme-controllable parameters
 	 *
@@ -817,8 +820,6 @@ class App {
 	// to access the page
 
 	private static $baseurl;
-
-	private static $meta;
 
 	/**
 	 * App constructor.

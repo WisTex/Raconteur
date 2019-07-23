@@ -16,11 +16,11 @@ class Mp3audio {
         $id = $p->analyze(dbunescbin($attach['content']));
 
         $photo = isset($id['id3v2']['APIC'][0]['data']) ? $id['id3v2']['APIC'][0]['data'] : null;
-        if(is_null($photo) && isset($id['id3v2']['PIC'][0]['data'])) {
+        if (is_null($photo) && isset($id['id3v2']['PIC'][0]['data'])) {
             $photo = $id['id3v2']['PIC'][0]['data'];
         }
 
-        if($photo) {
+        if ($photo) {
 			$image = imagecreatefromstring($photo);
 			$dest = imagecreatetruecolor( $width, $height );
 	        $srcwidth = imagesx($image);

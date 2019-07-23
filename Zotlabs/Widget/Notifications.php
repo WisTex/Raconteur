@@ -14,11 +14,11 @@ class Notifications {
 				'type' => 'network',
 				'icon' => 'th',
 				'severity' => 'secondary',
-				'label' => t('New Network Activity'),
-				'title' => t('New Network Activity Notifications'),
+				'label' => t('New Stream Activity'),
+				'title' => t('New Stream Activity Notifications'),
 				'viewall' => [
 					'url' => 'network',
-					'label' => t('View your network activity')
+					'label' => t('View your stream activity')
 				],
 				'markall' => [
 					'label' => t('Mark all notifications read')

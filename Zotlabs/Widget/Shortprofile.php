@@ -2,17 +2,16 @@
 
 namespace Zotlabs\Widget;
 
+use App;
+use Zotlabs\Lib\Libprofile;
+
 class Shortprofile {
 
 	function widget($arr) {
-
-		if(! \App::$profile['profile_uid'])
-			return;
-
-		$block = observer_prohibited();
-
-		return profile_sidebar(\App::$profile, $block, true, true);
+		if (App::$profile['profile_uid']) {
+			return Libprofile::widget(App::$profile, observer_prohibited(), true, true);
+		}
+		return EMPTY_STR;
 	}
-
 }
 

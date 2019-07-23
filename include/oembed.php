@@ -120,7 +120,7 @@ function oembed_fetch_url($embedurl){
 	// These media files should now be caught in bbcode.php
 	// left here as a fallback in case this is called from another source
 
-	$noexts = [ '.mp3', '.mp4', '.ogg', '.ogv', '.oga', '.ogm', '.webm', '.opus', '.m4a' ];
+	$noexts = [ '.mp3', '.mp4', '.ogg', '.ogv', '.oga', '.ogm', '.webm', '.opus', '.m4a', '.mov' ];
 
 	$result = oembed_action($embedurl); 
 

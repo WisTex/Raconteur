@@ -51,7 +51,7 @@ class OAuth2Storage extends \OAuth2\Storage\Pdo {
     {
 
 		$x = channelx_by_n($username);
-		if(! $x) {
+		if (! $x) {
 			return false;
 		}
 
@@ -92,29 +92,30 @@ class OAuth2Storage extends \OAuth2\Storage\Pdo {
     }
 
     public function getUserClaims ($user_id, $claims) {
-      // Populate the CLAIMS requested (if any).
-      // @TODO: create a more reasonable/comprehensive list.
-      // @TODO: present claims on the AUTHORIZATION screen
+		// Populate the CLAIMS requested (if any).
+		// @TODO: create a more reasonable/comprehensive list.
+		// @TODO: present claims on the AUTHORIZATION screen
 
-        $userClaims = Array();
+        $userClaims = [];
         $claims = explode (' ', trim($claims));
-        $validclaims = Array ("name","preferred_username","webfinger","portable_id","email","picture","firstName","lastName");
-        $claimsmap = Array (
-                            "webfinger" => 'webfinger',
-                            "portable_id" => 'portable_id',
-                            "name" => 'name',
-							"email" => 'email',
-                            "preferred_username" => 'username',
-							"picture" => 'picture',
-							"given_name" => 'firstName',
-							"family_name" => 'lastName'
-                           );
+        $validclaims = [ "name", "preferred_username", "webfinger", "portable_id", "email", "picture", "firstName", "lastName" ];
+        $claimsmap = [
+			"webfinger"          => 'webfinger',
+			"portable_id"        => 'portable_id',
+			"name"               => 'name',
+			"email"              => 'email',
+			"preferred_username" => 'username',
+			"picture"            => 'picture',
+			"given_name"         => 'firstName',
+			"family_name"        => 'lastName'
+		];
         $userinfo = $this->getUser($user_id);
         foreach ($validclaims as $validclaim) {
             if (in_array($validclaim,$claims)) {
               $claimkey = $claimsmap[$validclaim];
               $userClaims[$validclaim] = $userinfo[$claimkey];
-            } else {
+            }
+			else {
               $userClaims[$validclaim] = $validclaim;
             }
         }

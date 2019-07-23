@@ -333,11 +333,11 @@ class Directory extends Controller {
 	
 								if ($karr) {
 									if (local_channel()) {
-										$r = q("select keywords from profile where uid = %d and is_default = 1 limit 1",
+										$pk = q("select keywords from profile where uid = %d and is_default = 1 limit 1",
 											intval(local_channel())
 										);
-										if ($r) {
-											$keywords = str_replace(',',' ', $r[0]['keywords']);
+										if ($pk) {
+											$keywords = str_replace(',',' ', $pk[0]['keywords']);
 											$keywords = str_replace('  ',' ', $keywords);
 											$marr = explode(' ', $keywords);
 										}

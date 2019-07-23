@@ -6,102 +6,96 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
 
 
-class Viewconnections extends \Zotlabs\Web\Controller {
+class Viewconnections extends Controller {
 
 	function init() {
 	
-		if(observer_prohibited()) {
+		if (observer_prohibited()) {
 			return;
 		}
 
-		if(argc() > 1) {
+		if (argc() > 1) {
 			Libprofile::load(argv(1));
 		}
-
 	}
 	
 	function get() {
-	
-		if(observer_prohibited()) {
+
+		// logger('request: ' . print_r($_REQUEST,true));
+
+		if (observer_prohibited()) {
 			notice( t('Public access denied.') . EOL);
 			return;
 		}
-	
-		if(((! count(\App::$profile)) || (\App::$profile['hide_friends']))) {
+
+		if (((! (is_array(App::$profile) && count(App::$profile))) || (App::$profile['hide_friends']))) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		} 
 	
-		if(! perm_is_allowed(\App::$profile['uid'], get_observer_hash(),'view_contacts')) {
+		if (! perm_is_allowed(App::$profile['uid'], get_observer_hash(),'view_contacts')) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		} 
 	
-		if(! $_REQUEST['aj'])
-			$_SESSION['return_url'] = \App::$query_string;
+		if (! $_REQUEST['aj']) {
+			$_SESSION['return_url'] = App::$query_string;
+		}
 	
-	
-		$is_owner = ((local_channel() && local_channel() == \App::$profile['uid']) ? true : false);
+		$is_owner = ((local_channel() && local_channel() == App::$profile['uid']) ? true : false);
 	
 		$abook_flags = " and abook_pending = 0 and abook_self = 0 ";
 		$sql_extra = '';
 	
-		if(! $is_owner) {
+		if (! $is_owner) {
 			$abook_flags .= " and abook_hidden = 0 ";
 			$sql_extra = " and xchan_hidden = 0 ";
 		}
 	
-		$r = q("SELECT count(*) as total FROM abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d $abook_flags and xchan_orphan = 0 and xchan_deleted = 0 $sql_extra ",
-			intval(\App::$profile['uid'])
-		);
-		if($r) {
-			\App::set_pager_total($r[0]['total']);
-		}
-	
 		$r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d $abook_flags and xchan_orphan = 0 and xchan_deleted = 0 $sql_extra order by xchan_name LIMIT %d OFFSET %d ",
-			intval(\App::$profile['uid']),
-			intval(\App::$pager['itemspage']),
-			intval(\App::$pager['start'])
+			intval(App::$profile['uid']),
+			intval(App::$pager['itemspage']),
+			intval(App::$pager['start'])
 		);
 	
-		if((! $r) && (! $_REQUEST['aj'])) {
+		if ((! $r) && (! $_REQUEST['aj'])) {
 			info( t('No connections.') . EOL );
 			return $o;
 		}
 	
-		$contacts = array();
+		$contacts = [];
 	
-		foreach($r as $rr) {
+		foreach ($r as $rr) {
 
 			$oneway = false;
-			if(! their_perms_contains(\App::$profile['uid'],$rr['xchan_hash'],'post_comments')) {
+			if (! their_perms_contains(App::$profile['uid'],$rr['xchan_hash'],'post_comments')) {
 				$oneway = true;
 			}
 	
 			$url = chanlink_hash($rr['xchan_hash']);
-			if($url) {
-				$contacts[] = array(
-					'id' => $rr['abook_id'],
-					'archived' => (intval($rr['abook_archived']) ? true : false),
-					'img_hover' => sprintf( t('Visit %s\'s profile [%s]'), $rr['xchan_name'], $rr['xchan_url']),
-					'thumb' => $rr['xchan_photo_m'], 
-					'name' => substr($rr['xchan_name'],0,20),
-					'username' => $rr['xchan_addr'],
-					'link' => $url,
-					'sparkle' => '',
-					'itemurl' => $rr['url'],
-					'network' => '',
-					'oneway' => $oneway
-				);
+			if ($url) {
+				$contacts[] = [
+					'id'        => $rr['abook_id'],
+					'archived'  => (intval($rr['abook_archived']) ? true : false),
+					'img_hover' => sprintf( t('Visit %1$s\'s profile [%2$s]'), $rr['xchan_name'], $rr['xchan_url']),
+					'thumb'     => $rr['xchan_photo_m'], 
+					'name'      => substr($rr['xchan_name'],0,20),
+					'username'  => $rr['xchan_addr'],
+					'link'      => $url,
+					'sparkle'   => '',
+					'itemurl'   => $rr['url'],
+					'network'   => '',
+					'oneway'    => $oneway
+				];
 			}
 		}
 	
 	
-		if($_REQUEST['aj']) {
-			if($contacts) {
-				$o = replace_macros(get_markup_template('viewcontactsajax.tpl'),array(
+		if ($_REQUEST['aj']) {
+			if ($contacts) {
+				$o = replace_macros(get_markup_template('viewcontactsajax.tpl'), [
 					'$contacts' => $contacts
-				));
+				]);
 			}
 			else {
 				$o = '<div id="content-complete"></div>';
@@ -110,18 +104,16 @@ class Viewconnections extends \Zotlabs\Web\Controller {
 			killme();
 		}
 		else {
-			$o .= "<script> var page_query = '" . escape_tags(urlencode($_GET['req'])) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
-			$tpl = get_markup_template("viewcontact_template.tpl");
-			$o .= replace_macros($tpl, array(
-				'$title' => t('View Connections'),
+			$o .= "<script> var page_query = '" . escape_tags($_GET['req']) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
+			$o .= replace_macros(get_markup_template('viewcontact_template.tpl'), [
+				'$title'    => t('View Connections'),
 				'$contacts' => $contacts,
-	//			'$paginate' => paginate($a),
-			));
+			]);
 		}
 	
-	    if(! $contacts)
+	    if (! $contacts) {
 	        $o .= '<div id="content-complete"></div>';
-	
+		}
 		return $o;
 	}
 	

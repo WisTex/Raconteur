@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/photomap
+requires: local_channel
+name: Photomap
+photo: icon:file-image-o
+categories: Networking
