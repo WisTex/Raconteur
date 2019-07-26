@@ -272,6 +272,10 @@ function can_comment_on_post($observer_xchan, $item) {
 		return false;
 	}
 
+	if (intval($item['item_nocomment'])) {
+		return false;
+	}
+
 	if(comments_are_now_closed($item)) {
 		return false;
 	}

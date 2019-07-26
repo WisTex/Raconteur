@@ -3,6 +3,7 @@
 <script language="javascript" type="text/javascript" src="{{$baseurl}}/library/fullcalendar.old/fullcalendar.min.js"></script>
 <script language="javascript" type="text/javascript" src="{{$baseurl}}/library/fullcalendar.old/locale-all.js"></script>
 
+
 <script>
 	function showEvent(eventid) {
 		$.get(
