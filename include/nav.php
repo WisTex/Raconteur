@@ -163,19 +163,11 @@ function nav($template = 'default') {
 		$nav['help'] = [$help_url, t('Help'), "", t('Help and documentation'), 'help_nav_btn', $context_help, $enable_context_help];
 	}
 
-	switch(App::$module) {
-		case 'network':
-			$search_form_action = 'network';
-			break;
-		case 'channel':
-			$search_form_action = 'channel/' . App::$profile['channel_address'];
-			break;
-		default:
-			$search_form_action = 'search';
-	}
 
+	$search_form_action = 'search';
+	
 
-	$nav['search'] = ['search', t('Search'), "", t('Search site @name, !forum, #tag, ?docs, content'), $search_form_action];
+	$nav['search'] = ['search', t('Search'), "", t('Search site @name, #tag, content'), $search_form_action];
 
 	/**
 	 * Admin page
@@ -305,7 +297,7 @@ function nav($template = 'default') {
 		'$is_owner' => $is_owner,
 		'$sel' => App::$nav_sel,
 		'$powered_by' => $powered_by,
-		'$help' => t('@name, !forum, #tag, content'), // t('@name, !forum, #tag, ?doc, content'),
+		'$help' => t('@name, #tag, content'), 
 		'$pleasewait' => t('Please wait...'),
 		'$nav_apps' => $nav_apps,
 		'$navbar_apps' => $navbar_apps,
