@@ -17,12 +17,12 @@ $(document).ready(function() {
 	}
 	$('#css3-calc').remove(); // Remove the test element
 
-//	if($(window).width() >= 992) {
-//		$('#left_aside_wrapper, #right_aside_wrapper').stick_in_parent({
-//			offset_top: parseInt($('aside').css('padding-top')),
-//			parent: 'main'
-//		});
-//	}
+	if($(window).width() >= 992) {
+		$('#right_aside_wrapper').stick_in_parent({
+			offset_top: parseInt($('aside').css('padding-top')),
+			parent: 'main'
+		});
+	}
 
 	$('#expand-aside').on('click', toggleAside);
 
@@ -46,7 +46,7 @@ $(document).ready(function() {
 
 	$('#right_aside_wrapper').on('click', function() {
 		if(right_aside_height != $('#right_aside_wrapper').height()) {
-			//$(document.body).trigger("sticky_kit:recalc");
+			$(document.body).trigger("sticky_kit:recalc");
 			right_aside_height = $('#right_aside_wrapper').height();
 		}
 	});
@@ -103,7 +103,7 @@ function makeFullScreen(full) {
 		$('main').removeClass('fullscreen');
 		$('header, nav, aside, #fullscreen-btn').show();
 		$('#inline-btn').hide();
-		//$(document.body).trigger("sticky_kit:recalc");
+		$(document.body).trigger("sticky_kit:recalc");
 	}
 }
 

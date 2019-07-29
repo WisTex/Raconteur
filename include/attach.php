@@ -2595,9 +2595,14 @@ function save_chunk($channel,$start,$end,$len) {
 
 	$tmp_path = $_FILES['files']['tmp_name'];
 	$new_base = 'store/[data]/' . $channel['channel_address'] . '/tmp';
+
 	os_mkdir($new_base,STORAGE_DEFAULT_PERMISSIONS,true);
 
-	$new_path = $new_base . '/' . $_FILES['files']['name'];
+	if (! is_dir($new_base)) {
+		logger('directory create failed for ' . $new_base);
+	}
+
+	$new_path = $new_base . '/' . $_FILES['files']['name'] . '.ftmp';
 
 	if(! file_exists($new_path)) {
 		rename($tmp_path,$new_path);
