@@ -637,13 +637,13 @@ class Connedit extends Controller {
 
 			$tpl = get_markup_template("abook_edit.tpl");
 	
-			if(Apps::system_app_installed(local_channel(),'Affinity Tool')) {
+			if(Apps::system_app_installed(local_channel(),'Friend Zoom')) {
 
 				$sections['affinity'] = [
-					'label' => t('Affinity'),
+					'label' => t('Friend Zoom'),
 					'url'   => z_root() . '/connedit/' . $contact['abook_id'] . '/?f=&section=affinity',
 					'sel'   => '',
-					'title' => t('Open Set Affinity section by default'),
+					'title' => t('Open Friend Zoom section by default'),
 				];
 	
 				$labels = [
@@ -714,13 +714,13 @@ class Connedit extends Controller {
 			$multiprofs = ((feature_enabled(local_channel(),'multi_profiles')) ? true : false);
 	
 			if($slide && !$multiprofs)
-				$affinity = t('Set Affinity');
+				$affinity = t('Set Friend Zoom');
 	
 			if(!$slide && $multiprofs)
 				$affinity = t('Set Profile');
 	
 			if($slide && $multiprofs)
-				$affinity = t('Set Affinity & Profile');
+				$affinity = t('Set Friend Zoom & Profile');
 	
 			
 			$theirs = get_abconfig(local_channel(),$contact['abook_xchan'],'system','their_perms',EMPTY_STR);

@@ -2120,13 +2120,13 @@ function xchan_query(&$items, $abook = true, $effective_uid = 0) {
 	if(count($arr)) {
 		if($abook) {
 			$chans = q("select * from xchan left join hubloc on hubloc_hash = xchan_hash left join abook on abook_xchan = xchan_hash and abook_channel = %d
-				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and hubloc_primary = 1",
+				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") order by hubloc_primary desc",
 				intval($item['uid'])
 			);
 		}
 		else {
 			$chans = q("select xchan.*,hubloc.* from xchan left join hubloc on hubloc_hash = xchan_hash
-				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and hubloc_primary = 1");
+				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") order by hubloc_primary desc");
 		}
 		$xchans = q("select * from xchan where xchan_hash in (" . protect_sprintf(implode(',',$arr)) . ") and xchan_network in ('rss','unknown', 'anon')");
 		if(! $chans)
