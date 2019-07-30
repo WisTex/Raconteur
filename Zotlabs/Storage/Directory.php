@@ -882,7 +882,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 					intval($channel['channel_account_id'])
 				);
 				$used  = (($r) ? (float) $r[0]['total'] : 0);
-				$limit = (float) service_class_fetch($this->auth->owner_id, 'attach_upload_limit');
+				$limit = (float) engr_units_to_bytes(service_class_fetch($this->auth->owner_id, 'attach_upload_limit'));
 				if($limit) {
 					// Don't let the result go negative
 					$free = (($limit > $used) ? $limit - $used : 0);

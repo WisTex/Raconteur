@@ -759,7 +759,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 			return $ret;
 		}
 
-		$limit = service_class_fetch($channel_id, 'attach_upload_limit');
+		$limit = engr_units_to_bytes(service_class_fetch($channel_id, 'attach_upload_limit'));
 
 		if($limit !== false) {
 			$r = q("select sum(filesize) as total from attach where aid = %d ",
