@@ -48,7 +48,7 @@ require_once('include/items.php');
 define ( 'STD_VERSION',             '3.5' );
 define ( 'ZOT_REVISION',            '6.0' );
 
-define ( 'DB_UPDATE_VERSION',       1232 );
+define ( 'DB_UPDATE_VERSION',       1233 );
 
 define ( 'PLATFORM_NAME',           'zap' );
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
@@ -309,6 +309,7 @@ define ( 'ABOOK_FLAG_PENDING'    , 0x0010);
 define ( 'ABOOK_FLAG_UNCONNECTED', 0x0020);
 define ( 'ABOOK_FLAG_SELF'       , 0x0080);
 define ( 'ABOOK_FLAG_FEED'       , 0x0100);
+define ( 'ABOOK_FLAG_CENSORED'   , 0x0200);
 
 
 define ( 'MAIL_DELETED',       0x0001);

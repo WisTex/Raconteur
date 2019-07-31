@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS `abook` (
   `abook_connected` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `abook_dob` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `abook_flags` int(11) NOT NULL DEFAULT 0 ,
+  `abook_censor` int(11) NOT NULL DEFAULT 0 ,
   `abook_blocked` tinyint(4) NOT NULL DEFAULT 0 ,
   `abook_ignored` tinyint(4) NOT NULL DEFAULT 0 ,
   `abook_hidden` tinyint(4) NOT NULL DEFAULT 0 ,

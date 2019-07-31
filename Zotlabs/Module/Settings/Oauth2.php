@@ -11,7 +11,7 @@ class Oauth2 {
 		if(x($_POST,'remove')){
 			check_form_security_token_redirectOnErr('/settings/oauth2', 'settings_oauth2');
 			$name   	= ((x($_POST,'name')) ? escape_tags(trim($_POST['name'])) : '');
-		logger("REMOVE! ".$name." uid: ".local_channel());	
+			logger("REMOVE! ".$name." uid: ".local_channel());	
 			$key = $_POST['remove'];
 			q("DELETE FROM oauth_authorization_codes WHERE client_id='%s' AND user_id=%d",
 				dbesc($name),

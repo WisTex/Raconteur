@@ -828,6 +828,7 @@ function updateConvItems(mode,data) {
 		$('.item_' + submid_encoded).addClass('item-highlight');
 	}
 
+	
 	$(document.body).trigger("sticky_kit:recalc");
 }
 
@@ -878,6 +879,11 @@ function collapseHeight() {
 		console.log('collapsed above viewport count: ' + i);
 		$(window).scrollTop(sval);
 	}
+
+	// pixelate any images from censored connections
+	
+	$('img[data-pixelate]').pixelate();
+
 }
 
 function updateInit() {

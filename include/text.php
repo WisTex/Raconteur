@@ -1488,8 +1488,16 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 
 	call_hooks('prepare_body_init', $item);
 
+	$pixelation = floatval(get_pconfig($item['uid'],'system','content_pixelation',0.05));
+
+	$censored = (($item['author']['abook_censor'] || $item['owner']['abook_censor']) 
+		? 'data-pixelate data-value="' . $pixelation . '" data-reveal="true" ' 
+		: ''
+	);
+	
 	$s = '';
 	$photo = '';
+
 	$is_photo = ((($item['verb'] === ACTIVITY_POST) && ($item['obj_type'] === ACTIVITY_OBJ_PHOTO)) ? true : false);
 
 	if($is_photo) {
@@ -1499,13 +1507,13 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 		if(array_key_exists('url',$object) && is_array($object['url']) && array_key_exists(0,$object['url'])) {
 			// if original photo width is <= 640px prepend it to item body
 			if(array_key_exists('width',$object['url'][0]) && $object['url'][0]['width'] <= 640) {
-				$s .= '<div class="inline-photo-item-wrapper"><a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener" ><img class="inline-photo-item" style="max-width:' . $object['url'][0]['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($object['url'][0]['href'])) . '"></a></div>' . $s;
+				$s .= '<div class="inline-photo-item-wrapper"><a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener" ><img $censored class="inline-photo-item" style="max-width:' . $object['url'][0]['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($object['url'][0]['href'])) . '"></a></div>' . $s;
 			}
 
 			// if original photo width is > 640px make it a cover photo
 			if(array_key_exists('width',$object['url'][0]) && $object['url'][0]['width'] > 640) {
 				$scale = ((($object['url'][1]['width'] == 1024) || ($object['url'][1]['height'] == 1024)) ? 1 : 0);
-				$photo = '<a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener"><img style="max-width:' . $object['url'][$scale]['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($object['url'][$scale]['href'])) . '"></a>';
+				$photo = '<a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener"><img $censored style="max-width:' . $object['url'][$scale]['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($object['url'][$scale]['href'])) . '"></a>';
 			}
 		}
 	}
@@ -1522,6 +1530,11 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 		}
 	}
 
+	if ($censored) {
+		$s = str_replace('<img ', '<img ' . $censored, $s);
+	}
+
+
 	$event = (($item['obj_type'] === ACTIVITY_OBJ_EVENT) ? format_event_obj($item['obj']) : false);
 
 	// This is not the most pleasant UI element possible, but this is difficult to add to one of the templates.
@@ -1529,7 +1542,7 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 	// of code re-factoring to make that happen.
 
 	if($event['header'] && $item['resource_id']) {
-		$event['header'] .= '<i class="fa fa-asterisk" title="' . t('Added to your calendar') . '"></i>';
+		$event['header'] .= '<i class="fa fa-asterisk" title="' . t('Added to your calendar') . '"></i>' . '&nbsp;' . t('Added to your calendar');
 	}
 
 	$prep_arr = array(
