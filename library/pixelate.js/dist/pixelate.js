@@ -90,14 +90,6 @@
         ctx.drawImage(element, 0, 0, imgWidth, imgHeight);
       });
 
-      canv.addEventListener('touchstart', function () {
-        if (revealed) {
-          return;
-        }
-
-        ctx.drawImage(element, 0, 0, imgWidth, imgHeight);
-      });
-
       canv.addEventListener('mouseleave', function () {
         if (revealed) {
           return;
@@ -106,16 +98,7 @@
         ctx.drawImage(element, 0, 0, width, height);
         ctx.drawImage(canv, 0, 0, width, height, 0, 0, canv.width, canv.height);
       });
-
-      canv.addEventListener('touchend', function () {
-        if (revealed) {
-          return;
-        }
-
-        ctx.drawImage(element, 0, 0, width, height);
-        ctx.drawImage(canv, 0, 0, width, height, 0, 0, canv.width, canv.height);
-      });
-	}
+    }
   };
 
   if (typeof $ === 'function') {
