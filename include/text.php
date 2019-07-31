@@ -1490,7 +1490,7 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 
 	$pixelation = floatval(get_pconfig($item['uid'],'system','content_pixelation',0.05));
 
-	$censored = (($item['author']['abook_censor'] || $item['owner']['abook_censor']) 
+	$censored = ((($item['author']['abook_censor'] || $item['owner']['abook_censor']) && (! intval($_SESSION['unsafe'])))
 		? 'data-pixelate data-value="' . $pixelation . '" data-reveal="true" ' 
 		: ''
 	);
