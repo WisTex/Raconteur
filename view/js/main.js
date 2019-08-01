@@ -807,6 +807,12 @@ function updateConvItems(mode,data) {
 		collapseHeight();
 	}
 
+	// pixelate any images from censored connections
+	// This has way too many bugs currently.
+	
+	//	$('img[data-censored]').pixelate({ value: 0.05, reveal: true });
+
+	
 	// auto-scroll to a particular comment in a thread (designated by mid) when in single-thread mode
 	// use the same method to generate the submid as we use in ThreadItem, 
 	// base64_encode + replace(['+','='],['','']);
@@ -880,10 +886,7 @@ function collapseHeight() {
 		$(window).scrollTop(sval);
 	}
 
-	// pixelate any images from censored connections
 	
-	$('img[data-pixelate]').pixelate();
-
 }
 
 function updateInit() {

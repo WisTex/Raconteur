@@ -91,7 +91,7 @@ function nav($template = 'default') {
 
  		$nav['settings'] = array('settings', t('Settings'),"", t('Account/Channel Settings'),'settings_nav_btn');
 
- 		$nav['safe'] = array('safe', t('Safe Mode'), ((intval($_SESSION['unsafe'])) ? t('(is off)') : t('(is on)')) , t('Connection image filtering'),'safe_nav_btn');
+// 		$nav['safe'] = array('safe', t('Safe Mode'), ((intval($_SESSION['unsafe'])) ? t('(is off)') : t('(is on)')) , t('Connection image filtering'),'safe_nav_btn');
 
 	
 		if($chans && count($chans) > 1 && feature_enabled(local_channel(),'nav_channel_select'))

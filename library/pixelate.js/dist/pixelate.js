@@ -48,7 +48,7 @@
     canv.height = imgHeight;
 
     var ctx = canv.getContext('2d');
-    ctx.mozImageSmoothingEnabled = false;
+//    ctx.mozImageSmoothingEnabled = false;
     ctx.webkitImageSmoothingEnabled = false;
     ctx.imageSmoothingEnabled = false;
 

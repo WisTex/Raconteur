@@ -1491,9 +1491,16 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 	$pixelation = floatval(get_pconfig($item['uid'],'system','content_pixelation',0.05));
 
 	$censored = ((($item['author']['abook_censor'] || $item['owner']['abook_censor']) && (! intval($_SESSION['unsafe'])))
-		? 'data-pixelate data-value="' . $pixelation . '" data-reveal="true" ' 
+		? ' data-censored ' 
 		: ''
 	);
+
+	if ($censored) {
+		if (! $opts) {
+			$opts = [];
+		}
+		$opts['censored'] = true;
+	}
 	
 	$s = '';
 	$photo = '';
@@ -1530,9 +1537,10 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 		}
 	}
 
-	if ($censored) {
-		$s = str_replace('<img ', '<img ' . $censored, $s);
-	}
+//	if ($censored) {
+//		$s = separate_img_links($s);
+//		//$s = str_replace('<img ', '<img ' . $censored, $s);
+//	}
 
 
 	$event = (($item['obj_type'] === ACTIVITY_OBJ_EVENT) ? format_event_obj($item['obj']) : false);
@@ -1608,6 +1616,12 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 
 	return $prep_arr;
 }
+
+function separate_img_links($s) {
+	$x = preg_replace('/\<a (.*?)\>\<img(.*?)\>\<\/a\>/ism',
+		'<img$2><br><a $1>' . t('Link') . '</a>',$s);
+	return $x;
+} 
 
 
 function prepare_binary($item) {
