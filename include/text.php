@@ -1510,16 +1510,16 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 		$object = json_decode($item['obj'],true);
 
 		if(array_key_exists('url',$object) && is_array($object['url']) && array_key_exists(0,$object['url'])) {
-			// if original photo width is <= 640px prepend it to item body
-			if(array_key_exists('width',$object['url'][0]) && $object['url'][0]['width'] <= 640) {
-				$item['body'] = '[zmg]' . $object['url'][0]['href'] . '[/zmg]' . "\n\n" . $item['body'];
-			}
-
 			// if original photo width is > 640px make it a cover photo
 			if(array_key_exists('width',$object['url'][0]) && $object['url'][0]['width'] > 640) {
 				$scale = ((($object['url'][1]['width'] == 1024) || ($object['url'][1]['height'] == 1024)) ? 1 : 0);
 				$photo = '<a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener"><img style="max-width:' . $object['url'][$scale]['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($object['url'][$scale]['href'])) . '"></a>';
 			}
+			// if original photo width is <= 640px prepend it to item body
+			elseif(array_key_exists('width',$object['url'][0]) && $object['url'][0]['width'] <= 640) {
+				$item['body'] = '[zmg]' . $object['url'][0]['href'] . '[/zmg]' . "\n\n" . $item['body'];
+			}
+
 		}
 	}
 
