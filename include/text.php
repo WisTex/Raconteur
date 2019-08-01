@@ -1488,11 +1488,9 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 
 	call_hooks('prepare_body_init', $item);
 
-	$pixelation = floatval(get_pconfig($item['uid'],'system','content_pixelation',0.05));
-
-	$censored = ((($item['author']['abook_censor'] || $item['owner']['abook_censor']) && (! intval($_SESSION['unsafe'])))
-		? ' data-censored ' 
-		: ''
+	$censored = ((($item['author']['abook_censor'] || $item['owner']['abook_censor'] || $item['author']['xchan_selfcensored'] || $item['owner']['xchan_selfcensored'] || $item['author']['xchan_censored'] || $item['owner']['xchan_censored']) && (! intval($_SESSION['unsafe'])))
+		? true
+		: false
 	);
 
 	if ($censored) {
@@ -1507,20 +1505,20 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 
 	$is_photo = ((($item['verb'] === ACTIVITY_POST) && ($item['obj_type'] === ACTIVITY_OBJ_PHOTO)) ? true : false);
 
-	if($is_photo) {
+	if($is_photo && ! $censored) {
 
 		$object = json_decode($item['obj'],true);
 
 		if(array_key_exists('url',$object) && is_array($object['url']) && array_key_exists(0,$object['url'])) {
 			// if original photo width is <= 640px prepend it to item body
 			if(array_key_exists('width',$object['url'][0]) && $object['url'][0]['width'] <= 640) {
-				$s .= '<div class="inline-photo-item-wrapper"><a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener" ><img $censored class="inline-photo-item" style="max-width:' . $object['url'][0]['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($object['url'][0]['href'])) . '"></a></div>' . $s;
+				$item['body'] = '[zmg]' . $object['url'][0]['href'] . '[/zmg]' . "\n\n" . $item['body'];
 			}
 
 			// if original photo width is > 640px make it a cover photo
 			if(array_key_exists('width',$object['url'][0]) && $object['url'][0]['width'] > 640) {
 				$scale = ((($object['url'][1]['width'] == 1024) || ($object['url'][1]['height'] == 1024)) ? 1 : 0);
-				$photo = '<a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener"><img $censored style="max-width:' . $object['url'][$scale]['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($object['url'][$scale]['href'])) . '"></a>';
+				$photo = '<a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener"><img style="max-width:' . $object['url'][$scale]['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($object['url'][$scale]['href'])) . '"></a>';
 			}
 		}
 	}
@@ -1537,10 +1535,6 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 		}
 	}
 
-//	if ($censored) {
-//		$s = separate_img_links($s);
-//		//$s = str_replace('<img ', '<img ' . $censored, $s);
-//	}
 
 
 	$event = (($item['obj_type'] === ACTIVITY_OBJ_EVENT) ? format_event_obj($item['obj']) : false);

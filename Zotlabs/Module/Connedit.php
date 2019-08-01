@@ -584,13 +584,13 @@ class Connedit extends Controller {
 					'info'   => (intval($contact['abook_ignored']) ? t('This connection is ignored!') : ''),
 				),
 
-//				'censor' => array(
-//					'label' => (intval($contact['abook_censor']) ? t('Uncensor') : t('Censor')),
-//					'url'   => z_root() . '/connedit/' . $contact['abook_id'] . '/censor',
-//					'sel'   => (intval($contact['abook_censor']) ? 'active' : ''),
-//					'title' => t('Censor (or Uncensor) images from this connection'),
-//					'info'   => (intval($contact['abook_censor']) ? t('This connection is censored!') : ''),
-//				),
+				'censor' => array(
+					'label' => (intval($contact['abook_censor']) ? t('Uncensor') : t('Censor')),
+					'url'   => z_root() . '/connedit/' . $contact['abook_id'] . '/censor',
+					'sel'   => (intval($contact['abook_censor']) ? 'active' : ''),
+					'title' => t('Censor (or Uncensor) images from this connection'),
+					'info'   => (intval($contact['abook_censor']) ? t('This connection is censored!') : ''),
+				),
 
 				'archive' => array(
 					'label' => (intval($contact['abook_archived']) ? t('Unarchive') : t('Archive')),
