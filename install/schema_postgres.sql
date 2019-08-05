@@ -1620,6 +1620,7 @@ CREATE TABLE oauth_clients (
   grant_types           VARCHAR(80),
   scope                 VARCHAR(4000),
   user_id               bigint NOT NULL DEFAULT '0',
+  client_name           VARCHAR(80),
   PRIMARY KEY (client_id)
 );
 

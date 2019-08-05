@@ -2122,6 +2122,7 @@ function trim_and_unpunify($s) {
  */
 function xchan_query(&$items, $abook = true, $effective_uid = 0) {
 	$arr = array();
+
 	if($items && count($items)) {
 
 		if($effective_uid) {
@@ -2155,6 +2156,7 @@ function xchan_query(&$items, $abook = true, $effective_uid = 0) {
 		else
 			$chans = array_merge($xchans,$chans);
 	}
+
 	if($items && count($items) && $chans && count($chans)) {
 		for($x = 0; $x < count($items); $x ++) {
 			$items[$x]['owner'] = find_xchan_in_array($items[$x]['owner_xchan'],$chans);

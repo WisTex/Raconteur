@@ -34,20 +34,22 @@ class Oauth2 {
 			check_form_security_token_redirectOnErr('/settings/oauth2', 'settings_oauth2');
 			
 			$name   	= ((x($_POST,'name')) ? escape_tags(trim($_POST['name'])) : '');
+			$clid       = ((x($_POST,'clid')) ? escape_tags(trim($_POST['clid'])) : '');
 			$secret		= ((x($_POST,'secret')) ? escape_tags(trim($_POST['secret'])) : '');
 			$redirect	= ((x($_POST,'redirect')) ? escape_tags(trim($_POST['redirect'])) : '');
 			$grant		= ((x($_POST,'grant')) ? escape_tags(trim($_POST['grant'])) : '');
 			$scope		= ((x($_POST,'scope')) ? escape_tags(trim($_POST['scope'])) : '');
 
 			$ok = true;
-			if($name == '' || $secret == '') {
+			if($clid == '' || $secret == '') {
 				$ok = false;
-				notice( t('Name and Secret are required') . EOL);
+				notice( t('ID and Secret are required') . EOL);
 			}
 		
 			if($ok) {
 				if ($_POST['submit']==t("Update")){
 					$r = q("UPDATE oauth_clients SET
+								client_name = '%s',
 								client_id = '%s',
 								client_secret = '%s',
 								redirect_uri = '%s',
@@ -56,17 +58,19 @@ class Oauth2 {
 								user_id = %d
 							WHERE client_id='%s' and user_id = %s",
 							dbesc($name),
+							dbesc($clid),
 							dbesc($secret),
 							dbesc($redirect),
 							dbesc($grant),
 							dbesc($scope),
 							intval(local_channel()),
-							dbesc($name),
-                                                        intval(local_channel()));
+							dbesc($clid),
+							intval(local_channel()));
 				} else {
-					$r = q("INSERT INTO oauth_clients (client_id, client_secret, redirect_uri, grant_types, scope, user_id)
-						VALUES ('%s','%s','%s','%s','%s',%d)",
+					$r = q("INSERT INTO oauth_clients (client_name, client_id, client_secret, redirect_uri, grant_types, scope, user_id)
+						VALUES ('%s','%s','%s','%s','%s','%s',%d)",
 						dbesc($name),
+						dbesc($clid),
 						dbesc($secret),
 						dbesc($redirect),
 						dbesc($grant),
@@ -95,6 +99,7 @@ class Oauth2 {
 				'$submit'	=> t('Submit'),
 				'$cancel'	=> t('Cancel'),
 				'$name'		=> array('name', t('Name'), '', t('Name of application')),
+				'$clid'	    => array('clid', t('Consumer ID'), random_string(16), t('Automatically generated - change if desired. Max length 20')),
 				'$secret'	=> array('secret', t('Consumer Secret'), random_string(16), t('Automatically generated - change if desired. Max length 20')),
 				'$redirect'	=> array('redirect', t('Redirect'), '', t('Redirect URI - leave blank unless your application specifically requires this')),
 				'$grant'     => array('grant', t('Grant Types'), '', t('leave blank unless your application specifically requires this')),
@@ -122,7 +127,8 @@ class Oauth2 {
 				'$title'	=> t('Add application'),
 				'$submit'	=> t('Update'),
 				'$cancel'	=> t('Cancel'),
-				'$name'		=> array('name', t('Name'), $app['client_id'], t('Name of application')),
+				'$name'		=> array('name', t('Name'), $app['client_name'], t('Name of application')),
+				'$clid'	    => array('clid', t('Consumer ID'), $app['client_id'], t('Automatically generated - change if desired. Max length 20')),
 				'$secret'	=> array('secret', t('Consumer Secret'), $app['client_secret'], t('Automatically generated - change if desired. Max length 20')),
 				'$redirect'	=> array('redirect', t('Redirect'), $app['redirect_uri'], t('Redirect URI - leave blank unless your application specifically requires this')),
 				'$grant'     => array('grant', t('Grant Types'), $app['grant_types'], t('leave blank unless your application specifically requires this')),

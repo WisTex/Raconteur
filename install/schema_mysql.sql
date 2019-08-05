@@ -1591,6 +1591,7 @@ CREATE TABLE if not exists oauth_clients (
   grant_types           VARCHAR(80),
   scope                 VARCHAR(4000),
   user_id               int(10) unsigned NOT NULL DEFAULT 0,
+  client_name           VARCHAR(80),
   PRIMARY KEY (client_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
