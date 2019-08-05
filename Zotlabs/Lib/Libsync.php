@@ -854,11 +854,6 @@ class Libsync {
 					continue;
 				}
 
-				// Catch some malformed entries from the past which still exist
-
-				if(strpos($location['address'],'/') !== false)
-					$location['address'] = substr($location['address'],0,strpos($location['address'],'/'));
-
 				// match as many fields as possible in case anything at all changed.
 
 				$r = q("select * from hubloc where hubloc_hash = '%s' and hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_id_url = '%s' and hubloc_url = '%s' and hubloc_url_sig = '%s' and hubloc_site_id = '%s' and hubloc_host = '%s' and hubloc_addr = '%s' and hubloc_callback = '%s' and hubloc_sitekey = '%s' ",

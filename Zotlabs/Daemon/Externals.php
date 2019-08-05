@@ -7,10 +7,12 @@ use Zotlabs\Lib\Libzot;
 
 class Externals {
 
-	static public function run($argc,$argv){
+	static public function run($argc, $argv){
 
 		$total = 0;
 		$attempts = 0;
+
+		$sys = get_sys_channel();
 
 		logger('externals: startup', LOGGER_DEBUG);
 
@@ -80,7 +82,6 @@ class Externals {
 
 					$j = json_decode($x['body'],true);
 					if($j['success'] && $j['messages']) {
-						$sys = get_sys_channel();
 						foreach($j['messages'] as $message) {
 							// on these posts, clear any route info. 
 							$message['route'] = EMPTY_STR;

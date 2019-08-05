@@ -17,6 +17,7 @@ function abook_store_lowlevel($arr) {
 		'abook_connected'   => ((array_key_exists('abook_connected',$arr))   ? $arr['abook_connected']   : NULL_DATE),
 		'abook_dob'         => ((array_key_exists('abook_dob',$arr))         ? $arr['abook_dob']         : NULL_DATE),
 		'abook_flags'       => ((array_key_exists('abook_flags',$arr))       ? $arr['abook_flags']       : 0),
+		'abook_censor'      => ((array_key_exists('abook_censor',$arr))      ? $arr['abook_censor']      : 0),
 		'abook_blocked'     => ((array_key_exists('abook_blocked',$arr))     ? $arr['abook_blocked']     : 0),
 		'abook_ignored'     => ((array_key_exists('abook_ignored',$arr))     ? $arr['abook_ignored']     : 0),
 		'abook_hidden'      => ((array_key_exists('abook_hidden',$arr))      ? $arr['abook_hidden']      : 0),
@@ -158,6 +159,9 @@ function abook_toggle_flag($abook,$flag) {
 			break;
 		case ABOOK_FLAG_IGNORED:
 			$field = 'abook_ignored';
+			break;
+		case ABOOK_FLAG_CENSORED:
+			$field = 'abook_censor';
 			break;
 		case ABOOK_FLAG_HIDDEN:
 			$field = 'abook_hidden';

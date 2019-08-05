@@ -50,6 +50,10 @@
 		<div class="dropdown-divider"></div>
 		<a class="dropdown-item{{if $sel.name == Admin}} active{{/if}}" href="{{$nav.admin.0}}" title="{{$nav.admin.3}}" role="menuitem" id="{{$nav.admin.4}}">{{$nav.admin.1}}</a>
 		{{/if}}
+		{{if $nav.safe}}
+		<div class="dropdown-divider"></div>
+		<a class="dropdown-item{{if $sel.name == Safe}} active{{/if}}" href="{{$nav.safe.0}}" title="{{$nav.safe.3}}" role="menuitem" id="{{$nav.safe.4}}">{{$nav.safe.1}} {{$nav.safe.2}}</a>
+		{{/if}}
 		{{if $nav.logout}}
 		<div class="dropdown-divider"></div>
 		<a class="dropdown-item" href="{{$nav.logout.0}}" title="{{$nav.logout.3}}" role="menuitem" id="{{$nav.logout.4}}">{{$nav.logout.1}}</a>

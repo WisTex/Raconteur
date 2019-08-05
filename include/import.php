@@ -1274,7 +1274,7 @@ function sync_files($channel, $files) {
 
 	if ($channel && $files) {
 
-		$limit = service_class_fetch($channel['channel_id'], 'attach_upload_limit');
+		$limit = engr_units_to_bytes(service_class_fetch($channel['channel_id'], 'attach_upload_limit'));
 
 		foreach ($files as $f) {
 			if (! $f) {

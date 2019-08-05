@@ -313,7 +313,7 @@ class Apps {
 	static public function translate_system_apps(&$arr) {
 		$apps = array(
 			'Apps' => t('Apps'),
-			'Affinity Tool' => t('Affinity Tool'),
+			'Friend Zoom' => t('Friend Zoom'),
 			'Articles' => t('Articles'),
 			'Cards' => t('Cards'),
 			'Calendar' => t('Calendar'),

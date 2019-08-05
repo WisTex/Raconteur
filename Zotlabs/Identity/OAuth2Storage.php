@@ -137,4 +137,35 @@ class OAuth2Storage extends \OAuth2\Storage\Pdo {
         return true;
     }
 
+    public function setClientDetails($client_id, $client_secret = null, $redirect_uri = null, $grant_types = null, $scope = null, $user_id = null, $client_name = null)
+    {
+        // if it exists, update it.
+        if ($this->getClientDetails($client_id)) {
+            $stmt = $this->db->prepare($sql = sprintf('UPDATE %s SET client_secret=:client_secret, redirect_uri=:redirect_uri, grant_types=:grant_types, scope=:scope, user_id=:user_id, client_name=:client_name where client_id=:client_id', $this->config['client_table']));
+        } else {
+            $stmt = $this->db->prepare(sprintf('INSERT INTO %s (client_id, client_secret, redirect_uri, grant_types, scope, user_id, client_name) VALUES (:client_id, :client_secret, :redirect_uri, :grant_types, :scope, :user_id, :client_name)', $this->config['client_table']));
+        }
+
+        return $stmt->execute(compact('client_id', 'client_secret', 'redirect_uri', 'grant_types', 'scope', 'user_id', 'client_name'));
+    }
+
+
+
+
+    public function checkRestrictedGrantType($client_id, $grant_type)
+    {
+        $details = $this->getClientDetails($client_id);
+        if ($details['grant_types']) {
+            $grant_types = explode(' ', $details['grant_types']);
+            return in_array($grant_type, (array) $grant_types);
+        }
+
+        // if grant_types are not defined, then none are restricted
+        return true;
+    }
+
+
+
+
+
 }

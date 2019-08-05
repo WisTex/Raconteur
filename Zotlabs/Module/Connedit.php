@@ -431,7 +431,7 @@ class Connedit extends Controller {
 					notice(t('Unable to set address book parameters.') . EOL);
 				goaway(z_root() . '/connedit/' . $contact_id);
 			}
-	
+
 			if($cmd === 'ignore') {
 				if(abook_toggle_flag($orig_record[0],ABOOK_FLAG_IGNORED)) {
 					$this->connedit_clone($a);
@@ -441,6 +441,15 @@ class Connedit extends Controller {
 				goaway(z_root() . '/connedit/' . $contact_id);
 			}
 	
+			if($cmd === 'censor') {
+				if(abook_toggle_flag($orig_record[0],ABOOK_FLAG_CENSORED)) {
+					$this->connedit_clone($a);
+				}
+				else
+					notice(t('Unable to set address book parameters.') . EOL);
+				goaway(z_root() . '/connedit/' . $contact_id);
+			}
+
 			if($cmd === 'archive') {
 				if(abook_toggle_flag($orig_record[0],ABOOK_FLAG_ARCHIVED)) {
 					$this->connedit_clone($a);
@@ -574,7 +583,15 @@ class Connedit extends Controller {
 					'title' => t('Ignore (or Unignore) all inbound communications from this connection'),
 					'info'   => (intval($contact['abook_ignored']) ? t('This connection is ignored!') : ''),
 				),
-	
+
+				'censor' => array(
+					'label' => (intval($contact['abook_censor']) ? t('Uncensor') : t('Censor')),
+					'url'   => z_root() . '/connedit/' . $contact['abook_id'] . '/censor',
+					'sel'   => (intval($contact['abook_censor']) ? 'active' : ''),
+					'title' => t('Censor (or Uncensor) images from this connection'),
+					'info'   => (intval($contact['abook_censor']) ? t('This connection is censored!') : ''),
+				),
+
 				'archive' => array(
 					'label' => (intval($contact['abook_archived']) ? t('Unarchive') : t('Archive')),
 					'url'   => z_root() . '/connedit/' . $contact['abook_id'] . '/archive',
@@ -637,13 +654,13 @@ class Connedit extends Controller {
 
 			$tpl = get_markup_template("abook_edit.tpl");
 	
-			if(Apps::system_app_installed(local_channel(),'Affinity Tool')) {
+			if(Apps::system_app_installed(local_channel(),'Friend Zoom')) {
 
 				$sections['affinity'] = [
-					'label' => t('Affinity'),
+					'label' => t('Friend Zoom'),
 					'url'   => z_root() . '/connedit/' . $contact['abook_id'] . '/?f=&section=affinity',
 					'sel'   => '',
-					'title' => t('Open Set Affinity section by default'),
+					'title' => t('Open Friend Zoom section by default'),
 				];
 	
 				$labels = [
@@ -714,13 +731,13 @@ class Connedit extends Controller {
 			$multiprofs = ((feature_enabled(local_channel(),'multi_profiles')) ? true : false);
 	
 			if($slide && !$multiprofs)
-				$affinity = t('Set Affinity');
+				$affinity = t('Set Friend Zoom');
 	
 			if(!$slide && $multiprofs)
 				$affinity = t('Set Profile');
 	
 			if($slide && $multiprofs)
-				$affinity = t('Set Affinity & Profile');
+				$affinity = t('Set Friend Zoom & Profile');
 	
 			
 			$theirs = get_abconfig(local_channel(),$contact['abook_xchan'],'system','their_perms',EMPTY_STR);

@@ -31,7 +31,7 @@ $(document).ready(function () {
 		}
 	});
 
-	$(document.body).trigger("sticky_kit:recalc");
+	//$(document.body).trigger("sticky_kit:recalc");
 
 	toc.contentTop = [];
 	toc.edgeMargin = 20;   // margin above the top or margin from the end of the page

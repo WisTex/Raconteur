@@ -272,6 +272,10 @@ function can_comment_on_post($observer_xchan, $item) {
 		return false;
 	}
 
+	if (intval($item['item_nocomment'])) {
+		return false;
+	}
+
 	if(comments_are_now_closed($item)) {
 		return false;
 	}
@@ -952,8 +956,8 @@ function import_author_rss($x) {
 
 	$r = xchan_store_lowlevel(
 		[
-			'xchan_hash'         => $x['guid'],
-			'xchan_guid'         => $x['guid'],
+			'xchan_hash'         => $x['url'],
+			'xchan_guid'         => $x['url'],
 			'xchan_url'          => $x['url'],
 			'xchan_name'         => (($name) ? $name : t('(Unknown)')),
 			'xchan_name_date'    => datetime_convert(),

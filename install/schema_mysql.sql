@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS `abook` (
   `abook_connected` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `abook_dob` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `abook_flags` int(11) NOT NULL DEFAULT 0 ,
+  `abook_censor` int(11) NOT NULL DEFAULT 0 ,
   `abook_blocked` tinyint(4) NOT NULL DEFAULT 0 ,
   `abook_ignored` tinyint(4) NOT NULL DEFAULT 0 ,
   `abook_hidden` tinyint(4) NOT NULL DEFAULT 0 ,
@@ -1590,6 +1591,7 @@ CREATE TABLE if not exists oauth_clients (
   grant_types           VARCHAR(80),
   scope                 VARCHAR(4000),
   user_id               int(10) unsigned NOT NULL DEFAULT 0,
+  client_name           VARCHAR(80),
   PRIMARY KEY (client_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
