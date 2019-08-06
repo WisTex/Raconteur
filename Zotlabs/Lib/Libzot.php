@@ -323,13 +323,13 @@ class Libzot {
 			return false;
 		}
 
-
 		logger('zot-info: ' . print_r($record,true), LOGGER_DATA, LOG_DEBUG);
 
 		$x = self::import_xchan($record['data'], (($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
 
-		if (! $x['success'])
+		if (! $x['success']) {
 			return false;
+		}
 
 		if ($channel && $record['data']['permissions']) {
 			$old_read_stream_perm = their_perms_contains($channel['channel_id'],$x['hash'],'view_stream');
@@ -381,6 +381,18 @@ class Libzot {
 				}
 			}
 			else {
+
+				// limit the ability to do connection spamming, this limit is per channel
+				$lim = intval(get_config('system','max_connections_per_day',50));
+				if ($lim) {
+					$n = q("select count(abook_id) as total from abook where abook_channel = %d and abook_created > %s",
+						intval($channel['channel_id']),
+						dbesc(datetime_convert('UTC','UTC','now - 24 hours'))
+					);
+					if ($n && intval($n['total']) > $lim) {
+						return false;
+					}
+				}
 
 				$p = Permissions::connect_perms($channel['channel_id']);
 				$my_perms = Permissions::serialise($p['perms']);
