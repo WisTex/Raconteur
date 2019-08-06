@@ -390,6 +390,7 @@ class Libzot {
 						dbesc(datetime_convert('UTC','UTC','now - 24 hours'))
 					);
 					if ($n && intval($n['total']) > $lim) {
+						logger('channel: ' . $channel['channel_id'] . ' too many new connections per day. This one from ' . $hsig['signer'], LOGGER_NORMAL, LOG_WARNING);
 						return false;
 					}
 				}
