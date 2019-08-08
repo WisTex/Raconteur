@@ -1,4 +1,4 @@
-	{{if $item.comment_firstcollapsed}}
+{{if $item.comment_firstcollapsed}}
 <div class="hide-comments-outer fakelink" onclick="showHideComments({{$item.id}});">
 	<span id="hide-comments-{{$item.id}}" class="hide-comments">{{$item.hide_text}}</span>&nbsp;<span id="hide-comments-total-{{$item.id}}" class="hide-comments-total">{{$item.num_comments}}</span>
 </div>
