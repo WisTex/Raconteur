@@ -288,6 +288,10 @@ class Activity {
 			$ret['commentPolicy'] = map_scope(PermissionLimits::Get($i['uid'],'post_comments'));
 		}
 
+		if (intval($i['item_private']) === 2) {
+			$ret['directMessage'] = true;
+		}
+
 		if (array_key_exists('comments_closed',$i) && $i['comments_closed'] !== EMPTY_STR && $i['comments_closed'] !== NULL_DATE) {
 			if($ret['commentPolicy']) {
 				$ret['commentPolicy'] .= ' ';
@@ -925,7 +929,7 @@ class Activity {
 				$ret['endpoints']   = [ 'sharedInbox' => z_root() . '/inbox' ];
 	
 				$ret['publicKey'] = [
-					'id'           => $p['xchan_url'] . '/public_key_pem',
+					'id'           => $p['xchan_url'],
 					'owner'        => $p['xchan_url'],
 					'publicKeyPem' => $p['xchan_pubkey']
 				];
@@ -1940,6 +1944,8 @@ class Activity {
 			$s['item_deleted'] = 1;
 		}
 
+		
+
 
 		$s['verb']     = self::activity_mapper($act->type);
 
@@ -2177,6 +2183,11 @@ class Activity {
 
 		if ($act->recips && (! in_array(ACTIVITY_PUBLIC_INBOX,$act->recips)))
 			$s['item_private'] = 1;
+
+
+		if (array_key_exists('directMessage',$act->obj) && intval($act->obj['directMessage'])) {
+			$s['item_private'] = 2;
+		}
 
 		set_iconfig($s,'activitypub','recips',$act->raw_recips);
 

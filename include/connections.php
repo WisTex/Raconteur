@@ -17,6 +17,7 @@ function abook_store_lowlevel($arr) {
 		'abook_connected'   => ((array_key_exists('abook_connected',$arr))   ? $arr['abook_connected']   : NULL_DATE),
 		'abook_dob'         => ((array_key_exists('abook_dob',$arr))         ? $arr['abook_dob']         : NULL_DATE),
 		'abook_flags'       => ((array_key_exists('abook_flags',$arr))       ? $arr['abook_flags']       : 0),
+		'abook_censor'      => ((array_key_exists('abook_censor',$arr))      ? $arr['abook_censor']      : 0),
 		'abook_blocked'     => ((array_key_exists('abook_blocked',$arr))     ? $arr['abook_blocked']     : 0),
 		'abook_ignored'     => ((array_key_exists('abook_ignored',$arr))     ? $arr['abook_ignored']     : 0),
 		'abook_hidden'      => ((array_key_exists('abook_hidden',$arr))      ? $arr['abook_hidden']      : 0),
@@ -158,6 +159,9 @@ function abook_toggle_flag($abook,$flag) {
 			break;
 		case ABOOK_FLAG_IGNORED:
 			$field = 'abook_ignored';
+			break;
+		case ABOOK_FLAG_CENSORED:
+			$field = 'abook_censor';
 			break;
 		case ABOOK_FLAG_HIDDEN:
 			$field = 'abook_hidden';
@@ -816,3 +820,108 @@ function contact_profile_assign($current) {
 	return $o;
 }
 
+function contact_block() {
+	$o = '';
+
+	if(! App::$profile['uid'])
+		return;
+
+	if(! perm_is_allowed(App::$profile['uid'],get_observer_hash(),'view_contacts'))
+		return;
+
+	$shown = get_pconfig(App::$profile['uid'],'system','display_friend_count');
+
+	if($shown === false)
+		$shown = 25;
+	if($shown == 0)
+		return;
+
+	$is_owner = ((local_channel() && local_channel() == App::$profile['uid']) ? true : false);
+	$sql_extra = '';
+
+	$abook_flags = " and abook_pending = 0 and abook_self = 0 ";
+
+	if(! $is_owner) {
+		$abook_flags .= " and abook_hidden = 0 ";
+		$sql_extra = " and xchan_hidden = 0 ";
+	}
+
+	if((! is_array(App::$profile)) || (App::$profile['hide_friends']))
+		return $o;
+
+	$r = q("SELECT COUNT(abook_id) AS total FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_channel = %d
+		$abook_flags and xchan_orphan = 0 and xchan_deleted = 0 $sql_extra",
+		intval(App::$profile['uid'])
+	);
+	if(count($r)) {
+		$total = intval($r[0]['total']);
+	}
+	if(! $total) {
+		$contacts = t('No connections');
+		$micropro = null;
+	} else {
+
+		$randfunc = db_getfunc('RAND');
+
+		$r = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash WHERE abook_channel = %d $abook_flags and abook_archived = 0 and xchan_orphan = 0 and xchan_deleted = 0 $sql_extra ORDER BY $randfunc LIMIT %d",
+			intval(App::$profile['uid']),
+			intval($shown)
+		);
+
+		if(count($r)) {
+			$contacts = t('Connections');
+			$micropro = Array();
+			foreach($r as $rr) {
+
+				// There is no setting to discover if you are bi-directionally connected
+				// Use the ability to post comments as an indication that this relationship is more
+				// than wishful thinking; even though soapbox channels and feeds will disable it. 
+
+				if(! their_perms_contains(App::$profile['uid'],$rr['xchan_hash'],'post_comments')) {
+					$rr['oneway'] = true;
+				}
+				$micropro[] = micropro($rr,true,'mpfriend');
+			}
+		}
+	}
+
+	$tpl = get_markup_template('contact_block.tpl');
+	$o = replace_macros($tpl, array(
+		'$contacts' => $contacts,
+		'$nickname' => App::$profile['channel_address'],
+		'$viewconnections' => (($total > $shown) ? sprintf(t('View all %s connections'),$total) : ''),
+		'$micropro' => $micropro,
+	));
+
+	$arr = array('contacts' => $r, 'output' => $o);
+
+	call_hooks('contact_block_end', $arr);
+	return $o;
+}
+
+function micropro($contact, $redirect = false, $class = '', $mode = false) {
+
+	if($contact['click'])
+		$url = '#';
+	else
+		$url = chanlink_hash($contact['xchan_hash']);
+
+
+	$tpl = 'micropro_img.tpl';
+	if($mode === true)
+		$tpl = 'micropro_txt.tpl';
+	if($mode === 'card')
+		$tpl = 'micropro_card.tpl';
+
+	return replace_macros(get_markup_template($tpl), array(
+		'$click' => (($contact['click']) ? $contact['click'] : ''),
+		'$class' => $class . (($contact['archived']) ? ' archived' : ''),
+		'$oneway' => (($contact['oneway']) ? true : false),
+		'$url' => $url,
+		'$photo' => $contact['xchan_photo_s'],
+		'$name' => $contact['xchan_name'],
+		'$addr' => $contact['xchan_addr'],
+		'$title' => $contact['xchan_name'] . ' [' . $contact['xchan_addr'] . ']',
+		'$network' => sprintf(t('Network: %s'), $contact['xchan_network'])
+	));
+}

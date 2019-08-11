@@ -98,7 +98,7 @@ class Embedphotos extends Controller {
 
 		$channel_id = 0;
 		if (array_key_exists('channel_id', $args)) {
-			$channel_id = $args['channel'];
+			$channel_id = $args['channel_id'];
 			$channel = channelx_by_n($channel_id);
 		}
 		

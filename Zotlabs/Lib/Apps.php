@@ -313,7 +313,7 @@ class Apps {
 	static public function translate_system_apps(&$arr) {
 		$apps = array(
 			'Apps' => t('Apps'),
-			'Affinity Tool' => t('Affinity Tool'),
+			'Friend Zoom' => t('Friend Zoom'),
 			'Articles' => t('Articles'),
 			'Cards' => t('Cards'),
 			'Calendar' => t('Calendar'),
@@ -331,6 +331,7 @@ class Apps {
 			'Suggest Channels' => t('Suggest Channels'),
 			'Login' => t('Login'),
 			'Channel Manager' => t('Channel Manager'), 
+			'Notes' => t('Notes'),
 			'Network' => t('Stream'), 
 			'Settings' => t('Settings'),
 			'Files' => t('Files'),
@@ -339,7 +340,9 @@ class Apps {
 			'Channel Home' => t('Channel Home'), 
 			'View Profile' => t('View Profile'),
 			'Photos' => t('Photos'), 
+			'Photomap' => t('Photomap'), 
 			'Events' => t('Events'), 
+			'Tasks' => t('Tasks'),
 			'No Comment' => t('No Comment'),
 			'Directory' => t('Directory'), 
 			'Help' => t('Help'),

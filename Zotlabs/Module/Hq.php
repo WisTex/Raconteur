@@ -1,19 +1,23 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Lib\PermissionDescription;
+
 require_once("include/bbcode.php");
 require_once('include/security.php');
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
 
 
-class Hq extends \Zotlabs\Web\Controller {
+class Hq extends Controller {
 
 	function init() {
 		if(! local_channel())
 			return;
 
-		\App::$profile_uid = local_channel();
+		App::$profile_uid = local_channel();
 	}
 
 	function post() {
@@ -104,7 +108,7 @@ class Hq extends \Zotlabs\Web\Controller {
 		}
 	
 		if(! $update) {
-			$channel = \App::get_channel();
+			$channel = App::get_channel();
 
 			$channel_acl = [
 				'allow_cid' => $channel['channel_allow_cid'], 
@@ -119,7 +123,7 @@ class Hq extends \Zotlabs\Web\Controller {
 				'default_location'    => $channel['channel_location'],
 				'nickname'            => $channel['channel_address'],
 				'lockstate'           => (($group || $cid || $channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
-				'acl'                 => populate_acl($channel_acl,true, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
+				'acl'                 => populate_acl($channel_acl,true, PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
 				'permissions'         => $channel_acl,
 				'bang'                => '',
 				'visitor'             => true,
@@ -165,7 +169,7 @@ class Hq extends \Zotlabs\Web\Controller {
 			$o .= "<script> var profile_uid = " . local_channel()
 				. "; var netargs = '?f='; var profile_page = " . \App::$pager['page'] . ";</script>\r\n";
 	
-			\App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),[
+			App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),[
 				'$baseurl' => z_root(),
 				'$pgtype'  => 'hq',
 				'$uid'     => local_channel(),
@@ -178,6 +182,7 @@ class Hq extends \Zotlabs\Web\Controller {
 				'$conv'    => '0',
 				'$spam'    => '0',
 				'$fh'      => '0',
+				'$dm'      => '0',
 				'$nouveau' => '0',
 				'$wall'    => '0',
 				'$static'  => $static,

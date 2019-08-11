@@ -11,6 +11,7 @@ use App;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Daemon\Master;
 
 
@@ -322,13 +323,13 @@ class Libzot {
 			return false;
 		}
 
-
 		logger('zot-info: ' . print_r($record,true), LOGGER_DATA, LOG_DEBUG);
 
 		$x = self::import_xchan($record['data'], (($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
 
-		if (! $x['success'])
+		if (! $x['success']) {
 			return false;
+		}
 
 		if ($channel && $record['data']['permissions']) {
 			$old_read_stream_perm = their_perms_contains($channel['channel_id'],$x['hash'],'view_stream');
@@ -380,6 +381,19 @@ class Libzot {
 				}
 			}
 			else {
+
+				// limit the ability to do connection spamming, this limit is per channel
+				$lim = intval(get_config('system','max_connections_per_day',50));
+				if ($lim) {
+					$n = q("select count(abook_id) as total from abook where abook_channel = %d and abook_created > %s",
+						intval($channel['channel_id']),
+						dbesc(datetime_convert('UTC','UTC','now - 24 hours'))
+					);
+					if ($n && intval($n['total']) > $lim) {
+						logger('channel: ' . $channel['channel_id'] . ' too many new connections per day. This one from ' . $hsig['signer'], LOGGER_NORMAL, LOG_WARNING);
+						return false;
+					}
+				}
 
 				$p = Permissions::connect_perms($channel['channel_id']);
 				$my_perms = Permissions::serialise($p['perms']);
@@ -1289,8 +1303,8 @@ class Libzot {
 					$arr['owner_xchan'] = $env['sender'];						
 				}
 
-				if ($private) {
-					$arr['item_private'] = true;
+				if ($private && (! intval($arr['item_private']))) {
+					$arr['item_private'] = 1;
 				}
 				if ($arr['mid'] === $arr['parent_mid']) {
 					if (is_array($AS->obj) && array_key_exists('commentPolicy',$AS->obj)) {
@@ -1535,6 +1549,8 @@ class Libzot {
 
 		$result = [];
 
+		//logger('msg_arr: ' . print_r($msg_arr,true),LOGGER_ALL);
+
 		// If an upstream hop used ActivityPub, set the identities to zot6 nomadic identities where applicable
 		// else things could easily get confused
 
@@ -1691,7 +1707,7 @@ class Libzot {
 					// doesn't exist. 
 
 					if ($perm === 'send_stream') {
-						if (get_pconfig($channel['channel_id'],'system','hyperdrive',true)) {
+						if (get_pconfig($channel['channel_id'],'system','hyperdrive',false)) {
 							$allowed = true;
 						}
 					}
@@ -2950,15 +2966,10 @@ class Libzot {
 		// now all forums (public, restricted, and private) set the public_forum flag. So it really means "is a group"
 		// and has nothing to do with accessibility.  
 
-		$channel_type = 'normal';
-
 		$role = get_pconfig($e['channel_id'],'system','permissions_role');
-		if (in_array($role, ['forum','forum_restricted','repository'])) {
-			$channel_type = 'group';
-		}
-		if (in_array($role, ['collection','collection_restricted'])) {
-			$channel_type = 'collection';
-		}
+		$rolesettings = PermissionRoles::role_perms($role);
+
+		$channel_type = isset($rolesettings['channel_type']) ? $rolesettings['channel_type'] : 'normal';
 
 		//  This is for birthdays and keywords, but must check access permissions
 		$p = q("select * from profile where uid = %d and is_default = 1",

@@ -64,7 +64,7 @@ class Network extends Controller {
 		$category   = ((x($_REQUEST,'cat')) ? $_REQUEST['cat'] : '');
 		$hashtags   = ((x($_REQUEST,'tag')) ? $_REQUEST['tag'] : '');
 		$verb       = ((x($_REQUEST,'verb')) ? $_REQUEST['verb'] : '');
-
+		$dm         = ((x($_REQUEST,'dm')) ? $_REQUEST['dm'] : 0);
 
 		$order = get_pconfig(local_channel(), 'mod_network', 'order', 0);
 		switch ($order) {
@@ -122,8 +122,8 @@ class Network extends Controller {
 			$def_acl    = [ 'allow_gid' => '<' . $r[0]['hash'] . '>' ];
 		}
 	
-		$default_cmin = ((Apps::system_app_installed(local_channel(),'Affinity Tool')) ? get_pconfig(local_channel(),'affinity','cmin',0) : (-1));
-		$default_cmax = ((Apps::system_app_installed(local_channel(),'Affinity Tool')) ? get_pconfig(local_channel(),'affinity','cmax',99) : (-1));
+		$default_cmin = ((Apps::system_app_installed(local_channel(),'Friend Zoom')) ? get_pconfig(local_channel(),'affinity','cmin',0) : (-1));
+		$default_cmax = ((Apps::system_app_installed(local_channel(),'Friend Zoom')) ? get_pconfig(local_channel(),'affinity','cmax',99) : (-1));
 
 		$cid      = ((x($_GET,'cid'))   ? intval($_GET['cid'])   : 0);
 		$star     = ((x($_GET,'star'))  ? intval($_GET['star'])  : 0);
@@ -336,6 +336,7 @@ class Network extends Controller {
 				'$conv'    => (($conv) ? $conv : '0'),
 				'$spam'    => (($spam) ? $spam : '0'),
 				'$fh'      => '0',
+				'$dm'      => (($dm) ? $dm : '0'),
 				'$nouveau' => (($nouveau) ? $nouveau : '0'),
 				'$wall'    => '0',
 				'$static'  => $static, 
@@ -399,6 +400,10 @@ class Network extends Controller {
 			$sql_extra .= term_query('item',$file,TERM_FILE);
 		}
 	
+		if ($dm) {
+			$sql_extra .= " and item_private = 2 ";
+		}
+
 		if ($conv) {
 			$item_thread_top = '';
 

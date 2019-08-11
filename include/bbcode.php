@@ -953,6 +953,7 @@ function bbcode($Text, $options = []) {
 	$cache       = ((array_key_exists('cache',$options)) ? $options['cache'] : false);
 	$newwin      = ((array_key_exists('newwin',$options)) ? $options['newwin'] : true);
 	$export      = ((array_key_exists('export',$options)) ? $options['export'] : false);
+	$censored    = ((array_key_exists('censored',$options)) ? $options['censored'] : false);
 
 	$target = (($newwin) ? ' target="_blank" ' : '');
 
@@ -1373,6 +1374,7 @@ function bbcode($Text, $options = []) {
 			$Text);
 
 	// Images
+
 	// [img]pathtoimage[/img]
 	if (strpos($Text,'[/img]') !== false) {
 		$Text = preg_replace("/\[img\](.*?)\[\/img\]/ism", '<img style="max-width: 100%;" src="$1" alt="' . t('Image/photo') . '" />', $Text);
@@ -1417,6 +1419,12 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace("/\[zmg\=([0-9]*)x([0-9]*) float=right\](.*?)\[\/zmg\]/ism", '<img class="zrl" src="$3" style="width: 100%; max-width: $1px; float: right;" alt="' . t('Image/photo') . '" />', $Text);
 	}
 
+	if($censored) {
+		$Text = separate_img_links($Text);
+		$Text = preg_replace("/\<img(.*?)src=\"(.*?)\"(.*?)\>/ism",'<i class="fa fa-image"></i> <a href="#" onclick="\\$.colorbox({ \'href\': \'$2\' }); return false;">$2</a>',$Text);
+	}
+
+
 	// style (sanitized)
 	if (strpos($Text,'[/style]') !== false) {
 		$Text = preg_replace_callback("(\[style=(.*?)\](.*?)\[\/style\])ism", "bb_sanitize_style", $Text);
@@ -1439,15 +1447,15 @@ function bbcode($Text, $options = []) {
 
 	// html5 video and audio
 	if (strpos($Text,'[/video]') !== false) {
-		$Text = preg_replace_callback("/\[video (.*?)\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg))\[\/video\]/ism", 'videowithopts', $Text);
-		$Text = preg_replace_callback("/\[video\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg))\[\/video\]/ism", 'tryzrlvideo', $Text);
+		$Text = preg_replace_callback("/\[video (.*?)\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg|mov))\[\/video\]/ism", 'videowithopts', $Text);
+		$Text = preg_replace_callback("/\[video\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg|mov))\[\/video\]/ism", 'tryzrlvideo', $Text);
 	}
 	if (strpos($Text,'[/audio]') !== false) {
 		$Text = preg_replace_callback("/\[audio\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mp3|opus|m4a))\[\/audio\]/ism", 'tryzrlaudio', $Text);
 	}
 	if (strpos($Text,'[/zvideo]') !== false) {
-		$Text = preg_replace_callback("/\[zvideo (.*?)\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg))\[\/zvideo\]/ism", 'videowithopts', $Text);
-		$Text = preg_replace_callback("/\[zvideo\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg))\[\/zvideo\]/ism", 'tryzrlvideo', $Text);
+		$Text = preg_replace_callback("/\[zvideo (.*?)\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg|mov))\[\/zvideo\]/ism", 'videowithopts', $Text);
+		$Text = preg_replace_callback("/\[zvideo\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg|mov))\[\/zvideo\]/ism", 'tryzrlvideo', $Text);
 	}
 	if (strpos($Text,'[/zaudio]') !== false) {
 		$Text = preg_replace_callback("/\[zaudio\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mp3|opus|m4a))\[\/zaudio\]/ism", 'tryzrlaudio', $Text);

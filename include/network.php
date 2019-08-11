@@ -2,6 +2,7 @@
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Zotfinger;
+use Zotlabs\Lib\Webfinger;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityPub;
@@ -1213,7 +1214,7 @@ function discover_by_webbie($webbie, $protocol = '') {
 
 	$network  = null;
 
-	$x = webfinger_rfc7033($webbie);
+	$x = Webfinger::exec($webbie);
 
  	$address = EMPTY_STR;
 
@@ -1300,6 +1301,7 @@ function discover_by_webbie($webbie, $protocol = '') {
 
 /**
  * @brief Fetch and return a webfinger for a webbie.
+ * No longer used - see Zotlabs/Lib/Webfinger.php
  *
  * @param string $webbie - The resource
  * @return boolean|string false or associative array from result JSON

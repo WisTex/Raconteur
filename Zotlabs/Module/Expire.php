@@ -51,15 +51,6 @@ logger('expire: ' . print_r($_POST,true));
 		));
 
 		return $s;
-
-
-
-
-
-
-
-
-
 	}
 
 

@@ -45,10 +45,10 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '3.1' );
+define ( 'STD_VERSION',             '19.8.7' );
 define ( 'ZOT_REVISION',            '6.0' );
 
-define ( 'DB_UPDATE_VERSION',       1232 );
+define ( 'DB_UPDATE_VERSION',       1234 );
 
 define ( 'PLATFORM_NAME',           'zap' );
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
@@ -309,6 +309,7 @@ define ( 'ABOOK_FLAG_PENDING'    , 0x0010);
 define ( 'ABOOK_FLAG_UNCONNECTED', 0x0020);
 define ( 'ABOOK_FLAG_SELF'       , 0x0080);
 define ( 'ABOOK_FLAG_FEED'       , 0x0100);
+define ( 'ABOOK_FLAG_CENSORED'   , 0x0200);
 
 
 define ( 'MAIL_DELETED',       0x0001);
@@ -466,7 +467,7 @@ define ( 'NAMESPACE_YMEDIA',          'http://search.yahoo.com/mrss/' );
 
 define ( 'ACTIVITYSTREAMS_JSONLD_REV', 'https://www.w3.org/ns/activitystreams' );
 
-define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.8' );
+define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.9' );
 /**
  * activity stream defines
  */
@@ -491,6 +492,7 @@ define ( 'ACTIVITY_OBJ_PHOTO',   'Image');
 define ( 'ACTIVITY_OBJ_P_PHOTO', 'Icon' );
 define ( 'ACTIVITY_OBJ_PROFILE', 'Profile');
 define ( 'ACTIVITY_OBJ_EVENT',   'Event' );
+define ( 'ACTIVITY_OBJ_POLL',    'Question');
 
 
 
@@ -773,6 +775,8 @@ class App {
 	public static  $force_max_items = 0;
 	public static  $theme_thread_allow = true;
 
+	public static $meta;
+	
 	/**
 	 * @brief An array for all theme-controllable parameters
 	 *
@@ -817,8 +821,6 @@ class App {
 	// to access the page
 
 	private static $baseurl;
-
-	private static $meta;
 
 	/**
 	 * App constructor.

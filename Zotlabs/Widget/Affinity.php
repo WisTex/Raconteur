@@ -11,14 +11,14 @@ class Affinity {
 		if(! local_channel())
 			return '';
 	
-		$default_cmin = ((Apps::system_app_installed(local_channel(),'Affinity Tool')) ? get_pconfig(local_channel(),'affinity','cmin',0) : 0);
-		$default_cmax = ((Apps::system_app_installed(local_channel(),'Affinity Tool')) ? get_pconfig(local_channel(),'affinity','cmax',99) : 99);
+		$default_cmin = ((Apps::system_app_installed(local_channel(),'Friend Zoom')) ? get_pconfig(local_channel(),'affinity','cmin',0) : 0);
+		$default_cmax = ((Apps::system_app_installed(local_channel(),'Friend Zoom')) ? get_pconfig(local_channel(),'affinity','cmax',99) : 99);
 
 		$cmin = ((x($_REQUEST,'cmin')) ? intval($_REQUEST['cmin']) : $default_cmin);
 		$cmax = ((x($_REQUEST,'cmax')) ? intval($_REQUEST['cmax']) : $default_cmax);
 
 
-		if(Apps::system_app_installed(local_channel(),'Affinity Tool')) {
+		if(Apps::system_app_installed(local_channel(),'Friend Zoom')) {
 
 			$labels = array(
 				0  => t('Me'),

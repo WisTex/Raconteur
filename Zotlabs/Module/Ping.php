@@ -291,6 +291,7 @@ class Ping extends Controller {
 
 
 					$mid = basename($tt['link']);
+					$mid = ((strpos($mid, 'b64.') === 0) ? @base64url_decode(substr($mid, 4)) : $mid);
 
 					if (in_array($tt['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) {
 						// we need the thread parent

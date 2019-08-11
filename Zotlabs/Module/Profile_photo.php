@@ -5,6 +5,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
+use Zotlabs\Daemon\Master;
 
 /*
  * @file Profile_photo.php
@@ -33,7 +34,7 @@ class Profile_photo extends Controller {
 			return;
 		}
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 		Libprofile::load($channel['channel_address']);
 	
 	}
@@ -151,7 +152,7 @@ class Profile_photo extends Controller {
 						return;
 					}
 	
-					$channel = \App::get_channel();
+					$channel = App::get_channel();
 	
 					// If setting for the default profile, unset the profile photo flag from any other photos I own
 	
@@ -219,7 +220,7 @@ class Profile_photo extends Controller {
 					info( t('Shift-reload the page or clear browser cache if the new photo does not display immediately.') . EOL);
 	
 					// Update directory in background
-					\Zotlabs\Daemon\Master::Summon(array('Directory',$channel['channel_id']));
+					Master::Summon( [ 'Directory', $channel['channel_id'] ] );
 	
 				}
 				else
@@ -287,7 +288,7 @@ class Profile_photo extends Controller {
 				}
 			}
 
-			$res = attach_store(\App::get_channel(), get_observer_hash(), '', array('album' => t('Profile Photos'), 'hash' => $hash));
+			$res = attach_store(App::get_channel(), get_observer_hash(), '', array('album' => t('Profile Photos'), 'hash' => $hash));
 	
 			logger('attach_store: ' . print_r($res,true));
 
@@ -349,7 +350,7 @@ class Profile_photo extends Controller {
 			return;
 		}
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 		$pf = 0;
 		$newuser = false;
 	
@@ -462,7 +463,7 @@ class Profile_photo extends Controller {
 	        }
 	 
 			if($multi_profiles) {
-				\App::$data['importfile'] = $resource_id;
+				App::$data['importfile'] = $resource_id;
 			}
 			else {
 				$this->profile_photo_crop_ui_head($a, $ph, $hash, $smallest);
@@ -489,16 +490,16 @@ class Profile_photo extends Controller {
 			}
 		}
 
-		$importing = ((array_key_exists('importfile',\App::$data)) ? true : false);
+		$importing = ((array_key_exists('importfile',App::$data)) ? true : false);
 	
-		if(! x(\App::$data,'imagecrop')) {
+		if(! x(App::$data,'imagecrop')) {
 	
 			$tpl = get_markup_template('profile_photo.tpl');
 	
 			$o .= replace_macros($tpl,array(
-				'$user' => \App::$channel['channel_address'],
+				'$user' => App::$channel['channel_address'],
 				'$info' => ((count($profiles) > 1) ? t('Your default profile photo is visible to anybody on the internet. Profile photos for alternate profiles will inherit the permissions of the profile') : t('Your profile photo is visible to anybody on the internet and may be distributed to other websites.')), 
-				'$importfile' => (($importing) ? \App::$data['importfile'] : ''),
+				'$importfile' => (($importing) ? App::$data['importfile'] : ''),
 				'$lbl_upfile' => t('Upload File:'),
 				'$lbl_profiles' => t('Select a profile:'),
 				'$title' => (($importing) ? t('Use Photo for Profile') : t('Change Profile Photo')),
@@ -528,13 +529,13 @@ class Profile_photo extends Controller {
 
 			// present a cropping form
 
-			$filename = \App::$data['imagecrop'] . '-' . \App::$data['imagecrop_resolution'];
-			$resolution = \App::$data['imagecrop_resolution'];
+			$filename = App::$data['imagecrop'] . '-' . App::$data['imagecrop_resolution'];
+			$resolution = App::$data['imagecrop_resolution'];
 			$tpl = get_markup_template("cropbody.tpl");
 			$o .= replace_macros($tpl,array(
 				'$filename' => $filename,
 				'$profile' => intval($_REQUEST['profile']),
-				'$resource' => \App::$data['imagecrop'] . '-' . \App::$data['imagecrop_resolution'],
+				'$resource' => App::$data['imagecrop'] . '-' . App::$data['imagecrop_resolution'],
 				'$image_url' => z_root() . '/photo/' . $filename,
 				'$title' => t('Crop Image'),
 				'$desc' => t('Please adjust the image cropping for optimum viewing.'),
@@ -565,19 +566,19 @@ class Profile_photo extends Controller {
 		if($max_length > 0)
 			$ph->scaleImage($max_length);
 	
-		\App::$data['width']  = $ph->getWidth();
-		\App::$data['height'] = $ph->getHeight();
+		App::$data['width']  = $ph->getWidth();
+		App::$data['height'] = $ph->getHeight();
 	
-		if(\App::$data['width'] < 500 || \App::$data['height'] < 500) {
+		if(App::$data['width'] < 500 || App::$data['height'] < 500) {
 			$ph->scaleImageUp(400);
-			\App::$data['width']  = $ph->getWidth();
-			\App::$data['height'] = $ph->getHeight();
+			App::$data['width']  = $ph->getWidth();
+			App::$data['height'] = $ph->getHeight();
 		}
 	
 	
-		\App::$data['imagecrop'] = $hash;
-		\App::$data['imagecrop_resolution'] = $smallest;
-		\App::$page['htmlhead'] .= replace_macros(get_markup_template("crophead.tpl"), array());
+		App::$data['imagecrop'] = $hash;
+		App::$data['imagecrop_resolution'] = $smallest;
+		App::$page['htmlhead'] .= replace_macros(get_markup_template("crophead.tpl"), array());
 		return;
 	}
 	

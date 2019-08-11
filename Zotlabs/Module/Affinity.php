@@ -9,7 +9,7 @@ class Affinity extends \Zotlabs\Web\Controller {
 
 	function post() {
 
-		if(! ( local_channel() && Apps::system_app_installed(local_channel(),'Affinity Tool'))) {
+		if(! ( local_channel() && Apps::system_app_installed(local_channel(),'Friend Zoom'))) {
             return;
         }
 
@@ -23,7 +23,7 @@ class Affinity extends \Zotlabs\Web\Controller {
 			set_pconfig(local_channel(),'affinity','cmin',0);
 			set_pconfig(local_channel(),'affinity','cmax',$cmax);
 
-			info( t('Affinity Tool settings updated.') . EOL);
+			info( t('Friend Zoom settings updated.') . EOL);
 
 		}
 		
@@ -34,11 +34,11 @@ class Affinity extends \Zotlabs\Web\Controller {
 
 	function get() {
 
-        $desc = t('This app (when installed) presents a slider control in your connection editor and also on your network page. The slider represents your degree of friendship or <em>affinity</em> with each connection. It allows you to zoom in or out and display conversations from only your closest friends or everybody in your stream.');
+        $desc = t('This app (when installed) presents a slider control in your connection editor and also on your network page. The slider represents your degree of friendship with each connection. It allows you to zoom in or out and display conversations from only your closest friends or everybody in your stream.');
 
         $text = '<div class="section-content-info-wrapper">' . $desc . '</div>';
 
-        if(! ( local_channel() && Apps::system_app_installed(local_channel(),'Affinity Tool'))) {
+        if(! ( local_channel() && Apps::system_app_installed(local_channel(),'Friend Zoom'))) {
             return $text;
         }
 
@@ -52,7 +52,7 @@ class Affinity extends \Zotlabs\Web\Controller {
 //			'$field'    => array('affinity_cmax', t('Default maximum affinity level'), $cmax, t('0-99 default 99'))
 //		));
 
-		if(Apps::system_app_installed(local_channel(),'Affinity Tool')) {
+		if(Apps::system_app_installed(local_channel(),'Friend Zoom')) {
 
 			$labels = array(
 				0  => t('Me'),
@@ -80,7 +80,7 @@ class Affinity extends \Zotlabs\Web\Controller {
 		}
 
 		$s .= replace_macros(get_markup_template('generic_app_settings.tpl'), array(
-			'$addon'    => array('affinity', '' . t('Affinity Tool Settings'), '', t('Submit')),
+			'$addon'    => array('affinity', '' . t('Friend Zoom Settings'), '', t('Submit')),
 			'$content'  => $setting_fields
 		));
 

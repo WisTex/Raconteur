@@ -270,7 +270,6 @@ class Events extends Controller {
 	
 	function get() {
 	
-		
 		if(argc() > 2 && argv(1) == 'ical') {
 			$event_id = argv(2);
 	

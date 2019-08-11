@@ -272,6 +272,10 @@ function can_comment_on_post($observer_xchan, $item) {
 		return false;
 	}
 
+	if (intval($item['item_nocomment'])) {
+		return false;
+	}
+
 	if(comments_are_now_closed($item)) {
 		return false;
 	}
@@ -952,8 +956,8 @@ function import_author_rss($x) {
 
 	$r = xchan_store_lowlevel(
 		[
-			'xchan_hash'         => $x['guid'],
-			'xchan_guid'         => $x['guid'],
+			'xchan_hash'         => $x['url'],
+			'xchan_guid'         => $x['url'],
 			'xchan_url'          => $x['url'],
 			'xchan_name'         => (($name) ? $name : t('(Unknown)')),
 			'xchan_name_date'    => datetime_convert(),
@@ -1660,8 +1664,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 
 	$arr['comment_policy'] = ((x($arr,'comment_policy')) ? notags(trim($arr['comment_policy']))  : 'contacts' );
 
-	if(! array_key_exists('item_unseen',$arr))
-		$arr['item_unseen'] = 1;
+	$arr['item_unseen'] = ((array_key_exists('item_unseen',$arr)) ? intval($arr['item_unseen']) : 1 );
 
 	if((! array_key_exists('item_nocomment',$arr)) && ($arr['comment_policy'] == 'none'))
 		$arr['item_nocomment'] = 1;
@@ -1842,10 +1845,13 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	}
 
 
- 	if(strlen($allow_cid) || strlen($allow_gid) || strlen($deny_cid) || strlen($deny_gid))
-		$private = 1;
-	else
-		$private = $arr['item_private'];
+	$private = intval($arr['item_private']);
+
+	if (! $private) {
+	 	if (strlen($allow_cid) || strlen($allow_gid) || strlen($deny_cid) || strlen($deny_gid)) {
+			$private = 1;
+		}
+	}
 
 	$arr['parent']          = $parent_id;
 	$arr['allow_cid']       = $allow_cid;
@@ -2881,9 +2887,12 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 		$arr['item_uplink'] = 1;
 		$arr['source_xchan'] = $item['owner_xchan'];
 
-		$arr['item_private'] = (($channel['channel_allow_cid'] || $channel['channel_allow_gid']
-		|| $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
 
+		$arr['item_private'] = $item['item_private'];
+		if(! intval($arr['item_private'])) {
+			$arr['item_private'] = (($channel['channel_allow_cid'] || $channel['channel_allow_gid']
+			|| $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
+		}
 
 		$arr['item_origin'] = 1;
 		$arr['item_wall'] = 1;
@@ -3331,6 +3340,8 @@ function retain_item($id) {
 	);
 }
 
+// Items is array of item.id
+
 function drop_items($items,$interactive = false,$stage = DROPITEM_NORMAL,$force = false) {
 	$uid = 0;
 
@@ -3393,14 +3404,15 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 	if(! $interactive)
 		$ok_to_delete = true;
 
+	// admin deletion
+	
+	if(is_site_admin())
+		$ok_to_delete = true;
+
 	// owner deletion
 	if(local_channel() && local_channel() == $item['uid'])
 		$ok_to_delete = true;
 
-	// sys owned item, requires site admin to delete
-	$sys = get_sys_channel();
-	if(is_site_admin() && $sys['channel_id'] == $item['uid'])
-		$ok_to_delete = true;
 
 	// author deletion
 	$observer = App::get_observer();
@@ -4275,12 +4287,12 @@ function set_linkified_perms($linkified, &$str_contact_allow, &$str_group_allow,
 			if(strpos($access_tag,'cid:') === 0) {
 				$str_contact_allow .= '<' . substr($access_tag,4) . '>';
 				$access_tag = '';
-				$private = 1;
+				$private = 2;
 			}
 			elseif(strpos($access_tag,'gid:') === 0) {
 				$str_group_allow .= '<' . substr($access_tag,4) . '>';
 				$access_tag = '';
-				$private = 1;
+				$private = 2;
 			}
 		}
 	}

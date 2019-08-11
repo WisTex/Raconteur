@@ -203,8 +203,8 @@ require_once('include/api_zot.php');
 		$grant_types = trim($_REQUEST['grant_types']);
 		$scope = trim($_REQUEST['scope']);
 		$icon = trim($_REQUEST['logo_uri']);
-		$r = q("INSERT INTO oauth_clients (client_id, client_secret, redirect_uri, grant_types, scope, user_id)
-			VALUES ( '%s', '%s', '%s', '%s', '%s', '%s' ) ",
+		$r = q("INSERT INTO oauth_clients (client_id, client_secret, redirect_uri, grant_types, scope, user_id, client_name)
+			VALUES ( '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) ",
 			dbesc($key),
 			dbesc($secret),
 			dbesc($redirect),

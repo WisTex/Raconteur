@@ -23,7 +23,8 @@ CREATE TABLE "abook" (
   "abook_updated" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "abook_connected" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "abook_dob" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
-  "abook_flags" bigint NOT NULL DEFAULT '0',
+  "abook_censor" bigint NOT NULL DEFAULT '0',
+  "abook_blocked" smallint NOT NULL DEFAULT '0',
   "abook_blocked" smallint NOT NULL DEFAULT '0',
   "abook_ignored" smallint NOT NULL DEFAULT '0',
   "abook_hidden" smallint NOT NULL DEFAULT '0',
@@ -1619,6 +1620,7 @@ CREATE TABLE oauth_clients (
   grant_types           VARCHAR(80),
   scope                 VARCHAR(4000),
   user_id               bigint NOT NULL DEFAULT '0',
+  client_name           VARCHAR(80),
   PRIMARY KEY (client_id)
 );
 

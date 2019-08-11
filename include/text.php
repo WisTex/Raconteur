@@ -726,8 +726,6 @@ function btlogger($msg, $level = LOGGER_NORMAL, $priority = LOG_INFO) {
 	}
 }
 
-
-
 function log_priority_str($priority) {
 	$parr = array(
 		LOG_EMERG   => 'LOG_EMERG',
@@ -910,103 +908,6 @@ function qp($s) {
 	return str_replace ("%", "=", rawurlencode($s));
 }
 
-
-function get_mentions($item,$tags) {
-	$o = '';
-
-	if(! count($tags))
-		return $o;
-
-	foreach($tags as $x) {
-		if($x['ttype'] == TERM_MENTION) {
-			$o .= "\t\t" . '<link rel="mentioned" href="' . $x['url'] . '" />' . "\r\n";
-			$o .= "\t\t" . '<link rel="ostatus:attention" href="' . $x['url'] . '" />' . "\r\n";
-		}
-	}
-	return $o;
-}
-
-
-function contact_block() {
-	$o = '';
-
-	if(! App::$profile['uid'])
-		return;
-
-	if(! perm_is_allowed(App::$profile['uid'],get_observer_hash(),'view_contacts'))
-		return;
-
-	$shown = get_pconfig(App::$profile['uid'],'system','display_friend_count');
-
-	if($shown === false)
-		$shown = 25;
-	if($shown == 0)
-		return;
-
-	$is_owner = ((local_channel() && local_channel() == App::$profile['uid']) ? true : false);
-	$sql_extra = '';
-
-	$abook_flags = " and abook_pending = 0 and abook_self = 0 ";
-
-	if(! $is_owner) {
-		$abook_flags .= " and abook_hidden = 0 ";
-		$sql_extra = " and xchan_hidden = 0 ";
-	}
-
-	if((! is_array(App::$profile)) || (App::$profile['hide_friends']))
-		return $o;
-
-	$r = q("SELECT COUNT(abook_id) AS total FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_channel = %d
-		$abook_flags and xchan_orphan = 0 and xchan_deleted = 0 $sql_extra",
-		intval(App::$profile['uid'])
-	);
-	if(count($r)) {
-		$total = intval($r[0]['total']);
-	}
-	if(! $total) {
-		$contacts = t('No connections');
-		$micropro = null;
-	} else {
-
-		$randfunc = db_getfunc('RAND');
-
-		$r = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash WHERE abook_channel = %d $abook_flags and abook_archived = 0 and xchan_orphan = 0 and xchan_deleted = 0 $sql_extra ORDER BY $randfunc LIMIT %d",
-			intval(App::$profile['uid']),
-			intval($shown)
-		);
-
-		if(count($r)) {
-			$contacts = t('Connections');
-			$micropro = Array();
-			foreach($r as $rr) {
-
-				// There is no setting to discover if you are bi-directionally connected
-				// Use the ability to post comments as an indication that this relationship is more
-				// than wishful thinking; even though soapbox channels and feeds will disable it. 
-
-				if(! their_perms_contains(App::$profile['uid'],$rr['xchan_hash'],'post_comments')) {
-					$rr['oneway'] = true;
-				}
-				$micropro[] = micropro($rr,true,'mpfriend');
-			}
-		}
-	}
-
-	$tpl = get_markup_template('contact_block.tpl');
-	$o = replace_macros($tpl, array(
-		'$contacts' => $contacts,
-		'$nickname' => App::$profile['channel_address'],
-		'$viewconnections' => (($total > $shown) ? sprintf(t('View all %s connections'),$total) : ''),
-		'$micropro' => $micropro,
-	));
-
-	$arr = array('contacts' => $r, 'output' => $o);
-
-	call_hooks('contact_block_end', $arr);
-	return $o;
-}
-
-
 function chanlink_hash($s) {
 	return z_root() . '/chanview?f=&hash=' . urlencode($s);
 }
@@ -1029,32 +930,6 @@ function magiclink_url($observer,$myaddr,$url) {
 
 
 
-function micropro($contact, $redirect = false, $class = '', $mode = false) {
-
-	if($contact['click'])
-		$url = '#';
-	else
-		$url = chanlink_hash($contact['xchan_hash']);
-
-
-	$tpl = 'micropro_img.tpl';
-	if($mode === true)
-		$tpl = 'micropro_txt.tpl';
-	if($mode === 'card')
-		$tpl = 'micropro_card.tpl';
-
-	return replace_macros(get_markup_template($tpl), array(
-		'$click' => (($contact['click']) ? $contact['click'] : ''),
-		'$class' => $class . (($contact['archived']) ? ' archived' : ''),
-		'$oneway' => (($contact['oneway']) ? true : false),
-		'$url' => $url,
-		'$photo' => $contact['xchan_photo_s'],
-		'$name' => $contact['xchan_name'],
-		'$addr' => $contact['xchan_addr'],
-		'$title' => $contact['xchan_name'] . ' [' . $contact['xchan_addr'] . ']',
-		'$network' => sprintf(t('Network: %s'), $contact['xchan_network'])
-	));
-}
 
 
 function search($s,$id='search-box',$url='/search',$save = false) {
@@ -1576,9 +1451,9 @@ function generate_map($coord) {
 	$coord = str_replace(array(',','/','  '),array(' ',' ',' '),$coord);
 
 	$arr = [
-			'lat' => trim(substr($coord, 0, strpos($coord, ' '))),
-			'lon' => trim(substr($coord, strpos($coord, ' ')+1)),
-			'html' => ''
+		'lat' => trim(substr($coord, 0, strpos($coord, ' '))),
+		'lon' => trim(substr($coord, strpos($coord, ' ')+1)),
+		'html' => ''
 	];
 
 	/**
@@ -1594,8 +1469,8 @@ function generate_map($coord) {
 
 function generate_named_map($location) {
 	$arr = [
-			'location' => $location,
-			'html' => ''
+		'location' => $location,
+		'html' => ''
 	];
 
 	/**
@@ -1613,25 +1488,38 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 
 	call_hooks('prepare_body_init', $item);
 
+	$censored = ((($item['author']['abook_censor'] || $item['owner']['abook_censor'] || $item['author']['xchan_selfcensored'] || $item['owner']['xchan_selfcensored'] || $item['author']['xchan_censored'] || $item['owner']['xchan_censored']) && (! intval($_SESSION['unsafe'])))
+		? true
+		: false
+	);
+
+	if ($censored) {
+		if (! $opts) {
+			$opts = [];
+		}
+		$opts['censored'] = true;
+	}
+	
 	$s = '';
 	$photo = '';
+
 	$is_photo = ((($item['verb'] === ACTIVITY_POST) && ($item['obj_type'] === ACTIVITY_OBJ_PHOTO)) ? true : false);
 
-	if($is_photo) {
+	if($is_photo && ! $censored) {
 
 		$object = json_decode($item['obj'],true);
 
 		if(array_key_exists('url',$object) && is_array($object['url']) && array_key_exists(0,$object['url'])) {
-			// if original photo width is <= 640px prepend it to item body
-			if(array_key_exists('width',$object['url'][0]) && $object['url'][0]['width'] <= 640) {
-				$s .= '<div class="inline-photo-item-wrapper"><a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener" ><img class="inline-photo-item" style="max-width:' . $object['url'][0]['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($object['url'][0]['href'])) . '"></a></div>' . $s;
-			}
-
 			// if original photo width is > 640px make it a cover photo
 			if(array_key_exists('width',$object['url'][0]) && $object['url'][0]['width'] > 640) {
 				$scale = ((($object['url'][1]['width'] == 1024) || ($object['url'][1]['height'] == 1024)) ? 1 : 0);
 				$photo = '<a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener"><img style="max-width:' . $object['url'][$scale]['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($object['url'][$scale]['href'])) . '"></a>';
 			}
+			// if original photo width is <= 640px prepend it to item body
+			elseif(array_key_exists('width',$object['url'][0]) && $object['url'][0]['width'] <= 640) {
+				$item['body'] = '[zmg]' . $object['url'][0]['href'] . '[/zmg]' . "\n\n" . $item['body'];
+			}
+
 		}
 	}
 
@@ -1647,6 +1535,8 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 		}
 	}
 
+
+
 	$event = (($item['obj_type'] === ACTIVITY_OBJ_EVENT) ? format_event_obj($item['obj']) : false);
 
 	// This is not the most pleasant UI element possible, but this is difficult to add to one of the templates.
@@ -1654,7 +1544,7 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 	// of code re-factoring to make that happen.
 
 	if($event['header'] && $item['resource_id']) {
-		$event['header'] .= '<i class="fa fa-asterisk" title="' . t('Added to your calendar') . '"></i>';
+		$event['header'] .= '<i class="fa fa-asterisk" title="' . t('Added to your calendar') . '"></i>' . '&nbsp;' . t('Added to your calendar');
 	}
 
 	$prep_arr = array(
@@ -1720,6 +1610,12 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 
 	return $prep_arr;
 }
+
+function separate_img_links($s) {
+	$x = preg_replace('/\<a (.*?)\>\<img(.*?)\>\<\/a\>/ism',
+		'<img$2><br><a $1>' . t('Link') . '</a>',$s);
+	return $x;
+} 
 
 
 function prepare_binary($item) {
@@ -1807,49 +1703,6 @@ function create_export_photo_body(&$item) {
 	}
 }
 
-/**
- * @brief Return atom link elements for all of our hubs.
- *
- * @return string
- */
-function feed_hublinks() {
-	$hub = get_config('system', 'huburl');
-
-	$hubxml = '';
-	if(strlen($hub)) {
-		$hubs = explode(',', $hub);
-		if(count($hubs)) {
-			foreach($hubs as $h) {
-				$h = trim($h);
-				if(! strlen($h))
-					continue;
-
-				$hubxml .= '<link rel="hub" href="' . xmlify($h) . '" />' . "\n" ;
-			}
-		}
-	}
-
-	return $hubxml;
-}
-
-/**
- * @brief Return atom link elements for salmon endpoints
- *
- * @param string $nick
- * @return string
- */
-function feed_salmonlinks($nick) {
-
-	$salmon  = '<link rel="salmon" href="' . xmlify(z_root() . '/salmon/' . $nick) . '" />' . "\n" ;
-
-	// old style links that status.net still needed as of 12/2010
-
-	$salmon .= '  <link rel="http://salmon-protocol.org/ns/salmon-replies" href="' . xmlify(z_root() . '/salmon/' . $nick) . '" />' . "\n" ;
-	$salmon .= '  <link rel="http://salmon-protocol.org/ns/salmon-mention" href="' . xmlify(z_root() . '/salmon/' . $nick) . '" />' . "\n" ;
-
-	return $salmon;
-}
-
 
 function get_plink($item,$conversation_mode = true) {
 	if($conversation_mode)
@@ -1863,10 +1716,10 @@ function get_plink($item,$conversation_mode = true) {
 		$zidify = false;
 
 	if(x($item,$key)) {
-		return array(
+		return [
 			'href' => (($zidify) ? zid($item[$key]) : $item[$key]),
 			'title' => t('Link to Source'),
-		);
+		];
 	}
 	else {
 		return false;
@@ -2269,6 +2122,7 @@ function trim_and_unpunify($s) {
  */
 function xchan_query(&$items, $abook = true, $effective_uid = 0) {
 	$arr = array();
+
 	if($items && count($items)) {
 
 		if($effective_uid) {
@@ -2288,13 +2142,13 @@ function xchan_query(&$items, $abook = true, $effective_uid = 0) {
 	if(count($arr)) {
 		if($abook) {
 			$chans = q("select * from xchan left join hubloc on hubloc_hash = xchan_hash left join abook on abook_xchan = xchan_hash and abook_channel = %d
-				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and hubloc_primary = 1",
+				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") order by hubloc_primary desc",
 				intval($item['uid'])
 			);
 		}
 		else {
 			$chans = q("select xchan.*,hubloc.* from xchan left join hubloc on hubloc_hash = xchan_hash
-				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and hubloc_primary = 1");
+				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") order by hubloc_primary desc");
 		}
 		$xchans = q("select * from xchan where xchan_hash in (" . protect_sprintf(implode(',',$arr)) . ") and xchan_network in ('rss','unknown', 'anon')");
 		if(! $chans)
@@ -2302,6 +2156,7 @@ function xchan_query(&$items, $abook = true, $effective_uid = 0) {
 		else
 			$chans = array_merge($xchans,$chans);
 	}
+
 	if($items && count($items) && $chans && count($chans)) {
 		for($x = 0; $x < count($items); $x ++) {
 			$items[$x]['owner'] = find_xchan_in_array($items[$x]['owner_xchan'],$chans);
@@ -3002,6 +2857,15 @@ function item_url_replace($channel,&$item,$old,$new,$oldnick = '') {
 	$item['llink'] = str_replace($old,$new,$item['llink']);
 	if($oldnick)
 		$item['llink'] = str_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['llink']);
+
+	if($item['term']) {
+		for($x = 0; $x < count($item['term']); $x ++) {
+			$item['term'][$x]['url'] =  str_replace($old,$new,$item['term'][$x]['url']);
+			if ($oldnick) {
+				$item['term'][$x]['url'] = str_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['term'][$x]['url']);
+			}
+		}
+	}
 
 }
 

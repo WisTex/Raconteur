@@ -353,7 +353,7 @@ class Dirsearch extends Controller {
 	
 			$ret['results'] = $entries;
 			if ($kw) {
-				$k = dir_tagadelic($kw, $hub, $type);
+				$k = dir_tagadelic($kw, $hub, $type,$safesql);
 				if ($k) {
 					$ret['keywords'] = array();
 					foreach ($k as $kv) {
@@ -430,7 +430,7 @@ class Dirsearch extends Controller {
 						$quoted_string = false;
 					}
 					else
-						$curr['value'] .= ' ' . trim(q);
+						$curr['value'] .= ' ' . trim($q);
 				}
 			}
 		}

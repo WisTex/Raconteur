@@ -27,9 +27,9 @@ class LDSignatures {
 	static function sign($data,$channel) {
 
 		$options = [
-			'type' => 'RsaSignature2017',
-			'nonce' => random_string(64),
-			'creator' => z_root() . '/channel/' . $channel['channel_address'] . '/public_key_pem',
+			'type'    => 'RsaSignature2017',
+			'nonce'   => random_string(64),
+			'creator' => channel_url($channel),
 			'created' => datetime_convert('UTC','UTC', 'now', 'Y-m-d\Th:i:s\Z')
 		];
 
@@ -110,7 +110,7 @@ class LDSignatures {
 		$data_type = 'application/activity+json';
 		$encoding  = 'base64url';
 		$algorithm = 'RSA-SHA256';
-		$keyhash   = base64url_encode(z_root() . '/channel/' . $channel['channel_address']);
+		$keyhash   = base64url_encode(channel_url($channel));
 
 		$data = str_replace(array(" ","\t","\r","\n"),array("","","",""),$data);
 
@@ -121,12 +121,12 @@ class LDSignatures {
 		$signature  = base64url_encode(Crypto::sign($data . $precomputed,$channel['channel_prvkey']));
 
 		return ([
-			'id'          => $arr['id'],
-			'meData'      => $data,
-			'meDataType'  => $data_type,
-			'meEncoding'  => $encoding,
-			'meAlgorithm' => $algorithm,
-			'meCreator'   => z_root() . '/channel/' . $channel['channel_address'] . '/public_key_pem',
+			'id'               => $arr['id'],
+			'meData'           => $data,
+			'meDataType'       => $data_type,
+			'meEncoding'       => $encoding,
+			'meAlgorithm'      => $algorithm,
+			'meCreator'        => channel_url($channel),
 			'meSignatureValue' => $signature
 		]);
 

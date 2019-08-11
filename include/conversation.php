@@ -1482,7 +1482,7 @@ function get_item_children($arr, $parent) {
 	$children = array();
 	foreach($arr as $item) {
 		if($item['id'] != $item['parent']) {
-			if(get_config('system','thread_allow',((defined('NOMADIC')) ? false : true))) {
+			if(get_config('system','thread_allow',true)) {
 				// Fallback to parent_mid if thr_parent is not set
 				$thr_parent = $item['thr_parent'];
 				if($thr_parent === '')

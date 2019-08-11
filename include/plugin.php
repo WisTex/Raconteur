@@ -844,7 +844,6 @@ function head_get_links() {
 	return $str;
 }
 
-
 function format_css_if_exists($source) {
 
 	// script_path() returns https://yoursite.tld

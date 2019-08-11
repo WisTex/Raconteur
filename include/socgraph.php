@@ -2,6 +2,7 @@
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libzotdir;
+use Zotlabs\Lib\Zotfinger;
 
 /**
  * poco_load
@@ -122,7 +123,7 @@ function poco_load($xchan = '', $url = null) {
 					$profile_url = $url['value'];
 					continue;
 				}
-				if($url['type'] == 'zot6') {
+				if(in_array($url['type'], ['zot','zot6'] )) {
 					$network = $url['type'];
 					$address = str_replace('acct:' , '', $url['value']);
 					continue;
@@ -151,14 +152,24 @@ function poco_load($xchan = '', $url = null) {
 
 		if(($x !== false) && (! count($x))) {
 			if($address) {
-				if($network === 'zot6') {
-					$j = Zotlabs\Lib\Zotfinger::exec($profile_url);
+				if(in_array($network, ['zot','zot6'])) {
+
+					// 'zot' entries are only imported if they are discoverable via zot6.
+					// Reset the $hash variable to the zot6 xchan_hash if we succeed
+					
+					$j = Zotfinger::exec($profile_url);
 					if(is_array($j) && array_path_exists('signature/signer',$j) && $j['signature']['signer'] === $profile_url && intval($j['signature']['header_valid'])) {
-						Libzot::import_xchan($j['data']);
+						$new_xchan = Libzot::import_xchan($j['data']);
+
+						if($new_xchan['success']) {
+							$x = q("select xchan_hash from xchan where xchan_hash = '%s' limit 1",
+								dbesc($new_xchan['hash'])
+							);
+							if ($x) {
+								$hash = $new_xchan['hash'];
+							}
+						}
 					}
-					$x = q("select xchan_hash from xchan where xchan_hash = '%s' limit 1",
-						dbesc($hash)
-					);
 					if(! $x) {
 						continue;
 					}
@@ -170,7 +181,6 @@ function poco_load($xchan = '', $url = null) {
 		}
 
 		$total ++;
-
 
 		$r = q("select * from xlink where xlink_xchan = '%s' and xlink_link = '%s' and xlink_static = 0 limit 1",
 			dbesc($xchan),
@@ -409,7 +419,7 @@ function poco() {
 			$sql_extra ",
 			intval($channel_id)
 		);
-		$rooms = q("select * from menu_item where ( mitem_flags & " . intval(MENU_ITEM_CHATROOM) . " )>0 and allow_cid = '' and allow_gid = '' and deny_cid = '' and deny_gid = '' and mitem_channel_id = %d",
+		$rooms = q("select * from menu_item where ( mitem_flags & " . intval(MENU_ITEM_CHATROOM) . " ) > 0 and allow_cid = '' and allow_gid = '' and deny_cid = '' and deny_gid = '' and mitem_channel_id = %d",
 			intval($channel_id)
 		);
 	}
