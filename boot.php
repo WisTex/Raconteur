@@ -45,7 +45,7 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '19.8.7' );
+define ( 'STD_VERSION',             '19.8.9' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1234 );
@@ -588,7 +588,8 @@ define ( 'ITEM_TYPE_DOC',        5 );
 define ( 'ITEM_TYPE_CARD',       6 );
 define ( 'ITEM_TYPE_ARTICLE',    7 );
 define ( 'ITEM_TYPE_MAIL',       8 );
-define ( 'ITEM_TYPE_REPORT',     9 );
+define ( 'ITEM_TYPE_CUSTOM',     9
+define ( 'ITEM_TYPE_REPORT',     10 );
 
 define ( 'ITEM_IS_STICKY',       1000 );
 
