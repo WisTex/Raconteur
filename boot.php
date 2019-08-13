@@ -588,7 +588,7 @@ define ( 'ITEM_TYPE_DOC',        5 );
 define ( 'ITEM_TYPE_CARD',       6 );
 define ( 'ITEM_TYPE_ARTICLE',    7 );
 define ( 'ITEM_TYPE_MAIL',       8 );
-define ( 'ITEM_TYPE_CUSTOM',     9
+define ( 'ITEM_TYPE_CUSTOM',     9 );
 define ( 'ITEM_TYPE_REPORT',     10 );
 
 define ( 'ITEM_IS_STICKY',       1000 );
