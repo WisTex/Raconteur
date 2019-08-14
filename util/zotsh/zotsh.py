@@ -154,6 +154,10 @@ class ZotSH(object):
         session_home = self.get_host_session(SERVER)
 
         # call /magic on SERVER
+
+        # FixMe: Written in an earlier era
+        # This needs to be reworked completely for OpenWebAuth
+
         r = session_home.get( 
             SERVER + "magic",  
             params={'dest': newhost},
@@ -166,7 +170,8 @@ class ZotSH(object):
 
 
         # call auth_url with "test" param
-    
+        # FixMe: no longer exists, see above
+        
         r = session_remote.get( 
             auth_url,
             params={'test': 1 },

@@ -26,7 +26,7 @@ class Directory extends Controller {
 			
 			Libsync::build_sync_packet(local_channel(), [ 'xign' => [ [ 'uid' => local_channel(), 'xchan' => $_GET['ignore'] ]]] );	
 			if ($_REQUEST['return']) {
-				goaway(z_root . '/' . base64_decode($_REQUEST['return']);
+				goaway(z_root() . '/' . base64_decode($_REQUEST['return']);
 			}
 			goaway(z_root() . '/directory?f=&suggest=1');
 		}
