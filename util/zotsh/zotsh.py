@@ -83,7 +83,7 @@ class ZotSH(object):
             #session.params.update({'davguest':1})
         else:
             session = self.session
-        session.params.update({'davguest': (not  host == SERVER) })
+        #session.params.update({'davguest': (not  host == SERVER) })
         return session
     
     def do(self, command, *args):
