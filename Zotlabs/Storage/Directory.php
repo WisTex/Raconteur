@@ -731,8 +731,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 			foreach ($r as $rr) {
 				if (perm_is_allowed($rr['channel_id'], $auth->observer, 'view_storage') && $rr['publish']) {
 					logger('found channel: /cloud/' . $rr['channel_address'], LOGGER_DATA);
-					// @todo can't we drop '/cloud'? It gets stripped off anyway in RedDirectory
-					$ret[] = new Directory('/cloud/' . $rr['channel_address'], $auth);
+					$ret[] = new Directory($rr['channel_address'], $auth);
 				}
 			}
 		}
