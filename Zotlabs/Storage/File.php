@@ -353,7 +353,7 @@ class File extends DAV\Node implements DAV\IFile {
 	 *  filesize in bytes
 	 */
 	public function getSize() {
-		return $this->data['filesize'];
+		return intval($this->data['filesize']);
 	}
 
 	/**

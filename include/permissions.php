@@ -1,5 +1,8 @@
 <?php
 
+use Zotlabs\Access\Permissions;
+use Zotlabs\Access\PermissionLimits;
+
 require_once('include/security.php');
 
 /**
@@ -29,7 +32,7 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
 	if($api)
 		return get_all_api_perms($uid,$api);	
 
-	$global_perms = \Zotlabs\Access\Permissions::Perms();
+	$global_perms = Permissions::Perms();
 
 	// Save lots of individual lookups
 
@@ -49,7 +52,7 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
 
 		// First find out what the channel owner declared permissions to be.
 
-		$channel_perm = intval(\Zotlabs\Access\PermissionLimits::Get($uid,$perm_name));
+		$channel_perm = intval(PermissionLimits::Get($uid,$perm_name));
 
 		if(! $channel_checked) {
 			$r = q("select * from channel where channel_id = %d limit 1",
@@ -102,7 +105,7 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
 			// Check if this is a write permission and they are being ignored
 			// This flag is only visible internally.
 
-			$blocked_anon_perms = \Zotlabs\Access\Permissions::BlockedAnonPerms();
+			$blocked_anon_perms = Permissions::BlockedAnonPerms();
 
 
 			if(($x) && ($default_ignored) && in_array($perm_name,$blocked_anon_perms) && intval($x[0]['abook_ignored'])) {
@@ -268,11 +271,11 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
 		return $arr['result'];
 	}
 
-	$global_perms = \Zotlabs\Access\Permissions::Perms();
+	$global_perms = Permissions::Perms();
 
 	// First find out what the channel owner declared permissions to be.
 
-	$channel_perm = \Zotlabs\Access\PermissionLimits::Get($uid,$permission);
+	$channel_perm = PermissionLimits::Get($uid,$permission);
 
 	$r = q("select channel_pageflags, channel_moved, channel_hash from channel where channel_id = %d limit 1",
 		intval($uid)
@@ -281,7 +284,7 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
 		return false;
 
 
-	$blocked_anon_perms = \Zotlabs\Access\Permissions::BlockedAnonPerms();
+	$blocked_anon_perms = Permissions::BlockedAnonPerms();
 
 	if($observer_xchan) {
 		if($channel_perm & PERMS_AUTHED)
@@ -404,7 +407,7 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
 
 function get_all_api_perms($uid,$api) {	
 
-	$global_perms = \Zotlabs\Access\Permissions::Perms();
+	$global_perms = Permissions::Perms();
 
 	$ret = array();
 
@@ -521,7 +524,7 @@ function site_default_perms() {
 		'post_like'     => PERMS_NETWORK
 	);
 
-	$global_perms = \Zotlabs\Access\Permissions::Perms();
+	$global_perms = Permissions::Perms();
 
 	foreach($global_perms as $perm => $v) {
 		$x = get_config('default_perms', $perm, $typical[$perm]);

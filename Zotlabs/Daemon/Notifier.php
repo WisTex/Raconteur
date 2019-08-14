@@ -101,6 +101,15 @@ class Notifier {
 		if(! $item_id)
 			return;
 
+		self::$deliveries   = [];
+		self::$recipients   = [];
+		self::$env_recips   = [];
+		self::$packet_type  = 'activity';
+		self::$encoding     = 'activitystreams';
+		self::$encoded_item = null;
+		self::$channel      = null;
+		self::$private      = false;
+
 		$sys = get_sys_channel();
 
 		$mail = false;
