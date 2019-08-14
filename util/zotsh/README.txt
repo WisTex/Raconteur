@@ -16,6 +16,13 @@ Extract somewere and launch zotsh.py
 Description
 -----------
 
+Update: 2019-08-14
+
+Have just looked at this after several years of bitrot and made some updates.
+it functions for cli DAV access on your assigned hub, but magic-auth to dav repos on other hubs
+(e.g. the host command) needs to be updated to work with openwebauth.
+
+----
 ZotSH is a command line WebDAV client for Hubzilla.
 It knows how to magic-auth to remote hubs using Zot.
 
