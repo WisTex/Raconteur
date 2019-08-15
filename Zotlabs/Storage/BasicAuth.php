@@ -164,9 +164,12 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic {
      */
     function check(RequestInterface $request, ResponseInterface $response) {
 
-		if(local_channel()) {
+		if (local_channel()) {
 			$this->setAuthenticated(\App::get_channel());
 			return [ true, $this->principalPrefix . $this->channel_name ];
+		}
+		elseif (remote_channel()) {
+			return [ true, $this->principalPrefix . $this->observer ];
 		}
 
         $auth = new \Sabre\HTTP\Auth\Basic(
