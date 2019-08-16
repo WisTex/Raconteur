@@ -1684,6 +1684,7 @@ function get_site_info() {
 		'site_name'                    => (($site_name) ? $site_name : ''),
 		'version'                      => $version,
 		'version_tag'                  => $tag,
+		'addon_version'                => defined('ADDON_VERSION') ? ADDON_VERSION : 'unknown',
 		'server_role'                  => System::get_server_role(),
 		'commit'                       => $commit,
 		'plugins'                      => $visible_plugins,

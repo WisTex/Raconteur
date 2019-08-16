@@ -22,6 +22,9 @@ require_once('vendor/autoload.php');
 if (file_exists('addon/vendor/autoload.php')) {
 	require_once('addon/vendor/autoload.php');
 }
+if (file_exists('addon/version.php')) {
+	require_once('addon/version.php');
+}
 
 require_once('include/config.php');
 require_once('include/network.php');

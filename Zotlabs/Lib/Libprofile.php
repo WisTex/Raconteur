@@ -61,11 +61,19 @@ class Libprofile {
 
 		if ($profile) {
 			$p = q("SELECT profile.uid AS profile_uid, profile.*, channel.* FROM profile
-					LEFT JOIN channel ON profile.uid = channel.channel_id
-					WHERE channel.channel_address = '%s' AND profile.profile_guid = '%s' LIMIT 1",
-					dbesc($nickname),
-					dbesc($profile)
+				LEFT JOIN channel ON profile.uid = channel.channel_id
+				WHERE channel.channel_address = '%s' AND profile.profile_guid = '%s' LIMIT 1",
+				dbesc($nickname),
+				dbesc($profile)
 			);
+			if (! $p) {
+				$p = q("SELECT profile.uid AS profile_uid, profile.*, channel.* FROM profile
+					LEFT JOIN channel ON profile.uid = channel.channel_id
+					WHERE channel.channel_address = '%s' AND profile.id = %d LIMIT 1",
+					dbesc($nickname),
+					intval($profile)
+				);
+			}
 		}
 
 		if (! $p) {

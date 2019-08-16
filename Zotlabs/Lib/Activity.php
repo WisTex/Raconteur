@@ -54,12 +54,31 @@ class Activity {
 		}
 		else {
 			$m = parse_url($url);
+
+			// handle bearcaps
+			if ($m['scheme'] === 'bear' && $m['query']) {
+				$params = explode('&',$m['query']);
+				if ($params) {
+					foreach ($params as $p) {
+						if (substr($p,0,2) === 'u=') {
+							$url = substr($p,2);
+						}
+						if (substr($p,0,2) === 't=') {
+							$token = substr($p,2);
+						}
+					}
+				}
+			}
+
 			$headers = [
 				'Accept'           => 'application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
 				'Host'             => $m['host'],
 				'(request-target)' => 'get ' . get_request_string($url),
 				'Date'             => datetime_convert('UTC','UTC','now','D, d M Y H:i:s') . ' UTC'
 			];
+			if (isset($token)) {
+				$headers['Authorization'] = 'Bearer ' . $token;
+			}
 			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false);
 			$x = z_fetch_url($url, true, $redirects, [ 'headers' => $h ] );
 		}
