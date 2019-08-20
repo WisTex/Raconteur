@@ -13,11 +13,11 @@ class Delxitems {
 		cli_startup();
 
 		if($argc != 3) {
-			killme();
+			return;
 		}
 
 		remove_abook_items($argv[1],$argv[2]);
 
-		killme();
+		return;
 	}
 }
