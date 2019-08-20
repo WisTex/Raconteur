@@ -13,7 +13,7 @@ class CurlAuth {
 	static public function run($argc,$argv) {
 
 		if($argc != 2)
-			killme();
+			return;
 
 		\App::$session->start();
 
@@ -50,6 +50,6 @@ class CurlAuth {
 
 		file_put_contents($c,$x);
 
-		killme();
+		return;
 	}
 }

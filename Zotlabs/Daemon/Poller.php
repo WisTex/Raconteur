@@ -47,7 +47,7 @@ class Poller {
 			$restart = true;
 			$generation = intval($argv[2]);
 			if(! $generation)
-				killme();		
+				return;
 		}
 
 		if(($argc > 1) && intval($argv[1])) {
