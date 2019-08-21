@@ -108,7 +108,7 @@ class Libzotdir {
 		if($ret === false) {
 			$ret = get_config('directory', $setting);
 			if($ret === false) {
-				$default = (in_array($setting,['globaldir','safemode']) ? 1 : 0);
+				$ret = (in_array($setting,['globaldir','safemode']) ? 1 : 0);
 			}
 		}
 

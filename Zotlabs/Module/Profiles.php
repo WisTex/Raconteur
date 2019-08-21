@@ -5,6 +5,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
+use Zotlabs\Daemon\Master;
 
 use Sabre\VObject\Reader;
 
@@ -77,7 +78,7 @@ class Profiles extends Controller {
 				[
 					'aid'          => intval(get_account_id()),
 					'uid'          => intval(local_channel()),
-					'profile_guid' => random_string(),
+					'profile_guid' => new_uuid(),
 					'profile_name' => $name,
 					'fullname'     => $r1[0]['fullname'],
 					'photo'        => $r1[0]['photo'],
@@ -108,18 +109,18 @@ class Profiles extends Controller {
 			$name = t('Profile-') . ($num_profiles + 1);
 			$r1 = q("SELECT * FROM profile WHERE uid = %d AND id = %d LIMIT 1",
 				intval(local_channel()),
-				intval(\App::$argv[2])
+				intval(argv(2))
 			);
 			if(! count($r1)) {
 				notice( t('Profile unavailable to clone.') . EOL);
-				\App::$error = 404;
+				App::$error = 404;
 				return;
 			}
 			unset($r1[0]['id']);
 			$r1[0]['is_default'] = 0;
 			$r1[0]['publish'] = 0;	
-			$r1[0]['profile_name'] = dbesc($name);
-			$r1[0]['profile_guid'] = dbesc(random_string());
+			$r1[0]['profile_name'] = $name;
+			$r1[0]['profile_guid'] = new_uuid();
 	
 			create_table_from_array('profile', $r1[0]);
 	
@@ -191,7 +192,7 @@ class Profiles extends Controller {
 	
 			$chan = App::get_channel();
 	
-			Libprofile::load($chan['channel_address'],$r[0]['id']);
+			Libprofile::load($chan['channel_address'],$r[0]['profile_guid']);
 		}
 	}
 	
@@ -602,7 +603,7 @@ class Profiles extends Controller {
 				Libsync::build_sync_packet(local_channel(),array('profile' => $r));
 			}
 	
-			$channel = \App::get_channel();
+			$channel = App::get_channel();
 	
 			if($namechanged && $is_default) {
 				$r = q("UPDATE xchan SET xchan_name = '%s', xchan_name_date = '%s' WHERE xchan_hash = '%s'",
@@ -617,9 +618,10 @@ class Profiles extends Controller {
 			}
 	
 			if($is_default) {
-				// reload the info for the sidebar widget - why does this not work?
+				// reload the info for the sidebar widget - Q: why does this not work?
+				// A: The page is already loaded. Perhaps need to redirect instead to force widget updates.
 				Libprofile::load($channel['channel_address']);
-				\Zotlabs\Daemon\Master::Summon(array('Directory',local_channel()));
+				Master::Summon(array('Directory',local_channel()));
 			}
 		}
 	}
