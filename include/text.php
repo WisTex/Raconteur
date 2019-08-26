@@ -1505,21 +1505,35 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 
 	$is_photo = ((($item['verb'] === ACTIVITY_POST) && ($item['obj_type'] === ACTIVITY_OBJ_PHOTO)) ? true : false);
 
-	if($is_photo && ! $censored) {
+	if ($is_photo && ! $censored) {
 
 		$object = json_decode($item['obj'],true);
+		$ptr = null;
 
-		if(array_key_exists('url',$object) && is_array($object['url']) && array_key_exists(0,$object['url'])) {
+		if (array_key_exists('url',$object) && is_array($object['url'])) {
+			if (array_key_exists(0,$object['url'])) {
+				foreach ($object['url'] as $link) {
+					if(array_key_exists('width',$link) && $link['width'] >= 640 && $link['width'] <= 1024) {
+						$ptr = $link;
+					}
+				}
+				if (! $ptr) {				
+					$ptr = $object['url'][0];
+				}
+			}
+			else {
+				$ptr = $object['url'];
+			}
+
 			// if original photo width is > 640px make it a cover photo
-			if(array_key_exists('width',$object['url'][0]) && $object['url'][0]['width'] > 640) {
-				$scale = ((($object['url'][1]['width'] == 1024) || ($object['url'][1]['height'] == 1024)) ? 1 : 0);
-				$photo = '<a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener"><img style="max-width:' . $object['url'][$scale]['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($object['url'][$scale]['href'])) . '"></a>';
+			if ($ptr) {
+				if (array_key_exists('width',$ptr) && $ptr['width'] > 640) {
+				$photo = '<a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener"><img style="max-width:' . $ptr['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($ptr['href'])) . '"></a>';
+				}
+				else {
+					$item['body'] = '[zmg]' . $ptr['href'] . '[/zmg]' . "\n\n" . $item['body'];
+				}
 			}
-			// if original photo width is <= 640px prepend it to item body
-			elseif(array_key_exists('width',$object['url'][0]) && $object['url'][0]['width'] <= 640) {
-				$item['body'] = '[zmg]' . $object['url'][0]['href'] . '[/zmg]' . "\n\n" . $item['body'];
-			}
-
 		}
 	}
 

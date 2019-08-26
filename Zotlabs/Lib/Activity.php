@@ -982,7 +982,7 @@ class Activity {
 				$ret['outbox']      = z_root() . '/nullbox';
 			}
 			$ret['publicKey'] = [
-				'id'           => $p['xchan_url'] . '/public_key_pem',
+				'id'           => $p['xchan_url'],
 				'owner'        => $p['xchan_url'],
 				'publicKeyPem' => $p['xchan_pubkey']
 			];

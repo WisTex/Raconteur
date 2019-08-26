@@ -164,12 +164,7 @@ class Profiles extends Controller {
 			echo json_encode($r1[0]);
 			killme();
 		}
-	
-	
-	
-	
-		// Run Libprofile::load() here to make sure the theme is set before
-		// we start loading content
+		
 		if(((argc() > 1) && (intval(argv(1)))) || !feature_enabled(local_channel(),'multi_profiles')) {
 			if(feature_enabled(local_channel(),'multi_profiles'))
 				$id = argv(1);
@@ -324,7 +319,7 @@ class Profiles extends Controller {
 
 			$orig_vcard = null;
 
-			$channel = \App::get_channel();
+			$channel = App::get_channel();
 
 			$default_vcard_cat = ((defined('DEFAULT_VCARD_CAT')) ? DEFAULT_VCARD_CAT : 'HOME');
 
@@ -595,12 +590,12 @@ class Profiles extends Controller {
 			if($r)
 				info( t('Profile updated.') . EOL);
 	
-			$r = q("select * from profile where id = %d and uid = %d limit 1",
+			$sync = q("select * from profile where id = %d and uid = %d limit 1",
 				intval(argv(1)),
 				intval(local_channel())
 			);
-			if($r) {
-				Libsync::build_sync_packet(local_channel(),array('profile' => $r));
+			if($sync) {
+				Libsync::build_sync_packet(local_channel(),array('profile' => $sync));
 			}
 	
 			$channel = App::get_channel();
@@ -618,10 +613,8 @@ class Profiles extends Controller {
 			}
 	
 			if($is_default) {
-				// reload the info for the sidebar widget - Q: why does this not work?
-				// A: The page is already loaded. Perhaps need to redirect instead to force widget updates.
-				Libprofile::load($channel['channel_address']);
 				Master::Summon(array('Directory',local_channel()));
+				goaway(z_root() . '/profiles/' . $sync[0]['id']);
 			}
 		}
 	}
