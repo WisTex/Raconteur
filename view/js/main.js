@@ -107,7 +107,7 @@ $(document).ready(function() {
 				if (event.ctrlKey) {
 					totStopped = true;
 				}
-				$('#pause').html('<img src="images/pause.gif" alt="pause" style="border: 1px solid black;" />');
+				$('#pause').html('<i class="fa fa-pause fa-fw"></i>');
 			} else {
 				unpause();
 			}

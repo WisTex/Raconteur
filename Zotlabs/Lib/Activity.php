@@ -54,12 +54,31 @@ class Activity {
 		}
 		else {
 			$m = parse_url($url);
+
+			// handle bearcaps
+			if ($m['scheme'] === 'bear' && $m['query']) {
+				$params = explode('&',$m['query']);
+				if ($params) {
+					foreach ($params as $p) {
+						if (substr($p,0,2) === 'u=') {
+							$url = substr($p,2);
+						}
+						if (substr($p,0,2) === 't=') {
+							$token = substr($p,2);
+						}
+					}
+				}
+			}
+
 			$headers = [
 				'Accept'           => 'application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
 				'Host'             => $m['host'],
 				'(request-target)' => 'get ' . get_request_string($url),
 				'Date'             => datetime_convert('UTC','UTC','now','D, d M Y H:i:s') . ' UTC'
 			];
+			if (isset($token)) {
+				$headers['Authorization'] = 'Bearer ' . $token;
+			}
 			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false);
 			$x = z_fetch_url($url, true, $redirects, [ 'headers' => $h ] );
 		}
@@ -892,7 +911,12 @@ class Activity {
 			}
 		}
 
-		$ret['id']    = ((strpos($p['xchan_hash'],'http') === 0) ? $p['xchan_hash'] : $p['xchan_url']);
+		if ($c) {
+			$ret['id'] = channel_url($c);
+		}
+		else {
+			$ret['id'] = ((strpos($p['xchan_hash'],'http') === 0) ? $p['xchan_hash'] : $p['xchan_url']);
+		}
 		if ($p['xchan_addr'] && strpos($p['xchan_addr'],'@'))
 			$ret['preferredUsername'] = substr($p['xchan_addr'],0,strpos($p['xchan_addr'],'@'));
 		$ret['name']  = $p['xchan_name'];
@@ -905,19 +929,7 @@ class Activity {
 			'height'    => 300,
 			'width'     => 300,
 		];
-		$ret['url'] = [
-			[ 
-				'type'      => 'Link',
-				'mediaType' => 'text/html',
-				'href'      => $p['xchan_url']
-			],
-			[
-				'type'      => 'Link',
-				'mediaType' => 'text/x-zot+json',
-				'href'      => $p['xchan_url']
-			]
-		];
-
+		$ret['url'] = $p['xchan_url'];
 
 		if ($activitypub) {	
 
@@ -970,7 +982,7 @@ class Activity {
 				$ret['outbox']      = z_root() . '/nullbox';
 			}
 			$ret['publicKey'] = [
-				'id'           => $p['xchan_url'] . '/public_key_pem',
+				'id'           => $p['xchan_url'],
 				'owner'        => $p['xchan_url'],
 				'publicKeyPem' => $p['xchan_pubkey']
 			];

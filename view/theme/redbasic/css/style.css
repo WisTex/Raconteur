@@ -805,7 +805,7 @@ div.jGrowl div.info {
 }
 #jGrowl.top-right {
 	top: 4.5rem;
-	right: 15px;
+	left: 150px;
 }
 
 div.jGrowl div.jGrowl-notification {

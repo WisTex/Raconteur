@@ -1309,9 +1309,9 @@ function sync_files($channel, $files) {
 					logger('sync_files duplicate check: attach_by_hash() returned ' . print_r($x,true), LOGGER_DEBUG);
 
 					if ($x['success']) {
-						$orig_attach = $x[0];
+						$orig_attach = $x['data'];
 						$attach_exists = true;
-						$attach_id = $x[0]['id'];
+						$attach_id = $orig_attach['id'];
 					}
 
 					$newfname = 'store/' . $channel['channel_address'] . '/' . get_attach_binname($att['content']);

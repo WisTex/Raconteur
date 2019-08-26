@@ -22,6 +22,9 @@ require_once('vendor/autoload.php');
 if (file_exists('addon/vendor/autoload.php')) {
 	require_once('addon/vendor/autoload.php');
 }
+if (file_exists('addon/version.php')) {
+	require_once('addon/version.php');
+}
 
 require_once('include/config.php');
 require_once('include/network.php');
@@ -45,7 +48,7 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '19.8.14' );
+define ( 'STD_VERSION',             '19.8.26' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1234 );

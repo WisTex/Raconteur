@@ -395,7 +395,7 @@ function create_identity($arr) {
 	);
 
 	if($role_permissions) {
-		$myperms = ((array_key_exists('perms_connect',$role_permissions)) ? $role_permissions['perms_connect'] : array());
+		$myperms = ((array_key_exists('perms_connect',$role_permissions)) ? $role_permissions['perms_connect'] : [] );
 	}
 	else {
 		$x = PermissionRoles::role_perms('social');

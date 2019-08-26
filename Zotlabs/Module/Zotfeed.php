@@ -41,6 +41,7 @@ class Zotfeed extends \Zotlabs\Web\Controller {
 	
 		logger('zotfeed request: ' . $r[0]['channel_name'], LOGGER_DEBUG);
 	
+		$result['project'] = 'Zap';	
 		$result['messages'] = zot_feed($r[0]['channel_id'],$observer['xchan_hash'],array('mindate' => $mindate));
 		$result['success'] = true;
 		json_return_and_die($result);

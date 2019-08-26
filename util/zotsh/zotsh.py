@@ -6,6 +6,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import  easywebdav
 import easywebdav.__version__ as easywebdavversion
+import base64
 
 __version__= "0.0.2"
 
@@ -88,7 +89,7 @@ class ZotSH(object):
     
     def do(self, command, *args):
         if not command in self.commands:
-            raise CommandNotFound("Unknow command '%s'" % command)
+            raise CommandNotFound("Unknown command '%s'" % command)
         
         cmd = getattr(self, "cmd_%s"%command, None)
         if cmd is None:
@@ -153,35 +154,17 @@ class ZotSH(object):
         session_remote = self.get_host_session(newhost)
         session_home = self.get_host_session(SERVER)
 
-        # call /magic on SERVER
-
-        # FixMe: Written in an earlier era
-        # This needs to be reworked completely for OpenWebAuth
-
+        bnewhost = newhost + 'dav'
+        bnewhost = bnewhost.encode('hex')
+        
         r = session_home.get( 
             SERVER + "magic",  
-            params={'dest': newhost},
-            allow_redirects=False,
+            params={'bdest': bnewhost, 'owa': 1},
+            allow_redirects=True,
             verify=VERIFY_SSL )
         
-        if not 'location' in r.headers:
-            raise Exception("Cannot start magic auth to '%s'" % newhostname)
-        auth_url = r.headers['location']
-
-
-        # call auth_url with "test" param
-        # FixMe: no longer exists, see above
-        
-        r = session_remote.get( 
-            auth_url,
-            params={'test': 1 },
-            verify=VERIFY_SSL )
-
-        if r.json()['success']:
-            self.hostname = newhostname
-            self.session = session_remote
-        else:
-            raise Exception("Cannot magic auth to '%s'" % newhostname)
+        self.hostname = newhostname
+        self.session = session_remote
         
 
     def cmd_pwd(self, *args):
