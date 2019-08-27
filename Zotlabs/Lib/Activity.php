@@ -319,7 +319,6 @@ class Activity {
 		}
 		$ret['attributedTo'] = $i['author']['xchan_url'];
 
-
 		if ($i['mid'] !== $i['parent_mid']) {
 			$ret['inReplyTo'] = $i['thr_parent'];
 			$cnv = get_iconfig($i['parent'],'ostatus','conversation');

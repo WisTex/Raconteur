@@ -74,15 +74,6 @@ class Connedit extends Controller {
 	
 		$channel = App::get_channel();
 	
-		// TODO if configured for hassle-free permissions, we'll post the form with ajax as soon as the
-		// connection enable is toggled to a special autopost url and set permissions immediately, leaving
-		// the other form elements alone pending a manual submit of the form. The downside is that there
-		// will be a window of opportunity when the permissions have been set but before you've had a chance
-		// to review and possibly restrict them. The upside is we won't have to warn you that your connection
-		// can't do anything until you save the bloody form.
-	
-		$autopost = (((argc() > 2) && (argv(2) === 'auto')) ? true : false);
-	
 		$orig_record = q("SELECT * FROM abook WHERE abook_id = %d AND abook_channel = %d LIMIT 1",
 			intval($contact_id),
 			intval(local_channel())
@@ -287,33 +278,33 @@ class Connedit extends Controller {
 	
 	function connedit_clone(&$a) {
 	
-			if(! App::$poi)
-				return;
+		if (! App::$poi) {
+			return;
+		}
 	
+		$channel = App::get_channel();
 	
-			$channel = App::get_channel();
+		$r = q("SELECT abook.*, xchan.*
+			FROM abook left join xchan on abook_xchan = xchan_hash
+			WHERE abook_channel = %d and abook_id = %d LIMIT 1",
+			intval(local_channel()),
+			intval(App::$poi['abook_id'])
+		);
+		if ($r) {
+			App::$poi = array_shift($r);
+		}
 	
-			$r = q("SELECT abook.*, xchan.*
-				FROM abook left join xchan on abook_xchan = xchan_hash
-				WHERE abook_channel = %d and abook_id = %d LIMIT 1",
-				intval(local_channel()),
-				intval(App::$poi['abook_id'])
-			);
-			if($r) {
-				App::$poi = array_shift($r);
-			}
+		$clone = App::$poi;
 	
-			$clone = App::$poi;
+		unset($clone['abook_id']);
+		unset($clone['abook_account']);
+		unset($clone['abook_channel']);
 	
-			unset($clone['abook_id']);
-			unset($clone['abook_account']);
-			unset($clone['abook_channel']);
-	
-			$abconfig = load_abconfig($channel['channel_id'],$clone['abook_xchan']);
-			if($abconfig)
-				$clone['abconfig'] = $abconfig;
-	
-			Libsync::build_sync_packet(0 /* use the current local_channel */, array('abook' => array($clone)));
+		$abconfig = load_abconfig($channel['channel_id'],$clone['abook_xchan']);
+		if ($abconfig) {
+			$clone['abconfig'] = $abconfig;
+		}
+		Libsync::build_sync_packet($channel['channel_id'], [ 'abook' => [ $clone ] ] );
 	}
 	
 	/* @brief Generate content of connection edit page
