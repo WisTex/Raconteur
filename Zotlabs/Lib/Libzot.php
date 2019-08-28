@@ -1537,7 +1537,8 @@ class Libzot {
 	 * @brief
 	 *
 	 * @param array $sender
-	 * @param array $arr
+	 * @param ActivityStreams object $act
+	 * @param array $msg_arr
 	 * @param array $deliveries
 	 * @param boolean $relay
 	 * @param boolean $public (optional) default false
@@ -1891,8 +1892,9 @@ class Libzot {
 
 					// We need this line to ensure wall-to-wall comments are relayed (by falling through to the relay bit),
 					// and at the same time not relay any other relayable posts more than once, because to do so is very wasteful.
-					if (! intval($r[0]['item_origin']))
+					if (! intval($r[0]['item_origin'])) {
 						continue;
+					}
 				}
 			}
 			else {
@@ -2336,90 +2338,6 @@ class Libzot {
 		}
 
 		return $post_id;
-	}
-
-	static function process_mail_delivery($sender, $arr, $deliveries) {
-
-		$result = array();
-
-		if ($sender != $arr['from_xchan']) {
-			logger('process_mail_delivery: sender is not mail author');
-			return;
-		}
-
-		foreach ($deliveries as $d) {
-	
-			$DR = new DReport(z_root(),$sender,$d,$arr['mid']);
-
-			$r = q("select * from channel where channel_hash = '%s' limit 1",
-				dbesc($d['hash'])
-			);
-
-			if (! $r) {
-				$DR->update('recipient not found');
-				$result[] = $DR->get();
-				continue;
-			}
-
-			$channel = $r[0];
-			$DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
-
-
-			if (! perm_is_allowed($channel['channel_id'],$sender,'post_mail')) {
-
-				/* 
-				 * Always allow somebody to reply if you initiated the conversation. It's anti-social
-				 * and a bit rude to send a private message to somebody and block their ability to respond.
-				 * If you are being harrassed and want to put an end to it, delete the conversation.
-				 */
-
-				$return = false;
-				if ($arr['parent_mid']) {
-					$return = q("select * from mail where mid = '%s' and channel_id = %d limit 1",
-						dbesc($arr['parent_mid']),
-						intval($channel['channel_id'])
-					);
-				}
-				if (! $return) {
-					logger("permission denied for mail delivery {$channel['channel_id']}");
-					$DR->update('permission denied');
-					$result[] = $DR->get();
-					continue;
-				}
-			}
-
-
-			$r = q("select id from mail where mid = '%s' and channel_id = %d limit 1",
-				dbesc($arr['mid']),
-				intval($channel['channel_id'])
-			);
-			if ($r) {
-				if (intval($arr['mail_recalled'])) {
-					$x = q("delete from mail where id = %d and channel_id = %d",
-						intval($r[0]['id']),
-						intval($channel['channel_id'])
-					);
-					$DR->update('mail recalled');
-					$result[] = $DR->get();
-					logger('mail_recalled');
-				}
-				else {
-					$DR->update('duplicate mail received');
-					$result[] = $DR->get();
-					logger('duplicate mail received');
-				}
-				continue;
-			}
-			else {
-				$arr['account_id'] = $channel['channel_account_id'];
-				$arr['channel_id'] = $channel['channel_id'];
-				$item_id = mail_store($arr);
-				$DR->update('mail delivered');
-				$result[] = $DR->get();
-			}
-		}
-
-		return $result;
 	}
 
 

@@ -85,11 +85,15 @@ class Connections extends Controller {
 					$pending = true;
 					break;
 				case 'ifpending':
+				case intval(argv(1)):
 					$r = q("SELECT COUNT(abook.abook_id) AS total FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash where abook_channel = %d and abook_pending = 1 and abook_self = 0 and abook_ignored = 0 and xchan_deleted = 0 and xchan_orphan = 0 ",
 						intval(local_channel())
 					);
 					if ($r && $r[0]['total']) {
 						$search_flags = " and abook_pending = 1 ";
+						if(intval(argv(1))) {
+							$search_flags .= " and abook_id = " . intval(argv(1)) . " ";
+						}
 						$head = t('New');
 						$pending = true;
 						App::$argv[1] = 'pending';

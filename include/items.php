@@ -3846,7 +3846,7 @@ function zot_feed($uid, $observer_hash, $arr) {
 		$nonsys_uids = q("SELECT channel_id FROM channel WHERE channel_system = 0");
 		$nonsys_uids_str = ids_to_querystr($nonsys_uids,'channel_id');
 
-		$r = q("SELECT parent, postopts FROM item
+		$r = q("SELECT parent FROM item
 			WHERE uid IN ( %s )
 			AND item_private = 0
 			$item_normal
@@ -3855,7 +3855,7 @@ function zot_feed($uid, $observer_hash, $arr) {
 		);
 	}
 	else {
-		$r = q("SELECT parent, postopts FROM item
+		$r = q("SELECT parent FROM item
 			WHERE uid = %d
 			$item_normal
 			$sql_extra ORDER BY created ASC $limit",
@@ -3868,8 +3868,6 @@ function zot_feed($uid, $observer_hash, $arr) {
 	if($r) {
 		foreach($r as $rv) {
 			if(array_key_exists($rv['parent'],$parents))
-				continue;
-			if(strpos($rv['postopts'],'nodeliver') !== false)
 				continue;
 			$parents[$rv['parent']] = $rv;
 			if(count($parents) > 200)

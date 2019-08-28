@@ -307,11 +307,6 @@ class Notifier {
 				return;
 			}
 
-			if(strpos($target_item['postopts'],'nodeliver') !== false) {
-				logger('notifier: target item is undeliverable', LOGGER_DEBUG);
-				return;
-			}
-
 			$s = q("select * from channel left join xchan on channel_hash = xchan_hash where channel_id = %d limit 1",
 				intval($target_item['uid'])
 			);
