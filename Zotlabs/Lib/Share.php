@@ -95,7 +95,7 @@ class Share {
 		$is_photo = (($this->item['obj_type'] === ACTIVITY_OBJ_PHOTO) ? true : false);
 		if($is_photo) {
 			$object = json_decode($this->item['obj'],true);
-			$photo_bb = $object['body'];
+			$photo_bb = (($object['source']) ? $object['source']['content'] : $object['body']);
 		}
 	
 		if (strpos($this->item['body'], "[/share]") !== false) {
@@ -107,7 +107,7 @@ class Share {
 				"' portable_id='"   . $this->item['author']['xchan_hash'] . 
 				"' avatar='"        . $this->item['author']['xchan_photo_s'] .
 				"' link='"          . $this->item['plink'] .
-				"' auth='"          . (($this->item['author']['network'] === 'zot') ? 'true' : 'false') .
+				"' auth='"          . (($this->item['author']['network'] === 'zot6') ? 'true' : 'false') .
 				"' posted='"        . $this->item['created'] .
 				"' message_id='"    . $this->item['mid'] .
 			"']";
