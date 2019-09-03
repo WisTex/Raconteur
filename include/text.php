@@ -1631,7 +1631,7 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 
 function separate_img_links($s) {
 	$x = preg_replace('/\<a (.*?)\>\<img(.*?)\>\<\/a\>/ism',
-		'<img$2><br><a $1>' . t('Link') . '</a>',$s);
+		'<img$2><br><a $1>' . t('Link') . '</a><br>',$s);
 	return $x;
 } 
 

@@ -1,8 +1,6 @@
 /**
  * Redbasic
  *
- * Based on duepuntozero Friendica style
- * Originally by Fabio Comuni <fabrix.xm@gmail.com>
  */
 
 
@@ -31,6 +29,13 @@ html {
 	text-decoration: none;
 }
 
+a.zrl:hover {
+	font-weight:bold;
+}
+
+.threadlevel {
+	margin-right: 0.1rem;
+}
 
 body {
 	font-size: 0.9rem;

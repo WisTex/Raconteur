@@ -475,8 +475,6 @@ class Channel {
 		$default_permcat = get_pconfig(local_channel(),'system','default_permcat','default');
 
 	
-		$stpl = get_markup_template('settings.tpl');
-	
 		$acl = new AccessControl($channel);
 		$perm_defaults = $acl->get();
 	
@@ -528,9 +526,8 @@ class Channel {
 		$site_firehose = intval(get_config('system','site_firehose',0)) == 1;
 
 
-		$o .= replace_macros($stpl,array(
-			'$ptitle' 	=> t('Channel Settings'),
-	
+		$o .= replace_macros(get_markup_template('settings.tpl'), [
+			'$ptitle' 	=> t('Channel Settings'),	
 			'$submit' 	=> t('Submit'),
 			'$baseurl' => z_root(),
 			'$uid' => local_channel(),
@@ -551,11 +548,6 @@ class Channel {
 	
 			'$hide_presence' => array('hide_presence', t('Hide my online presence'),$hide_presence, t('Prevents displaying in your profile that you are online'), $yes_no),
 	
-			'$lbl_pmacro' => t('Simple Privacy Settings:'),
-			'$pmacro3'    => t('Very Public - <em>extremely permissive (should be used with caution)</em>'),
-			'$pmacro2'    => t('Typical - <em>default public, privacy when desired (similar to social network permissions but with improved privacy)</em>'),
-			'$pmacro1'    => t('Private - <em>default private, never open or public</em>'),
-			'$pmacro0'    => t('Blocked - <em>default blocked to/from everybody</em>'),
 			'$permiss_arr' => $permiss,
 			'$comment_perms' => $comment_perms,
 
@@ -640,20 +632,16 @@ class Channel {
 			'$h_descadvn' => t('Change the behaviour of this account for special situations'),
 			'$pagetype' => $pagetype,
 			'$lbl_misc' => t('Miscellaneous Settings'),
-			'$photo_path' => array('photo_path', t('Default photo upload folder'), get_pconfig(local_channel(),'system','photo_path'), t('%Y - current year, %m -  current month')),
-			'$attach_path' => array('attach_path', t('Default file upload folder'), get_pconfig(local_channel(),'system','attach_path'), t('%Y - current year, %m -  current month')),
+			'$photo_path' => array('photo_path', t('Default photo upload folder name'), get_pconfig(local_channel(),'system','photo_path'), t('%Y - current year, %m -  current month')),
+			'$attach_path' => array('attach_path', t('Default file upload folder name'), get_pconfig(local_channel(),'system','attach_path'), t('%Y - current year, %m -  current month')),
 			'$menus' => $menu,			
 			'$menu_desc' => t('Personal menu to display in your channel pages'),
 			'$removeme' => t('Remove Channel'),
 			'$removechannel' => t('Remove this channel.'),
-			'$firefoxshare' => t('Firefox Share $Projectname provider'),
 			'$cal_first_day' => array('first_day', t('Start calendar week on Monday'), ((get_pconfig(local_channel(),'system','cal_first_day')) ? 1 : ''), '', $yes_no),
-		));
+		]);
 	
-		call_hooks('settings_form',$o);
-	
-		//$o .= '</form>' . "\r\n";
-	
+		call_hooks('settings_form',$o);	
 		return $o;
 	}
 }
