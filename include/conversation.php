@@ -1479,21 +1479,26 @@ function jot_collections($channel,$collections) {
 }
 
 function get_item_children($arr, $parent) {
-	$children = array();
-	foreach($arr as $item) {
-		if($item['id'] != $item['parent']) {
-			if(get_config('system','thread_allow',true)) {
+
+	$children = [];
+	if (! $arr) {
+		return $children;
+	}
+	foreach ($arr as $item) {
+		if (intval($item['id']) !== intval($item['parent'])) {
+			if (get_config('system','thread_allow',true)) {
 				// Fallback to parent_mid if thr_parent is not set
 				$thr_parent = $item['thr_parent'];
-				if($thr_parent === '')
+				if ($thr_parent === '') {
 					$thr_parent = $item['parent_mid'];
+				}
 				
-				if($thr_parent === $parent['mid']) {
+				if ($thr_parent === $parent['mid']) {
 					$item['children'] = get_item_children($arr, $item);
 					$children[] = $item;
 				}
 			}
-			else if($item['parent'] == $parent['id']) {
+			elseif ($item['parent'] == $parent['id']) {
 				$children[] = $item;
 			}
 		}
