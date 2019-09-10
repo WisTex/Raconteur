@@ -38,7 +38,7 @@ class ThreadItem {
 				
 		$this->data = $data;
 		$this->toplevel = ($this->get_id() == $this->get_data_value('parent'));
-//		$this->threaded = get_config('system','thread_allow',((defined('NOMADIC')) ? false : true));
+//		$this->threaded = get_config('system','thread_allow',((get_config('system','activitypub')) ? true : false));
 		$this->threaded = get_config('system','thread_allow',true);
 
 		$observer = App::get_observer();
@@ -482,7 +482,8 @@ class ThreadItem {
 			'preview_lbl' => t('This is an unsaved preview'),
 			'wait' => t('Please wait'),
 			'submid' => str_replace(['+','='], ['',''], base64_encode($item['mid'])),
-			'thread_level' => $thread_level
+			'thread_level' => $thread_level,
+			'thread_max' => intval(get_config('system','thread_maxlevel',2)) + 1
 		);
 
 		$arr = array('item' => $item, 'output' => $tmp_item);
@@ -504,8 +505,21 @@ class ThreadItem {
 		if($observer && ($profile_addr === $observer['xchan_hash'] || $profile_addr === $observer['xchan_addr'])) {
 			$add_top_author = false;
 		}
-		if($add_top_author && (! defined('NOMADIC'))) {
+		if($add_top_author && (get_config('system','activitypub'))) {
 			$result['authors'][] = $profile_addr;
+			if ($item['term']) {
+				foreach ($item['term'] as $t) {
+					if ($t['ttype'] == TERM_MENTION) {
+						if (strpos($t['term'],'@') !== false) {
+							$result['authors'][] = $t['term'];
+						}
+						else {
+							$url = ((($position = strpos($t['url'],'url=')) !== false) ? urldecode(substr($t['url'],$position+4)) : $t['url']);
+							$result['authors'][] = $url;
+						}
+					}
+				}
+			}			
 		}
 
 		$nb_children = count($children);
@@ -523,15 +537,6 @@ class ThreadItem {
 				if(strpos($xz['body'],"<button id=\"nsfw-wrap-") !== false && $collapse_all === false) {
 					$censored = true;
 				}
-				$author = $child->get_author();
-				if($author && ! in_array($author,$result['authors'])) {
-					if($observer && ($author === $observer['xchan_hash'] || $author === $observer['xchan_addr'])) {
-						// do nothing
-					}
-					elseif(! defined('NOMADIC')) {
-						$result['authors'][] = $author;
-					}
-				}
 				$result['children'][] = $xz;
 			}
 			// Collapse
@@ -547,14 +552,6 @@ class ThreadItem {
 				}
 			}
 		}
-
-		if(count($result['authors']) > 6) {
-			$slice = array_slice($result['authors'],0,3);
-			$slice2 = array_slice($result['authors'],-3,3);
-			$result['authors'] = array_merge($slice,$slice2);
-		}		
-
-		//logger('authors: ' . print_r($result['authors'],true));
 
 		$result['private'] = $item['item_private'];
 		$result['toplevel'] = ($this->is_toplevel() ? 'toplevel_item' : '');
@@ -880,7 +877,7 @@ class ThreadItem {
 			'$myphoto' => $observer['xchan_photo_s'],
 			'$comment' => t('Comment'),
 			'$submit' => t('Submit'),
-			'$edat' => ((defined('NOMADIC')) ? '' : t('Add Conversation Mentions')),
+			'$edat' => ((get_config('system','activitypub')) ? t('Add Conversation Mentions') : EMPTY_STR),
 			'$edbold' => t('Bold'),
 			'$editalic' => t('Italic'),
 			'$eduline' => t('Underline'),

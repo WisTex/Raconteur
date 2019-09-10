@@ -24,6 +24,7 @@ class Apschema extends \Zotlabs\Web\Controller {
 				'emojiReaction'      => 'zot:emojiReaction',
 				'expires'            => 'zot:expires',
 				'directMessage'      => 'zot:directMessage',
+				'replyTo'            => 'zot:replyTo'
 			]
 		];
 

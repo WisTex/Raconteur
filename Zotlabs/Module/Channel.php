@@ -114,7 +114,7 @@ class Channel extends Controller {
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1',
 				z_root() . ZOT_APSCHEMA_REV
-			]], Activity::encode_person($channel,true,((defined('NOMADIC')) ? false : true)));
+			]], Activity::encode_person($channel,true,true));
 
 			$headers = [];
         	$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;

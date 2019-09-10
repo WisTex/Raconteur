@@ -75,7 +75,7 @@ class Profile extends \Zotlabs\Web\Controller {
 			$chan = channelx_by_nick(argv(1));
 			if(! $chan)
 				http_status_exit(404, 'Not found');
-			$p = Activity::encode_person($chan,true,((defined('NOMADIC')) ? false : true));
+			$p = Activity::encode_person($chan,true,((get_config('system','activitypub')) ? true : false));
 			if(! $p) {
 				http_status_exit(404, 'Not found');
 			}

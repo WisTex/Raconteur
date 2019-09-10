@@ -24,6 +24,7 @@ class ActivityStreams {
 	public $actor      = null;
 	public $obj        = null;
 	public $tgt        = null;
+	public $replyto    = null;
 	public $origin     = null;
 	public $owner      = null;
 	public $signer     = null;
@@ -83,14 +84,15 @@ class ActivityStreams {
 		}
 
 		if($this->is_valid()) {
-			$this->id     = $this->get_property_obj('id');
-			$this->type   = $this->get_primary_type();
-			$this->actor  = $this->get_actor('actor','','');
-			$this->obj    = $this->get_compound_property('object');
-			$this->tgt    = $this->get_compound_property('target');
-			$this->origin = $this->get_compound_property('origin');
-			$this->recips = $this->collect_recips();
-
+			$this->id      = $this->get_property_obj('id');
+			$this->type    = $this->get_primary_type();
+			$this->actor   = $this->get_actor('actor','','');
+			$this->obj     = $this->get_compound_property('object');
+			$this->tgt     = $this->get_compound_property('target');
+			$this->origin  = $this->get_compound_property('origin');
+			$this->recips  = $this->collect_recips();
+			$this->replyto = $this->get_compound_property('replyTo');
+			
 			$this->ldsig = $this->get_compound_property('signature');
 			if($this->ldsig) {
 				$this->signer = $this->get_compound_property('creator',$this->ldsig);

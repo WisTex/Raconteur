@@ -2127,6 +2127,7 @@ function trim_and_unpunify($s) {
 }
 
 
+
 /**
  * @brief Fetches xchan and hubloc data for an array of items with only an
  * author_xchan and owner_xchan.

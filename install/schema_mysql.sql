@@ -584,6 +584,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   `author_xchan` char(191) NOT NULL DEFAULT '',
   `source_xchan` char(191) NOT NULL DEFAULT '',
   `mimetype` char(191) NOT NULL DEFAULT '',
+  `replyto` text NOT NULL,
   `title` text NOT NULL,
   `summary` mediumtext NOT NULL,
   `body` mediumtext NOT NULL,
