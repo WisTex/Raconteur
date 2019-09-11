@@ -29,20 +29,20 @@ class Connect {
 		$my_perms = false;
 		$protocol = '';
 
-		if(substr($url,0,1) === '[') {
+		if (substr($url,0,1) === '[') {
 			$x = strpos($url,']');
-			if($x) {
+			if ($x) {
 				$protocol = substr($url,1,$x-1);
 				$url = substr($url,$x+1);
 			}
 		}
 
-		if(! allowed_url($url)) {
+		if (! check_siteallowed($url)) {
 			$result['message'] = t('Channel is blocked on this site.');
 			return $result;
 		}
 
-		if(! $url) {
+		if (! $url) {
 			$result['message'] = t('Channel location missing.');
 			return $result;
 		}
@@ -80,7 +80,7 @@ class Connect {
 			// Some Hubzilla records were originally stored as activitypub. If we find one, force rediscovery
 			// since Zap cannot connect with them.
 			
-			if($r['xchan_network'] === 'activitypub') {
+			if($r['xchan_network'] === 'activitypub' && ! get_config('system','activitypub')) {
 				$r = null;
 			}
 		}
@@ -141,9 +141,15 @@ class Connect {
 			return $result;
 		}
 
+		if (! check_channelallowed($xchan_hash)) {
+			$result['message'] = t('Channel is blocked on this site.');
+			logger('follow: ' . $result['message']);
+			return $result;
+
+		}
 		// Now start processing the new connection
 
-		if($r['xchan_network'] === 'activitypub') {
+		if($r['xchan_network'] === 'activitypub' && ! get_config('system','activitypub')) {
 			// ActivityPub is not nomadic
 			$result['message'] = t('Protocol not supported');
 			return $result;

@@ -53,7 +53,6 @@ class Site {
 		}
 		$mirror_frontpage	=	((x($_POST,'mirror_frontpage'))	? intval(trim($_POST['mirror_frontpage']))		: 0);
 		$directory_server	=	((x($_POST,'directory_server')) ? trim($_POST['directory_server']) : '');
-		$allowed_sites		=	((x($_POST,'allowed_sites'))	? notags(trim($_POST['allowed_sites']))		: '');
 		$force_publish		=	((x($_POST,'publish_all'))		? True	: False);
 		$disable_discover_tab =	((x($_POST,'disable_discover_tab'))		? False	:	True);
 		$site_firehose      =   ((x($_POST,'site_firehose')) ? True : False);
@@ -144,7 +143,6 @@ class Site {
 		set_config('system','access_policy', $access_policy);
 		set_config('system','account_abandon_days', $abandon_days);
 		set_config('system','register_text', $register_text);
-		set_config('system','allowed_sites', $allowed_sites);
 		set_config('system','publish_all', $force_publish);
 		set_config('system','disable_discover_tab', $disable_discover_tab);
 		set_config('system','site_firehose', $site_firehose);
@@ -317,7 +315,6 @@ class Site {
 			'$frontpage'	        => [ 'frontpage', t("Site homepage to show visitors (default: login box)"), get_config('system','frontpage'), t("example: 'public' to show public stream, 'page/sys/home' to show a system webpage called 'home' or 'include:home.html' to include a file.") ],
 			'$mirror_frontpage'     => [ 'mirror_frontpage', t("Preserve site homepage URL"), get_config('system','mirror_frontpage'), t('Present the site homepage in a frame at the original location instead of redirecting') ],
 			'$abandon_days'         => [ 'abandon_days', t('Accounts abandoned after x days'), get_config('system','account_abandon_days'), t('Will not waste system resources polling external sites for abandonded accounts. Enter 0 for no time limit.') ],
-			'$allowed_sites'        => [ 'allowed_sites', t("Allowed friend domains"), get_config('system','allowed_sites'), t("Comma separated list of domains which are allowed to establish friendships with this site. Wildcards are accepted. Empty to allow any domains") ],
 			'$verify_email'         => [ 'verify_email', t("Verify Email Addresses"), get_config('system','verify_email'), t("Check to verify email addresses used in account registration (recommended).") ],
 			'$force_publish'        => [ 'publish_all', t("Force publish"), get_config('system','publish_all'), t("Check to force all profiles on this site to be listed in the site directory.") ],
 			'$disable_discover_tab'	=> [ 'disable_discover_tab', t('Import Public Streams'), $discover_tab, t('Import and allow access to public content pulled from other sites. Warning: this content is unmoderated.') ],

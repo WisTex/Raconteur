@@ -491,22 +491,16 @@ class ThreadItem {
 
 		$result = $arr['output'];
 
-		$censored = false;
-
-		if(strpos($body['html'],"<button id=\"nsfw-wrap-") !== false && $collapse_all === false) {
-			$censored = true;
-		}
+		$censored = ((strpos($body['html'],"<button id=\"nsfw-wrap-") !== false && $collapse_all === false) ? true : false);
 
 		$result['children'] = [];
 
-		// place to store all the author addresses (links if not available) in the thread so we can auto-mention them in JS. 
-		$result['authors'] = [];
-		$add_top_author = true;
-		if($observer && ($profile_addr === $observer['xchan_hash'] || $profile_addr === $observer['xchan_addr'])) {
-			$add_top_author = false;
-		}
-		if($add_top_author && (get_config('system','activitypub'))) {
-			$result['authors'][] = $profile_addr;
+		if (get_config('system','activitypub')) {
+			// place to store all the author addresses (links if not available) in the thread so we can auto-mention them in JS. 
+			$result['authors'] = [];
+			if ($observer && ($profile_addr === $observer['xchan_hash'] || $profile_addr === $observer['xchan_addr'])) {
+				$result['authors'][] = $profile_addr;
+			}
 			if ($item['term']) {
 				foreach ($item['term'] as $t) {
 					if ($t['ttype'] == TERM_MENTION) {
@@ -514,12 +508,12 @@ class ThreadItem {
 							$result['authors'][] = $t['term'];
 						}
 						else {
-							$url = ((($position = strpos($t['url'],'url=')) !== false) ? urldecode(substr($t['url'],$position+4)) : $t['url']);
+							$url = ((($position = strpos($t['url'],'url=')) !== false) ? urldecode(substr($t['url'],$position + 4)) : $t['url']);
 							$result['authors'][] = $url;
 						}
 					}
 				}
-			}			
+			}
 		}
 
 		$nb_children = count($children);
