@@ -2881,6 +2881,11 @@ class Activity {
 
 		if ($event) {
 			$event['summary'] = html2bbcode($content['summary']);
+			if (! $event['summary']) {
+				if ($content['name']) {
+					$event['summary'] = html2bbcode($content['name']);
+				}
+			}
 			$event['description'] = html2bbcode($content['content']);
 			if ($event['summary'] && $event['dtstart']) {
 				$content['event'] = $event;
@@ -2892,9 +2897,6 @@ class Activity {
 				$content['bbcode'] = purify_html($act['source']['content']);
 			}
 		}
-
-
-
 
 		return $content;
 	}

@@ -499,6 +499,9 @@ class ThreadItem {
 			// place to store all the author addresses (links if not available) in the thread so we can auto-mention them in JS. 
 			$result['authors'] = [];
 			if ($observer && ($profile_addr === $observer['xchan_hash'] || $profile_addr === $observer['xchan_addr'])) {
+				// ignore it
+			}
+			else {
 				$result['authors'][] = $profile_addr;
 			}
 			if ($item['term']) {

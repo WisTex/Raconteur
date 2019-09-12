@@ -51,7 +51,7 @@ require_once('include/items.php');
 define ( 'STD_VERSION',             '19.9.10' );
 define ( 'ZOT_REVISION',            '6.0' );
 
-define ( 'DB_UPDATE_VERSION',       1235 );
+define ( 'DB_UPDATE_VERSION',       1236 );
 
 define ( 'PLATFORM_NAME',           'zap' );
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );

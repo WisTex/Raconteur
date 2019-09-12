@@ -9,6 +9,7 @@ function abook_store_lowlevel($arr) {
 		'abook_account'     => ((array_key_exists('abook_account',$arr))     ? $arr['abook_account']     : 0),
 		'abook_channel'     => ((array_key_exists('abook_channel',$arr))     ? $arr['abook_channel']     : 0),
 		'abook_xchan'       => ((array_key_exists('abook_xchan',$arr))       ? $arr['abook_xchan']       : ''),
+		'abook_alias'       => ((array_key_exists('abook_alias',$arr))       ? $arr['abook_alias']       : ''),
 		'abook_my_perms'    => ((array_key_exists('abook_my_perms',$arr))    ? $arr['abook_my_perms']    : 0),
 		'abook_their_perms' => ((array_key_exists('abook_their_perms',$arr)) ? $arr['abook_their_perms'] : 0),
 		'abook_closeness'   => ((array_key_exists('abook_closeness',$arr))   ? $arr['abook_closeness']   : 99),

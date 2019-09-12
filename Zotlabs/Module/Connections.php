@@ -188,7 +188,7 @@ class Connections extends Controller {
 			$search_txt = dbesc(protect_sprintf(preg_quote($search)));
 			$searching = true;
 		}
-		$sql_extra .= (($searching) ? protect_sprintf(" AND xchan_name like '%$search_txt%' ") : "");
+		$sql_extra .= (($searching) ? protect_sprintf(" AND ( xchan_name like '%$search_txt%' OR abook_alias like '%$search_txt%' ) ") : "");
 	
 		if($_REQUEST['gid']) {
 			$sql_extra .= " and xchan_hash in ( select xchan from pgrp_member where gid = " . intval($_REQUEST['gid']) . " and uid = " . intval(local_channel()) . " ) ";
@@ -256,7 +256,7 @@ class Connections extends Controller {
 						'delete_hover' => t('Delete connection'),
 						'id' => $rr['abook_id'],
 						'thumb' => $rr['xchan_photo_m'], 
-						'name' => $rr['xchan_name'],
+						'name' => $rr['xchan_name'] . (($rr['abook_alias']) ? ' &lt;' . $rr['abook_alias'] . '&gt;' : ''),
 						'classes' => ((intval($rr['abook_archived']) || intval($rr['abook_not_here'])) ? 'archived' : ''),
 						'link' => z_root() . '/connedit/' . $rr['abook_id'],
 						'deletelink' => z_root() . '/connedit/' . intval($rr['abook_id']) . '/drop',

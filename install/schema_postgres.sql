@@ -16,6 +16,7 @@ CREATE TABLE "abook" (
   "abook_account" bigint  NOT NULL,
   "abook_channel" bigint  NOT NULL,
   "abook_xchan" text NOT NULL DEFAULT '',
+  "abook_alias" text NOT NULL DEFAULT '',
   "abook_my_perms" bigint NOT NULL,
   "abook_their_perms" bigint NOT NULL,
   "abook_closeness" numeric(3)  NOT NULL DEFAULT '99',
@@ -44,6 +45,7 @@ CREATE TABLE "abook" (
   create index  "abook_account" on abook ("abook_account");
   create index  "abook_channel" on abook  ("abook_channel");
   create index  "abook_xchan"  on abook ("abook_xchan");
+  create index  "abook_alias"  on abook ("abook_alias");
   create index  "abook_my_perms"  on abook ("abook_my_perms");
   create index  "abook_their_perms"  on abook ("abook_their_perms");
   create index  "abook_closeness" on abook  ("abook_closeness");
