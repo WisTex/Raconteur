@@ -385,7 +385,7 @@ class Libzot {
 				// limit the ability to do connection spamming, this limit is per channel
 				$lim = intval(get_config('system','max_connections_per_day',50));
 				if ($lim) {
-					$n = q("select count(abook_id) as total from abook where abook_channel = %d and abook_created > %s",
+					$n = q("select count(abook_id) as total from abook where abook_channel = %d and abook_created > '%s'",
 						intval($channel['channel_id']),
 						dbesc(datetime_convert('UTC','UTC','now - 24 hours'))
 					);
