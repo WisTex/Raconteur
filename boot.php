@@ -48,7 +48,7 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '19.9.10' );
+define ( 'STD_VERSION',             '19.9.17' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1236 );
@@ -75,7 +75,7 @@ define ( 'DIRECTORY_MODE_PRIMARY',     0x0001); // There can only be *one* prima
 define ( 'DIRECTORY_MODE_SECONDARY',   0x0002); // All other mirror directory servers
 define ( 'DIRECTORY_MODE_STANDALONE',  0x0100); // A detached (off the grid) hub with itself as directory server.
 
-// We will look for upstream directories whenever me make contact
+// We will look for upstream directories whenever we make contact
 // with other sites, but if this is a new installation and isn't
 // a standalone hub, we need to seed the service with a starting
 // point to go out and find the rest of the world.

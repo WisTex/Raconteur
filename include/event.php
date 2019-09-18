@@ -1064,7 +1064,8 @@ function event_store_item($arr, $event) {
 		$x = [ 
 			'type'      => 'Event',
 			'id'        => z_root() . '/event/' . $r[0]['resource_id'],
-			'summary'   => bbcode($arr['summary']),
+			'name'      => $arr['summary'],
+//			'summary'   => bbcode($arr['summary']),
 			// RFC3339 Section 4.3
 			'startTime' => (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtstart'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtstart'],'Y-m-d\\TH:i:s-00:00')),
 			'content'   => bbcode($arr['description']),
@@ -1217,7 +1218,8 @@ function event_store_item($arr, $event) {
 			$y = [ 
 				'type'       => 'Event',
 				'id'         => z_root() . '/event/' . $event['event_hash'],
-				'summary'    => bbcode($arr['summary']),
+				'name'       => $arr['summary'],
+//				'summary'    => bbcode($arr['summary']),
 				// RFC3339 Section 4.3
 				'startTime'  => (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtstart'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtstart'],'Y-m-d\\TH:i:s-00:00')),
 				'content'    => bbcode($arr['description']),

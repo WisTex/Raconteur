@@ -9,6 +9,10 @@ use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Daemon\Master;
 
 
+require_once('include/html2bbcode.php');
+require_once('include/html2plain.php');
+require_once('include/event.php');
+
 class Activity {
 
 	static $ACTOR_CACHE_DAYS = 3;
@@ -2816,8 +2820,6 @@ class Activity {
 
 	static function bb_content($content,$field) {
 
-		require_once('include/html2bbcode.php');
-		require_once('include/event.php');
 		$ret = false;
 
 		if (is_array($content[$field])) {
@@ -2883,7 +2885,7 @@ class Activity {
 			$event['summary'] = html2bbcode($content['summary']);
 			if (! $event['summary']) {
 				if ($content['name']) {
-					$event['summary'] = html2bbcode($content['name']);
+					$event['summary'] = html2plain(purify_html($content['name']),256);
 				}
 			}
 			$event['description'] = html2bbcode($content['content']);

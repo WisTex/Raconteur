@@ -203,6 +203,10 @@ class Inbox extends Controller {
 				case 'Like':
 				case 'Dislike':
 				case 'Announce':
+				case 'Accept':
+				case 'Reject':
+				case 'TentativeAccept':
+				case 'TentativeReject':
 				case 'emojiReaction':
 					// These require a resolvable object structure
 					if (is_array($AS->obj)) {
