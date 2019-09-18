@@ -727,14 +727,14 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 			return $ret;
 		}
 
-		$r = q("SELECT channel_id, channel_address, profile.publish FROM channel left join profile on profile.uid = channel.channel_id WHERE channel_removed = 0 AND channel_system = 0 AND (channel_pageflags & %d) = 0",
+		$r = q("SELECT channel_id, channel_address FROM channel left join profile on profile.uid = channel.channel_id WHERE channel_removed = 0 AND channel_system = 0 AND (channel_pageflags & %d) = 0",
 			intval(PAGE_HIDDEN)
 		);
 
 		if ($r) {
 			foreach ($r as $rr) {
-				if (perm_is_allowed($rr['channel_id'], $auth->observer, 'view_storage') && $rr['publish']) {
-					logger('found channel: /cloud/' . $rr['channel_address'], LOGGER_DATA);
+				if (perm_is_allowed($rr['channel_id'], $auth->observer, 'view_storage')) {
+					logger('found channel: ' . $rr['channel_address'], LOGGER_DATA);
 					$ret[] = new Directory($rr['channel_address'], $auth);
 				}
 			}

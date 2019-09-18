@@ -1118,7 +1118,9 @@ function bbcode($Text, $options = []) {
 	if (strpos($Text,'[/url]') !== false) {
 //		$Text = preg_replace("/\[url\]([$URLSearchString]*)\[\/url\]/ism", '<span class="bookmark-identifier">#^</span><a class="bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
 //		$Text = preg_replace("/\[url\=([$URLSearchString]*)\](.*?)\[\/url\]/ism", '<span class="bookmark-identifier">#^</span><a class="bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
+
 		$Text = preg_replace("/\[url\]([$URLSearchString]*)\[\/url\]/ism", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
+		$Text = preg_replace("/\@(\!?)\[url\=([$URLSearchString]*)\](.*?)\[\/url\]/ism", '@$1<span class="h-card"><a class="u-url mention" href="$2" ' . $target . ' rel="nofollow noopener" >$3</a></span>', $Text);
 		$Text = preg_replace("/\[url\=([$URLSearchString]*)\](.*?)\[\/url\]/ism", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
 	}
 
@@ -1126,6 +1128,7 @@ function bbcode($Text, $options = []) {
 //		$Text = preg_replace("/\#\^\[zrl\]([$URLSearchString]*)\[\/zrl\]/ism", '<span class="bookmark-identifier">#^</span><a class="zrl bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
 //		$Text = preg_replace("/\#\^\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '<span class="bookmark-identifier">#^</span><a class="zrl bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
 		$Text = preg_replace("/\[zrl\]([$URLSearchString]*)\[\/zrl\]/ism", '<a class="zrl" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
+		$Text = preg_replace("/\@(\!?)\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '@$1<span class="h-card"><a class="zrl u-url mention" href="$2" ' . $target . ' rel="nofollow noopener" >$3</a></span>', $Text);
 		$Text = preg_replace("/\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '<a class="zrl" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
 	}
 

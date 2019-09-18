@@ -1631,7 +1631,7 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 
 function separate_img_links($s) {
 	$x = preg_replace('/\<a (.*?)\>\<img(.*?)\>\<\/a\>/ism',
-		'<img$2><br><a $1>' . t('Link') . '</a>',$s);
+		'<img$2><br><a $1>' . t('Link') . '</a><br>',$s);
 	return $x;
 } 
 
@@ -2125,6 +2125,7 @@ function array_elm_to_str($arr,$elm,$delim = ',',$each = 'trim') {
 function trim_and_unpunify($s) {
 	return unpunify(trim($s));
 }
+
 
 
 /**

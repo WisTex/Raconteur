@@ -9,6 +9,7 @@ function abook_store_lowlevel($arr) {
 		'abook_account'     => ((array_key_exists('abook_account',$arr))     ? $arr['abook_account']     : 0),
 		'abook_channel'     => ((array_key_exists('abook_channel',$arr))     ? $arr['abook_channel']     : 0),
 		'abook_xchan'       => ((array_key_exists('abook_xchan',$arr))       ? $arr['abook_xchan']       : ''),
+		'abook_alias'       => ((array_key_exists('abook_alias',$arr))       ? $arr['abook_alias']       : ''),
 		'abook_my_perms'    => ((array_key_exists('abook_my_perms',$arr))    ? $arr['abook_my_perms']    : 0),
 		'abook_their_perms' => ((array_key_exists('abook_their_perms',$arr)) ? $arr['abook_their_perms'] : 0),
 		'abook_closeness'   => ((array_key_exists('abook_closeness',$arr))   ? $arr['abook_closeness']   : 99),
@@ -40,31 +41,37 @@ function abook_store_lowlevel($arr) {
 
 function rconnect_url($channel_id,$xchan) {
 
-	if(! $xchan)
-		return '';
+	if (! $xchan) {
+		return EMPTY_STR;
+	}
 
 	$r = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s' limit 1",
 		intval($channel_id),
 		dbesc($xchan)
 	);
-
-	if($r)
-		return '';
-
+	
+	// Already connected
+	if ($r) {
+		return EMPTY_STR;
+	}
+	
 	$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 		dbesc($xchan)
 	);
 
-	if(($r) && ($r[0]['xchan_follow']))
+	if (($r) && ($r[0]['xchan_follow'])) {
 		return $r[0]['xchan_follow'];
+	}
 
 	$r = q("select hubloc_url from hubloc where hubloc_hash = '%s' and hubloc_primary = 1 limit 1",
 		dbesc($xchan)
 	);
 
-	if($r)
+	if ($r) {
 		return $r[0]['hubloc_url'] . '/follow?f=&url=%s';
-	return '';
+	}
+	
+	return EMPTY_STR;
 
 }
 
@@ -97,63 +104,67 @@ function abook_self($channel_id) {
 
 function vcard_from_xchan($xchan, $observer = null, $mode = '') {
 
-	if(! $xchan) {
-		if(App::$poi) {
+	if (! $xchan) {
+		if (App::$poi) {
 			$xchan = App::$poi;
 		}
-		elseif(is_array(App::$profile) && App::$profile['channel_hash']) {
+		elseif (is_array(App::$profile) && App::$profile['channel_hash']) {
 			$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 				dbesc(App::$profile['channel_hash'])
 			);
-			if($r)
+			if($r) {
 				$xchan = $r[0];
+			}
 		}
 	}
 
-	if(! $xchan)
+	if (! $xchan) {
 		return;
+	}
 
 	$connect = false;
-	if(local_channel()) {
+	if (local_channel()) {
 		$r = q("select * from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
 			dbesc($xchan['xchan_hash']),
 			intval(local_channel())
 		);
-		if(! $r)
+		if (! $r) {
 			$connect = t('Connect');
+		}
 	}
 
 	// don't provide a connect button for transient or one-way identities
 
-	if(in_array($xchan['xchan_network'],['rss','anon','unknown']) || strpos($xchan['xchan_addr'],'guest:') === 0) {
+	if (in_array($xchan['xchan_network'],['rss','anon','unknown']) || strpos($xchan['xchan_addr'],'guest:') === 0) {
 		$connect = false;
 	}
 
-	if(array_key_exists('channel_id',$xchan))
+	if (array_key_exists('channel_id',$xchan)) {
 		App::$profile_uid = $xchan['channel_id'];
+	}
 
 	$url = (($observer) 
 		? z_root() . '/magic?f=&owa=1&bdest=' . bin2hex($xchan['xchan_url']) . '&addr=' . $xchan['xchan_addr'] 
 		: $xchan['xchan_url']
 	);
 					
-	return replace_macros(get_markup_template('xchan_vcard.tpl'),array(
+	return replace_macros(get_markup_template('xchan_vcard.tpl'), [
 		'$name'    => $xchan['xchan_name'],
 		'$photo'   => ((is_array(App::$profile) && array_key_exists('photo',App::$profile)) ? App::$profile['photo'] : $xchan['xchan_photo_l']),
-		'$follow'  => (($xchan['xchan_addr']) ? $xchan['xchan_addr'] : $xchan['xchan_url']),
+		'$follow'  => urlencode(($xchan['xchan_addr']) ? $xchan['xchan_addr'] : $xchan['xchan_url']),
 		'$link'    => zid($xchan['xchan_url']),
 		'$connect' => $connect,
-		'$newwin'  => (($mode === 'chanview') ? t('New window') : ''),
+		'$newwin'  => (($mode === 'chanview') ? t('New window') : EMPTY_STR),
 		'$newtit'  => t('Open the selected location in a different window or browser tab'),
 		'$url'     => $url,
-	));
+	]);
 }
 
 function abook_toggle_flag($abook,$flag) {
 
-	$field = '';
+	$field = EMPTY_STR;
 
-	switch($flag) {
+	switch ($flag) {
 		case ABOOK_FLAG_BLOCKED:
 			$field = 'abook_blocked';
 			break;
@@ -184,14 +195,14 @@ function abook_toggle_flag($abook,$flag) {
 		default:
 			break;
 	}
-	if(! $field)
+	if (! $field) {
 		return;
+	}
 
     $r = q("UPDATE abook set $field = (1 - $field) where abook_id = %d and abook_channel = %d",
 			intval($abook['abook_id']),
 			intval($abook['abook_channel'])
 	);
-
 
 	// if unsetting the archive bit, update the timestamps so we'll try to connect for an additional 30 days. 
 
@@ -223,8 +234,9 @@ function abook_toggle_flag($abook,$flag) {
 function mark_orphan_hubsxchans() {
 
 	$dirmode = intval(get_config('system','directory_mode'));
-	if($dirmode == DIRECTORY_MODE_NORMAL)
+	if ($dirmode == DIRECTORY_MODE_NORMAL) {
 		return;
+	}
 
 	$r = q("update hubloc set hubloc_deleted = 1 where hubloc_deleted = 0 
 		and hubloc_network = 'zot6' and hubloc_connected < %s - interval %s",
@@ -233,7 +245,7 @@ function mark_orphan_hubsxchans() {
 
 	$r = q("select hubloc_id, hubloc_hash from hubloc where hubloc_deleted = 1 and hubloc_orphancheck = 0");
 
-	if($r) {
+	if ($r) {
 		foreach($r as $rr) {
 
 			// see if any other hublocs are still alive for this channel
@@ -241,14 +253,13 @@ function mark_orphan_hubsxchans() {
 			$x = q("select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
 				dbesc($rr['hubloc_hash'])
 			);
-			if($x) {
+			if ($x) {
 
 				// yes - if the xchan was marked as an orphan, undo it
 
 				$y = q("update xchan set xchan_orphan = 0 where xchan_orphan = 1 and xchan_hash = '%s'",
 					dbesc($rr['hubloc_hash'])
 				);
-
 			}
 			else {
 
@@ -277,7 +288,7 @@ function remove_all_xchan_resources($xchan, $channel_id = 0) {
 	// $channel_id is reserved for future use.
 
 
-	if(intval($channel_id) === 0) {
+	if (intval($channel_id) === 0) {
 
 		if (! $xchan) {
 			return;
@@ -487,9 +498,11 @@ function random_profile() {
 
 	$checkrandom = get_config('randprofile','check'); // False by default
 	$retryrandom = intval(get_config('randprofile','retry'));
-	if($retryrandom == 0) $retryrandom = 5;
-
-	for($i = 0; $i < $retryrandom; $i++) {
+	if ($retryrandom == 0) {
+		$retryrandom = 5;
+	}
+	
+	for ($i = 0; $i < $retryrandom; $i++) {
 
 		$r = q("select xchan_url, xchan_hash from xchan left join hubloc on hubloc_hash = xchan_hash where
 			xchan_hidden = 0 and xchan_system = 0 and
@@ -499,21 +512,24 @@ function random_profile() {
 			db_quoteinterval('30 day')
 		);
 
-		if(!$r) return ''; // Couldn't get a random channel
-
-		if($checkrandom) {
+		if (!$r) {
+			return EMPTY_STR; // Couldn't get a random channel
+		}
+		if ($checkrandom) {
 			$x = z_fetch_url($r[0]['xchan_url']);
-			if($x['success'])
+			if ($x['success']) {
 				return $r[0]['xchan_hash'];
-			else
+			}
+			else {
 				logger('Random channel turned out to be bad.');
+			}
 		}
 		else {
 			return $r[0]['xchan_hash'];
 		}
 
 	}
-	return '';
+	return EMPTY_STR;
 }
 
 function update_vcard($arr,$vcard = null) {
@@ -535,7 +551,7 @@ function update_vcard($arr,$vcard = null) {
 	// right is to provide a form to input all the various fields and not 
 	// try to extract it from the FN. 
 
-	if(! $vcard) {
+	if (! $vcard) {
 		$vcard = new \Sabre\VObject\Component\VCard([
 			'FN' => $fn,
 			'N' => array_reverse(explode(' ', $fn))

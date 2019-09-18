@@ -9,6 +9,10 @@ use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Daemon\Master;
 
 
+require_once('include/html2bbcode.php');
+require_once('include/html2plain.php');
+require_once('include/event.php');
+
 class Activity {
 
 	static $ACTOR_CACHE_DAYS = 3;
@@ -25,7 +29,12 @@ class Activity {
 			return self::fetch_profile($x); 
 		}
 		if (in_array($x['type'], [ ACTIVITY_OBJ_NOTE, ACTIVITY_OBJ_ARTICLE ] )) {
-			return self::fetch_item($x); 
+
+			// Use Mastodon-specific note and media hacks if nomadic. Else HTML.
+			// Eventually this needs to be passed in much further up the stack
+			// and base the decision on whether or not we are encoding for ActivityPub or Zot6
+
+			return self::fetch_item($x,((get_config('system','activitypub')) ? true : false)); 
 		}
 		if ($x['type'] === ACTIVITY_OBJ_THING) {
 			return self::fetch_thing($x); 
@@ -141,7 +150,7 @@ class Activity {
 
 	}
 
-	static function fetch_item($x) {
+	static function fetch_item($x,$activitypub = false) {
 
 		if (array_key_exists('source',$x)) {
 			// This item is already processed and encoded
@@ -154,7 +163,7 @@ class Activity {
 		if ($r) {
 			xchan_query($r,true);
 			$r = fetch_post_tags($r,true);
-			return self::encode_item($r[0],((defined('NOMADIC')) ? false : true));
+			return self::encode_item($r[0],$activitypub);
 		}
 	}
 
@@ -318,7 +327,6 @@ class Activity {
 			$ret['commentPolicy'] .= 'until=' . datetime_convert('UTC','UTC',$i['comments_closed'],ATOM_TIME);
 		}
 		$ret['attributedTo'] = $i['author']['xchan_url'];
-
 
 		if ($i['mid'] !== $i['parent_mid']) {
 			$ret['inReplyTo'] = $i['thr_parent'];
@@ -931,7 +939,7 @@ class Activity {
 		];
 		$ret['url'] = $p['xchan_url'];
 
-		if ($activitypub) {	
+		if ($activitypub && $feature_complete) {	
 
 			if ($c) {
 				$ret['inbox']       = z_root() . '/inbox/'     . $c['channel_address'];
@@ -1881,7 +1889,8 @@ class Activity {
 
 			$s['mid'] = $act->id;
 			$s['parent_mid'] = $act->obj['id'];
-
+			$s['replyto'] = $act->replyto;
+			
 			// over-ride the object timestamp with the activity
 
 			if ($act->data['published']) {
@@ -2345,7 +2354,7 @@ class Activity {
 				intval($item['uid'])
 			);
 			if (! $p) {
-				if (defined('NOMADIC')) {
+				if (! get_config('system','activitypub')) {
 					return;
 				}
 				else {
@@ -2811,8 +2820,6 @@ class Activity {
 
 	static function bb_content($content,$field) {
 
-		require_once('include/html2bbcode.php');
-		require_once('include/event.php');
 		$ret = false;
 
 		if (is_array($content[$field])) {
@@ -2876,6 +2883,11 @@ class Activity {
 
 		if ($event) {
 			$event['summary'] = html2bbcode($content['summary']);
+			if (! $event['summary']) {
+				if ($content['name']) {
+					$event['summary'] = html2plain(purify_html($content['name']),256);
+				}
+			}
 			$event['description'] = html2bbcode($content['content']);
 			if ($event['summary'] && $event['dtstart']) {
 				$content['event'] = $event;
@@ -2887,9 +2899,6 @@ class Activity {
 				$content['bbcode'] = purify_html($act['source']['content']);
 			}
 		}
-
-
-
 
 		return $content;
 	}

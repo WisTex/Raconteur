@@ -29,10 +29,6 @@ class ActivityPub {
 				return;
 			}
 
-			if(strpos($arr['target_item']['postopts'],'nopub') !== false) {
-				return;
-			}
-
 			$signed_msg = get_iconfig($arr['target_item'],'activitypub','rawmsg');
 
 			// If we have an activity already stored with an LD-signature

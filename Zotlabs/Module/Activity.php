@@ -63,7 +63,7 @@ class Activity extends Controller {
 			killme();
 
 		}
-
+		goaway(z_root() . '/item/' . argv(1));
 	}
 
 }

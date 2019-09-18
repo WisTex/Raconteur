@@ -15,7 +15,7 @@ class Siteinfo extends Controller {
 		
 	function get() {
 
-		if(defined('NOMADIC')) {
+		if(! get_config('system','activitypub')) {
 			$federated = [ 'zot6' ];
 		}
 		else {

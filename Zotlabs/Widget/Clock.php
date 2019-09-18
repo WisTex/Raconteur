@@ -6,9 +6,7 @@ class Clock {
 
 	function widget($arr) {
 
-		$miltime = 0;
-		if(isset($arr['military']) && $arr['military'])
-			$miltime = 1;
+		$miltime =  ((isset($arr['military']) && $arr['military']) ? intval($arr['military']) : false);
 
 		$o = <<< EOT
 <div class="widget">
@@ -29,7 +27,7 @@ function startclock(){
     showtime()
 }
 
-function showtime(){
+function showtime() {
     var now = new Date()
     var hours = now.getHours()
     var minutes = now.getMinutes()

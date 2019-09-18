@@ -45,8 +45,18 @@ function import_channel($channel, $account_id, $seize, $newname = '') {
 		dbesc($channel['channel_hash']),
 		dbesc($channel['channel_address'])
 	);
-	if ($r && $r[0]['channel_guid'] == $channel['channel_guid'] && $r[0]['channel_pubkey'] === $channel['channel_pubkey'] && $r[0]['channel_hash'] === $channel['channel_hash'])
+	if ($r && $r[0]['channel_guid'] == $channel['channel_guid'] && $r[0]['channel_pubkey'] === $channel['channel_pubkey'] && $r[0]['channel_hash'] === $channel['channel_hash']) {
+		// do not return a dead or deleted or system channel
+		if ($r[0]['channel_deleted'] > NULL_DATE
+			|| intval($r[0]['channel_removed'])
+			|| intval($r[0]['channel_moved'])
+			|| intval($r[0]['channel_system'])) {
+			logger('attempt to import to a channel that was removed. ', print_r($channel,true));
+			notice( t('A channel with these settings was discovered and is not usable as it was removed or reserved for system use. Import failed.') . EOL);
+			return false;
+		}
 		return $r[0];
+	}
 
 	if (($r) || (check_webbie(array($channel['channel_address'])) !== $channel['channel_address'])) {
 		if ($r[0]['channel_guid'] === $channel['channel_guid'] || $r[0]['channel_hash'] === $channel['channel_hash']) {

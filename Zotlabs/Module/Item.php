@@ -121,7 +121,7 @@ class Item extends Controller {
 			if(! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream'))
 				http_status_exit(403, 'Forbidden');
 
-			$i = Activity::encode_item($items[0],((defined('NOMADIC')) ? false : true));
+			$i = Activity::encode_item($items[0],((get_config('system','activitypub')) ? true : false));
 
 			if(! $i)
 				http_status_exit(404, 'Not found');
@@ -267,7 +267,7 @@ class Item extends Controller {
 			if(! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream'))
 				http_status_exit(403, 'Forbidden');
 
-			$i = Activity::encode_item_collection($nitems,'conversation/' . $item_id,'OrderedCollection',( defined('NOMADIC') ? false : true));
+			$i = Activity::encode_item_collection($nitems,'conversation/' . $item_id,'OrderedCollection',( get_config('system','activitypub') ? true : false));
 			if($portable_id) {
 				ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
 			}
@@ -299,8 +299,9 @@ class Item extends Controller {
 		// the text/html page of the item.
 		
 		if (argc() > 1 && argv(1) !== 'drop') {
-			$x = q("select uid, item_wall, llink, mid from item where mid = '%s' ",
-				dbesc(z_root() . '/item/' . argv(1))
+			$x = q("select uid, item_wall, llink, mid from item where mid = '%s' or mid = '%s' ",
+				dbesc(z_root() . '/item/' . argv(1)),
+				dbesc(z_root() . '/activity/' . argv(1))
 			);
 			if ($x) {
 				foreach ($x as $xv) {
@@ -1224,7 +1225,7 @@ class Item extends Controller {
 		if(! array_key_exists('obj',$datarray)) {
 			$copy = $datarray;
 			$copy['author'] = $observer;
-			$datarray['obj'] = Activity::encode_item($copy,((defined('NOMADIC')) ? false : true));
+			$datarray['obj'] = Activity::encode_item($copy,((get_config('system','activitypub')) ? true : false));
 		}	
 
 		// A specific ACL over-rides public_policy completely

@@ -591,51 +591,6 @@ function validate_email($addr) {
 }
 
 /**
- * @brief Check $url against our list of allowed sites.
- *
- * Wildcards allowed. If allowed_sites is unset return true.
- *
- * @param string $url
- * @return boolean Return true if url is allowed, otherwise return false
- */
-function allowed_url($url) {
-
-	$h = @parse_url($url);
-
-	if(! $h) {
-		return false;
-	}
-
-	$str_allowed = get_config('system', 'allowed_sites');
-	if(! $str_allowed)
-		return true;
-
-	$found = false;
-
-	$host = strtolower($h['host']);
-
-	// always allow our own site
-
-	if($host == strtolower($_SERVER['SERVER_NAME']))
-		return true;
-
-	$fnmatch = function_exists('fnmatch');
-	$allowed = explode(',',$str_allowed);
-
-	if(count($allowed)) {
-		foreach($allowed as $a) {
-			$pat = strtolower(trim($a));
-			if(($fnmatch && fnmatch($pat,$host)) || ($pat == $host)) {
-				$found = true;
-				break;
-			}
-		}
-	}
-
-	return $found;
-}
-
-/**
  * @brief Check if email address is allowed to register here.
  *
  * Compare against our list (wildcards allowed).
@@ -1719,7 +1674,7 @@ function check_siteallowed($url) {
 
 	$retvalue = true;
 
-	$arr = array('url' => $url);
+	$arr = [ 'url' => $url ];
 	/**
 	 * @hooks check_siteallowed
 	 *   Used to over-ride or bypass the site black/white block lists.
@@ -1728,24 +1683,27 @@ function check_siteallowed($url) {
 	 */
 	call_hooks('check_siteallowed', $arr);
 
-	if(array_key_exists('allowed',$arr))
+	if (array_key_exists('allowed',$arr)) {
 		return $arr['allowed'];
+	}
 
 	$bl1 = get_config('system','whitelisted_sites');
-	if(is_array($bl1) && $bl1) {
-		foreach($bl1 as $bl) {
-			if($bl === '*')
+	if (is_array($bl1) && $bl1) {
+		foreach ($bl1 as $bl) {
+			if ($bl === '*') {
 				$retvalue = true;
-			if($bl && strpos($url,$bl) !== false)
+			}
+			if ($bl && strpos($url,$bl) !== false)
 				return true;
 		}
 	}
 	$bl1 = get_config('system','blacklisted_sites');
-	if(is_array($bl1) && $bl1) {
-		foreach($bl1 as $bl) {
-			if($bl === '*')
+	if (is_array($bl1) && $bl1) {
+		foreach ($bl1 as $bl) {
+			if ($bl === '*') {
 				$retvalue = false;
-			if($bl && strpos($url,$bl) !== false) {
+			}
+			if ($bl && strpos($url,$bl) !== false) {
 				return false;
 			}
 		}
@@ -1811,7 +1769,7 @@ function check_channelallowed($hash) {
 
 	$retvalue = true;
 
-	$arr = array('hash' => $hash);
+	$arr = [ 'hash' => $hash ];
 	/**
 	 * @hooks check_channelallowed
 	 *   Used to over-ride or bypass the channel black/white block lists.
@@ -1820,24 +1778,28 @@ function check_channelallowed($hash) {
 	 */
 	call_hooks('check_channelallowed', $arr);
 
-	if(array_key_exists('allowed',$arr))
+	if (array_key_exists('allowed',$arr)) {
 		return $arr['allowed'];
+	}
 
 	$bl1 = get_config('system','whitelisted_channels');
-	if(is_array($bl1) && $bl1) {
-		foreach($bl1 as $bl) {
-			if($bl === '*')
+	if (is_array($bl1) && $bl1) {
+		foreach ($bl1 as $bl) {
+			if ($bl === '*') {
 				$retvalue = true;
-			if($bl && strpos($hash,$bl) !== false)
+			}
+			if ($bl && strpos($hash,$bl) !== false) {
 				return true;
+			}
 		}
 	}
 	$bl1 = get_config('system','blacklisted_channels');
-	if(is_array($bl1) && $bl1) {
-		foreach($bl1 as $bl) {
-			if($bl === '*')
+	if (is_array($bl1) && $bl1) {
+		foreach ($bl1 as $bl) {
+			if ($bl === '*') {
 				$retvalue = false;
-			if($bl && strpos($hash,$bl) !== false) {
+			}
+			if ($bl && strpos($hash,$bl) !== false) {
 				return false;
 			}
 		}

@@ -22,7 +22,7 @@
 				{{/if}}
 				{{if $item.title && !$item.event}}
 				<div class="p-2{{if $item.is_new}} bg-primary text-white{{/if}} wall-item-title h3{{if !$item.photo}} rounded-top{{/if}}" id="wall-item-title-{{$item.id}}">
-					{{if $item.title_tosource}}{{if $item.plink}}<a href="{{$item.plink.href}}" title="{{$item.title}} ({{$item.plink.title}})">{{/if}}{{/if}}{{$item.title}}{{if $item.title_tosource}}{{if $item.plink}}</a>{{/if}}{{/if}}
+					{{if $item.title_tosource}}{{if $item.plink}}<a href="{{$item.plink.href}}" title="{{$item.title}} ({{$item.plink.title}})" rel="nofollow noopener">{{/if}}{{/if}}{{$item.title}}{{if $item.title_tosource}}{{if $item.plink}}</a>{{/if}}{{/if}}
 				</div>
 				{{if ! $item.is_new}}
 				<hr class="m-0">
@@ -104,7 +104,7 @@
 								<i class="fa fa-thumbs-o-down{{if $item.my_responses.dislike}} ivoted{{/if}}" ></i>
 							</button>
 							{{/if}}
-							{{if $item.comment && $item.thread_level > 1 && $item.thread_level < 3}}
+							{{if $item.comment && $item.thread_level > 1 && $item.thread_level < $item.thread_max }}
 							<button type="button" title="{{$item.comment_lbl}}" class="btn btn-outline-secondary btn-sm" onclick="openClose('wall-item-comment-wrapper-{{$item.id}}'); $('#comment-edit-text-{{$item.id}}').click(); return false;">
 								<i class="fa fa-comment-o"></i>
 							</button>

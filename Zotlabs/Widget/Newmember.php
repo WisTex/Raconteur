@@ -1,24 +1,29 @@
 <?php
-
 namespace Zotlabs\Widget;
+
+use App;
 
 class Newmember {
 
 	function widget($arr) {
 
-		if(! local_channel())
+		if (! local_channel()) {
 			return EMPTY_STR;
+		}
 
-		$c = \App::get_channel();
-		if(! $c)
+		$c = App::get_channel();
+		if (! $c) {
 			return EMPTY_STR;
+		}
+		$a = App::get_account();
+		if (! $a) {
+			return EMPTY_STR;
+		}
 
-		$a = \App::get_account();
-		if(! $a)
+		// @fixme
+		if (! feature_enabled(local_channel(),'start_menu')) {
 			return EMPTY_STR;
-
-		if(! feature_enabled(local_channel(),'start_menu'))
-			return EMPTY_STR;
+		}
 
 		$options = [
 			t('Profile Creation'),
@@ -53,14 +58,13 @@ class Newmember {
 
 		// hack to put this in the correct spot of the array
 
-		if($site_firehose || $net_firehose) {
+		if ($site_firehose || $net_firehose) {
 			$options[5]['pubstream'] = t('View public stream');
 		}
 
 		$o = replace_macros(get_markup_template('new_member.tpl'), [
 			'$title' => t('New Member Links'),
 			'$options' => $options
-
 		]);
 
 		return $o;

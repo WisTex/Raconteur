@@ -431,8 +431,7 @@ logger('gis: ' . print_r($gis,true));
 				'$modalerrorlink' => t('Error getting photo link'),
 				'$modalerroralbum' => t('Error getting album'),
 				'$form_security_token' => get_form_security_token("cover_photo"),
-					/// @FIXME - yuk  
-				'$select' => t('Select existing photo'),
+				'$select' => t('Select previously uploaded photo'),
 
 			));
 			

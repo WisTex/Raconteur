@@ -33,7 +33,7 @@ class Photo extends \Zotlabs\Web\Controller {
 			$channel = channelx_by_n($r[0]['uid']);
 		
 			$obj = json_decode($r[0]['obj'],true);
-			$obj['actor'] = Activity::encode_person($channel,true,((defined('NOMADIC')) ? false : true));
+			$obj['actor'] = Activity::encode_person($channel,true,((get_config('system','activitypub')) ? true : false));
 
 			$x = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,

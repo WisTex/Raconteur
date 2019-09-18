@@ -1659,6 +1659,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	$arr['plink']         = ((x($arr,'plink'))         ? notags(trim($arr['plink']))         : '');
 	$arr['attach']        = ((x($arr,'attach'))        ? notags(trim($arr['attach']))        : '');
 	$arr['app']           = ((x($arr,'app'))           ? notags(trim($arr['app']))           : '');
+	$arr['replyto']       = ((x($arr,'replyto'))       ? serialise($arr['replyto'])          : '');
 
 	$arr['public_policy'] = '';
 
@@ -2139,6 +2140,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 	$arr['tgt_type']      = ((x($arr,'tgt_type'))      ? notags(trim($arr['tgt_type']))      : $orig[0]['tgt_type']);
 	$arr['target']        = ((x($arr,'target'))        ? trim($arr['target'])                : $orig[0]['target']);
 	$arr['plink']         = ((x($arr,'plink'))         ? notags(trim($arr['plink']))         : $orig[0]['plink']);
+	$arr['replyto']       = ((x($arr,'replyto'))       ? serialise($arr['replyto'])          : $orig[0]['replyto']);
 
 	$arr['allow_cid']     = ((array_key_exists('allow_cid',$arr))  ? trim($arr['allow_cid']) : $orig[0]['allow_cid']);
 	$arr['allow_gid']     = ((array_key_exists('allow_gid',$arr))  ? trim($arr['allow_gid']) : $orig[0]['allow_gid']);
@@ -2872,7 +2874,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 	}
 
 	// @todo handle edit and parent correctly
-
+	// @fixme nomadic needs changing to whether or not activitypub is in effect
 	if((! $parent) && (! defined('NOMADIC'))) {
 
 		if($edit) {
@@ -3846,7 +3848,7 @@ function zot_feed($uid, $observer_hash, $arr) {
 		$nonsys_uids = q("SELECT channel_id FROM channel WHERE channel_system = 0");
 		$nonsys_uids_str = ids_to_querystr($nonsys_uids,'channel_id');
 
-		$r = q("SELECT parent, postopts FROM item
+		$r = q("SELECT parent FROM item
 			WHERE uid IN ( %s )
 			AND item_private = 0
 			$item_normal
@@ -3855,7 +3857,7 @@ function zot_feed($uid, $observer_hash, $arr) {
 		);
 	}
 	else {
-		$r = q("SELECT parent, postopts FROM item
+		$r = q("SELECT parent FROM item
 			WHERE uid = %d
 			$item_normal
 			$sql_extra ORDER BY created ASC $limit",
@@ -3868,8 +3870,6 @@ function zot_feed($uid, $observer_hash, $arr) {
 	if($r) {
 		foreach($r as $rv) {
 			if(array_key_exists($rv['parent'],$parents))
-				continue;
-			if(strpos($rv['postopts'],'nodeliver') !== false)
 				continue;
 			$parents[$rv['parent']] = $rv;
 			if(count($parents) > 200)

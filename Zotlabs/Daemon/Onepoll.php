@@ -99,6 +99,76 @@ class Onepoll {
 		if(! $responded)
 			return;
 
+		if(defined('USE_OUTBOX')) {
+
+		// @fixme
+		// This needs to be converted from zotfeed to ActivityStreams (such as an ActivityPub outbox).
+		// The zotfeed has serious compatibility issues between Hubzilla and Zap.
+
+		if($contact['xchan_connurl']) {
+			$fetch_feed = true;
+			$x = null;
+
+			// They haven't given us permission to see their stream
+
+			$can_view_stream = intval(get_abconfig($importer_uid,$contact['abook_xchan'],'their_perms','view_stream'));
+
+			if(! $can_view_stream)
+				$fetch_feed = false;
+
+			// we haven't given them permission to send us their stream
+
+			$can_send_stream = intval(get_abconfig($importer_uid,$contact['abook_xchan'],'my_perms','send_stream'));
+			
+			if(! $can_send_stream)
+				$fetch_feed = false;
+
+			if($fetch_feed) {
+
+				if(strpos($contact['xchan_connurl'],z_root()) === 0) {
+					// local channel - save a network fetch
+					$c = channelx_by_hash($contact['xchan_hash']);
+					if($c) {
+						$x = [ 
+							'success' => true, 
+							'body' => json_encode( [ 
+								'success' => true,
+								'messages' => zot_feed($c['channel_id'], $importer['xchan_hash'], [ 'mindate' => $last_update ])
+							])
+						];
+					}
+				}
+				else {
+					// remote fetch	
+
+					$feedurl = str_replace('/poco/','/zotfeed/',$contact['xchan_connurl']);		
+					$feedurl .= '?f=&mindate=' . urlencode($last_update) . '&zid=' . $importer['channel_address'] . '@' . \App::get_hostname();
+					$recurse = 0;
+					$x = z_fetch_url($feedurl, false, $recurse, [ 'session' => true ]);
+				}
+
+				logger('feed_update: ' . print_r($x,true), LOGGER_DATA);
+			}
+
+			if(($x) && ($x['success'])) {
+				$total = 0;
+				logger('onepoll: feed update ' . $contact['xchan_name'] . ' ' . $feedurl);
+
+				$j = json_decode($x['body'],true);
+				if($j['success'] && $j['messages']) {
+					foreach($j['messages'] as $message) {
+						// process delivery here once we have parsed the AS
+						logger('onepoll: feed_update: process_delivery: ' . print_r($results,true), LOGGER_DATA);
+						$total ++;
+					}
+					logger("onepoll: $total messages processed");
+				}
+			}
+		}
+			
+
+		} // end USE_OUTBOX
+
 		// update the poco details for this connection
 
 		if($contact['xchan_connurl']) {	
