@@ -470,7 +470,8 @@ define ( 'NAMESPACE_YMEDIA',          'http://search.yahoo.com/mrss/' );
 
 define ( 'ACTIVITYSTREAMS_JSONLD_REV', 'https://www.w3.org/ns/activitystreams' );
 
-define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.10' );
+define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.11' );
+
 /**
  * activity stream defines
  */

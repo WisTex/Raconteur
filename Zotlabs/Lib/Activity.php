@@ -819,6 +819,15 @@ class Activity {
 					/* Add mentions only if the targets are individuals */
 					$m = self::map_acl($i,(($i['allow_gid']) ? false : true));
 					$ret['tag'] = (($ret['tag']) ? array_merge($ret['tag'],$m) : $m);
+					$ret['to'] = [ $reply_url ];
+					if (is_array($m) && $m && ! $ret['to']) {
+						$ret['to'] = [];
+						foreach ($m as $ma) {
+							if (is_array($ma) && $ma['type'] === 'Mention') {
+								$ret['to'][] = $ma['href'];
+							}
+						}
+					}
 				}
 			}
 			else {
@@ -873,10 +882,6 @@ class Activity {
 			stringify_array_elms($x);
 			if (! $x)
 				return;
-
-			$strict = (($mentions) ? true : get_config('activitypub','compliance'));
-
-			$sql_extra = (($strict) ? " and xchan_network = 'activitypub' " : '');
 
 			$details = q("select xchan_url, xchan_addr, xchan_name from xchan where xchan_hash in (" . implode(',',$x) . ") $sql_extra");
 
@@ -954,6 +959,22 @@ class Activity {
 					'publicKeyPem' => $p['xchan_pubkey']
 				];
 
+				// map other nomadic identities linked with this channel
+				
+				$locations = [];
+				$locs = Libzot::encode_locations($c);
+				if ($locs) {
+					foreach ($locs as $loc) {
+						if ($loc['url'] !== z_root()) {
+							$locations[] = $loc['id_url'];
+						}
+					}
+				}
+				
+				if ($locations) {
+					$ret['alsoKnownAs'] = $locations;
+				}
+				
 				$cp = get_cover_photo($c['channel_id'],'array');
 				if ($cp) {
 					$ret['image'] = [
@@ -1285,7 +1306,6 @@ class Activity {
 			if ($g)
 				AccessList::member_add($channel['channel_id'],'',$ret['xchan_hash'],$g['id']);
 		}
-
 
 		return;
 
@@ -2238,10 +2258,25 @@ class Activity {
 		}
 		
 		$allowed = false;
-
+		$moderated = false;
+		
 		if ($is_child_node) {
-			// in ActivityPub, anybody can post comments
-			$allowed = true;
+			$p = q("select id from item where mid = '%s' and uid = %d and item_wall = 1",
+				dbesc($item['parent_mid']),
+				intval($channel['channel_id'])
+			);
+			if ($p) {
+				$allowed = perm_is_allowed($channel['channel_id'],$observer_hash,'post_comments');
+				if (! $allowed) {
+					// @wip at least let the sender know we received their comment
+					// but we don't permit spam here.
+					
+					self::send_rejection_activity($channel['channel_id'],$observer_hash,$item);
+				}
+			}
+			else {
+				$allowed = true;
+			}
 		}
 		elseif (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') || ($is_sys_channel && $pubstream)) {
 			$allowed = true;
@@ -2917,5 +2952,13 @@ class Activity {
 		}
 		return $content;
 	}
+
+	static function send_rejection_activity($channel_id,$observer_hash,$item) {
+
+
+
+	}
+
+
 
 }
