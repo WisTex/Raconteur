@@ -1424,6 +1424,9 @@ function bbcode($Text, $options = []) {
 
 	if($censored) {
 		$Text = separate_img_links($Text);
+
+		//@fixme make this work with OWA image links
+
 		$Text = preg_replace("/\<img(.*?)src=\"(.*?)\"(.*?)\>/ism",'<i class="fa fa-image"></i> <a href="#" onclick="\\$.colorbox({ \'href\': \'$2\' }); return false;">$2</a>',$Text);
 	}
 

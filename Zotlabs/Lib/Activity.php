@@ -939,7 +939,7 @@ class Activity {
 		];
 		$ret['url'] = $p['xchan_url'];
 
-		if ($activitypub && $feature_complete) {	
+		if ($activitypub && get_config('system','activitypub')) {	
 
 			if ($c) {
 				$ret['inbox']       = z_root() . '/inbox/'     . $c['channel_address'];
