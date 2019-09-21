@@ -77,6 +77,7 @@ class Site {
 		$poll_interval     = ((x($_POST,'poll_interval'))    ? intval(trim($_POST['poll_interval'])) : 0);
 		$maxloadavg        = ((x($_POST,'maxloadavg'))       ? intval(trim($_POST['maxloadavg'])) : 50);
 		$feed_contacts     = ((x($_POST,'feed_contacts'))    ? intval($_POST['feed_contacts'])    : 0);
+		$ap_contacts       = ((x($_POST,'ap_contacts'))      ? intval($_POST['ap_contacts'])    : 0);
 		$verify_email      = ((x($_POST,'verify_email'))     ? 1 : 0);
 		$imagick_path      = ((x($_POST,'imagick_path'))     ? trim($_POST['imagick_path'])   : '');
 		$thumbnail_security  = ((x($_POST,'thumbnail_security'))     ? intval($_POST['thumbnail_security'])   : 0);
@@ -87,6 +88,7 @@ class Site {
 		$permissions_role = escape_tags(trim($_POST['permissions_role']));
 
 		set_config('system', 'feed_contacts', $feed_contacts);
+		set_config('system', 'activitypub', $ap_contacts);
 		set_config('system', 'delivery_interval', $delivery_interval);
 		set_config('system', 'delivery_batch_count', $delivery_batch_count);
 		set_config('system', 'poll_interval', $poll_interval);
@@ -305,6 +307,7 @@ class Site {
 //			'$theme_mobile'         => [ 'theme_mobile', t("Mobile system theme"), get_config('system','mobile_theme'), t("Theme for mobile devices"), $theme_choices_mobile ],
 //			'$site_channel'         => [ 'site_channel', t("Channel to use for this website's static pages"), get_config('system','site_channel'), t("Site Channel") ],
 			'$feed_contacts'        => [ 'feed_contacts', t('Allow Feeds as Connections'),get_config('system','feed_contacts'),t('(Heavy system resource usage)') ],
+			'$ap_contacts'           => [ 'ap_contacts', t('Allow ActivityPub Connections'),get_config('system','activitypub'),t('Experimental and unsupported. ActivityPub does not fully support privacy and account mobility.') ],
 			'$maximagesize'         => [ 'maximagesize', t("Maximum image size"), intval(get_config('system','maximagesize')), t("Maximum size in bytes of uploaded images. Default is 0, which means no limits.") ],
 			'$register_policy'      => [ 'register_policy', t("Does this site allow new member registration?"), get_config('system','register_policy'), "", $register_choices ],
 			'$invite_only'          => [ 'invite_only', t("Invitation only"), get_config('system','invitation_only'), t("Only allow new member registrations with an invitation code. New member registration must be allowed for this to work.") ],

@@ -113,6 +113,7 @@
 				<div class="section-content-tools-wrapper">
 					{{include file="field_checkbox.tpl" field=$verify_email}}
 					{{include file="field_checkbox.tpl" field=$feed_contacts}}
+					{{include file="field_checkbox.tpl" field=$ap_contacts}}
 					{{include file="field_checkbox.tpl" field=$force_publish}}
 					{{include file="field_checkbox.tpl" field=$disable_discover_tab}}
 					{{include file="field_checkbox.tpl" field=$site_firehose}}
