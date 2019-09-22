@@ -17,6 +17,7 @@ class Apschema extends \Zotlabs\Web\Controller {
 				'ostatus'            => 'http://ostatus.org#',
 				'conversation'       => 'ostatus:conversation',
 				'sensitive'          => 'as:sensitive',
+				'alsoKnownAs'        => 'as:alsoKnownAs',
 				'inheritPrivacy'     => 'as:inheritPrivacy',
 				'commentPolicy'      => 'zot:commentPolicy',
 				'topicalCollection'  => 'zot:topicalCollection',

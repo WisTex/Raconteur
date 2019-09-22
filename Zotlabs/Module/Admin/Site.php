@@ -77,6 +77,7 @@ class Site {
 		$poll_interval     = ((x($_POST,'poll_interval'))    ? intval(trim($_POST['poll_interval'])) : 0);
 		$maxloadavg        = ((x($_POST,'maxloadavg'))       ? intval(trim($_POST['maxloadavg'])) : 50);
 		$feed_contacts     = ((x($_POST,'feed_contacts'))    ? intval($_POST['feed_contacts'])    : 0);
+		$ap_contacts       = ((x($_POST,'ap_contacts'))      ? intval($_POST['ap_contacts'])    : 0);
 		$verify_email      = ((x($_POST,'verify_email'))     ? 1 : 0);
 		$imagick_path      = ((x($_POST,'imagick_path'))     ? trim($_POST['imagick_path'])   : '');
 		$thumbnail_security  = ((x($_POST,'thumbnail_security'))     ? intval($_POST['thumbnail_security'])   : 0);
@@ -87,6 +88,7 @@ class Site {
 		$permissions_role = escape_tags(trim($_POST['permissions_role']));
 
 		set_config('system', 'feed_contacts', $feed_contacts);
+		set_config('system', 'activitypub', $ap_contacts);
 		set_config('system', 'delivery_interval', $delivery_interval);
 		set_config('system', 'delivery_batch_count', $delivery_batch_count);
 		set_config('system', 'poll_interval', $poll_interval);
@@ -305,6 +307,7 @@ class Site {
 //			'$theme_mobile'         => [ 'theme_mobile', t("Mobile system theme"), get_config('system','mobile_theme'), t("Theme for mobile devices"), $theme_choices_mobile ],
 //			'$site_channel'         => [ 'site_channel', t("Channel to use for this website's static pages"), get_config('system','site_channel'), t("Site Channel") ],
 			'$feed_contacts'        => [ 'feed_contacts', t('Allow Feeds as Connections'),get_config('system','feed_contacts'),t('(Heavy system resource usage)') ],
+			'$ap_contacts'           => [ 'ap_contacts', t('Allow ActivityPub Connections'),get_config('system','activitypub'),t('Experimental and unsupported. ActivityPub does not fully support privacy and account mobility.') ],
 			'$maximagesize'         => [ 'maximagesize', t("Maximum image size"), intval(get_config('system','maximagesize')), t("Maximum size in bytes of uploaded images. Default is 0, which means no limits.") ],
 			'$register_policy'      => [ 'register_policy', t("Does this site allow new member registration?"), get_config('system','register_policy'), "", $register_choices ],
 			'$invite_only'          => [ 'invite_only', t("Invitation only"), get_config('system','invitation_only'), t("Only allow new member registrations with an invitation code. New member registration must be allowed for this to work.") ],
@@ -338,7 +341,7 @@ class Site {
 			'$imagick_path'         => [ 'imagick_path', t("Path to ImageMagick convert program"), get_config('system','imagick_convert_path'), t("If set, use this program to generate photo thumbnails for huge images ( > 4000 pixels in either dimension), otherwise memory exhaustion may occur. Example: /usr/bin/convert") ],
 			'$thumbnail_security'   => [ 'thumbnail_security', t("Allow SVG thumbnails in file browser"), get_config('system','thumbnail_security',0), t("WARNING: SVG images may contain malicious code.") ],
 			'$maxloadavg'           => [ 'maxloadavg', t("Maximum Load Average"), ((intval(get_config('system','maxloadavg')) > 0)?get_config('system','maxloadavg'):50), t("Maximum system load before delivery and poll processes are deferred - default 50.") ],
-			'$default_expire_days'  => [ 'default_expire_days', t('Expiration period in days for imported (grid/network) content'), intval(get_config('system','default_expire_days')), t('0 for no expiration of imported content') ],
+			'$default_expire_days'  => [ 'default_expire_days', t('Expiration period in days for imported streams'), intval(get_config('system','default_expire_days')), t('0 for no expiration of imported content') ],
 			'$active_expire_days'   => [ 'active_expire_days', t('Do not expire any posts which have comments less than this many days ago'), intval(get_config('system','active_expire_days',7)), '' ],
 			'$sellpage'             => [ 'site_sellpage', t('Public servers: Optional landing (marketing) webpage for new registrants'), get_config('system','sellpage',''), sprintf( t('Create this page first. Default is %s/register'),z_root()) ],
 			'$first_page'           => [ 'first_page', t('Page to display after creating a new channel'), get_config('system','workflow_channel_next','profiles'), t('Default: profiles') ],

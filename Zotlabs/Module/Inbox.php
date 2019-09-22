@@ -210,12 +210,12 @@ class Inbox extends Controller {
 				case 'emojiReaction':
 					// These require a resolvable object structure
 					if (is_array($AS->obj)) {
-						// replies must go to the replyTo endpoint if the top level post originated here.
 						$item = Activity::decode_note($AS);
-						if ($item['mid'] !== $item['parent_mid'] && stripos(z_root(), $item['parent_mid']) === 0) {
-							$item = null;
-							break;
-						}
+						// @wip replies must go to the replyTo endpoint if the top level post originated here.
+						//if ($item['mid'] !== $item['parent_mid'] && stripos(z_root(), $item['parent_mid']) === 0) {
+						//	$item = null;
+						//	break;
+						//}
 					}
 					else {
 						logger('unresolved object: ' . print_r($AS->obj,true));

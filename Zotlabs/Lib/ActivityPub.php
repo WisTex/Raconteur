@@ -157,7 +157,6 @@ class ActivityPub {
 
 	static function queue_message($msg,$sender,$recip,$message_id = '') {
 
-
 		$dest_url = $recip['hubloc_callback'];
 
     	logger('URL: ' . $dest_url, LOGGER_DEBUG);

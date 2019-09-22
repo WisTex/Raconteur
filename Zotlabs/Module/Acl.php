@@ -85,7 +85,9 @@ class Acl extends \Zotlabs\Web\Controller {
 		if($search) {
 			$sql_extra = " AND pgrp.gname LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " ";
 			$sql_extra2 = "AND ( xchan_name LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " OR xchan_addr LIKE " . protect_sprintf( "'%" . dbesc(punify($search)) . ((strpos($search,'@') === false) ? "%@%'"  : "%'")) . ") ";
-	
+
+
+
 			// This horrible mess is needed because position also returns 0 if nothing is found. 
 			// Would be MUCH easier if it instead returned a very large value
 			// Otherwise we could just 
@@ -96,11 +98,14 @@ class Acl extends \Zotlabs\Web\Controller {
 					. " then POSITION('" . protect_sprintf(dbesc($search)) 
 					. "' IN xchan_name) else position('" . protect_sprintf(dbesc(punify($search))) . "' IN xchan_addr) end, ";
 
-			$sql_extra3 = "AND ( xchan_addr like " . protect_sprintf( "'%" . dbesc(punify($search)) . "%'" ) . " OR xchan_name like " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " OR abook_alias like " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " ) ";
-	
+			$sql_extra3 = "AND ( xchan_addr like " . protect_sprintf( "'%" . dbesc(punify($search)) . "%'" ) . " OR ( xchan_name like " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " OR abook_alias like " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " )) ";
+
+			$sql_extra4 = "AND ( xchan_name LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " OR xchan_addr LIKE " . protect_sprintf( "'%" . dbesc(punify($search)) . ((strpos($search,'@') === false) ? "%@%'"  : "%'")) . " OR abook_alias LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'") . ") ";
+
+
 		}
 		else {
-			$sql_extra = $sql_extra2 = $sql_extra3 = "";
+			$sql_extra = $sql_extra2 = $sql_extra3 = $sql_extra4 = "";
 		}
 		
 		
@@ -214,13 +219,14 @@ class Acl extends \Zotlabs\Web\Controller {
 				} 
 
 				// add connections
-	
+
 				$r = q("SELECT abook_id as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, xchan_type, abook_flags, abook_self 
 					FROM abook left join xchan on abook_xchan = xchan_hash 
-					WHERE (abook_channel = %d $extra_channels_sql) AND abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 $sql_extra2 order by $order_extra2 xchan_name asc" ,
+					WHERE (abook_channel = %d $extra_channels_sql) AND abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 $sql_extra4 order by xchan_name asc" ,
 					intval(local_channel())
 				);
-				if($r2)
+
+				if($r && $r2)
 					$r = array_merge($r2,$r);
 
 			}
