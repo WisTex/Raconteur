@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Enotify;
+use Zotlabs\Lib\Apps;
 
 require_once('include/bbcode.php');
 
@@ -163,6 +164,10 @@ class Ping extends Controller {
 		$discover_tab_on = can_view_public_stream();
 
 		$notify_pubs = ((local_channel()) ? ($vnotify & VNOTIFY_PUBS) && $discover_tab_on : $discover_tab_on);
+
+		if ($notify_pubs && local_channel() && ! Apps::system_app_installed(local_channel(),'Public Stream')) {
+			$notify_pubs = false;
+		}
 
 		$sys = get_sys_channel();
 

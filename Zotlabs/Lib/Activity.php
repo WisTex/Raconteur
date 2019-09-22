@@ -2260,7 +2260,7 @@ class Activity {
 		$allowed = false;
 		$moderated = false;
 		
-		if ($is_child_node) {
+		if ($is_child_node) {		
 			$p = q("select id from item where mid = '%s' and uid = %d and item_wall = 1",
 				dbesc($item['parent_mid']),
 				intval($channel['channel_id'])
@@ -2268,14 +2268,16 @@ class Activity {
 			if ($p) {
 				$allowed = perm_is_allowed($channel['channel_id'],$observer_hash,'post_comments');
 				if (! $allowed) {
-					// @wip at least let the sender know we received their comment
-					// but we don't permit spam here.
-					
-					self::send_rejection_activity($channel['channel_id'],$observer_hash,$item);
+					// let the sender know we received their comment but we don't permit spam here.
+					self::send_rejection_activity($channel,$observer_hash,$item);
 				}
 			}
 			else {
 				$allowed = true;
+				// reject public stream comments that weren't sent by the conversation owner
+				if ($is_sys_channel && $pubstream && $item['owner_xchan'] !== $observer_hash) {
+					$allowed = false;
+				}
 			}
 		}
 		elseif (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') || ($is_sys_channel && $pubstream)) {
@@ -2953,10 +2955,33 @@ class Activity {
 		return $content;
 	}
 
-	static function send_rejection_activity($channel_id,$observer_hash,$item) {
+	static function send_rejection_activity($channel,$observer_hash,$item) {
 
+		$recip = q("select * from hubloc where hubloc_hash = '%s' limit 1",
+			dbesc($observer_hash)
+		);
+		if (! $recip) {
+			return;
+		}
 
+		$arr = [
+			'id'     => z_root() . '/bounces/' . new_uuid(),
+			'to'     => [ $observer_hash ],
+			'type'   => 'Reject',
+			'actor'  => channel_url($channel),
+			'name'   => 'Permission denied',
+			'object' => $item['message_id']
+		];
+		
+		$msg = array_merge(['@context' => [
+			ACTIVITYSTREAMS_JSONLD_REV,
+			'https://w3id.org/security/v1',
+			z_root() . ZOT_APSCHEMA_REV
+		]], $arr);
 
+		$queue_id = ActivityPub::queue_message($msg,$channel,$recip[0]);
+		do_delivery( [ $queue_id ] );
+		
 	}
 
 
