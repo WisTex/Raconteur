@@ -53,18 +53,18 @@ class Permissions {
 	static public function Perms($filter = '') {
 
 		$perms = [
-			'view_stream'   => t('Can view your channel stream and posts'),
-			'send_stream'   => t('Can send you their channel stream and posts'),
-			'view_profile'  => t('Can view your default channel profile'),
-			'view_contacts' => t('Can view your connections'),
-			'view_storage'  => t('Can view your file storage and photos'),
-			'write_storage' => t('Can upload/modify your file storage and photos'),
-			'post_wall'     => t('Can post on your channel (wall) page'),
-			'post_comments' => t('Can comment on or like your posts'),
-			'post_like'     => t('Can like/dislike profiles and profile things'),
-			'republish'     => t('Can source your public posts in derived channels'),
-			'moderated'     => t('Comments are moderated'),
-			'delegate'      => t('Can administer your channel')
+			'view_stream'   => t('Grant viewing access to and delivery of your channel stream and posts'),
+			'view_profile'  => t('Grant viewing access to your default channel profile'),
+			'view_contacts' => t('Grant viewing access to your address book (connections)'),
+			'view_storage'  => t('Grant viewing access to your file storage and photos'),
+			'post_wall'     => t('Grant permission to post on your channel (wall) page'),
+			'send_stream'   => t('Accept delivery of their posts and comments to their posts'),
+			'post_comments' => t('Accept delivery of their comments and likes on your posts'),
+			'post_like'     => t('Accept delivery of their likes of your profile'),
+			'write_storage' => t('Grant upload permissions to your file storage and photos'),
+			'republish'     => t('Grant permission to republish/mirror your posts'),
+			'moderated'     => t('Accept comments and wall posts only after approval (moderation)'),
+			'delegate'      => t('Grant channel administration (delegation) permission')
 		];
 
 		$x = [
