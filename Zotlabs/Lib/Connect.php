@@ -52,11 +52,11 @@ class Connect {
 		$r = q("select count(*) as total from abook where abook_channel = %d and abook_self = 0 ",
 			intval($uid)
 		);
-		if($r) {
+		if ($r) {
 			$total_channels = $r[0]['total'];
 		}
 
-		if(! service_class_allows($uid,'total_channels',$total_channels)) {
+		if (! service_class_allows($uid,'total_channels',$total_channels)) {
 			$result['message'] = upgrade_message();
 			return $result;
 		}
@@ -70,7 +70,7 @@ class Connect {
 			dbesc($url)
 		);
 
-		if($r) {
+		if ($r) {
 
 			// reset results to the best record or the first if we don't have the best
 			// note: this is a single record and not an array of results
@@ -80,7 +80,7 @@ class Connect {
 			// Some Hubzilla records were originally stored as activitypub. If we find one, force rediscovery
 			// since Zap cannot connect with them.
 			
-			if($r['xchan_network'] === 'activitypub' && ! get_config('system','activitypub')) {
+			if ($r['xchan_network'] === 'activitypub' && ! get_config('system','activitypub')) {
 				$r = null;
 			}
 		}
@@ -89,16 +89,16 @@ class Connect {
 		$singleton = false;
 		$d = false;
 
-		if(! $r) {
+		if (! $r) {
 
 			// not in cache - try discovery
 
 			$wf = discover_by_webbie($url,$protocol);
 
-			if(! $wf) {
+			if (! $wf) {
 				$feeds = get_config('system','feed_contacts');
 
-				if(($feeds) && (in_array($protocol, [ '', 'feed', 'rss' ]))) {
+				if (($feeds) && (in_array($protocol, [ '', 'feed', 'rss' ]))) {
 					$d = discover_feed($url);
 				}
 				else {
@@ -108,7 +108,7 @@ class Connect {
 			}
 		}
 
-		if($wf || $d) {
+		if ($wf || $d) {
 
 			// something was discovered - find the record which was just created.
 
@@ -120,14 +120,14 @@ class Connect {
 
 			// convert to a single record (once again preferring a zot solution in the case of multiples)
 
-			if($r) {
+			if ($r) {
 				$r = Libzot::zot_record_preferred($r,'xchan_network');
 			}
 		}
 
 		// if discovery was a success or the channel was already cached we should have an xchan record in $r
 
-		if($r) {
+		if ($r) {
 			$xchan = $r;
 			$xchan_hash = $r['xchan_hash'];
 			$their_perms = EMPTY_STR;
@@ -135,7 +135,7 @@ class Connect {
 
 		// failure case
 
-		if(! $xchan_hash) {
+		if (! $xchan_hash) {
 			$result['message'] = t('Channel discovery failed.');
 			logger('follow: ' . $result['message']);
 			return $result;
@@ -147,35 +147,37 @@ class Connect {
 			return $result;
 
 		}
-		// Now start processing the new connection
 
-		if($r['xchan_network'] === 'activitypub' && ! get_config('system','activitypub')) {
-			// ActivityPub is not nomadic
+		$ap_allowed = get_config('system','activitypub',false) && get_pconfig($uid,'system','activitypub',true);
+		
+		if ($r['xchan_network'] === 'activitypub' && ! $ap_allowed) {
 			$result['message'] = t('Protocol not supported');
 			return $result;
 		}
+
+		// Now start processing the new connection
 
 		$aid = $channel['channel_account_id'];
 		$hash = $channel['channel_hash'];
 		$default_group = $channel['channel_default_group'];
 
-		if($hash === $xchan_hash) {
+		if ($hash === $xchan_hash) {
 			$result['message'] = t('Cannot connect to yourself.');
 			return $result;
 		}
 
-		if($xchan['xchan_network'] === 'rss') {
+		if ($xchan['xchan_network'] === 'rss') {
 
 			// check service class feed limits
 
 			$t = q("select count(*) as total from abook where abook_account = %d and abook_feed = 1 ",
 				intval($aid)
 			);
-			if($t) {
+			if ($t) {
 				$total_feeds = $t[0]['total'];
 			}
 
-			if(! service_class_allows($uid,'total_feeds',$total_feeds)) {
+			if (! service_class_allows($uid,'total_feeds',$total_feeds)) {
 				$result['message'] = upgrade_message();
 				return $result;
 			}
@@ -184,8 +186,9 @@ class Connect {
 			// to negotiate a suitable permission response
 
 			$p = get_abconfig($uid,$xchan_hash,'system','their_perms',EMPTY_STR);
-			if($p)
+			if ($p) {
 				$p .= ',';
+			}
 			$p .= 'view_stream,republish';
 			set_abconfig($uid,$xchan_hash,'system','their_perms',$p);
 
@@ -218,14 +221,14 @@ class Connect {
 			intval($uid)
 		);
 
-		if($r) {
+		if ($r) {
 
 			$abook_instance = $r[0]['abook_instance'];
 
 			// If they are on a non-nomadic network, add them to this location
 
-			if(($singleton) && strpos($abook_instance,z_root()) === false) {
-				if($abook_instance) {
+			if (($singleton) && strpos($abook_instance,z_root()) === false) {
+				if ($abook_instance) {
 					$abook_instance .= ',';
 				}
 				$abook_instance .= z_root();
@@ -238,7 +241,7 @@ class Connect {
 
 			// if they have a pending connection, we just followed them so approve the connection request
 
-			if(intval($r[0]['abook_pending'])) {
+			if (intval($r[0]['abook_pending'])) {
 				$x = q("update abook set abook_pending = 0 where abook_id = %d",
 					intval($r[0]['abook_id'])
 				);
@@ -265,7 +268,7 @@ class Connect {
 			);
 		}
 
-		if(! $r) {
+		if (! $r) {
 			logger('abook creation failed');
 			$result['message'] = t('error saving data');
 			return $result;
@@ -273,7 +276,7 @@ class Connect {
 
 		// Set suitable permissions to the connection
 
-		if($my_perms) {
+		if ($my_perms) {
 			set_abconfig($uid,$xchan_hash,'system','my_perms',$my_perms);
 		}
 
@@ -285,7 +288,7 @@ class Connect {
 			intval($uid)
 		);
 
-		if($r) {
+		if ($r) {
 			$result['abook'] = $r[0];
 			Master::Summon([ 'Notifier', 'permissions_create', $result['abook']['abook_id'] ]);
 		}
@@ -296,9 +299,9 @@ class Connect {
 
 		/** If there is a default group for this channel, add this connection to it */
 
-		if($default_group) {
+		if ($default_group) {
 			$g = AccessList::rec_byhash($uid,$default_group);
-			if($g) {
+			if ($g) {
 				AccessList::member_add($uid,'',$xchan_hash,$g['id']);
 			}
 		}

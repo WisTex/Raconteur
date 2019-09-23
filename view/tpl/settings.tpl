@@ -83,6 +83,7 @@
 							{{$suggestme}}
 							{{include file="field_input.tpl" field=$expire}}
 							{{include file="field_checkbox.tpl" field=$hyperdrive}}
+							{{$activitypub}}
 						</div>
 						{{if $permcat_enable}}
 						{{include file="field_select.tpl" field=$defpermcat}}
