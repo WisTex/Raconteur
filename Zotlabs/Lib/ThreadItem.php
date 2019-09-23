@@ -495,7 +495,7 @@ class ThreadItem {
 
 		$result['children'] = [];
 
-		if (get_config('system','activitypub')) {
+		if (get_config('system','activitypub') && local_channel() && get_pconfig(local_channel(),'system','activitypub',true)) {
 			// place to store all the author addresses (links if not available) in the thread so we can auto-mention them in JS. 
 			$result['authors'] = [];
 			if ($observer && ($profile_addr === $observer['xchan_hash'] || $profile_addr === $observer['xchan_addr'])) {

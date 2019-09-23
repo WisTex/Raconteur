@@ -150,9 +150,12 @@ class Connect {
 
 		$ap_allowed = get_config('system','activitypub',false) && get_pconfig($uid,'system','activitypub',true);
 		
-		if ($r['xchan_network'] === 'activitypub' && ! $ap_allowed) {
-			$result['message'] = t('Protocol not supported');
-			return $result;
+		if ($r['xchan_network'] === 'activitypub')
+			if (! $ap_allowed) {
+				$result['message'] = t('Protocol not supported');
+				return $result;
+			}
+			$singleton = true;
 		}
 
 		// Now start processing the new connection
