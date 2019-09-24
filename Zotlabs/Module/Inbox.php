@@ -165,17 +165,15 @@ class Inbox extends Controller {
 
 		foreach ($channels as $channel) {
 
+			if (! get_pconfig($channel['channel_id'],'system','activitypub',true)) {
+				continue;
+			}
+
 			switch ($AS->type) {
 				case 'Follow':
 					if ($AS->obj & ActivityStreams::is_an_actor($AS->obj['type'])) {
-
-						// by default if the site enables activitypub, everybody on the site gets it.
-						// But you can turn it off if you don't want it.
-						
-						if (get_pconfig($channel['channel_id'],'system','activitypub',true)) {
-							// do follow activity
-							Activity::follow($channel,$AS);
-						}
+						// do follow activity
+						Activity::follow($channel,$AS);
 					}
 					break;
 				case 'Accept':
