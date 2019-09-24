@@ -38,7 +38,6 @@ class ThreadItem {
 				
 		$this->data = $data;
 		$this->toplevel = ($this->get_id() == $this->get_data_value('parent'));
-//		$this->threaded = get_config('system','thread_allow',((get_config('system','activitypub')) ? true : false));
 		$this->threaded = get_config('system','thread_allow',true);
 
 		$observer = App::get_observer();
