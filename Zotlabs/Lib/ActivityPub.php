@@ -12,8 +12,9 @@ class ActivityPub {
 
 	static public function notifier_process(&$arr) {
 
-		if($arr['hub']['hubloc_network'] !== 'activitypub')
+		if ($arr['hub']['hubloc_network'] !== 'activitypub') {
 			return;
+		}
 
 		logger('upstream: ' . intval($arr['upstream']));
 
@@ -22,9 +23,9 @@ class ActivityPub {
 
 		$signed_msg = null;
 
-		if(array_key_exists('target_item',$arr) && is_array($arr['target_item'])) {
+		if (array_key_exists('target_item',$arr) && is_array($arr['target_item'])) {
 
-			if(intval($arr['target_item']['item_obscured'])) {
+			if (intval($arr['target_item']['item_obscured'])) {
 				logger('Cannot send raw data as an activitypub activity.');
 				return;
 			}
@@ -38,7 +39,7 @@ class ActivityPub {
 			// It is unclear if Mastodon supports the federation delivery model. Initial tests were
 			// inconclusive and the behaviour varied. 
 
-			if(($arr['channel']['channel_hash'] !== $arr['target_item']['author_xchan']) && (! $signed_msg)) {
+			if (($arr['channel']['channel_hash'] !== $arr['target_item']['author_xchan']) && (! $signed_msg)) {
 				logger('relayed post with no signed message');
 				return;
 			}
@@ -47,19 +48,21 @@ class ActivityPub {
 
 		$target_item = $arr['target_item'];
 
-		if(! $target_item['mid'])
+		if (! $target_item['mid']) {
 			return;
+		}
 
 		$prv_recips = $arr['env_recips'];
 
 
-		if($signed_msg) {
+		if ($signed_msg) {
 			$jmsg = $signed_msg;
 		}
 		else {
 			$ti = Activity::encode_activity($target_item, true);
-			if(! $ti)
+			if (! $ti) {
 				return;
+			}
 
 			$msg = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
@@ -70,40 +73,42 @@ class ActivityPub {
 			$msg['signature'] = LDSignatures::sign($msg,$arr['channel']);
 
 			logger('ActivityPub_encoded: ' . json_encode($msg,JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT));
-
+			
 			$jmsg = json_encode($msg, JSON_UNESCAPED_SLASHES);
 		}
 
-		if($prv_recips) {
-			$hashes = array();
+		if ($prv_recips) {
+			$hashes = [];
 
 			// re-explode the recipients, but only for this hub/pod
 
-			foreach($prv_recips as $recip)
+			foreach ($prv_recips as $recip) {
 				$hashes[] = "'" . $recip . "'";
+			}
 
 			$r = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_url = '%s'
 				and xchan_hash in (" . implode(',', $hashes) . ") and xchan_network = 'activitypub' ",
 				dbesc($arr['hub']['hubloc_url'])
 			);
 
-			if(! $r) {
+			if (! $r) {
 				logger('activitypub_process_outbound: no recipients');
 				return;
 			}
 
-			foreach($r as $contact) {
+			foreach ($r as $contact) {
 
 				// is $contact connected with this channel - and if the channel is cloned, also on this hub?
 				// 2018-10-19 this probably doesn't apply to activitypub anymore, just send the thing.
 				// They'll reject it if they don't like it. 
 				// $single = deliverable_singleton($arr['channel']['channel_id'],$contact);
 
-				if(! $arr['normal_mode'])
+				if (! $arr['normal_mode']) {
 					continue;
+				}
 
 				$qi = self::queue_message($jmsg,$arr['channel'],$contact,$target_item['mid']);
-				if($qi) {
+				if ($qi) {
 					$arr['queued'][] = $qi;
 				}
 				continue;
@@ -117,11 +122,11 @@ class ActivityPub {
 			// See if we can deliver all of them at once
 
 			$x = get_xconfig($arr['hub']['hubloc_hash'],'activitypub','collections');
-			if($x && $x['sharedInbox']) {
+			if ($x && $x['sharedInbox']) {
 				logger('using publicInbox delivery for ' . $arr['hub']['hubloc_url'], LOGGER_DEBUG);
 				$contact['hubloc_callback'] = $x['sharedInbox'];
 				$qi = self::queue_message($jmsg,$arr['channel'],$contact,$target_item['mid']);
-				if($qi) {
+				if ($qi) {
 					$arr['queued'][] = $qi;
 				}
 			}
@@ -131,19 +136,18 @@ class ActivityPub {
 					dbesc($arr['hub']['hubloc_url'])
 				);
 
-				if(! $r) {
+				if (! $r) {
 					logger('activitypub_process_outbound: no recipients');
 					return;
 				}
 
 		
-				foreach($r as $contact) {
+				foreach ($r as $contact) {
 
 					// $single = deliverable_singleton($arr['channel']['channel_id'],$contact);
 
-
 					$qi = self::queue_message($jmsg,$arr['channel'],$contact,$target_item['mid']);
-					if($qi) {
+					if ($qi) {
 						$arr['queued'][] = $qi;
 					}
 				}	
@@ -162,7 +166,7 @@ class ActivityPub {
     	logger('URL: ' . $dest_url, LOGGER_DEBUG);
 		logger('DATA: ' . jindent($msg), LOGGER_DATA);
 
-    	if(intval(get_config('system','activitypub_test')) || intval(get_pconfig($sender['channel_id'],'system','activitypub_test'))) {
+    	if (intval(get_config('system','activitypub_test')) || intval(get_pconfig($sender['channel_id'],'system','activitypub_test'))) {
         	logger('test mode - delivery disabled');
 	        return false;
     	}
@@ -170,7 +174,7 @@ class ActivityPub {
 	    $hash = random_string();
 
     	logger('queue: ' . $hash . ' ' . $dest_url, LOGGER_DEBUG);
-		Queue::insert(array(
+		Queue::insert([
     	    'hash'       => $hash,
         	'account_id' => $sender['channel_account_id'],
 	        'channel_id' => $sender['channel_id'],
@@ -178,9 +182,9 @@ class ActivityPub {
         	'posturl'    => $dest_url,
 	        'notify'     => '',
     	    'msg'        => $msg
-    	));
+    	]);
 
-	    if($message_id && (! get_config('system','disable_dreport'))) {
+	    if ($message_id && (! get_config('system','disable_dreport'))) {
     	    q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_result, dreport_time, dreport_xchan, dreport_queue ) values ( '%s','%s','%s','%s','%s','%s','%s' ) ",
         	    dbesc($message_id),
             	dbesc($dest_url),
@@ -193,7 +197,6 @@ class ActivityPub {
     	}
 
 	    return $hash;
-
 	}
 
 
@@ -202,13 +205,14 @@ class ActivityPub {
 
 		// send a follow activity to the followee's inbox
 
-		if($x['recipient']['xchan_network'] !== 'activitypub') {
+		if ($x['recipient']['xchan_network'] !== 'activitypub') {
 			return;
 		}
 
 		$p = Activity::encode_person($x['sender'],true,true);
-		if(! $p)
+		if (! $p) {
 			return;
+		}
 
 		$msg = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
@@ -232,14 +236,14 @@ class ActivityPub {
 			dbesc($x['recipient']['xchan_hash'])
 		);
 
-		if($h) {
+		if ($h) {
 			$qi = self::queue_message($jmsg,$x['sender'],$h[0]);
-			if($qi)
+			if ($qi) {
 				$x['deliveries'] = $qi;
+			}
 		}
 		
 		$x['success'] = true;
-
 	}
 
 
@@ -247,19 +251,21 @@ class ActivityPub {
 
 		// send an accept activity to the followee's inbox
 
-		if($x['recipient']['xchan_network'] !== 'activitypub') {
+		if ($x['recipient']['xchan_network'] !== 'activitypub') {
 			return;
 		}
 
 		// we currently are not handling send of reject follow activities; this is permitted by protocol
 
 		$accept = get_abconfig($x['recipient']['abook_channel'],$x['recipient']['xchan_hash'],'activitypub','their_follow_id');
-		if(! $accept)
+		if (! $accept) {
 			return;
+		}
 
 		$p = Activity::encode_person($x['sender'],true,true);
-		if(! $p)
+		if (! $p) {
 			return;
+		}
 
 		$msg = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
@@ -287,10 +293,11 @@ class ActivityPub {
 			dbesc($x['recipient']['xchan_hash'])
 		);
 
-		if($h) {
+		if ($h) {
 			$qi = self::queue_message($jmsg,$x['sender'],$h[0]);
-			if($qi)
+			if ($qi) {
 				$x['deliveries'] = $qi;
+			}
 		}
 		
 		$x['success'] = true;
@@ -303,23 +310,24 @@ class ActivityPub {
 			intval($abook['abook_id'])
 		);
 
-		if((! $recip) || $recip[0]['xchan_network'] !== 'activitypub')
+		if ((! $recip) || $recip[0]['xchan_network'] !== 'activitypub')
 			return; 
 
 		$channel = channelx_by_n($recip[0]['abook_channel']);
-		if(! $channel)
+		if (! $channel) {
 			return;
+		}
 
 		$p = Activity::encode_person($channel,true,true);
-		if(! $p)
+		if (! $p) {
 			return;
+		}
 
 		// send an unfollow activity to the followee's inbox
 
 		$orig_activity = get_abconfig($recip[0]['abook_channel'],$recip[0]['xchan_hash'],'activitypub','follow_id');
 
-		if($orig_activity && $recip[0]['abook_pending']) {
-
+		if ($orig_activity && $recip[0]['abook_pending']) {
 
 			// was never approved
 
@@ -374,9 +382,9 @@ class ActivityPub {
 			dbesc($recip[0]['xchan_hash'])
 		);
 
-		if($h) {
+		if ($h) {
 			$qi = self::queue_message($jmsg,$channel,$h[0]);
-			if($qi) {
+			if ($qi) {
 				Master::Summon([ 'Deliver' , $qi ]);
 			}
 		}	
@@ -386,18 +394,18 @@ class ActivityPub {
 
 		$person_obj = null;
 		$ap = Activity::fetch($apurl);
-		if($ap) {
+		if ($ap) {
 			$AS = new ActivityStreams($ap); 
-			if($AS->is_valid()) {
-				if(ActivityStreams::is_an_actor($AS->type)) {
+			if ($AS->is_valid()) {
+				if (ActivityStreams::is_an_actor($AS->type)) {
 					$person_obj = $AS->data;
 				}
-				elseif($AS->obj && ActivityStreams::is_an_actor($AS->obj['type'])) {
+				elseif ($AS->obj && ActivityStreams::is_an_actor($AS->obj['type'])) {
 					$person_obj = $AS->obj;
 				}
 			}
 		}
-		if($person_obj) {
+		if ($person_obj) {
 			Activity::actor_store($person_obj['id'],$person_obj);
 			return $person_obj['id'];
 		}
