@@ -24,6 +24,10 @@ class Connect {
 
 		$uid = $channel['channel_id'];
 
+		if (strpos($url,'@') === false && strpos($url,'/') === false) {
+			$url = $url . '@' . App::get_hostname();
+		}
+
 		$result = [ 'success' => false, 'message' => '' ];
 
 		$my_perms = false;
@@ -150,7 +154,7 @@ class Connect {
 
 		$ap_allowed = get_config('system','activitypub',false) && get_pconfig($uid,'system','activitypub',true);
 		
-		if ($r['xchan_network'] === 'activitypub')
+		if ($r['xchan_network'] === 'activitypub') {
 			if (! $ap_allowed) {
 				$result['message'] = t('Protocol not supported');
 				return $result;
