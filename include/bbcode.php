@@ -803,6 +803,16 @@ function bb_code_unprotect_sub($match) {
 	return base64_decode($match[1]);
 }
 
+function bb_colorbox($match) {
+	if (strpos($match[1],'zrl')) {
+		$url = zid($match[2]);
+	}
+	else {
+		$url = $match[2];
+	}
+	return '<a href="' . $url . '" target="censored"><img src="' . $url . '" alt="censored" style="opacity: 0.03;"></a>';
+}
+
 function bb_code($match) {
 	if(strpos($match[0], "<br />"))
 		return '<pre><code>' . bb_code_protect(trim($match[1])) . '</code></pre>';
@@ -1425,10 +1435,7 @@ function bbcode($Text, $options = []) {
 
 	if($censored) {
 		$Text = separate_img_links($Text);
-
-		//@fixme make this work with OWA image links
-
-		$Text = preg_replace("/\<img(.*?)src=\"(.*?)\"(.*?)\>/ism",'<i class="fa fa-image"></i> <a href="#" onclick="\\$.colorbox({ \'href\': \'$2\' }); return false;">$2</a>',$Text);
+		$Text = preg_replace_callback("/\<img(.*?)src=\"(.*?)\"(.*?)\>/ism","bb_colorbox",$Text);
 	}
 
 

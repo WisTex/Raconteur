@@ -38,7 +38,6 @@ class ThreadItem {
 				
 		$this->data = $data;
 		$this->toplevel = ($this->get_id() == $this->get_data_value('parent'));
-//		$this->threaded = get_config('system','thread_allow',((get_config('system','activitypub')) ? true : false));
 		$this->threaded = get_config('system','thread_allow',true);
 
 		$observer = App::get_observer();
@@ -495,7 +494,7 @@ class ThreadItem {
 
 		$result['children'] = [];
 
-		if (get_config('system','activitypub')) {
+		if (get_config('system','activitypub') && local_channel() && get_pconfig(local_channel(),'system','activitypub',true)) {
 			// place to store all the author addresses (links if not available) in the thread so we can auto-mention them in JS. 
 			$result['authors'] = [];
 			if ($observer && ($profile_addr === $observer['xchan_hash'] || $profile_addr === $observer['xchan_addr'])) {
@@ -874,7 +873,7 @@ class ThreadItem {
 			'$myphoto' => $observer['xchan_photo_s'],
 			'$comment' => t('Comment'),
 			'$submit' => t('Submit'),
-			'$edat' => ((get_config('system','activitypub')) ? t('Add Conversation Mentions') : EMPTY_STR),
+			'$edat' => EMPTY_STR,
 			'$edbold' => t('Bold'),
 			'$editalic' => t('Italic'),
 			'$eduline' => t('Underline'),
@@ -884,7 +883,7 @@ class ThreadItem {
 			'$edatt' => t('Attach/Upload file'),
 			'$edurl' => t('Insert Link'),
 			'$edvideo' => t('Video'),
-			'$preview' => t('Preview'), // ((feature_enabled($conv->get_profile_owner(),'preview')) ? t('Preview') : ''),
+			'$preview' => t('Preview'), 
 			'$indent' => $indent,
 			'$can_upload' => (perm_is_allowed($conv->get_profile_owner(),get_observer_hash(),'write_storage') && $conv->is_uploadable()),
 			'$feature_encrypt' => ((feature_enabled($conv->get_profile_owner(),'content_encrypt')) ? true : false),

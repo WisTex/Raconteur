@@ -34,7 +34,7 @@ class PermissionRoles {
 				$ret['online'] = true;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'send_stream', 'post_wall', 'post_comments'
+					'view_pages', 'send_stream', 'post_wall', 'post_comments', 'post_like'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 				break;
@@ -46,7 +46,7 @@ class PermissionRoles {
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_storage',
-					'view_pages', 'send_stream', 'post_wall', 'post_comments'
+					'view_pages', 'send_stream', 'post_wall', 'post_comments', 'post_like'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 				$ret['limits']['view_contacts'] = PERMS_SPECIFIC;
@@ -59,7 +59,7 @@ class PermissionRoles {
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage', 'write_storage',
-					'view_pages', 'post_wall', 'post_comments'
+					'view_pages', 'post_wall', 'post_comments', 'post_like'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 				$ret['channel_type'] = 'group';
@@ -74,7 +74,7 @@ class PermissionRoles {
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'post_wall', 'post_comments', 'moderated'
+					'view_pages', 'post_wall', 'post_comments', 'post_like', 'moderated'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 				$ret['channel_type'] = 'group';
@@ -88,7 +88,7 @@ class PermissionRoles {
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage', 'write_storage',
-					'view_pages', 'post_wall', 'post_comments'
+					'view_pages', 'post_wall', 'post_comments', 'post_like'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 				$ret['limits']['view_contacts'] = PERMS_SPECIFIC;
@@ -102,7 +102,7 @@ class PermissionRoles {
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'post_comments'
+					'view_pages', 'post_comments', 'post_like'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 				$ret['channel_type'] = 'collection';
@@ -116,7 +116,7 @@ class PermissionRoles {
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_storage',
-					'view_pages', 'post_comments'
+					'view_pages', 'post_comments', 'post_like'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 				$ret['limits']['view_contacts'] = PERMS_SPECIFIC;

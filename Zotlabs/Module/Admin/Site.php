@@ -29,7 +29,7 @@ class Site {
 
 		$admininfo			=	((x($_POST,'admininfo'))		? trim($_POST['admininfo'])				: false);
 		$siteinfo			=	((x($_POST,'siteinfo'))		    ? trim($_POST['siteinfo'])				: '');
-		$language			=	((x($_POST,'language'))			? notags(trim($_POST['language']))			: '');
+		$language			=	((x($_POST,'language'))			? notags(trim($_POST['language']))			: 'en');
 		$theme				=	((x($_POST,'theme'))			? notags(trim($_POST['theme']))				: '');
 //		$theme_mobile			=	((x($_POST,'theme_mobile'))		? notags(trim($_POST['theme_mobile']))			: '');
 //		$site_channel			=	((x($_POST,'site_channel'))	? notags(trim($_POST['site_channel']))				: '');
@@ -302,7 +302,7 @@ class Site {
 			'$banner'               => [ 'banner', t("Banner/Logo"), $banner, t('Unfiltered HTML/CSS/JS is allowed') ],
 			'$admininfo'            => [ 'admininfo', t("Administrator Information"), $admininfo, t("Contact information for site administrators.  Displayed on siteinfo page.  BBCode may be used here.") ],
 			'$siteinfo'		        => [ 'siteinfo', t('Site Information'), get_config('system','siteinfo'), t("Publicly visible description of this site.  Displayed on siteinfo page.  BBCode may be used here.") ],
-			'$language'             => [ 'language', t("System language"), get_config('system','language'), "", $lang_choices ],
+			'$language'             => [ 'language', t("System language"), get_config('system','language','en'), "", $lang_choices ],
 			'$theme'                => [ 'theme', t("System theme"), get_config('system','theme'), t("Default system theme - may be over-ridden by user profiles - <a href='#' id='cnftheme'>change theme settings</a>"), $theme_choices ],
 //			'$theme_mobile'         => [ 'theme_mobile', t("Mobile system theme"), get_config('system','mobile_theme'), t("Theme for mobile devices"), $theme_choices_mobile ],
 //			'$site_channel'         => [ 'site_channel', t("Channel to use for this website's static pages"), get_config('system','site_channel'), t("Site Channel") ],

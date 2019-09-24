@@ -483,7 +483,7 @@ class Notifier {
 			'relay_to_owner' => $relay_to_owner,
 			'uplink'         => $uplink,
 			'cmd'            => $cmd,
-			'single'         => (($cmd === 'single_mail' || $cmd === 'single_activity') ? true : false),
+			'single'         => (($cmd === 'single_activity') ? true : false),
 			'request'        => $request,
 			'normal_mode'    => $normal_mode,
 			'packet_type'    => self::$packet_type,
@@ -589,7 +589,7 @@ class Notifier {
 					'relay_to_owner' => $relay_to_owner,
 					'uplink'         => $uplink,
 					'cmd'            => $cmd,
-					'single'         => (($cmd === 'single_mail' || $cmd === 'single_activity') ? true : false),
+					'single'         => (($cmd === 'single_activity') ? true : false),
 					'request'        => $request,
 					'normal_mode'    => $normal_mode,
 					'packet_type'    => self::$packet_type,
@@ -607,7 +607,7 @@ class Notifier {
 			}
 
 			// singleton deliveries by definition 'not got zot'.
-            // Single deliveries are other federated networks (plugins) and we're essentially
+            // Single deliveries are other federated networks and we're essentially
 			// delivering only to those that have this site url in their abook_instance
 			// and only from within a sync operation. This means if you post from a clone,
 			// and a connection is connected to one of your other clones; assuming that hub
@@ -615,9 +615,7 @@ class Notifier {
 			// will invoke a delivery to those connections which are connected to just that
 			// hub instance.
 
-			// Note: Legacy Hubzilla and Osada code. In Zap this should never happen.
-
-			if ($cmd === 'single_mail' || $cmd === 'single_activity') {
+			if ($cmd === 'single_activity') {
 				continue;
 			}
 

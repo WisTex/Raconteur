@@ -947,7 +947,13 @@ class Activity {
 		if ($activitypub && get_config('system','activitypub')) {	
 
 			if ($c) {
-				$ret['inbox']       = z_root() . '/inbox/'     . $c['channel_address'];
+				if (get_pconfig($c['channel_id'],'system','activitypub',true)) {
+					$ret['inbox']       = z_root() . '/inbox/'     . $c['channel_address'];
+				}
+				else {
+					$ret['inbox'] = null;
+				}
+				
 				$ret['outbox']      = z_root() . '/outbox/'    . $c['channel_address'];
 				$ret['followers']   = z_root() . '/followers/' . $c['channel_address'];
 				$ret['following']   = z_root() . '/following/' . $c['channel_address'];
@@ -972,7 +978,7 @@ class Activity {
 				}
 				
 				if ($locations) {
-					$ret['alsoKnownAs'] = $locations;
+					$ret['zot:alsoKnownAs'] = $locations;
 				}
 				
 				$cp = get_cover_photo($c['channel_id'],'array');

@@ -472,8 +472,18 @@ class Directory extends Controller {
 							echo $o;
 							killme();
 						}
-						if (App::$pager['page'] == 1 && $j['records'] == 0 && strpos($search,'@')) {
-							goaway(z_root() . '/chanview/?f=&address=' . $search);
+						if (App::$pager['page'] == 1 && $j['records'] == 0) {
+							if (strpos($search,'@')) {
+								goaway(z_root() . '/chanview/?f=&address=' . $search);
+							}
+							else {
+								$r = q("select xchan_hash from xchan where xchan_name = '%s' limit 1",
+									dbesc($search)
+								);
+								if ($r) {
+									goaway(z_root() . '/chanview/?f=&hash=' . urlencode($r[0]['xchan_hash']));
+								}
+							}
 						}
 						info( t("No entries (some entries may be hidden).") . EOL);
 					}

@@ -1557,6 +1557,17 @@ function conv_sort($arr, $order) {
 		return $ret;
 	}
 
+	$data = [ 'items' => $arr, 'order' => $order ];
+
+	call_hooks('conv_sort', $data);
+
+	$arr = $data['items'];
+
+	if (! (is_array($arr) && count($arr))) {
+		return $ret;
+	}
+
+
 	foreach ($arr as $x) {
 		if (intval($x['id']) === intval($x['parent'])) {
 			$parents[] = $x;

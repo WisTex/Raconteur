@@ -165,6 +165,10 @@ class Inbox extends Controller {
 
 		foreach ($channels as $channel) {
 
+			if (! get_pconfig($channel['channel_id'],'system','activitypub',true)) {
+				continue;
+			}
+
 			switch ($AS->type) {
 				case 'Follow':
 					if ($AS->obj & ActivityStreams::is_an_actor($AS->obj['type'])) {

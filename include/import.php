@@ -866,14 +866,12 @@ function import_items($channel, $items, $sync = false, $relocate = null) {
 			}
 
 			fix_attached_photo_permissions($channel['channel_id'],$item['author_xchan'],$item['body'],$item['allow_cid'],$item['allow_gid'],$item['deny_cid'],$item['deny_gid']);
-
 			fix_attached_file_permissions($channel,$item['author_xchan'],$item['body'],$item['allow_cid'],$item['allow_gid'],$item['deny_cid'],$item['deny_gid']);
 
 			if ($sync && $item['item_wall']) {
 				// deliver singletons if we have any
 				if ($item_result && $item_result['success']) {
-					// Not applicable to Zap as it does not federate with singletons. 
-					// Master::Summon( [ 'Notifier','single_activity',$item_result['item_id'] ]);
+					Master::Summon( [ 'Notifier','single_activity',$item_result['item_id'] ]);
 				}
 			}
 		}

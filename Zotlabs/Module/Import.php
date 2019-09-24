@@ -122,7 +122,7 @@ class Import extends Controller {
 			}
 		}
 
-		$codebase = ((defined('NOMADIC')) ? 'zap' : 'osada');
+		$codebase = 'zap';
 
 		if ((! array_path_exists('compatibility/codebase',$data)) || $data['compatibility']['codebase'] !== $codebase) {
 			notice('Data export format is not compatible with this software');

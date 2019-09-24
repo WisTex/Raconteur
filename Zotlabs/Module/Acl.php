@@ -324,7 +324,7 @@ class Acl extends \Zotlabs\Web\Controller {
 					$contacts[] = array(
 						"photo"    => $g['photo'],
 						"name"     => $g['name'],
-						"nick"     => $g['address']
+						"nick"     => $g['address'],
 					);
 				}
 			}
@@ -424,7 +424,9 @@ class Acl extends \Zotlabs\Web\Controller {
 		if(strpos($search,'@') !== false) {
 			$address = true;
 		}
-	
+
+		$remote_dir = false;
+		
 		if(($dirmode == DIRECTORY_MODE_PRIMARY) || ($dirmode == DIRECTORY_MODE_STANDALONE)) {
 			$url = z_root() . '/dirsearch';
 		}
@@ -432,6 +434,7 @@ class Acl extends \Zotlabs\Web\Controller {
 		if(! $url) {
 			$directory = Libzotdir::find_upstream_directory($dirmode);
 			$url = $directory['url'] . '/dirsearch';
+			$remote_dir = true;
 		}
 
 		$token = get_config('system','realm_token');
@@ -446,11 +449,41 @@ class Acl extends \Zotlabs\Web\Controller {
 				$t = 0;
 				$j = json_decode($x['body'],true);
 				if($j && $j['results']) {
-					return $j['results'];
+					$results =  $j['results'];
 				}
 			}
 		}
-		return array();
+
+		if($remote_dir) {
+			$query = z_root() . '/dirsearch' . '?f=&navsearch=1' . (($token) ? '&t=' . urlencode($token) : '');
+			$query .= '&name=' . urlencode($search) . "&limit=$count" . (($address) ? '&address=' . urlencode(punify($search)) : '');
+	
+			$x = z_fetch_url($query);
+			if($x['success']) {
+				$t = 0;
+				$j = json_decode($x['body'],true);
+				if($j && $j['results']) {
+					$results2 =  $j['results'];
+				}
+			}
+		}
+
+		if($results2 && $results) {
+			foreach($results2 as $x) {
+				$found = false;
+				foreach($results as $y) {
+					if($y['url'] === $x['url']) {
+						$found = true;
+					}
+				}
+				if (! $found) {
+					$x['local'] = true;
+					$results[] = $x;
+				}
+			}
+		}
+
+		return $results;
 	}
 
 }
