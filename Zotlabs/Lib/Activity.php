@@ -1560,17 +1560,18 @@ class Activity {
 			);
 		}
 
-		if (! $icon)
+		if (! $icon) {
 			$icon = z_root() . '/' . get_default_profile_photo(300);
-
+		}
+		
 		Master::Summon( [ 'Xchan_photo', bin2hex($icon), bin2hex($url) ] );
 
 	}
 
 	static function drop($channel,$observer,$act) {
 		$r = q("select * from item where mid = '%s' and uid = %d limit 1",
-			$act->obj['id'],
-			$channel['channel_id']
+			dbesc((is_array($act->obj)) ? $act->obj['id'] : $act->obj),
+			intval($channel['channel_id'])
 		);
 
 		if (! $r) {
@@ -1586,33 +1587,6 @@ class Activity {
 
 	}
 
-
-	static function create_action($channel,$observer_hash,$act) {
-
-		if (in_array($act->obj['type'], [ 'Note', 'Article', 'Video', 'Audio', 'Image' ])) {
-			self::create_note($channel,$observer_hash,$act);
-		}
-
-
-	}
-
-	static function announce_action($channel,$observer_hash,$act) {
-
-		if (in_array($act->type, [ 'Announce' ])) {
-			self::announce_note($channel,$observer_hash,$act);
-		}
-
-	}
-
-
-	static function like_action($channel,$observer_hash,$act) {
-
-		if (in_array($act->obj['type'], [ 'Note', 'Article', 'Video', 'Audio', 'Image' ])) {
-			self::like_note($channel,$observer_hash,$act);
-		}
-
-
-	}
 
 	// sort function width decreasing
 
