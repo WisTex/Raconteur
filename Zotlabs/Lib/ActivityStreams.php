@@ -61,6 +61,7 @@ class ActivityStreams {
 				$tmp = JSalmon::unpack($this->data['data']);
 				if($ret && $ret['success']) {
 					if($ret['signer']) {
+						logger('Unpacked: ' . json_encode($tmp,JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT),LOGGER_DATA,LOG_DEBUG);
 						$saved = json_encode($this->data,JSON_UNESCAPED_SLASHES);
 						$this->data = $tmp;
 						$this->data['signer'] = $ret['signer'];

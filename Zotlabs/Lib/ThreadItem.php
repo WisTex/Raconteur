@@ -503,15 +503,20 @@ class ThreadItem {
 			else {
 				$result['authors'][] = $profile_addr;
 			}
+			// Add any mentions from the immediate parent, unless they are mentions of the current viewer or duplicates
 			if ($item['term']) {
 				foreach ($item['term'] as $t) {
 					if ($t['ttype'] == TERM_MENTION) {
 						if (strpos($t['term'],'@') !== false) {
-							$result['authors'][] = $t['term'];
+							if ($observer && $t['term'] !== $observer['xchan_addr'] && ! in_array($t['term'],$result['authors'])) {
+								$result['authors'][] = $t['term'];
+							}
 						}
 						else {
 							$url = ((($position = strpos($t['url'],'url=')) !== false) ? urldecode(substr($t['url'],$position + 4)) : $t['url']);
-							$result['authors'][] = $url;
+							if ($observer && $url !== $observer['xchan_url'] && ! in_array($url,$result['authors'])) {
+								$result['authors'][] = $url;
+							}
 						}
 					}
 				}
