@@ -2248,6 +2248,8 @@ class Activity {
 			if ($p) {
 				$allowed = perm_is_allowed($channel['channel_id'],$observer_hash,'post_comments');
 				if (! $allowed) {
+					logger('rejected comment from ' . $observer_hash . ' for ' . $channel['channel_address']);
+					logger('rejected: ' . print_r($item,true), LOGGER_DATA);
 					// let the sender know we received their comment but we don't permit spam here.
 					self::send_rejection_activity($channel,$observer_hash,$item);
 				}

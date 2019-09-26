@@ -625,9 +625,6 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 				];
 				call_hooks('stream_item',$x);
 				
-				if($x['item']['blocked'])
-					continue;
-
 				$item = $x['item'];
 
 				$threadsid++;
@@ -805,15 +802,10 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 			$threads = array();
 			foreach($items as $item) {
 
-				// Check for any blocked authors
-
 
 				$x = [ 'mode' => $mode, 'item' => $item ];
 				call_hooks('stream_item',$x);
 				
-				if($x['item']['blocked'])
-					continue;
-
 				$item = $x['item'];
 
 				builtin_activity_puller($item, $conv_responses);

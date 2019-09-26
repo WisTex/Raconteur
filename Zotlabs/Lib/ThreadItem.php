@@ -50,7 +50,7 @@ class ThreadItem {
 				 * Only add those that will be displayed
 				 */
 
-				if((! visible_activity($item)) || array_key_exists('blocked',$item)) {
+				if(! visible_activity($item)) {
 					continue;
 				}
 
@@ -437,7 +437,9 @@ class ThreadItem {
 			'event' => $body['event'],
 			'has_tags' => $has_tags,
 			'reactions' => $this->reactions,
-// Item toolbar buttons
+
+			// Item toolbar buttons
+
 			'emojis'    => (($this->is_toplevel() && $this->is_commentable() && $observer) ? '1' : ''),
 			'like'      => $like,
 			'dislike'   => $dislike,
@@ -453,8 +455,9 @@ class ThreadItem {
 			'addtocal'  => (($has_event && ! $item['resource_id']) ? t('Add to Calendar') : ''),
 			'drop'      => $drop,
 			'multidrop' => ((feature_enabled($conv->get_profile_owner(),'multi_delete')) ? $multidrop : ''),
-                        'dropdown_extras' => $dropdown_extras,
-// end toolbar buttons
+			'dropdown_extras' => $dropdown_extras,
+			
+			// end toolbar buttons
 
 			'unseen_comments' => $unseen_comments,
 			'comment_count' => $total_children,
@@ -630,6 +633,7 @@ class ThreadItem {
 			logger('[WARN] Item::add_child : Item already exists ('. $item->get_id() .').', LOGGER_DEBUG);
 			return false;
 		}
+
 		/*
 		 * Only add what will be displayed
 		 */
@@ -646,6 +650,7 @@ class ThreadItem {
 	/**
 	 * Get a child by its ID
 	 */
+	 
 	public function get_child($id) {
 		foreach($this->get_children() as $child) {
 			if($child->get_id() == $id)
@@ -657,6 +662,7 @@ class ThreadItem {
 	/**
 	 * Get all our children
 	 */
+	 
 	public function get_children() {
 		return $this->children;
 	}
@@ -676,6 +682,7 @@ class ThreadItem {
 	/**
 	 * Remove our parent
 	 */
+	 
 	protected function remove_parent() {
 		$this->parent = null;
 		$this->conversation = null;
@@ -684,6 +691,7 @@ class ThreadItem {
 	/**
 	 * Remove a child
 	 */
+	 
 	public function remove_child($item) {
 		$id = $item->get_id();
 		foreach($this->get_children() as $key => $child) {
@@ -796,7 +804,7 @@ class ThreadItem {
 		$total = count($children);
 		if($total > 0) {
 			foreach($children as $child) {
-				if((! visible_activity($child->data)) || array_key_exists('blocked',$child->data)) {
+				if(! visible_activity($child->data)) {
 					continue;
 				}
 				if(! array_key_exists('sequence',$this->data)) {
@@ -815,7 +823,7 @@ class ThreadItem {
 		if($total > 0) {
 			$total = 0;
 			foreach($children as $child) {
-				if((! visible_activity($child->data)) || array_key_exists('author_blocked',$child->data)) {
+				if(! visible_activity($child->data)) {
 					continue;
 				}
 				if(intval($child->data['item_unseen']))
