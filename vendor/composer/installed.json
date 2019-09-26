@@ -706,17 +706,17 @@
     },
     {
         "name": "league/flysystem",
-        "version": "1.0.53",
-        "version_normalized": "1.0.53.0",
+        "version": "1.0.55",
+        "version_normalized": "1.0.55.0",
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/flysystem.git",
-            "reference": "08e12b7628f035600634a5e76d95b5eb66cea674"
+            "reference": "33c91155537c6dc899eacdc54a13ac6303f156e6"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/08e12b7628f035600634a5e76d95b5eb66cea674",
-            "reference": "08e12b7628f035600634a5e76d95b5eb66cea674",
+            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/33c91155537c6dc899eacdc54a13ac6303f156e6",
+            "reference": "33c91155537c6dc899eacdc54a13ac6303f156e6",
             "shasum": ""
         },
         "require": {
@@ -746,7 +746,7 @@
             "spatie/flysystem-dropbox": "Allows you to use Dropbox storage",
             "srmklive/flysystem-dropbox-v2": "Allows you to use Dropbox storage for PHP 5 applications"
         },
-        "time": "2019-06-18T20:09:29+00:00",
+        "time": "2019-08-24T11:17:19+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -792,17 +792,17 @@
     },
     {
         "name": "league/html-to-markdown",
-        "version": "4.8.1",
-        "version_normalized": "4.8.1.0",
+        "version": "4.8.2",
+        "version_normalized": "4.8.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/html-to-markdown.git",
-            "reference": "250d1bf45f80d15594fb6b316df777d6d4c97ad1"
+            "reference": "e747489191f8e9144a7270eb61f8b9516e99e413"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/250d1bf45f80d15594fb6b316df777d6d4c97ad1",
-            "reference": "250d1bf45f80d15594fb6b316df777d6d4c97ad1",
+            "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/e747489191f8e9144a7270eb61f8b9516e99e413",
+            "reference": "e747489191f8e9144a7270eb61f8b9516e99e413",
             "shasum": ""
         },
         "require": {
@@ -815,7 +815,7 @@
             "phpunit/phpunit": "4.*",
             "scrutinizer/ocular": "~1.1"
         },
-        "time": "2018-12-24T17:21:44+00:00",
+        "time": "2019-08-02T11:57:39+00:00",
         "bin": [
             "bin/html-to-markdown"
         ],
@@ -837,16 +837,16 @@
         ],
         "authors": [
             {
-                "name": "Nick Cernis",
-                "email": "nick@cern.is",
-                "homepage": "http://modernnerd.net",
-                "role": "Original Author"
-            },
-            {
                 "name": "Colin O'Dell",
                 "email": "colinodell@gmail.com",
                 "homepage": "https://www.colinodell.com",
                 "role": "Lead Developer"
+            },
+            {
+                "name": "Nick Cernis",
+                "email": "nick@cern.is",
+                "homepage": "http://modernnerd.net",
+                "role": "Original Author"
             }
         ],
         "description": "An HTML-to-markdown conversion helper for PHP",
@@ -2156,17 +2156,17 @@
     },
     {
         "name": "simplepie/simplepie",
-        "version": "1.5.2",
-        "version_normalized": "1.5.2.0",
+        "version": "1.5.3",
+        "version_normalized": "1.5.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/simplepie/simplepie.git",
-            "reference": "0e8fe72132dad765d25db4cabc69a91139af1263"
+            "reference": "173663382a9346acd53df60c7ffb20689c9cf1f6"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/simplepie/simplepie/zipball/0e8fe72132dad765d25db4cabc69a91139af1263",
-            "reference": "0e8fe72132dad765d25db4cabc69a91139af1263",
+            "url": "https://api.github.com/repos/simplepie/simplepie/zipball/173663382a9346acd53df60c7ffb20689c9cf1f6",
+            "reference": "173663382a9346acd53df60c7ffb20689c9cf1f6",
             "shasum": ""
         },
         "require": {
@@ -2185,7 +2185,7 @@
             "ext-mbstring": "",
             "mf2/mf2": "Microformat module that allows for parsing HTML for microformats"
         },
-        "time": "2018-08-02T05:43:58+00:00",
+        "time": "2019-09-22T23:21:30+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2227,23 +2227,23 @@
             "rss"
         ],
         "support": {
-            "source": "https://github.com/simplepie/simplepie/tree/1.5.2",
+            "source": "https://github.com/simplepie/simplepie/tree/1.5.3",
             "issues": "https://github.com/simplepie/simplepie/issues"
         }
     },
     {
         "name": "simshaun/recurr",
-        "version": "v4.0",
-        "version_normalized": "4.0.0.0",
+        "version": "v4.0.1",
+        "version_normalized": "4.0.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/simshaun/recurr.git",
-            "reference": "e7bccac5704b9710c8512fdd7cf78fb5445523a2"
+            "reference": "053c35aaba20a179aa62ead344bea4a9af2c0092"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/simshaun/recurr/zipball/e7bccac5704b9710c8512fdd7cf78fb5445523a2",
-            "reference": "e7bccac5704b9710c8512fdd7cf78fb5445523a2",
+            "url": "https://api.github.com/repos/simshaun/recurr/zipball/053c35aaba20a179aa62ead344bea4a9af2c0092",
+            "reference": "053c35aaba20a179aa62ead344bea4a9af2c0092",
             "shasum": ""
         },
         "require": {
@@ -2253,7 +2253,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.5"
         },
-        "time": "2019-02-24T03:15:15+00:00",
+        "time": "2019-08-06T22:18:04+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2263,8 +2263,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "Recurr\\": "src/Recurr/",
-                "Recurr\\Test\\": "tests/"
+                "Recurr\\": "src/Recurr/"
             }
         },
         "notification-url": "https://packagist.org/downloads/",
@@ -2274,8 +2273,8 @@
         "authors": [
             {
                 "name": "Shaun Simmons",
-                "email": "shaun@envysphere.com",
-                "homepage": "http://envysphere.com"
+                "email": "shaun@shaun.pub",
+                "homepage": "https://shaun.pub"
             }
         ],
         "description": "PHP library for working with recurrence rules",
@@ -2345,23 +2344,23 @@
     },
     {
         "name": "symfony/options-resolver",
-        "version": "v4.3.2",
-        "version_normalized": "4.3.2.0",
+        "version": "v4.3.4",
+        "version_normalized": "4.3.4.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/options-resolver.git",
-            "reference": "40762ead607c8f792ee4516881369ffa553fee6f"
+            "reference": "81c2e120522a42f623233968244baebd6b36cb6a"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/options-resolver/zipball/40762ead607c8f792ee4516881369ffa553fee6f",
-            "reference": "40762ead607c8f792ee4516881369ffa553fee6f",
+            "url": "https://api.github.com/repos/symfony/options-resolver/zipball/81c2e120522a42f623233968244baebd6b36cb6a",
+            "reference": "81c2e120522a42f623233968244baebd6b36cb6a",
             "shasum": ""
         },
         "require": {
             "php": "^7.1.3"
         },
-        "time": "2019-06-13T11:01:17+00:00",
+        "time": "2019-08-08T09:29:19+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2401,17 +2400,17 @@
     },
     {
         "name": "symfony/polyfill-ctype",
-        "version": "v1.11.0",
-        "version_normalized": "1.11.0.0",
+        "version": "v1.12.0",
+        "version_normalized": "1.12.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/polyfill-ctype.git",
-            "reference": "82ebae02209c21113908c229e9883c419720738a"
+            "reference": "550ebaac289296ce228a706d0867afc34687e3f4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/82ebae02209c21113908c229e9883c419720738a",
-            "reference": "82ebae02209c21113908c229e9883c419720738a",
+            "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/550ebaac289296ce228a706d0867afc34687e3f4",
+            "reference": "550ebaac289296ce228a706d0867afc34687e3f4",
             "shasum": ""
         },
         "require": {
@@ -2420,11 +2419,11 @@
         "suggest": {
             "ext-ctype": "For best performance"
         },
-        "time": "2019-02-06T07:57:58+00:00",
+        "time": "2019-08-06T08:03:45+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.11-dev"
+                "dev-master": "1.12-dev"
             }
         },
         "installation-source": "dist",
@@ -2442,12 +2441,12 @@
         ],
         "authors": [
             {
-                "name": "Symfony Community",
-                "homepage": "https://symfony.com/contributors"
+                "name": "Gert de Pagter",
+                "email": "BackEndTea@gmail.com"
             },
             {
-                "name": "Gert de Pagter",
-                "email": "backendtea@gmail.com"
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
             }
         ],
         "description": "Symfony polyfill for ctype functions",
@@ -2461,23 +2460,23 @@
     },
     {
         "name": "symfony/process",
-        "version": "v4.3.2",
-        "version_normalized": "4.3.2.0",
+        "version": "v4.3.4",
+        "version_normalized": "4.3.4.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/process.git",
-            "reference": "856d35814cf287480465bb7a6c413bb7f5f5e69c"
+            "reference": "e89969c00d762349f078db1128506f7f3dcc0d4a"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/process/zipball/856d35814cf287480465bb7a6c413bb7f5f5e69c",
-            "reference": "856d35814cf287480465bb7a6c413bb7f5f5e69c",
+            "url": "https://api.github.com/repos/symfony/process/zipball/e89969c00d762349f078db1128506f7f3dcc0d4a",
+            "reference": "e89969c00d762349f078db1128506f7f3dcc0d4a",
             "shasum": ""
         },
         "require": {
             "php": "^7.1.3"
         },
-        "time": "2019-05-30T16:10:05+00:00",
+        "time": "2019-08-26T08:26:39+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
