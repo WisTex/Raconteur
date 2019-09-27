@@ -1934,28 +1934,38 @@ function get_responses($conv_responses,$response_verbs,$ob,$item) {
 function get_response_button_text($v,$count) {
 	switch($v) {
 		case 'like':
-			return tt('Like','Likes',$count,'noun');
+			if(get_config('system','show_like_counts',true)) {
+				return $count . ' ' . tt('Like','Likes',$count,'noun');
+			}
+			else {
+				return t('Likes', 'noun');
+			}
 			break;
 		case 'dislike':
-			return tt('Dislike','Dislikes',$count,'noun');
+			if(get_config('system','show_like_counts',true)) {
+				return $count . ' ' . tt('Dislike','Dislikes',$count,'noun');
+			}
+			else {
+				return t('Dislikes', 'noun');
+			}
 			break;
 		case 'attendyes':
-			return tt('Attending','Attending',$count,'noun');
+			return $count . ' ' . tt('Attending','Attending',$count,'noun');
 			break;
 		case 'attendno':
-			return tt('Not Attending','Not Attending',$count,'noun');
+			return $count . ' ' . tt('Not Attending','Not Attending',$count,'noun');
 			break;
 		case 'attendmaybe':
-			return tt('Undecided','Undecided',$count,'noun');
+			return $count . ' ' . tt('Undecided','Undecided',$count,'noun');
 			break;
 		case 'agree':
-			return tt('Agree','Agrees',$count,'noun');
+			return $count . ' ' . tt('Agree','Agrees',$count,'noun');
 			break;
 		case 'disagree':
-			return tt('Disagree','Disagrees',$count,'noun');
+			return $count . ' ' . tt('Disagree','Disagrees',$count,'noun');
 			break;
 		case 'abstain':
-			return tt('Abstain','Abstains',$count,'noun');
+			return $count . ' ' . tt('Abstain','Abstains',$count,'noun');
 			break;
 		default:
 			return '';

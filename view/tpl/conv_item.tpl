@@ -210,13 +210,13 @@
 						{{foreach $item.responses as $verb=>$response}}
 						{{if $response.count}}
 						<div class="btn-group">
-							<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle"{{if $response.modal}} data-toggle="modal" data-target="#{{$verb}}Modal-{{$item.id}}"{{else}} data-toggle="dropdown"{{/if}} id="wall-item-{{$verb}}-{{$item.id}}">{{$response.count}} {{$response.button}}</button>
+							<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle"{{if $response.modal}} data-toggle="modal" data-target="#{{$verb}}Modal-{{$item.id}}"{{else}} data-toggle="dropdown"{{/if}} id="wall-item-{{$verb}}-{{$item.id}}">{{$response.button}}</button>
 							{{if $response.modal}}
 							<div class="modal" id="{{$verb}}Modal-{{$item.id}}">
 								<div class="modal-dialog">
 									<div class="modal-content">
 										<div class="modal-header">
-											<h4 class="modal-title">{{$response.count}} {{$response.button}}</h4>
+											<h4 class="modal-title">{{$response.button}}</h4>
 											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 										</div>
 										<div class="modal-body response-list">
