@@ -593,6 +593,10 @@ function photo_new_resource() {
 }
 
 
+function new_token() {
+	return random_string(mt_rand(48,64));	
+}
+
 /**
  * @brief Generate a unique ID.
  *

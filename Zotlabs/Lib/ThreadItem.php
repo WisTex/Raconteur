@@ -254,12 +254,22 @@ class ThreadItem {
 		} else {
 			$like_list_part = '';
 		}
-		$like_button_label = tt('Like','Likes',$like_count,'noun');
-
+		if(get_config('system','show_like_counts',true)) {
+			$like_button_label = tt('Like','Likes',$like_count,'noun');
+		}
+		else {
+			$like_button_label = t('Likes','noun');
+		}
 
 		$dislike_count = ((x($conv_responses['dislike'],$item['mid'])) ? $conv_responses['dislike'][$item['mid']] : '');
 		$dislike_list = ((x($conv_responses['dislike'],$item['mid'])) ? $conv_responses['dislike'][$item['mid'] . '-l'] : '');
-		$dislike_button_label = tt('Dislike','Dislikes',$dislike_count,'noun');
+		if(get_config('system','show_like_counts',true)) {
+				$dislike_button_label = tt('Dislike','Dislikes',$dislike_count,'noun');
+		}
+		else {
+				$dislike_button_label = t('Dislikes','noun');
+		}
+		
 		if (($dislike_list) && (count($dislike_list) > MAX_LIKERS)) {
 			$dislike_list_part = array_slice($dislike_list, 0, MAX_LIKERS);
 			array_push($dislike_list_part, '<a class="dropdown-item" href="#" data-toggle="modal" data-target="#dislikeModal-' . $this->get_id() . '"><b>' . t('View all') . '</b></a>');
@@ -473,7 +483,7 @@ class ThreadItem {
 			'like_modal_title' => t('Likes','noun'),
 			'dislike_modal_title' => t('Dislikes','noun'),
 			'dislike_count' => $dislike_count,
-			'dislike_list' => $dislkie_list,
+			'dislike_list' => $dislike_list,
 			'dislike_list_part' => $dislike_list_part,
 			'dislike_button_label' => $dislike_button_label,
 			'modal_dismiss' => t('Close'),
