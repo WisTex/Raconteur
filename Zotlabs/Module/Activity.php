@@ -9,12 +9,17 @@ use Zotlabs\Lib\Activity as ZlibActivity;
 class Activity extends Controller {
 
 	function init() {
-
+	
 		if (ActivityStreams::is_as_request()) {
 			$item_id = argv(1);
 
 			if (! $item_id) {
 				return;
+			}
+
+			$bear = ZlibActivity::bear_from_request();
+			if ($bear) {
+				logger('bear: ' . $bear, LOGGER_DEBUG);
 			}
 
 			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 

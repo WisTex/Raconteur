@@ -76,7 +76,10 @@ class Activity {
 							$token = substr($p,2);
 						}
 					}
+					// re-parse the URL because it changed and we need the host in the next section
+					$m = parse_url($url);
 				}
+
 			}
 
 			$headers = [
@@ -2970,6 +2973,18 @@ class Activity {
 		
 	}
 
+	static function bear_from_request() {
+
+		foreach ( [ 'REDIRECT_REMOTE_USER', 'HTTP_AUTHORIZATION' ] as $s ) {		
+			$auth = ((array_key_exists($s,$_SERVER) && strpos($_SERVER[$s],'Bearer ') === 0)
+				? str_replace('Bearer ', EMPTY_STR, $_SERVER[$s])
+				: EMPTY_STR
+			);
+			break;
+		}
+
+		return (($auth) ? 'bear:?u=' . z_root() . $_SERVER['REQUEST_URI'] . '&t=' . $auth : EMPTY_STR);
+	}
 
 
 }
