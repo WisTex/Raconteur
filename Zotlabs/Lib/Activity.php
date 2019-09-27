@@ -978,7 +978,11 @@ class Activity {
 				}
 				
 				if ($locations) {
-					$ret['zot:alsoKnownAs'] = $locations;
+					if (count($locations) === 1) {
+						$locations = array_shift($locations);
+					}
+					$ret['copiedTo'] = $locations;
+					$ret['alsoKnownAs'] = $locations;
 				}
 				
 				$cp = get_cover_photo($c['channel_id'],'array');

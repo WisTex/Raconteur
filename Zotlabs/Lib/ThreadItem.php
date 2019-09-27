@@ -941,21 +941,41 @@ class ThreadItem {
 		// present friend-of-friend conversations from hyperdrive as relayed posts from the first friend
 		// we find among the respondents.
 		
-		if($this->is_toplevel() && (! $this->data['owner']['abook_id'])) {
-			$children = $this->data['children'];
-			if($children) {
-				foreach($children as $child) {
-					if($child['author']['abook_id'] && (! intval($child['author']['abook_self']))) {
-						$this->owner_url = chanlink_hash($child['author']['xchan_hash']);
-						$this->owner_photo = $child['author']['xchan_photo_m'];
-						$this->owner_name = $child['author']['xchan_name'];
-						$this->wall_to_wall = true;
-						break;
-					}
+		if ($this->is_toplevel() && (! $this->data['owner']['abook_id'])) {
+			if ($this->data['children']) {
+				$friend = $this->find_a_friend($this->data['children']);
+				if ($friend) {
+					$this->owner_url = $friend['url'];
+					$this->owner_photo = $friend['photo'];
+					$this->owner_name = $friend['name'];
+					$this->wall_to_wall = true;
 				}
 			}
 		}
 	}
+
+	private function find_a_friend($items) {
+		$ret = null;
+		if ($items) {
+			foreach ($items as $child) {
+				if ($child['author']['abook_id'] && (! intval($child['author']['abook_self']))) {
+					return [
+						'url'   => chanlink_hash($child['author']['xchan_hash']),
+						'photo' => $child['author']['xchan_photo_m'],
+						'name'  => $child['author']['xchan_name']
+					];
+					if ($child['children']) {
+						$ret = $this->find_a_friend($child['children']);
+						if ($ret) {
+							break;
+						}
+					}
+				}
+			}
+		}
+		return $ret;
+	}
+
 
 	private function is_wall_to_wall() {
 		return $this->wall_to_wall;
