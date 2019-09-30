@@ -36,7 +36,9 @@ class ActivityStreams {
 	/**
 	 * @brief Constructor for ActivityStreams.
 	 *
-	 * Takes a JSON string as parameter, decodes it and sets up this object.
+	 * Takes a JSON string or previously decode activity array as parameter,
+	 * decodes it and sets up this object/activity, fetching any required attributes
+	 * which were only referenced by @id/URI.
 	 *
 	 * @param string $string
 	 */
@@ -47,6 +49,7 @@ class ActivityStreams {
 
 		if (is_array($string)) {
 			$this->data = $string;
+			$this->raw = json_encode($string,JSON_UNESCAPED_SLASHES);
 		}
 		else {
 			$this->data = json_decode($string, true);
