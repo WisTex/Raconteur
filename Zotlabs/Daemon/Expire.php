@@ -27,11 +27,6 @@ class Expire {
 			db_utcnow(), db_quoteinterval('36 DAY')
 		);
 
-		/** @FIXME make this optional as it could have a performance impact on large sites */
-
-		if (intval(get_config('system', 'optimize_items')))
-			q("optimize table item");
-
 		logger('expire: start', LOGGER_DEBUG);
 
 		$site_expire = intval(get_config('system', 'default_expire_days'));

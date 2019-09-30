@@ -10,6 +10,7 @@ use Epub;
  * @brief Thumbnail creation for epub files.
  *
  */
+
 class Epubthumb {
 
 	/**
@@ -18,6 +19,7 @@ class Epubthumb {
 	 * @param string $type MimeType
 	 * @return boolean
 	 */
+
 	function Match($type) {
 		return(($type === 'application/epub+zip') ? true : false );
 	}
@@ -30,6 +32,7 @@ class Epubthumb {
 	 * @param number $height (optional) default 300
 	 * @param number $width (optional) default 300
 	 */
+	 
 	function Thumb($attach, $preview_style, $height = 300, $width = 300) {
 
 		$photo = false;
