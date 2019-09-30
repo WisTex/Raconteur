@@ -17,18 +17,40 @@ class Activity extends Controller {
 				return;
 			}
 
-			$bear = ZlibActivity::bear_from_request();
+			$ob_authorise = false;
+			$item_uid = 0;
+			
+			$bear = ZlibActivity::token_from_request();
 			if ($bear) {
 				logger('bear: ' . $bear, LOGGER_DEBUG);
+				$t = q("select item.uid, iconfig.v from iconfig left join item on iid = item.id where cat = 'ocaps' and item.uuid = '%s'",
+					dbesc($item_id)
+				);
+				if ($t) {
+					foreach ($t as $token) {
+						if ($token['v'] === $bear) {
+							$ob_authorize = true;
+							$item_uid = $token['uid'];
+							break;
+						}
+					}
+				}
 			}
 
 			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 
 				and item.item_delayed = 0 and item.item_blocked = 0 ";
 
-			// if passed an owner_id of 0, we force "guest access" or observer checking
-			$sql_extra = item_permissions_sql(0);
-
-			$r = q("select * from item where uuid = '%s' $item_normal $sql_extra limit 1",
+			// if passed an owner_id of 0 to item_permissions_sql(), we force "guest access" or observer checking
+			// Give ocap tokens priority
+			
+			if ($ob_authorize) {
+				$sql_extra = " and item.uid = " . intval($token['uid']) . " ";
+			}
+			else {
+				$sql_extra = item_permissions_sql(0);
+			}
+			
+			$r = q("select * from item where uuid = '%s' $item_normal $sql_extra and item_deleted = 0 limit 1",
 				dbesc($item_id)
 			);
 			if (! $r) {
@@ -52,7 +74,6 @@ class Activity extends Controller {
 				'https://w3id.org/security/v1',
 				z_root() . ZOT_APSCHEMA_REV
 				]], ZlibActivity::encode_activity($items[0]));
-
 
 
 			$headers = [];

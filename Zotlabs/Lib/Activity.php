@@ -1015,20 +1015,11 @@ class Activity {
     		}
 		}
 		else {
-
-			$ret['inbox']       = z_root() . '/nullbox';
-			if ($c) {
-				$ret['outbox']      = z_root() . '/outbox/'    . $c['channel_address'];
-			}
-			else {
-				$ret['outbox']      = z_root() . '/nullbox';
-			}
 			$ret['publicKey'] = [
 				'id'           => $p['xchan_url'],
 				'owner'        => $p['xchan_url'],
 				'publicKeyPem' => $p['xchan_pubkey']
 			];
-
 		}
 
 		$arr = [ 'xchan' => $p, 'encoded' => $ret, 'activitypub' => $activitypub ];
@@ -1603,219 +1594,6 @@ class Activity {
 		return (($a['width'] > $b['width']) ? -1 : 1);
 	}
 
-	static function create_note($channel,$observer_hash,$act) {
-
-		$s = [];
-
-		// Mastodon only allows visibility in public timelines if the public inbox is listed in the 'to' field.
-		// They are hidden in the public timeline if the public inbox is listed in the 'cc' field.
-		// This is not part of the activitypub protocol - we might change this to show all public posts in pubstream at some point.
-		$pubstream = ((is_array($act->obj) && array_key_exists('to', $act->obj) && in_array(ACTIVITY_PUBLIC_INBOX, $act->obj['to'])) ? true : false);
-		$is_sys_channel = is_sys_channel($channel['channel_id']);
-
-		$parent = ((array_key_exists('inReplyTo',$act->obj)) ? urldecode($act->obj['inReplyTo']) : '');
-		if ($parent) {
-
-			$r = q("select * from item where uid = %d and ( mid = '%s' or  mid = '%s' ) limit 1",
-				intval($channel['channel_id']),
-				dbesc($parent),
-				dbesc(basename($parent))
-			);
-
-			if (! $r) {
-				logger('parent not found.');
-				return;
-			}
-
-			if ($r[0]['owner_xchan'] === $channel['channel_hash']) {
-				if (! perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') && ! ($is_sys_channel && $pubstream)) {
-					logger('no comment permission.');
-					return;
-				}
-			}
-
-			$s['parent_mid'] = $r[0]['mid'];
-			$s['owner_xchan'] = $r[0]['owner_xchan'];
-			$s['author_xchan'] = $observer_hash;
-
-		}
-		else {
-			if (! perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') && ! ($is_sys_channel && $pubstream)) {
-				logger('no permission');
-				return;
-			}
-			$s['owner_xchan'] = $s['author_xchan'] = $observer_hash;
-		}
-	
-		$abook = q("select * from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
-			dbesc($observer_hash),
-			intval($channel['channel_id'])
-		);
-	
-		if (is_array($act->obj)) {
-			$content = self::get_content($act->obj);
-		}
-
-		if (! $content) {
-			logger('no content');
-			return;
-		}
-
-		$s['aid'] = $channel['channel_account_id'];
-		$s['uid'] = $channel['channel_id'];
-		$s['mid'] = urldecode($act->obj['id']);
-		$s['plink'] = urldecode($act->obj['id']);
-
-
-		if ($act->data['published']) {
-			$s['created'] = datetime_convert('UTC','UTC',$act->data['published']);
-		}
-		elseif ($act->obj['published']) {
-			$s['created'] = datetime_convert('UTC','UTC',$act->obj['published']);
-		}
-		if ($act->data['updated']) {
-			$s['edited'] = datetime_convert('UTC','UTC',$act->data['updated']);
-		}
-		elseif ($act->obj['updated']) {
-			$s['edited'] = datetime_convert('UTC','UTC',$act->obj['updated']);
-		}
-
-		if (! $s['created'])
-			$s['created'] = datetime_convert();
-
-		if (! $s['edited'])
-			$s['edited'] = $s['created'];
-
-
-		if (! $s['parent_mid'])
-			$s['parent_mid'] = $s['mid'];
-
-	
-		$s['title']    = self::bb_content($content,'name');
-		$s['summary']  = self::bb_content($content,'summary'); 
-		$s['body']     = self::bb_content($content,'content');
-		$s['verb']     = ACTIVITY_POST;
-		$s['obj_type'] = ACTIVITY_OBJ_NOTE;
-
-		$generator = $act->get_property_obj('generator');
-		if (! $generator)
-			$generator = $act->get_property_obj('generator',$act->obj);
-
-		if ($generator && array_key_exists('type',$generator) 
-			&& in_array($generator['type'], ['Application', 'Service' ] ) && array_key_exists('name',$generator)) {
-			$s['app'] = escape_tags($generator['name']);
-		}
-
-		if ($channel['channel_system']) {
-			if (! MessageFilter::evaluate($s,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
-				logger('post is filtered');
-				return;
-			}
-		}
-
-
-		if (! post_is_importable($channel['channel_id'],$s,$abook[0])) {
-			logger('post is filtered');
-			return;
-		}
-
-		if ($act->obj['conversation']) {
-			set_iconfig($s,'ostatus','conversation',$act->obj['conversation'],1);
-		}
-
-		$a = self::decode_taxonomy($act->obj);
-		if ($a) {
-			$s['term'] = $a;
-		}
-
-		$a = self::decode_attachment($act->obj);
-		if ($a) {
-			$s['attach'] = $a;
-		}
-
-		if ($act->obj['type'] === 'Note' && $s['attach']) {
-			$s['body'] .= self::bb_attach($s['attach'],$s['body']);
-		}
-
-		// we will need a hook here to extract magnet links e.g. peertube
-		// right now just link to the largest mp4 we find that will fit in our
-		// standard content region
-
-		if ($act->obj['type'] === 'Video') {
-
-			$vtypes = [
-				'video/mp4',
-				'video/ogg',
-				'video/webm'
-			];
-
-			$mps = [];
-			if (array_key_exists('url',$act->obj) && is_array($act->obj['url'])) {
-				foreach ($act->obj['url'] as $vurl) {
-					if (in_array($vurl['mimeType'], $vtypes)) {
-						if (! array_key_exists('width',$vurl)) {
-							$vurl['width'] = 0;
-						}
-						$mps[] = $vurl;
-					}
-				}
-			}
-			if ($mps) {
-				usort($mps,[ __CLASS__, 'vid_sort' ]);
-				foreach ($mps as $m) {
-					if (intval($m['width']) < 500) {
-						$s['body'] .= "\n\n" . '[video]' . $m['href'] . '[/video]';
-						break;
-					}
-				}
-			}
-		}
-
-		if ($act->recips && (! in_array(ACTIVITY_PUBLIC_INBOX,$act->recips)))
-			$s['item_private'] = 1;
-
-		set_iconfig($s,'activitypub','recips',$act->raw_recips);
-		if ($parent) {
-			set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
-		}
-
-		$x = null;
-
-		$r = q("select created, edited from item where mid = '%s' and uid = %d limit 1",
-			dbesc($s['mid']),
-			intval($s['uid'])
-		);
-		if ($r) {
-			if ($s['edited'] > $r[0]['edited']) {
-				$x = item_store_update($s);
-			}
-			else {
-				return;
-			}
-		}
-		else {
-			$x = item_store($s);
-		}
-
-		if (is_array($x) && $x['item_id']) {
-			if ($parent) {
-				if ($s['owner_xchan'] === $channel['channel_hash']) {
-					// We are the owner of this conversation, so send all received comments back downstream
-					Master::Summon(array('Notifier','comment-import',$x['item_id']));
-				}
-				$r = q("select * from item where id = %d limit 1",
-					intval($x['item_id'])
-				);
-				if ($r) {
-					send_status_notifications($x['item_id'],$r[0]);
-				}
-			}
-			sync_an_item($channel['channel_id'],$x['item_id']);
-		}
-
-	}
-
-
 	static function share_bb($obj) {
 		// @fixme - error check and set defaults
 
@@ -2253,12 +2031,14 @@ class Activity {
 				intval($channel['channel_id'])
 			);
 			if ($p) {
-				$allowed = perm_is_allowed($channel['channel_id'],$observer_hash,'post_comments');
+				// check permissions against the author, not the sender
+				$allowed = perm_is_allowed($channel['channel_id'],$item['author_xchan'],'post_comments');
 				if (! $allowed) {
-					logger('rejected comment from ' . $observer_hash . ' for ' . $channel['channel_address']);
+					logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
 					logger('rejected: ' . print_r($item,true), LOGGER_DATA);
 					// let the sender know we received their comment but we don't permit spam here.
-					self::send_rejection_activity($channel,$observer_hash,$item);
+					self::send_rejection_activity($channel,$item['author_xchan'],$item);
+					return;
 				}
 			}
 			else {
@@ -2482,6 +2262,13 @@ class Activity {
 				break;
 			}
 			$a = new ActivityStreams($n);
+			if ($a->type === 'Announce' && is_array($a->obj)
+				&& array_key_exists('object',$a->obj) && array_key_exists('actor',$a->obj)) {
+				// This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
+				// Reparse the encapsulated Activity and use that instead
+				logger('relayed activity',LOGGER_DEBUG);
+				$a = new ActivityStreams($a->obj);
+			}
 
 			logger($a->debug());
 
@@ -2531,278 +2318,6 @@ class Activity {
 
 		return false;
 	}
-
-
-
-
-
-	static function announce_note($channel,$observer_hash,$act) {
-
-		$s = [];
-
-		$is_sys_channel = is_sys_channel($channel['channel_id']);
-
-		// Mastodon only allows visibility in public timelines if the public inbox is listed in the 'to' field.
-		// They are hidden in the public timeline if the public inbox is listed in the 'cc' field.
-		// This is not part of the activitypub protocol - we might change this to show all public posts in pubstream at some point.
-		$pubstream = ((is_array($act->obj) && array_key_exists('to', $act->obj) && in_array(ACTIVITY_PUBLIC_INBOX, $act->obj['to'])) ? true : false);
-
-		if (! perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') && ! ($is_sys_channel && $pubstream)) {
-			logger('no permission');
-			return;
-		}
-
-		if (is_array($act->obj)) {
-			$content = self::get_content($act->obj);
-		}
-		if (! $content) {
-			logger('no content');
-			return;
-		}
-
-		$s['owner_xchan'] = $s['author_xchan'] = $observer_hash;
-
-		$s['aid'] = $channel['channel_account_id'];
-		$s['uid'] = $channel['channel_id'];
-		$s['mid'] = urldecode($act->obj['id']);
-		$s['plink'] = urldecode($act->obj['id']);
-
-		if (! $s['created'])
-			$s['created'] = datetime_convert();
-
-		if (! $s['edited'])
-			$s['edited'] = $s['created'];
-
-
-		$s['parent_mid'] = $s['mid'];
-
-		$s['verb']     = ACTIVITY_POST;
-		$s['obj_type'] = ACTIVITY_OBJ_NOTE;
-		$s['app']      = t('ActivityPub');
-
-		if ($channel['channel_system']) {
-			if (! MessageFilter::evaluate($s,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
-				logger('post is filtered');
-				return;
-			}
-		}
-
-		$abook = q("select * from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
-			dbesc($observer_hash),
-			intval($channel['channel_id'])
-		);
-
-		if (! post_is_importable($channel['channel_id'],$s,$abook[0])) {
-			logger('post is filtered');
-			return;
-		}
-
-		if ($act->obj['conversation']) {
-			set_iconfig($s,'ostatus','conversation',$act->obj['conversation'],1);
-		}
-
-		$a = self::decode_taxonomy($act->obj);
-		if ($a) {
-			$s['term'] = $a;
-		}
-
-		$a = self::decode_attachment($act->obj);
-		if ($a) {
-			$s['attach'] = $a;
-		}
-
-		$body = "[share author='" . urlencode($act->sharee['name']) . 
-			"' profile='" . $act->sharee['url'] . 
-			"' avatar='" . $act->sharee['photo_s'] . 
-			"' link='" . ((is_array($act->obj['url'])) ? $act->obj['url']['href'] : $act->obj['url']) . 
-			"' auth='" . ((is_matrix_url($act->obj['url'])) ? 'true' : 'false' ) . 
-			"' posted='" . $act->obj['published'] . 
-			"' message_id='" . $act->obj['id'] . 
-		"']";
-
-		if ($content['name'])
-			$body .= self::bb_content($content,'name') . "\r\n";
-
-		$body .= self::bb_content($content,'content');
-
-		if ($act->obj['type'] === 'Note' && $s['attach']) {
-			$body .= self::bb_attach($s['attach'],body);
-		}
-
-		$body .= "[/share]";
-
-		$s['title']    = self::bb_content($content,'name');
-		$s['body']     = $body;
-
-		if ($act->recips && (! in_array(ACTIVITY_PUBLIC_INBOX,$act->recips)))
-			$s['item_private'] = 1;
-
-		set_iconfig($s,'activitypub','recips',$act->raw_recips);
-
-		$r = q("select created, edited from item where mid = '%s' and uid = %d limit 1",
-			dbesc($s['mid']),
-			intval($s['uid'])
-		);
-		if ($r) {
-			if ($s['edited'] > $r[0]['edited']) {
-				$x = item_store_update($s);
-			}
-			else {
-				return;
-			}
-		}
-		else {
-			$x = item_store($s);
-		}
-
-
-		if (is_array($x) && $x['item_id']) {
-			if ($parent) {
-				if ($s['owner_xchan'] === $channel['channel_hash']) {
-					// We are the owner of this conversation, so send all received comments back downstream
-					Master::Summon(array('Notifier','comment-import',$x['item_id']));
-				}
-				$r = q("select * from item where id = %d limit 1",
-					intval($x['item_id'])
-				);
-				if ($r) {
-					send_status_notifications($x['item_id'],$r[0]);
-				}
-			}
-			sync_an_item($channel['channel_id'],$x['item_id']);
-		}
-
-
-	}
-
-	static function like_note($channel,$observer_hash,$act) {
-
-		$s = [];
-
-		$parent = $act->obj['id'];
-	
-		if ($act->type === 'Like')
-			$s['verb'] = ACTIVITY_LIKE;
-		if ($act->type === 'Dislike')
-			$s['verb'] = ACTIVITY_DISLIKE;
-
-		if (! $parent)
-			return;
-
-		$r = q("select * from item where uid = %d and ( mid = '%s' or  mid = '%s' ) limit 1",
-			intval($channel['channel_id']),
-			dbesc($parent),
-			dbesc(urldecode(basename($parent)))
-		);
-
-		if (! $r) {
-			logger('parent not found.');
-			return;
-		}
-
-		xchan_query($r);
-		$parent_item = $r[0];
-
-		if ($parent_item['owner_xchan'] === $channel['channel_hash']) {
-			if (! perm_is_allowed($channel['channel_id'],$observer_hash,'post_comments')) {
-				logger('no comment permission.');
-				return;
-			}
-		}
-
-		if ($parent_item['mid'] === $parent_item['parent_mid']) {
-			$s['parent_mid'] = $parent_item['mid'];
-		}
-		else {
-			$s['thr_parent'] = $parent_item['mid'];
-			$s['parent_mid'] = $parent_item['parent_mid'];
-		}
-
-		$s['owner_xchan'] = $parent_item['owner_xchan'];
-		$s['author_xchan'] = $observer_hash;
-	
-		$s['aid'] = $channel['channel_account_id'];
-		$s['uid'] = $channel['channel_id'];
-		$s['mid'] = $act->id;
-
-		if (! $s['parent_mid'])
-			$s['parent_mid'] = $s['mid'];
-	
-
-		$post_type = (($parent_item['resource_type'] === 'photo') ? t('photo') : t('status'));
-
-		$links = array(array('rel' => 'alternate','type' => 'text/html', 'href' => $parent_item['plink']));
-		$objtype = (($parent_item['resource_type'] === 'photo') ? ACTIVITY_OBJ_PHOTO : ACTIVITY_OBJ_NOTE );
-
-		$body = $parent_item['body'];
-
-		$z = q("select * from xchan where xchan_hash = '%s' limit 1",
-			dbesc($parent_item['author_xchan'])
-		);
-		if ($z)
-			$item_author = $z[0];		
-
-		$object = json_encode(array(
-			'type'    => $post_type,
-			'id'      => $parent_item['mid'],
-			'parent'  => (($parent_item['thr_parent']) ? $parent_item['thr_parent'] : $parent_item['parent_mid']),
-			'link'    => $links,
-			'title'   => $parent_item['title'],
-			'content' => $parent_item['body'],
-			'created' => $parent_item['created'],
-			'edited'  => $parent_item['edited'],
-			'author'  => array(
-				'name'     => $item_author['xchan_name'],
-				'address'  => $item_author['xchan_addr'],
-				'guid'     => $item_author['xchan_guid'],
-				'guid_sig' => $item_author['xchan_guid_sig'],
-				'link'     => array(
-					array('rel' => 'alternate', 'type' => 'text/html', 'href' => $item_author['xchan_url']),
-					array('rel' => 'photo', 'type' => $item_author['xchan_photo_mimetype'], 'href' => $item_author['xchan_photo_m'])),
-				),
-			), JSON_UNESCAPED_SLASHES
-		);
-
-		if ($act->type === 'Like')
-			$bodyverb = t('%1$s likes %2$s\'s %3$s');
-		if ($act->type === 'Dislike')
-			$bodyverb = t('%1$s doesn\'t like %2$s\'s %3$s');
-
-		$ulink = '[url=' . $item_author['xchan_url'] . ']' . $item_author['xchan_name'] . '[/url]';
-		$alink = '[url=' . $parent_item['author']['xchan_url'] . ']' . $parent_item['author']['xchan_name'] . '[/url]';
-		$plink = '[url='. z_root() . '/display/' . urlencode($act->id) . ']' . $post_type . '[/url]';
-		$s['body'] =  sprintf( $bodyverb, $ulink, $alink, $plink );
-
-		$s['app']  = t('ActivityPub');
-
-		// set the route to that of the parent so downstream hubs won't reject it.
-
-		$s['route'] = $parent_item['route'];
-		$s['item_private'] = $parent_item['item_private'];
-		$s['obj_type'] = $objtype;
-		$s['obj'] = $object;
-
-		if ($act->obj['conversation']) {
-			set_iconfig($s,'ostatus','conversation',$act->obj['conversation'],1);
-		}
-
-		if ($act->recips && (! in_array(ACTIVITY_PUBLIC_INBOX,$act->recips)))
-			$s['item_private'] = 1;
-
-		set_iconfig($s,'activitypub','recips',$act->raw_recips);
-
-		$result = item_store($s);
-
-		if ($result['success']) {
-			// if the message isn't already being relayed, notify others
-			if (intval($parent_item['item_origin']))
-					Master::Summon(array('Notifier','comment-import',$result['item_id']));
-			sync_an_item($channel['channel_id'],$result['item_id']);
-		}
-
-		return;
-	}
-
 
 	static function bb_attach($attach,$body) {
 
@@ -2973,17 +2488,28 @@ class Activity {
 		
 	}
 
-	static function bear_from_request() {
+	// Find either an Authorization: Bearer token or 'token' request variable
+	// in the current web request and return it
+
+	static function token_from_request() {
 
 		foreach ( [ 'REDIRECT_REMOTE_USER', 'HTTP_AUTHORIZATION' ] as $s ) {		
 			$auth = ((array_key_exists($s,$_SERVER) && strpos($_SERVER[$s],'Bearer ') === 0)
 				? str_replace('Bearer ', EMPTY_STR, $_SERVER[$s])
 				: EMPTY_STR
 			);
-			break;
+			if ($auth) {
+				break;
+			}
 		}
 
-		return (($auth) ? 'bear:?u=' . z_root() . $_SERVER['REQUEST_URI'] . '&t=' . $auth : EMPTY_STR);
+		if (! $auth) {
+			if (array_key_exists('token',$_REQUEST) && $_REQUEST['token']) {
+				$auth = $_REQUEST['token'];
+			}
+		}
+
+		return $auth;
 	}
 
 

@@ -43,6 +43,13 @@ class Inbox extends Controller {
 		$hsig = HTTPSig::verify($data);
 
 		$AS = new ActivityStreams($data);
+		if ($AS->is_valid() && $AS->type === 'Announce' && is_array($AS->obj)
+			&& array_key_exists('object',$AS->obj) && array_key_exists('actor',$AS->obj)) {
+			// This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
+			// Reparse the encapsulated Activity and use that instead
+			logger('relayed activity',LOGGER_DEBUG);
+			$AS = new ActivityStreams($AS->obj);
+		}
 
 		//logger('debug: ' . $AS->debug());
 
@@ -59,6 +66,7 @@ class Inbox extends Controller {
 			}
 			return;
 		}
+		
 
 		// $observer_hash in this case is the sender
 
