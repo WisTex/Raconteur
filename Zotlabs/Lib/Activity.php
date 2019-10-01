@@ -40,6 +40,8 @@ class Activity {
 			return self::fetch_thing($x); 
 		}
 
+		call_hooks('encode_object',$x);
+
 		return $x;
 
 	}
@@ -1056,6 +1058,7 @@ class Activity {
 			'http://activitystrea.ms/schema/1.0/unfollow'  => 'Unfollow',
 		];
 
+		call_hooks('activity_mapper',$acts);
 
 		if (array_key_exists($verb,$acts) && $acts[$verb]) {
 			return $acts[$verb];
@@ -1103,6 +1106,8 @@ class Activity {
 			'http://purl.org/zot/activity/mood'                 => 'zot:Mood',
 		
 		];
+
+		call_hooks('activity_obj_mapper',$objs);
 
 		if (array_key_exists($obj,$objs)) {
 			return $objs[$obj];
@@ -2008,6 +2013,15 @@ class Activity {
 			set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
 		}
 
+		$hookinfo = [
+			'act' => $act,
+			's' => $s
+		];
+
+		call_hooks('decode_note',$hookinfo);
+
+		$s = $hookinfo['s'];
+
 		return $s;
 
 	}
@@ -2304,10 +2318,22 @@ class Activity {
 				break;
 			}
 
-			array_unshift($p,[ $a, $item ]);
+			$hookinfo = [
+			        'a' => $a,
+			        'item' => $item
+			];
+
+			call_hooks('fetch_and_store',$hookinfo);
+
+			$item = $hookinfo['item'];
+
+			if($item) {
+
+				array_unshift($p,[ $a, $item ]);
 			
-			if ($item['parent_mid'] === $item['mid'] || count($p) > 30) {
-				break;
+				if ($item['parent_mid'] === $item['mid'] || count($p) > 30) {
+					break;
+				}
 			}
 
 			$current_act = $a;
