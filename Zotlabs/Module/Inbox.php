@@ -1,6 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
@@ -24,6 +25,8 @@ class Inbox extends Controller {
 
 		$sys_disabled = ((Config::Get('system','disable_discover_tab') || Config::Get('system','disable_activitypub_discover_tab'))  ? true : false);
 
+		logger('inbox_args: ' . print_r(App::$argv,true));
+		
 		$is_public = false;
 
 		if (argc() == 1 || argv(1) === '[public]') {
@@ -176,6 +179,8 @@ class Inbox extends Controller {
 			if (! get_pconfig($channel['channel_id'],'system','activitypub',true)) {
 				continue;
 			}
+			
+			logger('inbox_channel: ' . $channel['channel_address'],LOGGER_DEBUG);
 
 			switch ($AS->type) {
 				case 'Follow':

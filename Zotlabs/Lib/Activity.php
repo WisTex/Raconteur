@@ -724,37 +724,15 @@ class Activity {
 			}
 		}
 
-		if ($i['mid'] != $i['parent_mid']) {
+		if ($i['mid'] !== $i['parent_mid']) {
+			$reply = true;
 			$ret['inReplyTo'] = $i['thr_parent'];
 			$cnv = get_iconfig($i['parent'],'ostatus','conversation');
 			if (! $cnv) {
 				$cnv = $ret['parent_mid'];
 			}
-
-			$reply = true;
-
-			if ($i['item_private']) {
-				$d = q("select xchan_url, xchan_addr, xchan_name from item left join xchan on xchan_hash = author_xchan where id = %d limit 1",
-					intval($i['parent'])
-				);
-				if ($d) {
-					$is_directmessage = false;
-					$recips = get_iconfig($i['parent'], 'activitypub', 'recips');
-
-					if ($recips && is_array($recips) and array_key_exists('to', $recips) && is_array($recips['to']) 
-						&& in_array($i['author']['xchan_url'], $recips['to'])) {
-						$reply_url = $d[0]['xchan_url'];
-						$is_directmessage = true;
-					}
-					else {
-						$reply_url = z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@'));
-					}
-
-					$reply_addr = (($d[0]['xchan_addr']) ? $d[0]['xchan_addr'] : $d[0]['xchan_name']);
-				}
-			}
-
 		}
+
 
 		if (! $cnv) {
 			$cnv = get_iconfig($i,'ostatus','conversation');
@@ -799,9 +777,64 @@ class Activity {
 			}
 		}
 
+		// addressing madness
+		
 		if ($activitypub) {
-			if ($i['item_private']) {
-				if ($reply) {
+
+			$public = (($item['item_private']) ? false : true);
+			$top_level = (($reply) ? false : true);
+			
+			if ($public) {
+				if ($top_level) {
+					$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
+					$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
+				}
+				else {
+					$ret['to'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
+					$ret['cc'] = [ ACTIVITY_PUBLIC_INBOX ];
+				}
+
+			}
+			else {
+				if ($top_level) {
+					/* Add mentions only if the targets are individuals */
+					$m = self::map_acl($i,(($i['allow_gid']) ? false : true));
+					$ret['tag'] = (($ret['tag']) ? array_merge($ret['tag'],$m) : $m);
+					if ($reply_url) {
+						$ret['to'] = [ $reply_url ];
+					}
+					if (is_array($m) && $m) {
+						if (! $ret['to']) {
+							$ret['to'] = [];
+						}
+						foreach ($m as $ma) {
+							if (is_array($ma) && $ma['type'] === 'Mention' && $ma['href']) {
+								$ret['to'][] = $ma['href'];
+							}
+						}
+					}
+				}
+				else {
+
+					$d = q("select xchan_url, xchan_addr, xchan_name from item left join xchan on xchan_hash = author_xchan where id = %d limit 1",
+						intval($i['parent'])
+					);
+					if ($d) {
+						$is_directmessage = false;
+						$recips = get_iconfig($i['parent'], 'activitypub', 'recips');
+
+						if ($recips && is_array($recips) and array_key_exists('to', $recips) && is_array($recips['to']) 
+							&& in_array($i['author']['xchan_url'], $recips['to'])) {
+							$reply_url = $d[0]['xchan_url'];
+							$is_directmessage = true;
+						}
+						else {
+							$reply_url = z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@'));
+						}
+
+						$reply_addr = (($d[0]['xchan_addr']) ? $d[0]['xchan_addr'] : $d[0]['xchan_name']);
+					}
+
 					if ($i['author_xchan'] === $i['owner_xchan']) {
 						$m = self::map_acl($i,(($i['allow_gid']) ? false : true));
 						$ret['tag'] = (($ret['tag']) ? array_merge($ret['tag'],$m) : $m);
@@ -820,35 +853,8 @@ class Activity {
 						}
 					}
 				}
-				else {
-					/* Add mentions only if the targets are individuals */
-					$m = self::map_acl($i,(($i['allow_gid']) ? false : true));
-					$ret['tag'] = (($ret['tag']) ? array_merge($ret['tag'],$m) : $m);
-					if ($reply_url) {
-						$ret['to'] = [ $reply_url ];
-					}
-					if (is_array($m) && $m) {
-						if (! $ret['to']) {
-							$ret['to'] = [];
-						}
-						foreach ($m as $ma) {
-							if (is_array($ma) && $ma['type'] === 'Mention' && $ma['href']) {
-								$ret['to'][] = $ma['href'];
-							}
-						}
-					}
-				}
 			}
-			else {
-				if ($reply) {
-					$ret['to'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
-					$ret['cc'] = [ ACTIVITY_PUBLIC_INBOX ];
-				}
-				else {
-					$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
-					$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
-				}
-			}
+
 			$mentions = self::map_mentions($i);
 			if (count($mentions) > 0) {
 				if (! $ret['to']) {
@@ -858,12 +864,14 @@ class Activity {
 					$ret['to'] = array_merge($ret['to'], $mentions);
 				}
 			}	
-
 		}
 
 		return $ret;
 	}
 
+	
+	// Returns an array of URLS for any mention tags found in the item array $i.
+	
 	static function map_mentions($i) {
 		if (! $i['term']) {
 			return [];
@@ -884,7 +892,12 @@ class Activity {
 		return $list;
 	}
 
-	static function map_acl($i,$mentions = false) {
+	// Returns an array of all recipients targeted by item array $i. If $mentions is true,
+	// returned instead an array of ActivityStreams Mention objects corresponding to the addressed recipients.
+	// This should probably only be called when we know the message is private so that only private ACLs are enumerated
+	// and not your entire list of connections
+	
+	static function map_acl($i, $mentions = false) {
 
 		$private = false;
 		$list = [];
