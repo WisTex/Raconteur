@@ -822,11 +822,15 @@ class Activity {
 					/* Add mentions only if the targets are individuals */
 					$m = self::map_acl($i,(($i['allow_gid']) ? false : true));
 					$ret['tag'] = (($ret['tag']) ? array_merge($ret['tag'],$m) : $m);
-					$ret['to'] = [ $reply_url ];
-					if (is_array($m) && $m && ! $ret['to']) {
-						$ret['to'] = [];
+					if ($reply_url) {
+						$ret['to'] = [ $reply_url ];
+					}
+					if (is_array($m) && $m) {
+						if (! $ret['to']) {
+							$ret['to'] = [];
+						}
 						foreach ($m as $ma) {
-							if (is_array($ma) && $ma['type'] === 'Mention') {
+							if (is_array($ma) && $ma['type'] === 'Mention' && $ma['href']) {
 								$ret['to'][] = $ma['href'];
 							}
 						}
@@ -866,6 +870,9 @@ class Activity {
 		$list = [];
 
 		foreach ($i['term'] as $t) {
+			if (! $t['url']) {
+				continue;
+			}
 			if ($t['ttype'] == TERM_MENTION) {
 				$url = self::lookup_term_url($t['url']);
 				$list[] = (($url) ? $url : $t['url']);

@@ -6,7 +6,7 @@ use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Queue;
 use Zotlabs\Daemon\Master;
-
+use Zotlabs\Lib\IConfig;
 
 class ActivityPub {
 
@@ -59,9 +59,22 @@ class ActivityPub {
 			$jmsg = $signed_msg;
 		}
 		else {
+
 			$ti = Activity::encode_activity($target_item, true);
 			if (! $ti) {
 				return;
+			}
+
+			if ($target_item['mid'] !== $target_item['parent_mid']) {
+				$token = IConfig::get($target_item['id'],'ocap','relay');
+				if ($token) {
+					if (defined('USE_BEARCAPS')) {
+						$ti['id'] = 'bear:?u=' . $ti['id'] . '&t=' . $token;
+					}
+					else {
+						$ti['id'] = $ti['id'] . '?token=' . $token;
+					}
+				}
 			}
 
 			$msg = array_merge(['@context' => [

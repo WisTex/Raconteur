@@ -593,8 +593,20 @@ function photo_new_resource() {
 }
 
 
-function new_token() {
-	return random_string(mt_rand(48,64));	
+// provide psuedo random token (string) consisting entirely of US-ASCII letters/numbers
+// and with possibly variable length
+
+function new_token($minlen = 36,$maxlen = 48) {
+
+	$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+	$str   = EMPTY_STR;
+
+	$len   = (($minlen === $maxlen) ? $minlen : mt_rand($minlen,$maxlen));
+
+	for($a = 0; $a < $len; $a ++) {
+		$str .= $chars[mt_rand(0,62)];
+	}
+	return $str;
 }
 
 /**

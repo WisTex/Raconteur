@@ -48,7 +48,7 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '19.9.27' );
+define ( 'STD_VERSION',             '19.9.30' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1236 );
@@ -69,6 +69,8 @@ define ( 'EOL',                    '<br>' . "\r\n"        );
 define ( 'EMPTY_STR',              ''                     );
 define ( 'ATOM_TIME',              'Y-m-d\\TH:i:s\\Z'     ); // aka ISO 8601 "Zulu"
 define ( 'TEMPLATE_BUILD_PATH',    'store/[data]/smarty3' );
+
+//define ( 'USE_BEARCAPS',           true);
 
 define ( 'DIRECTORY_MODE_NORMAL',      0x0000); // A directory client
 define ( 'DIRECTORY_MODE_PRIMARY',     0x0001); // There can only be *one* primary directory server in a directory_realm.

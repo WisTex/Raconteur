@@ -23,7 +23,7 @@ class Activity extends Controller {
 			$bear = ZlibActivity::token_from_request();
 			if ($bear) {
 				logger('bear: ' . $bear, LOGGER_DEBUG);
-				$t = q("select item.uid, iconfig.v from iconfig left join item on iid = item.id where cat = 'ocaps' and item.uuid = '%s'",
+				$t = q("select item.uid, iconfig.v from iconfig left join item on iid = item.id where cat = 'ocap' and item.uuid = '%s'",
 					dbesc($item_id)
 				);
 				if ($t) {
