@@ -3904,7 +3904,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 
 		$contact_str = '';
 
-		$contacts = AccessList::members($r[0]['id']);
+		$contacts = AccessList::members($uid,$r[0]['id']);
 		if ($contacts) {
 			foreach($contacts as $c) {
 				if($contact_str)

@@ -5,11 +5,79 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\AccessList;
+use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Activity;
+use Zotlabs\Web\HTTPSig;
+use Zotlabs\Lib\Config;
 
 
 class Lists extends Controller {
 
 	function init() {
+		if (ActivityStreams::is_as_request()) {
+			$item_id = argv(1);
+			if( ! $item_id) {
+				http_status_exit(404, 'Not found');
+			}
+			$x = q("select * from pgrp where hash = '%s' limit 1",
+				dbesc($item_id)
+			);
+			if (! $x) {
+				http_status_exit(404, 'Not found');
+			}
+
+			$group = array_shift($x);
+
+			// process an authenticated fetch
+
+			$sigdata = HTTPSig::verify(EMPTY_STR);
+			if ($sigdata['portable_id'] && $sigdata['header_valid']) {
+				$portable_id = $sigdata['portable_id'];
+				if (! check_channelallowed($portable_id)) {
+					http_status_exit(403, 'Permission denied');
+				}
+				if (! check_siteallowed($sigdata['signer'])) {
+					http_status_exit(403, 'Permission denied');
+				}
+				observer_auth($portable_id);
+			}
+			elseif (! Config::get('system','require_authenticated_fetch',false)) {
+				http_status_exit(403,'Permission denied');
+			}
+
+			if (! perm_is_allowed($group['uid'],get_observer_hash(),'view_contacts') {
+				http_status_exit(403,'Permission denied');
+			}
+
+			if (! $group['visible']) {
+				$controlling_channel = channelx_by_uid($group['uid']);
+				if (! $controlling_channel() || $controlling_channel['channel_hash'] !== get_observer_hash()) {
+					http_status_exit(403,'Permission denied');
+				}
+			}
+			
+			$members = AccessList::members($group['uid'],$group['id']);
+
+			$x = array_merge(['@context' => [
+				ACTIVITYSTREAMS_JSONLD_REV,
+				'https://w3id.org/security/v1',
+				z_root() . ZOT_APSCHEMA_REV
+				]], Activity::encode_follow_collection($members, App::$query_string, 'OrderedCollection'));
+
+
+			$headers = [];
+			$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
+			$x['signature'] = LDSignatures::sign($x,$channel);
+			$ret = json_encode($x, JSON_UNESCAPED_SLASHES);
+			$headers['Digest'] = HTTPSig::generate_digest_header($ret);
+			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
+			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
+			HTTPSig::set_headers($h);
+			echo $ret;
+			killme();
+
+		}
+
 		if (! local_channel()) {
 			notice( t('Permission denied.') . EOL);
 			return;
@@ -108,7 +176,7 @@ class Lists extends Controller {
 			foreach ($groups as $group) {
 				$entries[$i]['name'] = $group['gname'];
 				$entries[$i]['id'] = $group['id'];
-				$entries[$i]['count'] = count(AccessList::members($group['id']));
+				$entries[$i]['count'] = count(AccessList::members(local_channel(),$group['id']));
 				$i++;
 			}
 
@@ -188,7 +256,7 @@ class Lists extends Controller {
 			$group = $r[0];
 	
 	
-			$members = AccessList::members($group['id']);
+			$members = AccessList::members(local_channel(), $group['id']);
 	
 			$preselected = array();
 			if(count($members))	{
@@ -206,7 +274,7 @@ class Lists extends Controller {
 					AccessList::member_add(local_channel(),$group['gname'],$change);
 				}
 	
-				$members = AccessList::members($group['id']);
+				$members = AccessList::members(local_channel(), $group['id']);
 	
 				$preselected = array();
 				if(count($members))	{

@@ -206,15 +206,15 @@ class AccessList {
 	}
 
 
-	static function members($gid) {
+	static function members($uid, $gid) {
 		$ret = array();
 		if(intval($gid)) {
 			$r = q("SELECT * FROM pgrp_member 
 				LEFT JOIN abook ON abook_xchan = pgrp_member.xchan left join xchan on xchan_hash = abook_xchan
 				WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 ORDER BY xchan_name ASC ",
 				intval($gid),
-				intval(local_channel()),
-				intval(local_channel())
+				intval($uid),
+				intval($uid)
 			);
 			if($r)
 				$ret = $r;
@@ -222,12 +222,12 @@ class AccessList {
 		return $ret;
 	}
 
-	static function members_xchan($gid) {
+	static function members_xchan($uid,$gid) {
 		$ret = [];
 		if(intval($gid)) {
 			$r = q("SELECT xchan FROM pgrp_member WHERE gid = %d AND uid = %d",
 				intval($gid),
-				intval(local_channel())
+				intval($uid)
 			);
 			if($r) {
 				foreach($r as $rr) {

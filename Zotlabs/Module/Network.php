@@ -229,7 +229,7 @@ class Network extends Controller {
 	
 		if ($group) {
 			$contact_str = '';
-			$contacts = AccessList::members($group);
+			$contacts = AccessList::members(local_channel(),$group);
 			if ($contacts) {
 				$contact_str = ids_to_querystr($contacts,'xchan',true);
 			}
