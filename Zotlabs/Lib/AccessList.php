@@ -285,7 +285,7 @@ class AccessList {
 
 
 
-	static function widget($every="connections",$each="group",$edit = false, $group_id = 0, $cid = '',$mode = 1) {
+	static function widget($every="connections",$each="lists",$edit = false, $group_id = 0, $cid = '',$mode = 1) {
 
 		$o = '';
 

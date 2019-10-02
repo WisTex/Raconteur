@@ -9,7 +9,7 @@ use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Config;
-
+use Zotlabs\Lib\LDSignatures;
 
 class Lists extends Controller {
 
@@ -45,13 +45,13 @@ class Lists extends Controller {
 				http_status_exit(403,'Permission denied');
 			}
 
-			if (! perm_is_allowed($group['uid'],get_observer_hash(),'view_contacts') {
+			if (! perm_is_allowed($group['uid'],get_observer_hash(),'view_contacts')) {
 				http_status_exit(403,'Permission denied');
 			}
 
 			if (! $group['visible']) {
-				$controlling_channel = channelx_by_uid($group['uid']);
-				if (! $controlling_channel() || $controlling_channel['channel_hash'] !== get_observer_hash()) {
+				$controlling_channel = channelx_by_n($group['uid']);
+				if (! $controlling_channel || $controlling_channel['channel_hash'] !== get_observer_hash()) {
 					http_status_exit(403,'Permission denied');
 				}
 			}

@@ -1383,7 +1383,7 @@ function hex2bin(hex) {
 
 function groupChangeMember(gid, cid, sec_token) {
 	$('body .fakelink').css('cursor', 'wait');
-	$.get('alist/' + gid + '/' + cid + "?t=" + sec_token, function(data) {
+	$.get('lists/' + gid + '/' + cid + "?t=" + sec_token, function(data) {
 		$('#group-update-wrapper').html(data);
 		$('body .fakelink').css('cursor', 'auto');
 	});
