@@ -49,9 +49,14 @@ class Lists extends Controller {
 				http_status_exit(403,'Permission denied');
 			}
 
+			$channel = channelx_by_n($group['uid']);
+
+			if (! $channel) {
+				http_status_exit(404,'Not found');
+			}
+
 			if (! $group['visible']) {
-				$controlling_channel = channelx_by_n($group['uid']);
-				if (! $controlling_channel || $controlling_channel['channel_hash'] !== get_observer_hash()) {
+				if ($channel['channel_hash'] !== get_observer_hash()) {
 					http_status_exit(403,'Permission denied');
 				}
 			}
