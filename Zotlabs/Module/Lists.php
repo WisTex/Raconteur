@@ -340,7 +340,7 @@ class Lists extends Controller {
 		}
 	
 		$context['$groupeditor'] = $groupeditor;
-		$context['$desc'] = t('Click a channel to toggle membership');
+		$context['$desc'] = t('Select a channel to toggle membership');
 	
 		if($change) {
 			$tpl = get_markup_template('groupeditor.tpl');
