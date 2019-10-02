@@ -1,74 +1,76 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\AccessList;
 
 
-class Alist extends \Zotlabs\Web\Controller {
+class Lists extends Controller {
 
 	function init() {
-		if(! local_channel()) {
+		if (! local_channel()) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
 
-		\App::$profile_uid = local_channel();
-
+		App::$profile_uid = local_channel();
 		nav_set_selected('Access Lists');
 	}
 
 	function post() {
 	
-		if(! local_channel()) {
+		if (! local_channel()) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
 	
-		if((argc() == 2) && (argv(1) === 'new')) {
-			check_form_security_token_redirectOnErr('/alist/new', 'group_edit');
+		if ((argc() == 2) && (argv(1) === 'new')) {
+			check_form_security_token_redirectOnErr('/lists/new', 'group_edit');
 			
 			$name = notags(trim($_POST['groupname']));
 			$public = intval($_POST['public']);
 			$r = AccessList::add(local_channel(),$name,$public);
-			if($r) {
+			if ($r) {
 				info( t('Access list created.') . EOL );
 			}
 			else {
 				notice( t('Could not create access list.') . EOL );
 			}
-			goaway(z_root() . '/alist');
+			goaway(z_root() . '/lists');
 	
 		}
-		if((argc() == 2) && (intval(argv(1)))) {
-			check_form_security_token_redirectOnErr('/alist', 'group_edit');
+		if ((argc() == 2) && (intval(argv(1)))) {
+			check_form_security_token_redirectOnErr('/lists', 'group_edit');
 			
 			$r = q("SELECT * FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
 				intval(argv(1)),
 				intval(local_channel())
 			);
-			if(! $r) {
+			if (! $r) {
 				notice( t('Access list not found.') . EOL );
 				goaway(z_root() . '/connections');
 	
 			}
-			$group = $r[0];
+			$group = array_shift($r);
 			$groupname = notags(trim($_POST['groupname']));
 			$public = intval($_POST['public']);
 	
-			if((strlen($groupname))  && (($groupname != $group['gname']) || ($public != $group['visible']))) {
+			if ((strlen($groupname))  && (($groupname != $group['gname']) || ($public != $group['visible']))) {
 				$r = q("UPDATE pgrp SET gname = '%s', visible = %d  WHERE uid = %d AND id = %d",
 					dbesc($groupname),
 					intval($public),
 					intval(local_channel()),
 					intval($group['id'])
 				);
-				if($r)
+				if ($r) {
 					info( t('Access list updated.') . EOL );
+				}
 				Libsync::build_sync_packet(local_channel(),null,true);
 			}
 	
-			goaway(z_root() . '/alist/' . argv(1) . '/' . argv(2));
+			goaway(z_root() . '/lists/' . argv(1) . '/' . argv(2));
 		}
 		return;	
 	}
@@ -77,22 +79,24 @@ class Alist extends \Zotlabs\Web\Controller {
 
 		$change = false;
 	
-		logger('mod_alist: ' . \App::$cmd,LOGGER_DEBUG);
+		logger('mod_lists: ' . \App::$cmd,LOGGER_DEBUG);
 		
-		if(! local_channel()) {
+		if (! local_channel()) {
 			notice( t('Permission denied') . EOL);
 			return;
 		}
 
 		// Switch to text mode interface if we have more than 'n' contacts or group members
 		$switchtotext = get_pconfig(local_channel(),'system','groupedit_image_limit');
-		if($switchtotext === false)
+		if ($switchtotext === false) {
 			$switchtotext = get_config('system','groupedit_image_limit');
-		if($switchtotext === false)
+		}
+		if ($switchtotext === false) {
 			$switchtotext = 400;
+		}
 
 
-		if((argc() == 1) || ((argc() == 2) && (argv(1) === 'new'))) {
+		if ((argc() == 1) || ((argc() == 2) && (argv(1) === 'new'))) {
 
 			$new = (((argc() == 2) && (argv(1) === 'new')) ? true : false);
 
@@ -101,7 +105,7 @@ class Alist extends \Zotlabs\Web\Controller {
 			);
 
 			$i = 0;
-			foreach($groups as $group) {
+			foreach ($groups as $group) {
 				$entries[$i]['name'] = $group['gname'];
 				$entries[$i]['id'] = $group['id'];
 				$entries[$i]['count'] = count(AccessList::members($group['id']));
@@ -138,7 +142,7 @@ class Alist extends \Zotlabs\Web\Controller {
 		$tpl = get_markup_template('group_edit.tpl');
 	
 		if((argc() == 3) && (argv(1) === 'drop')) {
-			check_form_security_token_redirectOnErr('/alist', 'group_drop', 't');
+			check_form_security_token_redirectOnErr('/lists', 'group_drop', 't');
 			
 			if(intval(argv(2))) {
 				$r = q("SELECT gname FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
@@ -152,7 +156,7 @@ class Alist extends \Zotlabs\Web\Controller {
 				else
 					notice( t('Unable to remove access list.') . EOL);
 			}
-			goaway(z_root() . '/alist');
+			goaway(z_root() . '/lists');
 			// NOTREACHED
 		}
 	

@@ -796,6 +796,9 @@ class Activity {
 
 			}
 			else {
+			
+				// private activity
+				
 				if ($top_level) {
 					/* Add mentions only if the targets are individuals */
 					$m = self::map_acl($i,(($i['allow_gid']) ? false : true));
@@ -982,8 +985,9 @@ class Activity {
 				$ret['outbox']      = z_root() . '/outbox/'    . $c['channel_address'];
 				$ret['followers']   = z_root() . '/followers/' . $c['channel_address'];
 				$ret['following']   = z_root() . '/following/' . $c['channel_address'];
+
 				$ret['endpoints']   = [ 'sharedInbox' => z_root() . '/inbox' ];
-	
+				
 				$ret['publicKey'] = [
 					'id'           => $p['xchan_url'],
 					'owner'        => $p['xchan_url'],

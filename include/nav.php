@@ -87,7 +87,7 @@ function nav($template = 'default') {
 			$nav['manage'] = array('manage', t('Channels'), "", t('Manage your channels'),'manage_nav_btn');
  		}
 
-		$nav['group'] = array('alist', t('Access Lists'),"", t('Manage your access lists'),'group_nav_btn');
+		$nav['group'] = array('lists', t('Lists'),"", t('Manage your access lists'),'group_nav_btn');
 
  		$nav['settings'] = array('settings', t('Settings'),"", t('Account/Channel Settings'),'settings_nav_btn');
 

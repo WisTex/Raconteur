@@ -74,7 +74,7 @@ class Apps {
 			'Events',
 			'Search',
 			'Profile Photo',
-			'Access Lists'
+			'Lists'
 		]);
 		call_hooks('get_base_apps',$x);
 		return $x;
@@ -363,7 +363,7 @@ class Apps {
 			'Profile Photo' => t('Profile Photo'),
 			'Profile' => t('Profile'),
 			'Profiles' => t('Profiles'),
-			'Access Lists' => t('Access Lists'),
+			'Lists' => t('Lists'),
 			'Notifications' => t('Notifications'),
 			'Order Apps' => t('Order Apps'),
 			'CalDAV' => t('CalDAV'),

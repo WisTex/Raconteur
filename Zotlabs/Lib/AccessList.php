@@ -10,9 +10,9 @@ class AccessList {
 	static function add($uid,$name,$public = 0) {
 
 		$ret = false;
-		if(x($uid) && x($name)) {
+		if ($uid && $name) {
 			$r = self::byname($uid,$name); // check for dups
-			if($r !== false) {
+			if ($r !== false) {
 
 				// This could be a problem. 
 				// Let's assume we've just created a list which we once deleted
@@ -30,15 +30,7 @@ class AccessList {
 				return true;
 			}
 
-			do {
-				$dups = false;
-				$hash = random_string(32) . str_replace(['<','>'],['.','.'], $name);
-
-				$r = q("SELECT id FROM pgrp WHERE hash = '%s' LIMIT 1", dbesc($hash));
-				if($r)
-					$dups = true;
-			} while($dups == true);
-
+			$hash = new_uuid();
 
 			$r = q("INSERT INTO pgrp ( hash, uid, visible, gname )
 				VALUES( '%s', %d, %d, '%s' ) ",
@@ -312,7 +304,7 @@ class AccessList {
 				$selected = (($group_id == $rr['id']) ? ' group-selected' : '');
 			
 				if ($edit) {
-					$groupedit = [ 'href' => "alist/".$rr['id'], 'title' => t('edit') ];
+					$groupedit = [ 'href' => "lists/".$rr['id'], 'title' => t('edit') ];
 				} 
 				else {
 					$groupedit = null;
@@ -334,7 +326,7 @@ class AccessList {
 	
 		$tpl = get_markup_template("group_side.tpl");
 		$o = replace_macros($tpl, array(
-			'$title'		=> t('Access Lists'),
+			'$title'		=> t('Lists'),
 			'$edittext'     => t('Edit list'),
 			'$createtext' 	=> t('Create new list'),
 			'$ungrouped'    => (($every === 'contacts') ? t('Channels not in any access list') : ''),
