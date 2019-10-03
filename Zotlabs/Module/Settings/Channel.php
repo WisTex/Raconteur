@@ -516,7 +516,7 @@ class Channel {
 
 		if (get_config('system','activitypub')) {
 			$apconfig = true;
-			$activitypub = replace_macros(get_markup_template('field_checkbox.tpl'), [ '$field' => [ 'activitypub', t('Allow ActivityPub Connections'), ((get_pconfig(local_channel(),'system','activitypub',true)) ? 1 : 0), t('Does not work well with some privacy settings and location independence.'), $yes_no ]]);
+			$activitypub = replace_macros(get_markup_template('field_checkbox.tpl'), [ '$field' => [ 'activitypub', t('Enable ActivityPub protocol'), ((get_pconfig(local_channel(),'system','activitypub',true)) ? 1 : 0), t('ActivityPub is not completely compatible with some of this software\'s features.'), $yes_no ]]);
 		}
 		else {
 			$apconfig = false;
@@ -524,7 +524,7 @@ class Channel {
 		}
 
 		$apheader = t('ActivityPub');
-		$apdoc = t('ActivityPub is an emerging internet standard protocol for social communications and is offered by a growing number of software applications. ') . t('This protocol has a large number of users, however many applications disagree on the precise specifications for privacy, message delivery, and account migration - and may have conflicting or even broken implementations. ') . t('Your system administrator has enabled this experimental service on this website, however it is not fully supported by this software. ') . t('Also many features of this software may not be fully supported by other ActivityPub applications. Use at your own risk.');
+		$apdoc = t('ActivityPub is an emerging internet standard for social communications and is offered by a growing number of software applications. ') . t('It has a large number of existing users, however many applications disagree on the precise specifications for privacy, message delivery, and account migration - and there are many conflicting and even broken implementations. It is still very much a work in progress, and privacy and data integrity are much less predictable if you use it. ') . EOL . t('Your system administrator has allowed this experimental service on this website. You are free to make your own decision.');
 
 		$permissions_set = (($permissions_role != 'custom') ? true : false);
 
@@ -646,7 +646,8 @@ class Channel {
 			'$sec_addon'  => $plugin['security'],
 			'$notify_addon' => $plugin['notify'],
 			'$misc_addon' => $plugin['misc'],
-	
+			'$lbl_time' => t('Date and time'),
+			'$miscdoc' => t('This section is reserved for use by optional addons and apps to provide additional settings.'), 
 			'$h_advn' => t('Advanced Account/Page Type Settings'),
 			'$h_descadvn' => t('Change the behaviour of this account for special situations'),
 			'$pagetype' => $pagetype,
