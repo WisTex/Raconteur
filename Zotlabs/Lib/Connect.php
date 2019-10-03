@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Lib;
 
+use App;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Daemon\Master;
 
