@@ -1,15 +1,6 @@
 <div class="section-subtitle-wrapper">
 	<div class="pull-right">
 		{{if $channel.default_links}}
-		{{if $channel.default}}
-		<div>
-			<i class="fa fa-check-square-o"></i>&nbsp;{{$msg_default}}
-		</div>
-		{{else}}
-		<a href="manage/{{$channel.channel_id}}/default" class="make-default-link">
-			<i class="fa fa-square-o"></i>&nbsp;{{$msg_make_default}}
-		</a>
-		{{/if}}
 		{{/if}}
 		{{if $channel.delegate}}
 			{{$delegated_desc}}
@@ -30,6 +21,7 @@
 	<div class="clear"></div>
 </div>
 <div class="section-content-wrapper">
+	<div class="pull-left" style="width: 75%;">
 	<div class="channel-photo-wrapper">
 		{{if $selected != $channel.channel_id}}<a href="{{$channel.link}}" class="channel-selection-photo-link" title="{{$channel.channel_name}}">{{/if}}
 			<img class="channel-photo{{if $selected == $channel.channel_id}} channel-active{{/if}}" src="{{$channel.xchan_photo_m}}" alt="{{$channel.channel_name}}" />
@@ -43,4 +35,30 @@
 		</div>
 		{{/if}}
 	</div>
+	</div>
+	{{if $channel.default_links}}
+	<div class="pull-left">
+		{{if $channel.default}}
+		<a href="manage/{{$channel.channel_id}}/noop" class="make-default-link">
+			<i class="fa fa-check-square-o"></i>&nbsp;{{$msg_default}}
+		</a>
+		{{else}}
+		<a href="manage/{{$channel.channel_id}}/default" class="make-default-link">
+			<i class="fa fa-square-o"></i>&nbsp;{{$msg_make_default}}
+		</a>
+		{{/if}}
+		<br>
+		{{if $channel.include_in_menu}}
+		<a href="manage/{{$channel.channel_id}}/noop" class="channel-menu-link">
+			<i class="fa fa-check-square-o"></i>&nbsp;{{$msg_no_include}}
+		</a>
+		{{else}}
+		<a href="manage/{{$channel.channel_id}}/menu" class="channel-menu-link">
+			<i class="fa fa-square-o"></i>&nbsp;{{$msg_include}}
+		</a>
+		{{/if}}
+		<br>
+	</div>
+	{{/if}}
+	<div class="clear"></div>
 </div>

@@ -1,5 +1,7 @@
 .make-default-link,
-.make-default-link:hover {
+.make-default-link:hover,
+.channel-menu-link,
+.channel-menu-link:hover {
 	color: inherit;
 	text-decoration: none;
 }

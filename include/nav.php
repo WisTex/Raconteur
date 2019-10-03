@@ -31,10 +31,12 @@ function nav($template = 'default') {
 		);
 
 		if(! $_SESSION['delegate']) {
-			$chans = q("select channel_name, channel_id from channel where channel_account_id = %d and channel_removed = 0 order by channel_name ",
-				intval(get_account_id())
+			$chans = q("select channel_name, channel_id from channel left join pconfig on channel_id = pconfig.uid where channel_account_id = %d and channel_removed = 0 and pconfig.cat = 'system' and pconfig.k = 'include_in_menu' and pconfig.v = '1' and channel_id != %d order by channel_name ",
+				intval(get_account_id()),
+				intval(local_channel())
 			);
 		}
+
 		$sitelocation = (($is_owner) ? '' : App::$profile['reddress']);
 	}
 	elseif(remote_channel()) {
@@ -94,8 +96,9 @@ function nav($template = 'default') {
 		$nav['safe'] = array('safe', t('Safe Mode'), ((get_safemode()) ? t('(is on)') : t('(is off)')) , t('Content filtering'),'safe_nav_btn');
 
 	
-		if($chans && count($chans) > 1 && feature_enabled(local_channel(),'nav_channel_select'))
+		if ($chans && count($chans) > 0) {
 			$nav['channels'] = $chans;
+		}
 
 		$nav['logout'] = ['logout',t('Logout'), "", t('End this session'),'logout_nav_btn'];
 		
