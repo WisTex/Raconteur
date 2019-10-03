@@ -160,7 +160,7 @@ class Channel {
 		$adult            = (($_POST['adult'] == 1) ? 1 : 0);
 		$defpermcat       = ((x($_POST,'defpermcat')) ? notags(trim($_POST['defpermcat'])) : 'default');
 	
-		$cal_first_day   = (((x($_POST,'first_day')) && (intval($_POST['first_day']) == 1)) ? 1: 0);
+		$cal_first_day   = (((x($_POST,'first_day')) && intval($_POST['first_day']) >= 0 && intval($_POST['first_day']) < 7) ? intval($_POST['first_day']) : 0);
 		$mailhost        = ((array_key_exists('mailhost',$_POST)) ? notags(trim($_POST['mailhost'])) : '');
 		$profile_assign  = ((x($_POST,'profile_assign')) ? notags(trim($_POST['profile_assign'])) : '');
 
@@ -657,7 +657,15 @@ class Channel {
 			'$menu_desc' => t('Personal menu to display in your channel pages'),
 			'$removeme' => t('Remove Channel'),
 			'$removechannel' => t('Remove this channel.'),
-			'$cal_first_day' => array('first_day', t('Start calendar week on Monday'), ((get_pconfig(local_channel(),'system','cal_first_day')) ? 1 : ''), t('Disable to start the calendar week on Sunday'), $yes_no),
+			'$cal_first_day' => array('first_day', t('Calendar week begins on'), intval(get_pconfig(local_channel(),'system','cal_first_day')), t('This varies by country/culture'),
+				[   0 => t('Sunday'),
+					1 => t('Monday'),
+					2 => t('Tuesday'),
+					3 => t('Wednesday'),
+					4 => t('Thursday'),
+					5 => t('Friday'),
+					6 => t('Saturday')
+				]),
 		]);
 	
 		call_hooks('settings_form',$o);	
