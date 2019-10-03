@@ -451,10 +451,8 @@ class Channel {
 
 		$webbie = $nickname . '@' . App::get_hostname();
 		$intl_nickname = unpunify($nickname) . '@' . unpunify(App::get_hostname());
-	
-		$tpl_addr = get_markup_template("settings_nick_set.tpl");
-	
-		$prof_addr = replace_macros($tpl_addr,array(
+		
+		$prof_addr = replace_macros(get_markup_template('channel_settings_header.tpl'),array(
 			'$desc' => t('Your channel address is'),
 			'$nickname' => (($intl_nickname === $webbie) ? $webbie : $intl_nickname . '&nbsp;(' . $webbie . ')'),
 			'$compat' => t('Friends using compatible applications can use this address to connect with you.'),

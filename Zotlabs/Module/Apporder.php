@@ -33,9 +33,9 @@ class Apporder extends \Zotlabs\Web\Controller {
 
 			foreach ($syslist as $app) {
 				if ($l === 'nav_pinned_app') {
-					$navbar_apps[] = Apps::app_render($app,'nav-order');
+					$navbar_apps[] = Apps::app_render($app,'nav-order-pinned');
 				}
-				elseif (strpos($app['categories'],'nav_pinned_app') === false) {
+				else {
 					$nav_apps[] = Apps::app_render($app,'nav-order');
 				}
 			}
