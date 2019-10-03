@@ -536,7 +536,7 @@ class Photos extends Controller {
 			return;
 		}
 	
-		$unsafe = ((array_key_exists('unsafe',$_REQUEST) && $_REQUEST['unsafe']) ? 1 : 0);
+		$unsafe = 1 - get_safemode();
 			
 		require_once('include/bbcode.php');
 		require_once('include/security.php');

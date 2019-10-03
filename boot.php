@@ -2497,3 +2497,10 @@ function observer_prohibited($allow_account = false) {
 	}
 	return (((get_config('system', 'block_public')) && (! local_channel()) && (! remote_channel())) ? true : false );
 }
+
+function get_safemode() {
+	if (! array_key_exists('safemode', $_SESSION)) {
+		$_SESSION['safemode'] = 1;
+	}
+	return intval($_SESSION['safemode']);
+}
