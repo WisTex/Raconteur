@@ -275,7 +275,7 @@ class ActivityPub {
 			return;
 		}
 
-		$p = Activity::encode_person($x['sender'],true,true);
+		$p = Activity::encode_person($x['sender'],false);
 		if (! $p) {
 			return;
 		}

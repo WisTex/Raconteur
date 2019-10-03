@@ -42,11 +42,11 @@ class ActivityStreams {
 	 *
 	 * @param string $string
 	 */
-	function __construct($string,$hub = null) {
+	function __construct($string,$hub = null,$client = null) {
 
 		$this->raw  = $string;
 		$this->hub  = $hub;
-
+		
 		if (is_array($string)) {
 			$this->data = $string;
 			$this->raw = json_encode($string,JSON_UNESCAPED_SLASHES);
@@ -113,9 +113,9 @@ class ActivityStreams {
 				}
 			}
 
-			// Implied create activity required by specification if no object is present
+			// Implied create activity required by C2S specification if no object is present
 			
-			if (! $this->obj) {
+			if ($client && ! $this->obj) {
 				$this->obj = $this->data;
 				$this->type = 'Create';
 				if (! $this->actor) {

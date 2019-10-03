@@ -2270,7 +2270,7 @@ function stringify_array_elms(&$arr, $escape = false) {
  */
 function stringify_array($arr, $escape = false) {
 	if($arr) {
-		stringify_array_elms($arr);
+		stringify_array_elms($arr, $escape);
 		return(implode(',',$arr));
 	}
 	return EMPTY_STR;

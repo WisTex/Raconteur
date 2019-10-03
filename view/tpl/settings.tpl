@@ -83,7 +83,6 @@
 							{{$suggestme}}
 							{{include file="field_input.tpl" field=$expire}}
 							{{include file="field_checkbox.tpl" field=$hyperdrive}}
-							{{$activitypub}}
 						</div>
 						{{if $permcat_enable}}
 						{{include file="field_select.tpl" field=$defpermcat}}
@@ -98,6 +97,31 @@
 					</div>
 				</div>
 			</div>
+			{{if $apconfig}}
+			<div class="panel">
+				<div class="section-subtitle-wrapper" role="tab" id="apub-settings">
+					<h3>
+						<a data-toggle="collapse" data-target="#apub-settings-collapse" href="#">
+							{{$apheader}}
+						</a>
+					</h3>
+				</div>
+				<div id="apub-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="apub-settings" data-parent="#settings">
+					<div class="section-content-tools-wrapper">
+						<div class="section-content-info-wrapper">
+						{{$apdoc}}
+						</div>
+						{{$activitypub}}
+						<div class="settings-submit-wrapper" >
+							<button type="submit" name="submit" class="btn btn-primary">{{$submit}}</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			{{else}}
+			{{$activitypub}}
+			{{/if}}
+			
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="notification-settings">
 					<h3>
