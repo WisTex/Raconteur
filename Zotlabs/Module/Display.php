@@ -180,6 +180,12 @@ class Display extends Controller {
 			 	return '';
 			}
 		}
+		if ($target_item['item_type'] == ITEM_TYPE_CUSTOM) {
+			call_hooks('item_custom_display',$target_item);
+			notice( t('Page not found.') . EOL);
+			return '';
+		}
+
 		
 		
 		$static = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
@@ -224,6 +230,7 @@ class Display extends Controller {
 				'$conv'    => '0',
 				'$spam'    => '0',
 				'$fh'      => '0',
+				'$dm'      => '0',
 				'$nouveau' => '0',
 				'$wall'    => '0',
 				'$static'  => $static,

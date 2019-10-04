@@ -22,6 +22,9 @@ require_once('vendor/autoload.php');
 if (file_exists('addon/vendor/autoload.php')) {
 	require_once('addon/vendor/autoload.php');
 }
+if (file_exists('addon/version.php')) {
+	require_once('addon/version.php');
+}
 
 require_once('include/config.php');
 require_once('include/network.php');
@@ -45,10 +48,13 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '2.16' );
+define ( 'STD_VERSION',             '19.10.5' );
 define ( 'ZOT_REVISION',            '6.0' );
 
-define ( 'DB_UPDATE_VERSION',       1232 );
+define ( 'DB_UPDATE_VERSION',       1236 );
+
+define ( 'PLATFORM_NAME',           'zap' );
+define ( 'PLATFORM_ARCHITECTURE',   'zap' );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 
@@ -57,19 +63,21 @@ define ( 'PROJECT_BASE',   __DIR__ );
  *
  * Contains a HTML line break (br) element and a real carriage return with line
  * feed for the source.
- * This can be used in HTML and JavaScript where needed a line break.
+ * This can be used in HTML and JavaScript wherever a line break is required.
  */
 define ( 'EOL',                    '<br>' . "\r\n"        );
 define ( 'EMPTY_STR',              ''                     );
 define ( 'ATOM_TIME',              'Y-m-d\\TH:i:s\\Z'     ); // aka ISO 8601 "Zulu"
 define ( 'TEMPLATE_BUILD_PATH',    'store/[data]/smarty3' );
 
+//define ( 'USE_BEARCAPS',           true);
+
 define ( 'DIRECTORY_MODE_NORMAL',      0x0000); // A directory client
 define ( 'DIRECTORY_MODE_PRIMARY',     0x0001); // There can only be *one* primary directory server in a directory_realm.
 define ( 'DIRECTORY_MODE_SECONDARY',   0x0002); // All other mirror directory servers
 define ( 'DIRECTORY_MODE_STANDALONE',  0x0100); // A detached (off the grid) hub with itself as directory server.
 
-// We will look for upstream directories whenever me make contact
+// We will look for upstream directories whenever we make contact
 // with other sites, but if this is a new installation and isn't
 // a standalone hub, we need to seed the service with a starting
 // point to go out and find the rest of the world.
@@ -306,6 +314,7 @@ define ( 'ABOOK_FLAG_PENDING'    , 0x0010);
 define ( 'ABOOK_FLAG_UNCONNECTED', 0x0020);
 define ( 'ABOOK_FLAG_SELF'       , 0x0080);
 define ( 'ABOOK_FLAG_FEED'       , 0x0100);
+define ( 'ABOOK_FLAG_CENSORED'   , 0x0200);
 
 
 define ( 'MAIL_DELETED',       0x0001);
@@ -463,7 +472,8 @@ define ( 'NAMESPACE_YMEDIA',          'http://search.yahoo.com/mrss/' );
 
 define ( 'ACTIVITYSTREAMS_JSONLD_REV', 'https://www.w3.org/ns/activitystreams' );
 
-define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.8' );
+define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.13' );
+
 /**
  * activity stream defines
  */
@@ -488,6 +498,7 @@ define ( 'ACTIVITY_OBJ_PHOTO',   'Image');
 define ( 'ACTIVITY_OBJ_P_PHOTO', 'Icon' );
 define ( 'ACTIVITY_OBJ_PROFILE', 'Profile');
 define ( 'ACTIVITY_OBJ_EVENT',   'Event' );
+define ( 'ACTIVITY_OBJ_POLL',    'Question');
 
 
 
@@ -583,7 +594,8 @@ define ( 'ITEM_TYPE_DOC',        5 );
 define ( 'ITEM_TYPE_CARD',       6 );
 define ( 'ITEM_TYPE_ARTICLE',    7 );
 define ( 'ITEM_TYPE_MAIL',       8 );
-define ( 'ITEM_TYPE_REPORT',     9 );
+define ( 'ITEM_TYPE_CUSTOM',     9 );
+define ( 'ITEM_TYPE_REPORT',     10 );
 
 define ( 'ITEM_IS_STICKY',       1000 );
 
@@ -607,16 +619,6 @@ function sys_boot() {
 	App::$install = ((file_exists('.htconfig.php') && filesize('.htconfig.php')) ? false : true);
 
 	@include('.htconfig.php');
-
-	if(defined('NOMADIC')) {
-		define ( 'PLATFORM_NAME',           'zap' );
-		define ( 'PLATFORM_ARCHITECTURE',   'zap' );
-	}
-	else {
-		define ( 'PLATFORM_NAME',           'osada' );
-		define ( 'PLATFORM_ARCHITECTURE',   'osada' );
-	}
-
 
 	// allow somebody to set some initial settings just in case they can't
 	// install without special fiddling
@@ -780,6 +782,8 @@ class App {
 	public static  $force_max_items = 0;
 	public static  $theme_thread_allow = true;
 
+	public static $meta;
+	
 	/**
 	 * @brief An array for all theme-controllable parameters
 	 *
@@ -824,8 +828,6 @@ class App {
 	// to access the page
 
 	private static $baseurl;
-
-	private static $meta;
 
 	/**
 	 * App constructor.
@@ -2494,4 +2496,11 @@ function observer_prohibited($allow_account = false) {
 		return (((get_config('system', 'block_public')) && (! get_account_id()) && (! remote_channel())) ? true : false );
 	}
 	return (((get_config('system', 'block_public')) && (! local_channel()) && (! remote_channel())) ? true : false );
+}
+
+function get_safemode() {
+	if (! array_key_exists('safemode', $_SESSION)) {
+		$_SESSION['safemode'] = 1;
+	}
+	return intval($_SESSION['safemode']);
 }

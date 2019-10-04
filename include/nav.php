@@ -31,10 +31,12 @@ function nav($template = 'default') {
 		);
 
 		if(! $_SESSION['delegate']) {
-			$chans = q("select channel_name, channel_id from channel where channel_account_id = %d and channel_removed = 0 order by channel_name ",
-				intval(get_account_id())
+			$chans = q("select channel_name, channel_id from channel left join pconfig on channel_id = pconfig.uid where channel_account_id = %d and channel_removed = 0 and pconfig.cat = 'system' and pconfig.k = 'include_in_menu' and pconfig.v = '1' and channel_id != %d order by channel_name ",
+				intval(get_account_id()),
+				intval(local_channel())
 			);
 		}
+
 		$sitelocation = (($is_owner) ? '' : App::$profile['reddress']);
 	}
 	elseif(remote_channel()) {
@@ -87,13 +89,16 @@ function nav($template = 'default') {
 			$nav['manage'] = array('manage', t('Channels'), "", t('Manage your channels'),'manage_nav_btn');
  		}
 
-		$nav['group'] = array('alist', t('Access Lists'),"", t('Manage your access lists'),'group_nav_btn');
+		$nav['group'] = array('lists', t('Lists'),"", t('Manage your access lists'),'group_nav_btn');
 
  		$nav['settings'] = array('settings', t('Settings'),"", t('Account/Channel Settings'),'settings_nav_btn');
 
+		$nav['safe'] = array('safe', t('Safe Mode'), ((get_safemode()) ? t('(is on)') : t('(is off)')) , t('Content filtering'),'safe_nav_btn');
+
 	
-		if($chans && count($chans) > 1 && feature_enabled(local_channel(),'nav_channel_select'))
+		if ($chans && count($chans) > 0) {
 			$nav['channels'] = $chans;
+		}
 
 		$nav['logout'] = ['logout',t('Logout'), "", t('End this session'),'logout_nav_btn'];
 		
@@ -163,19 +168,11 @@ function nav($template = 'default') {
 		$nav['help'] = [$help_url, t('Help'), "", t('Help and documentation'), 'help_nav_btn', $context_help, $enable_context_help];
 	}
 
-	switch(App::$module) {
-		case 'network':
-			$search_form_action = 'network';
-			break;
-		case 'channel':
-			$search_form_action = 'channel/' . App::$profile['channel_address'];
-			break;
-		default:
-			$search_form_action = 'search';
-	}
 
+	$search_form_action = 'search';
+	
 
-	$nav['search'] = ['search', t('Search'), "", t('Search site @name, !forum, #tag, ?docs, content'), $search_form_action];
+	$nav['search'] = ['search', t('Search'), "", t('Search site @name, #tag, content'), $search_form_action];
 
 	/**
 	 * Admin page
@@ -261,21 +258,16 @@ function nav($template = 'default') {
 		}
 	}
 
-
 	if($syslist) {
 		foreach($syslist as $app) {
 			if(\App::$nav_sel['name'] == $app['name'])
 				$app['active'] = true;
 
 			if($is_owner) {
-				if(strpos($app['categories'],'nav_pinned_app') === false) {
-					$nav_apps[] = Apps::app_render($app,'nav');
-				}
+				$nav_apps[] = Apps::app_render($app,'nav');
 			}
 			elseif(! $is_owner && strpos($app['requires'], 'local_channel') === false) {
-				if(strpos($app['categories'],'nav_pinned_app') === false) {
-					$nav_apps[] = Apps::app_render($app,'nav');
-				}
+				$nav_apps[] = Apps::app_render($app,'nav');
 			}
 		}
 	}
@@ -305,7 +297,7 @@ function nav($template = 'default') {
 		'$is_owner' => $is_owner,
 		'$sel' => App::$nav_sel,
 		'$powered_by' => $powered_by,
-		'$help' => t('@name, !forum, #tag, content'), // t('@name, !forum, #tag, ?doc, content'),
+		'$help' => t('@name, #tag, content'), 
 		'$pleasewait' => t('Please wait...'),
 		'$nav_apps' => $nav_apps,
 		'$navbar_apps' => $navbar_apps,

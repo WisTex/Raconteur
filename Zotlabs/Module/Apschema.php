@@ -17,12 +17,17 @@ class Apschema extends \Zotlabs\Web\Controller {
 				'ostatus'            => 'http://ostatus.org#',
 				'conversation'       => 'ostatus:conversation',
 				'sensitive'          => 'as:sensitive',
+				'movedTo'            => 'as:movedTo',
+				'copiedTo'           => 'as:copiedTo',
+				'alsoKnownAs'        => 'as:alsoKnownAs',
 				'inheritPrivacy'     => 'as:inheritPrivacy',
 				'commentPolicy'      => 'zot:commentPolicy',
 				'topicalCollection'  => 'zot:topicalCollection',
 				'eventRepeat'        => 'zot:eventRepeat',
 				'emojiReaction'      => 'zot:emojiReaction',
 				'expires'            => 'zot:expires',
+				'directMessage'      => 'zot:directMessage',
+				'replyTo'            => 'zot:replyTo'
 			]
 		];
 

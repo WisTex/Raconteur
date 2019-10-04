@@ -272,6 +272,10 @@ function can_comment_on_post($observer_xchan, $item) {
 		return false;
 	}
 
+	if (intval($item['item_nocomment'])) {
+		return false;
+	}
+
 	if(comments_are_now_closed($item)) {
 		return false;
 	}
@@ -952,8 +956,8 @@ function import_author_rss($x) {
 
 	$r = xchan_store_lowlevel(
 		[
-			'xchan_hash'         => $x['guid'],
-			'xchan_guid'         => $x['guid'],
+			'xchan_hash'         => $x['url'],
+			'xchan_guid'         => $x['url'],
 			'xchan_url'          => $x['url'],
 			'xchan_name'         => (($name) ? $name : t('(Unknown)')),
 			'xchan_name_date'    => datetime_convert(),
@@ -1492,12 +1496,12 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 			'allow_exec' => $allow_exec
 	];
 	/**
-	 * @hooks item_store
+	 * @hooks item_store_before
 	 *   Called when item_store() stores a record of type item.
 	 *   * \e array \b item
 	 *   * \e boolean \b allow_exec
 	 */
-	call_hooks('item_store', $d);
+	call_hooks('item_store_before', $d);
 	$arr = $d['item'];
 	$allow_exec = $d['allow_exec'];
 
@@ -1655,13 +1659,13 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	$arr['plink']         = ((x($arr,'plink'))         ? notags(trim($arr['plink']))         : '');
 	$arr['attach']        = ((x($arr,'attach'))        ? notags(trim($arr['attach']))        : '');
 	$arr['app']           = ((x($arr,'app'))           ? notags(trim($arr['app']))           : '');
+	$arr['replyto']       = ((x($arr,'replyto'))       ? serialise($arr['replyto'])          : '');
 
 	$arr['public_policy'] = '';
 
 	$arr['comment_policy'] = ((x($arr,'comment_policy')) ? notags(trim($arr['comment_policy']))  : 'contacts' );
 
-	if(! array_key_exists('item_unseen',$arr))
-		$arr['item_unseen'] = 1;
+	$arr['item_unseen'] = ((array_key_exists('item_unseen',$arr)) ? intval($arr['item_unseen']) : 1 );
 
 	if((! array_key_exists('item_nocomment',$arr)) && ($arr['comment_policy'] == 'none'))
 		$arr['item_nocomment'] = 1;
@@ -1842,10 +1846,13 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	}
 
 
- 	if(strlen($allow_cid) || strlen($allow_gid) || strlen($deny_cid) || strlen($deny_gid))
-		$private = 1;
-	else
-		$private = $arr['item_private'];
+	$private = intval($arr['item_private']);
+
+	if (! $private) {
+	 	if (strlen($allow_cid) || strlen($allow_gid) || strlen($deny_cid) || strlen($deny_gid)) {
+			$private = 1;
+		}
+	}
 
 	$arr['parent']          = $parent_id;
 	$arr['allow_cid']       = $allow_cid;
@@ -1982,13 +1989,13 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 			'allow_exec' => $allow_exec
 	];
 	/**
-	 * @hooks item_store_update
+	 * @hooks item_store_update_before
 	 *   Called when item_store_update() is called to update a stored item. It
 	 *   overwrites the function's parameters $arr and $allow_exec.
 	 *   * \e array \b item
 	 *   * \e boolean \b allow_exec
 	 */
-	call_hooks('item_store_update', $d);
+	call_hooks('item_store_update_before', $d);
 	$arr = $d['item'];
 	$allow_exec = $d['allow_exec'];
 
@@ -2133,6 +2140,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 	$arr['tgt_type']      = ((x($arr,'tgt_type'))      ? notags(trim($arr['tgt_type']))      : $orig[0]['tgt_type']);
 	$arr['target']        = ((x($arr,'target'))        ? trim($arr['target'])                : $orig[0]['target']);
 	$arr['plink']         = ((x($arr,'plink'))         ? notags(trim($arr['plink']))         : $orig[0]['plink']);
+	$arr['replyto']       = ((x($arr,'replyto'))       ? serialise($arr['replyto'])          : $orig[0]['replyto']);
 
 	$arr['allow_cid']     = ((array_key_exists('allow_cid',$arr))  ? trim($arr['allow_cid']) : $orig[0]['allow_cid']);
 	$arr['allow_gid']     = ((array_key_exists('allow_gid',$arr))  ? trim($arr['allow_gid']) : $orig[0]['allow_gid']);
@@ -2865,64 +2873,6 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 		}
 	}
 
-	// @todo handle edit and parent correctly
-
-	if((! $parent) && (! defined('NOMADIC'))) {
-
-		if($edit) {
-			return;
-		}
-
-		$arr = [];
-
-		$arr['aid'] = $channel['channel_account_id'];
-		$arr['uid'] = $channel['channel_id'];
-
-		$arr['item_uplink'] = 1;
-		$arr['source_xchan'] = $item['owner_xchan'];
-
-		$arr['item_private'] = (($channel['channel_allow_cid'] || $channel['channel_allow_gid']
-		|| $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
-
-
-		$arr['item_origin'] = 1;
-		$arr['item_wall'] = 1;
-		$arr['uuid'] = new_uuid();
-		$arr['mid'] = str_replace('/item/','/activity/',$arr['mid']);
-		$arr['parent_mid'] = $item['mid'];
-
-		$mention = '@[zrl=' . $item['author']['xchan_url'] . ']' . $item['author']['xchan_name'] . '[/zrl]';
-		$arr['body'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $item['obj_type']);
-
-		$arr['author_xchan'] = $channel['channel_hash'];
-		$arr['owner_xchan']  = $item['author_xchan'];
-		$arr['obj'] = $item['obj'];
-		$arr['obj_type'] = $item['obj_type'];
-		$arr['verb'] = 'Announce';
-		$arr['item_restrict'] = 1;
-
-		$arr['allow_cid'] = $channel['channel_allow_cid'];
-		$arr['allow_gid'] = $channel['channel_allow_gid'];
-		$arr['deny_cid']  = $channel['channel_deny_cid'];
-		$arr['deny_gid']  = $channel['channel_deny_gid'];
-		$arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
-
-		q("update item set comment_policy = 'authenticated' where mid = '%s' and uid = %d",
-			dbesc($arr['parent_mid']),
-			intval($arr['uid'])
-		);
-
-		$post = item_store($arr);	
-
-		$post_id = $post['item_id'];
-
-		if($post_id) {
-			Master::Summon([ 'Notifier','tgroup',$post_id ]);
-			return;
-		}
-	}
-
-
 	// Change this copy of the post to a forum head message and deliver to all the tgroup members
 	// also reset all the privacy bits to the forum default permissions
 
@@ -3331,6 +3281,8 @@ function retain_item($id) {
 	);
 }
 
+// Items is array of item.id
+
 function drop_items($items,$interactive = false,$stage = DROPITEM_NORMAL,$force = false) {
 	$uid = 0;
 
@@ -3384,7 +3336,8 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 
 	$item = $r[0];
 
-	$linked_item = (($item['resource_id'] && $item['resource_type'] && in_array($item['resource_type'], $linked_resource_types)) ? true : false);
+	// logger('dropped_item: ' . print_r($item,true),LOGGER_ALL);
+
 
 	$ok_to_delete = false;
 
@@ -3392,14 +3345,15 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 	if(! $interactive)
 		$ok_to_delete = true;
 
+	// admin deletion
+	
+	if(is_site_admin())
+		$ok_to_delete = true;
+
 	// owner deletion
 	if(local_channel() && local_channel() == $item['uid'])
 		$ok_to_delete = true;
 
-	// sys owned item, requires site admin to delete
-	$sys = get_sys_channel();
-	if(is_site_admin() && $sys['channel_id'] == $item['uid'])
-		$ok_to_delete = true;
 
 	// author deletion
 	$observer = App::get_observer();
@@ -3407,19 +3361,20 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 		$ok_to_delete = true;
 
 	if($ok_to_delete) {
+		
+		$r = q("UPDATE item SET item_deleted = 1 WHERE id = %d",
+			intval($item['id'])
+		);
 
-		// set the deleted flag immediately on this item just in case the
-		// hook calls a remote process which loops. We'll delete it properly in a second.
-
-		if(($linked_item) && (! $force)) {
-			$r = q("UPDATE item SET item_hidden = 1 WHERE id = %d",
-				intval($item['id'])
+		if ($item['resource_type'] === 'event' ) {
+			q("delete from event where event_hash = '%s' and uid = %d",
+				dbesc($item['resource_id']),
+				intval($item['uid'])
 			);
 		}
-		else {
-			$r = q("UPDATE item SET item_deleted = 1 WHERE id = %d",
-				intval($item['id'])
-			);
+
+		if ($item['resource_type'] === 'photo' ) {
+			attach_delete($item['uid'],$item['resource_id'],true);
 		}
 
 		$arr = [
@@ -3484,7 +3439,6 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
  */
 function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
 
-	$linked_item = (($item['resource_id']) ? true : false);
 
 	logger('item: ' . $item['id'] . ' stage: ' . $stage . ' force: ' . $force, LOGGER_DATA);
 
@@ -3499,39 +3453,19 @@ function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
 			break;
 
 		case DROPITEM_PHASE1:
-			if($linked_item && ! $force) {
-				$r = q("UPDATE item SET item_hidden = 1,
-					changed = '%s', edited = '%s'  WHERE id = %d",
-					dbesc(datetime_convert()),
-					dbesc(datetime_convert()),
-					intval($item['id'])
-				);
-			}
-			else {
-				$r = q("UPDATE item set item_deleted = 1, changed = '%s', edited = '%s' where id = %d",
-					dbesc(datetime_convert()),
-					dbesc(datetime_convert()),
-					intval($item['id'])
-				);
-			}
+			$r = q("UPDATE item set item_deleted = 1, changed = '%s', edited = '%s' where id = %d",
+				dbesc(datetime_convert()),
+				dbesc(datetime_convert()),
+				intval($item['id'])
+			);
 
 			break;
 
 		case DROPITEM_NORMAL:
 		default:
-			if($linked_item && ! $force) {
-				$r = q("UPDATE item SET item_hidden = 1,
-					changed = '%s', edited = '%s'  WHERE id = %d",
-					dbesc(datetime_convert()),
-					dbesc(datetime_convert()),
-					intval($item['id'])
-				);
-			}
-			else {
-				$r = q("DELETE FROM item WHERE id = %d",
-					intval($item['id'])
-				);
-			}
+			$r = q("DELETE FROM item WHERE id = %d",
+				intval($item['id'])
+			);
 			break;
 	}
 
@@ -3853,7 +3787,7 @@ function zot_feed($uid, $observer_hash, $arr) {
 		$nonsys_uids = q("SELECT channel_id FROM channel WHERE channel_system = 0");
 		$nonsys_uids_str = ids_to_querystr($nonsys_uids,'channel_id');
 
-		$r = q("SELECT parent, postopts FROM item
+		$r = q("SELECT parent FROM item
 			WHERE uid IN ( %s )
 			AND item_private = 0
 			$item_normal
@@ -3862,7 +3796,7 @@ function zot_feed($uid, $observer_hash, $arr) {
 		);
 	}
 	else {
-		$r = q("SELECT parent, postopts FROM item
+		$r = q("SELECT parent FROM item
 			WHERE uid = %d
 			$item_normal
 			$sql_extra ORDER BY created ASC $limit",
@@ -3875,8 +3809,6 @@ function zot_feed($uid, $observer_hash, $arr) {
 	if($r) {
 		foreach($r as $rv) {
 			if(array_key_exists($rv['parent'],$parents))
-				continue;
-			if(strpos($rv['postopts'],'nodeliver') !== false)
 				continue;
 			$parents[$rv['parent']] = $rv;
 			if(count($parents) > 200)
@@ -3972,7 +3904,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 
 		$contact_str = '';
 
-		$contacts = AccessList::members($r[0]['id']);
+		$contacts = AccessList::members($uid,$r[0]['id']);
 		if ($contacts) {
 			foreach($contacts as $c) {
 				if($contact_str)
@@ -4294,12 +4226,12 @@ function set_linkified_perms($linkified, &$str_contact_allow, &$str_group_allow,
 			if(strpos($access_tag,'cid:') === 0) {
 				$str_contact_allow .= '<' . substr($access_tag,4) . '>';
 				$access_tag = '';
-				$private = 1;
+				$private = 2;
 			}
 			elseif(strpos($access_tag,'gid:') === 0) {
 				$str_group_allow .= '<' . substr($access_tag,4) . '>';
 				$access_tag = '';
-				$private = 1;
+				$private = 2;
 			}
 		}
 	}
@@ -4397,10 +4329,6 @@ function sync_an_item($channel_id,$item_id) {
 
 function fix_attached_photo_permissions($uid,$xchan_hash,$body,
 	$str_contact_allow,$str_group_allow,$str_contact_deny,$str_group_deny) {
-
-	if(get_pconfig($uid,'system','force_public_uploads',1)) {
-		$str_contact_allow = $str_group_allow = $str_contact_deny = $str_group_deny = '';
-	}
 
 	$match = null;
 	// match img and zmg image links
@@ -4502,10 +4430,6 @@ function fix_attached_photo_permissions($uid,$xchan_hash,$body,
 
 function fix_attached_file_permissions($channel,$observer_hash,$body,
 	$str_contact_allow,$str_group_allow,$str_contact_deny,$str_group_deny) {
-
-	if(get_pconfig($channel['channel_id'],'system','force_public_uploads',1)) {
-		$str_contact_allow = $str_group_allow = $str_contact_deny = $str_group_deny = '';
-	}
 
 	$match = false;
 

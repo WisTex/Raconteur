@@ -4,7 +4,7 @@
 		<div class="input-group">
 			<input class="form-control" type="text" name="url" title="{{$hint}}" placeholder="{{$desc}}" />
 			<div class="input-group-append">
-				<button class="btn btn-success" type="submit" name="submit" value="{{$follow}}" title="{{$follow}}"><i class="fa fa-fw fa-plus"></i></button>
+				<button class="btn btn-sm btn-success" type="submit" name="submit" value="{{$follow}}" title="{{$follow}}"><i class="fa fa-fw fa-plus"></i></button>
 			</div>
 		</div>
 	</form>

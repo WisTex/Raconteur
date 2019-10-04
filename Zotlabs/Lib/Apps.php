@@ -74,7 +74,7 @@ class Apps {
 			'Events',
 			'Search',
 			'Profile Photo',
-			'Access Lists'
+			'Lists'
 		]);
 		call_hooks('get_base_apps',$x);
 		return $x;
@@ -313,7 +313,7 @@ class Apps {
 	static public function translate_system_apps(&$arr) {
 		$apps = array(
 			'Apps' => t('Apps'),
-			'Affinity Tool' => t('Affinity Tool'),
+			'Friend Zoom' => t('Friend Zoom'),
 			'Articles' => t('Articles'),
 			'Cards' => t('Cards'),
 			'Calendar' => t('Calendar'),
@@ -331,6 +331,7 @@ class Apps {
 			'Suggest Channels' => t('Suggest Channels'),
 			'Login' => t('Login'),
 			'Channel Manager' => t('Channel Manager'), 
+			'Notes' => t('Notes'),
 			'Network' => t('Stream'), 
 			'Settings' => t('Settings'),
 			'Files' => t('Files'),
@@ -339,7 +340,10 @@ class Apps {
 			'Channel Home' => t('Channel Home'), 
 			'View Profile' => t('View Profile'),
 			'Photos' => t('Photos'), 
+			'Photomap' => t('Photomap'), 
 			'Events' => t('Events'), 
+			'Tasks' => t('Tasks'),
+			'No Comment' => t('No Comment'),
 			'Directory' => t('Directory'), 
 			'Help' => t('Help'),
 			'Mail' => t('Mail'),
@@ -359,7 +363,7 @@ class Apps {
 			'Profile Photo' => t('Profile Photo'),
 			'Profile' => t('Profile'),
 			'Profiles' => t('Profiles'),
-			'Access Lists' => t('Access Lists'),
+			'Lists' => t('Lists'),
 			'Notifications' => t('Notifications'),
 			'Order Apps' => t('Order Apps'),
 			'CalDAV' => t('CalDAV'),
@@ -579,7 +583,8 @@ class Apps {
 			'$featured' => ((strpos($papp['categories'], 'nav_featured_app') === false) ? false : true),
 			'$pinned' => ((strpos($papp['categories'], 'nav_pinned_app') === false) ? false : true),
 			'$navapps' => (($mode === 'nav') ? true : false),
-			'$order' => (($mode === 'nav-order') ? true : false),
+			'$order' => (($mode === 'nav-order' || $mode === 'nav-order-pinned') ? true : false),
+			'$mode' => $mode,
 			'$add' => t('Add to app-tray'),
 			'$remove' => t('Remove from app-tray'),
 			'$add_nav' => t('Pin to navbar'),
@@ -921,8 +926,6 @@ class Apps {
 		if ($list) {
 			foreach ($list as $li) {
 				$papp = self::app_encode($li);
-				if ($menu !== 'nav_pinned_app' && strpos($papp['categories'],'nav_pinned_app') !== false)
-					continue;
 				$syslist[] = $papp;
 			}
 		}
@@ -970,9 +973,6 @@ class Apps {
 		if ($list) {
 			foreach ($list as $li) {
 				$papp = self::app_encode($li);
-				if ($menu !== 'nav_pinned_app' && strpos($papp['categories'],'nav_pinned_app') !== false) {
-					continue;
-				}
 				$syslist[] = $papp;
 			}
 		}

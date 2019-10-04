@@ -1,52 +1,49 @@
 <?php
+
 /**
  * @file include/account.php
- * @brief Somme account related functions.
+ * @brief Some account related functions.
  */
 
 use Zotlabs\Lib\Crypto;
-
-require_once('include/config.php');
-require_once('include/network.php');
-require_once('include/plugin.php');
-require_once('include/text.php');
-require_once('include/language.php');
-require_once('include/datetime.php');
-require_once('include/channel.php');
 
 
 function get_account_by_id($account_id) {
 	$r = q("select * from account where account_id = %d",
 		intval($account_id)
 	);
-	return (($r) ? $r[0] : false);
+	return (($r) ? array_shift($r) : false);
 }
 
 function check_account_email($email) {
 
 	$email = punify($email);
-	$result = array('error' => false, 'message' => '');
+	$result = [ 'error' => false, 'message' => '' ];
 
 	// Caution: empty email isn't counted as an error in this function. 
 	// Check for empty value separately. 
 
-	if(! strlen($email))
+	if (! strlen($email)) {
 		return $result;
+	}
 
-	if(! validate_email($email))
+	if (! validate_email($email)) {
 		$result['message'] .= t('Not a valid email address') . EOL;
-	elseif(! allowed_email($email))
+	}
+	elseif (! allowed_email($email)) {
 		$result['message'] = t('Your email domain is not among those allowed on this site');
+	}
 	else {	
 		$r = q("select account_email from account where account_email = '%s' limit 1",
 			dbesc($email)
 		);
-		if($r) {
+		if ($r) {
 			$result['message'] .= t('Your email address is already registered at this site.');
 		}
 	}
-	if($result['message'])
+	if ($result['message']) {
 		$result['error'] = true;
+	}
 
 	$arr = array('email' => $email, 'result' => $result);
 	call_hooks('check_account_email', $arr);
@@ -55,54 +52,58 @@ function check_account_email($email) {
 }
 
 function check_account_password($password) {
-	$result = array('error' => false, 'message' => '');
+	$result = [ 'error' => false, 'message' => '' ];
 
 	// The only validation we perform by default is pure Javascript to
 	// check minimum length and that both entered passwords match.
 	// Use hooked functions to perform complexity requirement checks.
 
-	$arr = array('password' => $password, 'result' => $result);
+	$arr = [ 'password' => $password, 'result' => $result ];
 	call_hooks('check_account_password', $arr);
 
 	return $arr['result'];
 }
 
 function check_account_invite($invite_code) {
-	$result = array('error' => false, 'message' => '');
+	$result = [ 'error' => false, 'message' => '' ];
 
 	$using_invites = get_config('system','invitation_only');
 
-	if($using_invites) {
-		if(! $invite_code) {
+	if ($using_invites) {
+		if (! $invite_code) {
 			$result['message'] .= t('An invitation is required.') . EOL;
 		}
 		$r = q("select * from register where hash = '%s' limit 1", dbesc($invite_code));
-		if(! $r) {
+		if (! $r) {
 			$result['message'] .= t('Invitation could not be verified.') . EOL;
 		}
 	}
-	if(strlen($result['message']))
+	if (strlen($result['message'])) {
 		$result['error'] = true;
+	}
 
-	$arr = array('invite_code' => $invite_code, 'result' => $result);
+	$arr = [ 'invite_code' => $invite_code, 'result' => $result ];
 	call_hooks('check_account_invite', $arr);
 
 	return $arr['result'];
 }
 
 function check_account_admin($arr) {
-	if(is_site_admin())
+	if (is_site_admin()) {
 		return true;
+	}
 	$admin_email = trim(get_config('system','admin_email'));
-	if(strlen($admin_email) && $admin_email === trim($arr['email']))
+	if (strlen($admin_email) && $admin_email === trim($arr['email'])) {
 		return true;
+	}
 	return false;
 }
 
 function account_total() {
 	$r = q("select account_id from account where true");
-	if(is_array($r))
+	if ($r) {
 		return count($r);
+	}
 	return false;
 }
 
@@ -138,7 +139,7 @@ function create_account($arr) {
 
 	// Required: { email, password }
 
-	$result = array('success' => false, 'email' => '', 'password' => '', 'message' => '');
+	$result = [ 'success' => false, 'email' => '', 'password' => '', 'message' => '' ];
 
 	$invite_code = ((x($arr,'invite_code'))   ? notags(trim($arr['invite_code']))  : '');
 	$email       = ((x($arr,'email'))         ? notags(punify(trim($arr['email']))) : '');
@@ -149,30 +150,25 @@ function create_account($arr) {
 	$roles       = ((x($arr,'account_roles')) ? intval($arr['account_roles'])      : 0 );
 	$expires     = ((x($arr,'expires'))       ? intval($arr['expires'])            : NULL_DATE);
 
-	$default_service_class = get_config('system','default_service_class');
+	$default_service_class = get_config('system','default_service_class', EMPTY_STR);
 
-	if($default_service_class === false)
-		$default_service_class = '';
-
-	if((! x($email)) || (! x($password))) {
+	if (! ($email && $password)) {
 		$result['message'] = t('Please enter the required information.');
 		return $result;
 	}
 
 	// prevent form hackery
 
-	if($roles & ACCOUNT_ROLE_ADMIN) {
-		$admin_result = check_account_admin($arr);
-		if(! $admin_result) {
-			$roles = 0;
-		}
+	if (($roles & ACCOUNT_ROLE_ADMIN) && (! check_account_admin($arr))) {
+		$roles = $roles - ACCOUNT_ROLE_ADMIN;
 	}
 
 	// allow the admin_email account to be admin, but only if it's the first account.
 
 	$c = account_total();
-	if (($c === 0) && (check_account_admin($arr)))
+	if (($c === 0) && (check_account_admin($arr))) {
 		$roles |= ACCOUNT_ROLE_ADMIN;
+	}
 
 	// Ensure that there is a host keypair.
 
@@ -183,21 +179,21 @@ function create_account($arr) {
 	}
 
 	$invite_result = check_account_invite($invite_code);
-	if($invite_result['error']) {
+	if ($invite_result['error']) {
 		$result['message'] = $invite_result['message'];
 		return $result;
 	}
 
 	$email_result = check_account_email($email);
 
-	if($email_result['error']) {
+	if ($email_result['error']) {
 		$result['message'] = $email_result['message'];
 		return $result;
 	}
 
 	$password_result = check_account_password($password);
 
-	if($password_result['error']) {
+	if ($password_result['error']) {
 		$result['message'] = $password_result['message'];
 		return $result;
 	}
@@ -219,7 +215,7 @@ function create_account($arr) {
 			'account_service_class' => $default_service_class
 		]
 	);
-	if(! $r) {
+	if (! $r) {
 		logger('create_account: DB INSERT failed.');
 		$result['message'] = t('Failed to store account information.');
 		return($result);
@@ -229,7 +225,7 @@ function create_account($arr) {
 		dbesc($email),
 		dbesc($password_encoded)
 	);
-	if($r && count($r)) {
+	if ($r && count($r)) {
 		$result['account'] = $r[0];
 	}
 	else {
@@ -238,12 +234,12 @@ function create_account($arr) {
 
 	// Set the parent record to the current record_id if no parent was provided
 
-	if(! $parent) {
+	if (! $parent) {
 		$r = q("update account set account_parent = %d where account_id = %d",
 			intval($result['account']['account_id']),
 			intval($result['account']['account_id'])
 		);
-		if(! $r) {
+		if (! $r) {
 			logger('create_account: failed to set parent');
 		}
 		$result['account']['parent'] = $result['account']['account_id'];
@@ -262,19 +258,19 @@ function create_account($arr) {
 
 function verify_email_address($arr) {
 
-	if(array_key_exists('resend',$arr)) {
+	if (array_key_exists('resend',$arr)) {
 		$email = $arr['email'];
 		$a = q("select * from account where account_email = '%s' limit 1",
 			dbesc($arr['email'])
 		);
-		if(! ($a && ($a[0]['account_flags'] & ACCOUNT_UNVERIFIED))) {
+		if (! ($a && ($a[0]['account_flags'] & ACCOUNT_UNVERIFIED))) {
 			return false;
 		}
-		$account = $a[0];
+		$account = array_shift($a);
 		$v = q("select * from register where uid = %d and password = 'verify' limit 1",
 			intval($account['account_id'])
 		);
-		if($v) {
+		if ($v) {
 			$hash = $v[0]['hash'];
 		}
 		else {
@@ -317,11 +313,12 @@ function verify_email_address($arr) {
 
 	pop_lang();
 
-	if($res)
+	if ($res) {
 		$delivered ++;
-	else
+	}
+	else {
 		logger('send_reg_approval_email: failed to account_id: ' . $arr['account']['account_id']);
-
+	}
 	return $res;
 }
 
@@ -333,19 +330,21 @@ function send_reg_approval_email($arr) {
 	$r = q("select * from account where (account_roles & %d) >= 4096",
 		 intval(ACCOUNT_ROLE_ADMIN)
 	);
-	if(! ($r && count($r)))
+	if (! ($r && count($r))) {
 		return false;
+	}
 
-	$admins = array();
+	$admins = [];
 
-	foreach($r as $rr) {
-		if(strlen($rr['account_email'])) {
-			$admins[] = array('email' => $rr['account_email'], 'lang' => $rr['account_lang']);
+	foreach ($r as $rr) {
+		if (strlen($rr['account_email'])) {
+			$admins[] = [ 'email' => $rr['account_email'], 'lang' => $rr['account_lang'] ];
 		}
 	}
 
-	if(! count($admins))
+	if (! count($admins)) {
 		return false;
+	}
 
 	$hash = random_string();
 
@@ -363,20 +362,22 @@ function send_reg_approval_email($arr) {
 
 	$delivered = 0;
 
-	foreach($admins as $admin) {
-		if(strlen($admin['lang']))
+	foreach ($admins as $admin) {
+		if (strlen($admin['lang'])) {
 			push_lang($admin['lang']);
-		else
+		}
+		else {
 			push_lang('en');
+		}
 
-		$email_msg = replace_macros(get_intltext_template('register_verify_eml.tpl'), array(
+		$email_msg = replace_macros(get_intltext_template('register_verify_eml.tpl'), [
 			'$sitename' => get_config('system','sitename'),
 			'$siteurl'  =>  z_root(),
 			'$email'    => $arr['email'],
 			'$uid'      => $arr['account']['account_id'],
 			'$hash'     => $hash,
 			'$details'  => $details
-		 ));
+		 ]);
 
 		$res = z_mail(
 			[ 
@@ -386,25 +387,27 @@ function send_reg_approval_email($arr) {
 			]
 		);
 
-		if($res)
+		if ($res) {
 			$delivered ++;
-		else
+		}
+		else {
 			logger('send_reg_approval_email: failed to ' . $admin['email'] . 'account_id: ' . $arr['account']['account_id']);
-
+		}
+		
 		pop_lang();
 	}
 
-	return($delivered ? true : false);
+	return ($delivered ? true : false);
 }
 
 function send_register_success_email($email,$password) {
 
-	$email_msg = replace_macros(get_intltext_template('register_open_eml.tpl'), array(
+	$email_msg = replace_macros(get_intltext_template('register_open_eml.tpl'), [
 		'$sitename' => get_config('system','sitename'),
 		'$siteurl' =>  z_root(),
 		'$email'    => $email,
 		'$password' => t('your registration password'),
-	));
+	]);
 
 	$res = z_mail(
 		[ 
@@ -414,7 +417,7 @@ function send_register_success_email($email,$password) {
 		]
 	);
 
-	return($res ? true : false);
+	return ($res ? true : false);
 }
 
 /**
@@ -431,26 +434,27 @@ function account_allow($hash) {
 		dbesc($hash)
 	);
 
-	if(! $register)
+	if (! $register) {
 		return $ret;
+	}
 
 	$account = q("SELECT * FROM account WHERE account_id = %d LIMIT 1",
 		intval($register[0]['uid'])
 	);
 
-	if(! $account)
+	if (! $account)
 		return $ret;
 
 	$r = q("DELETE FROM register WHERE hash = '%s'",
 		dbesc($register[0]['hash'])
 	);
 
-	$r = q("update account set account_flags = (account_flags & ~%d) where (account_flags & %d)>0 and account_id = %d",
+	$r = q("update account set account_flags = (account_flags & ~%d) where (account_flags & %d) > 0 and account_id = %d",
 		intval(ACCOUNT_BLOCKED),
 		intval(ACCOUNT_BLOCKED),
 		intval($register[0]['uid'])
 	);
-	$r = q("update account set account_flags = (account_flags & ~%d) where (account_flags & %d)>0 and account_id = %d",
+	$r = q("update account set account_flags = (account_flags & ~%d) where (account_flags & %d) > 0 and account_id = %d",
 		intval(ACCOUNT_PENDING),
 		intval(ACCOUNT_PENDING),
 		intval($register[0]['uid'])
@@ -459,14 +463,14 @@ function account_allow($hash) {
 	push_lang($register[0]['lang']);
 
 	$email_tpl = get_intltext_template("register_open_eml.tpl");
-	$email_msg = replace_macros($email_tpl, array(
-			'$sitename' => get_config('system','sitename'),
-			'$siteurl' =>  z_root(),
-			'$username' => $account[0]['account_email'],
-			'$email' => $account[0]['account_email'],
-			'$password' => '',
-			'$uid' => $account[0]['account_id']
-	));
+	$email_msg = replace_macros($email_tpl, [
+		'$sitename' => get_config('system','sitename'),
+		'$siteurl'  =>  z_root(),
+		'$username' => $account[0]['account_email'],
+		'$email'    => $account[0]['account_email'],
+		'$password' => '',
+		'$uid'      => $account[0]['account_id']
+	]);
 
 	$res = z_mail(
 		[ 
@@ -478,8 +482,9 @@ function account_allow($hash) {
 
 	pop_lang();
 
-	if(get_config('system','auto_channel_create'))
+	if (get_config('system','auto_channel_create')) {
 		auto_channel_create($register[0]['uid']);
+	}
 
 	if ($res) {
 		info( t('Account approved.') . EOL );
@@ -505,15 +510,17 @@ function account_deny($hash) {
 		dbesc($hash)
 	);
 
-	if(! count($register))
+	if(! $register) {
 		return false;
+	}
 
 	$account = q("SELECT account_id, account_email FROM account WHERE account_id = %d LIMIT 1",
 		intval($register[0]['uid'])
 	);
 
-	if(! $account)
+	if (! $account) {
 		return false;
+	}
 
 	$r = q("DELETE FROM account WHERE account_id = %d",
 		intval($register[0]['uid'])
@@ -540,15 +547,17 @@ function account_approve($hash) {
 		dbesc($hash)
 	);
 
-	if(! $register)
+	if (! $register) {
 		return $ret;
+	}
 
 	$account = q("SELECT * FROM account WHERE account_id = %d LIMIT 1",
 		intval($register[0]['uid'])
 	);
 
-	if(! $account)
+	if (! $account) {
 		return $ret;
+	}
 
 	$r = q("DELETE FROM register WHERE hash = '%s' and password = 'verify'",
 		dbesc($register[0]['hash'])
@@ -576,11 +585,13 @@ function account_approve($hash) {
 		intval($register[0]['uid'])
 	);
 
-	if(! $account)
+	if (! $account) {
 		return $ret;
+	}
 
-	if(get_config('system','auto_channel_create'))
+	if(get_config('system','auto_channel_create')) {
 		auto_channel_create($register[0]['uid']);
+	}
 	else {
 		$_SESSION['login_return_url'] = 'new_channel';
 		authenticate_success($account[0],null,true,true,false,true);
@@ -612,20 +623,21 @@ function downgrade_accounts() {
 		db_getfunc('UTC_TIMESTAMP')
 	);
 
-	if(! $r)
+	if (! $r) {
 		return;
+	}
 
 	$basic = get_config('system','default_service_class');
 
-	foreach($r as $rr) {
-		if(($basic) && ($rr['account_service_class']) && ($rr['account_service_class'] != $basic)) {
+	foreach ($r as $rr) {
+		if (($basic) && ($rr['account_service_class']) && ($rr['account_service_class'] != $basic)) {
 			$x = q("UPDATE account set account_service_class = '%s', account_expires = '%s'
 				where account_id = %d",
 				dbesc($basic),
 				dbesc(NULL_DATE),
 				intval($rr['account_id'])
 			);
-			$ret = array('account' => $rr);
+			$ret = [ 'account' => $rr ];
 			call_hooks('account_downgrade', $ret );
 			logger('downgrade_accounts: Account id ' . $rr['account_id'] . ' downgraded.');
 		}
@@ -634,7 +646,7 @@ function downgrade_accounts() {
 				intval(ACCOUNT_EXPIRED),
 				intval($rr['account_id'])
 			);
-			$ret = array('account' => $rr);
+			$ret = [ 'account' => $rr ];
 			call_hooks('account_downgrade', $ret);
 			logger('downgrade_accounts: Account id ' . $rr['account_id'] . ' expired.');
 		}
@@ -669,13 +681,14 @@ function downgrade_accounts() {
 function service_class_allows($uid, $property, $usage = false) {
 	$limit = service_class_fetch($uid, $property);
 
-	if($limit === false)
+	if ($limit === false) {
 		return true; // No service class set => everything is allowed
-
+	}
+	
 	$limit = engr_units_to_bytes($limit);
-	if($usage === false) {
+	if ($usage === false) {
 		// We use negative values for not allowed properties in a subscriber plan
-		return ((x($limit)) ? (bool) $limit : true);
+		return (($limit) ? (bool) $limit : true);
 	} else {
 		return (((intval($usage)) < intval($limit)) ? true : false);
 	}
@@ -706,14 +719,15 @@ function account_service_class_allows($aid, $property, $usage = false) {
 
 	$limit = account_service_class_fetch($aid, $property);
 
-	if($limit === false)
+	if ($limit === false) {
 		return true; // No service class is set => everything is allowed
-
+	}
+	
 	$limit = engr_units_to_bytes($limit);
 
-	if($usage === false) {
+	if ($usage === false) {
 		// We use negative values for not allowed properties in a subscriber plan
-		return ((x($limit)) ? (bool) $limit : true);
+		return (($limit) ? (bool) $limit : true);
 	} else {
 		return (((intval($usage)) < intval($limit)) ? true : false);
 	}
@@ -739,26 +753,27 @@ function account_service_class_allows($aid, $property, $usage = false) {
 function service_class_fetch($uid, $property) {
 
 
-	if($uid == local_channel()) {
+	if ($uid == local_channel()) {
 		$service_class = App::$account['account_service_class'];
 	}
 	else {
-		$r = q("select account_service_class as service_class 
-				from channel c, account a 
-				where c.channel_account_id=a.account_id and c.channel_id= %d limit 1",
-				intval($uid)
+		$r = q("select account_service_class 
+			from channel c, account a 
+			where c.channel_account_id = a.account_id and c.channel_id = %d limit 1",
+			intval($uid)
 		);
-		if($r !== false and count($r)) {
-			$service_class = $r[0]['service_class'];
+		if ($r) {
+			$service_class = $r[0]['account_service_class'];
 		}
 	}
-	if(! x($service_class))
+	if (! $service_class) {
 		return false; // everything is allowed
-
+	}
 	$arr = get_config('service_class', $service_class);
 
-	if(! is_array($arr) || (! count($arr)))
+	if (! is_array($arr) || (! count($arr))) {
 		return false;
+	}
 
 	return((array_key_exists($property, $arr)) ? $arr[$property] : false);
 }

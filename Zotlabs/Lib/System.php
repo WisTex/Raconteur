@@ -31,7 +31,7 @@ class System {
 		if(is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('icon',App::$config['system'])) {
 			return App::$config['system']['icon'];
 		}		
-		return z_root() . '/images/z-64.png';
+		return z_root() . '/images/z2-64.png';
 
 	}
 
@@ -68,7 +68,7 @@ class System {
 	static public function get_project_link() {
 		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['project_link'])
 			return App::$config['system']['project_link'];
-		return 'https://framagit.org/zot/zap';
+		return 'https://zotlabs.com/zap';
 	}
 
 	static public function get_project_srclink() {

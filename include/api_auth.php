@@ -7,6 +7,11 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\System;
 use Zotlabs\Web\HTTPSig;
 
+require_once('include/oauth.php');
+require_once('include/auth.php');
+require_once('include/security.php');
+
+
 /**
  * API Login via basic-auth or OAuth
  */
@@ -16,9 +21,6 @@ function api_login() {
 	$record = null;
 	$remote_auth = false;
 	$sigblock = null;
-
-	require_once('include/oauth.php');
-
 
 	if (array_key_exists('REDIRECT_REMOTE_USER',$_SERVER) && (! array_key_exists('HTTP_AUTHORIZATION',$_SERVER))) {
 		$_SERVER['HTTP_AUTHORIZATION'] = $_SERVER['REDIRECT_REMOTE_USER'];
@@ -137,8 +139,6 @@ function api_login() {
 		}
 	}
 
-	require_once('include/auth.php');
-	require_once('include/security.php');
 
 	// process normal login request
 

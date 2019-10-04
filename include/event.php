@@ -110,6 +110,7 @@ function format_event_obj($jobject) {
 			'$dtend_label'	 => t('Finishes:'),
 			'$dtend_title'	 => datetime_convert('UTC','UTC',$dtend, ((strpos($object['startTime'],'Z')) ? ATOM_TIME : 'Y-m-d\TH:i:s' )),
 			'$dtend_dt'	 => ((strpos($object['startTime'],'Z')) ? day_translate(datetime_convert('UTC', date_default_timezone_get(), $dtend , $bd_format )) :  day_translate(datetime_convert('UTC', 'UTC', $dtend , $bd_format )))
+
 		));
 
 		$event['content'] = replace_macros(get_markup_template('event_item_content.tpl'),array(
@@ -272,6 +273,9 @@ function format_event_bbcode($ev) {
 	if($ev['adjust'])
 		$o .= '[event-adjust]' . $ev['adjust'] . '[/event-adjust]';
 
+	// Hubzilla compatibility
+	$o .= '[event-timezone]UTC[/event-timezone]';
+	
 	return $o;
 }
 
@@ -333,6 +337,16 @@ function bbtoevent($s) {
 		}
 		else
 			$ev['nofinish'] = 1;
+	}
+
+	if(preg_match("/\[event\-timezone\](.*?)\[\/event\-timezone\]/is",$s,$match)) {
+		$tz = $match[1];
+		if (array_key_exists('dtstart',$ev)) {
+			$ev['dtstart'] = datetime_convert($tz,'UTC',$ev['dtstart']);
+		}
+		if (array_key_exists('dtend',$ev)) {
+			$ev['dtend'] = datetime_convert($tz,'UTC',$ev['dtend']);
+		}
 	}
 
 //	logger('bbtoevent: ' . print_r($ev,true));
@@ -1063,7 +1077,8 @@ function event_store_item($arr, $event) {
 		$x = [ 
 			'type'      => 'Event',
 			'id'        => z_root() . '/event/' . $r[0]['resource_id'],
-			'summary'   => bbcode($arr['summary']),
+			'name'      => $arr['summary'],
+//			'summary'   => bbcode($arr['summary']),
 			// RFC3339 Section 4.3
 			'startTime' => (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtstart'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtstart'],'Y-m-d\\TH:i:s-00:00')),
 			'content'   => bbcode($arr['description']),
@@ -1216,7 +1231,8 @@ function event_store_item($arr, $event) {
 			$y = [ 
 				'type'       => 'Event',
 				'id'         => z_root() . '/event/' . $event['event_hash'],
-				'summary'    => bbcode($arr['summary']),
+				'name'       => $arr['summary'],
+//				'summary'    => bbcode($arr['summary']),
 				// RFC3339 Section 4.3
 				'startTime'  => (($arr['adjust']) ? datetime_convert('UTC','UTC',$arr['dtstart'], ATOM_TIME) : datetime_convert('UTC','UTC',$arr['dtstart'],'Y-m-d\\TH:i:s-00:00')),
 				'content'    => bbcode($arr['description']),

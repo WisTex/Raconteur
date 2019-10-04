@@ -10,9 +10,9 @@ class AccessList {
 	static function add($uid,$name,$public = 0) {
 
 		$ret = false;
-		if(x($uid) && x($name)) {
+		if ($uid && $name) {
 			$r = self::byname($uid,$name); // check for dups
-			if($r !== false) {
+			if ($r !== false) {
 
 				// This could be a problem. 
 				// Let's assume we've just created a list which we once deleted
@@ -30,15 +30,7 @@ class AccessList {
 				return true;
 			}
 
-			do {
-				$dups = false;
-				$hash = random_string(32) . str_replace(['<','>'],['.','.'], $name);
-
-				$r = q("SELECT id FROM pgrp WHERE hash = '%s' LIMIT 1", dbesc($hash));
-				if($r)
-					$dups = true;
-			} while($dups == true);
-
+			$hash = new_uuid();
 
 			$r = q("INSERT INTO pgrp ( hash, uid, visible, gname )
 				VALUES( '%s', %d, %d, '%s' ) ",
@@ -214,15 +206,15 @@ class AccessList {
 	}
 
 
-	static function members($gid) {
+	static function members($uid, $gid) {
 		$ret = array();
 		if(intval($gid)) {
 			$r = q("SELECT * FROM pgrp_member 
 				LEFT JOIN abook ON abook_xchan = pgrp_member.xchan left join xchan on xchan_hash = abook_xchan
 				WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 ORDER BY xchan_name ASC ",
 				intval($gid),
-				intval(local_channel()),
-				intval(local_channel())
+				intval($uid),
+				intval($uid)
 			);
 			if($r)
 				$ret = $r;
@@ -230,12 +222,12 @@ class AccessList {
 		return $ret;
 	}
 
-	static function members_xchan($gid) {
+	static function members_xchan($uid,$gid) {
 		$ret = [];
 		if(intval($gid)) {
 			$r = q("SELECT xchan FROM pgrp_member WHERE gid = %d AND uid = %d",
 				intval($gid),
-				intval(local_channel())
+				intval($uid)
 			);
 			if($r) {
 				foreach($r as $rr) {
@@ -293,7 +285,7 @@ class AccessList {
 
 
 
-	static function widget($every="connections",$each="group",$edit = false, $group_id = 0, $cid = '',$mode = 1) {
+	static function widget($every="connections",$each="lists",$edit = false, $group_id = 0, $cid = '',$mode = 1) {
 
 		$o = '';
 
@@ -312,7 +304,7 @@ class AccessList {
 				$selected = (($group_id == $rr['id']) ? ' group-selected' : '');
 			
 				if ($edit) {
-					$groupedit = [ 'href' => "alist/".$rr['id'], 'title' => t('edit') ];
+					$groupedit = [ 'href' => "lists/".$rr['id'], 'title' => t('edit') ];
 				} 
 				else {
 					$groupedit = null;
@@ -334,7 +326,7 @@ class AccessList {
 	
 		$tpl = get_markup_template("group_side.tpl");
 		$o = replace_macros($tpl, array(
-			'$title'		=> t('Access Lists'),
+			'$title'		=> t('Lists'),
 			'$edittext'     => t('Edit list'),
 			'$createtext' 	=> t('Create new list'),
 			'$ungrouped'    => (($every === 'contacts') ? t('Channels not in any access list') : ''),

@@ -399,6 +399,9 @@ class Libsync {
 
 				}
 
+				$columns = db_columns('channel');
+
+
 				$disallowed = [
 					'channel_id',         'channel_account_id',  'channel_primary',   'channel_prvkey',
 					'channel_address',    'channel_notifyflags', 'channel_removed',   'channel_deleted',
@@ -409,17 +412,15 @@ class Libsync {
 					'channel_a_delegate', 'channel_moved'
 				];
 
-				$clean = array();
 				foreach($arr['channel'] as $k => $v) {
-					if(in_array($k,$disallowed))
+					if (in_array($k,$disallowed)) {
 						continue;
-					$clean[$k] = $v;
-				}
-				if(count($clean)) {
-					foreach($clean as $k => $v) {
-						$r = dbq("UPDATE channel set " . dbesc($k) . " = '" . dbesc($v)
-							. "' where channel_id = " . intval($channel['channel_id']) );
 					}
+					if (! in_array($k,$columns)) {
+						continue;
+					}
+					$r = dbq("UPDATE channel set " . dbesc($k) . " = '" . dbesc($v)
+						. "' where channel_id = " . intval($channel['channel_id']) );
 				}
 			}
 
@@ -852,11 +853,6 @@ class Libsync {
 					logger('Empty hubloc sitekey. ' . print_r($location,true));
 					continue;
 				}
-
-				// Catch some malformed entries from the past which still exist
-
-				if(strpos($location['address'],'/') !== false)
-					$location['address'] = substr($location['address'],0,strpos($location['address'],'/'));
 
 				// match as many fields as possible in case anything at all changed.
 

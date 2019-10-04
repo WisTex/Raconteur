@@ -4,10 +4,11 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Web\Controller;
 
 require_once('include/socgraph.php');
 
-class Suggestions extends \Zotlabs\Web\Controller {
+class Suggestions extends Controller {
 
 	function init() {
 		if (! local_channel())

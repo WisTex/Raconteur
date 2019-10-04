@@ -803,6 +803,16 @@ function bb_code_unprotect_sub($match) {
 	return base64_decode($match[1]);
 }
 
+function bb_colorbox($match) {
+	if (strpos($match[1],'zrl')) {
+		$url = zid($match[2]);
+	}
+	else {
+		$url = $match[2];
+	}
+	return '<a href="' . $url . '" target="censored"><img src="' . $url . '" alt="censored" style="opacity: 0.03;"></a>';
+}
+
 function bb_code($match) {
 	if(strpos($match[0], "<br />"))
 		return '<pre><code>' . bb_code_protect(trim($match[1])) . '</code></pre>';
@@ -953,6 +963,7 @@ function bbcode($Text, $options = []) {
 	$cache       = ((array_key_exists('cache',$options)) ? $options['cache'] : false);
 	$newwin      = ((array_key_exists('newwin',$options)) ? $options['newwin'] : true);
 	$export      = ((array_key_exists('export',$options)) ? $options['export'] : false);
+	$censored    = ((array_key_exists('censored',$options)) ? $options['censored'] : false);
 
 	$target = (($newwin) ? ' target="_blank" ' : '');
 
@@ -1117,14 +1128,18 @@ function bbcode($Text, $options = []) {
 	if (strpos($Text,'[/url]') !== false) {
 //		$Text = preg_replace("/\[url\]([$URLSearchString]*)\[\/url\]/ism", '<span class="bookmark-identifier">#^</span><a class="bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
 //		$Text = preg_replace("/\[url\=([$URLSearchString]*)\](.*?)\[\/url\]/ism", '<span class="bookmark-identifier">#^</span><a class="bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
+
 		$Text = preg_replace("/\[url\]([$URLSearchString]*)\[\/url\]/ism", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
+		$Text = preg_replace("/\@(\!?)\[url\=([$URLSearchString]*)\](.*?)\[\/url\]/ism", '@$1<span class="h-card"><a class="u-url mention" href="$2" ' . $target . ' rel="nofollow noopener" >$3</a></span>', $Text);
 		$Text = preg_replace("/\[url\=([$URLSearchString]*)\](.*?)\[\/url\]/ism", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
 	}
 
 	if (strpos($Text,'[/zrl]') !== false) {
-//		$Text = preg_replace("/\#\^\[zrl\]([$URLSearchString]*)\[\/zrl\]/ism", '<span class="bookmark-identifier">#^</span><a class="zrl bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
-//		$Text = preg_replace("/\#\^\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '<span class="bookmark-identifier">#^</span><a class="zrl bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
+		// render hubzilla bookmarks as normal links
+		$Text = preg_replace("/\#\^\[zrl\]([$URLSearchString]*)\[\/zrl\]/ism", '<a class="zrl bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
+		$Text = preg_replace("/\#\^\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '<a class="zrl bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
 		$Text = preg_replace("/\[zrl\]([$URLSearchString]*)\[\/zrl\]/ism", '<a class="zrl" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
+		$Text = preg_replace("/\@(\!?)\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '@$1<span class="h-card"><a class="zrl u-url mention" href="$2" ' . $target . ' rel="nofollow noopener" >$3</a></span>', $Text);
 		$Text = preg_replace("/\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '<a class="zrl" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
 	}
 
@@ -1373,6 +1388,7 @@ function bbcode($Text, $options = []) {
 			$Text);
 
 	// Images
+
 	// [img]pathtoimage[/img]
 	if (strpos($Text,'[/img]') !== false) {
 		$Text = preg_replace("/\[img\](.*?)\[\/img\]/ism", '<img style="max-width: 100%;" src="$1" alt="' . t('Image/photo') . '" />', $Text);
@@ -1417,6 +1433,12 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace("/\[zmg\=([0-9]*)x([0-9]*) float=right\](.*?)\[\/zmg\]/ism", '<img class="zrl" src="$3" style="width: 100%; max-width: $1px; float: right;" alt="' . t('Image/photo') . '" />', $Text);
 	}
 
+	if($censored) {
+		$Text = separate_img_links($Text);
+		$Text = preg_replace_callback("/\<img(.*?)src=\"(.*?)\"(.*?)\>/ism","bb_colorbox",$Text);
+	}
+
+
 	// style (sanitized)
 	if (strpos($Text,'[/style]') !== false) {
 		$Text = preg_replace_callback("(\[style=(.*?)\](.*?)\[\/style\])ism", "bb_sanitize_style", $Text);
@@ -1439,15 +1461,15 @@ function bbcode($Text, $options = []) {
 
 	// html5 video and audio
 	if (strpos($Text,'[/video]') !== false) {
-		$Text = preg_replace_callback("/\[video (.*?)\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg))\[\/video\]/ism", 'videowithopts', $Text);
-		$Text = preg_replace_callback("/\[video\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg))\[\/video\]/ism", 'tryzrlvideo', $Text);
+		$Text = preg_replace_callback("/\[video (.*?)\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg|mov))\[\/video\]/ism", 'videowithopts', $Text);
+		$Text = preg_replace_callback("/\[video\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg|mov))\[\/video\]/ism", 'tryzrlvideo', $Text);
 	}
 	if (strpos($Text,'[/audio]') !== false) {
 		$Text = preg_replace_callback("/\[audio\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mp3|opus|m4a))\[\/audio\]/ism", 'tryzrlaudio', $Text);
 	}
 	if (strpos($Text,'[/zvideo]') !== false) {
-		$Text = preg_replace_callback("/\[zvideo (.*?)\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg))\[\/zvideo\]/ism", 'videowithopts', $Text);
-		$Text = preg_replace_callback("/\[zvideo\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg))\[\/zvideo\]/ism", 'tryzrlvideo', $Text);
+		$Text = preg_replace_callback("/\[zvideo (.*?)\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg|mov))\[\/zvideo\]/ism", 'videowithopts', $Text);
+		$Text = preg_replace_callback("/\[zvideo\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mpeg|mpg|mov))\[\/zvideo\]/ism", 'tryzrlvideo', $Text);
 	}
 	if (strpos($Text,'[/zaudio]') !== false) {
 		$Text = preg_replace_callback("/\[zaudio\](.*?\.(ogg|ogv|oga|ogm|webm|mp4|mp3|opus|m4a))\[\/zaudio\]/ism", 'tryzrlaudio', $Text);
@@ -1494,6 +1516,7 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace("/\[event\-finish\](.*?)\[\/event\-finish\]/ism",'',$Text);
 		$Text = preg_replace("/\[event\-id\](.*?)\[\/event\-id\]/ism",'',$Text);
 		$Text = preg_replace("/\[event\-location\](.*?)\[\/event\-location\]/ism",'',$Text);
+		$Text = preg_replace("/\[event\-timezone\](.*?)\[\/event\-timezone\]/ism",'',$Text);
 		$Text = preg_replace("/\[event\-adjust\](.*?)\[\/event\-adjust\]/ism",'',$Text);
 
 		$Text = str_replace("\0",'$',$Text);

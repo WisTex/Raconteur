@@ -1,6 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Access\AccessControl;
@@ -12,6 +13,7 @@ use Zotlabs\Web\Controller;
 
 */
 
+require_once('include/attach.php');
 require_once('include/photo_factory.php');
 require_once('include/photos.php');
 
@@ -25,14 +27,14 @@ require_once('include/photos.php');
  */
 
 
-class Cover_photo extends \Zotlabs\Web\Controller {
+class Cover_photo extends Controller {
 
 	function init() {
-		if(! local_channel()) {
+		if (! local_channel()) {
 			return;
 		}
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 		Libprofile::load($channel['channel_address']);	
 	}
 	
@@ -45,26 +47,26 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 	
 	function post() {
 	
-		if(! local_channel()) {
+		if (! local_channel()) {
 			return;
 		}
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 		
 		check_form_security_token_redirectOnErr('/cover_photo', 'cover_photo');
-	        
-		if((array_key_exists('cropfinal',$_POST)) && ($_POST['cropfinal'] == 1)) {
+		
+		if ((array_key_exists('cropfinal',$_POST)) && ($_POST['cropfinal'] == 1)) {
 	
 			// phase 2 - we have finished cropping
 	
-			if(argc() != 2) {
+			if (argc() != 2) {
 				notice( t('Image uploaded but image cropping failed.') . EOL );
 				return;
 			}
 	
 			$image_id = argv(1);
 	
-			if(substr($image_id,-2,1) == '-') {
+			if (substr($image_id,-2,1) == '-') {
 				$scale = substr($image_id,-1,1);
 				$image_id = substr($image_id,0,-2);
 			}
@@ -79,8 +81,8 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 			$r = q("select gender from profile where uid = %d and is_default = 1 limit 1",
 				intval(local_channel())
 			);
-			if($r) {
-				$profile = $r[0];
+			if ($r) {
+				$profile = array_shift($r);
 			}
 	
 			$r = q("SELECT * FROM photo WHERE resource_id = '%s' AND uid = %d AND imgscale > 0 order by imgscale asc LIMIT 1",
@@ -88,26 +90,26 @@ class Cover_photo extends \Zotlabs\Web\Controller {
 				intval(local_channel())
 			);
 	
-			if($r) {
+			if ($r) {
 
 				$max_thumb = intval(get_config('system','max_thumbnail',1600));
 				$iscaled = false;
-				if(intval($r[0]['height']) > $max_thumb || intval($r[0]['width']) > $max_thumb) { 
+				if (intval($r[0]['height']) > $max_thumb || intval($r[0]['width']) > $max_thumb) { 
 					$imagick_path = get_config('system','imagick_convert_path');
-					if($imagick_path && @file_exists($imagick_path) && intval($r[0]['os_storage'])) {
+					if ($imagick_path && @file_exists($imagick_path) && intval($r[0]['os_storage'])) {
 
 						$fname = dbunescbin($r[0]['content']);
 						$tmp_name = $fname . '-001';
 						$newsize = photo_calculate_scale(array_merge(getimagesize($fname),['max' => $max_thumb]));
 						$cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $fname) . ' -resize ' . $newsize . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmp_name);
 						//	logger('imagick thumbnail command: ' . $cmd);
-						for($x = 0; $x < 4; $x ++) {
+						for ($x = 0; $x < 4; $x ++) {
 							exec($cmd);
-							if(file_exists($tmp_name)) {
+							if (file_exists($tmp_name)) {
 								break;
 							}
 						}
-						if(file_exists($tmp_name)) {
+						if (file_exists($tmp_name)) {
 							$base_image = $r[0];
 							$gis = getimagesize($tmp_name);
 logger('gis: ' . print_r($gis,true));
@@ -119,13 +121,13 @@ logger('gis: ' . print_r($gis,true));
 						}
 					}
 				}
-				if(! $iscaled) {
+				if (! $iscaled) {
 					$base_image = $r[0];
-					$base_image['content'] = (($r[0]['os_storage']) ? @file_get_contents(dbunescbin($base_image['content'])) : dbunescbin($base_image['content']));
+					$base_image['content'] = (($base_image['os_storage']) ? @file_get_contents(dbunescbin($base_image['content'])) : dbunescbin($base_image['content']));
 				}
 
 				$im = photo_factory($base_image['content'], $base_image['mimetype']);
-				if($im->is_valid()) {
+				if ($im->is_valid()) {
 	
 					// We are scaling and cropping the relative pixel locations to the original photo instead of the 
 					// scaled photo we operated on.
@@ -142,7 +144,7 @@ logger('gis: ' . print_r($gis,true));
 					$scaled_width = $g[0]['width'];
 					$scaled_height = $g[0]['height'];
 	
-					if((! $scaled_width) || (! $scaled_height)) {
+					if ((! $scaled_width) || (! $scaled_height)) {
 						logger('potential divide by zero scaling cover photo');
 						return;
 					}
@@ -179,20 +181,19 @@ logger('gis: ' . print_r($gis,true));
 					$p['imgscale'] = 7;
 					$p['photo_usage'] = PHOTO_COVER;
 	
-					$r1 = $im->save($p);
-	
+					$r1 = $im->storeThumbnail($p, PHOTO_RES_COVER_1200);
+
 					$im->doScaleImage(850,310);
 					$p['imgscale'] = 8;
-	
-					$r2 = $im->save($p);
-	
+
+					$r2 = $im->storeThumbnail($p, PHOTO_RES_COVER_850);
 	
 					$im->doScaleImage(425,160);
 					$p['imgscale'] = 9;
 	
-					$r3 = $im->save($p);
+					$r3 = $im->storeThumbnail($p, PHOTO_RES_COVER_425);
 				
-					if($r1 === false || $r2 === false || $r3 === false) {
+					if ($r1 === false || $r2 === false || $r3 === false) {
 						// if one failed, delete them all so we can start over.
 						notice( t('Image resize failed.') . EOL );
 						$x = q("delete from photo where resource_id = '%s' and uid = %d and imgscale >= 7 ",
@@ -202,7 +203,7 @@ logger('gis: ' . print_r($gis,true));
 						return;
 					}
 	
-					$channel = \App::get_channel();
+					$channel = App::get_channel();
 					$this->send_cover_photo_activity($channel,$base_image,$profile);
 	
 	
@@ -218,24 +219,22 @@ logger('gis: ' . print_r($gis,true));
 	
 		$hash = photo_new_resource();
 		$smallest = 0;
-	
-		require_once('include/attach.php');
-	
+		
 		$matches = [];
 		$partial = false;
 
-		if(array_key_exists('HTTP_CONTENT_RANGE',$_SERVER)) {
+		if (array_key_exists('HTTP_CONTENT_RANGE',$_SERVER)) {
 			$pm = preg_match('/bytes (\d*)\-(\d*)\/(\d*)/',$_SERVER['HTTP_CONTENT_RANGE'],$matches);
-			if($pm) {
+			if ($pm) {
 				logger('Content-Range: ' . print_r($matches,true));
 				$partial = true;
 			}
 		}
 
-		if($partial) {
+		if ($partial) {
 			$x = save_chunk($channel,$matches[1],$matches[2],$matches[3]);
 
-			if($x['partial']) {
+			if ($x['partial']) {
 				header('Range: bytes=0-' . (($x['length']) ? $x['length'] - 1 : 0));
 				json_return_and_die($result);
 			}
@@ -252,7 +251,7 @@ logger('gis: ' . print_r($gis,true));
 			}
 		}
 		else {	
-			if(! array_key_exists('userfile',$_FILES)) {
+			if (! array_key_exists('userfile',$_FILES)) {
 				$_FILES['userfile'] = [
 					'name'     => $_FILES['files']['name'],
 					'type'     => $_FILES['files']['type'],
@@ -263,9 +262,9 @@ logger('gis: ' . print_r($gis,true));
 			}
 		}
 
-		$res = attach_store(\App::get_channel(), get_observer_hash(), '', array('album' => t('Cover Photos'), 'hash' => $hash));
+		$res = attach_store(App::get_channel(), get_observer_hash(), '', array('album' => t('Cover Photos'), 'hash' => $hash));
 	
-		logger('attach_store: ' . print_r($res,true));
+		logger('attach_store: ' . print_r($res,true),LOGGER_DEBUG);
 
 		json_return_and_die([ 'message' => $hash ]);
 		
@@ -273,7 +272,7 @@ logger('gis: ' . print_r($gis,true));
 	
 	function send_cover_photo_activity($channel,$photo,$profile) {
 	
-		$arr = array();
+		$arr = [];
 		$arr['item_thread_top'] = 1;
 		$arr['item_origin'] = 1;
 		$arr['item_wall'] = 1;
@@ -282,12 +281,15 @@ logger('gis: ' . print_r($gis,true));
 		$arr['obj_type'] = ACTIVITY_OBJ_NOTE;
 		$arr['verb'] = ACTIVITY_CREATE;
 	
-		if($profile && stripos($profile['gender'],t('female')) !== false)
+		if ($profile && stripos($profile['gender'],t('female')) !== false) {
 			$t = t('%1$s updated her %2$s');
-		elseif($profile && stripos($profile['gender'],t('male')) !== false)
+		}
+		elseif ($profile && stripos($profile['gender'],t('male')) !== false) {
 			$t = t('%1$s updated his %2$s');
-		else
+		}
+		else {
 			$t = t('%1$s updated their %2$s');
+		}
 	
 		$ptext = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo['resource_id'] . ']' . t('cover photo') . '[/zrl]';
 	
@@ -336,19 +338,19 @@ logger('gis: ' . print_r($gis,true));
 	
 	function get() {
 	
-		if(! local_channel()) {
+		if (! local_channel()) {
 			notice( t('Permission denied.') . EOL );
 			return;
 		}
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 		$newuser = false;
 	
-		if(argc() == 2 && argv(1) === 'new')
+		if (argc() == 2 && argv(1) === 'new')
 			$newuser = true;
 	
-		if(argv(1) === 'use') {
+		if (argv(1) === 'use') {
 			if (argc() < 3) {
 				notice( t('Permission denied.') . EOL );
 				return;
@@ -362,14 +364,15 @@ logger('gis: ' . print_r($gis,true));
 				intval(local_channel()),
 				dbesc($resource_id)
 			);
-			if(! $r) {
+			if (! $r) {
 				notice( t('Photo not available.') . EOL );
 				return;
 			}
 			$havescale = false;
-			foreach($r as $rr) {
-				if($rr['imgscale'] == 7)
+			foreach ($r as $rr) {
+				if ($rr['imgscale'] == 7) {
 					$havescale = true;
+				}
 			}
 	
 			$r = q("SELECT content, mimetype, resource_id, os_storage FROM photo WHERE id = %d and uid = %d limit 1",
@@ -377,75 +380,74 @@ logger('gis: ' . print_r($gis,true));
 				intval(local_channel())
 	
 			);
-			if(! $r) {
+			if (! $r) {
 				notice( t('Photo not available.') . EOL );
 				return;
 			}
 	
-			if(intval($r[0]['os_storage']))
+			if (intval($r[0]['os_storage'])) {
 				$data = @file_get_contents(dbunescbin($r[0]['content']));
-			else
-				$data = dbunescbin($r[0]['content']); 
+			}
+			else {
+				$data = dbunescbin($r[0]['content']);
+			}
 	
 			$ph = photo_factory($data, $r[0]['mimetype']);
 			$smallest = 0;
-			if($ph->is_valid()) {
+			if ($ph->is_valid()) {
 				// go ahead as if we have just uploaded a new photo to crop
 				$i = q("select resource_id, imgscale from photo where resource_id = '%s' and uid = %d and imgscale = 0",
 					dbesc($r[0]['resource_id']),
 					intval(local_channel())
 				);
 	
-				if($i) {
+				if ($i) {
 					$hash = $i[0]['resource_id'];
-					foreach($i as $ii) {
+					foreach ($i as $ii) {
 						$smallest = intval($ii['imgscale']);
 					}
 	            }
 	        }
 	 
-			$this->cover_photo_crop_ui_head($a, $ph, $hash, $smallest);
+			$this->cover_photo_crop_ui_head($ph, $hash, $smallest);
 		}
 	
 	
-		if(! x(\App::$data,'imagecrop')) {
+		if(! array_key_exists('imagecrop',App::$data)) {
 	
-			$tpl = get_markup_template('cover_photo.tpl');
-	
-			$o .= replace_macros($tpl,array(
-				'$user'                => \App::$channel['channel_address'],
-				'$info'                => t('Your cover photo may be visible to anybody on the internet'),
-				'$existing'            => get_cover_photo(local_channel(),'array',PHOTO_RES_COVER_850),
-				'$lbl_upfile'          => t('Upload File:'),
-				'$lbl_profiles'        => t('Select a profile:'),
-				'$title'               => t('Change Cover Photo'),
-				'$submit'              => t('Upload'),
-				'$profiles'            => $profiles,
-				'$embedPhotos' => t('Use a photo from your albums'),
-				'$embedPhotosModalTitle' => t('Use a photo from your albums'),
+			$o .= replace_macros(get_markup_template('cover_photo.tpl'), [
+				'$user'                   => App::$channel['channel_address'],
+				'$info'                   => t('Your cover photo may be visible to anybody on the internet'),
+				'$existing'               => get_cover_photo(local_channel(),'array',PHOTO_RES_COVER_850),
+				'$lbl_upfile'             => t('Upload File:'),
+				'$lbl_profiles'           => t('Select a profile:'),
+				'$title'                  => t('Change Cover Photo'),
+				'$submit'                 => t('Upload'),
+				'$profiles'               => $profiles,
+				'$embedPhotos'            => t('Use a photo from your albums'),
+				'$embedPhotosModalTitle'  => t('Use a photo from your albums'),
 				'$embedPhotosModalCancel' => t('Cancel'),
-				'$embedPhotosModalOK' => t('OK'),
-				'$modalchooseimages' => t('Choose images to embed'),
-				'$modalchoosealbum' => t('Choose an album'),
-				'$modaldiffalbum' => t('Choose a different album'),
-				'$modalerrorlist' => t('Error getting album list'),
-				'$modalerrorlink' => t('Error getting photo link'),
-				'$modalerroralbum' => t('Error getting album'),
-				'$form_security_token' => get_form_security_token("cover_photo"),
-					/// @FIXME - yuk  
-				'$select' => t('Select existing photo'),
+				'$embedPhotosModalOK'     => t('OK'),
+				'$modalchooseimages'      => t('Choose images to embed'),
+				'$modalchoosealbum'       => t('Choose an album'),
+				'$modaldiffalbum'         => t('Choose a different album'),
+				'$modalerrorlist'         => t('Error getting album list'),
+				'$modalerrorlink'         => t('Error getting photo link'),
+				'$modalerroralbum'        => t('Error getting album'),
+				'$form_security_token'    => get_form_security_token("cover_photo"),
+				'$select'                 => t('Select previously uploaded photo'),
 
-			));
+			]);
 			
 			call_hooks('cover_photo_content_end', $o);
 			
 			return $o;
 		}
 		else {
-			$filename = \App::$data['imagecrop'] . '-3';
+			$filename = App::$data['imagecrop'] . '-3';
 			$resolution = 3;
-			$tpl = get_markup_template("cropcover.tpl");
-			$o .= replace_macros($tpl,array(
+
+			$o .= replace_macros(get_markup_template('cropcover.tpl'), [
 				'$filename'            => $filename,
 				'$profile'             => intval($_REQUEST['profile']),
 				'$resource'            => \App::$data['imagecrop'] . '-3',
@@ -454,11 +456,9 @@ logger('gis: ' . print_r($gis,true));
 				'$desc'                => t('Please adjust the image cropping for optimum viewing.'),
 				'$form_security_token' => get_form_security_token("cover_photo"),
 				'$done'                => t('Done Editing')
-			));
+			]);
 			return $o;
 		}
-	
-		return; // NOTREACHED
 	}
 	
 	/* @brief Generate the UI for photo-cropping
@@ -469,27 +469,29 @@ logger('gis: ' . print_r($gis,true));
 	 *
 	 */
 	
-	function cover_photo_crop_ui_head(&$a, $ph, $hash, $smallest){
+	function cover_photo_crop_ui_head($ph, $hash, $smallest){
 	
 		$max_length = get_config('system','max_image_length');
-		if(! $max_length)
+		if (! $max_length) {
 			$max_length = MAX_IMAGE_LENGTH;
-		if($max_length > 0)
+		}
+		if ($max_length > 0) {
 			$ph->scaleImage($max_length);
-	
+		}
+		
 		$width  = $ph->getWidth();
 		$height = $ph->getHeight();
 	
-		if($width < 300 || $height < 300) {
+		if ($width < 300 || $height < 300) {
 			$ph->scaleImageUp(240);
 			$width  = $ph->getWidth();
 			$height = $ph->getHeight();
 		}
 	
 	
-		\App::$data['imagecrop'] = $hash;
-		\App::$data['imagecrop_resolution'] = $smallest;
-		\App::$page['htmlhead'] .= replace_macros(get_markup_template("crophead.tpl"), array());
+		App::$data['imagecrop'] = $hash;
+		App::$data['imagecrop_resolution'] = $smallest;
+		App::$page['htmlhead'] .= replace_macros(get_markup_template('crophead.tpl'), []);
 		return;
 	}
 	

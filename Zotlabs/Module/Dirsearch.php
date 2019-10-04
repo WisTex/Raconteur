@@ -27,10 +27,12 @@ class Dirsearch extends Controller {
 	
 		$dirmode = intval(get_config('system','directory_mode'));
 	
-		if ($dirmode == DIRECTORY_MODE_NORMAL) {
+		if ($dirmode == DIRECTORY_MODE_NORMAL && ! intval($_REQUEST['navsearch'])) {
 			$ret['message'] = t('This site is not a directory server');
 			json_return_and_die($ret);
 		}
+
+		$network = ((intval($_REQUEST['navsearch'])) ? EMPTY_STR : " AND xchan_network = 'zot6' ");
 
 
 		$access_token = $_REQUEST['t'];
@@ -220,7 +222,7 @@ class Dirsearch extends Controller {
 		else {
 			$qlimit = " LIMIT " . intval($perpage) . " OFFSET " . intval($startrec);
 			if ($return_total) {
-				$r = q("SELECT COUNT(xchan_hash) AS total FROM xchan left join xprof on xchan_hash = xprof_hash where $logic $sql_extra and xchan_network = 'zot6' and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 $safesql ");
+				$r = q("SELECT COUNT(xchan_hash) AS total FROM xchan left join xprof on xchan_hash = xprof_hash where $logic $sql_extra $network and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 $safesql ");
 				if ($r) {
 					$ret['total_items'] = $r[0]['total'];
 				}
@@ -299,7 +301,7 @@ class Dirsearch extends Controller {
 		// normal directory query
 
 		$r = q("SELECT xchan.*, xprof.* from xchan left join xprof on xchan_hash = xprof_hash 
-			where ( $logic $sql_extra ) $hub_query and xchan_network = 'zot6' and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 
+			where ( $logic $sql_extra ) $hub_query $network and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 
 			$safesql $order $qlimit "
 		);
 		
@@ -353,7 +355,7 @@ class Dirsearch extends Controller {
 	
 			$ret['results'] = $entries;
 			if ($kw) {
-				$k = dir_tagadelic($kw, $hub, $type);
+				$k = dir_tagadelic($kw, $hub, $type,$safesql);
 				if ($k) {
 					$ret['keywords'] = array();
 					foreach ($k as $kv) {
@@ -430,7 +432,7 @@ class Dirsearch extends Controller {
 						$quoted_string = false;
 					}
 					else
-						$curr['value'] .= ' ' . trim(q);
+						$curr['value'] .= ' ' . trim($q);
 				}
 			}
 		}

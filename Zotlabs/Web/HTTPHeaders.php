@@ -7,20 +7,19 @@ class HTTPHeaders {
 	private $in_progress = [];
 	private $parsed = [];
 
-
 	function __construct($headers) {
 
 		$lines = explode("\n",str_replace("\r",'',$headers));
-		if($lines) {
-			foreach($lines as $line) {
-				if(preg_match('/^\s+/',$line,$matches) && trim($line)) {
-					if($this->in_progress['k']) {
+		if ($lines) {
+			foreach ($lines as $line) {
+				if (preg_match('/^\s+/',$line,$matches) && trim($line)) {
+					if ($this->in_progress['k']) {
 						$this->in_progress['v'] .= ' ' . ltrim($line);
 						continue;
 					}
 				}
 				else {
-					if($this->in_progress['k']) {
+					if ($this->in_progress['k']) {
 						$this->parsed[] = [ $this->in_progress['k'] => $this->in_progress['v'] ];
 						$this->in_progress = [];
 					}
@@ -43,9 +42,9 @@ class HTTPHeaders {
 
 	function fetcharr() {
 		$ret = [];
-		if($this->parsed) {
-			foreach($this->parsed as $x) {
-				foreach($x as $y => $z) {
+		if ($this->parsed) {
+			foreach ($this->parsed as $x) {
+				foreach ($x as $y => $z) {
 					$ret[$y] = $z;
 				}
 			}

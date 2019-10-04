@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Render;
 
+use App;
+
 require_once('include/security.php');
 require_once('include/menu.php');
 
@@ -17,14 +19,15 @@ require_once('include/menu.php');
  * page. The various regions have names and these names can change depending on
  * what layout template you choose.
  */
+
 class Comanche {
 
 	function parse($s, $pass = 0) {
 		$matches = array();
 
 		$cnt = preg_match_all("/\[comment\](.*?)\[\/comment\]/ism", $s, $matches, PREG_SET_ORDER);
-		if($cnt) {
-			foreach($matches as $mtch) {
+		if ($cnt) {
+			foreach ($matches as $mtch) {
 				$s = str_replace($mtch[0], '', $s);
 			}
 		}
@@ -49,22 +52,22 @@ class Comanche {
 		 */
 
 		$cnt = preg_match_all("/\[switch (.*?)\](.*?)\[default\](.*?)\[\/default\]\s*\[\/switch\]/ism", $s, $matches, PREG_SET_ORDER);
-		if($cnt) {
-			foreach($matches as $mtch) {
+		if ($cnt) {
+			foreach ($matches as $mtch) {
 				$switch_done = 0;
 				$switch_var = $this->get_condition_var($mtch[1]);
 				$default = $mtch[3];
 				$cases = array();
 				$cntt = preg_match_all("/\[case (.*?)\](.*?)\[\/case\]/ism", $mtch[2], $cases, PREG_SET_ORDER);
-				if($cntt) {
-					foreach($cases as $case) {
-						if($case[1] === $switch_var) {
+				if ($cntt) {
+					foreach ($cases as $case) {
+						if ($case[1] === $switch_var) {
 							$switch_done = 1;
 							$s = str_replace($mtch[0], $case[2], $s);
 							break;
 						}
 					}
-					if($switch_done === 0) {
+					if ($switch_done === 0) {
 						$s = str_replace($mtch[0], $default, $s);
 					}
 				}
@@ -72,9 +75,9 @@ class Comanche {
 		}
 
 		$cnt = preg_match_all("/\[if (.*?)\](.*?)\[else\](.*?)\[\/if\]/ism", $s, $matches, PREG_SET_ORDER);
-		if($cnt) {
-			foreach($matches as $mtch) {
-				if($this->test_condition($mtch[1])) {
+		if ($cnt) {
+			foreach ($matches as $mtch) {
+				if ($this->test_condition($mtch[1])) {
 					$s = str_replace($mtch[0], $mtch[2], $s);
 				}
 				else {
@@ -84,9 +87,9 @@ class Comanche {
 		}
 		else {
 			$cnt = preg_match_all("/\[if (.*?)\](.*?)\[\/if\]/ism", $s, $matches, PREG_SET_ORDER);
-			if($cnt) {
-				foreach($matches as $mtch) {
-					if($this->test_condition($mtch[1])) {
+			if ($cnt) {
+				foreach ($matches as $mtch) {
+					if ($this->test_condition($mtch[1])) {
 						$s = str_replace($mtch[0], $mtch[2], $s);
 					}
 					else {
@@ -95,10 +98,12 @@ class Comanche {
 				}
 			}
 		}
-		if($pass == 0)
+		if ($pass == 0) {
 			$this->parse_pass0($s);
-		else
+		}
+		else {
 			$this->parse_pass1($s);
+		}
 	}
 
 	function parse_pass0($s) {
@@ -106,49 +111,51 @@ class Comanche {
 		$matches = null;
 
 		$cnt = preg_match("/\[layout\](.*?)\[\/layout\]/ism", $s, $matches);
-		if($cnt)
-			\App::$page['template'] = trim($matches[1]);
-
+		if ($cnt) {
+			App::$page['template'] = trim($matches[1]);
+		}
+		
 		$cnt = preg_match("/\[template=(.*?)\](.*?)\[\/template\]/ism", $s, $matches);
-		if($cnt) {
-			\App::$page['template'] = trim($matches[2]);
-			\App::$page['template_style'] = trim($matches[2]) . '_' . $matches[1];
+		if ($cnt) {
+			App::$page['template'] = trim($matches[2]);
+			App::$page['template_style'] = trim($matches[2]) . '_' . $matches[1];
 		}
 
 		$cnt = preg_match("/\[template\](.*?)\[\/template\]/ism", $s, $matches);
-		if($cnt) {
-			\App::$page['template'] = trim($matches[1]);
+		if ($cnt) {
+			App::$page['template'] = trim($matches[1]);
 		}
 
 		$cnt = preg_match("/\[theme=(.*?)\](.*?)\[\/theme\]/ism", $s, $matches);
-		if($cnt) {
-			\App::$layout['schema'] = trim($matches[1]);
-			\App::$layout['theme'] = trim($matches[2]);
+		if ($cnt) {
+			App::$layout['schema'] = trim($matches[1]);
+			App::$layout['theme'] = trim($matches[2]);
 		}
 
 		$cnt = preg_match("/\[theme\](.*?)\[\/theme\]/ism", $s, $matches);
-		if($cnt)
-			\App::$layout['theme'] = trim($matches[1]);
-
+		if ($cnt) {
+			App::$layout['theme'] = trim($matches[1]);
+		}
+		
 		$cnt = preg_match("/\[navbar\](.*?)\[\/navbar\]/ism", $s, $matches);
-		if($cnt)
-			\App::$layout['navbar'] = trim($matches[1]);
-
+		if ($cnt) {
+			App::$layout['navbar'] = trim($matches[1]);
+		}
 
 		$cnt = preg_match_all("/\[webpage\](.*?)\[\/webpage\]/ism", $s, $matches, PREG_SET_ORDER);
-		if($cnt) {
+		if ($cnt) {
 			// only the last webpage definition is used if there is more than one
-			foreach($matches as $mtch) {
-				\App::$layout['webpage'] = $this->webpage($a,$mtch[1]);
+			foreach ($matches as $mtch) {
+				App::$layout['webpage'] = $this->webpage($a,$mtch[1]);
 			}
 		}
 	}
 
 	function parse_pass1($s) {
 		$cnt = preg_match_all("/\[region=(.*?)\](.*?)\[\/region\]/ism", $s, $matches, PREG_SET_ORDER);
-		if($cnt) {
-			foreach($matches as $mtch) {
-				\App::$layout['region_' . $mtch[1]] = $this->region($mtch[2],$mtch[1]);
+		if ($cnt) {
+			foreach ($matches as $mtch) {
+				App::$layout['region_' . $mtch[1]] = $this->region($mtch[2],$mtch[1]);
 			}
 		}
 	}
@@ -169,37 +176,43 @@ class Comanche {
 	 * @return string|boolean
 	 */
 	function get_condition_var($v) {
-		if($v) {
+		if ($v) {
 			$x = explode('.', $v);
-			if($x[0] == 'config')
+			if ($x[0] == 'config') {
 				return get_config($x[1],$x[2]);
-			elseif($x[0] === 'request')
+			}
+			elseif ($x[0] === 'request') {
 				return $_SERVER['REQUEST_URI'];
-			elseif($x[0] === 'local_channel') {
+			}
+			elseif ($x[0] === 'local_channel') {
 				return local_channel();
 			}
-			elseif($x[0] === 'observer') {
-				if(count($x) > 1) {
-					if($x[1] == 'language')
-						return \App::$language;
-					$y = \App::get_observer();
-					if(! $y)
+			elseif ($x[0] === 'observer') {
+				if (count($x) > 1) {
+					if ($x[1] == 'language') {
+						return App::$language;
+					}
+					$y = App::get_observer();
+					if (! $y) {
 						return false;
-					if($x[1] == 'address')
+					}
+					if ($x[1] == 'address') {
 						return $y['xchan_addr'];
-					elseif($x[1] == 'name')
+					}
+					elseif ($x[1] == 'name') {
 						return $y['xchan_name'];
-					elseif($x[1] == 'webname')
+					}
+					elseif ($x[1] == 'webname') {
 						return substr($y['xchan_addr'],0,strpos($y['xchan_addr'],'@'));
-
+					}
 					return false;
 				}
 				return get_observer_hash();
 			}
-			else
+			else {
 				return false;
+			}
 		}
-
 		return false;
 	}
 
@@ -227,86 +240,85 @@ class Comanche {
 	 */
 	function test_condition($s) {
 
-		if(preg_match('/[\$](.*?)\s\~\=\s(.*?)$/',$s,$matches)) {
+		if (preg_match('/[\$](.*?)\s\~\=\s(.*?)$/',$s,$matches)) {
 			$x = $this->get_condition_var($matches[1]);
-			if(stripos($x,trim($matches[2])) !== false)
+			if (stripos($x,trim($matches[2])) !== false) {
 				return true;
-
+			}
 			return false;
 		}
 
-		if(preg_match('/[\$](.*?)\s\=\=\s(.*?)$/',$s,$matches)) {
+		if (preg_match('/[\$](.*?)\s\=\=\s(.*?)$/',$s,$matches)) {
 			$x = $this->get_condition_var($matches[1]);
-			if($x == trim($matches[2]))
+			if ($x == trim($matches[2])) {
 				return true;
-
+			}
 			return false;
 		}
 
-		if(preg_match('/[\$](.*?)\s\!\=\s(.*?)$/',$s,$matches)) {
+		if (preg_match('/[\$](.*?)\s\!\=\s(.*?)$/',$s,$matches)) {
 			$x = $this->get_condition_var($matches[1]);
-			if($x != trim($matches[2]))
+			if ($x != trim($matches[2])) {
 				return true;
-
+			}
 			return false;
 		}
 
-		if(preg_match('/[\$](.*?)\s\>\=\s(.*?)$/',$s,$matches)) {
+		if (preg_match('/[\$](.*?)\s\>\=\s(.*?)$/',$s,$matches)) {
 			$x = $this->get_condition_var($matches[1]);
-			if($x >= trim($matches[2]))
+			if ($x >= trim($matches[2])) {
 				return true;
-
+			}
 			return false;
 		}
 
-		if(preg_match('/[\$](.*?)\s\<\=\s(.*?)$/',$s,$matches)) {
+		if (preg_match('/[\$](.*?)\s\<\=\s(.*?)$/',$s,$matches)) {
 			$x = $this->get_condition_var($matches[1]);
-			if($x <= trim($matches[2]))
+			if ($x <= trim($matches[2])) {
 				return true;
-
+			}
 			return false;
 		}
 
-		if(preg_match('/[\$](.*?)\s\>\s(.*?)$/',$s,$matches)) {
+		if (preg_match('/[\$](.*?)\s\>\s(.*?)$/',$s,$matches)) {
 			$x = $this->get_condition_var($matches[1]);
-			if($x > trim($matches[2]))
+			if ($x > trim($matches[2])) {
 				return true;
-
+			}
 			return false;
 		}
 
-		if(preg_match('/[\$](.*?)\s\>\s(.*?)$/',$s,$matches)) {
+		if (preg_match('/[\$](.*?)\s\>\s(.*?)$/',$s,$matches)) {
 			$x = $this->get_condition_var($matches[1]);
-			if($x < trim($matches[2]))
+			if ($x < trim($matches[2])) {
 				return true;
-
+			}
 			return false;
 		}
 
-		if(preg_match('/[\$](.*?)\s\{\}\s(.*?)$/',$s,$matches)) {
+		if (preg_match('/[\$](.*?)\s\{\}\s(.*?)$/',$s,$matches)) {
 			$x = $this->get_condition_var($matches[1]);
-			if(is_array($x) && in_array(trim($matches[2]),$x))
+			if (is_array($x) && in_array(trim($matches[2]),$x)) {
 				return true;
-
+			}
 			return false;
 		}
 
-		if(preg_match('/[\$](.*?)\s\{\*\}\s(.*?)$/',$s,$matches)) {
+		if (preg_match('/[\$](.*?)\s\{\*\}\s(.*?)$/',$s,$matches)) {
 			$x = $this->get_condition_var($matches[1]);
-			if(is_array($x) && array_key_exists(trim($matches[2]),$x))
+			if (is_array($x) && array_key_exists(trim($matches[2]),$x)) {
 				return true;
-
+			}
 			return false;
 		}
 
-		if(preg_match('/[\$](.*?)$/',$s,$matches)) {
+		if (preg_match('/[\$](.*?)$/',$s,$matches)) {
 			$x = $this->get_condition_var($matches[1]);
-			if($x)
+			if ($x) {
 				return true;
-
+			}
 			return false;
 		}
-
 		return false;
 	}
 
@@ -324,14 +336,14 @@ class Comanche {
 		$name = $s;
 
 		$cnt = preg_match_all("/\[var=(.*?)\](.*?)\[\/var\]/ism", $s, $matches, PREG_SET_ORDER);
-		if($cnt) {
-			foreach($matches as $mtch) {
+		if ($cnt) {
+			foreach ($matches as $mtch) {
 				$var[$mtch[1]] = $mtch[2];
 				$name = str_replace($mtch[0], '', $name);
 			}
 		}
 
-		if($channel_id) {
+		if ($channel_id) {
 			$m = menu_fetch($name, $channel_id, get_observer_hash());
 			return menu_render($m, $class, $edit = false, $var);
 		}
@@ -339,8 +351,8 @@ class Comanche {
 
 
 	function replace_region($match) {
-		if (array_key_exists($match[1], \App::$page)) {
-			return \App::$page[$match[1]];
+		if (array_key_exists($match[1], App::$page)) {
+			return App::$page[$match[1]];
 		}
 	}
 
@@ -353,11 +365,11 @@ class Comanche {
 	 * @return int channel_id
 	 */
 	function get_channel_id() {
-		$channel_id = ((is_array(\App::$profile)) ? \App::$profile['profile_uid'] : 0);
+		$channel_id = ((is_array(App::$profile)) ? App::$profile['profile_uid'] : 0);
 
-		if ((! $channel_id) && (local_channel()))
+		if ((! $channel_id) && (local_channel())) {
 			$channel_id = local_channel();
-
+		}
 		return $channel_id;
 	}
 
@@ -375,8 +387,8 @@ class Comanche {
 		$class = (($class) ? $class : 'bblock widget');
 
 		$cnt = preg_match_all("/\[var=(.*?)\](.*?)\[\/var\]/ism", $s, $matches, PREG_SET_ORDER);
-		if($cnt) {
-			foreach($matches as $mtch) {
+		if ($cnt) {
+			foreach ($matches as $mtch) {
 				$var[$mtch[1]] = $mtch[2];
 				$name = str_replace($mtch[0], '', $name);
 			}
@@ -385,37 +397,37 @@ class Comanche {
 		$o = '';
 		$channel_id = $this->get_channel_id();
 
-		if($channel_id) {
+		if ($channel_id) {
 			$r = q("select * from item inner join iconfig on iconfig.iid = item.id and item.uid = %d
 				and iconfig.cat = 'system' and iconfig.k = 'BUILDBLOCK' and iconfig.v = '%s' limit 1",
 				intval($channel_id),
 				dbesc($name)
 			);
 
-			if($r) {
+			if ($r) {
 				//check for eventual menus in the block and parse them
 				$cnt = preg_match_all("/\[menu\](.*?)\[\/menu\]/ism", $r[0]['body'], $matches, PREG_SET_ORDER);
-				if($cnt) {
-					foreach($matches as $mtch) {
+				if ($cnt) {
+					foreach ($matches as $mtch) {
 						$r[0]['body'] = str_replace($mtch[0], $this->menu(trim($mtch[1])), $r[0]['body']);
 					}
 				}
 				$cnt = preg_match_all("/\[menu=(.*?)\](.*?)\[\/menu\]/ism", $r[0]['body'], $matches, PREG_SET_ORDER);
-				if($cnt) {
-					foreach($matches as $mtch) {
+				if ($cnt) {
+					foreach ($matches as $mtch) {
 						$r[0]['body'] = str_replace($mtch[0],$this->menu(trim($mtch[2]),$mtch[1]),$r[0]['body']);
 					}
 				}
 
-				//emit the block
+				// emit the block
 				$o .= (($var['wrap'] == 'none') ? '' : '<div class="' . $class . '">');
 
-				if($r[0]['title'] && trim($r[0]['body']) != '$content') {
+				if ($r[0]['title'] && trim($r[0]['body']) != '$content') {
 					$o .= '<h3>' . $r[0]['title'] . '</h3>';
 				}
 
-				if(trim($r[0]['body']) === '$content') {
-					$o .= \App::$page['content'];
+				if (trim($r[0]['body']) === '$content') {
+					$o .= App::$page['content'];
 				}
 				else {
 					$o .= prepare_text($r[0]['body'], $r[0]['mimetype']);
@@ -436,7 +448,7 @@ class Comanche {
 	 */
 	function js($s) {
 
-		switch($s) {
+		switch ($s) {
 			case 'jquery':
 				$path = 'view/js/jquery.js';
 				break;
@@ -450,9 +462,9 @@ class Comanche {
 		}
 
 		$ret = '<script src="' . z_root() . '/' . $path . '" ></script>';
-		if($init)
+		if ($init) {
 			$ret .= $init;
-
+		}
 		return $ret;
 	}
 
@@ -464,7 +476,7 @@ class Comanche {
 	 */
 	function css($s) {
 
-		switch($s) {
+		switch ($s) {
 			case 'bootstrap':
 				$path = 'vendor/twbs/bootstrap/dist/css/bootstrap.min.css';
 				break;
@@ -496,8 +508,8 @@ class Comanche {
 		$matches = array();
 
 		$cnt = preg_match_all("/\[authored\](.*?)\[\/authored\]/ism", $s, $matches, PREG_SET_ORDER);
-		if($cnt) {
-			foreach($matches as $mtch) {
+		if ($cnt) {
+			foreach ($matches as $mtch) {
 				$ret['authored'] = $mtch[1];
 			}
 		}
@@ -522,64 +534,70 @@ class Comanche {
 			}
 		}
 
-		if(! purify_filename($name))
+		if (! purify_filename($name)) {
 			return '';
+		}
 
 		$clsname = ucfirst($name);
 		$nsname = "\\Zotlabs\\Widget\\" . $clsname;
 
 		$found = false;
 		$widgets = \Zotlabs\Extend\Widget::get();
-		if($widgets) {
-			foreach($widgets as $widget) {
-				if(is_array($widget) && strtolower($widget[1]) === strtolower($name) && file_exists($widget[0])) {
+		if ($widgets) {
+			foreach ($widgets as $widget) {
+				if (is_array($widget) && strtolower($widget[1]) === strtolower($name) && file_exists($widget[0])) {
 					require_once($widget[0]);
 					$found = true;
 				}
 			}
 		}
 
-		if(! $found) {
-			if(file_exists('Zotlabs/SiteWidget/' . $clsname . '.php'))
+		if (! $found) {
+			if (file_exists('Zotlabs/SiteWidget/' . $clsname . '.php')) {
 				require_once('Zotlabs/SiteWidget/' . $clsname . '.php');
-			elseif(file_exists('widget/' . $clsname . '/' . $clsname . '.php'))
+			}
+			elseif (file_exists('widget/' . $clsname . '/' . $clsname . '.php')) {
 				require_once('widget/' . $clsname . '/' . $clsname . '.php');
-			elseif(file_exists('Zotlabs/Widget/' . $clsname . '.php'))
+			}
+			elseif (file_exists('Zotlabs/Widget/' . $clsname . '.php')) {
 				require_once('Zotlabs/Widget/' . $clsname . '.php');
+			}
 			else {
 				$pth = theme_include($clsname . '.php');
-				if($pth) {
+				if ($pth) {
 					require_once($pth);
 				}
 			}
 		}
 
-		if(class_exists($nsname)) {
+		if (class_exists($nsname)) {
 			$x = new $nsname;
 			$f = 'widget';
-			if(method_exists($x,$f)) {
+			if (method_exists($x,$f)) {
 				return $x->$f($vars);
 			}
 		}
 
 		$func = 'widget_' . trim($name);
 
-		if(! function_exists($func)) {
-			if(file_exists('widget/' . trim($name) . '.php'))
+		if (! function_exists($func)) {
+			if (file_exists('widget/' . trim($name) . '.php')) {
 				require_once('widget/' . trim($name) . '.php');
-			elseif(file_exists('widget/' . trim($name) . '/' . trim($name) . '.php'))
+			}
+			elseif (file_exists('widget/' . trim($name) . '/' . trim($name) . '.php')) {
 				require_once('widget/' . trim($name) . '/' . trim($name) . '.php');
-		
-			if(! function_exists($func)) {
+			}
+			if (! function_exists($func)) {
 				$theme_widget = $func . '.php';
-				if(theme_include($theme_widget)) {
+				if (theme_include($theme_widget)) {
 					require_once(theme_include($theme_widget));
 				}
 			}
 		}
 
-		if(function_exists($func))
+		if (function_exists($func)) {
 			return $func($vars);
+		}
 	}
 
 
@@ -590,8 +608,8 @@ class Comanche {
 		$matches = array();
 
 		$cnt = preg_match_all("/\[menu\](.*?)\[\/menu\]/ism", $s, $matches, PREG_SET_ORDER);
-		if($cnt) {
-			foreach($matches as $mtch) {
+		if ($cnt) {
+			foreach ($matches as $mtch) {
 				$s = str_replace($mtch[0], $this->menu(trim($mtch[1])), $s);
 			}
 		}
@@ -600,43 +618,42 @@ class Comanche {
 		// allows different menu renderings to be applied
 
 		$cnt = preg_match_all("/\[menu=(.*?)\](.*?)\[\/menu\]/ism", $s, $matches, PREG_SET_ORDER);
-		if($cnt) {
-			foreach($matches as $mtch) {
+		if ($cnt) {
+			foreach ($matches as $mtch) {
 				$s = str_replace($mtch[0],$this->menu(trim($mtch[2]),$mtch[1]),$s);
 			}
 		}
 		$cnt = preg_match_all("/\[block\](.*?)\[\/block\]/ism", $s, $matches, PREG_SET_ORDER);
-		if($cnt) {
-			foreach($matches as $mtch) {
+		if ($cnt) {
+			foreach ($matches as $mtch) {
 				$s = str_replace($mtch[0],$this->block(trim($mtch[1])),$s);
 			}
 		}
 
 		$cnt = preg_match_all("/\[block=(.*?)\](.*?)\[\/block\]/ism", $s, $matches, PREG_SET_ORDER);
-		if($cnt) {
-			foreach($matches as $mtch) {
+		if ($cnt) {
+			foreach ($matches as $mtch) {
 				$s = str_replace($mtch[0],$this->block(trim($mtch[2]),trim($mtch[1])),$s);
 			}
 		}
 
 		$cnt = preg_match_all("/\[js\](.*?)\[\/js\]/ism", $s, $matches, PREG_SET_ORDER);
-		if($cnt) {
-			foreach($matches as $mtch) {
+		if ($cnt) {
+			foreach ($matches as $mtch) {
 				$s = str_replace($mtch[0],$this->js(trim($mtch[1])),$s);
 			}
 		}
 
 		$cnt = preg_match_all("/\[css\](.*?)\[\/css\]/ism", $s, $matches, PREG_SET_ORDER);
-		if($cnt) {
-			foreach($matches as $mtch) {
+		if ($cnt) {
+			foreach ($matches as $mtch) {
 				$s = str_replace($mtch[0],$this->css(trim($mtch[1])),$s);
 			}
 		}
-		// need to modify this to accept parameters
 
 		$cnt = preg_match_all("/\[widget=(.*?)\](.*?)\[\/widget\]/ism", $s, $matches, PREG_SET_ORDER);
-		if($cnt) {
-			foreach($matches as $mtch) {
+		if ($cnt) {
+			foreach ($matches as $mtch) {
 				$s = str_replace($mtch[0],$this->widget(trim($mtch[1]),$mtch[2]),$s);
 			}
 		}
@@ -660,7 +677,7 @@ class Comanche {
 	 *    )
 	 */
 	function register_page_template($arr) {
-		\App::$page_layouts[$arr['template']] = array($arr['variant']);
+		App::$page_layouts[$arr['template']] = array($arr['variant']);
 		return;
 	}
 

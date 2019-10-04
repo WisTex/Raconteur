@@ -9,11 +9,11 @@
 	</div>
 
 	<div id="group_tools" class="clearfix section-content-tools-wrapper" style="display: none">
-		<form action="alist/{{$gid}}" id="group-edit-form" method="post" >
+		<form action="lists/{{$gid}}" id="group-edit-form" method="post" >
 			<input type='hidden' name='form_security_token' value='{{$form_security_token_edit}}'>
 			{{include file="field_input.tpl" field=$gname}}
 			{{include file="field_checkbox.tpl" field=$public}}
-			<a href="alist/drop/{{$gid}}?t={{$form_security_token_drop}}" onclick="return confirmDelete();" class="btn btn-sm btn-danger">
+			<a href="lists/drop/{{$gid}}?t={{$form_security_token_drop}}" onclick="return confirmDelete();" class="btn btn-sm btn-danger">
 				{{$delete}}
 			</a>
 			<button type="submit" name="submit" class="btn btn-sm btn-primary float-right">{{$submit}}</button>

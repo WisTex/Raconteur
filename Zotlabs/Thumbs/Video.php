@@ -14,10 +14,12 @@ class Video {
 		$photo = false;
 
 		$t = explode('/',$attach['filetype']);
-		if($t[1])
+		if ($t[1]) {
 			$extension = '.' . $t[1];
-		else
-			return; 
+		}
+		else {
+			return;
+		}
 
 
 		$file = dbunescbin($attach['content']);
@@ -26,7 +28,7 @@ class Video {
 
 		$istream = fopen($file,'rb');
 		$ostream = fopen($tmpfile,'wb');
-		if($istream && $ostream) {
+		if ($istream && $ostream) {
 			pipe_streams($istream,$ostream);
 			fclose($istream);
 			fclose($ostream);
@@ -40,19 +42,19 @@ class Video {
 
 
 		$ffmpeg = trim(shell_exec('which ffmpeg'));
-		if($ffmpeg) { 
+		if (! $ffmpeg) { 
 			logger('ffmpeg not found in path. Video thumbnails may fail.');
 		}
 
 		$imagick_path = get_config('system','imagick_convert_path');
-		if($imagick_path && @file_exists($imagick_path)) {
+		if ($imagick_path && @file_exists($imagick_path)) {
 			$cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmpfile . '[0]') . ' -resize ' . $width . 'x' . $height . ' ' . escapeshellarg(PROJECT_BASE . '/' . $outfile);
 			//  logger('imagick thumbnail command: ' . $cmd);
 
 			/** @scrutinizer ignore-unhandled */
 			@exec($cmd);
 
-			if(! file_exists($outfile)) {
+			if (! file_exists($outfile)) {
 				logger('imagick scale failed.');
 			}
 			else {

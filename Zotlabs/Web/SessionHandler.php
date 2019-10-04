@@ -2,8 +2,9 @@
 
 namespace Zotlabs\Web;
 
+use SessionHandlerInterface;
 
-class SessionHandler implements \SessionHandlerInterface {
+class SessionHandler implements SessionHandlerInterface {
 
 
 	function open ($s, $n) {
@@ -17,10 +18,10 @@ class SessionHandler implements \SessionHandlerInterface {
 
 	function read ($id) {
 
-		if($id) {
+		if ($id) {
 			$r = q("SELECT sess_data FROM session WHERE sid= '%s'", dbesc($id));
 
-			if($r) {
+			if ($r) {
 				return $r[0]['sess_data'];
 			}
 			else {
@@ -38,8 +39,11 @@ class SessionHandler implements \SessionHandlerInterface {
 
 	function write ($id, $data) {
 
-		if(! $id || ! $data) {
-			return false;
+		// Pretend everything is hunky-dory, even though it isn't. There probably isn't anything
+		// we can do about it in any event.
+		
+		if (! $id) {
+			return true;
 		}
 
 		// Unless we authenticate somehow, only keep a session for 5 minutes
@@ -50,12 +54,12 @@ class SessionHandler implements \SessionHandlerInterface {
 
 		$expire = time() + 300;
 
-		if($_SESSION) {
-			if(array_key_exists('remember_me',$_SESSION) && intval($_SESSION['remember_me']))
+		if ($_SESSION) {
+			if (array_key_exists('remember_me',$_SESSION) && intval($_SESSION['remember_me']))
 				$expire = time() + (60 * 60 * 24 * 365);
-			elseif(local_channel())
+			elseif (local_channel())
 				$expire = time() + (60 * 60 * 24 * 3);
-			elseif(remote_channel())
+			elseif (remote_channel())
 				$expire = time() + (60 * 60 * 24 * 1);
 		}
 

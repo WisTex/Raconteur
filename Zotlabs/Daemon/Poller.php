@@ -29,8 +29,8 @@ class Poller {
 			return;
 		}
 	
-		// Create a lockfile.  Needs two vars, but $x doesn't need to contain anything.
-		file_put_contents($lockfile, $x);
+		// Create a lockfile.  
+		file_put_contents($lockfile, EMPTY_STR);
 
 		logger('poller: start');
 	
@@ -47,7 +47,7 @@ class Poller {
 			$restart = true;
 			$generation = intval($argv[2]);
 			if(! $generation)
-				killme();		
+				return;
 		}
 
 		if(($argc > 1) && intval($argv[1])) {

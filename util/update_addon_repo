@@ -27,6 +27,11 @@ filelist=(`ls extend/addon/$1`)
 cd addon
 
 for a in "${filelist[@]}" ; do
+	if [ $a = 'version.php' ]; then
+		if [ ! -x 'version.php' ]; then
+			ln -s ../extend/addon/$1/version.php version.php
+		fi
+	fi
 	base=`basename $a`
 	if [ $base = '.git' ]; then
 #		echo 'ignoring git'
@@ -35,7 +40,7 @@ for a in "${filelist[@]}" ; do
 	if [ ! -d ../extend/addon/$1/$base ]; then
 #		echo $a 'not a directory'
 		continue;
-	fi
+   	fi
 	if [ -x $base ]; then
 #		echo $base 'file exists'
 		continue;

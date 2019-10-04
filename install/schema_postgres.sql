@@ -16,6 +16,7 @@ CREATE TABLE "abook" (
   "abook_account" bigint  NOT NULL,
   "abook_channel" bigint  NOT NULL,
   "abook_xchan" text NOT NULL DEFAULT '',
+  "abook_alias" text NOT NULL DEFAULT '',
   "abook_my_perms" bigint NOT NULL,
   "abook_their_perms" bigint NOT NULL,
   "abook_closeness" numeric(3)  NOT NULL DEFAULT '99',
@@ -23,7 +24,8 @@ CREATE TABLE "abook" (
   "abook_updated" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "abook_connected" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "abook_dob" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
-  "abook_flags" bigint NOT NULL DEFAULT '0',
+  "abook_censor" bigint NOT NULL DEFAULT '0',
+  "abook_blocked" smallint NOT NULL DEFAULT '0',
   "abook_blocked" smallint NOT NULL DEFAULT '0',
   "abook_ignored" smallint NOT NULL DEFAULT '0',
   "abook_hidden" smallint NOT NULL DEFAULT '0',
@@ -43,6 +45,7 @@ CREATE TABLE "abook" (
   create index  "abook_account" on abook ("abook_account");
   create index  "abook_channel" on abook  ("abook_channel");
   create index  "abook_xchan"  on abook ("abook_xchan");
+  create index  "abook_alias"  on abook ("abook_alias");
   create index  "abook_my_perms"  on abook ("abook_my_perms");
   create index  "abook_their_perms"  on abook ("abook_their_perms");
   create index  "abook_closeness" on abook  ("abook_closeness");
@@ -571,6 +574,7 @@ CREATE TABLE "item" (
   "author_xchan" text NOT NULL DEFAULT '',
   "source_xchan" text NOT NULL DEFAULT '',
   "mimetype" text NOT NULL DEFAULT '',
+  "replyto" text NOT NULL,
   "title" text NOT NULL,
   "summary" text NOT NULL,
   "body" text NOT NULL,
@@ -1619,6 +1623,7 @@ CREATE TABLE oauth_clients (
   grant_types           VARCHAR(80),
   scope                 VARCHAR(4000),
   user_id               bigint NOT NULL DEFAULT '0',
+  client_name           VARCHAR(80),
   PRIMARY KEY (client_id)
 );
 

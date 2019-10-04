@@ -625,9 +625,6 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 				];
 				call_hooks('stream_item',$x);
 				
-				if($x['item']['blocked'])
-					continue;
-
 				$item = $x['item'];
 
 				$threadsid++;
@@ -805,15 +802,10 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 			$threads = array();
 			foreach($items as $item) {
 
-				// Check for any blocked authors
-
 
 				$x = [ 'mode' => $mode, 'item' => $item ];
 				call_hooks('stream_item',$x);
 				
-				if($x['item']['blocked'])
-					continue;
-
 				$item = $x['item'];
 
 				builtin_activity_puller($item, $conv_responses);
@@ -1220,7 +1212,7 @@ function z_status_editor($a, $x, $popup = false) {
 	if(x($x, 'hide_voting'))
 		$feature_voting = false;
 	
-	$feature_nocomment = feature_enabled($x['profile_uid'], 'disable_comments');
+	$feature_nocomment = Apps::system_app_installed($x['profile_uid'], 'No Comment');
 	if(x($x, 'disable_comments'))
 		$feature_nocomment = false;
 
@@ -1257,6 +1249,9 @@ function z_status_editor($a, $x, $popup = false) {
 	$writefiles = (($mimetype === 'text/bbcode') ? perm_is_allowed($x['profile_uid'], get_observer_hash(), 'write_storage') : false);
 	if(x($x, 'hide_attach'))
 		$writefiles = false;
+	if(perm_is_allowed($x['profile_uid'],get_observer_hash(),'moderated')) {
+		$writefiles = false;
+	}
 
 	$layout = ((x($x,'layout')) ? $x['layout'] : '');
 
@@ -1475,22 +1470,49 @@ function jot_collections($channel,$collections) {
 
 }
 
+
 function get_item_children($arr, $parent) {
-	$children = array();
-	foreach($arr as $item) {
-		if($item['id'] != $item['parent']) {
-			if(get_config('system','thread_allow',((defined('NOMADIC')) ? false : true))) {
-				// Fallback to parent_mid if thr_parent is not set
+
+	$children = [];
+	if (! $arr) {
+		return $children;
+	}
+
+	$thread_allow = get_config('system','thread_allow',true);
+	$thread_max   = intval(get_config('system','thread_maxlevel',2));
+	
+	foreach ($arr as $item) {
+		if (intval($item['id']) !== intval($item['parent'])) {
+			if ($thread_allow) {
+
 				$thr_parent = $item['thr_parent'];
-				if($thr_parent === '')
+
+				// Fallback to parent_mid if thr_parent is not set
+				if ($thr_parent === EMPTY_STR) {
 					$thr_parent = $item['parent_mid'];
+				}
 				
-				if($thr_parent === $parent['mid']) {
-					$item['children'] = get_item_children($arr, $item);
+				if ($thr_parent === $parent['mid']) {
+					$my_children = get_item_children($arr, $item);
+					if ($item['item_level'] > $thread_max) {
+						// Like and Dislike activities are allowed as children of the last supported level.
+						// After that they are ignored.
+						// Any other children deeper than $thread_max are flattened. 
+						if(in_array($item['verb'], [ 'Like','Dislike' ])) {
+							if ($item['item_level'] > ($thread_max + 1)) {
+								continue;
+							}
+						}
+						$children = (($my_children) ? array_merge($children,$my_children) : $children);
+					}
+					else {
+						$item['children'] = $my_children;
+					}
 					$children[] = $item;
 				}
 			}
-			else if($item['parent'] == $parent['id']) {
+			elseif (intval($item['parent']) === intval($parent['id'])) {
+				// threads are disabled. Anything that is in this conversation gets added to children. 
 				$children[] = $item;
 			}
 		}
@@ -1510,100 +1532,72 @@ function sort_item_children($items) {
 }
 
 function add_children_to_list($children, &$arr) {
-	foreach($children as $y) {
+	foreach ($children as $y) {
 		$arr[] = $y;
-		if($y['children'])
+		if ($y['children']) {
 			add_children_to_list($y['children'], $arr);
-	}
-}
-
-function flatten_conversation($parent) {
-	if (!isset($parent['children']) || count($parent['children']) == 0) {
-		return $parent;
-	}
-
-	for ($i = 0; $i < count($parent['children']); $i++) {
-		$child = $parent['children'][$i];
-
-		if (isset($child['children']) && count($child['children'])) {
-			// This helps counting only the regular posts
-			$count_post_closure = function($var) {
-				return in_array($var['verb'], ['Create','Update'] );
-			};
-
-			$child_post_count = count(array_filter($child['children'], $count_post_closure));
-
-			$remaining_post_count = count(array_filter(array_slice($parent['children'], $i), $count_post_closure));
-
-			// If there's only one child's children post and this is the last child post
-			if ($child_post_count == 1 && $remaining_post_count == 1) {
-
-				// Searches the post item in the children
-				$j = 0;
-				while((! in_array($child['children'][$j]['verb'], ['Create','Update' ])) && $j < count($child['children'])) {
-					$j ++;
-				}
-
-				$moved_item = $child['children'][$j];
-				unset($parent['children'][$i]['children'][$j]);
-				$parent['children'][] = $moved_item;
-			} else {
-				$parent['children'][$i] = flatten_conversation($child);
-			}
 		}
 	}
-
-	return $parent;
 }
-
-
 
 function conv_sort($arr, $order) {
 
-	if((!(is_array($arr) && count($arr))))
-		return array();
+	$parents = [];
+	$ret = [];
+	
+	if (! (is_array($arr) && count($arr))) {
+		return $ret;
+	}
 
-	$parents = array();
+	$data = [ 'items' => $arr, 'order' => $order ];
 
-	foreach($arr as $x) {
-		if($x['id'] == $x['parent']) {
-				$parents[] = $x;
+	call_hooks('conv_sort', $data);
+
+	$arr = $data['items'];
+
+	if (! (is_array($arr) && count($arr))) {
+		return $ret;
+	}
+
+
+	foreach ($arr as $x) {
+		if (intval($x['id']) === intval($x['parent'])) {
+			$parents[] = $x;
 		}
 	}
 
-	if(stristr($order,'created'))
+	if (stristr($order,'created')) {
 		usort($parents,'sort_thr_created');
-	elseif(stristr($order,'commented'))
+	}
+	elseif (stristr($order,'commented')) {
 		usort($parents,'sort_thr_commented');
-	elseif(stristr($order,'updated'))
+	}
+	elseif (stristr($order,'updated')) {
 		usort($parents,'sort_thr_updated');
-	elseif(stristr($order,'ascending'))
+	}
+	elseif (stristr($order,'ascending')) {
 		usort($parents,'sort_thr_created_rev');
+	}
 
-
-	if(count($parents))
-		foreach($parents as $i=>$_x)
+	if ($parents) {
+		foreach ($parents as $i => $_x) {
 			$parents[$i]['children'] = get_item_children($arr, $_x);
-
-	if(count($parents)) {
-		foreach($parents as $k => $v) {
-			if(count($parents[$k]['children'])) {
+		}
+		
+		foreach ($parents as $k => $v) {
+			if ($parents[$k]['children']) {
 				$parents[$k]['children'] = sort_item_children($parents[$k]['children']);
 			}
 		}
 
-//		foreach ($parents as $i => $parent) {
-//			$parents[$i] = flatten_conversation($parent);
-//		}
 	}
 
-
-	$ret = array();
-	if(count($parents)) {
-		foreach($parents as $x) {
+	if ($parents) {
+		foreach ($parents as $x) {
 			$ret[] = $x;
-			if(count($x['children']))
+			if ($x['children']) {
 				add_children_to_list($x['children'], $ret);
+			}
 		}
 	}
 
@@ -1709,119 +1703,6 @@ function prepare_page($item) {
 	));
 }
 
-
-
-function network_tabs() {
-
-	$no_active='';
-	$starred_active = '';
-	$new_active = '';
-	$all_active = '';
-	$search_active = '';
-	$conv_active = '';
-	$spam_active = '';
-	$postord_active = '';
-
-	if(x($_GET,'new')) {
-		$new_active = 'active';
-	}
-
-	if(x($_GET,'search')) {
-		$search_active = 'active';
-	}
-
-	if(x($_GET,'star')) {
-		$starred_active = 'active';
-	}
-
-	if(x($_GET,'conv')) {
-		$conv_active = 'active';
-	}
-
-	if(x($_GET,'spam')) {
-		$spam_active = 'active';
-	}
-
-	if (($new_active == '') 
-		&& ($starred_active == '') 
-		&& ($conv_active == '')
-		&& ($search_active == '')
-		&& ($spam_active == '')) {
-			$no_active = 'active';
-	}
-
-	if ($no_active=='active' && x($_GET,'order')) {
-		switch($_GET['order']){
-			case 'post': $postord_active = 'active'; $no_active=''; break;
-			case 'comment' : $all_active = 'active'; $no_active=''; break;
-		}
-	}
-
-	if ($no_active=='active') $all_active='active';
-
-	$cmd = App::$cmd;
-
-	// tabs
-	$tabs = array();
-
-	$tabs[] = array(
-		'label' => t('Commented Order'),
-		'url'=>z_root() . '/' . $cmd . '?f=&order=comment' . ((x($_GET,'cid')) ? '&cid=' . $_GET['cid'] : '') . ((x($_GET,'gid')) ? '&gid=' . $_GET['gid'] : ''),
-		'sel'=>$all_active,
-		'title'=> t('Sort by Comment Date'),
-	);
-
-	$tabs[] = array(
-		'label' => t('Posted Order'),
-		'url'=>z_root() . '/' . $cmd . '?f=&order=post' . ((x($_GET,'cid')) ? '&cid=' . $_GET['cid'] : '') . ((x($_GET,'gid')) ? '&gid=' . $_GET['gid'] : ''),
-		'sel'=>$postord_active,
-		'title' => t('Sort by Post Date'),
-	);
-
-	if(feature_enabled(local_channel(),'personal_tab')) {
-		$tabs[] = array(
-			'label' => t('Personal'),
-			'url' => z_root() . '/' . $cmd . '?f=' . ((x($_GET,'cid')) ? '&cid=' . $_GET['cid'] : '') . '&conv=1',
-			'sel' => $conv_active,
-			'title' => t('Posts that mention or involve you'),
-		);
-	}
-
-	if(feature_enabled(local_channel(),'new_tab')) {
-		$tabs[] = array(
-			'label' => t('New'),
-			'url' => z_root() . '/' . $cmd . '?f=' . ((x($_GET,'cid')) ? '&cid=' . $_GET['cid'] : '') . '&new=1' . ((x($_GET,'gid')) ? '&gid=' . $_GET['gid'] : ''),
-			'sel' => $new_active,
-			'title' => t('Activity Stream - by date'),
-		);
-	}
-
-	if(feature_enabled(local_channel(),'star_posts')) {
-		$tabs[] = array(
-			'label' => t('Starred'),
-			'url'=>z_root() . '/' . $cmd . '/?f=' . ((x($_GET,'cid')) ? '&cid=' . $_GET['cid'] : '') . '&star=1',
-			'sel'=>$starred_active,
-			'title' => t('Favourite Posts'),
-		);
-	}
-	// Not yet implemented
-
-	if(feature_enabled(local_channel(),'spam_filter')) {
-		$tabs[] = array(
-			'label' => t('Spam'),
-			'url'=> z_root() . '/network?f=&spam=1',
-			'sel'=> $spam_active,
-			'title' => t('Posts flagged as SPAM'),
-		);
-	}
-
-	$arr = array('tabs' => $tabs);
-	call_hooks('network_tabs', $arr);
-
-	$tpl = get_markup_template('common_tabs.tpl');
-
-	return replace_macros($tpl, array('$tabs' => $arr['tabs']));
-}
 
 /**
  * @brief
@@ -2053,28 +1934,38 @@ function get_responses($conv_responses,$response_verbs,$ob,$item) {
 function get_response_button_text($v,$count) {
 	switch($v) {
 		case 'like':
-			return tt('Like','Likes',$count,'noun');
+			if(get_config('system','show_like_counts',true)) {
+				return $count . ' ' . tt('Like','Likes',$count,'noun');
+			}
+			else {
+				return t('Likes', 'noun');
+			}
 			break;
 		case 'dislike':
-			return tt('Dislike','Dislikes',$count,'noun');
+			if(get_config('system','show_like_counts',true)) {
+				return $count . ' ' . tt('Dislike','Dislikes',$count,'noun');
+			}
+			else {
+				return t('Dislikes', 'noun');
+			}
 			break;
 		case 'attendyes':
-			return tt('Attending','Attending',$count,'noun');
+			return $count . ' ' . tt('Attending','Attending',$count,'noun');
 			break;
 		case 'attendno':
-			return tt('Not Attending','Not Attending',$count,'noun');
+			return $count . ' ' . tt('Not Attending','Not Attending',$count,'noun');
 			break;
 		case 'attendmaybe':
-			return tt('Undecided','Undecided',$count,'noun');
+			return $count . ' ' . tt('Undecided','Undecided',$count,'noun');
 			break;
 		case 'agree':
-			return tt('Agree','Agrees',$count,'noun');
+			return $count . ' ' . tt('Agree','Agrees',$count,'noun');
 			break;
 		case 'disagree':
-			return tt('Disagree','Disagrees',$count,'noun');
+			return $count . ' ' . tt('Disagree','Disagrees',$count,'noun');
 			break;
 		case 'abstain':
-			return tt('Abstain','Abstains',$count,'noun');
+			return $count . ' ' . tt('Abstain','Abstains',$count,'noun');
 			break;
 		default:
 			return '';

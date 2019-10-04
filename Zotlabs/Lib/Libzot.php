@@ -11,6 +11,7 @@ use App;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Daemon\Master;
 
 
@@ -322,13 +323,13 @@ class Libzot {
 			return false;
 		}
 
-
 		logger('zot-info: ' . print_r($record,true), LOGGER_DATA, LOG_DEBUG);
 
 		$x = self::import_xchan($record['data'], (($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
 
-		if (! $x['success'])
+		if (! $x['success']) {
 			return false;
+		}
 
 		if ($channel && $record['data']['permissions']) {
 			$old_read_stream_perm = their_perms_contains($channel['channel_id'],$x['hash'],'view_stream');
@@ -380,6 +381,19 @@ class Libzot {
 				}
 			}
 			else {
+
+				// limit the ability to do connection spamming, this limit is per channel
+				$lim = intval(get_config('system','max_connections_per_day',50));
+				if ($lim) {
+					$n = q("select count(abook_id) as total from abook where abook_channel = %d and abook_created > '%s'",
+						intval($channel['channel_id']),
+						dbesc(datetime_convert('UTC','UTC','now - 24 hours'))
+					);
+					if ($n && intval($n['total']) > $lim) {
+						logger('channel: ' . $channel['channel_id'] . ' too many new connections per day. This one from ' . $hsig['signer'], LOGGER_NORMAL, LOG_WARNING);
+						return false;
+					}
+				}
 
 				$p = Permissions::connect_perms($channel['channel_id']);
 				$my_perms = Permissions::serialise($p['perms']);
@@ -1169,6 +1183,14 @@ class Libzot {
 		if ($env['encoding'] === 'activitystreams') {
 
 				$AS = new ActivityStreams($data);
+				if ($AS->is_valid() && $AS->type === 'Announce' && is_array($AS->obj)
+					&& array_key_exists('object',$AS->obj) && array_key_exists('actor',$AS->obj)) {
+					// This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
+					// Reparse the encapsulated Activity and use that instead
+					logger('relayed activity',LOGGER_DEBUG);
+					$AS = new ActivityStreams($AS->obj);
+				}
+
 				if (! $AS->is_valid()) {
 					logger('Activity rejected: ' . print_r($data,true));
 					return;
@@ -1289,8 +1311,8 @@ class Libzot {
 					$arr['owner_xchan'] = $env['sender'];						
 				}
 
-				if ($private) {
-					$arr['item_private'] = true;
+				if ($private && (! intval($arr['item_private']))) {
+					$arr['item_private'] = 1;
 				}
 				if ($arr['mid'] === $arr['parent_mid']) {
 					if (is_array($AS->obj) && array_key_exists('commentPolicy',$AS->obj)) {
@@ -1523,7 +1545,8 @@ class Libzot {
 	 * @brief
 	 *
 	 * @param array $sender
-	 * @param array $arr
+	 * @param ActivityStreams object $act
+	 * @param array $msg_arr
 	 * @param array $deliveries
 	 * @param boolean $relay
 	 * @param boolean $public (optional) default false
@@ -1534,6 +1557,8 @@ class Libzot {
 	static function process_delivery($sender, $act, $msg_arr, $deliveries, $relay, $public = false, $request = false) {
 
 		$result = [];
+
+		//logger('msg_arr: ' . print_r($msg_arr,true),LOGGER_ALL);
 
 		// If an upstream hop used ActivityPub, set the identities to zot6 nomadic identities where applicable
 		// else things could easily get confused
@@ -1681,24 +1706,23 @@ class Libzot {
 					// Conversation fetches (e.g. $request == true) take place for 
 					//   a) new comments on expired posts
 					//   b) hyperdrive (friend-of-friend) conversations
-					//   c) Repeats of posts by others
 
 
 					// over-ride normal connection permissions for hyperdrive (friend-of-friend) conversations
-					// (if hyperdrive is enabled) and repeated posts by a friend.
+					// (if hyperdrive is enabled).
  					// If $allowed is already true, this is probably the conversation of a direct friend or a
 					// conversation fetch for a new comment on an expired post
 					// Comments of all these activities are allowed and will only be rejected (later) if the parent
 					// doesn't exist. 
 
-//					if ($perm === 'send_stream') {
-//						if (get_pconfig($channel['channel_id'],'system','hyperdrive',true) || $arr['verb'] === 'Announce') {
-//							$allowed = true;
-//						}
-//					}
-//					else {
+					if ($perm === 'send_stream') {
+						if (get_pconfig($channel['channel_id'],'system','hyperdrive',false)) {
+							$allowed = true;
+						}
+					}
+					else {
 						$allowed = true;
-//					}
+					}
 
 					$friendofriend = true;
 				}
@@ -1818,7 +1842,7 @@ class Libzot {
 
 				// remove_community_tag is a no-op if this isn't a community tag activity
 				self::remove_community_tag($sender,$arr,$channel['channel_id']);
-	
+
 				// set these just in case we need to store a fresh copy of the deleted post.
 				// This could happen if the delete got here before the original post did.
 
@@ -1876,8 +1900,9 @@ class Libzot {
 
 					// We need this line to ensure wall-to-wall comments are relayed (by falling through to the relay bit),
 					// and at the same time not relay any other relayable posts more than once, because to do so is very wasteful.
-					if (! intval($r[0]['item_origin']))
+					if (! intval($r[0]['item_origin'])) {
 						continue;
+					}
 				}
 			}
 			else {
@@ -1967,9 +1992,6 @@ class Libzot {
 		if (get_pconfig($channel['channel_id'],'system','hyperdrive',true)) {
 			return true;
 		}
-		if ($item['verb'] === 'Announce' && get_pconfig($channel['channel_id'],'system','hyperdrive_announce',true)) {
-			return true;
-		}
 		return false;
 	}
 
@@ -2006,6 +2028,14 @@ class Libzot {
 		foreach ($a['data']['orderedItems'] as $activity) {
 
 			$AS = new ActivityStreams($activity);
+			if ($AS->is_valid() && $AS->type === 'Announce' && is_array($AS->obj)
+				&& array_key_exists('object',$AS->obj) && array_key_exists('actor',$AS->obj)) {
+				// This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
+				// Reparse the encapsulated Activity and use that instead
+				logger('relayed activity',LOGGER_DEBUG);
+				$AS = new ActivityStreams($AS->obj);
+			}
+
 			if (! $AS->is_valid()) {
 				logger('FOF Activity rejected: ' . print_r($activity,true));
 				continue;
@@ -2236,7 +2266,7 @@ class Libzot {
 		$item_found = false;
 		$post_id = 0;
 
-		$r = q("select id, author_xchan, owner_xchan, source_xchan, item_deleted from item where ( author_xchan = '%s' or owner_xchan = '%s' or source_xchan = '%s' )
+		$r = q("select * from item where ( author_xchan = '%s' or owner_xchan = '%s' or source_xchan = '%s' )
 			and mid = '%s' and uid = %d limit 1",
 			dbesc($sender),
 			dbesc($sender),
@@ -2246,11 +2276,12 @@ class Libzot {
 		);
 
 		if ($r) {
-			if ($r[0]['author_xchan'] === $sender || $r[0]['owner_xchan'] === $sender || $r[0]['source_xchan'] === $sender) {
+			$stored = $r[0];
+			if ($stored['author_xchan'] === $sender || $stored['owner_xchan'] === $sender || $stored['source_xchan'] === $sender) {
 				$ownership_valid = true;
 			}
 
-			$post_id = $r[0]['id'];
+			$post_id = $stored['id'];
 			$item_found = true;
 		}
 		else {
@@ -2274,8 +2305,26 @@ class Libzot {
 			return false;
 		}
 
+		if ($stored['resource_type'] === 'event') {
+			$i = q("SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
+				dbesc($stored['resource_id']),
+				intval($uid)
+			);
+			if ($i) {
+				if ($i[0]['event_xchan'] === $sender) {
+					q("delete from event where event_hash = '%s' and uid = %d",
+						dbesc($stored['resource_id']),
+						intval($uid)
+					);
+				}
+				else {
+					logger('delete linked event: not owner');
+					return;
+				}
+			}
+		}
 		if ($item_found) {
-			if (intval($r[0]['item_deleted'])) {
+			if (intval($stored['item_deleted'])) {
 				logger('delete_imported_item: item was already deleted');
 				if (! $relay) {
 					return false;
@@ -2288,10 +2337,10 @@ class Libzot {
 				// back, and we aren't going to (or shouldn't at any rate) delete it again in the future - so losing
 				// this information from the metadata should have no other discernible impact.
 
-				if (($r[0]['id'] != $r[0]['parent']) && intval($r[0]['item_origin'])) {
+				if (($stored['id'] != $stored['parent']) && intval($stored['item_origin'])) {
 					q("update item set item_origin = 0 where id = %d and uid = %d",
-						intval($r[0]['id']),
-						intval($r[0]['uid'])
+						intval($stored['id']),
+						intval($stored['uid'])
 					);
 				}
 			}
@@ -2305,90 +2354,6 @@ class Libzot {
 		}
 
 		return $post_id;
-	}
-
-	static function process_mail_delivery($sender, $arr, $deliveries) {
-
-		$result = array();
-
-		if ($sender != $arr['from_xchan']) {
-			logger('process_mail_delivery: sender is not mail author');
-			return;
-		}
-
-		foreach ($deliveries as $d) {
-	
-			$DR = new DReport(z_root(),$sender,$d,$arr['mid']);
-
-			$r = q("select * from channel where channel_hash = '%s' limit 1",
-				dbesc($d['hash'])
-			);
-
-			if (! $r) {
-				$DR->update('recipient not found');
-				$result[] = $DR->get();
-				continue;
-			}
-
-			$channel = $r[0];
-			$DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
-
-
-			if (! perm_is_allowed($channel['channel_id'],$sender,'post_mail')) {
-
-				/* 
-				 * Always allow somebody to reply if you initiated the conversation. It's anti-social
-				 * and a bit rude to send a private message to somebody and block their ability to respond.
-				 * If you are being harrassed and want to put an end to it, delete the conversation.
-				 */
-
-				$return = false;
-				if ($arr['parent_mid']) {
-					$return = q("select * from mail where mid = '%s' and channel_id = %d limit 1",
-						dbesc($arr['parent_mid']),
-						intval($channel['channel_id'])
-					);
-				}
-				if (! $return) {
-					logger("permission denied for mail delivery {$channel['channel_id']}");
-					$DR->update('permission denied');
-					$result[] = $DR->get();
-					continue;
-				}
-			}
-
-
-			$r = q("select id from mail where mid = '%s' and channel_id = %d limit 1",
-				dbesc($arr['mid']),
-				intval($channel['channel_id'])
-			);
-			if ($r) {
-				if (intval($arr['mail_recalled'])) {
-					$x = q("delete from mail where id = %d and channel_id = %d",
-						intval($r[0]['id']),
-						intval($channel['channel_id'])
-					);
-					$DR->update('mail recalled');
-					$result[] = $DR->get();
-					logger('mail_recalled');
-				}
-				else {
-					$DR->update('duplicate mail received');
-					$result[] = $DR->get();
-					logger('duplicate mail received');
-				}
-				continue;
-			}
-			else {
-				$arr['account_id'] = $channel['channel_account_id'];
-				$arr['channel_id'] = $channel['channel_id'];
-				$item_id = mail_store($arr);
-				$DR->update('mail delivered');
-				$result[] = $DR->get();
-			}
-		}
-
-		return $result;
 	}
 
 
@@ -2935,15 +2900,10 @@ class Libzot {
 		// now all forums (public, restricted, and private) set the public_forum flag. So it really means "is a group"
 		// and has nothing to do with accessibility.  
 
-		$channel_type = 'normal';
-
 		$role = get_pconfig($e['channel_id'],'system','permissions_role');
-		if (in_array($role, ['forum','forum_restricted','repository'])) {
-			$channel_type = 'group';
-		}
-		if (in_array($role, ['collection','collection_restricted'])) {
-			$channel_type = 'collection';
-		}
+		$rolesettings = PermissionRoles::role_perms($role);
+
+		$channel_type = isset($rolesettings['channel_type']) ? $rolesettings['channel_type'] : 'normal';
 
 		//  This is for birthdays and keywords, but must check access permissions
 		$p = q("select * from profile where uid = %d and is_default = 1",

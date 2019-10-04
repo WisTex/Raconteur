@@ -13,11 +13,15 @@ class Poster extends Controller {
 		$nick = argv(1);
 		$hash = argv(2);
 
-		if(! ($nick && $hash)) {
+		if (! ($nick && $hash)) {
 			return;
 		}
 
 		$u = channelx_by_nick($nick);
+
+		if (! $u) {
+			return;
+		}
 
 		$sql_extra = permissions_sql(intval($u['channel_id']));
 
@@ -25,13 +29,14 @@ class Poster extends Controller {
 			dbesc($hash),
 			intval($u['channel_id'])
 		);
-		if($r) {
+		if ($r) {
 			$path = dbunescbin($r[0]['content']);
-			if($path && @file_exists($path . '.thumb')) {
+			if ($path && @file_exists($path . '.thumb')) {
 				header('Content-Type: image/jpeg');
 				echo file_get_contents($path . '.thumb');
 				killme();
 			}
 		}
+		killme();
 	}
 }

@@ -99,20 +99,26 @@ class Onepoll {
 		if(! $responded)
 			return;
 
+		if(defined('USE_OUTBOX')) {
+
+		// @fixme
+		// This needs to be converted from zotfeed to ActivityStreams (such as an ActivityPub outbox).
+		// The zotfeed has serious compatibility issues between Hubzilla and Zap.
+
 		if($contact['xchan_connurl']) {
 			$fetch_feed = true;
 			$x = null;
 
 			// They haven't given us permission to see their stream
 
-			$can_view_stream = their_perms_contains($importer_uid,$contact['abook_xchan'],'view_stream');
+			$can_view_stream = intval(get_abconfig($importer_uid,$contact['abook_xchan'],'their_perms','view_stream'));
 
 			if(! $can_view_stream)
 				$fetch_feed = false;
 
 			// we haven't given them permission to send us their stream
 
-			$can_send_stream = ((strpos(get_abconfig($importer_uid,$contact['abook_xchan'],'system','my_perms',EMPTY_STR),'send_stream') !== false) ? true : false);
+			$can_send_stream = intval(get_abconfig($importer_uid,$contact['abook_xchan'],'my_perms','send_stream'));
 			
 			if(! $can_send_stream)
 				$fetch_feed = false;
@@ -151,7 +157,7 @@ class Onepoll {
 				$j = json_decode($x['body'],true);
 				if($j['success'] && $j['messages']) {
 					foreach($j['messages'] as $message) {
-						$results = Libzot::process_delivery($contact['xchan_hash'], null, get_item_elements($message), [ $importer['xchan_hash'] ], false);
+						// process delivery here once we have parsed the AS
 						logger('onepoll: feed_update: process_delivery: ' . print_r($results,true), LOGGER_DATA);
 						$total ++;
 					}
@@ -160,6 +166,8 @@ class Onepoll {
 			}
 		}
 			
+
+		} // end USE_OUTBOX
 
 		// update the poco details for this connection
 

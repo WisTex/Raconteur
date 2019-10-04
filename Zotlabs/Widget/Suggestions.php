@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Widget;
 
+use App;
 use Zotlabs\Lib\Apps;
 
 require_once('include/socgraph.php');
@@ -42,7 +43,7 @@ class Suggestions {
 				'profile' => $rr['xchan_url'],
 				'name'    => $rr['xchan_name'],
 				'photo'   => $rr['xchan_photo_m'],
-				'ignlnk'  => z_root() . '/directory?ignore=' . $rr['xchan_hash'],
+				'ignlnk'  => z_root() . '/directory?return=' . base64_encode(App::$query_string) . '&ignore=' . $rr['xchan_hash'],
 				'conntxt' => t('Connect'),
 				'connlnk' => $connlnk,
 				'ignore'  => t('Ignore/Hide')

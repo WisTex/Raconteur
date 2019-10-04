@@ -50,13 +50,21 @@ class Authorize extends \Zotlabs\Web\Controller {
 		// TODO: The automatic client registration protocol below should adhere more
 		// closely to "OAuth 2.0 Dynamic Client Registration Protocol" defined
 		// at https://tools.ietf.org/html/rfc7591
-		
+
+		// If no client_id was provided, generate a new one.
+		if (x($_POST, 'client_name')) {
+			$client_name = $_POST['client_name'];
+		} else {
+			$client_name = $_POST['client_name'] = EMPTY_STR;
+		}
+
 		// If no client_id was provided, generate a new one.
 		if (x($_POST, 'client_id')) {
 			$client_id = $_POST['client_id'];
 		} else {
 			$client_id = $_POST['client_id'] = random_string(16);
 		}
+
 		// If no redirect_uri was provided, generate a fake one.
 		if (x($_POST, 'redirect_uri')) {
 			$redirect_uri = $_POST['redirect_uri'];
@@ -76,7 +84,7 @@ class Authorize extends \Zotlabs\Web\Controller {
 			// Until "Dynamic Client Registration" is pursued - allow new clients to assign their own secret in the REQUEST
 			$client_secret = (isset($_REQUEST['client_secret'])) ? $_REQUEST['client_secret'] : random_string(16);
 			// Client apps are registered per channel
-			$storage->setClientDetails($client_id, $client_secret, $redirect_uri, 'authorization_code', $_REQUEST['scope'], $user_id);
+			$storage->setClientDetails($client_id, $client_secret, $redirect_uri, $_REQUEST['grant_types'], $_REQUEST['scope'], $user_id, $client_name);
 		}
 		if (!$client = $storage->getClientDetails($client_id)) {
 			// There was an error registering the client.

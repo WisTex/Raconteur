@@ -14,6 +14,7 @@
 					<div class="dropdown-divider"></div>
 					<a class="dropdown-item" href="#" title="{{$tools.block.title}}" onclick="window.location.href='{{$tools.block.url}}'; return false;">{{$tools.block.label}}</a>
 					<a class="dropdown-item" href="#" title="{{$tools.ignore.title}}" onclick="window.location.href='{{$tools.ignore.url}}'; return false;">{{$tools.ignore.label}}</a>
+					<a class="dropdown-item" href="#" title="{{$tools.censor.title}}" onclick="window.location.href='{{$tools.censor.url}}'; return false;">{{$tools.censor.label}}</a>
 					<a class="dropdown-item" href="#" title="{{$tools.archive.title}}" onclick="window.location.href='{{$tools.archive.url}}'; return false;">{{$tools.archive.label}}</a>					<a class="dropdown-item" href="#" title="{{$tools.hide.title}}" onclick="window.location.href='{{$tools.hide.url}}'; return false;">{{$tools.hide.label}}</a>
 					<a class="dropdown-item" href="#" title="{{$tools.delete.title}}" onclick="window.location.href='{{$tools.delete.url}}'; return false;">{{$tools.delete.label}}</a>
 				</div>
@@ -76,6 +77,25 @@
 		<input type="hidden" name="section" value="{{$section}}">
 
 		<div class="panel-group" id="contact-edit-tools" role="tablist" aria-multiselectable="true">
+
+			<div class="panel">
+				<div class="section-subtitle-wrapper" role="tab" id="alias-tool">
+					<h3>
+						<a data-toggle="collapse" data-parent="#contact-edit-tools" href="#alias-tool-collapse" aria-expanded="true" aria-controls="alias-tool-collapse">
+							{{$alias_label}}
+						</a>
+					</h3>
+				</div>
+				<div id="alias-tool-collapse" class="panel-collapse collapse show" role="tabpanel" aria-labelledby="alias-tool">
+					<div class="section-content-tools-wrapper">
+						{{include file="field_input.tpl" field=$alias}}
+						<div class="settings-submit-wrapper" >
+							<button type="submit" name="done" value="{{$submit}}" class="btn btn-primary">{{$submit}}</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			{{if $notself}}
 
 			{{if $is_pending}}

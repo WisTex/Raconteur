@@ -29,7 +29,7 @@ class Site {
 
 		$admininfo			=	((x($_POST,'admininfo'))		? trim($_POST['admininfo'])				: false);
 		$siteinfo			=	((x($_POST,'siteinfo'))		    ? trim($_POST['siteinfo'])				: '');
-		$language			=	((x($_POST,'language'))			? notags(trim($_POST['language']))			: '');
+		$language			=	((x($_POST,'language'))			? notags(trim($_POST['language']))			: 'en');
 		$theme				=	((x($_POST,'theme'))			? notags(trim($_POST['theme']))				: '');
 //		$theme_mobile			=	((x($_POST,'theme_mobile'))		? notags(trim($_POST['theme_mobile']))			: '');
 //		$site_channel			=	((x($_POST,'site_channel'))	? notags(trim($_POST['site_channel']))				: '');
@@ -53,7 +53,6 @@ class Site {
 		}
 		$mirror_frontpage	=	((x($_POST,'mirror_frontpage'))	? intval(trim($_POST['mirror_frontpage']))		: 0);
 		$directory_server	=	((x($_POST,'directory_server')) ? trim($_POST['directory_server']) : '');
-		$allowed_sites		=	((x($_POST,'allowed_sites'))	? notags(trim($_POST['allowed_sites']))		: '');
 		$force_publish		=	((x($_POST,'publish_all'))		? True	: False);
 		$disable_discover_tab =	((x($_POST,'disable_discover_tab'))		? False	:	True);
 		$site_firehose      =   ((x($_POST,'site_firehose')) ? True : False);
@@ -73,11 +72,13 @@ class Site {
 		$proxyuser         = ((x($_POST,'proxyuser'))        ? notags(trim($_POST['proxyuser']))  : '');
 		$proxy             = ((x($_POST,'proxy'))            ? notags(trim($_POST['proxy']))      : '');
 		$timeout           = ((x($_POST,'timeout'))          ? intval(trim($_POST['timeout']))    : 60);
+		$show_like_counts  = ((x($_POST,'show_like_counts')) ? intval(trim($_POST['show_like_counts'])) : 0);
 		$delivery_interval = ((x($_POST,'delivery_interval'))? intval(trim($_POST['delivery_interval'])) : 0);
 		$delivery_batch_count = ((x($_POST,'delivery_batch_count') && $_POST['delivery_batch_count'] > 0)? intval(trim($_POST['delivery_batch_count'])) : 3);
 		$poll_interval     = ((x($_POST,'poll_interval'))    ? intval(trim($_POST['poll_interval'])) : 0);
 		$maxloadavg        = ((x($_POST,'maxloadavg'))       ? intval(trim($_POST['maxloadavg'])) : 50);
 		$feed_contacts     = ((x($_POST,'feed_contacts'))    ? intval($_POST['feed_contacts'])    : 0);
+		$ap_contacts       = ((x($_POST,'ap_contacts'))      ? intval($_POST['ap_contacts'])    : 0);
 		$verify_email      = ((x($_POST,'verify_email'))     ? 1 : 0);
 		$imagick_path      = ((x($_POST,'imagick_path'))     ? trim($_POST['imagick_path'])   : '');
 		$thumbnail_security  = ((x($_POST,'thumbnail_security'))     ? intval($_POST['thumbnail_security'])   : 0);
@@ -88,6 +89,7 @@ class Site {
 		$permissions_role = escape_tags(trim($_POST['permissions_role']));
 
 		set_config('system', 'feed_contacts', $feed_contacts);
+		set_config('system', 'activitypub', $ap_contacts);
 		set_config('system', 'delivery_interval', $delivery_interval);
 		set_config('system', 'delivery_batch_count', $delivery_batch_count);
 		set_config('system', 'poll_interval', $poll_interval);
@@ -109,6 +111,7 @@ class Site {
 		set_config('system', 'imagick_convert_path' , $imagick_path);
 		set_config('system', 'thumbnail_security' , $thumbnail_security);
 		set_config('system', 'default_permissions_role', $permissions_role);
+		set_config('system', 'show_like_counts', $show_like_counts);
 		set_config('system', 'pubstream_incl',$pub_incl);
 		set_config('system', 'pubstream_excl',$pub_excl);
 
@@ -144,7 +147,6 @@ class Site {
 		set_config('system','access_policy', $access_policy);
 		set_config('system','account_abandon_days', $abandon_days);
 		set_config('system','register_text', $register_text);
-		set_config('system','allowed_sites', $allowed_sites);
 		set_config('system','publish_all', $force_publish);
 		set_config('system','disable_discover_tab', $disable_discover_tab);
 		set_config('system','site_firehose', $site_firehose);
@@ -177,10 +179,10 @@ class Site {
 
 		/* Installed langs */
 		$lang_choices = array();
-		$langs = glob('view/*/hstrings.php');
+		$langs = glob('view/*/strings.php');
 
 		if (is_array($langs) && count($langs)) {
-			if (! in_array('view/en/hstrings.php',$langs))
+			if (! in_array('view/en/strings.php',$langs))
 				$langs[] = 'view/en/';
 			asort($langs);
 			foreach ($langs as $l) {
@@ -302,11 +304,12 @@ class Site {
 			'$banner'               => [ 'banner', t("Banner/Logo"), $banner, t('Unfiltered HTML/CSS/JS is allowed') ],
 			'$admininfo'            => [ 'admininfo', t("Administrator Information"), $admininfo, t("Contact information for site administrators.  Displayed on siteinfo page.  BBCode may be used here.") ],
 			'$siteinfo'		        => [ 'siteinfo', t('Site Information'), get_config('system','siteinfo'), t("Publicly visible description of this site.  Displayed on siteinfo page.  BBCode may be used here.") ],
-			'$language'             => [ 'language', t("System language"), get_config('system','language'), "", $lang_choices ],
+			'$language'             => [ 'language', t("System language"), get_config('system','language','en'), "", $lang_choices ],
 			'$theme'                => [ 'theme', t("System theme"), get_config('system','theme'), t("Default system theme - may be over-ridden by user profiles - <a href='#' id='cnftheme'>change theme settings</a>"), $theme_choices ],
 //			'$theme_mobile'         => [ 'theme_mobile', t("Mobile system theme"), get_config('system','mobile_theme'), t("Theme for mobile devices"), $theme_choices_mobile ],
 //			'$site_channel'         => [ 'site_channel', t("Channel to use for this website's static pages"), get_config('system','site_channel'), t("Site Channel") ],
 			'$feed_contacts'        => [ 'feed_contacts', t('Allow Feeds as Connections'),get_config('system','feed_contacts'),t('(Heavy system resource usage)') ],
+			'$ap_contacts'           => [ 'ap_contacts', t('Allow ActivityPub Connections'),get_config('system','activitypub'),t('Experimental and unsupported. ActivityPub does not fully support privacy and account mobility.') ],
 			'$maximagesize'         => [ 'maximagesize', t("Maximum image size"), intval(get_config('system','maximagesize')), t("Maximum size in bytes of uploaded images. Default is 0, which means no limits.") ],
 			'$register_policy'      => [ 'register_policy', t("Does this site allow new member registration?"), get_config('system','register_policy'), "", $register_choices ],
 			'$invite_only'          => [ 'invite_only', t("Invitation only"), get_config('system','invitation_only'), t("Only allow new member registrations with an invitation code. New member registration must be allowed for this to work.") ],
@@ -317,12 +320,12 @@ class Site {
 			'$frontpage'	        => [ 'frontpage', t("Site homepage to show visitors (default: login box)"), get_config('system','frontpage'), t("example: 'public' to show public stream, 'page/sys/home' to show a system webpage called 'home' or 'include:home.html' to include a file.") ],
 			'$mirror_frontpage'     => [ 'mirror_frontpage', t("Preserve site homepage URL"), get_config('system','mirror_frontpage'), t('Present the site homepage in a frame at the original location instead of redirecting') ],
 			'$abandon_days'         => [ 'abandon_days', t('Accounts abandoned after x days'), get_config('system','account_abandon_days'), t('Will not waste system resources polling external sites for abandonded accounts. Enter 0 for no time limit.') ],
-			'$allowed_sites'        => [ 'allowed_sites', t("Allowed friend domains"), get_config('system','allowed_sites'), t("Comma separated list of domains which are allowed to establish friendships with this site. Wildcards are accepted. Empty to allow any domains") ],
 			'$verify_email'         => [ 'verify_email', t("Verify Email Addresses"), get_config('system','verify_email'), t("Check to verify email addresses used in account registration (recommended).") ],
 			'$force_publish'        => [ 'publish_all', t("Force publish"), get_config('system','publish_all'), t("Check to force all profiles on this site to be listed in the site directory.") ],
 			'$disable_discover_tab'	=> [ 'disable_discover_tab', t('Import Public Streams'), $discover_tab, t('Import and allow access to public content pulled from other sites. Warning: this content is unmoderated.') ],
 			'$site_firehose'	    => [ 'site_firehose', t('Site only Public Streams'), get_config('system','site_firehose'), t('Allow access to public content originating only from this site if Imported Public Streams are disabled.') ],
 			'$open_pubstream'	    => [ 'open_pubstream', t('Allow anybody on the internet to access the Public streams'), get_config('system','open_pubstream',0), t('Default is to only allow viewing by site members. Warning: this content is unmoderated.') ],
+			'$show_like_counts'	    => [ 'show_like_counts', t('Show numbers of likes and dislikes in conversations'), get_config('system','show_like_counts',1), t('If disabled, the presence of likes and dislikes will be shown, but without totals.') ],
 			'$incl'                 => [ 'pub_incl',t('Only import Public stream posts with this text'), get_config('system','pubstream_incl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts') ],
 			'$excl'                 => [ 'pub_excl',t('Do not import Public stream posts with this text'), get_config('system','pubstream_excl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts') ],
 			'$login_on_homepage'	=> [ 'login_on_homepage', t("Login on Homepage"),((intval($homelogin) || $homelogin === false) ? 1 : '') , t("Present a login box to visitors on the home page if no other content has been configured.") ],
@@ -341,7 +344,7 @@ class Site {
 			'$imagick_path'         => [ 'imagick_path', t("Path to ImageMagick convert program"), get_config('system','imagick_convert_path'), t("If set, use this program to generate photo thumbnails for huge images ( > 4000 pixels in either dimension), otherwise memory exhaustion may occur. Example: /usr/bin/convert") ],
 			'$thumbnail_security'   => [ 'thumbnail_security', t("Allow SVG thumbnails in file browser"), get_config('system','thumbnail_security',0), t("WARNING: SVG images may contain malicious code.") ],
 			'$maxloadavg'           => [ 'maxloadavg', t("Maximum Load Average"), ((intval(get_config('system','maxloadavg')) > 0)?get_config('system','maxloadavg'):50), t("Maximum system load before delivery and poll processes are deferred - default 50.") ],
-			'$default_expire_days'  => [ 'default_expire_days', t('Expiration period in days for imported (grid/network) content'), intval(get_config('system','default_expire_days')), t('0 for no expiration of imported content') ],
+			'$default_expire_days'  => [ 'default_expire_days', t('Expiration period in days for imported streams'), intval(get_config('system','default_expire_days')), t('0 for no expiration of imported content') ],
 			'$active_expire_days'   => [ 'active_expire_days', t('Do not expire any posts which have comments less than this many days ago'), intval(get_config('system','active_expire_days',7)), '' ],
 			'$sellpage'             => [ 'site_sellpage', t('Public servers: Optional landing (marketing) webpage for new registrants'), get_config('system','sellpage',''), sprintf( t('Create this page first. Default is %s/register'),z_root()) ],
 			'$first_page'           => [ 'first_page', t('Page to display after creating a new channel'), get_config('system','workflow_channel_next','profiles'), t('Default: profiles') ],

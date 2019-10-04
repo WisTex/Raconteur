@@ -3,6 +3,7 @@
 [widget=activity_filter][/widget]
 [widget=savedsearch][/widget]
 [widget=suggestions][/widget]
+[widget=tasklist][/widget]
 [widget=notes][/widget]
 [/region]
 

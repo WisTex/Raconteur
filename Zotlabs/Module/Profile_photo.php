@@ -1,21 +1,21 @@
 <?php
 namespace Zotlabs\Module;
 
+/*
+ * @file Profile_photo.php
+ * @brief Module-file with functions for uploading and scaling of profile-photos
+ *
+ */
+
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
-
-/*
- * @file Profile_photo.php
- * @brief Module-file with functions for handling of profile-photos
- *
- */
+use Zotlabs\Daemon\Master;
 
 
 require_once('include/photo_factory.php');
 require_once('include/photos.php');
-
 
 
 class Profile_photo extends Controller {
@@ -33,7 +33,7 @@ class Profile_photo extends Controller {
 			return;
 		}
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 		Libprofile::load($channel['channel_address']);
 	
 	}
@@ -47,49 +47,46 @@ class Profile_photo extends Controller {
 	
 	function post() {
 	
-		if(! local_channel()) {
+		if (! local_channel()) {
 			return;
 		}
 		
 		check_form_security_token_redirectOnErr('/profile_photo', 'profile_photo');
 	        
-		if((array_key_exists('cropfinal',$_POST)) && (intval($_POST['cropfinal']) == 1)) {
+		if ((array_key_exists('cropfinal',$_POST)) && (intval($_POST['cropfinal']) == 1)) {
 	
 			// logger('crop: ' . print_r($_POST,true));
 
-
-
 			// phase 2 - we have finished cropping
 	
-			if(argc() != 2) {
+			if (argc() != 2) {
 				notice( t('Image uploaded but image cropping failed.') . EOL );
 				return;
 			}
 	
 			$image_id = argv(1);
 	
-			if(substr($image_id,-2,1) == '-') {
+			if (substr($image_id,-2,1) == '-') {
 				$scale = substr($image_id,-1,1);
 				$image_id = substr($image_id,0,-2);
 			}
 
-
 			// unless proven otherwise
 			$is_default_profile = 1;
 	
-			if($_REQUEST['profile']) {
+			if ($_REQUEST['profile']) {
 				$r = q("select id, profile_guid, is_default, gender from profile where id = %d and uid = %d limit 1",
 					intval($_REQUEST['profile']),
 					intval(local_channel())
 				);
-				if($r) {
-					$profile = $r[0];
-					if(! intval($profile['is_default']))
+				if ($r) {
+					$profile = array_shift($r);
+					if (! intval($profile['is_default'])) {
 						$is_default_profile = 0;
+					}
 				}
 			} 
 
-	
 			$srcX = intval($_POST['xstart']);
 			$srcY = intval($_POST['ystart']);
 			$srcW = intval($_POST['xfinal']) - $srcX;
@@ -99,13 +96,13 @@ class Profile_photo extends Controller {
 				dbesc($image_id),
 				dbesc(local_channel()),
 				intval($scale));
-			if($r) {
+			if ($r) {
 	
-				$base_image = $r[0];
-				$base_image['content'] = (($r[0]['os_storage']) ? @file_get_contents(dbunescbin($base_image['content'])) : dbunescbin($base_image['content']));
+				$base_image = array_shift($r);
+				$base_image['content'] = (($base_image['os_storage']) ? @file_get_contents(dbunescbin($base_image['content'])) : dbunescbin($base_image['content']));
 			
 				$im = photo_factory($base_image['content'], $base_image['mimetype']);
-				if($im->is_valid()) {
+				if ($im->is_valid()) {
 	
 					$im->cropImage(300,$srcX,$srcY,$srcW,$srcH);
 	
@@ -126,19 +123,19 @@ class Profile_photo extends Controller {
 					$p['imgscale']    = PHOTO_RES_PROFILE_300;
 					$p['photo_usage'] = (($is_default_profile) ? PHOTO_PROFILE : PHOTO_NORMAL);
 	
-					$r1 = $im->save($p);
+					$r1 = $im->storeThumbnail($p, PHOTO_RES_PROFILE_300);
 	
 					$im->scaleImage(80);
 					$p['imgscale'] = PHOTO_RES_PROFILE_80;
 	
-					$r2 = $im->save($p);
+					$r2 = $im->storeThumbnail($p, PHOTO_RES_PROFILE_80);
 				
 					$im->scaleImage(48);
 					$p['imgscale'] = PHOTO_RES_PROFILE_48;
 	
-					$r3 = $im->save($p);
+					$r3 = $im->storeThumbnail($p, PHOTO_RES_PROFILE_48);
 				
-					if($r1 === false || $r2 === false || $r3 === false) {
+					if ($r1 === false || $r2 === false || $r3 === false) {
 						// if one failed, delete them all so we can start over.
 						notice( t('Image resize failed.') . EOL );
 						$x = q("delete from photo where resource_id = '%s' and uid = %d and imgscale in ( %d, %d, %d ) ",
@@ -151,11 +148,11 @@ class Profile_photo extends Controller {
 						return;
 					}
 	
-					$channel = \App::get_channel();
+					$channel = App::get_channel();
 	
 					// If setting for the default profile, unset the profile photo flag from any other photos I own
 	
-					if($is_default_profile) {
+					if ($is_default_profile) {
 
 						$r = q("update profile set photo = '%s', thumb = '%s' where is_default = 1 and uid = %d",
 							dbesc(z_root() . '/photo/profile/l/' . local_channel()),
@@ -209,9 +206,9 @@ class Profile_photo extends Controller {
 					photo_profile_setperms(local_channel(),$base_image['resource_id'],$_REQUEST['profile']);
 
 					$sync = attach_export_data($channel,$base_image['resource_id']);
-					if($sync)
+					if ($sync) {
 						Libsync::build_sync_packet($channel['channel_id'],array('file' => array($sync), 'profile' => $sync_profiles));
-
+					}
 
 					// Similarly, tell the nav bar to bypass the cache and update the avatar image.
 					$_SESSION['reload_avatar'] = true;
@@ -219,15 +216,15 @@ class Profile_photo extends Controller {
 					info( t('Shift-reload the page or clear browser cache if the new photo does not display immediately.') . EOL);
 	
 					// Update directory in background
-					\Zotlabs\Daemon\Master::Summon(array('Directory',$channel['channel_id']));
+					Master::Summon( [ 'Directory', $channel['channel_id'] ] );
 	
 				}
-				else
+				else {
 					notice( t('Unable to process image') . EOL);
+				}
 			}
 	
 			goaway(z_root() . '/profiles');
-			return; // NOTREACHED
 		}
 	
 		// A new photo was uploaded. Store it and save some important details
@@ -239,7 +236,7 @@ class Profile_photo extends Controller {
 		$smallest = 0;
 	
 
-		if($_REQUEST['importfile']) {
+		if ($_REQUEST['importfile']) {
 			$hash = $_REQUEST['importfile'];
 			$importing = true;
 		}
@@ -248,18 +245,18 @@ class Profile_photo extends Controller {
 			$matches = [];
 			$partial = false;
 
-			if(array_key_exists('HTTP_CONTENT_RANGE',$_SERVER)) {
+			if (array_key_exists('HTTP_CONTENT_RANGE',$_SERVER)) {
 				$pm = preg_match('/bytes (\d*)\-(\d*)\/(\d*)/',$_SERVER['HTTP_CONTENT_RANGE'],$matches);
-				if($pm) {
-					logger('Content-Range: ' . print_r($matches,true));
+				if ($pm) {
+					logger('Content-Range: ' . print_r($matches,true), LOGGER_DEBUG);
 					$partial = true;
 				}
 			}
 
-			if($partial) {
+			if ($partial) {
 				$x = save_chunk($channel,$matches[1],$matches[2],$matches[3]);
 
-				if($x['partial']) {
+				if ($x['partial']) {
 					header('Range: bytes=0-' . (($x['length']) ? $x['length'] - 1 : 0));
 					json_return_and_die($result);
 				}
@@ -276,7 +273,7 @@ class Profile_photo extends Controller {
 				}
 			}
 			else {	
-				if(! array_key_exists('userfile',$_FILES)) {
+				if (! array_key_exists('userfile',$_FILES)) {
 					$_FILES['userfile'] = [
 						'name'     => $_FILES['files']['name'],
 						'type'     => $_FILES['files']['type'],
@@ -287,29 +284,27 @@ class Profile_photo extends Controller {
 				}
 			}
 
-			$res = attach_store(\App::get_channel(), get_observer_hash(), '', array('album' => t('Profile Photos'), 'hash' => $hash));
+			$res = attach_store(App::get_channel(), get_observer_hash(), '', array('album' => t('Profile Photos'), 'hash' => $hash));
 	
-			logger('attach_store: ' . print_r($res,true));
+			logger('attach_store: ' . print_r($res,true), LOGGER_DEBUG);
 
 			json_return_and_die([ 'message' => $hash ]);
-
-
 		}
 	
-		if(($res && intval($res['data']['is_photo'])) || $importing) {
+		if (($res && intval($res['data']['is_photo'])) || $importing) {
 			$i = q("select * from photo where resource_id = '%s' and uid = %d order by imgscale",
 				dbesc($hash),
 				intval(local_channel())
 			);
 	
-			if(! $i) {
+			if (! $i) {
 				notice( t('Image upload failed.') . EOL );
 				return;
 			}
 			$os_storage = false;
 	
-			foreach($i as $ii) {
-				if(intval($ii['imgscale']) < PHOTO_RES_640) {
+			foreach ($i as $ii) {
+				if (intval($ii['imgscale']) < PHOTO_RES_640) {
 					$smallest = intval($ii['imgscale']);
 					$os_storage = intval($ii['os_storage']);
 					$imagedata = $ii['content'];
@@ -321,12 +316,12 @@ class Profile_photo extends Controller {
 		$imagedata = (($os_storage) ? @file_get_contents(dbunescbin($imagedata)) : dbunescbin($imagedata));
 		$ph = photo_factory($imagedata, $filetype);
 	
-		if(! $ph->is_valid()) {
+		if (! $ph->is_valid()) {
 			notice( t('Unable to process image.') . EOL );
 			return;
 		}
 	
-		return $this->profile_photo_crop_ui_head($a, $ph, $hash, $smallest);
+		return $this->profile_photo_crop_ui_head($ph, $hash, $smallest);
 
 		// This will "fall through" to the get() method, and since
 		// App::$data['imagecrop'] is set, it will proceed to cropping 
@@ -336,7 +331,6 @@ class Profile_photo extends Controller {
 	
 	/* @brief Generate content of profile-photo view
 	 *
-	 * @param $a Current application
 	 * @return void
 	 *
 	 */
@@ -344,19 +338,20 @@ class Profile_photo extends Controller {
 	
 	function get() {
 	
-		if(! local_channel()) {
+		if (! local_channel()) {
 			notice( t('Permission denied.') . EOL );
 			return;
 		}
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 		$pf = 0;
 		$newuser = false;
 	
-		if(argc() == 2 && argv(1) === 'new')
+		if (argc() == 2 && argv(1) === 'new') {
 			$newuser = true;
+		}
 	
-		if(argv(1) === 'use') {
+		if (argv(1) === 'use') {
 			if (argc() < 3) {
 				notice( t('Permission denied.') . EOL );
 				return;
@@ -364,7 +359,6 @@ class Profile_photo extends Controller {
 				        
 			$resource_id = argv(2);
 	
-
 			$pf = (($_REQUEST['pf']) ? intval($_REQUEST['pf']) : 0);
 
 			$c = q("select id, is_default from profile where uid = %d",
@@ -373,7 +367,7 @@ class Profile_photo extends Controller {
 
 			$multi_profiles = true;
 
-			if(($c) && (count($c) === 1) && (intval($c[0]['is_default']))) {
+			if (($c) && (count($c) === 1) && (intval($c[0]['is_default']))) {
 				$_REQUEST['profile'] = $c[0]['id'];
 				$multi_profiles = false;
 			}
@@ -385,33 +379,34 @@ class Profile_photo extends Controller {
 				intval(local_channel()),
 				dbesc($resource_id)
 			);
-			if(! $r) {
+			if (! $r) {
 				notice( t('Photo not available.') . EOL );
 				return;
 			}
 			$havescale = false;
-			foreach($r as $rr) {
-				if($rr['imgscale'] == PHOTO_RES_PROFILE_80)
+			foreach ($r as $rr) {
+				if ($rr['imgscale'] == PHOTO_RES_PROFILE_80) {
 					$havescale = true;
+				}
 			}
 	
 			// set an already loaded and cropped photo as profile photo
 	
-			if($havescale) {
+			if ($havescale) {
 				// unset any existing profile photos
 				$r = q("UPDATE photo SET photo_usage = %d WHERE photo_usage = %d AND uid = %d",
 					intval(PHOTO_NORMAL),
 					intval(PHOTO_PROFILE),
-					intval(local_channel()));
+					intval(local_channel())
+				);
 	
 				$r = q("UPDATE photo SET photo_usage = %d WHERE uid = %d AND resource_id = '%s'",
 					intval(PHOTO_PROFILE),
 					intval(local_channel()),
 					dbesc($resource_id)
-					);
+				);
 	
-				$r = q("UPDATE xchan set xchan_photo_date = '%s' 
-					where xchan_hash = '%s'",
+				$r = q("UPDATE xchan set xchan_photo_date = '%s' where xchan_hash = '%s'",
 					dbesc(datetime_convert()),
 					dbesc($channel['xchan_hash'])
 				);
@@ -419,11 +414,11 @@ class Profile_photo extends Controller {
 				photo_profile_setperms(local_channel(),$resource_id,$_REQUEST['profile']);
 
 				$sync = attach_export_data($channel,$resource_id);
-				if($sync)
+				if ($sync) {
 					Libsync::build_sync_packet($channel['channel_id'],array('file' => array($sync)));
+				}
 
-
-				\Zotlabs\Daemon\Master::Summon(array('Directory',local_channel()));
+				Master::Summon( [ 'Directory',local_channel() ] );
 				goaway(z_root() . '/profiles');
 			}
 	
@@ -432,154 +427,148 @@ class Profile_photo extends Controller {
 				intval(local_channel())
 	
 			);
-			if(! $r) {
+			if (! $r) {
 				notice( t('Photo not available.') . EOL );
 				return;
 			}
 	
-			if(intval($r[0]['os_storage']))
+			if (intval($r[0]['os_storage'])) {
 				$data = @file_get_contents(dbunescbin($r[0]['content']));
-			else
+			}
+			else {
 				$data = dbunescbin($r[0]['content']); 
-	
+			}
+			
 			$ph = photo_factory($data, $r[0]['mimetype']);
 			$smallest = 0;
-			if($ph->is_valid()) {
+			if ($ph->is_valid()) {
 				// go ahead as if we have just uploaded a new photo to crop
 				$i = q("select resource_id, imgscale from photo where resource_id = '%s' and uid = %d order by imgscale",
 					dbesc($r[0]['resource_id']),
 					intval(local_channel())
 				);
 	
-				if($i) {
+				if ($i) {
 					$hash = $i[0]['resource_id'];
-					foreach($i as $ii) {
-						if(intval($ii['imgscale']) < PHOTO_RES_640) {
+					foreach ($i as $ii) {
+						if (intval($ii['imgscale']) < PHOTO_RES_640) {
 							$smallest = intval($ii['imgscale']);
 						}
 					}
 	            }
 	        }
 	 
-			if($multi_profiles) {
-				\App::$data['importfile'] = $resource_id;
+			if ($multi_profiles) {
+				App::$data['importfile'] = $resource_id;
 			}
 			else {
-				$this->profile_photo_crop_ui_head($a, $ph, $hash, $smallest);
+				$this->profile_photo_crop_ui_head($ph, $hash, $smallest);
 			}
 
 			// falls through with App::$data['imagecrop'] set so we go straight to the cropping section
 
 		}
 	
-
 		// present an upload form
 
 		$profiles = q("select id, profile_name as name, is_default from profile where uid = %d order by id asc",
 			intval(local_channel())
 		);
 
-		if($profiles) {
-			for($x = 0; $x < count($profiles); $x ++) {
+		if ($profiles) {
+			for ($x = 0; $x < count($profiles); $x ++) {
 				$profiles[$x]['selected'] = false;
-				if($pf && $profiles[$x]['id'] == $pf)
+				if ($pf && $profiles[$x]['id'] == $pf) {
 					$profiles[$x]['selected'] = true;
-				if((! $pf) && $profiles[$x]['is_default'])
+				}
+				if ((! $pf) && $profiles[$x]['is_default']) {
 					$profiles[$x]['selected'] = true;
+				}
 			}
 		}
 
-		$importing = ((array_key_exists('importfile',\App::$data)) ? true : false);
+		$importing = ((array_key_exists('importfile',App::$data)) ? true : false);
 	
-		if(! x(\App::$data,'imagecrop')) {
+		if (! array_key_exists('imagecrop', App::$data)) {
 	
 			$tpl = get_markup_template('profile_photo.tpl');
 	
-			$o .= replace_macros($tpl,array(
-				'$user' => \App::$channel['channel_address'],
-				'$info' => ((count($profiles) > 1) ? t('Your default profile photo is visible to anybody on the internet. Profile photos for alternate profiles will inherit the permissions of the profile') : t('Your profile photo is visible to anybody on the internet and may be distributed to other websites.')), 
-				'$importfile' => (($importing) ? \App::$data['importfile'] : ''),
-				'$lbl_upfile' => t('Upload File:'),
-				'$lbl_profiles' => t('Select a profile:'),
-				'$title' => (($importing) ? t('Use Photo for Profile') : t('Change Profile Photo')),
-				'$submit' => (($importing) ? t('Use') : t('Upload')),
-				'$profiles' => $profiles,
-				'$single' => ((count($profiles) == 1) ? true : false),
-				'$profile0' => $profiles[0],
-				'$embedPhotos' => t('Use a photo from your albums'),
-				'$embedPhotosModalTitle' => t('Use a photo from your albums'),
+			$o .= replace_macros($tpl, [
+				'$user'                   => App::$channel['channel_address'],
+				'$info'                   => ((count($profiles) > 1) ? t('Your default profile photo is visible to anybody on the internet. Profile photos for alternate profiles will inherit the permissions of the profile') : t('Your profile photo is visible to anybody on the internet and may be distributed to other websites.')), 
+				'$importfile'             => (($importing) ? App::$data['importfile'] : ''),
+				'$lbl_upfile'             => t('Upload File:'),
+				'$lbl_profiles'           => t('Select a profile:'),
+				'$title'                  => (($importing) ? t('Use Photo for Profile') : t('Change Profile Photo')),
+				'$submit'                 => (($importing) ? t('Use') : t('Upload')),
+				'$profiles'               => $profiles,
+				'$single'                 => ((count($profiles) == 1) ? true : false),
+				'$profile0'               => $profiles[0],
+				'$embedPhotos'            => t('Use a photo from your albums'),
+				'$embedPhotosModalTitle'  => t('Use a photo from your albums'),
 				'$embedPhotosModalCancel' => t('Cancel'),
-				'$embedPhotosModalOK' => t('OK'),
-				'$modalchooseimages' => t('Choose images to embed'),
-				'$modalchoosealbum' => t('Choose an album'),
-				'$modaldiffalbum' => t('Choose a different album'),
-				'$modalerrorlist' => t('Error getting album list'),
-				'$modalerrorlink' => t('Error getting photo link'),
-				'$modalerroralbum' => t('Error getting album'),
-				'$form_security_token' => get_form_security_token("profile_photo"),
-				'$select' => t('Select existing photo'),
-			));
+				'$embedPhotosModalOK'     => t('OK'),
+				'$modalchooseimages'      => t('Choose images to embed'),
+				'$modalchoosealbum'       => t('Choose an album'),
+				'$modaldiffalbum'         => t('Choose a different album'),
+				'$modalerrorlist'         => t('Error getting album list'),
+				'$modalerrorlink'         => t('Error getting photo link'),
+				'$modalerroralbum'        => t('Error getting album'),
+				'$form_security_token'    => get_form_security_token("profile_photo"),
+				'$select'                 => t('Select previously uploaded photo'),
+			]);
 			
 			call_hooks('profile_photo_content_end', $o);
-			
 			return $o;
 		}
 		else {
 
 			// present a cropping form
 
-			$filename = \App::$data['imagecrop'] . '-' . \App::$data['imagecrop_resolution'];
-			$resolution = \App::$data['imagecrop_resolution'];
-			$tpl = get_markup_template("cropbody.tpl");
-			$o .= replace_macros($tpl,array(
-				'$filename' => $filename,
-				'$profile' => intval($_REQUEST['profile']),
-				'$resource' => \App::$data['imagecrop'] . '-' . \App::$data['imagecrop_resolution'],
-				'$image_url' => z_root() . '/photo/' . $filename,
-				'$title' => t('Crop Image'),
-				'$desc' => t('Please adjust the image cropping for optimum viewing.'),
+			$filename   = App::$data['imagecrop'] . '-' . App::$data['imagecrop_resolution'];
+			$resolution = App::$data['imagecrop_resolution'];
+			$o .= replace_macros(get_markup_template('cropbody.tpl'), [
+				'$filename'            => $filename,
+				'$profile'             => intval($_REQUEST['profile']),
+				'$resource'            => App::$data['imagecrop'] . '-' . App::$data['imagecrop_resolution'],
+				'$image_url'           => z_root() . '/photo/' . $filename,
+				'$title'               => t('Crop Image'),
+				'$desc'                => t('Please adjust the image cropping for optimum viewing.'),
 				'$form_security_token' => get_form_security_token("profile_photo"),
-				'$done' => t('Done Editing')
-			));
+				'$done'                => t('Done Editing')
+			]);
 			return $o;
 		}
-	
-		return; // NOTREACHED
 	}
 	
 	/* @brief Generate the UI for photo-cropping
 	 *
-	 * @param $a Current application
 	 * @param $ph Photo-Factory
 	 * @return void
 	 *
 	 */
 	
-	
-	
-	function profile_photo_crop_ui_head(&$a, $ph, $hash, $smallest){
-	
+	function profile_photo_crop_ui_head($ph, $hash, $smallest) {
 		$max_length = get_config('system','max_image_length');
-		if(! $max_length)
+		if (! $max_length) {
 			$max_length = MAX_IMAGE_LENGTH;
-		if($max_length > 0)
+		}
+		if ($max_length > 0) {
 			$ph->scaleImage($max_length);
+		}
+		
+		App::$data['width']  = $ph->getWidth();
+		App::$data['height'] = $ph->getHeight();
 	
-		\App::$data['width']  = $ph->getWidth();
-		\App::$data['height'] = $ph->getHeight();
-	
-		if(\App::$data['width'] < 500 || \App::$data['height'] < 500) {
+		if (App::$data['width'] < 500 || App::$data['height'] < 500) {
 			$ph->scaleImageUp(400);
-			\App::$data['width']  = $ph->getWidth();
-			\App::$data['height'] = $ph->getHeight();
+			App::$data['width']  = $ph->getWidth();
+			App::$data['height'] = $ph->getHeight();
 		}
 	
-	
-		\App::$data['imagecrop'] = $hash;
-		\App::$data['imagecrop_resolution'] = $smallest;
-		\App::$page['htmlhead'] .= replace_macros(get_markup_template("crophead.tpl"), array());
+		App::$data['imagecrop'] = $hash;
+		App::$data['imagecrop_resolution'] = $smallest;
+		App::$page['htmlhead'] .= replace_macros(get_markup_template('crophead.tpl'), []);
 		return;
 	}
-	
-	
 }

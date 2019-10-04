@@ -76,7 +76,7 @@ class Lockview extends \Zotlabs\Web\Controller {
 			killme();
 		}
 	
-		if(($item['item_private'] == 1) && (! strlen($item['allow_cid'])) && (! strlen($item['allow_gid'])) 
+		if(intval($item['item_private']) && (! strlen($item['allow_cid'])) && (! strlen($item['allow_gid'])) 
 			&& (! strlen($item['deny_cid'])) && (! strlen($item['deny_gid']))) {
 	
 			// if the post is private, but public_policy is blank ("visible to the internet"), and there aren't any

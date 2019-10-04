@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Lib;
 
+use App;
+
 require_once('include/text.php');
 
 /**
@@ -36,9 +38,9 @@ class ThreadItem {
 				
 		$this->data = $data;
 		$this->toplevel = ($this->get_id() == $this->get_data_value('parent'));
-		$this->threaded = get_config('system','thread_allow',((defined('NOMADIC')) ? false : true));
+		$this->threaded = get_config('system','thread_allow',true);
 
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 
 		// Prepare the children
 		if($data['children']) {
@@ -48,7 +50,7 @@ class ThreadItem {
 				 * Only add those that will be displayed
 				 */
 
-				if((! visible_activity($item)) || array_key_exists('blocked',$item)) {
+				if(! visible_activity($item)) {
 					continue;
 				}
 
@@ -116,7 +118,7 @@ class ThreadItem {
 //			logger('parent: ' . $item['thr_parent']);
 		}
 
-		$lock = ((($item['item_private'] == 1) || (($item['uid'] == local_channel()) && (strlen($item['allow_cid']) || strlen($item['allow_gid']) 
+		$lock = (((intval($item['item_private'])) || (($item['uid'] == local_channel()) && (strlen($item['allow_cid']) || strlen($item['allow_gid']) 
 			|| strlen($item['deny_cid']) || strlen($item['deny_gid']))))
 			? t('Private Message')
 			: false);
@@ -132,7 +134,7 @@ class ThreadItem {
 			$privacy_warning = true;
 		}
 
-		if(($item['item_private'] == 1) && ($item['owner']['xchan_network'] === 'activitypub')) {
+		if(intval($item['item_private']) && ($item['owner']['xchan_network'] === 'activitypub')) {
 
 			$recips = get_iconfig($item['parent'], 'activitypub', 'recips');
 
@@ -193,7 +195,6 @@ class ThreadItem {
 			$drop = [ 'dropping' => true, 'delete' => t('Admin Delete') ];
 		}
 
-// FIXME
 		if($observer_is_pageowner) {		
 			$multidrop = array(
 				'select' => t('Select'), 
@@ -215,9 +216,8 @@ class ThreadItem {
 		$canvote = false;
 
 		// process action responses - e.g. like/dislike/attend/agree/whatever
-		$response_verbs = array('like');
-//		if(feature_enabled($conv->get_profile_owner(),'dislike'))
-			$response_verbs[] = 'dislike';
+		$response_verbs = [ 'like', 'dislike' ];
+
 		if($item['obj_type'] === ACTIVITY_OBJ_EVENT) {
 			$response_verbs[] = 'attendyes';
 			$response_verbs[] = 'attendno';
@@ -239,9 +239,6 @@ class ThreadItem {
 			}
 		}
 
-//		if(! feature_enabled($conv->get_profile_owner(),'dislike'))
-//			unset($conv_responses['dislike']);
-  
 		$responses = get_responses($conv_responses,$response_verbs,$this,$item);
 
 		$my_responses = [];
@@ -257,19 +254,29 @@ class ThreadItem {
 		} else {
 			$like_list_part = '';
 		}
-		$like_button_label = tt('Like','Likes',$like_count,'noun');
+		if(get_config('system','show_like_counts',true)) {
+			$like_button_label = tt('Like','Likes',$like_count,'noun');
+		}
+		else {
+			$like_button_label = t('Likes','noun');
+		}
 
-//		if (feature_enabled($conv->get_profile_owner(),'dislike')) {
-			$dislike_count = ((x($conv_responses['dislike'],$item['mid'])) ? $conv_responses['dislike'][$item['mid']] : '');
-			$dislike_list = ((x($conv_responses['dislike'],$item['mid'])) ? $conv_responses['dislike'][$item['mid'] . '-l'] : '');
-			$dislike_button_label = tt('Dislike','Dislikes',$dislike_count,'noun');
-			if (($dislike_list) && (count($dislike_list) > MAX_LIKERS)) {
-				$dislike_list_part = array_slice($dislike_list, 0, MAX_LIKERS);
-				array_push($dislike_list_part, '<a class="dropdown-item" href="#" data-toggle="modal" data-target="#dislikeModal-' . $this->get_id() . '"><b>' . t('View all') . '</b></a>');
-			} else {
-				$dislike_list_part = '';
-			}
-//		}
+		$dislike_count = ((x($conv_responses['dislike'],$item['mid'])) ? $conv_responses['dislike'][$item['mid']] : '');
+		$dislike_list = ((x($conv_responses['dislike'],$item['mid'])) ? $conv_responses['dislike'][$item['mid'] . '-l'] : '');
+		if(get_config('system','show_like_counts',true)) {
+				$dislike_button_label = tt('Dislike','Dislikes',$dislike_count,'noun');
+		}
+		else {
+				$dislike_button_label = t('Dislikes','noun');
+		}
+		
+		if (($dislike_list) && (count($dislike_list) > MAX_LIKERS)) {
+			$dislike_list_part = array_slice($dislike_list, 0, MAX_LIKERS);
+			array_push($dislike_list_part, '<a class="dropdown-item" href="#" data-toggle="modal" data-target="#dislikeModal-' . $this->get_id() . '"><b>' . t('View all') . '</b></a>');
+		} else {
+			$dislike_list_part = '';
+		}
+
 
 		$showlike    = ((x($conv_responses['like'],$item['mid'])) ? format_like($conv_responses['like'][$item['mid']],$conv_responses['like'][$item['mid'] . '-l'],'like',$item['mid']) : '');
 		$showdislike = ((x($conv_responses['dislike'],$item['mid']))  
@@ -284,7 +291,6 @@ class ThreadItem {
 		$this->check_wall_to_wall();
 		
 		if($this->is_toplevel()) {
-			// FIXME check this permission
 			if(($conv->get_profile_owner() == local_channel()) && (! array_key_exists('real_uid',$item))) {
 
 				$star = array(
@@ -304,8 +310,6 @@ class ThreadItem {
 		$unverified = '' ; // (($this->is_wall_to_wall() && (! intval($item['item_verified']))) ? t('Message cannot be verified') : '');
 
 
-
-		// FIXME - check this permission
 		if($conv->get_profile_owner() == local_channel()) {
 			$tagger = array(
 				'tagit' => t("Add Tag"),
@@ -443,7 +447,9 @@ class ThreadItem {
 			'event' => $body['event'],
 			'has_tags' => $has_tags,
 			'reactions' => $this->reactions,
-// Item toolbar buttons
+
+			// Item toolbar buttons
+
 			'emojis'    => (($this->is_toplevel() && $this->is_commentable() && $observer) ? '1' : ''),
 			'like'      => $like,
 			'dislike'   => $dislike,
@@ -456,11 +462,12 @@ class ThreadItem {
 			'tagger'    => ((feature_enabled($conv->get_profile_owner(),'commtag')) ? $tagger : ''),
 			'filer'     => ((feature_enabled($conv->get_profile_owner(),'filing')) ? $filer : ''),
 			'bookmark'  => (($conv->get_profile_owner() == local_channel() && local_channel() && $has_bookmarks) ? t('Save Bookmarks') : ''),
-			'addtocal'  => (($has_event) ? t('Add to Calendar') : ''),
+			'addtocal'  => (($has_event && ! $item['resource_id']) ? t('Add to Calendar') : ''),
 			'drop'      => $drop,
 			'multidrop' => ((feature_enabled($conv->get_profile_owner(),'multi_delete')) ? $multidrop : ''),
-                        'dropdown_extras' => $dropdown_extras,
-// end toolbar buttons
+			'dropdown_extras' => $dropdown_extras,
+			
+			// end toolbar buttons
 
 			'unseen_comments' => $unseen_comments,
 			'comment_count' => $total_children,
@@ -476,7 +483,7 @@ class ThreadItem {
 			'like_modal_title' => t('Likes','noun'),
 			'dislike_modal_title' => t('Dislikes','noun'),
 			'dislike_count' => $dislike_count,
-			'dislike_list' => $dislkie_list,
+			'dislike_list' => $dislike_list,
 			'dislike_list_part' => $dislike_list_part,
 			'dislike_button_label' => $dislike_button_label,
 			'modal_dismiss' => t('Close'),
@@ -487,7 +494,8 @@ class ThreadItem {
 			'preview_lbl' => t('This is an unsaved preview'),
 			'wait' => t('Please wait'),
 			'submid' => str_replace(['+','='], ['',''], base64_encode($item['mid'])),
-			'thread_level' => $thread_level
+			'thread_level' => $thread_level,
+			'thread_max' => intval(get_config('system','thread_maxlevel',2)) + 1
 		);
 
 		$arr = array('item' => $item, 'output' => $tmp_item);
@@ -495,22 +503,49 @@ class ThreadItem {
 
 		$result = $arr['output'];
 
-		$censored = false;
-
-		if(strpos($body['html'],"<button id=\"nsfw-wrap-") !== false && $collapse_all === false) {
-			$censored = true;
-		}
+		$censored = ((strpos($body['html'],"<button id=\"nsfw-wrap-") !== false && $collapse_all === false) ? true : false);
 
 		$result['children'] = [];
 
-		// place to store all the author addresses (links if not available) in the thread so we can auto-mention them in JS. 
-		$result['authors'] = [];
-		$add_top_author = true;
-		if($observer && ($profile_addr === $observer['xchan_hash'] || $profile_addr === $observer['xchan_addr'])) {
-			$add_top_author = false;
-		}
-		if($add_top_author && (! defined('NOMADIC'))) {
-			$result['authors'][] = $profile_addr;
+		if (get_config('system','activitypub') && local_channel() && get_pconfig(local_channel(),'system','activitypub',true)) {
+			// place to store all the author addresses (links if not available) in the thread so we can auto-mention them in JS. 
+			$result['authors'] = [];
+			// fix to add in sub-replies if replying to a comment on your own post from the top level. 
+			if ($observer && ($profile_addr === $observer['xchan_hash'] || $profile_addr === $observer['xchan_addr'])) {
+				// ignore it
+			}
+			else {
+				$result['authors'][] = $profile_addr;
+			}
+			if ($children) {
+				foreach ($children as $child) {
+					$cdata = $child->get_data();
+					if ($cdata['author']['xchan_addr']) {
+						if (! in_array($cdata['author']['xchan_addr'],$result['authors'])) {
+							$result['authors'][] = $cdata['author']['xchan_addr'];
+						}
+					}
+				}
+			}
+					
+			// Add any mentions from the immediate parent, unless they are mentions of the current viewer or duplicates
+			if ($item['term']) {
+				foreach ($item['term'] as $t) {
+					if ($t['ttype'] == TERM_MENTION) {
+						if (strpos($t['term'],'@') !== false) {
+							if ($observer && $t['term'] !== $observer['xchan_addr'] && ! in_array($t['term'],$result['authors'])) {
+								$result['authors'][] = $t['term'];
+							}
+						}
+						else {
+							$url = ((($position = strpos($t['url'],'url=')) !== false) ? urldecode(substr($t['url'],$position + 4)) : $t['url']);
+							if ($observer && $url !== $observer['xchan_url'] && ! in_array($url,$result['authors'])) {
+								$result['authors'][] = $url;
+							}
+						}
+					}
+				}
+			}
 		}
 
 		$nb_children = count($children);
@@ -528,15 +563,6 @@ class ThreadItem {
 				if(strpos($xz['body'],"<button id=\"nsfw-wrap-") !== false && $collapse_all === false) {
 					$censored = true;
 				}
-				$author = $child->get_author();
-				if($author && ! in_array($author,$result['authors'])) {
-					if($observer && ($author === $observer['xchan_hash'] || $author === $observer['xchan_addr'])) {
-						// do nothing
-					}
-					elseif(! defined('NOMADIC')) {
-						$result['authors'][] = $author;
-					}
-				}
 				$result['children'][] = $xz;
 			}
 			// Collapse
@@ -552,14 +578,6 @@ class ThreadItem {
 				}
 			}
 		}
-
-		if(count($result['authors']) > 6) {
-			$slice = array_slice($result['authors'],0,3);
-			$slice2 = array_slice($result['authors'],-3,3);
-			$result['authors'] = array_merge($slice,$slice2);
-		}		
-
-		//logger('authors: ' . print_r($result['authors'],true));
 
 		$result['private'] = $item['item_private'];
 		$result['toplevel'] = ($this->is_toplevel() ? 'toplevel_item' : '');
@@ -637,6 +655,7 @@ class ThreadItem {
 			logger('[WARN] Item::add_child : Item already exists ('. $item->get_id() .').', LOGGER_DEBUG);
 			return false;
 		}
+
 		/*
 		 * Only add what will be displayed
 		 */
@@ -653,6 +672,7 @@ class ThreadItem {
 	/**
 	 * Get a child by its ID
 	 */
+	 
 	public function get_child($id) {
 		foreach($this->get_children() as $child) {
 			if($child->get_id() == $id)
@@ -664,6 +684,7 @@ class ThreadItem {
 	/**
 	 * Get all our children
 	 */
+	 
 	public function get_children() {
 		return $this->children;
 	}
@@ -683,6 +704,7 @@ class ThreadItem {
 	/**
 	 * Remove our parent
 	 */
+	 
 	protected function remove_parent() {
 		$this->parent = null;
 		$this->conversation = null;
@@ -691,6 +713,7 @@ class ThreadItem {
 	/**
 	 * Remove a child
 	 */
+	 
 	public function remove_child($item) {
 		$id = $item->get_id();
 		foreach($this->get_children() as $key => $child) {
@@ -803,7 +826,7 @@ class ThreadItem {
 		$total = count($children);
 		if($total > 0) {
 			foreach($children as $child) {
-				if((! visible_activity($child->data)) || array_key_exists('blocked',$child->data)) {
+				if(! visible_activity($child->data)) {
 					continue;
 				}
 				if(! array_key_exists('sequence',$this->data)) {
@@ -822,7 +845,7 @@ class ThreadItem {
 		if($total > 0) {
 			$total = 0;
 			foreach($children as $child) {
-				if((! visible_activity($child->data)) || array_key_exists('author_blocked',$child->data)) {
+				if(! visible_activity($child->data)) {
 					continue;
 				}
 				if(intval($child->data['item_unseen']))
@@ -849,7 +872,7 @@ class ThreadItem {
 	 */
 	private function get_comment_box($indent) {
 
-		if(!$this->is_toplevel() && !get_config('system','thread_allow',((defined('NOMADIC')) ? false : true))) {
+		if(!$this->is_toplevel() && !get_config('system','thread_allow',true)) {
 			return '';
 		}
 		
@@ -885,7 +908,7 @@ class ThreadItem {
 			'$myphoto' => $observer['xchan_photo_s'],
 			'$comment' => t('Comment'),
 			'$submit' => t('Submit'),
-			'$edat' => ((defined('NOMADIC')) ? '' : t('Add Conversation Mentions')),
+			'$edat' => EMPTY_STR,
 			'$edbold' => t('Bold'),
 			'$editalic' => t('Italic'),
 			'$eduline' => t('Underline'),
@@ -895,13 +918,13 @@ class ThreadItem {
 			'$edatt' => t('Attach/Upload file'),
 			'$edurl' => t('Insert Link'),
 			'$edvideo' => t('Video'),
-			'$preview' => t('Preview'), // ((feature_enabled($conv->get_profile_owner(),'preview')) ? t('Preview') : ''),
+			'$preview' => t('Preview'), 
 			'$indent' => $indent,
 			'$can_upload' => (perm_is_allowed($conv->get_profile_owner(),get_observer_hash(),'write_storage') && $conv->is_uploadable()),
 			'$feature_encrypt' => ((feature_enabled($conv->get_profile_owner(),'content_encrypt')) ? true : false),
 			'$encrypt' => t('Encrypt text'),
 			'$cipher' => $conv->get_cipher(),
-			'$sourceapp' => \App::$sourcename,
+			'$sourceapp' => App::$sourcename,
 			'$observer' => get_observer_hash(),
 			'$anoncomments' => ((($conv->get_mode() === 'channel' || $conv->get_mode() === 'display') && perm_is_allowed($conv->get_profile_owner(),'','post_comments')) ? true : false),
 			'$anonname' => [ 'anonname', t('Your full name (required)') ],
@@ -936,7 +959,45 @@ class ThreadItem {
 			$this->owner_name = $this->data['owner']['xchan_name'];
 			$this->wall_to_wall = true;
 		}
+
+		// present friend-of-friend conversations from hyperdrive as relayed posts from the first friend
+		// we find among the respondents.
+		
+		if ($this->is_toplevel() && (! $this->data['owner']['abook_id'])) {
+			if ($this->data['children']) {
+				$friend = $this->find_a_friend($this->data['children']);
+				if ($friend) {
+					$this->owner_url = $friend['url'];
+					$this->owner_photo = $friend['photo'];
+					$this->owner_name = $friend['name'];
+					$this->wall_to_wall = true;
+				}
+			}
+		}
 	}
+
+	private function find_a_friend($items) {
+		$ret = null;
+		if ($items) {
+			foreach ($items as $child) {
+				if ($child['author']['abook_id'] && (! intval($child['author']['abook_self']))) {
+					return [
+						'url'   => chanlink_hash($child['author']['xchan_hash']),
+						'photo' => $child['author']['xchan_photo_m'],
+						'name'  => $child['author']['xchan_name']
+					];
+					if ($child['children']) {
+						$ret = $this->find_a_friend($child['children']);
+						if ($ret) {
+							break;
+						}
+					}
+				}
+			}
+		}
+		return $ret;
+	}
+
 
 	private function is_wall_to_wall() {
 		return $this->wall_to_wall;

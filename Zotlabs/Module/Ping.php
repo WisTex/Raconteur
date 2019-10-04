@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Enotify;
+use Zotlabs\Lib\Apps;
 
 require_once('include/bbcode.php');
 
@@ -164,6 +165,10 @@ class Ping extends Controller {
 
 		$notify_pubs = ((local_channel()) ? ($vnotify & VNOTIFY_PUBS) && $discover_tab_on : $discover_tab_on);
 
+		if ($notify_pubs && local_channel() && ! Apps::system_app_installed(local_channel(),'Public Stream')) {
+			$notify_pubs = false;
+		}
+
 		$sys = get_sys_channel();
 
 		if ($notify_pubs) {
@@ -291,6 +296,7 @@ class Ping extends Controller {
 
 
 					$mid = basename($tt['link']);
+					$mid = ((strpos($mid, 'b64.') === 0) ? @base64url_decode(substr($mid, 4)) : $mid);
 
 					if (in_array($tt['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) {
 						// we need the thread parent
@@ -393,7 +399,7 @@ class Ping extends Controller {
 			if ($r) {
 				foreach ($r as $rr) {
 					$local_result[] = [
-						'notify_link' => z_root() . '/connections/ifpending',
+						'notify_link' => z_root() . '/connections/' . $rr['abook_id'],
 						'name'        => $rr['xchan_name'],
 						'addr'        => $rr['xchan_addr'],
 						'url'         => $rr['xchan_url'],

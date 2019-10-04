@@ -3,6 +3,7 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\PConfig;
 
 require_once('include/security.php');
 
@@ -20,16 +21,22 @@ class Manage extends Controller {
 	
 		$change_channel = ((argc() > 1) ? intval(argv(1)) : 0);
 	
-		if ((argc() > 2) && (argv(2) === 'default')) {
-			$r = q("select channel_id from channel where channel_id = %d and channel_account_id = %d limit 1",
-				intval($change_channel),
-				intval(get_account_id())
-			);
-			if ($r) {
-				q("update account set account_default_channel = %d where account_id = %d",
+		if (argc() > 2) {
+			if (argv(2) === 'default') {
+				$r = q("select channel_id from channel where channel_id = %d and channel_account_id = %d limit 1",
 					intval($change_channel),
 					intval(get_account_id())
 				);
+				if ($r) {
+					q("update account set account_default_channel = %d where account_id = %d",
+						intval($change_channel),
+						intval(get_account_id())
+					);
+				}
+			}
+			elseif (argv(2) === 'menu') {
+				$state = intval(PConfig::get($change_channel,'system','include_in_menu', 0));
+				PConfig::set($change_channel,'system','include_in_menu',1 - $state);
 			}
 			goaway(z_root() . '/manage');
 		}
@@ -60,6 +67,7 @@ class Manage extends Controller {
 			$channels = $r;
 			for ($x = 0; $x < count($channels); $x ++) {
 				$channels[$x]['link'] = 'manage/' . intval($channels[$x]['channel_id']);
+				$channels[$x]['include_in_menu'] = intval(PConfig::get($channels[$x]['channel_id'],'system','include_in_menu',0));
 				$channels[$x]['default'] = (($channels[$x]['channel_id'] == $account['account_default_channel']) ? "1" : ''); 
 				$channels[$x]['default_links'] = '1';
 				$channels[$x]['collections_label'] = t('Collection');	
@@ -175,6 +183,8 @@ class Manage extends Controller {
 			'$desc'             => t('Switch to one of your channels by selecting it.'),
 			'$msg_default'      => t('Default Channel'),
 			'$msg_make_default' => t('Make Default'),
+			'$msg_include'      => t('Add to menu'),
+			'$msg_no_include'    => t('Remove from menu'),
 			'$create'           => $create,
 			'$all_channels'     => $channels,
 			'$mail_format'      => t('%d new messages'),

@@ -138,6 +138,15 @@ class Linkinfo extends Controller {
 			$x = Activity::fetch($url);
 			if (is_array($x)) {
 				$y = new ActivityStreams($x);
+				if ($y->is_valid() && $y->type === 'Announce' && is_array($y->obj)
+					&& array_key_exists('object',$y->obj) && array_key_exists('actor',$y->obj)) {
+					// This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
+					// Reparse the encapsulated Activity and use that instead
+					logger('relayed activity',LOGGER_DEBUG);
+					$y = new ActivityStreams($y->obj);
+				}
+
+
 				if ($y->is_valid()) {
 					$z = Activity::decode_note($y);
 					$r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_hash = '%s' OR hubloc_id_url = '%s'",

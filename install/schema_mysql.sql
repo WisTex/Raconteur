@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `abook` (
   `abook_account` int(10) unsigned NOT NULL DEFAULT 0 ,
   `abook_channel` int(10) unsigned NOT NULL DEFAULT 0 ,
   `abook_xchan` char(191) NOT NULL DEFAULT '',
+  `abook_alias` char(191) NOT NULL DEFAULT '',
   `abook_my_perms` int(11) NOT NULL DEFAULT 0 ,
   `abook_their_perms` int(11) NOT NULL DEFAULT 0 ,
   `abook_closeness` tinyint(3) unsigned NOT NULL DEFAULT 99,
@@ -25,6 +26,7 @@ CREATE TABLE IF NOT EXISTS `abook` (
   `abook_connected` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `abook_dob` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `abook_flags` int(11) NOT NULL DEFAULT 0 ,
+  `abook_censor` int(11) NOT NULL DEFAULT 0 ,
   `abook_blocked` tinyint(4) NOT NULL DEFAULT 0 ,
   `abook_ignored` tinyint(4) NOT NULL DEFAULT 0 ,
   `abook_hidden` tinyint(4) NOT NULL DEFAULT 0 ,
@@ -43,6 +45,7 @@ CREATE TABLE IF NOT EXISTS `abook` (
   KEY `abook_account` (`abook_account`),
   KEY `abook_channel` (`abook_channel`),
   KEY `abook_xchan` (`abook_xchan`),
+  KEY `abook_alias` (`abook_alias`),
   KEY `abook_my_perms` (`abook_my_perms`),
   KEY `abook_their_perms` (`abook_their_perms`),
   KEY `abook_closeness` (`abook_closeness`),
@@ -583,6 +586,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   `author_xchan` char(191) NOT NULL DEFAULT '',
   `source_xchan` char(191) NOT NULL DEFAULT '',
   `mimetype` char(191) NOT NULL DEFAULT '',
+  `replyto` text NOT NULL,
   `title` text NOT NULL,
   `summary` mediumtext NOT NULL,
   `body` mediumtext NOT NULL,
@@ -1590,6 +1594,7 @@ CREATE TABLE if not exists oauth_clients (
   grant_types           VARCHAR(80),
   scope                 VARCHAR(4000),
   user_id               int(10) unsigned NOT NULL DEFAULT 0,
+  client_name           VARCHAR(80),
   PRIMARY KEY (client_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

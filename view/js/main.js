@@ -107,7 +107,7 @@ $(document).ready(function() {
 				if (event.ctrlKey) {
 					totStopped = true;
 				}
-				$('#pause').html('<img src="images/pause.gif" alt="pause" style="border: 1px solid black;" />');
+				$('#pause').html('<i class="fa fa-pause fa-fw"></i>');
 			} else {
 				unpause();
 			}
@@ -807,6 +807,7 @@ function updateConvItems(mode,data) {
 		collapseHeight();
 	}
 
+	
 	// auto-scroll to a particular comment in a thread (designated by mid) when in single-thread mode
 	// use the same method to generate the submid as we use in ThreadItem, 
 	// base64_encode + replace(['+','='],['','']);
@@ -828,6 +829,7 @@ function updateConvItems(mode,data) {
 		$('.item_' + submid_encoded).addClass('item-highlight');
 	}
 
+	
 	$(document.body).trigger("sticky_kit:recalc");
 }
 
@@ -878,6 +880,7 @@ function collapseHeight() {
 		console.log('collapsed above viewport count: ' + i);
 		$(window).scrollTop(sval);
 	}
+	
 }
 
 function updateInit() {
@@ -1078,17 +1081,9 @@ function justifyPhotos(id) {
 	justifiedGalleryActive = true;
 	$('#' + id).show();
 	$('#' + id).justifiedGallery({
-		selector: 'a, div:not(.spinner, #page-end)',
+		selector: 'a, div:not(#page-end)',
 		margins: 3,
-		border: 0,
-		sizeRangeSuffixes: {
-			'lt100': '-3',
-			'lt240': '-3',
-			'lt320': '-3',
-			'lt500': '-2',
-			'lt640': '-2',
-			'lt1024': '-1'
-		}
+		border: 0
 	}).on('jg.complete', function(e){ justifiedGalleryActive = false; });
 }
 
@@ -1388,7 +1383,7 @@ function hex2bin(hex) {
 
 function groupChangeMember(gid, cid, sec_token) {
 	$('body .fakelink').css('cursor', 'wait');
-	$.get('alist/' + gid + '/' + cid + "?t=" + sec_token, function(data) {
+	$.get('lists/' + gid + '/' + cid + "?t=" + sec_token, function(data) {
 		$('#group-update-wrapper').html(data);
 		$('body .fakelink').css('cursor', 'auto');
 	});

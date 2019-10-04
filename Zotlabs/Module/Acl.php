@@ -85,7 +85,9 @@ class Acl extends \Zotlabs\Web\Controller {
 		if($search) {
 			$sql_extra = " AND pgrp.gname LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " ";
 			$sql_extra2 = "AND ( xchan_name LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " OR xchan_addr LIKE " . protect_sprintf( "'%" . dbesc(punify($search)) . ((strpos($search,'@') === false) ? "%@%'"  : "%'")) . ") ";
-	
+
+
+
 			// This horrible mess is needed because position also returns 0 if nothing is found. 
 			// Would be MUCH easier if it instead returned a very large value
 			// Otherwise we could just 
@@ -96,11 +98,14 @@ class Acl extends \Zotlabs\Web\Controller {
 					. " then POSITION('" . protect_sprintf(dbesc($search)) 
 					. "' IN xchan_name) else position('" . protect_sprintf(dbesc(punify($search))) . "' IN xchan_addr) end, ";
 
-			$sql_extra3 = "AND ( xchan_addr like " . protect_sprintf( "'%" . dbesc(punify($search)) . "%'" ) . " OR xchan_name like " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " ) ";
-	
+			$sql_extra3 = "AND ( xchan_addr like " . protect_sprintf( "'%" . dbesc(punify($search)) . "%'" ) . " OR ( xchan_name like " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " OR abook_alias like " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " )) ";
+
+			$sql_extra4 = "AND ( xchan_name LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " OR xchan_addr LIKE " . protect_sprintf( "'%" . dbesc(punify($search)) . ((strpos($search,'@') === false) ? "%@%'"  : "%'")) . " OR abook_alias LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'") . ") ";
+
+
 		}
 		else {
-			$sql_extra = $sql_extra2 = $sql_extra3 = "";
+			$sql_extra = $sql_extra2 = $sql_extra3 = $sql_extra4 = "";
 		}
 		
 		
@@ -145,14 +150,14 @@ class Acl extends \Zotlabs\Web\Controller {
 
 			if($r) {	
 				foreach($r as $g){
-		//		logger('acl: group: ' . $g['gname'] . ' members: ' . AccessList::members_xchan($g['id']));
+		//		logger('acl: group: ' . $g['gname'] . ' members: ' . AccessList::members_xchan(local_channel(),$g['id']));
 					$groups[] = array(
 						"type"  => "g",
 						"photo" => "images/twopeople.png",
 						"name"  => $g['gname'],
 						"id"	=> $g['id'],
 						"xid"   => $g['hash'],
-						"uids"  => AccessList::members_xchan($g['id']),
+						"uids"  => AccessList::members_xchan(local_channel(),$g['id']),
 						"link"  => ''
 					);
 				}
@@ -214,13 +219,14 @@ class Acl extends \Zotlabs\Web\Controller {
 				} 
 
 				// add connections
-	
+
 				$r = q("SELECT abook_id as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, xchan_type, abook_flags, abook_self 
 					FROM abook left join xchan on abook_xchan = xchan_hash 
-					WHERE (abook_channel = %d $extra_channels_sql) AND abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 $sql_extra2 order by $order_extra2 xchan_name asc" ,
+					WHERE (abook_channel = %d $extra_channels_sql) AND abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 $sql_extra4 order by xchan_name asc" ,
 					intval(local_channel())
 				);
-				if($r2)
+
+				if($r && $r2)
 					$r = array_merge($r2,$r);
 
 			}
@@ -318,7 +324,7 @@ class Acl extends \Zotlabs\Web\Controller {
 					$contacts[] = array(
 						"photo"    => $g['photo'],
 						"name"     => $g['name'],
-						"nick"     => $g['address']
+						"nick"     => $g['address'],
 					);
 				}
 			}
@@ -418,7 +424,9 @@ class Acl extends \Zotlabs\Web\Controller {
 		if(strpos($search,'@') !== false) {
 			$address = true;
 		}
-	
+
+		$remote_dir = false;
+		
 		if(($dirmode == DIRECTORY_MODE_PRIMARY) || ($dirmode == DIRECTORY_MODE_STANDALONE)) {
 			$url = z_root() . '/dirsearch';
 		}
@@ -426,6 +434,7 @@ class Acl extends \Zotlabs\Web\Controller {
 		if(! $url) {
 			$directory = Libzotdir::find_upstream_directory($dirmode);
 			$url = $directory['url'] . '/dirsearch';
+			$remote_dir = true;
 		}
 
 		$token = get_config('system','realm_token');
@@ -440,11 +449,41 @@ class Acl extends \Zotlabs\Web\Controller {
 				$t = 0;
 				$j = json_decode($x['body'],true);
 				if($j && $j['results']) {
-					return $j['results'];
+					$results =  $j['results'];
 				}
 			}
 		}
-		return array();
+
+		if($remote_dir) {
+			$query = z_root() . '/dirsearch' . '?f=&navsearch=1' . (($token) ? '&t=' . urlencode($token) : '');
+			$query .= '&name=' . urlencode($search) . "&limit=$count" . (($address) ? '&address=' . urlencode(punify($search)) : '');
+	
+			$x = z_fetch_url($query);
+			if($x['success']) {
+				$t = 0;
+				$j = json_decode($x['body'],true);
+				if($j && $j['results']) {
+					$results2 =  $j['results'];
+				}
+			}
+		}
+
+		if($results2 && $results) {
+			foreach($results2 as $x) {
+				$found = false;
+				foreach($results as $y) {
+					if($y['url'] === $x['url']) {
+						$found = true;
+					}
+				}
+				if (! $found) {
+					$x['local'] = true;
+					$results[] = $x;
+				}
+			}
+		}
+
+		return $results;
 	}
 
 }

@@ -12,7 +12,7 @@ class Webfinger extends Controller {
 
 		// This is a public resource with relaxed CORS policy. Close the current login session.
 		session_write_close();
-
+		
 		header('Access-Control-Allow-Origin: *');
 
 		$result = [];
@@ -111,7 +111,7 @@ class Webfinger extends Controller {
 				'http://webfinger.net/ns/name'   => $channel_target['channel_name'],
 				'http://xmlns.com/foaf/0.1/name' => $channel_target['channel_name'],
 				'https://w3id.org/security/v1#publicKeyPem' => $channel_target['xchan_pubkey'],
-				'http://purl.org/zot/federation' => ((defined('NOMADIC')) ? 'zot6' : 'zot6,activitypub')
+				'http://purl.org/zot/federation' => ((get_config('system','activitypub')) ? 'zot6,activitypub' : 'zot6')
 			];
 	
 			foreach ($aliases as $alias) { 
@@ -149,25 +149,24 @@ class Webfinger extends Controller {
 					'type' => 'application/x-zot+json',
 					'href' => z_root() . '/owa'
 				],
+
+				[
+					'rel'  => 'self',
+					'type' => 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
+					'href' => z_root() . '/channel/' . $channel_target['channel_address']
+    			],
 				
+				[
+					'rel'  => 'self',
+					'type' => 'application/activity+json',
+					'href' => z_root() . '/channel/' . $channel_target['channel_address']
+    			],
+
 				[ 
 					'rel' => 'http://ostatus.org/schema/1.0/subscribe',
 					'template' => z_root() . '/follow?url={uri}'
 				],
 			];
-		}
-
-		if (! defined('NOMADIC')) {
-			$result['links'][] = [
-				'rel'  => 'self',
-				'type' => 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
-				'href' => z_root() . '/channel/' . $channel_target['channel_address']
-    		];
-			$result['links'][] = [
-				'rel'  => 'self',
-				'type' => 'application/activity+json',
-				'href' => z_root() . '/channel/' . $channel_target['channel_address']
-    		];
 		}
 
 		if (! $result) {

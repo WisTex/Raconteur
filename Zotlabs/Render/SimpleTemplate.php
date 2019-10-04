@@ -6,20 +6,20 @@ define ("KEY_NOT_EXISTS", '^R_key_not_Exists^');
 
 class SimpleTemplate implements TemplateEngine {
 
-	static $name ="internal";
+	static $name = 'internal';
 
 	var $r;
 	var $search;
 	var $replace;
-	var $stack = array();
-	var $nodes = array();
-	var $done = false;
-	var $d = false;
-	var $lang = null;
-	var $debug=false;
+	var $stack = [];
+	var $nodes = [];
+	var $done  = false;
+	var $d     = false;
+	var $lang  = null;
+	var $debug = false;
 
 	private function _preg_error() {
-		switch(preg_last_error()) {
+		switch (preg_last_error()) {
 			case PREG_INTERNAL_ERROR: echo('PREG_INTERNAL_ERROR'); break;
 			case PREG_BACKTRACK_LIMIT_ERROR: echo('PREG_BACKTRACK_LIMIT_ERROR'); break;
 			case PREG_RECURSION_LIMIT_ERROR: echo('PREG_RECURSION_LIMIT_ERROR'); break;
@@ -27,7 +27,7 @@ class SimpleTemplate implements TemplateEngine {
 // This is only valid for php > 5.3, not certain how to code around it for unit tests
 //			case PREG_BAD_UTF8_OFFSET_ERROR: echo('PREG_BAD_UTF8_OFFSET_ERROR'); break;
 			default:
-				//die("Unknown preg error.");
+				// die("Unknown preg error.");
 				return;
 		}
 		echo "<hr><pre>";
@@ -36,20 +36,21 @@ class SimpleTemplate implements TemplateEngine {
 	}
 
 	private function _push_stack() {
-		$this->stack[] = array($this->r, $this->nodes);
+		$this->stack[] = [ $this->r, $this->nodes ];
 	}
 
 	private function _pop_stack(){
 		list($this->r, $this->nodes) = array_pop($this->stack);
 	}
 
-	private function _get_var($name, $retNoKey=false) {
-		$keys = array_map('trim',explode(".",$name));
-		if ($retNoKey && !array_key_exists($keys[0], $this->r))
+	private function _get_var($name, $retNoKey = false) {
+		$keys = array_map('trim',explode('.',$name));
+		if ($retNoKey && ! array_key_exists($keys[0], $this->r)) {
 			return KEY_NOT_EXISTS;
+		}
 
 		$val = $this->r;
-		foreach($keys as $k) {
+		foreach ($keys as $k) {
 			$val = (isset($val[$k]) ? $val[$k] : null);
 		}
 
@@ -65,22 +66,28 @@ class SimpleTemplate implements TemplateEngine {
 	 * \endcode
 	 */
 	private function _replcb_if($args) {
-		if (strpos($args[2],"==")>0){
-			list($a,$b) = array_map("trim",explode("==",$args[2]));
+		if (strpos($args[2],'==') > 0){
+			list($a,$b) = array_map('trim',explode('==',$args[2]));
 			$a = $this->_get_var($a);
-			if ($b[0]=="$") $b =  $this->_get_var($b);
+			if ($b[0] == '$') {
+				$b =  $this->_get_var($b);
+			}
 			$val = ($a == $b);
-		} else if (strpos($args[2],"!=")>0){
-			list($a,$b) = array_map("trim", explode("!=",$args[2]));
+		}
+		elseif (strpos($args[2], '!=') > 0) {
+			list($a,$b) = array_map('trim', explode('!=',$args[2]));
 			$a = $this->_get_var($a);
-			if ($b[0]=="$") $b =  $this->_get_var($b);
+			if ($b[0] == '$') {
+				$b =  $this->_get_var($b);
+			}
 			$val = ($a != $b);
-		} else {
+		}
+		else {
 			$val = $this->_get_var($args[2]);
 		}
 		$x = preg_split("|{{ *else *}}|", $args[3]);
 
-		return ( ($val) ? $x[0] : (isset($x[1]) ? $x[1] : ""));
+		return ( ($val) ? $x[0] : (isset($x[1]) ? $x[1] : EMPTY_STR));
 	}
 
 	/**
@@ -92,24 +99,31 @@ class SimpleTemplate implements TemplateEngine {
 	 */
 	private function _replcb_for($args) {
 		$m = array_map('trim', explode(" as ", $args[2]));
-		$x = explode("=>",$m[1]);
+		$x = explode('=>',$m[1]);
 		if (count($x) == 1) {
 			$varname = $x[0];
-			$keyname = "";
-		} else {
+			$keyname = EMPTY_STR;
+		}
+		else {
 			list($keyname, $varname) = $x;
 		}
-		if ($m[0]=="" || $varname=="" || is_null($varname)) die("template error: 'for ".$m[0]." as ".$varname."'") ;
-		//$vals = $this->r[$m[0]];
-		$vals = $this->_get_var($m[0]);
-		$ret="";
-		if (!is_array($vals)) return $ret;
+		if ($m[0] == EMPTY_STR || $varname == EMPTY_STR || is_null($varname)) {
+			die("template error: 'for ".$m[0]." as ".$varname."'") ;
+		}
 
-		foreach ($vals as $k=>$v){
+		$vals = $this->_get_var($m[0]);
+		$ret = EMPTY_STR;
+		if (!is_array($vals)) {
+			return $ret;
+		}
+
+		foreach ($vals as $k => $v) {
 			$this->_push_stack();
 			$r = $this->r;
 			$r[$varname] = $v;
-			if ($keyname!='') $r[$keyname] = (($k === 0) ? '0' : $k);
+			if ($keyname != EMPTY_STR) {
+				$r[$keyname] = (($k === 0) ? '0' : $k);
+			}
 			$ret .=  $this->replace($args[3], $r);
 			$this->_pop_stack();
 		}
@@ -124,19 +138,22 @@ class SimpleTemplate implements TemplateEngine {
 	 * \endcode
 	 */
 	private function _replcb_inc($args) {
-		if (strpos($args[2],"with")) {
+		if (strpos($args[2],'with')) {
 			list($tplfile, $newctx) = array_map('trim', explode("with",$args[2]));
-		} else {
+		}
+		else {
 			$tplfile = trim($args[2]);
 			$newctx = null;
 		}
 
-		if ($tplfile[0]=="$") $tplfile = $this->_get_var($tplfile);
+		if ($tplfile[0] == '$') {
+			$tplfile = $this->_get_var($tplfile);
+		}
 
 		$this->_push_stack();
 		$r = $this->r;
-		if (!is_null($newctx)) {
-			list($a,$b) = array_map('trim', explode("=",$newctx));
+		if (! is_null($newctx)) {
+			list($a,$b) = array_map('trim', explode('=',$newctx));
 			$r[$a] = $this->_get_var($b); 
 		}
 		$this->nodes = Array();
@@ -159,7 +176,7 @@ class SimpleTemplate implements TemplateEngine {
 		$vars[] = $args[1];
 
 		$ret = "<pre>";
-		foreach ($vars as $var){
+		foreach ($vars as $var) {
 			$ret .= htmlspecialchars(var_export( $this->_get_var($var), true ));
 			$ret .= "\n";
 		}
@@ -170,7 +187,7 @@ class SimpleTemplate implements TemplateEngine {
 
 	private function _replcb_node($m) {
 		$node = $this->nodes[$m[1]];
-		if (method_exists($this, "_replcb_".$node[1])){
+		if (method_exists($this, "_replcb_" . $node[1])) {
 			$s = call_user_func(array($this, "_replcb_".$node[1]),  $node);
 		} else {
 			$s = "";
@@ -282,7 +299,7 @@ class SimpleTemplate implements TemplateEngine {
 		$os = "";
 		$count=0;
 		while (($os !== $s) && $count<10) {
-			$os=$s;
+			$os = $s;
 			$count++;
 			$s = $this->var_replace($s);
 		}

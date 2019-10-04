@@ -1,4 +1,4 @@
-	{{if $item.comment_firstcollapsed}}
+{{if $item.comment_firstcollapsed}}
 <div class="hide-comments-outer fakelink" onclick="showHideComments({{$item.id}});">
 	<span id="hide-comments-{{$item.id}}" class="hide-comments">{{$item.hide_text}}</span>&nbsp;<span id="hide-comments-total-{{$item.id}}" class="hide-comments-total">{{$item.num_comments}}</span>
 </div>
@@ -22,7 +22,7 @@
 				{{/if}}
 				{{if $item.title && !$item.event}}
 				<div class="p-2{{if $item.is_new}} bg-primary text-white{{/if}} wall-item-title h3{{if !$item.photo}} rounded-top{{/if}}" id="wall-item-title-{{$item.id}}">
-					{{if $item.title_tosource}}{{if $item.plink}}<a href="{{$item.plink.href}}" title="{{$item.title}} ({{$item.plink.title}})">{{/if}}{{/if}}{{$item.title}}{{if $item.title_tosource}}{{if $item.plink}}</a>{{/if}}{{/if}}
+					{{if $item.title_tosource}}{{if $item.plink}}<a href="{{$item.plink.href}}" title="{{$item.title}} ({{$item.plink.title}})" rel="nofollow noopener">{{/if}}{{/if}}{{$item.title}}{{if $item.title_tosource}}{{if $item.plink}}</a>{{/if}}{{/if}}
 				</div>
 				{{if ! $item.is_new}}
 				<hr class="m-0">
@@ -104,7 +104,7 @@
 								<i class="fa fa-thumbs-o-down{{if $item.my_responses.dislike}} ivoted{{/if}}" ></i>
 							</button>
 							{{/if}}
-							{{if $item.comment && $item.thread_level > 1}}
+							{{if $item.comment && $item.thread_level > 1 && $item.thread_level < $item.thread_max }}
 							<button type="button" title="{{$item.comment_lbl}}" class="btn btn-outline-secondary btn-sm" onclick="openClose('wall-item-comment-wrapper-{{$item.id}}'); $('#comment-edit-text-{{$item.id}}').click(); return false;">
 								<i class="fa fa-comment-o"></i>
 							</button>
@@ -150,9 +150,6 @@
 									<i class="fa fa-cog"></i>
 								</button>
 								<div class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="wall-item-menu-{{$item.id}}">
-									{{if $item.share}}
-									<a class="dropdown-item" href="#" onclick="jotShare({{$item.id}},{{$item.item_type}}); return false"><i class="generic-icons-nav fa fa-fw fa-retweet" title="{{$item.share}}"></i>{{$item.share}}</a>
-									{{/if}}
 									{{if $item.embed}}
 									<a class="dropdown-item" href="#" onclick="jotEmbed({{$item.id}},{{$item.item_type}}); return false"><i class="generic-icons-nav fa fa-fw fa-share" title="{{$item.embed}}"></i>{{$item.embed}}</a>
 									{{/if}}
@@ -213,13 +210,13 @@
 						{{foreach $item.responses as $verb=>$response}}
 						{{if $response.count}}
 						<div class="btn-group">
-							<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle"{{if $response.modal}} data-toggle="modal" data-target="#{{$verb}}Modal-{{$item.id}}"{{else}} data-toggle="dropdown"{{/if}} id="wall-item-{{$verb}}-{{$item.id}}">{{$response.count}} {{$response.button}}</button>
+							<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle"{{if $response.modal}} data-toggle="modal" data-target="#{{$verb}}Modal-{{$item.id}}"{{else}} data-toggle="dropdown"{{/if}} id="wall-item-{{$verb}}-{{$item.id}}">{{$response.button}}</button>
 							{{if $response.modal}}
 							<div class="modal" id="{{$verb}}Modal-{{$item.id}}">
 								<div class="modal-dialog">
 									<div class="modal-content">
 										<div class="modal-header">
-											<h4 class="modal-title">{{$response.count}} {{$response.button}}</h4>
+											<h4 class="modal-title">{{$response.button}}</h4>
 											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 										</div>
 										<div class="modal-body response-list">

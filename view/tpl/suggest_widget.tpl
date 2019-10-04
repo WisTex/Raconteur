@@ -6,5 +6,6 @@
 {{/foreach}}
 {{/if}}
 <div class="clear"></div>
-<div class="suggest-widget-more"><a href="suggestions">{{$more}}</a></div>
+<!--disabled the more link until the zot and zot6 directories are merged due to conflicting results -->
+<!--div class="suggest-widget-more"><a href="suggestions">{{$more}}</a></div-->
 </div>

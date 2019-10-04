@@ -4,7 +4,7 @@
  * @brief Functions related to photo handling.
  */
 
-
+use Zotlabs\Lib\Apps;
 use Zotlabs\Access\AccessControl;
 
 require_once('include/permissions.php');
@@ -290,7 +290,7 @@ function photo_upload($channel, $observer, $args) {
 		$ph->scaleImage(1024);
 
 	$p['imgscale'] = 1;
-	$r1 = $ph->save($p);
+	$r1 = $ph->storeThumbnail($p, PHOTO_RES_1024);
 	$url[1] = [
 		'type' => 'Link',
 		'mediaType' => $type,
@@ -305,7 +305,7 @@ function photo_upload($channel, $observer, $args) {
 		$ph->scaleImage(640);
 
 	$p['imgscale'] = 2;
-	$r2 = $ph->save($p);
+	$r2 = $ph->storeThumbnail($p, PHOTO_RES_640);
 	$url[2] = [
 		'type' => 'Link',
 		'mediaType' => $type,
@@ -320,7 +320,7 @@ function photo_upload($channel, $observer, $args) {
 		$ph->scaleImage(320);
 
 	$p['imgscale'] = 3;
-	$r3 = $ph->save($p);
+	$r3 = $ph->storeThumbnail($p, PHOTO_RES_320);
 	$url[3] = [
 		'type' => 'Link',
 		'mediaType' => $type,
@@ -356,7 +356,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$lat = $lon = null;
 
-	if($exif && feature_enabled($channel_id,'photo_location')) {
+	if($exif && Apps::system_app_installed($channel_id,'Photomap')) {
 		$gps = null;
 		if(array_key_exists('GPS',$exif)) {
 			$gps = $exif['GPS'];
@@ -399,6 +399,8 @@ function photo_upload($channel, $observer, $args) {
 
 	$summary = (($args['body']) ? $args['body'] : '') . '[footer]' . $activity_format . '[/footer]';
 
+	// If uploaded into a post, this is the text that is returned to the webapp for inclusion in the post.
+
 	$obj_body =  '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo_hash . ']'
 		. $tag . z_root() . "/photo/{$photo_hash}-{$scale}." . $ph->getExt() . '[/zmg]'
 		. '[/zrl]';
@@ -413,8 +415,8 @@ function photo_upload($channel, $observer, $args) {
 		// This is a placeholder and will get over-ridden by the item mid, which is critical for sharing as a conversational item over activitypub
 		'id'        => z_root() . '/photo/' . $photo_hash,
 		'url'       => $url,
-		'source'    => [ 'content' => $obj_body, 'mediaType' => 'text/bbcode' ],
-		'content'   => bbcode($obj_body)
+		'source'    => [ 'content' => $summary, 'mediaType' => 'text/bbcode' ],
+		'content'   => bbcode($summary)
 	];
 
 // @FIXME - update to collection

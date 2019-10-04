@@ -22,7 +22,9 @@ class Events extends Controller {
 	
 		if(! local_channel())
 			return;
-	
+
+		$channel = App::get_channel();
+
 		if(($_FILES) && array_key_exists('userfile',$_FILES) && intval($_FILES['userfile']['size'])) {
 			$src = $_FILES['userfile']['tmp_name'];
 			if($src) {
@@ -151,7 +153,6 @@ class Events extends Controller {
 
 		$share = 1;	
 
-		$channel = App::get_channel();
 	
 		$acl = new AccessControl(false);
 	
@@ -193,7 +194,7 @@ class Events extends Controller {
 		}
 	
 		$post_tags = array();
-		$channel = App::get_channel();
+
 		$ac = $acl->get();
 	
 		if(strlen($categories)) {
@@ -295,6 +296,8 @@ class Events extends Controller {
 			return;
 		}
 	
+		$channel = App::get_channel();
+
 		nav_set_selected('Events');
 	
 		if((argc() > 2) && (argv(1) === 'ignore') && intval(argv(2))) {
@@ -311,8 +314,7 @@ class Events extends Controller {
 			);
 		}
 	
-		$first_day = get_pconfig(local_channel(),'system','cal_first_day');
-		$first_day = (($first_day) ? $first_day : 0);
+		$first_day = intval(get_pconfig(local_channel(),'system','cal_first_day',0));
 	
 		$htpl = get_markup_template('event_head.tpl');
 		App::$page['htmlhead'] .= replace_macros($htpl,array(
@@ -324,8 +326,6 @@ class Events extends Controller {
 		));
 	
 		$o = '';
-	
-		$channel = App::get_channel();
 	
 		$mode = 'view';
 		$y = 0;
@@ -751,7 +751,7 @@ class Events extends Controller {
 				dbesc($event_id),
 				intval(local_channel())
 			);
-	
+
 			$sync_event = $r[0];
 	
 			if($r) {
@@ -759,7 +759,63 @@ class Events extends Controller {
 					dbesc($event_id),
 					intval(local_channel())
 				);
-				if($r) {
+				if ($r) {
+					$i = q("select * from item where resource_type = 'event' and resource_id = '%s' and uid = %d",
+						dbesc($event_id),
+						intval(local_channel())
+					);
+
+					if ($i) {
+
+						$can_delete = false;
+						$local_delete = true;
+
+						$ob_hash = get_observer_hash();
+						if($ob_hash && ($ob_hash === $i[0]['author_xchan'] || $ob_hash === $i[0]['owner_xchan'] || $ob_hash === $i[0]['source_xchan'])) {
+							$can_delete = true;
+						}
+
+						// The site admin can delete any post/item on the site.
+						// If the item originated on this site+channel the deletion will propagate downstream. 
+						// Otherwise just the local copy is removed.
+
+						if(is_site_admin()) {
+							$local_delete = true;
+							if(intval($i[0]['item_origin']))
+								$can_delete = true;
+						}
+
+						if($can_delete || $local_delete) {
+	
+							// if this is a different page type or it's just a local delete
+							// but not by the item author or owner, do a simple deletion
+
+							$complex = false;	
+
+							if(intval($i[0]['item_type']) || ($local_delete && (! $can_delete))) {
+								drop_item($i[0]['id']);
+							}
+							else {
+								// complex deletion that needs to propagate and be performed in phases
+								drop_item($i[0]['id'],true,DROPITEM_PHASE1);
+								$complex = true;
+							}
+
+							$ii = q("select * from item where id = %d",
+								intval($i[0]['id'])
+							);
+							if($ii) {
+								xchan_query($ii);
+								$sync_item = fetch_post_tags($ii);
+								Libsync::build_sync_packet($i[0]['uid'],array('item' => array(encode_item($sync_item[0],true))));
+							}
+
+							if($complex) {
+								tag_deliver($i[0]['uid'],$i[0]['id']);
+							}
+						}
+					}
+
 					$r = q("update item set resource_type = '', resource_id = '' where resource_type = 'event' and resource_id = '%s' and uid = %d",
 						dbesc($event_id),
 						intval(local_channel())

@@ -15,11 +15,8 @@ class Follow extends Controller {
 
 	function init() {
 	
-		if(! local_channel()) {
-			return;
-		}
 	
-		if(ActivityStreams::is_as_request() && argc() == 2) {
+		if (ActivityStreams::is_as_request() && argc() == 2) {
 			$abook_id = intval(argv(1));
 			if(! $abook_id)
 				return;
@@ -27,18 +24,21 @@ class Follow extends Controller {
 			$r = q("select * from abook left join xchan on abook_xchan = xchan_hash where abook_id = %d",
 				intval($abook_id)
 			);
-			if (! $r)
+			if (! $r) {
 				return;
+			}
 
 			$chan = channelx_by_n($r[0]['abook_channel']);
 
-			if(! $chan)
+			if (! $chan) {
 				http_status_exit(404, 'Not found');
-
+			}
+			
 			$actor = Activity::encode_person($chan,true,true);
-			if(! $actor)
+			if (! $actor) {
 				http_status_exit(404, 'Not found');
-
+			}
+			
 			$x = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1',
@@ -64,6 +64,13 @@ class Follow extends Controller {
 
     	}
 
+
+		if (! local_channel()) {
+			return;
+		}
+
+
+
 		$uid = local_channel();
 		$url = notags(trim(punify($_REQUEST['url'])));
 		$return_url = $_SESSION['return_url'];
@@ -71,17 +78,13 @@ class Follow extends Controller {
 		$interactive = (($_REQUEST['interactive']) ? intval($_REQUEST['interactive']) : 1);	
 		$channel = App::get_channel();
 
-		if(strpos($url,'@') === false && strpos($url,'/') === false) {
-			$url = $url . '@' . App::get_hostname();
-		}
-
-
 		$result = Connect::connect($channel,$url);
 		
-		if($result['success'] == false) {
-			if($result['message'])
+		if ($result['success'] == false) {
+			if ($result['message']) {
 				notice($result['message']);
-			if($interactive) {
+			}
+			if ($interactive) {
 				goaway($return_url);
 			}
 			else {
@@ -92,8 +95,8 @@ class Follow extends Controller {
 		info( t('Connection added.') . EOL);
 	
 		$clone = array();
-		foreach($result['abook'] as $k => $v) {
-			if(strpos($k,'abook_') === 0) {
+		foreach ($result['abook'] as $k => $v) {
+			if (strpos($k,'abook_') === 0) {
 				$clone[$k] = $v;
 			}
 		}
@@ -102,19 +105,20 @@ class Follow extends Controller {
 		unset($clone['abook_channel']);
 	
 		$abconfig = load_abconfig($channel['channel_id'],$clone['abook_xchan']);
-		if($abconfig)
+		if ($abconfig) {
 			$clone['abconfig'] = $abconfig;
-	
+		}
 		Libsync::build_sync_packet(0, [ 'abook' => [ $clone ] ], true);
 	
 		$can_view_stream = their_perms_contains($channel['channel_id'],$clone['abook_xchan'],'view_stream');
 	
 		// If we can view their stream, pull in some posts
 	
-		if(($can_view_stream) || ($result['abook']['xchan_network'] === 'rss'))
+		if (($can_view_stream) || ($result['abook']['xchan_network'] === 'rss')) {
 			Master::Summon([ 'Onepoll', $result['abook']['abook_id'] ]);
+		}
 	
-		if($interactive) {
+		if ($interactive) {
 			goaway(z_root() . '/connedit/' . $result['abook']['abook_id'] . '?follow=1');
 		}
 		else {
@@ -124,7 +128,7 @@ class Follow extends Controller {
 	}
 	
 	function get() {
-		if(! local_channel()) {
+		if (! local_channel()) {
 			return login();
 		}
 	}

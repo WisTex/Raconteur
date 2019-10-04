@@ -76,6 +76,7 @@ class Channel extends Controller {
 			'href'  => z_root() . '/feed/' . $which . '?f=&top=1'
 		]);
 
+		
 		// handle zot6 channel discovery 
 
 		if(Libzot::is_zot_request()) {
@@ -113,7 +114,7 @@ class Channel extends Controller {
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1',
 				z_root() . ZOT_APSCHEMA_REV
-			]], Activity::encode_person($channel,true,((defined('NOMADIC')) ? false : true)));
+			]], Activity::encode_person($channel,true,true));
 
 			$headers = [];
         	$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
@@ -135,6 +136,16 @@ class Channel extends Controller {
 
 		Libprofile::load($which,$profile);
 
+		App::$meta->set('og:title', $channel['channel_name']);
+		App::$meta->set('og:image', $channel['xchan_photo_l']);
+		App::$meta->set('og:type','webpage');
+		App::$meta->set('og:url', channel_url($channel));
+		if(App::$profile['about'] && perm_is_allowed($channel['channel_id'],get_observer_hash(),'view_profile')) {
+			App::$meta->set('og:description', App::$profile['about']);
+		}
+		else {
+			App::$meta->set('og:description', sprintf( t('This is the home page of %s.'), $channel['channel_name']));
+		}
 	}
 
 	function get($update = 0, $load = false) {
@@ -440,6 +451,7 @@ class Channel extends Controller {
 				'$nouveau' => '0',
 				'$wall' => '1',
 				'$fh' => '0',
+				'$dm' => '0',
 				'$static'  => $static,
 				'$page' => ((App::$pager['page'] != 1) ? App::$pager['page'] : 1),
 				'$search' => $search,

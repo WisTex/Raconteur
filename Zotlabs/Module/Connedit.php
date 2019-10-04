@@ -74,15 +74,6 @@ class Connedit extends Controller {
 	
 		$channel = App::get_channel();
 	
-		// TODO if configured for hassle-free permissions, we'll post the form with ajax as soon as the
-		// connection enable is toggled to a special autopost url and set permissions immediately, leaving
-		// the other form elements alone pending a manual submit of the form. The downside is that there
-		// will be a window of opportunity when the permissions have been set but before you've had a chance
-		// to review and possibly restrict them. The upside is we won't have to warn you that your connection
-		// can't do anything until you save the bloody form.
-	
-		$autopost = (((argc() > 2) && (argv(2) === 'auto')) ? true : false);
-	
 		$orig_record = q("SELECT * FROM abook WHERE abook_id = %d AND abook_channel = %d LIMIT 1",
 			intval($contact_id),
 			intval(local_channel())
@@ -127,6 +118,7 @@ class Connedit extends Controller {
 	
 		$abook_incl = ((array_key_exists('abook_incl',$_POST)) ? escape_tags($_POST['abook_incl']) : $orig_record[0]['abook_incl']);
 		$abook_excl = ((array_key_exists('abook_excl',$_POST)) ? escape_tags($_POST['abook_excl']) : $orig_record[0]['abook_excl']);
+		$abook_alias = ((array_key_exists('abook_alias',$_POST)) ? escape_tags(trim($_POST['abook_alias'])) : $orig_record[0]['abook_alias']);
 
 
 		$hidden = intval($_POST['hidden']);
@@ -184,13 +176,14 @@ class Connedit extends Controller {
 		$abook_pending = (($new_friend) ? 0 : $orig_record[0]['abook_pending']);
 
 		$r = q("UPDATE abook SET abook_profile = '%s', abook_closeness = %d, abook_pending = %d,
-			abook_incl = '%s', abook_excl = '%s'
+			abook_incl = '%s', abook_excl = '%s', abook_alias = '%s'
 			where abook_id = %d AND abook_channel = %d",
 			dbesc($profile_id),
 			intval($closeness),
 			intval($abook_pending),
 			dbesc($abook_incl),
 			dbesc($abook_excl),
+			dbesc($abook_alias),
 			intval($contact_id),
 			intval(local_channel())
 		);
@@ -247,8 +240,7 @@ class Connedit extends Controller {
 				post_activity_item($xarr);
 	
 			}
-	
-	
+		
 			// pull in a bit of content if there is any to pull in
 			Master::Summon( [ 'Onepoll', $contact_id ]);
 	
@@ -287,33 +279,33 @@ class Connedit extends Controller {
 	
 	function connedit_clone(&$a) {
 	
-			if(! App::$poi)
-				return;
+		if (! App::$poi) {
+			return;
+		}
 	
+		$channel = App::get_channel();
 	
-			$channel = App::get_channel();
+		$r = q("SELECT abook.*, xchan.*
+			FROM abook left join xchan on abook_xchan = xchan_hash
+			WHERE abook_channel = %d and abook_id = %d LIMIT 1",
+			intval(local_channel()),
+			intval(App::$poi['abook_id'])
+		);
+		if ($r) {
+			App::$poi = array_shift($r);
+		}
 	
-			$r = q("SELECT abook.*, xchan.*
-				FROM abook left join xchan on abook_xchan = xchan_hash
-				WHERE abook_channel = %d and abook_id = %d LIMIT 1",
-				intval(local_channel()),
-				intval(App::$poi['abook_id'])
-			);
-			if($r) {
-				App::$poi = array_shift($r);
-			}
+		$clone = App::$poi;
 	
-			$clone = App::$poi;
+		unset($clone['abook_id']);
+		unset($clone['abook_account']);
+		unset($clone['abook_channel']);
 	
-			unset($clone['abook_id']);
-			unset($clone['abook_account']);
-			unset($clone['abook_channel']);
-	
-			$abconfig = load_abconfig($channel['channel_id'],$clone['abook_xchan']);
-			if($abconfig)
-				$clone['abconfig'] = $abconfig;
-	
-			Libsync::build_sync_packet(0 /* use the current local_channel */, array('abook' => array($clone)));
+		$abconfig = load_abconfig($channel['channel_id'],$clone['abook_xchan']);
+		if ($abconfig) {
+			$clone['abconfig'] = $abconfig;
+		}
+		Libsync::build_sync_packet($channel['channel_id'], [ 'abook' => [ $clone ] ] );
 	}
 	
 	/* @brief Generate content of connection edit page
@@ -431,7 +423,7 @@ class Connedit extends Controller {
 					notice(t('Unable to set address book parameters.') . EOL);
 				goaway(z_root() . '/connedit/' . $contact_id);
 			}
-	
+
 			if($cmd === 'ignore') {
 				if(abook_toggle_flag($orig_record[0],ABOOK_FLAG_IGNORED)) {
 					$this->connedit_clone($a);
@@ -441,6 +433,15 @@ class Connedit extends Controller {
 				goaway(z_root() . '/connedit/' . $contact_id);
 			}
 	
+			if($cmd === 'censor') {
+				if(abook_toggle_flag($orig_record[0],ABOOK_FLAG_CENSORED)) {
+					$this->connedit_clone($a);
+				}
+				else
+					notice(t('Unable to set address book parameters.') . EOL);
+				goaway(z_root() . '/connedit/' . $contact_id);
+			}
+
 			if($cmd === 'archive') {
 				if(abook_toggle_flag($orig_record[0],ABOOK_FLAG_ARCHIVED)) {
 					$this->connedit_clone($a);
@@ -574,7 +575,15 @@ class Connedit extends Controller {
 					'title' => t('Ignore (or Unignore) all inbound communications from this connection'),
 					'info'   => (intval($contact['abook_ignored']) ? t('This connection is ignored!') : ''),
 				),
-	
+
+				'censor' => array(
+					'label' => (intval($contact['abook_censor']) ? t('Uncensor') : t('Censor')),
+					'url'   => z_root() . '/connedit/' . $contact['abook_id'] . '/censor',
+					'sel'   => (intval($contact['abook_censor']) ? 'active' : ''),
+					'title' => t('Censor (or Uncensor) images from this connection'),
+					'info'   => (intval($contact['abook_censor']) ? t('This connection is censored!') : ''),
+				),
+
 				'archive' => array(
 					'label' => (intval($contact['abook_archived']) ? t('Unarchive') : t('Archive')),
 					'url'   => z_root() . '/connedit/' . $contact['abook_id'] . '/archive',
@@ -637,13 +646,13 @@ class Connedit extends Controller {
 
 			$tpl = get_markup_template("abook_edit.tpl");
 	
-			if(Apps::system_app_installed(local_channel(),'Affinity Tool')) {
+			if(Apps::system_app_installed(local_channel(),'Friend Zoom')) {
 
 				$sections['affinity'] = [
-					'label' => t('Affinity'),
+					'label' => t('Friend Zoom'),
 					'url'   => z_root() . '/connedit/' . $contact['abook_id'] . '/?f=&section=affinity',
 					'sel'   => '',
-					'title' => t('Open Set Affinity section by default'),
+					'title' => t('Open Friend Zoom section by default'),
 				];
 	
 				$labels = [
@@ -714,13 +723,13 @@ class Connedit extends Controller {
 			$multiprofs = ((feature_enabled(local_channel(),'multi_profiles')) ? true : false);
 	
 			if($slide && !$multiprofs)
-				$affinity = t('Set Affinity');
+				$affinity = t('Set Friend Zoom');
 	
 			if(!$slide && $multiprofs)
 				$affinity = t('Set Profile');
 	
 			if($slide && $multiprofs)
-				$affinity = t('Set Affinity & Profile');
+				$affinity = t('Set Friend Zoom & Profile');
 	
 			
 			$theirs = get_abconfig(local_channel(),$contact['abook_xchan'],'system','their_perms',EMPTY_STR);
@@ -776,7 +785,7 @@ class Connedit extends Controller {
 				$not_here = t('This connection is unreachable from this location. Location independence is not supported by their network.');
 	
 			$o .= replace_macros($tpl, [
-				'$header'         => (($self) ? t('Connection Default Permissions') : sprintf( t('Connection: %s'),$contact['xchan_name'])),
+				'$header'         => (($self) ? t('Connection Default Permissions') : sprintf( t('Connection: %s'),$contact['xchan_name']) . (($contact['abook_alias']) ? ' &lt;' . $contact['abook_alias'] . '&gt;' : '')),
 				'$autoperms'      => array('autoperms',t('Apply these permissions automatically'), ((get_pconfig(local_channel(),'system','autoperms')) ? 1 : 0), t('Connection requests will be approved without your interaction'), $yes_no),
 				'$permcat'        => [ 'permcat', t('Permission role'), '', '<span class="loading invisible">' . t('Loading') . '<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span></span>',$permcats ],
 				'$permcat_new'    => t('Add permission role'),
@@ -803,6 +812,7 @@ class Connedit extends Controller {
 				'$connfilter_label' => t('Custom Filter'),
 				'$incl'           => array('abook_incl',t('Only import posts with this text'), $contact['abook_incl'],t('words one per line or #tags, $categories, /patterns/, or lang=xx, leave blank to import all posts')),
 				'$excl'           => array('abook_excl',t('Do not import posts with this text'), $contact['abook_excl'],t('words one per line or #tags, $categories, /patterns/, or lang=xx, leave blank to import all posts')),
+				'$alias'          => array('abook_alias',t('Nickname'), $contact['abook_alias'],t('optional - allows you to search by a name that you have chosen')),
 				'$rating_text'    => array('rating_text', t('Optionally explain your rating'),$rating_text,''),
 				'$rating_info'    => t('This information is public!'),
 				'$rating'         => $rating,

@@ -721,18 +721,21 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 	 * @return array Directory[]
  	 */
 	function ChannelList(&$auth) {
-		$ret = array();
+		$ret = [];
 
-		$r = q("SELECT channel_id, channel_address, profile.publish FROM channel left join profile on profile.uid = channel.channel_id WHERE channel_removed = 0 AND channel_system = 0 AND (channel_pageflags & %d) = 0",
+		if (intval(get_config('system','cloud_disable_siteroot'))) {
+			return $ret;
+		}
+
+		$r = q("SELECT channel_id, channel_address FROM channel left join profile on profile.uid = channel.channel_id WHERE channel_removed = 0 AND channel_system = 0 AND (channel_pageflags & %d) = 0",
 			intval(PAGE_HIDDEN)
 		);
 
 		if ($r) {
 			foreach ($r as $rr) {
-				if (perm_is_allowed($rr['channel_id'], $auth->observer, 'view_storage') && $rr['publish']) {
-					logger('found channel: /cloud/' . $rr['channel_address'], LOGGER_DATA);
-					// @todo can't we drop '/cloud'? It gets stripped off anyway in RedDirectory
-					$ret[] = new Directory('/cloud/' . $rr['channel_address'], $auth);
+				if (perm_is_allowed($rr['channel_id'], $auth->observer, 'view_storage')) {
+					logger('found channel: ' . $rr['channel_address'], LOGGER_DATA);
+					$ret[] = new Directory($rr['channel_address'], $auth);
 				}
 			}
 		}
@@ -882,7 +885,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 					intval($channel['channel_account_id'])
 				);
 				$used  = (($r) ? (float) $r[0]['total'] : 0);
-				$limit = (float) service_class_fetch($this->auth->owner_id, 'attach_upload_limit');
+				$limit = (float) engr_units_to_bytes(service_class_fetch($this->auth->owner_id, 'attach_upload_limit'));
 				if($limit) {
 					// Don't let the result go negative
 					$free = (($limit > $used) ? $limit - $used : 0);

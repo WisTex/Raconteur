@@ -83,7 +83,7 @@ class SmartyTemplate implements TemplateEngine {
 			$template->filename = $template_file;
 			return $template;
 		}		
-		return "";
+		return EMPTY_STR;
 	}
 
 

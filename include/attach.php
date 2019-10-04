@@ -759,7 +759,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 			return $ret;
 		}
 
-		$limit = service_class_fetch($channel_id, 'attach_upload_limit');
+		$limit = engr_units_to_bytes(service_class_fetch($channel_id, 'attach_upload_limit'));
 
 		if($limit !== false) {
 			$r = q("select sum(filesize) as total from attach where aid = %d ",
@@ -1487,8 +1487,8 @@ function attach_delete($channel_id, $resource, $is_photo = 0) {
 		intval($channel_id)
 	);
 
-        $arr = ['channel_id' => $channel_id, 'resource' => $resource, 'is_photo'=>$is_photo];
-        call_hooks("attach_delete",$arr);
+	$arr = ['channel_id' => $channel_id, 'resource' => $resource, 'is_photo'=>$is_photo];
+	call_hooks("attach_delete",$arr);
 
 	file_activity($channel_id, $object, $object['allow_cid'], $object['allow_gid'], $object['deny_cid'], $object['deny_gid'], 'update', true);
 
@@ -1498,7 +1498,7 @@ function attach_delete($channel_id, $resource, $is_photo = 0) {
 
 function attach_drop_photo($channel_id,$resource) {
 
-	$x = q("select id, item_hidden from item where resource_id = '%s' and resource_type = 'photo' and uid = %d",
+	$x = q("select id, item_hidden from item where resource_id = '%s' and resource_type = 'photo' and uid = %d and item_deleted = 0",
 		dbesc($resource),
 		intval($channel_id)
 	);
@@ -2595,9 +2595,14 @@ function save_chunk($channel,$start,$end,$len) {
 
 	$tmp_path = $_FILES['files']['tmp_name'];
 	$new_base = 'store/[data]/' . $channel['channel_address'] . '/tmp';
+
 	os_mkdir($new_base,STORAGE_DEFAULT_PERMISSIONS,true);
 
-	$new_path = $new_base . '/' . $_FILES['files']['name'];
+	if (! is_dir($new_base)) {
+		logger('directory create failed for ' . $new_base);
+	}
+
+	$new_path = $new_base . '/' . $_FILES['files']['name'] . '.ftmp';
 
 	if(! file_exists($new_path)) {
 		rename($tmp_path,$new_path);

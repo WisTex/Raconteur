@@ -1,62 +1,60 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
+
 require_once('include/security.php');
 require_once('include/bbcode.php');
 
 
 
-class Subthread extends \Zotlabs\Web\Controller {
+class Subthread extends Controller {
 
 	function get() {
 	
-		if(! local_channel()) {
+		if (! local_channel()) {
 			return;
 		}
 	
 		$sys = get_sys_channel();
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
 		$item_id = ((argc() > 2) ? notags(trim(argv(2))) : 0);
 	
-		if(argv(1) === 'sub')
+		if (argv(1) === 'sub') {
 			$activity = ACTIVITY_FOLLOW;
-		elseif(argv(1) === 'unsub')
+		}
+		elseif (argv(1) === 'unsub') {
 			$activity = ACTIVITY_UNFOLLOW;
-	
+		}
 	
 		$i = q("select * from item where id = %d and uid = %d",
 			intval($item_id),
 			intval(local_channel())
 		);
 
-		if(! $i) {
+		if (! $i) {
 			$i = q("select * from item where id = %d and uid = %d",
 				intval($postid),
 				intval($sys['channel_id'])
 			);
 
-			if($i) {
+			if ($i) {
 				$i = [ copy_of_pubitem($channel, $i[0]['mid']) ];
 				$item_id = (($i) ? $i[0]['id'] : 0);
 			}
 		}
 		
-		if(! $i) {
+		if (! $i) {
 			return;
 		}
 
-		$r = q("SELECT parent FROM item WHERE id = %d",
-			intval($item_id)
+		$r = q("select * from item where id = parent and id = %d limit 1",
+			dbesc($i[0]['parent'])
 		);
-
-		if($r) {
-			$r = q("select * from item where id = parent and id = %d limit 1",
-				dbesc($r[0]['parent'])
-			);
-		}
 	
-		if((! $item_id) || (! $r)) {
+		if ((! $item_id) || (! $r)) {
 			logger('subthread: no item ' . $item_id);
 			return;
 		}
@@ -64,11 +62,12 @@ class Subthread extends \Zotlabs\Web\Controller {
 		$item = $r[0];
 	
 		$owner_uid = $item['uid'];
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 		$ob_hash = (($observer) ? $observer['xchan_hash'] : '');
 	
-		if(! perm_is_allowed($owner_uid,$ob_hash,'post_comments'))
+		if (! perm_is_allowed($owner_uid,$ob_hash,'post_comments')) {
 			return;
+		}
 	
 		$sys = get_sys_channel();
 	
@@ -81,30 +80,31 @@ class Subthread extends \Zotlabs\Web\Controller {
 		// Even if the activity is rejected by the item owner, it should still get attached
 		// to the local discover conversation on this site. 
 	
-		if(($owner_uid != $sys['channel_id']) && (! perm_is_allowed($owner_uid,$observer['xchan_hash'],'post_comments'))) {
-				notice( t('Permission denied') . EOL);
-				killme();
+		if (($owner_uid != $sys['channel_id']) && (! perm_is_allowed($owner_uid,$observer['xchan_hash'],'post_comments'))) {
+			notice( t('Permission denied') . EOL);
+			killme();
 		}
 	
 		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 			dbesc($item['owner_xchan'])
 		);
-		if($r)
+		if ($r) {
 			$thread_owner = $r[0];
-		else
+		}
+		else {
 			killme();
-	
+		}
+		
 		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 			dbesc($item['author_xchan'])
 		);
-		if($r)
+		if ($r) {
 			$item_author = $r[0];
-		else
+		}
+		else {
 			killme();
-	
-	
-	
-	
+		}
+		
 		$uuid = new_uuid();
 		$mid = z_root() . '/item/' . $uuid;
 	
@@ -114,36 +114,21 @@ class Subthread extends \Zotlabs\Web\Controller {
 		$objtype = (($item['resource_type'] === 'photo') ? ACTIVITY_OBJ_PHOTO : ACTIVITY_OBJ_NOTE ); 
 	
 		$body = $item['body'];
-	
-		$obj = json_encode(array(
-			'type'    => $objtype,
-			'id'      => $item['mid'],
-			'parent'  => (($item['thr_parent']) ? $item['thr_parent'] : $item['parent_mid']),
-			'link'    => $links,
-			'title'   => $item['title'],
-			'content' => $item['body'],
-			'created' => $item['created'],
-			'edited'  => $item['edited'],
-			'author'  => array(
-				'name'     => $item_author['xchan_name'],
-				'address'  => $item_author['xchan_addr'],
-				'guid'     => $item_author['xchan_guid'],
-				'guid_sig' => $item_author['xchan_guid_sig'],
-				'link'     => array(
-					array('rel' => 'alternate', 'type' => 'text/html', 'href' => $item_author['xchan_url']),
-					array('rel' => 'photo', 'type' => $item_author['xchan_photo_mimetype'], 'href' => $item_author['xchan_photo_m'])),
-				),
-		));
-	
-		if(! intval($item['item_thread_top']))
+
+		$obj = Activity::fetch_item( [ 'id' => $item['mid'] ] );
+		$objtype = $obj['type'];
+
+		if (! intval($item['item_thread_top']))
 			$post_type = 'comment';		
 	
-		if($activity === ACTIVITY_FOLLOW)
+		if ($activity === ACTIVITY_FOLLOW) {
 			$bodyverb = t('%1$s is following %2$s\'s %3$s');
-		if($activity === ACTIVITY_UNFOLLOW)
+		}
+		if ($activity === ACTIVITY_UNFOLLOW) {
 			$bodyverb = t('%1$s stopped following %2$s\'s %3$s');
-	
-		$arr = array();
+		}
+		
+		$arr = [];
 
 		$arr['uuid']          = $uuid;	
 		$arr['mid']           = $mid;
@@ -156,11 +141,14 @@ class Subthread extends \Zotlabs\Web\Controller {
 		$arr['author_xchan']  = $observer['xchan_hash'];
 		$arr['item_origin']   = 1;
 		$arr['item_notshown'] = 1;
-		if(intval($item['item_wall']))
+
+		if (intval($item['item_wall'])) {
 			$arr['item_wall'] = 1;
-		else
+		}
+		else {
 			$arr['item_wall'] = 0;
-	
+		}
+		
 		$ulink = '[zrl=' . $item_author['xchan_url'] . ']' . $item_author['xchan_name'] . '[/zrl]';
 		$alink = '[zrl=' . $observer['xchan_url'] . ']' . $observer['xchan_name'] . '[/zrl]';
 		$plink = '[zrl=' . z_root() . '/display/' . gen_link_id($item['mid']) . ']' . $post_type . '[/zrl]';
@@ -169,7 +157,7 @@ class Subthread extends \Zotlabs\Web\Controller {
 	
 		$arr['verb']          = $activity;
 		$arr['obj_type']      = $objtype;
-		$arr['obj']           = $obj;
+		$arr['obj']           = json_encode($obj);
 	
 		$arr['allow_cid']     = $item['allow_cid'];
 		$arr['allow_gid']     = $item['allow_gid'];
@@ -183,12 +171,6 @@ class Subthread extends \Zotlabs\Web\Controller {
 	
 		call_hooks('post_local_end', $arr);
 	
-		killme();
-	
-	
+		killme();	
 	}
-	
-	
-	
-	
 }

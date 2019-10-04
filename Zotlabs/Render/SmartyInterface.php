@@ -18,14 +18,14 @@ class SmartyInterface extends Smarty {
 		// setTemplateDir can be set to an array, which Smarty will parse in order.
 		// The order is thus very important here
 
-		$template_dirs = array('theme' => "view/theme/$thname/tpl/");
+		$template_dirs = [ 'theme' => "view/theme/$thname/tpl/" ];
 		if ( x(App::$theme_info,"extends") ) {
-			$template_dirs = $template_dirs + array('extends' => "view/theme/" . \App::$theme_info["extends"] . "/tpl/");
+			$template_dirs = $template_dirs + [ 'extends' => "view/theme/" . App::$theme_info["extends"] . '/tpl/' ];
 		}
 		$template_dirs = $template_dirs + array('base' => 'view/tpl/');
 		$this->setTemplateDir($template_dirs);
 
-        $basecompiledir = App::$config['system']['smarty3_folder'];
+        $basecompiledir = get_config('system','smarty3_folder');
         
 		$this->setCompileDir($basecompiledir.'/compiled/');
 		$this->setConfigDir($basecompiledir.'/config/');

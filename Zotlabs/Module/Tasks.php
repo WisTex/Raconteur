@@ -3,6 +3,7 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Apps;
 
 require_once('include/event.php');
 
@@ -96,4 +97,19 @@ class Tasks extends Controller {
 			json_return_and_die($x);
 		}	
 	}
+
+	function get() {
+        $desc = t('This app provides a simple personal and task list.');
+
+        $text = '<div class="section-content-info-wrapper">' . $desc . '</div>';
+
+        if(! ( local_channel() && Apps::system_app_installed(local_channel(),'Tasks'))) {
+            return $text;
+        }
+
+		$obj = new \Zotlabs\Widget\Tasklist;
+		return $obj->widget([]);
+	}
+
+
 }

@@ -17,7 +17,7 @@ class PermissionRoles {
 	 * @return number
 	 */
 	static public function version() {
-		return 2;
+		return 3;
 	}
 
 	static function role_perms($role) {
@@ -34,7 +34,7 @@ class PermissionRoles {
 				$ret['online'] = true;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'send_stream', 'post_wall', 'post_comments'
+					'view_pages', 'send_stream', 'post_wall', 'post_comments', 'post_like'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
 				break;
@@ -43,13 +43,13 @@ class PermissionRoles {
 				$ret['perms_auto'] = false;
 				$ret['default_collection'] = true;
 				$ret['directory_publish'] = true;
-				$ret['online'] = true;
+				$ret['online'] = false;
 				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'send_stream', 'post_wall', 'post_comments'
+					'view_stream', 'view_profile', 'view_storage',
+					'view_pages', 'send_stream', 'post_wall', 'post_comments', 'post_like'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
-
+				$ret['limits']['view_contacts'] = PERMS_SPECIFIC;
 				break;
 
 			case 'forum':
@@ -58,10 +58,11 @@ class PermissionRoles {
 				$ret['directory_publish'] = true;
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'post_wall', 'post_comments'
+					'view_stream', 'view_profile', 'view_contacts', 'view_storage', 'write_storage',
+					'view_pages', 'post_wall', 'post_comments', 'post_like'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
+				$ret['channel_type'] = 'group';
 	
 				break;
 
@@ -73,9 +74,10 @@ class PermissionRoles {
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'post_wall', 'post_comments', 'moderated'
+					'view_pages', 'post_wall', 'post_comments', 'post_like', 'moderated'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
+				$ret['channel_type'] = 'group';
 	
 				break;
 
@@ -85,10 +87,12 @@ class PermissionRoles {
 				$ret['directory_publish'] = true;
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'post_wall', 'post_comments'
+					'view_stream', 'view_profile', 'view_contacts', 'view_storage', 'write_storage',
+					'view_pages', 'post_wall', 'post_comments', 'post_like'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
+				$ret['limits']['view_contacts'] = PERMS_SPECIFIC;
+				$ret['channel_type'] = 'group';
 				break;
 
 			case 'collection':
@@ -98,9 +102,10 @@ class PermissionRoles {
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
 					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'post_comments'
+					'view_pages', 'post_comments', 'post_like'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
+				$ret['channel_type'] = 'collection';
 	
 				break;
 
@@ -110,10 +115,12 @@ class PermissionRoles {
 				$ret['directory_publish'] = true;
 				$ret['online'] = false;
 				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'post_comments'
+					'view_stream', 'view_profile', 'view_storage',
+					'view_pages', 'post_comments', 'post_like'
 				];
 				$ret['limits'] = PermissionLimits::Std_Limits();
+				$ret['limits']['view_contacts'] = PERMS_SPECIFIC;
+				$ret['channel_type'] = 'collection';
 				break;
 
 			case 'feed':
@@ -129,6 +136,10 @@ class PermissionRoles {
 				$ret['limits'] = PermissionLimits::Std_Limits();
 
 				break;
+
+			case 'repository':
+				//Legacy settings to cover all channel_types previously in Libzot.php
+				$ret['channel_type'] = 'group';
 
 			default:
 				break;
