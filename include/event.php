@@ -273,6 +273,9 @@ function format_event_bbcode($ev) {
 	if($ev['adjust'])
 		$o .= '[event-adjust]' . $ev['adjust'] . '[/event-adjust]';
 
+	// Hubzilla compatibility
+	$o .= '[event-timezone]UTC[/event-timezone]';
+	
 	return $o;
 }
 
@@ -334,6 +337,16 @@ function bbtoevent($s) {
 		}
 		else
 			$ev['nofinish'] = 1;
+	}
+
+	if(preg_match("/\[event\-timezone\](.*?)\[\/event\-timezone\]/is",$s,$match)) {
+		$tz = $match[1];
+		if (array_key_exists('dtstart',$ev)) {
+			$ev['dtstart'] = datetime_convert($tz,'UTC',$ev['dtstart']);
+		}
+		if (array_key_exists('dtend',$ev)) {
+			$ev['dtend'] = datetime_convert($tz,'UTC',$ev['dtend']);
+		}
 	}
 
 //	logger('bbtoevent: ' . print_r($ev,true));
