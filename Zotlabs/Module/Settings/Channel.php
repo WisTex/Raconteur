@@ -516,7 +516,7 @@ class Channel {
 
 		if (get_config('system','activitypub')) {
 			$apconfig = true;
-			$activitypub = replace_macros(get_markup_template('field_checkbox.tpl'), [ '$field' => [ 'activitypub', t('Enable ActivityPub protocol'), ((get_pconfig(local_channel(),'system','activitypub',true)) ? 1 : 0), t('ActivityPub is not completely compatible with some of this software\'s features.'), $yes_no ]]);
+			$activitypub = replace_macros(get_markup_template('field_checkbox.tpl'), [ '$field' => [ 'activitypub', t('Enable ActivityPub protocol'), ((get_pconfig(local_channel(),'system','activitypub',true)) ? 1 : 0), t(''), $yes_no ]]);
 		}
 		else {
 			$apconfig = false;
@@ -524,7 +524,7 @@ class Channel {
 		}
 
 		$apheader = t('ActivityPub');
-		$apdoc = t('ActivityPub is an emerging internet standard for social communications and is offered by a growing number of software applications. ') . t('It has a large number of existing users, however many applications disagree on the precise specifications for privacy, message delivery, and account migration - and there are many conflicting and even broken implementations. It is still very much a work in progress, and privacy and data integrity are much less predictable if you use it. ') . EOL . t('Your system administrator has allowed this experimental service on this website. You are free to make your own decision.');
+		$apdoc = t('ActivityPub is an emerging internet standard for social communications. ') . t('It provides access to a large and growing number of existing users and supported software applications, however it is still evolving. If this is enabled you will almost certainly encounter compatibility issues, with varying levels of severity and personal impact. ') . EOL . t('Your system administrator has allowed this experimental service on this website. Please disable it if you prefer a bit more stability in your life.');
 
 		$permissions_set = (($permissions_role != 'custom') ? true : false);
 
