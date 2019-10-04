@@ -2293,6 +2293,11 @@ function jindent($json) {
 	$prevChar  = '';
 	$outOfQuotes = true;
 
+	if (is_array($json)) {
+		btlogger('is an array', LOGGER_DATA);
+		$json = json_encode($json,JSON_UNESCAPED_SLASHES);
+	} 
+
 	for ($i = 0; $i <= $strLen; $i++) {
 		// Grab the next character in the string.
 		$char = substr($json, $i, 1);
