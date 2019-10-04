@@ -24,7 +24,7 @@ class Collections {
 					break;
 			case 'connections':
 					$every = 'connections';
-					$each = 'group';
+					$each = 'lists';
 					$edit = true;
 					$current = $_REQUEST['gid'];
 					$abook_id = 0;
@@ -39,7 +39,7 @@ class Collections {
 					break;
 			case 'abook':
 					$every = 'connections';
-					$each = 'group';
+					$each = 'lists';
 					$edit = false;
 					$current = 0;
 					$abook_id = App::$poi['abook_xchan'];

@@ -314,8 +314,7 @@ class Events extends Controller {
 			);
 		}
 	
-		$first_day = get_pconfig(local_channel(),'system','cal_first_day');
-		$first_day = (($first_day) ? $first_day : 0);
+		$first_day = intval(get_pconfig(local_channel(),'system','cal_first_day',0));
 	
 		$htpl = get_markup_template('event_head.tpl');
 		App::$page['htmlhead'] .= replace_macros($htpl,array(

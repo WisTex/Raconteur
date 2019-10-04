@@ -81,9 +81,8 @@ class Cal extends Controller {
 		nav_set_selected('Calendar');
 	
 		$sql_extra = permissions_sql($channel['channel_id'],get_observer_hash(),'event');
-	
-		$first_day = get_pconfig(local_channel(),'system','cal_first_day');
-		$first_day = (($first_day) ? $first_day : 0);
+
+		$first_day = intval(get_pconfig($channel['channel_id'],'system','cal_first_day',0));
 	
 		$htpl = get_markup_template('event_head.tpl');
 		\App::$page['htmlhead'] .= replace_macros($htpl,array(

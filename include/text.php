@@ -593,6 +593,22 @@ function photo_new_resource() {
 }
 
 
+// provide psuedo random token (string) consisting entirely of US-ASCII letters/numbers
+// and with possibly variable length
+
+function new_token($minlen = 36,$maxlen = 48) {
+
+	$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+	$str   = EMPTY_STR;
+
+	$len   = (($minlen === $maxlen) ? $minlen : mt_rand($minlen,$maxlen));
+
+	for($a = 0; $a < $len; $a ++) {
+		$str .= $chars[mt_rand(0,62)];
+	}
+	return $str;
+}
+
 /**
  * @brief Generate a unique ID.
  *
@@ -1492,7 +1508,7 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 
 	call_hooks('prepare_body_init', $item);
 
-	$censored = ((($item['author']['abook_censor'] || $item['owner']['abook_censor'] || $item['author']['xchan_selfcensored'] || $item['owner']['xchan_selfcensored'] || $item['author']['xchan_censored'] || $item['owner']['xchan_censored']) && (! intval($_SESSION['unsafe'])))
+	$censored = ((($item['author']['abook_censor'] || $item['owner']['abook_censor'] || $item['author']['xchan_selfcensored'] || $item['owner']['xchan_selfcensored'] || $item['author']['xchan_censored'] || $item['owner']['xchan_censored']) && (get_safemode()))
 		? true
 		: false
 	);
@@ -2254,7 +2270,7 @@ function stringify_array_elms(&$arr, $escape = false) {
  */
 function stringify_array($arr, $escape = false) {
 	if($arr) {
-		stringify_array_elms($arr);
+		stringify_array_elms($arr, $escape);
 		return(implode(',',$arr));
 	}
 	return EMPTY_STR;
@@ -2277,20 +2293,25 @@ function jindent($json) {
 	$prevChar  = '';
 	$outOfQuotes = true;
 
-	for ($i=0; $i<=$strLen; $i++) {
+	if (is_array($json)) {
+		btlogger('is an array', LOGGER_DATA);
+		$json = json_encode($json,JSON_UNESCAPED_SLASHES);
+	} 
+
+	for ($i = 0; $i <= $strLen; $i++) {
 		// Grab the next character in the string.
 		$char = substr($json, $i, 1);
 
 		// Are we inside a quoted string?
 		if ($char == '"' && $prevChar != '\\') {
 			$outOfQuotes = !$outOfQuotes;
-
+		}
 		// If this character is the end of an element,
 		// output a new line and indent the next line.
-		} else if(($char == '}' || $char == ']') && $outOfQuotes) {
+		elseif(($char == '}' || $char == ']') && $outOfQuotes) {
 			$result .= $newLine;
 			$pos --;
-			for ($j=0; $j<$pos; $j++) {
+			for ($j = 0; $j < $pos; $j++) {
 				$result .= $indentStr;
 			}
 		}
@@ -2310,7 +2331,6 @@ function jindent($json) {
 				$result .= $indentStr;
 			}
 		}
-
 		$prevChar = $char;
 	}
 

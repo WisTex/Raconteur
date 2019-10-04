@@ -72,6 +72,7 @@ class Site {
 		$proxyuser         = ((x($_POST,'proxyuser'))        ? notags(trim($_POST['proxyuser']))  : '');
 		$proxy             = ((x($_POST,'proxy'))            ? notags(trim($_POST['proxy']))      : '');
 		$timeout           = ((x($_POST,'timeout'))          ? intval(trim($_POST['timeout']))    : 60);
+		$show_like_counts  = ((x($_POST,'show_like_counts')) ? intval(trim($_POST['show_like_counts'])) : 0);
 		$delivery_interval = ((x($_POST,'delivery_interval'))? intval(trim($_POST['delivery_interval'])) : 0);
 		$delivery_batch_count = ((x($_POST,'delivery_batch_count') && $_POST['delivery_batch_count'] > 0)? intval(trim($_POST['delivery_batch_count'])) : 3);
 		$poll_interval     = ((x($_POST,'poll_interval'))    ? intval(trim($_POST['poll_interval'])) : 0);
@@ -110,6 +111,7 @@ class Site {
 		set_config('system', 'imagick_convert_path' , $imagick_path);
 		set_config('system', 'thumbnail_security' , $thumbnail_security);
 		set_config('system', 'default_permissions_role', $permissions_role);
+		set_config('system', 'show_like_counts', $show_like_counts);
 		set_config('system', 'pubstream_incl',$pub_incl);
 		set_config('system', 'pubstream_excl',$pub_excl);
 
@@ -323,6 +325,7 @@ class Site {
 			'$disable_discover_tab'	=> [ 'disable_discover_tab', t('Import Public Streams'), $discover_tab, t('Import and allow access to public content pulled from other sites. Warning: this content is unmoderated.') ],
 			'$site_firehose'	    => [ 'site_firehose', t('Site only Public Streams'), get_config('system','site_firehose'), t('Allow access to public content originating only from this site if Imported Public Streams are disabled.') ],
 			'$open_pubstream'	    => [ 'open_pubstream', t('Allow anybody on the internet to access the Public streams'), get_config('system','open_pubstream',0), t('Default is to only allow viewing by site members. Warning: this content is unmoderated.') ],
+			'$show_like_counts'	    => [ 'show_like_counts', t('Show numbers of likes and dislikes in conversations'), get_config('system','show_like_counts',1), t('If disabled, the presence of likes and dislikes will be shown, but without totals.') ],
 			'$incl'                 => [ 'pub_incl',t('Only import Public stream posts with this text'), get_config('system','pubstream_incl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts') ],
 			'$excl'                 => [ 'pub_excl',t('Do not import Public stream posts with this text'), get_config('system','pubstream_excl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts') ],
 			'$login_on_homepage'	=> [ 'login_on_homepage', t("Login on Homepage"),((intval($homelogin) || $homelogin === false) ? 1 : '') , t("Present a login box to visitors on the home page if no other content has been configured.") ],

@@ -1,74 +1,149 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\AccessList;
+use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Activity;
+use Zotlabs\Web\HTTPSig;
+use Zotlabs\Lib\Config;
+use Zotlabs\Lib\LDSignatures;
 
-
-class Alist extends \Zotlabs\Web\Controller {
+class Lists extends Controller {
 
 	function init() {
-		if(! local_channel()) {
+		if (ActivityStreams::is_as_request()) {
+			$item_id = argv(1);
+			if( ! $item_id) {
+				http_status_exit(404, 'Not found');
+			}
+			$x = q("select * from pgrp where hash = '%s' limit 1",
+				dbesc($item_id)
+			);
+			if (! $x) {
+				http_status_exit(404, 'Not found');
+			}
+
+			$group = array_shift($x);
+
+			// process an authenticated fetch
+
+			$sigdata = HTTPSig::verify(EMPTY_STR);
+			if ($sigdata['portable_id'] && $sigdata['header_valid']) {
+				$portable_id = $sigdata['portable_id'];
+				if (! check_channelallowed($portable_id)) {
+					http_status_exit(403, 'Permission denied');
+				}
+				if (! check_siteallowed($sigdata['signer'])) {
+					http_status_exit(403, 'Permission denied');
+				}
+				observer_auth($portable_id);
+			}
+			elseif (! Config::get('system','require_authenticated_fetch',false)) {
+				http_status_exit(403,'Permission denied');
+			}
+
+			if (! perm_is_allowed($group['uid'],get_observer_hash(),'view_contacts')) {
+				http_status_exit(403,'Permission denied');
+			}
+
+			$channel = channelx_by_n($group['uid']);
+
+			if (! $channel) {
+				http_status_exit(404,'Not found');
+			}
+
+			if (! $group['visible']) {
+				if ($channel['channel_hash'] !== get_observer_hash()) {
+					http_status_exit(403,'Permission denied');
+				}
+			}
+			
+			$members = AccessList::members($group['uid'],$group['id']);
+
+			$x = array_merge(['@context' => [
+				ACTIVITYSTREAMS_JSONLD_REV,
+				'https://w3id.org/security/v1',
+				z_root() . ZOT_APSCHEMA_REV
+				]], Activity::encode_follow_collection($members, App::$query_string, 'OrderedCollection'));
+
+
+			$headers = [];
+			$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
+			$x['signature'] = LDSignatures::sign($x,$channel);
+			$ret = json_encode($x, JSON_UNESCAPED_SLASHES);
+			$headers['Digest'] = HTTPSig::generate_digest_header($ret);
+			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
+			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
+			HTTPSig::set_headers($h);
+			echo $ret;
+			killme();
+
+		}
+
+		if (! local_channel()) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
 
-		\App::$profile_uid = local_channel();
-
+		App::$profile_uid = local_channel();
 		nav_set_selected('Access Lists');
 	}
 
 	function post() {
 	
-		if(! local_channel()) {
+		if (! local_channel()) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
 	
-		if((argc() == 2) && (argv(1) === 'new')) {
-			check_form_security_token_redirectOnErr('/alist/new', 'group_edit');
+		if ((argc() == 2) && (argv(1) === 'new')) {
+			check_form_security_token_redirectOnErr('/lists/new', 'group_edit');
 			
 			$name = notags(trim($_POST['groupname']));
 			$public = intval($_POST['public']);
 			$r = AccessList::add(local_channel(),$name,$public);
-			if($r) {
+			if ($r) {
 				info( t('Access list created.') . EOL );
 			}
 			else {
 				notice( t('Could not create access list.') . EOL );
 			}
-			goaway(z_root() . '/alist');
+			goaway(z_root() . '/lists');
 	
 		}
-		if((argc() == 2) && (intval(argv(1)))) {
-			check_form_security_token_redirectOnErr('/alist', 'group_edit');
+		if ((argc() == 2) && (intval(argv(1)))) {
+			check_form_security_token_redirectOnErr('/lists', 'group_edit');
 			
 			$r = q("SELECT * FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
 				intval(argv(1)),
 				intval(local_channel())
 			);
-			if(! $r) {
+			if (! $r) {
 				notice( t('Access list not found.') . EOL );
 				goaway(z_root() . '/connections');
 	
 			}
-			$group = $r[0];
+			$group = array_shift($r);
 			$groupname = notags(trim($_POST['groupname']));
 			$public = intval($_POST['public']);
 	
-			if((strlen($groupname))  && (($groupname != $group['gname']) || ($public != $group['visible']))) {
+			if ((strlen($groupname))  && (($groupname != $group['gname']) || ($public != $group['visible']))) {
 				$r = q("UPDATE pgrp SET gname = '%s', visible = %d  WHERE uid = %d AND id = %d",
 					dbesc($groupname),
 					intval($public),
 					intval(local_channel()),
 					intval($group['id'])
 				);
-				if($r)
+				if ($r) {
 					info( t('Access list updated.') . EOL );
+				}
 				Libsync::build_sync_packet(local_channel(),null,true);
 			}
 	
-			goaway(z_root() . '/alist/' . argv(1) . '/' . argv(2));
+			goaway(z_root() . '/lists/' . argv(1) . '/' . argv(2));
 		}
 		return;	
 	}
@@ -77,22 +152,24 @@ class Alist extends \Zotlabs\Web\Controller {
 
 		$change = false;
 	
-		logger('mod_alist: ' . \App::$cmd,LOGGER_DEBUG);
+		logger('mod_lists: ' . \App::$cmd,LOGGER_DEBUG);
 		
-		if(! local_channel()) {
+		if (! local_channel()) {
 			notice( t('Permission denied') . EOL);
 			return;
 		}
 
 		// Switch to text mode interface if we have more than 'n' contacts or group members
 		$switchtotext = get_pconfig(local_channel(),'system','groupedit_image_limit');
-		if($switchtotext === false)
+		if ($switchtotext === false) {
 			$switchtotext = get_config('system','groupedit_image_limit');
-		if($switchtotext === false)
+		}
+		if ($switchtotext === false) {
 			$switchtotext = 400;
+		}
 
 
-		if((argc() == 1) || ((argc() == 2) && (argv(1) === 'new'))) {
+		if ((argc() == 1) || ((argc() == 2) && (argv(1) === 'new'))) {
 
 			$new = (((argc() == 2) && (argv(1) === 'new')) ? true : false);
 
@@ -101,10 +178,10 @@ class Alist extends \Zotlabs\Web\Controller {
 			);
 
 			$i = 0;
-			foreach($groups as $group) {
+			foreach ($groups as $group) {
 				$entries[$i]['name'] = $group['gname'];
 				$entries[$i]['id'] = $group['id'];
-				$entries[$i]['count'] = count(AccessList::members($group['id']));
+				$entries[$i]['count'] = count(AccessList::members(local_channel(),$group['id']));
 				$i++;
 			}
 
@@ -138,7 +215,7 @@ class Alist extends \Zotlabs\Web\Controller {
 		$tpl = get_markup_template('group_edit.tpl');
 	
 		if((argc() == 3) && (argv(1) === 'drop')) {
-			check_form_security_token_redirectOnErr('/alist', 'group_drop', 't');
+			check_form_security_token_redirectOnErr('/lists', 'group_drop', 't');
 			
 			if(intval(argv(2))) {
 				$r = q("SELECT gname FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
@@ -152,7 +229,7 @@ class Alist extends \Zotlabs\Web\Controller {
 				else
 					notice( t('Unable to remove access list.') . EOL);
 			}
-			goaway(z_root() . '/alist');
+			goaway(z_root() . '/lists');
 			// NOTREACHED
 		}
 	
@@ -184,7 +261,7 @@ class Alist extends \Zotlabs\Web\Controller {
 			$group = $r[0];
 	
 	
-			$members = AccessList::members($group['id']);
+			$members = AccessList::members(local_channel(), $group['id']);
 	
 			$preselected = array();
 			if(count($members))	{
@@ -202,7 +279,7 @@ class Alist extends \Zotlabs\Web\Controller {
 					AccessList::member_add(local_channel(),$group['gname'],$change);
 				}
 	
-				$members = AccessList::members($group['id']);
+				$members = AccessList::members(local_channel(), $group['id']);
 	
 				$preselected = array();
 				if(count($members))	{
@@ -263,7 +340,7 @@ class Alist extends \Zotlabs\Web\Controller {
 		}
 	
 		$context['$groupeditor'] = $groupeditor;
-		$context['$desc'] = t('Click a channel to toggle membership');
+		$context['$desc'] = t('Select a channel to toggle membership');
 	
 		if($change) {
 			$tpl = get_markup_template('groupeditor.tpl');

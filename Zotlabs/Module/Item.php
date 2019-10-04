@@ -1160,6 +1160,8 @@ class Item extends Controller {
 			$plink = z_root() . '/item/' . $uuid;
 		}
 
+
+
 		$datarray['aid']                 = $channel['channel_account_id'];
 		$datarray['uid']                 = $profile_uid;
 		$datarray['uuid']                = $uuid;
@@ -1233,9 +1235,15 @@ class Item extends Controller {
 		if(! empty_acl($datarray))
 			$datarray['public_policy'] = '';
 
-		if($iconfig)
+		if ($iconfig) {
 			$datarray['iconfig'] = $iconfig;
-	
+		}
+		if ($private) {
+			IConfig::set($datarray,'ocap','relay',new_token());
+		}
+
+
+
 		// preview mode - prepare the body for display and send it via json
 	
 		if($preview) {

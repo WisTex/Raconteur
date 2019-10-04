@@ -7,15 +7,16 @@ class Tagadelic {
 
 	static public function calc($arr) {
 
-		$tags = array();
+		$tags = [];
 		$min = 1e9;
 		$max = -1e9;
 
 		$x = 0;
-		if(! $arr)
-			return array();
+		if (! $arr) {
+			return [];
+		}
 
-		foreach($arr as $rr) {
+		foreach ($arr as $rr) {
 			$tags[$x][0] = $rr['term'];
 			$tags[$x][1] = log($rr['total']);
 			$tags[$x][2] = 0;
@@ -28,7 +29,7 @@ class Tagadelic {
 
 		$range = max(.01, $max - $min) * 1.0001;
 
-		for($x = 0; $x < count($tags); $x ++) {
+		for ($x = 0; $x < count($tags); $x ++) {
 			$tags[$x][2] = 1 + floor(9 * ($tags[$x][1] - $min) / $range);
 		}
 
@@ -36,8 +37,9 @@ class Tagadelic {
 	}
 
 	static public function tags_sort($a,$b) {
-		if(strtolower($a[0]) == strtolower($b[0]))
+		if (strtolower($a[0]) === strtolower($b[0])) {
 			return 0;
+		}
 		return((strtolower($a[0]) < strtolower($b[0])) ? -1 : 1);
 	}
 

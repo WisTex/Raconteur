@@ -160,7 +160,7 @@ class Channel {
 		$adult            = (($_POST['adult'] == 1) ? 1 : 0);
 		$defpermcat       = ((x($_POST,'defpermcat')) ? notags(trim($_POST['defpermcat'])) : 'default');
 	
-		$cal_first_day   = (((x($_POST,'first_day')) && (intval($_POST['first_day']) == 1)) ? 1: 0);
+		$cal_first_day   = (((x($_POST,'first_day')) && intval($_POST['first_day']) >= 0 && intval($_POST['first_day']) < 7) ? intval($_POST['first_day']) : 0);
 		$mailhost        = ((array_key_exists('mailhost',$_POST)) ? notags(trim($_POST['mailhost'])) : '');
 		$profile_assign  = ((x($_POST,'profile_assign')) ? notags(trim($_POST['profile_assign'])) : '');
 
@@ -447,19 +447,22 @@ class Channel {
 	
 		));
 	
-		$subdir = ((strlen(\App::get_path())) ? '<br />' . t('or') . ' ' . z_root() . '/channel/' . $nickname : '');
+		$subdir = ((strlen(App::get_path())) ? '<br />' . t('or') . ' ' . z_root() . '/channel/' . $nickname : '');
 
-		$webbie = $nickname . '@' . \App::get_hostname();
+		$webbie = $nickname . '@' . App::get_hostname();
 		$intl_nickname = unpunify($nickname) . '@' . unpunify(App::get_hostname());
-	
-		$tpl_addr = get_markup_template("settings_nick_set.tpl");
-	
-		$prof_addr = replace_macros($tpl_addr,array(
+		
+		$prof_addr = replace_macros(get_markup_template('channel_settings_header.tpl'),array(
 			'$desc' => t('Your channel address is'),
 			'$nickname' => (($intl_nickname === $webbie) ? $webbie : $intl_nickname . '&nbsp;(' . $webbie . ')'),
+			'$compat' => t('Friends using compatible applications can use this address to connect with you.'),
 			'$subdir' => $subdir,
-			'$davdesc' => t('Your files/photos are accessible via WebDAV at'),
+			'$davdesc' => t('Your files/photos are accessible as a network drive at'),
 			'$davpath' => z_root() . '/dav/' . $nickname,
+			'$windows' => t('(Windows)'),
+			'$other' => t('(other platforms)'),
+			'$or' => t('or'),
+			'$davspath' => 'davs://' . App::get_hostname() . '/dav/' . $nickname,
 			'$basepath' => App::get_hostname()
 		));
 
@@ -512,12 +515,16 @@ class Channel {
 		$hyperdrive = [ 'hyperdrive', t('Enable hyperdrive'), ((get_pconfig(local_channel(),'system','hyperdrive',true)) ? 1 : 0), t('Import public third-party conversations in which your connections participate.'), $yes_no ];
 
 		if (get_config('system','activitypub')) {
-			$activitypub = replace_macros(get_markup_template('field_checkbox.tpl'), [ '$field' => [ 'activitypub', t('Allow ActivityPub Connections'), ((get_pconfig(local_channel(),'system','activitypub',true)) ? 1 : 0), t('Does not work well with some privacy settings and location independence.'), $yes_no ]]);
+			$apconfig = true;
+			$activitypub = replace_macros(get_markup_template('field_checkbox.tpl'), [ '$field' => [ 'activitypub', t('Enable ActivityPub protocol'), ((get_pconfig(local_channel(),'system','activitypub',true)) ? 1 : 0), t(''), $yes_no ]]);
 		}
 		else {
+			$apconfig = false;
 			$activitypub = '<input type="hidden" name="activitypub" value="1" >' . EOL;
 		}
 
+		$apheader = t('ActivityPub');
+		$apdoc = t('ActivityPub is an emerging internet standard for social communications. ') . t('It provides access to a large and growing number of existing users and supported software applications, however it is still evolving. If this is enabled you will obtain much greater social reach, however you will almost certainly encounter compatibility issues, with varying levels of severity and personal impact. ') . EOL . t('Your system administrator has allowed this experimental service on this website. Please disable it if you prefer a bit more stability in your life.');
 
 		$permissions_set = (($permissions_role != 'custom') ? true : false);
 
@@ -543,15 +550,15 @@ class Channel {
 			'$form_security_token' => get_form_security_token("settings"),
 			'$nickname_block' => $prof_addr,
 			'$h_basic' 	=> t('Basic Settings'),
-			'$username' => array('username',  t('Full Name:'), $username,''),
-			'$email' 	=> array('email', t('Email Address:'), $email, ''),
-			'$timezone' => array('timezone_select' , t('Your Timezone:'), $timezone, '', get_timezones()),
-			'$defloc'	=> array('defloc', t('Default Post Location:'), $defloc, t('Geographical location to display on your posts')),
-			'$allowloc' => array('allow_location', t('Use Browser Location:'), ((get_pconfig(local_channel(),'system','use_browser_location')) ? 1 : ''), '', $yes_no),
+			'$username' => array('username',  t('Full name'), $username,''),
+			'$email' 	=> array('email', t('Email Address'), $email, ''),
+			'$timezone' => array('timezone_select' , t('Your timezone'), $timezone, t('This is important for showing the correct time on shared events'), get_timezones()),
+			'$defloc'	=> array('defloc', t('Default post location'), $defloc, t('Optional geographical location to display on your posts')),
+			'$allowloc' => array('allow_location', t('Obtain post location from your web browser or device'), ((get_pconfig(local_channel(),'system','use_browser_location')) ? 1 : ''), '', $yes_no),
 			
-			'$adult'    => array('adult', t('Adult Content'), $adult_flag, t('This channel frequently or regularly publishes adult content. (Please tag any adult material and/or nudity with #NSFW)'), $yes_no),
+			'$adult'    => array('adult', t('Adult content'), $adult_flag, t('This channel frequently or regularly publishes adult content. (Please tag any adult material and/or nudity with #NSFW)'), $yes_no),
 	
-			'$h_prv' 	=> t('Security and Privacy Settings'),
+			'$h_prv' 	=> t('Security and Privacy'),
 			'$permissions_set' => $permissions_set,
 			'$perms_set_msg' => t('Your permissions are already configured. Click to view/adjust'),
 	
@@ -592,7 +599,10 @@ class Channel {
 //			'$anymention' => $anymention,			
 			'$hyperdrive' => $hyperdrive,
 			'$activitypub' => $activitypub,
-			'$h_not' 	=> t('Notification Settings'),
+			'$apconfig' => $apconfig,
+			'$apheader' => $apheader,
+			'$apdoc' => $apdoc,
+			'$h_not' 	=> t('Notifications'),
 			'$activity_options' => t('By default post a status message when:'),
 			'$post_newfriend' => array('post_newfriend',  t('accepting a friend request'), $post_newfriend, '', $yes_no),
 			'$post_joingroup' => array('post_joingroup',  t('joining a forum/community'), $post_joingroup, '', $yes_no),
@@ -628,7 +638,7 @@ class Channel {
 			'$vnotify14'	=> array('vnotify14', t('Unseen likes and dislikes'), ($vnotify & VNOTIFY_LIKE), VNOTIFY_LIKE, '', $yes_no),
 			'$vnotify15'	=> array('vnotify15', t('Unseen forum posts'), ($vnotify & VNOTIFY_FORUMS), VNOTIFY_FORUMS, '', $yes_no),
 			'$vnotify16'	=> ((is_site_admin()) ? array('vnotify16', t('Reported content'), ($vnotify & VNOTIFY_REPORTS), VNOTIFY_REPORTS, '', $yes_no) : [] ),
-			'$mailhost' => [ 'mailhost', t('Email notification hub (hostname)'), get_pconfig(local_channel(),'system','email_notify_host',\App::get_hostname()), sprintf( t('If your channel is mirrored to multiple hubs, set this to your preferred location. This will prevent duplicate email notifications. Example: %s'),\App::get_hostname()) ],
+			'$mailhost' => [ 'mailhost', t('Email notification hub (hostname)'), get_pconfig(local_channel(),'system','email_notify_host',App::get_hostname()), sprintf( t('If your channel is mirrored to multiple locations, set this to your preferred location. This will prevent duplicate email notifications. Example: %s'),App::get_hostname()) ],
 			'$always_show_in_notices'  => array('always_show_in_notices', t('Show new wall posts, private messages and connections under Notices'), $always_show_in_notices, 1, '', $yes_no),
 	
 			'$evdays' => array('evdays', t('Notify me of events this many days in advance'), $evdays, t('Must be greater than 0')),			
@@ -636,18 +646,27 @@ class Channel {
 			'$sec_addon'  => $plugin['security'],
 			'$notify_addon' => $plugin['notify'],
 			'$misc_addon' => $plugin['misc'],
-	
+			'$lbl_time' => t('Date and time'),
+			'$miscdoc' => t('This section is reserved for use by optional addons and apps to provide additional settings.'), 
 			'$h_advn' => t('Advanced Account/Page Type Settings'),
 			'$h_descadvn' => t('Change the behaviour of this account for special situations'),
 			'$pagetype' => $pagetype,
-			'$lbl_misc' => t('Miscellaneous Settings'),
+			'$lbl_misc' => t('Miscellaneous'),
 			'$photo_path' => array('photo_path', t('Default photo upload folder name'), get_pconfig(local_channel(),'system','photo_path'), t('%Y - current year, %m -  current month')),
 			'$attach_path' => array('attach_path', t('Default file upload folder name'), get_pconfig(local_channel(),'system','attach_path'), t('%Y - current year, %m -  current month')),
 			'$menus' => $menu,			
 			'$menu_desc' => t('Personal menu to display in your channel pages'),
 			'$removeme' => t('Remove Channel'),
 			'$removechannel' => t('Remove this channel.'),
-			'$cal_first_day' => array('first_day', t('Start calendar week on Monday'), ((get_pconfig(local_channel(),'system','cal_first_day')) ? 1 : ''), '', $yes_no),
+			'$cal_first_day' => array('first_day', t('Calendar week begins on'), intval(get_pconfig(local_channel(),'system','cal_first_day')), t('This varies by country/culture'),
+				[   0 => t('Sunday'),
+					1 => t('Monday'),
+					2 => t('Tuesday'),
+					3 => t('Wednesday'),
+					4 => t('Thursday'),
+					5 => t('Friday'),
+					6 => t('Saturday')
+				]),
 		]);
 	
 		call_hooks('settings_form',$o);	

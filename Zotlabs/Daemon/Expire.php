@@ -27,11 +27,6 @@ class Expire {
 			db_utcnow(), db_quoteinterval('36 DAY')
 		);
 
-		/** @FIXME make this optional as it could have a performance impact on large sites */
-
-		if (intval(get_config('system', 'optimize_items')))
-			q("optimize table item");
-
 		logger('expire: start', LOGGER_DEBUG);
 
 		$site_expire = intval(get_config('system', 'default_expire_days'));
@@ -51,15 +46,18 @@ class Expire {
 				// service class default (if non-zero) over-rides the site default
 
 				$service_class_expire = service_class_fetch($rr['channel_id'], 'expire_days');
-				if (intval($service_class_expire))
+				if (intval($service_class_expire)) {
 					$channel_expire = $service_class_expire;
-				else
+				}
+				else {
 					$channel_expire = $site_expire;
-	
+				}
+				
 				if (intval($channel_expire) && (intval($channel_expire) < intval($rr['channel_expire_days'])) ||
 					intval($rr['channel_expire_days'] == 0)) {
 					$expire_days = $channel_expire;
-				} else {
+				}
+				else {
 					$expire_days = $rr['channel_expire_days'];
 				}
 
@@ -75,9 +73,7 @@ class Expire {
 			// this should probably just fetch the channel_expire_days from the sys channel,
 			// but there's no convenient way to set it.
 
-			$expire_days = get_config('system', 'sys_expire_days');
-			if ($expire_days === false)
-				$expire_days = 30;
+			$expire_days = get_config('system', 'sys_expire_days',30);
 
 			if (intval($site_expire) && (intval($site_expire) < intval($expire_days))) {
 				$expire_days = $site_expire;
@@ -85,9 +81,10 @@ class Expire {
 
 			logger('Expire: sys interval: ' . $expire_days, LOGGER_DEBUG);
 	
-			if ($expire_days)
+			if ($expire_days) {
 				item_expire($x['channel_id'], $expire_days, $commented_days);
-
+			}
+			
 			logger('Expire: sys: done', LOGGER_DEBUG);
 		}
 	}

@@ -1496,12 +1496,12 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 			'allow_exec' => $allow_exec
 	];
 	/**
-	 * @hooks item_store
+	 * @hooks item_store_before
 	 *   Called when item_store() stores a record of type item.
 	 *   * \e array \b item
 	 *   * \e boolean \b allow_exec
 	 */
-	call_hooks('item_store', $d);
+	call_hooks('item_store_before', $d);
 	$arr = $d['item'];
 	$allow_exec = $d['allow_exec'];
 
@@ -1989,13 +1989,13 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 			'allow_exec' => $allow_exec
 	];
 	/**
-	 * @hooks item_store_update
+	 * @hooks item_store_update_before
 	 *   Called when item_store_update() is called to update a stored item. It
 	 *   overwrites the function's parameters $arr and $allow_exec.
 	 *   * \e array \b item
 	 *   * \e boolean \b allow_exec
 	 */
-	call_hooks('item_store_update', $d);
+	call_hooks('item_store_update_before', $d);
 	$arr = $d['item'];
 	$allow_exec = $d['allow_exec'];
 
@@ -3904,7 +3904,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 
 		$contact_str = '';
 
-		$contacts = AccessList::members($r[0]['id']);
+		$contacts = AccessList::members($uid,$r[0]['id']);
 		if ($contacts) {
 			foreach($contacts as $c) {
 				if($contact_str)

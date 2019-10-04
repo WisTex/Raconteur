@@ -17,6 +17,9 @@ class Apschema extends \Zotlabs\Web\Controller {
 				'ostatus'            => 'http://ostatus.org#',
 				'conversation'       => 'ostatus:conversation',
 				'sensitive'          => 'as:sensitive',
+				'movedTo'            => 'as:movedTo',
+				'copiedTo'           => 'as:copiedTo',
+				'alsoKnownAs'        => 'as:alsoKnownAs',
 				'inheritPrivacy'     => 'as:inheritPrivacy',
 				'commentPolicy'      => 'zot:commentPolicy',
 				'topicalCollection'  => 'zot:topicalCollection',
@@ -24,7 +27,6 @@ class Apschema extends \Zotlabs\Web\Controller {
 				'emojiReaction'      => 'zot:emojiReaction',
 				'expires'            => 'zot:expires',
 				'directMessage'      => 'zot:directMessage',
-				'alsoKnownAs'        => 'zot:alsoKnownAs',
 				'replyTo'            => 'zot:replyTo'
 			]
 		];

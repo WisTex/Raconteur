@@ -19,7 +19,6 @@
 				<div id="basic-settings-collapse" class="collapse show" role="tabpanel" aria-labelledby="basic-settings" data-parent="#settings">
 					<div class="section-content-tools-wrapper">
 						{{include file="field_input.tpl" field=$username}}
-						{{include file="field_select_grouped.tpl" field=$timezone}}
 						{{include file="field_input.tpl" field=$defloc}}
 						{{include file="field_checkbox.tpl" field=$allowloc}}
 						{{include file="field_checkbox.tpl" field=$adult}}
@@ -83,7 +82,6 @@
 							{{$suggestme}}
 							{{include file="field_input.tpl" field=$expire}}
 							{{include file="field_checkbox.tpl" field=$hyperdrive}}
-							{{$activitypub}}
 						</div>
 						{{if $permcat_enable}}
 						{{include file="field_select.tpl" field=$defpermcat}}
@@ -98,6 +96,31 @@
 					</div>
 				</div>
 			</div>
+			{{if $apconfig}}
+			<div class="panel">
+				<div class="section-subtitle-wrapper" role="tab" id="apub-settings">
+					<h3>
+						<a data-toggle="collapse" data-target="#apub-settings-collapse" href="#">
+							{{$apheader}}
+						</a>
+					</h3>
+				</div>
+				<div id="apub-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="apub-settings" data-parent="#settings">
+					<div class="section-content-tools-wrapper">
+						<div class="section-content-info-wrapper">
+						{{$apdoc}}
+						</div>
+						{{$activitypub}}
+						<div class="settings-submit-wrapper" >
+							<button type="submit" name="submit" class="btn btn-primary">{{$submit}}</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			{{else}}
+			{{$activitypub}}
+			{{/if}}
+			
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="notification-settings">
 					<h3>
@@ -156,7 +179,6 @@
 									{{include file="field_intcheckbox.tpl" field=$vnotify16}}
 								{{/if}}
 								{{include file="field_intcheckbox.tpl" field=$always_show_in_notices}}
-								{{include file="field_input.tpl" field=$evdays}}
 							</div>
 						</div>
 						{{if $notify_addon}}
@@ -168,7 +190,30 @@
 					</div>
 				</div>
 			</div>
-			
+			<div class="panel">
+				<div class="section-subtitle-wrapper" role="tab" id="time-settings">
+					<h3>
+						<a data-toggle="collapse" data-target="#time-settings-collapse" href="#" aria-expanded="true" aria-controls="time-settings-collapse">
+							{{$lbl_time}}
+						</a>
+					</h3>
+				</div>
+				<div id="time-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="time-settings" data-parent="#settings" >
+					<div class="section-content-tools-wrapper">
+
+						{{include file="field_select_grouped.tpl" field=$timezone}}
+						{{include file="field_select.tpl" field=$cal_first_day}}
+						{{include file="field_input.tpl" field=$evdays}}
+
+						<div class="settings-submit-wrapper" >
+							<button type="submit" name="submit" class="btn btn-primary">{{$submit}}</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="miscellaneous-settings">
 					<h3>
@@ -179,6 +224,10 @@
 				</div>
 				<div id="miscellaneous-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="miscellaneous-settings" data-parent="#settings" >
 					<div class="section-content-tools-wrapper">
+						<div class="section-content-info-wrapper">
+						{{$miscdoc}}
+						</div>
+
 						{{if $profselect}}
 						<label for="contact-profile-selector">{{$profseltxt}}</label>
 						{{$profselect}}
@@ -193,7 +242,6 @@
 							</select>
 						</div>
 						{{/if}}
-						{{include file="field_checkbox.tpl" field=$cal_first_day}}
 						{{if $misc_addon}}
 						{{$misc_addon}}
 						{{/if}}

@@ -8,11 +8,12 @@ class Safe extends Controller {
 
 	function init() {
 
-		if (array_key_exists('unsafe',$_SESSION) && intval($_SESSION['unsafe'])) {
-			$_SESSION['unsafe'] = 0;
+		$x = get_safemode();
+		if ($x) {
+			$_SESSION['safemode'] = 0;
 		}
 		else {
-			$_SESSION['unsafe'] = 1;
+			$_SESSION['safemode'] = 1;
 		}
 		goaway(z_root());
 	}

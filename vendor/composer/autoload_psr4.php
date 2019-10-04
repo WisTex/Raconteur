@@ -19,7 +19,6 @@ return array(
     'Sabre\\DAVACL\\' => array($vendorDir . '/sabre/dav/lib/DAVACL'),
     'Sabre\\CardDAV\\' => array($vendorDir . '/sabre/dav/lib/CardDAV'),
     'Sabre\\CalDAV\\' => array($vendorDir . '/sabre/dav/lib/CalDAV'),
-    'Recurr\\Test\\' => array($vendorDir . '/simshaun/recurr/tests'),
     'Recurr\\' => array($vendorDir . '/simshaun/recurr/src/Recurr'),
     'Ramsey\\Uuid\\' => array($vendorDir . '/ramsey/uuid/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),

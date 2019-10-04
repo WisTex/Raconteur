@@ -94,7 +94,7 @@ class Activity_filter {
 			}
 			$tabs[] = [
 				'id' => 'privacy_groups',
-				'label' => t('Access Lists'),
+				'label' => t('Lists'),
 				'icon' => 'users',
 				'url' => '#',
 				'sel' => (($filter_active == 'group') ? true : false),

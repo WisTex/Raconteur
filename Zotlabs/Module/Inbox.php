@@ -1,6 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
@@ -24,6 +25,8 @@ class Inbox extends Controller {
 
 		$sys_disabled = ((Config::Get('system','disable_discover_tab') || Config::Get('system','disable_activitypub_discover_tab'))  ? true : false);
 
+		logger('inbox_args: ' . print_r(App::$argv,true));
+		
 		$is_public = false;
 
 		if (argc() == 1 || argv(1) === '[public]') {
@@ -43,6 +46,13 @@ class Inbox extends Controller {
 		$hsig = HTTPSig::verify($data);
 
 		$AS = new ActivityStreams($data);
+		if ($AS->is_valid() && $AS->type === 'Announce' && is_array($AS->obj)
+			&& array_key_exists('object',$AS->obj) && array_key_exists('actor',$AS->obj)) {
+			// This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
+			// Reparse the encapsulated Activity and use that instead
+			logger('relayed activity',LOGGER_DEBUG);
+			$AS = new ActivityStreams($AS->obj);
+		}
 
 		//logger('debug: ' . $AS->debug());
 
@@ -59,6 +69,7 @@ class Inbox extends Controller {
 			}
 			return;
 		}
+		
 
 		// $observer_hash in this case is the sender
 
@@ -168,6 +179,8 @@ class Inbox extends Controller {
 			if (! get_pconfig($channel['channel_id'],'system','activitypub',true)) {
 				continue;
 			}
+			
+			logger('inbox_channel: ' . $channel['channel_address'],LOGGER_DEBUG);
 
 			switch ($AS->type) {
 				case 'Follow':

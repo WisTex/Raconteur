@@ -38,7 +38,7 @@ class Contactgroup extends Controller {
 				killme();
 			}
 	
-			$members = AccessList::members($group['id']);
+			$members = AccessList::members(local_channel(),$group['id']);
 			$preselected = ids_to_array($members,'xchan_hash');
 	
 			if ($change) {

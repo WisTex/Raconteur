@@ -112,7 +112,7 @@
 				{{foreach $responses as $verb=>$response}}
 					{{if $response.count}}
 					<div class="btn-group">
-						<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle" data-toggle="dropdown" id="wall-item-{{$verb}}-{{$id}}">{{$response.count}} {{$response.button}}</button>
+						<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle" data-toggle="dropdown" id="wall-item-{{$verb}}-{{$id}}">{{$response.button}}</button>
 						{{if $response.list_part}}
 						<ul class="dropdown-menu" role="menu" aria-labelledby="wall-item-{{$verb}}-{{$id}}">{{foreach $response.list_part as $liker}}<li role="presentation">{{$liker}}</li>{{/foreach}}</ul>
 						{{else}}

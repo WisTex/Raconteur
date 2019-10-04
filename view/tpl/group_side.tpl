@@ -14,7 +14,7 @@
 			</li>
 			{{/foreach}}
 			<li class="nav-item">
-				<a class="nav-link" href="alist/new" title="{{$createtext}}" ><i class="fa fa-plus-circle"></i> {{$createtext}}</a>
+				<a class="nav-link" href="lists/new" title="{{$createtext}}" ><i class="fa fa-plus-circle"></i> {{$createtext}}</a>
 			</li>
 		</ul>
 

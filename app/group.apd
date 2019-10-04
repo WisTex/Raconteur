@@ -1,6 +1,6 @@
-version: 1
-url: $baseurl/alist
+version: 2
+url: $baseurl/lists
 requires: local_channel
-name: Access Lists
+name: Lists
 photo: icon:users
 categories: Networking
