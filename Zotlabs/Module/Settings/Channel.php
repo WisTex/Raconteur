@@ -457,7 +457,7 @@ class Channel {
 			'$nickname' => (($intl_nickname === $webbie) ? $webbie : $intl_nickname . '&nbsp;(' . $webbie . ')'),
 			'$compat' => t('Friends using compatible applications can use this address to connect with you.'),
 			'$subdir' => $subdir,
-			'$davdesc' => t('Your files/photos are accessible as a network drive via WebDAV at'),
+			'$davdesc' => t('Your files/photos are accessible as a network drive at'),
 			'$davpath' => z_root() . '/dav/' . $nickname,
 			'$windows' => t('(Windows)'),
 			'$other' => t('(other platforms)'),
@@ -524,7 +524,7 @@ class Channel {
 		}
 
 		$apheader = t('ActivityPub');
-		$apdoc = t('ActivityPub is an emerging internet standard for social communications. ') . t('It provides access to a large and growing number of existing users and supported software applications, however it is still evolving. If this is enabled you will almost certainly encounter compatibility issues, with varying levels of severity and personal impact. ') . EOL . t('Your system administrator has allowed this experimental service on this website. Please disable it if you prefer a bit more stability in your life.');
+		$apdoc = t('ActivityPub is an emerging internet standard for social communications. ') . t('It provides access to a large and growing number of existing users and supported software applications, however it is still evolving. If this is enabled you will obtain much greater social reach, however you will almost certainly encounter compatibility issues, with varying levels of severity and personal impact. ') . EOL . t('Your system administrator has allowed this experimental service on this website. Please disable it if you prefer a bit more stability in your life.');
 
 		$permissions_set = (($permissions_role != 'custom') ? true : false);
 
