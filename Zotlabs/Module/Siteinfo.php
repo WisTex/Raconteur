@@ -2,6 +2,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\System;
+use Zotlabs\Lib\Config;
 use Zotlabs\Web\Controller;
 
 class Siteinfo extends Controller {
@@ -15,11 +16,9 @@ class Siteinfo extends Controller {
 		
 	function get() {
 
-		if(! get_config('system','activitypub')) {
-			$federated = [ 'zot6' ];
-		}
-		else {
-			$federated = [ 'zot6','activitypub' ];
+		$federated = 'Zot6';
+		if (Config::get('system','activitypub')) {
+			$federated .= ', ActivityPub';
 		}
 
 
@@ -41,8 +40,8 @@ class Siteinfo extends Controller {
 				'$transport_link' => '<a href="https://zotlabs.com">https://zotlabs.com</a>',
 
 				'$ebs' => System::ebs(),
-				'$additional_text' => t('Additional federated transport protocols:'),
-				'$additional_fed' => implode(', ',array_unique($federated)),
+				'$additional_text' => t('Federated transport protocols:'),
+				'$additional_fed' => $federated,
 				'$prj_version' => ((get_config('system','hidden_version_siteinfo')) ? '' : sprintf( t('Version %s'), System::get_project_version())),
 				'$prj_linktxt' => t('Project homepage'),
 				'$prj_srctxt' => t('Developer homepage'),
