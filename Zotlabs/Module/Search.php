@@ -168,8 +168,7 @@ class Search extends \Zotlabs\Web\Controller {
 				$r = null;
 						
 				if (local_channel()) {
-					$r = q("SELECT mid, MAX(id) as item_id from item
-						WHERE ((item.allow_cid = ''  AND item.allow_gid = '' AND item.deny_cid  = '' AND item.deny_gid  = '' AND item_private = 0 ) OR item.uid = %d ) 
+					$r = q("SELECT mid, MAX(id) as item_id from item where uid = %d
 						$item_normal
 						$sql_extra
 						group by mid, created order by created desc $pager_sql ",
@@ -177,10 +176,7 @@ class Search extends \Zotlabs\Web\Controller {
 					);
 				}
 				if ($r === null) {
-					$r = q("SELECT mid, MAX(id) as item_id from item
-						WHERE (( item.allow_cid = ''  AND item.allow_gid = '' AND item.deny_cid  = ''
-						AND item.deny_gid  = '' AND item_private = 0 )
-							$pub_sql )
+					$r = q("SELECT mid, MAX(id) as item_id from item $pub_sql
 						$item_normal
 						$sql_extra 
 						group by mid, created order by created desc $pager_sql"

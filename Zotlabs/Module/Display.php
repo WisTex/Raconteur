@@ -122,7 +122,7 @@ class Display extends Controller {
 //			\App::$poi = $x[0];
 		}
 
-		//if the item is to be moderated redirect to /moderate
+		// if the item is to be moderated redirect to /moderate
 		if($target_item['item_blocked'] == ITEM_MODERATED) {
 			goaway(z_root() . '/moderate/' . $target_item['id']);
 		}
@@ -283,33 +283,21 @@ class Display extends Controller {
 			}
 
 			if($r === null) {
-				$r = q("SELECT item.id as item_id from item
-					WHERE mid = '%s'
-					AND (((( item.allow_cid = ''  AND item.allow_gid = '' AND item.deny_cid  = '' 
-					AND item.deny_gid  = '' AND item_private = 0 ) 
-					and uid != 0))
-					$sql_extra )
-					$item_normal
-					limit 1",
+				$r = q("SELECT item.id as item_id from item WHERE mid = '%s' $sql_extra $item_normal limit 1",
 					dbesc($target_item['parent_mid'])
 				);
 			}
 		}
 	
-		elseif($update && !$load) {
+		elseif ($update && !$load) {
 			$r = null;
 
 			require_once('include/channel.php');
 			$sys = get_sys_channel();
 			$sysid = $sys['channel_id'];
 
-			if(local_channel()) {
-				$r = q("SELECT item.parent AS item_id from item
-					WHERE uid = %d
-					and parent_mid = '%s'
-					$item_normal_update
-					$simple_update
-					limit 1",
+			if (local_channel()) {
+				$r = q("SELECT item.parent AS item_id from item WHERE uid = %d and parent_mid = '%s' $item_normal_update $simple_update limit 1",
 					intval(local_channel()),
 					dbesc($target_item['parent_mid'])
 				);
@@ -319,15 +307,7 @@ class Display extends Controller {
 			}
 
 			if(! $r) {
-				$r = q("SELECT item.parent AS item_id from item
-					WHERE parent_mid = '%s'
-					AND ((( item.allow_cid = ''  AND item.allow_gid = '' AND item.deny_cid  = '' 
-					AND item.deny_gid  = '' AND item_private = 0 ) 
-					and uid != 0 )
-					$sql_extra )
-					$item_normal_update
-					$simple_update
-					limit 1",
+				$r = q("SELECT item.parent AS item_id from item WHERE parent_mid = '%s' $sql_extra $item_normal_update $simple_update limit 1",
 					dbesc($target_item['parent_mid'])
 				);
 			}

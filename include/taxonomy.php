@@ -1,4 +1,4 @@
-?php /** @file */
+<?php /** @file */
 
 use Zotlabs\Lib\Apps;
 
