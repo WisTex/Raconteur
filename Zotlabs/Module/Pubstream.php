@@ -88,11 +88,6 @@ class Pubstream extends Controller {
 			$o .= status_editor($a,$x);
 			$o .= '</div>';
 		}
-
-
-
-
-
 	
 		if(! $update && !$load) {
 
@@ -162,7 +157,7 @@ class Pubstream extends Controller {
 		require_once('include/security.php');
 	
 		if($site_firehose) {
-			$uids = " and item.uid in ( " . stream_perms_api_uids(PERMS_PUBLIC) . " ) and item_private = 0  and item_wall = 1 ";
+			$uids = " and item_private = 0  and item_wall = 1 ";
 		}
 		else {
 			$sys = get_sys_channel();

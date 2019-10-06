@@ -283,24 +283,15 @@ class Display extends Controller {
 			}
 
 			if($r === null) {
-
-				// in case somebody turned off public access to sys channel content using permissions
-				// make that content unsearchable by ensuring the owner uid can't match
-
-				if(! perm_is_allowed($sysid,$observer_hash,'view_stream'))
-					$sysid = 0;
-
 				$r = q("SELECT item.id as item_id from item
 					WHERE mid = '%s'
 					AND (((( item.allow_cid = ''  AND item.allow_gid = '' AND item.deny_cid  = '' 
 					AND item.deny_gid  = '' AND item_private = 0 ) 
-					and uid in ( " . stream_perms_api_uids(($observer_hash) ? (PERMS_NETWORK|PERMS_PUBLIC) : PERMS_PUBLIC) . " ))
-					OR uid = %d )
+					and uid != 0))
 					$sql_extra )
 					$item_normal
 					limit 1",
-					dbesc($target_item['parent_mid']),
-					intval($sysid)
+					dbesc($target_item['parent_mid'])
 				);
 			}
 		}
@@ -328,22 +319,16 @@ class Display extends Controller {
 			}
 
 			if(! $r) {
-				// in case somebody turned off public access to sys channel content using permissions
-				// make that content unsearchable by ensuring the owner_xchan can't match
-				if(! perm_is_allowed($sysid,$observer_hash,'view_stream'))
-					$sysid = 0;
 				$r = q("SELECT item.parent AS item_id from item
 					WHERE parent_mid = '%s'
-					AND (((( item.allow_cid = ''  AND item.allow_gid = '' AND item.deny_cid  = '' 
+					AND ((( item.allow_cid = ''  AND item.allow_gid = '' AND item.deny_cid  = '' 
 					AND item.deny_gid  = '' AND item_private = 0 ) 
-					and uid in ( " . stream_perms_api_uids(($observer_hash) ? (PERMS_NETWORK|PERMS_PUBLIC) : PERMS_PUBLIC) . " ))
-					OR uid = %d )
+					and uid != 0 )
 					$sql_extra )
 					$item_normal_update
 					$simple_update
 					limit 1",
-					dbesc($target_item['parent_mid']),
-					intval($sysid)
+					dbesc($target_item['parent_mid'])
 				);
 			}
 			$_SESSION['loadtime'] = datetime_convert();
@@ -369,7 +354,6 @@ class Display extends Controller {
 		else {
 			$items = array();
 		}
-
 
 		switch($module_format) {
 			
