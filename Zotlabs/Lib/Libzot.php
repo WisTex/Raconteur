@@ -1050,7 +1050,7 @@ class Libzot {
 		}
 
 		if (! is_array($x)) {
-			btlogger('failed communication - no useful response: ' . $x);
+			logger('no useful response: ' . $x);
 		}
 
 		if ($x) {

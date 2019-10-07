@@ -2280,18 +2280,20 @@ class Activity {
 			if (! $n) { 
 				break;
 			}
-			$a = new ActivityStreams($n);
+			// set client flag to convert objects to implied activities
+			$a = new ActivityStreams($n,null,true);
 			if ($a->type === 'Announce' && is_array($a->obj)
 				&& array_key_exists('object',$a->obj) && array_key_exists('actor',$a->obj)) {
 				// This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
 				// Reparse the encapsulated Activity and use that instead
 				logger('relayed activity',LOGGER_DEBUG);
-				$a = new ActivityStreams($a->obj);
+				$a = new ActivityStreams($a->obj,null,true);
 			}
 
 			logger($a->debug());
 
 			if (! $a->is_valid()) {
+				logger('not a valid activity');
 				break;
 			}
 			if (is_array($a->actor) && array_key_exists('id',$a->actor)) {
@@ -2300,7 +2302,7 @@ class Activity {
 
 			$item = null;
 
-			switch($a->type) {
+			switch ($a->type) {
 				case 'Create':
 				case 'Update':
 				case 'Like':
