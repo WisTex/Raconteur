@@ -207,7 +207,7 @@ ACL.prototype.on_button_hide = function(event) {
 
 ACL.prototype.set_allow = function(itemid) {
 	type = itemid[0];
-	id   = itemid.substr(1);
+	id   = decodeURIComponent(itemid.substr(1));
 	switch(type) {
 		case "g":
 			if (that.allow_gid.indexOf(id)<0) {
@@ -231,7 +231,7 @@ ACL.prototype.set_allow = function(itemid) {
 
 ACL.prototype.set_deny = function(itemid) {
 	type = itemid[0];
-	id   = itemid.substr(1);
+	id   = decodeURIComponent(itemid.substr(1));
 	switch(type) {
 		case "g":
 			if (that.deny_gid.indexOf(id)<0) {
@@ -310,8 +310,12 @@ ACL.prototype.update_view = function(value) {
 
 	else {
 		that.list.show(); //show acl-list
+		datasrc2src('#acl-list-content .list-group-item img[data-src]');
 		that.info.hide(); //hide acl-info
 		that.update_select('custom');
+		if(typeof value === 'undefined') {
+			value = 'custom';
+		}
 
 		/* jot acl */
 		if(that.allow_gid.length === 0 && that.allow_cid.length === 0 && that.deny_gid.length === 0 && that.deny_cid.length === 0 && value === 'custom') {
@@ -334,7 +338,7 @@ ACL.prototype.update_view = function(value) {
 		$("#acl-list-content .acl-list-item").each(function() {
 			itemid = $(this).attr('id');
 			type = itemid[0];
-			id   = itemid.substr(1);
+			id   = decodeURIComponent(itemid.substr(1));
 
 			btshow = $(this).children(".acl-button-show").removeClass("btn-success").addClass("btn-outline-success");
 			bthide = $(this).children(".acl-button-hide").removeClass("btn-danger").addClass("btn-outline-danger");
