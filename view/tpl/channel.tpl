@@ -49,7 +49,7 @@
 		{{/if}}
 		<br>
 		{{if $channel.include_in_menu}}
-		<a href="manage/{{$channel.channel_id}}/noop" class="channel-menu-link">
+		<a href="manage/{{$channel.channel_id}}/menu" class="channel-menu-link">
 			<i class="fa fa-check-square-o"></i>&nbsp;{{$msg_no_include}}
 		</a>
 		{{else}}
