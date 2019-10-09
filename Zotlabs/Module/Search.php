@@ -163,36 +163,23 @@ class Search extends \Zotlabs\Web\Controller {
 			$itemspage = get_pconfig(local_channel(),'system','itemspage');
 			App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
 			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));
-	
-			// in case somebody turned off public access to sys channel content with permissions
-	
-			if (! perm_is_allowed($sys['channel_id'],$observer_hash,'view_stream'))
-				$sys['xchan_hash'] .= 'disabled';
-	
+		
 			if ($load) {
 				$r = null;
 						
 				if (local_channel()) {
-					$r = q("SELECT mid, MAX(id) as item_id from item
-						WHERE ((( item.allow_cid = ''  AND item.allow_gid = '' AND item.deny_cid  = '' AND item.deny_gid  = '' AND item_private = 0 ) 
-						OR ( item.uid = %d )) OR item.owner_xchan = '%s' )
+					$r = q("SELECT mid, MAX(id) as item_id from item where uid = %d
 						$item_normal
 						$sql_extra
 						group by mid, created order by created desc $pager_sql ",
-						intval(local_channel()),
-						dbesc($sys['xchan_hash'])
+						intval(local_channel())
 					);
 				}
 				if ($r === null) {
-					$r = q("SELECT mid, MAX(id) as item_id from item
-						WHERE (((( item.allow_cid = ''  AND item.allow_gid = '' AND item.deny_cid  = ''
-						AND item.deny_gid  = '' AND item_private = 0 )
-						and owner_xchan in ( " . stream_perms_xchans(($observer) ? (PERMS_NETWORK|PERMS_PUBLIC) : PERMS_PUBLIC) . " ))
-							$pub_sql ) OR owner_xchan = '%s')
+					$r = q("SELECT mid, MAX(id) as item_id from item $pub_sql
 						$item_normal
 						$sql_extra 
-						group by mid, created order by created desc $pager_sql",
-						dbesc($sys['xchan_hash'])
+						group by mid, created order by created desc $pager_sql"
 					);
 				}
 				if ($r) {

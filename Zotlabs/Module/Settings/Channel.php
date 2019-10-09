@@ -512,7 +512,7 @@ class Channel {
 			$autoperms  = '<input type="hidden" name="autoperms"  value="' . intval(get_pconfig(local_channel(),'system','autoperms'))  . '" />';
 		}
 
-		$hyperdrive = [ 'hyperdrive', t('Enable hyperdrive'), ((get_pconfig(local_channel(),'system','hyperdrive',true)) ? 1 : 0), t('Import public third-party conversations in which your connections participate.'), $yes_no ];
+		$hyperdrive = [ 'hyperdrive', t('Friend-of-friend conversations'), ((get_pconfig(local_channel(),'system','hyperdrive',true)) ? 1 : 0), t('Import public third-party conversations in which your connections participate.'), $yes_no ];
 
 		if (get_config('system','activitypub')) {
 			$apconfig = true;

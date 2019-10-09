@@ -336,7 +336,7 @@ function pub_tagadelic($net,$site,$limit,$recent,$safemode,$type) {
 	$count = intval($limit);
 
 	if($site) {
-    	$uids = " and item.uid in ( " . stream_perms_api_uids(PERMS_PUBLIC) . " ) and item_private = 0  and item_wall = 1 ";
+    	$uids = " and item_private = 0  and item_wall = 1 ";
 	}
     else {
         $sys = get_sys_channel();

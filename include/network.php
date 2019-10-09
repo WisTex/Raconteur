@@ -1632,6 +1632,10 @@ function get_site_info() {
 		}
 	}
 
+	$protocols = [ 'zot' ];
+	if (get_config('system','activitypub')) {
+		$protocols[] = 'activitypub';
+	}
 
 	$data = [
 		'url'                          => z_root(),
@@ -1642,6 +1646,7 @@ function get_site_info() {
 		'addon_version'                => defined('ADDON_VERSION') ? ADDON_VERSION : 'unknown',
 		'server_role'                  => System::get_server_role(),
 		'commit'                       => $commit,
+		'protocols'                    => $protocols,
 		'plugins'                      => $visible_plugins,
 		'register_policy'              =>  $register_policy[get_config('system','register_policy')],
 		'invitation_only'              => (bool) intval(get_config('system','invitation_only')),

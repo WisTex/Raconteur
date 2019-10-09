@@ -31,9 +31,8 @@ function nav($template = 'default') {
 		);
 
 		if(! $_SESSION['delegate']) {
-			$chans = q("select channel_name, channel_id from channel left join pconfig on channel_id = pconfig.uid where channel_account_id = %d and channel_removed = 0 and pconfig.cat = 'system' and pconfig.k = 'include_in_menu' and pconfig.v = '1' and channel_id != %d order by channel_name ",
-				intval(get_account_id()),
-				intval(local_channel())
+			$chans = q("select channel_name, channel_id from channel left join pconfig on channel_id = pconfig.uid where channel_account_id = %d and channel_removed = 0 and pconfig.cat = 'system' and pconfig.k = 'include_in_menu' and pconfig.v = '1' order by channel_name ",
+				intval(get_account_id())
 			);
 		}
 
