@@ -2,6 +2,9 @@
 
 namespace Zotlabs\Widget;
 
+use App;
+use Zotlabs\Lib\Apps;
+
 class Settings_menu {
 
 	function widget($arr) {
@@ -10,7 +13,7 @@ class Settings_menu {
 			return;
 
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
 		$abook_self_id = 0;
 
@@ -73,9 +76,9 @@ class Settings_menu {
 			);
 		}
 
-		if(feature_enabled(local_channel(),'oauth2_clients')) {
+		if(Apps::system_app_installed(local_channel(),'Clients')) {
 			$tabs[] =	array(
-				'label' => t('OAuth2 apps'),
+				'label' => t('Client apps'),
 				'url' => z_root() . '/settings/oauth2',
 				'selected' => ((argv(1) === 'oauth2') ? 'active' : ''),
 			);

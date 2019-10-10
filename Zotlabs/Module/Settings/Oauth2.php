@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Module\Settings;
 
+use Zotlabs\Lib\Apps;
+
 
 class Oauth2 {
 
@@ -90,7 +92,11 @@ logger('redirect: ' . $redirect);
 	}
 
 	function get() {
-			
+
+		if(! Apps::system_app_installed(local_channel(),'Clients')) {
+			return;
+		}
+
 		if((argc() > 2) && (argv(2) === 'add')) {
 			$tpl = get_markup_template("settings_oauth2_edit.tpl");
 			$o .= replace_macros($tpl, array(
