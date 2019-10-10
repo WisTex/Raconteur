@@ -3,9 +3,9 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Keyutils;
+use Zotlabs\Web\Controller;
 
-
-class Jwks extends \Zotlabs\Web\Controller {
+class Jwks extends Controller {
 
 	function init() {
 		
@@ -21,9 +21,18 @@ class Jwks extends \Zotlabs\Web\Controller {
 
 
 		$ret = [
-			'keys'                     => $keys
+			'keys' => $keys
 		];
 
-		json_return_and_die($ret);
+		if (argc() > 1) {
+			$entry = intval(argv(1));
+			if ($keys[$entry]) {
+				unset($keys[$entry]['kid']);
+				json_return_and_die($keys[$entry],'application/jwk+json');
+			}
+		}
+
+		json_return_and_die($ret,'application/jwk-set+json');
+		
 	}
 }
