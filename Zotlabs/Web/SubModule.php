@@ -28,23 +28,24 @@ class SubModule {
 	 */
 	function __construct($whicharg = 1) {
 
-		if(argc() < ($whicharg + 1))
+		if (argc() < ($whicharg + 1)) {
 			return;
+		}
 
 		$filename = 'Zotlabs/Module/' . ucfirst(argv(0)) . '/'. ucfirst(argv($whicharg)) . '.php';
 		$modname = '\\Zotlabs\\Module\\' . ucfirst(argv(0)) . '\\' . ucfirst(argv($whicharg));
 
-		if(file_exists($filename)) {
+		if (file_exists($filename)) {
 			$this->controller = new $modname();
 		}
 
 		$routes = Route::get();
 
-		if($routes) {
-			foreach($routes as $route) {
-				if(is_array($route) && strtolower($route[1]) === strtolower(argv(0)) . '/' . strtolower(argv($whicharg))) {
+		if ($routes) {
+			foreach ($routes as $route) {
+				if (is_array($route) && strtolower($route[1]) === strtolower(argv(0)) . '/' . strtolower(argv($whicharg))) {
 					include_once($route[0]);
-					if(class_exists($modname)) {
+					if (class_exists($modname)) {
 						$this->controller = new $modname;
 					}
 				}
@@ -60,11 +61,13 @@ class SubModule {
 	 */
 	function call($method) {
 
-		if(! $this->controller)
+		if (! $this->controller) {
 			return false;
+		}
 
-		if(method_exists($this->controller, $method))
+		if (method_exists($this->controller, $method)) {
 			return $this->controller->$method();
+		}
 
 		return false;
 	}

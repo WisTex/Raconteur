@@ -166,6 +166,64 @@ class OAuth2Storage extends \OAuth2\Storage\Pdo {
 
 
 
+    /**
+     * @param mixed $client_id
+     * @return mixed
+     */
+    public function getPublicKey($client_id = null)
+    {
+	
+dbg(2);
+		$r = q("select channel_pubkey from channel left join oauth_clients on channel_id = user_id where client_id = '%s'",
+			dbesc($client_id)
+		);
+dbg(0);
+		return ($r) ? $r[0]['channel_pubkey'] : false;
+	}
+	
+
+    /**
+     * @param mixed $client_id
+     * @return mixed
+     */
+    public function getPrivateKey($client_id = null)
+    {
+dbg(2);
+		$r = q("select channel_prvkey from channel left join oauth_clients on channel_id = user_id where client_id = '%s'",
+			dbesc($client_id)
+		);
+dbg(0);
+		return ($r) ? $r[0]['channel_prvkey'] : false;
+    }
+
+    /**
+     * @param mixed $client_id
+     * @return string
+     */
+    public function getEncryptionAlgorithm($client_id = null)
+    {
+        return 'RS256';
+    }
+
+
+    /**
+     * @param mixed $client_id
+     * @param $subject
+     * @return string
+     */
+    public function getClientKey($client_id, $subject)
+    {
+dbg(2);
+		$r = q("select channel_pubkey from channel left join oauth_clients on channel_id = user_id where client_id = '%s' and user_id = '%s'",
+			dbesc($client_id),
+			dbesc($subject)
+		);
+
+dbg(0);		
+		return ($r) ? $r[0]['channel_pubkey'] : false;
+    }
+
+
 
 
 }

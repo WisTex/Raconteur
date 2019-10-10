@@ -2001,7 +2001,7 @@ class Activity {
 			$s['item_private'] = 1;
 
 
-		if (array_key_exists('directMessage',$act->obj) && intval($act->obj['directMessage'])) {
+		if (is_array($act->obj) && array_key_exists('directMessage',$act->obj) && intval($act->obj['directMessage'])) {
 			$s['item_private'] = 2;
 		}
 

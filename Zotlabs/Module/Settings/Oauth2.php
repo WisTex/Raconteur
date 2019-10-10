@@ -39,7 +39,7 @@ class Oauth2 {
 			$redirect	= ((x($_POST,'redirect')) ? escape_tags(trim($_POST['redirect'])) : '');
 			$grant		= ((x($_POST,'grant')) ? escape_tags(trim($_POST['grant'])) : '');
 			$scope		= ((x($_POST,'scope')) ? escape_tags(trim($_POST['scope'])) : '');
-
+logger('redirect: ' . $redirect);
 			$ok = true;
 			if($clid == '' || $secret == '') {
 				$ok = false;
