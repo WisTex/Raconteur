@@ -65,7 +65,7 @@ class Activity extends Controller {
 			}
 
 			xchan_query($r,true);
-			$items = fetch_post_tags($r,true);
+			$items = fetch_post_tags($r,false);
 
 			$channel = channelx_by_n($items[0]['uid']);
 

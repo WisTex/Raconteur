@@ -273,14 +273,14 @@ class Notifier {
 				if (intval($target_item['item_type'] == ITEM_TYPE_CUSTOM)) {
 
 					$hookinfo=[
-						'targetitem'=>$target_item,
-						'deliver'=>false
+						'targetitem' => $target_item,
+						'deliver'    => false
 					];
 
 					call_hooks('customitem_deliver',$hookinfo);
 				}
 
-				if (!$hookinfo['deliver']) {
+				if (! $hookinfo['deliver']) {
 					logger('notifier: target item not forwardable: type ' . $target_item['item_type'], LOGGER_DEBUG);
 					return;
 				}
