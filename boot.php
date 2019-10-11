@@ -2504,3 +2504,4 @@ function get_safemode() {
 	}
 	return intval($_SESSION['safemode']);
 }
+

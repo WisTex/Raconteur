@@ -6,7 +6,7 @@ namespace Zotlabs\Web;
 class HttpMeta {
 
 	private $vars = null;
-	private $og = null;
+	private $og   = null;
 
 	function __construct() {
 

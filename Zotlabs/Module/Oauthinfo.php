@@ -10,7 +10,7 @@ class Oauthinfo extends Controller {
 		$ret = [
 			'issuer'                   => z_root(),
 			'authorization_endpoint'   => z_root() . '/authorize',
-			'jwks_uri'                 => z_root() . '/jwks/0',
+			'jwks_uri'                 => z_root() . '/jwks',
 			'token_endpoint'           => z_root() . '/token',
 			'userinfo_endpoint'        => z_root() . '/userinfo',
 			'scopes_supported'         => [ 'openid', 'profile', 'email' ],
