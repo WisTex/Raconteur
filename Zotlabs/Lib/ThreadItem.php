@@ -495,7 +495,7 @@ class ThreadItem {
 			'wait' => t('Please wait'),
 			'submid' => str_replace(['+','='], ['',''], base64_encode($item['mid'])),
 			'thread_level' => $thread_level,
-			'thread_max' => intval(get_config('system','thread_maxlevel',2)) + 1
+			'thread_max' => intval(get_config('system','thread_maxlevel',10)) + 1
 		);
 
 		$arr = array('item' => $item, 'output' => $tmp_item);
