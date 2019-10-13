@@ -2504,6 +2504,18 @@ function tag_deliver($uid, $item_id) {
 	}
 
 
+	if ($is_group && intval($item['item_thread_top']) && intval($item['item_wall']) && $item['author_xchan'] !== $item['owner_xchan']) {
+		// group delivery via W2W
+		logger('rewriting W2W post for ' . $u['channel_address']);
+		start_delivery_chain($u, $item, $item_id, 0, false);
+		q("update item set item_wall = 0 where id = %d",
+			intval($item_id)
+		);
+		return;
+	}
+
+
+
 	/*
 	 * A "union" is a message which our channel has sourced from another channel.
 	 * This sets up a second delivery chain just like forum tags do.
