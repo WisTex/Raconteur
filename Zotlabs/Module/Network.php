@@ -157,9 +157,9 @@ class Network extends Controller {
 				notice( t('No such channel') . EOL );
 				goaway(z_root() . '/network');
 			}
-			if (! $pf) {
-				$def_acl = [ 'allow_cid' => '<' . $cid_r[0]['abook_xchan'] . '>', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => '' ];
-			}
+
+			$def_acl = [ 'allow_cid' => '<' . $cid_r[0]['abook_xchan'] . '>', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => '' ];
+
 		}
 	
 		if (! $update) {
@@ -180,7 +180,7 @@ class Network extends Controller {
 				'deny_gid'  => $channel['channel_deny_gid']
 			];
 
-			$private_editing = ((($group || $cid) && (! intval($_GET['pf']))) ? true : false);
+			$private_editing = (($group || $cid) ? true : false);
 	
 			$x = [
 				'is_owner'            => true,
