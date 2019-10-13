@@ -59,21 +59,18 @@ class ActivityPub {
 			$jmsg = $signed_msg;
 		}
 		else {
-
 			$ti = Activity::encode_activity($target_item, true);
 			if (! $ti) {
 				return;
 			}
 
-			if ($target_item['mid'] !== $target_item['parent_mid']) {
-				$token = IConfig::get($target_item['id'],'ocap','relay');
-				if ($token) {
-					if (defined('USE_BEARCAPS')) {
-						$ti['id'] = 'bear:?u=' . $ti['id'] . '&t=' . $token;
-					}
-					else {
-						$ti['id'] = $ti['id'] . '?token=' . $token;
-					}
+			$token = IConfig::get($target_item['id'],'ocap','relay');
+			if ($token) {
+				if (defined('USE_BEARCAPS')) {
+					$ti['id'] = 'bear:?u=' . $ti['id'] . '&t=' . $token;
+				}
+				else {
+					$ti['id'] = $ti['id'] . '?token=' . $token;
 				}
 			}
 
@@ -153,7 +150,6 @@ class ActivityPub {
 					logger('activitypub_process_outbound: no recipients');
 					return;
 				}
-
 		
 				foreach ($r as $contact) {
 

@@ -6,6 +6,7 @@ use App;
 use URLify;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Connect;
 use Zotlabs\Daemon\Master;
 
 require_once('include/import.php');
@@ -104,7 +105,7 @@ class Import extends Controller {
 			}
 		}
 
-		if(! $data) {
+		if (! $data) {
 			logger('Empty import file.');
 			notice( t('Imported file is empty.') . EOL);
 			return;
@@ -239,7 +240,7 @@ class Import extends Controller {
 
 				$hash = Libzot::make_xchan_hash($xchan['xchan_guid'],$xchan['xchan_pubkey']);
 
-				if($xchan['xchan_network'] === 'zot6' && $hash !== $xchan['xchan_hash']) {
+				if ($xchan['xchan_network'] === 'zot6' && $hash !== $xchan['xchan_hash']) {
 					logger('forged xchan: ' . print_r($xchan,true));
 					continue;
 				}
@@ -353,18 +354,25 @@ class Import extends Controller {
 				$abook['abook_account'] = $account_id;
 				$abook['abook_channel'] = $channel['channel_id'];
 
-				if(array_key_exists('abook_instance',$abook) && $abook['abook_instance'] && strpos($abook['abook_instance'],z_root()) === false) {
+				$reconnect = false;
+
+				if (array_key_exists('abook_instance',$abook) && $abook['abook_instance'] && strpos($abook['abook_instance'],z_root()) === false) {
 					$abook['abook_not_here'] = 1;
+					if (! ($abook['abook_pending'] || $abook['abook_blocked']))  {
+						$reconnect = true;
+					}
 				} 
 
-				if($abook['abook_self']) {
+				if ($abook['abook_self']) {
 					$ctype = 0;
 					$role = get_pconfig($channel['channel_id'],'system','permissions_role');
-					if(strpos($role,'collection' !== false))
+					if (strpos($role,'collection' !== false)) {
 						$ctype = 2;
-					elseif(strpos($role,'group') !== false)
+					}
+					elseif (strpos($role,'group') !== false) {
 						$ctype = 1;
-					if($ctype) {
+					}
+					if ($ctype) {
 						q("update xchan set xchan_type = %d where xchan_hash = '%s' ",
 							intval($ctype),
 							dbesc($abook['abook_xchan'])
@@ -372,10 +380,12 @@ class Import extends Controller {
 					}
 				}
 				else {
-					if($max_friends !== false && $friends > $max_friends)
+					if ($max_friends !== false && $friends > $max_friends) {
 						continue;
-					if($max_feeds !== false && intval($abook['abook_feed']) && ($feeds > $max_feeds))
+					}
+					if ($max_feeds !== false && intval($abook['abook_feed']) && ($feeds > $max_feeds)) {
 						continue;
+					}
 				}
 
 				$r = q("select abook_id from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
@@ -411,6 +421,9 @@ class Import extends Controller {
 						set_abconfig($channel['channel_id'],$abc['xchan'],$abc['cat'],$abc['k'],$abc['v']);
 					}
 				}
+				if ($reconnect) {
+					Connect::connect($channel,$abook['abook_xchan']);
+				}
 			}
 
 			logger('import step 8');
@@ -434,8 +447,8 @@ class Import extends Controller {
 			$r = q("select * from pgrp where uid = %d",
 				intval($channel['channel_id'])
 			);
-			if($r) {
-				foreach($r as $rr) {
+			if ($r) {
+				foreach ($r as $rr) {
 					$saved[$rr['hash']]['new'] = $rr['id'];
 				}
 			}
@@ -448,8 +461,9 @@ class Import extends Controller {
 				unset($group_member['id']);
 				$group_member['uid'] = $channel['channel_id'];
 				foreach ($saved as $x) {
-					if($x['old'] == $group_member['gid'])
+					if ($x['old'] == $group_member['gid']) {
 						$group_member['gid'] = $x['new'];
+					}
 				}
 				create_table_from_array('pgrp_member', $group_member);
 			}

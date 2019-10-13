@@ -2001,10 +2001,12 @@ class Activity {
 			$s['item_private'] = 1;
 
 
-		if (array_key_exists('directMessage',$act->obj) && intval($act->obj['directMessage'])) {
-			$s['item_private'] = 2;
+		if (is_array($act->obj)) {
+			if (array_key_exists('directMessage',$act->obj) && intval($act->obj['directMessage'])) {
+				$s['item_private'] = 2;
+			}
 		}
-
+		
 		set_iconfig($s,'activitypub','recips',$act->raw_recips);
 
 		if ($parent) {
@@ -2036,6 +2038,13 @@ class Activity {
 		// This is not part of the activitypub protocol - we might change this to show all public posts in pubstream at some point.
 
 		$pubstream = ((is_array($act->obj) && array_key_exists('to', $act->obj) && is_array($act->obj['to']) && in_array(ACTIVITY_PUBLIC_INBOX, $act->obj['to'])) ? true : false);
+
+		// very unpleasant and imperfect way of determining a Mastodon DM
+		
+		if ($act->raw_recips && array_key_exists('to',$act->raw_recips) && count($act->raw_recips['to'] === 1) && $act->raw_recips['to'][0] === channel_url($channel) && ! $act->raw_recips['cc']) {
+			$item['item_private'] = 2;
+		}
+
 
 		if ($item['parent_mid'] && $item['parent_mid'] !== $item['mid']) {
 			$is_child_node = true;

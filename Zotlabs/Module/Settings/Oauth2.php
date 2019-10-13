@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Module\Settings;
 
+use Zotlabs\Lib\Apps;
+
 
 class Oauth2 {
 
@@ -39,7 +41,7 @@ class Oauth2 {
 			$redirect	= ((x($_POST,'redirect')) ? escape_tags(trim($_POST['redirect'])) : '');
 			$grant		= ((x($_POST,'grant')) ? escape_tags(trim($_POST['grant'])) : '');
 			$scope		= ((x($_POST,'scope')) ? escape_tags(trim($_POST['scope'])) : '');
-
+logger('redirect: ' . $redirect);
 			$ok = true;
 			if($clid == '' || $secret == '') {
 				$ok = false;
@@ -90,7 +92,11 @@ class Oauth2 {
 	}
 
 	function get() {
-			
+
+		if(! Apps::system_app_installed(local_channel(),'Clients')) {
+			return;
+		}
+
 		if((argc() > 2) && (argv(2) === 'add')) {
 			$tpl = get_markup_template("settings_oauth2_edit.tpl");
 			$o .= replace_macros($tpl, array(
@@ -161,15 +167,26 @@ class Oauth2 {
 		}
 			
 
-		$r = q("SELECT oauth_clients.*, oauth_access_tokens.access_token as oauth_token, (oauth_clients.user_id = %d) AS my 
-				FROM oauth_clients
-				LEFT JOIN oauth_access_tokens ON oauth_clients.client_id=oauth_access_tokens.client_id AND
-                                                                 oauth_clients.user_id=oauth_access_tokens.user_id
-				WHERE oauth_clients.user_id IN (%d,0)",
-				intval(local_channel()),
+		$r = q("SELECT * FROM oauth_clients WHERE user_id = %d ",
 				intval(local_channel())
 		);
-			
+
+		$c = q("select client_id, access_token from oauth_access_tokens where user_id = %d",
+			intval(local_channel())
+		);
+		if ($r && $c) {
+			foreach($c as $cv) {
+				for($x = 0; $x < count($r); $x ++) {
+					if($r[$x]['client_id'] === $cv['client_id']) {
+						if(! array_key_exists($r[$x]['tokens'])) {
+							$r[$x]['tokens'] = [];
+						}
+						$r[$x]['tokens'][] = $cv['access_token'];
+					}
+				}
+			}
+		}
+
 		$tpl = get_markup_template("settings_oauth2.tpl");
 		$o .= replace_macros($tpl, array(
 			'$form_security_token' => get_form_security_token("settings_oauth2"),

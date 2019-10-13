@@ -5,6 +5,7 @@ namespace Zotlabs\Lib;
 use App;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Queue;
+use Zotlabs\Lib\Connect;
 use Zotlabs\Daemon\Master;
 
 class Libsync {
@@ -510,8 +511,12 @@ class Libsync {
 					if(! array_key_exists('abook_xchan',$clean))
 						continue;
 
+					$reconnect = false;
 					if(array_key_exists('abook_instance',$clean) && $clean['abook_instance'] && strpos($clean['abook_instance'],z_root()) === false) {
 						$clean['abook_not_here'] = 1;
+						if (! ($abook['abook_pending'] || $abook['abook_blocked']))  {
+							$reconnect = true;
+						}
 					}
 
 
@@ -565,6 +570,9 @@ class Libsync {
 						foreach($abconfig as $abc) {
 							set_abconfig($channel['channel_id'],$abc['xchan'],$abc['cat'],$abc['k'],$abc['v']);
 						}
+					}
+					if ($reconnect) {
+						Connect::connect($channel,$abook['abook_xchan']);
 					}
 				}
 			}

@@ -318,6 +318,7 @@ class Apps {
 			'Cards' => t('Cards'),
 			'Calendar' => t('Calendar'),
 			'Categories' => t('Categories'),
+			'Clients' => t('Clients'),
 			'Admin' => t('Site Admin'),
 			'Content Filter' => t('Content Filter'),
 			'Content Import' => t('Content Import'),

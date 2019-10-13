@@ -48,7 +48,7 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '19.10.9' );
+define ( 'STD_VERSION',             '19.10.14' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1236 );
@@ -2504,3 +2504,4 @@ function get_safemode() {
 	}
 	return intval($_SESSION['safemode']);
 }
+

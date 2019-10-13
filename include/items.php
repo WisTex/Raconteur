@@ -19,6 +19,7 @@ use Zotlabs\Lib\IConfig;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\ThreadListener;
 use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Daemon\Master;
 
@@ -2452,81 +2453,68 @@ function get_item_contact($item,$contacts) {
  */
 function tag_deliver($uid, $item_id) {
 
+	$role = get_pconfig($uid,'system','permissions_role');
+	$rolesettings = PermissionRoles::role_perms($role);
+	$channel_type = isset($rolesettings['channel_type']) ? $rolesettings['channel_type'] : 'normal';
+
+	$is_group = (($channel_type === 'group') ? true : false);
+	$is_collection = (($channel_type === 'collection') ? true : false);
+
 	$mention = false;
 
 	/*
 	 * Fetch stuff we need - a channel and an item
 	 */
 
-	$u = q("select * from channel left join xchan on channel_hash = xchan_hash where channel_id = %d limit 1",
-		intval($uid)
-	);
-	if(! $u)
+	$u = channelx_by_n($uid);
+	if (! $u) {
 		return;
+	}
 
 	$i = q("select * from item where id = %d and uid = %d limit 1",
 		intval($item_id),
 		intval($uid)
 	);
-	if(! $i)
+	if (! $i) {
 		return;
+	}
 
 	xchan_query($i,true);
 	$i = fetch_post_tags($i);
 
-	$item = $i[0];
+	$item = array_shift($i);
 
-	if(($item['source_xchan']) && intval($item['item_uplink'])
+	if (($item['source_xchan']) && intval($item['item_uplink'])
 		&& intval($item['item_thread_top']) && ($item['edited'] != $item['created'])) {
 
 		// this is an update (edit) to a post which was already processed by us and has a second delivery chain
 		// Just start the second delivery chain to deliver the updated post
 		// after resetting ownership and permission bits
-		logger('updating edited tag_deliver post for ' . $u[0]['channel_address']);
-		start_delivery_chain($u[0], $item, $item_id, 0, true);
+		
+		logger('updating edited tag_deliver post for ' . $u['channel_address']);
+		start_delivery_chain($u, $item, $item_id, 0, true);
 		return;
 	}
 
-	/*
-	 * Seems like a good place to plug in a poke notification.
-	 */
-
-	if (stristr($item['verb'],ACTIVITY_POKE)) {
-		$poke_notify = true;
-
-		if(($item['obj_type'] == "") || ($item['obj_type'] !== ACTIVITY_OBJ_PERSON) || (! $item['obj']))
-			$poke_notify = false;
-
-		$obj = json_decode($item['obj'],true);
-		if($obj) {
-			if($obj['id'] !== $u[0]['channel_hash'])
-				$poke_notify = false;
-		}
-		if(intval($item['item_deleted']))
-			$poke_notify = false;
-
-		$verb = urldecode(substr($item['verb'],strpos($item['verb'],'#')+1));
-		if($poke_notify) {
-			Enotify::submit(array(
-				'to_xchan'     => $u[0]['channel_hash'],
-				'from_xchan'   => $item['author_xchan'],
-				'type'         => NOTIFY_POKE,
-				'item'         => $item,
-				'link'         => $i[0]['llink'],
-				'verb'         => ACTIVITY_POKE,
-				'activity'     => $verb,
-				'otype'        => 'item'
-			));
-		}
+	if ($is_group && intval($item['item_private']) === 2) {
+		// group delivery via DM
+		logger('group DM delivery for ' . $u['channel_address']);
+		start_delivery_chain($u, $item, $item_id, 0, false);
+		return;
 	}
 
-	/*
-	 * Do community tagging
-	 */
 
-	if($item['obj_type'] === ACTIVITY_OBJ_TAGTERM) {
-		item_community_tag($u[0],$item);
+	if ($is_group && intval($item['item_thread_top']) && intval($item['item_wall']) && $item['author_xchan'] !== $item['owner_xchan']) {
+		// group delivery via W2W
+		logger('rewriting W2W post for ' . $u['channel_address']);
+		start_delivery_chain($u, $item, $item_id, 0, false);
+		q("update item set item_wall = 0 where id = %d",
+			intval($item_id)
+		);
+		return;
 	}
+
+
 
 	/*
 	 * A "union" is a message which our channel has sourced from another channel.
@@ -2535,21 +2523,21 @@ function tag_deliver($uid, $item_id) {
 	 */
 
 	$union = check_item_source($uid,$item);
-	if($union)
+	if ($union) {
 		logger('check_item_source returns true');
+	}
 
-
-	// This might be a followup (e.g. comment) by the original post author to a tagged forum
+	// This might be a followup (e.g. comment) by the original post author to an already uplinked item
 	// If so setup a second delivery chain
 
-	if( ! intval($item['item_thread_top'])) {
+	if (! intval($item['item_thread_top'])) {
 		$x = q("select * from item where id = parent and parent = %d and uid = %d limit 1",
 			intval($item['parent']),
 			intval($uid)
 		);
 
-		if(($x) && intval($x[0]['item_uplink'])) {
-			start_delivery_chain($u[0],$item,$item_id,$x[0]);
+		if (($x) && intval($x[0]['item_uplink'])) {
+			start_delivery_chain($u,$item,$item_id,$x[0]);
 		}
 	}
 
@@ -2558,28 +2546,31 @@ function tag_deliver($uid, $item_id) {
 	 * Now we've got those out of the way. Let's see if this is a post that's tagged for re-delivery
 	 */
 
+
 	$terms = get_terms_oftype($item['term'],TERM_MENTION);
 
 	$pterms = get_terms_oftype($item['term'],TERM_PCATEGORY);
 
-	if($terms)
+	if ($terms) {
 		logger('Post mentions: ' . print_r($terms,true), LOGGER_DATA);
-
-	if($pterms)
+	}
+	
+	if ($pterms) {
 		logger('Post collections: ' . print_r($pterms,true), LOGGER_DATA);
+	}
+	
+	$link = normalise_link($u['xchan_url']);
 
-	$link = normalise_link($u[0]['xchan_url']);
+	if ($terms) {
+		foreach ($terms as $term) {
 
-	if($terms) {
-		foreach($terms as $term) {
-
-			if(! link_compare($term['url'],$link)) {
+			if (! link_compare($term['url'],$link)) {
 				continue;
 			}
 
 			$mention = true;
 
-			logger('Mention found for ' . $u[0]['channel_name']);
+			logger('Mention found for ' . $u['channel_name']);
 
 			$r = q("update item set item_mentionsme = 1 where id = %d",
 				intval($item_id)
@@ -2595,15 +2586,15 @@ function tag_deliver($uid, $item_id) {
 			$matches = array();
 
 			$pattern = '/[\!@]\!?\[[uz]rl\=' . preg_quote($term['url'],'/') . '\]' . preg_quote($term['term'],'/') . '\[\/[uz]rl\]/';
-			if(preg_match($pattern,$body,$matches))
+			if (preg_match($pattern,$body,$matches))
 				$tagged = true;
 
 			$pattern = '/\[[uz]rl\=' . preg_quote($term['url'],'/') . '\][\!@](.*?)\[\/[uz]rl\]/';
-			if(preg_match($pattern,$body,$matches))
+			if (preg_match($pattern,$body,$matches))
 				$tagged = true;
 
 
-			if(! $tagged ) {
+			if (! $tagged ) {
 				logger('Mention was in a reshare - ignoring');
 				continue;
 			}
@@ -2613,6 +2604,7 @@ function tag_deliver($uid, $item_id) {
 				'item' => $item,
 				'body' => $body
 			];
+
 			/**
 			 * @hooks tagged
 			 *   Called when a delivery is processed which results in you being tagged.
@@ -2620,14 +2612,15 @@ function tag_deliver($uid, $item_id) {
 			 *   * \e array \b item
 			 *   * \e string \b body
 			 */
+
 			call_hooks('tagged', $arr);
 
 			/*
-			 * Kill two birds with one stone. As long as we're here, send a mention notification.
+			 * Send a mention notification.
 			 */
 
 			Enotify::submit(array(
-				'to_xchan'     => $u[0]['channel_hash'],
+				'to_xchan'     => $u['channel_hash'],
 				'from_xchan'   => $item['author_xchan'],
 				'type'         => NOTIFY_TAGSELF,
 				'item'         => $item,
@@ -2638,22 +2631,22 @@ function tag_deliver($uid, $item_id) {
 
 		}
 	}
-	if($pterms) {
-		foreach($pterms as $term) {
+	if ($is_collection && $pterms) {
+		foreach ($pterms as $term) {
 
 			$ptagged = false;
 
-			if(! link_compare($term['url'],$link)) {
+			if (! link_compare($term['url'],$link)) {
 				continue;
 			}
 
 			$ptagged = true;
 
-			logger('Collection post found for ' . $u[0]['channel_name']);
+			logger('Collection post found for ' . $u['channel_name']);
 
 			// ptagged - keep going, next check permissions
 
-			if((! perm_is_allowed($uid,$item['author_xchan'],'write_collection')) && ($item['author_xchan'] !== $u[0]['channel_parent'])) {
+			if ((! perm_is_allowed($uid,$item['author_xchan'],'write_collection')) && ($item['author_xchan'] !== $u['channel_parent'])) {
 				logger('tag_delivery denied for uid ' . $uid . ' and xchan ' . $item['author_xchan']);
 				continue;
 			}
@@ -2662,83 +2655,29 @@ function tag_deliver($uid, $item_id) {
 			// prevent delivery looping - only proceed
 			// if the message originated elsewhere and is a top-level post
 
-			if(intval($item['item_wall']) || intval($item['item_origin']) || (! intval($item['item_thread_top'])) || ($item['id'] != $item['parent'])) {
+			if (intval($item['item_wall']) || intval($item['item_origin']) || (! intval($item['item_thread_top'])) || ($item['id'] != $item['parent'])) {
 				logger('Item was local or a comment. rejected.');
 				continue;
 			}
 
 			logger('Creating second delivery chain.');
-			start_delivery_chain($u[0],$item,$item_id,null);
+			start_delivery_chain($u,$item,$item_id,null);
 
 		}
 	}
 
-	if($union) {
-		if(intval($item['item_wall']) || intval($item['item_origin']) || (! intval($item['item_thread_top'])) || ($item['id'] != $item['parent'])) {
+	if ($union) {
+		if (intval($item['item_wall']) || intval($item['item_origin']) || (! intval($item['item_thread_top'])) || ($item['id'] != $item['parent'])) {
 			logger('Item was local or a comment. rejected.');
 			return;
 		}
 
 		logger('Creating second delivery chain.');
-		start_delivery_chain($u[0],$item,$item_id,null);
+		start_delivery_chain($u,$item,$item_id,null);
 
 	}
 
 }
-
-
-function item_community_tag($channel,$item) {
-
-
-	// We received a community tag activity for a post.
-	// See if we are the owner of the parent item and have given permission to tag our posts.
-	// If so tag the parent post.
-
-	logger('tag_deliver: community tag activity received: channel: ' . $channel['channel_name']);
-
-	$tag_the_post = false;
-	$p = null;
-
-	$j_obj = json_decode($item['obj'],true);
-	$j_tgt = json_decode($item['target'],true);
-	if($j_tgt && $j_tgt['id']) {
-		$p = q("select * from item where mid = '%s' and uid = %d limit 1",
-			dbesc($j_tgt['id']),
-			intval($channel['channel_id'])
-		);
-	}
-	if($p) {
-		xchan_query($p);
-		$items = fetch_post_tags($p,true);
-		$pitem = $items[0];
-		$auth = get_iconfig($item,'system','communitytagauth');
-		if($auth) {
-			if(Libzot::verify('tagauth.' . $item['mid'],$auth,$pitem['owner']['xchan_pubkey']) || Libzot::verify('tagauth.' . $item['mid'],$auth,$pitem['author']['xchan_pubkey'])) {
-				logger('tag_deliver: tagging the post: ' . $channel['channel_name']);
-				$tag_the_post = true;
-			}
-		}
-		else {
-			if(($pitem['owner_xchan'] === $channel['channel_hash']) && (! intval(get_pconfig($channel['channel_id'],'system','blocktags')))) {
-				logger('tag_deliver: community tag recipient: ' . $channel['channel_name']);
-				$tag_the_post = true;
-				$sig = Libzot::sign('tagauth.' . $item['mid'],$channel['channel_prvkey']);
-				logger('tag_deliver: setting iconfig for ' . $item['id']);
-				set_iconfig($item['id'],'system','communitytagauth',base64url_encode($sig),1);
-			}
-		}
-
-		if($tag_the_post) {
-			store_item_tag($channel['channel_id'],$pitem['id'],TERM_OBJ_POST,TERM_COMMUNITYTAG,$j_obj['title'],$j_obj['id']);
-		}
-		else {
-			logger('Tag permission denied for ' . $channel['channel_address']);
-		}
-	}
-
-}
-
-
 
 
 /**
@@ -2753,22 +2692,38 @@ function item_community_tag($channel,$item) {
  * @param array $item
  * @return boolean
  */
+
 function tgroup_check($uid, $item) {
 
 	$mention = false;
 
-	// check that the message originated elsewhere and is a top-level post
-	// or is a followup and we have already accepted the top level post as an uplink
+	$role = get_pconfig($uid,'system','permissions_role');
+	$rolesettings = PermissionRoles::role_perms($role);
+	$channel_type = isset($rolesettings['channel_type']) ? $rolesettings['channel_type'] : 'normal';
 
-	if($item['mid'] != $item['parent_mid']) {
+	$is_group = (($channel_type === 'group') ? true : false);
+	$is_collection = (($channel_type === 'collection') ? true : false);
+
+	// If a comment, check if we have already accepted the top level post as an uplink
+	// Applies to collections only at this time
+	// @FIXME We need a comment clause for groups
+	
+	if ($item['mid'] !== $item['parent_mid']) {
 		$r = q("select id from item where mid = '%s' and uid = %d and item_uplink = 1 limit 1",
 			dbesc($item['parent_mid']),
 			intval($uid)
 		);
-		if($r)
+		if ($r) {
 			return true;
+		}
+	}
 
-		return false;
+	// post to group via DM
+	
+	if ($is_group) {
+		if (intval($item['item_private']) === 2 && $item['mid'] === $item['parent_mid']) {
+			return true;
+		}
 	}
 
 	// see if we already have this item. Maybe it is being updated.
@@ -2777,39 +2732,18 @@ function tgroup_check($uid, $item) {
 		dbesc($item['mid']),
 		intval($uid)
 	);
-	if($r)
+
+	if ($r) {
 		return true;
-
-	$u = q("select * from channel left join xchan on channel_hash = xchan_hash where channel_id = %d limit 1",
-		intval($uid)
-	);
-
-	if(! $u)
-		return false;
-
-	if((! perm_is_allowed($uid,$item['author_xchan'],'write_collection')) && ($item['author_xchan'] !== $u[0]['channel_parent'])) {
-		logger('tgroup_check delivery denied for uid ' . $uid . ' and xchan ' . $item['author_xchan']);
+	}
+	
+	$u = channelx_by_n($uid);
+	if (! $u) {
 		return false;
 	}
-
-	$terms = get_terms_oftype($item['term'],TERM_PCATEGORY);
-
-	if($terms)
-		logger('tgroup_check: post mentions: ' . print_r($terms,true), LOGGER_DATA);
-
-
-	$link = normalise_link($u[0]['xchan_url']);
-
-	if($terms) {
-		foreach($terms as $term) {
-			if(! link_compare($term['url'],$link)) {
-				continue;
-			}
-
-			logger('tgroup_check: mention found for ' . $u[0]['channel_name']);
-
-			return true;
-		}
+	
+	if (($is_collection) && (perm_is_allowed($uid,$item['author_xchan'],'write_collection') || $item['author_xchan'] === $u['channel_parent'])) {
+		return true;
 	}
 
 	return false;
@@ -2872,6 +2806,84 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 			);
 		}
 	}
+
+	// @todo handle edit and parent correctly
+
+	if(! $parent) {
+
+		if($edit) {
+			return;
+		}
+
+		$arr = [];
+
+		$arr['aid'] = $channel['channel_account_id'];
+		$arr['uid'] = $channel['channel_id'];
+
+		$arr['item_uplink'] = 1;
+		$arr['source_xchan'] = $item['owner_xchan'];
+
+		$arr['item_private'] = (($channel['channel_allow_cid'] || $channel['channel_allow_gid']
+		|| $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
+
+		$arr['item_origin'] = 1;
+		$arr['item_wall'] = 1;
+		$arr['mid'] = item_message_id();
+		$arr['mid'] = str_replace('/item/','/activity/',$arr['mid']);
+		$arr['parent_mid'] = $arr['mid'];
+		$arr['item_thread_top'] = 1;
+	
+		if (strpos($item['body'], "[/share]") !== false) {
+			$pos = strpos($item['body'], "[share");
+			$bb = substr($item['body'], $pos);
+		} else {
+			$bb = "[share author='" . urlencode($item['author']['xchan_name']).
+				"' profile='"       . $item['author']['xchan_url'] .
+				"' portable_id='"   . $item['author']['xchan_hash'] . 
+				"' avatar='"        . $item['author']['xchan_photo_s'] .
+				"' link='"          . $item['plink'] .
+				"' auth='"          . (($item['author']['network'] === 'zot6') ? 'true' : 'false') .
+				"' posted='"        . $item['created'] .
+				"' message_id='"    . $item['mid'] .
+			"']";
+			if($item['title'])
+				$bb .= '[b]'.$item['title'].'[/b]'."\r\n";
+			$bb .= $item['body'];
+			$bb .= "[/share]";
+		}
+
+		$mention = '@[zrl=' . $item['author']['xchan_url'] . ']' . $item['author']['xchan_name'] . '[/zrl]';
+		$arr['body'] = $bb;
+
+		$arr['author_xchan'] = $channel['channel_hash'];
+		$arr['owner_xchan']  = $item['author_xchan'];
+		// $arr['obj'] = $item['obj'];
+		$arr['obj_type'] = $item['obj_type'];
+		$arr['verb'] = 'Create';
+		$arr['item_restrict'] = 1;
+
+		$arr['allow_cid'] = $channel['channel_allow_cid'];
+		$arr['allow_gid'] = $channel['channel_allow_gid'];
+		$arr['deny_cid']  = $channel['channel_deny_cid'];
+		$arr['deny_gid']  = $channel['channel_deny_gid'];
+		$arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
+
+		q("update item set comment_policy = 'authenticated', item_wall = 1 where mid = '%s' and uid = %d",
+			dbesc($arr['parent_mid']),
+			intval($arr['uid'])
+		);
+
+		$post = item_store($arr);	
+
+		$post_id = $post['item_id'];
+
+		if($post_id) {
+			Master::Summon([ 'Notifier','tgroup',$post_id ]);
+		}
+		return;
+	}
+
+
 
 	// Change this copy of the post to a forum head message and deliver to all the tgroup members
 	// also reset all the privacy bits to the forum default permissions

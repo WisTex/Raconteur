@@ -19,15 +19,14 @@
 <input type='hidden' name='name' value='{{$app.client_id}}'>
 	<div class='oauthapp'>
 		{{if $app.client_name}}<h4>{{$app.client_name}}</h4>{{else}}<h4>{{$noname}}</h4>{{/if}}
-		{{if $app.my}}
-			{{if $app.oauth_token}}
-			<div class="settings-submit-wrapper" ><button class="settings-submit"  type="submit" name="remove" value="{{$app.oauth_token}}">{{$remove}}</button></div>
-			{{/if}}
+		{{if $app.tokens}}
+		{{foreach $app.tokens as $token}}
+			<div class="settings-submit-wrapper" ><button class="settings-submit"  type="submit" name="remove" value="{{$token}}">{{$remove}}</button></div>
+		{{/foreach}}
 		{{/if}}
-		{{if $app.my}}
+
 		<a href="{{$baseurl}}/settings/oauth2/edit/{{$app.client_id}}" title="{{$edit}}"><i class="fa fa-pencil btn btn-outline-secondary"></i></a>
 		<a href="{{$baseurl}}/settings/oauth2/delete/{{$app.client_id}}?t={{$form_security_token}}" title="{{$delete}}"><i class="fa fa-trash-o btn btn-outline-secondary"></i></a>
-		{{/if}}		
 	</div>
 </form>
 	{{/foreach}}

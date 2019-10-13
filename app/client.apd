@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/clients
+requires: local_channel
+name: Clients
+photo: icon:ticket
+categories: Networking

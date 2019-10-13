@@ -28,7 +28,7 @@ cd addon
 
 for a in "${filelist[@]}" ; do
 	if [ $a = 'version.php' ]; then
-		if [ ! -x 'version.php' ]; then
+		if [ ! -f 'version.php' ]; then
 			ln -s ../extend/addon/$1/version.php version.php
 		fi
 	fi

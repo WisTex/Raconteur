@@ -116,7 +116,7 @@ abstract class PhotoDriver {
 	 */
 	public function __construct($data, $type = '') {
 		$this->types = $this->supportedTypes();
-		if(! array_key_exists($type, $this->types)) {
+		if (! array_key_exists($type, $this->types)) {
 			$type = 'image/jpeg';
 		}
 		$this->type = $type;
@@ -125,8 +125,9 @@ abstract class PhotoDriver {
 	}
 
 	public function __destruct() {
-		if($this->is_valid())
+		if ($this->is_valid()) {
 			$this->destroy();
+		}
 	}
 
 	/**
@@ -144,9 +145,9 @@ abstract class PhotoDriver {
 	 * @return boolean|number Width of image in pixels, or false on failure
 	 */
 	public function getWidth() {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
-
+		}
 		return $this->width;
 	}
 
@@ -156,9 +157,9 @@ abstract class PhotoDriver {
 	 * @return boolean|number Height of image in pixels, or false on failure
 	 */
 	public function getHeight() {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
-
+		}
 		return $this->height;
 	}
 
@@ -169,9 +170,9 @@ abstract class PhotoDriver {
 	 * @return boolean False on failure, otherwise true
 	 */
 	public function saveImage($path) {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
-
+		}
 		return (file_put_contents($path, $this->imageString()) ? true : false);
 	}
 
@@ -181,9 +182,9 @@ abstract class PhotoDriver {
 	 * @return boolean|string False on failure, otherwise mimetype.
 	 */
 	public function getType() {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
-
+		}
 		return $this->type;
 	}
 
@@ -193,9 +194,9 @@ abstract class PhotoDriver {
 	 * @return boolean|string False on failure, otherwise file extension.
 	 */
 	public function getExt() {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
-
+		}
 		return $this->types[$this->getType()];
 	}
 
@@ -209,51 +210,58 @@ abstract class PhotoDriver {
 	 * @return boolean|void false on failure, otherwise void
 	 */
 	public function scaleImage($max, $float_height = true) {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
+		}
 
-		$width = $this->width;
+		$width  = $this->width;
 		$height = $this->height;
 
 		$dest_width = $dest_height = 0;
 
-		if((! $width) || (! $height))
+		if (! ($width && $height)) {
 			return false;
+		}
 
-		if($width > $max && $height > $max) {
+		if ($width > $max && $height > $max) {
 
 			// very tall image (greater than 16:9)
 			// constrain the width - let the height float.
 
-			if(((($height * 9) / 16) > $width) && ($float_height)) {
+			if (((($height * 9) / 16) > $width) && ($float_height)) {
 				$dest_width = $max;
 				$dest_height = intval(($height * $max) / $width);
 			} // else constrain both dimensions
-			elseif($width > $height) {
+			elseif ($width > $height) {
 				$dest_width = $max;
 				$dest_height = intval(($height * $max) / $width);
-			} else {
+			}
+			else {
 				$dest_width = intval(($width * $max) / $height);
 				$dest_height = $max;
 			}
-		} else {
-			if($width > $max) {
+		}
+		else {
+			if ($width > $max) {
 				$dest_width = $max;
 				$dest_height = intval(($height * $max) / $width);
-			} else {
-				if($height > $max) {
+			}
+			else {
+				if ($height > $max) {
 
 					// very tall image (greater than 16:9)
 					// but width is OK - don't do anything
 
-					if(((($height * 9) / 16) > $width) && ($float_height)) {
+					if (((($height * 9) / 16) > $width) && ($float_height)) {
 						$dest_width = $width;
 						$dest_height = $height;
-					} else {
+					}
+					else {
 						$dest_width = intval(($width * $max) / $height);
 						$dest_height = $max;
 					}
-				} else {
+				}
+				else {
 					$dest_width = $width;
 					$dest_height = $height;
 				}
@@ -263,7 +271,7 @@ abstract class PhotoDriver {
 	}
 
 	public function scaleImageUp($min) {
-		if(! $this->is_valid()) {
+		if (! $this->is_valid()) {
 			return false;
 		}
 
@@ -272,26 +280,31 @@ abstract class PhotoDriver {
 
 		$dest_width = $dest_height = 0;
 
-		if((! $width) || (! $height))
+		if (! ($width && $height)) {
 			return false;
+		}
 
-		if($width < $min && $height < $min) {
-			if($width > $height) {
+		if ($width < $min && $height < $min) {
+			if ($width > $height) {
 				$dest_width = $min;
 				$dest_height = intval(($height * $min) / $width);
-			} else {
+			}
+			else {
 				$dest_width = intval(($width * $min) / $height);
 				$dest_height = $min;
 			}
-		} else {
-			if($width < $min) {
+		}
+		else {
+			if ($width < $min) {
 				$dest_width = $min;
 				$dest_height = intval(($height * $min) / $width);
-			} else {
-				if($height < $min) {
+			}
+			else {
+				if ($height < $min) {
 					$dest_width = intval(($width * $min) / $height);
 					$dest_height = $min;
-				} else {
+				}
+				else {
 					$dest_width = $width;
 					$dest_height = $height;
 				}
@@ -307,9 +320,9 @@ abstract class PhotoDriver {
 	 * @return boolean|void false on failure, otherwise void
 	 */
 	public function scaleImageSquare($dim) {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
-
+		}
 		$this->doScaleImage($dim, $dim);
 	}
 
@@ -327,9 +340,9 @@ abstract class PhotoDriver {
 	 * @return boolean|void false on failure
 	 */
 	public function cropImage($max, $x, $y, $w, $h) {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
-
+		}
 		$this->cropImageRect($max, $max, $x, $y, $w, $h);
 	}
 
@@ -340,9 +353,7 @@ abstract class PhotoDriver {
 	 * @return boolean|array
 	 */
 	public function exif($filename) {
-		if((! function_exists('exif_read_data'))
-				|| (! in_array($this->getType(), ['image/jpeg', 'image/tiff'])))
-		{
+		if ((! function_exists('exif_read_data')) || (! in_array($this->getType(), ['image/jpeg', 'image/tiff']))) {
 			return false;
 		}
 
@@ -351,13 +362,14 @@ abstract class PhotoDriver {
 		 * memory exhaustion on large images.
 		 */
 
-		if(version_compare(PHP_VERSION, '7.2.0') >= 0) {
+		if (version_compare(PHP_VERSION, '7.2.0') >= 0) {
 			$f = @fopen($filename, 'rb');
-		} else {
+		}
+		else {
 			$f = $filename;
 		}
 
-		if($f) {
+		if ($f) {
 			return @exif_read_data($f, null, true);
 		}
 
@@ -371,17 +383,17 @@ abstract class PhotoDriver {
 	 * @return boolean true if oriented, otherwise false
 	 */
 	public function orient($exif) {
-		if(! ($this->is_valid() && $exif)) {
+		if (! ($this->is_valid() && $exif)) {
 			return false;
 		}
 
 		$ort = ((array_key_exists('IFD0', $exif)) ? $exif['IFD0']['Orientation'] : $exif['Orientation']);
 
-		if(! $ort) {
+		if (! $ort) {
 			return false;
 		}
 
-		switch($ort) {
+		switch ($ort) {
 			case 1 : // nothing
 				break;
 			case 2 : // horizontal flip
@@ -422,7 +434,7 @@ abstract class PhotoDriver {
 	 * @return boolean|array
 	 */
 	public function save($arr, $skipcheck = false) {
-		if(! ($skipcheck || $this->is_valid())) {
+		if (! ($skipcheck || $this->is_valid())) {
 			logger('Attempt to store invalid photo.');
 			return false;
 		}
@@ -454,12 +466,12 @@ abstract class PhotoDriver {
 		$p['expires'] = (($arr['expires']) ? $arr['expires'] : gmdate('Y-m-d H:i:s', time() + get_config('system', 'photo_cache_time', 86400)));
 		$p['profile'] = ((array_key_exists('profile', $arr)) ? intval($arr['profile']) : 0);
 
-		if(! intval($p['imgscale']))
+		if (! intval($p['imgscale'])) {
 			logger('save: ' . print_r($arr, true), LOGGER_DATA);
-
+		}
 		$x = q("select id, created from photo where resource_id = '%s' and uid = %d and xchan = '%s' and imgscale = %d limit 1", dbesc($p['resource_id']), intval($p['uid']), dbesc($p['xchan']), intval($p['imgscale']));
 
-		if($x) {
+		if ($x) {
 			$p['created'] = (($x['created']) ? $x['created'] : $p['edited']);
 			$r = q("UPDATE photo set
 				aid = %d,
@@ -490,7 +502,8 @@ abstract class PhotoDriver {
 				profile = %d
 				where id = %d",
 			intval($p['aid']), intval($p['uid']), dbesc($p['xchan']), dbesc($p['resource_id']), dbescdate($p['created']), dbescdate($p['edited']), dbesc(basename($p['filename'])), dbesc($p['mimetype']), dbesc($p['album']), intval($p['height']), intval($p['width']), (intval($p['os_storage']) ? dbescbin($p['os_syspath']) : dbescbin($this->imageString())), intval($p['os_storage']), (intval($p['os_storage']) ? @filesize($p['os_syspath']) : strlen($this->imageString())), intval($p['imgscale']), intval($p['photo_usage']), dbesc($p['title']), dbesc($p['description']), dbesc($p['os_path']), dbesc($p['display_path']), dbesc($p['allow_cid']), dbesc($p['allow_gid']), dbesc($p['deny_cid']), dbesc($p['deny_gid']), dbescdate($p['expires']), intval($p['profile']), intval($x[0]['id']));
-		} else {
+		}
+		else {
 			$p['created'] = (($arr['created']) ? $arr['created'] : $p['edited']);
 			$r = q("INSERT INTO photo
 				( aid, uid, xchan, resource_id, created, edited, filename, mimetype, album, height, width, content, os_storage, filesize, imgscale, photo_usage, title, description, os_path, display_path, allow_cid, allow_gid, deny_cid, deny_gid, expires, profile )
