@@ -1449,7 +1449,18 @@ class Item extends Controller {
 		$datarray['llink'] = z_root() . '/display/' . gen_link_id($datarray['mid']);
 	
 		call_hooks('post_local_end', $datarray);
-	
+
+		$role = get_pconfig($profile_uid,'system','permissions_role');
+		$rolesettings = PermissionRoles::role_perms($role);
+		$channel_type = isset($rolesettings['channel_type']) ? $rolesettings['channel_type'] : 'normal';
+
+		$is_group = (($channel_type === 'group') ? true : false);
+
+		if ($is_group && $datarray['mid'] === $datarray['parent_mid'] && $datarray['author_xchan'] !== $datarray['owner_xchan']) {
+			// W2W group post - will have been delivered already by tag_deliver()
+			$nopush = false;
+		}
+
 		if(! $nopush)
 			\Zotlabs\Daemon\Master::Summon(array('Notifier', $notify_type, $post_id));
 	
