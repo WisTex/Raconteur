@@ -4,6 +4,7 @@ use Zotlabs\Lib\IConfig;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\Connect;
 use Zotlabs\Daemon\Master;
 
 require_once('include/menu.php');
