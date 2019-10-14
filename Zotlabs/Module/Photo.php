@@ -58,7 +58,6 @@ class Photo extends Controller {
 		}
 
 		$prvcachecontrol = false;
-		$smaxage = '';
 		$streaming = null;
 		$channel = null;
 		$person = 0;
@@ -106,10 +105,6 @@ class Photo extends Controller {
 			}
 	
 			$uid = $person;
-
-			// Set a sane value for s-maxage in case infrastructure caching is present since
-			// browser refreshing does not refresh infrastructure caches.
-			$smaxage = 's-maxage=120;';
 
 			$d = [ 'imgscale' => $resolution, 'channel_id' => $uid, 'default' => $default, 'data'  => '', 'mimetype' => '' ];
 			call_hooks('get_profile_photo',$d);
@@ -295,11 +290,9 @@ class Photo extends Controller {
 			}
 		 	header("Expires: " . gmdate("D, d M Y H:i:s", time() + $cache) . " GMT");
 			// Set browser cache age as $cache.  But set timeout of 'shared caches'
-			// much lower in some cases in the event that infrastructure caching is present.
-			// Otherwise changes to profile images and cover photos may not update until
-			// max-age expires - and a browser refresh often does not force 
-			// a cache refresh for infrastructure caches.
-			header('Cache-Control: '.$smaxage.' max-age=' . $cache . ';');
+			// much lower in the event that infrastructure caching is present.
+			$smaxage = intval($cache/12);
+			header('Cache-Control: s-maxage='.$smaxage.'; max-age=' . $cache . ';');
 	
 		}
 
