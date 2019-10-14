@@ -32,6 +32,7 @@ use Zotlabs\Lib\IConfig;
 use Zotlabs\Lib\Enotify;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\AccessControl;
 use App;
 use URLify;
