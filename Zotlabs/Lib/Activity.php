@@ -1356,8 +1356,9 @@ class Activity {
 
 	static function actor_store($url,$person_obj) {
 
-		if (! is_array($person_obj))
+		if (! is_array($person_obj)) {
 			return;
+		}
 
 //		logger('person_obj: ' . print_r($person_obj,true));
 
@@ -1371,6 +1372,13 @@ class Activity {
 			else {
 				return;
 			}
+		}
+
+		if (array_key_exists('movedTo',$person_obj) && $person_obj['movedTo'] && ! is_array($person_obj['movedTo'])) {
+			$tgt = self::fetch($person_obj['movedTo']);
+			self::actor_store($person_obj['movedTo'],$tgt);
+			ActivityPub::move($person_obj['id'],$tgt);
+			return;
 		}
 
 		$url = $person_obj['id'];

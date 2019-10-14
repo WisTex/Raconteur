@@ -421,4 +421,48 @@ class ActivityPub {
 		return false;
 	}
 
+	static public function move($src,$dst) {
+
+		if (! ($src && $dst)) {
+			return;
+		}
+
+		if ($src && ! is_array($src)) {
+			$src = Activity::fetch($src);
+			if (is_array($src)) {
+				$src_xchan = $src['id'];
+			}
+		}
+
+		$approvals = null;
+
+		if ($dst && ! is_array($dst)) {
+			$dst = Activity::fetch($dst);
+			if (is_array($dst)) {
+				$dst_xchan = $dst['id'];
+				if (array_key_exists('alsoKnownAs',$dst)) {
+					if(! is_array($dst['alsoKnownAs'])) {
+						$dst['alsoKnownAs'] = [ $dst['alsoKnownAs'] ];
+					}
+					$approvals = $dst['alsoKnownAs'];
+				}
+			}
+		}
+
+		if(! ($src_xchan && $dst_xchan)) {
+			return;
+		}
+
+		if ($approvals) {
+			foreach($approvals as $approval) {
+				if($approval === $src_xchan) {
+					$r = q("update abook set abook_xchan = '%s' where abook_xchan = '%s'",
+						dbesc($dst_xchan),
+						dbesc($src_xchan)
+					);
+				}
+			}
+		}
+	}
+
 }
