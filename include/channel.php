@@ -1697,19 +1697,19 @@ function get_zcard($channel, $observer_hash = '', $args = array()) {
 		$cover_width = 425;
 		$size = 'hz_small';
 		$cover_size = PHOTO_RES_COVER_425;
-		$pphoto = array('mimetype' => $channel['xchan_photo_mimetype'], 'width' => 80 , 'height' => 80, 'href' => $channel['xchan_photo_m']);
+		$pphoto = array('mimetype' => $channel['xchan_photo_mimetype'], 'width' => 80 , 'height' => 80, 'href' => $channel['xchan_photo_m'].'?rev='.strtotime($channel['xchan_photo_date']));
 	} elseif($maxwidth <= 900) {
 		$width = 900;
 		$cover_width = 850;
 		$size = 'hz_medium';
 		$cover_size = PHOTO_RES_COVER_850;
-		$pphoto = array('mimetype' => $channel['xchan_photo_mimetype'], 'width' => 160 , 'height' => 160, 'href' => $channel['xchan_photo_l']);
+		$pphoto = array('mimetype' => $channel['xchan_photo_mimetype'], 'width' => 160 , 'height' => 160, 'href' => $channel['xchan_photo_l'].'?rev='.strtotime($channel['xchan_photo_date']));
 	} elseif($maxwidth <= 1200) {
 		$width = 1200;
 		$cover_width = 1200;
 		$size = 'hz_large';
 		$cover_size = PHOTO_RES_COVER_1200;
-		$pphoto = array('mimetype' => $channel['xchan_photo_mimetype'], 'width' => 300 , 'height' => 300, 'href' => $channel['xchan_photo_l']);
+		$pphoto = array('mimetype' => $channel['xchan_photo_mimetype'], 'width' => 300 , 'height' => 300, 'href' => $channel['xchan_photo_l'].'?rev='.strtotime($channel['xchan_photo_date']));
 	}
 
 //	$scale = (float) $maxwidth / $width;
