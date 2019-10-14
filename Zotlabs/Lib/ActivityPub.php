@@ -5,6 +5,7 @@ use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Queue;
+use Zotlabs\Lib\Libsync;
 use Zotlabs\Daemon\Master;
 use Zotlabs\Lib\IConfig;
 
@@ -456,10 +457,55 @@ class ActivityPub {
 		if ($approvals) {
 			foreach($approvals as $approval) {
 				if($approval === $src_xchan) {
-					$r = q("update abook set abook_xchan = '%s' where abook_xchan = '%s'",
-						dbesc($dst_xchan),
+					$abooks = q("select abook_channel from abook where abook_xchan = '%s'",
 						dbesc($src_xchan)
 					);
+					if ($abooks) {
+						foreach ($abooks as $abook) {
+							// check to see if we already performed this action
+							$x = q("select * from abook where abook_xchan = '%s' and abook_channel = %d",
+								dbesc($dst_xchan),
+								intval($abook['abook_channel'])
+							);
+							if ($x) {
+								continue;
+							}
+							// update the local abook							
+							q("update abconfig set xchan = '%s' where chan = %d and xchan = '%s'",
+								dbesc($dst_xchan),
+								intval($abook['abook_channel']),
+								dbesc($src_xchan)
+							);
+							q("update pgrp_member set xchan = '%s' where uid = %d and xchan = '%s'",
+								dbesc($dst_xchan),
+								intval($abook['abook_channel']),
+								dbesc($src_xchan)
+							);							
+							$r = q("update abook set abook_xchan = '%s' where abook_xchan = '%s' and abook_channel = %d ",
+								dbesc($dst_xchan),
+								dbesc($src_xchan),
+								intval($abook['abook_channel'])
+							);
+
+							$r = q("SELECT abook.*, xchan.*
+								FROM abook left join xchan on abook_xchan = xchan_hash
+								WHERE abook_channel = %d and abook_id = %d LIMIT 1",
+								intval(abook['abook_channel']),
+								intval($dst_xchan)
+							);
+							if ($r) {
+								$clone = array_shift($r);
+								unset($clone['abook_id']);
+								unset($clone['abook_account']);
+								unset($clone['abook_channel']);
+								$abconfig = load_abconfig($abook['abook_channel'],$clone['abook_xchan']);
+								if ($abconfig) {
+									$clone['abconfig'] = $abconfig;
+								}
+								Libsync::build_sync_packet($abook['abook_channel'], [ 'abook' => [ $clone ] ] );
+							}
+						}
+					}
 				}
 			}
 		}
