@@ -57,6 +57,7 @@ class Photo extends \Zotlabs\Web\Controller {
 		}
 
 		$prvcachecontrol = false;
+		$smaxage = '';
 		$streaming = null;
 		$channel = null;
 		$person = 0;
@@ -106,6 +107,10 @@ class Photo extends \Zotlabs\Web\Controller {
 			}
 	
 			$uid = $person;
+
+			// Set a sane value for s-maxage in case infrastructure caching is present since
+			// browser refreshing does not refresh infrastructure caches.
+			$smaxage = 's-maxage=120;';
 
 			$d = [ 'imgscale' => $resolution, 'channel_id' => $uid, 'default' => $default, 'data'  => '', 'mimetype' => '' ];
 			call_hooks('get_profile_photo',$d);
@@ -212,6 +217,9 @@ class Photo extends \Zotlabs\Web\Controller {
 					if(intval($e[0]['os_storage'])) {
 						$streaming = $data;
 					}
+
+					if($e[0]['allow_cid'] != '' || $e[0]['allow_gid'] != '' || $e[0]['deny_gid'] != '' || $e[0]['deny_gid'] != '')
+						$prvcachecontrol = 'no-store, no-cache, must-revalidate';
 				}
 				else {
 					if(! $allowed) {
@@ -255,10 +263,6 @@ class Photo extends \Zotlabs\Web\Controller {
 			}
 		}
 	
-		// Writing in cachefile
-		if (isset($cachefile) && $cachefile != '')
-			file_put_contents($cachefile, $data);
-	
 		if(function_exists('header_remove')) {
 			header_remove('Pragma');
 			header_remove('pragma');
@@ -268,18 +272,18 @@ class Photo extends \Zotlabs\Web\Controller {
 	
 		if($prvcachecontrol) {
 	
-			// it is a private photo that they have no permission to view.
-			// tell the browser not to cache it, in case they authenticate
-			// and subsequently have permission to see it
+			// it is a private photo that they have permission to view.
+			// tell the browser and infrastructure caches not to cache it, 
+			// in case permissions change before the next access.
 	
 			header("Cache-Control: no-store, no-cache, must-revalidate");
 	
 		}
 		else {
-			// The photo cache default is 1 day to provide a privacy trade-off,
+			// The cache default for public photos is 1 day to provide a privacy trade-off,
 			// as somebody reducing photo permissions on a photo that is already 
 			// "in the wild" won't be able to stop the photo from being viewed
-			// for this amount amount of time once it is in the browser cache.
+			// for this amount amount of time once it is cached.
 			// The privacy expectations of your site members and their perception 
 			// of privacy where it affects the entire project may be affected.
 			// This has performance considerations but we highly recommend you 
@@ -290,7 +294,12 @@ class Photo extends \Zotlabs\Web\Controller {
 				$cache = (3600 * 24); // 1 day
 	
 		 	header("Expires: " . gmdate("D, d M Y H:i:s", time() + $cache) . " GMT");
-			header("Cache-Control: max-age=" . $cache);
+			// Set browser cache age as $cache.  But set timeout of 'shared caches'
+			// much lower in some cases in the event that infrastructure caching is present.
+			// Otherwise changes to profile images and cover photos may not update until
+			// max-age expires - and a browser refresh often does not force 
+			// a cache refresh for infrastructure caches.
+			header('Cache-Control: '.$smaxage.' max-age=' . $cache . ';');
 	
 		}
 
