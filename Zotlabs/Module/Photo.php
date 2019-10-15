@@ -76,6 +76,7 @@ class Photo extends Controller {
 				killme();
 		}
 	
+		$token = $_REQUEST['token'] ?: EMPTY_STR;
 		$observer_xchan = get_observer_hash();
 
 		$default = z_root() . '/' . get_default_profile_photo();

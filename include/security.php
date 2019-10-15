@@ -306,7 +306,7 @@ function change_channel($change_channel) {
  */
 
 
-function permissions_sql($owner_id, $remote_observer = null, $table = '') {
+function permissions_sql($owner_id, $remote_observer = null, $table = '', $token = EMPTY_STR) {
 
 	$local_channel = local_channel();
 
@@ -331,6 +331,14 @@ function permissions_sql($owner_id, $remote_observer = null, $table = '') {
 
 	if (($local_channel) && ($local_channel == $owner_id)) {
 		return EMPTY_STR;
+	}
+
+	/*
+	 * OCAP token access
+	 */
+	 
+	elseif ($token) {
+		return " and {table}allow_cid like '" . protect_sprintf('%<token:' . $token . '>%') . "' "; 
 	}
 
 	/**

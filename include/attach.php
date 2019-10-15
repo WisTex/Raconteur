@@ -147,9 +147,9 @@ function z_mime_content_type($filename) {
  */
 function attach_count_files($channel_id, $observer, $hash = '', $filename = '', $filetype = '') {
 
-	$ret = array('success' => false);
+	$ret = [ 'success' => false ];
 
-	if(! perm_is_allowed($channel_id, $observer, 'read_storage')) {
+	if (! perm_is_allowed($channel_id, $observer, 'read_storage')) {
 		$ret['message'] = t('Permission denied.');
 		return $ret;
 	}
@@ -157,15 +157,15 @@ function attach_count_files($channel_id, $observer, $hash = '', $filename = '', 
 	require_once('include/security.php');
 	$sql_extra = permissions_sql($channel_id);
 
-	if($hash)
+	if ($hash) {
 		$sql_extra .= protect_sprintf(" and hash = '" . dbesc($hash) . "' ");
-
-	if($filename)
+	}
+	if ($filename) {
 		$sql_extra .= protect_sprintf(" and filename like '@" . dbesc($filename) . "@' ");
-
-	if($filetype)
+	}
+	if ($filetype) {
 		$sql_extra .= protect_sprintf(" and filetype like '@" . dbesc($filetype) . "@' ");
-
+	}
 	$r = q("select id, uid, folder from attach where uid = %d $sql_extra",
 		intval($channel_id)
 	);
@@ -194,9 +194,9 @@ function attach_count_files($channel_id, $observer, $hash = '', $filename = '', 
  */
 function attach_list_files($channel_id, $observer, $hash = '', $filename = '', $filetype = '', $orderby = 'created desc', $start = 0, $entries = 0, $since = '', $until = '') {
 
-	$ret = array('success' => false);
+	$ret = [ 'success' => false ];
 
-	if(! perm_is_allowed($channel_id,$observer, 'view_storage')) {
+	if (! perm_is_allowed($channel_id,$observer, 'view_storage')) {
 		$ret['message'] = t('Permission denied.');
 		return $ret;
 	}
@@ -205,24 +205,25 @@ function attach_list_files($channel_id, $observer, $hash = '', $filename = '', $
 	require_once('include/security.php');
 	$sql_extra = permissions_sql($channel_id);
 
-	if($hash)
+	if ($hash) {
 		$sql_extra .= protect_sprintf(" and hash = '" . dbesc($hash) . "' ");
-
-	if($filename)
+	}
+	if ($filename) {
 		$sql_extra .= protect_sprintf(" and filename like '%" . dbesc($filename) . "%' ");
-
-	if($filetype)
+	}
+	if ($filetype) {
 		$sql_extra .= protect_sprintf(" and filetype like '%" . dbesc($filetype) . "%' ");
-
-	if($entries)
+	}
+	if ($entries) {
 		$limit = " limit " . intval($start) . ", " . intval($entries) . " ";
-
-	if(! $since)
+	}
+	if (! $since) {
 		$since = NULL_DATE;
-
-	if(! $until)
+	}
+	if (! $until) {
 		$until = datetime_convert();
-
+	}
+	
 	$sql_extra .= " and created >= '" . dbesc($since) . "' and created <= '" . dbesc($until) . "' ";
 
 	// Retrieve all columns except 'content'
@@ -251,25 +252,27 @@ function attach_list_files($channel_id, $observer, $hash = '', $filename = '', $
  */
 function attach_by_hash($hash, $observer_hash, $rev = 0) {
 
-	$ret = array('success' => false);
+	$ret = [ 'success' => false ];
 
 	// Check for existence, which will also provide us the owner uid
 
 	$sql_extra = '';
-	if($rev == (-1))
+	if ($rev == (-1)) {
 		$sql_extra = " order by revision desc ";
-	elseif($rev)
+	}
+	elseif ($rev) {
 		$sql_extra = " and revision = " . intval($rev) . " ";
-
+	}
+	
 	$r = q("SELECT uid FROM attach WHERE hash = '%s' $sql_extra LIMIT 1",
 		dbesc($hash)
 	);
-	if(! $r) {
+	if (! $r) {
 		$ret['message'] = t('Item was not found.');
 		return $ret;
 	}
 
-	if(! attach_can_view($r[0]['uid'], $observer_hash, $hash)) {
+	if (! attach_can_view($r[0]['uid'], $observer_hash, $hash)) {
 		$ret['message'] = t('Permission denied.');
 		return $ret;
 	}
@@ -281,7 +284,7 @@ function attach_by_hash($hash, $observer_hash, $rev = 0) {
 		intval($r[0]['uid'])
 	);
 
-	if(! $r) {
+	if (! $r) {
 		$ret['message'] = t('Unknown error.');
 		return $ret;
 	}
@@ -289,42 +292,44 @@ function attach_by_hash($hash, $observer_hash, $rev = 0) {
 	$r[0]['content'] = dbunescbin($r[0]['content']);
 
 	$ret['success'] = true;
-	$ret['data'] = $r[0];
+	$ret['data'] = array_shift($r);
 
 	return $ret;
 }
 
 
-function attach_can_view($uid,$ob_hash,$resource) {
+function attach_can_view($uid,$ob_hash,$resource,$token = EMPTY_STR) {
 
-	$sql_extra = permissions_sql($uid,$ob_hash);
+	$sql_extra = permissions_sql($uid,$ob_hash,'',$token);
 	$hash = $resource;
 
-	if(! perm_is_allowed($uid,$ob_hash,'view_storage')) {
-		return false;
+	if (! $token) {
+		if (! perm_is_allowed($uid,$ob_hash,'view_storage')) {
+			return false;
+		}
 	}
 
 	$r = q("select folder from attach where hash = '%s' and uid = %d $sql_extra",
 		dbesc($hash),
 		intval($uid)
 	);
-	if(! $r) {
+	if (! $r) {
 		return false;
 	}
 
-	return attach_can_view_folder($uid,$ob_hash,$r[0]['folder']);
+	return attach_can_view_folder($uid,$ob_hash,$r[0]['folder'],$token);
 
 }
 
 
 
-function attach_can_view_folder($uid,$ob_hash,$folder_hash) {
+function attach_can_view_folder($uid,$ob_hash,$folder_hash,$token = EMPTY_STR) {
 
-	$sql_extra = permissions_sql($uid,$ob_hash);
+	$sql_extra = permissions_sql($uid,$ob_hash,'',$token);
 	$hash = $folder_hash;
 	$result = false;
 
-	if(! $folder_hash) {
+	if ((! $folder_hash) && (! $token)) {
 		return perm_is_allowed($uid,$ob_hash,'view_storage');
 	}
 
@@ -334,9 +339,9 @@ function attach_can_view_folder($uid,$ob_hash,$folder_hash) {
 			dbesc($hash),
 			intval($uid)
 		);
-		if(! $r)
+		if (! $r) {
 			return false;
-
+		}
 		$hash = $r[0]['folder'];
 	} while($hash);
 

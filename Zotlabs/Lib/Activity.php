@@ -659,7 +659,7 @@ class Activity {
 			if ($num_bbtags) {
 
 				foreach ($bbtags as $t) {
-					if((! $t[1]) || (in_array($t[1],['url','zrl','img','zmg']))) {
+					if((! $t[1]) || (in_array($t[1],['url','zrl','img','zmg','share']))) {
 						continue;
 					}
 					$convert_to_article = true;
