@@ -752,6 +752,20 @@ class Activity {
 			$ret['conversation'] = $cnv;
 		}
 
+		// provide ocap access token for private media
+		
+		if ($activitypub && $i['item_private']) {
+			$token = get_iconfig($i['id'],'ocap','relay');
+			if ($token && $has_images) {
+				foreach ($images as $match) {
+					if (strpos($match[2],z_root() . '/photo/') !== false) {
+						$i['body'] = str_replace($match[2],$match[2] . '?token=' . $token, $i['body']);
+						$match[2] = $match[2] . '?token=' . $token;
+					}
+				}
+			}
+		}
+
 		if ($i['mimetype'] === 'text/bbcode') {
 			if ($i['title']) {
 				$ret['name'] = $i['title'];
@@ -780,6 +794,8 @@ class Activity {
 		if ($a) {
 			$ret['attachment'] = $a;
 		}
+
+
 
 		if ($activitypub && $has_images && $ret['type'] === 'Note') {
 			$img = [];

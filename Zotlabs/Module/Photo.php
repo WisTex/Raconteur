@@ -22,11 +22,16 @@ class Photo extends Controller {
 			$observer_xchan = get_observer_hash();
 			$allowed = false;
 
+			$bear = Activity::token_from_request();
+			if ($bear) {
+				logger('bear: ' . $bear, LOGGER_DEBUG);
+			}
+
 			$r = q("select * from item where resource_type = 'photo' and resource_id = '%s' limit 1",
 				dbesc(argv(1))
 			);
 			if ($r) {
-				$allowed = attach_can_view($r[0]['uid'],$observer_xchan,argv(1));
+				$allowed = attach_can_view($r[0]['uid'],$observer_xchan,argv(1),$bear);
 			}
 			if (! $allowed) {
 				http_status_exit(404,'Permission denied.');
@@ -138,7 +143,13 @@ class Photo extends Controller {
 			}
 		}
 		else {
-	
+
+			$bear = Activity::token_from_request();
+			if ($bear) {
+				logger('bear: ' . $bear, LOGGER_DEBUG);
+			}
+
+
 			/**
 			 * Other photos
 			 */
@@ -198,7 +209,7 @@ class Photo extends Controller {
 				}
 
 				if ($allowed === (-1)) {
-					$allowed = attach_can_view($r[0]['uid'],$observer_xchan,$photo);
+					$allowed = attach_can_view($r[0]['uid'],$observer_xchan,$photo,$bear);
 				}
 
 				$channel = channelx_by_n($r[0]['uid']);
