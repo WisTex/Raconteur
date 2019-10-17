@@ -652,7 +652,7 @@ class Activity {
 		$convert_to_article = false;
 		$images = false;
 
-		if ($activitypub && $ret['type'] === 'Note') {
+		if ($ret['type'] === 'Note') {
 
 			$bbtags = false;
 			$num_bbtags = preg_match_all('/\[\/([a-z]+)\]/ism',$i['body'],$bbtags,PREG_SET_ORDER);
@@ -668,11 +668,13 @@ class Activity {
 
 			$has_images = preg_match_all('/\[[zi]mg(.*?)\](.*?)\[/ism',$i['body'],$images,PREG_SET_ORDER);
 
-			if ($has_images > 1) {
-				$convert_to_article = true;
-			}
-			if ($convert_to_article) {
-				$ret['type'] = 'Article';
+			if ($activitypub) {
+				if ($has_images > 1) {
+					$convert_to_article = true;
+				}
+				if ($convert_to_article) {
+					$ret['type'] = 'Article';
+				}
 			}
 		}
 
@@ -754,8 +756,8 @@ class Activity {
 
 		// provide ocap access token for private media
 		
-		if ($activitypub && $i['item_private']) {
-			$token = get_iconfig($i['id'],'ocap','relay');
+		if ($i['item_private']) {
+			$token = get_iconfig($i,'ocap','relay');
 			if ($token && $has_images) {
 				foreach ($images as $match) {
 					if (strpos($match[2],z_root() . '/photo/') !== false) {

@@ -4,7 +4,8 @@ namespace Zotlabs\Module;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity as ZlibActivity;
-
+use Zotlabs\Web\HTTPSig;
+use Zotlabs\Lib\LDSignatures;
 
 class Activity extends Controller {
 
@@ -40,6 +41,18 @@ class Activity extends Controller {
 			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 
 				and item.item_delayed = 0 and item.item_blocked = 0 ";
 
+			$sigdata = HTTPSig::verify(EMPTY_STR);
+			if ($sigdata['portable_id'] && $sigdata['header_valid']) {
+				$portable_id = $sigdata['portable_id'];
+				if (! check_channelallowed($portable_id)) {
+					http_status_exit(403, 'Permission denied');
+				}
+				if (! check_siteallowed($sigdata['signer'])) {
+					http_status_exit(403, 'Permission denied');
+				}
+				observer_auth($portable_id);
+			}
+
 			// if passed an owner_id of 0 to item_permissions_sql(), we force "guest access" or observer checking
 			// Give ocap tokens priority
 			
@@ -49,10 +62,11 @@ class Activity extends Controller {
 			else {
 				$sql_extra = item_permissions_sql(0);
 			}
-			
+
 			$r = q("select * from item where uuid = '%s' $item_normal $sql_extra and item_deleted = 0 limit 1",
 				dbesc($item_id)
 			);
+
 			if (! $r) {
 				$r = q("select * from item where uuid = '%s' $item_normal limit 1",
 					dbesc($item_id)

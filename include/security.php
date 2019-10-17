@@ -475,12 +475,19 @@ function item_permissions_sql($owner_id, $remote_observer = null) {
 				$gs = '<<>>'; // should be impossible to match
 			}
 
+			// This function is often called without an $owner_id in places where this could not be
+			// determined in advance. The ACL fields will usually not contain the original author or owner
+			// so we will also check for author_xchan and owner_xchan to account for this ACL deficiency.
+
 			$regexop = db_getfunc('REGEXP');
 			$sql = sprintf(
-				" AND (( NOT (deny_cid $regexop '%s' OR deny_gid $regexop '%s')
-				  AND ( allow_cid $regexop '%s' OR allow_gid $regexop '%s' OR ( allow_cid = '' AND allow_gid = '' AND item_private = 0 ))
-				  ))
+				" AND ( author_xchan = '%s' OR owner_xchan = '%s' OR 
+				(( NOT (deny_cid $regexop '%s' OR deny_gid $regexop '%s')
+				AND ( allow_cid $regexop '%s' OR allow_gid $regexop '%s' OR ( allow_cid = '' AND allow_gid = '' AND item_private = 0 ))
+				)))
 				",
+				dbesc($observer),
+				dbesc($observer),
 				dbesc($cs),
 				dbesc($gs),
 				dbesc($cs),
