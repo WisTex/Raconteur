@@ -1786,8 +1786,9 @@ class Activity {
 			$s['item_deleted'] = 1;
 		}
 
-		
-
+		if (array_key_exists('sensitive',$act->obj) && boolval($act->obj['sensitive'])) {
+			$s['item_nsfw'] = 1;
+		}
 
 		$s['verb']     = self::activity_mapper($act->type);
 
