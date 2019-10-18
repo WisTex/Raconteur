@@ -1392,7 +1392,7 @@ class Activity {
 			}
 		}
 
-		if (array_key_exists('movedTo',$person_obj) && $person_obj['movedTo'] && ! is_array($person_obj['movedTo'])) {
+		if (is_array($person_obj) && array_key_exists('movedTo',$person_obj) && $person_obj['movedTo'] && ! is_array($person_obj['movedTo'])) {
 			$tgt = self::fetch($person_obj['movedTo']);
 			self::actor_store($person_obj['movedTo'],$tgt);
 			ActivityPub::move($person_obj['id'],$tgt);
@@ -2068,7 +2068,7 @@ class Activity {
 
 		// very unpleasant and imperfect way of determining a Mastodon DM
 		
-		if ($act->raw_recips && array_key_exists('to',$act->raw_recips) && count($act->raw_recips['to'] === 1) && $act->raw_recips['to'][0] === channel_url($channel) && ! $act->raw_recips['cc']) {
+		if ($act->raw_recips && array_key_exists('to',$act->raw_recips) && is_array($act->raw_recips['to']) && count($act->raw_recips['to'] === 1) && $act->raw_recips['to'][0] === channel_url($channel) && ! $act->raw_recips['cc']) {
 			$item['item_private'] = 2;
 		}
 
@@ -2552,7 +2552,7 @@ class Activity {
 			z_root() . ZOT_APSCHEMA_REV
 		]], $arr);
 
-		$queue_id = ActivityPub::queue_message($msg,$channel,$recip[0]);
+		$queue_id = ActivityPub::queue_message(json_encode($msg, JSON_UNESCAPED_SLASHES),$channel,$recip[0]);
 		do_delivery( [ $queue_id ] );
 		
 	}
