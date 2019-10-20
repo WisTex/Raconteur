@@ -821,9 +821,17 @@ class Libsync {
 
 		if($arr['locations']) {
 
-			if($absolute)
-				self::check_location_move($sender['hash'],$arr['locations']);
+			$x = q("select * from xchan where xchan_hash = '%s'",
+				dbesc($sender['hash'])
+			);
+			if ($x) {
+				$xchan = array_shift($x);
+			}
 
+			if ($absolute) {
+				Libzot::check_location_move($sender['hash'],$arr['locations']);
+			}
+			
 			$xisting = q("select * from hubloc where hubloc_hash = '%s'",
 				dbesc($sender['hash'])
 			);
@@ -951,6 +959,14 @@ class Libsync {
 							$changed = true;
 						}
 					}
+					elseif(intval($r[0]['hubloc_primary']) && $xchan && $xchan['xchan_url'] !== $r[0]['hubloc_id_url']) {
+						$pr = hubloc_change_primary($r[0]);
+						if($pr) {
+							$what .= 'xchan_primary ';
+							$changed = true;
+						}
+					}
+
 					if(intval($r[0]['hubloc_deleted']) && (! intval($location['deleted']))) {
 						$n = q("update hubloc set hubloc_deleted = 0, hubloc_updated = '%s' where hubloc_id = %d",
 							dbesc(datetime_convert()),

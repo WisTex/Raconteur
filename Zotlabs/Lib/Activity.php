@@ -2068,7 +2068,7 @@ class Activity {
 
 		// very unpleasant and imperfect way of determining a Mastodon DM
 		
-		if ($act->raw_recips && array_key_exists('to',$act->raw_recips) && is_array($act->raw_recips['to']) && count($act->raw_recips['to'] === 1) && $act->raw_recips['to'][0] === channel_url($channel) && ! $act->raw_recips['cc']) {
+		if ($act->raw_recips && array_key_exists('to',$act->raw_recips) && is_array($act->raw_recips['to']) && count($act->raw_recips['to']) === 1 && $act->raw_recips['to'][0] === channel_url($channel) && ! $act->raw_recips['cc']) {
 			$item['item_private'] = 2;
 		}
 
