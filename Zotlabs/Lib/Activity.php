@@ -652,14 +652,14 @@ class Activity {
 		$convert_to_article = false;
 		$images = false;
 
-		if ($activitypub && $ret['type'] === 'Note') {
+		if ($ret['type'] === 'Note') {
 
 			$bbtags = false;
 			$num_bbtags = preg_match_all('/\[\/([a-z]+)\]/ism',$i['body'],$bbtags,PREG_SET_ORDER);
 			if ($num_bbtags) {
 
 				foreach ($bbtags as $t) {
-					if((! $t[1]) || (in_array($t[1],['url','zrl','img','zmg']))) {
+					if((! $t[1]) || (in_array($t[1],['url','zrl','img','zmg','share']))) {
 						continue;
 					}
 					$convert_to_article = true;
@@ -668,11 +668,13 @@ class Activity {
 
 			$has_images = preg_match_all('/\[[zi]mg(.*?)\](.*?)\[/ism',$i['body'],$images,PREG_SET_ORDER);
 
-			if ($has_images > 1) {
-				$convert_to_article = true;
-			}
-			if ($convert_to_article) {
-				$ret['type'] = 'Article';
+			if ($activitypub) {
+				if ($has_images > 1) {
+					$convert_to_article = true;
+				}
+				if ($convert_to_article) {
+					$ret['type'] = 'Article';
+				}
 			}
 		}
 
@@ -752,6 +754,20 @@ class Activity {
 			$ret['conversation'] = $cnv;
 		}
 
+		// provide ocap access token for private media
+		
+		if ($i['item_private']) {
+			$token = get_iconfig($i,'ocap','relay');
+			if ($token && $has_images) {
+				foreach ($images as $match) {
+					if (strpos($match[2],z_root() . '/photo/') !== false) {
+						$i['body'] = str_replace($match[2],$match[2] . '?token=' . $token, $i['body']);
+						$match[2] = $match[2] . '?token=' . $token;
+					}
+				}
+			}
+		}
+
 		if ($i['mimetype'] === 'text/bbcode') {
 			if ($i['title']) {
 				$ret['name'] = $i['title'];
@@ -780,6 +796,8 @@ class Activity {
 		if ($a) {
 			$ret['attachment'] = $a;
 		}
+
+
 
 		if ($activitypub && $has_images && $ret['type'] === 'Note') {
 			$img = [];
@@ -1356,8 +1374,9 @@ class Activity {
 
 	static function actor_store($url,$person_obj) {
 
-		if (! is_array($person_obj))
+		if (! is_array($person_obj)) {
 			return;
+		}
 
 //		logger('person_obj: ' . print_r($person_obj,true));
 
@@ -1371,6 +1390,13 @@ class Activity {
 			else {
 				return;
 			}
+		}
+
+		if (is_array($person_obj) && array_key_exists('movedTo',$person_obj) && $person_obj['movedTo'] && ! is_array($person_obj['movedTo'])) {
+			$tgt = self::fetch($person_obj['movedTo']);
+			self::actor_store($person_obj['movedTo'],$tgt);
+			ActivityPub::move($person_obj['id'],$tgt);
+			return;
 		}
 
 		$url = $person_obj['id'];
@@ -1760,8 +1786,9 @@ class Activity {
 			$s['item_deleted'] = 1;
 		}
 
-		
-
+		if (array_key_exists('sensitive',$act->obj) && boolval($act->obj['sensitive'])) {
+			$s['item_nsfw'] = 1;
+		}
 
 		$s['verb']     = self::activity_mapper($act->type);
 
@@ -2041,7 +2068,7 @@ class Activity {
 
 		// very unpleasant and imperfect way of determining a Mastodon DM
 		
-		if ($act->raw_recips && array_key_exists('to',$act->raw_recips) && count($act->raw_recips['to'] === 1) && $act->raw_recips['to'][0] === channel_url($channel) && ! $act->raw_recips['cc']) {
+		if ($act->raw_recips && array_key_exists('to',$act->raw_recips) && is_array($act->raw_recips['to']) && count($act->raw_recips['to']) === 1 && $act->raw_recips['to'][0] === channel_url($channel) && ! $act->raw_recips['cc']) {
 			$item['item_private'] = 2;
 		}
 
@@ -2525,7 +2552,7 @@ class Activity {
 			z_root() . ZOT_APSCHEMA_REV
 		]], $arr);
 
-		$queue_id = ActivityPub::queue_message($msg,$channel,$recip[0]);
+		$queue_id = ActivityPub::queue_message(json_encode($msg, JSON_UNESCAPED_SLASHES),$channel,$recip[0]);
 		do_delivery( [ $queue_id ] );
 		
 	}

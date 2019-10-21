@@ -4340,7 +4340,7 @@ function sync_an_item($channel_id,$item_id) {
 
 
 function fix_attached_photo_permissions($uid,$xchan_hash,$body,
-	$str_contact_allow,$str_group_allow,$str_contact_deny,$str_group_deny) {
+	$str_contact_allow,$str_group_allow,$str_contact_deny,$str_group_deny,$token = EMPTY_STR) {
 
 	$match = null;
 	// match img and zmg image links
@@ -4387,7 +4387,7 @@ function fix_attached_photo_permissions($uid,$xchan_hash,$body,
 				if($r) {
 					$r = q("UPDATE photo SET allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s'
 						WHERE resource_id = '%s' AND uid = %d ",
-						dbesc($str_contact_allow),
+						dbesc($str_contact_allow . (($token) ? '<token:' . $token . '>' : EMPTY_STR)),
 						dbesc($str_group_allow),
 						dbesc($str_contact_deny),
 						dbesc($str_group_deny),
@@ -4425,7 +4425,7 @@ function fix_attached_photo_permissions($uid,$xchan_hash,$body,
 					if($r) {
 						q("update attach SET allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s'
 							WHERE id = %d AND uid = %d",
-							dbesc($str_contact_allow),
+							dbesc($str_contact_allow . (($token) ? '<token:' . $token . '>' : EMPTY_STR)),
 							dbesc($str_group_allow),
 							dbesc($str_contact_deny),
 							dbesc($str_group_deny),
@@ -4441,7 +4441,7 @@ function fix_attached_photo_permissions($uid,$xchan_hash,$body,
 
 
 function fix_attached_file_permissions($channel,$observer_hash,$body,
-	$str_contact_allow,$str_group_allow,$str_contact_deny,$str_group_deny) {
+	$str_contact_allow,$str_group_allow,$str_contact_deny,$str_group_deny,$token = EMPTY_STR) {
 
 	$match = false;
 
@@ -4454,7 +4454,7 @@ function fix_attached_file_permissions($channel,$observer_hash,$body,
 				attach_store($channel,$observer_hash,$options = 'update', array(
 					'hash'      => $hash,
 					'revision'  => $rev,
-					'allow_cid' => $str_contact_allow,
+					'allow_cid' => $str_contact_allow . (($token) ? '<token:' . $token . '>' : EMPTY_STR),
 					'allow_gid' => $str_group_allow,
 					'deny_cid'  => $str_contact_deny,
 					'deny_gid'  => $str_group_deny

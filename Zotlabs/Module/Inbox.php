@@ -242,6 +242,12 @@ class Inbox extends Controller {
 				case 'Delete':
 					Activity::drop($channel,$observer_hash,$AS);
 					break;
+
+				case 'Move':
+					if($observer_hash && $observer_hash === $AS->actor && Activity::is_an_actor($AS->obj) && Activity::is_an_actor($AS->tgt)) {
+						ActivityPub::move($AS->obj,$AS->tgt);
+					}
+					break;
 				case 'Add':
 				case 'Remove':
 				default:

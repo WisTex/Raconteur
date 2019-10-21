@@ -1,6 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\LDSignatures;
@@ -12,22 +13,27 @@ require_once('include/photo_factory.php');
 require_once('include/photos.php');
 
 
-class Photo extends \Zotlabs\Web\Controller {
+class Photo extends Controller {
 
 	function init() {
 	
 
-		if(ActivityStreams::is_as_request()) {
+		if (ActivityStreams::is_as_request()) {
 			$observer_xchan = get_observer_hash();
 			$allowed = false;
+
+			$bear = Activity::token_from_request();
+			if ($bear) {
+				logger('bear: ' . $bear, LOGGER_DEBUG);
+			}
 
 			$r = q("select * from item where resource_type = 'photo' and resource_id = '%s' limit 1",
 				dbesc(argv(1))
 			);
-			if($r) {
-				$allowed = attach_can_view($r[0]['uid'],$observer_xchan,argv(1));
+			if ($r) {
+				$allowed = attach_can_view($r[0]['uid'],$observer_xchan,argv(1),$bear);
 			}
-			if(! $allowed) {
+			if (! $allowed) {
 				http_status_exit(404,'Permission denied.');
 			}
 			$channel = channelx_by_n($r[0]['uid']);
@@ -57,12 +63,11 @@ class Photo extends \Zotlabs\Web\Controller {
 		}
 
 		$prvcachecontrol = false;
-		$smaxage = '';
 		$streaming = null;
 		$channel = null;
 		$person = 0;
 
-		switch(argc()) {
+		switch (argc()) {
 			case 4:
 				$person = argv(3);
 				$res    = argv(2);
@@ -74,23 +79,22 @@ class Photo extends \Zotlabs\Web\Controller {
 			case 1:
 			default:
 				killme();
-				// NOTREACHED
 		}
 	
+		$token = $_REQUEST['token'] ?: EMPTY_STR;
 		$observer_xchan = get_observer_hash();
 
 		$default = z_root() . '/' . get_default_profile_photo();
 	
-		if(isset($type)) {
+		if (isset($type)) {
 	
 			/**
 			 * Profile photos - Access controls on default profile photos are not honoured since they need to be exchanged with remote sites.
 			 * 
 			 */
 	
-			if($type === 'profile') {
-				switch($res) {
-	
+			if ($type === 'profile') {
+				switch ($res) {
 					case 'm':
 						$resolution = 5;
 						$default = z_root() . '/' . get_default_profile_photo(80);
@@ -108,10 +112,6 @@ class Photo extends \Zotlabs\Web\Controller {
 	
 			$uid = $person;
 
-			// Set a sane value for s-maxage in case infrastructure caching is present since
-			// browser refreshing does not refresh infrastructure caches.
-			$smaxage = 's-maxage=120;';
-
 			$d = [ 'imgscale' => $resolution, 'channel_id' => $uid, 'default' => $default, 'data'  => '', 'mimetype' => '' ];
 			call_hooks('get_profile_photo',$d);
 
@@ -121,28 +121,35 @@ class Photo extends \Zotlabs\Web\Controller {
 			$data       = $d['data'];
 			$mimetype   = $d['mimetype'];
 
-			if(! $data) {
+			if (! $data) {
 				$r = q("SELECT * FROM photo WHERE imgscale = %d AND uid = %d AND photo_usage = %d LIMIT 1",
 					intval($resolution),
 					intval($uid),
 					intval(PHOTO_PROFILE)
 				);
-				if($r) {
+				if ($r) {
 					$data = dbunescbin($r[0]['content']);
 					$mimetype = $r[0]['mimetype'];
 				}
-				if(intval($r[0]['os_storage']))
+				if (intval($r[0]['os_storage'])) {
 					$data = file_get_contents($data);
+				}
 			}
-			if(! $data) {
+			if (! $data) {
 				$data = fetch_image_from_url($default,$mimetype);
 			}
-			if(! $mimetype) {
+			if (! $mimetype) {
 				$mimetype = 'image/png';
 			}
 		}
 		else {
-	
+
+			$bear = Activity::token_from_request();
+			if ($bear) {
+				logger('bear: ' . $bear, LOGGER_DEBUG);
+			}
+
+
 			/**
 			 * Other photos
 			 */
@@ -166,39 +173,43 @@ class Photo extends \Zotlabs\Web\Controller {
 	
 			$resolution = 0;
 	
-			if(strpos($photo,'.') !== false)
+			if (strpos($photo,'.') !== false) {
 				$photo = substr($photo,0,strpos($photo,'.'));
-		
-			if(substr($photo,-2,1) == '-') {
+			}
+			
+			if (substr($photo,-2,1) == '-') {
 				$resolution = intval(substr($photo,-1,1));
 				$photo = substr($photo,0,-2);
 				// If viewing on a high-res screen, attempt to serve a higher resolution image:
-				if ($resolution == 2 && ($cookie_value > 1))
-				  {
+				if ($resolution == 2 && ($cookie_value > 1)) {
 				    $resolution = 1;
-				  }
+				}
 			}
 			
 			$r = q("SELECT uid, photo_usage FROM photo WHERE resource_id = '%s' AND imgscale = %d LIMIT 1",
 				dbesc($photo),
 				intval($resolution)
 			);
-			if($r) {
+			if ($r) {
 
 				$allowed = (-1);
 
-				if(intval($r[0]['photo_usage'])) {
+				if (intval($r[0]['photo_usage'])) {
 					$allowed = 1;
-					if(intval($r[0]['photo_usage']) === PHOTO_COVER) 
-						if($resolution < PHOTO_RES_COVER_1200)
+					if (intval($r[0]['photo_usage']) === PHOTO_COVER) {
+						if ($resolution < PHOTO_RES_COVER_1200) {
 							$allowed = (-1);
-					if(intval($r[0]['photo_usage']) === PHOTO_PROFILE)
-						if(! in_array($resolution,[4,5,6]))
+						}
+					}
+					if (intval($r[0]['photo_usage']) === PHOTO_PROFILE) {
+						if (! in_array($resolution,[4,5,6])) {
 							$allowed = (-1);
+						}
+					}
 				}
 
-				if($allowed === (-1)) {
-					$allowed = attach_can_view($r[0]['uid'],$observer_xchan,$photo);
+				if ($allowed === (-1)) {
+					$allowed = attach_can_view($r[0]['uid'],$observer_xchan,$photo,$bear);
 				}
 
 				$channel = channelx_by_n($r[0]['uid']);
@@ -211,32 +222,30 @@ class Photo extends \Zotlabs\Web\Controller {
 
 				$exists = (($e) ? true : false);
 
-				if($exists && $allowed) {
+				if ($exists && $allowed) {
 					$data = dbunescbin($e[0]['content']);
 					$mimetype = $e[0]['mimetype'];
-					if(intval($e[0]['os_storage'])) {
+					if (intval($e[0]['os_storage'])) {
 						$streaming = $data;
 					}
 
-					if($e[0]['allow_cid'] != '' || $e[0]['allow_gid'] != '' || $e[0]['deny_gid'] != '' || $e[0]['deny_gid'] != '')
+					if ($e[0]['allow_cid'] != '' || $e[0]['allow_gid'] != '' || $e[0]['deny_gid'] != '' || $e[0]['deny_gid'] != '')
 						$prvcachecontrol = 'no-store, no-cache, must-revalidate';
 				}
 				else {
-					if(! $allowed) {
+					if (! $allowed) {
 						http_status_exit(403,'forbidden');
 					}
-					if(! $exists) {
+					if (! $exists) {
 						http_status_exit(404,'not found');
 					}
-
 				}
 			}
 		}
 	
-		if(! isset($data)) {
-			if(isset($resolution)) {
-				switch($resolution) {
-	
+		if (! isset($data)) {
+			if (isset($resolution)) {
+				switch ($resolution) {
 					case 4:
 						$data = fetch_image_from_url(z_root() . '/' . get_default_profile_photo(),$mimetype);
 						break;
@@ -248,29 +257,27 @@ class Photo extends \Zotlabs\Web\Controller {
 						break;
 					default:
 						killme();
-						// NOTREACHED
-						break;
 				}
 			}
 		}
 	
-		if(isset($res) && intval($res) && $res < 500) {
+		if (isset($res) && intval($res) && $res < 500) {
 			$ph = photo_factory($data, $mimetype);
-			if($ph->is_valid()) {
+			if ($ph->is_valid()) {
 				$ph->scaleImageSquare($res);
 				$data = $ph->imageString();
 				$mimetype = $ph->getType();
 			}
 		}
 	
-		if(function_exists('header_remove')) {
+		if (function_exists('header_remove')) {
 			header_remove('Pragma');
 			header_remove('pragma');
 		}
 	
 		header("Content-type: " . $mimetype);
 	
-		if($prvcachecontrol) {
+		if ($prvcachecontrol) {
 	
 			// it is a private photo that they have permission to view.
 			// tell the browser and infrastructure caches not to cache it, 
@@ -290,28 +297,28 @@ class Photo extends \Zotlabs\Web\Controller {
 			// leave it alone. 
 	
 			$cache = get_config('system','photo_cache_time');
-			if(! $cache)
+			if (! $cache) {
 				$cache = (3600 * 24); // 1 day
-	
+			}
 		 	header("Expires: " . gmdate("D, d M Y H:i:s", time() + $cache) . " GMT");
 			// Set browser cache age as $cache.  But set timeout of 'shared caches'
-			// much lower in some cases in the event that infrastructure caching is present.
-			// Otherwise changes to profile images and cover photos may not update until
-			// max-age expires - and a browser refresh often does not force 
-			// a cache refresh for infrastructure caches.
-			header('Cache-Control: '.$smaxage.' max-age=' . $cache . ';');
+			// much lower in the event that infrastructure caching is present.
+			$smaxage = intval($cache/12);
+			header('Cache-Control: s-maxage='.$smaxage.'; max-age=' . $cache . ';');
 	
 		}
 
 		// If it's a file resource, stream it. 
 
-		if($streaming && $channel) {
-			if(strpos($streaming,'store') !== false)
+		if ($streaming && $channel) {
+			if (strpos($streaming,'store') !== false) {
 				$istream = fopen($streaming,'rb');
-			else
+			}
+			else {
 				$istream = fopen('store/' . $channel['channel_address'] . '/' . $streaming,'rb');
+			}
 			$ostream = fopen('php://output','wb');
-			if($istream && $ostream) {
+			if ($istream && $ostream) {
 				pipe_streams($istream,$ostream);
 				fclose($istream);
 				fclose($ostream);
@@ -320,7 +327,6 @@ class Photo extends \Zotlabs\Web\Controller {
 		else {
 			echo $data;
 		}
-
 		killme();
 	}
 	

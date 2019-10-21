@@ -259,7 +259,7 @@ class Permissions {
 		if(! $my_perms) {
 			$c = channelx_by_n($channel_id);
 			if($c) {
-				$my_perms = Permissions::FilledPerms(get_abconfig($channel_id,$c['channel_hash'],'system','my_perms',EMPTY_STR));
+				$my_perms = Permissions::FilledPerms(explode(',',get_abconfig($channel_id,$c['channel_hash'],'system','my_perms',EMPTY_STR)));
 			}
 		}
 

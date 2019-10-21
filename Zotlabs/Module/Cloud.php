@@ -7,21 +7,23 @@ namespace Zotlabs\Module;
  * Module for accessing the DAV storage area.
  */
 
+use App;
 use Sabre\DAV as SDAV;
 use Zotlabs\Storage;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Web\Controller;
+use Zotlabs\Storage\BasicAuth;
+use Zotlabs\Storage\Directory;
 
 // composer autoloader for SabreDAV
 require_once('vendor/autoload.php');
-
 require_once('include/attach.php');
-
 
 /**
  * @brief Cloud Module.
  *
  */
+
 class Cloud extends Controller {
 
 	/**
@@ -30,13 +32,14 @@ class Cloud extends Controller {
 	 */
 	function init() {
 
-		if (! is_dir('store'))
+		if (! is_dir('store')) {
 			os_mkdir('store', STORAGE_DEFAULT_PERMISSIONS, false);
-
+		}
+		
 		$which = null;
-		if (argc() > 1)
+		if (argc() > 1) {
 			$which = argv(1);
-
+		}
 		$profile = 0;
 
 		if ($which) {
@@ -44,19 +47,20 @@ class Cloud extends Controller {
 		}
 
 
-		$auth = new \Zotlabs\Storage\BasicAuth();
+		$auth = new BasicAuth();
 
 		$ob_hash = get_observer_hash();
 
 		if ($ob_hash) {
 			if (local_channel()) {
-				$channel = \App::get_channel();
+				$channel = App::get_channel();
 				$auth->setCurrentUser($channel['channel_address']);
 				$auth->channel_id = $channel['channel_id'];
 				$auth->channel_hash = $channel['channel_hash'];
 				$auth->channel_account_id = $channel['channel_account_id'];
-				if($channel['channel_timezone'])
+				if ($channel['channel_timezone']) {
 					$auth->setTimezone($channel['channel_timezone']);
+				}
 			}
 			$auth->observer = $ob_hash;
 		}
@@ -64,17 +68,18 @@ class Cloud extends Controller {
 		// if we arrived at this path with any query parameters in the url, build a clean url without
 		// them and redirect.
 
-		if(! array_key_exists('cloud_sort',$_SESSION)) {
+		if (! array_key_exists('cloud_sort',$_SESSION)) {
 			$_SESSION['cloud_sort'] = 'name';
 		}
 
 		$_SESSION['cloud_sort'] = (($_REQUEST['sort']) ? trim(notags($_REQUEST['sort'])) : $_SESSION['cloud_sort']);
 
 		$x = clean_query_string();
-		if($x !== \App::$query_string)
+		if ($x !== App::$query_string) {
 			goaway(z_root() . '/' . $x);
+		}
 
-		$rootDirectory = new \Zotlabs\Storage\Directory('/', $auth);
+		$rootDirectory = new Directory('/', $auth);
 
 		// A SabreDAV server-object
 		$server = new SDAV\Server($rootDirectory);
@@ -105,8 +110,9 @@ class Cloud extends Controller {
 
 		$server->exec();
 
-		if($browser->build_page)
+		if ($browser->build_page) {
 			construct_page();
+		}
 		
 		killme();
 	}
@@ -114,13 +120,13 @@ class Cloud extends Controller {
 
 	function DAVException($err) {
 			
-		if($err instanceof \Sabre\DAV\Exception\NotFound) {
+		if ($err instanceof \Sabre\DAV\Exception\NotFound) {
 			notice( t('Not found') . EOL);
 		}
-		elseif($err instanceof \Sabre\DAV\Exception\Forbidden) {
+		elseif ($err instanceof \Sabre\DAV\Exception\Forbidden) {
 			notice( t('Permission denied') . EOL);
 		}
-		elseif($err instanceof \Sabre\DAV\Exception\NotImplemented) {
+		elseif ($err instanceof \Sabre\DAV\Exception\NotImplemented) {
 			notice( t('Please refresh page') . EOL);
 		}
 		else {

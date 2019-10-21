@@ -272,16 +272,16 @@ class Libzot {
 			// We'll order by reverse id to try and pick off the newest one first and hopefully end up with the
 			// correct hubloc. If this doesn't work we may have to re-write this section to try them all.
 
-			if(array_key_exists('xchan_addr',$them) && $them['xchan_addr']) {
-				$r = q("select hubloc_id_url, hubloc_primary from hubloc where hubloc_addr = '%s' and hubloc_network = 'zot6' order by hubloc_id desc",
-					dbesc($them['xchan_addr'])
-				);
-			}
-			if (! $r) {
+//			if(array_key_exists('xchan_addr',$them) && $them['xchan_addr']) {
+//				$r = q("select hubloc_id_url, hubloc_primary from hubloc where hubloc_addr = '%s' and hubloc_network = 'zot6' order by hubloc_id desc",
+//					dbesc($them['xchan_addr'])
+//				);
+//			}
+//			if (! $r) {
 				$r = q("select hubloc_id_url, hubloc_primary from hubloc where hubloc_hash = '%s' and hubloc_network = 'zot6' order by hubloc_id desc",
 					dbesc($them['xchan_hash'])
 				);
-			}
+//			}
 
 			if ($r) {
 				foreach ($r as $rr) {
