@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Queue;
 use Zotlabs\Lib\Connect;
+use Zotlabs\Lib\DReport;
 use Zotlabs\Daemon\Master;
 
 class Libsync {
@@ -16,6 +17,10 @@ class Libsync {
 	 * Send a zot packet to all hubs where this channel is duplicated, refreshing
 	 * such things as personal settings, channel permissions, address book updates, etc.
 	 *
+	 * By default, sync the channel and any pconfig changes which were made in the current process
+	 * AccessLists (aka privacy groups) will also be included if $groups_changed is true.
+	 * To include other data sources, provide them as $packet.
+	 *
 	 * @param int $uid (optional) default 0
 	 * @param array $packet (optional) default null
 	 * @param boolean $groups_changed (optional) default false
@@ -23,22 +28,25 @@ class Libsync {
 
 	static function build_sync_packet($uid = 0, $packet = null, $groups_changed = false) {
 
-		logger('build_sync_packet');
+		//logger('build_sync_packet');
 
 		$keychange = (($packet && array_key_exists('keychange',$packet)) ? true : false);
-		if($keychange) {
+		if ($keychange) {
 			logger('keychange sync');
 		}
 
-		if(! $uid)
+		if (! $uid) {
 			$uid = local_channel();
-
-		if(! $uid)
+		}
+		
+		if (! $uid) {
 			return;
+		}
 
 		$channel = channelx_by_n($uid);
-		if(! $channel)
+		if (! $channel) {
 			return;
+		}
 
 		// don't provide these in the export 
 
@@ -46,115 +54,119 @@ class Libsync {
 		unset($channel['channel_password']);
 		unset($channel['channel_salt']);
 
-
-		if(intval($channel['channel_removed']))
-			return;
-
-		$h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url where hubloc_hash = '%s' and hubloc_network = 'zot6' and hubloc_deleted = 0",
+		$h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url 
+			where hubloc_hash = '%s' and hubloc_network = 'zot6' and hubloc_deleted = 0",
 			dbesc(($keychange) ? $packet['keychange']['old_hash'] : $channel['channel_hash'])
 		);
 
-		if(! $h)
+		if (! $h) {
 			return;
+		}
 
-		$synchubs = array();
+		$synchubs = [];
 
-		foreach($h as $x) {
-			if($x['hubloc_host'] == App::get_hostname())
+		foreach ($h as $x) {
+			if ($x['hubloc_host'] == App::get_hostname()) {
 				continue;
+			}
 
 			$y = q("select site_dead from site where site_url = '%s' limit 1",
 				dbesc($x['hubloc_url'])
 			);
 
-			if((! $y) || ($y[0]['site_dead'] == 0))
+			if ((! $y) || ($y[0]['site_dead'] == 0)) {
 				$synchubs[] = $x;
+			}
 		}
 
-		if(! $synchubs)
+		if (! $synchubs) {
 			return;
+		}
 
 		$env_recips = [ $channel['channel_hash'] ];
 
-		if($packet)
+		if ($packet) {
 			logger('packet: ' . print_r($packet, true),LOGGER_DATA, LOG_DEBUG);
-
-		$info = (($packet) ? $packet : array());
+		}
+		
+		$info = (($packet) ? $packet : [] );
 		$info['type'] = 'sync';
 		$info['encoding'] = 'red'; // note: not zot, this packet is very platform specific
 		$info['relocate'] = ['channel_address' => $channel['channel_address'], 'url' => z_root() ];
 
-		if(array_key_exists($uid,App::$config) && array_key_exists('transient',App::$config[$uid])) {
+		if (array_key_exists($uid, App::$config) && array_key_exists('transient', App::$config[$uid])) {
 			$settings = App::$config[$uid]['transient'];
-			if($settings) {
+			if ($settings) {
 				$info['config'] = $settings;
 			}
 		}
 
-		if($channel) {
-			$info['channel'] = array();
-			foreach($channel as $k => $v) {
+		if ($channel) {
+			$info['channel'] = [];
+			foreach ($channel as $k => $v) {
 
 				// filter out any joined tables like xchan
 
-				if(strpos($k,'channel_') !== 0)
+				if (strpos($k,'channel_') !== 0) {
 					continue;
+				}
 
 				// don't pass these elements, they should not be synchronised
 
 
-				$disallowed = [
-					'channel_id','channel_account_id','channel_primary','channel_address',
-					'channel_deleted','channel_removed','channel_system'
-				];
+				$disallowed = [ 'channel_id','channel_account_id','channel_primary','channel_address',
+					'channel_deleted','channel_removed','channel_system' ];
 
-				if(! $keychange) {
+				if (! $keychange) {
 					$disallowed[] = 'channel_prvkey';
 				}
 
-				if(in_array($k,$disallowed))
+				if (in_array($k,$disallowed)) {
 					continue;
+				}
 
 				$info['channel'][$k] = $v;
 			}
 		}
 
-		if($groups_changed) {
+		if ($groups_changed) {
 			$r = q("select hash as collection, visible, deleted, gname as name from pgrp where uid = %d",
 				intval($uid)
 			);
-			if($r)
+			if ($r) {
 				$info['collections'] = $r;
+			}
 
-			$r = q("select pgrp.hash as collection, pgrp_member.xchan as member from pgrp left join pgrp_member on pgrp.id = pgrp_member.gid where pgrp_member.uid = %d",
+			$r = q("select pgrp.hash as collection, pgrp_member.xchan as member from pgrp left join pgrp_member on pgrp.id = pgrp_member.gid 
+				where pgrp_member.uid = %d",
 				intval($uid)
 			);
-			if($r)
+			if ($r) {
 				$info['collection_members'] = $r;
+			}
 		}
 
-		$interval = ((get_config('system','delivery_interval') !== false)
-			? intval(get_config('system','delivery_interval')) : 2 );
+		$interval = get_config('system','delivery_interval', 2);
 
 		logger('Packet: ' . print_r($info,true), LOGGER_DATA, LOG_DEBUG);
 
 		$total = count($synchubs);
 
-		foreach($synchubs as $hub) {
+		foreach ($synchubs as $hub) {
 			$hash = random_string();
 			$n = Libzot::build_packet($channel,'sync',$env_recips,json_encode($info),'red',$hub['hubloc_sitekey'],$hub['site_crypto']);
-			Queue::insert(array(
+			Queue::insert([
 				'hash'       => $hash,
 				'account_id' => $channel['channel_account_id'],
 				'channel_id' => $channel['channel_id'],
 				'posturl'    => $hub['hubloc_callback'],
 				'notify'     => $n,
 				'msg'        => EMPTY_STR
-			));
+			]);
 
 
 			$x = q("select count(outq_hash) as total from outq where outq_delivered = 0");
-			if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',3000))) {
+			if (intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',3000))) {
 				logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
 				Queue::update($hash);
 				continue;
@@ -164,49 +176,51 @@ class Libsync {
 			Master::Summon([ 'Deliver', $hash ]);
 			$total = $total - 1;
 
-			if($interval && $total)
+			if ($interval && $total) {
 				@time_sleep_until(microtime(true) + (float) $interval);
+			}
 		}
 	}
 
 
 	static function build_link_packet($uid = 0, $packet = null) {
 
-		logger('build_link_packet');
+		// logger('build_link_packet');
 
-		if(! $uid)
+		if (! $uid) {
 			$uid = local_channel();
-
-		if(! $uid)
+		}
+		
+		if (! $uid) {
 			return;
+		}
 
 		$channel = channelx_by_n($uid);
-		if(! $channel)
+		if (! $channel) {
 			return;
-
-		if(intval($channel['channel_removed']))
-			return;
+		}
 
 		$l = q("select link from linkid where ident = '%s' and sigtype = 2",
 			dbesc($channel['channel_hash'])
 		);
 
-		if(! $l)
+		if (! $l) {
 			return;
+		}
 
 		$hashes = ids_to_querystr($l,'link',true);
 		
 		$h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url where hubloc_hash in (" . protect_sprintf($hashes) . ") and hubloc_network = 'zot6' and hubloc_deleted = 0");
 
-		if(! $h)
+		if (! $h) {
 			return;
+		}
 
-		$interval = ((get_config('system','delivery_interval') !== false)
-			? intval(get_config('system','delivery_interval')) : 2 );
+		$interval = get_config('system','delivery_interval',2);
 
 
-		foreach($h as $x) {
-			if($x['hubloc_host'] == App::get_hostname()) {
+		foreach ($h as $x) {
+			if ($x['hubloc_host'] == App::get_hostname()) {
 				continue;
 			}
 
@@ -214,15 +228,16 @@ class Libsync {
 				dbesc($x['hubloc_url'])
 			);
 
-			if(($y) && (intval($y[0]['site_dead']) == 1))
+			if (($y) && (intval($y[0]['site_dead']) == 1)) {
 				$continue;
-
+			}
 
 			$env_recips = [ $x['hubloc_hash'] ];
 
-			if($packet)
+			if ($packet) {
 				logger('packet: ' . print_r($packet, true),LOGGER_DATA, LOG_DEBUG);
-
+			}
+			
 			$info = (($packet) ? $packet : []);
 			$info['type'] = 'sync';
 			$info['encoding'] = 'red'; // note: not zot, this packet is very platform specific
@@ -242,7 +257,7 @@ class Libsync {
 			]);
 
 			$y = q("select count(outq_hash) as total from outq where outq_delivered = 0");
-			if(intval($y[0]['total']) > intval(get_config('system','force_queue_threshold',3000))) {
+			if (intval($y[0]['total']) > intval(get_config('system','force_queue_threshold',3000))) {
 				logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
 				Queue::update($hash);
 				continue;
@@ -250,13 +265,11 @@ class Libsync {
 
 			Master::Summon([ 'Deliver', $hash ]);
 
-			if($interval && count($h) > 1)
+			if ($interval && count($h) > 1) {
 				@time_sleep_until(microtime(true) + (float) $interval);
+			}
 		}
 	}
-
-
-
 
 
 	/**
@@ -283,13 +296,13 @@ class Libsync {
 				dbesc($sender)
 			);
 
-			$DR = new \Zotlabs\Lib\DReport(z_root(),$sender,$d,'sync');
+			$DR = new DReport(z_root(),$sender,$d,'sync');
 
-			if(! $r) {
+			if (! $r) {
 				$l = q("select ident from linkid where link = '%s' and sigtype = 2 limit 1",
 					dbesc($sender)
 				);
-				if($l) {
+				if ($l) {
 					$linked_channel = true;
 					$r = q("select * from channel where channel_hash = '%s' limit 1",
 						dbesc($l[0]['ident'])
@@ -310,86 +323,98 @@ class Libsync {
 			$max_friends = service_class_fetch($channel['channel_id'],'total_channels');
 			$max_feeds = account_service_class_fetch($channel['channel_account_id'],'total_feeds');
 
-			if($channel['channel_hash'] != $sender && (! $linked_channel)) {
+			if ($channel['channel_hash'] != $sender && (! $linked_channel)) {
 				logger('Possible forgery. Sender ' . $sender . ' is not ' . $channel['channel_hash']);
 				$DR->update('channel mismatch');
 				$result[] = $DR->get();
 				continue;
 			}
 
-			if($keychange) {
+			if ($keychange) {
 				self::keychange($channel,$arr);
 				continue;
 			}
 
 			// if the clone is active, so are we
 
-			if(substr($channel['channel_active'],0,10) !== substr(datetime_convert(),0,10)) {
+			if (substr($channel['channel_active'],0,10) !== substr(datetime_convert(),0,10)) {
 				q("UPDATE channel set channel_active = '%s' where channel_id = %d",
 					dbesc(datetime_convert()),
 					intval($channel['channel_id'])
 				);
 			}
 
-			if(array_key_exists('config',$arr) && is_array($arr['config']) && count($arr['config'])) {
-				foreach($arr['config'] as $cat => $k) {
-					foreach($arr['config'][$cat] as $k => $v)
+			if (array_key_exists('config',$arr) && is_array($arr['config']) && count($arr['config'])) {
+				foreach ($arr['config'] as $cat => $k) {
+					foreach ($arr['config'][$cat] as $k => $v) {
 						set_pconfig($channel['channel_id'],$cat,$k,$v);
+					}
 				}
 			}
 
 
-			if(array_key_exists('xign',$arr) && $arr['xign'])
+			if (array_key_exists('xign',$arr) && $arr['xign']) {
 				sync_xign($channel,$arr['xign']);
+			}
 
-			if(array_key_exists('obj',$arr) && $arr['obj'])
+			if (array_key_exists('obj',$arr) && $arr['obj']) {
 				sync_objs($channel,$arr['obj']);
+			}
 
-			if(array_key_exists('likes',$arr) && $arr['likes'])
+			if (array_key_exists('likes',$arr) && $arr['likes']) {
 				import_likes($channel,$arr['likes']);
+			}
 
-			if(array_key_exists('app',$arr) && $arr['app'])
+			if (array_key_exists('app',$arr) && $arr['app']) {
 				sync_apps($channel,$arr['app']);
-	
-			if(array_key_exists('chatroom',$arr) && $arr['chatroom'])
+			}
+
+			if (array_key_exists('sysapp',$arr) && $arr['sysapp']) {
+				sync_sysapps($channel,$arr['sysapp']);
+			}
+
+			if (array_key_exists('chatroom',$arr) && $arr['chatroom']) {
 				sync_chatrooms($channel,$arr['chatroom']);
+			}
 
-			if(array_key_exists('conv',$arr) && $arr['conv'])
+			if (array_key_exists('conv',$arr) && $arr['conv']) {
 				import_conv($channel,$arr['conv']);
+			}
 
-			if(array_key_exists('mail',$arr) && $arr['mail'])
+			if (array_key_exists('mail',$arr) && $arr['mail']) {
 				sync_mail($channel,$arr['mail']);
+			}
 	
-			if(array_key_exists('event',$arr) && $arr['event'])
+			if (array_key_exists('event',$arr) && $arr['event']) {
 				sync_events($channel,$arr['event']);
+			}
 
-			if(array_key_exists('event_item',$arr) && $arr['event_item'])
+			if (array_key_exists('event_item',$arr) && $arr['event_item']) {
 				sync_items($channel,$arr['event_item'],((array_key_exists('relocate',$arr)) ? $arr['relocate'] : null));
+			}
 
-			if(array_key_exists('item',$arr) && $arr['item'])
+			if (array_key_exists('item',$arr) && $arr['item']) {
 				sync_items($channel,$arr['item'],((array_key_exists('relocate',$arr)) ? $arr['relocate'] : null));
-	
-			// deprecated, maintaining for a few months for upward compatibility
-			// this should sync webpages, but the logic is a bit subtle
-
-			if(array_key_exists('item_id',$arr) && $arr['item_id'])
-				sync_items($channel,$arr['item_id']);
-
-			if(array_key_exists('menu',$arr) && $arr['menu'])
+			}
+			
+			if (array_key_exists('menu',$arr) && $arr['menu']) {
 				sync_menus($channel,$arr['menu']);
+			}
 	
-			if(array_key_exists('file',$arr) && $arr['file'])
+			if (array_key_exists('file',$arr) && $arr['file']) {
 				sync_files($channel,$arr['file']);
+			}
 
-			if(array_key_exists('wiki',$arr) && $arr['wiki'])
+			if (array_key_exists('wiki',$arr) && $arr['wiki']) {
 				sync_items($channel,$arr['wiki'],((array_key_exists('relocate',$arr)) ? $arr['relocate'] : null));
+			}
 
 			if(array_key_exists('channel',$arr) && is_array($arr['channel']) && count($arr['channel'])) {
 
 				$remote_channel = $arr['channel'];
 				$remote_channel['channel_id'] = $channel['channel_id'];
 
-				if(array_key_exists('channel_pageflags',$arr['channel']) && intval($arr['channel']['channel_pageflags'])) {
+				if (array_key_exists('channel_pageflags',$arr['channel']) && intval($arr['channel']['channel_pageflags'])) {
 
 					// Several pageflags are site-specific and cannot be sync'd.
 					// Only allow those bits which are shareable from the remote and then 
@@ -401,7 +426,6 @@ class Libsync {
 				}
 
 				$columns = db_columns('channel');
-
 
 				$disallowed = [
 					'channel_id',         'channel_account_id',  'channel_primary',   'channel_prvkey',
@@ -425,7 +449,7 @@ class Libsync {
 				}
 			}
 
-			if(array_key_exists('abook',$arr) && is_array($arr['abook']) && count($arr['abook'])) {
+			if (array_key_exists('abook',$arr) && is_array($arr['abook']) && count($arr['abook'])) {
 
 				$total_friends = 0;
 				$total_feeds = 0;
@@ -433,52 +457,46 @@ class Libsync {
 				$r = q("select abook_id, abook_feed from abook where abook_channel = %d",
 					intval($channel['channel_id'])
 				);
-				if($r) {
+				if ($r) {
 					// don't count yourself
 					$total_friends = ((count($r) > 0) ? count($r) - 1 : 0);
-					foreach($r as $rr)
-						if(intval($rr['abook_feed']))
+					foreach ($r as $rr) {
+						if (intval($rr['abook_feed'])) {
 							$total_feeds ++;
+						}
+					}
 				}
 
 
-				$disallowed = array('abook_id','abook_account','abook_channel','abook_rating','abook_rating_text','abook_not_here');
+				$disallowed = [ 'abook_id', 'abook_account', 'abook_channel', 'abook_rating', 'abook_rating_text', 'abook_not_here' ];
 
 				$fields = db_columns('abook');
 
-				foreach($arr['abook'] as $abook) {
+				foreach ($arr['abook'] as $abook) {
 
 					$abconfig = null;
 
-					if(array_key_exists('abconfig',$abook) && is_array($abook['abconfig']) && count($abook['abconfig']))
+					if (array_key_exists('abconfig',$abook) && is_array($abook['abconfig']) && count($abook['abconfig'])) {
 						$abconfig = $abook['abconfig'];
-
-					if(! array_key_exists('abook_blocked',$abook)) {
-						// convert from redmatrix
-						$abook['abook_blocked']     = (($abook['abook_flags'] & 0x0001) ? 1 : 0);
-						$abook['abook_ignored']     = (($abook['abook_flags'] & 0x0002) ? 1 : 0);
-						$abook['abook_hidden']      = (($abook['abook_flags'] & 0x0004) ? 1 : 0);
-						$abook['abook_archived']    = (($abook['abook_flags'] & 0x0008) ? 1 : 0);
-						$abook['abook_pending']     = (($abook['abook_flags'] & 0x0010) ? 1 : 0);
-						$abook['abook_unconnected'] = (($abook['abook_flags'] & 0x0020) ? 1 : 0);
-						$abook['abook_self']        = (($abook['abook_flags'] & 0x0080) ? 1 : 0);
-						$abook['abook_feed']        = (($abook['abook_flags'] & 0x0100) ? 1 : 0);
 					}
 
-					$clean = array();
-					if($abook['abook_xchan'] && $abook['entry_deleted']) {
+					$clean = [];
+					
+					if ($abook['abook_xchan'] && $abook['entry_deleted']) {
 						logger('Removing abook entry for ' . $abook['abook_xchan']);
 
 						$r = q("select abook_id, abook_feed from abook where abook_xchan = '%s' and abook_channel = %d and abook_self = 0 limit 1",
 							dbesc($abook['abook_xchan']),
 							intval($channel['channel_id'])
 						);
-						if($r) {
+						if ($r) {
 							contact_remove($channel['channel_id'],$r[0]['abook_id']);
-							if($total_friends)
+							if ($total_friends) {
 								$total_friends --;
-							if(intval($r[0]['abook_feed']))
+							}
+							if (intval($r[0]['abook_feed'])) {
 								$total_feeds --;
+							}
 						}
 						continue;
 					}
@@ -487,38 +505,38 @@ class Libsync {
 					// This relies on the undocumented behaviour that red sites send xchan info with the abook
 					// and import_author_xchan will look them up on all federated networks
 
-					if($abook['abook_xchan'] && $abook['xchan_addr']) {
+					if ($abook['abook_xchan'] && $abook['xchan_addr']) {
 						$h = Libzot::get_hublocs($abook['abook_xchan']);
-						if(! $h) {
+						if (! $h) {
 							$xhash = import_author_xchan(encode_item_xchan($abook));
-							if(! $xhash) {
+							if (! $xhash) {
 								logger('Import of ' . $abook['xchan_addr'] . ' failed.');
 								continue;
 							}
 						}
 					}
 
-					foreach($abook as $k => $v) {
-						if(in_array($k,$disallowed) || (strpos($k,'abook') !== 0)) {
+					foreach ($abook as $k => $v) {
+						if (in_array($k,$disallowed) || (strpos($k,'abook') !== 0)) {
 							continue;
 						}
-						if(! in_array($k,$fields)) {
+						if (! in_array($k,$fields)) {
 							continue;
 						}
 						$clean[$k] = $v;
 					}
 
-					if(! array_key_exists('abook_xchan',$clean))
+					if (! array_key_exists('abook_xchan',$clean)) {
 						continue;
+					}
 
 					$reconnect = false;
-					if(array_key_exists('abook_instance',$clean) && $clean['abook_instance'] && strpos($clean['abook_instance'],z_root()) === false) {
+					if (array_key_exists('abook_instance',$clean) && $clean['abook_instance'] && strpos($clean['abook_instance'],z_root()) === false) {
 						$clean['abook_not_here'] = 1;
 						if (! ($abook['abook_pending'] || $abook['abook_blocked']))  {
 							$reconnect = true;
 						}
 					}
-
 
 					$r = q("select * from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
 						dbesc($clean['abook_xchan']),
@@ -527,12 +545,12 @@ class Libsync {
 
 					// make sure we have an abook entry for this xchan on this system
 
-					if(! $r) {
-						if($max_friends !== false && $total_friends > $max_friends) {
+					if (! $r) {
+						if ($max_friends !== false && $total_friends > $max_friends) {
 							logger('total_channels service class limit exceeded');
 							continue;
 						}
-						if($max_feeds !== false && intval($clean['abook_feed']) && $total_feeds > $max_feeds) {
+						if ($max_feeds !== false && intval($clean['abook_feed']) && $total_feeds > $max_feeds) {
 							logger('total_feeds service class limit exceeded');
 							continue;
 						}
@@ -544,14 +562,16 @@ class Libsync {
 							]
 						);
 						$total_friends ++;
-						if(intval($clean['abook_feed']))
+						if (intval($clean['abook_feed'])) {
 							$total_feeds ++;
+						}
 					}
 
-					if(count($clean)) {
-						foreach($clean as $k => $v) {
-							if($k == 'abook_dob')
+					if (count($clean)) {
+						foreach ($clean as $k => $v) {
+							if ($k == 'abook_dob') {
 								$v = dbescdate($v);
+							}
 
 							$r = dbq("UPDATE abook set " . dbesc($k) . " = '" . dbesc($v)
 							. "' where abook_xchan = '" . dbesc($clean['abook_xchan']) . "' and abook_channel = " . intval($channel['channel_id']));
@@ -565,9 +585,9 @@ class Libsync {
 
 					// translate_abook_perms_inbound($channel,$abook);
 
-					if($abconfig) {
+					if ($abconfig) {
 						/// @fixme does not handle sync of del_abconfig
-						foreach($abconfig as $abc) {
+						foreach ($abconfig as $abc) {
 							set_abconfig($channel['channel_id'],$abc['xchan'],$abc['cat'],$abc['k'],$abc['v']);
 						}
 					}
@@ -579,21 +599,21 @@ class Libsync {
 
 			// sync collections (privacy groups) oh joy...
 
-			if(array_key_exists('collections',$arr) && is_array($arr['collections']) && count($arr['collections'])) {
+			if (array_key_exists('collections',$arr) && is_array($arr['collections']) && count($arr['collections'])) {
 				$x = q("select * from pgrp where uid = %d",
 					intval($channel['channel_id'])
 				);
-				foreach($arr['collections'] as $cl) {
+				foreach ($arr['collections'] as $cl) {
 					$found = false;
-					if($x) {
-						foreach($x as $y) {
-							if($cl['collection'] == $y['hash']) {
+					if ($x) {
+						foreach ($x as $y) {
+							if ($cl['collection'] == $y['hash']) {
 								$found = true;
 								break;
 							}
 						}
-						if($found) {
-							if(($y['gname'] != $cl['name'])
+						if ($found) {
+							if (($y['gname'] != $cl['name'])
 								|| ($y['visible'] != $cl['visible'])
 								|| ($y['deleted'] != $cl['deleted'])) {
 								q("update pgrp set gname = '%s', visible = %d, deleted = %d where hash = '%s' and uid = %d",
@@ -604,14 +624,14 @@ class Libsync {
 									intval($channel['channel_id'])
 								);
 							}
-							if(intval($cl['deleted']) && (! intval($y['deleted']))) {
+							if (intval($cl['deleted']) && (! intval($y['deleted']))) {
 								q("delete from pgrp_member where gid = %d",
 									intval($y['id'])
 								);
 							}
 						}
 					}
-					if(! $found) {
+					if (! $found) {
 						$r = q("INSERT INTO pgrp ( hash, uid, visible, deleted, gname )
 							VALUES( '%s', %d, %d, %d, '%s' ) ",
 							dbesc($cl['collection']),
@@ -626,16 +646,16 @@ class Libsync {
 					// They need to be removed by marking deleted and removing the members.
 					// This shouldn't happen except for clones created before this function was written.
 
-					if($x) {
+					if ($x) {
 						$found_local = false;
-						foreach($x as $y) {
-							foreach($arr['collections'] as $cl) {
-								if($cl['collection'] == $y['hash']) {
+						foreach ($x as $y) {
+							foreach ($arr['collections'] as $cl) {
+								if ($cl['collection'] == $y['hash']) {
 									$found_local = true;
 									break;
 								}
 							}
-							if(! $found_local) {
+							if (! $found_local) {
 								q("delete from pgrp_member where gid = %d",
 									intval($y['id'])
 								);
@@ -655,38 +675,40 @@ class Libsync {
 
 				// now sync the members
 
-				if(array_key_exists('collection_members', $arr)
+				if (array_key_exists('collection_members', $arr)
 					&& is_array($arr['collection_members'])
 					&& count($arr['collection_members'])) {
 
 					// first sort into groups keyed by the group hash
 					$members = array();
-					foreach($arr['collection_members'] as $cm) {
-						if(! array_key_exists($cm['collection'],$members))
-							$members[$cm['collection']] = array();
+					foreach ($arr['collection_members'] as $cm) {
+						if (! array_key_exists($cm['collection'],$members)) {
+							$members[$cm['collection']] = [];
+						}
 
 						$members[$cm['collection']][] = $cm['member'];
 					}
 
 					// our group list is already synchronised
-					if($x) {
-						foreach($x as $y) {
+					if ($x) {
+						foreach ($x as $y) {
 	
 							// for each group, loop on members list we just received
-							if(isset($y['hash']) && isset($members[$y['hash']])) {
-								foreach($members[$y['hash']] as $member) {
+							if (isset($y['hash']) && isset($members[$y['hash']])) {
+								foreach ($members[$y['hash']] as $member) {
 									$found = false;
 									$z = q("select xchan from pgrp_member where gid = %d and uid = %d and xchan = '%s' limit 1",
 										intval($y['id']),
 										intval($channel['channel_id']),
 										dbesc($member)
 									);
-									if($z)
+									if ($z) {
 										$found = true;
+									}
 	
 									// if somebody is in the group that wasn't before - add them
 	
-									if(! $found) {
+									if (! $found) {
 										q("INSERT INTO pgrp_member (uid, gid, xchan)
 											VALUES( %d, %d, '%s' ) ",
 											intval($channel['channel_id']),
@@ -702,10 +724,10 @@ class Libsync {
 								intval($y['id']),
 								intval($channel['channel_id'])
 							);
-							if($m) {
-								foreach($m as $mm) {
+							if ($m) {
+								foreach ($m as $mm) {
 									// if the local existing member isn't in the list we just received - remove them
-									if(! in_array($mm['xchan'],$members[$y['hash']])) {
+									if (! in_array($mm['xchan'],$members[$y['hash']])) {
 										q("delete from pgrp_member where xchan = '%s' and gid = %d and uid = %d",
 											dbesc($mm['xchan']),
 											intval($y['id']),
@@ -719,17 +741,17 @@ class Libsync {
 				}
 			}
 
-			if(array_key_exists('profile',$arr) && is_array($arr['profile']) && count($arr['profile'])) {
+			if (array_key_exists('profile',$arr) && is_array($arr['profile']) && count($arr['profile'])) {
 
 				$disallowed = array('id','aid','uid','guid');
 
-				foreach($arr['profile'] as $profile) {
+				foreach ($arr['profile'] as $profile) {
 	
 					$x = q("select * from profile where profile_guid = '%s' and uid = %d limit 1",
 						dbesc($profile['profile_guid']),
 						intval($channel['channel_id'])
 					);
-					if(! $x) {
+					if (! $x) {
 						profile_store_lowlevel(
 							[
 								'aid'          => $channel['channel_account_id'],
@@ -742,32 +764,39 @@ class Libsync {
 							dbesc($profile['profile_guid']),
 							intval($channel['channel_id'])
 						);
-						if(! $x)
+						if (! $x) {
 							continue;
+						}
 					}
-					$clean = array();
-					foreach($profile as $k => $v) {
-						if(in_array($k,$disallowed))
+					$clean = [];
+					foreach ($profile as $k => $v) {
+						if (in_array($k,$disallowed)) {
 							continue;
+						}
 
-						if($profile['is_default'] && in_array($k,['photo','thumb']))
+						if ($profile['is_default'] && in_array($k,['photo','thumb'])) {
 							continue;
+						}
 
-						if($k === 'name')
+						if ($k === 'name') {
 							$clean['fullname'] = $v;
-						elseif($k === 'with')
+						}
+						elseif ($k === 'with') {
 							$clean['partner'] = $v;
-						elseif($k === 'work')
+						}
+						elseif ($k === 'work') {
 							$clean['employment'] = $v;
-						elseif(array_key_exists($k,$x[0]))
+						}
+						elseif (array_key_exists($k,$x[0])) {
 							$clean[$k] = $v;
+						}
 
 						/**
 						 * @TODO
 						 * We also need to import local photos if a custom photo is selected
 						 */
 
-						if((strpos($profile['thumb'],'/photo/profile/l/') !== false) || intval($profile['is_default'])) {
+						if ((strpos($profile['thumb'],'/photo/profile/l/') !== false) || intval($profile['is_default'])) {
 							$profile['photo'] = z_root() . '/photo/profile/l/' . $channel['channel_id'];
 							$profile['thumb'] = z_root() . '/photo/profile/m/' . $channel['channel_id'];
 						}
@@ -777,8 +806,8 @@ class Libsync {
 						}
 					}
 
-					if(count($clean)) {
-						foreach($clean as $k => $v) {
+					if (count($clean)) {
+						foreach ($clean as $k => $v) {
 							$r = dbq("UPDATE profile set " . TQUOT . dbesc($k) . TQUOT . " = '" . dbesc($v)
 							. "' where profile_guid = '" . dbesc($profile['profile_guid'])
 							. "' and uid = " . intval($channel['channel_id']));
@@ -787,7 +816,7 @@ class Libsync {
 				}
 			}
 
-			$addon = ['channel' => $channel, 'data' => $arr];
+			$addon = [ 'channel' => $channel, 'data' => $arr ];
 			/**
 			 * @hooks process_channel_sync_delivery
 			 *   Called when accepting delivery of a 'sync packet' containing structure and table updates from a channel clone.
@@ -796,7 +825,7 @@ class Libsync {
 			 */
 			call_hooks('process_channel_sync_delivery', $addon);
 
-			$DR = new \Zotlabs\Lib\DReport(z_root(),$d,$d,'sync','channel sync delivered');
+			$DR = new DReport(z_root(),$d,$d,'sync','channel sync delivered');
 
 			$DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
 
