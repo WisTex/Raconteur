@@ -754,16 +754,16 @@ class Activity {
 			$ret['conversation'] = $cnv;
 		}
 
-		// provide ocap access token for private media
-		
-		if ($i['item_private']) {
-			$token = get_iconfig($i,'ocap','relay');
-			if ($token && $has_images) {
-				foreach ($images as $match) {
-					if (strpos($match[2],z_root() . '/photo/') !== false) {
-						$i['body'] = str_replace($match[2],$match[2] . '?token=' . $token, $i['body']);
-						$match[2] = $match[2] . '?token=' . $token;
-					}
+		// provide ocap access token for private media.
+		// set this for descendants even if the current item is not private
+		// because it may have been relayed from a private item. 
+
+		$token = get_iconfig($i,'ocap','relay');
+		if ($token && $has_images) {
+			foreach ($images as $match) {
+				if (strpos($match[2],z_root() . '/photo/') !== false) {
+					$i['body'] = str_replace($match[2],$match[2] . '?token=' . $token, $i['body']);
+					$match[2] = $match[2] . '?token=' . $token;
 				}
 			}
 		}

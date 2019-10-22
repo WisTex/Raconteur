@@ -338,7 +338,7 @@ function permissions_sql($owner_id, $remote_observer = null, $table = '', $token
 	 */
 	 
 	elseif ($token) {
-		return " and {table}allow_cid like '" . protect_sprintf('%<token:' . $token . '>%') . "' "; 
+		return " and {$table}allow_cid like '" . protect_sprintf('%<token:' . $token . '>%') . "' "; 
 	}
 
 	/**

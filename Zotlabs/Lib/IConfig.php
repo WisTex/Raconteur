@@ -14,42 +14,49 @@ class IConfig {
 
 		$is_item = false;
 	
-		if(is_array($item)) {
+		if (is_array($item)) {
 			$is_item = true;
-			if((! array_key_exists('iconfig',$item)) || (! is_array($item['iconfig'])))
-				$item['iconfig'] = array();
 
-			if(array_key_exists('item_id',$item))
+			if ((! array_key_exists('iconfig',$item)) || (! is_array($item['iconfig']))) {
+				$item['iconfig'] = [];
+			}
+
+			if (array_key_exists('item_id',$item)) {
 				$iid = $item['item_id'];
-			else
+			}
+			else {
 				$iid = $item['id'];
-		}
-		elseif(intval($item))
-			$iid = $item;
-
-		if(! $iid)
-			return $default;
-
-		if(is_array($item) && array_key_exists('iconfig',$item) && is_array($item['iconfig'])) {
-			foreach($item['iconfig'] as $c) {
-				if($c['iid'] == $iid && $c['cat'] == $family && $c['k'] == $key)
-					return $c['v'];
+			}
+			
+			if (array_key_exists('iconfig',$item) && is_array($item['iconfig'])) {
+				foreach ($item['iconfig'] as $c) {
+					if ($c['cat'] == $family && $c['k'] == $key) {
+						return $c['v'];
+					}
+				}
 			}
 		}
-		 
+		elseif (intval($item)) {
+			$iid = $item;
+
+			if (! $iid) {
+				return $default;
+			}
+		}
+		
 		$r = q("select * from iconfig where iid = %d and cat = '%s' and k = '%s' limit 1",
 			intval($iid),
 			dbesc($family),
 			dbesc($key)
 		);
-		if($r) {
+		if ($r) {
 			$r[0]['v'] = unserialise($r[0]['v']);
-			if($is_item)
+			if ($is_item) {
 				$item['iconfig'][] = $r[0];
+			}
 			return $r[0]['v'];
 		}
 		return $default;
-
 	}
 
 	/**
