@@ -733,14 +733,16 @@ class Photos extends Controller {
 			}
 
 			if($_GET['order'] === 'posted')
-				$order = 'ASC';
+				$order = 'created ASC';
+			elseif($_GET['order'] === 'name')
+				$order = 'filename ASC';
 			else
-				$order = 'DESC';
+				$order = 'created DESC';
 
 			$r = q("SELECT p.resource_id, p.id, p.filename, p.mimetype, p.imgscale, p.description, p.created FROM photo p INNER JOIN
 					(SELECT resource_id, max(imgscale) imgscale FROM photo left join attach on folder = '%s' and photo.resource_id = attach.hash WHERE attach.uid = %d AND imgscale <= 4 AND photo_usage IN ( %d, %d ) and is_nsfw = %d $sql_extra GROUP BY resource_id) ph 
 					ON (p.resource_id = ph.resource_id AND p.imgscale = ph.imgscale)
-				ORDER BY created $order LIMIT %d OFFSET %d",
+				ORDER BY $order LIMIT %d OFFSET %d",
 				dbesc($x['hash']),
 				intval($owner_uid),
 				intval(PHOTO_NORMAL),
@@ -890,13 +892,15 @@ class Photos extends Controller {
 			$nextlink = '';
 	
 			if($_GET['order'] === 'posted')
-				$order = 'ASC';
+				$order = 'created ASC';
+			elseif ($_GET['order'] === 'name')
+				$order = 'filename ASC';
 			else
-				$order = 'DESC';
+				$order = 'created DESC';
 	
 
 			$prvnxt = q("SELECT hash FROM attach WHERE folder = '%s' AND uid = %d AND is_photo = 1
-				$sql_attach ORDER BY created $order ",
+				$sql_attach ORDER BY $order ",
 				dbesc($x[0]['folder']),
 				intval($owner_uid)
 			); 
@@ -914,8 +918,8 @@ class Photos extends Controller {
 					}
 				}
 	
-				$prevlink = z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/image/' . $prvnxt[$prv]['hash'] . (($_GET['order'] === 'posted') ? '?f=&order=posted' : '');
-				$nextlink = z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/image/' . $prvnxt[$nxt]['hash'] . (($_GET['order'] === 'posted') ? '?f=&order=posted' : '');
+				$prevlink = z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/image/' . $prvnxt[$prv]['hash'] . (($_GET['order']) ? '?f=&order=' . $_GET['order'] : '');
+				$nextlink = z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/image/' . $prvnxt[$nxt]['hash'] . (($_GET['order']) ? '?f=&order=' . $_GET['order'] : '');
 	 		}
 	
 	

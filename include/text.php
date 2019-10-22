@@ -1973,6 +1973,25 @@ function undo_post_tagging($s) {
 			}
 		}
 	}
+	$matches = null;
+	$x = null;
+	$cnt = preg_match_all('/([@#])(\!*)\[url=(.*?)\](.*?)\[\/url\]/ism',$s,$matches,PREG_SET_ORDER);
+	if($cnt) {
+		foreach($matches as $mtch) {
+			$x = false;
+			if($mtch[1] === '@') {
+				$x = q("select xchan_addr, xchan_url from xchan where xchan_url = '%s' limit 1",
+					dbesc($mtch[3])
+				);
+			}
+			if($x) {
+				$s = str_replace($mtch[0], $mtch[1] . $mtch[2] . '{' . (($x[0]['xchan_addr']) ? $x[0]['xchan_addr'] : $x[0]['xchan_url']) . '}', $s);
+			}
+			else {
+				$s = str_replace($mtch[0], $mtch[1] . $mtch[2] . quote_tag($mtch[4]),$s);
+			}
+		}
+	}
 	return $s;
 }
 
@@ -2622,7 +2641,8 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
                     //create profile link
                     $profile = str_replace(',','%2c',$profile);
                     $url = $profile;
-					$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname . '[/zrl]';
+					$zrl = (($xc['xchan_network'] === 'zot6') ? 'zrl' : 'url');
+					$newtag = '@' . (($exclusive) ? '!' : '') . '[' . $zrl . '=' . $profile . ']' . $newname . '[/' . $zrl . ']';
 					$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
 
 
