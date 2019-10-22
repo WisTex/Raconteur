@@ -313,8 +313,16 @@ function attach_can_view($uid,$ob_hash,$resource,$token = EMPTY_STR) {
 		dbesc($hash),
 		intval($uid)
 	);
+
 	if (! $r) {
 		return false;
+	}
+
+	// don't perform recursive folder check when using OCAP. Only when using ACL access.
+	// For OCAP if the token is valid they can see the thing. 
+	
+	if ($token) {
+		return true;
 	}
 
 	return attach_can_view_folder($uid,$ob_hash,$r[0]['folder'],$token);

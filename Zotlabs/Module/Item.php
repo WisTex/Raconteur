@@ -1230,12 +1230,6 @@ class Item extends Controller {
 		$datarray['route']               = $route;
 
 
-		if(! array_key_exists('obj',$datarray)) {
-			$copy = $datarray;
-			$copy['author'] = $observer;
-			$datarray['obj'] = Activity::encode_item($copy,((get_config('system','activitypub')) ? true : false));
-		}	
-
 		// A specific ACL over-rides public_policy completely
  
 		if(! empty_acl($datarray))
@@ -1248,6 +1242,11 @@ class Item extends Controller {
 			IConfig::set($datarray,'ocap','relay',$token);
 		}
 
+		if(! array_key_exists('obj',$datarray)) {
+			$copy = $datarray;
+			$copy['author'] = $observer;
+			$datarray['obj'] = Activity::encode_item($copy,((get_config('system','activitypub')) ? true : false));
+		}	
 
 
 		// preview mode - prepare the body for display and send it via json
