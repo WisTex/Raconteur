@@ -152,12 +152,54 @@ class Lists extends Controller {
 
 		$change = false;
 	
-		logger('mod_lists: ' . \App::$cmd,LOGGER_DEBUG);
+		logger('mod_lists: ' . App::$cmd,LOGGER_DEBUG);
 		
+
+		if (argc() > 2 && argv(1) === 'view') {
+			$grp = argv(2);
+			if ($grp) {
+				$r = q("select * from pgrp where hash = '%s' and deleted = 0",
+					dbesc($grp)
+				);
+				if ($r) {
+					$uid = $r[0]['uid'];
+					if (local_channel() && local_channel() == $uid) {
+						goaway(z_root() . '/lists/' . $r[0]['id']);					
+					}
+					if (! ($r[0]['visible'] && perm_is_allowed($uid,get_observer_hash(),'view_contacts'))) {
+						notice( t('Permission denied') . EOL);
+						return;
+					}
+					$members = [];
+					$memberlist = AccessList::members($uid, $r[0]['id']);
+
+					if ($memberlist) {
+						foreach ($memberlist as $member) {
+							$members[] = micropro($member,true,'mpgroup', false);
+						}
+					}
+					$o = replace_macros(get_markup_template('listmembers.tpl'), [
+						'$title' => t('List members'),
+						'$members' => $members
+					]);
+					return $o;
+				}
+				else {
+					notice ( t('List not found') . EOL);
+					return;
+				}
+			}
+		}
+
+
+
+
 		if (! local_channel()) {
 			notice( t('Permission denied') . EOL);
 			return;
 		}
+
+
 
 		// Switch to text mode interface if we have more than 'n' contacts or group members
 		$switchtotext = get_pconfig(local_channel(),'system','groupedit_image_limit');
@@ -259,10 +301,9 @@ class Lists extends Controller {
 				goaway(z_root() . '/connections');
 			}
 			$group = $r[0];
-	
-	
+
 			$members = AccessList::members(local_channel(), $group['id']);
-	
+
 			$preselected = array();
 			if(count($members))	{
 				foreach($members as $member)

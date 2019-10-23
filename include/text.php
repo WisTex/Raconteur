@@ -2677,18 +2677,19 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
             // weird - as all the other tags are linked to something.
 
             if(local_channel() && local_channel() == $profile_uid) {
-                $grp = AccessList::byname($profile_uid,$name);
-
+			$grp = AccessList::byname($profile_uid,$name);
                 if($grp) {
-                    $g = q("select hash from pgrp where id = %d and visible = 1 limit 1",
-                        intval($grp)
+					$g = q("select * from pgrp where id = %d and visible = 1 limit 1",
+                        intval($grp['id'])
                     );
-                    if($g && $exclusive) {
+					if($g && $exclusive) {
 						$access_tag .= 'gid:' . $g[0]['hash'];
                     }
                     $channel = App::get_channel();
                     if($channel) {
-                        $newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . z_root() . '/channel/' . $channel['channel_address'] . ']' . $newname . '[/zrl]';
+						$replaced = true;
+						$newname = $channel['channel_name'] . '(' . $g[0]['gname'] . ')';
+						$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . z_root() . '/lists/view/' . $g[0]['hash'] . ']' . $newname . '[/zrl]';
                         $body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
                     }
                 }
