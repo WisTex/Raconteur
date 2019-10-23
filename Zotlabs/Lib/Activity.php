@@ -760,10 +760,11 @@ class Activity {
 
 		$token = get_iconfig($i,'ocap','relay');
 		if ($token && $has_images) {
-			foreach ($images as $match) {
+			for ($n = 0; $n < count($images); $n ++) {
+				$match = $images[$n];
 				if (strpos($match[2],z_root() . '/photo/') !== false) {
 					$i['body'] = str_replace($match[2],$match[2] . '?token=' . $token, $i['body']);
-					$match[2] = $match[2] . '?token=' . $token;
+					$images[$n][2] = $match[2] . '?token=' . $token;
 				}
 			}
 		}

@@ -2505,6 +2505,10 @@ function tag_deliver($uid, $item_id) {
 
 
 	if ($is_group && intval($item['item_thread_top']) && intval($item['item_wall']) && $item['author_xchan'] !== $item['owner_xchan']) {
+		if (strpos($item['body'],'[/share]')) {
+			logger('W2W post already shared');
+			return;
+		}
 		// group delivery via W2W
 		logger('rewriting W2W post for ' . $u['channel_address']);
 		start_delivery_chain($u, $item, $item_id, 0, false);
@@ -2762,6 +2766,8 @@ function tgroup_check($uid, $item) {
  */
 function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false) {
 
+	btlogger('start_chain: ' . $channel['channel_id'] . ' item: ' . $item_id);
+	
 	$sourced = check_item_source($channel['channel_id'],$item);
 
 	if($sourced) {
