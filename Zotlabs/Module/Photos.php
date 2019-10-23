@@ -775,10 +775,12 @@ class Photos extends Controller {
 	
 			}
 	
-			if($_GET['order'] === 'posted')
-				$order =  array(t('Show Newest First'), z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/album/' . $datum);
-			else
-				$order = array(t('Show Oldest First'), z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/album/' . $datum . '?f=&order=posted');
+			$order =  [
+				[ t('Date descending'), z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/album/' . $datum ],
+				[ t('Date ascending'), z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/album/' . $datum . '?f=&order=posted'],
+				[ t('Name ascending'), z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/album/' . $datum . '?f=&order=name']
+			];
+				
 	
 			$photos = array();
 			if(count($r)) {
@@ -837,6 +839,7 @@ class Photos extends Controller {
 					'$can_post' => $can_post,
 					'$upload' => array(t('Add Photos'), z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/upload/' . $datum),
 					'$order' => $order,
+					'$sort'  => t('Sort'),
 					'$upload_form' => $upload_form,
 					'$usage' => $usage_message
 				));

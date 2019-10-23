@@ -2,7 +2,14 @@
 	<div class="section-title-wrapper">
 		<div class="pull-right">
 			{{if $order}}
-			<a class="btn btn-outline-secondary btn-sm" href="{{$order.1}}" title="{{$order.0}}"><i class="fa fa-sort"></i></a>
+			<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{$sort}}">
+				<i class="fa fa-sort-amount-up"></i>
+			</button>
+			<div class="dropdown-menu dropdown-menu-right">
+				{{foreach $order as $menu}}
+				<a class="dropdown-item {{$menu.2}}" href="{{$menu.1}}">{{$menu.0}}</a>
+				{{/foreach}}
+			</div>
 			{{/if}}
 			<div class="btn-group btn-group">
 				{{if $album_edit.1}}
