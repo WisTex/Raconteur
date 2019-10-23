@@ -175,7 +175,7 @@ class Lists extends Controller {
 
 					if ($memberlist) {
 						foreach ($memberlist as $member) {
-							$members[] = micropro($member,true,'mpgroup', false);
+							$members[] = micropro($member,true,'mpgroup', 'card');
 						}
 					}
 					$o = replace_macros(get_markup_template('listmembers.tpl'), [
