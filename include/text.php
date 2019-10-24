@@ -2680,7 +2680,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 			$grp = AccessList::byname($profile_uid,$name);
                 if($grp) {
 					$g = q("select * from pgrp where id = %d and visible = 1 limit 1",
-                        intval($grp['id'])
+                        intval($grp)
                     );
 					if($g && $exclusive) {
 						$access_tag .= 'gid:' . $g[0]['hash'];
@@ -2688,7 +2688,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
                     $channel = App::get_channel();
                     if($channel) {
 						$replaced = true;
-						$newname = $channel['channel_name'] . '(' . $g[0]['gname'] . ')';
+						$newname = $channel['channel_name'] . ' (' . $g[0]['gname'] . ')';
 						$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . z_root() . '/lists/view/' . $g[0]['hash'] . ']' . $newname . '[/zrl]';
                         $body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
                     }
