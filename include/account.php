@@ -101,7 +101,8 @@ function check_account_admin($arr) {
 
 function account_total() {
 	$r = q("select account_id from account where true");
-	if ($r) {
+	// Distinguish between an empty array and an error
+	if (is_array($r)) {
 		return count($r);
 	}
 	return false;
@@ -165,7 +166,7 @@ function create_account($arr) {
 
 	// allow the admin_email account to be admin, but only if it's the first account.
 
-	$c = intval(account_total());
+	$c = account_total();
 	if (($c === 0) && (check_account_admin($arr))) {
 		$roles |= ACCOUNT_ROLE_ADMIN;
 	}
