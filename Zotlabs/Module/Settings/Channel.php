@@ -516,7 +516,7 @@ class Channel {
 
 		$hyperdrive = [ 'hyperdrive', t('Friend-of-friend conversations'), ((get_pconfig(local_channel(),'system','hyperdrive',true)) ? 1 : 0), t('Import public third-party conversations in which your connections participate.'), $yes_no ];
 
-		if (get_config('system','activitypub')) {
+		if (get_config('system','activitypub',true)) {
 			$apconfig = true;
 			$activitypub = replace_macros(get_markup_template('field_checkbox.tpl'), [ '$field' => [ 'activitypub', t('Enable ActivityPub protocol'), ((get_pconfig(local_channel(),'system','activitypub',true)) ? 1 : 0), t(''), $yes_no ]]);
 		}

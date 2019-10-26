@@ -39,7 +39,7 @@ class Photo extends Controller {
 			$channel = channelx_by_n($r[0]['uid']);
 		
 			$obj = json_decode($r[0]['obj'],true);
-			$obj['actor'] = Activity::encode_person($channel,true,((get_config('system','activitypub')) ? true : false));
+			$obj['actor'] = Activity::encode_person($channel,true,((get_config('system','activitypub',true)) ? true : false));
 
 			$x = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,

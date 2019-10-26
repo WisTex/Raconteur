@@ -90,7 +90,7 @@ class Id extends Controller {
 			xchan_query($r,true);
 			$items = fetch_post_tags($r,true);
 
-			$i = Activity::encode_item($items[0],( get_config('system','activitypub') ? true : false ));
+			$i = Activity::encode_item($items[0],( get_config('system','activitypub',true) ? true : false ));
 
 			if(! $i)
 				http_status_exit(404, 'Not found');

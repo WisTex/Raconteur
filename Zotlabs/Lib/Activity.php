@@ -34,7 +34,7 @@ class Activity {
 			// Eventually this needs to be passed in much further up the stack
 			// and base the decision on whether or not we are encoding for ActivityPub or Zot6
 
-			return self::fetch_item($x,((get_config('system','activitypub')) ? true : false)); 
+			return self::fetch_item($x,((get_config('system','activitypub',true)) ? true : false)); 
 		}
 		if ($x['type'] === ACTIVITY_OBJ_THING) {
 			return self::fetch_thing($x); 
@@ -972,7 +972,7 @@ class Activity {
 		];
 		$ret['url'] = $p['xchan_url'];
 
-		if ($activitypub && get_config('system','activitypub')) {	
+		if ($activitypub && get_config('system','activitypub',true)) {	
 
 			if ($c) {
 				if (get_pconfig($c['channel_id'],'system','activitypub',true)) {
@@ -2216,7 +2216,7 @@ class Activity {
 				intval($item['uid'])
 			);
 			if (! $p) {
-				if (! get_config('system','activitypub')) {
+				if (! get_config('system','activitypub',true)) {
 					return;
 				}
 				else {

@@ -17,7 +17,7 @@ class Siteinfo extends Controller {
 	function get() {
 
 		$federated = 'Zot6';
-		if (Config::get('system','activitypub')) {
+		if (Config::get('system','activitypub',true)) {
 			$federated .= ', ActivityPub';
 		}
 

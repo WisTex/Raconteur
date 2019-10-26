@@ -85,7 +85,7 @@ class Connect {
 			// Some Hubzilla records were originally stored as activitypub. If we find one, force rediscovery
 			// since Zap cannot connect with them.
 			
-			if ($r['xchan_network'] === 'activitypub' && ! get_config('system','activitypub')) {
+			if ($r['xchan_network'] === 'activitypub' && ! get_config('system','activitypub',true)) {
 				$r = null;
 			}
 		}
@@ -153,7 +153,7 @@ class Connect {
 
 		}
 
-		$ap_allowed = get_config('system','activitypub',false) && get_pconfig($uid,'system','activitypub',true);
+		$ap_allowed = get_config('system','activitypub',true) && get_pconfig($uid,'system','activitypub',true);
 		
 		if ($r['xchan_network'] === 'activitypub') {
 			if (! $ap_allowed) {

@@ -122,7 +122,7 @@ class Item extends Controller {
 			if(! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream'))
 				http_status_exit(403, 'Forbidden');
 
-			$i = Activity::encode_item($items[0],((get_config('system','activitypub')) ? true : false));
+			$i = Activity::encode_item($items[0],((get_config('system','activitypub',true)) ? true : false));
 
 			if(! $i)
 				http_status_exit(404, 'Not found');
