@@ -1973,6 +1973,25 @@ function undo_post_tagging($s) {
 			}
 		}
 	}
+	$matches = null;
+	$x = null;
+	$cnt = preg_match_all('/([@#])(\!*)\[url=(.*?)\](.*?)\[\/url\]/ism',$s,$matches,PREG_SET_ORDER);
+	if($cnt) {
+		foreach($matches as $mtch) {
+			$x = false;
+			if($mtch[1] === '@') {
+				$x = q("select xchan_addr, xchan_url from xchan where xchan_url = '%s' limit 1",
+					dbesc($mtch[3])
+				);
+			}
+			if($x) {
+				$s = str_replace($mtch[0], $mtch[1] . $mtch[2] . '{' . (($x[0]['xchan_addr']) ? $x[0]['xchan_addr'] : $x[0]['xchan_url']) . '}', $s);
+			}
+			else {
+				$s = str_replace($mtch[0], $mtch[1] . $mtch[2] . quote_tag($mtch[4]),$s);
+			}
+		}
+	}
 	return $s;
 }
 
@@ -2622,7 +2641,8 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
                     //create profile link
                     $profile = str_replace(',','%2c',$profile);
                     $url = $profile;
-					$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname . '[/zrl]';
+					$zrl = (($xc['xchan_network'] === 'zot6') ? 'zrl' : 'url');
+					$newtag = '@' . (($exclusive) ? '!' : '') . '[' . $zrl . '=' . $profile . ']' . $newname . '[/' . $zrl . ']';
 					$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
 
 
@@ -2657,18 +2677,19 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
             // weird - as all the other tags are linked to something.
 
             if(local_channel() && local_channel() == $profile_uid) {
-                $grp = AccessList::byname($profile_uid,$name);
-
+			$grp = AccessList::byname($profile_uid,$name);
                 if($grp) {
-                    $g = q("select hash from pgrp where id = %d and visible = 1 limit 1",
+					$g = q("select * from pgrp where id = %d and visible = 1 limit 1",
                         intval($grp)
                     );
-                    if($g && $exclusive) {
+					if($g && $exclusive) {
 						$access_tag .= 'gid:' . $g[0]['hash'];
                     }
                     $channel = App::get_channel();
                     if($channel) {
-                        $newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . z_root() . '/channel/' . $channel['channel_address'] . ']' . $newname . '[/zrl]';
+						$replaced = true;
+						$newname = $channel['channel_name'] . ' (' . $g[0]['gname'] . ')';
+						$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . z_root() . '/lists/view/' . $g[0]['hash'] . ']' . $newname . '[/zrl]';
                         $body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
                     }
                 }

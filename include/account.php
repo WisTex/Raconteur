@@ -101,7 +101,8 @@ function check_account_admin($arr) {
 
 function account_total() {
 	$r = q("select account_id from account where true");
-	if ($r) {
+	// Distinguish between an empty array and an error
+	if (is_array($r)) {
 		return count($r);
 	}
 	return false;

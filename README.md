@@ -1,7 +1,7 @@
 ZAP
 ===
 
-Zap is an open source decentralised social network with more privacy and less drama. 
+Zap is a webserver app which implements a decentralised social network with more privacy and less drama. 
 
 
 =====

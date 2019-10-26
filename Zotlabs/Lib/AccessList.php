@@ -115,7 +115,9 @@ class AccessList {
 		return $ret;
 	}
 
-
+	// returns the integer id of an access group owned by $uid and named $name
+	// or false.
+	
 	static function byname($uid,$name) {
 		if((! $uid) || (! strlen($name)))
 			return false;

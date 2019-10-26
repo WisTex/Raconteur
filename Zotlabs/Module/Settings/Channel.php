@@ -159,7 +159,9 @@ class Channel {
 		$post_profilechange   = (($_POST['post_profilechange'] == 1) ? 1: 0);
 		$adult            = (($_POST['adult'] == 1) ? 1 : 0);
 		$defpermcat       = ((x($_POST,'defpermcat')) ? notags(trim($_POST['defpermcat'])) : 'default');
-	
+
+		$hide_friends      = ((x($_POST,'hide_friends')) ? 1 - intval($_POST['hide_friends'])  : 0);  
+
 		$cal_first_day   = (((x($_POST,'first_day')) && intval($_POST['first_day']) >= 0 && intval($_POST['first_day']) < 7) ? intval($_POST['first_day']) : 0);
 		$mailhost        = ((array_key_exists('mailhost',$_POST)) ? notags(trim($_POST['mailhost'])) : '');
 		$profile_assign  = ((x($_POST,'profile_assign')) ? notags(trim($_POST['profile_assign'])) : '');
@@ -288,17 +290,17 @@ class Channel {
 		if($r)
 			info( t('Settings updated.') . EOL);
 	
-		if(! is_null($publish)) {
-			$r = q("UPDATE profile SET publish = %d WHERE is_default = 1 AND uid = %d",
-				intval($publish),
-				intval(local_channel())
-			);
-			$r = q("UPDATE xchan SET xchan_hidden = %d WHERE xchan_hash = '%s'",
-				intval(1 - $publish),
-				intval($channel['channel_hash'])
-			);
-		}
-	
+
+		$r = q("UPDATE profile SET publish = %d, hide_friends = %d WHERE is_default = 1 AND uid = %d",
+			intval($publish),
+			intval($hide_friends),
+			intval(local_channel())
+		);
+		$r = q("UPDATE xchan SET xchan_hidden = %d WHERE xchan_hash = '%s'",
+			intval(1 - $publish),
+			intval($channel['channel_hash'])
+		);
+
 		if($name_change) {
 			$r = q("update xchan set xchan_name = '%s', xchan_name_date = '%s' where xchan_hash = '%s'",
 				dbesc($username),
@@ -438,10 +440,10 @@ class Channel {
 		}
 		else {
 			$profile_in_dir = replace_macros($opt_tpl,array(
-				'$field' 	=> array('profile_in_directory', t('Publish your default profile in the network directory'), $profile['publish'], '', $yes_no),
+				'$field' 	=> array('profile_in_directory', t('Publish your profile in the network directory'), $profile['publish'], '', $yes_no),
 			));
 		}
-	
+
 		$suggestme = replace_macros($opt_tpl,array(
 				'$field' 	=> array('suggestme',  t('Allow us to suggest you as a potential friend to new members?'), $suggestme, '', $yes_no),
 	
@@ -563,7 +565,7 @@ class Channel {
 			'$perms_set_msg' => t('Your permissions are already configured. Click to view/adjust'),
 	
 			'$hide_presence' => array('hide_presence', t('Hide my online presence'),$hide_presence, t('Prevents displaying in your profile that you are online'), $yes_no),
-	
+			'$hidefriends' => array('hide_friends', t('Allow others to view your friends and connections'), 1 - intval($profile['hide_friends']), '', $yes_no ),
 			'$permiss_arr' => $permiss,
 			'$comment_perms' => $comment_perms,
 

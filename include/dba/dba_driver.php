@@ -13,6 +13,7 @@
  * The factory will return a database driver which is an implementation of the
  * abstract dba_driver class.
  */
+
 class DBA {
 
 	static public $dba = null;
