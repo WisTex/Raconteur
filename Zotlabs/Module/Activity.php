@@ -87,7 +87,7 @@ class Activity extends Controller {
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1',
 				z_root() . ZOT_APSCHEMA_REV
-				]], ZlibActivity::encode_activity($items[0]));
+				]], ZlibActivity::encode_activity($items[0],get_config('system','activitypub',true)));
 
 
 			$headers = [];
