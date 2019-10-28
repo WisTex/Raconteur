@@ -1,12 +1,18 @@
+Privacy Policy
+==============
 
 Privacy Notice May 2018
+
+The following applies mainly to account registrants on this site. You may use this website
+without registering for an account.
+
 
 How your information will be used
 =================================
 
 Information you provide to this website may be stored and used to provide services to you.
 
-We require an email address to idenitfy the account holder. This will not be shared with
+We require an email address to identify the account holder. This will not be shared with
 any other website or service. It is used to send you notifications about your account and
 perform administrative tasks such as resetting your password. You have the option to 
 opt-out of all email notifications through your settings. 
@@ -77,8 +83,7 @@ download for either archival puposes or to transfer to another compatible websit
 Your rights
 ===========
 
-Under the General Data Protection Regulation
-(GDPR) and The Data Protection Act 2018 
+Under the General Data Protection Regulation (GDPR) and The Data Protection Act 2018 
 (DPA) you have a number of rights with regard to your personal data. 
 You have the right to request from us access to and rectification or erasure of your personal data,
 the right to restrict processing, object to processing as well as in certain circumstances the right
@@ -92,23 +97,24 @@ You have the right to lodge a complaint to the Information Commissioners’ Offi
 believe that we have not complied with the requirements of the GDPR or DPA 18 with regard 
 to your personal data.
 
+DMCA takedown notices (for illegal use of copyrighted information) MUST be initiated by the
+owner of the copyright and should be addressed to the data protection officer, listed below.
+
+
 Identity and contact details of controller and data protection officer
+======================================================================
 
 [NAME OF COMPANY]
-is the controller 
-[and processor]
-of data for the purposes of the DPA 18 and GDPR. 3
+is the controller [and processor] of data for the purposes of the DPA section 18 and GDPR section 3.
 
-If you have any concerns as to how your data is processed you can contact:
+If you have any concerns as to how your data is processed you may contact:
 
-[
-[NAME]
-Data Protection Offer at 
-[EMAIL ADDRESS]
-]
-[NAME] [JOB TITLE]
-at 
-[EMAIL ADDRESS]
-or you can write to these
-individuals using the address of 
-[]
+[Website operator should include their contact details here].
+
+
+Terms of Service
+================
+
+
+This website is physically located in [COUNTRY] and all usage is subject to the laws thereof.
+
