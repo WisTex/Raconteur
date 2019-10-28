@@ -22,6 +22,9 @@ class PhotoGd extends PhotoDriver {
 		if (imagetypes() & IMG_GIF) {
 			$t['image/gif'] = 'gif';
 		}
+		if (imagetypes() & IMG_WEBP) {
+			$t['image/webp'] = 'webp';
+		}
 
 		return $t;
 	}
@@ -160,6 +163,11 @@ class PhotoGd extends PhotoDriver {
 		ob_start();
 
 		switch ($this->getType()){
+			case 'image/webp':
+			
+				\imagewebp($this->image);
+				break;
+				
 			case 'image/png':
 				$quality = get_config('system', 'png_quality');
 				if ((! $quality) || ($quality > 9)) {
