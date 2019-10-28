@@ -2,6 +2,10 @@
 
 namespace Zotlabs\Photo;
 
+use Imagick;
+use Exception;
+
+
 /**
  * @brief ImageMagick photo driver.
  */
@@ -10,30 +14,33 @@ class PhotoImagick extends PhotoDriver {
 	public function supportedTypes() {
 		return [
 			'image/jpeg' => 'jpg',
-			'image/png' => 'png',
-			'image/gif' => 'gif',
+			'image/png'  => 'png',
+			'image/gif'  => 'gif',
+			'image/webp' => 'webp',
 		];
 	}
 
 	private function get_FormatsMap() {
 		return [
 			'image/jpeg' => 'JPG',
-			'image/png' => 'PNG',
-			'image/gif' => 'GIF',
+			'image/png'  => 'PNG',
+			'image/gif'  => 'GIF',
+			'image/webp' => 'WEBP'
 		];
 	}
 
 
 	protected function load($data, $type) {
 		$this->valid = false;
-		$this->image = new \Imagick();
+		$this->image = new Imagick();
 
-		if(! $data)
+		if (! $data) {
 			return;
+		}
 
 		try {
 			$this->image->readImageBlob($data);
-		} catch(\Exception $e) {
+		} catch(Exception $e) {
 			logger('Imagick readImageBlob() exception:' . print_r($e, true));
 			return;
 		}
@@ -45,7 +52,7 @@ class PhotoImagick extends PhotoDriver {
 		$map = $this->get_FormatsMap();
 		$format = $map[$type];
 
-		if($this->image) {
+		if ($this->image) {
 			$this->image->setFormat($format);
 
 			// Always coalesce, if it is not a multi-frame image it won't hurt anyway
@@ -57,11 +64,12 @@ class PhotoImagick extends PhotoDriver {
 			/*
 			 * setup the compression here, so we'll do it only once
 			 */
-			switch($this->getType()) {
+			switch ($this->getType()) {
 				case 'image/png':
 					$quality = get_config('system', 'png_quality');
-					if((! $quality) || ($quality > 9))
+					if ((! $quality) || ($quality > 9)) {
 						$quality = PNG_QUALITY;
+					}
 					/*
 					 * From http://www.imagemagick.org/script/command-line-options.php#quality:
 					 *
@@ -75,8 +83,9 @@ class PhotoImagick extends PhotoDriver {
 					break;
 				case 'image/jpeg':
 					$quality = get_config('system', 'jpeg_quality');
-					if((! $quality) || ($quality > 100))
+					if ((! $quality) || ($quality > 100)) {
 						$quality = JPEG_QUALITY;
+					}
 					$this->image->setCompressionQuality($quality);
 				default:
 					break;
@@ -85,7 +94,7 @@ class PhotoImagick extends PhotoDriver {
 	}
 
 	protected function destroy() {
-		if($this->is_valid()) {
+		if ($this->is_valid()) {
 			$this->image->clear();
 			$this->image->destroy();
 		}
@@ -108,7 +117,7 @@ class PhotoImagick extends PhotoDriver {
 
 		$this->image->stripImage();
 
-		if(! empty($profiles)) {
+		if (! empty($profiles)) {
 			$this->image->profileImage('icc', $profiles['icc']);
 		}
 	}
@@ -122,8 +131,9 @@ class PhotoImagick extends PhotoDriver {
 	 * @return boolean|\Imagick
 	 */
 	public function getImage() {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
+		}
 
 		$this->image = $this->image->deconstructImages();
 		return $this->image;
@@ -144,8 +154,9 @@ class PhotoImagick extends PhotoDriver {
 	}
 
 	public function rotate($degrees) {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
+		}
 
 		$this->image->setFirstIterator();
 		do {
@@ -157,8 +168,9 @@ class PhotoImagick extends PhotoDriver {
 	}
 
 	public function flip($horiz = true, $vert = false) {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
+		}
 
 		$this->image->setFirstIterator();
 		do {
@@ -170,8 +182,9 @@ class PhotoImagick extends PhotoDriver {
 	}
 
 	public function cropImageRect($maxx, $maxy, $x, $y, $w, $h) {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
+		}
 
 		$this->image->setFirstIterator();
 		do {
@@ -188,8 +201,9 @@ class PhotoImagick extends PhotoDriver {
 	}
 
 	public function imageString() {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
+		}
 
 		/* Clean it */
 		$this->image = $this->image->deconstructImages();
