@@ -1,7 +1,6 @@
 <?php
 
 use Michelf\MarkdownExtra;
-use App;
 
 /**
  * @brief
@@ -9,6 +8,7 @@ use App;
  * @param string $path
  * @return string|unknown
  */
+
 function get_help_fullpath($path,$suffix=null) {
 
 		return find_docfile($path,App::$language);
@@ -24,12 +24,8 @@ function find_docfile($name,$language) {
 			return 'doc/' . $lang . '/' . $name . '.md';
 		}
 	}
-
 	return EMPTY_STR;
 }
-
-
-
 
 
 /**

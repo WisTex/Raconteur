@@ -3,7 +3,7 @@
 
 <h3>{{$sitenametxt}}</h3>
 
-<div>{{$sitename}}</div>
+<div><a href="{{$url}}">{{$sitename}}</a></div>
 
 <h3>{{$headline}}</h3>
 

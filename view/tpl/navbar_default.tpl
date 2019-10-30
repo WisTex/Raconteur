@@ -1,4 +1,4 @@
-<div class="project-banner" title="{{$project_title}}"><a href="{{$baseurl}}"><img src="{{$project_icon}}" alt="{{$project_title}}"></a></div>
+<div class="project-banner" title="{{$project_title}}"><a href="{{$baseurl}}/siteinfo"><img src="{{$project_icon}}" alt="{{$project_title}}"></a></div>
 {{if $nav.login && !$userinfo}}
 <div class="d-lg-none pt-1 pb-1">
 	{{if $nav.loginmenu.1.4}}
