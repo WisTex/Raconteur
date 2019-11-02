@@ -174,6 +174,27 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 }
 
 function comments_are_now_closed($item) {
+
+	$x = [
+		'item' => $item,
+		'closed' => 'unset'
+	];
+
+	/**
+	 * @hooks comments_are_now_closed
+	 *   Called to determine whether commenting should be closed
+	 *   * \e array \b item
+	 *   * \e boolean \b closed - return value
+	 */
+
+	call_hooks('comments_are_now_closed', $x);
+
+	if ($x['closed'] != 'unset') {
+		return $x['closed'];
+	}
+
+
+
 	if($item['comments_closed'] > NULL_DATE) {
 		$d = datetime_convert();
 		if($d > $item['comments_closed'])
