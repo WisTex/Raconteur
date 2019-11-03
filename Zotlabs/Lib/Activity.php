@@ -244,7 +244,11 @@ class Activity {
 		$ret = [];
 
 		if ($item['tag'] && is_array($item['tag'])) {
-			foreach ($item['tag'] as $t) {
+			$ptr = $item['tag'];
+			if (! array_key_exists(0,$ptr)) {
+				$ptr = [ $ptr ];
+			}
+			foreach ($ptr as $t) {
 				if (! array_key_exists('type',$t))
 					$t['type'] = 'Hashtag';
 
@@ -399,8 +403,12 @@ class Activity {
 
 		$ret = [];
 
-		if ($item['attachment']) {
-			foreach ($item['attachment'] as $att) {
+		if (is_array($item['attachment']) && $item['attachment']) {
+			$ptr = $item['attachment'];
+			if (! array_key_exists(0,$ptr)) {
+				$ptr = [ $ptr ];
+			}
+			foreach ($ptr as $att) {
 				$entry = [];
 				if ($att['href'])
 					$entry['href'] = $att['href'];
@@ -413,6 +421,9 @@ class Activity {
 				if ($entry)
 					$ret[] = $entry;
 			}
+		}
+		else {
+			btlogger('not an array: ' . $item['attachment']);
 		}
 
 		return $ret;
@@ -736,7 +747,7 @@ class Activity {
 				if ($d) {
 					$recips = get_iconfig($i['parent'], 'activitypub', 'recips');
 
-					if (in_array($i['author']['xchan_url'], $recips['to'])) {
+					if (is_array($recips) && in_array($i['author']['xchan_url'], $recips['to'])) {
 						$reply_url = $d[0]['xchan_url'];
 						$is_directmessage = true;
 					}
