@@ -237,6 +237,7 @@ class Queue {
 			$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
 			$ret = $outq['outq_msg'];
 			logger('ActivityPub send: ' . jindent($ret), LOGGER_DATA);
+			$headers['Date'] = datetime_convert('UTC','UTC', 'now', 'D, d M Y h:i:s \\G\\M\\T');
 			$headers['Digest'] = HTTPSig::generate_digest_header($ret);
 			$headers['(request-target)'] = 'post ' . get_request_string($outq['outq_posturl']);
 

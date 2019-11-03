@@ -87,8 +87,8 @@ class Activity {
 			$headers = [
 				'Accept'           => 'application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
 				'Host'             => $m['host'],
-				'(request-target)' => 'get ' . get_request_string($url),
-				'Date'             => datetime_convert('UTC','UTC','now','D, d M Y H:i:s') . ' UTC'
+				'Date'             => datetime_convert('UTC','UTC', 'now', 'D, d M Y h:i:s \\G\\M\\T'),
+				'(request-target)' => 'get ' . get_request_string($url)
 			];
 			if (isset($token)) {
 				$headers['Authorization'] = 'Bearer ' . $token;
@@ -2090,7 +2090,6 @@ class Activity {
 		}
 		
 		$allowed = false;
-		$moderated = false;
 		
 		if ($is_child_node) {		
 			$p = q("select id from item where mid = '%s' and uid = %d and item_wall = 1",
@@ -2106,6 +2105,10 @@ class Activity {
 					// let the sender know we received their comment but we don't permit spam here.
 					self::send_rejection_activity($channel,$item['author_xchan'],$item);
 					return;
+				}
+
+				if (perm_is_allowed($channel['channel_id'],$item['author_xchan'],'moderated')) {
+					$item['item_blocked'] = ITEM_MODERATED;
 				}
 			}
 			else {
