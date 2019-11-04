@@ -2154,14 +2154,6 @@ class Activity {
 			return;
 		}
 
-		if (is_array($act->obj)) {
-			$content = self::get_content($act->obj);
-		}
-		if (! $content) {
-			logger('no content');
-			return;
-		}
-
 		$item['aid'] = $channel['channel_account_id'];
 		$item['uid'] = $channel['channel_id'];
 

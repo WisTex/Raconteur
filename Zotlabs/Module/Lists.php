@@ -41,7 +41,7 @@ class Lists extends Controller {
 				}
 				observer_auth($portable_id);
 			}
-			elseif (! Config::get('system','require_authenticated_fetch',false)) {
+			elseif (Config::get('system','require_authenticated_fetch',false)) {
 				http_status_exit(403,'Permission denied');
 			}
 
