@@ -297,7 +297,7 @@ class Connect {
 		);
 
 		if ($r) {
-			$result['abook'] = $r[0];
+			$result['abook'] = array_shift($r);
 			Master::Summon([ 'Notifier', 'permissions_create', $result['abook']['abook_id'] ]);
 		}
 
