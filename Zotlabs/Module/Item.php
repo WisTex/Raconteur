@@ -990,11 +990,6 @@ class Item extends Controller {
 							'revision' => $r['data']['revision']
 						);
 					}
-					$ext = substr($r['data']['filename'],strrpos($r['data']['filename'],'.'));
-					if(strpos($r['data']['filetype'],'audio/') !== false)
-						$attach_link =  '[audio]' . z_root() . '/attach/' . $r['data']['hash'] . '/' . $r['data']['revision'] . (($ext) ? $ext : '') . '[/audio]';
-					elseif(strpos($r['data']['filetype'],'video/') !== false)
-						$attach_link =  '[video]' . z_root() . '/attach/' . $r['data']['hash'] . '/' . $r['data']['revision'] . (($ext) ? $ext : '') . '[/video]';
 					$body = str_replace($match[1][$i],$attach_link,$body);
 					$i++;
 				}
