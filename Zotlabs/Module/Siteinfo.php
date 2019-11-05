@@ -17,7 +17,7 @@ class Siteinfo extends Controller {
 	function get() {
 
 		$federated = 'Zot6';
-		if (Config::get('system','activitypub')) {
+		if (Config::get('system','activitypub',true)) {
 			$federated .= ', ActivityPub';
 		}
 
@@ -27,6 +27,7 @@ class Siteinfo extends Controller {
 		$siteinfo = replace_macros(get_markup_template('siteinfo.tpl'),
 			[ 
 				'$title' => t('About this site'),
+				'$url' => z_root(),
 				'$sitenametxt' => t('Site Name'),
 				'$sitename' => System::get_site_name(),
 				'$headline' => t('Site Information'),

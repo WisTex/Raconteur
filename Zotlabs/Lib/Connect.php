@@ -69,7 +69,7 @@ class Connect {
 		$xchan_hash = '';
 		$sql_options = (($protocol) ? " and xchan_network = '" . dbesc($protocol) . "' " : '');
 
-		$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' $sql_options ",
+		$r = q("select * from xchan where ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s') $sql_options ",
 			dbesc($url),
 			dbesc($url),
 			dbesc($url)
@@ -85,7 +85,7 @@ class Connect {
 			// Some Hubzilla records were originally stored as activitypub. If we find one, force rediscovery
 			// since Zap cannot connect with them.
 			
-			if ($r['xchan_network'] === 'activitypub' && ! get_config('system','activitypub')) {
+			if ($r['xchan_network'] === 'activitypub' && ! get_config('system','activitypub',true)) {
 				$r = null;
 			}
 		}
@@ -117,7 +117,7 @@ class Connect {
 
 			// something was discovered - find the record which was just created.
 
-			$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' $sql_options",
+			$r = q("select * from xchan where ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' ) $sql_options",
 				dbesc(($wf) ? $wf : $url),
 				dbesc($url),
 				dbesc($url)
@@ -153,7 +153,7 @@ class Connect {
 
 		}
 
-		$ap_allowed = get_config('system','activitypub',false) && get_pconfig($uid,'system','activitypub',true);
+		$ap_allowed = get_config('system','activitypub',true) && get_pconfig($uid,'system','activitypub',true);
 		
 		if ($r['xchan_network'] === 'activitypub') {
 			if (! $ap_allowed) {
@@ -297,7 +297,7 @@ class Connect {
 		);
 
 		if ($r) {
-			$result['abook'] = $r[0];
+			$result['abook'] = array_shift($r);
 			Master::Summon([ 'Notifier', 'permissions_create', $result['abook']['abook_id'] ]);
 		}
 

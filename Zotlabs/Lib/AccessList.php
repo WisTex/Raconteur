@@ -49,41 +49,41 @@ class AccessList {
 
 	static function remove($uid,$name) {
 		$ret = false;
-		if(x($uid) && x($name)) {
+		if ($uid && $name) {
 			$r = q("SELECT id, hash FROM pgrp WHERE uid = %d AND gname = '%s' LIMIT 1",
 				intval($uid),
 				dbesc($name)
 			);
-			if($r) {
+			if ($r) {
 				$group_id = $r[0]['id'];
 				$group_hash = $r[0]['hash'];
 			}
-
-			if(! $group_id)
+			else {
 				return false;
-
+			}
+			
 			// remove group from default posting lists
 			$r = q("SELECT channel_default_group, channel_allow_gid, channel_deny_gid FROM channel WHERE channel_id = %d LIMIT 1",
 			       intval($uid)
 			);
-			if($r) {
-				$user_info = $r[0];
+			if ($r) {
+				$user_info = array_shift($r);
 				$change = false;
 
-				if($user_info['channel_default_group'] == $group_hash) {
+				if ($user_info['channel_default_group'] == $group_hash) {
 					$user_info['channel_default_group'] = '';
 					$change = true;
 				}
-				if(strpos($user_info['channel_allow_gid'], '<' . $group_hash . '>') !== false) {
+				if (strpos($user_info['channel_allow_gid'], '<' . $group_hash . '>') !== false) {
 					$user_info['channel_allow_gid'] = str_replace('<' . $group_hash . '>', '', $user_info['channel_allow_gid']);
 					$change = true;
 				}
-				if(strpos($user_info['channel_deny_gid'], '<' . $group_hash . '>') !== false) {
+				if (strpos($user_info['channel_deny_gid'], '<' . $group_hash . '>') !== false) {
 					$user_info['channel_deny_gid'] = str_replace('<' . $group_hash . '>', '', $user_info['channel_deny_gid']);
 					$change = true;
 				}
 
-				if($change) {
+				if ($change) {
 					q("UPDATE channel SET channel_default_group = '%s', channel_allow_gid = '%s', channel_deny_gid = '%s' 
 						WHERE channel_id = %d",
 						intval($user_info['channel_default_group']),
@@ -119,19 +119,21 @@ class AccessList {
 	// or false.
 	
 	static function byname($uid,$name) {
-		if((! $uid) || (! strlen($name)))
+		if (! ($uid && $name)) {
 			return false;
-		$r = q("SELECT * FROM pgrp WHERE uid = %d AND gname = '%s' LIMIT 1",
+		}
+		$r = q("SELECT id FROM pgrp WHERE uid = %d AND gname = '%s' LIMIT 1",
 			intval($uid),
 			dbesc($name)
 		);
-		if($r)
+		if ($r) {
 			return $r[0]['id'];
+		}
 		return false;
 	}
 
 	static function by_id($uid,$id) {
-		if((! $uid) || (! $id)) {
+		if (! ($uid && $id)) {
 			return false;
 		}
 		
@@ -139,34 +141,37 @@ class AccessList {
 			intval($uid),
 			intval($id)
 		);
-		if($r) {
+		if ($r) {
 			return array_shift($r);
 		}
-		
 		return false;
 	}
 
 
 
 	static function rec_byhash($uid,$hash) {
-		if((! $uid) || (! strlen($hash)))
+		if (! ( $uid && $hash)) {
 			return false;
+		}
 		$r = q("SELECT * FROM pgrp WHERE uid = %d AND hash = '%s' LIMIT 1",
 			intval($uid),
 			dbesc($hash)
 		);
-		if($r)
-			return $r[0];
+		if ($r) {
+			return array_shift($r);
+		}
 		return false;
 	}
 
 
 	static function member_remove($uid,$name,$member) {
 		$gid = self::byname($uid,$name);
-		if(! $gid)
+		if (! $gid) {
 			return false;
-		if(! ( $uid && $gid && $member))
+		}
+		if (! ($uid && $gid && $member)) {
 			return false;
+		}
 		$r = q("DELETE FROM pgrp_member WHERE uid = %d AND gid = %d AND xchan = '%s' ",
 			intval($uid),
 			intval($gid),
@@ -180,37 +185,39 @@ class AccessList {
 
 
 	static function member_add($uid,$name,$member,$gid = 0) {
-		if(! $gid)
+		if (! $gid) {
 			$gid = self::byname($uid,$name);
-		if((! $gid) || (! $uid) || (! $member))
+		}
+		if (! ($gid && $uid && $member)) {
 			return false;
+		}
 
 		$r = q("SELECT * FROM pgrp_member WHERE uid = %d AND gid = %d AND xchan = '%s' LIMIT 1",	
 			intval($uid),
 			intval($gid),
 			dbesc($member)
 		);
-		if($r)
+		if ($r) {
 			return true;	// You might question this, but 
 				// we indicate success because the group member was in fact created
 				// -- It was just created at another time
-	 	if(! $r)
+		}
+	 	else {
 			$r = q("INSERT INTO pgrp_member (uid, gid, xchan)
 				VALUES( %d, %d, '%s' ) ",
 				intval($uid),
 				intval($gid),
 				dbesc($member)
-		);
-
+			);
+		}
 		Libsync::build_sync_packet($uid,null,true);
-
 		return $r;
 	}
 
 
 	static function members($uid, $gid) {
-		$ret = array();
-		if(intval($gid)) {
+		$ret = [];
+		if (intval($gid)) {
 			$r = q("SELECT * FROM pgrp_member 
 				LEFT JOIN abook ON abook_xchan = pgrp_member.xchan left join xchan on xchan_hash = abook_xchan
 				WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 ORDER BY xchan_name ASC ",
@@ -218,22 +225,23 @@ class AccessList {
 				intval($uid),
 				intval($uid)
 			);
-			if($r)
+			if ($r) {
 				$ret = $r;
+			}
 		}
 		return $ret;
 	}
 
 	static function members_xchan($uid,$gid) {
 		$ret = [];
-		if(intval($gid)) {
+		if (intval($gid)) {
 			$r = q("SELECT xchan FROM pgrp_member WHERE gid = %d AND uid = %d",
 				intval($gid),
 				intval($uid)
 			);
-			if($r) {
-				foreach($r as $rr) {
-					$ret[] = $rr['xchan'];
+			if ($r) {
+				foreach ($r as $rv) {
+					$ret[] = $rv['xchan'];
 				}
 			}
 		}
@@ -242,15 +250,14 @@ class AccessList {
 
 	static function members_profile_xchan($uid,$gid) {
 		$ret = [];
-
-		if(intval($gid)) {
+		if (intval($gid)) {
 			$r = q("SELECT abook_xchan as xchan from abook left join profile on abook_profile = profile_guid where profile.id = %d and profile.uid = %d",
 				intval($gid),
 				intval($uid)
 			);
-			if($r) {
-				foreach($r as $rr) {
-					$ret[] = $rr['xchan'];
+			if ($r) {
+				foreach($r as $rv) {
+					$ret[] = $rv['xchan'];
 				}
 			}
 		}
@@ -263,28 +270,23 @@ class AccessList {
 	static function select($uid,$group = '') {
 	
 		$grps = [];
-		$o = '';
 
 		$r = q("SELECT * FROM pgrp WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
 			intval($uid)
 		);
-		$grps[] = array('name' => '', 'hash' => '0', 'selected' => '');
-		if($r) {
-			foreach($r as $rr) {
-				$grps[] = array('name' => $rr['gname'], 'id' => $rr['hash'], 'selected' => (($group == $rr['hash']) ? 'true' : ''));
+		$grps[] = [ 'name' => '', 'hash' => '0', 'selected' => '' ];
+		if ($r) {
+			foreach ($r as $rr) {
+				$grps[] = [ 'name' => $rr['gname'], 'id' => $rr['hash'], 'selected' => (($group == $rr['hash']) ? 'true' : '') ];
 			}
 
 		}
-		logger('select: ' . print_r($grps,true), LOGGER_DATA);
-
-		$o = replace_macros(get_markup_template('group_selection.tpl'), array(
+		
+		return replace_macros(get_markup_template('group_selection.tpl'), [
 			'$label' => t('Add new connections to this access list'),
 			'$groups' => $grps 
-		));
-		return $o;
+		]);
 	}
-
-
 
 
 	static function widget($every="connections",$each="lists",$edit = false, $group_id = 0, $cid = '',$mode = 1) {
@@ -297,12 +299,12 @@ class AccessList {
 			intval($_SESSION['uid'])
 		);
 		$member_of = [];
-		if($cid) {
+		if ($cid) {
 			$member_of = self::containing(local_channel(),$cid);
 		} 
 
-		if($r) {
-			foreach($r as $rr) {
+		if ($r) {
+			foreach ($r as $rr) {
 				$selected = (($group_id == $rr['id']) ? ' group-selected' : '');
 			
 				if ($edit) {
@@ -324,41 +326,38 @@ class AccessList {
 				];
 			}
 		}
-	
-	
-		$tpl = get_markup_template("group_side.tpl");
-		$o = replace_macros($tpl, array(
+		
+		return replace_macros(get_markup_template('group_side.tpl'), [
 			'$title'		=> t('Lists'),
 			'$edittext'     => t('Edit list'),
 			'$createtext' 	=> t('Create new list'),
 			'$ungrouped'    => (($every === 'contacts') ? t('Channels not in any access list') : ''),
 			'$groups'		=> $groups,
 			'$add'			=> t('add'),
-		));
-		
-	
-		return $o;
+		]);
+
 	}
 
 
 	static function expand($g) {
-		if(! (is_array($g) && count($g)))
-			return array();
+		if (! (is_array($g) && count($g))) {
+			return [];
+		}
 
 		$ret = [];
 		$x   = [];
 
 		// private profile linked virtual groups
 
-		foreach($g as $gv) {
-			if(substr($gv,0,3) === 'vp.') {
+		foreach ($g as $gv) {
+			if (substr($gv,0,3) === 'vp.') {
 				$profile_hash = substr($gv,3);
-				if($profile_hash) {
+				if ($profile_hash) {
 					$r = q("select abook_xchan from abook where abook_profile = '%s'",
 						dbesc($profile_hash)
 					);
-					if($r) {
-						foreach($r as $rv) {
+					if ($r) {
+						foreach ($r as $rv) {
 							$ret[] = $rv['abook_xchan'];
 						}
 					}
@@ -369,14 +368,14 @@ class AccessList {
 			}
 		}								 
 
-		if($x) {
+		if ($x) {
 			stringify_array_elms($x,true);
 			$groups = implode(',', $x);
-			if($groups) {
+			if ($groups) {
 				$r = q("SELECT xchan FROM pgrp_member WHERE gid IN ( select id from pgrp where hash in ( $groups ))");
-				if($r) {
-					foreach($r as $rr) {
-						$ret[] = $rr['xchan'];
+				if ($r) {
+					foreach ($r as $rv) {
+						$ret[] = $rv['xchan'];
 					}
 				}
 			}
@@ -386,12 +385,12 @@ class AccessList {
 
 
 	static function member_of($c) {
-		$r = q("SELECT pgrp.gname, pgrp.id FROM pgrp LEFT JOIN pgrp_member ON pgrp_member.gid = pgrp.id WHERE pgrp_member.xchan = '%s' AND pgrp.deleted = 0 ORDER BY pgrp.gname  ASC ",
+		$r = q("SELECT pgrp.gname, pgrp.id FROM pgrp LEFT JOIN pgrp_member ON pgrp_member.gid = pgrp.id 
+			WHERE pgrp_member.xchan = '%s' AND pgrp.deleted = 0 ORDER BY pgrp.gname  ASC ",
 			dbesc($c)
 		);
 
 		return $r;
-
 	}
 
 	static function containing($uid,$c) {
@@ -401,12 +400,12 @@ class AccessList {
 			dbesc($c)
 		);
 
-		$ret = array();
-		if($r) {
-			foreach($r as $rr)
-				$ret[] = $rr['gid'];
+		$ret = [];
+		if ($r) {
+			foreach ($r as $rv)
+				$ret[] = $rv['gid'];
 		}
-	
+		
 		return $ret;
 	}
 }

@@ -34,7 +34,7 @@ class Activity {
 			// Eventually this needs to be passed in much further up the stack
 			// and base the decision on whether or not we are encoding for ActivityPub or Zot6
 
-			return self::fetch_item($x,((get_config('system','activitypub')) ? true : false)); 
+			return self::fetch_item($x,((get_config('system','activitypub',true)) ? true : false)); 
 		}
 		if ($x['type'] === ACTIVITY_OBJ_THING) {
 			return self::fetch_thing($x); 
@@ -87,8 +87,8 @@ class Activity {
 			$headers = [
 				'Accept'           => 'application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
 				'Host'             => $m['host'],
-				'(request-target)' => 'get ' . get_request_string($url),
-				'Date'             => datetime_convert('UTC','UTC','now','D, d M Y H:i:s') . ' UTC'
+				'Date'             => datetime_convert('UTC','UTC', 'now', 'D, d M Y h:i:s \\G\\M\\T'),
+				'(request-target)' => 'get ' . get_request_string($url)
 			];
 			if (isset($token)) {
 				$headers['Authorization'] = 'Bearer ' . $token;
@@ -244,7 +244,11 @@ class Activity {
 		$ret = [];
 
 		if ($item['tag'] && is_array($item['tag'])) {
-			foreach ($item['tag'] as $t) {
+			$ptr = $item['tag'];
+			if (! array_key_exists(0,$ptr)) {
+				$ptr = [ $ptr ];
+			}
+			foreach ($ptr as $t) {
 				if (! array_key_exists('type',$t))
 					$t['type'] = 'Hashtag';
 
@@ -399,8 +403,12 @@ class Activity {
 
 		$ret = [];
 
-		if ($item['attachment']) {
-			foreach ($item['attachment'] as $att) {
+		if (is_array($item['attachment']) && $item['attachment']) {
+			$ptr = $item['attachment'];
+			if (! array_key_exists(0,$ptr)) {
+				$ptr = [ $ptr ];
+			}
+			foreach ($ptr as $att) {
 				$entry = [];
 				if ($att['href'])
 					$entry['href'] = $att['href'];
@@ -413,6 +421,9 @@ class Activity {
 				if ($entry)
 					$ret[] = $entry;
 			}
+		}
+		else {
+			btlogger('not an array: ' . $item['attachment']);
 		}
 
 		return $ret;
@@ -736,7 +747,7 @@ class Activity {
 				if ($d) {
 					$recips = get_iconfig($i['parent'], 'activitypub', 'recips');
 
-					if (in_array($i['author']['xchan_url'], $recips['to'])) {
+					if (is_array($recips) && in_array($i['author']['xchan_url'], $recips['to'])) {
 						$reply_url = $d[0]['xchan_url'];
 						$is_directmessage = true;
 					}
@@ -972,7 +983,7 @@ class Activity {
 		];
 		$ret['url'] = $p['xchan_url'];
 
-		if ($activitypub && get_config('system','activitypub')) {	
+		if ($activitypub && get_config('system','activitypub',true)) {	
 
 			if ($c) {
 				if (get_pconfig($c['channel_id'],'system','activitypub',true)) {
@@ -2079,7 +2090,6 @@ class Activity {
 		}
 		
 		$allowed = false;
-		$moderated = false;
 		
 		if ($is_child_node) {		
 			$p = q("select id from item where mid = '%s' and uid = %d and item_wall = 1",
@@ -2095,6 +2105,10 @@ class Activity {
 					// let the sender know we received their comment but we don't permit spam here.
 					self::send_rejection_activity($channel,$item['author_xchan'],$item);
 					return;
+				}
+
+				if (perm_is_allowed($channel['channel_id'],$item['author_xchan'],'moderated')) {
+					$item['item_blocked'] = ITEM_MODERATED;
 				}
 			}
 			else {
@@ -2137,14 +2151,6 @@ class Activity {
 
 		if (! $allowed) {
 			logger('no permission');
-			return;
-		}
-
-		if (is_array($act->obj)) {
-			$content = self::get_content($act->obj);
-		}
-		if (! $content) {
-			logger('no content');
 			return;
 		}
 
@@ -2216,7 +2222,7 @@ class Activity {
 				intval($item['uid'])
 			);
 			if (! $p) {
-				if (! get_config('system','activitypub')) {
+				if (! get_config('system','activitypub',true)) {
 					return;
 				}
 				else {

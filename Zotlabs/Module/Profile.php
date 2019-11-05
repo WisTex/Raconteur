@@ -75,7 +75,7 @@ class Profile extends \Zotlabs\Web\Controller {
 			$chan = channelx_by_nick(argv(1));
 			if(! $chan)
 				http_status_exit(404, 'Not found');
-			$p = Activity::encode_person($chan,true,((get_config('system','activitypub')) ? true : false));
+			$p = Activity::encode_person($chan,true,((get_config('system','activitypub',true)) ? true : false));
 			if(! $p) {
 				http_status_exit(404, 'Not found');
 			}
@@ -93,6 +93,7 @@ class Profile extends \Zotlabs\Web\Controller {
 			$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
 			$x['signature'] = LDSignatures::sign($x,$chan);
 			$ret = json_encode($x, JSON_UNESCAPED_SLASHES);
+			$headers['Date'] = datetime_convert('UTC','UTC', 'now', 'D, d M Y h:i:s \\G\\M\\T');
 			$headers['Digest'] = HTTPSig::generate_digest_header($ret);
 			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
 			$h = HTTPSig::create_sig($headers,$chan['channel_prvkey'],channel_url($chan));

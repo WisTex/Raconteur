@@ -79,20 +79,8 @@ class Help extends Controller {
 			killme();
 		}
 
-		$headings = [
-			'about'     => t('About'),
-			'member'    => t('Members'),
-			'admin'     => t('Administrators'),
-			'developer' => t('Developers'),
-			'tutorials' => t('Tutorials')
-		];
-
-		if(array_key_exists(argv(1), $headings))
-			$heading = $headings[argv(1)];
-
 		$content =  get_help_content();
 		
-		$language = determine_help_language()['language'];
 
 		return replace_macros(get_markup_template('help.tpl'), array(
 			'$title'      => t('$Projectname Documentation'),

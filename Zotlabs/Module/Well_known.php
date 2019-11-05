@@ -50,7 +50,7 @@ class Well_known extends Controller {
 					break;
 
 				case 'dnt-policy.txt':
-					echo file_get_contents('doc/dnt-policy.txt');
+					echo file_get_contents('doc/global/dnt-policy.txt');
 					killme();
 
 				default:

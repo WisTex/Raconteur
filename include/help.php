@@ -2,44 +2,29 @@
 
 use Michelf\MarkdownExtra;
 
-
 /**
  * @brief
  *
  * @param string $path
  * @return string|unknown
  */
+
 function get_help_fullpath($path,$suffix=null) {
 
-        $docroot = 'doc/';
+		return find_docfile($path,App::$language);
+}
 
-        // Determine the language and modify the path accordingly
-//        $x = determine_help_language();
-  //      $lang = $x['language'];
-    //    $url_idx = ($x['from_url'] ? 1 : 0);
-        // The English translation is at the root of /doc/. Other languages are in
-        // subfolders named by the language code such as "de", "es", etc.
-  //      if($lang !== 'en') {
-    //            $langpath = $lang . '/' . $path;
-      //  } else {
-        //        $langpath = $path;
-    //    }
+function find_docfile($name,$language) {
 
-
-		$newpath = $docroot . $path;
-		
-        if ($suffix) {
-            if (file_exists($newpath . $suffix)) {
-              return $newpath;
-            }
-        } elseif (file_exists($newpath . '.md') ||
-            file_exists($newpath . '.bb') ||
-            file_exists($newpath . '.html')) {
-                return $newpath;
-        }
-
-
-        return $newpath;
+	foreach([ $language, 'en' ] as $lang) {
+		if (file_exists('doc/site/' . $lang . '/' . $name . '.md')) {
+			return 'doc/site/' . $lang . '/' . $name . '.md';
+		}
+		if (file_exists('doc/' . $lang . '/' . $name . '.md')) {
+			return 'doc/' . $lang . '/' . $name . '.md';
+		}
+	}
+	return EMPTY_STR;
 }
 
 
@@ -56,27 +41,15 @@ function get_help_content($tocpath = false) {
 
 	$text = '';
 
-	$path = '';
-	$docroot = 'doc/';
-
 	$path = argv(1);
 
-	$fullpath = get_help_fullpath($path,'.md');
+	$fullpath = get_help_fullpath($path);
 
-
-	$text = load_doc_file($fullpath . '.md');
+	$text = load_doc_file($fullpath);
 
 	App::$page['title'] = t('Help');
 
-
-	if($doctype === 'markdown') {
-		# escape #include tags
-		$text = preg_replace('/#include/ism', '%%include', $text);
-		$content = MarkdownExtra::defaultTransform($text);
-		$content = preg_replace('/%%include/ism', '#include', $content);
-	}
-
-	$content = preg_replace_callback("/#include (.*?)\;/ism", 'preg_callback_help_include', $content);
+	$content = MarkdownExtra::defaultTransform($text);
 
 	return translate_projectname($content);
 }

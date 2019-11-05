@@ -6,6 +6,7 @@ namespace Zotlabs\Photo;
  * @brief GD photo driver.
  *
  */
+
 class PhotoGd extends PhotoDriver {
 
 	/**
@@ -15,21 +16,27 @@ class PhotoGd extends PhotoDriver {
 	public function supportedTypes() {
 		$t = [];
 		$t['image/jpeg'] = 'jpg';
-		if(imagetypes() & IMG_PNG)
+		if (imagetypes() & IMG_PNG) {
 			$t['image/png'] = 'png';
-		if(imagetypes() & IMG_GIF)
+		}
+		if (imagetypes() & IMG_GIF) {
 			$t['image/gif'] = 'gif';
+		}
+		if (imagetypes() & IMG_WEBP) {
+			$t['image/webp'] = 'webp';
+		}
 
 		return $t;
 	}
 
 	protected function load($data, $type) {
 		$this->valid = false;
-		if(! $data)
+		if (! $data) {
 			return;
+		}
 
 		$this->image = @imagecreatefromstring($data);
-		if($this->image !== false) {
+		if ($this->image !== false) {
 			$this->valid  = true;
 			$this->setDimensions();
 			imagealphablending($this->image, false);
@@ -52,7 +59,7 @@ class PhotoGd extends PhotoDriver {
 	}
 
 	protected function destroy() {
-		if($this->is_valid()) {
+		if ($this->is_valid()) {
 			imagedestroy($this->image);
 		}
 	}
@@ -65,8 +72,9 @@ class PhotoGd extends PhotoDriver {
 	 * @return boolean|resource
 	 */
 	public function getImage() {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
+		}
 
 		return $this->image;
 	}
@@ -79,39 +87,42 @@ class PhotoGd extends PhotoDriver {
 
 		imagealphablending($dest, false);
 		imagesavealpha($dest, true);
-		if($this->type == 'image/png')
+		if ($this->type == 'image/png') {
 			imagefill($dest, 0, 0, imagecolorallocatealpha($dest, 0, 0, 0, 127)); // fill with alpha
-
+		}
 		imagecopyresampled($dest, $this->image, 0, 0, 0, 0, $dest_width, $dest_height, $width, $height);
-		if($this->image)
+		if ($this->image) {
 			imagedestroy($this->image);
+		}
 
 		$this->image = $dest;
 		$this->setDimensions();
 	}
 
 	public function rotate($degrees) {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
+		}
 
 		$this->image = imagerotate($this->image, $degrees, 0);
 		$this->setDimensions();
 	}
 
 	public function flip($horiz = true, $vert = false) {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
+		}
 
 		$w = imagesx($this->image);
 		$h = imagesy($this->image);
 		$flipped = imagecreate($w, $h);
-		if($horiz) {
-			for($x = 0; $x < $w; $x++) {
+		if ($horiz) {
+			for ($x = 0; $x < $w; $x++) {
 				imagecopy($flipped, $this->image, $x, 0, $w - $x - 1, 0, 1, $h);
 			}
 		}
-		if($vert) {
-			for($y = 0; $y < $h; $y++) {
+		if ($vert) {
+			for ($y = 0; $y < $h; $y++) {
 				imagecopy($flipped, $this->image, 0, $y, 0, $h - $y - 1, $w, 1);
 			}
 		}
@@ -120,19 +131,20 @@ class PhotoGd extends PhotoDriver {
 	}
 
 	public function cropImageRect($maxx, $maxy, $x, $y, $w, $h) {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
+		}
 
 		$dest = imagecreatetruecolor($maxx, $maxy);
 		imagealphablending($dest, false);
 		imagesavealpha($dest, true);
-		if($this->type == 'image/png')
+		if ($this->type == 'image/png') {
 			imagefill($dest, 0, 0, imagecolorallocatealpha($dest, 0, 0, 0, 127)); // fill with alpha
-
+		}
 		imagecopyresampled($dest, $this->image, 0, 0, $x, $y, $maxx, $maxy, $w, $h);
-		if($this->image)
+		if ($this->image) {
 			imagedestroy($this->image);
-
+		}
 		$this->image = $dest;
 		$this->setDimensions();
 	}
@@ -142,18 +154,25 @@ class PhotoGd extends PhotoDriver {
 	 * @see \Zotlabs\Photo\PhotoDriver::imageString()
 	 */
 	public function imageString() {
-		if(! $this->is_valid())
+		if (! $this->is_valid()) {
 			return false;
+		}
 
 		$quality = false;
 
 		ob_start();
 
-		switch($this->getType()){
+		switch ($this->getType()){
+			case 'image/webp':
+			
+				\imagewebp($this->image);
+				break;
+				
 			case 'image/png':
 				$quality = get_config('system', 'png_quality');
-				if((! $quality) || ($quality > 9))
+				if ((! $quality) || ($quality > 9)) {
 					$quality = PNG_QUALITY;
+				}
 
 				\imagepng($this->image, NULL, $quality);
 				break;
@@ -161,8 +180,9 @@ class PhotoGd extends PhotoDriver {
 			// gd can lack imagejpeg(), but we verify during installation it is available
 			default:
 				$quality = get_config('system', 'jpeg_quality');
-				if((! $quality) || ($quality > 100))
+				if ((! $quality) || ($quality > 100)) {
 					$quality = JPEG_QUALITY;
+				}
 
 				\imagejpeg($this->image, NULL, $quality);
 				break;
