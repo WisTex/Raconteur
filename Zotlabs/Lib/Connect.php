@@ -69,7 +69,7 @@ class Connect {
 		$xchan_hash = '';
 		$sql_options = (($protocol) ? " and xchan_network = '" . dbesc($protocol) . "' " : '');
 
-		$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' $sql_options ",
+		$r = q("select * from xchan where ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s') $sql_options ",
 			dbesc($url),
 			dbesc($url),
 			dbesc($url)
@@ -117,7 +117,7 @@ class Connect {
 
 			// something was discovered - find the record which was just created.
 
-			$r = q("select * from xchan where xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' $sql_options",
+			$r = q("select * from xchan where ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' ) $sql_options",
 				dbesc(($wf) ? $wf : $url),
 				dbesc($url),
 				dbesc($url)

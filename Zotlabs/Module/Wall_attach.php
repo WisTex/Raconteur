@@ -129,8 +129,9 @@ class Wall_attach extends Controller {
 			$s .=  "\n\n" . '[attachment]' . $r['data']['hash'] . ',' . $r['data']['revision'] . '[/attachment]' . "\n";
 		}
 	
-		if ($using_api)
+		if ($using_api) {
 			return $s;
+		}
 
 		$result['message'] = $s;
 		json_return_and_die($result);		
