@@ -274,6 +274,20 @@ function bb_parse_app($match) {
 		return Zotlabs\Lib\Apps::app_render($app);
 }
 
+function bb_svg($match) {
+	$Text = $match[1];
+
+	$Text = str_replace(['(',')'],['&lpar;','&rpar;'],$Text);
+	$Text = preg_replace("/\[line (.*?)]/", '<line $1/>', $Text);
+	$Text = preg_replace("/\[circle (.*?)]/", '<circle $1/>', $Text);
+	$Text = preg_replace("/\[rect (.*?)]/", '<rect $1/>', $Text);
+	$Text = preg_replace("/\[polygon (.*?)]/", '<polygon $1/>', $Text);
+	$Text = preg_replace("/\[ellipse (.*?)]/", '<ellipse $1/>', $Text);
+	$Text = preg_replace("/\[text (.*?)](.*?)\[\/text\]/", '<text$1>$2</text>', $Text);
+
+	return '<svg width="100%" height="480">' . str_replace('<br>','',$Text) . '</svg>';
+}
+
 function bb_parse_element($match) {
 	$j = json_decode(base64url_decode($match[1]),true);
 
@@ -1489,6 +1503,10 @@ function bbcode($Text, $options = []) {
 	if (strpos($Text,'[/zaudio]') !== false) {
 		$Text = preg_replace("/\[zaudio\](.*?)\[\/zaudio\]/", '<a class="zid" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
 	}
+
+	// SVG stuff
+	$Text = preg_replace_callback("/\[svg\](.*?)\[\/svg\]/", 'bb_svg', $Text);
+
 
 	// oembed tag
 	if(! $export)
