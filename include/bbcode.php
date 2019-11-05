@@ -2,6 +2,7 @@
 
 
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\SvgSanitizer;
 
 /**
  * @file include/bbcode.php
@@ -275,7 +276,8 @@ function bb_parse_app($match) {
 }
 
 function bb_svg($match) {
-	$Text = $match[1];
+	$params = $match[1];
+	$Text = $match[2];
 
 	$Text = str_replace(['(',')'],['&lpar;','&rpar;'],$Text);
 	$Text = preg_replace("/\[line (.*?)]/", '<line $1/>', $Text);
@@ -285,7 +287,11 @@ function bb_svg($match) {
 	$Text = preg_replace("/\[ellipse (.*?)]/", '<ellipse $1/>', $Text);
 	$Text = preg_replace("/\[text (.*?)](.*?)\[\/text\]/", '<text$1>$2</text>', $Text);
 
-	return '<svg width="100%" height="480">' . str_replace('<br>','',$Text) . '</svg>';
+	$output =  '<svg' (($params) ? $params : ' width="100%" height="480" ') . >' . str_replace('<br>','',$Text) . '</svg>';
+	$purify = new SvgSanitizer();
+	$purify->loadXML($output);
+	return $purify->saveSVG();
+	
 }
 
 function bb_parse_element($match) {
@@ -1505,7 +1511,7 @@ function bbcode($Text, $options = []) {
 	}
 
 	// SVG stuff
-	$Text = preg_replace_callback("/\[svg\](.*?)\[\/svg\]/", 'bb_svg', $Text);
+	$Text = preg_replace_callback("/\[svg(.*?)\](.*?)\[\/svg\]/", 'bb_svg', $Text);
 
 
 	// oembed tag
