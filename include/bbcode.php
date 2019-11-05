@@ -275,7 +275,17 @@ function bb_parse_app($match) {
 }
 
 function bb_svg($match) {
-	return '<svg width="100%" height="480">' . str_replace('<br>','',$match[1]) . '</svg>';
+	$Text = $match[1];
+
+	$Text = str_replace(['(',')'],['&lpar;','&rpar;'],$Text);
+	$Text = preg_replace("/\[line (.*?)]/", '<line $1/>', $Text);
+	$Text = preg_replace("/\[circle (.*?)]/", '<circle $1/>', $Text);
+	$Text = preg_replace("/\[rect (.*?)]/", '<rect $1/>', $Text);
+	$Text = preg_replace("/\[polygon (.*?)]/", '<polygon $1/>', $Text);
+	$Text = preg_replace("/\[ellipse (.*?)]/", '<ellipse $1/>', $Text);
+	$Text = preg_replace("/\[text (.*?)](.*?)\[\/text\]/", '<text$1>$2</text>', $Text);
+
+	return '<svg width="100%" height="480">' . str_replace('<br>','',$Text) . '</svg>';
 }
 
 function bb_parse_element($match) {
@@ -1497,12 +1507,6 @@ function bbcode($Text, $options = []) {
 	// SVG stuff
 	$Text = preg_replace_callback("/\[svg\](.*?)\[\/svg\]/", 'bb_svg', $Text);
 
-	$Text = preg_replace("/\[line (.*?)]/", '<line $1/>', $Text);
-	$Text = preg_replace("/\[circle (.*?)]/", '<circle $1/>', $Text);
-	$Text = preg_replace("/\[rect (.*?)]/", '<rect $1/>', $Text);
-	$Text = preg_replace("/\[polygon (.*?)]/", '<polygon $1/>', $Text);
-	$Text = preg_replace("/\[ellipse (.*?)]/", '<ellipse $1/>', $Text);
-	$Text = preg_replace("/\[text (.*?)](.*?)\[\/text\]/", '<text $1>$2</text>', $Text);
 
 	// oembed tag
 	if(! $export)
