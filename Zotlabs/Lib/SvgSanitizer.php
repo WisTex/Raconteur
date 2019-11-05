@@ -1,6 +1,7 @@
 <?php
 
 namespace Zotlabs\Lib;
+use DomDocument;
 
 /**
  *  SVGSantiizer

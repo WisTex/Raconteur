@@ -285,10 +285,10 @@ function bb_svg($match) {
 	$Text = preg_replace("/\[rect (.*?)]/", '<rect $1/>', $Text);
 	$Text = preg_replace("/\[polygon (.*?)]/", '<polygon $1/>', $Text);
 	$Text = preg_replace("/\[ellipse (.*?)]/", '<ellipse $1/>', $Text);
-	$Text = preg_replace("/\[text (.*?)](.*?)\[\/text\]/", '<text$1>$2</text>', $Text);
+	$Text = preg_replace("/\[text (.*?)](.*?)\[\/text\]/", '<text $1>$2</text>', $Text);
 
 
-	$output =  '<svg' (($params) ? $params : ' width="100%" height="480" ') . '>' . str_replace('<br>','',$Text) . '</svg>';
+	$output =  '<svg' . (($params) ? $params : ' width="100%" height="480" ') . '>' . str_replace('<br>','',$Text) . '</svg>';
 	$purify = new SvgSanitizer();
 	$purify->loadXML($output);
 	return $purify->saveSVG();
