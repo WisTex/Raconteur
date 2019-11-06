@@ -6,7 +6,7 @@
 use Zotlabs\Lib\MarkdownSoap;
 use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Libzot;
-
+use Zotlabs\Lib\SvgSanitizer;
 
 use Michelf\MarkdownExtra;
 use Ramsey\Uuid\Uuid;
@@ -834,9 +834,10 @@ function get_tags($s) {
 	$ret = array();
 	$match = array();
 
-	// ignore anything in a code block
+	// ignore anything in a code or svg block
 
 	$s = preg_replace('/\[code(.*?)\](.*?)\[\/code\]/sm','',$s);
+	$s = preg_replace('/\[svg(.*?)\](.*?)\[\/svg\]/sm','',$s);
 
 	// ignore anything in [style= ]
 	$s = preg_replace('/\[style=(.*?)\]/sm','',$s);
@@ -3221,17 +3222,19 @@ function cleanup_bbcode($body) {
 	$body = preg_replace_callback('/\[code(.*?)\[\/(code)\]/ism','\red_escape_codeblock',$body);
 	$body = preg_replace_callback('/\[url(.*?)\[\/(url)\]/ism','\red_escape_codeblock',$body);
 	$body = preg_replace_callback('/\[zrl(.*?)\[\/(zrl)\]/ism','\red_escape_codeblock',$body);
+	$body = preg_replace_callback('/\[svg(.*?)\[\/(svg)\]/ism','\red_escape_codeblock',$body);
 
-	$body = preg_replace_callback("/([^\]\='".'"'."\/\{]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\
+	$body = preg_replace_callback("/([^\]\='".'"'."\;\/\{]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\
 +\,\(\)]+)/ismu", '\nakedoembed', $body);
 
-	$body = preg_replace_callback("/([^\]\='".'"'."\/\{]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\
+	$body = preg_replace_callback("/([^\]\='".'"'."\;\/\{]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\
 +\,\(\)]+)/ismu", '\red_zrl_callback', $body);
 
 
 	$body = preg_replace_callback('/\[\$b64zrl(.*?)\[\/(zrl)\]/ism','\red_unescape_codeblock',$body);
 	$body = preg_replace_callback('/\[\$b64url(.*?)\[\/(url)\]/ism','\red_unescape_codeblock',$body);
 	$body = preg_replace_callback('/\[\$b64code(.*?)\[\/(code)\]/ism','\red_unescape_codeblock',$body);
+	$body = preg_replace_callback('/\[\$b64svg(.*?)\[\/(svg)\]/ism','\red_unescape_codeblock',$body);
 
 	// fix any img tags that should be zmg
 
@@ -3441,3 +3444,19 @@ function obscurify($s) {
 function unobscurify($s) {
 	return base64url_decode(str_rot47($s));
 }
+
+function svg2bb($s) {
+
+	$s = preg_replace("/\<text (.*?)\>(.*?)\<(.*?)\<\/text\>/", '<text $1>$2&lt;$3</text>', $s);
+	$s = preg_replace("/\<text (.*?)\>(.*?)\>(.*?)\<\/text\>/", '<text $1>$2&gt;$3</text>', $s);
+
+	$purify = new SvgSanitizer();
+	if ($purify->loadXML($s)) {
+		$purify->sanitize();
+		$output = $purify->saveSVG();
+		$output = preg_replace("/\<\?xml(.*?)\>/",'',$output);
+		$output = str_replace(['<','>'],['[',']'],$output);
+		$output = str_replace('/]',']',$output);
+		return $output;
+	}
+	return EMPTY_STR;}

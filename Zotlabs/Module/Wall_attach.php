@@ -125,7 +125,17 @@ class Wall_attach extends Controller {
 			if (strpos($r['data']['filetype'],'audio') === 0) {
 				$s = "\n\n" . '[zaudio]' . $url . '[/zaudio]' . "\n\n";
 			}
-			
+			if ($r['data']['filetype'] === 'image/svg+xml') {
+				$x = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+				if ($x) {
+					$bb = svg2bb($x);
+					if ($bb) {
+						$s .= "\n\n" . $bb;
+					}
+				}
+			}
+
+
 			$s .=  "\n\n" . '[attachment]' . $r['data']['hash'] . ',' . $r['data']['revision'] . '[/attachment]' . "\n";
 		}
 	

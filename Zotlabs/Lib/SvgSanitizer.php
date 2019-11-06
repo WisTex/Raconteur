@@ -20,6 +20,9 @@ class SvgSanitizer {
 	//private $remoteHref = false;		// Check if hrefs in XML can goto remote locations
 	private $xmlDoc;				// PHP XML DOMDocument
 
+	private $removedattrs = [];
+	private $removednodes = [];
+	
 	// defines the whitelist of elements and attributes allowed.
 	private static $whitelist = array(
 		"a"=>array("class", "clip-path", "clip-rule", "fill", "fill-opacity", "fill-rule", "filter", "id", "mask", "opacity", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "style", "systemLanguage", "transform", "href", "xlink:href", "xlink:title"),
@@ -59,6 +62,7 @@ class SvgSanitizer {
 	function __construct() {
 		$this->xmlDoc = new DOMDocument();
 		$this->xmlDoc->preserveWhiteSpace = false;
+		libxml_use_internal_errors(true);
 	}
 
 	// load XML SVG
@@ -67,7 +71,11 @@ class SvgSanitizer {
 	}
 
 	function loadXML($str) {
-		$this->xmlDoc->loadXML($str);
+		if (! $this->xmlDoc->loadXML($str)) {
+			logger('loadxml: ' . print_r(libxml_get_errors(),true), LOGGER_DEBUG);
+			return false;
+		}
+		return true;
 	}
 
 	function sanitize()
@@ -78,36 +86,42 @@ class SvgSanitizer {
 		// loop through all elements
 		for($i = 0; $i < $allElements->length; $i++)
 		{
+			$this->removedattrs = [];
+			
 			$currentNode = $allElements->item($i);
-
 
 			// array of allowed attributes in specific element
 			$whitelist_attr_arr = self::$whitelist[$currentNode->tagName];
 
 			// does element exist in whitelist?
 		    if(isset($whitelist_attr_arr)) {
-
-		    		for($x = 0; $x < $currentNode->attributes->length; $x++) {
+					$total = $currentNode->attributes->length;
+					
+		    		for($x = 0; $x < $total; $x++) {
 
 		    			// get attributes name
-		    			$attrName = $currentNode->attributes->item($x)->name;
+		    			$attrName = $currentNode->attributes->item($x)->nodeName;
 
-		    			// check if attribute isn't in whiltelist
-		    			if(!in_array($attrName,$whitelist_attr_arr)) {
-		    				$currentNode->removeAttribute($attrName);
-		    				$x--;
+		    			// check if attribute isn't in whitelist
+		    			if(! in_array($attrName, $whitelist_attr_arr)) {
+							$this->removedattrs[] = $attrName;
 		    			}	
 		    		}	
-		    }
+					if ($this->removedattrs) {
+						foreach ($this->removedattrs as $attr) {
+							$currentNode->removeAttribute($attr);
+							logger('removed: ' . $attr, LOGGER_DEBUG);
+						}
+					}
+
+			}
 
 		    // else remove element
 		    else {
-
 		        $currentNode->parentNode->removeChild($currentNode);
-		        $i--;
-
 		    }	
 		}
+		return true;
 	}
 
 	function saveSVG() {
