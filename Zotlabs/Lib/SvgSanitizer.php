@@ -60,7 +60,7 @@ class SvgSanitizer {
 	);
 
 	function __construct() {
-		$this->xmlDoc = new DOMDocument();
+		$this->xmlDoc = new DOMDocument('1.0','UTF-8');
 		$this->xmlDoc->preserveWhiteSpace = false;
 		libxml_use_internal_errors(true);
 	}

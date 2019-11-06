@@ -3449,14 +3449,17 @@ function svg2bb($s) {
 
 	$s = preg_replace("/\<text (.*?)\>(.*?)\<(.*?)\<\/text\>/", '<text $1>$2&lt;$3</text>', $s);
 	$s = preg_replace("/\<text (.*?)\>(.*?)\>(.*?)\<\/text\>/", '<text $1>$2&gt;$3</text>', $s);
-
+	$s = utf8_encode($s);
 	$purify = new SvgSanitizer();
 	if ($purify->loadXML($s)) {
 		$purify->sanitize();
 		$output = $purify->saveSVG();
 		$output = preg_replace("/\<\?xml(.*?)\>/",'',$output);
+		$output = preg_replace("/\<\!\-\-(.*?)\-\-\>/",'',$output);
 		$output = str_replace(['<','>'],['[',']'],$output);
 		$output = str_replace('/]',']',$output);
 		return $output;
 	}
-	return EMPTY_STR;}
+	return EMPTY_STR;
+}
+

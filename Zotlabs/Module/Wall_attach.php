@@ -132,6 +132,12 @@ class Wall_attach extends Controller {
 					if ($bb) {
 						$s .= "\n\n" . $bb;
 					}
+					else {
+						logger('empty return from svgbb');
+					}
+				}
+				else {
+					logger('unable to read svg data file: ' . 'store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
 				}
 			}
 
