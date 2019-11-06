@@ -276,23 +276,39 @@ function bb_parse_app($match) {
 }
 
 function bb_svg($match) {
-	$params = $match[1];
+
+
+	$params = str_replace(['<br>', '&quot;'], [ '', '"'],$match[1]);
 	$Text = $match[2];
+	
+	$Text = preg_replace("/\[line (.*?)\]/", '<line $1/>', $Text);
+	$Text = preg_replace("/\[circle (.*?)\]/", '<circle $1/>', $Text);
+	$Text = preg_replace("/\[rect (.*?)\]/", '<rect $1/>', $Text);
+	$Text = preg_replace("/\[polygon (.*?)\]/", '<polygon $1/>', $Text);
+	$Text = preg_replace("/\[ellipse (.*?)\]/", '<ellipse $1/>', $Text);
+	$Text = preg_replace("/\[text (.*?)\](.*?)\[\/text\]/", '<text $1>$2</text>', $Text);
+	$Text = preg_replace("/\[defs\](.*?)\[\/defs\]/", '<defs>$1</defs>', $Text);
+	$Text = preg_replace("/\[linearGradient\](.*?)\[\/linearGradient\]/", '<linearGradient>$1</linearGradient>', $Text);
+	$Text = preg_replace("/\[linearGradient (.*?)\](.*?)\[\/linearGradient\]/", '<linearGradient $1>$2</linearGradient>', $Text);
+	$Text = preg_replace("/\[linearGradient (.*?)\]/", '<linearGradient $1/>', $Text);
+	$Text = preg_replace("/\[radialGradient](.*?)\[\/radialGradient\]/", '<radialGradient>$1</radialGradient>', $Text);
+	$Text = preg_replace("/\[radialGradient (.*?)\](.*?)\[\/radialGradient\]/", '<radialGradient $1>$2</radialGradient>', $Text);
+	$Text = preg_replace("/\[radialGradient (.*?)\]/", '<radialGradient $1/>', $Text);
+	$Text = preg_replace("/\[metadata (.*?)\]/", '<metadata $1/>', $Text);
+	$Text = preg_replace("/\[stop (.*?)\]/", '<stop $1/>', $Text);
+	$Text = preg_replace("/\[g\](.*?)\[\/g\]/", '<g>$1</g>', $Text);
+	$Text = preg_replace("/\[g (.*?)\](.*?)\[\/g\]/", '<g $1>$2</g>', $Text);
+	$Text = preg_replace("/\[path (.*?)\]/", '<path $1/>', $Text);
+	$Text = preg_replace("/\[path (.*?)\](.*?)\[\/path\]/", '<path $1>$2</path>', $Text);
+	
+	$output =  '<svg' . (($params) ? $params : ' width="100%" height="480" ') . '>' . str_replace(['<br>', '&quot;', '&nbsp;'], [ '', '"', ' '],$Text) . '</svg>';
 
-	$Text = str_replace(['(',')'],['&lpar;','&rpar;'],$Text);
-	$Text = preg_replace("/\[line (.*?)]/", '<line $1/>', $Text);
-	$Text = preg_replace("/\[circle (.*?)]/", '<circle $1/>', $Text);
-	$Text = preg_replace("/\[rect (.*?)]/", '<rect $1/>', $Text);
-	$Text = preg_replace("/\[polygon (.*?)]/", '<polygon $1/>', $Text);
-	$Text = preg_replace("/\[ellipse (.*?)]/", '<ellipse $1/>', $Text);
-	$Text = preg_replace("/\[text (.*?)](.*?)\[\/text\]/", '<text $1>$2</text>', $Text);
-
-
-	$output =  '<svg' . (($params) ? $params : ' width="100%" height="480" ') . '>' . str_replace('<br>','',$Text) . '</svg>';
 	$purify = new SvgSanitizer();
 	$purify->loadXML($output);
-	return $purify->saveSVG();
-	
+	$purify->sanitize();
+	$output = $purify->saveSVG();
+	$output = preg_replace("/\<\?xml(.*?)\?\>/",'',$output);
+	return $output;
 }
 
 function bb_parse_element($match) {
@@ -1139,7 +1155,7 @@ function bbcode($Text, $options = []) {
 	$urlchars = '[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]';
 
 	if (strpos($Text,'http') !== false) {
-		$Text = preg_replace("/([^\]\='".'"'."\/])(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" ' . $target . ' rel="nofollow noopener">$2</a>', $Text);
+		$Text = preg_replace("/([^\]\='".'"'."\;\/])(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" ' . $target . ' rel="nofollow noopener">$2</a>', $Text);
 	}
 
 	if (strpos($Text,'[/share]') !== false) {
@@ -1512,7 +1528,7 @@ function bbcode($Text, $options = []) {
 	}
 
 	// SVG stuff
-	$Text = preg_replace_callback("/\[svg(.*?)\](.*?)\[\/svg\]/", 'bb_svg', $Text);
+	$Text = preg_replace_callback("/\[svg(.*?)\](.*?)\[\/svg\]/ism", 'bb_svg', $Text);
 
 
 	// oembed tag
