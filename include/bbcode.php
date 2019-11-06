@@ -277,29 +277,8 @@ function bb_parse_app($match) {
 
 function bb_svg($match) {
 
-
 	$params = str_replace(['<br>', '&quot;'], [ '', '"'],$match[1]);
-	$Text = $match[2];
-	
-	$Text = preg_replace("/\[line (.*?)\]/", '<line $1/>', $Text);
-	$Text = preg_replace("/\[circle (.*?)\]/", '<circle $1/>', $Text);
-	$Text = preg_replace("/\[rect (.*?)\]/", '<rect $1/>', $Text);
-	$Text = preg_replace("/\[polygon (.*?)\]/", '<polygon $1/>', $Text);
-	$Text = preg_replace("/\[ellipse (.*?)\]/", '<ellipse $1/>', $Text);
-	$Text = preg_replace("/\[text (.*?)\](.*?)\[\/text\]/", '<text $1>$2</text>', $Text);
-	$Text = preg_replace("/\[defs\](.*?)\[\/defs\]/", '<defs>$1</defs>', $Text);
-	$Text = preg_replace("/\[linearGradient\](.*?)\[\/linearGradient\]/", '<linearGradient>$1</linearGradient>', $Text);
-	$Text = preg_replace("/\[linearGradient (.*?)\](.*?)\[\/linearGradient\]/", '<linearGradient $1>$2</linearGradient>', $Text);
-	$Text = preg_replace("/\[linearGradient (.*?)\]/", '<linearGradient $1/>', $Text);
-	$Text = preg_replace("/\[radialGradient](.*?)\[\/radialGradient\]/", '<radialGradient>$1</radialGradient>', $Text);
-	$Text = preg_replace("/\[radialGradient (.*?)\](.*?)\[\/radialGradient\]/", '<radialGradient $1>$2</radialGradient>', $Text);
-	$Text = preg_replace("/\[radialGradient (.*?)\]/", '<radialGradient $1/>', $Text);
-	$Text = preg_replace("/\[metadata (.*?)\]/", '<metadata $1/>', $Text);
-	$Text = preg_replace("/\[stop (.*?)\]/", '<stop $1/>', $Text);
-	$Text = preg_replace("/\[g\](.*?)\[\/g\]/", '<g>$1</g>', $Text);
-	$Text = preg_replace("/\[g (.*?)\](.*?)\[\/g\]/", '<g $1>$2</g>', $Text);
-	$Text = preg_replace("/\[path (.*?)\]/", '<path $1/>', $Text);
-	$Text = preg_replace("/\[path (.*?)\](.*?)\[\/path\]/", '<path $1>$2</path>', $Text);
+	$Text = str_replace([ '[',']' ], [ '<','>' ], $match[2]);
 	
 	$output =  '<svg' . (($params) ? $params : ' width="100%" height="480" ') . '>' . str_replace(['<br>', '&quot;', '&nbsp;'], [ '', '"', ' '],$Text) . '</svg>';
 
