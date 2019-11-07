@@ -938,6 +938,13 @@ function parseIdentityAwareHTML($Text) {
 		$Text = str_replace('[observer.address]',$s1 . $observer['xchan_addr'] . $s2, $Text);
 		$Text = str_replace('[observer.webname]', substr($observer['xchan_addr'],0,strpos($observer['xchan_addr'],'@')), $Text);
 		$Text = str_replace('[observer.photo]',$s1 . '[zmg]'.$observer['xchan_photo_l'].'[/zmg]' . $s2, $Text);
+		$Text = str_replace('[observer.baseurl/]', $obsBaseURL, $Text);
+		$Text = str_replace('[observer.url/]',$observer['xchan_url'], $Text);
+		$Text = str_replace('[observer.name/]',$s1 . $observer['xchan_name'] . $s2, $Text);
+		$Text = str_replace('[observer.address/]',$s1 . $observer['xchan_addr'] . $s2, $Text);
+		$Text = str_replace('[observer.webname/]', substr($observer['xchan_addr'],0,strpos($observer['xchan_addr'],'@')), $Text);
+		$Text = str_replace('[observer.photo/]',$s1 . '[zmg]'.$observer['xchan_photo_l'].'[/zmg]' . $s2, $Text);
+
 	} else {
 		$Text = str_replace('[observer.baseurl]', '', $Text);
 		$Text = str_replace('[observer.url]','', $Text);
@@ -945,9 +952,15 @@ function parseIdentityAwareHTML($Text) {
 		$Text = str_replace('[observer.address]','', $Text);
 		$Text = str_replace('[observer.webname]','',$Text);
 		$Text = str_replace('[observer.photo]','', $Text);
+		$Text = str_replace('[observer.baseurl/]', '', $Text);
+		$Text = str_replace('[observer.url/]','', $Text);
+		$Text = str_replace('[observer.name/]','', $Text);
+		$Text = str_replace('[observer.address/]','', $Text);
+		$Text = str_replace('[observer.webname/]','',$Text);
+		$Text = str_replace('[observer.photo/]','', $Text);
 	}
         
-	$Text = str_replace(array('[baseurl]','[sitename]'),array(z_root(),get_config('system','sitename')),$Text);
+	$Text = str_replace(array('[baseurl]','[baseurl/]','[sitename]','[sitename/]'),array(z_root(),z_root(), get_config('system','sitename'),get_config('system','sitename')),$Text);
         
 
 	// Unhide all [noparse] contained bbtags unspacefying them 
@@ -1053,7 +1066,7 @@ function bbcode($Text, $options = []) {
 	$saved_images = $x['images'];
 
 	if(! $export)
-		$Text = str_replace(array('[baseurl]','[sitename]'),array(z_root(),get_config('system','sitename')),$Text);
+		$Text = str_replace(array('[baseurl]','[baseurl/]','[sitename]','[sitename/]'),array(z_root(),z_root(), get_config('system','sitename'),get_config('system','sitename')),$Text);
 
 
 	// Replace any html brackets with HTML Entities to prevent executing HTML or script
@@ -1118,6 +1131,12 @@ function bbcode($Text, $options = []) {
 		$Text = str_replace('[observer.address]',$s1 . $observer['xchan_addr'] . $s2, $Text);
 		$Text = str_replace('[observer.webname]', substr($observer['xchan_addr'],0,strpos($observer['xchan_addr'],'@')), $Text);
 		$Text = str_replace('[observer.photo]',$s1 . '[zmg]'.$observer['xchan_photo_l'].'[/zmg]' . $s2, $Text);
+		$Text = str_replace('[observer.baseurl/]', $obsBaseURL, $Text);
+		$Text = str_replace('[observer.url/]',$observer['xchan_url'], $Text);
+		$Text = str_replace('[observer.name/]',$s1 . $observer['xchan_name'] . $s2, $Text);
+		$Text = str_replace('[observer.address/]',$s1 . $observer['xchan_addr'] . $s2, $Text);
+		$Text = str_replace('[observer.webname/]', substr($observer['xchan_addr'],0,strpos($observer['xchan_addr'],'@')), $Text);
+		$Text = str_replace('[observer.photo/]',$s1 . '[zmg]'.$observer['xchan_photo_l'].'[/zmg]' . $s2, $Text);
 	} else {
 		$Text = str_replace('[observer.baseurl]', '', $Text);
 		$Text = str_replace('[observer.url]','', $Text);
@@ -1125,6 +1144,12 @@ function bbcode($Text, $options = []) {
 		$Text = str_replace('[observer.address]','', $Text);
 		$Text = str_replace('[observer.webname]','',$Text);
 		$Text = str_replace('[observer.photo]','', $Text);
+		$Text = str_replace('[observer.baseurl/]', '', $Text);
+		$Text = str_replace('[observer.url/]','', $Text);
+		$Text = str_replace('[observer.name/]','', $Text);
+		$Text = str_replace('[observer.address/]','', $Text);
+		$Text = str_replace('[observer.webname/]','',$Text);
+		$Text = str_replace('[observer.photo/]','', $Text);
 	}
 
 
@@ -1189,9 +1214,11 @@ function bbcode($Text, $options = []) {
 			$Text = preg_replace_callback("/\[map\](.*?)\[\/map\]/ism", 'bb_map_location', $Text);
 		}
 		if (strpos($Text,'[map=') !== false) {
+			$Text = preg_replace_callback("/\[map=(.*?)\/\]/ism", 'bb_map_coords', $Text);
 			$Text = preg_replace_callback("/\[map=(.*?)\]/ism", 'bb_map_coords', $Text);
 		}
 		if (strpos($Text,'[map]') !== false) {
+			$Text = preg_replace("/\[map\/\]/", '<div class="map"></div>', $Text);
 			$Text = preg_replace("/\[map\]/", '<div class="map"></div>', $Text);
 		}
 	}
@@ -1274,10 +1301,12 @@ function bbcode($Text, $options = []) {
 	while(strpos($Text,'[toc]') !== false) {
 		$toc_id = 'toc-' . random_string(10);
 		$Text = preg_replace("/\[toc\]/ism", '<ul id="' . $toc_id . '" class="toc" data-toc=".section-content-wrapper"></ul><script>$("#' . $toc_id . '").toc();</script>', $Text, 1);
+		$Text = preg_replace("/\[toc\/\]/ism", '<ul id="' . $toc_id . '" class="toc" data-toc=".section-content-wrapper"></ul><script>$("#' . $toc_id . '").toc();</script>', $Text, 1);
 	}
 	// Check for table of content with params
 	while(strpos($Text,'[toc') !== false) {
 		$toc_id = 'toc-' . random_string(10);
+		$Text = preg_replace("/\[toc([^\]]+?)\/\]/ism", '<ul id="' . $toc_id . '" class="toc"$1></ul><script>$("#' . $toc_id . '").toc();</script>', $Text, 1);
 		$Text = preg_replace("/\[toc([^\]]+?)\]/ism", '<ul id="' . $toc_id . '" class="toc"$1></ul><script>$("#' . $toc_id . '").toc();</script>', $Text, 1);
 	}
 	// Check for centered text
@@ -1290,8 +1319,10 @@ function bbcode($Text, $options = []) {
 	}
 	// Check for list text
 
-	$Text = preg_replace("/<br \/>\[\*\]/ism",'[*]',$Text);
+	$Text = preg_replace("/<br \/>\[\*\/\]/ism",'[*/]',$Text);
+	$Text = preg_replace("/<br \/>\[\*\]/ism",'[*/]',$Text);
 
+	$Text = str_replace("[*/]", "<li>", $Text);
 	$Text = str_replace("[*]", "<li>", $Text);
 
  	// handle nested lists
@@ -1342,11 +1373,13 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace("/\[table border=0\](.*?)\[\/table\]/sm", '<table class="table table-responsive" >$1</table>', $Text);
 	}
 	$Text = str_replace('</tr><br /><tr>', "</tr>\n<tr>", $Text);
-	$Text = str_replace('[hr]', '<hr />', $Text);
+	$Text = str_replace('[hr]', '<hr>', $Text);
+	$Text = str_replace('[hr/]', '<hr>', $Text);
 
 	// This is actually executed in prepare_body()
 
 	$Text = str_replace('[nosmile]', '', $Text);
+	$Text = str_replace('[nosmile/]', '', $Text);
 
 	// Check for font change text
 	if (strpos($Text,'[/font]') !== false) {
