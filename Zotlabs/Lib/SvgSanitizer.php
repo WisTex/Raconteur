@@ -71,6 +71,10 @@ class SvgSanitizer {
 	}
 
 	function loadXML($str) {
+		if (! $str) {
+			logger('loadxml: empty input', LOGGER_DEBUG);
+			return false;
+		}
 		if (! $this->xmlDoc->loadXML($str)) {
 			logger('loadxml: ' . print_r(libxml_get_errors(),true), LOGGER_DEBUG);
 			return false;
