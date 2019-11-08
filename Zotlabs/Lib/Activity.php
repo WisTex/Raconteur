@@ -87,7 +87,7 @@ class Activity {
 			$headers = [
 				'Accept'           => 'application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
 				'Host'             => $m['host'],
-				'Date'             => datetime_convert('UTC','UTC', 'now', 'D, d M Y h:i:s \\G\\M\\T'),
+				'Date'             => datetime_convert('UTC','UTC', 'now', 'D, d M Y H:i:s \\G\\M\\T'),
 				'(request-target)' => 'get ' . get_request_string($url)
 			];
 			if (isset($token)) {
