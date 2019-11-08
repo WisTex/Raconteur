@@ -239,6 +239,7 @@ class Inbox extends Controller {
 						Activity::unfollow($channel,$AS);
 						break;
 					}
+				case 'Tombstone':
 				case 'Delete':
 					Activity::drop($channel,$observer_hash,$AS);
 					break;
