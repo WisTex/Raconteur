@@ -6,7 +6,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
-use Zotlabs\Web\HTTPSignatures;
+use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\Connect;
 use Zotlabs\Daemon\Master;
