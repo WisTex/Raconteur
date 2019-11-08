@@ -1594,6 +1594,24 @@ class Libzot {
 
 			$DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
 
+			if ($act->type === 'Tombstone') {
+				$r = q("select * from item where mid = '%s' and uid = %d",
+					dbesc($act->id),
+					intval($channel['channel_id'])
+				);
+				if ($r) {
+					if (($r[0]['author_xchan'] === $sender) || ($r[0]['owner_xchan'] === $sender)) {
+						drop_item($r[0]['id'],false);
+					}
+					$DR->update('item deleted');
+					$result[] = $DR->get();
+					continue;
+				}
+				$DR->update('deleted item not found');
+				$result[] = $DR->get();
+				continue;	
+			}
+
 			if (($act) && ($act->obj) && (! is_array($act->obj))) {
 
 				// The initial object fetch failed using the sys channel credentials. 

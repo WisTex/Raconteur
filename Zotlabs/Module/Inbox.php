@@ -184,13 +184,13 @@ class Inbox extends Controller {
 
 			switch ($AS->type) {
 				case 'Follow':
-					if ($AS->obj & ActivityStreams::is_an_actor($AS->obj['type'])) {
+					if ($AS->obj && ActivityStreams::is_an_actor($AS->obj['type'])) {
 						// do follow activity
 						Activity::follow($channel,$AS);
 					}
 					break;
 				case 'Accept':
-					if ($AS->obj & $AS->obj['type'] === 'Follow') {
+					if ($AS->obj && $AS->obj['type'] === 'Follow') {
 						// do follow activity
 						Activity::follow($channel,$AS);
 					}
@@ -234,11 +234,12 @@ class Inbox extends Controller {
 					}
 					break;
 				case 'Undo':
-					if ($AS->obj & $AS->obj['type'] === 'Follow') {
+					if ($AS->obj && $AS->obj['type'] === 'Follow') {
 						// do unfollow activity
 						Activity::unfollow($channel,$AS);
 						break;
 					}
+				case 'Tombstone':
 				case 'Delete':
 					Activity::drop($channel,$observer_hash,$AS);
 					break;

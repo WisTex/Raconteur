@@ -3399,6 +3399,9 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 	if($observer && $observer['xchan_hash'] && ($observer['xchan_hash'] === $item['author_xchan']))
 		$ok_to_delete = true;
 
+	if($observer && $observer['xchan_hash'] && ($observer['xchan_hash'] === $item['owner_xchan']))
+		$ok_to_delete = true;
+
 	if($ok_to_delete) {
 		
 		$r = q("UPDATE item SET item_deleted = 1 WHERE id = %d",

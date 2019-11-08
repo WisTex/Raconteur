@@ -84,6 +84,27 @@ function deletenode(&$doc, $node)
 		$child->parentNode->removeChild($child);
 }
 
+
+function svg2bbcode($match) {
+
+	$params = $match[1];
+	$s = $match[2];
+	
+	$output =  '<svg' . (($params) ? $params : ' width="100%" height="480" ') . '>' . $s . '</svg>';
+
+	$purify = new SvgSanitizer();
+	if ($purify->loadXML($s)) {
+		$purify->sanitize();
+		$output = $purify->saveSVG();
+		$output = preg_replace("/\<\?xml(.*?)\>/",'',$output);
+		$output = preg_replace("/\<\!\-\-(.*?)\-\-\>/",'',$output);
+		$output = str_replace(['<','>'],['[',']'],$output);
+		return $output;
+	}
+	return EMPTY_STR;
+
+}
+
 function html2bbcode($message)
 {
 

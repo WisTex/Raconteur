@@ -236,17 +236,17 @@
     },
     {
         "name": "ezyang/htmlpurifier",
-        "version": "v4.11.0",
-        "version_normalized": "4.11.0.0",
+        "version": "v4.12.0",
+        "version_normalized": "4.12.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/ezyang/htmlpurifier.git",
-            "reference": "83ab08bc1af7d808a9e0fbf024f1c24bfd73c0a7"
+            "reference": "a617e55bc62a87eec73bd456d146d134ad716f03"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/83ab08bc1af7d808a9e0fbf024f1c24bfd73c0a7",
-            "reference": "83ab08bc1af7d808a9e0fbf024f1c24bfd73c0a7",
+            "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/a617e55bc62a87eec73bd456d146d134ad716f03",
+            "reference": "a617e55bc62a87eec73bd456d146d134ad716f03",
             "shasum": ""
         },
         "require": {
@@ -255,7 +255,7 @@
         "require-dev": {
             "simpletest/simpletest": "dev-master#72de02a7b80c6bb8864ef9bf66d41d2f58f826bd"
         },
-        "time": "2019-07-14T18:58:38+00:00",
+        "time": "2019-10-28T03:44:26+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -334,33 +334,34 @@
     },
     {
         "name": "guzzlehttp/guzzle",
-        "version": "6.3.3",
-        "version_normalized": "6.3.3.0",
+        "version": "6.4.1",
+        "version_normalized": "6.4.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/guzzle/guzzle.git",
-            "reference": "407b0cb880ace85c9b63c5f9551db498cb2d50ba"
+            "reference": "0895c932405407fd3a7368b6910c09a24d26db11"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/guzzle/guzzle/zipball/407b0cb880ace85c9b63c5f9551db498cb2d50ba",
-            "reference": "407b0cb880ace85c9b63c5f9551db498cb2d50ba",
+            "url": "https://api.github.com/repos/guzzle/guzzle/zipball/0895c932405407fd3a7368b6910c09a24d26db11",
+            "reference": "0895c932405407fd3a7368b6910c09a24d26db11",
             "shasum": ""
         },
         "require": {
+            "ext-json": "*",
             "guzzlehttp/promises": "^1.0",
-            "guzzlehttp/psr7": "^1.4",
+            "guzzlehttp/psr7": "^1.6.1",
             "php": ">=5.5"
         },
         "require-dev": {
             "ext-curl": "*",
             "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.4 || ^7.0",
-            "psr/log": "^1.0"
+            "psr/log": "^1.1"
         },
         "suggest": {
             "psr/log": "Required for using the Log middleware"
         },
-        "time": "2018-04-22T15:46:56+00:00",
+        "time": "2019-10-23T15:58:00+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -369,12 +370,12 @@
         },
         "installation-source": "dist",
         "autoload": {
-            "files": [
-                "src/functions_include.php"
-            ],
             "psr-4": {
                 "GuzzleHttp\\": "src/"
-            }
+            },
+            "files": [
+                "src/functions_include.php"
+            ]
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
@@ -706,17 +707,17 @@
     },
     {
         "name": "league/flysystem",
-        "version": "1.0.55",
-        "version_normalized": "1.0.55.0",
+        "version": "1.0.57",
+        "version_normalized": "1.0.57.0",
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/flysystem.git",
-            "reference": "33c91155537c6dc899eacdc54a13ac6303f156e6"
+            "reference": "0e9db7f0b96b9f12dcf6f65bc34b72b1a30ea55a"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/33c91155537c6dc899eacdc54a13ac6303f156e6",
-            "reference": "33c91155537c6dc899eacdc54a13ac6303f156e6",
+            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/0e9db7f0b96b9f12dcf6f65bc34b72b1a30ea55a",
+            "reference": "0e9db7f0b96b9f12dcf6f65bc34b72b1a30ea55a",
             "shasum": ""
         },
         "require": {
@@ -746,7 +747,7 @@
             "spatie/flysystem-dropbox": "Allows you to use Dropbox storage",
             "srmklive/flysystem-dropbox-v2": "Allows you to use Dropbox storage for PHP 5 applications"
         },
-        "time": "2019-08-24T11:17:19+00:00",
+        "time": "2019-10-16T21:01:05+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -792,17 +793,17 @@
     },
     {
         "name": "league/html-to-markdown",
-        "version": "4.8.2",
-        "version_normalized": "4.8.2.0",
+        "version": "4.9.0",
+        "version_normalized": "4.9.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/html-to-markdown.git",
-            "reference": "e747489191f8e9144a7270eb61f8b9516e99e413"
+            "reference": "71319108e3db506250b8987721b13568fd9fa446"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/e747489191f8e9144a7270eb61f8b9516e99e413",
-            "reference": "e747489191f8e9144a7270eb61f8b9516e99e413",
+            "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/71319108e3db506250b8987721b13568fd9fa446",
+            "reference": "71319108e3db506250b8987721b13568fd9fa446",
             "shasum": ""
         },
         "require": {
@@ -812,17 +813,17 @@
         },
         "require-dev": {
             "mikehaertl/php-shellcommand": "~1.1.0",
-            "phpunit/phpunit": "4.*",
+            "phpunit/phpunit": "^4.8|^5.7",
             "scrutinizer/ocular": "~1.1"
         },
-        "time": "2019-08-02T11:57:39+00:00",
+        "time": "2019-11-02T14:54:14+00:00",
         "bin": [
             "bin/html-to-markdown"
         ],
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "4.9-dev"
+                "dev-master": "4.10-dev"
             }
         },
         "installation-source": "dist",
@@ -1563,27 +1564,27 @@
     },
     {
         "name": "psr/log",
-        "version": "1.1.0",
-        "version_normalized": "1.1.0.0",
+        "version": "1.1.2",
+        "version_normalized": "1.1.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/php-fig/log.git",
-            "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd"
+            "reference": "446d54b4cb6bf489fc9d75f55843658e6f25d801"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/php-fig/log/zipball/6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
-            "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
+            "url": "https://api.github.com/repos/php-fig/log/zipball/446d54b4cb6bf489fc9d75f55843658e6f25d801",
+            "reference": "446d54b4cb6bf489fc9d75f55843658e6f25d801",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2018-11-20T15:27:04+00:00",
+        "time": "2019-11-01T11:05:21+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.0.x-dev"
+                "dev-master": "1.1.x-dev"
             }
         },
         "installation-source": "dist",
@@ -2344,23 +2345,23 @@
     },
     {
         "name": "symfony/options-resolver",
-        "version": "v4.3.4",
-        "version_normalized": "4.3.4.0",
+        "version": "v4.3.6",
+        "version_normalized": "4.3.6.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/options-resolver.git",
-            "reference": "81c2e120522a42f623233968244baebd6b36cb6a"
+            "reference": "f46c7fc8e207bd8a2188f54f8738f232533765a4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/options-resolver/zipball/81c2e120522a42f623233968244baebd6b36cb6a",
-            "reference": "81c2e120522a42f623233968244baebd6b36cb6a",
+            "url": "https://api.github.com/repos/symfony/options-resolver/zipball/f46c7fc8e207bd8a2188f54f8738f232533765a4",
+            "reference": "f46c7fc8e207bd8a2188f54f8738f232533765a4",
             "shasum": ""
         },
         "require": {
             "php": "^7.1.3"
         },
-        "time": "2019-08-08T09:29:19+00:00",
+        "time": "2019-10-28T20:59:01+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2460,23 +2461,23 @@
     },
     {
         "name": "symfony/process",
-        "version": "v4.3.4",
-        "version_normalized": "4.3.4.0",
+        "version": "v4.3.6",
+        "version_normalized": "4.3.6.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/process.git",
-            "reference": "e89969c00d762349f078db1128506f7f3dcc0d4a"
+            "reference": "3b2e0cb029afbb0395034509291f21191d1a4db0"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/process/zipball/e89969c00d762349f078db1128506f7f3dcc0d4a",
-            "reference": "e89969c00d762349f078db1128506f7f3dcc0d4a",
+            "url": "https://api.github.com/repos/symfony/process/zipball/3b2e0cb029afbb0395034509291f21191d1a4db0",
+            "reference": "3b2e0cb029afbb0395034509291f21191d1a4db0",
             "shasum": ""
         },
         "require": {
             "php": "^7.1.3"
         },
-        "time": "2019-08-26T08:26:39+00:00",
+        "time": "2019-10-28T17:07:32+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
