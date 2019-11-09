@@ -422,7 +422,7 @@ class Activity {
 					$ret[] = $entry;
 			}
 		}
-		else {
+		elseif (is_string($item['attachment'])) {
 			btlogger('not an array: ' . $item['attachment']);
 		}
 
@@ -798,7 +798,14 @@ class Activity {
 		else {
 			return [];
 		}
-		
+
+		$ret['url'] = [
+			'type'      => 'Link',
+			'rel'       => 'alternate',
+			'mediaType' => 'text/html',
+			'href'      => $ret['id']
+		];
+
 		$t = self::encode_taxonomy($i);
 		if ($t) {
 			$ret['tag'] = $t;
