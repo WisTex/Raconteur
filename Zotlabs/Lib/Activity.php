@@ -532,7 +532,7 @@ class Activity {
 			$ret['conversation'] = $cnv;
 		}
 
-		$ret['inheritPrivacy'] = true;
+//		$ret['inheritPrivacy'] = true;
 
 		$actor = self::encode_person($i['author'],false);
 		if ($actor)
@@ -695,7 +695,7 @@ class Activity {
 		if ($i['created'] !== $i['edited']) {
 			$ret['updated'] = datetime_convert('UTC','UTC',$i['edited'],ATOM_TIME);
 		}
-		if ($i['expires'] <= NULL_DATE) {
+		if ($i['expires'] > NULL_DATE) {
 			$ret['expires'] = datetime_convert('UTC','UTC',$i['expires'],ATOM_TIME);
 		}
 		if ($i['app']) {
@@ -713,7 +713,7 @@ class Activity {
 			}
 		}
 
-		$ret['inheritPrivacy'] = true;
+//		$ret['inheritPrivacy'] = true;
 
 		if (intval($i['item_wall']) && $i['mid'] === $i['parent_mid']) {
 			$ret['commentPolicy'] = map_scope(PermissionLimits::Get($i['uid'],'post_comments'));
@@ -788,7 +788,10 @@ class Activity {
 				$ret['summary'] = bbcode($i['summary'], [ 'export' => true ]);
 			}
 			$ret['content'] = bbcode($i['body'], [ 'export' => true ]);
-			$ret['source'] = [ 'content' => $i['body'], 'summary' => $i['summary'], 'mediaType' => 'text/bbcode' ];
+			$ret['source'] = [ 'content' => $i['body'], 'mediaType' => 'text/bbcode' ];
+			if ($ret['summary']) {
+				$ret['source']['summary'] = $i['summary'];
+			}
 		}
 
 		$actor = self::encode_person($i['author'],false);
