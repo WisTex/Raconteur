@@ -138,7 +138,6 @@
 			<div id="adv-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="adv-settings" data-parent="#settings">
 				<div class="section-content-tools-wrapper">
 					{{include file="field_input.tpl" field=$imagick_path}}
-					{{include file="field_checkbox.tpl" field=$thumbnail_security}}
 					{{include file="field_input.tpl" field=$proxy}}
 					{{include file="field_input.tpl" field=$proxyuser}}
 					{{include file="field_input.tpl" field=$timeout}}

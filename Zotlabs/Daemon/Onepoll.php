@@ -62,11 +62,13 @@ class Onepoll {
 
 		if($contact['xchan_network'] === 'rss') {
 			logger('onepoll: processing feed ' . $contact['xchan_name'], LOGGER_DEBUG);
-			handle_feed($importer['channel_id'],$contact_id,$contact['xchan_hash']);
-			q("update abook set abook_connected = '%s' where abook_id = %d",
-				dbesc(datetime_convert()),
-				intval($contact['abook_id'])
-			);
+			$alive = handle_feed($importer['channel_id'],$contact_id,$contact['xchan_hash']);
+			if ($alive) {
+				q("update abook set abook_connected = '%s' where abook_id = %d",
+					dbesc(datetime_convert()),
+					intval($contact['abook_id'])
+				);
+			}
 			return;
 		}
 	
