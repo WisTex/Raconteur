@@ -164,17 +164,17 @@
     },
     {
         "name": "doctrine/collections",
-        "version": "v1.6.2",
-        "version_normalized": "1.6.2.0",
+        "version": "1.6.3",
+        "version_normalized": "1.6.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/doctrine/collections.git",
-            "reference": "c5e0bc17b1620e97c968ac409acbff28b8b850be"
+            "reference": "037ccc5b1c249275f8f6bb48e35f140fd52fd577"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/doctrine/collections/zipball/c5e0bc17b1620e97c968ac409acbff28b8b850be",
-            "reference": "c5e0bc17b1620e97c968ac409acbff28b8b850be",
+            "url": "https://api.github.com/repos/doctrine/collections/zipball/037ccc5b1c249275f8f6bb48e35f140fd52fd577",
+            "reference": "037ccc5b1c249275f8f6bb48e35f140fd52fd577",
             "shasum": ""
         },
         "require": {
@@ -186,7 +186,7 @@
             "phpunit/phpunit": "^7.0",
             "vimeo/psalm": "^3.2.2"
         },
-        "time": "2019-06-09T13:48:14+00:00",
+        "time": "2019-11-04T15:26:07+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -205,16 +205,16 @@
         ],
         "authors": [
             {
+                "name": "Guilherme Blanco",
+                "email": "guilhermeblanco@gmail.com"
+            },
+            {
                 "name": "Roman Borschel",
                 "email": "roman@code-factory.org"
             },
             {
                 "name": "Benjamin Eberlei",
                 "email": "kontakt@beberlei.de"
-            },
-            {
-                "name": "Guilherme Blanco",
-                "email": "guilhermeblanco@gmail.com"
             },
             {
                 "name": "Jonathan Wage",
@@ -2290,23 +2290,26 @@
     },
     {
         "name": "smarty/smarty",
-        "version": "v3.1.33",
-        "version_normalized": "3.1.33.0",
+        "version": "v3.1.34",
+        "version_normalized": "3.1.34.0",
         "source": {
             "type": "git",
             "url": "https://github.com/smarty-php/smarty.git",
-            "reference": "dd55b23121e55a3b4f1af90a707a6c4e5969530f"
+            "reference": "c9f0de05f41b9e52798b268ab1e625fac3b8578c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/smarty-php/smarty/zipball/dd55b23121e55a3b4f1af90a707a6c4e5969530f",
-            "reference": "dd55b23121e55a3b4f1af90a707a6c4e5969530f",
+            "url": "https://api.github.com/repos/smarty-php/smarty/zipball/c9f0de05f41b9e52798b268ab1e625fac3b8578c",
+            "reference": "c9f0de05f41b9e52798b268ab1e625fac3b8578c",
             "shasum": ""
         },
         "require": {
             "php": ">=5.2"
         },
-        "time": "2018-09-12T20:54:16+00:00",
+        "require-dev": {
+            "phpunit/phpunit": "6.4.1"
+        },
+        "time": "2019-02-28T06:42:20+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2315,8 +2318,8 @@
         },
         "installation-source": "dist",
         "autoload": {
-            "files": [
-                "libs/bootstrap.php"
+            "classmap": [
+                "libs/"
             ]
         },
         "notification-url": "https://packagist.org/downloads/",
@@ -2341,6 +2344,63 @@
         "homepage": "http://www.smarty.net",
         "keywords": [
             "templating"
+        ]
+    },
+    {
+        "name": "svg-edit/svgedit",
+        "version": "v5.0.0",
+        "version_normalized": "5.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/SVG-Edit/svgedit.git",
+            "reference": "fc0c53f61a7b38ccc229c8b15453136066d1b6db"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/SVG-Edit/svgedit/zipball/fc0c53f61a7b38ccc229c8b15453136066d1b6db",
+            "reference": "fc0c53f61a7b38ccc229c8b15453136066d1b6db",
+            "shasum": ""
+        },
+        "time": "2019-05-07T00:02:32+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Narendra Sisodiya",
+                "email": "narendra@narendrasisodiya.com"
+            },
+            {
+                "name": "Pavol Rusnak",
+                "email": "stick@gk2.sk"
+            },
+            {
+                "name": "Jeff Schiller",
+                "email": "codedread@gmail.com"
+            },
+            {
+                "name": "Vidar Hokstad",
+                "email": "vidar.hokstad@gmail.com"
+            },
+            {
+                "name": "Alexis Deveria",
+                "email": "adeveria@gmail.com"
+            },
+            {
+                "name": "Brett Zamir",
+                "email": "brettz9@yahoo.com"
+            }
+        ],
+        "description": "SVG-edit is a fast, web-based, javascript-driven SVG drawing editor that works in any modern browser.",
+        "homepage": "https://github.com/SVG-Edit/svgedit/tree/master",
+        "keywords": [
+            "drawing",
+            "editor",
+            "svg",
+            "svg-edit"
         ]
     },
     {
