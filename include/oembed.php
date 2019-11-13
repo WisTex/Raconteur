@@ -146,7 +146,7 @@ function oembed_fetch_url($embedurl){
 		$txt = Cache::get('[' . App::$videowidth . '] ' . $furl);
 	}
 
-	if(strpos(strtolower($embedurl),'.pdf') !== false) {
+	if(strpos(strtolower($embedurl),'.pdf') !== false && get_config('system','inline_pdf')) {
 		$action = 'allow';
 		$j = [
 			'html' => '<object data="' . $embedurl . '" type="application/pdf" style="width: 100%; height: 300px;"></object>',

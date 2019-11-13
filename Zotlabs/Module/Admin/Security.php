@@ -29,6 +29,12 @@ class Security {
 		$cloud_disksize       = ((x($_POST,'cloud_disksize'))	? 1	: 0);
 		set_config('system','cloud_report_disksize',$cloud_disksize);
 
+		$thumbnail_security  = ((x($_POST,'thumbnail_security'))     ? intval($_POST['thumbnail_security'])   : 0);
+		set_config('system', 'thumbnail_security' , $thumbnail_security);
+
+		$inline_pdf  = ((x($_POST,'inline_pdf'))     ? intval($_POST['inline_pdf'])   : 0);
+		set_config('system', 'inline_pdf' , $inline_pdf);
+
 		$ws = $this->trim_array_elems(explode("\n",$_POST['whitelisted_sites']));
 		set_config('system','whitelisted_sites',$ws);
 	
@@ -127,6 +133,10 @@ class Security {
 			'$localdir_hide'     => [ 'localdir_hide', t('Hide local directory'), intval(get_config('system','localdir_hide')), t('Only use the global directory') ], 
 			'$cloud_noroot'     => [ 'cloud_noroot', t('Provide a cloud root directory'), 1 - intval(get_config('system','cloud_disable_siteroot')), t('The cloud root directory lists all channel names which provide public files') ], 
 			'$cloud_disksize'     => [ 'cloud_disksize', t('Show total disk space available to cloud uploads'), intval(get_config('system','cloud_report_disksize')), '' ],
+			'$thumbnail_security'   => [ 'thumbnail_security', t("Allow SVG thumbnails in file browser"), get_config('system','thumbnail_security',0), t("WARNING: SVG images may contain malicious code.") ],
+
+			'$inline_pdf'   => [ 'inline_pdf', t("Allow embedded (inline) PDF files"), get_config('system','inline_pdf',0), '' ],
+
 			'$transport_security' => array('transport_security', t('Set "Transport Security" HTTP header'),intval(get_config('system','transport_security_header')),''),
 			'$content_security' => array('content_security', t('Set "Content Security Policy" HTTP header'),intval(get_config('system','content_security_policy')),''),
 			'$allowed_email'	=> array('allowed_email', t("Allowed email domains"), get_config('system','allowed_email'), t("Comma separated list of domains which are allowed in email addresses for registrations to this site. Wildcards are accepted. Empty to allow any domains")),

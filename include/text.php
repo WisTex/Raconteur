@@ -2610,6 +2610,8 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 			// select someone by attag or nick and the name passed in
 
 			if(! $r) {
+				// strip user-supplied wildcards before running a wildcard search
+				$newname = str_replace('%','',$newname);
 				$r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash
 					WHERE xchan_addr like ('%s') AND abook_channel = %d ",
 						dbesc(((strpos($newname,'@')) ? $newname : $newname . '@%')),

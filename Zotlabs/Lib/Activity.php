@@ -802,12 +802,14 @@ class Activity {
 			return [];
 		}
 
-		$ret['url'] = [
-			'type'      => 'Link',
-			'rel'       => 'alternate',
-			'mediaType' => 'text/html',
-			'href'      => $ret['id']
-		];
+		$ret['url'] = $ret['id'];
+		
+//		$ret['url'] = [
+//			'type'      => 'Link',
+//			'rel'       => 'alternate',
+//			'mediaType' => 'text/html',
+//			'href'      => $ret['id']
+//		];
 
 		$t = self::encode_taxonomy($i);
 		if ($t) {

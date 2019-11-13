@@ -1750,7 +1750,9 @@ function handle_feed($uid, $abook_id, $url) {
 	if($z['success']) {
 		consume_feed($z['body'], $channel, $x[0], 1);
 		consume_feed($z['body'], $channel, $x[0], 2);
+		return true;
 	}
+	return false;
 }
 
 
