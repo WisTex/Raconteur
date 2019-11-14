@@ -1,7 +1,9 @@
 <?php
 
 namespace Zotlabs\Lib;
+
 use DomDocument;
+use Zotlabs\Lib\Config;
 
 /**
  *  SVGSantiizer
@@ -76,7 +78,7 @@ class SvgSanitizer {
 			return false;
 		}
 		if (! $this->xmlDoc->loadXML($str)) {
-			logger('loadxml: ' . print_r(libxml_get_errors(),true), LOGGER_DEBUG);
+			logger('loadxml: ' . print_r(array_slice(libxml_get_errors(),0,Config::Get('system','svg_backtrace_limit',3)),true), LOGGER_DEBUG);
 			return false;
 		}
 		return true;

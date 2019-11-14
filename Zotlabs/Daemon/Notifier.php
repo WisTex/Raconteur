@@ -193,7 +193,7 @@ class Notifier {
 						self::$recipients[] = $recip['abook_xchan'];
 						self::$private = false;
 						self::$packet_type = 'refresh';
-						self::$env_recips = [ $$recip['xchan_hash'] ];
+						self::$env_recips = [ $recip['xchan_hash'] ];
 					}
 				}
 			}
