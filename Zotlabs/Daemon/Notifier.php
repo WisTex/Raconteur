@@ -175,6 +175,10 @@ class Notifier {
 						case 'permissions_accept':
 							ActivityPub::permissions_accept($perm_update);
 							break;
+						case 'permissions_update':
+							ActivityPub::permissions_update($perm_update);
+							break;
+
 						default:
 							break;
 					}

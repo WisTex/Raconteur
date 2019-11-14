@@ -43,6 +43,19 @@ class Activity_filter {
 			'title' => t('Show posts that mention or involve me')
 		];
 
+		if(x($_GET,'star')) {
+			$starred_active = (($_GET['star'] == 1) ? 'active' : '');
+			$filter_active = 'star';
+		}
+
+		$tabs[] = [
+			'label' => t('Saved Posts'),
+			'icon'  => 'star',
+			'url'   => z_root() . '/' . $cmd . '/?star=1',
+			'sel'   => $starred_active,
+			'title' => t('Show posts that I have saved')
+		];
+
 
 		if(x($_GET,'verb')) {
 			$verb_active = (($_GET['verb'] == 1) ? 'active' : '');
@@ -57,21 +70,6 @@ class Activity_filter {
 			'title' => t('Show posts that include events')
 		];
 
-
-		if(feature_enabled(local_channel(),'star_posts')) {
-			if(x($_GET,'star')) {
-				$starred_active = (($_GET['star'] == 1) ? 'active' : '');
-				$filter_active = 'star';
-			}
-
-			$tabs[] = [
-				'label' => t('Starred Posts'),
-				'icon' => 'star',
-				'url'=>z_root() . '/' . $cmd . '/?star=1',
-				'sel'=>$starred_active,
-				'title' => t('Show posts that I have starred')
-			];
-		}
 
 
 		$groups = q("SELECT * FROM pgrp WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",

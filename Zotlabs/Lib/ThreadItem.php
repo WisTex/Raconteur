@@ -294,7 +294,7 @@ class ThreadItem {
 			if(($conv->get_profile_owner() == local_channel()) && (! array_key_exists('real_uid',$item))) {
 
 				$star = array(
-					'toggle' => t("Toggle Star Status"),
+					'toggle' => t('Save'),
 					'isstarred' => ((intval($item['item_starred'])) ? true : false),
 				);
 
@@ -458,7 +458,7 @@ class ThreadItem {
 			'rawmid'	=> $item['mid'],
 			'plink'     => get_plink($item),
 			'edpost'    => $edpost, // ((feature_enabled($conv->get_profile_owner(),'edit_posts')) ? $edpost : ''),
-			'star'      => ((feature_enabled($conv->get_profile_owner(),'star_posts')) ? $star : ''),
+			'star'      => $star,
 			'tagger'    => ((feature_enabled($conv->get_profile_owner(),'commtag')) ? $tagger : ''),
 			'filer'     => ((feature_enabled($conv->get_profile_owner(),'filing')) ? $filer : ''),
 			'bookmark'  => (($conv->get_profile_owner() == local_channel() && local_channel() && $has_bookmarks) ? t('Save Bookmarks') : ''),

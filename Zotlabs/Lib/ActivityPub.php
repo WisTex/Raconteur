@@ -210,6 +210,15 @@ class ActivityPub {
 	}
 
 
+	static function permissions_update(&$x) {
+
+		if ($x['recipient']['xchan_network'] !== 'activitypub') {
+			return;
+		}
+		self::discover($x['recipient']['xchan_hash'],true);
+		$x['success'] = true;
+	}
+
 
 	static function permissions_create(&$x) {
 
@@ -400,7 +409,7 @@ class ActivityPub {
 		}	
 	}
 
-	static function discover($apurl) {
+	static function discover($apurl, $force = false) {
 
 		$person_obj = null;
 		$ap = Activity::fetch($apurl);
@@ -416,7 +425,7 @@ class ActivityPub {
 			}
 		}
 		if ($person_obj) {
-			Activity::actor_store($person_obj['id'],$person_obj);
+			Activity::actor_store($person_obj['id'],$person_obj, $force);
 			return $person_obj['id'];
 		}
 		return false;

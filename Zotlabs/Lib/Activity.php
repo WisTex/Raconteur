@@ -1400,7 +1400,7 @@ class Activity {
 
 
 
-	static function actor_store($url,$person_obj) {
+	static function actor_store($url, $person_obj, $force = false) {
 
 		if (! is_array($person_obj)) {
 			return;
@@ -1412,7 +1412,7 @@ class Activity {
 		// fetch a fresh copy before continuing.
 
 		if (array_key_exists('cached',$person_obj)) {
-			if (array_key_exists('updated',$person_obj) && datetime_convert('UTC','UTC',$person_obj['updated']) < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days')) {
+			if (array_key_exists('updated',$person_obj) && (datetime_convert('UTC','UTC',$person_obj['updated']) < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days') || $force)) {
 				$person_obj = self::fetch($url);
 			}
 			else {
