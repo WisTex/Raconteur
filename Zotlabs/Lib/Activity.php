@@ -827,8 +827,6 @@ class Activity {
 			$ret['attachment'] = $a;
 		}
 
-
-
 		if ($activitypub && $has_images && $ret['type'] === 'Note') {
 			$img = [];
         	foreach ($images as $match) {
