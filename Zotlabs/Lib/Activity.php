@@ -517,10 +517,16 @@ class Activity {
 
 		if ($i['mid'] !== $i['parent_mid']) {
 			$reply = true;
-			$ret['inReplyTo'] = $i['thr_parent'];
-			$cnv = get_iconfig($i['parent'],'ostatus','conversation');
-			if (! $cnv) {
-				$cnv = $ret['parent_mid'];
+
+			// inReplyTo needs to be set in the activity for followup actiions (Like, Dislike, Attend, Announce, etc.),
+			// but *not* for comments, where it should only be present in the object
+			
+			if (! in_array($ret['type'],[ 'Create','Update' ])) {
+				$ret['inReplyTo'] = $i['thr_parent'];
+				$cnv = get_iconfig($i['parent'],'ostatus','conversation');
+				if (! $cnv) {
+					$cnv = $ret['parent_mid'];
+				}
 			}
 		}
 
