@@ -517,10 +517,16 @@ class Activity {
 
 		if ($i['mid'] !== $i['parent_mid']) {
 			$reply = true;
-			$ret['inReplyTo'] = $i['thr_parent'];
-			$cnv = get_iconfig($i['parent'],'ostatus','conversation');
-			if (! $cnv) {
-				$cnv = $ret['parent_mid'];
+
+			// inReplyTo needs to be set in the activity for followup actiions (Like, Dislike, Attend, Announce, etc.),
+			// but *not* for comments, where it should only be present in the object
+			
+			if (! in_array($ret['type'],[ 'Create','Update' ])) {
+				$ret['inReplyTo'] = $i['thr_parent'];
+				$cnv = get_iconfig($i['parent'],'ostatus','conversation');
+				if (! $cnv) {
+					$cnv = $ret['parent_mid'];
+				}
 			}
 		}
 
@@ -820,8 +826,6 @@ class Activity {
 		if ($a) {
 			$ret['attachment'] = $a;
 		}
-
-
 
 		if ($activitypub && $has_images && $ret['type'] === 'Note') {
 			$img = [];
@@ -1396,7 +1400,7 @@ class Activity {
 
 
 
-	static function actor_store($url,$person_obj) {
+	static function actor_store($url, $person_obj, $force = false) {
 
 		if (! is_array($person_obj)) {
 			return;
@@ -1408,7 +1412,7 @@ class Activity {
 		// fetch a fresh copy before continuing.
 
 		if (array_key_exists('cached',$person_obj)) {
-			if (array_key_exists('updated',$person_obj) && datetime_convert('UTC','UTC',$person_obj['updated']) < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days')) {
+			if (array_key_exists('updated',$person_obj) && (datetime_convert('UTC','UTC',$person_obj['updated']) < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days') || $force)) {
 				$person_obj = self::fetch($url);
 			}
 			else {
