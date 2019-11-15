@@ -31,7 +31,7 @@ class System {
 		if(is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('icon',App::$config['system'])) {
 			return App::$config['system']['icon'];
 		}		
-		return z_root() . '/images/z2-64.png';
+		return z_root() . '/images/z0-64.png';
 
 	}
 

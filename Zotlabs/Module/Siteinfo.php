@@ -48,6 +48,7 @@ class Siteinfo extends Controller {
 				'$prj_srctxt' => t('Developer homepage'),
 				'$prj_link' => System::get_project_link(),
 				'$prj_src' => System::get_project_srclink(),
+				'$prj_icon' => System::get_project_icon(),
 			]
 		);
 

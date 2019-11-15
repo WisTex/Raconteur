@@ -1,6 +1,8 @@
 <div class="generic-content-wrapper-styled">
 <h2>{{$title}}</h2>
 
+<img src="{{$prj_icon}}" alt="project icon" />
+
 <h3>{{$sitenametxt}}</h3>
 
 <div><a href="{{$url}}">{{$sitename}}</a></div>
