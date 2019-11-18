@@ -46,18 +46,18 @@ $(document).ready(function() {
 
 	$(document).on('click focus', '.comment-edit-form', handle_comment_form);
 
-	$(document).swipe( {
-		swipeRight:function(event,direction,distance,duration,fingerCount,fingerData,currentDirection) {
+//	$(document).swipe( {
+//		swipeRight:function(event,direction,distance,duration,fingerCount,fingerData,currentDirection) {
 //			$('#region_1').show();
 //			$('#region_2').show();
 //			$('#region_3').hide();
-		},
-		swipeLeft:function(event,direction,distance,duration,fingerCount,fingerData,currentDirection) {
+//		},
+//		swipeLeft:function(event,direction,distance,duration,fingerCount,fingerData,currentDirection) {
 //			$('#region_1').hide();
 //			$('#region_2').show();
 //			$('#region_3').show();
-		}
-	});
+//		}
+//	});
 
 
 	
