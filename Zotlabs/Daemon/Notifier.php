@@ -333,7 +333,7 @@ class Notifier {
 		
 				$parent_item = array_shift($r);
 				$top_level_post = false;
-				$thread_is_public = 1 - intval($parent_item['item_private']) ;
+				$thread_is_public = ((intval($parent_item['item_private'])) ? false : true) ;
 			}
 
 			// avoid looping of discover items 12/4/2014
