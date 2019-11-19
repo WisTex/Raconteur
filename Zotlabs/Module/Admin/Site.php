@@ -77,7 +77,7 @@ class Site {
 		$delivery_batch_count = ((x($_POST,'delivery_batch_count') && $_POST['delivery_batch_count'] > 0)? intval(trim($_POST['delivery_batch_count'])) : 3);
 		$poll_interval     = ((x($_POST,'poll_interval'))    ? intval(trim($_POST['poll_interval'])) : 0);
 		$maxloadavg        = ((x($_POST,'maxloadavg'))       ? intval(trim($_POST['maxloadavg'])) : 50);
-		$feed_contacts     = ((x($_POST,'feed_contacts'))    ? intval($_POST['feed_contacts'])    : 0);
+//		$feed_contacts     = ((x($_POST,'feed_contacts'))    ? intval($_POST['feed_contacts'])    : 0);
 		$ap_contacts       = ((x($_POST,'ap_contacts'))      ? intval($_POST['ap_contacts'])    : 0);
 		$verify_email      = ((x($_POST,'verify_email'))     ? 1 : 0);
 		$imagick_path      = ((x($_POST,'imagick_path'))     ? trim($_POST['imagick_path'])   : '');
@@ -87,7 +87,7 @@ class Site {
 
 		$permissions_role = escape_tags(trim($_POST['permissions_role']));
 
-		set_config('system', 'feed_contacts', $feed_contacts);
+//		set_config('system', 'feed_contacts', $feed_contacts);
 		set_config('system', 'activitypub', $ap_contacts);
 		set_config('system', 'delivery_interval', $delivery_interval);
 		set_config('system', 'delivery_batch_count', $delivery_batch_count);
