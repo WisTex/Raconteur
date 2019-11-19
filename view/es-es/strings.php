@@ -2,9 +2,10 @@
 
 if(! function_exists("string_plural_select_es_es")) {
 function string_plural_select_es_es($n){
-     return ($n != 1 ? 1 : 0);
+	return ($n != 1 ? 1 : 0);;
 }}
 App::$rtl = 0;
+App::$strings["plural_function_code"] = "(n != 1 ? 1 : 0)";
 App::$strings["Social Networking"] = "Redes sociales";
 App::$strings["Social - Normal"] = "Social - Normal";
 App::$strings["Social - Restricted"] = "Social - Restringido";
@@ -246,8 +247,8 @@ App::$strings["[\$Projectname:Notify]"] = "[\$Projectname:Aviso]";
 App::$strings["created a new post"] = "ha creado una nueva entrada";
 App::$strings["reacted to %s's conversation"] = "reaccionó a la conversación de %s";
 App::$strings["shared %s's post"] = "compartió la entrada de %s";
-App::$strings["edited a post dated %s"] = "ha editado una entrada fechada el %s";
-App::$strings["edited a comment dated %s"] = "ha editado un comentario fechado el %s";
+App::$strings["edited a post dated %s"] = "ha editado una entrada con fecha de %s";
+App::$strings["edited a comment dated %s"] = "ha editado un comentario con fecha de %s";
 App::$strings["Visible to your default audience"] = "Visible para su público predeterminado.";
 App::$strings["Only me"] = "Sólo yo";
 App::$strings["Public"] = "Público";
@@ -2028,13 +2029,13 @@ App::$strings["Suggested Chatrooms"] = "Salas de chat sugeridas";
 App::$strings["Tags"] = "Etiquetas";
 App::$strings["New Stream Activity"] = "Nueva actividad en el stream";
 App::$strings["New Stream Activity Notifications"] = "Avisos de nueva actividad en el stream";
-App::$strings["View your stream activity"] = "Ver su actividad en el stream";
+App::$strings["View your stream activity"] = "Ver la actividad de su stream";
 App::$strings["Mark all notifications read"] = "Marcar todas las notificaciones como leídas";
 App::$strings["Show new posts only"] = "Mostrar solo las entradas nuevas";
 App::$strings["Filter by name"] = "Filtrar por nombre";
 App::$strings["New Home Activity"] = "Nueva actividad en su página principal";
 App::$strings["New Home Activity Notifications"] = "Avisos de nueva actividad en su página principal";
-App::$strings["View your home activity"] = "Ver su actividad en su página principal";
+App::$strings["View your home activity"] = "Ver la actividad de su página principal";
 App::$strings["Mark all notifications seen"] = "Marcar todas las notificaciones como vistas";
 App::$strings["New Mails"] = "Nuevos mensajes de correo";
 App::$strings["New Mails Notifications"] = "Avisos de nuevos mensajes de correo";
