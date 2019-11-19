@@ -26,7 +26,7 @@ class Acl extends \Zotlabs\Web\Controller {
 
 	function init() {
 
-		// logger('mod_acl: ' . print_r($_GET,true),LOGGER_DATA);
+		// logger('mod_acl: ' . print_r($_REQUEST,true),LOGGER_DATA);
 
 		$start    = (x($_REQUEST,'start')  ? $_REQUEST['start']  : 0);
 		$count    = (x($_REQUEST,'count')  ? $_REQUEST['count']  : 500);
@@ -317,7 +317,7 @@ class Acl extends \Zotlabs\Web\Controller {
 	
 		}
 		elseif($type == 'x') {
-			$r = $this->navbar_complete($a);
+			$r = $this->navbar_complete();
 			$contacts = array();
 			if($r) {
 				foreach($r as $g) {
@@ -397,7 +397,7 @@ class Acl extends \Zotlabs\Web\Controller {
 	}
 
 
-	function navbar_complete(&$a) {
+	function navbar_complete() {
 	
 	//	logger('navbar_complete');
 	
@@ -437,6 +437,9 @@ class Acl extends \Zotlabs\Web\Controller {
 			$remote_dir = true;
 		}
 
+		$results = [];
+		$results2 = [];
+
 		$token = get_config('system','realm_token');
 	
 		$count = (x($_REQUEST,'count') ?  $_REQUEST['count'] : 100);
@@ -468,7 +471,7 @@ class Acl extends \Zotlabs\Web\Controller {
 			}
 		}
 
-		if($results2 && $results) {
+		if($results2) {
 			foreach($results2 as $x) {
 				$found = false;
 				foreach($results as $y) {
