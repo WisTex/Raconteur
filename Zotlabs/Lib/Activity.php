@@ -809,7 +809,9 @@ class Activity {
 		}
 
 		$ret['url'] = $ret['id'];
-		
+
+
+
 //		$ret['url'] = [
 //			'type'      => 'Link',
 //			'rel'       => 'alternate',
