@@ -1013,7 +1013,7 @@ class Apps {
 	}
 
 	static public function app_decode($s) {
-		$x = base64_decode(str_replace(array('<br />',"\r","\n",' '),array('','','',''),$s));
+		$x = base64_decode(str_replace(array('<br>',"\r","\n",' '),array('','','',''),$s));
 		return json_decode($x,true);
 	}
 

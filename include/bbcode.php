@@ -1,6 +1,6 @@
 <?php
 
-
+use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\SvgSanitizer;
 
@@ -270,9 +270,10 @@ function bb_parse_crypt($match) {
 
 function bb_parse_app($match) {
 
-	$app = Zotlabs\Lib\Apps::app_decode($match[1]);
-	if ($app)
-		return Zotlabs\Lib\Apps::app_render($app);
+	$app = Apps::app_decode($match[1]);
+	if ($app) {
+		return Apps::app_render($app);
+	}
 }
 
 function bb_svg($match) {
