@@ -1,6 +1,6 @@
 <div class="generic-content-wrapper-styled">
 <h1>{{$title}}</h1>
-<br />
+<br>
 <div id="language-selector" >
 	<form action="#" method="post" >
 		<select name="system_language" onchange="this.form.submit();" >

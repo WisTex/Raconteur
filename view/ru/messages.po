@@ -2359,9 +2359,9 @@ msgstr "Опубликовать в GNU Social"
 
 #: ../../extend/addon/hzaddons/statusnet/statusnet.php:195
 msgid ""
-"Please contact your site administrator.<br />The provided API URL is not "
+"Please contact your site administrator.<br>The provided API URL is not "
 "valid."
-msgstr "Пожалуйста свяжитесь с администратором сайта. <br />Предоставленный URL API недействителен."
+msgstr "Пожалуйста свяжитесь с администратором сайта. <br>Предоставленный URL API недействителен."
 
 #: ../../extend/addon/hzaddons/statusnet/statusnet.php:232
 msgid "We could not contact the GNU social API with the Path you entered."
@@ -2380,7 +2380,7 @@ msgid ""
 "There are preconfigured OAuth key pairs for some GNU social servers "
 "available. If you are using one of them, please use these credentials.<br /"
 ">If not feel free to connect to any other GNU social instance (see below)."
-msgstr "Существуют предварительно настроенные пары ключей OAuth для некоторых доступных серверов GNU social. Если вы используете один из них, используйте эти учетные данные. <br />Если вы не хотите подключаться к какому-либо другому серверу GNU social (см. ниже)."
+msgstr "Существуют предварительно настроенные пары ключей OAuth для некоторых доступных серверов GNU social. Если вы используете один из них, используйте эти учетные данные. <br>Если вы не хотите подключаться к какому-либо другому серверу GNU social (см. ниже)."
 
 #: ../../extend/addon/hzaddons/statusnet/statusnet.php:327
 msgid "Provide your own OAuth Credentials"
@@ -2390,10 +2390,10 @@ msgstr "Предоставьте ваши собственные регистр�
 msgid ""
 "No consumer key pair for GNU social found. Register your Hubzilla Account as "
 "an desktop client on your GNU social account, copy the consumer key pair "
-"here and enter the API base root.<br />Before you register your own OAuth "
+"here and enter the API base root.<br>Before you register your own OAuth "
 "key pair ask the administrator if there is already a key pair for this "
 "Hubzilla installation at your favourite GNU social installation."
-msgstr "Не найдена пользовательская пара ключей для GNU social. Зарегистрируйте свою учетную запись Hubzilla в качестве настольного клиента в своей учетной записи GNU social, скопируйте cюда пару ключей пользователя и введите корневой каталог базы API. <br />Прежде чем регистрировать свою собственную пару ключей OAuth, спросите администратора, если ли уже пара ключей для этой установки Hubzilla в вашем GNU social."
+msgstr "Не найдена пользовательская пара ключей для GNU social. Зарегистрируйте свою учетную запись Hubzilla в качестве настольного клиента в своей учетной записи GNU social, скопируйте cюда пару ключей пользователя и введите корневой каталог базы API. <br>Прежде чем регистрировать свою собственную пару ключей OAuth, спросите администратора, если ли уже пара ключей для этой установки Hubzilla в вашем GNU social."
 
 #: ../../extend/addon/hzaddons/statusnet/statusnet.php:333
 msgid "OAuth Consumer Key"
@@ -12007,8 +12007,8 @@ msgstr "Рекомендуется настроить разрешения ис�
 
 #: ../../Zotlabs/Module/Admin/Security.php:87
 msgid ""
-"https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/"
-"<br />https://vimeo.com/<br />https://soundcloud.com/<br />"
+"https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/"
+"<br>https://vimeo.com/<br>https://soundcloud.com/<br>"
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Security.php:88

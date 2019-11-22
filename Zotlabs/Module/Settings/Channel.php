@@ -449,7 +449,7 @@ class Channel {
 	
 		));
 	
-		$subdir = ((strlen(App::get_path())) ? '<br />' . t('or') . ' ' . z_root() . '/channel/' . $nickname : '');
+		$subdir = ((strlen(App::get_path())) ? '<br>' . t('or') . ' ' . z_root() . '/channel/' . $nickname : '');
 
 		$webbie = $nickname . '@' . App::get_hostname();
 		$intl_nickname = unpunify($nickname) . '@' . unpunify(App::get_hostname());

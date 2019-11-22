@@ -2316,11 +2316,11 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Security.php:117
 msgid ""
-"https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/<br"
-" />https://vimeo.com/<br />https://soundcloud.com/<br />"
+"https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br"
+" />https://vimeo.com/<br>https://soundcloud.com/<br>"
 msgstr ""
-"https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/<br"
-" />https://vimeo.com/<br />https://soundcloud.com/<br />"
+"https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br"
+" />https://vimeo.com/<br>https://soundcloud.com/<br>"
 
 #: ../../Zotlabs/Module/Admin/Security.php:118
 msgid ""

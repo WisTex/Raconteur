@@ -3262,9 +3262,9 @@ msgstr "Ce paramétrage autorisant le HTML pour les sites suivants."
 
 #: ../../Zotlabs/Module/Admin/Security.php:81
 msgid ""
-"https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/<br"
-" />https://vimeo.com/<br />https://soundcloud.com/<br />"
-msgstr "https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/<br />https://vimeo.com/<br />https://soundcloud.com/<br />"
+"https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br"
+" />https://vimeo.com/<br>https://soundcloud.com/<br>"
+msgstr "https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br>https://vimeo.com/<br>https://soundcloud.com/<br>"
 
 #: ../../Zotlabs/Module/Admin/Security.php:82
 msgid ""
@@ -10925,7 +10925,7 @@ msgstr "Publier sur GNU-social"
 
 #: ../../addon/statusnet/statusnet.php:195
 msgid ""
-"Please contact your site administrator.<br />The provided API URL is not "
+"Please contact your site administrator.<br>The provided API URL is not "
 "valid."
 msgstr "Veuillez contacter l'administrateur de votre site. L'URL de l'API n'est pas valide."
 
@@ -10956,7 +10956,7 @@ msgstr "Fournissez vos propres informations d'identification OAuth"
 msgid ""
 "No consumer key pair for GNU social found. Register your Hubzilla Account as"
 " an desktop client on your GNU social account, copy the consumer key pair "
-"here and enter the API base root.<br />Before you register your own OAuth "
+"here and enter the API base root.<br>Before you register your own OAuth "
 "key pair ask the administrator if there is already a key pair for this "
 "Hubzilla installation at your favourite GNU social installation."
 msgstr "Aucune paire de clés utilisateur n'a été trouvée pour GNU-social. Enregistrer votre compte Hubzilla en tant que client de bureau sur votre compte GNU-social, puis copier la paire de clés utilisateur ici et entrer la racine de base de l'API.\nAvant d'enregistrer votre propre paire de clés OAuth, demandez à l'administrateur s'il existe déjà une paire de clés pour cette installation de Hubzilla à votre installation GNU-social préférée."

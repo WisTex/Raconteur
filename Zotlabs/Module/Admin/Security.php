@@ -120,7 +120,7 @@ class Security {
 		}
 
 		$embedhelp2 = t("The recommended setting is to only allow unfiltered HTML from the following sites:"); 
-		$embedhelp3 = t("https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/<br />https://vimeo.com/<br />https://soundcloud.com/<br />");
+		$embedhelp3 = t("https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br>https://vimeo.com/<br>https://soundcloud.com/<br>");
 		$embedhelp4 = t("All other embedded content will be filtered, <strong>unless</strong> embedded content from that site is explicitly blocked.");
 	
 		$t = get_markup_template('admin_security.tpl');

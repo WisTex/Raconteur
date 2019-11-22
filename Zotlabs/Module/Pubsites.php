@@ -56,7 +56,7 @@ class Pubsites extends \Zotlabs\Web\Controller {
 								$location = '<p title="' . t('Location') . '" style="margin: 5px 5px 0 0; text-align: right"><i class="fa fa-globe"></i> ' . $jj['location'] . '</p>'; 
 							}
 							else {
-								$location = '<br />&nbsp;';
+								$location = '<br>&nbsp;';
 							}
 							$urltext = str_replace(array('https://'), '', $jj['url']);
 							$o .= '<tr><td><a href="'. (($jj['sellpage']) ? $jj['sellpage'] : $jj['url'] . '/register' ) . '" ><i class="fa fa-link"></i> ' . $urltext . '</a>' . $location . '</td><td>' . $jj['access'] . '</td><td>' . $jj['register'] . '</td><td>' . ucwords($jj['project']) . (($jj['version']) ? ' ' . $jj['version'] : '') . '</td>';

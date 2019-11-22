@@ -3258,9 +3258,9 @@ msgstr "Het wordt aanbevolen om alleen ongefilterde HTML van de volgende website
 
 #: ../../Zotlabs/Module/Admin/Security.php:81
 msgid ""
-"https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/<br"
-" />https://vimeo.com/<br />https://soundcloud.com/<br />"
-msgstr "https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/<br />https://vimeo.com/<br />https://soundcloud.com/<br />"
+"https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br"
+" />https://vimeo.com/<br>https://soundcloud.com/<br>"
+msgstr "https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br>https://vimeo.com/<br>https://soundcloud.com/<br>"
 
 #: ../../Zotlabs/Module/Admin/Security.php:82
 msgid ""
@@ -10921,9 +10921,9 @@ msgstr "GNU social"
 
 #: ../../addon/statusnet/statusnet.php:195
 msgid ""
-"Please contact your site administrator.<br />The provided API URL is not "
+"Please contact your site administrator.<br>The provided API URL is not "
 "valid."
-msgstr "De verstrekte API-URL is ongeldig.<br />Neem contact op met jouw hubbeheerder."
+msgstr "De verstrekte API-URL is ongeldig.<br>Neem contact op met jouw hubbeheerder."
 
 #: ../../addon/statusnet/statusnet.php:232
 msgid "We could not contact the GNU social API with the Path you entered."
@@ -10942,7 +10942,7 @@ msgid ""
 "There are preconfigured OAuth key pairs for some GNU social servers "
 "available. If you are using one of them, please use these credentials.<br "
 "/>If not feel free to connect to any other GNU social instance (see below)."
-msgstr "Er zijn op deze hub enkele voorgeconfigureerde OAuthkey-paren voor GNU social servers beschikbaar. Wanneer je een van deze servers gebruikt, gebruik dan deze voorgeconfigureerde gegevens.<br />Wanneer dit niet het geval is, maak dan gerust met een andere GNU social-server verbinding (zie hieronder)."
+msgstr "Er zijn op deze hub enkele voorgeconfigureerde OAuthkey-paren voor GNU social servers beschikbaar. Wanneer je een van deze servers gebruikt, gebruik dan deze voorgeconfigureerde gegevens.<br>Wanneer dit niet het geval is, maak dan gerust met een andere GNU social-server verbinding (zie hieronder)."
 
 #: ../../addon/statusnet/statusnet.php:327
 msgid "Provide your own OAuth Credentials"
@@ -10952,10 +10952,10 @@ msgstr "Verstrek jouw eigen OAuth-gegevens"
 msgid ""
 "No consumer key pair for GNU social found. Register your Hubzilla Account as"
 " an desktop client on your GNU social account, copy the consumer key pair "
-"here and enter the API base root.<br />Before you register your own OAuth "
+"here and enter the API base root.<br>Before you register your own OAuth "
 "key pair ask the administrator if there is already a key pair for this "
 "Hubzilla installation at your favourite GNU social installation."
-msgstr "Geen consumerkey voor GNU social gevonden. Registreer jouw Hubzilla-account als een desktopclient in jouw GNU-social-account, kopieer en plak hier de consumerkey en de consumersecret, en vul de API-base-root in.<br />Voordat je jouw eigen OAuthkey-paar registreert, vraag dan eerst aan jouw hubbeheerder of er al een key-paar voor deze hub op jouw favoriete GNU social-server bestaat."
+msgstr "Geen consumerkey voor GNU social gevonden. Registreer jouw Hubzilla-account als een desktopclient in jouw GNU-social-account, kopieer en plak hier de consumerkey en de consumersecret, en vul de API-base-root in.<br>Voordat je jouw eigen OAuthkey-paar registreert, vraag dan eerst aan jouw hubbeheerder of er al een key-paar voor deze hub op jouw favoriete GNU social-server bestaat."
 
 #: ../../addon/statusnet/statusnet.php:333
 msgid "OAuth Consumer Key"

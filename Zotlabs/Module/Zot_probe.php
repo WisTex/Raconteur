@@ -17,7 +17,7 @@ class Zot_probe extends \Zotlabs\Web\Controller {
 		$o .= 'Lookup URI: <input type="text" style="width: 250px;" name="addr" value="' . $_GET['addr'] .'" /><br>';
 		$o .= '<input type="submit" name="submit" value="Submit" /></form>'; 
 	
-		$o .= '<br /><br />';
+		$o .= '<br><br>';
 	
 		if(x($_GET,'addr')) {
 			$addr = $_GET['addr'];

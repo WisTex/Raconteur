@@ -3275,9 +3275,9 @@ msgstr "Die empfohlene Einstellung ist, ungefiltertes HTML nur von den nachfolge
 
 #: ../../Zotlabs/Module/Admin/Security.php:81
 msgid ""
-"https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/<br"
-" />https://vimeo.com/<br />https://soundcloud.com/<br />"
-msgstr "https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/<br />https://vimeo.com/<br />https://soundcloud.com/<br />"
+"https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br"
+" />https://vimeo.com/<br>https://soundcloud.com/<br>"
+msgstr "https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br>https://vimeo.com/<br>https://soundcloud.com/<br>"
 
 #: ../../Zotlabs/Module/Admin/Security.php:82
 msgid ""
@@ -10938,9 +10938,9 @@ msgstr "Bei GNU social veröffentlichen"
 
 #: ../../addon/statusnet/statusnet.php:195
 msgid ""
-"Please contact your site administrator.<br />The provided API URL is not "
+"Please contact your site administrator.<br>The provided API URL is not "
 "valid."
-msgstr "Bitte kontaktiere den Administrator deines Hubs.<br />Die angegebene API URL ist nicht korrekt."
+msgstr "Bitte kontaktiere den Administrator deines Hubs.<br>Die angegebene API URL ist nicht korrekt."
 
 #: ../../addon/statusnet/statusnet.php:232
 msgid "We could not contact the GNU social API with the Path you entered."
@@ -10959,7 +10959,7 @@ msgid ""
 "There are preconfigured OAuth key pairs for some GNU social servers "
 "available. If you are using one of them, please use these credentials.<br "
 "/>If not feel free to connect to any other GNU social instance (see below)."
-msgstr "Für einige GNU social Server sind voreingestellte OAuth Schlüsselpaare verfügbar. Solltest du einen dieser Server benutzen, dann verwende bitte diese Schlüssel. <br />Falls nicht, stelle stattdessen eine Verbindung zu irgend einem anderen GNU social Server her (siehe unten)."
+msgstr "Für einige GNU social Server sind voreingestellte OAuth Schlüsselpaare verfügbar. Solltest du einen dieser Server benutzen, dann verwende bitte diese Schlüssel. <br>Falls nicht, stelle stattdessen eine Verbindung zu irgend einem anderen GNU social Server her (siehe unten)."
 
 #: ../../addon/statusnet/statusnet.php:327
 msgid "Provide your own OAuth Credentials"
@@ -10969,10 +10969,10 @@ msgstr "Stelle deine eigenen OAuth Credentials zur Verfügung"
 msgid ""
 "No consumer key pair for GNU social found. Register your Hubzilla Account as"
 " an desktop client on your GNU social account, copy the consumer key pair "
-"here and enter the API base root.<br />Before you register your own OAuth "
+"here and enter the API base root.<br>Before you register your own OAuth "
 "key pair ask the administrator if there is already a key pair for this "
 "Hubzilla installation at your favourite GNU social installation."
-msgstr "Kein Consumer-Schlüsselpaar für GNU social gefunden. Registriere deinen Hubzilla-Account als Desktop-Client bei deinem GNU social Account, kopiere das Consumer-Schlüsselpaar hierher und gib die API-URL ein.<br />Bevor du dein eigenes Consumer-Schlüsselpaar registrierst, frage den Administrator dieses Hubzilla-Servers, ob schon ein Schlüsselpaar für diesen Hubzilla-Server auf diesem GNU social-Server existiert."
+msgstr "Kein Consumer-Schlüsselpaar für GNU social gefunden. Registriere deinen Hubzilla-Account als Desktop-Client bei deinem GNU social Account, kopiere das Consumer-Schlüsselpaar hierher und gib die API-URL ein.<br>Bevor du dein eigenes Consumer-Schlüsselpaar registrierst, frage den Administrator dieses Hubzilla-Servers, ob schon ein Schlüsselpaar für diesen Hubzilla-Server auf diesem GNU social-Server existiert."
 
 #: ../../addon/statusnet/statusnet.php:333
 msgid "OAuth Consumer Key"
@@ -13530,7 +13530,7 @@ msgstr "Nicht anzeigen"
 msgid ""
 "Post permissions %s cannot be changed %s after a post is shared.</br />These"
 " permissions set who is allowed to view the post."
-msgstr "Beitragsberechtigungen %s können nicht geändert werden %s, nachdem der Beitrag gesendet wurde.<br />Diese Berechtigungen bestimmen, wer den Beitrag sehen kann."
+msgstr "Beitragsberechtigungen %s können nicht geändert werden %s, nachdem der Beitrag gesendet wurde.<br>Diese Berechtigungen bestimmen, wer den Beitrag sehen kann."
 
 #: ../../include/dba/dba_driver.php:178
 #, php-format

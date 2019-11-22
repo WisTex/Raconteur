@@ -15,8 +15,8 @@
 <input type="submit" name="submit" class="sources-submit" value="{{$submit}}" />
 </div>
 </form>
-<br />
-<br />
+<br>
+<br>
 <a href="sources/{{$id}}/drop">{{$drop}}</a>
 </div>
 

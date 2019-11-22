@@ -108,15 +108,15 @@
 			<!--label id="profile-photo-upload-label" class="form-label" for="profile-photo-upload">{{$lbl_upfile}}</label>
 			<input name="userfile" class="form-input" type="file" id="profile-photo-upload" size="48" / -->
 			<div class="clear"></div>
-			<br />
-			<br />
+			<br>
+			<br>
 			<div id="profile-photo-submit-wrapper">
 				<input type="submit" name="submit" id="profile-photo-submit" value="{{$submit}}">
 			</div>
 		</div>
 
 		</form>
-		<br />
+		<br>
 		<div id="profile-photo-link-select-wrapper">
 		<button id="embed-photo-wrapper" class="btn btn-default btn-primary" title="{{$embedPhotos}}" onclick="initializeEmbedPhotoDialog();return false;">
 		<i id="embed-photo" class="fa fa-file-image-o"></i> {{$select}}

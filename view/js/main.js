@@ -1581,7 +1581,7 @@ function b2h(s) {
 	rep(/\>/gi,"&gt;");
 	rep(/\"/gi,"&quot;");
 
-	rep(/\n/gi,"<br />");
+	rep(/\n/gi,"<br>");
 	rep(/\[b\]/gi,"<strong>");
 	rep(/\[\/b\]/gi,"</strong>");
 	rep(/\[i\]/gi,"<em>");

@@ -131,8 +131,8 @@
 			{{/foreach}}
 			</select>
 			<div class="clear"></div>
-			<br />
-			<br />
+			<br>
+			<br>
 			{{/if}}
 
 			<div id="profile-photo-submit-wrapper">
@@ -141,7 +141,7 @@
 		</div>
 
 		</form>
-		<br />
+		<br>
 		<div id="profile-photo-link-select-wrapper">
 		<button id="embed-photo-wrapper" class="btn btn-default btn-primary" title="{{$embedPhotos}}" onclick="initializeEmbedPhotoDialog();return false;">
 		<i id="embed-photo" class="fa fa-file-image-o"></i> {{$select}}

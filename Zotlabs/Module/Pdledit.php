@@ -66,7 +66,7 @@ class Pdledit extends \Zotlabs\Web\Controller {
 					$name = lcfirst(basename($f,'.php'));
 					$x = theme_include('mod_' . $name . '.pdl');
 					if($x) {
-						$o .= '<a href="pdledit/' . $name . '" >' . $name . '</a>' . ((in_array($name,$edited)) ? ' ' . t('(modified)') . ' <a href="pdledit/' . $name . '/reset" >' . t('Reset') . '</a>': '' ) . '<br />';
+						$o .= '<a href="pdledit/' . $name . '" >' . $name . '</a>' . ((in_array($name,$edited)) ? ' ' . t('(modified)') . ' <a href="pdledit/' . $name . '/reset" >' . t('Reset') . '</a>': '' ) . '<br>';
 					}
 				}
 			}
@@ -74,7 +74,7 @@ class Pdledit extends \Zotlabs\Web\Controller {
 			if($addons) {
 				foreach($addons as $a) {
 					$name = substr(basename($a, '.pdl'),4);
-					$o .= '<a href="pdledit/' . $name . '" >' . $name . '</a>' . ((in_array($name,$edited)) ? ' ' . t('(modified)') . ' <a href="pdledit/' . $name . '/reset" >' . t('Reset') . '</a>': '' ) . '<br />';
+					$o .= '<a href="pdledit/' . $name . '" >' . $name . '</a>' . ((in_array($name,$edited)) ? ' ' . t('(modified)') . ' <a href="pdledit/' . $name . '/reset" >' . t('Reset') . '</a>': '' ) . '<br>';
 				}
 			}
 
