@@ -263,7 +263,7 @@ function bb_parse_crypt($match) {
 
 	$x = random_string();
 
-	$Text = '<br /><div id="' . $x . '"><img src="' . z_root() . '/images/lock_icon.gif" onclick="red_decrypt(\'' . $algorithm . '\',\'' . $hint . '\',\'' . $match[2] . '\',\'#' . $x . '\');" alt="' . t('Encrypted content') . '" title="' . t('Encrypted content') . '" /></div><br />';
+	$Text = '<br><div id="' . $x . '"><img src="' . z_root() . '/images/lock_icon.gif" onclick="red_decrypt(\'' . $algorithm . '\',\'' . $hint . '\',\'' . $match[2] . '\',\'#' . $x . '\');" alt="' . t('Encrypted content') . '" title="' . t('Encrypted content') . '" /></div><br>';
 
 	return $Text;
 }
@@ -656,7 +656,7 @@ function bb_definitionList($match) {
 	// Using '(?<!\\\)' to allow backslash-escaped closing braces to appear in the term-text.
 	$closeDescriptionTag = "</dd>\n";
 	$eatLeadingSpaces = '(?:&nbsp;|[ \t])*'; // prevent spaces infront of [*= from adding another line to the previous element
-	$listElements = preg_replace('/^(\n|<br \/>)/', '', $match[2]); // ltrim the first newline
+	$listElements = preg_replace('/^(\n|<br>)/', '', $match[2]); // ltrim the first newline
 	$listElements = preg_replace(
 		'/' . $eatLeadingSpaces . '\[\*=([[:print:]]*?)(?<!\\\)\]/uism', 
 		$closeDescriptionTag . '<dt>$1</dt><dd>', 
@@ -831,14 +831,14 @@ function bb_colorbox($match) {
 }
 
 function bb_code($match) {
-	if(strpos($match[0], "<br />"))
+	if(strpos($match[0], "<br>"))
 		return '<pre><code>' . bb_code_protect(trim($match[1])) . '</code></pre>';
 	else
 		return '<code class="inline-code">' . bb_code_protect(trim($match[1])) . '</code>';
 }
 
 function bb_code_options($match) {
-	if(strpos($match[0], "<br />")) {
+	if(strpos($match[0], "<br>")) {
 		$class = "";
 		$pre = true;
 	} else {
@@ -861,7 +861,7 @@ function bb_code_options($match) {
 function bb_fixtable_lf($match) {
 
 	// remove extraneous whitespace between table element tags since newlines will all
-	// be converted to '<br />' and turn your neatly crafted tables into a whole lot of
+	// be converted to '<br>' and turn your neatly crafted tables into a whole lot of
 	// empty space.
  
 	$x = preg_replace("/\]\s+\[/",'][',$match[1]);
@@ -1088,7 +1088,7 @@ function bbcode($Text, $options = []) {
 
 	$Text = preg_replace_callback("/\[table\](.*?)\[\/table\]/ism",'bb_fixtable_lf',$Text);
 
-	// Convert new line chars to html <br /> tags
+	// Convert new line chars to html <br> tags
 
 	// nlbr seems to be hopelessly messed up
 	//	$Text = nl2br($Text);
@@ -1270,32 +1270,32 @@ function bbcode($Text, $options = []) {
 	// Check for h1
 	if (strpos($Text,'[h1]') !== false) {
 		$Text = preg_replace("(\[h1\](.*?)\[\/h1\])ism",'<h1>$1</h1>',$Text);
-		$Text = str_replace('</h1><br />', '</h1>', $Text);
+		$Text = str_replace('</h1><br>', '</h1>', $Text);
 	}
 	// Check for h2
 	if (strpos($Text,'[h2]') !== false) {
 		$Text = preg_replace("(\[h2\](.*?)\[\/h2\])ism",'<h2>$1</h2>',$Text);
-		$Text = str_replace('</h2><br />', '</h2>', $Text);
+		$Text = str_replace('</h2><br>', '</h2>', $Text);
 	}
 	// Check for h3
 	if (strpos($Text,'[h3]') !== false) {
 		$Text = preg_replace("(\[h3\](.*?)\[\/h3\])ism",'<h3>$1</h3>',$Text);
-		$Text = str_replace('</h3><br />', '</h3>', $Text);
+		$Text = str_replace('</h3><br>', '</h3>', $Text);
 	}
 	// Check for h4
 	if (strpos($Text,'[h4]') !== false) {
 		$Text = preg_replace("(\[h4\](.*?)\[\/h4\])ism",'<h4>$1</h4>',$Text);
-		$Text = str_replace('</h4><br />', '</h4>', $Text);
+		$Text = str_replace('</h4><br>', '</h4>', $Text);
 	}
 	// Check for h5
 	if (strpos($Text,'[h5]') !== false) {
 		$Text = preg_replace("(\[h5\](.*?)\[\/h5\])ism",'<h5>$1</h5>',$Text);
-		$Text = str_replace('</h5><br />', '</h5>', $Text);
+		$Text = str_replace('</h5><br>', '</h5>', $Text);
 	}
 	// Check for h6
 	if (strpos($Text,'[h6]') !== false) {
 		$Text = preg_replace("(\[h6\](.*?)\[\/h6\])ism",'<h6>$1</h6>',$Text);
-		$Text = str_replace('</h6><br />', '</h6>', $Text);
+		$Text = str_replace('</h6><br>', '</h6>', $Text);
 	}
 
 	// Check for table of content without params
@@ -1320,8 +1320,8 @@ function bbcode($Text, $options = []) {
 	}
 	// Check for list text
 
-	$Text = preg_replace("/<br \/>\[\*\/\]/ism",'[*/]',$Text);
-	$Text = preg_replace("/<br \/>\[\*\]/ism",'[*/]',$Text);
+	$Text = preg_replace("/<br>\[\*\/\]/ism",'[*/]',$Text);
+	$Text = preg_replace("/<br>\[\*\]/ism",'[*/]',$Text);
 
 	$Text = str_replace("[*/]", "<li>", $Text);
 	$Text = str_replace("[*]", "<li>", $Text);
@@ -1343,7 +1343,7 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace("/\[list=((?-i)A)\](.*?)\[\/list\]/ism", '<ul class="listupperalpha" style="list-style-type: upper-alpha;">$2</ul>', $Text);
 		$Text = preg_replace("/\[ul\](.*?)\[\/ul\]/ism", '<ul class="listbullet" style="list-style-type: circle;">$1</ul>', $Text);
 		$Text = preg_replace("/\[ol\](.*?)\[\/ol\]/ism", '<ul class="listdecimal" style="list-style-type: decimal;">$1</ul>', $Text);
-		$Text = preg_replace("/\[\/li\]<br \/>\[li\]/ism",'[/li][li]',$Text);
+		$Text = preg_replace("/\[\/li\]<br>\[li\]/ism",'[/li][li]',$Text);
 		$Text = preg_replace("/\[li\](.*?)\[\/li\]/ism", '<li>$1</li>', $Text);
 
 		// [dl] tags have an optional [dl terms="bi"] form where bold/italic/underline/mono/large
@@ -1373,7 +1373,7 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace("/\[table border=1\](.*?)\[\/table\]/sm", '<table class="table table-responsive table-bordered" >$1</table>', $Text);
 		$Text = preg_replace("/\[table border=0\](.*?)\[\/table\]/sm", '<table class="table table-responsive" >$1</table>', $Text);
 	}
-	$Text = str_replace('</tr><br /><tr>', "</tr>\n<tr>", $Text);
+	$Text = str_replace('</tr><br><tr>', "</tr>\n<tr>", $Text);
 	$Text = str_replace('[hr]', '<hr>', $Text);
 	$Text = str_replace('[hr/]', '<hr>', $Text);
 
@@ -1488,7 +1488,6 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace_callback("/\<img(.*?)src=\"(.*?)\"(.*?)\>/ism","bb_colorbox",$Text);
 	}
 
-
 	// style (sanitized)
 	if (strpos($Text,'[/style]') !== false) {
 		$Text = preg_replace_callback("(\[style=(.*?)\](.*?)\[\/style\])ism", "bb_sanitize_style", $Text);
@@ -1497,7 +1496,7 @@ function bbcode($Text, $options = []) {
 	// crypt
 	if (strpos($Text,'[/crypt]') !== false) {
 		$x = random_string();
-		$Text = preg_replace("/\[crypt\](.*?)\[\/crypt\]/ism",'<br /><div id="' . $x . '"><img src="' .z_root() . '/images/lock_icon.gif" onclick="red_decrypt(\'rot13\',\'\',\'$1\',\'#' . $x . '\');" alt="' . t('Encrypted content') . '" title="' . t('Encrypted content') . '" /><br /></div>', $Text);
+		$Text = preg_replace("/\[crypt\](.*?)\[\/crypt\]/ism",'<br><div id="' . $x . '"><img src="' .z_root() . '/images/lock_icon.gif" onclick="red_decrypt(\'rot13\',\'\',\'$1\',\'#' . $x . '\');" alt="' . t('Encrypted content') . '" title="' . t('Encrypted content') . '" /><br></div>', $Text);
 		$Text = preg_replace_callback("/\[crypt (.*?)\](.*?)\[\/crypt\]/ism", 'bb_parse_crypt', $Text);
 	}
 
@@ -1549,7 +1548,7 @@ function bbcode($Text, $options = []) {
 		$Text = oembed_bbcode2html($Text);
 
 	// Avoid triple linefeeds through oembed
-	$Text = str_replace("<br style='clear:left'></span><br /><br />", "<br style='clear:left'></span><br />", $Text);
+	$Text = str_replace("<br style='clear:left'></span><br><br>", "<br style='clear:left'></span><br>", $Text);
 
 	// If we found an event earlier, strip out all the event code and replace with a reformatted version.
 	// Replace the event-start section with the entire formatted event. The other bbcode is stripped.
