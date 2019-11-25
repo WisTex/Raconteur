@@ -276,6 +276,14 @@ function bb_parse_app($match) {
 	}
 }
 
+function bb_parse_app_ap($match) {
+
+	$app = Apps::app_decode($match[1]);
+	if ($app) {
+		$result = sprintf( t('(Embedded app \'%s\' could not be displayed).'), $app['name']);
+	}
+}
+
 function bb_svg($match) {
 
 	$params = str_replace(['<br>', '&quot;'], [ '', '"'],$match[1]);
@@ -993,7 +1001,12 @@ function bbcode($Text, $options = []) {
 	$cache       = ((array_key_exists('cache',$options)) ? $options['cache'] : false);
 	$newwin      = ((array_key_exists('newwin',$options)) ? $options['newwin'] : true);
 	$export      = ((array_key_exists('export',$options)) ? $options['export'] : false);
+	$activitypub = ((array_key_exists('activitypub',$options)) ? $options['activitypub'] : false);
 	$censored    = ((array_key_exists('censored',$options)) ? $options['censored'] : false);
+
+	if ($activitypub) {
+		$export = true;
+	}
 
 	$target = (($newwin) ? ' target="_blank" ' : '');
 
@@ -1500,8 +1513,13 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace_callback("/\[crypt (.*?)\](.*?)\[\/crypt\]/ism", 'bb_parse_crypt', $Text);
 	}
 
-	if(strpos($Text,'[/app]') !== false) {
-		$Text = preg_replace_callback("/\[app\](.*?)\[\/app\]/ism",'bb_parse_app', $Text);
+	if (strpos($Text,'[/app]') !== false) {
+		if ($activitypub) {
+			$Text = preg_replace_callback("/\[app\](.*?)\[\/app\]/ism",'bb_parse_app_ap', $Text);
+		}
+		else {
+			$Text = preg_replace_callback("/\[app\](.*?)\[\/app\]/ism",'bb_parse_app', $Text);
+		}
 	}
 
 	if(strpos($Text,'[/element]') !== false) {

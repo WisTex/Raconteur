@@ -558,7 +558,7 @@ class Channel {
 			'$defloc'	=> array('defloc', t('Default post location'), $defloc, t('Optional geographical location to display on your posts')),
 			'$allowloc' => array('allow_location', t('Obtain post location from your web browser or device'), ((get_pconfig(local_channel(),'system','use_browser_location')) ? 1 : ''), '', $yes_no),
 			
-			'$adult'    => array('adult', t('Adult content'), $adult_flag, t('This channel frequently or regularly publishes adult content. (Please tag any adult material and/or nudity with #NSFW)'), $yes_no),
+			'$adult'    => array('adult', t('Adult content'), $adult_flag, t('Enable to indicate if this channel frequently or regularly publishes adult content. (Please also tag any adult material and/or nudity with #NSFW)'), $yes_no),
 	
 			'$h_prv' 	=> t('Security and Privacy'),
 			'$permissions_set' => $permissions_set,

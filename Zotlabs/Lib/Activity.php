@@ -676,7 +676,7 @@ class Activity {
 			if ($num_bbtags) {
 
 				foreach ($bbtags as $t) {
-					if((! $t[1]) || (in_array($t[1],['url','zrl','img','zmg','share']))) {
+					if((! $t[1]) || (in_array($t[1],['url','zrl','img','zmg','share','app']))) {
 						continue;
 					}
 					$convert_to_article = true;
@@ -791,9 +791,9 @@ class Activity {
 				$ret['name'] = $i['title'];
 			}
 			if ($i['summary']) {
-				$ret['summary'] = bbcode($i['summary'], [ 'export' => true ]);
+				$ret['summary'] = bbcode($i['summary'], [ (($activitypub) ? 'activitypub' : 'export') => true ]);
 			}
-			$ret['content'] = bbcode($i['body'], [ 'export' => true ]);
+			$ret['content'] = bbcode($i['body'], [ (($activitypub) ? 'activitypub' : 'export)' => true ]);
 			$ret['source'] = [ 'content' => $i['body'], 'mediaType' => 'text/bbcode' ];
 			if ($ret['summary']) {
 				$ret['source']['summary'] = $i['summary'];
