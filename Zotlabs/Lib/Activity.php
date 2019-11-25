@@ -646,6 +646,8 @@ class Activity {
 		$reply = false;
 		$is_directmessage = false;
 
+		$bbopts = (($activitypub) ? 'activitypub' : 'export');
+
 		$objtype = self::activity_obj_mapper($i['obj_type']);
 
 		if (intval($i['item_deleted'])) {
@@ -791,9 +793,9 @@ class Activity {
 				$ret['name'] = $i['title'];
 			}
 			if ($i['summary']) {
-				$ret['summary'] = bbcode($i['summary'], [ (($activitypub) ? 'activitypub' : 'export') => true ]);
+				$ret['summary'] = bbcode($i['summary'], [ $bbopts => true ]);
 			}
-			$ret['content'] = bbcode($i['body'], [ (($activitypub) ? 'activitypub' : 'export)' => true ]);
+			$ret['content'] = bbcode($i['body'], [ $bbopts => true ]);
 			$ret['source'] = [ 'content' => $i['body'], 'mediaType' => 'text/bbcode' ];
 			if ($ret['summary']) {
 				$ret['source']['summary'] = $i['summary'];
