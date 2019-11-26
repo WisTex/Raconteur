@@ -280,7 +280,7 @@ function bb_parse_app_ap($match) {
 
 	$app = Apps::app_decode($match[1]);
 	if ($app) {
-		$result = sprintf( t('(Embedded app \'%s\' could not be displayed).'), $app['name']);
+		return sprintf( t('(Embedded app \'%s\' could not be displayed).'), $app['name']);
 	}
 }
 
