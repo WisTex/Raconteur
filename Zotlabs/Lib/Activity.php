@@ -2088,7 +2088,6 @@ class Activity {
 
 	static function store($channel,$observer_hash,$act,$item,$fetch_parents = true) {
 
-
 		$is_sys_channel = is_sys_channel($channel['channel_id']);
 		$is_child_node = false;
 
@@ -2416,6 +2415,7 @@ class Activity {
 	}
 
 	static function bb_attach($attach,$body) {
+
 
 		$ret = false;
 
