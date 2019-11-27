@@ -35,7 +35,7 @@ class Inbox extends Controller {
 		else {
 			$c = channelx_by_nick(argv(1));
 			if (! $c) {
-				http_status_exit(404,'Not found');
+				http_status_exit(410,'Gone');
 			}
 			$channels = [ $c ];
 		}
