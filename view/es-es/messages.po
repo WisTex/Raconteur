@@ -20,7 +20,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: es_ES\n"
 "Plural-Forms: nplurals=2; plural=(n != 1 ? 1 : 0);\n"
-
 #: ../../Zotlabs/Access/PermissionRoles.php:176
 msgid "Social Networking"
 msgstr "Redes sociales"
@@ -1266,12 +1265,12 @@ msgstr "compartió la entrada de %s"
 #: ../../Zotlabs/Lib/Enotify.php:875
 #, php-format
 msgid "edited a post dated %s"
-msgstr "ha editado una entrada fechada el %s"
+msgstr "ha editado una entrada con fecha de %s"
 
 #: ../../Zotlabs/Lib/Enotify.php:879
 #, php-format
 msgid "edited a comment dated %s"
-msgstr "ha editado un comentario fechado el %s"
+msgstr "ha editado un comentario con fecha de %s"
 
 #: ../../Zotlabs/Lib/PermissionDescription.php:34
 #: ../../include/acl_selectors.php:33
@@ -9730,7 +9729,7 @@ msgstr "Avisos de nueva actividad en el stream"
 
 #: ../../Zotlabs/Widget/Notifications.php:21
 msgid "View your stream activity"
-msgstr "Ver su actividad en el stream"
+msgstr "Ver la actividad de su stream"
 
 #: ../../Zotlabs/Widget/Notifications.php:24
 msgid "Mark all notifications read"
@@ -9759,7 +9758,7 @@ msgstr "Avisos de nueva actividad en su página principal"
 
 #: ../../Zotlabs/Widget/Notifications.php:40
 msgid "View your home activity"
-msgstr "Ver su actividad en su página principal"
+msgstr "Ver la actividad de su página principal"
 
 #: ../../Zotlabs/Widget/Notifications.php:43
 #: ../../Zotlabs/Widget/Notifications.php:150
