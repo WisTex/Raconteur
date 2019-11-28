@@ -246,7 +246,7 @@ function create_identity($arr) {
 
 	if(array_key_exists('permissions_role',$arr) && $arr['permissions_role']) {
 		$role_permissions = PermissionRoles::role_perms($arr['permissions_role']);
-		if(isset($role_permissions['channel_type']) && $role_permissions['channel_type'] == 'collection') {
+		if(isset($role_permissions['channel_type']) && $role_permissions['channel_type'] === 'collection') {
 			$parent_channel_hash = $arr['parent_hash'];
 		}			
 	}
