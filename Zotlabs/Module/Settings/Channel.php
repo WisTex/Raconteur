@@ -28,6 +28,10 @@ class Channel {
 		$role = ((x($_POST,'permissions_role')) ? notags(trim($_POST['permissions_role'])) : '');
 		$oldrole = get_pconfig(local_channel(),'system','permissions_role');
 
+		$forbidden_roles = [ 'collection', 'collection_restricted' ];
+		if (in_array($role,$forbidden_roles) || in_array($oldrole,$forbidden_roles)) {
+			$role = $oldrole;
+		}
 
 		if(($role != $oldrole) || ($role === 'custom')) {
 	
@@ -90,7 +94,7 @@ class Channel {
 						return;
 					}
 				}
-				// no default collection
+				// no default permissions 
 				else {
 					q("update channel set channel_default_group = '', channel_allow_gid = '', channel_allow_cid = '', channel_deny_gid = '', 
 						channel_deny_cid = '' where channel_id = %d",
@@ -449,7 +453,7 @@ class Channel {
 	
 		));
 	
-		$subdir = ((strlen(App::get_path())) ? '<br />' . t('or') . ' ' . z_root() . '/channel/' . $nickname : '');
+		$subdir = ((strlen(App::get_path())) ? '<br>' . t('or') . ' ' . z_root() . '/channel/' . $nickname : '');
 
 		$webbie = $nickname . '@' . App::get_hostname();
 		$intl_nickname = unpunify($nickname) . '@' . unpunify(App::get_hostname());
@@ -531,6 +535,9 @@ class Channel {
 		$permissions_set = (($permissions_role != 'custom') ? true : false);
 
 		$perm_roles = PermissionRoles::roles();
+		// Don't permit changing to a collection (@TODO unless there is a mechanism to select the channel_parent)
+		unset($perm_roles['Collection']);
+		
 
 		$vnotify = get_pconfig(local_channel(),'system','vnotify');
 		$always_show_in_notices = get_pconfig(local_channel(),'system','always_show_in_notices');
@@ -558,7 +565,7 @@ class Channel {
 			'$defloc'	=> array('defloc', t('Default post location'), $defloc, t('Optional geographical location to display on your posts')),
 			'$allowloc' => array('allow_location', t('Obtain post location from your web browser or device'), ((get_pconfig(local_channel(),'system','use_browser_location')) ? 1 : ''), '', $yes_no),
 			
-			'$adult'    => array('adult', t('Adult content'), $adult_flag, t('This channel frequently or regularly publishes adult content. (Please tag any adult material and/or nudity with #NSFW)'), $yes_no),
+			'$adult'    => array('adult', t('Adult content'), $adult_flag, t('Enable to indicate if this channel frequently or regularly publishes adult content. (Please also tag any adult material and/or nudity with #NSFW)'), $yes_no),
 	
 			'$h_prv' 	=> t('Security and Privacy'),
 			'$permissions_set' => $permissions_set,
@@ -588,6 +595,8 @@ class Channel {
 			'$deny_gid' => acl2json($perm_defaults['deny_gid']),
 			'$suggestme' => $suggestme,
 			'$group_select' => $group_select,
+			'$can_change_role' => ((in_array($permissions_role, [ 'collection', 'collection_restricted'] )) ? false : true),
+			'$permissions_role' => $permissions_role,
 			'$role' => array('permissions_role' , t('Channel role and privacy'), $permissions_role, '', $perm_roles),
 			'$defpermcat' => [ 'defpermcat', t('Default Permissions Group'), $default_permcat, '', $permcats ],	
 			'$permcat_enable' => feature_enabled(local_channel(),'permcats'),

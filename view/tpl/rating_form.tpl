@@ -13,7 +13,7 @@
 <input type="hidden" name="target" value="{{$target}}" />
 
 <input id="contact-rating-mirror" type="hidden" name="rating" value="{{$rating_val}}" />
-<br />
+<br>
 <h3 class="abook-rating-text-desc">{{$lbl_rating_txt}}</h3>
 <textarea name="rating_text" id="rating-text" >{{$rating_txt}}</textarea>
 

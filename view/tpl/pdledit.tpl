@@ -3,24 +3,24 @@
 
 <h2>{{$mname}} {{$module}}</h2>
 
-<br />
+<br>
 <a href="help/comanche" target="hubzilla-help">{{$help}}</a>
 <br>
 <br>
 <a href="pdledit">{{$another}}</a>
-<br />
-<br />
+<br>
+<br>
 
 <div class="descriptive-text">{{$original}}</div>
 <pre><code>{{$src}}</code></pre>
 
-<br />
+<br>
 
 <form action="pdledit" method="post" >
 <input type="hidden" name="module" value="{{$module}}" />
 <textarea rows="24" cols="80" name="content">{{$content}}</textarea>
 
-<br />
+<br>
 <input type="submit" name="submit" value="{{$submit}}" />
 
 </form>

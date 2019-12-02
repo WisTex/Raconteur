@@ -7,8 +7,8 @@
 
 	<div id="poke-desc">{{$desc}}</div>
 
-<br />
-<br />
+<br>
+<br>
 
 
 <form action="poke" method="get">

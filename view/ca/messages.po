@@ -3327,9 +3327,9 @@ msgstr "L'ajust recomanat és només permetre HTML sense filtrar dels següents 
 
 #: ../../Zotlabs/Module/Admin/Security.php:87
 msgid ""
-"https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/<br"
-" />https://vimeo.com/<br />https://soundcloud.com/<br />"
-msgstr "https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/<br />https://vimeo.com/<br />https://soundcloud.com/<br />"
+"https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br"
+" />https://vimeo.com/<br>https://soundcloud.com/<br>"
+msgstr "https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br>https://vimeo.com/<br>https://soundcloud.com/<br>"
 
 #: ../../Zotlabs/Module/Admin/Security.php:88
 msgid ""
@@ -11195,9 +11195,9 @@ msgstr "Publica a GNU Social"
 
 #: ../../addon/statusnet/statusnet.php:195
 msgid ""
-"Please contact your site administrator.<br />The provided API URL is not "
+"Please contact your site administrator.<br>The provided API URL is not "
 "valid."
-msgstr "Contacta l'administrador del teu lloc. <br />L'adreça URL de l'API no és vàlida."
+msgstr "Contacta l'administrador del teu lloc. <br>L'adreça URL de l'API no és vàlida."
 
 #: ../../addon/statusnet/statusnet.php:232
 msgid "We could not contact the GNU social API with the Path you entered."
@@ -11216,7 +11216,7 @@ msgid ""
 "There are preconfigured OAuth key pairs for some GNU social servers "
 "available. If you are using one of them, please use these credentials.<br "
 "/>If not feel free to connect to any other GNU social instance (see below)."
-msgstr "Hi ha disponibles preconfigurats alguns parells de clau OAuth per a alguns servidors de GNU Social. I en fas servir algun, fes servir aquestes credencials.<br />Altrament, pots connectar-te a qualsevol altra instància de GNU Social (mira més avall)"
+msgstr "Hi ha disponibles preconfigurats alguns parells de clau OAuth per a alguns servidors de GNU Social. I en fas servir algun, fes servir aquestes credencials.<br>Altrament, pots connectar-te a qualsevol altra instància de GNU Social (mira més avall)"
 
 #: ../../addon/statusnet/statusnet.php:327
 msgid "Provide your own OAuth Credentials"
@@ -11226,10 +11226,10 @@ msgstr "Proporciona credencials OAuth pròpies"
 msgid ""
 "No consumer key pair for GNU social found. Register your Hubzilla Account as"
 " an desktop client on your GNU social account, copy the consumer key pair "
-"here and enter the API base root.<br />Before you register your own OAuth "
+"here and enter the API base root.<br>Before you register your own OAuth "
 "key pair ask the administrator if there is already a key pair for this "
 "Hubzilla installation at your favourite GNU social installation."
-msgstr "No s'ha trobat cap parell de claus per a GNU Social. Registra el teu compte de Hubzilla com un client d'escriptori al teu compte de GNU Social, després copia el parell de claus de consumidor aquí i finalment introdueix l'adreça arrel de l'API.<br />Abans de registrar el teu propi parell de claus, pregunta a l'administració d'aquest hub si ja hi ha un parell de claus registrat per al mateix servidor de GNU Social."
+msgstr "No s'ha trobat cap parell de claus per a GNU Social. Registra el teu compte de Hubzilla com un client d'escriptori al teu compte de GNU Social, després copia el parell de claus de consumidor aquí i finalment introdueix l'adreça arrel de l'API.<br>Abans de registrar el teu propi parell de claus, pregunta a l'administració d'aquest hub si ja hi ha un parell de claus registrat per al mateix servidor de GNU Social."
 
 #: ../../addon/statusnet/statusnet.php:333
 msgid "OAuth Consumer Key"

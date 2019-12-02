@@ -3248,9 +3248,9 @@ msgstr "L'impostazione consigliata è di permettere HTML non filtrato solo dai s
 
 #: ../../Zotlabs/Module/Admin/Security.php:81
 msgid ""
-"https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/<br"
-" />https://vimeo.com/<br />https://soundcloud.com/<br />"
-msgstr "https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/<br />https://vimeo.com/<br />https://soundcloud.com/<br />"
+"https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br"
+" />https://vimeo.com/<br>https://soundcloud.com/<br>"
+msgstr "https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br>https://vimeo.com/<br>https://soundcloud.com/<br>"
 
 #: ../../Zotlabs/Module/Admin/Security.php:82
 msgid ""
@@ -10626,7 +10626,7 @@ msgstr ""
 
 #: ../../addon/statusnet/statusnet.php:195
 msgid ""
-"Please contact your site administrator.<br />The provided API URL is not "
+"Please contact your site administrator.<br>The provided API URL is not "
 "valid."
 msgstr ""
 
@@ -10657,7 +10657,7 @@ msgstr ""
 msgid ""
 "No consumer key pair for GNU social found. Register your Hubzilla Account as"
 " an desktop client on your GNU social account, copy the consumer key pair "
-"here and enter the API base root.<br />Before you register your own OAuth "
+"here and enter the API base root.<br>Before you register your own OAuth "
 "key pair ask the administrator if there is already a key pair for this "
 "Hubzilla installation at your favourite GNU social installation."
 msgstr ""

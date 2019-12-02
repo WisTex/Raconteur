@@ -33,7 +33,11 @@ class Inbox extends Controller {
 			$is_public = true;
 		}
 		else {
-			$channels = [ channelx_by_nick(argv(1)) ];
+			$c = channelx_by_nick(argv(1));
+			if (! $c) {
+				http_status_exit(410,'Gone');
+			}
+			$channels = [ $c ];
 		}
 
 		$data = file_get_contents('php://input');
@@ -87,7 +91,7 @@ class Inbox extends Controller {
 		$m = parse_url($observer_hash);
 		if ($m && $m['scheme'] && $m['host']) {
 			if (! check_siteallowed($m['scheme'] . '://' . $m['host'])) {
-				http_status_exit(404,'Permission denied');
+				http_status_exit(403,'Permission denied');
 			}
 		}
 

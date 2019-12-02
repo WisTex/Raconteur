@@ -646,6 +646,8 @@ class Activity {
 		$reply = false;
 		$is_directmessage = false;
 
+		$bbopts = (($activitypub) ? 'activitypub' : 'export');
+
 		$objtype = self::activity_obj_mapper($i['obj_type']);
 
 		if (intval($i['item_deleted'])) {
@@ -676,7 +678,7 @@ class Activity {
 			if ($num_bbtags) {
 
 				foreach ($bbtags as $t) {
-					if((! $t[1]) || (in_array($t[1],['url','zrl','img','zmg','share']))) {
+					if((! $t[1]) || (in_array($t[1],['url','zrl','img','zmg','share','app']))) {
 						continue;
 					}
 					$convert_to_article = true;
@@ -791,9 +793,9 @@ class Activity {
 				$ret['name'] = $i['title'];
 			}
 			if ($i['summary']) {
-				$ret['summary'] = bbcode($i['summary'], [ 'export' => true ]);
+				$ret['summary'] = bbcode($i['summary'], [ $bbopts => true ]);
 			}
-			$ret['content'] = bbcode($i['body'], [ 'export' => true ]);
+			$ret['content'] = bbcode($i['body'], [ $bbopts => true ]);
 			$ret['source'] = [ 'content' => $i['body'], 'mediaType' => 'text/bbcode' ];
 			if ($ret['summary']) {
 				$ret['source']['summary'] = $i['summary'];
@@ -809,7 +811,9 @@ class Activity {
 		}
 
 		$ret['url'] = $ret['id'];
-		
+
+
+
 //		$ret['url'] = [
 //			'type'      => 'Link',
 //			'rel'       => 'alternate',
@@ -1592,7 +1596,7 @@ class Activity {
 				[
 					'hubloc_guid'     => $url,
 					'hubloc_hash'     => $url,
-					'hubloc_id_url'   => $url,
+					'hubloc_id_url'   => $profile,
 					'hubloc_addr'     => ((strpos($username,'@')) ? $username : ''),
 					'hubloc_network'  => 'activitypub',
 					'hubloc_url'      => $baseurl,
@@ -1613,6 +1617,12 @@ class Activity {
 			if ($inbox !== $h[0]['hubloc_callback']) {
 				$r = q("update hubloc set hubloc_callback = '%s' where hubloc_hash = '%s'",
 					dbesc($inbox),
+					dbesc($url)
+				);
+			}
+			if ($profile !== $h[0]['hubloc_id_url']) {
+				$r = q("update hubloc set hubloc_id_url = '%s' where hubloc_hash = '%s'",
+					dbesc($profile),
 					dbesc($url)
 				);
 			}
@@ -2084,7 +2094,6 @@ class Activity {
 
 	static function store($channel,$observer_hash,$act,$item,$fetch_parents = true) {
 
-
 		$is_sys_channel = is_sys_channel($channel['channel_id']);
 		$is_child_node = false;
 
@@ -2412,6 +2421,7 @@ class Activity {
 	}
 
 	static function bb_attach($attach,$body) {
+
 
 		$ret = false;
 

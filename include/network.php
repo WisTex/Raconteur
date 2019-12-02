@@ -1653,7 +1653,7 @@ function get_site_info() {
 		'directory_mode'               =>  $directory_mode[get_config('system','directory_mode')],
 		'directory_server'             => get_config('system','directory_server'),
 		'language'                     => get_config('system','language'),
-		'rss_connections'              => (bool) intval(get_config('system','feed_contacts')),
+//		'rss_connections'              => (bool) intval(get_config('system','feed_contacts')),
 		'expiration'                   => $site_expire,
 		'default_service_restrictions' => $service_class,
 		'locked_features'              => $locked_features,

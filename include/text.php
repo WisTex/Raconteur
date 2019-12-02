@@ -2570,7 +2570,8 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 			$newname = substr($name,1);
 			$newname = substr($newname,0,-1);
 
-			$r = q("select * from xchan where xchan_addr = '%s' or xchan_url = '%s'",
+			$r = q("select * from xchan where xchan_addr = '%s' or xchan_hash = '%s' or xchan_url = '%s'",
+				dbesc($newname),
 				dbesc($newname),
 				dbesc($newname)
 			);

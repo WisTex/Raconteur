@@ -4047,8 +4047,8 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Admin.php:750
 msgid ""
-"https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/<br"
-" />https://vimeo.com/<br />https://soundcloud.com/<br />"
+"https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br"
+" />https://vimeo.com/<br>https://soundcloud.com/<br>"
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin.php:751

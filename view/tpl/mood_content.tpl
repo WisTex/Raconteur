@@ -7,13 +7,13 @@
 
 	    <div id="mood-desc">{{$desc}}</div>
 
-		<br />
-		<br />
+		<br>
+		<br>
 
 
 		<form action="mood" method="get">
-		<br />
-		<br />
+		<br>
+		<br>
 
 		<input id="mood-parent" type="hidden" value="{{$parent}}" name="parent" />
 
@@ -24,8 +24,8 @@
 			{{/foreach}}
 			</select>
 		</div>
-		<br />
-		<br />
+		<br>
+		<br>
 
 		<input type="submit" name="submit" value="{{$submit}}" />
 		</form>

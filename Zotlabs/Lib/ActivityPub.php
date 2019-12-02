@@ -73,6 +73,9 @@ class ActivityPub {
 				else {
 					$ti['id'] = $ti['id'] . '?token=' . $token;
 				}
+				if ($ti['url'] && is_string($ti['url'])) {
+					$ti['url'] .= '?token=' . $token;
+				}
 			}
 
 			$msg = array_merge(['@context' => [

@@ -17,6 +17,7 @@ class ThreadItem {
 	private $comment_box_template = 'comment_item.tpl';
 	private $commentable = false;
 	// list of supported reaction emojis - a site can over-ride this via config system.reactions
+	// Deprecated. Use your operating system or a browser plugin. 
 	private $reactions = ['1f60a','1f44f','1f37e','1f48b','1f61e','2665','1f606','1f62e','1f634','1f61c','1f607','1f608'];
 	private $toplevel = false;
 	private $children = array();
@@ -450,7 +451,7 @@ class ThreadItem {
 
 			// Item toolbar buttons
 
-			'emojis'    => (($this->is_toplevel() && $this->is_commentable() && $observer) ? '1' : ''),
+			'emojis'    => '', // deprecated - use your operating system or a browser plugin
 			'like'      => $like,
 			'dislike'   => $dislike,
 			'share'     => $share,
@@ -521,7 +522,7 @@ class ThreadItem {
 				foreach ($children as $child) {
 					$cdata = $child->get_data();
 					if ($cdata['author']['xchan_addr']) {
-						if (! in_array($cdata['author']['xchan_addr'],$result['authors'])) {
+						if ($observer && $observer['xchan_hash'] !== $cdata['author']['xchan_hash'] && ! in_array($cdata['author']['xchan_addr'],$result['authors'])) {
 							$result['authors'][] = $cdata['author']['xchan_addr'];
 						}
 					}
@@ -530,17 +531,21 @@ class ThreadItem {
 					
 			// Add any mentions from the immediate parent, unless they are mentions of the current viewer or duplicates
 			if ($item['term']) {
+				$additional_mentions = [];
 				foreach ($item['term'] as $t) {
 					if ($t['ttype'] == TERM_MENTION) {
-						if (strpos($t['term'],'@') !== false) {
-							if ($observer && $t['term'] !== $observer['xchan_addr'] && ! in_array($t['term'],$result['authors'])) {
-								$result['authors'][] = $t['term'];
-							}
-						}
-						else {
-							$url = ((($position = strpos($t['url'],'url=')) !== false) ? urldecode(substr($t['url'],$position + 4)) : $t['url']);
-							if ($observer && $url !== $observer['xchan_url'] && ! in_array($url,$result['authors'])) {
-								$result['authors'][] = $url;
+						$additional_mentions[] = ((($position = strpos($t['url'],'url=')) !== false) ? urldecode(substr($t['url'],$position + 4)) : $t['url']);;
+					}
+				}
+				if ($additional_mentions) {
+					$r = q("select hubloc_addr, hubloc_id_url, hubloc_hash from hubloc where hubloc_id_url in (" . protect_sprintf(stringify_array($additional_mentions, true)) . ") ");
+					if ($r) {
+						foreach ($r as $rv) {
+							$ment = (($r[0]['hubloc_addr']) ? $r[0]['hubloc_addr'] : $r[0]['hubloc_id_url']);
+							if ($ment) {
+								if ($observer && $observer['xchan_hash'] !== $rv['hubloc_hash'] && ! in_array($ment,$result['authors'])) {
+									$result['authors'][] = $ment;
+								}
 							}
 						}
 					}

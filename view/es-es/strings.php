@@ -2,9 +2,10 @@
 
 if(! function_exists("string_plural_select_es_es")) {
 function string_plural_select_es_es($n){
-     return ($n != 1 ? 1 : 0);
+	return ($n != 1 ? 1 : 0);;
 }}
 App::$rtl = 0;
+App::$strings["plural_function_code"] = "(n != 1 ? 1 : 0)";
 App::$strings["Social Networking"] = "Redes sociales";
 App::$strings["Social - Normal"] = "Social - Normal";
 App::$strings["Social - Restricted"] = "Social - Restringido";
@@ -246,8 +247,8 @@ App::$strings["[\$Projectname:Notify]"] = "[\$Projectname:Aviso]";
 App::$strings["created a new post"] = "ha creado una nueva entrada";
 App::$strings["reacted to %s's conversation"] = "reaccionó a la conversación de %s";
 App::$strings["shared %s's post"] = "compartió la entrada de %s";
-App::$strings["edited a post dated %s"] = "ha editado una entrada fechada el %s";
-App::$strings["edited a comment dated %s"] = "ha editado un comentario fechado el %s";
+App::$strings["edited a post dated %s"] = "ha editado una entrada con fecha de %s";
+App::$strings["edited a comment dated %s"] = "ha editado un comentario con fecha de %s";
 App::$strings["Visible to your default audience"] = "Visible para su público predeterminado.";
 App::$strings["Only me"] = "Sólo yo";
 App::$strings["Public"] = "Público";
@@ -462,7 +463,7 @@ App::$strings["Account language (for emails)"] = "Idioma de la cuenta (para los 
 App::$strings["Service class"] = "Clase de servicio";
 App::$strings["By default, unfiltered HTML is allowed in embedded media. This is inherently insecure."] = "De forma predeterminada, el HTML sin filtrar está permitido en el contenido multimedia incorporado en una publicación. Esto es siempre inseguro.";
 App::$strings["The recommended setting is to only allow unfiltered HTML from the following sites:"] = "La configuración recomendada es que sólo se permita HTML sin filtrar desde los siguientes sitios: ";
-App::$strings["https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/<br />https://vimeo.com/<br />https://soundcloud.com/<br />"] = "https://youtube.com/<br />https://www.youtube.com/<br />https://youtu.be/<br />https://vimeo.com/<br />https://soundcloud.com/<br />";
+App::$strings["https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br>https://vimeo.com/<br>https://soundcloud.com/<br>"] = "https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br>https://vimeo.com/<br>https://soundcloud.com/<br>";
 App::$strings["All other embedded content will be filtered, <strong>unless</strong> embedded content from that site is explicitly blocked."] = "El resto del contenido incrustado se filtrará, <strong>excepto</ strong> si el contenido incorporado desde ese sitio está bloqueado de forma explícita.";
 App::$strings["Security"] = "Seguridad";
 App::$strings["Block public"] = "Bloquear páginas públicas";
@@ -2028,13 +2029,13 @@ App::$strings["Suggested Chatrooms"] = "Salas de chat sugeridas";
 App::$strings["Tags"] = "Etiquetas";
 App::$strings["New Stream Activity"] = "Nueva actividad en el stream";
 App::$strings["New Stream Activity Notifications"] = "Avisos de nueva actividad en el stream";
-App::$strings["View your stream activity"] = "Ver su actividad en el stream";
+App::$strings["View your stream activity"] = "Ver la actividad de su stream";
 App::$strings["Mark all notifications read"] = "Marcar todas las notificaciones como leídas";
 App::$strings["Show new posts only"] = "Mostrar solo las entradas nuevas";
 App::$strings["Filter by name"] = "Filtrar por nombre";
 App::$strings["New Home Activity"] = "Nueva actividad en su página principal";
 App::$strings["New Home Activity Notifications"] = "Avisos de nueva actividad en su página principal";
-App::$strings["View your home activity"] = "Ver su actividad en su página principal";
+App::$strings["View your home activity"] = "Ver la actividad de su página principal";
 App::$strings["Mark all notifications seen"] = "Marcar todas las notificaciones como vistas";
 App::$strings["New Mails"] = "Nuevos mensajes de correo";
 App::$strings["New Mails Notifications"] = "Avisos de nuevos mensajes de correo";

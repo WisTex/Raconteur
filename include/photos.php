@@ -217,7 +217,6 @@ function photo_upload($channel, $observer, $args) {
 		$ph->orient($exif);
 	}
 
-
 	$ph->clearexif();
 
 	if(get_pconfig($channel_id,'system','clearexif',false)) {

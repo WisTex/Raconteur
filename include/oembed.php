@@ -330,7 +330,7 @@ function oembed_format_object($j){
 					$embedurl = zid($embedurl);
 					$j['thumbnail_url'] = zid($j['thumbnail_url']);
 				}
-				$ret = '<a href="' . $embedurl . '" ><img src="' . $j['thumbnail_url'] . '" alt="thumbnail" /></a><br /><br />';
+				$ret = '<a href="' . $embedurl . '" ><img src="' . $j['thumbnail_url'] . '" alt="thumbnail" /></a><br><br>';
 			}
 
 			//$ret = "<a href='".$embedurl."'>".$j['title']."</a>";
@@ -353,13 +353,13 @@ function oembed_format_object($j){
 	// add link to source if not present in "rich" type
 	if (  $j['type'] != 'rich' || !strpos($j['html'],$embedurl) ){
 		$embedlink = (isset($j['title']))?$j['title'] : $embedurl;
-		$ret .= '<br />' . "<a href='$embedurl' rel='oembed'>$embedlink</a>";
-		$ret .= "<br />";
+		$ret .= '<br>' . "<a href='$embedurl' rel='oembed'>$embedlink</a>";
+		$ret .= "<br>";
 		if (isset($j['author_name'])) $ret .= t(' by ') . $j['author_name'];
 		if (isset($j['provider_name'])) $ret .= t(' on ') . $j['provider_name'];
 	} else {
 		// add <a> for html2bbcode conversion
-		$ret .= "<br /><a href='$embedurl' rel='oembed'>$embedurl</a>";
+		$ret .= "<br><a href='$embedurl' rel='oembed'>$embedurl</a>";
 	}
 	$ret.="<br style='clear:left'></span>";
 	return  mb_convert_encoding($ret, 'HTML-ENTITIES', mb_detect_encoding($ret));

@@ -19,7 +19,7 @@ class Search extends \Zotlabs\Web\Controller {
 	
 	
 	function get($update = 0, $load = false) {
-	
+
 		if ((get_config('system','block_public')) || (get_config('system','block_public_search',1))) {
 			if ((! local_channel()) && (! remote_channel())) {
 				notice( t('Public access denied.') . EOL);
@@ -176,7 +176,7 @@ class Search extends \Zotlabs\Web\Controller {
 					);
 				}
 				if ($r === null) {
-					$r = q("SELECT mid, MAX(id) as item_id from item $pub_sql
+					$r = q("SELECT mid, MAX(id) as item_id from item WHERE true $pub_sql
 						$item_normal
 						$sql_extra 
 						group by mid, created order by created desc $pager_sql"

@@ -2,6 +2,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
+use Zotlabs\Access\PermissionRoles;
 
 require_once('include/security.php');
 
@@ -17,10 +18,11 @@ class Register extends Controller {
 		// created a channel, we'll try to revive the connection request 
 		// and process it.
 	
-		if($_REQUEST['connect'])
+		if ($_REQUEST['connect']) {
 			$_SESSION['connect'] = $_REQUEST['connect'];
+		}
 	
-		switch($cmd) {
+		switch ($cmd) {
 			case 'invite_check.json':
 				$result = check_account_invite($_REQUEST['invite_code']);
 				break;
@@ -33,7 +35,7 @@ class Register extends Controller {
 			default: 
 				break;
 		}
-		if($result) {
+		if ($result) {
 			json_return_and_die($result);
 		}
 	}
@@ -44,17 +46,17 @@ class Register extends Controller {
 		check_form_security_token_redirectOnErr('/register', 'register');
 
 		$max_dailies = intval(get_config('system','max_daily_registrations'));
-		if($max_dailies) {
+		if ($max_dailies) {
 			$r = q("select count(account_id) as total from account where account_created > %s - INTERVAL %s",
 				db_utcnow(), db_quoteinterval('1 day')
 			);
-			if($r && $r[0]['total'] >= $max_dailies) {
+			if ($r && intval($r[0]['total']) >= $max_dailies) {
 				notice( t('Maximum daily site registrations exceeded. Please try again tomorrow.') . EOL);
 				return;
 			}
 		}
 	
-		if(! x($_POST,'tos')) {
+		if (! x($_POST,'tos')) {
 			notice( t('Please indicate acceptance of the Terms of Service. Registration failed.') . EOL);
 			return;
 		}
@@ -64,7 +66,7 @@ class Register extends Controller {
 		$email_verify = get_config('system','verify_email');
 	
 	
-		switch($policy) {
+		switch ($policy) {
 	
 			case REGISTER_OPEN:
 				$flags = ACCOUNT_OK;
@@ -76,7 +78,7 @@ class Register extends Controller {
 	
 			default:
 			case REGISTER_CLOSED:
-				if(! is_site_admin()) {
+				if (! is_site_admin()) {
 					notice( t('Permission denied.') . EOL );
 					return;
 				}
@@ -84,11 +86,12 @@ class Register extends Controller {
 				break;
 		}
 	
-		if($email_verify && $policy == REGISTER_OPEN)
+		if ($email_verify && $policy == REGISTER_OPEN) {
 			$flags = $flags | ACCOUNT_UNVERIFIED;
+		}
 			
 	
-		if((! $_POST['password']) || ($_POST['password'] !== $_POST['password2'])) {
+		if ((! $_POST['password']) || ($_POST['password'] !== $_POST['password2'])) {
 			notice( t('Passwords do not match.') . EOL);
 			return;
 		}
@@ -98,40 +101,44 @@ class Register extends Controller {
 	
 		$result = create_account($arr);
 	
-		if(! $result['success']) {
+		if (! $result['success']) {
 			notice($result['message']);
 			return;
 		}
+
 		require_once('include/security.php');
 	
 	
-		if($_REQUEST['name'])
+		if ($_REQUEST['name']) {
 			set_aconfig($result['account']['account_id'],'register','channel_name',$_REQUEST['name']);
-		if($_REQUEST['nickname'])
+		}
+		if ($_REQUEST['nickname']) {
 			set_aconfig($result['account']['account_id'],'register','channel_address',$_REQUEST['nickname']);
-		if($_REQUEST['permissions_role'])
+		}
+		if ($_REQUEST['permissions_role']) {
 			set_aconfig($result['account']['account_id'],'register','permissions_role',$_REQUEST['permissions_role']);
+		}
 	
 	
 	 	$using_invites = intval(get_config('system','invitation_only'));
 		$num_invites   = intval(get_config('system','number_invites'));
 		$invite_code   = ((x($_POST,'invite_code'))  ? notags(trim($_POST['invite_code']))  : '');
 	
-		if($using_invites && $invite_code) {
+		if ($using_invites && $invite_code) {
 			q("delete * from register where hash = '%s'", dbesc($invite_code));
 			// @FIXME - this also needs to be considered when using 'invites_remaining' in mod/invite.php
 			set_aconfig($result['account']['account_id'],'system','invites_remaining',$num_invites);
 		}
 	
-		if($policy == REGISTER_OPEN ) {
-			if($email_verify) {
+		if ($policy == REGISTER_OPEN ) {
+			if ($email_verify) {
 				$res = verify_email_address($result);
 			}
 			else {
 				$res = send_register_success_email($result['email'],$result['password']);
 			}
-			if($res) {
-				if($invite_code) {
+			if ($res) {
+				if ($invite_code) {
 					info( t('Registration successful. Continue to create your first channel...') . EOL ) ;
 				} 
 				else {
@@ -139,9 +146,9 @@ class Register extends Controller {
 				}
 			}
 		}
-		elseif($policy == REGISTER_APPROVE) {
+		elseif ($policy == REGISTER_APPROVE) {
 			$res = send_reg_approval_email($result);
-			if($res) {
+			if ($res) {
 				info( t('Your registration is pending approval by the site owner.') . EOL ) ;
 			}
 			else {
@@ -150,7 +157,7 @@ class Register extends Controller {
 			goaway(z_root());
 		}
 	
-		if($email_verify) {
+		if ($email_verify) {
 			goaway(z_root() . '/email_validation/' . bin2hex($result['email']));
 		}
 
@@ -161,19 +168,20 @@ class Register extends Controller {
 		$new_channel = false;
 		$next_page = 'new_channel';
 	
-		if(get_config('system','auto_channel_create')) {
+		if (get_config('system','auto_channel_create')) {
 			$new_channel = auto_channel_create($result['account']['account_id']);
-			if($new_channel['success']) {
+			if ($new_channel['success']) {
 				$channel_id = $new_channel['channel']['channel_id'];
 				change_channel($channel_id);
 				$next_page = '~';
 			}
-			else
+			else {
 				$new_channel = false;
+			}
 		}
 	
 		$x = get_config('system','workflow_register_next');
-		if($x) {
+		if ($x) {
 			$next_page = $x;
 			$_SESSION['workflow'] = true;
 		}
@@ -190,8 +198,8 @@ class Register extends Controller {
 		$registration_is = '';
 		$other_sites = '';
 	
-		if(intval(get_config('system','register_policy')) === REGISTER_CLOSED) {
-			if(intval(get_config('system','directory_mode')) === DIRECTORY_MODE_STANDALONE) {
+		if (intval(get_config('system','register_policy')) === REGISTER_CLOSED) {
+			if (intval(get_config('system','directory_mode')) === DIRECTORY_MODE_STANDALONE) {
 				notice( t('Registration on this hub is disabled.')  . EOL);
 				return;
 			}
@@ -200,7 +208,7 @@ class Register extends Controller {
 			return $mod->get();
 		}
 	
-		if(intval(get_config('system','register_policy')) == REGISTER_APPROVE) {
+		if (intval(get_config('system','register_policy')) == REGISTER_APPROVE) {
 			$registration_is = t('Registration on this hub is by approval only.');
 			$other_sites = t('<a href="pubsites">Register at another affiliated hub.</a>');
 		}
@@ -208,18 +216,18 @@ class Register extends Controller {
 
 		$invitations = false;
 
-		if(intval(get_config('system','invitation_only'))) {
+		if (intval(get_config('system','invitation_only'))) {
 			$invitations = true;
 			$registration_is = t('Registration on this hub is by invitation only.');
 			$other_sites = t('<a href="pubsites">Register at another affiliated hub.</a>');
 		}
 	
 		$max_dailies = intval(get_config('system','max_daily_registrations'));
-		if($max_dailies) {
+		if ($max_dailies) {
 			$r = q("select count(account_id) as total from account where account_created > %s - INTERVAL %s",
 				db_utcnow(), db_quoteinterval('1 day')
 			);
-			if($r && $r[0]['total'] >= $max_dailies) {
+			if ($r && $r[0]['total'] >= $max_dailies) {
 				logger('max daily registrations exceeded.');
 				notice( t('This site has exceeded the number of allowed daily account registrations. Please try again tomorrow.') . EOL);
 				return;
@@ -228,25 +236,26 @@ class Register extends Controller {
 
 		$privacy_role = ((x($_REQUEST,'permissions_role')) ? $_REQUEST['permissions_role'] : "");
 
-		$perm_roles = \Zotlabs\Access\PermissionRoles::roles();
+		$perm_roles = PermissionRoles::roles();
 
 		// Configurable terms of service link
 	
 		$tosurl = get_config('system','tos_url');
-		if(! $tosurl)
+		if (! $tosurl) {
 			$tosurl = z_root() . '/help/TermsOfService';
+		}
 	
 		$toslink = '<a href="' . $tosurl . '" target="_blank">' . t('Terms of Service') . '</a>';
 	
 		// Configurable whether to restrict age or not - default is based on international legal requirements
 		// This can be relaxed if you are on a restricted server that does not share with public servers
 	
-		if(get_config('system','no_age_restriction')) {
+		if (get_config('system','no_age_restriction')) {
 			$label_tos = sprintf( t('I accept the %s for this website'), $toslink);
 		}
 		else {
 			$age = get_config('system','minimum_age');
-			if(!$age) {
+			if (!$age) {
 				$age = 13;
 			}
 			$label_tos = sprintf( t('I am over %s years of age and accept the %s for this website'), $age, $toslink);
