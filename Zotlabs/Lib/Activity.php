@@ -1596,7 +1596,7 @@ class Activity {
 				[
 					'hubloc_guid'     => $url,
 					'hubloc_hash'     => $url,
-					'hubloc_id_url'   => $url,
+					'hubloc_id_url'   => $profile,
 					'hubloc_addr'     => ((strpos($username,'@')) ? $username : ''),
 					'hubloc_network'  => 'activitypub',
 					'hubloc_url'      => $baseurl,
@@ -1617,6 +1617,12 @@ class Activity {
 			if ($inbox !== $h[0]['hubloc_callback']) {
 				$r = q("update hubloc set hubloc_callback = '%s' where hubloc_hash = '%s'",
 					dbesc($inbox),
+					dbesc($url)
+				);
+			}
+			if ($profile !== $h[0]['hubloc_id_url']) {
+				$r = q("update hubloc set hubloc_id_url = '%s' where hubloc_hash = '%s'",
+					dbesc($profile),
 					dbesc($url)
 				);
 			}
