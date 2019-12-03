@@ -1,13 +1,16 @@
 <?php
 namespace Zotlabs\Module;
 
+// ActivityPub delivery endpoint
+
+
 use App;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Config;
-
+use Zotlabs\Lib\PConfig;
 
 class Inbox extends Controller {
 
@@ -16,10 +19,9 @@ class Inbox extends Controller {
 		// This SHOULD be handled by the webserver, but in the RFC it is only indicated as
 		// a SHOULD and not a MUST, so some webservers fail to reject appropriately.
 
-		logger('accepting: ' . $_SERVER['HTTP_ACCEPT'],LOGGER_DEBUG);
-
 		if ((array_key_exists('HTTP_ACCEPT',$_SERVER)) && ($_SERVER['HTTP_ACCEPT']) 
 			&& (strpos($_SERVER['HTTP_ACCEPT'],'*') === false) && (! ActivityStreams::is_as_request())) {
+			logger('unhandled accept header: ' . $_SERVER['HTTP_ACCEPT'],LOGGER_DEBUG);
 			http_status_exit(406,'not acceptable');
 		}
 
@@ -74,7 +76,6 @@ class Inbox extends Controller {
 			return;
 		}
 		
-
 		// $observer_hash in this case is the sender
 
 		if ($hsig['header_valid'] && $hsig['content_valid'] && $hsig['portable_id']) {
@@ -111,8 +112,6 @@ class Inbox extends Controller {
 			dbesc(datetime_convert()),
 			dbesc($observer_hash)
 		);
-		// $test is ignored
-
 
 		if ($is_public) {
 
@@ -180,7 +179,7 @@ class Inbox extends Controller {
 
 		foreach ($channels as $channel) {
 
-			if (! get_pconfig($channel['channel_id'],'system','activitypub',true)) {
+			if (! PConfig::Get($channel['channel_id'],'system','activitypub',true)) {
 				continue;
 			}
 			
@@ -189,6 +188,12 @@ class Inbox extends Controller {
 			switch ($AS->type) {
 				case 'Follow':
 					if ($AS->obj && ActivityStreams::is_an_actor($AS->obj['type'])) {
+						// do follow activity
+						Activity::follow($channel,$AS);
+					}
+					break;
+				case 'Join':
+					if ($AS->obj && $AS->obj['type'] === 'Group') {
 						// do follow activity
 						Activity::follow($channel,$AS);
 					}
@@ -228,6 +233,19 @@ class Inbox extends Controller {
 				case 'Reject':
 				case 'TentativeAccept':
 				case 'TentativeReject':
+				case 'Add':
+				case 'Arrive':
+				case 'Block':
+				case 'Flag':
+				case 'Ignore':
+				case 'Invite':
+				case 'Listen':
+				case 'Move':
+				case 'Offer':
+				case 'Question':
+				case 'Read':
+				case 'Travel':
+				case 'View':
 				case 'emojiReaction':
 					// These require a resolvable object structure
 					if (is_array($AS->obj)) {
@@ -239,6 +257,12 @@ class Inbox extends Controller {
 					break;
 				case 'Undo':
 					if ($AS->obj && $AS->obj['type'] === 'Follow') {
+						// do unfollow activity
+						Activity::unfollow($channel,$AS);
+						break;
+					}
+				case 'Leave':
+					if ($AS->obj && $AS->obj['type'] === 'Group') {
 						// do unfollow activity
 						Activity::unfollow($channel,$AS);
 						break;

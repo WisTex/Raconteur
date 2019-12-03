@@ -378,9 +378,14 @@ class ThreadItem {
 
 		$has_tags = (($body['tags'] || $body['categories'] || $body['mentions'] || $body['attachments'] || $body['folders']) ? true : false);
 
-                $dropdown_extras_arr = [ 'item' => $item , 'dropdown_extras' => '' ];
-                call_hooks('dropdown_extras',$dropdown_extras_arr);
-                $dropdown_extras = $dropdown_extras_arr['dropdown_extras'];
+		$dropdown_extras_arr = [ 'item' => $item , 'dropdown_extras' => '' ];
+		call_hooks('dropdown_extras',$dropdown_extras_arr);
+		$dropdown_extras = $dropdown_extras_arr['dropdown_extras'];
+
+		// Pinned item processing                                                                                                                                     
+		$allowed_type = (in_array($item['item_type'], get_config('system', 'pin_types', [ ITEM_TYPE_POST ])) ? true : false);                                         
+		$pinned_items = ($allowed_type ? get_pconfig($item['uid'], 'pinned', $item['item_type'], []) : []);                                                           
+		$pinned = ((! empty($pinned_items) && in_array($item['mid'], $pinned_items)) ? true : false);             
 
 		$tmp_item = array(
 			'template' => $this->get_template(),
@@ -462,6 +467,11 @@ class ThreadItem {
 			'star'      => $star,
 			'tagger'    => ((feature_enabled($conv->get_profile_owner(),'commtag')) ? $tagger : ''),
 			'filer'     => ((feature_enabled($conv->get_profile_owner(),'filing')) ? $filer : ''),
+			'pinned'    => ($pinned ? t('Pinned post') : ''),
+			'pinnable'  => false,
+// @fixme
+//			'pinnable'  => (($this->is_toplevel() && local_channel() && $item['owner_xchan'] == $observer['xchan_hash'] && $allowed_type && $item['item_private'] == 0) ? '1' : ''),
+			'pinme'     => ($pinned ? t('Unpin this post') : t('Pin this post')),  
 			'bookmark'  => (($conv->get_profile_owner() == local_channel() && local_channel() && $has_bookmarks) ? t('Save Bookmarks') : ''),
 			'addtocal'  => (($has_event && ! $item['resource_id']) ? t('Add to Calendar') : ''),
 			'drop'      => $drop,
