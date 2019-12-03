@@ -258,6 +258,10 @@ class Channel extends Controller {
 				$o .= status_editor($a,$x);
 			}
 
+			if (! $mid && ! $search) {
+				$obj = new \Zotlabs\Widget\Pinned;
+				$o .= $obj->widget([]);
+			}
 		}
 
 
