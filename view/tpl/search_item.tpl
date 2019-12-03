@@ -79,6 +79,9 @@
 							<i class="fa fa-cog"></i>
 						</button>
 						<div class="dropdown-menu dropdown-menu-right">
+							{{if $item.conv}}
+							<a class="dropdown-item" href='{{$item.conv.href}}' id='context-{{$item.id}}' title='{{$item.conv.title}}'><i class="fa fa-fw fa-list generic-icons-nav"></i>{{$item.conv.title}}</a>
+							{{/if}}
 							{{if $item.star}}
 							<a class="dropdown-item" href="#" onclick="dostar({{$item.id}}); return false;"><i id="starred-{{$item.id}}" class="fa fa-fw{{if $item.star.isstarred}} starred fa-star{{else}} unstarred fa-star-o{{/if}} generic-icons-nav" title="{{$item.star.toggle}}"></i>{{$item.star.toggle}}</a>
 							{{/if}}
@@ -114,11 +117,6 @@
 
 			</div>
 		</div>
-		{{if $item.conv}}
-		<div class="p-2 wall-item-conv" id="wall-item-conv-{{$item.id}}" >
-			<a href='{{$item.conv.href}}' id='context-{{$item.id}}' title='{{$item.conv.title}}'>{{$item.conv.title}}</a>
-		</div>
-		{{/if}}
 	</div>
 </div>
 
