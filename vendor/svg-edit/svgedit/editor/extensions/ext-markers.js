@@ -87,10 +87,13 @@ export default {
       const str = elem.getAttribute(attr);
       if (!str) { return null; }
       const m = str.match(/\(#(.*)\)/);
+      // const m = str.match(/\(#(?<id>.+)\)/);
+      // if (!m || !m.groups.id) {
       if (!m || m.length !== 2) {
         return null;
       }
       return svgCanvas.getElem(m[1]);
+      // return svgCanvas.getElem(m.groups.id);
     }
 
     /**
@@ -147,7 +150,7 @@ export default {
     /**
     * @param {string} id
     * @param {""|"\\nomarker"|"nomarker"|"leftarrow"|"rightarrow"|"textmarker"|"forwardslash"|"reverseslash"|"verticalslash"|"box"|"star"|"xmark"|"triangle"|"mcircle"} val
-    * @returns {void}
+    * @returns {SVGMarkerElement}
     */
     function addMarker (id, val) {
       const txtBoxBg = '#ffffff';
@@ -254,7 +257,7 @@ export default {
     function convertline (elem) {
       // this routine came from the connectors extension
       // it is needed because midpoint markers don't work with line elements
-      if (!(elem.tagName === 'line')) { return elem; }
+      if (elem.tagName !== 'line') { return elem; }
 
       // Convert to polyline to accept mid-arrow
 
@@ -443,7 +446,7 @@ export default {
 
     /**
     * @param {"nomarker"|"leftarrow"|"rightarrow"|"textmarker"|"forwardslash"|"reverseslash"|"verticalslash"|"box"|"star"|"xmark"|"triangle"|"mcircle"} id
-    * @returns {void}
+    * @returns {string}
     */
     function getTitle (id) {
       const {langList} = strings;
