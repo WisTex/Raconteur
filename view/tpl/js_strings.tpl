@@ -33,8 +33,9 @@
 		'name_empty'  : "{{$name_empty}}",
 		'name_ok1'    : "{{$name_ok1}}",
 		'name_ok2'    : "{{$name_ok2}}",
-
-
+		'pinned'      : "{{$pinned}}",
+		'pin_item'    : "{{$pin_item}}",
+		'unpin_item'  : "{{$unpin_item}}",
 
 		't01' : "{{$t01}}",
 		't02' : "{{$t02}}",

@@ -21,6 +21,9 @@
 			{{/if}}
 			{{/if}}
 			<div class="p-2 clearfix wall-item-head{{if $item.is_new && !$item.title && !$item.event && !$item.is_comment}} wall-item-head-new rounded-top{{/if}}">
+				{{if $item.pinned}}
+				    <span class="float-right wall-item-pinned" title="{{$item.pinned}}" id="wall-item-pinned-{{$item.id}}"><i class="fa fa-thumb-tack">&nbsp;</i></span>
+				{{/if}}
 				<div class="wall-item-info" id="wall-item-info-{{$item.id}}" >
 					<div class="wall-item-photo-wrapper{{if $item.owner_url}} wwfrom{{/if}}" id="wall-item-photo-wrapper-{{$item.id}}">
 						<img src="{{$item.thumb}}" class="fakelink wall-item-photo{{$item.sparkle}} u-photo p-name" id="wall-item-photo-{{$item.id}}" alt="{{$item.name}}" data-toggle="dropdown" />
@@ -76,6 +79,9 @@
 							<i class="fa fa-cog"></i>
 						</button>
 						<div class="dropdown-menu dropdown-menu-right">
+							{{if $item.conv}}
+							<a class="dropdown-item" href='{{$item.conv.href}}' id='context-{{$item.id}}' title='{{$item.conv.title}}'><i class="fa fa-fw fa-list generic-icons-nav"></i>{{$item.conv.title}}</a>
+							{{/if}}
 							{{if $item.star}}
 							<a class="dropdown-item" href="#" onclick="dostar({{$item.id}}); return false;"><i id="starred-{{$item.id}}" class="fa fa-fw{{if $item.star.isstarred}} starred fa-star{{else}} unstarred fa-star-o{{/if}} generic-icons-nav" title="{{$item.star.toggle}}"></i>{{$item.star.toggle}}</a>
 							{{/if}}
@@ -111,11 +117,6 @@
 
 			</div>
 		</div>
-		{{if $item.conv}}
-		<div class="p-2 wall-item-conv" id="wall-item-conv-{{$item.id}}" >
-			<a href='{{$item.conv.href}}' id='context-{{$item.id}}' title='{{$item.conv.title}}'>{{$item.conv.title}}</a>
-		</div>
-		{{/if}}
 	</div>
 </div>
 

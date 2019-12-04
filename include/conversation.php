@@ -710,6 +710,9 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
 				$conv_link = ((in_array($item['item_type'],[ ITEM_TYPE_CARD, ITEM_TYPE_ARTICLE] )) ? $item['plink'] : z_root() . '/display/' . gen_link_id($conv_link_mid));
 
+				$allowed_type = (in_array($item['item_type'], get_config('system', 'pin_types', [ ITEM_TYPE_POST ])) ? true : false);
+				$pinned_items = ($allowed_type ? get_pconfig($item['uid'], 'pinned', $item['item_type'], []) : []);
+				$pinned = ((! empty($pinned_items) && in_array($item['mid'], $pinned_items)) ? true : false);
 
 				$tmp_item = array(
 					'template' => $tpl,
@@ -768,7 +771,10 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 					'like' => '',
 					'dislike' => '',
 					'comment' => '',
-					'conv' => (($preview) ? '' : array('href'=> $conv_link, 'title'=> t('View in context'))),
+					'pinned'    => ($pinned ? t('Pinned post') : ''),
+					'pinnable'  => (($item['mid'] === $item['parent_mid'] && local_channel() && $item['owner_xchan'] == $observer['xchan_hash'] && $allowed_type && $item['item_private'] == 0) ? '1' : ''),
+					'pinme'     => ($pinned ? t('Unpin this post') : t('Pin this post')),  
+					'conv' => (($preview) ? '' : array('href'=> $conv_link, 'title'=> t('View Conversation'))),
 					'previewing' => $previewing,
 					'wait' => t('Please wait'),
 					'thread_level' => 1,

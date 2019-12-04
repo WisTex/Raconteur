@@ -1160,6 +1160,38 @@ function doprofilelike(ident, verb) {
 }
 
 
+function dopin(id) {
+	id = id.toString();
+	$('#like-rotator-' + id).show();
+	$.post('pin', { 'id' : id })
+		.done(function() {
+			window.location.href=window.location.href;
+		})
+		.fail(function() {
+			window.location.href=window.location.href;
+		})
+}
+
+function dropItem(url, object) {
+	var confirm = confirmDelete();
+	if(confirm) {
+		var id = url.split('/')[2];
+		$('body').css('cursor', 'wait');
+		$(object + ', #pinned-wrapper-' + id).fadeTo('fast', 0.33, function () {
+			$.post('pin', { 'id' : id });
+			$.get(url).done(function() {
+				$(object + ', #pinned-wrapper-' + id).remove();
+				$('body').css('cursor', 'auto');
+			});
+		});
+		return true;
+	}
+	else {
+			return false;
+	}
+}
+
+
 function dropItem(url, object) {
 
 	var confirm = confirmDelete();
