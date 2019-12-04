@@ -31,7 +31,7 @@ class Pinned {
 
 		$id_list = $this->list($types);
 
-		//logger('id_list: ' . print_r($id_list,true));
+		// logger('id_list: ' . print_r($id_list,true));
 
 		if (empty($id_list)) {
 			return $ret;
@@ -46,8 +46,8 @@ class Pinned {
 		$o = str_replace('<div id="conversation-end">','<div id="pin-widget-end">', $o);
 		$o = str_replace('class="thread-wrapper ','class="pin-thread-wrapper ', $o);
 
-		logger('output: ' . $o);
-		return $o;
+		// logger('output: ' . $o);
+		return '<hr>' . $o . '<hr>';
 
 	}
 
