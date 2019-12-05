@@ -587,14 +587,8 @@ class Activity {
 			$top_level = (($reply) ? false : true);
 			
 			if ($public) {
-				if ($top_level) {
-					$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
-					$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
-				}
-				else {
-					$ret['to'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
-					$ret['cc'] = [ ACTIVITY_PUBLIC_INBOX ];
-				}
+				$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
+				$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
 			}
 			else {
 			
@@ -850,14 +844,8 @@ class Activity {
 			$top_level = (($i['mid'] === $i['parent_mid']) ? true : false);
 			
 			if ($public) {
-				if ($top_level) {
-					$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
-					$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
-				}
-				else {
-					$ret['to'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
-					$ret['cc'] = [ ACTIVITY_PUBLIC_INBOX ];
-				}
+				$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
+				$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
 			}
 			else {
 			
