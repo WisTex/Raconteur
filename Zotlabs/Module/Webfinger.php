@@ -78,7 +78,7 @@ class Webfinger extends Controller {
 				}		
 			}
 			if (strpos($resource,'http') === 0) {
-				$channel_nickname = str_replace('~','',basename($resource));
+				$channel_nickname = str_replace( ['~','@'],['',''],basename($resource));
 			}
 
 			if ($channel_nickname) {	
