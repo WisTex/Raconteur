@@ -167,12 +167,25 @@ class HTTPSig {
 		logger('verified: ' . $x, LOGGER_DEBUG);
 
 		if (! $x) {
-			logger('verify failed for ' . $result['signer'] . ' alg=' . $algorithm . (($key['public_key']) ? '' : ' no key'));
-			$sig_block['signature'] = base64_encode($sig_block['signature']);
-			logger('affected sigblock: ' . print_r($sig_block,true));
-			logger('headers: ' . print_r($headers,true));
-			logger('server: ' . print_r($_SERVER,true));
-			return $result;
+
+			// try again, ignoring the local actor (xchan) cache and refetching the key
+			// from its source
+			
+			$key = self::get_key($key,$result['signer'],true);
+
+			if ($key && $key['public_key']) {
+				$y = Crypto::verify($signed_data,$sig_block['signature'],$key['public_key'],$algorithm);
+				logger('verified: (cache reload) ' . $x, LOGGER_DEBUG);
+			}
+
+			if (! $y) {
+				logger('verify failed for ' . $result['signer'] . ' alg=' . $algorithm . (($key['public_key']) ? '' : ' no key'));
+				$sig_block['signature'] = base64_encode($sig_block['signature']);
+				logger('affected sigblock: ' . print_r($sig_block,true));
+				logger('headers: ' . print_r($headers,true));
+				logger('server: ' . print_r($_SERVER,true));
+				return $result;
+			}
 		}
 
 		$result['portable_id'] = $key['portable_id'];
@@ -198,7 +211,7 @@ class HTTPSig {
 		return $result;
 	}
 
-	static function get_key($key,$id) {
+	static function get_key($key,$id,$force = false) {
 
 		if ($key) {
 			if (function_exists($key)) {
@@ -208,11 +221,11 @@ class HTTPSig {
 		}
 
 		if (strpos($id,'#') === false) {
-			$key = self::get_webfinger_key($id);
+			$key = self::get_webfinger_key($id,$force);
 		}
 
 		if (! $key) {
-			$key = self::get_activitystreams_key($id);
+			$key = self::get_activitystreams_key($id,$force);
 		}
 
 		return $key;
@@ -243,16 +256,18 @@ class HTTPSig {
 	 *   false if no pub key found, otherwise return the pub key
 	 */
 
-	function get_activitystreams_key($id) {
+	function get_activitystreams_key($id,$force = false) {
 
 		// remove fragment
 
 		$url = ((strpos($id,'#')) ? substr($id,0,strpos($id,'#')) : $id);
 
-		$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' ",
-			dbesc(str_replace('acct:','',$url)),
-			dbesc($url)
-		);
+		if (! $force) {
+			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' ",
+				dbesc(str_replace('acct:','',$url)),
+				dbesc($url)
+			);
+		}
 
 		if ($x) {
 			$best = Libzot::zot_record_preferred($x);
@@ -276,12 +291,14 @@ class HTTPSig {
 	}
 
 
-	function get_webfinger_key($id) {
+	function get_webfinger_key($id,$force = false) {
 
-		$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' ",
-			dbesc(str_replace('acct:','',$id)),
-			dbesc($id)
-		);
+		if (! $force) {
+			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' ",
+				dbesc(str_replace('acct:','',$id)),
+				dbesc($id)
+			);
+		}
 
 		if ($x) {
 			$best = Libzot::zot_record_preferred($x);
@@ -314,12 +331,14 @@ class HTTPSig {
 	}
 
 
-	function get_zotfinger_key($id) {
+	function get_zotfinger_key($id,$force = false) {
 
-		$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' ",
-			dbesc(str_replace('acct:','',$id)),
-			dbesc($id)
-		);
+		if (! $force) {
+			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' ",
+				dbesc(str_replace('acct:','',$id)),
+				dbesc($id)
+			);
+		}
 
 		if ($x) {
 			$best = Libzot::zot_record_preferred($x);

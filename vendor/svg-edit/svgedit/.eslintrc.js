@@ -50,33 +50,19 @@ module.exports = {
         // In case we need to extend
         customTags: []
       },
-      tagNamePreference: {
-        arg: "param",
-        return: "returns"
-      },
-      allowOverrideWithoutParam: true,
-      allowImplementsWithoutParam: true,
-      allowAugmentsExtendsWithoutParam: true,
-      // For `jsdoc/check-examples` in `ash-nazg`
-      matchingFileName: "dummy.md",
-      rejectExampleCodeRegex: "^`",
+      augmentsExtendsReplacesDocs: true,
+      // Todo: Figure out why this is not working and why seem to have to
+      //    disable for all Markdown:
+      /*
+      baseConfig: {
+        rules: {
+          "no-multi-spaces": "off"
+        }
+      }
+      */
     }
   },
   overrides: [
-    // Remove this rule when fully migrated to eslint-plugin-jsdoc: https://github.com/gajus/eslint-plugin-jsdoc/issues/107
-    // These would otherwise currently break because of these issues:
-    //  1. `event:` https://github.com/eslint/doctrine/issues/221
-    //  1. `@implements`/`@augments`/`@extends`/`@override`: https://github.com/eslint/doctrine/issues/222
-    {
-      files: [
-        "test/utilities_test.js", "editor/svg-editor.js", "editor/svgcanvas.js",
-        "editor/coords.js",
-        "editor/extensions/ext-eyedropper.js", "editor/extensions/ext-webappfind.js"
-      ],
-      rules: {
-        "valid-jsdoc": "off"
-      }
-    },
     // Locales have no need for importing outside of SVG-Edit
     {
       files: [
@@ -113,6 +99,18 @@ module.exports = {
         "import/unambiguous": ["off"]
       }
     },
+    {
+      files: ['test/browser-bugs/**'],
+      rules: {
+        'no-var': 'off'
+      }
+    },
+    {
+      files: ['**/*.html'],
+      rules: {
+        'import/unambiguous': 'off'
+      }
+    },
     // Our Markdown rules (and used for JSDoc examples as well, by way of
     //   our use of `matchingFileName` in conjunction with
     //   `jsdoc/check-examples` within `ash-nazg`)
@@ -126,7 +124,12 @@ module.exports = {
         "padded-blocks": ["off"],
         "import/unambiguous": ["off"],
         "import/no-unresolved": ["off"],
-        "node/no-missing-import": ["off"]
+        "node/no-missing-import": ["off"],
+        "no-multi-spaces": "off",
+        "sonarjs/no-all-duplicated-branches": "off",
+        "no-alert": "off",
+        // Disable until may fix https://github.com/gajus/eslint-plugin-jsdoc/issues/211
+        "indent": "off"
       }
     },
     // Dis-apply Node rules mistakenly giving errors with browser files,
@@ -151,7 +154,7 @@ module.exports = {
       // Node files
       files: [
         "docs/jsdoc-config.js",
-        "build-html.js", "jsdoc-check-overly-generic-types.js",
+        "build-html.js",
         "rollup.config.js", "rollup-config.config.js"
       ],
       env: {
@@ -184,8 +187,11 @@ module.exports = {
     }
   ],
   rules: {
+    // The Babel transform seems to have a problem converting these
+    "prefer-named-capture-group": "off",
     // Override these `ash-nazg/sauron` rules which are difficult for us
     //   to apply at this time
+    "unicorn/prefer-string-slice": "off",
     "default-case": "off",
     "require-unicode-regexp": "off",
     "max-len": ["off", {

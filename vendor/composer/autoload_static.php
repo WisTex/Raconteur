@@ -23,6 +23,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
         '20ed976102eb0f85eff007c4d1dc1db8' => __DIR__ . '/..' . '/indieweb/rel-me/RelMe.php',
+        'e39a8b23c42d4e1452234d762b03835a' => __DIR__ . '/..' . '/ramsey/uuid/src/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -1730,6 +1731,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Module\\Photo' => __DIR__ . '/../..' . '/Zotlabs/Module/Photo.php',
         'Zotlabs\\Module\\Photomap' => __DIR__ . '/../..' . '/Zotlabs/Module/Photomap.php',
         'Zotlabs\\Module\\Photos' => __DIR__ . '/../..' . '/Zotlabs/Module/Photos.php',
+        'Zotlabs\\Module\\Pin' => __DIR__ . '/../..' . '/Zotlabs/Module/Pin.php',
         'Zotlabs\\Module\\Ping' => __DIR__ . '/../..' . '/Zotlabs/Module/Ping.php',
         'Zotlabs\\Module\\Poco' => __DIR__ . '/../..' . '/Zotlabs/Module/Poco.php',
         'Zotlabs\\Module\\Poke' => __DIR__ . '/../..' . '/Zotlabs/Module/Poke.php',
@@ -2111,6 +2113,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Widget\\Photo' => __DIR__ . '/../..' . '/Zotlabs/Widget/Photo.php',
         'Zotlabs\\Widget\\Photo_albums' => __DIR__ . '/../..' . '/Zotlabs/Widget/Photo_albums.php',
         'Zotlabs\\Widget\\Photo_rand' => __DIR__ . '/../..' . '/Zotlabs/Widget/Photo_rand.php',
+        'Zotlabs\\Widget\\Pinned' => __DIR__ . '/../..' . '/Zotlabs/Widget/Pinned.php',
         'Zotlabs\\Widget\\Portfolio' => __DIR__ . '/../..' . '/Zotlabs/Widget/Portfolio.php',
         'Zotlabs\\Widget\\Profile' => __DIR__ . '/../..' . '/Zotlabs/Widget/Profile.php',
         'Zotlabs\\Widget\\Pubsites' => __DIR__ . '/../..' . '/Zotlabs/Widget/Pubsites.php',
