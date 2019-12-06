@@ -152,6 +152,25 @@ function confirmDelete() {
 	return confirm(aStr.delitem);
 }
 
+function getSelectedText() { 
+	var selectedText = ''; 
+  
+	// window.getSelection 
+	if (window.getSelection) { 
+		selectedText = window.getSelection(); 
+	} 
+	// document.getSelection 
+	else if (document.getSelection) { 
+		selectedText = document.getSelection(); 
+	}
+	// document.selection 
+	else if (document.selection) { 
+		selectedText =  document.selection.createRange().text; 
+	} else return; 
+    return selectedText;
+} 
+
+
 function handle_comment_form(e) {
 	e.stopPropagation();
 
@@ -193,6 +212,10 @@ function handle_comment_form(e) {
 		
 		form.find(':not(:visible)').show();
 		commentAuthors(commentId);
+		var quoted = getSelectedText();
+		var tmpStr = $("#comment-edit-text-" + commentId).val();
+		$("#comment-edit-text-" + commentId).val(tmpStr + quoted);
+
 	}
 
 	// handle click outside of form (close empty forms)
