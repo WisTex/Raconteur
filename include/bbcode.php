@@ -1456,7 +1456,7 @@ function bbcode($Text, $options = []) {
 	if (strpos($Text,'[/img]') !== false) {
 		$Text = preg_replace("/\[img\](.*?)\[\/img\]/ism", '<img style="max-width: 100%;" src="$1" alt="' . t('Image/photo') . '" />', $Text);
 		// Friendica's modified bbcode img tags
-		$Text = preg_replace("/\[img=(.*?)\](.*?)\[\/img\]/ism", '<img style="max-width: 100%;" src="$1" alt="' . t('Image/photo') . '" />', $Text);
+		$Text = preg_replace("/\[img=http(.*?)\](.*?)\[\/img\]/ism", '<img style="max-width: 100%;" src="http$1" alt="' . t('Image/photo') . '" />', $Text);
 	}
 	if (strpos($Text,'[/zmg]') !== false) {
 		$Text = preg_replace("/\[zmg\](.*?)\[\/zmg\]/ism", '<img class="zrl" style="max-width: 100%;" src="$1" alt="' . t('Image/photo') . '" />', $Text);
