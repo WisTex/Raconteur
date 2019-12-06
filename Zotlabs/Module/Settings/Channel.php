@@ -164,7 +164,7 @@ class Channel {
 		$adult            = (($_POST['adult'] == 1) ? 1 : 0);
 		$defpermcat       = ((x($_POST,'defpermcat')) ? notags(trim($_POST['defpermcat'])) : 'default');
 
-		$hide_friends      = ((x($_POST,'hide_friends')) ? 1 - intval($_POST['hide_friends'])  : 0);  
+		$hide_friends      = 1 - intval($_POST['hide_friends']);  
 
 		$cal_first_day   = (((x($_POST,'first_day')) && intval($_POST['first_day']) >= 0 && intval($_POST['first_day']) < 7) ? intval($_POST['first_day']) : 0);
 		$mailhost        = ((array_key_exists('mailhost',$_POST)) ? notags(trim($_POST['mailhost'])) : '');
