@@ -180,7 +180,7 @@
 		else {
 			$mindate = (($_REQUEST['mindate']) ? datetime_convert(date_default_timezone_get(),'UTC',$_REQUEST['mindate']) : '');
         	if(! $mindate)
-            	$mindate = datetime_convert(date_defualt_timezone_get(),'UTC', 'now - 14 days');
+            	$mindate = datetime_convert(date_default_timezone_get(),'UTC', 'now - 14 days');
 
 			json_return_and_die(zot_feed($channel['channel_id'],$channel['channel_hash'],[ 'mindate' => $mindate ]));
 		}

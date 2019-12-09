@@ -404,7 +404,7 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 	if(! array_key_exists('item_origin',$arr))
 		$arr['item_origin'] = 1;
 	if(! array_key_exists('item_wall',$arr) && (! $is_comment))
-		$arr['item_wall'] = 1;
+		$arr['item_wall'] = 0;
 	if(! array_key_exists('item_thread_top',$arr) && (! $is_comment))
 		$arr['item_thread_top'] = 1;
 
