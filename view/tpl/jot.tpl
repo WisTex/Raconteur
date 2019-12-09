@@ -50,11 +50,6 @@
 		</div>
 		{{/if}}
 		<div id="jot-text-wrap">
-			{{if $reset}}
-			<button id="profile-jot-reset" class="btn btn-outline-secondary btn-sm d-none border-0" title="{{$reset}}" onclick="itemCancel(); return false;">
-				<i class="fa fa-close"></i>
-			</button>
-			{{/if}}
 			<textarea class="profile-jot-text" id="profile-jot-text" name="body" tabindex="3" placeholder="{{$placeholdtext}}" >{{$content}}</textarea>
 		</div>
 		{{if $attachment}}
@@ -203,6 +198,11 @@
 				{{/if}}
 				<button id="dbtn-submit" class="btn btn-primary btn-sm" type="submit" tabindex="3" name="button-submit">{{$share}}</button>
 			</div>
+			{{if $reset}}
+			<button id="profile-jot-reset" class="btn btn-outline-secondary btn-sm float-right" title="{{$reset}}" onclick="itemCancel(); return false;">
+				<i class="fa fa-close"></i>
+			</button>
+			{{/if}}
 			<div class="clear"></div>
 			{{if $jotplugins}}
 			<div id="profile-jot-plugin-wrapper" class="mt-2">

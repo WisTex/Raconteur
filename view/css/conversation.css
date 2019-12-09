@@ -33,9 +33,10 @@
 }
 
 #profile-jot-reset {
-	position: absolute;
+	margin-right: 0.5rem;
+/*	position: absolute;
 	top: 0px;
-	right: 0px;
+	right: 0px; */
 }
 .comment-reset {
 	margin-right: 0.5rem;
