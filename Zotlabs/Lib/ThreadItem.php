@@ -371,7 +371,7 @@ class ThreadItem {
 			$viewthread = z_root() . '/channel/' . $owner_address . '?f=&mid=' . urlencode(gen_link_id($item['mid']));
 
 		$comment_count_txt = sprintf( tt('%d comment','%d comments',$total_children),$total_children );
-		$list_unseen_txt = (($unseen_comments) ? sprintf('%d unseen',$unseen_comments) : '');
+		$list_unseen_txt = (($unseen_comments) ? sprintf( t('%d unseen'),$unseen_comments) : '');
 		
 		$children = $this->get_children();
 

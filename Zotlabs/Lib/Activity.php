@@ -1812,7 +1812,7 @@ class Activity {
 			$s['item_deleted'] = 1;
 		}
 
-		if (array_key_exists('sensitive',$act->obj) && boolval($act->obj['sensitive'])) {
+		if ($act->obj && array_key_exists('sensitive',$act->obj) && boolval($act->obj['sensitive'])) {
 			$s['item_nsfw'] = 1;
 		}
 
@@ -2453,6 +2453,11 @@ class Activity {
 
 		$ret = false;
 
+		if (! is_array($content)) {
+			btlogger('content not initialised');
+			return $ret;
+		}
+		
 		if (is_array($content[$field])) {
 			foreach ($content[$field] as $k => $v) {
 				$ret .= html2bbcode($v);
