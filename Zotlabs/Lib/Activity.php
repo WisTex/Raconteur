@@ -1730,7 +1730,7 @@ class Activity {
 
 
 		if (in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block', 'Announce', 'Accept', 'Reject',
-			'TentativeAccept', 'TentativeReject', 'emojiReaction' ])) {
+			'TentativeAccept', 'TentativeReject', 'emojiReaction', 'EmojiReaction' ])) {
 
 			$response_activity = true;
 
@@ -1785,6 +1785,10 @@ class Activity {
 			}
 			if ($act->type === 'emojiReaction') {
 				$content['content'] = (($act->tgt && $act->tgt['type'] === 'Image') ? '[img=32x32]' . $act->tgt['url'] . '[/img]' : '&#x' . $act->tgt['name'] . ';');
+			}
+			if ($act->type === 'EmojiReaction') {
+				// Pleroma and Misskey emoji reactions
+				$content['content'] = self::get_textfield($act,'content');
 			}
 		}
 

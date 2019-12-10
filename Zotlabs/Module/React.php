@@ -1,7 +1,7 @@
 <?php
-
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Daemon\Master;
@@ -16,7 +16,7 @@ class React extends Controller {
 			return;
 
 		$sys = get_sys_channel();
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
 		$postid = $_REQUEST['postid'];
 
