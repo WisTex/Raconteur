@@ -1764,6 +1764,14 @@ class Activity {
 
 			if ($act->type === 'Like') {
 				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $content['content'];
+				if (array_key_exists($act->data['_misskey_reaction'])) {
+					// @todo we should probably map and render the known misskey reaction emojis but hopefully
+					// an emojireaction standard will emerge and this will be pointless.
+					// The value provided is probably an emoji shortname. 
+					$content['content'] = purify_html($act->data['_misskey_reaction']);
+					// change the type so it won't be turned into an invisible like activity. 
+					$act->type = 'MisskeyReaction';
+				}
 			}
 			if ($act->type === 'Dislike') {
 				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $content['content'];
@@ -1787,7 +1795,7 @@ class Activity {
 				$content['content'] = (($act->tgt && $act->tgt['type'] === 'Image') ? '[img=32x32]' . $act->tgt['url'] . '[/img]' : '&#x' . $act->tgt['name'] . ';');
 			}
 			if ($act->type === 'EmojiReaction') {
-				// Pleroma and Misskey emoji reactions
+				// Pleroma emoji reactions
 				$content['content'] = self::get_textfield($act,'content');
 			}
 		}
