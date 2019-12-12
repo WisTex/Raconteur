@@ -170,6 +170,9 @@ function getSelectedText() {
     return selectedText;
 } 
 
+function commentCancel(commentId) {
+	$("#comment-edit-text-" + commentId).val('');
+}
 
 function handle_comment_form(e) {
 	e.stopPropagation();
@@ -211,13 +214,17 @@ function handle_comment_form(e) {
 		$('#' + submitElm).attr('tabindex','10');
 		
 		form.find(':not(:visible)').show();
-		commentAuthors(commentId);
+		if(! expanded.length) {
+			commentAuthors(commentId);
+		}
 		var quoted = getSelectedText();
 		var tmpStr = $("#comment-edit-text-" + commentId).val();
-		$("#comment-edit-text-" + commentId).val(tmpStr + quoted);
-
+		if(quoted != '') {
+			$("#comment-edit-text-" + commentId).val(tmpStr + '[quote]' + quoted + '[/quote]');
+		}
 	}
 
+	
 	// handle click outside of form (close empty forms)
 	$(document).on('click', function(e) {
 		fields.each(function() {

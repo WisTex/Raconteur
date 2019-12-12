@@ -1730,7 +1730,7 @@ class Activity {
 
 
 		if (in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block', 'Announce', 'Accept', 'Reject',
-			'TentativeAccept', 'TentativeReject', 'emojiReaction' ])) {
+			'TentativeAccept', 'TentativeReject', 'emojiReaction', 'EmojiReaction' ])) {
 
 			$response_activity = true;
 
@@ -1764,6 +1764,14 @@ class Activity {
 
 			if ($act->type === 'Like') {
 				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $content['content'];
+				if (array_key_exists($act->data['_misskey_reaction'])) {
+					// @todo we should probably map and render the known misskey reaction emojis but hopefully
+					// an emojireaction standard will emerge and this will be pointless.
+					// The value provided is probably an emoji shortname. 
+					$content['content'] = purify_html($act->data['_misskey_reaction']);
+					// change the type so it won't be turned into an invisible like activity. 
+					$act->type = 'MisskeyReaction';
+				}
 			}
 			if ($act->type === 'Dislike') {
 				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $content['content'];
@@ -1785,6 +1793,10 @@ class Activity {
 			}
 			if ($act->type === 'emojiReaction') {
 				$content['content'] = (($act->tgt && $act->tgt['type'] === 'Image') ? '[img=32x32]' . $act->tgt['url'] . '[/img]' : '&#x' . $act->tgt['name'] . ';');
+			}
+			if ($act->type === 'EmojiReaction') {
+				// Pleroma emoji reactions
+				$content['content'] = self::get_textfield($act,'content');
 			}
 		}
 
@@ -1812,7 +1824,7 @@ class Activity {
 			$s['item_deleted'] = 1;
 		}
 
-		if (array_key_exists('sensitive',$act->obj) && boolval($act->obj['sensitive'])) {
+		if ($act->obj && array_key_exists('sensitive',$act->obj) && boolval($act->obj['sensitive'])) {
 			$s['item_nsfw'] = 1;
 		}
 
@@ -2453,6 +2465,11 @@ class Activity {
 
 		$ret = false;
 
+		if (! is_array($content)) {
+			btlogger('content not initialised');
+			return $ret;
+		}
+		
 		if (is_array($content[$field])) {
 			foreach ($content[$field] as $k => $v) {
 				$ret .= html2bbcode($v);
