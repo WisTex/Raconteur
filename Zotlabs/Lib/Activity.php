@@ -1764,7 +1764,7 @@ class Activity {
 
 			if ($act->type === 'Like') {
 				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $content['content'];
-				if (array_key_exists($act->data['_misskey_reaction'])) {
+				if (array_key_exists('_misskey_reaction',$act->data)) {
 					// @todo we should probably map and render the known misskey reaction emojis but hopefully
 					// an emojireaction standard will emerge and this will be pointless.
 					// The value provided is probably an emoji shortname. 
