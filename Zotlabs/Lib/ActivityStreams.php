@@ -32,7 +32,8 @@ class ActivityStreams {
 	public $sigok      = false;
 	public $recips     = null;
 	public $raw_recips = null;
-
+	public $implied_create = false;
+	
 	/**
 	 * @brief Constructor for ActivityStreams.
 	 *
@@ -115,7 +116,8 @@ class ActivityStreams {
 
 			// Implied create activity required by C2S specification if no object is present
 			
-			if ($client && ! $this->obj) {
+			if (! $this->obj) {
+				$this->implied_create = true;
 				$this->obj = $this->data;
 				$this->type = 'Create';
 				if (! $this->actor) {

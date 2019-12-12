@@ -172,6 +172,7 @@ function getSelectedText() {
 
 function commentCancel(commentId) {
 	$("#comment-edit-text-" + commentId).val('');
+	localStorage.removeItem("comment_body-" + commentId);		
 }
 
 function handle_comment_form(e) {
