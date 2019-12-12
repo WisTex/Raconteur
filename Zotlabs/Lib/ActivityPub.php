@@ -245,7 +245,7 @@ class ActivityPub {
 				'id'     => z_root() . '/follow/' . $x['recipient']['abook_id'],
 				'type'   => 'Follow',
 				'actor'  => $p,
-				'object' => $x['recipient']['xchan_url'],
+				'object' => $x['recipient']['xchan_hash'],
 				'to'     => [ $x['recipient']['xchan_hash'] ]
 		]);
 
