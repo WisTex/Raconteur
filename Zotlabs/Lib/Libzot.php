@@ -1575,6 +1575,11 @@ class Libzot {
 			}
 		}
 
+		if ($act->implied_activity) {
+			logger('implied activity. Not delivering/storing.');
+			return;
+		}
+
 		foreach ($deliveries as $d) {
 
 			$local_public = $public;

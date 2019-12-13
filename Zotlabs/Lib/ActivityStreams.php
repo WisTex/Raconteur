@@ -117,7 +117,9 @@ class ActivityStreams {
 			// Implied create activity required by C2S specification if no object is present
 			
 			if (! $this->obj) {
-				$this->implied_create = true;
+				if (! $client) {
+					$this->implied_create = true;
+				}
 				$this->obj = $this->data;
 				$this->type = 'Create';
 				if (! $this->actor) {
