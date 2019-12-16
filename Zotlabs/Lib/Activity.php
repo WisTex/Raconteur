@@ -2094,6 +2094,13 @@ class Activity {
 
 	static function store($channel,$observer_hash,$act,$item,$fetch_parents = true) {
 
+
+		if ($act && $act->implied_create) {
+			// This is originally a S2S object with no associated activity
+			logger('Not storing implied create activity!');
+			return;
+		}
+
 		$is_sys_channel = is_sys_channel($channel['channel_id']);
 		$is_child_node = false;
 
