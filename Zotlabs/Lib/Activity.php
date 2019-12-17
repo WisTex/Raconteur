@@ -2537,11 +2537,19 @@ class Activity {
 		}
 
 		if ($event) {
-			$event['summary'] = html2bbcode($content['summary']);
+			$event['summary'] = html2plain(purify_html($content['summary']),256);
 			if (! $event['summary']) {
 				if ($content['name']) {
 					$event['summary'] = html2plain(purify_html($content['name']),256);
 				}
+			}
+			if (! $event['summary']) {
+				if ($content['content']) {
+					$event['summary'] = html2plain(purify_html($content['content']),256);
+				}
+			}
+			if ($event['summary']) {
+				$event['summary'] = substr($event['summary'],0,256);
 			}
 			$event['description'] = html2bbcode($content['content']);
 			if ($event['summary'] && $event['dtstart']) {
