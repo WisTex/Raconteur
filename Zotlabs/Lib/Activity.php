@@ -365,15 +365,18 @@ class Activity {
 		// The xchan_url for mastodon is a text/html rendering. This is called from map_mentions where we need
 		// to convert the mention url to an ActivityPub id. If this fails for any reason, return the url we have
 
-		$r = q("select hubloc_id_url from hubloc left join xchan on hubloc_hash = xchan_hash where xchan_url = '%s' and hubloc_primary = 1 limit 1",
+		$r = q("select * from hubloc where hubloc_id_url = '%s' limit 1",
 			dbesc($url)
 		);
 
 		if ($r) {
+			if ($r[0]['hubloc_network'] === 'activitypub') {
+				return $r[0]['hubloc_hash'];
+			}
 			return $r[0]['hubloc_id_url'];
 		}
 
-		return EMPTY_STR;
+		return $url;
 	}
 
 
@@ -601,18 +604,37 @@ class Activity {
 					$ret['to'] = [];
 					if ($ret['tag']) {
 						foreach ($ret['tag'] as $mention) {
-							if (is_array($mention) && array_key_exists('href',$mention) && $mention['href'] && ! in_array($mention['href'],$ret['to'])) {
-								$ret['to'][] = $mention['href'];
+							if (is_array($mention) && array_key_exists('href',$mention) && $mention['href']) {
+								$h = q("select * from hubloc where hubloc_id_url = '%s' limit 1",
+									dbesc($mention['href'])
+								);
+								if ($h) {
+									if ($h[0]['hubloc_network'] === 'activitypub') {
+										$addr = $h[0]['hubloc_hash'];
+									}
+									else {
+										$addr = $h[0]['hubloc_id_url'];
+									}
+									if (! in_array($addr,$ret['to'])) {
+										$ret['to'][] = $addr;
+									}
+								}
 							}
 						}
 					}
-					
-					$d = q("select hubloc_id_url from hubloc left join item on hubloc_hash = owner_xchan where id = %d limit 1",
+
+					$d = q("select hubloc.*  from hubloc left join item on hubloc_hash = owner_xchan where item.id = %d limit 1",
 						intval($i['parent'])
 					);
 					if ($d) {
-						if (! in_array($d[0]['hubloc_id_url'],$ret['to'])) {
-							$ret['cc'] = [ $d[0]['hubloc_id_url'] ];
+						if ($d[0]['hubloc_network'] === 'activitypub') {
+							$addr = $d[0]['hubloc_hash'];
+						}
+						else {
+							$addr = $d[0]['hubloc_id_url'];
+						}
+						if (! in_array($addr,$ret['to'])) {
+							$ret['cc'][] = $addr;
 						}
 					}
 				}
@@ -858,18 +880,37 @@ class Activity {
 					$ret['to'] = [];
 					if ($ret['tag']) {
 						foreach ($ret['tag'] as $mention) {
-							if (is_array($mention) && array_key_exists('href',$mention) && $mention['href'] && ! in_array($mention['href'],$ret['to'])) {
-								$ret['to'][] = $mention['href'];
+							if (is_array($mention) && array_key_exists('href',$mention) && $mention['href']) {
+								$h = q("select * from hubloc where hubloc_id_url = '%s' limit 1",
+									dbesc($mention['href'])
+								);
+								if ($h) {
+									if ($h[0]['hubloc_network'] === 'activitypub') {
+										$addr = $h[0]['hubloc_hash'];
+									}
+									else {
+										$addr = $h[0]['hubloc_id_url'];
+									}
+									if (! in_array($addr,$ret['to'])) {
+										$ret['to'][] = $addr;
+									}
+								}
 							}
 						}
 					}
 
-					$d = q("select hubloc_id_url from hubloc left join item on hubloc_hash = owner_xchan where id = %d limit 1",
+					$d = q("select hubloc.*  from hubloc left join item on hubloc_hash = owner_xchan where item.id = %d limit 1",
 						intval($i['parent'])
 					);
 					if ($d) {
-						if (! in_array($d[0]['hubloc_id_url'],$ret['to'])) {
-							$ret['cc'] = [ $d[0]['hubloc_id_url'] ];
+						if ($d[0]['hubloc_network'] === 'activitypub') {
+							$addr = $d[0]['hubloc_hash'];
+						}
+						else {
+							$addr = $d[0]['hubloc_id_url'];
+						}
+						if (! in_array($addr,$ret['to'])) {
+							$ret['cc'][] = $addr;
 						}
 					}
 				}
