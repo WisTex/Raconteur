@@ -117,6 +117,7 @@
 	{{/foreach}}
 
 	function getData(b64mid, notify_id) {
+		$(document).scrollTop(0);
 		$('.thread-wrapper').remove();
 		bParam_mid = b64mid;
 		mode = 'replace';
