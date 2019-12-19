@@ -2,8 +2,8 @@
 ### MANDATORY - database password #############
 #
 # Please give your database password
+# It is better to not use blanks inside the password.
 #   Example: db_pass=pass_word_with_no_blanks_in_it
-#   Example: db_pass="this password has blanks in it"
 db_pass=
 
 ###############################################
@@ -18,7 +18,12 @@ db_pass=
 #     Example: my.cooldomain.org
 #     Example: cooldomain.org
 #
-# Email is optional
+# You might use "localhost" for a LOCAL TEST installation.
+# This is usefull if you want to debug the server inside a VM.
+#
+#     Example: localhost
+#
+# Email is optional if you use "localhost".
 #
 #
 le_domain=
@@ -28,7 +33,7 @@ le_email=
 ### OPTIONAL - selfHOST - dynamic IP address ##
 #
 # 1. Register a domain at selfhost.de
-#    - choose offer "DOMAIN dynamisch" 1,50€/mon at 08.01.2016
+#    - choose offer "DOMAIN dynamisch" 1,50€/mon at 04/2019
 # 2. Get your configuration for dynamic IP update
 #    - Log in at selfhost.de
 #    - go to "DynDNS Accounte"
