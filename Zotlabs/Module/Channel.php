@@ -89,7 +89,7 @@ class Channel extends Controller {
 					dbesc($sigdata['signer'])
 				);
 
-				if($s) {
+				if($s && $s[0]['hubloc_sitekey'] && $s[0]['site_crypto']) {
 					$data = json_encode(Crypto::encapsulate($data,$s[0]['hubloc_sitekey'],Libzot::best_algorithm($s[0]['site_crypto'])));
 				}
 			}
