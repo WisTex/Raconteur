@@ -41,10 +41,13 @@ class HTTPSig {
 		}
 	}
 
+
+
 	static function find_headers($data,&$body) {
 
 		// decide if $data arrived via controller submission or curl
-
+		// changes $body for the caller
+		
 		if (is_array($data) && $data['header']) {
 			if (! $data['success']) {
 				return [];
@@ -99,7 +102,12 @@ class HTTPSig {
 		if (! $headers) {
 			return $result;
 		}
-		
+
+		if (is_array($body)) {
+			btlogger('body is array!' . print_r($body,true));
+		}
+
+
 		$sig_block = null;
 
 		if (array_key_exists('signature',$headers)) {
