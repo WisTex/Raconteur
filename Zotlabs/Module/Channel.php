@@ -29,8 +29,9 @@ class Channel extends Controller {
 
 	function init() {
 
-		if (in_array(substr($_GET['search'],0,1),[ '@', '!', '?']))	
+		if (in_array(substr($_GET['search'],0,1),[ '@', '!', '?'])) {
 			goaway('search' . '?f=&search=' . $_GET['search']);
+		}
 
 		$which = null;
 		if (argc() > 1) {
