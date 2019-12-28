@@ -2598,6 +2598,25 @@ class Activity {
 			}
 		}
 
+		// simple rendering of incoming polls until they are fully supported
+		
+		if ($act['type'] === 'Question') {
+			if (array_key_exists('anyOf',$act)) {
+				foreach ($act['anyOf'] as $poll) {
+					if (array_key_exists('name',$poll) && $poll['name']) {
+						$content['content'] = '[ ] ' . html2plain(purify_html($poll['name']),256) . "\n";
+					}
+				}
+			}
+			if (array_key_exists('oneOf',$act)) {
+				foreach ($act['oneOf'] as $poll) {
+					if (array_key_exists('name',$poll) && $poll['name']) {
+						$content['content'] = '( ) ' . html2plain(purify_html($poll['name']),256) . "\n";
+					}
+				}
+			}
+		}
+
 		if (array_key_exists('source',$act) && array_key_exists('mediaType',$act['source'])) {
 			if ($act['source']['mediaType'] === 'text/bbcode') {
 				$content['bbcode'] = purify_html($act['source']['content']);
