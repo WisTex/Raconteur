@@ -2604,14 +2604,14 @@ class Activity {
 			if (array_key_exists('anyOf',$act)) {
 				foreach ($act['anyOf'] as $poll) {
 					if (array_key_exists('name',$poll) && $poll['name']) {
-						$content['content'] = '[ ] ' . html2plain(purify_html($poll['name']),256) . "\n";
+						$content['content'] .= '[ ] ' . html2plain(purify_html($poll['name']),256) . "\n";
 					}
 				}
 			}
 			if (array_key_exists('oneOf',$act)) {
 				foreach ($act['oneOf'] as $poll) {
 					if (array_key_exists('name',$poll) && $poll['name']) {
-						$content['content'] = '( ) ' . html2plain(purify_html($poll['name']),256) . "\n";
+						$content['content'] .= '( ) ' . html2plain(purify_html($poll['name']),256) . "\n";
 					}
 				}
 			}
