@@ -2300,7 +2300,7 @@ class Activity {
 				}
 				else {
 					$a = false;
-					if (PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce') {
+					if (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') && (PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce')) {
 						$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
 					}
 					if ($a) {
@@ -2604,14 +2604,14 @@ class Activity {
 			if (array_key_exists('anyOf',$act)) {
 				foreach ($act['anyOf'] as $poll) {
 					if (array_key_exists('name',$poll) && $poll['name']) {
-						$content['content'] .= '[ ] ' . html2plain(purify_html($poll['name']),256) . "\n";
+						$content['content'] .= '[ ] ' . html2plain(purify_html($poll['name']),256) . EOL . EOL;
 					}
 				}
 			}
 			if (array_key_exists('oneOf',$act)) {
 				foreach ($act['oneOf'] as $poll) {
 					if (array_key_exists('name',$poll) && $poll['name']) {
-						$content['content'] .= '( ) ' . html2plain(purify_html($poll['name']),256) . "\n";
+						$content['content'] .= '( ) ' . html2plain(purify_html($poll['name']),256) . EOL . EOL;
 					}
 				}
 			}
