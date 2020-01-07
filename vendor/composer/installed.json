@@ -334,17 +334,17 @@
     },
     {
         "name": "guzzlehttp/guzzle",
-        "version": "6.4.1",
-        "version_normalized": "6.4.1.0",
+        "version": "6.5.2",
+        "version_normalized": "6.5.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/guzzle/guzzle.git",
-            "reference": "0895c932405407fd3a7368b6910c09a24d26db11"
+            "reference": "43ece0e75098b7ecd8d13918293029e555a50f82"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/guzzle/guzzle/zipball/0895c932405407fd3a7368b6910c09a24d26db11",
-            "reference": "0895c932405407fd3a7368b6910c09a24d26db11",
+            "url": "https://api.github.com/repos/guzzle/guzzle/zipball/43ece0e75098b7ecd8d13918293029e555a50f82",
+            "reference": "43ece0e75098b7ecd8d13918293029e555a50f82",
             "shasum": ""
         },
         "require": {
@@ -359,13 +359,14 @@
             "psr/log": "^1.1"
         },
         "suggest": {
+            "ext-intl": "Required for Internationalized Domain Name (IDN) support",
             "psr/log": "Required for using the Log middleware"
         },
-        "time": "2019-10-23T15:58:00+00:00",
+        "time": "2019-12-23T11:57:10+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "6.3-dev"
+                "dev-master": "6.5-dev"
             }
         },
         "installation-source": "dist",
@@ -600,26 +601,28 @@
     },
     {
         "name": "jbroadway/urlify",
-        "version": "1.1.3-stable",
-        "version_normalized": "1.1.3.0",
+        "version": "1.2.0-stable",
+        "version_normalized": "1.2.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/jbroadway/urlify.git",
-            "reference": "37fe4e7680a1c8cd68ac43a27dac7ef4be476300"
+            "reference": "b917c8c9274a9784a2eb30c657fc386ad591fdcd"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/jbroadway/urlify/zipball/37fe4e7680a1c8cd68ac43a27dac7ef4be476300",
-            "reference": "37fe4e7680a1c8cd68ac43a27dac7ef4be476300",
+            "url": "https://api.github.com/repos/jbroadway/urlify/zipball/b917c8c9274a9784a2eb30c657fc386ad591fdcd",
+            "reference": "b917c8c9274a9784a2eb30c657fc386ad591fdcd",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.3.0"
+            "php": ">=7.0.0",
+            "voku/portable-ascii": "^1.4",
+            "voku/stop-words": "^2.0"
         },
         "require-dev": {
-            "phpunit/phpunit": "^4.8.36 || ^5.7 || ^6.5"
+            "phpunit/phpunit": "~6.0 || ~7.0"
         },
-        "time": "2019-06-13T18:30:56+00:00",
+        "time": "2019-12-13T19:53:11+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -707,17 +710,17 @@
     },
     {
         "name": "league/flysystem",
-        "version": "1.0.57",
-        "version_normalized": "1.0.57.0",
+        "version": "1.0.62",
+        "version_normalized": "1.0.62.0",
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/flysystem.git",
-            "reference": "0e9db7f0b96b9f12dcf6f65bc34b72b1a30ea55a"
+            "reference": "14dd5d7dff5fbc29ca9a2a53ff109760e40d91a0"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/0e9db7f0b96b9f12dcf6f65bc34b72b1a30ea55a",
-            "reference": "0e9db7f0b96b9f12dcf6f65bc34b72b1a30ea55a",
+            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/14dd5d7dff5fbc29ca9a2a53ff109760e40d91a0",
+            "reference": "14dd5d7dff5fbc29ca9a2a53ff109760e40d91a0",
             "shasum": ""
         },
         "require": {
@@ -747,7 +750,7 @@
             "spatie/flysystem-dropbox": "Allows you to use Dropbox storage",
             "srmklive/flysystem-dropbox-v2": "Allows you to use Dropbox storage for PHP 5 applications"
         },
-        "time": "2019-10-16T21:01:05+00:00",
+        "time": "2019-12-29T14:46:55+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -793,17 +796,17 @@
     },
     {
         "name": "league/html-to-markdown",
-        "version": "4.9.0",
-        "version_normalized": "4.9.0.0",
+        "version": "4.9.1",
+        "version_normalized": "4.9.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/html-to-markdown.git",
-            "reference": "71319108e3db506250b8987721b13568fd9fa446"
+            "reference": "1dcd0f85de786f46a7f224a27cc3d709ddd2a68c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/71319108e3db506250b8987721b13568fd9fa446",
-            "reference": "71319108e3db506250b8987721b13568fd9fa446",
+            "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/1dcd0f85de786f46a7f224a27cc3d709ddd2a68c",
+            "reference": "1dcd0f85de786f46a7f224a27cc3d709ddd2a68c",
             "shasum": ""
         },
         "require": {
@@ -816,7 +819,7 @@
             "phpunit/phpunit": "^4.8|^5.7",
             "scrutinizer/ocular": "~1.1"
         },
-        "time": "2019-11-02T14:54:14+00:00",
+        "time": "2019-12-28T01:32:28+00:00",
         "bin": [
             "bin/html-to-markdown"
         ],
@@ -1658,23 +1661,23 @@
     },
     {
         "name": "ramsey/uuid",
-        "version": "3.9.1",
-        "version_normalized": "3.9.1.0",
+        "version": "3.9.2",
+        "version_normalized": "3.9.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/ramsey/uuid.git",
-            "reference": "5ac2740e0c8c599d2bbe7f113a939f2b5b216c67"
+            "reference": "7779489a47d443f845271badbdcedfe4df8e06fb"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ramsey/uuid/zipball/5ac2740e0c8c599d2bbe7f113a939f2b5b216c67",
-            "reference": "5ac2740e0c8c599d2bbe7f113a939f2b5b216c67",
+            "url": "https://api.github.com/repos/ramsey/uuid/zipball/7779489a47d443f845271badbdcedfe4df8e06fb",
+            "reference": "7779489a47d443f845271badbdcedfe4df8e06fb",
             "shasum": ""
         },
         "require": {
             "ext-json": "*",
             "paragonie/random_compat": "^1 | ^2 | 9.99.99",
-            "php": "^5.4 | ^7",
+            "php": "^5.4 | ^7 | ^8",
             "symfony/polyfill-ctype": "^1.8"
         },
         "replace": {
@@ -1684,13 +1687,13 @@
             "codeception/aspect-mock": "^1 | ^2",
             "doctrine/annotations": "^1.2",
             "goaop/framework": "1.0.0-alpha.2 | ^1 | ^2.1",
-            "jakub-onderka/php-parallel-lint": "^0.9.0",
-            "mockery/mockery": "^0.9.9",
+            "jakub-onderka/php-parallel-lint": "^1",
+            "mockery/mockery": "^0.9.11 | ^1",
             "moontoast/math": "^1.1",
             "paragonie/random-lib": "^2",
             "php-mock/php-mock-phpunit": "^0.3 | ^1.1",
             "phpunit/phpunit": "^4.8 | ^5.4 | ^6.5",
-            "squizlabs/php_codesniffer": "^2.3"
+            "squizlabs/php_codesniffer": "^3.5"
         },
         "suggest": {
             "ext-ctype": "Provides support for PHP Ctype functions",
@@ -1702,7 +1705,7 @@
             "ramsey/uuid-console": "A console application for generating UUIDs with ramsey/uuid",
             "ramsey/uuid-doctrine": "Allows the use of Ramsey\\Uuid\\Uuid as Doctrine field type."
         },
-        "time": "2019-12-01T04:55:27+00:00",
+        "time": "2019-12-17T08:18:51+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2002,17 +2005,17 @@
     },
     {
         "name": "sabre/vobject",
-        "version": "4.2.0",
-        "version_normalized": "4.2.0.0",
+        "version": "4.2.1",
+        "version_normalized": "4.2.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/sabre-io/vobject.git",
-            "reference": "bd500019764e434ff65872d426f523e7882a0739"
+            "reference": "6d7476fbd227ae285029c19ad518cd451336038c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sabre-io/vobject/zipball/bd500019764e434ff65872d426f523e7882a0739",
-            "reference": "bd500019764e434ff65872d426f523e7882a0739",
+            "url": "https://api.github.com/repos/sabre-io/vobject/zipball/6d7476fbd227ae285029c19ad518cd451336038c",
+            "reference": "6d7476fbd227ae285029c19ad518cd451336038c",
             "shasum": ""
         },
         "require": {
@@ -2026,7 +2029,7 @@
         "suggest": {
             "hoa/bench": "If you would like to run the benchmark scripts"
         },
-        "time": "2019-02-19T13:05:37+00:00",
+        "time": "2019-12-18T19:29:43+00:00",
         "bin": [
             "bin/vobject",
             "bin/generate_vcards"
@@ -2165,17 +2168,17 @@
     },
     {
         "name": "simplepie/simplepie",
-        "version": "1.5.3",
-        "version_normalized": "1.5.3.0",
+        "version": "1.5.4",
+        "version_normalized": "1.5.4.0",
         "source": {
             "type": "git",
             "url": "https://github.com/simplepie/simplepie.git",
-            "reference": "173663382a9346acd53df60c7ffb20689c9cf1f6"
+            "reference": "f4c8246511a38fc9d99a59fb42f61eeeafb31663"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/simplepie/simplepie/zipball/173663382a9346acd53df60c7ffb20689c9cf1f6",
-            "reference": "173663382a9346acd53df60c7ffb20689c9cf1f6",
+            "url": "https://api.github.com/repos/simplepie/simplepie/zipball/f4c8246511a38fc9d99a59fb42f61eeeafb31663",
+            "reference": "f4c8246511a38fc9d99a59fb42f61eeeafb31663",
             "shasum": ""
         },
         "require": {
@@ -2194,7 +2197,7 @@
             "ext-mbstring": "",
             "mf2/mf2": "Microformat module that allows for parsing HTML for microformats"
         },
-        "time": "2019-09-22T23:21:30+00:00",
+        "time": "2019-11-23T07:05:15+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2236,7 +2239,7 @@
             "rss"
         ],
         "support": {
-            "source": "https://github.com/simplepie/simplepie/tree/1.5.3",
+            "source": "https://github.com/simplepie/simplepie/tree/1.5.4",
             "issues": "https://github.com/simplepie/simplepie/issues"
         }
     },
@@ -2413,8 +2416,8 @@
     },
     {
         "name": "symfony/options-resolver",
-        "version": "v5.0.1",
-        "version_normalized": "5.0.1.0",
+        "version": "v5.0.2",
+        "version_normalized": "5.0.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/options-resolver.git",
@@ -2529,23 +2532,23 @@
     },
     {
         "name": "symfony/process",
-        "version": "v5.0.1",
-        "version_normalized": "5.0.1.0",
+        "version": "v5.0.2",
+        "version_normalized": "5.0.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/process.git",
-            "reference": "1568a2e8370fbc7416ef64eb5a698e4a05db5ff4"
+            "reference": "ea2dc31b59d63abd9bc2356ac72eb7b3f3469f0e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/process/zipball/1568a2e8370fbc7416ef64eb5a698e4a05db5ff4",
-            "reference": "1568a2e8370fbc7416ef64eb5a698e4a05db5ff4",
+            "url": "https://api.github.com/repos/symfony/process/zipball/ea2dc31b59d63abd9bc2356ac72eb7b3f3469f0e",
+            "reference": "ea2dc31b59d63abd9bc2356ac72eb7b3f3469f0e",
             "shasum": ""
         },
         "require": {
             "php": "^7.2.5"
         },
-        "time": "2019-11-28T14:20:16+00:00",
+        "time": "2019-12-10T11:06:55+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2629,6 +2632,102 @@
             "responsive",
             "sass",
             "web"
+        ]
+    },
+    {
+        "name": "voku/portable-ascii",
+        "version": "1.4.6",
+        "version_normalized": "1.4.6.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/voku/portable-ascii.git",
+            "reference": "8b23920025c9b040301e3d1443b302547560f48d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/voku/portable-ascii/zipball/8b23920025c9b040301e3d1443b302547560f48d",
+            "reference": "8b23920025c9b040301e3d1443b302547560f48d",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=7.0.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~6.0 || ~7.0"
+        },
+        "suggest": {
+            "ext-intl": "Use Intl for transliterator_transliterate() support"
+        },
+        "time": "2019-12-23T12:30:26+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "voku\\": "src/voku/",
+                "voku\\tests\\": "tests/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Lars Moelleken",
+                "homepage": "http://www.moelleken.org/"
+            }
+        ],
+        "description": "Portable ASCII library - performance optimized (ascii) string functions for php.",
+        "homepage": "https://github.com/voku/portable-ascii",
+        "keywords": [
+            "ascii",
+            "clean",
+            "php"
+        ]
+    },
+    {
+        "name": "voku/stop-words",
+        "version": "2.0.1",
+        "version_normalized": "2.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/voku/stop-words.git",
+            "reference": "8e63c0af20f800b1600783764e0ce19e53969f71"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/voku/stop-words/zipball/8e63c0af20f800b1600783764e0ce19e53969f71",
+            "reference": "8e63c0af20f800b1600783764e0ce19e53969f71",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=7.0.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~6.0"
+        },
+        "time": "2018-11-23T01:37:27+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "voku\\": "src/voku/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Lars Moelleken",
+                "homepage": "http://www.moelleken.org/"
+            }
+        ],
+        "description": "Stop-Words via PHP",
+        "keywords": [
+            "stop words",
+            "stop-words"
         ]
     }
 ]

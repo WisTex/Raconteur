@@ -2787,7 +2787,7 @@ function tgroup_check($uid, $item) {
  */
 function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false) {
 
-	btlogger('start_chain: ' . $channel['channel_id'] . ' item: ' . $item_id);
+	// btlogger('start_chain: ' . $channel['channel_id'] . ' item: ' . $item_id);
 	
 	$sourced = check_item_source($channel['channel_id'],$item);
 
