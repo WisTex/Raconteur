@@ -697,7 +697,7 @@ class Activity {
 			if ($num_bbtags) {
 
 				foreach ($bbtags as $t) {
-					if((! $t[1]) || (in_array($t[1],['url','zrl','img','zmg','share','app']))) {
+					if((! $t[1]) || (in_array($t[1],['url','zrl','img','zmg','share','app','quote']))) {
 						continue;
 					}
 					$convert_to_article = true;
@@ -814,7 +814,13 @@ class Activity {
 			if ($i['summary']) {
 				$ret['summary'] = bbcode($i['summary'], [ $bbopts => true ]);
 			}
-			$ret['content'] = bbcode($i['body'], [ $bbopts => true ]);
+			$opts = [ $bbopts => true ];
+			if ($activitypub && ! $convert_to_article) {
+				// This converts blockquote tags to unicode quotes to retain some sense of context after going
+				// through Mastodon's aggressive HTML purifier
+				$opts['plain'] = true;
+			}
+			$ret['content'] = bbcode($i['body'], $opts);
 			$ret['source'] = [ 'content' => $i['body'], 'mediaType' => 'text/bbcode' ];
 			if ($ret['summary']) {
 				$ret['source']['summary'] = $i['summary'];
@@ -831,14 +837,15 @@ class Activity {
 
 		$ret['url'] = $ret['id'];
 
-
-
-//		$ret['url'] = [
-//			'type'      => 'Link',
-//			'rel'       => 'alternate',
-//			'mediaType' => 'text/html',
-//			'href'      => $ret['id']
-//		];
+		// Very few ActivityPub projects currently support url as array
+		// and most will choke and die if you supply one here.
+		
+		//		$ret['url'] = [
+		//			'type'      => 'Link',
+		//			'rel'       => 'alternate',
+		//			'mediaType' => 'text/html',
+		//			'href'      => $ret['id']
+		//		];
 
 		$t = self::encode_taxonomy($i);
 		if ($t) {
@@ -2308,7 +2315,7 @@ class Activity {
 				}
 				else {
 					$a = false;
-					if (PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce') {
+					if (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') && (PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce')) {
 						$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
 					}
 					if ($a) {
@@ -2612,14 +2619,14 @@ class Activity {
 			if (array_key_exists('anyOf',$act)) {
 				foreach ($act['anyOf'] as $poll) {
 					if (array_key_exists('name',$poll) && $poll['name']) {
-						$content['content'] .= '[ ] ' . html2plain(purify_html($poll['name']),256) . "\n";
+						$content['content'] .= '[ ] ' . html2plain(purify_html($poll['name']),256) . EOL . EOL;
 					}
 				}
 			}
 			if (array_key_exists('oneOf',$act)) {
 				foreach ($act['oneOf'] as $poll) {
 					if (array_key_exists('name',$poll) && $poll['name']) {
-						$content['content'] .= '( ) ' . html2plain(purify_html($poll['name']),256) . "\n";
+						$content['content'] .= '( ) ' . html2plain(purify_html($poll['name']),256) . EOL . EOL;
 					}
 				}
 			}
