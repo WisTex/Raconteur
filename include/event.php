@@ -1182,6 +1182,7 @@ function event_store_item($arr, $event) {
 		$item_arr['author_xchan']    = $arr['event_xchan'];
 		$item_arr['mid']             = $arr['mid'];
 		$item_arr['parent_mid']      = $arr['mid'];
+		$item_arr['uuid']            = $event['event_hash'];
 		$item_arr['owner_xchan']     = (($wall) ? $z['channel_hash'] : $arr['event_xchan']);
 		$item_arr['author_xchan']    = $arr['event_xchan'];
 		$item_arr['summary']         = $arr['summary'];
