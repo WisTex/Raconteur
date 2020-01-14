@@ -3383,7 +3383,7 @@ function print_val($v, $escape = true) {
 
 function array_path_exists($str,$arr) {
 
-	if (! $arr) {
+	if (! ($arr && is_array($arr))) {
 		return false;
 	}
 

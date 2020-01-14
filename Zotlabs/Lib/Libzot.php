@@ -1215,8 +1215,10 @@ class Libzot {
 		
 		if ($arr && $env['type'] !== 'sync') {
 			if (strpos($arr['mid'],'http') === false && strpos($arr['mid'],'x-zot') === false) {
-				logger('activity rejected: legacy message-id');
-				return;
+				if (strpos($arr['mid'],'bear:') === false) {
+					logger('activity rejected: legacy message-id');
+					return;
+				}
 			}
 
 			if ($arr['verb'] === 'Create' && ActivityStreams::is_an_actor($arr['obj_type'])) {
@@ -1799,7 +1801,6 @@ class Libzot {
 					if ((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {
 						self::fetch_conversation($channel,$arr['parent_mid']);
-
 					}
 					continue;
 				}
@@ -2515,8 +2516,8 @@ class Libzot {
 		if ($x && count($x)) {
 			foreach ($x as $hub) {
 
-				// if this is a local channel that has been deleted, the hubloc is no good - make sure it is marked deleted
-				// so that nobody tries to use it.
+				// if this is a local channel that has been deleted, the hubloc is no good
+				// - make sure it is marked deleted so that nobody tries to use it.
 
 				if (intval($channel['channel_removed']) && $hub['hubloc_url'] === z_root()) {
 					$hub['hubloc_deleted'] = 1;

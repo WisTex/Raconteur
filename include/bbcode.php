@@ -1003,7 +1003,8 @@ function bbcode($Text, $options = []) {
 	$export      = ((array_key_exists('export',$options)) ? $options['export'] : false);
 	$activitypub = ((array_key_exists('activitypub',$options)) ? $options['activitypub'] : false);
 	$censored    = ((array_key_exists('censored',$options)) ? $options['censored'] : false);
-
+	$plain       = ((array_key_exists('plain',$options)) ? $options['plain'] : false);
+	
 	if ($activitypub) {
 		$export = true;
 	}
@@ -1433,6 +1434,7 @@ function bbcode($Text, $options = []) {
 	// Declare the format for [quote] layout
 	$QuoteLayout = '<blockquote>$1</blockquote>';
 
+
 	// Check for [quote] text
 	// handle nested quotes
 	$endlessloop = 0;
@@ -1449,6 +1451,11 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace("/\[quote=[\"\']*(.*?)[\"\']*\](.*?)\[\/quote\]/ism",
 			"<span class=".'"bb-quote"'.">" . $t_wrote . "</span><blockquote>$2</blockquote>",
 			$Text);
+
+	if ($plain) {
+		$Text = str_replace([ '<blockquote>','</blockquote>' ], [ '“', '”' ], $Text);
+	}
+
 
 	// Images
 

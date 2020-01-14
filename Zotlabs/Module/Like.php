@@ -60,7 +60,14 @@ class Like extends Controller {
 			return EMPTY_STR; 
 		}
 
-	
+		$is_rsvp = false;
+		
+		if (in_array($activity, [ 'Accept', 'Reject', 'TentativeAccept' ])) {
+			$is_rsvp = true;
+		}
+
+
+
 		$extended_like = false;
 		$object = $target = null;
 		$post_type = EMPTY_STR;
@@ -328,7 +335,7 @@ class Like extends Controller {
 		$arr = array();
 
 		$arr['uuid']  = $uuid;
-        $arr['mid'] = z_root() . '/item/' . $uuid;
+        $arr['mid'] = z_root() . (($is_rsvp) ? '/activity/' : '/item/' ) . $uuid;
 
 	
 		if($extended_like) {

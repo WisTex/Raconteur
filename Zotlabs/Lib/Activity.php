@@ -168,6 +168,9 @@ class Activity {
 		if ($r) {
 			xchan_query($r,true);
 			$r = fetch_post_tags($r,true);
+			if ($r[0]['verb'] === 'Invite') {
+				return self::encode_activity($r[0],$activitypub);
+			}
 			return self::encode_item($r[0],$activitypub);
 		}
 	}
@@ -521,10 +524,10 @@ class Activity {
 		if ($i['mid'] !== $i['parent_mid']) {
 			$reply = true;
 
-			// inReplyTo needs to be set in the activity for followup actiions (Like, Dislike, Attend, Announce, etc.),
-			// but *not* for comments, where it should only be present in the object
+			// inReplyTo needs to be set in the activity for followup actions (Like, Dislike, Announce, etc.),
+			// but *not* for comments and RSVPs, where it should only be present in the object
 			
-			if (! in_array($ret['type'],[ 'Create','Update' ])) {
+			if (! in_array($ret['type'],[ 'Create','Update','Accept','Reject','TentativeAccept','TentativeReject' ])) {
 				$ret['inReplyTo'] = $i['thr_parent'];
 				$cnv = get_iconfig($i['parent'],'ostatus','conversation');
 				if (! $cnv) {
@@ -694,7 +697,7 @@ class Activity {
 			if ($num_bbtags) {
 
 				foreach ($bbtags as $t) {
-					if((! $t[1]) || (in_array($t[1],['url','zrl','img','zmg','share','app']))) {
+					if((! $t[1]) || (in_array($t[1],['url','zrl','img','zmg','share','app','quote']))) {
 						continue;
 					}
 					$convert_to_article = true;
@@ -811,7 +814,13 @@ class Activity {
 			if ($i['summary']) {
 				$ret['summary'] = bbcode($i['summary'], [ $bbopts => true ]);
 			}
-			$ret['content'] = bbcode($i['body'], [ $bbopts => true ]);
+			$opts = [ $bbopts => true ];
+			if ($activitypub && ! $convert_to_article) {
+				// This converts blockquote tags to unicode quotes to retain some sense of context after going
+				// through Mastodon's aggressive HTML purifier
+				$opts['plain'] = true;
+			}
+			$ret['content'] = bbcode($i['body'], $opts);
 			$ret['source'] = [ 'content' => $i['body'], 'mediaType' => 'text/bbcode' ];
 			if ($ret['summary']) {
 				$ret['source']['summary'] = $i['summary'];
@@ -828,14 +837,15 @@ class Activity {
 
 		$ret['url'] = $ret['id'];
 
-
-
-//		$ret['url'] = [
-//			'type'      => 'Link',
-//			'rel'       => 'alternate',
-//			'mediaType' => 'text/html',
-//			'href'      => $ret['id']
-//		];
+		// Very few ActivityPub projects currently support url as array
+		// and most will choke and die if you supply one here.
+		
+		//		$ret['url'] = [
+		//			'type'      => 'Link',
+		//			'rel'       => 'alternate',
+		//			'mediaType' => 'text/html',
+		//			'href'      => $ret['id']
+		//		];
 
 		$t = self::encode_taxonomy($i);
 		if ($t) {
@@ -1769,6 +1779,9 @@ class Activity {
 			$s['expires'] = datetime_convert('UTC','UTC',$act->obj['expires']);
 		}
 
+		if ($act->type === 'Invite' && $act->obj['type'] === 'Event') {
+			$s['mid'] = $s['parent_mid'] = $act->id;
+		}
 
 		if (in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block', 'Announce', 'Accept', 'Reject',
 			'TentativeAccept', 'TentativeReject', 'emojiReaction', 'EmojiReaction' ])) {
@@ -1817,18 +1830,23 @@ class Activity {
 			if ($act->type === 'Dislike') {
 				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $content['content'];
 			}
-			if ($act->type === 'Accept' && $act->obj['type'] === 'Event' ) {
-				$content['content'] = sprintf( t('Will attend %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
+			
+			// handle event RSVPs
+			if (($act->obj['type'] === 'Event') || ($act->obj['type'] === 'Invite' && array_path_exists('object/type',$act->obj) && $act->obj['object']['type'] === 'Event')) {
+				if ($act->type === 'Accept') {
+					$content['content'] = sprintf( t('Will attend %s\'s event'),$mention) . EOL . EOL . $content['content'];
+				}
+				if ($act->type === 'Reject') {
+					$content['content'] = sprintf( t('Will not attend %s\'s event'),$mention) . EOL . EOL . $content['content'];
+				}
+				if ($act->type === 'TentativeAccept') {
+					$content['content'] = sprintf( t('May attend %s\'s event'),$mention) . EOL . EOL . $content['content'];
+				}
+				if ($act->type === 'TentativeReject') {
+					$content['content'] = sprintf( t('May not attend %s\'s event'),$mention) . EOL . EOL . $content['content'];
+				}
 			}
-			if ($act->type === 'Reject' && $act->obj['type'] === 'Event' ) {
-				$content['content'] = sprintf( t('Will not attend %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
-			}
-			if ($act->type === 'TentativeAccept' && $act->obj['type'] === 'Event' ) {
-				$content['content'] = sprintf( t('May attend %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
-			}
-			if ($act->type === 'TentativeReject' && $act->obj['type'] === 'Event' ) {
-				$content['content'] = sprintf( t('May not attend %1$s\'s %2$s'),$mention,$act->obj['type']) . EOL . EOL . $content['content'];
-			}
+			
 			if ($act->type === 'Announce') {
 				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $act->obj['type']);
 			}

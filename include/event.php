@@ -1173,14 +1173,16 @@ function event_store_item($arr, $event) {
 			}
 		}
 
-		if(! $arr['mid'])
-			$arr['mid'] = z_root() . '/event/' . $event['event_hash'];
-
+		if (! $arr['mid']) {
+			$arr['mid'] = z_root() . '/activity/' . $event['event_hash'];
+		}
+		
 		$item_arr['aid']             = $z['channel_account_id'];
 		$item_arr['uid']             = $arr['uid'];
 		$item_arr['author_xchan']    = $arr['event_xchan'];
 		$item_arr['mid']             = $arr['mid'];
 		$item_arr['parent_mid']      = $arr['mid'];
+		$item_arr['uuid']            = $event['event_hash'];
 		$item_arr['owner_xchan']     = (($wall) ? $z['channel_hash'] : $arr['event_xchan']);
 		$item_arr['author_xchan']    = $arr['event_xchan'];
 		$item_arr['summary']         = $arr['summary'];
@@ -1189,7 +1191,7 @@ function event_store_item($arr, $event) {
 		$item_arr['deny_cid']        = $arr['deny_cid'];
 		$item_arr['deny_gid']        = $arr['deny_gid'];
 		$item_arr['item_private']    = $private;
-		$item_arr['verb']            = 'Create';
+		$item_arr['verb']            = 'Invite';
 		$item_arr['item_wall']       = $item_wall;
 		$item_arr['item_origin']     = $item_origin;
 		$item_arr['item_thread_top'] = $item_thread_top;
