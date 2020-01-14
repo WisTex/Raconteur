@@ -1779,6 +1779,9 @@ class Activity {
 			$s['expires'] = datetime_convert('UTC','UTC',$act->obj['expires']);
 		}
 
+		if ($act->type === 'Invite' && $act->obj['type'] === 'Event') {
+			$s['mid'] = $s['parent_mid'] = $act->id;
+		}
 
 		if (in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block', 'Announce', 'Accept', 'Reject',
 			'TentativeAccept', 'TentativeReject', 'emojiReaction', 'EmojiReaction' ])) {
