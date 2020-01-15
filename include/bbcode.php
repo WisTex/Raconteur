@@ -299,6 +299,23 @@ function bb_svg($match) {
 	return $output;
 }
 
+function bb_svg_export($match) {
+
+	$params = str_replace(['<br>', '&quot;'], [ '', '"'],$match[1]);
+	$Text = str_replace([ '[',']' ], [ '<','>' ], $match[2]);
+	
+	$output =  '<svg' . (($params) ? $params : ' width="100%" height="480" ') . '>' . str_replace(['<br>', '&quot;', '&nbsp;'], [ '', '"', ' '],$Text) . '</svg>';
+
+	$purify = new SvgSanitizer();
+	$purify->loadXML($output);
+	$purify->sanitize();
+	$output = $purify->saveSVG();
+	$output = preg_replace("/\<\?xml(.*?)\?\>/",'',$output);
+	$output = '<img alt="svg" src="data:image/svg+xml,' . urlencode($output) . '" >';
+	return $output;
+}
+
+
 function bb_parse_element($match) {
 	$j = json_decode(base64url_decode($match[1]),true);
 
@@ -1567,8 +1584,13 @@ function bbcode($Text, $options = []) {
 	}
 
 	// SVG stuff
-	$Text = preg_replace_callback("/\[svg(.*?)\](.*?)\[\/svg\]/ism", 'bb_svg', $Text);
 
+	if ($activitypub) {
+		$Text = preg_replace_callback("/\[svg(.*?)\](.*?)\[\/svg\]/ism", 'bb_svg_export', $Text);
+	}
+	else {
+		$Text = preg_replace_callback("/\[svg(.*?)\](.*?)\[\/svg\]/ism", 'bb_svg', $Text);
+	}
 
 	// oembed tag
 	if(! $export)
