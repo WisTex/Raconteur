@@ -536,12 +536,15 @@ class Activity {
 			}
 		}
 
-
 		if (! $cnv) {
 			$cnv = get_iconfig($i,'ostatus','conversation');
 		}
 		if ($cnv) {
 			$ret['conversation'] = $cnv;
+		}
+
+		if (intval($i['item_private']) === 2) {
+			$ret['directMessage'] = true;
 		}
 
 //		$ret['inheritPrivacy'] = true;
@@ -2133,6 +2136,10 @@ class Activity {
 		
 		set_iconfig($s,'activitypub','recips',$act->raw_recips);
 
+		if (array_key_exists('directMessage',$act->data) && intval($act->data['directMessage'])) {
+				$s['item_private'] = 2;
+		}
+
 		if ($parent) {
 			set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
 		}
@@ -2619,17 +2626,18 @@ class Activity {
 		// simple rendering of incoming polls until they are fully supported
 		
 		if ($act['type'] === 'Question') {
+			$content['content'] .= EOL . EOL;
 			if (array_key_exists('anyOf',$act)) {
 				foreach ($act['anyOf'] as $poll) {
 					if (array_key_exists('name',$poll) && $poll['name']) {
-						$content['content'] .= '[ ] ' . html2plain(purify_html($poll['name']),256) . EOL . EOL;
+						$content['content'] .= '[ ] ' . html2plain(purify_html($poll['name']),256) . EOL;
 					}
 				}
 			}
 			if (array_key_exists('oneOf',$act)) {
 				foreach ($act['oneOf'] as $poll) {
 					if (array_key_exists('name',$poll) && $poll['name']) {
-						$content['content'] .= '( ) ' . html2plain(purify_html($poll['name']),256) . EOL . EOL;
+						$content['content'] .= '( ) ' . html2plain(purify_html($poll['name']),256) . EOL;
 					}
 				}
 			}

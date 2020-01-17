@@ -51,12 +51,13 @@ class Like extends Controller {
 	
 		$verb = notags(trim($_GET['verb']));
 	
-		if(! $verb)
+		if (! $verb) {
 			$verb = 'like';
-	
+		}
+		
 		$activity = $this->reaction_to_activity($verb);
 
-		if(! $activity) {
+		if (! $activity) {
 			return EMPTY_STR; 
 		}
 
@@ -345,8 +346,9 @@ class Like extends Controller {
 		}
 		else {
 			$post_type = (($item['resource_type'] === 'photo') ? t('photo') : t('status'));
-			if($item['obj_type'] === ACTIVITY_OBJ_EVENT)
+			if ($item['obj_type'] === ACTIVITY_OBJ_EVENT) {
 				$post_type = t('event');
+			}
 	
 			$objtype = $item['obj_type'];
 
@@ -354,15 +356,17 @@ class Like extends Controller {
 	
 			$object = json_encode(Activity::fetch_item( [ 'id' => $item['mid'] ]));
 	
-			if(! intval($item['item_thread_top']))
-				$post_type = 'comment';		
+			if (! intval($item['item_thread_top'])) {
+				$post_type = 'comment';
+			}
 	
 			$arr['item_origin'] = 1;
 			$arr['item_notshown'] = 1;
 			$arr['item_type'] = $item['item_type'];
 	
-			if(intval($item['item_wall']))
+			if (intval($item['item_wall'])) {
 				$arr['item_wall'] = 1;
+			}
 	
 			// if this was a linked photo and was hidden, unhide it and distribute it.
 	
@@ -396,13 +400,14 @@ class Like extends Controller {
 		if($verb === 'attendmaybe')
 			$bodyverb = t('%1$s may attend %2$s\'s %3$s');
 	
-		if(! isset($bodyverb))
-				killme(); 
+		if (! isset($bodyverb)) {
+			killme(); 
+		}
 
-// @FIXME Not sure if this is still needed	
-//		if(local_channel() && $verb === 'attendyes') {
-//			event_addtocal($item['id'],$ch[0]['channel_id']);
-//		}
+
+		if (local_channel() && $verb === 'attendyes') {
+			event_addtocal($item['id'],$ch[0]['channel_id']);
+		}
 		
 		if($extended_like) {
 			$ulink = '[zrl=' . $ch[0]['xchan_url'] . ']' . $ch[0]['xchan_name'] . '[/zrl]';
@@ -452,7 +457,7 @@ class Like extends Controller {
 		$arr['obj_type']      = $objtype;
 		$arr['obj']           = $object;
 	
-		if($target) {
+		if ($target) {
 			$arr['tgt_type']  = $tgttype;
 			$arr['target']    = $target;
 		}
