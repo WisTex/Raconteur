@@ -515,10 +515,7 @@ function z_dns_check($h,$check_mx = 0) {
 	// Use config values from memory as this can be called during setup
 	// before a database or even any config structure exists.
 
-	if(is_array(\App::$config) && array_key_exists('system',\App::$config)
-		&& is_array(\App::$config['system'])
-		&& array_key_exists('do_not_check_dns',\App::$config['system'])
-		&& \App::$config['system']['do_not_check_dns'])
+	if(is_array(App::$config) && array_path_exists('system/do_not_check_dns', App::$config) && App::$config['system']['do_not_check_dns'])
 		return true;
 
 	// This will match either Windows or Mac ('Darwin')
@@ -531,7 +528,7 @@ function z_dns_check($h,$check_mx = 0) {
 
 	// Otherwise we will assume dns_get_record() works as documented
 
-	$opts = DNS_A + DNS_CNAME + DNS_PTR;
+	$opts = DNS_A + DNS_CNAME + DNS_AAAA;
 	if($check_mx)
 		$opts += DNS_MX;
 
