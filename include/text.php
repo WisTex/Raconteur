@@ -1570,7 +1570,10 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 		}
 	}
 
-
+	$poll = (($item['obj_type'] === 'Question' && in_array($item['verb'],[ 'Create','Update' ])) ? format_poll($item, $s, $opts) : false);
+	if ($poll) {
+		$s = $poll;
+	}
 
 	$event = (($item['obj_type'] === ACTIVITY_OBJ_EVENT) ? format_event_obj($item['obj']) : false);
 
@@ -1652,6 +1655,72 @@ function separate_img_links($s) {
 
 	return $x;
 } 
+
+function format_poll($item,$s,$opts) {
+
+	if (! is_array($item['obj'])) {
+		$act = json_decode($item['obj'],true);
+	}
+	else {
+		$act = $item['obj'];
+	}
+
+	$commentable = can_comment_on_post(((local_channel()) ? get_observer_hash() : EMPTY_STR),$item);
+
+	//logger('format_poll: ' . print_r($item,true));
+	$activated = ((local_channel() && local_channel() == $item['uid']) ? true : false);
+	$output = $s . EOL. EOL;
+
+	if ($act['type'] === 'Question') {
+		if ($activated and $commentable) {
+			$output .= '<form action="vote/' . $item['id'] . '" method="post" >';
+		}
+		if (array_key_exists('anyOf',$act)) {
+			foreach ($act['anyOf'] as $poll) {
+				if (array_key_exists('name',$poll) && $poll['name']) {
+					$text = html2plain(purify_html($poll['name']),256);
+					if (array_path_exists('replies/totalItems',$poll)) {
+						$total = $poll['replies']['totalItems'];
+					}
+					else {
+						$total = 0;
+					}
+					if ($activated && $commentable) {
+						$output .= '<input type="checkbox" name="answer[]" value="' . $text . '"> ' . $text . '</input>' . ' (' . $total . ')' . EOL;
+					}
+					else {
+						$output .= '[ ] ' . $text . ' (' . $total . ')' . EOL;
+					}
+				}
+			}
+		}
+		if (array_key_exists('oneOf',$act)) {
+			foreach ($act['oneOf'] as $poll) {
+				if (array_key_exists('name',$poll) && $poll['name']) {
+					$text = html2plain(purify_html($poll['name']),256);
+					if (array_path_exists('replies/totalItems',$poll)) {
+						$total = $poll['replies']['totalItems'];
+					}
+					else {
+						$total = 0;
+					}
+					if ($activated && $commentable) {
+						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '"> ' . $text . '</input>' . ' (' . $total . ')' . EOL;
+					}
+					else {
+						$output .= '( ) ' . $text . ' (' . $total . ')' . EOL;
+					}
+				}
+			}
+		}
+		if ($activated and $commentable) {
+			$output .= '<input onclick="this.submit(); return false;" type="submit" name="submit" value="' . t('Submit') . '"></form>';
+		}
+
+	}
+	return $output;
+}
+
 
 
 function prepare_binary($item) {
@@ -1762,10 +1831,6 @@ function get_plink($item,$conversation_mode = true) {
 	}
 }
 
-
-function unamp($s) {
-	return str_replace('&amp;', '&', $s);
-}
 
 function layout_select($channel_id, $current = '') {
 	$r = q("select mid, v from item left join iconfig on iconfig.iid = item.id

@@ -1132,6 +1132,10 @@ class Activity {
 
 	static function activity_mapper($verb) {
 
+		if ($verb === 'Answer') {
+			return 'Note';
+		}
+		
 		if (strpos($verb,'/') === false) {
 			return $verb;
 		}
@@ -1934,6 +1938,16 @@ class Activity {
 			$s['body'] .= self::bb_attach($s['attach'],$s['body']);
 		}
 
+		if ($act->obj['type'] === 'Question' && in_array($act->type,['Create','Update'])) {
+			if ($act->obj['endTime']) {
+				$s['comments_closed'] = datetime_convert('UTC','UTC', $act->obj['endTime']);
+			}
+		}
+
+		if ($act->obj['closed']) {
+			$s['comments_closed'] = datetime_convert('UTC','UTC', $act->obj['closed']);
+		}			
+
 
 		// we will need a hook here to extract magnet links e.g. peertube
 		// right now just link to the largest mp4 we find that will fit in our
@@ -2620,26 +2634,6 @@ class Activity {
 			$event['description'] = html2bbcode($content['content']);
 			if ($event['summary'] && $event['dtstart']) {
 				$content['event'] = $event;
-			}
-		}
-
-		// simple rendering of incoming polls until they are fully supported
-		
-		if ($act['type'] === 'Question') {
-			$content['content'] .= EOL . EOL;
-			if (array_key_exists('anyOf',$act)) {
-				foreach ($act['anyOf'] as $poll) {
-					if (array_key_exists('name',$poll) && $poll['name']) {
-						$content['content'] .= '[ ] ' . html2plain(purify_html($poll['name']),256) . EOL;
-					}
-				}
-			}
-			if (array_key_exists('oneOf',$act)) {
-				foreach ($act['oneOf'] as $poll) {
-					if (array_key_exists('name',$poll) && $poll['name']) {
-						$content['content'] .= '( ) ' . html2plain(purify_html($poll['name']),256) . EOL;
-					}
-				}
 			}
 		}
 

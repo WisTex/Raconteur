@@ -385,16 +385,6 @@ class Item extends Controller {
 		$consensus = intval($_REQUEST['consensus']);
 		$nocomment = intval($_REQUEST['nocomment']);
 
-		// If this is a poll, grab the poll data
-		
-		$qtype = intval($_REQUEST['qtype']);
-		if($_REQUEST['answers'] && is_array($_REQUEST['answers'])) {
-			$pollchoices = [];
-			foreach($_REQUEST['answers'] as $q) {
-				$pollchoices[] = escape_tags($q);
-			}
-			$_REQUEST['obj_type'] = ACTIVITY_OBJ_POLL;
-		}
 
 		// 'origin' (if non-zero) indicates that this network is where the message originated,
 		// for the purpose of relaying comments to other conversation members. 
@@ -427,7 +417,7 @@ class Item extends Controller {
 		$layout_mid  = ((x($_REQUEST,'layout_mid'))  ? escape_tags($_REQUEST['layout_mid']): '');
 		$plink       = ((x($_REQUEST,'permalink'))   ? escape_tags($_REQUEST['permalink']) : '');
 		$obj_type    = ((x($_REQUEST,'obj_type'))    ? escape_tags($_REQUEST['obj_type'])  : ACTIVITY_OBJ_NOTE);
-	
+
 		// allow API to bulk load a bunch of imported items with sending out a bunch of posts. 
 		$nopush      = ((x($_REQUEST,'nopush'))      ? intval($_REQUEST['nopush'])         : 0);
 	
@@ -889,7 +879,12 @@ class Item extends Controller {
 			// BBCODE alert: the following functions assume bbcode input
 			// and will require alternatives for alternative content-types (text/html, text/markdown, text/plain, etc.)
 			// we may need virtual or template classes to implement the possible alternatives
-			
+
+			$obj = $this->extract_poll_data($body);
+			if ($obj) {
+				$datarray['obj'] = $obj;
+				$obj_type = 'Question';
+			}
 
 			if(strpos($body,'[/summary]') !== false) {
 				$match = '';
@@ -1162,7 +1157,9 @@ class Item extends Controller {
 			$plink = z_root() . '/item/' . $uuid;
 		}
 
-
+		if ($datarray['obj']) {
+			$datarray['obj']['id'] = $mid;
+		}
 
 		$datarray['aid']                 = $channel['channel_account_id'];
 		$datarray['uid']                 = $profile_uid;
@@ -1637,5 +1634,51 @@ class Item extends Controller {
 		return $ret;
 	}
 	
-	
+	function extract_poll_data(&$body) {
+
+		$multiple = false;
+		if(strpos($body,'[/question]') === false && strpos($body,'[/answer]') === false) {
+			return false;
+		}
+
+		$obj = [];
+		$ptr = [];
+		$matches = null;
+		$obj['type'] = 'Question';
+
+		if (preg_match_all('/\[answer\](.*?)\[\/answer\]/',$body,$matches,PREG_SET_ORDER)) {
+			foreach ($matches as $match) {
+				$ptr[] = [ 'name' => $match[1], 'type' => 'Note', 'replies' => [ 'type' => 'Collection', 'totalItems' => 0 ]];
+
+$body = str_replace('[answer]' . $match[1] . '[/answer]', EMPTY_STR, $body);
+			}
+		}
+
+		$matches = null;
+
+		if (preg_match('/\[question\](.*?)\[\/question\]/',$body,$matches)) {
+			$obj['content'] = bbcode($matches[1]);
+			$body = str_replace('[question]' . $matches[1] . '[/question]', $matches[1], $body);
+			$obj['oneOf'] = $ptr;
+		}
+
+		$matches = null;
+		
+		if (preg_match('/\[question=multiple\](.*?)\[\/question\]/',$body,$matches)) {
+			$obj['content'] = bbcode($matches[1]);
+			$body = str_replace('[question=multiple]' . $matches[1] . '[/question]', $matches[1], $body);
+			$obj['anyOf'] = $ptr;
+		}
+
+		$matches = null;
+		
+		if (preg_match('/\[ends\](.*?)\[\/ends\]',$body,$matches)) {
+			$obj['endTime'] = datetime_convert(date_default_timezone_get(),'UTC', $matches[1],ATOM_TIME);
+			$body = str_replace('[ends]' . $match[1] . '[/ends]', EMPTY_STR, $body);
+		}
+
+		return $obj;
+
+	}
+
 }

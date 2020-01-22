@@ -403,7 +403,7 @@ function count_descendants($item) {
  * @return boolean
  */
 function visible_activity($item) {
-	$hidden_activities = [ ACTIVITY_LIKE, ACTIVITY_DISLIKE, ACTIVITY_POLLRESPONSE ];
+	$hidden_activities = [ ACTIVITY_LIKE, ACTIVITY_DISLIKE, 'Answer' ];
 
 	if(intval($item['item_notshown']))
 		return false;
