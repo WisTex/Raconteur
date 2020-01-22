@@ -1179,9 +1179,6 @@ class Activity {
 
 	static function activity_obj_mapper($obj) {
 
-		if (strpos($obj,'/') === false) {
-			return $obj;
-		}
 
 		$objs = [
 			'http://activitystrea.ms/schema/1.0/note'           => 'Note',
@@ -1202,6 +1199,14 @@ class Activity {
 		];
 
 		call_hooks('activity_obj_mapper',$objs);
+
+		if ($obj === 'Answer') {
+			return 'Note';
+		}
+
+		if (strpos($obj,'/') === false) {
+			return $obj;
+		}
 
 		if (array_key_exists($obj,$objs)) {
 			return $objs[$obj];
