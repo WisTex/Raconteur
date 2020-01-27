@@ -1752,15 +1752,81 @@ class Activity {
 
 	}
 
+	static function update_poll($act,$content) {
+		$multi = false;
+		$r = q("select * from item where mid = '%s' and verb = 'Create' and item_wall = 1",
+			dbesc($act->obj['id'])
+		);
+		if (! $r) {
+			return false;
+		}
+		$item = array_shift($r);
+		$o = json_decode($item['obj'],true);
+		if($o && array_key_exists('anyOf',$o)) {
+			$multi = true;
+		}
+		$answer_found = false;
+		$found = false;
+		if ($multi) {
+			foreach($o['anyOf'] as $a) {
+				if($a['name'] === $content['name'] ) {
+					$answer_found = true;
+					foreach($o['anyOf']['replies'] as $reply) {
+						if($reply['id'] === $act->id) {
+							$found = true;
+						}
+					}
+				}
+			}
+			if (! $found) {
+				$o['anyOf']['replies']['totalItems'] ++;
+				$o['anyOf']['replies']['items'][] = [ 'id' => $act->id, 'type' => 'Note' ];
+				$update = true;
+			}
+		}
+		else {
+			foreach($o['oneOf'] as $a) {
+				if($a['name'] === $content['name'] ) {
+					$answer_found = false;
+					foreach($o['oneOf']['replies'] as $reply) {
+						if($reply['id'] === $act->id) {
+							$found = true;
+						}
+					}
+				}
+			}
+			if (! $found) {
+				$o['oneOf']['replies']['totalItems'] ++;
+				$o['oneOf']['replies']['items'][] = [ 'id' => $act->id, 'type' => 'Note' ];
+			}
+		}
+		if ($answer_found && ! $found) {			
+			$x = q("update item set obj = '%s', updated = '%s' where id = %d",
+				dbesc(json_encode($o)),
+				dbesc(datetime_convert()),
+				intval($item['id'])
+			);
+			Master::Summon( [ 'Notifier', 'wall-new', $item['id'] ] );
+			return true;
+		}
+
+		return false;
+	}
+
 
 	static function decode_note($act) {
 
 		$response_activity = false;
-
+		$poll_handled = false;
+		
 		$s = [];
 
 		if (is_array($act->obj)) {
 			$content = self::get_content($act->obj);
+
+			if($act->type === 'Note' && $act->obj['type'] === 'Question' && $content['name']) {
+				$poll_handled = self::update_poll($act,$content);
+			}
 		}
 			
 		$s['owner_xchan']  = $act->actor['id'];
@@ -1900,6 +1966,11 @@ class Activity {
 		}
 
 		$s['verb']     = self::activity_mapper($act->type);
+
+		if ($poll_handled) {
+			$s['verb'] = 'Answer';
+		}
+
 
 		$s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
 		$s['obj']      = $act->obj;

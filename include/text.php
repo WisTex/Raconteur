@@ -1673,7 +1673,7 @@ function format_poll($item,$s,$opts) {
 
 	if ($act['type'] === 'Question') {
 		if ($activated and $commentable) {
-			$output .= '<form action="vote/' . $item['id'] . '" method="post" >';
+			$output .= '<form id="question-form-' . $item['id'] . '" >';
 		}
 		if (array_key_exists('anyOf',$act)) {
 			foreach ($act['anyOf'] as $poll) {
@@ -1686,7 +1686,7 @@ function format_poll($item,$s,$opts) {
 						$total = 0;
 					}
 					if ($activated && $commentable) {
-						$output .= '<input type="checkbox" name="answer[]" value="' . $text . '"> ' . $text . '</input>' . ' (' . $total . ')' . EOL;
+						$output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '"> ' . $text . '</input>' . ' (' . $total . ')' . EOL;
 					}
 					else {
 						$output .= '[ ] ' . $text . ' (' . $total . ')' . EOL;
@@ -1714,7 +1714,7 @@ function format_poll($item,$s,$opts) {
 			}
 		}
 		if ($activated and $commentable) {
-			$output .= '<input onclick="this.submit(); return false;" type="submit" name="submit" value="' . t('Submit') . '"></form>';
+			$output .= '<input type="button" name="vote" value="vote" onclick="submitPoll(' . $item['id'] . '); return false;">'. '</form>';
 		}
 
 	}

@@ -1322,6 +1322,16 @@ function filestorage(event, nick, id) {
 	});
 }
 
+function submitPoll(id) {
+
+	$.post('vote/' + id,
+			   $('#question-form-' + id).serialize(),
+			   function(data) {
+
+	});
+
+}
+
 function post_comment(id) {
 	unpause();
 	commentBusy = true;
