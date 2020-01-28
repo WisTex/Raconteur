@@ -111,6 +111,7 @@ class Vote extends Controller {
 				Libsync::build_sync_packet($channel['channel_id'], [ 'item' => [ encode_item($sync_item[0],true) ] ]);
 			}
 		}
+		info( t('Poll response submitted') );
 		json_return_and_die([ 'success' => true ]);
 	}
 }

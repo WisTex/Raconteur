@@ -1714,7 +1714,7 @@ function format_poll($item,$s,$opts) {
 			}
 		}
 		if ($activated and $commentable) {
-			$output .= '<input type="button" name="vote" value="vote" onclick="submitPoll(' . $item['id'] . '); return false;">'. '</form>';
+			$output .= EOL . '<input type="button" class="btn btn-std btn-success" name="vote" value="vote" onclick="submitPoll(' . $item['id'] . '); return false;">'. '</form>';
 		}
 
 	}

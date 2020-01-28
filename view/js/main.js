@@ -1325,10 +1325,12 @@ function filestorage(event, nick, id) {
 function submitPoll(id) {
 
 	$.post('vote/' + id,
-			   $('#question-form-' + id).serialize(),
-			   function(data) {
-
-	});
+	   $('#question-form-' + id).serialize(),
+	   function(data) {
+			if(timer) clearTimeout(timer);
+			timer = setTimeout(updateInit,1500);
+	   }
+	);
 
 }
 

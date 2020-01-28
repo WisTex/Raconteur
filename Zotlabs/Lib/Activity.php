@@ -1765,38 +1765,44 @@ class Activity {
 		$answer_found = false;
 		$found = false;
 		if ($multi) {
-			foreach($o['anyOf'] as $a) {
-				if($a['name'] === $content ) {
+			for ($c = 0; $c < count($o['anyOf']); $c ++) {
+				if ($o['anyOf'][$c]['name'] === $content) {
 					$answer_found = true;
-					foreach($o['anyOf']['replies'] as $reply) {
-						if($reply['id'] === $mid) {
-							$found = true;
+					if (is_array($o['anyOf'][$c]['replies'])) {
+						foreach($o['anyOf'][$c]['replies'] as $reply) {
+							if($reply['id'] === $mid) {
+								$found = true;
+							}
 						}
 					}
+
+					if (! $found) {
+						$o['anyOf'][$c]['replies']['totalItems'] ++;
+						$o['anyOf'][$c]['replies']['items'][] = [ 'id' => $mid, 'type' => 'Note' ];
+					}
 				}
-			}
-			if (! $found) {
-				$o['anyOf']['replies']['totalItems'] ++;
-				$o['anyOf']['replies']['items'][] = [ 'id' => $mid, 'type' => 'Note' ];
-				$update = true;
 			}
 		}
 		else {
-			foreach($o['oneOf'] as $a) {
-				if($a['name'] === $content ) {
-					$answer_found = false;
-					foreach($o['oneOf']['replies'] as $reply) {
-						if($reply['id'] === $mid) {
-							$found = true;
+			for ($c = 0; $c < count($o['oneOf']); $c ++) {
+				if ($o['oneOf'][$c]['name'] === $content) {
+					$answer_found = true;
+					if (is_array($o['oneOf'][$c]['replies'])) {
+						foreach($o['oneOf'][$c]['replies'] as $reply) {
+							if($reply['id'] === $mid) {
+								$found = true;
+							}
 						}
+					}
+
+					if (! $found) {
+						$o['oneOf'][$c]['replies']['totalItems'] ++;
+						$o['oneOf'][$c]['replies']['items'][] = [ 'id' => $mid, 'type' => 'Note' ];
 					}
 				}
 			}
-			if (! $found) {
-				$o['oneOf']['replies']['totalItems'] ++;
-				$o['oneOf']['replies']['items'][] = [ 'id' => $mid, 'type' => 'Note' ];
-			}
 		}
+		logger('updated_poll: ' . print_r($o,true),LOGGER_DATA);		
 		if ($answer_found && ! $found) {			
 			$x = q("update item set obj = '%s', edited = '%s' where id = %d",
 				dbesc(json_encode($o)),
