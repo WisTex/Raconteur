@@ -6172,7 +6172,7 @@ msgstr "Aceptar la conexión para permitir la comunicación"
 
 #: ../../Zotlabs/Module/Connedit.php:726
 msgid "Set Friend Zoom"
-msgstr "Establecer \"Fried Zoom\""
+msgstr "Establecer \"Friend Zoom\""
 
 #: ../../Zotlabs/Module/Connedit.php:729
 msgid "Set Profile"
