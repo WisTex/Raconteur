@@ -1812,6 +1812,10 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 
 			if(intval($r[0]['item_uplink']) && (! $r[0]['item_private']))
 				$arr['item_private'] = 0;
+
+			if(in_array($arr['verb'], ['Note','Answer']) && $arr['obj_type'] === 'Question' && intval($r[0]['item_wall'])) {
+				Activity::update_poll($r[0],$arr['mid'],$arr['title']);
+			}
 		}
 		else {
 			logger('item_store: item parent was not found - ignoring item');

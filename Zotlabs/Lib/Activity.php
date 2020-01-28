@@ -1752,15 +1752,12 @@ class Activity {
 
 	}
 
-	static function update_poll($act,$content) {
+	static function update_poll($item,$mid,$content) {
 		$multi = false;
-		$r = q("select * from item where mid = '%s' and verb = 'Create' and item_wall = 1",
-			dbesc($act->obj['id'])
-		);
-		if (! $r) {
+		if (! $item) {
 			return false;
 		}
-		$item = array_shift($r);
+
 		$o = json_decode($item['obj'],true);
 		if($o && array_key_exists('anyOf',$o)) {
 			$multi = true;
@@ -1769,10 +1766,10 @@ class Activity {
 		$found = false;
 		if ($multi) {
 			foreach($o['anyOf'] as $a) {
-				if($a['name'] === $content['name'] ) {
+				if($a['name'] === $content ) {
 					$answer_found = true;
 					foreach($o['anyOf']['replies'] as $reply) {
-						if($reply['id'] === $act->id) {
+						if($reply['id'] === $mid) {
 							$found = true;
 						}
 					}
@@ -1780,16 +1777,16 @@ class Activity {
 			}
 			if (! $found) {
 				$o['anyOf']['replies']['totalItems'] ++;
-				$o['anyOf']['replies']['items'][] = [ 'id' => $act->id, 'type' => 'Note' ];
+				$o['anyOf']['replies']['items'][] = [ 'id' => $mid, 'type' => 'Note' ];
 				$update = true;
 			}
 		}
 		else {
 			foreach($o['oneOf'] as $a) {
-				if($a['name'] === $content['name'] ) {
+				if($a['name'] === $content ) {
 					$answer_found = false;
 					foreach($o['oneOf']['replies'] as $reply) {
-						if($reply['id'] === $act->id) {
+						if($reply['id'] === $mid) {
 							$found = true;
 						}
 					}
@@ -1797,11 +1794,11 @@ class Activity {
 			}
 			if (! $found) {
 				$o['oneOf']['replies']['totalItems'] ++;
-				$o['oneOf']['replies']['items'][] = [ 'id' => $act->id, 'type' => 'Note' ];
+				$o['oneOf']['replies']['items'][] = [ 'id' => $mid, 'type' => 'Note' ];
 			}
 		}
 		if ($answer_found && ! $found) {			
-			$x = q("update item set obj = '%s', updated = '%s' where id = %d",
+			$x = q("update item set obj = '%s', edited = '%s' where id = %d",
 				dbesc(json_encode($o)),
 				dbesc(datetime_convert()),
 				intval($item['id'])
@@ -1824,9 +1821,6 @@ class Activity {
 		if (is_array($act->obj)) {
 			$content = self::get_content($act->obj);
 
-			if($act->type === 'Note' && $act->obj['type'] === 'Question' && $content['name']) {
-				$poll_handled = self::update_poll($act,$content);
-			}
 		}
 			
 		$s['owner_xchan']  = $act->actor['id'];
@@ -1967,7 +1961,7 @@ class Activity {
 
 		$s['verb']     = self::activity_mapper($act->type);
 
-		if ($poll_handled) {
+		if($act->type === 'Note' && $act->obj['type'] === 'Question' && $content['name'] && ! $content['content']) {
 			$s['verb'] = 'Answer';
 		}
 
