@@ -138,14 +138,14 @@ class Setup extends Controller {
 					'$dbpass'      => $dbpass,
 					'$dbdata'      => $dbdata,
 					'$dbtype'      => $dbtype,
-					'$servertype'  => "define('NOMADIC',1);",
+					'$servertype'  => '',
 					'$server_role' => 'pro',
 					'$timezone'    => $timezone,
-					'$platform'    => ((! $servertype) ? 'Zap' : 'Osada'),
+					'$platform'    => ucfirst(PLATFORM_NAME),
 					'$siteurl'     => $siteurl,
 					'$site_id'     => random_string(),
 					'$phpath'      => $phpath,
-					'$adminmail' => $adminmail
+					'$adminmail'   => $adminmail
 				));
 
 				$result = file_put_contents('.htconfig.php', $txt);
