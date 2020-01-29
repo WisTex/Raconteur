@@ -1,6 +1,8 @@
 <?php
 
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Verify;
+
 
 function is_matrix_url($url) {
 
@@ -111,7 +113,7 @@ function strip_escaped_zids($s) {
 
 
 function clean_query_string($s = '') {
-	$x = strip_zids(($s) ? $s : \App::$query_string);
+	$x = strip_zids(($s) ? $s : App::$query_string);
 	$x = strip_owt($x);
 	$x = strip_zats($x);
 	$x = strip_query_param($x,'sort');
@@ -270,9 +272,9 @@ function red_zrlify_img_callback($matches) {
  */
 function owt_init($token) {
 
-	\Zotlabs\Lib\Verify::purge('owt', '3 MINUTE');
+	Verify::purge('owt', '3 MINUTE');
 
-	$ob_hash = \Zotlabs\Lib\Verify::get_meta('owt', 0, $token);
+	$ob_hash = Verify::get_meta('owt', 0, $token);
 
 	if($ob_hash === false) {
 		return;
@@ -338,7 +340,7 @@ function owt_init($token) {
 
 	$arr = [
 			'xchan' => $hubloc,
-			'url' => \App::$query_string,
+			'url' => App::$query_string,
 			'session' => $_SESSION
 	];
 	/**
@@ -350,11 +352,11 @@ function owt_init($token) {
 	 */
 	call_hooks('magic_auth_success', $arr);
 
-	\App::set_observer($hubloc);
+	App::set_observer($hubloc);
 	require_once('include/security.php');
-	\App::set_groups(init_groups_visitor($_SESSION['visitor_id']));
+	App::set_groups(init_groups_visitor($_SESSION['visitor_id']));
 	if(! get_config('system', 'hide_owa_greeting'))
-		info(sprintf( t('OpenWebAuth: %1$s welcomes %2$s'),\App::get_hostname(), $hubloc['xchan_name']));
+		info(sprintf( t('OpenWebAuth: %1$s welcomes %2$s'),App::get_hostname(), $hubloc['xchan_name']));
 
 	logger('OpenWebAuth: auth success from ' . $hubloc['xchan_addr']);
 }
@@ -400,8 +402,8 @@ function observer_auth($ob_hash) {
 	$_SESSION['remote_hub'] = $hubloc['hubloc_url'];
 	$_SESSION['DNT'] = 1;
 
-	\App::set_observer($hubloc);
+	App::set_observer($hubloc);
 	require_once('include/security.php');
-	\App::set_groups(init_groups_visitor($_SESSION['visitor_id']));
+	App::set_groups(init_groups_visitor($_SESSION['visitor_id']));
 
 }

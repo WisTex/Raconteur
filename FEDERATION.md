@@ -10,7 +10,7 @@ Direct Messages (DM) are differentiated from other private messaging using the z
 
 Events
 
-Events and RSVP are supported per AS-vocabulary with the exception that a Create/Event is not transmitted. Invite/Event is the primary method of sharing events. For compatibiliity with some legacy applications, RSVP responses of Accept/Event, Reject/Event, TentativeAccept/Event and TentativeReject/Event are accepted as valid RSVP activities. By default we send Accept/{Invite/Event} (and other RSVP responses) per AS-vocabulary (WIP 2020/1/9, until completed the Create/Event and Accept/Event form will be generated). Events with no timezone (e.g. "all day events" or holidays) are sent with no 'Z' on the event times per RFC3339 Section 4.3. All event times are in UTC and timezone adjusted events are transmitted using Zulu time 'yyyy-mm-ddThh:mm:ssZ'. Event descriptions are sent using 'summary' and accepted using summary, title, and content in order of existence. These are converted internally to plaintext if they contain HTML. If 'location' contains coordinates, a map will typically be generated when rendered. 
+Events and RSVP are supported per AS-vocabulary with the exception that a Create/Event is not transmitted. Invite/Event is the primary method of sharing events. For compatibiliity with some legacy applications, RSVP responses of Accept/Event, Reject/Event, TentativeAccept/Event and TentativeReject/Event are accepted as valid RSVP activities. By default we send Accept/{Invite/Event} (and other RSVP responses) per AS-vocabulary. Events with no timezone (e.g. "all day events" or holidays) are sent with no 'Z' on the event times per RFC3339 Section 4.3. All event times are in UTC and timezone adjusted events are transmitted using Zulu time 'yyyy-mm-ddThh:mm:ssZ'. Event descriptions are sent using 'summary' and accepted using summary, title, and content in order of existence. These are converted internally to plaintext if they contain HTML. If 'location' contains coordinates, a map will typically be generated when rendered. 
 
 
 Groups
@@ -19,7 +19,7 @@ Groups may be public or private. The initial thread starting post to a group is 
 
 Comments
 
-Zap provides permission control and moderation of comments. By default commentss are only accepted from existing connections. This can be changed by the individual. Other sites MAY use zot:commentPolicy (string) as a guide if they do not wish to provide comment abilities where it is known in advance they will be rejected.
+Zap provides permission control and moderation of comments. By default comments are only accepted from existing connections. This can be changed by the individual. Other sites MAY use zot:commentPolicy (string) as a guide if they do not wish to provide comment abilities where it is known in advance they will be rejected.
 
 
 Private Media

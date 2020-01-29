@@ -53,7 +53,7 @@ class Verify {
 	 * @param string $interval SQL compatible time interval
 	 */
 	function purge($type, $interval) {
-		q("delete from verify where vtype = '%s' and created < %s - INTERVAL %s",
+		q("delete from verify where vtype = '%s' and created < ( %s - INTERVAL %s )",
 			dbesc($type),
 			db_utcnow(),
 			db_quoteinterval($interval)
