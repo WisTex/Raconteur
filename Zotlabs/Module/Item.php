@@ -1637,9 +1637,14 @@ class Item extends Controller {
 	function extract_poll_data(&$body) {
 
 		$multiple = false;
-		if(strpos($body,'[/question]') === false && strpos($body,'[/answer]') === false) {
+
+		if (strpos($body,'[/question]') === false && strpos($body,'[/answer]') === false) {
 			return false;
 		}
+		if (strpos($body,'[nobb]') !== false) {
+			return false;
+		}
+
 
 		$obj = [];
 		$ptr = [];
@@ -1649,8 +1654,7 @@ class Item extends Controller {
 		if (preg_match_all('/\[answer\](.*?)\[\/answer\]/',$body,$matches,PREG_SET_ORDER)) {
 			foreach ($matches as $match) {
 				$ptr[] = [ 'name' => $match[1], 'type' => 'Note', 'replies' => [ 'type' => 'Collection', 'totalItems' => 0 ]];
-
-$body = str_replace('[answer]' . $match[1] . '[/answer]', EMPTY_STR, $body);
+				$body = str_replace('[answer]' . $match[1] . '[/answer]', EMPTY_STR, $body);
 			}
 		}
 

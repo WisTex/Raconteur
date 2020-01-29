@@ -1967,8 +1967,13 @@ class Activity {
 
 		$s['verb']     = self::activity_mapper($act->type);
 
-		if($act->type === 'Note' && $act->obj['type'] === 'Question' && $content['name'] && ! $content['content']) {
+		if ($act->type === 'Note' && $act->obj['type'] === 'Question' && $content['name'] && ! $content['content']) {
 			$s['verb'] = 'Answer';
+		}
+
+		// Mastodon does not provide update timestamps when updating poll tallies which means race conditions may occur here.
+		if ($act->type === 'Update' && $act->obj['type'] === 'Question' && $s['edited'] === $s['created']) {
+			$s['edited'] = datetime_convert();
 		}
 
 
