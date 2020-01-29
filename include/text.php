@@ -1665,6 +1665,10 @@ function format_poll($item,$s,$opts) {
 		$act = $item['obj'];
 	}
 
+	if (! is_array($act)) {
+		return EMPTY_STR;
+	}
+
 	$commentable = can_comment_on_post(((local_channel()) ? get_observer_hash() : EMPTY_STR),$item);
 
 	//logger('format_poll: ' . print_r($item,true));
@@ -1675,7 +1679,7 @@ function format_poll($item,$s,$opts) {
 		if ($activated and $commentable) {
 			$output .= '<form id="question-form-' . $item['id'] . '" >';
 		}
-		if (array_key_exists('anyOf',$act)) {
+		if (array_key_exists('anyOf',$act) && is_array($act['anyOf'])) {
 			foreach ($act['anyOf'] as $poll) {
 				if (array_key_exists('name',$poll) && $poll['name']) {
 					$text = html2plain(purify_html($poll['name']),256);
@@ -1694,7 +1698,7 @@ function format_poll($item,$s,$opts) {
 				}
 			}
 		}
-		if (array_key_exists('oneOf',$act)) {
+		if (array_key_exists('oneOf',$act) && is_array($act['oneOf'])) {
 			foreach ($act['oneOf'] as $poll) {
 				if (array_key_exists('name',$poll) && $poll['name']) {
 					$text = html2plain(purify_html($poll['name']),256);

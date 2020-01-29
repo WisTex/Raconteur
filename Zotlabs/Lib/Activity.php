@@ -1770,7 +1770,7 @@ class Activity {
 					$answer_found = true;
 					if (is_array($o['anyOf'][$c]['replies'])) {
 						foreach($o['anyOf'][$c]['replies'] as $reply) {
-							if($reply['id'] === $mid) {
+							if(array_key_exists('id',$reply) && $reply['id'] === $mid) {
 								$found = true;
 							}
 						}
@@ -1789,7 +1789,7 @@ class Activity {
 					$answer_found = true;
 					if (is_array($o['oneOf'][$c]['replies'])) {
 						foreach($o['oneOf'][$c]['replies'] as $reply) {
-							if($reply['id'] === $mid) {
+							if(array_key_exists('id',$reply) && $reply['id'] === $mid) {
 								$found = true;
 							}
 						}
