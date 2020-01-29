@@ -1759,7 +1759,7 @@ class Activity {
 		}
 
 		$o = json_decode($item['obj'],true);
-		if($o && array_key_exists('anyOf',$o)) {
+		if ($o && array_key_exists('anyOf',$o)) {
 			$multi = true;
 		}
 		$answer_found = false;
@@ -1860,6 +1860,14 @@ class Activity {
 		if ($act->type === 'Invite' && $act->obj['type'] === 'Event') {
 			$s['mid'] = $s['parent_mid'] = $act->id;
 		}
+
+		if ($act->type === 'Note' && $act->obj['type'] === 'Question' && $act->data['name']) {
+			$s['mid'] = $act->id;
+			$s['parent_mid'] = $act->obj['id'];
+			$s['replyto'] = $act->replyto;
+			$s['verb'] = 'Answer';
+			$content['content'] = EMPTY_STR;
+		}		
 
 		if (in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block', 'Announce', 'Accept', 'Reject',
 			'TentativeAccept', 'TentativeReject', 'emojiReaction', 'EmojiReaction' ])) {
@@ -1967,8 +1975,9 @@ class Activity {
 
 		$s['verb']     = self::activity_mapper($act->type);
 
-		if ($act->type === 'Note' && $act->obj['type'] === 'Question' && $content['name'] && ! $content['content']) {
+		if ($act->type === 'Note' && $act->obj['type'] === 'Question' && $act->data['name'] && ! $content['content']) {
 			$s['verb'] = 'Answer';
+			$s['title'] = purify_html($act->data['name']);
 		}
 
 		// Mastodon does not provide update timestamps when updating poll tallies which means race conditions may occur here.

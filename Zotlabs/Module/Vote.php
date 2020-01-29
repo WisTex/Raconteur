@@ -11,11 +11,13 @@ class Vote extends Controller {
 
 	function init() {
 
+		$ret = [ 'success' => false, 'message' => EMPTY_STR ];
+
 		$channel = App::get_channel();
 
 		if (! $channel) {
-			http_status_exit(403, 'Permission denied');
-			killme();
+			$ret['message'] = t('Permission denied.');
+			json_return_and_die($ret);
 		}
 
 
@@ -35,16 +37,16 @@ class Vote extends Controller {
 
 		}
 		else {
-			http_status_exit(404, 'not found');
-			killme();
+			$ret['message'] = t('Poll not found.');
+			json_return_and_die($ret);
 		}
 
 		$valid = false;
 		
 		if ($obj['oneOf']) {
 			foreach($obj['oneOf'] as $selection) {
-				logger('selection: ' . $selection);
-				logger('response: ' . $response);
+				//		logger('selection: ' . $selection);
+				//		logger('response: ' . $response);
 				if($selection['name'] && $selection['name'] === $response) {
 					$valid = true;
 				}
@@ -66,7 +68,8 @@ class Vote extends Controller {
 		}
 
 		if (! $valid) {
-			http_status_exit(400,'Bad request');
+			$ret['message'] = t('Invalid response.');
+			json_return_and_die($ret);
 		}
 
 		if (! is_array($response)) {
@@ -111,8 +114,9 @@ class Vote extends Controller {
 				Libsync::build_sync_packet($channel['channel_id'], [ 'item' => [ encode_item($sync_item[0],true) ] ]);
 			}
 		}
-		info( t('Poll response submitted') );
-		json_return_and_die([ 'success' => true ]);
+		$ret['success'] = true;
+		$ret['message'] = t('Poll response submitted');
+		json_return_and_die($ret);
 	}
 }
 

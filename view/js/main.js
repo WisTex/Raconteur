@@ -1325,11 +1325,12 @@ function filestorage(event, nick, id) {
 function submitPoll(id) {
 
 	$.post('vote/' + id,
-	   $('#question-form-' + id).serialize(),
-	   function(data) {
+		$('#question-form-' + id).serialize(),
+		function(data) {
+			$.jGrowl(data.message, { sticky: false, theme: ((data.success) ? 'info' : 'notice'), life: 10000 });
 			if(timer) clearTimeout(timer);
 			timer = setTimeout(updateInit,1500);
-	   }
+		}
 	);
 
 }
