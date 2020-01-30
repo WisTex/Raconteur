@@ -115,7 +115,7 @@ class Vote extends Controller {
 			}
 		}
 		$ret['success'] = true;
-		$ret['message'] = t('Poll response submitted');
+		$ret['message'] = t('Response submitted. Updates may not appear instantly.');
 		json_return_and_die($ret);
 	}
 }

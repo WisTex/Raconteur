@@ -29,7 +29,7 @@ class Apschema extends \Zotlabs\Web\Controller {
 				'directMessage'      => 'zot:directMessage',
 				'replyTo'            => 'zot:replyTo',
 				'meta'               => 'zot:meta',
-				'data'               => 'zot:data',
+				'value'              => 'zot:value',
 			]
 		];
 
