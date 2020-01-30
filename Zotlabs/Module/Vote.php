@@ -55,7 +55,7 @@ class Vote extends Controller {
 
 		$choices = [];
 		if ($obj['anyOf']) {
-			foreach ($obj['oneOf'] as $selection) {
+			foreach ($obj['anyOf'] as $selection) {
 				$choices[] = $selection['name'];
 			}
 			foreach ($response as $res) {

@@ -1367,8 +1367,13 @@ class Libzot {
 
 				logger('Channel sync received: ' . print_r($arr,true), LOGGER_DATA, LOG_DEBUG);
 				logger('Channel sync recipients: ' . print_r($deliveries,true), LOGGER_DATA, LOG_DEBUG);
-
-				$result = Libsync::process_channel_sync_delivery($env['sender'],$arr,$deliveries);
+				
+				if ($env['encoding'] === 'red') {
+					$result = Libsync::process_channel_sync_delivery($env['sender'],$arr,$deliveries);
+				}
+				else {
+					logger('unsupported sync packet encoding ignored.');
+				}
 			}
 		}
 		if ($result) {

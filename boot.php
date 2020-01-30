@@ -48,7 +48,7 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '20.01.28' );
+define ( 'STD_VERSION',             '20.01.30' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1236 );
@@ -472,7 +472,7 @@ define ( 'NAMESPACE_YMEDIA',          'http://search.yahoo.com/mrss/' );
 
 define ( 'ACTIVITYSTREAMS_JSONLD_REV', 'https://www.w3.org/ns/activitystreams' );
 
-define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.13' );
+define ( 'ZOT_APSCHEMA_REV', '/apschema/v1.14' );
 
 /**
  * activity stream defines
