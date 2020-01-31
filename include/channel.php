@@ -480,7 +480,7 @@ function create_identity($arr) {
 
 			foreach($accts as $acct) {
 				if(trim($acct)) {
-					$f = $connect_and_sync($ret['channel'],trim($acct));
+					$f = connect_and_sync($ret['channel'],trim($acct));
 					if($f['success']) {
 
 						$can_view_stream = their_perms_contains($ret['channel']['channel_id'],$f['abook']['abook_xchan'],'view_stream');
