@@ -1676,7 +1676,7 @@ class Item extends Controller {
 
 		$matches = null;
 		
-		if (preg_match('/\[ends\](.*?)\[\/ends\]',$body,$matches)) {
+		if (preg_match('/\[ends\](.*?)\[\/ends\]/',$body,$matches)) {
 			$obj['endTime'] = datetime_convert(date_default_timezone_get(),'UTC', $matches[1],ATOM_TIME);
 			$body = str_replace('[ends]' . $match[1] . '[/ends]', EMPTY_STR, $body);
 		}
