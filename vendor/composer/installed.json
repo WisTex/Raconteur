@@ -710,17 +710,17 @@
     },
     {
         "name": "league/flysystem",
-        "version": "1.0.62",
-        "version_normalized": "1.0.62.0",
+        "version": "1.0.63",
+        "version_normalized": "1.0.63.0",
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/flysystem.git",
-            "reference": "14dd5d7dff5fbc29ca9a2a53ff109760e40d91a0"
+            "reference": "8132daec326565036bc8e8d1876f77ec183a7bd6"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/14dd5d7dff5fbc29ca9a2a53ff109760e40d91a0",
-            "reference": "14dd5d7dff5fbc29ca9a2a53ff109760e40d91a0",
+            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/8132daec326565036bc8e8d1876f77ec183a7bd6",
+            "reference": "8132daec326565036bc8e8d1876f77ec183a7bd6",
             "shasum": ""
         },
         "require": {
@@ -750,7 +750,7 @@
             "spatie/flysystem-dropbox": "Allows you to use Dropbox storage",
             "srmklive/flysystem-dropbox-v2": "Allows you to use Dropbox storage for PHP 5 applications"
         },
-        "time": "2019-12-29T14:46:55+00:00",
+        "time": "2020-01-04T16:30:31+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1243,7 +1243,8 @@
             "codecs",
             "php",
             "tags"
-        ]
+        ],
+        "abandoned": true
     },
     {
         "name": "masterminds/html5",
@@ -2005,17 +2006,17 @@
     },
     {
         "name": "sabre/vobject",
-        "version": "4.2.1",
-        "version_normalized": "4.2.1.0",
+        "version": "4.2.2",
+        "version_normalized": "4.2.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/sabre-io/vobject.git",
-            "reference": "6d7476fbd227ae285029c19ad518cd451336038c"
+            "reference": "449616b2d45b95c8973975de23f34a3d14f63b4b"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sabre-io/vobject/zipball/6d7476fbd227ae285029c19ad518cd451336038c",
-            "reference": "6d7476fbd227ae285029c19ad518cd451336038c",
+            "url": "https://api.github.com/repos/sabre-io/vobject/zipball/449616b2d45b95c8973975de23f34a3d14f63b4b",
+            "reference": "449616b2d45b95c8973975de23f34a3d14f63b4b",
             "shasum": ""
         },
         "require": {
@@ -2029,7 +2030,7 @@
         "suggest": {
             "hoa/bench": "If you would like to run the benchmark scripts"
         },
-        "time": "2019-12-18T19:29:43+00:00",
+        "time": "2020-01-14T10:18:45+00:00",
         "bin": [
             "bin/vobject",
             "bin/generate_vcards"
@@ -2416,23 +2417,23 @@
     },
     {
         "name": "symfony/options-resolver",
-        "version": "v5.0.2",
-        "version_normalized": "5.0.2.0",
+        "version": "v5.0.3",
+        "version_normalized": "5.0.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/options-resolver.git",
-            "reference": "1ad3d0ffc00cc1990e5c9c7bb6b81578ec3f5f68"
+            "reference": "b1ab86ce52b0c0abe031367a173005a025e30e04"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/options-resolver/zipball/1ad3d0ffc00cc1990e5c9c7bb6b81578ec3f5f68",
-            "reference": "1ad3d0ffc00cc1990e5c9c7bb6b81578ec3f5f68",
+            "url": "https://api.github.com/repos/symfony/options-resolver/zipball/b1ab86ce52b0c0abe031367a173005a025e30e04",
+            "reference": "b1ab86ce52b0c0abe031367a173005a025e30e04",
             "shasum": ""
         },
         "require": {
             "php": "^7.2.5"
         },
-        "time": "2019-11-18T17:27:11+00:00",
+        "time": "2020-01-04T14:08:26+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2532,23 +2533,23 @@
     },
     {
         "name": "symfony/process",
-        "version": "v5.0.2",
-        "version_normalized": "5.0.2.0",
+        "version": "v5.0.3",
+        "version_normalized": "5.0.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/process.git",
-            "reference": "ea2dc31b59d63abd9bc2356ac72eb7b3f3469f0e"
+            "reference": "f9ffd870f5ac01abec7b2b5e15f904ca9400ecd1"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/process/zipball/ea2dc31b59d63abd9bc2356ac72eb7b3f3469f0e",
-            "reference": "ea2dc31b59d63abd9bc2356ac72eb7b3f3469f0e",
+            "url": "https://api.github.com/repos/symfony/process/zipball/f9ffd870f5ac01abec7b2b5e15f904ca9400ecd1",
+            "reference": "f9ffd870f5ac01abec7b2b5e15f904ca9400ecd1",
             "shasum": ""
         },
         "require": {
             "php": "^7.2.5"
         },
-        "time": "2019-12-10T11:06:55+00:00",
+        "time": "2020-01-09T09:53:06+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2636,17 +2637,17 @@
     },
     {
         "name": "voku/portable-ascii",
-        "version": "1.4.6",
-        "version_normalized": "1.4.6.0",
+        "version": "1.4.7",
+        "version_normalized": "1.4.7.0",
         "source": {
             "type": "git",
             "url": "https://github.com/voku/portable-ascii.git",
-            "reference": "8b23920025c9b040301e3d1443b302547560f48d"
+            "reference": "a691852adbf7518370332fd7921292d8dad34e7e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/voku/portable-ascii/zipball/8b23920025c9b040301e3d1443b302547560f48d",
-            "reference": "8b23920025c9b040301e3d1443b302547560f48d",
+            "url": "https://api.github.com/repos/voku/portable-ascii/zipball/a691852adbf7518370332fd7921292d8dad34e7e",
+            "reference": "a691852adbf7518370332fd7921292d8dad34e7e",
             "shasum": ""
         },
         "require": {
@@ -2658,7 +2659,7 @@
         "suggest": {
             "ext-intl": "Use Intl for transliterator_transliterate() support"
         },
-        "time": "2019-12-23T12:30:26+00:00",
+        "time": "2020-01-27T08:58:33+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
