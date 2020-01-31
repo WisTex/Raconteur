@@ -48,11 +48,17 @@ class HTTPSig {
 		// decide if $data arrived via controller submission or curl
 		// changes $body for the caller
 		
-		if (is_array($data) && $data['header']) {
+		if (is_array($data) && array_key_exists('header',$data)) {
 			if (! $data['success']) {
+				$body = EMPTY_STR;
 				return [];
 			}
 
+			if (! $data['header']) {
+				$body = EMPTY_STR;
+				return [];
+			}
+			
 			$h = new HTTPHeaders($data['header']);
 			$headers = $h->fetcharr();
 			$body = $data['body'];
