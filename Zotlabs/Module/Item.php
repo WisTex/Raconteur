@@ -932,7 +932,20 @@ class Item extends Controller {
 			}
 
 			if ($private) {
-				$token = new_token();
+			
+				// for edited posts, re-use any existing OCAP token (if found).
+				// Otherwise generate a new one.
+				
+				if ($iconfig) {
+					foreach ($iconfig as $cfg) {
+						if ($cfg['cat'] === 'ocap' && $cfg['k'] == 'relay') {
+							$token = $cfg['v'];
+						}
+					}
+				}
+				if (! $token) {
+					$token = new_token();
+				}
 			}
 
 	
