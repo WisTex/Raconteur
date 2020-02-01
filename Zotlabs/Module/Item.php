@@ -938,7 +938,7 @@ class Item extends Controller {
 				
 				if ($iconfig) {
 					foreach ($iconfig as $cfg) {
-						if ($cfg['cat'] === 'ocap' && $cfg['k'] == 'relay') {
+						if ($cfg['cat'] === 'ocap' && $cfg['k'] === 'relay') {
 							$token = $cfg['v'];
 						}
 					}
