@@ -4410,14 +4410,23 @@ function fix_attached_photo_permissions($uid,$xchan_hash,$body,
 					}
 				}
 
-				$r = q("SELECT id FROM photo
-					WHERE allow_cid = '%s' AND allow_gid = '' AND deny_cid = '' AND deny_gid = ''
-					AND resource_id = '%s' AND uid = %d LIMIT 1",
-					dbesc($srch),
-					dbesc($image_uri),
-					intval($uid)
-				);
-
+				if ($token) {
+					// we will add the new token to the photo regardless of what was already there.
+					$r = q("SELECT id FROM photo
+						WHERE resource_id = '%s' AND uid = %d LIMIT 1",
+						dbesc($image_uri),
+						intval($uid)
+					);
+				}
+				else {
+					$r = q("SELECT id FROM photo
+						WHERE allow_cid = '%s' AND allow_gid = '' AND deny_cid = '' AND deny_gid = ''
+						AND resource_id = '%s' AND uid = %d LIMIT 1",
+						dbesc($srch),
+						dbesc($image_uri),
+						intval($uid)
+					);
+				}
 				if($r) {
 					$r = q("UPDATE photo SET allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s'
 						WHERE resource_id = '%s' AND uid = %d ",
@@ -4431,13 +4440,24 @@ function fix_attached_photo_permissions($uid,$xchan_hash,$body,
 
 					// also update the linked item (which is probably invisible)
 
-					$r = q("select id from item
-						WHERE allow_cid = '%s' AND allow_gid = '' AND deny_cid = '' AND deny_gid = ''
-						AND resource_id = '%s' and resource_type = 'photo' AND uid = %d LIMIT 1",
-						dbesc($srch),
-						dbesc($image_uri),
-						intval($uid)
-					);
+					if ($token) {
+						// we will add the new token to the photo regardless of what was already there.
+						$r = q("select id from item
+							WHERE resource_id = '%s' and resource_type = 'photo' AND uid = %d LIMIT 1",
+							dbesc($image_uri),
+							intval($uid)
+						);
+					}
+					else {
+
+						$r = q("select id from item
+							WHERE allow_cid = '%s' AND allow_gid = '' AND deny_cid = '' AND deny_gid = ''
+							AND resource_id = '%s' and resource_type = 'photo' AND uid = %d LIMIT 1",
+							dbesc($srch),
+							dbesc($image_uri),
+							intval($uid)
+						);
+					}
 					if($r) {
 						$private = (($str_contact_allow || $str_group_allow || $str_contact_deny || $str_group_deny) ? true : false);
 
