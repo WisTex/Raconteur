@@ -1700,7 +1700,7 @@ function format_poll($item,$s,$opts) {
 		}
 		if (array_key_exists('oneOf',$act) && is_array($act['oneOf'])) {
 			foreach ($act['oneOf'] as $poll) {
-				if (array_key_exists('name',$poll) && $poll['name']) {
+				if (is_array($poll) && array_key_exists('name',$poll) && $poll['name']) {
 					$text = html2plain(purify_html($poll['name']),256);
 					if (array_path_exists('replies/totalItems',$poll)) {
 						$total = $poll['replies']['totalItems'];
@@ -3042,7 +3042,7 @@ function perms2str($p) {
  * @brief Turn user/group ACLs stored as angle bracketed text into arrays.
  *
  * turn string array of angle-bracketed elements into string array
- * e.g. "<123xyz><246qyo><sxo33e>" => array(123xyz,246qyo,sxo33e);
+ * e.g. "<123xyz><246qyo><sxo33e>" => [ '123xyz','246qyo','sxo33e' ];
  *
  * @param string $s
  * @return array

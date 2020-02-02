@@ -333,13 +333,6 @@ function permissions_sql($owner_id, $remote_observer = null, $table = '', $token
 		return EMPTY_STR;
 	}
 
-	/*
-	 * OCAP token access
-	 */
-	 
-	elseif ($token) {
-		return " and {$table}allow_cid like '" . protect_sprintf('%<token:' . $token . '>%') . "' "; 
-	}
 
 	/**
 	 * Authenticated visitor. 
@@ -352,6 +345,13 @@ function permissions_sql($owner_id, $remote_observer = null, $table = '', $token
 		if ($observer) {
 
 			$sec = get_security_ids($owner_id,$observer);
+
+			if ($token) {
+				if (! array_key_exists('allow_cid',$sec)) {
+					$sec['allow_cid'] = [];
+				}
+				$sec['allow_cid'][] = 'token:' . $token;
+			}
 
 			// always allow the channel owner, even if authenticated as a visitor
 
@@ -397,6 +397,16 @@ function permissions_sql($owner_id, $remote_observer = null, $table = '', $token
 				dbesc($gs)
 			);
 		}
+
+		/*
+		 * OCAP token access
+		 */
+	 
+		elseif ($token) {
+			$sql = " and ( {$table}allow_cid like '" . protect_sprintf('%<token:' . $token . '>%') .
+			"' OR ( {$table}allow_cid = '' AND {$table}allow_gid = '' AND {$table}deny_cid = '' AND {$table}deny_gid = '' ) )"; 
+		}
+
 	}
 
 	return $sql;

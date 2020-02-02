@@ -4372,155 +4372,143 @@ function sync_an_item($channel_id,$item_id) {
 	}
 }
 
+function list_attached_local_files($body) {
 
-function fix_attached_photo_permissions($uid,$xchan_hash,$body,
-	$str_contact_allow,$str_group_allow,$str_contact_deny,$str_group_deny,$token = EMPTY_STR) {
-
-	$match = null;
+	$files = [];
+	$match = [];
+	
 	// match img and zmg image links
-	if(preg_match_all("/\[[zi]mg(.*?)\](.*?)\[\/[zi]mg\]/",$body,$match)) {
+	if (preg_match_all("/\[[zi]mg(.*?)\](.*?)\[\/[zi]mg\]/",$body,$match)) {
 		$images = $match[2];
-		if($images) {
-			foreach($images as $image) {
-				if(! stristr($image,z_root() . '/photo/'))
+		if ($images) {
+			foreach ($images as $image) {
+				if (! stristr($image,z_root() . '/photo/')) {
 					continue;
+				}
 				$image_uri = substr($image,strrpos($image,'/') + 1);
-				if(strpos($image_uri,'-') !== false)
+				if (strpos($image_uri,'-') !== false) {
 					$image_uri = substr($image_uri,0, strrpos($image_uri,'-'));
-				if(strpos($image_uri,'.') !== false)
+				}
+				if (strpos($image_uri,'.') !== false) {
 					$image_uri = substr($image_uri,0, strpos($image_uri,'.'));
-				if(! strlen($image_uri))
-					continue;
-				$srch = '<' . $xchan_hash . '>';
-
-				$r = q("select folder from attach where hash = '%s' and uid = %d limit 1",
-					dbesc($image_uri),
-					intval($uid)
-				);
-				if($r && $r[0]['folder']) {
-					$f = q("select * from attach where hash = '%s' and is_dir = 1 and uid = %d limit 1",
-						dbesc($r[0]['folder']),
-						intval($uid)
-					);
-					if(($f) && (($f[0]['allow_cid']) || ($f[0]['allow_gid']) || ($f[0]['deny_cid']) || ($f[0]['deny_gid']))) {
-						$str_contact_allow = $f[0]['allow_cid'];
-						$str_group_allow = $f[0]['allow_gid'];
-						$str_contact_deny = $f[0]['deny_cid'];
-						$str_group_deny = $f[0]['deny_gid'];
-					}
 				}
-
-				if ($token) {
-					// we will add the new token to the photo regardless of what was already there.
-					$r = q("SELECT id FROM photo
-						WHERE resource_id = '%s' AND uid = %d LIMIT 1",
-						dbesc($image_uri),
-						intval($uid)
-					);
-				}
-				else {
-					$r = q("SELECT id FROM photo
-						WHERE allow_cid = '%s' AND allow_gid = '' AND deny_cid = '' AND deny_gid = ''
-						AND resource_id = '%s' AND uid = %d LIMIT 1",
-						dbesc($srch),
-						dbesc($image_uri),
-						intval($uid)
-					);
-				}
-				if($r) {
-					$r = q("UPDATE photo SET allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s'
-						WHERE resource_id = '%s' AND uid = %d ",
-						dbesc($str_contact_allow . (($token) ? '<token:' . $token . '>' : EMPTY_STR)),
-						dbesc($str_group_allow),
-						dbesc($str_contact_deny),
-						dbesc($str_group_deny),
-						dbesc($image_uri),
-						intval($uid)
-					);
-
-					// also update the linked item (which is probably invisible)
-
-					if ($token) {
-						// we will add the new token to the photo regardless of what was already there.
-						$r = q("select id from item
-							WHERE resource_id = '%s' and resource_type = 'photo' AND uid = %d LIMIT 1",
-							dbesc($image_uri),
-							intval($uid)
-						);
-					}
-					else {
-
-						$r = q("select id from item
-							WHERE allow_cid = '%s' AND allow_gid = '' AND deny_cid = '' AND deny_gid = ''
-							AND resource_id = '%s' and resource_type = 'photo' AND uid = %d LIMIT 1",
-							dbesc($srch),
-							dbesc($image_uri),
-							intval($uid)
-						);
-					}
-					if($r) {
-						$private = (($str_contact_allow || $str_group_allow || $str_contact_deny || $str_group_deny) ? true : false);
-
-						$r = q("UPDATE item SET allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', item_private = %d
-							WHERE id = %d AND uid = %d",
-							dbesc($str_contact_allow),
-							dbesc($str_group_allow),
-							dbesc($str_contact_deny),
-							dbesc($str_group_deny),
-							intval($private),
-							intval($r[0]['id']),
-							intval($uid)
-						);
-					}
-					$r = q("select id from attach where hash = '%s' and uid = %d limit 1",
-						dbesc($image_uri),
-						intval($uid)
-					);
-					if($r) {
-						q("update attach SET allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s'
-							WHERE id = %d AND uid = %d",
-							dbesc($str_contact_allow . (($token) ? '<token:' . $token . '>' : EMPTY_STR)),
-							dbesc($str_group_allow),
-							dbesc($str_contact_deny),
-							dbesc($str_group_deny),
-							intval($r[0]['id']),
-							intval($uid)
-						);
-					}
+				if ($image_uri) {
+					$files[] = $image_uri;
 				}
 			}
 		}
 	}
+	if (preg_match_all("/\[attachment\](.*?)\[\/attachment\]/",$body,$match)) {
+		$attaches = $match[1];
+		if ($attaches) {
+			foreach ($attaches as $attach) {
+				$hash = substr($attach,0,strpos($attach,','));
+				if ($hash) {
+					$files[] = $hash;
+				}
+			}
+		}
+	}
+
+	return $files;
 }
 
 
-function fix_attached_file_permissions($channel,$observer_hash,$body,
-	$str_contact_allow,$str_group_allow,$str_contact_deny,$str_group_deny,$token = EMPTY_STR) {
+function fix_attached_permissions($uid,$body,$str_contact_allow,$str_group_allow,$str_contact_deny,$str_group_deny,$token = EMPTY_STR) {
 
-	$match = false;
+	$files = list_attached_local_files($body);
+	if (! $files) {
+		return;
+	}
 
-	if(preg_match_all("/\[attachment\](.*?)\[\/attachment\]/",$body,$match)) {
-		$attaches = $match[1];
-		if($attaches) {
-			foreach($attaches as $attach) {
-				$hash = substr($attach,0,strpos($attach,','));
-				$rev = intval(substr($attach,strpos($attach,',')));
-				attach_store($channel,$observer_hash,$options = 'update', array(
-					'hash'      => $hash,
-					'revision'  => $rev,
-					'allow_cid' => $str_contact_allow . (($token) ? '<token:' . $token . '>' : EMPTY_STR),
-					'allow_gid' => $str_group_allow,
-					'deny_cid'  => $str_contact_deny,
-					'deny_gid'  => $str_group_deny
-				));
+	foreach ($files as $file) {
+		$attach_q = q("select id, hash, flags, is_photo, allow_cid, allow_gid, deny_cid, deny_gid from attach where hash = '%s' and uid = %d",
+			dbesc($file),
+			intval($uid)
+		);
+
+		if (! $attach_q) {
+			continue;
+		}
+		
+		$attach = array_shift($attach_q);
+
+		$match = null;
+		$existing_public = false;
+		$new_public = (($str_contact_allow||$str_group_allow||$str_contact_deny||$str_group_deny) ? false : true);
+		$existing_public = (($attach['allow_cid']||$attach['allow_gid']||$attach['deny_cid']||$attach['deny_gid']) ? false : true);
+
+		if ($existing_public) {
+			// permissions have already been fixed and they are public. There's nothing for us to do.
+			continue;
+		}
+		
+		// if flags & 1, the attachment was uploaded directly into a post and needs to have permissions corrected
+		// or - if it is a private file and a new token was generated, we'll need to add the token to the ACL.
+
+		if (((intval($attach['flags']) & 1) !== 1) && (! $token)) {
+			continue;
+		}
+
+		$item_private = 0;
+
+		if ($new_public === false) {
+		
+			$item_private = (($str_group_allow) ? 1 : 2);
+
+			// preserve any existing tokens that may have been set for this file
+			$token_matches = null;
+			if (preg_match_all('/\<token:(.*?)\>/',$attach['allow_cid'],$token_matches, PREG_SET_ORDER)) {
+				foreach ($token_matches as $m) {
+					$tok = '<token:' . $m[1] . '>';
+					if (! strpos($str_contact_allow,$tok)) {
+						$str_contact_allow .= $tok;
+					}
+				}
 			}
+			if ($token) {
+				$str_contact_allow .= '<token:' . $token . '>';
+			}
+		}
+
+		q("update attach SET allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', flags = 0
+			WHERE id = %d AND uid = %d",
+			dbesc($str_contact_allow),
+			dbesc($str_group_allow),
+			dbesc($str_contact_deny),
+			dbesc($str_group_deny),
+			intval($attach['id']),
+			intval($uid)
+		);
+
+		if ($attach['is_photo']) {
+			$r = q("UPDATE photo SET allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s'
+				WHERE resource_id = '%s' AND uid = %d ",
+				dbesc($str_contact_allow),
+				dbesc($str_group_allow),
+				dbesc($str_contact_deny),
+				dbesc($str_group_deny),
+				dbesc($file),
+				intval($uid)
+			);
+
+			$r = q("UPDATE item SET allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', item_private = %d
+				WHERE resource_id = '%s' AND 'resource_type' = 'photo'  AND uid = %d",
+				dbesc($str_contact_allow),
+				dbesc($str_group_allow),
+				dbesc($str_contact_deny),
+				dbesc($str_group_deny),
+				intval($item_private),
+				intval($attach['id']),
+				intval($uid)
+			);
 		}
 	}
 }
 
 
 function item_create_edit_activity($post) {
-
+	// obsolete and not maintained, left in case it is ever needed again
 	if((! $post) || (! $post['item']) || ($post['item']['item_type'] != ITEM_TYPE_POST))
 		return;
 

@@ -95,6 +95,7 @@ class Wall_attach extends Controller {
 			'visible'   => 0,
 			'album'     => $def_album,
 			'directory' => $def_attach,
+			'flags'     => 1, // indicates temporary permissions are created
 			'allow_cid' => '<' . $channel['channel_hash'] . '>'
 		]);
 	

@@ -479,7 +479,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 	$upload_path = (($arr && $arr['directory']) ? $arr['directory'] : '');
 	$visible = (($arr && $arr['visible']) ? $arr['visible'] : '');
 	$notify = (($arr && $arr['notify']) ? $arr['notify'] : '');
-
+	$flags = (($arr && array_key_exists('flags',$arr)) ? intval($arr['flags']) : 0);
 	$observer = array();
 
 	$dosync = ((array_key_exists('nosync',$arr) && $arr['nosync']) ? 0 : 1);
@@ -894,8 +894,8 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 	}
 	else {
 
-		$r = q("INSERT INTO attach ( aid, uid, hash, creator, filename, filetype, folder, filesize, revision, os_storage, is_photo, content, created, edited, os_path, display_path, allow_cid, allow_gid,deny_cid, deny_gid )
-			VALUES ( %d, %d, '%s', '%s', '%s', '%s', '%s', %d, %d, %d, %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) ",
+		$r = q("INSERT INTO attach ( aid, uid, hash, creator, filename, filetype, folder, filesize, revision, os_storage, is_photo, flags, content, created, edited, os_path, display_path, allow_cid, allow_gid,deny_cid, deny_gid )
+			VALUES ( %d, %d, '%s', '%s', '%s', '%s', '%s', %d, %d, %d, %d, %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) ",
 			intval($channel['channel_account_id']),
 			intval($channel_id),
 			dbesc($hash),
@@ -907,6 +907,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 			intval(0),
 			intval(1),
 			intval($is_photo),
+			intval($flags),
 			dbescbin($os_basepath . $os_relpath),
 			dbesc($created),
 			dbesc($created),
