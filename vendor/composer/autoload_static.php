@@ -23,6 +23,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
         '20ed976102eb0f85eff007c4d1dc1db8' => __DIR__ . '/..' . '/indieweb/rel-me/RelMe.php',
+        'd08bec471a180204a14ef3c91e951f99' => __DIR__ . '/..' . '/p3k/emoji-detector/src/Emoji.php',
         'e39a8b23c42d4e1452234d762b03835a' => __DIR__ . '/..' . '/ramsey/uuid/src/functions.php',
     );
 

@@ -22,5 +22,6 @@ return array(
     '320cde22f66dd4f5d3fd621d3e88b98f' => $vendorDir . '/symfony/polyfill-ctype/bootstrap.php',
     '2cffec82183ee1cea088009cef9a6fc3' => $vendorDir . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
     '20ed976102eb0f85eff007c4d1dc1db8' => $vendorDir . '/indieweb/rel-me/RelMe.php',
+    'd08bec471a180204a14ef3c91e951f99' => $vendorDir . '/p3k/emoji-detector/src/Emoji.php',
     'e39a8b23c42d4e1452234d762b03835a' => $vendorDir . '/ramsey/uuid/src/functions.php',
 );
