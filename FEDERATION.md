@@ -40,7 +40,11 @@ Content
 
 Content can be rich multi-media and renders nicely as HTML.  Bbcode is used internally due to its ease of purification while still providing rich multi-media support. Simple content which contains very little markup is downgraded to a Note to retain compatibility with Mastodon. Complex markup is sent as Article (which unfortunately Mastodon does not render but only provides a link). Content is not obviously length-limited and authors MAY use up to the storage maximum of 24MB. In practice bbcode conversion limits the effective length to around 200KB and the default "maximum length of imported content" from other sites is 200KB. This can be changed on a per-site basis but this is rare. A Note may contain one or more images or links. The images are also added as an attachment for the benefit of Mastodon, but remain in the HTML source. When importing content from other sites, if the content contains an image attachment, the content is scanned to see if a link (a) or (img) tag containing that image is already present in the HTML. If not, an image tag is added inline to the end of the incoming content. Multiple images are supported using this mechanism.
 
-Mastodon 'summary' does not invoke any special handling. Mastodon 'sensitive' is honoured and results in invoking whatever mechanisms the user has selected to deal with this type of content. By default images are obscured and are 'click to view'. Sensitive text is not treated specially, but may be obscured using the NSFW plugin or filtered per connection based on string match, tags, patterns, languages, or other criteria.
+Mastodon 'summary' does not invoke any special handling so 'summary' can be used for its intended purpose as a content summary. Mastodon 'sensitive' is honoured and results in invoking whatever mechanisms the user has selected to deal with this type of content. By default images are obscured and are 'click to view'. Sensitive text is not treated specially, but may be obscured using the NSFW plugin or filtered per connection based on string match, tags, patterns, languages, or other criteria.
+
+Edits
+
+Edited posts and comments are sent with Update/Note and an 'updated' timestamp along with the original 'published' timestamp. 
 
 Announce
 
