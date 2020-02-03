@@ -4499,7 +4499,7 @@ function fix_attached_permissions($uid,$body,$str_contact_allow,$str_group_allow
 				dbesc($str_contact_deny),
 				dbesc($str_group_deny),
 				intval($item_private),
-				intval($attach['id']),
+				dbesc($file),
 				intval($uid)
 			);
 		}
