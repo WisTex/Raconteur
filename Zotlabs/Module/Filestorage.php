@@ -36,7 +36,7 @@ class Filestorage extends \Zotlabs\Web\Controller {
 
 		$url = get_cloud_url($channel_id, $channel['channel_address'], $resource);
 
-		//get the object before permissions change so we can catch eventual former allowed members
+		// get the object before permissions change so we can catch eventual former allowed members
 		$object = get_file_activity_object($channel_id, $resource, $url);
 
 		attach_change_permissions($channel_id, $resource, $x['allow_cid'], $x['allow_gid'], $x['deny_cid'], $x['deny_gid'], $recurse, true);

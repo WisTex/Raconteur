@@ -4461,7 +4461,7 @@ function fix_attached_permissions($uid,$body,$str_contact_allow,$str_group_allow
 			if (preg_match_all('/\<token:(.*?)\>/',$attach['allow_cid'],$token_matches, PREG_SET_ORDER)) {
 				foreach ($token_matches as $m) {
 					$tok = '<token:' . $m[1] . '>';
-					if (! strpos($str_contact_allow,$tok)) {
+					if (strpos($str_contact_allow,$tok) === false) {
 						$str_contact_allow .= $tok;
 					}
 				}

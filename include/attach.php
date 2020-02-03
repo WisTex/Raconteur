@@ -1360,16 +1360,35 @@ function attach_mkdirp($channel, $observer_hash, $arr = null) {
 function attach_change_permissions($channel_id, $resource, $allow_cid, $allow_gid, $deny_cid, $deny_gid, $recurse = false, $sync = false) {
 
 	$channel = channelx_by_n($channel_id);
-	if(! $channel)
+	if (! $channel) {
 		return;
+	}
 
-	$r = q("select hash, flags, is_dir, is_photo from attach where hash = '%s' and uid = %d limit 1",
+	$r = q("select hash, flags, is_dir, is_photo, allow_cid from attach where hash = '%s' and uid = %d limit 1",
 		dbesc($resource),
 		intval($channel_id)
 	);
 
-	if(! $r)
+	if (! $r) {
 		return;
+	}
+
+	$private = (($allow_cid || $allow_gid || $deny_cid || $deny_gid) ? true : false);
+
+	// preserve any existing tokens that may have been set for this file
+	// @fixme - we need a way to unconditionally clear these if desired.
+	
+	if ($private) {
+		$token_matches = null;
+		if (preg_match_all('/\<token:(.*?)\>/',$r[0]['allow_cid'],$token_matches, PREG_SET_ORDER)) {
+			foreach ($token_matches as $m) {
+				$tok = '<token:' . $m[1] . '>';
+				if (strpos($allow_cid,$tok) === false) {
+					$allow_cid .= $tok;
+				}
+			}
+		}
+	}
 
 	if(intval($r[0]['is_dir'])) {
 		if($recurse) {
@@ -1385,7 +1404,7 @@ function attach_change_permissions($channel_id, $resource, $allow_cid, $allow_gi
 		}
 	}
 
-	$x = q("update attach set allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s' where hash = '%s' and uid = %d",
+	$x = q("update attach set allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', flags = 0 where hash = '%s' and uid = %d",
 		dbesc($allow_cid),
 		dbesc($allow_gid),
 		dbesc($deny_cid),
@@ -1402,6 +1421,15 @@ function attach_change_permissions($channel_id, $resource, $allow_cid, $allow_gi
 			dbesc($resource),
 			intval($channel_id)
 		);
+		$x = q("update item set allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s' where resource_id = '%s' and resource_type = 'photo' and uid = %d",
+			dbesc($allow_cid),
+			dbesc($allow_gid),
+			dbesc($deny_cid),
+			dbesc($deny_gid),
+			dbesc($resource),
+			intval($channel_id)
+		);
+
 	}
 
 	if($sync) {
