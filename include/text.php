@@ -11,6 +11,7 @@ use Zotlabs\Lib\SvgSanitizer;
 use Michelf\MarkdownExtra;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
+use Emoji;
 
 require_once("include/bbcode.php");
 
@@ -1573,6 +1574,13 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 	$poll = (($item['obj_type'] === 'Question' && in_array($item['verb'],[ 'Create','Update' ])) ? format_poll($item, $s, $opts) : false);
 	if ($poll) {
 		$s = $poll;
+	}
+
+	if ($item['obj_type'] === 'EmojiReaction') {
+		$em = Emoji\is_single_emoji(trim($item['body']));
+		if ($em) {
+			$s = '<span style="font-size: 2rem;">' . trim($item['body']) . '</span>';
+		}
 	}
 
 	$event = (($item['obj_type'] === ACTIVITY_OBJ_EVENT) ? format_event_obj($item['obj']) : false);

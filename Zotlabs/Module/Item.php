@@ -36,6 +36,7 @@ use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\AccessControl;
 use App;
 use URLify;
+use Emoji;
 
 require_once('include/attach.php');
 require_once('include/bbcode.php');
@@ -485,6 +486,14 @@ class Item extends Controller {
 			if ($obj_type == ACTIVITY_OBJ_NOTE) {
 				$obj_type = ACTIVITY_OBJ_COMMENT;
 			}
+
+			if (mb_strlen($_REQUEST['body']) < 10) {
+				$t = Emoji\is_single_emoji(trim($_REQUEST['body']));
+				if ($t) {
+					$obj_type = 'EmojiReaction';
+				}
+			}
+
 
 			// fetch the parent item
 			
