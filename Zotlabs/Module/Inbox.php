@@ -248,6 +248,7 @@ class Inbox extends Controller {
 				case 'View':
 				case 'emojiReaction':
 				case 'EmojiReaction':
+				case 'EmojiReact':
 					// These require a resolvable object structure
 					if (is_array($AS->obj)) {
 						$item = Activity::decode_note($AS);

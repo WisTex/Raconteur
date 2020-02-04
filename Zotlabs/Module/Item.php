@@ -490,7 +490,7 @@ class Item extends Controller {
 			if (mb_strlen($_REQUEST['body']) < 10) {
 				$t = Emoji\is_single_emoji(trim($_REQUEST['body']));
 				if ($t) {
-					$obj_type = 'EmojiReaction';
+					$obj_type = 'EmojiReact';
 				}
 			}
 

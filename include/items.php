@@ -2657,7 +2657,6 @@ function tag_deliver($uid, $item_id) {
 				'verb'         => ACTIVITY_TAG,
 				'otype'        => 'item'
 			));
-
 		}
 	}
 	if ($is_collection && $pterms) {
@@ -2775,8 +2774,44 @@ function tgroup_check($uid, $item) {
 		return true;
 	}
 
+	// return true if we are mentioned and we permit delivery of mentions from strangers
+	
+	if (PConfig::Get($uid, 'system','permit_all_mentions') && i_am_mentioned($u,$item)) {
+		return true;
+	}
+	
 	return false;
 }
+
+
+function i_am_mentioned($channel,$item) {
+
+	$link = $channel['xchan_url'];
+
+	$body = preg_replace('/\[share(.*?)\[\/share\]/','',$item['body']);
+
+	$tagged = false;
+	$matches = [];
+
+	$terms = get_terms_oftype($item['term'],TERM_MENTION);
+	if ($terms) {
+		foreach ($terms as $term) {
+			if ($link === $term['url']) {
+				$pattern = '/[\!@]\!?\[[uz]rl\=' . preg_quote($term['url'],'/') . '\]' . preg_quote($term['term'],'/') . '\[\/[uz]rl\]/';
+				if (preg_match($pattern,$body,$matches)) {
+					$tagged = true;
+				}
+				$pattern = '/\[[uz]rl\=' . preg_quote($term['url'],'/') . '\][\!@](.*?)\[\/[uz]rl\]/';
+				if (preg_match($pattern,$body,$matches)) {
+					$tagged = true;
+				}
+			}
+		}
+	}
+	return $tagged;
+}
+
+
 
 /**
  * Sourced and tag-delivered posts are re-targetted for delivery to the connections of the channel

@@ -1869,7 +1869,7 @@ class Activity {
 		}		
 
 		if (in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block', 'Announce', 'Accept', 'Reject',
-			'TentativeAccept', 'TentativeReject', 'emojiReaction', 'EmojiReaction' ])) {
+			'TentativeAccept', 'TentativeReject', 'emojiReaction', 'EmojiReaction', 'EmojiReact' ])) {
 
 			$response_activity = true;
 
@@ -1939,7 +1939,7 @@ class Activity {
 				// Hubzilla reactions
 				$content['content'] = (($act->tgt && $act->tgt['type'] === 'Image') ? '[img=32x32]' . $act->tgt['url'] . '[/img]' : '&#x' . $act->tgt['name'] . ';');
 			}
-			if ($act->type === 'EmojiReaction') {
+			if (in_array($act->type,[ 'EmojiReaction', 'EmojiReact' ])) {
 				// Pleroma reactions
 				$t = trim(self::get_textfield($act,'content'));
 				$e = Emoji\is_single_emoji($t);

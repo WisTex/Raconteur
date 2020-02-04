@@ -11,7 +11,6 @@ use Zotlabs\Lib\SvgSanitizer;
 use Michelf\MarkdownExtra;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
-use Emoji;
 
 require_once("include/bbcode.php");
 
