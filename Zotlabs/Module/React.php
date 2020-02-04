@@ -26,7 +26,7 @@ class React extends Controller {
 		$emoji = $_REQUEST['emoji'];
 
 
-		if($_REQUEST['emoji']) {
+		if($emoji) {
 
 			$i = q("select * from item where id = %d and uid = %d",
 				intval($postid),

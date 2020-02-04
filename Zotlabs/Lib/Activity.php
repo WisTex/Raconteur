@@ -8,7 +8,6 @@ use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Daemon\Master;
 
-
 require_once('include/html2bbcode.php');
 require_once('include/html2plain.php');
 require_once('include/event.php');
@@ -1937,11 +1936,17 @@ class Activity {
 				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $act->obj['type']);
 			}
 			if ($act->type === 'emojiReaction') {
+				// Hubzilla reactions
 				$content['content'] = (($act->tgt && $act->tgt['type'] === 'Image') ? '[img=32x32]' . $act->tgt['url'] . '[/img]' : '&#x' . $act->tgt['name'] . ';');
 			}
 			if ($act->type === 'EmojiReaction') {
-				// Pleroma emoji reactions
-				$content['content'] = self::get_textfield($act,'content');
+				// Pleroma reactions
+				$t = trim(self::get_textfield($act,'content'));
+				$e = Emoji\is_single_emoji($t);
+				if ($e) {
+					$content['content'] = trim(self::get_textfield($act,'content'));
+				}
+				
 			}
 		}
 
