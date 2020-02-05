@@ -36,7 +36,6 @@
 		"league/html-to-markdown": "^4.4",
 		"pear/text_languagedetect": "^1.0",
 		"commerceguys/intl": "~0.7",
-		"lukasreschke/id3parser": "^0.0.1",
 		"smarty/smarty": "~3.1",
 		"ramsey/uuid": "^3.8",
 		"twbs/bootstrap": "4.1.3",

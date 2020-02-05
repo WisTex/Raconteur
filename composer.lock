@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9946b1b3af6a4397416033a9eaba7980",
+    "content-hash": "31ba5c9ecbcca96fabcf1d8eded2099f",
     "packages": [
         {
             "name": "blueimp/jquery-file-upload",
@@ -1172,42 +1172,6 @@
                 "oauth2"
             ],
             "time": "2019-11-11T16:54:51+00:00"
-        },
-        {
-            "name": "lukasreschke/id3parser",
-            "version": "v0.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/LukasReschke/ID3Parser.git",
-                "reference": "cd3ba6e8918cc30883f01a3c24281cfe23b8877a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/LukasReschke/ID3Parser/zipball/cd3ba6e8918cc30883f01a3c24281cfe23b8877a",
-                "reference": "cd3ba6e8918cc30883f01a3c24281cfe23b8877a",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "ID3Parser\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL"
-            ],
-            "homepage": "https://github.com/LukasReschke/ID3Parser/",
-            "keywords": [
-                "codecs",
-                "php",
-                "tags"
-            ],
-            "abandoned": true,
-            "time": "2016-04-04T09:34:50+00:00"
         },
         {
             "name": "masterminds/html5",

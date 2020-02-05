@@ -73,10 +73,6 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
             'League\\HTMLToMarkdown\\' => 22,
             'League\\Flysystem\\' => 17,
         ),
-        'I' => 
-        array (
-            'ID3Parser\\' => 10,
-        ),
         'H' => 
         array (
             'Hubzilla\\' => 9,
@@ -199,10 +195,6 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'League\\Flysystem\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/flysystem/src',
-        ),
-        'ID3Parser\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/lukasreschke/id3parser/src',
         ),
         'Hubzilla\\' => 
         array (
@@ -626,13 +618,6 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'HTMLPurifier_VarParser_Flexible' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/VarParser/Flexible.php',
         'HTMLPurifier_VarParser_Native' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/VarParser/Native.php',
         'HTMLPurifier_Zipper' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Zipper.php',
-        'ID3Parser\\ID3Parser' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/ID3Parser.php',
-        'ID3Parser\\getID3\\Tags\\getid3_id3v1' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/Tags/getid3_id3v1.php',
-        'ID3Parser\\getID3\\Tags\\getid3_id3v2' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/Tags/getid3_id3v2.php',
-        'ID3Parser\\getID3\\getID3' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3.php',
-        'ID3Parser\\getID3\\getid3_exception' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3_exception.php',
-        'ID3Parser\\getID3\\getid3_handler' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3_handler.php',
-        'ID3Parser\\getID3\\getid3_lib' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3_lib.php',
         'League\\Flysystem\\AdapterInterface' => __DIR__ . '/..' . '/league/flysystem/src/AdapterInterface.php',
         'League\\Flysystem\\Adapter\\AbstractAdapter' => __DIR__ . '/..' . '/league/flysystem/src/Adapter/AbstractAdapter.php',
         'League\\Flysystem\\Adapter\\AbstractFtpAdapter' => __DIR__ . '/..' . '/league/flysystem/src/Adapter/AbstractFtpAdapter.php',
