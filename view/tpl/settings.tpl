@@ -51,6 +51,7 @@
 						{{$autoperms}}
 						{{$anymention}}
 						{{include file="field_select.tpl" field=$comment_perms}}
+						{{include file="field_checkbox.tpl" field=$permit_all_mentions}}
 						
 						<div id="advanced-perm" style="display:{{if $permissions_set}}none{{else}}block{{/if}};">
 							<div class="form-group">
@@ -61,7 +62,7 @@
 									<div class="modal-content">
 										<div class="modal-header">
 											<h4 class="modal-title">{{$lbl_p2macro}}</h4>
-											<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+											<button type="button" class="close" data-dismiss="modal" aria-label="{{$close}}"><span aria-hidden="true">&times;</span></button>
 										</div>
 										<div class="modal-body">
 										{{foreach $permiss_arr as $permit}}
@@ -69,7 +70,7 @@
 										{{/foreach}}
 										</div>
 										<div class="modal-footer">
-											<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+											<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$close}}</button>
 										</div>
 									</div><!-- /.modal-content -->
 								</div><!-- /.modal-dialog -->

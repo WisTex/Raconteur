@@ -169,7 +169,8 @@ class Channel {
 		$cal_first_day   = (((x($_POST,'first_day')) && intval($_POST['first_day']) >= 0 && intval($_POST['first_day']) < 7) ? intval($_POST['first_day']) : 0);
 		$mailhost        = ((array_key_exists('mailhost',$_POST)) ? notags(trim($_POST['mailhost'])) : '');
 		$profile_assign  = ((x($_POST,'profile_assign')) ? notags(trim($_POST['profile_assign'])) : '');
-
+		$permit_all_mentions = (($_POST['permit_all_mentions'] == 1) ? 1: 0);
+		
 		// allow a permission change to over-ride the autoperms setting from the form
 
 		if(! isset($autoperms)) {
@@ -279,6 +280,7 @@ class Channel {
 		set_pconfig(local_channel(),'system','hyperdrive',$hyperdrive);
 		set_pconfig(local_channel(),'system','activitypub',$activitypub);
 		set_pconfig(local_channel(),'system','autoperms',$autoperms);
+		set_pconfig(local_channel(),'system','permit_all_mentions',$permit_all_mentions);
 	
 		$r = q("update channel set channel_name = '%s', channel_pageflags = %d, channel_timezone = '%s', channel_location = '%s', channel_notifyflags = %d, channel_max_anon_mail = %d, channel_max_friend_req = %d, channel_expire_days = %d $set_perms where channel_id = %d",
 			dbesc($username),
@@ -613,6 +615,7 @@ class Channel {
 			'$apconfig' => $apconfig,
 			'$apheader' => $apheader,
 			'$apdoc' => $apdoc,
+			'$close' => t('Close'),
 			'$h_not' 	=> t('Notifications'),
 			'$activity_options' => t('By default post a status message when:'),
 			'$post_newfriend' => array('post_newfriend',  t('accepting a friend request'), $post_newfriend, '', $yes_no),
@@ -651,7 +654,7 @@ class Channel {
 			'$vnotify16'	=> ((is_site_admin()) ? array('vnotify16', t('Reported content'), ($vnotify & VNOTIFY_REPORTS), VNOTIFY_REPORTS, '', $yes_no) : [] ),
 			'$mailhost' => [ 'mailhost', t('Email notification hub (hostname)'), get_pconfig(local_channel(),'system','email_notify_host',App::get_hostname()), sprintf( t('If your channel is mirrored to multiple locations, set this to your preferred location. This will prevent duplicate email notifications. Example: %s'),App::get_hostname()) ],
 			'$always_show_in_notices'  => array('always_show_in_notices', t('Show new wall posts, private messages and connections under Notices'), $always_show_in_notices, 1, '', $yes_no),
-	
+			'$permit_all_mentions' => [ 'permit_all_mentions', t('Accept messages from strangers which mention me'), get_pconfig(local_channel(),'system','permit_all_mentions'), t('This setting supercedes normal permissions'), $yes_no ],
 			'$evdays' => array('evdays', t('Notify me of events this many days in advance'), $evdays, t('Must be greater than 0')),			
 			'$basic_addon' => $plugin['basic'],
 			'$sec_addon'  => $plugin['security'],

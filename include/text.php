@@ -1575,6 +1575,11 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 		$s = $poll;
 	}
 
+	$em = Emoji\is_single_emoji(trim($item['body']));
+	if ($em) {
+		$s = '<span style="font-size: 2rem;">' . trim($item['body']) . '</span>';
+	}
+
 	$event = (($item['obj_type'] === ACTIVITY_OBJ_EVENT) ? format_event_obj($item['obj']) : false);
 
 	// This is not the most pleasant UI element possible, but this is difficult to add to one of the templates.
