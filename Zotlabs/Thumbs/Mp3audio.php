@@ -2,7 +2,7 @@
 
 namespace Zotlabs\Thumbs;
 
-use ID3Parser\ID3Parser;
+use PhpId3\Id3TagsReader;
 
 class Mp3audio {
 
@@ -11,15 +11,21 @@ class Mp3audio {
 	}
 
 	function Thumb($attach,$preview_style,$height = 300, $width = 300) {
-		$p = new ID3Parser();
 
-        $id = $p->analyze(dbunescbin($attach['content']));
+		$fh = @fopen(dbunescbin($attach['content']),'rb');
+		if ($fh === false) {
+			return;
+		}
+		$id3 = new Id3TagsReader($fh);
+		$id3->readAllTags();
 
-        $photo = isset($id['id3v2']['APIC'][0]['data']) ? $id['id3v2']['APIC'][0]['data'] : null;
-        if (is_null($photo) && isset($id['id3v2']['PIC'][0]['data'])) {
-            $photo = $id['id3v2']['PIC'][0]['data'];
-        }
+		$image = $id3->getImage(); 
+		if (is_array($image)) {
+			$photo = $image[1];
+		}
 
+		fclose($fh);
+		
         if ($photo) {
 			$image = imagecreatefromstring($photo);
 			$dest = imagecreatetruecolor( $width, $height );
