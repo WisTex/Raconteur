@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1777c61a20a9b380c9f63f037d002248",
+    "content-hash": "9946b1b3af6a4397416033a9eaba7980",
     "packages": [
         {
             "name": "blueimp/jquery-file-upload",
@@ -2140,6 +2140,42 @@
                 "xml"
             ],
             "time": "2019-01-09T13:51:57+00:00"
+        },
+        {
+            "name": "shubhamjain/php-id3",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shubhamjain/PHP-ID3.git",
+                "reference": "d4cae5c013097ee4ecc96693b935e9128ff51d3d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shubhamjain/PHP-ID3/zipball/d4cae5c013097ee4ecc96693b935e9128ff51d3d",
+                "reference": "d4cae5c013097ee4ecc96693b935e9128ff51d3d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "PhpId3": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Shubham Jain",
+                    "email": "shubham.jain.1@gmail.com"
+                }
+            ],
+            "description": "A MP3 ID3 tags reader in native PHP",
+            "time": "2015-09-10T04:13:26+00:00"
         },
         {
             "name": "simplepie/simplepie",
@@ -5911,6 +5947,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "indieweb/rel-me": 20,
+        "shubhamjain/php-id3": 20,
         "phpunit/phpunit": 0,
         "behat/behat": 0,
         "behat/mink-extension": 0,

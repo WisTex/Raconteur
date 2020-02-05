@@ -252,6 +252,13 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
                 0 => __DIR__ . '/..' . '/simplepie/simplepie/library',
             ),
         ),
+        'P' => 
+        array (
+            'PhpId3' => 
+            array (
+                0 => __DIR__ . '/..' . '/shubhamjain/php-id3',
+            ),
+        ),
         'O' => 
         array (
             'OAuth2' => 
@@ -866,6 +873,10 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'PHPGit\\Command\\TreeCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/TreeCommand.php',
         'PHPGit\\Exception\\GitException' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Exception/GitException.php',
         'PHPGit\\Git' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Git.php',
+        'PhpId3\\BinaryFileReader' => __DIR__ . '/..' . '/shubhamjain/php-id3/PhpId3/BinaryFileReader.php',
+        'PhpId3\\Id3Tags' => __DIR__ . '/..' . '/shubhamjain/php-id3/PhpId3/Id3Tags.php',
+        'PhpId3\\Id3TagsReader' => __DIR__ . '/..' . '/shubhamjain/php-id3/PhpId3/Id3TagsReader.php',
+        'PhpId3\\Tests\\GenerateCvCommandTest' => __DIR__ . '/..' . '/shubhamjain/php-id3/Tests/Id3TagsReaderTest.php',
         'Psr\\Http\\Message\\MessageInterface' => __DIR__ . '/..' . '/psr/http-message/src/MessageInterface.php',
         'Psr\\Http\\Message\\RequestInterface' => __DIR__ . '/..' . '/psr/http-message/src/RequestInterface.php',
         'Psr\\Http\\Message\\ResponseInterface' => __DIR__ . '/..' . '/psr/http-message/src/ResponseInterface.php',

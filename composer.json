@@ -55,7 +55,8 @@
 		"league/oauth2-linkedin": "^5.1",
 		"forkawesome/fork-awesome": "^1.1",
 		"svg-edit/svgedit": "^5.0",
-		"p3k/emoji-detector": "^0.2.1"
+		"p3k/emoji-detector": "^0.2.1",
+		"shubhamjain/php-id3": "dev-master"
 	},
 	"require-dev" : {
 		"phpunit/phpunit" : "@stable",

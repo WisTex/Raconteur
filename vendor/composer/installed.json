@@ -2211,6 +2211,44 @@
         ]
     },
     {
+        "name": "shubhamjain/php-id3",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/shubhamjain/PHP-ID3.git",
+            "reference": "d4cae5c013097ee4ecc96693b935e9128ff51d3d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/shubhamjain/PHP-ID3/zipball/d4cae5c013097ee4ecc96693b935e9128ff51d3d",
+            "reference": "d4cae5c013097ee4ecc96693b935e9128ff51d3d",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "time": "2015-09-10T04:13:26+00:00",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "psr-0": {
+                "PhpId3": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Shubham Jain",
+                "email": "shubham.jain.1@gmail.com"
+            }
+        ],
+        "description": "A MP3 ID3 tags reader in native PHP"
+    },
+    {
         "name": "simplepie/simplepie",
         "version": "1.5.4",
         "version_normalized": "1.5.4.0",
