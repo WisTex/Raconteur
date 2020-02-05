@@ -1575,11 +1575,9 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 		$s = $poll;
 	}
 
-	if ($item['obj_type'] === 'EmojiReaction') {
-		$em = Emoji\is_single_emoji(trim($item['body']));
-		if ($em) {
-			$s = '<span style="font-size: 2rem;">' . trim($item['body']) . '</span>';
-		}
+	$em = Emoji\is_single_emoji(trim($item['body']));
+	if ($em) {
+		$s = '<span style="font-size: 2rem;">' . trim($item['body']) . '</span>';
 	}
 
 	$event = (($item['obj_type'] === ACTIVITY_OBJ_EVENT) ? format_event_obj($item['obj']) : false);

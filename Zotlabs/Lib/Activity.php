@@ -1935,18 +1935,19 @@ class Activity {
 			if ($act->type === 'Announce') {
 				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $act->obj['type']);
 			}
+
 			if ($act->type === 'emojiReaction') {
 				// Hubzilla reactions
 				$content['content'] = (($act->tgt && $act->tgt['type'] === 'Image') ? '[img=32x32]' . $act->tgt['url'] . '[/img]' : '&#x' . $act->tgt['name'] . ';');
 			}
+			
 			if (in_array($act->type,[ 'EmojiReaction', 'EmojiReact' ])) {
 				// Pleroma reactions
 				$t = trim(self::get_textfield($act,'content'));
 				$e = Emoji\is_single_emoji($t);
 				if ($e) {
 					$content['content'] = trim(self::get_textfield($act,'content'));
-				}
-				
+				}	
 			}
 		}
 
@@ -2550,27 +2551,15 @@ class Activity {
 				Activity::actor_store($a->actor['id'],$a->actor);
 			}
 
-			$item = null;
+			$item = Activity::decode_note($a);
 
-			switch ($a->type) {
-				case 'Create':
-				case 'Update':
-				case 'Like':
-				case 'Dislike':
-				case 'Announce':
-					$item = Activity::decode_note($a);
-					break;
-				default:
-					break;
-
-			}
 			if (! $item) {
 				break;
 			}
 
 			$hookinfo = [
-			        'a' => $a,
-			        'item' => $item
+		        'a' => $a,
+		        'item' => $item
 			];
 
 			call_hooks('fetch_and_store',$hookinfo);
