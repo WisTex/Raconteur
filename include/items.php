@@ -2614,7 +2614,7 @@ function tag_deliver($uid, $item_id) {
 			$tagged = false;
 			$matches = array();
 
-			$pattern = '/[\!@]\!?\[[uz]rl\=' . preg_quote($term['url'],'/') . '\]' . preg_quote($term['term'],'/') . '\[\/[uz]rl\]/';
+			$pattern = '/[\!@]\!?\[[uz]rl\=' . preg_quote($term['url'],'/') . '\](.*?)\[\/[uz]rl\]/';
 			if (preg_match($pattern,$body,$matches))
 				$tagged = true;
 
@@ -2723,7 +2723,6 @@ function tag_deliver($uid, $item_id) {
 
 function tgroup_check($uid, $item) {
 
-	$mention = false;
 
 	$role = get_pconfig($uid,'system','permissions_role');
 	$rolesettings = PermissionRoles::role_perms($role);
@@ -2794,10 +2793,11 @@ function i_am_mentioned($channel,$item) {
 	$matches = [];
 
 	$terms = get_terms_oftype($item['term'],TERM_MENTION);
+
 	if ($terms) {
 		foreach ($terms as $term) {
 			if ($link === $term['url']) {
-				$pattern = '/[\!@]\!?\[[uz]rl\=' . preg_quote($term['url'],'/') . '\]' . preg_quote($term['term'],'/') . '\[\/[uz]rl\]/';
+				$pattern = '/[\!@]\!?\[[uz]rl\=' . preg_quote($term['url'],'/') . '\](.*?)\[\/[uz]rl\]/';
 				if (preg_match($pattern,$body,$matches)) {
 					$tagged = true;
 				}
