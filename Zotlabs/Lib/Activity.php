@@ -690,6 +690,9 @@ class Activity {
 					$ret = json_decode($i['obj'],true);
 				}
 			}
+			if(array_path_exists('actor/id',$ret)) {
+				$ret['actor'] = $ret['actor']['id'];
+			}
 		}
 
 
@@ -1871,6 +1874,16 @@ class Activity {
 			$s['mid'] = $s['parent_mid'] = $act->id;
 		}
 
+		if ($act->obj['type'] === 'Note' && $act->data['name']) {
+			$parent = self::fetch($act->parent_id);
+			if ($parent && array_path_exists('object/type',$parent) && $parent['object']['type'] === 'Question') {
+				$s['mid'] = $act->id;
+				$s['replyto'] = $act->replyto;
+				$s['verb'] = 'Answer';
+				$content['content'] = EMPTY_STR;
+			}
+		}
+		
 		if ($act->type === 'Note' && $act->obj['type'] === 'Question' && $act->data['name']) {
 			$s['mid'] = $act->id;
 			$s['parent_mid'] = $act->obj['id'];
@@ -1997,7 +2010,7 @@ class Activity {
 
 		$s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
 		$s['obj']      = $act->obj;
-		if (is_array($obj) && array_path_exists('actor/id',$s['obj'])) {
+		if (is_array($s['obj']) && array_path_exists('actor/id',$s['obj'])) {
 			$s['obj']['actor'] = $s['obj']['actor']['id'];
 		}
 
