@@ -681,6 +681,17 @@ class Activity {
 
 		$ret['type'] = $objtype;
 
+		if ($objtype === 'Question') {
+			if ($i['obj']) {
+				if (is_array($i['obj'])) {
+					$ret = $i['obj'];
+				}
+				else {
+					$ret = json_decode($i['obj'],true);
+				}
+			}
+		}
+
 
 		/**
 		 * If the destination is activitypub, see if the content needs conversion to 
