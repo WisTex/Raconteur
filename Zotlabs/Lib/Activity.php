@@ -681,6 +681,20 @@ class Activity {
 
 		$ret['type'] = $objtype;
 
+		if ($objtype === 'Question') {
+			if ($i['obj']) {
+				if (is_array($i['obj'])) {
+					$ret = $i['obj'];
+				}
+				else {
+					$ret = json_decode($i['obj'],true);
+				}
+			}
+			if(array_path_exists('actor/id',$ret)) {
+				$ret['actor'] = $ret['actor']['id'];
+			}
+		}
+
 
 		/**
 		 * If the destination is activitypub, see if the content needs conversion to 
@@ -1860,6 +1874,16 @@ class Activity {
 			$s['mid'] = $s['parent_mid'] = $act->id;
 		}
 
+		if ($act->obj['type'] === 'Note' && $act->data['name']) {
+			$parent = self::fetch($act->parent_id);
+			if ($parent && array_path_exists('object/type',$parent) && $parent['object']['type'] === 'Question') {
+				$s['mid'] = $act->id;
+				$s['replyto'] = $act->replyto;
+				$s['verb'] = 'Answer';
+				$content['content'] = EMPTY_STR;
+			}
+		}
+		
 		if ($act->type === 'Note' && $act->obj['type'] === 'Question' && $act->data['name']) {
 			$s['mid'] = $act->id;
 			$s['parent_mid'] = $act->obj['id'];
@@ -1986,7 +2010,7 @@ class Activity {
 
 		$s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
 		$s['obj']      = $act->obj;
-		if (is_array($obj) && array_path_exists('actor/id',$s['obj'])) {
+		if (is_array($s['obj']) && array_path_exists('actor/id',$s['obj'])) {
 			$s['obj']['actor'] = $s['obj']['actor']['id'];
 		}
 
@@ -2541,6 +2565,15 @@ class Activity {
 			}
 			if (is_array($a->actor) && array_key_exists('id',$a->actor)) {
 				Activity::actor_store($a->actor['id'],$a->actor);
+			}
+
+			// we don't support Create/Person which may have landed here accidentally due to an implied_create
+			// added to an incorrectly translated Hubzilla like of a "new friend" activity. There is no perfect mapping from that AS1
+			// construct to AS2. The above fetch of the parent will return a naked Person object which is turned into a Create by the AS parser.
+			// There may be other solutions but this should catch it. 
+
+			if ($a->implied_create && is_array($a->obj) && array_key_exists('type',$a->obj) && ActivityStreams::is_an_actor($a->obj['type'])) {
+				return false;
 			}
 
 			$item = Activity::decode_note($a);
