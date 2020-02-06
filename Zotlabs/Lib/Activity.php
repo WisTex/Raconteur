@@ -2543,6 +2543,15 @@ class Activity {
 				Activity::actor_store($a->actor['id'],$a->actor);
 			}
 
+			// we don't support Create/Person which may have landed here accidentally due to an implied_create
+			// added to an incorrectly translated Hubzilla like of a "new friend" activity. There is no perfect mapping from that AS1
+			// construct to AS2. The above fetch of the parent will return a naked Person object which is turned into a Create by the AS parser.
+			// There may be other solutions but this should catch it. 
+
+			if ($a->implied_create && is_array($a->obj) && array_key_exists('type',$a->obj) && ActivityStreams::is_an_actor($a->obj['type'])) {
+				return false;
+			}
+
 			$item = Activity::decode_note($a);
 
 			if (! $item) {

@@ -1196,6 +1196,13 @@ class Libzot {
 					return;
 				}
 
+				// compatibility issue with like of Hubzilla "new friend" activities which is very difficult to fix
+				
+				if ($AS->implied_create && is_array($AS->obj) && array_key_exists('type',$AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])) {
+					logger('create/person activity rejected. ' . print_r($data,true));
+					return false;
+				}
+
 				if (is_array($AS->obj)) {
 					$arr = Activity::decode_note($AS);
 				}
