@@ -503,8 +503,12 @@ class Activity {
 		}
 
 		$ret['published'] = datetime_convert('UTC','UTC',$i['created'],ATOM_TIME);
-		if ($i['created'] !== $i['edited'])
+		if ($i['created'] !== $i['edited']) {
 			$ret['updated'] = datetime_convert('UTC','UTC',$i['edited'],ATOM_TIME);
+			if ($ret['type'] === 'Create') {
+				$ret['type'] = 'Update';
+			}
+		}
 		if ($i['app']) {
 			$ret['generator'] = [ 'type' => 'Application', 'name' => $i['app'] ];
 		}
@@ -823,10 +827,11 @@ class Activity {
 			}
 		}
 
+		if ($i['title']) {
+			$ret['name'] = $i['title'];
+		}
+
 		if ($i['mimetype'] === 'text/bbcode') {
-			if ($i['title']) {
-				$ret['name'] = $i['title'];
-			}
 			if ($i['summary']) {
 				$ret['summary'] = bbcode($i['summary'], [ $bbopts => true ]);
 			}
@@ -1145,10 +1150,6 @@ class Activity {
 
 	static function activity_mapper($verb) {
 
-		if ($verb === 'Answer') {
-			return 'Note';
-		}
-		
 		if (strpos($verb,'/') === false) {
 			return $verb;
 		}
@@ -1771,6 +1772,10 @@ class Activity {
 			return false;
 		}
 
+
+			
+
+
 		$o = json_decode($item['obj'],true);
 		if ($o && array_key_exists('anyOf',$o)) {
 			$multi = true;
@@ -1815,6 +1820,15 @@ class Activity {
 				}
 			}
 		}
+
+		if ($item['comments_closed'] > NULL_DATE) {
+			if ($item['comments_closed'] > datetime_convert()) {
+				$o['closed'] = datetime_convert('UTC','UTC',$item['comments_closed'], ATOM_TIME);
+				// set this to force an update
+				$answer_found = true;
+			}
+		}
+
 		logger('updated_poll: ' . print_r($o,true),LOGGER_DATA);		
 		if ($answer_found && ! $found) {			
 			$x = q("update item set obj = '%s', edited = '%s' where id = %d",
@@ -1839,9 +1853,15 @@ class Activity {
 
 		if (is_array($act->obj)) {
 			$content = self::get_content($act->obj);
-
 		}
-			
+
+		// These activities should have been handled separately in the Inbox module and should not be turned into posts
+		
+		if (in_array($act->type, ['Follow', 'Accept', 'Reject', 'Create', 'Update'])
+			&& is_array($a->obj) && array_key_exists('type',$a->obj) && ActivityStreams::is_an_actor($a->obj['type'])) {
+			return false;
+		}
+
 		$s['owner_xchan']  = $act->actor['id'];
 		$s['author_xchan'] = $act->actor['id'];
 
@@ -1873,24 +1893,6 @@ class Activity {
 		if ($act->type === 'Invite' && $act->obj['type'] === 'Event') {
 			$s['mid'] = $s['parent_mid'] = $act->id;
 		}
-
-		if ($act->obj['type'] === 'Note' && $act->data['name']) {
-			$parent = self::fetch($act->parent_id);
-			if ($parent && array_path_exists('object/type',$parent) && $parent['object']['type'] === 'Question') {
-				$s['mid'] = $act->id;
-				$s['replyto'] = $act->replyto;
-				$s['verb'] = 'Answer';
-				$content['content'] = EMPTY_STR;
-			}
-		}
-		
-		if ($act->type === 'Note' && $act->obj['type'] === 'Question' && $act->data['name']) {
-			$s['mid'] = $act->id;
-			$s['parent_mid'] = $act->obj['id'];
-			$s['replyto'] = $act->replyto;
-			$s['verb'] = 'Answer';
-			$content['content'] = EMPTY_STR;
-		}		
 
 		if (in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block', 'Announce', 'Accept', 'Reject',
 			'TentativeAccept', 'TentativeReject', 'emojiReaction', 'EmojiReaction', 'EmojiReact' ])) {
@@ -1996,11 +1998,6 @@ class Activity {
 		}
 
 		$s['verb']     = self::activity_mapper($act->type);
-
-		if ($act->type === 'Note' && $act->obj['type'] === 'Question' && $act->data['name'] && ! $content['content']) {
-			$s['verb'] = 'Answer';
-			$s['title'] = purify_html($act->data['name']);
-		}
 
 		// Mastodon does not provide update timestamps when updating poll tallies which means race conditions may occur here.
 		if ($act->type === 'Update' && $act->obj['type'] === 'Question' && $s['edited'] === $s['created']) {
@@ -2316,7 +2313,7 @@ class Activity {
 		$allowed = false;
 		
 		if ($is_child_node) {		
-			$p = q("select id from item where mid = '%s' and uid = %d and item_wall = 1",
+			$p = q("select id, obj_type from item where mid = '%s' and uid = %d and item_wall = 1",
 				dbesc($item['parent_mid']),
 				intval($channel['channel_id'])
 			);
@@ -2340,6 +2337,12 @@ class Activity {
 				// reject public stream comments that weren't sent by the conversation owner
 				if ($is_sys_channel && $pubstream && $item['owner_xchan'] !== $observer_hash) {
 					$allowed = false;
+				}
+			}
+			
+			if ($p && $p[0]['obj_type'] === 'Question') {
+				if ($item['obj_type'] === 'Note' && $item['title'] && (! $item['content']) && (! $item['summary'])) {
+					$item['obj_type'] = 'Answer';
 				}
 			}
 		}
@@ -2567,14 +2570,7 @@ class Activity {
 				Activity::actor_store($a->actor['id'],$a->actor);
 			}
 
-			// we don't support Create/Person which may have landed here accidentally due to an implied_create
-			// added to an incorrectly translated Hubzilla like of a "new friend" activity. There is no perfect mapping from that AS1
-			// construct to AS2. The above fetch of the parent will return a naked Person object which is turned into a Create by the AS parser.
-			// There may be other solutions but this should catch it. 
 
-			if ($a->implied_create && is_array($a->obj) && array_key_exists('type',$a->obj) && ActivityStreams::is_an_actor($a->obj['type'])) {
-				return false;
-			}
 
 			$item = Activity::decode_note($a);
 

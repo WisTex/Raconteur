@@ -403,11 +403,15 @@ function count_descendants($item) {
  * @return boolean
  */
 function visible_activity($item) {
-	$hidden_activities = [ ACTIVITY_LIKE, ACTIVITY_DISLIKE, 'Answer' ];
+	$hidden_activities = [ ACTIVITY_LIKE, ACTIVITY_DISLIKE ];
 
 	if(intval($item['item_notshown']))
 		return false;
 
+	if ($item['obj_type'] === 'Answer') {
+		return false;
+	}
+	
 	foreach($hidden_activities as $act) {
 		if((activity_match($item['verb'], $act)) && ($item['mid'] != $item['parent_mid'])) {
 			return false;

@@ -31,7 +31,6 @@ class Vote extends Controller {
 			);
 		}
 
-
 		if ($fetch && $fetch[0]['obj_type'] === 'Question') {
 			$obj = json_decode($fetch[0]['obj'],true);
 
@@ -80,22 +79,34 @@ class Vote extends Controller {
 
 			$item = [];
 
-
 			$item['aid'] = $channel['channel_account_id'];
 			$item['uid'] = $channel['channel_id'];
 			$item['item_origin'] = true;
 			$item['parent'] = $fetch[0]['id'];
 			$item['parent_mid'] = $fetch[0]['mid'];
+			$item['thr_parent'] = $fetch[0]['mid'];
 			$item['uuid'] = new_uuid();
 			$item['mid'] = z_root() . '/item/' . $item['uuid'];
-			$item['verb'] = 'Answer';
+			$item['verb'] = 'Create';
 			$item['title'] = $res;
 			$item['author_xchan'] = $channel['channel_hash'];
 			$item['owner_xchan'] = $fetch[0]['author_xchan'];
+			$item['allow_cid'] = '<' . $fetch[0]['author_xchan'] . '>';
+			$item['item_private'] = 1;
 			
-			$item['obj'] = $obj;
-			$item['obj_type'] = 'Question';
+			// These two are placeholder values that will be reset after
+			// we encode the item
+			
+			$item['obj_type'] = 'Note';
+			$item['author'] = channelx_by_n($channel['channel_id']);
 
+			$item['obj'] = Activity::encode_item($item,((get_config('system','activitypub')) ? true : false));
+
+			// now reset the placeholders
+
+			$item['obj_type'] = 'Answer';
+			unset($item['author']);
+			
 			$x = item_store($item); 
 
 			retain_item($fetch[0]['id']);
