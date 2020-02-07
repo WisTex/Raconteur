@@ -1784,7 +1784,7 @@ class Libzot {
 				// As a side effect we will also do a preliminary check that we have the top-level-post, otherwise
 				// processing it is pointless.
 	
-				$r = q("select route, id, parent_mid, mid, owner_xchan, item_private from item where mid = '%s' and uid = %d limit 1",
+				$r = q("select route, id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
 					dbesc($arr['parent_mid']),
 					intval($channel['channel_id'])
 				);
@@ -1794,6 +1794,15 @@ class Libzot {
 						$arr['thr_parent'] = $arr['parent_mid'];
 						$arr['parent_mid'] = $r[0]['parent_mid'];
 					}	
+
+					if ($r[0]['obj_type'] === 'Question') {
+						// route checking doesn't work here because we've changed the privacy
+						$r[0]['route'] = EMPTY_STR;
+						// If this is a poll response, convert the obj_type to our (internal-only) "Answer" type
+						if ($arr['obj_type'] === 'Note' && $arr['title'] && (! $arr['content']) && (! $arr['summary'])) {
+							$arr['obj_type'] = 'Answer';
+						}
+					}
 				}
 				else {
 					$DR->update('comment parent not found');
@@ -1816,7 +1825,8 @@ class Libzot {
 					}
 					continue;
 				}
-								
+
+
 				if ($relay || $friendofriend || (intval($r[0]['item_private']) === 0 && intval($arr['item_private']) === 0)) {
 					// reset the route in case it travelled a great distance upstream
 					// use our parent's route so when we go back downstream we'll match

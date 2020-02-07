@@ -880,13 +880,6 @@ class Item extends Controller {
 			// and will require alternatives for alternative content-types (text/html, text/markdown, text/plain, etc.)
 			// we may need virtual or template classes to implement the possible alternatives
 
-//			$obj = $this->extract_poll_data($body);
-//			if ($obj) {
-//				$obj['attributedTo'] = channel_url($channel);
-//				$datarray['obj'] = $obj;
-//				$obj_type = 'Question';
-//			}
-
 			if(strpos($body,'[/summary]') !== false) {
 				$match = '';
 				$cnt = preg_match("/\[summary\](.*?)\[\/summary\]/ism",$body,$match);
@@ -1109,21 +1102,12 @@ class Item extends Controller {
 			}
 		}
 
-		// this will generally only happen when creating a poll and it cannot be
-		// done earlier because the $mid has only just now been defined
-
 		$obj = $this->extract_poll_data($body,[ 'item_private' => $private, 'allow_cid' => $str_contact_allow, 'allow_gid' => $str_contact_deny ]);
 		if ($obj) {
+			$obj['url'] = $mid;
 			$obj['attributedTo'] = channel_url($channel);
 			$datarray['obj'] = $obj;
 			$obj_type = 'Question';
-		}
-
-
-
-
-		if ($datarray['obj'] && ! $datarray['obj']['url']) {
-			$datarray['obj']['url'] = $mid;
 		}
 
 		if(! $parent_mid) {
