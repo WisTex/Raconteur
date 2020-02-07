@@ -220,6 +220,11 @@ class HTTPSig {
 			}
 
 			logger('Content_Valid: ' . (($result['content_valid']) ? 'true' : 'false'));
+			if (! $result['content_valid']) {
+				logger('invalid content signature: data ' . print_r($data,true));
+				logger('invalid content signature: headers ' . print_r($headers,true));
+				logger('invalid content signature: body ' . print_r($body,true));
+			}
 		}
 
 		return $result;

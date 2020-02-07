@@ -176,8 +176,7 @@ class Item extends Controller {
 
 			// process an authenticated fetch
 
-
-			$sigdata = HTTPSig::verify(EMPTY_STR);
+			$sigdata = HTTPSig::verify(($_SERVER['REQUEST_METHOD'] === 'POST') ? file_get_contents('php://input') : EMPTY_STR);
 			if ($sigdata['portable_id'] && $sigdata['header_valid']) {
 				$portable_id = $sigdata['portable_id'];
 				if (! check_channelallowed($portable_id)) {
