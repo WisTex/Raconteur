@@ -693,9 +693,10 @@ class Activity {
 				else {
 					$ret = json_decode($i['obj'],true);
 				}
-			}
-			if(array_path_exists('actor/id',$ret)) {
-				$ret['actor'] = $ret['actor']['id'];
+			
+				if(array_path_exists('actor/id',$ret)) {
+					$ret['actor'] = $ret['actor']['id'];
+				}
 			}
 		}
 
