@@ -1722,9 +1722,21 @@ function format_poll($item,$s,$opts) {
 				}
 			}
 		}
+		if ($item['comments_closed'] > NULL_DATE) {
+			$t = datetime_convert('UTC',date_default_timezone_get(), $item['comments_closed'], 'Y-m-d h:i');
+			$closed = ((datetime_convert() > $item['comments_closed']) ? true : false);
+			if ($closed) { 
+				$message = t('Poll has ended.');
+			}
+			else {
+				$message = sprintf(t('Poll ends: %s'),$t);
+			}
+			$output .= EOL . '<div>' . $message . '</div>';
+		} 
 		if ($activated and $commentable) {
 			$output .= EOL . '<input type="button" class="btn btn-std btn-success" name="vote" value="vote" onclick="submitPoll(' . $item['id'] . '); return false;">'. '</form>';
 		}
+		
 
 	}
 	return $output;
