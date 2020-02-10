@@ -1680,6 +1680,18 @@ function format_poll($item,$s,$opts) {
 	$activated = ((local_channel() && local_channel() == $item['uid']) ? true : false);
 	$output = $s . EOL. EOL;
 
+	$closed = false;
+	$closing = false;
+
+	if ($item['comments_closed'] > NULL_DATE) {
+		$closing = true;
+		$t = datetime_convert('UTC',date_default_timezone_get(), $item['comments_closed'], 'Y-m-d H:i');
+		$closed = ((datetime_convert() > $item['comments_closed']) ? true : false);
+		if ($closed) {
+			$commentable = false;
+		}
+	}
+
 	if ($act['type'] === 'Question') {
 		if ($activated and $commentable) {
 			$output .= '<form id="question-form-' . $item['id'] . '" >';
@@ -1722,17 +1734,14 @@ function format_poll($item,$s,$opts) {
 				}
 			}
 		}
-		if ($item['comments_closed'] > NULL_DATE) {
-			$t = datetime_convert('UTC',date_default_timezone_get(), $item['comments_closed'], 'Y-m-d h:i');
-			$closed = ((datetime_convert() > $item['comments_closed']) ? true : false);
-			if ($closed) { 
-				$message = t('Poll has ended.');
-			}
-			else {
-				$message = sprintf(t('Poll ends: %s'),$t);
-			}
-			$output .= EOL . '<div>' . $message . '</div>';
-		} 
+		if ($closed) { 
+			$message = t('Poll has ended.');
+		}
+		elseif ($closing) {
+			$message = sprintf(t('Poll ends: %s'),$t);
+		}
+		$output .= EOL . '<div>' . $message . '</div>';
+
 		if ($activated and $commentable) {
 			$output .= EOL . '<input type="button" class="btn btn-std btn-success" name="vote" value="vote" onclick="submitPoll(' . $item['id'] . '); return false;">'. '</form>';
 		}

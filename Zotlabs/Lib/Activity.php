@@ -1858,8 +1858,8 @@ class Activity {
 
 		// These activities should have been handled separately in the Inbox module and should not be turned into posts
 		
-		if (in_array($act->type, ['Follow', 'Accept', 'Reject', 'Create', 'Update'])
-			&& is_array($a->obj) && array_key_exists('type',$a->obj) && ($a->obj['type'] === 'Follow' || ActivityStreams::is_an_actor($a->obj['type']))) {
+		if (in_array($act->type, ['Follow', 'Accept', 'Reject', 'Create', 'Update']) && is_array($act->obj) && array_key_exists('type',$act->obj)
+			&& ($act->obj['type'] === 'Follow' || ActivityStreams::is_an_actor($act->obj['type']))) {
 			return false;
 		}
 
