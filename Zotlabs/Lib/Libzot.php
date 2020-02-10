@@ -1796,10 +1796,10 @@ class Libzot {
 					}	
 
 					if ($r[0]['obj_type'] === 'Question') {
-						// route checking doesn't work here because we've changed the privacy
+						// route checking doesn't work correctly here because we've changed the privacy
 						$r[0]['route'] = EMPTY_STR;
 						// If this is a poll response, convert the obj_type to our (internal-only) "Answer" type
-						if ($arr['obj_type'] === 'Note' && $arr['title'] && (! $arr['content']) && (! $arr['summary'])) {
+						if ($arr['obj_type'] === 'Note' && $arr['title'] && (! $arr['content'])) {
 							$arr['obj_type'] = 'Answer';
 						}
 					}

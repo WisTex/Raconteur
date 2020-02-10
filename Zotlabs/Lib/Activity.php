@@ -2342,7 +2342,7 @@ class Activity {
 			}
 			
 			if ($p && $p[0]['obj_type'] === 'Question') {
-				if ($item['obj_type'] === 'Note' && $item['title'] && (! $item['content']) && (! $item['summary'])) {
+				if ($item['obj_type'] === 'Note' && $item['title'] && (! $item['content'])) {
 					$item['obj_type'] = 'Answer';
 				}
 			}
