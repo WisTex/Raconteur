@@ -187,19 +187,19 @@ class Inbox extends Controller {
 
 			switch ($AS->type) {
 				case 'Follow':
-					if ($AS->obj && array_key_exists('type', $AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])) {
+					if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])) {
 						// do follow activity
 						Activity::follow($channel,$AS);
 					}
 					break;
 				case 'Join':
-					if ($AS->obj && $AS->obj['type'] === 'Group') {
+					if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
 						// do follow activity
 						Activity::follow($channel,$AS);
 					}
 					break;
 				case 'Accept':
-					if ($AS->obj && $AS->obj['type'] === 'Follow') {
+					if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Follow') {
 						// do follow activity
 						Activity::follow($channel,$AS);
 					}
@@ -258,13 +258,13 @@ class Inbox extends Controller {
 					}
 					break;
 				case 'Undo':
-					if ($AS->obj && $AS->obj['type'] === 'Follow') {
+					if ($AS->obj && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Follow') {
 						// do unfollow activity
 						Activity::unfollow($channel,$AS);
 						break;
 					}
 				case 'Leave':
-					if ($AS->obj && $AS->obj['type'] === 'Group') {
+					if ($AS->obj && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
 						// do unfollow activity
 						Activity::unfollow($channel,$AS);
 						break;
@@ -275,7 +275,9 @@ class Inbox extends Controller {
 					break;
 
 				case 'Move':
-					if($observer_hash && $observer_hash === $AS->actor && Activity::is_an_actor($AS->obj) && Activity::is_an_actor($AS->tgt)) {
+					if($observer_hash && $observer_hash === $AS->actor
+					&& is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStream::is_an_actor($AS->obj['type'])
+					&& is_array($AS->tgt) && array_key_exists('type', $AS->tgt) && ActivityStream::is_an_actor($AS->tgt['type'])) {
 						ActivityPub::move($AS->obj,$AS->tgt);
 					}
 					break;
