@@ -1773,10 +1773,6 @@ class Activity {
 			return false;
 		}
 
-
-			
-
-
 		$o = json_decode($item['obj'],true);
 		if ($o && array_key_exists('anyOf',$o)) {
 			$multi = true;

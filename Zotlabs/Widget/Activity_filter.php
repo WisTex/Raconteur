@@ -58,16 +58,25 @@ class Activity_filter {
 
 
 		if(x($_GET,'verb')) {
-			$verb_active = (($_GET['verb'] == 1) ? 'active' : '');
-			$filter_active = 'events';
+			$events_active = (($_GET['verb'] == '.Event') ? 'active' : '');
+			$polls_active = (($_GET['verb'] == '.Question') ? 'active' : '');
+			$filter_active = (($events_active) ? 'events' : 'polls');
 		}
 
 		$tabs[] = [
 			'label' => t('Events'),
 			'icon' => 'calendar',
 			'url' => z_root() . '/' . $cmd . '/?verb=%2EEvent',
-			'sel' => $verb_active,
+			'sel' => $events_active,
 			'title' => t('Show posts that include events')
+		];
+
+		$tabs[] = [
+			'label' => t('Polls'),
+			'icon' => 'bar-chart',
+			'url' => z_root() . '/' . $cmd . '/?verb=%2EQuestion',
+			'sel' => $polls_active,
+			'title' => t('Show posts that include polls')
 		];
 
 
