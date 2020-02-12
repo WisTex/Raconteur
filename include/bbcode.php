@@ -558,7 +558,7 @@ function bb_ShareAttributes($match) {
 	// Bob Smith wrote the following post 2 hours ago
 
 	$fmt = sprintf( t('%1$s wrote the following %2$s %3$s'),
-		'<a href="' . (($auth) ? zid($profile) : $profile) . '" >' . $author . '</a>',
+		'<a href="' . (($auth) ? zid($profile) : $profile) . '" ><bdi>' . $author . '</bdi></a>',
 		'<a href="' . (($auth) ? zid($link) : $link) . '" >' . $type . '</a>',
 		$reldate
 	);
@@ -1349,6 +1349,13 @@ function bbcode($Text, $options = []) {
 	if (strpos($Text,'[/footer]') !== false) {
 		$Text = preg_replace("(\[footer\](.*?)\[\/footer\])ism", "<div class=\"wall-item-footer\">$1</div>", $Text);
 	}
+
+	// Check for bdi
+	if (strpos($Text,'[/bdi]') !== false) {
+		$Text = preg_replace("(\[bdi\](.*?)\[\/bdi\])ism", "<bdi>$1</bdi>", $Text);
+	}
+
+
 	// Check for list text
 
 	$Text = preg_replace("/<br>\[\*\/\]/ism",'[*/]',$Text);

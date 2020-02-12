@@ -1730,6 +1730,8 @@ class Libzot {
 			if ((! $tag_delivery) && (! $local_public)) {
 				$allowed = (perm_is_allowed($channel['channel_id'],$sender,$perm));
 				if ((! $allowed) && $perm === 'post_comments') {
+
+
 					$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
 						dbesc($arr['parent_mid']),
 						intval($channel['channel_id'])
@@ -1737,6 +1739,10 @@ class Libzot {
 					if ($parent) {
 						$allowed = can_comment_on_post($sender,$parent[0]);
 					}
+					if ((! $allowed) && PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$arr)) {
+						$allowed = true;
+					}
+
 				}
 				if ($request) {
 
