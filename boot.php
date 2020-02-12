@@ -48,7 +48,7 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '20.02.12' );
+define ( 'STD_VERSION',             '20.02.13' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1236 );

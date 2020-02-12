@@ -7,6 +7,7 @@ use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Daemon\Master;
+use Zotlabs\Lib\PConfig;
 
 require_once('include/html2bbcode.php');
 require_once('include/html2plain.php');
@@ -848,7 +849,11 @@ class Activity {
 				$ret['source']['summary'] = $i['summary'];
 			}
 		}
-
+		else {
+			$ret['mediaType'] = $i['mimetype'];
+			$ret['content'] = $i['body'];
+		}
+		
 		$actor = self::encode_person($i['author'],false);
 		if ($actor) {
 			$ret['actor'] = $actor;
@@ -1849,7 +1854,13 @@ class Activity {
 		$s = [];
 
 		if (is_array($act->obj)) {
-			$content = self::get_content($act->obj);
+			$binary = false;
+			if (array_key_exists('mediaType',$act->obj) && $act['mediaType'] !== 'text/html') {
+				$s['mimetype'] = escape_tags($act->obj['mediaType']);
+				$binary = true;
+			}
+
+			$content = self::get_content($act->obj,$binary);
 		}
 
 		// These activities should have been handled separately in the Inbox module and should not be turned into posts
@@ -1974,8 +1985,14 @@ class Activity {
 
 		$s['title']    = (($response_activity) ? EMPTY_STR : self::bb_content($content,'name'));
 		$s['summary']  = self::bb_content($content,'summary');
-		$s['body']     = ((self::bb_content($content,'bbcode') && (! $response_activity)) ? self::bb_content($content,'bbcode') : self::bb_content($content,'content'));
 
+		if (array_key_exists('mimetype',$s) && $s['mimetype'] !== 'text/bbcode') {
+			$s['body'] = $content['content'];
+		}
+		else {
+			$s['body']     = ((self::bb_content($content,'bbcode') && (! $response_activity)) ? self::bb_content($content,'bbcode') : self::bb_content($content,'content'));
+		}
+		
 		// handle some of the more widely used of the numerous and varied ways of deleting something
 		
 		if ($act->type === 'Tombstone') {
@@ -2317,6 +2334,10 @@ class Activity {
 			if ($p) {
 				// check permissions against the author, not the sender
 				$allowed = perm_is_allowed($channel['channel_id'],$item['author_xchan'],'post_comments');
+				if ((! $allowed) && PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$item)) {
+					$allowed = true;
+				}
+				
 				if (! $allowed) {
 					logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
 					logger('rejected: ' . print_r($item,true), LOGGER_DATA);
@@ -2682,7 +2703,7 @@ class Activity {
 	}
 
 
-	static function get_content($act) {
+	static function get_content($act,$binary = false) {
 
 		$content = [];
 		$event = null;
@@ -2690,6 +2711,7 @@ class Activity {
 		if ((! $act) || (! is_array($act))) {
 			return $content;
 		}
+
 
 		if ($act['type'] === 'Event') {
 			$adjust = false;
@@ -2713,12 +2735,12 @@ class Activity {
 		}                         
 
 		foreach ([ 'name', 'summary', 'content' ] as $a) {
-			if (($x = self::get_textfield($act,$a)) !== false) {
+			if (($x = self::get_textfield($act,$a,$binary)) !== false) {
 				$content[$a] = $x;
 			}
 		}
 
-		if ($event) {
+		if ($event && ! $binary) {
 			$event['summary'] = html2plain(purify_html($content['summary']),256);
 			if (! $event['summary']) {
 				if ($content['name']) {
@@ -2749,15 +2771,15 @@ class Activity {
 	}
 
 
-	static function get_textfield($act,$field) {
+	static function get_textfield($act,$field,$binary = false) {
 	
 		$content = false;
 
 		if (array_key_exists($field,$act) && $act[$field])
-			$content = purify_html($act[$field]);
+			$content = (($binary) ? $act[$field] : purify_html($act[$field]));
 		elseif (array_key_exists($field . 'Map',$act) && $act[$field . 'Map']) {
 			foreach ($act[$field . 'Map'] as $k => $v) {
-				$content[escape_tags($k)] = purify_html($v);
+				$content[escape_tags($k)] = (($binary) ? $v : purify_html($v));
 			}
 		}
 		return $content;

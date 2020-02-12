@@ -19,7 +19,7 @@ Groups may be public or private. The initial thread starting post to a group is 
 
 Comments
 
-Zap provides permission control and moderation of comments. By default comments are only accepted from existing connections. This can be changed by the individual. Other sites MAY use zot:commentPolicy (string) as a guide if they do not wish to provide comment abilities where it is known in advance they will be rejected.
+Zap provides permission control and moderation of comments. By default comments are only accepted from existing connections. This can be changed by the individual. Other sites MAY use zot:commentPolicy (string) as a guide if they do not wish to provide comment abilities where it is known in advance they will be rejected. A Reject/Note activity will be sent if the comment is not permitted. There is currently no response for moderated content, but will likely also be represented by Reject/Note. 
 
 
 Private Media
@@ -29,7 +29,7 @@ Private media MAY be accessed using OCAP or OpenWebAuth.
 
 Permission System
 
-The Zot permission system has years of historical use and is different than and the reverse of the typical ActivityPub project. We consider 'Follow' to be an anti-pattern which encourages pseudo anonymous stalking. A Follow activity by a Zap actor typically means the Zap actor will send activities to the recipient. It may also confer other permissions. Accept/Follow provides permission to receive content from the referenced actor.
+The Zot permission system has years of historical use and is different than and the reverse of the typical ActivityPub project. We consider 'Follow' to be an anti-pattern which encourages pseudo anonymous stalking. A Follow activity by a Zap actor typically means the Zap actor will send activities to the recipient. It may also confer other permissions. Accept/Follow usually provides permission to receive content from the referenced actor, depending on their privacy settings. 
 
 
 Delivery model
