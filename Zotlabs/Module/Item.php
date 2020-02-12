@@ -1659,7 +1659,7 @@ class Item extends Controller {
 		$matches = null;
 		$obj['type'] = 'Question';
 
-		if (preg_match_all('/\[answer\](.*?)\[\/answer\]/',$body,$matches,PREG_SET_ORDER)) {
+		if (preg_match_all('/\[answer\](.*?)\[\/answer\]/ism',$body,$matches,PREG_SET_ORDER)) {
 			foreach ($matches as $match) {
 				$ptr[] = [ 'name' => $match[1], 'type' => 'Note', 'replies' => [ 'type' => 'Collection', 'totalItems' => 0 ]];
 				$body = str_replace('[answer]' . $match[1] . '[/answer]', EMPTY_STR, $body);
@@ -1668,7 +1668,7 @@ class Item extends Controller {
 
 		$matches = null;
 
-		if (preg_match('/\[question\](.*?)\[\/question\]/',$body,$matches)) {
+		if (preg_match('/\[question\](.*?)\[\/question\]/ism',$body,$matches)) {
 			$obj['content'] = bbcode($matches[1]);
 			$body = str_replace('[question]' . $matches[1] . '[/question]', $matches[1], $body);
 			$obj['oneOf'] = $ptr;
@@ -1676,7 +1676,7 @@ class Item extends Controller {
 
 		$matches = null;
 		
-		if (preg_match('/\[question=multiple\](.*?)\[\/question\]/',$body,$matches)) {
+		if (preg_match('/\[question=multiple\](.*?)\[\/question\]/ism',$body,$matches)) {
 			$obj['content'] = bbcode($matches[1]);
 			$body = str_replace('[question=multiple]' . $matches[1] . '[/question]', $matches[1], $body);
 			$obj['anyOf'] = $ptr;
@@ -1684,7 +1684,7 @@ class Item extends Controller {
 
 		$matches = null;
 		
-		if (preg_match('/\[ends\](.*?)\[\/ends\]/',$body,$matches)) {
+		if (preg_match('/\[ends\](.*?)\[\/ends\]/ism',$body,$matches)) {
 			$obj['endTime'] = datetime_convert(date_default_timezone_get(),'UTC', $matches[1],ATOM_TIME);
 			$body = str_replace('[ends]' . $matches[1] . '[/ends]', EMPTY_STR, $body);
 		}
