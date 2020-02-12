@@ -7,6 +7,7 @@ use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Daemon\Master;
+use Zotlabs\Lib\PConfig;
 
 require_once('include/html2bbcode.php');
 require_once('include/html2plain.php');
@@ -2317,6 +2318,10 @@ class Activity {
 			if ($p) {
 				// check permissions against the author, not the sender
 				$allowed = perm_is_allowed($channel['channel_id'],$item['author_xchan'],'post_comments');
+				if ((! $allowed) && PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$item)) {
+					$allowed = true;
+				}
+				
 				if (! $allowed) {
 					logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
 					logger('rejected: ' . print_r($item,true), LOGGER_DATA);
