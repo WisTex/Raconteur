@@ -63,7 +63,7 @@ class Apps {
 		$x = get_config('system','base_apps',[ 
 			'Connections',
 			'Suggest Channels',
-			'Network',
+			'Stream',
 			'Settings',
 			'Files',
 			'Channel Home',
@@ -333,7 +333,7 @@ class Apps {
 			'Login' => t('Login'),
 			'Channel Manager' => t('Channel Manager'), 
 			'Notes' => t('Notes'),
-			'Network' => t('Stream'), 
+			'Stream' => t('Stream'), 
 			'Settings' => t('Settings'),
 			'Files' => t('Files'),
 			'Webpages' => t('Webpages'),

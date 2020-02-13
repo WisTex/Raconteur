@@ -1,6 +1,6 @@
 version: 1
-url: $baseurl/network
+url: $baseurl/stream
 requires: local_channel
-name: Network
+name: Stream
 photo: icon:th
 categories: nav_featured_app, Networking
