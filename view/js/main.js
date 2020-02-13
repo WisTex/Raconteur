@@ -931,7 +931,7 @@ function collapseHeight() {
 
 function updateInit() {
 
-	if($('#live-stream').length)    { src = 'stream'; }
+	if($('#live-stream').length)     { src = 'stream'; }
 	if($('#live-channel').length)    { src = 'channel'; }
 	if($('#live-pubstream').length)  { src = 'pubstream'; }
 	if($('#live-display').length)    { src = 'display'; }
