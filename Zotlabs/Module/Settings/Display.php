@@ -32,9 +32,9 @@ class Display {
 		$channel_divmore_height = ((x($_POST,'channel_divmore_height')) ? intval($_POST['channel_divmore_height']) : 400);
 		if($channel_divmore_height < 50)
 			$channel_divmore_height = 50;
-		$network_divmore_height = ((x($_POST,'network_divmore_height')) ? intval($_POST['network_divmore_height']) : 400);
-		if($network_divmore_height < 50)
-			$network_divmore_height = 50;
+		$stream_divmore_height = ((x($_POST,'stream_divmore_height')) ? intval($_POST['stream_divmore_height']) : 400);
+		if($stream_divmore_height < 50)
+			$stream_divmore_height = 50;
 
 		$browser_update   = ((x($_POST,'browser_update')) ? intval($_POST['browser_update']) : 0);
 		$browser_update   = $browser_update * 1000;
@@ -52,7 +52,7 @@ class Display {
 		set_pconfig(local_channel(),'system','itemspage', $itemspage);
 		set_pconfig(local_channel(),'system','no_smilies',1-intval($nosmile));
 		set_pconfig(local_channel(),'system','channel_divmore_height', $channel_divmore_height);
-		set_pconfig(local_channel(),'system','network_divmore_height', $network_divmore_height);
+		set_pconfig(local_channel(),'system','stream_divmore_height', $stream_divmore_height);
 		set_pconfig(local_channel(),'system','channel_menu', $channel_menu);
 
 		$newschema = '';
@@ -197,7 +197,7 @@ class Display {
 			'$theme_config' => $theme_config,
 			'$expert' => feature_enabled(local_channel(),'advanced_theming'),
 			'$channel_divmore_height' => array('channel_divmore_height', t('Channel page max height of content (in pixels)'), ((get_pconfig(local_channel(),'system','channel_divmore_height')) ? get_pconfig(local_channel(),'system','channel_divmore_height') : 400), t('click to expand content exceeding this height')),
-			'$network_divmore_height' => array('network_divmore_height', t('Network page max height of content (in pixels)'), ((get_pconfig(local_channel(),'system','network_divmore_height')) ? get_pconfig(local_channel(),'system','network_divmore_height') : 400) , t('click to expand content exceeding this height')),
+			'$stream_divmore_height' => array('stream_divmore_height', t('Stream page max height of content (in pixels)'), ((get_pconfig(local_channel(),'system','stream_divmore_height')) ? get_pconfig(local_channel(),'system','stream_divmore_height') : 400) , t('click to expand content exceeding this height')),
 
 
 		));

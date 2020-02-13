@@ -33,7 +33,7 @@ class Ping extends Controller {
 
 		$result['notify'] = 0;
 		$result['home'] = 0;
-		$result['network'] = 0;
+		$result['stream'] = 0;
 		$result['intros'] = 0;
 		$result['mail'] = 0;
 		$result['register'] = 0;
@@ -234,7 +234,7 @@ class Ping extends Controller {
 		// mark all items read
 		if (x($_REQUEST, 'markRead') && local_channel()) {
 			switch ($_REQUEST['markRead']) {
-				case 'network':
+				case 'stream':
 					$r = q("UPDATE item SET item_unseen = 0 WHERE uid = %d AND item_unseen = 1",
 						intval(local_channel())
 					);
@@ -356,7 +356,7 @@ class Ping extends Controller {
 
 		}
 
-		if (argc() > 1 && (argv(1) === 'network' || argv(1) === 'home')) {
+		if (argc() > 1 && (argv(1) === 'stream' || argv(1) === 'home')) {
 			$local_result = array();
 			$item_normal_moderate = $item_normal;
 
@@ -588,13 +588,13 @@ class Ping extends Controller {
 						$result['home'] ++;
 					}
 					else {
-						$result['network'] ++;
+						$result['stream'] ++;
 					}
 				}
 			}
 		}
 		if (! ($vnotify & VNOTIFY_NETWORK))
-			$result['network'] = 0;
+			$result['stream'] = 0;
 		if (! ($vnotify & VNOTIFY_CHANNEL))
 			$result['home'] = 0;
 
@@ -708,7 +708,7 @@ class Ping extends Controller {
 						dbesc($forums[$x]['xchan_hash'])
 					);
 					if ($r[0]['unseen']) {
-						$forums[$x]['notify_link'] = (($forums[$x]['private_forum']) ? $forums[$x]['xchan_url'] : z_root() . '/network/?f=&pf=1&cid=' . $forums[$x]['abook_id']);
+						$forums[$x]['notify_link'] = (($forums[$x]['private_forum']) ? $forums[$x]['xchan_url'] : z_root() . '/stream/?f=&pf=1&cid=' . $forums[$x]['abook_id']);
 						$forums[$x]['name'] = $forums[$x]['xchan_name'];
 						$forums[$x]['addr'] = $forums[$x]['xchan_addr'];
 						$forums[$x]['url'] = $forums[$x]['xchan_url'];

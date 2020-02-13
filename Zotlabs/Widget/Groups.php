@@ -80,7 +80,7 @@ class Groups {
 		/**
 		 * @FIXME
 		 * This SQL makes the counts correct when you get forum posts arriving from different routes/sources
-		 * (like personal channels). However the network query for these posts doesn't yet include this
+		 * (like personal channels). However the stream query for these posts doesn't yet include this
 		 * correction and it makes the SQL for that query pretty hairy so this is left as a future exercise.
 		 * It may make more sense in that query to look for the mention in the body rather than another join,
 		 * but that makes it very inefficient.
@@ -104,7 +104,7 @@ class Groups {
 
 			foreach($r1 as $rr) {
 
-				$link = 'network?f=&pf=1&cid=' . $rr['abook_id'];
+				$link = 'stream?f=&pf=1&cid=' . $rr['abook_id'];
 				if($x3) {
 					foreach($x3 as $xx) {
 						if($rr['xchan_hash'] == $xx['xchan']) {

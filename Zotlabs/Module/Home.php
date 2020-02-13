@@ -41,7 +41,7 @@ class Home extends Controller {
 				$dest = get_config('system','startpage');
 			}
 			if (! $dest) {
-				$dest = z_root() . '/network';
+				$dest = z_root() . '/stream';
 			}
 			goaway($dest);
 		}

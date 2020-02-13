@@ -555,7 +555,7 @@ class Connedit extends Controller {
 	
 				'recent' => array(
 					'label' => t('Recent Activity'),
-					'url'   => z_root() . '/network/?f=&cid=' . $contact['abook_id'],
+					'url'   => z_root() . '/stream/?f=&cid=' . $contact['abook_id'],
 					'sel'   => '',
 					'title' => t('View recent posts and comments'),
 				),

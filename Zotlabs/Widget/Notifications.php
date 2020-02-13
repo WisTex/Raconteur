@@ -11,13 +11,13 @@ class Notifications {
 			$channel = App::get_channel();
 
 			$notifications[] = [
-				'type' => 'network',
+				'type' => 'stream',
 				'icon' => 'th',
 				'severity' => 'secondary',
 				'label' => t('New Stream Activity'),
 				'title' => t('New Stream Activity Notifications'),
 				'viewall' => [
-					'url' => 'network',
+					'url' => 'stream',
 					'label' => t('View your stream activity')
 				],
 				'markall' => [

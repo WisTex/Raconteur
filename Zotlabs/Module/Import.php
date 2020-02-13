@@ -533,7 +533,7 @@ class Import extends Controller {
 
 		change_channel($channel['channel_id']);
 
-		goaway(z_root() . '/network' );
+		goaway(z_root() . '/stream' );
 	}
 
 	/**

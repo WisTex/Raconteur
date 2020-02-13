@@ -49,7 +49,7 @@ class ThreadStream {
 		$ob_hash = (($this->observer) ? $this->observer['xchan_hash'] : '');
 
 		switch($mode) {
-			case 'network':
+			case 'stream':
 				$this->profile_owner = local_channel();
 				$this->writable = true;
 				break;
