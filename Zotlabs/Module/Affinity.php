@@ -34,7 +34,7 @@ class Affinity extends \Zotlabs\Web\Controller {
 
 	function get() {
 
-        $desc = t('This app (when installed) presents a slider control in your connection editor and also on your network page. The slider represents your degree of friendship with each connection. It allows you to zoom in or out and display conversations from only your closest friends or everybody in your stream.');
+        $desc = t('This app (when installed) presents a slider control in your connection editor and also on your stream page. The slider represents your degree of friendship with each connection. It allows you to zoom in or out and display conversations from only your closest friends or everybody in your stream.');
 
         $text = '<div class="section-content-info-wrapper">' . $desc . '</div>';
 
@@ -42,7 +42,7 @@ class Affinity extends \Zotlabs\Web\Controller {
             return $text;
         }
 
-		$text .= EOL . t('The number below represents the default maximum slider position for your network/stream page as a percentage.') . EOL . EOL; 			
+		$text .= EOL . t('The number below represents the default maximum slider position for your stream page as a percentage.') . EOL . EOL; 			
 
 		$setting_fields = $text;
 

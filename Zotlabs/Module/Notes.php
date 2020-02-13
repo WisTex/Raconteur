@@ -50,7 +50,7 @@ class Notes extends Controller {
             return $text;
         }
 
-        $desc = t('This app is installed. The Notes tool can be found on your network stream page.');
+        $desc = t('This app is installed. The Notes tool can be found on your stream page.');
 
         $text = '<div class="section-content-info-wrapper">' . $desc . '</div>';
 

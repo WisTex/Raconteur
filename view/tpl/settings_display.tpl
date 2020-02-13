@@ -59,7 +59,7 @@
 						{{include file="field_input.tpl" field=$ajaxint}}
 						{{include file="field_input.tpl" field=$itemspage}}
 						{{include file="field_input.tpl" field=$channel_divmore_height}}
-						{{include file="field_input.tpl" field=$network_divmore_height}}
+						{{include file="field_input.tpl" field=$stream_divmore_height}}
 						{{include file="field_checkbox.tpl" field=$nosmile}}
 						{{include file="field_checkbox.tpl" field=$channel_menu}}
 						{{include file="field_checkbox.tpl" field=$user_scalable}}

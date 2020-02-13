@@ -3302,14 +3302,14 @@ function item_expire($uid,$days,$comment_days = 7) {
 	if(! $comment_days)
 		$comment_days = 7;
 	
-	// $expire_network_only = save your own wall posts
+	// $expire_stream_only = save your own wall posts
 	// and just expire conversations started by others
 	// do not enable this until we can pass bulk delete messages through zot
-	//	$expire_network_only = get_pconfig($uid,'expire','network_only');
+	//	$expire_stream_only = get_pconfig($uid,'expire','stream_only');
 
-	$expire_network_only = 1;
+	$expire_stream_only = 1;
 
-	$sql_extra = ((intval($expire_network_only)) ? " AND item_wall = 0 " : "");
+	$sql_extra = ((intval($expire_stream_only)) ? " AND item_wall = 0 " : "");
 
 	$expire_limit = get_config('system','expire_limit');
 	if(! intval($expire_limit))
@@ -3929,7 +3929,7 @@ function zot_feed($uid, $observer_hash, $arr) {
 
 
 
-function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = CLIENT_MODE_NORMAL,$module = 'network') {
+function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = CLIENT_MODE_NORMAL,$module = 'stream') {
 
 	$result = array('success' => false);
 
@@ -4064,7 +4064,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 	if (array_key_exists('cmin',$arr) || array_key_exists('cmax',$arr)) {
 		if (($arr['cmin'] != 0) || ($arr['cmax'] != 99)) {
 
-			// Not everybody who shows up in the network stream will be in your address book.
+			// Not everybody who shows up in the stream will be in your address book.
 			// By default those that aren't are assumed to have closeness = 99; but this isn't
 			// recorded anywhere. So if cmax is 99, we'll open the search up to anybody in
 			// the stream with a NULL address book entry.

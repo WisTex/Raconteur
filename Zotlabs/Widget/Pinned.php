@@ -37,7 +37,7 @@ class Pinned {
 			return $ret;
 		}
 
-		$o = conversation($id_list,'network-new',0,'traditional');
+		$o = conversation($id_list,'stream-new',0,'traditional');
 
 		// change some id and class names so that auto-update doesn't stumble over them
 

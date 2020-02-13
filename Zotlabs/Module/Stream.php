@@ -11,7 +11,7 @@ require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
 
 
-class Network extends Controller {
+class Stream extends Controller {
 
 	function init() {
 		if (! local_channel()) {
@@ -44,7 +44,7 @@ class Network extends Controller {
 		}
 
 		$arr = [ 'query' => App::$query_string ];
-		call_hooks('network_content_init', $arr);
+		call_hooks('stream_content_init', $arr);
 	
 		$channel = App::$data;
 		
@@ -66,7 +66,7 @@ class Network extends Controller {
 		$verb       = ((x($_REQUEST,'verb')) ? $_REQUEST['verb'] : '');
 		$dm         = ((x($_REQUEST,'dm')) ? $_REQUEST['dm'] : 0);
 
-		$order = get_pconfig(local_channel(), 'mod_network', 'order', 0);
+		$order = get_pconfig(local_channel(), 'mod_stream', 'order', 0);
 		switch ($order) {
 			case 0:
 				$order = 'comment';
@@ -114,7 +114,7 @@ class Network extends Controller {
 					killme();
 				}
 				notice( t('No such group') . EOL );
-				goaway(z_root() . '/network');
+				goaway(z_root() . '/stream');
 			}
 	
 			$group      = $gid;
@@ -155,7 +155,7 @@ class Network extends Controller {
 					killme();
 				}
 				notice( t('No such channel') . EOL );
-				goaway(z_root() . '/network');
+				goaway(z_root() . '/stream');
 			}
 
 			$def_acl = [ 'allow_cid' => '<' . $cid_r[0]['abook_xchan'] . '>', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => '' ];
@@ -296,7 +296,7 @@ class Network extends Controller {
 			}
 			else {
 				notice( t('Invalid channel.') . EOL);
-				goaway(z_root() . '/network');
+				goaway(z_root() . '/stream');
 			}
 
 		}
@@ -313,19 +313,19 @@ class Network extends Controller {
 			// We only launch liveUpdate if you aren't filtering in some incompatible
 			// way and also you aren't writing a comment (discovered in javascript).
 	
-			$maxheight = get_pconfig(local_channel(),'system','network_divmore_height');
+			$maxheight = get_pconfig(local_channel(),'system','stream_divmore_height');
 			if(! $maxheight)
 				$maxheight = 400;
 	
 	
-			$o .= '<div id="live-network"></div>' . "\r\n";
+			$o .= '<div id="live-stream"></div>' . "\r\n";
 			$o .= "<script> var profile_uid = " . local_channel() 
 				. "; var profile_page = " . App::$pager['page'] 
 				. "; divmore_height = " . intval($maxheight) . "; </script>\r\n";
 	
 			App::$page['htmlhead'] .= replace_macros(get_markup_template('build_query.tpl'), [
 				'$baseurl' => z_root(),
-				'$pgtype'  => 'network',
+				'$pgtype'  => 'stream',
 				'$uid'     => ((local_channel()) ? local_channel() : '0'),
 				'$gid'     => (($gid) ? $gid : '0'),
 				'$cid'     => (($cid) ? $cid : '0'),
@@ -463,7 +463,7 @@ class Network extends Controller {
 		$abook_uids = " and abook.abook_channel = " . local_channel() . " ";
 		$uids = " and item.uid = " . local_channel() . " ";
 	
-		if (get_pconfig(local_channel(),'system','network_list_mode'))
+		if (get_pconfig(local_channel(),'system','stream_list_mode'))
 			$page_mode = 'list';
 		else
 			$page_mode = 'client';
@@ -599,7 +599,7 @@ class Network extends Controller {
 			}
 		}
 	
-		$mode = (($nouveau) ? 'network-new' : 'network');
+		$mode = (($nouveau) ? 'stream-new' : 'stream');
 
 		if ($search) {
 			$mode = 'search';

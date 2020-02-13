@@ -464,7 +464,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 	$previewing = (($preview) ? ' preview ' : '');
 	$preview_lbl = t('This is an unsaved preview');
 
-	if (in_array($mode, [ 'network', 'pubstream'])) {
+	if (in_array($mode, [ 'stream', 'pubstream'])) {
 
 		$profile_owner = local_channel();
 		$page_writeable = ((local_channel()) ? true : false);
@@ -474,7 +474,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 			// We only launch liveUpdate if you aren't filtering in some incompatible
 			// way and also you aren't writing a comment (discovered in javascript).
 
-			$live_update_div = '<div id="live-network"></div>' . "\r\n"
+			$live_update_div = '<div id="live-stream"></div>' . "\r\n"
 				. "<script> var profile_uid = " . $_SESSION['uid']
 				. "; var netargs = '" . substr(App::$cmd,8)
 				. '?f='
@@ -614,9 +614,9 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
 	if($items) {
 
-		if(in_array($mode, [ 'network-new', 'search', 'community', 'moderate' ])) {
+		if(in_array($mode, [ 'stream-new', 'search', 'community', 'moderate' ])) {
 
-			// "New Item View" on network page or search page results
+			// "New Item View" on stream page or search page results
 			// - just loop through the items and format them minimally for display
 
 			$tpl = 'search_item.tpl';
@@ -667,7 +667,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 				$location = format_location($item);
 
 				localize_item($item);
-				if($mode === 'network-new')
+				if($mode === 'stream-new')
 					$dropping = true;
 				else
 					$dropping = false;
@@ -929,7 +929,7 @@ function thread_action_menu($item,$mode = '') {
 			'href' => '#'
 		];
 
-		if(! in_array($mode, [ 'network-new', 'search', 'community'])) {
+		if(! in_array($mode, [ 'stream-new', 'search', 'community'])) {
 			if($item['parent'] == $item['id'] && (get_observer_hash() != $item['author_xchan'])) {
 				$menu[] = [ 
 					'menu' => 'follow_thread',
@@ -1006,7 +1006,7 @@ function thread_author_menu($item, $mode = '') {
 		$poke_link = z_root() . '/poke/?f=&c=' . $contact['abook_id'];
 		if (! intval($contact['abook_self']))  
 			$contact_url = z_root() . '/connedit/' . $contact['abook_id'];
-		$posts_link = z_root() . '/network/?cid=' . $contact['abook_id'];
+		$posts_link = z_root() . '/stream/?cid=' . $contact['abook_id'];
 
 		$clean_url = normalise_link($item['author-link']);
 	}

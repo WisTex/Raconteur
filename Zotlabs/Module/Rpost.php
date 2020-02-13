@@ -93,7 +93,7 @@ class Rpost extends Controller {
 		if(argc() > 1 && argv(1) === 'return') {
 			if($_SESSION['remote_return'])
 				goaway($_SESSION['remote_return']);
-			goaway(z_root() . '/network');
+			goaway(z_root() . '/stream');
 		}
 	
 		$plaintext = true;
