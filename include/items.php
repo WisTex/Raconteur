@@ -883,10 +883,6 @@ function import_author_xchan($x) {
 	if(array_key_exists('network',$x) && $x['network'] === 'zot6')
 		return $y;
 
-	if($x['network'] === 'rss') {
-		$y = import_author_rss($x);
-	}
-
 	if(! $y) {
 		$y = import_author_activitypub($x);
 	}
@@ -953,60 +949,6 @@ function import_author_activitypub($x) {
     return false;
 }
 
-
-/**
- * @brief Imports an author from a RSS feed.
- *
- * @param array $x an associative array with
- *   * \e string \b url
- *   * \e string \b name
- *   * \e string \b guid
- * @return boolean|string
- */
-function import_author_rss($x) {
-	if(! $x['url'])
-		return false;
-
-	$r = q("select xchan_hash from xchan where xchan_network = 'rss' and xchan_url = '%s' limit 1",
-		dbesc($x['url'])
-	);
-	if($r) {
-		logger('In cache' , LOGGER_DEBUG);
-		return $r[0]['xchan_hash'];
-	}
-	$name = trim($x['name']);
-
-	$r = xchan_store_lowlevel(
-		[
-			'xchan_hash'         => $x['url'],
-			'xchan_guid'         => $x['url'],
-			'xchan_url'          => $x['url'],
-			'xchan_name'         => (($name) ? $name : t('(Unknown)')),
-			'xchan_name_date'    => datetime_convert(),
-			'xchan_network'      => 'rss'
-		]
-	);
-
-	if($r && $x['photo']) {
-
-		$photos = import_xchan_photo($x['photo']['src'],$x['url']);
-
-		if($photos) {
-			$r = q("update xchan set xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s' where xchan_url = '%s' and xchan_network = 'rss'",
-				dbesc(datetime_convert()),
-				dbesc($photos[0]),
-				dbesc($photos[1]),
-				dbesc($photos[2]),
-				dbesc($photos[3]),
-				dbesc($x['url'])
-			);
-			if($r)
-				return $x['url'];
-		}
-	}
-
-	return false;
-}
 
 function import_author_unknown($x) {
 
@@ -3312,8 +3254,9 @@ function item_expire($uid,$days,$comment_days = 7) {
 	$sql_extra = ((intval($expire_stream_only)) ? " AND item_wall = 0 " : "");
 
 	$expire_limit = get_config('system','expire_limit');
-	if(! intval($expire_limit))
+	if (! intval($expire_limit)) {
 		$expire_limit = 5000;
+	}
 
 	$item_normal = item_normal();
 
@@ -3333,17 +3276,18 @@ function item_expire($uid,$days,$comment_days = 7) {
 		db_quoteinterval(intval($comment_days) . ' DAY')
 	);
 
-	if(! $r)
+	if (! $r) {
 		return;
+	}
 
 	$r = fetch_post_tags($r,true);
 
-	foreach($r as $item) {
+	foreach ($r as $item) {
 
 		// don't expire filed items
 
 		$terms = get_terms_oftype($item['term'],TERM_FILE);
-		if($terms) {
+		if ($terms) {
 			retain_item($item['id']);
 			continue;
 		}
