@@ -278,7 +278,7 @@ class Connections extends Controller {
 						'ignore_hover' => t('Ignore connection'),
 						'ignore' => ((! $rr['abook_ignored']) ? t('Ignore') : false),
 						'recent_label' => t('Recent activity'),
-						'recentlink' => z_root() . '/network/?f=&cid=' . intval($rr['abook_id']),
+						'recentlink' => z_root() . '/stream/?f=&cid=' . intval($rr['abook_id']),
 						'oneway' => $oneway,
 						'allow_delete' => ($rr['abook_pending'] || get_pconfig(local_channel(),'system','connections_quick_delete')),
 					);
