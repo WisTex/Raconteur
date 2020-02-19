@@ -332,6 +332,7 @@ class Acl extends Controller {
 						"photo"    => $g['photo'],
 						"name"     => $g['name'],
 						"nick"     => $g['address'],
+						'link'     => (($g['address']) ? $g['address'] : $g['url'])
 					];
 				}
 			}

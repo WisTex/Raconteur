@@ -75,6 +75,15 @@ function basic_replace(item) {
 	return '$1'+item.name+' ';
 }
 
+function link_replace(item) {
+	if(typeof item.replace !== 'undefined')
+		return '$1'+item.replace;
+
+	return '$1'+item.link+' ';
+}
+
+
+
 function trim_replace(item) {
 	if(typeof item.replace !== 'undefined')
 		return '$1'+item.replace;
@@ -289,6 +298,44 @@ function string2bb(element) {
 			cache: true,
 			search: function(term, callback) { contact_search(term, callback, backend_url, typ,[], spinelement=false); },
 			replace: basic_replace,
+			template: contact_format,
+		};
+
+		this.attr('autocomplete','off');
+
+		var textcomplete;
+		var Textarea = Textcomplete.editors.Textarea;
+
+		$(this).each(function() {
+			var editor = new Textarea(this);
+			textcomplete = new Textcomplete(editor);
+			textcomplete.register([contacts], {className:'acpopup', zIndex:1020});
+		});
+
+		if(autosubmit)
+			textcomplete.on('selected', function() { this.editor.el.form.submit(); });
+
+		if(typeof onselect !== 'undefined')
+			textcomplete.on('select', function() { var item = this.dropdown.getActiveItem(); onselect(item.searchResult.data); });
+	};
+})( jQuery );
+
+(function( $ ) {
+	$.fn.discover_autocomplete = function(backend_url, typ, autosubmit, onselect) {
+
+		if(! this.length)
+			return;
+
+		if(typeof typ === 'undefined') typ = 'x';
+		if(typeof autosubmit === 'undefined') autosubmit = false;
+
+		// Autocomplete contacts
+		contacts = {
+			match: /(^)([^\n]{2,})$/,
+			index: 2,
+			cache: true,
+			search: function(term, callback) { contact_search(term, callback, backend_url, typ,[], spinelement=false); },
+			replace: link_replace,
 			template: contact_format,
 		};
 
