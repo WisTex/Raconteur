@@ -48,7 +48,7 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '20.02.13' );
+define ( 'STD_VERSION',             '20.02.19' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1237 );
@@ -1099,31 +1099,30 @@ class App {
 
 	public static function build_pagehead() {
 
-		$user_scalable = ((local_channel()) ? get_pconfig(local_channel(),'system','user_scalable') : 0);
-		if ($user_scalable === false)
-			$user_scalable = 0;
+		$user_scalable = ((local_channel()) ? get_pconfig(local_channel(),'system','user_scalable', 0) : 0);
 
-		$preload_images = ((local_channel()) ? get_pconfig(local_channel(),'system','preload_images') : 0);
-		if ($preload_images === false)
-			$preload_images = 0;
+		$preload_images = ((local_channel()) ? get_pconfig(local_channel(),'system','preload_images',0) : 0);
 
-		$interval = ((local_channel()) ? get_pconfig(local_channel(),'system','update_interval') : 80000);
-		if($interval < 10000)
-			$interval = 80000;
+		$interval = ((local_channel()) ? get_pconfig(local_channel(),'system','update_interval',60000) : 60000);
+		if ($interval < 10000) {
+			$interval = 60000;
+		}
 
-		if(! x(self::$page,'title'))
+		if (! x(self::$page,'title')) {
 			self::$page['title'] = self::$config['system']['sitename'];
+		}
 
-		if(! self::$meta->get_field('og:title'))
+		if (! self::$meta->get_field('og:title')) {
 			self::$meta->set('og:title',self::$page['title']);
-
+		}
+		
 		self::$meta->set('generator', System::get_platform_name());
 
 		$i = head_get_icon();
 		if (! $i) {
 			$i = System::get_project_icon();
 		}
-		if($i) {
+		if ($i) {
 			head_add_link(['rel' => 'shortcut icon', 'href' => $i ]);
 		}
 
@@ -1172,9 +1171,9 @@ class App {
 	* @param string $name
 	*/
 	public static function register_template_engine($class, $name = '') {
-		if(! $name) {
+		if (! $name) {
 			$v = get_class_vars($class);
-			if(x($v, "name")) {
+			if (x($v, "name")) {
 				$name = $v['name'];
 			}
 		}
@@ -1200,7 +1199,7 @@ class App {
 		}
 		else {
 			$template_engine = 'smarty3';
-			if(x(self::$theme, 'template_engine')) {
+			if (x(self::$theme, 'template_engine')) {
 				$template_engine = self::$theme['template_engine'];
 			}
 		}
@@ -1250,8 +1249,9 @@ class App {
 
 	public static function head_get_icon() {
 		$icon = self::$data['pageicon'];
-		if ($icon && ! strpos($icon,'://'))
+		if ($icon && ! strpos($icon,'://')) {
 			$icon = z_root() . $icon;
+		}
 		return $icon;
 	}
 

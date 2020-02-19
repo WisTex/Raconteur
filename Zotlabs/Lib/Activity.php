@@ -1855,7 +1855,7 @@ class Activity {
 
 		if (is_array($act->obj)) {
 			$binary = false;
-			if (array_key_exists('mediaType',$act->obj) && $act['mediaType'] !== 'text/html') {
+			if (array_key_exists('mediaType',$act->obj) && $act->obj['mediaType'] !== 'text/html') {
 				$s['mimetype'] = escape_tags($act->obj['mediaType']);
 				$binary = true;
 			}

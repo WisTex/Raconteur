@@ -48,5 +48,5 @@ Edited posts and comments are sent with Update/Note and an 'updated' timestamp a
 
 Announce
 
-Announce and relay activities are supported on the inbound side but are not generated. Instead a new message is generated with an embedded rendering of the shared content as the message content. This message may contain additional commentary in order to comply with the Fair Use provisions of copyright law.
+Announce and relay activities are supported on the inbound side but are not generated. Instead a new message is generated with an embedded rendering of the shared content as the message content. This message may (should) contain additional commentary in order to comply with the Fair Use provisions of copyright law.
 

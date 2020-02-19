@@ -257,7 +257,7 @@ class Activity_filter {
 			]);
 
 			$o .= replace_macros(get_markup_template('activity_filter_widget.tpl'), [
-				'$title' => t('Activity Filters'),
+				'$title' => t('Stream Filters'),
 				'$reset' => $reset,
 				'$content' => $content,
 				'$name' => $name

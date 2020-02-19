@@ -92,7 +92,6 @@ class Connect {
 
 
 		$singleton = false;
-		$d = false;
 
 		if (! $r) {
 
@@ -101,19 +100,12 @@ class Connect {
 			$wf = discover_by_webbie($url,$protocol);
 
 			if (! $wf) {
-				$feeds = get_config('system','feed_contacts');
-
-				if (($feeds) && (in_array($protocol, [ '', 'feed', 'rss' ]))) {
-					$d = discover_feed($url);
-				}
-				else {
-					$result['message'] = t('Remote channel or protocol unavailable.');
-					return $result;
-				}
+				$result['message'] = t('Remote channel or protocol unavailable.');
+				return $result;
 			}
 		}
 
-		if ($wf || $d) {
+		if ($wf) {
 
 			// something was discovered - find the record which was just created.
 
@@ -174,35 +166,6 @@ class Connect {
 			return $result;
 		}
 
-		if ($xchan['xchan_network'] === 'rss') {
-
-			// check service class feed limits
-
-			$t = q("select count(*) as total from abook where abook_account = %d and abook_feed = 1 ",
-				intval($aid)
-			);
-			if ($t) {
-				$total_feeds = $t[0]['total'];
-			}
-
-			if (! service_class_allows($uid,'total_feeds',$total_feeds)) {
-				$result['message'] = upgrade_message();
-				return $result;
-			}
-
-			// Always set these "remote" permissions for feeds since we cannot interact with them
-			// to negotiate a suitable permission response
-
-			$p = get_abconfig($uid,$xchan_hash,'system','their_perms',EMPTY_STR);
-			if ($p) {
-				$p .= ',';
-			}
-			$p .= 'view_stream,republish';
-			set_abconfig($uid,$xchan_hash,'system','their_perms',$p);
-
-		}
-
-
 		$p = Permissions::connect_perms($uid);
 
 		// parent channels have unencumbered write permission
@@ -219,7 +182,6 @@ class Connect {
 		$my_perms = Permissions::serialise($p['perms']);
 		
 		$profile_assign = get_pconfig($uid,'system','profile_assign','');
-
 
 		// See if we are already connected by virtue of having an abook record
 
