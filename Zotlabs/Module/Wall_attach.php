@@ -112,10 +112,15 @@ class Wall_attach extends Controller {
 			$url = z_root() . '/cloud/' . $channel['channel_address'] . '/' . $r['data']['display_path'];
 
 			if (strpos($r['data']['filetype'],'video') === 0) {
-				// give a wee bit of time for the background thumbnail processor to do its thing
-				// or else we'll never see a video poster
-				sleep(3);
-				$thumb = Linkinfo::get_video_poster($url);
+				for ($s = 0; $s < 15; $s ++) {
+					$thumb = Linkinfo::get_video_poster($url);
+					if ($thumb) {
+						break;
+					}
+					sleep(1);
+					continue;
+				}
+
 				if ($thumb) {
 					$s = "\n\n" . '[zvideo poster=\'' . $thumb . '\']' . $url . '[/zvideo]' . "\n\n";
 				}
