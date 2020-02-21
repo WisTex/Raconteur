@@ -1332,37 +1332,50 @@ function theme_attachments(&$item) {
 
 	$arr = json_decode($item['attach'],true);
 
-	if(is_array($arr) && count($arr)) {
+	if (is_array($arr) && count($arr)) {
 		$attaches = array();
-		foreach($arr as $r) {
+		foreach ($arr as $r) {
 
+			$label = EMPTY_STR;
 			$icon = getIconFromType($r['type']);
 			
-			if($r['title'])
+			if ($r['title']) {
 				$label = urldecode(htmlspecialchars($r['title'], ENT_COMPAT, 'UTF-8'));
+			}
 
-			if(! $label && $r['href'])
-				$label = basename($r['href']);
+			if (! $label) {
+				if ($r['href']) {
+					$m = parse_url($r['href']);
+					if ($m && $m['path']) {
+						$label = basename($m['path']);
+					}
+				}
+			}
 
-			//some feeds provide an attachment where title an empty space
-			if(! $label || $label  == ' ')
+			// some feeds provide an attachment where title is an empty space
+			if (! trim($label)) {
 				$label = t('Unknown Attachment');
+			}
 
 			$title = t('Size') . ' ' . (($r['length']) ? userReadableSize($r['length']) : t('unknown'));
 
-			require_once('include/channel.php');
-			if(is_foreigner($item['author_xchan']))
+			if (is_foreigner($item['author_xchan'])) {
 				$url = $r['href'];
-			else
+			}
+			else {
 				$url = z_root() . '/magic?f=&owa=1&hash=' . $item['author_xchan'] . '&bdest=' . bin2hex($r['href'] . '/' . $r['revision']);
-
-			//$s .= '<a href="' . $url . '" title="' . $title . '" class="attachlink"  >' . $icon . '</a>';
-			$attaches[] = array('label' => $label, 'url' => $url, 'icon' => $icon, 'title' => $title);
+			}
+			$attaches[] = [ 
+				'label' => $label, 
+				'url'   => $url, 
+				'icon'  => $icon, 
+				'title' => $title 
+			];
 		}
 
-		$s = replace_macros(get_markup_template('item_attach.tpl'), array(
-			'$attaches' => $attaches
-		));
+		$s = replace_macros(get_markup_template('item_attach.tpl'), [ 
+			'$attaches' => $attaches 
+		]);
 	}
 
 	return $s;
