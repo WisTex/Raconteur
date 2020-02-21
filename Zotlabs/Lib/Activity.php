@@ -8,6 +8,7 @@ use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Daemon\Master;
 use Zotlabs\Lib\PConfig;
+use Emoji;
 
 require_once('include/html2bbcode.php');
 require_once('include/html2plain.php');
