@@ -2076,7 +2076,6 @@ class Activity {
 			$s['app'] = escape_tags($generator['name']);
 		}
 
-
 		if (! $response_activity) {
 			$a = self::decode_taxonomy($act->obj);
 			if ($a) {
@@ -2089,17 +2088,18 @@ class Activity {
 					}
 				}
 			}
+
+			$a = self::decode_attachment($act->obj);
+			if ($a) {
+				$s['attach'] = $a;
+			}
+
+			$a = self::decode_iconfig($act->obj);
+			if ($a) {
+				$s['iconfig'] = $a;
+			}
 		}
 
-		$a = self::decode_attachment($act->obj);
-		if ($a) {
-			$s['attach'] = $a;
-		}
-
-		$a = self::decode_iconfig($act->obj);
-		if ($a) {
-			$s['iconfig'] = $a;
-		}
 
 		if ($act->obj['type'] === 'Note' && $s['attach']) {
 			$s['body'] .= self::bb_attach($s['attach'],$s['body']);

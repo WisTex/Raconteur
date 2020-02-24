@@ -38,7 +38,7 @@ function authenticate_success($user_record, $channel = null, $login_initial = fa
 			change_channel($uid_to_load);
 		}
 
-		if($login_initial || $update_lastlog) {
+		if(($login_initial || $update_lastlog) && (! $_SESSION['sudo'])) {
 			q("update account set account_lastlog = '%s' where account_id = %d",
 				dbesc(datetime_convert()),
 				intval($_SESSION['account_id'])
@@ -67,7 +67,7 @@ function authenticate_success($user_record, $channel = null, $login_initial = fa
 
 		// don't let members get redirected to a raw ajax page update - this can happen
 		// if DHCP changes the IP address at an unfortunate time and paranoia is turned on
-		if(strstr($return_url,'update_'))
+		if(strstr($return_url,'update'))
 			$return_url = '';
 
 		unset($_SESSION['login_return_url']);
@@ -95,7 +95,7 @@ function atoken_login($atoken) {
 	$_SESSION['visitor_id'] = $atoken['xchan_hash'];
 	$_SESSION['atoken'] = $atoken['atoken_id'];
 
-	\App::set_observer($atoken);
+	App::set_observer($atoken);
 
 	return true;
 }
@@ -269,7 +269,7 @@ function change_channel($change_channel) {
 
 			// Update the active timestamp at most once a day
 
-			if(substr($r[0]['channel_active'],0,10) !== substr(datetime_convert(),0,10)) {
+			if(substr($r[0]['channel_active'],0,10) !== substr(datetime_convert(),0,10) && (! $_SESSION['sudo'])) {
 				$z = q("UPDATE channel SET channel_active = '%s' WHERE channel_id = %d",
 					dbesc(datetime_convert()),
 					intval($r[0]['channel_id'])

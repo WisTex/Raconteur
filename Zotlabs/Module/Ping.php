@@ -232,7 +232,7 @@ class Ping extends Controller {
 		 */
 
 		// mark all items read
-		if (x($_REQUEST, 'markRead') && local_channel()) {
+		if (x($_REQUEST, 'markRead') && local_channel() && (! $_SESSION['sudo'])) {
 			switch ($_REQUEST['markRead']) {
 				case 'stream':
 					$r = q("UPDATE item SET item_unseen = 0 WHERE uid = %d AND item_unseen = 1",
@@ -269,7 +269,7 @@ class Ping extends Controller {
 			}
 		}
 
-		if (x($_REQUEST, 'markItemRead') && local_channel()) {
+		if (x($_REQUEST, 'markItemRead') && local_channel() && (! $_SESSION['sudo'])) {
 			$r = q("UPDATE item SET item_unseen = 0 WHERE  uid = %d AND parent = %d",
 				intval(local_channel()),
 				intval($_REQUEST['markItemRead'])

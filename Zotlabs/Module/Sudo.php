@@ -24,7 +24,8 @@ class Sudo extends Controller {
 			$_SESSION['delegate_channel'] = $c['channel_id'];
 			$_SESSION['delegate']		  = get_observer_hash();
 			$_SESSION['account_id']	      = intval($c['channel_account_id']);
-
+			$_SESSION['sudo']             = 1;
+			
 			change_channel($c['channel_id']);
 			goaway(z_root());			
 		}
