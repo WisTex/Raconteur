@@ -9,7 +9,7 @@ class Sudo extends Controller {
 
 	function init() {
 
-		if ((argc() < 2) || (! intval(Config::Get('system','allow_sudo')))) { {
+		if ((argc() < 2) || (! intval(Config::Get('system','allow_sudo')))) {
 			http_status_exit(404,'Not found');
 		}
 
