@@ -589,7 +589,7 @@ class Stream extends Controller {
 			}
 		}
 	
-		if ($update_unseen) {
+		if ($update_unseen && (! $_SESSION['sudo'])) {
 			$x = [ 'channel_id' => local_channel(), 'update' => 'unset' ];
 			call_hooks('update_unseen',$x);
 			if ($x['update'] === 'unset' || intval($x['update'])) {

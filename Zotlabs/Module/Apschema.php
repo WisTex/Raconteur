@@ -29,8 +29,9 @@ class Apschema extends \Zotlabs\Web\Controller {
 				'expires'            => 'zot:expires',
 				'directMessage'      => 'zot:directMessage',
 				'replyTo'            => 'zot:replyTo',
-				'meta'               => 'zot:meta',
-				'value'              => 'zot:value',
+				'schema'             => 'http://schema.org#',
+				'PropertyValue'      => 'schema:PropertyValue',
+				'value'              => 'schema:value',
 			]
 		];
 

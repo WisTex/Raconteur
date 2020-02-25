@@ -42,22 +42,67 @@ if(cache_uid !== localUser.toString()) {
 
 $.ajaxSetup({cache: false});
 
+var region = 0;
+
 $(document).ready(function() {
 
 	$(document).on('click focus', '.comment-edit-form', handle_comment_form);
 
-//	$(document).swipe( {
-//		swipeRight:function(event,direction,distance,duration,fingerCount,fingerData,currentDirection) {
-//			$('#region_1').show();
-//			$('#region_2').show();
-//			$('#region_3').hide();
-//		},
-//		swipeLeft:function(event,direction,distance,duration,fingerCount,fingerData,currentDirection) {
-//			$('#region_1').hide();
-//			$('#region_2').show();
-//			$('#region_3').show();
-//		}
-//	});
+	$(document).swipe( {
+		preventDefaultEvents: false,
+		swipeLeft:function(event,direction,distance,duration,fingerCount,fingerData,currentDirection) {
+//			if (region == 0) {
+//				$('#region_1').show();
+//				$('#region_2').show();
+//				$('#region_3').show();
+//				region = 1;
+//			}
+//			else if (region == 1) {
+//				$('#region_1').show();
+//				$('#region_2').hide();
+//				$('#region_3').hide();
+//				region = 2;
+//			}
+//			else if (region == 2) {
+//				$('#region_1').hide();
+//				$('#region_2').show();
+//				$('#region_3').hide();
+//				region = 3;
+//			}
+//			else if (region == 3) {
+//				$('#region_1').hide();
+//				$('#region_2').hide();
+//				$('#region_3').show();
+//				region = 0;
+//			}
+		},
+		swipeRight:function(event,direction,distance,duration,fingerCount,fingerData,currentDirection) {
+//			if (region == 0) {
+//				$('#region_1').show();
+//				$('#region_2').show();
+//				$('#region_3').show();
+//				region = 3;
+//			}
+//			else if (region == 1) {
+//				$('#region_1').show();
+//				$('#region_2').hide();
+//				$('#region_3').hide();
+//				region = 0;
+//			}
+//			else if (region == 2) {
+//				$('#region_1').hide();
+//				$('#region_2').show();
+//				$('#region_3').hide();
+//				region = 1;
+//			}
+//			else if (region == 3) {
+//				$('#region_1').hide();
+//				$('#region_2').hide();
+//				$('#region_3').show();
+//				region = 2;
+//			}
+		}
+	});
 
 
 	

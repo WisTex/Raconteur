@@ -1,23 +1,25 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
 
 
-class Notify extends \Zotlabs\Web\Controller {
+class Notify extends Controller {
 
 	function init() {
-		if(! local_channel())
+		if (! local_channel()) {
 			return;
+		}
 	
-		if(argc() > 2 && argv(1) === 'view' && intval(argv(2))) {
+		if (argc() > 2 && argv(1) === 'view' && intval(argv(2))) {
 			$r = q("select * from notify where id = %d and uid = %d limit 1",
 				intval(argv(2)),
 				intval(local_channel())
 			);
-			if($r) {
+			if ($r) {
 				$x = [ 'channel_id' => local_channel(), 'update' => 'unset' ];
 				call_hooks('update_unseen',$x);
-				if($x['update'] === 'unset' || intval($x['update'])) {
+				if ((! $_SESSION['sudo']) && ($x['update'] === 'unset' || intval($x['update']))) {
 					q("update notify set seen = 1 where (( parent != '' and parent = '%s' and otype = '%s' ) or link = '%s' ) and uid = %d",
 						dbesc($r[0]['parent']),
 						dbesc($r[0]['otype']),
@@ -35,19 +37,19 @@ class Notify extends \Zotlabs\Web\Controller {
 	
 	
 	function get() {
-		if(! local_channel())
+		if (! local_channel()) {
 			return login();
+		}
 	
 		$notif_tpl = get_markup_template('notifications.tpl');
 			
 		$not_tpl = get_markup_template('notify.tpl');
-		require_once('include/bbcode.php');
 	
 		$r = q("SELECT * from notify where uid = %d and seen = 0 order by created desc",
 			intval(local_channel())
 		);
 			
-		if($r) {
+		if ($r) {
 			foreach ($r as $it) {
 				$notif_content .= replace_macros($not_tpl,array(
 					'$item_link' => z_root().'/notify/view/'. $it['id'],
