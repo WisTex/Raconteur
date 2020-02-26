@@ -50,3 +50,6 @@ Announce
 
 Announce and relay activities are supported on the inbound side but are not generated. Instead a new message is generated with an embedded rendering of the shared content as the message content. This message may (should) contain additional commentary in order to comply with the Fair Use provisions of copyright law.
 
+Mastodon Custom Emojis
+
+Mastodon Custom Emojis are only supported for post content. Display names and message titles are considered text only fields and embedded images (the mechanism behind custom emojis) are not supported in these locations.

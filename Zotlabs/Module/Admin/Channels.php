@@ -2,12 +2,14 @@
 
 namespace Zotlabs\Module\Admin;
 
+use App;
 use Zotlabs\Daemon\Master;
 
 /**
  * @brief Admin Module for Channels.
  *
  */
+ 
 class Channels {
 
 	/**
@@ -118,13 +120,13 @@ class Channels {
 
 		$total = q("SELECT count(*) as total FROM channel where channel_removed = 0 and channel_system = 0");
 		if($total) {
-			\App::set_pager_total($total[0]['total']);
-			\App::set_pager_itemspage(100);
+			App::set_pager_total($total[0]['total']);
+			App::set_pager_itemspage(100);
 		}
 
 		$channels = q("SELECT * from channel where channel_removed = 0 and channel_system = 0 order by $key $dir limit %d offset %d ",
-			intval(\App::$pager['itemspage']),
-			intval(\App::$pager['start'])
+			intval(App::$pager['itemspage']),
+			intval(App::$pager['start'])
 		);
 
 		if($channels) {
@@ -138,11 +140,14 @@ class Channels {
 					$channels[$x]['allowcode'] = true;
 				else
 					$channels[$x]['allowcode'] = false;
+					
+				$channels[$x]['channel_link'] = z_root() . '/channel/' . $channels[$x]['channel_address'];
 			}
 		}
 
-		$t = get_markup_template('admin_channels.tpl');
-		$o = replace_macros($t, array(
+		call_hooks('admin_channels',$channels);
+
+		$o = replace_macros(get_markup_template('admin_channels.tpl'), [
 			// strings //
 			'$title' => t('Administration'),
 			'$page' => t('Channels'),
@@ -169,7 +174,7 @@ class Channels {
 			// values //
 			'$baseurl' => z_root(),
 			'$channels' => $channels,
-		));
+		]);
 		$o .= paginate($a);
 
 		return $o;
