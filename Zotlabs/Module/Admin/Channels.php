@@ -145,11 +145,7 @@ class Channels {
 			}
 		}
 
-logger('channels1: ' . print_r($channels,true));
-
 		call_hooks('admin_channels',$channels);
-		
-logger('channels2: ' . print_r($channels,true));
 
 		$o = replace_macros(get_markup_template('admin_channels.tpl'), [
 			// strings //
