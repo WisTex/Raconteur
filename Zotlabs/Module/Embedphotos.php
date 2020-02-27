@@ -53,7 +53,7 @@ class Embedphotos extends Controller {
 		$output = EMPTY_STR;
 		if ($channel) {
 			$resolution = ((feature_enabled($channel['channel_id'],'large_photos')) ? 1 : 2);
-			$r = q("select mimetype, height, width from photo where resource_id = '%s' and $resolution = %d and uid = %d limit 1",
+			$r = q("select mimetype, height, width, title from photo where resource_id = '%s' and $resolution = %d and uid = %d limit 1",
 				dbesc($resource),
 				intval($resolution),
 				intval($channel['channel_id'])
@@ -74,9 +74,24 @@ class Embedphotos extends Controller {
 			else {
 				$ext = EMPTY_STR;
 			}
-			
+
+			$alt = $r[0]['title'];
+			if (! $alt) {
+				$a = q("select filename from attach where hash = '%s' and uid = %d limit 1",
+					dbesc($resource),
+					intval($channel['channel_id'])
+				);
+				if ($a) {
+					$alt = $a[0]['filename'];
+				}
+				else {
+					$alt = t('Image/photo');
+				}
+			}
+			$alt = ' alt=' . str_replace([ '[',']' ],[ '%5b','%5d'],$alt);
+
 			$output = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $resource . ']' .
-				'[zmg=' . $r[0]['width'] . 'x' . $r[0]['height'] . ']' . z_root() . '/photo/' . $resource . '-' . $resolution .  $ext . '[/zmg][/zrl]';
+				'[zmg=' . $r[0]['width'] . 'x' . $r[0]['height'] . $alt . ']' . z_root() . '/photo/' . $resource . '-' . $resolution .  $ext . '[/zmg][/zrl]';
 
 			return $output;
 		}

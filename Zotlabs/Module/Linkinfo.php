@@ -80,10 +80,12 @@ class Linkinfo extends Controller {
 				$type = $hdrs['content-type'];
 			if ($type) {
 				if (stripos($type,'image/') !== false) {
+					$basename = str_replace([ '[',']' ],[ '%5b','%5d'],basename($url));
+					
 					if ($zrl)
-						echo $br . '[zmg]' . $url . '[/zmg]' . $br;
+						echo $br . '[zmg alt=' . $basename . ']' . $url . '[/zmg]' . $br;
 					else
-						echo $br . '[img]' . $url . '[/img]' . $br;
+						echo $br . '[img alt=' . $basename . ']' . $url . '[/img]' . $br;
 					killme();
 				}
 				if (stripos($type,'video/') !== false) {
