@@ -384,6 +384,7 @@ class Item extends Controller {
 		$consensus = intval($_REQUEST['consensus']);
 		$nocomment = intval($_REQUEST['nocomment']);
 
+		$is_poll = ((trim($_REQUEST['poll_answers'][0]) != '' && trim($_REQUEST['poll_answers'][1]) != '') ? true : false);
 
 		// 'origin' (if non-zero) indicates that this network is where the message originated,
 		// for the purpose of relaying comments to other conversation members. 
@@ -1101,7 +1102,21 @@ class Item extends Controller {
 			}
 		}
 
-		$obj = $this->extract_poll_data($body,[ 'item_private' => $private, 'allow_cid' => $str_contact_allow, 'allow_gid' => $str_contact_deny ]);
+
+		if($is_poll) {
+			$poll = [
+				'question' => $body,
+				'answers' => $_REQUEST['poll_answers'],
+				'multiple_answers' => $_REQUEST['poll_multiple_answers'],
+				'expire_value' => $_REQUEST['poll_expire_value'],
+				'expire_unit' => $_REQUEST['poll_expire_unit']
+			];
+			$obj = $this->extract_poll_data($poll, [ 'item_private' => $private, 'allow_cid' => $str_contact_allow, 'allow_gid' => $str_contact_deny ]);
+		}
+		else {
+			$obj = $this->extract_bb_poll_data($body,[ 'item_private' => $private, 'allow_cid' => $str_contact_allow, 'allow_gid' => $str_contact_deny ]);
+		}
+
 		if ($obj) {
 			$obj['url'] = $mid;
 			$obj['attributedTo'] = channel_url($channel);
@@ -1642,7 +1657,7 @@ class Item extends Controller {
 		return $ret;
 	}
 	
-	function extract_poll_data(&$body,$item) {
+	function extract_bb_poll_data(&$body,$item) {
 
 		$multiple = false;
 
@@ -1652,7 +1667,6 @@ class Item extends Controller {
 		if (strpos($body,'[nobb]') !== false) {
 			return false;
 		}
-
 
 		$obj = [];
 		$ptr = [];
@@ -1696,6 +1710,44 @@ class Item extends Controller {
 			$obj['to'] = [ ACTIVITY_PUBLIC_INBOX ];
 		}
 		
+		return $obj;
+
+	}
+
+	function extract_poll_data($poll, $item) {
+
+		$multiple = intval($poll['multiple_answers']);
+		$expire_value = intval($poll['expire_value']);
+		$expire_unit = $poll['expire_unit'];
+		$question = $poll['question'];
+		$answers = $poll['answers'];
+
+		$obj = [];
+		$ptr = [];
+		$obj['type'] = 'Question';
+		$obj['content'] = bbcode($question);
+
+		foreach($answers as $answer) {
+			if(trim($answer))
+				$ptr[] = [ 'name' => escape_tags($answer), 'type' => 'Note', 'replies' => [ 'type' => 'Collection', 'totalItems' => 0 ]];
+		}
+
+		if($multiple) {
+			$obj['anyOf'] = $ptr;
+		}
+		else {
+			$obj['oneOf'] = $ptr;
+		}
+
+		$obj['endTime'] = datetime_convert(date_default_timezone_get(), 'UTC', 'now + ' . $expire_value . ' ' . $expire_unit, ATOM_TIME);
+
+		if ($item['item_private']) {
+			$obj['to'] = Activity::map_acl($item);
+		}
+		else {
+			$obj['to'] = [ ACTIVITY_PUBLIC_INBOX ];
+		}
+
 		return $obj;
 
 	}
