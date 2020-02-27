@@ -1811,8 +1811,11 @@ class Activity {
 
 	}
 
-	static function update_poll($item,$mid,$content) {
+	static function update_poll($item,$post) {
 		$multi = false;
+		$mid = $post['mid'];
+		$content = $post['title'];
+		
 		if (! $item) {
 			return false;
 		}
@@ -1821,6 +1824,31 @@ class Activity {
 		if ($o && array_key_exists('anyOf',$o)) {
 			$multi = true;
 		}
+
+		$r = q("select mid, title from item where parent_mid = '%s' and author_xchan = '%s'",
+			dbesc($item['mid']),
+			dbesc($post['author_xchan'])
+		);
+
+		// prevent any duplicate votes by same author for oneOf and duplicate votes with same author and same answer for anyOf
+		
+		if ($r) {
+			if ($multi) {
+				foreach ($r as $rv) {
+					if ($rv['title'] === $content && $rv['mid'] !== $mid) {
+						return false;
+					}
+				}
+			}
+			else {
+				foreach ($r as $rv) {
+					if ($rv['mid'] !== $mid) {
+						return false;
+					}
+				}
+			}
+		}
+			
 		$answer_found = false;
 		$found = false;
 		if ($multi) {

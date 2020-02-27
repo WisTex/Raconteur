@@ -833,6 +833,63 @@ function bb_observer($Text) {
 	return $Text;
 }
 
+function bb_imgoptions($match) {
+
+	// $Text = preg_replace_callback("/\[([zi])mg([ \=])(.*?)\](.*?)\[\/[zi]mg\]/ism",'bb_imgoptions',$Text);
+	// alt text cannot contain ']'
+	
+	// [img|zmg=wwwxhhh float=left|right alt=alt text]url[/img|zmg]
+
+	$local_match = null;
+	$width       = 0;
+	$float       = false;
+	$alt         = false;
+
+	$style = EMPTY_STR;
+	
+	if ($match[2] === '=') {
+		// pull out (optional) size declarations first
+		if (preg_match("/([0-9]*)x([0-9]*)/ism",$match[3],$local_match)) {
+			$width = intval($local_match[1]);
+		}
+		$match[3] = substr($match[3],strpos($match[3],' '));
+	}
+	// then (optional) float specifiers
+	if ($n = strpos($match[3],'float=left') !== false) {
+		$float = 'left';
+		$match[3] = substr($match[3],$n + 10);
+	}
+	if ($n = strpos($match[3],'float=right') !== false) {
+		$float = 'right';
+		$match[3] = substr($match[3],$n + 11);
+	}
+	// finally alt text which extends to the close of the tag
+	if ($n = strpos($match[3],'alt=') !== false) {
+		$alt = substr($match[3],$n + 4);
+	}
+
+	// now assemble the resulting img tag from these components
+	
+	$output = '<img ' . (($match[1] === 'z') ? 'class="zrl" ' : '') . ' ';
+	
+	if ($width) {
+		$style .= 'width: 100%; max-width: ' . $width . 'px; ';
+	}
+	else {
+		$style .= 'max-width: 100%; ';
+	}
+	if ($float) {
+		$style .= 'float: ' . $float . '; ';
+	}
+	
+	$output .= (($style) ? 'style="' . $style . '" ' : '') . 'alt="' . htmlentities(($alt) ? $alt : t('Image/photo'),ENT_COMPAT,'UTF-8') . '" ';
+
+	$output .= 'src="' . $match[4] . '" >';
+	
+	return $output;
+	
+}
+
 function bb_code_protect($s) {
 	return 'b64.^9e%.' . base64_encode($s) . '.b64.$9e%';
 }
@@ -1493,41 +1550,44 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace("/\[zmg\](.*?)\[\/zmg\]/ism", '<img class="zrl" style="max-width: 100%;" src="$1" alt="' . t('Image/photo') . '" />', $Text);
 	}
 
+	$Text = preg_replace_callback("/\[([zi])mg([ \=])(.*?)\](.*?)\[\/[zi]mg\]/ism",'bb_imgoptions',$Text);
+
+
 	// [img float={left, right}]pathtoimage[/img]
-	if (strpos($Text,'[/img]') !== false) {
-		$Text = preg_replace("/\[img float=left\](.*?)\[\/img\]/ism", '<img style="max-width: 100%;" src="$1" style="float: left;" alt="' . t('Image/photo') . '" />', $Text);
-	}
-	if (strpos($Text,'[/img]') !== false) {
-		$Text = preg_replace("/\[img float=right\](.*?)\[\/img\]/ism", '<img style="max-width: 100%;" src="$1" style="float: right;" alt="' . t('Image/photo') . '" />', $Text);
-	}
-	if (strpos($Text,'[/zmg]') !== false) {
-		$Text = preg_replace("/\[zmg float=left\](.*?)\[\/zmg\]/ism", '<img style="max-width: 100%;" class="zrl" src="$1" style="float: left;" alt="' . t('Image/photo') . '" />', $Text);
-	}
-	if (strpos($Text,'[/zmg]') !== false) {
-		$Text = preg_replace("/\[zmg float=right\](.*?)\[\/zmg\]/ism", '<img style="max-width: 100%;" class="zrl" src="$1" style="float: right;" alt="' . t('Image/photo') . '" />', $Text);
-	}
+//	if (strpos($Text,'[/img]') !== false) {
+//		$Text = preg_replace("/\[img float=left\](.*?)\[\/img\]/ism", '<img style="max-width: 100%;" src="$1" style="float: left;" alt="' . t('Image/photo') . '" />', $Text);
+//	}
+//	if (strpos($Text,'[/img]') !== false) {
+//		$Text = preg_replace("/\[img float=right\](.*?)\[\/img\]/ism", '<img style="max-width: 100%;" src="$1" style="float: right;" alt="' . t('Image/photo') . '" />', $Text);
+//	}
+//	if (strpos($Text,'[/zmg]') !== false) {
+//		$Text = preg_replace("/\[zmg float=left\](.*?)\[\/zmg\]/ism", '<img style="max-width: 100%;" class="zrl" src="$1" style="float: left;" alt="' . t('Image/photo') . '" />', $Text);
+//	}
+//	if (strpos($Text,'[/zmg]') !== false) {
+//		$Text = preg_replace("/\[zmg float=right\](.*?)\[\/zmg\]/ism", '<img style="max-width: 100%;" class="zrl" src="$1" style="float: right;" alt="' . t('Image/photo') . '" />', $Text);
+//	}
 
 	// [img=widthxheight]pathtoimage[/img]
-	if (strpos($Text,'[/img]') !== false) {
-		$Text = preg_replace("/\[img\=([0-9]*)x([0-9]*)\](.*?)\[\/img\]/ism", '<img src="$3" style="width: 100%; max-width: $1px;" alt="' . t('Image/photo') . '" />', $Text);
-	}
-	if (strpos($Text,'[/zmg]') !== false) {
-		$Text = preg_replace("/\[zmg\=([0-9]*)x([0-9]*)\](.*?)\[\/zmg\]/ism", '<img class="zrl" src="$3" style="width: 100%; max-width: $1px;" alt="' . t('Image/photo') . '" />', $Text);
-	}
+//	if (strpos($Text,'[/img]') !== false) {
+//		$Text = preg_replace("/\[img\=([0-9]*)x([0-9]*)\](.*?)\[\/img\]/ism", '<img src="$3" style="width: 100%; max-width: $1px;" alt="' . t('Image/photo') . '" />', $Text);
+//	}
+//	if (strpos($Text,'[/zmg]') !== false) {
+//		$Text = preg_replace("/\[zmg\=([0-9]*)x([0-9]*)\](.*?)\[\/zmg\]/ism", '<img class="zrl" src="$3" style="width: 100%; max-width: $1px;" alt="' . t('Image/photo') . '" />', $Text);
+//	}
 
 	// [img=widthxheight float={left, right}]pathtoimage[/img]
-	if (strpos($Text,'[/img]') !== false) {
-		$Text = preg_replace("/\[img\=([0-9]*)x([0-9]*) float=left\](.*?)\[\/img\]/ism", '<img src="$3" style="width: 100%; max-width: $1px; float: left;" alt="' . t('Image/photo') . '" />', $Text);
-	}
-	if (strpos($Text,'[/img]') !== false) {
-		$Text = preg_replace("/\[img\=([0-9]*)x([0-9]*) float=right\](.*?)\[\/img\]/ism", '<img src="$3" style="width: 100%; max-width: $1px; float: right;" alt="' . t('Image/photo') . '" />', $Text);
-	}
-	if (strpos($Text,'[/zmg]') !== false) {
-		$Text = preg_replace("/\[zmg\=([0-9]*)x([0-9]*) float=left\](.*?)\[\/zmg\]/ism", '<img class="zrl" src="$3" style="width: 100%; max-width: $1px; float: left;" alt="' . t('Image/photo') . '" />', $Text);
-	}
-	if (strpos($Text,'[/zmg]') !== false) {
-		$Text = preg_replace("/\[zmg\=([0-9]*)x([0-9]*) float=right\](.*?)\[\/zmg\]/ism", '<img class="zrl" src="$3" style="width: 100%; max-width: $1px; float: right;" alt="' . t('Image/photo') . '" />', $Text);
-	}
+//	if (strpos($Text,'[/img]') !== false) {
+//		$Text = preg_replace("/\[img\=([0-9]*)x([0-9]*) float=left\](.*?)\[\/img\]/ism", '<img src="$3" style="width: 100%; max-width: $1px; float: left;" alt="' . t('Image/photo') . '" />', $Text);
+//	}
+//	if (strpos($Text,'[/img]') !== false) {
+//		$Text = preg_replace("/\[img\=([0-9]*)x([0-9]*) float=right\](.*?)\[\/img\]/ism", '<img src="$3" style="width: 100%; max-width: $1px; float: right;" alt="' . t('Image/photo') . '" />', $Text);
+//	}
+//	if (strpos($Text,'[/zmg]') !== false) {
+//		$Text = preg_replace("/\[zmg\=([0-9]*)x([0-9]*) float=left\](.*?)\[\/zmg\]/ism", '<img class="zrl" src="$3" style="width: 100%; max-width: $1px; float: left;" alt="' . t('Image/photo') . '" />', $Text);
+//	}
+//	if (strpos($Text,'[/zmg]') !== false) {
+//		$Text = preg_replace("/\[zmg\=([0-9]*)x([0-9]*) float=right\](.*?)\[\/zmg\]/ism", '<img class="zrl" src="$3" style="width: 100%; max-width: $1px; float: right;" alt="' . t('Image/photo') . '" />', $Text);
+//	}
 
 	if($censored) {
 		$Text = separate_img_links($Text);

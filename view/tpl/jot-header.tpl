@@ -80,6 +80,9 @@ var activeCommentText = '';
 			}
 		});
 
+		$('#jot-add-option').on('click', jotAddOption);
+		$(document).on('click', '.poll-option-close', jotRemoveOption);
+
 		function jotSetMime() { 
 			var mtype = $('#id_mimetype').val(); 
 			if(mtype == 'text/bbcode')
@@ -143,6 +146,7 @@ var activeCommentText = '';
 				activeCommentID = 0;
 			},
 		});
+
 	});
 
 	function deleteCheckedItems() {
@@ -358,6 +362,7 @@ var activeCommentText = '';
 	function itemCancel() {
 		$("#jot-title").val('');
 		$("#profile-jot-text").val('');
+		$(".jot-poll-option input").val('');
 		$("#jot-category").tagsinput('removeAll');
 
 		postSaveChanges('clean');
@@ -366,6 +371,7 @@ var activeCommentText = '';
 		$(".jothidden").hide();
 		$("#profile-jot-text").removeClass('jot-expanded');
 		$("#profile-jot-reset").addClass('d-none');
+		$("#jot-poll-wrap").addClass('d-none');
 		$("#jot-preview-content").html('').hide();
 		editor = false;
 		{{else}}
@@ -560,6 +566,19 @@ var activeCommentText = '';
 	  linkdrop(e);
 
     }
+
+	function initPoll() {
+		$('#jot-poll-wrap').toggleClass('d-none');
+	}
+
+	function jotAddOption() {
+		var option = '<div class="jot-poll-option form-group"><input class="w-100 border-0" name="poll_answers[]" type="text" value="" placeholder="Option"><div class="poll-option-close"><i class="fa fa-close"></i></div></div>';
+		$('#jot-poll-options').append(option);
+	}
+
+	function jotRemoveOption(e) {
+		$(this).closest('.jot-poll-option').remove();
+	}
 
 </script>
 
