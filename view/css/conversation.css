@@ -1,15 +1,18 @@
 
 /* jot */
-
-.jothidden input[type="text"] {
-	border: 0px;
-	margin: 0px;
-	height: 2.5rem;
-	width: 100%;
-}
-
 .jothidden {
 	display:none;
+}
+
+.jot-poll-option {
+	position: relative;
+}
+
+.poll-option-close {
+	position: absolute;
+	right: 0;
+	top: 0;
+	padding: 0.25rem 0 0.25rem 0.5rem;
 }
 
 #jot-title-wrap,
@@ -19,7 +22,8 @@
 	border-bottom: 1px solid rgba(0, 0, 0, .2);
 }
 
-#jot-attachment-wrap {
+#jot-attachment-wrap,
+#jot-poll-wrap {
 	border-top: 1px solid rgba(0, 0, 0, .2);
 }
 

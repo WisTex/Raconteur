@@ -1221,7 +1221,7 @@ function z_status_editor($a, $x, $popup = false) {
 	$feature_voting = false; // feature_enabled($x['profile_uid'], 'consensus_tools');
 	if(x($x, 'hide_voting'))
 		$feature_voting = false;
-	
+
 	$feature_nocomment = Apps::system_app_installed($x['profile_uid'], 'No Comment');
 	if(x($x, 'disable_comments'))
 		$feature_nocomment = false;
@@ -1385,6 +1385,8 @@ function z_status_editor($a, $x, $popup = false) {
 		'$embedPhotosModalOK' => t('OK'),
 		'$setloc' => $setloc,
 		'$voting' => t('Toggle voting'),
+		'$poll' => t('Toggle poll'),
+		'$multiple_answers' => ['poll_multiple_answers', t("Allow multiple answers")],
 		'$feature_voting' => $feature_voting,
 		'$consensus' => ((array_key_exists('item',$x)) ? $x['item']['item_consensus'] : 0),
 		'$nocommenttitle' => t('Disable comments'),

@@ -1629,6 +1629,10 @@ dl.bb-dl > dd > li {
 	font-size: 100%;
 }
 
+.bootstrap-tagsinput input {
+	height: 2.5rem;
+}
+
 /* Abusing theme-green is less work than makeing a new new one */
 .theme-green .back-bar .selected-bar {
 	background-color: #000000;
