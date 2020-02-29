@@ -374,19 +374,20 @@ function photo_upload($channel, $observer, $args) {
 	$large_photos = feature_enabled($channel['channel_id'], 'large_photos');
 
 	linkify_tags($args['body'], $channel_id);
-	$alt = ' alt=' . str_replace([ '[',']' ],[ '%5b','%5d'],$title);
+	
+	$alt = ' alt="' . $title . '"' ;
 
 	if($large_photos) {
 		$scale = 1;
 		$width = $url[1]['width'];
 		$height = $url[1]['height'];
-		$tag = (($r1) ? '[zmg=' . $width . 'x' . $height . $alt . ']' : '[zmg' . $alt . ']');
+		$tag = (($r1) ? '[zmg width="' . $width . '" height="' . $height . '"' . $alt . ']' : '[zmg' . $alt . ']');
 	}
 	else {
 		$scale = 2;
 		$width = $url[2]['width'];
 		$height = $url[2]['height'];
-		$tag = (($r2) ? '[zmg=' . $width . 'x' . $height . $alt . ']' : '[zmg' . $alt . ']');
+		$tag = (($r2) ? '[zmg width="' . $width . '" height="' . $height . '"' . $alt . ']' : '[zmg' . $alt . ']');
 	}
 
 	$author_link = '[zrl=' . z_root() . '/channel/' . $channel['channel_address'] . ']' . $channel['channel_name'] . '[/zrl]';

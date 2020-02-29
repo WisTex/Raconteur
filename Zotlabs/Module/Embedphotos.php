@@ -88,10 +88,11 @@ class Embedphotos extends Controller {
 					$alt = t('Image/photo');
 				}
 			}
-			$alt = ' alt=' . str_replace([ '[',']' ],[ '%5b','%5d'],$alt);
+			$alt = ' alt="' . $alt . '"';
 
-			$output = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $resource . ']' .
-				'[zmg=' . $r[0]['width'] . 'x' . $r[0]['height'] . $alt . ']' . z_root() . '/photo/' . $resource . '-' . $resolution .  $ext . '[/zmg][/zrl]';
+			$output = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $resource . ']'
+				. '[zmg width="' . $r[0]['width'] . '" height="' . $r[0]['height'] . '"' . $alt . ']'
+				. z_root() . '/photo/' . $resource . '-' . $resolution .  $ext . '[/zmg][/zrl]';
 
 			return $output;
 		}

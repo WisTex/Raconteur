@@ -846,15 +846,60 @@ function bb_imgoptions($match) {
 	$alt         = false;
 
 	$style = EMPTY_STR;
+
+	$attributes = $match[3];
+
+	$x = preg_match("/alt='(.*?)'/ism", $attributes, $matches);
+	if ($x) {
+		$alt = $matches[1];
+	}
+	
+	$x = preg_match("/alt=\&quot\;(.*?)\&quot\;/ism", $attributes, $matches);
+	if ($x) {
+		$alt = $matches[1];
+	}
+
+	$x = preg_match("/width='(.*?)'/ism", $attributes, $matches);
+	if ($x) {
+		$width = $matches[1];
+	}
+	
+	$x = preg_match("/width=\&quot\;(.*?)\&quot\;/ism", $attributes, $matches);
+	if ($x) {
+		$width = $matches[1];
+	}
+
+	$x = preg_match("/height='(.*?)'/ism", $attributes, $matches);
+	if ($x) {
+		$height = $matches[1];
+	}
+	
+	$x = preg_match("/height=\&quot\;(.*?)\&quot\;/ism", $attributes, $matches);
+	if ($x) {
+		$height = $matches[1];
+	}
+
+	$x = preg_match("/style='(.*?)'/ism", $attributes, $matches);
+	if ($x) {
+		$style = $matches[1];
+	}
+	
+	$x = preg_match("/style=\&quot\;(.*?)\&quot\;/ism", $attributes, $matches);
+	if ($x) {
+		$style = $matches[1];
+	}
+
+	// legacy img options
 	
 	if ($match[2] === '=') {
-		// pull out (optional) size declarations first
+		// pull out (optional) legacy size declarations first
 		if (preg_match("/([0-9]*)x([0-9]*)/ism",$match[3],$local_match)) {
 			$width = intval($local_match[1]);
 		}
 		$match[3] = substr($match[3],strpos($match[3],' '));
 	}
-	// then (optional) float specifiers
+
+	// then (optional) legacy float specifiers
 	if ($n = strpos($match[3],'float=left') !== false) {
 		$float = 'left';
 		$match[3] = substr($match[3],$n + 10);
@@ -863,8 +908,9 @@ function bb_imgoptions($match) {
 		$float = 'right';
 		$match[3] = substr($match[3],$n + 11);
 	}
+	
 	// finally alt text which extends to the close of the tag
-	if ($n = strpos($match[3],'alt=') !== false) {
+	if ((! $alt) && ($n = strpos($match[3],'alt=') !== false)) {
 		$alt = substr($match[3],$n + 4);
 	}
 
