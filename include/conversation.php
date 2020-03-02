@@ -88,21 +88,25 @@ function localize_item(&$item){
 
 	if (activity_match($item['verb'],ACTIVITY_LIKE) || activity_match($item['verb'],ACTIVITY_DISLIKE)){
 	
-		if(! $item['obj'])
+		if (! $item['obj']) {
 			return;
+		}
 
-		if(intval($item['item_thread_top']))
-			return;	
+		if (intval($item['item_thread_top'])) {
+			return;
+		}
 
-		$obj = json_decode($item['obj'],true);
-		if((! $obj) && ($item['obj'])) {
+		$obj = ((is_array($item['obj'])) ? $item['obj'] : json_decode($item['obj'],true));
+		if ((! $obj) && ($item['obj'])) {
 			logger('localize_item: failed to decode object: ' . print_r($item['obj'],true));
 		}
 		
-		if($obj['author'] && $obj['author']['link'])
+		if ($obj['author'] && $obj['author']['link']) {
 			$author_link = get_rel_link($obj['author']['link'],'alternate');
-		else
+		}
+		else {
 			$author_link = '';
+		}
 
 		$author_name = (($obj['author'] && $obj['author']['name']) ? $obj['author']['name'] : '');
 
@@ -110,7 +114,7 @@ function localize_item(&$item){
 
 		$Bphoto = '';
 
-		switch($obj['type']) {
+		switch ($obj['type']) {
 			case ACTIVITY_OBJ_PHOTO:
 				$post_type = t('photo');
 				break;
@@ -120,9 +124,12 @@ function localize_item(&$item){
 			case ACTIVITY_OBJ_PERSON:
 				$post_type = t('channel');
 				$author_name = $obj['title'];
-				if($obj['link']) {
+				if ($obj['link']) {
 					$author_link  = get_rel_link($obj['link'],'alternate');
 					$Bphoto = get_rel_link($obj['link'],'photo');
+				}
+				if ($obj['url']) {
+
 				}
 				break;
 			case ACTIVITY_OBJ_THING:
@@ -170,12 +177,18 @@ function localize_item(&$item){
 			elseif(activity_match($item['verb'],ACTIVITY_DISLIKE)) {
 				$shortbodyverb = t('doesn\'t like %1$s\'s %2$s');
 			}
+			elseif ($item['verb'] === 'Announce') {
+				$shortbodyverb = t('shared %1$s\'s %2$s');
+			}
 
-			$item['shortlocalize'] = sprintf($shortbodyverb, $objauthor, $plink);
-
+			if ($shortbodyverb) {
+				$item['shortlocalize'] = sprintf($shortbodyverb, $objauthor, $plink);
+			}
+			
 			$item['body'] = $item['localize'] = sprintf($bodyverb, $author, $objauthor, $plink);
-			if($Bphoto != "") 
-				$item['body'] .= "\n\n\n" . '[zrl=' . chanlink_url($author_link) . '][zmg=80x80]' . $Bphoto . '[/zmg][/zrl]';
+			if ($Bphoto != "") { 
+				$item['body'] .= "\n\n\n" . '[zrl=' . chanlink_url($author_link) . '][zmg width=&quot;80&quot; height=&quot;80&quot;]' . $Bphoto . '[/zmg][/zrl]';
+			}
 
 		}
 		else {

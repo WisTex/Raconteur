@@ -11,7 +11,7 @@ use App;
 class Hook {
 
 	static public function register($hook,$file,$function,$version = 1,$priority = 0) {
-		if(is_array($function)) {
+		if (is_array($function)) {
 			$function = serialize($function);
 		}
 
@@ -22,9 +22,10 @@ class Hook {
 			intval($priority),
 			intval($version)
 		);
-		if($r)
+		if ($r) {
 			return true;
-
+		}
+		
 		// To aid in upgrade and transition, remove old settings for any registered hooks that match in all respects except
 		// for priority or hook_version
 
@@ -46,8 +47,8 @@ class Hook {
 	}
 
 	static public function register_array($file,$arr) {
-		if($arr) {
-			foreach($arr as $k => $v) {
+		if ($arr) {
+			foreach ($arr as $k => $v) {
 				self::register($k,$file,$v);
 			}
 		}
@@ -55,7 +56,7 @@ class Hook {
 
 
 	static public function unregister($hook,$file,$function,$version = 1,$priority = 0) {
-		if(is_array($function)) {
+		if (is_array($function)) {
 			$function = serialize($function);
 		}
 		$r = q("DELETE FROM hook WHERE hook = '%s' AND file = '%s' AND fn = '%s' and priority = %d and hook_version = %d",
@@ -76,6 +77,7 @@ class Hook {
 	 *
 	 * @param string $file
 	 */
+	 
 	static public function unregister_by_file($file) {
 		$r = q("DELETE FROM hook WHERE file = '%s' ",
 			dbesc($file)
@@ -106,17 +108,18 @@ class Hook {
 	 *     currently not implemented in this function, would require the hook array to be resorted
 	 */
 	static public function insert($hook, $fn, $version = 0, $priority = 0) {
-		if(is_array($fn)) {
+		if (is_array($fn)) {
 			$fn = serialize($fn);
 		}
 
-		if(! is_array(App::$hooks))
-			App::$hooks = array();
+		if (! is_array(App::$hooks)) {
+			App::$hooks = [];
+		}
 
-		if(! array_key_exists($hook, App::$hooks))
-			App::$hooks[$hook] = array();
+		if (! array_key_exists($hook, App::$hooks)) {
+			App::$hooks[$hook] = [];
+		}
 
-		App::$hooks[$hook][] = array('', $fn, $priority, $version);
+		App::$hooks[$hook][] = [ '', $fn, $priority, $version ];
 	}
-
 }

@@ -371,7 +371,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$title = (($args['description']) ? $args['description'] : $args['filename']);
 
-	$large_photos = feature_enabled($channel['channel_id'], 'large_photos');
+	$large_photos = 1;
 
 	linkify_tags($args['body'], $channel_id);
 	

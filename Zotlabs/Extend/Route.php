@@ -13,10 +13,10 @@ class Route {
 
 	static function unregister($file,$modname) {
 		$rt = self::get();
-		if($rt) {
+		if ($rt) {
 			$n = [];
-			foreach($rt as $r) {
-				if($r[0] !== $file && $r[1] !== $modname) {
+			foreach ($rt as $r) {
+				if ($r[0] !== $file && $r[1] !== $modname) {
 					$n[] = $r;
 				}
 			}
@@ -26,10 +26,10 @@ class Route {
 
 	static function unregister_by_file($file) {
 		$rt = self::get();
-		if($rt) {
+		if ($rt) {
 			$n = [];
-			foreach($rt as $r) {
-				if($r[0] !== $file) {
+			foreach ($rt as $r) {
+				if ($r[0] !== $file) {
 					$n[] = $r;
 				}
 			}

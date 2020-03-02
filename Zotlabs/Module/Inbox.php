@@ -115,7 +115,7 @@ class Inbox extends Controller {
 
 		if ($is_public) {
 
-			if ($AS->type === 'Follow' && $AS->obj && ActivityStreams::is_an_actor($AS->obj['type'])) {
+			if ($AS->type === 'Follow' && is_array($AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])) {
 				$channels = q("SELECT * from channel where channel_address = '%s' and channel_removed = 0 ",
 					dbesc(basename($AS->obj['id']))
 				);
