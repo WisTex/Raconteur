@@ -839,7 +839,8 @@ function bb_imgoptions($match) {
 	// alt text cannot contain ']'
 	
 	// [img|zmg=wwwxhhh float=left|right alt=alt text]url[/img|zmg]
-
+	// [img|zmg width="nnn" height="nnn" alt="xyz" style="float: abc;"]url[/img|zmg]
+	
 	$local_match = null;
 	$width       = 0;
 	$float       = false;
@@ -859,6 +860,11 @@ function bb_imgoptions($match) {
 		$alt = $matches[1];
 	}
 
+	$x = preg_match("/width=([0-9]*)/ism", $attributes, $matches);
+	if ($x) {
+		$width = $matches[1];
+	}
+
 	$x = preg_match("/width='(.*?)'/ism", $attributes, $matches);
 	if ($x) {
 		$width = $matches[1];
@@ -867,6 +873,11 @@ function bb_imgoptions($match) {
 	$x = preg_match("/width=\&quot\;(.*?)\&quot\;/ism", $attributes, $matches);
 	if ($x) {
 		$width = $matches[1];
+	}
+
+	$x = preg_match("/height=([0-9]*)/ism", $attributes, $matches);
+	if ($x) {
+		$height = $matches[1];
 	}
 
 	$x = preg_match("/height='(.*?)'/ism", $attributes, $matches);
