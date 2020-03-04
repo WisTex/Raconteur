@@ -22,8 +22,8 @@ class CurlAuth {
 
 		$x = session_id();
 
-		$f = 'store/[data]/cookie_' . $argv[1];
-		$c = 'store/[data]/cookien_' . $argv[1];
+		$f = 'cache/cookie_' . $argv[1];
+		$c = 'cache/cookien_' . $argv[1];
 
 		$e = file_exists($f);
 

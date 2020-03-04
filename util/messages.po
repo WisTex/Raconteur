@@ -11608,7 +11608,7 @@ msgstr ""
 msgid "Set size of followup author photos"
 msgstr ""
 
-#: ../../store/[data]/smarty3/compiled/ac14d8b7b4a606fb8f9b8bf58de15e7cca1afd0c_0.file.cover_photo.tpl.php:140
+#: ../../cache/smarty3/compiled/ac14d8b7b4a606fb8f9b8bf58de15e7cca1afd0c_0.file.cover_photo.tpl.php:140
 msgid "Cover Photo"
 msgstr ""
 

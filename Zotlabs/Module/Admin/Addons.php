@@ -31,7 +31,7 @@ class Addons {
 					else {
 						json_return_and_die(array('message' => 'No repo name provided.', 'success' => false));
 					}
-					$extendDir = 'store/[data]/git/sys/extend';
+					$extendDir = 'cache/git/sys/extend';
 					$addonDir = $extendDir . '/addon';
 					if (!file_exists($extendDir)) {
 						if (!mkdir($extendDir, 0770, true)) {
@@ -45,7 +45,7 @@ class Addons {
 							}
 						}
 					}
-					$repoDir = 'store/[data]/git/sys/extend/addon/' . $repoName;
+					$repoDir = 'cache/git/sys/extend/addon/' . $repoName;
 					if (!is_dir($repoDir)) {
 						logger('Repo directory does not exist: ' . $repoDir);
 						json_return_and_die(array('message' => 'Invalid addon repo.', 'success' => false));
@@ -82,7 +82,7 @@ class Addons {
 					} else {
 						json_return_and_die(array('message' => 'No repo name provided.', 'success' => false));
 					}
-					$extendDir = 'store/[data]/git/sys/extend';
+					$extendDir = 'cache/git/sys/extend';
 					$addonDir = $extendDir . '/addon';
 					if (!file_exists($extendDir)) {
 						if (!mkdir($extendDir, 0770, true)) {
@@ -95,7 +95,7 @@ class Addons {
 							}
 						}
 					}
-					$repoDir = 'store/[data]/git/sys/extend/addon/' . $repoName;
+					$repoDir = 'cache/git/sys/extend/addon/' . $repoName;
 					if (!is_dir($repoDir)) {
 						logger('Repo directory does not exist: ' . $repoDir);
 						json_return_and_die(array('message' => 'Invalid addon repo.', 'success' => false));
@@ -113,7 +113,7 @@ class Addons {
 				case 'installrepo':
 					if (array_key_exists('repoURL', $_REQUEST)) {
 						$repoURL = $_REQUEST['repoURL'];
-						$extendDir = 'store/[data]/git/sys/extend';
+						$extendDir = 'cache/git/sys/extend';
 						$addonDir = $extendDir . '/addon';
 						if (!file_exists($extendDir)) {
 							if (!mkdir($extendDir, 0770, true)) {
@@ -141,7 +141,7 @@ class Addons {
 							json_return_and_die(array('message' => 'Invalid git repo', 'success' => false));
 						}
 						$repoDir = $addonDir . '/' . $repoName;
-						$tempRepoBaseDir = 'store/[data]/git/sys/temp/';
+						$tempRepoBaseDir = 'cache/git/sys/temp/';
 						$tempAddonDir = $tempRepoBaseDir . $repoName;
 
 						if (!is_writable($addonDir) || !is_writable($tempAddonDir)) {
@@ -173,9 +173,9 @@ class Addons {
 				case 'addrepo':
 					if (array_key_exists('repoURL', $_REQUEST)) {
 						$repoURL = $_REQUEST['repoURL'];
-						$extendDir = 'store/[data]/git/sys/extend';
+						$extendDir = 'cache/git/sys/extend';
 						$addonDir = $extendDir . '/addon';
-						$tempAddonDir = realpath('store/[data]') . '/git/sys/temp';
+						$tempAddonDir = realpath('cache') . '/git/sys/temp';
 						if (!file_exists($extendDir)) {
 							if (!mkdir($extendDir, 0770, true)) {
 								logger('Error creating extend folder: ' . $extendDir);
@@ -399,7 +399,7 @@ class Addons {
 		usort($plugins,'self::plugin_sort');
 
 		$allowManageRepos = false;
-		if(is_writable('extend/addon') && is_writable('store/[data]')) {
+		if(is_writable('extend/addon') && is_writable('cache')) {
 			$allowManageRepos = true;
 		}
 

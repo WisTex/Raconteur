@@ -70,7 +70,7 @@ class DB_Upgrade {
 						// Prevent sending hundreds of thousands of emails by creating
 						// a lockfile.  
 
-						$lockfile = 'store/[data]/mailsent';
+						$lockfile = 'cache/mailsent';
 
 						if ((file_exists($lockfile)) && (filemtime($lockfile) > (time() - 86400)))
 							return;

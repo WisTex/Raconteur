@@ -20,7 +20,7 @@ class Cron {
 		}
 
 		// Check for a lockfile.  If it exists, but is over an hour old, it's stale.  Ignore it.
-		$lockfile = 'store/[data]/cron';
+		$lockfile = 'cache/cron';
 		if((file_exists($lockfile)) && (filemtime($lockfile) > (time() - 3600)) 
 			&& (! get_config('system','override_cron_lockfile'))) {
 			logger("cron: Already running");

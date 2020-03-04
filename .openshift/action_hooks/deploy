@@ -46,7 +46,7 @@ echo "Starting Deploy..."
 echo "Check for the files directory called store, if not created - create it"
 
 if [ ! -d ${OPENSHIFT_DATA_DIR}store ]; then
-mkdir -p ${OPENSHIFT_DATA_DIR}"store/[data]/smarty3"
+mkdir -p ${OPENSHIFT_DATA_DIR}"cache/smarty3"
 echo "Done creating files directory"
 
 else

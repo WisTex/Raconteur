@@ -1663,7 +1663,7 @@ function jsonld_document_loader($url) {
 	}
 
 
-	$cachepath = 'store/[data]/ldcache';
+	$cachepath = 'cache/ldcache';
 	if(! is_dir($cachepath))
 		os_mkdir($cachepath, STORAGE_DEFAULT_PERMISSIONS, true);
 

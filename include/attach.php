@@ -2636,7 +2636,7 @@ function save_chunk($channel,$start,$end,$len) {
 	$result = [];
 
 	$tmp_path = $_FILES['files']['tmp_name'];
-	$new_base = 'store/[data]/' . $channel['channel_address'] . '/tmp';
+	$new_base = 'cache/' . $channel['channel_address'] . '/tmp';
 
 	os_mkdir($new_base,STORAGE_DEFAULT_PERMISSIONS,true);
 

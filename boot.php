@@ -68,7 +68,7 @@ define ( 'PROJECT_BASE',   __DIR__ );
 define ( 'EOL',                    '<br>' . "\r\n"        );
 define ( 'EMPTY_STR',              ''                     );
 define ( 'ATOM_TIME',              'Y-m-d\\TH:i:s\\Z'     ); // aka ISO 8601 "Zulu"
-define ( 'TEMPLATE_BUILD_PATH',    'store/[data]/smarty3' );
+define ( 'TEMPLATE_BUILD_PATH',    'cache/smarty3' );
 
 //define ( 'USE_BEARCAPS',           true);
 

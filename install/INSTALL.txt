@@ -102,10 +102,10 @@ web server platforms.
 
         git pull
 
-    - make sure folders *store/[data]/smarty3* and *store* exist and are 
+    - make sure folders *cache/smarty3* and *store* exist and are 
     writable by the webserver
 
-        mkdir -p "store/[data]/smarty3"
+        mkdir -p "cache/smarty3"
 
         chmod -R 777 store
 
