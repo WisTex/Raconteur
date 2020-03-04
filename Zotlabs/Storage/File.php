@@ -295,7 +295,7 @@ class File extends DAV\Node implements DAV\IFile {
 			$unsafe_types = array('text/html', 'text/css', 'application/javascript');
 
 			if (in_array($r[0]['filetype'], $unsafe_types) && (! channel_codeallowed($this->data['uid']))) {
-				header('Content-disposition: attachment; filename="' . $r[0]['filename'] . '"');
+				header('Content-Disposition: attachment; filename="' . $r[0]['filename'] . '"');
 				header('Content-type: text/plain');
 			}
 

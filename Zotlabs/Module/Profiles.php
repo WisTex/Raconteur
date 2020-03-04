@@ -152,7 +152,7 @@ class Profiles extends Controller {
 				return;
 			}
 			header('content-type: application/octet_stream');
-			header('content-disposition: attachment; filename="' . $r1[0]['profile_name'] . '.json"' );
+			header('Content-Disposition: attachment; filename="' . $r1[0]['profile_name'] . '.json"' );
 	
 			unset($r1[0]['id']);
 			unset($r1[0]['aid']);
