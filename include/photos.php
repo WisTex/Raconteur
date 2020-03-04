@@ -479,6 +479,8 @@ function photo_upload($channel, $observer, $args) {
 			'uuid'            => $uuid,
 			'mid'             => $mid,
 			'parent_mid'      => $mid,
+			'created'         => $p['created'],
+			'edited'          => $p['edited'],
 			'item_hidden'     => $item_hidden,
 			'resource_type'   => 'photo',
 			'resource_id'     => $photo_hash,
