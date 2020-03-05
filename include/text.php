@@ -1027,13 +1027,19 @@ function sslify($s) {
 	}
 
 	$pattern = "/\<img(.*?)src=\"(https?\:.*?)\"(.*?)\>/ism";
-
+	$cache_private = intval(get_config('system','cache_private_photos'));
+	
 	$matches = null;
 	$cnt = preg_match_all($pattern,$s,$matches,PREG_SET_ORDER);
 	if ($cnt) {
 		foreach ($matches as $match) {
 			if (strpos($match[0],'zrl') !== false) {
-				continue;
+				if ($cache_private) {
+					$match[2] = zid($match[2]);
+				}
+				else {
+					continue;
+				}
 			}
 			$cached = Img_cache::check($match[2],'cache/img');
 			if ($cached) {
