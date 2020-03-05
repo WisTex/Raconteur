@@ -105,9 +105,10 @@ web server platforms.
     - make sure folders *cache/smarty3* and *store* exist and are 
     writable by the webserver
 
+		mkdir -p "store"
         mkdir -p "cache/smarty3"
-
-        chmod -R 777 store
+		
+        chmod -R 777 store cache
 
         [This permission (777) is very dangerous and if you have sufficient
         privilege and knowledge you should make these directories writeable

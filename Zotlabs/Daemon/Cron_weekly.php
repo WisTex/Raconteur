@@ -50,7 +50,24 @@ class Cron_weekly {
 
 		// Check for dead sites
 		Master::Summon(array('Checksites'));
-			
+
+
+		// clean up image cache - use site expiration or 180 days if not set
+		
+		$files = glob('cache/img/*/*');
+		$expire_days = intval(get_config('system','default_expire_days', 180);
+		$now = time();
+
+		if ($files) {
+			foreach ($files as $file) {
+				if (is_file($file)) {
+					if ($now - filemtime($file) >= 60 * 60 * 24 * $expire_days) {
+						unlink($file);
+					}
+				}
+			}
+		}
+
 		// update searchable doc indexes
 		// disabled until help system regenerated
 		// Master::Summon(array('Importdoc'));

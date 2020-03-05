@@ -993,17 +993,37 @@ function linkify($s, $me = false) {
 }
 
 /**
- * @brief Replace media element using http url with https to a local redirector
- *  if using https locally.
+ * @brief implement image caching
  *
- * Looks for HTML tags containing src elements that are http when we're viewing an https page
- * Typically this throws an insecure content violation in the browser. So we redirect them
- * to a local redirector which uses https and which redirects to the selected content
+ * Note: This is named sslify because the old behaviour was only to proxy image fetches to
+ * non-SSL resources. Now all images are cached.
  *
  * @param string $s
  * @returns string
  */
 function sslify($s) {
+
+	if (! intval(get_config('system','cache_images', 1))) {
+
+		if (strpos(z_root(),'https:') === false) {
+			return $s;
+		}
+
+		// we'll only sslify img tags because media files will probably choke.
+
+		$pattern = "/\<img(.*?)src=\"(http\:.*?)\"(.*?)\>/";
+
+		$matches = null;
+		$cnt = preg_match_all($pattern,$s,$matches,PREG_SET_ORDER);
+		if ($cnt) {
+			foreach ($matches as $match) {
+				$filename = basename( parse_url($match[2], PHP_URL_PATH) );
+				$s = str_replace($match[2],z_root() . '/sslify/' . $filename . '?f=&url=' . urlencode($match[2]),$s);
+			}
+		}
+
+		return $s;
+	}
 
 	$pattern = "/\<img(.*?)src=\"(https?\:.*?)\"(.*?)\>/ism";
 
@@ -1016,7 +1036,7 @@ function sslify($s) {
 			}
 			$cached = Img_cache::check($match[2],'cache/img');
 			if ($cached) {
-				$s = str_replace($match[2],z_root() . '/' . Img_cache::get_filename($match[2],'cache/img') . '?url=' . urlencode($match[2]),$s);
+				$s = str_replace($match[2],z_root() . '/ca/' . basename(Img_cache::get_filename($match[2],'cache/img')) . '?url=' . urlencode($match[2]),$s);
 			}
 		}
 	}
