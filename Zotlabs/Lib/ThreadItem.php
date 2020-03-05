@@ -27,6 +27,7 @@ class ThreadItem {
 	private $owner_url = '';
 	private $owner_photo = '';
 	private $owner_name = '';
+	private $owner_censored = false;
 	private $wall_to_wall = false;
 	private $threaded = false;
 	private $visiting = false;
@@ -293,12 +294,10 @@ class ThreadItem {
 		
 		if($this->is_toplevel()) {
 			if(($conv->get_profile_owner() == local_channel()) && (! array_key_exists('real_uid',$item))) {
-
 				$star = array(
 					'toggle' => t('Save'),
 					'isstarred' => ((intval($item['item_starred'])) ? true : false),
 				);
-
 			}
 		} 
 		else {
@@ -360,7 +359,14 @@ class ThreadItem {
 			$item['collapse'] = true;
 		}
 
-		$body = prepare_body($item,true);
+		$opts = [];
+		if ($this->is_wall_to_wall()) {
+			if ($this->owner_censored) {
+				$opts['censored'] = true;
+			}
+		}
+
+		$body = prepare_body($item,true,$opts);
 
 		// $viewthread (below) is only valid in list mode. If this is a channel page, build the thread viewing link
 		// since we can't depend on llink or plink pointing to the right local location.
@@ -963,7 +969,8 @@ class ThreadItem {
 		$this->owner_url = '';
 		$this->owner_photo = '';
 		$this->owner_name = '';
-
+		$this->owner_censored = false;
+		
 		if($conv->get_mode() === 'channel')
 			return;
 		
@@ -984,6 +991,7 @@ class ThreadItem {
 					$this->owner_url = $friend['url'];
 					$this->owner_photo = $friend['photo'];
 					$this->owner_name = $friend['name'];
+					$this->owner_censored = $friend['censored'];
 					$this->wall_to_wall = true;
 				}
 			}
@@ -998,7 +1006,8 @@ class ThreadItem {
 					return [
 						'url'   => chanlink_hash($child['author']['xchan_hash']),
 						'photo' => $child['author']['xchan_photo_m'],
-						'name'  => $child['author']['xchan_name']
+						'name'  => $child['author']['xchan_name'],
+						'censored' => (($child['author']['xchan_censored'] || $child['author']['abook_censor']) ? true : false)
 					];
 					if ($child['children']) {
 						$ret = $this->find_a_friend($child['children']);
