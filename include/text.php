@@ -995,8 +995,9 @@ function linkify($s, $me = false) {
 /**
  * @brief implement image caching
  *
- * Note: This is named sslify because the old behaviour was only to proxy image fetches to
- * non-SSL resources. Now all images are cached.
+ * Note: This is named sslify because the original behaviour was only to proxy image fetches to
+ * non-SSL resources. Now all images can be cached. If this is disabled, we'll fall back to only caching
+ * the http: images
  *
  * @param string $s
  * @returns string

@@ -38,7 +38,7 @@ class Img_cache {
 
 	static function url_to_cache($url,$file) {
 
-		$fp = fopen($file,'w');
+		$fp = fopen($file,'wb');
 
 		if (! $fp) {
 			logger('failed to open storage file.',LOGGER_NORMAL,LOG_ERR);

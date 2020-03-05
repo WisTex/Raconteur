@@ -73,6 +73,7 @@ class Site {
 		$proxy             = ((x($_POST,'proxy'))            ? notags(trim($_POST['proxy']))      : '');
 		$timeout           = ((x($_POST,'timeout'))          ? intval(trim($_POST['timeout']))    : 60);
 		$show_like_counts  = ((x($_POST,'show_like_counts')) ? intval(trim($_POST['show_like_counts'])) : 0);
+		$cache_images      = ((x($_POST,'cache_images')) ? intval(trim($_POST['cache_images'])) : 0);
 		$delivery_interval = ((x($_POST,'delivery_interval'))? intval(trim($_POST['delivery_interval'])) : 0);
 		$delivery_batch_count = ((x($_POST,'delivery_batch_count') && $_POST['delivery_batch_count'] > 0)? intval(trim($_POST['delivery_batch_count'])) : 3);
 		$poll_interval     = ((x($_POST,'poll_interval'))    ? intval(trim($_POST['poll_interval'])) : 0);
@@ -94,6 +95,7 @@ class Site {
 		set_config('system', 'poll_interval', $poll_interval);
 		set_config('system', 'maxloadavg', $maxloadavg);
 		set_config('system', 'frontpage', $frontpage);
+		set_config('system', 'cache_images', $cache_images);
 		set_config('system', 'sellpage', $site_sellpage);
 		set_config('system', 'workflow_channel_next', $first_page);
 		set_config('system', 'site_location', $site_location);
@@ -308,6 +310,7 @@ class Site {
 //			'$site_channel'         => [ 'site_channel', t("Channel to use for this website's static pages"), get_config('system','site_channel'), t("Site Channel") ],
 			'$ap_contacts'           => [ 'ap_contacts', t('Allow ActivityPub Connections'),get_config('system','activitypub',true),t('Provides access to software supporting the ActivityPub protocol.') ],
 			'$maximagesize'         => [ 'maximagesize', t("Maximum image size"), intval(get_config('system','maximagesize')), t("Maximum size in bytes of uploaded images. Default is 0, which means no limits.") ],
+			'$cache_images'         => [ 'cache_images', t('Cache all public images'), intval(get_config('system','cache_images',1)), t('By default proxy non-SSL images, but do not cache') ], 
 			'$register_policy'      => [ 'register_policy', t("Does this site allow new member registration?"), get_config('system','register_policy'), "", $register_choices ],
 			'$invite_only'          => [ 'invite_only', t("Invitation only"), get_config('system','invitation_only'), t("Only allow new member registrations with an invitation code. New member registration must be allowed for this to work.") ],
 			'$minimum_age'          => [ 'minimum_age', t("Minimum age"), (x(get_config('system','minimum_age'))?get_config('system','minimum_age'):13), t("Minimum age (in years) for who may register on this site.") ],
@@ -340,7 +343,7 @@ class Site {
 			'$poll_interval'        => [ 'poll_interval', t("Poll interval"), (x(get_config('system','poll_interval'))?get_config('system','poll_interval'):2), t("Delay background polling processes by this many seconds to reduce system load. If 0, use delivery interval.") ],
 			'$imagick_path'         => [ 'imagick_path', t("Path to ImageMagick convert program"), get_config('system','imagick_convert_path'), t("If set, use this program to generate photo thumbnails for huge images ( > 4000 pixels in either dimension), otherwise memory exhaustion may occur. Example: /usr/bin/convert") ],
 			'$maxloadavg'           => [ 'maxloadavg', t("Maximum Load Average"), ((intval(get_config('system','maxloadavg')) > 0)?get_config('system','maxloadavg'):50), t("Maximum system load before delivery and poll processes are deferred - default 50.") ],
-			'$default_expire_days'  => [ 'default_expire_days', t('Expiration period in days for imported streams'), intval(get_config('system','default_expire_days')), t('0 for no expiration of imported content') ],
+			'$default_expire_days'  => [ 'default_expire_days', t('Expiration period in days for imported streams and cached images'), intval(get_config('system','default_expire_days')), t('0 for no expiration of imported content') ],
 			'$active_expire_days'   => [ 'active_expire_days', t('Do not expire any posts which have comments less than this many days ago'), intval(get_config('system','active_expire_days',7)), '' ],
 			'$sellpage'             => [ 'site_sellpage', t('Public servers: Optional landing (marketing) webpage for new registrants'), get_config('system','sellpage',''), sprintf( t('Create this page first. Default is %s/register'),z_root()) ],
 			'$first_page'           => [ 'first_page', t('Page to display after creating a new channel'), get_config('system','workflow_channel_next','profiles'), t('Default: profiles') ],
