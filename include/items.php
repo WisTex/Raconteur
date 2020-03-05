@@ -1912,7 +1912,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	item_update_parent_commented($arr);
 
 
-	if(strpos($arr['body'],'[embed]') !== false) {
+	if((strpos($arr['body'],'[embed]') !== false) || (strpos($arr['body'],'[/img]') !== false)) {
 		Master::Summon([ 'Cache_embeds', $current_post ]);
 	}
 
@@ -2244,10 +2244,9 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 	call_hooks('post_remote_update_end', $arr);
 
 
-	if(strpos($arr['body'],'[embed]') !== false) {
+	if((strpos($arr['body'],'[embed]') !== false) || (strpos($arr['body'],'[/img]') !== false)) {
 		Master::Summon([ 'Cache_embeds', $orig_post_id ]);
 	}
-
 
 	if($deliver) {
 		// don't send notify_comment for edits

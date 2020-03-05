@@ -55,7 +55,7 @@ class Cron_weekly {
 		// clean up image cache - use site expiration or 180 days if not set
 		
 		$files = glob('cache/img/*/*');
-		$expire_days = intval(get_config('system','default_expire_days', 180);
+		$expire_days = intval(get_config('system','default_expire_days', 180));
 		$now = time();
 
 		if ($files) {
