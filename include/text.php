@@ -7,6 +7,7 @@ use Zotlabs\Lib\MarkdownSoap;
 use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\SvgSanitizer;
+use Zotlabs\Lib\Img_cache;
 
 use Michelf\MarkdownExtra;
 use Ramsey\Uuid\Uuid;
@@ -1003,24 +1004,20 @@ function linkify($s, $me = false) {
  * @returns string
  */
 function sslify($s) {
-	if (strpos(z_root(),'https:') === false)
-		return $s;
 
-	// By default we'll only sslify img tags because media files will probably choke.
-	// You can set sslify_everything if you want - but it will likely white-screen if it hits your php memory limit.
-	// The downside is that http: media files will likely be blocked by your browser
-	// Complain to your browser maker
-
-	$allow = get_config('system','sslify_everything');
-
-	$pattern = (($allow) ? "/\<(.*?)src=\"(http\:.*?)\"(.*?)\>/" : "/\<img(.*?)src=\"(http\:.*?)\"(.*?)\>/" );
+	$pattern = "/\<img(.*?)src=\"(https?\:.*?)\"(.*?)\>/ism";
 
 	$matches = null;
 	$cnt = preg_match_all($pattern,$s,$matches,PREG_SET_ORDER);
 	if ($cnt) {
 		foreach ($matches as $match) {
-			$filename = basename( parse_url($match[2], PHP_URL_PATH) );
-			$s = str_replace($match[2],z_root() . '/sslify/' . $filename . '?f=&url=' . urlencode($match[2]),$s);
+			if (strpos($match[0],'zrl') !== false) {
+				continue;
+			}
+			$cached = Img_cache::check($match[2],'cache/img');
+			if ($cached) {
+				$s = str_replace($match[2],z_root() . '/' . Img_cache::get_filename($match[2],'cache/img') . '?url=' . urlencode($match[2]),$s);
+			}
 		}
 	}
 
