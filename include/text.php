@@ -1022,28 +1022,21 @@ function sslify($s) {
 				$s = str_replace($match[2],z_root() . '/sslify/' . $filename . '?f=&url=' . urlencode($match[2]),$s);
 			}
 		}
-
 		return $s;
 	}
 
 	$pattern = "/\<img(.*?)src=\"(https?\:.*?)\"(.*?)\>/ism";
-	$cache_private = intval(get_config('system','cache_private_photos'));
 	
 	$matches = null;
 	$cnt = preg_match_all($pattern,$s,$matches,PREG_SET_ORDER);
 	if ($cnt) {
 		foreach ($matches as $match) {
-			if (strpos($match[0],'zrl') !== false) {
-				if ($cache_private) {
-					$match[2] = zid($match[2]);
-				}
-				else {
-					continue;
-				}
-			}
-			$cached = Img_cache::check($match[2],'cache/img');
+			// For access controlled photos using OpenWebAuth, remove any zid attributes.
+			// This will cache a publicly available image but will not cache a protected one.
+			$clean = strip_zids(strip_query_param($match[2],'f'));
+			$cached = Img_cache::check($clean,'cache/img');
 			if ($cached) {
-				$s = str_replace($match[2],z_root() . '/ca/' . basename(Img_cache::get_filename($match[2],'cache/img')) . '?url=' . urlencode($match[2]),$s);
+				$s = str_replace($match[2],z_root() . '/ca/' . basename(Img_cache::get_filename($clean,'cache/img')) . '?url=' . urlencode($clean),$s);
 			}
 		}
 	}
