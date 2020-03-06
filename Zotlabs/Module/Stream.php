@@ -5,7 +5,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Apps;
-
+use Zotlabs\Lib\PermissionDescription;
 
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
@@ -180,18 +180,15 @@ class Stream extends Controller {
 				'deny_gid'  => $channel['channel_deny_gid']
 			];
 
-			$private_editing = false;
-			// $private_editing = (($group || $cid) ? true : false);
-	
 			$x = [
 				'is_owner'            => true,
 				'allow_location'      => ((intval(get_pconfig($channel['channel_id'],'system','use_browser_location'))) ? '1' : ''),
 				'default_location'    => $channel['channel_location'],
 				'nickname'            => $channel['channel_address'],
-				'lockstate'           => (($private_editing || $channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
-				'acl'                 => populate_acl((($private_editing) ? $def_acl : $channel_acl), true, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
-				'permissions'         => (($private_editing) ? $def_acl : $channel_acl),
-				'bang'                => (($private_editing) ? '!' : ''),
+				'lockstate'           => (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
+				'acl'                 => populate_acl($channel_acl, true, PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
+				'permissions'         => $channel_acl,
+				'bang'                => EMPTY_STR,
 				'visitor'             => true,
 				'profile_uid'         => local_channel(),
 				'editor_autocomplete' => true,
