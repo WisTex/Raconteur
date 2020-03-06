@@ -180,7 +180,8 @@ class Stream extends Controller {
 				'deny_gid'  => $channel['channel_deny_gid']
 			];
 
-			$private_editing = (($group || $cid) ? true : false);
+			$private_editing = false;
+			// $private_editing = (($group || $cid) ? true : false);
 	
 			$x = [
 				'is_owner'            => true,

@@ -22,7 +22,7 @@ class Img_cache {
 		
 		$path = self::get_filename($url,$prefix);
 		if (file_exists($path)) {
-			$t = @filemtime($path);
+			$t = filemtime($path);
 			if ($t && time() - $t >= self::$cache_life) {
 				if (self::url_to_cache($url,$path)) {
 					return true;
@@ -41,7 +41,7 @@ class Img_cache {
 		$fp = fopen($file,'wb');
 
 		if (! $fp) {
-			logger('failed to open storage file.',LOGGER_NORMAL,LOG_ERR);
+			logger('failed to open storage file: ' . $file,LOGGER_NORMAL,LOG_ERR);
 			return false;
 		}
 		
