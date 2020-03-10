@@ -20,8 +20,8 @@ class Cache_embeds {
 		$item = $c[0];
 
 		// bbcode conversion by default processes embeds that aren't already cached.
-		// Ignore the returned html output. 
 
-		bbcode($item['body']);
+		$s = bbcode($item['body']);
+		$s = sslify($s);
 	}
 }

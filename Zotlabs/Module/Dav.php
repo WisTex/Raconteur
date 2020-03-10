@@ -111,7 +111,7 @@ class Dav extends Controller {
 
 
 		// prevent overwriting changes each other with a lock backend
-		$lockBackend = new SDAV\Locks\Backend\File('store/[data]/locks');
+		$lockBackend = new SDAV\Locks\Backend\File('cache/locks');
 		$lockPlugin = new SDAV\Locks\Plugin($lockBackend);
 
 		$server->addPlugin($lockPlugin);

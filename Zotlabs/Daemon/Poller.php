@@ -22,7 +22,7 @@ class Poller {
 			$interval = ((get_config('system','delivery_interval') === false) ? 3 : intval(get_config('system','delivery_interval')));
 
 		// Check for a lockfile.  If it exists, but is over an hour old, it's stale.  Ignore it.
-		$lockfile = 'store/[data]/poller';
+		$lockfile = 'cache/poller';
 		if((file_exists($lockfile)) && (filemtime($lockfile) > (time() - 3600)) 
 			&& (! get_config('system','override_poll_lockfile'))) {
 			logger("poller: Already running");

@@ -60,26 +60,26 @@
 		<div id="jot-poll-wrap" class="p-2 d-none">
 			<div id="jot-poll-options">
 				<div class="jot-poll-option form-group">
-					<input class="w-100 border-0" name="poll_answers[]" type="text" value="" placeholder="Option">
+					<input class="w-100 border-0" name="poll_answers[]" type="text" value="" placeholder="{{$poll_option_label}}">
 				</div>
 				<div class="jot-poll-option form-group">
-					<input class="w-100 border-0" name="poll_answers[]" type="text" value="" placeholder="Option">
+					<input class="w-100 border-0" name="poll_answers[]" type="text" value="" placeholder="{{$poll_option_label}}">
 				</div>
 			</div>
 			{{include file="field_checkbox.tpl" field=$multiple_answers}}
 			<div id="jot-poll-tools" class="clearfix">
 				<div id="poll-tools-left" class="float-left">
-					<button id="jot-add-option" class="btn btn-outline-secondary btn-sm" type="button" title="" onclick="">
-						<i class="fa fa-plus"></i> Add option
+					<button id="jot-add-option" class="btn btn-outline-secondary btn-sm" type="button">
+						<i class="fa fa-plus"></i> {{$poll_add_option_label}}
 					</button>
 				</div>
 				<div id="poll-tools-right" class="float-right">
 					<div class="input-group">
 						<input type="text" name="poll_expire_value" class="form-control" value="10" size="3">
 						<select class="form-control" id="duration-select" name="poll_expire_unit">
-							<option value="Minutes">min</option>
-							<option value="Hours">h</option>
-							<option value="Days" selected="selected">d</option>
+							<option value="Minutes">{{$poll_expire_unit_label.0}}</option>
+							<option value="Hours">{{$poll_expire_unit_label.1}}</option>
+							<option value="Days" selected="selected">{{$poll_expire_unit_label.2}}</option>
 						</select>
 					</div>
 				</div>

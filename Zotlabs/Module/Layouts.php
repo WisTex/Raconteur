@@ -109,7 +109,7 @@ class Layouts extends Controller {
 			);
 			if($r) {
 				header('Content-type: application/x-hubzilla-layout');
-				header('Content-disposition: attachment; filename="' . $r[0]['sid'] . '.pdl"');
+				header('Content-Disposition: attachment; filename="' . $r[0]['sid'] . '.pdl"');
 				echo json_encode($r);
 				killme();
 			}

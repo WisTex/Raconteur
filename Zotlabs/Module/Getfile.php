@@ -136,7 +136,7 @@ class Getfile extends Controller {
 			header('Content-type: ' . $r['data']['filetype']);
 		}
 
-		header('Content-disposition: attachment; filename="' . $r['data']['filename'] . '"');
+		header('Content-Disposition: attachment; filename="' . $r['data']['filename'] . '"');
 		if(intval($r['data']['os_storage'])) {
 			$fname = dbunescbin($r['data']['content']);
 			if(strpos($fname,'store') !== false)

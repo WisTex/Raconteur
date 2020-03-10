@@ -86,23 +86,27 @@ function item_redir_and_replace_images($body, $images, $cid) {
 
 function localize_item(&$item){
 
-	if (activity_match($item['verb'],ACTIVITY_LIKE) || activity_match($item['verb'],ACTIVITY_DISLIKE)){
+	if (activity_match($item['verb'],ACTIVITY_LIKE) || activity_match($item['verb'],ACTIVITY_DISLIKE) || $item['verb'] === 'Announce'){
 	
-		if(! $item['obj'])
+		if (! $item['obj']) {
 			return;
+		}
 
-		if(intval($item['item_thread_top']))
-			return;	
+		if (intval($item['item_thread_top'])) {
+			return;
+		}
 
-		$obj = json_decode($item['obj'],true);
-		if((! $obj) && ($item['obj'])) {
+		$obj = ((is_array($item['obj'])) ? $item['obj'] : json_decode($item['obj'],true));
+		if ((! $obj) && ($item['obj'])) {
 			logger('localize_item: failed to decode object: ' . print_r($item['obj'],true));
 		}
 		
-		if($obj['author'] && $obj['author']['link'])
+		if ($obj['author'] && $obj['author']['link']) {
 			$author_link = get_rel_link($obj['author']['link'],'alternate');
-		else
+		}
+		else {
 			$author_link = '';
+		}
 
 		$author_name = (($obj['author'] && $obj['author']['name']) ? $obj['author']['name'] : '');
 
@@ -110,7 +114,7 @@ function localize_item(&$item){
 
 		$Bphoto = '';
 
-		switch($obj['type']) {
+		switch ($obj['type']) {
 			case ACTIVITY_OBJ_PHOTO:
 				$post_type = t('photo');
 				break;
@@ -120,9 +124,12 @@ function localize_item(&$item){
 			case ACTIVITY_OBJ_PERSON:
 				$post_type = t('channel');
 				$author_name = $obj['title'];
-				if($obj['link']) {
+				if ($obj['link']) {
 					$author_link  = get_rel_link($obj['link'],'alternate');
 					$Bphoto = get_rel_link($obj['link'],'photo');
+				}
+				if ($obj['url']) {
+
 				}
 				break;
 			case ACTIVITY_OBJ_THING:
@@ -140,7 +147,7 @@ function localize_item(&$item){
 
 			case ACTIVITY_OBJ_NOTE:
 			default:
-				$post_type = t('status');
+				$post_type = t('post');
 				if($obj['id'] != $obj['parent'])
 					$post_type = t('comment');
 				break;
@@ -161,6 +168,9 @@ function localize_item(&$item){
 			elseif(activity_match($item['verb'],ACTIVITY_DISLIKE)) {
 				$bodyverb = t('%1$s doesn\'t like %2$s\'s %3$s');
 			}
+			elseif ($item['verb'] === 'Announce') {
+				$bodyverb = t('%1$s repeated %2$s\'s %3$s');
+			}
 
 			// short version, in notification strings the author will be displayed separately
 
@@ -170,12 +180,18 @@ function localize_item(&$item){
 			elseif(activity_match($item['verb'],ACTIVITY_DISLIKE)) {
 				$shortbodyverb = t('doesn\'t like %1$s\'s %2$s');
 			}
+			elseif ($item['verb'] === 'Announce') {
+				$shortbodyverb = t('repeated %1$s\'s %2$s');
+			}
 
-			$item['shortlocalize'] = sprintf($shortbodyverb, $objauthor, $plink);
-
+			if ($shortbodyverb) {
+				$item['shortlocalize'] = sprintf($shortbodyverb, $objauthor, $plink);
+			}
+			
 			$item['body'] = $item['localize'] = sprintf($bodyverb, $author, $objauthor, $plink);
-			if($Bphoto != "") 
-				$item['body'] .= "\n\n\n" . '[zrl=' . chanlink_url($author_link) . '][zmg=80x80]' . $Bphoto . '[/zmg][/zrl]';
+			if ($Bphoto != "") { 
+				$item['body'] .= "\n\n\n" . '[zrl=' . chanlink_url($author_link) . '][zmg width=&quot;80&quot; height=&quot;80&quot;]' . $Bphoto . '[/zmg][/zrl]';
+			}
 
 		}
 		else {
@@ -1386,7 +1402,10 @@ function z_status_editor($a, $x, $popup = false) {
 		'$setloc' => $setloc,
 		'$voting' => t('Toggle voting'),
 		'$poll' => t('Toggle poll'),
-		'$multiple_answers' => ['poll_multiple_answers', t("Allow multiple answers")],
+		'$poll_option_label' => t('Option'),
+		'$poll_add_option_label' => t('Add option'),
+		'$poll_expire_unit_label' => [t('Minutes'), t('Hours'), t('Days')],
+		'$multiple_answers' => ['poll_multiple_answers', t("Allow multiple answers"), '', '', [t('No'), t('Yes')]],
 		'$feature_voting' => $feature_voting,
 		'$consensus' => ((array_key_exists('item',$x)) ? $x['item']['item_consensus'] : 0),
 		'$nocommenttitle' => t('Disable comments'),

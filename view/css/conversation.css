@@ -13,6 +13,7 @@
 	right: 0;
 	top: 0;
 	padding: 0.25rem 0 0.25rem 0.5rem;
+	cursor: pointer;
 }
 
 #jot-title-wrap,

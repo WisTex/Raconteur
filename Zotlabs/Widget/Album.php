@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Widget;
 
+use App;
 require_once('include/attach.php');
 
 class Album {
@@ -9,24 +10,27 @@ class Album {
 	function widget($args) {
 
 
-		$owner_uid = \App::$profile_uid;
+		$owner_uid = App::$profile_uid;
 		$sql_extra = permissions_sql($owner_uid);
 
 
-		if(! perm_is_allowed($owner_uid,get_observer_hash(),'view_storage'))
+		if (! perm_is_allowed($owner_uid,get_observer_hash(),'view_storage')) {
 			return '';
+		}
 
-		if($args['album'])
+		if ($args['album']) {
 			$album = $args['album'];
-		if($args['title'])
+		}
+		if ($args['title']) {
 			$title = $args['title'];
-
+		}
+		
 		/**
 		 * This may return incorrect permissions if you have multiple directories of the same name.
 		 * It is a limitation of the photo table using a name for a photo album instead of a folder hash
 		 */
 
-		if($album) {
+		if ($album) {
 			$x = q("select hash from attach where filename = '%s' and uid = %d limit 1",
 				dbesc($album),
 				intval($owner_uid)
@@ -94,7 +98,7 @@ class Album {
 			'$album_id' => rand(),
 			'$album_edit' => array(t('Edit Album'), $album_edit),
 			'$can_post' => false,
-			'$upload' => array(t('Upload'), z_root() . '/photos/' . \App::$profile['channel_address'] . '/upload/' . bin2hex($album)),
+			'$upload' => array(t('Upload'), z_root() . '/photos/' . App::$profile['channel_address'] . '/upload/' . bin2hex($album)),
 			'$order' => false,
 			'$upload_form' => $upload_form,
 			'$usage' => $usage_message

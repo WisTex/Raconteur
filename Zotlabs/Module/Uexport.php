@@ -26,7 +26,7 @@ class Uexport extends Controller {
 			}
 	
 			header('content-type: application/json');
-			header('content-disposition: attachment; filename="' . $channel['channel_address'] . (($year) ? '-' . $year : '') . (($month) ? '-' . $month : '') . (($_REQUEST['sections']) ? '-' . $_REQUEST['sections'] : '')  . '.json"' );
+			header('Content-Disposition: attachment; filename="' . $channel['channel_address'] . (($year) ? '-' . $year : '') . (($month) ? '-' . $month : '') . (($_REQUEST['sections']) ? '-' . $_REQUEST['sections'] : '')  . '.json"' );
 	
 			if ($year) {
 				echo json_encode(identity_export_year(local_channel(),$year,$month));

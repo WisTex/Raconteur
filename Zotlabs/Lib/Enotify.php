@@ -848,8 +848,8 @@ class Enotify {
 		require_once('include/conversation.php');
 
 		// Call localize_item to get a one line status for activities. 
-		// This should set $item['localized'] to indicate we have a brief summary.
-		// and perhaps $item['shortlocalized'] for an even briefer summary
+		// This should set $item['localize'] to indicate we have a brief summary.
+		// and perhaps $item['shortlocalize'] for an even briefer summary
 
 		localize_item($item);
 

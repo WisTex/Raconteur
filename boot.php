@@ -16,6 +16,18 @@ use Zotlabs\Daemon\Master;
  * @brief This file defines some global constants and includes the central App class.
  */
 
+define ( 'STD_VERSION',             '20.03.10' );
+define ( 'ZOT_REVISION',            '6.0' );
+
+define ( 'DB_UPDATE_VERSION',       1237 );
+
+define ( 'PLATFORM_NAME',           'zap' );
+define ( 'PLATFORM_ARCHITECTURE',   'zap' );
+
+define ( 'PROJECT_BASE',   __DIR__ );
+
+
+
 // composer autoloader for all namespaced Classes
 require_once('vendor/autoload.php');
 
@@ -48,15 +60,6 @@ require_once('include/items.php');
 
 
 
-define ( 'STD_VERSION',             '20.03.01' );
-define ( 'ZOT_REVISION',            '6.0' );
-
-define ( 'DB_UPDATE_VERSION',       1237 );
-
-define ( 'PLATFORM_NAME',           'zap' );
-define ( 'PLATFORM_ARCHITECTURE',   'zap' );
-
-define ( 'PROJECT_BASE',   __DIR__ );
 
 /**
  * @brief Constant with a HTML line break.
@@ -68,7 +71,7 @@ define ( 'PROJECT_BASE',   __DIR__ );
 define ( 'EOL',                    '<br>' . "\r\n"        );
 define ( 'EMPTY_STR',              ''                     );
 define ( 'ATOM_TIME',              'Y-m-d\\TH:i:s\\Z'     ); // aka ISO 8601 "Zulu"
-define ( 'TEMPLATE_BUILD_PATH',    'store/[data]/smarty3' );
+define ( 'TEMPLATE_BUILD_PATH',    'cache/smarty3' );
 
 //define ( 'USE_BEARCAPS',           true);
 

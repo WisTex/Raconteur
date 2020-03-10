@@ -7,6 +7,7 @@ use Zotlabs\Lib\MarkdownSoap;
 use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\SvgSanitizer;
+use Zotlabs\Lib\Img_cache;
 
 use Michelf\MarkdownExtra;
 use Ramsey\Uuid\Uuid;
@@ -992,35 +993,51 @@ function linkify($s, $me = false) {
 }
 
 /**
- * @brief Replace media element using http url with https to a local redirector
- *  if using https locally.
+ * @brief implement image caching
  *
- * Looks for HTML tags containing src elements that are http when we're viewing an https page
- * Typically this throws an insecure content violation in the browser. So we redirect them
- * to a local redirector which uses https and which redirects to the selected content
+ * Note: This is named sslify because the original behaviour was only to proxy image fetches to
+ * non-SSL resources. Now all images can be cached. If this is disabled, we'll fall back to only caching
+ * the http: images
  *
  * @param string $s
  * @returns string
  */
 function sslify($s) {
-	if (strpos(z_root(),'https:') === false)
+
+	if (! intval(get_config('system','cache_images', 1))) {
+
+		if (strpos(z_root(),'https:') === false) {
+			return $s;
+		}
+
+		// we'll only sslify img tags because media files will probably choke.
+
+		$pattern = "/\<img(.*?)src=\"(http\:.*?)\"(.*?)\>/";
+
+		$matches = null;
+		$cnt = preg_match_all($pattern,$s,$matches,PREG_SET_ORDER);
+		if ($cnt) {
+			foreach ($matches as $match) {
+				$filename = basename( parse_url($match[2], PHP_URL_PATH) );
+				$s = str_replace($match[2],z_root() . '/sslify/' . $filename . '?f=&url=' . urlencode($match[2]),$s);
+			}
+		}
 		return $s;
+	}
 
-	// By default we'll only sslify img tags because media files will probably choke.
-	// You can set sslify_everything if you want - but it will likely white-screen if it hits your php memory limit.
-	// The downside is that http: media files will likely be blocked by your browser
-	// Complain to your browser maker
-
-	$allow = get_config('system','sslify_everything');
-
-	$pattern = (($allow) ? "/\<(.*?)src=\"(http\:.*?)\"(.*?)\>/" : "/\<img(.*?)src=\"(http\:.*?)\"(.*?)\>/" );
-
+	$pattern = "/\<img(.*?)src=\"(https?\:.*?)\"(.*?)\>/ism";
+	
 	$matches = null;
 	$cnt = preg_match_all($pattern,$s,$matches,PREG_SET_ORDER);
 	if ($cnt) {
 		foreach ($matches as $match) {
-			$filename = basename( parse_url($match[2], PHP_URL_PATH) );
-			$s = str_replace($match[2],z_root() . '/sslify/' . $filename . '?f=&url=' . urlencode($match[2]),$s);
+			// For access controlled photos using OpenWebAuth, remove any zid attributes.
+			// This will cache a publicly available image but will not cache a protected one.
+			$clean = strip_zids(strip_query_param($match[2],'f'));
+			$cached = Img_cache::check($clean,'cache/img');
+			if ($cached) {
+				$s = str_replace($match[2],z_root() . '/ca/' . basename(Img_cache::get_filename($clean,'cache/img')) . '?url=' . urlencode($clean),$s);
+			}
 		}
 	}
 
@@ -1756,7 +1773,7 @@ function format_poll($item,$s,$opts) {
 		$output .= EOL . '<div>' . $message . '</div>';
 
 		if ($activated and $commentable) {
-			$output .= EOL . '<input type="button" class="btn btn-std btn-success" name="vote" value="vote" onclick="submitPoll(' . $item['id'] . '); return false;">'. '</form>';
+			$output .= EOL . '<input type="button" class="btn btn-std btn-success" name="vote" value="' . t('vote') . '" onclick="submitPoll(' . $item['id'] . '); return false;">'. '</form>';
 		}
 		
 
@@ -3359,8 +3376,6 @@ function cleanup_bbcode($body) {
 	 */
 
 	$body = preg_replace('/\[\/code\]\s*\[code\]/ism',"\n",$body);
-
-	$body = scale_external_images($body,false);
 
 	return $body;
 }

@@ -9168,7 +9168,7 @@ msgstr "Cron-Aufgaben laufen nicht."
 msgid "never"
 msgstr "Nie"
 
-#: ../../store/[data]/smarty3/compiled/a0a1289f91f53b2c12e4e0b45ffe8291540ba895_0.file.cover_photo.tpl.php:123
+#: ../../cache/smarty3/compiled/a0a1289f91f53b2c12e4e0b45ffe8291540ba895_0.file.cover_photo.tpl.php:123
 msgid "Cover Photo"
 msgstr "Cover Foto"
 

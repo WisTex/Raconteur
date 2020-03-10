@@ -675,7 +675,7 @@ class Webpages extends Controller {
 								// Generate the zip file
 								ExtendedZip::zipTree($tmp_folderpath, $zip_filepath, ZipArchive::CREATE);
 								// Output the file for download
-								header('Content-disposition: attachment; filename="' . $zip_filename . '"');
+								header('Content-Disposition: attachment; filename="' . $zip_filename . '"');
 								header("Content-Type: application/zip");
 								$success = readfile($zip_filepath);
 						} elseif ($action === 'cloud') { // Only zipfile or cloud should be possible values for $action here

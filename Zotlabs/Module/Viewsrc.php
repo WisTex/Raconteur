@@ -42,7 +42,7 @@ class Viewsrc extends Controller {
 
 				if ($dload) {
 					header('Content-type: ' . $r[0]['mimetype']);
-					header('Content-disposition: attachment; filename="' . t('item') . '-' . $item_id . '"' );
+					header('Content-Disposition: attachment; filename="' . t('item') . '-' . $item_id . '"' );
 					echo $r[0]['body'];
 					killme();
 				}

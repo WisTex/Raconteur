@@ -281,7 +281,7 @@ class Events extends Controller {
 			);
 			if($r) { 
 				header('Content-type: text/calendar');
-				header('content-disposition: attachment; filename="' . t('event') . '-' . $event_id . '.ics"' );
+				header('Content-Disposition: attachment; filename="' . t('event') . '-' . $event_id . '.ics"' );
 				echo ical_wrapper($r);
 				killme();
 			}
@@ -705,7 +705,7 @@ class Events extends Controller {
 			
 			if($export) {
 				header('Content-type: text/calendar');
-				header('content-disposition: attachment; filename="' . t('calendar') . '-' . $channel['channel_address'] . '.ics"' );
+				header('Content-Disposition: attachment; filename="' . t('calendar') . '-' . $channel['channel_address'] . '.ics"' );
 				echo ical_wrapper($r);
 				killme();
 			}

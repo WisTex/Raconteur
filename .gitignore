@@ -26,6 +26,7 @@ addon/
 widget/
 custom/
 /store/
+cache/
 # site apps
 apps/
 !doc/context/*/apps
