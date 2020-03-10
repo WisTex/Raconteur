@@ -1773,7 +1773,7 @@ function format_poll($item,$s,$opts) {
 		$output .= EOL . '<div>' . $message . '</div>';
 
 		if ($activated and $commentable) {
-			$output .= EOL . '<input type="button" class="btn btn-std btn-success" name="vote" value="vote" onclick="submitPoll(' . $item['id'] . '); return false;">'. '</form>';
+			$output .= EOL . '<input type="button" class="btn btn-std btn-success" name="vote" value="' . t('vote') . '" onclick="submitPoll(' . $item['id'] . '); return false;">'. '</form>';
 		}
 		
 

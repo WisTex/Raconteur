@@ -86,7 +86,7 @@ function item_redir_and_replace_images($body, $images, $cid) {
 
 function localize_item(&$item){
 
-	if (activity_match($item['verb'],ACTIVITY_LIKE) || activity_match($item['verb'],ACTIVITY_DISLIKE)){
+	if (activity_match($item['verb'],ACTIVITY_LIKE) || activity_match($item['verb'],ACTIVITY_DISLIKE) || $item['verb'] === 'Announce'){
 	
 		if (! $item['obj']) {
 			return;
@@ -147,7 +147,7 @@ function localize_item(&$item){
 
 			case ACTIVITY_OBJ_NOTE:
 			default:
-				$post_type = t('status');
+				$post_type = t('post');
 				if($obj['id'] != $obj['parent'])
 					$post_type = t('comment');
 				break;
@@ -168,6 +168,9 @@ function localize_item(&$item){
 			elseif(activity_match($item['verb'],ACTIVITY_DISLIKE)) {
 				$bodyverb = t('%1$s doesn\'t like %2$s\'s %3$s');
 			}
+			elseif ($item['verb'] === 'Announce') {
+				$bodyverb = t('%1$s repeated %2$s\'s %3$s');
+			}
 
 			// short version, in notification strings the author will be displayed separately
 
@@ -178,7 +181,7 @@ function localize_item(&$item){
 				$shortbodyverb = t('doesn\'t like %1$s\'s %2$s');
 			}
 			elseif ($item['verb'] === 'Announce') {
-				$shortbodyverb = t('shared %1$s\'s %2$s');
+				$shortbodyverb = t('repeated %1$s\'s %2$s');
 			}
 
 			if ($shortbodyverb) {
