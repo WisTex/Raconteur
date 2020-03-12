@@ -16,7 +16,7 @@ use Zotlabs\Daemon\Master;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '20.03.10' );
+define ( 'STD_VERSION',             '20.03.13' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1237 );
