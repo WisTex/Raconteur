@@ -1,6 +1,7 @@
 <?php
 namespace Zotlabs\Lib;
- 
+
+use Zotlabs\Daemon\Master;
 
 class Img_cache {
 
@@ -50,6 +51,7 @@ class Img_cache {
 
 		fclose($fp);
 		if ($x['success']) {
+			Master::Summon( [ 'CacheThumb' , basename($file) ] );
 			return true;
 		}
 		unlink($file); 

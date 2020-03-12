@@ -1542,6 +1542,23 @@ function fix_system_urls($oldurl, $newurl) {
 		}
 	}
 
+
+	// fix links in apps
+
+	$a = q("select id, app_url, app_photo from app where app_url like '%s' OR app_photo like '%s'",
+		dbesc('%' . $oldurl . '%'),
+		dbesc('%' . $oldurl . '%')
+	);
+	if($a) {
+		foreach($a as $aa) {
+			q("update app set app_url = '%s', app_photo = '%s' where id = %d",
+				dbesc(str_replace($oldurl,$newurl,$aa['app_url'])),
+				dbesc(str_replace($oldurl,$newurl,$aa['app_photo'])),
+				intval($aa['id'])
+			);
+		}
+	}
+
 	// now replace any remote xchans whose photos are stored locally (which will be most if not all remote xchans)
 
 	$r = q("select * from xchan where xchan_photo_l like '%s'",
