@@ -602,6 +602,8 @@ define ( 'ITEM_TYPE_REPORT',     10 );
 
 define ( 'ITEM_IS_STICKY',       1000 );
 
+define ( 'BLOCKTYPE_CHANNEL',    0 );
+define ( 'BLOCKTYPE_SERVER',     1 );
 
 define ( 'DBTYPE_MYSQL',    0 );
 define ( 'DBTYPE_POSTGRES', 1 );
