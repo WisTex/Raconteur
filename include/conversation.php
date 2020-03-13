@@ -86,7 +86,7 @@ function item_redir_and_replace_images($body, $images, $cid) {
 
 function localize_item(&$item){
 
-	if (activity_match($item['verb'],ACTIVITY_LIKE) || activity_match($item['verb'],ACTIVITY_DISLIKE) || $item['verb'] === 'Announce'){
+	if (activity_match($item['verb'],ACTIVITY_LIKE) || activity_match($item['verb'],ACTIVITY_DISLIKE) || $item['verb'] === 'Announce') {
 	
 		if (! $item['obj']) {
 			return;

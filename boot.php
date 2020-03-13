@@ -16,7 +16,7 @@ use Zotlabs\Daemon\Master;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '20.03.10' );
+define ( 'STD_VERSION',             '20.03.13' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1237 );
@@ -602,6 +602,8 @@ define ( 'ITEM_TYPE_REPORT',     10 );
 
 define ( 'ITEM_IS_STICKY',       1000 );
 
+define ( 'BLOCKTYPE_CHANNEL',    0 );
+define ( 'BLOCKTYPE_SERVER',     1 );
 
 define ( 'DBTYPE_MYSQL',    0 );
 define ( 'DBTYPE_POSTGRES', 1 );
