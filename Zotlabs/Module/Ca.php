@@ -14,9 +14,22 @@ class Ca extends Controller {
 				if ($x) {
 					header('Content-Type: ' . $x['mime']);
 				}
+
+				$cache = intval(get_config('system','photo_cache_time'));
+				if (! $cache) {
+					$cache = (3600 * 24); // 1 day
+				}
+			 	header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $cache) . ' GMT');
+				// Set browser cache age as $cache.  But set timeout of 'shared caches'
+				// much lower in the event that infrastructure caching is present.
+				$smaxage = intval($cache/12);
+				header('Cache-Control: s-maxage=' . $smaxage . '; max-age=' . $cache . ';');
+	
 				$infile = fopen($path,'rb');
 				$outfile = fopen('php://output','wb');
-				pipe_streams($infile,$outfile);
+				if ($infile && $outfile) {
+					pipe_streams($infile,$outfile);
+				}
 				fclose($infile);
 				fclose($outfile);
 				killme();
