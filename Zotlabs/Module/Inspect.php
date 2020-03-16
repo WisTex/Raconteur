@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Activity;
 
 class Inspect extends Controller {
 
@@ -59,7 +60,12 @@ class Inspect extends Controller {
 				}				
 
 				$output .= '<pre>' . print_array($item) . '</pre>' . EOL . EOL;
+
+				$output .= '<pre>' . escape_tags(json_encode(Activity::encode_activity($item,true), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)) . '</pre>' . EOL . EOL;
 			}
+
+			
+
 		}
 
 		if ($item_type === 'xchan') {
