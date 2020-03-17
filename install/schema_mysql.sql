@@ -216,6 +216,18 @@ CREATE TABLE IF NOT EXISTS `auth_codes` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS `block` (
+  `block_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `block_channel_id` int(10) UNSIGNED NOT NULL,
+  `block_entity` text NOT NULL,
+  `block_type` int(11) NOT NULL,
+  `block_comment` mediumtext NOT NULL,
+  PRIMARY KEY (`block_id`),
+  KEY `block_channel_id` (`block_channel_id`),
+  KEY `block_entity` (`block_entity`(191)),
+  KEY `block_type` (`block_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS `cache` (
   `k` char(191) NOT NULL DEFAULT '',
   `v` text NOT NULL,
