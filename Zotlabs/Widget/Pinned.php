@@ -45,6 +45,7 @@ class Pinned {
 		$o = str_replace('<div id="threads-end">','<div id="pins-end">', $o);
 		$o = str_replace('<div id="conversation-end">','<div id="pin-widget-end">', $o);
 		$o = str_replace('class="thread-wrapper ','class="pin-thread-wrapper ', $o);
+		$o = str_replace('class="wall-item-ago','class="wall-item-ago pinned', $o);
 
 		// logger('output: ' . $o);
 		return '<hr>' . $o . '<hr>';
