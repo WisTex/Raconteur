@@ -827,6 +827,7 @@ function updateConvItems(mode,data) {
 
 		// trigger the autotime function on all newly created content
 
+		$("> .pin-thread-wrapper .autotime",this).timeago();
 		$("> .wall-item-outside-wrapper .autotime, > .thread-wrapper .autotime",this).timeago();
 		$("> .shared_header .autotime",this).timeago();
 		
