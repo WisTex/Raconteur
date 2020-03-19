@@ -5,6 +5,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Connect;
+use Zotlabs\Lib\LibBlock;
 use Zotlabs\Daemon\Master;
 
 require_once('include/menu.php');
@@ -208,6 +209,36 @@ function sync_xign($channel, $xigns) {
 			if (! $r) {
 				create_table_from_array('xign', $xign);
 			}
+		}
+	}
+}
+
+function import_block($channel, $blocks) {
+
+	if ($channel && $blocks) {
+		foreach ($blocks as $block) {
+			unset($block['block_id']);
+			$block['block_channel_id'] = $channel['channel_id'];
+			LibBlock::store($block);
+		}
+	}
+}
+
+
+function sync_block($channel, $blocks) {
+
+	if ($channel && $blocks) {
+		foreach ($blocks as $block) {
+			unset($block['block_id']);
+			$block['block_channel_id'] = $channel['channel_id'];
+			if (! $block['block_entity']) {
+				continue;
+			}
+			if ($block['deleted']) {
+				LibBlock::remove($channel['channel_id'],$block['block_entity']);
+				continue;
+			}
+			LibBlock::store($channel['channel_id'],$block);
 		}
 	}
 }

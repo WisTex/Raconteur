@@ -15,7 +15,7 @@ class LibBlock {
 		
 		$arr['block_channel_id'] = ((array_key_exists('block_channel_id',$arr)) ? intval($arr['block_channel_id']) : 0);
 		$arr['block_type'] = ((array_key_exists('block_type',$arr)) ? intval($arr['block_type']) : BLOCKTYPE_CHANNEL );
-		$arr['block_comment'] = ((array_key_exists('block_comment',$arr)) ? escape_tags(trim($arr['block_comment'])) ? EMPTY_STR);
+		$arr['block_comment'] = ((array_key_exists('block_comment',$arr)) ? escape_tags(trim($arr['block_comment'])) : EMPTY_STR);
 
 		if (! intval($arr['block_id'])) {
 			$r = q("select * from block where block_channel_id = %d and block_entity = '%s' limit 1",
@@ -34,7 +34,7 @@ class LibBlock {
 					intval($arr['block_type']),
 					dbesc($arr['block_comment']),
 					intval($arr['block_id'])
-			)
+			);
 		}
 		else {
 			return create_table_from_array('block',$arr);
@@ -43,7 +43,7 @@ class LibBlock {
 
 	static function remove($channel_id,$entity) {
 		return q("delete from block where block_channel_id = %d and block_entity = '%s'",
-			intval($block_id),
+			intval($channel_id),
 			dbesc($entity)
 		);
 	}
@@ -60,7 +60,8 @@ class LibBlock {
 	static function fetch_by_entity($channel_id,$entity) {
 
 		$r = q("select * from block where block_channel_id = %d and block_entity = '%s' ",
-			intval($entity)
+			intval($channel_id),
+			dbesc($entity)
 		);
 		return (($r) ? array_shift($r) : $r);
 	}

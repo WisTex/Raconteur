@@ -170,7 +170,16 @@ class Stream extends Controller {
 					[ '$title' => t('Search Results For:') . ' ' . htmlspecialchars($search, ENT_COMPAT,'UTF-8') ]
 				);
 			}
-	
+
+			$body = EMPTY_STR;
+
+//	When viewing groups, automatically add a private mention to the editor
+//  This is disabled for now as well as setting the ACL for access lists, as the change in message scope could be unexpected.
+//			if (intval($pf) === 1 && $cid_r) {
+//				$backup = ((strpos($cid_r[0]['xchan_guid'],'http') === 0) ? $cid_r[0]['xchan_guid'] : $cid_r[0]['xchan_url']);
+//				$body = '@!{' . (($cid_r[0]['xchan_addr']) ? $cid_r[0]['xchan_addr'] : $backup) . '}' . "\n";
+//			}
+
 			nav_set_selected('Stream');
 
 			$channel_acl = [
@@ -189,6 +198,7 @@ class Stream extends Controller {
 				'acl'                 => populate_acl($channel_acl, true, PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
 				'permissions'         => $channel_acl,
 				'bang'                => EMPTY_STR,
+				'body'                => $body,
 				'visitor'             => true,
 				'profile_uid'         => local_channel(),
 				'editor_autocomplete' => true,

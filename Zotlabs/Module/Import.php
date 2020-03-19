@@ -474,6 +474,9 @@ class Import extends Controller {
 		if (is_array($data['xign'])) {
 			import_xign($channel,$data['xign']);
 		}
+		if (is_array($data['block'])) {
+			import_block($channel,$data['block']);
+		}
 		if (is_array($data['obj'])) {
 			import_objs($channel,$data['obj']);
 		}

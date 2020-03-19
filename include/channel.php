@@ -900,7 +900,14 @@ function identity_basic_export($channel_id, $sections = null) {
 		);
 		if($r)
 			$ret['xign'] = $r;
-			
+
+		$r = q("select * from block where block_channel_id = %d ",
+			intval($channel_id)
+		);
+		if($r)
+			$ret['block'] = $r;
+
+
 	}
 
 	if(in_array('config',$sections)) {
