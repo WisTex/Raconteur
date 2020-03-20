@@ -1780,10 +1780,17 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 		return $ret;
 	}
 
+	if (LibBlock::fetch_by_entity($arr['uid'],$arr['owner_chan']) || LibBlock::fetch_by_entity($arr['uid'],$arr['author_xchan'])) {
+		logger('Post cancelled by block rule.');
+		$ret['message'] = 'cancelled.';
+		return $ret;
+	}
+	
 	/**
 	 * @hooks item_store
 	 *   Called when item_store() stores a record of type item.
 	 */
+
 	call_hooks('item_store', $arr);
 
 	/**

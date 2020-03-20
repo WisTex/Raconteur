@@ -231,6 +231,12 @@ var activeCommentText = '';
 		}
 	}
 
+	function superblock(author,item) {
+		$.get('superblock?f=&item=' + item + '&block=' + author, function(data) {
+			location.reload(true);
+		});
+	}
+
 	function jotGetExpiry() {
 		//reply = prompt("{{$expirewhen}}", $('#jot-expire').val());
 		$('#expiryModal').modal();

@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Lib;
 
+use Zotlabs\Lib\LibBlock;
+
 /**
  * @brief File with functions and a class for generating system and email notifications.
  */
@@ -512,6 +514,18 @@ class Enotify {
 
 	$datarray['item'] = $params['item'];
 
+	if (LibBlock::fetch_by_entity($datarray['uid'],$datarray['sender_hash'])) {
+		pop_lang();
+		return;
+	}
+
+	if (is_array($datarray['parent_item'])) {
+		if (LibBlock::fetch_by_entity($datarray['uid'],$datarray['parent_item']['owner_xchan']) || LibBlock::fetch_by_entity($datarray['uid'],$datarray['parent_item']['owner_xchan'])) {
+			pop_lang();
+			return;
+		}
+	}
+
 	call_hooks('enotify_store', $datarray);
 
 	if ($datarray['abort']) {
@@ -881,7 +895,9 @@ class Enotify {
 			}
 		}
 
-
+		if (LibBlock::fetch_by_entity(local_channel(),$item['author']['xchan_hash'])) {
+			return [];
+		}
 
 		// convert this logic into a json array just like the system notifications
 

@@ -1,6 +1,7 @@
 <?php /** @file */
 
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\LibBlock;
 
 function item_extract_images($body) {
 
@@ -992,12 +993,14 @@ function thread_author_menu($item, $mode = '') {
 	$menu = [];
 
 	$local_channel = local_channel();
-
+	$blocked = false;
+	
 	if($local_channel) {
 		if(! count(App::$contacts))
 			load_contact_links($local_channel);
 		$channel = App::get_channel();
 		$channel_hash = (($channel) ? $channel['channel_hash'] : '');
+		$blocked = LibBlock::fetch_by_entity($local_channel,$item['author_xchan']);		
 	}
 
 	$profile_link = chanlink_hash($item['author_xchan']);
@@ -1012,10 +1015,6 @@ function thread_author_menu($item, $mode = '') {
 				$follow_url = z_root() . '/follow/?f=&url=' . urlencode(($item['author']['xchan_addr']) ? $item['author']['xchan_addr'] : $item['author']['xchan_url']) . '&interactive=0';
 			}
 		}
-	
-//		if($item['uid'] > 0 && author_is_pmable($item['author'],$contact)) {
-//			$pm_url = z_root() . '/mail/new/?f=&hash=' . urlencode($item['author_xchan']);
-//		}
 	}
 
 	if($contact) {
@@ -1075,6 +1074,16 @@ function thread_author_menu($item, $mode = '') {
 			'icon' => 'fw',
 			'action' => '',
 			'href' => $pm_url
+		];
+	}
+
+	if (! $blocked) {
+		$menu[] = [
+			'menu'   => 'superblock',
+			'title'  => t('Block completely'),
+			'icon'   => 'fw',
+			'action' => 'superblock(\'' . urlencode($item['author_xchan']) . '\',' . $item['id'] . '); return false;',
+	        'href'   => '#'
 		];
 	}
 
@@ -1580,7 +1589,56 @@ function conv_sort($arr, $order) {
 		return $ret;
 	}
 
-	$data = [ 'items' => $arr, 'order' => $order ];
+	$narr = [];
+	
+	foreach ($arr as $item) {
+
+		if (LibBlock::fetch_by_entity(local_channel(),$item['author_xchan']) || LibBlock::fetch_by_entity(local_channel(),$item['author_xchan'])) {
+			continue;
+		}
+
+		$matches = null;
+		$found = false;
+		
+		$cnt = preg_match_all("/\[share(.*?)portable_id='(.*?)'(.*?)\]/ism", $item['body'], $matches, PREG_SET_ORDER);
+		if ($cnt) {
+			foreach ($matches as $match) {
+				if ($sb->match($match[2])) {
+					$found = true;
+				}
+			}
+		}
+
+		if ($found) {
+			continue;
+		}
+
+
+		$matches = null;
+		$found = false;
+		$cnt = preg_match_all("/\[share(.*?)profile='(.*?)'(.*?)\]/ism", $item['body'], $matches, PREG_SET_ORDER);
+		if ($cnt) {
+			foreach ($matches as $match) {
+				$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s'",
+					dbesc($match[2])
+				);
+				if ($r) {
+					if (LibBlock::fetch_by_entity(local_channel(),$r[0]['hubloc_hash'])) {
+						$found = true;
+					}
+				}
+			}
+		}
+
+		if ($found) {
+			continue;
+		}
+
+		$narr[] = $item;
+	}
+
+
+	$data = [ 'items' => $narr, 'order' => $order ];
 
 	call_hooks('conv_sort', $data);
 
