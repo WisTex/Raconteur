@@ -1603,7 +1603,7 @@ function conv_sort($arr, $order) {
 		$cnt = preg_match_all("/\[share(.*?)portable_id='(.*?)'(.*?)\]/ism", $item['body'], $matches, PREG_SET_ORDER);
 		if ($cnt) {
 			foreach ($matches as $match) {
-				if ($sb->match($match[2])) {
+				if (LibBlock::fetch_by_entity(local_channel(),$match[2])) {
 					$found = true;
 				}
 			}

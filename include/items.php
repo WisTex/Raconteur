@@ -17,6 +17,7 @@ use Zotlabs\Lib\MarkdownSoap;
 use Zotlabs\Lib\MessageFilter;
 use Zotlabs\Lib\IConfig;
 use Zotlabs\Lib\PConfig;
+use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\ThreadListener;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\PermissionRoles;
