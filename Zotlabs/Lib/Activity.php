@@ -2367,6 +2367,10 @@ class Activity {
 			set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
 		}
 
+		if ((! array_key_exists('mimetype',$s)) || ($s['mimetype'] === 'text/bbcode')) {
+			$content['html'] = bbcode($content['content']);
+		}
+
 		$hookinfo = [
 			'act' => $act,
 			's' => $s

@@ -160,7 +160,7 @@
 
 				{{if $feature_nocomment}}
 					<button id="profile-nocomment-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$nocommenttitle}}" onclick="toggleNoComment();return false;">
-						<i id="profile-nocomment" class="fa fa-comments jot-icons"></i>
+						<i id="profile-nocomment" class="fa fa-comments-o jot-icons"></i>
 					</button>
 				{{/if}}
 				</div>

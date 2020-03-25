@@ -59,7 +59,9 @@ class Router {
 			if ($routes) {
 				foreach ($routes as $route) {
 					if (is_array($route) && strtolower($route[1]) === $module) {
-						include_once($route[0]);
+						if (file_exists($route[0])) {
+							include_once($route[0]);
+						}
 						if (class_exists($modname)) {
 							$this->controller = new $modname;
 							App::$module_loaded = true;

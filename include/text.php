@@ -1596,7 +1596,12 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 			$s .= prepare_text('[summary]' . $item['summary'] . '[/summary]' . $item['body'],$item['mimetype'],$opts);
 		}
 		else {
-			$s .= prepare_text($item['body'],$item['mimetype'], $opts);
+			if ($item['html']) {
+				$s .= smilies($item['html']);
+			}
+			else {
+				$s .= prepare_text($item['body'],$item['mimetype'], $opts);
+			}
 		}
 	}
 

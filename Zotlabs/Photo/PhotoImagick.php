@@ -207,7 +207,6 @@ class PhotoImagick extends PhotoDriver {
 
 		/* Clean it */
 		$this->image = $this->image->deconstructImages();
-
 		return $this->image->getImagesBlob();
 	}
 
