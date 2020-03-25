@@ -2368,7 +2368,7 @@ class Activity {
 		}
 
 		if ((! array_key_exists('mimetype',$s)) || ($s['mimetype'] === 'text/bbcode')) {
-			$content['html'] = bbcode($s['body']);
+			$s['html'] = bbcode($s['body']);
 		}
 
 		$hookinfo = [
