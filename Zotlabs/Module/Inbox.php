@@ -251,7 +251,8 @@ class Inbox extends Controller {
 				case 'EmojiReact':
 					// These require a resolvable object structure
 					if (is_array($AS->obj)) {
-						$item = Activity::decode_note($AS);
+						// The boolean flag enables html cache of the item
+						$item = Activity::decode_note($AS,true);
 					}
 					else {
 						logger('unresolved object: ' . print_r($AS->obj,true));

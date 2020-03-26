@@ -1927,7 +1927,7 @@ class Activity {
 	}
 
 
-	static function decode_note($act) {
+	static function decode_note($act, $cacheable = false) {
 
 		$response_activity = false;
 		$poll_handled = false;
@@ -2367,13 +2367,10 @@ class Activity {
 			set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
 		}
 
-		// restrict html caching to activitypub senders. zot has dynamic content.
-		// this library is used by both. 
-		// in all current cases we obtain activitypub content through an activity
-		// arriving at the inbox. There should be a better way of determining this
-		// and someday this assumption will change.
+		// Restrict html caching to ActivityPub senders.
+		// Zot has dynamic content and this library is used by both. 
 		
-		if (argv(0) === 'inbox') {
+		if ($cacheable) {
 			if ((! array_key_exists('mimetype',$s)) || ($s['mimetype'] === 'text/bbcode')) {
 				$s['html'] = bbcode($s['body']);
 			}
@@ -2686,9 +2683,8 @@ class Activity {
 				Activity::actor_store($a->actor['id'],$a->actor);
 			}
 
-
-
-			$item = Activity::decode_note($a);
+			// ActivityPub sourced items are cacheable
+			$item = Activity::decode_note($a,true);
 
 			if (! $item) {
 				break;
