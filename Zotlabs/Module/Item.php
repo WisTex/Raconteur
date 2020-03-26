@@ -440,30 +440,6 @@ class Item extends Controller {
 			$pagetitle = strtolower(URLify::transliterate($pagetitle));
 		}
 	
-		/**
-		 * process collections by tagging them
-		 */
-		 
-		if (array_key_exists('collections',$_REQUEST) && is_array($_REQUEST['collections']) && count($_REQUEST['collections'])) {
-			foreach ($_REQUEST['collections'] as $clct) {
-				$r = q("select xchan_url, xchan_hash from xchan left join hubloc on hubloc_hash = xchan_hash where hubloc_addr = '%s' limit 1",
-					dbesc($clct)
-				);
-				if ($r) { 
-					if (! isset($post_tags)) {
-						$post_tags = [];
-					}
-					$post_tags[] = [
-						'uid'   => $profile_uid, 
-						'ttype' => TERM_PCATEGORY,
-						'otype' => TERM_OBJ_POST,
-						'term'  => $clct,
-						'url'   => $r[0]['xchan_url']
-					];
-				}
-			}
-		}
-	
 		$item_flags = $item_restrict = 0;
 		$expires = NULL_DATE;
 	
@@ -915,10 +891,57 @@ class Item extends Controller {
 							'otype' => TERM_OBJ_POST,
 							'term'  => $success['term'],
 							'url'   => $success['url']
-						); 				
+						);
+
+						// support #collection syntax to post to a collection
+						// this is accomplished by adding a pcategory tag for each collection target
+						// this is checked inside tag_deliver() to create a second delivery chain
+
+						if ($success['termtype'] === TERM_HASHTAG) {
+							$r = q("select xchan_url from channel left join xchan on xchan_hash = channel_hash where channel_address = '%s' and channel_parent = '%s' and channel_removed = 0",
+								dbesc($success['term']),
+								dbesc(get_observer_hash())
+							);
+							if ($r) {
+								$post_tags[] = [
+									'uid'   => $profile_uid, 
+									'ttype' => TERM_PCATEGORY,
+									'otype' => TERM_OBJ_POST,
+									'term'  => $success['term'] . '@' . App::get_hostname(),
+									'url'   => $r[0]['xchan_url']
+								];
+							}
+						}
 					}
 				}
 			}
+
+
+			/**
+			 * process collections selected manually 
+			 */
+		 
+			if (array_key_exists('collections',$_REQUEST) && is_array($_REQUEST['collections']) && count($_REQUEST['collections'])) {
+				foreach ($_REQUEST['collections'] as $clct) {
+					$r = q("select xchan_url, xchan_hash from xchan left join hubloc on hubloc_hash = xchan_hash where hubloc_addr = '%s' limit 1",
+						dbesc($clct)
+					);
+					if ($r) { 
+						if (! isset($post_tags)) {
+							$post_tags = [];
+						}
+						$post_tags[] = [
+							'uid'   => $profile_uid, 
+							'ttype' => TERM_PCATEGORY,
+							'otype' => TERM_OBJ_POST,
+							'term'  => $clct,
+							'url'   => $r[0]['xchan_url']
+						];
+					}
+				}
+			}
+
+
 
 			if(($str_contact_allow) && (! $str_group_allow)) {
 				// direct message - private between individual channels but not groups

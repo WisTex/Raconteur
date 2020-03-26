@@ -2,19 +2,25 @@
 
 namespace Zotlabs\Widget;
 
+use Zotlabs\Lib\LibBlock;
+
+
 class Activity {
 
 	function widget($arr) {
 
-		if(! local_channel())
+		if (! local_channel()) {
 			return '';
+		}
 
-		$o = '';
+		$o = EMPTY_STR;
 
-		if(is_array($arr) && array_key_exists('limit',$arr))
+		if (is_array($arr) && array_key_exists('limit',$arr)) {
 			$limit = " limit " . intval($limit) . " ";
-		else
-			$limit = '';
+		}
+		else {
+			$limit = EMPTY_STR;
+		}
 
 		$perms_sql = item_permissions_sql(local_channel()) . item_normal();
 
@@ -25,9 +31,9 @@ class Activity {
 		$contributors = [];
 		$arr = [];
 
-		if($r) {
-			foreach($r as $rv) {
-				if(array_key_exists($rv['author_xchan'],$contributors)) {
+		if ($r) {
+			foreach ($r as $rv) {
+				if (array_key_exists($rv['author_xchan'],$contributors)) {
 					$contributors[$rv['author_xchan']] ++;
 				}
 				else {
@@ -35,7 +41,9 @@ class Activity {
 				}
 			}
 			foreach($contributors as $k => $v) {
-				$arr[] = [ 'author_xchan' => $k, 'total' => $v	];	
+				if (! LibBlock::fetch_by_entity(local_channel(), $k)) {
+					$arr[] = [ 'author_xchan' => $k, 'total' => $v	];
+				}
 			}
 			usort($arr,'total_sort');
 			xchan_query($arr);

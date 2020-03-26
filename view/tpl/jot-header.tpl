@@ -231,6 +231,12 @@ var activeCommentText = '';
 		}
 	}
 
+	function superblock(author,item) {
+		$.get('superblock?f=&item=' + item + '&block=' + author, function(data) {
+			location.reload(true);
+		});
+	}
+
 	function jotGetExpiry() {
 		//reply = prompt("{{$expirewhen}}", $('#jot-expire').val());
 		$('#expiryModal').modal();
@@ -428,12 +434,12 @@ var activeCommentText = '';
 	function toggleNoComment() {
 		if($('#jot-nocomment').val() > 0) {
 			$('#jot-nocomment').val(0);
-			$('#profile-nocomment, #profile-nocomment-sub').removeClass('fa-comments-o').addClass('fa-comments');
+			$('#profile-nocomment, #profile-nocomment-sub').removeClass('fa-comments').addClass('fa-comments-o');
 			$('#profile-nocomment-wrapper').attr('title', '{{$nocomment_enabled|escape:'javascript'}}');
 		}
 		else {
 			$('#jot-nocomment').val(1);
-			$('#profile-nocomment, #profile-nocomment-sub').removeClass('fa-comments').addClass('fa-comments-o');
+			$('#profile-nocomment, #profile-nocomment-sub').removeClass('fa-comments-o').addClass('fa-comments');
 			$('#profile-nocomment-wrapper').attr('title', '{{$nocomment_disabled|escape:'javascript'}}');
 		}
 	}

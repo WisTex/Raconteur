@@ -823,10 +823,9 @@ function updateConvItems(mode,data) {
 			}
 		}
 
-
-
 		// trigger the autotime function on all newly created content
 
+		$(".pinned .autotime").timeago();
 		$("> .wall-item-outside-wrapper .autotime, > .thread-wrapper .autotime",this).timeago();
 		$("> .shared_header .autotime",this).timeago();
 		

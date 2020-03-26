@@ -54,6 +54,13 @@ class Settings_menu {
 			'selected'	=> ((argv(1) === 'display') ? 'active' : ''),
 		);
 
+		$tabs[] =	array(
+			'label'	=> t('Manage Blocks'),
+			'url' 	=> z_root() . '/superblock',
+			'selected'	=> ((argv(0) === 'superblock') ? 'active' : ''),
+		);
+
+
 		if($hublocs) {
 			$tabs[] = array(
 				'label' => t('Manage locations'),

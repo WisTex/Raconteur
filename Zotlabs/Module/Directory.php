@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\LibBlock;
 
 require_once('include/socgraph.php');
 require_once('include/bbcode.php');
@@ -404,6 +405,10 @@ class Directory extends Controller {
 								'safe'              => $safe_mode
 							];
 	
+							if (LibBlock::fetch_by_entity(local_channel(), $entry['hash'])) {
+								continue;
+							}
+							
 							$arr = array('contact' => $rr, 'entry' => $entry);
 	
 							call_hooks('directory_item', $arr);

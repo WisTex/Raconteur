@@ -23,6 +23,7 @@ class Activity {
 		if (($x) && (! is_array($x)) && (substr(trim($x),0,1)) === '{' ) {
 			$x = json_decode($x,true);
 		}
+
 		if ($x['type'] === ACTIVITY_OBJ_PERSON) {
 			return self::fetch_person($x); 
 		}
@@ -723,6 +724,15 @@ class Activity {
 			return $ret;
 		}
 
+		if ($i['obj']) {
+			if (is_array($i['obj'])) {
+				$ret = $i['obj'];
+			}
+			else {
+				$ret = json_decode($i['obj'],true);
+			}
+		}
+
 		$ret['type'] = $objtype;
 
 		if ($objtype === 'Question') {
@@ -892,16 +902,20 @@ class Activity {
 			$ret['mediaType'] = $i['mimetype'];
 			$ret['content'] = $i['body'];
 		}
-		
-		$actor = self::encode_person($i['author'],false);
-		if ($actor) {
-			$ret['actor'] = $actor;
-		}
-		else {
-			return [];
+
+		if (! ($ret['actor'] || $ret['attributedTo'])) {
+			$actor = self::encode_person($i['author'],false);
+			if ($actor) {
+				$ret['actor'] = $actor;
+			}
+			else {
+				return [];
+			}
 		}
 
-		$ret['url'] = $ret['id'];
+		if (! $ret['url']) {
+			$ret['url'] = $ret['id'];
+		}
 
 		// Very few ActivityPub projects currently support url as array
 		// and most will choke and die if you supply one here.
@@ -2351,6 +2365,10 @@ class Activity {
 
 		if ($parent) {
 			set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
+		}
+
+		if ((! array_key_exists('mimetype',$s)) || ($s['mimetype'] === 'text/bbcode')) {
+			$s['html'] = bbcode($s['body']);
 		}
 
 		$hookinfo = [

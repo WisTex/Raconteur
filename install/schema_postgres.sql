@@ -211,6 +211,17 @@ CREATE TABLE "auth_codes" (
   "auth_scope" varchar(512) NOT NULL,
   PRIMARY KEY ("id")
 );
+CREATE TABLE "block" (
+  block_id serial NOT NULL,
+  block_channel_id int(10) UNSIGNED NOT NULL,
+  block_entity text NOT NULL,
+  block_type int(11) NOT NULL,
+  block_comment text NOT NULL,
+  PRIMARY KEY ("block_id")
+);
+create index "block_channel_id_idx" on block ("block_channel_id");
+create index "block_entity_idx" on block ("block_entity");
+create index "block_type_idx" on block ("block_type");
 CREATE TABLE "cache" (
   "k" text NOT NULL,
   "v" text NOT NULL,
