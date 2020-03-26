@@ -2367,10 +2367,18 @@ class Activity {
 			set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
 		}
 
-		if ((! array_key_exists('mimetype',$s)) || ($s['mimetype'] === 'text/bbcode')) {
-			$s['html'] = bbcode($s['body']);
+		// restrict html caching to activitypub senders. zot has dynamic content.
+		// this library is used by both. 
+		// in all current cases we obtain activitypub content through an activity
+		// arriving at the inbox. There should be a better way of determining this
+		// and someday this assumption will change.
+		
+		if (argv(0) === 'inbox') {
+			if ((! array_key_exists('mimetype',$s)) || ($s['mimetype'] === 'text/bbcode')) {
+				$s['html'] = bbcode($s['body']);
+			}
 		}
-
+		
 		$hookinfo = [
 			'act' => $act,
 			's' => $s
