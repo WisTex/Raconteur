@@ -1539,11 +1539,17 @@ class Item extends Controller {
 	
 		if((! local_channel()) && (! remote_channel()))
 			return;
+
+		// allow pinned items to be dropped. 'pin-' was prepended to the id of these
+		// items so that they would have a unique html id even if the pinned item
+		// was also displayed in a normal conversation on the same web page.
 		
-		if((argc() == 3) && (argv(1) === 'drop') && intval(argv(2))) {
+		$drop_id = str_replace('pin-','',argv(2));
+
+		if((argc() == 3) && (argv(1) === 'drop') && intval($drop_id)) {
 	
 			$i = q("select * from item where id = %d limit 1",
-				intval(argv(2))
+				intval($drop_id)
 			);
 	
 			if($i) {
