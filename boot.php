@@ -16,7 +16,7 @@ use Zotlabs\Daemon\Master;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '20.03.26' );
+define ( 'STD_VERSION',             '20.04.06' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1239 );
@@ -642,11 +642,11 @@ function sys_boot() {
 
 
 	if(! defined('DEFAULT_PLATFORM_ICON')) {
-		define( 'DEFAULT_PLATFORM_ICON', '/images/hz-32.png' );
+		define( 'DEFAULT_PLATFORM_ICON', '/images/z1-32.png' );
 	}
 
 	if(! defined('DEFAULT_NOTIFY_ICON')) {
-		define( 'DEFAULT_NOTIFY_ICON', '/images/hz-white-64.png' );
+		define( 'DEFAULT_NOTIFY_ICON', '/images/z1-64.png' );
 	}
 
 
