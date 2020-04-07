@@ -1506,26 +1506,6 @@ class Libzot {
 								}
 							}
 						}
-						// default tag type is hashtag if no type is provided
-						if ($tag['type'] === 'Hashtag' || (! $tag['type'])) {
-							$hashtag = substr($tag['name'],0,strpos($tag['name'],'#'));
-							$t = q("select * from pconfig where cat = 'system' and k = 'followed_tags'");
-							if ($t) {
-								foreach ($t as $tt) {
-									$followed_tags = unserialise($tt['v']);
-									if (is_array($followed_tags) && $followed_tags) {
-										foreach ($followed_tags as $ft) {
-											if (strcasecmp($ft,$tag['name']) === 0) {
-												$c = channelx_by_n($tt['uid']);
-												if ($c) {
-													$r[] = $c['channel_hash'];
-												}
-											}
-										}
-									}
-								}
-							}
-						}
 						if ($tag['type'] === 'topicalCollection' && strpos($tag['name'],App::get_hostname())) {
 							$address = substr($tag['name'],0,strpos($tag['name'],'@'));
 							if ($address) {
