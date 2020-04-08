@@ -678,7 +678,7 @@ class Channel {
 			'$mailhost' => [ 'mailhost', t('Email notification hub (hostname)'), get_pconfig(local_channel(),'system','email_notify_host',App::get_hostname()), sprintf( t('If your channel is mirrored to multiple locations, set this to your preferred location. This will prevent duplicate email notifications. Example: %s'),App::get_hostname()) ],
 			'$always_show_in_notices'  => array('always_show_in_notices', t('Show new wall posts, private messages and connections under Notices'), $always_show_in_notices, 1, '', $yes_no),
 			'$permit_all_mentions' => [ 'permit_all_mentions', t('Accept messages from strangers which mention me'), get_pconfig(local_channel(),'system','permit_all_mentions'), t('This setting supercedes normal permissions'), $yes_no ],
-			'$followed_tags' => [ 'followed_tags', t('Followed hashtags (comma separated, do not include the #)'),$followed,EMPTY_STR ],
+			'$followed_tags' => [ 'followed_tags', t('Accept messages from strangers which include any of the following hashtags'), $followed, t('comma separated, do not include the #') ],
 			'$evdays' => array('evdays', t('Notify me of events this many days in advance'), $evdays, t('Must be greater than 0')),			
 			'$basic_addon' => $plugin['basic'],
 			'$sec_addon'  => $plugin['security'],
