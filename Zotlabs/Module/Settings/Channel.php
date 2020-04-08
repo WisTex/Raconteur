@@ -177,7 +177,7 @@ class Channel {
 			$autoperms        = ((x($_POST,'autoperms')) ? intval($_POST['autoperms'])  : 0);  
 		}
 
-	
+
 		$pageflags = $channel['channel_pageflags'];
 		$existing_adult = (($pageflags & PAGE_ADULT) ? 1 : 0);
 		if($adult != $existing_adult)
@@ -259,7 +259,21 @@ class Channel {
 			if(strlen($timezone))
 				date_default_timezone_set($timezone);
 		}
-	
+
+
+		$followed_tags = $_POST['followed_tags'];
+		$ntags = [];
+		if ($followed_tags) {
+			$tags = explode(',', $followed_tags);
+			foreach ($tags as $t) {
+				$t = trim($t);
+				if ($t) {
+					$ntags[] = $t;
+				}
+			}
+		}
+
+		set_pconfig(local_channel(),'system','followed_tags',($ntags) ? $ntags : EMPTY_STR);
 		set_pconfig(local_channel(),'system','use_browser_location',$allow_location);
 		set_pconfig(local_channel(),'system','suggestme', $suggestme);
 		set_pconfig(local_channel(),'system','post_newfriend', $post_newfriend);
@@ -552,6 +566,15 @@ class Channel {
 		$disable_discover_tab = intval(get_config('system','disable_discover_tab',1)) == 1;
 		$site_firehose = intval(get_config('system','site_firehose',0)) == 1;
 
+		$ft = get_pconfig(local_channel(),'system','followed_tags','');
+		if ($ft && is_array($ft)) {
+			$followed = implode(',', $ft);
+		}
+		else {
+			$followed = EMPTY_STR;
+		}
+
+
 
 		$o .= replace_macros(get_markup_template('settings.tpl'), [
 			'$ptitle' 	=> t('Channel Settings'),	
@@ -655,6 +678,7 @@ class Channel {
 			'$mailhost' => [ 'mailhost', t('Email notification hub (hostname)'), get_pconfig(local_channel(),'system','email_notify_host',App::get_hostname()), sprintf( t('If your channel is mirrored to multiple locations, set this to your preferred location. This will prevent duplicate email notifications. Example: %s'),App::get_hostname()) ],
 			'$always_show_in_notices'  => array('always_show_in_notices', t('Show new wall posts, private messages and connections under Notices'), $always_show_in_notices, 1, '', $yes_no),
 			'$permit_all_mentions' => [ 'permit_all_mentions', t('Accept messages from strangers which mention me'), get_pconfig(local_channel(),'system','permit_all_mentions'), t('This setting supercedes normal permissions'), $yes_no ],
+			'$followed_tags' => [ 'followed_tags', t('Followed hashtags (comma separated, do not include the #)'),$followed,EMPTY_STR ],
 			'$evdays' => array('evdays', t('Notify me of events this many days in advance'), $evdays, t('Must be greater than 0')),			
 			'$basic_addon' => $plugin['basic'],
 			'$sec_addon'  => $plugin['security'],

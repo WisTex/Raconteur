@@ -88,6 +88,7 @@
 							{{$suggestme}}
 							{{include file="field_input.tpl" field=$expire}}
 							{{include file="field_checkbox.tpl" field=$hyperdrive}}
+							{{include file="field_input.tpl" field=$followed_tags}}
 						</div>
 						{{if $permcat_enable}}
 						{{include file="field_select.tpl" field=$defpermcat}}
