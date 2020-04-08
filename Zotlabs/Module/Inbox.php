@@ -155,6 +155,14 @@ class Inbox extends Controller {
 					$channels = array_merge($channels,$r);
 				}
 
+				// look for channels that are following hashtags. These will be checked in tgroup_check()
+				
+				$r = q("select * from channel where channel_id in (select uid from pconfig where cat = 'system' and k = 'followed_tags' and v != '' ) and channel_removed = 0 ");
+				if ($r) {
+					$channels = array_merge($channels,$r);
+				}
+
+
 				if (! $sys_disabled) {
 					$channels[] = get_sys_channel();
 				}

@@ -1485,6 +1485,18 @@ class Libzot {
 			}
 		}
 
+		// add channels that are following tags
+		// these will be enumerated and validated in tgroup_check()
+		
+		$ft = q("select channel_hash as hash from channel left join pconfig on pconfig.uid = channel_id where cat = 'system' and k = 'followed_tags' and channel_hash != '%s' and channel_removed = 0",
+			dbesc($msg['sender'])
+		);
+		if ($ft ) {
+			foreach ($ft as $t) {
+				$r[] = $t['hash'];
+			}
+		}
+
 		// look for any public mentions on this site
 		// They will get filtered by tgroup_check() so we don't need to check permissions now
 
