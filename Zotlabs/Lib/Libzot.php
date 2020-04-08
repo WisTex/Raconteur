@@ -1544,7 +1544,6 @@ class Libzot {
 		}
 
 		// There are probably a lot of duplicates in $r at this point. We need to filter those out.
-		// It's a bit of work since it's a multi-dimensional array
 
 		if ($r) {
 			$r = array_values(array_unique($r));
