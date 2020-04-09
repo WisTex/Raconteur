@@ -209,6 +209,37 @@ class Activity_filter {
 			}
 		}
 
+		$ft = get_pconfig(local_channel(),'system','followed_tags', EMPTY_STR);
+		if (is_array($ft) && $ft) {
+			foreach($ft as $t) {
+				$tag_active = (($_GET['netsearch'] === '#' . $t) ? 'active' : '');
+				if ($tag_active) {
+					$filter_active = 'tags';
+				}
+			
+				$tsub[] = [
+					'label' => '#' . $t,
+					'icon' => '',
+					'url' => z_root() . '/' . $cmd . '/?search=' . '%23' . $t,
+					'sel' => $tag_active,
+					'title' => sprintf(t('Show posts with hashtag %s'), '#' . $t),
+				];
+			}
+
+			$tabs[] = [
+				'id' => 'followed_tags',
+				'label' => t('Followed Hashtags'),
+				'icon' => 'bookmark',
+				'url' => '#',
+				'sel' => (($filter_active == 'tags') ? true : false),
+				'title' => t('Show followed hashtags'),
+				'sub' => $tsub
+			];
+
+		}
+
+
+
 //		if(x($_GET,'search')) {
 //			$filter_active = 'search';
 //			$tabs[] = [

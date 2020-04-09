@@ -1457,7 +1457,8 @@ class Libzot {
 			$perm = 'post_mail';
 		}
 
-		$r = [];
+		// channels which we will deliver this post to
+		$r = [];   
 
 		$c = q("select channel_id, channel_hash from channel where channel_removed = 0");
 
@@ -1484,6 +1485,18 @@ class Libzot {
 			}
 		}
 
+		// add channels that are following tags
+		// these will be enumerated and validated in tgroup_check()
+		
+		$ft = q("select channel_hash as hash from channel left join pconfig on pconfig.uid = channel_id where cat = 'system' and k = 'followed_tags' and channel_hash != '%s' and channel_removed = 0",
+			dbesc($msg['sender'])
+		);
+		if ($ft ) {
+			foreach ($ft as $t) {
+				$r[] = $t['hash'];
+			}
+		}
+
 		// look for any public mentions on this site
 		// They will get filtered by tgroup_check() so we don't need to check permissions now
 
@@ -1505,7 +1518,6 @@ class Libzot {
 								}
 							}
 						}
-
 						if ($tag['type'] === 'topicalCollection' && strpos($tag['name'],App::get_hostname())) {
 							$address = substr($tag['name'],0,strpos($tag['name'],'@'));
 							if ($address) {
@@ -1544,7 +1556,6 @@ class Libzot {
 		}
 
 		// There are probably a lot of duplicates in $r at this point. We need to filter those out.
-		// It's a bit of work since it's a multi-dimensional array
 
 		if ($r) {
 			$r = array_values(array_unique($r));

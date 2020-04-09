@@ -371,7 +371,11 @@ function bb_format_attachdata($body) {
 		if($data['preview']) {
 			$txt .= "\n\n" . '[img]' . $data['preview'] . '[/img]';
 		}
-		
+		if($data['image']) {
+			$txt .= "\n\n" . '[img]' . $data['image'] . '[/img]';
+		}
+
+
 		$txt .= "\n\n" . $data['text'];
 		return preg_replace('/\[attachment(.*?)\](.*?)\[\/attachment\]/ism',$txt,$body);
 	}

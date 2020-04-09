@@ -2727,7 +2727,23 @@ function tgroup_check($uid, $item) {
 	if (PConfig::Get($uid, 'system','permit_all_mentions') && i_am_mentioned($u,$item)) {
 		return true;
 	}
-	
+
+	$terms = get_terms_oftype($item['term'],TERM_HASHTAG);
+	if ($terms) {
+		$followed_tags = PConfig::Get($uid,'system','followed_tags');
+		if (! (is_array($followed_tags) && $followed_tags)) {
+			return false;
+		}
+
+		foreach ($terms as $term) {
+			foreach ($followed_tags as $tag) {
+				if (strcasecmp($term['term'],$tag) === 0) {
+					return true;
+				}
+			}
+		}
+	}
+
 	return false;
 }
 
