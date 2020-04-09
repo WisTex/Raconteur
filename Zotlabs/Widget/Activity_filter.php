@@ -220,7 +220,7 @@ class Activity_filter {
 				$tsub[] = [
 					'label' => '#' . $t,
 					'icon' => '',
-					'url' => z_root() . '/' . $cmd . '/?f=&search=' . '%23' . $t,
+					'url' => z_root() . '/' . $cmd . '/?search=' . '%23' . $t,
 					'sel' => $tag_active,
 					'title' => sprintf(t('Show posts with hashtag %s'), '#' . $t),
 				];
