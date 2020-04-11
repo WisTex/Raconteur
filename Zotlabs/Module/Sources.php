@@ -121,7 +121,7 @@ class Sources extends Controller {
 				'$tags'   => [ 'tags', t('Add the following categories to posts imported from this source (comma separated)'),'',t('Optional')],
 				'$resend' => [ 'resend', t('Resend posts with this channel as author'), 0, t('Copyrights may apply'), [ t('No'), t('Yes') ]],  
 				'$submit' => t('Submit')
-			));
+			]);
 			return $o;
 	
 		}
