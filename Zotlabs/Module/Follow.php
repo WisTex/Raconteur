@@ -97,31 +97,26 @@ class Follow extends Controller {
 						$a = new ActivityStreams($a->obj,null,true);
 					}
 
-					logger($a->debug());
+					if ($a->is_valid()) {
 
-					if (! $a->is_valid()) {
-						logger('not a valid activity');
-						break;
-					}
-					if (is_array($a->actor) && array_key_exists('id',$a->actor)) {
-						Activity::actor_store($a->actor['id'],$a->actor);
-					}
+						if (is_array($a->actor) && array_key_exists('id',$a->actor)) {
+							Activity::actor_store($a->actor['id'],$a->actor);
+						}
 
-					// ActivityPub sourced items are cacheable
-					$item = Activity::decode_note($a,true);
+						// ActivityPub sourced items are cacheable
+						$item = Activity::decode_note($a,true);
 	
-					if (! $item) {
-						break;
+						if ($item) {
+							Activity::store($channel,get_observer_hash(),$a,$item,false);
+						}
 					}
-
-					Activity::store($channel,get_observer_hash(),$a,$item,false);
 				}
 			}
 			
 			$r = q("select * from item where mid = '%s' and uid = %d",
 				dbesc($url),
 				intval($uid)
-			}
+			);
 			if ($r) {
 				if ($interactive) {
 					goaway(z_root() . '/display/' . gen_link_id($url));
