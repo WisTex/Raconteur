@@ -23,7 +23,7 @@ class CacheThumb {
 		$width  = $is[0];
 		$height = $is[1];
 
-		$max_thumb = get_config('system','max_thumbnail',1600);
+		$max_thumb = get_config('system','max_cache_thumbnail',1024);
 
 		if ($width > $max_thumb || $height > $max_thumb) {
 			$imagick_path = get_config('system','imagick_convert_path');

@@ -213,7 +213,7 @@ class Item extends Controller {
 
 			$parents_str = ids_to_querystr($i,'item_id');
 	
-			$items = q("SELECT item.*, item.id AS item_id FROM item WHERE item.parent IN ( %s ) $item_normal ",
+			$items = q("SELECT item.*, item.id AS item_id FROM item WHERE item.parent IN ( %s ) $item_normal order by item.id asc",
 				dbesc($parents_str)
 			);
 
@@ -224,43 +224,10 @@ class Item extends Controller {
 			xchan_query($items,true);
 			$items = fetch_post_tags($items,true);
 
-			$observer = App::get_observer();
-			$parent = $items[0];
-			$recips = (($parent['owner']['xchan_network'] === 'activitypub') ? get_iconfig($parent['id'],'activitypub','recips', []) : []);
-			$to = (($recips && array_key_exists('to',$recips) && is_array($recips['to'])) ? $recips['to'] : null);
-			$nitems = [];
-			foreach($items as $i) {
-
-				$mids = [];
-
-				if(intval($i['item_private'])) {
-					if(! $observer) {
-						continue;
-					}
-					// ignore private reshare, possibly from hubzilla
-					if($i['verb'] === 'Announce') {
-						if(! in_array($i['thr_parent'],$mids)) {
-							$mids[] = $i['thr_parent'];
-						}
-						continue;
-					}
-					// also ignore any children of the private reshares
-					if(in_array($i['thr_parent'],$mids)) {
-						continue;
-					}
-
-					if((! $to) || (! in_array($observer['xchan_url'],$to))) {
-						continue;
-					}
-
-				}
-				$nitems[] = $i;
-			}
-
-			if(! $nitems)
+			if(! $items)
 				http_status_exit(404, 'Not found');
 
-			$chan = channelx_by_n($nitems[0]['uid']);
+			$chan = channelx_by_n($items[0]['uid']);
 
 			if(! $chan)
 				http_status_exit(404, 'Not found');
@@ -268,7 +235,8 @@ class Item extends Controller {
 			if(! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream'))
 				http_status_exit(403, 'Forbidden');
 
-			$i = Activity::encode_item_collection($nitems,'conversation/' . $item_id,'OrderedCollection',( get_config('system','activitypub') ? true : false));
+
+			$i = Activity::encode_item_collection($items,'conversation/' . $item_id,'OrderedCollection',( get_config('system','activitypub') ? true : false));
 			if($portable_id) {
 				ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
 			}

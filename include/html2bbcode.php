@@ -232,6 +232,7 @@ function html2bbcode($message)
 	node2bbcode($doc, 'img', array('src'=>'/(.+)/'), '[img]$1', '[/img]');
 
 
+	node2bbcode($doc, 'video', array('src'=>'/(.+)/', 'poster'=>'/(.+)/'), '[video poster=&quot;$2&quot;]$1', '[/video]');
 	node2bbcode($doc, 'video', array('src'=>'/(.+)/'), '[video]$1', '[/video]');
 	node2bbcode($doc, 'audio', array('src'=>'/(.+)/'), '[audio]$1', '[/audio]');
 //	node2bbcode($doc, 'iframe', array('src'=>'/(.+)/'), '[iframe]$1', '[/iframe]');
