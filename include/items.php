@@ -2471,7 +2471,7 @@ function tag_deliver($uid, $item_id) {
 		return;
 	}
 
-	if ($is_group && intval($item['item_private']) === 2) {
+	if ($is_group && intval($item['item_private']) === 2 && intval($item['item_thread_top'])) {
 		// group delivery via DM
 		logger('group DM delivery for ' . $u['channel_address']);
 		start_delivery_chain($u, $item, $item_id, 0, false);
