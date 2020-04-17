@@ -266,7 +266,7 @@ class Activity_filter {
 //		}
 
 		$reset = [];
-		if($filter_active) {
+		if ($filter_active) {
 			$reset = [
 				'label' => '',
 				'icon' => 'remove',

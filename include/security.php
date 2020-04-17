@@ -558,7 +558,7 @@ function public_permissions_sql($observer_hash) {
 		);
 	}
 	else {
-		$sql = EMPTY_STR;
+		$sql = " and item_private = 0 ";
 	}
 
 	return $sql;

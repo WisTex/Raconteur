@@ -15,43 +15,40 @@ use Zotlabs\Daemon\Master;
 use Zotlabs\Web\HTTPHeaders;
 use Sabre\VObject\Reader;
 
-/* @file connedit.php
+/**
+ * @file connedit.php
  * @brief In this file the connection-editor form is generated and evaluated.
- *
- *
  */
 
 
 require_once('include/socgraph.php');
-
 require_once('include/photos.php');
 
 
 class Connedit extends Controller {
 
-	/* @brief Initialize the connection-editor
-	 *
-	 *
+	/**
+	 * @brief Initialize the connection-editor
 	 */
 
 	function init() {
 	
-		if(! local_channel())
+		if (! local_channel()) {
 			return;
+		}
 	
-		if((argc() >= 2) && intval(argv(1))) {
-			$r = q("SELECT abook.*, xchan.*
-				FROM abook left join xchan on abook_xchan = xchan_hash
+		if ((argc() >= 2) && intval(argv(1))) {
+			$r = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash
 				WHERE abook_channel = %d and abook_id = %d LIMIT 1",
 				intval(local_channel()),
 				intval(argv(1))
 			);
-			if($r) {
+			// Set the person-of-interest for use by widgets that operate on a single pre-defined channel
+			if ($r) {
 				App::$poi = array_shift($r);
 			}
 		}
 	
-
 		$channel = App::get_channel();
 		if ($channel) {
 			head_set_icon($channel['xchan_photo_s']);
@@ -59,18 +56,20 @@ class Connedit extends Controller {
 	}
 
 	
-	/* @brief Evaluate posted values and set changes
-	 *
+	/**
+	 * @brief Evaluate posted values and set changes
 	 */
 	
 	function post() {
 	
-		if(! local_channel())
+		if (! local_channel()) {
 			return;
+		}
 	
 		$contact_id = intval(argv(1));
-		if(! $contact_id)
+		if (! $contact_id) {
 			return;
+		}
 	
 		$channel = App::get_channel();
 	
@@ -79,59 +78,59 @@ class Connedit extends Controller {
 			intval(local_channel())
 		);
 	
-		if(! $orig_record) {
+		if (! $orig_record) {
 			notice( t('Could not access contact record.') . EOL);
 			goaway(z_root() . '/connections');
-			return; // NOTREACHED
 		}
-	
+
+		$orig_record = array_shift($orig_record);
+
 		call_hooks('contact_edit_post', $_POST);
 	
 		$vc = get_abconfig(local_channel(),$orig_record['abook_xchan'],'system','vcard');
 		$vcard = (($vc) ? Reader::read($vc) : null); 
 		$serialised_vcard = update_vcard($_REQUEST,$vcard);
-		if($serialised_vcard)
-			set_abconfig(local_channel(),$orig_record[0]['abook_xchan'],'system','vcard',$serialised_vcard);
+		if ($serialised_vcard) {
+			set_abconfig(local_channel(),$orig_record['abook_xchan'],'system','vcard',$serialised_vcard);
+		}
 
-		if(intval($orig_record[0]['abook_self'])) {
+		$autoperms = null;
+		$is_self = false;
+
+		if (intval($orig_record['abook_self'])) {
 			$autoperms = intval($_POST['autoperms']);
 			$is_self = true;
 		}
-		else {
-			$autoperms = null;
-			$is_self = false;
-		}
 	
-	
-		$profile_id = ((array_key_exists('profile_assign',$_POST)) ? $_POST['profile_assign'] : $orig_record[0]['abook_profile']);
+		$profile_id = ((array_key_exists('profile_assign',$_POST)) ? $_POST['profile_assign'] : $orig_record['abook_profile']);
 
-		if($profile_id) {
+		if ($profile_id) {
 			$r = q("SELECT profile_guid FROM profile WHERE profile_guid = '%s' AND uid = %d LIMIT 1",
 				dbesc($profile_id),
 				intval(local_channel())
 			);
-			if(! count($r)) {
+			if (! $r) {
 				notice( t('Could not locate selected profile.') . EOL);
 				return;
 			}
 		}
 	
-		$abook_incl = ((array_key_exists('abook_incl',$_POST)) ? escape_tags($_POST['abook_incl']) : $orig_record[0]['abook_incl']);
-		$abook_excl = ((array_key_exists('abook_excl',$_POST)) ? escape_tags($_POST['abook_excl']) : $orig_record[0]['abook_excl']);
-		$abook_alias = ((array_key_exists('abook_alias',$_POST)) ? escape_tags(trim($_POST['abook_alias'])) : $orig_record[0]['abook_alias']);
-
+		$abook_incl = ((array_key_exists('abook_incl',$_POST)) ? escape_tags($_POST['abook_incl']) : $orig_record['abook_incl']);
+		$abook_excl = ((array_key_exists('abook_excl',$_POST)) ? escape_tags($_POST['abook_excl']) : $orig_record['abook_excl']);
+		$abook_alias = ((array_key_exists('abook_alias',$_POST)) ? escape_tags(trim($_POST['abook_alias'])) : $orig_record['abook_alias']);
 
 		$hidden = intval($_POST['hidden']);
 	
 		$priority = intval($_POST['poll']);
-		if($priority > 5 || $priority < 0)
+		if ($priority > 5 || $priority < 0) {
 			$priority = 0;
+		}
 	
-		if(! array_key_exists('closeness',$_POST)) {
+		if (! array_key_exists('closeness',$_POST)) {
 			$_POST['closeness'] = 80;
 		}
 		$closeness = intval($_POST['closeness']);
-		if($closeness < 0 || $closeness > 99) {
+		if ($closeness < 0 || $closeness > 99) {
 			$closeness = 80;
 		}
 	
@@ -139,23 +138,24 @@ class Connedit extends Controller {
 
 		$p = EMPTY_STR;
 
-		if($all_perms) {
-			foreach($all_perms as $perm => $desc) {
-				if(array_key_exists('perms_' . $perm, $_POST)) {
-					if($p)
+		if ($all_perms) {
+			foreach ($all_perms as $perm => $desc) {
+				if (array_key_exists('perms_' . $perm, $_POST)) {
+					if ($p) {
 						$p .= ',';
+					}
 					$p .= $perm;
 				}
 			}
-			set_abconfig($channel['channel_id'],$orig_record[0]['abook_xchan'],'system','my_perms',$p);
-			if($autoperms) {
+			set_abconfig($channel['channel_id'],$orig_record['abook_xchan'],'system','my_perms',$p);
+			if ($autoperms) {
 				set_pconfig($channel['channel_id'],'system','autoperms',$p);
 			}
 		}
 
 		$new_friend = false;
 		
-		if(($_REQUEST['pending']) && intval($orig_record[0]['abook_pending'])) {
+		if (($_REQUEST['pending']) && intval($orig_record['abook_pending'])) {
 
 			$new_friend = true;
 	
@@ -169,11 +169,11 @@ class Connedit extends Controller {
 			$p = Permissions::connect_perms(local_channel());
 			$my_perms = Permissions::serialise($p['perms']);
 			if ($my_perms) {
-				set_abconfig($channel['channel_id'],$orig_record[0]['abook_xchan'],'system','my_perms',$my_perms);
+				set_abconfig($channel['channel_id'],$orig_record['abook_xchan'],'system','my_perms',$my_perms);
 			}
 		}
 
-		$abook_pending = (($new_friend) ? 0 : $orig_record[0]['abook_pending']);
+		$abook_pending = (($new_friend) ? 0 : $orig_record['abook_pending']);
 
 		$r = q("UPDATE abook SET abook_profile = '%s', abook_closeness = %d, abook_pending = %d,
 			abook_incl = '%s', abook_excl = '%s', abook_alias = '%s'
@@ -188,13 +188,15 @@ class Connedit extends Controller {
 			intval(local_channel())
 		);
 	
-		if($r)
+		if ($r) {
 			info( t('Connection updated.') . EOL);
-		else
+		}
+		else {
 			notice( t('Failed to update connection record.') . EOL);
-
-		if(! intval(App::$poi['abook_self'])) {
-			if($new_friend) {
+		}
+		
+		if (! intval(App::$poi['abook_self'])) {
+			if ($new_friend) {
 				Master::Summon( [ 'Notifier', 'permissions_accept', $contact_id ] ); 
 			}
 
@@ -205,12 +207,13 @@ class Connedit extends Controller {
 			]);
 		}
 	
-		if($new_friend) {
+		if ($new_friend) {
 			$default_group = $channel['channel_default_group'];
-			if($default_group) {
+			if ($default_group) {
 				$g = AccessList::rec_byhash(local_channel(),$default_group);
-				if($g)
+				if ($g) {
 					AccessList::member_add(local_channel(),'',App::$poi['abook_xchan'],$g['id']);
+				}
 			}
 	
 			// Check if settings permit ("post new friend activity" is allowed, and
@@ -220,7 +223,7 @@ class Connedit extends Controller {
 			$pr = q("select * from profile where uid = %d and is_default = 1 and hide_friends = 0",
 				intval($channel['channel_id'])
 			);
-			if(($pr) && (! intval($orig_record[0]['abook_hidden'])) && (intval(get_pconfig($channel['channel_id'],'system','post_newfriend')))) {
+			if (($pr) && (! intval($orig_record['abook_hidden'])) && (intval(get_pconfig($channel['channel_id'],'system','post_newfriend')))) {
 				$xarr = [];
 
 				$xarr['item_wall'] = 1;
@@ -243,7 +246,6 @@ class Connedit extends Controller {
 		
 			// pull in a bit of content if there is any to pull in
 			Master::Summon( [ 'Onepoll', $contact_id ]);
-	
 		}
 	
 		// Refresh the structure in memory with the new data
@@ -254,19 +256,20 @@ class Connedit extends Controller {
 			intval(local_channel()),
 			intval($contact_id)
 		);
-		if($r) {
-			App::$poi = $r[0];
+		if ($r) {
+			App::$poi = array_shift($r);
 		}
 	
-		if($new_friend) {
-			$arr = array('channel_id' => local_channel(), 'abook' => App::$poi);
+		if ($new_friend) {
+			$arr = [ 'channel_id' => local_channel(), 'abook' => App::$poi ];
 			call_hooks('accept_follow', $arr);
 		}
 	
 		$this->connedit_clone($a);
 	
-		if(($_REQUEST['pending']) && (!$_REQUEST['done']))
+		if (($_REQUEST['pending']) && (!$_REQUEST['done'])) {
 			goaway(z_root() . '/connections/ifpending');
+		}
 	
 		return;
 	
@@ -291,10 +294,11 @@ class Connedit extends Controller {
 			intval(local_channel()),
 			intval(App::$poi['abook_id'])
 		);
-		if ($r) {
-			App::$poi = array_shift($r);
+		if (! $r) {
+			return;
 		}
-	
+
+		App::$poi = array_shift($r);	
 		$clone = App::$poi;
 	
 		unset($clone['abook_id']);
@@ -308,17 +312,16 @@ class Connedit extends Controller {
 		Libsync::build_sync_packet($channel['channel_id'], [ 'abook' => [ $clone ] ] );
 	}
 	
-	/* @brief Generate content of connection edit page
-	 *
-	 *
+	/**
+	 * @brief Generate content of connection edit page
 	 */
 	
 	function get() {
 	
 		$sort_type = 0;
-		$o = '';
+		$o = EMPTY_STR;
 	
-		if(! local_channel()) {
+		if (! local_channel()) {
 			notice( t('Permission denied.') . EOL);
 			return login();
 		}
@@ -342,11 +345,12 @@ class Connedit extends Controller {
 		}
 		$o .= " }\n</script>\n";
 	
-		if(argc() == 3) {
+		if (argc() == 3) {
 	
 			$contact_id = intval(argv(1));
-			if(! $contact_id)
+			if (! $contact_id) {
 				return;
+			}
 	
 			$cmd = argv(2);
 	
@@ -356,34 +360,35 @@ class Connedit extends Controller {
 				intval(local_channel())
 			);
 	
-			if(! count($orig_record)) {
+			if(! $orig_record) {
 				notice( t('Could not access address book record.') . EOL);
 				goaway(z_root() . '/connections');
 			}
-	
-			if($cmd === 'update') {
+
+			$orig_record = array_shift($orig_record);
+
+			if ($cmd === 'update') {
 				// pull feed and consume it, which should subscribe to the hub.
 				Master::Summon( [ 'Poller', $contact_id ]);
 				goaway(z_root() . '/connedit/' . $contact_id);
-	
 			}
 
 			if($cmd === 'fetchvc') {
-				$url = str_replace('/channel/','/profile/',$orig_record[0]['xchan_url']) . '/vcard';
+				$url = str_replace('/channel/','/profile/',$orig_record['xchan_url']) . '/vcard';
 				$recurse = 0;
 				$x = z_fetch_url(zid($url),false,$recurse,['session' => true]);
-				if($x['success']) {
+				if ($x['success']) {
 					$h = new HTTPHeaders($x['header']);
 					$fields = $h->fetch();
-					if($fields) {
-						foreach($fields as $y) {
-							 if(array_key_exists('content-type',$y)) {
+					if ($fields) {
+						foreach ($fields as $y) {
+							 if (array_key_exists('content-type',$y)) {
 								$type = explode(';',trim($y['content-type']));
-								if($type && $type[0] === 'text/vcard' && $x['body']) {
+								if ($type && $type[0] === 'text/vcard' && $x['body']) {
 									$vc = Reader::read($x['body']);
 									$vcard = $vc->serialize();
-									if($vcard) {
-										set_abconfig(local_channel(),$orig_record[0]['abook_xchan'],'system','vcard',$vcard);
+									if ($vcard) {
+										set_abconfig(local_channel(),$orig_record['abook_xchan'],'system','vcard',$vcard);
 										$this->connedit_clone($a);
 									}
 								}
@@ -395,113 +400,82 @@ class Connedit extends Controller {
 			}
 
 
-			if($cmd === 'resetphoto') {
+			if ($cmd === 'resetphoto') {
 				q("update xchan set xchan_photo_date = '2001-01-01 00:00:00' where xchan_hash = '%s'",
-					dbesc($orig_record[0]['xchan_hash'])
+					dbesc($orig_record['xchan_hash'])
 				);
 				$cmd = 'refresh';
 			}	
 
-			if($cmd === 'refresh') {
-				if($orig_record[0]['xchan_network'] === 'zot6') {
-					if(! Libzot::refresh($orig_record[0], App::get_channel()))
+			if ($cmd === 'refresh') {
+				if($orig_record['xchan_network'] === 'zot6') {
+					if (! Libzot::refresh($orig_record, App::get_channel())) {
 						notice( t('Refresh failed - channel is currently unavailable.') );
+					}
 				}
 				else {
-	
-					// if you are on a different network we'll force a refresh of the connection basic info
+					// if they are on a different network we'll force a refresh of the connection basic info
 					Master::Summon( [ 'Notifier', 'permissions_update', $contact_id ]);
 				}
 				goaway(z_root() . '/connedit/' . $contact_id);
 			}
-	
-			if($cmd === 'block') {
-				if(abook_toggle_flag($orig_record[0],ABOOK_FLAG_BLOCKED)) {
-					$this->connedit_clone($a);
-				}
-				else
-					notice(t('Unable to set address book parameters.') . EOL);
-				goaway(z_root() . '/connedit/' . $contact_id);
-			}
 
-			if($cmd === 'ignore') {
-				if(abook_toggle_flag($orig_record[0],ABOOK_FLAG_IGNORED)) {
-					$this->connedit_clone($a);
-				}
-				else
-					notice(t('Unable to set address book parameters.') . EOL);
-				goaway(z_root() . '/connedit/' . $contact_id);
-			}
-	
-			if($cmd === 'censor') {
-				if(abook_toggle_flag($orig_record[0],ABOOK_FLAG_CENSORED)) {
-					$this->connedit_clone($a);
-				}
-				else
-					notice(t('Unable to set address book parameters.') . EOL);
-				goaway(z_root() . '/connedit/' . $contact_id);
-			}
-
-			if($cmd === 'archive') {
-				if(abook_toggle_flag($orig_record[0],ABOOK_FLAG_ARCHIVED)) {
-					$this->connedit_clone($a);
-				}
-				else
-					notice(t('Unable to set address book parameters.') . EOL);
-				goaway(z_root() . '/connedit/' . $contact_id);
-			}
-	
-			if($cmd === 'hide') {
-				if(abook_toggle_flag($orig_record[0],ABOOK_FLAG_HIDDEN)) {
-					$this->connedit_clone($a);
-				}
-				else
-					notice(t('Unable to set address book parameters.') . EOL);
-				goaway(z_root() . '/connedit/' . $contact_id);
-			}
-	
-			// We'll prevent somebody from unapproving an already approved contact.
-			// Though maybe somebody will want this eventually (??)
-	
-			if($cmd === 'approve') {
-				if(intval($orig_record[0]['abook_pending'])) {
-					if(abook_toggle_flag($orig_record[0],ABOOK_FLAG_PENDING)) {
-						$this->connedit_clone($a);
+			switch ($cmd) {
+				case 'block':
+					$flag_result = abook_toggle_flag($orig_record,ABOOK_FLAG_BLOCKED);
+					break;
+				case 'ignore':
+					$flag_result = abook_toggle_flag($orig_record,ABOOK_FLAG_IGNORED);
+					break;
+				case 'censor':
+					$flag_result = abook_toggle_flag($orig_record,ABOOK_FLAG_CENSORED);
+					break;
+				case 'archive':
+					$flag_result = abook_toggle_flag($orig_record,ABOOK_FLAG_ARCHIVED);
+					break;
+				case 'hide':
+					$flag_result = abook_toggle_flag($orig_record,ABOOK_FLAG_HIDDEN);
+					break;
+				case 'approve':
+					if(intval($orig_record['abook_pending'])) {
+						$flag_result = abook_toggle_flag($orig_record,ABOOK_FLAG_PENDING);
 					}
-					else
-						notice(t('Unable to set address book parameters.') . EOL);
+					break;
+				default:
+					break;
+			}
+
+			if (isset($flag_result)) {
+				if ($flag_result) {
+					$this->connedit_clone($a);
+				}
+				else {
+					notice(t('Unable to set address book parameters.') . EOL);
 				}
 				goaway(z_root() . '/connedit/' . $contact_id);
-			}
+			}	
 	
-	
-			if($cmd === 'drop') {
-	
-				if($orig_record[0]['xchan_network'] === 'activitypub') {
-					ActivityPub::contact_remove(local_channel(), $orig_record[0]);
+			if ($cmd === 'drop') {
+				if ($orig_record['xchan_network'] === 'activitypub') {
+					ActivityPub::contact_remove(local_channel(), $orig_record);
 				}
-				contact_remove(local_channel(), $orig_record[0]['abook_id']);
+				contact_remove(local_channel(), $orig_record['abook_id']);
 
 				// The purge notification is sent to the xchan_hash as the abook record will have just been removed
 				
-				Master::Summon( [ 'Notifier' , 'purge', $orig_record[0]['xchan_hash'] ] );
+				Master::Summon( [ 'Notifier' , 'purge', $orig_record['xchan_hash'] ] );
 				
-				Libsync::build_sync_packet(0 /* use the current local_channel */,
-					array('abook' => array(array(
-						'abook_xchan' => $orig_record[0]['abook_xchan'],
-						'entry_deleted' => true))
-					)
-				);
+				Libsync::build_sync_packet(0, [ 'abook' => [ 'abook_xchan' => $orig_record['abook_xchan'], 'entry_deleted' => true ] ] );
 	
-				info( t('Connection has been removed.') . EOL );
-				if(x($_SESSION,'return_url'))
+				notice( t('Connection has been removed.') . EOL );
+				if (x($_SESSION,'return_url')) {
 					goaway(z_root() . '/' . $_SESSION['return_url']);
+				}
 				goaway(z_root() . '/contacts');
-	
 			}
 		}
 	
-		if(App::$poi) {
+		if (App::$poi) {
 	
 			$abook_prev = 0;
 			$abook_next = 0;
@@ -513,19 +487,24 @@ class Connedit extends Controller {
 				intval(local_channel())
 			);
 
-			if($cn) {
+			if ($cn) {
+				// store previous/next ids for navigation
 				$pntotal = count($cn);
 
-				for($x = 0; $x < $pntotal; $x ++) {
-					if($cn[$x]['abook_id'] == $contact_id) {
-						if($x === 0)
+				for ($x = 0; $x < $pntotal; $x ++) {
+					if ($cn[$x]['abook_id'] == $contact_id) {
+						if ($x === 0) {
 							$abook_prev = 0;
-						else
+						}
+						else {
 							$abook_prev = $cn[$x - 1]['abook_id'];
-						if($x === $pntotal)
+						}
+						if ($x === $pntotal) {
 							$abook_next = 0;
-						else
+						}
+						else {
 							$abook_next = $cn[$x +1]['abook_id'];
+						}
 					}
 				}
  			}

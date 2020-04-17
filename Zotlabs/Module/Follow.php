@@ -6,6 +6,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\Connect;
@@ -66,13 +67,13 @@ class Follow extends Controller {
     	}
 
 
-		if (! local_channel()) {
+
+		$uid = local_channel();
+
+		if (! $uid) {
 			return;
 		}
 
-
-
-		$uid = local_channel();
 		$url = notags(trim(punify($_REQUEST['url'])));
 		$return_url = $_SESSION['return_url'];
 		$confirm = intval($_REQUEST['confirm']);
@@ -82,6 +83,52 @@ class Follow extends Controller {
 		$result = Connect::connect($channel,$url);
 		
 		if ($result['success'] == false) {
+
+			if ((strpos($url,'http') === 0) || strpos($url,'bear:') === 0 || strpos($url,'x-zot:') === 0) {
+				$n = Activity::fetch($url);
+				if ($n) { 
+					// set client flag to convert objects to implied activities
+					$a = new ActivityStreams($n,null,true);
+					if ($a->type === 'Announce' && is_array($a->obj)
+						&& array_key_exists('object',$a->obj) && array_key_exists('actor',$a->obj)) {
+						// This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
+						// Reparse the encapsulated Activity and use that instead
+						logger('relayed activity',LOGGER_DEBUG);
+						$a = new ActivityStreams($a->obj,null,true);
+					}
+
+					if ($a->is_valid()) {
+
+						if (is_array($a->actor) && array_key_exists('id',$a->actor)) {
+							Activity::actor_store($a->actor['id'],$a->actor);
+						}
+
+						// ActivityPub sourced items are cacheable
+						$item = Activity::decode_note($a,true);
+	
+						if ($item) {
+							Activity::store($channel,get_observer_hash(),$a,$item,false);
+						}
+					}
+				}
+			}
+			
+			$r = q("select * from item where mid = '%s' and uid = %d",
+				dbesc($url),
+				intval($uid)
+			);
+			if ($r) {
+				if ($interactive) {
+					goaway(z_root() . '/display/' . gen_link_id($url));
+				}
+				else {
+					$result['success'] = true;
+					json_return_and_die($result);
+				}
+			}
+
+
+
 			if ($result['message']) {
 				notice($result['message']);
 			}
