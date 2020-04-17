@@ -2362,9 +2362,13 @@ class Activity {
 			$s['plink'] = $s['mid'];
 		}
 
-		if ($act->recips && (! in_array(ACTIVITY_PUBLIC_INBOX,$act->recips)))
-			$s['item_private'] = 1;
+		// assume this is private unless specifically told otherwise.
 
+		$s['item_private'] = 1;
+		
+		if ($act->recips && in_array(ACTIVITY_PUBLIC_INBOX,$act->recips)) {
+			$s['item_private'] = 0;
+		}
 
 		if (is_array($act->obj)) {
 			if (array_key_exists('directMessage',$act->obj) && intval($act->obj['directMessage'])) {
