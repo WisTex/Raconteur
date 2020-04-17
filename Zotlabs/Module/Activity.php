@@ -7,6 +7,7 @@ use Zotlabs\Lib\Activity as ZlibActivity;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Lib\ThreadListener;
 use App;
 
 class Activity extends Controller {

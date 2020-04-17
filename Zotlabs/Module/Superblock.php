@@ -15,20 +15,36 @@ class Superblock extends Controller {
 		if (! local_channel()) {
 			return;
 		}
+
+		$type = BLOCKTYPE_CHANNEL;
+		$blocked = trim($_GET['block']);
+		if (! $blocked) {
+			$blocked = trim($_GET['blocksite']);
+			if ($blocked) {
+				$type = BLOCKTYPE_SERVER;				
+			}
+		}
 		
 		$handled = false;
 		$ignored = [];
-		if (array_key_exists('block',$_GET) && trim($_GET['block'])) {
+
+		if ($blocked) {
 			$handled = true;
-			$r = q("select id from item where id = %d and author_xchan = '%s' limit 1",
-				intval($_GET['item']),
-				dbesc($_GET['block'])
+			$r = q("select xchan_url from xchan where xchan_hash = '%s' limit 1",
+				dbesc($blocked)
 			);
 			if ($r) {
+				if ($type === BLOCKTYPE_SERVER) {
+					$m = parse_url($r[0]['xchan_url']);
+					if ($m) {
+						$blocked = $m['host'];
+					}
+				}
+
 				$bl = [
 					'block_channel_id' => local_channel(),
-					'block_entity' => trim($_GET['block']),
-					'block_type' => BLOCKTYPE_CHANNEL,
+					'block_entity' => $blocked,
+					'block_type' => $type,
 					'block_comment' => t('Added by Superblock')
 				];
 				

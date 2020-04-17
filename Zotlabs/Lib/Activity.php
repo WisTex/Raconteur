@@ -8,6 +8,7 @@ use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Daemon\Master;
 use Zotlabs\Lib\PConfig;
+use Zotlabs\Lib\LibBlock;
 use Emoji;
 
 require_once('include/html2bbcode.php');
@@ -1414,7 +1415,21 @@ class Activity {
 			return;
 		}
 		$ret = $r[0];
-
+		
+		$blocked = LibBlock::fetch($channel['channel_id'],BLOCKTYPE_SERVER);
+		if ($blocked) {
+			foreach($blocked as $b) {
+				if (strpos($ret['xchan_url'],$b['block_entity']) !== false) {
+					logger('siteblock - follower denied');
+					return;
+				}
+			}
+		}
+		if (LibBlock::fetch_by_entity($channel['channel_id'],$ret['xchan_hash'])) {
+			logger('actorblock - follower denied');
+			return;
+		}
+	
 		$p = Permissions::connect_perms($channel['channel_id']);
 		$my_perms  = Permissions::serialise($p['perms']);
 		$automatic = $p['automatic'];
@@ -2488,6 +2503,15 @@ class Activity {
 				}
 			}
 		}	
+
+		$blocked = LibBlock::fetch($channel['channel_id'],BLOCKTYPE_SERVER);
+		if ($blocked) {
+			foreach($blocked as $b) {
+				if (strpos($observer_hash,$b['block_entity']) !== false) {
+					$allowed = false;
+				}
+			}
+		}
 
 		if (! $allowed) {
 			logger('no permission');

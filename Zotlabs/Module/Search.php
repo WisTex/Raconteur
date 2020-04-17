@@ -3,13 +3,15 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\ActivityStreams;
 
 require_once("include/bbcode.php");
 require_once('include/security.php');
 require_once('include/conversation.php');
 
 
-class Search extends \Zotlabs\Web\Controller {
+class Search extends Controller {
 
 	function init() {
 		if (x($_REQUEST,'search')) {
@@ -60,7 +62,16 @@ class Search extends \Zotlabs\Web\Controller {
 	
 		$o .= search($search,'search-box','/search',((local_channel()) ? true : false));
 
-
+		if (strpos($search,'https://') === 0) {
+			$j = Activity::fetch($search,App::get_channel());
+			if ($j) {
+				$AS = new ActivityStreams($j);
+				if ($AS->is_valid()) {
+					// check if is_an_actor, otherwise import activity
+				}
+			}
+		}
+		
 		if (strpos($search,'#') === 0) {
 			$tag = true;
 			$search = substr($search,1);
@@ -122,7 +133,7 @@ class Search extends \Zotlabs\Web\Controller {
 			App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"), [
 				'$baseurl' => z_root(),
 				'$pgtype' => 'search',
-				'$uid' => ((\App::$profile['profile_uid']) ? App::$profile['profile_uid'] : '0'),
+				'$uid' => ((App::$profile['profile_uid']) ? App::$profile['profile_uid'] : '0'),
 				'$gid' => '0',
 				'$cid' => '0',
 				'$cmin' => '(-1)',
@@ -155,14 +166,14 @@ class Search extends \Zotlabs\Web\Controller {
 		}
 	
 		$item_normal = item_normal_search();
-		$pub_sql = public_permissions_sql($observer_hash);
+		$pub_sql = item_permissions_sql(0,$observer_hash);
 		
 		$sys = get_sys_channel();
 	
 		if (($update) && ($load)) {
 			$itemspage = get_pconfig(local_channel(),'system','itemspage');
 			App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
-			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));
+			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 		
 			if ($load) {
 				$r = null;
