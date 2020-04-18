@@ -15,49 +15,85 @@ class Superblock extends Controller {
 		if (! local_channel()) {
 			return;
 		}
+
+		$type = BLOCKTYPE_CHANNEL;
+		$blocked = trim($_GET['block']);
+		if (! $blocked) {
+			$blocked = trim($_GET['blocksite']);
+			if ($blocked) {
+				$type = BLOCKTYPE_SERVER;				
+			}
+		}
 		
 		$handled = false;
 		$ignored = [];
-		if (array_key_exists('block',$_GET) && trim($_GET['block'])) {
+
+		if ($blocked) {
 			$handled = true;
-			$r = q("select id from item where id = %d and author_xchan = '%s' limit 1",
-				intval($_GET['item']),
-				dbesc($_GET['block'])
+			$r = q("select xchan_url from xchan where xchan_hash = '%s' limit 1",
+				dbesc($blocked)
 			);
 			if ($r) {
+				if ($type === BLOCKTYPE_SERVER) {
+					$m = parse_url($r[0]['xchan_url']);
+					if ($m) {
+						$blocked = $m['host'];
+					}
+				}
+
 				$bl = [
 					'block_channel_id' => local_channel(),
-					'block_entity' => trim($_GET['block']),
-					'block_type' => BLOCKTYPE_CHANNEL,
-					'block_comment' => t('Added by Superblock')
+					'block_entity'     => $blocked,
+					'block_type'       => $type,
+					'block_comment'    => t('Added by Superblock')
 				];
 				
 				LibBlock::store($bl);
 
-				$sync = LibBlock::fetch_by_entity(local_channel(),trim($_GET['block']));
+				$sync = LibBlock::fetch_by_entity(local_channel(),$blocked);
+
+				if ($type === BLOCKTYPE_CHANNEL) {
+					$z = q("insert into xign ( uid, xchan ) values ( %d , '%s' ) ",
+						intval(local_channel()),
+						dbesc($blocked)
+					);
 				
-				$z = q("insert into xign ( uid, xchan ) values ( %d , '%s' ) ",
-					intval(local_channel()),
-					dbesc(trim($_GET['block']))
-				);
-				
-				$ignored = [ 'uid' => local_channel(), 'xchan' => $_GET['block'] ];
-				Libsync::build_sync_packet(0, [ 'xign' => [ $ignored ], 'block' => $sync ] );
+					$ignored = [ 'uid' => local_channel(), 'xchan' => $_GET['block'] ];
+					Libsync::build_sync_packet(0, [ 'xign' => [ $ignored ], 'block' => [ $sync ]] );
+				}
+				else {
+					Libsync::build_sync_packet(0, [ 'block' => [ $sync ]] );
+				}
 			}
 		}
-		if (array_key_exists('unblock',$_GET) && trim($_GET['unblock'])) {
+
+		$type = BLOCKTYPE_CHANNEL;
+		$unblocked = trim($_GET['unblock']);
+		if (! $unblocked) {
+			$unblocked = trim($_GET['unblocksite']);
+			if ($unblocked) {
+				$type = BLOCKTYPE_SERVER;				
+			}
+		}
+		if ($unblocked)  {
 			$handled = true;
 			if (check_form_security_token('superblock','sectok')) {
-				$r = LibBlock::fetch_by_entity(local_channel(), trim($_GET['unblock']));
+				$r = LibBlock::fetch_by_entity(local_channel(), $unblocked);
 				if ($r) {
-					LibBlock::remove(local_channel(), trim($_GET['unblock']));
-					$z = q("delete from xign where uid = %d  and xchan = '%s' ",
-						intval(local_channel()),
-						dbesc($_GET['block'])
-					);
-					$ignored = [ 'uid' => local_channel(), 'xchan' => $_GET['block'], 'deleted' => true ];
-					$r['deleted'] = true;
-					Libsync::build_sync_packet(0, [ 'xign' => [ $ignored ], 'block' => $r ] );
+					LibBlock::remove(local_channel(), $unblocked);
+					if ($type === BLOCKTYPE_CHANNEL) {
+						$z = q("delete from xign where uid = %d  and xchan = '%s' ",
+							intval(local_channel()),
+							dbesc($unblocked)
+						);
+						$ignored = [ 'uid' => local_channel(), 'xchan' => $unblocked, 'deleted' => true ];
+						$r['deleted'] = true;
+						Libsync::build_sync_packet(0, [ 'xign' => [ $ignored ], 'block' => [ $r ]] );
+					}
+					else {
+						$r['deleted'] = true;
+						Libsync::build_sync_packet(0, [ 'block' => [ $r ]] );
+					}
 				}
 			}
 		}
@@ -66,7 +102,7 @@ class Superblock extends Controller {
 
 			info( t('superblock settings updated') . EOL );
 
-			if ($_GET['unblock']) {
+			if ($unblocked) {
 				return;
 			}
 		
@@ -95,15 +131,34 @@ class Superblock extends Controller {
 		}
 
 		$sc .= replace_macros(get_markup_template('superblock_list.tpl'), [
-			'$blocked' => t('Currently blocked'),
+			'$blocked' => t('Blocked channels'),
 			'$entries' => $r,
 			'$nothing' => (($r) ? '' : t('No channels currently blocked')),
 			'$token'   => get_form_security_token('superblock'),
 			'$remove'  => t('Remove')
 		]);
 
+		$l = LibBlock::fetch(local_channel(),BLOCKTYPE_SERVER);
+		$list = ids_to_array($l,'block_entity');
+		if ($list) {
+			for ($x = 0; $x < count($list); $x ++ ) {
+				$list[$x] = [ $list[$x], urlencode($list[$x]) ];
+			}
+		}
+
+		$sc .= replace_macros(get_markup_template('superblock_serverlist.tpl'), [
+			'$blocked' => t('Blocked servers'),
+			'$entries' => $list,
+			'$nothing' => (($list) ? '' : t('No servers currently blocked')),
+			'$token'   => get_form_security_token('superblock'),
+			'$remove'  => t('Remove')
+		]);
+
+
+
+
 		$s .= replace_macros(get_markup_template('generic_app_settings.tpl'), [
-			'$addon' 	=> array('superblock', t('Superblock Settings'), '', t('Submit')),
+			'$addon' 	=> array('superblock', t('Manage Blocks'), '', t('Submit')),
 			'$content'	=> $sc
 		]);
 

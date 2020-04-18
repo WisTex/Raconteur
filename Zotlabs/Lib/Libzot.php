@@ -12,6 +12,7 @@ use Zotlabs\Web\HTTPSig;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\PermissionRoles;
+use Zotlabs\Lib\LibBlock;
 use Zotlabs\Daemon\Master;
 
 
@@ -393,6 +394,22 @@ class Libzot {
 						logger('channel: ' . $channel['channel_id'] . ' too many new connections per day. This one from ' . $hsig['signer'], LOGGER_NORMAL, LOG_WARNING);
 						return false;
 					}
+				}
+
+				// check personal blocklists
+				
+				$blocked = LibBlock::fetch($channel['channel_id'],BLOCKTYPE_SERVER);
+				if ($blocked) {
+					foreach($blocked as $b) {
+						if (strpos($url,$b['block_entity']) !== false) {
+							logger('siteblock - follower denied');
+							return;
+						}
+					}
+				}
+				if (LibBlock::fetch_by_entity($channel['channel_id'],$x['hash'])) {
+					logger('actorblock - follower denied');
+					return;
 				}
 
 				$p = Permissions::connect_perms($channel['channel_id']);
@@ -1721,6 +1738,10 @@ class Libzot {
 				}
 			}
 
+
+
+
+
 			$tag_delivery = tgroup_check($channel['channel_id'],$arr);
 
 			$perm = 'send_stream';
@@ -1740,6 +1761,23 @@ class Libzot {
 
 			if ((! $tag_delivery) && (! $local_public)) {
 				$allowed = (perm_is_allowed($channel['channel_id'],$sender,$perm));
+
+				$blocked = LibBlock::fetch($channel['channel_id'],BLOCKTYPE_SERVER);
+				if ($blocked) {
+					$h = q("select hubloc_url from hubloc where hubloc_hash = '%s'",
+						dbesc($sender)
+					);
+					if ($h) {
+						foreach ($h as $hub) {
+							foreach($blocked as $b) {
+								if (strpos($hub['hubloc_url'],$b['block_entity']) !== false) {
+									$allowed = false;
+								}
+							}
+						}
+					}
+				}
+
 				if ((! $allowed) && $perm === 'post_comments') {
 
 

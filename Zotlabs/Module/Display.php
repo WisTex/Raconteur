@@ -262,7 +262,7 @@ class Display extends Controller {
 		$item_normal = item_normal();
 		$item_normal_update = item_normal_update();
 
-		$sql_extra = public_permissions_sql($observer_hash);
+		$sql_extra = item_permissions_sql(0, $observer_hash);
 
 		if($noscript_content || $load) {
 

@@ -237,6 +237,13 @@ var activeCommentText = '';
 		});
 	}
 
+	function blocksite(author) {
+		$.get('superblock?f=&blocksite=' + author, function(data) {
+			location.reload(true);
+		});
+	}
+
+
 	function jotGetExpiry() {
 		//reply = prompt("{{$expirewhen}}", $('#jot-expire').val());
 		$('#expiryModal').modal();

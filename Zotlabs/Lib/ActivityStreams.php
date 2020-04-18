@@ -177,19 +177,19 @@ class ActivityStreams {
 	 */
 	function collect_recips($base = '', $namespace = '') {
 		$x = [];
+
 		$fields = [ 'to', 'cc', 'bto', 'bcc', 'audience'];
 		foreach ($fields as $f) {
 			$y = $this->get_compound_property($f, $base, $namespace);
 			if ($y) {
-				if (! is_array($y)) {
-					$y = [ $y ];
-				}
-				$x = array_merge($x, $y);
 				if (! is_array($this->raw_recips)) {
 					$this->raw_recips = [];
 				}
-
-				$this->raw_recips[$f] = $x;
+				if (! is_array($y)) {
+					$y = [ $y ];
+				}
+				$this->raw_recips[$f] = $y;
+				$x = array_merge($x, $y);
 			}
 		}
 		

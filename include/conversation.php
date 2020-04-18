@@ -993,14 +993,12 @@ function thread_author_menu($item, $mode = '') {
 	$menu = [];
 
 	$local_channel = local_channel();
-	$blocked = false;
 	
 	if($local_channel) {
 		if(! count(App::$contacts))
 			load_contact_links($local_channel);
 		$channel = App::get_channel();
 		$channel_hash = (($channel) ? $channel['channel_hash'] : '');
-		$blocked = LibBlock::fetch_by_entity($local_channel,$item['author_xchan']);		
 	}
 
 	$profile_link = chanlink_hash($item['author_xchan']);
@@ -1077,13 +1075,20 @@ function thread_author_menu($item, $mode = '') {
 		];
 	}
 
-	if (! $blocked) {
+	if (local_channel()) {
+		$menu[] = [
+			'menu'   => 'superblocksite',
+			'title'  => t('Block author\'s site'),
+			'icon'   => 'fw',
+			'action' => 'blocksite(\'' . urlencode($item['author_xchan']) . '\',' . $item['id'] . '); return false;',
+        	'href'   => '#'
+		];
 		$menu[] = [
 			'menu'   => 'superblock',
-			'title'  => t('Block completely'),
+			'title'  => t('Block author'),
 			'icon'   => 'fw',
 			'action' => 'superblock(\'' . urlencode($item['author_xchan']) . '\',' . $item['id'] . '); return false;',
-	        'href'   => '#'
+        	'href'   => '#'
 		];
 	}
 
