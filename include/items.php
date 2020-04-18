@@ -2843,7 +2843,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 
 	if(! $parent) {
 
-		if($edit) {
+		if ($edit) {
 			return;
 		}
 
@@ -2852,8 +2852,8 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 		$arr['aid'] = $channel['channel_account_id'];
 		$arr['uid'] = $channel['channel_id'];
 
-		$arr['item_uplink'] = 1;
-		$arr['source_xchan'] = $item['owner_xchan'];
+//		$arr['item_uplink'] = 1;
+//		$arr['source_xchan'] = $item['owner_xchan'];
 
 		$arr['item_private'] = (($channel['channel_allow_cid'] || $channel['channel_allow_gid']
 		|| $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);

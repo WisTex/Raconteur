@@ -715,7 +715,7 @@ class Ping extends Controller {
 						$forums[$x]['photo'] = $forums[$x]['xchan_photo_s'];
 						$forums[$x]['unseen'] = $r[0]['unseen'];
 						$forums[$x]['private_forum'] = (($forums[$x]['private_forum']) ? 'lock' : '');
-						$forums[$x]['message'] = (($forums[$x]['private_forum']) ? t('Private forum') : t('Public forum'));
+						$forums[$x]['message'] = (($forums[$x]['private_forum']) ? t('Private group') : t('Public group'));
 
 						$forums['total'] = $forums['total'] + $r[0]['unseen'];
 
