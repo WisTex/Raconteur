@@ -122,7 +122,7 @@ class Item extends Controller {
 			if(! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream'))
 				http_status_exit(403, 'Forbidden');
 
-			$i = Activity::encode_item($items[0],((get_config('system','activitypub',true)) ? true : false));
+			$i = Activity::encode_item($items[0],true);
 
 			if(! $i)
 				http_status_exit(404, 'Not found');
@@ -236,7 +236,7 @@ class Item extends Controller {
 				http_status_exit(403, 'Forbidden');
 
 
-			$i = Activity::encode_item_collection($items,'conversation/' . $item_id,'OrderedCollection',( get_config('system','activitypub') ? true : false));
+			$i = Activity::encode_item_collection($items,'conversation/' . $item_id,'OrderedCollection',true);
 			if($portable_id) {
 				ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
 			}

@@ -90,7 +90,7 @@ class Activity extends Controller {
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1',
 				z_root() . ZOT_APSCHEMA_REV
-				]], ZlibActivity::encode_activity($items[0],get_config('system','activitypub',true)));
+				]], ZlibActivity::encode_activity($items[0],true));
 
 
 			$headers = [];
@@ -239,7 +239,7 @@ class Activity extends Controller {
 			if(! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream'))
 				http_status_exit(403, 'Forbidden');
 
-			$i = ZlibActivity::encode_item_collection($nitems,'conversation/' . $item_id,'OrderedCollection',get_config('system','activitypub',true));
+			$i = ZlibActivity::encode_item_collection($nitems,'conversation/' . $item_id,'OrderedCollection',true);
 			if($portable_id) {
 				ThreadListener::store(z_root() . '/activity/' . $item_id,$portable_id);
 			}
