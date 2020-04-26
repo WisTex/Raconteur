@@ -460,6 +460,7 @@ function install_hubzilla {
         die "neither zap nor hubzilla repository > did not install addons or zap/hubzilla"
     fi
     mkdir -p "cache/smarty3"
+    mkdir -p "store"
     chmod -R 777 store
     touch .htconfig.php
     chmod ou+w .htconfig.php
