@@ -822,7 +822,7 @@ class Activity {
 			$ret['directMessage'] = true;
 		}
 
-		if (array_key_exists('comments_closed',$i) && $i['comments_closed'] !== EMPTY_STR && $i['comments_closed'] !== NULL_DATE) {
+		if (array_key_exists('comments_closed',$i) && $i['comments_closed'] !== EMPTY_STR && $i['comments_closed'] > NULL_DATE) {
 			if($ret['commentPolicy']) {
 				$ret['commentPolicy'] .= ' ';
 			}
