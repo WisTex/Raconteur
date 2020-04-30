@@ -126,7 +126,6 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 			}
 		}
 
-
 		// Add the authors of any posts in this thread, if they are known to us.
 		// This is specifically designed to forward wall-to-wall posts to the original author,
 		// in case they aren't a connection but have permission to write on our wall.
@@ -168,6 +167,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 	// add ourself just in case we have nomadic clones that need to get a copy.
 
 	$recipients[] = $item['author_xchan'];
+
 	if($item['owner_xchan'] != $item['author_xchan'])
 		$recipients[] = $item['owner_xchan'];
 
@@ -2888,7 +2888,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 		$arr['body'] = $bb;
 
 		$arr['author_xchan'] = $channel['channel_hash'];
-		$arr['owner_xchan']  = $item['author_xchan'];
+		$arr['owner_xchan']  = $channel['channel_hash'];
 		// $arr['obj'] = $item['obj'];
 		$arr['obj_type'] = $item['obj_type'];
 		$arr['verb'] = 'Create';
