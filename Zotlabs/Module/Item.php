@@ -800,7 +800,7 @@ class Item extends Controller {
 			$summary = z_input_filter($summary,$mimetype,$execflag);
 			$body = z_input_filter($body,$mimetype,$execflag);
 		}
-	
+
 
 		$arr = [ 'profile_uid' => $profile_uid, 'summary' => $summary, 'content' => $body, 'mimetype' => $mimetype ];
 		call_hooks('post_content',$arr);
@@ -814,7 +814,26 @@ class Item extends Controller {
 		$str_group_allow   = $gacl['allow_gid'];
 		$str_contact_deny  = $gacl['deny_cid'];
 		$str_group_deny    = $gacl['deny_gid'];
-	
+
+		$groupww = false;
+
+		// if this is a wall-to-wall post to a group, turn it into a direct message
+		
+		$role = get_pconfig($profile_uid,'system','permissions_role');
+
+		$rolesettings = PermissionRoles::role_perms($role);
+
+		$channel_type = isset($rolesettings['channel_type']) ? $rolesettings['channel_type'] : 'normal';
+
+		$is_group = (($channel_type === 'group') ? true : false);
+
+		if (($is_group) && ($walltowall) && (! $walltowall_comment)) {				
+			$groupww = true;
+			$str_contact_allow = $owner_xchan['xchan_hash'];
+			$str_group_allow = '';
+		}
+
+
 		if($mimetype === 'text/bbcode') {
 	
 			require_once('include/text.php');			
@@ -908,8 +927,6 @@ class Item extends Controller {
 					}
 				}
 			}
-
-
 
 			if(($str_contact_allow) && (! $str_group_allow)) {
 				// direct message - private between individual channels but not groups
@@ -1462,20 +1479,13 @@ class Item extends Controller {
 	
 		call_hooks('post_local_end', $datarray);
 
-		$role = get_pconfig($profile_uid,'system','permissions_role');
-		$rolesettings = PermissionRoles::role_perms($role);
-		$channel_type = isset($rolesettings['channel_type']) ? $rolesettings['channel_type'] : 'normal';
-
-		$is_group = (($channel_type === 'group') ? true : false);
-
-		if ($is_group && $datarray['mid'] === $datarray['parent_mid'] && $datarray['author_xchan'] !== $datarray['owner_xchan']) {
-			// W2W group post - will have been delivered already by tag_deliver()
+		if ($groupww) {
 			$nopush = false;
 		}
 
-		if(! $nopush)
+		if(! $nopush) {
 			\Zotlabs\Daemon\Master::Summon(array('Notifier', $notify_type, $post_id));
-	
+		}
 		logger('post_complete');
 
 		if($moderated) {
