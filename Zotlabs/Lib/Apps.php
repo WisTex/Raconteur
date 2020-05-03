@@ -328,6 +328,7 @@ class Apps {
 			'Content Import' => t('Content Import'),
 			'Connections' => t('Connections'),
 			'Expire Posts' => t('Expire Posts'),
+			'Future Posting' => t('Future Posting'),
 			'Remote Diagnostics' => t('Remote Diagnostics'),
 			'Suggest Channels' => t('Suggest Channels'),
 			'Login' => t('Login'),
