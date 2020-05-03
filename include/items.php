@@ -126,7 +126,6 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 			}
 		}
 
-
 		// Add the authors of any posts in this thread, if they are known to us.
 		// This is specifically designed to forward wall-to-wall posts to the original author,
 		// in case they aren't a connection but have permission to write on our wall.
@@ -168,6 +167,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 	// add ourself just in case we have nomadic clones that need to get a copy.
 
 	$recipients[] = $item['author_xchan'];
+
 	if($item['owner_xchan'] != $item['author_xchan'])
 		$recipients[] = $item['owner_xchan'];
 
@@ -822,31 +822,31 @@ function get_item_elements($x,$allow_code = false) {
 		$arr['resource_id'] = $x['resource_id'];
 		$arr['resource_type'] = $x['resource_type'];
 		$arr['attach'] = $x['attach'];
-		$arr['item_origin'] = $x['item_origin'];
-		$arr['item_unseen'] = $x['item_unseen'];
-		$arr['item_starred'] = $x['item_starred'];
-		$arr['item_uplink'] = $x['item_uplink'];
-		$arr['item_consensus'] = $x['item_consensus'];
-		$arr['item_wall'] = $x['item_wall'];
-		$arr['item_thread_top'] = $x['item_thread_top'];
-		$arr['item_notshown'] = $x['item_notshown'];
-		$arr['item_nsfw'] = $x['item_nsfw'];
+		$arr['item_origin'] = intval($x['item_origin']);
+		$arr['item_unseen'] = intval($x['item_unseen']);
+		$arr['item_starred'] = intval($x['item_starred']);
+		$arr['item_uplink'] = intval($x['item_uplink']);
+		$arr['item_consensus'] = intval($x['item_consensus']);
+		$arr['item_wall'] = intval($x['item_wall']);
+		$arr['item_thread_top'] = intval($x['item_thread_top']);
+		$arr['item_notshown'] = intval($x['item_notshown']);
+		$arr['item_nsfw'] = intval($x['item_nsfw']);
 		// local only		$arr['item_relay'] = $x['item_relay'];
-		$arr['item_mentionsme'] = $x['item_mentionsme'];
-		$arr['item_nocomment'] = $x['item_nocomment'];
-		$arr['item_obscured'] = $x['item_obscured'];
+		$arr['item_mentionsme'] = intval($x['item_mentionsme']);
+		$arr['item_nocomment'] = intval($x['item_nocomment']);
+		$arr['item_obscured'] = intval($x['item_obscured']);
 		// local only $arr['item_verified'] = $x['item_verified'];
-		$arr['item_retained'] = $x['item_retained'];
-		$arr['item_rss'] = $x['item_rss'];
-		$arr['item_deleted'] = $x['item_deleted'];
-		$arr['item_type'] = $x['item_type'];
-		$arr['item_hidden'] = $x['item_hidden'];
-		$arr['item_unpublished'] = $x['item_unpublished'];
-		$arr['item_delayed'] = $x['item_delayed'];
-		$arr['item_pending_remove'] = $x['item_pending_remove'];
-		$arr['item_blocked'] = $x['item_blocked'];
-		$arr['item_restrict'] = $x['item_restrict'];
-		$arr['item_flags'] = $x['item_flags'];
+		$arr['item_retained'] = intval($x['item_retained']);
+		$arr['item_rss'] = intval($x['item_rss']);
+		$arr['item_deleted'] = intval($x['item_deleted']);
+		$arr['item_type'] = intval($x['item_type']);
+		$arr['item_hidden'] = intval($x['item_hidden']);
+		$arr['item_unpublished'] = intval($x['item_unpublished']);
+		$arr['item_delayed'] = intval($x['item_delayed']);
+		$arr['item_pending_remove'] = intval($x['item_pending_remove']);
+		$arr['item_blocked'] = intval($x['item_blocked']);
+		$arr['item_restrict'] = intval($x['item_restrict']);
+		$arr['item_flags'] = intval($x['item_flags']);
 
 	}
 
@@ -2888,7 +2888,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 		$arr['body'] = $bb;
 
 		$arr['author_xchan'] = $channel['channel_hash'];
-		$arr['owner_xchan']  = $item['author_xchan'];
+		$arr['owner_xchan']  = $channel['channel_hash'];
 		// $arr['obj'] = $item['obj'];
 		$arr['obj_type'] = $item['obj_type'];
 		$arr['verb'] = 'Create';

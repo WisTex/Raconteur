@@ -37,6 +37,7 @@ function z_mime_content_type($filename) {
 	'css'  => 'text/css',
 	'md'   => 'text/markdown',
 	'bb'   => 'text/bbcode',
+	'abc'  => 'text/vnd.abc',
 	'js'   => 'application/javascript',
 	'json' => 'application/json',
 	'xml'  => 'application/xml',

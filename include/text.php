@@ -1036,6 +1036,8 @@ function sslify($s) {
 			$clean = strip_zids(strip_query_param($match[2],'f'));
 			$cached = Img_cache::check($clean,'cache/img');
 			if ($cached) {
+				// $file = Img_cache::get_filename($clean,'cache/img');
+				// @fixme getimagesize and replace height/width/alt in image tag
 				$s = str_replace($match[2],z_root() . '/ca/' . basename(Img_cache::get_filename($clean,'cache/img')) . '?url=' . urlencode($clean),$s);
 			}
 		}

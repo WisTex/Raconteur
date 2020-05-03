@@ -1426,7 +1426,7 @@ class Libzot {
 
 	static function find_parent($env,$act) {
 		if ($act) {
-			if (in_array($act->type, ['Like','Dislike'])) {
+			if (in_array($act->type, ['Like','Dislike']) && is_array($act->obj)) {
 				return $act->obj['id'];
 			}
 			if ($act->parent_id) {

@@ -443,7 +443,7 @@ class Notifier {
 
 				if ($top_level_post) {
 					// remove clones who will receive the post via sync
-					self::$recipients = array_diff(self::$recipients, [ $target_item['owner_xchan'] ]);
+					self::$recipients = array_values(array_diff(self::$recipients, [ $target_item['owner_xchan'] ]));
 				} 
 
 				// don't send deletions onward for other people's stuff

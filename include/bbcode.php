@@ -1753,8 +1753,9 @@ function bbcode($Text, $options = []) {
 
 	$Text = bb_replace_images($Text, $saved_images);
 
-	call_hooks('bbcode', $Text);
+	$args = [ 'text' => $Text, 'options' => $options ];
+	call_hooks('bbcode', $args);
 
-	return $Text;
+	return $args['text'];
 }
 

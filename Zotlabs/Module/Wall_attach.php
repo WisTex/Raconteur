@@ -11,9 +11,9 @@ require_once('include/photos.php');
 class Wall_attach extends Controller {
 
 	function init() {
-		logger('request_method: ' . $_SERVER['REQUEST_METHOD'],LOGGER_DATA,LOG_INFO);
-		logger('wall_attach: ' . print_r($_REQUEST,true),LOGGER_DEBUG,LOG_INFO);
-		logger('wall_attach files: ' . print_r($_FILES,true),LOGGER_DEBUG,LOG_INFO);
+//		logger('request_method: ' . $_SERVER['REQUEST_METHOD'],LOGGER_DATA,LOG_INFO);
+//		logger('wall_attach: ' . print_r($_REQUEST,true),LOGGER_DEBUG,LOG_INFO);
+//		logger('wall_attach files: ' . print_r($_FILES,true),LOGGER_DEBUG,LOG_INFO);
 		// for testing without actually storing anything
 		//		http_status_exit(200,'OK');
 	}
@@ -146,8 +146,15 @@ class Wall_attach extends Controller {
 					logger('unable to read svg data file: ' . 'store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
 				}
 			}
-
-
+			if ($r['data']['filetype'] === 'text/vnd.abc') {
+				$x = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+				if ($x) {
+					$s .= "\n\n" . '[abc]' . $x . '[/abc]';
+				}
+				else {
+					logger('unable to read ABC data file: ' . 'store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+				}
+			}
 			$s .=  "\n\n" . '[attachment]' . $r['data']['hash'] . ',' . $r['data']['revision'] . '[/attachment]' . "\n";
 		}
 	
