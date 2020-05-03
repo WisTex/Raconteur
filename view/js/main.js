@@ -126,8 +126,7 @@ $(document).ready(function() {
 		numbers       : aStr['t17'],
 	};
 
-	//mod_mail only
-	$(".mail-conv-detail .autotime").timeago();
+	jQuery.timeago.settings.allowFuture = true;
 
 	savedTitle = document.title;
 
