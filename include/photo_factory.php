@@ -188,129 +188,131 @@ function delete_thing_photo($url, $ob_hash) {
  * * \e string \b 5 => modification date
  */
 function import_xchan_photo($photo, $xchan, $thing = false, $force = false) {
-	$modified = '';
-	$o = null;
-
-	$flags = (($thing) ? PHOTO_THING : PHOTO_XCHAN);
-	$album = (($thing) ? 'Things' : 'Contact Photos');
 
 	logger('Updating channel photo from ' . $photo . ' for ' . $xchan, LOGGER_DEBUG);
 
-	if($thing) {
-		$hash = photo_new_resource();
-	} else {
-		$r = q("select resource_id, edited, mimetype from photo where xchan = '%s' and photo_usage = %d and imgscale = 4 limit 1", dbesc($xchan), intval(PHOTO_XCHAN));
-		if($r) {
-			$hash = $r[0]['resource_id'];
-			$modified = $r[0]['edited'];
-			$type = $r[0]['mimetype'];
-		} else {
-			$hash = photo_new_resource();
+	$flags    = (($thing) ? PHOTO_THING : PHOTO_XCHAN);
+	$album    = (($thing) ? 'Things' : 'Contact Photos');
+	$modified = EMPTY_STR;
+	$o        = null;
+	$failed   = true;
+	$img_str  = EMPTY_STR;
+	$hash     = photo_new_resource();
+
+	if (! $thing) {
+		$r = q("select resource_id, edited, mimetype from photo where xchan = '%s' and photo_usage = %d and imgscale = 4 limit 1",
+			dbesc($xchan),
+			intval(PHOTO_XCHAN)
+		);
+		if ($r) {
+			$r = array_shift($r);
+			$hash     = $r['resource_id'];
+			$modified = $r['edited'];
+			$type     = $r['mimetype'];
 		}
 	}
 
-	$photo_failure = false;
-	$img_str = '';
 
-	if($photo) {
+	if ($photo) {
 
-		if($force || $modified == '') {
+		if ($modified === EMPTY_STR || $force) {
 			$result = z_fetch_url($photo, true);
-		} else {
-			$h = [
-					'headers' => [
-							'If-Modified-Since: ' . gmdate('D, d M Y H:i:s', strtotime($modified . 'Z')) . ' GMT'
-					]
-			];
+		}
+		else {
+			$h = [ 'headers' => [ 'If-Modified-Since: ' . gmdate('D, d M Y H:i:s', strtotime($modified . 'Z')) . ' GMT' ] ];
 			$result = z_fetch_url($photo, true, 0, $h);
 		}
 
-		if($result['success']) {
+		if ($result['success']) {
 			$img_str = $result['body'];
 			$type = guess_image_type($photo, $result['header']);
 			$modified = gmdate('Y-m-d H:i:s', (preg_match('/last-modified: (.+) \S+/i', $result['header'], $o) ? strtotime($o[1] . 'Z') : time()));
-			if(is_null($type))
-				$photo_failure = true;
-		} elseif($result['return_code'] == 304) {
+			if (! is_null($type)) {
+				$failed = false;
+			}
+		}
+		elseif ($result['return_code'] == 304) {
 			$photo = z_root() . '/photo/' . $hash . '-4';
 			$thumb = z_root() . '/photo/' . $hash . '-5';
 			$micro = z_root() . '/photo/' . $hash . '-6';
-		} else {
-			$photo_failure = true;
+			$failed = false;
 		}
-	} else {
-		$photo_failure = true;
 	}
 
-	if(!$photo_failure && $result['return_code'] != 304) {
+	if (! $failed && $result['return_code'] != 304) {
 		$img = photo_factory($img_str, $type);
-		if($img->is_valid()) {
+		if ($img->is_valid()) {
 			$width = $img->getWidth();
 			$height = $img->getHeight();
 
-			if($width && $height) {
-				if(($width / $height) > 1.2) {
+			if ($width && $height) {
+				if (($width / $height) > 1.2) {
 					// crop out the sides
 					$margin = $width - $height;
 					$img->cropImage(300, ($margin / 2), 0, $height, $height);
-				} elseif(($height / $width) > 1.2) {
+				}
+				elseif(($height / $width) > 1.2) {
 					// crop out the bottom
 					$margin = $height - $width;
 					$img->cropImage(300, 0, 0, $width, $width);
-				} else {
+				}
+				else {
 					$img->scaleImageSquare(300);
 				}
-			} else {
-				$photo_failure = true;
+			}
+			else {
+				$failed = true;
 			}
 
 			$p = [
-					'xchan' => $xchan,
-					'resource_id' => $hash,
-					'filename' => basename($photo),
-					'album' => $album,
-					'photo_usage' => $flags,
-					'imgscale' => 4,
-					'edited' => $modified,
+				'xchan'       => $xchan,
+				'resource_id' => $hash,
+				'filename'    => basename($photo),
+				'album'       => $album,
+				'photo_usage' => $flags,
+				'imgscale'    => 4,
+				'edited'      => $modified,
 			];
 
 			$r = $img->save($p);
-			if($r === false)
-				$photo_failure = true;
-
+			if ($r === false) {
+				$failed = true;
+			}
 			$img->scaleImage(80);
 			$p['imgscale'] = 5;
 			$r = $img->save($p);
-			if($r === false)
-				$photo_failure = true;
-
+			if ($r === false) {
+				$failed = true;
+			}
 			$img->scaleImage(48);
 			$p['imgscale'] = 6;
 			$r = $img->save($p);
-			if($r === false)
-				$photo_failure = true;
-
+			if ($r === false) {
+				$failed = true;
+			}
 			$photo = z_root() . '/photo/' . $hash . '-4';
 			$thumb = z_root() . '/photo/' . $hash . '-5';
 			$micro = z_root() . '/photo/' . $hash . '-6';
-		} else {
+		}
+		else {
 			logger('Invalid image from ' . $photo);
-			$photo_failure = true;
+			$failed = true;
 		}
 	}
-	if($photo_failure) {
-		$default = get_default_profile_photo();
-		$photo = z_root() . '/' . $default;
-		$thumb = z_root() . '/' . get_default_profile_photo(80);
-		$micro = z_root() . '/' . get_default_profile_photo(48);
-		$type = 'image/png';
+	
+	if ($failed) {
+		$default  = get_default_profile_photo();
+		$photo    = z_root() . '/' . $default;
+		$thumb    = z_root() . '/' . get_default_profile_photo(80);
+		$micro    = z_root() . '/' . get_default_profile_photo(48);
+		$type     = 'image/png';
 		$modified = gmdate('Y-m-d H:i:s', filemtime($default));
 	}
 
 	logger('HTTP code: ' . $result['return_code'] . '; modified: ' . $modified
-			. '; failure: ' . ($photo_failure ? 'yes' : 'no') . '; URL: ' . $photo, LOGGER_DEBUG);
+			. '; failure: ' . ($failed ? 'yes' : 'no') . '; URL: ' . $photo, LOGGER_DEBUG);
 
-	return([$photo, $thumb, $micro, $type, $photo_failure, $modified]);
+	return([$photo, $thumb, $micro, $type, $failed, $modified]);
 }
 
 /**

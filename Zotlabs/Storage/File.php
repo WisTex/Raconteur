@@ -2,8 +2,12 @@
 
 namespace Zotlabs\Storage;
 
+use App;
 use Sabre\DAV;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Daemon\Master;
+
+require_once('include/photos.php');
 
 /**
  * @brief This class represents a file in DAV.
@@ -117,14 +121,22 @@ class File extends DAV\Node implements DAV\IFile {
 	 * @param resource $data
 	 * @return void
 	 */
+
 	public function put($data) {
 		logger('put file: ' . basename($this->name), LOGGER_DEBUG);
 		$size = 0;
 
-		// @todo only 3 values are needed
-		$c = q("SELECT * FROM channel WHERE channel_id = %d AND channel_removed = 0 LIMIT 1",
-			intval($this->auth->owner_id)
-		);
+
+		if ((! $this->auth->owner_id) || (! perm_is_allowed($this->auth->owner_id, $this->auth->observer, 'write_storage'))) {
+			logger('permission denied for put operation');
+			throw new DAV\Exception\Forbidden('Permission denied.');
+		}
+
+		$channel = channelx_by_n($this->auth->owner_id);
+
+		if (! $channel) {
+			throw new DAV\Exception\Forbidden('Permission denied.');
+		}
 
 		$is_photo = false;
 		$album = '';
@@ -135,22 +147,19 @@ class File extends DAV\Node implements DAV\IFile {
 		// and delete from a networked operating system. In this case you are only allowed to over-write the file
 		// if it is empty. Some DAV clients create the file and then store the contents so these would be allowed. 
 
-		if(get_pconfig($this->auth->owner_id,'system','os_delete_prohibit') && \App::$module == 'dav') {
+		if (get_pconfig($this->auth->owner_id,'system','os_delete_prohibit') && App::$module == 'dav') {
 			$r = q("select filesize from attach where hash = '%s' and uid = %d limit 1",
 				dbesc($this->data['hash']),
-				intval($c[0]['channel_id'])
+				intval($channel['channel_id'])
 			);
-			if($r && intval($r[0]['filesize'])) { 	
+			if ($r && intval($r[0]['filesize'])) { 	
 				throw new DAV\Exception\Forbidden('Permission denied.');
 			}
 		}
 
-
-
-
 		$r = q("SELECT flags, folder, os_storage, os_path, display_path, filename, is_photo FROM attach WHERE hash = '%s' AND uid = %d LIMIT 1",
 			dbesc($this->data['hash']),
-			intval($c[0]['channel_id'])
+			intval($channel['channel_id'])
 		);
 		if ($r) {
 
@@ -162,39 +171,51 @@ class File extends DAV\Node implements DAV\IFile {
 			if (intval($r[0]['os_storage'])) {
 				$d = q("select folder, content from attach where hash = '%s' and uid = %d limit 1",
 					dbesc($this->data['hash']),
-					intval($c[0]['channel_id'])
+					intval($channel['channel_id'])
 				);
-				if($d) {
-					if($d[0]['folder']) {
+				if ($d) {
+					if ($d[0]['folder']) {
 						$f1 = q("select * from attach where is_dir = 1 and hash = '%s' and uid = %d limit 1",
 							dbesc($d[0]['folder']),
-							intval($c[0]['channel_id'])
+							intval($channel['channel_id'])
 						);
-						if($f1) {
+						if ($f1) {
 							$album = $f1[0]['filename'];
 							$direct = $f1[0];
 						}
 					}
 					$fname = dbunescbin($d[0]['content']);
-					if(strpos($fname,'store/') === false)
+					if (strpos($fname,'store/') === false) {
 						$f = 'store/' . $this->auth->owner_nick . '/' . $fname ;
-					else
+					}
+					else {
 						$f = $fname;
+					}
+					
+					if (is_resource($data)) {
+						$fp = fopen($f,'wb');
+						if ($fp) {
+							pipe_streams($data,$fp);
+							fclose($fp);
+						}
+					}
+					else {
+						file_put_contents($f, $data);
+					}
 
-					// @todo check return value and set $size directly
-					@file_put_contents($f, $data);
 					$size = @filesize($f);
+
 					logger('filename: ' . $f . ' size: ' . $size, LOGGER_DEBUG);
 				}
 				$gis = @getimagesize($f);
 				logger('getimagesize: ' . print_r($gis,true), LOGGER_DATA);
-				if(($gis) && ($gis[2] === IMAGETYPE_GIF || $gis[2] === IMAGETYPE_JPEG || $gis[2] === IMAGETYPE_PNG)) {
+				if ($gis && supported_imagetype($gis[2])) {
 					$is_photo = 1;
 				}
 
 				// If we know it's a photo, over-ride the type in case the source system could not determine what it was
 
-				if($is_photo) {
+				if ($is_photo) {
 					q("update attach set filetype = '%s' where hash = '%s' and uid = %d",
 						dbesc($gis['mime']),
 						dbesc($this->data['hash']),
@@ -228,20 +249,29 @@ class File extends DAV\Node implements DAV\IFile {
 			intval($is_photo),
 			dbesc($edited),
 			dbesc($this->data['hash']),
-			intval($c[0]['channel_id'])
+			intval($channel['channel_id'])
 		);
 
-		if($is_photo) {
-			require_once('include/photos.php');
-			$args = array( 'resource_id' => $this->data['hash'], 'album' => $album, 'os_syspath' => $f, 'os_path' => $os_path, 'display_path' => $display_path, 'filename' => $filename, 'getimagesize' => $gis, 'directory' => $direct );
-			$p = photo_upload($c[0],\App::get_observer(),$args);
+		if ($is_photo) {
+			$args = [
+				'resource_id'  => $this->data['hash'],
+				'album'        => $album,
+				'os_syspath'   => $f,
+				'os_path'      => $os_path,
+				'display_path' => $display_path,
+				'filename'     => $filename,
+				'getimagesize' => $gis,
+				'directory'    => $direct
+			];
+			$p = photo_upload($channel, App::get_observer(), $args);
+			logger('photo_upload: ' . print_r($p,true), LOGGER_DATA);
 		}
 
 		// update the folder's lastmodified timestamp
 		$e = q("UPDATE attach SET edited = '%s' WHERE hash = '%s' AND uid = %d",
 			dbesc($edited),
 			dbesc($r[0]['folder']),
-			intval($c[0]['channel_id'])
+			intval($channel['channel_id'])
 		);
 
 		// @todo do we really want to remove the whole file if an update fails
@@ -251,37 +281,37 @@ class File extends DAV\Node implements DAV\IFile {
 
 		$maxfilesize = get_config('system', 'maxfilesize');
 		if (($maxfilesize) && ($size > $maxfilesize)) {
-			attach_delete($c[0]['channel_id'], $this->data['hash']);
+			attach_delete($channel['channel_id'], $this->data['hash']);
 			return;
 		}
 
-		$limit = engr_units_to_bytes(service_class_fetch($c[0]['channel_id'], 'attach_upload_limit'));
+		$limit = engr_units_to_bytes(service_class_fetch($channel['channel_id'], 'attach_upload_limit'));
 		if ($limit !== false) {
 			$x = q("select sum(filesize) as total from attach where aid = %d ",
-				intval($c[0]['channel_account_id'])
+				intval($channel['channel_account_id'])
 			);
 			if (($x) && ($x[0]['total'] + $size > $limit)) {
-				logger('service class limit exceeded for ' . $c[0]['channel_name'] . ' total usage is ' . $x[0]['total'] . ' limit is ' . userReadableSize($limit));
-				attach_delete($c[0]['channel_id'], $this->data['hash']);
+				logger('service class limit exceeded for ' . $channel['channel_name'] . ' total usage is ' . $x[0]['total'] . ' limit is ' . userReadableSize($limit));
+				attach_delete($channel['channel_id'], $this->data['hash']);
 				return;
 			}
 		}
 
-		\Zotlabs\Daemon\Master::Summon([ 'Thumbnail' , $this->data['hash'] ]);
+		Master::Summon([ 'Thumbnail' , $this->data['hash'] ]);
 
+		$sync = attach_export_data($channel,$this->data['hash']);
 
-		$sync = attach_export_data($c[0],$this->data['hash']);
-
-		if($sync)
-			Libsync::build_sync_packet($c[0]['channel_id'],array('file' => array($sync)));
-
+		if ($sync) {
+			Libsync::build_sync_packet($channel['channel_id'],array('file' => array($sync)));
+		}
 	}
 
 	/**
 	 * @brief Returns the raw data.
 	 *
-	 * @return string
+	 * @return string || resource
 	 */
+
 	public function get() {
 		logger('get file ' . basename($this->name), LOGGER_DEBUG);
 		logger('os_path: ' . $this->os_path, LOGGER_DATA);
@@ -301,10 +331,12 @@ class File extends DAV\Node implements DAV\IFile {
 
 			if (intval($r[0]['os_storage'])) {
 				$x = dbunescbin($r[0]['content']);
-				if(strpos($x,'store') === false)
+				if (strpos($x,'store') === false) {
 					$f = 'store/' . $this->auth->owner_nick . '/' . (($this->os_path) ? $this->os_path . '/' : '') . $x;
-				else
+				}
+				else {
 					$f = $x;
+				}
 				return @fopen($f, 'rb');
 			}
 			return dbunescbin($r[0]['content']);
@@ -362,6 +394,7 @@ class File extends DAV\Node implements DAV\IFile {
 	 *
 	 * @return int last modification time in UNIX timestamp
 	 */
+
 	public function getLastModified() {
 		return datetime_convert('UTC', 'UTC', $this->data['edited'], 'U');
 	}
@@ -393,11 +426,12 @@ class File extends DAV\Node implements DAV\IFile {
 
 		attach_delete($this->auth->owner_id, $this->data['hash']);
 
-		$ch = channelx_by_n($this->auth->owner_id);
-		if($ch) {
-			$sync = attach_export_data($ch, $this->data['hash'], true);
-			if($sync)
-				Libsync::build_sync_packet($ch['channel_id'], array('file' => array($sync)));
+		$channel = channelx_by_n($this->auth->owner_id);
+		if ($channel) {
+			$sync = attach_export_data($channel, $this->data['hash'], true);
+			if ($sync) {
+				Libsync::build_sync_packet($channel['channel_id'], [ 'file' => [ $sync ] ]);
+			}
 		}
 	}
 }

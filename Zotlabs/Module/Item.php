@@ -856,7 +856,7 @@ class Item extends Controller {
 				if($cnt) {
 					$summary .= $match[1];
 				}
-				$body_content = preg_replace("/^(.*?)\[summary\](.*?)\[\/summary\](.*?)$/ism", '',$body);
+				$body_content = preg_replace("/^(.*?)\[summary\](.*?)\[\/summary\]/ism", '',$body);
 				$body = trim($body_content);
 			}
 

@@ -1,4 +1,6 @@
 <?php
+namespace Zotlabs\Module;
+
 /**
  * @file Zotlabs/Module/Dav.php
  * @brief Initialize Hubzilla's cloud (SabreDAV).
@@ -6,8 +8,8 @@
  * Module for accessing the DAV storage area from a DAV client.
  */
 
-namespace Zotlabs\Module;
 
+use App;
 use Sabre\DAV as SDAV;
 use Zotlabs\Storage;
 use Zotlabs\Lib\Libprofile;
@@ -96,8 +98,8 @@ class Dav extends Controller {
 
 
 		$auth = new \Zotlabs\Storage\BasicAuth();
-		$auth->observer = get_observer_hash();
-		
+//		$auth->observer = get_observer_hash();
+
 		$auth->setRealm(ucfirst(\Zotlabs\Lib\System::get_platform_name()) . ' ' . 'WebDAV');
 
 		$rootDirectory = new \Zotlabs\Storage\Directory('/', $auth);

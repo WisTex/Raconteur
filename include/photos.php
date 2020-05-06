@@ -25,7 +25,7 @@ function photo_upload($channel, $observer, $args) {
 	$ret = [ 'success' => false ];
 	$channel_id = $channel['channel_id'];
 	$account_id = $channel['channel_account_id'];
-
+	
 	if (! perm_is_allowed($channel_id, $observer['xchan_hash'], 'write_storage')) {
 		$ret['message'] = t('Permission denied.');
 		return $ret;
