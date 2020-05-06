@@ -511,10 +511,9 @@ class Linkinfo extends Controller {
 	
 
 	private static function arr_add_hashes(&$item,$k) {
-		$item = '#' . $item;
+		if (substr($item,0,1) !== '#') {
+			$item = '#' . $item;
+		}
 	}
-
-
-
 
 }

@@ -1260,7 +1260,7 @@ function z_status_editor($a, $x, $popup = false) {
 	if(x($x, 'hide_expire'))
 		$feature_expire = false;
 
-	$feature_future = ((feature_enabled($x['profile_uid'], 'delayed_posting') && (! $webpage)) ? true : false);
+	$feature_future = ((Apps::system_app_installed($x['profile_uid'], 'Future Posting') && (! $webpage)) ? true : false);
 	if(x($x, 'hide_future'))
 		$feature_future = false;
 

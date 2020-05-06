@@ -328,6 +328,7 @@ class Apps {
 			'Content Import' => t('Content Import'),
 			'Connections' => t('Connections'),
 			'Expire Posts' => t('Expire Posts'),
+			'Future Posting' => t('Future Posting'),
 			'Remote Diagnostics' => t('Remote Diagnostics'),
 			'Suggest Channels' => t('Suggest Channels'),
 			'Login' => t('Login'),
@@ -1060,9 +1061,12 @@ class Apps {
 			$arr['author'] = $sys['channel_hash'];
 		}
 
-		if ($arr['photo'] && (strpos($arr['photo'],'icon:') === false) && (strpos($arr['photo'],z_root()) !== false)) {
+		if ($arr['photo'] && (strpos($arr['photo'],'icon:') === false) && (strpos($arr['photo'],z_root()) === false)) {
 			$x = import_xchan_photo(str_replace('$baseurl',z_root(),$arr['photo']),get_observer_hash(),true);
-			$arr['photo'] = $x[1];
+			if (! $x[4]) { 
+				// $x[4] = true indicates storage failure of our cached/resized copy. If this failed, just keep the original url.
+				$arr['photo'] = $x[1];
+			}
 		}
 
 
@@ -1148,9 +1152,12 @@ class Apps {
 			return $ret;
 		}
 
-		if ($arr['photo'] && (strpos($arr['photo'],'icon:') === false) && (strpos($arr['photo'],z_root()) !== false)) {
+		if ($arr['photo'] && (strpos($arr['photo'],'icon:') === false) && (strpos($arr['photo'],z_root()) === false)) {
 			$x = import_xchan_photo(str_replace('$baseurl',z_root(),$arr['photo']),get_observer_hash(),true);
-			$arr['photo'] = $x[1];
+			if (! $x[4]) { 
+				// $x[4] = true indicates storage failure of our cached/resized copy. If this failed, just keep the original url.
+				$arr['photo'] = $x[1];
+			}
 		}
 
 		$darray['app_sig']      = ((x($arr,'sig')) ? $arr['sig'] : '');

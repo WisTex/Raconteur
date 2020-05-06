@@ -374,6 +374,13 @@ class Item extends Controller {
 	
 		$message_id  = ((x($_REQUEST,'message_id') && $api_source)  ? strip_tags($_REQUEST['message_id'])       : '');
 		$created     = ((x($_REQUEST,'created'))     ? datetime_convert(date_default_timezone_get(),'UTC',$_REQUEST['created']) : datetime_convert());
+		
+		// Because somebody will probably try this and create a mess
+		
+		if ($created <= NULL_DATE) {
+			$created = datetime_convert();
+		}
+		
 		$post_id     = ((x($_REQUEST,'post_id'))     ? intval($_REQUEST['post_id'])        : 0);
 		$app         = ((x($_REQUEST,'source'))      ? strip_tags($_REQUEST['source'])     : '');
 		$return_path = ((x($_REQUEST,'return'))      ? $_REQUEST['return']                 : '');
@@ -849,7 +856,7 @@ class Item extends Controller {
 				if($cnt) {
 					$summary .= $match[1];
 				}
-				$body_content = preg_replace("/^(.*?)\[summary\](.*?)\[\/summary\](.*?)$/ism", '',$body);
+				$body_content = preg_replace("/^(.*?)\[summary\](.*?)\[\/summary\]/ism", '',$body);
 				$body = trim($body_content);
 			}
 

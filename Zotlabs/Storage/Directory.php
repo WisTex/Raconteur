@@ -2,8 +2,13 @@
 
 namespace Zotlabs\Storage;
 
+use App;
 use Sabre\DAV;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Daemon\Master;
+
+
+require_once('include/photos.php');
 
 /**
  * @brief RedDirectory class.
@@ -14,7 +19,6 @@ use Zotlabs\Lib\Libsync;
  * @implements \\Sabre\\DAV\\ICollection
  * @implements \\Sabre\\DAV\\IQuota
  *
- * @link http://github.com/friendica/red
  * @license http://opensource.org/licenses/mit-license.php The MIT License (MIT)
  */
 class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMoveTarget {
@@ -54,9 +58,9 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 		logger('directory ' . $ext_path, LOGGER_DATA);
 		$this->ext_path = $ext_path;
 		// remove "/cloud" from the beginning of the path
-		$modulename = \App::$module;
+		$modulename = App::$module;
 		$this->red_path = ((strpos($ext_path, '/' . $modulename) === 0) ? substr($ext_path, strlen($modulename) + 1) : $ext_path);
-		if(! $this->red_path) {
+		if (! $this->red_path) {
 			$this->red_path = '/';
 		}
 		$this->auth = $auth_plugin;
@@ -114,7 +118,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 			throw new DAV\Exception\Forbidden('Permission denied.');
 		}
 
-		$modulename = \App::$module;
+		$modulename = App::$module;
 		if ($this->red_path === '/' && $name === $modulename) {
 			return new Directory('/' . $modulename, $this->auth);
 		}
@@ -133,7 +137,6 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 	 * @return string
 	 */
 	public function getName() {
-		//logger(basename($this->red_path), LOGGER_DATA);
 		return (basename($this->red_path));
 	}
 
@@ -179,8 +182,9 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 		$ch = channelx_by_n($this->auth->owner_id);
 		if ($ch) {
 			$sync = attach_export_data($ch, $this->folder_hash);
-			if ($sync)
+			if ($sync) {
 				Libsync::build_sync_packet($ch['channel_id'], array('file' => array($sync)));
+			}
 		}
 
 		$this->red_path = $new_path;
@@ -215,11 +219,9 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 
 		$mimetype = z_mime_content_type($name);
 
-		$c = q("SELECT * FROM channel WHERE channel_id = %d AND channel_removed = 0 LIMIT 1",
-			intval($this->auth->owner_id)
-		);
+		$channel = channelx_by_n($this->auth->owner_id);
 
-		if (! $c) {
+		if (! $channel) {
 			logger('no channel');
 			throw new DAV\Exception\Forbidden('Permission denied.');
 		}
@@ -234,29 +236,32 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 		if ($this->folder_hash) {
 			$r = q("select * from attach where hash = '%s' and is_dir = 1 and uid = %d limit 1",
 				dbesc($this->folder_hash),
-				intval($c[0]['channel_id'])
+				intval($channel['channel_id'])
 			);
-			if ($r)
-				$direct = $r[0];
+			if ($r) {
+				$direct = array_shift($r);
+			}
 		}
 
 		if (($direct) && (($direct['allow_cid']) || ($direct['allow_gid']) || ($direct['deny_cid']) || ($direct['deny_gid']))) {
 			$allow_cid = $direct['allow_cid'];
 			$allow_gid = $direct['allow_gid'];
-			$deny_cid = $direct['deny_cid'];
-			$deny_gid = $direct['deny_gid'];
+			$deny_cid  = $direct['deny_cid'];
+			$deny_gid  = $direct['deny_gid'];
 		}
 		else {
-			$allow_cid = $c[0]['channel_allow_cid'];
-			$allow_gid = $c[0]['channel_allow_gid'];
-			$deny_cid = $c[0]['channel_deny_cid'];
-			$deny_gid = $c[0]['channel_deny_gid'];
+			$allow_cid = $channel['channel_allow_cid'];
+			$allow_gid = $channel['channel_allow_gid'];
+			$deny_cid = $channel['channel_deny_cid'];
+			$deny_gid = $channel['channel_deny_gid'];
 		}
+
+		$created = $edited = datetime_convert();
 
 		$r = q("INSERT INTO attach ( aid, uid, hash, creator, filename, folder, os_storage, filetype, filesize, revision, is_photo, content, created, edited, os_path, display_path, allow_cid, allow_gid, deny_cid, deny_gid )
 			VALUES ( %d, %d, '%s', '%s', '%s', '%s', '%s', '%s', %d, %d, %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) ",
-			intval($c[0]['channel_account_id']),
-			intval($c[0]['channel_id']),
+			intval($channel['channel_account_id']),
+			intval($channel['channel_id']),
 			dbesc($hash),
 			dbesc($this->auth->observer),
 			dbesc($name),
@@ -265,10 +270,10 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 			dbesc($mimetype),
 			intval($filesize),
 			intval(0),
-			intval($is_photo),
+			intval(0),
 			dbesc($f),
-			dbesc(datetime_convert()),
-			dbesc(datetime_convert()),
+			dbesc($created),
+			dbesc($edited),
 			'', 
 			'', 
 			dbesc($allow_cid),
@@ -281,95 +286,111 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 
 		$xpath = attach_syspaths($this->auth->owner_id, $hash);
 
-		// returns the number of bytes that were written to the file, or FALSE on failure
-		$size = file_put_contents($f, $data);
+		if (is_resource($data)) {
+			$fp = fopen($f,'wb');
+			if ($fp) {
+				pipe_streams($data,$fp);
+				fclose($fp);
+			}
+			$size = filesize($f);
+		}
+		else {
+			$size = file_put_contents($f, $data);
+		}
+		
 		// delete attach entry if file_put_contents() failed
 		if ($size === false) {
 			logger('file_put_contents() failed to ' . $f);
-			attach_delete($c[0]['channel_id'], $hash);
+			attach_delete($channel['channel_id'], $hash);
 			return;
 		}
-
-		// returns now
-		$edited = datetime_convert();
 
 		$is_photo = 0;
 		$gis = @getimagesize($f);
 		logger('getimagesize: ' . print_r($gis,true), LOGGER_DATA);
-		if (($gis) && ($gis[2] === IMAGETYPE_GIF || $gis[2] === IMAGETYPE_JPEG || $gis[2] === IMAGETYPE_PNG)) {
+		if (($gis) && supported_imagetype($gis[2])) {
 			$is_photo = 1;
 		}
 
 		// If we know it's a photo, over-ride the type in case the source system could not determine what it was
 
-		if($is_photo) {
+		if ($is_photo) {
 			q("update attach set filetype = '%s' where hash = '%s' and uid = %d",
 				dbesc($gis['mime']),
 				dbesc($hash),
-				intval($c[0]['channel_id'])
+				intval($channel['channel_id'])
 			);
 		}
 
-
-		// updates entry with filesize and timestamp
-		$d = q("UPDATE attach SET filesize = '%s', os_path = '%s', display_path = '%s', is_photo = %d, edited = '%s' WHERE hash = '%s' AND uid = %d",
+		// updates entry with path and filesize
+		$d = q("UPDATE attach SET filesize = '%s', os_path = '%s', display_path = '%s', is_photo = %d WHERE hash = '%s' AND uid = %d",
 			dbesc($size),
 			dbesc($xpath['os_path']),
-			dbesc($xpath['display_path']),
+			dbesc($xpath['path']),
 			intval($is_photo),
-			dbesc($edited),
 			dbesc($hash),
-			intval($c[0]['channel_id'])
+			intval($channel['channel_id'])
 		);
 
-		// update the folder's lastmodified timestamp
+		// update the parent folder's lastmodified timestamp
 		$e = q("UPDATE attach SET edited = '%s' WHERE hash = '%s' AND uid = %d",
 			dbesc($edited),
 			dbesc($this->folder_hash),
-			intval($c[0]['channel_id'])
+			intval($channel['channel_id'])
 		);
 
 		$maxfilesize = get_config('system', 'maxfilesize');
 		if (($maxfilesize) && ($size > $maxfilesize)) {
-			attach_delete($c[0]['channel_id'], $hash);
+			logger('system maxfilesize exceeded. Deleting uploaded file.');
+			attach_delete($channel['channel_id'], $hash);
 			return;
 		}
 
 		// check against service class quota
-		$limit = engr_units_to_bytes(service_class_fetch($c[0]['channel_id'], 'attach_upload_limit'));
+		$limit = engr_units_to_bytes(service_class_fetch($channel['channel_id'], 'attach_upload_limit'));
 		if ($limit !== false) {
 			$z = q("SELECT SUM(filesize) AS total FROM attach WHERE aid = %d ",
-				intval($c[0]['channel_account_id'])
+				intval($channel['channel_account_id'])
 			);
 			if (($z) && ($z[0]['total'] + $size > $limit)) {
-				logger('service class limit exceeded for ' . $c[0]['channel_name'] . ' total usage is ' . $z[0]['total'] . ' limit is ' . userReadableSize($limit));
-				attach_delete($c[0]['channel_id'], $hash);
+				logger('service class limit exceeded for ' . $channel['channel_name'] . ' total usage is ' . $z[0]['total'] . ' limit is ' . userReadableSize($limit));
+				attach_delete($channel['channel_id'], $hash);
 				return;
 			}
 		}
 
-		if($is_photo) {
+		if ($is_photo) {
 			$album = '';
 			if ($this->folder_hash) {
 				$f1 = q("select filename, display_path from attach WHERE hash = '%s' AND uid = %d",
 					dbesc($this->folder_hash),
-					intval($c[0]['channel_id'])
+					intval($channel['channel_id'])
 				);
-				if ($f1)
+				if ($f1) {
 					$album = (($f1[0]['display_path']) ? $f1[0]['display_path'] : $f1[0]['filename']);
+				}
 			}
 
-			require_once('include/photos.php');
-			$args = array( 'resource_id' => $hash, 'album' => $album, 'os_syspath' => $f, 'os_path' => $xpath['os_path'], 'display_path' => $xpath['path'], 'filename' => $name, 'getimagesize' => $gis, 'directory' => $direct);
-			$p = photo_upload($c[0], \App::get_observer(), $args);
+			$args = [
+				'resource_id'  => $hash,
+				'album'        => $album,
+				'os_syspath'   => $f,
+				'os_path'      => $xpath['os_path'],
+				'display_path' => $xpath['path'],
+				'filename'     => $name,
+				'getimagesize' => $gis,
+				'directory'    => $direct
+			];
+			$p = photo_upload($channel, App::get_observer(), $args);
 		}
 		
-		\Zotlabs\Daemon\Master::Summon([ 'Thumbnail' , $this->folder_hash ]);
+		Master::Summon([ 'Thumbnail' , $hash ]);
 
-		$sync = attach_export_data($c[0], $hash);
+		$sync = attach_export_data($channel, $hash);
 
-		if ($sync)
-			Libsync::build_sync_packet($c[0]['channel_id'], array('file' => array($sync)));
+		if ($sync) {
+			Libsync::build_sync_packet($channel['channel_id'], array('file' => array($sync)));
+		}
 	}
 
 	/**
@@ -385,24 +406,22 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 			throw new DAV\Exception\Forbidden('Permission denied.');
 		}
 
-		$r = q("SELECT * FROM channel WHERE channel_id = %d AND channel_removed = 0 LIMIT 1",
-			intval($this->auth->owner_id)
-		);
+		$channel = channelx_by_n($this->auth->owner_id);
 
-		if ($r) {
+		if ($channel) {
 
 			// When initiated from DAV, set the 'force' flag on attach_mkdir(). This will cause the operation to report success even if the 
 			// folder already exists. 
 
 			require_once('include/attach.php');
-			$result = attach_mkdir($r[0], $this->auth->observer, array('filename' => $name, 'folder' => $this->folder_hash, 'force' => true));
+			$result = attach_mkdir($channel, $this->auth->observer, array('filename' => $name, 'folder' => $this->folder_hash, 'force' => true));
 
-			if($result['success']) {
-				$sync = attach_export_data($r[0],$result['data']['hash']);
+			if ($result['success']) {
+				$sync = attach_export_data($channel,$result['data']['hash']);
 				logger('createDirectory: attach_export_data returns $sync:' . print_r($sync, true), LOGGER_DEBUG);
 
-				if($sync) {
-					Libsync::build_sync_packet($r[0]['channel_id'], array('file' => array($sync)));
+				if ($sync) {
+					Libsync::build_sync_packet($channel['channel_id'], array('file' => array($sync)));
 				}
 			}
 			else {
@@ -429,11 +448,12 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 
 		attach_delete($this->auth->owner_id, $this->folder_hash);
 
-		$ch = channelx_by_n($this->auth->owner_id);
-		if ($ch) {
-			$sync = attach_export_data($ch, $this->folder_hash, true);
-			if ($sync)
-				Libsync::build_sync_packet($ch['channel_id'], array('file' => array($sync)));
+		$channel = channelx_by_n($this->auth->owner_id);
+		if ($channel) {
+			$sync = attach_export_data($channel, $this->folder_hash, true);
+			if ($sync) {
+				Libsync::build_sync_packet($channel['channel_id'], array('file' => array($sync)));
+			}
 		}
 	}
 
@@ -448,7 +468,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 	public function childExists($name) {
 		// On /cloud we show a list of available channels.
 		// @todo what happens if no channels are available?
-		$modulename = \App::$module;
+		$modulename = App::$module;
 		if ($this->red_path === '/' && $name === $modulename) {
 			//logger('We are at ' $modulename . ' show a channel list', LOGGER_DEBUG);
 			return true;
@@ -456,16 +476,16 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 
 		$x = $this->FileData($this->ext_path . '/' . $name, $this->auth, true);
 		//logger('FileData returns: ' . print_r($x, true), LOGGER_DATA);
-		if ($x)
+		if ($x) {
 			return true;
-
+		}
 		return false;
 	}
 
 
 	public function moveInto($targetName,$sourcePath, DAV\INode $sourceNode) {
 
-		if(! $this->auth->owner_id) {
+		if (! $this->auth->owner_id) {
 			return false;
 		}
 
@@ -474,7 +494,6 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 		}
 
 		return attach_move($this->auth->owner_id, $sourceNode->data->hash, $this->folder_hash);
-
 	}
 
 
@@ -488,7 +507,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 
 		logger('GetDir: ' . $this->ext_path, LOGGER_DEBUG);
 		$this->auth->log();
-		$modulename = \App::$module;
+		$modulename = App::$module;
 
 		$file = $this->ext_path;
 
@@ -511,15 +530,13 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 
 		$channel_name = $path_arr[0];
 
-		$r = q("SELECT channel_id FROM channel WHERE channel_address = '%s' AND channel_removed = 0 LIMIT 1",
-			dbesc($channel_name)
-		);
+		$channel = channelx_by_nick($channel_name);
 
-		if (! $r) {
+		if (! $channel) {
 			throw new DAV\Exception\NotFound('The file with name: ' . $channel_name . ' could not be found.');
 		}
 
-		$channel_id = $r[0]['channel_id'];
+		$channel_id = $channel['channel_id'];
 		$this->auth->owner_id = $channel_id;
 		$this->auth->owner_nick = $channel_name;
 
@@ -535,10 +552,10 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 			);
 			if ($r && intval($r[0]['is_dir'])) {
 				$folder = $r[0]['hash'];
-				if (strlen($os_path))
+				if (strlen($os_path)) {
 					$os_path .= '/';
+				}
 				$os_path .= $folder;
-
 				$path = $path . '/' . $r[0]['filename'];
 			}
 		}
@@ -598,19 +615,19 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 		$file = trim($file, '/');
 		$path_arr = explode('/', $file);
 
-		if (! $path_arr)
+		if (! $path_arr) {
 			return null;
+		}
 
 		$channel_name = $path_arr[0];
 
-		$r = q("SELECT channel_id FROM channel WHERE channel_address = '%s' LIMIT 1",
-			dbesc($channel_name)
-		);
+		$channel = channelx_by_nick($channel_name);
 
-		if (! $r)
+		if (! $channel) {
 			return null;
+		}
 
-		$channel_id = $r[0]['channel_id'];
+		$channel_id = $channel['channel_id'];
 		$perms = permissions_sql($channel_id);
 
 		$auth->owner_id = $channel_id;
@@ -687,17 +704,19 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 		);
 
 		foreach ($r as $rr) {
-			if(\App::$module === 'cloud' && (strpos($rr['filename'],'.') === 0) && (! get_pconfig($channel_id,'system','show_dot_files')) )
+			if (App::$module === 'cloud' && (strpos($rr['filename'],'.') === 0) && (! get_pconfig($channel_id,'system','show_dot_files')) ) {
 				continue;
+			}
 
 			// @FIXME I don't think we use revisions currently in attach structures.
 			// In case we see any in the wild provide a unique filename. This 
 			// name may or may not be accessible
 
-			if($rr['revision'])
+			if ($rr['revision']) {
 				$rr['filename'] .= '-' . $rr['revision'];
+			}
 
-			//logger('filename: ' . $rr['filename'], LOGGER_DEBUG);
+			// logger('filename: ' . $rr['filename'], LOGGER_DEBUG);
 			if (intval($rr['is_dir'])) {
 				$ret[] = new Directory($path . '/' . $rr['filename'], $auth);
 			}

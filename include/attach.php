@@ -2577,8 +2577,9 @@ function attach_syspaths($channel_id,$attach_hash) {
 			dbesc($attach_hash),
 			intval($channel_id)
 		);
-		if(! $r)
+		if (! $r) {
 			break;
+		}
 
 		$os_path = $r[0]['hash'] . (($os_path) ? '/' . $os_path : '');
 		$path = $r[0]['filename'] . (($path) ? '/' . $path : '');

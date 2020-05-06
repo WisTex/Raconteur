@@ -16,7 +16,7 @@ use Zotlabs\Daemon\Master;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '20.05.03' );
+define ( 'STD_VERSION',             '20.05.06' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1239 );
@@ -2042,9 +2042,9 @@ function dba_timer() {
  */
 function get_observer_hash() {
 	$observer = App::get_observer();
-	if(is_array($observer))
+	if (is_array($observer)) {
 		return $observer['xchan_hash'];
-
+	}
 	return '';
 }
 
@@ -2527,3 +2527,6 @@ function get_safemode() {
 	return intval($_SESSION['safemode']);
 }
 
+function supported_imagetype($x) {
+	return in_array($x, [ IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP ]);
+}

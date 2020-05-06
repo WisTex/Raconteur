@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/future
+requires: local_channel
+name: Future Posting
+photo: icon:clock-o
+categories: Networking
