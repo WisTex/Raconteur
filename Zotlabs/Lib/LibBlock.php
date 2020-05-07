@@ -5,6 +5,25 @@ namespace Zotlabs\Lib;
 
 class LibBlock {
 
+	static $cache = [];
+
+	// This limits the number of DB queries for fetch_by_entity to once per page load.
+	
+	static function fetch_from_cache($channel_id,$entity) {
+		if (! self::$cache[$channel_id]) {
+			self::$cache[$channel_id] = self::fetch($channel_id);
+		}
+		if (self::$cache[$channel_id] && is_array(self::$cache[$channel_id])) {
+			foreach (self::$cache[$channel_id] as $entry) {
+				if (is_array($entry) && strcasecmp($entry['block_entity'],$entity) === 0) {
+					return $entry;
+				}
+			}
+		}
+		return false;
+	}
+
+
 	static function store($arr) {
 
 		$arr['block_entity'] = trim($arr['block_entity']);
@@ -59,11 +78,8 @@ class LibBlock {
 
 	static function fetch_by_entity($channel_id,$entity) {
 
-		$r = q("select * from block where block_channel_id = %d and block_entity = '%s' ",
-			intval($channel_id),
-			dbesc($entity)
-		);
-		return (($r) ? array_shift($r) : $r);
+		return self::fetch_from_cache($channel_id,$entity);
+		
 	}
 
 	static function fetch($channel_id,$type = false) {
