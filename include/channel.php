@@ -4,6 +4,7 @@
  * @brief Channel related functions.
  */
 
+use App;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\AccessList;
@@ -1840,6 +1841,12 @@ function channelx_by_nick($nick) {
 
 	$nick = punify($nick);
 
+	// return a cached copy if there is a cached copy and it's a match
+
+	if (App::$channel && is_array(App::$channel) && array_key_exists('channel_address',App::$channel) && App::$channel['channel_address'] === $nick) {
+		return App::$channel;
+	}
+
 	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_address = '%s'  and channel_removed = 0 LIMIT 1",
 		dbesc($nick)
 	);
@@ -1854,27 +1861,18 @@ function channelx_by_nick($nick) {
  * @return array|boolean false if channel ID not found, otherwise the channel array
  */
 function channelx_by_hash($hash) {
+
+	if (App::$channel && is_array(App::$channel) && array_key_exists('channel_hash',App::$channel) && App::$channel['channel_hash'] === $hash) {
+		return App::$channel;
+	}
+
+
 	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_hash = '%s' and channel_removed = 0 LIMIT 1",
 		dbesc($hash)
 	);
 
 	return(($r) ? $r[0] : false);
 }
-
-/**
- * @brief Get a channel array by a channel_address.
- *
- * @param string $address
- * @return array|boolean false if channel ID not found, otherwise the channel array
- */
-function channelx_by_address($address) {
-	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_address = '%s' and channel_removed = 0 LIMIT 1",
-		dbesc($address)
-	);
-
-	return(($r) ? $r[0] : false);
-}
-
 
 
 /**
@@ -1884,6 +1882,12 @@ function channelx_by_address($address) {
  * @return array|boolean false if channel ID not found, otherwise the channel array
  */
 function channelx_by_n($id) {
+
+	if (App::$channel && is_array(App::$channel) && array_key_exists('channel_id',App::$channel) && intval(App::$channel['channel_id']) === intval($id)) {
+		return App::$channel;
+	}
+
+
 	$r = q("SELECT * FROM channel LEFT JOIN xchan ON channel_hash = xchan_hash WHERE channel_id = %d AND channel_removed = 0 LIMIT 1",
 		dbesc($id)
 	);
