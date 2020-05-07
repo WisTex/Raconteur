@@ -88,7 +88,7 @@ class Linkinfo extends Controller {
 						echo $br . '[img alt="' . $basename . '"]' . $url . '[/img]' . $br;
 					killme();
 				}
-				if (stripos($type,'video/') !== false) {
+				if ((stripos($type,'video/') !== false) || ($type === 'application/ogg')) {
 					$thumb = self::get_video_poster($url);
 					if($thumb) {
 						if ($zrl)

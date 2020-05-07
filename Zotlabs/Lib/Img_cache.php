@@ -51,8 +51,11 @@ class Img_cache {
 
 		fclose($fp);
 		if ($x['success']) {
-			Master::Summon( [ 'CacheThumb' , basename($file) ] );
-			return true;
+			$i = getimagesize($file);
+			if ($i && $i[2]) {  // looking for non-zero imagetype
+				Master::Summon( [ 'CacheThumb' , basename($file) ] );
+				return true;
+			}
 		}
 		unlink($file); 
 		return false;
