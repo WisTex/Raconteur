@@ -21,11 +21,8 @@ class Cache_embeds {
 
 		$item = array_shift($c);
 
-		// bbcode conversion by default processes embeds that aren't already cached.
+		$s = bbcode($item['body']);
+		$s = sslify($s);
 
-		if (! strlen($item['html'])) {
-			$s = bbcode($item['body']);
-			$s = sslify($s);
-		}
 	}
 }

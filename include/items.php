@@ -1920,12 +1920,9 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 
 	item_update_parent_commented($arr);
 
-
-	if((strpos($arr['body'],'[embed]') !== false) || (strpos($arr['body'],'[/img]') !== false)) {
+	if((strpos($arr['body'],'[embed]') !== false) || (strpos($arr['body'],'[/img]') !== false) || (strpos($arr['body'],'[/zmg]') !== false)) {
 		Master::Summon([ 'Cache_embeds', $current_post ]);
 	}
-
-
 
 	// If _creating_ a deleted item, don't propagate it further or send out notifications.
 	// We need to store the item details just in case the delete came in before the original post,
