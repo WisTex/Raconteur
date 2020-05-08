@@ -33,13 +33,14 @@ class LibBlock {
 		}
 		
 		$arr['block_channel_id'] = ((array_key_exists('block_channel_id',$arr)) ? intval($arr['block_channel_id']) : 0);
-		$arr['block_type'] = ((array_key_exists('block_type',$arr)) ? intval($arr['block_type']) : BLOCKTYPE_CHANNEL );
-		$arr['block_comment'] = ((array_key_exists('block_comment',$arr)) ? escape_tags(trim($arr['block_comment'])) : EMPTY_STR);
+		$arr['block_type']       = ((array_key_exists('block_type',$arr)) ? intval($arr['block_type']) : BLOCKTYPE_CHANNEL );
+		$arr['block_comment']    = ((array_key_exists('block_comment',$arr)) ? escape_tags(trim($arr['block_comment'])) : EMPTY_STR);
 
 		if (! intval($arr['block_id'])) {
-			$r = q("select * from block where block_channel_id = %d and block_entity = '%s' limit 1",
+			$r = q("select * from block where block_channel_id = %d and block_entity = '%s' and block_type = %d limit 1",
 				intval($arr['block_channel_id']),
-				dbesc($arr['block_entity'])
+				dbesc($arr['block_entity']),
+				intval($arr['block_type'])
 			);
 			if ($r) {
 				$arr['block_id'] = $r[0]['block_id'];
