@@ -1248,9 +1248,7 @@ function z_status_editor($a, $x, $popup = false) {
 	$plaintext = true;
 
 
-	$feature_voting = false; // feature_enabled($x['profile_uid'], 'consensus_tools');
-	if(x($x, 'hide_voting'))
-		$feature_voting = false;
+	$feature_voting = false;
 
 	$feature_nocomment = Apps::system_app_installed($x['profile_uid'], 'No Comment');
 	if(x($x, 'disable_comments'))
