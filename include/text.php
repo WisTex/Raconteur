@@ -1,6 +1,8 @@
 <?php
 /**
  * @file include/text.php
+ * This file started as some additional text handling functions but has grown to include
+ * a number of miscellaneous functions that didn't really fit anywhere else.  Perhaps it should be named "misc.php" instead. 
  */
 
 use Zotlabs\Lib\MarkdownSoap;
@@ -13,13 +15,6 @@ use Michelf\MarkdownExtra;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
 
-require_once("include/bbcode.php");
-
-// random string, there are 86 characters max in text mode, 128 for hex
-// output is urlsafe
-
-define('RANDOM_STRING_HEX',  0x00 );
-define('RANDOM_STRING_TEXT', 0x01 );
 
 /**
  * @brief This is our template processor.
@@ -41,16 +36,18 @@ function replace_macros($s, $r) {
 	 *   * \e string \b template
 	 *   * \e array \b params
 	 */
+
 	call_hooks('replace_macros', $arr);
 
 	$t = App::template_engine();
 
-        try {
-	        $output = $t->replace_macros($arr['template'], $arr['params']);
-        } catch (Exception $e) {
-                logger("Unable to render template: " . $e->getMessage());
-                $output = "<h3>ERROR: there was an error creating the output.</h3>";
-        }
+	try {
+		$output = $t->replace_macros($arr['template'], $arr['params']);
+	}
+	catch (Exception $e) {
+		logger("Unable to render template: " . $e->getMessage());
+		$output = "<h3>ERROR: there was an error creating the output.</h3>";
+	}
 
 	return $output;
 }
@@ -62,7 +59,14 @@ function replace_macros($s, $r) {
  * @param int $type
  *
  * @return string
+ *
+ * There are 86 characters max in text mode, 128 for hex. output is urlsafe.
  */
+
+
+define('RANDOM_STRING_HEX',  0x00 );
+define('RANDOM_STRING_TEXT', 0x01 );
+
 function random_string($size = 64, $type = RANDOM_STRING_HEX) {
 	// generate a bit of entropy and run it through the whirlpool
 	$s = hash('whirlpool', (string) rand() . uniqid(rand(),true) . (string) rand(),(($type == RANDOM_STRING_TEXT) ? true : false));
@@ -72,11 +76,12 @@ function random_string($size = 64, $type = RANDOM_STRING_HEX) {
 }
 
 /**
- * @brief Input filter to replace HTML tag characters with something safe.
+ * @brief Input filter to replace HTML tag characters with something safe - without changing the string length.
  *
  * @param string $string Input string
  *
  * @return string Filtered string
+ *
  */
 function notags($string) {
 	return(str_replace(array("<",">"), array('[',']'), $string));
@@ -852,6 +857,12 @@ function get_tags($s) {
 	// match any double quoted tags
 
 	if(preg_match_all('/([@#\!]\&quot\;.*?\&quot\;)/',$s,$match)) {
+		foreach($match[1] as $mtch) {
+			$ret[] = $mtch;
+		}
+	}
+
+	if(preg_match_all('/([@#\!]\".*?\")/',$s,$match)) {
 		foreach($match[1] as $mtch) {
 			$ret[] = $mtch;
 		}
@@ -2638,6 +2649,10 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 				$basetag = substr($tag,7);
 				$basetag = substr($basetag,0,-6);
 			}
+			elseif((substr($tag,0,2) === '#"') && (substr($tag,-1,1) === '"')) {
+				$basetag = substr($tag,2);
+				$basetag = substr($basetag,0,-1);
+			}
 			else
 				$basetag = substr($tag,1);
 
@@ -2721,6 +2736,10 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 			if((substr($name,0,6) === '&quot;') && (substr($name,-6,6) === '&quot;')) {
 				$newname = substr($name,6);
 				$newname = substr($newname,0,-6);
+			}
+			elseif((substr($name,0,1) === '"') && (substr($name,-1,1) === '"')) {
+				$newname = substr($name,1);
+				$newname = substr($newname,0,-1);
 			}
 
 			// select someone from this user's contacts by name

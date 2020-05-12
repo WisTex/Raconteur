@@ -227,7 +227,17 @@ var activeCommentText = '';
 	function jotGetLocation() {
 		reply = prompt("{{$whereareu}}", $('#jot-location').val());
 		if(reply && reply.length) {
-			$('#jot-location').val(reply);
+			// A single period indicates "use my browser location"
+			if(reply == '.') {
+				if(navigator.geolocation) {
+					reply = '';
+					navigator.geolocation.getCurrentPosition(function(position) {
+						$('#jot-coord').val(position.coords.latitude + ' ' + position.coords.longitude);
+						$('#profile-nolocation-wrapper').attr('disabled', false);
+					});
+				}
+			}
+			$('#jot-location').val(reply);			
 		}
 	}
 

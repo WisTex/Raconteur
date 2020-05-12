@@ -1248,9 +1248,7 @@ function z_status_editor($a, $x, $popup = false) {
 	$plaintext = true;
 
 
-	$feature_voting = false; // feature_enabled($x['profile_uid'], 'consensus_tools');
-	if(x($x, 'hide_voting'))
-		$feature_voting = false;
+	$feature_voting = false;
 
 	$feature_nocomment = Apps::system_app_installed($x['profile_uid'], 'No Comment');
 	if(x($x, 'disable_comments'))
@@ -1772,7 +1770,7 @@ function prepare_page($item) {
 	// prepare_body calls unobscure() as a side effect. Do it here so that
 	// the template will get passed an unobscured title.
 
-	$body = prepare_body($item, [ 'newwin' => false ]);
+	$body = prepare_body($item, true, [ 'newwin' => false ]);
 	if(App::$page['template'] == 'none') {
 		$tpl = 'page_display_empty.tpl';
 

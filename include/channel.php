@@ -4,6 +4,7 @@
  * @brief Channel related functions.
  */
 
+
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\AccessList;
@@ -1834,17 +1835,27 @@ function get_zcard_embed($channel, $observer_hash = '', $args = array()) {
  *   - array with channel entry
  *   - false if no channel with $nick was found
  */
+
 function channelx_by_nick($nick) {
 
 	// If we are provided a Unicode nickname convert to IDN
 
 	$nick = punify($nick);
 
+	// return a cached copy if there is a cached copy and it's a match.
+	// Also check that there is an xchan_hash to validate the App::$channel data is complete
+	// and that columns from both joined tables are present
+	
+	if (App::$channel && is_array(App::$channel) && array_key_exists('channel_address',App::$channel)
+		&& array_key_exists('xchan_hash',App::$channel) && App::$channel['channel_address'] === $nick) {
+		return App::$channel;
+	}
+
 	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_address = '%s'  and channel_removed = 0 LIMIT 1",
 		dbesc($nick)
 	);
 
-	return(($r) ? $r[0] : false);
+	return(($r) ? array_shift($r) : false);
 }
 
 /**
@@ -1853,28 +1864,20 @@ function channelx_by_nick($nick) {
  * @param string $hash
  * @return array|boolean false if channel ID not found, otherwise the channel array
  */
+
 function channelx_by_hash($hash) {
+
+	if (App::$channel && is_array(App::$channel) && array_key_exists('channel_hash',App::$channel)
+		&& array_key_exists('xchan_hash',App::$channel) && App::$channel['channel_hash'] === $hash) {
+		return App::$channel;
+	}
+
 	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_hash = '%s' and channel_removed = 0 LIMIT 1",
 		dbesc($hash)
 	);
 
-	return(($r) ? $r[0] : false);
+	return(($r) ? array_shift($r) : false);
 }
-
-/**
- * @brief Get a channel array by a channel_address.
- *
- * @param string $address
- * @return array|boolean false if channel ID not found, otherwise the channel array
- */
-function channelx_by_address($address) {
-	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_address = '%s' and channel_removed = 0 LIMIT 1",
-		dbesc($address)
-	);
-
-	return(($r) ? $r[0] : false);
-}
-
 
 
 /**
@@ -1883,12 +1886,19 @@ function channelx_by_address($address) {
  * @param int $id A channel ID
  * @return array|boolean false if channel ID not found, otherwise the channel array
  */
+
 function channelx_by_n($id) {
+
+	if (App::$channel && is_array(App::$channel) && array_key_exists('channel_id',App::$channel)
+		&& array_key_exists('xchan_hash',App::$channel) && intval(App::$channel['channel_id']) === intval($id)) {
+		return App::$channel;
+	}
+
 	$r = q("SELECT * FROM channel LEFT JOIN xchan ON channel_hash = xchan_hash WHERE channel_id = %d AND channel_removed = 0 LIMIT 1",
 		dbesc($id)
 	);
 
-	return(($r) ? $r[0] : false);
+	return(($r) ? array_shift($r) : false);
 }
 
 /**
@@ -1897,6 +1907,7 @@ function channelx_by_n($id) {
  * @param array $channel
  * @return string
  */
+
 function channel_reddress($channel) {
 	if(! ($channel && array_key_exists('channel_address', $channel)))
 		return '';
@@ -1914,12 +1925,10 @@ function channel_reddress($channel) {
  * @param int $channel_id
  * @return int
  */
+
 function channel_manual_conv_update($channel_id) {
 
-	$x = get_pconfig($channel_id, 'system', 'manual_conversation_update');
-	if($x === false)
-		$x = get_config('system', 'manual_conversation_update', 1);
-
+	$x = get_pconfig($channel_id, 'system', 'manual_conversation_update', get_config('system', 'manual_conversation_update', 1));
 	return intval($x);
 }
 
@@ -2043,6 +2052,7 @@ function profile_store_lowlevel($arr) {
  * @param boolean $unset_session (optional) default true
  * @return boolean|array
  */
+
 function account_remove($account_id, $local = true, $unset_session = true) {
 
 	logger('account_remove: ' . $account_id);
@@ -2106,6 +2116,7 @@ function account_remove($account_id, $local = true, $unset_session = true) {
  * @param boolean $local default true
  * @param boolean $unset_session default false
  */
+
 function channel_remove($channel_id, $local = true, $unset_session = false) {
 
 	if (! $channel_id) {
@@ -2364,10 +2375,12 @@ function anon_identity_init($reqvars) {
 	return $x[0];
 }
 
-
 function channel_url($channel) {
-	if(! is_array($channel))
+
+	// data validation - if this is wrong, log the call stack so we can find the issue
+	if (! is_array($channel)) {
 		btlogger('not a channel array');
+	}
 
 	return (($channel) ? z_root() . '/channel/' . $channel['channel_address'] : z_root());
 }

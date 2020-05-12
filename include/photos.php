@@ -5,6 +5,7 @@
  */
 
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\Activity;
 use Zotlabs\Access\AccessControl;
 
 require_once('include/permissions.php');
@@ -419,6 +420,17 @@ function photo_upload($channel, $observer, $args) {
 		'source'    => [ 'content' => $summary, 'mediaType' => 'text/bbcode' ],
 		'content'   => bbcode($summary)
 	];
+
+	$public = (($ac['allow_cid'] || $ac['allow_gid'] || $ac['deny_cid'] || $ac['deny_gid']) ? false : true);
+
+	if ($public) {
+		$object['to'] = [ ACTIVITY_PUBLIC_INBOX ];
+		$object['cc'] = [ z_root() . '/followers/' . $channel['channel_address'] ];
+	}
+	else {
+		$object['to'] = Activity::map_acl(array_merge($ac, ['item_private' => 1 - intval($public) ]));
+	}
+
 
 // @FIXME - update to collection
 //	$target = array(

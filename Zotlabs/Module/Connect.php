@@ -12,7 +12,7 @@ class Connect extends Controller {
 
 	function init() {
 		if(argc() > 1) {
-			App::$data['channel'] = channelx_by_address(argv(1));
+			App::$data['channel'] = channelx_by_nick(argv(1));
 			Libprofile::load(argv(1),EMPTY_STR);
 		}
 		else {

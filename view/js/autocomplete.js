@@ -212,7 +212,7 @@ function string2bb(element) {
 			replace: function(item) { return "$1" + item.text + ' '; },
 			template: smiley_format
 		};
-		this.attr('autocomplete','off');
+
 
 		var Textarea = Textcomplete.editors.Textarea;
 
@@ -266,8 +266,6 @@ function string2bb(element) {
 			template: tag_format
 		};
 
-		this.attr('autocomplete', 'off');
-
 		var textcomplete;
 		var Textarea = Textcomplete.editors.Textarea;
 
@@ -300,8 +298,6 @@ function string2bb(element) {
 			replace: basic_replace,
 			template: contact_format,
 		};
-
-		this.attr('autocomplete','off');
 
 		var textcomplete;
 		var Textarea = Textcomplete.editors.Textarea;
@@ -338,8 +334,6 @@ function string2bb(element) {
 			replace: link_replace,
 			template: contact_format,
 		};
-
-		this.attr('autocomplete','off');
 
 		var textcomplete;
 		var Textarea = Textcomplete.editors.Textarea;
@@ -378,7 +372,6 @@ function string2bb(element) {
 			template: contact_format,
 		};
 
-		this.attr('autocomplete','off');
 
 		var textcomplete;
 		var Textarea = Textcomplete.editors.Textarea;
@@ -460,7 +453,6 @@ function string2bb(element) {
 			template: bbco_format
 		};
 
-		this.attr('autocomplete','off');
 
 		var Textarea = Textcomplete.editors.Textarea;
 
