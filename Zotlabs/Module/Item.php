@@ -317,6 +317,7 @@ class Item extends Controller {
 		$parent     = ((x($_REQUEST,'parent'))     ? intval($_REQUEST['parent'])   : 0);
 		$parent_mid = ((x($_REQUEST,'parent_mid')) ? trim($_REQUEST['parent_mid']) : '');
 	
+		$hidden_mentions = ((x($_REQUEST,'hidden_mentions')) ? trim($_REQUEST['hidden_mentions']) : '');
 
 		/**
 		 * Who is viewing this page and posting this thing
@@ -393,7 +394,7 @@ class Item extends Controller {
 		$plink       = ((x($_REQUEST,'permalink'))   ? escape_tags($_REQUEST['permalink']) : '');
 		$obj_type    = ((x($_REQUEST,'obj_type'))    ? escape_tags($_REQUEST['obj_type'])  : ACTIVITY_OBJ_NOTE);
 
-		// allow API to bulk load a bunch of imported items with sending out a bunch of posts. 
+		// allow API to bulk load a bunch of imported items without sending out a bunch of posts. 
 		$nopush      = ((x($_REQUEST,'nopush'))      ? intval($_REQUEST['nopush'])         : 0);
 	
 		/*
@@ -842,10 +843,7 @@ class Item extends Controller {
 
 
 		if($mimetype === 'text/bbcode') {
-	
-			require_once('include/text.php');			
-	
-	
+		
 			// BBCODE alert: the following functions assume bbcode input
 			// and will require alternatives for alternative content-types (text/html, text/markdown, text/plain, etc.)
 			// we may need virtual or template classes to implement the possible alternatives
@@ -864,46 +862,62 @@ class Item extends Controller {
 			$body = cleanup_bbcode($body);
 	
 			// Look for tags and linkify them
-			$results = linkify_tags($summary, ($uid) ? $uid : $profile_uid);
-			$results = linkify_tags($body, ($uid) ? $uid : $profile_uid);
+			$summary_tags = linkify_tags($summary, ($uid) ? $uid : $profile_uid);
+			$body_tags = linkify_tags($body, ($uid) ? $uid : $profile_uid);
+			$comment_tags = linkify_tags($hidden_mentions, ($uid) ? $uid : $profile_uid);
+			
+			foreach ( [ $summary_tags, $body_tags, $comment_tags ] as $results ) {
 
-
-			if($results) {
+				if ($results) {
 	
-				// Set permissions based on tag replacements
-				set_linkified_perms($results, $str_contact_allow, $str_group_allow, $profile_uid, $parent_item, $private);
+					// Set permissions based on tag replacements
+					set_linkified_perms($results, $str_contact_allow, $str_group_allow, $profile_uid, $parent_item, $private);
 	
-				if (! isset($post_tags)) {
-					$post_tags = [];
-				}
-				foreach($results as $result) {
-					$success = $result['success'];
-					if($success['replaced']) {
-						$post_tags[] = array(
-							'uid'   => $profile_uid, 
-							'ttype' => $success['termtype'],
-							'otype' => TERM_OBJ_POST,
-							'term'  => $success['term'],
-							'url'   => $success['url']
-						);
+					if (! isset($post_tags)) {
+						$post_tags = [];
+					}
+					foreach ($results as $result) {
+						$success = $result['success'];
+						if ($success['replaced']) {
+						
+							// suppress duplicate mentions/tags
+							$already_tagged = false;
+							foreach ($post_tags as $pt) {
+								if ($pt['term'] === $success['term'] && $pt['url'] === $success['url'] && intval($pt['ttype']) === intval($success['termtype'])) {
+									$already_tagged = true;
+									break;
+								}
+							}
+							if ($already_tagged) {
+								continue;
+							}
 
-						// support #collection syntax to post to a collection
-						// this is accomplished by adding a pcategory tag for each collection target
-						// this is checked inside tag_deliver() to create a second delivery chain
-
-						if ($success['termtype'] === TERM_HASHTAG) {
-							$r = q("select xchan_url from channel left join xchan on xchan_hash = channel_hash where channel_address = '%s' and channel_parent = '%s' and channel_removed = 0",
-								dbesc($success['term']),
-								dbesc(get_observer_hash())
+							$post_tags[] = array(
+								'uid'   => $profile_uid, 
+								'ttype' => $success['termtype'],
+								'otype' => TERM_OBJ_POST,
+								'term'  => $success['term'],
+								'url'   => $success['url']
 							);
-							if ($r) {
-								$post_tags[] = [
-									'uid'   => $profile_uid, 
-									'ttype' => TERM_PCATEGORY,
-									'otype' => TERM_OBJ_POST,
-									'term'  => $success['term'] . '@' . App::get_hostname(),
-									'url'   => $r[0]['xchan_url']
-								];
+
+							// support #collection syntax to post to a collection
+							// this is accomplished by adding a pcategory tag for each collection target
+							// this is checked inside tag_deliver() to create a second delivery chain
+
+							if ($success['termtype'] === TERM_HASHTAG) {
+								$r = q("select xchan_url from channel left join xchan on xchan_hash = channel_hash where channel_address = '%s' and channel_parent = '%s' and channel_removed = 0",
+									dbesc($success['term']),
+									dbesc(get_observer_hash())
+								);
+								if ($r) {
+									$post_tags[] = [
+										'uid'   => $profile_uid, 
+										'ttype' => TERM_PCATEGORY,
+										'otype' => TERM_OBJ_POST,
+										'term'  => $success['term'] . '@' . App::get_hostname(),
+										'url'   => $r[0]['xchan_url']
+									];
+								}
 							}
 						}
 					}
