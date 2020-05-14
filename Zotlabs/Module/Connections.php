@@ -79,6 +79,11 @@ class Connections extends Controller {
 					$head = t('Archived/Unreachable');
 					$archived = true;
 					break;
+				case 'all':
+					$search_flags = '';
+					$head = t('All');
+					$all = true;
+					break;
 				case 'pending':
 					$search_flags = " and abook_pending = 1 ";
 					$head = t('New');
@@ -107,8 +112,6 @@ class Connections extends Controller {
 					}
 					break;
 	
-				case 'all':
-					$head = t('All');
 				default:
 					$search_flags = " and abook_blocked = 0 and abook_ignored = 0 and abook_hidden = 0 and abook_archived = 0 and abook_not_here = 0 ";
 					$active = true;
@@ -123,8 +126,9 @@ class Connections extends Controller {
 			}
 		}
 		else {
-			$sql_extra = " and abook_blocked = 0 ";
-			$unblocked = true;
+			$sql_extra = " and abook_blocked = 0 and abook_ignored = 0 and abook_hidden = 0 and abook_archived = 0 and abook_not_here = 0 ";
+			$active = true;
+			$head = t('Active');
 		}
 	
 		$search = ((x($_REQUEST,'search')) ? notags(trim($_REQUEST['search'])) : '');
@@ -175,7 +179,7 @@ class Connections extends Controller {
 	
 			'all' => array(
 				'label' => t('All Connections'),
-				'url'   => z_root() . '/connections', 
+				'url'   => z_root() . '/connections/all', 
 				'sel'   => ($all) ? 'active' : '',
 				'title' => t('Show all connections'),
 			),
