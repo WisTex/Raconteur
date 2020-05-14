@@ -206,9 +206,26 @@ class Connections extends Controller {
 			App::set_pager_total($r[0]['total']);
 			$total = $r[0]['total'];
 		}
-	
+
+		switch($_REQUEST['order']) {
+			case 'date':
+				$order = 'abook_created desc';
+				break;
+			case 'created':
+				$order = 'abook_created';
+				break;
+			case 'cmax':
+				$order = 'abook_closeness';
+				break;
+			case 'name':
+			default:
+				$order = 'xchan_name';
+				break;
+		}
+		
+
 		$r = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash
-			WHERE abook_channel = %d and abook_self = 0 and xchan_deleted = 0 and xchan_orphan = 0 $sql_extra $sql_extra2 ORDER BY xchan_name LIMIT %d OFFSET %d ",
+			WHERE abook_channel = %d and abook_self = 0 and xchan_deleted = 0 and xchan_orphan = 0 $sql_extra $sql_extra2 ORDER BY $order LIMIT %d OFFSET %d ",
 			intval(local_channel()),
 			intval(App::$pager['itemspage']),
 			intval(App::$pager['start'])
