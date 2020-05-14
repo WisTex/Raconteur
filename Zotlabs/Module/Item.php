@@ -883,7 +883,7 @@ class Item extends Controller {
 							// suppress duplicate mentions/tags
 							$already_tagged = false;
 							foreach ($post_tags as $pt) {
-								if ($pt['term'] === $success['term'] && $pt['url'] === $success['url'] && $pt['ttype'] === $success['termtype']) {
+								if ($pt['term'] === $success['term'] && $pt['url'] === $success['url'] && intval($pt['ttype']) === intval($success['termtype'])) {
 									$already_tagged = true;
 									break;
 								}
