@@ -10,7 +10,7 @@ use Zotlabs\Access\AccessControl;
 
 require_once('include/permissions.php');
 require_once('include/photo_factory.php');
-require_once('include/text.php');
+require_once('include/attach.php');
 
 /**
  * @brief Upload a photo.
@@ -38,13 +38,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$album    = $args['album'];
 
-	if (intval($args['visible']) || $args['visible'] === 'true') {
-		$visible = 1;
-	}
-	else {
-		$visible = 0;
-	}
-
+	$visible = ((intval($args['visible']) || $args['visible'] === 'true') ? 1 : 0);
 	$deliver = ((array_key_exists('deliver', $args)) ? intval($args['deliver']) : 1 ); 
 
 
@@ -87,7 +81,7 @@ function photo_upload($channel, $observer, $args) {
 				$tmp_name = $args['os_syspath'] . '-001';
 				$newsize = photo_calculate_scale(array_merge($args['getimagesize'],['max' => $max_thumb]));
 				$cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $args['os_syspath']) . ' -resize ' . $newsize . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmp_name);
-					logger('imagick thumbnail command: ' . $cmd);
+				logger('imagick thumbnail command: ' . $cmd);
 				for($x = 0; $x < 4; $x ++) {
 					exec($cmd);
 					if(file_exists($tmp_name)) {
@@ -557,28 +551,29 @@ function photo_upload($channel, $observer, $args) {
 
 function photo_calculate_scale($arr) {
 
-	$max = $arr['max'];
-	$width = $arr[0];
+	$max    = $arr['max'];
+	$width  = $arr[0];
 	$height = $arr[1];
 
 	$dest_width = $dest_height = 0;
 
-	if((! $width)|| (! $height))
-		return FALSE;
+	if (! ($width && $height)) {
+		return false;
+	}
 
-	if($width > $max && $height > $max) {
+	if ($width > $max && $height > $max) {
 
 		// very tall image (greater than 16:9)
 		// constrain the width - let the height float.
 
-		if((($height * 9) / 16) > $width) {
+		if ((($height * 9) / 16) > $width) {
 			$dest_width = $max;
  			$dest_height = intval(( $height * $max ) / $width);
 		}
 
 		// else constrain both dimensions
 
-		elseif($width > $height) {
+		elseif ($width > $height) {
 			$dest_width = $max;
 			$dest_height = intval(( $height * $max ) / $width);
 		}
@@ -588,16 +583,17 @@ function photo_calculate_scale($arr) {
 		}
 	}
 	else {
-		if( $width > $max ) {
+		if ( $width > $max ) {
 			$dest_width = $max;
 			$dest_height = intval(( $height * $max ) / $width);
 		}
 		else {
-			if( $height > $max ) {
+			if ( $height > $max ) {
+
 				// very tall image (greater than 16:9)
 				// but width is OK - don't do anything
 
-				if((($height * 9) / 16) > $width) {
+				if ((($height * 9) / 16) > $width) {
 					$dest_width = $width;
  					$dest_height = $height;
 				}
@@ -635,8 +631,9 @@ function photos_albums_list($channel, $observer, $sort_key = 'display_path', $di
 	$channel_id     = $channel['channel_id'];
 	$observer_xchan = (($observer) ? $observer['xchan_hash'] : '');
 
-	if(! perm_is_allowed($channel_id, $observer_xchan, 'view_storage'))
+	if (! perm_is_allowed($channel_id, $observer_xchan, 'view_storage')) {
 		return false;
+	}
 
 	$sql_extra = permissions_sql($channel_id,$observer_xchan);
 
@@ -647,21 +644,22 @@ function photos_albums_list($channel, $observer, $sort_key = 'display_path', $di
 		intval($channel_id)
 	);
 
+	// add a 'root directory' to the results
+	
 	array_unshift($r,[ 'display_path' => '/', 'hash' => '' ]);
 	$str = ids_to_querystr($r,'hash',true);
 
 	$albums = [];
 
-	if($str) {
+	if ($str) {
 		$x = q("select count( distinct hash ) as total, folder from attach where is_photo = 1 and uid = %d and folder in ( $str ) $sql_extra group by folder ",
 			intval($channel_id)
 		);
-		if($x) {
-			require_once('include/attach.php');
-			foreach($r as $rv) {
-				foreach($x as $xv) {
-					if($xv['folder'] === $rv['hash']) {
-						if($xv['total'] != 0 && attach_can_view_folder($channel_id,$observer_xchan,$xv['folder'])) {
+		if ($x) {
+			foreach ($r as $rv) {
+				foreach ($x as $xv) {
+					if ($xv['folder'] === $rv['hash']) {
+						if ($xv['total'] != 0 && attach_can_view_folder($channel_id,$observer_xchan,$xv['folder'])) {
 							$albums[] = [ 'album' => $rv['display_path'], 'folder' => $xv['folder'], 'total' => $xv['total'] ];
 						}
 						continue;
@@ -673,12 +671,12 @@ function photos_albums_list($channel, $observer, $sort_key = 'display_path', $di
 
 	// add various encodings to the array so we can just loop through and pick them out in a template
 
-	$ret = array('success' => false);
+	$ret = [ 'success' => false ];
 
-	if($albums) {
+	if ($albums) {
 		$ret['success'] = true;
-		$ret['albums'] = array();
-		foreach($albums as $k => $album) {
+		$ret['albums'] = [];
+		foreach ($albums as $k => $album) {
 			$entry = [
 				'text'      => (($album['album']) ? $album['album'] : '/'),
 				'shorttext' => (($album['album']) ? ellipsify($album['album'],28) : '/'),
@@ -699,15 +697,17 @@ function photos_albums_list($channel, $observer, $sort_key = 'display_path', $di
 
 function photos_album_widget($channelx,$observer,$sortkey = 'display_path',$direction = 'asc') {
 
-	$o = '';
+	$o = EMPTY_STR;
 
-	if(array_key_exists('albums', App::$data))
+	if (array_key_exists('albums', App::$data)) {
 		$albums = App::$data['albums'];
-	else
+	}
+	else {
 		$albums = photos_albums_list($channelx,$observer,$sortkey,$direction);
-
-	if($albums['success']) {
-		$o = replace_macros(get_markup_template('photo_albums.tpl'),array(
+	}
+	
+	if ($albums['success']) {
+		$o = replace_macros(get_markup_template('photo_albums.tpl'), [
 			'$nick'    => $channelx['channel_address'],
 			'$title'   => t('Photo Albums'),
 			'$recent'  => t('Recent Photos'),
@@ -715,7 +715,7 @@ function photos_album_widget($channelx,$observer,$sortkey = 'display_path',$dire
 			'$baseurl' => z_root(),
 			'$upload'  => ((perm_is_allowed($channelx['channel_id'],(($observer) ? $observer['xchan_hash'] : ''),'write_storage'))
 				? t('Upload New Photos') : '')
-		));
+		]);
 	}
 
 	return $o;
@@ -734,15 +734,17 @@ function photos_list_photos($channel, $observer, $album = '') {
 	$channel_id     = $channel['channel_id'];
 	$observer_xchan = (($observer) ? $observer['xchan_hash'] : '');
 
-	if(! perm_is_allowed($channel_id,$observer_xchan,'view_storage'))
+	if (! perm_is_allowed($channel_id,$observer_xchan,'view_storage')) {
 		return false;
+	}
 
 	$sql_extra = permissions_sql($channel_id);
 
-	if($album)
+	if ($album) {
 		$sql_extra .= " and album = '" . protect_sprintf(dbesc($album)) . "' ";
-
-	$ret = array('success' => false);
+	}
+	
+	$ret = [ 'success' => false ];
 
 	$r = q("select resource_id, created, edited, title, description, album, filename, mimetype, height, width, filesize, imgscale, photo_usage, allow_cid, allow_gid, deny_cid, deny_gid from photo where uid = %d and photo_usage in ( %d, %d ) $sql_extra ",
 		intval($channel_id),
@@ -750,8 +752,8 @@ function photos_list_photos($channel, $observer, $album = '') {
 		intval(PHOTO_PROFILE)
 	);
 
-	if($r) {
-		for($x = 0; $x < count($r); $x ++) {
+	if ($r) {
+		for ($x = 0; $x < count($r); $x ++) {
 			$r[$x]['src'] = z_root() . '/photo/' . $r[$x]['resource_id'] . '-' . $r[$x]['imgscale'];
 		}
 		$ret['success'] = true;
@@ -778,16 +780,7 @@ function photos_album_exists($channel_id, $observer_hash, $album) {
 		intval($channel_id)
 	);
 
-	// partial backward compatibility with Hubzilla < 2.4 when we used the filename only
-	// (ambiguous which would get chosen if you had two albums of the same name in different directories)
-	if(!$r && ctype_xdigit($album)) {
-		$r = q("SELECT folder, hash, is_dir, filename, os_path, display_path FROM attach WHERE filename = '%s' AND is_dir = 1 AND uid = %d $sql_extra limit 1",
-			dbesc(hex2bin($album)),
-			intval($channel_id)
-		);
-	}
-
-	return (($r) ? $r[0] : false);
+	return (($r) ? array_shift($r) : false);
 }
 
 /**
@@ -1008,7 +1001,7 @@ function profile_photo_set_profile_perms($uid, $profileid = 0) {
 		);
 	}
 	else {
-		logger('Resetting permissions on default-profile-photo for user'.local_channel());
+		logger('Resetting permissions on default-profile-photo for user ' . $uid);
 
 		$r = q("SELECT photo, profile_guid, id, is_default, uid  FROM profile
 			WHERE profile.uid = %d AND is_default = 1 LIMIT 1",
@@ -1050,7 +1043,7 @@ function profile_photo_set_profile_perms($uid, $profileid = 0) {
 			);
 		}
 		else {
-			//Reset permissions on default profile picture to public
+			// Reset permissions on default profile picture to public
 			q("UPDATE photo SET allow_cid = '' WHERE photo_usage = %d AND uid = %d",
 				intval(PHOTO_PROFILE),
 				intval($uid)
