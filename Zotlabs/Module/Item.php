@@ -317,6 +317,7 @@ class Item extends Controller {
 		$parent     = ((x($_REQUEST,'parent'))     ? intval($_REQUEST['parent'])   : 0);
 		$parent_mid = ((x($_REQUEST,'parent_mid')) ? trim($_REQUEST['parent_mid']) : '');
 	
+		$hidden_mentions = ((x($_REQUEST,'hidden_mentions')) ? trim($_REQUEST['hidden_mentions']) : '');
 
 		/**
 		 * Who is viewing this page and posting this thing
@@ -863,8 +864,9 @@ class Item extends Controller {
 			// Look for tags and linkify them
 			$summary_tags = linkify_tags($summary, ($uid) ? $uid : $profile_uid);
 			$body_tags = linkify_tags($body, ($uid) ? $uid : $profile_uid);
-
-			foreach ( [ $summary_tags, $body_tags ] as $results ) {
+			$comment_tags = linkify_tags($hidden_mentions, ($uid) ? $uid : $profile_uid);
+			
+			foreach ( [ $summary_tags, $body_tags, $comment_tags ] as $results ) {
 
 				if ($results) {
 	

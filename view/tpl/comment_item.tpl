@@ -13,6 +13,7 @@
 				<input type="hidden" name="return" value="{{$return_path}}" />
 				<input type="hidden" name="jsreload" value="{{$jsreload}}" />
 				<input type="hidden" name="preview" id="comment-preview-inp-{{$id}}" value="0" />
+				<input type="hidden" name="hidden_mentions" id="hidden-mentions-{{$id}}" value="" />	
 				{{if $anoncomments && ! $observer}}
 				<div id="comment-edit-anon-{{$id}}" style="display: none;" >
 					{{include file="field_input.tpl" field=$anonname}}

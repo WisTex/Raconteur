@@ -356,13 +356,13 @@ function commentInsert(obj, id) {
 }
 
 function commentAuthors(id) {
-	var auths = $("#thread-authors-" + id).html();
-	if(typeof(auths) != 'undefined') {
-		var tmpStr = $("#comment-edit-text-" + id).val();
-		if(tmpStr == '') {
-			$("#comment-edit-text-" + id).val(auths);
-		}
-	}
+	$("#hidden-mentions-" + id).val($("#thread-authors-" + id).html());
+//	if(typeof(auths) != 'undefined') {
+//		var tmpStr = $("#comment-edit-text-" + id).val();
+//		if(tmpStr == '') {
+//			$("#comment-edit-text-" + id).val(auths);
+//		}
+//	}
 }
 
 
