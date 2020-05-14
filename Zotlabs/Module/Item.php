@@ -879,6 +879,19 @@ class Item extends Controller {
 					foreach ($results as $result) {
 						$success = $result['success'];
 						if ($success['replaced']) {
+						
+							// suppress duplicate mentions/tags
+							$already_tagged = false;
+							foreach ($post_tags as $pt) {
+								if ($pt['term'] === $success['term'] && $pt['url'] === $success['url'] && $pt['ttype'] === $success['termtype']) {
+									$already_tagged = true;
+									break;
+								}
+							}
+							if ($already_tagged) {
+								continue;
+							}
+
 							$post_tags[] = array(
 								'uid'   => $profile_uid, 
 								'ttype' => $success['termtype'],
