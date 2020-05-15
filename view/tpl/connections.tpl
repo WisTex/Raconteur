@@ -1,5 +1,17 @@
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper clearfix">
+		{{if $order}}
+		<div class="dropdown pull-right">
+			<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{$sortorder}}">
+				<i class="fa fa-sort"></i>
+			</button>
+			<div class="dropdown-menu dropdown-menu-right">
+				{{foreach $order as $menu}}
+				<a class="dropdown-item {{$menu.sel}}" href="{{$menu.url}}">{{$menu.label}}</a>
+				{{/foreach}}
+			</div>
+		</div>
+		{{/if}}
 		<div class="dropdown pull-right">
 			<button type="button" class="btn btn-primary btn-sm" onclick="openClose('contacts-search-form'); $('#contacts-search').focus();">
 				<i class="fa fa-search"></i>&nbsp;{{$label}}
@@ -13,6 +25,7 @@
 				{{/foreach}}
 			</div>
 		</div>
+
 		{{if $finding}}<h2>{{$finding}}</h2>{{else}}<h2>{{$header}}{{if $total}} ({{$total}}){{/if}}</h2>{{/if}}
 	</div>
 	<div id="contacts-search-form" class="section-content-tools-wrapper">
