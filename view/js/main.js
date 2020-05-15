@@ -259,9 +259,8 @@ function handle_comment_form(e) {
 		$('#' + submitElm).attr('tabindex','10');
 		
 		form.find(':not(:visible)').show();
-		if(! expanded.length) {
-			commentAuthors(commentId);
-		}
+		commentAuthors(commentId);
+
 		var quoted = getSelectedText();
 		var tmpStr = $("#comment-edit-text-" + commentId).val();
 		if(quoted != '') {
