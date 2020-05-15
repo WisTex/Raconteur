@@ -206,9 +206,61 @@ class Connections extends Controller {
 			App::set_pager_total($r[0]['total']);
 			$total = $r[0]['total'];
 		}
+
+		switch($_REQUEST['order']) {
+			case 'date':
+				$order_q = 'abook_created desc';
+				break;
+			case 'created':
+				$order_q = 'abook_created';
+				break;
+			case 'cmax':
+				$order_q = 'abook_closeness';
+				break;
+			case 'name':
+			default:
+				$order_q = 'xchan_name';
+				break;
+		}
+
+
+		$order = array(
 	
+			'name' => array(
+				'label' => t('Name'),
+				'url'   => z_root() . '/connections' . ((argv(1)) ? '/' . argv(1) : '')  . '?order=name', 
+				'sel'   => ($_REQUEST['order'] === 'name' || (! isset($_REQUEST['order']))) ? 'active' : '',
+				'title' => t('Order by name'),
+			),
+
+			'date' => array(
+				'label' => t('Recent'),
+				'url'   => z_root() . '/connections' . ((argv(1)) ? '/' . argv(1) : '') . '?order=date', 
+				'sel'   => ($_REQUEST['order'] === 'date') ? 'active' : '',
+				'title' => t('Order by recent'),
+			),
+
+			'created' => array(
+				'label' => t('Created'),
+				'url'   => z_root() . '/connections' . ((argv(1)) ? '/' . argv(1) : '') . '?order=created', 
+				'sel'   => ($_REQUEST['order'] === 'created') ? 'active' : '',
+				'title' => t('Order by date'),
+			),
+// reserved for cmax
+//			'date' => array(
+//				'label' => t(''),
+//				'url'   => z_root() . '/connections' . ((argv(1)) ? '/' . argv(1) : '') . '?order=date', 
+//				'sel'   => ($_REQUEST['order'] === 'date') ? 'active' : '',
+//				'title' => t('Order by recent'),
+//			),
+
+		);
+
+
+
+
 		$r = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash
-			WHERE abook_channel = %d and abook_self = 0 and xchan_deleted = 0 and xchan_orphan = 0 $sql_extra $sql_extra2 ORDER BY xchan_name LIMIT %d OFFSET %d ",
+			WHERE abook_channel = %d and abook_self = 0 and xchan_deleted = 0 and xchan_orphan = 0 $sql_extra $sql_extra2 ORDER BY $order_q LIMIT %d OFFSET %d ",
 			intval(local_channel()),
 			intval(App::$pager['itemspage']),
 			intval(App::$pager['start'])
@@ -309,6 +361,9 @@ class Connections extends Controller {
 			$o .= replace_macros(get_markup_template('connections.tpl'),array(
 				'$header' => t('Connections') . (($head) ? ': ' . $head : ''),
 				'$tabs' => $tabs,
+				'$order' => $order,
+				'$sort' => t('Filter by'),
+				'$sortorder' => t('Sort by'),
 				'$total' => $total,
 				'$search' => $search_hdr,
 				'$label' => t('Search'),
@@ -319,7 +374,7 @@ class Connections extends Controller {
 				'$cmd' => App::$cmd,
 				'$contacts' => $contacts,
 				'$paginate' => paginate($a),
-	
+				
 			)); 
 		}
 	
