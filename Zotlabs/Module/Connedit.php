@@ -423,7 +423,7 @@ class Connedit extends Controller {
 
 			switch ($cmd) {
 				case 'block':
-					if (intval($orig_record['abook_blocked']) {
+					if (intval($orig_record['abook_blocked'])) {
 						LibBlock::remove(local_channel(),$orig_record['abook_xchan']);
 						$sync = [
 							'block_channel_id' => local_channel(),
