@@ -753,41 +753,8 @@ class Activity {
 		}
 
 
-		/**
-		 * If the destination is activitypub, see if the content needs conversion to 
-		 * Mastodon "quirks" mode. This will be the case if there is any markup beyond
-		 * links or images OR if the number of images exceeds 1. This content may be
-		 * purified into oblivion when using the Note type so turn it into an Article.
-		 */
-
-		$convert_to_article = false;
 		$images = false;
-
-		if ($ret['type'] === 'Note') {
-
-			$bbtags = false;
-			$num_bbtags = preg_match_all('/\[\/([a-z]+)\]/ism',$i['body'],$bbtags,PREG_SET_ORDER);
-			if ($num_bbtags) {
-
-				foreach ($bbtags as $t) {
-					if((! $t[1]) || (in_array($t[1],['url','zrl','img','zmg','share','app','quote']))) {
-						continue;
-					}
-					$convert_to_article = true;
-				}
-			} 
-
-			$has_images = preg_match_all('/\[[zi]mg(.*?)\](.*?)\[/ism',$i['body'],$images,PREG_SET_ORDER);
-
-			if ($activitypub) {
-				if ($has_images > 1) {
-					$convert_to_article = true;
-				}
-				if ($convert_to_article) {
-					$ret['type'] = 'Article';
-				}
-			}
-		}
+		$has_images = preg_match_all('/\[[zi]mg(.*?)\](.*?)\[/ism',$i['body'],$images,PREG_SET_ORDER);
 
 		$ret['id'] = $i['mid'];
 
@@ -889,11 +856,6 @@ class Activity {
 				$ret['summary'] = bbcode($i['summary'], [ $bbopts => true ]);
 			}
 			$opts = [ $bbopts => true ];
-			if ($activitypub && ! $convert_to_article) {
-				// This converts blockquote tags to unicode quotes to retain some sense of context after going
-				// through Mastodon's aggressive HTML purifier
-				$opts['plain'] = true;
-			}
 			$ret['content'] = bbcode($i['body'], $opts);
 			$ret['source'] = [ 'content' => $i['body'], 'mediaType' => 'text/bbcode' ];
 			if ($ret['summary']) {
