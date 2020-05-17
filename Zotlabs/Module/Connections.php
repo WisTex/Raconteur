@@ -3,6 +3,7 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\LibBlock;
 
 require_once('include/socgraph.php');
 
@@ -274,6 +275,9 @@ class Connections extends Controller {
 
 
 			foreach($r as $rr) {
+				if ((! $blocked) && LibBlock::fetch_by_entity(local_channel(),$rr['xchan_hash'])) {
+					continue;
+				}
 				if($rr['xchan_url']) {
 
 					if(($rr['vcard']) && is_array($rr['vcard']['tels']) && $rr['vcard']['tels'][0]['nr'])

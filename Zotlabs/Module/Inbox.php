@@ -80,6 +80,21 @@ class Inbox extends Controller {
 
 		if ($hsig['header_valid'] && $hsig['content_valid'] && $hsig['portable_id']) {
 			$observer_hash = $hsig['portable_id'];
+			// fetch the portable_id for the actor, which may or may not be the sender
+			$v = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s'",
+				dbesc($AS->actor['id']),
+				dbesc($AS->actor['id'])
+			);
+			// only allow relayed activities if the activity is signed with LDSigs
+			// AND the signature is valid AND the signer is the actor.
+			if ($v && $v[0]['hubloc_hash'] !== $observer_hash) {
+				if ($AS->signer && $AS->signer !== $AS->actor['id']) {
+					return;
+				}
+				if (! $AS->sigok) {
+					return;
+				}
+			}
 		}
 		else {
 			$observer_hash = $AS->actor['id'];
