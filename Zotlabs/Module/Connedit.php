@@ -423,6 +423,30 @@ class Connedit extends Controller {
 
 			switch ($cmd) {
 				case 'block':
+					if (intval($orig_record['abook_blocked']) {
+						LibBlock::remove(local_channel(),$orig_record['abook_xchan']);
+						$sync = [
+							'block_channel_id' => local_channel(),
+							'block_entity'     => $orig_record['abook_xchan'],
+							'block_type'       => BLOCKTYPE_CHANNEL,
+							'deleted'          => true,
+						];
+					}
+					else {
+						LibBlock::store( [
+							'block_channel_id' => local_channel(),
+							'block_entity'     => $orig_record['abook_xchan'],
+							'block_type'       => BLOCKTYPE_CHANNEL,
+							'block_comment'    => t('Added by Connedit')
+						]);
+						$z = q("insert into xign ( uid, xchan ) values ( %d , '%s' ) ",
+							intval(local_channel()),
+							dbesc($orig_record['abook_xchan'])
+						);
+						$sync = LibBlock::fetch_by_entity(local_channel(),$orig_record['abook_xchan']);
+					}
+					$ignored = [ 'uid' => local_channel(), 'xchan' => $orig_record['abook_xchan'] ];
+					Libsync::build_sync_packet(0, [ 'xign' => [ $ignored ], 'block' => [ $sync ]] );
 					$flag_result = abook_toggle_flag($orig_record,ABOOK_FLAG_BLOCKED);
 					break;
 				case 'ignore':
