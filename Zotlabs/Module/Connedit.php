@@ -8,6 +8,7 @@ use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\ActivityPub;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\AccessList;
+use Zotlabs\Lib\LibBlock;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Lib\Permcat;
