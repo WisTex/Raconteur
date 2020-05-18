@@ -50,20 +50,44 @@ class Superblock extends Controller {
 				
 				LibBlock::store($bl);
 
-				$sync = LibBlock::fetch_by_entity(local_channel(),$blocked);
+				$sync = [];
+				
+				$sync['block'] = [ LibBlock::fetch_by_entity(local_channel(),$blocked) ];
 
 				if ($type === BLOCKTYPE_CHANNEL) {
 					$z = q("insert into xign ( uid, xchan ) values ( %d , '%s' ) ",
 						intval(local_channel()),
 						dbesc($blocked)
 					);
-				
-					$ignored = [ 'uid' => local_channel(), 'xchan' => $_GET['block'] ];
-					Libsync::build_sync_packet(0, [ 'xign' => [ $ignored ], 'block' => [ $sync ]] );
+					$ab = q("select * from abook where abook_channel = %d and abook_xchan = '%s'",
+						intval(local_channel()),
+						dbesc($blocked)
+					);
+					if (($ab) && (! intval($ab['abook_blocked']))) {
+						q("update abook set abook_blocked = 1 where abook_channel = %d and abook_xchan = '%s'",
+							intval(local_channel()),
+							dbesc($blocked)
+						);
+						
+						$r = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
+							intval(local_channel()),
+							dbesc($blocked)
+						);
+						if ($r) {
+							$r = array_shift($r);
+							$abconfig = load_abconfig(local_channel(),$blocked);
+							if ($abconfig) {
+								$r['abconfig'] = $abconfig;
+							}
+							unset($r['abook_id']);
+							unset($r['abook_account']);
+							unset($r['abook_channel']);
+							$sync['abook'] = [ $r ];
+						}
+					}
+					$sync['xign'] = [[ 'uid' => local_channel(), 'xchan' => $_GET['block'] ]];
 				}
-				else {
-					Libsync::build_sync_packet(0, [ 'block' => [ $sync ]] );
-				}
+				Libsync::build_sync_packet(0, $sync);
 			}
 		}
 
@@ -74,26 +98,48 @@ class Superblock extends Controller {
 			if ($unblocked) {
 				$type = BLOCKTYPE_SERVER;				
 			}
-		}
+		}		
 		if ($unblocked)  {
 			$handled = true;
 			if (check_form_security_token('superblock','sectok')) {
 				$r = LibBlock::fetch_by_entity(local_channel(), $unblocked);
 				if ($r) {
 					LibBlock::remove(local_channel(), $unblocked);
+
+					$sync = [];
+					$sync['block'] = [[
+						'block_channel_id' => local_channel(),
+						'block_entity'     => $unblocked,
+						'block_type'       => $type,
+						'deleted'          => true,
+					]];
 					if ($type === BLOCKTYPE_CHANNEL) {
+						$ab = q("select * from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_xchan = '%s'",
+							intval(local_channel()),
+							dbesc($unblocked)
+						);		
+						if (($ab) && (intval($ab['abook_blocked']))) {
+							q("update abook set abook_blocked = 1 where abook_channel = %d and abook_xchan = '%s'",
+								intval(local_channel()),
+								dbesc($unblocked)
+							);
+							$ab['abook_blocked'] = 0;
+							$abconfig = load_abconfig(local_channel(),$unblocked);
+							if ($abconfig) {
+								$ab['abconfig'] = $abconfig;
+							}
+							unset($ab['abook_id']);
+							unset($ab['abook_account']);
+							unset($ab['abook_channel']);
+							$sync['abook'] = [ $ab ];
+						}
+
 						$z = q("delete from xign where uid = %d  and xchan = '%s' ",
 							intval(local_channel()),
 							dbesc($unblocked)
 						);
-						$ignored = [ 'uid' => local_channel(), 'xchan' => $unblocked, 'deleted' => true ];
-						$r['deleted'] = true;
-						Libsync::build_sync_packet(0, [ 'xign' => [ $ignored ], 'block' => [ $r ]] );
 					}
-					else {
-						$r['deleted'] = true;
-						Libsync::build_sync_packet(0, [ 'block' => [ $r ]] );
-					}
+					Libsync::build_sync_packet(0, $sync );
 				}
 			}
 		}
@@ -153,9 +199,6 @@ class Superblock extends Controller {
 			'$token'   => get_form_security_token('superblock'),
 			'$remove'  => t('Remove')
 		]);
-
-
-
 
 		$s .= replace_macros(get_markup_template('generic_app_settings.tpl'), [
 			'$addon' 	=> array('superblock', t('Manage Blocks'), '', t('Submit')),
