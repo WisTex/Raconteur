@@ -615,6 +615,8 @@ class Setup extends Controller {
 		$status = true;
 		$help = '';
 
+		@os_mkdir(TEMPLATE_BUILD_PATH, STORAGE_DEFAULT_PERMISSIONS, true);
+
 		if(! is_writable(TEMPLATE_BUILD_PATH) ) {
 			$status = false;
 			$help = t('This software uses the Smarty3 template engine to render its web views. Smarty3 compiles templates to PHP to speed up rendering.') .EOL;
@@ -635,8 +637,8 @@ class Setup extends Controller {
 		$status = true;
 		$help = '';
 
-		@os_mkdir(TEMPLATE_BUILD_PATH, STORAGE_DEFAULT_PERMISSIONS, true);
-
+		@os_mkdir('store', STORAGE_DEFAULT_PERMISSIONS, true);
+		
 		if(! is_writable('store')) {
 			$status = false;
 			$help = t('This software uses the store directory to save uploaded files. The web server needs to have write access to the store directory under the top level web folder') . EOL;
