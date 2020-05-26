@@ -2750,7 +2750,9 @@ class Activity {
 		if ((strpos($body,']' . $s . '[/img]') === false) && 
 			(strpos($body,']' . $s . '[/zmg]') === false) && 
 			(strpos($body,']' . $s . '[/video]') === false) && 
-			(strpos($body,']' . $s . '[/audio]') === false)) {
+			(strpos($body,']' . $s . '[/zvideo]') === false) && 
+			(strpos($body,']' . $s . '[/audio]') === false) && 
+			(strpos($body,']' . $s . '[/zaudio]') === false)) {
 			return true;
 		}
 		return false;
