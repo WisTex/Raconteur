@@ -125,7 +125,7 @@ class Register extends Controller {
 		$invite_code   = ((x($_POST,'invite_code'))  ? notags(trim($_POST['invite_code']))  : '');
 	
 		if ($using_invites && $invite_code) {
-			q("delete * from register where hash = '%s'", dbesc($invite_code));
+			q("delete from register where hash = '%s'", dbesc($invite_code));
 			// @FIXME - this also needs to be considered when using 'invites_remaining' in mod/invite.php
 			set_aconfig($result['account']['account_id'],'system','invites_remaining',$num_invites);
 		}
