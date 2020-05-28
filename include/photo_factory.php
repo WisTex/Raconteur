@@ -27,27 +27,18 @@ function photo_factory($data, $type = null) {
 		'image/svg+xml',
 	];
 
-	if($type && in_array(strtolower($type), $unsupported_types)) {
+	if ($type && in_array(strtolower($type), $unsupported_types)) {
 		logger('Unsupported image type ' . $type);
 		return null;
 	}
 
 	$ignore_imagick = get_config('system', 'ignore_imagick');
 
-	if(class_exists('Imagick') && !$ignore_imagick) {
-		$v = Imagick::getVersion();
-		preg_match('/ImageMagick ([0-9]+\.[0-9]+\.[0-9]+)/', $v['versionString'], $m);
-		if(version_compare($m[1], '6.6.7') >= 0) {
-			$ph = new PhotoImagick($data, $type);
-		} else {
-			// earlier imagick versions have issues with scaling png's
-			// don't log this because it will just fill the logfile.
-			// leave this note here so those who are looking for why
-			// we aren't using imagick can find it
-		}
+	if (class_exists('Imagick') && !$ignore_imagick) {
+		$ph = new PhotoImagick($data, $type);
 	}
 
-	if(! $ph) {
+	if (! $ph) {
 		$ph = new PhotoGd($data, $type);
 	}
 
@@ -64,8 +55,9 @@ function photo_factory($data, $type = null) {
  *   Headers to check for Content-Type (from curl request)
  * @return null|string Guessed mimetype
  */
+ 
 function guess_image_type($filename, $headers = '') {
-//	logger('Photo: guess_image_type: '.$filename . ($headers?' from curl headers':''), LOGGER_DEBUG);
+	//	logger('Photo: guess_image_type: '.$filename . ($headers?' from curl headers':''), LOGGER_DEBUG);
 	$type = null;
 	$m = null;
 
@@ -76,68 +68,63 @@ function guess_image_type($filename, $headers = '') {
 			list($k, $v) = array_map('trim', explode(':', trim($l), 2));
 			$hdrs[strtolower($k)] = $v;
 		}
-		logger('Curl headers: ' .var_export($hdrs, true), LOGGER_DEBUG);
-		if(array_key_exists('content-type', $hdrs)) {
+		logger('Curl headers: ' . print_r($hdrs, true), LOGGER_DEBUG);
+		if (array_key_exists('content-type', $hdrs)) {
 			$ph = photo_factory('');
 			$types = $ph->supportedTypes();
 
-			if(array_key_exists($hdrs['content-type'], $types))
+			if (array_key_exists($hdrs['content-type'], $types))
 				$type = $hdrs['content-type'];
 		}
 	}
 
-	if(is_null($type)){
+	if (is_null($type)) {
 		$ignore_imagick = get_config('system', 'ignore_imagick');
 		// Guessing from extension? Isn't that... dangerous?
 		if(class_exists('Imagick') && file_exists($filename) && is_readable($filename) && !$ignore_imagick) {
-			$v = Imagick::getVersion();
-			preg_match('/ImageMagick ([0-9]+\.[0-9]+\.[0-9]+)/', $v['versionString'], $m);
-			if(version_compare($m[1], '6.6.7') >= 0) {
 				/**
 				 * Well, this not much better,
 				 * but at least it comes from the data inside the image,
 				 * we won't be tricked by a manipulated extension
-			 	*/
+			 	 */
 				$image = new Imagick($filename);
 				$type = $image->getImageMimeType();
-			}
-			else {
-				// earlier imagick versions have issues with scaling png's
-				// don't log this because it will just fill the logfile.
-				// leave this note here so those who are looking for why
-				// we aren't using imagick can find it
-			}
 		}
 
-		if(is_null($type)) {
+		if (is_null($type)) {
 			$ext = pathinfo($filename, PATHINFO_EXTENSION);
 			$ph = photo_factory('');
 			$types = $ph->supportedTypes();
-			foreach($types as $m => $e) {
-				if($ext === $e) {
+			foreach ($types as $m => $e) {
+				if ($ext === $e) {
 					$type = $m;
 				}
 			}
 		}
 
-		if(is_null($type) && (strpos($filename, 'http') === false)) {
+		if (is_null($type) && (strpos($filename, 'http') === false)) {
 			$size = getimagesize($filename);
 			$ph = photo_factory('');
 			$types = $ph->supportedTypes();
 			$type = ((array_key_exists($size['mime'], $types)) ? $size['mime'] : 'image/jpeg');
 		}
-		if(is_null($type)) {
-			if(strpos(strtolower($filename),'jpg') !== false)
+		if (is_null($type)) {
+			if (strpos(strtolower($filename),'jpg') !== false) {
 				$type = 'image/jpeg';
-			elseif(strpos(strtolower($filename),'jpeg') !== false)
+			}
+			elseif (strpos(strtolower($filename),'jpeg') !== false) {
 				$type = 'image/jpeg';
-			elseif(strpos(strtolower($filename),'gif') !== false)
+			}
+			elseif (strpos(strtolower($filename),'gif') !== false) {
 				$type = 'image/gif';
-			elseif(strpos(strtolower($filename),'png') !== false)
+			}
+			elseif (strpos(strtolower($filename),'png') !== false) {
 				$type = 'image/png';
+			}
 		}
 
 	}
+	
 	logger('Photo: guess_image_type: filename = ' . $filename . ' type = ' . $type, LOGGER_DEBUG);
 
 	return $type;
@@ -157,8 +144,9 @@ function delete_thing_photo($url, $ob_hash) {
 
 	// hashes should be 32 bytes.
 
-	if((! $ob_hash) || (strlen($hash) < 16))
+	if ((! $ob_hash) || (strlen($hash) < 16)) {
 		return;
+	}
 
 	q("delete from photo where xchan = '%s' and photo_usage = %d and resource_id = '%s'",
 		dbesc($ob_hash),
@@ -251,7 +239,7 @@ function import_xchan_photo($photo, $xchan, $thing = false, $force = false) {
 					$margin = $width - $height;
 					$img->cropImage(300, ($margin / 2), 0, $height, $height);
 				}
-				elseif(($height / $width) > 1.2) {
+				elseif (($height / $width) > 1.2) {
 					// crop out the bottom
 					$margin = $height - $width;
 					$img->cropImage(300, 0, 0, $width, $width);
@@ -326,10 +314,10 @@ function import_xchan_photo($photo, $xchan, $thing = false, $force = false) {
 function import_channel_photo_from_url($photo, $aid, $uid) {
 	$type = null;
 
-	if($photo) {
+	if ($photo) {
 		$result = z_fetch_url($photo, true);
 
-		if($result['success']) {
+		if ($result['success']) {
 			$img_str = $result['body'];
 			$type = guess_image_type($photo, $result['header']);
 
@@ -358,46 +346,51 @@ function import_channel_photo($photo, $type, $aid, $uid) {
 	$filename = $hash;
 
 	$img = photo_factory($photo, $type);
-	if($img->is_valid()) {
+	if ($img->is_valid()) {
 
 		// config array for image save method
 		$p = [
-				'aid' => $aid,
-				'uid' => $uid,
-				'resource_id' => $hash,
-				'filename' => $filename,
-				'album' => t('Profile Photos'),
-				'photo_usage' => PHOTO_PROFILE,
-				'imgscale' => 4,
+			'aid'         => $aid,
+			'uid'         => $uid,
+			'resource_id' => $hash,
+			'filename'    => $filename,
+			'album'       => t('Profile Photos'),
+			'photo_usage' => PHOTO_PROFILE,
+			'imgscale'    => PHOTO_RES_PROFILE_300,
 		];
 
 		// photo size
 		$img->scaleImageSquare(300);
 		$r = $img->save($p);
-		if($r === false)
+		if ($r === false) {
 			$photo_failure = true;
-
+		}
+		
 		// thumb size
 		$img->scaleImage(80);
 		$p['imgscale'] = 5;
 		$r = $img->save($p);
-		if($r === false)
+		if ($r === false) {
 			$photo_failure = true;
-
+		}
+		
 		// micro size
 		$img->scaleImage(48);
 		$p['imgscale'] = 6;
 		$r = $img->save($p);
-		if($r === false)
+		if ($r === false) {
 			$photo_failure = true;
+		}
 
-	} else {
+	}
+	else {
 		logger('Invalid image.');
 		$photo_failure = true;
 	}
 
-	if($photo_failure)
+	if ($photo_failure) {
 		return false;
-	else
-		return $hash;
+	}
+
+	return $hash;
 }

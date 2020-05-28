@@ -25,12 +25,11 @@ use Zotlabs\Access\AccessControl;
 use Zotlabs\Daemon\Master;
 
 
-require_once('include/bbcode.php');
+
 require_once('include/oembed.php');
-require_once('include/message.php');
 require_once('include/feedutils.php');
 require_once('include/photo_factory.php');
-require_once('include/permissions.php');
+
 
 /**
  * @brief Collects recipients.
