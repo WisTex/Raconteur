@@ -9,6 +9,7 @@ use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Daemon\Master;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\LibBlock;
+use Zotlabs\Lib\Markdown;
 use Emoji;
 
 require_once('include/html2bbcode.php');
@@ -1915,12 +1916,27 @@ class Activity {
 
 		if (is_array($act->obj)) {
 			$binary = false;
+			$markdown = false;
+			
 			if (array_key_exists('mediaType',$act->obj) && $act->obj['mediaType'] !== 'text/html') {
-				$s['mimetype'] = escape_tags($act->obj['mediaType']);
-				$binary = true;
+				if ($act->obj['mediaType'] === 'text/markdown') {
+					$markdown = true;
+				}
+				else {
+					$s['mimetype'] = escape_tags($act->obj['mediaType']);
+					$binary = true;
+				}
 			}
 
 			$content = self::get_content($act->obj,$binary);
+
+			// handle markdown conversion inline (peertube)
+			
+			if ($markdown) {
+				foreach ( [ 'summary', 'content' ] as $t) {
+					$content[$t] = Markdown::to_bbcode($content[$t],true, [ 'preserve_lf' => true ]); 
+				}
+			}
 		}
 
 		// These activities should have been handled separately in the Inbox module and should not be turned into posts
@@ -2150,8 +2166,17 @@ class Activity {
 					'video/webm'
 				];
 
-				$mps = [];
-				$ptr = null;
+				$mps    = [];
+				$poster = null;
+				$ptr    = null;
+
+				if (array_key_exists('icon',$act->obj)) {
+					if (is_array($act->obj['icon']) && array_key_exists('type',$act->obj['icon']) && $act->obj['icon']['type'] === 'Image' && is_string($act->obj['icon']['url'])) {
+						$poster = $act->obj['icon']['url'];
+					}
+				}
+
+				$tag = (($poster) ? '[video poster=&quot;' . $poster . '&quot;]' : '[video]' );
 
 				if (array_key_exists('url',$act->obj)) {
 					if (is_array($act->obj['url'])) {
@@ -2185,13 +2210,13 @@ class Activity {
 						usort($mps,[ __CLASS__, 'vid_sort' ]);
 						foreach ($mps as $m) {
 							if (intval($m['width']) < 500 && self::media_not_in_body($m['href'],$s['body'])) {
-								$s['body'] .= "\n\n" . '[video]' . $m['href'] . '[/video]';
+								$s['body'] .= "\n\n" . $tag . $m['href'] . '[/video]';
 								break;
 							}
 						}
 					}
 					elseif (is_string($act->obj['url']) && self::media_not_in_body($act->obj['url'],$s['body'])) {
-						$s['body'] .= "\n\n" . '[video]' . $act->obj['url'] . '[/video]';
+						$s['body'] .= "\n\n" . $tag . $act->obj['url'] . '[/video]';
 					}
 				}
 			}
