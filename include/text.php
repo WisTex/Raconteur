@@ -2786,8 +2786,8 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 		
         // $r is set if we found something
 
-        if($r) {
-            foreach($r as $xc) {
+        if ($r) {
+            foreach ($r as $xc) {
                 $profile = $xc['xchan_url'];
                 $newname = (($tagpref && $xc['xchan_addr']) ? $xc['xchan_addr'] : $xc['xchan_name']);
 				if (intval($tagpref) === 2 && $xc['xchan_addr']) {
@@ -2837,11 +2837,10 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 
             // note that we aren't setting $replaced even though we're replacing text.
             // This tag isn't going to get a term attached to it. It's only used for
-            // access control. The link points to out own channel just so it doesn't look
-            // weird - as all the other tags are linked to something.
+            // access control. 
 
             if(local_channel() && local_channel() == $profile_uid) {
-			$grp = AccessList::byname($profile_uid,$name);
+				$grp = AccessList::byname($profile_uid,$name);
                 if($grp) {
 					$g = q("select * from pgrp where id = %d and visible = 1 limit 1",
                         intval($grp)
