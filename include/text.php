@@ -10,6 +10,8 @@ use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\SvgSanitizer;
 use Zotlabs\Lib\Img_cache;
+use Zotlabs\Lib\PConfig;
+use Zotlabs\Lib\Config;
 
 use Michelf\MarkdownExtra;
 use Ramsey\Uuid\Uuid;
@@ -2777,13 +2779,17 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
         $fn_results = [];
         $access_tag = EMPTY_STR;
 
-
+		// some platforms prefer to mention people by username rather than display name.
+		// make this a personal choice by the publisher
+		
+		$tagpref = PConfig::Get($profile_uid,'system','tag_username',Config::Get('system','tag_username',false));
+		
         // $r is set if we found something
 
         if($r) {
             foreach($r as $xc) {
                 $profile = $xc['xchan_url'];
-                $newname = $xc['xchan_name'];
+                $newname = (($tagpref && $xc['xchan_addr']) ? $xc['xchan_addr'] : $xc['xchan_name']);
                 // add the channel's xchan_hash to $access_tag if exclusive
                 if($exclusive) {
                     $access_tag = 'cid:' . $xc['xchan_hash'];
