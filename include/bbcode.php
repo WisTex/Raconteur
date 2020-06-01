@@ -1511,6 +1511,11 @@ function bbcode($Text, $options = []) {
 
 	}
 
+	// Friendica generates this
+	if (strpos($Text,'[/abstract]') !== false) {
+		$Text = preg_replace_callback("/\[abstract\](.*?)\[\/abstract\]/ism", '<h3>$1</h3>', $Text);
+	}
+
 	if (strpos($Text,'[checklist]') !== false) {
 		$Text = preg_replace_callback("/\[checklist\](.*?)\[\/checklist\]/ism", 'bb_checklist', $Text);
 	}
