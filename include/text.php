@@ -2790,6 +2790,9 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
             foreach($r as $xc) {
                 $profile = $xc['xchan_url'];
                 $newname = (($tagpref && $xc['xchan_addr']) ? $xc['xchan_addr'] : $xc['xchan_name']);
+				if (intval($tagpref) === 2 && $xc['xchan_addr']) {
+					$newname = sprintf( t('%1$s (%2$s)'), $xc['xchan_name'], $newname);
+				}
                 // add the channel's xchan_hash to $access_tag if exclusive
                 if($exclusive) {
                     $access_tag = 'cid:' . $xc['xchan_hash'];
