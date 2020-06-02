@@ -2445,14 +2445,14 @@ class Activity {
 				}
 				
 				if ($txt) {
-					$s['body'] = preg_replace('/\@\[zrl\=' . preg_quote($tag['url'],'/') . '\](.*?)\[\/zrl\]/ism',
-						'@[zrl=' . $tag['url'] . ']' . $txt . '[/zrl]',$s['body']);
-					$s['body'] = preg_replace('/\@\[url\=' . preg_quote($tag['url'],'/') . '\](.*?)\[\/url\]/ism',
-						'@[url=' . $tag['url'] . ']' . $txt . '[/url]',$s['body']);
-					$s['body'] = preg_replace('/\[zrl\=' . preg_quote($tag['url'],'/') . '\]@(.*?)\[\/zrl\]/ism',
-						'[zrl=' . $tag['url'] . ']@' . $txt . '[/zrl]',$s['body']);
-					$s['body'] = preg_replace('/\[url\=' . preg_quote($tag['url'],'/') . '\]@(.*?)\[\/url\]/ism',
-						'[url=' . $tag['url'] . ']@' . $txt . '[/url]',$s['body']);
+					$s['body'] = preg_replace('/\@\[zrl\=' . preg_quote($x[0]['xchan_url'],'/') . '\](.*?)\[\/zrl\]/ism',
+						'@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',$s['body']);
+					$s['body'] = preg_replace('/\@\[url\=' . preg_quote($x[0]['xchan_url'],'/') . '\](.*?)\[\/url\]/ism',
+						'@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',$s['body']);
+					$s['body'] = preg_replace('/\[zrl\=' . preg_quote($x[0]['xchan_url'],'/') . '\]@(.*?)\[\/zrl\]/ism',
+						'[zrl=' . $x[0]['xchan_url'] . ']@' . $txt . '[/zrl]',$s['body']);
+					$s['body'] = preg_replace('/\[url\=' . preg_quote($x[0]['xchan_url'],'/') . '\]@(.*?)\[\/url\]/ism',
+						'[url=' . $x[0]['xchan_url'] . ']@' . $txt . '[/url]',$s['body']);
 				}
 			}
 		}
