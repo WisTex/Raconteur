@@ -2421,7 +2421,7 @@ class Activity {
 					// some platforms put the identity url into href rather than the profile url. Accept either form.
 					$x = q("select * from xchan where xchan_url = '%s' or xchan_hash = '%s' limit 1",
 						dbesc($tag['url']),
-						dbesc($tag['url']),
+						dbesc($tag['url'])
 					);
 					if ($x) {
 						switch ($pref) {
