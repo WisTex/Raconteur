@@ -2782,19 +2782,24 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 		// some platforms prefer to mention people by username rather than display name.
 		// make this a personal choice by the publisher
 		
-		$tagpref = PConfig::Get($profile_uid,'system','tag_username',Config::Get('system','tag_username',false));
+		$tagpref = intval(PConfig::Get($profile_uid,'system','tag_username',Config::Get('system','tag_username',false)));
 		
         // $r is set if we found something
 
         if ($r) {
             foreach ($r as $xc) {
                 $profile = $xc['xchan_url'];
-                $newname = (($tagpref && $xc['xchan_addr']) ? $xc['xchan_addr'] : $xc['xchan_name']);
-				if (intval($tagpref) === 2 && $xc['xchan_addr']) {
+
+				$newname = $xc['xchan_name'];
+				
+				if ($tagpref === 1 && $xc['xchan_addr']) {
+					$newname = $xc['xchan_addr'];
+				}
+				if ($tagpref === 2 && $xc['xchan_addr']) {
 					$newname = sprintf( t('%1$s (%2$s)'), $xc['xchan_name'], $newname);
 				}
                 // add the channel's xchan_hash to $access_tag if exclusive
-                if($exclusive) {
+                if ($exclusive) {
                     $access_tag = 'cid:' . $xc['xchan_hash'];
                 }
 

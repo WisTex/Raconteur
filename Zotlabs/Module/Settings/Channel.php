@@ -703,6 +703,7 @@ class Channel {
 					0 => t('the channel display name'),
 					1 => t('the channel nickname'),
 					2 => t('display name (nickname)'),
+					127 => t('no preference, use the system default'),
 				]],
 				
 			'$cal_first_day' => array('first_day', t('Calendar week begins on'), intval(get_pconfig(local_channel(),'system','cal_first_day')), t('This varies by country/culture'),

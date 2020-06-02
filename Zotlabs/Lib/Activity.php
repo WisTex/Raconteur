@@ -2406,15 +2406,22 @@ class Activity {
 		// 0 - displayname
 		// 1 - username
 		// 2 - displayname (username)
-
+		// 127 - default
+		
 		$pref = intval(PConfig::Get($s['uid'],'system','tag_username',Config::Get('system','tag_username',false)));
+
+		if ($pref === 127) {
+			return;
+		}
 
 		if ($s['term']) {
 			foreach ($s['term'] as $tag) {
 				$txt = EMPTY_STR;
 				if (intval($tag['ttype']) === TERM_MENTION) {
-					$x = q("select * from xchan where xchan_url = '%s' limit 1",
-						dbesc($tag['url'])
+					// some platforms put the identity url into href rather than the profile url. Accept either form.
+					$x = q("select * from xchan where xchan_url = '%s' or xchan_hash = '%s' limit 1",
+						dbesc($tag['url']),
+						dbesc($tag['url']),
 					);
 					if ($x) {
 						switch ($pref) {
