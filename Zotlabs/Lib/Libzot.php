@@ -13,6 +13,7 @@ use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Lib\LibBlock;
+use Zotlabs\Lib\Activity;
 use Zotlabs\Daemon\Master;
 
 
@@ -2020,6 +2021,8 @@ class Libzot {
 				}
 
 				$item_id = 0;
+
+				Activity::rewrite_mentions($arr);
 
 				if (($arr['mid'] == $arr['parent_mid']) && (! post_is_importable($arr['uid'],$arr,$abook))) {
 					$DR->update('post ignored');

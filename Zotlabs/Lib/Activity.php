@@ -8,6 +8,7 @@ use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Daemon\Master;
 use Zotlabs\Lib\PConfig;
+use Zotlabs\Lib\Config;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Markdown;
 use Emoji;
@@ -2068,7 +2069,8 @@ class Activity {
 		else {
 			$s['body']     = ((self::bb_content($content,'bbcode') && (! $response_activity)) ? self::bb_content($content,'bbcode') : self::bb_content($content,'content'));
 		}
-		
+
+
 		// handle some of the more widely used of the numerous and varied ways of deleting something
 		
 		if ($act->type === 'Tombstone') {
@@ -2136,6 +2138,7 @@ class Activity {
 				$s['iconfig'] = $a;
 			}
 		}
+
 
 
 		if ($act->obj['type'] === 'Note' && $s['attach']) {
@@ -2375,6 +2378,7 @@ class Activity {
 			set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
 		}
 
+
 		// Restrict html caching to ActivityPub senders.
 		// Zot has dynamic content and this library is used by both. 
 		
@@ -2397,6 +2401,64 @@ class Activity {
 
 	}
 
+	static function rewrite_mentions(&$s) {
+		// rewrite incoming mentions in accordance with system.tag_username setting
+		// 0 - displayname
+		// 1 - username
+		// 2 - displayname (username)
+
+		$pref = intval(PConfig::Get($s['uid'],'system','tag_username',Config::Get('system','tag_username',false)));
+
+		if ($s['term']) {
+			foreach ($s['term'] as $tag) {
+				$txt = EMPTY_STR;
+				if (intval($tag['ttype']) === TERM_MENTION) {
+					$x = q("select * from xchan where xchan_url = '%s' limit 1",
+						dbesc($tag['url'])
+					);
+					if ($x) {
+						switch ($pref) {
+							case 0:
+								$txt = $x[0]['xchan_name'];
+								break;
+							case 1:
+								$txt = (($x[0]['xchan_addr']) ? $x[0]['xchan_addr'] : $x[0]['xchan_name']);
+								break;
+							case 2:
+							default;
+								if ($x[0]['xchan_addr']) {
+									$txt = sprintf( t('%1$s (%2$s)'), $x[0]['xchan_name'], $x[0]['xchan_addr']);
+								}
+								else {
+									$txt = $x[0]['xchan_name'];
+								}
+								break;
+						}
+					}
+				}
+				
+				if ($txt) {
+					$s['body'] = preg_replace('/\@\[zrl\=' . preg_quote($tag['url'],'/') . '\](.*?)\[\/zrl\]/ism',
+						'@[zrl=' . $tag['url'] . ']' . $txt . '[/zrl]',$s['body']);
+					$s['body'] = preg_replace('/\@\[url\=' . preg_quote($tag['url'],'/') . '\](.*?)\[\/url\]/ism',
+						'@[url=' . $tag['url'] . ']' . $txt . '[/url]',$s['body']);
+					$s['body'] = preg_replace('/\[zrl\=' . preg_quote($tag['url'],'/') . '\]@(.*?)\[\/zrl\]/ism',
+						'[zrl=' . $tag['url'] . ']@' . $txt . '[/zrl]',$s['body']);
+					$s['body'] = preg_replace('/\[url\=' . preg_quote($tag['url'],'/') . '\]@(.*?)\[\/url\]/ism',
+						'[url=' . $tag['url'] . ']@' . $txt . '[/url]',$s['body']);
+				}
+			}
+		}
+		
+		// $s['html'] will be populated if caching was enabled.
+		// This is usually the case for ActivityPub sourced content, while Zot6 content is not cached.
+
+		if ($s['html']) {
+			$s['html'] = bbcode($s['body']);
+		}
+
+		return;
+	}
 
 	static function store($channel,$observer_hash,$act,$item,$fetch_parents = true) {
 
@@ -2526,9 +2588,6 @@ class Activity {
 			return;
 		}
 
-
-
-
 		if ($channel['channel_system']) {
 			if (! MessageFilter::evaluate($item,get_config('system','pubstream_incl'),get_config('system','pubstream_excl'))) {
 				logger('post is filtered');
@@ -2616,6 +2675,8 @@ class Activity {
 			}
 			$item['parent_mid'] = $p[0]['parent_mid'];
 		}
+
+		self::rewrite_mentions($item);
 
 		$r = q("select id, created, edited from item where mid = '%s' and uid = %d limit 1",
 			dbesc($item['mid']),
