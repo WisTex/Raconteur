@@ -2450,9 +2450,9 @@ class Activity {
 					$s['body'] = preg_replace('/\@\[url\=' . preg_quote($x[0]['xchan_url'],'/') . '\](.*?)\[\/url\]/ism',
 						'@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',$s['body']);
 					$s['body'] = preg_replace('/\[zrl\=' . preg_quote($x[0]['xchan_url'],'/') . '\]@(.*?)\[\/zrl\]/ism',
-						'[zrl=' . $x[0]['xchan_url'] . ']@' . $txt . '[/zrl]',$s['body']);
+						'@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',$s['body']);
 					$s['body'] = preg_replace('/\[url\=' . preg_quote($x[0]['xchan_url'],'/') . '\]@(.*?)\[\/url\]/ism',
-						'[url=' . $x[0]['xchan_url'] . ']@' . $txt . '[/url]',$s['body']);
+						'@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',$s['body']);
 				}
 			}
 		}
