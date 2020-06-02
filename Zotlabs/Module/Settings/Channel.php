@@ -157,7 +157,7 @@ class Channel {
 //		$anymention       = ((x($_POST,'anymention')) ? intval($_POST['anymention'])  : 0);  
 		$hyperdrive       = ((x($_POST,'hyperdrive')) ? intval($_POST['hyperdrive'])  : 0);  
 		$activitypub      = ((x($_POST,'activitypub')) ? intval($_POST['activitypub'])  : 0);  
-
+		$tag_username     = ((x($_POST,'tag_username')) ? intval($_POST['tag_username'])  : 0);  
 		$post_newfriend   = (($_POST['post_newfriend'] == 1) ? 1: 0);
 		$post_joingroup   = (($_POST['post_joingroup'] == 1) ? 1: 0);
 		$post_profilechange   = (($_POST['post_profilechange'] == 1) ? 1: 0);
@@ -294,7 +294,9 @@ class Channel {
 		set_pconfig(local_channel(),'system','hyperdrive',$hyperdrive);
 		set_pconfig(local_channel(),'system','activitypub',$activitypub);
 		set_pconfig(local_channel(),'system','autoperms',$autoperms);
+		set_pconfig(local_channel(),'system','tag_username',$tag_username);
 		set_pconfig(local_channel(),'system','permit_all_mentions',$permit_all_mentions);
+		
 	
 		$r = q("update channel set channel_name = '%s', channel_pageflags = %d, channel_timezone = '%s', channel_location = '%s', channel_notifyflags = %d, channel_max_anon_mail = %d, channel_max_friend_req = %d, channel_expire_days = %d $set_perms where channel_id = %d",
 			dbesc($username),
@@ -696,6 +698,13 @@ class Channel {
 			'$menu_desc' => t('Personal menu to display in your channel pages'),
 			'$removeme' => t('Remove Channel'),
 			'$removechannel' => t('Remove this channel.'),
+			'$tag_username' => [ 'tag_username', t('Mentions should display'), intval(get_pconfig(local_channel(),'system','tag_username',get_config('system','tag_username',false))),'',
+				[
+					0 => t('the channel display name'),
+					1 => t('the channel nickname'),
+					2 => t('display name (nickname)'),
+				]],
+				
 			'$cal_first_day' => array('first_day', t('Calendar week begins on'), intval(get_pconfig(local_channel(),'system','cal_first_day')), t('This varies by country/culture'),
 				[   0 => t('Sunday'),
 					1 => t('Monday'),

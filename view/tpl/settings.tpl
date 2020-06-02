@@ -118,6 +118,8 @@
 						{{$apdoc}}
 						</div>
 						{{$activitypub}}
+						{{include file="field_select.tpl" field=$tag_username}}
+
 						<div class="settings-submit-wrapper" >
 							<button type="submit" name="submit" class="btn btn-primary">{{$submit}}</button>
 						</div>
