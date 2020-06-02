@@ -698,11 +698,11 @@ class Channel {
 			'$menu_desc' => t('Personal menu to display in your channel pages'),
 			'$removeme' => t('Remove Channel'),
 			'$removechannel' => t('Remove this channel.'),
-			'$tag_username' => [ 'tag_username', t('Mentions should display'), intval(get_pconfig(local_channel(),'system','tag_username',get_config('system','tag_username',false))),'',
+			'$tag_username' => [ 'tag_username', t('Mentions should display'), intval(get_pconfig(local_channel(),'system','tag_username',get_config('system','tag_username',false))), t('Changes to this setting are applied to new posts/comments only. It is not retroactive.'),
 				[
-					0 => t('the channel display name'),
-					1 => t('the channel nickname'),
-					2 => t('display name (nickname)'),
+					0 => t('the channel display name [example: @Barbara Jenkins]'),
+					1 => t('the channel nickname [example: @barbara1976]'),
+					2 => t('combined [example: @Barbara Jenkins (barbara1976)]'),
 					127 => t('no preference, use the system default'),
 				]],
 				
