@@ -2406,14 +2406,21 @@ class Activity {
 		// 0 - displayname
 		// 1 - username
 		// 2 - displayname (username)
-
+		// 127 - default
+		
 		$pref = intval(PConfig::Get($s['uid'],'system','tag_username',Config::Get('system','tag_username',false)));
+
+		if ($pref === 127) {
+			return;
+		}
 
 		if ($s['term']) {
 			foreach ($s['term'] as $tag) {
 				$txt = EMPTY_STR;
 				if (intval($tag['ttype']) === TERM_MENTION) {
-					$x = q("select * from xchan where xchan_url = '%s' limit 1",
+					// some platforms put the identity url into href rather than the profile url. Accept either form.
+					$x = q("select * from xchan where xchan_url = '%s' or xchan_hash = '%s' limit 1",
+						dbesc($tag['url']),
 						dbesc($tag['url'])
 					);
 					if ($x) {
@@ -2438,14 +2445,14 @@ class Activity {
 				}
 				
 				if ($txt) {
-					$s['body'] = preg_replace('/\@\[zrl\=' . preg_quote($tag['url'],'/') . '\](.*?)\[\/zrl\]/ism',
-						'@[zrl=' . $tag['url'] . ']' . $txt . '[/zrl]',$s['body']);
-					$s['body'] = preg_replace('/\@\[url\=' . preg_quote($tag['url'],'/') . '\](.*?)\[\/url\]/ism',
-						'@[url=' . $tag['url'] . ']' . $txt . '[/url]',$s['body']);
-					$s['body'] = preg_replace('/\[zrl\=' . preg_quote($tag['url'],'/') . '\]@(.*?)\[\/zrl\]/ism',
-						'[zrl=' . $tag['url'] . ']@' . $txt . '[/zrl]',$s['body']);
-					$s['body'] = preg_replace('/\[url\=' . preg_quote($tag['url'],'/') . '\]@(.*?)\[\/url\]/ism',
-						'[url=' . $tag['url'] . ']@' . $txt . '[/url]',$s['body']);
+					$s['body'] = preg_replace('/\@\[zrl\=' . preg_quote($x[0]['xchan_url'],'/') . '\](.*?)\[\/zrl\]/ism',
+						'@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',$s['body']);
+					$s['body'] = preg_replace('/\@\[url\=' . preg_quote($x[0]['xchan_url'],'/') . '\](.*?)\[\/url\]/ism',
+						'@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',$s['body']);
+					$s['body'] = preg_replace('/\[zrl\=' . preg_quote($x[0]['xchan_url'],'/') . '\]@(.*?)\[\/zrl\]/ism',
+						'@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',$s['body']);
+					$s['body'] = preg_replace('/\[url\=' . preg_quote($x[0]['xchan_url'],'/') . '\]@(.*?)\[\/url\]/ism',
+						'@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',$s['body']);
 				}
 			}
 		}
