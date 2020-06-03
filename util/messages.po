@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 20.06.02\n"
+"Project-Id-Version: 20.06.03\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-01 21:52-0700\n"
+"POT-Creation-Date: 2020-06-02 22:02-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,7 +48,7 @@ msgstr ""
 #: ../../Zotlabs/Access/PermissionRoles.php:187
 #: ../../Zotlabs/Module/Manage.php:73 ../../Zotlabs/Module/Manage.php:170
 #: ../../Zotlabs/Module/Directory.php:395 ../../Zotlabs/Storage/Browser.php:131
-#: ../../include/text.php:2928
+#: ../../include/text.php:2939
 msgid "Collection"
 msgstr ""
 
@@ -380,8 +380,8 @@ msgstr ""
 
 #: ../../Zotlabs/Lib/Apps.php:355 ../../Zotlabs/Module/Connections.php:373
 #: ../../Zotlabs/Module/Search.php:47 ../../Zotlabs/Widget/Sitesearch.php:31
-#: ../../include/nav.php:174 ../../include/text.php:972
-#: ../../include/text.php:984 ../../include/acl_selectors.php:118
+#: ../../include/nav.php:174 ../../include/acl_selectors.php:118
+#: ../../include/text.php:972 ../../include/text.php:984
 msgid "Search"
 msgstr ""
 
@@ -1684,7 +1684,7 @@ msgstr ""
 msgid "&#x1f501; Repeated %1$s's %2$s"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Activity.php:2430 ../../include/text.php:2794
+#: ../../Zotlabs/Lib/Activity.php:2437 ../../include/text.php:2805
 #, php-format
 msgid "%1$s (%2$s)"
 msgstr ""
@@ -2663,7 +2663,7 @@ msgstr ""
 msgid "Site settings updated."
 msgstr ""
 
-#: ../../Zotlabs/Module/Admin/Site.php:195 ../../include/text.php:3198
+#: ../../Zotlabs/Module/Admin/Site.php:195 ../../include/text.php:3209
 #: ../../view/theme/redbasic/php/config.php:15
 msgid "Default"
 msgstr ""
@@ -3135,12 +3135,12 @@ msgstr ""
 msgid "Insufficient permissions.  Request redirected to profile page."
 msgstr ""
 
-#: ../../Zotlabs/Module/Channel.php:221 ../../Zotlabs/Module/Stream.php:170
+#: ../../Zotlabs/Module/Channel.php:221 ../../Zotlabs/Module/Stream.php:177
 msgid "Search Results For:"
 msgstr ""
 
 #: ../../Zotlabs/Module/Channel.php:256 ../../Zotlabs/Module/Pubstream.php:84
-#: ../../Zotlabs/Module/Hq.php:137 ../../Zotlabs/Module/Stream.php:208
+#: ../../Zotlabs/Module/Hq.php:137 ../../Zotlabs/Module/Stream.php:215
 #: ../../Zotlabs/Module/Display.php:85
 msgid "Reset form"
 msgstr ""
@@ -4899,23 +4899,23 @@ msgstr ""
 msgid "Download PDL file"
 msgstr ""
 
-#: ../../Zotlabs/Module/Stream.php:116
+#: ../../Zotlabs/Module/Stream.php:123
 msgid "No such group"
 msgstr ""
 
-#: ../../Zotlabs/Module/Stream.php:157
+#: ../../Zotlabs/Module/Stream.php:164
 msgid "No such channel"
 msgstr ""
 
-#: ../../Zotlabs/Module/Stream.php:247
+#: ../../Zotlabs/Module/Stream.php:254
 msgid "Access list is empty"
 msgstr ""
 
-#: ../../Zotlabs/Module/Stream.php:258
+#: ../../Zotlabs/Module/Stream.php:265
 msgid "Access list: "
 msgstr ""
 
-#: ../../Zotlabs/Module/Stream.php:306
+#: ../../Zotlabs/Module/Stream.php:313
 #: ../../extend/addon/a/zotpost/Mod_zotpost.php:29
 msgid "Invalid channel."
 msgstr ""
@@ -5820,8 +5820,8 @@ msgid "thing"
 msgstr ""
 
 #: ../../Zotlabs/Module/Like.php:348 ../../Zotlabs/Module/Subthread.php:111
-#: ../../Zotlabs/Module/Tagger.php:71 ../../include/text.php:2080
-#: ../../include/conversation.php:120
+#: ../../Zotlabs/Module/Tagger.php:71 ../../include/conversation.php:120
+#: ../../include/text.php:2080
 msgid "photo"
 msgstr ""
 
@@ -5832,8 +5832,8 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Like.php:350 ../../Zotlabs/Module/Calendar.php:252
 #: ../../Zotlabs/Module/Events.php:284 ../../Zotlabs/Module/Tagger.php:75
-#: ../../include/event.php:1208 ../../include/text.php:2083
-#: ../../include/conversation.php:123
+#: ../../include/event.php:1208 ../../include/conversation.php:123
+#: ../../include/text.php:2083
 msgid "event"
 msgstr ""
 
@@ -8503,57 +8503,67 @@ msgstr ""
 msgid "Mentions should display"
 msgstr ""
 
+#: ../../Zotlabs/Module/Settings/Channel.php:701
+msgid ""
+"Changes to this setting are applied to new posts/comments only. It is not "
+"retroactive."
+msgstr ""
+
 #: ../../Zotlabs/Module/Settings/Channel.php:703
-msgid "the channel display name"
+msgid "the channel display name [example: @Barbara Jenkins]"
 msgstr ""
 
 #: ../../Zotlabs/Module/Settings/Channel.php:704
-msgid "the channel nickname"
+msgid "the channel nickname [example: @barbara1976]"
 msgstr ""
 
 #: ../../Zotlabs/Module/Settings/Channel.php:705
-msgid "display name (nickname)"
+msgid "combined [example: @Barbara Jenkins (barbara1976)]"
 msgstr ""
 
-#: ../../Zotlabs/Module/Settings/Channel.php:708
-msgid "Calendar week begins on"
-msgstr ""
-
-#: ../../Zotlabs/Module/Settings/Channel.php:708
-msgid "This varies by country/culture"
+#: ../../Zotlabs/Module/Settings/Channel.php:706
+msgid "no preference, use the system default"
 msgstr ""
 
 #: ../../Zotlabs/Module/Settings/Channel.php:709
+msgid "Calendar week begins on"
+msgstr ""
+
+#: ../../Zotlabs/Module/Settings/Channel.php:709
+msgid "This varies by country/culture"
+msgstr ""
+
+#: ../../Zotlabs/Module/Settings/Channel.php:710
 #: ../../include/js_strings.php:88 ../../include/text.php:1303
 msgid "Sunday"
 msgstr ""
 
-#: ../../Zotlabs/Module/Settings/Channel.php:710
+#: ../../Zotlabs/Module/Settings/Channel.php:711
 #: ../../include/js_strings.php:89 ../../include/text.php:1303
 msgid "Monday"
 msgstr ""
 
-#: ../../Zotlabs/Module/Settings/Channel.php:711
+#: ../../Zotlabs/Module/Settings/Channel.php:712
 #: ../../include/js_strings.php:90 ../../include/text.php:1303
 msgid "Tuesday"
 msgstr ""
 
-#: ../../Zotlabs/Module/Settings/Channel.php:712
+#: ../../Zotlabs/Module/Settings/Channel.php:713
 #: ../../include/js_strings.php:91 ../../include/text.php:1303
 msgid "Wednesday"
 msgstr ""
 
-#: ../../Zotlabs/Module/Settings/Channel.php:713
+#: ../../Zotlabs/Module/Settings/Channel.php:714
 #: ../../include/js_strings.php:92 ../../include/text.php:1303
 msgid "Thursday"
 msgstr ""
 
-#: ../../Zotlabs/Module/Settings/Channel.php:714
+#: ../../Zotlabs/Module/Settings/Channel.php:715
 #: ../../include/js_strings.php:93 ../../include/text.php:1303
 msgid "Friday"
 msgstr ""
 
-#: ../../Zotlabs/Module/Settings/Channel.php:715
+#: ../../Zotlabs/Module/Settings/Channel.php:716
 #: ../../include/js_strings.php:94 ../../include/text.php:1303
 msgid "Saturday"
 msgstr ""
@@ -8792,8 +8802,8 @@ msgstr ""
 msgid "Post not found."
 msgstr ""
 
-#: ../../Zotlabs/Module/Tagger.php:81 ../../include/text.php:2088
-#: ../../include/conversation.php:153
+#: ../../Zotlabs/Module/Tagger.php:81 ../../include/conversation.php:153
+#: ../../include/text.php:2088
 msgid "comment"
 msgstr ""
 
@@ -10630,320 +10640,6 @@ msgstr ""
 msgid "Empty path"
 msgstr ""
 
-#: ../../include/text.php:497
-msgid "prev"
-msgstr ""
-
-#: ../../include/text.php:499
-msgid "first"
-msgstr ""
-
-#: ../../include/text.php:528
-msgid "last"
-msgstr ""
-
-#: ../../include/text.php:531
-msgid "next"
-msgstr ""
-
-#: ../../include/text.php:542
-msgid "older"
-msgstr ""
-
-#: ../../include/text.php:544
-msgid "newer"
-msgstr ""
-
-#: ../../include/text.php:1072 ../../include/text.php:1076
-msgid "poke"
-msgstr ""
-
-#: ../../include/text.php:1072 ../../include/text.php:1076
-#: ../../include/conversation.php:267
-msgid "poked"
-msgstr ""
-
-#: ../../include/text.php:1077
-msgid "ping"
-msgstr ""
-
-#: ../../include/text.php:1077
-msgid "pinged"
-msgstr ""
-
-#: ../../include/text.php:1078
-msgid "prod"
-msgstr ""
-
-#: ../../include/text.php:1078
-msgid "prodded"
-msgstr ""
-
-#: ../../include/text.php:1079
-msgid "slap"
-msgstr ""
-
-#: ../../include/text.php:1079
-msgid "slapped"
-msgstr ""
-
-#: ../../include/text.php:1080
-msgid "finger"
-msgstr ""
-
-#: ../../include/text.php:1080
-msgid "fingered"
-msgstr ""
-
-#: ../../include/text.php:1081
-msgid "rebuff"
-msgstr ""
-
-#: ../../include/text.php:1081
-msgid "rebuffed"
-msgstr ""
-
-#: ../../include/text.php:1104
-msgid "happy"
-msgstr ""
-
-#: ../../include/text.php:1105
-msgid "sad"
-msgstr ""
-
-#: ../../include/text.php:1106
-msgid "mellow"
-msgstr ""
-
-#: ../../include/text.php:1107
-msgid "tired"
-msgstr ""
-
-#: ../../include/text.php:1108
-msgid "perky"
-msgstr ""
-
-#: ../../include/text.php:1109
-msgid "angry"
-msgstr ""
-
-#: ../../include/text.php:1110
-msgid "stupefied"
-msgstr ""
-
-#: ../../include/text.php:1111
-msgid "puzzled"
-msgstr ""
-
-#: ../../include/text.php:1112
-msgid "interested"
-msgstr ""
-
-#: ../../include/text.php:1113
-msgid "bitter"
-msgstr ""
-
-#: ../../include/text.php:1114
-msgid "cheerful"
-msgstr ""
-
-#: ../../include/text.php:1115
-msgid "alive"
-msgstr ""
-
-#: ../../include/text.php:1116
-msgid "annoyed"
-msgstr ""
-
-#: ../../include/text.php:1117
-msgid "anxious"
-msgstr ""
-
-#: ../../include/text.php:1118
-msgid "cranky"
-msgstr ""
-
-#: ../../include/text.php:1119
-msgid "disturbed"
-msgstr ""
-
-#: ../../include/text.php:1120
-msgid "frustrated"
-msgstr ""
-
-#: ../../include/text.php:1121
-msgid "depressed"
-msgstr ""
-
-#: ../../include/text.php:1122
-msgid "motivated"
-msgstr ""
-
-#: ../../include/text.php:1123
-msgid "relaxed"
-msgstr ""
-
-#: ../../include/text.php:1124
-msgid "surprised"
-msgstr ""
-
-#: ../../include/text.php:1307
-msgid "May"
-msgstr ""
-
-#: ../../include/text.php:1389
-msgid "Unknown Attachment"
-msgstr ""
-
-#: ../../include/text.php:1392
-msgid "unknown"
-msgstr ""
-
-#: ../../include/text.php:1432
-msgid "remove category"
-msgstr ""
-
-#: ../../include/text.php:1506
-msgid "remove from file"
-msgstr ""
-
-#: ../../include/text.php:1640
-msgid "Added to your calendar"
-msgstr ""
-
-#: ../../include/text.php:1709
-msgid "Link"
-msgstr ""
-
-#: ../../include/text.php:1788
-msgid "Poll has ended."
-msgstr ""
-
-#: ../../include/text.php:1791
-#, php-format
-msgid "Poll ends: %s"
-msgstr ""
-
-#: ../../include/text.php:1796
-msgid "vote"
-msgstr ""
-
-#: ../../include/text.php:1808
-msgid "Download binary/encrypted content"
-msgstr ""
-
-#: ../../include/text.php:1932
-msgid "Page layout"
-msgstr ""
-
-#: ../../include/text.php:1932
-msgid "You can create your own with the layouts tool"
-msgstr ""
-
-#: ../../include/text.php:1942
-msgid "BBcode"
-msgstr ""
-
-#: ../../include/text.php:1943
-msgid "HTML"
-msgstr ""
-
-#: ../../include/text.php:1944
-msgid "Markdown"
-msgstr ""
-
-#: ../../include/text.php:1945
-msgid "Text"
-msgstr ""
-
-#: ../../include/text.php:1946
-msgid "Comanche Layout"
-msgstr ""
-
-#: ../../include/text.php:1951
-msgid "PHP"
-msgstr ""
-
-#: ../../include/text.php:1960
-msgid "Page content type"
-msgstr ""
-
-#: ../../include/text.php:2093
-msgid "activity"
-msgstr ""
-
-#: ../../include/text.php:2197
-msgid "a-z, 0-9, -, and _ only"
-msgstr ""
-
-#: ../../include/text.php:2524
-msgid "Design Tools"
-msgstr ""
-
-#: ../../include/text.php:2530
-msgid "Pages"
-msgstr ""
-
-#: ../../include/text.php:2552
-msgid "Import website..."
-msgstr ""
-
-#: ../../include/text.php:2553
-msgid "Select folder to import"
-msgstr ""
-
-#: ../../include/text.php:2554
-msgid "Import from a zipped folder:"
-msgstr ""
-
-#: ../../include/text.php:2555
-msgid "Import from cloud files:"
-msgstr ""
-
-#: ../../include/text.php:2556
-msgid "/cloud/channel/path/to/folder"
-msgstr ""
-
-#: ../../include/text.php:2557
-msgid "Enter path to website files"
-msgstr ""
-
-#: ../../include/text.php:2558
-msgid "Select folder"
-msgstr ""
-
-#: ../../include/text.php:2559
-msgid "Export website..."
-msgstr ""
-
-#: ../../include/text.php:2560
-msgid "Export to a zip file"
-msgstr ""
-
-#: ../../include/text.php:2561
-msgid "website.zip"
-msgstr ""
-
-#: ../../include/text.php:2562
-msgid "Enter a name for the zip file."
-msgstr ""
-
-#: ../../include/text.php:2563
-msgid "Export to cloud files"
-msgstr ""
-
-#: ../../include/text.php:2564
-msgid "/path/to/export/folder"
-msgstr ""
-
-#: ../../include/text.php:2565
-msgid "Enter a path to a cloud files destination."
-msgstr ""
-
-#: ../../include/text.php:2566
-msgid "Specify folder"
-msgstr ""
-
 #: ../../include/bbcode.php:266 ../../include/bbcode.php:1634
 msgid "Encrypted content"
 msgstr ""
@@ -11315,6 +11011,11 @@ msgstr ""
 msgid "%1$s poked %2$s"
 msgstr ""
 
+#: ../../include/conversation.php:267 ../../include/text.php:1072
+#: ../../include/text.php:1076
+msgid "poked"
+msgstr ""
+
 #: ../../include/conversation.php:700
 msgid "Toggle Star Status"
 msgstr ""
@@ -11625,6 +11326,315 @@ msgstr ""
 
 #: ../../include/channel.php:586 ../../include/channel.php:675
 msgid "Unable to retrieve modified identity"
+msgstr ""
+
+#: ../../include/text.php:497
+msgid "prev"
+msgstr ""
+
+#: ../../include/text.php:499
+msgid "first"
+msgstr ""
+
+#: ../../include/text.php:528
+msgid "last"
+msgstr ""
+
+#: ../../include/text.php:531
+msgid "next"
+msgstr ""
+
+#: ../../include/text.php:542
+msgid "older"
+msgstr ""
+
+#: ../../include/text.php:544
+msgid "newer"
+msgstr ""
+
+#: ../../include/text.php:1072 ../../include/text.php:1076
+msgid "poke"
+msgstr ""
+
+#: ../../include/text.php:1077
+msgid "ping"
+msgstr ""
+
+#: ../../include/text.php:1077
+msgid "pinged"
+msgstr ""
+
+#: ../../include/text.php:1078
+msgid "prod"
+msgstr ""
+
+#: ../../include/text.php:1078
+msgid "prodded"
+msgstr ""
+
+#: ../../include/text.php:1079
+msgid "slap"
+msgstr ""
+
+#: ../../include/text.php:1079
+msgid "slapped"
+msgstr ""
+
+#: ../../include/text.php:1080
+msgid "finger"
+msgstr ""
+
+#: ../../include/text.php:1080
+msgid "fingered"
+msgstr ""
+
+#: ../../include/text.php:1081
+msgid "rebuff"
+msgstr ""
+
+#: ../../include/text.php:1081
+msgid "rebuffed"
+msgstr ""
+
+#: ../../include/text.php:1104
+msgid "happy"
+msgstr ""
+
+#: ../../include/text.php:1105
+msgid "sad"
+msgstr ""
+
+#: ../../include/text.php:1106
+msgid "mellow"
+msgstr ""
+
+#: ../../include/text.php:1107
+msgid "tired"
+msgstr ""
+
+#: ../../include/text.php:1108
+msgid "perky"
+msgstr ""
+
+#: ../../include/text.php:1109
+msgid "angry"
+msgstr ""
+
+#: ../../include/text.php:1110
+msgid "stupefied"
+msgstr ""
+
+#: ../../include/text.php:1111
+msgid "puzzled"
+msgstr ""
+
+#: ../../include/text.php:1112
+msgid "interested"
+msgstr ""
+
+#: ../../include/text.php:1113
+msgid "bitter"
+msgstr ""
+
+#: ../../include/text.php:1114
+msgid "cheerful"
+msgstr ""
+
+#: ../../include/text.php:1115
+msgid "alive"
+msgstr ""
+
+#: ../../include/text.php:1116
+msgid "annoyed"
+msgstr ""
+
+#: ../../include/text.php:1117
+msgid "anxious"
+msgstr ""
+
+#: ../../include/text.php:1118
+msgid "cranky"
+msgstr ""
+
+#: ../../include/text.php:1119
+msgid "disturbed"
+msgstr ""
+
+#: ../../include/text.php:1120
+msgid "frustrated"
+msgstr ""
+
+#: ../../include/text.php:1121
+msgid "depressed"
+msgstr ""
+
+#: ../../include/text.php:1122
+msgid "motivated"
+msgstr ""
+
+#: ../../include/text.php:1123
+msgid "relaxed"
+msgstr ""
+
+#: ../../include/text.php:1124
+msgid "surprised"
+msgstr ""
+
+#: ../../include/text.php:1307
+msgid "May"
+msgstr ""
+
+#: ../../include/text.php:1389
+msgid "Unknown Attachment"
+msgstr ""
+
+#: ../../include/text.php:1392
+msgid "unknown"
+msgstr ""
+
+#: ../../include/text.php:1432
+msgid "remove category"
+msgstr ""
+
+#: ../../include/text.php:1506
+msgid "remove from file"
+msgstr ""
+
+#: ../../include/text.php:1640
+msgid "Added to your calendar"
+msgstr ""
+
+#: ../../include/text.php:1709
+msgid "Link"
+msgstr ""
+
+#: ../../include/text.php:1788
+msgid "Poll has ended."
+msgstr ""
+
+#: ../../include/text.php:1791
+#, php-format
+msgid "Poll ends: %s"
+msgstr ""
+
+#: ../../include/text.php:1796
+msgid "vote"
+msgstr ""
+
+#: ../../include/text.php:1808
+msgid "Download binary/encrypted content"
+msgstr ""
+
+#: ../../include/text.php:1932
+msgid "Page layout"
+msgstr ""
+
+#: ../../include/text.php:1932
+msgid "You can create your own with the layouts tool"
+msgstr ""
+
+#: ../../include/text.php:1942
+msgid "BBcode"
+msgstr ""
+
+#: ../../include/text.php:1943
+msgid "HTML"
+msgstr ""
+
+#: ../../include/text.php:1944
+msgid "Markdown"
+msgstr ""
+
+#: ../../include/text.php:1945
+msgid "Text"
+msgstr ""
+
+#: ../../include/text.php:1946
+msgid "Comanche Layout"
+msgstr ""
+
+#: ../../include/text.php:1951
+msgid "PHP"
+msgstr ""
+
+#: ../../include/text.php:1960
+msgid "Page content type"
+msgstr ""
+
+#: ../../include/text.php:2093
+msgid "activity"
+msgstr ""
+
+#: ../../include/text.php:2197
+msgid "a-z, 0-9, -, and _ only"
+msgstr ""
+
+#: ../../include/text.php:2524
+msgid "Design Tools"
+msgstr ""
+
+#: ../../include/text.php:2530
+msgid "Pages"
+msgstr ""
+
+#: ../../include/text.php:2552
+msgid "Import website..."
+msgstr ""
+
+#: ../../include/text.php:2553
+msgid "Select folder to import"
+msgstr ""
+
+#: ../../include/text.php:2554
+msgid "Import from a zipped folder:"
+msgstr ""
+
+#: ../../include/text.php:2555
+msgid "Import from cloud files:"
+msgstr ""
+
+#: ../../include/text.php:2556
+msgid "/cloud/channel/path/to/folder"
+msgstr ""
+
+#: ../../include/text.php:2557
+msgid "Enter path to website files"
+msgstr ""
+
+#: ../../include/text.php:2558
+msgid "Select folder"
+msgstr ""
+
+#: ../../include/text.php:2559
+msgid "Export website..."
+msgstr ""
+
+#: ../../include/text.php:2560
+msgid "Export to a zip file"
+msgstr ""
+
+#: ../../include/text.php:2561
+msgid "website.zip"
+msgstr ""
+
+#: ../../include/text.php:2562
+msgid "Enter a name for the zip file."
+msgstr ""
+
+#: ../../include/text.php:2563
+msgid "Export to cloud files"
+msgstr ""
+
+#: ../../include/text.php:2564
+msgid "/path/to/export/folder"
+msgstr ""
+
+#: ../../include/text.php:2565
+msgid "Enter a path to a cloud files destination."
+msgstr ""
+
+#: ../../include/text.php:2566
+msgid "Specify folder"
 msgstr ""
 
 #: ../../util/nconfig.php:34
