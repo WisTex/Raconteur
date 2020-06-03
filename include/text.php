@@ -2790,8 +2790,14 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
             foreach ($r as $xc) {
                 $profile = $xc['xchan_url'];
 
-				$newname = $xc['xchan_name'];
+				// $tagpref
+				// 0 use display name
+				// 1 use username@host
+				// 2 use 'display name (username@host)'
+				// 127 use display name outbound and don't change inbound
 				
+				$newname = $xc['xchan_name'];
+
 				if ($tagpref === 1 && $xc['xchan_addr']) {
 					$newname = $xc['xchan_addr'];
 				}

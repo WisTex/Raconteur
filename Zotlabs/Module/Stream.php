@@ -520,7 +520,7 @@ class Stream extends Controller {
 		elseif ($update) {
 	
 			// Normal conversation view
-	
+
 			if($order === 'post')
 				$ordering = "created";
 			else
