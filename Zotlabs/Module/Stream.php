@@ -25,7 +25,7 @@ class Stream extends Controller {
 	
 		$channel = App::get_channel();
 		App::$profile_uid = local_channel();
-		App::$data = $channel;
+		App::$data['channel'] = $channel;
 		head_set_icon($channel['xchan_photo_s']);	
 	}
 	
@@ -46,8 +46,15 @@ class Stream extends Controller {
 		$arr = [ 'query' => App::$query_string ];
 		call_hooks('stream_content_init', $arr);
 	
-		$channel = App::$data;
+		$channel = App::$data['channel'];
+
+		// if called from liveUpdate() we will not have called Stream::init() on this request and $channel will not be set
 		
+		if (! $channel) {
+			$channel = App::get_channel();
+		}
+
+
 		$item_normal = item_normal();
 		$item_normal_update = item_normal_update();
 	
@@ -419,6 +426,7 @@ class Stream extends Controller {
 		}
 
 		if ($conv) {
+		
 			$item_thread_top = '';
 
 			if ($nouveau) {
