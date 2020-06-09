@@ -276,6 +276,9 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
 	// First find out what the channel owner declared permissions to be.
 
 	$channel_perm = PermissionLimits::Get($uid,$permission);
+	if ($channel_perm === false) {
+		return false;
+	}
 
 	$r = q("select channel_pageflags, channel_moved, channel_hash from channel where channel_id = %d limit 1",
 		intval($uid)
