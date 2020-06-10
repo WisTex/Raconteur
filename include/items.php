@@ -4602,7 +4602,7 @@ function copy_of_pubitem($channel,$mid) {
 	}
 
 
-	$r = q("select * from item where parent_mid = (select parent_mid from item where mid = '%s' and uid = %d ) order by id ",
+	$r = q("select * from item where parent_mid = (select parent_mid from item where mid = '%s' and ( uid = %d OR ( item_private = 0 and item_wall = 1 ) ) ) order by id ",
 		dbesc($mid),
 		intval($syschan['channel_id'])
 	);

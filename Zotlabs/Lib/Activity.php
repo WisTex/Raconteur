@@ -1208,7 +1208,7 @@ class Activity {
 		if (strpos($verb,ACTIVITY_POKE) !== false)
 			return 'Activity';
 
-		// We should return false, however this will trigger an uncaught execption  and crash 
+		// We should return false, however this will trigger an uncaught exception  and crash 
 		// the delivery system if encountered by the JSON-LDSignature library
  
 		logger('Unmapped activity: ' . $verb);
