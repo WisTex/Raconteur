@@ -79,6 +79,9 @@ web server platforms.
     - some form of email server or email gateway such that PHP mail() works.
 
     - Mysql 5.5.3 or later or MariaDB or postgres database server.
+	Case-insensitive search is not supported on postgres. This is not harmful,
+	but postgres nodes should probably not be used as directory servers due
+	to this limitation. 
     
     - ability to schedule jobs with cron.
 
