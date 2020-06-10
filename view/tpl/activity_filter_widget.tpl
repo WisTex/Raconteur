@@ -7,7 +7,6 @@
 		</a>
 		{{/if}}
 	</h3>
-	{{$content}}
 	{{if $name}}
 	<div class="notifications-textinput">
 		<form method="get" action="{{$name.url}}" role="search">
@@ -22,4 +21,5 @@
 		});
 	</script>
 	{{/if}}
+	{{$content}}
 </div>
