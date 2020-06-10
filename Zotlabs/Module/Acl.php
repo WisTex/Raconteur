@@ -86,7 +86,7 @@ class Acl extends Controller {
 
 		if ($search) {
 			$sql_extra = " AND pgrp.gname LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " ";
-			$sql_extra2 = " AND ( xchan_name LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " OR xchan_addr LIKE " . protect_sprintf( "'%" . dbesc(punify($search)) . ((strpos($search,'@') === false) ? "%@%'"  : "%'")) . OR abook_alias like " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . ") ";
+			$sql_extra2 = " AND ( xchan_name LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " OR xchan_addr LIKE " . protect_sprintf( "'%" . dbesc(punify($search)) . ((strpos($search,'@') === false) ? "%@%'"  : "%'")) . " OR abook_alias like " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . ") ";
 
 
 
