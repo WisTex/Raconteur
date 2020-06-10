@@ -11,14 +11,14 @@
 	{{if $name}}
 	<div class="notifications-textinput">
 		<form method="get" action="{{$name.url}}" role="search">
-			<div class="text-muted notifications-textinput-filter"><i class="fa fa-fw fa-filter"></i></div>
-			<input id="cid" type="hidden" value="" name="cid" />
-			<input id="cid-filter" class="form-control form-control-sm{{if $name.sel}} {{$name.sel}}{{/if}}" type="text" value="" placeholder="{{$name.label}}" name="name" title="" />
+			<div class="text-muted notifications-textinput-filter"><i class="fa fa-fw fa-users"></i></div>
+			<input id="xchan" type="hidden" value="" name="xchan" />
+			<input id="xchan-filter" class="form-control form-control-sm{{if $name.sel}} {{$name.sel}}{{/if}}" autocomplete="off" autofill="off" type="text" value="" placeholder="{{$name.label}}" name="name" title="" />
 		</form>
 	</div>
 	<script>
-		$("#cid-filter").name_autocomplete(baseurl + '/acl', 'a', true, function(data) {
-			$("#cid").val(data.id);
+		$("#xchan-filter").name_autocomplete(baseurl + '/acl', 'x', true, function(data) {
+			$("#xchan").val(data.xchan);
 		});
 	</script>
 	{{/if}}
