@@ -333,7 +333,7 @@ class Acl extends Controller {
 						"name"     => $g['name'],
 						"nick"     => $g['address'],
 						'link'     => (($g['address']) ? $g['address'] : $g['url']),
-						'xchan'    => urlencode($g['hash'])
+						'xchan'    => $g['hash']
 					];
 				}
 			}
