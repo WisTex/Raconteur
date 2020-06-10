@@ -10,7 +10,7 @@
 	{{if $name}}
 	<div class="notifications-textinput">
 		<form method="get" action="{{$name.url}}" role="search">
-			<div class="text-muted notifications-textinput-filter"><i class="fa fa-fw fa-users"></i></div>
+			<div class="text-muted notifications-textinput-filter"><i class="fa fa-fw fa-user"></i></div>
 			<input id="xchan" type="hidden" value="" name="xchan" />
 			<input id="xchan-filter" class="form-control form-control-sm{{if $name.sel}} {{$name.sel}}{{/if}}" autocomplete="off" autofill="off" type="text" value="" placeholder="{{$name.label}}" name="name" title="" />
 		</form>
