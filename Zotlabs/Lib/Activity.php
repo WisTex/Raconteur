@@ -1931,6 +1931,15 @@ class Activity {
 
 			$content = self::get_content($act->obj,$binary);
 
+			if ($cacheable) {
+				// Zot6 activities will all be rendered from bbcode source in order to generate dynamic content.
+				// If the activity came from ActivityPub (hence $cacheable is set), use the HTML rendering
+				// and discard the bbcode source since it is unlikely that it is compatible with our implementation.
+				// Friendica for example.
+				
+				unset($content['bbcode']);
+			}
+
 			// handle markdown conversion inline (peertube)
 			
 			if ($markdown) {
