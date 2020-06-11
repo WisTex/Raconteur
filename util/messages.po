@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 20.06.03\n"
+"Project-Id-Version: 20.06.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-02 22:02-0700\n"
+"POT-Creation-Date: 2020-06-10 15:12-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -462,9 +462,8 @@ msgstr ""
 msgid "Channel Sources"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:374
+#: ../../Zotlabs/Lib/Apps.php:374 ../../extend/addon/a/gallery/gallery.php:46
 #: ../../extend/addon/a/gallery/Mod_Gallery.php:137
-#: ../../extend/addon/a/gallery/gallery.php:46
 msgid "Gallery"
 msgstr ""
 
@@ -1060,8 +1059,8 @@ msgstr ""
 #: ../../extend/addon/a/content_import/Mod_content_import.php:142
 #: ../../extend/addon/a/openstreetmap/openstreetmap.php:168
 #: ../../extend/addon/a/flashcards/Mod_Flashcards.php:262
-#: ../../extend/addon/a/faces/Mod_Faces.php:149
-#: ../../extend/addon/a/faces/faces.php:108
+#: ../../extend/addon/a/faces/Mod_Faces.php:155
+#: ../../extend/addon/a/faces/faces.php:118
 msgid "Submit"
 msgstr ""
 
@@ -1773,10 +1772,6 @@ msgstr ""
 #: ../../Zotlabs/Module/Acl.php:129 ../../include/acl_selectors.php:88
 msgctxt "acl"
 msgid "Profile"
-msgstr ""
-
-#: ../../Zotlabs/Module/Acl.php:375
-msgid "network"
 msgstr ""
 
 #: ../../Zotlabs/Module/Ping.php:350
@@ -2530,6 +2525,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Settings/Oauth2.php:136
 #: ../../Zotlabs/Module/Sharedwithme.php:104
 #: ../../Zotlabs/Storage/Browser.php:291
+#: ../../Zotlabs/Widget/Activity_filter.php:259
 msgid "Name"
 msgstr ""
 
@@ -3139,8 +3135,8 @@ msgstr ""
 msgid "Search Results For:"
 msgstr ""
 
-#: ../../Zotlabs/Module/Channel.php:256 ../../Zotlabs/Module/Pubstream.php:84
-#: ../../Zotlabs/Module/Hq.php:137 ../../Zotlabs/Module/Stream.php:215
+#: ../../Zotlabs/Module/Channel.php:256 ../../Zotlabs/Module/Hq.php:137
+#: ../../Zotlabs/Module/Stream.php:215 ../../Zotlabs/Module/Pubstream.php:84
 #: ../../Zotlabs/Module/Display.php:85
 msgid "Reset form"
 msgstr ""
@@ -3961,6 +3957,10 @@ msgstr ""
 msgid "Find"
 msgstr ""
 
+#: ../../Zotlabs/Module/Acl.php:376
+msgid "network"
+msgstr ""
+
 #: ../../Zotlabs/Module/Appman.php:40 ../../Zotlabs/Module/Appman.php:57
 msgid "App installed."
 msgstr ""
@@ -4178,7 +4178,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Settings/Channel.php:313
 #: ../../extend/addon/a/logrot/logrot.php:55
 #: ../../extend/addon/a/openstreetmap/openstreetmap.php:184
-#: ../../extend/addon/a/faces/faces.php:172
+#: ../../extend/addon/a/faces/faces.php:200
 msgid "Settings updated."
 msgstr ""
 
@@ -4570,13 +4570,13 @@ msgstr ""
 #: ../../Zotlabs/Module/Connedit.php:630 ../../Zotlabs/Module/Photos.php:694
 #: ../../Zotlabs/Module/Photos.php:1065 ../../include/acl_selectors.php:123
 #: ../../extend/addon/a/flashcards/Mod_Flashcards.php:254
-#: ../../extend/addon/a/faces/Mod_Faces.php:141
+#: ../../extend/addon/a/faces/Mod_Faces.php:147
 msgid "Permissions"
 msgstr ""
 
 #: ../../Zotlabs/Module/Filestorage.php:198
 #: ../../extend/addon/a/flashcards/Mod_Flashcards.php:261
-#: ../../extend/addon/a/faces/Mod_Faces.php:148
+#: ../../extend/addon/a/faces/Mod_Faces.php:154
 msgid "Set/edit permissions"
 msgstr ""
 
@@ -7117,7 +7117,7 @@ msgid ""
 "server root."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:736 ../../extend/addon/a/faces/faces.php:183
+#: ../../Zotlabs/Module/Setup.php:736 ../../extend/addon/a/faces/faces.php:211
 msgid "Errors encountered creating database tables."
 msgstr ""
 
@@ -9651,11 +9651,11 @@ msgstr ""
 msgid "Show followed hashtags"
 msgstr ""
 
-#: ../../Zotlabs/Widget/Activity_filter.php:275
+#: ../../Zotlabs/Widget/Activity_filter.php:273
 msgid "Remove active filter"
 msgstr ""
 
-#: ../../Zotlabs/Widget/Activity_filter.php:291
+#: ../../Zotlabs/Widget/Activity_filter.php:289
 msgid "Stream Filters"
 msgstr ""
 
@@ -10908,79 +10908,6 @@ msgstr ""
 msgid "Upload New Photos"
 msgstr ""
 
-#: ../../include/items.php:986
-msgid "(Unknown)"
-msgstr ""
-
-#: ../../include/items.php:1168
-msgid "Visible to anybody on the internet."
-msgstr ""
-
-#: ../../include/items.php:1170
-msgid "Visible to you only."
-msgstr ""
-
-#: ../../include/items.php:1172
-msgid "Visible to anybody in this network."
-msgstr ""
-
-#: ../../include/items.php:1174
-msgid "Visible to anybody authenticated."
-msgstr ""
-
-#: ../../include/items.php:1176
-#, php-format
-msgid "Visible to anybody on %s."
-msgstr ""
-
-#: ../../include/items.php:1178
-msgid "Visible to all connections."
-msgstr ""
-
-#: ../../include/items.php:1180
-msgid "Visible to approved connections."
-msgstr ""
-
-#: ../../include/items.php:1182
-msgid "Visible to specific connections."
-msgstr ""
-
-#: ../../include/items.php:3946
-msgid "Privacy group not found."
-msgstr ""
-
-#: ../../include/items.php:3962
-msgid "Privacy group is empty."
-msgstr ""
-
-#: ../../include/items.php:3969
-#, php-format
-msgid "Privacy group: %s"
-msgstr ""
-
-#: ../../include/items.php:3981
-msgid "Connection not found."
-msgstr ""
-
-#: ../../include/items.php:4326
-msgid "profile photo"
-msgstr ""
-
-#: ../../include/items.php:4530
-#, php-format
-msgid "[Edited %s]"
-msgstr ""
-
-#: ../../include/items.php:4530
-msgctxt "edit_activity"
-msgid "Post"
-msgstr ""
-
-#: ../../include/items.php:4530
-msgctxt "edit_activity"
-msgid "Comment"
-msgstr ""
-
 #: ../../include/conversation.php:173
 #, php-format
 msgid "%1$s repeated %2$s's %3$s"
@@ -11637,6 +11564,79 @@ msgstr ""
 msgid "Specify folder"
 msgstr ""
 
+#: ../../include/items.php:986
+msgid "(Unknown)"
+msgstr ""
+
+#: ../../include/items.php:1168
+msgid "Visible to anybody on the internet."
+msgstr ""
+
+#: ../../include/items.php:1170
+msgid "Visible to you only."
+msgstr ""
+
+#: ../../include/items.php:1172
+msgid "Visible to anybody in this network."
+msgstr ""
+
+#: ../../include/items.php:1174
+msgid "Visible to anybody authenticated."
+msgstr ""
+
+#: ../../include/items.php:1176
+#, php-format
+msgid "Visible to anybody on %s."
+msgstr ""
+
+#: ../../include/items.php:1178
+msgid "Visible to all connections."
+msgstr ""
+
+#: ../../include/items.php:1180
+msgid "Visible to approved connections."
+msgstr ""
+
+#: ../../include/items.php:1182
+msgid "Visible to specific connections."
+msgstr ""
+
+#: ../../include/items.php:3946
+msgid "Privacy group not found."
+msgstr ""
+
+#: ../../include/items.php:3962
+msgid "Privacy group is empty."
+msgstr ""
+
+#: ../../include/items.php:3969
+#, php-format
+msgid "Privacy group: %s"
+msgstr ""
+
+#: ../../include/items.php:3981
+msgid "Connection not found."
+msgstr ""
+
+#: ../../include/items.php:4326
+msgid "profile photo"
+msgstr ""
+
+#: ../../include/items.php:4530
+#, php-format
+msgid "[Edited %s]"
+msgstr ""
+
+#: ../../include/items.php:4530
+msgctxt "edit_activity"
+msgid "Post"
+msgstr ""
+
+#: ../../include/items.php:4530
+msgctxt "edit_activity"
+msgid "Comment"
+msgstr ""
+
 #: ../../util/nconfig.php:34
 msgid "Source channel not found."
 msgstr ""
@@ -11968,6 +11968,10 @@ msgstr ""
 msgid "Not allowed."
 msgstr ""
 
+#: ../../extend/addon/a/gallery/gallery.php:49
+msgid "Photo Gallery"
+msgstr ""
+
 #: ../../extend/addon/a/gallery/Mod_Gallery.php:59
 msgid "Gallery App"
 msgstr ""
@@ -11976,19 +11980,15 @@ msgstr ""
 msgid "A simple gallery for your photo albums"
 msgstr ""
 
-#: ../../extend/addon/a/gallery/gallery.php:49
-msgid "Photo Gallery"
-msgstr ""
-
-#: ../../extend/addon/a/faces/Mod_Faces.php:1718
+#: ../../extend/addon/a/faces/Mod_Faces.php:1739
 msgid "Face detection is not activated"
 msgstr ""
 
-#: ../../extend/addon/a/faces/Mod_Faces.php:1728
+#: ../../extend/addon/a/faces/Mod_Faces.php:1749
 msgid "Face detection is still busy"
 msgstr ""
 
-#: ../../extend/addon/a/faces/faces.php:201
+#: ../../extend/addon/a/faces/faces.php:229
 msgid "Errors encountered deleting all rows of database table "
 msgstr ""
 
