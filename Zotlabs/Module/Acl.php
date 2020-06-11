@@ -49,6 +49,8 @@ class Acl extends Controller {
 		//  'm'  =>  autocomplete private mail recipient (checks post_mail permission)
 		//  'a'  =>  autocomplete connections (mod_connections, mod_poke, mod_sources, mod_photos)
 		//  'x'  =>  nav search bar autocomplete (match any xchan)
+		//  'z'  =>  autocomplete any xchan, but also include abook_alias, requires non-zero local_channel()
+		//           and also contains xid without urlencode, used specifically by activity_filter widget
 		// $_REQUEST['query'] contains autocomplete search text.
 	
 		// List of channels whose connections to also suggest, 
@@ -151,7 +153,7 @@ class Acl extends Controller {
 			);
 
 			if ($r) {	
-				foreach ($r as $g){
+				foreach ($r as $g) {
 		//		logger('acl: group: ' . $g['gname'] . ' members: ' . AccessList::members_xchan(local_channel(),$g['id']));
 					$groups[] = [
 						"type"  => "g",
@@ -323,6 +325,16 @@ class Acl extends Controller {
 			);
 	
 		}
+		elseif ($type == 'z') {
+			$r = q("SELECT xchan_name as name, xchan_hash as hash, xchan_addr as nick, xchan_photo_s as micro, xchan_network as network, xchan_url as url, xchan_addr as attag FROM xchan left join abook on xchan_hash = abook_xchan
+				WHERE ( abook_channel = %d OR abook_channel IS NULL ) 
+				and xchan_deleted = 0
+				$sql_extra3
+				ORDER BY xchan_name ASC ",
+				intval(local_channel())
+			);
+		}
+
 		elseif ($type == 'x') {
 			$contacts = [];
 			$r = $this->navbar_complete();
@@ -356,7 +368,11 @@ class Acl extends Controller {
 					continue;
 				}
 
-				$g['hash'] = urlencode($g['hash']);
+				// 'z' (activity_filter autocomplete) requires an un-encoded hash to prevent double encoding
+				
+				if ($type !== 'z') {
+					$g['hash'] = urlencode($g['hash']);
+				}
 				
 				if (! $g['nick']) { 
 					$g['nick'] = $g['url'];
@@ -430,7 +446,7 @@ class Acl extends Controller {
 			$star = true;
 			$search = substr($search,1);
 		}
-	
+
 		if (strpos($search,'@') !== false) {
 			$address = true;
 		}
@@ -456,7 +472,7 @@ class Acl extends Controller {
 		if ($url) {
 			$query = $url . '?f=' . (($token) ? '&t=' . urlencode($token) : '');
 			$query .= '&name=' . urlencode($search) . "&limit=$count" . (($address) ? '&address=' . urlencode(punify($search)) : '');
-	
+			
 			$x = z_fetch_url($query);
 			if ($x['success']) {
 				$t = 0;

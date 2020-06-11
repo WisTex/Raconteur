@@ -16,8 +16,8 @@
 		</form>
 	</div>
 	<script>
-		$("#xchan-filter").name_autocomplete(baseurl + '/acl', 'x', true, function(data) {
-			$("#xchan").val(data.xchan);
+		$("#xchan-filter").name_autocomplete(baseurl + '/acl', 'z', true, function(data) {
+			$("#xchan").val(data.xid);
 		});
 	</script>
 	{{/if}}
