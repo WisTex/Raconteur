@@ -21,17 +21,17 @@
 	{{include file="field_textarea.tpl" field=$allowed_email}}
 	{{include file="field_textarea.tpl" field=$not_allowed_email}}	
 
-	{{include file="field_textarea.tpl" field=$whitelisted_sites}}
-	{{include file="field_textarea.tpl" field=$blacklisted_sites}}
+	{{include file="field_textarea.tpl" field=$allowed_sites}}
+	{{include file="field_textarea.tpl" field=$denied_sites}}
 
-	{{include file="field_textarea.tpl" field=$whitelisted_channels}}
-	{{include file="field_textarea.tpl" field=$blacklisted_channels}}
+	{{include file="field_textarea.tpl" field=$allowed_channels}}
+	{{include file="field_textarea.tpl" field=$denied_channels}}
 
-	{{include file="field_textarea.tpl" field=$pswhitelisted_sites}}
-	{{include file="field_textarea.tpl" field=$psblacklisted_sites}}
+	{{include file="field_textarea.tpl" field=$psallowed_sites}}
+	{{include file="field_textarea.tpl" field=$psdenied_sites}}
 
-	{{include file="field_textarea.tpl" field=$pswhitelisted_channels}}
-	{{include file="field_textarea.tpl" field=$psblacklisted_channels}}
+	{{include file="field_textarea.tpl" field=$psallowed_channels}}
+	{{include file="field_textarea.tpl" field=$psdenied_channels}}
 
 	{{include file="field_textarea.tpl" field=$embed_allow}}
 	{{include file="field_textarea.tpl" field=$embed_deny}}

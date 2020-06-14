@@ -35,29 +35,29 @@ class Security {
 		$inline_pdf  = ((x($_POST,'inline_pdf'))     ? intval($_POST['inline_pdf'])   : 0);
 		set_config('system', 'inline_pdf' , $inline_pdf);
 
-		$ws = $this->trim_array_elems(explode("\n",$_POST['whitelisted_sites']));
-		set_config('system','whitelisted_sites',$ws);
+		$ws = $this->trim_array_elems(explode("\n",$_POST['allowed_sites']));
+		set_config('system','allowed_sites',$ws);
 	
-		$bs = $this->trim_array_elems(explode("\n",$_POST['blacklisted_sites']));
-		set_config('system','blacklisted_sites',$bs);
+		$bs = $this->trim_array_elems(explode("\n",$_POST['denied_sites']));
+		set_config('system','denied_sites',$bs);
 	
-		$wc = $this->trim_array_elems(explode("\n",$_POST['whitelisted_channels']));
-		set_config('system','whitelisted_channels',$wc);
+		$wc = $this->trim_array_elems(explode("\n",$_POST['allowed_channels']));
+		set_config('system','allowed_channels',$wc);
 	
-		$bc = $this->trim_array_elems(explode("\n",$_POST['blacklisted_channels']));
-		set_config('system','blacklisted_channels',$bc);
+		$bc = $this->trim_array_elems(explode("\n",$_POST['denied_channels']));
+		set_config('system','denied_channels',$bc);
 
-		$ws = $this->trim_array_elems(explode("\n",$_POST['pubstream_whitelisted_sites']));
-		set_config('system','pubstream_whitelisted_sites',$ws);
+		$ws = $this->trim_array_elems(explode("\n",$_POST['pubstream_allowed_sites']));
+		set_config('system','pubstream_allowed_sites',$ws);
 	
-		$bs = $this->trim_array_elems(explode("\n",$_POST['pubstream_blacklisted_sites']));
-		set_config('system','pubstream_blacklisted_sites',$bs);
+		$bs = $this->trim_array_elems(explode("\n",$_POST['pubstream_denied_sites']));
+		set_config('system','pubstream_denied_sites',$bs);
 	
-		$wc = $this->trim_array_elems(explode("\n",$_POST['pubstream_whitelisted_channels']));
-		set_config('system','pubstream_whitelisted_channels',$wc);
+		$wc = $this->trim_array_elems(explode("\n",$_POST['pubstream_allowed_channels']));
+		set_config('system','pubstream_allowed_channels',$wc);
 	
-		$bc = $this->trim_array_elems(explode("\n",$_POST['pubstream_blacklisted_channels']));
-		set_config('system','pubstream_blacklisted_channels',$bc);
+		$bc = $this->trim_array_elems(explode("\n",$_POST['pubstream_denied_channels']));
+		set_config('system','pubstream_denied_channels',$bc);
 
 		$embed_sslonly         = ((x($_POST,'embed_sslonly'))		? True	: False);
 		set_config('system','embed_sslonly',$embed_sslonly);
@@ -81,41 +81,41 @@ class Security {
 
 	function get() {
 	
-		$whitesites = get_config('system','whitelisted_sites');
-		$whitesites_str = ((is_array($whitesites)) ? implode("\n",$whitesites) : '');
+		$allowedsites = get_config('system','allowed_sites');
+		$allowedsites_str = ((is_array($allowedsites)) ? implode("\n",$allowedsites) : '');
 	
-		$blacksites = get_config('system','blacklisted_sites');
-		$blacksites_str = ((is_array($blacksites)) ? implode("\n",$blacksites) : '');
+		$deniedsites = get_config('system','denied_sites');
+		$deniedsites_str = ((is_array($deniedsites)) ? implode("\n",$deniedsites) : '');
 	
 	
-		$whitechannels = get_config('system','whitelisted_channels');
-		$whitechannels_str = ((is_array($whitechannels)) ? implode("\n",$whitechannels) : '');
+		$allowedchannels = get_config('system','allowed_channels');
+		$allowedchannels_str = ((is_array($allowedchannels)) ? implode("\n",$allowedchannels) : '');
 	
-		$blackchannels = get_config('system','blacklisted_channels');
-		$blackchannels_str = ((is_array($blackchannels)) ? implode("\n",$blackchannels) : '');
+		$deniedchannels = get_config('system','denied_channels');
+		$deniedchannels_str = ((is_array($deniedchannels)) ? implode("\n",$deniedchannels) : '');
 
-		$pswhitesites = get_config('system','pubstream_whitelisted_sites');
-		$pswhitesites_str = ((is_array($pswhitesites)) ? implode("\n",$pswhitesites) : '');
+		$psallowedsites = get_config('system','pubstream_allowed_sites');
+		$psallowedsites_str = ((is_array($psallowedsites)) ? implode("\n",$psallowedsites) : '');
 	
-		$psblacksites = get_config('system','pubstream_blacklisted_sites');
-		$psblacksites_str = ((is_array($psblacksites)) ? implode("\n",$psblacksites) : '');
+		$psdeniedsites = get_config('system','pubstream_denied_sites');
+		$psdeniedsites_str = ((is_array($psdeniedsites)) ? implode("\n",$psdeniedsites) : '');
 	
 	
-		$pswhitechannels = get_config('system','pubstream_whitelisted_channels');
-		$pswhitechannels_str = ((is_array($pswhitechannels)) ? implode("\n",$pswhitechannels) : '');
+		$psallowedchannels = get_config('system','pubstream_allowed_channels');
+		$psallowedchannels_str = ((is_array($psallowedchannels)) ? implode("\n",$psallowedchannels) : '');
 	
-		$psblackchannels = get_config('system','pubstream_blacklisted_channels');
-		$psblackchannels_str = ((is_array($psblackchannels)) ? implode("\n",$psblackchannels) : '');
+		$psdeniedchannels = get_config('system','pubstream_denied_channels');
+		$psdeniedchannels_str = ((is_array($psdeniedchannels)) ? implode("\n",$psdeniedchannels) : '');
 
-		$whiteembeds = get_config('system','embed_allow');
-		$whiteembeds_str = ((is_array($whiteembeds)) ? implode("\n",$whiteembeds) : '');
+		$allowedembeds = get_config('system','embed_allow');
+		$allowedembeds_str = ((is_array($allowedembeds)) ? implode("\n",$allowedembeds) : '');
 	
-		$blackembeds = get_config('system','embed_deny');
-		$blackembeds_str = ((is_array($blackembeds)) ? implode("\n",$blackembeds) : '');
+		$deniedembeds = get_config('system','embed_deny');
+		$deniedembeds_str = ((is_array($deniedembeds)) ? implode("\n",$deniedembeds) : '');
 	
 		$embed_coop = intval(get_config('system','embed_coop'));
 	
-		if((! $whiteembeds) && (! $blackembeds)) {
+		if((! $allowedembeds) && (! $deniedembeds)) {
 			$embedhelp1 = t("By default, unfiltered HTML is allowed in embedded media. This is inherently insecure.");
 		}
 
@@ -141,20 +141,20 @@ class Security {
 			'$content_security' => array('content_security', t('Set "Content Security Policy" HTTP header'),intval(get_config('system','content_security_policy')),''),
 			'$allowed_email'	=> array('allowed_email', t("Allowed email domains"), get_config('system','allowed_email'), t("Comma separated list of domains which are allowed in email addresses for registrations to this site. Wildcards are accepted. Empty to allow any domains")),
 			'$not_allowed_email'	=> array('not_allowed_email', t("Not allowed email domains"), get_config('system','not_allowed_email'), t("Comma separated list of domains which are not allowed in email addresses for registrations to this site. Wildcards are accepted. Empty to allow any domains, unless allowed domains have been defined.")),
-			'$whitelisted_sites' => array('whitelisted_sites', t('Allow communications only from these sites'), $whitesites_str, t('One site per line. Leave empty to allow communication from anywhere by default')),
-			'$blacklisted_sites' => array('blacklisted_sites', t('Block communications from these sites'), $blacksites_str, ''),
-			'$whitelisted_channels' => array('whitelisted_channels', t('Allow communications only from these channels'), $whitechannels_str, t('One channel (hash) per line. Leave empty to allow from any channel by default')),
-			'$blacklisted_channels' => array('blacklisted_channels', t('Block communications from these channels'), $blackchannels_str, ''),
+			'$allowed_sites' => array('allowed_sites', t('Allow communications only from these sites'), $allowedsites_str, t('One site per line. Leave empty to allow communication from anywhere by default')),
+			'$denied_sites' => array('denied_sites', t('Block communications from these sites'), $deniedsites_str, ''),
+			'$allowed_channels' => array('allowed_channels', t('Allow communications only from these channels'), $allowedchannels_str, t('One channel (hash) per line. Leave empty to allow from any channel by default')),
+			'$denied_channels' => array('denied_channels', t('Block communications from these channels'), $deniedchannels_str, ''),
 
-			'$pswhitelisted_sites' => array('pubstream_whitelisted_sites', t('Allow public stream communications only from these sites'), $pswhitesites_str, t('One site per line. Leave empty to allow communication from anywhere by default')),
-			'$psblacklisted_sites' => array('pubstream_blacklisted_sites', t('Block public stream communications from these sites'), $psblacksites_str, ''),
-			'$pswhitelisted_channels' => array('pubstream_whitelisted_channels', t('Allow public stream communications only from these channels'), $pswhitechannels_str, t('One channel (hash) per line. Leave empty to allow from any channel by default')),
-			'$psblacklisted_channels' => array('pubstream_blacklisted_channels', t('Block public stream communications from these channels'), $psblackchannels_str, ''),
+			'$psallowed_sites' => array('pubstream_allowed_sites', t('Allow public stream communications only from these sites'), $psallowedsites_str, t('One site per line. Leave empty to allow communication from anywhere by default')),
+			'$psdenied_sites' => array('pubstream_denied_sites', t('Block public stream communications from these sites'), $psdeniedsites_str, ''),
+			'$psallowed_channels' => array('pubstream_allowed_channels', t('Allow public stream communications only from these channels'), $psallowedchannels_str, t('One channel (hash) per line. Leave empty to allow from any channel by default')),
+			'$psdenied_channels' => array('pubstream_denied_channels', t('Block public stream communications from these channels'), $psdeniedchannels_str, ''),
 
 
 			'$embed_sslonly' => array('embed_sslonly',t('Only allow embeds from secure (SSL) websites and links.'), intval(get_config('system','embed_sslonly')),''),
-			'$embed_allow' => array('embed_allow', t('Allow unfiltered embedded HTML content only from these domains'), $whiteembeds_str, t('One site per line. By default embedded content is filtered.')),
-			'$embed_deny' => array('embed_deny', t('Block embedded HTML from these domains'), $blackembeds_str, ''),
+			'$embed_allow' => array('embed_allow', t('Allow unfiltered embedded HTML content only from these domains'), $allowedembeds_str, t('One site per line. By default embedded content is filtered.')),
+			'$embed_deny' => array('embed_deny', t('Block embedded HTML from these domains'), $deniedembeds_str, ''),
 	
 //	        '$embed_coop'     => array('embed_coop', t('Cooperative embed security'), $embed_coop, t('Enable to share embed security with other compatible sites/hubs')),
 

@@ -27,7 +27,7 @@ class Webfinger {
 		}
 
 		if (! check_siteallowed(self::$server)) {
-			logger('blacklisted: ' . self::$server);
+			logger('denied: ' . self::$server);
 			return false;
 		}
 

@@ -535,7 +535,7 @@ class Libzot {
 	 * @param boolean $multiple (optional) default false
 	 *
 	 * @return array|null
-	 *   * null if site is blacklisted or not found
+	 *   * null if site is denied or not found
 	 *   * otherwise an array with an hubloc record
 	 */
 
@@ -544,7 +544,7 @@ class Libzot {
 		if ($arr['id'] && $arr['id_sig'] && $arr['location'] && $arr['location_sig']) {
 
 			if (! check_siteallowed($arr['location'])) {
-				logger('blacklisted site: ' . $arr['location']);
+				logger('denied site: ' . $arr['location']);
 				return null;
 			}
 
@@ -585,12 +585,12 @@ class Libzot {
 		}
 
 		if (! check_siteallowed($r[0]['hubloc_url'])) {
-			logger('blacklisted site: ' . $r[0]['hubloc_url']);
+			logger('denied site: ' . $r[0]['hubloc_url']);
 			return null;
 		}
 
 		if (! check_channelallowed($r[0]['hubloc_hash'])) {
-			logger('blacklisted channel: ' . $r[0]['hubloc_hash']);
+			logger('denied channel: ' . $r[0]['hubloc_hash']);
 			return null;
 		}
 
@@ -1706,7 +1706,7 @@ class Libzot {
 					continue;
 				}
 
-				// don't allow pubstream posts if the sender even has a clone on a pubstream blacklisted site
+				// don't allow pubstream posts if the sender even has a clone on a pubstream denied site
 
 				$siteallowed = true;
 				$h = q("select hubloc_url from hubloc where hubloc_hash = '%s'",
