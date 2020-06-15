@@ -102,7 +102,7 @@ class Poller {
 						$min = 60;
 					$x = datetime_convert('UTC','UTC',"now - $min minutes");
 					if($c < $x) {
-						Master::Summon(array('Onepoll',$contact['abook_id']));
+						Run::Summon(array('Onepoll',$contact['abook_id']));
 						if($interval)
 							@time_sleep_until(microtime(true) + (float) $interval);
 					}
@@ -167,7 +167,7 @@ class Poller {
 				if((! $update) && (! $force))
 						continue;
 
-				Master::Summon(array('Onepoll',$contact['abook_id']));
+				Run::Summon(array('Onepoll',$contact['abook_id']));
 				if($interval)
 					@time_sleep_until(microtime(true) + (float) $interval);
 
@@ -189,7 +189,7 @@ class Poller {
 					if($rr['ud_last'] > NULL_DATE)
 						if($rr['ud_last'] > datetime_convert('UTC','UTC', 'now - 1 day'))
 							continue;
-					Master::Summon(array('Onedirsync',$rr['ud_id']));
+					Run::Summon(array('Onedirsync',$rr['ud_id']));
 					if($interval)
 						@time_sleep_until(microtime(true) + (float) $interval);
 				}

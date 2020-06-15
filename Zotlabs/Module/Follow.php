@@ -10,7 +10,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\Connect;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 class Follow extends Controller {
 
@@ -163,7 +163,7 @@ class Follow extends Controller {
 		// If we can view their stream, pull in some posts
 	
 		if (($can_view_stream) || ($result['abook']['xchan_network'] === 'rss')) {
-			Master::Summon([ 'Onepoll', $result['abook']['abook_id'] ]);
+			Run::Summon([ 'Onepoll', $result['abook']['abook_id'] ]);
 		}
 	
 		if ($interactive) {

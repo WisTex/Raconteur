@@ -9,8 +9,8 @@ use Zotlabs\Lib\ActivityPub;
 use Zotlabs\Lib\Queue;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Keyutils;
-use Zotlabs\Daemon\Master;
-use Masterminds\HTML5;
+use Zotlabs\Daemon\Run;
+use Runminds\HTML5;
 
 /**
  * @file include/network.php
@@ -1080,7 +1080,7 @@ function do_delivery($deliveries, $force = false) {
 		$deliver[] = $d;
 
 		if(count($deliver) >= $deliveries_per_process) {
-			Master::Summon(array('Deliver',$deliver));
+			Run::Summon(array('Deliver',$deliver));
 			$deliver = array();
 			if($interval)
 				@time_sleep_until(microtime(true) + (float) $interval);
@@ -1090,7 +1090,7 @@ function do_delivery($deliveries, $force = false) {
 	// catch any stragglers
 
 	if($deliver) {
-		Master::Summon(array('Deliver',$deliver));
+		Run::Summon(array('Deliver',$deliver));
 	}
 }
 

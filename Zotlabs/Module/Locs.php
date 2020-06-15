@@ -3,7 +3,7 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 
 class Locs extends Controller {
@@ -37,7 +37,7 @@ class Locs extends Controller {
 					dbesc($channel['channel_hash'])
 				);
 	
-				Master::Summon( [ 'Notifier', 'refresh_all', $channel['channel_id'] ] );
+				Run::Summon( [ 'Notifier', 'refresh_all', $channel['channel_id'] ] );
 				return;
 			}			
 		}
@@ -75,7 +75,7 @@ class Locs extends Controller {
 					intval($hubloc_id),
 					dbesc($channel['channel_hash'])
 				);
-				Master::Summon( [ 'Notifier', 'refresh_all', $channel['channel_id'] ] );
+				Run::Summon( [ 'Notifier', 'refresh_all', $channel['channel_id'] ] );
 				return;
 			}			
 		}
@@ -94,7 +94,7 @@ class Locs extends Controller {
 		$channel = App::get_channel();
 	
 		if($_REQUEST['sync']) {
-			Master::Summon( [ 'Notifier', 'refresh_all', $channel['channel_id'] ] );
+			Run::Summon( [ 'Notifier', 'refresh_all', $channel['channel_id'] ] );
 			info( t('Pushing location info') . EOL);
 			goaway(z_root() . '/locs');
 		}

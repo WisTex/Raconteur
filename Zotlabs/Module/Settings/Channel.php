@@ -9,7 +9,7 @@ use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\AccessControl;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Permcat;
 
 class Channel {
@@ -335,7 +335,7 @@ class Channel {
 			);
 		}
 	
-		Master::Summon( [ 'Directory', local_channel() ] );
+		Run::Summon( [ 'Directory', local_channel() ] );
 	
 		Libsync::build_sync_packet();
 	

@@ -8,9 +8,9 @@ command-line process and detached from normal web processing.
 Background tasks are invoked by calling
 
 
-	Zotlabs\Daemon\Master::Summon([ $cmd, $arg1, $argn... ]); 
+	Zotlabs\Daemon\Run::Summon([ $cmd, $arg1, $argn... ]); 
 
-The Master class loads the desired command file and passes the arguments.
+The Run class loads the desired command file and passes the arguments.
 
 
 To create a background task 'Foo' use the following template.
@@ -27,7 +27,7 @@ To create a background task 'Foo' use the following template.
 	}
 
 
-The Master class "summons" the command by creating an executable script
+The Run class "summons" the command by creating an executable script
 from the provided arguments, then it invokes "Release" to execute the script
 detached from web processing. This process calls the static::run() function
 with any command line arguments using the traditional argc, argv format. 

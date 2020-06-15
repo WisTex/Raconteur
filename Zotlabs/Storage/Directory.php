@@ -5,7 +5,7 @@ namespace Zotlabs\Storage;
 use App;
 use Sabre\DAV;
 use Zotlabs\Lib\Libsync;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 
 require_once('include/photos.php');
@@ -384,7 +384,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 			$p = photo_upload($channel, App::get_observer(), $args);
 		}
 		
-		Master::Summon([ 'Thumbnail' , $hash ]);
+		Run::Summon([ 'Thumbnail' , $hash ]);
 
 		$sync = attach_export_data($channel, $hash);
 

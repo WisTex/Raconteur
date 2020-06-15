@@ -4,7 +4,7 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Libprofile;
 
 
@@ -41,7 +41,7 @@ class Connect extends Controller {
 					intval(local_channel()) 
 				);
 				
-				Master::Summon(array('Notifier','refresh_all',App::$data['channel']['channel_id']));
+				Run::Summon(array('Notifier','refresh_all',App::$data['channel']['channel_id']));
 			}
 			set_pconfig(App::$data['channel']['channel_id'],'system','selltext',$text);
 			// reload the page completely to get fresh data

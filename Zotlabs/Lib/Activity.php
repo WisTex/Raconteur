@@ -6,7 +6,7 @@ use Zotlabs\Web\HTTPSig;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\Config;
 use Zotlabs\Lib\LibBlock;
@@ -1328,7 +1328,7 @@ class Activity {
 					// Send an Accept back to them
 
 					set_abconfig($channel['channel_id'],$person_obj['id'],'activitypub','their_follow_id', $their_follow_id);
-					Master::Summon([ 'Notifier', 'permissions_accept', $contact['abook_id'] ]);
+					Run::Summon([ 'Notifier', 'permissions_accept', $contact['abook_id'] ]);
 					return;
 
 				case 'Accept':
@@ -1443,9 +1443,9 @@ class Activity {
 
 				if ($my_perms && $automatic) {
 					// send an Accept for this Follow activity
-					Master::Summon([ 'Notifier', 'permissions_accept', $new_connection[0]['abook_id'] ]);
+					Run::Summon([ 'Notifier', 'permissions_accept', $new_connection[0]['abook_id'] ]);
 					// Send back a Follow notification to them
-					Master::Summon([ 'Notifier', 'permissions_create', $new_connection[0]['abook_id'] ]);
+					Run::Summon([ 'Notifier', 'permissions_create', $new_connection[0]['abook_id'] ]);
 				}
 
 				$clone = array();
@@ -1741,7 +1741,7 @@ class Activity {
 			$icon = z_root() . '/' . get_default_profile_photo(300);
 		}
 		
-		Master::Summon( [ 'Xchan_photo', bin2hex($icon), bin2hex($url) ] );
+		Run::Summon( [ 'Xchan_photo', bin2hex($icon), bin2hex($url) ] );
 
 	}
 
@@ -1900,7 +1900,7 @@ class Activity {
 				dbesc(datetime_convert()),
 				intval($item['id'])
 			);
-			Master::Summon( [ 'Notifier', 'wall-new', $item['id'] ] );
+			Run::Summon( [ 'Notifier', 'wall-new', $item['id'] ] );
 			return true;
 		}
 
@@ -2716,7 +2716,7 @@ class Activity {
 			if ($is_child_node) {
 				if ($item['owner_xchan'] === $channel['channel_hash']) {
 					// We are the owner of this conversation, so send all received comments back downstream
-					Master::Summon(array('Notifier','comment-import',$x['item_id']));
+					Run::Summon(array('Notifier','comment-import',$x['item_id']));
 				}
 				$r = q("select * from item where id = %d limit 1",
 					intval($x['item_id'])

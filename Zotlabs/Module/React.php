@@ -4,7 +4,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 
 
@@ -81,7 +81,7 @@ class React extends Controller {
 
 			if($x['success']) {
 				$nid = $x['item_id'];
-				Master::Summon( [ 'Notifier', 'like', $nid ] );
+				Run::Summon( [ 'Notifier', 'like', $nid ] );
 			}
 
 		}

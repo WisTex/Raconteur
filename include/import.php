@@ -6,7 +6,7 @@ use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Connect;
 use Zotlabs\Lib\LibBlock;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 require_once('include/menu.php');
 
@@ -902,7 +902,7 @@ function import_items($channel, $items, $sync = false, $relocate = null) {
 			if ($sync && $item['item_wall']) {
 				// deliver singletons if we have any
 				if ($item_result && $item_result['success']) {
-					Master::Summon( [ 'Notifier','single_activity',$item_result['item_id'] ]);
+					Run::Summon( [ 'Notifier','single_activity',$item_result['item_id'] ]);
 				}
 			}
 		}
@@ -1284,7 +1284,7 @@ function import_mail($channel, $mails, $sync = false) {
 			$mail_id = mail_store($m);
 			if ($sync && $mail_id) {
 				// Not applicable to Zap which does not federate with singletons
-				// Master::Summon(array('Notifier','single_mail',$mail_id));
+				// Run::Summon(array('Notifier','single_mail',$mail_id));
 			}
  		}
 	}
@@ -1641,7 +1641,7 @@ function sync_files($channel, $files) {
 				}
 			}
 
-			Master::Summon([ 'Thumbnail' , $att['hash'] ]);
+			Run::Summon([ 'Thumbnail' , $att['hash'] ]);
 
 			if ($f['item']) {
 				sync_items($channel,$f['item'],

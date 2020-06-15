@@ -72,7 +72,7 @@ Switch the verification on/off (1/0)
   - restart
 + create cron jobs for
   - DynDNS (selfHOST.de or freedns.afraid.org) every 5 minutes
-  - Master.php for Zap/Hubzilla every 10 minutes
+  - Run.php for Zap/Hubzilla every 10 minutes
   - daily maintenance script every day at 05:30
 
 The script is known to work without adjustments with

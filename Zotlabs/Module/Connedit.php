@@ -12,7 +12,7 @@ use Zotlabs\Lib\LibBlock;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Lib\Permcat;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 use Zotlabs\Web\HTTPHeaders;
 use Sabre\VObject\Reader;
 
@@ -198,10 +198,10 @@ class Connedit extends Controller {
 		
 		if (! intval(App::$poi['abook_self'])) {
 			if ($new_friend) {
-				Master::Summon( [ 'Notifier', 'permissions_accept', $contact_id ] ); 
+				Run::Summon( [ 'Notifier', 'permissions_accept', $contact_id ] ); 
 			}
 
-			Master::Summon( [ 
+			Run::Summon( [ 
 				'Notifier', 
 				(($new_friend) ? 'permissions_create' : 'permissions_update'), 
 				$contact_id 
@@ -246,7 +246,7 @@ class Connedit extends Controller {
 			}
 		
 			// pull in a bit of content if there is any to pull in
-			Master::Summon( [ 'Onepoll', $contact_id ]);
+			Run::Summon( [ 'Onepoll', $contact_id ]);
 		}
 	
 		// Refresh the structure in memory with the new data
@@ -370,7 +370,7 @@ class Connedit extends Controller {
 
 			if ($cmd === 'update') {
 				// pull feed and consume it, which should subscribe to the hub.
-				Master::Summon( [ 'Poller', $contact_id ]);
+				Run::Summon( [ 'Poller', $contact_id ]);
 				goaway(z_root() . '/connedit/' . $contact_id);
 			}
 
@@ -416,7 +416,7 @@ class Connedit extends Controller {
 				}
 				else {
 					// if they are on a different network we'll force a refresh of the connection basic info
-					Master::Summon( [ 'Notifier', 'permissions_update', $contact_id ]);
+					Run::Summon( [ 'Notifier', 'permissions_update', $contact_id ]);
 				}
 				goaway(z_root() . '/connedit/' . $contact_id);
 			}
@@ -488,7 +488,7 @@ class Connedit extends Controller {
 
 				// The purge notification is sent to the xchan_hash as the abook record will have just been removed
 				
-				Master::Summon( [ 'Notifier' , 'purge', $orig_record['xchan_hash'] ] );
+				Run::Summon( [ 'Notifier' , 'purge', $orig_record['xchan_hash'] ] );
 				
 				Libsync::build_sync_packet(0, [ 'abook' => [ 'abook_xchan' => $orig_record['abook_xchan'], 'entry_deleted' => true ] ] );
 	
