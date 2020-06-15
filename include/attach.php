@@ -1015,7 +1015,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 		call_hooks('photo_upload_end', $ret);
 	}
 
-	\Zotlabs\Daemon\Master::Summon([ 'Thumbnail' , $hash ]);
+	\Zotlabs\Daemon\Run::Summon([ 'Thumbnail' , $hash ]);
 
 
 	if($dosync) {

@@ -7,7 +7,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Queue;
 use Zotlabs\Lib\Connect;
 use Zotlabs\Lib\DReport;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 class Libsync {
 
@@ -173,7 +173,7 @@ class Libsync {
 			}
 
 
-			Master::Summon([ 'Deliver', $hash ]);
+			Run::Summon([ 'Deliver', $hash ]);
 			$total = $total - 1;
 
 			if ($interval && $total) {
@@ -263,7 +263,7 @@ class Libsync {
 				continue;
 			}
 
-			Master::Summon([ 'Deliver', $hash ]);
+			Run::Summon([ 'Deliver', $hash ]);
 
 			if ($interval && count($h) > 1) {
 				@time_sleep_until(microtime(true) + (float) $interval);

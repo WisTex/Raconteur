@@ -8,7 +8,7 @@ use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Web\Controller;
 use Zotlabs\Access\AccessControl;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 require_once('include/photo_factory.php');
 require_once('include/photos.php');
@@ -433,7 +433,7 @@ class Photos extends Controller {
 			}
 
 			if($visibility) {
-				Master::Summon(array('Notifier','edit_post',$item_id));
+				Run::Summon(array('Notifier','edit_post',$item_id));
 			}
 
 			$sync = attach_export_data(App::$data['channel'],$resource_id);

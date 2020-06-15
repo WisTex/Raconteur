@@ -4,7 +4,7 @@ namespace Zotlabs\Lib;
 
 use App;
 use Zotlabs\Access\Permissions;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 
 
@@ -260,7 +260,7 @@ class Connect {
 
 		if ($r) {
 			$result['abook'] = array_shift($r);
-			Master::Summon([ 'Notifier', 'permissions_create', $result['abook']['abook_id'] ]);
+			Run::Summon([ 'Notifier', 'permissions_create', $result['abook']['abook_id'] ]);
 		}
 
 		$arr = [ 'channel_id' => $uid, 'channel' => $channel, 'abook' => $result['abook'] ];

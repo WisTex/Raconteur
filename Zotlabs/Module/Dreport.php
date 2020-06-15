@@ -36,7 +36,7 @@ class Dreport extends \Zotlabs\Web\Controller {
 					dbesc($channel['channel_hash'])
 				);
 				if($i) {
-					\Zotlabs\Daemon\Master::Summon([ 'Notifier', 'edit_post', $i[0]['id'] ]);
+					\Zotlabs\Daemon\Run::Summon([ 'Notifier', 'edit_post', $i[0]['id'] ]);
 				}
 			}
 			sleep(3);

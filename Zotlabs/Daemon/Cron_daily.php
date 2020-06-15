@@ -20,7 +20,7 @@ class Cron_daily {
  
 		$d3 = intval(datetime_convert('UTC','UTC','now','N'));
 		if($d3 == 7) {
-			Master::Summon(array('Cron_weekly'));
+			Run::Summon(array('Cron_weekly'));
 		}
 
 		// once daily run birthday_updates and then expire in background
@@ -78,8 +78,8 @@ class Cron_daily {
 		}
 
 
-		Master::Summon(array('Expire'));
-		Master::Summon(array('Cli_suggest'));
+		Run::Summon(array('Expire'));
+		Run::Summon(array('Cli_suggest'));
 
 		remove_obsolete_hublocs();
 

@@ -14,7 +14,7 @@ use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Activity;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 
 class Libzot {
@@ -379,7 +379,7 @@ class Libzot {
 				else {
 					// if we were just granted read stream permission and didn't have it before, try to pull in some posts
 					if ((! $old_read_stream_perm) && (intval($permissions['view_stream'])))
-						Master::Summon([ 'Onepoll', $r[0]['abook_id'] ]);
+						Run::Summon([ 'Onepoll', $r[0]['abook_id'] ]);
 				}
 			}
 			else {
@@ -468,7 +468,7 @@ class Libzot {
 
 					if ($new_connection) {
 						if (! Permissions::PermsCompare($new_perms,$previous_perms)) {
-							Master::Summon([ 'Notifier', 'permissions_create', $new_connection[0]['abook_id'] ]);
+							Run::Summon([ 'Notifier', 'permissions_create', $new_connection[0]['abook_id'] ]);
 						}
 
 						if (! $is_collection) {
@@ -485,7 +485,7 @@ class Libzot {
 						if (intval($permissions['view_stream'])) {
 							if (intval(get_pconfig($channel['channel_id'],'perm_limits','send_stream') & PERMS_PENDING)
 								|| (! intval($new_connection[0]['abook_pending'])))
-								Master::Summon([ 'Onepoll', $new_connection[0]['abook_id'] ]);
+								Run::Summon([ 'Onepoll', $new_connection[0]['abook_id'] ]);
 						}
 
 
@@ -1954,7 +1954,7 @@ class Libzot {
 
 				if ($relay && $item_id) {
 					logger('process_delivery: invoking relay');
-					Master::Summon([ 'Notifier', 'relay', intval($item_id) ]);
+					Run::Summon([ 'Notifier', 'relay', intval($item_id) ]);
 					$DR->update('relayed');
 					$result[] = $DR->get();
 				}
@@ -2073,7 +2073,7 @@ class Libzot {
 
 			if ($relay && $item_id) {
 				logger('Invoking relay');
-				Master::Summon([ 'Notifier', 'relay', intval($item_id) ]);
+				Run::Summon([ 'Notifier', 'relay', intval($item_id) ]);
 				$DR->addto_update('relayed');
 				$result[] = $DR->get();
 			}

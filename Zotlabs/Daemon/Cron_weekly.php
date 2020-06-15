@@ -49,7 +49,7 @@ class Cron_weekly {
 		}
 
 		// Check for dead sites
-		Master::Summon(array('Checksites'));
+		Run::Summon(array('Checksites'));
 
 
 		// clean up image cache - use site expiration or 180 days if not set
@@ -70,7 +70,7 @@ class Cron_weekly {
 
 		// update searchable doc indexes
 		// disabled until help system regenerated
-		// Master::Summon(array('Importdoc'));
+		// Run::Summon(array('Importdoc'));
 
 		/**
 		 * End Cron Weekly

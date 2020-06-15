@@ -6,7 +6,7 @@ use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Queue;
 use Zotlabs\Lib\Libsync;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\IConfig;
 
 class ActivityPub {
@@ -407,7 +407,7 @@ class ActivityPub {
 		if ($h) {
 			$qi = self::queue_message($jmsg,$channel,$h[0]);
 			if ($qi) {
-				Master::Summon([ 'Deliver' , $qi ]);
+				Run::Summon([ 'Deliver' , $qi ]);
 			}
 		}	
 	}

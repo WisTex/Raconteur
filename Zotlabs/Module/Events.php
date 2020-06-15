@@ -6,7 +6,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Access\AccessControl;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 require_once('include/conversation.php');
 require_once('include/bbcode.php');
@@ -262,7 +262,7 @@ class Events extends Controller {
 		}
 	
 		if($share)
-			Master::Summon(array('Notifier','event',$item_id));
+			Run::Summon(array('Notifier','event',$item_id));
 	
 	}
 	

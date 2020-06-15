@@ -4,7 +4,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Libsync;
 
 class Vote extends Controller {
@@ -113,7 +113,7 @@ class Vote extends Controller {
 
 			if($x['success']) {
 				$itemid = $x['item_id'];
-				Master::Summon( [ 'Notifier', 'like', $itemid ] );
+				Run::Summon( [ 'Notifier', 'like', $itemid ] );
 			}
 		
 			$r = q("select * from item where id = %d",

@@ -22,7 +22,7 @@ use Zotlabs\Lib\ThreadListener;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\AccessControl;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 
 
@@ -483,7 +483,7 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 	}
 
 	if($post_id && $deliver) {
-		Master::Summon([ 'Notifier','activity',$post_id ]);
+		Run::Summon([ 'Notifier','activity',$post_id ]);
 	}
 
 	$ret['success'] = true;
@@ -1920,7 +1920,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	item_update_parent_commented($arr);
 
 	if((strpos($arr['body'],'[embed]') !== false) || (strpos($arr['body'],'[/img]') !== false) || (strpos($arr['body'],'[/zmg]') !== false)) {
-		Master::Summon([ 'Cache_embeds', $current_post ]);
+		Run::Summon([ 'Cache_embeds', $current_post ]);
 	}
 
 	// If _creating_ a deleted item, don't propagate it further or send out notifications.
@@ -2250,7 +2250,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 
 
 	if((strpos($arr['body'],'[embed]') !== false) || (strpos($arr['body'],'[/img]') !== false)) {
-		Master::Summon([ 'Cache_embeds', $orig_post_id ]);
+		Run::Summon([ 'Cache_embeds', $orig_post_id ]);
 	}
 
 	if($deliver) {
@@ -2901,7 +2901,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 		$post_id = $post['item_id'];
 
 		if($post_id) {
-			Master::Summon([ 'Notifier','tgroup',$post_id ]);
+			Run::Summon([ 'Notifier','tgroup',$post_id ]);
 		}
 		return;
 	}
@@ -2963,7 +2963,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 	);
 
 	if($r)
-		Master::Summon([ 'Notifier','tgroup',$item_id ]);
+		Run::Summon([ 'Notifier','tgroup',$item_id ]);
 	else {
 		logger('start_delivery_chain: failed to update item');
 		// reset the source xchan to prevent loops
@@ -3337,7 +3337,7 @@ function drop_items($items,$interactive = false,$stage = DROPITEM_NORMAL,$force 
 	// multiple threads may have been deleted, send an expire notification
 
 	if($uid) {
-		Master::Summon([ 'Notifier','expire',$uid ]);
+		Run::Summon([ 'Notifier','expire',$uid ]);
 	}
 }
 
@@ -3453,7 +3453,7 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 		// set if we know we're going to send delete notifications out to others.
 
 		if((intval($item['item_wall']) && ($stage != DROPITEM_PHASE2)) || ($stage == DROPITEM_PHASE1)) {
-			Master::Summon([ 'Notifier','drop',$notify_id ]);
+			Run::Summon([ 'Notifier','drop',$notify_id ]);
 		}
 
 		goaway(z_root() . '/' . $_SESSION['return_url']);
@@ -4568,7 +4568,7 @@ function item_create_edit_activity($post) {
 		}
 	}
 
-	Master::Summon([ 'Notifier', 'edit_activity', $post_id ]);
+	Run::Summon([ 'Notifier', 'edit_activity', $post_id ]);
 }
 
 /**

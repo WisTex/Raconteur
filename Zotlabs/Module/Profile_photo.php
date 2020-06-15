@@ -11,7 +11,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 
 require_once('include/photo_factory.php');
@@ -216,7 +216,7 @@ class Profile_photo extends Controller {
 					info( t('Shift-reload the page or clear browser cache if the new photo does not display immediately.') . EOL);
 	
 					// Update directory in background
-					Master::Summon( [ 'Directory', $channel['channel_id'] ] );
+					Run::Summon( [ 'Directory', $channel['channel_id'] ] );
 	
 				}
 				else {
@@ -418,7 +418,7 @@ class Profile_photo extends Controller {
 					Libsync::build_sync_packet($channel['channel_id'],array('file' => array($sync)));
 				}
 
-				Master::Summon( [ 'Directory',local_channel() ] );
+				Run::Summon( [ 'Directory',local_channel() ] );
 				goaway(z_root() . '/profiles');
 			}
 	

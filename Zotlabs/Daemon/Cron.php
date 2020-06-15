@@ -34,9 +34,9 @@ class Cron {
 	
 		// run queue delivery process in the background
 
-		Master::Summon(array('Queue'));
+		Run::Summon(array('Queue'));
 
-		Master::Summon(array('Poller'));
+		Run::Summon(array('Poller'));
 
 		// maintenance for mod sharedwithme - check for updated items and remove them
 
@@ -62,7 +62,7 @@ class Cron {
 				drop_item($rr['id'],false,(($rr['item_wall']) ? DROPITEM_PHASE1 : DROPITEM_NORMAL));
 				if($rr['item_wall']) {
 					// The notifier isn't normally invoked unless item_drop is interactive.
-					Master::Summon( [ 'Notifier', 'drop', $rr['id'] ] );
+					Run::Summon( [ 'Notifier', 'drop', $rr['id'] ] );
 				}
 			}
 		}
@@ -91,7 +91,7 @@ class Cron {
 		);
 		if($r) {
 			foreach($r as $rr) {
-				Master::Summon(array('Directory',$rr['channel_id'],'force'));
+				Run::Summon(array('Directory',$rr['channel_id'],'force'));
 				if($interval)
 					@time_sleep_until(microtime(true) + (float) $interval);
 			}
@@ -123,7 +123,7 @@ class Cron {
 							]
 						);
 					}
-					Master::Summon(array('Notifier','wall-new',$rr['id']));
+					Run::Summon(array('Notifier','wall-new',$rr['id']));
 				}
 			}
 		}
@@ -152,7 +152,7 @@ class Cron {
 
 
 		if(($d2 != $d1) && ($h1 == $h2)) {
-			Master::Summon(array('Cron_daily'));
+			Run::Summon(array('Cron_daily'));
 		}
 
 		// update any photos which didn't get imported properly
@@ -183,7 +183,7 @@ class Cron {
 
 		$disable_discover_tab = get_config('system','disable_discover_tab') || get_config('system','disable_discover_tab') === false;
 		if(! $disable_discover_tab)
-			Master::Summon(array('Externals'));
+			Run::Summon(array('Externals'));
 
 		$generation = 0;
 
@@ -203,7 +203,7 @@ class Cron {
 		// TODO check to see if there are any cronhooks before wasting a process
 
 		if(! $restart)
-			Master::Summon(array('Cronhooks'));
+			Run::Summon(array('Cronhooks'));
 
 		set_config('system','lastcron',datetime_convert());
 

@@ -30,7 +30,7 @@
 #        * adminer,  
 #        * git to download and update addons
 # - configure cron
-#        * "Master.php" for regular background prozesses of hubzilla
+#        * "Run.php" for regular background prozesses of hubzilla
 #        * "apt-get update" and "apt-get dist-upgrade" and "apt-get autoremove" to keep linux up-to-date
 #        * run command to keep the IP up-to-date > DynDNS provided by selfHOST.de or freedns.afraid.org
 #        * backup hubzillas database and files (rsync)
@@ -485,9 +485,9 @@ function install_cryptosetup {
 function configure_cron_daily {
     print_info "configuring cron..."
     # every 10 min for poller.php
-    if [ -z "`grep 'Master.php' /etc/crontab`" ]
+    if [ -z "`grep 'Run.php' /etc/crontab`" ]
     then
-        echo "*/10 * * * * www-data cd /var/www/html; php Zotlabs/Daemon/Master.php Cron >> /dev/null 2>&1" >> /etc/crontab
+        echo "*/10 * * * * www-data cd /var/www/html; php Zotlabs/Daemon/Run.php Cron >> /dev/null 2>&1" >> /etc/crontab
     fi
     # Run external script daily at 05:30
     # - stop apache and mysql-server

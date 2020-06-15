@@ -7,7 +7,7 @@ use URLify;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Connect;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 require_once('include/import.php');
 require_once('include/photo_factory.php');
@@ -526,11 +526,11 @@ class Import extends Controller {
 		// send out refresh requests
 		// notify old server that it may no longer be primary.
 
-		Master::Summon( [ 'Notifier','refresh_all',$channel['channel_id'] ] );
+		Run::Summon( [ 'Notifier','refresh_all',$channel['channel_id'] ] );
 
 		// This will indirectly perform a refresh_all *and* update the directory
 
-		Master::Summon( [ 'Directory', $channel['channel_id'] ] );
+		Run::Summon( [ 'Directory', $channel['channel_id'] ] );
 
 		notice( t('Import completed.') . EOL);
 
