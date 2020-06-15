@@ -1,11 +1,6 @@
 CHANGELOG
 =========
 
-5.1.0
------
-
- * added `Process::getStartTime()` to retrieve the start time of the process as float
-
 5.0.0
 -----
 

@@ -301,7 +301,7 @@ class Filesystem implements FilesystemInterface
             return false;
         }
 
-        return (int) $object['timestamp'];
+        return $object['timestamp'];
     }
 
     /**

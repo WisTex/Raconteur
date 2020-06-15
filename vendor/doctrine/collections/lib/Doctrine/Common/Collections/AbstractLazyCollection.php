@@ -7,7 +7,6 @@ use Closure;
 /**
  * Lazy collection that is backed by a concrete collection
  *
- * @phpstan-template TKey
  * @psalm-template TKey of array-key
  * @psalm-template T
  * @template-implements Collection<TKey,T>
@@ -285,8 +284,6 @@ abstract class AbstractLazyCollection implements Collection
 
     /**
      * {@inheritDoc}
-     *
-     * @psalm-param TKey $offset
      */
     public function offsetExists($offset)
     {
@@ -297,12 +294,6 @@ abstract class AbstractLazyCollection implements Collection
 
     /**
      * {@inheritDoc}
-     *
-     * @param int|string $offset
-     *
-     * @return mixed
-     *
-     * @psalm-param TKey $offset
      */
     public function offsetGet($offset)
     {
@@ -313,10 +304,6 @@ abstract class AbstractLazyCollection implements Collection
 
     /**
      * {@inheritDoc}
-     *
-     * @param mixed $value
-     *
-     * @psalm-param TKey $offset
      */
     public function offsetSet($offset, $value)
     {
@@ -326,8 +313,6 @@ abstract class AbstractLazyCollection implements Collection
 
     /**
      * {@inheritDoc}
-     *
-     * @psalm-param TKey $offset
      */
     public function offsetUnset($offset)
     {

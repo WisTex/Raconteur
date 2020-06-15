@@ -1,15 +1,9 @@
 # URLify for PHP [![Build Status](https://travis-ci.org/jbroadway/urlify.png)](https://travis-ci.org/jbroadway/urlify)
 
-A fast PHP slug generator and transliteration library, started as a PHP port of
-[URLify.js](https://github.com/django/django/blob/master/django/contrib/admin/static/admin/js/urlify.js)
-from the Django project.
-
-Handles symbols from latin languages, Arabic, Azerbaijani, Bulgarian, Burmese, Croatian, Czech, Danish, Esperanto,
-Estonian, Finnish, French, Switzerland (French), Austrian (French), Georgian, German, Switzerland (German),
-Austrian (German), Greek, Hindi, Kazakh, Latvian, Lithuanian, Norwegian, Persian, Polish, Romanian, Russian, Swedish,
-Serbian, Slovak, Turkish, Ukrainian and Vietnamese, and many other via `ASCII::to_transliterate()`.
-
-Symbols it cannot transliterate it can omit or replace with a specified character.
+A PHP port of [URLify.js](https://github.com/django/django/blob/master/django/contrib/admin/static/admin/js/urlify.js)
+from the Django project. Handles symbols from Latin languages as well as Arabic, Azerbaijani, Czech, German, Greek, Kazakh,
+Latvian, Lithuanian, Persian, Polish, Romanian, Bulgarian, Russian, Serbian, Turkish, Ukrainian, Vietnamese and Slovak. Symbols it cannot
+transliterate it will simply omit.
 
 ## Installation
 
@@ -21,21 +15,15 @@ $ composer require jbroadway/urlify
 
 ## Usage
 
-First, include Composer's autoloader:
-
-```php
-require_once 'vendor/autoload.php';
-```
-
 To generate slugs for URLs:
 
 ```php
 <?php
 
-echo URLify::slug (' J\'étudie le français ');
+echo URLify::filter (' J\'étudie le français ');
 // "jetudie-le-francais"
 
-echo URLify::slug ('Lo siento, no hablo español.');
+echo URLify::filter ('Lo siento, no hablo español.');
 // "lo-siento-no-hablo-espanol"
 ```
 
