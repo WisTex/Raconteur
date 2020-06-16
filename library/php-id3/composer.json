@@ -1,0 +1,17 @@
+{
+    "name": "shubhamjain/php-id3",
+    "description": "A MP3 ID3 tags reader in native PHP",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Shubham Jain",
+            "email": "shubham.jain.1@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": { "PhpId3" : "" }
+    },
+    "require": {
+        "php": ">=5.3.3"
+    }
+}

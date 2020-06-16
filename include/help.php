@@ -77,6 +77,9 @@ function preg_callback_help_include($matches) {
  * @return boolean|array
  */
 function determine_help_language() {
+
+	require_once('library/text_languagedetect/Text/LanguageDetect.php');
+
 	$lang_detect = new Text_LanguageDetect();
 	// Set this mode to recognize language by the short code like "en", "ru", etc.
 	$lang_detect->setNameMode(2);
