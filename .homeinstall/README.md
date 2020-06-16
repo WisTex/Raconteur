@@ -136,5 +136,7 @@ to boot the Rapsi to the client console.
 
 DO NOT FORGET TO CHANGE THE DEFAULT PASSWORD FOR USER PI!
 
+## Reminder for Different Web Wervers
 
+For those of you who feel adventurous enough to use a different web server (Nginx, Lighttpd...), don't forget that this script will install Apache and that you can only have one web server listening to ports 80 & 443. Also, don't forget to tweak /var/www/hubzilla-daily.sh accordingly.
 
