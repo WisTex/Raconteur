@@ -6,7 +6,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Lib\Apps;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 
 require_once('include/conversation.php');
@@ -230,7 +230,7 @@ class Calendar extends Controller {
 			}
 		}
 	
-		Master::Summon( [ 'Notifier', 'event', $item_id ] );
+		Run::Summon( [ 'Notifier', 'event', $item_id ] );
 		killme();
 	
 	}

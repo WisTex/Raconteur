@@ -1386,7 +1386,7 @@ class Item extends Controller {
 				}
 			}
 			if(! $nopush)
-				\Zotlabs\Daemon\Master::Summon(array('Notifier', 'edit_post', $post_id));
+				\Zotlabs\Daemon\Run::Summon(array('Notifier', 'edit_post', $post_id));
 	
 
 			if($api_source)
@@ -1505,7 +1505,7 @@ class Item extends Controller {
 		}
 
 		if(! $nopush) {
-			\Zotlabs\Daemon\Master::Summon(array('Notifier', $notify_type, $post_id));
+			\Zotlabs\Daemon\Run::Summon(array('Notifier', $notify_type, $post_id));
 		}
 		logger('post_complete');
 

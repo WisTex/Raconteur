@@ -40,18 +40,18 @@ class Externals {
 				}
 			}
 
-			$blacklisted = false;
+			$denied = false;
 
 			if (! check_siteallowed($url)) {
-				logger('blacklisted site: ' . $url);
-				$blacklisted = true;
+				logger('denied site: ' . $url);
+				$denied = true;
 			}
 
 			$attempts ++;
 
 			// make sure we can eventually break out if somebody blacklists all known sites
 
-			if ($blacklisted) {
+			if ($denied) {
 				if ($attempts > 20) {
 					break;
 				}

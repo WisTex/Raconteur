@@ -5,7 +5,7 @@ namespace Zotlabs\Storage;
 use App;
 use Sabre\DAV;
 use Zotlabs\Lib\Libsync;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 require_once('include/photos.php');
 
@@ -297,7 +297,7 @@ class File extends DAV\Node implements DAV\IFile {
 			}
 		}
 
-		Master::Summon([ 'Thumbnail' , $this->data['hash'] ]);
+		Run::Summon([ 'Thumbnail' , $this->data['hash'] ]);
 
 		$sync = attach_export_data($channel,$this->data['hash']);
 

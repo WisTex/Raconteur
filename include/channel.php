@@ -13,7 +13,7 @@ use Zotlabs\Lib\Connect;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\Permissions;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\System;
 use Zotlabs\Render\Comanche;
 
@@ -489,7 +489,7 @@ function create_identity($arr) {
 						// If we can view their stream, pull in some posts
 
 						if(($can_view_stream) || ($f['abook']['xchan_network'] === 'rss')) {
-							Master::Summon([ 'Onepoll',$f['abook']['abook_id'] ]);
+							Run::Summon([ 'Onepoll',$f['abook']['abook_id'] ]);
 						}
 					}
 				}
@@ -505,7 +505,7 @@ function create_identity($arr) {
 
 		call_hooks('create_identity', $newuid);
 
-		Master::Summon(array('Directory', $ret['channel']['channel_id']));
+		Run::Summon(array('Directory', $ret['channel']['channel_id']));
 	}
 
 	$ret['success'] = true;
@@ -637,7 +637,7 @@ function change_channel_keys($channel) {
 
 	xchan_change_key($oldxchan,$newxchan,$stored);
 
-	Master::Summon([ 'Notifier', 'keychange', $channel['channel_id'] ]);
+	Run::Summon([ 'Notifier', 'keychange', $channel['channel_id'] ]);
 
 	$ret['success'] = true;
 	return $ret;
@@ -720,7 +720,7 @@ function channel_change_address($channel,$new_address) {
 		}
 	}
 
-	Master::Summon(array('Notifier', 'refresh_all', $channel['channel_id']));
+	Run::Summon(array('Notifier', 'refresh_all', $channel['channel_id']));
 
 	$ret['success'] = true;
 	return $ret;
@@ -1292,7 +1292,7 @@ function zid_init() {
 				dbesc($tmp_str)
 			);
 			if(! $r) {
-				Master::Summon(array('Gprobe',bin2hex($tmp_str)));
+				Run::Summon(array('Gprobe',bin2hex($tmp_str)));
 			}
 			if($r && remote_channel() && remote_channel() === $r[0]['hubloc_hash'])
 				return;
@@ -2246,7 +2246,7 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 			dbesc($channel['channel_hash'])
 		);
 		// send a cleanup message to other servers
-		Master::Summon( [ 'Notifier', 'purge_all', $channel_id ] );
+		Run::Summon( [ 'Notifier', 'purge_all', $channel_id ] );
 	}
 
 	//remove from file system
@@ -2257,7 +2257,7 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 		@rrmdir($f);
 	}
 
-	Master::Summon([ 'Directory', $channel_id ]);
+	Run::Summon([ 'Directory', $channel_id ]);
 
 	if ($channel_id == local_channel() && $unset_session) {
 		App::$session->nuke();

@@ -106,7 +106,7 @@ if($argc < 3) {
 		else {
 			$dstname = (($isadir) ? '' : basename($dstfile));
 			$cmd = [ 'Importfile', $channel['channel_id'], $argv[$x], $folder, $dstname ];
-			\Zotlabs\Daemon\Master::Summon($cmd);
+			\Zotlabs\Daemon\Run::Summon($cmd);
 		}
 	}
 
@@ -147,7 +147,7 @@ if($argc < 3) {
 				}
 				else {
 					$cmd = [ 'Importfile', $channel['channel_id'], $src . '/' . $entry, $folder ];
-					\Zotlabs\Daemon\Master::Summon($cmd);
+					\Zotlabs\Daemon\Run::Summon($cmd);
 				}
 			}
 			closedir($dir);

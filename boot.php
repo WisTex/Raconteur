@@ -8,7 +8,7 @@ use Zotlabs\Render\Comanche;
 use Zotlabs\Render\Theme;
 use Zotlabs\Lib\DB_Upgrade;
 use Zotlabs\Lib\System;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 /**
  * @file boot.php
@@ -16,10 +16,10 @@ use Zotlabs\Daemon\Master;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '20.06.11' );
+define ( 'STD_VERSION',             '20.06.16' );
 define ( 'ZOT_REVISION',            '6.0' );
 
-define ( 'DB_UPDATE_VERSION',       1239 );
+define ( 'DB_UPDATE_VERSION',       1240 );
 
 define ( 'PLATFORM_NAME',           'zap' );
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
@@ -1540,7 +1540,7 @@ function fix_system_urls($oldurl, $newurl) {
 				}
 			}
 
-			Master::Summon( [ 'Notifier', 'refresh_all', $c[0]['channel_id'] ]);
+			Run::Summon( [ 'Notifier', 'refresh_all', $c[0]['channel_id'] ]);
 		}
 	}
 
@@ -2467,7 +2467,7 @@ function check_cron_broken() {
 	$d = get_config('system','lastcron');
 
 	if((! $d) || ($d < datetime_convert('UTC','UTC','now - 4 hours'))) {
-		Master::Summon(array('Cron'));
+		Run::Summon(array('Cron'));
 		set_config('system','lastcron',datetime_convert());
 	}
 

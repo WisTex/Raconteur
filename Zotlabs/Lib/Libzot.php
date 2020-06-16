@@ -14,7 +14,7 @@ use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Activity;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 
 class Libzot {
@@ -379,7 +379,7 @@ class Libzot {
 				else {
 					// if we were just granted read stream permission and didn't have it before, try to pull in some posts
 					if ((! $old_read_stream_perm) && (intval($permissions['view_stream'])))
-						Master::Summon([ 'Onepoll', $r[0]['abook_id'] ]);
+						Run::Summon([ 'Onepoll', $r[0]['abook_id'] ]);
 				}
 			}
 			else {
@@ -468,7 +468,7 @@ class Libzot {
 
 					if ($new_connection) {
 						if (! Permissions::PermsCompare($new_perms,$previous_perms)) {
-							Master::Summon([ 'Notifier', 'permissions_create', $new_connection[0]['abook_id'] ]);
+							Run::Summon([ 'Notifier', 'permissions_create', $new_connection[0]['abook_id'] ]);
 						}
 
 						if (! $is_collection) {
@@ -485,7 +485,7 @@ class Libzot {
 						if (intval($permissions['view_stream'])) {
 							if (intval(get_pconfig($channel['channel_id'],'perm_limits','send_stream') & PERMS_PENDING)
 								|| (! intval($new_connection[0]['abook_pending'])))
-								Master::Summon([ 'Onepoll', $new_connection[0]['abook_id'] ]);
+								Run::Summon([ 'Onepoll', $new_connection[0]['abook_id'] ]);
 						}
 
 
@@ -535,7 +535,7 @@ class Libzot {
 	 * @param boolean $multiple (optional) default false
 	 *
 	 * @return array|null
-	 *   * null if site is blacklisted or not found
+	 *   * null if site is denied or not found
 	 *   * otherwise an array with an hubloc record
 	 */
 
@@ -544,7 +544,7 @@ class Libzot {
 		if ($arr['id'] && $arr['id_sig'] && $arr['location'] && $arr['location_sig']) {
 
 			if (! check_siteallowed($arr['location'])) {
-				logger('blacklisted site: ' . $arr['location']);
+				logger('denied site: ' . $arr['location']);
 				return null;
 			}
 
@@ -585,12 +585,12 @@ class Libzot {
 		}
 
 		if (! check_siteallowed($r[0]['hubloc_url'])) {
-			logger('blacklisted site: ' . $r[0]['hubloc_url']);
+			logger('denied site: ' . $r[0]['hubloc_url']);
 			return null;
 		}
 
 		if (! check_channelallowed($r[0]['hubloc_hash'])) {
-			logger('blacklisted channel: ' . $r[0]['hubloc_hash']);
+			logger('denied channel: ' . $r[0]['hubloc_hash']);
 			return null;
 		}
 
@@ -1706,7 +1706,7 @@ class Libzot {
 					continue;
 				}
 
-				// don't allow pubstream posts if the sender even has a clone on a pubstream blacklisted site
+				// don't allow pubstream posts if the sender even has a clone on a pubstream denied site
 
 				$siteallowed = true;
 				$h = q("select hubloc_url from hubloc where hubloc_hash = '%s'",
@@ -1954,7 +1954,7 @@ class Libzot {
 
 				if ($relay && $item_id) {
 					logger('process_delivery: invoking relay');
-					Master::Summon([ 'Notifier', 'relay', intval($item_id) ]);
+					Run::Summon([ 'Notifier', 'relay', intval($item_id) ]);
 					$DR->update('relayed');
 					$result[] = $DR->get();
 				}
@@ -2073,7 +2073,7 @@ class Libzot {
 
 			if ($relay && $item_id) {
 				logger('Invoking relay');
-				Master::Summon([ 'Notifier', 'relay', intval($item_id) ]);
+				Run::Summon([ 'Notifier', 'relay', intval($item_id) ]);
 				$DR->addto_update('relayed');
 				$result[] = $DR->get();
 			}

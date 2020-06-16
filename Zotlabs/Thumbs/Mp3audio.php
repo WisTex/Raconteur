@@ -2,6 +2,10 @@
 
 namespace Zotlabs\Thumbs;
 
+require_once('library/php-id3/PhpId3/Id3TagsReader.php');
+require_once('library/php-id3/PhpId3/BinaryFileReader.php');
+require_once('library/php-id3/PhpId3/Id3Tags.php');
+
 use PhpId3\Id3TagsReader;
 
 class Mp3audio {

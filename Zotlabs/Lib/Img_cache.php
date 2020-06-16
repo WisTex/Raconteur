@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Lib;
 
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 class Img_cache {
 
@@ -53,7 +53,7 @@ class Img_cache {
 		if ($x['success']) {
 			$i = getimagesize($file);
 			if ($i && $i[2]) {  // looking for non-zero imagetype
-				Master::Summon( [ 'CacheThumb' , basename($file) ] );
+				Run::Summon( [ 'CacheThumb' , basename($file) ] );
 				return true;
 			}
 		}

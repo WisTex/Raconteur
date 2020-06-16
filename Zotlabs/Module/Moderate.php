@@ -88,7 +88,7 @@ class Moderate extends \Zotlabs\Web\Controller {
 					Libsync::build_sync_packet(local_channel(),array('item' => array(encode_item($sync_item[0],true))));
 				}
 				if($action === 'approve') {
-					\Zotlabs\Daemon\Master::Summon(array('Notifier', 'comment-new', $post_id));
+					\Zotlabs\Daemon\Run::Summon(array('Notifier', 'comment-new', $post_id));
 				}
 				goaway(z_root() . '/moderate');
 			}

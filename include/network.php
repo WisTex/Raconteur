@@ -9,8 +9,8 @@ use Zotlabs\Lib\ActivityPub;
 use Zotlabs\Lib\Queue;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Keyutils;
-use Zotlabs\Daemon\Master;
-use Masterminds\HTML5;
+use Zotlabs\Daemon\Run;
+use Runminds\HTML5;
 
 /**
  * @file include/network.php
@@ -1080,7 +1080,7 @@ function do_delivery($deliveries, $force = false) {
 		$deliver[] = $d;
 
 		if(count($deliver) >= $deliveries_per_process) {
-			Master::Summon(array('Deliver',$deliver));
+			Run::Summon(array('Deliver',$deliver));
 			$deliver = array();
 			if($interval)
 				@time_sleep_until(microtime(true) + (float) $interval);
@@ -1090,7 +1090,7 @@ function do_delivery($deliveries, $force = false) {
 	// catch any stragglers
 
 	if($deliver) {
-		Master::Summon(array('Deliver',$deliver));
+		Run::Summon(array('Deliver',$deliver));
 	}
 }
 
@@ -1232,7 +1232,7 @@ function check_siteallowed($url) {
 		return $arr['allowed'];
 	}
 
-	$bl1 = get_config('system','whitelisted_sites');
+	$bl1 = get_config('system','allowed_sites');
 	if (is_array($bl1) && $bl1) {
 		foreach ($bl1 as $bl) {
 			if ($bl === '*') {
@@ -1242,7 +1242,7 @@ function check_siteallowed($url) {
 				return true;
 		}
 	}
-	$bl1 = get_config('system','blacklisted_sites');
+	$bl1 = get_config('system','denied_sites');
 	if (is_array($bl1) && $bl1) {
 		foreach ($bl1 as $bl) {
 			if ($bl === '*') {
@@ -1279,7 +1279,7 @@ function check_pubstream_siteallowed($url) {
 	if(array_key_exists('allowed',$arr))
 		return $arr['allowed'];
 
-	$bl1 = get_config('system','pubstream_whitelisted_sites');
+	$bl1 = get_config('system','pubstream_allowed_sites');
 	if(is_array($bl1) && $bl1) {
 		foreach($bl1 as $bl) {
 			if($bl === '*')
@@ -1288,7 +1288,7 @@ function check_pubstream_siteallowed($url) {
 				return true;
 		}
 	}
-	$bl1 = get_config('system','pubstream_blacklisted_sites');
+	$bl1 = get_config('system','pubstream_denied_sites');
 	if(is_array($bl1) && $bl1) {
 		foreach($bl1 as $bl) {
 			if($bl === '*')
@@ -1327,7 +1327,7 @@ function check_channelallowed($hash) {
 		return $arr['allowed'];
 	}
 
-	$bl1 = get_config('system','whitelisted_channels');
+	$bl1 = get_config('system','allowed_channels');
 	if (is_array($bl1) && $bl1) {
 		foreach ($bl1 as $bl) {
 			if ($bl === '*') {
@@ -1338,7 +1338,7 @@ function check_channelallowed($hash) {
 			}
 		}
 	}
-	$bl1 = get_config('system','blacklisted_channels');
+	$bl1 = get_config('system','denied_channels');
 	if (is_array($bl1) && $bl1) {
 		foreach ($bl1 as $bl) {
 			if ($bl === '*') {
@@ -1376,7 +1376,7 @@ function check_pubstream_channelallowed($hash) {
 	if(array_key_exists('allowed',$arr))
 		return $arr['allowed'];
 
-	$bl1 = get_config('system','pubstream_whitelisted_channels');
+	$bl1 = get_config('system','pubstream_allowed_channels');
 	if(is_array($bl1) && $bl1) {
 		foreach($bl1 as $bl) {
 			if($bl === '*')
@@ -1385,7 +1385,7 @@ function check_pubstream_channelallowed($hash) {
 				return true;
 		}
 	}
-	$bl1 = get_config('system','pubstream_blacklisted_channels');
+	$bl1 = get_config('system','pubstream_denied_channels');
 	if(is_array($bl1) && $bl1) {
 		foreach($bl1 as $bl) {
 			if($bl === '*')

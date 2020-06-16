@@ -36,7 +36,7 @@ require_once('include/bbcode.php');
 /*
  * The notifier is typically called with:
  *
- *		Zotlabs\Daemon\Master::Summon( [ 'Notifier', COMMAND, ITEM_ID ] );
+ *		Zotlabs\Daemon\Run::Summon( [ 'Notifier', COMMAND, ITEM_ID ] );
  *
  * where COMMAND is one of the following:
  *
@@ -395,7 +395,7 @@ class Notifier {
 				$is_moderated = their_perms_contains($parent_item['uid'],$sendto,'moderated');
 				if ($relay_to_owner && $thread_is_public && (! $is_moderated)) {
 					if (get_pconfig($target_item['uid'],'system','hyperdrive',false)) {
-						Master::Summon([ 'Notifier' , 'hyper', $item_id ]);
+						Run::Summon([ 'Notifier' , 'hyper', $item_id ]);
 					}
 				}
 						
@@ -415,7 +415,7 @@ class Notifier {
 					// don't uplink a relayed post to the relay owner
 					if ($parent_item['source_xchan'] !== $parent_item['owner_xchan']) {
 						logger('notifier: uplinking this item');
-						Master::Summon(array('Notifier','uplink',$item_id));
+						Run::Summon(array('Notifier','uplink',$item_id));
 					}
 				}
 
@@ -681,7 +681,7 @@ class Notifier {
 			// This wastes a process if there are no delivery hooks configured, so check this before launching the new process
 			$x = q("select * from hook where hook = 'notifier_normal'");
 			if ($x) {
-				Master::Summon( [ 'Deliver_hooks', $target_item['id'] ] );
+				Run::Summon( [ 'Deliver_hooks', $target_item['id'] ] );
 			}
 		}
 

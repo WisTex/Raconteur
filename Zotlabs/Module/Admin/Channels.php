@@ -3,7 +3,7 @@
 namespace Zotlabs\Module\Admin;
 
 use App;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 
 /**
  * @brief Admin Module for Channels.
@@ -30,7 +30,7 @@ class Channels {
 					intval(PAGE_CENSORED),
 					intval( $uid )
 				);
-				Master::Summon( [ 'Directory', $uid, 'nopush' ] );
+				Run::Summon( [ 'Directory', $uid, 'nopush' ] );
 			}
 			notice( sprintf( tt("%s channel censored/uncensored", "%s channels censored/uncensored", count($channels)), count($channels)) );
 		}
@@ -86,7 +86,7 @@ class Channels {
 						intval($pflags),
 						intval( $uid )
 					);
-					Master::Summon( [ 'Directory', $uid, 'nopush' ]);
+					Run::Summon( [ 'Directory', $uid, 'nopush' ]);
 
 					notice( sprintf( (($pflags & PAGE_CENSORED) ? t("Channel '%s' censored"): t("Channel '%s' uncensored")) , $channel[0]['channel_name'] . ' (' . $channel[0]['channel_address'] . ')' ) . EOL);
 				}; break;

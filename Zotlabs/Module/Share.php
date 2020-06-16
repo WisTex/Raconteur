@@ -2,7 +2,7 @@
 namespace Zotlabs\Module;
 
 use App;
-use Zotlabs\Daemon\Master;
+use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Libsync;
 
 require_once('include/security.php');
@@ -126,7 +126,7 @@ class Share extends \Zotlabs\Web\Controller {
 			Libsync::build_sync_packet($channel['channel_id'], [ 'item' => [ encode_item($sync_item[0],true) ] ]);
 		}
 
-		Master::Summon([ 'Notifier','like',$post_id ]);
+		Run::Summon([ 'Notifier','like',$post_id ]);
 	
 		killme();
 	

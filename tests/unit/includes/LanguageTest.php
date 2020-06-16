@@ -41,6 +41,9 @@ class LanguageTest extends UnitTestCase {
 	 */
 	public function testDetectLanguage($text, $langCode, $confidence) {
 
+
+		require_once('library/text_languagedetect/Text/LanguageDetect.php');
+
 		// php-mock can not mock global functions which is called by a global function.
 		// If the calling function is in a namespace it would work.
 		//$gc = $this->getFunctionMock(__NAMESPACE__, 'get_config');
