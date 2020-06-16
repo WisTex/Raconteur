@@ -135,10 +135,10 @@ class Admin extends \Zotlabs\Web\Controller {
 		$upgrade = EMPTY_STR;
 
 		if((! defined('PLATFORM_ARCHITECTURE')) || (PLATFORM_ARCHITECTURE === 'red')) {
-			$vmaster = get_repository_version('master');
+			$vrelease = get_repository_version('release');
 			$vdev = get_repository_version('dev');
 
-			$upgrade = ((version_compare(STD_VERSION,$vmaster) < 0) ? t('Your software should be updated') : '');
+			$upgrade = ((version_compare(STD_VERSION,$vrelease) < 0) ? t('Your software should be updated') : '');
 		}
 
 		$t = get_markup_template('admin_summary.tpl');
@@ -152,7 +152,7 @@ class Admin extends \Zotlabs\Web\Controller {
 			'$channels' => array( t('Registered channels'), $channels),
 			'$plugins'  => array( t('Active addons'), $plugins ),
 			'$version'  => array( t('Version'), STD_VERSION),
-			'$vmaster'  => array( t('Repository version (master)'), $vmaster),
+			'$vmaster'  => array( t('Repository version (release)'), $vrelease),
 			'$vdev'     => array( t('Repository version (dev)'), $vdev),
 			'$upgrade'  => $upgrade,
 			'$build'    => get_config('system', 'db_version')

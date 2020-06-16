@@ -1424,7 +1424,7 @@ function deliverable_singleton($channel_id,$xchan) {
 
 
 
-function get_repository_version($branch = 'master') {
+function get_repository_version($branch = 'release') {
 
 	$path = "https://framagit.org/zot/zap/raw/$branch/boot.php";
 
