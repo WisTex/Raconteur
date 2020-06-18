@@ -1802,7 +1802,7 @@ class Libzot {
 					if ((! $allowed) && PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$arr)) {
 						// permit_all_mentions bypasses some comment protections, but if comments are disallowed completely
 						// honour this setting.
-						if (! absolutely_no_comments($arr)) {
+						if (! absolutely_no_comments($parent[0])) {
 							$allowed = true;
 						}
 					}
