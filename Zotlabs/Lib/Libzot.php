@@ -1344,9 +1344,19 @@ class Libzot {
 				if ($arr['mid'] === $arr['parent_mid']) {
 					if (is_array($AS->obj) && array_key_exists('commentPolicy',$AS->obj)) {
 						$p = strstr($AS->obj['commentPolicy'],'until=');
+
+						// if until= is the same as the creation date, set the item_nocomment flag
+						// as comments were already closed before the post was even sent.
+						
 						if($p !== false) {
-							$arr['comments_closed'] = datetime_convert('UTC','UTC', substr($p,6));
-							$arr['comment_policy'] = trim(str_replace($p,'',$AS->obj['commentPolicy']));
+							$comments_closed_at = datetime_convert('UTC','UTC',substr($p,6));
+							if ($comments_closed_at === $arr['created']) {
+								$arr['item_nocomment'] = 1;
+							}
+							else {
+								$arr['comments_closed'] = $comments_closed_at;
+								$arr['comment_policy'] = trim(str_replace($p,'',$AS->obj['commentPolicy']));
+							}
 						}
 						else {
 							$arr['comment_policy'] = $AS->obj['commentPolicy'];

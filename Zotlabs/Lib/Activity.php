@@ -792,12 +792,19 @@ class Activity {
 			$ret['directMessage'] = true;
 		}
 
-		if (array_key_exists('comments_closed',$i) && $i['comments_closed'] !== EMPTY_STR && $i['comments_closed'] > NULL_DATE) {
+		if (intval($item['item_nocomment']))  {
+			if($ret['commentPolicy']) {
+				$ret['commentPolicy'] .= ' ';
+			}
+			$ret['commentPolicy'] .= 'until=' . datetime_convert('UTC','UTC',$i['created'],ATOM_TIME);
+		}
+		elseif (array_key_exists('comments_closed',$i) && $i['comments_closed'] !== EMPTY_STR && $i['comments_closed'] > NULL_DATE) {
 			if($ret['commentPolicy']) {
 				$ret['commentPolicy'] .= ' ';
 			}
 			$ret['commentPolicy'] .= 'until=' . datetime_convert('UTC','UTC',$i['comments_closed'],ATOM_TIME);
 		}
+		
 		$ret['attributedTo'] = $i['author']['xchan_url'];
 
 		if ($i['mid'] !== $i['parent_mid']) {
