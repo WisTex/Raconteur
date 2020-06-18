@@ -520,7 +520,7 @@ class Enotify {
 	}
 
 	if (is_array($datarray['parent_item'])) {
-		if (LibBlock::fetch_by_entity($datarray['uid'],$datarray['parent_item']['owner_xchan']) || LibBlock::fetch_by_entity($datarray['uid'],$datarray['parent_item']['owner_xchan'])) {
+		if (LibBlock::fetch_by_entity($datarray['uid'],$datarray['parent_item']['author_xchan']) || LibBlock::fetch_by_entity($datarray['uid'],$datarray['parent_item']['owner_xchan'])) {
 			pop_lang();
 			return;
 		}

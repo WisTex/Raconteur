@@ -88,7 +88,8 @@ class Acl extends Controller {
 
 		if ($search) {
 			$sql_extra = " AND pgrp.gname LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " ";
-			$sql_extra2 = " AND ( xchan_name LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " OR xchan_addr LIKE " . protect_sprintf( "'%" . dbesc(punify($search)) . ((strpos($search,'@') === false) ? "%@%'"  : "%'")) . " OR abook_alias like " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . ") ";
+			// sql_extra2 is typically used when we don't have a local_channel - so we are not search abook_alias
+			$sql_extra2 = " AND ( xchan_name LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . " OR xchan_addr LIKE " . protect_sprintf( "'%" . dbesc(punify($search)) . ((strpos($search,'@') === false) ? "%@%'"  : "%'")) . ") ";
 
 
 
@@ -285,8 +286,7 @@ class Acl extends Controller {
 			}
 			if ((count($r) < 100) && $type == 'c') {
 				$r2 = q("SELECT substr(xchan_hash,1,18) as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, 0 as abook_flags, 0 as abook_self 
-					FROM xchan 
-					WHERE xchan_deleted = 0 and not xchan_network  in ('rss','anon','unknown') $sql_extra2 order by $order_extra2 xchan_name asc" 
+					FROM xchan WHERE xchan_deleted = 0 and not xchan_network  in ('rss','anon','unknown') $sql_extra2 order by $order_extra2 xchan_name asc" 
 				);
 				if ($r2) {
 					$r = array_merge($r,$r2);

@@ -2518,6 +2518,9 @@ class Activity {
 				if ((! $allowed) && PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$item)) {
 					$allowed = true;
 				}
+				if (absolutely_no_comments($p[0])) {
+					$allowed = false;
+				}
 				
 				if (! $allowed) {
 					logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
