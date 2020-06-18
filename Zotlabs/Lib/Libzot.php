@@ -1790,7 +1790,11 @@ class Libzot {
 						$allowed = can_comment_on_post($sender,$parent[0]);
 					}
 					if ((! $allowed) && PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$arr)) {
-						$allowed = true;
+						// permit_all_mentions bypasses some comment protections, but if comments are disallowed completely
+						// honour this setting.
+						if (! absolutely_no_comments($arr)) {
+							$allowed = true;
+						}
 					}
 
 				}

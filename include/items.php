@@ -345,6 +345,26 @@ function can_comment_on_post($observer_xchan, $item) {
 	return false;
 }
 
+
+function absolutely_no_comments($item) {
+
+	if($item['comment_policy'] === 'none') {
+		return true;
+	}
+
+	if (intval($item['item_nocomment'])) {
+		return true;
+	}
+
+	if(comments_are_now_closed($item)) {
+		return true;
+	}
+
+	return false;
+}
+
+
+
 /**
  * @brief Adds $hash to the item source route specified by $iid.
  *
