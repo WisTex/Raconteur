@@ -2515,7 +2515,7 @@ class Activity {
 		$allowed = false;
 		
 		if ($is_child_node) {		
-			$p = q("select id, obj_type from item where mid = '%s' and uid = %d and item_wall = 1",
+			$p = q("select * from item where mid = '%s' and uid = %d and item_wall = 1",
 				dbesc($item['parent_mid']),
 				intval($channel['channel_id'])
 			);

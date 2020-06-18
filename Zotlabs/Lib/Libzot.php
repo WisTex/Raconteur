@@ -1790,8 +1790,7 @@ class Libzot {
 				}
 
 				if ((! $allowed) && $perm === 'post_comments') {
-
-
+				
 					$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
 						dbesc($arr['parent_mid']),
 						intval($channel['channel_id'])
@@ -1802,7 +1801,10 @@ class Libzot {
 					if ((! $allowed) && PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$arr)) {
 						// permit_all_mentions bypasses some comment protections, but if comments are disallowed completely
 						// honour this setting.
-						if (! absolutely_no_comments($parent[0])) {
+						if ($parent && absolutely_no_comments($parent[0])) {
+							$allowed = false;
+						}
+						else {
 							$allowed = true;
 						}
 					}
