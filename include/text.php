@@ -2818,8 +2818,8 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
                     $url = $profile;
 					$zrl = (($xc['xchan_network'] === 'zot6') ? 'zrl' : 'url');
 					$newtag = '@' . (($exclusive) ? '!' : '') . '[' . $zrl . '=' . $profile . ']' . $newname . '[/' . $zrl . ']';
+					
 					$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
-
 
                     // append tag to str_tags
                     if(! stristr($str_tags,$newtag)) {
