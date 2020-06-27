@@ -2818,8 +2818,8 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
                     $url = $profile;
 					$zrl = (($xc['xchan_network'] === 'zot6') ? 'zrl' : 'url');
 					$newtag = '@' . (($exclusive) ? '!' : '') . '[' . $zrl . '=' . $profile . ']' . $newname . '[/' . $zrl . ']';
+					
 					$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
-
 
                     // append tag to str_tags
                     if(! stristr($str_tags,$newtag)) {
@@ -3404,9 +3404,9 @@ function cleanup_bbcode($body) {
 +\,\(\)]+)/ismu", '\red_zrl_callback', $body);
 
 
-	$body = preg_replace_callback('/\[\$b64zrl(.*?)\[\/(zrl)\]/ism','\red_unescape_codeblock',$body);
-	$body = preg_replace_callback('/\[\$b64url(.*?)\[\/(url)\]/ism','\red_unescape_codeblock',$body);
 	$body = preg_replace_callback('/\[\$b64code(.*?)\[\/(code)\]/ism','\red_unescape_codeblock',$body);
+	$body = preg_replace_callback('/\[\$b64url(.*?)\[\/(url)\]/ism','\red_unescape_codeblock',$body);
+	$body = preg_replace_callback('/\[\$b64zrl(.*?)\[\/(zrl)\]/ism','\red_unescape_codeblock',$body);
 	$body = preg_replace_callback('/\[\$b64svg(.*?)\[\/(svg)\]/ism','\red_unescape_codeblock',$body);
 
 	// fix any img tags that should be zmg

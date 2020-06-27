@@ -164,7 +164,4 @@ class OAuth2Storage extends \OAuth2\Storage\Pdo {
         return true;
     }
 
-
-
-
 }
