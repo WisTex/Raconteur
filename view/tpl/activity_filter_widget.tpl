@@ -1,12 +1,18 @@
 <div class="widget">
 	<h3 class="d-flex justify-content-between align-items-center">
+		<div onclick="openClose('actfilt'); return true;">
 		{{$title}}
+		{{if ! $reset}}
+		<i class="fa fa-fw fa-caret-down"></i>
+		{{/if}}
+		</div>
 		{{if $reset}}
 		<a href="{{$reset.url}}" class="text-muted" title="{{$reset.title}}">
 			<i class="fa fa-fw fa-{{$reset.icon}}"></i>
 		</a>
 		{{/if}}
 	</h3>
+	<div id="actfilt" style="display: none;">
 	{{if $name}}
 	<div class="notifications-textinput">
 		<form method="get" action="{{$name.url}}" role="search">
@@ -22,4 +28,5 @@
 	</script>
 	{{/if}}
 	{{$content}}
+	</div>
 </div>
