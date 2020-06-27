@@ -187,11 +187,8 @@ class PermissionRoles {
 			t('Collection') => [
 				'collection' => t('Collection - Normal'),
 				'collection_restricted' => t('Collection - Restricted')
-			],
-
-			t('Feed Republish') => [
-				'feed' => t('Feed Republish')
 			]
+
 		];
 
 		call_hooks('list_permission_roles',$roles);
