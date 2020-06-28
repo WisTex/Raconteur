@@ -10,7 +10,7 @@
 		"ZOT",
 		"ZOT6"
 	],
-	"homepage" : "http://framagit.org/zot/zap/",
+	"homepage" : "http://codeberg.org/zot/zap/",
 	"license" : "MIT",
 	"authors" : [{
 			"name" : "Mike Macgirvin",
@@ -18,8 +18,8 @@
 		}
 	],
 	"support" : {
-		"issues" : "https://framagit.org/zot/zap/issues",
-		"source" : "https://framagit.org/zot/zap/"
+		"issues" : "https://codeberg.org/zot/zap/issues",
+		"source" : "https://codeberg.org/zot/zap/"
 	},
 	"require" : {
 		"php" : ">=7.0",
