@@ -65,11 +65,11 @@ web server platforms.
 	Example config scripts are available for these platforms in the install 
 	directory. Apache and nginx have the most support. 
 
-    - PHP 7.1 or later. 
+    - PHP 7.2 or later. 
 
     - PHP *command line* access with register_argc_argv set to true in the 
     php.ini file - and with no hosting provider restrictions on the use of 
-    exec() and proc_open().
+    exec() and proc_open(). 
 
     - curl, gd (with at least jpeg and png support), mysqli, mbstring, xml, 
     xmlreader (FreeBSD), zip and openssl extensions. The imagick extension MAY
@@ -105,8 +105,8 @@ web server platforms.
 
         git pull
 
-    - make sure folders *cache/smarty3* and *store* exist and are 
-    writable by the webserver
+    - make sure the folders "cache/smarty3" and "store" exist and are 
+    writable by the webserver.
 
 		mkdir -p "store"
         mkdir -p "cache/smarty3"
