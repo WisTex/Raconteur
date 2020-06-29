@@ -25,7 +25,7 @@ Software
   - apt-get install git
   - mkdir -p /var/www
   - cd /var/www
-  - git clone https://framagit.org/zot/zap.git html
+  - git clone https://codeberg.org/zot/zap.git html
   - cd html/.homeinstall
   - cp hubzilla-config.txt.template hubzilla-config.txt
   - nano hubzilla-config.txt

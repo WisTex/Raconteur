@@ -8,7 +8,7 @@ Earlier revisions of the zot protocol dealt with the creation of nomadic identit
 
 Zot/6 builds on those concepts and streamlines many of the interactions, applying lessons learned over decades of building decentralised systems.
 
-A reference implementation (a social media app) is provided at https://framagit.org/zot/zap ; the reference implementation is not yet 100% spec compliant or complete but may be used for basic compatibility testing and development purposes. 
+A reference implementation (a social media app) is provided at https://codeberg.org/zot/zap ; the reference implementation is not yet 100% spec compliant or complete but may be used for basic compatibility testing and development purposes. 
 
 ### Differences from earlier Zot versions
 

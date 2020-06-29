@@ -17,7 +17,7 @@ requirements and confirm these with your hosting provider prior to
 installation. (And preferably before entering into a long-term contract.)
 
 If you encounter installation issues, please let us know via the issue 
-tracker at https://framagit.org/zot/zap where you downloaded the software.
+tracker at https://codeberg.org/zot/zap where you downloaded the software.
 Please be as clear as you can about your operating environment and provide as
 much detail as possible about any error messages you may see, so that we can
 prevent it from happening in the future. Due to the large variety of operating
@@ -65,11 +65,11 @@ web server platforms.
 	Example config scripts are available for these platforms in the install 
 	directory. Apache and nginx have the most support. 
 
-    - PHP 7.1 or later. 
+    - PHP 7.2 or later. 
 
     - PHP *command line* access with register_argc_argv set to true in the 
     php.ini file - and with no hosting provider restrictions on the use of 
-    exec() and proc_open().
+    exec() and proc_open(). 
 
     - curl, gd (with at least jpeg and png support), mysqli, mbstring, xml, 
     xmlreader (FreeBSD), zip and openssl extensions. The imagick extension MAY
@@ -99,14 +99,14 @@ web server platforms.
     software much easier to update. The Linux command to clone the repository 
     into a directory "mywebsite" would be
 
-        git clone https://framagit.org/zot/zap.git mywebsite
+        git clone https://codeberg.org/zot/zap.git mywebsite
 
     - and then you can pick up the latest changes at any time with
 
         git pull
 
-    - make sure folders *cache/smarty3* and *store* exist and are 
-    writable by the webserver
+    - make sure the folders "cache/smarty3" and "store" exist and are 
+    writable by the webserver.
 
 		mkdir -p "store"
         mkdir -p "cache/smarty3"
@@ -131,7 +131,7 @@ web server platforms.
          a nickname of 'zaddons'. You can pull in other addon repositories by 
          giving them different nicknames.
 
-            util/add_addon_repo https://framagit.org/zot/zap-addons.git zaddons
+            util/add_addon_repo https://codeberg.org/zot/zap-addons.git zaddons
 
     - For keeping the addon tree updated, you should be on your top level website 
 		directory and issue an update command for that repository.

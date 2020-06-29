@@ -455,7 +455,7 @@ function install_hubzilla {
     elif git remote -v | grep -i "origin.*zap.*"
     then
         print_info "zap"
-        util/add_addon_repo https://framagit.org/zot/zap-addons.git zaddons
+        util/add_addon_repo https://codeberg.org/zot/zap-addons.git zaddons
     else
         die "neither zap nor hubzilla repository > did not install addons or zap/hubzilla"
     fi
