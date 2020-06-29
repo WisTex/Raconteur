@@ -3,7 +3,7 @@
 		<div onclick="openClose('actfilt'); return true;">
 		{{$title}}
 		{{if ! $reset}}
-		<i class="fa fa-fw fa-caret-down"></i>
+		<i class="fa fa-fw fa-caret-down fakelink"></i>
 		{{/if}}
 		</div>
 		{{if $reset}}
