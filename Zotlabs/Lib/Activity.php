@@ -2016,12 +2016,28 @@ class Activity {
 
 			$obj_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj));
 
-			// if the object is an actor it is not really a response activity, reset a couple of things
+			// We already check for admin blocks of third-party objects when fetching them explicitly.
+			// Repeat here just in case the entire object was supplied inline and did not require fetching
+			
+			if ($obj_actor && array_key_exists('id',$obj_actor)) {
+				$m = parse_url($obj_actor['id']);
+				if ($m && $m['scheme'] && $m['host']) {
+					if (! check_siteallowed($m['scheme'] . '://' . $m['host'])) {
+						return;
+					}
+				}
+				if (! check_channelallowed($obj_actor['id'])) {
+					return;
+				}
+			}
+
+			// if the object is an actor, it is not really a response activity, so reset a couple of things
 			
 			if (ActivityStreams::is_an_actor($act->obj['type'])) {
 				$obj_actor = $act->actor;
 				$s['parent_mid'] = $s['mid'];
 			}
+
 
 			// ensure we store the original actor
 			self::actor_store($obj_actor['id'],$obj_actor);
@@ -2070,12 +2086,12 @@ class Activity {
 			}
 		}
 
-		if (! $s['created'])
+		if (! $s['created']) {
 			$s['created'] = datetime_convert();
-
-		if (! $s['edited'])
+		}
+		if (! $s['edited']) {
 			$s['edited'] = $s['created'];
-
+		}
 		$s['title']    = (($response_activity) ? EMPTY_STR : self::bb_content($content,'name'));
 		$s['summary']  = self::bb_content($content,'summary');
 
