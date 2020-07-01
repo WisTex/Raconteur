@@ -110,6 +110,9 @@ class Inbox extends Controller {
 				http_status_exit(403,'Permission denied');
 			}
 		}
+		if (! check_channelallowed($observer_hash)) {
+			http_status_exit(403,'Permission denied');
+		}
 
 		if (is_array($AS->actor) && array_key_exists('id',$AS->actor)) {
 			Activity::actor_store($AS->actor['id'],$AS->actor);
@@ -121,6 +124,9 @@ class Inbox extends Controller {
 
 		if (is_array($AS->obj) && is_array($AS->obj['actor']) && array_key_exists('id',$AS->obj['actor']) && $AS->obj['actor']['id'] !== $AS->actor['id']) {
 			Activity::actor_store($AS->obj['actor']['id'],$AS->obj['actor']);
+			if (! check_channelallowed($AS->obj['actor']['id'])) {
+				http_status_exit(403,'Permission denied');
+			}
 		}
 
 		$test = q("update hubloc set hubloc_connected = '%s' where hubloc_hash = '%s' and hubloc_network = 'activitypub'",

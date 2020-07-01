@@ -2570,6 +2570,7 @@ class Activity {
 			if (! check_pubstream_channelallowed($observer_hash)) {
 				$allowed = false;
 			}
+
 			// don't allow pubstream posts if the sender even has a clone on a pubstream denied site
 
 			$h = q("select hubloc_url from hubloc where hubloc_hash = '%s'",
