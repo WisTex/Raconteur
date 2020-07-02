@@ -147,6 +147,6 @@ function trim_message($str) {
 	return $str;
 }
 
-if (array_search(__file__,get_included_files())===0){
+if (array_search(__file__,get_included_files()) === 0) {
   po2php_run($argc,$argv);
 }
