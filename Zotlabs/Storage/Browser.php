@@ -1,8 +1,13 @@
 <?php
-
 namespace Zotlabs\Storage;
 
 use Sabre\DAV;
+
+//require_once('include/conversation.php');
+//require_once('include/text.php');
+
+require_once('include/acl_selectors.php');
+
 
 /**
  * @brief Provides a DAV frontend for the webbrowser.
@@ -15,6 +20,7 @@ use Sabre\DAV;
  * @link http://framagit.org/hubzilla/core/
  * @license http://opensource.org/licenses/mit-license.php The MIT License (MIT)
  */
+
 class Browser extends DAV\Browser\Plugin {
 
 	public $build_page = false;
@@ -65,7 +71,8 @@ class Browser extends DAV\Browser\Plugin {
 
 		if (! perm_is_allowed($this->auth->owner_id, get_observer_hash(), 'write_storage')) {
 			$this->enablePost = false;
-		} else {
+		}
+		else {
 			$this->enablePost = true;
 		}
 	}
@@ -79,26 +86,25 @@ class Browser extends DAV\Browser\Plugin {
 		// (owner_id = channel_id) is visitor owner of this directory?
 		$is_owner = ((local_channel() && $this->auth->owner_id == local_channel()) ? true : false);
 
-		if ($this->auth->getTimezone())
+		if ($this->auth->getTimezone()) {
 			date_default_timezone_set($this->auth->getTimezone());
+		}
 
-		require_once('include/conversation.php');
-		require_once('include/text.php');
 		if ($this->auth->owner_nick) {
 			$html = '';
 		}
 
-		$files = $this->server->getPropertiesForPath($path, array(
+		$files = $this->server->getPropertiesForPath($path, [
 			'{DAV:}displayname',
 			'{DAV:}resourcetype',
 			'{DAV:}getcontenttype',
 			'{DAV:}getcontentlength',
 			'{DAV:}getlastmodified',
-			), 1);
+			], 1);
 
 		$parent = $this->server->tree->getNodeForPath($path);
 
-		$parentpath = array();
+		$parentpath = [];
 		// only show parent if not leaving /cloud/; TODO how to improve this?
 		if ($path && $path != "cloud") {
 			list($parentUri) = \Sabre\Uri\split($path);
@@ -108,13 +114,15 @@ class Browser extends DAV\Browser\Plugin {
 			$parentpath['path'] = $fullPath;
 		}
 
-		$f = array();
+		$f = [];
 		foreach ($files as $file) {
-			$ft = array();
+			$ft = [];
 			$type = null;
 
 			// This is the current directory, we can skip it
-			if (rtrim($file['href'], '/') == $path) continue;
+			if (rtrim($file['href'], '/') == $path) {
+				continue;
+			}
 
 			list(, $name) = \Sabre\Uri\split($file['href']);
 
@@ -122,9 +130,11 @@ class Browser extends DAV\Browser\Plugin {
 				$type = $file[200]['{DAV:}resourcetype']->getValue();
 
 				// resourcetype can have multiple values
-				if (!is_array($type)) $type = array($type);
+				if (! is_array($type)) {
+					$type = [ $type ];
+				}
 
-				foreach ($type as $k=>$v) {
+				foreach ($type as $k => $v) {
 					// Some name mapping is preferred
 					switch ($v) {
 						case '{DAV:}collection' :
@@ -158,10 +168,12 @@ class Browser extends DAV\Browser\Plugin {
 
 			// If no resourcetype was found, we attempt to use
 			// the contenttype property
-			if (!$type && isset($file[200]['{DAV:}getcontenttype'])) {
+			if (! $type && isset($file[200]['{DAV:}getcontenttype'])) {
 				$type = $file[200]['{DAV:}getcontenttype'];
 			}
-			if (!$type) $type = t('Unknown');
+			if (! $type) {
+				$type = t('Unknown');
+			}
 
 			$size = isset($file[200]['{DAV:}getcontentlength']) ? (int)$file[200]['{DAV:}getcontentlength'] : '';
 			$lastmodified = ((isset($file[200]['{DAV:}getlastmodified'])) ? $file[200]['{DAV:}getlastmodified']->getTime()->format('Y-m-d H:i:s') : '');
@@ -199,11 +211,8 @@ class Browser extends DAV\Browser\Plugin {
 
 
 			// generate preview icons for tile view. 
-			// Currently we only handle images, but this could potentially be extended with plugins
-			// to provide document and video thumbnails. SVG, PDF and office documents have some 
-			// security concerns and should only be allowed on single-user sites with tightly controlled
-			// upload access. system.thumbnail_security should be set to 1 if you want to include these 
-			// types 
+			// SVG, PDF and office documents have some security concerns and should only be allowed on single-user sites with tightly controlled
+			// upload access. system.thumbnail_security should be set to 1 if you want to include these types 
 
 			$is_creator = false;
 			$photo_icon = '';
@@ -214,24 +223,23 @@ class Browser extends DAV\Browser\Plugin {
 				intval($owner)
 			);
 
-			if($r) {
+			if ($r) {
 				$is_creator = (($r[0]['creator'] === get_observer_hash()) ? true : false);
-			 	if(file_exists(dbunescbin($r[0]['content']) . '.thumb')) {
+			 	if (file_exists(dbunescbin($r[0]['content']) . '.thumb')) {
 					$photo_icon = 'data:image/jpeg;base64,' . base64_encode(file_get_contents(dbunescbin($r[0]['content']) . '.thumb'));
-//					logger('found thumb: ' . $photo_icon);
 				}
 			}
 
-			if(strpos($type,'image/') === 0 && $attachHash) {
+			if (strpos($type,'image/') === 0 && $attachHash) {
 				$r = q("select resource_id, imgscale from photo where resource_id = '%s' and imgscale in ( %d, %d ) order by imgscale asc limit 1",
 					dbesc($attachHash),
 					intval(PHOTO_RES_320),
 					intval(PHOTO_RES_PROFILE_80)
 				);
-				if($r) {
+				if ($r) {
 					$photo_icon = 'photo/' . $r[0]['resource_id'] . '-' . $r[0]['imgscale'];				
 				}
-				if($type === 'image/svg+xml' && $preview_style > 0) {
+				if ($type === 'image/svg+xml' && $preview_style > 0) {
 					$photo_icon = $fullPath;
 				}
 			}
@@ -241,7 +249,7 @@ class Browser extends DAV\Browser\Plugin {
 			$photo_icon = $g['thumbnail'];
 
 
-			$attachIcon = ""; // "<a href=\"attach/".$attachHash."\" title=\"".$displayName."\"><i class=\"fa fa-arrow-circle-o-down\"></i></a>";
+			$attachIcon = ""; 
 
 			// put the array for this file together
 			$ft['attachId'] = $this->findAttachIdByHash($attachHash);
@@ -270,11 +278,14 @@ class Browser extends DAV\Browser\Plugin {
 			$this->server->emit('onHTMLActionsPanel', array($parent, &$output, $path));
 		}
 
+		// "display as tiles" is the default for visitors, and changes to this setting are stored in the session
+		// so that they apply even to unauthenticated visitors.
+
 		$deftiles = (($is_owner) ? 0 : 1);
 		$tiles = ((array_key_exists('cloud_tiles',$_SESSION)) ? intval($_SESSION['cloud_tiles']) : $deftiles);
 		$_SESSION['cloud_tiles'] = $tiles;
 	
-		$html .= replace_macros(get_markup_template('cloud.tpl'), array(
+		$html .= replace_macros(get_markup_template('cloud.tpl'), [
 				'$header' => t('Files') . ": " . $this->escapeHTML($path) . "/",
 				'$total' => t('Total'),
 				'$actionspanel' => $output,
@@ -296,7 +307,8 @@ class Browser extends DAV\Browser\Plugin {
 				'$edit' => t('Edit'),
 				'$delete' => t('Delete'),
 				'$nick' => $this->auth->getCurrentUser()
-			));
+			]
+		);
 
 
 		$a = false;
@@ -328,22 +340,24 @@ class Browser extends DAV\Browser\Plugin {
 	 * @param string $path
 	 */
 	public function htmlActionsPanel(DAV\INode $node, &$output, $path) {
-		if(! $node instanceof DAV\ICollection)
+		if (! $node instanceof DAV\ICollection) {
 			return;
+		}
 
 		// We also know fairly certain that if an object is a non-extended
 		// SimpleCollection, we won't need to show the panel either.
-		if (get_class($node) === 'Sabre\\DAV\\SimpleCollection')
-			return;
-		require_once('include/acl_selectors.php');
 
+		if (get_class($node) === 'Sabre\\DAV\\SimpleCollection') {
+			return;
+		}
+		
 		$aclselect = null;
 		$lockstate = '';
 		$limit = 0;
 
-		if($this->auth->owner_id) {
+		if ($this->auth->owner_id) {
 			$channel = channelx_by_n($this->auth->owner_id);
-			if($channel) {
+			if ($channel) {
 				$acl = new \Zotlabs\Access\AccessControl($channel);
 				$channel_acl = $acl->get();
 				$lockstate = (($acl->is_private()) ? 'lock' : 'unlock');
@@ -355,7 +369,7 @@ class Browser extends DAV\Browser\Plugin {
 			$limit = engr_units_to_bytes(service_class_fetch($this->auth->owner_id, 'attach_upload_limit'));
 		}
 
-		if((! $limit) && get_config('system','cloud_report_disksize')) {
+		if ((! $limit) && get_config('system','cloud_report_disksize')) {
 			$limit = engr_units_to_bytes(disk_free_space('store'));
 		}
 
@@ -363,12 +377,11 @@ class Browser extends DAV\Browser\Plugin {
 			intval($this->auth->channel_account_id)
 		);
 		$used = $r[0]['total'];
-		if($used) {
+		if ($used) {
 			$quotaDesc = t('You are using %1$s of your available file storage.');
-			$quotaDesc = sprintf($quotaDesc,
-				userReadableSize($used));
+			$quotaDesc = sprintf($quotaDesc,userReadableSize($used));
 		}
-		if($limit && $used) {
+		if ($limit && $used) {
 			$quotaDesc = t('You are using %1$s of %2$s available file storage. (%3$s&#37;)');
 			$quotaDesc = sprintf($quotaDesc,
 				userReadableSize($used),
@@ -376,7 +389,7 @@ class Browser extends DAV\Browser\Plugin {
 				round($used / $limit, 1) * 100);
 		}
 		// prepare quota for template
-		$quota = array();
+		$quota = [];
 		$quota['used'] = $used;
 		$quota['limit'] = $limit;
 		$quota['desc'] = $quotaDesc;
@@ -387,9 +400,9 @@ class Browser extends DAV\Browser\Plugin {
 		$special = 'cloud/' . $this->auth->owner_nick;
 		$count   = strlen($special);
 
-		if(strpos($path,$special) === 0)
+		if (strpos($path,$special) === 0) {
 			$path = trim(substr($path,$count),'/');
-
+		}
 
 		$output .= replace_macros(get_markup_template('cloud_actionspanel.tpl'), array(
 				'$folder_header' => t('Create new folder'),
@@ -462,15 +475,14 @@ class Browser extends DAV\Browser\Plugin {
 	 *  The hash of an attachment
 	 * @return string
 	 */
+	 
 	protected function findAttachIdByHash($attachHash) {
 		$r = q("SELECT id FROM attach WHERE hash = '%s' ORDER BY edited DESC LIMIT 1",
 			dbesc($attachHash)
 		);
-		$id = "";
+		$id = EMPTY_STR;
 		if ($r) {
-			foreach ($r as $rr) {
-				$id = $rr['id'];
-			}
+			$id = $r[0]['id'];
 		}
 		return $id;
 	}
