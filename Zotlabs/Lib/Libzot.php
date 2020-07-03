@@ -1798,10 +1798,15 @@ class Libzot {
 					if ($parent) {
 						$allowed = can_comment_on_post($sender,$parent[0]);
 					}
-					if ((! $allowed) && PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$arr)) {
-						// permit_all_mentions bypasses some comment protections, but if comments are disallowed completely
-						// honour this setting.
-						if ($parent && absolutely_no_comments($parent[0])) {
+					$permit_all_mentions = intval(PConfig::Get($channel['channel_id'], 'system','permit_all_mentions'));
+					// undocumented fature: permit_all_mentions = 2 means only allow if it is somebody else's conversation.
+					if ((! $allowed) && $permit_all_mentions && i_am_mentioned($channel,$arr)) {
+						if ($permit_all_mentions === 2 && $parent[0]['owner_xchan'] === $channel['channel_hash']) {
+							$allowed = false;
+						}
+						elseif ($parent && absolutely_no_comments($parent[0])) {
+							// permit_all_mentions bypasses some comment protections, but if comments are
+							// disallowed completely honour that setting.
 							$allowed = false;
 						}
 						else {

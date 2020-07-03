@@ -2538,8 +2538,15 @@ class Activity {
 			if ($p) {
 				// check permissions against the author, not the sender
 				$allowed = perm_is_allowed($channel['channel_id'],$item['author_xchan'],'post_comments');
-				if ((! $allowed) && PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$item)) {
-					$allowed = true;
+				$permit_all_mentions = intval(PConfig::Get($channel['channel_id'], 'system','permit_all_mentions'));
+				// undocumented feature: permit_all_mentions = 2 means only allow if it's somebody else's conversation.
+				if ((! $allowed) && $permit_all_mentions && i_am_mentioned($channel,$item)) {
+					if ($permit_all_mentions === 2 && $p[0]['owner_xchan'] === $channel['channel_hash']) {
+						$allowed = false;
+					}
+					else {
+						$allowed = true;
+					}
 				}
 				if (absolutely_no_comments($p[0])) {
 					$allowed = false;
