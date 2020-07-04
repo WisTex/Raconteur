@@ -2529,6 +2529,7 @@ class Activity {
 		}
 		
 		$allowed = false;
+		$permit_mentions = intval(PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$item));
 		
 		if ($is_child_node) {		
 			$p = q("select * from item where mid = '%s' and uid = %d and item_wall = 1",
@@ -2538,10 +2539,8 @@ class Activity {
 			if ($p) {
 				// check permissions against the author, not the sender
 				$allowed = perm_is_allowed($channel['channel_id'],$item['author_xchan'],'post_comments');
-				$permit_all_mentions = intval(PConfig::Get($channel['channel_id'], 'system','permit_all_mentions'));
-				// undocumented feature: permit_all_mentions = 2 means only allow if it's somebody else's conversation.
-				if ((! $allowed) && $permit_all_mentions && i_am_mentioned($channel,$item)) {
-					if ($permit_all_mentions === 2 && $p[0]['owner_xchan'] === $channel['channel_hash']) {
+				if ((! $allowed) && $permit_mentions)  {
+					if ($p[0]['owner_xchan'] === $channel['channel_hash']) {
 						$allowed = false;
 					}
 					else {
@@ -2578,8 +2577,13 @@ class Activity {
 				}
 			}
 		}
-		elseif (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') || ($is_sys_channel && $pubstream)) {
-			$allowed = true;
+		else {
+			if (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') || ($is_sys_channel && $pubstream)) {
+				$allowed = true;
+			}
+			if ($permit_mentions) {
+				$allowed = true;
+			}
 		}
 
 		if (tgroup_check($channel['channel_id'],$item) && (! $is_child_node)) {
