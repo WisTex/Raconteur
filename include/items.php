@@ -2475,7 +2475,7 @@ function tag_deliver($uid, $item_id) {
 
 	$item = array_shift($i);
 
-	if (($item['source_xchan']) && intval($item['item_uplink'])
+	if (intval($item['item_uplink']) && $item['source_xchan']
 		&& intval($item['item_thread_top']) && ($item['edited'] != $item['created'])) {
 
 		// this is an update (edit) to a post which was already processed by us and has a second delivery chain
@@ -2483,14 +2483,14 @@ function tag_deliver($uid, $item_id) {
 		// after resetting ownership and permission bits
 		
 		logger('updating edited tag_deliver post for ' . $u['channel_address']);
-		start_delivery_chain($u, $item, $item_id, 0, true);
+		start_delivery_chain($u, $item, $item_id, 0, false, true);
 		return;
 	}
 
 	if ($is_group && intval($item['item_private']) === 2 && intval($item['item_thread_top'])) {
 		// group delivery via DM
 		logger('group DM delivery for ' . $u['channel_address']);
-		start_delivery_chain($u, $item, $item_id, 0, false);
+		start_delivery_chain($u, $item, $item_id, 0, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
 		return;
 	}
 
@@ -2502,7 +2502,7 @@ function tag_deliver($uid, $item_id) {
 		}
 		// group delivery via W2W
 		logger('rewriting W2W post for ' . $u['channel_address']);
-		start_delivery_chain($u, $item, $item_id, 0, false);
+		start_delivery_chain($u, $item, $item_id, 0, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
 		q("update item set item_wall = 0 where id = %d",
 			intval($item_id)
 		);
@@ -2806,7 +2806,7 @@ function i_am_mentioned($channel,$item) {
  * @param int $item_id
  * @param boolean $parent
  */
-function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false) {
+function start_delivery_chain($channel, $item, $item_id, $parent, $group = false, $edit = false) {
 
 	// btlogger('start_chain: ' . $channel['channel_id'] . ' item: ' . $item_id);
 	
@@ -2855,36 +2855,59 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 		}
 	}
 
-	// @todo handle edit and parent correctly
-
-	if(! $parent) {
-
-		if ($edit) {
-			return;
-		}
+	if ($group && (! $parent)) {
 
 		$arr = [];
+		
+		if ($edit) {
+			// process edit or delete action
+			$r = q("select * from item where source_xchan = '%s' and body like '%s' and uid = %d limit 1",
+				dbesc($item['owner_xchan']),
+				dbesc("%message_id='" . $item['mid'] . "'%"),
+				intval($channel['channel_id'])
+			);
+			if ($r) {
+				if (intval($item['item_deleted'])) {
+					drop_item($r[0]['id'],false,DROPITEM_PHASE1);
+					Run::Summon([ 'Notifier','drop',$r[0]['id'] ]);
+					return;
+				}
+				$arr['id'] = intval($r[0]['id']);
+				$arr['parent'] = intval($r[0]['parent']);
+				$arr['mid'] = $r[0]['mid'];
+				$arr['parent_mid'] = $r[0]['parent_mid'];
+				$arr['edited'] = datetime_convert();
+			}
+			else {
+				logger('unable to locate original group post ' . $item['mid']);
+				return;
+			}
 
+		}
+		else {
+			$arr['mid'] = str_replace('/item/','/activity/',item_message_id());
+			$arr['parent_mid'] = $arr['mid'];
+		}
+		
 		$arr['aid'] = $channel['channel_account_id'];
 		$arr['uid'] = $channel['channel_id'];
 
-//		$arr['item_uplink'] = 1;
-//		$arr['source_xchan'] = $item['owner_xchan'];
+		// WARNING: the presence of both source_xchan and non-zero item_uplink here will cause a delivery loop
+		$arr['item_uplink']  = 0;
+		$arr['source_xchan'] = $item['owner_xchan'];
 
 		$arr['item_private'] = (($channel['channel_allow_cid'] || $channel['channel_allow_gid']
 		|| $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
 
 		$arr['item_origin'] = 1;
 		$arr['item_wall'] = 1;
-		$arr['mid'] = item_message_id();
-		$arr['mid'] = str_replace('/item/','/activity/',$arr['mid']);
-		$arr['parent_mid'] = $arr['mid'];
 		$arr['item_thread_top'] = 1;
 	
 		if (strpos($item['body'], "[/share]") !== false) {
 			$pos = strpos($item['body'], "[share");
 			$bb = substr($item['body'], $pos);
-		} else {
+		}
+		else {
 			$bb = "[share author='" . urlencode($item['author']['xchan_name']).
 				"' profile='"       . $item['author']['xchan_url'] .
 				"' portable_id='"   . $item['author']['xchan_hash'] . 
@@ -2900,12 +2923,12 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 			$bb .= "[/share]";
 		}
 
-		$mention = '@[zrl=' . $item['author']['xchan_url'] . ']' . $item['author']['xchan_name'] . '[/zrl]';
+//		$mention = '@[zrl=' . $item['author']['xchan_url'] . ']' . $item['author']['xchan_name'] . '[/zrl]';
 		$arr['body'] = $bb;
 
 		$arr['author_xchan'] = $channel['channel_hash'];
 		$arr['owner_xchan']  = $channel['channel_hash'];
-		// $arr['obj'] = $item['obj'];
+
 		$arr['obj_type'] = $item['obj_type'];
 		$arr['verb'] = 'Create';
 		$arr['item_restrict'] = 1;
@@ -2915,8 +2938,13 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 		$arr['deny_cid']  = $channel['channel_deny_cid'];
 		$arr['deny_gid']  = $channel['channel_deny_gid'];
 		$arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
-		
-		$post = item_store($arr);	
+
+		if ($arr['id']) {
+			$post = item_store_update($arr);
+		}
+		else {
+			$post = item_store($arr);
+		}
 
 		$post_id = $post['item_id'];
 
@@ -2925,7 +2953,6 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 		}
 		return;
 	}
-
 
 
 	// Change this copy of the post to a forum head message and deliver to all the tgroup members
@@ -3006,7 +3033,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $edit = false)
 function check_item_source($uid, $item) {
 
 	logger('source: uid: ' . $uid, LOGGER_DEBUG);
-	$xchan = (($item['source_xchan']) ?  $item['source_xchan'] : $item['owner_xchan']);
+	$xchan = (($item['source_xchan'] && intval($item['item_uplink'])) ?  $item['source_xchan'] : $item['owner_xchan']);
 
 	$r = q("select * from source where src_channel_id = %d and ( src_xchan = '%s' or src_xchan = '*' ) limit 1",
 		intval($uid),
