@@ -175,8 +175,10 @@ class ThreadItem {
 		}
 
 
-		if($observer['xchan_hash'] == $this->get_data_value('author_xchan') 
+		if($observer['xchan_hash']
+			&& $observer['xchan_hash'] == $this->get_data_value('author_xchan') 
 			|| $observer['xchan_hash'] == $this->get_data_value('owner_xchan') 
+			|| $observer['xchan_hash'] == $this->get_data_value('source_xchan') 
 			|| $this->get_data_value('uid') == local_channel())
 			$dropping = true;
 

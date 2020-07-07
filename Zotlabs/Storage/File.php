@@ -12,14 +12,14 @@ require_once('include/photos.php');
 /**
  * @brief This class represents a file in DAV.
  *
- * It provides all functions to work with files in Red's cloud through DAV protocol.
+ * It provides all functions to work with files in the project cloud through DAV protocol.
  *
  * @extends \\Sabre\\DAV\\Node
  * @implements \\Sabre\\DAV\\IFile
  *
- * @link http://github.com/friendica/red
  * @license http://opensource.org/licenses/mit-license.php The MIT License (MIT)
  */
+
 class File extends DAV\Node implements DAV\IFile {
 
 	/**
@@ -31,15 +31,20 @@ class File extends DAV\Node implements DAV\IFile {
 	 *  * filename (string)
 	 *  * filetype (string)
 	 */
+
 	private $data;
+
 	/**
 	 * @see \\Sabre\\DAV\\Auth\\Backend\\BackendInterface
 	 * @var \\Zotlabs\\Storage\\BasicAuth $auth
 	 */
+
 	private $auth;
+
 	/**
 	 * @var string $name
 	 */
+
 	private $name;
 
 	/**
@@ -49,12 +54,11 @@ class File extends DAV\Node implements DAV\IFile {
 	 * @param array $data from attach table
 	 * @param &$auth
 	 */
+
 	public function __construct($name, $data, &$auth) {
 		$this->name = $name;
 		$this->data = $data;
 		$this->auth = $auth;
-
-		// logger(print_r($this->data, true), LOGGER_DATA);
 	}
 
 	/**
@@ -62,8 +66,8 @@ class File extends DAV\Node implements DAV\IFile {
 	 *
 	 * @return string
 	 */
+
 	public function getName() {
-		//logger(basename($this->name), LOGGER_DATA);
 		return basename($this->name);
 	}
 
@@ -74,6 +78,7 @@ class File extends DAV\Node implements DAV\IFile {
 	 * @param string $newName The new name of the file.
 	 * @return void
 	 */
+
 	public function setName($newName) {
 		logger('old name ' . basename($this->name) . ' -> ' . $newName, LOGGER_DATA);
 
@@ -98,7 +103,7 @@ class File extends DAV\Node implements DAV\IFile {
 			intval($this->auth->owner_id)
 		);
 
-		if($this->data->is_photo) {
+		if ($this->data->is_photo) {
 			$r = q("update photo set filename = '%s', display_path = '%s' where resource_id = '%s' and uid = %d",
 				dbesc($newName),
 				dbesc($x['path']),
@@ -108,10 +113,11 @@ class File extends DAV\Node implements DAV\IFile {
 		}
 
 		$ch = channelx_by_n($this->auth->owner_id);
-		if($ch) {
+		if ($ch) {
 			$sync = attach_export_data($ch,$this->data['hash']);
-			if($sync)
-				Libsync::build_sync_packet($ch['channel_id'],array('file' => array($sync)));
+			if ($sync) {
+				Libsync::build_sync_packet($ch['channel_id'], [ 'file' => [ $sync ] ]);
+			}
 		}
 	}
 
@@ -166,7 +172,6 @@ class File extends DAV\Node implements DAV\IFile {
 			$os_path = $r[0]['os_path'];
 			$display_path = $r[0]['display_path'];
 			$filename = $r[0]['filename'];
-
 
 			if (intval($r[0]['os_storage'])) {
 				$d = q("select folder, content from attach where hash = '%s' and uid = %d limit 1",
@@ -369,6 +374,7 @@ class File extends DAV\Node implements DAV\IFile {
 	 *
 	 * @return mixed
 	 */
+
 	public function getContentType() {
 		// @todo this should be a global definition.
 		$unsafe_types = array('text/html', 'text/css', 'application/javascript');
@@ -410,17 +416,21 @@ class File extends DAV\Node implements DAV\IFile {
 	public function delete() {
 		logger('delete file ' . basename($this->name), LOGGER_DEBUG);
 
-		if((! $this->auth->owner_id) || (! perm_is_allowed($this->auth->owner_id, $this->auth->observer, 'write_storage'))) {
+		if ((! $this->auth->owner_id) || (! perm_is_allowed($this->auth->owner_id, $this->auth->observer, 'write_storage'))) {
 			throw new DAV\Exception\Forbidden('Permission denied.');
 		}
 
-		if($this->auth->owner_id !== $this->auth->channel_id) {
+		if ($this->auth->owner_id !== $this->auth->channel_id) {
 			if (($this->auth->observer !== $this->data['creator']) || intval($this->data['is_dir'])) {
 				throw new DAV\Exception\Forbidden('Permission denied.');
 			}
 		}
 
-		if(get_pconfig($this->auth->owner_id,'system','os_delete_prohibit') && \App::$module == 'dav') {
+		// This is a subtle solution to crypto-lockers which can wreak havoc on network resources when
+		// invoked on a dav-mounted filesystem. By setting system.os_delete_prohibit, one can remove files
+		// via the web interface but from their operating system the filesystem is treated as read-only. 
+		
+		if (get_pconfig($this->auth->owner_id,'system','os_delete_prohibit') && \App::$module == 'dav') {
 			throw new DAV\Exception\Forbidden('Permission denied.');
 		}
 

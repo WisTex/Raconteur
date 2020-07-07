@@ -8,7 +8,7 @@ class Zotfinger {
 
 	static function exec($resource,$channel = null) {
 
-		if(! $resource) {
+		if (! $resource) {
 			return false;
 		}
 
@@ -16,7 +16,7 @@ class Zotfinger {
 
 		$data = json_encode([ 'zot_token' => random_string() ]);
 
-		if($channel && $m) {
+		if ($channel && $m) {
 
 			$headers = [ 
 				'Accept'           => 'application/x-zot+json', 
@@ -34,19 +34,17 @@ class Zotfinger {
 				
 		$result = [];
 
-
 		$redirects = 0;
 		$x = z_post_url($resource,$data,$redirects, [ 'headers' => $h  ] );
 
 
-
-		if($x['success']) {
+		if ($x['success']) {
 
 			$result['signature'] = HTTPSig::verify($x);
     
 			$result['data'] = json_decode($x['body'],true);
 
-			if($result['data'] && is_array($result['data']) && array_key_exists('encrypted',$result['data']) && $result['data']['encrypted']) {
+			if ($result['data'] && is_array($result['data']) && array_key_exists('encrypted',$result['data']) && $result['data']['encrypted']) {
 				$result['data'] = json_decode(Crypto::unencapsulate($result['data'],get_config('system','prvkey')),true);
 			}
 
@@ -55,7 +53,5 @@ class Zotfinger {
 
 		return false;
 	}
-
-
 
 }

@@ -864,6 +864,8 @@ function get_tags($s) {
 		}
 	}
 
+	// match any unescaped double quoted tags (rare)
+	
 	if(preg_match_all('/([@#\!]\".*?\")/',$s,$match)) {
 		foreach($match[1] as $mtch) {
 			$ret[] = $mtch;

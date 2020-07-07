@@ -2016,12 +2016,28 @@ class Activity {
 
 			$obj_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj));
 
-			// if the object is an actor it is not really a response activity, reset a couple of things
+			// We already check for admin blocks of third-party objects when fetching them explicitly.
+			// Repeat here just in case the entire object was supplied inline and did not require fetching
+			
+			if ($obj_actor && array_key_exists('id',$obj_actor)) {
+				$m = parse_url($obj_actor['id']);
+				if ($m && $m['scheme'] && $m['host']) {
+					if (! check_siteallowed($m['scheme'] . '://' . $m['host'])) {
+						return;
+					}
+				}
+				if (! check_channelallowed($obj_actor['id'])) {
+					return;
+				}
+			}
+
+			// if the object is an actor, it is not really a response activity, so reset a couple of things
 			
 			if (ActivityStreams::is_an_actor($act->obj['type'])) {
 				$obj_actor = $act->actor;
 				$s['parent_mid'] = $s['mid'];
 			}
+
 
 			// ensure we store the original actor
 			self::actor_store($obj_actor['id'],$obj_actor);
@@ -2070,12 +2086,12 @@ class Activity {
 			}
 		}
 
-		if (! $s['created'])
+		if (! $s['created']) {
 			$s['created'] = datetime_convert();
-
-		if (! $s['edited'])
+		}
+		if (! $s['edited']) {
 			$s['edited'] = $s['created'];
-
+		}
 		$s['title']    = (($response_activity) ? EMPTY_STR : self::bb_content($content,'name'));
 		$s['summary']  = self::bb_content($content,'summary');
 
@@ -2513,6 +2529,7 @@ class Activity {
 		}
 		
 		$allowed = false;
+		$permit_mentions = intval(PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$item));
 		
 		if ($is_child_node) {		
 			$p = q("select * from item where mid = '%s' and uid = %d and item_wall = 1",
@@ -2522,8 +2539,13 @@ class Activity {
 			if ($p) {
 				// check permissions against the author, not the sender
 				$allowed = perm_is_allowed($channel['channel_id'],$item['author_xchan'],'post_comments');
-				if ((! $allowed) && PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$item)) {
-					$allowed = true;
+				if ((! $allowed) && $permit_mentions)  {
+					if ($p[0]['owner_xchan'] === $channel['channel_hash']) {
+						$allowed = false;
+					}
+					else {
+						$allowed = true;
+					}
 				}
 				if (absolutely_no_comments($p[0])) {
 					$allowed = false;
@@ -2555,8 +2577,13 @@ class Activity {
 				}
 			}
 		}
-		elseif (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') || ($is_sys_channel && $pubstream)) {
-			$allowed = true;
+		else {
+			if (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') || ($is_sys_channel && $pubstream)) {
+				$allowed = true;
+			}
+			if ($permit_mentions) {
+				$allowed = true;
+			}
 		}
 
 		if (tgroup_check($channel['channel_id'],$item) && (! $is_child_node)) {
@@ -2570,6 +2597,7 @@ class Activity {
 			if (! check_pubstream_channelallowed($observer_hash)) {
 				$allowed = false;
 			}
+
 			// don't allow pubstream posts if the sender even has a clone on a pubstream denied site
 
 			$h = q("select hubloc_url from hubloc where hubloc_hash = '%s'",

@@ -60,7 +60,7 @@ class Inbox extends Controller {
 			$AS = new ActivityStreams($AS->obj);
 		}
 
-		//logger('debug: ' . $AS->debug());
+		// logger('debug: ' . $AS->debug());
 
 		if (! $AS->is_valid()) {
 			if ($AS->deleted) {
@@ -110,6 +110,9 @@ class Inbox extends Controller {
 				http_status_exit(403,'Permission denied');
 			}
 		}
+		if (! check_channelallowed($observer_hash)) {
+			http_status_exit(403,'Permission denied');
+		}
 
 		if (is_array($AS->actor) && array_key_exists('id',$AS->actor)) {
 			Activity::actor_store($AS->actor['id'],$AS->actor);
@@ -121,8 +124,13 @@ class Inbox extends Controller {
 
 		if (is_array($AS->obj) && is_array($AS->obj['actor']) && array_key_exists('id',$AS->obj['actor']) && $AS->obj['actor']['id'] !== $AS->actor['id']) {
 			Activity::actor_store($AS->obj['actor']['id'],$AS->obj['actor']);
+			if (! check_channelallowed($AS->obj['actor']['id'])) {
+				http_status_exit(403,'Permission denied');
+			}
 		}
 
+		// update the hubloc_connected timestamp, ignore failures
+		
 		$test = q("update hubloc set hubloc_connected = '%s' where hubloc_hash = '%s' and hubloc_network = 'activitypub'",
 			dbesc(datetime_convert()),
 			dbesc($observer_hash)
@@ -163,7 +171,7 @@ class Inbox extends Controller {
 
 			if (in_array(ACTIVITY_PUBLIC_INBOX,$AS->recips)) {
 
-				// look for channels with send_stream = PERMS_PUBLIC
+				// look for channels with send_stream = PERMS_PUBLIC (accept posts from anybody on the internet)
 
 				$r = q("select * from channel where channel_id in (select uid from pconfig where cat = 'perm_limits' and k = 'send_stream' and v = '1' ) and channel_removed = 0 ");
 				if ($r) {
@@ -186,11 +194,16 @@ class Inbox extends Controller {
 
 		}
 
+		// $channels represents all "potential" recipients. If they are not in this array, they will not receive the activity.
+		// If they are in this array, we will decide whether or not to deliver on a case-by-case basis.
+ 
 		if (! $channels) {
 			logger('no deliveries on this site');
 			return;
 		}
 
+		// Bto and Bcc aren't valid in this context and should not be stored. 
+		
 		$saved_recips = [];
 		foreach ( [ 'to', 'cc', 'audience' ] as $x ) {
 			if (array_key_exists($x,$AS->data)) {

@@ -16,7 +16,7 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '20.06.29' );
+define ( 'STD_VERSION',             '20.07.07' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1240 );
@@ -57,9 +57,6 @@ require_once('include/hubloc.php');
 require_once('include/attach.php');
 require_once('include/bbcode.php');
 require_once('include/items.php');
-
-
-
 
 /**
  * @brief Constant with a HTML line break.

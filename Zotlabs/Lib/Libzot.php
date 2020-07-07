@@ -1749,10 +1749,6 @@ class Libzot {
 				}
 			}
 
-
-
-
-
 			$tag_delivery = tgroup_check($channel['channel_id'],$arr);
 
 			$perm = 'send_stream';
@@ -1789,26 +1785,33 @@ class Libzot {
 					}
 				}
 
-				if ((! $allowed) && $perm === 'post_comments') {
-				
-					$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
-						dbesc($arr['parent_mid']),
-						intval($channel['channel_id'])
-					);
-					if ($parent) {
-						$allowed = can_comment_on_post($sender,$parent[0]);
-					}
-					if ((! $allowed) && PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$arr)) {
-						// permit_all_mentions bypasses some comment protections, but if comments are disallowed completely
-						// honour this setting.
+				$permit_mentions = intval(PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$arr));
+
+				if (! $allowed) {
+					if ($perm === 'post_comments') {
+						$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
+							dbesc($arr['parent_mid']),
+							intval($channel['channel_id'])
+						);
+						if ($parent) {
+							$allowed = can_comment_on_post($sender,$parent[0]);
+						}
+						if ((! $allowed) && $permit_mentions) {
+							if ($parent && $parent[0]['owner_xchan'] === $channel['channel_hash']) {
+								$allowed = false;
+							}
+							else {
+								$allowed = true;
+							}
+						}
 						if ($parent && absolutely_no_comments($parent[0])) {
 							$allowed = false;
 						}
-						else {
-							$allowed = true;
-						}
-					}
 
+					}
+					elseif ($permit_mentions) {
+						$allowed = true;
+					}
 				}
 				if ($request) {
 
