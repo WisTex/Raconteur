@@ -2488,9 +2488,11 @@ function tag_deliver($uid, $item_id) {
 	}
 
 	if ($is_group && intval($item['item_private']) === 2 && intval($item['item_thread_top'])) {
-		// group delivery via DM
-		logger('group DM delivery for ' . $u['channel_address']);
-		start_delivery_chain($u, $item, $item_id, 0, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
+		// group delivery via DM - use post_wall permission since send_stream is probably turned off and this will be turned into an embedded wall-to-wall post
+		if(perm_is_allowed($uid,$item['owner_xchan'],'post_wall')) {
+			logger('group DM delivery for ' . $u['channel_address']);
+			start_delivery_chain($u, $item, $item_id, 0, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
+		}
 		return;
 	}
 
