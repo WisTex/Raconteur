@@ -2989,7 +2989,7 @@ class Activity {
 			}
 		}
 
-		if (array_key_exists('source',$act) && array_key_exists('mediaType',$act['source'])) {
+		if (array_path_exists('source/mediaType',$act) && array_path_exists('source/content',$act)) {
 			if ($act['source']['mediaType'] === 'text/bbcode') {
 				$content['bbcode'] = purify_html($act['source']['content']);
 			}
