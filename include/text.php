@@ -3559,7 +3559,7 @@ function array_path_exists($str,$arr) {
 
 	if ($search) {
 		foreach ($search as $s) {
-			if ($ptr && array_key_exists($s,$ptr)) {
+			if ($ptr && is_array($ptr) && array_key_exists($s,$ptr)) {
 				$ptr = $ptr[$s];
 			}
 			else {
