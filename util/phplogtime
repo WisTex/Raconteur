@@ -16,6 +16,10 @@ else {
 	$file = 'php.out';
 }
 
+if ($file === '-') {
+	$file = 'php://stdin';
+}
+
 $lines = @file($file);
 if (! $lines) {
 	exit (0);
