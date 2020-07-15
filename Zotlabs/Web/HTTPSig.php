@@ -88,7 +88,7 @@ class HTTPSig {
 
 	// See draft-cavage-http-signatures-10
 
-	static function verify($data,$key = '') {
+	static function verify($data,$key = '', $keytype = '') {
 
 		$body      = $data;
 		$headers   = null;
@@ -170,7 +170,7 @@ class HTTPSig {
 
 		$result['signer'] = $sig_block['keyId'];
 
-		$fkey = self::get_key($key,$result['signer']);
+		$fkey = self::get_key($key,$keytype,$result['signer']);
 
 		if (! ($fkey && $fkey['public_key'])) {
 			return $result;
@@ -185,7 +185,7 @@ class HTTPSig {
 			// try again, ignoring the local actor (xchan) cache and refetching the key
 			// from its source
 			
-			$fkey = self::get_key($key,$result['signer'],true);
+			$fkey = self::get_key($key,$keytype,$result['signer'],true);
 
 			if ($fkey && $fkey['public_key']) {
 				$y = Crypto::verify($signed_data,$sig_block['signature'],$fkey['public_key'],$algorithm);
@@ -230,7 +230,7 @@ class HTTPSig {
 		return $result;
 	}
 
-	static function get_key($key,$id,$force = false) {
+	static function get_key($key,$keytype,$id,$force = false) {
 
 		if ($key) {
 			if (function_exists($key)) {
@@ -239,14 +239,22 @@ class HTTPSig {
 			return [ 'public_key' => $key ];
 		}
 
+		if ($keytype === 'zot6') {
+			$key = self::get_zotfinger_key($id,$force);
+			if ($key) {
+				return $key;
+			}
+		}
+		
+
 		if (strpos($id,'#') === false) {
 			$key = self::get_webfinger_key($id,$force);
+			if ($key) {
+				return $key;
+			}			
 		}
 
-		if (! $key) {
-			$key = self::get_activitystreams_key($id,$force);
-		}
-
+		$key = self::get_activitystreams_key($id,$force);
 		return $key;
 
 	}
@@ -353,7 +361,7 @@ class HTTPSig {
 	function get_zotfinger_key($id,$force = false) {
 
 		if (! $force) {
-			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' ",
+			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' and hubloc_network = 'zot6'",
 				dbesc(str_replace('acct:','',$id)),
 				dbesc($id)
 			);

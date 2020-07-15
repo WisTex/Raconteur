@@ -37,7 +37,6 @@ class Zotfinger {
 		$redirects = 0;
 		$x = z_post_url($resource,$data,$redirects, [ 'headers' => $h  ] );
 
-
 		if ($x['success']) {
 
 			$result['signature'] = HTTPSig::verify($x);
