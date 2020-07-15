@@ -39,7 +39,7 @@ class Zotfinger {
 
 		if ($x['success']) {
 
-			$result['signature'] = HTTPSig::verify($x);
+			$result['signature'] = HTTPSig::verify($x, EMPTY_STR, 'zot6');
     
 			$result['data'] = json_decode($x['body'],true);
 
