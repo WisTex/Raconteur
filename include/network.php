@@ -944,18 +944,18 @@ function discover_by_webbie($webbie, $protocol = '') {
 
 				if($link['rel'] === PROTOCOL_ZOT6 && ((! $protocol) || (strtolower($protocol) === 'zot6'))) {
 					logger('zot6 found for ' . $webbie, LOGGER_DEBUG);
-					$record = Zotfinger::exec($link['href']);
+					$record = Zotfinger::exec($link['href'], null, false);
 
 					// Check the HTTP signature
 
-					$hsig = $record['signature'];
-					if($hsig && ($hsig['signer'] === $url || $hsig['signer'] === $link['href']) && $hsig['header_valid'] === true && $hsig['content_valid'] === true)
-					$hsig_valid = true;
+//					$hsig = $record['signature'];
+//					if($hsig && ($hsig['signer'] === $url || $hsig['signer'] === $link['href']) && $hsig['header_valid'] === true && $hsig['content_valid'] === true)
+//					$hsig_valid = true;
 
-					if(! $hsig_valid) {
-						logger('http signature not valid: ' . print_r($hsig,true));
-						continue;
-					}
+//					if(! $hsig_valid) {
+//						logger('http signature not valid: ' . print_r($hsig,true));
+//						continue;
+//					}
 
 					$x = Libzot::import_xchan($record['data']);
 					if($x['success']) {
