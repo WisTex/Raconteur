@@ -1,0 +1,49 @@
+#!/usr/bin/env php
+<?php
+
+/*
+ * This command line utility reads the optional PHP error log
+ * and converts the times to UTC so the events can be cross-referenced in the
+ * application logfile.
+ *
+ */
+
+
+if ($argc > 1) {
+	$file = $argv[1];
+}
+else {
+	$file = 'php.out';
+}
+
+if ($file === '-') {
+	$file = 'php://stdin';
+}
+
+$lines = @file($file);
+if (! $lines) {
+	exit (0);
+}
+
+if ($lines) {
+	foreach ($lines as $line) {
+		if (substr($line,0,1) === "[") {
+			$ts = rtrim(substr($line,1,strpos($line,"]")),"]");
+			if ($ts) {
+				$arr = explode(' ', $ts);
+				if (count($arr) === 3) {
+					$ti = new DateTimeZone($arr[2]);
+					$d = new DateTime($arr[1] . ' ' . $arr[2]);
+					$to = new DateTimeZone('UTC');
+					$d->setTimeZone($to);
+					$o = $d->format("Y-m-d H:i:s");
+					echo "[" . $o . "]" . substr($line,strlen($ts) + 2);
+				}
+			}
+		}
+		else {
+			echo $line;
+		}
+	}
+}
+			

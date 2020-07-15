@@ -33,7 +33,6 @@
 		"bshaffer/oauth2-server-php": "^1.9",
 		"ezyang/htmlpurifier": "^4.9",
 		"league/html-to-markdown": "^4.4",
-		"pear/text_languagedetect": "^1.0",
 		"commerceguys/intl": "~0.7",
 		"smarty/smarty": "~3.1",
 		"ramsey/uuid": "^3.8",
@@ -53,8 +52,7 @@
 		"league/oauth2-linkedin": "^5.1",
 		"forkawesome/fork-awesome": "^1.1",
 		"svg-edit/svgedit": "^5.0",
-		"p3k/emoji-detector": "^0.2.1",
-		"shubhamjain/php-id3": "dev-master"
+		"p3k/emoji-detector": "^0.2.1"
 	},
 	"require-dev" : {
 		"phpunit/phpunit" : "@stable",

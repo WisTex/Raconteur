@@ -161,7 +161,7 @@ class Pubstream extends Controller {
 		}
 		else {
 			$sys = get_sys_channel();
-			$uids = " and ( item.uid  = " . intval($sys['channel_id']) . " OR (item_private = 0 and item_wall = 1)) ";
+			$uids = " and ( item.uid  = " . intval($sys['channel_id']) . " )"; 
 			$sql_extra = item_permissions_sql($sys['channel_id']);
 			App::$data['firehose'] = intval($sys['channel_id']);
 		}

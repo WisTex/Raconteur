@@ -15,11 +15,13 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         '383eaff206634a77a1be54e64e6459c7' => __DIR__ . '/..' . '/sabre/uri/lib/functions.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '2b9d0f43f9552984cfa82fee95491826' => __DIR__ . '/..' . '/sabre/event/lib/coroutine.php',
         'd81bab31d3feb45bfe2f283ea3c8fdf7' => __DIR__ . '/..' . '/sabre/event/lib/Loop/functions.php',
         'a1cce3d26cc15c00fcd0b3354bd72c88' => __DIR__ . '/..' . '/sabre/event/lib/Promise/functions.php',
         '3569eecfeed3bcf0bad3c998a494ecb8' => __DIR__ . '/..' . '/sabre/xml/lib/Deserializer/functions.php',
         '93aa591bc4ca510c520999e34229ee79' => __DIR__ . '/..' . '/sabre/xml/lib/Serializer/functions.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         'b45b351e6b6f7487d819961fef2fda77' => __DIR__ . '/..' . '/jakeasmith/http_build_url/src/http_build_url.php',
         '757772e28a0943a9afe83def8db95bdf' => __DIR__ . '/..' . '/mf2/mf2/Mf2/Parser.php',
         'ebdb698ed4152ae445614b69b5e4bb6a' => __DIR__ . '/..' . '/sabre/http/lib/functions.php',
@@ -33,7 +35,6 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
     public static $prefixLengthsPsr4 = array (
         'v' => 
         array (
-            'voku\\tests\\' => 11,
             'voku\\' => 5,
         ),
         'Z' => 
@@ -42,6 +43,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         ),
         'S' => 
         array (
+            'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Php72\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
@@ -100,10 +102,6 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
     );
 
     public static $prefixDirsPsr4 = array (
-        'voku\\tests\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/voku/portable-ascii/tests',
-        ),
         'voku\\' => 
         array (
             0 => __DIR__ . '/..' . '/voku/portable-ascii/src/voku',
@@ -112,6 +110,10 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\' => 
         array (
             0 => __DIR__ . '/../..' . '/Zotlabs',
+        ),
+        'Symfony\\Polyfill\\Php80\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
         ),
         'Symfony\\Polyfill\\Php72\\' => 
         array (
@@ -246,20 +248,6 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
             'URLify' => 
             array (
                 0 => __DIR__ . '/..' . '/jbroadway/urlify',
-            ),
-        ),
-        'T' => 
-        array (
-            'Text' => 
-            array (
-                0 => __DIR__ . '/..' . '/pear/text_languagedetect',
-            ),
-        ),
-        'P' => 
-        array (
-            'PhpId3' => 
-            array (
-                0 => __DIR__ . '/..' . '/shubhamjain/php-id3',
             ),
         ),
         'O' => 
@@ -561,7 +549,6 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'HTMLPurifier_Injector_SafeObject' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Injector/SafeObject.php',
         'HTMLPurifier_Language' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Language.php',
         'HTMLPurifier_LanguageFactory' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/LanguageFactory.php',
-        'HTMLPurifier_Language_en_x_test' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Language/classes/en-x-test.php',
         'HTMLPurifier_Length' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Length.php',
         'HTMLPurifier_Lexer' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Lexer.php',
         'HTMLPurifier_Lexer_DOMLex' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Lexer/DOMLex.php',
@@ -870,10 +857,6 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'PHPGit\\Command\\TreeCommand' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Command/TreeCommand.php',
         'PHPGit\\Exception\\GitException' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Exception/GitException.php',
         'PHPGit\\Git' => __DIR__ . '/..' . '/kzykhys/git/src/PHPGit/Git.php',
-        'PhpId3\\BinaryFileReader' => __DIR__ . '/..' . '/shubhamjain/php-id3/PhpId3/BinaryFileReader.php',
-        'PhpId3\\Id3Tags' => __DIR__ . '/..' . '/shubhamjain/php-id3/PhpId3/Id3Tags.php',
-        'PhpId3\\Id3TagsReader' => __DIR__ . '/..' . '/shubhamjain/php-id3/PhpId3/Id3TagsReader.php',
-        'PhpId3\\Tests\\GenerateCvCommandTest' => __DIR__ . '/..' . '/shubhamjain/php-id3/Tests/Id3TagsReaderTest.php',
         'Psr\\Http\\Message\\MessageInterface' => __DIR__ . '/..' . '/psr/http-message/src/MessageInterface.php',
         'Psr\\Http\\Message\\RequestInterface' => __DIR__ . '/..' . '/psr/http-message/src/RequestInterface.php',
         'Psr\\Http\\Message\\ResponseInterface' => __DIR__ . '/..' . '/psr/http-message/src/ResponseInterface.php',
@@ -1474,6 +1457,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Smarty_Template_Source' => __DIR__ . '/..' . '/smarty/smarty/libs/sysplugins/smarty_template_source.php',
         'Smarty_Undefined_Variable' => __DIR__ . '/..' . '/smarty/smarty/libs/sysplugins/smarty_undefined_variable.php',
         'Smarty_Variable' => __DIR__ . '/..' . '/smarty/smarty/libs/sysplugins/smarty_variable.php',
+        'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
         'Symfony\\Component\\OptionsResolver\\Debug\\OptionsResolverIntrospector' => __DIR__ . '/..' . '/symfony/options-resolver/Debug/OptionsResolverIntrospector.php',
         'Symfony\\Component\\OptionsResolver\\Exception\\AccessException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/AccessException.php',
         'Symfony\\Component\\OptionsResolver\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/ExceptionInterface.php',
@@ -1484,6 +1468,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Symfony\\Component\\OptionsResolver\\Exception\\NoSuchOptionException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/NoSuchOptionException.php',
         'Symfony\\Component\\OptionsResolver\\Exception\\OptionDefinitionException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/OptionDefinitionException.php',
         'Symfony\\Component\\OptionsResolver\\Exception\\UndefinedOptionsException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/UndefinedOptionsException.php',
+        'Symfony\\Component\\OptionsResolver\\OptionConfigurator' => __DIR__ . '/..' . '/symfony/options-resolver/OptionConfigurator.php',
         'Symfony\\Component\\OptionsResolver\\Options' => __DIR__ . '/..' . '/symfony/options-resolver/Options.php',
         'Symfony\\Component\\OptionsResolver\\OptionsResolver' => __DIR__ . '/..' . '/symfony/options-resolver/OptionsResolver.php',
         'Symfony\\Component\\Process\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/symfony/process/Exception/ExceptionInterface.php',
@@ -1507,15 +1492,12 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Symfony\\Polyfill\\Intl\\Idn\\Idn' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Idn.php',
         'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
         'Symfony\\Polyfill\\Php72\\Php72' => __DIR__ . '/..' . '/symfony/polyfill-php72/Php72.php',
+        'Symfony\\Polyfill\\Php80\\Php80' => __DIR__ . '/..' . '/symfony/polyfill-php80/Php80.php',
         'TPC_yyStackEntry' => __DIR__ . '/..' . '/smarty/smarty/libs/sysplugins/smarty_internal_configfileparser.php',
         'TP_yyStackEntry' => __DIR__ . '/..' . '/smarty/smarty/libs/sysplugins/smarty_internal_templateparser.php',
-        'Text_LanguageDetect' => __DIR__ . '/..' . '/pear/text_languagedetect/Text/LanguageDetect.php',
-        'Text_LanguageDetect_Exception' => __DIR__ . '/..' . '/pear/text_languagedetect/Text/LanguageDetect/Exception.php',
-        'Text_LanguageDetect_ISO639' => __DIR__ . '/..' . '/pear/text_languagedetect/Text/LanguageDetect/ISO639.php',
-        'Text_LanguageDetect_Parser' => __DIR__ . '/..' . '/pear/text_languagedetect/Text/LanguageDetect/Parser.php',
         'URLify' => __DIR__ . '/..' . '/jbroadway/urlify/URLify.php',
-        'URLifyTest' => __DIR__ . '/..' . '/jbroadway/urlify/tests/URLifyTest.php',
         'UploadHandler' => __DIR__ . '/..' . '/blueimp/jquery-file-upload/server/php/UploadHandler.php',
+        'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
         'Zotlabs\\Access\\AccessControl' => __DIR__ . '/../..' . '/Zotlabs/Access/AccessControl.php',
         'Zotlabs\\Access\\PermissionLimits' => __DIR__ . '/../..' . '/Zotlabs/Access/PermissionLimits.php',
         'Zotlabs\\Access\\PermissionRoles' => __DIR__ . '/../..' . '/Zotlabs/Access/PermissionRoles.php',
@@ -1545,6 +1527,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Daemon\\Onepoll' => __DIR__ . '/../..' . '/Zotlabs/Daemon/Onepoll.php',
         'Zotlabs\\Daemon\\Poller' => __DIR__ . '/../..' . '/Zotlabs/Daemon/Poller.php',
         'Zotlabs\\Daemon\\Queue' => __DIR__ . '/../..' . '/Zotlabs/Daemon/Queue.php',
+        'Zotlabs\\Daemon\\Run' => __DIR__ . '/../..' . '/Zotlabs/Daemon/Run.php',
         'Zotlabs\\Daemon\\Thumbnail' => __DIR__ . '/../..' . '/Zotlabs/Daemon/Thumbnail.php',
         'Zotlabs\\Daemon\\Xchan_photo' => __DIR__ . '/../..' . '/Zotlabs/Daemon/Xchan_photo.php',
         'Zotlabs\\Extend\\Hook' => __DIR__ . '/../..' . '/Zotlabs/Extend/Hook.php',
@@ -1707,7 +1690,6 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Module\\Magic' => __DIR__ . '/../..' . '/Zotlabs/Module/Magic.php',
         'Zotlabs\\Module\\Manage' => __DIR__ . '/../..' . '/Zotlabs/Module/Manage.php',
         'Zotlabs\\Module\\Menu' => __DIR__ . '/../..' . '/Zotlabs/Module/Menu.php',
-        'Zotlabs\\Module\\Message' => __DIR__ . '/../..' . '/Zotlabs/Module/Message.php',
         'Zotlabs\\Module\\Mitem' => __DIR__ . '/../..' . '/Zotlabs/Module/Mitem.php',
         'Zotlabs\\Module\\Moderate' => __DIR__ . '/../..' . '/Zotlabs/Module/Moderate.php',
         'Zotlabs\\Module\\Mood' => __DIR__ . '/../..' . '/Zotlabs/Module/Mood.php',
@@ -2069,6 +2051,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Update\\_1237' => __DIR__ . '/../..' . '/Zotlabs/Update/_1237.php',
         'Zotlabs\\Update\\_1238' => __DIR__ . '/../..' . '/Zotlabs/Update/_1238.php',
         'Zotlabs\\Update\\_1239' => __DIR__ . '/../..' . '/Zotlabs/Update/_1239.php',
+        'Zotlabs\\Update\\_1240' => __DIR__ . '/../..' . '/Zotlabs/Update/_1240.php',
         'Zotlabs\\Web\\Controller' => __DIR__ . '/../..' . '/Zotlabs/Web/Controller.php',
         'Zotlabs\\Web\\HTTPHeaders' => __DIR__ . '/../..' . '/Zotlabs/Web/HTTPHeaders.php',
         'Zotlabs\\Web\\HTTPSig' => __DIR__ . '/../..' . '/Zotlabs/Web/HTTPSig.php',
@@ -2097,7 +2080,6 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Widget\\Clock' => __DIR__ . '/../..' . '/Zotlabs/Widget/Clock.php',
         'Zotlabs\\Widget\\Collections' => __DIR__ . '/../..' . '/Zotlabs/Widget/Collections.php',
         'Zotlabs\\Widget\\Common_friends' => __DIR__ . '/../..' . '/Zotlabs/Widget/Common_friends.php',
-        'Zotlabs\\Widget\\Conversations' => __DIR__ . '/../..' . '/Zotlabs/Widget/Conversations.php',
         'Zotlabs\\Widget\\Cover_photo' => __DIR__ . '/../..' . '/Zotlabs/Widget/Cover_photo.php',
         'Zotlabs\\Widget\\Design_tools' => __DIR__ . '/../..' . '/Zotlabs/Widget/Design_tools.php',
         'Zotlabs\\Widget\\Dirsort' => __DIR__ . '/../..' . '/Zotlabs/Widget/Dirsort.php',
@@ -2139,7 +2121,6 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Widget\\Vcard' => __DIR__ . '/../..' . '/Zotlabs/Widget/Vcard.php',
         'Zotlabs\\Widget\\Website_portation_tools' => __DIR__ . '/../..' . '/Zotlabs/Widget/Website_portation_tools.php',
         'Zotlabs\\Widget\\Zcard' => __DIR__ . '/../..' . '/Zotlabs/Widget/Zcard.php',
-        'Zotlabs\\Zot6\\Finger' => __DIR__ . '/../..' . '/Zotlabs/Zot6/Finger.php',
         'Zotlabs\\Zot6\\IHandler' => __DIR__ . '/../..' . '/Zotlabs/Zot6/IHandler.php',
         'Zotlabs\\Zot6\\Receiver' => __DIR__ . '/../..' . '/Zotlabs/Zot6/Receiver.php',
         'Zotlabs\\Zot6\\Zot6Handler' => __DIR__ . '/../..' . '/Zotlabs/Zot6/Zot6Handler.php',

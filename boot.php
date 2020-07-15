@@ -16,7 +16,7 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '20.07.07' );
+define ( 'STD_VERSION',             '20.07.15' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1240 );
@@ -696,6 +696,7 @@ function startup() {
 		// Disable transparent Session ID support
 		@ini_set('session.use_trans_sid',    0);
 	}
+	@ini_set('pcre.jit',0);
 }
 
 
