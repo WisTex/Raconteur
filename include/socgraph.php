@@ -154,21 +154,12 @@ function poco_load($xchan = '', $url = null) {
 			if($address) {
 				if(in_array($network, ['zot','zot6'])) {
 
-					// 'zot' entries are only imported if they are discoverable via zot6.
-					// Reset the $hash variable to the zot6 xchan_hash if we succeed
-					
-					$j = Zotfinger::exec($profile_url);
-					if(is_array($j) && array_path_exists('signature/signer',$j) && $j['signature']['signer'] === $profile_url && intval($j['signature']['header_valid'])) {
-						$new_xchan = Libzot::import_xchan($j['data']);
-
-						if($new_xchan['success']) {
-							$x = q("select xchan_hash from xchan where xchan_hash = '%s' limit 1",
-								dbesc($new_xchan['hash'])
-							);
-							if ($x) {
-								$hash = $new_xchan['hash'];
-							}
-						}
+					$wf = discover_by_webbie($profile_url);
+					if ($wf) {
+						$x = q("select xchan_hash from xchan where xchan_hash = '%s' limit 1",
+							dbesc($wf)
+						);
+						$hash = $wf;
 					}
 					if(! $x) {
 						continue;
