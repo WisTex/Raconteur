@@ -389,7 +389,7 @@ class HTTPSig {
 						continue;
 					}
 					if ($l['rel'] === 'http://purl.org/zot/protocol/6.0' && array_key_exists('href',$l) && $l['href'] !== EMPTY_STR) {
-						$z = Zotfinger::exec($l['href']);
+						$z = Zotfinger::exec($l['href'], null, false);
 						if ($z) {
 							$i = Libzot::import_xchan($z['data']);
 							if ($i['success']) {
