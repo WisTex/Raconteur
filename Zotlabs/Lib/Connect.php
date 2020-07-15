@@ -34,6 +34,8 @@ class Connect {
 		$my_perms = false;
 		$protocol = '';
 
+		$ap_allowed = get_config('system','activitypub',true) && get_pconfig($uid,'system','activitypub',true);
+
 		if (substr($url,0,1) === '[') {
 			$x = strpos($url,']');
 			if ($x) {
@@ -85,7 +87,7 @@ class Connect {
 			// Some Hubzilla records were originally stored as activitypub. If we find one, force rediscovery
 			// since Zap cannot connect with them.
 			
-			if ($r['xchan_network'] === 'activitypub' && ! get_config('system','activitypub',true)) {
+			if (($r['xchan_network'] === 'activitypub') && (! $ap_allowed)) {
 				$r = null;
 			}
 		}
@@ -145,7 +147,6 @@ class Connect {
 
 		}
 
-		$ap_allowed = get_config('system','activitypub',true) && get_pconfig($uid,'system','activitypub',true);
 		
 		if ($r['xchan_network'] === 'activitypub') {
 			if (! $ap_allowed) {
