@@ -534,7 +534,31 @@ class Notifier {
 			where hubloc_hash in (" . protect_sprintf(implode(',',self::$recipients)) . ") 
 			and hubloc_error = 0 and hubloc_deleted = 0 and ( site_dead = 0 OR site_dead is null ) "
 		);		
- 
+
+		// public posts won't make it to the local public stream unless there's a recipient on this site. 
+		// This code block sees if it's a public post and localhost is missing, and if so adds an entry for the local sys channel to the $hubs list
+		
+		if (! self::$private) {
+			$found_localhost = false;
+			if ($hubs) {
+				foreach ($hubs as $h) {
+					if ($h['hubloc_url'] === z_root()) {
+						$found_localhost = true;
+						break;
+					}
+				}
+			}
+			if (! $found_localhost) {
+				$localhub = q("select hubloc.*, site.site_crypto, site.site_flags from hubloc left join site on site_url = hubloc_url 
+					where hubloc_id_url = '%s' and hubloc_error = 0 and hubloc_deleted = 0 and ( site_dead = 0 OR site_dead is null ) ",
+					dbesc(z_root() . '/channel/sys')
+				);		
+				if ($localhub) {
+					$hubs = array_merge($hubs,$localhub);
+				}
+			}
+		}
+		
 		if (! $hubs) {
 			logger('notifier: no hubs', LOGGER_NORMAL, LOG_NOTICE);
 			return;
