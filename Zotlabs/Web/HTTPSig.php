@@ -389,6 +389,11 @@ class HTTPSig {
 						continue;
 					}
 					if ($l['rel'] === 'http://purl.org/zot/protocol/6.0' && array_key_exists('href',$l) && $l['href'] !== EMPTY_STR) {
+
+						// The third argument to Zotfinger::exec() tells it not to verify signatures
+						// Since we're inside a function that is fetching keys with which to verify signatures,
+						// this is necessary to prevent infinite loops.
+						
 						$z = Zotfinger::exec($l['href'], null, false);
 						if ($z) {
 							$i = Libzot::import_xchan($z['data']);

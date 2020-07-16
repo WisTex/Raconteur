@@ -910,9 +910,10 @@ function email_header_encode($in_str, $charset = 'UTF-8', $header = 'Subject') {
  *
  * @param string $webbie
  * @param string $protocol (optional) default empty
+ * @param boolean $verify (optional) default true, verify HTTP signatures on Zot discovery packets.
  * @return boolean
  */
-function discover_by_webbie($webbie, $protocol = '') {
+function discover_by_webbie($webbie, $protocol = '', $verify = true) {
 
 	$result   = [];
 
@@ -948,14 +949,18 @@ function discover_by_webbie($webbie, $protocol = '') {
 
 					// Check the HTTP signature
 
-//					$hsig = $record['signature'];
-//					if($hsig && ($hsig['signer'] === $url || $hsig['signer'] === $link['href']) && $hsig['header_valid'] === true && $hsig['content_valid'] === true)
-//					$hsig_valid = true;
+					if ($verify) {
 
-//					if(! $hsig_valid) {
-//						logger('http signature not valid: ' . print_r($hsig,true));
-//						continue;
-//					}
+						$hsig = $record['signature'];
+						if($hsig && ($hsig['signer'] === $url || $hsig['signer'] === $link['href']) && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
+							$hsig_valid = true;
+						}
+
+						if(! $hsig_valid) {
+							logger('http signature not valid: ' . print_r($hsig,true));
+							continue;
+						}
+					}
 
 					$x = Libzot::import_xchan($record['data']);
 					if($x['success']) {

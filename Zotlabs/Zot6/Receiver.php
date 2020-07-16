@@ -168,9 +168,6 @@ class Receiver {
 		if ($this->sigdata && $this->sigdata['header_signed'] && $this->sigdata['header_valid']) {
 			$result = true;
 
-			
-
-
 			// It is OK to not have signed content - not all messages provide content.
 			// But if it is signed, it has to be valid
 

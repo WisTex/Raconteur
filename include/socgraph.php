@@ -152,8 +152,7 @@ function poco_load($xchan = '', $url = null) {
 
 		if(($x !== false) && (! count($x))) {
 			if($address) {
-				if(in_array($network, ['zot','zot6'])) {
-
+				if(in_array($network, ['zot6'])) {
 					$wf = discover_by_webbie($profile_url);
 					if ($wf) {
 						$x = q("select xchan_hash from xchan where xchan_hash = '%s' limit 1",
@@ -399,7 +398,7 @@ function poco() {
 		$sql_extra = " and abook_self = 0 ";
 
 	if($cid)
-		$sql_extra = sprintf(" and abook_id = %d and abook_hidden = 0 and abook_pending = 0 ",intval($cid));
+		$sql_extra = sprintf(" and abook_id = %d and abook_archived = 0 and abook_hidden = 0 and abook_pending = 0 ",intval($cid));
 
 	if($system_mode) {
 		$r = q("SELECT count(*) as total from abook where abook_self = 1 
