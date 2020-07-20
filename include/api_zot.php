@@ -1,7 +1,9 @@
 <?php
 
 	function zot_api_init() {
-        api_register_func('api/red/version','api_zot_version',false);
+		api_register_func('api/z/1.0/verify','api_verify', true);
+		
+		api_register_func('api/red/version','api_zot_version',false);
         api_register_func('api/z/1.0/version','api_zot_version',false);
 		api_register_func('api/export/basic','api_export_basic', true);
 		api_register_func('api/red/channel/export/basic','api_export_basic', true);
@@ -45,6 +47,18 @@
 		api_register_func('api/z/1.0/perm_allowed','api_zot_perm_allowed',true);
 
 		return;
+	}
+
+
+	function api_verify($type) {
+		if (api_user() === false) {
+			logger('no channel');
+			return false;
+		}
+		$channel = channelx_by_n(api_user());
+		logger('channel: ' . print_r($channel,true));
+
+		json_return_and_die($channel);
 	}
 
 

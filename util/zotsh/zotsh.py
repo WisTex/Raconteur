@@ -268,13 +268,13 @@ def zotsh():
     session_home = zotsh.get_host_session()
 
     #~ #login on home server
-    print "loggin in..."
+    print "logging in..."
     r = session_home.get( 
-        SERVER + "api/account/verify_credentials",  
+        SERVER + "/api/z/1.0/verify",  
         auth=HTTPBasicAuth(USER, PASSWD), 
         verify=VERIFY_SSL    )
 
-    print "Hi", r.json()['name']
+    print "Hi - ", r.json()['channel_name']
 
     zotsh.session = session_home
 
