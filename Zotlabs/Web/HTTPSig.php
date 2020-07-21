@@ -245,7 +245,7 @@ class HTTPSig {
 				return $key;
 			}
 		}
-		
+				
 
 		if (strpos($id,'#') === false) {
 			$key = self::get_webfinger_key($id,$force);
