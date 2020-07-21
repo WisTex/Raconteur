@@ -234,8 +234,10 @@ class Inbox extends Controller {
 						Activity::follow($channel,$AS);
 					}
 					break;
-				case 'Accept':
-					if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Follow') {
+				case 'Accept':			
+					// Activitypub for wordpress sends lowercase 'follow' on accept.
+					// https://github.com/pfefferle/wordpress-activitypub/issues/97
+					if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && in_array($AS->obj['type'], ['Follow','follow'])) {
 						// do follow activity
 						Activity::follow($channel,$AS);
 					}
