@@ -152,6 +152,9 @@ class Channel extends Controller {
 
 	function get($update = 0, $load = false) {
 
+		
+
+
 		$noscript_content = get_config('system', 'noscript_content', '1');
 
 		if($load)
@@ -197,6 +200,11 @@ class Channel extends Controller {
 		$ob_hash = (($observer) ? $observer['xchan_hash'] : '');
 
 		$perms = get_all_perms(App::$profile['profile_uid'],$ob_hash);
+
+		$role = get_pconfig(App::$profile['profile_uid'],'system','permissions_role');
+		if ($role === 'social_restricted') {
+			info( t('This is a privacy enhanced channel. Content may only be visible to connections.') . EOL);  
+		}
 
 		if(! $perms['view_stream']) {
 			// We may want to make the target of this redirect configurable

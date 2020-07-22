@@ -10,13 +10,12 @@ class Pdledit extends \Zotlabs\Web\Controller {
 			return;
 		if(! $_REQUEST['module'])
 			return;
-		if(! feature_enabled(local_channel(),'advanced_theming'))
-			return;
 
 		if(! trim($_REQUEST['content'])) {
 			del_pconfig(local_channel(),'system','mod_' . $_REQUEST['module'] . '.pdl');
 			goaway(z_root() . '/pdledit');
 		}
+
 		set_pconfig(local_channel(),'system','mod_' . $_REQUEST['module'] . '.pdl',escape_tags($_REQUEST['content']));
 		Libsync::build_sync_packet();
 		info( t('Layout updated.') . EOL);
@@ -30,11 +29,6 @@ class Pdledit extends \Zotlabs\Web\Controller {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
-
-//		if(! feature_enabled(local_channel(),'advanced_theming')) {
-//			notice( t('Feature disabled.') . EOL);
-//			return;
-//		}
 
 		if(argc() > 2 && argv(2) === 'reset') {
 			del_pconfig(local_channel(),'system','mod_' . argv(1) . '.pdl');
