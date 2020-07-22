@@ -470,6 +470,7 @@ CREATE TABLE "pgrp" (
   "visible" numeric(1) NOT NULL DEFAULT '0',
   "deleted" numeric(1) NOT NULL DEFAULT '0',
   "gname" text NOT NULL,
+  "rule" text NOT NULL,
   PRIMARY KEY ("id")
 
 );
@@ -477,6 +478,7 @@ create index "groups_uid_idx" on pgrp ("uid");
 create index "groups_visible_idx" on pgrp  ("visible");
 create index "groups_deleted_idx" on pgrp ("deleted");
 create index "groups_hash_idx" on pgrp ("hash");
+create index "groups_rule_idx" on pgrp ("rule");
 
 CREATE TABLE "hook" (
   "id" serial NOT NULL,

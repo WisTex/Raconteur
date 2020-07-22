@@ -32,8 +32,8 @@ class AccessList {
 
 			$hash = new_uuid();
 
-			$r = q("INSERT INTO pgrp ( hash, uid, visible, gname )
-				VALUES( '%s', %d, %d, '%s' ) ",
+			$r = q("INSERT INTO pgrp ( hash, uid, visible, gname, rule )
+				VALUES( '%s', %d, %d, '%s', '' ) ",
 				dbesc($hash),
 				intval($uid),
 				intval($public),
