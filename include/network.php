@@ -934,7 +934,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true) {
         }
     }
 
-	if($x && array_key_exists('links',$x) && $x['links']) {
+	if($x && array_key_exists('links',$x) && is_array($x['links'])) {
 		foreach($x['links'] as $link) {
 			if(array_key_exists('rel',$link)) {
 

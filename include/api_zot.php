@@ -56,7 +56,7 @@
 			return false;
 		}
 		$channel = channelx_by_n(api_user());
-		logger('channel: ' . print_r($channel,true));
+		// logger('channel: ' . print_r($channel,true));
 
 		json_return_and_die($channel);
 	}
