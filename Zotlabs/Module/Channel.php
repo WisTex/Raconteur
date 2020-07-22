@@ -201,10 +201,6 @@ class Channel extends Controller {
 
 		$perms = get_all_perms(App::$profile['profile_uid'],$ob_hash);
 
-		$role = get_pconfig(App::$profile['profile_uid'],'system','permissions_role');
-		if ($role === 'social_restricted') {
-			info( t('This is a privacy enhanced channel. Content may only be visible to connections.') . EOL);  
-		}
 
 		if(! $perms['view_stream']) {
 			// We may want to make the target of this redirect configurable
@@ -228,6 +224,11 @@ class Channel extends Controller {
 				$o .= replace_macros(get_markup_template("section_title.tpl"),array(
 					'$title' => t('Search Results For:') . ' ' . htmlspecialchars($search, ENT_COMPAT,'UTF-8')
 				));
+			}
+
+			$role = get_pconfig(App::$profile['profile_uid'],'system','permissions_role');
+			if ($role === 'social_restricted' &&  (! $ob_hash)) {
+				// provide warning that content is probably hidden ?
 			}
 
 			if($channel && $is_owner) {

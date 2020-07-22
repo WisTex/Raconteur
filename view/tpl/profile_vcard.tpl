@@ -27,6 +27,9 @@
 	{{if $reddress}}<div class="reddress">{{$profile.reddress}}</div>{{/if}}		
 	{{/if}}
 	{{if $pdesc}}<div class="title">{{$profile.pdesc}}</div>{{/if}}
+	{{if $active}}
+		<dl class="active"><dt class="active-label">{{$active}}</dt><dd>{{$activewhen}}</dd></dl>
+	{{/if}}
 	{{if $location}}
 		<dl class="location"><dt class="location-label">{{$location}}</dt> 
 		<dd class="adr h-adr">

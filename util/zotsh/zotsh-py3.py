@@ -8,7 +8,7 @@ import  easywebdav
 import easywebdav.__version__ as easywebdavversion
 import base64
 
-__version__= "0.0.2"
+__version__= "0.1.2"
 
 SERVER = None
 USER = None
@@ -268,13 +268,13 @@ def zotsh():
     session_home = zotsh.get_host_session()
 
     #~ #login on home server
-    print("loggin in...")
+    print("logging in...")
     r = session_home.get( 
-        SERVER + "api/account/verify_credentials",  
+        SERVER + "api/z/1.0/verify",  
         auth=HTTPBasicAuth(USER, PASSWD), 
         verify=VERIFY_SSL    )
 
-    print("Hi", r.json()['name'])
+    print("Hi - ", r.json()['channel_name'])
 
     zotsh.session = session_home
 

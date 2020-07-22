@@ -342,6 +342,8 @@ class Libprofile {
 			'$homepage'      => $homepage,
 			'$chanmenu'      => $channel_menu,
 			'$reddress'      => $reddress,
+			'$active'        => t('Active'),
+			'$activewhen'    => relative_date($profile['channel_lastpost']),
 			'$rating'        => '',
 			'$contact_block' => $contact_block,
 			'$change_photo'  => t('Change your profile photo'),
