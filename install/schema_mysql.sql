@@ -470,12 +470,14 @@ CREATE TABLE IF NOT EXISTS `pgrp` (
   `visible` tinyint(1) NOT NULL DEFAULT 0 ,
   `deleted` tinyint(1) NOT NULL DEFAULT 0 ,
   `gname` char(191) NOT NULL DEFAULT '',
+  `rule` char(191) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `uid` (`uid`),
   KEY `visible` (`visible`),
   KEY `deleted` (`deleted`),
   KEY `hash` (`hash`),
-  KEY `gname` (`gname`)
+  KEY `gname` (`gname`),
+  KEY `rule` (`rule`),
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `pgrp_member` (
