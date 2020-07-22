@@ -130,7 +130,7 @@ class Libsync {
 		}
 
 		if ($groups_changed) {
-			$r = q("select hash as collection, visible, deleted, gname as name from pgrp where uid = %d",
+			$r = q("select hash as collection, visible, deleted, gname as name from pgrp where uid = %d and rule = '' ",
 				intval($uid)
 			);
 			if ($r) {
@@ -138,7 +138,7 @@ class Libsync {
 			}
 
 			$r = q("select pgrp.hash as collection, pgrp_member.xchan as member from pgrp left join pgrp_member on pgrp.id = pgrp_member.gid 
-				where pgrp_member.uid = %d",
+				where pgrp_member.uid = %d and pgrp.rule = '' ",
 				intval($uid)
 			);
 			if ($r) {
@@ -604,7 +604,7 @@ class Libsync {
 			// sync collections (privacy groups) oh joy...
 
 			if (array_key_exists('collections',$arr) && is_array($arr['collections']) && count($arr['collections'])) {
-				$x = q("select * from pgrp where uid = %d",
+				$x = q("select * from pgrp where uid = %d and rule = ''",
 					intval($channel['channel_id'])
 				);
 				foreach ($arr['collections'] as $cl) {
@@ -636,8 +636,8 @@ class Libsync {
 						}
 					}
 					if (! $found) {
-						$r = q("INSERT INTO pgrp ( hash, uid, visible, deleted, gname )
-							VALUES( '%s', %d, %d, %d, '%s' ) ",
+						$r = q("INSERT INTO pgrp ( hash, uid, visible, deleted, gname, rule )
+							VALUES( '%s', %d, %d, %d, '%s', '' ) ",
 							dbesc($cl['collection']),
 							intval($channel['channel_id']),
 							intval($cl['visible']),

@@ -19,7 +19,7 @@ use Zotlabs\Daemon\Run;
 define ( 'STD_VERSION',             '20.07.16' );
 define ( 'ZOT_REVISION',            '6.0' );
 
-define ( 'DB_UPDATE_VERSION',       1240 );
+define ( 'DB_UPDATE_VERSION',       1241 );
 
 define ( 'PLATFORM_NAME',           'zap' );
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
