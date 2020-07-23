@@ -965,21 +965,6 @@ function photo_profile_setperms($channel_id,$resource_id,$profile_id) {
 			intval($channel_id)
 		);
 	}
-	else {
-		$r = q("update photo set allow_cid = '', allow_gid = '%s', deny_cid = '', deny_gid = ''
-			where resource_id = '%s' and uid = %d",
-			dbesc('<vp.' . $profile_guid . '>'),
-			dbesc($resource_id),
-			intval($channel_id)
-		);
-
-		$r = q("update attach set allow_cid = '', allow_gid = '%s', deny_cid = '', deny_gid = ''
-			where hash = '%s' and uid = %d",
-			dbesc('<vp.' . $profile_guid . '>'),
-			dbesc($resource_id),
-			intval($channel_id)
-		);
-	}
 }
 
 /**

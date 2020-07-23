@@ -347,25 +347,8 @@ class AccessList {
 		$ret = [];
 		$x   = [];
 
-		// private profile linked virtual groups
-
 		foreach ($g as $gv) {
-			if (substr($gv,0,3) === 'vp.') {
-				$profile_hash = substr($gv,3);
-				if ($profile_hash) {
-					$r = q("select abook_xchan from abook where abook_profile = '%s'",
-						dbesc($profile_hash)
-					);
-					if ($r) {
-						foreach ($r as $rv) {
-							$ret[] = $rv['abook_xchan'];
-						}
-					}
-				}
-			}
-			else {
-				$x[] = $gv;
-			}
+			$x[] = $gv;
 		}								 
 
 		if ($x) {

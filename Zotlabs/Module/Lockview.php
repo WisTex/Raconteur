@@ -102,21 +102,6 @@ class Lockview extends \Zotlabs\Web\Controller {
 		stringify_array_elms($deny_users,true);
 	
 
-		$profile_groups = [];
-		if($allowed_groups) {
-			foreach($allowed_groups as $g) {
-				if(substr($g,0,4) === '\'vp.') {
-					$profile_groups[] = '\'' . substr($g,4);
-				}
-			}
-		}
-		if(count($profile_groups)) {
-			$r = q("SELECT profile_name FROM profile WHERE profile_guid IN ( " . implode(', ', $profile_groups) . " )");
-			if($r)
-				foreach($r as $rr) 
-					$l[] = '<div class="dropdown-item"><b>' . t('Profile','acl') . ' ' . $rr['profile_name'] . '</b></div>';
-		}
-
 		if(count($allowed_groups)) {
 			$r = q("SELECT gname FROM pgrp WHERE hash IN ( " . implode(', ', $allowed_groups) . " )");
 			if($r)
@@ -136,24 +121,6 @@ class Lockview extends \Zotlabs\Web\Controller {
 				}
 			}
 		}
-
-
-		$profile_groups = [];
-		if($deny_groups) {
-			foreach($deny_groups as $g) {
-				if(substr($g,0,4) === '\'vp.') {
-					$profile_groups[] = '\'' . substr($g,4);
-				}
-			}
-		}
-		if(count($profile_groups)) {
-			$r = q("SELECT profile_name FROM profile WHERE profile_guid IN ( " . implode(', ', $profile_groups) . " )");
-			if($r)
-				foreach($r as $rr) 
-					$l[] = '<div class="dropdown-item"><b><strike>' . t('Profile','acl') . ' ' . $rr['profile_name'] . '</strike></b></div>';
-		}
-
-
 
 		if(count($deny_groups)) {
 			$r = q("SELECT gname FROM pgrp WHERE hash IN ( " . implode(', ', $deny_groups) . " )");

@@ -119,25 +119,6 @@ class Acl extends Controller {
 		
 		if ($type == '' || $type == 'g') {
 
-			// virtual groups based on private profile viewing ability
-
-			$r = q("select id, profile_guid, profile_name from profile where is_default = 0 and uid = %d",
-				intval(local_channel())
-			);	
-			if ($r) {
-				foreach ($r as $rv) {
-					$groups[] = [
-						"type"  => "g",
-						"photo" => "images/twopeople.png",
-						"name"  => t('Profile','acl') . ' ' . $rv['profile_name'],
-						"id"	=> 'vp' . $rv['id'],
-						"xid"   => 'vp.' . $rv['profile_guid'],
-						"uids"  => AccessList::members_profile_xchan(local_channel(), $rv['id']),
-						"link"  => ''
-					];
-				}
-			}
-
 			// Normal privacy groups
 
 			$r = q("SELECT pgrp.id, pgrp.hash, pgrp.gname
