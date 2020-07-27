@@ -202,15 +202,9 @@ class Lists extends Controller {
 
 
 
-		// Switch to text mode interface if we have more than 'n' contacts or group members
-		$switchtotext = get_pconfig(local_channel(),'system','groupedit_image_limit');
-		if ($switchtotext === false) {
-			$switchtotext = get_config('system','groupedit_image_limit');
-		}
-		if ($switchtotext === false) {
-			$switchtotext = 400;
-		}
-
+		// Switch to text mode interface if we have more than 'n' contacts or group members, else loading avatars will lead to poor interactivity
+		
+		$switchtotext = get_pconfig(local_channel(),'system','listedit_image_limit',get_config('system','listedit_image_limit', 1000));
 
 		if ((argc() == 1) || ((argc() == 2) && (argv(1) === 'new'))) {
 
