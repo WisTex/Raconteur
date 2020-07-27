@@ -140,6 +140,7 @@ class Channel {
 		$evdays           = ((x($_POST,'evdays'))     ? intval($_POST['evdays'])             : 3);
 		$photo_path       = ((x($_POST,'photo_path')) ? escape_tags(trim($_POST['photo_path'])) : '');
 		$attach_path      = ((x($_POST,'attach_path')) ? escape_tags(trim($_POST['attach_path'])) : '');
+		$noindex          = ((x($_POST,'noindex'))     ? intval($_POST['noindex'])             : 0);
 	
 		$channel_menu     = ((x($_POST['channel_menu'])) ? htmlspecialchars_decode(trim($_POST['channel_menu']),ENT_QUOTES) : '');
 	
@@ -296,6 +297,7 @@ class Channel {
 		set_pconfig(local_channel(),'system','autoperms',$autoperms);
 		set_pconfig(local_channel(),'system','tag_username',$tag_username);
 		set_pconfig(local_channel(),'system','permit_all_mentions',$permit_all_mentions);
+		set_pconfig(local_channel(),'system','noindex',$noindex);
 		
 	
 		$r = q("update channel set channel_name = '%s', channel_pageflags = %d, channel_timezone = '%s', channel_location = '%s', channel_notifyflags = %d, channel_max_anon_mail = %d, channel_max_friend_req = %d, channel_expire_days = %d $set_perms where channel_id = %d",
@@ -602,8 +604,7 @@ class Channel {
 			'$hidefriends' => array('hide_friends', t('Allow others to view your friends and connections'), 1 - intval($profile['hide_friends']), '', $yes_no ),
 			'$permiss_arr' => $permiss,
 			'$comment_perms' => $comment_perms,
-
-
+			'$noindex' => [ 'noindex', t('Forbid indexing of your channel content by search engines'), get_pconfig($channel['channel_id'],'system','noindex'), '', $yes_no],
 			'$blocktags' => array('blocktags',t('Allow others to tag your posts'), 1-$blocktags, t('Often used by the community to retro-actively flag inappropriate content'), $yes_no),
 	
 			'$lbl_p2macro' => t('Channel Permission Limits'),

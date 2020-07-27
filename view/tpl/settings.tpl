@@ -86,6 +86,7 @@
 						<div class="settings-common-perms">
 							{{$profile_in_dir}}
 							{{include file="field_checkbox.tpl" field=$hidefriends}}
+							{{include file="field_checkbox.tpl" field=$noindex}}
 							{{$suggestme}}
 							{{include file="field_input.tpl" field=$expire}}
 							{{include file="field_checkbox.tpl" field=$hyperdrive}}

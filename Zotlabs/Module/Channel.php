@@ -63,6 +63,10 @@ class Channel extends Controller {
 			http_status_exit(404, 'Not found');
 		}
 
+		if (get_pconfig($channel['channel_id'],'system','noindex')) {
+			App::$meta->set('robots', 'noindex, noarchive');
+		}
+
 		head_add_link( [ 
 			'rel'   => 'alternate', 
 			'type'  => 'application/atom+xml',

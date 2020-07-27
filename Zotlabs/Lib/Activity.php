@@ -2285,7 +2285,13 @@ class Activity {
 						$s['body'] .= "\n\n" . '[audio]' . $act->obj['url'] . '[/audio]';
 					}
 				}
-
+				// Pleroma audio scrobbler
+				elseif ($act->type === 'Listen' && array_key_exists('artist', $act->obj) && array_key_exists('title',$act->obj) && $s['body'] === EMPTY_STR) {
+					$s['body'] .= "\n\n" . sprintf('Listening to \"%1$s\" by %2$s', escape_tags($act->obj['title']), escape_tags($act->obj['artist']));
+					if(isset($act->obj['album'])) {
+						$s['body'] .= "\n" . sprintf('(%s)', escape_tags($act->obj['album']));
+					}
+				}
 			}
 
 			if ($act->obj['type'] === 'Image' && strpos($s['body'],'zrl=') === false) {
