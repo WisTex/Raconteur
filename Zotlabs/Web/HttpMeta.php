@@ -53,10 +53,11 @@ class HttpMeta {
 
 
 	function get() {
+		// use 'name' for most meta fields, and 'property' for opengraph properties
 		$o = '';
 		if ($this->vars) {
 			foreach ($this->vars as $k => $v) {
-				$o .= '<meta property="' . htmlspecialchars($k,ENT_COMPAT,'UTF-8',false) . '" content="' . htmlspecialchars($v,ENT_COMPAT,'UTF-8',false) . '" />' . "\r\n" ;
+				$o .= '<meta name="' . htmlspecialchars($k,ENT_COMPAT,'UTF-8',false) . '" content="' . htmlspecialchars($v,ENT_COMPAT,'UTF-8',false) . '" />' . "\r\n" ;
 			}
 		}
 		if ($this->check_required()) {
