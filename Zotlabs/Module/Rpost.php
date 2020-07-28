@@ -139,7 +139,8 @@ class Rpost extends Controller {
 			'bbco_autocomplete'   => 'bbcode',
 			'editor_autocomplete' => true,
 			'bbcode'              => true,
-			'jotnets'             => true
+			'jotnets'             => true,
+			'reset'               => t('Reset form')
 		];
 	
 		$editor = status_editor($a,$x);
