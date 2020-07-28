@@ -2078,10 +2078,10 @@ class Activity {
 			
 			if (in_array($act->type,[ 'EmojiReaction', 'EmojiReact' ])) {
 				// Pleroma reactions
-				$t = trim(self::get_textfield($act,'content'));
-				$e = Emoji\is_single_emoji($t);
+				$t = trim(self::get_textfield($act->data,'content'));
+				$e = Emoji\is_single_emoji($t) || mb_strlen($t) === 1;
 				if ($e) {
-					$content['content'] = trim(self::get_textfield($act,'content'));
+					$content['content'] = $t;
 				}	
 			}
 		}

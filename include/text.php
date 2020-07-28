@@ -1627,7 +1627,8 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 		$s = $poll;
 	}
 
-	$em = Emoji\is_single_emoji(trim($item['body']));
+	$e = trim($item['body']);
+	$em = Emoji\is_single_emoji($e) || mb_strlen($e) === 1;
 	if ($em) {
 		$s = '<span style="font-size: 2rem;">' . trim($item['body']) . '</span>';
 	}
