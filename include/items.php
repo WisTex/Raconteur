@@ -3759,8 +3759,8 @@ function fetch_post_tags($items, $link = false) {
 	for($x = 0; $x < count($items); $x ++) {
 		if($tags) {
 			foreach($tags as $t) {
-				if(($link) && ($t['ttype'] == TERM_MENTION))
-					$t['url'] = chanlink_url($t['url']);
+//				if(($link) && ($t['ttype'] == TERM_MENTION))
+//					$t['url'] = chanlink_url($t['url']);
 				if(array_key_exists('item_id',$items[$x])) {
 					if($t['oid'] == $items[$x]['item_id']) {
 						if(! is_array($items[$x]['term']))
