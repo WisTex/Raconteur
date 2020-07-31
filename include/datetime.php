@@ -136,8 +136,10 @@ function dob($dob) {
 	else
 		$value = (($ignore_year) ? datetime_convert('UTC','UTC',$dob,'m-d') : datetime_convert('UTC','UTC',$dob,'Y-m-d'));
 
+	$age = age($value,App::$user['timezone'],App::$user['timezone']);
+
 	$o = replace_macros(get_markup_template("field_input.tpl"), [
-		'$field' => [ 'dob', t('Birthday'), $value, ((intval($value)) ? t('Age: ') . age($value,App::$user['timezone'],App::$user['timezone']) : ''), '', 'placeholder="' . t('YYYY-MM-DD or MM-DD') .'"' ]
+		'$field' => [ 'dob', t('Birthday'), $value, ((intval($age)) ? t('Age: ') . $age : ''), '', 'placeholder="' . t('YYYY-MM-DD or MM-DD') .'"' ]
 	]);
 
 
