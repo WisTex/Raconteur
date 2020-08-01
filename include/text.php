@@ -2789,6 +2789,10 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 		
         // $r is set if we found something
 
+		if ($r) {
+			$r = [ Libzot::zot_record_preferred($r) ];
+		}
+
         if ($r) {
             foreach ($r as $xc) {
                 $profile = $xc['xchan_url'];

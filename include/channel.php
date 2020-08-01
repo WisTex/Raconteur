@@ -883,7 +883,7 @@ function identity_basic_export($channel_id, $sections = null) {
 				$ret['hubloc'] = $r;
 		}
 
-		$r = q("select * from pgrp where uid = %d and rule = '' ",
+		$r = q("select * from pgrp where uid = %d ",
 			intval($channel_id)
 		);
 
