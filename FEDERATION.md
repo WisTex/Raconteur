@@ -25,8 +25,18 @@ Groups may be public or private. The initial thread starting post to a group is 
 
 Comments
 
-Zap provides permission control and moderation of comments. By default comments are only accepted from existing connections. This can be changed by the individual. Other sites MAY use zot:commentPolicy (string) as a guide if they do not wish to provide comment abilities where it is known in advance they will be rejected. A Reject/Note activity will be sent if the comment is not permitted. There is currently no response for moderated content, but will likely also be represented by Reject/Note. 
+Zap provides permission control and moderation of comments. By default comments are only accepted from existing connections. This can be changed by the individual. Other sites MAY use zot:commentPolicy (string) as a guide if they do not wish to provide comment abilities where it is known in advance they will be rejected. A Reject/Note activity will be sent if the comment is not permitted. There is currently no response for moderated content, but will likely also be represented by Reject/Note.
 
+'commentPolicy' can be any of
+
+'authenticated' - matches the typical ActivityPub permissions
+'contacts' - matches approved followers
+'any connections' - matches followers regardless of approval
+'site: foobar.com' - matches any actor or clone instance from 'foobar.com'
+'network: red' - matches any actor from the 'red' network
+'public' - matches anybody at all, may require moderation if the network isn't known
+'self' - matches the activity author only
+'until=2001-01-01T00:00Z' - comments are closed after the date given. This can be supplied on its own or appended to any other commentPolicy string by preceding with a space; for example 'contacts until=2001-01-01T00:00Z'.
 
 Private Media
 
