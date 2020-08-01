@@ -82,5 +82,5 @@ Mastodon Custom Emojis are only supported for post content. Display names and me
 
 Mentions and private mentions
 
-By default the mention format is '@Display Name', but other options are available, such as '@username' and both '@Display Name (username)'. Mentions may also contain an ampersand, for example '@!Display Name'. This indicates a Direct or private message to 'Display Name' and post addressing/privacy are altered accordingly.  
+By default the mention format is '@Display Name', but other options are available, such as '@username' and both '@Display Name (username)'. Mentions may also contain an exclamation character, for example '@!Display Name'. This indicates a Direct or private message to 'Display Name' and post addressing/privacy are altered accordingly.  
 
