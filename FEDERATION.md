@@ -45,6 +45,8 @@ Zap provides permission control and moderation of comments. By default comments 
 
 'until=2001-01-01T00:00Z' - comments are closed after the date given. This can be supplied on its own or appended to any other commentPolicy string by preceding with a space; for example 'contacts until=2001-01-01T00:00Z'.
 
+
+
 Private Media
 
 Private media MAY be accessed using OCAP or OpenWebAuth.
@@ -76,3 +78,9 @@ Announce and relay activities are supported on the inbound side but are not gene
 Mastodon Custom Emojis
 
 Mastodon Custom Emojis are only supported for post content. Display names and message titles are considered text only fields and embedded images (the mechanism behind custom emojis) are not supported in these locations.
+
+
+Mentions and private mentions
+
+By default the mention format is '@Display Name', but other options are available, such as '@username' and both '@Display Name (username)'. Mentions may also contain an ampersand, for example '@!Display Name'. This indicates a Direct or private message to 'Display Name' and post addressing/privacy are altered accordingly.  
+
