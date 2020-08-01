@@ -30,12 +30,19 @@ Zap provides permission control and moderation of comments. By default comments 
 'commentPolicy' can be any of
 
 'authenticated' - matches the typical ActivityPub permissions
+
 'contacts' - matches approved followers
+
 'any connections' - matches followers regardless of approval
+
 'site: foobar.com' - matches any actor or clone instance from 'foobar.com'
+
 'network: red' - matches any actor from the 'red' network
+
 'public' - matches anybody at all, may require moderation if the network isn't known
+
 'self' - matches the activity author only
+
 'until=2001-01-01T00:00Z' - comments are closed after the date given. This can be supplied on its own or appended to any other commentPolicy string by preceding with a space; for example 'contacts until=2001-01-01T00:00Z'.
 
 Private Media
