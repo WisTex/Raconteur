@@ -782,8 +782,6 @@ class Activity {
 			}
 		}
 
-//		$ret['inheritPrivacy'] = true;
-
 		if (intval($i['item_wall']) && $i['mid'] === $i['parent_mid']) {
 			$ret['commentPolicy'] = map_scope(PermissionLimits::Get($i['uid'],'post_comments'));
 		}

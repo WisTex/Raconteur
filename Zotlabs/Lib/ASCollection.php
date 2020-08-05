@@ -6,11 +6,9 @@ use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 
 /**
- * Class for dealing with ActivityStreams ordered collections.
+ * Class for dealing with fetching ActivityStreams collections (ordered or unordered, normal or paged).
  * Construct with the object url and an optional channel to sign the request.
- * Returns an array of collection members.
- * If desired, call $collection->next to return additional pages (arrays of collection members).
- * Returns an empty array when there is nothing more to return
+ * Use $class->get() to return an array of collection members.
  */
  
 
@@ -18,55 +16,72 @@ use Zotlabs\Lib\Activity;
 
 class ASCollection {
 
-	private $url = null;
-	private $channel = null;
+	private $url      = null;
+	private $channel  = null;
 	private $nextpage = null;
-	private $data = null;
-
+	private $data     = [];
+	
 	function __construct($url,$channel = null) {
 
-		$this->url = $url;
+		$this->url     = $url;
 		$this->channel = $channel;
 		
 		$data = Activity::fetch($url,$channel);
 
-		if (! $data) {
+		if (! is_array($data)) {
+			return;
+		}
+
+		if (! in_array($data['type'], ['Collection','OrderedCollection'])) {
 			return false;
 		}
-
-		$ptr = $data;
-			
-		if ($data['type'] === 'OrderedCollection') {
-			if (array_key_exists('first',$data)) {
-				$ptr = $data['first'];
-			}
+		
+		if (array_key_exists('first',$data)) {
+			$this->nextpage = $data['first'];
 		}
 
-		if ($ptr['type'] === 'OrderedCollectionPage' && $ptr['orderedItems']) {
-			$this->data = $ptr['orderedItems'];			
+		if (isset($data['items']) && is_array($data['items'])) {
+			$this->data = $data['items'];			
+		}
+		elseif (isset($data['orderedItems']) && is_array($data['orderedItems'])) {
+			$this->data = $data['orderedItems'];			
 		}
 
-		$this->setnext($data);
+		do {
+			$x = $this->next();
+		} while ($x);
+	}
+
+	function get() {
 		return $this->data;
 	}
 
 	function next() {
 
 		if (! $this->nextpage) {
-			return [];
+			return false;
 		}
-		$data = Activity::fetch($this->nextpage,$channel);
+				
+		$data = Activity::fetch($this->nextpage,$this->channel);
 
-		if (! $data) {
-			return [];
+		if (! is_array($data)) {
+			return false;
 		}
 		
-		if ($data['type'] === 'OrderedCollectionPage' && $data['orderedItems']) {
-			$this->data = $data['orderedItems'];			
+		if (! in_array($data['type'], ['CollectionPage','OrderedCollectionPage'])) {
+			return false;
 		}
-		
+
 		$this->setnext($data);
-		return $this->data;
+
+		if (isset($data['items']) && is_array($data['items'])) {
+			$this->data = array_merge($this->data,$data['items']);			
+		}
+		elseif (isset($data['orderedItems']) && is_array($data['orderedItems'])) {
+			$this->data = array_merge($this->data,$data['orderedItems']);			
+		}
+
+		return true;
 	}
 
 	function setnext($data) {
@@ -75,6 +90,9 @@ class ASCollection {
 		}
 		elseif (array_key_exists('last',$data)) {
 			$this->nextpage = $data['last'];
+		}
+		else {
+			$this->nextpage = false;
 		}
 	}
 
