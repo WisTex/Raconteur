@@ -13,13 +13,38 @@ Events
 Events and RSVP are supported per AS-vocabulary with the exception that a Create/Event is not transmitted. Invite/Event is the primary method of sharing events. For compatibiliity with some legacy applications, RSVP responses of Accept/Event, Reject/Event, TentativeAccept/Event and TentativeReject/Event are accepted as valid RSVP activities. By default we send Accept/{Invite/Event} (and other RSVP responses) per AS-vocabulary. Events with no timezone (e.g. "all day events" or holidays) are sent with no 'Z' on the event times per RFC3339 Section 4.3. All event times are in UTC and timezone adjusted events are transmitted using Zulu time 'yyyy-mm-ddThh:mm:ssZ'. Event descriptions are sent using 'summary' and accepted using summary, title, and content in order of existence. These are converted internally to plaintext if they contain HTML. If 'location' contains coordinates, a map will typically be generated when rendered. 
 
 
+Nomadic Identity
+
+Nomadic identity describes a mechanism where the data stored by your social network can be mirrored to multiple servers in near realtime and any of these servers can be used at any time should your "primary" server be unavailable (temporarily or permanently). The mechanisms for creating nomadic accounts and maintaining mirrors are currently not supported by ActivityPub but are available via the Zot6 protocol. However, the instance information is provided to ActivityPub services which wish to support it in a more seamless manner. Otherwise DMs (for example) may need to be sent to all actor instances to ensure the nomadic actor receives them. There are many other examples. 
+
+The actor record for nomadic accounts contains a 'copiedTo' property which is otherwise identical to Mastodon's 'movedTo' property. ActivityPub services wishing to support compatibility with this mechanism should ensure that each nomadic instance is "folded" into a single fediverse identity so that messages from the same actor across different instances are recognised as being the same author. Additionally, any posts sent to a nomadic account should be sent to all instances and private data should be made accessible to all actor instances. This includes historical data and posts as new instances can be created at any time.  
+
 Groups
 
 Groups may be public or private. The initial thread starting post to a group is sent using a DM to the group and should be the only DM recipient. This helps preserve the sanctity of private groups and is a posting method available to most ActivityPub software, as opposed to bang tags (!groupname) which lack widespread support and normal @mentions which can create privacy issues and their associated drama.  It will be converted to an embedded post authored by the group Actor (and attributed to the original Actor) and resent to all members. Followups and replies to group posts use normal federation methods. The actor type is 'Group' and can be followed using Follow/Group *or* Join/Group, and unfollowed by Undo/Follow *or* Leave/Group.
 
 Comments
 
-Zap provides permission control and moderation of comments. By default comments are only accepted from existing connections. This can be changed by the individual. Other sites MAY use zot:commentPolicy (string) as a guide if they do not wish to provide comment abilities where it is known in advance they will be rejected. A Reject/Note activity will be sent if the comment is not permitted. There is currently no response for moderated content, but will likely also be represented by Reject/Note. 
+Zap provides permission control and moderation of comments. By default comments are only accepted from existing connections. This can be changed by the individual. Other sites MAY use zot:commentPolicy (string) as a guide if they do not wish to provide comment abilities where it is known in advance they will be rejected. A Reject/Note activity will be sent if the comment is not permitted. There is currently no response for moderated content, but will likely also be represented by Reject/Note.
+
+'commentPolicy' can be any of
+
+'authenticated' - matches the typical ActivityPub permissions
+
+'contacts' - matches approved followers
+
+'any connections' - matches followers regardless of approval
+
+'site: foobar.com' - matches any actor or clone instance from 'foobar.com'
+
+'network: red' - matches any actor from the 'red' network
+
+'public' - matches anybody at all, may require moderation if the network isn't known
+
+'self' - matches the activity author only
+
+'until=2001-01-01T00:00Z' - comments are closed after the date given. This can be supplied on its own or appended to any other commentPolicy string by preceding with a space; for example 'contacts until=2001-01-01T00:00Z'.
+
 
 
 Private Media
@@ -53,3 +78,9 @@ Announce and relay activities are supported on the inbound side but are not gene
 Mastodon Custom Emojis
 
 Mastodon Custom Emojis are only supported for post content. Display names and message titles are considered text only fields and embedded images (the mechanism behind custom emojis) are not supported in these locations.
+
+
+Mentions and private mentions
+
+By default the mention format is '@Display Name', but other options are available, such as '@username' and both '@Display Name (username)'. Mentions may also contain an exclamation character, for example '@!Display Name'. This indicates a Direct or private message to 'Display Name' and post addressing/privacy are altered accordingly.  
+

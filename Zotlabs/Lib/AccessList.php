@@ -248,25 +248,6 @@ class AccessList {
 		return $ret;
 	}
 
-	static function members_profile_xchan($uid,$gid) {
-		$ret = [];
-		if (intval($gid)) {
-			$r = q("SELECT abook_xchan as xchan from abook left join profile on abook_profile = profile_guid where profile.id = %d and profile.uid = %d",
-				intval($gid),
-				intval($uid)
-			);
-			if ($r) {
-				foreach($r as $rv) {
-					$ret[] = $rv['xchan'];
-				}
-			}
-		}
-		return $ret;
-	}
-
-
-
-
 	static function select($uid,$group = '') {
 	
 		$grps = [];

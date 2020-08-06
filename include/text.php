@@ -1478,11 +1478,11 @@ function format_mentions(&$item) {
 			$term = htmlspecialchars($t['term'],ENT_COMPAT,'UTF-8',false) ;
 			if(! trim($term))
 				continue;
-			if(strpos($item['body'], $t['url']))
+			if(strpos($item['body'], urlencode($t['url'])))
 				continue;
 			if($s)
 				$s .= ' ';
-			$s .= '<span class="badge badge-pill badge-success"><i class="fa fa-at"></i>&nbsp;<a class="text-white" href="' . zid($t['url']) . '" >' . $term . '</a></span>';
+			$s .= '<span class="badge badge-pill badge-success"><i class="fa fa-at"></i>&nbsp;<a class="text-white" href="' . zid(chanlink_url($t['url'])) . '" >' . $term . '</a></span>';
 		}
 	}
 
@@ -2788,6 +2788,10 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 		$tagpref = intval(PConfig::Get($profile_uid,'system','tag_username',Config::Get('system','tag_username',false)));
 		
         // $r is set if we found something
+
+		if ($r) {
+			$r = [ Libzot::zot_record_preferred($r) ];
+		}
 
         if ($r) {
             foreach ($r as $xc) {

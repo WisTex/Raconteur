@@ -2486,8 +2486,8 @@ function tag_deliver($uid, $item_id) {
 		start_delivery_chain($u, $item, $item_id, 0, false, true);
 		return;
 	}
-
-	if ($is_group && intval($item['item_private']) === 2 && intval($item['item_thread_top'])) {
+	// important - ignore wall posts here else dm's by group owner will be sent to group.
+	if ($is_group && intval($item['item_private']) === 2 && intval($item['item_thread_top']) && (! intval($item['item_wall']))) {
 		// group delivery via DM - use post_wall permission since send_stream is probably turned off and this will be turned into an embedded wall-to-wall post
 		if(perm_is_allowed($uid,$item['owner_xchan'],'post_wall')) {
 			logger('group DM delivery for ' . $u['channel_address']);
@@ -3759,8 +3759,8 @@ function fetch_post_tags($items, $link = false) {
 	for($x = 0; $x < count($items); $x ++) {
 		if($tags) {
 			foreach($tags as $t) {
-				if(($link) && ($t['ttype'] == TERM_MENTION))
-					$t['url'] = chanlink_url($t['url']);
+//				if(($link) && ($t['ttype'] == TERM_MENTION))
+//					$t['url'] = chanlink_url($t['url']);
 				if(array_key_exists('item_id',$items[$x])) {
 					if($t['oid'] == $items[$x]['item_id']) {
 						if(! is_array($items[$x]['term']))
