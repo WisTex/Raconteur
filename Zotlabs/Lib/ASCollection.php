@@ -8,6 +8,8 @@ use Zotlabs\Lib\Activity;
 /**
  * Class for dealing with fetching ActivityStreams collections (ordered or unordered, normal or paged).
  * Construct with the object url and an optional channel to sign the request.
+ * $direction is 0 (default) to fetch from the beginning, and 1 to fetch from the end and reverse order the resultant array.
+ * An optional limit to the number of records returned may also be specified. 
  * Use $class->get() to return an array of collection members.
  */
  
@@ -16,15 +18,19 @@ use Zotlabs\Lib\Activity;
 
 class ASCollection {
 
-	private $url      = null;
-	private $channel  = null;
-	private $nextpage = null;
-	private $data     = [];
+	private $url       = null;
+	private $channel   = null;
+	private $nextpage  = null;
+	private $limit     = 0;
+	private $direction = 0;  // 0 = forward, 1 = reverse
+	private $data      = [];
 	
-	function __construct($url,$channel = null) {
+	function __construct($url,$channel = null,$direction = 0, $limit = 0) {
 
-		$this->url     = $url;
-		$this->channel = $channel;
+		$this->url       = $url;
+		$this->channel   = $channel;
+		$this->direction = $direction;
+		$this->limit     = $limit;
 		
 		$data = Activity::fetch($url,$channel);
 
@@ -35,16 +41,30 @@ class ASCollection {
 		if (! in_array($data['type'], ['Collection','OrderedCollection'])) {
 			return false;
 		}
-		
-		if (array_key_exists('first',$data)) {
-			$this->nextpage = $data['first'];
+
+		if ($this->direction) {
+			if (array_key_exists('last',$data) && $data['last']) {
+				$this->nextpage = $data['last'];
+			}
+		}
+		else {
+			if (array_key_exists('first',$data) && $data['first']) {
+				$this->nextpage = $data['first'];
+			}
 		}
 
 		if (isset($data['items']) && is_array($data['items'])) {
-			$this->data = $data['items'];			
+			$this->data = (($this->direction) ? array_reverse($data['items']) : $data['items']);			
 		}
 		elseif (isset($data['orderedItems']) && is_array($data['orderedItems'])) {
-			$this->data = $data['orderedItems'];			
+			$this->data = (($this->direction) ? array_reverse($data['orderedItems']) : $data['orderedItems']);			
+		}
+
+		if ($limit) {
+			if (count($this->data) > $limit) {
+				$this->data = array_slice($this->data,0,$limit);
+				return;
+			}
 		}
 
 		do {
@@ -75,25 +95,45 @@ class ASCollection {
 		$this->setnext($data);
 
 		if (isset($data['items']) && is_array($data['items'])) {
-			$this->data = array_merge($this->data,$data['items']);			
+			$this->data = array_merge($this->data,(($this->direction) ? array_reverse($data['items']) : $data['items']));			
 		}
 		elseif (isset($data['orderedItems']) && is_array($data['orderedItems'])) {
-			$this->data = array_merge($this->data,$data['orderedItems']);			
+			$this->data = array_merge($this->data,(($this->direction) ? array_reverse($data['orderedItems']) : $data['orderedItems']));			
+		}
+
+		if ($limit) {
+			if (count($this->data) > $limit) {
+				$this->data = array_slice($this->data,0,$limit);
+				$this->nextpage = false;
+				return true;
+			}
 		}
 
 		return true;
 	}
 
 	function setnext($data) {
-		if (array_key_exists('next',$data)) {
-			$this->nextpage = $data['next'];
-		}
-		elseif (array_key_exists('last',$data)) {
-			$this->nextpage = $data['last'];
+		if ($this->direction) {
+			if (array_key_exists('prev',$data) && $data['prev']) {
+				$this->nextpage = $data['prev'];
+			}
+			elseif (array_key_exists('first',$data) && $data['first']) {
+				$this->nextpage = $data['first'];
+			}
+			else {
+				$this->nextpage = false;
+			}
 		}
 		else {
-			$this->nextpage = false;
+			if (array_key_exists('next',$data) && $data['next']) {
+				$this->nextpage = $data['next'];
+			}
+			elseif (array_key_exists('last',$data) && $data['last']) {
+				$this->nextpage = $data['last'];
+			}
+			else {
+				$this->nextpage = false;
+			}
 		}
 	}
-
 }
