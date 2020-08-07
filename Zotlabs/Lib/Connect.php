@@ -99,7 +99,7 @@ class Connect {
 
 			// not in cache - try discovery
 
-			$wf = discover_by_webbie($url,$protocol);
+			$wf = discover_by_webbie($url,$protocol,false);
 
 			if (! $wf) {
 				$result['message'] = t('Remote channel or protocol unavailable.');

@@ -945,7 +945,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true) {
 
 				if($link['rel'] === PROTOCOL_ZOT6 && ((! $protocol) || (strtolower($protocol) === 'zot6'))) {
 					logger('zot6 found for ' . $webbie, LOGGER_DEBUG);
-					$record = Zotfinger::exec($link['href'], null, false);
+					$record = Zotfinger::exec($link['href'], null, $verify);
 
 					// Check the HTTP signature
 
