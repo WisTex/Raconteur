@@ -262,7 +262,7 @@ class Stream extends Controller {
 	
 			if ($x) {
 				$title = replace_macros(get_markup_template("section_title.tpl"),array(
-					'$title' => sprintf( t('Access list: %s'), $x['gname']);
+					'$title' => sprintf( t('Access list: %s'), $x['gname'])
 				));
 			}
 	
