@@ -215,12 +215,30 @@ class AccessList {
 	}
 
 
-	static function members($uid, $gid) {
+	static function members($uid, $gid, $total = false, $start = 0, $records = 0) {
 		$ret = [];
+		if ($records) {
+			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval($records), intval($start));
+		}
+
 		if (intval($gid)) {
+			if ($total) {
+				$r = q("SELECT count(xchan) as total FROM pgrp_member 
+					LEFT JOIN abook ON abook_xchan = pgrp_member.xchan left join xchan on xchan_hash = abook_xchan
+					WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0
+					and abook_blocked = 0 and abook_pending = 0",
+					intval($gid),
+					intval($uid),
+					intval($uid)
+				);
+				if ($r) {
+					return $r[0]['total'];
+				}
+			}
+			
 			$r = q("SELECT * FROM pgrp_member 
 				LEFT JOIN abook ON abook_xchan = pgrp_member.xchan left join xchan on xchan_hash = abook_xchan
-				WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 ORDER BY xchan_name ASC ",
+				WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 ORDER BY xchan_name ASC $pager_sql",
 				intval($gid),
 				intval($uid),
 				intval($uid)

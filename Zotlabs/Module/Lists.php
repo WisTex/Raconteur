@@ -60,14 +60,25 @@ class Lists extends Controller {
 					http_status_exit(403,'Permission denied');
 				}
 			}
-			
-			$members = AccessList::members($group['uid'],$group['id']);
 
+			$total = AccessList::members($group['uid'],$group['id'], true);
+			if ($total) {
+				App::set_pager_total($total);
+				App::set_pager_itemspage(100);
+			}
+
+			if (App::$pager['unset'] && $total > 100) {		
+				$ret = 	Activity::paged_collection_init($total,App::$query_string);
+			}
+			else {
+				$members = AccessList::members($group['uid'],$group['id'], false, App::$pager['start'], App::$pager['itemspage']);
+				$ret = Activity::encode_follow_collection($members, App::$query_string, 'OrderedCollection',$total);
+			}
 			$x = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1',
 				z_root() . ZOT_APSCHEMA_REV
-				]], Activity::encode_follow_collection($members, App::$query_string, 'OrderedCollection'));
+				]], $ret);
 
 
 			$headers = [];
