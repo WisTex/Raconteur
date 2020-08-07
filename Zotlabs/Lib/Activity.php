@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Lib;
 
+use App;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionRoles;
@@ -180,13 +181,56 @@ class Activity {
 		}
 	}
 
-	static function encode_item_collection($items,$id,$type,$activitypub = false) {
+	static function paged_collection_init($total,$id, $type = 'OrderedCollection') {
 
 		$ret = [
 			'id' => z_root() . '/' . $id,
 			'type' => $type,
-			'totalItems' => count($items),
+			'totalItems' => $total,
 		];
+
+		$numpages = $total / App::$pager['itemspage'];
+		$lastpage = (($numpages > intval($numpages)) ? intval($numpages) + 1 : $numpages);
+
+		$ret['first'] = z_root() . '/' . App::$query_string . '?page=1';
+		$ret['last']  = z_root() . '/' . App::$query_string . '?page=' . $lastpage;
+
+		return $ret;
+		
+	}
+
+
+	static function encode_item_collection($items,$id,$type,$activitypub = false,$total = 0) {
+
+		if ($total > 100) {
+			$ret = [
+				'id' => z_root() . '/' . $id,
+				'type' => $type . 'Page',
+			];
+
+			$numpages = $total / App::$pager['itemspage'];
+			$lastpage = (($numpages > intval($numpages)) ? intval($numpages) + 1 : $numpages);
+
+			$stripped = preg_replace('/([&|\?]page=[0-9]*)/','',$id);
+			$stripped = rtrim($stripped,'/');
+
+			$ret['partOf'] = z_root() . '/' . $stripped;
+
+			if (App::$pager['page'] < $lastpage) {
+				$ret['next'] = z_root() . '/' . $stripped . '?page=' . (intval(App::$pager['page']) + 1);
+			}
+			if (App::$pager['page'] > 1) {
+				$ret['prev'] = z_root() . '/' . $stripped . '?page=' . (intval(App::$pager['page']) - 1);
+			}
+		}
+		else {
+			$ret = [
+				'id' => z_root() . '/' . $id,
+				'type' => $type,
+				'totalItems' => $total,
+			];
+		}
+
 
 		if ($items) {
 			$x = [];
@@ -213,13 +257,37 @@ class Activity {
 		return $ret;
 	}
 
-	static function encode_follow_collection($items,$id,$type,$extra = null) {
+	static function encode_follow_collection($items,$id,$type,$total = 0,$extra = null) {
 
-		$ret = [
-			'id' => z_root() . '/' . $id,
-			'type' => $type,
-			'totalItems' => count($items),
-		];
+		if ($total > 100) {
+			$ret = [
+				'id' => z_root() . '/' . $id,
+				'type' => $type . 'Page',
+			];
+
+			$numpages = $total / App::$pager['itemspage'];
+			$lastpage = (($numpages > intval($numpages)) ? intval($numpages) + 1 : $numpages);
+
+			$stripped = preg_replace('/([&|\?]page=[0-9]*)/','',$id);
+			$stripped = rtrim($stripped,'/');
+
+			$ret['partOf'] = z_root() . '/' . $stripped;
+
+			if (App::$pager['page'] < $lastpage) {
+				$ret['next'] = z_root() . '/' . $stripped . '?page=' . (intval(App::$pager['page']) + 1);
+			}
+			if (App::$pager['page'] > 1) {
+				$ret['prev'] = z_root() . '/' . $stripped . '?page=' . (intval(App::$pager['page']) - 1);
+			}
+		}
+		else {
+			$ret = [
+				'id' => z_root() . '/' . $id,
+				'type' => $type,
+				'totalItems' => $total,
+			];
+		}
+		
 		if ($extra) {
 			$ret = array_merge($ret,$extra);
 		}

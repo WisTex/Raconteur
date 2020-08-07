@@ -7,7 +7,7 @@ use Zotlabs\Lib\Activity;
 
 /**
  * Class for dealing with fetching ActivityStreams collections (ordered or unordered, normal or paged).
- * Construct with the object url and an optional channel to sign the request.
+ * Construct with either an existing object or url and an optional channel to sign requests.
  * $direction is 0 (default) to fetch from the beginning, and 1 to fetch from the end and reverse order the resultant array.
  * An optional limit to the number of records returned may also be specified. 
  * Use $class->get() to return an array of collection members.
@@ -18,22 +18,26 @@ use Zotlabs\Lib\Activity;
 
 class ASCollection {
 
-	private $url       = null;
 	private $channel   = null;
 	private $nextpage  = null;
 	private $limit     = 0;
 	private $direction = 0;  // 0 = forward, 1 = reverse
 	private $data      = [];
 	
-	function __construct($url,$channel = null,$direction = 0, $limit = 0) {
+	function __construct($obj, $channel = null, $direction = 0, $limit = 0) {
 
-		$this->url       = $url;
 		$this->channel   = $channel;
 		$this->direction = $direction;
 		$this->limit     = $limit;
 		
-		$data = Activity::fetch($url,$channel);
+		if (is_array($obj)) {
+			$data = $obj;
+		}
 
+		if (is_string($obj)) {
+			$data = Activity::fetch($obj,$channel);
+		}
+		
 		if (! is_array($data)) {
 			return;
 		}

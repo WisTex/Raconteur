@@ -120,7 +120,7 @@ class Stream extends Controller {
 				if ($update) {
 					killme();
 				}
-				notice( t('No such group') . EOL );
+				notice( t('Access list not found') . EOL );
 				goaway(z_root() . '/stream');
 			}
 	
@@ -262,7 +262,7 @@ class Stream extends Controller {
 	
 			if ($x) {
 				$title = replace_macros(get_markup_template("section_title.tpl"),array(
-					'$title' => t('Access list: ') . $x['gname']
+					'$title' => sprintf( t('Access list: %s'), $x['gname']);
 				));
 			}
 	

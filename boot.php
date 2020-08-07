@@ -936,6 +936,7 @@ class App {
 		 * pagination
 		 */
 
+		self::$pager['unset']     = ((array_key_exists('page',$_REQUEST)) ? false : true);
 		self::$pager['page']      = ((x($_GET,'page') && intval($_GET['page']) > 0) ? intval($_GET['page']) : 1);
 		self::$pager['itemspage'] = 60;
 		self::$pager['start']     = (self::$pager['page'] * self::$pager['itemspage']) - self::$pager['itemspage'];

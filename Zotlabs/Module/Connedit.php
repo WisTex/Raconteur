@@ -492,7 +492,7 @@ class Connedit extends Controller {
 				
 				Libsync::build_sync_packet(0, [ 'abook' => [ 'abook_xchan' => $orig_record['abook_xchan'], 'entry_deleted' => true ] ] );
 	
-				notice( t('Connection has been removed.') . EOL );
+				info( t('Connection has been removed.') . EOL );
 				if (x($_SESSION,'return_url')) {
 					goaway(z_root() . '/' . $_SESSION['return_url']);
 				}
@@ -569,7 +569,7 @@ class Connedit extends Controller {
 					'url'   => z_root() . '/connedit/' . $contact['abook_id'] . '/block',
 					'sel'   => (intval($contact['abook_blocked']) ? 'active' : ''),
 					'title' => t('Block (or Unblock) all communications with this connection'),
-					'info'   => (intval($contact['abook_blocked']) ? t('This connection is blocked!') : ''),
+					'info'   => (intval($contact['abook_blocked']) ? t('This connection is blocked') : ''),
 				),
 	
 				'ignore' => array(
@@ -577,7 +577,7 @@ class Connedit extends Controller {
 					'url'   => z_root() . '/connedit/' . $contact['abook_id'] . '/ignore',
 					'sel'   => (intval($contact['abook_ignored']) ? 'active' : ''),
 					'title' => t('Ignore (or Unignore) all inbound communications from this connection'),
-					'info'   => (intval($contact['abook_ignored']) ? t('This connection is ignored!') : ''),
+					'info'   => (intval($contact['abook_ignored']) ? t('This connection is ignored') : ''),
 				),
 
 				'censor' => array(
@@ -585,7 +585,7 @@ class Connedit extends Controller {
 					'url'   => z_root() . '/connedit/' . $contact['abook_id'] . '/censor',
 					'sel'   => (intval($contact['abook_censor']) ? 'active' : ''),
 					'title' => t('Censor (or Uncensor) images from this connection'),
-					'info'   => (intval($contact['abook_censor']) ? t('This connection is censored!') : ''),
+					'info'   => (intval($contact['abook_censor']) ? t('This connection is censored') : ''),
 				),
 
 				'archive' => array(
@@ -593,7 +593,7 @@ class Connedit extends Controller {
 					'url'   => z_root() . '/connedit/' . $contact['abook_id'] . '/archive',
 					'sel'   => (intval($contact['abook_archived']) ? 'active' : ''),
 					'title' => t('Archive (or Unarchive) this connection - mark channel dead but keep content'),
-					'info'   => (intval($contact['abook_archived']) ? t('This connection is archived!') : ''),
+					'info'   => (intval($contact['abook_archived']) ? t('This connection is archived') : ''),
 				),
 	
 				'hide' => array(
@@ -601,7 +601,7 @@ class Connedit extends Controller {
 					'url'   => z_root() . '/connedit/' . $contact['abook_id'] . '/hide',
 					'sel'   => (intval($contact['abook_hidden']) ? 'active' : ''),
 					'title' => t('Hide or Unhide this connection from your other connections'),
-					'info'   => (intval($contact['abook_hidden']) ? t('This connection is hidden!') : ''),
+					'info'   => (intval($contact['abook_hidden']) ? t('This connection is hidden') : ''),
 				),
 	
 				'delete' => array(

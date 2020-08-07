@@ -3987,7 +3987,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 			intval($uid)
 		);
 		if(! $r) {
-			$result['message']  = t('Privacy group not found.');
+			$result['message']  = t('Access list not found.');
 			return $result;
 		}
 
@@ -4010,7 +4010,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 		$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND (( author_xchan IN ( $contact_str ) OR owner_xchan in ( $contact_str)) or allow_gid like '" . protect_sprintf('%<' . dbesc($r[0]['hash']) . '>%') . "' ) and id = parent $item_normal ) ";
 
 		$x = AccessList::rec_byhash($uid,$r[0]['hash']);
-		$result['headline'] = sprintf( t('Privacy group: %s'),$x['gname']);
+		$result['headline'] = sprintf( t('Access list: %s'),$x['gname']);
 	}
 	elseif($arr['cid'] && $uid) {
 
@@ -4022,7 +4022,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 			$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND uid = " . intval($arr['uid']) . " AND ( author_xchan = '" . dbesc($r[0]['abook_xchan']) . "' or owner_xchan = '" . dbesc($r[0]['abook_xchan']) . "' ) $item_normal ) ";
 			$result['headline'] = sprintf( t('Connection: %s'),$r[0]['xchan_name']);
 		} else {
-			$result['message'] = t('Connection not found.');
+			$result['message'] = t('Channel not found.');
 			return $result;
 		}
 	}
@@ -4061,9 +4061,11 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 		// only setup pagination on initial page view
 		$pager_sql = '';
 	} else {
-		$itemspage = (($channel) ? get_pconfig($uid,'system','itemspage') : 20);
-		App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
-		$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
+		if(! $arr['total']) {
+			$itemspage = (($channel) ? get_pconfig($uid,'system','itemspage') : 20);
+			App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
+			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
+		}
 	}
 
 	if (isset($arr['start']) && isset($arr['records']))
@@ -4112,6 +4114,18 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 
 		// "New Item View" - show all items unthreaded in reverse created date order
 
+		if ($arr['total']) {
+			$items = q("SELECT count(item.id) AS total FROM item
+				WHERE $item_uids $item_restrict
+				$simple_update
+				$sql_extra $sql_nets $sql_extra3"
+			);
+			if ($items) {
+				return intval($items[0]['total']);
+			}
+			return 0;
+		}
+		
 		$items = q("SELECT item.*, item.id AS item_id FROM item
 				WHERE $item_uids $item_restrict
 				$simple_update
@@ -4119,12 +4133,12 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 				ORDER BY item.received DESC $pager_sql"
 		);
 
-		require_once('include/items.php');
 
 		xchan_query($items);
-
 		$items = fetch_post_tags($items,true);
-	} else {
+
+	}
+	else {
 
 		// Normal conversation view
 

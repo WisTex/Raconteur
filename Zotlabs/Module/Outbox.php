@@ -41,28 +41,53 @@ class Outbox extends Controller {
 		$params['type']      = 'json';
 		$params['pages']     = ((x($_REQUEST,'pages'))      ? intval($_REQUEST['pages'])    : 0);
 		$params['top']       = ((x($_REQUEST,'top'))        ? intval($_REQUEST['top'])      : 0);
-		$params['start']     = ((x($_REQUEST,'start'))      ? intval($_REQUEST['start'])    : 0);
-		$params['records']   = ((x($_REQUEST,'records'))    ? intval($_REQUEST['records'])  : 60);
 		$params['direction'] = ((x($_REQUEST,'direction'))  ? dbesc($_REQUEST['direction']) : 'desc'); // unimplemented
 		$params['cat']       = ((x($_REQUEST,'cat'))        ? escape_tags($_REQUEST['cat']) : '');
-		$params['compat']    = ((x($_REQUEST,'compat'))     ? intval($_REQUEST['compat'])   : 1);	
+		$params['compat']    = 1;
 
-
-		$items = items_fetch(
-    	    [
-        	    'wall'       => '1',
-            	'datequery'  => $params['end'],
+		
+		$total = items_fetch(
+    	   	[
+				'total'      => true,
+	       	    'wall'       => '1',
+    	       	'datequery'  => $params['end'],
 	            'datequery2' => $params['begin'],
-    	        'start'      => intval($params['start']),
-        	    'records'    => intval($params['records']),
-            	'direction'  => dbesc($params['direction']),
-	            'pages'      => $params['pages'],
-    	        'order'      => dbesc('post'),
-        	    'top'        => $params['top'],
+           		'direction'  => dbesc($params['direction']),
+	           	'pages'      => $params['pages'],
+	            'order'      => dbesc('post'),
+    	   	    'top'        => $params['top'],
             	'cat'        => $params['cat'],
-	            'compat'     => $params['compat']
-    	    ], $channel, $observer_hash, CLIENT_MODE_NORMAL, App::$module
+	       	    'compat'     => $params['compat']
+    	   	], $channel, $observer_hash, CLIENT_MODE_NORMAL, App::$module
 	    );
+
+		if ($total) {
+			App::set_pager_total($total);
+			App::set_pager_itemspage(100);
+		}
+
+		if(App::$pager['unset'] && $total > 100) {		
+			$ret = 	Activity::paged_collection_init($total,App::$query_string);
+		}
+		else {
+			$items = items_fetch(
+    		    [
+        		    'wall'       => '1',
+            		'datequery'  => $params['end'],
+	            	'datequery2' => $params['begin'],
+					'records'    => intval(App::$pager['itemspage']),
+					'start'      => intval(App::$pager['start']),
+        	    	'direction'  => dbesc($params['direction']),
+	        	    'pages'      => $params['pages'],
+    	        	'order'      => dbesc('post'),
+	        	    'top'        => $params['top'],
+    	        	'cat'        => $params['cat'],
+	    	        'compat'     => $params['compat']
+    	    	], $channel, $observer_hash, CLIENT_MODE_NORMAL, App::$module
+	    	);
+			
+			$ret = Activity::encode_item_collection($items, App::$query_string, 'OrderedCollection',true, $total);
+		}
 
 		if(ActivityStreams::is_as_request()) {
 
@@ -70,7 +95,7 @@ class Outbox extends Controller {
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1',
 				z_root() . ZOT_APSCHEMA_REV
-            	]], Activity::encode_item_collection($items, App::$query_string, 'OrderedCollection',true));
+            	]], $ret);
 
 			$headers = [];
 			$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;

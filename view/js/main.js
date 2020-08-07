@@ -598,11 +598,11 @@ function notificationsUpdate(cached_data) {
 			$.jGrowl.defaults.closerTemplate = '<div>[ ' + aStr.closeAll + ']</div>';
 
 			$(data.notice).each(function() {
-				$.jGrowl(this.message, { sticky: true, theme: 'notice' });
+				$.jGrowl(this.message, { sticky: false, theme: 'notice', life: 10000 });
 			});
 
 			$(data.info).each(function(){
-				$.jGrowl(this.message, { sticky: false, theme: 'info', life: 10000 });
+				$.jGrowl(this.message, { sticky: false, theme: 'info' });
 			});
 		});
 	}
