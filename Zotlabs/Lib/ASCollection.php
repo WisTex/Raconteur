@@ -23,7 +23,9 @@ class ASCollection {
 	private $limit     = 0;
 	private $direction = 0;  // 0 = forward, 1 = reverse
 	private $data      = [];
-	
+	private $history   = [];
+
+
 	function __construct($obj, $channel = null, $direction = 0, $limit = 0) {
 
 		$this->channel   = $channel;
@@ -36,6 +38,7 @@ class ASCollection {
 
 		if (is_string($obj)) {
 			$data = Activity::fetch($obj,$channel);
+			$this->history[] = $obj;
 		}
 		
 		if (! is_array($data)) {
@@ -86,7 +89,18 @@ class ASCollection {
 			return false;
 		}
 				
-		$data = Activity::fetch($this->nextpage,$this->channel);
+		if (is_array($this->nextpage)) {
+			$data = $this->nextpage;
+		}
+		
+		if (is_string($this->nextpage)) {
+			if (in_array($this->nextpage,$this->history)) {
+				// recursion detected
+				return false;
+			}
+			$data = Activity::fetch($this->nextpage,$this->channel);
+			$this->history[] = $this->nextpage;
+		}
 
 		if (! is_array($data)) {
 			return false;
