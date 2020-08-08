@@ -41,7 +41,7 @@ class Zot_probe extends \Zotlabs\Web\Controller {
 
 				$o .= '<pre>' . htmlspecialchars($x['header']) . '</pre>' . EOL;
 
-				$o .= 'verify returns: ' . str_replace("\n",EOL,print_r(HTTPSig::verify($x),true)) . EOL;
+				$o .= 'verify returns: ' . str_replace("\n",EOL,print_r(HTTPSig::verify($x, EMPTY_STR, 'zot6'),true)) . EOL;
 
 				$o .= '<pre>' . htmlspecialchars(json_encode(json_decode($x['body']),JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)) . '</pre>' . EOL;
 
