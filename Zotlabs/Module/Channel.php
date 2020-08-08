@@ -86,7 +86,7 @@ class Channel extends Controller {
 
 		if(Libzot::is_zot_request()) {
 	
-			$sigdata = HTTPSig::verify(file_get_contents('php://input'));
+			$sigdata = HTTPSig::verify(file_get_contents('php://input'), EMPTY_STR, 'zot6');
 
 			if($sigdata && $sigdata['signer'] && $sigdata['header_valid']) {
 				$data = json_encode(Libzot::zotinfo([ 'address' => $channel['channel_address'], 'target_url' => $sigdata['signer'] ]));
