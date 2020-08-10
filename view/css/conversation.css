@@ -16,6 +16,10 @@
 	cursor: pointer;
 }
 
+#jot-markup-toggle {
+	margin-right: 3px;
+}
+
 #jot-title-wrap,
 #jot-pagetitle-wrap,
 #jot-category-wrap,

@@ -1398,6 +1398,7 @@ function z_status_editor($a, $x, $popup = false) {
 		'$id_select' => $id_select,
 		'$id_seltext' => t('Post as'),
 		'$writefiles' => $writefiles,
+		'$text_style' => t('Text styles'),
 		'$bold' => t('Bold'),
 		'$italic' => t('Italic'),
 		'$underline' => t('Underline'),
