@@ -25,7 +25,7 @@ class Pubsites extends \Zotlabs\Web\Controller {
 		$o .= '<div class="section-title-wrapper"><h2>' . t('Public Hubs') . '</h2></div>';
 	
 		$o .= '<div class="section-content-tools-wrapper"><div class="descriptive-text">' . 
-			t('The listed hubs allow public registration for the $Projectname network. All hubs in the network are interlinked so membership on any of them conveys membership in the network as a whole. Some hubs may require subscription or provide tiered service plans. The hub itself <strong>may</strong> provide additional details.') . '</div>' . EOL;
+			t('The listed hubs allow public registration for the zot network - which may include webapps such as zap, misty (Mistpark 2020), and hubzilla. All hubs in the network are interlinked so membership on any of them conveys membership in the network as a whole. Some hubs may require subscription or provide tiered service plans. The hub itself <strong>may</strong> provide additional details.') . '</div>' . EOL;
 	
 		$ret = z_fetch_url($url);
 		if($ret['success']) {
