@@ -104,7 +104,7 @@ class System {
 
 		if(get_directory_realm() != DIRECTORY_REALM)
 			return true;
-		if(in_array(strtolower($p),['hubzilla','zap','red','osada']))
+		if(in_array(strtolower($p),['hubzilla','zap','red','misty','osada']))
 			return true;
 		return false;
 	}

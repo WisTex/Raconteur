@@ -477,7 +477,7 @@ CREATE TABLE IF NOT EXISTS `pgrp` (
   KEY `deleted` (`deleted`),
   KEY `hash` (`hash`),
   KEY `gname` (`gname`),
-  KEY `rule` (`rule`),
+  KEY `rule` (`rule`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `pgrp_member` (
