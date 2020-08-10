@@ -1,7 +1,7 @@
 Federation
 ==========
 
-The ActivityPub implementation in Zap strives to be compliant to the core spec where possible, while offering a range of services and features which normally aren't provided by ActivityPub projects.
+The ActivityPub implementation in this project strives to be compliant to the core spec where possible, while offering a range of services and features which normally aren't provided by ActivityPub projects.
 
 
 Direct Messages
@@ -25,7 +25,7 @@ Groups may be public or private. The initial thread starting post to a group is 
 
 Comments
 
-Zap provides permission control and moderation of comments. By default comments are only accepted from existing connections. This can be changed by the individual. Other sites MAY use zot:commentPolicy (string) as a guide if they do not wish to provide comment abilities where it is known in advance they will be rejected. A Reject/Note activity will be sent if the comment is not permitted. There is currently no response for moderated content, but will likely also be represented by Reject/Note.
+This project provides permission control and moderation of comments. By default comments are only accepted from existing connections. This can be changed by the individual. Other sites MAY use zot:commentPolicy (string) as a guide if they do not wish to provide comment abilities where it is known in advance they will be rejected. A Reject/Note activity will be sent if the comment is not permitted. There is currently no response for moderated content, but will likely also be represented by Reject/Note.
 
 'commentPolicy' can be any of
 
@@ -54,12 +54,12 @@ Private media MAY be accessed using OCAP or OpenWebAuth.
 
 Permission System
 
-The Zot permission system has years of historical use and is different than and the reverse of the typical ActivityPub project. We consider 'Follow' to be an anti-pattern which encourages pseudo anonymous stalking. A Follow activity by a Zap actor typically means the Zap actor will send activities to the recipient. It may also confer other permissions. Accept/Follow usually provides permission to receive content from the referenced actor, depending on their privacy settings. 
+The Zot permission system has years of historical use and is different than and the reverse of the typical ActivityPub project. We consider 'Follow' to be an anti-pattern which encourages pseudo anonymous stalking. A Follow activity by an actor on this project typically means the actor on this project will send activities to the recipient. It may also confer other permissions. Accept/Follow usually provides permission to receive content from the referenced actor, depending on their privacy settings. 
 
 
 Delivery model
 
-Zap uses the relay system pioneered by projects such as Friendica, Diaspora, and Hubzilla which attempts to keep entire conversations intact and keeps the conversation initiator in control of the privacy distribution. This is not guaranteed under ActivityPub where conversation members can cc: others who were not in the initial privacy group. We encourage projects to not allow additional recipients or not include their own followers in followups. Followups SHOULD have one recipient - the conversation owner or originator, and are relayed by the owner to the other conversation members. This normally requires the use of LD-Signatures but may also be accessible through authenticated fetch of the activity using HTTP signatures.
+This project uses the relay system pioneered by projects such as Friendica, Diaspora, and Hubzilla which attempts to keep entire conversations intact and keeps the conversation initiator in control of the privacy distribution. This is not guaranteed under ActivityPub where conversation members can cc: others who were not in the initial privacy group. We encourage projects to not allow additional recipients or not include their own followers in followups. Followups SHOULD have one recipient - the conversation owner or originator, and are relayed by the owner to the other conversation members. This normally requires the use of LD-Signatures but may also be accessible through authenticated fetch of the activity using HTTP signatures.
 
 Content
 

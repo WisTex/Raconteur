@@ -179,7 +179,7 @@ class Setup extends Controller {
 
 		$o = '';
 		$wizard_status = '';
-		$install_title = t('Zap Server - Setup');
+		$install_title = t('$Projectname Server - Setup');
 
 		if(x(App::$data, 'db_conn_failed')) {
 			$this->install_wizard_pass = 2;

@@ -31,7 +31,7 @@ class System {
 		if(is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('icon',App::$config['system'])) {
 			return App::$config['system']['icon'];
 		}		
-		return z_root() . '/images/z1-64.png';
+		return z_root() . '/images/' . PLATFORM_NAME . '-64.png';
 
 	}
 
@@ -68,13 +68,13 @@ class System {
 	static public function get_project_link() {
 		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['project_link'])
 			return App::$config['system']['project_link'];
-		return 'https://zotlabs.com/zap';
+		return 'https://zotlabs.com/' . PLATFORM_NAME';
 	}
 
 	static public function get_project_srclink() {
 		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['project_srclink'])
 			return App::$config['system']['project_srclink'];
-		return 'https://codeberg.org/zot/zap';
+		return 'https://codeberg.org/zot/' . PLATFORM_NAME;
 	}
 
 	static public function get_server_role() {
