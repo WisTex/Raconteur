@@ -1177,7 +1177,7 @@ class Activity {
 				$ret['following']   = z_root() . '/following/' . $c['channel_address'];
 
 				$ret['endpoints']   = [ 'sharedInbox' => z_root() . '/inbox' ];
-				
+				$ret['discoverable'] = 1 - intval($p['xchan_hidden']);				
 				$ret['publicKey'] = [
 					'id'           => $p['xchan_url'],
 					'owner'        => $p['xchan_url'],
@@ -1337,6 +1337,11 @@ class Activity {
 
 		$contact = null;
 		$their_follow_id = null;
+
+		if (intval($channel['channel_system'])) {
+			// The system channel ignores all follow requests 
+			return;
+		}
 
 		/*
 		 * 
@@ -1641,6 +1646,10 @@ class Activity {
 			$icon = z_root() . '/' . get_default_profile_photo();
 		}
 
+		$hidden = false;
+		if (array_key_exists('discoverable',$person_obj) && (! intval($person_obj['discoverable']))) {
+			$hidden = true;
+		}
 
 		$links = false;
 		$profile = false;
@@ -1717,6 +1726,7 @@ class Activity {
 					'xchan_addr'           => ((strpos($username,'@')) ? $username : ''),
 					'xchan_url'            => $profile,
 					'xchan_name'           => $name,
+					'xchan_hidden'         => intval($hidden),
 					'xchan_name_date'      => datetime_convert(),
 					'xchan_network'        => 'activitypub',
 					'xchan_photo_date'     => datetime_convert('UTC','UTC','1968-01-01'),
@@ -1738,11 +1748,12 @@ class Activity {
 			}
 
 			// update existing record
-			$u = q("update xchan set xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s' where xchan_hash = '%s'",
+			$u = q("update xchan set xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s', xchan_hidden = %d where xchan_hash = '%s'",
 				dbesc($name),
 				dbesc($pubkey),
 				dbesc('activitypub'),
 				dbesc(datetime_convert()),
+				intval($hidden),
 				dbesc($url)
 			);
 
