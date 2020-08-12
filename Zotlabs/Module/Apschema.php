@@ -14,6 +14,7 @@ class Apschema extends \Zotlabs\Web\Controller {
 				'zot'                => z_root() . '/apschema#',
 				'id'                 => '@id',
 				'type'               => '@type',
+				'toot'               => 'http://joinmastodon.org/ns#',
 				'ostatus'            => 'http://ostatus.org#',
 				'conversation'       => 'ostatus:conversation',
 				'sensitive'          => 'as:sensitive',
@@ -32,6 +33,7 @@ class Apschema extends \Zotlabs\Web\Controller {
 				'schema'             => 'http://schema.org#',
 				'PropertyValue'      => 'schema:PropertyValue',
 				'value'              => 'schema:value',
+				'discoverable'       => 'toot:discoverable',
 			]
 		];
 
