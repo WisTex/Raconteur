@@ -2,12 +2,11 @@
 
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
 
-class Apschema extends \Zotlabs\Web\Controller {
+class Apschema extends Controller {
 
 	function init() {
-
-		$base = z_root();
 
 		$arr = [
 			'@context' => [
