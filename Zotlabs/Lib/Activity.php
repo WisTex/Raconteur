@@ -1177,7 +1177,7 @@ class Activity {
 				$ret['following']   = z_root() . '/following/' . $c['channel_address'];
 
 				$ret['endpoints']   = [ 'sharedInbox' => z_root() . '/inbox' ];
-				$ret['discoverable'] = 1 - intval($p['xchan_hidden']);				
+				$ret['discoverable'] = ((1 - intval($p['xchan_hidden'])) ? true : false);				
 				$ret['publicKey'] = [
 					'id'           => $p['xchan_url'],
 					'owner'        => $p['xchan_url'],
