@@ -58,7 +58,7 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 	}
 
 
-	$channel = ((local_channel()) ? \App::get_channel() : '');
+	$channel = ((local_channel()) ? App::get_channel() : '');
 	$has_acl = false;
 	$single_group = false;
 	$just_me = false;
