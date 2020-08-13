@@ -56,6 +56,7 @@ function get_capath() {
 function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
 
 	$ret = array('return_code' => 0, 'success' => false, 'header' => "", 'body' => "");
+	$passthru = false;
 
 	$ch = @curl_init($url);
 	if(($redirects > 8) || (! $ch))
@@ -81,6 +82,8 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
 	if(x($opts,'filep')) {
 		@curl_setopt($ch, CURLOPT_FILE, $opts['filep']);
 		@curl_setopt($ch, CURLOPT_HEADER, false);
+		@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		$passthru = true;
 	}
 
 	if(x($opts,'upload'))
@@ -173,6 +176,19 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
 	//logger('fetch_url:' . $http_code . ' data: ' . $s);
 	$header = '';
 
+	// For file redirects, set curl to follow location (indicated by $passthru).
+	// Then just return success or failure.
+	
+	if ($passthru) {
+		if ($http_code >= 200 && $http_code < 300) {
+			$ret['success'] = true;
+		}
+		$ret['return_code'] = $http_code;
+		@curl_close($ch);					
+		return $ret;
+	}
+		
+
 	// Pull out multiple headers, e.g. proxy and continuation headers
 	// allow for HTTP/2.x without fixing code
 
@@ -186,11 +202,11 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
 		$matches = array();
 		preg_match('/(Location:|URI:)(.*?)\n/i', $header, $matches);
 		$newurl = trim(array_pop($matches));
-		if(strpos($newurl,'/') === 0)
-			$newurl = $url . $newurl;
-		$url_parsed = @parse_url($newurl);
-		if (isset($url_parsed)) {
-			@curl_close($ch);
+//		if(strpos($newurl,'/') === 0)
+//			$newurl = $url . $newurl;
+//		$url_parsed = @parse_url($newurl);
+		if ($newurl) {
+			@curl_close($ch);			
 			return z_fetch_url($newurl,$binary,++$redirects,$opts);
 		}
 	}
