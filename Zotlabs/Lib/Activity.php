@@ -1713,6 +1713,23 @@ class Activity {
 			}
 		}
 
+		$keywords = [];
+		
+		if (is_array($person_obj['tag'])) {
+			foreach ($person_obj['tag'] as $t) {
+				if (is_array($t) && isset($t['type']) && $t['type'] === 'Hashtag') {
+					if (isset($t['name'])) {
+						$tag = escape_tags((substr($t['name'],0,1) === '#') ? substr($t['name'],1) : $t['name']);
+						if ($tag) {
+							$keywords[] = $tag;
+						}
+					}
+				}
+			}
+		}
+
+		$about = ((isset($person_obj['summary'])) ? html2bbcode($person_obj['summary']) : EMPTY_STR);
+
 		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 			dbesc($url)
 		);
