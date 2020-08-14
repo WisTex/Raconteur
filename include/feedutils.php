@@ -90,11 +90,6 @@ function get_feed_for($channel, $observer_hash, $params) {
 	$atom = '';
 
 	$feed_author = '';
-	if(intval($params['compat']) === 1) {
-		$feed_author = atom_render_author('author',$channel);
-	}
-
-	$owner = atom_render_author('zot:owner',$channel);
 
 	$atom .= replace_macros($feed_template, array(
 		'$version'       => xmlify(Zotlabs\Lib\System::get_project_version()),
@@ -171,90 +166,6 @@ function get_feed_for($channel, $observer_hash, $params) {
 }
 
 /**
- * @brief Return the verb for an item, or fall back to ACTIVITY_POST.
- *
- * @param array $item an associative array with
- *   * \e string \b verb
- * @return string item's verb if set, default ACTIVITY_POST see boot.php
- */
-function construct_verb($item) {
-	if ($item['verb'])
-		return $item['verb'];
-
-	return ACTIVITY_POST;
-}
-
-function construct_activity_object($item) {
-
-	if($item['obj']) {
-		$o = '<as:object>' . "\r\n";
-		$r = json_decode($item['obj'],false);
-
-		if(! $r)
-			return '';
-		if($r->type)
-			$o .= '<as:obj_type>' . xmlify($r->type) . '</as:obj_type>' . "\r\n";
-		if($r->id)
-			$o .= '<id>' . xmlify($r->id) . '</id>' . "\r\n";
-		if($r->title)
-			$o .= '<title>' . xmlify($r->title) . '</title>' . "\r\n";
-		if($r->links) {
-			/** @FIXME!! */
-			if(substr($r->link,0,1) === '<') {
-				$r->link = preg_replace('/\<link(.*?)\"\>/','<link$1"/>',$r->link);
-				$o .= $r->link;
-			}
-			else
-				$o .= '<link rel="alternate" type="text/html" href="' . xmlify($r->link) . '" />' . "\r\n";
-		}
-		if($r->content) {
-			$o .= '<content type="html" >' . xmlify(bbcode($r->content)) . '</content>' . "\r\n";
-		}
-		$o .= '</as:object>' . "\r\n";
-
-		return $o;
-	}
-
-	return '';
-}
-
-function construct_activity_target($item) {
-
-	if($item['target']) {
-		$o = '<as:target>' . "\r\n";
-		$r = json_decode($item['target'],false);
-		if(! $r)
-			return '';
-		if($r->type)
-			$o .= '<as:obj_type>' . xmlify($r->type) . '</as:obj_type>' . "\r\n";
-		if($r->id)
-			$o .= '<id>' . xmlify($r->id) . '</id>' . "\r\n";
-		if($r->title)
-			$o .= '<title>' . xmlify($r->title) . '</title>' . "\r\n";
-		if($r->links) {
-			/** @FIXME !!! */
-			if(substr($r->link,0,1) === '<') {
-				if(strstr($r->link,'&') && (! strstr($r->link,'&amp;')))
-					$r->link = str_replace('&','&amp;', $r->link);
-				$r->link = preg_replace('/\<link(.*?)\"\>/','<link$1"/>',$r->link);
-				$o .= $r->link;
-			}
-			else
-				$o .= '<link rel="alternate" type="text/html" href="' . xmlify($r->link) . '" />' . "\r\n";
-		}
-		if($r->content)
-			$o .= '<content type="html" >' . xmlify(bbcode($r->content)) . '</content>' . "\r\n";
-
-		$o .= '</as:target>' . "\r\n";
-
-		return $o;
-	}
-
-	return '';
-}
-
-
-/**
  * @brief Return a XML tag with author information.
  *
  * @param string $tag The XML tag to create
@@ -281,12 +192,10 @@ function atom_author($tag, $nick, $name, $uri, $h, $w, $type, $photo) {
 
 	$o .= "<$tag>\r\n";
 	$o .= "  <id>$uri</id>\r\n";
-	$o .= "  <name>$nick</name>\r\n";
+	$o .= "  <name>$name</name>\r\n";
 	$o .= "  <uri>$uri</uri>\r\n";
 	$o .= '  <link rel="photo"  type="' . $type . '" media:width="' . $w . '" media:height="' . $h . '" href="' . $photo . '" />' . "\r\n";
 	$o .= '  <link rel="avatar" type="' . $type . '" media:width="' . $w . '" media:height="' . $h . '" href="' . $photo . '" />' . "\r\n";
-	$o .= '  <poco:preferredUsername>' . $nick . '</poco:preferredUsername>' . "\r\n";
-	$o .= '  <poco:displayName>' . $name . '</poco:displayName>' . "\r\n";
 
 	/**
 	 * @hooks atom_author
@@ -318,15 +227,12 @@ function atom_render_author($tag, $xchan) {
 	$w = $h = 300;
 
 	$o = "<$tag>\r\n";
-	$o .= "  <as:object-type>http://activitystrea.ms/schema/1.0/person</as:object-type>\r\n";
 	$o .= "  <id>$id</id>\r\n";
-	$o .= "  <name>$nick</name>\r\n";
+	$o .= "  <name>$name</name>\r\n";
 	$o .= "  <uri>$id</uri>\r\n";
 	$o .= '  <link rel="alternate" type="text/html" href="' . $id . '" />' . "\r\n";
 	$o .= '  <link rel="photo"  type="' . $type . '" media:width="' . $w . '" media:height="' . $h . '" href="' . $photo . '" />' . "\r\n";
 	$o .= '  <link rel="avatar" type="' . $type . '" media:width="' . $w . '" media:height="' . $h . '" href="' . $photo . '" />' . "\r\n";
-	$o .= '  <poco:preferredUsername>' . $nick . '</poco:preferredUsername>' . "\r\n";
-	$o .= '  <poco:displayName>' . $name . '</poco:displayName>' . "\r\n";
 
 	/**
 	 * @hooks atom_render_author
@@ -392,29 +298,12 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
 
 	// provide separate summary and content unless compat is true; as summary represents a content-warning on some networks
 
-	$matches = false;
-	if(preg_match('|\[summary\](.*?)\[/summary\]|ism',$item['body'],$matches))
-		$summary = $matches[1];
-	else
-		$summary = '';
+	$summary = $item['summary'];
 
 	$body = $item['body'];
 
-	if($summary) 
-		$body = preg_replace('|^(.*?)\[summary\](.*?)\[/summary\](.*?)$|ism','$1$3',$item['body']);
+	$compat_photos = null;
 
-	if($compat)
-		$summary = '';
-
-	if($item['allow_cid'] || $item['allow_gid'] || $item['deny_cid'] || $item['deny_gid'])
-		$body = fix_private_photos($body,$owner['uid'],$item,$cid);
-
-	if($compat) {
-		$compat_photos = compat_photos_list($body);
-	}
-	else {
-		$compat_photos = null;
-	}
 
 	$o = "\r\n\r\n<entry>\r\n";
 
@@ -425,27 +314,13 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
 		$o .= atom_render_author('author',$item['author']);
 	}
 
-	$o .= atom_render_author('zot:owner',$item['owner']);
-
 	if(($item['parent'] != $item['id']) || ($item['parent_mid'] !== $item['mid']) || (($item['thr_parent'] !== '') && ($item['thr_parent'] !== $item['mid']))) {
 		$parent_item = (($item['thr_parent']) ? $item['thr_parent'] : $item['parent_mid']);
-		// ensure it's a legal uri and not just a message-id
-		if(! strpos($parent_item,':'))
-			$parent_item = 'X-ZOT:' . $parent_item;
 
 		$o .= '<thr:in-reply-to ref="' . xmlify($parent_item) . '" type="text/html" href="' .  xmlify($item['plink']) . '" />' . "\r\n";
 	}
 
-	if(activity_match($item['obj_type'],ACTIVITY_OBJ_EVENT) && activity_match($item['verb'],ACTIVITY_POST)) {
-		$obj = ((is_array($item['obj'])) ? $item['obj'] : json_decode($item['obj'],true));
 
-		$o .= '<title>' . xmlify($item['title']) . '</title>' . "\r\n";
-		$o .= '<summary xmlns="urn:ietf:params:xml:ns:xcal">' . xmlify(bbcode($obj['title'])) . '</summary>' . "\r\n";
-		$o .= '<dtstart xmlns="urn:ietf:params:xml:ns:xcal">' . datetime_convert('UTC','UTC', $obj['dtstart'],'Ymd\\THis' . (($obj['adjust']) ? '\\Z' : '')) .  '</dtstart>' . "\r\n";
-		$o .= '<dtend xmlns="urn:ietf:params:xml:ns:xcal">' . datetime_convert('UTC','UTC', $obj['dtend'],'Ymd\\THis' . (($obj['adjust']) ? '\\Z' : '')) .  '</dtend>' . "\r\n";
-		$o .= '<location xmlns="urn:ietf:params:xml:ns:xcal">' . ((is_array($obj['location'])) ? xmlify(bbcode($obj['location']['content'])) : xmlify(bbcode($obj['location']))) . '</location>' . "\r\n";
-		$o .= '<content type="' . $type . '" >' . xmlify(bbcode($obj['description'])) . '</content>' . "\r\n";
-	}
 	else {
 		$o .= '<title>' . xmlify($item['title']) . '</title>' . "\r\n";
 		if($summary)
@@ -459,29 +334,6 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
 
 	$o .= '<link rel="alternate" type="text/html" href="' . xmlify($item['plink']) . '" />' . "\r\n";
 
-	if($item['location']) {
-		$o .= '<zot:location>' . xmlify($item['location']) . '</zot:location>' . "\r\n";
-		$o .= '<poco:address><poco:formatted>' . xmlify($item['location']) . '</poco:formatted></poco:address>' . "\r\n";
-	}
-
-	if($item['coord'])
-		$o .= '<georss:point>' . xmlify($item['coord']) . '</georss:point>' . "\r\n";
-
-	if(($item['item_private']) || strlen($item['allow_cid']) || strlen($item['allow_gid']) || strlen($item['deny_cid']) || strlen($item['deny_gid']))
-		$o .= '<zot:private>' . (($item['item_private']) ? $item['item_private'] : 1) . '</zot:private>' . "\r\n";
-
-	if($item['app'])
-		$o .= '<statusnet:notice_info local_id="' . $item['id'] . '" source="' . xmlify($item['app']) . '" ></statusnet:notice_info>' . "\r\n";
-
-	$verb = construct_verb($item);
-	$o .= '<as:verb>' . xmlify($verb) . '</as:verb>' . "\r\n";
-	$actobj = construct_activity_object($item);
-	if(strlen($actobj))
-		$o .= $actobj;
-
-	$actarg = construct_activity_target($item);
-	if(strlen($actarg))
-		$o .= $actarg;
 
 	if($item['attach']) {
 		$enclosures = json_decode($item['attach'], true);
@@ -495,37 +347,19 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
 			}
 		}
 	}
-	if($compat_photos) {
-		foreach($compat_photos as $enc) {
-			$o .= '<link rel="enclosure" '
-			. (($enc['href']) ? 'href="' . $enc['href'] . '" ' : '')
-			. ((array_key_exists('length',$enc)) ? 'length="' . $enc['length'] . '" ' : '')
-			. (($enc['type']) ? 'type="' . $enc['type'] . '" ' : '')
-			. ' />' . "\r\n";
-		}
-	}
 
 	if($item['term']) {
 		foreach($item['term'] as $term) {
 			$scheme = '';
 			$label = '';
 			switch($term['ttype']) {
-				case TERM_UNKNOWN:
-					$scheme = NAMESPACE_ZOT . '/term/unknown';
-					$label = $term['term'];
-					break;
 				case TERM_HASHTAG:
-				case TERM_COMMUNITYTAG:
 					$scheme = NAMESPACE_ZOT . '/term/hashtag';
-					$label = '#' . $term['term'];
-					break;
-				case TERM_MENTION:
-					$scheme = NAMESPACE_ZOT . '/term/mention';
-					$label = '@' . $term['term'];
+					$label = '#' . str_replace('"','',$term['term']);
 					break;
 				case TERM_CATEGORY:
 					$scheme = NAMESPACE_ZOT . '/term/category';
-					$label = $term['term'];
+					$label = str_replace('"','',$term['term']);
 					break;
 				default:
 					break;
@@ -533,7 +367,7 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
 			if(! $scheme)
 				continue;
 
-			$o .= '<category scheme="' . $scheme . '" term="' . $term['term'] . '" label="' . $label . '" />' . "\r\n";
+			$o .= '<category scheme="' . $scheme . '" term="' . str_replace('"','',$term['term']) . '" label="' . $label . '" />' . "\r\n";
 		}
 	}
 
@@ -573,52 +407,7 @@ function get_mentions($item,$tags) {
 	foreach($tags as $x) {
 		if($x['ttype'] == TERM_MENTION) {
 			$o .= "\t\t" . '<link rel="mentioned" href="' . $x['url'] . '" />' . "\r\n";
-			$o .= "\t\t" . '<link rel="ostatus:attention" href="' . $x['url'] . '" />' . "\r\n";
 		}
 	}
 	return $o;
 }
-
-/**
- * @brief Return atom link elements for all of our hubs.
- *
- * @return string
- */
-function feed_hublinks() {
-	$hub = get_config('system', 'huburl');
-
-	$hubxml = '';
-	if(strlen($hub)) {
-		$hubs = explode(',', $hub);
-		if(count($hubs)) {
-			foreach($hubs as $h) {
-				$h = trim($h);
-				if(! strlen($h))
-					continue;
-
-				$hubxml .= '<link rel="hub" href="' . xmlify($h) . '" />' . "\n" ;
-			}
-		}
-	}
-
-	return $hubxml;
-}
-
-/**
- * @brief Return atom link elements for salmon endpoints
- *
- * @param string $nick
- * @return string
- */
-function feed_salmonlinks($nick) {
-
-	$salmon  = '<link rel="salmon" href="' . xmlify(z_root() . '/salmon/' . $nick) . '" />' . "\n" ;
-
-	// old style links that status.net still needed as of 12/2010
-
-	$salmon .= '  <link rel="http://salmon-protocol.org/ns/salmon-replies" href="' . xmlify(z_root() . '/salmon/' . $nick) . '" />' . "\n" ;
-	$salmon .= '  <link rel="http://salmon-protocol.org/ns/salmon-mention" href="' . xmlify(z_root() . '/salmon/' . $nick) . '" />' . "\n" ;
-
-	return $salmon;
-}
-
