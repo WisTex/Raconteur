@@ -310,7 +310,7 @@ class Site {
 //			'$site_channel'         => [ 'site_channel', t("Channel to use for this website's static pages"), get_config('system','site_channel'), t("Site Channel") ],
 			'$ap_contacts'           => [ 'ap_contacts', t('ActivityPub protocol'),get_config('system','activitypub',true),t('Provides access to software supporting the ActivityPub protocol.') ],
 			'$maximagesize'         => [ 'maximagesize', t("Maximum image size"), intval(get_config('system','maximagesize')), t("Maximum size in bytes of uploaded images. Default is 0, which means no limits.") ],
-			'$cache_images'         => [ 'cache_images', t('Cache all public images'), intval(get_config('system','cache_images',1)), t('By default proxy non-SSL images, but do not store locally') ], 
+			'$cache_images'         => [ 'cache_images', t('Cache all public images'), intval(get_config('system','cache_images',1)), t('If disabled, proxy non-SSL images, but do not store locally') ], 
 			'$register_policy'      => [ 'register_policy', t("Does this site allow new member registration?"), get_config('system','register_policy'), "", $register_choices ],
 			'$invite_only'          => [ 'invite_only', t("Invitation only"), get_config('system','invitation_only'), t("Only allow new member registrations with an invitation code. New member registration must be allowed for this to work.") ],
 			'$minimum_age'          => [ 'minimum_age', t("Minimum age"), (x(get_config('system','minimum_age'))?get_config('system','minimum_age'):13), t("Minimum age (in years) for who may register on this site.") ],

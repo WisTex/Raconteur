@@ -12,6 +12,7 @@ use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\Config;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Markdown;
+use Zotlabs\Lib\Libzotdir;
 use Emoji;
 
 require_once('include/html2bbcode.php');
@@ -1781,6 +1782,8 @@ class Activity {
 				);
 			}
 		}
+
+		Libzotdir::update_directory_profile($url,[ 'about' => $about, 'keywords' => $keywords ], null,0,true);
 
 		if ($collections) {
 			set_xconfig($url,'activitypub','collections',$collections);
