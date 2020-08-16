@@ -32,7 +32,7 @@ class File extends DAV\Node implements DAV\IFile {
 	 *  * filetype (string)
 	 */
 
-	private $data;
+	public $data;
 
 	/**
 	 * @see \\Sabre\\DAV\\Auth\\Backend\\BackendInterface
