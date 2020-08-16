@@ -1783,7 +1783,7 @@ class Activity {
 			}
 		}
 
-		Libzotdir::update_directory_profile($url,[ 'about' => $about, 'keywords' => $keywords ], null,0,true);
+		Libzotdir::import_directory_profile($url,[ 'about' => $about, 'keywords' => $keywords ], null,0,true);
 
 		if ($collections) {
 			set_xconfig($url,'activitypub','collections',$collections);
