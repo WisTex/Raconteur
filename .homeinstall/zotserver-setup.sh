@@ -464,15 +464,15 @@ function zotserver_name {
 function install_zotserver {
     print_info "installing addons..."
     cd $install_path/
-    if zotserver=hubzilla
+    if [ $zotserver = "hubzilla" ]
     then
         print_info "hubzilla"
         util/add_addon_repo https://framagit.org/hubzilla/addons hzaddons
-    elif zotserver=zap
+    elif [ $zotserver = "zap" ]
     then
         print_info "zap"
         util/add_addon_repo https://codeberg.org/zot/zap-addons.git zaddons
-    elif zotserver=misty
+    elif [ $zotserver = "misty" ]
     then
         print_info "misty"
         util/add_addon_repo https://codeberg.org/zot/misty-addons.git maddons
@@ -598,8 +598,8 @@ echo "shutdown -r now" >> /var/www/$zotserverdaily
 
     if [ -z "`grep 'zotserver-daily.sh' /etc/crontab`" ]
     then
-        echo "30 05 * * * root /bin/bash /var/www/$zotserverdaily >> $install_path/zotserver-daily.log 2>&1" >> /etc/crontab
-        echo "0 0 1 * * root rm $install_path/zotserver-daily.log" >> /etc/crontab
+        echo "30 05 * * * root /bin/bash /var/www/$zotserverdaily >> $install_path/${zotserver_name}-daily.log 2>&1" >> /etc/crontab
+        echo "0 0 1 * * root rm $install_path/${zotserver_name}-daily.log" >> /etc/crontab
     fi
 
     # This is active after either "reboot" or "/etc/init.d/cron reload"
@@ -622,8 +622,8 @@ source $configfile
 
 selfhostdir=/etc/selfhost
 selfhostscript=selfhost-updater.sh
-zotserverdaily=${zotserver_name}-daily.sh
-backup_mount_point=/media/${zotserver_name}_backup
+zotserverdaily="${zotserver_name}-daily.sh"
+backup_mount_point="/media/${zotserver_name}_backup"
 
 #set -x    # activate debugging from here
 

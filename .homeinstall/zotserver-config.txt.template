@@ -145,9 +145,9 @@ backup_device_pass=
 ###############################################
 #
 # Database for hubzilla
-hubzilla_db_name=
-hubzilla_db_user=
-hubzilla_db_pass=$db_pass
+zotserver_db_name=
+zotserver_db_user=
+zotserver_db_pass=$db_pass
 # 
 #
 # Password for package mysql-server
