@@ -607,7 +607,7 @@ echo "shutdown -r now" >> /var/www/$zotserverdaily
 
     if [ -z "`grep 'zotserver-daily.sh' /etc/crontab`" ]
     then
-        echo "30 05 * * * root /bin/bash /var/www/$zotserverdaily >> $install_path/${zotserver_name}-daily.log 2>&1" >> /etc/crontab
+        echo "30 05 * * * root /bin/bash /var/www/$zotserverdaily >> $install_path/${zotserver}-daily.log 2>&1" >> /etc/crontab
         echo "0 0 1 * * root rm $install_path/${zotserver_name}-daily.log" >> /etc/crontab
     fi
 
