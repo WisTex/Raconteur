@@ -9,7 +9,7 @@ class Img_cache {
 
 	static function get_filename($url, $prefix = EMPTY_STR, $sluglen = 2) {
 		$hash = hash('sha256', $url);
-		$slug = substr($hash,0,$sluglen);
+		$slug = substr($hash,0,2);
 		$path = $prefix . '/' . $slug;
 		os_mkdir($path, STORAGE_DEFAULT_PERMISSIONS, true);
 		return $path . '/' . $hash;

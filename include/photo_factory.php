@@ -189,7 +189,7 @@ function import_xchan_photo($photo, $xchan, $thing = false, $force = false) {
 	$hash       = photo_new_resource();
 	$os_storage = false;
 
-	$cache_path = Img_cache::get_filename($xchan,'cache/xphoto',3);
+//	$cache_path = Img_cache::get_filename($xchan,'cache/xphoto');
 
 
 	if (! $thing) {
