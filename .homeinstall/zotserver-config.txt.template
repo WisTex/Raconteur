@@ -145,8 +145,8 @@ backup_device_pass=
 ###############################################
 #
 # Database for hubzilla
-hubzilla_db_name=hubzilla
-hubzilla_db_user=hubzilla
+hubzilla_db_name=
+hubzilla_db_user=
 hubzilla_db_pass=$db_pass
 # 
 #

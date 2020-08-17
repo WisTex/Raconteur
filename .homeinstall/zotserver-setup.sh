@@ -6,43 +6,44 @@
 # This file automates the installation of
 # - hubzilla: https://zotlabs.org/page/hubzilla/hubzilla-project and
 # - zap: https://zotlabs.com/zap/
-# under Debian Linux
+# - misty : http://zotlabs.com/misty/
+# under Debian Linux "Buster"
 #
-# 1) Copy the file "hubzilla-config.txt.template" to "hubzilla-config.txt"
+# 1) Copy the file "zotserver-config.txt.template" to "zotserver-config.txt"
 #       Follow the instuctions there
 # 
 # 2) Switch to user "root" by typing "su -"
 # 
-# 3) Run with "./hubzilla-setup.sh"
+# 3) Run with "./zotserver-setup.sh"
 #       If this fails check if you can execute the script.
-#       - To make it executable type "chmod +x hubzilla-setup.sh"
-#       - or run "bash hubzilla-setup.sh"
+#       - To make it executable type "chmod +x zotserver-setup.sh"
+#       - or run "bash zotserver-setup.sh"
 # 
 # 
 # What does this script do basically?
 # -----------------------------------
 # 
-# This file automates the installation of hubzilla under Debian Linux
+# This file automates the installation of zotserver under Debian Linux
 # - install
-#        * apache webserer, 
+#        * apache webserver, 
 #        * php,  
-#        * mariadb - the database for hubzilla,  
+#        * mariadb - the database for zotserver,  
 #        * adminer,  
 #        * git to download and update addons
 # - configure cron
-#        * "Run.php" for regular background prozesses of hubzilla
+#        * "Run.php" for regular background prozesses of zotserver
 #        * "apt-get update" and "apt-get dist-upgrade" and "apt-get autoremove" to keep linux up-to-date
 #        * run command to keep the IP up-to-date > DynDNS provided by selfHOST.de or freedns.afraid.org
-#        * backup hubzillas database and files (rsync)
+#        * backup zotserver's database and files (rsync)
 # - run letsencrypt to create, register and use a certifacte for https
 # 
 # 
 # Discussion
 # ----------
 # 
-# Security - password  is the same for mysql-server, phpmyadmin and hubzilla db
+# Security - password  is the same for mysql-server, phpmyadmin and zotserver db
 # - The script runs into installation errors for phpmyadmin if it uses
-#   different passwords. For the sake of simplicity one singel password.
+#   different passwords. For the sake of simplicity one single password.
 # 
 # How to restore from backup
 # --------------------------
@@ -51,15 +52,15 @@
 # - - - - - - 
 # 
 # The installation
-# - writes a script /var/www/hubzilla-daily.sh
-# - creates a daily cron that runs the hubzilla-daily.sh
+# - writes a script (hubzilla-daily.sh, zap-daily.sh or misty-daily.sh) in /var/www/
+# - creates a daily cron that runs this script
 #
-# hubzilla-daily.sh makes a (daily) backup of all relevant files
+# The script makes a (daily) backup of all relevant files
 # - /var/lib/mysql/ > database
-# - /var/www/ > hubzilla/zap from github
+# - /var/www/ > hubzilla/zap/misty from github
 # - /etc/letsencrypt/ > certificates
 # 
-# hubzilla-daily.sh writes the backup to an external disk compatible to LUKS+ext4 (see hubzilla-config.txt)
+# Also, it  writes the backup to an external disk compatible to LUKS+ext4 (see zotserver-config.txt)
 # 
 # Credits
 # -------
@@ -117,21 +118,21 @@ function check_config {
 	        if [ -n "$backup_device_pass" ]
 	        then
 	            echo "$backup_device_pass" | cryptsetup luksOpen $backup_device_name cryptobackup
-	            if mount /dev/mapper/cryptobackup /media/hubzilla_backup
+	            if mount /dev/mapper/cryptobackup /media/zotserver_backup
 	            then
                     device_mounted=1
 	                print_info "ok - could encrypt and mount external backup device"
-                	umount /media/hubzilla_backup
+                	umount /media/zotserver_backup
 	            else
             		print_warn "backup to external device will fail because encryption failed"
 	            fi
                 cryptsetup luksClose cryptobackup
             else
-	            if mount $backup_device_name /media/hubzilla_backup
+	            if mount $backup_device_name /media/zotserver_backup
 	            then
                     device_mounted=1
 	                print_info "ok - could mount external backup device"
-                	umount /media/hubzilla_backup
+                	umount /media/zotserver_backup
 	            else
             		print_warn "backup to external device will fail because mount failed"
 	            fi
@@ -198,7 +199,7 @@ function print_warn {
     echo -e '\e[0m'
 }
 
-function stop_hubzilla {
+function stop_zotserver {
     print_info "stopping apache webserver..."
     systemctl stop apache2
     print_info "stopping mysql db..."
@@ -289,24 +290,24 @@ function install_adminer {
     systemctl reload apache2
 }
 
-function create_hubzilla_db {
-    print_info "creating hubzilla database..." 
-    if [ -z "$hubzilla_db_name" ]
+function create_zotserver_db {
+    print_info "creating zotserver database..." 
+    if [ -z "$zotserver_db_name" ]
     then
-        die "hubzilla_db_name not set in $configfile"
-    fi     
-    if [ -z "$hubzilla_db_user" ]
+        zotserver_db_name=$zotserver
+    fi
+    if [ -z "$zotserver_db_user" ]
     then
-        die "hubzilla_db_user not set in $configfile"
-    fi     
-    if [ -z "$hubzilla_db_pass" ]
+        zotserver_db_user=$zotserver
+    fi
+    if [ -z "$zotserver_db_pass" ]
     then
-        die "hubzilla_db_pass not set in $configfile"
+        die "zotserver_db_pass not set in $configfile"
     fi
     systemctl restart mariadb
-    Q1="CREATE DATABASE IF NOT EXISTS $hubzilla_db_name;"
-    Q2="GRANT USAGE ON *.* TO $hubzilla_db_user@localhost IDENTIFIED BY '$hubzilla_db_pass';"
-    Q3="GRANT ALL PRIVILEGES ON $hubzilla_db_name.* to $hubzilla_db_user@localhost identified by '$hubzilla_db_pass';"
+    Q1="CREATE DATABASE IF NOT EXISTS $zotserver_db_name;"
+    Q2="GRANT USAGE ON *.* TO $zotserver_db_user@localhost IDENTIFIED BY '$zotserver_db_pass';"
+    Q3="GRANT ALL PRIVILEGES ON $zotserver_db_name.* to $zotserver_db_user@localhost identified by '$zotserver_db_pass';"
     Q4="FLUSH PRIVILEGES;"
     SQL="${Q1}${Q2}${Q3}${Q4}"     
     mysql -uroot -p$phpmyadminpass -e "$SQL"
@@ -429,7 +430,7 @@ function install_letsencrypt {
     fi
     nocheck_install "certbot python-certbot-apache" 
     print_info "run certbot ..."
-	certbot --apache -w /var/www/html -d $le_domain -m $le_email --agree-tos --non-interactive --redirect --hsts --uir
+	certbot --apache -w $install_path -d $le_domain -m $le_email --agree-tos --non-interactive --redirect --hsts --uir
     service apache2 restart
 }
 
@@ -445,19 +446,38 @@ function check_https {
     fi
 }
 
-function install_hubzilla {
-    print_info "installing addons..."
-    cd /var/www/html/
+function zotserver_name {
     if git remote -v | grep -i "origin.*hubzilla.*"
+    then
+        zotserver=hubzilla
+    elif git remote -v | grep -i "origin.*zap.*"
+    then
+        zotserver=zap
+    elif git remote -v | grep -i "origin.*misty.*"
+    then
+        zotserver=misty
+    else
+        die "neither misty, zap nor hubzilla repository > did not install misty/zap/hubzilla"
+    fi
+}
+
+function install_zotserver {
+    print_info "installing addons..."
+    cd $install_path/
+    if zotserver=hubzilla
     then
         print_info "hubzilla"
         util/add_addon_repo https://framagit.org/hubzilla/addons hzaddons
-    elif git remote -v | grep -i "origin.*zap.*"
+    elif zotserver=zap
     then
         print_info "zap"
         util/add_addon_repo https://codeberg.org/zot/zap-addons.git zaddons
+    elif zotserver=misty
+    then
+        print_info "misty"
+        util/add_addon_repo https://codeberg.org/zot/misty-addons.git maddons
     else
-        die "neither zap nor hubzilla repository > did not install addons or zap/hubzilla"
+        die "neither misty, zap nor hubzilla repository > did not install addons or misty/zap/hubzilla"
     fi
     mkdir -p "cache/smarty3"
     mkdir -p "store"
@@ -466,9 +486,9 @@ function install_hubzilla {
     chmod ou+w .htconfig.php
     cd /var/www/
     chown -R www-data:www-data html
-	chown root:www-data /var/www/html/
-	chown root:www-data /var/www/html/.htaccess
-	chmod 0644 /var/www/html/.htaccess
+	chown root:www-data $install_path/
+	chown root:www-data $install_path/.htaccess
+	chmod 0644 $install_path/.htaccess
     print_info "installed addons"
 }
 
@@ -487,99 +507,99 @@ function configure_cron_daily {
     # every 10 min for poller.php
     if [ -z "`grep 'Run.php' /etc/crontab`" ]
     then
-        echo "*/10 * * * * www-data cd /var/www/html; php Zotlabs/Daemon/Run.php Cron >> /dev/null 2>&1" >> /etc/crontab
+        echo "*/10 * * * * www-data cd $install_path; php Zotlabs/Daemon/Run.php Cron >> /dev/null 2>&1" >> /etc/crontab
     fi
     # Run external script daily at 05:30
     # - stop apache and mysql-server
     # - renew the certificate of letsencrypt
-    # - backup db, files (/var/www/html), certificates if letsencrypt
-    # - update hubzilla core and addon
+    # - backup db, files ($install_path), certificates if letsencrypt
+    # - update zotserver core and addon
     # - update and upgrade linux
     # - reboot is done by "shutdown -h now" because "reboot" hangs sometimes depending on the system
-echo "#!/bin/sh" > /var/www/$hubzilladaily
-echo "#" >> /var/www/$hubzilladaily
-echo "echo \" \"" >> /var/www/$hubzilladaily
-echo "echo \"+++ \$(date) +++\"" >> /var/www/$hubzilladaily
-echo "echo \" \"" >> /var/www/$hubzilladaily
-echo "echo \"\$(date) - renew certificate...\"" >> /var/www/$hubzilladaily
-echo "certbot renew --noninteractive" >> /var/www/$hubzilladaily
-echo "#" >> /var/www/$hubzilladaily
-echo "echo \"\$(date) - stopping apache and mysql...\"" >> /var/www/$hubzilladaily
-echo "service apache2 stop" >> /var/www/$hubzilladaily
-echo "/etc/init.d/mysql stop # to avoid inconsistencies" >> /var/www/$hubzilladaily
-echo "#" >> /var/www/$hubzilladaily
-echo "# backup" >> /var/www/$hubzilladaily
-echo "echo \"\$(date) - try to mount external device for backup...\"" >> /var/www/$hubzilladaily
-echo "backup_device_name=$backup_device_name" >> /var/www/$hubzilladaily
-echo "backup_device_pass=$backup_device_pass" >> /var/www/$hubzilladaily
-echo "backup_mount_point=$backup_mount_point" >> /var/www/$hubzilladaily
-echo "device_mounted=0" >> /var/www/$hubzilladaily
-echo "if [ -n \"$backup_device_name\" ]" >> /var/www/$hubzilladaily
-echo "then" >> /var/www/$hubzilladaily
-echo "    if blkid | grep $backup_device_name" >> /var/www/$hubzilladaily
-echo "    then" >> /var/www/$hubzilladaily
+echo "#!/bin/sh" > /var/www/$zotserverdaily
+echo "#" >> /var/www/$zotserverdaily
+echo "echo \" \"" >> /var/www/$zotserverdaily
+echo "echo \"+++ \$(date) +++\"" >> /var/www/$zotserverdaily
+echo "echo \" \"" >> /var/www/$zotserverdaily
+echo "echo \"\$(date) - renew certificate...\"" >> /var/www/$zotserverdaily
+echo "certbot renew --noninteractive" >> /var/www/$zotserverdaily
+echo "#" >> /var/www/$zotserverdaily
+echo "echo \"\$(date) - stopping apache and mysql...\"" >> /var/www/$zotserverdaily
+echo "service apache2 stop" >> /var/www/$zotserverdaily
+echo "/etc/init.d/mysql stop # to avoid inconsistencies" >> /var/www/$zotserverdaily
+echo "#" >> /var/www/$zotserverdaily
+echo "# backup" >> /var/www/$zotserverdaily
+echo "echo \"\$(date) - try to mount external device for backup...\"" >> /var/www/$zotserverdaily
+echo "backup_device_name=$backup_device_name" >> /var/www/$zotserverdaily
+echo "backup_device_pass=$backup_device_pass" >> /var/www/$zotserverdaily
+echo "backup_mount_point=$backup_mount_point" >> /var/www/$zotserverdaily
+echo "device_mounted=0" >> /var/www/$zotserverdaily
+echo "if [ -n \"$backup_device_name\" ]" >> /var/www/$zotserverdaily
+echo "then" >> /var/www/$zotserverdaily
+echo "    if blkid | grep $backup_device_name" >> /var/www/$zotserverdaily
+echo "    then" >> /var/www/$zotserverdaily
 	if [ -n "$backup_device_pass" ]
 	then
-echo "        echo \"decrypting backup device...\"" >> /var/www/$hubzilladaily
-echo "        echo "\"$backup_device_pass\"" | cryptsetup luksOpen $backup_device_name cryptobackup" >> /var/www/$hubzilladaily
+echo "        echo \"decrypting backup device...\"" >> /var/www/$zotserverdaily
+echo "        echo "\"$backup_device_pass\"" | cryptsetup luksOpen $backup_device_name cryptobackup" >> /var/www/$zotserverdaily
     fi
-echo "        if [ ! -d $backup_mount_point ]" >> /var/www/$hubzilladaily
-echo "        then" >> /var/www/$hubzilladaily
-echo "            mkdir $backup_mount_point" >> /var/www/$hubzilladaily
-echo "        fi" >> /var/www/$hubzilladaily
-echo "        echo \"mounting backup device...\"" >> /var/www/$hubzilladaily
+echo "        if [ ! -d $backup_mount_point ]" >> /var/www/$zotserverdaily
+echo "        then" >> /var/www/$zotserverdaily
+echo "            mkdir $backup_mount_point" >> /var/www/$zotserverdaily
+echo "        fi" >> /var/www/$zotserverdaily
+echo "        echo \"mounting backup device...\"" >> /var/www/$zotserverdaily
 	if [ -n "$backup_device_pass" ]
 	then
-echo "        if mount /dev/mapper/cryptobackup $backup_mount_point" >> /var/www/$hubzilladaily
+echo "        if mount /dev/mapper/cryptobackup $backup_mount_point" >> /var/www/$zotserverdaily
 	else
-echo "        if mount $backup_device_name $backup_mount_point" >> /var/www/$hubzilladaily
+echo "        if mount $backup_device_name $backup_mount_point" >> /var/www/$zotserverdaily
 	fi
-echo "        then" >> /var/www/$hubzilladaily
-echo "            device_mounted=1" >> /var/www/$hubzilladaily
-echo "            echo \"device $backup_device_name is now mounted. Starting backup...\"" >> /var/www/$hubzilladaily
-echo "            rsync -a --delete /var/lib/mysql/ /media/hubzilla_backup/mysql" >> /var/www/$hubzilladaily
-echo "            rsync -a --delete /var/www/ /media/hubzilla_backup/www" >> /var/www/$hubzilladaily
-echo "            rsync -a --delete /etc/letsencrypt/ /media/hubzilla_backup/letsencrypt" >> /var/www/$hubzilladaily
-echo "            echo \"\$(date) - disk sizes...\"" >> /var/www/$hubzilladaily
-echo "            df -h" >> /var/www/$hubzilladaily
-echo "            echo \"\$(date) - db size...\"" >> /var/www/$hubzilladaily
-echo "            du -h $backup_mount_point | grep mysql/hubzilla" >> /var/www/$hubzilladaily
-echo "            echo \"unmounting backup device...\"" >> /var/www/$hubzilladaily
-echo "            umount $backup_mount_point" >> /var/www/$hubzilladaily
-echo "        else" >> /var/www/$hubzilladaily
-echo "            echo \"failed to mount device $backup_device_name\"" >> /var/www/$hubzilladaily
-echo "        fi" >> /var/www/$hubzilladaily
+echo "        then" >> /var/www/$zotserverdaily
+echo "            device_mounted=1" >> /var/www/$zotserverdaily
+echo "            echo \"device $backup_device_name is now mounted. Starting backup...\"" >> /var/www/$zotserverdaily
+echo "            rsync -a --delete /var/lib/mysql/ /media/zotserver_backup/mysql" >> /var/www/$zotserverdaily
+echo "            rsync -a --delete /var/www/ /media/zotserver_backup/www" >> /var/www/$zotserverdaily
+echo "            rsync -a --delete /etc/letsencrypt/ /media/zotserver_backup/letsencrypt" >> /var/www/$zotserverdaily
+echo "            echo \"\$(date) - disk sizes...\"" >> /var/www/$zotserverdaily
+echo "            df -h" >> /var/www/$zotserverdaily
+echo "            echo \"\$(date) - db size...\"" >> /var/www/$zotserverdaily
+echo "            du -h $backup_mount_point | grep mysql/zotserver" >> /var/www/$zotserverdaily
+echo "            echo \"unmounting backup device...\"" >> /var/www/$zotserverdaily
+echo "            umount $backup_mount_point" >> /var/www/$zotserverdaily
+echo "        else" >> /var/www/$zotserverdaily
+echo "            echo \"failed to mount device $backup_device_name\"" >> /var/www/$zotserverdaily
+echo "        fi" >> /var/www/$zotserverdaily
 	if [ -n "$backup_device_pass" ]
 	then
-echo "        echo \"closing decrypted backup device...\"" >> /var/www/$hubzilladaily
-echo "        cryptsetup luksClose cryptobackup" >> /var/www/$hubzilladaily
+echo "        echo \"closing decrypted backup device...\"" >> /var/www/$zotserverdaily
+echo "        cryptsetup luksClose cryptobackup" >> /var/www/$zotserverdaily
 	fi
-echo "    fi" >> /var/www/$hubzilladaily
-echo "fi" >> /var/www/$hubzilladaily
-echo "if [ \$device_mounted == 0 ]" >> /var/www/$hubzilladaily
-echo "then" >> /var/www/$hubzilladaily
-echo "    echo \"device could not be mounted $backup_device_name. No backup written.\"" >> /var/www/$hubzilladaily
-echo "fi" >> /var/www/$hubzilladaily
-echo "#" >> /var/www/$hubzilladaily
-echo "echo \"\$(date) - db size...\"" >> /var/www/$hubzilladaily
-echo "du -h /var/lib/mysql/ | grep mysql/hubzilla" >> /var/www/$hubzilladaily
-echo "#" >> /var/www/$hubzilladaily
-echo "# update" >> /var/www/$hubzilladaily
-echo "echo \"\$(date) - updating core and addons...\"" >> /var/www/$hubzilladaily
-echo "(cd /var/www/html/ ; util/udall)" >> /var/www/$hubzilladaily
-echo "chown -R www-data:www-data /var/www/html/ # make all accessable for the webserver" >> /var/www/$hubzilladaily
-echo "chown root:www-data /var/www/html/.htaccess" >> /var/www/$hubzilladaily
-echo "chmod 0644 /var/www/html/.htaccess # www-data can read but not write it" >> /var/www/$hubzilladaily
-echo "echo \"\$(date) - updating linux...\"" >> /var/www/$hubzilladaily
-echo "apt-get -q -y update && apt-get -q -y dist-upgrade && apt-get -q -y autoremove # update linux and upgrade" >> /var/www/$hubzilladaily
-echo "echo \"\$(date) - Backup and update finished. Rebooting...\"" >> /var/www/$hubzilladaily
-echo "#" >> /var/www/$hubzilladaily
-echo "shutdown -r now" >> /var/www/$hubzilladaily
+echo "    fi" >> /var/www/$zotserverdaily
+echo "fi" >> /var/www/$zotserverdaily
+echo "if [ \$device_mounted == 0 ]" >> /var/www/$zotserverdaily
+echo "then" >> /var/www/$zotserverdaily
+echo "    echo \"device could not be mounted $backup_device_name. No backup written.\"" >> /var/www/$zotserverdaily
+echo "fi" >> /var/www/$zotserverdaily
+echo "#" >> /var/www/$zotserverdaily
+echo "echo \"\$(date) - db size...\"" >> /var/www/$zotserverdaily
+echo "du -h /var/lib/mysql/ | grep mysql/zotserver" >> /var/www/$zotserverdaily
+echo "#" >> /var/www/$zotserverdaily
+echo "# update" >> /var/www/$zotserverdaily
+echo "echo \"\$(date) - updating core and addons...\"" >> /var/www/$zotserverdaily
+echo "(cd $install_path/ ; util/udall)" >> /var/www/$zotserverdaily
+echo "chown -R www-data:www-data $install_path/ # make all accessable for the webserver" >> /var/www/$zotserverdaily
+echo "chown root:www-data $install_path/.htaccess" >> /var/www/$zotserverdaily
+echo "chmod 0644 $install_path/.htaccess # www-data can read but not write it" >> /var/www/$zotserverdaily
+echo "echo \"\$(date) - updating linux...\"" >> /var/www/$zotserverdaily
+echo "apt-get -q -y update && apt-get -q -y dist-upgrade && apt-get -q -y autoremove # update linux and upgrade" >> /var/www/$zotserverdaily
+echo "echo \"\$(date) - Backup and update finished. Rebooting...\"" >> /var/www/$zotserverdaily
+echo "#" >> /var/www/$zotserverdaily
+echo "shutdown -r now" >> /var/www/$zotserverdaily
 
-    if [ -z "`grep 'hubzilla-daily.sh' /etc/crontab`" ]
+    if [ -z "`grep 'zotserver-daily.sh' /etc/crontab`" ]
     then
-        echo "30 05 * * * root /bin/bash /var/www/$hubzilladaily >> /var/www/html/hubzilla-daily.log 2>&1" >> /etc/crontab
-        echo "0 0 1 * * root rm /var/www/html/hubzilla-daily.log" >> /etc/crontab
+        echo "30 05 * * * root /bin/bash /var/www/$zotserverdaily >> $install_path/zotserver-daily.log 2>&1" >> /etc/crontab
+        echo "0 0 1 * * root rm $install_path/zotserver-daily.log" >> /etc/crontab
     fi
 
     # This is active after either "reboot" or "/etc/init.d/cron reload"
@@ -593,19 +613,22 @@ export PATH=/bin:/usr/bin:/sbin:/usr/sbin
 
 check_sanity
 
+zotserver_name
+install_path="$(dirname "$(pwd)")"
+
 # Read config file edited by user
-configfile=hubzilla-config.txt
+configfile=zotserver-config.txt
 source $configfile
 
 selfhostdir=/etc/selfhost
 selfhostscript=selfhost-updater.sh
-hubzilladaily=hubzilla-daily.sh
-backup_mount_point=/media/hubzilla_backup
+zotserverdaily=${zotserver_name}-daily.sh
+backup_mount_point=/media/${zotserver_name}_backup
 
 #set -x    # activate debugging from here
 
 check_config
-stop_hubzilla
+stop_zotserver
 update_upgrade
 install_curl
 install_wget
@@ -615,7 +638,7 @@ install_imagemagick
 install_php
 install_mysql
 install_adminer
-create_hubzilla_db
+create_zotserver_db
 run_freedns
 install_run_selfhost
 ping_domain
@@ -630,7 +653,7 @@ else
     print_info "is localhost - skipped installation of letsencrypt and configuration of apache for https"
 fi     
 
-install_hubzilla
+install_zotserver
 
 configure_cron_daily
 
