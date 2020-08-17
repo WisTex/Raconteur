@@ -3,6 +3,7 @@
 use Zotlabs\Photo\PhotoDriver;
 use Zotlabs\Photo\PhotoGd;
 use Zotlabs\Photo\PhotoImagick;
+use Zotlabs\Lib\Img_cache;
 
 /**
  * @brief Return a PhotoDriver object.
@@ -179,13 +180,17 @@ function import_xchan_photo($photo, $xchan, $thing = false, $force = false) {
 
 	logger('Updating channel photo from ' . $photo . ' for ' . $xchan, LOGGER_DEBUG);
 
-	$flags    = (($thing) ? PHOTO_THING : PHOTO_XCHAN);
-	$album    = (($thing) ? 'Things' : 'Contact Photos');
-	$modified = EMPTY_STR;
-	$o        = null;
-	$failed   = true;
-	$img_str  = EMPTY_STR;
-	$hash     = photo_new_resource();
+	$flags      = (($thing) ? PHOTO_THING : PHOTO_XCHAN);
+	$album      = (($thing) ? 'Things' : 'Contact Photos');
+	$modified   = EMPTY_STR;
+	$matches    = null;
+	$failed     = true;
+	$img_str    = EMPTY_STR;
+	$hash       = photo_new_resource();
+	$os_storage = false;
+
+	$cache_path = Img_cache::get_filename($xchan,'cache/xphoto',3);
+
 
 	if (! $thing) {
 		$r = q("select resource_id, edited, mimetype from photo where xchan = '%s' and photo_usage = %d and imgscale = 4 limit 1",
@@ -194,9 +199,12 @@ function import_xchan_photo($photo, $xchan, $thing = false, $force = false) {
 		);
 		if ($r) {
 			$r = array_shift($r);
-			$hash     = $r['resource_id'];
-			$modified = $r['edited'];
-			$type     = $r['mimetype'];
+			$hash       = $r['resource_id'];
+			$modified   = $r['edited'];
+			$type       = $r['mimetype'];
+		}
+		else {
+			$os_storage = true;
 		}
 	}
 
@@ -214,7 +222,7 @@ function import_xchan_photo($photo, $xchan, $thing = false, $force = false) {
 		if ($result['success']) {
 			$img_str = $result['body'];
 			$type = guess_image_type($photo, $result['header']);
-			$modified = gmdate('Y-m-d H:i:s', (preg_match('/last-modified: (.+) \S+/i', $result['header'], $o) ? strtotime($o[1] . 'Z') : time()));
+			$modified = gmdate('Y-m-d H:i:s', (preg_match('/last-modified: (.+) \S+/i', $result['header'], $matches) ? strtotime($matches[1] . 'Z') : time()));
 			if (! is_null($type)) {
 				$failed = false;
 			}

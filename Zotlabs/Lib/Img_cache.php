@@ -7,9 +7,9 @@ class Img_cache {
 
 	static $cache_life = 18600 * 7;
 
-	static function get_filename($url, $prefix = EMPTY_STR) {
+	static function get_filename($url, $prefix = EMPTY_STR, $sluglen = 2) {
 		$hash = hash('sha256', $url);
-		$slug = substr($hash,0,2);
+		$slug = substr($hash,0,$sluglen);
 		$path = $prefix . '/' . $slug;
 		os_mkdir($path, STORAGE_DEFAULT_PERMISSIONS, true);
 		return $path . '/' . $hash;
@@ -20,7 +20,7 @@ class Img_cache {
 		if (strpos($url,z_root()) !== false) {
 			return false;
 		}
-		
+
 		$path = self::get_filename($url,$prefix);
 		if (file_exists($path)) {
 			$t = filemtime($path);

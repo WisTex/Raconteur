@@ -1017,9 +1017,11 @@ function linkify($s, $me = false) {
  * @param string $s
  * @returns string
  */
-function sslify($s) {
+function sslify($s, $cache_enable = true) {
 
-	if (! intval(get_config('system','cache_images', 1))) {
+	if ((! $cache_enable) || (! intval(get_config('system','cache_images', 1)))) {
+
+		// if caching is prevented for whatever reason, proxy any non-SSL photos
 
 		if (strpos(z_root(),'https:') === false) {
 			return $s;
@@ -1681,12 +1683,23 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 	if(local_channel() == $item['uid'])
 		$filer = format_filer($item);
 
+	// Caching photos can use absurd amounts of space.
+	// Don't cache photos if somebody is just browsing the stream to the 
+	// beginning of time. This optimises performance for viewing things created
+	// recently. Also catch an explicit expiration of 0 or "no cache".
+
+	$cache_expire = intval(get_config('system', 'default_expire_days'));
+	if ($cache_expire <= 0) {
+		$cache_expire = 60;
+	}
+	$cache_enable = ((($cache_expire) && ($item['created'] < datetime_convert('UTC','UTC', 'now - ' . $cache_expire . ' days'))) ? false : true);
+
 	if($s)
-		$s = sslify($s);
+		$s = sslify($s, $cache_enable);
 	if($photo)
-		$photo = sslify($photo);
+		$photo = sslify($photo, $cache_enable);
 	if($event)
-		$event = sslify($event);
+		$event = sslify($event, $cache_enable);
 	
 	$prep_arr = array(
 		'item' => $item,

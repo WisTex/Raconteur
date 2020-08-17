@@ -52,16 +52,19 @@ class Cron_weekly {
 		Run::Summon(array('Checksites'));
 
 
-		// clean up image cache - use site expiration or 180 days if not set
+		// clean up image cache - use site expiration or 60 days if not set or zero
 		
 		$files = glob('cache/img/*/*');
-		$expire_days = intval(get_config('system','default_expire_days', 180));
+		$expire_days = intval(get_config('system','default_expire_days'));
+		if ($expire_days <= 0) {
+			$expire_days = 60;
+		}
 		$now = time();
-
+		$maxage = 86400 * $expire_days;
 		if ($files) {
 			foreach ($files as $file) {
 				if (is_file($file)) {
-					if ($now - filemtime($file) >= 60 * 60 * 24 * $expire_days) {
+					if ($now - filemtime($file) >= $maxage) {
 						unlink($file);
 					}
 				}
