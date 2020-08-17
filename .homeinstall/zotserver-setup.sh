@@ -213,6 +213,15 @@ function install_apache {
     systemctl restart apache2
 }
 
+function add_vhost {
+    print_info "adding vhost"
+    echo "<VirtualHost *:80>" >> "/etc/apache2/sites-available/${le_domain}.conf"
+    echo "ServerName ${le_domain}" >> "/etc/apache2/sites-available/${le_domain}.conf"
+    echo "DocumentRoot $install_path" >> "/etc/apache2/sites-available/${le_domain}.conf"
+    echo "</VirtualHost>"  >> "/etc/apache2/sites-available/${le_domain}.conf"
+    a2ensite $le_domain
+}
+
 function install_imagemagick {
     print_info "installing imagemagick..."
     nocheck_install "imagemagick"
@@ -485,7 +494,7 @@ function install_zotserver {
     touch .htconfig.php
     chmod ou+w .htconfig.php
     cd /var/www/
-    chown -R www-data:www-data html
+    chown -R www-data:www-data $install_path
 	chown root:www-data $install_path/
 	chown root:www-data $install_path/.htaccess
 	chmod 0644 $install_path/.htaccess
@@ -622,8 +631,8 @@ source $configfile
 
 selfhostdir=/etc/selfhost
 selfhostscript=selfhost-updater.sh
-zotserverdaily="${zotserver_name}-daily.sh"
-backup_mount_point="/media/${zotserver_name}_backup"
+zotserverdaily="${zotserver}-daily.sh"
+backup_mount_point="/media/${zotserver}_backup"
 
 #set -x    # activate debugging from here
 
@@ -634,6 +643,7 @@ install_curl
 install_wget
 install_sendmail
 install_apache
+add_vhost
 install_imagemagick
 install_php
 install_mysql
