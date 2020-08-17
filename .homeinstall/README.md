@@ -1,3 +1,4 @@
+
 # How to use
 
 ## Disclaimers
@@ -27,12 +28,12 @@ Software
   - cd /var/www
   - git clone https://codeberg.org/zot/zap.git html
   - cd html/.homeinstall
-  - cp hubzilla-config.txt.template hubzilla-config.txt
-  - nano hubzilla-config.txt
+  - cp zotserver-config.txt.template zotserver-config.txt
+  - nano zotserver-config.txt
     - Read the comments carefully
     - Enter your values: db pass, domain, values for dyn DNS
     - Prepare your external disk for backups
-  - hubzilla-setup.sh as root
+  - zotserver-setup.sh as root
     - ... wait, wait, wait until the script is finised
 + Open your domain with a browser and step throught the initial configuration of hubzilla.
 
@@ -100,7 +101,7 @@ Open the ports 80 and 443 on your router for your Debian. Make sure your web ser
 
 ## Preparations Dynamic IP Address
 
-Follow the instructions in .homeinstall/hubzilla-config.txt.  
+Follow the instructions in .homeinstall/zotserver-config.txt.  
 
 In short...  
 
