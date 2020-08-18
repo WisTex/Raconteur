@@ -1,21 +1,18 @@
 <?php
 namespace Zotlabs\Lib;
 
+use Zotlabs\Lib\Hashpath;
 use Zotlabs\Daemon\Run;
 
 class Img_cache {
 
 	static $cache_life = 18600 * 7;
 
-	static function get_filename($url, $prefix = EMPTY_STR, $sluglen = 2) {
-		$hash = hash('sha256', $url);
-		$slug = substr($hash,0,2);
-		$path = $prefix . '/' . $slug;
-		os_mkdir($path, STORAGE_DEFAULT_PERMISSIONS, true);
-		return $path . '/' . $hash;
+	static function get_filename($url, $prefix = '.') {
+		return Hashpath::hash($url,$prefix);
 	}
 
-	static function check($url, $prefix = EMPTY_STR) {
+	static function check($url, $prefix = '.') {
 
 		if (strpos($url,z_root()) !== false) {
 			return false;
