@@ -9,7 +9,7 @@ class Img_cache {
 	static $cache_life = 18600 * 7;
 
 	static function get_filename($url, $prefix = '.') {
-		return Hashpath::hash($url,$prefix);
+		return Hashpath::path($url,$prefix);
 	}
 
 	static function check($url, $prefix = '.') {
