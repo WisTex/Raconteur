@@ -757,9 +757,7 @@ class Activity {
 						else {
 							$addr = $d[0]['hubloc_id_url'];
 						}
-						if (! in_array($addr,$ret['to'])) {
-							$ret['cc'][] = $addr;
-						}
+						$ret['cc'][] = $addr;
 					}
 				}
 			}
@@ -1057,9 +1055,7 @@ class Activity {
 						else {
 							$addr = $d[0]['hubloc_id_url'];
 						}
-						if (! in_array($addr,$ret['to'])) {
-							$ret['cc'][] = $addr;
-						}
+						$ret['cc'][] = $addr;
 					}
 				}
 			}
@@ -1157,7 +1153,7 @@ class Activity {
 							$ret[] = $d['hubloc_hash'];
 						}
 						else {
-							$ret[] = d['hubloc_id_url'];
+							$ret[] = $d['hubloc_id_url'];
 						}
 					}
 				}
