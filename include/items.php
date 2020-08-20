@@ -2486,6 +2486,23 @@ function tag_deliver($uid, $item_id) {
 		start_delivery_chain($u, $item, $item_id, 0, false, true);
 		return;
 	}
+
+	$mail_notify = false;
+	if ((! intval($item['item_wall'])) && intval($item['item_private']) === 2) {
+		Enotify::submit(array(
+			'to_xchan'     => $u['channel_hash'],
+			'from_xchan'   => $item['author_xchan'],
+			'type'         => NOTIFY_MAIL,
+			'item'         => $item,
+			'link'         => $i[0]['llink'],
+			'verb'         => 'DM',
+			'otype'        => 'item'
+		));
+		$mail_notify = true;
+	}
+
+
+
 	// important - ignore wall posts here else dm's by group owner will be sent to group.
 	if ($is_group && intval($item['item_private']) === 2 && intval($item['item_thread_top']) && (! intval($item['item_wall']))) {
 		// group delivery via DM - use post_wall permission since send_stream is probably turned off and this will be turned into an embedded wall-to-wall post
@@ -2613,18 +2630,20 @@ function tag_deliver($uid, $item_id) {
 			call_hooks('tagged', $arr);
 
 			/*
-			 * Send a mention notification.
+			 * Send a mention notification - unless we just sent a mail notification for the same item
 			 */
 
-			Enotify::submit(array(
-				'to_xchan'     => $u['channel_hash'],
-				'from_xchan'   => $item['author_xchan'],
-				'type'         => NOTIFY_TAGSELF,
-				'item'         => $item,
-				'link'         => $i[0]['llink'],
-				'verb'         => ACTIVITY_TAG,
-				'otype'        => 'item'
-			));
+			if (! $mail_notify) {
+				Enotify::submit(array(
+					'to_xchan'     => $u['channel_hash'],
+					'from_xchan'   => $item['author_xchan'],
+					'type'         => NOTIFY_TAGSELF,
+					'item'         => $item,
+					'link'         => $i[0]['llink'],
+					'verb'         => ACTIVITY_TAG,
+					'otype'        => 'item'
+				));
+			}
 		}
 	}
 	if ($is_collection && $pterms) {
