@@ -724,10 +724,10 @@ class Activity {
 					$ret['to'] = self::map_acl($i);
 				}
 				else {
-					$ret['to'] = [];
+					$ret['cc'] = self::map_acl($i);
 					if ($ret['tag']) {
 						foreach ($ret['tag'] as $mention) {
-							if (is_array($mention) && array_key_exists('href',$mention) && $mention['href']) {
+							if (is_array($mention) && array_key_exists('ttype',$mention) && in_array($mention['ttype'],[ TERM_FORUM, TERM_MENTION]) && array_key_exists('href',$mention) && $mention['href']) {
 								$h = q("select * from hubloc where hubloc_id_url = '%s' limit 1",
 									dbesc($mention['href'])
 								);
@@ -746,8 +746,9 @@ class Activity {
 						}
 					}
 
-					$d = q("select hubloc.*  from hubloc left join item on hubloc_hash = owner_xchan where item.id = %d limit 1",
-						intval($i['parent'])
+					$d = q("select hubloc.*  from hubloc left join item on hubloc_hash = owner_xchan where item.parent_mid = '%s' and item.uid = %d limit 1",
+						dbesc($i['parent_mid']),
+						intval($i['uid'])
 					);
 					if ($d) {
 						if ($d[0]['hubloc_network'] === 'activitypub') {
@@ -773,6 +774,19 @@ class Activity {
 				}
 			}	
 		}
+
+		$cc = [];
+		if ($ret['cc'] && is_array($ret['cc'])) {
+			foreach ($ret['cc'] as $e) {
+				if (! is_array($ret['to'])) {
+					$cc[] = $e;
+				}
+				elseif (! in_array($e,$ret['to'])) {
+					$cc[] = $e;
+				}
+			}
+		}
+		$ret['cc'] = $cc;
 
 		return $ret;
 	}
@@ -1007,10 +1021,10 @@ class Activity {
 					$ret['to'] = self::map_acl($i);
 				}
 				else {
-					$ret['to'] = [];
+					$ret['cc'] = self::map_acl($i);
 					if ($ret['tag']) {
 						foreach ($ret['tag'] as $mention) {
-							if (is_array($mention) && array_key_exists('href',$mention) && $mention['href']) {
+							if (is_array($mention) && array_key_exists('ttype',$mention) && in_array($mention['ttype'],[ TERM_FORUM, TERM_MENTION]) && array_key_exists('href',$mention) && $mention['href']) {
 								$h = q("select * from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
 									dbesc($mention['href']),
 									dbesc($mention['href'])
@@ -1030,9 +1044,12 @@ class Activity {
 						}
 					}
 
-					$d = q("select hubloc.*  from hubloc left join item on hubloc_hash = owner_xchan where item.id = %d limit 1",
-						intval($i['parent'])
+
+					$d = q("select hubloc.*  from hubloc left join item on hubloc_hash = owner_xchan where item.parent_mid = '%s' and item.uid = %d limit 1",
+						dbesc($i['parent_mid']),
+						intval($i['uid'])
 					);
+
 					if ($d) {
 						if ($d[0]['hubloc_network'] === 'activitypub') {
 							$addr = $d[0]['hubloc_hash'];
@@ -1057,6 +1074,22 @@ class Activity {
 				}
 			}	
 		}
+
+		// remove any duplicates from 'cc' that are present in 'to'
+		// as this may indicate that mentions changed the audience from secondary to primary
+		
+		$cc = [];
+		if ($ret['cc'] && is_array($ret['cc'])) {
+			foreach ($ret['cc'] as $e) {
+				if (! is_array($ret['to'])) {
+					$cc[] = $e;
+				}
+				elseif (! in_array($e,$ret['to'])) {
+					$cc[] = $e;
+				}
+			}
+		}
+		$ret['cc'] = $cc;
 
 		return $ret;
 	}
@@ -1095,6 +1128,15 @@ class Activity {
 			return $ret;
 		}
 
+		if ($i['mid'] !== $i['parent_mid']) {
+			$i = q("select * from item where parent_mid = '%s' and uid = %d",
+				dbesc($i['parent_mid']),
+				intval($i['uid'])
+			);
+			if ($i) {
+				$i = array_shift($i);
+			}
+		}
 		if ($i['allow_gid']) {
 			$tmp = expand_acl($i['allow_gid']);
 			if ($tmp) {
@@ -1108,16 +1150,36 @@ class Activity {
 			$tmp = expand_acl($i['allow_cid']);
 			$list = stringify_array($tmp,true);
 			if ($list) {
-				$details = q("select hubloc_id_url, hubloc_hash from hubloc where hubloc_hash in (" . $list . ") ");
+				$details = q("select hubloc_id_url, hubloc_hash, hubloc_network from hubloc where hubloc_hash in (" . $list . ") ");
 				if ($details) {
 					foreach ($details as $d) {
-						$ret[] = $d['hubloc_hash'];
+						if ($d['hubloc_network'] === 'activitypub') {
+							$ret[] = $d['hubloc_hash'];
+						}
+						else {
+							$ret[] = d['hubloc_id_url'];
+						}
 					}
 				}
 			}
 		}
 
-		return $ret;
+		$x = get_iconfig($i['id'],'activitypub','recips');
+		if ($x) {
+			foreach ([ 'to','cc' ] as $k) {
+				if (isset($x[$k])) {
+					if (is_string($x[$k])) {
+						$ret[] = $x[$k];
+					}
+					else {
+						$ret = array_merge($ret,$x[$k]);
+					}
+				}
+			}
+		}
+
+		return array_values(array_unique($ret));				
+
 	}
 
 
