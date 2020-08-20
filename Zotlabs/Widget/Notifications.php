@@ -49,21 +49,6 @@ class Notifications {
 			];
 
 			$notifications[] = [
-				'type' => 'mail',
-				'icon' => 'envelope',
-				'severity' => 'danger',
-				'label' => t('New Mails'),
-				'title' => t('New Mails Notifications'),
-				'viewall' => [
-					'url' => 'mail/combined',
-					'label' => t('View your private mails')
-				],
-				'markall' => [
-					'label' => t('Mark all messages seen')
-				]
-			];
-
-			$notifications[] = [
 				'type' => 'all_events',
 				'icon' => 'calendar',
 				'severity' => 'secondary',
