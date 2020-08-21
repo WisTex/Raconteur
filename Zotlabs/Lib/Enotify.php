@@ -545,7 +545,7 @@ class Enotify {
 	// (probably would be better that way)
 
 	if (!$always_show_in_notices) {
-		if (($params['type'] == NOTIFY_WALL) || ($params['type'] == NOTIFY_MAIL) || ($params['type'] == NOTIFY_INTRO)) {
+		if (($params['type'] == NOTIFY_WALL) || ($params['type'] == NOTIFY_INTRO)) {
 			$seen = 1;
 		}
 		// set back to unseen for moderated wall posts

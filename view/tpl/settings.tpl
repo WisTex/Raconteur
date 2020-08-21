@@ -168,7 +168,7 @@
 							<div class="group">
 								{{include file="field_intcheckbox.tpl" field=$vnotify1}}
 								{{include file="field_intcheckbox.tpl" field=$vnotify2}}
-								{{*include file="field_intcheckbox.tpl" field=$vnotify3*}}
+								{{include file="field_intcheckbox.tpl" field=$vnotify3}}
 								{{include file="field_intcheckbox.tpl" field=$vnotify4}}
 								{{include file="field_intcheckbox.tpl" field=$vnotify5}}
 								{{include file="field_intcheckbox.tpl" field=$vnotify6}}
