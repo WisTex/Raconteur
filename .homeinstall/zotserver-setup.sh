@@ -264,7 +264,7 @@ function install_mysql {
         systemctl status mariadb
         systemctl start mariadb
         mysql --user=root <<_EOF_
-UPDATE mysql.user SET Password=PASSWORD('${db_root_password}') WHERE User='root';
+UPDATE mysql.user SET Password=PASSWORD('${mysqlpass}') WHERE User='root';
 DELETE FROM mysql.user WHERE User='';
 DROP DATABASE IF EXISTS test;
 DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
@@ -514,7 +514,7 @@ function install_cryptosetup {
 function configure_cron_daily {
     print_info "configuring cron..."
     # every 10 min for poller.php
-    if [ -z "`grep 'Run.php' /etc/crontab`" ]
+    if [ -z "`grep '$install_path.*Run.php' /etc/crontab`" ]
     then
         echo "*/10 * * * * www-data cd $install_path; php Zotlabs/Daemon/Run.php Cron >> /dev/null 2>&1" >> /etc/crontab
     fi
@@ -605,10 +605,10 @@ echo "echo \"\$(date) - Backup and update finished. Rebooting...\"" >> /var/www/
 echo "#" >> /var/www/$zotserverdaily
 echo "shutdown -r now" >> /var/www/$zotserverdaily
 
-    if [ -z "`grep 'zotserver-daily.sh' /etc/crontab`" ]
+    if [ -z "`grep '$zotserverdaily' /etc/crontab`" ]
     then
-        echo "30 05 * * * root /bin/bash /var/www/$zotserverdaily >> $install_path/${zotserver}-daily.log 2>&1" >> /etc/crontab
-        echo "0 0 1 * * root rm $install_path/${zotserver_name}-daily.log" >> /etc/crontab
+        echo "30 05 * * * root /bin/bash /var/www/$zotserverdaily >> $install_path/${install_folder}-${zotserver}-daily.log 2>&1" >> /etc/crontab
+        echo "0 0 1 * * root rm $install_path/${install_folder}-${zotserver}-daily.log" >> /etc/crontab
     fi
 
     # This is active after either "reboot" or "/etc/init.d/cron reload"
@@ -624,6 +624,7 @@ check_sanity
 
 zotserver_name
 install_path="$(dirname "$(pwd)")"
+install_folder="$(basename $install_path)"
 
 # Read config file edited by user
 configfile=zotserver-config.txt
@@ -631,8 +632,8 @@ source $configfile
 
 selfhostdir=/etc/selfhost
 selfhostscript=selfhost-updater.sh
-zotserverdaily="${zotserver}-daily.sh"
-backup_mount_point="/media/${zotserver}_backup"
+zotserverdaily="${install_folder}-${zotserver}-daily.sh"
+backup_mount_point="/media/${install_folder}-${zotserver}_backup"
 
 #set -x    # activate debugging from here
 
