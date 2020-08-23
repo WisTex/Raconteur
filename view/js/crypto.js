@@ -15,6 +15,12 @@ function str_rot13 (str) {
 	});
 }
 
+// Arrays for pluggable encryptors/decryptors
+
+var red_encryptors = new Array();
+var red_decryptors = new Array();
+
+
 function hz_encrypt(alg, elem) {
 	var enc_text = '';
 	var newdiv = '';
@@ -26,11 +32,11 @@ function hz_encrypt(alg, elem) {
 
 	// key and hint need to be localised
 
-        var passphrase = prompt(aStr['passphrase']);
-        // let the user cancel this dialogue
-        if (passphrase == null)
-                return false;
-        var enc_key = bin2hex(passphrase);
+	var passphrase = prompt(aStr['passphrase']);
+	// let the user cancel this dialogue
+	if (passphrase == null)
+			return false;
+	var enc_key = bin2hex(passphrase);
 
 	// If you don't provide a key you get rot13, which doesn't need a key
 	// but consequently isn't secure.  
@@ -55,6 +61,14 @@ function hz_encrypt(alg, elem) {
 			newdiv = "[crypt alg='AES-128-CCM' hint='" + enc_hint + "']" + window.btoa(encrypted) + '[/crypt]';
 	}
 
+	if((red_encryptors.length) && (! newdiv.length)) {
+		for(var i = 0; i < red_encryptors.length; i ++) {
+			newdiv = red_encryptors[i](alg,text);
+			if(newdiv.length)
+				break;
+		}
+	}
+	
 	enc_key = '';
 
 	// This might be a comment box on a page with a tinymce editor
@@ -76,13 +90,6 @@ function hz_decrypt(alg, hint, text, elem) {
 
 	var dec_text = '';
 
-	var supported = ['AES-128-CCM', 'rot13', 'triple-rot13'];
-
-	if(supported.indexOf(alg) < 0) {
-		alert('Sorry, this encryption type is not supported anymore.\r\nConsider asking your admin to install the cryptojs addon for legacy crypto support.');
-		return;
-	}
-
 	text = window.atob(text);
 
 	if(alg == 'rot13' || alg == 'triple-rot13')
@@ -93,6 +100,14 @@ function hz_decrypt(alg, hint, text, elem) {
 
 	if(alg == 'AES-128-CCM') {
 		dec_text = sjcl.decrypt(enc_key, text);
+	}
+
+	if((red_decryptors.length) && (! dec_text.length)) {
+		for(var i = 0; i < red_decryptors.length; i ++) {
+			dec_text = red_decryptors[i](alg,text,enc_key);
+			if(dec_text.length)
+				break;
+		}
 	}
 
 	enc_key = '';

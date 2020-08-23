@@ -266,11 +266,6 @@ function bb_parse_crypt($match) {
 
 	$f = 'hz_decrypt';
 
-	//legacy cryptojs support
-	if(plugin_is_installed('cryptojs')) {
-		$f = ((in_array($algorithm, ['AES-128-CCM', 'rot13', 'triple-rot13'])) ? 'hz_decrypt' : 'red_decrypt');
-	}
-
 	$onclick = 'onclick="' . $f . '(\'' . $algorithm . '\',\'' . $hint . '\',\'' . $match[2] . '\',\'#' . $x . '\');"';
 	$label = t('Encrypted content');
 
