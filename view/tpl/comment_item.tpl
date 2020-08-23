@@ -54,7 +54,7 @@
 						</div>
 						{{if $feature_encrypt}}
 						<div class="btn-group mr-2">
-							<button class="btn btn-outline-secondary btn-sm" title="{{$encrypt}}" onclick="red_encrypt('{{$cipher}}','#comment-edit-text-' + '{{$id}}',''); return false;">
+							<button class="btn btn-outline-secondary btn-sm" title="{{$encrypt}}" onclick="hz_encrypt('{{$cipher}}','#comment-edit-text-' + '{{$id}}'); return false;">
 								<i class="fa fa-key comment-icon"></i>
 							</button>
 						</div>

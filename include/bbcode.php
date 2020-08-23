@@ -237,9 +237,10 @@ function bb_replace_images($body, $images) {
  * @param array $match
  * @return string HTML code
  */
+
 function bb_parse_crypt($match) {
 
-	$matches = array();
+	$matches = [];
 	$attributes = $match[1];
 
 	$algorithm = "";
@@ -263,7 +264,17 @@ function bb_parse_crypt($match) {
 
 	$x = random_string();
 
-	$Text = '<br><div id="' . $x . '"><img src="' . z_root() . '/images/lock_icon.gif" onclick="red_decrypt(\'' . $algorithm . '\',\'' . $hint . '\',\'' . $match[2] . '\',\'#' . $x . '\');" alt="' . t('Encrypted content') . '" title="' . t('Encrypted content') . '" /></div><br>';
+	$f = 'hz_decrypt';
+
+	//legacy cryptojs support
+	if(plugin_is_installed('cryptojs')) {
+		$f = ((in_array($algorithm, ['AES-128-CCM', 'rot13', 'triple-rot13'])) ? 'hz_decrypt' : 'red_decrypt');
+	}
+
+	$onclick = 'onclick="' . $f . '(\'' . $algorithm . '\',\'' . $hint . '\',\'' . $match[2] . '\',\'#' . $x . '\');"';
+	$label = t('Encrypted content');
+
+	$Text = '<br /><div id="' . $x . '"><img class="cursor-pointer" src="' . z_root() . '/images/lock_icon.svg" ' . $onclick . ' alt="' . $label . '" title="' . $label . '" /></div><br />';
 
 	return $Text;
 }
@@ -1630,9 +1641,12 @@ function bbcode($Text, $options = []) {
 
 	// crypt
 	if (strpos($Text,'[/crypt]') !== false) {
-		$x = random_string();
-		$Text = preg_replace("/\[crypt\](.*?)\[\/crypt\]/ism",'<br><div id="' . $x . '"><img src="' .z_root() . '/images/lock_icon.gif" onclick="red_decrypt(\'rot13\',\'\',\'$1\',\'#' . $x . '\');" alt="' . t('Encrypted content') . '" title="' . t('Encrypted content') . '" /><br></div>', $Text);
-		$Text = preg_replace_callback("/\[crypt (.*?)\](.*?)\[\/crypt\]/ism", 'bb_parse_crypt', $Text);
+		if ($activitypub) {
+			$Text = preg_replace("/\[crypt (.*?)\](.*?)\[\/crypt\]/ism", '<br><div id="' . $x . '"><img src="' .z_root() . '/images/lock_icon.svg" alt="' . t('Encrypted content') . '" title="' . t('Encrypted content') . '" /><br></div>', $Text);
+		}
+		else {
+			$Text = preg_replace_callback("/\[crypt (.*?)\](.*?)\[\/crypt\]/ism", 'bb_parse_crypt', $Text);
+		}
 	}
 
 	if (strpos($Text,'[/app]') !== false) {

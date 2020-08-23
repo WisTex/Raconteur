@@ -22,7 +22,7 @@ class ThreadStream {
 	private $preview = false;
 	private $prepared_item = '';
 	public $reload = '';
-	private $cipher = 'aes256';
+	private $cipher = 'AES-128-CCM';
 
 	// $prepared_item is for use by alternate conversation structures such as photos
 	// wherein we've already prepared a top level item which doesn't look anything like

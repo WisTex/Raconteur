@@ -187,6 +187,12 @@ class Chat extends Controller {
 				notice( t('Room not found') . EOL);
 				return;
 			}
+
+			$cipher = get_pconfig(local_channel(),'system','default_cipher');
+			if (! $cipher) {
+				$cipher = 'AES-128-CCM';
+			}
+
 	
 			$o = replace_macros(get_markup_template('chat.tpl'), [
 				'$is_owner' => ((local_channel() && local_channel() == $x[0]['cr_uid']) ? true : false),
@@ -200,7 +206,7 @@ class Chat extends Controller {
 				'$away' => t('I am away right now'),
 				'$online' => t('I am online'),
 				'$feature_encrypt' => ((feature_enabled(local_channel(),'content_encrypt')) ? true : false),
-				'$cipher' => '',
+				'$cipher' => $cipher,
 				'$linkurl' => t('Please enter a link URL:'),
 				'$encrypt' => t('Encrypt text'),
 				'$insert' => t('Insert web link')
