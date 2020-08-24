@@ -2,33 +2,34 @@
 #
 # How to use
 # ----------
-# 
+#
 # This file automates the installation of
 # - hubzilla: https://zotlabs.org/page/hubzilla/hubzilla-project and
 # - zap: https://zotlabs.com/zap/
-# - misty : http://zotlabs.com/misty/
+# - misty : https://zotlabs.com/misty/
+# - osada : https://codeberg.org/zot/osada
 # under Debian Linux "Buster"
 #
 # 1) Copy the file "zotserver-config.txt.template" to "zotserver-config.txt"
 #       Follow the instuctions there
-# 
+#
 # 2) Switch to user "root" by typing "su -"
-# 
+#
 # 3) Run with "./zotserver-setup.sh"
 #       If this fails check if you can execute the script.
 #       - To make it executable type "chmod +x zotserver-setup.sh"
 #       - or run "bash zotserver-setup.sh"
-# 
-# 
+#
+#
 # What does this script do basically?
 # -----------------------------------
-# 
+#
 # This file automates the installation of a Zot hub/instance under Debian Linux
 # - install
-#        * apache webserver, 
-#        * php,  
-#        * mariadb - the database for zotserver,  
-#        * adminer,  
+#        * apache webserver,
+#        * php,
+#        * mariadb - the database for zotserver,
+#        * adminer,
 #        * git to download and update addons
 # - configure cron
 #        * "Run.php" for regular background processes of your Zot hub/instance
@@ -36,15 +37,15 @@
 #        * run command to keep the IP up-to-date > DynDNS provided by selfHOST.de or freedns.afraid.org
 #        * backup your server's database and files (rsync)
 # - run letsencrypt to create, register and use a certifacte for https
-# 
-# 
+#
+#
 # Discussion
 # ----------
-# 
+#
 # Security - password  is the same for mysql-server, phpmyadmin and your hub/instance db
 # - The script runs into installation errors for phpmyadmin if it uses
 #   different passwords. For the sake of simplicity one single password.
-# 
+#
 # How to restore from backup
 # --------------------------
 #
@@ -52,7 +53,7 @@
 #
 # Daily backup
 # ------------
-# 
+#
 # The installation
 # - writes a shell script in /var/www/
 # - creates a daily cron that runs this script
@@ -61,7 +62,7 @@
 # - /var/lib/mysql/ > database
 # - /var/www/ > hubzilla/zap/misty from github
 # - /etc/letsencrypt/ > certificates
-# 
+#
 # The backup will be written on an external disk compatible to LUKS+ext4 (see zotserver-config.txt)
 #
 # How to restore from backup
@@ -107,11 +108,11 @@ function check_config {
     if [ -z "$db_pass" ]
     then
         die "db_pass not set in $configfile"
-    fi     
+    fi
     if [ -z "$le_domain" ]
     then
         die "le_domain not set in $configfile"
-    fi   
+    fi
     # backup is important and should be checked
 	if [ -n "$backup_device_name" ]
 	then
@@ -308,7 +309,7 @@ function install_adminer {
 }
 
 function create_zotserver_db {
-    print_info "creating zotserver database..." 
+    print_info "creating zotserver database..."
     if [ -z "$zotserver_db_name" ]
     then
         zotserver_db_name=$zotserver
@@ -382,21 +383,21 @@ function install_run_selfhost {
 
 function ping_domain {
     print_info "ping domain $domain..."
-    # Is the domain resolved? Try to ping 6 times à 10 seconds 
-    COUNTER=0    
+    # Is the domain resolved? Try to ping 6 times à 10 seconds
+    COUNTER=0
     for i in {1..6}
     do
-        print_info "loop $i for ping -c 1 $domain ..."     
-        if ping -c 4 -W 1 $le_domain    
+        print_info "loop $i for ping -c 1 $domain ..."
+        if ping -c 4 -W 1 $le_domain
         then
             print_info "$le_domain resolved"
             break
-        else 
+        else
             if [ $i -gt 5 ]
             then
                 die "Failed to: ping -c 1 $domain not resolved"
-            fi            
-        fi 
+            fi
+        fi
         sleep 10
     done
     sleep 5
@@ -417,7 +418,7 @@ function configure_cron_freedns {
             echo "*/30 * * * * root wget --no-check-certificate -O - http://freedns.afraid.org/dynamic/update.php?$freedns_key > /dev/null 2>&1" >> /etc/crontab
         else
             print_info "cron for freedns was configured already"
-        fi       
+        fi
     fi
 }
 
@@ -436,7 +437,7 @@ function configure_cron_selfhost {
             echo "*/5 * * * * root /bin/bash /etc/selfhost/selfhost-updater.sh update > /dev/null 2>&1" >> /etc/crontab
         else
             print_info "cron for selfhost was configured already"
-        fi        
+        fi
     fi
 }
 
@@ -451,7 +452,7 @@ function install_letsencrypt {
     then
         die "Failed to install let's encrypt: 'le_email' is empty in $configfile"
     fi
-    nocheck_install "certbot python-certbot-apache" 
+    nocheck_install "certbot python-certbot-apache"
     print_info "run certbot ..."
 	certbot --apache -w $install_path -d $le_domain -m $le_email --agree-tos --non-interactive --redirect --hsts --uir
     service apache2 restart
@@ -479,8 +480,11 @@ function zotserver_name {
     elif git remote -v | grep -i "origin.*misty.*"
     then
         zotserver=misty
+    elif git remote -v | grep -i "origin.*osada.*"
+    then
+        zotserver=osada
     else
-        die "neither misty, zap nor hubzilla repository > did not install misty/zap/hubzilla"
+        die "neither osada,misty, zap nor hubzilla repository > did not install osada/misty/zap/hubzilla"
     fi
 }
 
@@ -499,8 +503,12 @@ function install_zotserver {
     then
         print_info "misty"
         util/add_addon_repo https://codeberg.org/zot/misty-addons.git maddons
+    elif [ $zotserver = "osada" ]
+    then
+        print_info "osada"
+        util/add_addon_repo https://codeberg.org/zot/osada-addons.git oaddons
     else
-        die "neither misty, zap nor hubzilla repository > did not install addons or misty/zap/hubzilla"
+        die "neither osada, misty, zap nor hubzilla repository > did not install addons or osada/misty/zap/hubzilla"
     fi
     mkdir -p "cache/smarty3"
     mkdir -p "store"
@@ -630,7 +638,7 @@ echo "shutdown -r now" >> /var/www/$zotserverdaily
 }
 
 ########################################################################
-# START OF PROGRAM 
+# START OF PROGRAM
 ########################################################################
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin
 
@@ -680,7 +688,7 @@ then
     check_https
 else
     print_info "is localhost - skipped installation of letsencrypt and configuration of apache for https"
-fi     
+fi
 
 install_zotserver
 
@@ -692,7 +700,7 @@ then
     install_rsync
 else
     print_info "is localhost - skipped installation of cryptosetup"
-fi     
+fi
 
 
 #set +x    # stop debugging from here
