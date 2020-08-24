@@ -1,6 +1,6 @@
 <?php
 /**
- * @file include/plugin.php
+ * @file include/addon.php
  *
  * @brief Some functions to handle addons and themes.
  */
@@ -20,10 +20,10 @@ function handleerrors_plugin($plugin,$notice,$log,$uninstall=false){
 	}
 
 	if ($uninstall) {
-		$idx = array_search($plugin, \App::$plugins);
-		unset(\App::$plugins[$idx]);
+		$idx = array_search($plugin, App::$plugins);
+		unset(App::$plugins[$idx]);
 		uninstall_plugin($plugin);
-		set_config("system","addon", implode(", ",\App::$plugins));
+		set_config("system","addon", implode(", ",App::$plugins));
 	}
 }
 
@@ -1018,15 +1018,15 @@ function get_intltext_template($s, $root = '') {
         $testroot = ($root=='') ? $testroot = "ROOT" : $root;
         $t = App::template_engine();
 
-        if (isset(\App::$override_intltext_templates[$testroot][$s]["content"])) {
-                return \App::$override_intltext_templates[$testroot][$s]["content"];
+        if (isset(App::$override_intltext_templates[$testroot][$s]["content"])) {
+                return App::$override_intltext_templates[$testroot][$s]["content"];
         } else {
-                if (isset(\App::$override_intltext_templates[$testroot][$s]["root"]) && 
-                   isset(\App::$override_intltext_templates[$testroot][$s]["file"])) {
-                        $s = \App::$override_intltext_templates[$testroot][$s]["file"];
-                        $root = \App::$override_intltext_templates[$testroot][$s]["root"];
-                } elseif (\App::$override_templateroot) {
-                   $newroot = \App::$override_templateroot.$root;
+                if (isset(App::$override_intltext_templates[$testroot][$s]["root"]) && 
+                   isset(App::$override_intltext_templates[$testroot][$s]["file"])) {
+                        $s = App::$override_intltext_templates[$testroot][$s]["file"];
+                        $root = App::$override_intltext_templates[$testroot][$s]["root"];
+                } elseif (App::$override_templateroot) {
+                   $newroot = App::$override_templateroot.$root;
                    if ($newroot != '' && substr($newroot,-1) != '/' ) {
                            $newroot .= '/';
                    }
@@ -1042,15 +1042,15 @@ function get_markup_template($s, $root = '') {
 
         $t = App::template_engine();
 
-        if (isset(\App::$override_markup_templates[$testroot][$s]["content"])) {
-                return \App::$override_markup_templates[$testroot][$s]["content"];
+        if (isset(App::$override_markup_templates[$testroot][$s]["content"])) {
+                return App::$override_markup_templates[$testroot][$s]["content"];
         } else {
-                if (isset(\App::$override_markup_templates[$testroot][$s]["root"]) && 
-                   isset(\App::$override_markup_templates[$testroot][$s]["file"])) {
-                        $s = \App::$override_markup_templates[$testroot][$s]["file"];
-                        $root = \App::$override_markup_templates[$testroot][$s]["root"];
-                } elseif (\App::$override_templateroot) {
-                   $newroot = \App::$override_templateroot.$root;
+                if (isset(App::$override_markup_templates[$testroot][$s]["root"]) && 
+                   isset(App::$override_markup_templates[$testroot][$s]["file"])) {
+                        $s = App::$override_markup_templates[$testroot][$s]["file"];
+                        $root = App::$override_markup_templates[$testroot][$s]["root"];
+                } elseif (App::$override_templateroot) {
+                   $newroot = App::$override_templateroot.$root;
                    if ($newroot != '' && substr($newroot,-1) != '/' ) {
                            $newroot .= '/';
                    }

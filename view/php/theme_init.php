@@ -1,7 +1,5 @@
 <?php
 
-require_once('include/plugin.php');
-
 head_add_css('/library/tiptip/tipTip.css');
 head_add_css('/library/jgrowl/jquery.jgrowl.css');
 head_add_css('/library/jRange/jquery.range.css');

@@ -10,10 +10,6 @@ use Zotlabs\Lib\Libsync;
  *
  */
 
-require_once('include/plugin.php');
-require_once('include/channel.php');
-
-
 class Apps {
 
 	static public $available_apps = null;
