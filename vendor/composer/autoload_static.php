@@ -80,6 +80,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'L' => 
         array (
             'League\\OAuth2\\Client\\' => 21,
+            'League\\MimeTypeDetection\\' => 25,
             'League\\HTMLToMarkdown\\' => 22,
             'League\\Flysystem\\' => 17,
         ),
@@ -213,6 +214,10 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
             3 => __DIR__ . '/..' . '/league/oauth2-google/src',
             4 => __DIR__ . '/..' . '/league/oauth2-instagram/src',
             5 => __DIR__ . '/..' . '/league/oauth2-linkedin/src',
+        ),
+        'League\\MimeTypeDetection\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/mime-type-detection/src',
         ),
         'League\\HTMLToMarkdown\\' => 
         array (
@@ -701,6 +706,12 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'League\\HTMLToMarkdown\\Environment' => __DIR__ . '/..' . '/league/html-to-markdown/src/Environment.php',
         'League\\HTMLToMarkdown\\HtmlConverter' => __DIR__ . '/..' . '/league/html-to-markdown/src/HtmlConverter.php',
         'League\\HTMLToMarkdown\\HtmlConverterInterface' => __DIR__ . '/..' . '/league/html-to-markdown/src/HtmlConverterInterface.php',
+        'League\\MimeTypeDetection\\EmptyExtensionToMimeTypeMap' => __DIR__ . '/..' . '/league/mime-type-detection/src/EmptyExtensionToMimeTypeMap.php',
+        'League\\MimeTypeDetection\\ExtensionMimeTypeDetector' => __DIR__ . '/..' . '/league/mime-type-detection/src/ExtensionMimeTypeDetector.php',
+        'League\\MimeTypeDetection\\ExtensionToMimeTypeMap' => __DIR__ . '/..' . '/league/mime-type-detection/src/ExtensionToMimeTypeMap.php',
+        'League\\MimeTypeDetection\\FinfoMimeTypeDetector' => __DIR__ . '/..' . '/league/mime-type-detection/src/FinfoMimeTypeDetector.php',
+        'League\\MimeTypeDetection\\GeneratedExtensionToMimeTypeMap' => __DIR__ . '/..' . '/league/mime-type-detection/src/GeneratedExtensionToMimeTypeMap.php',
+        'League\\MimeTypeDetection\\MimeTypeDetector' => __DIR__ . '/..' . '/league/mime-type-detection/src/MimeTypeDetector.php',
         'League\\OAuth2\\Client\\Exception\\HostedDomainException' => __DIR__ . '/..' . '/league/oauth2-google/src/Exception/HostedDomainException.php',
         'League\\OAuth2\\Client\\Grant\\AbstractGrant' => __DIR__ . '/..' . '/league/oauth2-client/src/Grant/AbstractGrant.php',
         'League\\OAuth2\\Client\\Grant\\AuthorizationCode' => __DIR__ . '/..' . '/league/oauth2-client/src/Grant/AuthorizationCode.php',
@@ -1572,6 +1583,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Lib\\DReport' => __DIR__ . '/../..' . '/Zotlabs/Lib/DReport.php',
         'Zotlabs\\Lib\\Enotify' => __DIR__ . '/../..' . '/Zotlabs/Lib/Enotify.php',
         'Zotlabs\\Lib\\ExtendedZip' => __DIR__ . '/../..' . '/Zotlabs/Lib/ExtendedZip.php',
+        'Zotlabs\\Lib\\Hashpath' => __DIR__ . '/../..' . '/Zotlabs/Lib/Hashpath.php',
         'Zotlabs\\Lib\\IConfig' => __DIR__ . '/../..' . '/Zotlabs/Lib/IConfig.php',
         'Zotlabs\\Lib\\Img_cache' => __DIR__ . '/../..' . '/Zotlabs/Lib/Img_cache.php',
         'Zotlabs\\Lib\\Img_filesize' => __DIR__ . '/../..' . '/Zotlabs/Lib/Img_filesize.php',
@@ -1758,6 +1770,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Module\\Safe' => __DIR__ . '/../..' . '/Zotlabs/Module/Safe.php',
         'Zotlabs\\Module\\Search' => __DIR__ . '/../..' . '/Zotlabs/Module/Search.php',
         'Zotlabs\\Module\\Search_ac' => __DIR__ . '/../..' . '/Zotlabs/Module/Search_ac.php',
+        'Zotlabs\\Module\\Secrets' => __DIR__ . '/../..' . '/Zotlabs/Module/Secrets.php',
         'Zotlabs\\Module\\Service_limits' => __DIR__ . '/../..' . '/Zotlabs/Module/Service_limits.php',
         'Zotlabs\\Module\\Settings' => __DIR__ . '/../..' . '/Zotlabs/Module/Settings.php',
         'Zotlabs\\Module\\Settings\\Account' => __DIR__ . '/../..' . '/Zotlabs/Module/Settings/Account.php',
