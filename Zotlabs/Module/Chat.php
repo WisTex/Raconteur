@@ -205,7 +205,7 @@ class Chat extends Controller {
 				'$drop' => t('Delete Room'),
 				'$away' => t('I am away right now'),
 				'$online' => t('I am online'),
-				'$feature_encrypt' => ((feature_enabled(local_channel(),'content_encrypt')) ? true : false),
+				'$feature_encrypt' => ((Apps::system_app_installed(local_channel(),'Secrets')) ? true : false),
 				'$cipher' => $cipher,
 				'$linkurl' => t('Please enter a link URL:'),
 				'$encrypt' => t('Encrypt text'),
