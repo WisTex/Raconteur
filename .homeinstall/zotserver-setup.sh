@@ -314,12 +314,18 @@ function create_zotserver_db {
         die "zotserver_db_pass not set in $configfile"
     fi
     systemctl restart mariadb
-    Q1="CREATE DATABASE IF NOT EXISTS $zotserver_db_name;"
-    Q2="GRANT USAGE ON *.* TO $zotserver_db_user@localhost IDENTIFIED BY '$zotserver_db_pass';"
-    Q3="GRANT ALL PRIVILEGES ON $zotserver_db_name.* to $zotserver_db_user@localhost identified by '$zotserver_db_pass';"
-    Q4="FLUSH PRIVILEGES;"
-    SQL="${Q1}${Q2}${Q3}${Q4}"     
-    mysql -uroot -p$phpmyadminpass -e "$SQL"
+    # Make sure we don't write over an already existing database
+    if [ -n $(mysql -h localhost -u root -p$mysqlpass -e "SHOW DATABASES;" | grep $zotserver_db_name) ]
+    then
+        die "Can't write over an already existing database!"
+    else
+        Q1="CREATE DATABASE IF NOT EXISTS $zotserver_db_name;"
+        Q2="GRANT USAGE ON *.* TO $zotserver_db_user@localhost IDENTIFIED BY '$zotserver_db_pass';"
+        Q3="GRANT ALL PRIVILEGES ON $zotserver_db_name.* to $zotserver_db_user@localhost identified by '$zotserver_db_pass';"
+        Q4="FLUSH PRIVILEGES;"
+        SQL="${Q1}${Q2}${Q3}${Q4}"
+        mysql -uroot -p$mysqlpass -e "$SQL"
+    fi
 }
 
 function run_freedns {
@@ -332,7 +338,7 @@ function run_freedns {
         then
             die "You can not use freeDNS AND selfHOST for dynamic IP updates ('freedns_key' AND 'selfhost_user' set in $configfile)"
         fi
-        wget --no-check-certificate -O - http://freedns.afraid.org/dynamic/update.php?$freedns_key       
+        wget --no-check-certificate -O - http://freedns.afraid.org/dynamic/update.php?$freedns_key
     fi
 }
 
