@@ -315,16 +315,16 @@ function create_zotserver_db {
     fi
     systemctl restart mariadb
     # Make sure we don't write over an already existing database
-    if [ -n $(mysql -h localhost -u root -p$mysqlpass -e "SHOW DATABASES;" | grep $zotserver_db_name) ]
+    if [ -z $(mysql -h localhost -u root -p$mysqlpass -e "SHOW DATABASES;" | grep $zotserver_db_name) ]
     then
-        die "Can't write over an already existing database!"
-    else
         Q1="CREATE DATABASE IF NOT EXISTS $zotserver_db_name;"
         Q2="GRANT USAGE ON *.* TO $zotserver_db_user@localhost IDENTIFIED BY '$zotserver_db_pass';"
         Q3="GRANT ALL PRIVILEGES ON $zotserver_db_name.* to $zotserver_db_user@localhost identified by '$zotserver_db_pass';"
         Q4="FLUSH PRIVILEGES;"
         SQL="${Q1}${Q2}${Q3}${Q4}"
         mysql -uroot -p$mysqlpass -e "$SQL"
+    else
+        die "Can't write over an already existing database!"
     fi
 }
 
@@ -629,6 +629,7 @@ export PATH=/bin:/usr/bin:/sbin:/usr/sbin
 check_sanity
 
 zotserver_name
+print_info "We're installing a $zotserver instance"
 install_path="$(dirname "$(pwd)")"
 install_folder="$(basename $install_path)"
 
