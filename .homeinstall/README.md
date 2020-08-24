@@ -16,7 +16,7 @@ Hardware
 
 Software
 
-+ Fresh installation of Debian 10 (Stretch)
++ Fresh installation of Debian 10 (Buster)
 + Router with open ports 80 and 443 for your web server
 
 You can of course run the script on a VPS or any distant server as long as the above sotfware requirements are satisfied.  
