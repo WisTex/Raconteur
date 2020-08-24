@@ -23,7 +23,7 @@
 # What does this script do basically?
 # -----------------------------------
 # 
-# This file automates the installation of zotserver under Debian Linux
+# This file automates the installation of a Zot hub/instance under Debian Linux
 # - install
 #        * apache webserver, 
 #        * php,  
@@ -31,28 +31,30 @@
 #        * adminer,  
 #        * git to download and update addons
 # - configure cron
-#        * "Run.php" for regular background prozesses of zotserver
+#        * "Run.php" for regular background processes of your Zot hub/instance
 #        * "apt-get update" and "apt-get dist-upgrade" and "apt-get autoremove" to keep linux up-to-date
 #        * run command to keep the IP up-to-date > DynDNS provided by selfHOST.de or freedns.afraid.org
-#        * backup zotserver's database and files (rsync)
+#        * backup your server's database and files (rsync)
 # - run letsencrypt to create, register and use a certifacte for https
 # 
 # 
 # Discussion
 # ----------
 # 
-# Security - password  is the same for mysql-server, phpmyadmin and zotserver db
+# Security - password  is the same for mysql-server, phpmyadmin and your hub/instance db
 # - The script runs into installation errors for phpmyadmin if it uses
 #   different passwords. For the sake of simplicity one single password.
 # 
 # How to restore from backup
 # --------------------------
 #
+# (Some explanations here would certainly be useful)
+#
 # Daily backup
-# - - - - - - 
+# ------------
 # 
 # The installation
-# - writes a script (hubzilla-daily.sh, zap-daily.sh or misty-daily.sh) in /var/www/
+# - writes a shell script in /var/www/
 # - creates a daily cron that runs this script
 #
 # The script makes a (daily) backup of all relevant files
@@ -60,8 +62,14 @@
 # - /var/www/ > hubzilla/zap/misty from github
 # - /etc/letsencrypt/ > certificates
 # 
-# Also, it  writes the backup to an external disk compatible to LUKS+ext4 (see zotserver-config.txt)
-# 
+# The backup will be written on an external disk compatible to LUKS+ext4 (see zotserver-config.txt)
+#
+# How to restore from backup
+# --------------------------
+#
+# (Some explanations here would certainly be useful)
+#
+#
 # Credits
 # -------
 #
@@ -270,7 +278,7 @@ DROP DATABASE IF EXISTS test;
 DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
 FLUSH PRIVILEGES;
 _EOF_
-    fi    
+    fi
 }
 
 function install_adminer {
@@ -314,7 +322,7 @@ function create_zotserver_db {
         die "zotserver_db_pass not set in $configfile"
     fi
     systemctl restart mariadb
-    # Make sure we don't write over an already existing database
+    # Make sure we don't write over an already existing database if we install more than one Zot hub/instance
     if [ -z $(mysql -h localhost -u root -p$mysqlpass -e "SHOW DATABASES;" | grep $zotserver_db_name) ]
     then
         Q1="CREATE DATABASE IF NOT EXISTS $zotserver_db_name;"
