@@ -23,10 +23,12 @@ head_add_js('/library/readmore.js/readmore.js');
 head_add_js('/library/sticky-kit/sticky-kit.min.js');
 head_add_js('/library/jgrowl/jquery.jgrowl.min.js');
 
+head_add_js('/library/sjcl/sjcl.js');
+
 head_add_js('acl.js');
 head_add_js('webtoolkit.base64.js');
 head_add_js('main.js');
-
+head_add_js('crypto.js');
 head_add_js('/library/jRange/jquery.range.js');
 head_add_js('/library/colorbox/jquery.colorbox-min.js');
 

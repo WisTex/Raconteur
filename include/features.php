@@ -300,14 +300,14 @@ function get_features($filtered = true, $level = (-1)) {
 //				feature_level('channel_sources',3),
 //			],
 			
-//			[
-//				'content_encrypt', 
-//				t('Even More Encryption'),          
-//				t('Allow optional encryption of content end-to-end with a shared secret key'),
-//				false,
-//				get_config('feature_lock','content_encrypt'),
-//				feature_level('content_encrypt',3),
-//			],
+			[
+				'content_encrypt', 
+				t('Browser Encryption'),          
+				t('Provide optional browser-to-browser encryption of content with a shared secret key'),
+				true,
+				get_config('feature_lock','content_encrypt'),
+				feature_level('content_encrypt',3),
+			],
 			
 //			[
 //				'consensus_tools', 

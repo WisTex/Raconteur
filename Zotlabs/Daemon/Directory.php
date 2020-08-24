@@ -18,7 +18,8 @@ class Directory {
 
 		$force = false;
 		$pushall = true;
-
+		$pushed = false;
+		
 		if($argc > 2) {
 			if($argv[2] === 'force')
 				$force = true;
@@ -37,25 +38,22 @@ class Directory {
 		if(! $channel)
 			return;
 
-		if($dirmode != DIRECTORY_MODE_NORMAL) {
+		// update the local directory - was optional, but now done regardless
+		
+		Libzotdir::local_dir_update($argv[1],$force);
 
-			// this is an in-memory update and we don't need to send a network packet.
+		q("update channel set channel_dirdate = '%s' where channel_id = %d",
+			dbesc(datetime_convert()),
+			intval($channel['channel_id'])
+		);
 
-			Libzotdir::local_dir_update($argv[1],$force);
-
-			q("update channel set channel_dirdate = '%s' where channel_id = %d",
-				dbesc(datetime_convert()),
-				intval($channel['channel_id'])
-			);
-
-			// Now update all the connections
-			if($pushall) 
-				Run::Summon(array('Notifier','refresh_all',$channel['channel_id']));
-
-			return;
+		// Now update all the connections
+		if($pushall) {
+			Run::Summon(array('Notifier','refresh_all',$channel['channel_id']));
+			$pushed = true;
 		}
 
-		// otherwise send the changes upstream
+		// if applicable send the changes upstream
 
 		$directory = Libzotdir::find_upstream_directory($dirmode);
 
@@ -98,7 +96,7 @@ class Directory {
 		}
 
 		// Now update all the connections
-		if($pushall)
+		if($pushall && (! $pushed))
 			Run::Summon(array('Notifier','refresh_all',$channel['channel_id']));
 
 	}

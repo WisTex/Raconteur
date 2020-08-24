@@ -35,7 +35,6 @@ class Ping extends Controller {
 		$result['home'] = 0;
 		$result['stream'] = 0;
 		$result['intros'] = 0;
-		$result['mail'] = 0;
 		$result['register'] = 0;
 		$result['moderate'] = 0;
 		$result['events'] = 0;
@@ -244,11 +243,6 @@ class Ping extends Controller {
 						intval(local_channel())
 					);
 					break;
-				case 'mail':
-					$r = q("UPDATE mail SET mail_seen = 1 WHERE channel_id = %d AND mail_seen = 0",
-						intval(local_channel())
-					);
-					break;
 				case 'all_events':
 					$r = q("UPDATE event SET dismissed = 1 WHERE uid = %d AND dismissed = 0 AND dtstart < '%s' AND dtstart > '%s' ",
 						intval(local_channel()),
@@ -326,34 +320,6 @@ class Ping extends Controller {
 			}
 
 			json_return_and_die( [ 'notify' => $notifs ] );
-		}
-
-		if (argc() > 1 && argv(1) === 'mail') {
-			$channel = App::get_channel();
-			$t = q("select mail.*, xchan.* from mail left join xchan on xchan_hash = from_xchan
-				where channel_id = %d and mail_seen = 0 and mail_deleted = 0
-				and from_xchan != '%s' order by created desc limit 50",
-				intval(local_channel()),
-				dbesc($channel['channel_hash'])
-			);
-
-			if ($t) {
-				foreach ($t as $zz) {
-					$notifs[] = array(
-						'notify_link' => z_root() . '/mail/' . $zz['id'],
-						'name' => $zz['xchan_name'],
-						'addr' => $zz['xchan_addr'],
-						'url' => $zz['xchan_url'],
-						'photo' => $zz['xchan_photo_s'],
-						'when' => relative_date($zz['created']),
-						'hclass' => (intval($zz['mail_seen']) ? 'notify-seen' : 'notify-unseen'),
-						'message' => t('sent you a private message'),
-					);
-				}
-			}
-
-			json_return_and_die( [ 'notify' => $notifs ] );
-
 		}
 
 		if (argc() > 1 && (argv(1) === 'stream' || argv(1) === 'home')) {
@@ -610,16 +576,6 @@ class Ping extends Controller {
 
 
 		$channel = App::get_channel();
-
-		if ($vnotify & VNOTIFY_MAIL) {
-			$mails = q("SELECT count(id) as total from mail
-				WHERE channel_id = %d AND mail_seen = 0 and from_xchan != '%s' ",
-				intval(local_channel()),
-				dbesc($channel['channel_hash'])
-			);
-			if ($mails)
-				$result['mail'] = intval($mails[0]['total']);
-		}
 
 		if ($vnotify & VNOTIFY_REGISTER) {
 			if (App::$config['system']['register_policy'] == REGISTER_APPROVE && is_site_admin()) {

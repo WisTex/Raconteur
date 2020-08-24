@@ -3,6 +3,7 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Activity;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');

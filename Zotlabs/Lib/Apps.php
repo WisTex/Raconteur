@@ -335,6 +335,7 @@ class Apps {
 			'Channel Manager' => t('Channel Manager'), 
 			'Notes' => t('Notes'),
 			'Stream' => t('Stream'), 
+			'Secrets' => t('Secrets'),
 			'Settings' => t('Settings'),
 			'Files' => t('Files'),
 			'Webpages' => t('Webpages'),

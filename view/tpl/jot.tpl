@@ -152,7 +152,7 @@
 					</button>
 				{{/if}}
 				{{if $feature_encrypt}}
-					<button id="profile-encrypt-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$encrypt}}" onclick="red_encrypt('{{$cipher}}','#profile-jot-text',$('#profile-jot-text').val());return false;">
+					<button id="profile-encrypt-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$encrypt}}" onclick="hz_encrypt('{{$cipher}}','#profile-jot-text');return false;">
 						<i id="profile-encrypt" class="fa fa-key jot-icons"></i>
 					</button>
 				{{/if}}
@@ -197,7 +197,7 @@
 						<a class="dropdown-item" href="#" onclick="jotGetPubDate();return false;"><i class="fa fa-clock-o"></i>&nbsp;{{$future_txt}}</a>
 						{{/if}}
 						{{if $feature_encrypt}}
-						<a class="dropdown-item" href="#" onclick="red_encrypt('{{$cipher}}','#profile-jot-text',$('#profile-jot-text').val());return false;"><i class="fa fa-key"></i>&nbsp;{{$encrypt}}</a>
+						<a class="dropdown-item" href="#" onclick="hz_encrypt('{{$cipher}}','#profile-jot-text',$('#profile-jot-text').val());return false;"><i class="fa fa-key"></i>&nbsp;{{$encrypt}}</a>
 						{{/if}}
 						<a class="dropdown-item" href="#" onclick="initPoll(); return false"><i id="profile-poll" class="fa fa-bar-chart jot-icons"></i>&nbsp;{{$poll}}</a>
 						{{if $feature_nocomment}}

@@ -70,15 +70,8 @@ class Channel extends Controller {
 		head_add_link( [ 
 			'rel'   => 'alternate', 
 			'type'  => 'application/atom+xml',
-			'title' => t('Posts and comments'),
-			'href'  => z_root() . '/feed/' . $which
-		]);
-
-		head_add_link( [ 
-			'rel'   => 'alternate', 
-			'type'  => 'application/atom+xml',
 			'title' => t('Only posts'),
-			'href'  => z_root() . '/feed/' . $which . '?f=&top=1'
+			'href'  => z_root() . '/feed/' . $which 
 		]);
 
 		

@@ -159,7 +159,7 @@
 								{{include file="field_intcheckbox.tpl" field=$notify3}}
 								{{include file="field_intcheckbox.tpl" field=$notify4}}
 								{{*include file="field_intcheckbox.tpl" field=$notify9*}}
-								{{*include file="field_intcheckbox.tpl" field=$notify5*}}
+								{{include file="field_intcheckbox.tpl" field=$notify5}}
 								{{*include file="field_intcheckbox.tpl" field=$notify6*}}
 								{{include file="field_intcheckbox.tpl" field=$notify7}}
 								{{*include file="field_intcheckbox.tpl" field=$notify8*}}
@@ -168,7 +168,7 @@
 							<div class="group">
 								{{include file="field_intcheckbox.tpl" field=$vnotify1}}
 								{{include file="field_intcheckbox.tpl" field=$vnotify2}}
-								{{*include file="field_intcheckbox.tpl" field=$vnotify3*}}
+								{{include file="field_intcheckbox.tpl" field=$vnotify3}}
 								{{include file="field_intcheckbox.tpl" field=$vnotify4}}
 								{{include file="field_intcheckbox.tpl" field=$vnotify5}}
 								{{include file="field_intcheckbox.tpl" field=$vnotify6}}

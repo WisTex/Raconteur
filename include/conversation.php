@@ -1360,7 +1360,7 @@ function z_status_editor($a, $x, $popup = false) {
 
 	$cipher = get_pconfig($x['profile_uid'], 'system', 'default_cipher');
 	if(! $cipher)
-		$cipher = 'aes256';
+		$cipher = 'AES-128-CCM';
 
 	if(array_key_exists('catsenabled',$x))
 		$catsenabled = $x['catsenabled'];
@@ -1462,7 +1462,7 @@ function z_status_editor($a, $x, $popup = false) {
 		'$defpublish' => $defpublish,
 		'$feature_future' => $feature_future,
 		'$future_txt' => t('Set publish date'),
-		'$feature_encrypt' => false, // ((feature_enabled($x['profile_uid'], 'content_encrypt') && (! $webpage)) ? true : false),
+		'$feature_encrypt' => ((Apps::system_app_installed($x['profile_uid'],'Secrets')) ? true : false),
 		'$encrypt' => t('Encrypt text'),
 		'$cipher' => $cipher,
 		'$expiryModalOK' => t('OK'),
@@ -1523,7 +1523,7 @@ function get_item_children($arr, $parent) {
 	}
 
 	$thread_allow = get_config('system','thread_allow',true);
-	$thread_max   = intval(get_config('system','thread_maxlevel',10));
+	$thread_max   = intval(get_config('system','thread_maxlevel',20));
 	
 	foreach ($arr as $item) {
 		if (intval($item['id']) !== intval($item['parent'])) {

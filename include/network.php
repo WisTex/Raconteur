@@ -56,6 +56,7 @@ function get_capath() {
 function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
 
 	$ret = array('return_code' => 0, 'success' => false, 'header' => "", 'body' => "");
+	$passthru = false;
 
 	$ch = @curl_init($url);
 	if(($redirects > 8) || (! $ch))
@@ -81,6 +82,8 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
 	if(x($opts,'filep')) {
 		@curl_setopt($ch, CURLOPT_FILE, $opts['filep']);
 		@curl_setopt($ch, CURLOPT_HEADER, false);
+		@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		$passthru = true;
 	}
 
 	if(x($opts,'upload'))
@@ -173,6 +176,19 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
 	//logger('fetch_url:' . $http_code . ' data: ' . $s);
 	$header = '';
 
+	// For file redirects, set curl to follow location (indicated by $passthru).
+	// Then just return success or failure.
+	
+	if ($passthru) {
+		if ($http_code >= 200 && $http_code < 300) {
+			$ret['success'] = true;
+		}
+		$ret['return_code'] = $http_code;
+		@curl_close($ch);					
+		return $ret;
+	}
+		
+
 	// Pull out multiple headers, e.g. proxy and continuation headers
 	// allow for HTTP/2.x without fixing code
 
@@ -186,11 +202,17 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
 		$matches = array();
 		preg_match('/(Location:|URI:)(.*?)\n/i', $header, $matches);
 		$newurl = trim(array_pop($matches));
-		if(strpos($newurl,'/') === 0)
-			$newurl = $url . $newurl;
-		$url_parsed = @parse_url($newurl);
-		if (isset($url_parsed)) {
-			@curl_close($ch);
+		if(strpos($newurl,'/') === 0) {
+			// We received a redirect to a relative path.
+			// Find the base component of the original url and re-assemble it with the new location
+			$base = @parse_url($url);
+			if ($base) {
+				unset($base['path']); unset($base['query']); unset($base['fragment']);
+				$newurl = unparse_url($base) . $newurl;
+			}
+		}
+		if ($newurl) {
+			@curl_close($ch);			
 			return z_fetch_url($newurl,$binary,++$redirects,$opts);
 		}
 	}
@@ -382,14 +404,21 @@ function z_post_url($url, $params, $redirects = 0, $opts = array()) {
 		$matches = array();
 		preg_match('/(Location:|URI:)(.*?)\n/', $header, $matches);
 		$newurl = trim(array_pop($matches));
-		if(strpos($newurl,'/') === 0)
-			$newurl = $url . $newurl;
-		$url_parsed = @parse_url($newurl);
-		if (isset($url_parsed)) {
+		if(strpos($newurl,'/') === 0) {
+			// We received a redirect to a relative path.
+			// Find the base component of the original url and re-assemble it with the new location
+			$base = @parse_url($url);
+			if ($base) {
+				unset($base['path']); unset($base['query']); unset($base['fragment']);
+				$newurl = unparse_url($base) . $newurl;
+			}
+		}
+		if ($newurl) {
 			curl_close($ch);
 			if($http_code == 303) {
 				return z_fetch_url($newurl,false,++$redirects,$opts);
-			} else {
+			}
+			else {
 				return z_post_url($newurl,$params,++$redirects,$opts);
 			}
 		}
@@ -461,6 +490,29 @@ function http_status_exit($val, $msg = '') {
 	http_status($val, $msg);
 	killme();
 }
+
+/*
+ *
+ * Takes the output of parse_url and builds a URL from it
+ *
+ */
+ 
+function unparse_url($parsed_url) {
+	$scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
+	$host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
+	$port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
+	$user     = isset($parsed_url['user']) ? $parsed_url['user'] : '';
+	$pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass']  : '';
+	$pass     = ($user || $pass) ? "$pass@" : '';
+	$path     = isset($parsed_url['path']) ? $parsed_url['path'] : '';
+	$query    = isset($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
+	$fragment = isset($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
+  	return "$scheme$user$pass$host$port$path$query$fragment";
+} 
+
+
+
+
 
 /**
  * @brief Convert an XML document to a normalised, case-corrected array used by webfinger.

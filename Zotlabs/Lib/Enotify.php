@@ -133,9 +133,10 @@ class Enotify {
 		$preamble = sprintf( t('%1$s sent you a new private message at %2$s.'), $sender['xchan_name'],$sitename);
 		$epreamble = sprintf( t('%1$s sent you %2$s.'),'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]', '[zrl=$itemlink]' . t('a private message') . '[/zrl]');
 		$sitelink = t('Please visit %s to view and/or reply to your private messages.');
-		$tsitelink = sprintf( $sitelink, $siteurl . '/mail/' . $params['item']['id'] );
-		$hsitelink = sprintf( $sitelink, '<a href="' . $siteurl . '/mail/' . $params['item']['id'] . '">' . $sitename . '</a>');
-		$itemlink = $siteurl . '/mail/' . $params['item']['id'];
+
+		$tsitelink = sprintf( $sitelink, $siteurl . '/display/' . gen_link_id($params['item']['mid']) );
+		$hsitelink = sprintf( $sitelink, '<a href="' . $siteurl . '/display/' . gen_link_id($params['item']['mid']) . '">' . $sitename . '</a>');
+		$itemlink = z_root() . '/display/' . gen_link_id($params['item']['mid']);
 	}
 
 	if ($params['type'] == NOTIFY_COMMENT) {
@@ -544,7 +545,7 @@ class Enotify {
 	// (probably would be better that way)
 
 	if (!$always_show_in_notices) {
-		if (($params['type'] == NOTIFY_WALL) || ($params['type'] == NOTIFY_MAIL) || ($params['type'] == NOTIFY_INTRO)) {
+		if (($params['type'] == NOTIFY_WALL) || ($params['type'] == NOTIFY_INTRO)) {
 			$seen = 1;
 		}
 		// set back to unseen for moderated wall posts
@@ -881,7 +882,10 @@ class Enotify {
 				$itemem_text = sprintf( t('shared %s\'s post'), $item['owner']['xchan_name']);
 			}
 		}
-
+		if ($item['item_private'] == 2) {
+			$itemem_text = t('sent a direct message');
+		}
+		
 		$edit = false;
 
 		if($item['edited'] > $item['created']) {

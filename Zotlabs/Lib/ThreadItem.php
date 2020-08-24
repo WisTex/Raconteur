@@ -513,7 +513,7 @@ class ThreadItem {
 			'wait' => t('Please wait'),
 			'submid' => str_replace(['+','='], ['',''], base64_encode($item['mid'])),
 			'thread_level' => $thread_level,
-			'thread_max' => intval(get_config('system','thread_maxlevel',10)) + 1
+			'thread_max' => intval(get_config('system','thread_maxlevel',20)) + 1
 		);
 
 		$arr = array('item' => $item, 'output' => $tmp_item);
@@ -944,7 +944,7 @@ class ThreadItem {
 			'$reset' => t('Reset'),
 			'$indent' => $indent,
 			'$can_upload' => (perm_is_allowed($conv->get_profile_owner(),get_observer_hash(),'write_storage') && $conv->is_uploadable()),
-			'$feature_encrypt' => ((feature_enabled($conv->get_profile_owner(),'content_encrypt')) ? true : false),
+			'$feature_encrypt' => ((Apps::system_app_installed($conv->get_profile_owner(),'Secrets')) ? true : false),
 			'$encrypt' => t('Encrypt text'),
 			'$cipher' => $conv->get_cipher(),
 			'$sourceapp' => App::$sourcename,
