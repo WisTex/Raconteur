@@ -651,7 +651,10 @@ install_curl
 install_wget
 install_sendmail
 install_apache
-add_vhost
+if [ "$install_path" != "/var/www/html" ]
+then
+    add_vhost
+fi
 install_imagemagick
 install_php
 install_mysql
