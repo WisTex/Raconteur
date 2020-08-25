@@ -4,6 +4,7 @@ use Zotlabs\Photo\PhotoDriver;
 use Zotlabs\Photo\PhotoGd;
 use Zotlabs\Photo\PhotoImagick;
 use Zotlabs\Lib\Img_cache;
+use Zotlabs\Lib\Hashpath;
 
 /**
  * @brief Return a PhotoDriver object.
@@ -312,18 +313,14 @@ function import_xchan_photo($photo, $xchan, $thing = false, $force = false) {
 }
 
 
-function import_remote_xchan_photo($photo, $xchan) {
+function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 
 //	logger('Updating channel photo from ' . $photo . ' for ' . $xchan, LOGGER_DEBUG);
 
 	$failed  = true;
-	$hash    = hash('sha256', $photo);
-	$slug    = substr($hash,0,2);
-	$slug2   = substr($hash,2,2);
-	$path    = 'cache/xphoto/' . $slug . '/' . $slug2;
-	$outfile =  $path . '/' . $hash;
 
-	os_mkdir($path, STORAGE_DEFAULT_PERMISSIONS, true);
+	$path =	Hashpath::path($xchan,'cache/xp',2);
+
 	$modified = ((file_exists($outfile)) ? @filemtime($outfile) : 0);
 
 	if (strpos($photo,z_root() === 0)) {
@@ -347,9 +344,9 @@ function import_remote_xchan_photo($photo, $xchan) {
 			}
 	}
 	elseif ($result['return_code'] == 304) {
-		$photo = z_root() . '/photo/' . $hash . '-4';
-		$thumb = z_root() . '/photo/' . $hash . '-5';
-		$micro = z_root() . '/photo/' . $hash . '-6';
+		$photo = z_root() . '/' . $path . '-4' . (($thing) ? '.obj' : EMPTY_STR);
+		$thumb = z_root() . '/' . $path . '-5' . (($thing) ? '.obj' : EMPTY_STR);
+		$micro = z_root() . '/' . $path . '-6' . (($thing) ? '.obj' : EMPTY_STR);
 		$failed = false;
 	}
 
@@ -389,25 +386,28 @@ function import_remote_xchan_photo($photo, $xchan) {
 				'edited'      => $modified,
 			];
 
-			$r = $img->save($p);
+			$savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
+			$photo = z_root() . '/' . $savepath;			
+			$r = $img->saveImage($savepath);
 			if ($r === false) {
 				$failed = true;
 			}
 			$img->scaleImage(80);
 			$p['imgscale'] = 5;
-			$r = $img->save($p);
+			$savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
+			$thumb = z_root() . '/' . $savepath;			
+			$r = $img->saveImage($savepath);
 			if ($r === false) {
 				$failed = true;
 			}
 			$img->scaleImage(48);
 			$p['imgscale'] = 6;
-			$r = $img->save($p);
+			$savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
+			$micro = z_root() . '/' . $savepath;			
+			$r = $img->saveImage($savepath);
 			if ($r === false) {
 				$failed = true;
 			}
-			$photo = z_root() . '/photo/' . $hash . '-4';
-			$thumb = z_root() . '/photo/' . $hash . '-5';
-			$micro = z_root() . '/photo/' . $hash . '-6';
 		}
 		else {
 			logger('Invalid image from ' . $photo);
