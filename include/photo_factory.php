@@ -142,19 +142,35 @@ function guess_image_type($filename, $headers = '') {
 function delete_thing_photo($url, $ob_hash) {
 
 	$hash = basename($url);
-	$hash = substr($hash, 0, strpos($hash, '-'));
+	$dbhash = substr($hash, 0, strpos($hash, '-'));
 
 	// hashes should be 32 bytes.
 
-	if ((! $ob_hash) || (strlen($hash) < 16)) {
+	if ((! $ob_hash) || (strlen($dbhash) < 16)) {
 		return;
 	}
 
-	q("delete from photo where xchan = '%s' and photo_usage = %d and resource_id = '%s'",
-		dbesc($ob_hash),
-		intval(PHOTO_THING),
-		dbesc($hash)
-	);
+	if (strpos($url,'/xp/') !== false && strpos($url,'.obj') !== false) {
+		$xppath = 'cache/xp/' . substr($hash,0,2) . '/' . substr($hash,2,2) . '/' . $hash;
+		if (file_exists($xppath)) {
+			unlink($xppath);
+		}
+		$xppath = str_replace('-4','-5',$xppath);
+		if (file_exists($xppath)) {
+			unlink($xppath);
+		}
+		$xppath = str_replace('-5','-6',$xppath);
+		if (file_exists($xppath)) {
+			unlink($xppath);
+		}		
+	}
+	else {
+		q("delete from photo where xchan = '%s' and photo_usage = %d and resource_id = '%s'",
+			dbesc($ob_hash),
+			intval(PHOTO_THING),
+			dbesc($dbhash)
+		);
+	}
 }
 
 /**
@@ -322,7 +338,9 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 
 	$modified = ((file_exists($outfile)) ? @filemtime($outfile) : 0);
 
-	if (strpos($photo,z_root()) === 0) {
+	// Maybe it's already a cached xchan photo
+	
+	if (strpos($photo, z_root() . '/xp/') === 0) {
 		return false;
 	}
 	
