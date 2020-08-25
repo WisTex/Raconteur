@@ -1470,8 +1470,8 @@ function attach_delete($channel_id, $resource, $is_photo = 0) {
 
 	if(! $r) {
 		attach_drop_photo($channel_id,$resource);
-                $arr = ['channel_id' => $channel_id, 'resource' => $resource, 'is_photo'=>$is_photo];
-                call_hooks("attach_delete",$arr);
+		$arr = ['channel_id' => $channel_id, 'resource' => $resource, 'is_photo'=>$is_photo];
+		call_hooks("attach_delete",$arr);
 		return;
 	}
 
@@ -1548,6 +1548,19 @@ function attach_drop_photo($channel_id,$resource) {
 	if($x) {
 		drop_item($x[0]['id'],false,(($x[0]['item_hidden']) ? DROPITEM_NORMAL : DROPITEM_PHASE1),true);
 	}
+	$r = q("select content from photo where uid = %d and resource_id = '%s' and os_storage = 1",
+		intval($channel_id),
+		dbesc($resource)
+	);
+	if ($r) {
+		foreach ($r as $rv) {
+			$p = dbunescbin($rv['content']);
+			if ($p && file_exists($p)) {
+				unlink($p);
+			}
+		}
+	}
+
 	q("DELETE FROM photo WHERE uid = %d AND resource_id = '%s'",
 		intval($channel_id),
 		dbesc($resource)
