@@ -190,9 +190,6 @@ function import_xchan_photo($photo, $xchan, $thing = false, $force = false) {
 	$hash       = photo_new_resource();
 	$os_storage = false;
 
-//	$cache_path = Img_cache::get_filename($xchan,'cache/xphoto');
-
-
 	if (! $thing) {
 		$r = q("select resource_id, edited, mimetype from photo where xchan = '%s' and photo_usage = %d and imgscale = 4 limit 1",
 			dbesc($xchan),
@@ -319,11 +316,13 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 
 	$failed  = true;
 
-	$path =	Hashpath::path($xchan,'cache/xp',2);
+	$path =	Hashpath::path((($thing) ? $photo . $xchan : $xchan),'cache/xp',2);
+	$hash = basename($path);
+
 
 	$modified = ((file_exists($outfile)) ? @filemtime($outfile) : 0);
 
-	if (strpos($photo,z_root() === 0)) {
+	if (strpos($photo,z_root()) === 0) {
 		return false;
 	}
 	
@@ -339,20 +338,20 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 	if ($result['success']) {
 		$type = guess_image_type($photo, $result['header']);
 		
-			if ($type) {
-				$failed = false;
-			}
+		if ($type) {
+			$failed = false;
+		}
 	}
 	elseif ($result['return_code'] == 304) {
-		$photo = z_root() . '/' . $path . '-4' . (($thing) ? '.obj' : EMPTY_STR);
-		$thumb = z_root() . '/' . $path . '-5' . (($thing) ? '.obj' : EMPTY_STR);
-		$micro = z_root() . '/' . $path . '-6' . (($thing) ? '.obj' : EMPTY_STR);
+		$photo = z_root() . '/xp/' . $hash . '-4' . (($thing) ? '.obj' : EMPTY_STR);
+		$thumb = z_root() . '/xp/' . $hash . '-5' . (($thing) ? '.obj' : EMPTY_STR);
+		$micro = z_root() . '/xp/' . $hash . '-6' . (($thing) ? '.obj' : EMPTY_STR);
 		$failed = false;
 	}
 
 
 	if (! $failed && $result['return_code'] != 304) {
-		$img = photo_factory($img_str, $type);
+		$img = photo_factory($result['body'], $type);
 		if ($img->is_valid()) {
 			$width = $img->getWidth();
 			$height = $img->getHeight();
@@ -387,7 +386,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 			];
 
 			$savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
-			$photo = z_root() . '/' . $savepath;			
+			$photo = z_root() . '/xp/' . $hash . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
 			$r = $img->saveImage($savepath);
 			if ($r === false) {
 				$failed = true;
@@ -395,7 +394,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 			$img->scaleImage(80);
 			$p['imgscale'] = 5;
 			$savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
-			$thumb = z_root() . '/' . $savepath;			
+			$thumb = z_root() . '/xp/' . $hash . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
 			$r = $img->saveImage($savepath);
 			if ($r === false) {
 				$failed = true;
@@ -403,7 +402,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 			$img->scaleImage(48);
 			$p['imgscale'] = 6;
 			$savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
-			$micro = z_root() . '/' . $savepath;			
+			$micro = z_root() . '/xp/' . $hash . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);			
 			$r = $img->saveImage($savepath);
 			if ($r === false) {
 				$failed = true;

@@ -263,22 +263,24 @@ class Import extends Controller {
 					);
 				}
 				else {
-					$photos = import_xchan_photo($xchan['xchan_photo_l'],$xchan['xchan_hash']);
-					if ($photos[4]) {
-						$photodate = NULL_DATE;
-					}
-					else {
-						$photodate = $xchan['xchan_photo_date'];
-					}
+					$photos = import_remote_xchan_photo($xchan['xchan_photo_l'],$xchan['xchan_hash']);
+					if ($photos) {
+						if ($photos[4]) {
+							$photodate = NULL_DATE;
+						}
+						else {
+							$photodate = $xchan['xchan_photo_date'];
+						}
 
-					$r = q("update xchan set xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s', xchan_photo_date = '%s' where xchan_hash = '%s'",
-						dbesc($photos[0]),
-						dbesc($photos[1]),
-						dbesc($photos[2]),
-						dbesc($photos[3]),
-						dbesc($photodate),
-						dbesc($xchan['xchan_hash'])
-					);
+						$r = q("update xchan set xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s', xchan_photo_date = '%s' where xchan_hash = '%s'",
+							dbesc($photos[0]),
+							dbesc($photos[1]),
+							dbesc($photos[2]),
+							dbesc($photos[3]),
+							dbesc($photodate),
+							dbesc($xchan['xchan_hash'])
+						);
+					}
 				}
 			}
 
