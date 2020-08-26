@@ -565,7 +565,7 @@ echo "backup_device_name=$backup_device_name" >> /var/www/$zotserverdaily
 echo "backup_device_pass=$backup_device_pass" >> /var/www/$zotserverdaily
 echo "backup_mount_point=$backup_mount_point" >> /var/www/$zotserverdaily
 echo "device_mounted=0" >> /var/www/$zotserverdaily
-echo "if [ -n \"$backup_device_name\" ]" >> /var/www/$zotserverdaily
+echo "if [ -n \"\$backup_device_name\" ]" >> /var/www/$zotserverdaily
 echo "then" >> /var/www/$zotserverdaily
 echo "    if blkid | grep $backup_device_name" >> /var/www/$zotserverdaily
 echo "    then" >> /var/www/$zotserverdaily
@@ -656,7 +656,7 @@ source $configfile
 selfhostdir=/etc/selfhost
 selfhostscript=selfhost-updater.sh
 zotserverdaily="${install_folder}-${zotserver}-daily.sh"
-backup_mount_point="/media/${install_folder}-${zotserver}_backup"
+backup_mount_point="/media/zotserver_backup"
 
 #set -x    # activate debugging from here
 
