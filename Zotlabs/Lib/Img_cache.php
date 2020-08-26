@@ -47,14 +47,16 @@ class Img_cache {
 		$x = z_fetch_url($url,true,$redirects,[ 'filep' => $fp, 'novalidate' => true ]);
 
 		fclose($fp);
-		if ($x['success']) {
-			$i = getimagesize($file);
+		if ($x['success'] && file_exists($file)) {
+			$i = @getimagesize($file);
 			if ($i && $i[2]) {  // looking for non-zero imagetype
 				Run::Summon( [ 'CacheThumb' , basename($file) ] );
 				return true;
 			}
 		}
-		unlink($file); 
+		if (file_exists($file)) {
+			unlink($file);
+		}
 		return false;
 	}
 

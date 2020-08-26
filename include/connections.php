@@ -346,6 +346,10 @@ function remove_all_xchan_resources($xchan, $channel_id = 0) {
 			$r = q("delete from hubloc where hubloc_hash = '%s'",
 				dbesc($xchan)
 			);
+			$r = q("delete from xprof where xprof_hash = '%s'",
+				dbesc($xchan)
+			);
+
 
 		}
 		else {
