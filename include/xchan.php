@@ -294,6 +294,21 @@ function xchan_change_key($oldx,$newx,$data) {
 }
 
 
+function cleanup_xchan_photos() {
+
+	$r = q("select photo.xchan, photo.resource_id from photo left join xchan on photo.xchan = xchan_hash where photo.xchan != '' and uid = 0 and imgscale = 4 and photo_usage = 2 and xchan_photo_l like ('%s') limit 200",
+		dbesc(z_root() . '/xp/%')
+	);
+	if ($r) {
+		foreach ($r as $rv) {
+			q("delete from photo where xchan = '%s' and resource_id = '%s' and photo_usage = 2 and uid = 0",
+				dbesc($rv['xchan']),
+				dbesc($rv['resource_id'])
+			);
+		}
+	}
+}
+
 
 function xprof_store_lowlevel($profile) {
 

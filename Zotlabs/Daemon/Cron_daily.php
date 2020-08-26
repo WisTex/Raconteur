@@ -81,6 +81,12 @@ class Cron_daily {
 		Run::Summon(array('Expire'));
 		Run::Summon(array('Cli_suggest'));
 
+		// remove xchan photos that were stored in the DB ine earlier versions
+		// and were migrated to filesystem storage.
+		// eventually this will do nothing but waste cpu cycles checking to see if anything remains.
+		
+		cleanup_xchan_photos();
+
 		remove_obsolete_hublocs();
 
 		call_hooks('cron_daily',datetime_convert());
