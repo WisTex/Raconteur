@@ -209,8 +209,15 @@ function print_warn {
 }
 
 function stop_zotserver {
-    print_info "stopping apache webserver..."
-    systemctl stop apache2
+    if [ $webserver = "nginx" ]
+    then
+        print_info "stopping nginx webserver..."
+        systemctl stop nginx
+    elif [ $webserver = "apache" ]
+    then
+        print_info "stopping apache webserver..."
+        systemctl stop apache2
+    fi
     print_info "stopping mysql db..."
     systemctl stop mariadb
 }
@@ -222,13 +229,25 @@ function install_apache {
     systemctl restart apache2
 }
 
+function install_nginx {
+    print_info "installing nginx..."
+    nocheck_install "nginx"
+    systemctl restart nginx
+}
+
 function add_vhost {
-    print_info "adding vhost"
+    print_info "adding apache vhost"
     echo "<VirtualHost *:80>" >> "/etc/apache2/sites-available/${le_domain}.conf"
     echo "ServerName ${le_domain}" >> "/etc/apache2/sites-available/${le_domain}.conf"
     echo "DocumentRoot $install_path" >> "/etc/apache2/sites-available/${le_domain}.conf"
     echo "</VirtualHost>"  >> "/etc/apache2/sites-available/${le_domain}.conf"
     a2ensite $le_domain
+}
+
+function add_nginx_block {
+    print_info "adding nginx block"
+    sed "s|SERVER_NAME|${le_domain}|g;s|INSTALL_PATH|${install_path}|g;s|ZOTSERVER_LOG|${install_folder}-${zotserver}.log|;s|PHP_FPM_SOCK|$(ls /var/run/php/*sock)|;" nginx-zotserver.conf.template >> /etc/nginx/sites-enabled/${le_domain}.conf
+    ln -s /etc/nginx/sites-enabled/${le_domain}.conf /etc/nginx/sites-available/
 }
 
 function install_imagemagick {
@@ -254,9 +273,18 @@ function install_sendmail {
 function install_php {
     # openssl and mbstring are included in libapache2-mod-php
     print_info "installing php..."
-    nocheck_install "libapache2-mod-php php php-pear php-curl php-gd php-mbstring php-xml php-zip"
-    sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/7.3/apache2/php.ini
-    sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/7.3/apache2/php.ini
+    if [ $webserver = "nginx" ]
+    then
+        nocheck_install "php php-pear php-curl php-gd php-mbstring php-xml php-zip php-fpm"
+        sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/7.3/fpm/php.ini
+        sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/7.3/fpm/php.ini
+        systemctl reload php7.3-fpm
+    elif [ $webserver = "apache" ]
+    then
+        nocheck_install "libapache2-mod-php php php-pear php-curl php-gd php-mbstring php-xml php-zip"
+        sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/7.3/apache2/php.ini
+        sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/7.3/apache2/php.ini
+    fi
 }
 
 function install_mysql {
@@ -452,10 +480,20 @@ function install_letsencrypt {
     then
         die "Failed to install let's encrypt: 'le_email' is empty in $configfile"
     fi
-    nocheck_install "certbot python-certbot-apache"
-    print_info "run certbot ..."
+    if [ $webserver = "nginx" ]
+    then
+        nocheck_install "certbot"
+        print_info "run certbot..."
+        systemctl stop nginx
+        certbot certonly --standalone -d $le_domain -m $le_email --agree-tos --non-interactive
+        systemctl start nginx
+    elif [ $webserver = "apache" ]
+    then
+        nocheck_install "certbot python-certbot-apache"
+        print_info "run certbot ..."
 	certbot --apache -w $install_path -d $le_domain -m $le_email --agree-tos --non-interactive --redirect --hsts --uir
-    service apache2 restart
+        service apache2 restart
+    fi
 }
 
 function check_https {
@@ -552,12 +590,18 @@ echo "#" >> /var/www/$zotserverdaily
 echo "echo \" \"" >> /var/www/$zotserverdaily
 echo "echo \"+++ \$(date) +++\"" >> /var/www/$zotserverdaily
 echo "echo \" \"" >> /var/www/$zotserverdaily
+echo "echo \"\$(date) - stopping $webserver and mysql...\"" >> /var/www/$zotserverdaily
+if [ $webserver = "nginx" ]
+then
+    echo "systemctl stop nginx" >> /var/www/$zotserverdaily
+elif [ $webserver = "apache" ]
+then
+    echo "service apache2 stop" >> /var/www/$zotserverdaily
+fi
+echo "/etc/init.d/mysql stop # to avoid inconsistencies" >> /var/www/$zotserverdaily
+echo "#" >> /var/www/$zotserverdaily
 echo "echo \"\$(date) - renew certificate...\"" >> /var/www/$zotserverdaily
 echo "certbot renew --noninteractive" >> /var/www/$zotserverdaily
-echo "#" >> /var/www/$zotserverdaily
-echo "echo \"\$(date) - stopping apache and mysql...\"" >> /var/www/$zotserverdaily
-echo "service apache2 stop" >> /var/www/$zotserverdaily
-echo "/etc/init.d/mysql stop # to avoid inconsistencies" >> /var/www/$zotserverdaily
 echo "#" >> /var/www/$zotserverdaily
 echo "# backup" >> /var/www/$zotserverdaily
 echo "echo \"\$(date) - try to mount external device for backup...\"" >> /var/www/$zotserverdaily
@@ -619,8 +663,11 @@ echo "# update" >> /var/www/$zotserverdaily
 echo "echo \"\$(date) - updating core and addons...\"" >> /var/www/$zotserverdaily
 echo "(cd $install_path/ ; util/udall)" >> /var/www/$zotserverdaily
 echo "chown -R www-data:www-data $install_path/ # make all accessable for the webserver" >> /var/www/$zotserverdaily
-echo "chown root:www-data $install_path/.htaccess" >> /var/www/$zotserverdaily
-echo "chmod 0644 $install_path/.htaccess # www-data can read but not write it" >> /var/www/$zotserverdaily
+if [ $webserver = "apache" ]
+then
+    echo "chown root:www-data $install_path/.htaccess" >> /var/www/$zotserverdaily
+    echo "chmod 0644 $install_path/.htaccess # www-data can read but not write it" >> /var/www/$zotserverdaily
+fi
 echo "echo \"\$(date) - updating linux...\"" >> /var/www/$zotserverdaily
 echo "apt-get -q -y update && apt-get -q -y dist-upgrade && apt-get -q -y autoremove # update linux and upgrade" >> /var/www/$zotserverdaily
 echo "echo \"\$(date) - Backup and update finished. Rebooting...\"" >> /var/www/$zotserverdaily
@@ -641,7 +688,6 @@ echo "shutdown -r now" >> /var/www/$zotserverdaily
 # START OF PROGRAM
 ########################################################################
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin
-
 check_sanity
 
 zotserver_name
@@ -666,10 +712,19 @@ update_upgrade
 install_curl
 install_wget
 install_sendmail
-install_apache
-if [ "$install_path" != "/var/www/html" ]
+if [ $webserver = "nginx" ]
 then
-    add_vhost
+    install_nginx
+    add_nginx_block
+elif [ $webserver = "apache" ]
+then
+    install_apache
+    if [ "$install_path" != "/var/www/html" ]
+    then
+        add_vhost
+    fi
+else
+die "Failed to install a Web server: 'webserver' not set to \"apache\" or \"nginx\" in $configfile" 
 fi
 install_imagemagick
 install_php
@@ -704,5 +759,3 @@ fi
 
 
 #set +x    # stop debugging from here
-
-
