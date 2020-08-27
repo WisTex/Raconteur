@@ -21,7 +21,7 @@ define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1241 );
 
-define ( 'PLATFORM_NAME',           'zap' );
+define ( 'PLATFORM_NAME',           'redmatrix' );
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
 
 define ( 'PROJECT_BASE',   __DIR__ );
