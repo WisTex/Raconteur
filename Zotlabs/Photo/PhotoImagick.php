@@ -41,7 +41,8 @@ class PhotoImagick extends PhotoDriver {
 		try {
 			$this->image->readImageBlob($data);
 		} catch(Exception $e) {
-			logger('Imagick readImageBlob() exception:' . print_r($e, true));
+			logger('Imagick read failed');			
+			// logger('Imagick readImageBlob() exception:' . print_r($e, true));
 			return;
 		}
 

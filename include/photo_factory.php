@@ -34,10 +34,20 @@ function photo_factory($data, $type = null) {
 		return null;
 	}
 
-	$ignore_imagick = get_config('system', 'ignore_imagick');
+
+	$ignore_imagick = get_config('system','ignore_imagick');
 
 	if (class_exists('Imagick') && !$ignore_imagick) {
 		$ph = new PhotoImagick($data, $type);
+
+		// As of August 2020, webp support is still poor in both imagick and gd. Both claim to support it,
+		// but both may require additional configuration. If it's a webp and the imagick driver failed,
+		// we'll try again with GD just in case that one handles it. If not, you may need to install libwebp
+		// which should make imagick work and/or re-compile php-gd with the option to include that library. 
+
+		if (! $ph->is_valid() && $type === 'image/webp') {
+			$ph = null;
+		}
 	}
 
 	if (! $ph) {

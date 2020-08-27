@@ -61,6 +61,7 @@ function z_mime_content_type($filename) {
 	'jpg'  => 'image/jpeg',
 	'gif'  => 'image/gif',
 	'bmp'  => 'image/bmp',
+	'webp' => 'image/webp',
 	'ico'  => 'image/vnd.microsoft.icon',
 	'tiff' => 'image/tiff',
 	'tif'  => 'image/tiff',
@@ -628,7 +629,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 	$is_photo = 0;
 	$gis = @getimagesize($src);
 	logger('getimagesize: ' . print_r($gis,true), LOGGER_DATA);
-	if(($gis) && ($gis[2] === IMAGETYPE_GIF || $gis[2] === IMAGETYPE_JPEG || $gis[2] === IMAGETYPE_PNG)) {
+	if(($gis) && in_array($gis[2], [ IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP ])) {
 		$is_photo = 1;
 		if($gis[2] === IMAGETYPE_GIF)
 			$def_extension =  '.gif';
@@ -636,6 +637,8 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 			$def_extension =  '.jpg';
 		if($gis[2] === IMAGETYPE_PNG)
 			$def_extension =  '.png';
+		if($gis[2] === IMAGETYPE_WEBP)
+			$def_extension =  '.webp';
 	}
 
 	// If we know it's a photo, over-ride the type in case the source system could not determine what it was
