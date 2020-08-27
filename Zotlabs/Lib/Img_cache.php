@@ -47,6 +47,10 @@ class Img_cache {
 		$x = z_fetch_url($url,true,$redirects,[ 'filep' => $fp, 'novalidate' => true ]);
 
 		fclose($fp);
+		
+		// $file *should* exist. The existence check was added because in at least one case
+		// this code was reached and $file did not exist. Go figure... 
+
 		if ($x['success'] && file_exists($file)) {
 			$i = @getimagesize($file);
 			if ($i && $i[2]) {  // looking for non-zero imagetype
