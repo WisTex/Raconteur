@@ -36,11 +36,15 @@ class PhotoGd extends PhotoDriver {
 		}
 
 		$this->image = @imagecreatefromstring($data);
+
 		if ($this->image !== false) {
 			$this->valid  = true;
 			$this->setDimensions();
 			imagealphablending($this->image, false);
 			imagesavealpha($this->image, true);
+		}
+		else {
+			logger('image load failed');
 		}
 	}
 
@@ -164,7 +168,7 @@ class PhotoGd extends PhotoDriver {
 
 		switch ($this->getType()){
 			case 'image/webp':
-			
+
 				\imagewebp($this->image);
 				break;
 				
