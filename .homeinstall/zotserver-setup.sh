@@ -576,7 +576,7 @@ function configure_zotserverdaily {
     echo "#" >> /var/www/$zotserverdaily
     echo "# update of $le_domain Zot hub/instance" >> /var/www/$zotserverdaily
     echo "echo \"\$(date) - updating core and addons...\"" >> /var/www/$zotserverdaily
-    echo "echo \"reaching git repository for $le_domain $zotserver hub\/instance...\"" >> /var/www/$zotserverdaily
+    echo "echo \"reaching git repository for $le_domain $zotserver hub/instance...\"" >> /var/www/$zotserverdaily
     echo "(cd $install_path ; util/udall)" >> /var/www/$zotserverdaily
     echo "chown -R www-data:www-data $install_path # make all accessible for the webserver" >> /var/www/$zotserverdaily
     if [ $webserver = "apache" ]
@@ -727,21 +727,29 @@ install_sendmail
 if [ $webserver = "nginx" ]
 then
     install_nginx
-    add_nginx_block
 elif [ $webserver = "apache" ]
 then
     install_apache
-    if [ "$install_path" != "/var/www/html" ]
-    then
-        add_vhost
-    fi
 else
 die "Failed to install a Web server: 'webserver' not set to \"apache\" or \"nginx\" in $configfile" 
 fi
 install_imagemagick
 install_php
+if [ $webserver = "nginx" ]
+then
+    add_nginx_block
+elif [ $webserver = "apache" ]
+then
+    if [ "$install_path" != "/var/www/html" ]
+    then
+        add_vhost
+    fi
+fi
 install_mysql
+if [ $webserver = "apache" ]
+then
 install_adminer
+fi
 create_zotserver_db
 run_freedns
 install_run_selfhost
