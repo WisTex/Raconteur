@@ -1,6 +1,6 @@
 ##
-# Hubzilla/Zap/Mistpark/Osada Nginx configuration
-# by Olaf Conradi
+# Hubzilla/Zap/Mistpark/Osada Nginx block configuration template
+# based on the example created by Olaf Conradi
 #
 # The files generated with this template will be added to
 # /etc/nginx/sites-available & /etc/nginx/sites-enabled (symlink)
