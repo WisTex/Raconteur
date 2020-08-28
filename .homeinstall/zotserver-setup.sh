@@ -684,13 +684,15 @@ function configure_cron_daily {
     echo "shutdown -r now" >> /var/www/$zotcron
 
     # If global cron job does not exist we add it to /etc/crontab
-    if [ -z "grep $zotcron /etc/crontab" ]
+    if grep -q $zotcron /etc/crontab
     then
+        echo "cron job already in /etc/crontab"
+    else
         echo "30 05 * * * root /bin/bash /var/www/$zotcron >> /var/www/zot-daily.log 2>&1" >> /etc/crontab
         echo "0 0 1 * * root rm /var/www/zot-daily.log" >> /etc/crontab
     fi
 
-    # This is active after either "reboot" or "/etc/init.d/cron reload"
+    # This is active after either "reboot" or cron reload"
     systemctl restart cron
     print_info "configured cron for updates/upgrades"
 }
