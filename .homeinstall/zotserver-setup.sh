@@ -572,18 +572,19 @@ function install_cryptosetup {
 }
 
 function configure_zotserverdaily {
-echo "#!/bin/sh" >> /var/www/$zotserverdaily
-echo "#" >> /var/www/$zotserverdaily
-echo "# update of $le_domain Zot hub/instance" >> /var/www/$zotserverdaily
-echo "echo \"\$(date) - updating core and addons...\"" >> /var/www/$zotserverdaily
-echo "(cd $install_path ; util/udall)" >> /var/www/$zotserverdaily
-echo "chown -R www-data:www-data $install_path # make all accessable for the webserver" >> /var/www/$zotserverdaily
-if [ $webserver = "apache" ]
-then
-    echo "chown root:www-data $install_path/.htaccess" >> /var/www/$zotserverdaily
-    echo "chmod 0644 $install_path/.htaccess # www-data can read but not write it" >> /var/www/$zotserverdaily
-fi
-chmod a+x /var/www/$zotserverdaily
+    echo "#!/bin/sh" >> /var/www/$zotserverdaily
+    echo "#" >> /var/www/$zotserverdaily
+    echo "# update of $le_domain Zot hub/instance" >> /var/www/$zotserverdaily
+    echo "echo \"\$(date) - updating core and addons...\"" >> /var/www/$zotserverdaily
+    echo "echo \"reaching git repository for $le_domain $zotserver hub\/instance...\"" >> /var/www/$zotserverdaily
+    echo "(cd $install_path ; util/udall)" >> /var/www/$zotserverdaily
+    echo "chown -R www-data:www-data $install_path # make all accessible for the webserver" >> /var/www/$zotserverdaily
+    if [ $webserver = "apache" ]
+    then
+        echo "chown root:www-data $install_path/.htaccess" >> /var/www/$zotserverdaily
+        echo "chmod 0644 $install_path/.htaccess # www-data can read but not write it" >> /var/www/$zotserverdaily
+    fi
+    chmod a+x /var/www/$zotserverdaily
 }
 
 function configure_cron_daily {
@@ -594,101 +595,103 @@ function configure_cron_daily {
         echo "*/10 * * * * www-data cd $install_path; php Zotlabs/Daemon/Run.php Cron >> /dev/null 2>&1" >> /etc/crontab
     fi
     # Run external script daily at 05:30
-    # - stop apache and mysql-server
+    # - stop apache/nginx and mysql-server
     # - renew the certificate of letsencrypt
     # - backup db, files ($install_path), certificates if letsencrypt
     # - update zotserver core and addon
     # - update and upgrade linux
     # - reboot is done by "shutdown -h now" because "reboot" hangs sometimes depending on the system
-echo "#!/bin/sh" > /var/www/$zotcron
-echo "#" >> /var/www/$zotcron
-echo "echo \" \"" >> /var/www/$zotcron
-echo "echo \"+++ \$(date) +++\"" >> /var/www/$zotcron
-echo "echo \" \"" >> /var/www/$zotcron
-echo "echo \"\$(date) - stopping $webserver and mysql...\"" >> /var/www/$zotcron
-if [ $webserver = "nginx" ]
-then
-    echo "systemctl stop nginx" >> /var/www/$zotcron
-elif [ $webserver = "apache" ]
-then
-    echo "service apache2 stop" >> /var/www/$zotcron
-fi
-echo "/etc/init.d/mysql stop # to avoid inconsistencies" >> /var/www/$zotcron
-echo "#" >> /var/www/$zotcron
-echo "echo \"\$(date) - renew certificate...\"" >> /var/www/$zotcron
-echo "certbot renew --noninteractive" >> /var/www/$zotcron
-echo "#" >> /var/www/$zotcron
-echo "# backup" >> /var/www/$zotcron
-echo "echo \"\$(date) - try to mount external device for backup...\"" >> /var/www/$zotcron
-echo "backup_device_name=$backup_device_name" >> /var/www/$zotcron
-echo "backup_device_pass=$backup_device_pass" >> /var/www/$zotcron
-echo "backup_mount_point=$backup_mount_point" >> /var/www/$zotcron
-echo "device_mounted=0" >> /var/www/$zotcron
-echo "if [ -n \"\$backup_device_name\" ]" >> /var/www/$zotcron
-echo "then" >> /var/www/$zotcron
-echo "    if blkid | grep $backup_device_name" >> /var/www/$zotcron
-echo "    then" >> /var/www/$zotcron
-	if [ -n "$backup_device_pass" ]
-	then
-echo "        echo \"decrypting backup device...\"" >> /var/www/$zotcron
-echo "        echo "\"$backup_device_pass\"" | cryptsetup luksOpen $backup_device_name cryptobackup" >> /var/www/$zotcron
+    echo "#!/bin/sh" > /var/www/$zotcron
+    echo "#" >> /var/www/$zotcron
+    echo "echo \" \"" >> /var/www/$zotcron
+    echo "echo \"+++ \$(date) +++\"" >> /var/www/$zotcron
+    echo "echo \" \"" >> /var/www/$zotcron
+    echo "echo \"\$(date) - stopping $webserver and mysql...\"" >> /var/www/$zotcron
+    if [ $webserver = "nginx" ]
+    then
+        echo "systemctl stop nginx" >> /var/www/$zotcron
+    elif [ $webserver = "apache" ]
+    then
+        echo "service apache2 stop" >> /var/www/$zotcron
     fi
-echo "        if [ ! -d $backup_mount_point ]" >> /var/www/$zotcron
-echo "        then" >> /var/www/$zotcron
-echo "            mkdir $backup_mount_point" >> /var/www/$zotcron
-echo "        fi" >> /var/www/$zotcron
-echo "        echo \"mounting backup device...\"" >> /var/www/$zotcron
-	if [ -n "$backup_device_pass" ]
-	then
-echo "        if mount /dev/mapper/cryptobackup $backup_mount_point" >> /var/www/$zotcron
-	else
-echo "        if mount $backup_device_name $backup_mount_point" >> /var/www/$zotcron
-	fi
-echo "        then" >> /var/www/$zotcron
-echo "            device_mounted=1" >> /var/www/$zotcron
-echo "            echo \"device $backup_device_name is now mounted. Starting backup...\"" >> /var/www/$zotcron
-echo "            rsync -a --delete /var/lib/mysql/ /media/zotserver_backup/mysql" >> /var/www/$zotcron
-echo "            rsync -a --delete /var/www/ /media/zotserver_backup/www" >> /var/www/$zotcron
-echo "            rsync -a --delete /etc/letsencrypt/ /media/zotserver_backup/letsencrypt" >> /var/www/$zotcron
-echo "            echo \"\$(date) - disk sizes...\"" >> /var/www/$zotcron
-echo "            df -h" >> /var/www/$zotcron
-echo "            echo \"\$(date) - db size...\"" >> /var/www/$zotcron
-echo "            du -h $backup_mount_point | grep mysql/zotserver" >> /var/www/$zotcron
-echo "            echo \"unmounting backup device...\"" >> /var/www/$zotcron
-echo "            umount $backup_mount_point" >> /var/www/$zotcron
-echo "        else" >> /var/www/$zotcron
-echo "            echo \"failed to mount device $backup_device_name\"" >> /var/www/$zotcron
-echo "        fi" >> /var/www/$zotcron
-	if [ -n "$backup_device_pass" ]
-	then
-echo "        echo \"closing decrypted backup device...\"" >> /var/www/$zotcron
-echo "        cryptsetup luksClose cryptobackup" >> /var/www/$zotcron
-	fi
-echo "    fi" >> /var/www/$zotcron
-echo "fi" >> /var/www/$zotcron
-echo "if [ \$device_mounted == 0 ]" >> /var/www/$zotcron
-echo "then" >> /var/www/$zotcron
-echo "    echo \"device could not be mounted $backup_device_name. No backup written.\"" >> /var/www/$zotcron
-echo "fi" >> /var/www/$zotcron
-echo "#" >> /var/www/$zotcron
-echo "echo \"\$(date) - db size...\"" >> /var/www/$zotcron
-echo "du -h /var/lib/mysql/ | grep mysql/" >> /var/www/$zotcron
-echo "#" >> /var/www/$zotcron
-echo "cd /var/www" >> /var/www/$zotcron
-echo "for f in *-daily.sh; do \"./\${f}\"; done" >> /var/www/$zotcron
-echo "echo \"\$(date) - updating linux...\"" >> /var/www/$zotcron
-echo "apt-get -q -y update && apt-get -q -y dist-upgrade && apt-get -q -y autoremove # update linux and upgrade" >> /var/www/$zotcron
-echo "echo \"\$(date) - Backup and update finished. Rebooting...\"" >> /var/www/$zotcron
-echo "#" >> /var/www/$zotcron
-echo "shutdown -r now" >> /var/www/$zotcron
+    echo "/etc/init.d/mysql stop # to avoid inconsistencies" >> /var/www/$zotcron
+    echo "#" >> /var/www/$zotcron
+    echo "echo \"\$(date) - renew certificate...\"" >> /var/www/$zotcron
+    echo "certbot renew --noninteractive" >> /var/www/$zotcron
+    echo "#" >> /var/www/$zotcron
+    echo "# backup" >> /var/www/$zotcron
+    echo "echo \"\$(date) - try to mount external device for backup...\"" >> /var/www/$zotcron
+    echo "backup_device_name=$backup_device_name" >> /var/www/$zotcron
+    echo "backup_device_pass=$backup_device_pass" >> /var/www/$zotcron
+    echo "backup_mount_point=$backup_mount_point" >> /var/www/$zotcron
+    echo "device_mounted=0" >> /var/www/$zotcron
+    echo "if [ -n \"\$backup_device_name\" ]" >> /var/www/$zotcron
+    echo "then" >> /var/www/$zotcron
+    echo "    if blkid | grep $backup_device_name" >> /var/www/$zotcron
+    echo "    then" >> /var/www/$zotcron
+    if [ -n "$backup_device_pass" ]
+    then
+        echo "        echo \"decrypting backup device...\"" >> /var/www/$zotcron
+        echo "        echo "\"$backup_device_pass\"" | cryptsetup luksOpen $backup_device_name cryptobackup" >> /var/www/$zotcron
+    fi
+    echo "        if [ ! -d $backup_mount_point ]" >> /var/www/$zotcron
+    echo "        then" >> /var/www/$zotcron
+    echo "            mkdir $backup_mount_point" >> /var/www/$zotcron
+    echo "        fi" >> /var/www/$zotcron
+    echo "        echo \"mounting backup device...\"" >> /var/www/$zotcron
+    if [ -n "$backup_device_pass" ]
+    then
+        echo "        if mount /dev/mapper/cryptobackup $backup_mount_point" >> /var/www/$zotcron
+    else
+        echo "        if mount $backup_device_name $backup_mount_point" >> /var/www/$zotcron
+    fi
+    echo "        then" >> /var/www/$zotcron
+    echo "            device_mounted=1" >> /var/www/$zotcron
+    echo "            echo \"device $backup_device_name is now mounted. Starting backup...\"" >> /var/www/$zotcron
+    echo "            rsync -a --delete /var/lib/mysql/ /media/zotserver_backup/mysql" >> /var/www/$zotcron
+    echo "            rsync -a --delete /var/www/ /media/zotserver_backup/www" >> /var/www/$zotcron
+    echo "            rsync -a --delete /etc/letsencrypt/ /media/zotserver_backup/letsencrypt" >> /var/www/$zotcron
+    echo "            echo \"\$(date) - disk sizes...\"" >> /var/www/$zotcron
+    echo "            df -h" >> /var/www/$zotcron
+    echo "            echo \"\$(date) - db size...\"" >> /var/www/$zotcron
+    echo "            du -h $backup_mount_point | grep mysql/zotserver" >> /var/www/$zotcron
+    echo "            echo \"unmounting backup device...\"" >> /var/www/$zotcron
+    echo "            umount $backup_mount_point" >> /var/www/$zotcron
+    echo "        else" >> /var/www/$zotcron
+    echo "            echo \"failed to mount device $backup_device_name\"" >> /var/www/$zotcron
+    echo "        fi" >> /var/www/$zotcron
+    if [ -n "$backup_device_pass" ]
+    then
+        echo "        echo \"closing decrypted backup device...\"" >> /var/www/$zotcron
+        echo "        cryptsetup luksClose cryptobackup" >> /var/www/$zotcron
+    fi
+    echo "    fi" >> /var/www/$zotcron
+    echo "fi" >> /var/www/$zotcron
+    echo "if [ \$device_mounted == 0 ]" >> /var/www/$zotcron
+    echo "then" >> /var/www/$zotcron
+    echo "    echo \"device could not be mounted $backup_device_name. No backup written.\"" >> /var/www/$zotcron
+    echo "fi" >> /var/www/$zotcron
+    echo "#" >> /var/www/$zotcron
+    echo "echo \"\$(date) - db size...\"" >> /var/www/$zotcron
+    echo "du -h /var/lib/mysql/ | grep mysql/" >> /var/www/$zotcron
+    echo "#" >> /var/www/$zotcron
+    echo "cd /var/www" >> /var/www/$zotcron
+    echo "for f in *-daily.sh; do \"./\${f}\"; done" >> /var/www/$zotcron
+    echo "echo \"\$(date) - updating linux...\"" >> /var/www/$zotcron
+    echo "apt-get -q -y update && apt-get -q -y dist-upgrade && apt-get -q -y autoremove # update linux and upgrade" >> /var/www/$zotcron
+    echo "echo \"\$(date) - Backup and update finished. Rebooting...\"" >> /var/www/$zotcron
+    echo "#" >> /var/www/$zotcron
+    echo "shutdown -r now" >> /var/www/$zotcron
 
-    if [ -z "`grep '$zotcron' /etc/crontab`" ]
+    # If global cron job does not exist we add it to /etc/crontab
+    if [ -z "grep $zotcron /etc/crontab" ]
     then
         echo "30 05 * * * root /bin/bash /var/www/$zotcron >> /var/www/zot-daily.log 2>&1" >> /etc/crontab
         echo "0 0 1 * * root rm /var/www/zot-daily.log" >> /etc/crontab
     fi
 
     # This is active after either "reboot" or "/etc/init.d/cron reload"
+    systemctl restart cron
     print_info "configured cron for updates/upgrades"
 }
 
