@@ -14,6 +14,9 @@ function ACL(backend_url) {
 
 	that.group_uids = [];
 	that.group_ids = [];
+	that.contact_uids = [];
+	that.contact_ids = [];
+	
 	that.selected_id = '';
 
 	that.info         = $("#acl-info");
@@ -148,14 +151,28 @@ ACL.prototype.on_showall = function(event) {
 
 ACL.prototype.on_showgroup = function(event) {
 	var xid = that.acl_select.children(":selected").val();
+	var cid = '';
 
+	if(xid.length && xid.substr(0,1) == '^') {
+		cid = xid.slice(1);
+		xid = '';		
+	}
+	
 	// preventDefault() isn't called here as we want state changes from update_view() to be applied to the radiobutton
 	event.stopPropagation();
 
-	that.allow_cid = [];
-	that.allow_gid = [xid];
-	that.deny_cid  = [];
-	that.deny_gid  = [];
+	if (xid.length) {
+		that.allow_cid = [];
+		that.allow_gid = [xid];
+		that.deny_cid  = [];
+		that.deny_gid  = [];
+	}
+	else {
+		that.allow_cid = [cid];
+		that.allow_gid = [];
+		that.deny_cid  = [];
+		that.deny_gid  = [];
+	}
 
 	that.update_view();
 	that.on_submit();
@@ -307,6 +324,17 @@ ACL.prototype.update_view = function(value) {
 		$('#dbtn-jotnets').hide();
 		$('.profile-jot-net input').attr('disabled', 'disabled');
 	}
+	else if (that.allow_gid.length === 0 && that.allow_cid.length === 1 && that.deny_gid.length === 0 && that.deny_cid.length === 0 && value !== 'custom') {
+		that.list.hide(); //hide acl-list
+		that.info.hide(); //show acl-info
+		that.selected_id = that.contact_ids[that.allow_cid[0]];
+		that.update_select(that.selected_id);
+
+		/* jot acl */
+		$('#jot-perms-icon, #dialog-perms-icon, #' + that.form_id[0].id + ' .jot-perms-icon').removeClass('fa-unlock').addClass('fa-lock');
+		$('#dbtn-jotnets').hide();
+		$('.profile-jot-net input').attr('disabled', 'disabled');
+	}
 
 	else {
 		that.list.show(); //show acl-list
@@ -382,6 +410,21 @@ ACL.prototype.update_view = function(value) {
 						bthide.removeClass("btn-outline-danger").addClass("btn-danger");
 						$(this).removeClass("groupshow");
 					}
+					$(that.contact_uids[id]).each(function(i, v) {
+						if(uclass == "grouphide")
+							// we need attr selection here because the id can include an @ (diaspora/friendica xchans)
+							$('[id="g' + v + '"]').removeClass("groupshow");
+						if(uclass !== "") {
+							var cls = $('[id="g' + v + '"]').attr('class');
+							if( cls === undefined)
+								return true;
+							var hiding = cls.indexOf('grouphide');
+							if(hiding == -1)
+								$('[id="g' + v + '"]').addClass(uclass);
+						}
+					});
+					break;
+
 			}
 		});
 	}
