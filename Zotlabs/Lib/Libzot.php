@@ -781,6 +781,16 @@ class Libzot {
 					del_xconfig($xchan_hash,'system','protocols');
 				}
 			}
+			$collections = [];
+			if (isset($arr['primary_location']['following'])) {
+				$collections['following'] = $arr['primary_location']['following'];
+			}
+			if (isset($arr['primary_location']['followers'])) {
+				$collections['followers'] = $arr['primary_location']['followers'];
+			}
+			if ($collections) {	
+				set_xconfig($xchan_hash,'activitypub','collections',$collections);
+			}
 
 			if (($r[0]['xchan_name_date'] != $arr['name_updated'])
 				|| ($r[0]['xchan_connurl'] != $arr['primary_location']['connections_url'])
@@ -3079,10 +3089,12 @@ class Libzot {
 		$ret['id_sig']         = self::sign($e['xchan_guid'], $e['channel_prvkey']);
 
 		$ret['primary_location'] = [ 
-			'address'            =>  $e['xchan_addr'],
-			'url'                =>  $e['xchan_url'],
-			'connections_url'    =>  $e['xchan_connurl'],
-			'follow_url'         =>  $e['xchan_follow'],
+			'address'            => $e['xchan_addr'],
+			'url'                => $e['xchan_url'],
+			'connections_url'    => $e['xchan_connurl'],
+			'follow_url'         => $e['xchan_follow'],
+			'followers'          => z_root() . '/followers/' . $e['channel_address'],
+			'following'          => z_root() . '/following/' . $e['channel_address']
 		];
 
 		$ret['public_key']     = $e['xchan_pubkey'];
@@ -3098,6 +3110,9 @@ class Libzot {
 		$ret['channel_role']   = get_pconfig($e['channel_id'],'system','permissions_role','custom');
 		$ret['channel_type']   = $channel_type;
 		$ret['protocols']      = [ 'zot6' ];
+		if (get_pconfig($e['channel_id'],'system','activitypub',get_config('system','activitypub',true))) {
+			$ret['protocols'][] = 'activitypub';
+		}
 		$ret['searchable']     = $searchable;
 		$ret['adult_content']  = $adult_channel;
 		

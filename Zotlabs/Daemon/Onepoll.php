@@ -38,7 +38,7 @@ class Onepoll {
 			return;
 		}
 
-		$contact = $contacts[0];
+		$contact = array_shift($contacts);
 
 		$t = $contact['abook_updated'];
 
