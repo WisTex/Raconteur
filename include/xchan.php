@@ -126,15 +126,17 @@ function xchan_store($arr) {
 	}
 
 	if($update_photo && $arr['photo']) {
-		$photos = import_xchan_photo($arr['photo'],$arr['hash']);
-		$x = q("update xchan set xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s' where xchan_hash = '%s'",
-			dbesc(datetime_convert()),
-			dbesc($photos[0]),
-			dbesc($photos[1]),
-			dbesc($photos[2]),
-			dbesc($photos[3]),
-			dbesc($arr['hash'])
-		);
+		$photos = import_remote_xchan_photo($arr['photo'],$arr['hash']);
+		if ($photos) {
+			$x = q("update xchan set xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s' where xchan_hash = '%s'",
+				dbesc(datetime_convert()),
+				dbesc($photos[0]),
+				dbesc($photos[1]),
+				dbesc($photos[2]),
+				dbesc($photos[3]),
+				dbesc($arr['hash'])
+			);
+		}
 	}
 	if($update_name && $arr['name']) {
 		$x = q("update xchan set xchan_name = '%s', xchan_name_date = '%s' where xchan_hash = '%s'",
@@ -291,6 +293,21 @@ function xchan_change_key($oldx,$newx,$data) {
 	}
 }
 
+
+function cleanup_xchan_photos() {
+
+	$r = q("select photo.xchan, photo.resource_id from photo left join xchan on photo.xchan = xchan_hash where photo.xchan != '' and uid = 0 and imgscale = 4 and photo_usage = 2 and xchan_photo_l like ('%s') limit 200",
+		dbesc(z_root() . '/xp/%')
+	);
+	if ($r) {
+		foreach ($r as $rv) {
+			q("delete from photo where xchan = '%s' and resource_id = '%s' and photo_usage = 2 and uid = 0",
+				dbesc($rv['xchan']),
+				dbesc($rv['resource_id'])
+			);
+		}
+	}
+}
 
 
 function xprof_store_lowlevel($profile) {

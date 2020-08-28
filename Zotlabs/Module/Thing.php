@@ -104,26 +104,32 @@ class Thing extends Controller {
 			$orig_record = $t[0];
 			if($photo != $orig_record['obj_imgurl']) {
 				delete_thing_photo($orig_record['obj_imgurl'],get_observer_hash());
-				$arr = import_xchan_photo($photo,get_observer_hash(),true);
-				$local_photo = $arr[0];
-				$local_photo_type = $arr[3];
+				$arr = import_remote_xchan_photo($photo,get_observer_hash(),true);
+				if ($arr) {
+					$local_photo = $arr[0];
+					$local_photo_type = $arr[3];
+				}
+				else {
+					$local_photo = $orig_record['obj_imgurl'];
+				}
 			}
-			else
+			else {
 				$local_photo = $orig_record['obj_imgurl'];
-
-			$r = q("update obj set obj_term = '%s', obj_url = '%s', obj_imgurl = '%s', obj_edited = '%s', allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s' where obj_obj = '%s' and obj_channel = %d ",
-				dbesc($name),
-				dbesc(($url) ? $url : z_root() . '/thing/' . $term_hash),
-				dbesc($local_photo),
-				dbesc(datetime_convert()),
-				dbesc($x['allow_cid']),
-				dbesc($x['allow_gid']),
-				dbesc($x['deny_cid']),
-				dbesc($x['deny_gid']),
-				dbesc($term_hash),
-				intval(local_channel())
-			);
-
+			}
+			if ($local_photo) {
+				$r = q("update obj set obj_term = '%s', obj_url = '%s', obj_imgurl = '%s', obj_edited = '%s', allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s' where obj_obj = '%s' and obj_channel = %d ",
+					dbesc($name),
+					dbesc(($url) ? $url : z_root() . '/thing/' . $term_hash),
+					dbesc($local_photo),
+					dbesc(datetime_convert()),
+					dbesc($x['allow_cid']),
+					dbesc($x['allow_gid']),
+					dbesc($x['deny_cid']),
+					dbesc($x['deny_gid']),
+					dbesc($term_hash),
+					intval(local_channel())
+				);
+			}
 			info( t('Thing updated') . EOL);
 
 			$r = q("select * from obj where obj_channel = %d and obj_obj = '%s' limit 1",
@@ -150,10 +156,16 @@ class Thing extends Controller {
 		$local_photo = null;
 
 		if($photo) {
-			$arr = import_xchan_photo($photo,get_observer_hash(),true);
-			$local_photo = $arr[0];
-			$local_photo_type = $arr[3];
+			$arr = import_remote_xchan_photo($photo,get_observer_hash(),true);
+			if ($arr) {
+				$local_photo = $arr[0];
+				$local_photo_type = $arr[3];
+			}
+			else {
+				$local_photo = $photo;
+			}
 		}
+		
 
 		$created = datetime_convert();
 		$url = (($url) ? $url : z_root() . '/thing/' . $hash);

@@ -166,18 +166,19 @@ class Cron {
 		if($r) {
 			require_once('include/photo_factory.php');
 			foreach($r as $rr) {
-				$photos = import_xchan_photo($rr['xchan_photo_l'],$rr['xchan_hash']);
-				$x = q("update xchan set xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
-					where xchan_hash = '%s'",
-					dbesc($photos[0]),
-					dbesc($photos[1]),
-					dbesc($photos[2]),
-					dbesc($photos[3]),
-					dbesc($rr['xchan_hash'])
-				);
+				$photos = import_remote_xchan_photo($rr['xchan_photo_l'],$rr['xchan_hash']);
+				if ($photos) {
+					$x = q("update xchan set xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
+						where xchan_hash = '%s'",
+						dbesc($photos[0]),
+						dbesc($photos[1]),
+						dbesc($photos[2]),
+						dbesc($photos[3]),
+						dbesc($rr['xchan_hash'])
+					);
+				}
 			}
 		}
-
 
 		// pull in some public posts
 

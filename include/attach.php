@@ -61,6 +61,7 @@ function z_mime_content_type($filename) {
 	'jpg'  => 'image/jpeg',
 	'gif'  => 'image/gif',
 	'bmp'  => 'image/bmp',
+	'webp' => 'image/webp',
 	'ico'  => 'image/vnd.microsoft.icon',
 	'tiff' => 'image/tiff',
 	'tif'  => 'image/tiff',
@@ -628,7 +629,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 	$is_photo = 0;
 	$gis = @getimagesize($src);
 	logger('getimagesize: ' . print_r($gis,true), LOGGER_DATA);
-	if(($gis) && ($gis[2] === IMAGETYPE_GIF || $gis[2] === IMAGETYPE_JPEG || $gis[2] === IMAGETYPE_PNG)) {
+	if(($gis) && in_array($gis[2], [ IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP ])) {
 		$is_photo = 1;
 		if($gis[2] === IMAGETYPE_GIF)
 			$def_extension =  '.gif';
@@ -636,6 +637,8 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 			$def_extension =  '.jpg';
 		if($gis[2] === IMAGETYPE_PNG)
 			$def_extension =  '.png';
+		if($gis[2] === IMAGETYPE_WEBP)
+			$def_extension =  '.webp';
 	}
 
 	// If we know it's a photo, over-ride the type in case the source system could not determine what it was
@@ -1470,8 +1473,8 @@ function attach_delete($channel_id, $resource, $is_photo = 0) {
 
 	if(! $r) {
 		attach_drop_photo($channel_id,$resource);
-                $arr = ['channel_id' => $channel_id, 'resource' => $resource, 'is_photo'=>$is_photo];
-                call_hooks("attach_delete",$arr);
+		$arr = ['channel_id' => $channel_id, 'resource' => $resource, 'is_photo'=>$is_photo];
+		call_hooks("attach_delete",$arr);
 		return;
 	}
 
@@ -1548,6 +1551,19 @@ function attach_drop_photo($channel_id,$resource) {
 	if($x) {
 		drop_item($x[0]['id'],false,(($x[0]['item_hidden']) ? DROPITEM_NORMAL : DROPITEM_PHASE1),true);
 	}
+	$r = q("select content from photo where uid = %d and resource_id = '%s' and os_storage = 1",
+		intval($channel_id),
+		dbesc($resource)
+	);
+	if ($r) {
+		foreach ($r as $rv) {
+			$p = dbunescbin($rv['content']);
+			if ($p && file_exists($p)) {
+				unlink($p);
+			}
+		}
+	}
+
 	q("DELETE FROM photo WHERE uid = %d AND resource_id = '%s'",
 		intval($channel_id),
 		dbesc($resource)

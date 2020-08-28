@@ -53,10 +53,6 @@ class Acl extends Controller {
 		//           and also contains xid without urlencode, used specifically by activity_filter widget
 		// $_REQUEST['query'] contains autocomplete search text.
 	
-		// List of channels whose connections to also suggest, 
-		// e.g. currently viewed channel or channels mentioned in a post
-
-		$extra_channels = (x($_REQUEST,'extra_channels') ? $_REQUEST['extra_channels'] : array());
 	
 		// The different autocomplete libraries use different names for the search text
 		// parameter. Internally we'll use $search to represent the search text no matter
@@ -151,59 +147,9 @@ class Acl extends Controller {
 		}
 	
 		if ($type == '' || $type == 'c' || $type === 'f') {
-
-			$extra_channels_sql  = ''; 
-
-			// Only include channels who allow the observer to view their connections
-			if ($extra_channels) {
-				foreach ($extra_channels as $channel) {
-					if (perm_is_allowed(intval($channel), get_observer_hash(),'view_contacts')) {
-						if ($extra_channels_sql) {
-							$extra_channels_sql .= ',';
-						}
-						$extra_channels_sql .= intval($channel);
-					}
-				}
-			}
 	
 			// Getting info from the abook is better for local users because it contains info about permissions
 			if (local_channel()) {
-				if ($extra_channels_sql != '') {
-					$extra_channels_sql = " OR (abook_channel IN ($extra_channels_sql)) and abook_hidden = 0 ";
-				}
-
-				// Add atokens belonging to the local channel
-
-				if ($search) {
-					$sql_extra_atoken = "AND ( atoken_name LIKE " . protect_sprintf( "'%" . dbesc($search) . "%'" ) . ") ";
-				}
-				else {
-					$sql_extra_atoken = '';
-				}
-
-				$r2 = null;
-
-				$r1 = q("select * from atoken where atoken_uid = %d $sql_extra_atoken",
-					intval(local_channel())
-				);
-
-				if ($r1) {
-					require_once('include/security.php');
-					$r2 = array();
-					foreach ($r1 as $rr) {
-						$x = atoken_xchan($rr);
-						$r2[] = [ 
-							'id' => 'a' . $rr['atoken_id'] ,
-							'hash' => $x['xchan_hash'],
-							'name' => $x['xchan_name'],
-							'micro' => $x['xchan_photo_m'],
-							'url' => z_root(),
-							'nick' => $x['xchan_addr'],
-							'abook_flags' => 0,
-							'abook_self' => 0
-						];
-					}
-				} 
 
 				// add connections
 
@@ -224,50 +170,10 @@ class Acl extends Controller {
 					dbesc(get_observer_hash())
 				);
 	
-				// Find contacts of extra channels
-				// This is probably more complicated than it needs to be
-				if ($extra_channels_sql) {
-					// Build a list of hashes that we got previously so we don't get them again
-					$known_hashes = array("'".get_observer_hash()."'");
-					if ($r) {
-						foreach ($r as $rr) {
-							$known_hashes[] = "'".$rr['hash']."'";
-						}
-					}
-					$known_hashes_sql = 'AND xchan_hash not in (' . implode(',',$known_hashes) . ')';
-	
-					$r2 = q("SELECT abook_id as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, abook_flags, abook_self 
-						FROM abook left join xchan on abook_xchan = xchan_hash 
-						WHERE abook_channel IN ($extra_channels_sql) $known_hashes_sql AND abook_blocked = 0 and abook_pending = 0 and abook_hidden = 0 and xchan_deleted = 0 $sql_extra2 order by $order_extra2 xchan_name asc");
-					if ($r2) {
-						$r = array_merge($r,$r2);
-					}
-					// Sort accoring to match position, then alphabetically. This could be avoided if the above two SQL queries could be combined into one, and the sorting could be done on the SQl server (like in the case of a local user)
-					$matchpos = function($x) use($search) {
-						$namepos = strpos($x['name'],$search);
-						$nickpos = strpos($x['nick'],$search);
-						// Use a large position if not found
-						return min($namepos === false ? 9999 : $namepos, $nickpos === false ? 9999 : $nickpos);
-					};
-					// This could be made simpler if PHP supported stable sorting
-					usort($r,function($a,$b) use($matchpos) {
-						$pos1 = $matchpos($a);
-						$pos2 = $matchpos($b);
-						if ($pos1 == $pos2) { // Order alphabetically if match position is the same
-							if ($a['name'] == $b['name']) {
-								return 0;
-							}
-							else {
-								return ($a['name'] < $b['name']) ? -1 : 1;
-							}
-						}
-						return ($pos1 < $pos2) ? -1 : 1;
-					});
-				}
 			}
 			if ((count($r) < 100) && $type == 'c') {
-				$r2 = q("SELECT substr(xchan_hash,1,18) as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, 0 as abook_flags, 0 as abook_self 
-					FROM xchan WHERE xchan_deleted = 0 and not xchan_network  in ('rss','anon','unknown') $sql_extra2 order by $order_extra2 xchan_name asc" 
+				$r2 = q("SELECT xchan_hash as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, 0 as abook_flags, 0 as abook_self 
+					FROM xchan WHERE xchan_deleted = 0 and xchan_network != 'unknown' $sql_extra2 order by $order_extra2 xchan_name asc" 
 				);
 				if ($r2) {
 					$r = array_merge($r,$r2);

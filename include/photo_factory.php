@@ -4,6 +4,7 @@ use Zotlabs\Photo\PhotoDriver;
 use Zotlabs\Photo\PhotoGd;
 use Zotlabs\Photo\PhotoImagick;
 use Zotlabs\Lib\Img_cache;
+use Zotlabs\Lib\Hashpath;
 
 /**
  * @brief Return a PhotoDriver object.
@@ -33,10 +34,20 @@ function photo_factory($data, $type = null) {
 		return null;
 	}
 
-	$ignore_imagick = get_config('system', 'ignore_imagick');
+
+	$ignore_imagick = get_config('system','ignore_imagick');
 
 	if (class_exists('Imagick') && !$ignore_imagick) {
 		$ph = new PhotoImagick($data, $type);
+
+		// As of August 2020, webp support is still poor in both imagick and gd. Both claim to support it,
+		// but both may require additional configuration. If it's a webp and the imagick driver failed,
+		// we'll try again with GD just in case that one handles it. If not, you may need to install libwebp
+		// which should make imagick work and/or re-compile php-gd with the option to include that library. 
+
+		if (! $ph->is_valid() && $type === 'image/webp') {
+			$ph = null;
+		}
 	}
 
 	if (! $ph) {
@@ -141,19 +152,35 @@ function guess_image_type($filename, $headers = '') {
 function delete_thing_photo($url, $ob_hash) {
 
 	$hash = basename($url);
-	$hash = substr($hash, 0, strpos($hash, '-'));
+	$dbhash = substr($hash, 0, strpos($hash, '-'));
 
 	// hashes should be 32 bytes.
 
-	if ((! $ob_hash) || (strlen($hash) < 16)) {
+	if ((! $ob_hash) || (strlen($dbhash) < 16)) {
 		return;
 	}
 
-	q("delete from photo where xchan = '%s' and photo_usage = %d and resource_id = '%s'",
-		dbesc($ob_hash),
-		intval(PHOTO_THING),
-		dbesc($hash)
-	);
+	if (strpos($url,'/xp/') !== false && strpos($url,'.obj') !== false) {
+		$xppath = 'cache/xp/' . substr($hash,0,2) . '/' . substr($hash,2,2) . '/' . $hash;
+		if (file_exists($xppath)) {
+			unlink($xppath);
+		}
+		$xppath = str_replace('-4','-5',$xppath);
+		if (file_exists($xppath)) {
+			unlink($xppath);
+		}
+		$xppath = str_replace('-5','-6',$xppath);
+		if (file_exists($xppath)) {
+			unlink($xppath);
+		}		
+	}
+	else {
+		q("delete from photo where xchan = '%s' and photo_usage = %d and resource_id = '%s'",
+			dbesc($ob_hash),
+			intval(PHOTO_THING),
+			dbesc($dbhash)
+		);
+	}
 }
 
 /**
@@ -188,9 +215,6 @@ function import_xchan_photo($photo, $xchan, $thing = false, $force = false) {
 	$img_str    = EMPTY_STR;
 	$hash       = photo_new_resource();
 	$os_storage = false;
-
-//	$cache_path = Img_cache::get_filename($xchan,'cache/xphoto');
-
 
 	if (! $thing) {
 		$r = q("select resource_id, edited, mimetype from photo where xchan = '%s' and photo_usage = %d and imgscale = 4 limit 1",
@@ -312,21 +336,21 @@ function import_xchan_photo($photo, $xchan, $thing = false, $force = false) {
 }
 
 
-function import_remote_xchan_photo($photo, $xchan) {
+function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 
 //	logger('Updating channel photo from ' . $photo . ' for ' . $xchan, LOGGER_DEBUG);
 
 	$failed  = true;
-	$hash    = hash('sha256', $photo);
-	$slug    = substr($hash,0,2);
-	$slug2   = substr($hash,2,2);
-	$path    = 'cache/xphoto/' . $slug . '/' . $slug2;
-	$outfile =  $path . '/' . $hash;
 
-	os_mkdir($path, STORAGE_DEFAULT_PERMISSIONS, true);
+	$path =	Hashpath::path((($thing) ? $photo . $xchan : $xchan),'cache/xp',2);
+	$hash = basename($path);
+
+
 	$modified = ((file_exists($outfile)) ? @filemtime($outfile) : 0);
 
-	if (strpos($photo,z_root() === 0)) {
+	// Maybe it's already a cached xchan photo
+	
+	if (strpos($photo, z_root() . '/xp/') === 0) {
 		return false;
 	}
 	
@@ -342,20 +366,20 @@ function import_remote_xchan_photo($photo, $xchan) {
 	if ($result['success']) {
 		$type = guess_image_type($photo, $result['header']);
 		
-			if ($type) {
-				$failed = false;
-			}
+		if ($type) {
+			$failed = false;
+		}
 	}
 	elseif ($result['return_code'] == 304) {
-		$photo = z_root() . '/photo/' . $hash . '-4';
-		$thumb = z_root() . '/photo/' . $hash . '-5';
-		$micro = z_root() . '/photo/' . $hash . '-6';
+		$photo = z_root() . '/xp/' . $hash . '-4' . (($thing) ? '.obj' : EMPTY_STR);
+		$thumb = z_root() . '/xp/' . $hash . '-5' . (($thing) ? '.obj' : EMPTY_STR);
+		$micro = z_root() . '/xp/' . $hash . '-6' . (($thing) ? '.obj' : EMPTY_STR);
 		$failed = false;
 	}
 
 
 	if (! $failed && $result['return_code'] != 304) {
-		$img = photo_factory($img_str, $type);
+		$img = photo_factory($result['body'], $type);
 		if ($img->is_valid()) {
 			$width = $img->getWidth();
 			$height = $img->getHeight();
@@ -389,25 +413,28 @@ function import_remote_xchan_photo($photo, $xchan) {
 				'edited'      => $modified,
 			];
 
-			$r = $img->save($p);
+			$savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
+			$photo = z_root() . '/xp/' . $hash . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
+			$r = $img->saveImage($savepath);
 			if ($r === false) {
 				$failed = true;
 			}
 			$img->scaleImage(80);
 			$p['imgscale'] = 5;
-			$r = $img->save($p);
+			$savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
+			$thumb = z_root() . '/xp/' . $hash . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
+			$r = $img->saveImage($savepath);
 			if ($r === false) {
 				$failed = true;
 			}
 			$img->scaleImage(48);
 			$p['imgscale'] = 6;
-			$r = $img->save($p);
+			$savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
+			$micro = z_root() . '/xp/' . $hash . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);			
+			$r = $img->saveImage($savepath);
 			if ($r === false) {
 				$failed = true;
 			}
-			$photo = z_root() . '/photo/' . $hash . '-4';
-			$thumb = z_root() . '/photo/' . $hash . '-5';
-			$micro = z_root() . '/photo/' . $hash . '-6';
 		}
 		else {
 			logger('Invalid image from ' . $photo);

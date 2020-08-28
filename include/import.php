@@ -368,8 +368,10 @@ function import_objs($channel, $objs) {
 			}
 
 			if ($obj['obj_imgurl']) {
-				$x = import_xchan_photo($obj['obj_imgurl'], $channel['channel_hash'], true);
-				$obj['obj_imgurl'] = $x[0];
+				$x = import_remote_xchan_photo($obj['obj_imgurl'], $channel['channel_hash'], true);
+				if ($x) {
+					$obj['obj_imgurl'] = $x[0];
+				}
 			}
 
 			create_table_from_array('obj', $obj);
@@ -424,8 +426,10 @@ function sync_objs($channel, $objs) {
 
 			if ($obj['obj_imgurl']) {
 				// import_xchan_photo() has a switch to store thing images
-				$x = import_xchan_photo($obj['obj_imgurl'], $channel['channel_hash'], true);
-				$obj['obj_imgurl'] = $x[0];
+				$x = import_remote_xchan_photo($obj['obj_imgurl'], $channel['channel_hash'], true);
+				if ($x) {
+					$obj['obj_imgurl'] = $x[0];
+				}
 			}
 
 			$hash = $obj['obj_obj'];
@@ -478,8 +482,10 @@ function import_apps($channel, $apps) {
 
 			if ($app['app_photo']) {
 				// overload import_xchan_photo()
-				$x = import_xchan_photo($app['app_photo'], $channel['channel_hash'], true);
-				$app['app_photo'] = $x[0];
+				$x = import_remote_xchan_photo($app['app_photo'], $channel['channel_hash'], true);
+				if ($x) {
+					$app['app_photo'] = $x[0];
+				}
 			}
 
 			$hash = $app['app_id'];
@@ -570,8 +576,10 @@ function sync_apps($channel, $apps) {
 
 			if ($app['app_photo']) {
 				// use import_xchan_photo()
-				$x = import_xchan_photo($app['app_photo'],$channel['channel_hash'],true);
-				$app['app_photo'] = $x[0];
+				$x = import_remote_xchan_photo($app['app_photo'],$channel['channel_hash'],true);
+				if ($x) {
+					$app['app_photo'] = $x[0];
+				}
 			}
 
 			if ($exists && $term) {

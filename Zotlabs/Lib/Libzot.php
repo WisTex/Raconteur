@@ -915,7 +915,7 @@ class Libzot {
 				}
 			}
 			else {
-				$photos = import_xchan_photo($arr['photo']['url'], $xchan_hash);
+				$photos = import_remote_xchan_photo($arr['photo']['url'], $xchan_hash);
 			}
 			if ($photos) {
 				if ($photos[4]) {
