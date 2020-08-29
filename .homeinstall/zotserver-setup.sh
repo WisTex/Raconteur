@@ -8,6 +8,7 @@
 # - zap: https://zotlabs.com/zap/
 # - misty : https://zotlabs.com/misty/
 # - osada : https://codeberg.org/zot/osada
+# - redmatrix : https://codeberg.org/zot/redmatrix
 # under Debian Linux "Buster"
 #
 # 1) Copy the file "zotserver-config.txt.template" to "zotserver-config.txt"
@@ -60,7 +61,7 @@
 #
 # The script makes a (daily) backup of all relevant files
 # - /var/lib/mysql/ > database
-# - /var/www/ > hubzilla/zap/misty from github
+# - /var/www/ > hubzilla/zap/misty from git repository
 # - /etc/letsencrypt/ > certificates
 #
 # The backup will be written on an external disk compatible to LUKS+ext4 (see zotserver-config.txt)
@@ -521,8 +522,11 @@ function zotserver_name {
     elif git remote -v | grep -i "origin.*osada.*"
     then
         zotserver=osada
+    elif git remote -v | grep -i "origin.*redmatrix.*"
+    then
+        zotserver=redmatrix
     else
-        die "neither osada,misty, zap nor hubzilla repository > did not install osada/misty/zap/hubzilla"
+        die "neither redmatrix, osada, misty, zap nor hubzilla repository > did not install redmatrix/osada/misty/zap/hubzilla"
     fi
 }
 
@@ -545,8 +549,12 @@ function install_zotserver {
     then
         print_info "osada"
         util/add_addon_repo https://codeberg.org/zot/osada-addons.git oaddons
+    elif [ $zotserver = "redmatrix" ]
+    then
+        print_info "redmatrix"
+        util/add_addon_repo https://codeberg.org/zot/redmatrix-addons.git raddons
     else
-        die "neither osada, misty, zap nor hubzilla repository > did not install addons or osada/misty/zap/hubzilla"
+        die "neither redmatrix, osada, misty, zap nor hubzilla repository > did not install addons or redmatrix/osada/misty/zap/hubzilla"
     fi
     mkdir -p "cache/smarty3"
     mkdir -p "store"
