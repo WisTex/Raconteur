@@ -1421,10 +1421,10 @@ class Item extends Controller {
 				if(local_channel())
 					retain_item($parent);
 
-				// only send comment notification if this is a wall-to-wall comment,
+				// only send comment notification if this is a wall-to-wall comment and not a DM,
 				// otherwise it will happen during delivery
 	
-				if(($datarray['owner_xchan'] != $datarray['author_xchan']) && (intval($parent_item['item_wall']))) {
+				if(($datarray['owner_xchan'] != $datarray['author_xchan']) && (intval($parent_item['item_wall'])) && intval($datarray['item_private']) != 2) {
 					Enotify::submit(array(
 						'type'         => NOTIFY_COMMENT,
 						'from_xchan'   => $datarray['author_xchan'],
