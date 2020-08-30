@@ -65,7 +65,7 @@ Switch the verification on/off (1/0)
 
 ## What the script will do for you...
 
-+ install everything required by your Zot hub/instance, basically a web server (Apache), PHP, a database (MySQL), certbot,...
++ install everything required by your Zot hub/instance, basically a web server (Apache or Nginx), PHP, a database (MySQL), certbot,...
 + create a database
 + run certbot to have everything for a secure connection (httpS)
 + create a script for daily maintenance
@@ -142,5 +142,5 @@ DO NOT FORGET TO CHANGE THE DEFAULT PASSWORD FOR USER PI!
 
 ## Reminder for Different Web Wervers
 
-For those of you who feel adventurous enough to use a different web server (Nginx, Lighttpd...), don't forget that this script will install Apache and that you can only have one web server listening to ports 80 & 443. Also, don't forget to tweak your daily shell script in /var/www/ accordingly.
+For those of you who feel adventurous enough to use a different web server (i.e. Lighttpd...), don't forget that this script will install Apache or Nginx and that you can only have one web server listening to ports 80 & 443. Also, don't forget to tweak your daily shell script in /var/www/ accordingly.
 
