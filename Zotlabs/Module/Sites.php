@@ -28,7 +28,7 @@ class Sites extends \Zotlabs\Web\Controller {
 							continue;
 						}
 						$o .= '<strong>' . ucfirst($p) . '</strong>' . EOL;
-						$o .= '<table class="table table-striped table-hover"><tr><td>' . t('URL') . '</td><td>' . t('Access Type') . '</td><td>' . t('Registration Policy') . '</td><td>' . t('Software') . '</td>';
+						$o .= '<table class="table table-striped table-hover"><tr><td style="width: 50%;">' . t('URL') . '</td><td style="width: 15%;">' . t('Access Type') . '</td><td style="width: 15%;">' . t('Registration Policy') . '</td><td style="width: 20%">' . t('Software') . '</td>';
 						$o .= '</tr>';
 
 						usort($v, [ $this, 'sort_versions' ]);
