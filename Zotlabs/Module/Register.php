@@ -195,31 +195,30 @@ class Register extends Controller {
 	
 	function get() {
 	
-		$registration_is = '';
-		$other_sites = '';
+		$registration_is = EMPTY_STR;
+		$other_sites = false;
 	
 		if (intval(get_config('system','register_policy')) === REGISTER_CLOSED) {
+			notice( t('Registration on this website is disabled.')  . EOL);
 			if (intval(get_config('system','directory_mode')) === DIRECTORY_MODE_STANDALONE) {
-				notice( t('Registration on this hub is disabled.')  . EOL);
-				return;
+				return EMPTY_STR;
 			}
-
-			$mod = new Pubsites();	
-			return $mod->get();
+			else {
+				$other_sites = true;
+			}
 		}
 	
 		if (intval(get_config('system','register_policy')) == REGISTER_APPROVE) {
-			$registration_is = t('Registration on this hub is by approval only.');
-			$other_sites = t('<a href="pubsites">Register at another affiliated hub.</a>');
+			$registration_is = t('Registration on this website is by approval only.');
+			$other_sites = true;
 		}
-
 
 		$invitations = false;
 
 		if (intval(get_config('system','invitation_only'))) {
 			$invitations = true;
-			$registration_is = t('Registration on this hub is by invitation only.');
-			$other_sites = t('<a href="pubsites">Register at another affiliated hub.</a>');
+			$registration_is = t('Registration on this site is by invitation only.');
+			$other_sites = true;
 		}
 	
 		$max_dailies = intval(get_config('system','max_daily_registrations'));
@@ -255,38 +254,36 @@ class Register extends Controller {
 		}
 		else {
 			$age = get_config('system','minimum_age');
-			if (!$age) {
+			if (! $age) {
 				$age = 13;
 			}
 			$label_tos = sprintf( t('I am over %s years of age and accept the %s for this website'), $age, $toslink);
 		}
 
-		$enable_tos = 1 - intval(get_config('system','no_termsofservice'));
+		$enable_tos   = 1 - intval(get_config('system','no_termsofservice'));
 	
-		$email        = array('email', t('Your email address'), ((x($_REQUEST,'email')) ? strip_tags(trim($_REQUEST['email'])) : ""));
-		$password     = array('password', t('Choose a password'), ''); 
-		$password2    = array('password2', t('Please re-enter your password'), ''); 
-		$invite_code  = array('invite_code', t('Please enter your invitation code'), ((x($_REQUEST,'invite_code')) ? strip_tags(trim($_REQUEST['invite_code'])) : ""));
-		$name = array('name', t('Your Name'), ((x($_REQUEST,'name')) ? $_REQUEST['name'] : ''), t('Real names are preferred.'));
-		$nickhub = '@' . str_replace(array('http://','https://','/'), '', get_config('system','baseurl'));
-		$nickname = array('nickname', t('Choose a short nickname'), ((x($_REQUEST,'nickname')) ? $_REQUEST['nickname'] : ''), sprintf( t('Your nickname will be used to create an easy to remember channel address e.g. nickname%s'), $nickhub));
-		$role = array('permissions_role' , t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel permission role for your usage needs and privacy requirements.'),$perm_roles);
-		$tos = array('tos', $label_tos, '', '', array(t('no'),t('yes')));
+		$email        = [ 'email', t('Your email address'), ((x($_REQUEST,'email')) ? strip_tags(trim($_REQUEST['email'])) : "")];
+		$password     = [ 'password', t('Choose a password'), '' ]; 
+		$password2    = [ 'password2', t('Please re-enter your password'), '' ]; 
+		$invite_code  = [ 'invite_code', t('Please enter your invitation code'), ((x($_REQUEST,'invite_code')) ? strip_tags(trim($_REQUEST['invite_code'])) : "")];
+		$name         = [ 'name', t('Your Name'), ((x($_REQUEST,'name')) ? $_REQUEST['name'] : ''), t('Real names are preferred.') ];
+		$nickhub      = '@' . str_replace(array('http://','https://','/'), '', get_config('system','baseurl'));
+		$nickname     = [ 'nickname', t('Choose a short nickname'), ((x($_REQUEST,'nickname')) ? $_REQUEST['nickname'] : ''), sprintf( t('Your nickname will be used to create an easy to remember channel address e.g. nickname%s'), $nickhub)];
+		$role         =  ['permissions_role' , t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel permission role for your usage needs and privacy requirements.'),$perm_roles];
+		$tos          = [ 'tos', $label_tos, '', '', [ t('no'), t('yes') ] ];
 
 
 		$auto_create  = (get_config('system','auto_channel_create') ? true : false);
 		$default_role = get_config('system','default_permissions_role');
 		$email_verify = get_config('system','verify_email');
 	
-		require_once('include/bbcode.php');
 	
-		$o = replace_macros(get_markup_template('register.tpl'), array(
-
+		$o = replace_macros(get_markup_template('register.tpl'), [
 			'$form_security_token' => get_form_security_token("register"),
 			'$title'        => t('Registration'),
 			'$reg_is'       => $registration_is,
 			'$registertext' => bbcode(get_config('system','register_text')),
-			'$other_sites'  => $other_sites,
+			'$other_sites'  => (($other_sites) ? t('<a href="sites">Show affiliated sites - some of which may allow registration.</a>') : EMPTY_STR),
 			'$invitations'  => $invitations,
 			'$invite_code'  => $invite_code,
 			'$auto_create'  => $auto_create,
@@ -301,7 +298,7 @@ class Register extends Controller {
 			'$pass2'        => $password2,
 			'$submit'       => t('Register'),
 			'$verify_note'  => (($email_verify) ? t('This site requires email verification. After completing this form, please check your email for further instructions.') : ''),
-		));
+		] );
 	
 		return $o;
 	

@@ -20,35 +20,20 @@ class Dirsearch extends Controller {
 	
 	function get() {
 	
-		$ret = array('success' => false);
+		$ret = [ 'success' => false ];
 	
 	//	logger('request: ' . print_r($_REQUEST,true));
 	
-	
-		$dirmode = intval(get_config('system','directory_mode'));
-	
-		if ($dirmode == DIRECTORY_MODE_NORMAL && ! intval($_REQUEST['navsearch'])) {
-			$ret['message'] = t('This site is not a directory server');
-			json_return_and_die($ret);
-		}
 
-		$network = ((intval($_REQUEST['navsearch'])) ? EMPTY_STR : " AND xchan_network = 'zot6' ");
-
-
-		$access_token = $_REQUEST['t'];
-	
-		$token = get_config('system','realm_token');
-		if ($token && $access_token != $token) {
-			$ret['message'] = t('This directory server requires an access token');
-			json_return_and_die($ret);
-		}
-	
-	
 		if (argc() > 1 && argv(1) === 'sites') {
 			$ret = $this->list_public_sites();
 			json_return_and_die($ret);
 		}
+
+		$dirmode = intval(get_config('system','directory_mode'));
 	
+		$network = ((intval($_REQUEST['navsearch'])) ? EMPTY_STR : " AND xchan_network = 'zot6' ");
+
 		$sql_extra = '';
 	
 		$tables = [ 'name', 'address', 'locale', 'region', 'postcode',
@@ -445,25 +430,16 @@ class Dirsearch extends Controller {
 	
 		$rand = db_getfunc('rand');
 		$realm = get_directory_realm();
-		if ($realm == DIRECTORY_REALM) {
-			$r = q("select * from site where site_access != 0 and site_register !=0 and ( site_realm = '%s' or site_realm = '') and site_type = %d and site_dead = 0 order by $rand",
-				dbesc($realm),
+
+		$r = q("select * from site where site_type = %d and site_dead = 0",
 				intval(SITE_TYPE_ZOT)
-			);
-		}
-		else {
-			$r = q("select * from site where site_access != 0 and site_register !=0 and site_realm = '%s' and site_type = %d and site_dead = 0 order by $rand",
-				dbesc($realm),
-				intval(SITE_TYPE_ZOT)
-			);
-		}
+		);
 			
 		$ret = array('success' => false);
 	
 		if ($r) {
 			$ret['success'] = true;
 			$ret['sites'] = array();
-			$insecure = array();
 	
 			foreach ($r as $rr) {
 				
@@ -483,13 +459,8 @@ class Dirsearch extends Controller {
 				else
 					$register = 'closed';
 	
-				if (strpos($rr['site_url'],'https://') !== false)
-					$ret['sites'][] = array('url' => $rr['site_url'], 'access' => $access, 'register' => $register, 'sellpage' => $rr['site_sellpage'], 'location' => $rr['site_location'], 'project' => $rr['site_project'], 'version' => $rr['site_version']);
-				else
-					$insecure[] = array('url' => $rr['site_url'], 'access' => $access, 'register' => $register, 'sellpage' => $rr['site_sellpage'], 'location' => $rr['site_location'], 'project' => $rr['site_project'], 'version' => $rr['site_version']);
-			}
-			if ($insecure) {
-				$ret['sites'] = array_merge($ret['sites'],$insecure);
+				$ret['sites'][] = array('url' => $rr['site_url'], 'access' => $access, 'register' => $register, 'sellpage' => $rr['site_sellpage'], 'location' => $rr['site_location'], 'project' => $rr['site_project'], 'version' => $rr['site_version']);
+
 			}
 		}
 		return $ret;

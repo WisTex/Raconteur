@@ -1602,9 +1602,6 @@ function login($register = false, $form_id = 'main-login', $hiddens = false, $lo
 	// Register links are enabled on the site home page and login page and navbar. 
 	// They are not shown by default on other pages which may require login.
 
-	// If the register link is enabled and registration is closed, the request is directed
-	// to /pubsites. If registration is allowed, /register is the default destination
-
 	// system.register_link can over-ride the default behaviour and redirect to an arbitrary
 	// webpage for paid/custom or organisational registrations, regardless of whether
 	// registration is allowed.
@@ -1627,7 +1624,7 @@ function login($register = false, $form_id = 'main-login', $hiddens = false, $lo
 
 	$register_policy = get_config('system','register_policy');
 
-	$reglink = get_config('system', 'register_link', z_root() . '/' . ((intval($register_policy) === REGISTER_CLOSED) ? 'pubsites' : 'register'));
+	$reglink = get_config('system', 'register_link', z_root() . '/register');
 
 	if($reglink !== 'none') {
 		$reg = [
