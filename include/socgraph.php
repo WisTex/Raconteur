@@ -216,7 +216,7 @@ function poco_load($xchan = '', $url = null) {
 
 function ap_poco_load($xchan) {
 
-	$max = get_config('system','max_imported_follow',1000);
+	$max = get_config('system','max_imported_follow',200);
 	
 	if($xchan) {
 		$cl = get_xconfig($xchan,'activitypub','collections');
