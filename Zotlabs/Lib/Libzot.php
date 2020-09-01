@@ -980,15 +980,15 @@ class Libzot {
 
 		// Are we a directory server of some kind?
 
-		$other_realm = false;
-		$realm = get_directory_realm();
-		if (array_key_exists('site',$arr)
-			&& array_key_exists('realm',$arr['site'])
-			&& (strpos($arr['site']['realm'],$realm) === false))
-			$other_realm = true;
+//		$other_realm = false;
+//		$realm = get_directory_realm();
+//		if (array_key_exists('site',$arr)
+//			&& array_key_exists('realm',$arr['site'])
+//			&& (strpos($arr['site']['realm'],$realm) === false))
+//			$other_realm = true;
 
 
-		if ($dirmode != DIRECTORY_MODE_NORMAL) {
+//		if ($dirmode != DIRECTORY_MODE_NORMAL) {
 
 			// We're some kind of directory server. However we can only add directory information
 			// if the entry is in the same realm (or is a sub-realm). Sub-realms are denoted by
@@ -1012,7 +1012,7 @@ class Libzot {
 					dbesc($xchan_hash)
 				);
 			}
-		}
+//		}
 
 		if (array_key_exists('site',$arr) && is_array($arr['site'])) {
 			$profile_changed = self::import_site($arr['site']);

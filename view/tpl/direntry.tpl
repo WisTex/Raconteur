@@ -28,6 +28,13 @@
 			</div>
 		</div>
 		<div class="contact-info">
+
+			{{if $entry.network}}
+			<div class="contact-info-element">
+				<span class="contact-info-label">{{$entry.network_label}}</span> {{$entry.network}}
+			</div>
+			{{/if}}
+
 			{{if $entry.common_friends}}
 			<div id="dir-common" class="contact-info-element">
 				<span class="contact-info-label">{{$entry.common_label}}</span> {{$entry.common_count}}

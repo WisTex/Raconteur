@@ -91,9 +91,9 @@ class Directory extends Controller {
 		$globaldir = Libzotdir::get_directory_setting($observer, 'globaldir');
 
 		// override your personal global search pref if we're doing a navbar search of the directory
-		if (intval($_REQUEST['navsearch'])) {
-			$globaldir = 1;
-		}
+//		if (intval($_REQUEST['navsearch'])) {
+//			$globaldir = 1;
+//		}
 	
 		$safe_mode = Libzotdir::get_directory_setting($observer, 'safemode');
 	
@@ -162,21 +162,21 @@ class Directory extends Controller {
 
 		$directory_admin = false;
 
-		if (($dirmode == DIRECTORY_MODE_PRIMARY) || ($dirmode == DIRECTORY_MODE_STANDALONE)) {
+//		if (($dirmode == DIRECTORY_MODE_PRIMARY) || ($dirmode == DIRECTORY_MODE_STANDALONE)) {
 			$url = z_root() . '/dirsearch';
 			if (is_site_admin()) {
 				$directory_admin = true;
 			}
-		}
-		if (! $url) {
-			$directory = Libzotdir::find_upstream_directory($dirmode);
-			if ((! $directory) || (! array_key_exists('url',$directory)) || (! $directory['url'])) {
-				logger('CRITICAL: No directory server URL');
-			}
-			$url = $directory['url'] . '/dirsearch';
-		}
+//		}
+//		if (! $url) {
+//			$directory = Libzotdir::find_upstream_directory($dirmode);
+//			if ((! $directory) || (! array_key_exists('url',$directory)) || (! $directory['url'])) {
+//				logger('CRITICAL: No directory server URL');
+//			}
+//			$url = $directory['url'] . '/dirsearch';
+//		}
 	
-		$token = get_config('system','realm_token');
+//		$token = get_config('system','realm_token');
 		
 		logger('mod_directory: URL = ' . $url, LOGGER_DEBUG);
 	
@@ -379,6 +379,8 @@ class Directory extends Controller {
 								'total_ratings'     => $total_ratings,
 								'viewrate'          => true,
 								'canrate'           => (($rating_enabled && local_channel()) ? true : false),
+								// 'network'           => network_to_name($rr['network']),
+								// 'network_label'     => t('Network:'),
 								'pdesc'	            => $pdesc,
 								'pdesc_label'       => t('Description:'),
 								'censor'            => (($directory_admin) ? 'dircensor/' . $rr['hash'] : ''),
@@ -400,7 +402,7 @@ class Directory extends Controller {
 								'ignlink'           => $suggest ? z_root() . '/directory?ignore=' . $rr['hash'] : '',
 								'ignore_label'      => t('Don\'t suggest'),
 								'common_friends'    => (($common[$rr['address']]) ? intval($common[$rr['address']]) : ''),
-								'common_label'      => t('Common connections (estimated):'),
+								'common_label'      => t('Common connections (at least):'),
 								'common_count'      => intval($common[$rr['address']]),
 								'safe'              => $safe_mode
 							];
@@ -450,7 +452,7 @@ class Directory extends Controller {
 						else {
 							$maxheight = 94;
 	
-							$dirtitle = (($globaldir) ? t('Global Directory') : t('Local Directory'));
+							$dirtitle = (($globaldir) ? t('Network Directory (channels known to this site)') : t('Local Directory'));
 	
 							$o .= "<script> var page_query = '" . escape_tags(urlencode($_GET['req'])) . "'; var extra_args = '" . extra_query_args() . "' ; divmore_height = " . intval($maxheight) . ";  </script>";
 							$o .= replace_macros($tpl, [

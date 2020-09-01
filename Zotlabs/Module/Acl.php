@@ -338,26 +338,16 @@ class Acl extends Controller {
 			$address = true;
 		}
 
-		$remote_dir = false;
 		
-		if (($dirmode == DIRECTORY_MODE_PRIMARY) || ($dirmode == DIRECTORY_MODE_STANDALONE)) {
-			$url = z_root() . '/dirsearch';
-		}
-	
-		if (! $url) {
-			$directory = Libzotdir::find_upstream_directory($dirmode);
-			$url = $directory['url'] . '/dirsearch';
-			$remote_dir = true;
-		}
+		$url = z_root() . '/dirsearch';
 
+	
 		$results = [];
-		$results2 = [];
 
-		$token = get_config('system','realm_token');
-	
 		$count = (x($_REQUEST,'count') ?  $_REQUEST['count'] : 100);
+
 		if ($url) {
-			$query = $url . '?f=' . (($token) ? '&t=' . urlencode($token) : '');
+			$query = $url . '?f=';
 			$query .= '&name=' . urlencode($search) . "&limit=$count" . (($address) ? '&address=' . urlencode(punify($search)) : '');
 			
 			$x = z_fetch_url($query);
@@ -366,35 +356,6 @@ class Acl extends Controller {
 				$j = json_decode($x['body'],true);
 				if ($j && $j['results']) {
 					$results =  $j['results'];
-				}
-			}
-		}
-
-		if ($remote_dir) {
-			$query = z_root() . '/dirsearch' . '?f=&navsearch=1' . (($token) ? '&t=' . urlencode($token) : '');
-			$query .= '&name=' . urlencode($search) . "&limit=$count" . (($address) ? '&address=' . urlencode(punify($search)) : '');
-	
-			$x = z_fetch_url($query);
-			if ($x['success']) {
-				$t = 0;
-				$j = json_decode($x['body'],true);
-				if ($j && $j['results']) {
-					$results2 =  $j['results'];
-				}
-			}
-		}
-
-		if ($results2) {
-			foreach ($results2 as $x) {
-				$found = false;
-				foreach ($results as $y) {
-					if ($y['url'] === $x['url']) {
-						$found = true;
-					}
-				}
-				if (! $found) {
-					$x['local'] = true;
-					$results[] = $x;
 				}
 			}
 		}

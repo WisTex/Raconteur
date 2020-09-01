@@ -31,8 +31,9 @@ class Dirsearch extends Controller {
 		}
 
 		$dirmode = intval(get_config('system','directory_mode'));
-	
-		$network = ((intval($_REQUEST['navsearch'])) ? EMPTY_STR : " AND xchan_network = 'zot6' ");
+
+
+		$network = EMPTY_STR;
 
 		$sql_extra = '';
 	
@@ -231,58 +232,6 @@ class Dirsearch extends Controller {
 			$order = " order by xchan_name_date desc ";
 	
 	
-		if ($sync) {
-
-			// generate sync packet for directory mirrors
-
-			$spkt = array('transactions' => [] );
-			$r = q("select * from updates where ud_date >= '%s' and ud_guid != '' order by ud_date desc",
-				dbesc($sync)
-			);
-			if ($r) {
-				foreach ($r as $rr) {
-					$flags = [];
-					if ($rr['ud_flags'] & UPDATE_FLAGS_DELETED)
-						$flags[] = 'deleted';
-					if ($rr['ud_flags'] & UPDATE_FLAGS_FORCED)
-						$flags[] = 'forced';
-					if ($rr['ud_flags'] & UPDATE_FLAGS_CENSORED)
-						$flags[] = 'censored';
-	
-					$spkt['transactions'][] = [
-						'hash'           => $rr['ud_hash'],
-						'address'        => $rr['ud_addr'],
-						'transaction_id' => $rr['ud_guid'],
-						'timestamp'      => $rr['ud_date'],
-						'flags'          => $flags
-					];
-				}
-			}
-
-			// sync ratings - not currently used
-			
-			$r = q("select * from xlink where xlink_static = 1 and xlink_updated >= '%s' ",
-				dbesc($sync)
-			);
-			if ($r) {
-				$spkt['ratings'] = [];
-				foreach ($r as $rr) {
-					$spkt['ratings'][] = [
-						'type'        => 'rating', 
-						'encoding'    => 'zot',
-						'channel'     => $rr['xlink_xchan'],
-						'target'      => $rr['xlink_link'],
-						'rating'      => intval($rr['xlink_rating']),
-						'rating_text' => $rr['xlink_rating_text'],
-						'signature'   => $rr['xlink_sig'],
-						'edited'      => $rr['xlink_updated']
-					];
-				}
-			}
-			json_return_and_die($spkt);
-		}
-
-
 		// normal directory query
 
 		$r = q("SELECT xchan.*, xprof.* from xchan left join xprof on xchan_hash = xprof_hash 
@@ -298,18 +247,18 @@ class Dirsearch extends Controller {
 			$entries = [];
 	
 			foreach ($r as $rr) {
-	
+
+				if ($rr['xchan_network'] === 'activitypub') {
+					$z = q("select xchan_hash from xchan where xchan_url = '%s' and xchan_network = 'zot6' limit 1",
+						dbesc($rr['xchan_url'])
+					);
+					if ($z) {
+						continue;
+					}
+				}
+
 				$entry = [];
-	
-				$pc = q("select count(xlink_rating) as total_ratings from xlink where xlink_link = '%s' and xlink_rating != 0 and xlink_static = 1 group by xlink_rating",
-					dbesc($rr['xchan_hash'])
-				);
-	
-				if ($pc)
-					$entry['total_ratings'] = intval($pc[0]['total_ratings']);
-				else
-					$entry['total_ratings'] = 0;
-	
+		
 				$entry['name']         = $rr['xchan_name'];
 				$entry['hash']         = $rr['xchan_hash'];
 				$entry['censored']     = $rr['xchan_censored'];
@@ -319,6 +268,7 @@ class Dirsearch extends Controller {
 				$entry['photo_l']      = $rr['xchan_photo_l'];
 				$entry['photo']        = $rr['xchan_photo_m'];
 				$entry['address']      = $rr['xchan_addr'];
+				$entry['network']      = $rr['xchan_network'];
 				$entry['description']  = $rr['xprof_desc'];
 				$entry['locale']       = $rr['xprof_locale'];
 				$entry['region']       = $rr['xprof_region'];

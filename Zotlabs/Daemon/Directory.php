@@ -29,11 +29,6 @@ class Directory {
 
 		logger('directory update', LOGGER_DEBUG);
 
-		$dirmode = get_config('system','directory_mode');
-		if($dirmode === false)
-			$dirmode = DIRECTORY_MODE_NORMAL;
-
-
 		$channel = channelx_by_n($argv[1]);
 		if(! $channel)
 			return;
@@ -52,52 +47,5 @@ class Directory {
 			Run::Summon(array('Notifier','refresh_all',$channel['channel_id']));
 			$pushed = true;
 		}
-
-		// if applicable send the changes upstream
-
-		$directory = Libzotdir::find_upstream_directory($dirmode);
-
-		if(! $directory) {
-			logger('no directory');
-			return;
-		}
-
-		$url = $directory['url'] . '/zot';
-
-		// ensure the upstream directory is updated
-
-		$packet = Libzot::build_packet($channel,(($force) ? 'force_refresh' : 'refresh'));
-		$z = Libzot::zot($url,$packet,$channel);
-
-		// re-queue if unsuccessful
-
-		if(! $z['success']) {
-
-			/** @FIXME we aren't updating channel_dirdate if we have to queue
-			 * the directory packet. That means we'll try again on the next poll run.
-			 */
-
-			$hash = new_uuid();
-
-			Queue::insert(array(
-				'hash'       => $hash,
-				'account_id' => $channel['channel_account_id'],
-				'channel_id' => $channel['channel_id'],
-				'posturl'    => $url,
-				'notify'     => $packet,
-			));
-
-		}
-		else {
-			q("update channel set channel_dirdate = '%s' where channel_id = %d",
-				dbesc(datetime_convert()),
-				intval($channel['channel_id'])
-			);
-		}
-
-		// Now update all the connections
-		if($pushall && (! $pushed))
-			Run::Summon(array('Notifier','refresh_all',$channel['channel_id']));
-
 	}
 }

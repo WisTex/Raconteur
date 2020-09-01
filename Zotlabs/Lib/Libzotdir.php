@@ -188,6 +188,11 @@ class Libzotdir {
 
 	static function sync_directories($dirmode) {
 
+		// !!!!!!!!!
+		return;
+		// !!!!!!!!!
+
+
 		if ($dirmode == DIRECTORY_MODE_STANDALONE || $dirmode == DIRECTORY_MODE_NORMAL)
 			return;
 
