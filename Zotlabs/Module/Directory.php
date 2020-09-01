@@ -322,9 +322,6 @@ class Directory extends Controller {
 							$homepageurl = ((x($profile,'homepage') == 1) ?  html2plain($profile['homepage']) : '');
 							$hometown = ((x($profile,'hometown') == 1) ? html2plain($profile['hometown'])  : False);
 							$about = ((x($profile,'about') == 1) ? zidify_links(bbcode($profile['about'])) : False);
-							if ($about && $safe_mode) {
-								$about = html2plain($about);
-							}
 							
 							$keywords = ((x($profile,'keywords')) ? $profile['keywords'] : '');
 	
