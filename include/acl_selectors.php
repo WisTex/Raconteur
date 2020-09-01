@@ -90,6 +90,15 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 		}
 	}
 
+	$forums = get_forum_channels(local_channel(),1);
+
+	if($forums) {
+		foreach($forums as $f) {
+			$selected = (($single_group && $f['hash'] === $allow_cid[0]) ? ' selected = "selected" ' : '');
+			$groups .= '<option id="^' . $f['abook_id'] . '" value="^' . $f['xchan_hash'] . '"' . $selected . '>' . $f['xchan_name'] . '</option>' . "\r\n";
+		}
+	}
+
 	$tpl = get_markup_template("acl_selector.tpl");
 	$o = replace_macros($tpl, array(
 		'$showall'         => $showall_caption,

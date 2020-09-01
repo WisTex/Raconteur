@@ -130,8 +130,14 @@ class Enotify {
 		logger('notification: mail');
 		$subject = 	sprintf( t('[$Projectname:Notify] New mail received at %s'),$sitename);
 
-		$preamble = sprintf( t('%1$s sent you a new private message at %2$s.'), $sender['xchan_name'],$sitename);
-		$epreamble = sprintf( t('%1$s sent you %2$s.'),'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]', '[zrl=$itemlink]' . t('a private message') . '[/zrl]');
+		if ($params['item']['mid'] === $params['item']['parent_mid']) {
+			$preamble = sprintf( t('%1$s sent you a new private message at %2$s.'), $sender['xchan_name'],$sitename);
+			$epreamble = sprintf( t('%1$s sent you %2$s.'),'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]', '[zrl=$itemlink]' . t('a private message') . '[/zrl]');
+		}
+		else {
+			$preamble = sprintf( t('%1$s replied to a private message at %2$s.'), $sender['xchan_name'],$sitename);
+			$epreamble = sprintf( t('%1$s replied to %2$s.'),'[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]', '[zrl=$itemlink]' . t('a private message') . '[/zrl]');
+		}
 		$sitelink = t('Please visit %s to view and/or reply to your private messages.');
 
 		$tsitelink = sprintf( $sitelink, $siteurl . '/display/' . gen_link_id($params['item']['mid']) );

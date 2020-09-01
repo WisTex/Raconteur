@@ -86,12 +86,8 @@
 		</div>
 		<div id="profile-jot-submit-wrapper" class="clearfix p-2 jothidden">
 			<div id="profile-jot-submit-left" class="btn-toolbar float-left">
-				{{if $bbcode}}
-				<button id="jot-markup-toggle" class="btn btn-outline-secondary btn-sm" title="{{$text_style}}" onclick="openClose('jot-markup'); return false;">
-						<i class="fa fa-fw fa-chevron-right jot-icons"></i>
-				</button>
-				
-				<div id="jot-markup" class="btn-group mr-2" style="display: none;">
+				{{if $bbcode}}				
+				<div id="jot-markup" class="btn-group mr-2">
 					<button id="main-editor-bold" class="btn btn-outline-secondary btn-sm" title="{{$bold}}" onclick="inserteditortag('b', 'profile-jot-text'); return false;">
 						<i class="fa fa-bold jot-icons"></i>
 					</button>

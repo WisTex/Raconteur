@@ -1787,7 +1787,15 @@ class Activity {
 			}
 		}
 
-		$about = ((isset($person_obj['summary'])) ? html2bbcode($person_obj['summary']) : EMPTY_STR);
+		$about = ((isset($person_obj['summary'])) ? html2bbcode(purify_html($person_obj['summary'])) : EMPTY_STR);
+
+		$p = q("select * from xchan where xchan_url = '%s' and xchan_network = 'zot6' limit 1",
+			dbesc($url)
+		);
+		if ($p) {
+			set_xconfig($url,'system','protocols','zot6,activitypub');
+		}
+
 
 		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 			dbesc($url)

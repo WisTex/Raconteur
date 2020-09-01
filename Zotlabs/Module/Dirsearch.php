@@ -20,35 +20,21 @@ class Dirsearch extends Controller {
 	
 	function get() {
 	
-		$ret = array('success' => false);
+		$ret = [ 'success' => false ];
 	
 	//	logger('request: ' . print_r($_REQUEST,true));
 	
-	
-		$dirmode = intval(get_config('system','directory_mode'));
-	
-		if ($dirmode == DIRECTORY_MODE_NORMAL && ! intval($_REQUEST['navsearch'])) {
-			$ret['message'] = t('This site is not a directory server');
-			json_return_and_die($ret);
-		}
 
-		$network = ((intval($_REQUEST['navsearch'])) ? EMPTY_STR : " AND xchan_network = 'zot6' ");
-
-
-		$access_token = $_REQUEST['t'];
-	
-		$token = get_config('system','realm_token');
-		if ($token && $access_token != $token) {
-			$ret['message'] = t('This directory server requires an access token');
-			json_return_and_die($ret);
-		}
-	
-	
 		if (argc() > 1 && argv(1) === 'sites') {
 			$ret = $this->list_public_sites();
 			json_return_and_die($ret);
 		}
-	
+
+		$dirmode = intval(get_config('system','directory_mode'));
+
+
+		$network = EMPTY_STR;
+
 		$sql_extra = '';
 	
 		$tables = [ 'name', 'address', 'locale', 'region', 'postcode',
@@ -246,58 +232,6 @@ class Dirsearch extends Controller {
 			$order = " order by xchan_name_date desc ";
 	
 	
-		if ($sync) {
-
-			// generate sync packet for directory mirrors
-
-			$spkt = array('transactions' => [] );
-			$r = q("select * from updates where ud_date >= '%s' and ud_guid != '' order by ud_date desc",
-				dbesc($sync)
-			);
-			if ($r) {
-				foreach ($r as $rr) {
-					$flags = [];
-					if ($rr['ud_flags'] & UPDATE_FLAGS_DELETED)
-						$flags[] = 'deleted';
-					if ($rr['ud_flags'] & UPDATE_FLAGS_FORCED)
-						$flags[] = 'forced';
-					if ($rr['ud_flags'] & UPDATE_FLAGS_CENSORED)
-						$flags[] = 'censored';
-	
-					$spkt['transactions'][] = [
-						'hash'           => $rr['ud_hash'],
-						'address'        => $rr['ud_addr'],
-						'transaction_id' => $rr['ud_guid'],
-						'timestamp'      => $rr['ud_date'],
-						'flags'          => $flags
-					];
-				}
-			}
-
-			// sync ratings - not currently used
-			
-			$r = q("select * from xlink where xlink_static = 1 and xlink_updated >= '%s' ",
-				dbesc($sync)
-			);
-			if ($r) {
-				$spkt['ratings'] = [];
-				foreach ($r as $rr) {
-					$spkt['ratings'][] = [
-						'type'        => 'rating', 
-						'encoding'    => 'zot',
-						'channel'     => $rr['xlink_xchan'],
-						'target'      => $rr['xlink_link'],
-						'rating'      => intval($rr['xlink_rating']),
-						'rating_text' => $rr['xlink_rating_text'],
-						'signature'   => $rr['xlink_sig'],
-						'edited'      => $rr['xlink_updated']
-					];
-				}
-			}
-			json_return_and_die($spkt);
-		}
-
-
 		// normal directory query
 
 		$r = q("SELECT xchan.*, xprof.* from xchan left join xprof on xchan_hash = xprof_hash 
@@ -313,18 +247,18 @@ class Dirsearch extends Controller {
 			$entries = [];
 	
 			foreach ($r as $rr) {
-	
+
+				if ($rr['xchan_network'] === 'activitypub') {
+					$z = q("select xchan_hash from xchan where xchan_url = '%s' and xchan_network = 'zot6' limit 1",
+						dbesc($rr['xchan_url'])
+					);
+					if ($z) {
+						continue;
+					}
+				}
+
 				$entry = [];
-	
-				$pc = q("select count(xlink_rating) as total_ratings from xlink where xlink_link = '%s' and xlink_rating != 0 and xlink_static = 1 group by xlink_rating",
-					dbesc($rr['xchan_hash'])
-				);
-	
-				if ($pc)
-					$entry['total_ratings'] = intval($pc[0]['total_ratings']);
-				else
-					$entry['total_ratings'] = 0;
-	
+		
 				$entry['name']         = $rr['xchan_name'];
 				$entry['hash']         = $rr['xchan_hash'];
 				$entry['censored']     = $rr['xchan_censored'];
@@ -334,6 +268,7 @@ class Dirsearch extends Controller {
 				$entry['photo_l']      = $rr['xchan_photo_l'];
 				$entry['photo']        = $rr['xchan_photo_m'];
 				$entry['address']      = $rr['xchan_addr'];
+				$entry['network']      = $rr['xchan_network'];
 				$entry['description']  = $rr['xprof_desc'];
 				$entry['locale']       = $rr['xprof_locale'];
 				$entry['region']       = $rr['xprof_region'];
@@ -445,25 +380,16 @@ class Dirsearch extends Controller {
 	
 		$rand = db_getfunc('rand');
 		$realm = get_directory_realm();
-		if ($realm == DIRECTORY_REALM) {
-			$r = q("select * from site where site_access != 0 and site_register !=0 and ( site_realm = '%s' or site_realm = '') and site_type = %d and site_dead = 0 order by $rand",
-				dbesc($realm),
+
+		$r = q("select * from site where site_type = %d and site_dead = 0",
 				intval(SITE_TYPE_ZOT)
-			);
-		}
-		else {
-			$r = q("select * from site where site_access != 0 and site_register !=0 and site_realm = '%s' and site_type = %d and site_dead = 0 order by $rand",
-				dbesc($realm),
-				intval(SITE_TYPE_ZOT)
-			);
-		}
+		);
 			
 		$ret = array('success' => false);
 	
 		if ($r) {
 			$ret['success'] = true;
 			$ret['sites'] = array();
-			$insecure = array();
 	
 			foreach ($r as $rr) {
 				
@@ -483,13 +409,8 @@ class Dirsearch extends Controller {
 				else
 					$register = 'closed';
 	
-				if (strpos($rr['site_url'],'https://') !== false)
-					$ret['sites'][] = array('url' => $rr['site_url'], 'access' => $access, 'register' => $register, 'sellpage' => $rr['site_sellpage'], 'location' => $rr['site_location'], 'project' => $rr['site_project'], 'version' => $rr['site_version']);
-				else
-					$insecure[] = array('url' => $rr['site_url'], 'access' => $access, 'register' => $register, 'sellpage' => $rr['site_sellpage'], 'location' => $rr['site_location'], 'project' => $rr['site_project'], 'version' => $rr['site_version']);
-			}
-			if ($insecure) {
-				$ret['sites'] = array_merge($ret['sites'],$insecure);
+				$ret['sites'][] = array('url' => $rr['site_url'], 'access' => $access, 'register' => $register, 'sellpage' => $rr['site_sellpage'], 'location' => $rr['site_location'], 'project' => $rr['site_project'], 'version' => $rr['site_version']);
+
 			}
 		}
 		return $ret;

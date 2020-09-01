@@ -2401,12 +2401,21 @@ function send_status_notifications($post_id,$item) {
 	if($y)
 		$notify = false;
 
+
+	if (intval($item['item_private']) === 2) {
+		$notify_type = NOTIFY_MAIL;
+	}
+	else {
+		$notify_type = NOTIFY_COMMENT;
+	}
+
+
 	if(! $notify)
 		return;
 
 
 	Enotify::submit(array(
-		'type'         => NOTIFY_COMMENT,
+		'type'         => $notify_type,
 		'from_xchan'   => $item['author_xchan'],
 		'to_xchan'     => $r[0]['channel_hash'],
 		'item'         => $item,
@@ -2487,8 +2496,11 @@ function tag_deliver($uid, $item_id) {
 		return;
 	}
 
+	// send mail (DM) notifications here, but only for top level posts.
+	// followups will be processed by send_status_notifications()
+	
 	$mail_notify = false;
-	if ((! intval($item['item_wall'])) && intval($item['item_private']) === 2) {
+	if ((! $item['item_wall']) && intval($item['item_thread_top']) && $item['author_xchan'] !== $u['channel_hash'] && intval($item['item_private']) === 2) {
 		Enotify::submit(array(
 			'to_xchan'     => $u['channel_hash'],
 			'from_xchan'   => $item['author_xchan'],

@@ -25,7 +25,12 @@ use Zotlabs\Lib\Zotfinger;
  * @param string $xchan
  * @param string $url
  */
+
 function poco_load($xchan = '', $url = null) {
+
+	if (ap_poco_load($xchan)) {
+		return;
+	}
 
 	if($xchan && ! $url) {
 		$r = q("select xchan_connurl from xchan where xchan_hash = '%s' limit 1",
@@ -144,7 +149,8 @@ function poco_load($xchan = '', $url = null) {
 			continue; 
 		}
 
-		$x = q("select xchan_hash from xchan where xchan_hash = '%s' limit 1",
+		$x = q("select xchan_hash from xchan where ( xchan_hash = '%s' or xchan_url = '%s' ) limit 1",
+			dbesc($hash),
 			dbesc($hash)
 		);
 
@@ -152,10 +158,11 @@ function poco_load($xchan = '', $url = null) {
 
 		if(($x !== false) && (! count($x))) {
 			if($address) {
-				if(in_array($network, ['zot6'])) {
+				if(in_array($network, ['zot6' , 'activitypub'])) {
 					$wf = discover_by_webbie($profile_url);
 					if ($wf) {
-						$x = q("select xchan_hash from xchan where xchan_hash = '%s' limit 1",
+						$x = q("select xchan_hash from xchan where ( xchan_hash = '%s' or xchan_url = '%s') limit 1",
+							dbesc($wf),
 							dbesc($wf)
 						);
 						$hash = $wf;
@@ -198,9 +205,104 @@ function poco_load($xchan = '', $url = null) {
 
 	q("delete from xlink where xlink_xchan = '%s' and xlink_updated < %s - INTERVAL %s and xlink_static = 0",
 		dbesc($xchan),
-		db_utcnow(), db_quoteinterval('2 DAY')
+		db_utcnow(), db_quoteinterval('7 DAY')
 	);
 
+}
+
+
+
+
+function ap_poco_load($xchan) {
+
+	$max = get_config('system','max_imported_follow',1000);
+	
+	if($xchan) {
+		$cl = get_xconfig($xchan,'activitypub','collections');
+		if (is_array($cl) && $cl) {
+			$url = ((array_key_exists('following',$cl)) ? $cl['following'] : '');
+		}
+		else {
+			return false;
+		}
+	}
+
+	if (! $url) {
+		logger('poco_load: no url');
+		return;
+	}
+
+	$obj = new ASCollection($url, '', 0, $max);
+	
+	$friends = $obj->get();
+	
+	if (! $friends) {
+		return;
+	}
+
+	foreach($friends as $entry) {
+
+		$hash = EMPTY_STR;
+
+		$x = q("select xchan_hash from xchan where (xchan_hash = '%s' or xchan_url = '%s') limit 1",
+			dbesc($entry),
+			dbesc($entry)
+		);
+
+		// We've never seen this person before. Import them.
+
+		if ($x) {
+			$hash = $x[0]['xchan_hash'];
+		}
+		else {
+			$wf = discover_by_webbie($entry);
+			if ($wf) {
+				$x = q("select xchan_hash from xchan where (xchan_hash = '%s' or xchan_url = '%s') limit 1",
+					dbesc($wf),
+					dbesc($wf)
+				);
+				$hash = $wf;
+			}
+		}
+
+		if (! $hash) {
+			continue;
+		}
+
+		$total ++;
+
+		$r = q("select * from xlink where xlink_xchan = '%s' and xlink_link = '%s' and xlink_static = 0 limit 1",
+			dbesc($xchan),
+			dbesc($hash)
+		);
+
+		if(! $r) {
+			q("insert into xlink ( xlink_xchan, xlink_link, xlink_rating, xlink_rating_text, xlink_sig, xlink_updated, xlink_static ) values ( '%s', '%s', %d, '%s', '%s', '%s', 0 ) ",
+				dbesc($xchan),
+				dbesc($hash),
+				intval(0),
+				dbesc(''),
+				dbesc(''),
+				dbesc(datetime_convert())
+			);
+		}
+		else {
+			q("update xlink set xlink_updated = '%s' where xlink_id = %d",
+				dbesc(datetime_convert()),
+				intval($r[0]['xlink_id'])
+			);
+		}
+	}
+
+	logger("ap_poco_load: loaded $total entries", LOGGER_DEBUG);
+
+	q("delete from xlink where xlink_xchan = '%s' and xlink_updated < %s - INTERVAL %s and xlink_static = 0",
+		dbesc($xchan),
+		db_utcnow(),
+		db_quoteinterval('7 DAY')
+	);
+
+	return true;
 }
 
 
@@ -294,6 +396,11 @@ function suggestion_query($uid, $myxchan, $start = 0, $limit = 80) {
 
 
 function update_suggestions() {
+
+	// !!!!!
+	return;
+	// !!!!!
+
 
 	$dirmode = get_config('system', 'directory_mode', DIRECTORY_MODE_NORMAL);
 

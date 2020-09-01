@@ -350,7 +350,6 @@ class Item extends Controller {
 	
 		$api_source = ((x($_REQUEST,'api_source') && $_REQUEST['api_source']) ? true : false);
 	
-		$consensus = intval($_REQUEST['consensus']);
 		$nocomment = intval($_REQUEST['nocomment']);
 
 		$is_poll = ((trim($_REQUEST['poll_answers'][0]) != '' && trim($_REQUEST['poll_answers'][1]) != '') ? true : false);
@@ -698,7 +697,6 @@ class Item extends Controller {
 			$item_unseen   = $orig_post['item_unseen'];
 			$item_starred   = $orig_post['item_starred'];
 			$item_uplink   = $orig_post['item_uplink'];
-			$item_consensus   = $orig_post['item_consensus'];
 			$item_wall   = $orig_post['item_wall'];
 			$item_thread_top   = $orig_post['item_thread_top'];
 			$item_notshown   = $orig_post['item_notshown'];
@@ -822,6 +820,33 @@ class Item extends Controller {
 		$str_group_allow   = $gacl['allow_gid'];
 		$str_contact_deny  = $gacl['deny_cid'];
 		$str_group_deny    = $gacl['deny_gid'];
+
+
+		// if the acl contains a single contact and it's a group, add a mention. This is for compatibility
+		// with other groups implementations which require a mention to trigger group delivery. 
+
+		if (($str_contact_allow) && (! $str_group_allow) && (! $str_contact_deny) && (! $str_group_deny)) {
+			$cida = expand_acl($str_contact_allow);
+			if (count($cida) === 1) {
+				$netgroups = get_forum_channels($profile_uid,1);
+				if ($netgroups)  {
+					foreach($netgroups as $ng) {
+						if ($ng['xchan_hash'] == $cida[0]) {
+							if (! isset($post_tags)) {
+								$post_tags = [];
+							}
+							$post_tags[] = array(
+								'uid'   => $profile_uid, 
+								'ttype' => TERM_MENTION,
+								'otype' => TERM_OBJ_POST,
+								'term'  => $ng['xchan_name'],
+								'url'   => $ng['xchan_url']
+							);
+						}
+					}
+				}
+			}
+		}
 
 		$groupww = false;
 
@@ -1096,7 +1121,6 @@ class Item extends Controller {
 		$item_unseen = ((local_channel() != $profile_uid) ? 1 : 0);
 		$item_wall = (($post_type === 'wall' || $post_type === 'wall-comment') ? 1 : 0);
 		$item_origin = (($origin) ? 1 : 0);
-		$item_consensus = (($consensus) ? 1 : 0);
 		$item_nocomment = (($nocomment) ? 1 : 0);
 	
 	
@@ -1197,15 +1221,8 @@ class Item extends Controller {
 			}
 		}
 
-		if($webpage == ITEM_TYPE_MAIL) {
-			$plink = z_root() . '/mail/' . $channel['channel_address'] . '/' . substr($mid,-16);
-		}
-
 
 		if ((! $plink) && ($item_thread_top)) {
-//			$plink = z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . gen_link_id($mid);
-//			$plink = substr($plink,0,190);
-
 			$plink = z_root() . '/item/' . $uuid;
 		}
 
@@ -1251,7 +1268,7 @@ class Item extends Controller {
 		$datarray['item_unseen']         = intval($item_unseen);
 		$datarray['item_starred']        = intval($item_starred);
 		$datarray['item_uplink']         = intval($item_uplink);
-		$datarray['item_consensus']      = intval($item_consensus);
+		$datarray['item_consensus']      = 0;
 		$datarray['item_notshown']       = intval($item_notshown);
 		$datarray['item_nsfw']           = intval($item_nsfw);
 		$datarray['item_relay']          = intval($item_relay);
@@ -1326,7 +1343,7 @@ class Item extends Controller {
 			if($z) {
 				$datarray['cancel'] = 1;
 				notice( t('Duplicate post suppressed.') . EOL);
-				logger('Duplicate post. Faking plugin cancel.');
+				logger('Duplicate post. Cancelled.');
 			}
 		}
 	
@@ -1362,19 +1379,6 @@ class Item extends Controller {
 			$datarray['id'] = $post_id;
 	
 			$x = item_store_update($datarray,$execflag);
-			
-			// We only need edit activities for other federated protocols
-			// which do not support edits natively. While this does federate 
-			// edits, it presents a number of issues locally - such as #757 and #758.
-			// The SQL check for an edit activity would not perform that well so to fix these issues
-			// requires an additional item flag (perhaps 'item_edit_activity') that we can add to the 
-			// query for searches and notifications.
-
-			// For now we'll just forget about trying to make edits work on network protocols that 
-			// don't support them.   
-
-			// item_create_edit_activity($x);			
-
 			if(! $parent) {
 				$r = q("select * from item where id = %d",
 					intval($post_id)
@@ -1417,10 +1421,10 @@ class Item extends Controller {
 				if(local_channel())
 					retain_item($parent);
 
-				// only send comment notification if this is a wall-to-wall comment,
+				// only send comment notification if this is a wall-to-wall comment and not a DM,
 				// otherwise it will happen during delivery
 	
-				if(($datarray['owner_xchan'] != $datarray['author_xchan']) && (intval($parent_item['item_wall']))) {
+				if(($datarray['owner_xchan'] != $datarray['author_xchan']) && (intval($parent_item['item_wall'])) && intval($datarray['item_private']) != 2) {
 					Enotify::submit(array(
 						'type'         => NOTIFY_COMMENT,
 						'from_xchan'   => $datarray['author_xchan'],

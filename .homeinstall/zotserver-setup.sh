@@ -8,6 +8,7 @@
 # - zap: https://zotlabs.com/zap/
 # - misty : https://zotlabs.com/misty/
 # - osada : https://codeberg.org/zot/osada
+# - redmatrix : https://codeberg.org/zot/redmatrix
 # under Debian Linux "Buster"
 #
 # 1) Copy the file "zotserver-config.txt.template" to "zotserver-config.txt"
@@ -60,7 +61,7 @@
 #
 # The script makes a (daily) backup of all relevant files
 # - /var/lib/mysql/ > database
-# - /var/www/ > hubzilla/zap/misty from github
+# - /var/www/ > hubzilla/zap/misty from git repository
 # - /etc/letsencrypt/ > certificates
 #
 # The backup will be written on an external disk compatible to LUKS+ext4 (see zotserver-config.txt)
@@ -209,8 +210,15 @@ function print_warn {
 }
 
 function stop_zotserver {
-    print_info "stopping apache webserver..."
-    systemctl stop apache2
+    if [ $webserver = "nginx" ]
+    then
+        print_info "stopping nginx webserver..."
+        systemctl stop nginx
+    elif [ $webserver = "apache" ]
+    then
+        print_info "stopping apache webserver..."
+        systemctl stop apache2
+    fi
     print_info "stopping mysql db..."
     systemctl stop mariadb
 }
@@ -222,13 +230,25 @@ function install_apache {
     systemctl restart apache2
 }
 
+function install_nginx {
+    print_info "installing nginx..."
+    nocheck_install "nginx"
+    systemctl restart nginx
+}
+
 function add_vhost {
-    print_info "adding vhost"
+    print_info "adding apache vhost"
     echo "<VirtualHost *:80>" >> "/etc/apache2/sites-available/${le_domain}.conf"
     echo "ServerName ${le_domain}" >> "/etc/apache2/sites-available/${le_domain}.conf"
     echo "DocumentRoot $install_path" >> "/etc/apache2/sites-available/${le_domain}.conf"
     echo "</VirtualHost>"  >> "/etc/apache2/sites-available/${le_domain}.conf"
     a2ensite $le_domain
+}
+
+function add_nginx_block {
+    print_info "adding nginx block"
+    sed "s|SERVER_NAME|${le_domain}|g;s|INSTALL_PATH|${install_path}|g;s|ZOTSERVER_LOG|${install_folder}-${zotserver}.log|;s|PHP_FPM_SOCK|$(ls /var/run/php/*sock)|;" nginx-zotserver.conf.template >> /etc/nginx/sites-enabled/${le_domain}.conf
+    ln -s /etc/nginx/sites-enabled/${le_domain}.conf /etc/nginx/sites-available/
 }
 
 function install_imagemagick {
@@ -254,9 +274,18 @@ function install_sendmail {
 function install_php {
     # openssl and mbstring are included in libapache2-mod-php
     print_info "installing php..."
-    nocheck_install "libapache2-mod-php php php-pear php-curl php-gd php-mbstring php-xml php-zip"
-    sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/7.3/apache2/php.ini
-    sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/7.3/apache2/php.ini
+    if [ $webserver = "nginx" ]
+    then
+        nocheck_install "php php-pear php-curl php-gd php-mbstring php-xml php-zip php-fpm"
+        sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/7.3/fpm/php.ini
+        sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/7.3/fpm/php.ini
+        systemctl reload php7.3-fpm
+    elif [ $webserver = "apache" ]
+    then
+        nocheck_install "libapache2-mod-php php php-pear php-curl php-gd php-mbstring php-xml php-zip"
+        sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/7.3/apache2/php.ini
+        sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/7.3/apache2/php.ini
+    fi
 }
 
 function install_mysql {
@@ -452,10 +481,20 @@ function install_letsencrypt {
     then
         die "Failed to install let's encrypt: 'le_email' is empty in $configfile"
     fi
-    nocheck_install "certbot python-certbot-apache"
-    print_info "run certbot ..."
+    if [ $webserver = "nginx" ]
+    then
+        nocheck_install "certbot"
+        print_info "run certbot..."
+        systemctl stop nginx
+        certbot certonly --standalone -d $le_domain -m $le_email --agree-tos --non-interactive
+        systemctl start nginx
+    elif [ $webserver = "apache" ]
+    then
+        nocheck_install "certbot python-certbot-apache"
+        print_info "run certbot ..."
 	certbot --apache -w $install_path -d $le_domain -m $le_email --agree-tos --non-interactive --redirect --hsts --uir
-    service apache2 restart
+        service apache2 restart
+    fi
 }
 
 function check_https {
@@ -483,8 +522,11 @@ function zotserver_name {
     elif git remote -v | grep -i "origin.*osada.*"
     then
         zotserver=osada
+    elif git remote -v | grep -i "origin.*redmatrix.*"
+    then
+        zotserver=redmatrix
     else
-        die "neither osada,misty, zap nor hubzilla repository > did not install osada/misty/zap/hubzilla"
+        die "neither redmatrix, osada, misty, zap nor hubzilla repository > did not install redmatrix/osada/misty/zap/hubzilla"
     fi
 }
 
@@ -507,8 +549,12 @@ function install_zotserver {
     then
         print_info "osada"
         util/add_addon_repo https://codeberg.org/zot/osada-addons.git oaddons
+    elif [ $zotserver = "redmatrix" ]
+    then
+        print_info "redmatrix"
+        util/add_addon_repo https://codeberg.org/zot/redmatrix-addons.git raddons
     else
-        die "neither osada, misty, zap nor hubzilla repository > did not install addons or osada/misty/zap/hubzilla"
+        die "neither redmatrix, osada, misty, zap nor hubzilla repository > did not install addons or redmatrix/osada/misty/zap/hubzilla"
     fi
     mkdir -p "cache/smarty3"
     mkdir -p "store"
@@ -533,6 +579,22 @@ function install_cryptosetup {
     nocheck_install "cryptsetup"
 }
 
+function configure_zotserverdaily {
+    echo "#!/bin/sh" >> /var/www/$zotserverdaily
+    echo "#" >> /var/www/$zotserverdaily
+    echo "# update of $le_domain Zot hub/instance" >> /var/www/$zotserverdaily
+    echo "echo \"\$(date) - updating core and addons...\"" >> /var/www/$zotserverdaily
+    echo "echo \"reaching git repository for $le_domain $zotserver hub/instance...\"" >> /var/www/$zotserverdaily
+    echo "(cd $install_path ; util/udall)" >> /var/www/$zotserverdaily
+    echo "chown -R www-data:www-data $install_path # make all accessible for the webserver" >> /var/www/$zotserverdaily
+    if [ $webserver = "apache" ]
+    then
+        echo "chown root:www-data $install_path/.htaccess" >> /var/www/$zotserverdaily
+        echo "chmod 0644 $install_path/.htaccess # www-data can read but not write it" >> /var/www/$zotserverdaily
+    fi
+    chmod a+x /var/www/$zotserverdaily
+}
+
 function configure_cron_daily {
     print_info "configuring cron..."
     # every 10 min for poller.php
@@ -541,99 +603,105 @@ function configure_cron_daily {
         echo "*/10 * * * * www-data cd $install_path; php Zotlabs/Daemon/Run.php Cron >> /dev/null 2>&1" >> /etc/crontab
     fi
     # Run external script daily at 05:30
-    # - stop apache and mysql-server
+    # - stop apache/nginx and mysql-server
     # - renew the certificate of letsencrypt
     # - backup db, files ($install_path), certificates if letsencrypt
     # - update zotserver core and addon
     # - update and upgrade linux
     # - reboot is done by "shutdown -h now" because "reboot" hangs sometimes depending on the system
-echo "#!/bin/sh" > /var/www/$zotserverdaily
-echo "#" >> /var/www/$zotserverdaily
-echo "echo \" \"" >> /var/www/$zotserverdaily
-echo "echo \"+++ \$(date) +++\"" >> /var/www/$zotserverdaily
-echo "echo \" \"" >> /var/www/$zotserverdaily
-echo "echo \"\$(date) - renew certificate...\"" >> /var/www/$zotserverdaily
-echo "certbot renew --noninteractive" >> /var/www/$zotserverdaily
-echo "#" >> /var/www/$zotserverdaily
-echo "echo \"\$(date) - stopping apache and mysql...\"" >> /var/www/$zotserverdaily
-echo "service apache2 stop" >> /var/www/$zotserverdaily
-echo "/etc/init.d/mysql stop # to avoid inconsistencies" >> /var/www/$zotserverdaily
-echo "#" >> /var/www/$zotserverdaily
-echo "# backup" >> /var/www/$zotserverdaily
-echo "echo \"\$(date) - try to mount external device for backup...\"" >> /var/www/$zotserverdaily
-echo "backup_device_name=$backup_device_name" >> /var/www/$zotserverdaily
-echo "backup_device_pass=$backup_device_pass" >> /var/www/$zotserverdaily
-echo "backup_mount_point=$backup_mount_point" >> /var/www/$zotserverdaily
-echo "device_mounted=0" >> /var/www/$zotserverdaily
-echo "if [ -n \"$backup_device_name\" ]" >> /var/www/$zotserverdaily
-echo "then" >> /var/www/$zotserverdaily
-echo "    if blkid | grep $backup_device_name" >> /var/www/$zotserverdaily
-echo "    then" >> /var/www/$zotserverdaily
-	if [ -n "$backup_device_pass" ]
-	then
-echo "        echo \"decrypting backup device...\"" >> /var/www/$zotserverdaily
-echo "        echo "\"$backup_device_pass\"" | cryptsetup luksOpen $backup_device_name cryptobackup" >> /var/www/$zotserverdaily
-    fi
-echo "        if [ ! -d $backup_mount_point ]" >> /var/www/$zotserverdaily
-echo "        then" >> /var/www/$zotserverdaily
-echo "            mkdir $backup_mount_point" >> /var/www/$zotserverdaily
-echo "        fi" >> /var/www/$zotserverdaily
-echo "        echo \"mounting backup device...\"" >> /var/www/$zotserverdaily
-	if [ -n "$backup_device_pass" ]
-	then
-echo "        if mount /dev/mapper/cryptobackup $backup_mount_point" >> /var/www/$zotserverdaily
-	else
-echo "        if mount $backup_device_name $backup_mount_point" >> /var/www/$zotserverdaily
-	fi
-echo "        then" >> /var/www/$zotserverdaily
-echo "            device_mounted=1" >> /var/www/$zotserverdaily
-echo "            echo \"device $backup_device_name is now mounted. Starting backup...\"" >> /var/www/$zotserverdaily
-echo "            rsync -a --delete /var/lib/mysql/ /media/zotserver_backup/mysql" >> /var/www/$zotserverdaily
-echo "            rsync -a --delete /var/www/ /media/zotserver_backup/www" >> /var/www/$zotserverdaily
-echo "            rsync -a --delete /etc/letsencrypt/ /media/zotserver_backup/letsencrypt" >> /var/www/$zotserverdaily
-echo "            echo \"\$(date) - disk sizes...\"" >> /var/www/$zotserverdaily
-echo "            df -h" >> /var/www/$zotserverdaily
-echo "            echo \"\$(date) - db size...\"" >> /var/www/$zotserverdaily
-echo "            du -h $backup_mount_point | grep mysql/zotserver" >> /var/www/$zotserverdaily
-echo "            echo \"unmounting backup device...\"" >> /var/www/$zotserverdaily
-echo "            umount $backup_mount_point" >> /var/www/$zotserverdaily
-echo "        else" >> /var/www/$zotserverdaily
-echo "            echo \"failed to mount device $backup_device_name\"" >> /var/www/$zotserverdaily
-echo "        fi" >> /var/www/$zotserverdaily
-	if [ -n "$backup_device_pass" ]
-	then
-echo "        echo \"closing decrypted backup device...\"" >> /var/www/$zotserverdaily
-echo "        cryptsetup luksClose cryptobackup" >> /var/www/$zotserverdaily
-	fi
-echo "    fi" >> /var/www/$zotserverdaily
-echo "fi" >> /var/www/$zotserverdaily
-echo "if [ \$device_mounted == 0 ]" >> /var/www/$zotserverdaily
-echo "then" >> /var/www/$zotserverdaily
-echo "    echo \"device could not be mounted $backup_device_name. No backup written.\"" >> /var/www/$zotserverdaily
-echo "fi" >> /var/www/$zotserverdaily
-echo "#" >> /var/www/$zotserverdaily
-echo "echo \"\$(date) - db size...\"" >> /var/www/$zotserverdaily
-echo "du -h /var/lib/mysql/ | grep mysql/zotserver" >> /var/www/$zotserverdaily
-echo "#" >> /var/www/$zotserverdaily
-echo "# update" >> /var/www/$zotserverdaily
-echo "echo \"\$(date) - updating core and addons...\"" >> /var/www/$zotserverdaily
-echo "(cd $install_path/ ; util/udall)" >> /var/www/$zotserverdaily
-echo "chown -R www-data:www-data $install_path/ # make all accessable for the webserver" >> /var/www/$zotserverdaily
-echo "chown root:www-data $install_path/.htaccess" >> /var/www/$zotserverdaily
-echo "chmod 0644 $install_path/.htaccess # www-data can read but not write it" >> /var/www/$zotserverdaily
-echo "echo \"\$(date) - updating linux...\"" >> /var/www/$zotserverdaily
-echo "apt-get -q -y update && apt-get -q -y dist-upgrade && apt-get -q -y autoremove # update linux and upgrade" >> /var/www/$zotserverdaily
-echo "echo \"\$(date) - Backup and update finished. Rebooting...\"" >> /var/www/$zotserverdaily
-echo "#" >> /var/www/$zotserverdaily
-echo "shutdown -r now" >> /var/www/$zotserverdaily
-
-    if [ -z "`grep '$zotserverdaily' /etc/crontab`" ]
+    echo "#!/bin/sh" > /var/www/$zotcron
+    echo "#" >> /var/www/$zotcron
+    echo "echo \" \"" >> /var/www/$zotcron
+    echo "echo \"+++ \$(date) +++\"" >> /var/www/$zotcron
+    echo "echo \" \"" >> /var/www/$zotcron
+    echo "echo \"\$(date) - stopping $webserver and mysql...\"" >> /var/www/$zotcron
+    if [ $webserver = "nginx" ]
     then
-        echo "30 05 * * * root /bin/bash /var/www/$zotserverdaily >> $install_path/${install_folder}-${zotserver}-daily.log 2>&1" >> /etc/crontab
-        echo "0 0 1 * * root rm $install_path/${install_folder}-${zotserver}-daily.log" >> /etc/crontab
+        echo "systemctl stop nginx" >> /var/www/$zotcron
+    elif [ $webserver = "apache" ]
+    then
+        echo "service apache2 stop" >> /var/www/$zotcron
+    fi
+    echo "/etc/init.d/mysql stop # to avoid inconsistencies" >> /var/www/$zotcron
+    echo "#" >> /var/www/$zotcron
+    echo "echo \"\$(date) - renew certificate...\"" >> /var/www/$zotcron
+    echo "certbot renew --noninteractive" >> /var/www/$zotcron
+    echo "#" >> /var/www/$zotcron
+    echo "# backup" >> /var/www/$zotcron
+    echo "echo \"\$(date) - try to mount external device for backup...\"" >> /var/www/$zotcron
+    echo "backup_device_name=$backup_device_name" >> /var/www/$zotcron
+    echo "backup_device_pass=$backup_device_pass" >> /var/www/$zotcron
+    echo "backup_mount_point=$backup_mount_point" >> /var/www/$zotcron
+    echo "device_mounted=0" >> /var/www/$zotcron
+    echo "if [ -n \"\$backup_device_name\" ]" >> /var/www/$zotcron
+    echo "then" >> /var/www/$zotcron
+    echo "    if blkid | grep $backup_device_name" >> /var/www/$zotcron
+    echo "    then" >> /var/www/$zotcron
+    if [ -n "$backup_device_pass" ]
+    then
+        echo "        echo \"decrypting backup device...\"" >> /var/www/$zotcron
+        echo "        echo "\"$backup_device_pass\"" | cryptsetup luksOpen $backup_device_name cryptobackup" >> /var/www/$zotcron
+    fi
+    echo "        if [ ! -d $backup_mount_point ]" >> /var/www/$zotcron
+    echo "        then" >> /var/www/$zotcron
+    echo "            mkdir $backup_mount_point" >> /var/www/$zotcron
+    echo "        fi" >> /var/www/$zotcron
+    echo "        echo \"mounting backup device...\"" >> /var/www/$zotcron
+    if [ -n "$backup_device_pass" ]
+    then
+        echo "        if mount /dev/mapper/cryptobackup $backup_mount_point" >> /var/www/$zotcron
+    else
+        echo "        if mount $backup_device_name $backup_mount_point" >> /var/www/$zotcron
+    fi
+    echo "        then" >> /var/www/$zotcron
+    echo "            device_mounted=1" >> /var/www/$zotcron
+    echo "            echo \"device $backup_device_name is now mounted. Starting backup...\"" >> /var/www/$zotcron
+    echo "            rsync -a --delete /var/lib/mysql/ /media/zotserver_backup/mysql" >> /var/www/$zotcron
+    echo "            rsync -a --delete /var/www/ /media/zotserver_backup/www" >> /var/www/$zotcron
+    echo "            rsync -a --delete /etc/letsencrypt/ /media/zotserver_backup/letsencrypt" >> /var/www/$zotcron
+    echo "            echo \"\$(date) - disk sizes...\"" >> /var/www/$zotcron
+    echo "            df -h" >> /var/www/$zotcron
+    echo "            echo \"\$(date) - db size...\"" >> /var/www/$zotcron
+    echo "            du -h $backup_mount_point | grep mysql/zotserver" >> /var/www/$zotcron
+    echo "            echo \"unmounting backup device...\"" >> /var/www/$zotcron
+    echo "            umount $backup_mount_point" >> /var/www/$zotcron
+    echo "        else" >> /var/www/$zotcron
+    echo "            echo \"failed to mount device $backup_device_name\"" >> /var/www/$zotcron
+    echo "        fi" >> /var/www/$zotcron
+    if [ -n "$backup_device_pass" ]
+    then
+        echo "        echo \"closing decrypted backup device...\"" >> /var/www/$zotcron
+        echo "        cryptsetup luksClose cryptobackup" >> /var/www/$zotcron
+    fi
+    echo "    fi" >> /var/www/$zotcron
+    echo "fi" >> /var/www/$zotcron
+    echo "if [ \$device_mounted == 0 ]" >> /var/www/$zotcron
+    echo "then" >> /var/www/$zotcron
+    echo "    echo \"device could not be mounted $backup_device_name. No backup written.\"" >> /var/www/$zotcron
+    echo "fi" >> /var/www/$zotcron
+    echo "#" >> /var/www/$zotcron
+    echo "echo \"\$(date) - db size...\"" >> /var/www/$zotcron
+    echo "du -h /var/lib/mysql/ | grep mysql/" >> /var/www/$zotcron
+    echo "#" >> /var/www/$zotcron
+    echo "cd /var/www" >> /var/www/$zotcron
+    echo "for f in *-daily.sh; do \"./\${f}\"; done" >> /var/www/$zotcron
+    echo "echo \"\$(date) - updating linux...\"" >> /var/www/$zotcron
+    echo "apt-get -q -y update && apt-get -q -y dist-upgrade && apt-get -q -y autoremove # update linux and upgrade" >> /var/www/$zotcron
+    echo "echo \"\$(date) - Backup and update finished. Rebooting...\"" >> /var/www/$zotcron
+    echo "#" >> /var/www/$zotcron
+    echo "shutdown -r now" >> /var/www/$zotcron
+
+    # If global cron job does not exist we add it to /etc/crontab
+    if grep -q $zotcron /etc/crontab
+    then
+        echo "cron job already in /etc/crontab"
+    else
+        echo "30 05 * * * root /bin/bash /var/www/$zotcron >> /var/www/zot-daily.log 2>&1" >> /etc/crontab
+        echo "0 0 1 * * root rm /var/www/zot-daily.log" >> /etc/crontab
     fi
 
-    # This is active after either "reboot" or "/etc/init.d/cron reload"
+    # This is active after either "reboot" or cron reload"
+    systemctl restart cron
     print_info "configured cron for updates/upgrades"
 }
 
@@ -641,7 +709,6 @@ echo "shutdown -r now" >> /var/www/$zotserverdaily
 # START OF PROGRAM
 ########################################################################
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin
-
 check_sanity
 
 zotserver_name
@@ -655,8 +722,9 @@ source $configfile
 
 selfhostdir=/etc/selfhost
 selfhostscript=selfhost-updater.sh
+zotcron="zotcron.sh"
 zotserverdaily="${install_folder}-${zotserver}-daily.sh"
-backup_mount_point="/media/${install_folder}-${zotserver}_backup"
+backup_mount_point="/media/zotserver_backup"
 
 #set -x    # activate debugging from here
 
@@ -666,15 +734,32 @@ update_upgrade
 install_curl
 install_wget
 install_sendmail
-install_apache
-if [ "$install_path" != "/var/www/html" ]
+if [ $webserver = "nginx" ]
 then
-    add_vhost
+    install_nginx
+elif [ $webserver = "apache" ]
+then
+    install_apache
+else
+die "Failed to install a Web server: 'webserver' not set to \"apache\" or \"nginx\" in $configfile" 
 fi
 install_imagemagick
 install_php
+if [ $webserver = "nginx" ]
+then
+    add_nginx_block
+elif [ $webserver = "apache" ]
+then
+    if [ "$install_path" != "/var/www/html" ]
+    then
+        add_vhost
+    fi
+fi
 install_mysql
+if [ $webserver = "apache" ]
+then
 install_adminer
+fi
 create_zotserver_db
 run_freedns
 install_run_selfhost
@@ -692,6 +777,8 @@ fi
 
 install_zotserver
 
+configure_zotserverdaily
+
 configure_cron_daily
 
 if [ "$le_domain" != "localhost" ]
@@ -704,5 +791,3 @@ fi
 
 
 #set +x    # stop debugging from here
-
-
