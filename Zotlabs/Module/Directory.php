@@ -83,9 +83,9 @@ class Directory extends Controller {
 
 		$observer = get_observer_hash();
 
-		if (get_config('system','block_public_directory',false) && (! $observer)) {
+		if (get_config('system','block_public_directory',true) && (! $observer)) {
 			notice( t('Public access denied.') . EOL);
-			return;
+			return login(false);
 		}
 			
 		$globaldir = Libzotdir::get_directory_setting($observer, 'globaldir');
