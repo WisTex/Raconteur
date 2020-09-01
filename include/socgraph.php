@@ -3,6 +3,7 @@
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\Zotfinger;
+use Zotlabs\Lib\ASCollection;
 
 /**
  * poco_load
