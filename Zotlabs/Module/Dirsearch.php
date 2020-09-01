@@ -248,6 +248,12 @@ class Dirsearch extends Controller {
 	
 			foreach ($r as $rr) {
 
+				// We need a better way to do this than one query for every
+				// AP record. Leaving this for the moment because it produces
+				// the desired results of not having duplicate entries for
+				// a channel that has multiple identities across multiple
+				// networks.
+				
 				if ($rr['xchan_network'] === 'activitypub') {
 					$z = q("select xchan_hash from xchan where xchan_url = '%s' and xchan_network = 'zot6' limit 1",
 						dbesc($rr['xchan_url'])
