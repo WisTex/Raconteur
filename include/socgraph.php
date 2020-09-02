@@ -119,7 +119,8 @@ function poco_load($xchan = '', $url = null) {
 		$name = '';
 		$hash = '';
 		$rating = 0;
-
+		$network = '';
+		
 		$name   = $entry['displayName'];
 		$hash   = $entry['hash'];
 
@@ -145,8 +146,13 @@ function poco_load($xchan = '', $url = null) {
 			}
 		}
 
+		if (! in_array($network, ['zot6' , 'activitypub'])) {
+			continue;
+		}
+
 		if((! $name) || (! $profile_url) || (! $profile_photo) || (! $hash) || (! $address)) {
 			logger('poco_load: missing data');
+			logger('poco_load: ' . print_r($entry,true), LOGGER_DATA);
 			continue; 
 		}
 
