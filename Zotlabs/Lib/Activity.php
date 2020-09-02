@@ -1811,6 +1811,7 @@ class Activity {
 					'xchan_url'            => $profile,
 					'xchan_name'           => $name,
 					'xchan_hidden'         => intval($hidden),
+					'xchan_updated'        => datetime_convert(),
 					'xchan_name_date'      => datetime_convert(),
 					'xchan_network'        => 'activitypub',
 					'xchan_photo_date'     => datetime_convert('UTC','UTC','1968-01-01'),
@@ -1832,7 +1833,8 @@ class Activity {
 			}
 
 			// update existing record
-			$u = q("update xchan set xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s', xchan_hidden = %d where xchan_hash = '%s'",
+			$u = q("update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s', xchan_hidden = %d where xchan_hash = '%s'",
+				dbesc(datetime_convert()),
 				dbesc($name),
 				dbesc($pubkey),
 				dbesc('activitypub'),

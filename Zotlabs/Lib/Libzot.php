@@ -798,10 +798,12 @@ class Libzot {
 				|| ($r[0]['xchan_follow'] != $arr['primary_location']['follow_url'])
 				|| ($r[0]['xchan_connpage'] != $arr['connect_url'])
 				|| ($r[0]['xchan_url'] != $arr['primary_location']['url'])
+				|| ($r[0]['xchan_updated'] < datetime_convert('UTC','UTC','now - 7 days'))
 				|| $hidden_changed || $adult_changed || $deleted_changed || $type_changed ) {
-				$rup = q("update xchan set xchan_name = '%s', xchan_name_date = '%s', xchan_connurl = '%s', xchan_follow = '%s',
+				$rup = q("update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_name_date = '%s', xchan_connurl = '%s', xchan_follow = '%s',
 					xchan_connpage = '%s', xchan_hidden = %d, xchan_selfcensored = %d, xchan_deleted = %d, xchan_type = %d,
 					xchan_addr = '%s', xchan_url = '%s' where xchan_hash = '%s'",
+					dbesc(datetime_convert()),
 					dbesc(($arr['name']) ? escape_tags($arr['name']) : '-'),
 					dbesc($arr['name_updated']),
 					dbesc($arr['primary_location']['connections_url']),
@@ -861,6 +863,7 @@ class Libzot {
 					'xchan_connpage'       => $arr['connect_url'],
 					'xchan_name'           => (($arr['name']) ? escape_tags($arr['name']) : '-'),
 					'xchan_network'        => 'zot6',
+					'xchan_updated'        => datetime_convert(),
 					'xchan_photo_date'     => $arr['photo_updated'],
 					'xchan_name_date'      => $arr['name_updated'],
 					'xchan_hidden'         => intval(1 - intval($arr['searchable'])),
@@ -931,8 +934,9 @@ class Libzot {
 				if ($photos[4]) {
 					// importing the photo failed somehow. Leave the photo_date alone so we can try again at a later date.
 					// This often happens when somebody joins the matrix with a bad cert.
-					$r = q("update xchan set xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
+					$r = q("update xchan set xchan_updated = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
 						where xchan_hash = '%s'",
+						dbesc(datetime_convert()),
 						dbesc($photos[0]),
 						dbesc($photos[1]),
 						dbesc($photos[2]),
@@ -941,9 +945,10 @@ class Libzot {
 					);
 				}
 				else {
-					$r = q("update xchan set xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
+					$r = q("update xchan set xchan_updated = '%s', xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
 						where xchan_hash = '%s'",
-						dbescdate(datetime_convert('UTC','UTC',$arr['photo_updated'])),
+						dbesc(datetime_convert()),
+						dbesc(datetime_convert('UTC','UTC',$arr['photo_updated'])),
 						dbesc($photos[0]),
 						dbesc($photos[1]),
 						dbesc($photos[2]),
