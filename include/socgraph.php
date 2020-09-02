@@ -47,6 +47,12 @@ function poco_load($xchan = '', $url = null) {
 		return;
 	}
 
+	$max = intval(get_config('system','max_imported_follow',10));
+	if (! intval($max)) {
+		return;
+	}
+
+
 	$url = $url . '?f=&fields=displayName,hash,urls,photos' ;
 
 	logger('poco_load: ' . $url, LOGGER_DEBUG);
@@ -110,6 +116,7 @@ function poco_load($xchan = '', $url = null) {
 		return;
 	}
 
+	
 	$total = 0;
 	foreach($j['entry'] as $entry) {
 
@@ -207,6 +214,12 @@ function poco_load($xchan = '', $url = null) {
 				intval($r[0]['xlink_id'])
 			);
 		}
+
+		$total ++;
+		if ($total > $max) {
+			break;
+		}
+
 	}
 	logger("poco_load: loaded $total entries",LOGGER_DEBUG);
 
@@ -222,7 +235,11 @@ function poco_load($xchan = '', $url = null) {
 
 function ap_poco_load($xchan) {
 
-	$max = intval(get_config('system','max_imported_follow',200));
+	$max = intval(get_config('system','max_imported_follow',10));
+	if (! intval($max)) {
+		return;
+	}
+
 	
 	if($xchan) {
 		$cl = get_xconfig($xchan,'activitypub','collections');
