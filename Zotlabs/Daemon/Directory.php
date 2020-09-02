@@ -13,25 +13,28 @@ class Directory {
 
 	static public function run($argc,$argv) {
 
-		if($argc < 2)
+		if ($argc < 2) {
 			return;
+		}
 
 		$force = false;
 		$pushall = true;
-		$pushed = false;
 		
-		if($argc > 2) {
-			if($argv[2] === 'force')
+		if ($argc > 2) {
+			if ($argv[2] === 'force') {
 				$force = true;
-			if($argv[2] === 'nopush')
+			}
+			if ($argv[2] === 'nopush') {
 				$pushall = false;
+			}
 		}	
 
 		logger('directory update', LOGGER_DEBUG);
 
 		$channel = channelx_by_n($argv[1]);
-		if(! $channel)
+		if (! $channel) {
 			return;
+		}
 
 		// update the local directory - was optional, but now done regardless
 		
@@ -43,9 +46,8 @@ class Directory {
 		);
 
 		// Now update all the connections
-		if($pushall) {
+		if ($pushall) {
 			Run::Summon(array('Notifier','refresh_all',$channel['channel_id']));
-			$pushed = true;
 		}
 	}
 }
