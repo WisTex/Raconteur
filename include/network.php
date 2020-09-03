@@ -1771,8 +1771,3 @@ function get_request_string($url) {
 }
 
 
-function update_this_site() {
-
-
-
-}
