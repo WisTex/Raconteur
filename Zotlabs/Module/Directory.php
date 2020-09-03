@@ -91,9 +91,9 @@ class Directory extends Controller {
 		$globaldir = Libzotdir::get_directory_setting($observer, 'globaldir');
 
 		// override your personal global search pref if we're doing a navbar search of the directory
-//		if (intval($_REQUEST['navsearch'])) {
-//			$globaldir = 1;
-//		}
+		if (intval($_REQUEST['navsearch'])) {
+			$globaldir = 1;
+		}
 	
 		$safe_mode = Libzotdir::get_directory_setting($observer, 'safemode');
 	
@@ -130,7 +130,8 @@ class Directory extends Controller {
 			// only works if the suggestion query and the directory query have the
 			// same number of results
 
-			$r = suggestion_query(local_channel(),get_observer_hash(),0,DIRECTORY_PAGESIZE);
+			App::set_pager_itemspage(60);
+			$r = suggestion_query(local_channel(),get_observer_hash(),App::$pager['start'],DIRECTORY_PAGESIZE);
 
 			if (! $r) {
 				notice( t('No default suggestions were found.') . EOL);
@@ -162,23 +163,10 @@ class Directory extends Controller {
 
 		$directory_admin = false;
 
-//		if (($dirmode == DIRECTORY_MODE_PRIMARY) || ($dirmode == DIRECTORY_MODE_STANDALONE)) {
-			$url = z_root() . '/dirsearch';
-			if (is_site_admin()) {
-				$directory_admin = true;
-			}
-//		}
-//		if (! $url) {
-//			$directory = Libzotdir::find_upstream_directory($dirmode);
-//			if ((! $directory) || (! array_key_exists('url',$directory)) || (! $directory['url'])) {
-//				logger('CRITICAL: No directory server URL');
-//			}
-//			$url = $directory['url'] . '/dirsearch';
-//		}
-	
-//		$token = get_config('system','realm_token');
-		
-		logger('mod_directory: URL = ' . $url, LOGGER_DEBUG);
+		$url = z_root() . '/dirsearch';
+		if (is_site_admin()) {
+			$directory_admin = true;
+		}
 	
 		$contacts = array();
 	
@@ -305,14 +293,7 @@ class Directory extends Controller {
 	
 							$page_type = '';
 	
-							$rating_enabled = get_config('system','rating_enabled');
-
-							if ($rr['total_ratings'] && $rating_enabled) {
-								$total_ratings = sprintf( tt("%d rating", "%d ratings", $rr['total_ratings']), $rr['total_ratings']);
-							}
-							else {
-								$total_ratings = '';
-							}
+							$total_ratings = '';
 	
 							$profile = $rr;
 	

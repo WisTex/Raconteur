@@ -181,7 +181,7 @@ class Dirsearch extends Controller {
 	
 		// If &limit=n, return at most n entries
 		// If &return_total=1, we count matching entries and return that as 'total_items' for use in pagination.
-		// By default we return one page (default 80 items maximum) and do not count total entries
+		// By default we return one page (default 60 items maximum) and do not count total entries
 	
 		$logic = ((strlen($sql_extra)) ? 'false' : 'true');
 	

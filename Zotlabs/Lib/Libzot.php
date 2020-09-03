@@ -3190,7 +3190,7 @@ class Libzot {
 	}
 
 
-	static function site_info() {
+	static function site_info($force = false) {
 
 		$signing_key = get_config('system','prvkey');
 		$sig_method  = get_config('system','signature_algorithm','sha256');
@@ -3228,7 +3228,7 @@ class Libzot {
 
 		// hide detailed site information if you're off the grid
 
-		if ($dirmode != DIRECTORY_MODE_STANDALONE) {
+		if ($dirmode != DIRECTORY_MODE_STANDALONE || $force) {
 
 			$register_policy = intval(get_config('system','register_policy'));
 	
@@ -3256,10 +3256,6 @@ class Libzot {
 			if ($access_policy == ACCESS_TIERED) {
 				$ret['site']['access_policy'] = 'tiered';
 			}
-
-			$ret['site']['accounts'] = account_total();
-
-			$ret['site']['channels'] = channel_total();
 
 			$ret['site']['admin'] = get_config('system','admin_email');
 
