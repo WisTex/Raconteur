@@ -379,9 +379,9 @@ class Directory extends Controller {
 								'keywords'          => $out,
 								'ignlink'           => $suggest ? z_root() . '/directory?ignore=' . $rr['hash'] : '',
 								'ignore_label'      => t('Don\'t suggest'),
-								'common_friends'    => (($common[$rr['address']]) ? intval($common[$rr['address']]) : ''),
-								'common_label'      => t('Common connections (at least):'),
-								'common_count'      => intval($common[$rr['address']]),
+								'common_friends'    => (($common[$rr['hash']]) ? intval($common[$rr['hash']]) : ''),
+								'common_label'      => t('Suggestion ranking:'),
+								'common_count'      => intval($common[$rr['hash']]),
 								'safe'              => $safe_mode
 							];
 	
