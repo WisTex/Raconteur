@@ -17,7 +17,7 @@ class Xp extends Controller {
 						case '4':
 							$path = get_default_profile_photo();
 							break;
-						case '5'
+						case '5':
 							$path = get_default_profile_photo(80);
 							break;
 						case '6':
