@@ -37,7 +37,7 @@ class Dirsearch extends Controller {
 
 		$sql_extra = '';
 	
-		$tables = [ 'name', 'address', 'locale', 'region', 'postcode',
+		$tables = [ 'name', 'address', 'xhash', 'locale', 'region', 'postcode',
 					'country', 'gender', 'marital', 'sexual', 'keywords' ];
 
 		// parse advanced query if present
@@ -51,6 +51,8 @@ class Dirsearch extends Controller {
 							$sql_extra .= $this->dir_query_build($adv['logic'],'xchan_name',$adv['value']);
 						elseif ($adv['field'] === 'address')
 	 						$sql_extra .= $this->dir_query_build($adv['logic'],'xchan_addr',$adv['value']);
+						elseif ($adv['field'] === 'xhash')
+	 						$sql_extra .= $this->dir_query_build($adv['logic'],'xchan_hash',$adv['value']);
 						else
 							$sql_extra .= $this->dir_query_build($adv['logic'],'xprof_' . $adv['field'],$adv['value']);
 					}

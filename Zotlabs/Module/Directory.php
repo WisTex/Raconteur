@@ -150,7 +150,7 @@ class Directory extends Controller {
 			// Build query to get info about suggested people
 			$advanced = '';
 			foreach (array_keys($addresses) as $address) {
-				$advanced .= "address=\"$address\" ";
+				$advanced .= "xhash=\"$address\" ";
 			}
 			// Remove last space in the advanced query
 			$advanced = rtrim($advanced);
