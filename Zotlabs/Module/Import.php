@@ -225,6 +225,7 @@ class Import extends Controller {
 					'xchan_follow'         => z_root() . '/follow?f=&url=%s',
 					'xchan_name'           => $channel['channel_name'],
 					'xchan_network'        => 'zot6',
+					'xchan_updated'        => datetime_convert(),
 					'xchan_photo_date'     => datetime_convert(),
 					'xchan_name_date'      => datetime_convert()
 				]
@@ -255,7 +256,8 @@ class Import extends Controller {
 
 
 				if ($xchan['xchan_hash'] === $channel['channel_hash']) {
-					$r = q("update xchan set xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s' where xchan_hash = '%s'",
+					$r = q("update xchan set xchan_updated = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s' where xchan_hash = '%s'",
+						dbesc(datetime_convert()),
 						dbesc(z_root() . '/photo/profile/l/' . $channel['channel_id']),
 						dbesc(z_root() . '/photo/profile/m/' . $channel['channel_id']),
 						dbesc(z_root() . '/photo/profile/s/' . $channel['channel_id']),
@@ -272,7 +274,8 @@ class Import extends Controller {
 							$photodate = $xchan['xchan_photo_date'];
 						}
 
-						$r = q("update xchan set xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s', xchan_photo_date = '%s' where xchan_hash = '%s'",
+						$r = q("update xchan set xchan_updated = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s', xchan_photo_date = '%s' where xchan_hash = '%s'",
+							dbesc(datetime_convert()),
 							dbesc($photos[0]),
 							dbesc($photos[1]),
 							dbesc($photos[2]),

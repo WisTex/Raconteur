@@ -21,6 +21,7 @@ function xchan_store_lowlevel($arr) {
 		'xchan_connpage' => ((array_key_exists('xchan_connpage',$arr)) ? $arr['xchan_connpage'] : ''),
 		'xchan_name' => ((array_key_exists('xchan_name',$arr)) ? $arr['xchan_name'] : ''),
 		'xchan_network' => ((array_key_exists('xchan_network',$arr)) ? $arr['xchan_network'] : ''),
+		'xchan_updated' => ((array_key_exists('xchan_updated',$arr)) ? datetime_convert('UTC','UTC',$arr['xchan_updated']) : datetime_convert()),
 		'xchan_photo_date' => ((array_key_exists('xchan_photo_date',$arr)) ? datetime_convert('UTC','UTC',$arr['xchan_photo_date']) : NULL_DATE),
 		'xchan_name_date' => ((array_key_exists('xchan_name_date',$arr)) ? datetime_convert('UTC','UTC',$arr['xchan_name_date']) : NULL_DATE),
 		'xchan_hidden' => ((array_key_exists('xchan_hidden',$arr)) ? intval($arr['xchan_hidden']) : 0),
@@ -102,6 +103,7 @@ function xchan_store($arr) {
 				$x['xchan_' . $k] = escape_tags($v);
 		}
 
+		$x['xchan_updated']    = datetime_convert();
 		$x['xchan_name_date']  = datetime_convert();
 		$x['xchan_photo_date'] = datetime_convert();
 		$x['xchan_system']     = false;
@@ -128,7 +130,8 @@ function xchan_store($arr) {
 	if($update_photo && $arr['photo']) {
 		$photos = import_remote_xchan_photo($arr['photo'],$arr['hash']);
 		if ($photos) {
-			$x = q("update xchan set xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s' where xchan_hash = '%s'",
+			$x = q("update xchan set xchan_updated = '%s', xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s' where xchan_hash = '%s'",
+				dbesc(datetime_convert()),
 				dbesc(datetime_convert()),
 				dbesc($photos[0]),
 				dbesc($photos[1]),
@@ -139,7 +142,8 @@ function xchan_store($arr) {
 		}
 	}
 	if($update_name && $arr['name']) {
-		$x = q("update xchan set xchan_name = '%s', xchan_name_date = '%s' where xchan_hash = '%s'",
+		$x = q("update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_name_date = '%s' where xchan_hash = '%s'",
+			dbesc(datetime_convert()),
 			dbesc(escape_tags($arr['name'])),
 			dbesc(datetime_convert()),
 			dbesc($arr['hash'])

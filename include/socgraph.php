@@ -47,6 +47,12 @@ function poco_load($xchan = '', $url = null) {
 		return;
 	}
 
+	$max = intval(get_config('system','max_imported_follow',10));
+	if (! intval($max)) {
+		return;
+	}
+
+
 	$url = $url . '?f=&fields=displayName,hash,urls,photos' ;
 
 	logger('poco_load: ' . $url, LOGGER_DEBUG);
@@ -110,6 +116,7 @@ function poco_load($xchan = '', $url = null) {
 		return;
 	}
 
+	
 	$total = 0;
 	foreach($j['entry'] as $entry) {
 
@@ -119,7 +126,8 @@ function poco_load($xchan = '', $url = null) {
 		$name = '';
 		$hash = '';
 		$rating = 0;
-
+		$network = '';
+		
 		$name   = $entry['displayName'];
 		$hash   = $entry['hash'];
 
@@ -129,7 +137,7 @@ function poco_load($xchan = '', $url = null) {
 					$profile_url = $url['value'];
 					continue;
 				}
-				if(in_array($url['type'], ['zot','zot6'] )) {
+				if(in_array($url['type'], ['zot6','activitypub'] )) {
 					$network = $url['type'];
 					$address = str_replace('acct:' , '', $url['value']);
 					continue;
@@ -145,8 +153,13 @@ function poco_load($xchan = '', $url = null) {
 			}
 		}
 
+		if (! in_array($network, ['zot6' , 'activitypub'])) {
+			continue;
+		}
+
 		if((! $name) || (! $profile_url) || (! $profile_photo) || (! $hash) || (! $address)) {
 			logger('poco_load: missing data');
+			logger('poco_load: ' . print_r($entry,true), LOGGER_DATA);
 			continue; 
 		}
 
@@ -201,6 +214,12 @@ function poco_load($xchan = '', $url = null) {
 				intval($r[0]['xlink_id'])
 			);
 		}
+
+		$total ++;
+		if ($total > $max) {
+			break;
+		}
+
 	}
 	logger("poco_load: loaded $total entries",LOGGER_DEBUG);
 
@@ -216,7 +235,11 @@ function poco_load($xchan = '', $url = null) {
 
 function ap_poco_load($xchan) {
 
-	$max = get_config('system','max_imported_follow',200);
+	$max = intval(get_config('system','max_imported_follow',10));
+	if (! intval($max)) {
+		return;
+	}
+
 	
 	if($xchan) {
 		$cl = get_xconfig($xchan,'activitypub','collections');
@@ -229,7 +252,7 @@ function ap_poco_load($xchan) {
 	}
 
 	if (! $url) {
-		logger('poco_load: no url');
+		logger('ap_poco_load: no url');
 		return;
 	}
 
@@ -250,12 +273,14 @@ function ap_poco_load($xchan) {
 			dbesc($entry)
 		);
 
-		// We've never seen this person before. Import them.
 
 		if ($x) {
 			$hash = $x[0]['xchan_hash'];
 		}
 		else {
+
+			// We've never seen this person before. Import them.
+
 			$wf = discover_by_webbie($entry);
 			if ($wf) {
 				$x = q("select xchan_hash from xchan where (xchan_hash = '%s' or xchan_url = '%s') limit 1",
@@ -365,28 +390,8 @@ function suggestion_query($uid, $myxchan, $start = 0, $limit = 80) {
 		intval($start)
 	);
 
-	if($r && count($r) >= ($limit -1))
-		return $r;
+	return (($r) ? $r : []);
 
-	$r2 = q("SELECT count(xlink_link) as total, xchan.* from xchan
-		left join xlink on xlink_link = xchan_hash
-		where xlink_xchan = ''
-		and not xlink_link in ( select abook_xchan from abook where abook_channel = %d )
-		and not xlink_link in ( select xchan from xign where uid = %d )
-		and xchan_hidden = 0
-		and xchan_deleted = 0
-		and xlink_static = 0
-		group by xchan_hash order by total desc limit %d offset %d ",
-		intval($uid),
-		intval($uid),
-		intval($limit),
-		intval($start)
-	);
-
-	if(is_array($r) && is_array($r2))
-		return array_merge($r,$r2);
-
-	return array();
 }
 
 // This function fetches a number of sitenames from the directory and searches them
@@ -397,6 +402,14 @@ function suggestion_query($uid, $myxchan, $start = 0, $limit = 80) {
 
 
 function update_suggestions() {
+
+	// this function is no longer used
+	// remove any existing entries it once created
+	// 
+	
+	$r = q("delete from xlink where xlink_xchan = '' and xlink_static = 0",
+		db_utcnow(), db_quoteinterval('7 DAY')
+	);
 
 	// !!!!!
 	return;

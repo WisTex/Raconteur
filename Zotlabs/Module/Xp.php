@@ -10,6 +10,26 @@ class Xp extends Controller {
 			$path = 'cache/xp/' . substr(argv(1),0,2) . '/' . substr(argv(1),2,2) . '/' . argv(1);
 
 			if (! file_exists($path)) {
+				// no longer cached for some reason, perhaps expired
+				$resolution = substr(argv(1),(-2),2);
+				if ($resolution && substr($resolution,0,1) === '-') {
+					switch (substr($resolution,1,1)) {
+						case '4':
+							$path = get_default_profile_photo();
+							break;
+						case '5'
+							$path = get_default_profile_photo(80);
+							break;
+						case '6':
+							$path = get_default_profile_photo(48);
+							break;
+						default:
+							break;
+					}
+				}
+			}
+							
+			if (! file_exists($path)) {
 				http_status_exit(404,'Not found');
 			}
 			

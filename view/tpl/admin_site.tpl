@@ -136,6 +136,7 @@
 				<div class="section-content-tools-wrapper">
 					{{include file="field_input.tpl" field=$imagick_path}}
 					{{include file="field_checkbox.tpl" field=$cache_images}}
+					{{include file="field_input.tpl" field=$max_imported_follow}}
 					{{include file="field_input.tpl" field=$proxy}}
 					{{include file="field_input.tpl" field=$proxyuser}}
 					{{include file="field_input.tpl" field=$timeout}}

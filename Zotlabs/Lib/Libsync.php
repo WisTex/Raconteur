@@ -1157,6 +1157,7 @@ class Libsync {
 				$xv['xchan_guid_sig']  = $sig;
 				$xv['xchan_hash']      = $hash;
 				$xv['xchan_pubkey']    = $channel['channel_pubkey'];
+				$xv['xchan_updated']   = datetime_convert();
 				xchan_store_lowlevel($xv);
 				$newxchan = $xv;
 			}
