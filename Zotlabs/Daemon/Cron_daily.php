@@ -2,6 +2,7 @@
 namespace Zotlabs\Daemon;
 
 use Zotlabs\Lib\Libzotdir;
+use Zotlabs\Lib\Libzot;
 
 class Cron_daily {
 
@@ -14,7 +15,10 @@ class Cron_daily {
 		 *
 		 */
 
-//		Libzotdir::check_upstream_directory();
+
+		// make sure our own site record is up to date
+		Libzot::import_site(Libzot::site_info(true));
+
 
 		// Fire off the Cron_weekly process if it's the correct day.
  

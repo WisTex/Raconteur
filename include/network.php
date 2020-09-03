@@ -1769,3 +1769,10 @@ function get_request_string($url) {
 	return '/' . ((count($a) > 3) ? $a[3] : EMPTY_STR);
 
 }
+
+
+function update_this_site() {
+
+
+
+}
