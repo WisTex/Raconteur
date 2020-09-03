@@ -1787,7 +1787,15 @@ class Activity {
 			}
 		}
 
-		$about = ((isset($person_obj['summary'])) ? html2bbcode($person_obj['summary']) : EMPTY_STR);
+		$about = ((isset($person_obj['summary'])) ? html2bbcode(purify_html($person_obj['summary'])) : EMPTY_STR);
+
+		$p = q("select * from xchan where xchan_url = '%s' and xchan_network = 'zot6' limit 1",
+			dbesc($url)
+		);
+		if ($p) {
+			set_xconfig($url,'system','protocols','zot6,activitypub');
+		}
+
 
 		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 			dbesc($url)
@@ -1803,6 +1811,7 @@ class Activity {
 					'xchan_url'            => $profile,
 					'xchan_name'           => $name,
 					'xchan_hidden'         => intval($hidden),
+					'xchan_updated'        => datetime_convert(),
 					'xchan_name_date'      => datetime_convert(),
 					'xchan_network'        => 'activitypub',
 					'xchan_photo_date'     => datetime_convert('UTC','UTC','1968-01-01'),
@@ -1824,7 +1833,8 @@ class Activity {
 			}
 
 			// update existing record
-			$u = q("update xchan set xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s', xchan_hidden = %d where xchan_hash = '%s'",
+			$u = q("update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s', xchan_hidden = %d where xchan_hash = '%s'",
+				dbesc(datetime_convert()),
 				dbesc($name),
 				dbesc($pubkey),
 				dbesc('activitypub'),

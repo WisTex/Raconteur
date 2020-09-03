@@ -83,9 +83,9 @@ class Directory extends Controller {
 
 		$observer = get_observer_hash();
 
-		if (get_config('system','block_public_directory',false) && (! $observer)) {
+		if (get_config('system','block_public_directory',true) && (! $observer)) {
 			notice( t('Public access denied.') . EOL);
-			return;
+			return login(false);
 		}
 			
 		$globaldir = Libzotdir::get_directory_setting($observer, 'globaldir');
@@ -130,7 +130,8 @@ class Directory extends Controller {
 			// only works if the suggestion query and the directory query have the
 			// same number of results
 
-			$r = suggestion_query(local_channel(),get_observer_hash(),0,DIRECTORY_PAGESIZE);
+			App::set_pager_itemspage(60);
+			$r = suggestion_query(local_channel(),get_observer_hash(),App::$pager['start'],DIRECTORY_PAGESIZE);
 
 			if (! $r) {
 				notice( t('No default suggestions were found.') . EOL);
@@ -142,14 +143,14 @@ class Directory extends Controller {
 			$common = array();
 			$index = 0;
 			foreach ($r as $rr) {
-				$common[$rr['xchan_addr']] = ((intval($rr['total']) > 0) ? intval($rr['total']) - 1 : 0);
-				$addresses[$rr['xchan_addr']] = $index++;
+				$common[$rr['xchan_hash']] = ((intval($rr['total']) > 0) ? intval($rr['total']) - 1 : 0);
+				$addresses[$rr['xchan_hash']] = $index++;
 			}
 	
 			// Build query to get info about suggested people
 			$advanced = '';
 			foreach (array_keys($addresses) as $address) {
-				$advanced .= "address=\"$address\" ";
+				$advanced .= "xhash=\"$address\" ";
 			}
 			// Remove last space in the advanced query
 			$advanced = rtrim($advanced);
@@ -162,23 +163,10 @@ class Directory extends Controller {
 
 		$directory_admin = false;
 
-		if (($dirmode == DIRECTORY_MODE_PRIMARY) || ($dirmode == DIRECTORY_MODE_STANDALONE)) {
-			$url = z_root() . '/dirsearch';
-			if (is_site_admin()) {
-				$directory_admin = true;
-			}
+		$url = z_root() . '/dirsearch';
+		if (is_site_admin()) {
+			$directory_admin = true;
 		}
-		if (! $url) {
-			$directory = Libzotdir::find_upstream_directory($dirmode);
-			if ((! $directory) || (! array_key_exists('url',$directory)) || (! $directory['url'])) {
-				logger('CRITICAL: No directory server URL');
-			}
-			$url = $directory['url'] . '/dirsearch';
-		}
-	
-		$token = get_config('system','realm_token');
-		
-		logger('mod_directory: URL = ' . $url, LOGGER_DEBUG);
 	
 		$contacts = array();
 	
@@ -305,14 +293,7 @@ class Directory extends Controller {
 	
 							$page_type = '';
 	
-							$rating_enabled = get_config('system','rating_enabled');
-
-							if ($rr['total_ratings'] && $rating_enabled) {
-								$total_ratings = sprintf( tt("%d rating", "%d ratings", $rr['total_ratings']), $rr['total_ratings']);
-							}
-							else {
-								$total_ratings = '';
-							}
+							$total_ratings = '';
 	
 							$profile = $rr;
 	
@@ -322,9 +303,6 @@ class Directory extends Controller {
 							$homepageurl = ((x($profile,'homepage') == 1) ?  html2plain($profile['homepage']) : '');
 							$hometown = ((x($profile,'hometown') == 1) ? html2plain($profile['hometown'])  : False);
 							$about = ((x($profile,'about') == 1) ? zidify_links(bbcode($profile['about'])) : False);
-							if ($about && $safe_mode) {
-								$about = html2plain($about);
-							}
 							
 							$keywords = ((x($profile,'keywords')) ? $profile['keywords'] : '');
 	
@@ -379,6 +357,8 @@ class Directory extends Controller {
 								'total_ratings'     => $total_ratings,
 								'viewrate'          => true,
 								'canrate'           => (($rating_enabled && local_channel()) ? true : false),
+								// 'network'           => network_to_name($rr['network']),
+								// 'network_label'     => t('Network:'),
 								'pdesc'	            => $pdesc,
 								'pdesc_label'       => t('Description:'),
 								'censor'            => (($directory_admin) ? 'dircensor/' . $rr['hash'] : ''),
@@ -399,9 +379,9 @@ class Directory extends Controller {
 								'keywords'          => $out,
 								'ignlink'           => $suggest ? z_root() . '/directory?ignore=' . $rr['hash'] : '',
 								'ignore_label'      => t('Don\'t suggest'),
-								'common_friends'    => (($common[$rr['address']]) ? intval($common[$rr['address']]) : ''),
-								'common_label'      => t('Common connections (estimated):'),
-								'common_count'      => intval($common[$rr['address']]),
+								'common_friends'    => (($common[$rr['hash']]) ? intval($common[$rr['hash']]) : ''),
+								'common_label'      => t('Suggestion ranking:'),
+								'common_count'      => intval($common[$rr['hash']]),
 								'safe'              => $safe_mode
 							];
 	
@@ -450,7 +430,7 @@ class Directory extends Controller {
 						else {
 							$maxheight = 94;
 	
-							$dirtitle = (($globaldir) ? t('Global Directory') : t('Local Directory'));
+							$dirtitle = (($globaldir) ? t('Network Directory (channels known to this site)') : t('Local Directory'));
 	
 							$o .= "<script> var page_query = '" . escape_tags(urlencode($_GET['req'])) . "'; var extra_args = '" . extra_query_args() . "' ; divmore_height = " . intval($maxheight) . ";  </script>";
 							$o .= replace_macros($tpl, [
@@ -507,7 +487,7 @@ class Directory extends Controller {
 		$out = [];
 		foreach ($suggests as $k => $v) {
 			foreach ($results as $rv) {
-				if ($k == $rv['address']) {
+				if ($k == $rv['hash']) {
 					$out[intval($v)] = $rv;
 					break;
 				}

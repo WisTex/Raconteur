@@ -781,6 +781,16 @@ class Libzot {
 					del_xconfig($xchan_hash,'system','protocols');
 				}
 			}
+			$collections = [];
+			if (isset($arr['primary_location']['following'])) {
+				$collections['following'] = $arr['primary_location']['following'];
+			}
+			if (isset($arr['primary_location']['followers'])) {
+				$collections['followers'] = $arr['primary_location']['followers'];
+			}
+			if ($collections) {	
+				set_xconfig($xchan_hash,'activitypub','collections',$collections);
+			}
 
 			if (($r[0]['xchan_name_date'] != $arr['name_updated'])
 				|| ($r[0]['xchan_connurl'] != $arr['primary_location']['connections_url'])
@@ -788,10 +798,12 @@ class Libzot {
 				|| ($r[0]['xchan_follow'] != $arr['primary_location']['follow_url'])
 				|| ($r[0]['xchan_connpage'] != $arr['connect_url'])
 				|| ($r[0]['xchan_url'] != $arr['primary_location']['url'])
+				|| ($r[0]['xchan_updated'] < datetime_convert('UTC','UTC','now - 7 days'))
 				|| $hidden_changed || $adult_changed || $deleted_changed || $type_changed ) {
-				$rup = q("update xchan set xchan_name = '%s', xchan_name_date = '%s', xchan_connurl = '%s', xchan_follow = '%s',
+				$rup = q("update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_name_date = '%s', xchan_connurl = '%s', xchan_follow = '%s',
 					xchan_connpage = '%s', xchan_hidden = %d, xchan_selfcensored = %d, xchan_deleted = %d, xchan_type = %d,
 					xchan_addr = '%s', xchan_url = '%s' where xchan_hash = '%s'",
+					dbesc(datetime_convert()),
 					dbesc(($arr['name']) ? escape_tags($arr['name']) : '-'),
 					dbesc($arr['name_updated']),
 					dbesc($arr['primary_location']['connections_url']),
@@ -851,6 +863,7 @@ class Libzot {
 					'xchan_connpage'       => $arr['connect_url'],
 					'xchan_name'           => (($arr['name']) ? escape_tags($arr['name']) : '-'),
 					'xchan_network'        => 'zot6',
+					'xchan_updated'        => datetime_convert(),
 					'xchan_photo_date'     => $arr['photo_updated'],
 					'xchan_name_date'      => $arr['name_updated'],
 					'xchan_hidden'         => intval(1 - intval($arr['searchable'])),
@@ -921,8 +934,9 @@ class Libzot {
 				if ($photos[4]) {
 					// importing the photo failed somehow. Leave the photo_date alone so we can try again at a later date.
 					// This often happens when somebody joins the matrix with a bad cert.
-					$r = q("update xchan set xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
+					$r = q("update xchan set xchan_updated = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
 						where xchan_hash = '%s'",
+						dbesc(datetime_convert()),
 						dbesc($photos[0]),
 						dbesc($photos[1]),
 						dbesc($photos[2]),
@@ -931,9 +945,10 @@ class Libzot {
 					);
 				}
 				else {
-					$r = q("update xchan set xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
+					$r = q("update xchan set xchan_updated = '%s', xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
 						where xchan_hash = '%s'",
-						dbescdate(datetime_convert('UTC','UTC',$arr['photo_updated'])),
+						dbesc(datetime_convert()),
+						dbesc(datetime_convert('UTC','UTC',$arr['photo_updated'])),
 						dbesc($photos[0]),
 						dbesc($photos[1]),
 						dbesc($photos[2]),
@@ -970,15 +985,15 @@ class Libzot {
 
 		// Are we a directory server of some kind?
 
-		$other_realm = false;
-		$realm = get_directory_realm();
-		if (array_key_exists('site',$arr)
-			&& array_key_exists('realm',$arr['site'])
-			&& (strpos($arr['site']['realm'],$realm) === false))
-			$other_realm = true;
+//		$other_realm = false;
+//		$realm = get_directory_realm();
+//		if (array_key_exists('site',$arr)
+//			&& array_key_exists('realm',$arr['site'])
+//			&& (strpos($arr['site']['realm'],$realm) === false))
+//			$other_realm = true;
 
 
-		if ($dirmode != DIRECTORY_MODE_NORMAL) {
+//		if ($dirmode != DIRECTORY_MODE_NORMAL) {
 
 			// We're some kind of directory server. However we can only add directory information
 			// if the entry is in the same realm (or is a sub-realm). Sub-realms are denoted by
@@ -1002,7 +1017,7 @@ class Libzot {
 					dbesc($xchan_hash)
 				);
 			}
-		}
+//		}
 
 		if (array_key_exists('site',$arr) && is_array($arr['site'])) {
 			$profile_changed = self::import_site($arr['site']);
@@ -3079,10 +3094,12 @@ class Libzot {
 		$ret['id_sig']         = self::sign($e['xchan_guid'], $e['channel_prvkey']);
 
 		$ret['primary_location'] = [ 
-			'address'            =>  $e['xchan_addr'],
-			'url'                =>  $e['xchan_url'],
-			'connections_url'    =>  $e['xchan_connurl'],
-			'follow_url'         =>  $e['xchan_follow'],
+			'address'            => $e['xchan_addr'],
+			'url'                => $e['xchan_url'],
+			'connections_url'    => $e['xchan_connurl'],
+			'follow_url'         => $e['xchan_follow'],
+			'followers'          => z_root() . '/followers/' . $e['channel_address'],
+			'following'          => z_root() . '/following/' . $e['channel_address']
 		];
 
 		$ret['public_key']     = $e['xchan_pubkey'];
@@ -3098,6 +3115,9 @@ class Libzot {
 		$ret['channel_role']   = get_pconfig($e['channel_id'],'system','permissions_role','custom');
 		$ret['channel_type']   = $channel_type;
 		$ret['protocols']      = [ 'zot6' ];
+		if (get_pconfig($e['channel_id'],'system','activitypub',get_config('system','activitypub',true))) {
+			$ret['protocols'][] = 'activitypub';
+		}
 		$ret['searchable']     = $searchable;
 		$ret['adult_content']  = $adult_channel;
 		
@@ -3170,7 +3190,7 @@ class Libzot {
 	}
 
 
-	static function site_info() {
+	static function site_info($force = false) {
 
 		$signing_key = get_config('system','prvkey');
 		$sig_method  = get_config('system','signature_algorithm','sha256');
@@ -3208,7 +3228,7 @@ class Libzot {
 
 		// hide detailed site information if you're off the grid
 
-		if ($dirmode != DIRECTORY_MODE_STANDALONE) {
+		if ($dirmode != DIRECTORY_MODE_STANDALONE || $force) {
 
 			$register_policy = intval(get_config('system','register_policy'));
 	
@@ -3236,10 +3256,6 @@ class Libzot {
 			if ($access_policy == ACCESS_TIERED) {
 				$ret['site']['access_policy'] = 'tiered';
 			}
-
-			$ret['site']['accounts'] = account_total();
-
-			$ret['site']['channels'] = channel_total();
 
 			$ret['site']['admin'] = get_config('system','admin_email');
 

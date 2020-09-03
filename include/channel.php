@@ -372,6 +372,7 @@ function create_identity($arr) {
 			'xchan_connurl'    => z_root() . '/poco/' . $ret['channel']['channel_address'],
 			'xchan_name'       => $ret['channel']['channel_name'],
 			'xchan_network'    => 'zot6',
+			'xchan_updated'    => datetime_convert(),
 			'xchan_photo_date' => datetime_convert(),
 			'xchan_name_date'  => datetime_convert(),
 			'xchan_system'     => $system
@@ -617,6 +618,7 @@ function change_channel_keys($channel) {
 			$xv['xchan_guid_sig']  = $sig;
 			$xv['xchan_hash']      = $hash;
 			$xv['xchan_pubkey']    = $key['pubkey'];
+			$xv['xchan_updated']   = datetime_convert();
 			xchan_store_lowlevel($xv);
 			$newxchan = $xv;
 		}
@@ -2350,6 +2352,7 @@ function anon_identity_init($reqvars) {
 			'xchan_name'    => $anon_name,
 			'xchan_url'     => $anon_url,
 			'xchan_network' => 'anon',
+			'xchan_updated' => datetime_convert(),
 			'xchan_name_date' => datetime_convert()
 		]);
 
@@ -2362,7 +2365,8 @@ function anon_identity_init($reqvars) {
 		$photo = z_root() . '/' . get_default_profile_photo(300);
 		$photos = import_remote_xchan_photo($photo,$hash);
 		if ($photos) {
-			$r = q("update xchan set xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s' where xchan_guid = '%s' and xchan_hash = '%s' and xchan_network = 'anon' ",
+			$r = q("update xchan set xchan_updated = '%s', xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s' where xchan_guid = '%s' and xchan_hash = '%s' and xchan_network = 'anon' ",
+				dbesc(datetime_convert()),
 				dbesc(datetime_convert()),
 				dbesc($photos[0]),
 				dbesc($photos[1]),

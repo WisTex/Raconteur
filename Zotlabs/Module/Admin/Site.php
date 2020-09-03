@@ -54,6 +54,7 @@ class Site {
 		$mirror_frontpage	=	((x($_POST,'mirror_frontpage'))	? intval(trim($_POST['mirror_frontpage']))		: 0);
 		$directory_server	=	((x($_POST,'directory_server')) ? trim($_POST['directory_server']) : '');
 		$force_publish		=	((x($_POST,'publish_all'))		? True	: False);
+		$block_public_dir	=	((x($_POST,'block_public_directory'))	? True	: False);
 		$disable_discover_tab =	((x($_POST,'disable_discover_tab'))		? False	:	True);
 		$site_firehose      =   ((x($_POST,'site_firehose')) ? True : False);
 		$open_pubstream     =   ((x($_POST,'open_pubstream')) ? True : False);
@@ -63,6 +64,7 @@ class Site {
 		$no_community_page    = !((x($_POST,'no_community_page'))	? True	:	False);
 		$default_expire_days  = ((array_key_exists('default_expire_days',$_POST)) ? intval($_POST['default_expire_days']) : 0);
 		$active_expire_days  = ((array_key_exists('active_expire_days',$_POST)) ? intval($_POST['active_expire_days']) : 7);
+		$max_imported_follow = ((x($_POST,'max_imported_follow'))	? intval(trim($_POST['max_imported_follow']))	    :  10);
 
 		$reply_address      = ((array_key_exists('reply_address',$_POST) && trim($_POST['reply_address'])) ? trim($_POST['reply_address']) : 'noreply@' . \App::get_hostname());
 		$from_email         = ((array_key_exists('from_email',$_POST) && trim($_POST['from_email'])) ? trim($_POST['from_email']) : 'Administrator@' . \App::get_hostname());
@@ -114,7 +116,8 @@ class Site {
 		set_config('system', 'show_like_counts', $show_like_counts);
 		set_config('system', 'pubstream_incl',$pub_incl);
 		set_config('system', 'pubstream_excl',$pub_excl);
-
+		set_config('system', 'block_public_directory', $block_public_dir);
+		set_config('system', 'max_imported_follow', $max_imported_follow);
 
 		if ($directory_server) {
 			set_config('system','directory_server',$directory_server);
@@ -320,14 +323,16 @@ class Site {
 			'$frontpage'	        => [ 'frontpage', t("Site homepage to show visitors (default: login box)"), get_config('system','frontpage'), t("example: 'public' to show public stream, 'page/sys/home' to show a system webpage called 'home' or 'include:home.html' to include a file.") ],
 			'$mirror_frontpage'     => [ 'mirror_frontpage', t("Preserve site homepage URL"), get_config('system','mirror_frontpage'), t('Present the site homepage in a frame at the original location instead of redirecting') ],
 			'$abandon_days'         => [ 'abandon_days', t('Accounts abandoned after x days'), get_config('system','account_abandon_days'), t('Will not waste system resources polling external sites for abandonded accounts. Enter 0 for no time limit.') ],
+			'$block_public_dir'     => [ 'block_public_directory', t('Block directory from visitors'), get_config('system','block_public_directory',true), t('Only allow authenticated access to directory.') ],
 			'$verify_email'         => [ 'verify_email', t("Verify Email Addresses"), get_config('system','verify_email'), t("Check to verify email addresses used in account registration (recommended).") ],
 			'$force_publish'        => [ 'publish_all', t("Force publish in directory"), get_config('system','publish_all'), t("Check to force all profiles on this site to be listed in the site directory.") ],
 			'$disable_discover_tab'	=> [ 'disable_discover_tab', t('Public stream'), $discover_tab, t('Provide access to public content from other sites. Warning: this content is unmoderated.') ],
-			'$site_firehose'	    => [ 'site_firehose', t('Site only Public ttream'), get_config('system','site_firehose'), t('Provide access to public content originating only from this site if Public stream is disabled.') ],
+			'$site_firehose'	    => [ 'site_firehose', t('Site only Public stream'), get_config('system','site_firehose'), t('Provide access to public content originating only from this site if Public stream is disabled.') ],
 			'$open_pubstream'	    => [ 'open_pubstream', t('Allow anybody on the internet to access the Public stream'), get_config('system','open_pubstream',0), t('Default is to only allow viewing by site members. Warning: this content is unmoderated.') ],
 			'$show_like_counts'	    => [ 'show_like_counts', t('Show numbers of likes and dislikes in conversations'), get_config('system','show_like_counts',1), t('If disabled, the presence of likes and dislikes will be shown, but without totals.') ],
 			'$incl'                 => [ 'pub_incl',t('Only import Public stream posts with this text'), get_config('system','pubstream_incl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts') ],
 			'$excl'                 => [ 'pub_excl',t('Do not import Public stream posts with this text'), get_config('system','pubstream_excl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts') ],
+			'$max_imported_follow'  => [ 'max_imported_follow', t('Maximum number of imported friends of friends'), get_config('system','max_imported_follow',10), t('Warning: higher numbers will improve the quality of friend suggestions and directory results but can exponentially increase resource usage') ], 
 			'$login_on_homepage'	=> [ 'login_on_homepage', t("Login on Homepage"),((intval($homelogin) || $homelogin === false) ? 1 : '') , t("Present a login box to visitors on the home page if no other content has been configured.") ],
 			'$enable_context_help'	=> [ 'enable_context_help', t("Enable context help"),((intval($enable_context_help) === 1 || $enable_context_help === false) ? 1 : 0) , t("Display contextual help for the current page when the help button is pressed.") ],
 			'$reply_address'        => [ 'reply_address', t('Reply-to email address for system generated email.'), get_config('system','reply_address','noreply@' . \App::get_hostname()),'' ],

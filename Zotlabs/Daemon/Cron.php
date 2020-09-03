@@ -43,13 +43,6 @@ class Cron {
 		require_once('include/sharedwithme.php');
 		apply_updates();
 	
-		// expire any expired mail
-
-		q("delete from mail where expires > '%s' and expires < %s ",
-			dbesc(NULL_DATE),
-			db_utcnow()
-		);
-
 		// expire any expired items
 
 		$r = q("select id,item_wall from item where expires > '2001-01-01 00:00:00' and expires < %s 

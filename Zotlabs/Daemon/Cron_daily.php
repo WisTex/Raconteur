@@ -2,6 +2,7 @@
 namespace Zotlabs\Daemon;
 
 use Zotlabs\Lib\Libzotdir;
+use Zotlabs\Lib\Libzot;
 
 class Cron_daily {
 
@@ -14,12 +15,15 @@ class Cron_daily {
 		 *
 		 */
 
-		Libzotdir::check_upstream_directory();
+
+		// make sure our own site record is up to date
+		Libzot::import_site(Libzot::site_info(true));
+
 
 		// Fire off the Cron_weekly process if it's the correct day.
  
 		$d3 = intval(datetime_convert('UTC','UTC','now','N'));
-		if($d3 == 7) {
+		if ($d3 == 7) {
 			Run::Summon(array('Cron_weekly'));
 		}
 
@@ -71,15 +75,16 @@ class Cron_daily {
 		// Pull remote changes and push local changes.
 		// potential issue: how do we keep from creating an endless update loop? 
 
-		$dirmode = get_config('system','directory_mode');
+//		$dirmode = get_config('system','directory_mode');
 
-		if($dirmode == DIRECTORY_MODE_SECONDARY || $dirmode == DIRECTORY_MODE_PRIMARY) {
-			Libzotdir::sync_directories($dirmode);
-		}
+//		if($dirmode == DIRECTORY_MODE_SECONDARY || $dirmode == DIRECTORY_MODE_PRIMARY) {
+//			Libzotdir::sync_directories($dirmode);
+//		}
 
 
 		Run::Summon(array('Expire'));
-		Run::Summon(array('Cli_suggest'));
+
+//		Run::Summon(array('Cli_suggest'));
 
 		// remove xchan photos that were stored in the DB ine earlier versions
 		// and were migrated to filesystem storage.

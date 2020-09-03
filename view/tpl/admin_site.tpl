@@ -67,9 +67,6 @@
 					{{include file="field_checkbox.tpl" field=$mirror_frontpage}}
 					{{include file="field_checkbox.tpl" field=$login_on_homepage}}
 					{{include file="field_checkbox.tpl" field=$enable_context_help}}
-					{{if $directory_server}}
-					{{include file="field_select.tpl" field=$directory_server}}
-					{{/if}}
 					<div class="settings-submit-wrapper" >
 						<button type="submit" name="page_site" class="btn btn-primary" value="1" >{{$submit}}</button>
 					</div>
@@ -114,6 +111,7 @@
 					{{include file="field_checkbox.tpl" field=$verify_email}}
 					{{include file="field_checkbox.tpl" field=$show_like_counts}}
 					{{include file="field_checkbox.tpl" field=$ap_contacts}}
+					{{include file="field_checkbox.tpl" field=$block_public_dir}}
 					{{include file="field_checkbox.tpl" field=$force_publish}}
 					{{include file="field_checkbox.tpl" field=$disable_discover_tab}}
 					{{include file="field_checkbox.tpl" field=$site_firehose}}
@@ -138,6 +136,7 @@
 				<div class="section-content-tools-wrapper">
 					{{include file="field_input.tpl" field=$imagick_path}}
 					{{include file="field_checkbox.tpl" field=$cache_images}}
+					{{include file="field_input.tpl" field=$max_imported_follow}}
 					{{include file="field_input.tpl" field=$proxy}}
 					{{include file="field_input.tpl" field=$proxyuser}}
 					{{include file="field_input.tpl" field=$timeout}}

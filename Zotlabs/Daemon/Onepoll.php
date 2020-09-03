@@ -38,7 +38,7 @@ class Onepoll {
 			return;
 		}
 
-		$contact = $contacts[0];
+		$contact = array_shift($contacts);
 
 		$t = $contact['abook_updated'];
 
@@ -159,13 +159,15 @@ class Onepoll {
 
 		} // end USE_OUTBOX
 
+
+
 		// update the poco details for this connection
 
 		if($contact['xchan_connurl']) {	
 			$r = q("SELECT xlink_id from xlink 
 				where xlink_xchan = '%s' and xlink_updated > %s - INTERVAL %s and xlink_static = 0 limit 1",
 				intval($contact['xchan_hash']),
-				db_utcnow(), db_quoteinterval('1 DAY')
+				db_utcnow(), db_quoteinterval('7 DAY')
 			);
 			if(! $r) {
 				poco_load($contact['xchan_hash'],$contact['xchan_connurl']);

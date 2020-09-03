@@ -30,6 +30,18 @@ le_domain=
 le_email=
 
 ###############################################
+### OPTIONAL - Webserver choice ###############
+#
+# Please indicate if you want to choose Nginx
+# or Apache as your web server
+#
+# Valid strings are nginx or apache (lower case),
+# any other will stop the setup script.
+# 
+webserver=apache
+
+
+###############################################
 ### OPTIONAL - selfHOST - dynamic IP address ##
 #
 # 1. Register a domain at selfhost.de

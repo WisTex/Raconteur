@@ -1003,6 +1003,7 @@ function import_author_unknown($x) {
 			'xchan_hash'         => $x['url'],
 			'xchan_guid'         => $x['url'],
 			'xchan_url'          => $x['url'],
+			'xchan_updated'      => datetime_convert(),
 			'xchan_name'         => (($name) ? $name : t('(Unknown)')),
 			'xchan_name_date'    => datetime_convert(),
 			'xchan_network'      => 'unknown'
@@ -1014,7 +1015,8 @@ function import_author_unknown($x) {
 		$photos = import_remote_xchan_photo($x['photo']['src'],$x['url']);
 
 		if($photos) {
-			$r = q("update xchan set xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s' where xchan_hash = '%s' and xchan_network = 'unknown'",
+			$r = q("update xchan set xchan_updated = '%s', xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s' where xchan_hash = '%s' and xchan_network = 'unknown'",
+				dbesc(datetime_convert()),
 				dbesc(datetime_convert()),
 				dbesc($photos[0]),
 				dbesc($photos[1]),
@@ -2401,12 +2403,21 @@ function send_status_notifications($post_id,$item) {
 	if($y)
 		$notify = false;
 
+
+	if (intval($item['item_private']) === 2) {
+		$notify_type = NOTIFY_MAIL;
+	}
+	else {
+		$notify_type = NOTIFY_COMMENT;
+	}
+
+
 	if(! $notify)
 		return;
 
 
 	Enotify::submit(array(
-		'type'         => NOTIFY_COMMENT,
+		'type'         => $notify_type,
 		'from_xchan'   => $item['author_xchan'],
 		'to_xchan'     => $r[0]['channel_hash'],
 		'item'         => $item,
@@ -2487,8 +2498,11 @@ function tag_deliver($uid, $item_id) {
 		return;
 	}
 
+	// send mail (DM) notifications here, but only for top level posts.
+	// followups will be processed by send_status_notifications()
+	
 	$mail_notify = false;
-	if ((! intval($item['item_wall'])) && intval($item['item_private']) === 2) {
+	if ((! $item['item_wall']) && intval($item['item_thread_top']) && $item['author_xchan'] !== $u['channel_hash'] && intval($item['item_private']) === 2) {
 		Enotify::submit(array(
 			'to_xchan'     => $u['channel_hash'],
 			'from_xchan'   => $item['author_xchan'],
