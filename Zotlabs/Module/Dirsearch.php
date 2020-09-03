@@ -126,6 +126,9 @@ class Dirsearch extends Controller {
 		if ($address) {
 			$sql_extra .= $this->dir_query_build($joiner,'xchan_addr',$address);
 		}
+		if ($hash) {
+			$sql_extra .= $this->dir_query_build($joiner,'xchan_hash',$hash);
+		}
 		if ($locale) {
 			$sql_extra .= $this->dir_query_build($joiner,'xprof_locale',$locale);
 		}
@@ -159,12 +162,7 @@ class Dirsearch extends Controller {
 			$sql_extra .= " AND  xprof_age >= " . intval($agege) . ") ";
 		}
 	
-	
-		if($hash) {
-			$sql_extra = " AND xchan_hash like '" . dbesc($hash) . protect_sprintf('%') . "' ";
-		}
-	
-	
+		
 	    $perpage      = (($_REQUEST['n'])              ? $_REQUEST['n']                    : 60);
 	    $page         = (($_REQUEST['p'])              ? intval($_REQUEST['p'] - 1)        : 0);
 	    $startrec     = (($page+1) * $perpage) - $perpage;

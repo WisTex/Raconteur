@@ -163,7 +163,7 @@ function poco_load($xchan = '', $url = null) {
 			continue; 
 		}
 
-		$x = q("select xchan_hash from xchan where ( xchan_hash = '%s' or xchan_url = '%s' ) limit 1",
+		$x = q("select xchan_hash from xchan where ( xchan_hash = '%s' or xchan_url = '%s' ) order by xchan_network desc limit 1",
 			dbesc($hash),
 			dbesc($hash)
 		);
@@ -175,11 +175,13 @@ function poco_load($xchan = '', $url = null) {
 				if(in_array($network, ['zot6' , 'activitypub'])) {
 					$wf = discover_by_webbie($profile_url);
 					if ($wf) {
-						$x = q("select xchan_hash from xchan where ( xchan_hash = '%s' or xchan_url = '%s') limit 1",
+						$x = q("select xchan_hash from xchan where ( xchan_hash = '%s' or xchan_url = '%s') order by xchan_network desc limit 1",
 							dbesc($wf),
 							dbesc($wf)
 						);
-						$hash = $wf;
+						if ($x) {
+							$hash = $x[0]['xchan_hash'];
+						}
 					}
 					if(! $x) {
 						continue;
@@ -268,7 +270,7 @@ function ap_poco_load($xchan) {
 
 		$hash = EMPTY_STR;
 
-		$x = q("select xchan_hash from xchan where (xchan_hash = '%s' or xchan_url = '%s') limit 1",
+		$x = q("select xchan_hash from xchan where (xchan_hash = '%s' or xchan_url = '%s') order by xchan_network desc limit 1",
 			dbesc($entry),
 			dbesc($entry)
 		);
@@ -283,11 +285,13 @@ function ap_poco_load($xchan) {
 
 			$wf = discover_by_webbie($entry);
 			if ($wf) {
-				$x = q("select xchan_hash from xchan where (xchan_hash = '%s' or xchan_url = '%s') limit 1",
+				$x = q("select xchan_hash from xchan where (xchan_hash = '%s' or xchan_url = '%s') order by xchan_network desc limit 1",
 					dbesc($wf),
 					dbesc($wf)
 				);
-				$hash = $wf;
+				if ($x) {
+					$hash = $x[0]['xchan_hash'];
+				}
 			}
 		}
 

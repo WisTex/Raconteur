@@ -143,8 +143,8 @@ class Directory extends Controller {
 			$common = array();
 			$index = 0;
 			foreach ($r as $rr) {
-				$common[$rr['xchan_addr']] = ((intval($rr['total']) > 0) ? intval($rr['total']) - 1 : 0);
-				$addresses[$rr['xchan_addr']] = $index++;
+				$common[$rr['xchan_hash']] = ((intval($rr['total']) > 0) ? intval($rr['total']) - 1 : 0);
+				$addresses[$rr['xchan_hash']] = $index++;
 			}
 	
 			// Build query to get info about suggested people
@@ -487,7 +487,7 @@ class Directory extends Controller {
 		$out = [];
 		foreach ($suggests as $k => $v) {
 			foreach ($results as $rv) {
-				if ($k == $rv['address']) {
+				if ($k == $rv['hash']) {
 					$out[intval($v)] = $rv;
 					break;
 				}
