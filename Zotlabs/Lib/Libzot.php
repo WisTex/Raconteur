@@ -2755,7 +2755,7 @@ class Libzot {
 			$site_logo = z_root() . '/images/' . strtolower($site_project) . '.png';
 		}
 		else {
-			$site_logo = z_root() . '/images/default_profile_photos/red_koala_trans/80.png';
+			$site_logo = z_root() . '/images/default_profile_photos/red_koala_trans/300.png';
 		}
 			
 		$set_sconfig($url,'system','about', $site_about);
