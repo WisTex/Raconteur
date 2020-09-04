@@ -102,10 +102,9 @@ class System {
 
 	static public function compatible_project($p) {
 
-		if(get_directory_realm() != DIRECTORY_REALM)
+		if (in_array(strtolower($p),['hubzilla','zap','red','misty','mistpark','redmatrix','osada'])) {
 			return true;
-		if(in_array(strtolower($p),['hubzilla','zap','red','misty','osada']))
-			return true;
+		}
 		return false;
 	}
 }
