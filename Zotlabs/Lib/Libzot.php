@@ -2758,8 +2758,8 @@ class Libzot {
 			$site_logo = z_root() . '/images/default_profile_photos/red_koala_trans/300.png';
 		}
 			
-		$set_sconfig($url,'system','about', $site_about);
-		$set_sconfig($url,'system','logo', $site_logo);
+		set_sconfig($url,'system','about', $site_about);
+		set_sconfig($url,'system','logo', $site_logo);
 		
 		// You can have one and only one primary directory per realm.
 		// Downgrade any others claiming to be primary. As they have
