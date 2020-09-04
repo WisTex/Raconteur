@@ -3285,9 +3285,9 @@ class Libzot {
 				}
 			}
 
-			$f = z_root() . '/images/' . strtolower(get_platform_name()) . '.png';
-			if ($file_exists($f)) {
-				$ret['site']['logo'] = $f;
+			$f = 'images/' . strtolower(System::get_platform_name()) . '.png';
+			if (file_exists($f)) {
+				$ret['site']['logo'] = z_root() . '/' . $f;
 			}
 
 			$ret['site']['about']      = bbcode(get_config('system','siteinfo'), [ 'export' => true ]); 
