@@ -245,10 +245,14 @@ function add_vhost {
     a2ensite $le_domain
 }
 
-function add_nginx_block {
-    print_info "adding nginx block"
+function add_nginx_conf {
+    print_info "adding nginx conf files"
     sed "s|SERVER_NAME|${le_domain}|g;s|INSTALL_PATH|${install_path}|g;s|ZOTSERVER_LOG|${install_folder}-${zotserver}.log|;s|PHP_FPM_SOCK|$(ls /var/run/php/*sock)|;" nginx-zotserver.conf.template >> /etc/nginx/sites-enabled/${le_domain}.conf
     ln -s /etc/nginx/sites-enabled/${le_domain}.conf /etc/nginx/sites-available/
+    if [ ! -f /etc/nginx/snippets/adminer-nginx.inc ]
+    then
+        sed "s|PHP_FPM_SOCK|$(ls /var/run/php/*sock)|;" adminer-nginx.inc.template >> /etc/nginx/snippets/adminer-nginx.inc
+    fi
 }
 
 function install_imagemagick {
@@ -314,27 +318,30 @@ _EOF_
 function install_adminer {
     print_info "installing adminer..."
     nocheck_install "adminer"
-    if [ ! -f /etc/adminer/adminer.conf ]
+    if [ $webserver = "apache" ]
     then
-        echo "Alias /adminer /usr/share/adminer/adminer" > /etc/adminer/adminer.conf
-        ln -s /etc/adminer/adminer.conf /etc/apache2/conf-available/adminer.conf
-    else
-        print_info "file /etc/adminer/adminer.conf exists already"
+        if [ ! -f /etc/adminer/adminer.conf ]
+        then
+            echo "Alias /adminer /usr/share/adminer/adminer" > /etc/adminer/adminer.conf
+            ln -s /etc/adminer/adminer.conf /etc/apache2/conf-available/adminer.conf
+        else
+            print_info "file /etc/adminer/adminer.conf exists already"
+        fi
+
+        a2enmod rewrite
+
+        if [ ! -f /etc/apache2/apache2.conf ]
+        then
+            die "could not find file /etc/apache2/apache2.conf"
+        fi
+        sed -i \
+            "s/AllowOverride None/AllowOverride all/" \
+            /etc/apache2/apache2.conf
+
+        a2enconf adminer
+        systemctl restart mariadb
+        systemctl reload apache2
     fi
-
-    a2enmod rewrite
-
-    if [ ! -f /etc/apache2/apache2.conf ]
-    then
-        die "could not find file /etc/apache2/apache2.conf"
-    fi
-    sed -i \
-        "s/AllowOverride None/AllowOverride all/" \
-        /etc/apache2/apache2.conf
-
-    a2enconf adminer
-    systemctl restart mariadb
-    systemctl reload apache2
 }
 
 function create_zotserver_db {
@@ -747,7 +754,7 @@ install_imagemagick
 install_php
 if [ $webserver = "nginx" ]
 then
-    add_nginx_block
+    add_nginx_conf
 elif [ $webserver = "apache" ]
 then
     if [ "$install_path" != "/var/www/html" ]
@@ -756,10 +763,7 @@ then
     fi
 fi
 install_mysql
-if [ $webserver = "apache" ]
-then
 install_adminer
-fi
 create_zotserver_db
 run_freedns
 install_run_selfhost
