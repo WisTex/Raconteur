@@ -30,12 +30,38 @@ class Superblock extends Controller {
 
 		if ($blocked) {
 			$handled = true;
-			$r = q("select xchan_url from xchan where xchan_hash = '%s' limit 1",
+			$r = q("select xchan_url from xchan where ( xchan_hash = '%s' or xchan_addr = '%s' or xchan_url = '%s' )",
+				dbesc($blocked),
+				dbesc($blocked),
 				dbesc($blocked)
 			);
+			if (! $r) {
+				// not in cache - try discovery
+				$wf = discover_by_webbie($blocked,'',false);
+
+				if (! $wf) {
+					notice( t('Channel not found.') . EOL);
+					killme();
+				}
+
+				if ($wf) {
+
+					// something was discovered - find the record which was just created.
+	
+					$r = q("select * from xchan where ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' )",
+						dbesc(($wf) ? $wf : $blocked),
+						dbesc($blocked),
+						dbesc($blocked)
+					);
+				}
+			}
+
 			if ($r) {
+
+				$r = Libzot::zot_record_preferred($r,'xchan_network');
+
 				if ($type === BLOCKTYPE_SERVER) {
-					$m = parse_url($r[0]['xchan_url']);
+					$m = parse_url($r['xchan_url']);
 					if ($m) {
 						$blocked = $m['host'];
 					}
