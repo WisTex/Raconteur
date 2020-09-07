@@ -16,111 +16,116 @@ class Superblock extends Controller {
 			return;
 		}
 
+		$inline = (isset($_REQUEST['manual_block']) ? true : false);
+
 		$type = BLOCKTYPE_CHANNEL;
-		$blocked = trim($_GET['block']);
+		$blocked = trim($_REQUEST['block']);
 		if (! $blocked) {
-			$blocked = trim($_GET['blocksite']);
+			$blocked = trim($_REQUEST['blocksite']);
 			if ($blocked) {
 				$type = BLOCKTYPE_SERVER;				
 			}
 		}
-		
+
+		$m = parse_url($blocked);
+		if ($m['scheme'] && $m['host'] && (($type === BLOCKTYPE_SERVER) || (! $m['path']))) {
+			$type = BLOCKTYPE_SERVER;
+			$blocked = $m['host'];
+		}
+
 		$handled = false;
 		$ignored = [];
 
 		if ($blocked) {
 			$handled = true;
-			$r = q("select xchan_url from xchan where ( xchan_hash = '%s' or xchan_addr = '%s' or xchan_url = '%s' )",
-				dbesc($blocked),
-				dbesc($blocked),
-				dbesc($blocked)
-			);
-			if (! $r) {
-				// not in cache - try discovery
-				$wf = discover_by_webbie($blocked,'',false);
-
-				if (! $wf) {
-					notice( t('Channel not found.') . EOL);
-					killme();
-				}
-
-				if ($wf) {
-
-					// something was discovered - find the record which was just created.
+			if ($type === BLOCKTYPE_CHANNEL) {
+				$r = q("select xchan_url from xchan where ( xchan_hash = '%s' or xchan_addr = '%s' or xchan_url = '%s' )",
+					dbesc($blocked),
+					dbesc($blocked),
+					dbesc($blocked)
+				);
+				if (! $r) {
+					// not in cache - try discovery
+					$wf = discover_by_webbie($blocked,'',false);
 	
-					$r = q("select * from xchan where ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' )",
-						dbesc(($wf) ? $wf : $blocked),
-						dbesc($blocked),
-						dbesc($blocked)
-					);
-				}
-			}
-
-			if ($r) {
-
-				$r = Libzot::zot_record_preferred($r,'xchan_network');
-
-				if ($type === BLOCKTYPE_SERVER) {
-					$m = parse_url($r['xchan_url']);
-					if ($m) {
-						$blocked = $m['host'];
-					}
-				}
-
-				$bl = [
-					'block_channel_id' => local_channel(),
-					'block_entity'     => $blocked,
-					'block_type'       => $type,
-					'block_comment'    => t('Added by Superblock')
-				];
-				
-				LibBlock::store($bl);
-
-				$sync = [];
-				
-				$sync['block'] = [ LibBlock::fetch_by_entity(local_channel(),$blocked) ];
-
-				if ($type === BLOCKTYPE_CHANNEL) {
-					$z = q("insert into xign ( uid, xchan ) values ( %d , '%s' ) ",
-						intval(local_channel()),
-						dbesc($blocked)
-					);
-					$ab = q("select * from abook where abook_channel = %d and abook_xchan = '%s'",
-						intval(local_channel()),
-						dbesc($blocked)
-					);
-					if (($ab) && (! intval($ab['abook_blocked']))) {
-						q("update abook set abook_blocked = 1 where abook_channel = %d and abook_xchan = '%s'",
-							intval(local_channel()),
-							dbesc($blocked)
-						);
-						
-						$r = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
-							intval(local_channel()),
-							dbesc($blocked)
-						);
-						if ($r) {
-							$r = array_shift($r);
-							$abconfig = load_abconfig(local_channel(),$blocked);
-							if ($abconfig) {
-								$r['abconfig'] = $abconfig;
-							}
-							unset($r['abook_id']);
-							unset($r['abook_account']);
-							unset($r['abook_channel']);
-							$sync['abook'] = [ $r ];
+					if (! $wf) {
+						notice( t('Channel not found.') . EOL);
+						if ($inline) {
+							return;
 						}
+						killme();
 					}
-					$sync['xign'] = [[ 'uid' => local_channel(), 'xchan' => $_GET['block'] ]];
+
+					if ($wf) {
+
+						// something was discovered - find the record which was just created.
+		
+						$r = q("select * from xchan where ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' )",
+							dbesc(($wf) ? $wf : $blocked),
+							dbesc($blocked),
+							dbesc($blocked)
+						);
+					}
 				}
-				Libsync::build_sync_packet(0, $sync);
+
+				if ($r) {
+					$r = Libzot::zot_record_preferred($r,'xchan_network');
+				}
 			}
+
+			$bl = [
+				'block_channel_id' => local_channel(),
+				'block_entity'     => $blocked,
+				'block_type'       => $type,
+				'block_comment'    => t('Added by Superblock')
+			];
+				
+			LibBlock::store($bl);
+
+			$sync = [];
+				
+			$sync['block'] = [ LibBlock::fetch_by_entity(local_channel(),$blocked) ];
+
+			if ($type === BLOCKTYPE_CHANNEL) {
+				$z = q("insert into xign ( uid, xchan ) values ( %d , '%s' ) ",
+					intval(local_channel()),
+					dbesc($blocked)
+				);
+				$ab = q("select * from abook where abook_channel = %d and abook_xchan = '%s'",
+					intval(local_channel()),
+					dbesc($blocked)
+				);
+				if (($ab) && (! intval($ab['abook_blocked']))) {
+					q("update abook set abook_blocked = 1 where abook_channel = %d and abook_xchan = '%s'",
+						intval(local_channel()),
+						dbesc($blocked)
+					);
+						
+					$r = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
+						intval(local_channel()),
+						dbesc($blocked)
+					);
+					if ($r) {
+						$r = array_shift($r);
+						$abconfig = load_abconfig(local_channel(),$blocked);
+						if ($abconfig) {
+							$r['abconfig'] = $abconfig;
+						}
+						unset($r['abook_id']);
+						unset($r['abook_account']);
+						unset($r['abook_channel']);
+						$sync['abook'] = [ $r ];
+					}
+				}
+				$sync['xign'] = [[ 'uid' => local_channel(), 'xchan' => $_GET['block'] ]];
+			}
+			Libsync::build_sync_packet(0, $sync);
 		}
 
 		$type = BLOCKTYPE_CHANNEL;
-		$unblocked = trim($_GET['unblock']);
+		$unblocked = trim($_REQUEST['unblock']);
 		if (! $unblocked) {
-			$unblocked = trim($_GET['unblocksite']);
+			$unblocked = trim($_REQUEST['unblocksite']);
 			if ($unblocked) {
 				$type = BLOCKTYPE_SERVER;				
 			}
@@ -174,7 +179,7 @@ class Superblock extends Controller {
 
 			info( t('superblock settings updated') . EOL );
 
-			if ($unblocked) {
+			if ($unblocked || $inline) {
 				return;
 			}
 		
@@ -209,6 +214,7 @@ class Superblock extends Controller {
 			'$token'   => get_form_security_token('superblock'),
 			'$remove'  => t('Remove')
 		]);
+
 
 		$l = LibBlock::fetch(local_channel(),BLOCKTYPE_SERVER);
 		$list = ids_to_array($l,'block_entity');
