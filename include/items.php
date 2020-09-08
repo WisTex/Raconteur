@@ -2577,7 +2577,7 @@ function tag_deliver($uid, $item_id) {
 
 	$terms = get_terms_oftype($item['term'],TERM_MENTION);
 
-	$pterms = get_terms_oftype($item['term'],TERM_PCATEGORY);
+	$pterms = get_terms_oftype($item['term'], [TERM_PCATEGORY, TERM_HASHTAG] );
 
 	if ($terms) {
 		logger('Post mentions: ' . print_r($terms,true), LOGGER_DATA);
@@ -2665,11 +2665,16 @@ function tag_deliver($uid, $item_id) {
 
 			$ptagged = false;
 
-			if (! link_compare($term['url'],$link)) {
+			if (link_compare($term['url'],$link)) {
+				$ptagged = true;
+			}
+			elseif ($term['ttype'] === TERM_HASHTAG && strtolower($term['term']) === strtolower($u['channel_address'])) {
+				$ptagged = true;
+			}
+			
+			if (! $ptagged) {
 				continue;
 			}
-
-			$ptagged = true;
 
 			logger('Collection post found for ' . $u['channel_name']);
 
