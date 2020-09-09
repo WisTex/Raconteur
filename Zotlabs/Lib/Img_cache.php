@@ -58,9 +58,9 @@ class Img_cache {
 				return true;
 			}
 		}
-		if (file_exists($file)) {
-			unlink($file);
-		}
+		// Ignore errors - we don't care if it doesn't exist here.
+		@unlink($file);
+
 		return false;
 	}
 

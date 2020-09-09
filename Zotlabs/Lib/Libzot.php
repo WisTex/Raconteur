@@ -16,6 +16,7 @@ use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Daemon\Run;
 
+require_once('include/html2bbcode.php');
 
 class Libzot {
 
@@ -2741,10 +2742,27 @@ class Libzot {
 		$sellpage = htmlspecialchars($arr['sellpage'],ENT_COMPAT,'UTF-8',false);
 		$site_location = htmlspecialchars($arr['location'],ENT_COMPAT,'UTF-8',false);
 		$site_realm = htmlspecialchars($arr['realm'],ENT_COMPAT,'UTF-8',false);
+		$sitename = htmlspecialchars($arr['sitename'],ENT_COMPAT,'UTF-8',false);
 		$site_project = htmlspecialchars($arr['project'],ENT_COMPAT,'UTF-8',false);
 		$site_crypto = ((array_key_exists('encryption',$arr) && is_array($arr['encryption'])) ? htmlspecialchars(implode(',',$arr['encryption']),ENT_COMPAT,'UTF-8',false) : '');
 		$site_version = ((array_key_exists('version',$arr)) ? htmlspecialchars($arr['version'],ENT_COMPAT,'UTF-8',false) : '');
-
+		if (array_key_exists('about',$arr) && $arr['about']) {
+			$site_about = html2bbcode(purify_html($arr['about']));
+		}
+		if (array_key_exists('logo',$arr) && $arr['logo']) {
+			$site_logo = $arr['logo'];
+		}
+		elseif (file_exists('images/' . strtolower($site_project) . '.png')) {
+			$site_logo = z_root() . '/images/' . strtolower($site_project) . '.png';
+		}
+		else {
+			$site_logo = z_root() . '/images/default_profile_photos/red_koala_trans/300.png';
+		}
+			
+		set_sconfig($url,'system','about', $site_about);
+		set_sconfig($url,'system','logo', $site_logo);
+		set_sconfig($url,'system','sitename', $sitename);
+		
 		// You can have one and only one primary directory per realm.
 		// Downgrade any others claiming to be primary. As they have
 		// flubbed up this badly already, don't let them be directory servers at all.
@@ -3269,6 +3287,12 @@ class Libzot {
 				}
 			}
 
+			$f = 'images/' . strtolower(System::get_platform_name()) . '.png';
+			if (file_exists($f)) {
+				$ret['site']['logo'] = z_root() . '/' . $f;
+			}
+
+			$ret['site']['about']      = bbcode(get_config('system','siteinfo'), [ 'export' => true ]); 
 			$ret['site']['plugins']    = $visible_plugins;
 			$ret['site']['sitehash']   = get_config('system','location_hash');
 			$ret['site']['sitename']   = get_config('system','sitename');
@@ -3277,7 +3301,6 @@ class Libzot {
 			$ret['site']['realm']      = get_directory_realm();
 			$ret['site']['project']    = System::get_platform_name();
 			$ret['site']['version']    = System::get_project_version();
-
 		}
 
 		return $ret['site'];

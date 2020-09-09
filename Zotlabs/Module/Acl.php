@@ -68,7 +68,7 @@ class Acl extends Controller {
 
 		$permitted = [];
 
-		if (in_array($type, [ 'm', 'a', 'c', 'f' ])) {
+		if (in_array($type, [ 'm', 'a', 'f' ])) {
 
 			// These queries require permission checking. We'll create a simple array of xchan_hash for those with
 			// the requisite permissions which we can check against. 
@@ -147,7 +147,7 @@ class Acl extends Controller {
 		}
 	
 		if ($type == '' || $type == 'c' || $type === 'f') {
-	
+
 			// Getting info from the abook is better for local users because it contains info about permissions
 			if (local_channel()) {
 
@@ -155,7 +155,7 @@ class Acl extends Controller {
 
 				$r = q("SELECT abook_id as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, xchan_type, abook_flags, abook_self 
 					FROM abook left join xchan on abook_xchan = xchan_hash 
-					WHERE (abook_channel = %d $extra_channels_sql) AND abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 $sql_extra4 order by xchan_name asc" ,
+					WHERE (abook_channel = %d $extra_channels_sql) AND abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 $sql_extra4 order by xchan_name asc limit $count" ,
 					intval(local_channel())
 				);
 
@@ -166,20 +166,21 @@ class Acl extends Controller {
 			else { // Visitors
 				$r = q("SELECT xchan_hash as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, 0 as abook_flags, 0 as abook_self
 					FROM xchan left join xlink on xlink_link = xchan_hash
-					WHERE xlink_xchan  = '%s' AND xchan_deleted = 0 $sql_extra2 order by $order_extra2 xchan_name asc" ,
+					WHERE xlink_xchan  = '%s' AND xchan_deleted = 0 $sql_extra2 order by $order_extra2 xchan_name asc limit $count" ,
 					dbesc(get_observer_hash())
 				);
 	
 			}
 			if ((count($r) < 100) && $type == 'c') {
 				$r2 = q("SELECT xchan_hash as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, 0 as abook_flags, 0 as abook_self 
-					FROM xchan WHERE xchan_deleted = 0 and xchan_network != 'unknown' $sql_extra2 order by $order_extra2 xchan_name asc" 
+					FROM xchan WHERE xchan_deleted = 0 and xchan_network != 'unknown' $sql_extra2 order by $order_extra2 xchan_name asc limit $count" 
 				);
 				if ($r2) {
 					$r = array_merge($r,$r2);
 					$r = unique_multidim_array($r,'hash');
 				}		
 			}
+
 		}
 		elseif ($type == 'm') {
 

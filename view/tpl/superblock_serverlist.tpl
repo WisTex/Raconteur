@@ -10,7 +10,7 @@
 <li>
 <div>
 <a class="pull-right" href="superblock?f=&unblocksite={{$e.1}}&sectok={{$token}}" title="{{$remove}}"><i class="fa fa-trash"></i></a>
-<a class="zid" href="{{$e.0}}">&nbsp;{{$e.0}}</a>
+<a href="https://{{$e.0}}">&nbsp;{{$e.0}}</a>
 </div>
 </li>
 {{/foreach}}

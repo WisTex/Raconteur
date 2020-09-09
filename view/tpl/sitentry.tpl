@@ -8,16 +8,18 @@
 			<a class="directory-censor btn btn-danger btn-sm" href="{{$entry.censor}}"> {{$entry.censor_label}}</a>
 			{{/if}}
 			{{if $entry.connect}}
-			<a class="btn btn-success btn-sm" href="{{$entry.connect}}"><i class="fa fa-plus connect-icon"></i> {{$entry.conn_label}}</a>
+			<a class="btn btn-success btn-sm" href="{{$entry.connect}}"><i class="fa fa-plus connect-icon"></i> {{$entry.connect_label}}</a>
+			{{else}}
+			<button class="btn btn-warning btn-sm" disabled><i class="fa fa-lock fa-fw connect-icon"></i></button>
 			{{/if}}
 		</div>
-		<h3>{{if $entry.type == 2}}<i class="fa fa-tags" title="{{$entry.collections_label}}"></i>&nbsp;{{elseif $entry.type == 1}}<i class="fa fa-comments-o" title="{{$entry.forum_label}}"></i>&nbsp;{{/if}}<a href='{{$entry.profile_link}}' >{{$entry.name}}</a>{{if $entry.online}}&nbsp;<i class="fa fa-asterisk online-now" title="{{$entry.online}}"></i>{{/if}}</h3>
+		<h3><a href='{{$entry.profile_link}}' >{{$entry.name}}</a></h3>
 	</div>
 	<div class="section-content-tools-wrapper directory-collapse">
 		<div class="contact-photo-wrapper" id="directory-photo-wrapper-{{$entry.hash}}" >
 			<div class="contact-photo" id="directory-photo-{{$entry.hash}}" >
 				<a href="{{$entry.profile_link}}" class="directory-profile-link" id="directory-profile-link-{{$entry.hash}}" >
-					<img class="directory-photo-img" src="{{$entry.photo}}" alt="{{$entry.alttext}}" title="{{$entry.alttext}}" />
+					<img class="directory-photo-img" src="{{$entry.photo}}" height="80" width="80" alt="{{$entry.alttext}}" title="{{$entry.alttext}}" >
 				</a>
 			</div>
 		</div>
@@ -29,15 +31,15 @@
 			</div>
 			{{/if}}
 
-			{{if $entry.common_friends}}
+			{{if $entry.version}}
 			<div id="dir-common" class="contact-info-element">
-				<span class="contact-info-label">{{$entry.common_label}}</span> {{$entry.common_count}}
+				<span class="contact-info-label">{{$entry.version_label}}</span> {{$entry.version}}
 			</div>
 			{{/if}}
 
-			{{if $entry.pdesc}}
+			{{if $entry.access}}
 			<div class="contact-info-element">
-				<span class="contact-info-label">{{$entry.pdesc_label}}</span> {{$entry.pdesc}}
+				<span class="contact-info-label">{{$entry.access_label}}</span> {{$entry.access}}
 			</div>
 			{{/if}}
 

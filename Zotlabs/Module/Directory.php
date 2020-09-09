@@ -143,14 +143,14 @@ class Directory extends Controller {
 			$common = array();
 			$index = 0;
 			foreach ($r as $rr) {
-				$common[$rr['xchan_addr']] = ((intval($rr['total']) > 0) ? intval($rr['total']) - 1 : 0);
-				$addresses[$rr['xchan_addr']] = $index++;
+				$common[$rr['xchan_hash']] = ((intval($rr['total']) > 0) ? intval($rr['total']) - 1 : 0);
+				$addresses[$rr['xchan_hash']] = $index++;
 			}
 	
 			// Build query to get info about suggested people
 			$advanced = '';
 			foreach (array_keys($addresses) as $address) {
-				$advanced .= "address=\"$address\" ";
+				$advanced .= "xhash=\"$address\" ";
 			}
 			// Remove last space in the advanced query
 			$advanced = rtrim($advanced);
@@ -379,9 +379,9 @@ class Directory extends Controller {
 								'keywords'          => $out,
 								'ignlink'           => $suggest ? z_root() . '/directory?ignore=' . $rr['hash'] : '',
 								'ignore_label'      => t('Don\'t suggest'),
-								'common_friends'    => (($common[$rr['address']]) ? intval($common[$rr['address']]) : ''),
-								'common_label'      => t('Common connections (at least):'),
-								'common_count'      => intval($common[$rr['address']]),
+								'common_friends'    => (($common[$rr['hash']]) ? intval($common[$rr['hash']]) : ''),
+								'common_label'      => t('Suggestion ranking:'),
+								'common_count'      => intval($common[$rr['hash']]),
 								'safe'              => $safe_mode
 							];
 	
@@ -487,7 +487,7 @@ class Directory extends Controller {
 		$out = [];
 		foreach ($suggests as $k => $v) {
 			foreach ($results as $rv) {
-				if ($k == $rv['address']) {
+				if ($k == $rv['hash']) {
 					$out[intval($v)] = $rv;
 					break;
 				}

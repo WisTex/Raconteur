@@ -2803,7 +2803,12 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
         // $r is set if we found something
 
 		if ($r) {
-			$r = [ Libzot::zot_record_preferred($r) ];
+			if (array_key_exists('hubloc_network',$r)) {
+				$r = [ Libzot::zot_record_preferred($r) ];
+			}
+			else {
+				$r = [ Libzot::zot_record_preferred($r, 'xchan_network') ];
+			}
 		}
 
         if ($r) {
