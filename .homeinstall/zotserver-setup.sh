@@ -698,6 +698,8 @@ function configure_cron_daily {
     echo "#" >> /var/www/$zotcron
     echo "shutdown -r now" >> /var/www/$zotcron
 
+    chmod a+x /var/www/$zotcron
+
     # If global cron job does not exist we add it to /etc/crontab
     if grep -q $zotcron /etc/crontab
     then
