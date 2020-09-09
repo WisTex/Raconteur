@@ -2742,6 +2742,7 @@ class Libzot {
 		$sellpage = htmlspecialchars($arr['sellpage'],ENT_COMPAT,'UTF-8',false);
 		$site_location = htmlspecialchars($arr['location'],ENT_COMPAT,'UTF-8',false);
 		$site_realm = htmlspecialchars($arr['realm'],ENT_COMPAT,'UTF-8',false);
+		$sitename = htmlspecialchars($arr['sitename'],ENT_COMPAT,'UTF-8',false);
 		$site_project = htmlspecialchars($arr['project'],ENT_COMPAT,'UTF-8',false);
 		$site_crypto = ((array_key_exists('encryption',$arr) && is_array($arr['encryption'])) ? htmlspecialchars(implode(',',$arr['encryption']),ENT_COMPAT,'UTF-8',false) : '');
 		$site_version = ((array_key_exists('version',$arr)) ? htmlspecialchars($arr['version'],ENT_COMPAT,'UTF-8',false) : '');
@@ -2760,6 +2761,7 @@ class Libzot {
 			
 		set_sconfig($url,'system','about', $site_about);
 		set_sconfig($url,'system','logo', $site_logo);
+		set_sconfig($url,'system','sitename', $sitename);
 		
 		// You can have one and only one primary directory per realm.
 		// Downgrade any others claiming to be primary. As they have

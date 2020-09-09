@@ -7,76 +7,89 @@ class Sites extends \Zotlabs\Web\Controller {
 
 	function get() {
 
-		$o .= '<div class="generic-content-wrapper">';
-	
-		$o .= '<div class="section-title-wrapper"><h2>' . t('Affiliated Sites') . '</h2></div>';
-	
-		$o .= '<div class="section-content-tools-wrapper"><div class="descriptive-text">' .
+		$sql_extra = (($_REQUEST['project']) ? " and site_project = '" . escape_tags(protect_sprintf($_REQUEST['project'])) . "' " : "");
 			
-		t('This page provides information about related projects and websites that are currently known to this system. These are a small fraction of the thousands of affiliated fediverse websites.') . '</div>' . EOL;
+		$desc = t('This page provides information about related projects and websites that are currently known to this system. These are a small fraction of the thousands of affiliated fediverse websites.');
 
 		$j = [];
 
-		$r = q("select * from site where site_type = %d and site_flags != 256 and site_dead = 0",
+		$r = q("select * from site where site_type = %d and site_flags != 256 and site_dead = 0 $sql_extra order by site_update desc",
 			intval(SITE_TYPE_ZOT)
 		);
 			
 		if ($r) {
 			foreach ($r as $rr) {				
 				if ($rr['site_access'] == ACCESS_FREE)
-					$access = 'free';
+					$access = t('free');
 				elseif ($rr['site_access'] == ACCESS_PAID)
-					$access = 'paid';
+					$access = t('subscription');
 				elseif ($rr['site_access'] == ACCESS_TIERED)
-					$access = 'tiered';
+					$access = t('tiered service plans');
 				else
 					$access = 'private';
 	
 				if ($rr['site_register'] == REGISTER_OPEN)
-					$register = 'open';
+					$register = t('Register');
 				elseif ($rr['site_register'] == REGISTER_APPROVE)
-					$register = 'approve';
+					$register = t('Register (requires approval)');
 				else
 					$register = 'closed';
-	
-				$j[] =  [ 'url' => $rr['site_url'], 'access' => $access, 'register' => $register, 'sellpage' => $rr['site_sellpage'], 'location' => $rr['site_location'], 'project' => $rr['site_project'], 'version' => $rr['site_version'] ];
+
+
+				$sitename = get_sconfig($rr['site_url'],'system','sitename',$rr['site_url']);
+				$disabled = (($access === 'private' || $register === 'closed') ? true : false);
+				$logo     = get_sconfig($rr['site_url'],'system','logo');
+				$about    = get_sconfig($rr['site_url'],'system','about');
+
+				if (! $logo && file_exists('images/' . strtolower($rr['site_project']) . '.png')) {
+					$logo = 'images/' . strtolower($rr['site_project']) . '.png';
+				}
+				if (! $logo) {
+					$logo = 'images/default_profile_photos/red_koala_trans/300.png';
+				}
+
+				if ($rr['site_sellpage']) {
+					$register_link = $rr['site_sellpage'];
+				}
+				else {
+					$register_link = $rr['site_url'] . '/register';
+				}
+
+				$j[] =  [
+					'profile_link' => $rr['site_url'],
+					'name' => $sitename,
+					'access' => $access,
+					'register' => $register_link,
+					'sellpage' => $rr['site_sellpage'],
+					'location_label' => t('Location'),
+					'location' => $rr['site_location'],
+					'project' => $rr['site_project'],
+					'version' => $rr['site_version'],
+					'photo' => $logo,
+					'about' => bbcode($about),
+					'hash' => substr(hash('sha256', $rr['site_url']), 0, 16),
+					'network_label' => t('Project'),
+					'network' => $rr['site_project'],
+					'version_label' => t('Version'),
+					'version' => $rr['site_version'],
+					'private' => $disabled,
+					'connect' => (($disabled) ? '' : $register_link),
+					'connect_label' => $register,
+					'access' => (($access === 'private') ? '' : $access),
+					'access_label' => t('Access type'), 
+				];
 			}
 		}
 
-		if ($j) {
-			$projects = $this->sort_sites($j);
-			foreach ($projects as $p => $v) {
-				if (! $p) {
-					continue;
-				}
-				$o .= '<strong>' . ucfirst($p) . '</strong>' . EOL;
-				$o .= '<table class="table table-striped table-hover"><tr><td style="width: 50%;">' . t('URL') . '</td><td style="width: 15%;">' . t('Access Type') . '</td><td style="width: 15%;">' . t('Registration Policy') . '</td><td style="width: 20%">' . t('Software') . '</td>';
-				$o .= '</tr>';
+		$o = replace_macros(get_markup_template('sitentry_header.tpl'), [
+			'$dirlbl' => 'Affiliated Sites',
+			'$desc'     => $desc,
+			'$entries'  => $j,
+		]);
 
-				usort($v, [ $this, 'sort_versions' ]);
-				foreach ($v as $jj) {
-					if (strpos($jj['version'],' ')) {
-						$x = explode(' ', $jj['version']);
-						if ($x[1]) {
-							$jj['version'] = $x[1];
-						}
-					}
-					$m = parse_url($jj['url']);
-					$host = strtolower($m['host']);
-					$location = '<br>&nbsp;';
-					if (!empty($jj['location'])) { 
-						$location = '<br><span title="' . t('Location') . '" style="margin: 5px 5px 0 0; text-align: right"><i class="fa fa-globe"></i> ' . $jj['location'] . '</span>'; 
-					}
-							
-					$disabled = (($jj['access'] === 'private') ? true : false);
-					$o .= '<tr><td>' . (($disabled) ? '' : '<a href="'. (($jj['sellpage']) ? $jj['sellpage'] : $jj['url'] . '/register' ) . '" ><i class="fa fa-link"></i> ') . $host . (($disabled) ? '' : '</a>') . $location . '</td><td>' . $jj['access'] . '</td><td>' . (($disabled) ? '&nbsp;' : $jj['register']) . '</td><td>' . ucwords($jj['project']) . (($jj['version']) ? ' ' . $jj['version'] : '') . '</td>';
-					$o .=  '</tr>';
-				}
-				$o .= '</table>';
-				$o .= '<br><br>';
-			}
-		}				
-		$o .= '</div></div>';
+
+
+
 		return $o;
 	}
 
