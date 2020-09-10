@@ -37,6 +37,9 @@ class Sites extends \Zotlabs\Web\Controller {
 
 
 				$sitename = get_sconfig($rr['site_url'],'system','sitename',$rr['site_url']);
+				if ($sitename !== $rr['site_url']) {
+					$sitename .= ' (' . $rr['site_url'] . ')';
+				}
 				$disabled = (($access === 'private' || $register === 'closed') ? true : false);
 				$logo     = get_sconfig($rr['site_url'],'system','logo');
 				$about    = get_sconfig($rr['site_url'],'system','about');
