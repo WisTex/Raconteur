@@ -14,7 +14,7 @@
     };
 
     var choosePhotoFromAlbum = function (album) {
-        $.post("embedphotos/album", {name: album},
+        $.post("embedphotos/album/{{$channel_id}}", {name: album},
             function(data) {
                 if (data['status']) {
                     $('#embedPhotoModalLabel').html("{{$modalchooseimages}}");
@@ -34,7 +34,7 @@
                             var imageparent = document.getElementById($(image).parent()[0].id);
                             $(imageparent).toggleClass('embed-photo-selected-photo');
 							var href = $(imageparent).attr('href');
-                            $.post("embedphotos/photolink", {href: href},
+                            $.post("embedphotos/photolink/{{$channel_id}}", {href: href},
                                 function(ddata) {
                                     if (ddata['status']) {
                                         window.location.href = 'admin/cover_photo/use/' + ddata['resource_id'];
@@ -61,7 +61,7 @@
     };
 
     var getPhotoAlbumList = function () {
-        $.post("embedphotos/albumlist", {},
+        $.post("embedphotos/albumlist/{{$channel_id}}", {},
             function(data) {
                 if (data['status']) {
                     var albums = data['albumlist']; //JSON.parse(data['albumlist']);

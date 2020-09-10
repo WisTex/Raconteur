@@ -365,6 +365,7 @@ logger('gis: ' . print_r($gis,true));
 	
 			$o .= replace_macros(get_markup_template('admin_cover_photo.tpl'), [
 				'$user'                   => $channel['channel_address'],
+				'$channel_id'             => $channel['channel_id'],
 				'$info'                   => t('Your cover photo may be visible to anybody on the internet'),
 				'$existing'               => get_cover_photo($channel['channel_id'],'array',PHOTO_RES_COVER_850),
 				'$lbl_upfile'             => t('Upload File:'),

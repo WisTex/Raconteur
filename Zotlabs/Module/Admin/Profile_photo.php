@@ -455,6 +455,7 @@ class Profile_photo {
 	
 			$o .= replace_macros($tpl, [
 				'$user'                   => $channel['channel_address'],
+				'$channel_id'             => $channel['channel_id'],
 				'$info'                   => ((count($profiles) > 1) ? t('Your default profile photo is visible to anybody on the internet. Profile photos for alternate profiles will inherit the permissions of the profile') : t('Your site photo is visible to anybody on the internet and may be distributed to other websites.')), 
 				'$importfile'             => (($importing) ? App::$data['importfile'] : ''),
 				'$lbl_upfile'             => t('Upload File:'),
