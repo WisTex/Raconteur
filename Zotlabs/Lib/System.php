@@ -20,11 +20,10 @@ class System {
 
 	static public function get_banner() {
 
-		if(is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('banner',App::$config['system']))
+		if(is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('banner',App::$config['system']) && App::$config['system']['banner']) {
 			return App::$config['system']['banner'];
-
-
-		return EMPTY_STR;
+		}
+		return self::get_site_name();
 	}
 
 	static public function get_project_icon() {
@@ -32,7 +31,6 @@ class System {
 			return App::$config['system']['icon'];
 		}		
 		return z_root() . '/images/' . PLATFORM_NAME . '-64.png';
-
 	}
 
 
@@ -55,13 +53,13 @@ class System {
 	static public function get_notify_icon() {
 		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['email_notify_icon_url'])
 			return App::$config['system']['email_notify_icon_url'];
-		return z_root() . DEFAULT_NOTIFY_ICON;
+		return self::get_project_icon();
 	}
 
 	static public function get_site_icon() {
 		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['site_icon_url'])
 			return App::$config['system']['site_icon_url'];
-		return z_root() . DEFAULT_PLATFORM_ICON ;
+		return self::get_project_icon();
 	}
 
 

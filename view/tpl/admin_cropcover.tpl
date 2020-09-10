@@ -1,0 +1,47 @@
+<h1>{{$title}}</h1>
+<p id="cropimage-desc">
+{{$desc}}
+</p>
+<div id="cropimage-wrapper">
+<img src="{{$image_url}}" id="croppa" class="imgCrop" alt="{{$title}}" />
+</div>
+<div id="cropimage-preview-wrapper" >
+<div id="previewWrap" class="crop-preview" style="width: 320px; height: 116px; max-width: 320px; max-height: 116px; overflow: hidden"></div>
+</div>
+
+<script type="text/javascript" language="javascript">
+
+var image = document.getElementById('croppa');
+var cropper = new Cropper(image, {
+	aspectRatio: 2.75 / 1,
+	viewMode: 1,
+	preview: '.crop-preview',
+	  crop: function(e) {
+		$( '#x1' ).val(e.detail.x);
+		$( '#y1' ).val(e.detail.y);
+		$( '#x2' ).val(e.detail.x + e.detail.width);
+		$( '#y2' ).val(e.detail.y + e.detail.height);
+		$( '#width' ).val(e.detail.scaleX);
+		$( '#height' ).val(e.detail.scaleY);
+	}
+});
+
+</script>
+
+<form action="admin/cover_photo/{{$resource}}" id="crop-image-form" method="post" />
+<input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
+
+<input type='hidden' name='profile' value='{{$profile}}'>
+<input type="hidden" name="cropfinal" value="1" />
+<input type="hidden" name="xstart" id="x1" />
+<input type="hidden" name="ystart" id="y1" />
+<input type="hidden" name="xfinal" id="x2" />
+<input type="hidden" name="yfinal" id="y2" />
+<input type="hidden" name="height" id="height" />
+<input type="hidden" name="width"  id="width" />
+
+<div id="crop-image-submit-wrapper" >
+<input type="submit" name="submit" value="{{$done}}" />
+</div>
+
+</form>

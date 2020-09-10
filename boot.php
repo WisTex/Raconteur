@@ -16,7 +16,7 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '20.09.09' );
+define ( 'STD_VERSION',             '20.09.10' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1242 );
@@ -2232,7 +2232,6 @@ function construct_page() {
 		 */
 		call_hooks('construct_page', $arr);
 		App::$layout = $arr['layout'];
-
 
 		foreach(App::$layout as $k => $v) {
 			if((strpos($k, 'region_') === 0) && strlen($v)) {

@@ -25,8 +25,6 @@ class Site {
 
 		$sitename 			=	((x($_POST,'sitename'))			? notags(trim($_POST['sitename']))			: '');
 
-		$banner				=	((x($_POST,'banner'))			? trim($_POST['banner'])				: false);
-
 		$admininfo			=	((x($_POST,'admininfo'))		? trim($_POST['admininfo'])				: false);
 		$siteinfo			=	((x($_POST,'siteinfo'))		    ? trim($_POST['siteinfo'])				: '');
 		$language			=	((x($_POST,'language'))			? notags(trim($_POST['language']))			: 'en');
@@ -123,13 +121,6 @@ class Site {
 			set_config('system','directory_server',$directory_server);
 		}
 		
-		if ($banner == '') {
-			del_config('system', 'banner');
-		}
-		else {
-			set_config('system', 'banner', $banner);
-		}
-
 		if ($admininfo == '') {
 			del_config('system', 'admininfo');
 		}
@@ -250,11 +241,6 @@ class Site {
 			}
 		}
 
-		/* Banner */
-
-		$banner = System::get_banner();
-
-		$banner = htmlspecialchars($banner);
 
 		/* Admin Info */
 		
@@ -304,7 +290,6 @@ class Site {
 			'$advanced'             => t('Advanced'),
 			'$baseurl'              => z_root(),
 			'$sitename'             => [ 'sitename', t("Site name"), htmlspecialchars(get_config('system','sitename'), ENT_QUOTES, 'UTF-8'),'' ],
-			'$banner'               => [ 'banner', t("Banner/Logo"), $banner, t('Unfiltered HTML/CSS/JS is allowed') ],
 			'$admininfo'            => [ 'admininfo', t("Administrator Information"), $admininfo, t("Contact information for site administrators.  Displayed on siteinfo page.  BBCode may be used here.") ],
 			'$siteinfo'		        => [ 'siteinfo', t('Site Information'), get_config('system','siteinfo'), t("Publicly visible description of this site.  Displayed on siteinfo page.  BBCode may be used here.") ],
 			'$language'             => [ 'language', t("System language"), get_config('system','language','en'), "", $lang_choices ],

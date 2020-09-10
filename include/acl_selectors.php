@@ -86,7 +86,7 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 	if($r) {
 		foreach($r as $rr) {
 			$selected = (($single_group && $rr['hash'] === $allow_gid[0]) ? ' selected = "selected" ' : '');
-			$groups .= '<option id="' . $rr['id'] . '" value="' . $rr['hash'] . '"' . $selected . '>' . $rr['gname'] . '</option>' . "\r\n";
+			$groups .= '<option id="' . $rr['id'] . '" value="' . $rr['hash'] . '"' . $selected . '>' . $rr['gname'] . ' ' . t('(List)') . '</option>' . "\r\n";
 		}
 	}
 
@@ -95,7 +95,7 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 	if($forums) {
 		foreach($forums as $f) {
 			$selected = (($single_group && $f['hash'] === $allow_cid[0]) ? ' selected = "selected" ' : '');
-			$groups .= '<option id="^' . $f['abook_id'] . '" value="^' . $f['xchan_hash'] . '"' . $selected . '>' . $f['xchan_name'] . '</option>' . "\r\n";
+			$groups .= '<option id="^' . $f['abook_id'] . '" value="^' . $f['xchan_hash'] . '"' . $selected . '>' . $f['xchan_name'] . ' ' . t('(Group)') . '</option>' . "\r\n";
 		}
 	}
 

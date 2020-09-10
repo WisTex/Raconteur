@@ -47,9 +47,9 @@ function nav($template = 'default') {
 
 	$channel_apps[] = channel_apps($is_owner, App::$profile['channel_address']);
 
-	$project_icon = System::get_project_icon();
+	$site_icon = System::get_site_icon();
 
-	$banner = System::get_banner();
+	$banner = System::get_site_name();
 
 	App::$page['header'] .= replace_macros(get_markup_template('hdr.tpl'), array(
 		//we could additionally use this to display important system notifications e.g. for updates
@@ -284,7 +284,7 @@ function nav($template = 'default') {
 
 	App::$page['nav'] .= replace_macros($tpl, array(
 		'$baseurl' => z_root(),
-		'$project_icon' => $project_icon,
+		'$project_icon' => $site_icon,
 		'$project_title' => t('Powered by $Projectname'),
 		'$fulldocs' => t('Help'),
 		'$sitelocation' => $sitelocation,

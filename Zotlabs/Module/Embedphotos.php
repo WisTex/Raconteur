@@ -16,18 +16,29 @@ class Embedphotos extends Controller {
 	 *
 	 */
 	function post() {
+	
+		// The admin tools for setting a site logo and cover photo set the channel_id explicitly
+		// to the 'sys' channel and use stored resources for that channel.
+		// Legacy behaviour uses the local logged in channel.
+		
+		if (argc() > 2 && is_site_admin() && intval(argv(2))) {
+			$channel_id = argv(2);
+		}
+		else {
+			$channel_id = local_channel();
+		}
 		if (argc() > 1 && argv(1) === 'album') {
 			// API: /embedphotos/album
 			$name = (x($_POST,'name') ? $_POST['name'] : null );
 			if (! $name) {
 				json_return_and_die(array('errormsg' => 'Error retrieving album', 'status' => false));
 			}
-			$album = $this->embedphotos_widget_album(array('channel_id' => local_channel(), 'album' => $name));
+			$album = $this->embedphotos_widget_album(array('channel_id' => $channel_id, 'album' => $name));
 			json_return_and_die(array('status' => true, 'content' => $album));
 		}
 		if (argc() > 1 && argv(1) === 'albumlist') {
 			// API: /embedphotos/albumlist
-			$album_list = $this->embedphotos_album_list();
+			$album_list = $this->embedphotos_album_list($channel_id);
 			json_return_and_die(array('status' => true, 'albumlist' => $album_list));
 		}
 		if (argc() > 1 && argv(1) === 'photolink') {
@@ -38,7 +49,7 @@ class Embedphotos extends Controller {
 			}
 			$resource_id = array_pop(explode("/", $href));
 
-			$x = self::photolink($resource_id);
+			$x = self::photolink($resource_id, $channel_id);
 			if ($x) {
 				json_return_and_die(array('status' => true, 'photolink' => $x, 'resource_id' => $resource_id));
 			}
@@ -48,8 +59,14 @@ class Embedphotos extends Controller {
 	}
 
 
-	protected static function photolink($resource) {
-		$channel = App::get_channel();
+	protected static function photolink($resource, $channel_id = 0) {
+		if (intval($channel_id)) {
+			$channel = channelx_by_n($channel_id);
+		}
+		else {
+			$channel = App::get_channel();
+		}
+		
 		$output = EMPTY_STR;
 		if ($channel) {
 			$resolution = ((feature_enabled($channel['channel_id'],'large_photos')) ? 1 : 2);
@@ -216,8 +233,9 @@ class Embedphotos extends Controller {
 		return $o;
 	}
 
-	function embedphotos_album_list() {
-		$p = photos_albums_list(App::get_channel(),App::get_observer());
+	function embedphotos_album_list($channel_id) {
+		$channel = channelx_by_n($channel_id);
+		$p = photos_albums_list($channel,App::get_observer());
 		if ($p['success']) {
 			return $p['albums'];
 		}
