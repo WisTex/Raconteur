@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Widget;
 
+use App;
+
 class Cover_photo {
 
 	function widget($arr) {
@@ -13,6 +15,12 @@ class Cover_photo {
 			return '';
 
 		$channel_id = 0;
+
+		if (App::$module === 'home') {
+			$channel = get_sys_channel();
+			$channel_id = $channel['channel_id'];
+		}
+
 		if(array_key_exists('channel_id', $arr) && intval($arr['channel_id']))
 			$channel_id = intval($arr['channel_id']);
 		if(! $channel_id)

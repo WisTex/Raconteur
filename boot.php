@@ -2233,7 +2233,6 @@ function construct_page() {
 		call_hooks('construct_page', $arr);
 		App::$layout = $arr['layout'];
 
-
 		foreach(App::$layout as $k => $v) {
 			if((strpos($k, 'region_') === 0) && strlen($v)) {
 				if(strpos($v, '$region_') !== false) {
