@@ -288,7 +288,16 @@ logger('gis: ' . print_r($gis,true));
 	
 		if (argc() == 3 && argv(1) === 'new')
 			$newuser = true;
-	
+
+
+		if (argv(2) === 'reset') {
+			q("update photo set photo_usage = %d where photo_usage = %d and uid = %d",
+				intval(PHOTO_NORMAL),
+				intval(PHOTO_COVER),
+				intval($channel['channel_id'])
+			);
+		}
+
 		if (argv(2) === 'use') {
 			if (argc() < 4) {
 				notice( t('Permission denied.') . EOL );
