@@ -15,11 +15,6 @@ html {
 	margin-right: 1.5rem;
 }
 
-.project-banner img {
-	height: 32px;
-	width: 32px;
-}
-
 .project-banner a {
 	color: $banner_colour;
 }
@@ -1301,7 +1296,7 @@ img.mail-conv-sender-photo {
 	width: 3.75rem;
 }
 
-#avatar {
+#avatar, .nav-avatar {
 	width: 2.35rem;
 	height: 2.35rem;
 	border-radius: $radius;

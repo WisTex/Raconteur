@@ -3286,19 +3286,15 @@ class Libzot {
 					}
 				}
 			}
-
-			$f = 'images/' . strtolower(System::get_platform_name()) . '.png';
-			if (file_exists($f)) {
-				$ret['site']['logo'] = z_root() . '/' . $f;
-			}
-
+			
 			$ret['site']['about']      = bbcode(get_config('system','siteinfo'), [ 'export' => true ]); 
 			$ret['site']['plugins']    = $visible_plugins;
 			$ret['site']['sitehash']   = get_config('system','location_hash');
-			$ret['site']['sitename']   = get_config('system','sitename');
 			$ret['site']['sellpage']   = get_config('system','sellpage');
 			$ret['site']['location']   = get_config('system','site_location');
 			$ret['site']['realm']      = get_directory_realm();
+			$ret['site']['sitename']   = System::get_site_name();
+			$ret['site']['logo']       = System::get_site_icon();
 			$ret['site']['project']    = System::get_platform_name();
 			$ret['site']['version']    = System::get_project_version();
 		}

@@ -55,7 +55,6 @@
 			<div id="basic-settings-collapse" class="collapse show" role="tabpanel" aria-labelledby="basic-settings" data-parent="#settings">
 				<div class="section-content-tools-wrapper">
 					{{include file="field_input.tpl" field=$sitename}}
-					{{include file="field_textarea.tpl" field=$banner}}
 					{{include file="field_textarea.tpl" field=$siteinfo}}
 					{{include file="field_textarea.tpl" field=$admininfo}}
 					{{include file="field_input.tpl" field=$reply_address}}

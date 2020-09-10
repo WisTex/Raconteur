@@ -19,16 +19,17 @@ class Admin {
 		// array( url, name, extra css classes )
 
 		$aside = [
-			'site'      => array(z_root() . '/admin/site/',     t('Site'),           'site'),
-			'accounts'  => array(z_root() . '/admin/accounts/', t('Accounts'),       'accounts', 'pending-update', t('Member registrations waiting for confirmation')),
-			'channels'  => array(z_root() . '/admin/channels/', t('Channels'),       'channels'),
-			'security'  => array(z_root() . '/admin/security/', t('Security'),       'security'),
-//			'features'  => array(z_root() . '/admin/features/', t('Features'),       'features'),
-			'addons'    => array(z_root() . '/admin/addons/',   t('Addons'),         'addons'),
-			'themes'    => array(z_root() . '/admin/themes/',   t('Themes'),         'themes'),
-			'queue'     => array(z_root() . '/admin/queue',     t('Inspect queue'),  'queue'),
-//			'profs'     => array(z_root() . '/admin/profs',     t('Profile Fields'), 'profs'),
-			'dbsync'    => array(z_root() . '/admin/dbsync/',   t('DB updates'),     'dbsync')
+			'site'          => array(z_root() . '/admin/site/',     t('Site'),           'site'),
+			'profile_photo' => array(z_root() . '/admin/profile_photo', t('Site icon/logo'), 'profile_photo'),
+			'accounts'      => array(z_root() . '/admin/accounts/', t('Accounts'),       'accounts', 'pending-update', t('Member registrations waiting for confirmation')),
+			'channels'      => array(z_root() . '/admin/channels/', t('Channels'),       'channels'),
+			'security'      => array(z_root() . '/admin/security/', t('Security'),       'security'),
+//			'features'      => array(z_root() . '/admin/features/', t('Features'),       'features'),
+			'addons'        => array(z_root() . '/admin/addons/',   t('Addons'),         'addons'),
+			'themes'        => array(z_root() . '/admin/themes/',   t('Themes'),         'themes'),
+			'queue'         => array(z_root() . '/admin/queue',     t('Inspect queue'),  'queue'),
+//			'profs'         => array(z_root() . '/admin/profs',     t('Profile Fields'), 'profs'),
+			'dbsync'        => array(z_root() . '/admin/dbsync/',   t('DB updates'),     'dbsync')
 		];
 
 		/* get plugins admin page */
