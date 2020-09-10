@@ -30,11 +30,11 @@ require_once('include/photos.php');
 class Cover_photo {
 
 	function init() {
-		if (! local_channel()) {
+		if (! is_site_admin()) {
 			return;
 		}
 	
-		$channel = App::get_channel();
+		$channel = get_sys_channel();
 		Libprofile::load($channel['channel_address']);	
 	}
 	
@@ -47,24 +47,24 @@ class Cover_photo {
 	
 	function post() {
 	
-		if (! local_channel()) {
+		if (! is_site_admin()) {
 			return;
 		}
 	
-		$channel = App::get_channel();
+		$channel = get_sys_channel();
 		
-		check_form_security_token_redirectOnErr('/cover_photo', 'cover_photo');
+		check_form_security_token_redirectOnErr('/admin/cover_photo', 'cover_photo');
 		
 		if ((array_key_exists('cropfinal',$_POST)) && ($_POST['cropfinal'] == 1)) {
 	
 			// phase 2 - we have finished cropping
 	
-			if (argc() != 2) {
+			if (argc() != 3) {
 				notice( t('Image uploaded but image cropping failed.') . EOL );
 				return;
 			}
 	
-			$image_id = argv(1);
+			$image_id = argv(2);
 	
 			if (substr($image_id,-2,1) == '-') {
 				$scale = substr($image_id,-1,1);
@@ -79,7 +79,7 @@ class Cover_photo {
 			$srcH = intval($_POST['yfinal']) - $srcY;
 	
 			$r = q("select gender from profile where uid = %d and is_default = 1 limit 1",
-				intval(local_channel())
+				intval($channel['channel_id'])
 			);
 			if ($r) {
 				$profile = array_shift($r);
@@ -87,7 +87,7 @@ class Cover_photo {
 	
 			$r = q("SELECT * FROM photo WHERE resource_id = '%s' AND uid = %d AND imgscale > 0 order by imgscale asc LIMIT 1",
 				dbesc($image_id),
-				intval(local_channel())
+				intval($channel['channel_id'])
 			);
 	
 			if ($r) {
@@ -137,7 +137,7 @@ logger('gis: ' . print_r($gis,true));
 	
 					$g = q("select width, height from photo where resource_id = '%s' and uid = %d and imgscale = 3",
 						dbesc($image_id),
-						intval(local_channel())
+						intval($channel['channel_id'])
 					);
 	
 	
@@ -154,7 +154,7 @@ logger('gis: ' . print_r($gis,true));
 					q("update photo set photo_usage = %d where photo_usage = %d and uid = %d",
 						intval(PHOTO_NORMAL),
 						intval(PHOTO_COVER),
-						intval(local_channel())
+						intval($channel['channel_id'])
 					);
 	
 					$orig_srcx = ( $base_image['width'] / $scaled_width ) * $srcX;
@@ -167,8 +167,8 @@ logger('gis: ' . print_r($gis,true));
 					$aid = get_account_id();
 	
 					$p = [ 
-						'aid'          => $aid, 
-						'uid'          => local_channel(), 
+						'aid'          => 0, 
+						'uid'          => $channel['channel_id'], 
 						'resource_id'  => $base_image['resource_id'],
 						'filename'     => $base_image['filename'], 
 						'album'        => t('Cover Photos'),
@@ -198,21 +198,17 @@ logger('gis: ' . print_r($gis,true));
 						notice( t('Image resize failed.') . EOL );
 						$x = q("delete from photo where resource_id = '%s' and uid = %d and imgscale >= 7 ",
 							dbesc($base_image['resource_id']),
-							local_channel()
+							intval($channel['channel_id'])
 						);
 						return;
-					}
-	
-					$channel = App::get_channel();
-					$this->send_cover_photo_activity($channel,$base_image,$profile);
-	
+					}	
 	
 				}
 				else
 					notice( t('Unable to process image') . EOL);
 			}
 	
-			goaway(z_root() . '/channel/' . $channel['channel_address']);
+			goaway(z_root() . '/admin');
 	
 		}
 	
@@ -262,69 +258,12 @@ logger('gis: ' . print_r($gis,true));
 			}
 		}
 
-		$res = attach_store(App::get_channel(), get_observer_hash(), '', array('album' => t('Cover Photos'), 'hash' => $hash));
+		$res = attach_store($channel, $channel['channel_hash'], '', array('album' => t('Cover Photos'), 'hash' => $hash));
 	
 		logger('attach_store: ' . print_r($res,true),LOGGER_DEBUG);
 
 		json_return_and_die([ 'message' => $hash ]);
 		
-	}
-	
-	function send_cover_photo_activity($channel,$photo,$profile) {
-	
-		$arr = [];
-		$arr['item_thread_top'] = 1;
-		$arr['item_origin'] = 1;
-		$arr['item_wall'] = 1;
-		$arr['uuid'] = new_uuid();
-		$arr['mid'] = z_root() . '/item/' . $arr['uuid'];
-		$arr['obj_type'] = ACTIVITY_OBJ_NOTE;
-		$arr['verb'] = ACTIVITY_CREATE;
-	
-		if ($profile && stripos($profile['gender'],t('female')) !== false) {
-			$t = t('%1$s updated her %2$s');
-		}
-		elseif ($profile && stripos($profile['gender'],t('male')) !== false) {
-			$t = t('%1$s updated his %2$s');
-		}
-		else {
-			$t = t('%1$s updated their %2$s');
-		}
-	
-		$ptext = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo['resource_id'] . ']' . t('cover photo') . '[/zrl]';
-	
-		$ltext = '[zrl=' . z_root() . '/profile/' . $channel['channel_address'] . ']' . '[zmg]' . z_root() . '/photo/' . $photo['resource_id'] . '-8[/zmg][/zrl]'; 
-	
-		$arr['body'] = sprintf($t,$channel['channel_name'],$ptext) . "\n\n" . $ltext;
-
-		$arr['obj'] = [ 
-			'type'      => ACTIVITY_OBJ_NOTE,
-			'published' => datetime_convert('UTC','UTC',$photo['created'],ATOM_TIME),
-			'updated'   => datetime_convert('UTC','UTC',$photo['edited'],ATOM_TIME),
-			'id'        => $arr['mid'],
-			'url'       => [ 'type' => 'Link', 'mediaType' => $photo['mimetype'], 'href' => z_root() . '/photo/' . $photo['resource_id'] . '-7' ],
-			'source'    => [ 'content' => $arr['body'], 'mediaType' => 'text/bbcode' ],
-			'content'   => bbcode($arr['body']),
-			'actor'     => Activity::encode_person($channel,false),			
-		];
-
-		$acl = new AccessControl($channel);
-		$x = $acl->get();
-		$arr['allow_cid'] = $x['allow_cid'];
-	
-		$arr['allow_gid'] = $x['allow_gid'];
-		$arr['deny_cid'] = $x['deny_cid'];
-		$arr['deny_gid'] = $x['deny_gid'];
-	
-		$arr['uid'] = $channel['channel_id'];
-		$arr['aid'] = $channel['channel_account_id'];
-	
-		$arr['owner_xchan'] = $channel['channel_hash'];
-		$arr['author_xchan'] = $channel['channel_hash'];
-	
-		post_activity_item($arr);
-	
-	
 	}
 	
 	
@@ -338,30 +277,30 @@ logger('gis: ' . print_r($gis,true));
 	
 	function get() {
 	
-		if (! local_channel()) {
+		if (! is_site_admin()) {
 			notice( t('Permission denied.') . EOL );
 			return;
 		}
 	
-		$channel = App::get_channel();
+		$channel = get_sys_channel();
 	
 		$newuser = false;
 	
-		if (argc() == 2 && argv(1) === 'new')
+		if (argc() == 3 && argv(1) === 'new')
 			$newuser = true;
 	
-		if (argv(1) === 'use') {
-			if (argc() < 3) {
+		if (argv(2) === 'use') {
+			if (argc() < 4) {
 				notice( t('Permission denied.') . EOL );
 				return;
 			};
 			
 	//		check_form_security_token_redirectOnErr('/cover_photo', 'cover_photo');
 	        
-			$resource_id = argv(2);
+			$resource_id = argv(3);
 	
 			$r = q("SELECT id, album, imgscale FROM photo WHERE uid = %d AND resource_id = '%s' and imgscale > 0 ORDER BY imgscale ASC",
-				intval(local_channel()),
+				intval($channel['channel_id']),
 				dbesc($resource_id)
 			);
 			if (! $r) {
@@ -377,7 +316,7 @@ logger('gis: ' . print_r($gis,true));
 	
 			$r = q("SELECT content, mimetype, resource_id, os_storage FROM photo WHERE id = %d and uid = %d limit 1",
 				intval($r[0]['id']),
-				intval(local_channel())
+				intval($channel['channel_id'])
 	
 			);
 			if (! $r) {
@@ -398,7 +337,7 @@ logger('gis: ' . print_r($gis,true));
 				// go ahead as if we have just uploaded a new photo to crop
 				$i = q("select resource_id, imgscale from photo where resource_id = '%s' and uid = %d and imgscale = 0",
 					dbesc($r[0]['resource_id']),
-					intval(local_channel())
+					intval($channel['channel_id'])
 				);
 	
 				if ($i) {
@@ -416,9 +355,9 @@ logger('gis: ' . print_r($gis,true));
 		if(! array_key_exists('imagecrop',App::$data)) {
 	
 			$o .= replace_macros(get_markup_template('cover_photo.tpl'), [
-				'$user'                   => App::$channel['channel_address'],
+				'$user'                   => $channel['channel_address'],
 				'$info'                   => t('Your cover photo may be visible to anybody on the internet'),
-				'$existing'               => get_cover_photo(local_channel(),'array',PHOTO_RES_COVER_850),
+				'$existing'               => get_cover_photo($channel['channel_id'],'array',PHOTO_RES_COVER_850),
 				'$lbl_upfile'             => t('Upload File:'),
 				'$lbl_profiles'           => t('Select a profile:'),
 				'$title'                  => t('Change Cover Photo'),
