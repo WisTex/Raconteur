@@ -3,6 +3,7 @@
 namespace Zotlabs\Widget;
 
 use App;
+use Zotlabs\Lib\System;
 
 class Cover_photo {
 
@@ -11,14 +12,18 @@ class Cover_photo {
 		require_once('include/channel.php');
 		$o = '';
 
+
 		if(\App::$module == 'channel' && $_REQUEST['mid'])
 			return '';
 
 		$channel_id = 0;
 
+		$site_banner = false;
+
 		if (App::$module === 'home') {
 			$channel = get_sys_channel();
 			$channel_id = $channel['channel_id'];
+			$site_banner = System::get_site_name();
 		}
 
 		if(array_key_exists('channel_id', $arr) && intval($arr['channel_id']))
@@ -55,10 +60,17 @@ class Cover_photo {
 		else
 			$title = $channel['channel_name'];
 
+
 		if(array_key_exists('subtitle', $arr) && isset($arr['subtitle']))
 			$subtitle = $arr['subtitle'];
 		else
 			$subtitle = str_replace('@','&#x40;',$channel['xchan_addr']);
+
+
+		if ($site_banner) {
+			$title = $site_banner;
+			$subtitle = '';
+		}
 
 		$c = get_cover_photo($channel_id,'html');
 
