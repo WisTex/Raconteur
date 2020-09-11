@@ -31,6 +31,7 @@ class Findpeople {
 			'$suggest' => t('Channel Suggestions'),
 			'$similar' => '', // FIXME and uncomment when mod/match working // t('Similar Interests'),
 			'$random' => '', // t('Random Profile'),
+			'$sites' => t('Affiliated sites'),
 			'$inv' => '', // t('Invite Friends'),
 			'$advanced_search' => $advanced_search,
 			'$advanced_hint' => "\r\n" . t('Advanced example: name=fred and country=iceland'),

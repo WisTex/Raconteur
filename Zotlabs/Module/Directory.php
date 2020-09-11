@@ -430,7 +430,7 @@ class Directory extends Controller {
 						else {
 							$maxheight = 94;
 	
-							$dirtitle = (($globaldir) ? t('Network Directory (channels known to this site)') : t('Local Directory'));
+							$dirtitle = (($globaldir) ? t('Directory') : t('Local Directory'));
 	
 							$o .= "<script> var page_query = '" . escape_tags(urlencode($_GET['req'])) . "'; var extra_args = '" . extra_query_args() . "' ; divmore_height = " . intval($maxheight) . ";  </script>";
 							$o .= replace_macros($tpl, [
