@@ -29,9 +29,10 @@ class HttpMeta {
 			($this->og) 
 			&& array_key_exists('og:title',$this->og) 
 			&& array_key_exists('og:type', $this->og) 
-			&& array_key_exists('og:image',$this->og) 
-			&& array_key_exists('og:url:secure_url',  $this->og)
-                        && array_key_exists('og:description',  $this->og)
+			&& array_key_exists('og:image',$this->og)
+			&& array_key_exists('og:description',  $this->og)
+			&& (array_key_exists('og:url', $this->og)
+			|| array_key_exists('og:url:secure_url',  $this->og))
 		) {
 			return true;
 		}

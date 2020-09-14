@@ -550,39 +550,39 @@ class Channel extends Controller {
 
 		if ($_REQUEST['mid']) {
 
-	                if(preg_match("/\[[zi]mg(.*?)\]([^\[]+)/is", $items[0]['body'], $matches)) {
-        	                $ogimage = $matches[2];
+			if(preg_match("/\[[zi]mg(.*?)\]([^\[]+)/is", $items[0]['body'], $matches)) {
+			$ogimage = $matches[2];
 			//	Will we use og:image:type someday? We keep this just in case
 			//	$ogimagetype = guess_image_type($ogimage);
-                	}
+		}
 
-                	// some work on post content to generate a description
-			// almost fully based on work done on Hubzilla by Maw Kostikov
-                	$ogdesc = $items[0]['body'];
+			// some work on post content to generate a description
+			// almost fully based on work done on Hubzilla by Max Kostikov
+			$ogdesc = $items[0]['body'];
 
-                	$ogdesc = str_replace("#^[", "[", $ogdesc);
+			$ogdesc = str_replace("#^[", "[", $ogdesc);
 
-                	$ogdesc = bbcode($ogdesc, [ 'tryoembed' => false ]);
-                	$ogdesc = trim(html2plain($ogdesc, 0, true));
-                	$ogdesc = html_entity_decode($ogdesc, ENT_QUOTES, 'UTF-8');
+			$ogdesc = bbcode($ogdesc, [ 'tryoembed' => false ]);
+			$ogdesc = trim(html2plain($ogdesc, 0, true));
+			$ogdesc = html_entity_decode($ogdesc, ENT_QUOTES, 'UTF-8');
 
-                	// remove all URLs
-                	$ogdesc = preg_replace("/https?\:\/\/[a-zA-Z0-9\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@]+/", "", $ogdesc);
+			// remove all URLs
+			$ogdesc = preg_replace("/https?\:\/\/[a-zA-Z0-9\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@]+/", "", $ogdesc);
 
-                	// shorten description
-                	$ogdesc = substr($ogdesc, 0, 300);
-                	$ogdesc = str_replace("\n", " ", $ogdesc);
-                	while (strpos($ogdesc, "  ") !== false)
-                        	$ogdesc = str_replace("  ", " ", $ogdesc);
-                	$ogdesc = (strlen($ogdesc) < 298 ? $ogdesc : rtrim(substr($ogdesc, 0, strrpos($ogdesc, " ")), "?.,:;!-") . "...");
+			// shorten description
+			$ogdesc = substr($ogdesc, 0, 300);
+			$ogdesc = str_replace("\n", " ", $ogdesc);
+			while (strpos($ogdesc, "  ") !== false)
+				$ogdesc = str_replace("  ", " ", $ogdesc);
+			$ogdesc = (strlen($ogdesc) < 298 ? $ogdesc : rtrim(substr($ogdesc, 0, strrpos($ogdesc, " ")), "?.,:;!-") . "...");
 
-	                // we can now start loading content
+			// we can now start loading content
 
 			if (! empty($items[0]['title'])) {
-                                App::$meta->set('og:title', $items[0]['title']);
+				App::$meta->set('og:title', $items[0]['title']);
 			}
 			else {
-                                App::$meta->set('og:title', $channel['channel_name']);
+				App::$meta->set('og:title', $channel['channel_name']);
 			}
 			if (! empty($ogimage)) {
 				App::$meta->set('og:image', $ogimage);
@@ -594,15 +594,16 @@ class Channel extends Controller {
 			App::$meta->set('og:url:secure_url', channel_url($channel));
 			if (! empty($ogdesc)) {
 				App::$meta->set('og:description', $ogdesc);
-                	}
+			}
 			else {
-                                App::$meta->set('og:description', sprintf( t('This post was published on the home page of %s.'), $channel['channel_name']));
+				App::$meta->set('og:description', sprintf( t('This post was published on the home page of %s.'), $channel['channel_name']));
 			}
 		}
 
-                if($mid)
-                        $o .= '<div id="content-complete"></div>';
+		if ($mid) {
+			$o .= '<div id="content-complete"></div>';
+		}
 
-                return $o;
+		return $o;
 	}
 }
