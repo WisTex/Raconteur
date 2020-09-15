@@ -729,7 +729,7 @@ class Libzot {
 		}
 
 		if ($r) {
-			if ($arr['photo'] && array_key_exists('updated',$arr['photo']) && $r[0]['xchan_photo_date'] != $arr['photo']['updated']) {
+			if ($arr['photo'] && array_key_exists('updated',$arr['photo']) && $arr['photo']['updated'] > $r[0]['xchan_photo_date']) {
 				$import_photos = true;
 			}
 
@@ -888,8 +888,11 @@ class Libzot {
 				dbesc($xchan_hash)
 			);
 			if ($local) {
-				$ph = z_fetch_url($arr['photo']['url'], true);
-				if ($ph['success']) {
+				$ph = false;
+				if (strpos($arr['photo']['url'], z_root()) === false) {
+					$ph = z_fetch_url($arr['photo']['url'], true);
+				}
+				if ($ph && $ph['success']) {
 					$hash = import_channel_photo($ph['body'], $arr['photo']['type'], $local[0]['channel_account_id'], $local[0]['channel_id']);
 
 					if ($hash) {

@@ -500,8 +500,17 @@ function import_channel_photo($photo, $type, $aid, $uid) {
 
 	logger('Importing channel photo for ' . $uid, LOGGER_DEBUG);
 
+	$r = q("select resource_id from photo where uid = %d and photo_usage = 1 and imgscale = 4",
+		intval($uid)
+	);
+	if ($r) {
+		$hash = $r[0]['resource_id'];
+	}
+	else {
+		$hash = photo_new_resource();
+	}
+	
 	$photo_failure = false;
-	$hash = photo_new_resource();
 	$filename = $hash;
 
 	$img = photo_factory($photo, $type);
