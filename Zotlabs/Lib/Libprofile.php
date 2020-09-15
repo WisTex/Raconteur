@@ -422,25 +422,29 @@ class Libprofile {
 
 			if(App::$profile['gender']) $profile['gender'] = array( t('Gender:'),  App::$profile['gender'] );
 
-			$ob_hash = get_observer_hash();
-			if($ob_hash && perm_is_allowed(App::$profile['profile_uid'],$ob_hash,'post_like')) {
-				$profile['canlike'] = true;
-				$profile['likethis'] = t('Like this channel');
-				$profile['profile_guid'] = App::$profile['profile_guid'];
-			}
 
-			$likers = q("select liker, xchan.*  from likes left join xchan on liker = xchan_hash where channel_id = %d and target_type = '%s' and verb = '%s'",
-				intval(App::$profile['profile_uid']),
-				dbesc(ACTIVITY_OBJ_PROFILE),
-				dbesc(ACTIVITY_LIKE)
-			);
-			$profile['likers'] = array();
-			$profile['like_count'] = count($likers);
-			$profile['like_button_label'] = tt('Like','Likes',$profile['like_count'],'noun');
-			if($likers) {
-				foreach($likers as $l)
-					$profile['likers'][] = array('name' => $l['xchan_name'],'photo' => zid($l['xchan_photo_s']), 'url' => zid($l['xchan_url']));
-			}
+			$ob_hash = get_observer_hash();
+// this may not work at all any more, but definitely won't work correctly if the liked profile belongs to a group
+// comment out until we are able to look at it much closer
+//			if($ob_hash && perm_is_allowed(App::$profile['profile_uid'],$ob_hash,'post_like')) {
+//				$profile['canlike'] = true;
+//				$profile['likethis'] = t('Like this channel');
+//				$profile['profile_guid'] = App::$profile['profile_guid'];
+//			}
+
+//			$likers = q("select liker, xchan.*  from likes left join xchan on liker = xchan_hash where channel_id = %d and target_type = '%s' and verb = '%s'",
+//				intval(App::$profile['profile_uid']),
+//				dbesc(ACTIVITY_OBJ_PROFILE),
+//				dbesc(ACTIVITY_LIKE)
+//			);
+//			$profile['likers'] = array();
+//			$profile['like_count'] = count($likers);
+//			$profile['like_button_label'] = tt('Like','Likes',$profile['like_count'],'noun');
+
+//			if($likers) {
+//				foreach($likers as $l)
+//					$profile['likers'][] = array('name' => $l['xchan_name'],'photo' => zid($l['xchan_photo_s']), 'url' => zid($l['xchan_url']));
+//			}
 
 			if((App::$profile['dob']) && (App::$profile['dob'] != '0000-00-00')) {
 

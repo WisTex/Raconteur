@@ -174,27 +174,10 @@ class Poller {
 			}
 		}
 
-		if($dirmode == DIRECTORY_MODE_SECONDARY || $dirmode == DIRECTORY_MODE_PRIMARY) {
-			$r = q("SELECT u.ud_addr, u.ud_id, u.ud_last FROM updates AS u INNER JOIN (SELECT ud_addr, max(ud_id) AS ud_id FROM updates WHERE ( ud_flags & %d ) = 0 AND ud_addr != '' AND ( ud_last <= '%s' OR ud_last > %s - INTERVAL %s ) GROUP BY ud_addr) AS s ON s.ud_id = u.ud_id ",
-				intval(UPDATE_FLAGS_UPDATED),
-				dbesc(NULL_DATE),
-				db_utcnow(), db_quoteinterval('7 DAY')
-			);
-			if($r) {
-				foreach($r as $rr) {
-
-					// If they didn't respond when we attempted before, back off to once a day
-					// After 7 days we won't bother anymore
-
-					if($rr['ud_last'] > NULL_DATE)
-						if($rr['ud_last'] > datetime_convert('UTC','UTC', 'now - 1 day'))
-							continue;
-					Run::Summon(array('Onedirsync',$rr['ud_id']));
-					if($interval)
-						@time_sleep_until(microtime(true) + (float) $interval);
-				}
-			}
-		}	
+		// migrate a few photos - eventually we'll migrate them all but without killing somebody's site
+		// trying to do them all at once
+		
+		migrate_xchan_photos(5);
 
 		set_config('system','lastpoll',datetime_convert());
 
