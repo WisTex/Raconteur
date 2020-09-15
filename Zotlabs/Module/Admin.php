@@ -24,18 +24,18 @@ class Admin extends \Zotlabs\Web\Controller {
 		$this->sm = new \Zotlabs\Web\SubModule();
 	}
 
-	function init() {
-		logger('admin_init', LOGGER_DEBUG);
+//	function init() {
+//		logger('admin_init', LOGGER_DEBUG);
 
-		if(! is_site_admin()) {
-			return;
-		}
-		if (argc() > 1) {
-			$this->sm->call('init');
-		}
+//		if(! is_site_admin()) {
+//			return;
+//		}
+//		if (argc() > 1) {
+//			$this->sm->call('init');
+//		}
 
-		goaway(z_root() . '/admin' );
-	}
+//		goaway(z_root() . '/admin' );
+//	}
 
 
 	function post(){
