@@ -300,7 +300,7 @@ function xchan_change_key($oldx,$newx,$data) {
 
 function cleanup_xchan_photos() {
 
-	$r = q("select photo.xchan, photo.resource_id from photo left join xchan on photo.xchan = xchan_hash where photo.xchan != '' and uid = 0 and imgscale = 4 and photo_usage = 2 and xchan_photo_l like ('%s') limit 200",
+	$r = q("select photo.xchan, photo.resource_id from photo left join xchan on photo.xchan = xchan_hash where photo.xchan != '' and uid = 0 and imgscale = 4 and photo_usage = 2 and xchan_photo_l like ('%s') limit 500",
 		dbesc(z_root() . '/xp/%')
 	);
 	if ($r) {
