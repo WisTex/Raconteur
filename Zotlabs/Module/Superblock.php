@@ -7,6 +7,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\LibBlock;
+use Zotlabs\Lib\Libzot;
 
 class Superblock extends Controller {
 
