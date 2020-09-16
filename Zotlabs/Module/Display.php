@@ -339,7 +339,7 @@ class Display extends Controller {
 			if ($item['mid'] === $item_hash) {
 
 
-				if(preg_match("/\[[zi]mg(.*?)\]([^\[]+)/is", $item['body'], $matches)) {
+				if(preg_match("/\[[zi]mg(.*?)\]([^\[]+)/is", $items[0]['body'], $matches)) {
 					$ogimage = $matches[2];
 					//	Will we use og:image:type someday? We keep this just in case
 					//	$ogimagetype = guess_image_type($ogimage);
@@ -363,24 +363,37 @@ class Display extends Controller {
 					$ogdesc = str_replace("  ", " ", $ogdesc);
 				$ogdesc = (strlen($ogdesc) < 298 ? $ogdesc : rtrim(substr($ogdesc, 0, strrpos($ogdesc, " ")), "?.,:;!-") . "...");
 
-				// we can now start loading content
+				$ogsite = (System::get_site_name()) ? escape_tags(System::get_site_name()) : System::get_platform_name();
 
-				if ($item['title']) {
-					App::$meta->set('og:title', $item['title']);
-				}
+				// we can now start loading content
+				if ($item['mid'] == $item['parent_mid']) {
+					App::$meta->set('og:title', ($items[0]['title']
+						? sprintf( t('"%s", shared by %s with %s'),$items[0]['title'],$item['author']['xchan_name'],$ogsite)
+						: sprintf( t('%s shared this post with %s'),$item['author']['xchan_name'],$ogsite)));
+                                        App::$meta->set('og:image', (isset($ogimage) ? $ogimage : System::get_site_icon()));
+                                        App::$meta->set('og:type', 'article');
+                                        App::$meta->set('og:url:secure_url', $item['llink']);
+					App::$meta->set('og:description', ($ogdesc ? $ogdesc : 'Not much to read, click to see the post.'));
+                                }
 				else {
-					App::$meta->set('og:title', ((System::get_site_name()) ? escape_tags(System::get_site_name()) : System::get_platform_name()));
-				}
-				if (isset($ogimage)) {
-					App::$meta->set('og:image', $ogimage);
-				}
-				else {
-					App::$meta->set('og:image', System::get_site_icon());
-				}
-				App::$meta->set('og:type', 'article');
-				App::$meta->set('og:url:secure_url', $item['llink']);
-				if ($ogdesc) {
-					App::$meta->set('og:description', $ogdesc);
+	                                if (($target_item['verb'] == ACTIVITY_LIKE) || ($target_item['verb'] == ACTIVITY_DISLIKE)) {
+	                                        App::$meta->set('og:title', ($items[0]['title'] 
+							? sprintf( t('%s shared a reaction to "%s"'),$item['author']['xchan_name'],$items[0]['title'])
+							: sprintf( t('%s shared a reaction to this post/conversation'),$item['author']['xchan_name'])));
+	                                        App::$meta->set('og:image', (isset($ogimage) ? $ogimage : System::get_site_icon()));
+						App::$meta->set('og:type', 'article');
+						App::$meta->set('og:url:secure_url', $item['llink']);
+	                                        App::$meta->set('og:description', $ogdesc);
+					}
+					else {
+                                                App::$meta->set('og:title', ($items[0]['title'] 
+                                                        ? sprintf( t('%s commented "%s"'),$item['author']['xchan_name'],$items[0]['title'])
+                                                        : sprintf( t('%s shared a comment of this post/conversation'),$item['author']['xchan_name'])));
+                                                App::$meta->set('og:image', (isset($ogimage) ? $ogimage : System::get_site_icon()));
+                                                App::$meta->set('og:type', 'article');
+                                                App::$meta->set('og:url:secure_url', $item['llink']);
+                                                App::$meta->set('og:description', sprintf( t('%s wrote this: "%s"'),$item['author']['xchan_name'],$ogdesc));
+                                        }
 				}
 			}
 		} 
