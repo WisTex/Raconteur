@@ -8,28 +8,47 @@
 
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Web\SubModule;
+use Zotlabs\Lib\Config;
 
-
-require_once('include/account.php');
 
 /**
  * @brief Admin area.
  *
  */
-class Admin extends \Zotlabs\Web\Controller {
+ 
+class Admin extends Controller {
 
 	private $sm = null;
 
 	function __construct() {
-		$this->sm = new \Zotlabs\Web\SubModule();
+		$this->sm = new SubModule();
 	}
 
-	function post(){
-		logger('admin_post', LOGGER_DEBUG);
+	function init() {
 
-		if(! is_site_admin()) {
+		logger('admin_init', LOGGER_DEBUG);
+
+		if (! is_site_admin()) {
 			return;
 		}
+		
+		if (argc() > 1) {
+			$this->sm->call('init');
+		}
+	}
+
+
+	function post() {
+
+		logger('admin_post', LOGGER_DEBUG);
+
+		if (! is_site_admin()) {
+			return;
+		}
+		
 		if (argc() > 1) {
 			$this->sm->call('post');
 		}
@@ -45,7 +64,7 @@ class Admin extends \Zotlabs\Web\Controller {
 
 		logger('admin_content', LOGGER_DEBUG);
 
-		if(! is_site_admin()) {
+		if (! is_site_admin()) {
 			return login(false);
 		}
 
@@ -57,9 +76,9 @@ class Admin extends \Zotlabs\Web\Controller {
 
 		$o = '';
 
-		if(argc() > 1) {
+		if (argc() > 1) {
 			$o = $this->sm->call('get');
-			if($o === false) {
+			if ($o === false) {
 				notice( t('Item not found.') );
 			}
 		}
@@ -67,9 +86,10 @@ class Admin extends \Zotlabs\Web\Controller {
 			$o = $this->admin_page_summary();
 		}
 
-		if(is_ajax()) {
+		if (is_ajax()) {
 			echo $o;
 			killme();
+			// this is probably redundant
 			return '';
 		}
 		else {
@@ -83,10 +103,11 @@ class Admin extends \Zotlabs\Web\Controller {
 	 *
 	 * @return string HTML from parsed admin_summary.tpl
 	 */
+
 	function admin_page_summary() {
 
 		// list total user accounts, expirations etc.
-		$accounts = array();
+		$accounts = [];
 		$r = q("SELECT COUNT(CASE WHEN account_id > 0 THEN 1 ELSE NULL END) AS total, COUNT(CASE WHEN account_expires > %s THEN 1 ELSE NULL END) AS expiring, COUNT(CASE WHEN account_expires < %s AND account_expires > '%s' THEN 1 ELSE NULL END) AS expired, COUNT(CASE WHEN (account_flags & %d)>0 THEN 1 ELSE NULL END) AS blocked FROM account",
 			db_utcnow(),
 			db_utcnow(),
@@ -94,10 +115,10 @@ class Admin extends \Zotlabs\Web\Controller {
 			intval(ACCOUNT_BLOCKED)
 		);
 		if ($r) {
-			$accounts['total']    = array('label' => t('Accounts'), 'val' => $r[0]['total']);
-			$accounts['blocked']  = array('label' => t('Blocked accounts'), 'val' => $r[0]['blocked']);
-			$accounts['expired']  = array('label' => t('Expired accounts'), 'val' => $r[0]['expired']);
-			$accounts['expiring'] = array('label' => t('Expiring accounts'), 'val' => $r[0]['expiring']);
+			$accounts['total']    = [ 'label' => t('Accounts'),          'val' => $r[0]['total'] ];
+			$accounts['blocked']  = [ 'label' => t('Blocked accounts'),  'val' => $r[0]['blocked'] ];
+			$accounts['expired']  = [ 'label' => t('Expired accounts'),  'val' => $r[0]['expired'] ];
+			$accounts['expiring'] = [ 'label' => t('Expiring accounts'), 'val' => $r[0]['expiring'] ];
 		}
 
 		// pending registrations
@@ -112,21 +133,29 @@ class Admin extends \Zotlabs\Web\Controller {
 		$channels = array();
 		$r = q("SELECT COUNT(*) AS total, COUNT(CASE WHEN channel_primary = 1 THEN 1 ELSE NULL END) AS main, COUNT(CASE WHEN channel_primary = 0 THEN 1 ELSE NULL END) AS clones FROM channel WHERE channel_removed = 0 and channel_system = 0");
 		if ($r) {
-			$channels['total']  = array('label' => t('Channels'), 'val' => $r[0]['total']);
-			$channels['main']   = array('label' => t('Primary'), 'val' => $r[0]['main']);
-			$channels['clones'] = array('label' => t('Clones'), 'val' => $r[0]['clones']);
+			$channels['total']  = [ 'label' => t('Channels'), 'val' => $r[0]['total'] ];
+			$channels['main']   = [ 'label' => t('Primary'),  'val' => $r[0]['main'] ];
+			$channels['clones'] = [ 'label' => t('Clones'),   'val' => $r[0]['clones'] ];
 		}
 
 		// We can do better, but this is a quick queue status
 		$r = q("SELECT COUNT(outq_delivered) AS total FROM outq WHERE outq_delivered = 0");
 		$queue = (($r) ? $r[0]['total'] : 0);
-		$queues = array( 'label' => t('Message queues'), 'queue' => $queue );
+		$queues = [ 'label' => t('Message queues'), 'queue' => $queue  ];
 
-		// If no plugins active return 0, otherwise list of plugin names
-		$plugins = (count(\App::$plugins) == 0) ? count(\App::$plugins) : \App::$plugins;
+		$plugins = [];
 
-		if(is_array($plugins))
+		if (is_array(App::$plugins) && App::$plugins) {
+			foreach (App::$plugins as $p) {
+				if ($p) {
+					$plugins[] = $p;
+				}
+			}
 			sort($plugins);
+		}
+		else {
+			$plugins =  0;
+		}
 
 		// Could be extended to provide also other alerts to the admin
 
@@ -134,29 +163,28 @@ class Admin extends \Zotlabs\Web\Controller {
 
 		$upgrade = EMPTY_STR;
 
-		if((! defined('PLATFORM_ARCHITECTURE')) || (PLATFORM_ARCHITECTURE === 'red')) {
+		if((! defined('PLATFORM_ARCHITECTURE')) || (PLATFORM_ARCHITECTURE === 'zap')) {
 			$vrelease = get_repository_version('release');
 			$vdev = get_repository_version('dev');
-
 			$upgrade = ((version_compare(STD_VERSION,$vrelease) < 0) ? t('Your software should be updated') : '');
 		}
 
 		$t = get_markup_template('admin_summary.tpl');
-		return replace_macros($t, array(
+		return replace_macros($t, [
 			'$title' => t('Administration'),
 			'$page' => t('Summary'),
 			'$adminalertmsg' => $alertmsg,
 			'$queues'   => $queues,
-			'$accounts' => array( t('Registered accounts'), $accounts),
-			'$pending'  => array( t('Pending registrations'), $pending),
-			'$channels' => array( t('Registered channels'), $channels),
-			'$plugins'  => array( t('Active addons'), $plugins ),
-			'$version'  => array( t('Version'), STD_VERSION),
-			'$vmaster'  => array( t('Repository version (release)'), $vrelease),
-			'$vdev'     => array( t('Repository version (dev)'), $vdev),
+			'$accounts' => [ t('Registered accounts'),          $accounts   ],
+			'$pending'  => [ t('Pending registrations'),        $pending    ],
+			'$channels' => [ t('Registered channels'),          $channels   ],
+			'$plugins'  => (($plugins) ? [ t('Active addons'),                $plugins    ] : EMPTY_STR),
+			'$version'  => [ t('Version'),                      STD_VERSION ],
+			'$vmaster'  => [ t('Repository version (release)'), $vrelease   ],
+			'$vdev'     => [ t('Repository version (dev)'),     $vdev       ],
 			'$upgrade'  => $upgrade,
-			'$build'    => get_config('system', 'db_version')
-		));
+			'$build'    => Config::Get('system', 'db_version')
+		]);
 	}
 
 }

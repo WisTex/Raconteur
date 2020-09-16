@@ -335,6 +335,56 @@ class Display extends Controller {
 			$items = array();
 		}
 
+		foreach ($items as $item) {
+			if ($item['mid'] === $item_hash) {
+
+
+				if(preg_match("/\[[zi]mg(.*?)\]([^\[]+)/is", $item['body'], $matches)) {
+					$ogimage = $matches[2];
+					//	Will we use og:image:type someday? We keep this just in case
+					//	$ogimagetype = guess_image_type($ogimage);
+				}
+
+				// some work on post content to generate a description
+				// almost fully based on work done on Hubzilla by Max Kostikov
+				$ogdesc = $item['body'];
+
+				$ogdesc = bbcode($ogdesc, [ 'export' => true ]);
+				$ogdesc = trim(html2plain($ogdesc, 0, true));
+				$ogdesc = html_entity_decode($ogdesc, ENT_QUOTES, 'UTF-8');
+
+				// remove all URLs
+				$ogdesc = preg_replace("/https?\:\/\/[a-zA-Z0-9\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@]+/", "", $ogdesc);
+
+				// shorten description
+				$ogdesc = substr($ogdesc, 0, 300);
+				$ogdesc = str_replace("\n", " ", $ogdesc);
+				while (strpos($ogdesc, "  ") !== false)
+					$ogdesc = str_replace("  ", " ", $ogdesc);
+				$ogdesc = (strlen($ogdesc) < 298 ? $ogdesc : rtrim(substr($ogdesc, 0, strrpos($ogdesc, " ")), "?.,:;!-") . "...");
+
+				// we can now start loading content
+
+				if ($item['title']) {
+					App::$meta->set('og:title', $item['title']);
+				}
+				else {
+					App::$meta->set('og:title', ((System::get_site_name()) ? escape_tags(System::get_site_name()) : System::get_platform_name()));
+				}
+				if (isset($ogimage)) {
+					App::$meta->set('og:image', $ogimage);
+				}
+				else {
+					App::$meta->set('og:image', System::get_site_icon());
+				}
+				App::$meta->set('og:type', 'article');
+				App::$meta->set('og:url:secure_url', $item['llink']);
+				if ($ogdesc) {
+					App::$meta->set('og:description', $ogdesc);
+				}
+			}
+		} 
+
 		switch($module_format) {
 			
 		case 'html':

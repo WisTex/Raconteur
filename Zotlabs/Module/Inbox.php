@@ -303,7 +303,7 @@ class Inbox extends Controller {
 						break;
 					}
 				case 'Leave':
-					if ($AS->obj && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
+					if ($AS->obj && is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
 						// do unfollow activity
 						Activity::unfollow($channel,$AS);
 						break;
