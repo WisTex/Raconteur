@@ -1124,7 +1124,7 @@ class App {
 
 		$i = head_get_icon();
 		if (! $i) {
-			$i = System::get_project_icon();
+			$i = System::get_site_icon();
 		}
 		if ($i) {
 			head_add_link(['rel' => 'shortcut icon', 'href' => $i ]);
