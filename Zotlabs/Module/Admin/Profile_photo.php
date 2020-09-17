@@ -178,6 +178,7 @@ class Profile_photo {
 
 					// Similarly, tell the nav bar to bypass the cache and update the avatar image.
 					$_SESSION['reload_avatar'] = true;
+
 					Config::Set('system','site_icon_url',z_root() . '/photo/profile/m/' . $channel['channel_id']);
 
 					info( t('Shift-reload the page or clear browser cache if the new photo does not display immediately.') . EOL);
