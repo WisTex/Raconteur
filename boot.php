@@ -16,7 +16,7 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '20.09.15' );
+define ( 'STD_VERSION',             '20.09.17' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1242 );
@@ -1124,7 +1124,7 @@ class App {
 
 		$i = head_get_icon();
 		if (! $i) {
-			$i = System::get_project_icon();
+			$i = System::get_site_icon();
 		}
 		if ($i) {
 			head_add_link(['rel' => 'shortcut icon', 'href' => $i ]);

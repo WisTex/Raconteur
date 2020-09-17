@@ -554,7 +554,7 @@ class Channel extends Controller {
 			$ogimage = $matches[2];
 			//	Will we use og:image:type someday? We keep this just in case
 			//	$ogimagetype = guess_image_type($ogimage);
-		}
+			}
 
 			// some work on post content to generate a description
 			// almost fully based on work done on Hubzilla by Max Kostikov
@@ -578,26 +578,11 @@ class Channel extends Controller {
 
 			// we can now start loading content
 
-			if (! empty($items[0]['title'])) {
-				App::$meta->set('og:title', $items[0]['title']);
-			}
-			else {
-				App::$meta->set('og:title', $channel['channel_name']);
-			}
-			if (! empty($ogimage)) {
-				App::$meta->set('og:image', $ogimage);
-			}
-			else {
-				App::$meta->set('og:image', $channel['xchan_photo_l']);
-			}
+			App::$meta->set('og:title', ($items[0]['title'] ? $items[0]['title'] : $channel['channel_name']));
+			App::$meta->set('og:image', ($ogimage ? $ogimage : $channel['xchan_photo_l']));
 			App::$meta->set('og:type', 'article');
 			App::$meta->set('og:url:secure_url', channel_url($channel));
-			if (! empty($ogdesc)) {
-				App::$meta->set('og:description', $ogdesc);
-			}
-			else {
-				App::$meta->set('og:description', sprintf( t('This post was published on the home page of %s.'), $channel['channel_name']));
-			}
+			App::$meta->set('og:description', ($ogdesc ? $ogdesc : sprintf( t('This post was published on the home page of %s.'), $channel['channel_name'])));
 		}
 
 		if ($mid) {
