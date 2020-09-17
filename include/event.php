@@ -96,13 +96,14 @@ function format_event_obj($jobject) {
 
 ******/
 
-	if(is_array($object) && array_key_exists('summary', $object)) {
+	if(is_array($object) && (array_key_exists('summary', $object) || array_key_exists('name',$object))) {
 
 		$bd_format = t('l F d, Y \@ g:i A'); // Friday January 18, 2011 @ 8:01 AM
 		$dtend = ((array_key_exists('endTime',$object)) ? $object['endTime'] : NULL_DATE);
+		$title = (($object['summary']) ? zidify_links(smilies(bbcode($object['summary']))) : $object['name']);
 
 		$event['header'] = replace_macros(get_markup_template('event_item_header.tpl'),array(
-			'$title'	 => zidify_links(smilies(bbcode($object['summary']))),
+			'$title'	 => $title,
 			'$dtstart_label' => t('Starts:'),
 			'$dtstart_title' => datetime_convert('UTC', 'UTC', $object['startTime'], ((strpos($object['startTime'],'Z')) ? ATOM_TIME : 'Y-m-d\TH:i:s' )),
 			'$dtstart_dt'	 => ((strpos($object['startTime'],'Z')) ? day_translate(datetime_convert('UTC', date_default_timezone_get(), $object['startTime'] , $bd_format )) : day_translate(datetime_convert('UTC', 'UTC', $object['startTime'] , $bd_format))),
