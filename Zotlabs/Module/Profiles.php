@@ -291,6 +291,7 @@ class Profiles extends Controller {
 			$marital      = escape_tags(trim($_POST['marital']));
 			$howlong      = escape_tags(trim($_POST['howlong']));
 			$sexual       = escape_tags(trim($_POST['sexual']));
+			$pronouns     = escape_tags(trim($_POST['pronouns']));
 			$homepage     = escape_tags(trim($_POST['homepage']));
 			$hometown     = escape_tags(trim($_POST['hometown']));
 			$politic      = escape_tags(trim($_POST['politic']));
@@ -528,6 +529,7 @@ class Profiles extends Controller {
 				partner = '%s',
 				howlong = '%s',
 				sexual = '%s',
+				pronouns = '%s',
 				homepage = '%s',
 				hometown = '%s',
 				politic = '%s',
@@ -563,6 +565,7 @@ class Profiles extends Controller {
 				dbesc($with),
 				dbesc($howlong),
 				dbesc($sexual),
+				dbesc($pronouns),
 				dbesc($homepage),
 				dbesc($hometown),
 				dbesc($politic),
@@ -735,6 +738,7 @@ class Profiles extends Controller {
 				'$lbl_gender'   => t('Your gender'),
 				'$lbl_marital'  => t('Marital status'),
 				'$lbl_sexual'   => t('Sexual preference'),
+				'$lbl_pronouns' => t('Pronouns'),
 				'$baseurl'      => z_root(),
 				'$profile_id'   => $r[0]['id'],
 				'$profile_name' => array('profile_name', t('Profile name'), $r[0]['profile_name'], t('Required'), '*'),
@@ -759,6 +763,8 @@ class Profiles extends Controller {
 				'$howlong'      => array('howlong', t('Since (date)'), ($r[0]['howlong'] <= NULL_DATE ? '' : datetime_convert('UTC',date_default_timezone_get(),$r[0]['howlong']))),
 				'$sexual'       => self::sexpref_selector($r[0]['sexual']),
 				'$sexual_min'   => self::sexpref_selector_min($r[0]['sexual']),
+				'$pronouns'     => self::pronouns_selector($r[0]['pronouns']),
+				'$pronouns_min' => self::pronouns_selector($r[0]['pronouns']),
 				'$about'        => array('about', t('Tell us about yourself'), $r[0]['about']),
 				'$homepage'     => array('homepage', t('Homepage URL'), $r[0]['homepage']),
 				'$hometown'     => array('hometown', t('Hometown'), $r[0]['hometown']),
@@ -958,6 +964,24 @@ static function gender_selector_min($current="",$suffix="") {
 	$o .= '</select>';
 	return $o;
 }	
+
+static function pronouns_selector($current="",$suffix="") {
+	$o = '';
+	$select = array('', t('He/Him'), t('She/Her'), t('They/Them'));
+
+	call_hooks('pronouns_selector', $select);
+
+	$o .= "<select class=\"form-control\" name=\"pronouns$suffix\" id=\"pronouns-select$suffix\" size=\"1\" >";
+	foreach($select as $selection) {
+		if($selection !== 'NOTRANSLATION') {
+			$selected = (($selection == $current) ? ' selected="selected" ' : '');
+			$o .= "<option value=\"$selection\" $selected >$selection</option>";
+		}
+	}
+	$o .= '</select>';
+	return $o;
+}	
+
 
 static function gender_text($current="",$suffix="") {
 	$o = '';

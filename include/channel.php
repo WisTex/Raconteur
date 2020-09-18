@@ -1514,7 +1514,7 @@ function get_profile_fields_basic($filter = 0) {
 	$profile_fields_basic = (($filter == 0) ? get_config('system','profile_fields_basic') : null);
 
 	if(! $profile_fields_basic)
-		$profile_fields_basic = array('fullname','pdesc','chandesc','basic_gender','dob','dob_tz','region','country_name','marital','sexual','homepage','hometown','keywords','about','contact');
+		$profile_fields_basic = array('fullname','pdesc','chandesc','basic_gender','pronouns','dob','dob_tz','region','country_name','marital','sexual','homepage','hometown','keywords','about','contact');
 
 	$x = array();
 	if($profile_fields_basic)
@@ -2016,6 +2016,7 @@ function profile_store_lowlevel($arr) {
         'partner'       => ((array_key_exists('partner',$arr))       ? $arr['partner']       : ''),
         'howlong'       => ((array_key_exists('howlong',$arr))       ? $arr['howlong']       : NULL_DATE),
         'sexual'        => ((array_key_exists('sexual',$arr))        ? $arr['sexual']        : ''),
+        'pronouns'      => ((array_key_exists('pronouns',$arr))      ? $arr['pronouns']      : ''),
         'politic'       => ((array_key_exists('politic',$arr))       ? $arr['politic']       : ''),
         'religion'      => ((array_key_exists('religion',$arr))      ? $arr['religion']      : ''),
         'keywords'      => ((array_key_exists('keywords',$arr))      ? $arr['keywords']      : ''),
