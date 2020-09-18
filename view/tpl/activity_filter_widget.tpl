@@ -1,6 +1,6 @@
 <div class="widget">
 	<h3 class="d-flex justify-content-between align-items-center">
-		<div onclick="openClose('actfilt'); return true;">
+		<div class="cursor-pointer" onclick="openClose('actfilt'); return true;">
 		{{$title}}
 		{{if ! $reset}}
 		<i class="fa fa-fw fa-caret-down fakelink"></i>
