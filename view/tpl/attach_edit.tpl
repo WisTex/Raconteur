@@ -3,8 +3,17 @@
 	<input type="hidden" name="filehash" value="{{$file.hash}}" />
 	<input type="hidden" name="uid" value="{{$uid}}" />
 	<input type="hidden" name="fileid" value="{{$file.id}}" />
-	{{if !$isadir}}{{include file="field_checkbox.tpl" field=$notify}}{{/if}}
-	{{if $isadir}}{{include file="field_checkbox.tpl" field=$recurse}}{{/if}}
+	{{if !$isadir}}
+	{{include file="field_checkbox.tpl" field=$notify}}
+	{{/if}}
+	{{if $isadir}}
+	{{include file="field_checkbox.tpl" field=$recurse}}
+	{{/if}}
+	{{if !$isadir}}
+	{{include file="field_input.tpl" field=$newname}}
+	{{include file="field_select.tpl" field=$newdir}}
+	{{/if}}
+	
 	<div id="attach-edit-tools-share" class="btn-group form-group">
 		{{if !$isadir}}
 		<a href="/rpost?attachment=[attachment]{{$file.hash}},{{$file.revision}}[/attachment]" id="attach-btn" class="btn btn-outline-secondary btn-sm" title="{{$attach_btn_title}}">
