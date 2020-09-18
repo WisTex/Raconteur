@@ -28,7 +28,7 @@ class Filestorage extends Controller {
 		$notify = ((x($_POST, 'notify_edit')) ? intval($_POST['notify_edit']) : 0);
 
 		$newname = ((x($_POST, 'newname')) ? notags($_POST['newname']) : '');
-		$newdir  = ((x($_POST, 'newdir'))  ? notags($_POST['newdir'])  : '');
+		$newdir  = ((x($_POST, 'newdir'))  ? notags($_POST['newdir'])  : false);
 
 		if(! $resource) {
 			notice(t('Item not found.') . EOL);
@@ -38,12 +38,29 @@ class Filestorage extends Controller {
 		$channel = App::get_channel();
 
 		if ($newdir || $newname) {
+			$changed = false;
+			
 			$m = q("select folder from attach where hash = '%s' and uid = %d limit 1",
 				dbesc($resource),
 				intval($channel_id)
 			);
+			
 			if ($m) {
-				attach_move($channel_id,$resource,(($newdir) ?: $m[0]['folder']), $newname);			
+			
+				// we should always have $newdir, but only call attach_move()
+				// if it is being changed *or* a new filename is set, and
+				// account for the fact $newdir can legally be an empty sring
+				// to indicate the cloud root directory
+
+				if ($newdir !== false && $newdir !== $m[0]['folder']) {
+					$changed = true;
+				}
+				if ($newname) {
+					$changed = true;
+				}
+				if ($changed) {
+					attach_move($channel_id, $resource, $newdir, $newname);
+				}
 			}
 		}
 
