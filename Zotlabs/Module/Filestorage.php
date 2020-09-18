@@ -1,14 +1,18 @@
 <?php
 namespace Zotlabs\Module;
+
+
 /**
  * @file Zotlabs/Module/Filestorage.php
- *
+ * @brief performs edit template and operations on cloud files when in "list" view mode
  */
 
-
+use App;
+use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Access\AccessControl;
 
-class Filestorage extends \Zotlabs\Web\Controller {
+class Filestorage extends Controller {
 
 	function post() {
 
@@ -23,14 +27,44 @@ class Filestorage extends \Zotlabs\Web\Controller {
 		$resource = ((x($_POST, 'filehash')) ? notags($_POST['filehash']) : '');
 		$notify = ((x($_POST, 'notify_edit')) ? intval($_POST['notify_edit']) : 0);
 
+		$newname = ((x($_POST, 'newname')) ? notags($_POST['newname']) : '');
+		$newdir  = ((x($_POST, 'newdir'))  ? notags($_POST['newdir'])  : false);
+
 		if(! $resource) {
 			notice(t('Item not found.') . EOL);
 			return;
 		}
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
-		$acl = new \Zotlabs\Access\AccessControl($channel);
+		if ($newdir || $newname) {
+			$changed = false;
+			
+			$m = q("select folder from attach where hash = '%s' and uid = %d limit 1",
+				dbesc($resource),
+				intval($channel_id)
+			);
+			
+			if ($m) {
+			
+				// we should always have $newdir, but only call attach_move()
+				// if it is being changed *or* a new filename is set, and
+				// account for the fact $newdir can legally be an empty sring
+				// to indicate the cloud root directory
+
+				if ($newdir !== false && $newdir !== $m[0]['folder']) {
+					$changed = true;
+				}
+				if ($newname) {
+					$changed = true;
+				}
+				if ($changed) {
+					attach_move($channel_id, $resource, $newdir, $newname);
+				}
+			}
+		}
+
+		$acl = new AccessControl($channel);
 		$acl->set_from_array($_POST);
 		$x = $acl->get();
 
@@ -40,6 +74,12 @@ class Filestorage extends \Zotlabs\Web\Controller {
 		$object = get_file_activity_object($channel_id, $resource, $url);
 
 		attach_change_permissions($channel_id, $resource, $x['allow_cid'], $x['allow_gid'], $x['deny_cid'], $x['deny_gid'], $recurse, true);
+
+
+		$sync = attach_export_data($channel,$resource,true);
+		if ($sync) {
+			Libsync::build_sync_packet($channel_id,array('file' => array($sync)));
+		}
 
 		file_activity($channel_id, $object, $x['allow_cid'], $x['allow_gid'], $x['deny_cid'], $x['deny_gid'], 'post', $notify);
 
@@ -52,7 +92,7 @@ class Filestorage extends \Zotlabs\Web\Controller {
 			$which = argv(1);
 		else {
 			notice( t('Requested profile is not available.') . EOL );
-			\App::$error = 404;
+			App::$error = 404;
 			return;
 		}
 
@@ -64,7 +104,7 @@ class Filestorage extends \Zotlabs\Web\Controller {
 			$owner = intval($r[0]['channel_id']);
 		}
 
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 		$ob_hash = (($observer) ? $observer['xchan_hash'] : '');
 
 		$perms = get_all_perms($owner, $ob_hash);
@@ -169,7 +209,7 @@ class Filestorage extends \Zotlabs\Web\Controller {
 			);
 
 			$f = $r[0];
-			$channel = \App::get_channel();
+			$channel = App::get_channel();
 
 			$cloudpath = get_cloudpath($f);
 
