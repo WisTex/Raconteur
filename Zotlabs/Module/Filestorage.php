@@ -75,7 +75,6 @@ class Filestorage extends Controller {
 
 		attach_change_permissions($channel_id, $resource, $x['allow_cid'], $x['allow_gid'], $x['deny_cid'], $x['deny_gid'], $recurse, true);
 
-
 		$sync = attach_export_data($channel,$resource,true);
 		if ($sync) {
 			Libsync::build_sync_packet($channel_id,array('file' => array($sync)));
@@ -221,6 +220,7 @@ class Filestorage extends Controller {
 			// Encode path that is used for link so it's a valid URL
 			// Keep slashes as slashes, otherwise mod_rewrite doesn't work correctly
 			$encoded_path = str_replace('%2F', '/', rawurlencode($cloudpath));
+			$folder_list = attach_folder_select_list($channel['channel_id']);
 
 			$o = replace_macros(get_markup_template('attach_edit.tpl'), array(
 				'$header' => t('Edit file permissions'),
@@ -235,6 +235,8 @@ class Filestorage extends Controller {
 				'$deny_cid' => acl2json($f['deny_cid']),
 				'$deny_gid' => acl2json($f['deny_gid']),
 				'$lockstate' => $lockstate,
+				'$newname' => [ 'newname', t('Change filename to') , '', '' ],
+				'$newdir'  => [ 'newdir', t('Move to directory'), $f['folder'], '', $folder_list ],
 				'$permset' => t('Set/edit permissions'),
 				'$recurse' => array('recurse', t('Include all files and sub folders'), 0, '', array(t('No'), t('Yes'))),
 				'$backlink' => t('Return to file list'),
