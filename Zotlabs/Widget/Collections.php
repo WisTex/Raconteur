@@ -9,10 +9,11 @@ class Collections {
 
 	function widget($args) {
 
-		if(argc() < 2)
-			return;
+//		if(argc() < 2)
+//			return;
 
 		$mode = ((array_key_exists('mode',$args)) ? $args['mode'] : 'conversation');
+
 		switch($mode) {
 			case 'conversation':
 					$every = argv(0);
@@ -26,9 +27,10 @@ class Collections {
 					$every = 'connections';
 					$each = 'lists';
 					$edit = true;
-					$current = $_REQUEST['gid'];
+					$current = 0;
 					$abook_id = 0;
-					$wmode = 0;
+					$wmode = 1;
+					break;
 			case 'groups':
 					$every = 'connections';
 					$each = argv(0);
