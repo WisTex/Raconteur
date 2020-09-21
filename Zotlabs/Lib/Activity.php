@@ -2695,8 +2695,16 @@ class Activity {
 			return;
 		}
 
+
+
 		$is_sys_channel = is_sys_channel($channel['channel_id']);
 		$is_child_node = false;
+
+		// Pleroma scrobbles can be really noisy and contain lots of duplicate activities. Disable them by default.
+		
+		if (($act->type === 'Listen') && ($is_sys_channel || get_pconfig($channel['channel_id'],'system','allow_scrobbles',false))) {
+			return;
+		}
 
 		// Mastodon only allows visibility in public timelines if the public inbox is listed in the 'to' field.
 		// They are hidden in the public timeline if the public inbox is listed in the 'cc' field.
