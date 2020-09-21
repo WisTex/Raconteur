@@ -330,7 +330,7 @@ class Channel {
 			$r = q("update xchan set xchan_name = '%s', xchan_name_date = '%s' where xchan_url = '%s'",
 				dbesc($username),
 				dbesc(datetime_convert()),
-				dbesc(z_root() . '/channel/' . $channel['channel_address']))
+				dbesc(z_root() . '/channel/' . $channel['channel_address'])
 			);
 			$r = q("update profile set fullname = '%s' where uid = %d and is_default = 1",
 				dbesc($username),

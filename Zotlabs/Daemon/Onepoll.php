@@ -3,6 +3,10 @@
 namespace Zotlabs\Daemon;
 
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\ASCollection;
+
 
 require_once('include/socgraph.php');
 
@@ -60,120 +64,91 @@ class Onepoll {
 			: datetime_convert('UTC','UTC',$contact['abook_updated'] . ' - 2 days')
 		);
 
-		if($contact['xchan_network'] !== 'zot6')
-			return;
+		if($contact['xchan_network'] === 'zot6') {
 
-		// update permissions
+			// update permissions
 
-		$x = Libzot::refresh($contact,$importer);
+			$x = Libzot::refresh($contact,$importer);
 
-		$responded = false;
-		$updated   = datetime_convert();
-		$connected = datetime_convert();
-		if(! $x) {
-			// mark for death by not updating abook_connected, this is caught in include/poller.php
-			q("update abook set abook_updated = '%s' where abook_id = %d",
-				dbesc($updated),
-				intval($contact['abook_id'])
-			);
-		}
-		else {
-			q("update abook set abook_updated = '%s', abook_connected = '%s' where abook_id = %d",
-				dbesc($updated),
-				dbesc($connected),
-				intval($contact['abook_id'])
-			);
-			$responded = true;
-		}
-
-		if(! $responded)
-			return;
-
-		if(defined('USE_OUTBOX')) {
-
-		// @fixme
-		// This needs to be converted from zotfeed to ActivityStreams (such as an ActivityPub outbox).
-		// The zotfeed has serious compatibility issues between Hubzilla and Zap.
-
-		if($contact['xchan_connurl']) {
-			$fetch_feed = true;
-			$x = null;
-
-			// They haven't given us permission to see their stream
-
-			$can_view_stream = intval(get_abconfig($importer_uid,$contact['abook_xchan'],'their_perms','view_stream'));
-
-			if(! $can_view_stream)
-				$fetch_feed = false;
-
-			// we haven't given them permission to send us their stream
-
-			$can_send_stream = intval(get_abconfig($importer_uid,$contact['abook_xchan'],'my_perms','send_stream'));
-			
-			if(! $can_send_stream)
-				$fetch_feed = false;
-
-			if($fetch_feed) {
-
-				if(strpos($contact['xchan_connurl'],z_root()) === 0) {
-					// local channel - save a network fetch
-					$c = channelx_by_hash($contact['xchan_hash']);
-					if($c) {
-						$x = [ 
-							'success' => true, 
-							'body' => json_encode( [ 
-								'success' => true,
-								'messages' => zot_feed($c['channel_id'], $importer['xchan_hash'], [ 'mindate' => $last_update ])
-							])
-						];
-					}
-				}
-				else {
-					// remote fetch	
-
-					$feedurl = str_replace('/poco/','/zotfeed/',$contact['xchan_connurl']);		
-					$feedurl .= '?f=&mindate=' . urlencode($last_update) . '&zid=' . $importer['channel_address'] . '@' . \App::get_hostname();
-					$recurse = 0;
-					$x = z_fetch_url($feedurl, false, $recurse, [ 'session' => true ]);
-				}
-
-				logger('feed_update: ' . print_r($x,true), LOGGER_DATA);
+			$responded = false;
+			$updated   = datetime_convert();
+			$connected = datetime_convert();
+			if(! $x) {
+				// mark for death by not updating abook_connected, this is caught in include/poller.php
+				q("update abook set abook_updated = '%s' where abook_id = %d",
+					dbesc($updated),
+					intval($contact['abook_id'])
+				);
+			}
+			else {
+				q("update abook set abook_updated = '%s', abook_connected = '%s' where abook_id = %d",
+					dbesc($updated),
+					dbesc($connected),
+					intval($contact['abook_id'])
+				);
+				$responded = true;
 			}
 
-			if(($x) && ($x['success'])) {
-				$total = 0;
-				logger('onepoll: feed update ' . $contact['xchan_name'] . ' ' . $feedurl);
+			if (! $responded) {
+				return;
+			}
+		}
+		
+		$fetch_feed = true;
 
-				$j = json_decode($x['body'],true);
-				if($j['success'] && $j['messages']) {
-					foreach($j['messages'] as $message) {
-						// process delivery here once we have parsed the AS
-						logger('onepoll: feed_update: process_delivery: ' . print_r($results,true), LOGGER_DATA);
-						$total ++;
+		// They haven't given us permission to see their stream
+
+		$can_view_stream = intval(get_abconfig($importer_uid,$contact['abook_xchan'],'their_perms','view_stream'));
+
+		if (! $can_view_stream) {
+			$fetch_feed = false;
+		}
+
+		// we haven't given them permission to send us their stream
+
+		$can_send_stream = intval(get_abconfig($importer_uid,$contact['abook_xchan'],'my_perms','send_stream'));
+			
+		if (! $can_send_stream) {
+			$fetch_feed = false;
+		}
+
+		if ($contact['abook_created'] < datetime_convert('UTC','UTC', 'now - 1 week')) {
+			$fetch_feed = false;
+		}
+		
+		if($fetch_feed) {
+			$max = intval(get_config('system','max_imported_posts',50));
+			if (intval($max)) {
+				$cl = get_xconfig($xchan,'activitypub','collections');
+				if (is_array($cl) && $cl) {
+					$url = ((array_key_exists('outbox',$cl)) ? $cl['outbox'] : '');
+					if ($url) {
+						$obj = new ASCollection($url, $importer, 0, $max);
+						$messages = $obj->get();
+						if ($messages) {	
+							foreach($messages as $message) {
+								$AS = new ActivityStreams($message);
+								if ($AS->is_valid() && is_array($AS->obj)) {
+									$item = Activity::decode_note($AS,true);
+									Activity::store($importer,$contact['abook_xchan'],$AS,$item);
+								}
+							}
+						}
 					}
-					logger("onepoll: $total messages processed");
 				}
 			}
 		}
-			
-
-		} // end USE_OUTBOX
-
-
 
 		// update the poco details for this connection
 
-		if($contact['xchan_connurl']) {	
-			$r = q("SELECT xlink_id from xlink 
-				where xlink_xchan = '%s' and xlink_updated > %s - INTERVAL %s and xlink_static = 0 limit 1",
-				intval($contact['xchan_hash']),
-				db_utcnow(), db_quoteinterval('7 DAY')
-			);
-			if(! $r) {
-				poco_load($contact['xchan_hash'],$contact['xchan_connurl']);
-			}
+		$r = q("SELECT xlink_id from xlink 
+			where xlink_xchan = '%s' and xlink_updated > %s - INTERVAL %s and xlink_static = 0 limit 1",
+			intval($contact['xchan_hash']),
+			db_utcnow(), db_quoteinterval('7 DAY')
+		);
+		if(! $r) {
+			poco_load($contact['xchan_hash'],$contact['xchan_connurl']);
 		}
-
 		return;
 	}
 }

@@ -301,7 +301,7 @@ class Inbox extends Controller {
 					}
 					break;
 				case 'Undo':
-					if ($AS->obj && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Follow') {
+					if ($AS->obj && is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Follow') {
 						// do unfollow activity
 						Activity::unfollow($channel,$AS);
 						break;
