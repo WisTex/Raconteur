@@ -67,6 +67,7 @@
 				<div class="p-2 wall-item-content clearfix" id="wall-item-content-{{$item.id}}">
 					<div class="wall-item-body e-content" id="wall-item-body-{{$item.id}}" >
 						{{$item.body}}
+						{{* $item.comment_order *}}
 					</div>
 				</div>
 				{{/if}}

@@ -232,17 +232,6 @@ class ThreadItem {
 			}
 		}
 
-		$consensus = (intval($item['item_consensus']) ? true : false);
-		if($consensus) {
-			$response_verbs[] = 'agree';
-			$response_verbs[] = 'disagree';
-			$response_verbs[] = 'abstain';
-			if($this->is_commentable() && $observer) {
-				$conlabels = array( t('I agree'), t('I disagree'), t('I abstain'));
-				$canvote = true;
-			}
-		}
-
 		$responses = get_responses($conv_responses,$response_verbs,$this,$item);
 
 		$my_responses = [];
@@ -398,7 +387,8 @@ class ThreadItem {
 		$tmp_item = array(
 			'template' => $this->get_template(),
 			'mode' => $mode,
-			'item_type' => intval($item['item_type']),			
+			'item_type' => intval($item['item_type']),
+			'comment_order' => $item['comment_order'],
 			'type' => implode("",array_slice(explode("/",$item['verb']),-1)),
 			'body' => $body['html'],
 			'tags' => $body['tags'],
@@ -572,9 +562,7 @@ class ThreadItem {
 
 		$nb_children = count($children);
 
-		$visible_comments = get_config('system','expanded_comments');
-		if($visible_comments === false)
-			$visible_comments = 3;
+		$visible_comments = get_config('system', 'expanded_comments', 3);
 		
 		if($collapse_all) {
 			$visible_comments = 0;
