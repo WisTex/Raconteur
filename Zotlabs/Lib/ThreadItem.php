@@ -108,22 +108,11 @@ class ThreadItem {
 		$conv = $this->get_conversation();
 		$observer = $conv->get_observer();
 
-//		if($thread_level == 1) {
-//			$this->label_descendants();
-//		}
-
-		if($thread_level > 1) {
-
-
-//			logger('thread_level: ' . $thread_level);
-//			logger('item: ' . $item['mid']);
-//			logger('parent: ' . $item['thr_parent']);
-		}
-
 		$lock = (((intval($item['item_private'])) || (($item['uid'] == local_channel()) && (strlen($item['allow_cid']) || strlen($item['allow_gid']) 
 			|| strlen($item['deny_cid']) || strlen($item['deny_gid']))))
 			? t('Private Message')
 			: false);
+
 		$shareable = ((($conv->get_profile_owner() == local_channel() && local_channel()) && ($item['item_private'] != 1)) ? true : false);
 
 		// allow an exemption for sharing stuff from your private feeds
@@ -144,26 +133,13 @@ class ThreadItem {
 				$privacy_warning = true;
 		}
 
-
 		if($lock && $privacy_warning) {
 			$lock = t('Privacy conflict. Discretion advised.');
 		}
 
-
-
 		$mode = $conv->get_mode();
 
-		switch($item['item_type']) {
-			case ITEM_TYPE_CARD:
-				$edlink = 'card_edit';
-				break;
-			case ITEM_TYPE_ARTICLE:
-				$edlink = 'article_edit';
-				break;
-			default:
-				$edlink = 'editpost';
-				break;
-		}
+		$edlink = 'editpost';
 
 		if(local_channel() && $observer['xchan_hash'] === $item['author_xchan'])
 			$edpost = array(z_root() . '/' . $edlink . '/' . $item['id'], t('Edit'));
@@ -389,6 +365,8 @@ class ThreadItem {
 			'mode' => $mode,
 			'item_type' => intval($item['item_type']),
 			'comment_order' => $item['comment_order'],
+			'parent' => $this->get_data_value('parent'),
+			'collapsed' => ((intval($item['comment_order']) > 3) ? true : false),
 			'type' => implode("",array_slice(explode("/",$item['verb']),-1)),
 			'body' => $body['html'],
 			'tags' => $body['tags'],

@@ -519,6 +519,22 @@ function showHideComments(id) {
 	}
 }
 
+
+function collapseComments(id) {
+	if( $('.collapsed-comments-' + id).is(':visible')) {
+		$('.collapsed-comments-' + id + ' .autotime').timeago('dispose');
+		$('.collapsed-comments-' + id).slideUp();
+		$('#hide-comments-' + id).html(aStr.showmore);
+		$('#hide-comments-total-' + id).show();
+	} else {
+		$('.collapsed-comments-' + id + ' .autotime').timeago();
+		$('.collapsed-comments-' + id).slideDown();
+		$('#hide-comments-' + id).html(aStr.showfewer);
+		$('#hide-comments-total-' + id).hide();
+	}
+}
+
+
 function openClose(theID) {
 	if(document.getElementById(theID).style.display == "block") {
 		document.getElementById(theID).style.display = "none";

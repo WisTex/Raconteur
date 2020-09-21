@@ -1,12 +1,14 @@
 {{if $item.comment_firstcollapsed}}
-<div class="hide-comments-outer fakelink" onclick="showHideComments({{$item.id}});">
-	<span id="hide-comments-{{$item.id}}" class="hide-comments">{{$item.hide_text}}</span>&nbsp;<span id="hide-comments-total-{{$item.id}}" class="hide-comments-total">{{$item.num_comments}}</span>
+<div class="hide-comments-outer fakelink" onclick="collapseComments({{$item.parent}});">
+	<span id="hide-comments-{{$item.parent}}" class="hide-comments">{{$item.hide_text}}</span>&nbsp;<span id="hide-comments-total-{{$item.parent}}" class="hide-comments-total">{{$item.num_comments}}</span>
 </div>
-<div id="collapsed-comments-{{$item.id}}" class="collapsed-comments" style="display: none;">
 {{/if}}
 	<div id="thread-wrapper-{{$item.id}}" class="thread-wrapper{{if $item.toplevel}} {{$item.toplevel}} generic-content-wrapper h-entry {{else}} u-comment h-cite {{/if}} item_{{$item.submid}}">
 		{{if $item.authors}}<span id="thread-authors-{{$item.id}}" style="display: none;">{{foreach $item.authors as $a}}@&#123;{{$a}}&#125; {{/foreach}}</span>{{/if}}
 		<a name="item_{{$item.id}}" ></a>
+		{{if $item.collapsed}}
+		<div id="collapsed-comments-{{$item.id}}" class="collapsed-comments-{{$item.parent}}" style="display: none;">
+		{{/if}}
 		<div class="wall-item-outside-wrapper{{if $item.is_comment}} comment{{/if}}{{if $item.previewing}} preview{{/if}}" id="wall-item-outside-wrapper-{{$item.id}}" >
 			<div class="clearfix wall-item-content-wrapper{{if $item.is_comment}} comment{{/if}}" id="wall-item-content-wrapper-{{$item.id}}">
 				{{for $x=3 to $item.thread_level}}<i class="fa fa-caret-right threadlevel {{if $x is odd}}odd{{else}}even{{/if}}"></i>{{/for}}
@@ -246,6 +248,9 @@
 				</div>
 			</div>
 		</div>
+		{{if $item.collapsed}}
+		</div>
+		{{/if}}
 		{{if $item.toplevel || $item.thread_level > 1 }}
 		{{foreach $item.children as $child}}
 			{{include file="{{$child.template}}" item=$child}}
@@ -257,6 +262,3 @@
 		</div>
 		{{/if}}
 	</div>
-{{if $item.comment_lastcollapsed}}
-</div>
-{{/if}}
