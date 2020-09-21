@@ -2,7 +2,9 @@
 
 namespace Zotlabs\Lib;
 
+use App;
 use Zotlabs\Lib\LibBlock;
+use Zotlabs\Lib\System;
 
 /**
  * @brief File with functions and a class for generating system and email notifications.
@@ -67,11 +69,11 @@ class Enotify {
 		$thanks     = t('Thank You,');
 		$sitename   = get_config('system','sitename');
 		$site_admin = sprintf( t('%s Administrator'), $sitename);
-		$opt_out1   = sprintf( t('This email was sent by %1$s at %2$s.'), t('$Projectname'), \App::get_hostname());
+		$opt_out1   = sprintf( t('This email was sent by %1$s at %2$s.'), t('$Projectname'), App::get_hostname());
 		$opt_out2   = sprintf( t('To stop receiving these messages, please adjust your Notification Settings at %s'), z_root() . '/settings');		
 		$hopt_out2  = sprintf( t('To stop receiving these messages, please adjust your %s.'), '<a href="' . z_root() . '/settings' . '">' . t('Notification Settings')  . '</a>');
 		$sender_name = $product;
-		$hostname = \App::get_hostname();
+		$hostname = App::get_hostname();
 		if(strpos($hostname,':'))
 			$hostname = substr($hostname,0,strpos($hostname,':'));
 
@@ -87,7 +89,7 @@ class Enotify {
 	
 		$sender_name = get_config('system','from_email_name');
 		if(! $sender_name)
-			$sender_name = \Zotlabs\Lib\System::get_site_name();
+			$sender_name = System::get_site_name();
 
 
 		$additional_mail_header = "";
@@ -609,8 +611,8 @@ class Enotify {
 
 	// wretched hack, but we don't want to duplicate all the preamble variations and we also don't want to screw up a translation
 
-	if ((\App::$language === 'en' || (! \App::$language)) && strpos($msg,', '))
-		$msg = substr($msg,strpos($msg,', ')+1);	
+	if ((App::$language === 'en' || (! App::$language)) && strpos($msg,', '))
+		$msg = substr($msg,strpos($msg,', ') + 1);	
 
 	$r = q("update notify set msg = '%s' where id = %d and uid = %d",
 		dbesc($msg),
@@ -626,7 +628,7 @@ class Enotify {
 		logger('notification: sending notification email');
 
 		$hn = get_pconfig($recip['channel_id'],'system','email_notify_host');
-		if($hn && (! stristr(\App::get_hostname(),$hn))) {
+		if($hn && (! stristr(App::get_hostname(),$hn))) {
 			// this isn't the email notification host
 			pop_lang();
 			return;
@@ -717,7 +719,7 @@ class Enotify {
 		$tpl = get_markup_template('email_notify_html.tpl');
 		$email_html_body = replace_macros($tpl,array(
 			'$banner'       => $datarray['banner'],
-			'$notify_icon'  => \Zotlabs\Lib\System::get_project_icon(),
+			'$notify_icon'  => System::get_site_icon(),
 			'$product'      => $datarray['product'],
 			'$preamble'     => $salutation . '<br><br>' . $datarray['preamble'],
 			'$sitename'     => $datarray['sitename'],

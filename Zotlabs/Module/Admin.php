@@ -53,7 +53,7 @@ class Admin extends Controller {
 			$this->sm->call('post');
 		}
 
-		goaway(z_root() . '/admin' );
+		// goaway(z_root() . '/admin' );
 	}
 
 	/**
@@ -89,8 +89,6 @@ class Admin extends Controller {
 		if (is_ajax()) {
 			echo $o;
 			killme();
-			// this is probably redundant
-			return '';
 		}
 		else {
 			return $o;

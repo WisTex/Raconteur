@@ -2343,6 +2343,7 @@ function copy_folder_to_cloudfiles($channel, $observer_hash, $srcpath, $cloudpat
 
 	return true;
 }
+
 /**
  * This function performs an in place directory-to-directory move of a stored attachment or photo.
  * The data is physically moved in the store/nickname storage location and the paths adjusted
@@ -2358,7 +2359,8 @@ function copy_folder_to_cloudfiles($channel, $observer_hash, $srcpath, $cloudpat
  * @param string $new_folder_hash
  * @return void|boolean
  */
-function attach_move($channel_id, $resource_id, $new_folder_hash) {
+
+function attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '') {
 
 	$c = channelx_by_n($channel_id);
 	if(! ($c && $resource_id))
@@ -2406,14 +2408,15 @@ function attach_move($channel_id, $resource_id, $new_folder_hash) {
 
 	// duplicate detection. If 'overwrite' is specified, return false because we can't yet do that.
 
-	$filename = $r[0]['filename'];
+	$oldfilename = $r[0]['filename'];
+	$newfilename = (($newname) ? basename($newname) : $oldfilename);
 
 	// don't do duplicate check unless our parent folder has changed. 
 
 	if($r[0]['folder'] !== $new_folder_hash) {
 
 		$s = q("select filename, id, hash, filesize from attach where filename = '%s' and folder = '%s' ",
-			dbesc($filename),
+			dbesc($newfilename),
 			dbesc($new_folder_hash)
 		);
 
@@ -2424,12 +2427,12 @@ function attach_move($channel_id, $resource_id, $new_folder_hash) {
 				return;
 			}
 			else {
-				if(strpos($filename,'.') !== false) {
-					$basename = substr($filename,0,strrpos($filename,'.'));
-					$ext = substr($filename,strrpos($filename,'.'));
+				if(strpos($newfilename,'.') !== false) {
+					$basename = substr($newfilename,0,strrpos($newfilename,'.'));
+					$ext = substr($newfilename,strrpos($newfilename,'.'));
 				}
 				else {
-					$basename = $filename;
+					$basename = $newfilename;
 					$ext = '';
 				}
 
@@ -2458,10 +2461,10 @@ function attach_move($channel_id, $resource_id, $new_folder_hash) {
 							$x++;
 					}
 					while($found);
-					$filename = $basename . '(' . $x . ')' . $ext;
+					$newfilename = $basename . '(' . $x . ')' . $ext;
 				}
 				else
-					$filename = $basename . $ext;
+					$newfilename = $basename . $ext;
 			}
 		}
 	}
@@ -2469,7 +2472,7 @@ function attach_move($channel_id, $resource_id, $new_folder_hash) {
 	$t = q("update attach set content = '%s', folder = '%s', filename = '%s' where id = %d",
 		dbescbin($newstorepath),
 		dbesc($new_folder_hash),
-		dbesc($filename),
+		dbesc($newfilename),
 		intval($r[0]['id'])
 	);
 
@@ -2487,7 +2490,7 @@ function attach_move($channel_id, $resource_id, $new_folder_hash) {
 		$t = q("update photo set album = '%s', filename = '%s', os_path = '%s', display_path = '%s'
 			where resource_id = '%s' and uid = %d",
 			dbesc($newalbumname),
-			dbesc($filename),
+			dbesc($newfilename),
 			dbesc($x['os_path']),
 			dbesc($x['path']),
 			dbesc($resource_id),
@@ -2521,6 +2524,11 @@ function attach_move($channel_id, $resource_id, $new_folder_hash) {
 
 	return true;
 }
+
+
+
+
+
 
 
 /**

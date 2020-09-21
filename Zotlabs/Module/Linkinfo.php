@@ -137,7 +137,7 @@ class Linkinfo extends Controller {
 		}
 		
 		if ($process_zotobj) {
-			$x = Activity::fetch($url);
+			$x = Activity::fetch($url, App::get_channel());
 			if (is_array($x)) {
 				$y = new ActivityStreams($x);
 				if ($y->is_valid() && $y->type === 'Announce' && is_array($y->obj)

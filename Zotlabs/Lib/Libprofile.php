@@ -289,6 +289,7 @@ class Libprofile {
 		$gender   = ((x($profile,'gender')   == 1) ? t('Gender:')   : False);
 		$marital  = ((x($profile,'marital')  == 1) ? t('Status:')   : False);
 		$homepage = ((x($profile,'homepage') == 1) ? t('Homepage:') : False);
+		$pronouns = ((x($profile,'pronouns') == 1) ? t('Pronouns:') : False);
 
 		// zap/osada do not have a realtime chat system at this time so don't show online state
 		//	$profile['online']   = (($profile['online_status'] === 'online') ? t('Online Now') : False);
@@ -302,6 +303,10 @@ class Libprofile {
 
 		if($profile['gender']) {
 			$profile['gender_icon'] = self::gender_icon($profile['gender']);
+		}
+		
+		if($profile['pronouns']) {
+			$profile['pronouns_icon'] = self::pronouns_icon($profile['pronouns']);
 		}
 
 		$firstname = ((strpos($profile['channel_name'],' '))
@@ -337,6 +342,7 @@ class Libprofile {
 			'$connect_url'   => $connect_url,
 			'$location'      => $location,
 			'$gender'        => $gender,
+			'$pronouns'      => $pronouns,
 			'$pdesc'         => $pdesc,
 			'$marital'       => $marital,
 			'$homepage'      => $homepage,
@@ -385,6 +391,22 @@ class Libprofile {
 			return 'neuter';
 		if(strpos(strtolower($gender),strtolower(t('Non-specific'))) !== false)
 			return 'genderless';
+
+		return '';
+	}
+
+	static function pronouns_icon($pronouns) {
+
+
+		// This can easily get throw off if the observer language is different
+		// than the channel owner language.
+
+		if(strpos(strtolower($pronouns),strtolower(t('She'))) !== false)
+			return 'venus';
+		if(strpos(strtolower($pronouns),strtolower(t('Him'))) !== false)
+			return 'mars';
+		if(strpos(strtolower($pronouns),strtolower(t('Them'))) !== false)
+			return 'users';
 
 		return '';
 	}
@@ -491,6 +513,8 @@ class Libprofile {
 
 
 			if(App::$profile['sexual']) $profile['sexual'] = array( t('Sexual Preference:'), App::$profile['sexual'] );
+
+			if(App::$profile['pronouns']) $profile['pronouns'] = array( t('Pronouns:'), App::$profile['pronouns'] );
 
 			if(App::$profile['homepage']) $profile['homepage'] = array( t('Homepage:'), linkify(App::$profile['homepage']) );
 

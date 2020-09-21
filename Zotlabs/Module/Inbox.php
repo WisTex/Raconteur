@@ -51,6 +51,10 @@ class Inbox extends Controller {
 
 		$hsig = HTTPSig::verify($data);
 
+		if (! ($hsig['header_signed'] && $hsig['header_valid'] && $hsig['content_signed'] && $hsig['content_valid'])) {
+			http_status_exit(403,'Permission denied');
+		}
+
 		$AS = new ActivityStreams($data);
 		if ($AS->is_valid() && $AS->type === 'Announce' && is_array($AS->obj)
 			&& array_key_exists('object',$AS->obj) && array_key_exists('actor',$AS->obj)) {
@@ -297,7 +301,7 @@ class Inbox extends Controller {
 					}
 					break;
 				case 'Undo':
-					if ($AS->obj && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Follow') {
+					if ($AS->obj && is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Follow') {
 						// do unfollow activity
 						Activity::unfollow($channel,$AS);
 						break;

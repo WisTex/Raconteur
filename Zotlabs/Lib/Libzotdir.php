@@ -462,6 +462,7 @@ class Libzotdir {
 		$arr['xprof_postcode']     = (($profile['postcode'])    ? htmlspecialchars($profile['postcode'],    ENT_COMPAT,'UTF-8',false) : '');
 		$arr['xprof_country']      = (($profile['country'])     ? htmlspecialchars($profile['country'],     ENT_COMPAT,'UTF-8',false) : '');
 		$arr['xprof_about']        = (($profile['about'])       ? htmlspecialchars($profile['about'],       ENT_COMPAT,'UTF-8',false) : '');
+		$arr['xprof_pronouns']     = (($profile['pronouns'])    ? htmlspecialchars($profile['pronouns'],    ENT_COMPAT,'UTF-8',false) : '');
 		$arr['xprof_homepage']     = (($profile['homepage'])    ? htmlspecialchars($profile['homepage'],    ENT_COMPAT,'UTF-8',false) : '');
 		$arr['xprof_hometown']     = (($profile['hometown'])    ? htmlspecialchars($profile['hometown'],    ENT_COMPAT,'UTF-8',false) : '');
 
@@ -520,7 +521,8 @@ class Libzotdir {
 					xprof_about = '%s',
 					xprof_homepage = '%s',
 					xprof_hometown = '%s',
-					xprof_keywords = '%s'
+					xprof_keywords = '%s',
+					xprof_pronouns = '%s'
 					where xprof_hash = '%s'",
 					dbesc($arr['xprof_desc']),
 					dbesc($arr['xprof_dob']),
@@ -536,13 +538,14 @@ class Libzotdir {
 					dbesc($arr['xprof_homepage']),
 					dbesc($arr['xprof_hometown']),
 					dbesc($arr['xprof_keywords']),
+					dbesc($arr['xprof_pronouns']),
 					dbesc($arr['xprof_hash'])
 				);
 			}
 		} else {
 			$update = true;
 			logger('New profile');
-			q("insert into xprof (xprof_hash, xprof_desc, xprof_dob, xprof_age, xprof_gender, xprof_marital, xprof_sexual, xprof_locale, xprof_region, xprof_postcode, xprof_country, xprof_about, xprof_homepage, xprof_hometown, xprof_keywords) values ('%s', '%s', '%s', %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s') ",
+			q("insert into xprof (xprof_hash, xprof_desc, xprof_dob, xprof_age, xprof_gender, xprof_marital, xprof_sexual, xprof_locale, xprof_region, xprof_postcode, xprof_country, xprof_about, xprof_homepage, xprof_hometown, xprof_keywords, xprof_pronouns) values ('%s', '%s', '%s', %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s') ",
 				dbesc($arr['xprof_hash']),
 				dbesc($arr['xprof_desc']),
 				dbesc($arr['xprof_dob']),
@@ -557,7 +560,8 @@ class Libzotdir {
 				dbesc($arr['xprof_about']),
 				dbesc($arr['xprof_homepage']),
 				dbesc($arr['xprof_hometown']),
-				dbesc($arr['xprof_keywords'])
+				dbesc($arr['xprof_keywords']),
+				dbesc($arr['xprof_pronouns'])
 			);
 		}
 

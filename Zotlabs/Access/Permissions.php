@@ -60,7 +60,6 @@ class Permissions {
 			'post_wall'     => t('Grant permission to post on your channel (wall) page'),
 			'send_stream'   => t('Accept delivery of their posts and all comments to their posts'),
 			'post_comments' => t('Accept delivery of their comments and likes on your posts'),
-			'post_like'     => t('Accept delivery of their likes of your profile'),
 			'write_storage' => t('Grant upload permissions to your file storage and photos'),
 			'republish'     => t('Grant permission to republish/mirror your posts'),
 			'moderated'     => t('Accept comments and wall posts only after approval (moderation)'),
