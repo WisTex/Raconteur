@@ -373,7 +373,7 @@ class Display extends Controller {
                                         App::$meta->set('og:image', (isset($ogimage) ? $ogimage : System::get_site_icon()));
                                         App::$meta->set('og:type', 'article');
                                         App::$meta->set('og:url:secure_url', $item['llink']);
-					App::$meta->set('og:description', ($ogdesc ? $ogdesc : 'Not much to read, click to see the post.'));
+					App::$meta->set('og:description', ($ogdesc ? $ogdesc : sprintf( t('Not much to read, click to see the post.'))));
                                 }
 				else {
 	                                if (($target_item['verb'] == ACTIVITY_LIKE) || ($target_item['verb'] == ACTIVITY_DISLIKE)) {
