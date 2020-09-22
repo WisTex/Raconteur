@@ -423,6 +423,7 @@ class ThreadItem {
 			'comment_lbl' => (($this->is_commentable() && $observer) ? t('Reply') : ''),
 			'is_comment' => $is_comment,
 			'is_new' => $is_new,
+			'mod_display' => ((argv(0) === 'display') ? true : false),   // comments are not collapsed when using mod_display
 			'owner_url' => $this->get_owner_url(),
 			'owner_photo' => $this->get_owner_photo(),
 			'owner_name' => $this->get_owner_name(),

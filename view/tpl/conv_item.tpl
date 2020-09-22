@@ -1,4 +1,4 @@
-{{if $item.comment_firstcollapsed}}
+{{if $item.comment_firstcollapsed && ! $item.mod_display}}
 <div class="hide-comments-outer fakelink" onclick="collapseComments({{$item.parent}});">
 	<span id="hide-comments-{{$item.parent}}" class="hide-comments">{{$item.hide_text}}</span>&nbsp;<span id="hide-comments-total-{{$item.parent}}" class="hide-comments-total">{{$item.num_comments}}</span>
 </div>
@@ -7,7 +7,7 @@
 		{{if $item.authors}}<span id="thread-authors-{{$item.id}}" style="display: none;">{{foreach $item.authors as $a}}@&#123;{{$a}}&#125; {{/foreach}}</span>{{/if}}
 		<a name="item_{{$item.id}}" ></a>
 		{{if $item.collapsed}}
-		<div id="collapsed-comments-{{$item.id}}" class="collapsed-comments-{{$item.parent}}" style="display: none;">
+		<div id="collapsed-comments-{{$item.id}}" class="collapsed-comments-{{$item.parent}}" style="display: {{if $item.mod_display}}block{{else}}none{{/if}};">
 		{{/if}}
 		<div class="wall-item-outside-wrapper{{if $item.is_comment}} comment{{/if}}{{if $item.previewing}} preview{{/if}}" id="wall-item-outside-wrapper-{{$item.id}}" >
 			<div class="clearfix wall-item-content-wrapper{{if $item.is_comment}} comment{{/if}}" id="wall-item-content-wrapper-{{$item.id}}">
