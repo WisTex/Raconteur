@@ -310,6 +310,7 @@ class Apps {
 		$apps = array(
 			'Apps' => t('Apps'),
 			'Friend Zoom' => t('Friend Zoom'),
+			'Virtual Lists' => t('Virtual Lists'),
 			'Articles' => t('Articles'),
 			'Cards' => t('Cards'),
 			'Calendar' => t('Calendar'),
