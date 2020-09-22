@@ -90,6 +90,21 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 		}
 	}
 
+	if ($channel) {
+		$selected = (($single_group && 'connections:' . $channel['channel_hash'] === $allow_gid[0]) ? ' selected = "selected" ' : '');
+		$groups .= '<option id="vg1" value="connections:' . $channel['channel_hash'] . '"' . $selected . '>' . t('My connections') . ' ' . t('(List)') . '</option>' . "\r\n";
+		if (get_pconfig($channel['channel_id'],'system','activitypub',get_config('system','activitypub',true))) {
+			$selected = (($single_group && 'activitypub:' . $channel['channel_hash'] === $allow_gid[0]) ? ' selected = "selected" ' : '');
+			$groups .= '<option id="vg2" value="activitypub:' . $channel['channel_hash'] . '"' . $selected . '>' . t('My ActivityPub connections') . ' ' . t('(List)') . '</option>' . "\r\n";
+		}
+		$selected = (($single_group && 'zot:' . $channel['channel_hash'] === $allow_gid[0]) ? ' selected = "selected" ' : '');
+		$groups .= '<option id="vg3" value="zot:' . $channel['channel_hash'] . '"' . $selected . '>' . t('My Zot connections') . ' ' . t('(List)') . '</option>' . "\r\n";
+
+
+
+	}
+
+
 	$forums = get_forum_channels(local_channel(),1);
 
 	if($forums) {
