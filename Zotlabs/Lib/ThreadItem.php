@@ -493,7 +493,7 @@ class ThreadItem {
 
 		$result['children'] = [];
 
-		if (get_config('system','activitypub',true) && local_channel() && get_pconfig(local_channel(),'system','activitypub',true)) {
+		if (local_channel() && get_pconfig(local_channel(),'system','activitypub',get_config('system','activitypub',true))) {
 			// place to store all the author addresses (links if not available) in the thread so we can auto-mention them in JS. 
 			$result['authors'] = [];
 			// fix to add in sub-replies if replying to a comment on your own post from the top level. 
@@ -503,16 +503,16 @@ class ThreadItem {
 			else {
 				$result['authors'][] = $profile_addr;
 			}
-			if ($children) {
-				foreach ($children as $child) {
-					$cdata = $child->get_data();
-					if ($cdata['author']['xchan_addr']) {
-						if ($observer && $observer['xchan_hash'] !== $cdata['author']['xchan_hash'] && ! in_array($cdata['author']['xchan_addr'],$result['authors'])) {
-							$result['authors'][] = $cdata['author']['xchan_addr'];
-						}
-					}
-				}
-			}
+//			if ($children) {
+//				foreach ($children as $child) {
+//					$cdata = $child->get_data();
+//					if ($cdata['author']['xchan_addr']) {
+//						if ($observer && $observer['xchan_hash'] !== $cdata['author']['xchan_hash'] && ! in_array($cdata['author']['xchan_addr'],$result['authors'])) {
+//							$result['authors'][] = $cdata['author']['xchan_addr'];
+//						}
+//					}
+//				}
+//			}
 					
 			// Add any mentions from the immediate parent, unless they are mentions of the current viewer or duplicates
 			if ($item['term']) {

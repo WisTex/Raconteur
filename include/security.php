@@ -664,7 +664,7 @@ function get_security_ids($channel_id, $ob_hash) {
 
 		// include xchans for all zot-like networks
 
-		$xchans = q("select xchan_hash from xchan where xchan_hash = '%s' OR ( xchan_guid = '%s' AND xchan_pubkey = '%s' ) ",
+		$xchans = q("select xchan_hash, xchan_network from xchan where xchan_hash = '%s' OR ( xchan_guid = '%s' AND xchan_pubkey = '%s' ) ",
 			dbesc($ob_hash),
 			dbesc($x[0]['xchan_guid']),
 			dbesc($x[0]['xchan_pubkey'])
@@ -682,6 +682,22 @@ function get_security_ids($channel_id, $ob_hash) {
 					$groups[] = $rv['hash'];
 				}
 			}
+
+			// virtual groups this identity is a member of
+
+			$r = q("select channel_hash from channel left join abook on channel_id = abook_channel where abook_xchan in ( " . protect_sprintf($hashes) . " ) and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ");
+			if ($r) {
+				foreach ($r as $rv) {
+					$groups[] = 'connections:' . $rv['channel_hash'];
+					if ($xchans[0]['xchan_network'] === 'zot6') {
+						$groups[] = 'zot:' . $rv['channel_hash'];
+					}
+					if ($xchans[0]['xchan_network'] === 'activitypub') {
+						$groups[] = 'activitypub:' . $rv['channel_hash'];
+					}
+				}
+			}
+
 			$ret['allow_gid'] = $groups;
 		}
 	}
