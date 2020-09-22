@@ -554,7 +554,7 @@ class ThreadItem {
 				$result['children'][] = $xz;
 			}
 			// Collapse
-			if($nb_children > $visible_comments) {
+			if($nb_children > $visible_comments && $thread_level == 1) {
 				$result['children'][0]['comment_firstcollapsed'] = true;
 				$result['children'][0]['num_comments'] = $comment_count_txt;
 				$result['children'][0]['hide_text'] = sprintf( t('%s show all'), '<i class="fa fa-chevron-down"></i>');
