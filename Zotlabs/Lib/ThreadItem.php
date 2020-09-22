@@ -541,30 +541,34 @@ class ThreadItem {
 
 		$nb_children = count($children);
 
+		$total_children = $this->count_visible_descendants();
+
 		$visible_comments = get_config('system', 'expanded_comments', 3);
 		
 		if($collapse_all) {
 			$visible_comments = 0;
 		}
 		if(($this->get_display_mode() === 'normal') && ($nb_children > 0)) {
-			foreach($children as $child) {
-				$xz = $child->get_template_data($conv_responses, $thread_level + 1);
-				if(strpos($xz['body'],"<button id=\"nsfw-wrap-") !== false && $collapse_all === false) {
-					$censored = true;
+			if ($children) {
+				foreach($children as $child) {
+					$xz = $child->get_template_data($conv_responses, $thread_level + 1);
+					if(strpos($xz['body'],"<button id=\"nsfw-wrap-") !== false && $collapse_all === false) {
+						$censored = true;
+					}
+					$result['children'][] = $xz;
 				}
-				$result['children'][] = $xz;
 			}
 			// Collapse
-			if($nb_children > $visible_comments && $thread_level == 1) {
+			if($total_children > $visible_comments && $thread_level == 1) {
 				$result['children'][0]['comment_firstcollapsed'] = true;
 				$result['children'][0]['num_comments'] = $comment_count_txt;
 				$result['children'][0]['hide_text'] = sprintf( t('%s show all'), '<i class="fa fa-chevron-down"></i>');
-				if($thread_level > 1) {
-					$result['children'][$nb_children - 1]['comment_lastcollapsed'] = true;
-				}
-				else {
-					$result['children'][$nb_children - ($visible_comments + 1)]['comment_lastcollapsed'] = true;
-				}
+		//		if($thread_level > 1) {
+		//			$result['children'][$nb_children - 1]['comment_lastcollapsed'] = true;
+		//		}
+		//		else {
+		//			$result['children'][$nb_children - ($visible_comments + 1)]['comment_lastcollapsed'] = true;
+		//		}
 			}
 		}
 
@@ -802,6 +806,22 @@ class ThreadItem {
 		}
 		return $total;
 	}
+
+	public function count_visible_descendants() {
+		$total = 0;
+		$children = $this->get_children();
+		if ($children) {
+			foreach ($children as $child) {
+				if (! visible_activity($child->data)) {
+					continue;
+				}
+				$total ++;
+				$total += $child->count_visible_descendants();
+			}
+		}
+		return $total;
+	}
+
 
 	private function label_descendants($count = 0) {
 		if(! array_key_exists('sequence',$this->data)) {
