@@ -3039,6 +3039,15 @@ class Activity {
 			$current_item = $item;
 		}
 
+		$id = ((array_path_exists('obj/replies/id',$current_item)) ? $current_item['obj']['replies']['id'] : false);
+		if (! $id) {
+			$id = ((array_path_exists('obj/replies',$current_item) && is_string($current_item['obj']['replies'])) ? $current_item['obj']['replies'] : false);
+		}
+		if ($id) {
+			Master::Run('Convo',$id, $channel['channel_id'], $observer_hash);
+		}
+
+
 		if ($p) {
 			foreach ($p as $pv) {
 				if ($pv[0]->is_valid()) {

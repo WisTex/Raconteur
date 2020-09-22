@@ -47,7 +47,7 @@ function replace_macros($s, $r) {
 		$output = $t->replace_macros($arr['template'], $arr['params']);
 	}
 	catch (Exception $e) {
-		logger("Unable to render template: " . $e->getMessage());
+		btlogger("Unable to render template: " . $e->getMessage());
 		$output = "<h3>ERROR: there was an error creating the output.</h3>";
 	}
 

@@ -887,7 +887,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
 //	logger('nouveau: ' . print_r($threads,true));
 
-
+// logger('page_template: ' . print_r($page_template,true));
 	$o .= replace_macros($page_template, array(
 		'$baseurl' => z_root(),
 		'$photo_item' => $content_html,

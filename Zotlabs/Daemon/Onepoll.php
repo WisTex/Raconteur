@@ -127,6 +127,9 @@ class Onepoll {
 						$messages = $obj->get();
 						if ($messages) {	
 							foreach($messages as $message) {
+								if (is_string($message)) {
+									$message = Activity::fetch($message,$importer);
+								}
 								$AS = new ActivityStreams($message);
 								if ($AS->is_valid() && is_array($AS->obj)) {
 									$item = Activity::decode_note($AS,true);
