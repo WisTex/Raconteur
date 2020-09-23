@@ -3044,7 +3044,7 @@ class Activity {
 			$id = ((array_path_exists('obj/replies',$current_item) && is_string($current_item['obj']['replies'])) ? $current_item['obj']['replies'] : false);
 		}
 		if ($id) {
-			Master::Run('Convo',$id, $channel['channel_id'], $observer_hash);
+			Run::Summon( [ 'Convo',$id, $channel['channel_id'], $observer_hash ]);
 		}
 
 
