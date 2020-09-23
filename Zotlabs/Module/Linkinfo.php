@@ -35,7 +35,18 @@ class Linkinfo extends Controller {
 		}
 
 		$url = strip_zids($url);
-	
+
+		if (strpos($url,'geo:') === 0) {
+			if ($process_embed) {
+				echo $br . '[map=' . substr($url,4) . ']' . $br;
+			}
+			else {
+				echo $br . '[url]' . $url . '[/url]' . $br;
+			}
+			killme();
+		}
+
+
 		if ((substr($url,0,1) != '/') && (substr($url,0,4) != 'http'))
 			$url = 'http://' . $url;
 	

@@ -1517,12 +1517,17 @@ function format_filer(&$item) {
 
 
 function generate_map($coord) {
-	$coord = trim($coord);
-	$coord = str_replace(array(',','/','  '),array(' ',' ',' '),$coord);
+
+	$coord = str_replace(array(',','/','  '),array(' ',' ',' '),trim($coord));
+	$zoom = substr($coord,strpos($coord,'?z=')+3);
+	if ($zoom) {
+		$coord = substr($coord,0,strpos($coord,'?'));
+	}	
 
 	$arr = [
 		'lat' => trim(substr($coord, 0, strpos($coord, ' '))),
 		'lon' => trim(substr($coord, strpos($coord, ' ')+1)),
+		'zoom' => $zoom,
 		'html' => ''
 	];
 
