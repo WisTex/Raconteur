@@ -165,12 +165,29 @@ function load_plugin($plugin) {
 
 
 /**
- * @brief Check if addon is installed.
+ * @brief Check if addon is installed (deprecated).
  *
  * @param string $name
  * @return boolean
  */
 function plugin_is_installed($name) {
+	$r = q("select aname from addon where aname = '%s' and installed = 1 limit 1",
+		dbesc($name)
+	);
+	if($r)
+		return true;
+
+	return false;
+}
+
+/**
+ * @brief Check if addon is installed (use this one).
+ *
+ * @param string $name
+ * @return boolean
+ */
+
+function addon_is_installed($name) {
 	$r = q("select aname from addon where aname = '%s' and installed = 1 limit 1",
 		dbesc($name)
 	);

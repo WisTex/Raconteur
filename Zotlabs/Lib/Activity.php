@@ -2936,9 +2936,9 @@ class Activity {
 			$x = item_store($item);
 		}
 
-		if ($fetch_parents && $parent) {
+		if ($fetch_parents && $parent && ! intval($parent[0]['item_private'])) {
 			// if the thread owner is a connnection, we will already receive any additional comments to their posts
-			// but if not we can try to fetch others in the background
+			// but if they are not we can try to fetch others in the background
 			$x = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash
 				WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
 				intval($channel['channel_id']),
