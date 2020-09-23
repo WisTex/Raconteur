@@ -1363,7 +1363,7 @@ function bbcode($Text, $options = []) {
 
 	if ($export) {
 		$Text = str_replace( [ '[map]','[/map]' ], [ '','' ] , $Text);
-		$Text = preg_replace("/\[map=(.*?)\]/ism", '$1', $Text);
+		$Text = preg_replace("/\[map=(.*?)[, ](.*?)\]/ism", 'geo:$1,$2', $Text);
 	}
 	else {
 		if (strpos($Text,'[/map]') !== false) {

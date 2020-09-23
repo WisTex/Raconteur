@@ -3000,7 +3000,7 @@ class Activity {
 				$a = new ActivityStreams($a->obj,null,true);
 			}
 
-			logger($a->debug());
+			logger($a->debug(),LOGGER_DATA);
 
 			if (! $a->is_valid()) {
 				logger('not a valid activity');
@@ -3030,7 +3030,7 @@ class Activity {
 
 				array_unshift($p,[ $a, $item ]);
 			
-				if ($item['parent_mid'] === $item['mid'] || count($p) > 30) {
+				if ($item['parent_mid'] === $item['mid'] || count($p) > 100) {
 					break;
 				}
 			}
@@ -3039,21 +3039,25 @@ class Activity {
 			$current_item = $item;
 		}
 
-		$id = ((array_path_exists('obj/replies/id',$current_item)) ? $current_item['obj']['replies']['id'] : false);
-		if (! $id) {
-			$id = ((array_path_exists('obj/replies',$current_item) && is_string($current_item['obj']['replies'])) ? $current_item['obj']['replies'] : false);
-		}
-		if ($id) {
-			Run::Summon( [ 'Convo',$id, $channel['channel_id'], $observer_hash ]);
-		}
-
-
 		if ($p) {
 			foreach ($p as $pv) {
 				if ($pv[0]->is_valid()) {
 					Activity::store($channel,$observer_hash,$pv[0],$pv[1],false);
 				}
 			}
+
+			// Now we have all the messages going back to the top level post.
+			// If it's a Mastodon like server, we can then fetch the conversation tree going back down to fill in any gaps
+			// but we'll do it in the background since we have what is needed to at least present that part of the conversation we have.
+		
+			$id = ((array_path_exists('obj/replies/id',$current_item)) ? $current_item['obj']['replies']['id'] : false);
+			if (! $id) {
+				$id = ((array_path_exists('obj/replies',$current_item) && is_string($current_item['obj']['replies'])) ? $current_item['obj']['replies'] : false);
+			}
+			if ($id) {
+				Run::Summon( [ 'Convo',$id, $channel['channel_id'], $observer_hash ]);
+			}
+
 			return true;
 		}
 
