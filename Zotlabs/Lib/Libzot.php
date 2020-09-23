@@ -2156,7 +2156,7 @@ class Libzot {
 		$obj = new ASCollection($a['data'],$channel);
 		$items = $obj->get();
 
-		if (! $items)) {
+		if (! $items) {
 			return false;
 		}
 
