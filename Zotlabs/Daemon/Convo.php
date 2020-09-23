@@ -4,7 +4,7 @@ namespace Zotlabs\Daemon;
 
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
-
+use Zotlabs\Lib\ASCollection;
 
 class Convo {
 
@@ -22,11 +22,11 @@ class Convo {
 		if (! $channel) {
 			killme();
 		}
-	
+
 		$r = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash
 			WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
 			intval($channel_id),
-			intval($contact_hash)
+			dbesc($contact_hash)
 		);
 		if (! $r) {
 			killme();
@@ -37,6 +37,7 @@ class Convo {
 		$obj = new ASCollection($id, $channel);
 
 		$messages = $obj->get();
+
 		if ($messages) {	
 			foreach ($messages as $message) {
 				if (is_string($message)) {
