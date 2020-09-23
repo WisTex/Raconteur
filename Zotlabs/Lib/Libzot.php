@@ -14,6 +14,7 @@ use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\ASCollection;
 use Zotlabs\Daemon\Run;
 
 require_once('include/html2bbcode.php');
@@ -1914,7 +1915,7 @@ class Libzot {
 					// this is just an exercise in futility.
 
 					if ((! $relay) && (! $request) && (! $local_public)
-						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {
+						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {													
 						self::fetch_conversation($channel,$arr['parent_mid']);
 					}
 					continue;
@@ -2152,7 +2153,10 @@ class Libzot {
 			return false;
 		}
 
-		if (! intval($a['data']['totalItems'])) {
+		$obj = new ASCollection($a['data'],$channel);
+		$items = $obj->get();
+
+		if (! $items)) {
 			return false;
 		}
 
@@ -2164,7 +2168,7 @@ class Libzot {
 		); 
 
 
-		foreach ($a['data']['orderedItems'] as $activity) {
+		foreach ($items as $activity) {
 
 			$AS = new ActivityStreams($activity);
 			if ($AS->is_valid() && $AS->type === 'Announce' && is_array($AS->obj)
@@ -2222,22 +2226,6 @@ class Libzot {
 
 			if ($AS->data['hubloc'] || $arr['author_xchan'] === $arr['owner_xchan']) {
 				$arr['item_verified'] = true;
-			}
-
-			// set comment policy depending on source hub. Unknown or osada is ActivityPub.
-			// Anything else we'll say is zot - which could have a range of project names
-
-			if ($signer) {
-				$s = q("select site_project from site where site_url = '%s' limit 1",
-					dbesc($signer[0]['hubloc_url'])
-				);
-				if ((! $s) || (in_array($s[0]['site_project'],[ '', 'osada' ]))) {
-					$arr['comment_policy'] = 'authenticated';
-				}
-				else {
-					$arr['comment_policy'] = 'contacts';
-				}				
-
 			}
 
 			if ($AS->data['signed_data']) {

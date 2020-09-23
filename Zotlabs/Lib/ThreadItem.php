@@ -121,22 +121,6 @@ class ThreadItem {
 
 		$privacy_warning = false;
 
-		if(intval($item['item_restrict']) & 1) {
-			$privacy_warning = true;
-		}
-
-		if(intval($item['item_private']) && ($item['owner']['xchan_network'] === 'activitypub')) {
-
-			$recips = get_iconfig($item['parent'], 'activitypub', 'recips');
-
-			if(is_array($recips) && array_key_exists('to',$recips) && (! in_array($observer['xchan_url'], $recips['to'])))
-				$privacy_warning = true;
-		}
-
-		if($lock && $privacy_warning) {
-			$lock = t('Privacy conflict. Discretion advised.');
-		}
-
 		$mode = $conv->get_mode();
 
 		$edlink = 'editpost';
