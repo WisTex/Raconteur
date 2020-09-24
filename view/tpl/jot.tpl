@@ -86,7 +86,7 @@
 		</div>
 		<div id="profile-jot-submit-wrapper" class="clearfix p-2 jothidden">
 			<div id="profile-jot-submit-left" class="btn-toolbar float-left">
-				{{if $bbcode}}				
+				{{if $bbcode && $feature_markup}}				
 				<div id="jot-markup" class="btn-group mr-2">
 					<button id="main-editor-bold" class="btn btn-outline-secondary btn-sm" title="{{$bold}}" onclick="inserteditortag('b', 'profile-jot-text'); return false;">
 						<i class="fa fa-bold jot-icons"></i>

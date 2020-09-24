@@ -1262,6 +1262,11 @@ function z_status_editor($a, $x, $popup = false) {
 	if(x($x, 'hide_future'))
 		$feature_future = false;
 
+	$feature_markup = ((Apps::system_app_installed($x['profile_uid'], 'Markup') && (! $webpage)) ? true : false);
+	if(x($x, 'hide_markup'))
+		$feature_markup = false;
+
+
 	$geotag = (($x['allow_location']) ? replace_macros(get_markup_template('jot_geotag.tpl'), array()) : '');
 	$setloc = t('Set your location');
 	$clearloc = ((get_pconfig($x['profile_uid'], 'system', 'use_browser_location')) ? t('Clear browser location') : '');
@@ -1462,6 +1467,7 @@ function z_status_editor($a, $x, $popup = false) {
 		'$defpublish' => $defpublish,
 		'$feature_future' => $feature_future,
 		'$future_txt' => t('Set publish date'),
+		'$feature_markup' => $feature_markup,
 		'$feature_encrypt' => ((Apps::system_app_installed($x['profile_uid'],'Secrets')) ? true : false),
 		'$encrypt' => t('Encrypt text'),
 		'$cipher' => $cipher,

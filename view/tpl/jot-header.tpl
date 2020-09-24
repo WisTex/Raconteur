@@ -1,3 +1,4 @@
+
 <script language="javascript" type="text/javascript">
 
 var editor = false;
@@ -91,12 +92,23 @@ var activeCommentText = '';
 				$('#profile-jot-submit-left').hide();
 		}
 
+		// drag-n-drop (aka "dragon drop") of uploads is currently disabled because the Blueimp jquery uploader uploads dropped files twice.
+		// This requires detailed investigation and the toolbox creator has closed similar issues because he does not have
+		// the time or resources to investigate. We also provide dragon drop for links and this compounds the issue, although
+		// disabling that functionality did not fix the file upload issue. 
+
+		// var uploadedFiles = [];
+
 		$('#invisible-wall-file-upload').fileupload({
 			url: 'wall_attach/{{$nickname}}',
 			dataType: 'json',
-			dropZone: $('#profile-jot-text'),
+		// disabled - this produces double uploads currently
+		//  dropZone: $('#profile-jot-text'),
+		//	pasteZone: $('#profile-jot-text'),
 			maxChunkSize: 2 * 1024 * 1024,
 			add: function(e,data) {
+				// console.log(e);
+				// console.log(data);
 				$('#profile-rotator').show();
 				data.submit();
 			},
@@ -115,7 +127,7 @@ var activeCommentText = '';
 
         // call initialization file
         if (window.File && window.FileList && window.FileReader) {
-          DragDropUploadInit();
+		//	DragDropUploadInit();
         }
 
 
@@ -138,7 +150,9 @@ var activeCommentText = '';
 
 			done: function(e,data) {
 				textarea = document.getElementById("comment-edit-text-" + activeCommentID);
-				textarea.value = textarea.value + data.result.message;
+				if (textarea != null ) {
+					textarea.value = textarea.value + data.result.message;
+				}
 			},
 			stop: function(e,data) {
 				$('body').css('cursor', 'auto');
@@ -583,7 +597,7 @@ var activeCommentText = '';
       // cancel event and hover styling
       DragDropUploadFileHover(e);
       // open editor if it isn't yet initialised
-	  if (!editor) {
+	  if (! editor) {
 			enableOnUser();
 	  }
 	  linkdrop(e);

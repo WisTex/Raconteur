@@ -1154,6 +1154,9 @@ function bbcode($Text, $options = []) {
 
 	call_hooks('bbcode_filter', $Text);
 
+
+
+
 	// Hide all [noparse] contained bbtags by spacefying them
 	if (strpos($Text,'[noparse]') !== false) {
 		$Text = preg_replace_callback("/\[noparse\](.*?)\[\/noparse\]/ism", 'bb_spacefy',$Text);
