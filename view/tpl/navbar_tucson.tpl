@@ -177,6 +177,7 @@
 				{{/if}}
 				{{if $is_owner}}
 				<div class="dropdown-divider"></div>
+				<a class="dropdown-item" href="/apps"><i class="generic-icons-nav fa fa-fw fa-gear"></i>{{$manageapps}}</a>
 				<a class="dropdown-item" href="/apps"><i class="generic-icons-nav fa fa-fw fa-plus-circle"></i>{{$addapps}}</a>
 				<a class="dropdown-item" href="/apporder"><i class="generic-icons-nav fa fa-fw fa-sort"></i>{{$orderapps}}</a>
 				{{/if}}
