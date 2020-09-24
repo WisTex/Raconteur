@@ -794,12 +794,12 @@ nav .acpopup {
 
 /* popup notifications */
 div.jGrowl div.notice {
-  background: #aa3311 url("../../../../images/icons/48/notice.png") no-repeat 5px center;
+  background-color: darkgreen;	
   color: #ffffff;
   padding-left: 58px;
 }
 div.jGrowl div.info {
-  background: #2244aa url("../../../../images/icons/48/info.png") no-repeat 5px center;
+  background-color: blue;	
   color: #ffffff;
   padding-left: 58px;
 }

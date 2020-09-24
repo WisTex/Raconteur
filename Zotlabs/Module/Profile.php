@@ -25,14 +25,14 @@ class Profile extends \Zotlabs\Web\Controller {
 			$which = argv(1);
 		else {
 			notice( t('Requested profile is not available.') . EOL );
-			\App::$error = 404;
+			App::$error = 404;
 			return;
 		}
 
 		nav_set_selected('Profile');
 	
 		$profile = '';
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 		if((local_channel()) && (argc() > 2) && (argv(2) === 'view')) {
 			$which = $channel['channel_address'];
