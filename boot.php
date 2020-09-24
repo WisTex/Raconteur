@@ -16,10 +16,10 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '20.09.17' );
+define ( 'STD_VERSION',             '20.09.25' );
 define ( 'ZOT_REVISION',            '6.0' );
 
-define ( 'DB_UPDATE_VERSION',       1242 );
+define ( 'DB_UPDATE_VERSION',       1243 );
 
 define ( 'PLATFORM_NAME',           'redmatrix' );
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );

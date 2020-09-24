@@ -2698,6 +2698,12 @@ class Activity {
 		$is_sys_channel = is_sys_channel($channel['channel_id']);
 		$is_child_node = false;
 
+		// Pleroma scrobbles can be really noisy and contain lots of duplicate activities. Disable them by default.
+		
+		if (($act->type === 'Listen') && ($is_sys_channel || get_pconfig($channel['channel_id'],'system','allow_scrobbles',false))) {
+			return;
+		}
+
 		// Mastodon only allows visibility in public timelines if the public inbox is listed in the 'to' field.
 		// They are hidden in the public timeline if the public inbox is listed in the 'cc' field.
 		// This is not part of the activitypub protocol - we might change this to show all public posts in pubstream at some point.
@@ -2872,49 +2878,43 @@ class Activity {
 			$item['item_verified'] = 1;
 		}
 
+		$parent = null;
+		
 		if ($is_child_node) {
 
-			$p = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
+			$parent = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
 				dbesc($item['parent_mid']),
 				intval($item['uid'])
 			);
-			if (! $p) {
+			if (! $parent) {
 				if (! get_config('system','activitypub',true)) {
 					return;
 				}
 				else {
-					$a = false;
+					$fetch = false;
 					if (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') && (PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce')) {
-						$a = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
+						$fetch = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
 					}
-					if ($a) {
-						$p = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
+					if ($fetch) {
+						$parent = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
 							dbesc($item['parent_mid']),
 							intval($item['uid'])
 						);
 					}
 					else {
-						// if no parent was fetched, turn into a top-level post
-				
-						// @TODO we maybe could accept these is we formatted the body correctly with share_bb()
-						// or at least provided a link to the object
-						if (in_array($act->type,[ 'Like','Dislike','Announce' ])) {
-							return;
-						}
-						// turn into a top level post
-						$item['parent_mid'] = $item['mid'];
-						$item['thr_parent'] = $item['mid'];
+						logger('no parent');
+						return;
 					}
 				}
 			}
 			
-			if ($p[0]['parent_mid'] !== $item['parent_mid']) {
+			if ($parent[0]['parent_mid'] !== $item['parent_mid']) {
 				$item['thr_parent'] = $item['parent_mid'];
 			}
 			else {
-				$item['thr_parent'] = $p[0]['parent_mid'];
+				$item['thr_parent'] = $parent[0]['parent_mid'];
 			}
-			$item['parent_mid'] = $p[0]['parent_mid'];
+			$item['parent_mid'] = $parent[0]['parent_mid'];
 		}
 
 		self::rewrite_mentions($item);
@@ -2936,6 +2936,24 @@ class Activity {
 			$x = item_store($item);
 		}
 
+		if ($fetch_parents && $parent && ! intval($parent[0]['item_private'])) {
+			// if the thread owner is a connnection, we will already receive any additional comments to their posts
+			// but if they are not we can try to fetch others in the background
+			$x = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash
+				WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
+				intval($channel['channel_id']),
+				dbesc($parent[0]['owner_xchan'])
+			);
+			if (! $x) {
+				$id = ((array_path_exists('obj/replies/id',$parent[0])) ? $parent[0]['obj']['replies']['id'] : false);
+				if (! $id) {
+					$id = ((array_path_exists('obj/replies',$parent[0]) && is_string($parent[0]['obj']['replies'])) ? $parent[0]['obj']['replies'] : false);
+				}
+				if ($id) {
+					Run::Summon( [ 'Convo',$id, $channel['channel_id'], $observer_hash ] );
+				}
+			}
+		}
 
 		if (is_array($x) && $x['item_id']) {
 			if ($is_child_node) {
@@ -2992,7 +3010,7 @@ class Activity {
 				$a = new ActivityStreams($a->obj,null,true);
 			}
 
-			logger($a->debug());
+			logger($a->debug(),LOGGER_DATA);
 
 			if (! $a->is_valid()) {
 				logger('not a valid activity');
@@ -3022,7 +3040,7 @@ class Activity {
 
 				array_unshift($p,[ $a, $item ]);
 			
-				if ($item['parent_mid'] === $item['mid'] || count($p) > 30) {
+				if ($item['parent_mid'] === $item['mid'] || count($p) > 100) {
 					break;
 				}
 			}
@@ -3036,7 +3054,7 @@ class Activity {
 				if ($pv[0]->is_valid()) {
 					Activity::store($channel,$observer_hash,$pv[0],$pv[1],false);
 				}
-			}
+			}			
 			return true;
 		}
 
@@ -3044,7 +3062,6 @@ class Activity {
 	}
 
 	static function bb_attach($attach,$body) {
-
 
 		$ret = false;
 

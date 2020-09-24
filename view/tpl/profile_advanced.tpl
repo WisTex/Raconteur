@@ -92,6 +92,15 @@
 		{{/if}}
 		{{/if}}
 
+		{{if $f == 'pronouns'}}
+		{{if $profile.pronouns}}
+		<dl id="aprofile-pronouns" class="aprofile">
+		 <dt>{{$profile.pronouns.0}}</dt>
+		 <dd>{{$profile.pronouns.1}}</dd>
+		</dl>
+		{{/if}}
+		{{/if}}
+
 		{{if $f == 'birthday'}}
 		{{if $profile.birthday}}
 		<dl id="aprofile-birthday" class="aprofile">

@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/markup
+requires: local_channel
+name: Markup
+photo: icon:bold
+categories: Productivity

@@ -39,7 +39,7 @@ class Apps {
 			foreach ($files as $f) {
 				$path = explode('/',$f);
 				$plugin = trim($path[1]);
-				if (plugin_is_installed($plugin)) {
+				if (addon_is_installed($plugin)) {
 					$x = self::parse_app_description($f,$translate);
 					if ($x) {
 						$x['plugin'] = $plugin;
@@ -65,7 +65,6 @@ class Apps {
 			'Channel Home',
 			'View Profile',
 			'Photos',
-//			'Calendar',
 			'Directory',
 			'Events',
 			'Search',
@@ -310,6 +309,8 @@ class Apps {
 		$apps = array(
 			'Apps' => t('Apps'),
 			'Friend Zoom' => t('Friend Zoom'),
+			'Virtual Lists' => t('Virtual Lists'),
+			'Markup' => t('Markup'),
 			'Articles' => t('Articles'),
 			'Cards' => t('Cards'),
 			'Calendar' => t('Calendar'),
@@ -426,7 +427,7 @@ class Apps {
 
 		self::translate_system_apps($papp);
 
-		if (trim($papp['plugin']) && (! plugin_is_installed(trim($papp['plugin'])))) {
+		if (trim($papp['plugin']) && (! addon_is_installed(trim($papp['plugin'])))) {
 			return '';
 		}
 

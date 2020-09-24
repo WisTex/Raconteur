@@ -1052,6 +1052,7 @@ CREATE TABLE "profile" (
   "partner" text NOT NULL DEFAULT '',
   "howlong" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "sexual" text NOT NULL DEFAULT '',
+  "pronouns" text NOT NULL DEFAULT '',
   "politic" text NOT NULL DEFAULT '',
   "religion" text NOT NULL DEFAULT '',
   "keywords" text NOT NULL DEFAULT '',
@@ -1382,6 +1383,7 @@ CREATE TABLE "xprof" (
   "xprof_country" text NOT NULL DEFAULT '',
   "xprof_keywords" text NOT NULL,
   "xprof_about" text NOT NULL,
+  "xprof_pronouns" text NOT NULL,
   "xprof_homepage" text NOT NULL DEFAULT '',
   "xprof_hometown" text NOT NULL DEFAULT '',
   PRIMARY KEY ("xprof_hash")

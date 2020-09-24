@@ -347,7 +347,40 @@ class AccessList {
 		$x   = [];
 
 		foreach ($g as $gv) {
-			$x[] = $gv;
+
+			// virtual access lists
+			// connections:abc is all the connection sof the channel with channel_hash abc
+			// zot:abc is all of abc's zot6 connections
+			// activitypub:abc is all of abc's activitypub connections
+			
+			if (strpos($gv,'connections:') === 0 || strpos($gv,'zot:') === 0 || strpos($gv,'activitypub:') === 0) {
+				$sql_extra = EMPTY_STR;
+				$channel_hash = substr($gv,strpos($gv,':') + 1);
+				if (strpos($gv,'zot:') === 0) {
+					$sql_extra = " and xchan_network = 'zot6' ";
+				}
+				if (strpos($gv,'activitypub:') === 0) {
+					$sql_extra = " and xchan_network = 'activitypub' ";
+				}
+				$r = q("select channel_id from channel where channel_hash = '%s' ",
+					dbesc($channel_hash)
+				);
+				if ($r) {
+					foreach ($r as $rv) {
+						$y = q("select abook_xchan from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 $sql_extra",
+							intval($rv['channel_id'])
+						);
+						if ($y) {
+							foreach ($y as $yv) {
+								$ret[] = $yv['abook_xchan'];
+							}
+						}
+					}
+				}			
+			}
+			else {
+				$x[] = $gv;
+			}
 		}								 
 
 		if ($x) {
@@ -360,6 +393,7 @@ class AccessList {
 						$ret[] = $rv['xchan'];
 					}
 				}
+				
 			}
 		}
 		return $ret;

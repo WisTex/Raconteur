@@ -108,22 +108,11 @@ class ThreadItem {
 		$conv = $this->get_conversation();
 		$observer = $conv->get_observer();
 
-//		if($thread_level == 1) {
-//			$this->label_descendants();
-//		}
-
-		if($thread_level > 1) {
-
-
-//			logger('thread_level: ' . $thread_level);
-//			logger('item: ' . $item['mid']);
-//			logger('parent: ' . $item['thr_parent']);
-		}
-
 		$lock = (((intval($item['item_private'])) || (($item['uid'] == local_channel()) && (strlen($item['allow_cid']) || strlen($item['allow_gid']) 
 			|| strlen($item['deny_cid']) || strlen($item['deny_gid']))))
 			? t('Private Message')
 			: false);
+
 		$shareable = ((($conv->get_profile_owner() == local_channel() && local_channel()) && ($item['item_private'] != 1)) ? true : false);
 
 		// allow an exemption for sharing stuff from your private feeds
@@ -132,38 +121,9 @@ class ThreadItem {
 
 		$privacy_warning = false;
 
-		if(intval($item['item_restrict']) & 1) {
-			$privacy_warning = true;
-		}
-
-		if(intval($item['item_private']) && ($item['owner']['xchan_network'] === 'activitypub')) {
-
-			$recips = get_iconfig($item['parent'], 'activitypub', 'recips');
-
-			if(is_array($recips) && array_key_exists('to',$recips) && (! in_array($observer['xchan_url'], $recips['to'])))
-				$privacy_warning = true;
-		}
-
-
-		if($lock && $privacy_warning) {
-			$lock = t('Privacy conflict. Discretion advised.');
-		}
-
-
-
 		$mode = $conv->get_mode();
 
-		switch($item['item_type']) {
-			case ITEM_TYPE_CARD:
-				$edlink = 'card_edit';
-				break;
-			case ITEM_TYPE_ARTICLE:
-				$edlink = 'article_edit';
-				break;
-			default:
-				$edlink = 'editpost';
-				break;
-		}
+		$edlink = 'editpost';
 
 		if(local_channel() && $observer['xchan_hash'] === $item['author_xchan'])
 			$edpost = array(z_root() . '/' . $edlink . '/' . $item['id'], t('Edit'));
@@ -229,17 +189,6 @@ class ThreadItem {
 			if($this->is_commentable() && $observer) {
 				$isevent = true;
 				$attend = array( t('I will attend'), t('I will not attend'), t('I might attend'));
-			}
-		}
-
-		$consensus = (intval($item['item_consensus']) ? true : false);
-		if($consensus) {
-			$response_verbs[] = 'agree';
-			$response_verbs[] = 'disagree';
-			$response_verbs[] = 'abstain';
-			if($this->is_commentable() && $observer) {
-				$conlabels = array( t('I agree'), t('I disagree'), t('I abstain'));
-				$canvote = true;
 			}
 		}
 
@@ -398,7 +347,10 @@ class ThreadItem {
 		$tmp_item = array(
 			'template' => $this->get_template(),
 			'mode' => $mode,
-			'item_type' => intval($item['item_type']),			
+			'item_type' => intval($item['item_type']),
+			'comment_order' => $item['comment_order'],
+			'parent' => $this->get_data_value('parent'),
+			'collapsed' => ((intval($item['comment_order']) > 3) ? true : false),
 			'type' => implode("",array_slice(explode("/",$item['verb']),-1)),
 			'body' => $body['html'],
 			'tags' => $body['tags'],
@@ -455,6 +407,7 @@ class ThreadItem {
 			'comment_lbl' => (($this->is_commentable() && $observer) ? t('Reply') : ''),
 			'is_comment' => $is_comment,
 			'is_new' => $is_new,
+			'mod_display' => ((argv(0) === 'display') ? true : false),   // comments are not collapsed when using mod_display
 			'owner_url' => $this->get_owner_url(),
 			'owner_photo' => $this->get_owner_photo(),
 			'owner_name' => $this->get_owner_name(),
@@ -525,7 +478,7 @@ class ThreadItem {
 
 		$result['children'] = [];
 
-		if (get_config('system','activitypub',true) && local_channel() && get_pconfig(local_channel(),'system','activitypub',true)) {
+		if (local_channel() && get_pconfig(local_channel(),'system','activitypub',get_config('system','activitypub',true))) {
 			// place to store all the author addresses (links if not available) in the thread so we can auto-mention them in JS. 
 			$result['authors'] = [];
 			// fix to add in sub-replies if replying to a comment on your own post from the top level. 
@@ -535,16 +488,16 @@ class ThreadItem {
 			else {
 				$result['authors'][] = $profile_addr;
 			}
-			if ($children) {
-				foreach ($children as $child) {
-					$cdata = $child->get_data();
-					if ($cdata['author']['xchan_addr']) {
-						if ($observer && $observer['xchan_hash'] !== $cdata['author']['xchan_hash'] && ! in_array($cdata['author']['xchan_addr'],$result['authors'])) {
-							$result['authors'][] = $cdata['author']['xchan_addr'];
-						}
-					}
-				}
-			}
+//			if ($children) {
+//				foreach ($children as $child) {
+//					$cdata = $child->get_data();
+//					if ($cdata['author']['xchan_addr']) {
+//						if ($observer && $observer['xchan_hash'] !== $cdata['author']['xchan_hash'] && ! in_array($cdata['author']['xchan_addr'],$result['authors'])) {
+//							$result['authors'][] = $cdata['author']['xchan_addr'];
+//						}
+//					}
+//				}
+//			}
 					
 			// Add any mentions from the immediate parent, unless they are mentions of the current viewer or duplicates
 			if ($item['term']) {
@@ -572,32 +525,34 @@ class ThreadItem {
 
 		$nb_children = count($children);
 
-		$visible_comments = get_config('system','expanded_comments');
-		if($visible_comments === false)
-			$visible_comments = 3;
+		$total_children = $this->count_visible_descendants();
+
+		$visible_comments = get_config('system', 'expanded_comments', 3);
 		
 		if($collapse_all) {
 			$visible_comments = 0;
 		}
 		if(($this->get_display_mode() === 'normal') && ($nb_children > 0)) {
-			foreach($children as $child) {
-				$xz = $child->get_template_data($conv_responses, $thread_level + 1);
-				if(strpos($xz['body'],"<button id=\"nsfw-wrap-") !== false && $collapse_all === false) {
-					$censored = true;
+			if ($children) {
+				foreach($children as $child) {
+					$xz = $child->get_template_data($conv_responses, $thread_level + 1);
+					if(strpos($xz['body'],"<button id=\"nsfw-wrap-") !== false && $collapse_all === false) {
+						$censored = true;
+					}
+					$result['children'][] = $xz;
 				}
-				$result['children'][] = $xz;
 			}
 			// Collapse
-			if($nb_children > $visible_comments) {
+			if($total_children > $visible_comments && $thread_level == 1) {
 				$result['children'][0]['comment_firstcollapsed'] = true;
 				$result['children'][0]['num_comments'] = $comment_count_txt;
 				$result['children'][0]['hide_text'] = sprintf( t('%s show all'), '<i class="fa fa-chevron-down"></i>');
-				if($thread_level > 1) {
-					$result['children'][$nb_children - 1]['comment_lastcollapsed'] = true;
-				}
-				else {
-					$result['children'][$nb_children - ($visible_comments + 1)]['comment_lastcollapsed'] = true;
-				}
+		//		if($thread_level > 1) {
+		//			$result['children'][$nb_children - 1]['comment_lastcollapsed'] = true;
+		//		}
+		//		else {
+		//			$result['children'][$nb_children - ($visible_comments + 1)]['comment_lastcollapsed'] = true;
+		//		}
 			}
 		}
 
@@ -836,6 +791,22 @@ class ThreadItem {
 		return $total;
 	}
 
+	public function count_visible_descendants() {
+		$total = 0;
+		$children = $this->get_children();
+		if ($children) {
+			foreach ($children as $child) {
+				if (! visible_activity($child->data)) {
+					continue;
+				}
+				$total ++;
+				$total += $child->count_visible_descendants();
+			}
+		}
+		return $total;
+	}
+
+
 	private function label_descendants($count = 0) {
 		if(! array_key_exists('sequence',$this->data)) {
 			if($count) {
@@ -945,6 +916,7 @@ class ThreadItem {
 			'$indent' => $indent,
 			'$can_upload' => (perm_is_allowed($conv->get_profile_owner(),get_observer_hash(),'write_storage') && $conv->is_uploadable()),
 			'$feature_encrypt' => ((Apps::system_app_installed($conv->get_profile_owner(),'Secrets')) ? true : false),
+			'$feature_markup' => ((Apps::system_app_installed($conv->get_profile_owner(),'Markup')) ? true : false),
 			'$encrypt' => t('Encrypt text'),
 			'$cipher' => $conv->get_cipher(),
 			'$sourceapp' => App::$sourcename,

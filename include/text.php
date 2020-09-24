@@ -47,7 +47,7 @@ function replace_macros($s, $r) {
 		$output = $t->replace_macros($arr['template'], $arr['params']);
 	}
 	catch (Exception $e) {
-		logger("Unable to render template: " . $e->getMessage());
+		btlogger("Unable to render template: " . $e->getMessage());
 		$output = "<h3>ERROR: there was an error creating the output.</h3>";
 	}
 
@@ -1517,12 +1517,17 @@ function format_filer(&$item) {
 
 
 function generate_map($coord) {
-	$coord = trim($coord);
-	$coord = str_replace(array(',','/','  '),array(' ',' ',' '),$coord);
+
+	$coord = str_replace(array(',','/','  '),array(' ',' ',' '),trim($coord));
+	$zoom = substr($coord,strpos($coord,'?z=')+3);
+	if ($zoom) {
+		$coord = substr($coord,0,strpos($coord,'?'));
+	}	
 
 	$arr = [
 		'lat' => trim(substr($coord, 0, strpos($coord, ' '))),
 		'lon' => trim(substr($coord, strpos($coord, ' ')+1)),
+		'zoom' => $zoom,
 		'html' => ''
 	];
 

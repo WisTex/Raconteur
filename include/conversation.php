@@ -887,7 +887,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
 //	logger('nouveau: ' . print_r($threads,true));
 
-
+// logger('page_template: ' . print_r($page_template,true));
 	$o .= replace_macros($page_template, array(
 		'$baseurl' => z_root(),
 		'$photo_item' => $content_html,
@@ -1262,6 +1262,11 @@ function z_status_editor($a, $x, $popup = false) {
 	if(x($x, 'hide_future'))
 		$feature_future = false;
 
+	$feature_markup = ((Apps::system_app_installed($x['profile_uid'], 'Markup') && (! $webpage)) ? true : false);
+	if(x($x, 'hide_markup'))
+		$feature_markup = false;
+
+
 	$geotag = (($x['allow_location']) ? replace_macros(get_markup_template('jot_geotag.tpl'), array()) : '');
 	$setloc = t('Set your location');
 	$clearloc = ((get_pconfig($x['profile_uid'], 'system', 'use_browser_location')) ? t('Clear browser location') : '');
@@ -1462,6 +1467,7 @@ function z_status_editor($a, $x, $popup = false) {
 		'$defpublish' => $defpublish,
 		'$feature_future' => $feature_future,
 		'$future_txt' => t('Set publish date'),
+		'$feature_markup' => $feature_markup,
 		'$feature_encrypt' => ((Apps::system_app_installed($x['profile_uid'],'Secrets')) ? true : false),
 		'$encrypt' => t('Encrypt text'),
 		'$cipher' => $cipher,
@@ -1476,7 +1482,9 @@ function z_status_editor($a, $x, $popup = false) {
 		'$summaryenabled' => $summaryenabled,
 		'$summary' => ((x($x, 'summary')) ? htmlspecialchars($x['summary'], ENT_COMPAT,'UTF-8') : ''),
 		'$placeholdsummary' => t('Summary'), 
-		'$discombed' => t('Find remote media players (oEmbed)'),
+		'$discombed' => t('Load remote media players'),
+		'$discombed2' => t('This <em>may</em> subject viewers of this post to behaviour tracking'),
+		'$embedchecked' => ((get_pconfig($x['profile_uid'],'system','linkinfo_embed',true)) ? ' checked ' : ''),
 		'$disczot' => t('Find shareable objects (Zot)'),
 		'$reset' => $reset
 	));
@@ -1584,6 +1592,34 @@ function add_children_to_list($children, &$arr) {
 	}
 }
 
+/*
+ * separate the incoming array into conversations, with the original post at index 0,
+ * and the comments following in reverse date order (newest first). Likes and other hidden activities go to the end.
+ * This lets us choose the most recent comments in each conversation (regardless of thread depth)
+ * to open by default - while collapsing everything else. 
+ */
+
+function flatten_and_order($arr) {
+	$narr = [];
+	$ret = [];
+	
+	foreach ($arr as $a) {
+		$narr[$a['parent']][] = $a;
+	}
+	
+	foreach ($narr as $n) {	
+		usort($n,'sort_flatten');
+		for($x = 0; $x < count($n); $x ++) {
+			$n[$x]['comment_order'] = $x;
+			$ret[] = $n[$x];
+		}
+	}
+
+	return $ret;
+}
+
+
+
 function conv_sort($arr, $order) {
 
 	$parents = [];
@@ -1597,7 +1633,7 @@ function conv_sort($arr, $order) {
 	
 	foreach ($arr as $item) {
 
-		if (LibBlock::fetch_by_entity(local_channel(),$item['author_xchan']) || LibBlock::fetch_by_entity(local_channel(),$item['author_xchan'])) {
+		if (LibBlock::fetch_by_entity(local_channel(),$item['author_xchan']) || LibBlock::fetch_by_entity(local_channel(),$item['owner_xchan'])) {
 			continue;
 		}
 
@@ -1652,12 +1688,15 @@ function conv_sort($arr, $order) {
 		return $ret;
 	}
 
+	$arr = flatten_and_order($arr);
+
 
 	foreach ($arr as $x) {
 		if (intval($x['id']) === intval($x['parent'])) {
 			$parents[] = $x;
 		}
 	}
+
 
 	if (stristr($order,'created')) {
 		usort($parents,'sort_thr_created');
@@ -1695,6 +1734,30 @@ function conv_sort($arr, $order) {
 	}
 
 	return $ret;
+}
+
+
+// This is a complicated sort.
+// We want the original post at index 0 and all the comments (regardless of thread depth) ordered newest to oldest.
+// likes and other invisible activities go to the end of the array beyond the oldest comment.
+
+function sort_flatten($a,$b) {
+
+	if ($a['parent'] === $a['id']) {
+		return -1;
+	}
+	if ($b['parent'] === $b['id']) {
+		return 1;
+	}
+
+	if (! visible_activity($a)) {
+		return 1;
+	}
+	if (! visible_activity($b)) {
+		return -1;
+	}
+
+	return strcmp($b['created'],$a['created']);
 }
 
 

@@ -74,13 +74,11 @@ class Cron {
 			}
 		}
 
-		// Ensure that every channel pings a directory server once a month. This way we can discover
-		// channels and sites that quietly vanished and prevent the directory from accumulating stale
-		// or dead entries.
+		// Ensure that every channel pings their directory occasionally.
 
 		$r = q("select channel_id from channel where channel_dirdate < %s - INTERVAL %s and channel_removed = 0",
 			db_utcnow(), 
-			db_quoteinterval('30 DAY')
+			db_quoteinterval('7 DAY')
 		);
 		if($r) {
 			foreach($r as $rr) {

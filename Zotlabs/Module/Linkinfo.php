@@ -20,8 +20,15 @@ class Linkinfo extends Controller {
 		$str_tags = '';
 		$process_embed = true;
 		$process_oembed = (($_GET['oembed']) ? true : false);	
-		$process_zotobj = (($_GET['zotobj']) ? true : false);	
-	
+		$process_zotobj = true;
+
+		if(local_channel()) {
+			$saved_oembed = ((get_pconfig(local_channel(),'system','linkinfo_embed',true)) ? true : false);
+			if ($saved_oembed !== $process_oembed) {
+				set_pconfig(local_channel(),'system','linkinfo_embed',intval($process_oembed));
+			}
+		}
+
 		$br = "\n";
 	
 		if (x($_GET,'binurl'))
@@ -35,7 +42,18 @@ class Linkinfo extends Controller {
 		}
 
 		$url = strip_zids($url);
-	
+
+		if (strpos($url,'geo:') === 0) {
+			if ($process_embed) {
+				echo $br . '[map=' . substr($url,4) . ']' . $br;
+			}
+			else {
+				echo $br . '[url]' . $url . '[/url]' . $br;
+			}
+			killme();
+		}
+
+
 		if ((substr($url,0,1) != '/') && (substr($url,0,4) != 'http'))
 			$url = 'http://' . $url;
 	
@@ -137,7 +155,7 @@ class Linkinfo extends Controller {
 		}
 		
 		if ($process_zotobj) {
-			$x = Activity::fetch($url);
+			$x = Activity::fetch($url, App::get_channel());
 			if (is_array($x)) {
 				$y = new ActivityStreams($x);
 				if ($y->is_valid() && $y->type === 'Announce' && is_array($y->obj)

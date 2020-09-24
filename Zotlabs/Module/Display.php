@@ -368,17 +368,17 @@ class Display extends Controller {
 				// we can now start loading content
 				if ($item['mid'] == $item['parent_mid']) {
 					App::$meta->set('og:title', ($items[0]['title']
-						? sprintf( t('"%s", shared by %s with %s'),$items[0]['title'],$item['author']['xchan_name'],$ogsite)
-						: sprintf( t('%s shared this post with %s'),$item['author']['xchan_name'],$ogsite)));
+						? sprintf( t('"%1$s", shared by %2$s with %3$s'),$items[0]['title'],$item['author']['xchan_name'],$ogsite)
+						: sprintf( t('%1$s shared this post with %2$s'),$item['author']['xchan_name'],$ogsite)));
                                         App::$meta->set('og:image', (isset($ogimage) ? $ogimage : System::get_site_icon()));
                                         App::$meta->set('og:type', 'article');
                                         App::$meta->set('og:url:secure_url', $item['llink']);
-					App::$meta->set('og:description', ($ogdesc ? $ogdesc : 'Not much to read, click to see the post.'));
+					App::$meta->set('og:description', ($ogdesc ? $ogdesc : sprintf( t('Not much to read, click to see the post.'))));
                                 }
 				else {
 	                                if (($target_item['verb'] == ACTIVITY_LIKE) || ($target_item['verb'] == ACTIVITY_DISLIKE)) {
 	                                        App::$meta->set('og:title', ($items[0]['title'] 
-							? sprintf( t('%s shared a reaction to "%s"'),$item['author']['xchan_name'],$items[0]['title'])
+							? sprintf( t('%1$s shared a reaction to "%2$s"'),$item['author']['xchan_name'],$items[0]['title'])
 							: sprintf( t('%s shared a reaction to this post/conversation'),$item['author']['xchan_name'])));
 	                                        App::$meta->set('og:image', (isset($ogimage) ? $ogimage : System::get_site_icon()));
 						App::$meta->set('og:type', 'article');
@@ -387,12 +387,12 @@ class Display extends Controller {
 					}
 					else {
                                                 App::$meta->set('og:title', ($items[0]['title'] 
-                                                        ? sprintf( t('%s commented "%s"'),$item['author']['xchan_name'],$items[0]['title'])
+                                                        ? sprintf( t('%1$s commented "%2$s"'),$item['author']['xchan_name'],$items[0]['title'])
                                                         : sprintf( t('%s shared a comment of this post/conversation'),$item['author']['xchan_name'])));
                                                 App::$meta->set('og:image', (isset($ogimage) ? $ogimage : System::get_site_icon()));
                                                 App::$meta->set('og:type', 'article');
                                                 App::$meta->set('og:url:secure_url', $item['llink']);
-                                                App::$meta->set('og:description', sprintf( t('%s wrote this: "%s"'),$item['author']['xchan_name'],$ogdesc));
+                                                App::$meta->set('og:description', sprintf( t('%1$s wrote this: "%2$s"'),$item['author']['xchan_name'],$ogdesc));
                                         }
 				}
 			}

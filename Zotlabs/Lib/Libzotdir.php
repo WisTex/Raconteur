@@ -340,7 +340,7 @@ class Libzotdir {
 	/**
 	 * @brief Push local channel updates to a local directory server.
 	 *
-	 * This is called from include/directory.php if a profile is to be pushed to the
+	 * This is called from Zotlabs/Daemon/Directory.php if a profile is to be pushed to the
 	 * directory and the local hub in this case is any kind of directory server.
 	 *
 	 * @param int $uid
@@ -462,6 +462,7 @@ class Libzotdir {
 		$arr['xprof_postcode']     = (($profile['postcode'])    ? htmlspecialchars($profile['postcode'],    ENT_COMPAT,'UTF-8',false) : '');
 		$arr['xprof_country']      = (($profile['country'])     ? htmlspecialchars($profile['country'],     ENT_COMPAT,'UTF-8',false) : '');
 		$arr['xprof_about']        = (($profile['about'])       ? htmlspecialchars($profile['about'],       ENT_COMPAT,'UTF-8',false) : '');
+		$arr['xprof_pronouns']     = (($profile['pronouns'])    ? htmlspecialchars($profile['pronouns'],    ENT_COMPAT,'UTF-8',false) : '');
 		$arr['xprof_homepage']     = (($profile['homepage'])    ? htmlspecialchars($profile['homepage'],    ENT_COMPAT,'UTF-8',false) : '');
 		$arr['xprof_hometown']     = (($profile['hometown'])    ? htmlspecialchars($profile['hometown'],    ENT_COMPAT,'UTF-8',false) : '');
 
@@ -520,7 +521,8 @@ class Libzotdir {
 					xprof_about = '%s',
 					xprof_homepage = '%s',
 					xprof_hometown = '%s',
-					xprof_keywords = '%s'
+					xprof_keywords = '%s',
+					xprof_pronouns = '%s'
 					where xprof_hash = '%s'",
 					dbesc($arr['xprof_desc']),
 					dbesc($arr['xprof_dob']),
@@ -536,13 +538,14 @@ class Libzotdir {
 					dbesc($arr['xprof_homepage']),
 					dbesc($arr['xprof_hometown']),
 					dbesc($arr['xprof_keywords']),
+					dbesc($arr['xprof_pronouns']),
 					dbesc($arr['xprof_hash'])
 				);
 			}
 		} else {
 			$update = true;
 			logger('New profile');
-			q("insert into xprof (xprof_hash, xprof_desc, xprof_dob, xprof_age, xprof_gender, xprof_marital, xprof_sexual, xprof_locale, xprof_region, xprof_postcode, xprof_country, xprof_about, xprof_homepage, xprof_hometown, xprof_keywords) values ('%s', '%s', '%s', %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s') ",
+			q("insert into xprof (xprof_hash, xprof_desc, xprof_dob, xprof_age, xprof_gender, xprof_marital, xprof_sexual, xprof_locale, xprof_region, xprof_postcode, xprof_country, xprof_about, xprof_homepage, xprof_hometown, xprof_keywords, xprof_pronouns) values ('%s', '%s', '%s', %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s') ",
 				dbesc($arr['xprof_hash']),
 				dbesc($arr['xprof_desc']),
 				dbesc($arr['xprof_dob']),
@@ -557,7 +560,8 @@ class Libzotdir {
 				dbesc($arr['xprof_about']),
 				dbesc($arr['xprof_homepage']),
 				dbesc($arr['xprof_hometown']),
-				dbesc($arr['xprof_keywords'])
+				dbesc($arr['xprof_keywords']),
+				dbesc($arr['xprof_pronouns'])
 			);
 		}
 
@@ -580,7 +584,12 @@ class Libzotdir {
 		if (($d['update']) && (! $suppress_update)) {
 			self::update_modtime($arr['xprof_hash'], new_uuid(), $addr, $ud_flags);
 		}
-		
+
+		q("update xchan set xchan_updated = '%s' where xchan_hash = '%s'",
+			dbesc(datetime_convert()),
+			dbesc($arr['xprof_hash'])
+		);
+
 		return $d['update'];
 	}
 

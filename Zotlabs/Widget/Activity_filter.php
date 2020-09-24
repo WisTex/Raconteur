@@ -141,38 +141,36 @@ class Activity_filter {
 			];
 		}
 
-		$forums = get_forum_channels(local_channel(),2);
+//		$forums = get_forum_channels(local_channel(),2);
 
-		if($forums) {
-			foreach($forums as $f) {
-				if(x($_GET,'pf') && x($_GET,'cid')) {
-					$forum_active = ((x($_GET,'pf') && $_GET['cid'] == $f['abook_id']) ? 'active' : '');
-					$filter_active = 'forums';
-				}
-				$csub[] = [
-					'label' => $f['xchan_name'],
-					'img' => $f['xchan_photo_s'],
-					'url' => z_root() . '/' . $cmd . '/?f=&pf=1&cid=' . $f['abook_id'],
-					'sel' => $forum_active,
-					'title' => t('Show posts to this collection'),
-					'lock' => (($f['private_forum']) ? 'lock' : ''),
-					'edit' => t('New post'),
-					'edit_url' => $f['xchan_url']
-				];
-			}
-
-			$tabs[] = [
-				'id' => 'collections',
-				'label' => t('Collections'),
-				'icon' => 'tags',
-				'url' => '#',
-				'sel' => (($filter_active == 'collections') ? true : false),
-				'title' => t('Show collections'),
-				'sub' => $csub
-			];
-		}
-
-
+//		if($forums) {
+//			foreach($forums as $f) {
+//				if(x($_GET,'pf') && x($_GET,'cid')) {
+//					$forum_active = ((x($_GET,'pf') && $_GET['cid'] == $f['abook_id']) ? 'active' : '');
+//					$filter_active = 'forums';
+//				}
+//				$csub[] = [
+//					'label' => $f['xchan_name'],
+//					'img' => $f['xchan_photo_s'],
+//					'url' => z_root() . '/' . $cmd . '/?f=&pf=1&cid=' . $f['abook_id'],
+//					'sel' => $forum_active,
+//					'title' => t('Show posts to this collection'),
+//					'lock' => (($f['private_forum']) ? 'lock' : ''),
+//					'edit' => t('New post'),
+//					'edit_url' => $f['xchan_url']
+//				];
+//			}
+//
+//			$tabs[] = [
+//				'id' => 'collections',
+//				'label' => t('Collections'),
+//				'icon' => 'tags',
+//				'url' => '#',
+//				'sel' => (($filter_active == 'collections') ? true : false),
+//				'title' => t('Show collections'),
+//				'sub' => $csub
+//			];
+//		}
 
 
 		if(feature_enabled(local_channel(),'filing')) {

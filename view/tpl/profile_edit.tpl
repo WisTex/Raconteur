@@ -70,7 +70,7 @@
 							{{include file="field_input.tpl" field=$pdesc}}
 							{{/if}}
 
-							{{if $fields.basic_gender || $fields.advanced_gender || $fields.gender}}
+							{{if $fields.basic_gender || $fields.advanced_gender || $fields.gender || $fields.pronouns}}
 							<div id="profile-edit-gender-wrapper" class="form-group field select" >
 							<label id="profile-edit-gender-label" for="gender-select" >{{$lbl_gender}}</label>
 							{{if ($advanced && $fields.gender) || $fields.advanced_gender}}
@@ -78,6 +78,15 @@
 							{{else}}
 							{{$gender_min}}
 							{{/if}}
+							</div>
+							<div class="clear"></div>
+							{{/if}}
+
+
+							{{if $fields.pronouns}}
+							<div id="profile-edit-pronouns-wrapper" class="form-group field" >
+							<label id="profile-edit-pronouns-label" for="pronouns-select" >{{$lbl_pronouns}}</label>
+							{{$pronouns}}
 							</div>
 							<div class="clear"></div>
 							{{/if}}
@@ -300,6 +309,8 @@
 							</div>
 							<div class="clear"></div>
 							{{/if}}
+
+
 
 							<div class="form-group" >
 							<button type="submit" name="submit" class="btn btn-primary" value="{{$submit}}">{{$submit}}</button>
