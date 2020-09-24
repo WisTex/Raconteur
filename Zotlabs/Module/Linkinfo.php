@@ -20,8 +20,15 @@ class Linkinfo extends Controller {
 		$str_tags = '';
 		$process_embed = true;
 		$process_oembed = (($_GET['oembed']) ? true : false);	
-		$process_zotobj = (($_GET['zotobj']) ? true : false);	
-	
+		$process_zotobj = true;
+
+		if(local_channel()) {
+			$saved_oembed = ((get_pconfig(local_channel(),'system','linkinfo_embed',true)) ? true : false);
+			if ($saved_oembed !== $process_oembed) {
+				set_pconfig(local_channel(),'system','linkinfo_embed',intval($process_oembed));
+			}
+		}
+
 		$br = "\n";
 	
 		if (x($_GET,'binurl'))

@@ -122,6 +122,10 @@
 						<i id="embed-photo" class="fa fa-file-image-o jot-icons"></i>
 					</button>
 					{{/if}}
+					<button type="button" id="profile-poll-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$poll}}" onclick="initPoll();">
+						<i id="profile-poll" class="fa fa-bar-chart jot-icons"></i>
+					</button>
+
 				</div>
 				<div class="btn-group mr-2 d-none d-lg-flex">
 					{{if $setloc}}
@@ -153,9 +157,6 @@
 					</button>
 				{{/if}}
 
-					<button type="button" id="profile-poll-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$poll}}" onclick="initPoll();">
-						<i id="profile-poll" class="fa fa-bar-chart jot-icons"></i>
-					</button>
 
 				{{if $feature_nocomment}}
 					<button id="profile-nocomment-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$nocommenttitle}}" onclick="toggleNoComment();return false;">
@@ -179,6 +180,7 @@
 						{{if $embedPhotos}}
 						<a class="dropdown-item" href="#" onclick="initializeEmbedPhotoDialog(); return false;"><i class="fa fa-file-image-o jot-icons"></i>&nbsp;{{$embedPhotos}}</a>
 						{{/if}}
+						<a class="dropdown-item" href="#" onclick="initPoll(); return false"><i id="profile-poll" class="fa fa-bar-chart jot-icons"></i>&nbsp;{{$poll}}</a>
 						{{if $setloc}}
 						<a class="dropdown-item" href="#" onclick="jotGetLocation(); return false;"><i class="fa fa-globe"></i>&nbsp;{{$setloc}}</a>
 						{{/if}}
@@ -195,7 +197,6 @@
 						{{if $feature_encrypt}}
 						<a class="dropdown-item" href="#" onclick="hz_encrypt('{{$cipher}}','#profile-jot-text',$('#profile-jot-text').val());return false;"><i class="fa fa-key"></i>&nbsp;{{$encrypt}}</a>
 						{{/if}}
-						<a class="dropdown-item" href="#" onclick="initPoll(); return false"><i id="profile-poll" class="fa fa-bar-chart jot-icons"></i>&nbsp;{{$poll}}</a>
 						{{if $feature_nocomment}}
 						<a class="dropdown-item" href="#" onclick="toggleNoComment(); return false;"><i id="profile-nocomment-sub" class="fa fa-comments"></i>&nbsp;{{$nocommenttitlesub}}</a>
 						{{/if}}
@@ -376,12 +377,13 @@
 					<div id="linkmodaldiscover" style="margin-top: 10px;">
 						<div class="clearfix form-group">
 							<label for="id_oembed">{{$discombed}}</label>
-							<div class="float-right"><input type="checkbox" name='oembed' id='id_oembed' value="1" checked ></div>
+							<div class="float-right"><input type="checkbox" name='oembed' id='id_oembed' value="1" {{$embedchecked}} ></div>
+							<div class="descriptive-text">{{$discombed2}}</div>
 						</div>
-						<div class="clearfix form-group">
+						<!--div class="clearfix form-group">
 							<label for="id_zotobj">{{$disczot}}</label>
 							<div class="float-right"><input type="checkbox" name='zotobj' id='id_zotobj' value="1" checked ></div>
-						</div>
+						</div -->
 					</div>
 			</div>
 			<div class="modal-footer">

@@ -1482,7 +1482,9 @@ function z_status_editor($a, $x, $popup = false) {
 		'$summaryenabled' => $summaryenabled,
 		'$summary' => ((x($x, 'summary')) ? htmlspecialchars($x['summary'], ENT_COMPAT,'UTF-8') : ''),
 		'$placeholdsummary' => t('Summary'), 
-		'$discombed' => t('Find remote media players (oEmbed)'),
+		'$discombed' => t('Load remote media players'),
+		'$discombed2' => t('This <em>may</em> subject viewers of this post to behaviour tracking'),
+		'$embedchecked' => ((get_pconfig($x['profile_uid'],'system','linkinfo_embed',true)) ? ' checked ' : ''),
 		'$disczot' => t('Find shareable objects (Zot)'),
 		'$reset' => $reset
 	));
