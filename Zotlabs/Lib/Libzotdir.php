@@ -340,7 +340,7 @@ class Libzotdir {
 	/**
 	 * @brief Push local channel updates to a local directory server.
 	 *
-	 * This is called from include/directory.php if a profile is to be pushed to the
+	 * This is called from Zotlabs/Daemon/Directory.php if a profile is to be pushed to the
 	 * directory and the local hub in this case is any kind of directory server.
 	 *
 	 * @param int $uid
@@ -584,7 +584,12 @@ class Libzotdir {
 		if (($d['update']) && (! $suppress_update)) {
 			self::update_modtime($arr['xprof_hash'], new_uuid(), $addr, $ud_flags);
 		}
-		
+
+		q("update xchan set xchan_updated = '%s' where xchan_hash = '%s'",
+			dbesc(datetime_convert()),
+			dbesc($arr['xprof_hash'])
+		);
+
 		return $d['update'];
 	}
 
