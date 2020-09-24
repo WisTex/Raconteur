@@ -39,7 +39,7 @@ class Apps {
 			foreach ($files as $f) {
 				$path = explode('/',$f);
 				$plugin = trim($path[1]);
-				if (plugin_is_installed($plugin)) {
+				if (addon_is_installed($plugin)) {
 					$x = self::parse_app_description($f,$translate);
 					if ($x) {
 						$x['plugin'] = $plugin;
@@ -427,7 +427,7 @@ class Apps {
 
 		self::translate_system_apps($papp);
 
-		if (trim($papp['plugin']) && (! plugin_is_installed(trim($papp['plugin'])))) {
+		if (trim($papp['plugin']) && (! addon_is_installed(trim($papp['plugin'])))) {
 			return '';
 		}
 
