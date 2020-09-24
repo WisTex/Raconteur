@@ -916,6 +916,7 @@ class ThreadItem {
 			'$indent' => $indent,
 			'$can_upload' => (perm_is_allowed($conv->get_profile_owner(),get_observer_hash(),'write_storage') && $conv->is_uploadable()),
 			'$feature_encrypt' => ((Apps::system_app_installed($conv->get_profile_owner(),'Secrets')) ? true : false),
+			'$feature_markup' => ((Apps::system_app_installed($conv->get_profile_owner(),'Markup')) ? true : false),
 			'$encrypt' => t('Encrypt text'),
 			'$cipher' => $conv->get_cipher(),
 			'$sourceapp' => App::$sourcename,
