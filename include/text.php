@@ -1787,6 +1787,12 @@ function format_poll($item,$s,$opts) {
 			}
 		}
 		if (array_key_exists('oneOf',$act) && is_array($act['oneOf'])) {
+			$totalResponses = 0;
+			foreach ($act['oneOf'] as $poll) {
+				if (array_path_exists('replies/totalItems',$poll)) {
+					$totalResponses += intval($poll['replies']['totalItems']);
+				}
+			}
 			foreach ($act['oneOf'] as $poll) {
 				if (is_array($poll) && array_key_exists('name',$poll) && $poll['name']) {
 					$text = html2plain(purify_html($poll['name']),256);
@@ -1797,11 +1803,12 @@ function format_poll($item,$s,$opts) {
 						$total = 0;
 					}
 					if ($activated && $commentable) {
-						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '"> ' . $text . '</input>' . ' (' . $total . ')' . EOL;
+						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '"> ' . $text . '</input>' . ' (' . $total . ')' . (($totalResponses) ? ' ' . intval($total / $totalResponses * 100) . '%' : '') . EOL;
 					}
 					else {
-						$output .= '( ) ' . $text . ' (' . $total . ')' . EOL;
+						$output .= '( ) ' . $text . ' (' . $total . ')' . (($totalResponses) ? ' ' . intval($total / $totalResponses * 100) . '%' : '') . EOL;
 					}
+					
 				}
 			}
 		}
