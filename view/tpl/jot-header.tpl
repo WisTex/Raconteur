@@ -364,6 +364,7 @@ var activeCommentText = '';
 					if (!editor) $("#profile-jot-text").val("");
 					initEditor(function(){
 					addeditortext(data);
+					preview_post();
 					$('#profile-rotator').hide();
 					});
 				}
