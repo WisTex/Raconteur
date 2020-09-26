@@ -3669,11 +3669,21 @@ function svg2bb($s) {
 	return EMPTY_STR;
 }
 
-// Takes something that looks like a phone number and returns just the digits or false.
-// @Todo: Does not handle extensions.
+// Takes something that looks like a phone number and returns a string suitable for tel: protocol or false.
 
 function is_phone_number($s) {
+	$ext = substr($s,strpos($s,'x')+1);
+	if (! $ext) {
+		$ext = substr($s,strpos($s,'X')+1);		
+	}
+	if ($ext && ctype_digit($ext)) {
+		$rext = ';ext=' . $ext;
+		$s = str_replace(['x' . $ext, 'X' . $ext],['',''],$s);
+	}
+	else {
+		$ext = EMPTY_STR;
+	}		
 	$s = str_replace(['(',')',' ','-','+'],['','','','',''],$s);	
-	return ((ctype_digit($s)) ? $s : false);
+	return ((ctype_digit($s)) ? $s . $rext : false);
 }
 
