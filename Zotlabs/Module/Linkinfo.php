@@ -53,6 +53,14 @@ class Linkinfo extends Controller {
 			killme();
 		}
 
+		if (strpos($url,'tel:') === 0 || (is_phone_number($url) !== false)) {
+			$phone = $url;
+			if (strpos($url,'tel:') !== 0) {
+				$url = 'tel:' . is_phone_number($url);
+			}
+			echo $br . '[url=' . $url . ']' . $phone . '[/url]' . $br;
+			killme();
+		}
 
 		if ((substr($url,0,1) != '/') && (substr($url,0,4) != 'http'))
 			$url = 'http://' . $url;

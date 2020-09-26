@@ -3669,3 +3669,11 @@ function svg2bb($s) {
 	return EMPTY_STR;
 }
 
+// Takes something that looks like a phone number and returns just the digits or false.
+// @Todo: Does not handle extensions.
+
+function is_phone_number($s) {
+	$s = str_replace(['(',')',' ','-','+'],['','','','',''],$s);	
+	return ((ctype_digit($s)) ? $s : false);
+}
+
