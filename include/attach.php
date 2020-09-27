@@ -1559,7 +1559,7 @@ function attach_drop_photo($channel_id,$resource) {
 		foreach ($r as $rv) {
 			$p = dbunescbin($rv['content']);
 			if ($p && file_exists($p)) {
-				unlink($p);
+				@unlink($p);
 			}
 		}
 	}
