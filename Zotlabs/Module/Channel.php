@@ -106,7 +106,35 @@ class Channel extends Controller {
 			killme();
 		}
 
-		if(ActivityStreams::is_as_request()) {
+		if (ActivityStreams::is_as_request()) {
+
+			// Somebody may attempt an ActivityStreams fetch on one of our message permalinks
+			// Make it do the right thing.
+			
+			$mid = ((x($_REQUEST,'mid')) ? $_REQUEST['mid'] : '');
+			if ($mid && strpos($mid,'b64.') === 0) {
+				$decoded = @base64url_decode(substr($mid,4));
+				if ($decoded) {
+					$mid = $decoded;
+				}
+			}
+			if ($mid) {
+				$obj = null;
+				if (strpos($mid, z_root() . '/item/') === 0) {
+					App::$argc = 2;
+					App::$argv = [ 'item', basename($mid) ]; 
+					$obj = new Item();
+				}
+				if (strpos($mid, z_root() . '/activity/') === 0) {
+					App::$argc = 2;
+					App::$argv = [ 'activity', basename($mid) ]; 
+					$obj = new Activity();
+				}
+				if ($obj) {
+					$obj->init();
+				}
+			}
+
 
 			$x = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
