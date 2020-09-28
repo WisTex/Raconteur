@@ -174,18 +174,36 @@ class Linkinfo extends Controller {
 		
 		if ($process_zotobj) {
 			$x = Activity::fetch($url, App::get_channel());
+			$y = null;
 			if (is_array($x)) {
-				$y = new ActivityStreams($x);
-				if ($y->is_valid() && $y->type === 'Announce' && is_array($y->obj)
-					&& array_key_exists('object',$y->obj) && array_key_exists('actor',$y->obj)) {
-					// This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
-					// Reparse the encapsulated Activity and use that instead
-					logger('relayed activity',LOGGER_DEBUG);
-					$y = new ActivityStreams($y->obj);
+				if (ActivityStreams::is_an_actor($x['type']) && $x['id']) {
+					if (check_siteallowed($x['id']) && check_channelallowed($x['id'])) {
+						$url = $x['url'];
+						if (is_array($url)) {
+							$url = $url[0]['href'];
+						}
+						$name = (($x['name']) ? $x['name'] . ' (' . $x['preferredUsername'] . ')' : $x['preferredUsername']);
+
+						if (array_path_exists('icon/url',$x)) {
+							$text = $br . $br . '[zrl=' . $url . '][zmg=300x300]' . $x['icon']['url'] . '[/zmg][/zrl]' ;
+						}
+						$text .= $br . $br . '[zrl=' . $url . ']' . $name . '[/zrl]' . $br . $br;
+						echo $text;
+						killme();
+					}
+				}
+				else {
+					$y = new ActivityStreams($x);
+					if ($y->is_valid() && $y->type === 'Announce' && is_array($y->obj)
+						&& array_key_exists('object',$y->obj) && array_key_exists('actor',$y->obj)) {
+						// This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
+						// Reparse the encapsulated Activity and use that instead
+						logger('relayed activity',LOGGER_DEBUG);
+						$y = new ActivityStreams($y->obj);
+					}
 				}
 
-
-				if ($y->is_valid()) {
+				if ($y && $y->is_valid()) {
 					$z = Activity::decode_note($y);
 					$r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_hash = '%s' OR hubloc_id_url = '%s'",
 						dbesc(is_array($y->actor) ? $y->actor['id'] : $y->actor),
@@ -204,7 +222,7 @@ class Linkinfo extends Controller {
 						// do not allow somebody to embed a post that was blocked by the site admin
 						// We *will* let them over-rule any blocks they created themselves
 						
-						if (! (check_siteallowed($r['hubloc_id_url']) && check_channelallowed($z['author_xchan']))) {
+						if (check_siteallowed($r['hubloc_id_url']) && check_channelallowed($z['author_xchan'])) {
 							$s = new Zlib\Share($z);
 							echo $s->bbcode();
 							killme();
