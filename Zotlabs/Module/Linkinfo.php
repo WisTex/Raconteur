@@ -136,6 +136,16 @@ class Linkinfo extends Controller {
 						echo $br . '[audio]' . $url . '[/audio]' . $br;
 					killme();
 				}
+				if (strtolower($type) === 'text/calendar') {
+					$content = z_fetch_url($url,false,0,array('novalidate' => true));
+					if ($content['success']) {
+						$ev = ical_to_ev($content['body']);
+						if ($ev) {
+							echo $br . format_event_bbcode($ev[0]) . $br;
+							killme();
+						}
+					}
+				}
 				if (strtolower($type) === 'application/pdf' || strtolower($type) === 'application/x-pdf') {
 					echo $br . '[embed]' . $url . '[/embed]' . $br;
 					killme();

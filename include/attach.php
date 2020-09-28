@@ -51,7 +51,7 @@ function z_mime_content_type($filename) {
 	'php'  => 'text/plain',
 	'rb'   => 'text/plain',
 	'pdl'  => 'text/plain',
-
+	'ics'  => 'text/calendar',
 
 	// images
 

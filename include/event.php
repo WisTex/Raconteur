@@ -298,9 +298,11 @@ function bbtoevent($s) {
 	$match = '';
 	if(preg_match("/\[event\](.*?)\[\/event\]/is",$s,$match)) {
 		// only parse one object per event tag
-		$x = ical_to_ev($match[1]);
-		if($x)
-			$ev = $x[0];
+		// @fixme disabled for now - ical_to_event() expects a VCALENDAR wrapper
+		// and our VEVENT does not current include it.
+//		$x = ical_to_ev($match[1]);
+//		if($x)
+//			$ev = $x[0];
 	}
 
 	$match = '';
