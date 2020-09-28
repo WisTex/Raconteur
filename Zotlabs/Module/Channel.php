@@ -118,7 +118,7 @@ class Channel extends Controller {
 					$mid = $decoded;
 				}
 			}
-			if ($mid)
+			if ($mid) {
 				$obj = null;
 				if (strpos($mid, z_root() . '/item/') === 0) {
 					App::$argc = 2;
