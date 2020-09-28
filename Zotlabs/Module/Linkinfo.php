@@ -200,9 +200,15 @@ class Linkinfo extends Controller {
 					}
 
 					if ($z) {
-						$s = new Zlib\Share($z);
-						echo $s->bbcode();
-						killme();
+
+						// do not allow somebody to embed a post that was blocked by the site admin
+						// We *will* let them over-rule any blocks they created themselves
+						
+						if (! (check_siteallowed($r['hubloc_id_url']) && check_channelallowed($z['author_xchan']))) {
+							$s = new Zlib\Share($z);
+							echo $s->bbcode();
+							killme();
+						}
 					}
 				}
 			}
