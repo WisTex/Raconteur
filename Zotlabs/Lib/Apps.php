@@ -334,6 +334,7 @@ class Apps {
 			'Stream' => t('Stream'), 
 			'Secrets' => t('Secrets'),
 			'Settings' => t('Settings'),
+			'Sites' => t('Sites'),
 			'Files' => t('Files'),
 			'Webpages' => t('Webpages'),
 			'Wiki' => t('Wiki'),

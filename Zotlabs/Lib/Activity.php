@@ -1992,7 +1992,7 @@ class Activity {
 			$multi = true;
 		}
 
-		$r = q("select mid, title from item where parent_mid = '%s' and author_xchan = '%s'",
+		$r = q("select mid, title from item where parent_mid = '%s' and author_xchan = '%s' and mid != parent_mid ",
 			dbesc($item['mid']),
 			dbesc($post['author_xchan'])
 		);
@@ -2024,7 +2024,7 @@ class Activity {
 					$answer_found = true;
 					if (is_array($o['anyOf'][$c]['replies'])) {
 						foreach($o['anyOf'][$c]['replies'] as $reply) {
-							if(array_key_exists('id',$reply) && $reply['id'] === $mid) {
+							if(is_array($reply) && array_key_exists('id',$reply) && $reply['id'] === $mid) {
 								$found = true;
 							}
 						}
@@ -2043,7 +2043,7 @@ class Activity {
 					$answer_found = true;
 					if (is_array($o['oneOf'][$c]['replies'])) {
 						foreach($o['oneOf'][$c]['replies'] as $reply) {
-							if(array_key_exists('id',$reply) && $reply['id'] === $mid) {
+							if(is_array($reply) && array_key_exists('id',$reply) && $reply['id'] === $mid) {
 								$found = true;
 							}
 						}

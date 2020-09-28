@@ -53,6 +53,14 @@ class Linkinfo extends Controller {
 			killme();
 		}
 
+		if (strpos($url,'tel:') === 0 || (is_phone_number($url) !== false)) {
+			$phone = $url;
+			if (strpos($url,'tel:') !== 0) {
+				$url = 'tel:' . is_phone_number($url);
+			}
+			echo $br . '[url=' . $url . ']' . $phone . '[/url]' . $br;
+			killme();
+		}
 
 		if ((substr($url,0,1) != '/') && (substr($url,0,4) != 'http'))
 			$url = 'http://' . $url;
@@ -127,6 +135,16 @@ class Linkinfo extends Controller {
 					else
 						echo $br . '[audio]' . $url . '[/audio]' . $br;
 					killme();
+				}
+				if (strtolower($type) === 'text/calendar') {
+					$content = z_fetch_url($url,false,0,array('novalidate' => true));
+					if ($content['success']) {
+						$ev = ical_to_ev($content['body']);
+						if ($ev) {
+							echo $br . format_event_bbcode($ev[0]) . $br;
+							killme();
+						}
+					}
 				}
 				if (strtolower($type) === 'application/pdf' || strtolower($type) === 'application/x-pdf') {
 					echo $br . '[embed]' . $url . '[/embed]' . $br;

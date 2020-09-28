@@ -155,6 +155,15 @@ class Wall_attach extends Controller {
 					logger('unable to read ABC data file: ' . 'store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
 				}
 			}
+			if ($r['data']['filetype'] === 'text/calendar') {
+				$content = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+				if ($content) {
+					$ev = ical_to_ev($content);
+					if ($ev) {
+						$s .= "\n\n" . format_event_bbcode($ev[0]) . "\n\n";
+					}
+				}
+			}			
 			$s .=  "\n\n" . '[attachment]' . $r['data']['hash'] . ',' . $r['data']['revision'] . '[/attachment]' . "\n";
 		}
 	

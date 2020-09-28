@@ -1787,6 +1787,12 @@ function format_poll($item,$s,$opts) {
 			}
 		}
 		if (array_key_exists('oneOf',$act) && is_array($act['oneOf'])) {
+			$totalResponses = 0;
+			foreach ($act['oneOf'] as $poll) {
+				if (array_path_exists('replies/totalItems',$poll)) {
+					$totalResponses += intval($poll['replies']['totalItems']);
+				}
+			}
 			foreach ($act['oneOf'] as $poll) {
 				if (is_array($poll) && array_key_exists('name',$poll) && $poll['name']) {
 					$text = html2plain(purify_html($poll['name']),256);
@@ -1797,11 +1803,12 @@ function format_poll($item,$s,$opts) {
 						$total = 0;
 					}
 					if ($activated && $commentable) {
-						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '"> ' . $text . '</input>' . ' (' . $total . ')' . EOL;
+						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '"> ' . $text . '</input>' . ' (' . $total . ')' . (($totalResponses) ? ' ' . intval($total / $totalResponses * 100) . '%' : '') . EOL;
 					}
 					else {
-						$output .= '( ) ' . $text . ' (' . $total . ')' . EOL;
+						$output .= '( ) ' . $text . ' (' . $total . ')' . (($totalResponses) ? ' ' . intval($total / $totalResponses * 100) . '%' : '') . EOL;
 					}
+					
 				}
 			}
 		}
@@ -3660,5 +3667,23 @@ function svg2bb($s) {
 		return $output;
 	}
 	return EMPTY_STR;
+}
+
+// Takes something that looks like a phone number and returns a string suitable for tel: protocol or false.
+
+function is_phone_number($s) {
+	$ext = substr($s,strpos($s,'x')+1);
+	if (! $ext) {
+		$ext = substr($s,strpos($s,'X')+1);		
+	}
+	if ($ext && ctype_digit($ext)) {
+		$rext = ';ext=' . $ext;
+		$s = str_replace(['x' . $ext, 'X' . $ext],['',''],$s);
+	}
+	else {
+		$ext = EMPTY_STR;
+	}		
+	$s = str_replace(['(',')',' ','-','+'],['','','','',''],$s);	
+	return ((ctype_digit($s)) ? $s . $rext : false);
 }
 

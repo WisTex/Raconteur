@@ -51,7 +51,7 @@ function z_mime_content_type($filename) {
 	'php'  => 'text/plain',
 	'rb'   => 'text/plain',
 	'pdl'  => 'text/plain',
-
+	'ics'  => 'text/calendar',
 
 	// images
 
@@ -1559,7 +1559,7 @@ function attach_drop_photo($channel_id,$resource) {
 		foreach ($r as $rv) {
 			$p = dbunescbin($rv['content']);
 			if ($p && file_exists($p)) {
-				unlink($p);
+				@unlink($p);
 			}
 		}
 	}
