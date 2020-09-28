@@ -296,7 +296,10 @@ class Activity {
 		if ($items) {
 			$x = [];
 			foreach ($items as $i) {
-				if ($i['xchan_url']) {
+				if ($i['xchan_network'] === 'activitypub') {
+					$x[] = $i['xchan_hash'];
+				}
+				else {
 					$x[] = $i['xchan_url'];
 				}
 			}
