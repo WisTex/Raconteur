@@ -2398,11 +2398,12 @@ class Libzot {
 		$post_id = 0;
 
 		$r = q("select * from item where ( author_xchan = '%s' or owner_xchan = '%s' or source_xchan = '%s' )
-			and mid = '%s' and uid = %d limit 1",
+			and mid in ('%s','%s')  and uid = %d limit 1",
 			dbesc($sender),
 			dbesc($sender),
 			dbesc($sender),
 			dbesc($item['mid']),
+			dbesc(str_replace('/activity/','/item/',$item['mid'])),
 			intval($uid)
 		);
 
