@@ -296,7 +296,10 @@ class Activity {
 		if ($items) {
 			$x = [];
 			foreach ($items as $i) {
-				if ($i['xchan_url']) {
+				if ($i['xchan_network'] === 'activitypub') {
+					$x[] = $i['xchan_hash'];
+				}
+				else {
 					$x[] = $i['xchan_url'];
 				}
 			}
@@ -564,24 +567,7 @@ class Activity {
 			else
 				return []; 
 
-			if ($i['obj']) {
-				if (! is_array($i['obj'])) {
-					$i['obj'] = json_decode($i['obj'],true);
-				}
-				$obj = self::encode_object($i['obj']);
-				if ($obj)
-					$ret['object'] = $obj;
-				else
-					return [];
-			}
-			else {
-				$obj = self::encode_item($i,$activitypub);
-				if ($obj)
-					$ret['object'] = $obj;
-				else
-					return [];
-			}
-
+			$ret['object'] = str_replace('/item/','/activity/',$i['mid']);
 			$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
 			return $ret;
 
