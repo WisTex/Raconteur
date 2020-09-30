@@ -295,14 +295,12 @@ class Like extends Controller {
 			$item_normal = " and item.item_deleted = 0 and item.item_unpublished = 0 and item.item_delayed = 0
 				and item.item_pending_remove = 0 and item.item_blocked = 0 and item.obj_type != '" . ACTIVITY_OBJ_FILE . "' ";
 
-
 			$r = q("SELECT id, parent, uid, verb FROM item WHERE verb in ( $verbs ) $item_normal
 				AND author_xchan = '%s' AND thr_parent = '%s' and uid = %d ",
 				dbesc($observer['xchan_hash']),
 				dbesc($item['mid']),
 				intval($owner_uid)
 			);
-	
 			if($r) {
 				// already liked it. Drop that item.
 				foreach($r as $rr) {
