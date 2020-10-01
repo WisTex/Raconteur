@@ -559,7 +559,12 @@ class Activity {
 		$reply = false;
 
 		if (intval($i['item_deleted'])) {
-			$ret['type'] = 'Delete';
+			if (in_array($ret['type'], [ 'Like', 'Dislike', 'Accept', 'Reject', 'TentativeAccept', 'TentativeReject' ])) {
+				$ret['type'] = 'Undo';
+			}
+			else {
+				$ret['type'] = 'Delete';
+			}
 			$ret['id'] = str_replace('/item/','/activity/',$i['mid']) . '#delete';
 			$actor = self::encode_person($i['author'],false);
 			if ($actor)
@@ -2256,15 +2261,11 @@ class Activity {
 
 		// handle some of the more widely used of the numerous and varied ways of deleting something
 		
-		if ($act->type === 'Tombstone') {
+		if (in_array($act->type, [ 'Delete', 'Undo', 'Tombstone' ])) {
 			$s['item_deleted'] = 1;
 		}
 		
 		if ($act->type === 'Create' && $act->obj['type'] === 'Tombstone') {
-			$s['item_deleted'] = 1;
-		}
-		
-		if ($act->type === 'Delete') {
 			$s['item_deleted'] = 1;
 		}
 
