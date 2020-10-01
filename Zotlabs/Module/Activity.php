@@ -224,7 +224,7 @@ class Activity extends Controller {
 				$sql_extra = item_permissions_sql(0);
 			}
 
-			$r = q("select * from item where uuid = '%s' $item_normal $sql_extra and item_deleted = 0 limit 1",
+			$r = q("select * from item where uuid = '%s' $item_normal $sql_extra limit 1",
 				dbesc($item_id)
 			);
 

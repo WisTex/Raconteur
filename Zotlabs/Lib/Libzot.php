@@ -2397,16 +2397,19 @@ class Libzot {
 		$item_found = false;
 		$post_id = 0;
 
+		$m = parse_url($item['mid']);
+		unset($m['fragment']);
+		$normalised = unparse_url($m);
+
 		$r = q("select * from item where ( author_xchan = '%s' or owner_xchan = '%s' or source_xchan = '%s' )
 			and mid in ('%s','%s')  and uid = %d limit 1",
 			dbesc($sender),
 			dbesc($sender),
 			dbesc($sender),
-			dbesc($item['mid']),
-			dbesc(str_replace('/activity/','/item/',$item['mid'])),
+			dbesc($normalised),
+			dbesc(str_replace('/activity/','/item/',$normalised)),
 			intval($uid)
 		);
-
 		if ($r) {
 			$stored = $r[0];
 			if ($stored['author_xchan'] === $sender || $stored['owner_xchan'] === $sender || $stored['source_xchan'] === $sender) {
