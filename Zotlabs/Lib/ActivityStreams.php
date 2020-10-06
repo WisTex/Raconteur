@@ -316,8 +316,19 @@ class ActivityStreams {
 		if (! $s) {
 			return false;
 		}
-		return(in_array($s,[ 'Application','Group','Organization','Person','Service' ]));
+		return (in_array($s,[ 'Application','Group','Organization','Person','Service' ]));
 	}
+
+	static function is_response_activity($s) {
+		if (! $s) {
+			return false;
+		}
+		return (in_array($s, [ 'Like', 'Dislike', 'Flag', 'Block', 'Announce', 'Accept', 'Reject', 'TentativeAccept', 'TentativeReject', 'emojiReaction', 'EmojiReaction', 'EmojiReact' ]));
+	}
+
+
+
+
 
 	/**
 	 * @brief

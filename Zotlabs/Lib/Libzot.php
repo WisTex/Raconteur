@@ -2408,7 +2408,7 @@ class Libzot {
 		}
 
 		// we may have stored either the object id or the activity id if it was a response activity (like, dislike, etc.)
-		
+
 		$r = q("select * from item where ( author_xchan = '%s' or owner_xchan = '%s' or source_xchan = '%s' )
 			and mid in ('%s','%s')  and uid = %d limit 1",
 			dbesc($sender),
@@ -2418,6 +2418,7 @@ class Libzot {
 			dbesc(str_replace('/activity/','/item/',$mid)),
 			intval($uid)
 		);
+
 		if ($r) {
 			$stored = $r[0];
 			// we proved ownership in the sql query
