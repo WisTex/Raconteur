@@ -696,7 +696,6 @@ function startup() {
 		// Disable transparent Session ID support
 		@ini_set('session.use_trans_sid',    0);
 	}
-	@ini_set('pcre.jit',0);
 }
 
 
