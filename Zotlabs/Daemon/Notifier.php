@@ -265,6 +265,12 @@ class Notifier {
 			$r = fetch_post_tags($r);
 		
 			$target_item = array_shift($r);
+
+			if($target_item['author']['xchan_network'] === 'anon') {
+				logger('notifier: target item author is not a fetchable actor', LOGGER_DEBUG);
+				return;
+			}
+
 			$deleted_item = false;
 
 			if (intval($target_item['item_deleted'])) {
