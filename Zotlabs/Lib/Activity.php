@@ -552,22 +552,46 @@ class Activity {
 	}
 
 
+	// the $recurse flag encodes the original non-deleted object of a deleted activity
 
-	static function encode_activity($i,$activitypub = false) {
+	static function encode_activity($i,$activitypub = false,$recurse = false) {
 
 		$ret   = [];
 		$reply = false;
 
-		if (intval($i['item_deleted'])) {
-			$ret['type'] = 'Delete';
-			$ret['id'] = str_replace('/item/','/activity/',$i['mid']) . '#delete';
+		if (intval($i['item_deleted']) && (! $recurse)) {
+
+			$is_response = ActivityStreams::is_response_activity($i['verb']);
+
+			if ($is_response) {
+				$ret['type'] = 'Undo';
+				$fragment = '#undo';
+			}
+			else {
+				$ret['type'] = 'Delete';
+				$fragment = '#delete';
+			}
+			
+			$ret['id'] = str_replace('/item/','/activity/',$i['mid']) . $fragment;
 			$actor = self::encode_person($i['author'],false);
 			if ($actor)
 				$ret['actor'] = $actor;
 			else
 				return []; 
 
-			$ret['object'] = str_replace('/item/','/activity/',$i['mid']);
+			$obj = (($is_response) ? self::encode_activity($i,$activitypub,true) : self::encode_item($i,$activitypub));
+			if ($obj) {
+				if (array_path_exists('object/id',$obj)) {
+					$obj['object'] = $obj['object']['id'];
+				}
+				if ($obj) {
+					$ret['object'] = $obj;
+				}
+            }
+            else {
+                return [];
+			}
+			
 			$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
 			return $ret;
 
@@ -2146,8 +2170,7 @@ class Activity {
 			$s['mid'] = $s['parent_mid'] = $act->id;
 		}
 
-		if (in_array($act->type, [ 'Like', 'Dislike', 'Flag', 'Block', 'Announce', 'Accept', 'Reject',
-			'TentativeAccept', 'TentativeReject', 'emojiReaction', 'EmojiReaction', 'EmojiReact' ])) {
+		if (ActivityStreams::is_response_activity($act->type)) {
 
 			$response_activity = true;
 
@@ -2256,15 +2279,11 @@ class Activity {
 
 		// handle some of the more widely used of the numerous and varied ways of deleting something
 		
-		if ($act->type === 'Tombstone') {
+		if (in_array($act->type, [ 'Delete', 'Undo', 'Tombstone' ])) {
 			$s['item_deleted'] = 1;
 		}
 		
 		if ($act->type === 'Create' && $act->obj['type'] === 'Tombstone') {
-			$s['item_deleted'] = 1;
-		}
-		
-		if ($act->type === 'Delete') {
 			$s['item_deleted'] = 1;
 		}
 

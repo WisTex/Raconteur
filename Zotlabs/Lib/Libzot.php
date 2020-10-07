@@ -1672,23 +1672,24 @@ class Libzot {
 
 			$DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
 
-			if ($act->type === 'Tombstone') {
-				$r = q("select * from item where mid = '%s' and uid = %d",
-					dbesc($act->id),
-					intval($channel['channel_id'])
-				);
-				if ($r) {
-					if (($r[0]['author_xchan'] === $sender) || ($r[0]['owner_xchan'] === $sender)) {
-						drop_item($r[0]['id'],false);
-					}
-					$DR->update('item deleted');
-					$result[] = $DR->get();
-					continue;
-				}
-				$DR->update('deleted item not found');
-				$result[] = $DR->get();
-				continue;	
-			}
+//			if ($act->type === 'Tombstone') {
+//				$r = q("select * from item where mid in ( '%s', '%s' ) and uid = %d",
+//					dbesc($act->id),
+//					dbesc(str_replace('/activity/','/item/',$act->id))
+//					intval($channel['channel_id'])
+//				);
+//				if ($r) {
+//					if (($r[0]['author_xchan'] === $sender) || ($r[0]['owner_xchan'] === $sender)) {
+//						drop_item($r[0]['id'],false);
+//					}
+//					$DR->update('item deleted');
+//					$result[] = $DR->get();
+//					continue;
+//				}
+//				$DR->update('deleted item not found');
+//				$result[] = $DR->get();
+//				continue;	
+//			}
 
 			if (($act) && ($act->obj) && (! is_array($act->obj))) {
 
@@ -1987,7 +1988,7 @@ class Libzot {
 				$arr['aid'] = $channel['channel_account_id'];
 				$arr['uid'] = $channel['channel_id'];
 	
-				$item_id = self::delete_imported_item($sender,$arr,$channel['channel_id'],$relay);
+				$item_id = self::delete_imported_item($sender,$act,$arr,$channel['channel_id'],$relay);
 				$DR->update(($item_id) ? 'deleted' : 'delete_failed');
 				$result[] = $DR->get();
 
@@ -2389,7 +2390,7 @@ class Libzot {
 	 * @return boolean|int post_id
 	 */
 
-	static function delete_imported_item($sender, $item, $uid, $relay) {
+	static function delete_imported_item($sender, $act, $item, $uid, $relay) {
 
 		logger('invoked', LOGGER_DEBUG);
 
@@ -2397,38 +2398,39 @@ class Libzot {
 		$item_found = false;
 		$post_id = 0;
 
+		if ($item['verb'] === 'Tombstone') {
+			// The id of the deleted thing is the item mid (activity id)
+			$mid = $item['mid'];
+		}
+		else {
+			// The id is the object id if the type is Undo or Delete
+			$mid = ((is_array($act->obj)) ? $act->obj['id'] : $act->obj);
+		}
+
+		// we may have stored either the object id or the activity id if it was a response activity (like, dislike, etc.)
+
 		$r = q("select * from item where ( author_xchan = '%s' or owner_xchan = '%s' or source_xchan = '%s' )
-			and mid = '%s' and uid = %d limit 1",
+			and mid in ('%s','%s')  and uid = %d limit 1",
 			dbesc($sender),
 			dbesc($sender),
 			dbesc($sender),
-			dbesc($item['mid']),
+			dbesc($mid),
+			dbesc(str_replace('/activity/','/item/',$mid)),
 			intval($uid)
 		);
 
 		if ($r) {
 			$stored = $r[0];
-			if ($stored['author_xchan'] === $sender || $stored['owner_xchan'] === $sender || $stored['source_xchan'] === $sender) {
-				$ownership_valid = true;
-			}
+			// we proved ownership in the sql query
+			$ownership_valid = true;
 
 			$post_id = $stored['id'];
 			$item_found = true;
 		}
 		else {
+			// this will fail with an ownership issue, so explain the real reason
+			logger('delete received for non-existent item or not owned by sender - ignoring.');
 
-			// perhaps the item is still in transit and the delete notification got here before the actual item did. Store it with the deleted flag set.
-			// item_store() won't try to deliver any notifications or start delivery chains if this flag is set.
-			// This means we won't end up with potentially even more delivery threads trying to push this delete notification.
-			// But this will ensure that if the (undeleted) original post comes in at a later date, we'll reject it because it will have an older timestamp.
-
-			logger('delete received for non-existent item - storing item data.');
-
-			if ($item['author_xchan'] === $sender || $item['owner_xchan'] === $sender || $item['source_xchan'] === $sender) {
-				$ownership_valid = true;
-				$item_result = item_store($item);
-				$post_id = $item_result['item_id'];
-			}
 		}
 
 		if ($ownership_valid === false) {

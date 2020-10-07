@@ -543,15 +543,12 @@ class Channel {
 
 		if (get_config('system','activitypub',true)) {
 			$apconfig = true;
-			$activitypub = replace_macros(get_markup_template('field_checkbox.tpl'), [ '$field' => [ 'activitypub', t('Enable ActivityPub protocol'), ((get_pconfig(local_channel(),'system','activitypub',true)) ? 1 : 0), t(''), $yes_no ]]);
+			$activitypub = replace_macros(get_markup_template('field_checkbox.tpl'), [ '$field' => [ 'activitypub', t('Enable ActivityPub protocol'), ((get_pconfig(local_channel(),'system','activitypub',true)) ? 1 : 0), t('ActivityPub is an emerging internet standard for social communications'), $yes_no ]]);
 		}
 		else {
 			$apconfig = false;
 			$activitypub = '<input type="hidden" name="activitypub" value="1" >' . EOL;
 		}
-
-		$apheader = t('ActivityPub');
-		$apdoc = t('ActivityPub is an emerging internet standard for social communications. ') . t('It provides access to a large and growing number of existing users and supported software applications, however it is still evolving. If this is enabled you will obtain much greater social reach, however it is likely you will also encounter compatibility issues. ');
 
 		$permissions_set = (($permissions_role != 'custom') ? true : false);
 
@@ -640,8 +637,6 @@ class Channel {
 			'$hyperdrive' => $hyperdrive,
 			'$activitypub' => $activitypub,
 			'$apconfig' => $apconfig,
-			'$apheader' => $apheader,
-			'$apdoc' => $apdoc,
 			'$close' => t('Close'),
 			'$h_not' 	=> t('Notifications'),
 			'$activity_options' => t('By default post a status message when:'),

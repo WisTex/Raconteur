@@ -104,32 +104,6 @@
 					</div>
 				</div>
 			</div>
-			{{if $apconfig}}
-			<div class="panel">
-				<div class="section-subtitle-wrapper" role="tab" id="apub-settings">
-					<h3>
-						<a data-toggle="collapse" data-target="#apub-settings-collapse" href="#">
-							{{$apheader}}
-						</a>
-					</h3>
-				</div>
-				<div id="apub-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="apub-settings" data-parent="#settings">
-					<div class="section-content-tools-wrapper">
-						<div class="section-content-info-wrapper">
-						{{$apdoc}}
-						</div>
-						{{$activitypub}}
-						{{include file="field_select.tpl" field=$tag_username}}
-
-						<div class="settings-submit-wrapper" >
-							<button type="submit" name="submit" class="btn btn-primary">{{$submit}}</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			{{else}}
-			{{$activitypub}}
-			{{/if}}
 			
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="notification-settings">
@@ -234,9 +208,9 @@
 				</div>
 				<div id="miscellaneous-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="miscellaneous-settings" data-parent="#settings" >
 					<div class="section-content-tools-wrapper">
-						<div class="section-content-info-wrapper">
-						{{$miscdoc}}
-						</div>
+
+						{{$activitypub}}
+						{{include file="field_select.tpl" field=$tag_username}}
 
 						{{if $profselect}}
 						<label for="contact-profile-selector">{{$profseltxt}}</label>
