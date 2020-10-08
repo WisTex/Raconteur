@@ -608,6 +608,10 @@ define ( 'DBTYPE_POSTGRES', 1 );
 
 function sys_boot() {
 
+	// this file may not exist
+	
+	@include('.htstartup.php');
+
 	// our central App object
 
 	App::init();
