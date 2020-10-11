@@ -4,7 +4,8 @@
 
 
 	var bParam_uid = {{$uid}};
-	var bParam_gid = {{$gid}};
+	// lists can be either type string (virtual lists) or integer (normal accesslists)
+	var bParam_gid = "{{$gid}}";
 	var bParam_cid = {{$cid}};
 	var bParam_cmin = {{$cmin}};
 	var bParam_cmax = {{$cmax}};

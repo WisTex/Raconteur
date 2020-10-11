@@ -67,7 +67,7 @@ class Stream extends Controller {
 		$datequery  = ((x($_GET,'dend') && is_a_date_arg($_GET['dend'])) ? notags($_GET['dend']) : '');
 		$datequery2 = ((x($_GET,'dbegin') && is_a_date_arg($_GET['dbegin'])) ? notags($_GET['dbegin']) : '');
 		$static     = ((x($_GET,'static')) ? intval($_GET['static']) : 0); 
-		$gid        = ((x($_GET,'gid')) ? $_REQUEST($_GET['gid']) : 0);
+		$gid        = ((x($_GET,'gid')) ? $_REQUEST['gid'] : 0);
 		$category   = ((x($_REQUEST,'cat')) ? $_REQUEST['cat'] : '');
 		$hashtags   = ((x($_REQUEST,'tag')) ? $_REQUEST['tag'] : '');
 		$verb       = ((x($_REQUEST,'verb')) ? $_REQUEST['verb'] : '');
