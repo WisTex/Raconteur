@@ -139,6 +139,12 @@ class Inbox extends Controller {
 			dbesc(datetime_convert()),
 			dbesc($observer_hash)
 		);
+		$m = parse_url($observer_hash);
+		if ($m['scheme'] && $m['host']) {
+			$test = q("update site set site_dead = 0 where site_dead = 1 and site_url = '%s' ",
+				dbesc($m['scheme'] . '://' . $m['host'])
+			);
+		}
 
 		if ($is_public) {
 
