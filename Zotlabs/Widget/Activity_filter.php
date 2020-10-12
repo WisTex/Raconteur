@@ -101,7 +101,7 @@ class Activity_filter {
 					];
 				}
 			}
-			if (Apps::system_app_installed($channel['channel_id'],'Virtual Lists')) {
+			if (Apps::system_app_installed(local_channel(),'Virtual Lists')) {
 				foreach ([ ':1', ':2', ':3' ] as $l) {
 					switch ($l) {
 						case ':1':
