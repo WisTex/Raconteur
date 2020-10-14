@@ -67,7 +67,7 @@ class Stream extends Controller {
 		$datequery  = ((x($_GET,'dend') && is_a_date_arg($_GET['dend'])) ? notags($_GET['dend']) : '');
 		$datequery2 = ((x($_GET,'dbegin') && is_a_date_arg($_GET['dbegin'])) ? notags($_GET['dbegin']) : '');
 		$static     = ((x($_GET,'static')) ? intval($_GET['static']) : 0); 
-		$gid        = ((x($_GET,'gid')) ? intval($_GET['gid']) : 0);
+		$gid        = ((x($_GET,'gid')) ? $_REQUEST['gid'] : 0);
 		$category   = ((x($_REQUEST,'cat')) ? $_REQUEST['cat'] : '');
 		$hashtags   = ((x($_REQUEST,'tag')) ? $_REQUEST['tag'] : '');
 		$verb       = ((x($_REQUEST,'verb')) ? $_REQUEST['verb'] : '');
@@ -110,18 +110,41 @@ class Stream extends Controller {
 		}
 	
 		// filter by collection (e.g. group)
-	
+
+		$vg = false;
+		
 		if ($gid) {
-			$r = q("SELECT * FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
-				intval($gid),
-				intval(local_channel())
-			);
-			if (! $r) {
-				if ($update) {
-					killme();
+			if (strpos($gid,':') === 0) {
+				$g = substr($gid,1);
+				switch ($g) {
+					case '1':
+						$r = [ 'hash' => 'connections:' . $channel['channel_hash'] ];
+						$vg = t('Connections');
+						break;
+					case '2':
+						$r = [ 'hash' => 'zot:' . $channel['channel_hash'] ];
+						$vg = t('Zot');
+						break;
+					case '3':
+						$r = [ 'hash' => 'activitypub:' . $channel['channel_hash'] ];
+						$vg = t('ActivityPub');
+						break;
+					default:
+						break;
 				}
-				notice( t('Access list not found') . EOL );
-				goaway(z_root() . '/stream');
+			}
+			else {
+				$r = q("SELECT * FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
+					intval($gid),
+					intval(local_channel())
+				);
+				if (! $r) {
+					if ($update) {
+						killme();
+					}
+					notice( t('Access list not found') . EOL );
+					goaway(z_root() . '/stream');
+				}
 			}
 	
 			$group      = $gid;
@@ -257,12 +280,15 @@ class Stream extends Controller {
 			$item_thread_top = '';
 
 			$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND (( author_xchan IN ( $contact_str ) OR owner_xchan in ( $contact_str )) or allow_gid like '" . protect_sprintf('%<' . dbesc($group_hash) . '>%') . "' ) and id = parent $item_normal ) ";
+
+			
+			if (! $vg) {
+				$x = AccessList::rec_byhash(local_channel(), $group_hash);
+			}
 	
-			$x = AccessList::rec_byhash(local_channel(), $group_hash);
-	
-			if ($x) {
+			if ($x || $vg) {
 				$title = replace_macros(get_markup_template("section_title.tpl"),array(
-					'$title' => sprintf( t('Access list: %s'), $x['gname'])
+					'$title' => sprintf( t('Access list: %s'), (($vg) ? $vg : $x['gname']))
 				));
 			}
 	

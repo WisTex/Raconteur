@@ -221,6 +221,41 @@ class AccessList {
 			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval($records), intval($start));
 		}
 
+		// process virtual groups
+		if (strpos($gid,':') === 0) {
+			$vg = substr($gid,1);
+			switch ($vg) {
+				case '1':
+					$sql_extra = EMPTY_STR;
+					break;
+				case '2':
+					$sql_extra = " and xchan_network = 'zot6' ";
+					break;
+				case '3':
+					$sql_extra = " and xchan_network = 'activitypub' ";
+					break;
+				default:
+					break;
+			}
+			if ($total) {
+				$r = q("SELECT count(*) FROM abook left join xchan on xchan_hash = abook_xchan WHERE abook_channel = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 $sql_extra ORDER BY xchan_name ASC $pager_sql",	
+					intval($uid)
+				);
+				return ($r) ? $r[0]['total'] : false;
+			}
+
+			$r = q("SELECT * FROM abook left join xchan on xchan_hash = abook_xchan
+				WHERE abook_channel = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 $sql_extra ORDER BY xchan_name ASC $pager_sql",
+				intval($uid)
+			);
+			if ($r) {
+				for($x = 0; $x < count($r); $x ++) {
+					$r[$x]['xchan'] = $r[$x]['abook_xchan'];
+				}
+			}				
+			return $r;
+		}
+		
 		if (intval($gid)) {
 			if ($total) {
 				$r = q("SELECT count(xchan) as total FROM pgrp_member 

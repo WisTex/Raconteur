@@ -556,8 +556,8 @@ class Notifier {
 				}
 			}
 			if (! $found_localhost) {
-				$localhub = q("select hubloc.*, site.site_crypto, site.site_flags from hubloc left join site on site_url = hubloc_url 
-					where hubloc_id_url = '%s' and hubloc_error = 0 and hubloc_deleted = 0 and ( site_dead = 0 OR site_dead is null ) ",
+				$localhub = q("select hubloc.*, site.site_crypto, site.site_flags, site.site_dead from hubloc 
+					left join site on site_url = hubloc_url where hubloc_id_url = '%s' and hubloc_error = 0 and hubloc_deleted = 0 ",
 					dbesc(z_root() . '/channel/sys')
 				);		
 				if ($localhub) {
@@ -583,8 +583,13 @@ class Notifier {
 		$keys    = []; // array of keys to check uniquness for zot hubs
 		$urls    = []; // array of urls to check uniqueness of hubs from other networks
 		$hub_env = []; // per-hub envelope so we don't broadcast the entire envelope to all
+		$dead    = []; // known dead hubs - report them as undeliverable
 
 		foreach ($hubs as $hub) {
+			if (intval($hub['site_dead'])) {
+				$dead[] = $hub;
+				continue;
+			}
 
 			if (self::$env_recips) {
 				foreach (self::$env_recips as $er) {
@@ -720,9 +725,31 @@ class Notifier {
 			do_delivery(self::$deliveries);
 		}
 
+		if ($dead) {
+			foreach ($dead as $deceased) {
+				if (is_array($target_item) && (! $target_item['item_deleted']) && (! get_config('system','disable_dreport'))) {
+					q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan, dreport_queue ) 
+						values ( '%s', '%s','%s','%s','%s','%s','%s','%s' ) ",
+						dbesc($target_item['mid']),
+						dbesc($deceased['hubloc_host']),
+						dbesc($deceased['hubloc_host']),
+						dbesc($deceased['hubloc_host']),
+						dbesc('undeliverable/unresponsive site'),
+						dbesc(datetime_convert()),
+						dbesc(self::$channel['channel_hash']),
+						dbesc(new_uuid())
+					);
+				}
+			}
+		}
+
 		call_hooks('notifier_end',$target_item);
 
 		logger('notifer: complete.');
+
+		
+
+
 		return;
 
 	}
