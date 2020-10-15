@@ -1139,7 +1139,6 @@ function bbcode($Text, $options = []) {
 		btlogger('Text is array: ' . print_r($Text,true));
 	}
 
-	$preserve_nl = ((array_key_exists('preserve_nl',$options)) ? $options['preserve_nl'] : false);
 	$cache       = ((array_key_exists('cache',$options)) ? $options['cache'] : false);
 	$newwin      = ((array_key_exists('newwin',$options)) ? $options['newwin'] : true);
 	$export      = ((array_key_exists('export',$options)) ? $options['export'] : false);
@@ -1250,17 +1249,32 @@ function bbcode($Text, $options = []) {
 	// Convert new line chars to html <br> tags
 
 	$Text = str_replace("\r\n", "\n", $Text);
-
-//	$Text = MarkdownExtra::DefaultTransform($Text);
-//	$Text = str_replace(">\n", '><br>', $Text);
-	
 	$Text = str_replace(array("\r", "\n"), array('<br>', '<br>'), $Text);
 
-	//	if ($preserve_nl)
-	//		$Text = str_replace(array("\n", "\r"), array('', ''), $Text);
+	// BEGIN markdown quirks
+	
+		$Text = str_replace('&lt;br&gt;','&_lt;br&_gt;', $Text);
+
+		$Text = MarkdownExtra::DefaultTransform($Text);
+
+		// linefeeds inside code blocks which were converted to <br> will have been converted to &lt;br&gt; by the default transform.
+		// convert them back to <br>. Those which were integral to the original code block before substitution have been escaped further
+		// and will be recovered after we perform this step. 
+
+		do {
+			$replaced = $Text;
+			$Text = preg_replace('/\<code\>(.*?)\&lt\;br\&gt\;(.*?)\<\/code\>/ism','<code>$1<br>$2</code>',$Text);
+		} while ($replaced != $Text);
+
+		// bbcode code blocks are wrapped in <pre>. Do the same for markdown code blocks so that the styling is consistent
+		
+		$Text = str_replace([ '<code>', '</code>' ], [ '<pre><code>', '</code></pre>' ] , $Text);
+
+		$Text = str_replace('&amp;_lt;br&amp;_gt;','&lt;br&gt;', $Text);
+
+	// END markdown quirks
 
 	$Text = str_replace(array("\t", "  "), array("&nbsp;&nbsp;&nbsp;&nbsp;", "&nbsp;&nbsp;"), $Text);
-
 
 	// Check for [code] text
 	if (strpos($Text,'[code]') !== false) {
