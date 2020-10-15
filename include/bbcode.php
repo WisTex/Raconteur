@@ -3,6 +3,7 @@
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\SvgSanitizer;
+use Michelf\MarkdownExtra;
 
 /**
  * @file include/bbcode.php
@@ -1248,17 +1249,15 @@ function bbcode($Text, $options = []) {
 
 	// Convert new line chars to html <br> tags
 
-	// nlbr seems to be hopelessly messed up
-	//	$Text = nl2br($Text);
-
-	// We'll emulate it.
-
 	$Text = str_replace("\r\n", "\n", $Text);
-	$Text = str_replace(array("\r", "\n"), array('<br>', '<br>'), $Text);
 
-	if ($preserve_nl)
-		$Text = str_replace(array("\n", "\r"), array('', ''), $Text);
+	$Text = MarkdownExtra::DefaultTransform($Text);
+	$Text = str_replace(">\n", '><br>', $Text);
+	
+	//$Text = str_replace(array("\r", "\n"), array('<br>', '<br>'), $Text);
 
+	//	if ($preserve_nl)
+	//		$Text = str_replace(array("\n", "\r"), array('', ''), $Text);
 
 	$Text = str_replace(array("\t", "  "), array("&nbsp;&nbsp;&nbsp;&nbsp;", "&nbsp;&nbsp;"), $Text);
 
