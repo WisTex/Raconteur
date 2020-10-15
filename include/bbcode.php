@@ -1250,30 +1250,6 @@ function bbcode($Text, $options = []) {
 
 	$Text = str_replace("\r\n", "\n", $Text);
 	$Text = str_replace(array("\r", "\n"), array('<br>', '<br>'), $Text);
-
-	// BEGIN markdown quirks
-	
-		$Text = str_replace('&lt;br&gt;','&_lt;br&_gt;', $Text);
-
-		$Text = MarkdownExtra::DefaultTransform($Text);
-
-		// linefeeds inside code blocks which were converted to <br> will have been converted to &lt;br&gt; by the default transform.
-		// convert them back to <br>. Those which were integral to the original code block before substitution have been escaped further
-		// and will be recovered after we perform this step. 
-
-		do {
-			$replaced = $Text;
-			$Text = preg_replace('/\<code\>(.*?)\&lt\;br\&gt\;(.*?)\<\/code\>/ism','<code>$1<br>$2</code>',$Text);
-		} while ($replaced != $Text);
-
-		// bbcode code blocks are wrapped in <pre>. Do the same for markdown code blocks so that the styling is consistent
-		
-		$Text = str_replace([ '<code>', '</code>' ], [ '<pre><code>', '</code></pre>' ] , $Text);
-
-		$Text = str_replace('&amp;_lt;br&amp;_gt;','&lt;br&gt;', $Text);
-
-	// END markdown quirks
-
 	$Text = str_replace(array("\t", "  "), array("&nbsp;&nbsp;&nbsp;&nbsp;", "&nbsp;&nbsp;"), $Text);
 
 	// Check for [code] text
