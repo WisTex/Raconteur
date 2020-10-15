@@ -1251,10 +1251,10 @@ function bbcode($Text, $options = []) {
 
 	$Text = str_replace("\r\n", "\n", $Text);
 
-	$Text = MarkdownExtra::DefaultTransform($Text);
-	$Text = str_replace(">\n", '><br>', $Text);
+//	$Text = MarkdownExtra::DefaultTransform($Text);
+//	$Text = str_replace(">\n", '><br>', $Text);
 	
-	//$Text = str_replace(array("\r", "\n"), array('<br>', '<br>'), $Text);
+	$Text = str_replace(array("\r", "\n"), array('<br>', '<br>'), $Text);
 
 	//	if ($preserve_nl)
 	//		$Text = str_replace(array("\n", "\r"), array('', ''), $Text);
