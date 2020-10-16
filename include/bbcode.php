@@ -1027,6 +1027,11 @@ function md_codeblock($content) {
 	return sprintf('<pre><code%s>%s</code></pre>', $class, $content);
 }
 
+function md_italic($content) {
+
+	return '<em>' . $content[2] . '</em>';
+}
+
 function md_image($content) {
 	$url = filter_var($content[1], FILTER_SANITIZE_URL);
 	$alt = '';
@@ -1294,7 +1299,9 @@ function bbcode($Text, $options = []) {
 
 	$Text = preg_replace('#(?<!\\\)([*_]{3})([^\n]+?)\1#','<strong><em>$2</em></strong>',$Text);
 	$Text = preg_replace('#(?<!\\\)([*_]{2})([^\n]+?)\1#','<strong>$2</strong>',$Text);
-	$Text = preg_replace('#(?<!\\\)([*_])([^\n|`]+?)\1#','<em>$2</em>',$Text);
+	// The character check is so we don't mistake underscore in the middle of a code variable as an italic trigger. 
+	$Text = preg_replace_callback('#[^[A-Za-z0-9](?<!\\\)([*_])([^\n|`]+?)\1#','md_italic',$Text);
+//	$Text = preg_replace('#(?<!\\\)([*_])([^\n|`]+?)\1#','<em>$2</em>',$Text);
 	$Text = preg_replace_callback('{ ^(.+?)[ ]*\n(=+|-+)[ ]*\n+ }mx','md_topheader', $Text);
 	$Text = preg_replace_callback('#^(\#{1,6})\s*([^\#]+?)\s*\#*$#m','md_header', $Text);
 	$Text = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#','md_codeblock',$Text);
