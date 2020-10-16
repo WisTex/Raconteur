@@ -1309,7 +1309,7 @@ function bbcode($Text, $options = []) {
 	// order lists
 	$Text = preg_replace('#^\d+[\.] +(.*?)$#m','<ol><li>$1</li></ol>',$Text);
 
-	$Text = preg_replace('/\s*<\/(ol|ul)>\n<\1>\s*/',"",$Text);
+	$Text = preg_replace('/\s*<\/(ol|ul)>\n+<\1>\s*/',"\n",$Text);
 
 	// Convert new line chars to html <br> tags
 
