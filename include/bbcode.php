@@ -1292,6 +1292,7 @@ function bbcode($Text, $options = []) {
 
 	// Perform some markdown conversions before translating linefeeds so as to keep the regexes manageable
 
+
 	$Text = preg_replace('#(?<!\\\)([*_]{3})([^\n]+?)\1#','<strong><em>$2</em></strong>',$Text);
 	$Text = preg_replace('#(?<!\\\)([*_]{2})([^\n]+?)\1#','<strong>$2</strong>',$Text);
 	$Text = preg_replace('#(?<!\\\)([*_])([^\n|`]+?)\1#','<em>$2</em>',$Text);
@@ -1301,6 +1302,11 @@ function bbcode($Text, $options = []) {
 	$Text = preg_replace('#^(?:\0(.*?)\0\n)?( {4}|\t)(.*?)$#m','<pre><code>$3</code></pre>',$Text);
 	$Text = preg_replace('#(?<!\\\)`([^\n]+?)`#','<pre><code>$1</code></pre>', $Text);
 	$Text = preg_replace('#<\/code><\/pre>\n<pre><code(>| .*?>)#','<br>',$Text);
+
+	// blockquotes
+	$Text = preg_replace('#^(&gt;)+ +(.*?)$#m','<blockquote>$2</blockquote>',$Text);
+	$Text = preg_replace('#</blockquote>\n<blockquote>#',"\n", $Text);
+
 	// links
 	$Text = preg_replace_callback('#!\[[^\]]*\]\((.*?)(?=\"|\))(\".*\")?\)(?!`)#','md_image',$Text);
 	$Text = preg_replace('#\[([^\[]+)\]\((?:javascript:)?([^\)]+)\)(?!`)#','<a href="$2">$1</a>',$Text);
