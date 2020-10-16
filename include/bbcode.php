@@ -1007,6 +1007,48 @@ function bb_code_options($match) {
 	}
 }
 
+function md_header($content) {
+
+	$headingLevel = \strlen($content[1]);
+	$header = trim($content[2]);
+	// Build anker without space, numbers.
+    $anker = preg_replace('#[^a-z?!]#', '', strtolower($header));
+    return sprintf('<h%d id="%s">%s</h%d>', $headingLevel, $anker, $header, $headingLevel);
+
+}
+
+function md_codeblock($content) {
+
+	$language = !empty($content[3]) ? filter_var($content[3], FILTER_SANITIZE_STRING) : '';
+	$class = !empty($language) ? sprintf(' class="%s language-%s"', $language, $language) : '';
+	// Build one block so that we not create each paragraph.
+	$content = str_replace("\n", '<br>', $content[4]);
+
+	return sprintf('<pre><code%s>%s</code></pre>', $class, $content);
+}
+
+function md_image($content) {
+	$url = filter_var($content[1], FILTER_SANITIZE_URL);
+	$alt = '';
+	if (isset($content[2])) {
+		$content[2] = str_replace('"', '', $content[2]);
+		$alt = ' alt="' . filter_var($content[2], FILTER_SANITIZE_STRING) . '"';
+	}
+
+	return sprintf('<img src="%s"%s>', $url, $alt);
+}
+
+function md_topheader($matches) {
+	// Terrible hack to check we haven't found an empty list item.
+	if ($matches[2] == '-' && preg_match('{^-(?: |$)}', $matches[1])) {
+		return $matches[0];
+	}
+
+	$level = $matches[2][0] == '=' ? 1 : 2;
+
+	return "<h$level>" . $matches[1] . "</h$level>" . "\n";
+
+}
 
 function bb_fixtable_lf($match) {
 
@@ -1246,9 +1288,31 @@ function bbcode($Text, $options = []) {
 
 	$Text = preg_replace_callback("/\[table\](.*?)\[\/table\]/ism",'bb_fixtable_lf',$Text);
 
+	$Text = str_replace("\r\n", "\n", $Text);
+
+	// Perform some markdown conversions before translating linefeeds so as to keep the regexes manageable
+
+	$Text = preg_replace('#(?<!\\\)([*_]{3})([^\n]+?)\1#','<strong><em>$2</em></strong>',$Text);
+	$Text = preg_replace('#(?<!\\\)([*_]{2})([^\n]+?)\1#','<strong>$2</strong>',$Text);
+	$Text = preg_replace('#(?<!\\\)([*_])([^\n|`]+?)\1#','<em>$2</em>',$Text);
+	$Text = preg_replace_callback('{ ^(.+?)[ ]*\n(=+|-+)[ ]*\n+ }mx','md_topheader', $Text);
+	$Text = preg_replace_callback('#^(\#{1,6})\s*([^\#]+?)\s*\#*$#m','md_header', $Text);
+	$Text = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#','md_codeblock',$Text);
+	$Text = preg_replace('#^(?:\0(.*?)\0\n)?( {4}|\t)(.*?)$#m','<pre><code>$3</code></pre>',$Text);
+	$Text = preg_replace('#(?<!\\\)`([^\n]+?)`#','<pre><code>$1</code></pre>', $Text);
+	$Text = preg_replace('#<\/code><\/pre>\n<pre><code(>| .*?>)#','<br>',$Text);
+	// links
+	$Text = preg_replace_callback('#!\[[^\]]*\]\((.*?)(?=\"|\))(\".*\")?\)(?!`)#','md_image',$Text);
+	$Text = preg_replace('#\[([^\[]+)\]\((?:javascript:)?([^\)]+)\)(?!`)#','<a href="$2">$1</a>',$Text);
+	// unordered lists
+	$Text = preg_replace('#^ *[*\-+] +(.*?)$#m','<ul><li>$1</li></ul>',$Text);
+	// order lists
+	$Text = preg_replace('#^\d+[\.] +(.*?)$#m','<ol><li>$1</li></ol>',$Text);
+
+	$Text = preg_replace('/\s*<\/(ol|ul)>\n<\1>\s*/',"",$Text);
+
 	// Convert new line chars to html <br> tags
 
-	$Text = str_replace("\r\n", "\n", $Text);
 	$Text = str_replace(array("\r", "\n"), array('<br>', '<br>'), $Text);
 	$Text = str_replace(array("\t", "  "), array("&nbsp;&nbsp;&nbsp;&nbsp;", "&nbsp;&nbsp;"), $Text);
 
