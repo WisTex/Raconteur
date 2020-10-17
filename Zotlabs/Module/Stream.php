@@ -73,8 +73,8 @@ class Stream extends Controller {
 		$verb       = ((x($_REQUEST,'verb')) ? $_REQUEST['verb'] : '');
 		$dm         = ((x($_REQUEST,'dm')) ? $_REQUEST['dm'] : 0);
 
-		$order = get_pconfig(local_channel(), 'mod_stream', 'order', 0);
-		switch ($order) {
+		$c_order = get_pconfig(local_channel(), 'mod_stream', 'order', 0);
+		switch ($c_order) {
 			case 0:
 				$order = 'comment';
 				break;
