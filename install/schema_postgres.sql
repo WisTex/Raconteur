@@ -25,7 +25,7 @@ CREATE TABLE "abook" (
   "abook_connected" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "abook_dob" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "abook_censor" bigint NOT NULL DEFAULT '0',
-  "abook_blocked" smallint NOT NULL DEFAULT '0',
+  "abook_flags" bigint NOT NULL DEFAULT '0',
   "abook_blocked" smallint NOT NULL DEFAULT '0',
   "abook_ignored" smallint NOT NULL DEFAULT '0',
   "abook_hidden" smallint NOT NULL DEFAULT '0',
