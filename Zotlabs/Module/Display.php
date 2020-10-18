@@ -335,6 +335,12 @@ class Display extends Controller {
 			$items = array();
 		}
 
+		// see if the top-level post owner chose to block search engines
+		
+		if ($items && get_pconfig($items[0]['uid'],'system','noindex')) {
+			App::$meta->set('robots', 'noindex, noarchive');
+		}
+
 		foreach ($items as $item) {
 			if ($item['mid'] === $item_hash) {
 

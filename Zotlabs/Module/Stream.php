@@ -73,8 +73,8 @@ class Stream extends Controller {
 		$verb       = ((x($_REQUEST,'verb')) ? $_REQUEST['verb'] : '');
 		$dm         = ((x($_REQUEST,'dm')) ? $_REQUEST['dm'] : 0);
 
-		$order = get_pconfig(local_channel(), 'mod_stream', 'order', 0);
-		switch ($order) {
+		$c_order = get_pconfig(local_channel(), 'mod_stream', 'order', 0);
+		switch ($c_order) {
 			case 0:
 				$order = 'comment';
 				break;
@@ -273,7 +273,7 @@ class Stream extends Controller {
 			}
 			else {
 				$contact_str = " '0' ";
-				if(! $update) {
+				if (! $update) {
 					info( t('Access list is empty'));
 				}
 			}
@@ -313,9 +313,9 @@ class Stream extends Controller {
 				}
 			}
 
-			$title = replace_macros(get_markup_template("section_title.tpl"),array(
+			$title = replace_macros(get_markup_template('section_title.tpl'), [
 				'$title' => '<a href="' . zid($cid_r[0]['xchan_url']) . '" ><img src="' . zid($cid_r[0]['xchan_photo_s'])  . '" alt="' . urlencode($cid_r[0]['xchan_name']) . '" /></a> <a href="' . zid($cid_r[0]['xchan_url']) . '" >' . $cid_r[0]['xchan_name'] . '</a>'
-			));
+			]);
 
 			$o = $title;
 			$o .= $status_editor;
@@ -327,9 +327,9 @@ class Stream extends Controller {
 			if ($r) {
 				$item_thread_top = '';
 				$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND uid = " . intval(local_channel()) . " AND ( author_xchan = '" . dbesc($xchan) . "' or owner_xchan = '" . dbesc($xchan) . "' ) $item_normal ) ";
-				$title = replace_macros(get_markup_template("section_title.tpl"),array(
+				$title = replace_macros(get_markup_template('section_title.tpl'), [
 					'$title' => '<a href="' . zid($r[0]['xchan_url']) . '" ><img src="' . zid($r[0]['xchan_photo_s'])  . '" alt="' . urlencode($r[0]['xchan_name']) . '" /></a> <a href="' . zid($r[0]['xchan_url']) . '" >' . $r[0]['xchan_name'] . '</a>'
-				));
+				]);
 
 				$o = $title;
 				$o .= $status_editor;
