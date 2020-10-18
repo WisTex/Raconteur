@@ -1304,7 +1304,7 @@ function bbcode($Text, $options = []) {
 	$Text = preg_replace_callback('#(^| )(?<!\\\)([*_])([^\n|`]+?)\2#m','md_italic',$Text);
 //	$Text = preg_replace('#(?<!\\\)([*_])([^\n|`]+?)\1#','<em>$2</em>',$Text);
 	$Text = preg_replace_callback('{ ^(.+?)[ ]*\n(=+|-+)[ ]*\n+ }mx','md_topheader', $Text);
-	$Text = preg_replace_callback('#^(\#{1,6})\s*([^\#]+?)\s*\#*$#m','md_header', $Text);
+	$Text = preg_replace_callback('#^(\#{1,6})\s+([^\#]+?)\s*\#*$#m','md_header', $Text);
 	$Text = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#','md_codeblock',$Text);
 	$Text = preg_replace('#^(?:\0(.*?)\0\n)?( {4}|\t)(.*?)$#m','<pre><code>$3</code></pre>',$Text);
 	$Text = preg_replace('#(?<!\\\)`([^\n]+?)`#','<pre><code>$1</code></pre>', $Text);
