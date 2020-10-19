@@ -1705,10 +1705,7 @@ function bbcode($Text, $options = []) {
 
 	// crypt
 	if (strpos($Text,'[/crypt]') !== false) {
-		if ($activitypub) {
-			$Text = preg_replace("/\[crypt (.*?)\](.*?)\[\/crypt\]/ism", '<br><div id="' . $x . '"><img src="' .z_root() . '/images/lock_icon.svg" alt="' . t('Encrypted content') . '" title="' . t('Encrypted content') . '" /><br></div>', $Text);
-		}
-		else {
+		if (! $activitypub) {
 			$Text = preg_replace_callback("/\[crypt (.*?)\](.*?)\[\/crypt\]/ism", 'bb_parse_crypt', $Text);
 		}
 	}
