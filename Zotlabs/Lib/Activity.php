@@ -1705,8 +1705,14 @@ class Activity {
 			if (is_array($person_obj['icon'])) {
 				if (array_key_exists('url',$person_obj['icon']))
 					$icon = $person_obj['icon']['url'];
-				else
-					$icon = $person_obj['icon'][0]['url'];
+				else {
+					if (is_string($person_obj['icon'][0])) {
+						$icon = $person_obj['icon'][0];
+					}
+					elseif (array_key_exists('url',$person_obj['icon'][0])) {
+						$icon = $person_obj['icon'][0]['url'];
+					}
+				}
 			}
 			else
 				$icon = $person_obj['icon'];

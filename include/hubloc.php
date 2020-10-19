@@ -247,6 +247,7 @@ function hubloc_change_primary($hubloc) {
  *
  * We use the post url to distinguish between http and https hublocs.
  * The https might be alive, and the http dead.
+ * Also set site_dead for the corresponding entry in the site table
  *
  * @param string $posturl Hubloc callback url which to disable
  */
@@ -254,6 +255,12 @@ function hubloc_mark_as_down($posturl) {
 	$r = q("update hubloc set hubloc_status = ( hubloc_status | %d ) where hubloc_callback = '%s'",
 		intval(HUBLOC_OFFLINE),
 		dbesc($posturl)
+	);
+	// extract the baseurl and set site.site_dead to match
+	$m = parse_url($posturl);
+	$h = $m['scheme'] . '://' . $m['host'];
+	$r = q("update site set site_dead = 1 where site_url = '%s'",
+		dbesc($h)
 	);
 }
 
