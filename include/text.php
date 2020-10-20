@@ -1781,7 +1781,7 @@ function format_poll($item,$s,$opts) {
 						$output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '"> ' . $text . '</input>' . ' (' . $total . ')' . EOL;
 					}
 					else {
-						$output .= '[ ] ' . $text . ' (' . $total . ')' . EOL;
+						$output .= $text . ' (' . $total . ')' . EOL;
 					}
 				}
 			}
@@ -1806,7 +1806,7 @@ function format_poll($item,$s,$opts) {
 						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '"> ' . $text . '</input>' . ' (' . $total . ')' . (($totalResponses) ? ' ' . intval($total / $totalResponses * 100) . '%' : '') . EOL;
 					}
 					else {
-						$output .= '( ) ' . $text . ' (' . $total . ')' . (($totalResponses) ? ' ' . intval($total / $totalResponses * 100) . '%' : '') . EOL;
+						$output .= $text . ' (' . $total . ')' . (($totalResponses) ? ' ' . intval($total / $totalResponses * 100) . '%' : '') . EOL;
 					}
 					
 				}
@@ -1816,7 +1816,7 @@ function format_poll($item,$s,$opts) {
 			$message = t('Poll has ended.');
 		}
 		elseif ($closing) {
-			$message = sprintf(t('Poll ends: %s'),$t);
+			$message = sprintf(t('Poll ends: %1$s (%2$s)'),relative_date($t),$t);
 		}
 		$output .= EOL . '<div>' . $message . '</div>';
 

@@ -1172,11 +1172,19 @@ class Item extends Controller {
 			$obj = $this->extract_bb_poll_data($body,[ 'item_private' => $private, 'allow_cid' => $str_contact_allow, 'allow_gid' => $str_contact_deny ]);
 		}
 
+		$comments_closed = NULL_DATE;
+
 		if ($obj) {
 			$obj['url'] = $mid;
 			$obj['attributedTo'] = channel_url($channel);
 			$datarray['obj'] = $obj;
 			$obj_type = 'Question';
+			if ($obj['endTime']) {
+				$d = datetime_convert('UTC','UTC', $obj['endTime']);
+				if ($d > NULL_DATE) {
+					$comments_closed = $d;	
+				}
+			}
 		}
 
 		if(! $parent_mid) {
@@ -1243,6 +1251,7 @@ class Item extends Controller {
 		$datarray['commented']           = (($orig_post) ? datetime_convert() : $created);
 		$datarray['received']            = (($orig_post) ? datetime_convert() : $created);
 		$datarray['changed']             = (($orig_post) ? datetime_convert() : $created);
+		$datarray['comments_closed']     = $comments_closed;
 		$datarray['mid']                 = $mid;
 		$datarray['parent_mid']          = $parent_mid;
 		$datarray['mimetype']            = $mimetype;
