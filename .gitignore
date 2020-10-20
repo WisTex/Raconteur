@@ -21,6 +21,7 @@ Thumbs.db
 
 ## Ignore site specific files and folders
 .htconfig.php
+.htstartup.php
 favicon.*
 addon/
 widget/
