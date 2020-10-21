@@ -49,7 +49,7 @@ class Convo {
 				if ($AS->is_valid() && is_array($AS->obj)) {
 					// set client flag because comments will probably just be objects and not full blown activities
 					// and that lets us use implied_create
-					$item = Activity::decode_note($AS,true,true);
+					$item = Activity::decode_note($AS,null,true);
 					Activity::store($channel,$contact['abook_xchan'],$AS,$item);
 				}
 			}
