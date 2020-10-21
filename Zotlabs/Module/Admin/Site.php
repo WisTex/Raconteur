@@ -56,6 +56,7 @@ class Site {
 		$disable_discover_tab =	((x($_POST,'disable_discover_tab'))		? False	:	True);
 		$site_firehose      =   ((x($_POST,'site_firehose')) ? True : False);
 		$open_pubstream     =   ((x($_POST,'open_pubstream')) ? True : False);
+		$animations         =   ((x($_POST,'animations')) ? True : False);
 		$login_on_homepage	=	((x($_POST,'login_on_homepage'))		? True	:	False);
 		$enable_context_help = ((x($_POST,'enable_context_help'))		? True	:	False);
 		$global_directory     = ((x($_POST,'directory_submit_url'))	? notags(trim($_POST['directory_submit_url']))	: '');
@@ -116,6 +117,8 @@ class Site {
 		set_config('system', 'pubstream_excl',$pub_excl);
 		set_config('system', 'block_public_directory', $block_public_dir);
 		set_config('system', 'max_imported_follow', $max_imported_follow);
+		set_config('system', 'animated_avatars', $animations);
+		
 
 		if ($directory_server) {
 			set_config('system','directory_server',$directory_server);
@@ -315,6 +318,7 @@ class Site {
 			'$site_firehose'	    => [ 'site_firehose', t('Site only Public stream'), get_config('system','site_firehose'), t('Provide access to public content originating only from this site if Public stream is disabled.') ],
 			'$open_pubstream'	    => [ 'open_pubstream', t('Allow anybody on the internet to access the Public stream'), get_config('system','open_pubstream',0), t('Default is to only allow viewing by site members. Warning: this content is unmoderated.') ],
 			'$show_like_counts'	    => [ 'show_like_counts', t('Show numbers of likes and dislikes in conversations'), get_config('system','show_like_counts',1), t('If disabled, the presence of likes and dislikes will be shown, but without totals.') ],
+			'$animations'           => [ 'animations', t('Permit animated profile photos'), get_config('system','animated_avatars',true), t('changing this may take several days to work through the system') ],
 			'$incl'                 => [ 'pub_incl',t('Only import Public stream posts with this text'), get_config('system','pubstream_incl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts') ],
 			'$excl'                 => [ 'pub_excl',t('Do not import Public stream posts with this text'), get_config('system','pubstream_excl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts') ],
 			'$max_imported_follow'  => [ 'max_imported_follow', t('Maximum number of imported friends of friends'), get_config('system','max_imported_follow',10), t('Warning: higher numbers will improve the quality of friend suggestions and directory results but can exponentially increase resource usage') ], 
