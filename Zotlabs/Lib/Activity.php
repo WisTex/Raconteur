@@ -2948,6 +2948,7 @@ class Activity {
 		}
 
 		if ($fetch_parents && $parent && ! intval($parent[0]['item_private'])) {
+			logger('topfetch', LOGGER_DEBUG);
 			// if the thread owner is a connnection, we will already receive any additional comments to their posts
 			// but if they are not we can try to fetch others in the background
 			$x = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash
@@ -2956,9 +2957,11 @@ class Activity {
 				dbesc($parent[0]['owner_xchan'])
 			);
 			if (! $x) {
-				$id = ((array_path_exists('object/replies/id',$parent[0])) ? $parent[0]['object']['replies']['id'] : false);
+				logger('topfetch: ' . print_r($parent[0],true), LOGGER_DEBUG);
+
+				$id = ((array_path_exists('obj/replies/id',$parent[0])) ? $parent[0]['obj']['replies']['id'] : false);
 				if (! $id) {
-					$id = ((array_path_exists('object/replies',$parent[0]) && is_string($parent[0]['object']['replies'])) ? $parent[0]['object']['replies'] : false);
+					$id = ((array_path_exists('obj/replies',$parent[0]) && is_string($parent[0]['obj']['replies'])) ? $parent[0]['obj']['replies'] : false);
 				}
 				if ($id) {
 					Run::Summon( [ 'Convo', $id, $channel['channel_id'], $observer_hash ] );
