@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/tagadelic
+requires: local_channel
+name: Tagadelic
+photo: icon:tags
+categories: Networking
