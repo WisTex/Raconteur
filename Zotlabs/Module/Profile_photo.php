@@ -119,21 +119,23 @@ class Profile_photo extends Controller {
 						'created'      => $base_image['created'],
 						'edited'       => $base_image['edited']
 					];
-	
+
+					$animated = get_config('system','animated_avatars',true);
+
 					$p['imgscale']    = PHOTO_RES_PROFILE_300;
 					$p['photo_usage'] = (($is_default_profile) ? PHOTO_PROFILE : PHOTO_NORMAL);
 	
-					$r1 = $im->storeThumbnail($p, PHOTO_RES_PROFILE_300);
+					$r1 = $im->storeThumbnail($p, PHOTO_RES_PROFILE_300, $animated);
 	
 					$im->scaleImage(80);
 					$p['imgscale'] = PHOTO_RES_PROFILE_80;
 	
-					$r2 = $im->storeThumbnail($p, PHOTO_RES_PROFILE_80);
+					$r2 = $im->storeThumbnail($p, PHOTO_RES_PROFILE_80, $animated);
 				
 					$im->scaleImage(48);
 					$p['imgscale'] = PHOTO_RES_PROFILE_48;
 	
-					$r3 = $im->storeThumbnail($p, PHOTO_RES_PROFILE_48);
+					$r3 = $im->storeThumbnail($p, PHOTO_RES_PROFILE_48, $animated);
 				
 					if ($r1 === false || $r2 === false || $r3 === false) {
 						// if one failed, delete them all so we can start over.

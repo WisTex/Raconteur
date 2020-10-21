@@ -201,14 +201,17 @@ class PhotoImagick extends PhotoDriver {
 		$this->doScaleImage($maxx, $maxy);
 	}
 
-	public function imageString() {
+	public function imageString($animated = true) {
 		if (! $this->is_valid()) {
 			return false;
 		}
 
 		/* Clean it */
 		$this->image = $this->image->deconstructImages();
-		return $this->image->getImagesBlob();
+		if ($animated) {
+			return $this->image->getImagesBlob();
+		}
+		return $this->image->getImageBlob();
 	}
 
 }

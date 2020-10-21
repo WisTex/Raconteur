@@ -157,7 +157,7 @@ class PhotoGd extends PhotoDriver {
 	 * {@inheritDoc}
 	 * @see \Zotlabs\Photo\PhotoDriver::imageString()
 	 */
-	public function imageString() {
+	public function imageString($animated = true) {
 		if (! $this->is_valid()) {
 			return false;
 		}

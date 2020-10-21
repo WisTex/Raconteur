@@ -103,7 +103,7 @@ abstract class PhotoDriver {
 	 *
 	 * @return string A Binary String.
 	 */
-	abstract public function imageString();
+	abstract public function imageString($animations = true);
 
 	abstract public function clearexif();
 
@@ -169,11 +169,11 @@ abstract class PhotoDriver {
 	 * @param string $path Path and filename where to save the image
 	 * @return boolean False on failure, otherwise true
 	 */
-	public function saveImage($path) {
+	public function saveImage($path, $animated = true) {
 		if (! $this->is_valid()) {
 			return false;
 		}
-		return (file_put_contents($path, $this->imageString()) ? true : false);
+		return (file_put_contents($path, $this->imageString($animated)) ? true : false);
 	}
 
 	/**
@@ -522,7 +522,7 @@ abstract class PhotoDriver {
 	 * @return boolean|array
 	 */
 
-	public function storeThumbnail($arr, $scale = 0) {
+	public function storeThumbnail($arr, $scale = 0, $animated = true) {
 	
 	    $arr['imgscale'] = $scale;
 	    
@@ -530,7 +530,7 @@ abstract class PhotoDriver {
 			$channel = channelx_by_n($arr['uid']);
 			$arr['os_storage'] = 1;
 			$arr['os_syspath'] = 'store/' . $channel['channel_address'] . '/' . $arr['os_path'] . '-' . $scale;
-			if (! $this->saveImage($arr['os_syspath'])) {
+			if (! $this->saveImage($arr['os_syspath'], $animated)) {
 				return false;
 			}
 		}

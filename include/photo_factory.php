@@ -346,6 +346,8 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 	$hash = basename($path);
 
 
+	$animated = get_config('system','animated_avatars',true);
+
 	$modified = ((file_exists($outfile)) ? @filemtime($outfile) : 0);
 
 	// Maybe it's already a cached xchan photo
@@ -415,7 +417,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 
 			$savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
 			$photo = z_root() . '/xp/' . $hash . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
-			$r = $img->saveImage($savepath);
+			$r = $img->saveImage($savepath,$animated);
 			if ($r === false) {
 				$failed = true;
 			}
@@ -423,7 +425,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 			$p['imgscale'] = 5;
 			$savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
 			$thumb = z_root() . '/xp/' . $hash . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
-			$r = $img->saveImage($savepath);
+			$r = $img->saveImage($savepath,$animated);
 			if ($r === false) {
 				$failed = true;
 			}
@@ -431,7 +433,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 			$p['imgscale'] = 6;
 			$savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
 			$micro = z_root() . '/xp/' . $hash . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);			
-			$r = $img->saveImage($savepath);
+			$r = $img->saveImage($savepath,$animated);
 			if ($r === false) {
 				$failed = true;
 			}
