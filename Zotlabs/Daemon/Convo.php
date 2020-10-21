@@ -10,6 +10,8 @@ class Convo {
 
 	static public function run($argc,$argv) {
 
+		logger('convo invoked: ' . print_r($argv,true));
+
 		if($argc != 4) {
 			killme();
 		}

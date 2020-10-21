@@ -2991,6 +2991,12 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		if($post_id) {
 			Run::Summon([ 'Notifier','tgroup',$post_id ]);
 		}
+
+		q("update channel set channel_lastpost = '%s' where channel_id = %d",
+			dbesc(datetime_convert()),
+			intval($channel['channel_id'])
+		);
+
 		return;
 	}
 
