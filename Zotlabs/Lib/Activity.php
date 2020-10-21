@@ -2893,7 +2893,7 @@ class Activity {
 		
 		if ($is_child_node) {
 
-			$parent = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
+			$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
 				dbesc($item['parent_mid']),
 				intval($item['uid'])
 			);
@@ -2907,7 +2907,7 @@ class Activity {
 						$fetch = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
 					}
 					if ($fetch) {
-						$parent = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
+						$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
 							dbesc($item['parent_mid']),
 							intval($item['uid'])
 						);
@@ -2957,8 +2957,11 @@ class Activity {
 				dbesc($parent[0]['owner_xchan'])
 			);
 			if (! $x) {
-				logger('topfetch: ' . print_r($parent[0],true), LOGGER_DEBUG);
-
+				// determine if the top-level post provides a replies collection
+				if ($parent[0]['obj']) {
+					$parent[0]['obj'] = json_decode($parent[0]['obj'],true);
+				}
+				logger('topfetch: ' . print_r($parent[0],true), LOGGER_ALL);
 				$id = ((array_path_exists('obj/replies/id',$parent[0])) ? $parent[0]['obj']['replies']['id'] : false);
 				if (! $id) {
 					$id = ((array_path_exists('obj/replies',$parent[0]) && is_string($parent[0]['obj']['replies'])) ? $parent[0]['obj']['replies'] : false);
