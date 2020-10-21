@@ -2961,7 +2961,7 @@ class Activity {
 					$id = ((array_path_exists('obj/replies',$parent[0]) && is_string($parent[0]['obj']['replies'])) ? $parent[0]['obj']['replies'] : false);
 				}
 				if ($id) {
-					Run::Summon( [ 'Convo',$id, $channel['channel_id'], $observer_hash ] );
+					Run::Summon( [ 'Convo', $id, $channel['channel_id'], $observer_hash ] );
 				}
 			}
 		}
