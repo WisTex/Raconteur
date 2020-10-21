@@ -2956,9 +2956,9 @@ class Activity {
 				dbesc($parent[0]['owner_xchan'])
 			);
 			if (! $x) {
-				$id = ((array_path_exists('obj/replies/id',$parent[0])) ? $parent[0]['obj']['replies']['id'] : false);
+				$id = ((array_path_exists('object/replies/id',$parent[0])) ? $parent[0]['object']['replies']['id'] : false);
 				if (! $id) {
-					$id = ((array_path_exists('obj/replies',$parent[0]) && is_string($parent[0]['obj']['replies'])) ? $parent[0]['obj']['replies'] : false);
+					$id = ((array_path_exists('object/replies',$parent[0]) && is_string($parent[0]['object']['replies'])) ? $parent[0]['object']['replies'] : false);
 				}
 				if ($id) {
 					Run::Summon( [ 'Convo', $id, $channel['channel_id'], $observer_hash ] );
