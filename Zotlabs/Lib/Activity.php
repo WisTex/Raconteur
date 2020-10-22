@@ -13,6 +13,7 @@ use Zotlabs\Lib\Config;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Markdown;
 use Zotlabs\Lib\Libzotdir;
+use Zotlabs\Lib\Nodeinfo;
 use Emoji;
 
 require_once('include/html2bbcode.php');
@@ -1864,6 +1865,40 @@ class Activity {
 					dbesc($username),
 					dbesc($url)
 				);
+			}
+		}
+
+		$m = parse_url($url);
+		if ($m['scheme'] && $m['host']) {
+			$site_url = $m['scheme'] . '://' . $m['host'];
+			$ni = Nodeinfo::fetch($site_url);
+			if ($ni && is_array($ni)) {
+				$software = ((array_path_exists('software/name',$ni)) ? $ni['software']['name'] : '');
+				$version = ((array_path_exists('software/version',$ni)) ? $ni['software']['version'] : '');
+
+				$r = q("select * from site where site_url = '%s'",
+					dbesc($site_url)
+				);
+				if ($r) {
+					q("update site set site_type = %d, site_project = '%s', site_version = '%s' where site_url = '%s'",
+						intval(SITE_TYPE_NOTZOT),
+						dbesc($software),
+						dbesc($version),
+						dbesc($site_url)
+					);
+				}
+				else {
+					site_store_lowlevel( 
+						[
+						'site_url'    => $site_url,
+						'site_update' => datetime_convert(),
+						'site_dead'   => 0,
+						'site_type'   => SITE_TYPE_NOTZOT,
+						'site_project' => $software,
+						'site_version' => $version
+						]
+					);
+				}
 			}
 		}
 
