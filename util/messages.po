@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 20.10.21\n"
+"Project-Id-Version: 20.10.22\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-20 16:25-0700\n"
+"POT-Creation-Date: 2020-10-21 17:12-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -167,8 +167,8 @@ msgstr ""
 #: ../../Zotlabs/Module/Profile.php:139 ../../Zotlabs/Module/Pdledit.php:29
 #: ../../Zotlabs/Module/Setup.php:221 ../../Zotlabs/Module/Profiles.php:197
 #: ../../Zotlabs/Module/Profiles.php:633 ../../Zotlabs/Module/Poke.php:155
-#: ../../Zotlabs/Module/Profile_photo.php:342
-#: ../../Zotlabs/Module/Profile_photo.php:356
+#: ../../Zotlabs/Module/Profile_photo.php:344
+#: ../../Zotlabs/Module/Profile_photo.php:358
 #: ../../Zotlabs/Module/Photos.php:72 ../../Zotlabs/Module/Regmod.php:20
 #: ../../Zotlabs/Module/Service_limits.php:11
 #: ../../Zotlabs/Module/Settings.php:66
@@ -676,7 +676,7 @@ msgstr ""
 msgid "Channel Manager"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:333 ../../Zotlabs/Lib/Apps.php:375
+#: ../../Zotlabs/Lib/Apps.php:333 ../../Zotlabs/Lib/Apps.php:376
 #: ../../Zotlabs/Widget/Notes.php:20
 msgid "Notes"
 msgstr ""
@@ -744,159 +744,163 @@ msgid "Tasks"
 msgstr ""
 
 #: ../../Zotlabs/Lib/Apps.php:347
+msgid "Tagadelic"
+msgstr ""
+
+#: ../../Zotlabs/Lib/Apps.php:348
 msgid "No Comment"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:348 ../../Zotlabs/Module/Directory.php:433
+#: ../../Zotlabs/Lib/Apps.php:349 ../../Zotlabs/Module/Directory.php:433
 msgid "Directory"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:349 ../../include/help.php:50
+#: ../../Zotlabs/Lib/Apps.php:350 ../../include/help.php:50
 #: ../../include/nav.php:167 ../../include/nav.php:289
 msgid "Help"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:350
+#: ../../Zotlabs/Lib/Apps.php:351
 msgid "Mail"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:351 ../../Zotlabs/Module/Mood.php:152
+#: ../../Zotlabs/Lib/Apps.php:352 ../../Zotlabs/Module/Mood.php:152
 msgid "Mood"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:352 ../../Zotlabs/Module/Poke.php:197
+#: ../../Zotlabs/Lib/Apps.php:353 ../../Zotlabs/Module/Poke.php:197
 msgid "Poke"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:353
+#: ../../Zotlabs/Lib/Apps.php:354
 msgid "Chat"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:354 ../../Zotlabs/Module/Connections.php:373
+#: ../../Zotlabs/Lib/Apps.php:355 ../../Zotlabs/Module/Connections.php:373
 #: ../../Zotlabs/Module/Search.php:47 ../../Zotlabs/Widget/Sitesearch.php:31
 #: ../../include/text.php:974 ../../include/text.php:986
 #: ../../include/nav.php:174 ../../include/acl_selectors.php:133
 msgid "Search"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:355 ../../Zotlabs/Widget/Stream_order.php:129
+#: ../../Zotlabs/Lib/Apps.php:356 ../../Zotlabs/Widget/Stream_order.php:129
 msgid "Stream Order"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:356
+#: ../../Zotlabs/Lib/Apps.php:357
 msgid "Probe"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:357
+#: ../../Zotlabs/Lib/Apps.php:358
 msgid "Suggest"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:358
+#: ../../Zotlabs/Lib/Apps.php:359
 msgid "Random Channel"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:359
+#: ../../Zotlabs/Lib/Apps.php:360
 msgid "Invite"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:360
+#: ../../Zotlabs/Lib/Apps.php:361
 msgid "Features"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:361
+#: ../../Zotlabs/Lib/Apps.php:362
 msgid "Language"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:362
+#: ../../Zotlabs/Lib/Apps.php:363
 msgid "Post"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:363
+#: ../../Zotlabs/Lib/Apps.php:364
 #: ../../extend/addon/a/zotpost/Mod_zotpost.php:54
 msgid "ZotPost"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:364
+#: ../../Zotlabs/Lib/Apps.php:365
 msgid "Profile Photo"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:365 ../../Zotlabs/Lib/Libprofile.php:572
+#: ../../Zotlabs/Lib/Apps.php:366 ../../Zotlabs/Lib/Libprofile.php:572
 #: ../../Zotlabs/Lib/Activity.php:2228 ../../Zotlabs/Lib/Activity.php:2231
 #: ../../Zotlabs/Module/Profperm.php:117
 msgid "Profile"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:366
+#: ../../Zotlabs/Lib/Apps.php:367
 msgid "Profiles"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:367 ../../Zotlabs/Lib/AccessList.php:365
+#: ../../Zotlabs/Lib/Apps.php:368 ../../Zotlabs/Lib/AccessList.php:365
 #: ../../Zotlabs/Widget/Activity_filter.php:136 ../../include/nav.php:91
 msgid "Lists"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:368 ../../Zotlabs/Module/Settings/Channel.php:641
+#: ../../Zotlabs/Lib/Apps.php:369 ../../Zotlabs/Module/Settings/Channel.php:641
 msgid "Notifications"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:369
+#: ../../Zotlabs/Lib/Apps.php:370
 msgid "Order Apps"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:370
+#: ../../Zotlabs/Lib/Apps.php:371
 msgid "CalDAV"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:371
+#: ../../Zotlabs/Lib/Apps.php:372
 msgid "CardDAV"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:372 ../../Zotlabs/Module/Sources.php:105
+#: ../../Zotlabs/Lib/Apps.php:373 ../../Zotlabs/Module/Sources.php:105
 #: ../../Zotlabs/Widget/Settings_menu.php:121
 msgid "Channel Sources"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:373 ../../extend/addon/a/gallery/gallery.php:46
+#: ../../Zotlabs/Lib/Apps.php:374 ../../extend/addon/a/gallery/gallery.php:46
 #: ../../extend/addon/a/gallery/Mod_Gallery.php:137
 msgid "Gallery"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:374
+#: ../../Zotlabs/Lib/Apps.php:375
 msgid "Guest Access"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:376
+#: ../../Zotlabs/Lib/Apps.php:377
 msgid "OAuth Apps Manager"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:377
+#: ../../Zotlabs/Lib/Apps.php:378
 msgid "OAuth2 Apps Manager"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:378
+#: ../../Zotlabs/Lib/Apps.php:379
 msgid "PDL Editor"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:379
+#: ../../Zotlabs/Lib/Apps.php:380
 #: ../../Zotlabs/Module/Settings/Permcats.php:100
 #: ../../Zotlabs/Widget/Settings_menu.php:104
 msgid "Permission Categories"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:380
+#: ../../Zotlabs/Lib/Apps.php:381
 msgid "Premium Channel"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:381 ../../Zotlabs/Module/Pubstream.php:94
+#: ../../Zotlabs/Lib/Apps.php:382 ../../Zotlabs/Module/Pubstream.php:94
 #: ../../Zotlabs/Widget/Notifications.php:128
 msgid "Public Stream"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:382
+#: ../../Zotlabs/Lib/Apps.php:383
 msgid "My Chatrooms"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:557 ../../Zotlabs/Module/Admin/Addons.php:451
+#: ../../Zotlabs/Lib/Apps.php:558 ../../Zotlabs/Module/Admin/Addons.php:451
 #: ../../Zotlabs/Module/Cdav.php:1050 ../../Zotlabs/Module/Cdav.php:1365
 #: ../../Zotlabs/Module/Connedit.php:865 ../../Zotlabs/Module/Profiles.php:801
 #: ../../Zotlabs/Module/Settings/Oauth.php:43
@@ -906,15 +910,15 @@ msgstr ""
 msgid "Update"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:557 ../../Zotlabs/Module/Admin/Addons.php:420
+#: ../../Zotlabs/Lib/Apps.php:558 ../../Zotlabs/Module/Admin/Addons.php:420
 msgid "Install"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:574
+#: ../../Zotlabs/Lib/Apps.php:575
 msgid "Purchase"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:577 ../../Zotlabs/Lib/Libprofile.php:189
+#: ../../Zotlabs/Lib/Apps.php:578 ../../Zotlabs/Lib/Libprofile.php:189
 #: ../../Zotlabs/Lib/Libprofile.php:193 ../../Zotlabs/Lib/ThreadItem.php:129
 #: ../../Zotlabs/Module/Admin/Profs.php:175 ../../Zotlabs/Module/Blocks.php:164
 #: ../../Zotlabs/Module/Connections.php:315
@@ -933,7 +937,7 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:578 ../../Zotlabs/Lib/ThreadItem.php:155
+#: ../../Zotlabs/Lib/Apps.php:579 ../../Zotlabs/Lib/ThreadItem.php:155
 #: ../../Zotlabs/Module/Admin/Profs.php:176
 #: ../../Zotlabs/Module/Admin/Accounts.php:175
 #: ../../Zotlabs/Module/Admin/Channels.php:156
@@ -953,27 +957,27 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:579
+#: ../../Zotlabs/Lib/Apps.php:580
 msgid "Undelete"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:589
+#: ../../Zotlabs/Lib/Apps.php:590
 msgid "Add to app-tray"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:590
+#: ../../Zotlabs/Lib/Apps.php:591
 msgid "Remove from app-tray"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:591
+#: ../../Zotlabs/Lib/Apps.php:592
 msgid "Pin to navbar"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:592
+#: ../../Zotlabs/Lib/Apps.php:593
 msgid "Unpin from navbar"
 msgstr ""
 
-#: ../../Zotlabs/Lib/Apps.php:1075 ../../Zotlabs/Lib/Apps.php:1164
+#: ../../Zotlabs/Lib/Apps.php:1076 ../../Zotlabs/Lib/Apps.php:1165
 #: ../../Zotlabs/Lib/Activity.php:1696 ../../Zotlabs/Module/Cdav.php:853
 #: ../../Zotlabs/Module/Cdav.php:854 ../../Zotlabs/Module/Cdav.php:861
 #: ../../Zotlabs/Module/Embedphotos.php:216 ../../Zotlabs/Module/Photos.php:813
@@ -1608,7 +1612,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Addons.php:436
 #: ../../Zotlabs/Module/Admin/Channels.php:154
 #: ../../Zotlabs/Module/Admin/Security.php:161
-#: ../../Zotlabs/Module/Admin/Site.php:285 ../../Zotlabs/Module/Cal.php:350
+#: ../../Zotlabs/Module/Admin/Site.php:288 ../../Zotlabs/Module/Cal.php:350
 #: ../../Zotlabs/Module/Expire.php:46 ../../Zotlabs/Module/Connedit.php:830
 #: ../../Zotlabs/Module/Appman.php:144 ../../Zotlabs/Module/Defperms.php:239
 #: ../../Zotlabs/Module/Editpost.php:94 ../../Zotlabs/Module/Events.php:524
@@ -1625,7 +1629,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Profiles.php:721 ../../Zotlabs/Module/Poke.php:215
 #: ../../Zotlabs/Module/Photos.php:1076 ../../Zotlabs/Module/Photos.php:1116
 #: ../../Zotlabs/Module/Photos.php:1234 ../../Zotlabs/Module/Affinity.php:83
-#: ../../Zotlabs/Module/Ap_probe.php:21
+#: ../../Zotlabs/Module/Zot_probe.php:18 ../../Zotlabs/Module/Ap_probe.php:21
 #: ../../Zotlabs/Module/Settings/Account.php:104
 #: ../../Zotlabs/Module/Settings/Featured.php:56
 #: ../../Zotlabs/Module/Settings/Network.php:41
@@ -1728,7 +1732,7 @@ msgstr ""
 
 #: ../../Zotlabs/Lib/Libzotdir.php:167 ../../Zotlabs/Lib/Libzotdir.php:168
 #: ../../Zotlabs/Lib/Libzotdir.php:169 ../../Zotlabs/Lib/Libzotdir.php:171
-#: ../../Zotlabs/Module/Admin/Site.php:251 ../../Zotlabs/Module/Api.php:99
+#: ../../Zotlabs/Module/Admin/Site.php:254 ../../Zotlabs/Module/Api.php:99
 #: ../../Zotlabs/Module/Connedit.php:333 ../../Zotlabs/Module/Connedit.php:725
 #: ../../Zotlabs/Module/Defperms.php:171 ../../Zotlabs/Module/Events.php:501
 #: ../../Zotlabs/Module/Events.php:502 ../../Zotlabs/Module/Events.php:527
@@ -1737,7 +1741,8 @@ msgstr ""
 #: ../../Zotlabs/Module/Mitem.php:181 ../../Zotlabs/Module/Mitem.php:260
 #: ../../Zotlabs/Module/Mitem.php:261 ../../Zotlabs/Module/Menu.php:165
 #: ../../Zotlabs/Module/Menu.php:224 ../../Zotlabs/Module/Profiles.php:679
-#: ../../Zotlabs/Module/Photos.php:689 ../../Zotlabs/Module/Ap_probe.php:20
+#: ../../Zotlabs/Module/Photos.php:689 ../../Zotlabs/Module/Zot_probe.php:17
+#: ../../Zotlabs/Module/Ap_probe.php:20
 #: ../../Zotlabs/Module/Settings/Display.php:94
 #: ../../Zotlabs/Module/Settings/Channel.php:363
 #: ../../Zotlabs/Module/Sources.php:122 ../../Zotlabs/Module/Sources.php:157
@@ -1754,7 +1759,7 @@ msgstr ""
 
 #: ../../Zotlabs/Lib/Libzotdir.php:167 ../../Zotlabs/Lib/Libzotdir.php:168
 #: ../../Zotlabs/Lib/Libzotdir.php:169 ../../Zotlabs/Lib/Libzotdir.php:171
-#: ../../Zotlabs/Module/Admin/Site.php:253 ../../Zotlabs/Module/Api.php:98
+#: ../../Zotlabs/Module/Admin/Site.php:256 ../../Zotlabs/Module/Api.php:98
 #: ../../Zotlabs/Module/Connedit.php:333 ../../Zotlabs/Module/Defperms.php:171
 #: ../../Zotlabs/Module/Events.php:501 ../../Zotlabs/Module/Events.php:502
 #: ../../Zotlabs/Module/Events.php:527 ../../Zotlabs/Module/Filestorage.php:236
@@ -1762,7 +1767,8 @@ msgstr ""
 #: ../../Zotlabs/Module/Mitem.php:181 ../../Zotlabs/Module/Mitem.php:260
 #: ../../Zotlabs/Module/Mitem.php:261 ../../Zotlabs/Module/Menu.php:165
 #: ../../Zotlabs/Module/Menu.php:224 ../../Zotlabs/Module/Profiles.php:679
-#: ../../Zotlabs/Module/Photos.php:689 ../../Zotlabs/Module/Ap_probe.php:20
+#: ../../Zotlabs/Module/Photos.php:689 ../../Zotlabs/Module/Zot_probe.php:17
+#: ../../Zotlabs/Module/Ap_probe.php:20
 #: ../../Zotlabs/Module/Settings/Display.php:94
 #: ../../Zotlabs/Module/Settings/Channel.php:363
 #: ../../Zotlabs/Module/Sources.php:122 ../../Zotlabs/Module/Sources.php:157
@@ -1914,7 +1920,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Addons.php:434
 #: ../../Zotlabs/Module/Admin/Channels.php:152
 #: ../../Zotlabs/Module/Admin/Security.php:128
-#: ../../Zotlabs/Module/Admin/Site.php:283 ../../Zotlabs/Module/Admin.php:172
+#: ../../Zotlabs/Module/Admin/Site.php:286 ../../Zotlabs/Module/Admin.php:172
 msgid "Administration"
 msgstr ""
 
@@ -2401,7 +2407,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Fbrowser.php:63 ../../Zotlabs/Module/Fbrowser.php:85
 #: ../../Zotlabs/Module/Card_edit.php:133
 #: ../../Zotlabs/Module/Editblock.php:145 ../../Zotlabs/Module/Profiles.php:803
-#: ../../Zotlabs/Module/Profile_photo.php:509
+#: ../../Zotlabs/Module/Profile_photo.php:511
 #: ../../Zotlabs/Module/Settings/Oauth.php:89
 #: ../../Zotlabs/Module/Settings/Oauth.php:115
 #: ../../Zotlabs/Module/Settings/Oauth2.php:106
@@ -2740,14 +2746,14 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Cover_photo.php:198
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:143
 #: ../../Zotlabs/Module/Cover_photo.php:198
-#: ../../Zotlabs/Module/Profile_photo.php:140
+#: ../../Zotlabs/Module/Profile_photo.php:142
 msgid "Image resize failed."
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Cover_photo.php:208
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:188
 #: ../../Zotlabs/Module/Cover_photo.php:212
-#: ../../Zotlabs/Module/Profile_photo.php:223 ../../include/photos.php:196
+#: ../../Zotlabs/Module/Profile_photo.php:225 ../../include/photos.php:196
 msgid "Unable to process image"
 msgstr ""
 
@@ -2757,8 +2763,8 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:392
 #: ../../Zotlabs/Module/Cover_photo.php:368
 #: ../../Zotlabs/Module/Cover_photo.php:384
-#: ../../Zotlabs/Module/Profile_photo.php:383
-#: ../../Zotlabs/Module/Profile_photo.php:431
+#: ../../Zotlabs/Module/Profile_photo.php:385
+#: ../../Zotlabs/Module/Profile_photo.php:433
 msgid "Photo not available."
 msgstr ""
 
@@ -2770,14 +2776,14 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Cover_photo.php:371
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:462
 #: ../../Zotlabs/Module/Cover_photo.php:422
-#: ../../Zotlabs/Module/Profile_photo.php:500
+#: ../../Zotlabs/Module/Profile_photo.php:502
 msgid "Upload File:"
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Cover_photo.php:372
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:463
 #: ../../Zotlabs/Module/Cover_photo.php:423
-#: ../../Zotlabs/Module/Profile_photo.php:501
+#: ../../Zotlabs/Module/Profile_photo.php:503
 msgid "Select a profile:"
 msgstr ""
 
@@ -2790,7 +2796,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:465
 #: ../../Zotlabs/Module/Cover_photo.php:425
 #: ../../Zotlabs/Module/Embedphotos.php:227
-#: ../../Zotlabs/Module/Profile_photo.php:503
+#: ../../Zotlabs/Module/Profile_photo.php:505
 #: ../../Zotlabs/Module/Photos.php:704 ../../Zotlabs/Storage/Browser.php:411
 #: ../../Zotlabs/Widget/Portfolio.php:110 ../../Zotlabs/Widget/Album.php:101
 #: ../../Zotlabs/Widget/Cdav.php:146 ../../Zotlabs/Widget/Cdav.php:182
@@ -2803,15 +2809,15 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:470
 #: ../../Zotlabs/Module/Cover_photo.php:427
 #: ../../Zotlabs/Module/Cover_photo.php:428
-#: ../../Zotlabs/Module/Profile_photo.php:507
-#: ../../Zotlabs/Module/Profile_photo.php:508
+#: ../../Zotlabs/Module/Profile_photo.php:509
+#: ../../Zotlabs/Module/Profile_photo.php:510
 msgid "Use a photo from your albums"
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Cover_photo.php:379
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:472
 #: ../../Zotlabs/Module/Cover_photo.php:430
-#: ../../Zotlabs/Module/Profile_photo.php:510
+#: ../../Zotlabs/Module/Profile_photo.php:512
 #: ../../include/conversation.php:1419 ../../include/conversation.php:1474
 #: ../../include/conversation.php:1476
 msgid "OK"
@@ -2820,7 +2826,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Cover_photo.php:380
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:473
 #: ../../Zotlabs/Module/Cover_photo.php:431
-#: ../../Zotlabs/Module/Profile_photo.php:511
+#: ../../Zotlabs/Module/Profile_photo.php:513
 #: ../../include/conversation.php:1334
 msgid "Choose images to embed"
 msgstr ""
@@ -2828,7 +2834,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Cover_photo.php:381
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:474
 #: ../../Zotlabs/Module/Cover_photo.php:432
-#: ../../Zotlabs/Module/Profile_photo.php:512
+#: ../../Zotlabs/Module/Profile_photo.php:514
 #: ../../include/conversation.php:1335
 msgid "Choose an album"
 msgstr ""
@@ -2836,14 +2842,14 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Cover_photo.php:382
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:475
 #: ../../Zotlabs/Module/Cover_photo.php:433
-#: ../../Zotlabs/Module/Profile_photo.php:513
+#: ../../Zotlabs/Module/Profile_photo.php:515
 msgid "Choose a different album"
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Cover_photo.php:383
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:476
 #: ../../Zotlabs/Module/Cover_photo.php:434
-#: ../../Zotlabs/Module/Profile_photo.php:514
+#: ../../Zotlabs/Module/Profile_photo.php:516
 #: ../../include/conversation.php:1337
 msgid "Error getting album list"
 msgstr ""
@@ -2851,7 +2857,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Cover_photo.php:384
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:477
 #: ../../Zotlabs/Module/Cover_photo.php:435
-#: ../../Zotlabs/Module/Profile_photo.php:515
+#: ../../Zotlabs/Module/Profile_photo.php:517
 #: ../../include/conversation.php:1338
 msgid "Error getting photo link"
 msgstr ""
@@ -2859,7 +2865,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Cover_photo.php:385
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:478
 #: ../../Zotlabs/Module/Cover_photo.php:436
-#: ../../Zotlabs/Module/Profile_photo.php:516
+#: ../../Zotlabs/Module/Profile_photo.php:518
 #: ../../include/conversation.php:1339
 msgid "Error getting album"
 msgstr ""
@@ -2867,521 +2873,58 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Cover_photo.php:387
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:480
 #: ../../Zotlabs/Module/Cover_photo.php:438
-#: ../../Zotlabs/Module/Profile_photo.php:518
+#: ../../Zotlabs/Module/Profile_photo.php:520
 msgid "Select previously uploaded photo"
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Cover_photo.php:404
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:497
 #: ../../Zotlabs/Module/Cover_photo.php:455
-#: ../../Zotlabs/Module/Profile_photo.php:535
+#: ../../Zotlabs/Module/Profile_photo.php:537
 msgid "Crop Image"
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Cover_photo.php:405
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:498
 #: ../../Zotlabs/Module/Cover_photo.php:456
-#: ../../Zotlabs/Module/Profile_photo.php:536
+#: ../../Zotlabs/Module/Profile_photo.php:538
 msgid "Please adjust the image cropping for optimum viewing."
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Cover_photo.php:407
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:500
 #: ../../Zotlabs/Module/Cover_photo.php:458
-#: ../../Zotlabs/Module/Profile_photo.php:538
+#: ../../Zotlabs/Module/Profile_photo.php:540
 msgid "Done Editing"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:162
-msgid "Site settings updated."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:189 ../../include/text.php:3246
-#: ../../view/theme/redbasic/php/config.php:15
-msgid "Default"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:200
-#: ../../Zotlabs/Module/Settings/Display.php:124
-#, php-format
-msgid "%s - (Incompatible)"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:207
-msgid "mobile"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:209
-msgid "experimental"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:211
-msgid "unsupported"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:252
-msgid "Yes - with approval"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:258
-msgid "My site is not a public server"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:259
-msgid "My site provides free public access"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:260
-msgid "My site provides paid public access"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:261
-msgid "My site provides free public access and premium paid plans"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:276
-msgid "Default permission role for new accounts"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:276
-msgid ""
-"This role will be used for the first channel created after registration."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:284 ../../Zotlabs/Widget/Admin.php:22
-msgid "Site"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:286
-msgid "Site Configuration"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:287
-#: ../../Zotlabs/Module/Register.php:283
-msgid "Registration"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:288
-msgid "File upload"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:289
-msgid "Policies"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:290
-#: ../../Zotlabs/Widget/Findpeople.php:23
-msgid "Advanced"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:292
-msgid "Site name"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:293
-msgid "Administrator Information"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:293
-msgid ""
-"Contact information for site administrators.  Displayed on siteinfo page.  "
-"BBCode may be used here."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:294 ../../Zotlabs/Module/Siteinfo.php:33
-msgid "Site Information"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:294
-msgid ""
-"Publicly visible description of this site.  Displayed on siteinfo page.  "
-"BBCode may be used here."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:295
-msgid "System language"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:296
-msgid "System theme"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:296
-msgid ""
-"Default system theme - may be over-ridden by user profiles - <a href='#' "
-"id='cnftheme'>change theme settings</a>"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:299
-msgid "ActivityPub protocol"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:299
-msgid "Provides access to software supporting the ActivityPub protocol."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:300
-msgid "Maximum image size"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:300
-msgid ""
-"Maximum size in bytes of uploaded images. Default is 0, which means no "
-"limits."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:301
-msgid "Cache all public images"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:301
-msgid "If disabled, proxy non-SSL images, but do not store locally"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:302
-msgid "Does this site allow new member registration?"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:303
-msgid "Invitation only"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:303
-msgid ""
-"Only allow new member registrations with an invitation code. New member "
-"registration must be allowed for this to work."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:304
-msgid "Minimum age"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:304
-msgid "Minimum age (in years) for who may register on this site."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:305
-msgid "Which best describes the types of account offered by this hub?"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:305
-msgid ""
-"If a public server policy is selected, this information may be displayed on "
-"the public server site list."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:306
-msgid "Register text"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:306
-msgid "Will be displayed prominently on the registration page."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:308
-msgid "Site homepage to show visitors (default: login box)"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:308
-msgid ""
-"example: 'public' to show public stream, 'page/sys/home' to show a system "
-"webpage called 'home' or 'include:home.html' to include a file."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:309
-msgid "Preserve site homepage URL"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:309
-msgid ""
-"Present the site homepage in a frame at the original location instead of "
-"redirecting"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:310
-msgid "Accounts abandoned after x days"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:310
-msgid ""
-"Will not waste system resources polling external sites for abandonded "
-"accounts. Enter 0 for no time limit."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:311
-msgid "Block directory from visitors"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:311
-msgid "Only allow authenticated access to directory."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:312
-msgid "Verify Email Addresses"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:312
-msgid ""
-"Check to verify email addresses used in account registration (recommended)."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:313
-msgid "Force publish in directory"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:313
-msgid ""
-"Check to force all profiles on this site to be listed in the site directory."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:314
-msgid "Public stream"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:314
-msgid ""
-"Provide access to public content from other sites. Warning: this content is "
-"unmoderated."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:315
-msgid "Site only Public stream"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:315
-msgid ""
-"Provide access to public content originating only from this site if Public "
-"stream is disabled."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:316
-msgid "Allow anybody on the internet to access the Public stream"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:316
-msgid ""
-"Default is to only allow viewing by site members. Warning: this content is "
-"unmoderated."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:317
-msgid "Show numbers of likes and dislikes in conversations"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:317
-msgid ""
-"If disabled, the presence of likes and dislikes will be shown, but without "
-"totals."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:318
-msgid "Only import Public stream posts with this text"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:318
-#: ../../Zotlabs/Module/Admin/Site.php:319
-msgid ""
-"words one per line or #tags or /patterns/ or lang=xx, leave blank to import "
-"all posts"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:319
-msgid "Do not import Public stream posts with this text"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:320
-msgid "Maximum number of imported friends of friends"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:320
-msgid ""
-"Warning: higher numbers will improve the quality of friend suggestions and "
-"directory results but can exponentially increase resource usage"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:321
-msgid "Login on Homepage"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:321
-msgid ""
-"Present a login box to visitors on the home page if no other content has "
-"been configured."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:322
-msgid "Enable context help"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:322
-msgid ""
-"Display contextual help for the current page when the help button is pressed."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:323
-msgid "Reply-to email address for system generated email."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:324
-msgid "Sender (From) email address for system generated email."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:325
-msgid "Display name of email sender for system generated email."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:326
-msgid "Directory Server URL"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:326
-msgid "Default directory server"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:327
-msgid "Proxy user"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:328
-msgid "Proxy URL"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:329
-msgid "Network timeout"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:329
-msgid "Value is in seconds. Set to 0 for unlimited (not recommended)."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:330
-msgid "Delivery interval"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:330
-msgid ""
-"Delay background delivery processes by this many seconds to reduce system "
-"load. Recommend: 4-5 for shared hosts, 2-3 for virtual private servers. 0-1 "
-"for large dedicated servers."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:331
-msgid "Deliveries per process"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:331
-msgid ""
-"Number of deliveries to attempt in a single operating system process. Adjust "
-"if necessary to tune system performance. Recommend: 1-5."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:332
-msgid "Queue Threshold"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:332
-msgid ""
-"Always defer immediate delivery if queue contains more than this number of "
-"entries."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:333
-msgid "Poll interval"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:333
-msgid ""
-"Delay background polling processes by this many seconds to reduce system "
-"load. If 0, use delivery interval."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:334
-msgid "Path to ImageMagick convert program"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:334
-msgid ""
-"If set, use this program to generate photo thumbnails for huge images ( > "
-"4000 pixels in either dimension), otherwise memory exhaustion may occur. "
-"Example: /usr/bin/convert"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:335
-msgid "Maximum Load Average"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:335
-msgid ""
-"Maximum system load before delivery and poll processes are deferred - "
-"default 50."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:336
-msgid "Expiration period in days for imported streams and cached images"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:336
-msgid "0 for no expiration of imported content"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:337
-msgid ""
-"Do not expire any posts which have comments less than this many days ago"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:338
-msgid ""
-"Public servers: Optional landing (marketing) webpage for new registrants"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:338
-#, php-format
-msgid "Create this page first. Default is %s/register"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:339
-msgid "Page to display after creating a new channel"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:339
-msgid "Default: profiles"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:340
-msgid "Site location"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Site.php:340
-msgid "Region or country - shared with other sites"
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:119
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:252
 #: ../../Zotlabs/Module/Profile_photo.php:116
-#: ../../Zotlabs/Module/Profile_photo.php:287
-#: ../../include/photo_factory.php:525
+#: ../../Zotlabs/Module/Profile_photo.php:289
+#: ../../include/photo_factory.php:527
 msgid "Profile Photos"
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:184
-#: ../../Zotlabs/Module/Profile_photo.php:216
+#: ../../Zotlabs/Module/Profile_photo.php:218
 msgid ""
 "Shift-reload the page or clear browser cache if the new photo does not "
 "display immediately."
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:266
-#: ../../Zotlabs/Module/Profile_photo.php:301
+#: ../../Zotlabs/Module/Profile_photo.php:303
 msgid "Image upload failed."
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:285
-#: ../../Zotlabs/Module/Profile_photo.php:320
+#: ../../Zotlabs/Module/Profile_photo.php:322
 msgid "Unable to process image."
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:460
-#: ../../Zotlabs/Module/Profile_photo.php:498
+#: ../../Zotlabs/Module/Profile_photo.php:500
 msgid ""
 "Your default profile photo is visible to anybody on the internet. Profile "
 "photos for alternate profiles will inherit the permissions of the profile"
@@ -3402,8 +2945,479 @@ msgid "Change Site Logo"
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:465
-#: ../../Zotlabs/Module/Profile_photo.php:503
+#: ../../Zotlabs/Module/Profile_photo.php:505
 msgid "Use"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:165
+msgid "Site settings updated."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:192 ../../include/text.php:3246
+#: ../../view/theme/redbasic/php/config.php:15
+msgid "Default"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:203
+#: ../../Zotlabs/Module/Settings/Display.php:124
+#, php-format
+msgid "%s - (Incompatible)"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:210
+msgid "mobile"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:212
+msgid "experimental"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:214
+msgid "unsupported"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:255
+msgid "Yes - with approval"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:261
+msgid "My site is not a public server"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:262
+msgid "My site provides free public access"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:263
+msgid "My site provides paid public access"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:264
+msgid "My site provides free public access and premium paid plans"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:279
+msgid "Default permission role for new accounts"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:279
+msgid ""
+"This role will be used for the first channel created after registration."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:287 ../../Zotlabs/Widget/Admin.php:22
+msgid "Site"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:289
+msgid "Site Configuration"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:290
+#: ../../Zotlabs/Module/Register.php:283
+msgid "Registration"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:291
+msgid "File upload"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:292
+msgid "Policies"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:293
+#: ../../Zotlabs/Widget/Findpeople.php:23
+msgid "Advanced"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:295
+msgid "Site name"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:296
+msgid "Administrator Information"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:296
+msgid ""
+"Contact information for site administrators.  Displayed on siteinfo page.  "
+"BBCode may be used here."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:297 ../../Zotlabs/Module/Siteinfo.php:33
+msgid "Site Information"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:297
+msgid ""
+"Publicly visible description of this site.  Displayed on siteinfo page.  "
+"BBCode may be used here."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:298
+msgid "System language"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:299
+msgid "System theme"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:299
+msgid ""
+"Default system theme - may be over-ridden by user profiles - <a href='#' "
+"id='cnftheme'>change theme settings</a>"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:302
+msgid "ActivityPub protocol"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:302
+msgid "Provides access to software supporting the ActivityPub protocol."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:303
+msgid "Maximum image size"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:303
+msgid ""
+"Maximum size in bytes of uploaded images. Default is 0, which means no "
+"limits."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:304
+msgid "Cache all public images"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:304
+msgid "If disabled, proxy non-SSL images, but do not store locally"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:305
+msgid "Does this site allow new member registration?"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:306
+msgid "Invitation only"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:306
+msgid ""
+"Only allow new member registrations with an invitation code. New member "
+"registration must be allowed for this to work."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:307
+msgid "Minimum age"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:307
+msgid "Minimum age (in years) for who may register on this site."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:308
+msgid "Which best describes the types of account offered by this hub?"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:308
+msgid ""
+"If a public server policy is selected, this information may be displayed on "
+"the public server site list."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:309
+msgid "Register text"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:309
+msgid "Will be displayed prominently on the registration page."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:311
+msgid "Site homepage to show visitors (default: login box)"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:311
+msgid ""
+"example: 'public' to show public stream, 'page/sys/home' to show a system "
+"webpage called 'home' or 'include:home.html' to include a file."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:312
+msgid "Preserve site homepage URL"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:312
+msgid ""
+"Present the site homepage in a frame at the original location instead of "
+"redirecting"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:313
+msgid "Accounts abandoned after x days"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:313
+msgid ""
+"Will not waste system resources polling external sites for abandonded "
+"accounts. Enter 0 for no time limit."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:314
+msgid "Block directory from visitors"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:314
+msgid "Only allow authenticated access to directory."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:315
+msgid "Verify Email Addresses"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:315
+msgid ""
+"Check to verify email addresses used in account registration (recommended)."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:316
+msgid "Force publish in directory"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:316
+msgid ""
+"Check to force all profiles on this site to be listed in the site directory."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:317
+msgid "Public stream"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:317
+msgid ""
+"Provide access to public content from other sites. Warning: this content is "
+"unmoderated."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:318
+msgid "Site only Public stream"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:318
+msgid ""
+"Provide access to public content originating only from this site if Public "
+"stream is disabled."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:319
+msgid "Allow anybody on the internet to access the Public stream"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:319
+msgid ""
+"Default is to only allow viewing by site members. Warning: this content is "
+"unmoderated."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:320
+msgid "Show numbers of likes and dislikes in conversations"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:320
+msgid ""
+"If disabled, the presence of likes and dislikes will be shown, but without "
+"totals."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:321
+msgid "Permit animated profile photos"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:321
+msgid "Changing this may take several days to work through the system"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:322
+msgid "Only import Public stream posts with this text"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:322
+#: ../../Zotlabs/Module/Admin/Site.php:323
+msgid ""
+"words one per line or #tags or /patterns/ or lang=xx, leave blank to import "
+"all posts"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:323
+msgid "Do not import Public stream posts with this text"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:324
+msgid "Maximum number of imported friends of friends"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:324
+msgid ""
+"Warning: higher numbers will improve the quality of friend suggestions and "
+"directory results but can exponentially increase resource usage"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:325
+msgid "Login on Homepage"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:325
+msgid ""
+"Present a login box to visitors on the home page if no other content has "
+"been configured."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:326
+msgid "Enable context help"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:326
+msgid ""
+"Display contextual help for the current page when the help button is pressed."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:327
+msgid "Reply-to email address for system generated email."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:328
+msgid "Sender (From) email address for system generated email."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:329
+msgid "Display name of email sender for system generated email."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:330
+msgid "Directory Server URL"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:330
+msgid "Default directory server"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:331
+msgid "Proxy user"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:332
+msgid "Proxy URL"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:333
+msgid "Network timeout"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:333
+msgid "Value is in seconds. Set to 0 for unlimited (not recommended)."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:334
+msgid "Delivery interval"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:334
+msgid ""
+"Delay background delivery processes by this many seconds to reduce system "
+"load. Recommend: 4-5 for shared hosts, 2-3 for virtual private servers. 0-1 "
+"for large dedicated servers."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:335
+msgid "Deliveries per process"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:335
+msgid ""
+"Number of deliveries to attempt in a single operating system process. Adjust "
+"if necessary to tune system performance. Recommend: 1-5."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:336
+msgid "Queue Threshold"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:336
+msgid ""
+"Always defer immediate delivery if queue contains more than this number of "
+"entries."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:337
+msgid "Poll interval"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:337
+msgid ""
+"Delay background polling processes by this many seconds to reduce system "
+"load. If 0, use delivery interval."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:338
+msgid "Path to ImageMagick convert program"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:338
+msgid ""
+"If set, use this program to generate photo thumbnails for huge images ( > "
+"4000 pixels in either dimension), otherwise memory exhaustion may occur. "
+"Example: /usr/bin/convert"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:339
+msgid "Maximum Load Average"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:339
+msgid ""
+"Maximum system load before delivery and poll processes are deferred - "
+"default 50."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:340
+msgid "Expiration period in days for imported streams and cached images"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:340
+msgid "0 for no expiration of imported content"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:341
+msgid ""
+"Do not expire any posts which have comments less than this many days ago"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:342
+msgid ""
+"Public servers: Optional landing (marketing) webpage for new registrants"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:342
+#, php-format
+msgid "Create this page first. Default is %s/register"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:343
+msgid "Page to display after creating a new channel"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:343
+msgid "Default: profiles"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:344
+msgid "Site location"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Site.php:344
+msgid "Region or country - shared with other sites"
 msgstr ""
 
 #: ../../Zotlabs/Module/Channel.php:49 ../../Zotlabs/Module/Chat.php:26
@@ -7422,17 +7436,17 @@ msgstr ""
 msgid "Make this post private"
 msgstr ""
 
-#: ../../Zotlabs/Module/Profile_photo.php:498
+#: ../../Zotlabs/Module/Profile_photo.php:500
 msgid ""
 "Your profile photo is visible to anybody on the internet and may be "
 "distributed to other websites."
 msgstr ""
 
-#: ../../Zotlabs/Module/Profile_photo.php:502
+#: ../../Zotlabs/Module/Profile_photo.php:504
 msgid "Use Photo for Profile"
 msgstr ""
 
-#: ../../Zotlabs/Module/Profile_photo.php:502
+#: ../../Zotlabs/Module/Profile_photo.php:504
 msgid "Change Profile Photo"
 msgstr ""
 
@@ -7678,6 +7692,18 @@ msgstr ""
 msgid "Connection added."
 msgstr ""
 
+#: ../../Zotlabs/Module/Zot_probe.php:15
+msgid "Zot6 Probe Diagnostic"
+msgstr ""
+
+#: ../../Zotlabs/Module/Zot_probe.php:16 ../../Zotlabs/Module/Ap_probe.php:19
+msgid "Object URL"
+msgstr ""
+
+#: ../../Zotlabs/Module/Zot_probe.php:17 ../../Zotlabs/Module/Ap_probe.php:20
+msgid "Authenticated fetch"
+msgstr ""
+
 #: ../../Zotlabs/Module/Home.php:112
 #, php-format
 msgid "Welcome to %s"
@@ -7731,14 +7757,6 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Ap_probe.php:18
 msgid "ActivityPub Probe Diagnostic"
-msgstr ""
-
-#: ../../Zotlabs/Module/Ap_probe.php:19
-msgid "Object URL"
-msgstr ""
-
-#: ../../Zotlabs/Module/Ap_probe.php:20
-msgid "Authenticated fetch"
 msgstr ""
 
 #: ../../Zotlabs/Module/Tasks.php:102
@@ -9192,6 +9210,15 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Vlists.php:21
 msgid "This app is installed. "
+msgstr ""
+
+#: ../../Zotlabs/Module/Tagadelic.php:29
+msgid "This app displays a hashtag cloud on your channel homepage."
+msgstr ""
+
+#: ../../Zotlabs/Module/Tagadelic.php:37
+msgid ""
+"This app is installed. It displays a hashtag cloud on your channel homepage."
 msgstr ""
 
 #: ../../Zotlabs/Module/Content_filter.php:25

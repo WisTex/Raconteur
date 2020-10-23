@@ -166,7 +166,7 @@ class Queue {
 						'site_url'    => $base,
 						'site_update' => datetime_convert(),
 						'site_dead'   => 0,
-						'site_type'   => intval(($outq['outq_driver'] === 'post') ? SITE_TYPE_NOTZOT : SITE_TYPE_UNKNOWN),
+						'site_type'   => ((in_array($outq['outq_driver'], [ 'post', 'activitypub' ])) ? SITE_TYPE_NOTZOT : SITE_TYPE_UNKNOWN),
 						'site_crypto' => ''
 					]
 				);
