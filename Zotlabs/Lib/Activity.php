@@ -1880,8 +1880,7 @@ class Activity {
 					dbesc($site_url)
 				);
 				if ($r) {
-					q("update site set site_type = %d, site_project = '%s', site_version = '%s' where site_url = '%s'",
-						intval(SITE_TYPE_NOTZOT),
+					q("update site set site_project = '%s', site_version = '%s' where site_url = '%s'",
 						dbesc($software),
 						dbesc($version),
 						dbesc($site_url)
