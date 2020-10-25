@@ -72,7 +72,7 @@ class Linkinfo extends Controller {
 						dbesc($xc)
 					);
 					if ($x) {
-						$url = $x['xchan_url'];
+						$url = $x[0]['xchan_url'];
 					}
 				}
 				else {
