@@ -62,9 +62,28 @@ class Linkinfo extends Controller {
 			killme();
 		}
 
-		if ((substr($url,0,1) != '/') && (substr($url,0,4) != 'http'))
-			$url = 'http://' . $url;
-	
+		$m = parse_url($url);
+		
+		if (! $m['scheme']) {
+			if (strpos($url,'@')) {
+				$xc = discover_by_webbie($url);
+				if ($xc) {
+					$x = q("select * from xchan where xchan_hash = '%s'",
+						dbesc($xc)
+					);
+					if ($x) {
+						$url = $x['xchan_url'];
+					}
+				}
+				else {
+					echo $br . '[url=mailto:' . $url . ']' . $url . '[/url]' . $br;
+					killme();
+				}
+			}
+			else {
+				$url = 'http://' . $url;
+			}
+		}	
 	
 		if ($_GET['title'])
 			$title = strip_tags(trim($_GET['title']));
