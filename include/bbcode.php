@@ -1024,7 +1024,7 @@ function md_codeblock($content) {
 	// Build one block so that we not create each paragraph.
 	$content = str_replace("\n", '<br>', $content[4]);
 
-	return sprintf('<pre><code%s>%s</code></pre>', $class, $content);
+	return sprintf('<pre><code%s>%s</code></pre>', $class, bb_code_protect($content));
 }
 
 function md_italic($content) {
@@ -1302,7 +1302,6 @@ function bbcode($Text, $options = []) {
 	$Text = preg_replace('#(?<!\\\)([*_]{2})([^\n]+?)\1#','<strong>$2</strong>',$Text);
 	// The character check is so we don't mistake underscore in the middle of a code variable as an italic trigger. 
 	$Text = preg_replace_callback('#(^| )(?<!\\\)([*_])([^\n|`]+?)\2#m','md_italic',$Text);
-//	$Text = preg_replace('#(?<!\\\)([*_])([^\n|`]+?)\1#','<em>$2</em>',$Text);
 	$Text = preg_replace_callback('{ ^(.+?)[ ]*\n(=+|-+)[ ]*\n+ }mx','md_topheader', $Text);
 	$Text = preg_replace_callback('#^(\#{1,6})\s+([^\#]+?)\s*\#*$#m','md_header', $Text);
 	$Text = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#','md_codeblock',$Text);

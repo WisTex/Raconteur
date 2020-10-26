@@ -240,10 +240,17 @@ function relative_date($posted_date, $format = null) {
 		return t('never');
 	}
 
-	$etime = time() - $abs;
-
+	if ($abs > time()) {
+		$direction = t('from now');
+		$etime = $abs - time();
+	}
+	else {
+		$direction = t('ago');
+		$etime = time() - $abs;
+	}
+	
 	if ($etime < 1) {
-		return t('less than a second ago');
+		return sprintf( t('less than a second %s'), $direction);
 	}
 
 	$a = array( 12 * 30 * 24 * 60 * 60  =>  'y',
@@ -261,9 +268,9 @@ function relative_date($posted_date, $format = null) {
 		if ($d >= 1) {
 			$r = round($d);
 			if (! $format)
-				$format = t('%1$d %2$s ago', 'e.g. 22 hours ago, 1 minute ago');
+				$format = t('%1$d %2$s %3$s', 'e.g. 22 hours ago, 1 minute ago');
 
-			return sprintf($format, $r, plural_dates($str,$r));
+			return sprintf($format, $r, plural_dates($str,$r), $direction);
 		}
 	}
 }

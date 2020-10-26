@@ -10,31 +10,31 @@ use Zotlabs\Web\HTTPSig;
 class Zot_probe extends \Zotlabs\Web\Controller {
 
 	function get() {
-	
-		$o .= '<h3>Zot6 Probe Diagnostic</h3>';
-	
-		$o .= '<form action="zot_probe" method="get">';
-		$o .= 'Lookup URI: <input type="text" style="width: 250px;" name="addr" value="' . $_GET['addr'] .'" /><br>';
-		$o .= '<input type="submit" name="submit" value="Submit" /></form>'; 
-	
-		$o .= '<br><br>';
-	
-		if(x($_GET,'addr')) {
-			$addr = $_GET['addr'];
-			$channel = (($_GET['auth']) ? \App::get_channel() : null);
 
-			if(strpos($addr,'x-zot:') === 0) {
-				$x = ZotURL::fetch($addr,$channel);
+		$o = replace_macros(get_markup_template('zot_probe.tpl'), [
+			'$page_title' => t('Zot6 Probe Diagnostic'),
+			'$resource'   => [ 'resource', t('Object URL') , $_REQUEST['resource'], EMPTY_STR ],
+			'$authf'      => [ 'authf', t('Authenticated fetch'), $_REQUEST['authf'], EMPTY_STR, [ t('No'), t('Yes') ] ],
+			'$submit'     => t('Submit')
+		]);
+
+
+		if(x($_GET,'resource')) {
+			$resource = $_GET['resource'];
+			$channel = (($_GET['authf']) ? \App::get_channel() : null);
+
+			if(strpos($resource,'x-zot:') === 0) {
+				$x = ZotURL::fetch($resource,$channel);
 			}
 			else {
-				$x = Zotfinger::exec($addr,$channel);
+				$x = Zotfinger::exec($resource,$channel);
 
 				$o .= '<pre>' . htmlspecialchars(print_array($x)) . '</pre>';
 
 				$headers = 'Accept: application/x-zot+json, application/jrd+json, application/json';
 
 				$redirects = 0;
-		    	$x = z_fetch_url($addr,true,$redirects, [ 'headers' => [ $headers ]]);
+		    	$x = z_fetch_url($resource,true,$redirects, [ 'headers' => [ $headers ]]);
 			}
 
 	    	if($x['success']) {

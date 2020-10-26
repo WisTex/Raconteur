@@ -344,6 +344,7 @@ class Apps {
 			'Photomap' => t('Photomap'), 
 			'Events' => t('Events'), 
 			'Tasks' => t('Tasks'),
+			'Tagadelic' => t('Tagadelic'),
 			'No Comment' => t('No Comment'),
 			'Directory' => t('Directory'), 
 			'Help' => t('Help'),

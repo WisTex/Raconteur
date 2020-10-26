@@ -1,4 +1,4 @@
-<?php /** @file */
+<?php 
 
 namespace Zotlabs\Daemon;
 
@@ -9,6 +9,8 @@ use Zotlabs\Lib\ASCollection;
 class Convo {
 
 	static public function run($argc,$argv) {
+
+		logger('convo invoked: ' . print_r($argv,true));
 
 		if($argc != 4) {
 			killme();
@@ -43,7 +45,9 @@ class Convo {
 				if (is_string($message)) {
 					$message = Activity::fetch($message,$channel);
 				}
-				$AS = new ActivityStreams($message);
+				// set client flag because comments will probably just be objects and not full blown activities
+				// and that lets us use implied_create
+				$AS = new ActivityStreams($message, null, true);
 				if ($AS->is_valid() && is_array($AS->obj)) {
 					$item = Activity::decode_note($AS,true);
 					Activity::store($channel,$contact['abook_xchan'],$AS,$item);

@@ -13,6 +13,7 @@ use Zotlabs\Lib\Config;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Markdown;
 use Zotlabs\Lib\Libzotdir;
+use Zotlabs\Lib\Nodeinfo;
 use Emoji;
 
 require_once('include/html2bbcode.php');
@@ -1689,13 +1690,13 @@ class Activity {
 			return;
 		}
 
-		$name = $person_obj['name'];
+		$name = escape_tags($person_obj['name']);
 		if (! $name)
-			$name = $person_obj['preferredUsername'];
+			$name = escape_tags($person_obj['preferredUsername']);
 		if (! $name)
-			$name = t('Unknown');
+			$name = escape_tags( t('Unknown'));
 
-		$username = $person_obj['preferredUsername'];
+		$username = escape_tags($person_obj['preferredUsername']);
 		$h = parse_url($url);
 		if ($h && $h['host']) {
 			$username .= '@' . $h['host'];
@@ -1864,6 +1865,39 @@ class Activity {
 					dbesc($username),
 					dbesc($url)
 				);
+			}
+		}
+
+		$m = parse_url($url);
+		if ($m['scheme'] && $m['host']) {
+			$site_url = $m['scheme'] . '://' . $m['host'];
+			$ni = Nodeinfo::fetch($site_url);
+			if ($ni && is_array($ni)) {
+				$software = ((array_path_exists('software/name',$ni)) ? $ni['software']['name'] : '');
+				$version = ((array_path_exists('software/version',$ni)) ? $ni['software']['version'] : '');
+
+				$r = q("select * from site where site_url = '%s'",
+					dbesc($site_url)
+				);
+				if ($r) {
+					q("update site set site_project = '%s', site_version = '%s' where site_url = '%s'",
+						dbesc($software),
+						dbesc($version),
+						dbesc($site_url)
+					);
+				}
+				else {
+					site_store_lowlevel( 
+						[
+						'site_url'    => $site_url,
+						'site_update' => datetime_convert(),
+						'site_dead'   => 0,
+						'site_type'   => SITE_TYPE_NOTZOT,
+						'site_project' => $software,
+						'site_version' => $version
+						]
+					);
+				}
 			}
 		}
 
@@ -2893,7 +2927,7 @@ class Activity {
 		
 		if ($is_child_node) {
 
-			$parent = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
+			$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
 				dbesc($item['parent_mid']),
 				intval($item['uid'])
 			);
@@ -2907,7 +2941,7 @@ class Activity {
 						$fetch = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
 					}
 					if ($fetch) {
-						$parent = q("select parent_mid from item where mid = '%s' and uid = %d limit 1",
+						$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
 							dbesc($item['parent_mid']),
 							intval($item['uid'])
 						);
@@ -2948,6 +2982,7 @@ class Activity {
 		}
 
 		if ($fetch_parents && $parent && ! intval($parent[0]['item_private'])) {
+			logger('topfetch', LOGGER_DEBUG);
 			// if the thread owner is a connnection, we will already receive any additional comments to their posts
 			// but if they are not we can try to fetch others in the background
 			$x = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash
@@ -2956,12 +2991,17 @@ class Activity {
 				dbesc($parent[0]['owner_xchan'])
 			);
 			if (! $x) {
+				// determine if the top-level post provides a replies collection
+				if ($parent[0]['obj']) {
+					$parent[0]['obj'] = json_decode($parent[0]['obj'],true);
+				}
+				logger('topfetch: ' . print_r($parent[0],true), LOGGER_ALL);
 				$id = ((array_path_exists('obj/replies/id',$parent[0])) ? $parent[0]['obj']['replies']['id'] : false);
 				if (! $id) {
 					$id = ((array_path_exists('obj/replies',$parent[0]) && is_string($parent[0]['obj']['replies'])) ? $parent[0]['obj']['replies'] : false);
 				}
 				if ($id) {
-					Run::Summon( [ 'Convo',$id, $channel['channel_id'], $observer_hash ] );
+					Run::Summon( [ 'Convo', $id, $channel['channel_id'], $observer_hash ] );
 				}
 			}
 		}

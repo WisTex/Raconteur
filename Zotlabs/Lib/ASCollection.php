@@ -153,5 +153,6 @@ class ASCollection {
 				$this->nextpage = false;
 			}
 		}
+		logger('nextpage: ' . $this->nextpage, LOGGER_DEBUG);
 	}
 }
