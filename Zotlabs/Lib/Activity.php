@@ -1690,13 +1690,13 @@ class Activity {
 			return;
 		}
 
-		$name = $person_obj['name'];
+		$name = escape_tags($person_obj['name']);
 		if (! $name)
-			$name = $person_obj['preferredUsername'];
+			$name = escape_tags($person_obj['preferredUsername']);
 		if (! $name)
-			$name = t('Unknown');
+			$name = escape_tags( t('Unknown'));
 
-		$username = $person_obj['preferredUsername'];
+		$username = escape_tags($person_obj['preferredUsername']);
 		$h = parse_url($url);
 		if ($h && $h['host']) {
 			$username .= '@' . $h['host'];
