@@ -33,6 +33,13 @@ class System {
 		return z_root() . '/images/' . PLATFORM_NAME . '-64.png';
 	}
 
+	static public function get_project_favicon() {
+		if(is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('favicon',App::$config['system'])) {
+			return App::$config['system']['favicon'];
+		}		
+		return z_root() . '/images/' . PLATFORM_NAME . '.ico';
+	}
+
 
 	static public function get_project_version() {
 		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['hide_version'])
@@ -62,6 +69,11 @@ class System {
 		return self::get_project_icon();
 	}
 
+	static public function get_site_favicon() {
+		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['site_favicon_url'])
+			return App::$config['system']['site_favicon_url'];
+		return self::get_project_favicon();
+	}
 
 	static public function get_project_link() {
 		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['project_link'])
