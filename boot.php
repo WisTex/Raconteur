@@ -83,10 +83,6 @@ define ( 'DIRECTORY_MODE_STANDALONE',  0x0100); // A detached (off the grid) hub
 // point to go out and find the rest of the world.
 
 define ( 'DIRECTORY_REALM',            'ZAP');
-define ( 'DIRECTORY_FALLBACK_MASTER',  'https://zap.macgirvin.com');
-
-$DIRECTORY_FALLBACK_SERVERS = [ ];
-
 
 /**
  *
@@ -2364,26 +2360,6 @@ function get_directory_realm() {
 
 	return DIRECTORY_REALM;
 }
-
-/**
- * @brief Return the primary directory server.
- *
- * @return string
- */
-function get_directory_primary() {
-
-	$dirmode = intval(get_config('system','directory_mode'));
-
-	if($dirmode == DIRECTORY_MODE_STANDALONE || $dirmode == DIRECTORY_MODE_PRIMARY) {
-		return z_root();
-	}
-
-	if($x = get_config('system', 'directory_primary'))
-		return $x;
-
-	return DIRECTORY_FALLBACK_MASTER;
-}
-
 
 /**
  * @brief Return relative date of last completed poller execution.

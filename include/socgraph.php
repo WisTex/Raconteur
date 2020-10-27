@@ -398,67 +398,6 @@ function suggestion_query($uid, $myxchan, $start = 0, $limit = 80) {
 
 }
 
-// This function fetches a number of sitenames from the directory and searches them
-// for channels that have opted-in to be "default" suggestions to new channels which
-// have no connections.
-// @TODO: We currently use a hardwired path of '/poco'. This should be configurable
-// and based on discovered endpoint locations.
-
-
-function update_suggestions() {
-
-	// this function is no longer used
-	// remove any existing entries it once created
-	// 
-	
-	$r = q("delete from xlink where xlink_xchan = '' and xlink_static = 0",
-		db_utcnow(), db_quoteinterval('7 DAY')
-	);
-
-	// !!!!!
-	return;
-	// !!!!!
-
-
-	$dirmode = get_config('system', 'directory_mode', DIRECTORY_MODE_NORMAL);
-
-	if ($dirmode == DIRECTORY_MODE_STANDALONE) {
-		poco_load('', z_root() . '/poco');
-		return;
-	}
-
-	if ($dirmode == DIRECTORY_MODE_PRIMARY) {
-		$url = z_root() . '/sitelist';
-	}
-	else {
-		$directory = Libzotdir::find_upstream_directory($dirmode);
-		$url = $directory['url'] . '/sitelist';
-	}
-	if (! $url)
-		return;
-
-	$ret = z_fetch_url($url);
-
-	if ($ret['success']) {
-
-		// We will grab fresh data once a day via the poller. Remove anything over a week old because
-		// the targets may have changed their preferences and don't want to be suggested - and they 
-		// may have simply gone away. 
-
-		$r = q("delete from xlink where xlink_xchan = '' and xlink_updated < %s - INTERVAL %s and xlink_static = 0",
-			db_utcnow(), db_quoteinterval('7 DAY')
-		);
-
-		$j = json_decode($ret['body'],true);
-		if ($j && $j['success']) {
-			foreach ($j['entries'] as $host) {
-				poco_load('',$host['url'] . '/poco');
-			}
-		}
-	}
-}
-
-
 function poco() {
 
 	$system_mode = false;
