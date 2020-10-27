@@ -232,13 +232,15 @@ class Queue {
 			$channel = channelx_by_n($outq['outq_channel']);
 
 			$retries = 0;
-
+			$m = parse_url($outq['outq_posturl']);
+			
 			$headers = [];
 			$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
 			$ret = $outq['outq_msg'];
 			logger('ActivityPub send: ' . jindent($ret), LOGGER_DATA);
 			$headers['Date'] = datetime_convert('UTC','UTC', 'now', 'D, d M Y H:i:s \\G\\M\\T');
 			$headers['Digest'] = HTTPSig::generate_digest_header($ret);
+			$headers['Host'] = $m['host'];
 			$headers['(request-target)'] = 'post ' . get_request_string($outq['outq_posturl']);
 
 			$xhead = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
