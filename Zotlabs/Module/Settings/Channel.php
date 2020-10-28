@@ -131,7 +131,7 @@ class Channel {
 		PermissionLimits::Set(local_channel(),'post_comments',$post_comments);
 
 		$publish          = (((x($_POST,'profile_in_directory')) && (intval($_POST['profile_in_directory']) == 1)) ? 1: 0);
-		$username         = ((x($_POST,'username'))   ? notags(trim($_POST['username']))     : '');
+		$username         = ((x($_POST,'username'))   ? escape_tags(trim($_POST['username']))     : '');
 		$timezone         = ((x($_POST,'timezone_select'))   ? notags(trim($_POST['timezone_select']))     : '');
 		$defloc           = ((x($_POST,'defloc'))     ? notags(trim($_POST['defloc']))       : '');
 		$openid           = ((x($_POST,'openid_url')) ? notags(trim($_POST['openid_url']))   : '');

@@ -1,30 +1,28 @@
 <?php
+
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
 
-
-class Oexchange extends \Zotlabs\Web\Controller {
+class Oexchange extends Controller {
 
 	function init() {
 	
-		if((argc() > 1) && (argv(1) === 'xrd')) {
-			$tpl = get_markup_template('oexchange_xrd.tpl');
-	
-			$o = replace_macros($tpl, array('$base' => z_root()));
-			echo $o;
+		if ((argc() > 1) && (argv(1) === 'xrd')) {
+			echo replace_macros(get_markup_template('oexchange_xrd.tpl'), [ '$base' => z_root() ] );
 			killme();
 		}
 	}
 	
 	function get() {
-	
-		if(! local_channel()) {
-			if(remote_channel()) {
-				$observer = \App::get_observer();
-				if($observer && $observer['xchan_url']) {
+		if (! local_channel()) {
+			if (remote_channel()) {
+				$observer = App::get_observer();
+				if ($observer && $observer['xchan_url']) {
 					$parsed = @parse_url($observer['xchan_url']);
-					if(! $parsed) {
-						notice( t('Unable to find your hub.') . EOL);
+					if (! $parsed) {
+						notice( t('Unable to find your site.') . EOL);
 						return;
 					}
 					$url = $parsed['scheme'] . '://' . $parsed['host'] . (($parsed['port']) ? ':' . $parsed['port'] : '');
@@ -37,7 +35,7 @@ class Oexchange extends \Zotlabs\Web\Controller {
 			return login(false);
 		}
 	
-		if((argc() > 1) && argv(1) === 'done') {
+		if ((argc() > 1) && argv(1) === 'done') {
 			info( t('Post successful.') . EOL);
 			return;
 		}
@@ -51,15 +49,17 @@ class Oexchange extends \Zotlabs\Web\Controller {
 		$tags = (((x($_REQUEST,'tags')) && strlen($_REQUEST['tags'])) 
 			? '&tags=' . urlencode(notags(trim($_REQUEST['tags']))) : '');
 	
-		$ret = z_fetch_url(z_root() . '/urlinfo?f=&url=' . $url . $title . $description . $tags);
+		$ret = z_fetch_url(z_root() . '/linkinfo?f=&url=' . $url . $title . $description . $tags);
 	
-		if($ret['success'])
+		if ($ret['success']) {
 			$s = $ret['body'];
+		}
 	
-		if(! strlen($s))
+		if (! strlen($s)) {
 			return;
+		}
 	
-		$post = array();
+		$post = [];
 	
 		$post['profile_uid'] = local_channel();
 		$post['return'] = '/oexchange/done' ;

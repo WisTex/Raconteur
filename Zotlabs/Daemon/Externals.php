@@ -4,6 +4,22 @@ namespace Zotlabs\Daemon;
 
 use Zotlabs\Lib\Libzot;
 
+/*
+
+This file is being kept for archival reference at this time.
+It is not currently referenced elsewhere. Its purpose is to grab
+some public posts from random zot sites by polling occasionally
+and asking for a 'zotfeed'. This is generally stored in the
+'public stream' which is owned by the system channel on this site.
+If somebody wishes to bring back this functionality, it should be
+modified to read public outboxes in ActivityStreams format.
+
+*/
+
+
+
+
+
 
 class Externals {
 

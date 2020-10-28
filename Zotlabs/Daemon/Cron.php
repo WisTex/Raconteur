@@ -171,12 +171,6 @@ class Cron {
 			}
 		}
 
-		// pull in some public posts
-
-		$disable_discover_tab = get_config('system','disable_discover_tab') || get_config('system','disable_discover_tab') === false;
-		if(! $disable_discover_tab)
-			Run::Summon(array('Externals'));
-
 		$generation = 0;
 
 		$restart    = false;
