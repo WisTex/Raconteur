@@ -2760,16 +2760,6 @@ class Libzot {
 		set_sconfig($url,'system','logo', $site_logo);
 		set_sconfig($url,'system','sitename', $sitename);
 		
-		// You can have one and only one primary directory per realm.
-		// Downgrade any others claiming to be primary. As they have
-		// flubbed up this badly already, don't let them be directory servers at all.
-
-		if (($site_directory === DIRECTORY_MODE_PRIMARY)
-			&& ($site_realm === get_directory_realm())
-			&& ($arr['url'] != get_directory_primary())) {
-			$site_directory = DIRECTORY_MODE_NORMAL;
-		}
-
 		$site_flags = $site_directory;
 
 		if (array_key_exists('zot',$arr)) {
