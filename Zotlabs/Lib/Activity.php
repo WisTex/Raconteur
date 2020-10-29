@@ -1876,15 +1876,22 @@ class Activity {
 				$software = ((array_path_exists('software/name',$ni)) ? $ni['software']['name'] : '');
 				$version = ((array_path_exists('software/version',$ni)) ? $ni['software']['version'] : '');
 
-				$r = q("select * from site where site_url = '%s'",
+				$site = q("select * from site where site_url = '%s'",
 					dbesc($site_url)
 				);
-				if ($r) {
-					q("update site set site_project = '%s', site_version = '%s' where site_url = '%s'",
+				if ($site) {
+					q("update site set site_project = '%s', site_version = '%s', where site_url = '%s'",
 						dbesc($software),
 						dbesc($version),
 						dbesc($site_url)
 					);
+					// it may have been saved originally as an unknown type, but we now know what it is
+					if (intval($site[0]['site_type']) === SITE_TYPE_UNKNOWN) {
+						q("update site set site_type = %d where site_url = '%s'",
+							intval(SITE_TYPE_NOTZOT),
+							dbesc($site_url)
+						);
+					}			
 				}
 				else {
 					site_store_lowlevel( 
