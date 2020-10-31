@@ -80,43 +80,6 @@ class Inbox extends Controller {
 			return;
 		}
 		
-		// $observer_hash in this case is the sender
-
-		if ($hsig['header_valid'] && $hsig['content_valid'] && $hsig['portable_id']) {
-			$observer_hash = $hsig['portable_id'];
-			// fetch the portable_id for the actor, which may or may not be the sender
-			$v = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s'",
-				dbesc($AS->actor['id']),
-				dbesc($AS->actor['id'])
-			);
-			// only allow relayed activities if the activity is signed with LDSigs
-			// AND the signature is valid AND the signer is the actor.
-			if ($v && $v[0]['hubloc_hash'] !== $observer_hash) {
-				if ($AS->signer && $AS->signer !== $AS->actor['id']) {
-					return;
-				}
-				if (! $AS->sigok) {
-					return;
-				}
-			}
-		}
-		else {
-			$observer_hash = $AS->actor['id'];
-		}
-
-		if (! $observer_hash) {
-			return;
-		}
-
-		$m = parse_url($observer_hash);
-		if ($m && $m['scheme'] && $m['host']) {
-			if (! check_siteallowed($m['scheme'] . '://' . $m['host'])) {
-				http_status_exit(403,'Permission denied');
-			}
-		}
-		if (! check_channelallowed($observer_hash)) {
-			http_status_exit(403,'Permission denied');
-		}
 
 		if (is_array($AS->actor) && array_key_exists('id',$AS->actor)) {
 			Activity::actor_store($AS->actor['id'],$AS->actor);
@@ -133,22 +96,77 @@ class Inbox extends Controller {
 			}
 		}
 
+		// Validate that the channel that sent us this activity has authority to do so.
+		// Require a valid HTTPSignature with a signed Digest header.
+
+		// Only permit relayed activities if the activity is signed with LDSigs
+		// AND the signature is valid AND the signer is the actor.
+
+		if ($hsig['header_valid'] && $hsig['content_valid'] && $hsig['portable_id']) {
+		
+			// fetch the portable_id for the actor, which may or may not be the sender
+			
+			$v = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s'",
+				dbesc($AS->actor['id']),
+				dbesc($AS->actor['id'])
+			);
+			
+			if ($v && $v[0]['hubloc_hash'] !== $hsig['portable_id']) {
+				// The sender is not actually the activity actor, so verify the LD signature.
+				// litepub activities (with no LD signature) will always have a matching actor and sender
+				
+				if ($AS->signer && $AS->signer !== $AS->actor['id'])  {
+					// the activity wasn't signed by the activity actor
+					return;
+				}
+				if (! $AS->sigok) {
+					// The activity signature isn't valid.
+					return;
+				}
+				
+			}
+			
+			if ($v) {
+				// The sender has been validated and stored
+				$observer_hash = $hsig['portable_id'];
+			}
+
+		}
+
+		if (! $observer_hash) {
+			return;
+		}
+
+		// verify that this site has permitted communication with the sender.
+		
+		$m = parse_url($observer_hash);
+
+		if ($m && $m['scheme'] && $m['host']) {
+			if (! check_siteallowed($m['scheme'] . '://' . $m['host'])) {
+				http_status_exit(403,'Permission denied');
+			}
+			// this site obviously isn't dead because they are trying to communicate with us. 
+			$test = q("update site set site_dead = 0 where site_dead = 1 and site_url = '%s' ",
+				dbesc($m['scheme'] . '://' . $m['host'])
+			);
+		}
+		if (! check_channelallowed($observer_hash)) {
+			http_status_exit(403,'Permission denied');
+		}
+
 		// update the hubloc_connected timestamp, ignore failures
 		
 		$test = q("update hubloc set hubloc_connected = '%s' where hubloc_hash = '%s' and hubloc_network = 'activitypub'",
 			dbesc(datetime_convert()),
 			dbesc($observer_hash)
 		);
-		$m = parse_url($observer_hash);
-		if ($m['scheme'] && $m['host']) {
-			$test = q("update site set site_dead = 0 where site_dead = 1 and site_url = '%s' ",
-				dbesc($m['scheme'] . '://' . $m['host'])
-			);
-		}
+
+
+		// Now figure out who the recipients are
 
 		if ($is_public) {
 
-			if ($AS->type === 'Follow' && is_array($AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])) {
+			if (in_array($AS->type, [ 'Follow', 'Join' ]) && is_array($AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])) {
 				$channels = q("SELECT * from channel where channel_address = '%s' and channel_removed = 0 ",
 					dbesc(basename($AS->obj['id']))
 				);

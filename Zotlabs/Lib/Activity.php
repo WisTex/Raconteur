@@ -106,9 +106,26 @@ class Activity {
 		}
 
 		if ($x['success']) {
+
 			$y = json_decode($x['body'],true);
 			logger('returned: ' . json_encode($y,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+
+			// check for a valid signature, but only if this is not an actor object. If it is signed, it must be valid.
+			// Ignore actors because of the potential for infinite recursion if we perform this step while
+			// fetching an actor key to validate a signature elsewhere. This should validate relayed activities
+			// over litepub which arrived at our inbox that do not use LD signatures
+			
+			if (($y['type']) && (! ActivityStreams::is_an_actor($y['type']))) {
+				$sigblock = HTTPSig::verify($x);
+
+				if (($sigblock['header_signed']) && (! $sigblock['header_valid'])) {
+					return null;
+				}
+			}
+
 			return json_decode($x['body'], true);
+
+
 		}
 		else {
 			logger('fetch failed: ' . $url);
