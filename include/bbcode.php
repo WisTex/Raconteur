@@ -958,6 +958,16 @@ function bb_imgoptions($match) {
 	
 }
 
+function bb_code_preprotect($matches) {
+	return '[code' . $matches[1] . ']' . 'b64.^8e%.' . base64_encode($matches[2]) . '.b64.$8e%' . '[/code]';
+}
+
+function bb_code_preunprotect($s) {
+	return preg_replace_callback('|b64\.\^8e\%\.(.*?)\.b64\.\$8e\%|ism','bb_code_unprotect_sub',$s);
+}
+
+
+
 function bb_code_protect($s) {
 	return 'b64.^9e%.' . base64_encode($s) . '.b64.$9e%';
 }
@@ -1295,8 +1305,11 @@ function bbcode($Text, $options = []) {
 
 	$Text = str_replace("\r\n", "\n", $Text);
 
-	// Perform some markdown conversions before translating linefeeds so as to keep the regexes manageable
+	// save code blocks from being interpreted as markdown
 
+	$Text = preg_replace_callback("/\[code(.*?)\](.*?)\[\/code\]/ism", 'bb_code_preprotect', $Text);
+
+	// Perform some markdown conversions before translating linefeeds so as to keep the regexes manageable
 
 	$Text = preg_replace('#(?<!\\\)([*_]{3})([^\n]+?)\1#','<strong><em>$2</em></strong>',$Text);
 	$Text = preg_replace('#(?<!\\\)([*_]{2})([^\n]+?)\1#','<strong>$2</strong>',$Text);
@@ -1316,12 +1329,15 @@ function bbcode($Text, $options = []) {
 	// links
 	$Text = preg_replace_callback('#!\[[^\]]*\]\((.*?)(?=\"|\))(\".*\")?\)(?!`)#','md_image',$Text);
 	$Text = preg_replace('#\[([^\[]+)\]\((?:javascript:)?([^\)]+)\)(?!`)#','<a href="$2">$1</a>',$Text);
+
 	// unordered lists
 	$Text = preg_replace('#^ *[*\-+] +(.*?)$#m','<ul><li>$1</li></ul>',$Text);
 	// order lists
 	$Text = preg_replace('#^\d+[\.] +(.*?)$#m','<ol><li>$1</li></ol>',$Text);
 
 	$Text = preg_replace('/\s*<\/(ol|ul)>\n+<\1>\s*/',"\n",$Text);
+
+	$Text = bb_code_preunprotect($Text);
 
 	// Convert new line chars to html <br> tags
 
