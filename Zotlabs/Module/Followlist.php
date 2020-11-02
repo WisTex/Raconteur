@@ -5,13 +5,17 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\ASCollection;
 use Zotlabs\Lib\Connect;
-
+use Zotlabs\Lib\Apps;
 
 class Followlist extends Controller {
 
 	function post() {
 
 		if (! local_channel()) {
+			return;
+		}
+
+		if (! Apps::system_app_installed(local_channel(),'Followlist')) {
 			return;
 		}
 
@@ -43,12 +47,42 @@ class Followlist extends Controller {
 
 	function get() {
 
+        $desc = t('This app allows you to connect to everybody in a pre-defined ActivityPub collection, such as follower/following lists. Install the app and revisit this page to input the source URL.');
+
+        $text = '<div class="section-content-info-wrapper">' . $desc . '</div>';
+
+		$max_records = get_config('system','max_imported_channels',1000);
+
+		// check service class limits
+
+		$r = q("select count(*) as total from abook where abook_channel = %d and abook_self = 0 ",
+			intval(local_channel())
+		);
+		if ($r) {
+			$total_channels = $r[0]['total'];
+		}
+
+		$sc = service_class_fetch(local_channel(),'total_channels');
+		if ($sc !== false) {
+			$allowed = intval($sc) - $total_channels;
+			if ($allowed < $max_records) {
+				$max_records = $allowed;
+			}
+		}
+
+
 		if (! local_channel()) {
 			return login();
 		}
 
+
+		if (! Apps::system_app_installed(local_channel(),'Followlist')) {
+			return $text;
+		}
+
 		return replace_macros(get_markup_template('followlist.tpl'), [
 			'$page_title' => t('Followlist'),
+			'$limits'     => sprintf( t('You may import up to %d records'), $max_records), 
 			'$notes'      => t('Enter the URL of an ActivityPub followers/following collection to import'),
 			'$url'        => [ 'url', t('URL of followers/following list'), '', '' ],
 			'$submit'     => t('Submit')

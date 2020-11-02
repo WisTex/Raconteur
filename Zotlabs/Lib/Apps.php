@@ -322,6 +322,7 @@ class Apps {
 			'Report Bug' => t('Report Bug'),
 			'View Bookmarks' => t('View Bookmarks'),
 			'Chatrooms' => t('Chatrooms'),
+			'Followlist' => t('Followlist'),
 			'Content Import' => t('Content Import'),
 			'Connections' => t('Connections'),
 			'Expire Posts' => t('Expire Posts'),

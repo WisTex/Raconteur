@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/followlist
+requires: local_channel
+name: Followlist
+photo: icon:users
+categories: Networking
