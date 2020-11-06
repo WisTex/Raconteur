@@ -115,7 +115,7 @@ class Inbox extends Controller {
 				// The sender is not actually the activity actor, so verify the LD signature.
 				// litepub activities (with no LD signature) will always have a matching actor and sender
 				
-				if ($AS->signer && $AS->signer !== $AS->actor['id'])  {
+				if ($AS->signer && is_array($AS->signer) && $AS->signer['id'] !== $AS->actor['id'])  {
 					// the activity wasn't signed by the activity actor
 					return;
 				}
