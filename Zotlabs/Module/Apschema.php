@@ -11,10 +11,10 @@ class Apschema extends Controller {
 		$arr = [
 			'@context' => [
 				'zot'                => z_root() . '/apschema#',
-				'id'                 => '@id',
-				'type'               => '@type',
+				'as'                 => 'https://www.w3.org/ns/activitystreams#',
 				'toot'               => 'http://joinmastodon.org/ns#',
 				'ostatus'            => 'http://ostatus.org#',
+				'schema'             => 'http://schema.org#',
 				'conversation'       => 'ostatus:conversation',
 				'sensitive'          => 'as:sensitive',
 				'movedTo'            => 'as:movedTo',
@@ -28,8 +28,8 @@ class Apschema extends Controller {
 				'emojiReaction'      => 'zot:emojiReaction',
 				'expires'            => 'zot:expires',
 				'directMessage'      => 'zot:directMessage',
+				'Category'           => 'zot:Category',
 				'replyTo'            => 'zot:replyTo',
-				'schema'             => 'http://schema.org#',
 				'PropertyValue'      => 'schema:PropertyValue',
 				'value'              => 'schema:value',
 				'discoverable'       => 'toot:discoverable',

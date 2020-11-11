@@ -12,6 +12,7 @@ use Zotlabs\Lib\SvgSanitizer;
 use Zotlabs\Lib\Img_cache;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\Config;
+use Zotlabs\Lib\Activity;
 
 use Michelf\MarkdownExtra;
 use Ramsey\Uuid\Uuid;
@@ -1457,8 +1458,13 @@ function format_hashtags(&$item) {
 			$term = htmlspecialchars($t['term'], ENT_COMPAT, 'UTF-8', false) ;
 			if(! trim($term))
 				continue;
-			if($t['url'] && stripos($item['body'], $t['url']))
+
+			// Pleroma uses example.com/tags/xxx in the taglist but example.com/tag/xxx in the body. Possibly a bug because one of these leads to
+			// an error page, but it messes up our detection of whether the tag was already present in the body.
+ 
+			if($t['url'] && ((stripos($item['body'], $t['url']) !== false) || (stripos($item['body'], str_replace('/tags/','/tag/',$t['url']))))) {
 				continue;
+			}
 			if($s)
 				$s .= ' ';
 
@@ -1474,17 +1480,58 @@ function format_hashtags(&$item) {
 function format_mentions(&$item) {
 	$s = '';
 
+	$pref = intval(PConfig::Get($item['uid'],'system','tag_username',Config::Get('system','tag_username',false)));
+
+	// hide "auto mentions" by default - this hidden pref let's you display them.
+
+	$show = intval(PConfig::Get($item['uid'],'system','show_auto_mentions',false));
+	if ((! $show) && (! $item['resource_type'])) {
+		return;
+	}
+
+	if ($pref === 127) {
+		return;
+	}
+
 	$terms = get_terms_oftype($item['term'],TERM_MENTION);
 	if($terms) {
 		foreach($terms as $t) {
+
 			$term = htmlspecialchars($t['term'],ENT_COMPAT,'UTF-8',false) ;
 			if(! trim($term))
 				continue;
-			if(strpos($item['body'], urlencode($t['url'])))
+
+			if($t['url'] && stripos($item['body'], $t['url']) !== false)
 				continue;
+
+			// some platforms put the identity url into href rather than the profile url. Accept either form.
+			$x = q("select * from xchan where xchan_url = '%s' or xchan_hash = '%s' limit 1",
+				dbesc($t['url']),
+				dbesc($t['url'])
+			);
+			if ($x) {
+				switch ($pref) {
+					case 0:
+						$txt = $x[0]['xchan_name'];
+						break;
+					case 1:
+						$txt = (($x[0]['xchan_addr']) ? $x[0]['xchan_addr'] : $x[0]['xchan_name']);
+						break;
+					case 2:
+					default;
+						if ($x[0]['xchan_addr']) {
+							$txt = sprintf( t('%1$s (%2$s)'), $x[0]['xchan_name'], $x[0]['xchan_addr']);
+						}
+						else {
+							$txt = $x[0]['xchan_name'];
+						}
+						break;
+				}
+			}
+	
 			if($s)
 				$s .= ' ';
-			$s .= '<span class="badge badge-pill badge-success"><i class="fa fa-at"></i>&nbsp;<a class="text-white" href="' . zid(chanlink_url($t['url'])) . '" >' . $term . '</a></span>';
+			$s .= '<span class="badge badge-pill badge-success"><i class="fa fa-at"></i>&nbsp;<a class="text-white" href="' . zid(chanlink_url($t['url'])) . '" >' . $txt . '</a></span>';
 		}
 	}
 
@@ -1681,8 +1728,7 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 
 	$tags = format_hashtags($item);
 
-	if($item['resource_type'])
-		$mentions = format_mentions($item);
+	$mentions = format_mentions($item);
 
 	$categories = format_categories($item,$writeable);
 

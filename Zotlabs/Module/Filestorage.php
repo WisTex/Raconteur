@@ -75,7 +75,7 @@ class Filestorage extends Controller {
 
 		attach_change_permissions($channel_id, $resource, $x['allow_cid'], $x['allow_gid'], $x['deny_cid'], $x['deny_gid'], $recurse, true);
 
-		$sync = attach_export_data($channel,$resource,true);
+		$sync = attach_export_data($channel,$resource,false);
 		if ($sync) {
 			Libsync::build_sync_packet($channel_id,array('file' => array($sync)));
 		}

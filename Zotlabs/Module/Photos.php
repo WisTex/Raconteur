@@ -207,7 +207,7 @@ class Photos extends Controller {
 			if(($m) && ($m[0]['folder'] != $_POST['move_to_album'])) {
 				attach_move($page_owner_uid,argv(2),$_POST['move_to_album']);			
 
-				$sync = attach_export_data(App::$data['channel'],argv(2),true);
+				$sync = attach_export_data(App::$data['channel'],argv(2),false);
 				if($sync) 
 					Libsync::build_sync_packet($page_owner_uid,array('file' => array($sync)));
 

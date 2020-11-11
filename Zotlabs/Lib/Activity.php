@@ -106,9 +106,26 @@ class Activity {
 		}
 
 		if ($x['success']) {
+
 			$y = json_decode($x['body'],true);
 			logger('returned: ' . json_encode($y,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+
+			// check for a valid signature, but only if this is not an actor object. If it is signed, it must be valid.
+			// Ignore actors because of the potential for infinite recursion if we perform this step while
+			// fetching an actor key to validate a signature elsewhere. This should validate relayed activities
+			// over litepub which arrived at our inbox that do not use LD signatures
+			
+			if (($y['type']) && (! ActivityStreams::is_an_actor($y['type']))) {
+				$sigblock = HTTPSig::verify($x);
+
+				if (($sigblock['header_signed']) && (! $sigblock['header_valid'])) {
+					return null;
+				}
+			}
+
 			return json_decode($x['body'], true);
+
+
 		}
 		else {
 			logger('fetch failed: ' . $url);
@@ -330,8 +347,9 @@ class Activity {
 				$ptr = [ $ptr ];
 			}
 			foreach ($ptr as $t) {
-				if (! array_key_exists('type',$t))
+				if (! array_key_exists('type',$t)) {
 					$t['type'] = 'Hashtag';
+				}
 
 				switch($t['type']) {
 					case 'Hashtag':
@@ -340,6 +358,10 @@ class Activity {
 
 					case 'topicalCollection':
 						$ret[] = [ 'ttype' => TERM_PCATEGORY, 'url' => $t['href'], 'term' => escape_tags($t['name']) ];
+						break;
+
+					case 'Category':
+						$ret[] = [ 'ttype' => TERM_CATEGORY, 'url' => $t['href'], 'term' => escape_tags($t['name']) ];
 						break;
 
 					case 'Mention':
@@ -383,6 +405,12 @@ class Activity {
 					case TERM_PCATEGORY:
 						if ($t['url'] && $t['term']) {
 							$ret[] = [ 'type' => 'topicalCollection', 'href' => $t['url'], 'name' => $t['term'] ];
+						}
+						break;
+
+					case TERM_CATEGORY:
+						if ($t['url'] && $t['term']) {
+							$ret[] = [ 'type' => 'Category', 'href' => $t['url'], 'name' => $t['term'] ];
 						}
 						break;
 
@@ -1876,15 +1904,22 @@ class Activity {
 				$software = ((array_path_exists('software/name',$ni)) ? $ni['software']['name'] : '');
 				$version = ((array_path_exists('software/version',$ni)) ? $ni['software']['version'] : '');
 
-				$r = q("select * from site where site_url = '%s'",
+				$site = q("select * from site where site_url = '%s'",
 					dbesc($site_url)
 				);
-				if ($r) {
-					q("update site set site_project = '%s', site_version = '%s' where site_url = '%s'",
+				if ($site) {
+					q("update site set site_project = '%s', site_version = '%s', where site_url = '%s'",
 						dbesc($software),
 						dbesc($version),
 						dbesc($site_url)
 					);
+					// it may have been saved originally as an unknown type, but we now know what it is
+					if (intval($site[0]['site_type']) === SITE_TYPE_UNKNOWN) {
+						q("update site set site_type = %d where site_url = '%s'",
+							intval(SITE_TYPE_NOTZOT),
+							dbesc($site_url)
+						);
+					}			
 				}
 				else {
 					site_store_lowlevel( 

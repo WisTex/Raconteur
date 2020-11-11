@@ -236,13 +236,15 @@ class ActivityPub {
 			return;
 		}
 
+		$orig_follow = get_abconfig($x['sender']['channel_id'],$x['recipient']['xchan_hash'],'activitypub','their_follow_id');
+
 		$msg = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1',
 				z_root() . ZOT_APSCHEMA_REV
 			]], 
 			[
-				'id'     => z_root() . '/follow/' . $x['recipient']['abook_id'],
+				'id'     => z_root() . '/follow/' . $x['recipient']['abook_id'] . (($orig_follow) ? '/' . md5($orig_follow) : EMPTY_STR),
 				'type'   => 'Follow',
 				'actor'  => $p,
 				'object' => $x['recipient']['xchan_hash'],
@@ -295,7 +297,7 @@ class ActivityPub {
 				z_root() . ZOT_APSCHEMA_REV
 			]], 
 			[
-				'id'     => z_root() . '/follow/' . $x['recipient']['abook_id'],
+				'id'     => z_root() . '/follow/' . $x['recipient']['abook_id'] . '/' . md5($accept),
 				'type'   => 'Accept',
 				'actor'  => $p,
 				'object' => [
@@ -359,7 +361,7 @@ class ActivityPub {
 				z_root() . ZOT_APSCHEMA_REV
 			]], 
 			[
-				'id'    => z_root() . '/follow/' . $recip[0]['abook_id'] . '#reject',
+				'id'    => z_root() . '/follow/' . $recip[0]['abook_id'] . '/' . md5($orig_activity) . '#reject',
 				'type'  => 'Reject',
 				'actor' => $p,
 				'object'     => [
@@ -383,11 +385,11 @@ class ActivityPub {
 				z_root() . ZOT_APSCHEMA_REV
 			]], 
 			[
-				'id'    => z_root() . '/follow/' . $recip[0]['abook_id'] . '#Undo',
+				'id'    => z_root() . '/follow/' . $recip[0]['abook_id'] . (($orig_activity) ? '/' . md5($orig_activity) : EMPTY_STR) . '#Undo',
 				'type'  => 'Undo',
 				'actor' => $p,
 				'object'     => [
-					'id'     => z_root() . '/follow/' . $recip[0]['abook_id'],
+					'id'     => z_root() . '/follow/' . $recip[0]['abook_id'] . (($orig_activity) ? '/' . md5($orig_activity) : EMPTY_STR),
 					'type'   => 'Follow',
 					'actor'  => $p,
 					'object' => $recip[0]['xchan_hash']

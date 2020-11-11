@@ -38,6 +38,7 @@ function z_mime_content_type($filename) {
 	'md'   => 'text/markdown',
 	'bb'   => 'text/bbcode',
 	'abc'  => 'text/vnd.abc',
+	'csv'  => 'text/csv',
 	'js'   => 'application/javascript',
 	'json' => 'application/json',
 	'xml'  => 'application/xml',
@@ -2671,6 +2672,12 @@ function save_chunk($channel,$start,$end,$len) {
 	}
 
 	$new_path = $new_base . '/' . $_FILES['files']['name'] . '.ftmp';
+
+	if(file_exists($new_path) && intval($start) === 0) {
+		$result['partial'] = true;
+		$result['length']  = intval(filesize($new_path));
+		return $result;
+	}
 
 	if(! file_exists($new_path)) {
 		rename($tmp_path,$new_path);
