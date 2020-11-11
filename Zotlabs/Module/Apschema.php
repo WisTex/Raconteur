@@ -28,7 +28,7 @@ class Apschema extends Controller {
 				'emojiReaction'      => 'zot:emojiReaction',
 				'expires'            => 'zot:expires',
 				'directMessage'      => 'zot:directMessage',
-				'category'           => 'zot:category',
+				'Category'           => 'zot:Category',
 				'replyTo'            => 'zot:replyTo',
 				'PropertyValue'      => 'schema:PropertyValue',
 				'value'              => 'schema:value',

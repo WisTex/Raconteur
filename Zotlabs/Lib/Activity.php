@@ -347,8 +347,9 @@ class Activity {
 				$ptr = [ $ptr ];
 			}
 			foreach ($ptr as $t) {
-				if (! array_key_exists('type',$t))
+				if (! array_key_exists('type',$t)) {
 					$t['type'] = 'Hashtag';
+				}
 
 				switch($t['type']) {
 					case 'Hashtag':
@@ -357,6 +358,10 @@ class Activity {
 
 					case 'topicalCollection':
 						$ret[] = [ 'ttype' => TERM_PCATEGORY, 'url' => $t['href'], 'term' => escape_tags($t['name']) ];
+						break;
+
+					case 'Category':
+						$ret[] = [ 'ttype' => TERM_CATEGORY, 'url' => $t['href'], 'term' => escape_tags($t['name']) ];
 						break;
 
 					case 'Mention':
@@ -400,6 +405,12 @@ class Activity {
 					case TERM_PCATEGORY:
 						if ($t['url'] && $t['term']) {
 							$ret[] = [ 'type' => 'topicalCollection', 'href' => $t['url'], 'name' => $t['term'] ];
+						}
+						break;
+
+					case TERM_CATEGORY:
+						if ($t['url'] && $t['term']) {
+							$ret[] = [ 'type' => 'Category', 'href' => $t['url'], 'name' => $t['term'] ];
 						}
 						break;
 
