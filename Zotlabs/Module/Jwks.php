@@ -12,11 +12,10 @@ class Jwks extends Controller {
 		$key = Keyutils::pemtome(get_config('system','pubkey'),$m,$e);
 		$keys = [
 			[
-				'alg' => 'RS256',
 				'e'   => base64url_encode($e),
 				'n'   => base64url_encode($m),
 				'kty' => 'RSA',
-				'kid' => 'key1'
+				'kid' => '0',
 			]
 		];
 

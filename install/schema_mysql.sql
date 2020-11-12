@@ -1617,22 +1617,25 @@ CREATE TABLE if not exists oauth_clients (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE if not exists oauth_access_tokens (
-  access_token         VARCHAR(40)    NOT NULL,
+  id INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  access_token         VARCHAR(1500)    NOT NULL,
   client_id            VARCHAR(80)    NOT NULL,
   user_id              int(10) unsigned NOT NULL DEFAULT 0,
   expires              TIMESTAMP      NOT NULL,
   scope                VARCHAR(4000),
-  PRIMARY KEY (access_token)
+  PRIMARY KEY (id),
+  KEY `access_token` (`access_token`),
+
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE if not exists oauth_authorization_codes (
-  authorization_code  VARCHAR(40)     NOT NULL,
+  authorization_code  VARCHAR(80)     NOT NULL,
   client_id           VARCHAR(80)     NOT NULL,
   user_id             int(10) unsigned NOT NULL DEFAULT 0,
   redirect_uri        VARCHAR(2000),
   expires             TIMESTAMP       NOT NULL,
   scope               VARCHAR(4000),
-  id_token            VARCHAR(1000),
+  id_token            VARCHAR(1500),
   PRIMARY KEY (authorization_code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

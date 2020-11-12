@@ -178,7 +178,7 @@ logger('redirect: ' . $redirect);
 			foreach($c as $cv) {
 				for($x = 0; $x < count($r); $x ++) {
 					if($r[$x]['client_id'] === $cv['client_id']) {
-						if(! array_key_exists($r[$x]['tokens'])) {
+						if(! array_key_exists('tokens',$r[$x])) {
 							$r[$x]['tokens'] = [];
 						}
 						$r[$x]['tokens'][] = $cv['access_token'];
