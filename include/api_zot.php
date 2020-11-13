@@ -1,8 +1,9 @@
 <?php
 
 	function zot_api_init() {
+		api_register_func('api/v1/apps','api_client_register', true);
+
 		api_register_func('api/z/1.0/verify','api_verify', true);
-		
 		api_register_func('api/red/version','api_zot_version',false);
         api_register_func('api/z/1.0/version','api_zot_version',false);
 		api_register_func('api/export/basic','api_export_basic', true);

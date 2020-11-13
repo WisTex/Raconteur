@@ -190,7 +190,7 @@ require_once('include/api_zot.php');
 		$ret = [];
 		$key = random_string(16);
 		$secret = random_string(16);
-		$name = trim(escape_tags($_REQUEST['application_name']));
+		$name = trim(escape_tags($_REQUEST['client_name']));
 		if (! $name) {
 			json_return_and_die($ret);
 		}
@@ -201,7 +201,7 @@ require_once('include/api_zot.php');
 			$redirect = trim($_REQUEST['redirect_uris']);
 		}
 		$grant_types = trim($_REQUEST['grant_types']);
-		$scope = trim($_REQUEST['scope']);
+		$scope = trim($_REQUEST['scopes']);
 		$icon = trim($_REQUEST['logo_uri']);
 		$r = q("INSERT INTO oauth_clients (client_id, client_secret, redirect_uri, grant_types, scope, user_id, client_name)
 			VALUES ( '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) ",
