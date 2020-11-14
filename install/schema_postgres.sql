@@ -213,9 +213,9 @@ CREATE TABLE "auth_codes" (
 );
 CREATE TABLE "block" (
   block_id serial NOT NULL,
-  block_channel_id int(10) UNSIGNED NOT NULL,
+  block_channel_id bigint UNSIGNED NOT NULL,
   block_entity text NOT NULL,
-  block_type int(11) NOT NULL,
+  block_type bigint NOT NULL,
   block_comment text NOT NULL,
   PRIMARY KEY ("block_id")
 );
