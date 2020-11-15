@@ -638,6 +638,10 @@ class Activity {
 			$ret['id'] = $i['mid'];
 		}
 
+		if ($i['uuid']) {
+			$ret['diaspora:guid'] = $i['uuid'];
+		}
+
 		if ($i['title']) {
 			$ret['name'] = $i['title'];
 		}
@@ -879,6 +883,10 @@ class Activity {
 		$has_images = preg_match_all('/\[[zi]mg(.*?)\](.*?)\[/ism',$i['body'],$images,PREG_SET_ORDER);
 
 		$ret['id'] = $i['mid'];
+
+		if ($i['uuid']) {
+			$ret['diaspora:guid'] = $i['uuid'];
+		}
 
 		$ret['published'] = datetime_convert('UTC','UTC',$i['created'],ATOM_TIME);
 		if ($i['created'] !== $i['edited']) {
@@ -2751,6 +2759,16 @@ class Activity {
 					$s['body'] = preg_replace('/\[zrl\=' . preg_quote($x[0]['xchan_url'],'/') . '\]@(.*?)\[\/zrl\]/ism',
 						'@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',$s['body']);
 					$s['body'] = preg_replace('/\[url\=' . preg_quote($x[0]['xchan_url'],'/') . '\]@(.*?)\[\/url\]/ism',
+						'@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',$s['body']);
+
+					// replace these just in case the sender (in this case Friendica) got it wrong
+					$s['body'] = preg_replace('/\@\[zrl\=' . preg_quote($x[0]['xchan_hash'],'/') . '\](.*?)\[\/zrl\]/ism',
+						'@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',$s['body']);
+					$s['body'] = preg_replace('/\@\[url\=' . preg_quote($x[0]['xchan_hash'],'/') . '\](.*?)\[\/url\]/ism',
+						'@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',$s['body']);
+					$s['body'] = preg_replace('/\[zrl\=' . preg_quote($x[0]['xchan_hash'],'/') . '\]@(.*?)\[\/zrl\]/ism',
+						'@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',$s['body']);
+					$s['body'] = preg_replace('/\[url\=' . preg_quote($x[0]['xchan_hash'],'/') . '\]@(.*?)\[\/url\]/ism',
 						'@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',$s['body']);
 				}
 			}
