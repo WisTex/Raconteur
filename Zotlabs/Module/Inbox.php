@@ -256,6 +256,12 @@ class Inbox extends Controller {
 						Activity::follow($channel,$AS);
 					}
 					break;
+				case 'Invite':
+					if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
+						// do follow activity
+						Activity::follow($channel,$AS);
+					}
+					break;
 				case 'Join':
 					if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
 						// do follow activity
