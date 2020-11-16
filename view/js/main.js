@@ -435,6 +435,13 @@ function doFollowAuthor(url) {
 }
 
 
+function update_role_text() {
+	var new_role = $("#id_permissions_role").val();
+	if (typeof(new_role) !== 'undefined') {
+		$("#channel_role_text").html(aStr[new_role]);
+	}	
+}
+
 function viewsrc(id) {
 	$.colorbox({href: 'viewsrc/' + id, maxWidth: '80%', maxHeight: '80%' });
 }

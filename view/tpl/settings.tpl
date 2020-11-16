@@ -44,10 +44,12 @@
 				<div id="privacy-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="privacy-settings" data-parent="#settings">
 					<div class="section-content-tools-wrapper">
 						{{if $can_change_role}}
-						{{include file="field_select_grouped.tpl" field=$role}}
+						{{include file="field_select_grouped.tpl" field=$role}}						
+						<div class="descriptive-text" id="channel_role_text"></div>
 						{{else}}
-						<input type="hidden" name="permissions_role" value="{{$permissions_role}}">
+						<input type="hidden" name="permissions_role" value="{{$permissions_role}}" >
 						{{/if}}
+						<br>
 						{{$autoperms}}
 						{{$anymention}}
 						{{include file="field_select.tpl" field=$comment_perms}}

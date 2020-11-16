@@ -1,6 +1,6 @@
 	<div class='form-group field select'>
 		<label for='id_{{$field.0}}'>{{$field.1}}</label>
-		<select class="form-control" name='{{$field.0}}' id='id_{{$field.0}}'>
+		<select class="form-control" name='{{$field.0}}' id='id_{{$field.0}}'{{if $field.5}} {{$field.5}}{{/if}}>
 			{{foreach $field.4 as $group=>$opts}}
 				<optgroup label='{{$group}}'>
 				{{foreach $opts as $opt=>$val}}

@@ -63,7 +63,16 @@
 		'month' : "{{$month}}",
 		'week' : "{{$week}}",
 		'day' : "{{$day}}",
-		'allday' : "{{$allday}}"
+		'allday' : "{{$allday}}",
+
+		'social' : "{{$channel_social}}",
+		'social_restricted' : "{{$channel_social_restricted}}",
+		'forum' : "{{$channel_forum}}",
+		'forum_restricted' : "{{$channel_forum_restricted}}",
+		'forum_moderated' : "{{$channel_forum_moderated}}",
+		'collection' : "{{$channel_collection}}",
+		'collection_restricted' : "{{$channel_collection_restricted}}",
+		
 	};
 
 </script>
