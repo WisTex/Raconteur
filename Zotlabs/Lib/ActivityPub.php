@@ -251,9 +251,19 @@ class ActivityPub {
 				'to'     => [ $x['recipient']['xchan_hash'] ]
 		]);
 
+		// for Group actors, send both a Follow and a Join because some platforms only support one and there's
+		// no way of discovering/knowing in advance which type they support
+
+		$join_msg = null;
+
+		if (intval($x['recipient']['xchan_type']) === 1) {
+			$join_msg = $msg;
+			$join_msg['type'] = 'Join';
+			$join_msg['signature'] = LDSignatures::sign($join_msg,$x['sender']);
+			$jmsg2 = json_encode($join_msg, JSON_UNESCAPED_SLASHES);
+		}
 
 		$msg['signature'] = LDSignatures::sign($msg,$x['sender']);
-
 		$jmsg = json_encode($msg, JSON_UNESCAPED_SLASHES);
 
 		$h = q("select * from hubloc where hubloc_hash = '%s' limit 1",
@@ -264,6 +274,12 @@ class ActivityPub {
 			$qi = self::queue_message($jmsg,$x['sender'],$h[0]);
 			if ($qi) {
 				$x['deliveries'] = $qi;
+			}
+			if ($join_msg) {
+				$qi = self::queue_message($join_msg,$x['sender'],$h[0]);
+				if ($qi) {
+					$x['deliveries'] = $qi;
+				}
 			}
 		}
 		

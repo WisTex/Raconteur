@@ -1458,7 +1458,7 @@ class Activity {
 
 		$person_obj = $act->actor;
 
-		if ($act->type === 'Follow') {
+		if (in_array($act->type, [ 'Follow', 'Invite', 'Join'])) {
 			$their_follow_id  = $act->id;
 		}
 		elseif ($act->type === 'Accept') {
@@ -1501,6 +1501,8 @@ class Activity {
 			switch($act->type) {
 
 				case 'Follow':
+				case 'Invite':
+				case 'Join':
 
 					// A second Follow request, but we haven't approved the first one
 
@@ -1840,6 +1842,7 @@ class Activity {
 			}
 		}
 
+		$xchan_type = (($person_obj['type'] === 'Group') ? 1 : 0);
 		$about = ((isset($person_obj['summary'])) ? html2bbcode(purify_html($person_obj['summary'])) : EMPTY_STR);
 
 		$p = q("select * from xchan where xchan_url = '%s' and xchan_network = 'zot6' limit 1",
@@ -1867,6 +1870,7 @@ class Activity {
 					'xchan_updated'        => datetime_convert(),
 					'xchan_name_date'      => datetime_convert(),
 					'xchan_network'        => 'activitypub',
+					'xchan_type'           => $xchan_type,
 					'xchan_photo_date'     => datetime_convert('UTC','UTC','1968-01-01'),
 					'xchan_photo_l'        => z_root() . '/' . get_default_profile_photo(),
 					'xchan_photo_m'        => z_root() . '/' . get_default_profile_photo(80),
@@ -1886,13 +1890,14 @@ class Activity {
 			}
 
 			// update existing record
-			$u = q("update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s', xchan_hidden = %d where xchan_hash = '%s'",
+			$u = q("update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s', xchan_hidden = %d, xchan_type = %d where xchan_hash = '%s'",
 				dbesc(datetime_convert()),
 				dbesc($name),
 				dbesc($pubkey),
 				dbesc('activitypub'),
 				dbesc(datetime_convert()),
 				intval($hidden),
+				intval($xchan_type),
 				dbesc($url)
 			);
 
