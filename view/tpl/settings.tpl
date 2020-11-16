@@ -49,7 +49,6 @@
 						{{else}}
 						<input type="hidden" name="permissions_role" value="{{$permissions_role}}" >
 						{{/if}}
-						<br>
 						{{$autoperms}}
 						{{$anymention}}
 						{{include file="field_select.tpl" field=$comment_perms}}
