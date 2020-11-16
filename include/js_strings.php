@@ -103,6 +103,13 @@ function js_strings() {
 		'$month' => t('month','calendar'),
 		'$week' => t('week','calendar'),
 		'$day' => t('day','calendar'),
-		'$allday' => t('All day','calendar')
+		'$allday' => t('All day','calendar'),
+		'$channel_social' => t('A social networking profile that is public by default and private if desired'),
+		'$channel_social_restricted' => t('A social networking profile where content is private to your [Friends] Access List by default but can be made public if desired'),
+		'$channel_forum' => t('A public group where members are allowed to upload media by default'),
+		'$channel_forum_restricted' => t('A private group with no upload permission'),
+		'$channel_forum_moderated' => t('A public group where posts are moderated by the owner. The [moderated] permission may be removed from any group member once trust is established'),
+		'$channel_collection' =>t('A sub-channel of your main channel - often devoted to a specific language or topic. Replies are sent back to your main channel'),
+		'$channel_collection_restricted' =>t('A private sub-channel of your main channel - often devoted to a specific language or topic. Replies are sent back to your main channel'),
 	));
 }
