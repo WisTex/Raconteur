@@ -135,27 +135,7 @@ class Channel extends Controller {
 				}
 			}
 
-
-			$x = array_merge(['@context' => [
-				ACTIVITYSTREAMS_JSONLD_REV,
-				'https://w3id.org/security/v1',
-				z_root() . ZOT_APSCHEMA_REV
-			]], Activity::encode_person($channel,true,true));
-
-			$headers = [];
-        	$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
-
-        	$x['signature'] = LDSignatures::sign($x,$channel);
-        	$ret = json_encode($x, JSON_UNESCAPED_SLASHES);
-			$headers['Date'] = datetime_convert('UTC','UTC', 'now', 'D, d M Y H:i:s \\G\\M\\T');
-        	$headers['Digest'] = HTTPSig::generate_digest_header($ret);
-			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
-        	$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
-        	HTTPSig::set_headers($h);
-
-        	echo $ret;
-	        killme();
-
+			as_return_and_die(Activity::encode_person($channel,true,true),$channel);
 		}
 
 		// Run Libprofile::load() here to make sure the theme is set before
