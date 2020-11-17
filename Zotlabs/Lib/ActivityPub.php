@@ -276,7 +276,7 @@ class ActivityPub {
 				$x['deliveries'] = $qi;
 			}
 			if ($join_msg) {
-				$qi = self::queue_message($join_msg,$x['sender'],$h[0]);
+				$qi = self::queue_message($jmsg2,$x['sender'],$h[0]);
 				if ($qi) {
 					$x['deliveries'] = $qi;
 				}

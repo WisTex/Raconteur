@@ -271,7 +271,8 @@ class Inbox extends Controller {
 				case 'Accept':			
 					// Activitypub for wordpress sends lowercase 'follow' on accept.
 					// https://github.com/pfefferle/wordpress-activitypub/issues/97
-					if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && in_array($AS->obj['type'], ['Follow','follow'])) {
+					// Mobilizon sends Accept/"Member" (not in vocabulary) in response to Join/Group
+					if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && in_array($AS->obj['type'], ['Follow','follow', 'Member'])) {
 						// do follow activity
 						Activity::follow($channel,$AS);
 					}
@@ -297,11 +298,14 @@ class Inbox extends Controller {
 						Activity::actor_store($AS->obj['id'],$AS->obj);
 						break;
 					}
+				case 'Accept':
+					if (is_array($AS->obj) && array_key_exists('type',$AS->obj) && (ActivityStreams::is_an_actor($AS->obj['type']) || $AS->obj['type'] === 'Member')) {
+						break;
+					}
 				case 'Create':
 				case 'Like':
 				case 'Dislike':
 				case 'Announce':
-				case 'Accept':
 				case 'Reject':
 				case 'TentativeAccept':
 				case 'TentativeReject':
