@@ -273,7 +273,6 @@ var activeCommentText = '';
 	}
 
 	function jotGetPubDate() {
-		//reply = prompt("{{$expirewhen}}", $('#jot-expire').val());
 		$('#createdModal').modal();
 		$('#created-modal-OKButton').on('click', function() {
 			reply=$('#created-date').val();
