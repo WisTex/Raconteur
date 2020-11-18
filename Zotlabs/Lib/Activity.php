@@ -1671,8 +1671,6 @@ class Activity {
 
 		$contact = null;
 
-		/* @FIXME This really needs to be a signed request. */
-
 		/* actor is unfollowing $channel */
 
 		$person_obj = $act->actor;

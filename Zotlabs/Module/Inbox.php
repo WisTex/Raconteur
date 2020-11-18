@@ -235,7 +235,7 @@ class Inbox extends Controller {
 			return;
 		}
 
-		// Bto and Bcc aren't valid in this context and should not be stored. 
+		// Bto and Bcc will only be present in a C2S transaction and should not be stored. 
 		
 		$saved_recips = [];
 		foreach ( [ 'to', 'cc', 'audience' ] as $x ) {
