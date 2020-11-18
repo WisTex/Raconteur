@@ -1,7 +1,13 @@
 <?php
 
+use Zotlabs\Lib\MastAPI;
+
+
+
 	function zot_api_init() {
+		// mastodon API specific endpoints
 		api_register_func('api/v1/apps','api_client_register', true);
+		api_register_func('api/v1/instance','api_mast_instance',false);
 
 		api_register_func('api/z/1.0/verify','api_verify', true);
 		api_register_func('api/red/version','api_zot_version',false);
@@ -77,6 +83,10 @@
 		}
 	}
 
+	function api_mast_instance($type) {
+		json_return_and_die(MastAPI::format_site());
+	}
+	
 
 
 	/*
