@@ -21,6 +21,7 @@ function xchan_store_lowlevel($arr) {
 		'xchan_connpage' => ((array_key_exists('xchan_connpage',$arr)) ? $arr['xchan_connpage'] : ''),
 		'xchan_name' => ((array_key_exists('xchan_name',$arr)) ? $arr['xchan_name'] : ''),
 		'xchan_network' => ((array_key_exists('xchan_network',$arr)) ? $arr['xchan_network'] : ''),
+		'xchan_created' => ((array_key_exists('xchan_created',$arr)) ? datetime_convert('UTC','UTC',$arr['xchan_created']) : datetime_convert()),
 		'xchan_updated' => ((array_key_exists('xchan_updated',$arr)) ? datetime_convert('UTC','UTC',$arr['xchan_updated']) : datetime_convert()),
 		'xchan_photo_date' => ((array_key_exists('xchan_photo_date',$arr)) ? datetime_convert('UTC','UTC',$arr['xchan_photo_date']) : NULL_DATE),
 		'xchan_name_date' => ((array_key_exists('xchan_name_date',$arr)) ? datetime_convert('UTC','UTC',$arr['xchan_name_date']) : NULL_DATE),

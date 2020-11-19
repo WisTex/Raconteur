@@ -2304,26 +2304,28 @@ class Activity {
 
 			$mention = self::get_actor_bbmention($obj_actor['id']);
 
+			$quoted_content = '[quote]' . $content['content'] . '[/quote]';
+
 			if ($act->type === 'Like') {
-				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $content['content'];
+				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $quoted_content;
 			}
 			if ($act->type === 'Dislike') {
-				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $content['content'];
+				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $quoted_content;
 			}
 			
 			// handle event RSVPs
 			if (($act->obj['type'] === 'Event') || ($act->obj['type'] === 'Invite' && array_path_exists('object/type',$act->obj) && $act->obj['object']['type'] === 'Event')) {
 				if ($act->type === 'Accept') {
-					$content['content'] = sprintf( t('Will attend %s\'s event'),$mention) . EOL . EOL . $content['content'];
+					$content['content'] = sprintf( t('Will attend %s\'s event'),$mention) . EOL . EOL . $quoted_content;
 				}
 				if ($act->type === 'Reject') {
-					$content['content'] = sprintf( t('Will not attend %s\'s event'),$mention) . EOL . EOL . $content['content'];
+					$content['content'] = sprintf( t('Will not attend %s\'s event'),$mention) . EOL . EOL . $quoted_content;
 				}
 				if ($act->type === 'TentativeAccept') {
-					$content['content'] = sprintf( t('May attend %s\'s event'),$mention) . EOL . EOL . $content['content'];
+					$content['content'] = sprintf( t('May attend %s\'s event'),$mention) . EOL . EOL . $quoted_content;
 				}
 				if ($act->type === 'TentativeReject') {
-					$content['content'] = sprintf( t('May not attend %s\'s event'),$mention) . EOL . EOL . $content['content'];
+					$content['content'] = sprintf( t('May not attend %s\'s event'),$mention) . EOL . EOL . $quoted_content;
 				}
 			}
 			

@@ -1301,6 +1301,7 @@ CREATE TABLE IF NOT EXISTS `xchan` (
   `xchan_connpage` char(191) NOT NULL DEFAULT '',
   `xchan_name` char(191) NOT NULL DEFAULT '',
   `xchan_network` char(191) NOT NULL DEFAULT '',
+  `xchan_created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `xchan_updated` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `xchan_photo_date` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `xchan_name_date` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
@@ -1324,6 +1325,7 @@ CREATE TABLE IF NOT EXISTS `xchan` (
   KEY `xchan_censored` (`xchan_censored`),
   KEY `xchan_selfcensored` (`xchan_selfcensored`),
   KEY `xchan_system` (`xchan_system`),
+  KEY `xchan_created` (`xchan_created`),
   KEY `xchan_updated` (`xchan_updated`),
   KEY `xchan_type` (`xchan_type`),
   KEY `xchan_deleted` (`xchan_deleted`)
