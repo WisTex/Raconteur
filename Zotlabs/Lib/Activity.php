@@ -2757,6 +2757,12 @@ class Activity {
 				}
 				
 				if ($txt) {
+
+					// the Markdown filter will get tripped up and think this is a markdown link
+					// if $txt begins with parens so put it behind a zero-width space
+					if (substr($txt,0,1) === '(') {
+						$txt = htmlspecialchars_decode('&#8203;',ENT_QUOTES) . $txt;
+					}					
 					$s['body'] = preg_replace('/\@\[zrl\=' . preg_quote($x[0]['xchan_url'],'/') . '\](.*?)\[\/zrl\]/ism',
 						'@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',$s['body']);
 					$s['body'] = preg_replace('/\@\[url\=' . preg_quote($x[0]['xchan_url'],'/') . '\](.*?)\[\/url\]/ism',

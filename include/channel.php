@@ -517,15 +517,15 @@ function create_identity($arr) {
 
 function connect_and_sync($channel,$address, $sub_channel = false) {
 
-	if((! $channel) || (! $address)) {
+	if ((! $channel) || (! $address)) {
 		return false;
 	}
 
 	$f = Connect::connect($channel,$address, $sub_channel);
-	if($f['success']) {
+	if ($f['success']) {
 		$clone = [];
-		foreach($f['abook'] as $k => $v) {
-			if(strpos($k,'abook_') === 0) {
+		foreach ($f['abook'] as $k => $v) {
+			if (strpos($k,'abook_') === 0) {
 				$clone[$k] = $v;
 			}
 		}
@@ -534,7 +534,7 @@ function connect_and_sync($channel,$address, $sub_channel = false) {
 		unset($clone['abook_channel']);
 	
 		$abconfig = load_abconfig($channel['channel_id'],$clone['abook_xchan']);
-		if($abconfig) {
+		if ($abconfig) {
 			$clone['abconfig'] = $abconfig;
 		}	
 
@@ -575,7 +575,7 @@ function change_channel_keys($channel) {
 		dbesc($hash),
 		intval($channel['channel_id'])
 	);
-	if(! $r) {
+	if (! $r) {
 		return $ret;
  	}
 
@@ -583,7 +583,7 @@ function change_channel_keys($channel) {
 		intval($channel['channel_id'])
 	);
 
-	if(! $r) {
+	if (! $r) {
 		$ret['message'] = t('Unable to retrieve modified identity');
 		return $ret;
 	}
@@ -612,9 +612,9 @@ function change_channel_keys($channel) {
 		dbesc($hash)
 	);
 
-	if(($x) && (! $check)) {
+	if (($x) && (! $check)) {
 		$oldxchan = $x[0];
-		foreach($x as $xv) {
+		foreach ($x as $xv) {
 			$xv['xchan_guid_sig']  = $sig;
 			$xv['xchan_hash']      = $hash;
 			$xv['xchan_pubkey']    = $key['pubkey'];
@@ -630,7 +630,7 @@ function change_channel_keys($channel) {
 		dbesc($stored['old_hash'])
 	);
 
-	if($a) {
+	if ($a) {
 		q("update abook set abook_xchan = '%s' where abook_id = %d",
 			dbesc($hash),
 			intval($a[0]['abook_id'])
@@ -651,12 +651,12 @@ function channel_change_address($channel,$new_address) {
 
 	$old_address = $channel['channel_address'];
 
-	if($new_address === 'sys') {
+	if ($new_address === 'sys') {
 		$ret['message'] = t('Reserved nickname. Please choose another.');
 		return $ret;
 	}
 
-	if(check_webbie(array($new_address)) !== $new_address) {
+	if (check_webbie(array($new_address)) !== $new_address) {
 		$ret['message'] = t('Nickname has unsupported characters or is already being used on this site.');
 		return $ret;
 	}
@@ -665,7 +665,7 @@ function channel_change_address($channel,$new_address) {
 		dbesc($new_address),
 		intval($channel['channel_id'])
 	);
-	if(! $r) {
+	if (! $r) {
 		return $ret;
  	}
 
@@ -673,7 +673,7 @@ function channel_change_address($channel,$new_address) {
 		intval($channel['channel_id'])
 	);
 
-	if(! $r) {
+	if (! $r) {
 		$ret['message'] = t('Unable to retrieve modified identity');
 		return $ret;
 	}
@@ -688,9 +688,9 @@ function channel_change_address($channel,$new_address) {
 		dbesc(z_root())
 	);
 
-	if($h) {
-		foreach($h as $hv) {
-			if($hv['hubloc_primary']) {
+	if ($h) {
+		foreach ($h as $hv) {
+			if ($hv['hubloc_primary']) {
 				q("update hubloc set hubloc_primary = 0 where hubloc_id = %d",
 					intval($hv['hubloc_id'])
 				);
@@ -710,10 +710,10 @@ function channel_change_address($channel,$new_address) {
 	$r = q("select * from app where app_channel = %d and app_system = 1",
 		intval($channel['channel_id'])
 	);
-	if($r) {
-		foreach($r as $rv) {
+	if ($r) {
+		foreach ($r as $rv) {
 			$replace = preg_replace('/([\=\/])(' . $old_address . ')($|[\%\/])/ism','$1' . $new_address . '$3',$rv['app_url']);
-			if($replace != $rv['app_url']) {
+			if ($replace != $rv['app_url']) {
 				q("update app set app_url = '%s' where id = %d",
 					dbesc($replace),
 					intval($rv['id'])
@@ -827,21 +827,22 @@ function identity_basic_export($channel_id, $sections = null) {
 	$r = q("select * from channel where channel_id = %d limit 1",
 		intval($channel_id)
 	);
-	if($r) {
+	if ($r) {
 		$ret['relocate'] = [ 'channel_address' => $r[0]['channel_address'], 'url' => z_root()];
-		if(in_array('channel',$sections)) {
+		if (in_array('channel',$sections)) {
 			$ret['channel'] = $r[0];
 			unset($ret['channel']['channel_password']);
 			unset($ret['channel']['channel_salt']);
 		}
 	}
 
-	if(in_array('channel',$sections) || in_array('profile',$sections)) {
+	if (in_array('channel',$sections) || in_array('profile',$sections)) {
 		$r = q("select * from profile where uid = %d",
 			intval($channel_id)
 		);
-		if($r)
+		if ($r) {
 			$ret['profile'] = $r;
+		}
 
 		$r = q("select mimetype, content, os_storage from photo
 			where imgscale = 4 and photo_usage = %d and uid = %d limit 1",
@@ -849,7 +850,7 @@ function identity_basic_export($channel_id, $sections = null) {
 			intval($channel_id)
 		);
 
-		if($r) {
+		if ($r) {
 			$ret['photo'] = [
 				'type' => $r[0]['mimetype'],
 				'data' => (($r[0]['os_storage'])
@@ -858,67 +859,75 @@ function identity_basic_export($channel_id, $sections = null) {
 		}
 	}
 
-	if(in_array('connections',$sections)) {
+	if (in_array('connections',$sections)) {
 		$xchans = array();
 		$r = q("select * from abook where abook_channel = %d ",
 			intval($channel_id)
 		);
-		if($r) {
+		if ($r) {
 			$ret['abook'] = $r;
 
-			for($x = 0; $x < count($ret['abook']); $x ++) {
+			for ($x = 0; $x < count($ret['abook']); $x ++) {
 				$xchans[] = $ret['abook'][$x]['abook_xchan'];
 				$abconfig = load_abconfig($channel_id,$ret['abook'][$x]['abook_xchan']);
-				if($abconfig)
+				if ($abconfig) {
 					$ret['abook'][$x]['abconfig'] = $abconfig;
+				}
 			}
 			stringify_array_elms($xchans);
 		}
 
 		if($xchans) {
 			$r = q("select * from xchan where xchan_hash in ( " . implode(',',$xchans) . " ) ");
-			if($r)
+			if ($r) {
 				$ret['xchan'] = $r;
+			}
 
 			$r = q("select * from hubloc where hubloc_hash in ( " . implode(',',$xchans) . " ) ");
-			if($r)
+			if ($r) {
 				$ret['hubloc'] = $r;
+			}
 		}
 
 		$r = q("select * from pgrp where uid = %d ",
 			intval($channel_id)
 		);
 
-		if($r)
+		if ($r) {
 			$ret['group'] = $r;
+		}
 
 		$r = q("select * from pgrp_member where uid = %d ",
 			intval($channel_id)
 		);
-		if($r)
+		if ($r) {
 			$ret['group_member'] = $r;
+		}
 
 		$r = q("select * from xign where uid = %d ",
 			intval($channel_id)
 		);
-		if($r)
+		if ($r) {
 			$ret['xign'] = $r;
+		}
 
 		$r = q("select * from block where block_channel_id = %d ",
 			intval($channel_id)
 		);
-		if($r)
+		if ($r) {
 			$ret['block'] = $r;
+		}
 
 
 	}
 
-	if(in_array('config',$sections)) {
+	if (in_array('config',$sections)) {
 		$r = q("select * from pconfig where uid = %d",
 			intval($channel_id)
 		);
-		if($r)
+		if ($r) {
 			$ret['config'] = $r;
+		}
 
 		// All other term types will be included in items, if requested.
 
@@ -927,9 +936,9 @@ function identity_basic_export($channel_id, $sections = null) {
 			intval(TERM_THING),
 			intval($channel_id)
 		);
-		if($r)
+		if ($r) {
 			$ret['term'] = $r;
-
+		}
 		// add psuedo-column obj_baseurl to aid in relocations
 
 		$r = q("select obj.*, '%s' as obj_baseurl from obj where obj_channel = %d",
@@ -937,23 +946,25 @@ function identity_basic_export($channel_id, $sections = null) {
 			intval($channel_id)
 		);
 
-		if($r)
+		if ($r) {
 			$ret['obj'] = $r;
+		}
 
 		$r = q("select * from likes where channel_id = %d",
 			intval($channel_id)
 		);
 
-		if($r)
+		if ($r) {
 			$ret['likes'] = $r;
+		}
 	}
 
-	if(in_array('apps',$sections)) {
+	if (in_array('apps',$sections)) {
 		$r = q("select * from app where app_channel = %d and app_system = 0",
 			intval($channel_id)
 		);
-		if($r) {
-			for($x = 0; $x < count($r); $x ++) {
+		if ($r) {
+			for ($x = 0; $x < count($r); $x ++) {
 				$r[$x]['term'] = q("select * from term where otype = %d and oid = %d",
 					intval(TERM_OBJ_APP),
 					intval($r[$x]['id'])
@@ -964,8 +975,8 @@ function identity_basic_export($channel_id, $sections = null) {
 		$r = q("select * from app where app_channel = %d and app_system = 1",
 			intval($channel_id)
 		);
-		if($r) {
-			for($x = 0; $x < count($r); $x ++) {
+		if ($r) {
+			for ($x = 0; $x < count($r); $x ++) {
 				$r[$x]['term'] = q("select * from term where otype = %d and oid = %d",
 					intval(TERM_OBJ_APP),
 					intval($r[$x]['id'])
@@ -975,62 +986,67 @@ function identity_basic_export($channel_id, $sections = null) {
 		}
 	}
 
-	if(in_array('chatrooms',$sections)) {
+	if (in_array('chatrooms',$sections)) {
 		$r = q("select * from chatroom where cr_uid = %d",
 			intval($channel_id)
 		);
-		if($r)
+		if ($r) {
 			$ret['chatroom'] = $r;
+		}
 	}
 
-	if(in_array('events',$sections)) {
+	if (in_array('events',$sections)) {
 		$r = q("select * from event where uid = %d",
 			intval($channel_id)
 		);
-		if($r)
+		if ($r) {
 			$ret['event'] = $r;
+		}
 
 		$r = q("select * from item where resource_type = 'event' and uid = %d",
 			intval($channel_id)
 		);
-		if($r) {
+		if ($r) {
 			$ret['event_item'] = array();
 			xchan_query($r);
 			$r = fetch_post_tags($r,true);
-			foreach($r as $rr)
+			foreach ($r as $rr) {
 				$ret['event_item'][] = encode_item($rr,true);
+			}
 		}
 	}
 
-	if(in_array('webpages',$sections)) {
+	if (in_array('webpages',$sections)) {
 		$x = menu_list($channel_id);
-		if($x) {
+		if ($x) {
 			$ret['menu'] = array();
-			for($y = 0; $y < count($x); $y ++) {
+			for ($y = 0; $y < count($x); $y ++) {
 				$m = menu_fetch($x[$y]['menu_name'],$channel_id,$ret['channel']['channel_hash']);
-				if($m)
+				if ($m) {
 					$ret['menu'][] = menu_element($ret['channel'],$m);
+				}
 			}
 		}
 		$r = q("select * from item where item_type in ( "
 			. ITEM_TYPE_BLOCK . "," . ITEM_TYPE_PDL . "," . ITEM_TYPE_WEBPAGE . " ) and uid = %d",
 			intval($channel_id)
 		);
-		if($r) {
+		if ($r) {
 			$ret['webpages'] = array();
 			xchan_query($r);
 			$r = fetch_post_tags($r,true);
-			foreach($r as $rr)
+			foreach ($r as $rr) {
 				$ret['webpages'][] = encode_item($rr,true);
+			}
 		}
 	}
 
-	if(in_array('mail',$sections)) {
+	if (in_array('mail',$sections)) {
 		$r = q("select * from conv where uid = %d",
 			intval($channel_id)
 		);
-		if($r) {
-			for($x = 0; $x < count($r); $x ++) {
+		if ($r) {
+			for ($x = 0; $x < count($r); $x ++) {
 				$r[$x]['subject'] = base64url_decode(str_rot47($r[$x]['subject']));
 			}
 			$ret['conv'] = $r;
@@ -1039,9 +1055,9 @@ function identity_basic_export($channel_id, $sections = null) {
 		$r = q("select * from mail where channel_id = %d",
 			intval($channel_id)
 		);
-		if($r) {
+		if ($r) {
 			$m = array();
-			foreach($r as $rr) {
+			foreach ($r as $rr) {
 				xchan_mail_query($rr);
 				$m[] = encode_mail($rr,true);
 			}
@@ -1049,21 +1065,21 @@ function identity_basic_export($channel_id, $sections = null) {
 		}
 	}
 
-	if(in_array('wikis',$sections)) {
+	if (in_array('wikis',$sections)) {
 		$r = q("select * from item where resource_type like 'nwiki%%' and uid = %d order by created",
 			intval($channel_id)
 		);
-		if($r) {
+		if ($r) {
 			$ret['wiki'] = array();
 			xchan_query($r);
 			$r = fetch_post_tags($r,true);
-			foreach($r as $rv) {
+			foreach ($r as $rv) {
 				$ret['wiki'][] = encode_item($rv,true);
 			}
 		}
 	}
 
-	if(in_array('items', $sections)) {
+	if (in_array('items', $sections)) {
 		/** @warning this may run into memory limits on smaller systems */
 
 		/** export three months of posts. If you want to export and import all posts you have to start with
@@ -1078,12 +1094,13 @@ function identity_basic_export($channel_id, $sections = null) {
 			db_utcnow(),
 			db_quoteinterval('3 MONTH')
 		);
-		if($r) {
+		if ($r) {
 			$ret['item'] = array();
 			xchan_query($r);
 			$r = fetch_post_tags($r,true);
-			foreach($r as $rr)
+			foreach ($r as $rr) {
 				$ret['item'][] = encode_item($rr,true);
+			}
 		}
 	}
 
@@ -1117,21 +1134,25 @@ function identity_basic_export($channel_id, $sections = null) {
  */
 function identity_export_year($channel_id, $year, $month = 0) {
 
-	if(! $year)
-		return array();
+	if (! $year) {
+		return [];
+	}
 
-	if($month && $month <= 12) {
+	if ($month && $month <= 12) {
 		$target_month = sprintf('%02d', $month);
 		$target_month_plus = sprintf('%02d', $month+1);
 	}
-	else
+	else {
 		$target_month = '01';
+	}
 
 	$mindate = datetime_convert('UTC', 'UTC', $year . '-' . $target_month . '-01 00:00:00');
-	if($month && $month < 12)
+	if ($month && $month < 12) {
 		$maxdate = datetime_convert('UTC', 'UTC', $year . '-' . $target_month_plus . '-01 00:00:00');
-	else
+	}
+	else {
 		$maxdate = datetime_convert('UTC', 'UTC', $year+1 . '-01-01 00:00:00');
+	}
 
 	return channel_export_items_date($channel_id,$mindate,$maxdate);
 
@@ -1150,19 +1171,22 @@ function identity_export_year($channel_id, $year, $month = 0) {
 
 function channel_export_items_date($channel_id, $start, $finish) {
 
-	if(! $start)
-		return array();
-	else
+	if (! $start) {
+		return [];
+	}
+	else {
 		$start = datetime_convert('UTC', 'UTC', $start);
-
+	}
+	
 	$finish = datetime_convert('UTC', 'UTC', (($finish) ? $finish : 'now'));
-	if($finish < $start)
-		return array();
+	if ($finish < $start) {
+		return [];
+	}
 
 	$ret = array();
 
 	$ch = channelx_by_n($channel_id);
-	if($ch) {
+	if ($ch) {
 		$ret['relocate'] = [ 'channel_address' => $ch['channel_address'], 'url' => z_root()];
 	}
 
@@ -1173,12 +1197,13 @@ function channel_export_items_date($channel_id, $start, $finish) {
 		dbesc($finish)
 	);
 
-	if($r) {
+	if ($r) {
 		$ret['item'] = array();
 		xchan_query($r);
 		$r = fetch_post_tags($r, true);
-		foreach($r as $rr)
+		foreach ($r as $rr) {
 			$ret['item'][] = encode_item($rr, true);
+		}
 	}
 
 	return $ret;
@@ -1198,33 +1223,36 @@ function channel_export_items_date($channel_id, $start, $finish) {
 
 function channel_export_items_page($channel_id, $start, $finish, $page = 0, $limit = 50) {
 
-	if(intval($page) < 1) {
+	if (intval($page) < 1) {
 		$page = 0;
 	}
 
-	if(intval($limit) < 1) {
+	if (intval($limit) < 1) {
 		$limit = 1;
 	}
 
-	if(intval($limit) > 5000) {
+	if (intval($limit) > 5000) {
 		$limit = 5000;
 	}
 
-	if(! $start)
+	if (! $start) {
 		$start = NULL_DATE;
-	else
+	}
+	else {
 		$start = datetime_convert('UTC', 'UTC', $start);
-
+	}
+	
 	$finish = datetime_convert('UTC', 'UTC', (($finish) ? $finish : 'now'));
-	if($finish < $start)
+	if ($finish < $start) {
 		return [];
+	}
 
 	$offset = intval($limit) * intval($page);
 
 	$ret = [];
 
 	$ch = channelx_by_n($channel_id);
-	if($ch) {
+	if ($ch) {
 		$ret['relocate'] = [ 'channel_address' => $ch['channel_address'], 'url' => z_root()];
 	}
 
@@ -1237,12 +1265,13 @@ function channel_export_items_page($channel_id, $start, $finish, $page = 0, $lim
 		intval($offset)
 	);
 
-	if($r) {
+	if ($r) {
 		$ret['item'] = array();
 		xchan_query($r);
 		$r = fetch_post_tags($r, true);
-		foreach($r as $rr)
+		foreach ($r as $rr) {
 			$ret['item'][] = encode_item($rr, true);
+		}
 	}
 
 	return $ret;
@@ -1251,19 +1280,23 @@ function channel_export_items_page($channel_id, $start, $finish, $page = 0, $lim
 
 
 function get_my_url() {
-	if(x($_SESSION, 'zrl_override'))
+	if (x($_SESSION, 'zrl_override')) {
 		return $_SESSION['zrl_override'];
-	if(x($_SESSION, 'my_url'))
+	}
+	if (x($_SESSION, 'my_url')) {
 		return $_SESSION['my_url'];
+	}
 
 	return false;
 }
 
 function get_my_address() {
-	if(x($_SESSION, 'zid_override'))
+	if (x($_SESSION, 'zid_override')) {
 		return $_SESSION['zid_override'];
-	if(x($_SESSION, 'my_address'))
+	}
+	if (x($_SESSION, 'my_address')) {
 		return $_SESSION['my_address'];
+	}
 
 	return false;
 }
@@ -1277,7 +1310,7 @@ function get_my_address() {
  */
 function zid_init() {
 	$tmp_str = get_my_address();
-	if(validate_email($tmp_str)) {
+	if (validate_email($tmp_str)) {
 		$arr = [
 				'zid' => $tmp_str,
 				'url' => App::$cmd
@@ -1289,22 +1322,23 @@ function zid_init() {
 		*/
 		call_hooks('zid_init', $arr);
 
-		if(! local_channel()) {
+		if (! local_channel()) {
 			$r = q("select * from hubloc where hubloc_addr = '%s' order by hubloc_connected desc limit 1",
 				dbesc($tmp_str)
 			);
-			if(! $r) {
+			if (! $r) {
 				Run::Summon(array('Gprobe',bin2hex($tmp_str)));
 			}
-			if($r && remote_channel() && remote_channel() === $r[0]['hubloc_hash'])
+			if ($r && remote_channel() && remote_channel() === $r[0]['hubloc_hash']) {
 				return;
+			}
 
 			logger('Not authenticated. Invoking reverse magic-auth for ' . $tmp_str);
 			// try to avoid recursion - but send them home to do a proper magic auth
 			$query = App::$query_string;
 			$query = str_replace(array('?zid=','&zid='),array('?rzid=','&rzid='),$query);
 			$dest = '/' . $query;
-			if($r && ($r[0]['hubloc_url'] != z_root()) && (! strstr($dest,'/magic')) && (! strstr($dest,'/rmagic'))) {
+			if ($r && ($r[0]['hubloc_url'] != z_root()) && (! strstr($dest,'/magic')) && (! strstr($dest,'/rmagic'))) {
 				goaway($r[0]['hubloc_url'] . '/magic' . '?f=&rev=1&owa=1&bdest=' . bin2hex(z_root() . $dest));
 			}
 			else
@@ -1318,13 +1352,14 @@ function zid_init() {
  *
  */
 function zat_init() {
-	if(local_channel() || remote_channel())
+	if (local_channel() || remote_channel()) {
 		return;
+	}
 
 	$r = q("select * from atoken where atoken_token = '%s' limit 1",
 		dbesc($_REQUEST['zat'])
 	);
-	if($r) {
+	if ($r) {
 		$xchan = atoken_xchan($r[0]);
 		atoken_create_xchan($xchan);
 		atoken_login($xchan);
@@ -1344,14 +1379,16 @@ function zat_init() {
  */
 function get_theme_uid() {
 	$uid = (($_REQUEST['puid']) ? intval($_REQUEST['puid']) : 0);
-	if(local_channel()) {
-		if((get_pconfig(local_channel(),'system','always_my_theme')) || (! $uid))
+	if (local_channel()) {
+		if ((get_pconfig(local_channel(),'system','always_my_theme')) || (! $uid)) {
 			return local_channel();
+		}
 	}
-	if(! $uid) {
+	if (! $uid) {
 		$x = get_sys_channel();
-		if($x)
+		if ($x) {
 			return $x['channel_id'];
+		}
 	}
 
 	return $uid;
@@ -1367,13 +1404,14 @@ function get_theme_uid() {
 */
 function get_default_profile_photo($size = 300) {
 	$scheme = get_config('system','default_profile_photo');
-	if(! $scheme)
+	if (! $scheme) {
 		$scheme = 'rainbow_man';
+	}
 
-	if(! is_dir('images/default_profile_photos/' . $scheme)) {
+	if (! is_dir('images/default_profile_photos/' . $scheme)) {
 		$x = [ 'scheme' => $scheme, 'size' => $size, 'url' => '' ];
 		call_hooks('default_profile_photo',$x);
-		if($x['url']) {
+		if ($x['url']) {
 			return $x['url'];
 		}
 		else {
@@ -1417,22 +1455,24 @@ function get_online_status($nick) {
 
 	$ret = array('result' => false);
 
-	if(observer_prohibited())
+	if (observer_prohibited()) {
 		return $ret;
+	}
 
 	$r = q("select channel_id, channel_hash from channel where channel_address = '%s' limit 1",
 		dbesc(argv(1))
 	);
-	if($r) {
+	if ($r) {
 		$hide = get_pconfig($r[0]['channel_id'],'system','hide_online_status');
-		if($hide)
+		if ($hide) {
 			return $ret;
-
+		}
 		$x = q("select cp_status from chatpresence where cp_xchan = '%s' and cp_room = 0 limit 1",
 			dbesc($r[0]['channel_hash'])
 		);
-		if($x)
+		if ($x) {
 			$ret['result'] = $x[0]['cp_status'];
+		}
 	}
 
 	return $ret;
@@ -1451,16 +1491,17 @@ function remote_online_status($webbie) {
 	$r = q("select * from hubloc where hubloc_addr = '%s' limit 1",
 		dbesc($webbie)
 	);
-	if(! $r)
+	if (! $r) {
 		return $result;
-
+	}
 	$url = $r[0]['hubloc_url'] . '/online/' . substr($webbie,0,strpos($webbie,'@'));
 
 	$x = z_fetch_url($url);
-	if($x['success']) {
+	if ($x['success']) {
 		$j = json_decode($x['body'],true);
-		if($j)
+		if ($j) {
 			$result = (($j['result']) ? $j['result'] : false);
+		}
 	}
 
 	return $result;
@@ -1473,12 +1514,11 @@ function remote_online_status($webbie) {
  * @return string with parsed HTML channel_id_selet template
  */
 function identity_selector() {
-	if(local_channel()) {
+	if (local_channel()) {
 		$r = q("select channel.*, xchan.* from channel left join xchan on channel.channel_hash = xchan.xchan_hash where channel.channel_account_id = %d and channel_removed = 0 order by channel_name ",
 			intval(get_account_id())
 		);
-		if($r && count($r) > 1) {
-			//$account = App::get_account();
+		if ($r && count($r) > 1) {
 			$o = replace_macros(get_markup_template('channel_id_select.tpl'), array(
 				'$channels' => $r,
 				'$selected' => local_channel()
@@ -1493,17 +1533,20 @@ function identity_selector() {
 
 
 function is_public_profile() {
-	if(! local_channel())
+	if (! local_channel()) {
 		return false;
+	}
 
-	if(intval(get_config('system','block_public')))
+	if (intval(get_config('system','block_public'))) {
 		return false;
+	}
 
 	$channel = App::get_channel();
-	if($channel) {
+	if ($channel) {
 		$perm = PermissionLimits::Get($channel['channel_id'],'view_profile');
-		if($perm == PERMS_PUBLIC)
+		if ($perm == PERMS_PUBLIC) {
 			return true;
+		}
 	}
 
 	return false;
@@ -1513,12 +1556,13 @@ function get_profile_fields_basic($filter = 0) {
 
 	$profile_fields_basic = (($filter == 0) ? get_config('system','profile_fields_basic') : null);
 
-	if(! $profile_fields_basic)
+	if (! $profile_fields_basic) {
 		$profile_fields_basic = array('fullname','pdesc','chandesc','basic_gender','pronouns','dob','dob_tz','region','country_name','marital','sexual','homepage','hometown','keywords','about','contact');
-
+	}
+	
 	$x = array();
-	if($profile_fields_basic)
-		foreach($profile_fields_basic as $f)
+	if ($profile_fields_basic)
+		foreach ($profile_fields_basic as $f)
 			$x[$f] = 1;
 
 	return $x;
@@ -1528,17 +1572,21 @@ function get_profile_fields_basic($filter = 0) {
 function get_profile_fields_advanced($filter = 0) {
 	$basic = get_profile_fields_basic($filter);
 	$profile_fields_advanced = (($filter == 0) ? get_config('system','profile_fields_advanced') : null);
-	if(! $profile_fields_advanced)
+	if (! $profile_fields_advanced) {
 		$profile_fields_advanced = array('comms', 'address','locality','postal_code','advanced_gender', 'partner','howlong','politic','religion','likes','dislikes','interest','channels','music','book','film','tv','romance','employment','education');
-
+	}
 	$x = array();
-	if($basic)
-		foreach($basic as $f => $v)
+	if ($basic) {
+		foreach ($basic as $f => $v) {
 			$x[$f] = $v;
+		}
+	}
 
-	if($profile_fields_advanced)
-		foreach($profile_fields_advanced as $f)
+	if ($profile_fields_advanced) {
+		foreach ($profile_fields_advanced as $f) {
 			$x[$f] = 1;
+		}
+	}
 
 	return $x;
 }
@@ -1584,7 +1632,7 @@ function get_channel_default_perms($uid) {
 	$r = q("select abook_xchan from abook where abook_channel = %d and abook_self = 1 limit 1",
 		intval($uid)
 	);
-	if($r) {
+	if ($r) {
 		$ret = \Zotlabs\Access\Permissions::FilledPerms(get_abconfig($uid,$r[0]['abook_xchan'],'system','my_perms',EMPTY_STR));
 	}
 
@@ -1596,7 +1644,7 @@ function profiles_build_sync($channel_id,$send = true) {
 	$r = q("select * from profile where uid = %d",
 		intval($channel_id)
 	);
-	if($r) {
+	if ($r) {
 		if($send) {
 			Libsync::build_sync_packet($channel_id,array('profile' => $r));
 		}
@@ -1609,10 +1657,11 @@ function profiles_build_sync($channel_id,$send = true) {
 
 function auto_channel_create($account_id) {
 
-	if(! $account_id)
+	if (! $account_id) {
 		return false;
+	}
 
-	$arr = array();
+	$arr = [];
 	$arr['account_id'] = $account_id;
 	$arr['name'] = get_aconfig($account_id,'register','channel_name');
 	$arr['nickname'] = legal_webbie(get_aconfig($account_id,'register','channel_address'));

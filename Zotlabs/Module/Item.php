@@ -1303,7 +1303,8 @@ class Item extends Controller {
 			$datarray['obj'] = Activity::encode_item($copy,((get_config('system','activitypub')) ? true : false));
 		}	
 
-
+		Activity::rewrite_mentions($datarray);
+		
 		// preview mode - prepare the body for display and send it via json
 	
 		if($preview) {
