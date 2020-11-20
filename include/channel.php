@@ -1633,7 +1633,7 @@ function get_channel_default_perms($uid) {
 		intval($uid)
 	);
 	if ($r) {
-		$ret = \Zotlabs\Access\Permissions::FilledPerms(get_abconfig($uid,$r[0]['abook_xchan'],'system','my_perms',EMPTY_STR));
+		$ret = Permissions::FilledPerms(get_abconfig($uid,$r[0]['abook_xchan'],'system','my_perms',EMPTY_STR));
 	}
 
 	return $ret;
