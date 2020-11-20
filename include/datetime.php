@@ -267,9 +267,9 @@ function relative_date($posted_date, $format = null) {
 		$d = $etime / $secs;
 		if ($d >= 1) {
 			$r = round($d);
-			if (! $format)
+			if (! $format) {
 				$format = t('%1$d %2$s %3$s', 'e.g. 22 hours ago, 1 minute ago');
-
+			}
 			return sprintf($format, $r, plural_dates($str,$r), $direction);
 		}
 	}
