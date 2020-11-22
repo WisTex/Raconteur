@@ -214,12 +214,6 @@ function red_zrl_callback($matches) {
 		$matches[2] = $t;
 	}
 
-	// this is a markdown link - ignore; as it will be handled by the bbcode parser.
-	
-	if ($matches[1] === "(" ) {
-		return $matches[0];
-	}
-
 	if($matches[1] === '#^')
 		$matches[1] = '';
 	if($zrl)
