@@ -79,18 +79,40 @@ class Authorize extends \Zotlabs\Web\Controller {
 		$channel = channelx_by_n(local_channel());
 		$user_id = $channel['channel_id'];
 
-		// If the client is not registered, add to the database
-		if (!$client = $storage->getClientDetails($client_id)) {
-			// Until "Dynamic Client Registration" is pursued - allow new clients to assign their own secret in the REQUEST
-			$client_secret = (isset($_REQUEST['client_secret'])) ? $_REQUEST['client_secret'] : random_string(16);
-			// Client apps are registered per channel
-			$storage->setClientDetails($client_id, $client_secret, $redirect_uri, $_REQUEST['grant_types'], $_REQUEST['scope'], $user_id, $client_name);
+		$client_found = false;
+		$client = $storage->getClientDetails($client_id);
+
+logger('client: ' . print_r($client,true));
+
+		if ($client) {
+			if (intval($client['user_id']) === 0 || intval($client['user_id']) === intval($user_id)) {
+				$client_found = true;
+				$client_name = $client['client_name'];
+				$client_secret = $client['client_secret'];
+				// Until "Dynamic Client Registration" is fully tested - allow new clients to assign their own secret in the REQUEST
+				if (! $client_secret) {
+					$client_secret = ((isset($_REQUEST['client_secret'])) ? $_REQUEST['client_secret'] : random_string(16));
+				}
+				$grant_types = $client['grant_types'];
+				// Client apps are registered per channel
+
+
+logger('client_id: ' . $client_id);
+logger('client_secret: ' . $client_secret);
+logger('redirect_uri: ' . $redirect_uri);
+logger('grant_types: ' . $_REQUEST['grant_types']);
+logger('scope: ' . $_REQUEST['scope']);
+logger('user_id: ' . $user_id);
+logger('client_name: ' . $client_name);
+
+				$storage->setClientDetails($client_id, $client_secret, $redirect_uri, $grant_types, $_REQUEST['scope'], $user_id, $client_name);
+			}
 		}
-		if (!$client = $storage->getClientDetails($client_id)) {
-			// There was an error registering the client.
+		if (! $client_found) {
 			$response->send();
 			killme();
 		}
+
 		$response->setParameter('client_secret', $client['client_secret']);
 
 		// validate the authorize request

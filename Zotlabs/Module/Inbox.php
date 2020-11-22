@@ -51,6 +51,11 @@ class Inbox extends Controller {
 
 		$hsig = HTTPSig::verify($data);
 
+		// By convention, fediverse server-to-server communications require a valid HTTP Signature
+		// which includes a signed digest header.
+		
+		// This check may need to move elsewhere or be modified in order to fully implement ActivityPub C2S.
+		
 		if (! ($hsig['header_signed'] && $hsig['header_valid'] && $hsig['content_signed'] && $hsig['content_valid'])) {
 			http_status_exit(403,'Permission denied');
 		}
@@ -230,7 +235,7 @@ class Inbox extends Controller {
 			return;
 		}
 
-		// Bto and Bcc aren't valid in this context and should not be stored. 
+		// Bto and Bcc will only be present in a C2S transaction and should not be stored. 
 		
 		$saved_recips = [];
 		foreach ( [ 'to', 'cc', 'audience' ] as $x ) {
@@ -256,6 +261,12 @@ class Inbox extends Controller {
 						Activity::follow($channel,$AS);
 					}
 					break;
+				case 'Invite':
+					if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
+						// do follow activity
+						Activity::follow($channel,$AS);
+					}
+					break;
 				case 'Join':
 					if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
 						// do follow activity
@@ -265,7 +276,8 @@ class Inbox extends Controller {
 				case 'Accept':			
 					// Activitypub for wordpress sends lowercase 'follow' on accept.
 					// https://github.com/pfefferle/wordpress-activitypub/issues/97
-					if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && in_array($AS->obj['type'], ['Follow','follow'])) {
+					// Mobilizon sends Accept/"Member" (not in vocabulary) in response to Join/Group
+					if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && in_array($AS->obj['type'], ['Follow','follow', 'Member'])) {
 						// do follow activity
 						Activity::follow($channel,$AS);
 					}
@@ -291,11 +303,14 @@ class Inbox extends Controller {
 						Activity::actor_store($AS->obj['id'],$AS->obj);
 						break;
 					}
+				case 'Accept':
+					if (is_array($AS->obj) && array_key_exists('type',$AS->obj) && (ActivityStreams::is_an_actor($AS->obj['type']) || $AS->obj['type'] === 'Member')) {
+						break;
+					}
 				case 'Create':
 				case 'Like':
 				case 'Dislike':
 				case 'Announce':
-				case 'Accept':
 				case 'Reject':
 				case 'TentativeAccept':
 				case 'TentativeReject':

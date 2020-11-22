@@ -178,6 +178,6 @@ class Webfinger extends Controller {
 		call_hooks('webfinger',$arr);
 
 
-		json_return_and_die($arr['result'],'application/jrd+json');
+		json_return_and_die($arr['result'],'application/jrd+json',true);
 	}
 }

@@ -2,6 +2,9 @@
 
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\LibBlock;
+use Zotlabs\Lib\ThreadStream;
+use Zotlabs\Lib\ThreadItem;
+use Zotlabs\Lib\Chatroom;
 
 function item_extract_images($body) {
 
@@ -588,16 +591,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 	if (! feature_enabled($profile_owner,'multi_delete'))
 		$page_dropping = false;
 
-	$uploading = false;
-
-	if(local_channel()) {
-		$cur_channel = App::get_channel();
-		if($cur_channel['channel_allow_cid'] === '' &&  $cur_channel['channel_allow_gid'] === ''
-			&& $cur_channel['channel_deny_cid'] === '' && $cur_channel['channel_deny_gid'] === ''
-			&& intval(\Zotlabs\Access\PermissionLimits::Get(local_channel(),'view_storage')) === PERMS_PUBLIC) {
-			$uploading = true;
-		}
-	}
+	$uploading = ((local_channel()) ? true : false);
 
 	$channel = App::get_channel();
 	$observer = App::get_observer();
@@ -815,7 +809,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 			// Normal View
 //			logger('conv: items: ' . print_r($items,true));
 
-			$conv = new Zotlabs\Lib\ThreadStream($mode, $preview, $uploading, $prepared_item);
+			$conv = new ThreadStream($mode, $preview, $uploading, $prepared_item);
 
 			// In the display mode we don't have a profile owner. 
 
@@ -846,7 +840,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
 				if($item['id'] == $item['parent']) {
 
-					$item_object = new Zotlabs\Lib\ThreadItem($item);
+					$item_object = new ThreadItem($item);
 					$conv->add_thread($item_object);
 					if(($page_mode === 'list') || ($page_mode === 'pager_list')) {
 						$item_object->set_template('conv_list.tpl');
@@ -1973,7 +1967,7 @@ function profile_tabs($a, $is_owner = false, $nickname = null){
 
 
 	if ($p['chat'] && feature_enabled($uid,'ajaxchat')) {
-		$has_chats = Zotlabs\Lib\Chatroom::list_count($uid);
+		$has_chats = Chatroom::list_count($uid);
 		if ($has_chats) {
 			$tabs[] = array(
 				'label' => t('Chatrooms'),

@@ -459,7 +459,7 @@ class Stream extends Controller {
 				$sql_extra .= " AND author_xchan = '" . dbesc($channel['channel_hash']) . "' ";
 			}
 			else {
-				$sql_extra .= sprintf(" AND parent IN (SELECT distinct(parent) from item where ( author_xchan = '%s' or item_mentionsme = 1 )) ",
+				$sql_extra .= sprintf(" AND parent IN (SELECT distinct(parent) from item where ( author_xchan = '%s' or item_mentionsme = 1 ) and item_deleted = 0 ) ",
 					dbesc(protect_sprintf($channel['channel_hash']))
 				);
 			}

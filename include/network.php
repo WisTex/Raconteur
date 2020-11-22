@@ -9,6 +9,8 @@ use Zotlabs\Lib\ActivityPub;
 use Zotlabs\Lib\Queue;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Keyutils;
+use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Web\HTTPSig;
 use Zotlabs\Daemon\Run;
 
 
@@ -451,12 +453,40 @@ function z_post_url($url, $params, $redirects = 0, $opts = array()) {
 	return($ret);
 }
 
-function json_return_and_die($x, $content_type = 'application/json') {
+function json_return_and_die($x, $content_type = 'application/json', $debug = false) {
 	header("Content-type: $content_type");
-	logger('returned_json: ' . json_encode($x,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOGGER_DATA);
+	if ($debug) {
+		logger('returned_json: ' . json_encode($x,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOGGER_DATA);
+	}
 	echo json_encode($x);
 	killme();
 }
+
+function as_return_and_die($obj,$channel) {
+
+	$x = array_merge(['@context' => [
+		ACTIVITYSTREAMS_JSONLD_REV,
+		'https://w3id.org/security/v1',
+		z_root() . ZOT_APSCHEMA_REV
+		]], $obj );
+
+	$headers = [];
+	$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
+	$x['signature'] = LDSignatures::sign($x,$channel);
+	$ret = json_encode($x, JSON_UNESCAPED_SLASHES);
+	logger('data: ' . jindent($ret), LOGGER_DATA);
+	$headers['Date'] = datetime_convert('UTC','UTC', 'now', 'D, d M Y H:i:s \\G\\M\\T');
+	$headers['Digest'] = HTTPSig::generate_digest_header($ret);
+	$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
+
+	$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
+	HTTPSig::set_headers($h);
+
+	echo $ret;
+	killme();
+
+}
+
 
 /**
  * @brief Send HTTP status header.

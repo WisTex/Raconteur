@@ -3471,7 +3471,7 @@ function share_unshield($m) {
 function cleanup_bbcode($body) {
 
 	/**
-	 * fix naked links by passing through a callback to see if this is a hubzilla site
+	 * fix naked links by passing through a callback to see if this is a zot site of some kind
 	 * (already known to us) which will get a zrl, otherwise link with url, add bookmark tag to both.
 	 * First protect any url inside certain bbcode tags so we don't double link it.
 	 */
@@ -3481,11 +3481,9 @@ function cleanup_bbcode($body) {
 	$body = preg_replace_callback('/\[zrl(.*?)\[\/(zrl)\]/ism','\red_escape_codeblock',$body);
 	$body = preg_replace_callback('/\[svg(.*?)\[\/(svg)\]/ism','\red_escape_codeblock',$body);
 
-	$body = preg_replace_callback("/([^\]\='".'"'."\;\/\{]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\
-+\,\(\)]+)/ismu", '\nakedoembed', $body);
+	$body = preg_replace_callback("/([^\]\='".'"'."\;\/\{\(]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\+\,\(\)]+)/ismu", '\nakedoembed', $body);
 
-	$body = preg_replace_callback("/([^\]\='".'"'."\;\/\{]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\
-+\,\(\)]+)/ismu", '\red_zrl_callback', $body);
+	$body = preg_replace_callback("/([^\]\='".'"'."\;\/\{\(]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\+\,\(\)]+)/ismu", '\red_zrl_callback', $body);
 
 
 	$body = preg_replace_callback('/\[\$b64code(.*?)\[\/(code)\]/ism','\red_unescape_codeblock',$body);

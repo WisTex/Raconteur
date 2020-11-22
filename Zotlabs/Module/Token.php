@@ -2,12 +2,16 @@
 
 namespace Zotlabs\Module;
 
+
+use Zotlabs\Web\Controller;
 use Zotlabs\Identity\OAuth2Storage;
 
 
-class Token extends \Zotlabs\Web\Controller {
+class Token extends Controller {
 
 	function init() {
+
+		logger('args: ' . print_r($_REQUEST,true));
 
 		// workaround for HTTP-auth in CGI mode
 		if (x($_SERVER, 'REDIRECT_REMOTE_USER')) {
@@ -27,11 +31,12 @@ class Token extends \Zotlabs\Web\Controller {
 				$_SERVER['PHP_AUTH_PW'] = $password;
 			}
 		}
-                $storage = new OAuth2Storage(\DBA::$dba->db);
+		
+		$storage = new OAuth2Storage(\DBA::$dba->db);
 		$s = new \Zotlabs\Identity\OAuth2Server($storage);
 		$request = \OAuth2\Request::createFromGlobals();
 		$response = $s->handleTokenRequest($request);
-                $response->send();
+		$response->send();
 		killme();
 	}
 

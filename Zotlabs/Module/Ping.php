@@ -156,6 +156,7 @@ class Ping extends Controller {
 
 
 		$sql_extra = '';
+
 		if (! ($vnotify & VNOTIFY_LIKE)) {
 			$sql_extra = " AND verb NOT IN ('" . dbesc(ACTIVITY_LIKE) . "', '" . dbesc(ACTIVITY_DISLIKE) . "') ";
 		}

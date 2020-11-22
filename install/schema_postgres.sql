@@ -213,9 +213,9 @@ CREATE TABLE "auth_codes" (
 );
 CREATE TABLE "block" (
   block_id serial NOT NULL,
-  block_channel_id int(10) UNSIGNED NOT NULL,
+  block_channel_id bigint UNSIGNED NOT NULL,
   block_entity text NOT NULL,
-  block_type int(11) NOT NULL,
+  block_type bigint NOT NULL,
   block_comment text NOT NULL,
   PRIMARY KEY ("block_id")
 );
@@ -1284,6 +1284,7 @@ CREATE TABLE "xchan" (
   "xchan_connpage" text NOT NULL DEFAULT '',
   "xchan_name" text NOT NULL DEFAULT '',
   "xchan_network" text NOT NULL DEFAULT '',
+  "xchan_created" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "xchan_updated" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "xchan_photo_date" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "xchan_name_date" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
@@ -1301,6 +1302,7 @@ create index "xchan_addr" on xchan ("xchan_addr");
 create index "xchan_name" on xchan ("xchan_name");
 create index "xchan_network" on xchan ("xchan_network");
 create index "xchan_url" on xchan ("xchan_url");
+create index "xchan_created" on xchan ("xchan_created");
 create index "xchan_updated" on xchan ("xchan_updated");
 create index "xchan_connurl" on xchan ("xchan_connurl");
 create index "xchan_follow" on xchan ("xchan_follow");

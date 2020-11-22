@@ -638,6 +638,10 @@ class Activity {
 			$ret['id'] = $i['mid'];
 		}
 
+		if ($i['uuid']) {
+			$ret['diaspora:guid'] = $i['uuid'];
+		}
+
 		if ($i['title']) {
 			$ret['name'] = $i['title'];
 		}
@@ -879,6 +883,10 @@ class Activity {
 		$has_images = preg_match_all('/\[[zi]mg(.*?)\](.*?)\[/ism',$i['body'],$images,PREG_SET_ORDER);
 
 		$ret['id'] = $i['mid'];
+
+		if ($i['uuid']) {
+			$ret['diaspora:guid'] = $i['uuid'];
+		}
 
 		$ret['published'] = datetime_convert('UTC','UTC',$i['created'],ATOM_TIME);
 		if ($i['created'] !== $i['edited']) {
@@ -1450,7 +1458,7 @@ class Activity {
 
 		$person_obj = $act->actor;
 
-		if ($act->type === 'Follow') {
+		if (in_array($act->type, [ 'Follow', 'Invite', 'Join'])) {
 			$their_follow_id  = $act->id;
 		}
 		elseif ($act->type === 'Accept') {
@@ -1493,6 +1501,8 @@ class Activity {
 			switch($act->type) {
 
 				case 'Follow':
+				case 'Invite':
+				case 'Join':
 
 					// A second Follow request, but we haven't approved the first one
 
@@ -1660,8 +1670,6 @@ class Activity {
 	static function unfollow($channel,$act) {
 
 		$contact = null;
-
-		/* @FIXME This really needs to be a signed request. */
 
 		/* actor is unfollowing $channel */
 
@@ -1832,6 +1840,7 @@ class Activity {
 			}
 		}
 
+		$xchan_type = (($person_obj['type'] === 'Group') ? 1 : 0);
 		$about = ((isset($person_obj['summary'])) ? html2bbcode(purify_html($person_obj['summary'])) : EMPTY_STR);
 
 		$p = q("select * from xchan where xchan_url = '%s' and xchan_network = 'zot6' limit 1",
@@ -1859,6 +1868,7 @@ class Activity {
 					'xchan_updated'        => datetime_convert(),
 					'xchan_name_date'      => datetime_convert(),
 					'xchan_network'        => 'activitypub',
+					'xchan_type'           => $xchan_type,
 					'xchan_photo_date'     => datetime_convert('UTC','UTC','1968-01-01'),
 					'xchan_photo_l'        => z_root() . '/' . get_default_profile_photo(),
 					'xchan_photo_m'        => z_root() . '/' . get_default_profile_photo(80),
@@ -1878,13 +1888,14 @@ class Activity {
 			}
 
 			// update existing record
-			$u = q("update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s', xchan_hidden = %d where xchan_hash = '%s'",
+			$u = q("update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s', xchan_hidden = %d, xchan_type = %d where xchan_hash = '%s'",
 				dbesc(datetime_convert()),
 				dbesc($name),
 				dbesc($pubkey),
 				dbesc('activitypub'),
 				dbesc(datetime_convert()),
 				intval($hidden),
+				intval($xchan_type),
 				dbesc($url)
 			);
 
@@ -2293,26 +2304,28 @@ class Activity {
 
 			$mention = self::get_actor_bbmention($obj_actor['id']);
 
+			$quoted_content = '[quote]' . $content['content'] . '[/quote]';
+
 			if ($act->type === 'Like') {
-				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $content['content'];
+				$content['content'] = sprintf( t('Likes %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $quoted_content;
 			}
 			if ($act->type === 'Dislike') {
-				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $content['content'];
+				$content['content'] = sprintf( t('Doesn\'t like %1$s\'s %2$s'),$mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type'])) . EOL . EOL . $quoted_content;
 			}
 			
 			// handle event RSVPs
 			if (($act->obj['type'] === 'Event') || ($act->obj['type'] === 'Invite' && array_path_exists('object/type',$act->obj) && $act->obj['object']['type'] === 'Event')) {
 				if ($act->type === 'Accept') {
-					$content['content'] = sprintf( t('Will attend %s\'s event'),$mention) . EOL . EOL . $content['content'];
+					$content['content'] = sprintf( t('Will attend %s\'s event'),$mention) . EOL . EOL . $quoted_content;
 				}
 				if ($act->type === 'Reject') {
-					$content['content'] = sprintf( t('Will not attend %s\'s event'),$mention) . EOL . EOL . $content['content'];
+					$content['content'] = sprintf( t('Will not attend %s\'s event'),$mention) . EOL . EOL . $quoted_content;
 				}
 				if ($act->type === 'TentativeAccept') {
-					$content['content'] = sprintf( t('May attend %s\'s event'),$mention) . EOL . EOL . $content['content'];
+					$content['content'] = sprintf( t('May attend %s\'s event'),$mention) . EOL . EOL . $quoted_content;
 				}
 				if ($act->type === 'TentativeReject') {
-					$content['content'] = sprintf( t('May not attend %s\'s event'),$mention) . EOL . EOL . $content['content'];
+					$content['content'] = sprintf( t('May not attend %s\'s event'),$mention) . EOL . EOL . $quoted_content;
 				}
 			}
 			
@@ -2744,6 +2757,12 @@ class Activity {
 				}
 				
 				if ($txt) {
+
+					// the Markdown filter will get tripped up and think this is a markdown link
+					// if $txt begins with parens so put it behind a zero-width space
+					if (substr($txt,0,1) === '(') {
+						$txt = htmlspecialchars_decode('&#8203;',ENT_QUOTES) . $txt;
+					}					
 					$s['body'] = preg_replace('/\@\[zrl\=' . preg_quote($x[0]['xchan_url'],'/') . '\](.*?)\[\/zrl\]/ism',
 						'@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',$s['body']);
 					$s['body'] = preg_replace('/\@\[url\=' . preg_quote($x[0]['xchan_url'],'/') . '\](.*?)\[\/url\]/ism',
@@ -2751,6 +2770,16 @@ class Activity {
 					$s['body'] = preg_replace('/\[zrl\=' . preg_quote($x[0]['xchan_url'],'/') . '\]@(.*?)\[\/zrl\]/ism',
 						'@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',$s['body']);
 					$s['body'] = preg_replace('/\[url\=' . preg_quote($x[0]['xchan_url'],'/') . '\]@(.*?)\[\/url\]/ism',
+						'@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',$s['body']);
+
+					// replace these just in case the sender (in this case Friendica) got it wrong
+					$s['body'] = preg_replace('/\@\[zrl\=' . preg_quote($x[0]['xchan_hash'],'/') . '\](.*?)\[\/zrl\]/ism',
+						'@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',$s['body']);
+					$s['body'] = preg_replace('/\@\[url\=' . preg_quote($x[0]['xchan_hash'],'/') . '\](.*?)\[\/url\]/ism',
+						'@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',$s['body']);
+					$s['body'] = preg_replace('/\[zrl\=' . preg_quote($x[0]['xchan_hash'],'/') . '\]@(.*?)\[\/zrl\]/ism',
+						'@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',$s['body']);
+					$s['body'] = preg_replace('/\[url\=' . preg_quote($x[0]['xchan_hash'],'/') . '\]@(.*?)\[\/url\]/ism',
 						'@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',$s['body']);
 				}
 			}
