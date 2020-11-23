@@ -287,6 +287,37 @@
 
 {{$acl}}
 
+{{if $feature_comment_control}}
+<!-- Modal for comment control-->
+<div class="modal" id="commModal" tabindex="-1" role="dialog" aria-labelledby="commModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="commModalLabel">{{$commctrl}}</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			</div>
+			<div class="modal-body form-group" style="width:90%">
+			
+				{{include file="field_select.tpl" field=$comment_perms}}
+				<div class="date">
+					<input type="text" placeholder="yyyy-mm-dd HH:MM" name="start_text" value="{{$comments_closed}}" id="commclose-date" class="form-control" />
+				</div>
+				<script>
+					$(function () {
+						var picker = $('#commclose-date').datetimepicker({format:'Y-m-d H:i', minDate: 0 });
+					});
+				</script>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$commModalCANCEL}}</button>
+				<button id="expiry-modal-OKButton" type="button" class="btn btn-primary">{{$commModalOK}}</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{{/if}}
+
+
 {{if $feature_expire}}
 <!-- Modal for item expiry-->
 <div class="modal" id="expiryModal" tabindex="-1" role="dialog" aria-labelledby="expiryModalLabel" aria-hidden="true">
@@ -314,6 +345,8 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 {{/if}}
+
+
 
 {{if $feature_future}}
 <div class="modal" id="createdModal" tabindex="-1" role="dialog" aria-labelledby="createdModalLabel" aria-hidden="true">
