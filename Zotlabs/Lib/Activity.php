@@ -1914,7 +1914,8 @@ class Activity {
 			if ($ni && is_array($ni)) {
 				$software = ((array_path_exists('software/name',$ni)) ? $ni['software']['name'] : '');
 				$version = ((array_path_exists('software/version',$ni)) ? $ni['software']['version'] : '');
-
+				$register = $ni['openRegistrations'];
+				
 				$site = q("select * from site where site_url = '%s'",
 					dbesc($site_url)
 				);
@@ -1940,7 +1941,9 @@ class Activity {
 						'site_dead'   => 0,
 						'site_type'   => SITE_TYPE_NOTZOT,
 						'site_project' => $software,
-						'site_version' => $version
+						'site_version' => $version,
+						'site_access' => (($register) ? ACCESS_FREE : ACCESS_PRIVATE),
+						'site_register' => (($register) ? REGISTER_OPEN : REGISTER_CLOSED)
 						]
 					);
 				}
