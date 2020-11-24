@@ -18,6 +18,8 @@
 		<input type="hidden" name="return" value="{{$return_path}}" />
 		<input type="hidden" name="location" id="jot-location" value="{{$defloc}}" />
 		<input type="hidden" name="expire" id="jot-expire" value="{{$defexpire}}" />
+		<input type="hidden" name="comments_closed" id="jot-commclosed" value="{{$defexpire}}" />
+		<input type="hidden" name="comments_from" id="jot-commfrom" value="{{$defexpire}}" />
 		<input type="hidden" name="created" id="jot-created" value="{{$defpublish}}" />
 		<input type="hidden" name="media_str" id="jot-media" value="" />
 		<input type="hidden" name="source" id="jot-source" value="{{$source}}" />
@@ -146,6 +148,13 @@
 						<i id="profile-expires" class="fa fa-eraser jot-icons"></i>
 					</button>
 				{{/if}}
+
+				{{if $feature_comment_control}}
+					<button id="profile-commctrl-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$commctrl}}" onclick="jotGetCommCtrl();return false;">
+						<i id="profile-commctrl" class="fa fa-comment-o jot-icons"></i>
+					</button>
+				{{/if}}
+
 				{{if $feature_future}}
 					<button id="profile-future-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$future_txt}}" onclick="jotGetPubDate();return false;">
 						<i id="profile-future" class="fa fa-clock-o jot-icons"></i>
@@ -300,6 +309,7 @@
 			
 				{{include file="field_select.tpl" field=$comment_perms}}
 				<div class="date">
+					<label for="id_oembed">{{$commclosedate}}</label>
 					<input type="text" placeholder="yyyy-mm-dd HH:MM" name="start_text" value="{{$comments_closed}}" id="commclose-date" class="form-control" />
 				</div>
 				<script>
@@ -310,7 +320,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$commModalCANCEL}}</button>
-				<button id="expiry-modal-OKButton" type="button" class="btn btn-primary">{{$commModalOK}}</button>
+				<button id="comm-modal-OKButton" type="button" class="btn btn-primary">{{$commModalOK}}</button>
 			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->

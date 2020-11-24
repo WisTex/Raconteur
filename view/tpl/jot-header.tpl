@@ -272,6 +272,23 @@ var activeCommentText = '';
 		})
 	}
 
+	function jotGetCommCtrl() {
+		$('#commModal').modal();
+		$('#comm-modal-OKButton').on('click', function() {
+			var post_comments = $('#post_comments').val();
+			if (post_comments && post_comments.length) {
+				$('#jot-commfrom').val(post_comments);
+			}
+			var reply=$('#commclose-date').val();
+			if(reply && reply.length) {
+				$('#jot-commclosed').val(reply);
+			}
+			$('#commModal').modal('hide');
+
+		})
+	}
+
+
 	function jotGetPubDate() {
 		$('#createdModal').modal();
 		$('#created-modal-OKButton').on('click', function() {

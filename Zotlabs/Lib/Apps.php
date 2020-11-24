@@ -347,6 +347,7 @@ class Apps {
 			'Tasks' => t('Tasks'),
 			'Tagadelic' => t('Tagadelic'),
 			'No Comment' => t('No Comment'),
+			'Comment Control' => t('Comment Control'),
 			'Directory' => t('Directory'), 
 			'Help' => t('Help'),
 			'Mail' => t('Mail'),

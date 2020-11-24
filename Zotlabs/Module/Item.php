@@ -293,7 +293,6 @@ class Item extends Controller {
 		$token    = EMPTY_STR;
 		$datarray = [];
 	
-	
 		/**
 		 * Is this a reply to something?
 		 */
@@ -302,6 +301,7 @@ class Item extends Controller {
 		$parent_mid = ((x($_REQUEST,'parent_mid')) ? trim($_REQUEST['parent_mid']) : '');
 	
 		$hidden_mentions = ((x($_REQUEST,'hidden_mentions')) ? trim($_REQUEST['hidden_mentions']) : '');
+		$comments_closed = ((x($_REQUEST,'comments_closed')) ? datetime_convert(date_default_timezone_get(),'UTC',$_REQUEST['comments_closed']) : NULL_DATE);
 
 		/**
 		 * Who is viewing this page and posting this thing
@@ -334,8 +334,8 @@ class Item extends Controller {
 	
 		$api_source = ((x($_REQUEST,'api_source') && $_REQUEST['api_source']) ? true : false);
 	
-		$nocomment = intval($_REQUEST['nocomment']);
 
+		$nocomment = intval($_REQUEST['nocomment']);
 		$is_poll = ((trim($_REQUEST['poll_answers'][0]) != '' && trim($_REQUEST['poll_answers'][1]) != '') ? true : false);
 
 		// 'origin' (if non-zero) indicates that this network is where the message originated,
@@ -644,8 +644,8 @@ class Item extends Controller {
 		$acl = new AccessControl($channel);
 
 		$view_policy = PermissionLimits::Get($channel['channel_id'],'view_stream');	
-		$comment_policy = PermissionLimits::Get($channel['channel_id'],'post_comments');
-	
+		$comment_policy = ((isset($_REQUEST['comments_from'])) ? intval($_REQUEST['comments_from']) : PermissionLimits::Get($channel['channel_id'],'post_comments'));
+
 		$public_policy = ((x($_REQUEST,'public_policy')) ? escape_tags($_REQUEST['public_policy']) : map_scope($view_policy,true));
 		if($webpage)
 			$public_policy = '';
@@ -1154,7 +1154,6 @@ class Item extends Controller {
 			$obj = $this->extract_bb_poll_data($body,[ 'item_private' => $private, 'allow_cid' => $str_contact_allow, 'allow_gid' => $str_contact_deny ]);
 		}
 
-		$comments_closed = NULL_DATE;
 
 		if ($obj) {
 			$obj['url'] = $mid;
