@@ -1244,13 +1244,7 @@ function z_status_editor($a, $x, $popup = false) {
 
 	$plaintext = true;
 
-
 	$feature_voting = false;
-
-	$feature_nocomment = Apps::system_app_installed($x['profile_uid'], 'No Comment');
-	if(x($x, 'disable_comments'))
-		$feature_nocomment = false;
-
 
 	$feature_comment_control = Apps::system_app_installed($x['profile_uid'], 'Comment Control');
 	if(x($x, 'disable_comment_control'))
@@ -1340,8 +1334,6 @@ function z_status_editor($a, $x, $popup = false) {
 		'$modalerrorlist' => t('Error getting album list'),
 		'$modalerrorlink' => t('Error getting photo link'),
 		'$modalerroralbum' => t('Error getting album'),
-		'$nocomment_enabled' => t('Comments enabled'),
-		'$nocomment_disabled' => t('Comments disabled'),
 		'$auto_save_draft' => $feature_auto_save_draft,
 		'$reset' => $reset
 	));
@@ -1473,13 +1465,14 @@ function z_status_editor($a, $x, $popup = false) {
 		'$consensus' => ((array_key_exists('item',$x)) ? $x['item']['item_consensus'] : 0),
 		'$nocommenttitle' => t('Disable comments'),
 		'$nocommenttitlesub' => t('Toggle comments'),
-		'$feature_nocomment' => $feature_nocomment,
+		'$comments_allowed' => [ 'comments_allowed', t('Allow comments on this post'), ((array_key_exists('item',$x)) ? 1 - $x['item']['item_nocomment'] : 1), '', [ t('No'), t('Yes')]],
+		
+		'$commentstate' => ((array_key_exists('item',$x)) ? 1 - $x['item']['item_nocomment'] : 1),
 		'$feature_comment_control' => $feature_comment_control,
 		'$commctrl' => t('Comment Control'),
 		'$comments_closed' => (($x['item']['comments_closed']) ? $x['item']['comments_closed'] : ''),
 		'$commclosedate' => t('Disable comments after (date)'),
 		'$comment_perms' => $comment_perms,
-		'$nocomment' => ((array_key_exists('item',$x)) ? $x['item']['item_nocomment'] : 0),
 		'$clearloc' => $clearloc,
 		'$title' => ((x($x, 'title')) ? htmlspecialchars($x['title'], ENT_COMPAT,'UTF-8') : ''),
 		'$placeholdertitle' => ((x($x, 'placeholdertitle')) ? $x['placeholdertitle'] : t('Title (optional)')),

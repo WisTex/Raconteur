@@ -27,7 +27,7 @@
 		<input type="hidden" id="jot-postid" name="post_id" value="{{$post_id}}" />
 		<input type="hidden" id="jot-webpage" name="webpage" value="{{$webpage}}" />
 		<input type="hidden" name="preview" id="jot-preview" value="0" />
-		<input type="hidden" id="jot-nocomment" name="nocomment" value="{{if $nocomment}}{{$nocomment}}{{else}}0{{/if}}" />
+		<input type="hidden" id="jot-commentstate" name="comments_enabled" value="{{if $commentstate}}{{$commentstate}}{{else}}1{{/if}}" />
 
 		{{if $webpage}}
 		<div id="jot-pagetitle-wrap" class="jothidden">
@@ -166,12 +166,6 @@
 					</button>
 				{{/if}}
 
-
-				{{if $feature_nocomment}}
-					<button id="profile-nocomment-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$nocommenttitle}}" onclick="toggleNoComment();return false;">
-						<i id="profile-nocomment" class="fa fa-comments-o jot-icons"></i>
-					</button>
-				{{/if}}
 				</div>
 				{{if $writefiles || $weblink || $setloc || $clearloc || $feature_expire || $feature_encrypt }}
 				<div class="btn-group d-lg-none">
@@ -205,9 +199,6 @@
 						{{/if}}
 						{{if $feature_encrypt}}
 						<a class="dropdown-item" href="#" onclick="hz_encrypt('{{$cipher}}','#profile-jot-text',$('#profile-jot-text').val());return false;"><i class="fa fa-key"></i>&nbsp;{{$encrypt}}</a>
-						{{/if}}
-						{{if $feature_nocomment}}
-						<a class="dropdown-item" href="#" onclick="toggleNoComment(); return false;"><i id="profile-nocomment-sub" class="fa fa-comments"></i>&nbsp;{{$nocommenttitlesub}}</a>
 						{{/if}}
 					</div>
 				</div>
@@ -305,8 +296,8 @@
 				<h4 class="modal-title" id="commModalLabel">{{$commctrl}}</h4>
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			</div>
-			<div class="modal-body form-group" style="width:90%">
-			
+			<div class="modal-body form-group" >
+				{{include file="field_checkbox.tpl" field=$comments_allowed}}				
 				{{include file="field_select.tpl" field=$comment_perms}}
 				<div class="date">
 					<label for="id_oembed">{{$commclosedate}}</label>

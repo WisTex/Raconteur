@@ -334,8 +334,10 @@ class Item extends Controller {
 	
 		$api_source = ((x($_REQUEST,'api_source') && $_REQUEST['api_source']) ? true : false);
 	
-
-		$nocomment = intval($_REQUEST['nocomment']);
+		$nocomment = 0;
+		if (isset($_REQUEST['comments_enabled'])) {
+			$nocomment = 1 - intval($_REQUEST['comments_enabled']);
+		}
 		$is_poll = ((trim($_REQUEST['poll_answers'][0]) != '' && trim($_REQUEST['poll_answers'][1]) != '') ? true : false);
 
 		// 'origin' (if non-zero) indicates that this network is where the message originated,
