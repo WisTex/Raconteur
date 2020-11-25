@@ -1824,6 +1824,8 @@ function bbcode($Text, $options = []) {
 	$Text = str_replace('%eY9-!','http', $Text);
 	$Text = bb_code_unprotect($Text);
 
+	// This lets you use HTML entities in posts - just wrap them in brackets. For instance [&copy;] to display a copyright symbol.
+	
 	$Text = preg_replace('/\[\&amp\;([#a-z0-9]+)\;\]/', '&$1;', $Text);
 
 	// fix any escaped ampersands that may have been converted into links
@@ -1832,15 +1834,15 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace("/\<(.*?)(src|href)=(.*?)\&amp\;(.*?)\>/ism", '<$1$2=$3&$4>', $Text);
 
 	// This is subtle - it's an XSS filter. It only accepts links with a protocol scheme and where
-	// the scheme begins with z (zhttp), h (http(s)), f (ftp(s)), m (mailto), t (tel) and named anchors.
+	// the scheme begins with z (zhttp), h (http(s)), f (ftp(s)), g (gemini), m (mailto), t (tel) and named anchors.
 	// data: urls are allowed if exporting to activitypub which allows inline svg to federate, but not 
 	// to be used for local display
 
 	if ($activitypub) {
-		$Text = preg_replace("/\<(.*?)(src|href)=\"[^dzhfmt#](.*?)\>/ism", '<$1$2="">', $Text);
+		$Text = preg_replace("/\<(.*?)(src|href)=\"[^dzghfmt#](.*?)\>/ism", '<$1$2="">', $Text);
 	}
 	else {
-		$Text = preg_replace("/\<(.*?)(src|href)=\"[^zhfmt#](.*?)\>/ism", '<$1$2="">', $Text);
+		$Text = preg_replace("/\<(.*?)(src|href)=\"[^zhgfmt#](.*?)\>/ism", '<$1$2="">', $Text);
 	}
 
 	$Text = bb_replace_images($Text, $saved_images);
