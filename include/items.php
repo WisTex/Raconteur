@@ -2944,7 +2944,11 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		$arr['item_private'] = (($channel['channel_allow_cid'] || $channel['channel_allow_gid']
 		|| $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
 
-		$arr['item_origin'] = 1;
+		// Setting item_origin on a deleted item also seems to cause looping
+		if (! $arr['item_deleted']) {
+			$arr['item_origin'] = 1;
+		}
+		
 		$arr['item_wall'] = 1;
 		$arr['item_thread_top'] = 1;
 	
