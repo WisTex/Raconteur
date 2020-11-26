@@ -18,6 +18,8 @@
 		<input type="hidden" name="return" value="{{$return_path}}" />
 		<input type="hidden" name="location" id="jot-location" value="{{$defloc}}" />
 		<input type="hidden" name="expire" id="jot-expire" value="{{$defexpire}}" />
+		<input type="hidden" name="comments_closed" id="jot-commclosed" value="{{$defexpire}}" />
+		<input type="hidden" name="comments_from" id="jot-commfrom" value="{{$defexpire}}" />
 		<input type="hidden" name="created" id="jot-created" value="{{$defpublish}}" />
 		<input type="hidden" name="media_str" id="jot-media" value="" />
 		<input type="hidden" name="source" id="jot-source" value="{{$source}}" />
@@ -25,7 +27,7 @@
 		<input type="hidden" id="jot-postid" name="post_id" value="{{$post_id}}" />
 		<input type="hidden" id="jot-webpage" name="webpage" value="{{$webpage}}" />
 		<input type="hidden" name="preview" id="jot-preview" value="0" />
-		<input type="hidden" id="jot-nocomment" name="nocomment" value="{{if $nocomment}}{{$nocomment}}{{else}}0{{/if}}" />
+		<input type="hidden" id="jot-commentstate" name="comments_enabled" value="{{if $commentstate}}{{$commentstate}}{{else}}1{{/if}}" />
 
 		{{if $webpage}}
 		<div id="jot-pagetitle-wrap" class="jothidden">
@@ -146,6 +148,13 @@
 						<i id="profile-expires" class="fa fa-eraser jot-icons"></i>
 					</button>
 				{{/if}}
+
+				{{if $feature_comment_control}}
+					<button id="profile-commctrl-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$commctrl}}" onclick="jotGetCommCtrl();return false;">
+						<i id="profile-commctrl" class="fa fa-comment-o jot-icons"></i>
+					</button>
+				{{/if}}
+
 				{{if $feature_future}}
 					<button id="profile-future-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$future_txt}}" onclick="jotGetPubDate();return false;">
 						<i id="profile-future" class="fa fa-clock-o jot-icons"></i>
@@ -157,12 +166,6 @@
 					</button>
 				{{/if}}
 
-
-				{{if $feature_nocomment}}
-					<button id="profile-nocomment-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$nocommenttitle}}" onclick="toggleNoComment();return false;">
-						<i id="profile-nocomment" class="fa fa-comments-o jot-icons"></i>
-					</button>
-				{{/if}}
 				</div>
 				{{if $writefiles || $weblink || $setloc || $clearloc || $feature_expire || $feature_encrypt }}
 				<div class="btn-group d-lg-none">
@@ -196,9 +199,6 @@
 						{{/if}}
 						{{if $feature_encrypt}}
 						<a class="dropdown-item" href="#" onclick="hz_encrypt('{{$cipher}}','#profile-jot-text',$('#profile-jot-text').val());return false;"><i class="fa fa-key"></i>&nbsp;{{$encrypt}}</a>
-						{{/if}}
-						{{if $feature_nocomment}}
-						<a class="dropdown-item" href="#" onclick="toggleNoComment(); return false;"><i id="profile-nocomment-sub" class="fa fa-comments"></i>&nbsp;{{$nocommenttitlesub}}</a>
 						{{/if}}
 					</div>
 				</div>
@@ -287,6 +287,38 @@
 
 {{$acl}}
 
+{{if $feature_comment_control}}
+<!-- Modal for comment control-->
+<div class="modal" id="commModal" tabindex="-1" role="dialog" aria-labelledby="commModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="commModalLabel">{{$commctrl}}</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			</div>
+			<div class="modal-body form-group" >
+				{{include file="field_checkbox.tpl" field=$comments_allowed}}				
+				{{include file="field_select.tpl" field=$comment_perms}}
+				<div class="date">
+					<label for="id_oembed">{{$commclosedate}}</label>
+					<input type="text" placeholder="yyyy-mm-dd HH:MM" name="start_text" value="{{$comments_closed}}" id="commclose-date" class="form-control" />
+				</div>
+				<script>
+					$(function () {
+						var picker = $('#commclose-date').datetimepicker({format:'Y-m-d H:i', minDate: 0 });
+					});
+				</script>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$commModalCANCEL}}</button>
+				<button id="comm-modal-OKButton" type="button" class="btn btn-primary">{{$commModalOK}}</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{{/if}}
+
+
 {{if $feature_expire}}
 <!-- Modal for item expiry-->
 <div class="modal" id="expiryModal" tabindex="-1" role="dialog" aria-labelledby="expiryModalLabel" aria-hidden="true">
@@ -314,6 +346,8 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 {{/if}}
+
+
 
 {{if $feature_future}}
 <div class="modal" id="createdModal" tabindex="-1" role="dialog" aria-labelledby="createdModalLabel" aria-hidden="true">

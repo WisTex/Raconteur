@@ -272,6 +272,31 @@ var activeCommentText = '';
 		})
 	}
 
+	function jotGetCommCtrl() {
+		$('#commModal').modal();
+		$('#comm-modal-OKButton').on('click', function() {
+
+			var comment_state = $("input[name='comments_allowed']:checked").val();
+			if (comment_state && comment_state.length) {
+				$('#jot-commentstate').val(comment_state);
+			}
+			else {
+				$('#jot-commentstate').val(0);
+			}				
+			
+			var post_comments = $('#post_comments').val();
+			if (post_comments && post_comments.length) {
+				$('#jot-commfrom').val(post_comments);
+			}
+			var reply=$('#commclose-date').val();
+			if(reply && reply.length) {
+				$('#jot-commclosed').val(reply);
+			}
+			$('#commModal').modal('hide');
+		})
+	}
+
+
 	function jotGetPubDate() {
 		$('#createdModal').modal();
 		$('#created-modal-OKButton').on('click', function() {
@@ -451,19 +476,6 @@ var activeCommentText = '';
 		else {
 			$('#jot-consensus').val(1);
 			$('#profile-voting, #profile-voting-sub').removeClass('fa-square-o').addClass('fa-check-square-o');
-		}
-	}
-
-	function toggleNoComment() {
-		if($('#jot-nocomment').val() > 0) {
-			$('#jot-nocomment').val(0);
-			$('#profile-nocomment, #profile-nocomment-sub').removeClass('fa-comments').addClass('fa-comments-o');
-			$('#profile-nocomment-wrapper').attr('title', '{{$nocomment_enabled|escape:'javascript'}}');
-		}
-		else {
-			$('#jot-nocomment').val(1);
-			$('#profile-nocomment, #profile-nocomment-sub').removeClass('fa-comments-o').addClass('fa-comments');
-			$('#profile-nocomment-wrapper').attr('title', '{{$nocomment_disabled|escape:'javascript'}}');
 		}
 	}
 

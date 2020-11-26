@@ -5,6 +5,9 @@ use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\ThreadStream;
 use Zotlabs\Lib\ThreadItem;
 use Zotlabs\Lib\Chatroom;
+use Zotlabs\Access\Permissions;
+use Zotlabs\Access\PermissionLimits;
+
 
 function item_extract_images($body) {
 
@@ -1241,12 +1244,12 @@ function z_status_editor($a, $x, $popup = false) {
 
 	$plaintext = true;
 
-
 	$feature_voting = false;
 
-	$feature_nocomment = Apps::system_app_installed($x['profile_uid'], 'No Comment');
-	if(x($x, 'disable_comments'))
-		$feature_nocomment = false;
+	$feature_comment_control = Apps::system_app_installed($x['profile_uid'], 'Comment Control');
+	if(x($x, 'disable_comment_control'))
+		$feature_comment_control = false;
+
 
 	$feature_expire = ((Apps::system_app_installed($x['profile_uid'], 'Expire Posts') && (! $webpage)) ? true : false);
 	if(x($x, 'hide_expire'))
@@ -1331,8 +1334,6 @@ function z_status_editor($a, $x, $popup = false) {
 		'$modalerrorlist' => t('Error getting album list'),
 		'$modalerrorlink' => t('Error getting photo link'),
 		'$modalerroralbum' => t('Error getting album'),
-		'$nocomment_enabled' => t('Comments enabled'),
-		'$nocomment_disabled' => t('Comments disabled'),
 		'$auto_save_draft' => $feature_auto_save_draft,
 		'$reset' => $reset
 	));
@@ -1365,6 +1366,48 @@ function z_status_editor($a, $x, $popup = false) {
 		$catsenabled = $x['catsenabled'];
 	else
 		$catsenabled = ((Apps::system_app_installed($x['profile_uid'], 'Categories') && (! $webpage)) ? 'categories' : '');
+
+
+	// we only need the comment_perms for the editor, but this logic is complicated enough (from Settings/Channel)
+	// that we will just duplicate the entire code block
+
+	$global_perms = Permissions::Perms();
+
+	$permiss = [];
+	
+	$perm_opts = [
+		array( t('Nobody except yourself'), 0),
+		array( t('Only those you specifically allow'), PERMS_SPECIFIC), 
+		array( t('Approved connections'), PERMS_CONTACTS),
+		array( t('Any connections'), PERMS_PENDING),
+		array( t('Anybody on this website'), PERMS_SITE),
+		array( t('Anybody in this network'), PERMS_NETWORK),
+		array( t('Anybody authenticated'), PERMS_AUTHED),
+		array( t('Anybody on the internet'), PERMS_PUBLIC)
+	];
+	
+	$limits = PermissionLimits::Get(local_channel());
+	$anon_comments = get_config('system','anonymous_comments',true);
+	
+	foreach($global_perms as $k => $perm) {
+		$options = [];
+		$can_be_public = ((strstr($k,'view') || ($k === 'post_comments' && $anon_comments)) ? true : false);
+		foreach($perm_opts as $opt) {
+			if($opt[1] == PERMS_PUBLIC && (! $can_be_public))
+				continue;
+			$options[$opt[1]] = $opt[0];
+		}
+		if($k === 'view_stream') {
+			$options = [$perm_opts[7][1] => $perm_opts[7][0]];
+		}
+		if($k === 'post_comments') {
+			$comment_perms = [ $k, t('Accept delivery of comments and likes on this post from'), $limits[$k],'',$options ];
+		}
+		else {
+			$permiss[] = array($k,$perm,$limits[$k],'',$options);			
+		}
+	}
+
 
 	// avoid illegal offset errors
 	if(! array_key_exists('permissions',$x)) 
@@ -1422,8 +1465,14 @@ function z_status_editor($a, $x, $popup = false) {
 		'$consensus' => ((array_key_exists('item',$x)) ? $x['item']['item_consensus'] : 0),
 		'$nocommenttitle' => t('Disable comments'),
 		'$nocommenttitlesub' => t('Toggle comments'),
-		'$feature_nocomment' => $feature_nocomment,
-		'$nocomment' => ((array_key_exists('item',$x)) ? $x['item']['item_nocomment'] : 0),
+		'$comments_allowed' => [ 'comments_allowed', t('Allow comments on this post'), ((array_key_exists('item',$x)) ? 1 - $x['item']['item_nocomment'] : 1), '', [ t('No'), t('Yes')]],
+		
+		'$commentstate' => ((array_key_exists('item',$x)) ? 1 - $x['item']['item_nocomment'] : 1),
+		'$feature_comment_control' => $feature_comment_control,
+		'$commctrl' => t('Comment Control'),
+		'$comments_closed' => (($x['item']['comments_closed']) ? $x['item']['comments_closed'] : ''),
+		'$commclosedate' => t('Disable comments after (date)'),
+		'$comment_perms' => $comment_perms,
 		'$clearloc' => $clearloc,
 		'$title' => ((x($x, 'title')) ? htmlspecialchars($x['title'], ENT_COMPAT,'UTF-8') : ''),
 		'$placeholdertitle' => ((x($x, 'placeholdertitle')) ? $x['placeholdertitle'] : t('Title (optional)')),
@@ -1467,6 +1516,8 @@ function z_status_editor($a, $x, $popup = false) {
 		'$cipher' => $cipher,
 		'$expiryModalOK' => t('OK'),
 		'$expiryModalCANCEL' => t('Cancel'),
+		'$commModalOK' => t('OK'),
+		'$commModalCANCEL' => t('Cancel'),
 		'$linkModalOK' => t('OK'),
 		'$linkModalCANCEL' => t('Cancel'),
 		'$close' => t('Close'),

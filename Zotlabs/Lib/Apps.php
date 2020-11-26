@@ -17,6 +17,7 @@ class Apps {
 
 	static public $base_apps = null;
 
+
 	static public function get_system_apps($translate = true) {
 
 		$ret = [];
@@ -85,7 +86,7 @@ class Apps {
 		self::$base_apps = self::get_base_apps();
  
 		$apps = self::get_system_apps(false);
-
+		
 		self::$available_apps = q("select * from app where app_channel = 0");
 
 		self::$installed_apps = q("select * from app where app_channel = %d",
@@ -347,6 +348,7 @@ class Apps {
 			'Tasks' => t('Tasks'),
 			'Tagadelic' => t('Tagadelic'),
 			'No Comment' => t('No Comment'),
+			'Comment Control' => t('Comment Control'),
 			'Directory' => t('Directory'), 
 			'Help' => t('Help'),
 			'Mail' => t('Mail'),

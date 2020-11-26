@@ -13,9 +13,7 @@ class Sites extends \Zotlabs\Web\Controller {
 
 		$j = [];
 
-		$r = q("select * from site where site_type = %d and site_flags != 256 and site_dead = 0 $sql_extra order by site_update desc",
-			intval(SITE_TYPE_ZOT)
-		);
+		$r = q("select * from site where site_flags != 256 and site_dead = 0 $sql_extra order by site_update desc");
 			
 		if ($r) {
 			foreach ($r as $rr) {				
@@ -48,7 +46,12 @@ class Sites extends \Zotlabs\Web\Controller {
 					$logo = 'images/' . strtolower($rr['site_project']) . '.png';
 				}
 				if (! $logo) {
-					$logo = 'images/default_profile_photos/red_koala_trans/300.png';
+					if (intval($rr['site_type']) != 0) {
+						$logo = 'images/activitypub-300.png';
+					}
+					else {
+						$logo = 'images/default_profile_photos/red_koala_trans/300.png';
+					}
 				}
 
 				if ($rr['site_sellpage']) {

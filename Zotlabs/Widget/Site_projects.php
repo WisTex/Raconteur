@@ -9,15 +9,18 @@ class Site_projects {
 
 
 
-		$r = q("select site_project, count(site_project) as total from site where site_project != '' and site_flags != 256 and site_dead = 0 and site_type = 0 group by site_project order by site_project desc");
+		$r = q("select site_project, site_type, count(site_project) as total from site where site_project != '' and site_flags != 256 and site_dead = 0 group by site_project order by site_project desc");
 
 		$results = [];
-		
+
+		usort($r, [ 'self', 'site_sort' ]);
+
 		if ($r) {
 		
 			foreach ($r as $rv) {
 				$result = [];
 				$result['name'] = $rv['site_project'];
+				$result['type'] = $rv['site_type'];
 				$result['cname'] = ucfirst($result['name']);
 				if ($rv['site_project'] === $_REQUEST['project']) {
 					$result['selected'] = true;
@@ -37,5 +40,12 @@ class Site_projects {
 			
 			return $o;
 		}		
+	}
+
+	static function site_sort($a,$b) {
+		if ($a['site_type'] === $b['site_type']) {
+			return strncmp($a,$b);
+		}
+		return (($a['site_type'] < $b['site_type']) ? -1 : 1);
 	}
 }

@@ -1665,7 +1665,7 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 	else {
 		if($item['summary']) {
 			// 8203 is a zero-width space so as not to trigger a markdown link if the summary starts with parentheses
-			$s .= prepare_text('[summary]&#8203;' . $item['summary'] . '[/summary]' . $item['body'],$item['mimetype'],$opts);
+			$s .= prepare_text('[summary]&#8203;' . $item['summary'] . '[/summary]&#8203;' . $item['body'],$item['mimetype'],$opts);
 		}
 		else {
 			if ($item['html']) {
