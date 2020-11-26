@@ -539,7 +539,7 @@ class Notifier {
 
 		$hubs = q("select hubloc.*, site.site_crypto, site.site_flags from hubloc left join site on site_url = hubloc_url 
 			where hubloc_hash in (" . protect_sprintf(implode(',',self::$recipients)) . ") 
-			and hubloc_error = 0 and hubloc_deleted = 0 and ( site_dead = 0 OR site_dead is null ) "
+			and hubloc_error = 0 and hubloc_deleted = 0 "
 		);		
 
 		// public posts won't make it to the local public stream unless there's a recipient on this site. 
