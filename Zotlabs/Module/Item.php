@@ -379,6 +379,9 @@ class Item extends Controller {
 		$plink       = ((x($_REQUEST,'permalink'))   ? escape_tags($_REQUEST['permalink']) : '');
 		$obj_type    = ((x($_REQUEST,'obj_type'))    ? escape_tags($_REQUEST['obj_type'])  : ACTIVITY_OBJ_NOTE);
 
+
+		$item_unpublished = ((isset($_REQUEST['draft']))    ? intval($_REQUEST['draft'])          : 0);
+
 		// allow API to bulk load a bunch of imported items without sending out a bunch of posts. 
 		$nopush      = ((x($_REQUEST,'nopush'))      ? intval($_REQUEST['nopush'])         : 0);
 	
@@ -677,30 +680,29 @@ class Item extends Controller {
 			$title             = escape_tags(trim($_REQUEST['title']));
 			$summary           = trim($_REQUEST['summary']);
 			$body              = trim($_REQUEST['body']);
-			$item_flags        = $orig_post['item_flags'];
 	
-			$item_origin   = $orig_post['item_origin'];
-			$item_unseen   = $orig_post['item_unseen'];
-			$item_starred   = $orig_post['item_starred'];
-			$item_uplink   = $orig_post['item_uplink'];
-			$item_wall   = $orig_post['item_wall'];
+			$item_flags        = $orig_post['item_flags'];
+			$item_origin       = $orig_post['item_origin'];
+			$item_unseen       = $orig_post['item_unseen'];
+			$item_starred      = $orig_post['item_starred'];
+			$item_uplink       = $orig_post['item_uplink'];
+			$item_wall         = $orig_post['item_wall'];
 			$item_thread_top   = $orig_post['item_thread_top'];
-			$item_notshown   = $orig_post['item_notshown'];
-			$item_nsfw   = $orig_post['item_nsfw'];
-			$item_relay   = $orig_post['item_relay'];
+			$item_notshown     = $orig_post['item_notshown'];
+			$item_nsfw         = $orig_post['item_nsfw'];
+			$item_relay        = $orig_post['item_relay'];
 			$item_mentionsme   = $orig_post['item_mentionsme'];
-			$item_nocomment   = $orig_post['item_nocomment'];
-			$item_obscured   = $orig_post['item_obscured'];
-			$item_verified   = $orig_post['item_verified'];
-			$item_retained   = $orig_post['item_retained'];
-			$item_rss   = $orig_post['item_rss'];
-			$item_deleted   = $orig_post['item_deleted'];
-			$item_type   = $orig_post['item_type'];
-			$item_hidden   = $orig_post['item_hidden'];
-			$item_unpublished   = $orig_post['item_unpublished'];
-			$item_delayed   = $orig_post['item_delayed'];
-			$item_pending_remove   = $orig_post['item_pending_remove'];
-			$item_blocked   = $orig_post['item_blocked'];
+			$item_nocomment    = $orig_post['item_nocomment'];
+			$item_obscured     = $orig_post['item_obscured'];
+			$item_verified     = $orig_post['item_verified'];
+			$item_retained     = $orig_post['item_retained'];
+			$item_rss          = $orig_post['item_rss'];
+			$item_deleted      = $orig_post['item_deleted'];
+			$item_type         = $orig_post['item_type'];
+			$item_hidden       = $orig_post['item_hidden'];
+			$item_delayed      = $orig_post['item_delayed'];
+			$item_pending_remove = $orig_post['item_pending_remove'];
+			$item_blocked      = $orig_post['item_blocked'];
 	
 	
 	
