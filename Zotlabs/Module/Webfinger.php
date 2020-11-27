@@ -111,7 +111,7 @@ class Webfinger extends Controller {
 				'http://webfinger.net/ns/name'   => $channel_target['channel_name'],
 				'http://xmlns.com/foaf/0.1/name' => $channel_target['channel_name'],
 				'https://w3id.org/security/v1#publicKeyPem' => $channel_target['xchan_pubkey'],
-				'http://purl.org/zot/federation' => ((get_config('system','activitypub',true)) ? 'zot6,activitypub' : 'zot6')
+				'http://purl.org/zot/federation' => ((get_config('system','activitypub', ACTIVITYPUB_ENABLED)) ? 'zot6,activitypub' : 'zot6')
 			];
 	
 			foreach ($aliases as $alias) { 

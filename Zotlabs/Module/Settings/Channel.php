@@ -541,13 +541,13 @@ class Channel {
 
 		$hyperdrive = [ 'hyperdrive', t('Friend-of-friend conversations'), ((get_pconfig(local_channel(),'system','hyperdrive',true)) ? 1 : 0), t('Import public third-party conversations in which your connections participate.'), $yes_no ];
 
-		if (get_config('system','activitypub',true)) {
+		if (get_config('system','activitypub', ACTIVITYPUB_ENABLED)) {
 			$apconfig = true;
-			$activitypub = replace_macros(get_markup_template('field_checkbox.tpl'), [ '$field' => [ 'activitypub', t('Enable ActivityPub protocol'), ((get_pconfig(local_channel(),'system','activitypub',true)) ? 1 : 0), t('ActivityPub is an emerging internet standard for social communications'), $yes_no ]]);
+			$activitypub = replace_macros(get_markup_template('field_checkbox.tpl'), [ '$field' => [ 'activitypub', t('Enable ActivityPub protocol'), ((get_pconfig(local_channel(),'system','activitypub', ACTIVITYPUB_ENABLED)) ? 1 : 0), t('ActivityPub is an emerging internet standard for social communications'), $yes_no ]]);
 		}
 		else {
 			$apconfig = false;
-			$activitypub = '<input type="hidden" name="activitypub" value="1" >' . EOL;
+			$activitypub = '<input type="hidden" name="activitypub" value="' . intval(ACTIVITYPUB_ENABLED) . '" >' . EOL;
 		}
 
 		$permissions_set = (($permissions_role != 'custom') ? true : false);
