@@ -478,7 +478,7 @@ class ThreadItem {
 
 		$result['children'] = [];
 
-		if (local_channel() && get_pconfig(local_channel(),'system','activitypub',get_config('system','activitypub',true))) {
+		if (local_channel() && get_pconfig(local_channel(),'system','activitypub',get_config('system','activitypub', ACTIVITYPUB_ENABLED))) {
 			// place to store all the author addresses (links if not available) in the thread so we can auto-mention them in JS. 
 			$result['authors'] = [];
 			// fix to add in sub-replies if replying to a comment on your own post from the top level. 

@@ -34,7 +34,7 @@ class Connect {
 		$my_perms = false;
 		$protocol = '';
 
-		$ap_allowed = get_config('system','activitypub',true) && get_pconfig($uid,'system','activitypub',true);
+		$ap_allowed = get_config('system','activitypub', ACTIVITYPUB_ENABLED) && get_pconfig($uid,'system','activitypub', ACTIVITYPUB_ENABLED);
 
 		if (substr($url,0,1) === '[') {
 			$x = strpos($url,']');

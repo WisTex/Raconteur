@@ -26,7 +26,8 @@ define ( 'PLATFORM_ARCHITECTURE',   'zap' );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 
-
+// This configures the default state of activitypub at the project level.
+define ( 'ACTIVITYPUB_ENABLED', true );
 
 // composer autoloader for all namespaced Classes
 require_once('vendor/autoload.php');

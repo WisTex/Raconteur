@@ -1260,7 +1260,7 @@ function get_site_info() {
 	}
 
 	$protocols = [ 'zot' ];
-	if (get_config('system','activitypub',true)) {
+	if (get_config('system','activitypub', ACTIVITYPUB_ENABLED)) {
 		$protocols[] = 'activitypub';
 	}
 

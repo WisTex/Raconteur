@@ -100,7 +100,7 @@ class Vote extends Controller {
 			$item['obj_type'] = 'Note';
 			$item['author'] = channelx_by_n($channel['channel_id']);
 
-			$item['obj'] = Activity::encode_item($item,((get_config('system','activitypub')) ? true : false));
+			$item['obj'] = Activity::encode_item($item,((get_config('system','activitypub', ACTIVITYPUB_ENABLED)) ? true : false));
 
 			// now reset the placeholders
 

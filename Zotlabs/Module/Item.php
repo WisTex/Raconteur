@@ -1301,7 +1301,7 @@ class Item extends Controller {
 		if(! array_key_exists('obj',$datarray)) {
 			$copy = $datarray;
 			$copy['author'] = $observer;
-			$datarray['obj'] = Activity::encode_item($copy,((get_config('system','activitypub')) ? true : false));
+			$datarray['obj'] = Activity::encode_item($copy,((get_config('system','activitypub', ACTIVITYPUB_ENABLED)) ? true : false));
 		}	
 
 		Activity::rewrite_mentions($datarray);

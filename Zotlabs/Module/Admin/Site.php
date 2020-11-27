@@ -299,7 +299,7 @@ class Site {
 			'$theme'                => [ 'theme', t("System theme"), get_config('system','theme'), t("Default system theme - may be over-ridden by user profiles - <a href='#' id='cnftheme'>change theme settings</a>"), $theme_choices ],
 //			'$theme_mobile'         => [ 'theme_mobile', t("Mobile system theme"), get_config('system','mobile_theme'), t("Theme for mobile devices"), $theme_choices_mobile ],
 //			'$site_channel'         => [ 'site_channel', t("Channel to use for this website's static pages"), get_config('system','site_channel'), t("Site Channel") ],
-			'$ap_contacts'           => [ 'ap_contacts', t('ActivityPub protocol'),get_config('system','activitypub',true),t('Provides access to software supporting the ActivityPub protocol.') ],
+			'$ap_contacts'           => [ 'ap_contacts', t('ActivityPub protocol'),get_config('system','activitypub', ACTIVITYPUB_ENABLED),t('Provides access to software supporting the ActivityPub protocol.') ],
 			'$maximagesize'         => [ 'maximagesize', t("Maximum image size"), intval(get_config('system','maximagesize')), t("Maximum size in bytes of uploaded images. Default is 0, which means no limits.") ],
 			'$cache_images'         => [ 'cache_images', t('Cache all public images'), intval(get_config('system','cache_images',1)), t('If disabled, proxy non-SSL images, but do not store locally') ], 
 			'$register_policy'      => [ 'register_policy', t("Does this site allow new member registration?"), get_config('system','register_policy'), "", $register_choices ],
