@@ -2798,10 +2798,10 @@ class Activity {
 		return;
 	}
 
-	static function store($channel,$observer_hash,$act,$item,$fetch_parents = true) {
+	static function store($channel,$observer_hash,$act,$item,$fetch_parents = true, $force = false) {
 
 
-		if ($act && $act->implied_create) {
+		if ($act && $act->implied_create && ! $force) {
 			// This is originally a S2S object with no associated activity
 			logger('Not storing implied create activity!');
 			return;
@@ -2927,7 +2927,7 @@ class Activity {
 			}
 		}
 
-		if (! $allowed) {
+		if (! $allowed && ! $force) {
 			logger('no permission');
 			return;
 		}
