@@ -130,6 +130,7 @@ class Channel {
 		$post_comments   = array_key_exists('post_comments',$_POST) ? intval($_POST['post_comments']) : PERMS_SPECIFIC;
 		PermissionLimits::Set(local_channel(),'post_comments',$post_comments);
 
+
 		$publish          = (((x($_POST,'profile_in_directory')) && (intval($_POST['profile_in_directory']) == 1)) ? 1: 0);
 		$username         = ((x($_POST,'username'))   ? escape_tags(trim($_POST['username']))     : '');
 		$timezone         = ((x($_POST,'timezone_select'))   ? notags(trim($_POST['timezone_select']))     : '');
@@ -171,7 +172,13 @@ class Channel {
 		$mailhost        = ((array_key_exists('mailhost',$_POST)) ? notags(trim($_POST['mailhost'])) : '');
 		$profile_assign  = ((x($_POST,'profile_assign')) ? notags(trim($_POST['profile_assign'])) : '');
 		$permit_all_mentions = (($_POST['permit_all_mentions'] == 1) ? 1: 0);
-		
+		$close_comment_days = (($_POST['close_comments']) ?	intval($_POST['close_comments']) : 0);
+		if ($close_comment_days) {
+			set_pconfig(local_channel(),'system','close_comments', $close_comment_days . ' days');
+		}
+		else {
+			set_pconfig(local_channel(),'system','close_comments', EMPTY_STR);
+		}
 		// allow a permission change to over-ride the autoperms setting from the form
 
 		if(! isset($autoperms)) {
@@ -603,6 +610,7 @@ class Channel {
 			'$permiss_arr' => $permiss,
 			'$comment_perms' => $comment_perms,
 			'$noindex' => [ 'noindex', t('Forbid indexing of your channel content by search engines'), get_pconfig($channel['channel_id'],'system','noindex'), '', $yes_no],
+			'$close_comments' => [ 'close_comments', t('Disable acceptance of comments on my posts after this many days'), ((intval(get_pconfig(local_channel(),'system','close_comments'))) ? intval(get_pconfig(local_channel(),'system','close_comments')) : EMPTY_STR), t('Leave unset or enter 0 to allow comments indefinitely') ],
 			'$blocktags' => array('blocktags',t('Allow others to tag your posts'), 1-$blocktags, t('Often used by the community to retro-actively flag inappropriate content'), $yes_no),
 	
 			'$lbl_p2macro' => t('Channel Permission Limits'),
