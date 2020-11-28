@@ -301,7 +301,7 @@ class Item extends Controller {
 		$parent_mid = ((x($_REQUEST,'parent_mid')) ? trim($_REQUEST['parent_mid']) : '');
 	
 		$hidden_mentions = ((x($_REQUEST,'hidden_mentions')) ? trim($_REQUEST['hidden_mentions']) : '');
-		$comments_closed = ((x($_REQUEST,'comments_closed')) ? datetime_convert(date_default_timezone_get(),'UTC',$_REQUEST['comments_closed']) : NULL_DATE);
+
 
 		/**
 		 * Who is viewing this page and posting this thing
@@ -338,6 +338,14 @@ class Item extends Controller {
 		if (isset($_REQUEST['comments_enabled'])) {
 			$nocomment = 1 - intval($_REQUEST['comments_enabled']);
 		}
+
+		$channel_comments_closed = get_pconfig($profile_uid,'system','close_comments');
+		if (! intval($channel_comments_closed)) {
+			$channel_comments_closed = NULL_DATE;
+		}
+
+		$comments_closed = ((x($_REQUEST,'comments_closed')) ? datetime_convert(date_default_timezone_get(),'UTC',$_REQUEST['comments_closed']) : $channel_comments_closed);
+
 		$is_poll = ((trim($_REQUEST['poll_answers'][0]) != '' && trim($_REQUEST['poll_answers'][1]) != '') ? true : false);
 
 		// 'origin' (if non-zero) indicates that this network is where the message originated,
@@ -1215,7 +1223,6 @@ class Item extends Controller {
 				$plink = z_root() . '/articles/' . $channel['channel_address'] . '/' . $r[0]['v'];
 			}
 		}
-
 
 		if ((! $plink) && ($item_thread_top)) {
 			$plink = z_root() . '/item/' . $uuid;
