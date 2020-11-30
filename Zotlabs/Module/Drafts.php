@@ -10,7 +10,7 @@ class Drafts extends Controller {
 
 	function init() {
 		if (local_channel() && Apps::system_app_installed(local_channel(),'Drafts')) {
-			goaway(z_root() . '/stream/?draft=1';
+			goaway(z_root() . '/stream/?draft=1');
         }
 	}
 
