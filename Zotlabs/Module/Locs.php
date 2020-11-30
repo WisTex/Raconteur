@@ -36,7 +36,15 @@ class Locs extends Controller {
 					intval($hubloc_id),
 					dbesc($channel['channel_hash'])
 				);
-	
+
+				$x = q("select * from hubloc where hubloc_id = %d and hubloc_hash = '%s' ",
+					intval($hubloc_id),
+					dbesc($channel['channel_hash'])
+				);
+				if ($x) {
+					hubloc_change_primary($x[0]);
+				}
+
 				Run::Summon( [ 'Notifier', 'refresh_all', $channel['channel_id'] ] );
 				return;
 			}			
