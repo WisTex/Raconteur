@@ -265,8 +265,6 @@ class Display extends Controller {
 
 		$sql_extra = ((local_channel()) ? EMPTY_STR : item_permissions_sql(0, $observer_hash));
 
-dbg(2);
-
 		if($noscript_content || $load) {
 
 			$r = null;
@@ -337,7 +335,7 @@ dbg(2);
 		else {
 			$items = array();
 		}
-dbg(0);
+
 		// see if the top-level post owner chose to block search engines
 		
 		if ($items && get_pconfig($items[0]['uid'],'system','noindex')) {
