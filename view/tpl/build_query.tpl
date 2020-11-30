@@ -16,6 +16,7 @@
 	var bParam_new = {{$nouveau}};
 	var bParam_page = {{$page}};
 	var bParam_wall = {{$wall}};
+	var bParam_draft = {{$draft}};
 	var bParam_list = {{$list}};
 	var bParam_fh = {{$fh}};
 	var bParam_dm = {{$dm}};
@@ -49,6 +50,7 @@
 		if(bParam_spam != 0) bCmd = bCmd + "&spam=" + bParam_spam;
 		if(bParam_new != 0) bCmd = bCmd + "&new=" + bParam_new;
 		if(bParam_wall != 0) bCmd = bCmd + "&wall=" + bParam_wall;
+		if(bParam_draft != 0) bCmd = bCmd + "&draft=" + bParam_draft;
 		if(bParam_list != 0) bCmd = bCmd + "&list=" + bParam_list;
 		if(bParam_fh != 0) bCmd = bCmd + "&fh=" + bParam_fh;
 		if(bParam_dm != 0) bCmd = bCmd + "&dm=" + bParam_dm;

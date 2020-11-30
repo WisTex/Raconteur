@@ -374,8 +374,9 @@ class Item extends Controller {
 		if ($created <= NULL_DATE) {
 			$created = datetime_convert();
 		}
-		
+
 		$post_id     = ((x($_REQUEST,'post_id'))     ? intval($_REQUEST['post_id'])        : 0);
+		
 		$app         = ((x($_REQUEST,'source'))      ? strip_tags($_REQUEST['source'])     : '');
 		$return_path = ((x($_REQUEST,'return'))      ? $_REQUEST['return']                 : '');
 		$preview     = ((x($_REQUEST,'preview'))     ? intval($_REQUEST['preview'])        : 0);
@@ -666,6 +667,7 @@ class Item extends Controller {
 			$private = 1;
 	
 		if($orig_post) {
+
 			$private = 0;
 			// webpages are allowed to change ACLs after the fact. Normal conversation items aren't. 
 			if($webpage) {
@@ -715,12 +717,12 @@ class Item extends Controller {
 	
 	
 			$postopts          = $orig_post['postopts'];
-			$created           = $orig_post['created'];
-			$expires           = $orig_post['expires'];
+			$created           = ((intval($orig_post['item_unpublished'])) ? $created : $orig_post['created']);
+			$expires           = ((intval($orig_post['item_unpublished'])) ? NULL_DATE : $orig_post['expires']);
 			$mid               = $orig_post['mid'];
 			$parent_mid        = $orig_post['parent_mid'];
 			$plink             = $orig_post['plink'];
-	
+
 		}
 		else {
 			if(! $walltowall) {
@@ -1238,11 +1240,11 @@ class Item extends Controller {
 		$datarray['owner_xchan']         = (($owner_hash) ? $owner_hash : $owner_xchan['xchan_hash']);
 		$datarray['author_xchan']        = $observer['xchan_hash'];
 		$datarray['created']             = $created;
-		$datarray['edited']              = (($orig_post) ? datetime_convert() : $created);
+		$datarray['edited']              = (($orig_post && (! intval($orig_post['item_unpublished']))) ? datetime_convert() : $created);
 		$datarray['expires']             = $expires;
-		$datarray['commented']           = (($orig_post) ? datetime_convert() : $created);
-		$datarray['received']            = (($orig_post) ? datetime_convert() : $created);
-		$datarray['changed']             = (($orig_post) ? datetime_convert() : $created);
+		$datarray['commented']           = (($orig_post && (! intval($orig_post['item_unpublished']))) ? datetime_convert() : $created);
+		$datarray['received']            = (($orig_post && (! intval($orig_post['item_unpublished']))) ? datetime_convert() : $created);
+		$datarray['changed']             = (($orig_post && (! intval($orig_post['item_unpublished']))) ? datetime_convert() : $created);
 		$datarray['comments_closed']     = $comments_closed;
 		$datarray['mid']                 = $mid;
 		$datarray['parent_mid']          = $parent_mid;
@@ -1378,6 +1380,9 @@ class Item extends Controller {
 				(($remote_id) ? $remote_id : basename($datarray['mid'])), true);
 		}
 
+		if (intval($datarray['item_unpublished'])) {
+			$draft_msg = t('Draft saved. Use <a href="stream?draft=1">Drafts</a> app to continue editing.');
+		}
 
 		if($orig_post) {
 			$datarray['id'] = $post_id;
@@ -1400,6 +1405,13 @@ class Item extends Controller {
 			if($api_source)
 				return($x);
 
+
+			if (intval($datarray['item_unpublished'])) {
+				info($draft_msg);
+			}
+
+
+
 			if((x($_REQUEST,'return')) && strlen($return_path)) {
 				logger('return: ' . $return_path);
 				goaway(z_root() . "/" . $return_path );
@@ -1412,7 +1424,6 @@ class Item extends Controller {
 		$post = item_store($datarray,$execflag);
 	
 		$post_id = $post['item_id'];
-
 		$datarray = $post['item'];
 
 		if($post_id) {
@@ -1525,7 +1536,11 @@ class Item extends Controller {
 	
 		if($api_source)
 			return $post;
-	
+
+		if (intval($datarray['item_unpublished'])) {
+			info($draft_msg);
+		}
+
 		if($return_path) {
 			goaway(z_root() . "/" . $return_path);
 		}
