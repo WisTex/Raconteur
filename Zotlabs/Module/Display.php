@@ -233,6 +233,7 @@ class Display extends Controller {
 				'$dm'      => '0',
 				'$nouveau' => '0',
 				'$wall'    => '0',
+				'$draft'   => '0',
 				'$static'  => $static,
 				'$page'    => ((App::$pager['page'] != 1) ? App::$pager['page'] : 1),
 				'$list'    => ((x($_REQUEST,'list')) ? intval($_REQUEST['list']) : 0),
@@ -323,7 +324,7 @@ class Display extends Controller {
 			if($parents_str) {
 				$items = q("SELECT item.*, item.id AS item_id 
 					FROM item
-					WHERE parent in ( %s ) $item_normal ",
+					WHERE parent in ( %s ) $item_normal $sql_extra ",
 					dbesc($parents_str)
 				);
 				xchan_query($items);

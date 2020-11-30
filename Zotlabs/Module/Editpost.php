@@ -85,6 +85,11 @@ class Editpost extends \Zotlabs\Web\Controller {
 			}
 		}
 
+		if (intval($itm[0]['item_unpublished'])) {
+			// clear the old creation date if editing a saved draft. These will always show as just created.
+			unset($itm[0]['created']);
+		}
+
 		$x = array(
 			'nickname' => $channel['channel_address'],
 			'item' => $itm[0],
@@ -95,6 +100,7 @@ class Editpost extends \Zotlabs\Web\Controller {
 			'hide_voting' => true,
 			'hide_future' => true,
 			'hide_location' => true,
+			'is_draft' => ((intval($itm[0]['item_unpublished'])) ? true : false),
 			'parent' => (($itm[0]['mid'] === $itm[0]['parent_mid']) ? 0 : $itm[0]['parent']),
 			'mimetype' => $itm[0]['mimetype'],
 			'ptyp' => $itm[0]['obj_type'],
@@ -104,7 +110,9 @@ class Editpost extends \Zotlabs\Web\Controller {
 			'visitor' => true,
 			'title' => htmlspecialchars_decode($itm[0]['title'],ENT_COMPAT),
 			'category' => $category,
-			'showacl' => false,
+			'showacl' => ((intval($itm[0]['unpublished'])) ? true : false),
+			// @todo - need acl and lockstate when item_unpublished is 1
+			'permissions' => $itm[0],
 			'profile_uid' => $owner_uid,
 			'catsenabled' => $catsenabled,
 			'collections' => $collections,

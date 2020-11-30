@@ -42,7 +42,7 @@ class Activity {
 			// Eventually this needs to be passed in much further up the stack
 			// and base the decision on whether or not we are encoding for ActivityPub or Zot6
 
-			return self::fetch_item($x,((get_config('system','activitypub',true)) ? true : false)); 
+			return self::fetch_item($x,((get_config('system','activitypub', ACTIVITYPUB_ENABLED)) ? true : false)); 
 		}
 		if ($x['type'] === ACTIVITY_OBJ_THING) {
 			return self::fetch_thing($x); 
@@ -1268,10 +1268,10 @@ class Activity {
 		];
 		$ret['url'] = $p['xchan_url'];
 
-		if ($activitypub && get_config('system','activitypub',true)) {	
+		if ($activitypub && get_config('system','activitypub', ACTIVITYPUB_ENABLED)) {	
 
 			if ($c) {
-				if (get_pconfig($c['channel_id'],'system','activitypub',true)) {
+				if (get_pconfig($c['channel_id'],'system','activitypub', ACTIVITYPUB_ENABLED)) {
 					$ret['inbox']       = z_root() . '/inbox/'     . $c['channel_address'];
 				}
 				else {
@@ -2798,10 +2798,10 @@ class Activity {
 		return;
 	}
 
-	static function store($channel,$observer_hash,$act,$item,$fetch_parents = true) {
+	static function store($channel,$observer_hash,$act,$item,$fetch_parents = true, $force = false) {
 
 
-		if ($act && $act->implied_create) {
+		if ($act && $act->implied_create && ! $force) {
 			// This is originally a S2S object with no associated activity
 			logger('Not storing implied create activity!');
 			return;
@@ -2927,7 +2927,7 @@ class Activity {
 			}
 		}
 
-		if (! $allowed) {
+		if (! $allowed && ! $force) {
 			logger('no permission');
 			return;
 		}
@@ -2999,7 +2999,7 @@ class Activity {
 				intval($item['uid'])
 			);
 			if (! $parent) {
-				if (! get_config('system','activitypub',true)) {
+				if (! get_config('system','activitypub', ACTIVITYPUB_ENABLED)) {
 					return;
 				}
 				else {

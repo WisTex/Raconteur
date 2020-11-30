@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/stream?draft=1
+requires: local_channel
+name: Drafts
+photo: icon:floppy-o
+categories: Productivity

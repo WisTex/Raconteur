@@ -127,6 +127,7 @@ class Pubstream extends Controller {
 				'$dm'      => '0',
 				'$nouveau' => '0',
 				'$wall'    => '0',
+				'$draft'   => '0',
 				'$list'    => '0',
 				'$static'  => $static,
 				'$page'    => ((App::$pager['page'] != 1) ? App::$pager['page'] : 1),

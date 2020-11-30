@@ -3120,7 +3120,7 @@ class Libzot {
 		$ret['channel_role']   = get_pconfig($e['channel_id'],'system','permissions_role','custom');
 		$ret['channel_type']   = $channel_type;
 		$ret['protocols']      = [ 'zot6' ];
-		if (get_pconfig($e['channel_id'],'system','activitypub',get_config('system','activitypub',true))) {
+		if (get_pconfig($e['channel_id'],'system','activitypub',get_config('system','activitypub', ACTIVITYPUB_ENABLED))) {
 			$ret['protocols'][] = 'activitypub';
 		}
 		$ret['searchable']     = $searchable;

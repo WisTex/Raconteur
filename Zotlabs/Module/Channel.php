@@ -477,6 +477,7 @@ class Channel extends Controller {
 				'$spam' => '0',
 				'$nouveau' => '0',
 				'$wall' => '1',
+				'$draft' => '0',
 				'$fh' => '0',
 				'$dm' => '0',
 				'$static'  => $static,

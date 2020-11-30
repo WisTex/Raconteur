@@ -62,12 +62,20 @@ class Search extends Controller {
 	
 		$o .= search($search,'search-box','/search',((local_channel()) ? true : false));
 
-		if (strpos($search,'https://') === 0) {
+		if (local_channel() && strpos($search,'https://') === 0) {
 			$j = Activity::fetch($search,App::get_channel());
 			if ($j) {
 				$AS = new ActivityStreams($j);
 				if ($AS->is_valid()) {
-					// check if is_an_actor, otherwise import activity
+					if (is_array($AS->obj) && ! ActivityStreams::is_an_actor($AS->obj)) {
+						// The boolean flag enables html cache of the item
+						$item = Activity::decode_note($AS,true);
+						if ($item) {
+							logger('parsed_item: ' . print_r($item,true),LOGGER_DATA);
+							Activity::store(App::get_channel(),get_observer_hash,$AS,$item, true, true);
+							goaway(z_root() . '/display/' . gen_link_id($item['mid']));
+						}
+					}
 				}
 			}
 		}
@@ -146,6 +154,7 @@ class Search extends Controller {
 				'$dm' => '0',
 				'$nouveau' => '0',
 				'$wall' => '0',
+				'$draft' => '0',
 				'$static' => $static,
 				'$list' => ((x($_REQUEST,'list')) ? intval($_REQUEST['list']) : 0),
 				'$page' => ((App::$pager['page'] != 1) ? App::$pager['page'] : 1),

@@ -301,7 +301,7 @@ class Item extends Controller {
 		$parent_mid = ((x($_REQUEST,'parent_mid')) ? trim($_REQUEST['parent_mid']) : '');
 	
 		$hidden_mentions = ((x($_REQUEST,'hidden_mentions')) ? trim($_REQUEST['hidden_mentions']) : '');
-		$comments_closed = ((x($_REQUEST,'comments_closed')) ? datetime_convert(date_default_timezone_get(),'UTC',$_REQUEST['comments_closed']) : NULL_DATE);
+
 
 		/**
 		 * Who is viewing this page and posting this thing
@@ -338,6 +338,14 @@ class Item extends Controller {
 		if (isset($_REQUEST['comments_enabled'])) {
 			$nocomment = 1 - intval($_REQUEST['comments_enabled']);
 		}
+
+		$channel_comments_closed = get_pconfig($profile_uid,'system','close_comments');
+		if (! intval($channel_comments_closed)) {
+			$channel_comments_closed = NULL_DATE;
+		}
+
+		$comments_closed = ((x($_REQUEST,'comments_closed')) ? datetime_convert(date_default_timezone_get(),'UTC',$_REQUEST['comments_closed']) : $channel_comments_closed);
+
 		$is_poll = ((trim($_REQUEST['poll_answers'][0]) != '' && trim($_REQUEST['poll_answers'][1]) != '') ? true : false);
 
 		// 'origin' (if non-zero) indicates that this network is where the message originated,
@@ -366,8 +374,9 @@ class Item extends Controller {
 		if ($created <= NULL_DATE) {
 			$created = datetime_convert();
 		}
-		
+
 		$post_id     = ((x($_REQUEST,'post_id'))     ? intval($_REQUEST['post_id'])        : 0);
+		
 		$app         = ((x($_REQUEST,'source'))      ? strip_tags($_REQUEST['source'])     : '');
 		$return_path = ((x($_REQUEST,'return'))      ? $_REQUEST['return']                 : '');
 		$preview     = ((x($_REQUEST,'preview'))     ? intval($_REQUEST['preview'])        : 0);
@@ -378,6 +387,9 @@ class Item extends Controller {
 		$layout_mid  = ((x($_REQUEST,'layout_mid'))  ? escape_tags($_REQUEST['layout_mid']): '');
 		$plink       = ((x($_REQUEST,'permalink'))   ? escape_tags($_REQUEST['permalink']) : '');
 		$obj_type    = ((x($_REQUEST,'obj_type'))    ? escape_tags($_REQUEST['obj_type'])  : ACTIVITY_OBJ_NOTE);
+
+
+		$item_unpublished = ((isset($_REQUEST['draft']))    ? intval($_REQUEST['draft'])          : 0);
 
 		// allow API to bulk load a bunch of imported items without sending out a bunch of posts. 
 		$nopush      = ((x($_REQUEST,'nopush'))      ? intval($_REQUEST['nopush'])         : 0);
@@ -655,6 +667,7 @@ class Item extends Controller {
 			$private = 1;
 	
 		if($orig_post) {
+
 			$private = 0;
 			// webpages are allowed to change ACLs after the fact. Normal conversation items aren't. 
 			if($webpage) {
@@ -677,40 +690,39 @@ class Item extends Controller {
 			$title             = escape_tags(trim($_REQUEST['title']));
 			$summary           = trim($_REQUEST['summary']);
 			$body              = trim($_REQUEST['body']);
-			$item_flags        = $orig_post['item_flags'];
 	
-			$item_origin   = $orig_post['item_origin'];
-			$item_unseen   = $orig_post['item_unseen'];
-			$item_starred   = $orig_post['item_starred'];
-			$item_uplink   = $orig_post['item_uplink'];
-			$item_wall   = $orig_post['item_wall'];
+			$item_flags        = $orig_post['item_flags'];
+			$item_origin       = $orig_post['item_origin'];
+			$item_unseen       = $orig_post['item_unseen'];
+			$item_starred      = $orig_post['item_starred'];
+			$item_uplink       = $orig_post['item_uplink'];
+			$item_wall         = $orig_post['item_wall'];
 			$item_thread_top   = $orig_post['item_thread_top'];
-			$item_notshown   = $orig_post['item_notshown'];
-			$item_nsfw   = $orig_post['item_nsfw'];
-			$item_relay   = $orig_post['item_relay'];
+			$item_notshown     = $orig_post['item_notshown'];
+			$item_nsfw         = $orig_post['item_nsfw'];
+			$item_relay        = $orig_post['item_relay'];
 			$item_mentionsme   = $orig_post['item_mentionsme'];
-			$item_nocomment   = $orig_post['item_nocomment'];
-			$item_obscured   = $orig_post['item_obscured'];
-			$item_verified   = $orig_post['item_verified'];
-			$item_retained   = $orig_post['item_retained'];
-			$item_rss   = $orig_post['item_rss'];
-			$item_deleted   = $orig_post['item_deleted'];
-			$item_type   = $orig_post['item_type'];
-			$item_hidden   = $orig_post['item_hidden'];
-			$item_unpublished   = $orig_post['item_unpublished'];
-			$item_delayed   = $orig_post['item_delayed'];
-			$item_pending_remove   = $orig_post['item_pending_remove'];
-			$item_blocked   = $orig_post['item_blocked'];
+			$item_nocomment    = $orig_post['item_nocomment'];
+			$item_obscured     = $orig_post['item_obscured'];
+			$item_verified     = $orig_post['item_verified'];
+			$item_retained     = $orig_post['item_retained'];
+			$item_rss          = $orig_post['item_rss'];
+			$item_deleted      = $orig_post['item_deleted'];
+			$item_type         = $orig_post['item_type'];
+			$item_hidden       = $orig_post['item_hidden'];
+			$item_delayed      = $orig_post['item_delayed'];
+			$item_pending_remove = $orig_post['item_pending_remove'];
+			$item_blocked      = $orig_post['item_blocked'];
 	
 	
 	
 			$postopts          = $orig_post['postopts'];
-			$created           = $orig_post['created'];
-			$expires           = $orig_post['expires'];
+			$created           = ((intval($orig_post['item_unpublished'])) ? $created : $orig_post['created']);
+			$expires           = ((intval($orig_post['item_unpublished'])) ? NULL_DATE : $orig_post['expires']);
 			$mid               = $orig_post['mid'];
 			$parent_mid        = $orig_post['parent_mid'];
 			$plink             = $orig_post['plink'];
-	
+
 		}
 		else {
 			if(! $walltowall) {
@@ -1214,7 +1226,6 @@ class Item extends Controller {
 			}
 		}
 
-
 		if ((! $plink) && ($item_thread_top)) {
 			$plink = z_root() . '/item/' . $uuid;
 		}
@@ -1229,11 +1240,11 @@ class Item extends Controller {
 		$datarray['owner_xchan']         = (($owner_hash) ? $owner_hash : $owner_xchan['xchan_hash']);
 		$datarray['author_xchan']        = $observer['xchan_hash'];
 		$datarray['created']             = $created;
-		$datarray['edited']              = (($orig_post) ? datetime_convert() : $created);
+		$datarray['edited']              = (($orig_post && (! intval($orig_post['item_unpublished']))) ? datetime_convert() : $created);
 		$datarray['expires']             = $expires;
-		$datarray['commented']           = (($orig_post) ? datetime_convert() : $created);
-		$datarray['received']            = (($orig_post) ? datetime_convert() : $created);
-		$datarray['changed']             = (($orig_post) ? datetime_convert() : $created);
+		$datarray['commented']           = (($orig_post && (! intval($orig_post['item_unpublished']))) ? datetime_convert() : $created);
+		$datarray['received']            = (($orig_post && (! intval($orig_post['item_unpublished']))) ? datetime_convert() : $created);
+		$datarray['changed']             = (($orig_post && (! intval($orig_post['item_unpublished']))) ? datetime_convert() : $created);
 		$datarray['comments_closed']     = $comments_closed;
 		$datarray['mid']                 = $mid;
 		$datarray['parent_mid']          = $parent_mid;
@@ -1301,7 +1312,7 @@ class Item extends Controller {
 		if(! array_key_exists('obj',$datarray)) {
 			$copy = $datarray;
 			$copy['author'] = $observer;
-			$datarray['obj'] = Activity::encode_item($copy,((get_config('system','activitypub')) ? true : false));
+			$datarray['obj'] = Activity::encode_item($copy,((get_config('system','activitypub', ACTIVITYPUB_ENABLED)) ? true : false));
 		}	
 
 		Activity::rewrite_mentions($datarray);
@@ -1369,6 +1380,9 @@ class Item extends Controller {
 				(($remote_id) ? $remote_id : basename($datarray['mid'])), true);
 		}
 
+		if (intval($datarray['item_unpublished'])) {
+			$draft_msg = t('Draft saved. Use <a href="stream?draft=1">Drafts</a> app to continue editing.');
+		}
 
 		if($orig_post) {
 			$datarray['id'] = $post_id;
@@ -1391,6 +1405,13 @@ class Item extends Controller {
 			if($api_source)
 				return($x);
 
+
+			if (intval($datarray['item_unpublished'])) {
+				info($draft_msg);
+			}
+
+
+
 			if((x($_REQUEST,'return')) && strlen($return_path)) {
 				logger('return: ' . $return_path);
 				goaway(z_root() . "/" . $return_path );
@@ -1403,7 +1424,6 @@ class Item extends Controller {
 		$post = item_store($datarray,$execflag);
 	
 		$post_id = $post['item_id'];
-
 		$datarray = $post['item'];
 
 		if($post_id) {
@@ -1516,7 +1536,11 @@ class Item extends Controller {
 	
 		if($api_source)
 			return $post;
-	
+
+		if (intval($datarray['item_unpublished'])) {
+			info($draft_msg);
+		}
+
 		if($return_path) {
 			goaway(z_root() . "/" . $return_path);
 		}
