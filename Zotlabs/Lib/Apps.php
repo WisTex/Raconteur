@@ -345,7 +345,7 @@ class Apps {
 			'Mail' => t('Mail'),
 			'Markup' => t('Markup'),
 			'Mood' => t('Mood'),
-			'My Chatrooms' => t('My Chatrooms')
+			'My Chatrooms' => t('My Chatrooms'),
 			'No Comment' => t('No Comment'),
 			'Notes' => t('Notes'),
 			'Notifications' => t('Notifications'),
