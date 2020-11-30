@@ -154,6 +154,7 @@ class Search extends Controller {
 				'$dm' => '0',
 				'$nouveau' => '0',
 				'$wall' => '0',
+				'$draft' => '0',
 				'$static' => $static,
 				'$list' => ((x($_REQUEST,'list')) ? intval($_REQUEST['list']) : 0),
 				'$page' => ((App::$pager['page'] != 1) ? App::$pager['page'] : 1),

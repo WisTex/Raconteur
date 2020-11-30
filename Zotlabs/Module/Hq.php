@@ -185,6 +185,7 @@ class Hq extends Controller {
 				'$dm'      => '0',
 				'$nouveau' => '0',
 				'$wall'    => '0',
+				'$draft'    => '0',
 				'$static'  => $static,
 				'$page'    => 1,
 				'$list'    => ((x($_REQUEST,'list')) ? intval($_REQUEST['list']) : 0),
