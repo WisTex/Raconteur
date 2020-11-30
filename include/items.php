@@ -210,6 +210,12 @@ function item_normal() {
 		and item.item_blocked = 0 and item.obj_type != '" . ACTIVITY_OBJ_FILE . "' ";
 }
 
+function item_normal_draft() {
+	return " and item.item_hidden = 0 and item.item_type = 0 and item.item_deleted = 0
+		and item.item_unpublished = 1 and item.item_pending_remove = 0
+		and item.item_blocked = 0 and item.obj_type != '" . ACTIVITY_OBJ_FILE . "' ";
+}
+
 function item_normal_search() {
 	return " and item.item_hidden = 0 and item.item_type in (0,3,6,7) and item.item_deleted = 0
 		and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_pending_remove = 0
@@ -2107,28 +2113,47 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 	unset($arr['mid']);
 	unset($arr['parent']);
 	unset($arr['parent_mid']);
-	unset($arr['created']);
 	unset($arr['author_xchan']);
 	unset($arr['owner_xchan']);
 	unset($arr['source_xchan']);
 	unset($arr['thr_parent']);
 	unset($arr['llink']);
 
+	if (intval($orig[0]['item_unpublished'])) {
+
+		$arr['created']       = ((x($arr,'created')  !== false) ? datetime_convert('UTC','UTC',$arr['created'])  : datetime_convert());
+		$arr['edited']        = $arr['created'];
+		$arr['expires']       = ((x($arr,'expires')  !== false) ? datetime_convert('UTC','UTC',$arr['expires'])  : NULL_DATE);
+
+		if(array_key_exists('comments_closed',$arr) && $arr['comments_closed'] > NULL_DATE)
+			$arr['comments_closed'] = datetime_convert('UTC','UTC',$arr['comments_closed']);
+		else
+			$arr['comments_closed'] = NULL_DATE;
+
+		$arr['commented']     = $arr['created'];
+
+		$arr['received']      = $arr['created'];
+		$arr['changed']       = $arr['created'];
+	}
+
+	else {
+		unset($arr['created']);
+
+		$arr['expires']       = ((x($arr,'expires')  !== false) ? datetime_convert('UTC','UTC',$arr['expires'])  : $orig[0]['expires']);
+
+
+		if(array_key_exists('comments_closed',$arr) && $arr['comments_closed'] > NULL_DATE)
+			$arr['comments_closed'] = datetime_convert('UTC','UTC',$arr['comments_closed']);
+		else
+			$arr['comments_closed'] = $orig[0]['comments_closed'];
+
+		$arr['commented']     = $orig[0]['commented'];
+		$arr['received']      = $orig[0]['received'];
+		$arr['changed']       = $orig[0]['changed'];
+	}
+
 	$arr['edited']        = ((x($arr,'edited')  !== false) ? datetime_convert('UTC','UTC',$arr['edited'])  : datetime_convert());
-	$arr['expires']       = ((x($arr,'expires')  !== false) ? datetime_convert('UTC','UTC',$arr['expires'])  : $orig[0]['expires']);
-
 	$arr['revision']      = ((x($arr,'revision') && $arr['revision'] > 0)   ? intval($arr['revision']) : 0);
-
-	if(array_key_exists('comments_closed',$arr) && $arr['comments_closed'] > NULL_DATE)
-		$arr['comments_closed'] = datetime_convert('UTC','UTC',$arr['comments_closed']);
-	else
-		$arr['comments_closed'] = $orig[0]['comments_closed'];
-
-	$arr['commented']     = $orig[0]['commented'];
-
-	$arr['received']      = $orig[0]['received'];
-	$arr['changed']       = $orig[0]['changed'];
-
 	$arr['route']         = ((array_key_exists('route',$arr)) ? trim($arr['route'])          : $orig[0]['route']);
 
 	$arr['location']      = ((x($arr,'location'))      ? notags(trim($arr['location']))      : $orig[0]['location']);

@@ -1426,6 +1426,8 @@ function z_status_editor($a, $x, $popup = false) {
 		call_hooks('jot_networks', $jotnets);
 	}
 
+	$permanent_draft = ((intval($x['profile_uid']) && intval($x['profile_uid']) === local_channel() && Apps::system_app_installed($x['profile_uid'],'Drafts')) ? ('Save draft') : EMPTY_STR);
+
 	$sharebutton = (x($x,'button') ? $x['button'] : t('Share'));
 	$placeholdtext = (x($x,'content_label') ? $x['content_label'] : $sharebutton);
 
@@ -1507,6 +1509,8 @@ function z_status_editor($a, $x, $popup = false) {
 		'$defexpire' => $defexpire,
 		'$feature_expire' => $feature_expire,
 		'$expires' => t('Set expiration date'),
+		'$save' => $permanent_draft,
+		'$is_draft' => ((array_key_exists('is_draft',$x) && intval($x['is_draft'])) ? true : false),
 		'$defpublish' => $defpublish,
 		'$feature_future' => $feature_future,
 		'$future_txt' => t('Set publish date'),

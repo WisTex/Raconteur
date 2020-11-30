@@ -156,6 +156,7 @@ class Stream extends Controller {
 		$default_cmax = ((Apps::system_app_installed(local_channel(),'Friend Zoom')) ? get_pconfig(local_channel(),'affinity','cmax',99) : (-1));
 
 		$cid      = ((x($_GET,'cid'))   ? intval($_GET['cid'])   : 0);
+		$draft    = ((x($_GET,'draft')) ? intval($_GET['draft']) : 0);
 		$star     = ((x($_GET,'star'))  ? intval($_GET['star'])  : 0);
 		$liked    = ((x($_GET,'liked')) ? intval($_GET['liked']) : 0);
 		$conv     = ((x($_GET,'conv'))  ? intval($_GET['conv'])  : 0);
@@ -170,6 +171,10 @@ class Stream extends Controller {
 		$deftag = '';
 	
 
+		if ($draft) {
+			$item_normal = item_normal_draft(); 
+		}
+		
 		if (x($_GET,'search') || $file || (!$pf && $cid)) {
 			$nouveau = true;
 		}
@@ -380,6 +385,7 @@ class Stream extends Controller {
 				'$dm'      => (($dm) ? $dm : '0'),
 				'$nouveau' => (($nouveau) ? $nouveau : '0'),
 				'$wall'    => '0',
+				'$draft'   => (($draft) ? $draft : '0'),
 				'$static'  => $static, 
 				'$list'    => ((x($_REQUEST,'list')) ? intval($_REQUEST['list']) : 0),
 				'$page'    => ((App::$pager['page'] != 1) ? App::$pager['page'] : 1),

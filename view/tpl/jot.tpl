@@ -27,6 +27,7 @@
 		<input type="hidden" id="jot-postid" name="post_id" value="{{$post_id}}" />
 		<input type="hidden" id="jot-webpage" name="webpage" value="{{$webpage}}" />
 		<input type="hidden" name="preview" id="jot-preview" value="0" />
+		<input type="hidden" name="draft" id="jot-draft" value="0" />
 		<input type="hidden" id="jot-commentstate" name="comments_enabled" value="{{if $commentstate}}{{$commentstate}}{{else}}1{{/if}}" />
 
 		{{if $webpage}}
@@ -213,6 +214,11 @@
 				{{if $preview}}
 				<button class="btn btn-outline-secondary btn-sm" onclick="preview_post();return false;" title="{{$preview}}">
 					<i class="fa fa-eye jot-icons" ></i>
+				</button>
+				{{/if}}
+				{{if $save}}
+				<button class="btn btn-outline-secondary btn-sm" onclick="save_draft();return false;" title="{{$save}}">
+					<i class="fa fa-floppy-o jot-icons{{if $is_draft}} btn-success{{/if}}" ></i>
 				</button>
 				{{/if}}
 				{{if $jotnets}}

@@ -1412,6 +1412,20 @@ function preview_post() {
 	return true;
 }
 
+function save_draft() {
+	$("#jot-draft").val("1");
+	$.post(
+		"item",
+		$("#profile-jot-form").serialize(),
+		function() {
+			itemCancel();
+			document.location.href=document.location.href;
+		},
+	);
+	return true;
+}
+
+
 function preview_mail() {
 	$("#mail-preview").val("1");
 	$("#mail-preview-content").show();
