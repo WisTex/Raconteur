@@ -727,9 +727,10 @@ function bb_checklist($match) {
  * @brief Sanitize style properties from BBCode to HTML.
  *
  * @param array $input
+ * @param boolean $raw - false if $input is a preg_match() result array, true if $input is a string.
  * @return string A HTML span tag with the styles.
  */
-function bb_sanitize_style($input) {
+function bb_sanitize_style($input, $raw = false) {
 	// whitelist array: property => limits (0 = no limitation)
 	$w = array(
 			// color properties
@@ -746,7 +747,7 @@ function bb_sanitize_style($input) {
 	);
 
 	$css = array();
-	$css_string = $input[1];
+	$css_string = (($raw) ? $input : $input[1]);
 	$a = explode(';', $css_string);
 
 	foreach($a as $parts){
@@ -781,6 +782,9 @@ function bb_sanitize_style($input) {
 		$css_string_san .= $key . ":" . $value ."; ";
 	}
 
+	if ($raw) {
+		return $css_string_san;
+	}
 	return '<span style="' . $css_string_san . '">' . $input[2] . '</span>';
 }
 
@@ -873,42 +877,42 @@ function bb_imgoptions($match) {
 
 	$x = preg_match("/width=([0-9]*)/ism", $attributes, $matches);
 	if ($x) {
-		$width = $matches[1];
+		$width = bb_xss($matches[1]);
 	}
 
 	$x = preg_match("/width='(.*?)'/ism", $attributes, $matches);
 	if ($x) {
-		$width = $matches[1];
+		$width = bb_xss($matches[1]);
 	}
 	
 	$x = preg_match("/width=\&quot\;(.*?)\&quot\;/ism", $attributes, $matches);
 	if ($x) {
-		$width = $matches[1];
+		$width = bb_xss($matches[1]);
 	}
 
 	$x = preg_match("/height=([0-9]*)/ism", $attributes, $matches);
 	if ($x) {
-		$height = $matches[1];
+		$height = bb_xss($matches[1]);
 	}
 
 	$x = preg_match("/height='(.*?)'/ism", $attributes, $matches);
 	if ($x) {
-		$height = $matches[1];
+		$height = bb_xss($matches[1]);
 	}
 	
 	$x = preg_match("/height=\&quot\;(.*?)\&quot\;/ism", $attributes, $matches);
 	if ($x) {
-		$height = $matches[1];
+		$height = bb_xss($matches[1]);
 	}
 
 	$x = preg_match("/style='(.*?)'/ism", $attributes, $matches);
 	if ($x) {
-		$style = $matches[1];
+		$style = bb_sanitize_style($matches[1],true);
 	}
 	
 	$x = preg_match("/style=\&quot\;(.*?)\&quot\;/ism", $attributes, $matches);
 	if ($x) {
-		$style = $matches[1];
+		$style = bb_sanitize_style($matches[1],true);
 	}
 
 	// legacy img options
@@ -1074,6 +1078,27 @@ function bb_fixtable_lf($match) {
 	$x = preg_replace("/\]\s+\[/",'][',$match[1]);
 	return '[table]' . $x . '[/table]';
 
+}
+
+function bb_colortag($matches) {
+	return '<span style="color: ' . bb_xss($matches[1]) . ';">' . $matches[2] . '</span>';
+}
+
+function bb_fonttag($matches) {
+	return '<span style="font-family: ' . bb_xss($matches[1]) . ';">' . $matches[2] . '</span>';
+}
+
+
+function bb_xss($s) {
+	// don't allow functions of any kind
+	$s = str_replace( [ '(', ')' ], [ '', '' ], $s);
+
+	// don't allow injection of multiple params
+
+	if (strpos($s,';') !== false) {
+		return substr($s,0,strpos($s,';'));
+	}
+	return $s;
 }
 
 function bbtopoll($s) {
@@ -1489,9 +1514,9 @@ function bbcode($Text, $options = []) {
 
 	// Check for colored text
 	if (strpos($Text,'[/color]') !== false) {
-		$Text = preg_replace("(\[color=(.*?)\](.*?)\[\/color\])ism", "<span style=\"color: $1;\">$2</span>", $Text);
+		$Text = preg_replace_callback("(\[color=(.*?)\](.*?)\[\/color\])ism", 'bb_colortag', $Text);
 	}
-	// Check for colored text
+	// Check for highlighted text
 	if (strpos($Text,'[/hl]') !== false) {
 		$Text = preg_replace("(\[hl\](.*?)\[\/hl\])ism", "<span style=\"background-color: yellow;\">$1</span>", $Text);
 		$Text = preg_replace("(\[hl=(.*?)\](.*?)\[\/hl\])ism", "<span style=\"background-color: $1;\">$2</span>", $Text);
@@ -1632,9 +1657,8 @@ function bbcode($Text, $options = []) {
 
 	// Check for font change text
 	if (strpos($Text,'[/font]') !== false) {
-		$Text = preg_replace("/\[font=(.*?)\](.*?)\[\/font\]/sm", "<span style=\"font-family: $1;\">$2</span>", $Text);
+		$Text = preg_replace("/\[font=(.*?)\](.*?)\[\/font\]/sm", 'bb_fonttag', $Text);
 	}
-
 
 	if(strpos($Text,'[/summary]') !== false) {
 		$Text = preg_replace_callback("/^(.*?)\[summary\](.*?)\[\/summary\](.*?)$/ism", 'bb_summary', $Text);
