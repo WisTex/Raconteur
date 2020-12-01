@@ -848,19 +848,6 @@ function bb_observer($Text) {
 	return $Text;
 }
 
-function bb_imagebasic($matches) {
-	return '<img style="max-width: 100%;" src="' . str_replace(['"',"'",'&quot;'],['','',''],$matches(1)) . '" alt="' . t('Image/photo') . '" />';
-}
-
-function bb_imagefriendica($matches) {
-	return '<img style="max-width: 100%;" src="http' . str_replace(['"',"'",'&quot;'],['','',''],$matches(1)) . '" alt="' . t('Image/photo') . '" />';
-}
-
-function bb_zimage($matches) {
-	return '<img class="zrl" style="max-width: 100%;" src="' . str_replace(['"',"'",'&quot;'],['','',''],$matches(1)) . '" alt="' . t('Image/photo') . '" />';
-
-}
-
 function bb_imgoptions($match) {
 
 	// $Text = preg_replace_callback("/\[([zi])mg([ \=])(.*?)\](.*?)\[\/[zi]mg\]/ism",'bb_imgoptions',$Text);
@@ -1736,12 +1723,12 @@ function bbcode($Text, $options = []) {
 
 	// [img]pathtoimage[/img]
 	if (strpos($Text,'[/img]') !== false) {
-		$Text = preg_replace_callback("/\[img\](.*?)\[\/img\]/ism", 'bb_imagebasic', $Text);
+		$Text = preg_replace("/\[img\](.*?)\[\/img\]/ism", '<img style="max-width: 100%;" src="$1" alt="' . t('Image/photo') . '" />', $Text);
 		// Friendica's modified bbcode img tags
-		$Text = preg_replace_callback("/\[img=http(.*?)\](.*?)\[\/img\]/ism", 'bb_imagefriendica', $Text);
+		$Text = preg_replace("/\[img=http(.*?)\](.*?)\[\/img\]/ism", '<img style="max-width: 100%;" src="http$1" alt="' . t('Image/photo') . '" />', $Text);
 	}
 	if (strpos($Text,'[/zmg]') !== false) {
-		$Text = preg_replace_callback("/\[zmg\](.*?)\[\/zmg\]/ism", 'bb_zimage', $Text);
+		$Text = preg_replace("/\[zmg\](.*?)\[\/zmg\]/ism", '<img class="zrl" style="max-width: 100%;" src="$1" alt="' . t('Image/photo') . '" />', $Text);
 	}
 
 	$Text = preg_replace_callback("/\[([zi])mg([ \=])(.*?)\](.*?)\[\/[zi]mg\]/ism",'bb_imgoptions',$Text);
