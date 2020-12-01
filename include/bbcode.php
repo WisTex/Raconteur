@@ -1657,7 +1657,7 @@ function bbcode($Text, $options = []) {
 
 	// Check for font change text
 	if (strpos($Text,'[/font]') !== false) {
-		$Text = preg_replace("/\[font=(.*?)\](.*?)\[\/font\]/sm", 'bb_fonttag', $Text);
+		$Text = preg_replace_callback("/\[font=(.*?)\](.*?)\[\/font\]/sm", 'bb_fonttag', $Text);
 	}
 
 	if(strpos($Text,'[/summary]') !== false) {
