@@ -1102,7 +1102,7 @@ function bb_fonttag($matches) {
 }
 
 function bb_sizetag($matches) {
-	return '<span style="font=size: ' . bb_xss($matches[1]) . ';">' . $matches[2] . '</span>';
+	return '<span style="font-size: ' . bb_xss($matches[1]) . ';">' . $matches[2] . '</span>';
 
 }
 
