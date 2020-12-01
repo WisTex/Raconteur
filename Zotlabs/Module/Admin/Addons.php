@@ -372,6 +372,9 @@ class Addons {
 		$files = glob('addon/*/');
 		if($files) {
 			foreach($files as $file) {
+				if ($file === 'addon/vendor/') {
+					continue;
+				}
 				if (is_dir($file)){
 					list($tmp, $id) = array_map('trim', explode('/', $file));
 					$info = get_plugin_info($id);
