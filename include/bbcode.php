@@ -1088,6 +1088,15 @@ function bb_fonttag($matches) {
 	return '<span style="font-family: ' . bb_xss($matches[1]) . ';">' . $matches[2] . '</span>';
 }
 
+function bb_sizetag($matches) {
+	return '<span style="font-size: ' . bb_xss($matches[1]) . ';">' . $matches[2] . '</span>';
+
+}
+
+function bb_hltag($matches) {
+	return '<span style="background-color: ' . bb_xss($matches[1]) . ';">' . $matches[2] . '</span>';
+}
+
 
 function bb_xss($s) {
 	// don't allow functions of any kind
@@ -1519,14 +1528,14 @@ function bbcode($Text, $options = []) {
 	// Check for highlighted text
 	if (strpos($Text,'[/hl]') !== false) {
 		$Text = preg_replace("(\[hl\](.*?)\[\/hl\])ism", "<span style=\"background-color: yellow;\">$1</span>", $Text);
-		$Text = preg_replace("(\[hl=(.*?)\](.*?)\[\/hl\])ism", "<span style=\"background-color: $1;\">$2</span>", $Text);
+		$Text = preg_replace_callback("(\[hl=(.*?)\](.*?)\[\/hl\])ism", 'bb_hltag', $Text);
 	}
 
 	// Check for sized text
 	// [size=50] --> font-size: 50px (with the unit).
 	if (strpos($Text,'[/size]') !== false) {
 		$Text = preg_replace("(\[size=(\d*?)\](.*?)\[\/size\])ism", "<span style=\"font-size: $1px;\">$2</span>", $Text);
-		$Text = preg_replace("(\[size=(.*?)\](.*?)\[\/size\])ism", "<span style=\"font-size: $1;\">$2</span>", $Text);
+		$Text = preg_replace_callback("(\[size=(.*?)\](.*?)\[\/size\])ism", 'bb_sizetag', $Text);
 	}
 	// Check for h1
 	if (strpos($Text,'[h1]') !== false) {

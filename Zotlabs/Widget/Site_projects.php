@@ -44,7 +44,7 @@ class Site_projects {
 
 	static function site_sort($a,$b) {
 		if ($a['site_type'] === $b['site_type']) {
-			return stricmp($a['site_project'],$b['site_project']);
+			return strcasecmp($b['site_project'],$a['site_project']);
 		}
 		return (($a['site_type'] < $b['site_type']) ? -1 : 1);
 	}
