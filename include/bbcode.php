@@ -1093,6 +1093,11 @@ function bb_sizetag($matches) {
 
 }
 
+function bb_hltag($matches) {
+	return '<span style="background-color: ' . bb_xss($matches[1]) . ';">' . $matches[2] . '</span>';
+}
+
+
 function bb_xss($s) {
 	// don't allow functions of any kind
 	$s = str_replace( [ '(', ')' ], [ '', '' ], $s);
@@ -1523,7 +1528,7 @@ function bbcode($Text, $options = []) {
 	// Check for highlighted text
 	if (strpos($Text,'[/hl]') !== false) {
 		$Text = preg_replace("(\[hl\](.*?)\[\/hl\])ism", "<span style=\"background-color: yellow;\">$1</span>", $Text);
-		$Text = preg_replace("(\[hl=(.*?)\](.*?)\[\/hl\])ism", "<span style=\"background-color: $1;\">$2</span>", $Text);
+		$Text = preg_replace_callback("(\[hl=(.*?)\](.*?)\[\/hl\])ism", 'bb_hltag', $Text);
 	}
 
 	// Check for sized text
