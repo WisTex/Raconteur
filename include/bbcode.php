@@ -749,7 +749,7 @@ function bb_sanitize_style($input) {
 	
 	$input_is_array = is_array($input);
 	$css = array();
-	$css_string = ($input_is_array) ? $input[1] : $input);
+	$css_string = (($input_is_array) ? $input[1] : $input);
 	$a = explode(';', $css_string);
 
 	foreach($a as $parts){
