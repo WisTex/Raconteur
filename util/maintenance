@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# enable, disable or check the maintenance mode.
+# If enabled, web access and execution of background tasks are blocked.
+# Interaction with the server is only possible through foreground scripts
+# We look for the existence of two files: maintenance_lock and cache/maintenance_lock
+# and if either exist the system is locked. We attempt to create and remove both of these.
+# One or the other _may_ fail due to permissions or ownership issues but the other will
+# usually succeed. 
+
+if [ $# -ne 0 ]; then
+	action=$1
+else
+	if [ -f maintenance_lock -o -f cache/maintenance_lock ]; then
+		echo "Maintenance mode is enabled"
+	else
+		echo "Maintenance mode is disabled"
+	fi
+	echo Usage: $0 'on|off'
+	exit
+fi
+
+if [ $1 == 'on' ]; then
+	touch maintenance_lock > /dev/null 2>&1
+	touch cache/maintenance_lock > /dev/null 2>&1
+	if [ -f maintenance_lock -o -f cache/maintenance_lock ]; then
+		echo "Maintenance mode is enabled"
+	else
+		echo "Failed: Maintenance mode is disabled"
+	fi
+fi
+if [ $1 == 'off' ]; then
+	rm maintenance_lock > /dev/null 2>&1
+	rm cache/maintenance_lock > /dev/null 2>&1
+	if [ -f maintenance_lock -o -f cache/maintenance_lock ]; then
+		echo "Failed: Maintenance mode is enabled"
+	else
+		echo "Maintenance mode is disabled"
+	fi
+fi

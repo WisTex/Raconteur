@@ -19,6 +19,9 @@ if (array_search( __file__ , get_included_files()) === 0) {
 class Run {
 
 	static public function Summon($arr) {
+		if (file_exists('maintenance_lock') || file_exists('cache/maintenance_lock')) {
+			return;
+		}
 		proc_run('php','Zotlabs/Daemon/Run.php',$arr);
 	}
 
