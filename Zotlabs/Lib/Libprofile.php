@@ -353,6 +353,8 @@ class Libprofile {
 			'$rating'        => '',
 			'$contact_block' => $contact_block,
 			'$change_photo'  => t('Change your profile photo'),
+			'$copyto'        => t('Copy to clipboard'),
+			'$copied'        => t('Address copied to clipboard'),
 			'$editmenu'      => self::edit_menu($profile['uid'])
 		));
 
