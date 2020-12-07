@@ -124,7 +124,7 @@ Installed by default. This represents the conversations of you and your connecti
 
 ## Stream Order
 
-Provides a setting on the Stream page to select between various sort orders, such as 'last commented date' (conversational), 'posted date' (also conversational) and 'date unthreaded' which lists every activity as a separate message.
+Requires the 'stream_order' addon. Provides a setting on the Stream page to select between various sort orders, such as 'last commented date' (conversational), 'posted date' (also conversational) and 'date unthreaded' which lists every activity as a separate message.
 
 ## Suggest Channels
 
