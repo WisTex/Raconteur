@@ -726,11 +726,10 @@ function bb_checklist($match) {
 /**
  * @brief Sanitize style properties from BBCode to HTML.
  *
- * @param array $input
- * @param boolean $raw - false if $input is a preg_match() result array, true if $input is a string.
+ * @param array|string $input
  * @return string A HTML span tag with the styles.
  */
-function bb_sanitize_style($input, $raw = false) {
+function bb_sanitize_style($input) {
 	// whitelist array: property => limits (0 = no limitation)
 	$w = array(
 			// color properties
@@ -746,8 +745,11 @@ function bb_sanitize_style($input, $raw = false) {
 			"text-decoration"  => 0,
 	);
 
+	// determine if input is string or array
+	
+	$input_is_array = is_array($input);
 	$css = array();
-	$css_string = (($raw) ? $input : $input[1]);
+	$css_string = (($input_is_array) ? $input[1] : $input);
 	$a = explode(';', $css_string);
 
 	foreach($a as $parts){
@@ -782,10 +784,11 @@ function bb_sanitize_style($input, $raw = false) {
 		$css_string_san .= $key . ":" . $value ."; ";
 	}
 
-	if ($raw) {
-		return $css_string_san;
+	if ($input_is_array) {
+		return '<span style="' . $css_string_san . '">' . $input[2] . '</span>';
 	}
-	return '<span style="' . $css_string_san . '">' . $input[2] . '</span>';
+
+	return $css_string_san;
 }
 
 function oblanguage_callback($matches) {
@@ -907,12 +910,12 @@ function bb_imgoptions($match) {
 
 	$x = preg_match("/style='(.*?)'/ism", $attributes, $matches);
 	if ($x) {
-		$style = bb_sanitize_style($matches[1],true);
+		$style = bb_sanitize_style($matches[1]);
 	}
 	
 	$x = preg_match("/style=\&quot\;(.*?)\&quot\;/ism", $attributes, $matches);
 	if ($x) {
-		$style = bb_sanitize_style($matches[1],true);
+		$style = bb_sanitize_style($matches[1]);
 	}
 
 	// legacy img options
@@ -969,7 +972,6 @@ function bb_code_preprotect($matches) {
 function bb_code_preunprotect($s) {
 	return preg_replace_callback('|b64\.\^8e\%\.(.*?)\.b64\.\$8e\%|ism','bb_code_unprotect_sub',$s);
 }
-
 
 
 function bb_code_protect($s) {

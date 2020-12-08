@@ -15,6 +15,10 @@ class WebServer {
 
 		require_once('boot.php');
 
+		if (file_exists('maintenance_lock') || file_exists('cache/maintenance_lock')) {
+			http_status_exit(503,'System unavailable');
+		}
+		
 		sys_boot();
 
 

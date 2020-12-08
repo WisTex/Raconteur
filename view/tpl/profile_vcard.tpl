@@ -24,7 +24,20 @@
 
 	{{if ! $zcard}}
 	<div class="fn p-name">{{$profile.fullname}}{{if $profile.online}} <i class="fa fa-asterisk online-now" title="{{$profile.online}}"></i>{{/if}}</div>
-	{{if $reddress}}<div class="reddress">{{$profile.reddress}}</div>{{/if}}		
+	{{if $reddress}}
+		<div><span id="profile-reddress" class="reddress">{{$profile.reddress}}</span>
+		<i class="fa fa-copy fakelink" style="margin-left:1em;" title="{{$copyto}}" onclick="copyReddress(); return false;"></i></div>
+		<script>function copyReddress() {
+			$('#profile-reddress').attr("contenteditable", true)
+	      .select()
+    	  .on("focus", function() {
+        	document.execCommand('selectAll', false, null)
+      		}).focus()
+    		document.execCommand("Copy");
+    		$('#profile-reddress').removeAttr("contenteditable");
+     		alert("{{$copied}}");
+		}</script>
+	{{/if}}		
 	{{/if}}
 	{{if $pdesc}}<div class="title">{{$profile.pdesc}}</div>{{/if}}
 	{{if $active}}
