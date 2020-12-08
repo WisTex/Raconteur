@@ -466,7 +466,7 @@ class ThreadItem {
 			'wait' => t('Please wait'),
 			'submid' => str_replace(['+','='], ['',''], base64_encode($item['mid'])),
 			'thread_level' => $thread_level,
-			'indentpx' => intval(get_pconfig(local_channel(),'system','thread_indent_px')),
+			'indentpx' => intval(get_pconfig(local_channel(),'system','thread_indent_px',get_config('system','thread_indent_px',0)),
 			'thread_max' => intval(get_config('system','thread_maxlevel',20)) + 1
 		);
 
