@@ -28,6 +28,7 @@ class Display {
 		$channel_menu      = ((x($_POST,'channel_menu')) ? intval($_POST['channel_menu'])  : 0);
 		$user_scalable     = ((x($_POST,'user_scalable')) ? intval($_POST['user_scalable'])  : 0);
 		$nosmile           = ((x($_POST,'nosmile')) ? intval($_POST['nosmile'])  : 0);
+		$indentpx          = ((x($_POST,'indentpx')) ? intval($_POST['indentpx']) : 0);
 
 		$channel_divmore_height = ((x($_POST,'channel_divmore_height')) ? intval($_POST['channel_divmore_height']) : 400);
 		if($channel_divmore_height < 50)
@@ -45,6 +46,12 @@ class Display {
 		if($itemspage > 100)
 			$itemspage = 100;
 
+		if ($indentpx < 0) {
+			$indentpx = 0;
+		}
+		if ($indentpx > 10) {
+			$indentpx = 10;
+		}
 
 		set_pconfig(local_channel(),'system','preload_images',$preload_images);
 		set_pconfig(local_channel(),'system','user_scalable',$user_scalable);
@@ -54,6 +61,7 @@ class Display {
 		set_pconfig(local_channel(),'system','channel_divmore_height', $channel_divmore_height);
 		set_pconfig(local_channel(),'system','stream_divmore_height', $stream_divmore_height);
 		set_pconfig(local_channel(),'system','channel_menu', $channel_menu);
+		set_pconfig(local_channel(),'system','thread_indent_px',$indentpx);
 
 		$newschema = '';
 		if($theme){
@@ -196,7 +204,7 @@ class Display {
 			'$expert' => feature_enabled(local_channel(),'advanced_theming'),
 			'$channel_divmore_height' => array('channel_divmore_height', t('Channel page max height of content (in pixels)'), ((get_pconfig(local_channel(),'system','channel_divmore_height')) ? get_pconfig(local_channel(),'system','channel_divmore_height') : 400), t('click to expand content exceeding this height')),
 			'$stream_divmore_height' => array('stream_divmore_height', t('Stream page max height of content (in pixels)'), ((get_pconfig(local_channel(),'system','stream_divmore_height')) ? get_pconfig(local_channel(),'system','stream_divmore_height') : 400) , t('click to expand content exceeding this height')),
-
+			'$indentpx' => [ 'indentpx', t('Indent threaded comments this many pixels from the parent'), intval(get_pconfig(local_channel(),'system','thread_indent_px', 0)), t('0-10') ],
 
 		));
 
