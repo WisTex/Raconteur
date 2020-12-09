@@ -32,6 +32,12 @@ a.zrl:hover {
 	margin-right: 0.1rem;
 }
 
+.thread-separator {
+	margin-top: 0px;
+	margin-bottom: 2px;
+	border-top: 1px dotted #EEE;
+}
+
 body {
 	font-size: 0.9rem;
 	background-color: $bgcolour;

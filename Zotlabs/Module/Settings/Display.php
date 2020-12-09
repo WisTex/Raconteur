@@ -50,8 +50,8 @@ class Display {
 		if ($indentpx < 0) {
 			$indentpx = 0;
 		}
-		if ($indentpx > 10) {
-			$indentpx = 10;
+		if ($indentpx > 20) {
+			$indentpx = 20;
 		}
 
 		set_pconfig(local_channel(),'system','preload_images',$preload_images);
@@ -205,7 +205,7 @@ class Display {
 			'$expert' => feature_enabled(local_channel(),'advanced_theming'),
 			'$channel_divmore_height' => array('channel_divmore_height', t('Channel page max height of content (in pixels)'), ((get_pconfig(local_channel(),'system','channel_divmore_height')) ? get_pconfig(local_channel(),'system','channel_divmore_height') : 400), t('click to expand content exceeding this height')),
 			'$stream_divmore_height' => array('stream_divmore_height', t('Stream page max height of content (in pixels)'), ((get_pconfig(local_channel(),'system','stream_divmore_height')) ? get_pconfig(local_channel(),'system','stream_divmore_height') : 400) , t('click to expand content exceeding this height')),
-			'$indentpx' => [ 'indentpx', t('Indent threaded comments this many pixels from the parent'), intval(get_pconfig(local_channel(),'system','thread_indent_px', get_config('system','thread_indent_px',0))), t('0-10') ],
+			'$indentpx' => [ 'indentpx', t('Indent threaded comments this many pixels from the parent'), intval(get_pconfig(local_channel(),'system','thread_indent_px', get_config('system','thread_indent_px',0))), t('0-20') ],
 
 		));
 
