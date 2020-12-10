@@ -130,7 +130,7 @@ class Libzot {
 			}
 			$data['data'] = $msg;
 		}
-		else {
+\		else {
 			unset($data['encoding']);
 		}
 
@@ -2773,6 +2773,10 @@ class Libzot {
 			set_sconfig($arr['url'],'system','zot_version',$arr['zot']);
 		}
 
+		if (array_key_exists('community',$arr)) {
+			set_sconfig($arr['url'],'system','network_community',$arr['community']);
+		}
+
 		if ($exists) {
 			if (($siterecord['site_flags'] != $site_flags)
 				|| ($siterecord['site_access'] != $access_policy)
@@ -3287,6 +3291,7 @@ class Libzot {
 			$ret['site']['sellpage']   = get_config('system','sellpage');
 			$ret['site']['location']   = get_config('system','site_location');
 			$ret['site']['realm']      = get_directory_realm();
+			$ret['site']['community']  = get_config('system','network_community', EMPTY_STR);
 			$ret['site']['sitename']   = System::get_site_name();
 			$ret['site']['logo']       = System::get_site_icon();
 			$ret['site']['project']    = System::get_platform_name();
