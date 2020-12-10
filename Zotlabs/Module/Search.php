@@ -65,7 +65,7 @@ class Search extends Controller {
 		if (local_channel() && strpos($search,'https://') === 0) {
 			$j = Activity::fetch($search,App::get_channel());
 			if ($j) {
-				$AS = new ActivityStreams($j);
+				$AS = new ActivityStreams($j, null, true);
 				if ($AS->is_valid()) {
 					if (is_array($AS->obj) && ! ActivityStreams::is_an_actor($AS->obj)) {
 						// The boolean flag enables html cache of the item
