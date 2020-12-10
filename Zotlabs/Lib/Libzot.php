@@ -1214,9 +1214,8 @@ class Libzot {
 		$our_community = get_config('system','network_community', EMPTY_STR);
 		$their_community = ((array_key_exists('community',$env)) ? $env['community'] : EMPTY_STR);
 		if ($our_community !== $their_community) {
-				logger('community mismatch');
-				return;
-			}
+			logger('community mismatch');
+			return;
 		}
 		
 		$message_request = false;
