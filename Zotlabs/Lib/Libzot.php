@@ -130,7 +130,7 @@ class Libzot {
 			}
 			$data['data'] = $msg;
 		}
-\		else {
+		else {
 			unset($data['encoding']);
 		}
 

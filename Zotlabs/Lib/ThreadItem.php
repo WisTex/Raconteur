@@ -87,7 +87,7 @@ class ThreadItem {
 	 *      _ false on failure
 	 */
 
-	public function get_template_data($conv_responses, $thread_level = 1, $collapse_all = false) {
+	public function get_template_data($conv_responses, $thread_level = 1) {
 	
 		$result = array();
 
@@ -306,10 +306,6 @@ class ThreadItem {
 
 		localize_item($item);
 
-		if($this->is_toplevel() && $collapse_all) {
-			$item['collapse'] = true;
-		}
-
 		$opts = [];
 		if ($this->is_wall_to_wall()) {
 			if ($this->owner_censored) {
@@ -475,8 +471,6 @@ class ThreadItem {
 
 		$result = $arr['output'];
 
-		$censored = ((strpos($body['html'],"<button id=\"nsfw-wrap-") !== false && $collapse_all === false) ? true : false);
-
 		$result['children'] = [];
 
 		if (local_channel() && get_pconfig(local_channel(),'system','activitypub',get_config('system','activitypub', ACTIVITYPUB_ENABLED))) {
@@ -489,16 +483,6 @@ class ThreadItem {
 			else {
 				$result['authors'][] = $profile_addr;
 			}
-//			if ($children) {
-//				foreach ($children as $child) {
-//					$cdata = $child->get_data();
-//					if ($cdata['author']['xchan_addr']) {
-//						if ($observer && $observer['xchan_hash'] !== $cdata['author']['xchan_hash'] && ! in_array($cdata['author']['xchan_addr'],$result['authors'])) {
-//							$result['authors'][] = $cdata['author']['xchan_addr'];
-//						}
-//					}
-//				}
-//			}
 					
 			// Add any mentions from the immediate parent, unless they are mentions of the current viewer or duplicates
 			if ($item['term']) {
@@ -530,16 +514,10 @@ class ThreadItem {
 
 		$visible_comments = get_config('system', 'expanded_comments', 3);
 		
-		if($collapse_all) {
-			$visible_comments = 0;
-		}
 		if(($this->get_display_mode() === 'normal') && ($nb_children > 0)) {
 			if ($children) {
 				foreach($children as $child) {
 					$xz = $child->get_template_data($conv_responses, $thread_level + 1);
-					if(strpos($xz['body'],"<button id=\"nsfw-wrap-") !== false && $collapse_all === false) {
-						$censored = true;
-					}
 					$result['children'][] = $xz;
 				}
 			}
@@ -561,12 +539,6 @@ class ThreadItem {
 		else {
 			$result['flatten'] = true;
 			$result['threaded'] = false;
-		}
-
-
-		if($result['toplevel'] && $censored && (! $collapse_all) && get_pconfig($conv->get_profile_owner(),'nsfw','collapse_all',true)) {
-			$copy = $conv_responses;
-			$result = $this->get_template_data($copy, 1, true);
 		}
 
 		return $result;
