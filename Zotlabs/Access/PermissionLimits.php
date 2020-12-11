@@ -78,6 +78,11 @@ class PermissionLimits {
 	 *   * \b array with all permission limits, if $perm is not set
 	 */
 	static public function Get($channel_id, $perm = '') {
+		if (! intval($channel_id)) {
+			btlogger('invalid channel');
+			return false;
+		}
+		
 		if($perm) {
 			$x = PConfig::Get($channel_id, 'perm_limits', $perm);
 			if($x === false) {
@@ -89,7 +94,7 @@ class PermissionLimits {
 		}
 
 		PConfig::Load($channel_id);
-		if(array_key_exists($channel_id, \App::$config)
+		if(array_key_exists($channel_id, App::$config)
 				&& array_key_exists('perm_limits', App::$config[$channel_id]))
 			return App::$config[$channel_id]['perm_limits'];
 
