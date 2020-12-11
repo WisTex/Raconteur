@@ -11,7 +11,11 @@
 		{{/if}}
 		<div class="wall-item-outside-wrapper{{if $item.is_comment}} comment{{/if}}{{if $item.previewing}} preview{{/if}}" id="wall-item-outside-wrapper-{{$item.id}}" >
 			<div class="clearfix wall-item-content-wrapper{{if $item.is_comment}} comment{{/if}}" id="wall-item-content-wrapper-{{$item.id}}">
+				{{if $item.thread_level > 1}}<hr class="thread-separator">{{/if}}
 				{{for $x=3 to $item.thread_level}}<i class="fa fa-caret-right threadlevel {{if $x is odd}}odd{{else}}even{{/if}}"></i>{{/for}}
+				{{if $item.indentpx}}
+				<div {{if $item.thread_level > 2}}style="margin-left: {{$item.thread_level * $item.indentpx}}px;"{{/if}}>
+				{{/if}}
 				{{if $item.photo}}
 				<div class="wall-photo-item" id="wall-photo-item-{{$item.id}}">
 					{{$item.photo}}
@@ -246,6 +250,9 @@
 					</div>
 					{{/if}}
 				</div>
+				{{if $item.indentpx}}
+				</div>
+				{{/if}}
 			</div>
 		</div>
 		{{if $item.collapsed}}

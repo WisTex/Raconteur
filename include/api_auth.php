@@ -114,6 +114,14 @@ function api_login() {
 						dbesc($keyId),
 						dbesc($keyId)
 					);
+					if (! $r) {
+						HTTPSig::get_zotfinger_key($keyId);
+						$r = q("select * from hubloc where hubloc_addr = '%s' or hubloc_id_url = '%s'",
+							dbesc($keyId),
+							dbesc($keyId)
+						);
+					}						
+
 					if ($r) {
 						$r = Libzot::zot_record_preferred($r);
 						$c = channelx_by_hash($r['hubloc_hash']);

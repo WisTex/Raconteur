@@ -1449,6 +1449,14 @@ class Activity {
 			return;
 		}
 
+		// ActivityPub does not support network communities. If this site uses anything but the default community, reject it.
+		
+		$community = get_config('system','network_community', EMPTY_STR);
+		if ($community) {
+			logger('community mismatch');
+			return;
+		}
+
 		/*
 		 * 
 		 * if $act->type === 'Follow', actor is now following $channel 
@@ -2800,7 +2808,14 @@ class Activity {
 
 	static function store($channel,$observer_hash,$act,$item,$fetch_parents = true, $force = false) {
 
-
+		// ActivityPub does not support network communities. If this site uses anything but the default community, reject it.
+		
+		$community = get_config('system','network_community', EMPTY_STR);
+		if ($community) {
+			logger('community mismatch');
+			return;
+		}
+		
 		if ($act && $act->implied_create && ! $force) {
 			// This is originally a S2S object with no associated activity
 			logger('Not storing implied create activity!');

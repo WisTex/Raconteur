@@ -111,11 +111,12 @@ class Libzot {
 		$sig_method = get_config('system','signature_algorithm','sha256');
 
 		$data = [
-			'type'     => $type,
-			'encoding' => $encoding,
-			'sender'   => $channel['channel_hash'],
-			'site_id'  => self::make_xchan_hash(z_root(), get_config('system','pubkey')),
-			'version'  => System::get_zot_revision(),
+			'type'      => $type,
+			'encoding'  => $encoding,
+			'sender'    => $channel['channel_hash'],
+			'community' => get_config('system','network_community', EMPTY_STR),
+			'site_id'   => self::make_xchan_hash(z_root(), get_config('system','pubkey')),
+			'version'   => System::get_zot_revision(),
 		];
 
 		if ($recipients) {
@@ -1210,6 +1211,13 @@ class Libzot {
 			return;
 		}
 
+		$our_community = get_config('system','network_community', EMPTY_STR);
+		$their_community = ((array_key_exists('community',$env)) ? $env['community'] : EMPTY_STR);
+		if ($our_community !== $their_community) {
+			logger('community mismatch');
+			return;
+		}
+		
 		$message_request = false;
 
 
@@ -1326,7 +1334,6 @@ class Libzot {
 			logger('No deliveries on this site');
 			return;
 		}
-
 
 		if ($has_data) {
 
@@ -2766,6 +2773,10 @@ class Libzot {
 			set_sconfig($arr['url'],'system','zot_version',$arr['zot']);
 		}
 
+		if (array_key_exists('community',$arr)) {
+			set_sconfig($arr['url'],'system','network_community',$arr['community']);
+		}
+
 		if ($exists) {
 			if (($siterecord['site_flags'] != $site_flags)
 				|| ($siterecord['site_access'] != $access_policy)
@@ -3280,6 +3291,7 @@ class Libzot {
 			$ret['site']['sellpage']   = get_config('system','sellpage');
 			$ret['site']['location']   = get_config('system','site_location');
 			$ret['site']['realm']      = get_directory_realm();
+			$ret['site']['community']  = get_config('system','network_community', EMPTY_STR);
 			$ret['site']['sitename']   = System::get_site_name();
 			$ret['site']['logo']       = System::get_site_icon();
 			$ret['site']['project']    = System::get_platform_name();

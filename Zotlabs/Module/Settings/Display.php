@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Module\Settings;
 
+use App;
 use Zotlabs\Lib\Libsync;
 
 
@@ -14,7 +15,7 @@ class Display {
 	function post() {
 		check_form_security_token_redirectOnErr('/settings/display', 'settings_display');
 
-		$themespec = explode(':', \App::$channel['channel_theme']);
+		$themespec = explode(':', App::$channel['channel_theme']);
 		$existing_theme  = $themespec[0];
 		$existing_schema = $themespec[1];
 
@@ -28,6 +29,7 @@ class Display {
 		$channel_menu      = ((x($_POST,'channel_menu')) ? intval($_POST['channel_menu'])  : 0);
 		$user_scalable     = ((x($_POST,'user_scalable')) ? intval($_POST['user_scalable'])  : 0);
 		$nosmile           = ((x($_POST,'nosmile')) ? intval($_POST['nosmile'])  : 0);
+		$indentpx          = ((x($_POST,'indentpx')) ? intval($_POST['indentpx']) : 0);
 
 		$channel_divmore_height = ((x($_POST,'channel_divmore_height')) ? intval($_POST['channel_divmore_height']) : 400);
 		if($channel_divmore_height < 50)
@@ -45,6 +47,12 @@ class Display {
 		if($itemspage > 100)
 			$itemspage = 100;
 
+		if ($indentpx < 0) {
+			$indentpx = 0;
+		}
+		if ($indentpx > 20) {
+			$indentpx = 20;
+		}
 
 		set_pconfig(local_channel(),'system','preload_images',$preload_images);
 		set_pconfig(local_channel(),'system','user_scalable',$user_scalable);
@@ -54,6 +62,7 @@ class Display {
 		set_pconfig(local_channel(),'system','channel_divmore_height', $channel_divmore_height);
 		set_pconfig(local_channel(),'system','stream_divmore_height', $stream_divmore_height);
 		set_pconfig(local_channel(),'system','channel_menu', $channel_menu);
+		set_pconfig(local_channel(),'system','thread_indent_px',$indentpx);
 
 		$newschema = '';
 		if($theme){
@@ -97,7 +106,7 @@ class Display {
 		if(! $default_theme)
 			$default_theme = 'redbasic';
 
-		$themespec = explode(':', \App::$channel['channel_theme']);
+		$themespec = explode(':', App::$channel['channel_theme']);
 		$existing_theme  = $themespec[0];
 		$existing_schema = $themespec[1];
 
@@ -196,7 +205,7 @@ class Display {
 			'$expert' => feature_enabled(local_channel(),'advanced_theming'),
 			'$channel_divmore_height' => array('channel_divmore_height', t('Channel page max height of content (in pixels)'), ((get_pconfig(local_channel(),'system','channel_divmore_height')) ? get_pconfig(local_channel(),'system','channel_divmore_height') : 400), t('click to expand content exceeding this height')),
 			'$stream_divmore_height' => array('stream_divmore_height', t('Stream page max height of content (in pixels)'), ((get_pconfig(local_channel(),'system','stream_divmore_height')) ? get_pconfig(local_channel(),'system','stream_divmore_height') : 400) , t('click to expand content exceeding this height')),
-
+			'$indentpx' => [ 'indentpx', t('Indent threaded comments this many pixels from the parent'), intval(get_pconfig(local_channel(),'system','thread_indent_px', get_config('system','thread_indent_px',0))), t('0-20') ],
 
 		));
 
@@ -207,7 +216,7 @@ class Display {
 
 	function get_theme_config_file($theme){
 
-		$base_theme = \App::$theme_info['extends'];
+		$base_theme = App::$theme_info['extends'];
 
 		if (file_exists("view/theme/$theme/php/config.php")){
 			return "view/theme/$theme/php/config.php";
