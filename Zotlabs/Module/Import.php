@@ -671,7 +671,7 @@ class Import extends Controller {
 			'$old_address'    => [ 'old_address', t('Your old identity address (xyz@example.com)'), '', ''],
 			'$email'          => [ 'email', t('Your old login email address'), '', '' ],
 			'$password'       => [ 'password', t('Your old login password'), '', '' ],
-			'$import_posts'   => [ 'import_posts', t('Import a few months of posts if possible (limited by available memory'), false, '', [ t('No'), t('Yes') ]],
+			'$import_posts'   => [ 'import_posts', t('Import a few months of posts if possible (limited by available memory)'), false, '', [ t('No'), t('Yes') ]],
 
 			'$common' => t('For either option, please choose whether to make this hub your new primary address, or whether your old location should continue this role. You will be able to post from either location, but only one can be marked as the primary location for files, photos, and media.'),
 
@@ -679,7 +679,7 @@ class Import extends Controller {
 			'$moving'       => [ 'moving', t('Move this channel (disable all previous locations)'), false, '', [ t('No'), t('Yes') ] ],
 			'$newname'      => [ 'newname', t('Use this channel nickname instead of the one provided'), '', t('Leave blank to keep your existing channel nickname. You will be randomly assigned a similar nickname if either name is already allocated on this site.')],
 
-			'$pleasewait'   => t('This process may take several minutes to complete. Please submit the form only once and leave this page open until finished.'),
+			'$pleasewait'   => t('This process may take several minutes to complete and considerably longer if importing a large amount of posts and files. Please submit the form only once and leave this page open until finished.'),
 
 			'$form_security_token' => get_form_security_token('channel_import'),
 			'$submit' => t('Submit')
