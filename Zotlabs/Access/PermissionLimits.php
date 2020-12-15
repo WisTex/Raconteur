@@ -78,8 +78,8 @@ class PermissionLimits {
 	 *   * \b array with all permission limits, if $perm is not set
 	 */
 	static public function Get($channel_id, $perm = '') {
+
 		if (! intval($channel_id)) {
-			btlogger('invalid channel');
 			return false;
 		}
 		
