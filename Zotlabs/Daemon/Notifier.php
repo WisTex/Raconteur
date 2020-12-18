@@ -584,22 +584,13 @@ class Notifier {
 		$urls    = []; // array of urls to check uniqueness of hubs from other networks
 		$hub_env = []; // per-hub envelope so we don't broadcast the entire envelope to all
 		$dead    = []; // known dead hubs - report them as undeliverable
-		$comm    = []; // known community mismatches
 		
-		$my_community = get_config('system','network_community', EMPTY_STR);
-
 		foreach ($hubs as $hub) {
 			if (intval($hub['site_dead'])) {
 				$dead[] = $hub;
 				continue;
 			}
 
-			$their_community = get_sconfig($hub['hubloc_url'],'system','network_community', EMPTY_STR);
-			if ($my_community !== $their_community && $hub['hubloc_url'] !== z_root()) {
-				$comm[] = $hub;
-				continue;
-			}
-				
 			if (self::$env_recips) {
 				foreach (self::$env_recips as $er) {
 					if ($hub['hubloc_hash'] === $er) {
@@ -744,25 +735,6 @@ class Notifier {
 						dbesc($deceased['hubloc_host']),
 						dbesc($deceased['hubloc_host']),
 						dbesc('undeliverable/unresponsive site'),
-						dbesc(datetime_convert()),
-						dbesc(self::$channel['channel_hash']),
-						dbesc(new_uuid())
-					);
-				}
-			}
-		}
-
-
-		if ($comm) {
-			foreach ($comm as $mismatch) {
-				if (is_array($target_item) && (! $target_item['item_deleted']) && (! get_config('system','disable_dreport'))) {
-					q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan, dreport_queue ) 
-						values ( '%s', '%s','%s','%s','%s','%s','%s','%s' ) ",
-						dbesc($target_item['mid']),
-						dbesc($mismatch['hubloc_host']),
-						dbesc($mismatch['hubloc_host']),
-						dbesc($mismatch['hubloc_host']),
-						dbesc('community mismatch - undeliverable site'),
 						dbesc(datetime_convert()),
 						dbesc(self::$channel['channel_hash']),
 						dbesc(new_uuid())
