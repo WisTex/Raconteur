@@ -72,7 +72,7 @@ class Search extends Controller {
 						$item = Activity::decode_note($AS,true);
 						if ($item) {
 							logger('parsed_item: ' . print_r($item,true),LOGGER_DATA);
-							Activity::store(App::get_channel(),get_observer_hash,$AS,$item, true, true);
+							Activity::store(App::get_channel(),get_observer_hash(),$AS,$item, true, true);
 							goaway(z_root() . '/display/' . gen_link_id($item['mid']));
 						}
 					}
