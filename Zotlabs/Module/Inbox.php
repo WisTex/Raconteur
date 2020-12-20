@@ -248,7 +248,7 @@ class Inbox extends Controller {
 
 		foreach ($channels as $channel) {
 
-			if (! PConfig::Get($channel['channel_id'],'system','activitypub',true)) {
+			if (! PConfig::Get($channel['channel_id'],'system','activitypub',Config::Get('system','activitypub',ACTIVITYPUB_ENABLED))) {
 				continue;
 			}
 			
