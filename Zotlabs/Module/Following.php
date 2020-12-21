@@ -26,6 +26,10 @@ class Following extends Controller {
 			http_status_exit(404, 'Not found');
 		}
 
+		if (intval($channel['channel_system'])) {
+			http_status_exit(403,'Permission denied');
+		}
+
 		Libprofile::load(argv(1));
 
 		$observer_hash = get_observer_hash();

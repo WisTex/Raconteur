@@ -25,6 +25,11 @@ class Inbox extends Controller {
 			http_status_exit(406,'not acceptable');
 		}
 
+		if (! Config::Get('system','activitypub',ACTIVITYPUB_ENABLED)) {
+			logger('ActivityPub INBOX request - protocol is disabled');
+			http_status_exit(404,'Not found');
+		}
+
 		$sys_disabled = ((Config::Get('system','disable_discover_tab') || Config::Get('system','disable_activitypub_discover_tab'))  ? true : false);
 
 		logger('inbox_args: ' . print_r(App::$argv,true));
