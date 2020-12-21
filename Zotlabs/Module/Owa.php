@@ -49,7 +49,7 @@ class Owa extends Controller {
 					}
 					if ($r) {
 						foreach ($r as $hubloc) {
-							$verified = HTTPSig::verify(file_get_contents('php://input'));	
+							$verified = HTTPSig::verify(file_get_contents('php://input'), $hubloc['xchan_pubkey']);	
 							if ($verified && $verified['header_signed'] && $verified['header_valid'] && ($verified['content_valid'] || (! $verified['content_signed']))) {
 								logger('OWA header: ' . print_r($verified,true),LOGGER_DATA);	
 								logger('OWA success: ' . $hubloc['hubloc_addr'],LOGGER_DATA);

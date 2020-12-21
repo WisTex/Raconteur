@@ -6,8 +6,8 @@ use Zotlabs\Lib\Libzotdir;
 class Sites extends \Zotlabs\Web\Controller {
 
 	function get() {
-
-		$sql_extra = (($_REQUEST['project']) ? " and site_project = '" . escape_tags(protect_sprintf($_REQUEST['project'])) . "' " : "");
+		
+		$sql_extra = (($_REQUEST['project']) ? " and site_project = '" . escape_tags(protect_sprintf(escape_tags($_REQUEST['project']))) . "' " : "");
 			
 		$desc = t('This page provides information about related projects and websites that are currently known to this system. These are a small fraction of the thousands of websites and dozens of projects and providers which make up the fediverse.');
 
