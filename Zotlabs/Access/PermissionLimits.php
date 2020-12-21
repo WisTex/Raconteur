@@ -90,13 +90,13 @@ class PermissionLimits {
 				call_hooks('permission_limits_get',$a);
 				return intval($a['value']);
 			}
-			return $x;
+			return intval($x);
 		}
 
 		PConfig::Load($channel_id);
-		if(array_key_exists($channel_id, App::$config)
-				&& array_key_exists('perm_limits', App::$config[$channel_id]))
-			return App::$config[$channel_id]['perm_limits'];
+		if(array_key_exists($channel_id, App::$config) && array_key_exists('perm_limits', App::$config[$channel_id])) {
+			return intval(App::$config[$channel_id]['perm_limits']);
+		}
 
 		return false;
 	}
