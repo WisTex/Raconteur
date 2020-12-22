@@ -1225,7 +1225,6 @@ function get_site_info() {
 	$site_name = get_config('system','sitename');
 	if(! get_config('system','hidden_version_siteinfo')) {
 		$version = System::get_project_version();
-		$tag = System::get_std_version();
 
 		if(@is_dir('.git') && function_exists('shell_exec')) {
 			$commit = trim( @shell_exec('git log -1 --format="%h"'));
@@ -1269,7 +1268,7 @@ function get_site_info() {
 		'platform'                     => System::get_platform_name(),
 		'site_name'                    => (($site_name) ? $site_name : ''),
 		'version'                      => $version,
-		'version_tag'                  => $tag,
+//		'version_tag'                  => $tag,
 		'addon_version'                => defined('ADDON_VERSION') ? ADDON_VERSION : 'unknown',
 		'server_role'                  => System::get_server_role(),
 		'commit'                       => $commit,
@@ -1278,7 +1277,7 @@ function get_site_info() {
 		'register_policy'              =>  $register_policy[get_config('system','register_policy')],
 		'invitation_only'              => (bool) intval(get_config('system','invitation_only')),
 		'directory_mode'               =>  $directory_mode[get_config('system','directory_mode')],
-		'directory_server'             => get_config('system','directory_server'),
+//		'directory_server'             => get_config('system','directory_server'),
 		'language'                     => get_config('system','language'),
 //		'rss_connections'              => (bool) intval(get_config('system','feed_contacts')),
 		'expiration'                   => $site_expire,
