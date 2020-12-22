@@ -2435,7 +2435,7 @@ function channel_url($channel) {
 
 	// data validation - if this is wrong, log the call stack so we can find the issue
 	if (! is_array($channel)) {
-		btlogger('not a channel array');
+		btlogger('not a channel array: ' . print_r($channel,true));
 	}
 
 	return (($channel) ? z_root() . '/channel/' . $channel['channel_address'] : z_root());

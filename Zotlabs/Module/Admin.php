@@ -32,6 +32,7 @@ class Admin extends Controller {
 		logger('admin_init', LOGGER_DEBUG);
 
 		if (! is_site_admin()) {
+			logger('admin denied.');
 			return;
 		}
 		
@@ -46,6 +47,7 @@ class Admin extends Controller {
 		logger('admin_post', LOGGER_DEBUG);
 
 		if (! is_site_admin()) {
+			logger('admin denied.');
 			return;
 		}
 		
@@ -65,6 +67,7 @@ class Admin extends Controller {
 		logger('admin_content', LOGGER_DEBUG);
 
 		if (! is_site_admin()) {
+			logger('admin denied.');
 			return login(false);
 		}
 
