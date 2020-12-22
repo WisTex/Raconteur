@@ -638,10 +638,6 @@ class Activity {
 			$ret['id'] = $i['mid'];
 		}
 
-		if ($i['uuid']) {
-			$ret['diaspora:guid'] = $i['uuid'];
-		}
-
 		if ($i['title']) {
 			$ret['name'] = $i['title'];
 		}
@@ -883,10 +879,6 @@ class Activity {
 		$has_images = preg_match_all('/\[[zi]mg(.*?)\](.*?)\[/ism',$i['body'],$images,PREG_SET_ORDER);
 
 		$ret['id'] = $i['mid'];
-
-		if ($i['uuid']) {
-			$ret['diaspora:guid'] = $i['uuid'];
-		}
 
 		$ret['published'] = datetime_convert('UTC','UTC',$i['created'],ATOM_TIME);
 		if ($i['created'] !== $i['edited']) {

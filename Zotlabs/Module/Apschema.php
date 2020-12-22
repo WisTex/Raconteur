@@ -14,7 +14,6 @@ class Apschema extends Controller {
 				'as'                 => 'https://www.w3.org/ns/activitystreams#',
 				'toot'               => 'http://joinmastodon.org/ns#',
 				'ostatus'            => 'http://ostatus.org#',
-				'diaspora'           => 'https://diasporafoundation.org/ns/',
 				'schema'             => 'http://schema.org#',
 				'conversation'       => 'ostatus:conversation',
 				'sensitive'          => 'as:sensitive',
@@ -34,7 +33,6 @@ class Apschema extends Controller {
 				'PropertyValue'      => 'schema:PropertyValue',
 				'value'              => 'schema:value',
 				'discoverable'       => 'toot:discoverable',
-				'guid'               => 'diaspora:guid',
 			]
 		];
 

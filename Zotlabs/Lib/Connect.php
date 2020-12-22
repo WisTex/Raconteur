@@ -80,7 +80,7 @@ class Connect {
 		if ($r) {
 
 			// reset results to the best record or the first if we don't have the best
-			// note: this is a single record and not an array of results
+			// note: this returns a single record and not an array of records
 
 			$r = Libzot::zot_record_preferred($r,'xchan_network');
 
