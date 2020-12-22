@@ -123,6 +123,7 @@ class Onepoll {
 				if (is_array($cl) && $cl) {
 					$url = ((array_key_exists('outbox',$cl)) ? $cl['outbox'] : '');
 					if ($url) {
+						logger('fetching outbox');
 						$obj = new ASCollection($url, $importer, 0, $max);
 						$messages = $obj->get();
 						if ($messages) {	
@@ -130,7 +131,7 @@ class Onepoll {
 								if (is_string($message)) {
 									$message = Activity::fetch($message,$importer);
 								}
-								$AS = new ActivityStreams($message);
+								$AS = new ActivityStreams($message,null,true);
 								if ($AS->is_valid() && is_array($AS->obj)) {
 									$item = Activity::decode_note($AS,true);
 									Activity::store($importer,$contact['abook_xchan'],$AS,$item);
