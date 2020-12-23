@@ -230,6 +230,11 @@ class Queue {
 		if($outq['outq_driver'] === 'activitypub') {
 
 			$channel = channelx_by_n($outq['outq_channel']);
+			if (! $channel) {
+				logger('missing channel: ' . $outq['outq_channel']);
+				return;
+			}
+
 
 			$retries = 0;
 			$m = parse_url($outq['outq_posturl']);
