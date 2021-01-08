@@ -10,10 +10,10 @@ class Uexport extends Controller {
 		if (! local_channel()) {
 			return;
 		}
-	
-		if (argc() > 1) {
 
-			$sections = (($_REQUEST['sections']) ? explode(',',$_REQUEST['sections']) : '');
+		$sections = (($_REQUEST['sections']) ? explode(',',$_REQUEST['sections']) : get_default_export_sections());
+
+		if (argc() > 1) {
 
 			$channel = App::get_channel();
 
@@ -28,20 +28,21 @@ class Uexport extends Controller {
 			header('content-type: application/json');
 			header('Content-Disposition: attachment; filename="' . $channel['channel_address'] . (($year) ? '-' . $year : '') . (($month) ? '-' . $month : '') . (($_REQUEST['sections']) ? '-' . $_REQUEST['sections'] : '')  . '.json"' );
 	
+			$flags = ((version_compare(PHP_VERSION,'7.2.0') >= 0) ? JSON_INVALID_UTF8_SUBSTITUTE : 0);  
+
 			if ($year) {
-				echo json_encode(identity_export_year(local_channel(),$year,$month));
+				echo json_encode(identity_export_year(local_channel(),$year,$month), $flags);
 				killme();
 			}
 	
 			if (argc() > 1 && argv(1) === 'basic') {
-				echo json_encode(identity_basic_export(local_channel(),$sections));
+				echo json_encode(identity_basic_export(local_channel(),$sections), $flags);
 				killme();
 			}
 	
 			// Warning: this option may consume a lot of memory
 	
 			if(argc() > 1 && argv(1) === 'complete') {
-				$sections = get_default_export_sections();
 				$sections[] = 'items';
 				echo json_encode(identity_basic_export(local_channel(),$sections));
 				killme();
