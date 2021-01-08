@@ -34,6 +34,7 @@ use Zotlabs\Lib\Apps;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\AccessControl;
+use Zotlabs\Daemon\Run;
 use App;
 use URLify;
 
@@ -1399,7 +1400,7 @@ class Item extends Controller {
 				}
 			}
 			if(! $nopush)
-				\Zotlabs\Daemon\Run::Summon(array('Notifier', 'edit_post', $post_id));
+				Run::Summon(array('Notifier', 'edit_post', $post_id));
 	
 
 			if($api_source)
@@ -1524,7 +1525,7 @@ class Item extends Controller {
 		}
 
 		if(! $nopush) {
-			\Zotlabs\Daemon\Run::Summon(array('Notifier', $notify_type, $post_id));
+			Run::Summon(array('Notifier', $notify_type, $post_id));
 		}
 		logger('post_complete');
 

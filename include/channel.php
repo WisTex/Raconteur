@@ -766,10 +766,7 @@ function get_default_export_sections() {
 			'config',
 			'apps',
 			'chatrooms',
-			'events',
-			'webpages',
-			'mail',
-			'wikis'
+			'events'
 	];
 
 	$cb = [ 'sections' => $sections ];
@@ -1012,69 +1009,6 @@ function identity_basic_export($channel_id, $sections = null) {
 			$r = fetch_post_tags($r,true);
 			foreach ($r as $rr) {
 				$ret['event_item'][] = encode_item($rr,true);
-			}
-		}
-	}
-
-	if (in_array('webpages',$sections)) {
-		$x = menu_list($channel_id);
-		if ($x) {
-			$ret['menu'] = array();
-			for ($y = 0; $y < count($x); $y ++) {
-				$m = menu_fetch($x[$y]['menu_name'],$channel_id,$ret['channel']['channel_hash']);
-				if ($m) {
-					$ret['menu'][] = menu_element($ret['channel'],$m);
-				}
-			}
-		}
-		$r = q("select * from item where item_type in ( "
-			. ITEM_TYPE_BLOCK . "," . ITEM_TYPE_PDL . "," . ITEM_TYPE_WEBPAGE . " ) and uid = %d",
-			intval($channel_id)
-		);
-		if ($r) {
-			$ret['webpages'] = array();
-			xchan_query($r);
-			$r = fetch_post_tags($r,true);
-			foreach ($r as $rr) {
-				$ret['webpages'][] = encode_item($rr,true);
-			}
-		}
-	}
-
-	if (in_array('mail',$sections)) {
-		$r = q("select * from conv where uid = %d",
-			intval($channel_id)
-		);
-		if ($r) {
-			for ($x = 0; $x < count($r); $x ++) {
-				$r[$x]['subject'] = base64url_decode(str_rot47($r[$x]['subject']));
-			}
-			$ret['conv'] = $r;
-		}
-
-		$r = q("select * from mail where channel_id = %d",
-			intval($channel_id)
-		);
-		if ($r) {
-			$m = array();
-			foreach ($r as $rr) {
-				xchan_mail_query($rr);
-				$m[] = encode_mail($rr,true);
-			}
-			$ret['mail'] = $m;
-		}
-	}
-
-	if (in_array('wikis',$sections)) {
-		$r = q("select * from item where resource_type like 'nwiki%%' and uid = %d order by created",
-			intval($channel_id)
-		);
-		if ($r) {
-			$ret['wiki'] = array();
-			xchan_query($r);
-			$r = fetch_post_tags($r,true);
-			foreach ($r as $rv) {
-				$ret['wiki'][] = encode_item($rv,true);
 			}
 		}
 	}
