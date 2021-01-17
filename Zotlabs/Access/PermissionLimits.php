@@ -95,7 +95,7 @@ class PermissionLimits {
 
 		PConfig::Load($channel_id);
 		if(array_key_exists($channel_id, App::$config) && array_key_exists('perm_limits', App::$config[$channel_id])) {
-			return intval(App::$config[$channel_id]['perm_limits']);
+			return App::$config[$channel_id]['perm_limits'];
 		}
 
 		return false;
