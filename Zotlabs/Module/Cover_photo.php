@@ -236,7 +236,7 @@ logger('gis: ' . print_r($gis,true));
 
 			if ($x['partial']) {
 				header('Range: bytes=0-' . (($x['length']) ? $x['length'] - 1 : 0));
-				json_return_and_die($result);
+				json_return_and_die($x);
 			}
 			else {
 				header('Range: bytes=0-' . (($x['size']) ? $x['size'] - 1 : 0));

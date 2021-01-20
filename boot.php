@@ -16,7 +16,7 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '21.01.09' );
+define ( 'STD_VERSION',             '21.01.20' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1247 );
@@ -1884,7 +1884,7 @@ function proc_run() {
 
 
 	$args = array_map('escapeshellarg',$args);
-	$cmdline = implode($args," ");
+	$cmdline = implode(' ', $args);
 
 	if (is_windows()) {
 		$cwd = getcwd();

@@ -40,7 +40,7 @@ function breaklines($line, $level, $wraplength = 75)
 	$newlines[] = $line;
 
 
-	return(implode($newlines, "\n"));
+	return(implode("\n", $newlines));
 }
 
 function quotelevel($message, $wraplength = 75)
