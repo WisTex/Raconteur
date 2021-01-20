@@ -211,7 +211,7 @@ class Cdav extends Controller {
 			$server->addPlugin(new \Sabre\CardDAV\VCFExportPlugin());
 
 			// And off we go!
-			$server->start();
+			$server->exec();
 
 			killme();
 

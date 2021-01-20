@@ -108,7 +108,7 @@ class Cloud extends Controller {
 
 		// All we need to do now, is to fire up the server
 
-		$server->start();
+		$server->exec();
 
 		if ($browser->build_page) {
 			construct_page();
