@@ -431,8 +431,8 @@ class Like extends Controller {
 		$arr['uid']          = $owner_uid;
 
 
-		$arr['item_flags']   = $item_flags;
-		$arr['item_wall']    = $item_wall;
+		$arr['item_flags']   = $item['item_flags'];
+		$arr['item_wall']    = $item['item_wall'];
 		$arr['parent_mid']   = (($extended_like) ? $arr['mid'] : $item['mid']);
 		$arr['owner_xchan']  = (($extended_like) ? $ch[0]['xchan_hash'] : $thread_owner['xchan_hash']);
 		$arr['author_xchan'] = $observer['xchan_hash'];

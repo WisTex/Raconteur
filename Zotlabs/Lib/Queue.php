@@ -307,7 +307,7 @@ class Queue {
 		if($outq['outq_posturl'] === z_root() . '/zot') {
 			// local delivery
 			$zot = new \Zotlabs\Zot6\Receiver(new \Zotlabs\Zot6\Zot6Handler(),$outq['outq_notify']);
-			$result = $zot->run(true);
+			$result = $zot->run();
 			logger('returned_json: ' . json_encode($result,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOGGER_DATA);
 			logger('deliver: local zot delivery succeeded to ' . $outq['outq_posturl']);
 			Libzot::process_response($outq['outq_posturl'],[ 'success' => true, 'body' => json_encode($result) ], $outq);

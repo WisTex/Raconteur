@@ -160,18 +160,18 @@ class Zot6Handler implements IHandler {
 		if ($recipients) {
 			// basically this means "unfriend"
 			foreach ($recipients as $recip) {
-				$r = q("select channel.*,xchan.* from channel
+				$channel = q("select channel.*,xchan.* from channel
 					left join xchan on channel_hash = xchan_hash
 					where channel_hash = '%s' limit 1",
 					dbesc($recip)
 				);
-				if ($r) {
-					$r = q("select abook_id from abook where uid = %d and abook_xchan = '%s' limit 1",
-						intval($r[0]['channel_id']),
+				if ($channel) {
+					$abook = q("select abook_id from abook where uid = %d and abook_xchan = '%s' limit 1",
+						intval($channel[0]['channel_id']),
 						dbesc($sender)
 					);
-					if ($r) {
-						contact_remove($r[0]['channel_id'],$r[0]['abook_id']);
+					if ($abook) {
+						contact_remove($channel[0]['channel_id'],$abook[0]['abook_id']);
 					}
 				}
 			}

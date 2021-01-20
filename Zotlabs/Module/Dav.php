@@ -126,7 +126,7 @@ class Dav extends Controller {
 		// $server->addPlugin(new \Zotlabs\Storage\QuotaPlugin($auth));
 
 		// All we need to do now, is to fire up the server
-		$server->exec();
+		$server->start();
 
 		killme();
 	}

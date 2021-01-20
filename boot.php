@@ -1884,7 +1884,7 @@ function proc_run() {
 
 
 	$args = array_map('escapeshellarg',$args);
-	$cmdline = implode($args," ");
+	$cmdline = implode(' ', $args);
 
 	if (is_windows()) {
 		$cwd = getcwd();
