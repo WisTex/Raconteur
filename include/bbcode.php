@@ -1238,6 +1238,7 @@ function bbcode($Text, $options = []) {
 	$activitypub = ((array_key_exists('activitypub',$options)) ? $options['activitypub'] : false);
 	$censored    = ((array_key_exists('censored',$options)) ? $options['censored'] : false);
 	$plain       = ((array_key_exists('plain',$options)) ? $options['plain'] : false);
+	$bbonly      = ((array_key_exists('bbonly',$options)) ? $options['bbonly'] : false);
 	
 	if ($activitypub) {
 		$export = true;
@@ -1246,8 +1247,6 @@ function bbcode($Text, $options = []) {
 	$target = (($newwin) ? ' target="_blank" ' : '');
 
 	call_hooks('bbcode_filter', $Text);
-
-
 
 
 	// Hide all [noparse] contained bbtags by spacefying them
@@ -1341,39 +1340,44 @@ function bbcode($Text, $options = []) {
 
 	$Text = str_replace("\r\n", "\n", $Text);
 
-	// save code blocks from being interpreted as markdown
 
-	$Text = preg_replace_callback("/\[code(.*?)\](.*?)\[\/code\]/ism", 'bb_code_preprotect', $Text);
+	if (! $bbonly) {
 
-	// Perform some markdown conversions before translating linefeeds so as to keep the regexes manageable
+		// save code blocks from being interpreted as markdown
 
-	$Text = preg_replace('#(?<!\\\)([*_]{3})([^\n]+?)\1#','<strong><em>$2</em></strong>',$Text);
-	$Text = preg_replace('#(?<!\\\)([*_]{2})([^\n]+?)\1#','<strong>$2</strong>',$Text);
-	// The character check is so we don't mistake underscore in the middle of a code variable as an italic trigger. 
-	$Text = preg_replace_callback('#(^| )(?<!\\\)([*_])([^\n|`]+?)\2#m','md_italic',$Text);
-	$Text = preg_replace_callback('{ ^(.+?)[ ]*\n(=+|-+)[ ]*\n+ }mx','md_topheader', $Text);
-	$Text = preg_replace_callback('#^(\#{1,6})\s+([^\#]+?)\s*\#*$#m','md_header', $Text);
-	$Text = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#','md_codeblock',$Text);
-	$Text = preg_replace('#^(?:\0(.*?)\0\n)?( {4}|\t)(.*?)$#m','<pre><code>$3</code></pre>',$Text);
-	$Text = preg_replace('#(?<!\\\)`([^\n]+?)`#','<pre><code>$1</code></pre>', $Text);
-	$Text = preg_replace('#<\/code><\/pre>\n<pre><code(>| .*?>)#','<br>',$Text);
+		$Text = preg_replace_callback("/\[code(.*?)\](.*?)\[\/code\]/ism", 'bb_code_preprotect', $Text);
 
-	// blockquotes
-	$Text = preg_replace('#^(&gt;)+ +(.*?)$#m','<blockquote>$2</blockquote>',$Text);
-	$Text = preg_replace('#</blockquote>\n<blockquote>#',"\n", $Text);
+		// Perform some markdown conversions before translating linefeeds so as to keep the regexes manageable
 
-	// links
-	$Text = preg_replace_callback('#!\[[^\]]*\]\((.*?)(?=\"|\))(\".*\")?\)(?!`)#','md_image',$Text);
-	$Text = preg_replace('#\[([^\[]+)\]\((?:javascript:)?([^\)]+)\)(?!`)#','<a href="$2">$1</a>',$Text);
+		$Text = preg_replace('#(?<!\\\)([*_]{3})([^\n]+?)\1#','<strong><em>$2</em></strong>',$Text);
+		$Text = preg_replace('#(?<!\\\)([*_]{2})([^\n]+?)\1#','<strong>$2</strong>',$Text);
+		// The character check is so we don't mistake underscore in the middle of a code variable as an italic trigger. 
+		$Text = preg_replace_callback('#(^| )(?<!\\\)([*_])([^\n|`]+?)\2#m','md_italic',$Text);
+		$Text = preg_replace_callback('{ ^(.+?)[ ]*\n(=+|-+)[ ]*\n+ }mx','md_topheader', $Text);
+		$Text = preg_replace_callback('#^(\#{1,6})\s+([^\#]+?)\s*\#*$#m','md_header', $Text);
+		$Text = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#','md_codeblock',$Text);
+		$Text = preg_replace('#^(?:\0(.*?)\0\n)?( {4}|\t)(.*?)$#m','<pre><code>$3</code></pre>',$Text);
+		$Text = preg_replace('#(?<!\\\)`([^\n]+?)`#','<pre><code>$1</code></pre>', $Text);
+		$Text = preg_replace('#<\/code><\/pre>\n<pre><code(>| .*?>)#','<br>',$Text);
 
-	// unordered lists
-	$Text = preg_replace('#^ *[*\-+] +(.*?)$#m','<ul><li>$1</li></ul>',$Text);
-	// order lists
-	$Text = preg_replace('#^\d+[\.] +(.*?)$#m','<ol><li>$1</li></ol>',$Text);
+		// blockquotes
+		$Text = preg_replace('#^(&gt;)+ +(.*?)$#m','<blockquote>$2</blockquote>',$Text);
+		$Text = preg_replace('#</blockquote>\n<blockquote>#',"\n", $Text);
 
-	$Text = preg_replace('/\s*<\/(ol|ul)>\n+<\1>\s*/',"\n",$Text);
+		// links
+		$Text = preg_replace_callback('#!\[[^\]]*\]\((.*?)(?=\"|\))(\".*\")?\)(?!`)#','md_image',$Text);
+		$Text = preg_replace('#\[([^\[]+)\]\((?:javascript:)?([^\)]+)\)(?!`)#','<a href="$2">$1</a>',$Text);
 
-	$Text = bb_code_preunprotect($Text);
+		// unordered lists
+		$Text = preg_replace('#^ *[*\-+] +(.*?)$#m','<ul><li>$1</li></ul>',$Text);
+		// order lists
+		$Text = preg_replace('#^\d+[\.] +(.*?)$#m','<ol><li>$1</li></ol>',$Text);
+
+		$Text = preg_replace('/\s*<\/(ol|ul)>\n+<\1>\s*/',"\n",$Text);
+
+		$Text = bb_code_preunprotect($Text);
+	}
+
 
 	// Convert new line chars to html <br> tags
 

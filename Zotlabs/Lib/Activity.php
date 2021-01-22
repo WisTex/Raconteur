@@ -2361,7 +2361,7 @@ class Activity {
 			$s['body'] = $content['content'];
 		}
 		else {
-			$s['body']     = ((self::bb_content($content,'bbcode') && (! $response_activity)) ? self::bb_content($content,'bbcode') : self::bb_content($content,'content'));
+			$s['body'] = ((self::bb_content($content,'bbcode') && (! $response_activity)) ? self::bb_content($content,'bbcode') : self::bb_content($content,'content'));
 		}
 
 
@@ -2696,7 +2696,21 @@ class Activity {
 		
 		if ($cacheable) {
 			if ((! array_key_exists('mimetype',$s)) || ($s['mimetype'] === 'text/bbcode')) {
-				$s['html'] = bbcode($s['body']);
+			
+				// preserve the original purified HTML content *unless* we've modified $s['body']
+				// within this function (to add attachments or reaction descriptions or mention rewrites).
+				// This avoids/bypasses some markdown rendering issues which can occur when
+				// converting to our markdown-enhanced bbcode and then back to HTML again.
+				// Also if we do need bbcode, use the 'bbonly' flag to ignore markdown and only
+				// interpret bbcode; which is much less susceptible to false positives in the
+				// conversion regexes. 
+				
+				if ($s['body'] === self::bb_content($content,'content')) {
+					$s['html'] = $content['content'];
+				}
+				else {
+					$s['html'] = bbcode($s['body'], [ 'bbonly' => true ]);
+				}
 			}
 		}
 		
@@ -3000,7 +3014,7 @@ class Activity {
 				}
 				else {
 					$fetch = false;
-					if (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') && (PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce')) {
+					if (intval($channel['channel_system']) || (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') && (PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce'))) {
 						$fetch = (($fetch_parents) ? self::fetch_and_store_parents($channel,$observer_hash,$act,$item) : false);
 					}
 					if ($fetch) {

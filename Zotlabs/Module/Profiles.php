@@ -27,9 +27,8 @@ class Profiles extends Controller {
 			if(! $r) {
 				notice( t('Profile not found.') . EOL);
 				goaway(z_root() . '/profiles');
-				return; // NOTREACHED
 			}
-			$profile_guid = $r['profile_guid'];
+			$profile_guid = $r[0]['profile_guid'];
 			
 			check_form_security_token_redirectOnErr('/profiles', 'profile_drop', 't');
 	
