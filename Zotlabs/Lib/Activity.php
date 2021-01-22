@@ -3164,7 +3164,14 @@ class Activity {
 
 			$item = $hookinfo['item'];
 
-			if($item) {
+			if ($item) {
+			
+				// don't leak any private conversations to the public stream
+				// even if they contain publicly addressed comments/reactions
+				
+				if ($item['parent_mid'] === $item['mid'] && intval($channel['channel_system']) && (! intval($item['item_private']))) {
+					break;
+				}
 
 				array_unshift($p,[ $a, $item ]);
 			
