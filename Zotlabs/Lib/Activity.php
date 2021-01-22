@@ -3170,12 +3170,18 @@ class Activity {
 				// even if they contain publicly addressed comments/reactions
 				
 				if ($item['parent_mid'] === $item['mid'] && intval($channel['channel_system']) && (! intval($item['item_private']))) {
+					$p = [];
 					break;
 				}
 
+				if (count($p) > 100) {
+					$p = [];
+					break;
+				}
+				
 				array_unshift($p,[ $a, $item ]);
-			
-				if ($item['parent_mid'] === $item['mid'] || count($p) > 100) {
+
+				if ($item['parent_mid'] === $item['mid']) {
 					break;
 				}
 			}
