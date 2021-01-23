@@ -6,15 +6,13 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Lib\ThreadListener;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Config;
 
 /**
  * Implements an ActivityPub outbox.
- * Typically unused for Zot6, but *may* be useful in generating
- * a consumeable ActivityStreams feed for the desired channel.
- *
  */
 
 
@@ -108,7 +106,25 @@ class Outbox extends Controller {
 	    	        'compat'     => $params['compat']
     		    	], $channel, $observer_hash, CLIENT_MODE_NORMAL, App::$module
 	    		);
-			
+
+				if ($items && $observer_hash) {
+
+					// check to see if this observer is a connection. If not, register any items
+					// belonging to this channel for notification of deletion/expiration
+					
+					$x = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s'",
+						intval($channel['channel_id']),
+						dbesc($observer_hash)
+					);
+					if (! $x) {
+						foreach ($items as $item) {
+							if (strpos($item['mid'], z_root()) === 0) {
+								ThreadListener::store($item['mid'],$observer_hash);
+							}
+						}
+					}
+				}
+
 				$ret = Activity::encode_item_collection($items, App::$query_string, 'OrderedCollection',true, $total);
 			}
 
