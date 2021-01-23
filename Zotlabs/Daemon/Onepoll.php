@@ -115,7 +115,14 @@ class Onepoll {
 		if ($contact['abook_created'] < datetime_convert('UTC','UTC', 'now - 1 week')) {
 			$fetch_feed = false;
 		}
-		
+
+		// In previous releases there was a mechanism to fetch 'external' or public stream posts from a site
+		// (as opposed to a channel). This mechanism was deprecated as there is no reliable/scalable method
+		// for informing downstream publishers when/if the content has expired or been deleted.
+		// We can use the ThreadListener interface to implement this on the owner's outbox, however this is still a
+		// work in progress and may present scaling issues. Making this work correctly with third-party fetches is
+		// prohibitive as deletion requests would need to be relayed over potentially hostile networks.
+
 		if($fetch_feed) {
 			$max = intval(get_config('system','max_imported_posts',50));
 			if (intval($max)) {
