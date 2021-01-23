@@ -39,15 +39,7 @@ class LDSignatures {
 		$dhash = self::hash(self::signable_data($data));
 		$options['signatureValue'] = base64_encode(Crypto::sign($ohash . $dhash,$channel['channel_prvkey']));
 
-		$signed = array_merge([
-			'@context' => [ 
-				ACTIVITYSTREAMS_JSONLD_REV, 
-				'https://w3id.org/security/v1',
-				Activity::ap_schema()
-			],
-		],$options);
-
-		return $signed;
+		return $options;
 	}
 
 
