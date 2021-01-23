@@ -2907,7 +2907,7 @@ class Activity {
 			$allowed = true;
 		}
 
-		if (intval($channel['channel_system'])) {
+		if ($is_sys_channel) {
 
 			if (! check_pubstream_channelallowed($observer_hash)) {
 				$allowed = false;
@@ -2925,6 +2925,9 @@ class Activity {
 						break;
 					}
 				}
+			}
+			if (intval($item['item_private'])) {
+				$allowed = false;
 			}
 		}	
 
@@ -3123,7 +3126,7 @@ class Activity {
 		$current_act = $act;
 		$current_item = $item;
 
-		while($current_item['parent_mid'] !== $current_item['mid']) {
+		while ($current_item['parent_mid'] !== $current_item['mid']) {
 			$n = self::fetch($current_item['parent_mid']);
 			if (! $n) { 
 				break;
@@ -3169,7 +3172,7 @@ class Activity {
 				// don't leak any private conversations to the public stream
 				// even if they contain publicly addressed comments/reactions
 				
-				if ($item['parent_mid'] === $item['mid'] && intval($channel['channel_system']) && intval($item['item_private'])) {
+				if (intval($channel['channel_system']) && intval($item['item_private'])) {
 					$p = [];
 					break;
 				}
