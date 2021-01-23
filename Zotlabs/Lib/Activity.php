@@ -3382,7 +3382,7 @@ class Activity {
 		$msg = array_merge(['@context' => [
 			ACTIVITYSTREAMS_JSONLD_REV,
 			'https://w3id.org/security/v1',
-			z_root() . ZOT_APSCHEMA_REV
+			self::ap_schema()
 		]], $arr);
 
 		$queue_id = ActivityPub::queue_message(json_encode($msg, JSON_UNESCAPED_SLASHES),$channel,$recip[0]);
@@ -3414,5 +3414,34 @@ class Activity {
 		return $auth;
 	}
 
+	static function ap_schema() {
+
+		return [
+			'zot'                => z_root() . '/apschema#',
+			'as'                 => 'https://www.w3.org/ns/activitystreams#',
+			'toot'               => 'http://joinmastodon.org/ns#',
+			'ostatus'            => 'http://ostatus.org#',
+			'schema'             => 'http://schema.org#',
+			'conversation'       => 'ostatus:conversation',
+			'sensitive'          => 'as:sensitive',
+			'movedTo'            => 'as:movedTo',
+			'copiedTo'           => 'as:copiedTo',
+			'alsoKnownAs'        => 'as:alsoKnownAs',
+			'inheritPrivacy'     => 'as:inheritPrivacy',
+			'EmojiReact'         => 'as:EmojiReact',
+			'commentPolicy'      => 'zot:commentPolicy',
+			'topicalCollection'  => 'zot:topicalCollection',
+			'eventRepeat'        => 'zot:eventRepeat',
+			'emojiReaction'      => 'zot:emojiReaction',
+			'expires'            => 'zot:expires',
+			'directMessage'      => 'zot:directMessage',
+			'Category'           => 'zot:Category',
+			'replyTo'            => 'zot:replyTo',
+			'PropertyValue'      => 'schema:PropertyValue',
+			'value'              => 'schema:value',
+			'discoverable'       => 'toot:discoverable',
+		];
+
+	}
 
 }
