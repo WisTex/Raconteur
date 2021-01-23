@@ -2907,7 +2907,7 @@ class Activity {
 			$allowed = true;
 		}
 
-		if (intval($channel['channel_system'])) {
+		if ($is_sys_channel) {
 
 			if (! check_pubstream_channelallowed($observer_hash)) {
 				$allowed = false;
@@ -2925,6 +2925,9 @@ class Activity {
 						break;
 					}
 				}
+			}
+			if (intval($item['item_private'])) {
+				$allowed = false;
 			}
 		}	
 
@@ -3123,7 +3126,7 @@ class Activity {
 		$current_act = $act;
 		$current_item = $item;
 
-		while($current_item['parent_mid'] !== $current_item['mid']) {
+		while ($current_item['parent_mid'] !== $current_item['mid']) {
 			$n = self::fetch($current_item['parent_mid']);
 			if (! $n) { 
 				break;
@@ -3164,11 +3167,24 @@ class Activity {
 
 			$item = $hookinfo['item'];
 
-			if($item) {
-
-				array_unshift($p,[ $a, $item ]);
+			if ($item) {
 			
-				if ($item['parent_mid'] === $item['mid'] || count($p) > 100) {
+				// don't leak any private conversations to the public stream
+				// even if they contain publicly addressed comments/reactions
+				
+				if (intval($channel['channel_system']) && intval($item['item_private'])) {
+					$p = [];
+					break;
+				}
+
+				if (count($p) > 100) {
+					$p = [];
+					break;
+				}
+				
+				array_unshift($p,[ $a, $item ]);
+
+				if ($item['parent_mid'] === $item['mid']) {
 					break;
 				}
 			}
@@ -3366,7 +3382,7 @@ class Activity {
 		$msg = array_merge(['@context' => [
 			ACTIVITYSTREAMS_JSONLD_REV,
 			'https://w3id.org/security/v1',
-			z_root() . ZOT_APSCHEMA_REV
+			self::ap_schema()
 		]], $arr);
 
 		$queue_id = ActivityPub::queue_message(json_encode($msg, JSON_UNESCAPED_SLASHES),$channel,$recip[0]);
@@ -3398,5 +3414,34 @@ class Activity {
 		return $auth;
 	}
 
+	static function ap_schema() {
+
+		return [
+			'zot'                => z_root() . '/apschema#',
+//			'as'                 => 'https://www.w3.org/ns/activitystreams#',
+			'toot'               => 'http://joinmastodon.org/ns#',
+			'ostatus'            => 'http://ostatus.org#',
+			'schema'             => 'http://schema.org#',
+			'conversation'       => 'ostatus:conversation',
+			'sensitive'          => 'as:sensitive',
+			'movedTo'            => 'as:movedTo',
+			'copiedTo'           => 'as:copiedTo',
+			'alsoKnownAs'        => 'as:alsoKnownAs',
+			'inheritPrivacy'     => 'as:inheritPrivacy',
+			'EmojiReact'         => 'as:EmojiReact',
+			'commentPolicy'      => 'zot:commentPolicy',
+			'topicalCollection'  => 'zot:topicalCollection',
+			'eventRepeat'        => 'zot:eventRepeat',
+			'emojiReaction'      => 'zot:emojiReaction',
+			'expires'            => 'zot:expires',
+			'directMessage'      => 'zot:directMessage',
+			'Category'           => 'zot:Category',
+			'replyTo'            => 'zot:replyTo',
+			'PropertyValue'      => 'schema:PropertyValue',
+			'value'              => 'schema:value',
+			'discoverable'       => 'toot:discoverable',
+		];
+
+	}
 
 }

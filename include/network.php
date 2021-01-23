@@ -467,7 +467,7 @@ function as_return_and_die($obj,$channel) {
 	$x = array_merge(['@context' => [
 		ACTIVITYSTREAMS_JSONLD_REV,
 		'https://w3id.org/security/v1',
-		z_root() . ZOT_APSCHEMA_REV
+		Activity::ap_schema()
 		]], $obj );
 
 	$headers = [];

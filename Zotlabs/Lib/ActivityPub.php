@@ -81,7 +81,7 @@ class ActivityPub {
 			$msg = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1',
-				z_root() . ZOT_APSCHEMA_REV
+				Activity::ap_schema()
 			]], $ti);
 	
 			$msg['signature'] = LDSignatures::sign($msg,$arr['channel']);
@@ -241,7 +241,7 @@ class ActivityPub {
 		$msg = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1',
-				z_root() . ZOT_APSCHEMA_REV
+				Activity::ap_schema()
 			]], 
 			[
 				'id'     => z_root() . '/follow/' . $x['recipient']['abook_id'] . (($orig_follow) ? '/' . md5($orig_follow) : EMPTY_STR),
@@ -310,7 +310,7 @@ class ActivityPub {
 		$msg = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1',
-				z_root() . ZOT_APSCHEMA_REV
+				Activity::ap_schema()
 			]], 
 			[
 				'id'     => z_root() . '/follow/' . $x['recipient']['abook_id'] . '/' . md5($accept),
@@ -374,7 +374,7 @@ class ActivityPub {
 			$msg = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1',
-				z_root() . ZOT_APSCHEMA_REV
+				Activity::ap_schema()
 			]], 
 			[
 				'id'    => z_root() . '/follow/' . $recip[0]['abook_id'] . '/' . md5($orig_activity) . '#reject',
@@ -398,7 +398,7 @@ class ActivityPub {
 			$msg = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1',
-				z_root() . ZOT_APSCHEMA_REV
+				Activity::ap_schema()
 			]], 
 			[
 				'id'    => z_root() . '/follow/' . $recip[0]['abook_id'] . (($orig_activity) ? '/' . md5($orig_activity) : EMPTY_STR) . '#Undo',

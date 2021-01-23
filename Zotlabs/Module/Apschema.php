@@ -3,37 +3,14 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Activity;
 
 class Apschema extends Controller {
 
 	function init() {
 
 		$arr = [
-			'@context' => [
-				'zot'                => z_root() . '/apschema#',
-				'as'                 => 'https://www.w3.org/ns/activitystreams#',
-				'toot'               => 'http://joinmastodon.org/ns#',
-				'ostatus'            => 'http://ostatus.org#',
-				'schema'             => 'http://schema.org#',
-				'conversation'       => 'ostatus:conversation',
-				'sensitive'          => 'as:sensitive',
-				'movedTo'            => 'as:movedTo',
-				'copiedTo'           => 'as:copiedTo',
-				'alsoKnownAs'        => 'as:alsoKnownAs',
-				'inheritPrivacy'     => 'as:inheritPrivacy',
-				'EmojiReact'         => 'as:EmojiReact',
-				'commentPolicy'      => 'zot:commentPolicy',
-				'topicalCollection'  => 'zot:topicalCollection',
-				'eventRepeat'        => 'zot:eventRepeat',
-				'emojiReaction'      => 'zot:emojiReaction',
-				'expires'            => 'zot:expires',
-				'directMessage'      => 'zot:directMessage',
-				'Category'           => 'zot:Category',
-				'replyTo'            => 'zot:replyTo',
-				'PropertyValue'      => 'schema:PropertyValue',
-				'value'              => 'schema:value',
-				'discoverable'       => 'toot:discoverable',
-			]
+			'@context' => array_merge(['as' => 'https://www.w3.org/ns/activitystreams#'], Activity::ap_schema())
 		];
 
 		header('Content-Type: application/ld+json');

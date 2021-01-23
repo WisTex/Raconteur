@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Lib;
 
+use Zotlabs\Lib\Activity;
+
 require_once('library/jsonld/jsonld.php');
 
 class LDSignatures {
@@ -41,7 +43,7 @@ class LDSignatures {
 			'@context' => [ 
 				ACTIVITYSTREAMS_JSONLD_REV, 
 				'https://w3id.org/security/v1',
-				z_root() . ZOT_APSCHEMA_REV
+				Activity::ap_schema()
 			],
 		],$options);
 
