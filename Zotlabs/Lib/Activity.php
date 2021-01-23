@@ -3418,7 +3418,7 @@ class Activity {
 
 		return [
 			'zot'                => z_root() . '/apschema#',
-			'as'                 => 'https://www.w3.org/ns/activitystreams#',
+//			'as'                 => 'https://www.w3.org/ns/activitystreams#',
 			'toot'               => 'http://joinmastodon.org/ns#',
 			'ostatus'            => 'http://ostatus.org#',
 			'schema'             => 'http://schema.org#',
