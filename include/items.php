@@ -69,7 +69,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 				intval($item['uid'])
 			);
 
-			if($r) {
+			if ($r) {
 				foreach($r as $rr) {
 					$recipients[] = $rr['abook_xchan'];
 				}
@@ -116,11 +116,20 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 		// in the middle of a public thread. Unless we can guarantee beyond all doubt that
 		// this is public, don't allow it to go to thread listeners.
 
-		if(! intval($item['item_private'])) {
-			$r = ThreadListener::fetch_by_target($item['parent_mid']);
-			if($r) {
-				foreach($r as $rv) {
-					$recipients[] = $rv['portable_id'];
+		if (! intval($item['item_private'])) {
+			$r = array_merge(ThreadListener::fetch_by_target($item['parent_mid']),
+				ThreadListener::fetch_by_target(str_replace('/activity/','/item/',$item['parent_mid']))
+			);
+			if ($item['mid'] !== $item['parent_mid']) {
+				$r = array_merge($r, ThreadListener::fetch_by_target($item['mid']),
+					ThreadListener::fetch_by_target(str_replace('/activity/','/item/',$item['mid']))
+				);
+			}
+			if ($r) {
+				foreach ($r as $rv) {
+					if (! in_array($rv['author_xchan'],$recipients)) {
+						$recipients[] = $rv['portable_id'];
+					}
 				}
 			}
 		}
@@ -135,9 +144,9 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 		$r = q("select author_xchan from item where parent = %d",
 			intval($item['parent'])
 		);
-		if($r) {
-			foreach($r as $rv) {
-				if(! in_array($rv['author_xchan'],$recipients)) {
+		if ($r) {
+			foreach ($r as $rv) {
+				if (! in_array($rv['author_xchan'],$recipients)) {
 					$recipients[] = $rv['author_xchan'];
 				}
 			}
