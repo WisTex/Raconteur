@@ -2852,6 +2852,8 @@ class Activity {
 				intval($channel['channel_id'])
 			);
 			if ($p) {
+				// set the owner to the owner of the parent
+				$item['owner_xchan'] = $p[0]['owner_xchan'];
 				// check permissions against the author, not the sender
 				$allowed = perm_is_allowed($channel['channel_id'],$item['author_xchan'],'post_comments');
 				if ((! $allowed) && $permit_mentions)  {
@@ -2881,7 +2883,7 @@ class Activity {
 			else {
 				$allowed = true;
 				// reject public stream comments that weren't sent by the conversation owner
-				if ($is_sys_channel && $pubstream && $item['owner_xchan'] !== $observer_hash) {
+				if ($is_sys_channel && $pubstream && $item['owner_xchan'] !== $observer_hash && ! $fetch_parents) {
 					$allowed = false;
 				}
 			}
