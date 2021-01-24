@@ -2809,6 +2809,11 @@ class Activity {
 		return;
 	}
 
+	// $force is used when manually fetching a remote item - it assumes you are granting one-time
+	// permission for the selected item/conversation regardless of your relationship with the author and
+	// assumes that you are in fact the sender. Please do not use it for anything else. The only permission
+	// checking that is performed is that the author isn't blocked by the site admin.
+
 	static function store($channel,$observer_hash,$act,$item,$fetch_parents = true, $force = false) {
 
 		if ($act && $act->implied_create && ! $force) {
@@ -2882,7 +2887,10 @@ class Activity {
 			}
 			else {
 				$allowed = true;
+
 				// reject public stream comments that weren't sent by the conversation owner
+				// but only on remote message deliveries to our site ($fetch_parents === true)
+
 				if ($is_sys_channel && $pubstream && $item['owner_xchan'] !== $observer_hash && ! $fetch_parents) {
 					$allowed = false;
 				}
