@@ -2951,7 +2951,7 @@ class Activity {
 		}
 
 		if (! $allowed && ! $force) {
-			logger('no permission');
+			logger('no permission: channel ' . $channel['channel_address'] . ', id = ' . $item['mid']);
 			return;
 		}
 
