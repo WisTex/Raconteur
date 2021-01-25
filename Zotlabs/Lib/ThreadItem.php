@@ -113,6 +113,8 @@ class ThreadItem {
 			? t('Private Message')
 			: false);
 
+		$locktype = $item['item_private'];
+
 		$shareable = ((($conv->get_profile_owner() == local_channel() && local_channel()) && ($item['item_private'] != 1)) ? true : false);
 
 		// allow an exemption for sharing stuff from your private feeds
@@ -389,6 +391,7 @@ class ThreadItem {
 			'editedtime' => (($item['edited'] != $item['created']) ? sprintf( t('last edited: %s'), datetime_convert('UTC', date_default_timezone_get(), $item['edited'], 'r')) : ''),
 			'expiretime' => (($item['expires'] > NULL_DATE) ? sprintf( t('Expires: %s'), datetime_convert('UTC', date_default_timezone_get(), $item['expires'], 'r')):''),
 			'lock' => $lock,
+			'locktype' => $locktype,
 			'delayed' => $item['item_delayed'],
 			'privacy_warning' => $privacy_warning,
 			'verified' => $verified,
