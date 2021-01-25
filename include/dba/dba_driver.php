@@ -228,11 +228,12 @@ abstract class dba_driver {
 // Procedural functions
 //
 
-function printable($s) {
+function printable($s, $escape = true) {
 	$s = preg_replace("~([\x01-\x08\x0E-\x0F\x10-\x1F\x7F-\xFF])~",".", $s);
 	$s = str_replace("\x00",'.',$s);
-	if(x($_SERVER,'SERVER_NAME'))
+	if ($escape) {
 		$s = escape_tags($s);
+	}
 
 	return $s;
 }
