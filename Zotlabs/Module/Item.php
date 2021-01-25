@@ -118,27 +118,29 @@ class Item extends Controller {
 				dbesc($parents_str)
 			);
 
-			if(! $items) {
+			if (! $items) {
 				http_status_exit(404, 'Not found');
 			}
 
 			xchan_query($items,true);
 			$items = fetch_post_tags($items,true);
 
-			if(! $items)
+			if (! $items) {
 				http_status_exit(404, 'Not found');
-
+			}
 			$chan = channelx_by_n($items[0]['uid']);
 
-			if(! $chan)
+			if (! $chan) {
 				http_status_exit(404, 'Not found');
-
-			if(! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream'))
+			}
+			
+			if (! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream')) {
 				http_status_exit(403, 'Forbidden');
+			}
 
 
 			$i = Activity::encode_item_collection($items,'conversation/' . $item_id,'OrderedCollection',true);
-			if($portable_id) {
+			if ($portable_id && (! intval($items[0]['item_private']))) {
 				ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
 			}
 
@@ -232,19 +234,31 @@ class Item extends Controller {
 
 			$chan = channelx_by_n($items[0]['uid']);
 
-			if(! $chan)
+			if (! $chan) {
 				http_status_exit(404, 'Not found');
-
-			if(! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream'))
+			}
+			
+			if (! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream')) {
 				http_status_exit(403, 'Forbidden');
+			}
 
 			$i = Activity::encode_item($items[0],true);
 
-			if(! $i)
+			if (! $i) {
 				http_status_exit(404, 'Not found');
-
+			}
+			
+			if ($portable_id && (! intval($items[0]['item_private']))) {
+				$c = q("select abook_id from abook where abook_channel = %d andd abook_xchan = '%s'",
+					intval($items[0]['uid']),
+					dbesc($portable_id)
+				);
+				if (! $c) {
+					ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
+				}
+			}
+			
 			as_return_and_die($i,$chan);
-
 		}
 
 

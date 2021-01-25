@@ -141,7 +141,7 @@ class Channel extends Controller {
 		// Run Libprofile::load() here to make sure the theme is set before
 		// we start loading content
 
-                Libprofile::load($which,$profile);
+		Libprofile::load($which,$profile);
 
 		if (! $_REQUEST['mid']) {
 
