@@ -2522,6 +2522,8 @@ function get_host() {
 	}
 
 	// Remove port number from host
-	$host = preg_replace('/:\d+$/', '', $host);
+	if (strpos($host,':') !== false) {
+		$host = substr($host,0,strpos($host,':'));
+	}
 	return trim($host);
 }

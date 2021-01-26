@@ -21,7 +21,8 @@ class ActivityPub {
 
 		// logger('notifier_array: ' . print_r($arr,true), LOGGER_ALL, LOG_INFO);
 
-
+		$purge_all = (($arr['packet_type'] === 'purge' && (! intval($arr['private']))) ? true : false);
+		
 		$signed_msg = null;
 
 		if (array_key_exists('target_item',$arr) && is_array($arr['target_item'])) {
@@ -47,50 +48,72 @@ class ActivityPub {
 		
 		}
 
-		$target_item = $arr['target_item'];
+		if ($purge_all) {
 
-		if (! $target_item['mid']) {
-			return;
-		}
-
-		$prv_recips = $arr['env_recips'];
-
-
-		if ($signed_msg) {
-			$jmsg = $signed_msg;
-		}
-		else {
-			$ti = Activity::encode_activity($target_item, true);
-			if (! $ti) {
-				return;
-			}
-
-			$token = IConfig::get($target_item['id'],'ocap','relay');
-			if ($token) {
-				if (defined('USE_BEARCAPS')) {
-					$ti['id'] = 'bear:?u=' . $ti['id'] . '&t=' . $token;
-				}
-				else {
-					$ti['id'] = $ti['id'] . '?token=' . $token;
-				}
-				if ($ti['url'] && is_string($ti['url'])) {
-					$ti['url'] .= '?token=' . $token;
-				}
-			}
+			$ti = [
+				'id' => channel_url($channel) . '#delete',
+				'type' => 'Delete',
+				'obj' => channel_url($channel)
+			];
 
 			$msg = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1',
 				Activity::ap_schema()
 			]], $ti);
-	
+
 			$msg['signature'] = LDSignatures::sign($msg,$arr['channel']);
 
-			logger('ActivityPub_encoded: ' . json_encode($msg,JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT));
+			logger('ActivityPub_encoded (purge_all): ' . json_encode($msg,JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT));
 			
 			$jmsg = json_encode($msg, JSON_UNESCAPED_SLASHES);
+			
 		}
+		else {
+			$target_item = $arr['target_item'];
 
+			if (! $target_item['mid']) {
+				return;
+			}
+
+			$prv_recips = $arr['env_recips'];
+
+
+			if ($signed_msg) {
+				$jmsg = $signed_msg;
+			}
+			else {
+				$ti = Activity::encode_activity($target_item, true);
+				if (! $ti) {
+					return;
+				}
+
+				$token = IConfig::get($target_item['id'],'ocap','relay');
+				if ($token) {
+					if (defined('USE_BEARCAPS')) {
+						$ti['id'] = 'bear:?u=' . $ti['id'] . '&t=' . $token;
+					}
+					else {
+						$ti['id'] = $ti['id'] . '?token=' . $token;
+					}
+					if ($ti['url'] && is_string($ti['url'])) {
+						$ti['url'] .= '?token=' . $token;
+					}
+				}
+
+				$msg = array_merge(['@context' => [
+					ACTIVITYSTREAMS_JSONLD_REV,
+					'https://w3id.org/security/v1',
+					Activity::ap_schema()
+				]], $ti);
+	
+				$msg['signature'] = LDSignatures::sign($msg,$arr['channel']);
+
+				logger('ActivityPub_encoded: ' . json_encode($msg,JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT));
+			
+				$jmsg = json_encode($msg, JSON_UNESCAPED_SLASHES);
+			}
+		}
 		if ($prv_recips) {
 			$hashes = [];
 
