@@ -243,7 +243,7 @@ class Activity extends Controller {
 			$items = fetch_post_tags($r,false);
 
 			if ($portable_id && (! intval($items[0]['item_private']))) {
-				$c = q("select abook_id from abook where abook_channel = %d andd abook_xchan = '%s'",
+				$c = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s'",
 					intval($items[0]['uid']),
 					dbesc($portable_id)
 				);

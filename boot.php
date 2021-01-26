@@ -848,7 +848,6 @@ class App {
 
 		self::$query_string = '';
 
-
 		startup();
 
 		set_include_path(
@@ -857,26 +856,29 @@ class App {
 			. '.'
 		);
 
-		self::$scheme = 'http';
-		if(x($_SERVER,'HTTPS') && $_SERVER['HTTPS'])
-			self::$scheme = 'https';
-		elseif(x($_SERVER,'SERVER_PORT') && (intval($_SERVER['SERVER_PORT']) == 443))
-			self::$scheme = 'https';
-
-		if(x($_SERVER,'SERVER_NAME')) {
-			self::$hostname = punify($_SERVER['SERVER_NAME']);
+		// normally self::$hostname (also scheme and port) will be filled in during startup.
+		// Set it manually from $_SERVER variables only if it wasn't.
+		
+		if (! self::$hostname) {
+			self::$hostname = punify(get_host());
+			self::$scheme = 'http';
+			
+			if(x($_SERVER,'HTTPS') && $_SERVER['HTTPS'])
+				self::$scheme = 'https';
+			elseif(x($_SERVER,'SERVER_PORT') && (intval($_SERVER['SERVER_PORT']) == 443))
+				self::$scheme = 'https';
 
 			if(x($_SERVER,'SERVER_PORT') && $_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443)
 				self::$hostname .= ':' . $_SERVER['SERVER_PORT'];
-
-			/*
-			 * Figure out if we are running at the top of a domain
-			 * or in a sub-directory and adjust accordingly
-			 */
-			$path = trim(dirname($_SERVER['SCRIPT_NAME']),'/\\');
-			if(isset($path) && strlen($path) && ($path != self::$path))
-				self::$path = $path;
 		}
+
+		/*
+		 * Figure out if we are running at the top of a domain
+		 * or in a sub-directory and adjust accordingly
+		 */
+		$path = trim(dirname($_SERVER['SCRIPT_NAME']),'/\\');
+		if(isset($path) && strlen($path) && ($path != self::$path))
+			self::$path = $path;
 
 		if((x($_SERVER,'QUERY_STRING')) && substr($_SERVER['QUERY_STRING'], 0, 4) === "req=") {
 			self::$query_string = str_replace(['<','>'],['&lt;','&gt;'],substr($_SERVER['QUERY_STRING'], 4));
@@ -2504,4 +2506,24 @@ function get_safemode() {
 
 function supported_imagetype($x) {
 	return in_array($x, [ IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP ]);
+}
+
+function get_host() {
+	if ($host = $_SERVER['HTTP_X_FORWARDED_HOST']) {
+		$elements = explode(',', $host);
+		$host = trim(end($elements));
+	}
+	else {
+		if (! $host = $_SERVER['HTTP_HOST']) {
+			if (! $host = $_SERVER['SERVER_NAME']) {
+				$host = ((! empty($_SERVER['SERVER_ADDR'])) ? $_SERVER['SERVER_ADDR'] : '');
+			}
+		}
+	}
+
+	// Remove port number from host
+	if (strpos($host,':') !== false) {
+		$host = substr($host,0,strpos($host,':'));
+	}
+	return trim($host);
 }
