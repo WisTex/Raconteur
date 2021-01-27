@@ -52,8 +52,10 @@ class ActivityPub {
 
 			$ti = [
 				'id' => channel_url($channel) . '#delete',
+				'actor' => channel_url($channel),
 				'type' => 'Delete',
-				'obj' => channel_url($channel)
+				'object' => channel_url($channel),
+				'to' => [ 'https://www.w3.org/ns/activitystreams#Public' ]
 			];
 
 			$msg = array_merge(['@context' => [
