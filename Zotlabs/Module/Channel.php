@@ -106,6 +106,19 @@ class Channel extends Controller {
 			killme();
 		}
 
+		// An ActivityStreams actor record is more or less required for ActivityStreams compliance
+		// unless the actor object is inlined into every activity/object. This implies that it
+		// is more or less required for the Zot6 protocol, which uses ActivityStreams as a content
+		// serialisation and which doesn't always include the full actor record with every
+		// activity/object.
+
+		// "more or less" means it isn't spelled out in the ActivityStreams spec, but a number of
+		// things will break in subtle ways if it isn't provided.
+
+		// The ActivityPub protocol requires an 'inbox', which will not be present in this record
+		// if/when the ActivityPub protocol is disabled. This will be the case when using the Redmatrix
+		// fork of Zap; which disables ActivityPub connectivity by default.  
+
 		if (ActivityStreams::is_as_request()) {
 
 			// Somebody may attempt an ActivityStreams fetch on one of our message permalinks
