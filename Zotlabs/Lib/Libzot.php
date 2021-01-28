@@ -259,6 +259,8 @@ class Libzot {
 
 	static function refresh($them, $channel = null, $force = false) {
 
+		$hsig_valid = false;
+
 		logger('them: ' . print_r($them,true), LOGGER_DATA, LOG_DEBUG);
 		if ($channel) {
 			logger('channel: ' . print_r($channel,true), LOGGER_DATA, LOG_DEBUG);
@@ -323,7 +325,7 @@ class Libzot {
 		}
 
 		if (! $hsig_valid) {
-			logger('http signature not valid: ' . print_r($hsig,true));
+			logger('http signature not valid: ' . (($record['data']) ? print_r($hsig,true) : 'fetch failed'));
 			return false;
 		}
 

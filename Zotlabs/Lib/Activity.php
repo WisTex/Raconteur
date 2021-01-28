@@ -2849,6 +2849,7 @@ class Activity {
 		}
 		
 		$allowed = false;
+		$reason = [ 'init' ];
 		$permit_mentions = intval(PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$item));
 		
 		if ($is_child_node) {		
@@ -2861,9 +2862,13 @@ class Activity {
 				$item['owner_xchan'] = $p[0]['owner_xchan'];
 				// check permissions against the author, not the sender
 				$allowed = perm_is_allowed($channel['channel_id'],$item['author_xchan'],'post_comments');
+				if (! $allowed) {
+					$reason[] = 'post_comments perm';
+				}
 				if ((! $allowed) && $permit_mentions)  {
 					if ($p[0]['owner_xchan'] === $channel['channel_hash']) {
 						$allowed = false;
+						$reason[] = 'ownership';
 					}
 					else {
 						$allowed = true;
@@ -2871,10 +2876,12 @@ class Activity {
 				}
 				if (absolutely_no_comments($p[0])) {
 					$allowed = false;
+					$reason[] = 'absolutely';
 				}
 				
 				if (! $allowed) {
 					logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
+					logger('rejected reason ' . print_r($reason,true));
 					logger('rejected: ' . print_r($item,true), LOGGER_DATA);
 					// let the sender know we received their comment but we don't permit spam here.
 					self::send_rejection_activity($channel,$item['author_xchan'],$item);
@@ -2893,6 +2900,7 @@ class Activity {
 
 				if ($is_sys_channel && $pubstream && $item['owner_xchan'] !== $observer_hash && ! $fetch_parents) {
 					$allowed = false;
+					$reason[] = 'sender ' . $observer_hash . ' not owner ' . $item['owner_xchan'];
 				}
 			}
 			
@@ -2921,6 +2929,7 @@ class Activity {
 
 			if (! check_pubstream_channelallowed($observer_hash)) {
 				$allowed = false;
+				$reason[] = 'pubstream channel';
 			}
 
 			// don't allow pubstream posts if the sender even has a clone on a pubstream denied site
@@ -2932,12 +2941,14 @@ class Activity {
 				foreach ($h as $hub) {
 					if (! check_pubstream_siteallowed($hub['hubloc_url'])) {
 						$allowed = false;
+						$reason = 'pubstream site';
 						break;
 					}
 				}
 			}
 			if (intval($item['item_private'])) {
 				$allowed = false;
+				$reason[] = 'private item';
 			}
 		}	
 
@@ -2946,12 +2957,14 @@ class Activity {
 			foreach($blocked as $b) {
 				if (strpos($observer_hash,$b['block_entity']) !== false) {
 					$allowed = false;
+					$reason[] = 'blocked';
 				}
 			}
 		}
 
 		if (! $allowed && ! $force) {
 			logger('no permission: channel ' . $channel['channel_address'] . ', id = ' . $item['mid']);
+			logger('no permission: reason ' . print_r($reason,true));
 			return;
 		}
 
@@ -3202,6 +3215,8 @@ class Activity {
 			$current_act = $a;
 			$current_item = $item;
 		}
+
+		
 
 		if ($p) {
 			foreach ($p as $pv) {
