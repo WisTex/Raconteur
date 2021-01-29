@@ -1786,10 +1786,12 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 				//				$uplinked_comment = true;
 			}
 
-			// if the parent is private, force privacy for the entire conversation
-
-			if($r[0]['item_private'])
+			// if the parent is private and the child is not, force privacy for the entire conversation
+			// if the child is private, leave it alone regardless of the parent privacy state
+			
+			if(intval($r[0]['item_private']) && (! intval($arr['item_private']))) {
 				$arr['item_private'] = $r[0]['item_private'];
+			}
 
 			// Edge case. We host a public forum that was originally posted to privately.
 			// The original author commented, but as this is a comment, the permissions
