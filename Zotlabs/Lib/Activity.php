@@ -110,6 +110,16 @@ class Activity {
 			$y = json_decode($x['body'],true);
 			logger('returned: ' . json_encode($y,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
 
+			$m = parse_url($url);
+			if ($m) {
+				$site_url = unparse_url( ['scheme' => $m['scheme'], 'host' => $m['host'], 'port' => $m['port'] ] );
+				q("update site set site_update = '%s' where site_url = '%s' and site_update < %s - INTERVAL %s",
+					dbesc(datetime_convert()),
+					dbesc($site_url),
+					db_utcnow(), db_quoteinterval('1 DAY')
+				);
+			}
+
 			// check for a valid signature, but only if this is not an actor object. If it is signed, it must be valid.
 			// Ignore actors because of the potential for infinite recursion if we perform this step while
 			// fetching an actor key to validate a signature elsewhere. This should validate relayed activities
@@ -1912,8 +1922,9 @@ class Activity {
 					dbesc($site_url)
 				);
 				if ($site) {
-					q("update site set site_project = '%s', site_version = '%s' where site_url = '%s'",
+					q("update site set site_project = '%s', site_update = '%s', site_version = '%s' where site_url = '%s'",
 						dbesc($software),
+						dbesc(datetime_convert()),
 						dbesc($version),
 						dbesc($site_url)
 					);
