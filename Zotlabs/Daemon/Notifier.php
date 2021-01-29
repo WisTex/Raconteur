@@ -415,6 +415,12 @@ class Notifier {
 					logger('normal (downstream) distribution', LOGGER_DEBUG);
 				}
 				$upstream = false;
+
+				if ($parent_item && $parent_item['item_private'] !== $target_item['item_private']) {
+					logger('conversation privacy mismatch - downstream delivery prevented');
+					return;
+				}
+
 				// if our parent is a tag_delivery recipient, uplink to the original author causing
 				// a delivery fork. 
 	
