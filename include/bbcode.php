@@ -1323,6 +1323,9 @@ function bbcode($Text, $options = []) {
 	// Replace any html brackets with HTML Entities to prevent executing HTML or script
 	// Don't use strip_tags here because it breaks [url] search by replacing & with amp
 
+	// experimental.... not yet working
+	//    $Text = purify_html($Text);
+
 	$Text = str_replace("<", "&lt;", $Text);
 	$Text = str_replace(">", "&gt;", $Text);
 
@@ -1342,6 +1345,13 @@ function bbcode($Text, $options = []) {
 
 
 	if (! $bbonly) {
+
+		// escape some frequently encountered false positives with a zero-width space
+
+		// Here we are catching things like [quote](something)[/quote] and [b](something)[/b] and preventing them from turning into broken markdown links [text](url)
+		// We'll do this with a zero-width space between ] and (
+		$Text = preg_replace("/\[(.*?)\]\((.*?)\)\[\/(.*?)\]/ism", '[$1]' . html_entity_decode('&#8203;') . '($2)[/$3]', $Text);
+
 
 		// save code blocks from being interpreted as markdown
 
