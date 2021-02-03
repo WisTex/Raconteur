@@ -1323,9 +1323,6 @@ function bbcode($Text, $options = []) {
 	// Replace any html brackets with HTML Entities to prevent executing HTML or script
 	// Don't use strip_tags here because it breaks [url] search by replacing & with amp
 
-	// experimental.... not yet working
-	//    $Text = purify_html($Text);
-
 	$Text = str_replace("<", "&lt;", $Text);
 	$Text = str_replace(">", "&gt;", $Text);
 
