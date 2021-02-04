@@ -3375,7 +3375,7 @@ class Activity {
 
 		if (array_path_exists('source/mediaType',$act) && array_path_exists('source/content',$act)) {
 			if ($act['source']['mediaType'] === 'text/bbcode') {
-				$content['bbcode'] = purify_html($act['source']['content']);
+				$content['bbcode'] = purify_html($act['source']['content'], [ 'escape'] );
 			}
 		}
 
