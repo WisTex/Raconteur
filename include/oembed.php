@@ -263,7 +263,7 @@ function oembed_fetch_url($embedurl){
 
 			// logger('frame src: ' . $j['html'], LOGGER_DATA);
 		
-			$j['html'] = purify_html($j['html'],$allow_position);
+			$j['html'] = purify_html($j['html'], (($allow_position) ? [ 'allow_position' ] : []));
 			if($j['html'] != $orig) {
 				// logger('oembed html was purified. original: ' . $orig . ' purified: ' . $j['html'], LOGGER_DEBUG, LOG_INFO); 
 			}

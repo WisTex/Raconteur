@@ -1324,11 +1324,9 @@ function bbcode($Text, $options = []) {
 	// Replace any html brackets with HTML Entities to prevent executing HTML or script
 	// Don't use strip_tags here because it breaks [url] search by replacing & with amp
 
-	// experimental.... not yet working
-	//    $Text = purify_html($Text);
-
-//	$Text = str_replace("<", "&lt;", $Text);
-//	$Text = str_replace(">", "&gt;", $Text);
+	// These are no longer needed since we run the content through purify_html()
+	//	$Text = str_replace("<", "&lt;", $Text);
+	//	$Text = str_replace(">", "&gt;", $Text);
 
 
 	// Check for [code] text here, before the linefeeds are messed with.
@@ -1359,7 +1357,7 @@ function bbcode($Text, $options = []) {
 
 		$Text = preg_replace_callback("/\[code(.*?)\](.*?)\[\/code\]/ism", 'bb_code_preprotect', $Text);
 
-		$Text = purify_html($Text);
+		$Text = purify_html($Text, [ 'escape' ]);
 
 		// Perform some markdown conversions before translating linefeeds so as to keep the regexes manageable
 
