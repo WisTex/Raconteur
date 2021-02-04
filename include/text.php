@@ -106,8 +106,11 @@ function escape_tags($string) {
 
 function z_input_filter($s,$type = 'text/bbcode',$allow_code = false) {
 
-	if($type === 'text/bbcode')
-		return escape_tags($s);
+	if($type === 'text/bbcode') {
+		return ($s);
+		// purify_html($s);
+		// return escape_tags($s);
+	}
 	if($type == 'text/plain')
 		return escape_tags($s);
 	if($type == 'application/x-pdl')
@@ -147,7 +150,7 @@ function z_input_filter($s,$type = 'text/bbcode',$allow_code = false) {
  * @param boolean $allow_position allow CSS position
  * @return string standards compliant filtered HTML
  */
-function purify_html($s, $allow_position = false) {
+function purify_html($s, $opts = []) {
 
 /**
  * @FIXME this function has html output, not bbcode - so safely purify these
@@ -159,6 +162,15 @@ function purify_html($s, $allow_position = false) {
 	$config = HTMLPurifier_Config::createDefault();
 	$config->set('Cache.DefinitionImpl', null);
 	$config->set('Attr.EnableID', true);
+
+	// This will escape invalid tags in the output instead of removing.
+	// This is necessary for mixed format (text+bbcode+html+markdown) messages or
+	// some angle brackets in plaintext may get stripped if they look like an HTML tag
+	
+	if (in_array('escape',$opts)) {
+		$config->set('Core.EscapeInvalidChildren', true);
+		$config->set('Core.EscapeInvalidTags', true);
+	}
 
 	// If enabled, target=blank attributes are added to all links.
 	//$config->set('HTML.TargetBlank', true);
@@ -187,7 +199,7 @@ function purify_html($s, $allow_position = false) {
 	//responsive navigation
 	$def->info_global_attr['data-responsive-menu'] = new HTMLPurifier_AttrDef_Text;
 	$def->info_global_attr['data-responsive-toggle'] = new HTMLPurifier_AttrDef_Text;
-	//magellan
+	//magellan 
 	$def->info_global_attr['data-magellan'] = new HTMLPurifier_AttrDef_Text;
 	$def->info_global_attr['data-magellan-target'] = new HTMLPurifier_AttrDef_Text;
 
@@ -282,7 +294,7 @@ function purify_html($s, $allow_position = false) {
 	$def->addElement('button',  'Inline', 'Inline', 'Common');
 
 
-	if($allow_position) {
+	if(in_array('allow_position', $opts)) {
 		$cssDefinition = $config->getCSSDefinition();
 
 		$cssDefinition->info['position'] = new HTMLPurifier_AttrDef_Enum(array('absolute', 'fixed', 'relative', 'static', 'inherit'), false);
