@@ -966,7 +966,7 @@ function bb_imgoptions($match) {
 }
 
 function bb_code_preprotect($matches) {
-	return '[code' . $matches[1] . ']' . 'b64.^8e%.' . base64_encode($matches[2]) . '.b64.$8e%' . '[/code]';
+	return '[code' . $matches[1] . ']' . 'b64.^8e%.' . base64_encode(str_replace('<br>','|+br+|',$matches[2])) . '.b64.$8e%' . '[/code]';
 }
 
 function bb_code_preunprotect($s) {
@@ -975,7 +975,7 @@ function bb_code_preunprotect($s) {
 
 
 function bb_code_protect($s) {
-	return 'b64.^9e%.' . base64_encode($s) . '.b64.$9e%';
+	return 'b64.^9e%.' . base64_encode(str_replace('<br>','|+br+|',$s)) . '.b64.$9e%';
 }
 
 function bb_code_unprotect($s) {
@@ -983,7 +983,8 @@ function bb_code_unprotect($s) {
 }
 
 function bb_code_unprotect_sub($match) {
-	return base64_decode($match[1]);
+	$x = str_replace( [ '<', '>'  ], [ '&lt;', '&gt;' ], base64_decode($match[1]));
+	return str_replace('|+br+|','<br>', $x);
 }
 
 function bb_colorbox($match) {
@@ -1323,8 +1324,9 @@ function bbcode($Text, $options = []) {
 	// Replace any html brackets with HTML Entities to prevent executing HTML or script
 	// Don't use strip_tags here because it breaks [url] search by replacing & with amp
 
-	$Text = str_replace("<", "&lt;", $Text);
-	$Text = str_replace(">", "&gt;", $Text);
+	// These are no longer needed since we run the content through purify_html()
+	//	$Text = str_replace("<", "&lt;", $Text);
+	//	$Text = str_replace(">", "&gt;", $Text);
 
 
 	// Check for [code] text here, before the linefeeds are messed with.
@@ -1340,8 +1342,10 @@ function bbcode($Text, $options = []) {
 
 	$Text = str_replace("\r\n", "\n", $Text);
 
-
-	if (! $bbonly) {
+	if ($bbonly) {
+		$Text = purify_html($Text);
+	}
+	else {
 
 		// escape some frequently encountered false positives with a zero-width space
 
@@ -1349,10 +1353,11 @@ function bbcode($Text, $options = []) {
 		// We'll do this with a zero-width space between ] and (
 		$Text = preg_replace("/\[(.*?)\]\((.*?)\)\[\/(.*?)\]/ism", '[$1]' . html_entity_decode('&#8203;') . '($2)[/$3]', $Text);
 
-
 		// save code blocks from being interpreted as markdown
 
 		$Text = preg_replace_callback("/\[code(.*?)\](.*?)\[\/code\]/ism", 'bb_code_preprotect', $Text);
+
+		$Text = purify_html($Text, [ 'escape' ]);
 
 		// Perform some markdown conversions before translating linefeeds so as to keep the regexes manageable
 

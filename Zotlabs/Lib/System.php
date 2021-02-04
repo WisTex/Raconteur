@@ -112,7 +112,7 @@ class System {
 
 	static public function compatible_project($p) {
 
-		if (in_array(strtolower($p),['hubzilla','zap','red','misty','mistpark','redmatrix','osada'])) {
+		if (in_array(strtolower($p),['hubzilla','zap','red','misty','mistpark','redmatrix','osada', 'roadhouse'])) {
 			return true;
 		}
 		return false;
