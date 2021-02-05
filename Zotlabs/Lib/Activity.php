@@ -2796,7 +2796,7 @@ class Activity {
 					$s['body'] = preg_replace('/\[url\=' . preg_quote($x[0]['xchan_hash'],'/') . '\]@(.*?)\[\/url\]/ism',
 						'@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',$s['body']);
 
-					if ($obj) {
+					if ($obj && $txt) {
 						if (! is_array($obj)) {
 							$obj = json_decode($obj,true);
 						}
