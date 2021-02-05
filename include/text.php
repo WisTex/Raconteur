@@ -1541,8 +1541,9 @@ function format_mentions(&$item) {
 				}
 			}
 	
-			if($s)
+			if ($s) {
 				$s .= ' ';
+			}
 			$s .= '<span class="badge badge-pill badge-success"><i class="fa fa-at"></i>&nbsp;<a class="text-white" href="' . zid(chanlink_url($t['url'])) . '" >' . $txt . '</a></span>';
 		}
 	}
