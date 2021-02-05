@@ -16,7 +16,7 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '21.01.30' );
+define ( 'STD_VERSION',             '21.02.05' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1247 );
@@ -72,6 +72,10 @@ define ( 'ATOM_TIME',              'Y-m-d\\TH:i:s\\Z'     ); // aka ISO 8601 "Zu
 define ( 'TEMPLATE_BUILD_PATH',    'cache/smarty3' );
 
 //define ( 'USE_BEARCAPS',           true);
+
+
+// Many of these directory settings are no longer used, but may still be referenced in code. 
+// The only ones of consequence in 2021 are DIRECTORY_MODE_NORMAL and DIRECTORY_MODE_STANDALONE.
 
 define ( 'DIRECTORY_MODE_NORMAL',      0x0000); // A directory client
 define ( 'DIRECTORY_MODE_PRIMARY',     0x0001); // There can only be *one* primary directory server in a directory_realm.
