@@ -91,10 +91,12 @@ class ActivityPub {
 				// the username or webfinger address when displaying names. This is likely to
 				// only cause confusion on nomadic networks where there could be any number
 				// of applicable webfinger addresses for a given identity. 
-				
-				Activity::rewrite_mentions_sub($target_item, 1);
-				
+
+
+				Activity::rewrite_mentions_sub($target_item, 1, $target_item['obj']);
+
 				$ti = Activity::encode_activity($target_item, true);
+
 				if (! $ti) {
 					return;
 				}
