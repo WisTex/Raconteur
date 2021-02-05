@@ -2738,18 +2738,7 @@ class Activity {
 
 	}
 
-	static function rewrite_mentions(&$s) {
-		// rewrite incoming mentions in accordance with system.tag_username setting
-		// 0 - displayname
-		// 1 - username
-		// 2 - displayname (username)
-		// 127 - default
-		
-		$pref = intval(PConfig::Get($s['uid'],'system','tag_username',Config::Get('system','tag_username',false)));
-
-		if ($pref === 127) {
-			return;
-		}
+	static function rewrite_mentions_sub(&$s, $pref) {
 
 		if ($s['term']) {
 			foreach ($s['term'] as $tag) {
@@ -2809,13 +2798,32 @@ class Activity {
 				}
 			}
 		}
-		
+
 		// $s['html'] will be populated if caching was enabled.
 		// This is usually the case for ActivityPub sourced content, while Zot6 content is not cached.
 
 		if ($s['html']) {
 			$s['html'] = bbcode($s['body'], [ 'bbonly' => true ] );
 		}
+
+		return;
+	}
+
+	static function rewrite_mentions(&$s) {
+		// rewrite incoming mentions in accordance with system.tag_username setting
+		// 0 - displayname
+		// 1 - username
+		// 2 - displayname (username)
+		// 127 - default
+		
+		$pref = intval(PConfig::Get($s['uid'],'system','tag_username',Config::Get('system','tag_username',false)));
+
+		if ($pref === 127) {
+			return;
+		}
+
+		self::rewrite_mentions_sub($s,$pref);
+
 
 		return;
 	}
