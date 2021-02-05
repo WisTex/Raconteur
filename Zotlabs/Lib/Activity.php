@@ -2738,18 +2738,7 @@ class Activity {
 
 	}
 
-	static function rewrite_mentions(&$s) {
-		// rewrite incoming mentions in accordance with system.tag_username setting
-		// 0 - displayname
-		// 1 - username
-		// 2 - displayname (username)
-		// 127 - default
-		
-		$pref = intval(PConfig::Get($s['uid'],'system','tag_username',Config::Get('system','tag_username',false)));
-
-		if ($pref === 127) {
-			return;
-		}
+	static function rewrite_mentions_sub(&$s, $pref, &$obj = null) {
 
 		if ($s['term']) {
 			foreach ($s['term'] as $tag) {
@@ -2806,16 +2795,49 @@ class Activity {
 						'@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',$s['body']);
 					$s['body'] = preg_replace('/\[url\=' . preg_quote($x[0]['xchan_hash'],'/') . '\]@(.*?)\[\/url\]/ism',
 						'@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',$s['body']);
+
+					if ($obj) {
+						if (! is_array($obj)) {
+							$obj = json_decode($obj,true);
+						}
+						if (array_path_exists('source/content',$obj)) {
+							$obj['source']['content'] = preg_replace('/\@\[zrl\=' . preg_quote($x[0]['xchan_url'],'/') . '\](.*?)\[\/zrl\]/ism',
+								'@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',$obj['source']['content']);
+							$obj['source']['content'] = preg_replace('/\@\[url\=' . preg_quote($x[0]['xchan_url'],'/') . '\](.*?)\[\/url\]/ism',
+								'@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',$obj['source']['content']);
+						}
+						$obj['content'] = preg_replace('/\@(.*?)\<a (.*?)href\=\"' . preg_quote($x[0]['xchan_url'],'/') . '\"(.*?)\>(.*?)\<\/a\>/ism',
+							'@$1<a $2 href="' . $x[0]['xchan_url'] . '"$3>' . $txt . '</a>', $obj['content']);
+					}
 				}
 			}
 		}
-		
+
 		// $s['html'] will be populated if caching was enabled.
 		// This is usually the case for ActivityPub sourced content, while Zot6 content is not cached.
 
 		if ($s['html']) {
-			$s['html'] = bbcode($s['body']);
+			$s['html'] = bbcode($s['body'], [ 'bbonly' => true ] );
 		}
+
+		return;
+	}
+
+	static function rewrite_mentions(&$s) {
+		// rewrite incoming mentions in accordance with system.tag_username setting
+		// 0 - displayname
+		// 1 - username
+		// 2 - displayname (username)
+		// 127 - default
+		
+		$pref = intval(PConfig::Get($s['uid'],'system','tag_username',Config::Get('system','tag_username',false)));
+
+		if ($pref === 127) {
+			return;
+		}
+
+		self::rewrite_mentions_sub($s,$pref);
+
 
 		return;
 	}

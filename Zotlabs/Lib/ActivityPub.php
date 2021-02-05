@@ -85,7 +85,18 @@ class ActivityPub {
 				$jmsg = $signed_msg;
 			}
 			else {
+
+				// Rewrite outbound mentions so they match the ActivityPub convention, which
+				// is to pretend that the preferred display name doesn't exist and instead use
+				// the username or webfinger address when displaying names. This is likely to
+				// only cause confusion on nomadic networks where there could be any number
+				// of applicable webfinger addresses for a given identity. 
+
+
+				Activity::rewrite_mentions_sub($target_item, 1, $target_item['obj']);
+
 				$ti = Activity::encode_activity($target_item, true);
+
 				if (! $ti) {
 					return;
 				}
