@@ -1625,7 +1625,6 @@ CREATE TABLE if not exists oauth_access_tokens (
   user_id              int(10) unsigned NOT NULL DEFAULT 0,
   expires              TIMESTAMP      NOT NULL,
   scope                VARCHAR(4000),
-  PRIMARY KEY (id),
   KEY `access_token` (`access_token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
