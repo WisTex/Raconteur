@@ -2814,7 +2814,7 @@ class Activity {
 		// This is usually the case for ActivityPub sourced content, while Zot6 content is not cached.
 
 		if ($s['html']) {
-			$s['html'] = bbcode($s['body']);
+			$s['html'] = bbcode($s['body'], [ 'bbonly' => true ] );
 		}
 
 		return;
