@@ -139,6 +139,10 @@ function videowithopts($match) {
 	if ($matches[1] != "")
 		$poster = 'poster="' . (($zrl) ? zid($matches[1]) : $matches[1]) . '"';
 
+	preg_match("/poster=\\\"(.*?)\\\"/ism", $attributes, $matches);
+	if ($matches[1] != "")
+		$poster = 'poster="' . (($zrl) ? zid($matches[1]) : $matches[1]) . '"';
+
 	return '<video ' . $poster . ' controls="controls" preload="none" src="' . str_replace(' ','%20',$link) . '" style="width:100%; max-width:' . App::$videowidth . 'px"><a href="' . str_replace(' ','%20',$link) . '">' . $link . '</a></video>';
 }
 
@@ -254,8 +258,13 @@ function bb_parse_crypt($match) {
 	if ($matches[1] != "")
 		$algorithm = $matches[1];
 
-	$hint = "";
+	preg_match("/alg=\\\"(.*?)\\\"/ism", $attributes, $matches);
+	if ($matches[1] != "")
+		$algorithm = $matches[1];
 
+	$hint = "";
+	$matches = [];
+	
 	preg_match("/hint='(.*?)'/ism", $attributes, $matches);
 	if ($matches[1] != "")
 		$hint = $matches[1];
@@ -415,6 +424,11 @@ function getAttachmentData($body) {
 		$type = strtolower($matches[1]);
 	}
 
+	preg_match('/type=\\\"(.*?)\\\"/ism', $attributes, $matches);
+	if (x($matches, 1)) {
+		$type = strtolower($matches[1]);
+	}
+
 	if ($type == "") {
 		return [];
 	}
@@ -437,6 +451,11 @@ function getAttachmentData($body) {
 		$url = $matches[1];
 	}
 
+	preg_match('/url=\\\"(.*?)\\\"/ism', $attributes, $matches);
+	if (x($matches, 1)) {
+		$url = $matches[1];
+	}
+
 	if ($url != "") {
 		$data["url"] = html_entity_decode($url, ENT_QUOTES, 'UTF-8');
 	}
@@ -451,6 +470,12 @@ function getAttachmentData($body) {
 	if (x($matches, 1)) {
 		$title = $matches[1];
 	}
+
+	preg_match('/title=\\\"(.*?)\\\"/ism', $attributes, $matches);
+	if (x($matches, 1)) {
+		$title = $matches[1];
+	}
+
 	if ($title != "") {
 		$title = html_entity_decode($title, ENT_QUOTES, 'UTF-8');
 		$title = str_replace(["[", "]"], ["&#91;", "&#93;"], $title);
@@ -464,6 +489,11 @@ function getAttachmentData($body) {
 	}
 
 	preg_match('/image=\&quot\;(.*?)\&quot\;/ism', $attributes, $matches);
+	if (x($matches, 1)) {
+		$image = $matches[1];
+	}
+
+	preg_match('/image=\\\"(.*?)\\\"/ism', $attributes, $matches);
 	if (x($matches, 1)) {
 		$image = $matches[1];
 	}
@@ -482,6 +512,12 @@ function getAttachmentData($body) {
 	if (x($matches, 1)) {
 		$preview = $matches[1];
 	}
+
+	preg_match('/preview=\\\"(.*?)\\\"/ism', $attributes, $matches);
+	if (x($matches, 1)) {
+		$preview = $matches[1];
+	}
+
 	if ($preview != "") {
 		$data["preview"] = html_entity_decode($preview, ENT_QUOTES, 'UTF-8');
 	}
@@ -878,6 +914,11 @@ function bb_imgoptions($match) {
 		$alt = $matches[1];
 	}
 
+	$x = preg_match("/alt=\\\"(.*?)\\\"/ism", $attributes, $matches);
+	if ($x) {
+		$alt = $matches[1];
+	}
+
 	$x = preg_match("/width=([0-9]*)/ism", $attributes, $matches);
 	if ($x) {
 		$width = bb_xss($matches[1]);
@@ -889,6 +930,11 @@ function bb_imgoptions($match) {
 	}
 	
 	$x = preg_match("/width=\&quot\;(.*?)\&quot\;/ism", $attributes, $matches);
+	if ($x) {
+		$width = bb_xss($matches[1]);
+	}
+
+	$x = preg_match("/width=\\\"(.*?)\\\"/ism", $attributes, $matches);
 	if ($x) {
 		$width = bb_xss($matches[1]);
 	}
@@ -907,6 +953,11 @@ function bb_imgoptions($match) {
 	if ($x) {
 		$height = bb_xss($matches[1]);
 	}
+	
+	$x = preg_match("/height=\\\"(.*?)\\\"/ism", $attributes, $matches);
+	if ($x) {
+		$height = bb_xss($matches[1]);
+	}
 
 	$x = preg_match("/style='(.*?)'/ism", $attributes, $matches);
 	if ($x) {
@@ -914,6 +965,11 @@ function bb_imgoptions($match) {
 	}
 	
 	$x = preg_match("/style=\&quot\;(.*?)\&quot\;/ism", $attributes, $matches);
+	if ($x) {
+		$style = bb_sanitize_style($matches[1]);
+	}
+
+	$x = preg_match("/style=\\\"(.*?)\\\"/ism", $attributes, $matches);
 	if ($x) {
 		$style = bb_sanitize_style($matches[1]);
 	}

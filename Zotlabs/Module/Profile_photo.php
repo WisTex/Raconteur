@@ -551,10 +551,7 @@ class Profile_photo extends Controller {
 	 */
 	
 	function profile_photo_crop_ui_head($ph, $hash, $smallest) {
-		$max_length = get_config('system','max_image_length');
-		if (! $max_length) {
-			$max_length = MAX_IMAGE_LENGTH;
-		}
+		$max_length = get_config('system','max_image_length', MAX_IMAGE_LENGTH);
 		if ($max_length > 0) {
 			$ph->scaleImage($max_length);
 		}
