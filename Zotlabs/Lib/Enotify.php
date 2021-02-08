@@ -701,7 +701,7 @@ class Enotify {
 					$private_activity = true;
 				case NOTIFY_MAIL:
 					$datarray['textversion'] = $datarray['htmlversion'] = $datarray['title'] = '';
-					$datarray['subject'] = preg_replace('/' . preg_quote(t('[$Projectname:Notify]')) . '/','$0*',$datarray['subject']);
+					$datarray['subject'] = preg_replace('/' . preg_quote(t('[$Projectname:Notify]'), '/') . '/','$0*',$datarray['subject']);
 					break;
 				default:
 					break;
