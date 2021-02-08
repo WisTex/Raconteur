@@ -911,7 +911,7 @@ function get_tags($s) {
 			if((strpos($mtch,'#') === 0) && ( ctype_digit(substr($mtch,1)) || in_array(substr($mtch,1,1), [ '^', '#' ])))
 				continue;
 			// or quote remnants from the quoted strings we already picked out earlier
-			if(strpos($mtch,'&quot'))
+			if((strpos($mtch,'&quot')) || strpos($mtch,"\""))
 				continue;
 
 			$ret[] = $mtch;
