@@ -224,17 +224,17 @@ function photo_upload($channel, $observer, $args) {
 
 	@unlink($src);
 
-	$max_length = get_config('system','max_image_length');
-	if (! $max_length)
-		$max_length = MAX_IMAGE_LENGTH;
-	if ($max_length > 0)
+	$max_length = get_config('system','max_image_length', MAX_IMAGE_LENGTH);
+	if ($max_length > 0) {
 		$ph->scaleImage($max_length);
-
-	if(! $width)
+	}
+	
+	if (! $width) {
 		$width  = $ph->getWidth();
-	if(! $height)
+	}
+	if (! $height) {
 		$height = $ph->getHeight();
-
+	}
 	$smallest = 0;
 
 	$photo_hash = (($args['resource_id']) ? $args['resource_id'] : photo_new_resource());
