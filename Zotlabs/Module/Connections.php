@@ -190,10 +190,10 @@ class Connections extends Controller {
 		$searching = false;
 		if($search) {
 			$search_hdr = $search;
-			$search_txt = dbesc(protect_sprintf(preg_quote($search)));
+			$search_txt = dbesc(protect_sprintf($search));
 			$searching = true;
 		}
-		$sql_extra .= (($searching) ? protect_sprintf(" AND ( xchan_name like '%$search_txt%' OR abook_alias like '%$search_txt%' ) ") : "");
+		$sql_extra .= (($searching) ? " AND ( xchan_name like '%%$search_txt%%' OR abook_alias like '%%$search_txt%%' ) " : "");
 	
 		if($_REQUEST['gid']) {
 			$sql_extra .= " and xchan_hash in ( select xchan from pgrp_member where gid = " . intval($_REQUEST['gid']) . " and uid = " . intval(local_channel()) . " ) ";

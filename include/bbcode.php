@@ -1413,7 +1413,14 @@ function bbcode($Text, $options = []) {
 
 		$Text = preg_replace_callback("/\[code(.*?)\](.*?)\[\/code\]/ism", 'bb_code_preprotect', $Text);
 
-		$Text = purify_html($Text, [ 'escape' ]);
+		// Quick but flawed fix for performance regression after purification
+		// was moved to rendering code to allow multiple code formats
+		// A proper fix would be to escape any code blocks before purification,
+		// restore them and store the resultant intermediate multicode.
+
+		if (strpbrk($Text,'<>') !== false) {
+			$Text = purify_html($Text, [ 'escape' ]);
+		}
 
 		// Perform some markdown conversions before translating linefeeds so as to keep the regexes manageable
 
