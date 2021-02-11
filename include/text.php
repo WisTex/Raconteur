@@ -107,9 +107,7 @@ function escape_tags($string) {
 function z_input_filter($s,$type = 'text/bbcode',$allow_code = false) {
 
 	if($type === 'text/bbcode') {
-		return ($s);
-		// purify_html($s);
-		// return escape_tags($s);
+		return (multicode_purify($s));
 	}
 	if($type == 'text/plain')
 		return escape_tags($s);

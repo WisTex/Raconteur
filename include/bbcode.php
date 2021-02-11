@@ -1021,6 +1021,22 @@ function bb_imgoptions($match) {
 	
 }
 
+function multicode_purify($s) {
+
+	$s = preg_replace_callback("/\[code(.*?)\](.*?)\[\/code\]/ism", function ($match) {
+		return '[code' . $match[1] . ']' . bb_code_protect($match[2]) . '[/code]';
+	}, $s);
+
+	$s = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#', function ($match) {
+		return $match[1] . $match[2] . "\n" . bb_code_protect($match[4]) . "\n" . $match[2] . (($match[5]) ? $match[5] : "\n");
+	}, $s);
+	
+	$s = purify_html($s, [ 'escape' ]);
+
+	return bb_code_unprotect($s);
+
+}
+
 function bb_code_preprotect($matches) {
 	return '[code' . $matches[1] . ']' . 'b64.^8e%.' . base64_encode(str_replace('<br>','|+br+|',$matches[2])) . '.b64.$8e%' . '[/code]';
 }
@@ -1094,7 +1110,7 @@ function md_codeblock($content) {
 
 	$language = !empty($content[3]) ? filter_var($content[3], FILTER_SANITIZE_STRING) : '';
 	$class = !empty($language) ? sprintf(' class="%s language-%s"', $language, $language) : '';
-	// Build one block so that we not create each paragraph.
+	// Build one block so that we not render each paragraph separately.
 	$content = str_replace("\n", '<br>', $content[4]);
 
 	return sprintf('<pre><code%s>%s</code></pre>', $class, bb_code_protect($content));
@@ -1417,10 +1433,11 @@ function bbcode($Text, $options = []) {
 		// was moved to rendering code to allow multiple code formats
 		// A proper fix would be to escape any code blocks before purification,
 		// restore them and store the resultant intermediate multicode.
+		// This is now accomplished using multicode_purify()
 
-		if (strpbrk($Text,'<>') !== false) {
-			$Text = purify_html($Text, [ 'escape' ]);
-		}
+		//		if (strpbrk($Text,'<>') !== false) {
+		//			$Text = purify_html($Text, [ 'escape' ]);
+		//		}
 
 		// Perform some markdown conversions before translating linefeeds so as to keep the regexes manageable
 
@@ -1948,7 +1965,7 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace("/\<(.*?)(src|href)=(.*?)\&amp\;(.*?)\>/ism", '<$1$2=$3&$4>', $Text);
 
 	// This is subtle - it's an XSS filter. It only accepts links with a protocol scheme and where
-	// the scheme begins with z (zhttp), h (http(s)), f (ftp(s)), g (gemini), m (mailto), t (tel) and named anchors.
+	// the scheme begins with z (zhttp), h (http(s)), f (ftp(s)), g (gemini), m (mailto|magnet), t (tel) and named anchors.
 	// data: urls are allowed if exporting to activitypub which allows inline svg to federate, but not 
 	// to be used for local display
 

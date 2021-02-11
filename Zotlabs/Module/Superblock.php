@@ -30,6 +30,13 @@ class Superblock extends Controller {
 
 		$m = parse_url($blocked);
 		if ($m['scheme'] && $m['host'] && (($type === BLOCKTYPE_SERVER) || (! $m['path']))) {
+			if (strcasecmp($m['host'],App::get_hostname()) === 0) {
+				notice(t('Blocking this site is not permitted.'));
+				if ($inline) {
+					return;
+				}
+				killme();
+			}	
 			$type = BLOCKTYPE_SERVER;
 			$blocked = $m['host'];
 		}
@@ -40,11 +47,13 @@ class Superblock extends Controller {
 		if ($blocked) {
 			$handled = true;
 			if ($type === BLOCKTYPE_CHANNEL) {
-				$r = q("select xchan_url from xchan where ( xchan_hash = '%s' or xchan_addr = '%s' or xchan_url = '%s' )",
+
+				$r = q("select * from xchan where ( xchan_hash = '%s' or xchan_addr = '%s' or xchan_url = '%s' )",
 					dbesc($blocked),
 					dbesc($blocked),
 					dbesc($blocked)
 				);
+
 				if (! $r) {
 					// not in cache - try discovery
 					$wf = discover_by_webbie($blocked,'',false);
@@ -71,6 +80,7 @@ class Superblock extends Controller {
 
 				if ($r) {
 					$r = Libzot::zot_record_preferred($r,'xchan_network');
+					$blocked = $r['xchan_hash'];
 				}
 			}
 
@@ -80,7 +90,7 @@ class Superblock extends Controller {
 				'block_type'       => $type,
 				'block_comment'    => t('Added by Superblock')
 			];
-				
+
 			LibBlock::store($bl);
 
 			$sync = [];
@@ -192,6 +202,7 @@ class Superblock extends Controller {
 	function get() {
 
 		$l = LibBlock::fetch(local_channel(),BLOCKTYPE_CHANNEL);
+
 		$list = ids_to_array($l,'block_entity');
 
 		stringify_array_elms($list,true);
