@@ -240,16 +240,28 @@ class Activity {
 			$numpages = $total / App::$pager['itemspage'];
 			$lastpage = (($numpages > intval($numpages)) ? intval($numpages) + 1 : $numpages);
 
-			$stripped = preg_replace('/([&|\?]page=[0-9]*)/','',$id);
-			$stripped = rtrim($stripped,'/');
+			$url_parts = parse_url($id);
 
-			$ret['partOf'] = z_root() . '/' . $stripped;
+			$ret['partOf'] = z_root() . '/' . $url_parts['path'];
+
+			$extra_query_args = '';
+			$query_args = null;
+			if (isset($url_parts['query'])) {
+				parse_str($url_parts['query'], $query_args);
+			}
+
+			if (is_array($query_args)) {
+				unset($query_args['page']);
+				foreach ($query_args as $k => $v) {
+					$extra_query_args .= '&' . urlencode($k) . '=' . urlencode($v);
+				}
+			}
 
 			if (App::$pager['page'] < $lastpage) {
-				$ret['next'] = z_root() . '/' . $stripped . '?page=' . (intval(App::$pager['page']) + 1);
+				$ret['next'] = z_root() . '/' . $url_parts['path'] . '?page=' . (intval(App::$pager['page']) + 1) . $extra_query_args;
 			}
 			if (App::$pager['page'] > 1) {
-				$ret['prev'] = z_root() . '/' . $stripped . '?page=' . (intval(App::$pager['page']) - 1);
+				$ret['prev'] = z_root() . '/' . $url_parts['path'] . '?page=' . (intval(App::$pager['page']) - 1) . $extra_query_args;
 			}
 		}
 		else {
