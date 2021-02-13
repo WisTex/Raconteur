@@ -2192,14 +2192,16 @@ class Libzot {
 
 			// logger($AS->debug());
 
-			$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
-				dbesc($AS->actor['id'])
+			$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
+				dbesc($AS->actor['id']),
+				dbesc($AS->actor['id'])				
 			); 
 
 			if (! $r) {
 				$y = import_author_xchan([ 'url' => $AS->actor['id'] ]);
 				if ($y) {
-					$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
+					$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
+						dbesc($AS->actor['id']),
 						dbesc($AS->actor['id'])
 					);
 				} 
@@ -3353,6 +3355,11 @@ class Libzot {
 				dbesc($hub['hubloc_hash'])
 			);
 		}
+
+		// this site obviously isn't dead because they are trying to communicate with us.
+		q("update site set site_dead = 0 where site_dead = 1 and site_url = '%s' ",
+			dbesc($hub['hubloc_url'])
+		);
 
 		return $hub['hubloc_url'];
 	}
