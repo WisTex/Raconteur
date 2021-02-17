@@ -79,7 +79,7 @@ class MastAPI {
 
 
 		$ret = [];
-		$ret['uri'] = App::get_hostname();
+		$ret['uri'] = z_root();
 		$ret['title'] = System::get_site_name();
 		$ret['description'] = bbcode(get_config('system','siteinfo'), [ 'export' => true ] );
 		$ret['email'] = get_config('system','admin_email');

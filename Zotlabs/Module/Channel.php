@@ -75,36 +75,6 @@ class Channel extends Controller {
 		]);
 
 		
-		// handle zot6 channel discovery 
-
-		if(Libzot::is_zot_request()) {
-	
-			$sigdata = HTTPSig::verify(file_get_contents('php://input'), EMPTY_STR, 'zot6');
-
-			if($sigdata && $sigdata['signer'] && $sigdata['header_valid']) {
-				$data = json_encode(Libzot::zotinfo([ 'guid_hash' => $channel['channel_hash'], 'target_url' => $sigdata['signer'] ]));
-				$s = q("select site_crypto, hubloc_sitekey from site left join hubloc on hubloc_url = site_url where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
-					dbesc($sigdata['signer'])
-				);
-
-				if($s && $s[0]['hubloc_sitekey'] && $s[0]['site_crypto']) {
-					$data = json_encode(Crypto::encapsulate($data,$s[0]['hubloc_sitekey'],Libzot::best_algorithm($s[0]['site_crypto'])));
-				}
-			}
-			else {
-				$data = json_encode(Libzot::zotinfo([ 'guid_hash' => $channel['channel_hash'] ]));
-			}
-
-			$headers = [ 
-				'Content-Type'     => 'application/x-zot+json', 
-				'Digest'           => HTTPSig::generate_digest_header($data),
-				'(request-target)' => strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI']
-			];
-			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
-			HTTPSig::set_headers($h);
-			echo $data;
-			killme();
-		}
 
 		// An ActivityStreams actor record is more or less required for ActivityStreams compliance
 		// unless the actor object is inlined into every activity/object. This implies that it
@@ -150,6 +120,38 @@ class Channel extends Controller {
 
 			as_return_and_die(Activity::encode_person($channel,true,true),$channel);
 		}
+
+		// handle zot6 channel discovery 
+
+		if(Libzot::is_zot_request()) {
+	
+			$sigdata = HTTPSig::verify(file_get_contents('php://input'), EMPTY_STR, 'zot6');
+
+			if($sigdata && $sigdata['signer'] && $sigdata['header_valid']) {
+				$data = json_encode(Libzot::zotinfo([ 'guid_hash' => $channel['channel_hash'], 'target_url' => $sigdata['signer'] ]));
+				$s = q("select site_crypto, hubloc_sitekey from site left join hubloc on hubloc_url = site_url where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
+					dbesc($sigdata['signer'])
+				);
+
+				if($s && $s[0]['hubloc_sitekey'] && $s[0]['site_crypto']) {
+					$data = json_encode(Crypto::encapsulate($data,$s[0]['hubloc_sitekey'],Libzot::best_algorithm($s[0]['site_crypto'])));
+				}
+			}
+			else {
+				$data = json_encode(Libzot::zotinfo([ 'guid_hash' => $channel['channel_hash'] ]));
+			}
+
+			$headers = [ 
+				'Content-Type'     => 'application/x-zot+json', 
+				'Digest'           => HTTPSig::generate_digest_header($data),
+				'(request-target)' => strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI']
+			];
+			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel));
+			HTTPSig::set_headers($h);
+			echo $data;
+			killme();
+		}
+
 
 		// Run Libprofile::load() here to make sure the theme is set before
 		// we start loading content

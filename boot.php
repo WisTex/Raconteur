@@ -16,7 +16,7 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '21.02.15' );
+define ( 'STD_VERSION',             '21.02.17' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1247 );
@@ -692,8 +692,8 @@ function startup() {
 	@set_time_limit(0);
 
 	if (function_exists ('ini_set')) {
-		// This has to be quite large to deal with embedded private photos
-		@ini_set('pcre.backtrack_limit', 500000);
+		// This has to be quite large
+		@ini_set('pcre.backtrack_limit', 5000000);
 
 		// Use cookies to store the session ID on the client side
 		@ini_set('session.use_only_cookies', 1);
