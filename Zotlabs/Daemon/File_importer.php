@@ -28,13 +28,13 @@ class File_importer {
 
 		$headers = [
 			'X-API-Token'      => random_string(),
-			'X-API-Request'    => $hz_server . '/api/z/1.0/file/export?f=&file_id=' . $attach_id,
+			'X-API-Request'    => $hz_server . '/api/z/1.0/file/export?f=&zap_compat=1&file_id=' . $attach_id,
 			'Host'             => $m['host'],
-			'(request-target)' => 'get /api/z/1.0/file/export?f=&file_id=' . $attach_id,
+			'(request-target)' => 'get /api/z/1.0/file/export?f=&zap_compat=1&file_id=' . $attach_id,
 		];
 
 		$headers = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),true,'sha512');		
-		$x = z_fetch_url($hz_server . '/api/z/1.0/file/export?f=&file_id=' . $attach_id,false,$redirects,[ 'headers' => $headers ]);
+		$x = z_fetch_url($hz_server . '/api/z/1.0/file/export?f=&zap_compat=1&file_id=' . $attach_id,false,$redirects,[ 'headers' => $headers ]);
 
 		if(! $x['success']) {
 			logger('no API response',LOGGER_DEBUG);
