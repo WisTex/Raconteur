@@ -233,6 +233,8 @@ function abook_toggle_flag($abook,$flag) {
 
 function mark_orphan_hubsxchans() {
 
+	return;
+
 	$dirmode = intval(get_config('system','directory_mode'));
 	if ($dirmode == DIRECTORY_MODE_NORMAL) {
 		return;

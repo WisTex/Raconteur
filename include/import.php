@@ -1440,8 +1440,14 @@ function sync_files($channel, $files) {
 							continue;
 						}
 
+						$columns = db_columns('attach');
+
 						$str = '';
 						foreach ($att as $k => $v) {
+							if (! in_array($k,$columns)) {
+								continue;
+							}
+							
 							if ($str) {
 								$str .= ",";
 							}
