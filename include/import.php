@@ -169,6 +169,23 @@ function import_config($channel, $configs) {
 		}
 
 		load_pconfig($channel['channel_id']);
+		$permissions_role = get_pconfig($channel['channel_id'],'system','permissions_role');
+		if ($permissions_role === 'social_federation') {
+			// Convert Hubzilla's social_federation role to 'social' with relaxed comment permissions
+			set_pconfig($channel['channel_id'],'systems','permissions_role','social');
+			PermissionLimits::Set($channel['channel_id'],'post_comments', PERMS_AUTHED);
+		}
+		else {		
+			// If the requested permissions_role doesn't exist on this system,
+			// convert it to 'social'
+		
+			$role_permissions = PermissionRoles::role_perms($permissions_role);
+
+			if (! $role_permissions) {
+				set_pconfig($channel['channel_id'],'system','permissions_role','social');
+			}
+		}
+
 	}
 }
 

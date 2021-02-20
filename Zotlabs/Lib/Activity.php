@@ -1281,6 +1281,9 @@ class Activity {
 			'width'     => 300,
 		];
 		$ret['url'] = $p['xchan_url'];
+		if ($p['channel_location']) {
+			$ret['location'] = [ 'type' => 'Place', 'name' => $p['channel_location'] ];
+		}
 
 		if ($activitypub && get_config('system','activitypub', ACTIVITYPUB_ENABLED)) {	
 
@@ -2426,6 +2429,20 @@ class Activity {
 		if ($generator && array_key_exists('type',$generator) 
 			&& in_array($generator['type'], [ 'Application','Service' ] ) && array_key_exists('name',$generator)) {
 			$s['app'] = escape_tags($generator['name']);
+		}
+
+		$location = $act->get_property_obj('location');
+		if (is_array($location) && array_key_exists('type',$location) && $location['type'] === 'Place') {
+			if (array_key_exists('name',$location)) {
+				$s['location'] = escape_tags($location['name']);
+			}
+			if (array_key_exists('content',$location)) {
+				$s['location'] = html2plain(html2plain(purify_html($location['content']),256));
+			}
+			
+			if (array_key_exists('latitude',$location) && array_key_exists('longitude',$location)) {
+				$s['coord'] = escape_tags($location['latitude']) . ' ' . escape_tags($location['longitude']);
+			}
 		}
 
 		if (! $response_activity) {
