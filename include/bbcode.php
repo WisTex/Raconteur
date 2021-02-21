@@ -271,6 +271,9 @@ function bb_parse_crypt($match) {
 	preg_match("/hint=\&quot\;(.*?)\&quot\;/ism", $attributes, $matches);
 	if ($matches[1] != "")
 		$hint = $matches[1];
+	preg_match("/hint=\\\"(.*?)\\\"/ism", $attributes, $matches);
+	if ($matches[1] != "")
+		$hint = $matches[1];
 
 	$x = random_string();
 
@@ -282,6 +285,25 @@ function bb_parse_crypt($match) {
 	$Text = '<br /><div id="' . $x . '"><img class="cursor-pointer" src="' . z_root() . '/images/lock_icon.svg" ' . $onclick . ' alt="' . $label . '" title="' . $label . '" /></div><br />';
 
 	return $Text;
+}
+
+/**
+ * @brief Returns raw base64 encoded crypt content.
+ *
+ * @param array $match
+ * @return string
+ */
+function bb_parse_b64_crypt($match) {
+
+	if(empty($match[2]))
+		return;
+
+	$r .= '----- ENCRYPTED CONTENT -----' . PHP_EOL;
+	$r .= $match[2] . PHP_EOL;
+	$r .= '----- END ENCRYPTED CONTENT -----';
+
+	return $r;
+
 }
 
 function bb_parse_app($match) {
@@ -1534,8 +1556,10 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace("/([^\]\='".'"'."\;\/])(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" ' . $target . ' rel="nofollow noopener">$2</a>', $Text);
 	}
 
-	if (strpos($Text,'[/share]') !== false) {
+	$count = 0;
+	while (strpos($Text,'[/share]') !== false && $count < 10) {
 		$Text = preg_replace_callback("/\[share(.*?)\](.*?)\[\/share\]/ism", 'bb_ShareAttributes', $Text);
+		$count ++;
 	}
 
 	if (strpos($Text,'[/url]') !== false) {
@@ -1848,7 +1872,10 @@ function bbcode($Text, $options = []) {
 
 	// crypt
 	if (strpos($Text,'[/crypt]') !== false) {
-		if (! $activitypub) {
+		if ($activitypub) {
+			$Text = preg_replace_callback("/\[crypt (.*?)\](.*?)\[\/crypt\]/ism", 'bb_parse_b64_crypt', $Text);
+		}
+		else {
 			$Text = preg_replace_callback("/\[crypt (.*?)\](.*?)\[\/crypt\]/ism", 'bb_parse_crypt', $Text);
 		}
 	}

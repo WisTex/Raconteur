@@ -50,6 +50,101 @@ class Item extends Controller {
 	function init() {
 
 
+		if(ActivityStreams::is_as_request()) {
+			$item_id = argv(1);
+			if(! $item_id)
+				http_status_exit(404, 'Not found');
+
+			$portable_id = EMPTY_STR;
+
+			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 ";
+
+			$i = null;
+
+			// do we have the item (at all)?
+			// add preferential bias to item owners (item_wall = 1)
+
+			$r = q("select * from item where mid = '%s' or uuid = '%s' $item_normal order by item_wall desc limit 1",
+				dbesc(z_root() . '/item/' . $item_id),
+				dbesc($item_id)
+			);
+
+			if (! $r) {
+				http_status_exit(404,'Not found');
+			}
+
+			// process an authenticated fetch
+
+
+			$sigdata = HTTPSig::verify(EMPTY_STR);
+			if ($sigdata['portable_id'] && $sigdata['header_valid']) {
+				$portable_id = $sigdata['portable_id'];
+				if (! check_channelallowed($portable_id)) {
+					http_status_exit(403, 'Permission denied');
+				}
+				if (! check_siteallowed($sigdata['signer'])) {
+					http_status_exit(403, 'Permission denied');
+				}
+				observer_auth($portable_id);
+
+				$i = q("select id as item_id from item where mid = '%s' $item_normal and owner_xchan = '%s' limit 1 ",
+					dbesc($r[0]['parent_mid']),
+					dbesc($portable_id)
+				);
+			}
+			elseif (Config::get('system','require_authenticated_fetch',false)) {
+				http_status_exit(403,'Permission denied');
+			}
+
+			// if we don't have a parent id belonging to the signer see if we can obtain one as a visitor that we have permission to access
+			// with a bias towards those items owned by channels on this site (item_wall = 1)
+
+			$sql_extra = item_permissions_sql(0);
+
+			if (! $i) {
+				$i = q("select id as item_id from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
+					dbesc($r[0]['parent_mid'])
+				);
+			}
+
+			if(! $i) {
+				http_status_exit(403,'Forbidden');
+			}
+
+			// If we get to this point we have determined we can access the original in $r (fetched much further above), so use it.
+
+			xchan_query($r,true);
+			$items = fetch_post_tags($r,false);
+
+			$chan = channelx_by_n($items[0]['uid']);
+
+			if (! $chan) {
+				http_status_exit(404, 'Not found');
+			}
+			
+			if (! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream')) {
+				http_status_exit(403, 'Forbidden');
+			}
+
+			$i = Activity::encode_item($items[0],true);
+
+			if (! $i) {
+				http_status_exit(404, 'Not found');
+			}
+			
+			if ($portable_id && (! intval($items[0]['item_private']))) {
+				$c = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s'",
+					intval($items[0]['uid']),
+					dbesc($portable_id)
+				);
+				if (! $c) {
+					ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
+				}
+			}
+			
+			as_return_and_die($i,$chan);
+		}
+
 		if(Libzot::is_zot_request()) {
 
 			$conversation = false;
@@ -165,102 +260,6 @@ class Item extends Controller {
 			killme();
 
 		}
-
-		if(ActivityStreams::is_as_request()) {
-			$item_id = argv(1);
-			if(! $item_id)
-				http_status_exit(404, 'Not found');
-
-			$portable_id = EMPTY_STR;
-
-			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 ";
-
-			$i = null;
-
-			// do we have the item (at all)?
-			// add preferential bias to item owners (item_wall = 1)
-
-			$r = q("select * from item where mid = '%s' or uuid = '%s' $item_normal order by item_wall desc limit 1",
-				dbesc(z_root() . '/item/' . $item_id),
-				dbesc($item_id)
-			);
-
-			if (! $r) {
-				http_status_exit(404,'Not found');
-			}
-
-			// process an authenticated fetch
-
-
-			$sigdata = HTTPSig::verify(EMPTY_STR);
-			if ($sigdata['portable_id'] && $sigdata['header_valid']) {
-				$portable_id = $sigdata['portable_id'];
-				if (! check_channelallowed($portable_id)) {
-					http_status_exit(403, 'Permission denied');
-				}
-				if (! check_siteallowed($sigdata['signer'])) {
-					http_status_exit(403, 'Permission denied');
-				}
-				observer_auth($portable_id);
-
-				$i = q("select id as item_id from item where mid = '%s' $item_normal and owner_xchan = '%s' limit 1 ",
-					dbesc($r[0]['parent_mid']),
-					dbesc($portable_id)
-				);
-			}
-			elseif (Config::get('system','require_authenticated_fetch',false)) {
-				http_status_exit(403,'Permission denied');
-			}
-
-			// if we don't have a parent id belonging to the signer see if we can obtain one as a visitor that we have permission to access
-			// with a bias towards those items owned by channels on this site (item_wall = 1)
-
-			$sql_extra = item_permissions_sql(0);
-
-			if (! $i) {
-				$i = q("select id as item_id from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
-					dbesc($r[0]['parent_mid'])
-				);
-			}
-
-			if(! $i) {
-				http_status_exit(403,'Forbidden');
-			}
-
-			// If we get to this point we have determined we can access the original in $r (fetched much further above), so use it.
-
-			xchan_query($r,true);
-			$items = fetch_post_tags($r,false);
-
-			$chan = channelx_by_n($items[0]['uid']);
-
-			if (! $chan) {
-				http_status_exit(404, 'Not found');
-			}
-			
-			if (! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream')) {
-				http_status_exit(403, 'Forbidden');
-			}
-
-			$i = Activity::encode_item($items[0],true);
-
-			if (! $i) {
-				http_status_exit(404, 'Not found');
-			}
-			
-			if ($portable_id && (! intval($items[0]['item_private']))) {
-				$c = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s'",
-					intval($items[0]['uid']),
-					dbesc($portable_id)
-				);
-				if (! $c) {
-					ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
-				}
-			}
-			
-			as_return_and_die($i,$chan);
-		}
-
 
 		// if it isn't a drop command and isn't a post method and wasn't handled already,
 		// the default action is a browser request for a persistent uri and this should return

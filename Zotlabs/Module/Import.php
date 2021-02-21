@@ -89,7 +89,7 @@ class Import extends Controller {
 				return;
 			}
 
-			$api_path .= 'channel/export/basic?f=&channel=' . $channelname;
+			$api_path .= 'channel/export/basic?f=&zap_compat=1&channel=' . $channelname;
 			if ($import_posts) {
 				$api_path .= '&posts=1';
 			}
@@ -498,27 +498,27 @@ class Import extends Controller {
 		if (is_array($data['chatroom'])) {
 			import_chatrooms($channel,$data['chatroom']);
 		}
-		if (is_array($data['conv'])) {
-			import_conv($channel,$data['conv']);
-		}
-		if (is_array($data['mail'])) {
-			import_mail($channel,$data['mail']);
-		}
+//		if (is_array($data['conv'])) {
+//			import_conv($channel,$data['conv']);
+//		}
+//		if (is_array($data['mail'])) {
+//			import_mail($channel,$data['mail']);
+//		}
 		if (is_array($data['event'])) {
 			import_events($channel,$data['event']);
 		}
 		if (is_array($data['event_item'])) {
 			import_items($channel,$data['event_item'],false,$relocate);
 		}
-		if (is_array($data['menu'])) {
-			import_menus($channel,$data['menu']);
-		}
-		if (is_array($data['wiki'])) {
-			import_items($channel,$data['wiki'],false,$relocate);
-		}
-		if (is_array($data['webpages'])) {
-			import_items($channel,$data['webpages'],false,$relocate);
-		}
+//		if (is_array($data['menu'])) {
+//			import_menus($channel,$data['menu']);
+//		}
+//		if (is_array($data['wiki'])) {
+//			import_items($channel,$data['wiki'],false,$relocate);
+//		}
+//		if (is_array($data['webpages'])) {
+//			import_items($channel,$data['webpages'],false,$relocate);
+//		}
 		$addon = array('channel' => $channel,'data' => $data);
 		call_hooks('import_channel',$addon);
 
@@ -542,14 +542,14 @@ class Import extends Controller {
 			while (1) {
 				$headers = [ 
 					'X-API-Token'      => random_string(),
-					'X-API-Request'    => $hz_server . '/api/z/1.0/item/export_page?f=&since=' . urlencode($since) . '&until=' . urlencode($until) . '&page=' . $page ,
+					'X-API-Request'    => $hz_server . '/api/z/1.0/item/export_page?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until) . '&page=' . $page ,
 					'Host'             => $m['host'],
-					'(request-target)' => 'get /api/z/1.0/item/export_page?f=&since=' . urlencode($since) . '&until=' . urlencode($until) . '&page=' . $page ,
+					'(request-target)' => 'get /api/z/1.0/item/export_page?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until) . '&page=' . $page ,
 				];
 
 				$headers = HTTPSig::create_sig($headers,$channel['channel_prvkey'], channel_url($channel),true,'sha512');
 
-				$x = z_fetch_url($hz_server . '/api/z/1.0/item/export_page?f=&since=' . urlencode($since) . '&until=' . urlencode($until) . '&page=' . $page,false,$redirects,[ 'headers' => $headers ]);
+				$x = z_fetch_url($hz_server . '/api/z/1.0/item/export_page?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until) . '&page=' . $page,false,$redirects,[ 'headers' => $headers ]);
 
 				// logger('z_fetch: ' . print_r($x,true));
 
@@ -577,14 +577,14 @@ class Import extends Controller {
 
 			$headers = [ 
 				'X-API-Token'      => random_string(),
-				'X-API-Request'    => $hz_server . '/api/z/1.0/files?f=&since=' . urlencode($since) . '&until=' . urlencode($until),
+				'X-API-Request'    => $hz_server . '/api/z/1.0/files?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until),
 				'Host'             => $m['host'],
-				'(request-target)' => 'get /api/z/1.0/files?f=&since=' . urlencode($since) . '&until=' . urlencode($until),
+				'(request-target)' => 'get /api/z/1.0/files?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until),
 			];
 
 			$headers = HTTPSig::create_sig($headers,$channel['channel_prvkey'], channel_url($channel),true,'sha512');
 
-			$x = z_fetch_url($hz_server . '/api/z/1.0/files?f=&since=' . urlencode($since) . '&until=' . urlencode($until),false,$redirects,[ 'headers' => $headers ]);
+			$x = z_fetch_url($hz_server . '/api/z/1.0/files?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until),false,$redirects,[ 'headers' => $headers ]);
 
 			if (! $x['success']) {
 				logger('no API response');

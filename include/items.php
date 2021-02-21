@@ -2985,27 +2985,22 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		$arr['item_wall'] = 1;
 		$arr['item_thread_top'] = 1;
 	
-		if (strpos($item['body'], "[/share]") !== false) {
-			$pos = strpos($item['body'], "[share");
-			$bb = substr($item['body'], $pos);
+		$bb = "[share author='" . urlencode($item['author']['xchan_name']).
+			"' profile='"       . $item['author']['xchan_url'] .
+			"' portable_id='"   . $item['author']['xchan_hash'] . 
+			"' avatar='"        . $item['author']['xchan_photo_s'] .
+			"' link='"          . $item['plink'] .
+			"' auth='"          . (($item['author']['network'] === 'zot6') ? 'true' : 'false') .
+			"' posted='"        . $item['created'] .
+			"' message_id='"    . $item['mid'] .
+		"']";
+		if($item['title']) {
+			$bb .= '[b]' . $item['title'] . '[/b]' . "\r\n";
+			$arr['title'] = $item['title'];
 		}
-		else {
-			$bb = "[share author='" . urlencode($item['author']['xchan_name']).
-				"' profile='"       . $item['author']['xchan_url'] .
-				"' portable_id='"   . $item['author']['xchan_hash'] . 
-				"' avatar='"        . $item['author']['xchan_photo_s'] .
-				"' link='"          . $item['plink'] .
-				"' auth='"          . (($item['author']['network'] === 'zot6') ? 'true' : 'false') .
-				"' posted='"        . $item['created'] .
-				"' message_id='"    . $item['mid'] .
-			"']";
-			if($item['title'])
-				$bb .= '[b]'.$item['title'].'[/b]'."\r\n";
-			$bb .= $item['body'];
-			$bb .= "[/share]";
-		}
+		$bb .= $item['body'];
+		$bb .= "[/share]";
 
-//		$mention = '@[zrl=' . $item['author']['xchan_url'] . ']' . $item['author']['xchan_name'] . '[/zrl]';
 		$arr['body'] = $bb;
 
 		$arr['term'] = $item['term'];

@@ -154,7 +154,7 @@ class Display {
 		}
 
 
-		$preload_images = get_pconfig(local_channel(),'system','preload_images', '1');
+		$preload_images = get_pconfig(local_channel(),'system','preload_images');
 
 		$user_scalable = get_pconfig(local_channel(),'system','user_scalable', '0');
 
