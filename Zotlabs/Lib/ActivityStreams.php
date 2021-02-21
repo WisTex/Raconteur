@@ -463,7 +463,8 @@ class ActivityStreams {
 		$x = getBestSupportedMimeType([
 			'application/ld+json;profile="https://www.w3.org/ns/activitystreams"',
 			'application/activity+json',
-			'application/ld+json;profile="http://www.w3.org/ns/activitystreams"'
+			'application/ld+json;profile="http://www.w3.org/ns/activitystreams"',
+			'application/x-zot-activity+json'
 		]);
 
 		return(($x) ? true : false);

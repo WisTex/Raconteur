@@ -58,7 +58,7 @@ class Import_items extends \Zotlabs\Web\Controller {
 			$servername  = substr($old_address,strpos($old_address,'@')+1);
 
 			$scheme = 'https://';
-			$api_path = '/api/red/channel/export/items?f=&channel=' . $channelname . '&year=' . intval($year);
+			$api_path = '/api/red/channel/export/items?f=&zap_compat=1&channel=' . $channelname . '&year=' . intval($year);
 			$binary = false;
 			$redirects = 0;
 			$opts = array('http_auth' => $email . ':' . $password);
@@ -86,13 +86,20 @@ class Import_items extends \Zotlabs\Web\Controller {
 		if(! is_array($data))
 			return;
 
-		if(array_key_exists('compatibility',$data) && array_key_exists('database',$data['compatibility'])) {
-			$v1 = substr($data['compatibility']['database'],-4);
-			$v2 = substr(DB_UPDATE_VERSION,-4);
-			if($v2 > $v1) {
-				$t = sprintf( t('Warning: Database versions differ by %1$d updates.'), $v2 - $v1 );
-				notice($t . EOL);
-			}
+//		if(array_key_exists('compatibility',$data) && array_key_exists('database',$data['compatibility'])) {
+//			$v1 = substr($data['compatibility']['database'],-4);
+//			$v2 = substr(DB_UPDATE_VERSION,-4);
+//			if($v2 > $v1) {
+//				$t = sprintf( t('Warning: Database versions differ by %1$d updates.'), $v2 - $v1 );
+//				notice($t . EOL);
+//			}
+//		}
+
+		$codebase = 'zap';
+
+		if ((! array_path_exists('compatibility/codebase',$data)) || $data['compatibility']['codebase'] !== $codebase) {
+			notice(t('Data export format is not compatible with this software'));
+			return;
 		}
 
 		$channel = \App::get_channel();
