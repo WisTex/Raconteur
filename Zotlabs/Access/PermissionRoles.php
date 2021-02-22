@@ -95,51 +95,51 @@ class PermissionRoles {
 				$ret['channel_type'] = 'group';
 				break;
 
-			case 'collection':
-				$ret['perms_auto'] = true;
-				$ret['default_collection'] = false;
-				$ret['directory_publish'] = true;
-				$ret['online'] = false;
-				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'post_comments'
-				];
-				$ret['limits'] = PermissionLimits::Std_Limits();
-				$ret['channel_type'] = 'collection';
-	
-				break;
-
-			case 'collection_restricted':
-				$ret['perms_auto'] = false;
-				$ret['default_collection'] = true;
-				$ret['directory_publish'] = true;
-				$ret['online'] = false;
-				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_storage',
-					'view_pages', 'post_comments'
-				];
-				$ret['limits'] = PermissionLimits::Std_Limits();
-				$ret['limits']['view_contacts'] = PERMS_SPECIFIC;
-				$ret['channel_type'] = 'collection';
-				break;
-
-			case 'feed':
-				$ret['perms_auto'] = true;
-				$ret['default_collection'] = false;
-				$ret['directory_publish'] = true;
-				$ret['online'] = false;
-				$ret['perms_connect'] = [
-					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
-					'view_pages', 'send_stream', 'post_wall', 'post_comments',
-					'republish'
-				];
-				$ret['limits'] = PermissionLimits::Std_Limits();
-
-				break;
-
-			case 'repository':
-				//Legacy settings to cover all channel_types previously in Libzot.php
-				$ret['channel_type'] = 'group';
+//			case 'collection':
+//				$ret['perms_auto'] = true;
+//				$ret['default_collection'] = false;
+//				$ret['directory_publish'] = true;
+//				$ret['online'] = false;
+//				$ret['perms_connect'] = [
+//					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
+//					'view_pages', 'post_comments'
+//				];
+//				$ret['limits'] = PermissionLimits::Std_Limits();
+//				$ret['channel_type'] = 'collection';
+//	
+//				break;
+//
+//			case 'collection_restricted':
+//				$ret['perms_auto'] = false;
+//				$ret['default_collection'] = true;
+//				$ret['directory_publish'] = true;
+//				$ret['online'] = false;
+//				$ret['perms_connect'] = [
+//					'view_stream', 'view_profile', 'view_storage',
+//					'view_pages', 'post_comments'
+//				];
+//				$ret['limits'] = PermissionLimits::Std_Limits();
+//				$ret['limits']['view_contacts'] = PERMS_SPECIFIC;
+//				$ret['channel_type'] = 'collection';
+//				break;
+//
+//			case 'feed':
+//				$ret['perms_auto'] = true;
+//				$ret['default_collection'] = false;
+//				$ret['directory_publish'] = true;
+//				$ret['online'] = false;
+//				$ret['perms_connect'] = [
+//					'view_stream', 'view_profile', 'view_contacts', 'view_storage',
+//					'view_pages', 'send_stream', 'post_wall', 'post_comments',
+//					'republish'
+//				];
+//				$ret['limits'] = PermissionLimits::Std_Limits();
+//
+//				break;
+//
+//			case 'repository':
+//				//Legacy settings to cover all channel_types previously in Libzot.php
+//				$ret['channel_type'] = 'group';
 
 			default:
 				break;
@@ -184,10 +184,10 @@ class PermissionRoles {
 				'forum_moderated' => t('Group - Moderated')
 			],
 
-			t('Collection') => [
-				'collection' => t('Collection - Normal'),
-				'collection_restricted' => t('Collection - Restricted')
-			]
+//			t('Collection') => [
+//				'collection' => t('Collection - Normal'),
+//				'collection_restricted' => t('Collection - Restricted')
+//			]
 
 		];
 
