@@ -3292,6 +3292,12 @@ class Activity {
 		return false;
 	}
 
+
+	// This function is designed to work with both ActivityPub and Zot attachments.
+	// The 'type' of each is different ('Image' vs 'image/jpeg' for example).
+	// If editing this function please be aware of the need to support both formats
+	// which we accomplish here through the use of stripos(). 
+
 	static function bb_attach($attach,$body) {
 
 		$ret = false;
@@ -3306,12 +3312,12 @@ class Activity {
 					$ret .= "\n\n" . '[img]' . $a['href'] . '[/img]';
 				}
 			}
-			if (array_key_exists('type',$a) && stripos($a['type'], 'video') === 0) {
+			if (array_key_exists('type',$a) && stripos($a['type'], 'video') !== false) {
 				if (self::media_not_in_body($a['href'],$body)) {
 					$ret .= "\n\n" . '[video]' . $a['href'] . '[/video]';
 				}
 			}
-			if (array_key_exists('type',$a) && stripos($a['type'], 'audio') === 0) {
+			if (array_key_exists('type',$a) && stripos($a['type'], 'audio') !== false) {
 				if (self::media_not_in_body($a['href'],$body)) {
 					$ret .= "\n\n" . '[audio]' . $a['href'] . '[/audio]';
 				}
@@ -3508,29 +3514,30 @@ class Activity {
 	static function ap_schema() {
 
 		return [
-			'zot'                => z_root() . '/apschema#',
-//			'as'                 => 'https://www.w3.org/ns/activitystreams#',
-			'toot'               => 'http://joinmastodon.org/ns#',
-			'ostatus'            => 'http://ostatus.org#',
-			'schema'             => 'http://schema.org#',
-			'conversation'       => 'ostatus:conversation',
-			'sensitive'          => 'as:sensitive',
-			'movedTo'            => 'as:movedTo',
-			'copiedTo'           => 'as:copiedTo',
-			'alsoKnownAs'        => 'as:alsoKnownAs',
-			'inheritPrivacy'     => 'as:inheritPrivacy',
-			'EmojiReact'         => 'as:EmojiReact',
-			'commentPolicy'      => 'zot:commentPolicy',
-			'topicalCollection'  => 'zot:topicalCollection',
-			'eventRepeat'        => 'zot:eventRepeat',
-			'emojiReaction'      => 'zot:emojiReaction',
-			'expires'            => 'zot:expires',
-			'directMessage'      => 'zot:directMessage',
-			'Category'           => 'zot:Category',
-			'replyTo'            => 'zot:replyTo',
-			'PropertyValue'      => 'schema:PropertyValue',
-			'value'              => 'schema:value',
-			'discoverable'       => 'toot:discoverable',
+			'zot'                       => z_root() . '/apschema#',
+//			'as'                        => 'https://www.w3.org/ns/activitystreams#',
+			'toot'                      => 'http://joinmastodon.org/ns#',
+			'ostatus'                   => 'http://ostatus.org#',
+			'schema'                    => 'http://schema.org#',
+			'conversation'              => 'ostatus:conversation',
+			'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
+			'sensitive'                 => 'as:sensitive',
+			'movedTo'                   => 'as:movedTo',
+			'copiedTo'                  => 'as:copiedTo',
+			'alsoKnownAs'               => 'as:alsoKnownAs',
+			'inheritPrivacy'            => 'as:inheritPrivacy',
+			'EmojiReact'                => 'as:EmojiReact',
+			'commentPolicy'             => 'zot:commentPolicy',
+			'topicalCollection'         => 'zot:topicalCollection',
+			'eventRepeat'               => 'zot:eventRepeat',
+			'emojiReaction'             => 'zot:emojiReaction',
+			'expires'                   => 'zot:expires',
+			'directMessage'             => 'zot:directMessage',
+			'Category'                  => 'zot:Category',
+			'replyTo'                   => 'zot:replyTo',
+			'PropertyValue'             => 'schema:PropertyValue',
+			'value'                     => 'schema:value',
+			'discoverable'              => 'toot:discoverable',
 		];
 
 	}
