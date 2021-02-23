@@ -989,7 +989,11 @@ class Activity {
 		if ($token && $has_images) {
 			for ($n = 0; $n < count($images); $n ++) {
 				$match = $images[$n];
-				if (strpos($match[2],z_root() . '/photo/') !== false) {
+				if (strpos($match[1],'=http') === 0 && strpos($match[1],'/photo/' !== false)) {
+					$i['body'] = str_replace($match[1],$match[1] . '?token=' . $token, $i['body']);
+					$images[$n][2] = substr($match[1],1) . '?token=' . $token;
+				}
+				elseif (strpos($match[2],z_root() . '/photo/') !== false) {
 					$i['body'] = str_replace($match[2],$match[2] . '?token=' . $token, $i['body']);
 					$images[$n][2] = $match[2] . '?token=' . $token;
 				}
@@ -1053,8 +1057,14 @@ class Activity {
 		if ($activitypub && $has_images && $ret['type'] === 'Note') {
 			$img = [];
         	foreach ($images as $match) {
-            	$img[] =  [ 'type' => 'Image', 'url' => $match[2] ];
-    		}
+			// handle Friendica-style img links with [img=$url]$alttext[/img]
+			if (strpos($match,'=http') === 0) {
+				$img[] =  [ 'type' => 'Image', 'url' => $match[1] ];
+			}
+			else {
+				$img[] =  [ 'type' => 'Image', 'url' => $match[2] ];
+			}
+
 	        if (! $ret['attachment']) {
     	        $ret['attachment'] = [];
 			}
