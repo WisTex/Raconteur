@@ -59,7 +59,8 @@ function zid($s, $address = '') {
 	$mine_parsed = parse_url($mine);
 	$s_parsed = parse_url($s);
 
-	if($mine_parsed['host'] === $s_parsed['host'])
+	if(isset($mine_parsed['host']) && isset($s_parsed['host'])
+		&& $mine_parsed['host'] === $s_parsed['host'])
 		$url_match = true;
 
 	if ($mine && $myaddr && (! $url_match))

@@ -2002,7 +2002,7 @@ function bbcode($Text, $options = []) {
 	else {
 		$Text = preg_replace("/\<(.*?)(src|href)=\"[^zhgfmt#](.*?)\>/ism", '<$1$2="">', $Text);
 	}
-
+	
 	$Text = bb_replace_images($Text, $saved_images);
 
 	$args = [ 'text' => $Text, 'options' => $options ];
