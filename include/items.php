@@ -1367,7 +1367,10 @@ function purify_imported_object($obj) {
 	$ret = null;
 	if (is_array($obj)) {
 		foreach ( $obj as $k => $v ) {
-			if (is_string($v)) {
+			if (is_array($v)) {
+				$ret[$k] = purify_imported_object($v);
+			}
+			elseif (is_string($v)) {
 				$ret[$k] = purify_html($v);
 			}
 		}
