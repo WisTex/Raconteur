@@ -1059,7 +1059,7 @@ class Activity {
         	foreach ($images as $match) {
 			// handle Friendica-style img links with [img=$url]$alttext[/img]
 			if (strpos($match,'=http') === 0) {
-				$img[] =  [ 'type' => 'Image', 'url' => $match[1] ];
+				$img[] =  [ 'type' => 'Image', 'url' => substr($match[1],1) ];
 			}
 			else {
 				$img[] =  [ 'type' => 'Image', 'url' => $match[2] ];
