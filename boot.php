@@ -16,7 +16,7 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '21.02.22' );
+define ( 'STD_VERSION',             '21.02.23' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1247 );
@@ -1930,11 +1930,11 @@ function is_site_admin() {
 	if(! session_id())
 		return false;
 
-	if($_SESSION['delegate'])
+	if(isset($_SESSION['delegate']))
 		return false;
 
-	if((intval($_SESSION['authenticated']))
-		&& (is_array(App::$account))
+	if(isset($_SESSION['authenticated']) && intval($_SESSION['authenticated'])
+		&& is_array(App::$account)
 		&& (App::$account['account_roles'] & ACCOUNT_ROLE_ADMIN))
 		return true;
 
@@ -1953,7 +1953,8 @@ function is_developer() {
 	if(! session_id())
 		return false;
 
-	if((intval($_SESSION['authenticated']))
+	if(isset($_SESSION['authenticated'])
+		&& (intval($_SESSION['authenticated']))
 		&& (is_array(App::$account))
 		&& (App::$account['account_roles'] & ACCOUNT_ROLE_DEVELOPER))
 		return true;
