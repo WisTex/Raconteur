@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 21.02.25\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-24 14:28-0800\n"
+"POT-Creation-Date: 2021-02-24 15:14-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2605,7 +2605,8 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Security.php:146
 #: ../../Zotlabs/Module/Admin/Security.php:151
 msgid ""
-"One channel (hash) per line. Leave empty to allow from any channel by default"
+"One channel (hash) per line. Leave empty to allow communication from any "
+"channel by default"
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Security.php:147

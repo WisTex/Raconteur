@@ -143,12 +143,12 @@ class Security {
 			'$not_allowed_email'	=> array('not_allowed_email', t("Not allowed email domains"), get_config('system','not_allowed_email'), t("Comma separated list of domains which are not allowed in email addresses for registrations to this site. Wildcards are accepted. Empty to allow any domains, unless allowed domains have been defined.")),
 			'$allowed_sites' => array('allowed_sites', t('Allow communications only from these sites'), $allowedsites_str, t('One site per line. Leave empty to allow communication from anywhere by default')),
 			'$denied_sites' => array('denied_sites', t('Block communications from these sites'), $deniedsites_str, ''),
-			'$allowed_channels' => array('allowed_channels', t('Allow communications only from these channels'), $allowedchannels_str, t('One channel (hash) per line. Leave empty to allow from any channel by default')),
+			'$allowed_channels' => array('allowed_channels', t('Allow communications only from these channels'), $allowedchannels_str, t('One channel (hash) per line. Leave empty to allow communication from any channel by default')),
 			'$denied_channels' => array('denied_channels', t('Block communications from these channels'), $deniedchannels_str, ''),
 
 			'$psallowed_sites' => array('pubstream_allowed_sites', t('Allow public stream communications only from these sites'), $psallowedsites_str, t('One site per line. Leave empty to allow communication from anywhere by default')),
 			'$psdenied_sites' => array('pubstream_denied_sites', t('Block public stream communications from these sites'), $psdeniedsites_str, ''),
-			'$psallowed_channels' => array('pubstream_allowed_channels', t('Allow public stream communications only from these channels'), $psallowedchannels_str, t('One channel (hash) per line. Leave empty to allow from any channel by default')),
+			'$psallowed_channels' => array('pubstream_allowed_channels', t('Allow public stream communications only from these channels'), $psallowedchannels_str, t('One channel (hash) per line. Leave empty to allow communication from any channel by default')),
 			'$psdenied_channels' => array('pubstream_denied_channels', t('Block public stream communications from these channels'), $psdeniedchannels_str, ''),
 
 
