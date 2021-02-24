@@ -1398,6 +1398,18 @@ function activity_sanitise($arr) {
 		if(is_array($arr)) {
 			$ret = array();
 			foreach($arr as $k => $x) {
+				if ($k === 'source' && array_path_exists('source/mediaType',$arr)) {
+					if (array_path_exists('source/content',$arr) && $arr['source']['mediaType'] === 'text/bbcode')) {
+						$ret[$k] = [ 'mediaType' => 'text/bbcode' ];
+						if (is_string($arr['source']['content'])) {
+								$ret[$k]['content'] = multicode_purify($arr['source']['content']);
+						}
+						if (array_path_exists('source/summary',$arr) && is_string($arr['source']['summary'])) {
+							$ret[$k]['summary'] = multicode_purify($arr['source']['summary']);
+						}
+						continue;
+					}
+				}
 				if (in_array($k, [ 'content', 'summary', 'contentMap', 'summaryMap' ])) {
 					$ret[$k] = purify_imported_object($arr[$k]);
 					continue;
