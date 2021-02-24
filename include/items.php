@@ -1402,7 +1402,7 @@ function activity_sanitise($arr) {
 					if (array_path_exists('source/content',$arr) && $arr['source']['mediaType'] === 'text/bbcode') {
 						$ret[$k] = [ 'mediaType' => 'text/bbcode' ];
 						if (is_string($arr['source']['content'])) {
-								$ret[$k]['content'] = multicode_purify($arr['source']['content']);
+							$ret[$k]['content'] = multicode_purify($arr['source']['content']);
 						}
 						if (array_path_exists('source/summary',$arr) && is_string($arr['source']['summary'])) {
 							$ret[$k]['summary'] = multicode_purify($arr['source']['summary']);
