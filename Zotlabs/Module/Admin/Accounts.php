@@ -34,7 +34,7 @@ class Accounts {
 					intval($users[$i])
 				);
 			}
-			notice( sprintf( tt("%s account blocked/unblocked", "%s account blocked/unblocked", count($users)), count($users)) );
+			notice( sprintf( tt("%s account blocked/unblocked", "%s accounts blocked/unblocked", count($users)), count($users)) );
 		}
 
 		// account delete button was submitted
