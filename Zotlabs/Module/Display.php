@@ -276,6 +276,7 @@ class Display extends Controller {
 			if(local_channel()) {
 				$r = q("SELECT item.id as item_id from item WHERE uid = %d and mid = '%s' $item_normal limit 1",
 					intval(local_channel()),
+					intval($sysid),
 					dbesc($target_item['parent_mid'])
 				);
 				if($r) {
@@ -283,13 +284,12 @@ class Display extends Controller {
 				}
 			}
 
-			if($r === null) {
+			if (! (is_array($r) && count($r))) {
 				$r = q("SELECT item.id as item_id from item WHERE mid = '%s' $sql_extra $item_normal limit 1",
 					dbesc($target_item['parent_mid'])
 				);
 			}
 		}
-	
 		elseif ($update && !$load) {
 			$r = null;
 
