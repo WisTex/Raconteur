@@ -10,6 +10,9 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Connect;
 use Zotlabs\Daemon\Run;
 
+use Zotlabs\Import\Friendica;
+
+
 require_once('include/import.php');
 require_once('include/photo_factory.php');
 
@@ -116,6 +119,17 @@ class Import extends Controller {
 
 		//logger('import: data: ' . print_r($data,true));
 		//print_r($data);
+
+
+		// handle Friendica export
+		
+		if (array_path_exists('user/parent-uid',$data)) {
+
+			$settings = [ 'account_id' => $account_id, 'sieze' => 1, 'newname' => $newname ];
+			$f = new Friendica($data, $settings);
+			
+			return;
+		}
 
 		if (! array_key_exists('compatibility',$data)) {
 			call_hooks('import_foreign_channel_data',$data);
