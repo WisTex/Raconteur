@@ -26,7 +26,7 @@ function import_channel($channel, $account_id, $seize, $newname = '') {
 		$channel['channel_removed'] = (($channel['channel_pageflags'] & 0x8000) ? 1 : 0);
 	}
 
-	if (intval($channel['channel_removed'])) {
+	if (isset($channel['channel_removed']) && intval($channel['channel_removed'])) {
 		notice( t('Unable to import a removed channel.') . EOL);
 		return false;
 	}
