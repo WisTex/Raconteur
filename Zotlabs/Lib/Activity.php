@@ -3447,7 +3447,12 @@ class Activity {
 
 		if (array_path_exists('source/mediaType',$act) && array_path_exists('source/content',$act)) {
 			if ($act['source']['mediaType'] === 'text/bbcode') {
-				$content['bbcode'] = purify_html($act['source']['content'], [ 'escape'] );
+				if (is_string($act['source']['content']) && strpos('<',$act['source']['content']) !== false) {
+					$content['bbcode'] = multicode_purify($act['source']['content']);
+				}
+				else {
+					$content['bbcode'] = purify_html($act['source']['content'], [ 'escape'] );
+				}
 			}
 		}
 
