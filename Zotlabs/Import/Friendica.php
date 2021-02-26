@@ -4,7 +4,12 @@ namespace Zotlabs\Import;
 use App;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\PConfig;
+use Zotlabs\Lib\Connect;
+use Zotlabs\Lib\AccessList;
 use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Access\PermissionRoles;
+use Zotlabs\Access\Permissions;
+use Zotlabs\Daemon\Run;
 
 
 class Friendica {
@@ -43,13 +48,29 @@ class Friendica {
 			'channel_location' => escape_tags($this->data['user']['default-location'])
 		];
 
+		$account_id = $this->settings['account_id'];
+		
+		$max_identities = account_service_class_fetch($account_id,'total_identities');
+
+		if ($max_identities !== false) {
+			$r = q("select channel_id from channel where channel_account_id = %d and channel_removed = 0 ",
+				intval($account_id)
+			);
+			if ($r && count($r) > $max_identities) {
+				notice( sprintf( t('Your service plan only allows %d channels.'), $max_identities) . EOL);
+				return;
+			}
+		}
+
 		// save channel or die
+
 
 		$channel = import_channel($channel,$this->settings['account_id'],$this->settings['sieze'],$this->settings['newname']);
 		if (! $channel) {
 			logger('no channel');
 			return;
 		}
+
 
 		// figure out channel permission roles
 
@@ -94,8 +115,183 @@ class Friendica {
 			return;
 		}
 
-		// find relevant profile fields.
+		// Create a verified hub location pointing to this site.
 
+		$r = hubloc_store_lowlevel(
+			[
+				'hubloc_guid'     => $channel['channel_guid'],
+				'hubloc_guid_sig' => $channel['channel_guid_sig'],
+				'hubloc_id_url'   => channel_url($channel),
+				'hubloc_hash'     => $channel['channel_hash'],
+				'hubloc_addr'     => channel_reddress($channel),
+				'hubloc_primary'  => 1,
+				'hubloc_url'      => z_root(),
+				'hubloc_url_sig'  => Libzot::sign(z_root(),$channel['channel_prvkey']),
+				'hubloc_site_id'  => Libzot::make_xchan_hash(z_root(),get_config('system','pubkey')),
+				'hubloc_host'     => App::get_hostname(),
+				'hubloc_callback' => z_root() . '/zot',
+				'hubloc_sitekey'  => get_config('system','pubkey'),
+				'hubloc_network'  => 'zot6',
+				'hubloc_updated'  => datetime_convert()
+			]
+		);
+		if (! $r) {
+			logger('Unable to store hub location');
+		}
+
+
+		if ($data['photo']) {
+			$p = z_fetch_url($self['avatar'],true);
+			if ($p['success']) {
+	            $h = explode("\n",$p['header']);
+            	foreach ($h as $l) {
+                	list($k,$v) = array_map("trim", explode(":", trim($l), 2));
+	                $hdrs[strtolower($k)] = $v;
+    	        }
+        	    if (array_key_exists('content-type', $hdrs)) {
+            	    $phototype = $hdrs['content-type'];
+	            }
+				else {
+					$phototype = 'image/jpeg';
+				}
+
+				import_channel_photo($p['body']),$phototype,$account_id,$channel['channel_id']);
+			}
+		}
+
+		$newuid = $channel['channel_id'];
+
+		$r = xchan_store_lowlevel(
+			[
+				'xchan_hash'       => $channel['channel_hash'],
+				'xchan_guid'       => $channel['channel_guid'],
+				'xchan_guid_sig'   => $channel['channel_guid_sig'],
+				'xchan_pubkey'     => $channel['channel_pubkey'],
+				'xchan_photo_mimetype' => (($photo_type) ? $photo_type : 'image/png'),
+				'xchan_photo_l'    => z_root() . "/photo/profile/l/{$newuid}",
+				'xchan_photo_m'    => z_root() . "/photo/profile/m/{$newuid}",
+				'xchan_photo_s'    => z_root() . "/photo/profile/s/{$newuid}",
+				'xchan_addr'       => channel_reddress($channel),
+				'xchan_url'        => channel_url($channel),
+				'xchan_follow'     => z_root() . '/follow?f=&url=%s',
+				'xchan_connurl'    => z_root() . '/poco/' . $channel['channel_address'],
+				'xchan_name'       => $channel['channel_name'],
+				'xchan_network'    => 'zot6',
+				'xchan_updated'    => datetime_convert(),
+				'xchan_photo_date' => datetime_convert(),
+				'xchan_name_date'  => datetime_convert(),
+				'xchan_system'     => 0
+			]
+		);
+
+		$r = profile_store_lowlevel(
+			[
+				'aid'          => intval($channel['channel_account_id']),
+				'uid'          => intval($newuid),
+				'profile_guid' => new_uuid(),
+				'profile_name' => t('Default Profile'),
+				'is_default'   => 1,
+				'publish'      => ((isset($this->data['profile']['publish'])) ? $this->data['profile']['publish'] : 1),
+				'fullname'     => $channel['channel_name'],
+				'photo'        => z_root() . "/photo/profile/l/{$newuid}",
+				'thumb'        => z_root() . "/photo/profile/m/{$newuid}",
+				'homepage'     => ((isset($this->data['profile']['homepage'])) ? $this->data['profile']['homepage'] : EMPTY_STR),
+			]
+		);
+
+		if($role_permissions) {
+			$myperms = ((array_key_exists('perms_connect',$role_permissions)) ? $role_permissions['perms_connect'] : [] );
+		}
+		else {
+			$x = PermissionRoles::role_perms('social');
+			$myperms = $x['perms_connect'];
+		}
+
+		$r = abook_store_lowlevel(
+			[
+				'abook_account'   => intval($channel['channel_account_id']),
+				'abook_channel'   => intval($newuid),
+				'abook_xchan'     => $channel['channel_hash'],
+				'abook_closeness' => 0,
+				'abook_created'   => datetime_convert(),
+				'abook_updated'   => datetime_convert(),
+				'abook_self'      => 1
+			]
+		);
+
+
+		$x = Permissions::serialise(Permissions::FilledPerms($myperms));
+		set_abconfig($newuid,$channel['channel_hash'],'system','my_perms',$x);
+
+		if(intval($channel['channel_account_id'])) {
+
+			// Save our permissions role so we can perhaps call it up and modify it later.
+
+			if($role_permissions) {
+				if(array_key_exists('online',$role_permissions))
+					set_pconfig($newuid,'system','hide_presence',1-intval($role_permissions['online']));
+				if(array_key_exists('perms_auto',$role_permissions)) {
+					$autoperms = intval($role_permissions['perms_auto']);
+					set_pconfig($newuid,'system','autoperms',$autoperms);
+				}
+			}
+
+			// Create a group with yourself as a member. This allows somebody to use it
+			// right away as a default group for new contacts.
+
+			AccessList::add($newuid, t('Friends'));
+			AccessList::member_add($newuid,t('Friends'),$ret['channel']['channel_hash']);
+
+			// if our role_permissions indicate that we're using a default collection ACL, add it.
+
+			if(is_array($role_permissions) && $role_permissions['default_collection']) {
+				$r = q("select hash from pgrp where uid = %d and gname = '%s' limit 1",
+					intval($newuid),
+					dbesc( t('Friends') )
+				);
+				if($r) {
+					q("update channel set channel_default_group = '%s', channel_allow_gid = '%s' where channel_id = %d",
+						dbesc($r[0]['hash']),
+						dbesc('<' . $r[0]['hash'] . '>'),
+						intval($newuid)
+					);
+				}
+			}
+
+			set_pconfig($channel['channel_id'],'system','photo_path', '%Y/%Y-%m');
+			set_pconfig($channel['channel_id'],'system','attach_path','%Y/%Y-%m');
+
+
+			// auto-follow any of the hub's pre-configured channel choices.
+			// Only do this if it's the first channel for this account;
+			// otherwise it could get annoying. Don't make this list too big
+			// or it will impact registration time.
+
+			$accts = get_config('system','auto_follow');
+			if(($accts) && (! $total_identities)) {
+				if(! is_array($accts))
+					$accts = array($accts);
+
+				foreach($accts as $acct) {
+					if(trim($acct)) {
+						$f = connect_and_sync($channel,trim($acct));
+						if($f['success']) {
+
+							$can_view_stream = their_perms_contains($channel['channel_id'],$f['abook']['abook_xchan'],'view_stream');
+
+							// If we can view their stream, pull in some posts
+
+							if(($can_view_stream) || ($f['abook']['xchan_network'] === 'rss')) {
+								Run::Summon([ 'Onepoll',$f['abook']['abook_id'] ]);
+							}
+						}
+					}
+				}
+			}
+
+
+			call_hooks('create_identity', $newuid);
+		}
 
 
 		// import contacts
@@ -106,14 +302,10 @@ class Friendica {
 					continue;
 				}
 
-				// build/store xchan, xprof, hubloc, abook and abconfig
-
-
+				$result = Connect::connect($channel,(($contact['addr']) ? $contact['addr'] : $contact['url']));
+				// ignore return value as there will likely be a fair number of protocols represented that aren't supported here
 			}
 		}
-
-
-
 
 		// import pconfig
 		// it is unlikely we can make use of these unless we recongise them. 
@@ -129,10 +321,14 @@ class Friendica {
 			}
 		}
 
-		
-		// update system
-		
 
+		// @todo: import AccessLists (groups in Friendica), but since they are all based on local identifiers
+		// to the system we are importing from this will be a challenge to cross-reference each of them and
+		// convert to global identifiers
+
+
+		notice( t('Import complete.') . EOL); 
+		return;
 	}
 
 
