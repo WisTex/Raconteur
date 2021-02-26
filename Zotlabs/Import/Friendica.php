@@ -35,7 +35,6 @@ class Friendica {
 
 		$channel = [
 			'channel_name' => escape_tags($this->data['user']['username']),
-			'channel_parent' => 0,
 			'channel_address' => escape_tags($this->data['user']['nickname']),
 			'channel_guid' => escape_tags($this->data['user']['guid']),
 			'channel_guid_sig' => Libzot::sign($this->data['user']['guid'],$this->data['user']['prvkey']),
@@ -140,7 +139,7 @@ class Friendica {
 		}
 
 
-		if ($data['photo']) {
+		if ($self['avatar']) {
 			$p = z_fetch_url($self['avatar'],true);
 			if ($p['success']) {
 	            $h = explode("\n",$p['header']);
@@ -301,7 +300,7 @@ class Friendica {
 				if (isset($contact['self']) && intval($contact['self'])) {
 					continue;
 				}
-
+				logger('connecting: ' . $contact['url'], LOGGER_DEBUG);
 				$result = Connect::connect($channel,(($contact['addr']) ? $contact['addr'] : $contact['url']));
 				// ignore return value as there will likely be a fair number of protocols represented that aren't supported here
 			}
@@ -310,7 +309,7 @@ class Friendica {
 		// import pconfig
 		// it is unlikely we can make use of these unless we recongise them. 
 		
-		if (iset($this->data['pconfig']) && is_array($this->data['pconfig'])) {
+		if (isset($this->data['pconfig']) && is_array($this->data['pconfig'])) {
 			foreach ($this->data['pconfig'] as $pc) {
 				$entry = [
 					'cat' => escape_tags(str_replace('.','__',$pc['cat'])),
@@ -327,8 +326,11 @@ class Friendica {
 		// convert to global identifiers
 
 
+		change_channel($channel['channel_id']);
 		notice( t('Import complete.') . EOL); 
-		return;
+
+		goaway(z_root() . '/stream' );
+
 	}
 
 
