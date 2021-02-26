@@ -155,7 +155,7 @@ class Friendica {
 					$phototype = 'image/jpeg';
 				}
 
-				import_channel_photo($p['body']),$phototype,$account_id,$channel['channel_id']);
+				import_channel_photo($p['body'],$phototype,$account_id,$channel['channel_id']);
 			}
 		}
 
