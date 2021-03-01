@@ -1399,7 +1399,7 @@ function get_online_status($nick) {
 	}
 
 	$r = q("select channel_id, channel_hash from channel where channel_address = '%s' limit 1",
-		dbesc(argv(1))
+		dbesc($nick)
 	);
 	if ($r) {
 		$hide = get_pconfig($r[0]['channel_id'],'system','hide_online_status');
