@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 21.02.25\n"
+"Project-Id-Version: 21.03.01\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-24 15:14-0800\n"
+"POT-Creation-Date: 2021-02-28 16:27-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -177,12 +177,12 @@ msgstr ""
 #: ../../Zotlabs/Module/Viewconnections.php:37
 #: ../../Zotlabs/Module/Suggestions.php:31 ../../Zotlabs/Module/Inspect.php:16
 #: ../../Zotlabs/Web/WebServer.php:133 ../../include/photos.php:31
-#: ../../include/items.php:3640 ../../include/attach.php:156
-#: ../../include/attach.php:203 ../../include/attach.php:279
-#: ../../include/attach.php:398 ../../include/attach.php:412
-#: ../../include/attach.php:419 ../../include/attach.php:497
-#: ../../include/attach.php:1060 ../../include/attach.php:1134
-#: ../../include/attach.php:1299
+#: ../../include/attach.php:156 ../../include/attach.php:203
+#: ../../include/attach.php:279 ../../include/attach.php:398
+#: ../../include/attach.php:412 ../../include/attach.php:419
+#: ../../include/attach.php:497 ../../include/attach.php:1060
+#: ../../include/attach.php:1134 ../../include/attach.php:1299
+#: ../../include/items.php:3640
 msgid "Permission denied."
 msgstr ""
 
@@ -1088,8 +1088,8 @@ msgstr ""
 
 #: ../../Zotlabs/Lib/Apps.php:581 ../../Zotlabs/Lib/ThreadItem.php:157
 #: ../../Zotlabs/Module/Admin/Profs.php:176
-#: ../../Zotlabs/Module/Admin/Accounts.php:175
 #: ../../Zotlabs/Module/Admin/Channels.php:156
+#: ../../Zotlabs/Module/Admin/Accounts.php:175
 #: ../../Zotlabs/Module/Blocks.php:166 ../../Zotlabs/Module/Cdav.php:1053
 #: ../../Zotlabs/Module/Cdav.php:1366 ../../Zotlabs/Module/Connedit.php:608
 #: ../../Zotlabs/Module/Connedit.php:866
@@ -1412,8 +1412,8 @@ msgstr ""
 #: ../../Zotlabs/Module/Settings/Channel.php:369
 #: ../../Zotlabs/Module/Settings/Display.php:103
 #: ../../Zotlabs/Module/Sources.php:122 ../../Zotlabs/Module/Sources.php:157
-#: ../../Zotlabs/Module/Import.php:674 ../../Zotlabs/Module/Import.php:678
-#: ../../Zotlabs/Module/Import.php:679 ../../Zotlabs/Storage/Browser.php:424
+#: ../../Zotlabs/Module/Import.php:688 ../../Zotlabs/Module/Import.php:692
+#: ../../Zotlabs/Module/Import.php:693 ../../Zotlabs/Storage/Browser.php:424
 #: ../../include/conversation.php:1465 ../../include/conversation.php:1470
 #: ../../view/theme/redbasic/php/config.php:98
 #: ../../extend/addon/a/zotpost/Mod_zotpost.php:77
@@ -1438,8 +1438,8 @@ msgstr ""
 #: ../../Zotlabs/Module/Settings/Channel.php:369
 #: ../../Zotlabs/Module/Settings/Display.php:103
 #: ../../Zotlabs/Module/Sources.php:122 ../../Zotlabs/Module/Sources.php:157
-#: ../../Zotlabs/Module/Import.php:674 ../../Zotlabs/Module/Import.php:678
-#: ../../Zotlabs/Module/Import.php:679 ../../Zotlabs/Storage/Browser.php:424
+#: ../../Zotlabs/Module/Import.php:688 ../../Zotlabs/Module/Import.php:692
+#: ../../Zotlabs/Module/Import.php:693 ../../Zotlabs/Storage/Browser.php:424
 #: ../../include/conversation.php:1465 ../../include/conversation.php:1470
 #: ../../view/theme/redbasic/php/config.php:98
 #: ../../extend/addon/a/zotpost/Mod_zotpost.php:77
@@ -1701,11 +1701,11 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Profs.php:178
 #: ../../Zotlabs/Module/Admin/Themes.php:158
 #: ../../Zotlabs/Module/Admin/Account_edit.php:71
-#: ../../Zotlabs/Module/Admin/Accounts.php:168
 #: ../../Zotlabs/Module/Admin/Channels.php:154
-#: ../../Zotlabs/Module/Admin/Security.php:161
 #: ../../Zotlabs/Module/Admin/Site.php:288
-#: ../../Zotlabs/Module/Admin/Addons.php:439 ../../Zotlabs/Module/Cal.php:350
+#: ../../Zotlabs/Module/Admin/Addons.php:439
+#: ../../Zotlabs/Module/Admin/Accounts.php:168
+#: ../../Zotlabs/Module/Admin/Security.php:161 ../../Zotlabs/Module/Cal.php:350
 #: ../../Zotlabs/Module/Expire.php:46 ../../Zotlabs/Module/Connedit.php:830
 #: ../../Zotlabs/Module/Appman.php:144 ../../Zotlabs/Module/Defperms.php:239
 #: ../../Zotlabs/Module/Events.php:524
@@ -1734,7 +1734,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Settings/Channel.php:589
 #: ../../Zotlabs/Module/Settings/Display.php:190
 #: ../../Zotlabs/Module/Sources.php:123 ../../Zotlabs/Module/Sources.php:160
-#: ../../Zotlabs/Module/Editpost.php:99 ../../Zotlabs/Module/Import.php:685
+#: ../../Zotlabs/Module/Editpost.php:99 ../../Zotlabs/Module/Import.php:699
 #: ../../Zotlabs/Module/Xchan.php:15 ../../Zotlabs/Module/Zotfinger.php:25
 #: ../../Zotlabs/Module/Superblock.php:248
 #: ../../Zotlabs/Module/Content_filter.php:66
@@ -1940,12 +1940,13 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Logs.php:82
 #: ../../Zotlabs/Module/Admin/Themes.php:122
 #: ../../Zotlabs/Module/Admin/Themes.php:156
-#: ../../Zotlabs/Module/Admin/Accounts.php:166
 #: ../../Zotlabs/Module/Admin/Channels.php:152
-#: ../../Zotlabs/Module/Admin/Security.php:128
 #: ../../Zotlabs/Module/Admin/Site.php:286
 #: ../../Zotlabs/Module/Admin/Addons.php:339
-#: ../../Zotlabs/Module/Admin/Addons.php:437 ../../Zotlabs/Module/Admin.php:175
+#: ../../Zotlabs/Module/Admin/Addons.php:437
+#: ../../Zotlabs/Module/Admin/Accounts.php:166
+#: ../../Zotlabs/Module/Admin/Security.php:128
+#: ../../Zotlabs/Module/Admin.php:175
 msgid "Administration"
 msgstr ""
 
@@ -2237,125 +2238,6 @@ msgstr ""
 msgid "Service class"
 msgstr ""
 
-#: ../../Zotlabs/Module/Admin/Accounts.php:37
-#, php-format
-msgid "%s account blocked/unblocked"
-msgid_plural "%s accounts blocked/unblocked"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:45
-#, php-format
-msgid "%s account deleted"
-msgid_plural "%s accounts deleted"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:83
-msgid "Account not found"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:94 ../../include/channel.php:2096
-#, php-format
-msgid "Account '%s' deleted"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:102
-#, php-format
-msgid "Account '%s' blocked"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:110
-#, php-format
-msgid "Account '%s' unblocked"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:167
-#: ../../Zotlabs/Module/Admin/Accounts.php:180
-#: ../../Zotlabs/Module/Admin.php:119 ../../Zotlabs/Widget/Admin.php:25
-msgid "Accounts"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:169
-#: ../../Zotlabs/Module/Admin/Channels.php:155
-msgid "select all"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:170
-msgid "Registrations waiting for confirm"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:171
-msgid "Request date"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:171
-#: ../../Zotlabs/Module/Admin/Accounts.php:183
-#: ../../Zotlabs/Module/Cdav.php:1353 ../../Zotlabs/Module/Connedit.php:853
-#: ../../Zotlabs/Module/Profiles.php:788 ../../include/network.php:1541
-msgid "Email"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:172
-msgid "No registrations."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:173
-#: ../../Zotlabs/Module/Connections.php:337 ../../include/conversation.php:740
-msgid "Approve"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:174
-#: ../../Zotlabs/Module/Authorize.php:33
-msgid "Deny"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:176
-#: ../../Zotlabs/Module/Connedit.php:568 ../../Zotlabs/Widget/Sblock.php:19
-msgid "Block"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:177
-#: ../../Zotlabs/Module/Connedit.php:568
-msgid "Unblock"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:182
-msgid "ID"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:184
-msgid "All Channels"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:185
-msgid "Register date"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:186
-msgid "Last login"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:187
-msgid "Expires"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:188
-msgid "Service Class"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:190
-msgid ""
-"Selected accounts will be deleted!\\n\\nEverything these accounts had posted "
-"on this site will be permanently deleted!\\n\\nAre you sure?"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Accounts.php:191
-msgid ""
-"The account {0} will be deleted!\\n\\nEverything this account has posted on "
-"this site will be permanently deleted!\\n\\nAre you sure?"
-msgstr ""
-
 #: ../../Zotlabs/Module/Admin/Channels.php:35
 #, php-format
 msgid "%s channel censored/uncensored"
@@ -2410,6 +2292,11 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin.php:137 ../../Zotlabs/Module/Manage.php:180
 #: ../../Zotlabs/Widget/Admin.php:26 ../../include/nav.php:88
 msgid "Channels"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Channels.php:155
+#: ../../Zotlabs/Module/Admin/Accounts.php:169
+msgid "select all"
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Channels.php:157
@@ -2470,179 +2357,6 @@ msgstr ""
 msgid ""
 "The channel {0} will be deleted!\\n\\nEverything that was posted in this "
 "channel on this site will be permanently deleted!\\n\\nAre you sure?"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:119
-msgid ""
-"By default, unfiltered HTML is allowed in embedded media. This is inherently "
-"insecure."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:122
-msgid ""
-"The recommended setting is to only allow unfiltered HTML from the following "
-"sites:"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:123
-msgid ""
-"https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/"
-"<br>https://vimeo.com/<br>https://soundcloud.com/<br>"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:124
-msgid ""
-"All other embedded content will be filtered, <strong>unless</strong> "
-"embedded content from that site is explicitly blocked."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:129
-#: ../../Zotlabs/Widget/Admin.php:27
-msgid "Security"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:131
-msgid "Block public"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:131
-msgid ""
-"Check to block public access to all otherwise public personal pages on this "
-"site unless you are currently authenticated."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:132
-msgid "Block public search"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:132
-msgid ""
-"Prevent access to search content unless you are currently authenticated."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:133
-msgid "Hide local directory"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:133
-msgid "Only use the global directory"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:134
-msgid "Provide a cloud root directory"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:134
-msgid ""
-"The cloud root directory lists all channel names which provide public files"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:135
-msgid "Show total disk space available to cloud uploads"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:136
-msgid "Allow SVG thumbnails in file browser"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:136
-msgid "WARNING: SVG images may contain malicious code."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:138
-msgid "Allow embedded (inline) PDF files"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:140
-msgid "Set \"Transport Security\" HTTP header"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:141
-msgid "Set \"Content Security Policy\" HTTP header"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:142
-msgid "Allowed email domains"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:142
-msgid ""
-"Comma separated list of domains which are allowed in email addresses for "
-"registrations to this site. Wildcards are accepted. Empty to allow any "
-"domains"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:143
-msgid "Not allowed email domains"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:143
-msgid ""
-"Comma separated list of domains which are not allowed in email addresses for "
-"registrations to this site. Wildcards are accepted. Empty to allow any "
-"domains, unless allowed domains have been defined."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:144
-msgid "Allow communications only from these sites"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:144
-#: ../../Zotlabs/Module/Admin/Security.php:149
-msgid ""
-"One site per line. Leave empty to allow communication from anywhere by "
-"default"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:145
-msgid "Block communications from these sites"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:146
-msgid "Allow communications only from these channels"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:146
-#: ../../Zotlabs/Module/Admin/Security.php:151
-msgid ""
-"One channel (hash) per line. Leave empty to allow communication from any "
-"channel by default"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:147
-msgid "Block communications from these channels"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:149
-msgid "Allow public stream communications only from these sites"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:150
-msgid "Block public stream communications from these sites"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:151
-msgid "Allow public stream communications only from these channels"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:152
-msgid "Block public stream communications from these channels"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:155
-msgid "Only allow embeds from secure (SSL) websites and links."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:156
-msgid "Allow unfiltered embedded HTML content only from these domains"
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:156
-msgid "One site per line. By default embedded content is filtered."
-msgstr ""
-
-#: ../../Zotlabs/Module/Admin/Security.php:157
-msgid "Block embedded HTML from these domains"
 msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Site.php:165
@@ -3446,6 +3160,293 @@ msgstr ""
 msgid "Use"
 msgstr ""
 
+#: ../../Zotlabs/Module/Admin/Accounts.php:37
+#, php-format
+msgid "%s account blocked/unblocked"
+msgid_plural "%s accounts blocked/unblocked"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:45
+#, php-format
+msgid "%s account deleted"
+msgid_plural "%s accounts deleted"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:83
+msgid "Account not found"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:94 ../../include/channel.php:2096
+#, php-format
+msgid "Account '%s' deleted"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:102
+#, php-format
+msgid "Account '%s' blocked"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:110
+#, php-format
+msgid "Account '%s' unblocked"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:167
+#: ../../Zotlabs/Module/Admin/Accounts.php:180
+#: ../../Zotlabs/Module/Admin.php:119 ../../Zotlabs/Widget/Admin.php:25
+msgid "Accounts"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:170
+msgid "Registrations waiting for confirm"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:171
+msgid "Request date"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:171
+#: ../../Zotlabs/Module/Admin/Accounts.php:183
+#: ../../Zotlabs/Module/Cdav.php:1353 ../../Zotlabs/Module/Connedit.php:853
+#: ../../Zotlabs/Module/Profiles.php:788 ../../include/network.php:1541
+msgid "Email"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:172
+msgid "No registrations."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:173
+#: ../../Zotlabs/Module/Connections.php:337 ../../include/conversation.php:740
+msgid "Approve"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:174
+#: ../../Zotlabs/Module/Authorize.php:33
+msgid "Deny"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:176
+#: ../../Zotlabs/Module/Connedit.php:568 ../../Zotlabs/Widget/Sblock.php:19
+msgid "Block"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:177
+#: ../../Zotlabs/Module/Connedit.php:568
+msgid "Unblock"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:182
+msgid "ID"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:184
+msgid "All Channels"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:185
+msgid "Register date"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:186
+msgid "Last login"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:187
+msgid "Expires"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:188
+msgid "Service Class"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:190
+msgid ""
+"Selected accounts will be deleted!\\n\\nEverything these accounts had posted "
+"on this site will be permanently deleted!\\n\\nAre you sure?"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Accounts.php:191
+msgid ""
+"The account {0} will be deleted!\\n\\nEverything this account has posted on "
+"this site will be permanently deleted!\\n\\nAre you sure?"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:119
+msgid ""
+"By default, unfiltered HTML is allowed in embedded media. This is inherently "
+"insecure."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:122
+msgid ""
+"The recommended setting is to only allow unfiltered HTML from the following "
+"sites:"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:123
+msgid ""
+"https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/"
+"<br>https://vimeo.com/<br>https://soundcloud.com/<br>"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:124
+msgid ""
+"All other embedded content will be filtered, <strong>unless</strong> "
+"embedded content from that site is explicitly blocked."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:129
+#: ../../Zotlabs/Widget/Admin.php:27
+msgid "Security"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:131
+msgid "Block public"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:131
+msgid ""
+"Check to block public access to all otherwise public personal pages on this "
+"site unless you are currently authenticated."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:132
+msgid "Block public search"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:132
+msgid ""
+"Prevent access to search content unless you are currently authenticated."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:133
+msgid "Hide local directory"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:133
+msgid "Only use the global directory"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:134
+msgid "Provide a cloud root directory"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:134
+msgid ""
+"The cloud root directory lists all channel names which provide public files"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:135
+msgid "Show total disk space available to cloud uploads"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:136
+msgid "Allow SVG thumbnails in file browser"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:136
+msgid "WARNING: SVG images may contain malicious code."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:138
+msgid "Allow embedded (inline) PDF files"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:140
+msgid "Set \"Transport Security\" HTTP header"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:141
+msgid "Set \"Content Security Policy\" HTTP header"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:142
+msgid "Allowed email domains"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:142
+msgid ""
+"Comma separated list of domains which are allowed in email addresses for "
+"registrations to this site. Wildcards are accepted. Empty to allow any "
+"domains"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:143
+msgid "Not allowed email domains"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:143
+msgid ""
+"Comma separated list of domains which are not allowed in email addresses for "
+"registrations to this site. Wildcards are accepted. Empty to allow any "
+"domains, unless allowed domains have been defined."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:144
+msgid "Allow communications only from these sites"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:144
+#: ../../Zotlabs/Module/Admin/Security.php:149
+msgid ""
+"One site per line. Leave empty to allow communication from anywhere by "
+"default"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:145
+msgid "Block communications from these sites"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:146
+msgid "Allow communications only from these channels"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:146
+#: ../../Zotlabs/Module/Admin/Security.php:151
+msgid ""
+"One channel (hash) per line. Leave empty to allow communication from any "
+"channel by default"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:147
+msgid "Block communications from these channels"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:149
+msgid "Allow public stream communications only from these sites"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:150
+msgid "Block public stream communications from these sites"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:151
+msgid "Allow public stream communications only from these channels"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:152
+msgid "Block public stream communications from these channels"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:155
+msgid "Only allow embeds from secure (SSL) websites and links."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:156
+msgid "Allow unfiltered embedded HTML content only from these domains"
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:156
+msgid "One site per line. By default embedded content is filtered."
+msgstr ""
+
+#: ../../Zotlabs/Module/Admin/Security.php:157
+msgid "Block embedded HTML from these domains"
+msgstr ""
+
 #: ../../Zotlabs/Module/Drafts.php:20
 msgid ""
 "This app allows you to save posts you are writing and finish them later "
@@ -4218,7 +4219,9 @@ msgstr ""
 #: ../../Zotlabs/Module/Settings/Channel.php:79
 #: ../../Zotlabs/Module/Settings/Channel.php:82
 #: ../../Zotlabs/Module/Settings/Channel.php:93
-#: ../../Zotlabs/Widget/Affinity.php:26 ../../include/channel.php:440
+#: ../../Zotlabs/Widget/Affinity.php:26 ../../Zotlabs/Import/Friendica.php:241
+#: ../../Zotlabs/Import/Friendica.php:242
+#: ../../Zotlabs/Import/Friendica.php:249 ../../include/channel.php:440
 #: ../../include/channel.php:441 ../../include/channel.php:448
 msgid "Friends"
 msgstr ""
@@ -5700,16 +5703,16 @@ msgstr ""
 msgid "Edit Card"
 msgstr ""
 
-#: ../../Zotlabs/Module/Import_items.php:48 ../../Zotlabs/Module/Import.php:72
+#: ../../Zotlabs/Module/Import_items.php:48 ../../Zotlabs/Module/Import.php:75
 msgid "Nothing to import."
 msgstr ""
 
-#: ../../Zotlabs/Module/Import_items.php:72 ../../Zotlabs/Module/Import.php:88
-#: ../../Zotlabs/Module/Import.php:104
+#: ../../Zotlabs/Module/Import_items.php:72 ../../Zotlabs/Module/Import.php:91
+#: ../../Zotlabs/Module/Import.php:107
 msgid "Unable to download data from old server"
 msgstr ""
 
-#: ../../Zotlabs/Module/Import_items.php:77 ../../Zotlabs/Module/Import.php:111
+#: ../../Zotlabs/Module/Import_items.php:77 ../../Zotlabs/Module/Import.php:114
 msgid "Imported file is empty."
 msgstr ""
 
@@ -5730,7 +5733,7 @@ msgid "Use this form to import existing posts and content from an export file."
 msgstr ""
 
 #: ../../Zotlabs/Module/Import_items.php:130
-#: ../../Zotlabs/Module/Import.php:669
+#: ../../Zotlabs/Module/Import.php:683
 msgid "File to Upload"
 msgstr ""
 
@@ -6507,7 +6510,7 @@ msgstr ""
 msgid "No webpage elements detected."
 msgstr ""
 
-#: ../../Zotlabs/Module/Webpages.php:421
+#: ../../Zotlabs/Module/Webpages.php:421 ../../Zotlabs/Import/Friendica.php:330
 msgid "Import complete."
 msgstr ""
 
@@ -9079,59 +9082,59 @@ msgstr ""
 msgid "Select a tag to remove: "
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:151
+#: ../../Zotlabs/Module/Import.php:165 ../../Zotlabs/Import/Friendica.php:59
 #, php-format
 msgid "Your service plan only allows %d channels."
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:181
+#: ../../Zotlabs/Module/Import.php:195
 msgid "No channel. Import failed."
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:616
+#: ../../Zotlabs/Module/Import.php:630
 msgid "Files and Posts imported."
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:632
+#: ../../Zotlabs/Module/Import.php:646
 msgid "Import completed."
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:662
+#: ../../Zotlabs/Module/Import.php:676
 msgid "You must be logged in to use this feature."
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:667
+#: ../../Zotlabs/Module/Import.php:681
 msgid "Import Channel"
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:668
+#: ../../Zotlabs/Module/Import.php:682
 msgid ""
 "Use this form to import an existing channel from a different server. You may "
 "retrieve the channel identity from the old server via the network or provide "
 "an export file."
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:670
+#: ../../Zotlabs/Module/Import.php:684
 msgid "Or provide the old server details"
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:671
+#: ../../Zotlabs/Module/Import.php:685
 msgid "Your old identity address (xyz@example.com)"
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:672
+#: ../../Zotlabs/Module/Import.php:686
 msgid "Your old login email address"
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:673
+#: ../../Zotlabs/Module/Import.php:687
 msgid "Your old login password"
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:674
+#: ../../Zotlabs/Module/Import.php:688
 msgid "Import a few months of posts if possible (limited by available memory)"
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:676
+#: ../../Zotlabs/Module/Import.php:690
 msgid ""
 "For either option, please choose whether to make this hub your new primary "
 "address, or whether your old location should continue this role. You will be "
@@ -9139,25 +9142,25 @@ msgid ""
 "location for files, photos, and media."
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:678
+#: ../../Zotlabs/Module/Import.php:692
 msgid "Make this hub my primary location"
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:679
+#: ../../Zotlabs/Module/Import.php:693
 msgid "Move this channel (disable all previous locations)"
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:680
+#: ../../Zotlabs/Module/Import.php:694
 msgid "Use this channel nickname instead of the one provided"
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:680
+#: ../../Zotlabs/Module/Import.php:694
 msgid ""
 "Leave blank to keep your existing channel nickname. You will be randomly "
 "assigned a similar nickname if either name is already allocated on this site."
 msgstr ""
 
-#: ../../Zotlabs/Module/Import.php:682
+#: ../../Zotlabs/Module/Import.php:696
 msgid ""
 "This process may take several minutes to complete and considerably longer if "
 "importing a large amount of posts and files. Please submit the form only "
@@ -10029,6 +10032,10 @@ msgstr ""
 msgid "Select an addressbook to import to"
 msgstr ""
 
+#: ../../Zotlabs/Import/Friendica.php:191 ../../include/channel.php:390
+msgid "Default Profile"
+msgstr ""
+
 #: ../../include/photos.php:151
 #, php-format
 msgid "Image exceeds website size limit of %lu bytes"
@@ -10162,72 +10169,8 @@ msgstr ""
 msgid "Unable to retrieve created identity"
 msgstr ""
 
-#: ../../include/channel.php:390
-msgid "Default Profile"
-msgstr ""
-
 #: ../../include/channel.php:587 ../../include/channel.php:677
 msgid "Unable to retrieve modified identity"
-msgstr ""
-
-#: ../../include/items.php:1027
-msgid "(Unknown)"
-msgstr ""
-
-#: ../../include/items.php:1210
-msgid "Visible to anybody on the internet."
-msgstr ""
-
-#: ../../include/items.php:1212
-msgid "Visible to you only."
-msgstr ""
-
-#: ../../include/items.php:1214
-msgid "Visible to anybody in this network."
-msgstr ""
-
-#: ../../include/items.php:1216
-msgid "Visible to anybody authenticated."
-msgstr ""
-
-#: ../../include/items.php:1218
-#, php-format
-msgid "Visible to anybody on %s."
-msgstr ""
-
-#: ../../include/items.php:1220
-msgid "Visible to all connections."
-msgstr ""
-
-#: ../../include/items.php:1222
-msgid "Visible to approved connections."
-msgstr ""
-
-#: ../../include/items.php:1224
-msgid "Visible to specific connections."
-msgstr ""
-
-#: ../../include/items.php:4133
-msgid "Privacy group is empty."
-msgstr ""
-
-#: ../../include/items.php:4511
-msgid "profile photo"
-msgstr ""
-
-#: ../../include/items.php:4715
-#, php-format
-msgid "[Edited %s]"
-msgstr ""
-
-#: ../../include/items.php:4715
-msgctxt "edit_activity"
-msgid "Post"
-msgstr ""
-
-#: ../../include/items.php:4715
-msgctxt "edit_activity"
-msgid "Comment"
 msgstr ""
 
 #: ../../include/features.php:56
@@ -10810,27 +10753,49 @@ msgstr ""
 msgid "Empty path"
 msgstr ""
 
-#: ../../include/import.php:30
-msgid "Unable to import a removed channel."
+#: ../../include/bbcode.php:283
+msgid "Encrypted content"
 msgstr ""
 
-#: ../../include/import.php:57
+#: ../../include/bbcode.php:321
+#, php-format
+msgid "(Embedded app '%s' could not be displayed)."
+msgstr ""
+
+#: ../../include/bbcode.php:361
+#, php-format
+msgid "Install %1$s element %2$s"
+msgstr ""
+
+#: ../../include/bbcode.php:365
+#, php-format
 msgid ""
-"A channel with these settings was discovered and is not usable as it was "
-"removed or reserved for system use. Import failed."
+"This post contains an installable %s element, however you lack permissions "
+"to install it on this site."
 msgstr ""
 
-#: ../../include/import.php:66
-msgid ""
-"Cannot create a duplicate channel identifier on this system. Import failed."
+#: ../../include/bbcode.php:621
+msgid "card"
 msgstr ""
 
-#: ../../include/import.php:87
-msgid "Unable to create a unique channel address. Import failed."
+#: ../../include/bbcode.php:623
+msgid "article"
 msgstr ""
 
-#: ../../include/import.php:133
-msgid "Cloned channel not found. Import failed."
+#: ../../include/bbcode.php:706 ../../include/bbcode.php:714
+msgid "Click to open/close"
+msgstr ""
+
+#: ../../include/bbcode.php:714
+msgid "spoiler"
+msgstr ""
+
+#: ../../include/bbcode.php:1270 ../../include/bbcode.php:1518
+msgid "Different viewers will see this text differently"
+msgstr ""
+
+#: ../../include/bbcode.php:1837
+msgid "$1 wrote:"
 msgstr ""
 
 #: ../../include/taxonomy.php:322
@@ -11310,49 +11275,87 @@ msgstr ""
 msgid "MySpace"
 msgstr ""
 
-#: ../../include/bbcode.php:283
-msgid "Encrypted content"
+#: ../../include/import.php:30
+msgid "Unable to import a removed channel."
 msgstr ""
 
-#: ../../include/bbcode.php:321
-#, php-format
-msgid "(Embedded app '%s' could not be displayed)."
-msgstr ""
-
-#: ../../include/bbcode.php:361
-#, php-format
-msgid "Install %1$s element %2$s"
-msgstr ""
-
-#: ../../include/bbcode.php:365
-#, php-format
+#: ../../include/import.php:57
 msgid ""
-"This post contains an installable %s element, however you lack permissions "
-"to install it on this site."
+"A channel with these settings was discovered and is not usable as it was "
+"removed or reserved for system use. Import failed."
 msgstr ""
 
-#: ../../include/bbcode.php:621
-msgid "card"
+#: ../../include/import.php:66
+msgid ""
+"Cannot create a duplicate channel identifier on this system. Import failed."
 msgstr ""
 
-#: ../../include/bbcode.php:623
-msgid "article"
+#: ../../include/import.php:87
+msgid "Unable to create a unique channel address. Import failed."
 msgstr ""
 
-#: ../../include/bbcode.php:706 ../../include/bbcode.php:714
-msgid "Click to open/close"
+#: ../../include/import.php:133
+msgid "Cloned channel not found. Import failed."
 msgstr ""
 
-#: ../../include/bbcode.php:714
-msgid "spoiler"
+#: ../../include/items.php:1027
+msgid "(Unknown)"
 msgstr ""
 
-#: ../../include/bbcode.php:1270 ../../include/bbcode.php:1518
-msgid "Different viewers will see this text differently"
+#: ../../include/items.php:1210
+msgid "Visible to anybody on the internet."
 msgstr ""
 
-#: ../../include/bbcode.php:1837
-msgid "$1 wrote:"
+#: ../../include/items.php:1212
+msgid "Visible to you only."
+msgstr ""
+
+#: ../../include/items.php:1214
+msgid "Visible to anybody in this network."
+msgstr ""
+
+#: ../../include/items.php:1216
+msgid "Visible to anybody authenticated."
+msgstr ""
+
+#: ../../include/items.php:1218
+#, php-format
+msgid "Visible to anybody on %s."
+msgstr ""
+
+#: ../../include/items.php:1220
+msgid "Visible to all connections."
+msgstr ""
+
+#: ../../include/items.php:1222
+msgid "Visible to approved connections."
+msgstr ""
+
+#: ../../include/items.php:1224
+msgid "Visible to specific connections."
+msgstr ""
+
+#: ../../include/items.php:4133
+msgid "Privacy group is empty."
+msgstr ""
+
+#: ../../include/items.php:4511
+msgid "profile photo"
+msgstr ""
+
+#: ../../include/items.php:4715
+#, php-format
+msgid "[Edited %s]"
+msgstr ""
+
+#: ../../include/items.php:4715
+msgctxt "edit_activity"
+msgid "Post"
+msgstr ""
+
+#: ../../include/items.php:4715
+msgctxt "edit_activity"
+msgid "Comment"
 msgstr ""
 
 #: ../../include/js_strings.php:5
