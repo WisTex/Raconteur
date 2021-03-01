@@ -48,6 +48,10 @@ Generates some statistics for the-federation.info and other nodeinfo based servi
 
 Collapse posts with inappropriate content
 
+## Open Search
+
+Configure your site as an open search provider, allowing you to add it as a search engine in your web browser. 
+
 ## OpenStreetMap
 
 Use OpenStreetMap for displaying locations.
@@ -55,6 +59,14 @@ Use OpenStreetMap for displaying locations.
 ## phpmailer
 
 use phpmailer instead of built-in mail() function
+
+## Qrator
+
+QR code generator
+
+## Queue Worker
+
+Alternate performance-enhanced delivery and background processing engine
 
 ## Rainbowtag
 

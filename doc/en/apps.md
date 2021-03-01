@@ -68,6 +68,10 @@ Set a post to be published at/after a certain date/time. Usually used for automa
 
 Requires the 'gallery' addon. This provides an improved image browser to your photos than the stock 'Photos' app. Interactions with photos in your stream are modified slightly.
 
+## Hexit
+
+Requires the 'hexit' addon. This provides an online hexadecimal/decimal converter. 
+
 ## Language
 
 This is generally used by developers to test alternate languages and is rarely needed. The language of your website will usually depend on the language settings of your browser and the existence of available translations. This app allows you to quickly over-ride the defaults and specify a particular language.
@@ -100,10 +104,17 @@ Installed by default. This displays your uploaded photos and photo albums separa
 
 This app lets you open a post editor at any time.
 
+## Qrator
+
+Requires the 'qrator' addon and provides a page to generate QR codes for your requirements.
+
+## Rainbow Tag
+
+Requires both the 'rainbowtag' addon and Tagadelic app. This converts the tag clouds provided by Tagadelic from monochrome into color.
+
 ## Search
 
 One click interface to the search page.
-
 
 ## Secrets
 
