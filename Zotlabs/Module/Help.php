@@ -73,7 +73,35 @@ class Help extends Controller {
 			killme();
 		}
 
-		$content =  get_help_content();
+		if (argc() === 1) {
+			$files = self::listdir('doc');
+			
+			if ($files) {
+				foreach ($files as $file) {
+					if ((! strpos($file,'/site/')) && file_exists(str_replace('doc/','doc/site/',$file))) {
+						continue;
+					}
+					if (strpos($file,'README')) {
+						continue;
+					}
+					if (preg_match('/\/(..|..\-..)\//',$file,$matches)) {
+						$language = $matches[1];
+					}
+					else {
+						$language = t('Unknown language');
+					}
+
+					$link = str_replace( [ 'doc/', '.mc' ], [ 'help/', '' ], $file);
+					if (strpos($link,'/global/') !== false || strpos($link,'/media/') !== false) {
+						continue;
+					}
+					$content .= '<a href="' . $link . '">' . ucfirst(basename($link)) . '</a>' . " [$language]" . EOL;
+				}
+			}
+		}
+		else {
+			$content =  get_help_content();
+		}
 		
 
 		return replace_macros(get_markup_template('help.tpl'), array(
@@ -84,5 +112,27 @@ class Help extends Controller {
 			'$language'   => $language
 		));
 	}
+
+	static function listdir($path) {
+		$results = [];
+		$handle = opendir($path);
+		if (! $handle) {
+			return $results;
+		}
+		while (false !== ($file = readdir($handle))) {
+			if ($file === '.' || $file === '..') {
+				continue;
+			}
+			if (is_dir($path . '/' . $file)) {
+				$results = array_merge($results, self::listdir($path . '/' . $file));
+			}
+			else {
+				$results[] = $path . '/' . $file;
+			}
+		}
+		closedir($handle);
+		return $results;
+	}
+
 
 }
