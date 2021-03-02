@@ -1168,12 +1168,25 @@ function md_topheader($matches) {
 
 function bb_fixtable_lf($match) {
 
+	// bbcode version (1 arg)
 	// remove extraneous whitespace between table element tags since newlines will all
 	// be converted to '<br>' and turn your neatly crafted tables into a whole lot of
 	// empty space.
  
 	$x = preg_replace("/\]\s+\[/",'][',$match[1]);
 	return '[table]' . $x . '[/table]';
+
+}
+
+function ht_fixtable_lf($match) {
+
+	// HTML version (2 args)
+	// remove extraneous whitespace between table element tags since newlines will all
+	// be converted to '<br>' and turn your neatly crafted tables into a whole lot of
+	// empty space.
+ 
+	$x = preg_replace("/\>\s+\</",'><',$match[2]);
+	return '<table' . $match[1] . '>' . $x . '</table>';
 
 }
 
@@ -1433,6 +1446,7 @@ function bbcode($Text, $options = []) {
 	}
 
 	$Text = preg_replace_callback("/\[table\](.*?)\[\/table\]/ism",'bb_fixtable_lf',$Text);
+	$Text = preg_replace_callback("/\<table(.*?)\>(.*?)\<\/table\>/ism",'ht_fixtable_lf',$Text);
 
 	$Text = str_replace("\r\n", "\n", $Text);
 
