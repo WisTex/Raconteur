@@ -7,13 +7,7 @@ use Zotlabs\Lib\System;
 require_once('include/help.php');
 
 /**
- * You can create local site resources in doc/Site.md and either link to doc/Home.md for the standard resources
- * or use our include mechanism to include it on your local page.
- *@code
- * #include doc/Home.md;
- *@endcode
- *
- * The syntax is somewhat strict.
+ * You can create local site resources in doc/site 
  */
 class Help extends Controller {
 

@@ -1,6 +1,8 @@
 <?php
 
+use App;
 use Michelf\MarkdownExtra;
+use Zotlabs\Lib\IConfig;
 
 /**
  * @brief
@@ -17,13 +19,20 @@ function get_help_fullpath($path,$suffix=null) {
 function find_docfile($name,$language) {
 
 	foreach([ $language, 'en' ] as $lang) {
-		if (file_exists('doc/site/' . $lang . '/' . $name . '.md')) {
-			return 'doc/site/' . $lang . '/' . $name . '.md';
+		if (file_exists('doc/site/' . $lang . '/' . $name . '.mc')) {
+			return 'doc/site/' . $lang . '/' . $name . '.mc';
 		}
-		if (file_exists('doc/' . $lang . '/' . $name . '.md')) {
-			return 'doc/' . $lang . '/' . $name . '.md';
+		if (file_exists('doc/' . $lang . '/' . $name . '.mc')) {
+			return 'doc/' . $lang . '/' . $name . '.mc';
 		}
 	}
+	if (file_exists('doc/site/' . $name . '.mc')) {
+		return ('doc/site/' . $name . '.mc');
+	}
+	if (file_exists('doc/' . $name . '.mc')) {
+		return ('doc/' . $name . '.mc');
+	}
+	
 	return EMPTY_STR;
 }
 
@@ -37,11 +46,19 @@ function find_docfile($name,$language) {
 function get_help_content($tocpath = false) {
 
 
-	$doctype = 'markdown';
+	$doctype = 'multicode';
 
 	$text = '';
 
-	$path = argv(1);
+	$path = '';
+	if (argc() > 1) {
+		for ($x = 1; $x < argc(); $x ++) {
+			if ($path) {
+				$path .= '/';
+			}
+			$path .= App::$argv[$x];
+		}
+	}
 
 	$fullpath = get_help_fullpath($path);
 
@@ -49,7 +66,7 @@ function get_help_content($tocpath = false) {
 
 	App::$page['title'] = t('Help');
 
-	$content = MarkdownExtra::defaultTransform($text);
+	$content = bbcode($text);
 
 	return translate_projectname($content);
 }
@@ -223,12 +240,7 @@ function store_doc_file($s) {
 	$item['aid'] = 0;
 	$item['uid'] = $sys['channel_id'];
 
-	if(strpos($s, '.md'))
-		$mimetype = 'text/markdown';
-	elseif(strpos($s, '.html'))
-		$mimetype = 'text/html';
-	else
-		$mimetype = 'text/bbcode';
+	$mimetype = 'text/bbcode';
 
 	require_once('include/html2plain.php');
 
@@ -246,7 +258,7 @@ function store_doc_file($s) {
 		intval(ITEM_TYPE_DOC)
 	);
 
-	\Zotlabs\Lib\IConfig::Set($item,'system','docfile',$s);
+	IConfig::Set($item,'system','docfile',$s);
 
 	if($r) {
 		$item['id'] = $r[0]['id'];
