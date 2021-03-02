@@ -1,6 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\System;
 
@@ -90,12 +91,15 @@ class Help extends Controller {
 					else {
 						$language = t('Unknown language');
 					}
+					if ($language === substr(App::$language,0,2)) {
+						$language = '';
+					}
 
 					$link = str_replace( [ 'doc/', '.mc' ], [ 'help/', '' ], $file);
 					if (strpos($link,'/global/') !== false || strpos($link,'/media/') !== false) {
 						continue;
 					}
-					$content .= '<a href="' . $link . '">' . ucfirst(basename($link)) . '</a>' . " [$language]" . EOL;
+					$content .= '<div class="nav-pills"><a href="' . $link . '">' . ucfirst(basename($link)) . '</a></div>' . (($language) ? " [$language]" : '') . EOL;
 				}
 			}
 		}

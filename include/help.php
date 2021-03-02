@@ -1,6 +1,6 @@
 <?php
 
-use App;
+
 use Michelf\MarkdownExtra;
 use Zotlabs\Lib\IConfig;
 
