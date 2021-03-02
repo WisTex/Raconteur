@@ -45,14 +45,19 @@ Posting to a Group
 ==================
 
 
-You can post to a group one of two ways.
+You can post to a group in several ways.
 
-1) Visit the group homepage using an authenticated link (this will usually be automatic when visiting pages inside the application) and post to the homepage creating a "wall-to-wall" post.
+1) Compose a post on your own site and use the access dialog (click the lock icon located immediately beneath the post editor) to select the group as a destination. This is the preferred method as it attempts to smooth over any differences communicating with groups provided by other applications.
 
 2) Send a DM (direct/private message) to the group. This will be re-published as a group post. A DM is created by creating a post and selecting the group as a private recipient from the access dialog (look for a lock button in the post editor). Alternatively you can create a post using "private mentions" and tag the group.  A post with a private mention is only sent to those mentioned. A private mention begins with the characters @! followed by the group name. This should auto-complete as soon as you start typing the name.
 
 When using a DM for group posting, please do not include any other recipients.
 
-Group members using other software (Mastodon, MoodleNet, etc.) will need to use a DM to post to the group. The precise mechanism for sending a DM may vary depending on the software used.
+Group members using other software (Mastodon, MoodleNet, etc.) will need to use a DM to post to groups that use this software. The precise mechanism for sending a DM may vary depending on the software used.
 
+3) Visit the group homepage using an authenticated link and post to the homepage creating a "wall-to-wall" post. This option is only available between sites and applications which provide network single sign-on. This software provides such a service. Other applications may not. 
 
+Posting comments to a Group
+===========================
+
+No special action is necessary. Just reply to the conversation as you would any other conversation. 
