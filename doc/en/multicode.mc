@@ -16,4 +16,12 @@ Multicode is a unique feature to this family of communication applications. It a
 **So should this.** (Markdown)
 [b]And this also.[/b] (BBcode)
 
+Implementation notes:
 
+To avoid surprises, please use preview when attempting something complex. To preview your post without publishing it, click the 'eye' icon below the post or comment. A preview of the post will show up just below the editor region. Click the 'eye' icon again to update the preview at any time. A preview will automatically be generated whenever multi-media content is added via upload/attach or when inserting webpages via the link tool.  
+
+Markdown is very susceptible to "false positives" which may add markup instructions unintentionally when using punctuation characters in unusual or uncommon ways. This can happen (for instance) if you include computer code in a post without identifying it as a block of code. If a markdown sequence is not rendered correctly, try adding space around the triggering punctuation and ensure that all computer code is placed in code blocks. 
+
+HTML must be heavily filtered on multi-user web applications to avoid/prevent a type of bad behaviour called "Cross-site scripting". You may not use Javascript at all, and there are a number of restrictions placed on rich-media elements such as audio/video tags and cross-domain content such as iframes. We use bbcode internally for many of these constructs - which will become apparent if you include a video or other rich media link. You may wish to do the same. 
+
+Also be aware that all line breaks in your posts are preserved and this may affect the display of HTML lists and tables. When using HTML to create such elements, you may be tempted to make them look "neat" by placing each table or list element on its own line. Don't do this, due to the preserved line breaks. Each list or table row should butt up against the one before it without including a blank line in between them.  
