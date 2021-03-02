@@ -1747,7 +1747,7 @@ class Activity {
 			ActivityPub::move($person_obj['id'],$tgt);
 			return;
 		}
-
+		
 		$url = $person_obj['id'];
 
 		if (! $url) {
@@ -2040,7 +2040,20 @@ class Activity {
 		if (! $icon) {
 			$icon = z_root() . '/' . get_default_profile_photo(300);
 		}
+
+		// We store all ActivityPub actors we can resolve. Some of them may be able to communicate over Zot6. Find them.
+		// Only probe if it looks like it looks something like a zot6 URL as there isn't anything in the actor record which we can reliably use for this purpose
+		// and adding zot discovery urls to the actor record will cause federation to fail with the 20-30 projects which don't accept arrays in the url field. 
 		
+		if (strpos($url,'/channel/') !== false) {
+			$zx = q("select * from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6'",
+				dbesc($url)
+			);	
+			if (($username) && strpos($username,'@') && (! $zx)) {
+				Run::Summon( [ 'Gprobe', bin2hex($username) ] );
+			}
+		}
+
 		Run::Summon( [ 'Xchan_photo', bin2hex($icon), bin2hex($url) ] );
 
 	}

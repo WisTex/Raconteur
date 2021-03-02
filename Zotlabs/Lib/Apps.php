@@ -58,19 +58,20 @@ class Apps {
 
 	static public function get_base_apps() {
 		$x = get_config('system','base_apps',[ 
-			'Connections',
-			'Suggest Channels',
-			'Stream',
-			'Settings',
-			'Files',
 			'Channel Home',
-			'View Profile',
-			'Photos',
+			'Connections',
 			'Directory',
 			'Events',
-			'Search',
+			'Files',
+			'Help',
+			'Lists',
+			'Photos',
 			'Profile Photo',
-			'Lists'
+			'Search',
+			'Settings',
+			'Stream',
+			'Suggest Channels',
+			'View Profile'
 		]);
 		call_hooks('get_base_apps',$x);
 		return $x;

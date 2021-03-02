@@ -1,19 +1,14 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\System;
 
 require_once('include/help.php');
 
 /**
- * You can create local site resources in doc/Site.md and either link to doc/Home.md for the standard resources
- * or use our include mechanism to include it on your local page.
- *@code
- * #include doc/Home.md;
- *@endcode
- *
- * The syntax is somewhat strict.
+ * You can create local site resources in doc/site 
  */
 class Help extends Controller {
 
@@ -79,7 +74,38 @@ class Help extends Controller {
 			killme();
 		}
 
-		$content =  get_help_content();
+		if (argc() === 1) {
+			$files = self::listdir('doc');
+			
+			if ($files) {
+				foreach ($files as $file) {
+					if ((! strpos($file,'/site/')) && file_exists(str_replace('doc/','doc/site/',$file))) {
+						continue;
+					}
+					if (strpos($file,'README')) {
+						continue;
+					}
+					if (preg_match('/\/(..|..\-..)\//',$file,$matches)) {
+						$language = $matches[1];
+					}
+					else {
+						$language = t('Unknown language');
+					}
+					if ($language === substr(App::$language,0,2)) {
+						$language = '';
+					}
+
+					$link = str_replace( [ 'doc/', '.mc' ], [ 'help/', '' ], $file);
+					if (strpos($link,'/global/') !== false || strpos($link,'/media/') !== false) {
+						continue;
+					}
+					$content .= '<div class="nav-pills"><a href="' . $link . '">' . ucfirst(basename($link)) . '</a></div>' . (($language) ? " [$language]" : '') . EOL;
+				}
+			}
+		}
+		else {
+			$content =  get_help_content();
+		}
 		
 
 		return replace_macros(get_markup_template('help.tpl'), array(
@@ -90,5 +116,27 @@ class Help extends Controller {
 			'$language'   => $language
 		));
 	}
+
+	static function listdir($path) {
+		$results = [];
+		$handle = opendir($path);
+		if (! $handle) {
+			return $results;
+		}
+		while (false !== ($file = readdir($handle))) {
+			if ($file === '.' || $file === '..') {
+				continue;
+			}
+			if (is_dir($path . '/' . $file)) {
+				$results = array_merge($results, self::listdir($path . '/' . $file));
+			}
+			else {
+				$results[] = $path . '/' . $file;
+			}
+		}
+		closedir($handle);
+		return $results;
+	}
+
 
 }

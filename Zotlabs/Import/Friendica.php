@@ -21,7 +21,8 @@ class Friendica {
 
 	private $groups = null;
 	private $members = null;
-
+	private $contacts = null;
+	
 
 	function __construct($data, $settings) {
 		$this->data = $data;
@@ -98,18 +99,18 @@ class Friendica {
 
 		// find the self contact
 		
-		$self = null;
+		$self_contact = null;
 
 		if (isset($this->data['contact']) && is_array($this->data['contact'])) {
 			foreach ($this->data['contact'] as $contact) {
 				if (isset($contact['self']) && intval($contact['self'])) {
-					$self = $contact;
+					$self_contact = $contact;
 					break;
 				}
 			}
 		}
 
-		if (! is_array($self)) {
+		if (! is_array($self_contact)) {
 			logger('self contact not found.');
 			return;
 		}
@@ -139,8 +140,8 @@ class Friendica {
 		}
 
 
-		if ($self['avatar']) {
-			$p = z_fetch_url($self['avatar'],true);
+		if ($self_contact['avatar']) {
+			$p = z_fetch_url($self_contact['avatar'],true);
 			if ($p['success']) {
 	            $h = explode("\n",$p['header']);
             	foreach ($h as $l) {
@@ -288,10 +289,11 @@ class Friendica {
 				}
 			}
 
-
 			call_hooks('create_identity', $newuid);
 		}
 
+		$this->groups = ((isset($this->data['group'])) ? $this->data['group'] : null);
+		$this->members = ((isset($this->data['group_member'])) ? $this->data['group_member'] : null);
 
 		// import contacts
 
@@ -302,7 +304,10 @@ class Friendica {
 				}
 				logger('connecting: ' . $contact['url'], LOGGER_DEBUG);
 				$result = Connect::connect($channel,(($contact['addr']) ? $contact['addr'] : $contact['url']));
-				// ignore return value as there will likely be a fair number of protocols represented that aren't supported here
+				if ($result['success'] && isset($result['abook'])) {
+					$contact['xchan_hash'] = $result['abook']['abook_xchan'];
+					$this->contacts[] = $contact;
+				}
 			}
 		}
 
@@ -320,11 +325,32 @@ class Friendica {
 			}
 		}
 
+		// The default 'Friends' group is already created and possibly populated.
+		// So some of the following code is redundant in that regard.
+		// Mostly this is used to create and populate any other groups.
 
-		// @todo: import AccessLists (groups in Friendica), but since they are all based on local identifiers
-		// to the system we are importing from this will be a challenge to cross-reference each of them and
-		// convert to global identifiers
-
+		if ($this->groups) {
+			foreach ($this->groups as $group) {
+				if (! intval($group['deleted'])) {
+					AccessList::add($channel['channel_id'], $group['name'], intval($group['visible']));
+					if ($this->members) {
+						foreach ($this->members as $member) {
+							if (intval($member['gid']) === intval(AccessList::byname($channel['channel_id'],$group['name']))) {
+								$contact_id = $member['contact-id'];
+								if ($this->contacts) {
+									foreach ($this->contacts as $contact) {
+										if (intval($contact['id']) === intval($contact_id)) {
+											AccessList::member_add($channel['channel_id'],$group['name'],$contact['xchan_hash']);
+											break;
+										}
+									}
+								}
+							}
+						}
+					}	
+				}
+			}
+		}
 
 		change_channel($channel['channel_id']);
 		notice( t('Import complete.') . EOL); 

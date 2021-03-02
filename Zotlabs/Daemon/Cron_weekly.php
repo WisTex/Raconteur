@@ -67,8 +67,8 @@ class Cron_weekly {
 		}
 
 		// update searchable doc indexes
-		// disabled until help system regenerated
-		// Run::Summon(array('Importdoc'));
+
+		Run::Summon(array('Importdoc'));
 
 		/**
 		 * End Cron Weekly
