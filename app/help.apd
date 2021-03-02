@@ -1,0 +1,5 @@
+version: 1
+url: $baseurl/help
+name: Help
+photo: icon:question
+categories: nav_featured_app, System
