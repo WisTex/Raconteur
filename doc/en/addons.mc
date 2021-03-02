@@ -1,6 +1,8 @@
 Addons
 ======
 
+Addons provide additional functionality that the original authors of the software did not implement or possibly did not anticipate. These must be installed by your website administrator before you can use them. 
+
 ### ABC Music
 
 Render ABC music notation as musical scores
@@ -59,7 +61,7 @@ Use OpenStreetMap for displaying locations.
 
 ### phpmailer
 
-use phpmailer instead of built-in mail() function
+Use phpmailer instead of built-in mail() function to send email notifications. This provides several configuration options for working with complex email environments. 
 
 ### Qrator
 
