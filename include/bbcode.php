@@ -1168,7 +1168,7 @@ function md_topheader($matches) {
 
 function bb_fixtable_lf($match) {
 
-	// bbcode version
+	// bbcode version (1 arg)
 	// remove extraneous whitespace between table element tags since newlines will all
 	// be converted to '<br>' and turn your neatly crafted tables into a whole lot of
 	// empty space.
@@ -1180,7 +1180,7 @@ function bb_fixtable_lf($match) {
 
 function ht_fixtable_lf($match) {
 
-	// HTML version
+	// HTML version (2 args)
 	// remove extraneous whitespace between table element tags since newlines will all
 	// be converted to '<br>' and turn your neatly crafted tables into a whole lot of
 	// empty space.
