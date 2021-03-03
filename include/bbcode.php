@@ -1484,7 +1484,7 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace_callback('{ ^(.+?)[ ]*\n(=+|-+)[ ]*\n+ }mx','md_topheader', $Text);
 		$Text = preg_replace_callback('#^(\#{1,6})\s+([^\#]+?)\s*\#*$#m','md_header', $Text);
 		$Text = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#','md_codeblock',$Text);
-		$Text = preg_replace('#^(?:\0(.*?)\0\n)?( {4}|\t)(.*?)$#m','<pre><code>$3</code></pre>',$Text);
+//		$Text = preg_replace('#^(?:\0(.*?)\0\n)?( {4}|\t)(.*?)$#m','<pre><code>$3</code></pre>',$Text);
 		$Text = preg_replace('#(?<!\\\)`([^\n]+?)`#','<pre><code>$1</code></pre>', $Text);
 		$Text = preg_replace('#<\/code><\/pre>\n<pre><code(>| .*?>)#','<br>',$Text);
 
@@ -1813,25 +1813,25 @@ function bbcode($Text, $options = []) {
 
 	// Check for [spoiler] text
 	$endlessloop = 0;
-	while ((strpos($Text, "[/spoiler]")!== false) and (strpos($Text, "[spoiler]") !== false) and (++$endlessloop < 20)) {
+	while ((strpos($Text, "[/spoiler]")!== false) && (strpos($Text, "[spoiler]") !== false) && (++$endlessloop < 20)) {
 		$Text = preg_replace_callback("/\[spoiler\](.*?)\[\/spoiler\]/ism", 'bb_spoilertag', $Text);
 	}
 
 	// Check for [spoiler=Author] text
 	$endlessloop = 0;
-	while ((strpos($Text, "[/spoiler]")!== false) and (strpos($Text, "[spoiler=") !== false) and (++$endlessloop < 20)) {
+	while ((strpos($Text, "[/spoiler]")!== false) && (strpos($Text, "[spoiler=") !== false) && (++$endlessloop < 20)) {
 		$Text = preg_replace_callback("/\[spoiler=(.*?)\](.*?)\[\/spoiler\]/ism", 'bb_spoilertag', $Text);
 	}
 
 	// Check for [open] text
 	$endlessloop = 0;
-	while ((strpos($Text, "[/open]")!== false)  and (strpos($Text, "[open]") !== false) and (++$endlessloop < 20)) {
+	while ((strpos($Text, "[/open]")!== false) && (strpos($Text, "[open]") !== false) && (++$endlessloop < 20)) {
 		$Text = preg_replace_callback("/\[open\](.*?)\[\/open\]/ism", 'bb_opentag', $Text);
 	}
 
 	// Check for [open=Title] text
 	$endlessloop = 0;
-	while ((strpos($Text, "[/open]")!== false)  and (strpos($Text, "[open=") !== false) and (++$endlessloop < 20)) {
+	while ((strpos($Text, "[/open]")!== false) && (strpos($Text, "[open=") !== false) && (++$endlessloop < 20)) {
 		$Text = preg_replace_callback("/\[open=(.*?)\](.*?)\[\/open\]/ism", 'bb_opentag', $Text);
 	}
 
@@ -1843,7 +1843,7 @@ function bbcode($Text, $options = []) {
 	// Check for [quote] text
 	// handle nested quotes
 	$endlessloop = 0;
-	while ((strpos($Text, "[/quote]") !== false) and (strpos($Text, "[quote]") !== false) and (++$endlessloop < 20))
+	while ((strpos($Text, "[/quote]") !== false) && (strpos($Text, "[quote]") !== false) && (++$endlessloop < 20))
 		$Text = preg_replace("/\[quote\](.*?)\[\/quote\]/ism", "$QuoteLayout", $Text);
 
 	// Check for [quote=Author] text
@@ -1852,7 +1852,7 @@ function bbcode($Text, $options = []) {
 
 	// handle nested quotes
 	$endlessloop = 0;
-	while ((strpos($Text, "[/quote]")!== false)  and (strpos($Text, "[quote=") !== false) and (++$endlessloop < 20))
+	while ((strpos($Text, "[/quote]")!== false) && (strpos($Text, "[quote=") !== false) && (++$endlessloop < 20))
 		$Text = preg_replace("/\[quote=[\"\']*(.*?)[\"\']*\](.*?)\[\/quote\]/ism",
 			"<span class=".'"bb-quote"'.">" . $t_wrote . "</span><blockquote>$2</blockquote>",
 			$Text);
