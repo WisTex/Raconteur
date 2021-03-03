@@ -1779,20 +1779,27 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace_callback("/\[checklist\](.*?)\[\/checklist\]/ism", 'bb_checklist', $Text);
 	}
 
+	
+	$loop = 0;
+	while (strpos($Text,'[/table]') !== false && strpos($Text,"[table") !== false && ++$loop < 20) {
+		$Text = preg_replace("/\[table\](.*?)\[\/table\]/ism", '<table class="table table-responsive">$1</table>', $Text);
+		$Text = preg_replace("/\[table border=1\](.*?)\[\/table\]/ism", '<table class="table table-responsive table-bordered" >$1</table>', $Text);
+		$Text = preg_replace("/\[table border=0\](.*?)\[\/table\]/ism", '<table class="table table-responsive" >$1</table>', $Text);
+	}
 	if (strpos($Text,'[th]') !== false) {
-		$Text = preg_replace("/\[th\](.*?)\[\/th\]/sm", '<th>$1</th>', $Text);
+		$Text = preg_replace("/\[th\](.*?)\[\/th\]/ism", '<th>$1</th>', $Text);
 	}
 	if (strpos($Text,'[td]') !== false) {
-		$Text = preg_replace("/\[td\](.*?)\[\/td\]/sm", '<td>$1</td>', $Text);
+		$Text = preg_replace("/\[td\](.*?)\[\/td\]/ism", '<td>$1</td>', $Text);
 	}
 	if (strpos($Text,'[tr]') !== false) {
-		$Text = preg_replace("/\[tr\](.*?)\[\/tr\]/sm", '<tr>$1</tr>', $Text);
+		$Text = preg_replace("/\[tr\](.*?)\[\/tr\]/ism", '<tr>$1</tr>', $Text);
 	}
-	if (strpos($Text,'[/table]') !== false) {
-		$Text = preg_replace("/\[table\](.*?)\[\/table\]/sm", '<table>$1</table>', $Text);
-		$Text = preg_replace("/\[table border=1\](.*?)\[\/table\]/sm", '<table class="table table-responsive table-bordered" >$1</table>', $Text);
-		$Text = preg_replace("/\[table border=0\](.*?)\[\/table\]/sm", '<table class="table table-responsive" >$1</table>', $Text);
+	if (strpos($Text,'[tbody]') !== false) {
+		$Text = preg_replace("/\[tbody\](.*?)\[\/tbody\]/ism", '<tbody>$1</tbody>', $Text);
 	}
+
+
 	$Text = str_replace('</tr><br><tr>', "</tr>\n<tr>", $Text);
 	$Text = str_replace('[hr]', '<hr>', $Text);
 	$Text = str_replace('[hr/]', '<hr>', $Text);
