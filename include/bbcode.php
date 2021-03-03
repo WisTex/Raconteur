@@ -1174,6 +1174,7 @@ function bb_fixtable_lf($match) {
 	// empty space.
  
 	$x = preg_replace("/\]\s+\[/",'][',$match[1]);
+	$x = str_replace("\\\n","\n",$x);
 	return '[table]' . $x . '[/table]';
 
 }
@@ -1735,10 +1736,7 @@ function bbcode($Text, $options = []) {
 
 	// Check for list text
 
-	$Text = preg_replace("/<br>\[\*\/\]/ism",'[*/]',$Text);
-	$Text = preg_replace("/<br>\[\*\]/ism",'[*/]',$Text);
-
-	$Text = str_replace("[*/]", "<li>", $Text);
+	$Text = preg_replace("/<br>\[\*\]/ism","[*]",$Text);
 	$Text = str_replace("[*]", "<li>", $Text);
 
  	// handle nested lists
@@ -1782,7 +1780,7 @@ function bbcode($Text, $options = []) {
 	
 	$loop = 0;
 	while (strpos($Text,'[/table]') !== false && strpos($Text,"[table") !== false && ++$loop < 20) {
-		$Text = preg_replace("/\[table\](.*?)\[\/table\]/ism", '<table class="table table-responsive">$1</table>', $Text);
+		$Text = preg_replace("/\[table\](.*?)\[\/table\]/ism", '<table class="table">$1</table>', $Text);
 		$Text = preg_replace("/\[table border=1\](.*?)\[\/table\]/ism", '<table class="table table-responsive table-bordered" >$1</table>', $Text);
 		$Text = preg_replace("/\[table border=0\](.*?)\[\/table\]/ism", '<table class="table table-responsive" >$1</table>', $Text);
 	}
@@ -1802,12 +1800,10 @@ function bbcode($Text, $options = []) {
 
 	$Text = str_replace('</tr><br><tr>', "</tr>\n<tr>", $Text);
 	$Text = str_replace('[hr]', '<hr>', $Text);
-	$Text = str_replace('[hr/]', '<hr>', $Text);
 
 	// This is actually executed in prepare_body()
 
 	$Text = str_replace('[nosmile]', '', $Text);
-	$Text = str_replace('[nosmile/]', '', $Text);
 
 	// Check for font change text
 	if (strpos($Text,'[/font]') !== false) {
