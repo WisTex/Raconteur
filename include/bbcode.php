@@ -1174,6 +1174,7 @@ function bb_fixtable_lf($match) {
 	// empty space.
  
 	$x = preg_replace("/\]\s+\[/",'][',$match[1]);
+	$x = str_replace("\\\n","\n",$x);
 	return '[table]' . $x . '[/table]';
 
 }
@@ -1484,7 +1485,7 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace_callback('{ ^(.+?)[ ]*\n(=+|-+)[ ]*\n+ }mx','md_topheader', $Text);
 		$Text = preg_replace_callback('#^(\#{1,6})\s+([^\#]+?)\s*\#*$#m','md_header', $Text);
 		$Text = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#','md_codeblock',$Text);
-		$Text = preg_replace('#^(?:\0(.*?)\0\n)?( {4}|\t)(.*?)$#m','<pre><code>$3</code></pre>',$Text);
+//		$Text = preg_replace('#^(?:\0(.*?)\0\n)?( {4}|\t)(.*?)$#m','<pre><code>$3</code></pre>',$Text);
 		$Text = preg_replace('#(?<!\\\)`([^\n]+?)`#','<pre><code>$1</code></pre>', $Text);
 		$Text = preg_replace('#<\/code><\/pre>\n<pre><code(>| .*?>)#','<br>',$Text);
 
@@ -1735,10 +1736,7 @@ function bbcode($Text, $options = []) {
 
 	// Check for list text
 
-	$Text = preg_replace("/<br>\[\*\/\]/ism",'[*/]',$Text);
-	$Text = preg_replace("/<br>\[\*\]/ism",'[*/]',$Text);
-
-	$Text = str_replace("[*/]", "<li>", $Text);
+	$Text = preg_replace("/<br>\[\*\]/ism","[*]",$Text);
 	$Text = str_replace("[*]", "<li>", $Text);
 
  	// handle nested lists
@@ -1779,28 +1777,33 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace_callback("/\[checklist\](.*?)\[\/checklist\]/ism", 'bb_checklist', $Text);
 	}
 
+	
+	$loop = 0;
+	while (strpos($Text,'[/table]') !== false && strpos($Text,"[table") !== false && ++$loop < 20) {
+		$Text = preg_replace("/\[table\](.*?)\[\/table\]/ism", '<table class="table">$1</table>', $Text);
+		$Text = preg_replace("/\[table border=1\](.*?)\[\/table\]/ism", '<table class="table table-responsive table-bordered" >$1</table>', $Text);
+		$Text = preg_replace("/\[table border=0\](.*?)\[\/table\]/ism", '<table class="table table-responsive" >$1</table>', $Text);
+	}
 	if (strpos($Text,'[th]') !== false) {
-		$Text = preg_replace("/\[th\](.*?)\[\/th\]/sm", '<th>$1</th>', $Text);
+		$Text = preg_replace("/\[th\](.*?)\[\/th\]/ism", '<th>$1</th>', $Text);
 	}
 	if (strpos($Text,'[td]') !== false) {
-		$Text = preg_replace("/\[td\](.*?)\[\/td\]/sm", '<td>$1</td>', $Text);
+		$Text = preg_replace("/\[td\](.*?)\[\/td\]/ism", '<td>$1</td>', $Text);
 	}
 	if (strpos($Text,'[tr]') !== false) {
-		$Text = preg_replace("/\[tr\](.*?)\[\/tr\]/sm", '<tr>$1</tr>', $Text);
+		$Text = preg_replace("/\[tr\](.*?)\[\/tr\]/ism", '<tr>$1</tr>', $Text);
 	}
-	if (strpos($Text,'[/table]') !== false) {
-		$Text = preg_replace("/\[table\](.*?)\[\/table\]/sm", '<table>$1</table>', $Text);
-		$Text = preg_replace("/\[table border=1\](.*?)\[\/table\]/sm", '<table class="table table-responsive table-bordered" >$1</table>', $Text);
-		$Text = preg_replace("/\[table border=0\](.*?)\[\/table\]/sm", '<table class="table table-responsive" >$1</table>', $Text);
+	if (strpos($Text,'[tbody]') !== false) {
+		$Text = preg_replace("/\[tbody\](.*?)\[\/tbody\]/ism", '<tbody>$1</tbody>', $Text);
 	}
+
+
 	$Text = str_replace('</tr><br><tr>', "</tr>\n<tr>", $Text);
 	$Text = str_replace('[hr]', '<hr>', $Text);
-	$Text = str_replace('[hr/]', '<hr>', $Text);
 
 	// This is actually executed in prepare_body()
 
 	$Text = str_replace('[nosmile]', '', $Text);
-	$Text = str_replace('[nosmile/]', '', $Text);
 
 	// Check for font change text
 	if (strpos($Text,'[/font]') !== false) {
@@ -1813,25 +1816,25 @@ function bbcode($Text, $options = []) {
 
 	// Check for [spoiler] text
 	$endlessloop = 0;
-	while ((strpos($Text, "[/spoiler]")!== false) and (strpos($Text, "[spoiler]") !== false) and (++$endlessloop < 20)) {
+	while ((strpos($Text, "[/spoiler]")!== false) && (strpos($Text, "[spoiler]") !== false) && (++$endlessloop < 20)) {
 		$Text = preg_replace_callback("/\[spoiler\](.*?)\[\/spoiler\]/ism", 'bb_spoilertag', $Text);
 	}
 
 	// Check for [spoiler=Author] text
 	$endlessloop = 0;
-	while ((strpos($Text, "[/spoiler]")!== false) and (strpos($Text, "[spoiler=") !== false) and (++$endlessloop < 20)) {
+	while ((strpos($Text, "[/spoiler]")!== false) && (strpos($Text, "[spoiler=") !== false) && (++$endlessloop < 20)) {
 		$Text = preg_replace_callback("/\[spoiler=(.*?)\](.*?)\[\/spoiler\]/ism", 'bb_spoilertag', $Text);
 	}
 
 	// Check for [open] text
 	$endlessloop = 0;
-	while ((strpos($Text, "[/open]")!== false)  and (strpos($Text, "[open]") !== false) and (++$endlessloop < 20)) {
+	while ((strpos($Text, "[/open]")!== false) && (strpos($Text, "[open]") !== false) && (++$endlessloop < 20)) {
 		$Text = preg_replace_callback("/\[open\](.*?)\[\/open\]/ism", 'bb_opentag', $Text);
 	}
 
 	// Check for [open=Title] text
 	$endlessloop = 0;
-	while ((strpos($Text, "[/open]")!== false)  and (strpos($Text, "[open=") !== false) and (++$endlessloop < 20)) {
+	while ((strpos($Text, "[/open]")!== false) && (strpos($Text, "[open=") !== false) && (++$endlessloop < 20)) {
 		$Text = preg_replace_callback("/\[open=(.*?)\](.*?)\[\/open\]/ism", 'bb_opentag', $Text);
 	}
 
@@ -1843,7 +1846,7 @@ function bbcode($Text, $options = []) {
 	// Check for [quote] text
 	// handle nested quotes
 	$endlessloop = 0;
-	while ((strpos($Text, "[/quote]") !== false) and (strpos($Text, "[quote]") !== false) and (++$endlessloop < 20))
+	while ((strpos($Text, "[/quote]") !== false) && (strpos($Text, "[quote]") !== false) && (++$endlessloop < 20))
 		$Text = preg_replace("/\[quote\](.*?)\[\/quote\]/ism", "$QuoteLayout", $Text);
 
 	// Check for [quote=Author] text
@@ -1852,7 +1855,7 @@ function bbcode($Text, $options = []) {
 
 	// handle nested quotes
 	$endlessloop = 0;
-	while ((strpos($Text, "[/quote]")!== false)  and (strpos($Text, "[quote=") !== false) and (++$endlessloop < 20))
+	while ((strpos($Text, "[/quote]")!== false) && (strpos($Text, "[quote=") !== false) && (++$endlessloop < 20))
 		$Text = preg_replace("/\[quote=[\"\']*(.*?)[\"\']*\](.*?)\[\/quote\]/ism",
 			"<span class=".'"bb-quote"'.">" . $t_wrote . "</span><blockquote>$2</blockquote>",
 			$Text);
