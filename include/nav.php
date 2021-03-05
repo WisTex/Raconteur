@@ -171,7 +171,7 @@ function nav($template = 'default') {
 	$search_form_action = 'search';
 	
 
-	$nav['search'] = ['search', t('Search'), "", t('Search site @name, #tag, content'), $search_form_action];
+	$nav['search'] = ['search', t('Search'), "", t('Search site @name, #tag, ?doc, content'), $search_form_action];
 
 	/**
 	 * Admin page
@@ -296,7 +296,7 @@ function nav($template = 'default') {
 		'$is_owner' => $is_owner,
 		'$sel' => App::$nav_sel,
 		'$powered_by' => $powered_by,
-		'$help' => t('@name, #tag, content'), 
+		'$help' => t('@name, #tag, ?doc, content'), 
 		'$pleasewait' => t('Please wait...'),
 		'$nav_apps' => $nav_apps,
 		'$navbar_apps' => $navbar_apps,
