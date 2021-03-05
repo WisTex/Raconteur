@@ -1480,13 +1480,15 @@ function bbcode($Text, $options = []) {
 
 		$Text = preg_replace('#(?<!\\\)([*_]{3})([^\n]+?)\1#','<strong><em>$2</em></strong>',$Text);
 		$Text = preg_replace('#(?<!\\\)([*_]{2})([^\n]+?)\1#','<strong>$2</strong>',$Text);
-		// The character check is so we don't mistake underscore in the middle of a code variable as an italic trigger. 
-		$Text = preg_replace_callback('#(^| )(?<!\\\)([*_])([^\n|`]+?)\2#m','md_italic',$Text);
+		// The character check is so we don't mistake underscore in the middle of conversational text as an italic trigger. 
+		$Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_])([^\n|`]+?)\2#m','md_italic',$Text);
 		$Text = preg_replace_callback('{ ^(.+?)[ ]*\n(=+|-+)[ ]*\n+ }mx','md_topheader', $Text);
 		$Text = preg_replace_callback('#^(\#{1,6})\s+([^\#]+?)\s*\#*$#m','md_header', $Text);
 		$Text = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#','md_codeblock',$Text);
-//		$Text = preg_replace('#^(?:\0(.*?)\0\n)?( {4}|\t)(.*?)$#m','<pre><code>$3</code></pre>',$Text);
-		$Text = preg_replace('#(?<!\\\)`([^\n]+?)`#','<pre><code>$1</code></pre>', $Text);
+		// do not use the "indent by tab or 4 spaces" markdown codeblock trigger - this produces way too many false positives
+		//		$Text = preg_replace('#^(?:\0(.*?)\0\n)?( {4}|\t)(.*?)$#m','<pre><code>$3</code></pre>',$Text);
+		// markdown inline code blocks must be preceded by space or linebreak
+		$Text = preg_replace('#(^|\n| )(?<!\\\)`([^\n]+?)`#','$1<code class="inline-code">$2</code>', $Text);
 		$Text = preg_replace('#<\/code><\/pre>\n<pre><code(>| .*?>)#','<br>',$Text);
 
 		// blockquotes
