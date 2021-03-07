@@ -856,6 +856,9 @@ class ThreadItem {
 		$comment_buttons = $arr['comment_buttons'];
 		
 		$feature_auto_save_draft = ((feature_enabled($conv->get_profile_owner(), 'auto_save_draft')) ? "true" : "false");
+		$permanent_draft = ((intval($conv->get_profile_owner()) === intval(local_channel()) && Apps::system_app_installed($conv->get_profile_owner(),'Drafts')) ? ('Save draft') : EMPTY_STR);
+
+
 
 		$comment_box = replace_macros($template,array(
 			'$return_path' => '',
@@ -896,6 +899,7 @@ class ThreadItem {
 			'$anonmail' => [ 'anonmail', t('Your email address (required)') ],
 			'$anonurl'  => [ 'anonurl',  t('Your website URL (optional)') ],
 			'$auto_save_draft' => $feature_auto_save_draft,
+			'$save' => $permanent_draft,
 		));
 
 		return $comment_box;
