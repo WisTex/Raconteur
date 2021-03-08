@@ -112,7 +112,7 @@ class Activity {
 
 			$m = parse_url($url);
 			if ($m) {
-				$site_url = unparse_url( ['scheme' => $m['scheme'], 'host' => $m['host'], 'port' => $m['port'] ] );
+				$site_url = unparse_url( ['scheme' => $m['scheme'], 'host' => $m['host'], 'port' => ((array_key_exists('port',$m) && intval($m['port'])) ? $m['port'] : 0) ] );
 				q("update site set site_update = '%s' where site_url = '%s' and site_update < %s - INTERVAL %s",
 					dbesc(datetime_convert()),
 					dbesc($site_url),
@@ -363,7 +363,7 @@ class Activity {
 
 		$ret = [];
 
-		if ($item['tag'] && is_array($item['tag'])) {
+		if (array_key_exists('tag',$item) && is_array($item['tag'])) {
 			$ptr = $item['tag'];
 			if (! array_key_exists(0,$ptr)) {
 				$ptr = [ $ptr ];
@@ -371,6 +371,12 @@ class Activity {
 			foreach ($ptr as $t) {
 				if (! array_key_exists('type',$t)) {
 					$t['type'] = 'Hashtag';
+				}
+				if (! (array_key_exists('name',$t))) {
+					continue;
+				}
+				if (! (array_path_exists('icon/url',$t) || array_key_exists('href',$t))) {
+					continue;
 				}
 
 				switch($t['type']) {
@@ -516,7 +522,7 @@ class Activity {
 
 		$ret = [];
 
-		if ($item['attach']) {
+		if (array_key_exists('attach',$item)) {
 			$atts = ((is_array($item['attach'])) ? $item['attach'] : json_decode($item['attach'],true));
 			if ($atts) {
 				foreach ($atts as $att) {
@@ -529,7 +535,7 @@ class Activity {
 				}
 			}
 		}
-		if ($item['iconfig']) {
+		if (array_key_exists('iconfig',$item) && is_array($item['iconfig'])) {
 			foreach ($item['iconfig'] as $att) {
 				if ($att['sharing']) {
 					$ret[] = [ 'type' => 'PropertyValue', 'name' => 'zot.' . $att['cat'] . '.' . $att['k'], 'value' => unserialise($att['v']) ];
@@ -576,20 +582,20 @@ class Activity {
 
 		$ret = [];
 
-		if (is_array($item['attachment']) && $item['attachment']) {
+		if (array_key_exists('attachment',$item) && is_array($item['attachment'])) {
 			$ptr = $item['attachment'];
 			if (! array_key_exists(0,$ptr)) {
 				$ptr = [ $ptr ];
 			}
 			foreach ($ptr as $att) {
 				$entry = [];
-				if ($att['href'])
+				if (array_key_exists('href',$att) && $att['href'])
 					$entry['href'] = $att['href'];
-				elseif ($att['url'])
+				elseif (array_key_exists('url',$att) && $att['url'])
 					$entry['href'] = $att['url'];
-				if ($att['mediaType'])
+				if (array_key_exists('mediaType',$att) && $att['mediaType'])
 					$entry['type'] = $att['mediaType'];
-				elseif ($att['type'] === 'Image')
+				elseif (array_key_exists('type',$att) && $att['type'] === 'Image')
 					$entry['type'] = 'image/jpeg';
 				if ($entry)
 					$ret[] = $entry;
@@ -1168,17 +1174,17 @@ class Activity {
 	// Returns an array of URLS for any mention tags found in the item array $i.
 	
 	static function map_mentions($i) {
-		if (! $i['term']) {
+		if (! (array_key_exists('term',$i) && is_array($i['term']))) {
 			return [];
 		}
 
 		$list = [];
 
 		foreach ($i['term'] as $t) {
-			if (! $t['url']) {
+			if (! (array_key_exists('url',$t) && $t['url'])) {
 				continue;
 			}
-			if ($t['ttype'] == TERM_MENTION) {
+			if (array_key_exists('ttype',$t) && $t['ttype'] == TERM_MENTION) {
 				$url = self::lookup_term_url($t['url']);
 				$list[] = (($url) ? $url : $t['url']);
 			}
@@ -1821,7 +1827,7 @@ class Activity {
 			$profile = $url;
 		}
 
-		$inbox = $person_obj['inbox'];
+		$inbox = ((array_key_exists('inbox',$person_obj)) ? $person_obj['inbox'] : null);
 
 		// either an invalid identity or a cached entry of some kind which didn't get caught above
 
@@ -1834,14 +1840,18 @@ class Activity {
 
 		if ($inbox) {
 			$collections['inbox'] = $inbox;
-			if ($person_obj['outbox'])
+			if (array_key_exists('outbox',$person_obj) && is_string($person_obj['outbox'])) {
 				$collections['outbox'] = $person_obj['outbox'];
-			if ($person_obj['followers'])
+			}
+			if (array_key_exists('followers',$person_obj) && is_string($person_obj['followers'])) {
 				$collections['followers'] = $person_obj['followers'];
-			if ($person_obj['following'])
+			}
+			if (array_key_exists('following',$person_obj) && is_string($person_obj['following'])) {
 				$collections['following'] = $person_obj['following'];
-			if ($person_obj['endpoints'] && is_array($person_obj['endpoints']) && $person_obj['endpoints']['sharedInbox'])
+			}
+			if (array_path_exists('endpoints/sharedInbox',$person_obj) && is_string($person_obj['endpoints']['sharedInbox'])) {
 				$collections['sharedInbox'] = $person_obj['endpoints']['sharedInbox'];
+			}
 		}
 
 		if (isset($person_obj['publicKey']['publicKeyPem'])) {
@@ -2283,26 +2293,26 @@ class Activity {
 		$s['mid']        = $act->obj['id'];
 		$s['parent_mid'] = $act->parent_id;
 
-		if ($act->data['published']) {
+		if (array_key_exists('published',$act->data) && $act->data['published']) {
 			$s['created'] = datetime_convert('UTC','UTC',$act->data['published']);
 		}
-		elseif ($act->obj['published']) {
+		elseif (array_key_exists('published',$act->obj) && $act->obj['published']) {
 			$s['created'] = datetime_convert('UTC','UTC',$act->obj['published']);
 		}
-		if ($act->data['updated']) {
+		if (array_key_exists('updated',$act->data) && $act->data['updated']) {
 			$s['edited'] = datetime_convert('UTC','UTC',$act->data['updated']);
 		}
-		elseif ($act->obj['updated']) {
+		elseif (array_key_exists('updated',$act->obj) && $act->obj['updated']) {
 			$s['edited'] = datetime_convert('UTC','UTC',$act->obj['updated']);
 		}
-		if ($act->data['expires']) {
+		if (array_key_exists('expires',$act->data) && $act->data['expires']) {
 			$s['expires'] = datetime_convert('UTC','UTC',$act->data['expires']);
 		}
-		elseif ($act->obj['expires']) {
+		elseif (array_key_exists('expires',$act->obj) && $act->obj['expires']) {
 			$s['expires'] = datetime_convert('UTC','UTC',$act->obj['expires']);
 		}
 
-		if ($act->type === 'Invite' && $act->obj['type'] === 'Event') {
+		if ($act->type === 'Invite' && array_key_exists('type',$act->obj) && $act->obj['type'] === 'Event') {
 			$s['mid'] = $s['parent_mid'] = $act->id;
 		}
 
@@ -2398,10 +2408,10 @@ class Activity {
 			}
 		}
 
-		if (! $s['created']) {
+		if (! (array_key_exists('created',$s) && $s['created'])) {
 			$s['created'] = datetime_convert();
 		}
-		if (! $s['edited']) {
+		if (! (array_key_exists('edited',$s) && $s['edited'])) {
 			$s['edited'] = $s['created'];
 		}
 		$s['title']    = (($response_activity) ? EMPTY_STR : self::bb_content($content,'name'));
@@ -2505,7 +2515,7 @@ class Activity {
 			}
 		}
 
-		if ($act->obj['closed']) {
+		if (array_key_exists('closed',$act->obj) && $act->obj['closed']) {
 			$s['comments_closed'] = datetime_convert('UTC','UTC', $act->obj['closed']);
 		}			
 
@@ -3377,7 +3387,7 @@ class Activity {
 			return $ret;
 		}
 		
-		if (is_array($content[$field])) {
+		if (array_key_exists($field,$content) && is_array($content[$field])) {
 			foreach ($content[$field] as $k => $v) {
 				$ret .= html2bbcode($v);
 				// save this for auto-translate or dynamic filtering

@@ -530,7 +530,7 @@ function http_status_exit($val, $msg = '') {
 function unparse_url($parsed_url) {
 	$scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
 	$host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
-	$port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
+	$port     = ((isset($parsed_url['port']) && intval($parsed_url['port'])) ? ':' . $parsed_url['port'] : '');
 	$user     = isset($parsed_url['user']) ? $parsed_url['user'] : '';
 	$pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass']  : '';
 	$pass     = ($user || $pass) ? "$pass@" : '';
