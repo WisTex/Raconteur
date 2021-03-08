@@ -13,6 +13,7 @@
 				<input type="hidden" name="return" value="{{$return_path}}" />
 				<input type="hidden" name="jsreload" value="{{$jsreload}}" />
 				<input type="hidden" name="preview" id="comment-preview-inp-{{$id}}" value="0" />
+				<input type="hidden" name="draft" id="comment-draft-{{$id}}" value="0" />
 				<input type="hidden" name="hidden_mentions" id="hidden-mentions-{{$id}}" value="" />	
 				{{if $anoncomments && ! $observer}}
 				<div id="comment-edit-anon-{{$id}}" style="display: none;" >
@@ -69,6 +70,11 @@
 							<i class="fa fa-eye comment-icon" ></i>
 						</button>
 						{{/if}}
+						{{if $save}}
+						<button class="btn btn-outline-secondary btn-sm" onclick="save_draft_comment({{$id}});return false;" title="{{$save}}">
+							<i class="fa fa-floppy-o comment-icon" ></i>
+						</button>
+						{{/if}}						
 						<button id="comment-edit-submit-{{$id}}" class="btn btn-primary btn-sm" type="submit" name="button-submit" onclick="post_comment({{$id}}); return false;">{{$submit}}</button>
 					</div>
 					{{if $reset}}
