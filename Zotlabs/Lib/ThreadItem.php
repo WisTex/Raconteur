@@ -337,9 +337,9 @@ class ThreadItem {
 		call_hooks('dropdown_extras',$dropdown_extras_arr);
 		$dropdown_extras = $dropdown_extras_arr['dropdown_extras'];
 
-		// Pinned item processing                                                                                                                                     
-		$allowed_type = (in_array($item['item_type'], get_config('system', 'pin_types', [ ITEM_TYPE_POST ])) ? true : false);                                         
-		$pinned_items = ($allowed_type ? get_pconfig($item['uid'], 'pinned', $item['item_type'], []) : []);                                                           
+		// Pinned item processing
+		$allowed_type = (in_array($item['item_type'], get_config('system', 'pin_types', [ ITEM_TYPE_POST ])) ? true : false);
+		$pinned_items = ($allowed_type ? get_pconfig($item['uid'], 'pinned', $item['item_type'], []) : []);
 		$pinned = ((! empty($pinned_items) && in_array($item['mid'], $pinned_items)) ? true : false);             
 
 		$tmp_item = array(
@@ -430,7 +430,9 @@ class ThreadItem {
 			'filer'     => ((feature_enabled($conv->get_profile_owner(),'filing')) ? $filer : ''),
 			'pinned'    => ($pinned ? t('Pinned post') : ''),
 			'pinnable'  => (($this->is_toplevel() && local_channel() && $item['owner_xchan'] == $observer['xchan_hash'] && $allowed_type && $item['item_private'] == 0 && $item['item_delayed'] == 0) ? '1' : ''),
-			'pinme'     => ($pinned ? t('Unpin this post') : t('Pin this post')),  
+			'pinme'     => ($pinned ? t('Unpin this post') : t('Pin this post')),
+			'isdraft'   => boolval($item['item_unpublished']),
+			'draft_txt' => t('Saved draft'),
 			'bookmark'  => (($conv->get_profile_owner() == local_channel() && local_channel() && $has_bookmarks) ? t('Save Bookmarks') : ''),
 			'addtocal'  => (($has_event && ! $item['resource_id']) ? t('Add to Calendar') : ''),
 			'drop'      => $drop,
