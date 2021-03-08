@@ -437,23 +437,20 @@ function create_identity($arr) {
 		// Create a group with yourself as a member. This allows somebody to use it
 		// right away as a default group for new contacts.
 
-		AccessList::add($newuid, t('Friends'));
-		AccessList::member_add($newuid,t('Friends'),$ret['channel']['channel_hash']);
+		$group_hash = AccessList::add($newuid, t('Friends'));
+		if ($group_hash) {
+			AccessList::member_add($newuid,t('Friends'),$ret['channel']['channel_hash']);
 
-		// if our role_permissions indicate that we're using a default collection ACL, add it.
+			// if our role_permissions indicate that we're using a default collection ACL, add it.
 
-		if(is_array($role_permissions) && $role_permissions['default_collection']) {
-			$r = q("select hash from pgrp where uid = %d and gname = '%s' limit 1",
-				intval($newuid),
-				dbesc( t('Friends') )
-			);
-			if($r) {
-				q("update channel set channel_default_group = '%s', channel_allow_gid = '%s' where channel_id = %d",
-					dbesc($r[0]['hash']),
-					dbesc('<' . $r[0]['hash'] . '>'),
-					intval($newuid)
-				);
+			if(is_array($role_permissions) && $role_permissions['default_collection']) {
+				$default_collection_str = '<' . $group_hash . '>';
 			}
+			q("update channel set channel_default_group = '%s', channel_allow_gid = '%s' where channel_id = %d",
+				dbesc($group_hash),
+				dbesc(($default_collection_str) ? $default_collection_str : EMPTY_STR),
+				intval($newuid)
+			);
 		}
 
 		if(! $system) {

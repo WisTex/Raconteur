@@ -27,7 +27,8 @@ class AccessList {
 					q('UPDATE pgrp SET deleted = 0 WHERE id = %d', intval($z[0]['id']));
 					notice( t('A deleted list with this name was revived. Existing item permissions <strong>may</strong> apply to this list and any future members. If this is not what you intended, please create another list with a different name.') . EOL); 
 				}
-				return true;
+				$hash = self::by_id($uid,$r);
+				return $hash;
 			}
 
 			$hash = new_uuid();
@@ -43,7 +44,8 @@ class AccessList {
 		}
 
 		Libsync::build_sync_packet($uid,null,true);
-		return $ret;
+		
+		return (($ret) ? $hash : $ret);
 	}
 
 

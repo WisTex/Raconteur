@@ -1425,6 +1425,19 @@ function save_draft() {
 	return true;
 }
 
+function save_draft_comment(id) {
+	$("#comment-draft-" + id).val("1");
+	$.post(
+		"item",
+		$("#comment-edit-form-" + id).serialize(),
+		function() {
+			commentCancel(id);
+			document.location.href=document.location.href;
+		},
+	);
+	return true;
+}
+
 
 function preview_mail() {
 	$("#mail-preview").val("1");
