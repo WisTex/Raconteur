@@ -3460,7 +3460,7 @@ class Activity {
 
 		if (array_path_exists('source/mediaType',$act) && array_path_exists('source/content',$act)) {
 			if ($act['source']['mediaType'] === 'text/bbcode') {
-				if (is_string($act['source']['content']) && strpos('<',$act['source']['content']) !== false) {
+				if (is_string($act['source']['content']) && strpos($act['source']['content'],'<') !== false) {
 					$content['bbcode'] = multicode_purify($act['source']['content']);
 				}
 				else {
