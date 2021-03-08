@@ -2407,11 +2407,11 @@ class Activity {
 		$s['title']    = (($response_activity) ? EMPTY_STR : self::bb_content($content,'name'));
 		$s['summary']  = self::bb_content($content,'summary');
 
-		if (array_key_exists('mimetype',$s) && $s['mimetype'] !== 'text/bbcode') {
-			$s['body'] = $content['content'];
+		if (array_key_exists('mimetype',$s) && in_array($s['mimetype'], [ 'text/bbcode', 'text/x-multicode' ])) {
+			$s['body'] = ((self::bb_content($content,'bbcode') && (! $response_activity)) ? self::bb_content($content,'bbcode') : self::bb_content($content,'content'));
 		}
 		else {
-			$s['body'] = ((self::bb_content($content,'bbcode') && (! $response_activity)) ? self::bb_content($content,'bbcode') : self::bb_content($content,'content'));
+			$s['body'] = $content['content'];
 		}
 
 
@@ -2759,7 +2759,7 @@ class Activity {
 		// Zot has dynamic content and this library is used by both. 
 		
 		if ($cacheable) {
-			if ((! array_key_exists('mimetype',$s)) || ($s['mimetype'] === 'text/bbcode')) {
+			if ((! array_key_exists('mimetype',$s)) || (in_array($s['mimetype'], [ 'text/bbcode', 'text/x-multicode' ]))) {
 			
 				// preserve the original purified HTML content *unless* we've modified $s['body']
 				// within this function (to add attachments or reaction descriptions or mention rewrites).
@@ -3459,7 +3459,7 @@ class Activity {
 		}
 
 		if (array_path_exists('source/mediaType',$act) && array_path_exists('source/content',$act)) {
-			if ($act['source']['mediaType'] === 'text/bbcode') {
+			if (in_array($act['source']['mediaType'], [ 'text/bbcode', 'text/x-multicode' ])) {
 				if (is_string($act['source']['content']) && strpos($act['source']['content'],'<') !== false) {
 					$content['bbcode'] = multicode_purify($act['source']['content']);
 				}

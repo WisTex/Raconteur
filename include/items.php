@@ -1399,7 +1399,8 @@ function activity_sanitise($arr) {
 			$ret = array();
 			foreach($arr as $k => $x) {
 				if ($k === 'source' && array_path_exists('source/mediaType',$arr)) {
-					if (array_path_exists('source/content',$arr) && $arr['source']['mediaType'] === 'text/bbcode') {
+					if (array_path_exists('source/content',$arr) && isset($arr['source']['mediaType']) && in_array($arr['source']['mediaType'], [ 'text/bbcode', 'text/x-multicode' ])) {
+						// @FIXME multicode
 						$ret[$k] = [ 'mediaType' => 'text/bbcode' ];
 						if (is_string($arr['source']['content'])) {
 							$ret[$k]['content'] = multicode_purify($arr['source']['content']);
