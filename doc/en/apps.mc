@@ -39,7 +39,9 @@ Installed by default. Lets you discover others in the network. This displays eve
 
 ### Drafts
 
-This optional app allows you to save a post you are composing and finish it later. After installing, click the 'disk' icon in the post editor to save a draft. Click the app itself to display your current drafts, and 'Edit Post' to continue editing. Important: please use the 'disk' icon to continue saving the draft if you wish to continue working on it. As soon as you click 'Share', the post will be published.
+This optional app allows you to save a post or comment you are composing and finish it later. After installing, click the 'disk' icon in the post/comment editor to save a draft. Click the app itself to display your current drafts, and 'Edit' from the article dropdown menu to continue editing.
+
+Important: please use the Draft icon (looks like a floppy disk in the default theme) to continue saving the draft if you wish to continue working on it. As soon as you click 'Share' (posts) or 'Submit' (comments), it will be published.
 
 ### Events
 
