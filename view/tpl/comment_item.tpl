@@ -71,7 +71,7 @@
 						</button>
 						{{/if}}
 						{{if $save}}
-						<button class="btn btn-outline-secondary btn-sm" onclick="save_draft_comment({{$id}});return false;" title="{{$save}}">
+						<button class="btn btn-sm {{if $isdraft}} btn-primary{{else}} btn-outline-secondary{{/if}}" onclick="save_draft_comment({{$id}});return false;" title="{{$save}}">
 							<i class="fa fa-floppy-o comment-icon" ></i>
 						</button>
 						{{/if}}						
