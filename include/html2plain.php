@@ -73,7 +73,7 @@ function quotelevel($message, $wraplength = 75)
 		if (!$startquote or ($line != ''))
 			$newlines[] = breaklines($line, $currlevel, $wraplength);
 	}
-	return(implode($newlines, "\n"));
+	return(implode("\n", $newlines));
 }
 
 function collecturls($message) {
