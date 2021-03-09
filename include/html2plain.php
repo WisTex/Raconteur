@@ -110,13 +110,13 @@ function html2plain($html, $wraplength = 75, $compact = false)
 	$doc->preserveWhiteSpace = false;
 
 	
-	$message = mb_convert_encoding($message, 'HTML-ENTITIES', "UTF-8");
-	if ($message === false) {
-		logger('mb_convert_encoding conversion failure');
+	$tmp_message = mb_convert_encoding($message, 'HTML-ENTITIES', "UTF-8");
+	if ($tmp_message === false) {
+		logger('mb_convert_encoding failed: ' . $tmp_message);
 		return EMPTY_STR;
 	}
 
-	@$doc->loadHTML($message);
+	@$doc->loadHTML($tmp_message);
 
 	$xpath = new DomXPath($doc);
 	$list = $xpath->query("//pre");

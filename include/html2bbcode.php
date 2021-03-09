@@ -105,8 +105,11 @@ function svg2bbcode($match) {
 
 }
 
-function html2bbcode($message)
-{
+function html2bbcode($message) {
+
+	if (! $message) {
+		return EMPTY_STR;
+	}
 
 	$message = str_replace("\r", "", $message);
 
@@ -125,9 +128,14 @@ function html2bbcode($message)
 	$doc = new DOMDocument();
 	$doc->preserveWhiteSpace = false;
 
-	$message = mb_convert_encoding($message, 'HTML-ENTITIES', "UTF-8");
+	$tmp_message = mb_convert_encoding($message, 'HTML-ENTITIES', "UTF-8");
 
-	@$doc->loadHTML($message);
+	if (! $tmp_message) {
+		logger('mb_convert_encoding failed: ' . $message);
+		return EMPTY_STR;
+	}
+
+	@$doc->loadHTML($tmp_message);
 
 	deletenode($doc, 'style');
 	deletenode($doc, 'head');
