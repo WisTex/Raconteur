@@ -2417,11 +2417,11 @@ class Activity {
 		$s['title']    = (($response_activity) ? EMPTY_STR : self::bb_content($content,'name'));
 		$s['summary']  = self::bb_content($content,'summary');
 
-		if (array_key_exists('mimetype',$s) && in_array($s['mimetype'], [ 'text/bbcode', 'text/x-multicode' ])) {
-			$s['body'] = ((self::bb_content($content,'bbcode') && (! $response_activity)) ? self::bb_content($content,'bbcode') : self::bb_content($content,'content'));
+		if (array_key_exists('mimetype',$s) && (! in_array($s['mimetype'], [ 'text/bbcode', 'text/x-multicode' ]))) {
+			$s['body'] = $content['content'];
 		}
 		else {
-			$s['body'] = $content['content'];
+			$s['body'] = ((self::bb_content($content,'bbcode') && (! $response_activity)) ? self::bb_content($content,'bbcode') : self::bb_content($content,'content'));
 		}
 
 
@@ -2803,7 +2803,7 @@ class Activity {
 
 	static function rewrite_mentions_sub(&$s, $pref, &$obj = null) {
 
-		if ($s['term']) {
+		if (isset($s['term']) && is_array($s['term'])) {
 			foreach ($s['term'] as $tag) {
 				$txt = EMPTY_STR;
 				if (intval($tag['ttype']) === TERM_MENTION) {
@@ -3474,7 +3474,7 @@ class Activity {
 					$content['bbcode'] = multicode_purify($act['source']['content']);
 				}
 				else {
-					$content['bbcode'] = purify_html($act['source']['content'], [ 'escape'] );
+					$content['bbcode'] = purify_html($act['source']['content'], [ 'escape' ] );
 				}
 			}
 		}
