@@ -686,7 +686,7 @@ function sys_boot() {
 
 
 function startup() {
-	error_reporting(E_ERROR | E_WARNING | E_PARSE);
+	error_reporting(E_ERROR | E_PARSE);
 
 	// Some hosting providers block/disable this
 	@set_time_limit(0);
@@ -1710,7 +1710,7 @@ function shutdown() {
 
 function get_account_id() {
 
-	if(intval($_SESSION['account_id']))
+	if(isset($_SESSION['account_id']) && intval($_SESSION['account_id']))
 		return intval($_SESSION['account_id']);
 
 	if(App::$account)
@@ -2120,7 +2120,7 @@ function load_pdl() {
 		$u = App::$comanche->get_channel_id();
 		if($u)
 			$s = get_pconfig($u, 'system', $n);
-		if(! $s)
+		if(! (isset($s) && $s))
 			$s = $layout;
 
 		if((! $s) && (($p = theme_include($n)) != ''))

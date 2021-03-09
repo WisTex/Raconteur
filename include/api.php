@@ -45,7 +45,7 @@ require_once('include/api_zot.php');
 					return false;
 			}
 		}			
-		if ($_SESSION['allow_api']) {
+		if (isset($_SESSION['allow_api']) && $_SESSION['allow_api']) {
 			return local_channel();
 		}
 		return false;
@@ -105,7 +105,7 @@ require_once('include/api_zot.php');
 
 			$channel = App::get_channel();
 
-			logger('API call for ' . $channel['channel_name'] . ': ' . App::$query_string);
+			logger('API call for ' . ((isset($channel)) ? $channel['channel_name'] : '') . ': ' . App::$query_string);
 			logger('API parameters: ' . print_r($_REQUEST,true));
 
 			$r = call_user_func($info['func'],$type);

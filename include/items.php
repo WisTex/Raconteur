@@ -3891,8 +3891,9 @@ function fetch_post_tags($items, $link = false) {
 //					$t['url'] = chanlink_url($t['url']);
 				if(array_key_exists('item_id',$items[$x])) {
 					if($t['oid'] == $items[$x]['item_id']) {
-						if(! is_array($items[$x]['term']))
+						if(! (isset($items[$x]['term']) && is_array($items[$x]['term']))) {
 							$items[$x]['term'] = array();
+						}
 						$items[$x]['term'][] = $t;
 					}
 				}
@@ -3909,8 +3910,9 @@ function fetch_post_tags($items, $link = false) {
 			foreach($imeta as $i) {
 				if(array_key_exists('item_id',$items[$x])) {
 					if($i['iid'] == $items[$x]['item_id']) {
-						if(! is_array($items[$x]['iconfig']))
+						if(! (isset($items[$x]['iconfig']) && is_array($items[$x]['iconfig']))) {
 							$items[$x]['iconfig'] = array();
+						}
 						$i['v'] = unserialise($i['v']);
 						$items[$x]['iconfig'][] = $i;
 					}

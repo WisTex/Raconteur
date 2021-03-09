@@ -1044,9 +1044,11 @@ function fetch_image_from_url($url,&$mimetype) {
 	if($x['success']) {
 		$hdrs = [];
 		$h = explode("\n",$x['header']);
-		foreach ($h as $l) {
-			list($k,$v) = array_map("trim", explode(":", trim($l), 2));
-			$hdrs[strtolower($k)] = $v;
+		if (isset($h) && is_array($h)) {
+			foreach ($h as $l) {
+				list($k,$v) = array_map("trim", explode(":", trim($l), 2));
+				$hdrs[strtolower($k)] = $v;
+			}
 		}
 		if (array_key_exists('content-type', $hdrs))
 			$mimetype = $hdrs['content-type'];

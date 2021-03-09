@@ -144,7 +144,7 @@ class Apps {
 			if ($iapp['app_id'] == hash('whirlpool',$app['name'])) {
 				$notfound = false;
 				if (($iapp['app_version'] !== $app['version'])
-					|| ($app['plugin'] && (! $iapp['app_plugin']))) {
+					|| ((isset($app['plugin']) && $app['plugin']) && (! (isset($iapp['app_plugin']) && $iapp['app_plugin'])))) {
 					return intval($iapp['app_id']);
 				}
 
@@ -170,7 +170,7 @@ class Apps {
 			if ($iapp['app_id'] == hash('whirlpool',$app['name'])) {
 				$installed = true;
 				if (($iapp['app_version'] != $app['version'])
-					|| ($app['plugin'] && (! $iapp['app_plugin']))) {
+					|| (isset($app['plugin']) && $app['plugin'] && (! (isset($iapp['app_plugin']) && $iapp['app_plugin'])))) {
 					return intval($iapp['app_id']);
 				}
 			}
@@ -297,7 +297,7 @@ class Apps {
 				}
 			}
 		}
-		if ($ret) {
+		if (isset($ret)) {
 			if ($translate) {
 				self::translate_system_apps($ret);
 			}
@@ -1244,58 +1244,58 @@ class Apps {
 
 		$ret['type'] = 'personal';
 	
-		if ($app['app_id']) {
+		if (isset($app['app_id']) && $app['app_id']) {
 			$ret['guid'] = $app['app_id'];
 		}
-		if ($app['app_sig']) {
+		if (isset($app['app_sig']) && $app['app_sig']) {
 			$ret['sig'] = $app['app_sig'];
 		}
-		if ($app['app_author']) {
+		if (isset($app['app_author']) && $app['app_author']) {
 			$ret['author'] = $app['app_author'];
 		}
-		if ($app['app_name']) {
+		if (isset($app['app_name']) && $app['app_name']) {
 			$ret['name'] = $app['app_name'];
 		}
-		if ($app['app_desc']) {
+		if (isset($app['app_desc']) && $app['app_desc']) {
 			$ret['desc'] = $app['app_desc'];
 		}
-		if ($app['app_url']) {
+		if (isset($app['app_url']) && $app['app_url']) {
 			$ret['url'] = $app['app_url'];
 		}
-		if ($app['app_photo']) {
+		if (isset($app['app_photo']) && $app['app_photo']) {
 			$ret['photo'] = $app['app_photo'];
 		}
-		if ($app['app_icon']) {
+		if (isset($app['app_icon']) && $app['app_icon']) {
 			$ret['icon'] = $app['app_icon'];
 		}
-		if ($app['app_version']) {
+		if (isset($app['app_version']) && $app['app_version']) {
 			$ret['version'] = $app['app_version'];
 		}
-		if ($app['app_addr']) {
+		if (isset($app['app_addr']) && $app['app_addr']) {
 			$ret['addr'] = $app['app_addr'];
 		}
-		if ($app['app_price']) {
+		if (isset($app['app_price']) && $app['app_price']) {
 			$ret['price'] = $app['app_price'];
 		}
-		if ($app['app_page']) {
+		if (isset($app['app_page']) && $app['app_page']) {
 			$ret['page'] = $app['app_page'];
 		}
-		if ($app['app_requires']) {
+		if (isset($app['app_requires']) && $app['app_requires']) {
 			$ret['requires'] = $app['app_requires'];
 		}
-		if ($app['app_system']) {
+		if (isset($app['app_system']) && $app['app_system']) {
 			$ret['system'] = $app['app_system'];
 		}
-		if ($app['app_options']) {
+		if (isset($app['app_options']) && $app['app_options']) {
 			$ret['options'] = $app['app_options'];
 		}
-		if ($app['app_plugin']) {
+		if (isset($app['app_plugin']) && $app['app_plugin']) {
 			$ret['plugin'] = trim($app['app_plugin']);
 		}
-		if ($app['app_deleted']) {
+		if (isset($app['app_deleted']) && $app['app_deleted']) {
 			$ret['deleted'] = $app['app_deleted'];
 		}
-		if ($app['term']) {
+		if (isset($app['term']) && $app['term']) {
 			$ret['categories'] = array_elm_to_str($app['term'],'term');
 		}
 

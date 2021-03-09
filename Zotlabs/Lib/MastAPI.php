@@ -66,7 +66,7 @@ class MastAPI {
 		return $ret;
 	}
 
-	function format_site() {
+	static function format_site() {
 
 		$register = intval(get_config('system','register_policy'));
 

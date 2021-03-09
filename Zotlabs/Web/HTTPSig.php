@@ -283,7 +283,7 @@ class HTTPSig {
 	 *   false if no pub key found, otherwise return the pub key
 	 */
 
-	function get_activitystreams_key($id,$force = false) {
+	static function get_activitystreams_key($id,$force = false) {
 
 		// remove fragment
 
@@ -318,7 +318,7 @@ class HTTPSig {
 	}
 
 
-	function get_webfinger_key($id,$force = false) {
+	static function get_webfinger_key($id,$force = false) {
 
 		if (! $force) {
 			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' ",
@@ -358,7 +358,7 @@ class HTTPSig {
 	}
 
 
-	function get_zotfinger_key($id,$force = false) {
+	static function get_zotfinger_key($id,$force = false) {
 
 		if (! $force) {
 			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' and hubloc_network = 'zot6'",

@@ -27,7 +27,7 @@ function authenticate_success($user_record, $channel = null, $login_initial = fa
 		if($channel)
 			$uid_to_load = $channel['channel_id'];
 
-		if(! $uid_to_load) {
+		if (! isset($uid_to_load)) {
 			$uid_to_load = (((x($_SESSION,'uid')) && (intval($_SESSION['uid'])))
 				? intval($_SESSION['uid'])
 				: intval(App::$account['account_default_channel'])
@@ -38,7 +38,7 @@ function authenticate_success($user_record, $channel = null, $login_initial = fa
 			change_channel($uid_to_load);
 		}
 
-		if(($login_initial || $update_lastlog) && (! $_SESSION['sudo'])) {
+		if(($login_initial || $update_lastlog) && (! (isset($_SESSION['sudo']) && $_SESSION['sudo']))) {
 			q("update account set account_lastlog = '%s' where account_id = %d",
 				dbesc(datetime_convert()),
 				intval($_SESSION['account_id'])

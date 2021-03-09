@@ -252,7 +252,7 @@ class Acl extends Controller {
 		if ($r) {
 			foreach ($r as $g) {
 	
-				if (in_array($g['network'],['rss','anon','unknown']) && ($type != 'a')) {
+				if (isset($g['network']) && in_array($g['network'],['rss','anon','unknown']) && ($type != 'a')) {
 					continue;
 				}
 
