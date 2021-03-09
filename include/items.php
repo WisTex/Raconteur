@@ -45,13 +45,13 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 	$private_envelope = ((intval($item['item_private'])) ? true : false);
 	$recipients = array();
 
-	if($item['allow_cid'] || $item['allow_gid'] || $item['deny_cid'] || $item['deny_gid']) {
+	if ($item['allow_cid'] || $item['allow_gid'] || $item['deny_cid'] || $item['deny_gid']) {
 
 		// it is private
 
 		$allow_people = expand_acl($item['allow_cid']);
 
-		if($include_groups) {
+		if ($include_groups) {
 			$allow_groups = AccessList::expand(expand_acl($item['allow_gid']));
 		}
 		else {
@@ -64,13 +64,13 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 		// address book minus the denied connections. The post is still private and can't be seen publicly
 		// as that would allow the denied person to see the post by logging out.
 
-		if((! $item['allow_cid']) && (! $item['allow_gid'])) {
+		if ((! $item['allow_cid']) && (! $item['allow_gid'])) {
 			$r = q("select * from abook where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
 				intval($item['uid'])
 			);
 
 			if ($r) {
-				foreach($r as $rr) {
+				foreach ($r as $rr) {
 					$recipients[] = $rr['abook_xchan'];
 				}
 			}
@@ -85,9 +85,9 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 		// That would lead to array_diff doing the wrong thing.
 		// This will result in a private post that won't be delivered to anybody.
 
-		if($recipients && $deny)
+		if ($recipients && $deny) {
 			$recipients = array_diff($recipients,$deny);
-
+		}
 		$private_envelope = true;
 	}
 	else {
@@ -105,8 +105,8 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 		$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
 			intval($item['uid'])
 		);
-		if($r) {
-			foreach($r as $rv) {
+		if ($r) {
+			foreach ($r as $rv) {
 				$recipients[] = $rv['abook_xchan'];
 			}
 		}
@@ -164,9 +164,9 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 	// This should prevent complex delivery chains from getting overly complex by not
 	// sending to anybody who is on our list of those who sent it to us.
 
-	if($item['route']) {
+	if ($item['route']) {
 		$route = explode(',',$item['route']);
-		if(count($route)) {
+		if (count($route)) {
 			$route = array_unique($route);
 			$recipients = array_diff($recipients,$route);
 		}
@@ -176,8 +176,9 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 
 	$recipients[] = $item['author_xchan'];
 
-	if($item['owner_xchan'] != $item['author_xchan'])
+	if ($item['owner_xchan'] != $item['author_xchan']) {
 		$recipients[] = $item['owner_xchan'];
+	}
 
 	return $recipients;
 }
@@ -198,16 +199,12 @@ function comments_are_now_closed($item) {
 
 	call_hooks('comments_are_now_closed', $x);
 
-	if ($x['closed'] != 'unset') {
+	if ($x['closed'] !== 'unset') {
 		return $x['closed'];
 	}
 
-
-
-	if($item['comments_closed'] > NULL_DATE) {
-		$d = datetime_convert();
-		if($d > $item['comments_closed'])
-			return true;
+	if ($item['comments_closed'] > NULL_DATE && datetime_convert() > $item['comments_closed']) {
+		return true;
 	}
 
 	return false;
@@ -254,10 +251,11 @@ function item_normal_moderate() {
  */
 function is_item_normal($item) {
 
-	if(intval($item['item_hidden']) || intval($item['item_type']) || intval($item['item_deleted'])
+	if (intval($item['item_hidden']) || intval($item['item_type']) || intval($item['item_deleted'])
 		|| intval($item['item_unpublished']) || intval($item['item_delayed']) || intval($item['item_pending_remove'])
-		|| intval($item['item_blocked']) || ($item['obj_type'] == ACTIVITY_OBJ_FILE))
+		|| intval($item['item_blocked']) || ($item['obj_type'] == ACTIVITY_OBJ_FILE)) {
 		return false;
+	}
 
 	return true;
 }
@@ -368,7 +366,7 @@ function can_comment_on_post($observer_xchan, $item) {
 
 function absolutely_no_comments($item) {
 
-	if($item['comment_policy'] === 'none') {
+	if ($item['comment_policy'] === 'none') {
 		return true;
 	}
 
@@ -403,16 +401,17 @@ function absolutely_no_comments($item) {
 function add_source_route($iid, $hash) {
 //	logger('add_source_route ' . $iid . ' ' . $hash, LOGGER_DEBUG);
 
-	if((! $iid) || (! $hash))
+	if ((! $iid) || (! $hash)) {
 		return;
+	}
 
 	$r = q("select route from item where id = %d limit 1",
 		intval($iid)
 	);
-	if($r) {
+	if ($r) {
 		$new_route = (($r[0]['route']) ? $r[0]['route'] . ',' : '') . $hash;
 		q("update item set route = '%s' where id = %d",
-			(dbesc($new_route)),
+			dbesc($new_route),
 			intval($iid)
 		);
 	}
@@ -435,43 +434,47 @@ function add_source_route($iid, $hash) {
  */
 function post_activity_item($arr, $allow_code = false, $deliver = true) {
 
-	$ret = array('success' => false);
+	$ret = [ 'success' => false ];
 
 	$is_comment = false;
-	if((($arr['parent']) && $arr['parent'] != $arr['id']) || (($arr['parent_mid']) && $arr['parent_mid'] != $arr['mid']))
+	if ((isset($arr['parent']) && $arr['parent'] && $arr['parent'] != $arr['id']) || (isset($arr['parent_mid']) && $arr['parent_mid'] && $arr['parent_mid'] != $arr['mid'])) {
 		$is_comment = true;
-
-	if(! array_key_exists('item_origin',$arr))
+	}
+	if (! array_key_exists('item_origin',$arr)) {
 		$arr['item_origin'] = 1;
-	if(! array_key_exists('item_wall',$arr) && (! $is_comment))
+	}
+	if (! array_key_exists('item_wall',$arr) && (! $is_comment)) {
 		$arr['item_wall'] = 0;
-	if(! array_key_exists('item_thread_top',$arr) && (! $is_comment))
+	}
+	if (! array_key_exists('item_thread_top',$arr) && (! $is_comment)) {
 		$arr['item_thread_top'] = 1;
+	}
 
 	$channel  = App::get_channel();
 	$observer = App::get_observer();
 
-	$arr['aid'] = ((x($arr,'aid')) ? $arr['aid'] : $channel['channel_account_id']);
-	$arr['uid'] = ((x($arr,'uid')) ? $arr['uid'] : $channel['channel_id']);
+	$arr['aid'] = ((isset($arr['aid'])) ? $arr['aid'] : $channel['channel_account_id']);
+	$arr['uid'] = ((isset($arr['uid'])) ? $arr['uid'] : $channel['channel_id']);
 
-	if(! perm_is_allowed($arr['uid'],$observer['xchan_hash'],(($is_comment) ? 'post_comments' : 'post_wall'))) {
+	if (! perm_is_allowed($arr['uid'],$observer['xchan_hash'],(($is_comment) ? 'post_comments' : 'post_wall'))) {
 		$ret['message'] = t('Permission denied');
 		return $ret;
 	}
 
-	if(! array_key_exists('mimetype',$arr))
+	if (! array_key_exists('mimetype',$arr)) {
 		$arr['mimetype'] = 'text/bbcode';
+	}
 
-    if(! $arr['mid']) {
-        $arr['uuid']         = ((x($arr,'uuid')) ? $arr['uuid'] : new_uuid());
+    if (! isset($arr['mid']) && $arr['mid']) {
+        $arr['uuid'] = ((isset($arr['uuid'])) ? $arr['uuid'] : new_uuid());
     }
-    $arr['mid']          = ((x($arr,'mid')) ? $arr['mid'] : z_root() . '/item/' . $arr['uuid']);
+    $arr['mid']          = ((isset($arr['mid'])) ? $arr['mid'] : z_root() . '/item/' . $arr['uuid']);
 
-	$arr['parent_mid']   = ((x($arr,'parent_mid')) ? $arr['parent_mid'] : $arr['mid']);
-	$arr['thr_parent']   = ((x($arr,'thr_parent')) ? $arr['thr_parent'] : $arr['mid']);
+	$arr['parent_mid']   = ((isset($arr['parent_mid'])) ? $arr['parent_mid'] : $arr['mid']);
+	$arr['thr_parent']   = ((isset($arr['thr_parent'])) ? $arr['thr_parent'] : $arr['mid']);
 
-	$arr['owner_xchan']  = ((x($arr,'owner_xchan'))  ? $arr['owner_xchan']  : $channel['channel_hash']);
-	$arr['author_xchan'] = ((x($arr,'author_xchan')) ? $arr['author_xchan'] : $observer['xchan_hash']);
+	$arr['owner_xchan']  = ((isset($arr['owner_xchan']))  ? $arr['owner_xchan']  : $channel['channel_hash']);
+	$arr['author_xchan'] = ((isset($arr['author_xchan'])) ? $arr['author_xchan'] : $observer['xchan_hash']);
 
 	$arr['verb']         = ((x($arr,'verb')) ? $arr['verb'] : ACTIVITY_POST);
 	$arr['obj_type']     = ((x($arr,'obj_type')) ? $arr['obj_type'] : ACTIVITY_OBJ_ARTICLE);
