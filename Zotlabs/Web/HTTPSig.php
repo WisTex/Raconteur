@@ -260,7 +260,7 @@ class HTTPSig {
 	}
 
 
-	function convertKey($key) {
+	static function convertKey($key) {
 
 		if (strstr($key,'RSA ')) { 
 			return Keyutils::rsatopem($key);

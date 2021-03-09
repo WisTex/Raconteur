@@ -103,10 +103,18 @@ function html2plain($html, $wraplength = 75, $compact = false)
 
 	$message = str_replace("\r", "", $html);
 
+	if (! $message) {
+		return $message;
+	}
 	$doc = new DOMDocument();
 	$doc->preserveWhiteSpace = false;
 
+	
 	$message = mb_convert_encoding($message, 'HTML-ENTITIES', "UTF-8");
+	if ($message === false) {
+		logger('mb_convert_encoding conversion failure');
+		return EMPTY_STR;
+	}
 
 	@$doc->loadHTML($message);
 
