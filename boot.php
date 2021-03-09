@@ -627,27 +627,27 @@ function sys_boot() {
 
 	@include('.htconfig.php');
 
-	// allow somebody to set some initial settings just in case they can't
-	// install without special fiddling
+	// allow somebody to set some initial settings 
 
-	if(App::$install && file_exists('.htpreconfig.php'))
+	if (file_exists('.htpreconfig.php')) {
 		@include('.htpreconfig.php');
+	}
 
-	if(array_key_exists('default_timezone',get_defined_vars())) {
+	if (array_key_exists('default_timezone',get_defined_vars())) {
 		App::$config['system']['timezone'] = $default_timezone;
 	}
 
 	App::$config['system']['server_role'] = 'pro';
 
-	App::$timezone = ((App::$config['system']['timezone']) ? App::$config['system']['timezone'] : 'UTC');
+	App::$timezone = (isset(App::$config['system']['timezone']) ? App::$config['system']['timezone'] : 'UTC');
 	date_default_timezone_set(App::$timezone);
 
 
-	if(! defined('DEFAULT_PLATFORM_ICON')) {
+	if (! defined('DEFAULT_PLATFORM_ICON')) {
 		define( 'DEFAULT_PLATFORM_ICON', '/images/z1-32.png' );
 	}
 
-	if(! defined('DEFAULT_NOTIFY_ICON')) {
+	if (! defined('DEFAULT_NOTIFY_ICON')) {
 		define( 'DEFAULT_NOTIFY_ICON', '/images/z1-64.png' );
 	}
 
@@ -658,9 +658,9 @@ function sys_boot() {
 
 	require_once('include/dba/dba_driver.php');
 
-	if(! App::$install) {
+	if (! App::$install) {
 		DBA::dba_factory($db_host, $db_port, $db_user, $db_pass, $db_data, $db_type, App::$install);
-		if(! DBA::$dba->connected) {
+		if (! DBA::$dba->connected) {
 			system_unavailable();
 		}
 
@@ -867,13 +867,16 @@ class App {
 			self::$hostname = punify(get_host());
 			self::$scheme = 'http';
 			
-			if(x($_SERVER,'HTTPS') && $_SERVER['HTTPS'])
+			if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) {
 				self::$scheme = 'https';
-			elseif(x($_SERVER,'SERVER_PORT') && (intval($_SERVER['SERVER_PORT']) == 443))
+			}
+			elseif (isset($_SERVER['SERVER_PORT']) && (intval($_SERVER['SERVER_PORT']) === 443)) {
 				self::$scheme = 'https';
+			}
 
-			if(x($_SERVER,'SERVER_PORT') && $_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443)
+			if (isset($_SERVER['SERVER_PORT']) && intval($_SERVER['SERVER_PORT']) !== 80 && intval($_SERVER['SERVER_PORT']) !== 443) {
 				self::$hostname .= ':' . $_SERVER['SERVER_PORT'];
+			}
 		}
 
 		/*
@@ -881,10 +884,11 @@ class App {
 		 * or in a sub-directory and adjust accordingly
 		 */
 		$path = trim(dirname($_SERVER['SCRIPT_NAME']),'/\\');
-		if(isset($path) && strlen($path) && ($path != self::$path))
+		if (isset($path) && strlen($path) && ($path != self::$path)) {
 			self::$path = $path;
+		}
 
-		if((x($_SERVER,'QUERY_STRING')) && substr($_SERVER['QUERY_STRING'], 0, 4) === "req=") {
+		if (isset($_SERVER['QUERY_STRING']) && substr($_SERVER['QUERY_STRING'], 0, 4) === "req=") {
 			self::$query_string = str_replace(['<','>'],['&lt;','&gt;'],substr($_SERVER['QUERY_STRING'], 4));
 			// removing trailing / - maybe a nginx problem
 			if (substr(self::$query_string, 0, 1) == "/") {
@@ -894,13 +898,15 @@ class App {
 			self::$query_string = preg_replace('/&/','?',self::$query_string,1);
 		}
 
-		if(x($_GET,'req'))
+		if (isset($_GET['req'])) {
 			self::$cmd = escape_tags(trim($_GET['req'],'/\\'));
+		}
 
-		// unix style "homedir"
+		// support both unix and fediverse style "homedir"
 
-		if((substr(self::$cmd, 0, 1) === '~') || (substr(self::$cmd, 0, 1) === '@'))
+		if ((substr(self::$cmd, 0, 1) === '~') || (substr(self::$cmd, 0, 1) === '@')) {
 			self::$cmd = 'channel/' . substr(self::$cmd, 1);
+		}
 
 		/*
 		 * Break the URL path into C style argc/argv style arguments for our
