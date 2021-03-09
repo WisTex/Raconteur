@@ -32,17 +32,18 @@ require_once('include/api_zot.php');
 		$aid = get_account_id();
 		$channel = App::get_channel();
 		
-		if (($aid) && (x($_REQUEST,'channel'))) {
+		if ($aid && isset($_REQUEST['channel']) && $_REQUEST['channel']) {
 
 			// Only change channel if it is different than the current channel
 
-			if ($channel && x($channel,'channel_address') && $channel['channel_address'] != $_REQUEST['channel']) {
+			if ($channel && isset($channel['channel_address']) && $channel['channel_address'] !== $_REQUEST['channel']) {
 				$c = q("select channel_id from channel where channel_address = '%s' and channel_account_id = %d limit 1",
 					dbesc($_REQUEST['channel']),
 					intval($aid)
 				);
-				if ((! $c) || (! change_channel($c[0]['channel_id'])))
+				if ((! $c) || (! change_channel($c[0]['channel_id']))) {
 					return false;
+				}
 			}
 		}			
 		if (isset($_SESSION['allow_api']) && $_SESSION['allow_api']) {
@@ -105,7 +106,7 @@ require_once('include/api_zot.php');
 
 			$channel = App::get_channel();
 
-			logger('API call for ' . ((isset($channel)) ? $channel['channel_name'] : '') . ': ' . App::$query_string);
+			logger('API call for ' . ((isset($channel) && is_array($channel)) ? $channel['channel_name'] : '') . ': ' . App::$query_string);
 			logger('API parameters: ' . print_r($_REQUEST,true));
 
 			$r = call_user_func($info['func'],$type);
@@ -164,11 +165,12 @@ require_once('include/api_zot.php');
 
 	function api_apply_template($templatename, $type, $data){
 
-		switch ($type){
+		switch ($type) {
 			case 'xml':
 				if ($data) {
-					foreach ($data as $k => $v)
+					foreach ($data as $k => $v) {
 						$ret = arrtoxml(str_replace('$','',$k),$v);
+					}
 				}
 				break;
 			case 'json':

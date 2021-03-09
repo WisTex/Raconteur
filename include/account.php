@@ -6,7 +6,7 @@
  */
 
 use Zotlabs\Lib\Crypto;
-
+use Zotlabs\Lib\System;
 
 function get_account_by_id($account_id) {
 	$r = q("select * from account where account_id = %d",
@@ -92,7 +92,7 @@ function check_account_admin($arr) {
 	if (is_site_admin()) {
 		return true;
 	}
-	$admin_email = trim(get_config('system','admin_email'));
+	$admin_email = trim(get_config('system','admin_email',''));
 	if (strlen($admin_email) && $admin_email === trim($arr['email'])) {
 		return true;
 	}
@@ -142,14 +142,14 @@ function create_account($arr) {
 
 	$result = [ 'success' => false, 'email' => '', 'password' => '', 'message' => '' ];
 
-	$invite_code = ((x($arr,'invite_code'))   ? notags(trim($arr['invite_code']))  : '');
-	$email       = ((x($arr,'email'))         ? notags(punify(trim($arr['email']))) : '');
-	$password    = ((x($arr,'password'))      ? trim($arr['password'])             : '');
-	$password2   = ((x($arr,'password2'))     ? trim($arr['password2'])            : '');
-	$parent      = ((x($arr,'parent'))        ? intval($arr['parent'])             : 0 );
-	$flags       = ((x($arr,'account_flags')) ? intval($arr['account_flags'])      : ACCOUNT_OK);
-	$roles       = ((x($arr,'account_roles')) ? intval($arr['account_roles'])      : 0 );
-	$expires     = ((x($arr,'expires'))       ? intval($arr['expires'])            : NULL_DATE);
+	$invite_code = ((isset($arr['invite_code']))   ? notags(trim($arr['invite_code']))  : '');
+	$email       = ((isset($arr['email']))         ? notags(punify(trim($arr['email']))) : '');
+	$password    = ((isset($arr['password']))      ? trim($arr['password'])             : '');
+	$password2   = ((isset($arr['password2']))     ? trim($arr['password2'])            : '');
+	$parent      = ((isset($arr['parent']))        ? intval($arr['parent'])             : 0 );
+	$flags       = ((isset($arr['account_flags'])) ? intval($arr['account_flags'])      : ACCOUNT_OK);
+	$roles       = ((isset($arr['account_roles'])) ? intval($arr['account_roles'])      : 0 );
+	$expires     = ((isset($arr['expires']))       ? intval($arr['expires'])            : NULL_DATE);
 
 	$default_service_class = get_config('system','default_service_class', EMPTY_STR);
 
@@ -226,7 +226,7 @@ function create_account($arr) {
 		dbesc($email),
 		dbesc($password_encoded)
 	);
-	if ($r && count($r)) {
+	if ($r && is_array($r) && count($r)) {
 		$result['account'] = $r[0];
 	}
 	else {
@@ -295,7 +295,7 @@ function verify_email_address($arr) {
 
 	$email_msg = replace_macros(get_intltext_template('register_verify_member.tpl'),
 		[
-			'$sitename' => get_config('system','sitename'),
+			'$sitename' => System::get_site_name(),
 			'$siteurl'  => z_root(),
 			'$email'    => $arr['email'],
 			'$uid'      => $account['account_id'],
@@ -307,7 +307,7 @@ function verify_email_address($arr) {
 	$res = z_mail(
 		[ 
 		'toEmail' => $arr['email'], 
-		'messageSubject' => sprintf( t('Registration confirmation for %s'), get_config('system','sitename')),
+		'messageSubject' => sprintf( t('Registration confirmation for %s'), System::get_site_name()),
 		'textVersion' => $email_msg,
 		]
 	);
@@ -331,7 +331,7 @@ function send_reg_approval_email($arr) {
 	$r = q("select * from account where (account_roles & %d) >= 4096",
 		 intval(ACCOUNT_ROLE_ADMIN)
 	);
-	if (! ($r && count($r))) {
+	if (! ($r && is_array($r) && count($r))) {
 		return false;
 	}
 
@@ -357,7 +357,7 @@ function send_reg_approval_email($arr) {
 		dbesc($arr['account']['account_language'])
 	);
 
-	$ip = $_SERVER['REMOTE_ADDR'];
+	$ip = ((isset($_SERVER['REMOTE_ADDR'])) ? $_SERVER['REMOTE_ADDR'] : EMPTY_STR);
 
 	$details = (($ip) ? $ip . ' [' . gethostbyaddr($ip) . ']' : '[unknown or stealth IP]');
 
@@ -404,7 +404,7 @@ function send_reg_approval_email($arr) {
 function send_register_success_email($email,$password) {
 
 	$email_msg = replace_macros(get_intltext_template('register_open_eml.tpl'), [
-		'$sitename' => get_config('system','sitename'),
+		'$sitename' => System::get_site_name(),
 		'$siteurl' =>  z_root(),
 		'$email'    => $email,
 		'$password' => t('your registration password'),
@@ -413,7 +413,7 @@ function send_register_success_email($email,$password) {
 	$res = z_mail(
 		[ 
 			'toEmail' => $email,
-			'messageSubject' => sprintf( t('Registration details for %s'), get_config('system','sitename')),
+			'messageSubject' => sprintf( t('Registration details for %s'), System::get_site_name()),
 			'textVersion' => $email_msg,
 		]
 	);
@@ -443,8 +443,9 @@ function account_allow($hash) {
 		intval($register[0]['uid'])
 	);
 
-	if (! $account)
+	if (! $account) {
 		return $ret;
+	}
 
 	$r = q("DELETE FROM register WHERE hash = '%s'",
 		dbesc($register[0]['hash'])
@@ -465,7 +466,7 @@ function account_allow($hash) {
 
 	$email_tpl = get_intltext_template("register_open_eml.tpl");
 	$email_msg = replace_macros($email_tpl, [
-		'$sitename' => get_config('system','sitename'),
+		'$sitename' => System::get_site_name(),
 		'$siteurl'  =>  z_root(),
 		'$username' => $account[0]['account_email'],
 		'$email'    => $account[0]['account_email'],
@@ -476,7 +477,7 @@ function account_allow($hash) {
 	$res = z_mail(
 		[ 
 		'toEmail' => $account[0]['account_email'],
-		'messageSubject' => sprintf( t('Registration details for %s'), get_config('system','sitename')),
+		'messageSubject' => sprintf( t('Registration details for %s'), System::get_site_name()),
 		'textVersion' => $email_msg,
 		]
 	);
@@ -590,7 +591,7 @@ function account_approve($hash) {
 		return $ret;
 	}
 
-	if(get_config('system','auto_channel_create')) {
+	if (get_config('system','auto_channel_create')) {
 		auto_channel_create($register[0]['uid']);
 	}
 	else {

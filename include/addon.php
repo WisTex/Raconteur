@@ -36,7 +36,7 @@ function unload_plugin($plugin){
 	logger("Addons: unloading " . $plugin, LOGGER_DEBUG);
 
 	@include_once('addon/' . $plugin . '/' . $plugin . '.php');
-	if(function_exists($plugin . '_unload')) {
+	if (function_exists($plugin . '_unload')) {
 		$func = $plugin . '_unload';
 		try {
 			$func();
