@@ -2166,7 +2166,7 @@ function construct_page() {
 
 	exec_pdl();
 
-	$comanche = ((count(App::$layout)) ? true : false);
+	$comanche = ((isset(App::$layout) && is_array(App::$layout) && count(App::$layout)) ? true : false);
 
 	require_once(theme_include('theme_init.php'));
 
@@ -2179,13 +2179,14 @@ function construct_page() {
 		$navbar = get_pconfig($uid,'system','navbar',$navbar);
 	}
 
-	if($comanche && App::$layout['navbar']) {
+	if($comanche && isset(App::$layout['navbar'])) {
 		$navbar = App::$layout['navbar'];
 	}
 
 	if (App::$module == 'setup') {
 		$installing = true;
-	} else {
+	}
+	else {
 		nav($navbar);
 	}
 
@@ -2203,10 +2204,10 @@ function construct_page() {
 
 	require_once('include/js_strings.php');
 
-	if (x(App::$page, 'template_style'))
+	if (isset(App::$page['template_style']))
 		head_add_css(App::$page['template_style'] . '.css');
 	else
-		head_add_css(((x(App::$page, 'template')) ? App::$page['template'] : 'default' ) . '.css');
+		head_add_css(((isset(App::$page['template'])) ? App::$page['template'] : 'default' ) . '.css');
 
 	if (($p = theme_include('mod_' . App::$module . '.css')) != '')
 		head_add_css('mod_' . App::$module . '.css');
@@ -2218,7 +2219,7 @@ function construct_page() {
 
 	App::build_pagehead();
 
-	if(App::$page['pdl_content']) {
+	if (isset(App::$page['pdl_content']) && App::$page['pdl_content']) {
 		App::$page['content'] = App::$comanche->region(App::$page['content']);
 	}
 
@@ -2231,7 +2232,7 @@ function construct_page() {
 	// This way the Comanche layout can include any existing content, alter the layout by adding stuff around it or changing the
 	// layout completely with a new layout definition, or replace/remove existing content.
 
-	if($comanche) {
+	if ($comanche) {
 		$arr = [
 				'module' => App::$module,
 				'layout' => App::$layout
@@ -2244,7 +2245,7 @@ function construct_page() {
 		 *   * \e string \b layout
 		 */
 		call_hooks('construct_page', $arr);
-		App::$layout = $arr['layout'];
+		App::$layout = ((isset($arr['layout']) && is_array($arr['layout'])) ? $arr['layout'] : []);
 
 		foreach(App::$layout as $k => $v) {
 			if((strpos($k, 'region_') === 0) && strlen($v)) {
@@ -2281,10 +2282,11 @@ function construct_page() {
 
 	// security headers - see https://securityheaders.io
 
-	if(App::get_scheme() === 'https' && App::$config['system']['transport_security_header'])
+	if (App::get_scheme() === 'https' && isset(App::$config['system']['transport_security_header']) && App::$config['system']['transport_security_header']) {
 		header("Strict-Transport-Security: max-age=31536000");
+	}
 
-	if(App::$config['system']['content_security_policy']) {
+	if (isset(App::$config['system']['content_security_policy']) && App::$config['system']['content_security_policy']) {
 		$cspsettings = Array (
 			'script-src' => Array ("'self'","'unsafe-inline'","'unsafe-eval'"),
 			'style-src' => Array ("'self'","'unsafe-inline'")
@@ -2301,31 +2303,31 @@ function construct_page() {
 		);
 		$cspheader = "Content-Security-Policy:";
 		foreach ($cspsettings as $cspdirective => $csp) {
-			if (!in_array($cspdirective,$validcspdirectives)) {
-                                logger("INVALID CSP DIRECTIVE: ".$cspdirective,LOGGER_DEBUG);
+			if (! in_array($cspdirective,$validcspdirectives)) {
+				logger("INVALID CSP DIRECTIVE: ".$cspdirective,LOGGER_DEBUG);
 				continue;
 			}
-			$cspsettingsarray=array_unique($cspsettings[$cspdirective]);
+			$cspsettingsarray = array_unique($cspsettings[$cspdirective]);
 			$cspsetpolicy = implode(' ',$cspsettingsarray);
 			if ($cspsetpolicy) {
-				$cspheader .= " ".$cspdirective." ".$cspsetpolicy.";";
+				$cspheader .= " $cspdirective $cspsetpolicy;";
 			}
 		}
 		header($cspheader);
 	}
 
-	if(App::$config['system']['x_security_headers']) {
+	if (isset(App::$config['system']['x_security_headers']) && App::$config['system']['x-security_headers']) {
 		header("X-Frame-Options: SAMEORIGIN");
 		header("X-Xss-Protection: 1; mode=block;");
 		header("X-Content-Type-Options: nosniff");
 	}
 
-	if(App::$config['system']['public_key_pins']) {
+	if (isset(App::$config['system']['public_key_pins']) && App::$config['system']['public_key_pins']) {
 		header("Public-Key-Pins: " . App::$config['system']['public_key_pins']);
 	}
 
 	require_once(theme_include(
-		((x(App::$page, 'template')) ? App::$page['template'] : 'default' ) . '.php' )
+		((isset(App::$page['template']) && App::$page['template']) ? App::$page['template'] : 'default' ) . '.php' )
 	);
 }
 
@@ -2520,14 +2522,14 @@ function supported_imagetype($x) {
 }
 
 function get_host() {
-	if ($host = $_SERVER['HTTP_X_FORWARDED_HOST']) {
+	if ($host = ((isset($_SERVER['HTTP_X_FORWARDED_HOST']) && $_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : EMPTY_STR)) {
 		$elements = explode(',', $host);
 		$host = trim(end($elements));
 	}
 	else {
-		if (! $host = $_SERVER['HTTP_HOST']) {
-			if (! $host = $_SERVER['SERVER_NAME']) {
-				$host = ((! empty($_SERVER['SERVER_ADDR'])) ? $_SERVER['SERVER_ADDR'] : '');
+		if (! $host = ((isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : EMPTY_STR)) {
+			if (! $host = ((isset($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : EMPTY_STR)) {
+				$host = ((isset($_SERVER['SERVER_ADDR']) && $_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '');
 			}
 		}
 	}
