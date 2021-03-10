@@ -29,8 +29,8 @@ class Channel extends Controller {
 
 	function init() {
 
-		if (in_array(substr($_GET['search'],0,1),[ '@', '!', '?'])) {
-			goaway('search' . '?f=&search=' . $_GET['search']);
+		if (isset($_GET['search']) && (in_array(substr($_GET['search'],0,1),[ '@', '!', '?'])  || strpos($_GET['search'],'https://') === 0)) {
+			goaway(z_root() . '/search' . '?f=&search=' . urlencode($_GET['search']));
 		}
 
 		$which = null;

@@ -158,7 +158,7 @@ function api_login() {
 		}
 	}
 
-	if ($record['account']) {
+	if (isset($record['account'])) {
 		authenticate_success($record['account']);
 
 		if($channel_login) {
@@ -181,6 +181,7 @@ function api_login() {
 function retry_basic_auth($method = 'Basic') {
 	header('WWW-Authenticate: ' . $method . ' realm="' . System::get_platform_name() . '"');
 	header('HTTP/1.0 401 Unauthorized');
-	echo('This api requires login');
+	echo( t('This api method requires authentication'));
 	killme();
 }
+

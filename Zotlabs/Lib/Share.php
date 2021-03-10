@@ -46,7 +46,7 @@ class Share {
 			return;
 		}
 	
-		if ($r[0]['mimetype'] !== 'text/bbcode') {
+		if (! in_array($r[0]['mimetype'], [ 'text/bbcode', 'text/x-multicode' ])) {
 			return;
 		}
 	

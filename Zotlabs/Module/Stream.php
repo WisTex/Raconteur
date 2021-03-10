@@ -46,7 +46,7 @@ class Stream extends Controller {
 		$arr = [ 'query' => App::$query_string ];
 		call_hooks('stream_content_init', $arr);
 	
-		$channel = App::$data['channel'];
+		$channel = ((isset(App::$data['channel'])) ? App::$data['channel'] : null);
 
 		// if called from liveUpdate() we will not have called Stream::init() on this request and $channel will not be set
 		
@@ -86,7 +86,7 @@ class Stream extends Controller {
 				break;
 		}
 
-		$search = (($_GET['search']) ? $_GET['search'] : '');
+		$search = (isset($_GET['search']) ? $_GET['search'] : '');
 		if ($search) {
 			$_GET['netsearch'] = escape_tags($search);
 			if (strpos($search,'@') === 0) {
@@ -300,7 +300,7 @@ class Stream extends Controller {
 			$o = $title . $status_editor;
 	
 		}
-		elseif ($cid_r) {
+		elseif (isset($cid_r) && $cid_r) {
 			$item_thread_top = EMPTY_STR;
 
 			if ($load || $update) {

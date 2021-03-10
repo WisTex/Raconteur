@@ -119,7 +119,7 @@ class Queue {
 			dbesc(($arr['driver']) ? $arr['driver'] : 'zot6'),
 			dbesc($arr['posturl']),
 			intval(1),
-			intval(($arr['priority']) ? $arr['priority'] : 0),
+			intval((isset($arr['priority'])) ? $arr['priority'] : 0),
 			dbesc(datetime_convert()),
 			dbesc(datetime_convert()),
 			dbesc(datetime_convert()),
