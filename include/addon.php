@@ -36,7 +36,7 @@ function unload_plugin($plugin){
 	logger("Addons: unloading " . $plugin, LOGGER_DEBUG);
 
 	@include_once('addon/' . $plugin . '/' . $plugin . '.php');
-	if(function_exists($plugin . '_unload')) {
+	if (function_exists($plugin . '_unload')) {
 		$func = $plugin . '_unload';
 		try {
 			$func();
@@ -909,7 +909,7 @@ function script_path() {
 
 	// Some proxy setups may require using http_host
 
-	if(intval(App::$config['system']['script_path_use_http_host']))
+	if(isset(App::$config['system']['script_path_use_http_host']) && intval(App::$config['system']['script_path_use_http_host']))
 		$server_var = 'HTTP_HOST';
 	else
 		$server_var = 'SERVER_NAME';

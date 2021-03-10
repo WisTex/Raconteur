@@ -37,7 +37,7 @@ function oembed_action($embedurl) {
 		$action = 'block';
 
 
-	// site white/black list
+	// site allow/deny list
 
 	if(($x = get_config('system','embed_deny'))) {
 		if(($x) && (! is_array($x)))
@@ -117,9 +117,6 @@ function oembed_process($url) {
 
 function oembed_fetch_url($embedurl){
 
-	// These media files should now be caught in bbcode.php
-	// left here as a fallback in case this is called from another source
-
 	$noexts = [ '.mp3', '.mp4', '.ogg', '.ogv', '.oga', '.ogm', '.webm', '.opus', '.m4a', '.mov' ];
 
 	$result = oembed_action($embedurl); 
@@ -190,12 +187,6 @@ function oembed_fetch_url($embedurl){
 					foreach($entries as $e){
 						$href = $e->getAttributeNode("href")->nodeValue;
 						
-						// Youtube will happily hand us an http oembed URL even if we specify an https link; and the returned http link will fail with a 40x if you try and fetch it
-						// This is not our bug, but good luck getting google to fix it.
-						
-						if (strpos($href,'http:') === 0 && strpos($href,'youtu') !== false) {
-							$href = str_replace('http:','https:', $href);
-						}
 						$x = z_fetch_url($href . '&maxwidth=' . App::$videowidth);
 						if($x['success'])
 							$txt = $x['body'];
@@ -251,7 +242,7 @@ function oembed_fetch_url($embedurl){
 			$orig = $j['html'];
 			$allow_position = (($is_matrix) ? true : false);
 
-			// some sites wrap their entire embed in an iframe
+			// some sites (e.g. Mastodon) wrap their entire embed in an iframe
 			// which we will purify away and which we provide anyway.
 			// So if we see this, grab the frame src url and use that 
 			// as the embed content - which will still need to be purified.

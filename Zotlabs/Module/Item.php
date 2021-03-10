@@ -50,11 +50,11 @@ class Item extends Controller {
 	function init() {
 
 
-		if(ActivityStreams::is_as_request()) {
+		if (ActivityStreams::is_as_request()) {
 			$item_id = argv(1);
-			if(! $item_id)
+			if (! $item_id) {
 				http_status_exit(404, 'Not found');
-
+			}
 			$portable_id = EMPTY_STR;
 
 			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 ";
@@ -107,7 +107,7 @@ class Item extends Controller {
 				);
 			}
 
-			if(! $i) {
+			if (! $i) {
 				http_status_exit(403,'Forbidden');
 			}
 
@@ -145,15 +145,15 @@ class Item extends Controller {
 			as_return_and_die($i,$chan);
 		}
 
-		if(Libzot::is_zot_request()) {
+		if (Libzot::is_zot_request()) {
 
 			$conversation = false;
 
 			$item_id = argv(1);
 
-			if(! $item_id)
+			if (! $item_id) {
 				http_status_exit(404, 'Not found');
-
+			}
 			$portable_id = EMPTY_STR;
 
 			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 ";
@@ -203,7 +203,7 @@ class Item extends Controller {
 				);
 			}
 
-			if(! $i) {
+			if (! $i) {
 				http_status_exit(403,'Forbidden');
 			}
 
@@ -239,9 +239,9 @@ class Item extends Controller {
 				ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
 			}
 
-			if(! $i)
+			if (! $i) {
 				http_status_exit(404, 'Not found');
-
+			}
 			$x = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
 				'https://w3id.org/security/v1',
@@ -287,12 +287,13 @@ class Item extends Controller {
 
 	function post() {
 
-		if((! local_channel()) && (! remote_channel()) && (! x($_REQUEST,'anonname')))
+		if ((! local_channel()) && (! remote_channel()) && (! isset($_REQUEST['anonname']))) {
 			return;
+		}
 
 		// drop an array of items.
 		
-		if (x($_REQUEST,'dropitems')) {
+		if (isset($_REQUEST['dropitems'])) {
 			$arr_drop = explode(',',$_REQUEST['dropitems']);
 			drop_items($arr_drop);
 			$json = array('success' => 1);
@@ -311,17 +312,17 @@ class Item extends Controller {
 		 * Is this a reply to something?
 		 */
 	
-		$parent     = ((x($_REQUEST,'parent'))     ? intval($_REQUEST['parent'])   : 0);
-		$parent_mid = ((x($_REQUEST,'parent_mid')) ? trim($_REQUEST['parent_mid']) : '');
+		$parent     = ((isset($_REQUEST['parent']))     ? intval($_REQUEST['parent'])   : 0);
+		$parent_mid = ((isset($_REQUEST['parent_mid'])) ? trim($_REQUEST['parent_mid']) : '');
 	
-		$hidden_mentions = ((x($_REQUEST,'hidden_mentions')) ? trim($_REQUEST['hidden_mentions']) : '');
+		$hidden_mentions = ((isset($_REQUEST['hidden_mentions'])) ? trim($_REQUEST['hidden_mentions']) : '');
 
 
 		/**
 		 * Who is viewing this page and posting this thing
 		 */
 		 
-		$remote_xchan = ((x($_REQUEST,'remote_xchan')) ? trim($_REQUEST['remote_xchan']) : false);
+		$remote_xchan = ((isset($_REQUEST['remote_xchan'])) ? trim($_REQUEST['remote_xchan']) : false);
 		$remote_observer = xchan_match( ['xchan_hash' => $remote_xchan ] );
 
 		if (! $remote_observer) {
@@ -330,7 +331,7 @@ class Item extends Controller {
 
 		// This is the local channel representing who the posted item will belong to.
 
-		$profile_uid = ((x($_REQUEST,'profile_uid')) ? intval($_REQUEST['profile_uid'])    : 0);
+		$profile_uid = ((isset($_REQUEST['profile_uid'])) ? intval($_REQUEST['profile_uid'])    : 0);
 
 		// *If* you are logged in as the site admin you are allowed to create items for the sys channel.
 		// This would typically be a webpage or webpage element.
@@ -346,7 +347,7 @@ class Item extends Controller {
 	
 		// logger('postvars ' . print_r($_REQUEST,true), LOGGER_DATA);
 	
-		$api_source = ((x($_REQUEST,'api_source') && $_REQUEST['api_source']) ? true : false);
+		$api_source = ((isset($_REQUEST['api_source']) && $_REQUEST['api_source']) ? true : false);
 	
 		$nocomment = 0;
 		if (isset($_REQUEST['comments_enabled'])) {
@@ -358,7 +359,7 @@ class Item extends Controller {
 			$channel_comments_closed = NULL_DATE;
 		}
 
-		$comments_closed = ((x($_REQUEST,'comments_closed')) ? datetime_convert(date_default_timezone_get(),'UTC',$_REQUEST['comments_closed']) : $channel_comments_closed);
+		$comments_closed = ((isset($_REQUEST['comments_closed'])) ? datetime_convert(date_default_timezone_get(),'UTC',$_REQUEST['comments_closed']) : $channel_comments_closed);
 
 		$is_poll = ((trim($_REQUEST['poll_answers'][0]) != '' && trim($_REQUEST['poll_answers'][1]) != '') ? true : false);
 

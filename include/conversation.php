@@ -1335,6 +1335,7 @@ function z_status_editor($a, $x, $popup = false) {
 		'$modalerrorlink' => t('Error getting photo link'),
 		'$modalerroralbum' => t('Error getting album'),
 		'$auto_save_draft' => $feature_auto_save_draft,
+		'$confirmdelete' => t('Delete this item?'),
 		'$reset' => $reset
 	));
 

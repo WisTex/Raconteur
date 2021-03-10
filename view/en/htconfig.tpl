@@ -106,8 +106,9 @@ App::$config['system']['theme'] = 'redbasic';
 // to create and write to php.out in the top level web directory,
 // or change the name (below) to a file/path where this is allowed.
 
-// Uncomment the following 4 lines to turn on PHP error logging.
-//error_reporting(E_ERROR | E_WARNING | E_PARSE ); 
+ini_set('display_errors', '0');
+
+// Uncomment the following lines to turn on PHP error logging.
+//error_reporting(E_ERROR | E_PARSE ); 
 //ini_set('error_log','php.out'); 
 //ini_set('log_errors','1'); 
-//ini_set('display_errors', '0');

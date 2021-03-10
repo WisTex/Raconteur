@@ -30,20 +30,22 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 	$showall_icon   = 'fa-globe';
 	$role = get_pconfig(local_channel(), 'system', 'permissions_role');
 
-	if(! $emptyACL_description) {
+	if (! $emptyACL_description) {
 		$showall_caption = t('Visible to your default audience');
 
-	} else if(is_a($emptyACL_description, '\\Zotlabs\\Lib\\PermissionDescription')) {
+	}
+	elseif (is_a($emptyACL_description, '\\Zotlabs\\Lib\\PermissionDescription')) {
 		$showall_caption = $emptyACL_description->get_permission_description();
 		$showall_origin  = (($role === 'custom') ? $emptyACL_description->get_permission_origin_description() : '');
 		$showall_icon    = $emptyACL_description->get_permission_icon();
-	} else {
+	}
+	else {
 		// For backwards compatibility we still accept a string... for now!
 		$showall_caption = $emptyACL_description;
 	}
 
 
-	if(is_array($defaults)) {
+	if (is_array($defaults)) {
 		$allow_cid = ((strlen($defaults['allow_cid']))
 			? explode('><', $defaults['allow_cid']) : array() );
 		$allow_gid = ((strlen($defaults['allow_gid']))
@@ -65,17 +67,17 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 	$just_me = false;
 	$custom = false;
 
-	if($allow_cid || $allow_gid || $deny_gid || $deny_cid) {
+	if ($allow_cid || $allow_gid || $deny_gid || $deny_cid) {
 		$has_acl = true;
 		$custom = true;
 	}
 
-	if(count($allow_gid) === 1 && (! $allow_cid) && (! $deny_gid) && (! $deny_cid)) {
+	if (count($allow_gid) === 1 && (! $allow_cid) && (! $deny_gid) && (! $deny_cid)) {
 		$single_group = true;
 		$custom = false;
 	}
 
-	if(count($allow_cid) === 1 && $channel && $allow_cid[0] = $channel['channel_hash'] && (! $allow_gid) && (! $deny_gid) && (! $deny_cid)) {
+	if (count($allow_cid) === 1 && $channel && $allow_cid[0] = $channel['channel_hash'] && (! $allow_gid) && (! $deny_gid) && (! $deny_cid)) {
 		$just_me = true;
 		$custom = false;
 	}
@@ -84,8 +86,8 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 		intval(local_channel())
 	);
 
-	if($r) {
-		foreach($r as $rr) {
+	if ($r) {
+		foreach ($r as $rr) {
 			$selected = (($single_group && $rr['hash'] === $allow_gid[0]) ? ' selected = "selected" ' : '');
 			$groups .= '<option id="' . $rr['id'] . '" value="' . $rr['hash'] . '"' . $selected . '>' . $rr['gname'] . ' ' . t('(List)') . '</option>' . "\r\n";
 		}
@@ -105,11 +107,10 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 
 	}
 
-
 	$forums = get_forum_channels(local_channel(),1);
 
-	if($forums) {
-		foreach($forums as $f) {
+	if ($forums) {
+		foreach ($forums as $f) {
 			$selected = (($single_group && $f['hash'] === $allow_cid[0]) ? ' selected = "selected" ' : '');
 			$groups .= '<option id="^' . $f['abook_id'] . '" value="^' . $f['xchan_hash'] . '"' . $selected . '>' . $f['xchan_name'] . ' ' . t('(Group)') . '</option>' . "\r\n";
 		}

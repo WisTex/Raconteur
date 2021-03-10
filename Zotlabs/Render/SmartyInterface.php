@@ -54,7 +54,7 @@ class SmartyInterface extends Smarty {
 		$this->right_delimiter = App::get_template_rdelim('smarty3');
 
 		// Don't report errors so verbosely
-		$this->error_reporting = E_ALL & (~E_NOTICE);
+		$this->error_reporting = (E_ERROR | E_PARSE);
 	}
 
 	function parsed($template = '') {

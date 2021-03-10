@@ -46,8 +46,9 @@ class Share extends \Zotlabs\Web\Controller {
 	
 		/** @FIXME we only share bbcode */
 	
-		if($r[0]['mimetype'] !== 'text/bbcode')
+		if (! in_array($r[0]['mimetype'], [ 'text/bbcode', 'text/x-multicode' ])) {
 			killme();
+		}
 	
 	
 		xchan_query($r);

@@ -627,27 +627,27 @@ function sys_boot() {
 
 	@include('.htconfig.php');
 
-	// allow somebody to set some initial settings just in case they can't
-	// install without special fiddling
+	// allow somebody to set some initial settings 
 
-	if(App::$install && file_exists('.htpreconfig.php'))
+	if (file_exists('.htpreconfig.php')) {
 		@include('.htpreconfig.php');
+	}
 
-	if(array_key_exists('default_timezone',get_defined_vars())) {
+	if (array_key_exists('default_timezone',get_defined_vars())) {
 		App::$config['system']['timezone'] = $default_timezone;
 	}
 
 	App::$config['system']['server_role'] = 'pro';
 
-	App::$timezone = ((App::$config['system']['timezone']) ? App::$config['system']['timezone'] : 'UTC');
+	App::$timezone = (isset(App::$config['system']['timezone']) ? App::$config['system']['timezone'] : 'UTC');
 	date_default_timezone_set(App::$timezone);
 
 
-	if(! defined('DEFAULT_PLATFORM_ICON')) {
+	if (! defined('DEFAULT_PLATFORM_ICON')) {
 		define( 'DEFAULT_PLATFORM_ICON', '/images/z1-32.png' );
 	}
 
-	if(! defined('DEFAULT_NOTIFY_ICON')) {
+	if (! defined('DEFAULT_NOTIFY_ICON')) {
 		define( 'DEFAULT_NOTIFY_ICON', '/images/z1-64.png' );
 	}
 
@@ -658,9 +658,9 @@ function sys_boot() {
 
 	require_once('include/dba/dba_driver.php');
 
-	if(! App::$install) {
+	if (! App::$install) {
 		DBA::dba_factory($db_host, $db_port, $db_user, $db_pass, $db_data, $db_type, App::$install);
-		if(! DBA::$dba->connected) {
+		if (! DBA::$dba->connected) {
 			system_unavailable();
 		}
 
@@ -686,7 +686,7 @@ function sys_boot() {
 
 
 function startup() {
-	error_reporting(E_ERROR | E_WARNING | E_PARSE);
+	error_reporting(E_ERROR | E_PARSE);
 
 	// Some hosting providers block/disable this
 	@set_time_limit(0);
@@ -867,13 +867,16 @@ class App {
 			self::$hostname = punify(get_host());
 			self::$scheme = 'http';
 			
-			if(x($_SERVER,'HTTPS') && $_SERVER['HTTPS'])
+			if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) {
 				self::$scheme = 'https';
-			elseif(x($_SERVER,'SERVER_PORT') && (intval($_SERVER['SERVER_PORT']) == 443))
+			}
+			elseif (isset($_SERVER['SERVER_PORT']) && (intval($_SERVER['SERVER_PORT']) === 443)) {
 				self::$scheme = 'https';
+			}
 
-			if(x($_SERVER,'SERVER_PORT') && $_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443)
+			if (isset($_SERVER['SERVER_PORT']) && intval($_SERVER['SERVER_PORT']) !== 80 && intval($_SERVER['SERVER_PORT']) !== 443) {
 				self::$hostname .= ':' . $_SERVER['SERVER_PORT'];
+			}
 		}
 
 		/*
@@ -881,10 +884,11 @@ class App {
 		 * or in a sub-directory and adjust accordingly
 		 */
 		$path = trim(dirname($_SERVER['SCRIPT_NAME']),'/\\');
-		if(isset($path) && strlen($path) && ($path != self::$path))
+		if (isset($path) && strlen($path) && ($path != self::$path)) {
 			self::$path = $path;
+		}
 
-		if((x($_SERVER,'QUERY_STRING')) && substr($_SERVER['QUERY_STRING'], 0, 4) === "req=") {
+		if (isset($_SERVER['QUERY_STRING']) && substr($_SERVER['QUERY_STRING'], 0, 4) === "req=") {
 			self::$query_string = str_replace(['<','>'],['&lt;','&gt;'],substr($_SERVER['QUERY_STRING'], 4));
 			// removing trailing / - maybe a nginx problem
 			if (substr(self::$query_string, 0, 1) == "/") {
@@ -894,13 +898,15 @@ class App {
 			self::$query_string = preg_replace('/&/','?',self::$query_string,1);
 		}
 
-		if(x($_GET,'req'))
+		if (isset($_GET['req'])) {
 			self::$cmd = escape_tags(trim($_GET['req'],'/\\'));
+		}
 
-		// unix style "homedir"
+		// support both unix and fediverse style "homedir"
 
-		if((substr(self::$cmd, 0, 1) === '~') || (substr(self::$cmd, 0, 1) === '@'))
+		if ((substr(self::$cmd, 0, 1) === '~') || (substr(self::$cmd, 0, 1) === '@')) {
 			self::$cmd = 'channel/' . substr(self::$cmd, 1);
+		}
 
 		/*
 		 * Break the URL path into C style argc/argv style arguments for our
@@ -1710,7 +1716,7 @@ function shutdown() {
 
 function get_account_id() {
 
-	if(intval($_SESSION['account_id']))
+	if(isset($_SESSION['account_id']) && intval($_SESSION['account_id']))
 		return intval($_SESSION['account_id']);
 
 	if(App::$account)
@@ -2120,7 +2126,7 @@ function load_pdl() {
 		$u = App::$comanche->get_channel_id();
 		if($u)
 			$s = get_pconfig($u, 'system', $n);
-		if(! $s)
+		if(! (isset($s) && $s))
 			$s = $layout;
 
 		if((! $s) && (($p = theme_include($n)) != ''))
@@ -2160,7 +2166,7 @@ function construct_page() {
 
 	exec_pdl();
 
-	$comanche = ((count(App::$layout)) ? true : false);
+	$comanche = ((isset(App::$layout) && is_array(App::$layout) && count(App::$layout)) ? true : false);
 
 	require_once(theme_include('theme_init.php'));
 
@@ -2173,13 +2179,14 @@ function construct_page() {
 		$navbar = get_pconfig($uid,'system','navbar',$navbar);
 	}
 
-	if($comanche && App::$layout['navbar']) {
+	if($comanche && isset(App::$layout['navbar'])) {
 		$navbar = App::$layout['navbar'];
 	}
 
 	if (App::$module == 'setup') {
 		$installing = true;
-	} else {
+	}
+	else {
 		nav($navbar);
 	}
 
@@ -2197,10 +2204,10 @@ function construct_page() {
 
 	require_once('include/js_strings.php');
 
-	if (x(App::$page, 'template_style'))
+	if (isset(App::$page['template_style']))
 		head_add_css(App::$page['template_style'] . '.css');
 	else
-		head_add_css(((x(App::$page, 'template')) ? App::$page['template'] : 'default' ) . '.css');
+		head_add_css(((isset(App::$page['template'])) ? App::$page['template'] : 'default' ) . '.css');
 
 	if (($p = theme_include('mod_' . App::$module . '.css')) != '')
 		head_add_css('mod_' . App::$module . '.css');
@@ -2212,7 +2219,7 @@ function construct_page() {
 
 	App::build_pagehead();
 
-	if(App::$page['pdl_content']) {
+	if (isset(App::$page['pdl_content']) && App::$page['pdl_content']) {
 		App::$page['content'] = App::$comanche->region(App::$page['content']);
 	}
 
@@ -2225,7 +2232,7 @@ function construct_page() {
 	// This way the Comanche layout can include any existing content, alter the layout by adding stuff around it or changing the
 	// layout completely with a new layout definition, or replace/remove existing content.
 
-	if($comanche) {
+	if ($comanche) {
 		$arr = [
 				'module' => App::$module,
 				'layout' => App::$layout
@@ -2238,7 +2245,7 @@ function construct_page() {
 		 *   * \e string \b layout
 		 */
 		call_hooks('construct_page', $arr);
-		App::$layout = $arr['layout'];
+		App::$layout = ((isset($arr['layout']) && is_array($arr['layout'])) ? $arr['layout'] : []);
 
 		foreach(App::$layout as $k => $v) {
 			if((strpos($k, 'region_') === 0) && strlen($v)) {
@@ -2275,10 +2282,11 @@ function construct_page() {
 
 	// security headers - see https://securityheaders.io
 
-	if(App::get_scheme() === 'https' && App::$config['system']['transport_security_header'])
+	if (App::get_scheme() === 'https' && isset(App::$config['system']['transport_security_header']) && App::$config['system']['transport_security_header']) {
 		header("Strict-Transport-Security: max-age=31536000");
+	}
 
-	if(App::$config['system']['content_security_policy']) {
+	if (isset(App::$config['system']['content_security_policy']) && App::$config['system']['content_security_policy']) {
 		$cspsettings = Array (
 			'script-src' => Array ("'self'","'unsafe-inline'","'unsafe-eval'"),
 			'style-src' => Array ("'self'","'unsafe-inline'")
@@ -2295,31 +2303,31 @@ function construct_page() {
 		);
 		$cspheader = "Content-Security-Policy:";
 		foreach ($cspsettings as $cspdirective => $csp) {
-			if (!in_array($cspdirective,$validcspdirectives)) {
-                                logger("INVALID CSP DIRECTIVE: ".$cspdirective,LOGGER_DEBUG);
+			if (! in_array($cspdirective,$validcspdirectives)) {
+				logger("INVALID CSP DIRECTIVE: ".$cspdirective,LOGGER_DEBUG);
 				continue;
 			}
-			$cspsettingsarray=array_unique($cspsettings[$cspdirective]);
+			$cspsettingsarray = array_unique($cspsettings[$cspdirective]);
 			$cspsetpolicy = implode(' ',$cspsettingsarray);
 			if ($cspsetpolicy) {
-				$cspheader .= " ".$cspdirective." ".$cspsetpolicy.";";
+				$cspheader .= " $cspdirective $cspsetpolicy;";
 			}
 		}
 		header($cspheader);
 	}
 
-	if(App::$config['system']['x_security_headers']) {
+	if (isset(App::$config['system']['x_security_headers']) && App::$config['system']['x-security_headers']) {
 		header("X-Frame-Options: SAMEORIGIN");
 		header("X-Xss-Protection: 1; mode=block;");
 		header("X-Content-Type-Options: nosniff");
 	}
 
-	if(App::$config['system']['public_key_pins']) {
+	if (isset(App::$config['system']['public_key_pins']) && App::$config['system']['public_key_pins']) {
 		header("Public-Key-Pins: " . App::$config['system']['public_key_pins']);
 	}
 
 	require_once(theme_include(
-		((x(App::$page, 'template')) ? App::$page['template'] : 'default' ) . '.php' )
+		((isset(App::$page['template']) && App::$page['template']) ? App::$page['template'] : 'default' ) . '.php' )
 	);
 }
 
@@ -2514,14 +2522,14 @@ function supported_imagetype($x) {
 }
 
 function get_host() {
-	if ($host = $_SERVER['HTTP_X_FORWARDED_HOST']) {
+	if ($host = ((isset($_SERVER['HTTP_X_FORWARDED_HOST']) && $_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : EMPTY_STR)) {
 		$elements = explode(',', $host);
 		$host = trim(end($elements));
 	}
 	else {
-		if (! $host = $_SERVER['HTTP_HOST']) {
-			if (! $host = $_SERVER['SERVER_NAME']) {
-				$host = ((! empty($_SERVER['SERVER_ADDR'])) ? $_SERVER['SERVER_ADDR'] : '');
+		if (! $host = ((isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : EMPTY_STR)) {
+			if (! $host = ((isset($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : EMPTY_STR)) {
+				$host = ((isset($_SERVER['SERVER_ADDR']) && $_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '');
 			}
 		}
 	}

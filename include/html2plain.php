@@ -73,7 +73,7 @@ function quotelevel($message, $wraplength = 75)
 		if (!$startquote or ($line != ''))
 			$newlines[] = breaklines($line, $currlevel, $wraplength);
 	}
-	return(implode($newlines, "\n"));
+	return(implode("\n", $newlines));
 }
 
 function collecturls($message) {
@@ -103,12 +103,20 @@ function html2plain($html, $wraplength = 75, $compact = false)
 
 	$message = str_replace("\r", "", $html);
 
+	if (! $message) {
+		return $message;
+	}
 	$doc = new DOMDocument();
 	$doc->preserveWhiteSpace = false;
 
-	$message = mb_convert_encoding($message, 'HTML-ENTITIES', "UTF-8");
+	
+	$tmp_message = mb_convert_encoding($message, 'HTML-ENTITIES', "UTF-8");
+	if ($tmp_message === false) {
+		logger('mb_convert_encoding failed: ' . $tmp_message);
+		return EMPTY_STR;
+	}
 
-	@$doc->loadHTML($message);
+	@$doc->loadHTML($tmp_message);
 
 	$xpath = new DomXPath($doc);
 	$list = $xpath->query("//pre");

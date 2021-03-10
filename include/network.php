@@ -530,7 +530,7 @@ function http_status_exit($val, $msg = '') {
 function unparse_url($parsed_url) {
 	$scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
 	$host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
-	$port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
+	$port     = ((isset($parsed_url['port']) && intval($parsed_url['port'])) ? ':' . intval($parsed_url['port']) : '');
 	$user     = isset($parsed_url['user']) ? $parsed_url['user'] : '';
 	$pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass']  : '';
 	$pass     = ($user || $pass) ? "$pass@" : '';
@@ -1110,7 +1110,7 @@ function webfinger_rfc7033($webbie) {
 			if($m['scheme'] !== 'https')
 				return false;
 
-			$rhs = $m['host'] . (($m['port']) ? ':' . $m['port'] : '');
+			$rhs = $m['host'] . ((isset($m['port']) && intval($m['port'])) ? ':' . intval($m['port']) : '');
 			$resource = urlencode($webbie);
 		}
 		else
@@ -1655,7 +1655,7 @@ function service_plink($contact, $guid) {
 
 	$m = parse_url($contact['xchan_url']);
 	if($m) {
-		$url = $m['scheme'] . '://' . $m['host'] . (($m['port']) ? ':' . $m['port'] : '');
+		$url = $m['scheme'] . '://' . $m['host'] . ((isset($m['port']) && intval($m['port'])) ? ':' . intval($m['port']) : '');
 	}
 	else {
 		$url = 'https://' . substr($contact['xchan_addr'],strpos($contact['xchan_addr'],'@')+1);

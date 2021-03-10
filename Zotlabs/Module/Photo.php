@@ -64,7 +64,7 @@ class Photo extends Controller {
 				killme();
 		}
 	
-		$token = $_REQUEST['token'] ?: EMPTY_STR;
+		$token = ((isset($_REQUEST['token'])) ? $_REQUEST['token'] : EMPTY_STR);
 		$observer_xchan = get_observer_hash();
 
 		$default = z_root() . '/' . get_default_profile_photo();
@@ -113,9 +113,9 @@ class Photo extends Controller {
 				if ($r) {
 					$data = dbunescbin($r[0]['content']);
 					$mimetype = $r[0]['mimetype'];
-				}
-				if (intval($r[0]['os_storage'])) {
-					$data = file_get_contents($data);
+					if (intval($r[0]['os_storage'])) {
+						$data = file_get_contents($data);
+					}
 				}
 			}
 			if (! $data) {

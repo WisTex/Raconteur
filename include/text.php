@@ -104,9 +104,9 @@ function escape_tags($string) {
 }
 
 
-function z_input_filter($s,$type = 'text/bbcode',$allow_code = false) {
+function z_input_filter($s, $type = 'text/bbcode', $allow_code = false) {
 
-	if($type === 'text/bbcode') {
+	if (in_array($type, [ 'text/bbcode', 'text/x-multicode' ])) {
 		return (multicode_purify($s));
 	}
 	if($type == 'text/plain')
@@ -149,13 +149,6 @@ function z_input_filter($s,$type = 'text/bbcode',$allow_code = false) {
  * @return string standards compliant filtered HTML
  */
 function purify_html($s, $opts = []) {
-
-/**
- * @FIXME this function has html output, not bbcode - so safely purify these
- * require_once('include/html2bbcode.php');
- * $s = html2bb_video($s);
- * $s = oembed_html2bbcode($s);
- */
 
 	$config = HTMLPurifier_Config::createDefault();
 	$config->set('Cache.DefinitionImpl', null);
@@ -1944,6 +1937,7 @@ function prepare_text($text, $content_type = 'text/bbcode', $opts = false) {
 			break;
 
 		case 'text/bbcode':
+		case 'text/x-multicode':
 		case '':
 		default:
 			require_once('include/bbcode.php');
@@ -3039,6 +3033,7 @@ function getIconFromType($type) {
 		'text/plain' => 'fa-file-text-o',
 		'text/markdown' => 'fa-file-text-o',
 		'text/bbcode' => 'fa-file-text-o',
+		'text/x-multicode' => 'fa-file-text-o',
 		'text/html' => 'fa-file-text-o',
 		'application/msword' => 'fa-file-word-o',
 		'application/pdf' => 'fa-file-pdf-o',
