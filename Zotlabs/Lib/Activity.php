@@ -3023,9 +3023,14 @@ class Activity {
 
 		if ($is_sys_channel) {
 
+			if (! $pubstream) {
+				$allowed = false;
+				$reason[] = 'unlisted post delivered to sys channel';
+			}
+
 			if (! check_pubstream_channelallowed($observer_hash)) {
 				$allowed = false;
-				$reason[] = 'pubstream channel';
+				$reason[] = 'pubstream channel blocked';
 			}
 
 			// don't allow pubstream posts if the sender even has a clone on a pubstream denied site
@@ -3037,7 +3042,7 @@ class Activity {
 				foreach ($h as $hub) {
 					if (! check_pubstream_siteallowed($hub['hubloc_url'])) {
 						$allowed = false;
-						$reason = 'pubstream site';
+						$reason = 'pubstream site blocked';
 						break;
 					}
 				}
@@ -3292,11 +3297,13 @@ class Activity {
 				// even if they contain publicly addressed comments/reactions
 				
 				if (intval($channel['channel_system']) && intval($item['item_private'])) {
+					logger('private conversation ignored');
 					$p = [];
 					break;
 				}
 
 				if (count($p) > 100) {
+					logger('Conversation overflow');
 					$p = [];
 					break;
 				}

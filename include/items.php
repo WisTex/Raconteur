@@ -641,31 +641,6 @@ function limit_body_size($body) {
 		return $body;
 }
 
-function title_is_body($title, $body) {
-
-	$title = strip_tags($title);
-	$title = trim($title);
-	$title = str_replace(array("\n", "\r", "\t", " "), array("","","",""), $title);
-
-	$body = strip_tags($body);
-	$body = trim($body);
-	$body = str_replace(array("\n", "\r", "\t", " "), array("","","",""), $body);
-
-	if (strlen($title) < strlen($body))
-		$body = substr($body, 0, strlen($title));
-
-	if (($title != $body) and (substr($title, -3) == "...")) {
-		$pos = strrpos($title, "...");
-		if ($pos > 0) {
-			$title = substr($title, 0, $pos);
-			$body = substr($body, 0, $pos);
-		}
-	}
-
-	return($title == $body);
-}
-
-
 function get_item_elements($x,$allow_code = false) {
 
 	$arr = array();
