@@ -177,7 +177,9 @@ function oembed_fetch_url($embedurl){
 				logger('fetch failure: ' . $furl);
 
 			if($html_text) {
-				$dom = @DOMDocument::loadHTML($html_text);
+				$doc = new DOMDocument();
+				$dom = @$doc->loadHTML($html_text);
+				
 				if ($dom){
 					$xpath = new DOMXPath($dom);
 					$attr = "oembed";
