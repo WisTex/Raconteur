@@ -258,7 +258,7 @@ class Router {
 
 				if (! $arr['replace']) {
 					if ($this->controller && method_exists($this->controller,'get')) {
-						$arr = [ 'content' => $this->controller->get() ];
+						$arr = [ 'content' => $this->controller->get(), 'replace' => false ];
 					}
 				}
 				call_hooks(App::$module . '_mod_aftercontent', $arr);

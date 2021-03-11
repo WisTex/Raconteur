@@ -140,8 +140,8 @@ class Hq extends Controller {
 			$o = replace_macros(get_markup_template("hq.tpl"),
 				[
 					'$no_messages' => (($target_item) ? false : true),
-					'$no_messages_label' => [ t('Welcome to Hubzilla!'), t('You have got no unseen posts...') ],
-					'$editor' => status_editor($a,$x)
+					'$no_messages_label' => [ t('Welcome to $Projectname!'), t('You have got no unseen posts...') ],
+					'$editor' => status_editor($x)
 				]
 			);
 

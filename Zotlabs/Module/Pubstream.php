@@ -13,6 +13,8 @@ class Pubstream extends Controller {
 
 	function get($update = 0, $load = false) {
 
+		$o = EMPTY_STR;
+		
 		if($load)
 			$_SESSION['loadtime'] = datetime_convert();
 
@@ -38,13 +40,14 @@ class Pubstream extends Controller {
 		}
 
 		$mid = ((x($_REQUEST,'mid')) ? $_REQUEST['mid'] : '');
-		$hashtags   = ((x($_REQUEST,'tag')) ? $_REQUEST['tag'] : '');
+		$hashtags = ((x($_REQUEST,'tag')) ? $_REQUEST['tag'] : '');
+		$decoded = false;
+		
 
-
-		if(strpos($mid,'b64.') === 0)
-			$decoded = @base64url_decode(substr($mid,4));
-		if($decoded)
-			$mid = $decoded;
+		if(strpos($mid,'b64.') === 0) {
+			$mid = @base64url_decode(substr($mid,4));
+			$decoded = true;
+		}
 
 		$item_normal = item_normal();
 		$item_normal_update = item_normal_update();
@@ -69,7 +72,7 @@ class Pubstream extends Controller {
 				'allow_location'      => ((intval(get_pconfig($channel['channel_id'],'system','use_browser_location'))) ? '1' : ''),
 				'default_location'    => $channel['channel_location'],
 				'nickname'            => $channel['channel_address'],
-				'lockstate'           => (($group || $cid || $channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
+				'lockstate'           => (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
 				'acl'                 => populate_acl($channel_acl,true,PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
 				'permissions'         => $channel_acl,
 				'bang'                => '',
@@ -85,7 +88,7 @@ class Pubstream extends Controller {
 			);
 	
 			$o = '<div id="jot-popup">';
-			$o .= status_editor($a,$x);
+			$o .= status_editor($x);
 			$o .= '</div>';
 		}
 	
@@ -108,9 +111,9 @@ class Pubstream extends Controller {
 				. "; divmore_height = " . intval($maxheight) . "; </script>\r\n";
 	
 			//if we got a decoded hash we must encode it again before handing to javascript 
-			if($decoded)
+			if ($decoded) {
 				$mid = 'b64.' . base64url_encode($mid);
-
+			}
 			App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),array(
 				'$baseurl' => z_root(),
 				'$pgtype'  => 'pubstream',
@@ -180,9 +183,10 @@ class Pubstream extends Controller {
 		$net_query = (($net) ? " left join xchan on xchan_hash = author_xchan " : ''); 
 		$net_query2 = (($net) ? " and xchan_network = '" . protect_sprintf(dbesc($net)) . "' " : '');
 
-		$abook_uids = " and abook.abook_channel = " . intval(App::$profile['profile_uid']) . " ";
-	
-		$simple_update = (($_SESSION['loadtime']) ? " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' " : '');
+		if (isset(App::$profile) && isset(App::$profile['profile_uid'])) {
+			$abook_uids = " and abook.abook_channel = " . intval(App::$profile['profile_uid']) . " ";
+		}
+		$simple_update = ((isset($_SESSION['loadtime']) && $_SESSION['loadtime']) ? " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' " : '');
 	
 		if($load)
 			$simple_update = '';
@@ -203,7 +207,7 @@ class Pubstream extends Controller {
 						$net_query
 						WHERE mid like '%s' $uids $item_normal
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
-						$sql_extra3 $sql_extra $sql_nets $net_query2 LIMIT 1",
+						$sql_extra $net_query2 LIMIT 1",
 						dbesc($mid . '%')
 					);
 				}
@@ -214,7 +218,7 @@ class Pubstream extends Controller {
 						$net_query
 						WHERE true $uids and item.item_thread_top = 1 $item_normal
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
-						$sql_extra3 $sql_extra $sql_nets $net_query2
+						$sql_extra $net_query2
 						ORDER BY $ordering DESC $pager_sql "
 					);
 				}
@@ -226,7 +230,7 @@ class Pubstream extends Controller {
 						$net_query
 						WHERE mid like '%s' $uids $item_normal_update $simple_update
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
-						$sql_extra3 $sql_extra $sql_nets $net_query2 LIMIT 1",
+						$sql_extra $net_query2 LIMIT 1",
 						dbesc($mid . '%')
 					);
 				}
@@ -237,7 +241,7 @@ class Pubstream extends Controller {
 						WHERE true $uids $item_normal_update
 						$simple_update
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
-						$sql_extra3 $sql_extra $sql_nets $net_query2"
+						$sql_extra $net_query2"
 					);
 				}
 				$_SESSION['loadtime'] = datetime_convert();
