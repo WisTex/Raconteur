@@ -37,9 +37,8 @@ if(! App::$install) {
 
 // Allow layouts to over-ride the schema
 
-if($_REQUEST['schema']) {
-	$schema = $_REQUEST['schema'];
-}
+$schema = ((isset($_REQUEST['schema']) && $_REQUEST['schema']) ? $_REQUEST['schema'] : EMPTY_STR);
+
 
 if (($schema) && ($schema != '---')) {
 
@@ -72,39 +71,39 @@ if ((!$schema) || ($schema == '---')) {
 		
 //Set some defaults - we have to do this after pulling owner settings, and we have to check for each setting
 //individually.  If we don't, we'll have problems if a user has set one, but not all options.
-if (! $nav_bg)
+if (! (isset($nav_bg) && $nav_bg))
 	$nav_bg = '#343a40';
-if (! $nav_icon_colour)
+if (! (isset($nav_icon_colour) && $nav_ion_colour))
 	$nav_icon_colour = 'rgba(255, 255, 255, 0.5)';
-if (! $nav_active_icon_colour)
+if (! (isset($nav_active_icon_colour) && $nav_active_icon_colour))
 	$nav_active_icon_colour = 'rgba(255, 255, 255, 0.75)';
-if (! $link_colour)
+if (! (isset($link_colour) && $link_colour))
 	$link_colour = '#007bff';
-if (! $banner_colour)
+if (! (isset($banner_colour) && $banner_colour))
 	$banner_colour = '#fff';
-if (! $bgcolour)
+if (! (isset($bgcolour) && $bgcolour))
 	$bgcolour = 'rgb(254,254,254)';
-if (! $background_image)
+if (! (isset($background_image) && $background_image))
 	$background_image ='';
-if (! $item_colour)
+if (! (isset($item_colour) && $item_colour))
 	$item_colour = 'rgb(238,238,238)';
-if (! $comment_item_colour)
+if (! (isset($comment_item_colour) && $comment_item_colour))
 	$comment_item_colour = 'rgb(255,255,255)';
-if (! $item_opacity)
+if (! (isset($item_opacity) && $item_opacity))
 	$item_opacity = '1';
-if (! $font_size)
+if (! (isset($font_size) && $font_size))
 	$font_size = '0.875rem';
-if (! $font_colour)
+if (! (isset($font_colour) && $font_colour))
 	$font_colour = '#4d4d4d';
-if (! $radius)
+if (! (isset($radius) && $radius))
 	$radius = '0.25rem';
-if (! $shadow)
+if (! (isset($shadow) && $shadow))
 	$shadow = '0';
-if (! $converse_width)
+if (! (isset($converse_width) && $converse_width))
 	$converse_width = '790';
-if(! $top_photo)
+if (! (isset($top_photo) && $top_photo))
 	$top_photo = '2.3rem';
-if(! $reply_photo)
+if (! (isset($reply_photo) && $reply_photo))
 	$reply_photo = '2.3rem';
 
 // Apply the settings
