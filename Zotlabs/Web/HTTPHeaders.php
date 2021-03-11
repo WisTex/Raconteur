@@ -13,13 +13,13 @@ class HTTPHeaders {
 		if ($lines) {
 			foreach ($lines as $line) {
 				if (preg_match('/^\s+/',$line,$matches) && trim($line)) {
-					if ($this->in_progress['k']) {
+					if (isset($this->in_progress['k'])) {
 						$this->in_progress['v'] .= ' ' . ltrim($line);
 						continue;
 					}
 				}
 				else {
-					if ($this->in_progress['k']) {
+					if (isset($this->in_progress['k'])) {
 						$this->parsed[] = [ $this->in_progress['k'] => $this->in_progress['v'] ];
 						$this->in_progress = [];
 					}

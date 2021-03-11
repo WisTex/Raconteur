@@ -51,12 +51,13 @@ class Ping extends Controller {
 		$result['forums_sub'] = [];
 		$result['reports'] = 0;
 		
-		if (! $_SESSION['static_loadtime']) {
+		if (! (isset($_SESSION['static_loadtime']) && $_SESSION['static_loadtime'])) {
 			$_SESSION['static_loadtime'] = datetime_convert();
 		}
 		
 		$vnotify = false;
-
+		$evdays = 3;
+		
 		$item_normal = item_normal();
 
 		if (local_channel()) {
@@ -82,7 +83,7 @@ class Ping extends Controller {
 		 * of the now current channel.
 		 */
 
-		$result['invalid'] = ((intval($_GET['uid'])) && (intval($_GET['uid']) != local_channel()) ? 1 : 0);
+		$result['invalid'] = ((isset($_GET['uid']) && intval($_GET['uid'])) && (intval($_GET['uid']) != local_channel()) ? 1 : 0);
 
 		/**
 		 * Send all system messages (alerts) to the browser.

@@ -187,7 +187,11 @@ class Receiver {
 				break;
 
 			case 'refresh':
-				$this->response = $this->handler->Refresh($this->sender,$this->recipients,$this->hub);
+				$this->response = $this->handler->Refresh($this->sender,$this->recipients,$this->hub,false);
+				break;
+				
+			case 'force_refresh':
+				$this->response = $this->handler->Refresh($this->sender,$this->recipients,$this->hub,true);
 				break;
 
 			case 'rekey':

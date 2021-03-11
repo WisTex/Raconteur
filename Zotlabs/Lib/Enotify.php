@@ -47,7 +47,7 @@ class Enotify {
 				dbesc($params['to_xchan'])
 			);
 		}
-		if ($x & $y) {
+		if ($x && $y) {
 			$sender = $x[0];
 			$recip = $y[0];
 		} else {

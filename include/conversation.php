@@ -599,11 +599,13 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 	$channel = App::get_channel();
 	$observer = App::get_observer();
 
-	if($update)
+	if($update && isset($_SESSION['return_url'])) {
 		$return_url = $_SESSION['return_url'];
-	else
+	}
+	else {
 		$return_url = $_SESSION['return_url'] = App::$query_string;
-
+	}
+	
 	load_contact_links(local_channel());
 
 	$cb = array('items' => $items, 'mode' => $mode, 'update' => $update, 'preview' => $preview);
