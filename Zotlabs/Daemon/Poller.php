@@ -64,11 +64,13 @@ class Poller {
 
 		// Only poll from those with suitable relationships
 
-		$abandon_sql = (($abandon_days) 
-			? sprintf(" AND account_lastlog > %s - INTERVAL %s ", db_utcnow(), db_quoteinterval(intval($abandon_days).' DAY')) 
-			: '' 
-		);
+//		$abandon_sql = (($abandon_days) 
+//			? sprintf(" AND account_lastlog > %s - INTERVAL %s ", db_utcnow(), db_quoteinterval(intval($abandon_days).' DAY')) 
+//			: '' 
+//		);
 
+		$abandon_sql = EMPTY_STR;
+		
 		$randfunc = db_getfunc('RAND');
 	
 		$contacts = q("SELECT abook.abook_updated, abook.abook_connected, abook.abook_feed,

@@ -342,7 +342,7 @@ class Channel extends Controller {
 			'title' => 'oembed'
 		]);
 
-		if ($update && $_SESSION['loadtime']) {
+		if ($update && isset($_SESSION['loadtime'])) {
 			$simple_update = " AND (( item_unseen = 1 AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' )  OR item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' ) ";
 		}
 		if ($load) {
@@ -524,13 +524,13 @@ class Channel extends Controller {
 			 * comment likes could also get somewhat hairy.
 			 */
 
-			if ($parents_str) {
+			if (isset($parents_str) && $parents_str) {
 				$update_unseen = " AND ( id IN ( " . dbesc($parents_str) . " )";
 				$update_unseen .= " OR ( parent IN ( " . dbesc($parents_str) . " ) AND verb in ( '" . dbesc(ACTIVITY_LIKE) . "','" . dbesc(ACTIVITY_DISLIKE) . "' ))) ";
 			}
 		}
 		else {
-			if ($parents_str) {
+			if (isset($parents_str) && $parents_str) {
 				$update_unseen = " AND parent IN ( " . dbesc($parents_str) . " )";
 			}
 		}
@@ -572,7 +572,7 @@ class Channel extends Controller {
 		// We reset $channel so that info can be obtained for unlogged visitors
 		$channel = channelx_by_n(App::$profile['profile_uid']); 
 
-		if ($_REQUEST['mid']) {
+		if (isset($_REQUEST['mid']) && $_REQUEST['mid']) {
 
 			if(preg_match("/\[[zi]mg(.*?)\]([^\[]+)/is", $items[0]['body'], $matches)) {
 			$ogimage = $matches[2];

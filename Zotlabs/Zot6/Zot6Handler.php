@@ -15,8 +15,8 @@ class Zot6Handler implements IHandler {
 		return self::reply_rekey_request($sender,$data,$hub);
 	}
 
-	function Refresh($sender,$recipients,$hub) {
-		return self::reply_refresh($sender,$recipients,$hub);
+	function Refresh($sender,$recipients,$hub,$force) {
+		return self::reply_refresh($sender,$recipients,$hub,$force);
 	}
 
 	function Purge($sender,$recipients,$hub) {
@@ -58,7 +58,7 @@ class Zot6Handler implements IHandler {
 	 * @return json_return_and_die()
 	 */
 
-	static function reply_refresh($sender, $recipients,$hub) {
+	static function reply_refresh($sender, $recipients,$hub,$force) {
 		$ret = array('success' => false);
 
 		if($recipients) {
@@ -72,13 +72,13 @@ class Zot6Handler implements IHandler {
 					dbesc($recip)
 				);
 
-				$x = Libzot::refresh( [ 'hubloc_id_url' => $hub['hubloc_id_url'] ], $r[0], (($msgtype === 'force_refresh') ? true : false));
+				$x = Libzot::refresh( [ 'hubloc_id_url' => $hub['hubloc_id_url'] ], $r[0], $force );
 			}
 		}
 		else {
 
 			// system wide refresh
-			$x = Libzot::refresh( [ 'hubloc_id_url' => $hub['hubloc_id_url'] ], null, (($msgtype === 'force_refresh') ? true : false));
+			$x = Libzot::refresh( [ 'hubloc_id_url' => $hub['hubloc_id_url'] ], null, $force );
 		}
 
 		$ret['success'] = true;

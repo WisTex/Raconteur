@@ -1042,7 +1042,7 @@ class App {
 				if ($s) {
 					$s .= ',';
 				}
-				$s .= '<' . $y['url'] . '>; rel="' . $y['rel'] . '"; type="' . $y['type'] . '"';
+				$s .= '<' . $y['href'] . '>; rel="' . $y['rel'] . '"; type="' . $y['type'] . '"';
 			}
 		}
 		return $s;
