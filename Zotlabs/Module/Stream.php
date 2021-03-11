@@ -518,7 +518,10 @@ class Stream extends Controller {
 	
 		$simple_update = (($update) ? " and item_unseen = 1 " : '');
 
-
+		$parents_str = '';
+		$update_unseen = '';
+		$items = [];
+		
 		// This fixes a very subtle bug so I'd better explain it. You wake up in the morning or return after a day
 		// or three and look at your matrix page - after opening up your browser. The first page loads just as it
 		// should. All of a sudden a few seconds later, page 2 will get inserted at the beginning of the page
@@ -592,9 +595,6 @@ class Stream extends Controller {
 				$_SESSION['loadtime'] = datetime_convert();
 			}
 
-			// Then fetch all the children of the parents that are on this page
-			$parents_str = '';
-			$update_unseen = '';
 	
 			if ($r) {
 	
@@ -611,9 +611,6 @@ class Stream extends Controller {
 				$items = fetch_post_tags($items,true);
 				$items = conv_sort($items,$ordering);
 
-			}
-			else {
-				$items = array();
 			}
 
 			if ($page_mode === 'list') {

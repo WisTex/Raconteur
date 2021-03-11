@@ -1698,14 +1698,14 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 	// Eventually we may wish to add/remove to/from calendar in the message title area but it will take a chunk
 	// of code re-factoring to make that happen.
 
-	if($event['header'] && $item['resource_id']) {
+	if(is_array($event) && $event['header'] && $item['resource_id']) {
 		$event['header'] .= '<i class="fa fa-asterisk" title="' . t('Added to your calendar') . '"></i>' . '&nbsp;' . t('Added to your calendar');
 	}
 
 	$prep_arr = array(
 		'item' => $item,
 		'html' => $event ? $event['content'] : $s,
-		'event' => $event['header'],
+		'event' => ((is_array($event)) ? $event['header'] : EMPTY_STR),
 		'photo' => $photo
 	);
 

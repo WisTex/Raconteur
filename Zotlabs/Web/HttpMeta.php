@@ -85,7 +85,7 @@ class HttpMeta {
 			$arr = $this->vars;
 		}
 		
-		if ($arr && array_key_exists($field,$arr) && $arr[$field]) {
+		if (isset($arr) && is_array($arr) && array_key_exists($field,$arr) && $arr[$field]) {
 			return $arr[$field];
 		}
 		return false;

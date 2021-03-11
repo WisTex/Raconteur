@@ -17,8 +17,8 @@ class Activity_filter {
 
 		$tabs = [];
 
-		if(x($_GET,'dm')) {
-			$dm_active = (($_GET['dm'] == 1) ? 'active' : '');
+		$dm_active = ((isset($_GET['dm']) && intval($_GET['dm'])) ? 'active' : '');
+		if ($dm_active) {
 			$filter_active = 'dm';
 		}
 
@@ -30,8 +30,9 @@ class Activity_filter {
 			'title' => t('Show direct (private) messages')
 		];
 
-		if(x($_GET,'conv')) {
-			$conv_active = (($_GET['conv'] == 1) ? 'active' : '');
+
+		$conv_active = ((isset($_GET['conv']) && intval($_GET['conv'])) ? 'active' : '');
+		if ($conv_active) {
 			$filter_active = 'personal';
 		}
 
@@ -43,8 +44,8 @@ class Activity_filter {
 			'title' => t('Show posts that mention or involve me')
 		];
 
-		if(x($_GET,'star')) {
-			$starred_active = (($_GET['star'] == 1) ? 'active' : '');
+		$starred_active = ((isset($_GET['star']) && intval($_GET['star'])) ? 'active' : '');
+		if ($starred_active) {
 			$filter_active = 'star';
 		}
 

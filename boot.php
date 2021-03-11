@@ -1170,7 +1170,7 @@ class App {
 				'$linkrel'         => head_get_links(),
 				'$js_strings'      => js_strings(),
 				'$zid'             => get_my_address(),
-				'$channel_id'      => self::$profile['uid']
+				'$channel_id'      => ((isset(self::$profile) && is_array(self::$profile) && array_key_exists('uid',self::$profile)) ? self::$profile['uid'] : '')
 			]
 		) . self::$page['htmlhead'];
 
