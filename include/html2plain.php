@@ -118,7 +118,7 @@ function html2plain($html, $wraplength = 75, $compact = false)
 
 	@$doc->loadHTML($tmp_message);
 
-	$xpath = new DomXPath($doc);
+	$xpath = new DOMXPath($doc);
 	$list = $xpath->query("//pre");
 	foreach ($list as $node) {
 		$node->nodeValue = str_replace("\n", "\r", htmlspecialchars($node->nodeValue));
