@@ -755,7 +755,7 @@ class Libzot {
 			if (intval($r[0]['xchan_selfcensored']) != intval($arr['adult_content'])) {
 				$adult_changed = 1;
 			}
-			if (intval($r[0]['xchan_deleted']) != intval($arr['deleted'])) {
+			if (isset($arr['deleted']) && intval($r[0]['xchan_deleted']) != intval($arr['deleted'])) {
 				$deleted_changed = 1;
 			}
 
@@ -3146,7 +3146,7 @@ class Libzot {
 		}
 
 		// This is a template for our follow url, %s will be replaced with a webbie
-		if (! $ret['follow_url']) {
+		if (! isset($ret['follow_url'])) {
 			$ret['follow_url'] = z_root() . '/follow?f=&url=%s';
 		}
 

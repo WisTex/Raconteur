@@ -44,13 +44,13 @@ class Libprofile {
 
 		// Can the observer see our profile?
 		require_once('include/permissions.php');
-		if (! perm_is_allowed($channel['channel_id'],$observer['xchan_hash'],'view_profile')) {
+		if (! perm_is_allowed($channel['channel_id'],(($observer) ? $observer['xchan_hash'] : ''),'view_profile')) {
 			$can_view_profile = false;
 		}
 
 		if (! $profile) {
 			$r = q("SELECT abook_profile FROM abook WHERE abook_xchan = '%s' and abook_channel = '%d' limit 1",
-				dbesc($observer['xchan_hash']),
+				dbesc(($observer) ? $observer['xchan_hash'] : ''),
 				intval($channel['channel_id'])
 			);
 			if ($r)
@@ -98,7 +98,7 @@ class Libprofile {
 		);
 		if ($q) {
 
-			$extra_fields = array();
+			$extra_fields = [];
 
 			$profile_fields_basic    = get_profile_fields_basic();
 			$profile_fields_advanced = get_profile_fields_advanced();
@@ -120,7 +120,7 @@ class Libprofile {
 			}
 		}
 
-		$p[0]['extra_fields'] = $extra_fields;
+		$p[0]['extra_fields'] = ((isset($extra_fields)) ? $extra_fields : []);
 
 		$z = q("select xchan_photo_date, xchan_addr from xchan where xchan_hash = '%s' limit 1",
 			dbesc($p[0]['channel_hash'])
@@ -142,8 +142,12 @@ class Libprofile {
 
 		if ($p[0]['keywords']) {
 			$keywords = str_replace(array('#',',',' ',',,'),array('',' ',',',','),$p[0]['keywords']);
-			if (strlen($keywords) && $can_view_profile)
+			if (strlen($keywords) && $can_view_profile) {
+				if (! isset(App::$page['htmlhead'])) {
+					App::$page['htmlhead'] = EMPTY_STR;
+				}
 				App::$page['htmlhead'] .= '<meta name="keywords" content="' . htmlentities($keywords,ENT_COMPAT,'UTF-8') . '" />' . "\r\n" ;
+			}
 		}
 
 		App::$profile = $p[0];

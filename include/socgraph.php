@@ -421,7 +421,7 @@ function poco() {
 		$system_mode = true;
 	}
 
-	$format = (($_REQUEST['format']) ? $_REQUEST['format'] : 'json');
+	$format = ((isset($_REQUEST['format']) && $_REQUEST['format']) ? $_REQUEST['format'] : 'json');
 
 	$justme = false;
 
@@ -456,15 +456,15 @@ function poco() {
 
 	}
 
-	if($justme)
+	if(isset($justme) && $justme)
 		$sql_extra = " and abook_self = 1 ";
 	else
 		$sql_extra = " and abook_self = 0 ";
 
-	if($cid)
+	if(isset($cid) && $cid)
 		$sql_extra = sprintf(" and abook_id = %d and abook_archived = 0 and abook_hidden = 0 and abook_pending = 0 ",intval($cid));
 
-	if($system_mode) {
+	if(isset($system_mode) && $system_mode) {
 		$r = q("SELECT count(*) as total from abook where abook_self = 1 
 			and abook_channel in (select uid from pconfig where cat = 'system' and k = 'suggestme' and v = '1') ");
 	}
@@ -482,11 +482,11 @@ function poco() {
 	else
 		$totalResults = 0;
 
-	$startIndex = intval($_GET['startIndex']);
-	if(! $startIndex)
+	$startIndex = ((isset($_GET['startIndex'])) ? intval($_GET['startIndex']) : 0);
+	if($startIndex < 0)
 		$startIndex = 0;
 
-	$itemsPerPage = ((x($_GET,'count') && intval($_GET['count'])) ? intval($_GET['count']) : $totalResults);
+	$itemsPerPage = ((isset($_GET['count']) && intval($_GET['count'])) ? intval($_GET['count']) : $totalResults);
 
 	if($system_mode) {
 		$r = q("SELECT abook.*, xchan.* from abook left join xchan on abook_xchan = xchan_hash where abook_self = 1 

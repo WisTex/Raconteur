@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Lib;
 
+use App;
+
 /**
  * @brief Class for handling observer's config.
  *
@@ -39,8 +41,8 @@ class XConfig {
 		if(! $xchan)
 			return false;
 
-		if(! array_key_exists($xchan, \App::$config))
-			\App::$config[$xchan] = array();
+		if(! array_key_exists($xchan, App::$config))
+			App::$config[$xchan] = [];
 
 		$r = q("SELECT * FROM xconfig WHERE xchan = '%s'",
 			dbesc($xchan)
@@ -50,11 +52,11 @@ class XConfig {
 			foreach($r as $rr) {
 				$k = $rr['k'];
 				$c = $rr['cat'];
-				if(! array_key_exists($c, \App::$config[$xchan])) {
-					\App::$config[$xchan][$c] = array();
-					\App::$config[$xchan][$c]['config_loaded'] = true;
+				if(! array_key_exists($c, App::$config[$xchan])) {
+					App::$config[$xchan][$c] = array();
+					App::$config[$xchan][$c]['config_loaded'] = true;
 				}
-				\App::$config[$xchan][$c][$k] = $rr['v'];
+				App::$config[$xchan][$c][$k] = $rr['v'];
 			}
 		}
 	}
@@ -82,13 +84,13 @@ class XConfig {
 		if(! $xchan)
 			return $default;
 
-		if(! array_key_exists($xchan, \App::$config))
+		if(! array_key_exists($xchan, App::$config))
 			load_xconfig($xchan);
 
-		if((! array_key_exists($family, \App::$config[$xchan])) || (! array_key_exists($key, \App::$config[$xchan][$family])))
+		if((! array_key_exists($family, App::$config[$xchan])) || (! array_key_exists($key, App::$config[$xchan][$family])))
 			return $default;
 
-		return unserialise(\App::$config[$xchan][$family][$key]);
+		return unserialise(App::$config[$xchan][$family][$key]);
 	}
 
 	/**
@@ -114,10 +116,10 @@ class XConfig {
 		$dbvalue = ((is_bool($dbvalue)) ? intval($dbvalue)  : $dbvalue);
 
 		if(self::Get($xchan, $family, $key) === false) {
-			if(! array_key_exists($xchan, \App::$config))
-				\App::$config[$xchan] = array();
-			if(! array_key_exists($family, \App::$config[$xchan]))
-				\App::$config[$xchan][$family] = array();
+			if(! array_key_exists($xchan, App::$config))
+				App::$config[$xchan] = [];
+			if(! array_key_exists($family, App::$config[$xchan]))
+				App::$config[$xchan][$family] = [];
 
 			$ret = q("INSERT INTO xconfig ( xchan, cat, k, v ) VALUES ( '%s', '%s', '%s', '%s' )",
 				dbesc($xchan),
@@ -135,7 +137,7 @@ class XConfig {
 			);
 		}
 
-		\App::$config[$xchan][$family][$key] = $value;
+		App::$config[$xchan][$family][$key] = $value;
 
 		if($ret)
 			return $value;
@@ -159,8 +161,8 @@ class XConfig {
 	 */
 	static public function Delete($xchan, $family, $key) {
 
-		if(x(\App::$config[$xchan][$family], $key))
-			unset(\App::$config[$xchan][$family][$key]);
+		if(isset(App::$config[$xchan]) && isset(App::$config[$xchan][$family]) && isset(App::$config[$xchan][$family][$key]))
+			unset(App::$config[$xchan][$family][$key]);
 
 		$ret = q("DELETE FROM xconfig WHERE xchan = '%s' AND cat = '%s' AND k = '%s'",
 			dbesc($xchan),

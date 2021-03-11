@@ -165,13 +165,13 @@ class WebServer {
 				[
 					'rel'  => 'jrd',
 					'type' => 'application/jrd+json',
-					'url'  => z_root() . '/.well-known/webfinger?f=&resource=acct%3A' . argv(1) . '%40' . App::get_hostname()
+					'href'  => z_root() . '/.well-known/webfinger?f=&resource=acct%3A' . argv(1) . '%40' . App::get_hostname()
 				],
 
 				[
 					'rel'  => 'zot',
 					'type' => 'application/x-zot+json',
-					'url'  => z_root() . '/channel/' . argv(1)
+					'href'  => z_root() . '/channel/' . argv(1)
 				],
 
 				[

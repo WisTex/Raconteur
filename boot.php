@@ -16,7 +16,7 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '21.03.08' );
+define ( 'STD_VERSION',             '21.03.11' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1247 );
@@ -1042,7 +1042,7 @@ class App {
 				if ($s) {
 					$s .= ',';
 				}
-				$s .= '<' . $y['url'] . '>; rel="' . $y['rel'] . '"; type="' . $y['type'] . '"';
+				$s .= '<' . $y['href'] . '>; rel="' . $y['rel'] . '"; type="' . $y['type'] . '"';
 			}
 		}
 		return $s;

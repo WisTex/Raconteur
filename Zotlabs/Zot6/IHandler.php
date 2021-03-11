@@ -8,7 +8,7 @@ interface IHandler {
 
 	function Rekey($sender,$data,$hub);
 
-	function Refresh($sender,$recipients,$hub);
+	function Refresh($sender,$recipients,$hub,$force);
 
 	function Purge($sender,$recipients,$hub);
 
