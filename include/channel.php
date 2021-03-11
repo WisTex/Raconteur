@@ -1314,7 +1314,7 @@ function zat_init() {
  * @return int
  */
 function get_theme_uid() {
-	$uid = (($_REQUEST['puid']) ? intval($_REQUEST['puid']) : 0);
+	$uid = ((isset($_REQUEST['puid'])) ? intval($_REQUEST['puid']) : 0);
 	if (local_channel()) {
 		if ((get_pconfig(local_channel(),'system','always_my_theme')) || (! $uid)) {
 			return local_channel();

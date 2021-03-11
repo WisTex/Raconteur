@@ -1016,11 +1016,12 @@ function thread_author_menu($item, $mode = '') {
 
 	if($contact) {
 		$poke_link = z_root() . '/poke/?f=&c=' . $contact['abook_id'];
-		if (! intval($contact['abook_self']))  
+		if (! (isset($contact['abook_self']) && intval($contact['abook_self']))) {  
 			$contact_url = z_root() . '/connedit/' . $contact['abook_id'];
+		}
 		$posts_link = z_root() . '/stream/?cid=' . $contact['abook_id'];
 
-		$clean_url = normalise_link($item['author-link']);
+		$clean_url = $item['author']['xchan_url'];
 	}
 
 
@@ -1034,7 +1035,7 @@ function thread_author_menu($item, $mode = '') {
 		];
 	}
 
-	if($posts_link) {
+	if(isset($posts_link) && $posts_link) {
 		$menu[] = [ 
 			'menu' => 'view_posts',
 			'title' => t('Recent Activity'),
@@ -1044,7 +1045,7 @@ function thread_author_menu($item, $mode = '') {
 		];
 	}
 
-	if($follow_url) {
+	if(isset($follow_url) && $follow_url) {
 		$menu[] = [ 
 			'menu' => 'follow',
 			'title' => t('Connect'),
@@ -1054,7 +1055,7 @@ function thread_author_menu($item, $mode = '') {
 		];
 	}
 
-	if($contact_url) {
+	if(isset($contact_url) && $contact_url) {
 		$menu[] = [ 
 			'menu' => 'connedit',
 			'title' => t('Edit Connection'),
@@ -1064,7 +1065,7 @@ function thread_author_menu($item, $mode = '') {
 		];
 	}
 
-	if($pm_url) {
+	if(isset($pm_url) && $pm_url) {
 		$menu[] = [ 
 			'menu' => 'prv_message',
 			'title' => t('Message'),
@@ -1245,7 +1246,7 @@ function z_status_editor($x, $popup = false) {
 		return $o;
 
 	$plaintext = true;
-
+	$webpage = false;
 	$feature_voting = false;
 
 	$feature_comment_control = Apps::system_app_installed($x['profile_uid'], 'Comment Control');

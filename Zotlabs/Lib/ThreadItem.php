@@ -198,7 +198,7 @@ class ThreadItem {
 
 		$my_responses = [];
 		foreach($response_verbs as $v) {
-			$my_responses[$v] = (($conv_responses[$v][$item['mid'] . '-m']) ? 1 : 0);
+			$my_responses[$v] = ((isset($conv_responses[$v][$item['mid'] . '-m']) && $conv_responses[$v][$item['mid'] . '-m']) ? 1 : 0);
 		}
 
 		$like_count = ((x($conv_responses['like'],$item['mid'])) ? $conv_responses['like'][$item['mid']] : '');
@@ -361,8 +361,8 @@ class ThreadItem {
 			'mid' => $item['mid'],
 			'isevent' => $isevent,
 			'attend' => $attend,
-			'consensus' => $consensus,
-			'conlabels' => $conlabels,
+			'consensus' => '',
+			'conlabels' => '',
 			'canvote' => $canvote,
 			'linktitle' => sprintf( t('View %s\'s profile - %s'), $profile_name, (($item['author']['xchan_addr']) ? $item['author']['xchan_addr'] : $item['author']['xchan_url'])),
 			'olinktitle' => sprintf( t('View %s\'s profile - %s'), $this->get_owner_name(), (($item['owner']['xchan_addr']) ? $item['owner']['xchan_addr'] : $item['owner']['xchan_url'])),

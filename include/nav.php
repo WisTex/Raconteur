@@ -51,7 +51,9 @@ function nav($template = 'default') {
 	$site_icon = System::get_site_icon();
 
 	$banner = System::get_site_name();
-
+	if (! isset(App::$page['header'])) {
+		App::$page['header'] = EMPTY_STR;
+	}
 	App::$page['header'] .= replace_macros(get_markup_template('hdr.tpl'), array(
 		//we could additionally use this to display important system notifications e.g. for updates
 	));
@@ -85,7 +87,7 @@ function nav($template = 'default') {
 
 	if(local_channel()) {
 
- 		if(! $_SESSION['delegate']) {
+ 		if(! (isset($_SESSION['delegate']) && $_SESSION['delegate'])) {
 			$nav['manage'] = array('manage', t('Channels'), "", t('Manage your channels'),'manage_nav_btn');
  		}
 

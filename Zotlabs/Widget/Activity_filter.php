@@ -9,12 +9,17 @@ class Activity_filter {
 
 	function widget($arr) {
 
-		if(! local_channel())
-			return '';
+		if (! local_channel()) {
+			return EMPTY_STR;
+		}
 
 		$cmd = App::$cmd;
-		$filter_active = false;
 
+		$filter_active = false;
+		$events_active = false;
+		$polls_active = false;
+		$group_active = false;
+		
 		$tabs = [];
 
 		$dm_active = ((isset($_GET['dm']) && intval($_GET['dm'])) ? 'active' : '');
@@ -251,7 +256,7 @@ class Activity_filter {
 //		}
 
 		$name = [];
-		if($_GET['name']) {
+		if(isset($_GET['name']) && $_GET['name']) {
 			$filter_active = 'name';
 		}
 		$name = [

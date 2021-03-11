@@ -7,6 +7,7 @@
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Access\AccessControl;
+use Zotlabs\Web\HTTPHeaders;
 
 require_once('include/permissions.php');
 require_once('include/photo_factory.php');
@@ -1042,16 +1043,11 @@ function fetch_image_from_url($url,&$mimetype) {
 	$redirects = 0;
 	$x = z_fetch_url($url,true,$redirects,[ 'novalidate' => true ]);
 	if($x['success']) {
-		$hdrs = [];
-		$h = explode("\n",$x['header']);
-		if (isset($h) && is_array($h)) {
-			foreach ($h as $l) {
-				list($k,$v) = array_map("trim", explode(":", trim($l), 2));
-				$hdrs[strtolower($k)] = $v;
-			}
-		}
-		if (array_key_exists('content-type', $hdrs))
+		$ht = new HTTPHeaders($x['header']);
+		$hdrs = $ht->fetcharr();
+		if ($hdrs && array_key_exists('content-type', $hdrs)) {
 			$mimetype = $hdrs['content-type'];
+		}
 
 		return $x['body'];
 	}

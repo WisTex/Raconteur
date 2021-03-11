@@ -73,7 +73,7 @@ if ((!$schema) || ($schema == '---')) {
 //individually.  If we don't, we'll have problems if a user has set one, but not all options.
 if (! (isset($nav_bg) && $nav_bg))
 	$nav_bg = '#343a40';
-if (! (isset($nav_icon_colour) && $nav_ion_colour))
+if (! (isset($nav_icon_colour) && $nav_icon_colour))
 	$nav_icon_colour = 'rgba(255, 255, 255, 0.5)';
 if (! (isset($nav_active_icon_colour) && $nav_active_icon_colour))
 	$nav_active_icon_colour = 'rgba(255, 255, 255, 0.75)';
@@ -115,7 +115,7 @@ if(file_exists('view/theme/redbasic/css/style.css')) {
 		$x .= file_get_contents('view/theme/redbasic/css/narrow_navbar.css');
 	}
 
-	if($schemecss) {
+	if(isset($schemecss)) {
 		$x .= $schemecss;
 	}
 
@@ -142,12 +142,8 @@ if(file_exists('view/theme/redbasic/css/style.css')) {
 		'$radius' => $radius,
 		'$shadow' => $shadow,
 		'$converse_width' => $converse_width,
-		'$nav_float_min_opacity' => $nav_float_min_opacity,
-		'$nav_percent_min_opacity' => $nav_percent_min_opacity,
 		'$top_photo' => $top_photo,
 		'$reply_photo' => $reply_photo,
-		'$pmenu_top' => $pmenu_top,
-		'$pmenu_reply' => $pmenu_reply,
 		'$main_width' => $main_width,
 		'$aside_width' => $aside_width
 	);

@@ -23,13 +23,15 @@ class HTTPHeaders {
 						$this->parsed[] = [ $this->in_progress['k'] => $this->in_progress['v'] ];
 						$this->in_progress = [];
 					}
-
-					$this->in_progress['k'] = strtolower(substr($line,0,strpos($line,':')));
-					$this->in_progress['v'] = ltrim(substr($line,strpos($line,':') + 1));
+					$key = strtolower(substr($line,0,strpos($line,':')));
+					if ($key) {
+						$this->in_progress['k'] = $key; 
+						$this->in_progress['v'] = ltrim(substr($line,strpos($line,':') + 1));
+					}
 				}
 
 			}
-			if($this->in_progress['k']) {
+			if ($this->in_progress['k']) {
 				$this->parsed[] = [ $this->in_progress['k'] => $this->in_progress['v'] ];
 				$this->in_progress = [];
 			}
@@ -49,6 +51,7 @@ class HTTPHeaders {
 				}
 			}
 		}
+		logger('fetcharr: ' . print_r($ret,true));
 		return $ret;
 	}
 

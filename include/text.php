@@ -1379,7 +1379,7 @@ function theme_attachments(&$item) {
 			$label = EMPTY_STR;
 			$icon = getIconFromType($r['type']);
 			
-			if ($r['title']) {
+			if (isset($r['title']) && $r['title']) {
 				$label = urldecode(htmlspecialchars($r['title'], ENT_COMPAT, 'UTF-8'));
 			}
 
@@ -1397,13 +1397,13 @@ function theme_attachments(&$item) {
 				$label = t('Unknown Attachment');
 			}
 
-			$title = t('Size') . ' ' . (($r['length']) ? userReadableSize($r['length']) : t('unknown'));
+			$title = t('Size') . ' ' . ((isset($r['length']) && $r['length']) ? userReadableSize($r['length']) : t('unknown'));
 
 			if (is_foreigner($item['author_xchan'])) {
 				$url = $r['href'];
 			}
 			else {
-				$url = z_root() . '/magic?f=&owa=1&hash=' . $item['author_xchan'] . '&bdest=' . bin2hex($r['href'] . '/' . $r['revision']);
+				$url = z_root() . '/magic?f=&owa=1&hash=' . $item['author_xchan'] . '&bdest=' . bin2hex($r['href'] . ((isset($r['revision']) ? '/' . $r['revision'] : '')));
 			}
 			$attaches[] = [ 
 				'label' => $label, 
@@ -1454,6 +1454,10 @@ function format_categories(&$item,$writeable) {
 
 function format_hashtags(&$item) {
 	$s = '';
+
+	if (! isset($item['term'])) {
+		return $s;
+	}
 
 	$terms = get_terms_oftype($item['term'], array(TERM_HASHTAG,TERM_COMMUNITYTAG));
 	if($terms) {
