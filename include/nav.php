@@ -30,7 +30,7 @@ function nav($template = 'default') {
 			intval($channel['channel_id'])
 		);
 
-		if(! $_SESSION['delegate']) {
+		if(! (isset($_SESSION['delegate']) && $_SESSION['delegate'])) {
 			$chans = q("select channel_name, channel_id from channel left join pconfig on channel_id = pconfig.uid where channel_account_id = %d and channel_removed = 0 and pconfig.cat = 'system' and pconfig.k = 'include_in_menu' and pconfig.v = '1' order by channel_name ",
 				intval(get_account_id())
 			);
@@ -45,7 +45,8 @@ function nav($template = 'default') {
 
 	require_once('include/conversation.php');
 
-	$channel_apps[] = channel_apps($is_owner, App::$profile['channel_address']);
+
+	$channel_apps[] = ((isset(App::$profile)) ? channel_apps($is_owner, App::$profile['channel_address']) : []);
 
 	$site_icon = System::get_site_icon();
 
@@ -342,8 +343,6 @@ function channel_apps($is_owner = false, $nickname = null) {
 	if(App::$is_sys)
 		return '';
 
-	if(! get_pconfig($uid, 'system', 'channelapps','1'))
-		return '';
 
 	$channel = App::get_channel();
 
@@ -352,6 +351,10 @@ function channel_apps($is_owner = false, $nickname = null) {
 
 	$uid = ((App::$profile['profile_uid']) ? App::$profile['profile_uid'] : local_channel());
 	$account_id = ((App::$profile['profile_uid']) ? App::$profile['channel_account_id'] : App::$channel['channel_account_id']);
+
+	if (! get_pconfig($uid, 'system', 'channelapps','1')) {
+		return '';
+	}
 
 	if($uid == local_channel()) {
 		return;

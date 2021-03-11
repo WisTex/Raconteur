@@ -582,7 +582,7 @@ class Apps {
 			'$delete' => ((local_channel() && $installed && $mode === 'edit') ? t('Delete') : ''),
 			'$undelete' => ((local_channel() && $installed && $mode === 'edit') ? t('Undelete') : ''),
 			'$settings_url' => ((local_channel() && $installed && $mode === 'list') ? $papp['settings_url'] : ''),
-			'$deleted' => $papp['deleted'],
+			'$deleted' => ((isset($papp['deleted'])) ? intval($papp['deleted']) : false),
 			'$feature' => (((isset($papp['embed']) && $papp['embed']) || $mode === 'edit') ? false : true),
 			'$pin' => (((isset($papp['embed']) && $papp['embed']) || $mode === 'edit') ? false : true),
 			'$featured' => ((strpos($papp['categories'], 'nav_featured_app') === false) ? false : true),

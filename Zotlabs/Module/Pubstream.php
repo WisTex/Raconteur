@@ -14,6 +14,7 @@ class Pubstream extends Controller {
 	function get($update = 0, $load = false) {
 
 		$o = EMPTY_STR;
+		$items = [];
 		
 		if($load)
 			$_SESSION['loadtime'] = datetime_convert();
