@@ -1796,10 +1796,11 @@ class Activity {
 					}
 				}
 			}
-			else
+			else {
 				$icon = $person_obj['icon'];
+			}
 		}
-		if (! $icon) {
+		if (! (isset($icon) && $icon)) {
 			$icon = z_root() . '/' . get_default_profile_photo();
 		}
 
