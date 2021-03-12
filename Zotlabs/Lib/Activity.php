@@ -721,7 +721,13 @@ class Activity {
 		}
 
 		if (! (isset($cnv) && $cnv)) {
-			$cnv = get_iconfig($i,'ostatus','conversation');
+			// This method may be called before the item is actually saved - in which case there is no id and IConfig cannot be used
+			if ($i['id']) {
+				$cnv = get_iconfig($i,'ostatus','conversation');
+			}
+			else {
+				$cnv = $i['parent_mid'];
+			}
 		}
 		if (isset($cnv) && $cnv) {
 			$ret['conversation'] = $cnv;
@@ -981,7 +987,12 @@ class Activity {
 			}
 		}
 		if (! isset($cnv)) {
-			$cnv = get_iconfig($i,'ostatus','conversation');
+			if ($i['id']) {
+				$cnv = get_iconfig($i,'ostatus','conversation');
+			}
+			else {
+				$cnv = $i['parent_mid'];
+			}
 		}
 		if ($cnv) {
 			$ret['conversation'] = $cnv;

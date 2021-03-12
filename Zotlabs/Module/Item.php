@@ -379,7 +379,7 @@ class Item extends Controller {
 			$channel_comments_closed = NULL_DATE;
 		}
 
-		$comments_closed = ((isset($_REQUEST['comments_closed'])) ? datetime_convert(date_default_timezone_get(),'UTC',$_REQUEST['comments_closed']) : $channel_comments_closed);
+		$comments_closed = ((isset($_REQUEST['comments_closed']) && $_REQUEST['comments_closed']) ? datetime_convert(date_default_timezone_get(),'UTC',$_REQUEST['comments_closed']) : $channel_comments_closed);
 
 		$is_poll = ((trim($_REQUEST['poll_answers'][0]) != '' && trim($_REQUEST['poll_answers'][1]) != '') ? true : false);
 
@@ -693,7 +693,7 @@ class Item extends Controller {
 		$acl = new AccessControl($channel);
 
 		$view_policy = PermissionLimits::Get($channel['channel_id'],'view_stream');	
-		$comment_policy = ((isset($_REQUEST['comments_from'])) ? intval($_REQUEST['comments_from']) : PermissionLimits::Get($channel['channel_id'],'post_comments'));
+		$comment_policy = ((isset($_REQUEST['comments_from']) && intval($_REQUEST['comments_from'])) ? intval($_REQUEST['comments_from']) : PermissionLimits::Get($channel['channel_id'],'post_comments'));
 
 		$public_policy = ((x($_REQUEST,'public_policy')) ? escape_tags($_REQUEST['public_policy']) : map_scope($view_policy,true));
 		if($webpage)
