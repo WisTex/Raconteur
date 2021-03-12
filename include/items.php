@@ -2636,9 +2636,9 @@ function tag_deliver($uid, $item_id) {
 	 */
 
 
-	$terms = get_terms_oftype($item['term'],TERM_MENTION);
+	$terms = ((isset($item['term'])) ? get_terms_oftype($item['term'],TERM_MENTION) : false);
 
-	$pterms = get_terms_oftype($item['term'], [TERM_PCATEGORY, TERM_HASHTAG] );
+	$pterms = ((isset($item['term'])) ? get_terms_oftype($item['term'], [TERM_PCATEGORY, TERM_HASHTAG] ) : false);
 
 	if ($terms) {
 		logger('Post mentions: ' . print_r($terms,true), LOGGER_DATA);
@@ -2846,7 +2846,7 @@ function tgroup_check($uid, $item) {
 		return true;
 	}
 
-	$terms = get_terms_oftype($item['term'],TERM_HASHTAG);
+	$terms = ((isset($item['term'])) ? get_terms_oftype($item['term'],TERM_HASHTAG) : false);
 	if ($terms) {
 		$followed_tags = PConfig::Get($uid,'system','followed_tags');
 		if (! (is_array($followed_tags) && $followed_tags)) {
@@ -2875,7 +2875,7 @@ function i_am_mentioned($channel,$item) {
 	$tagged = false;
 	$matches = [];
 
-	$terms = get_terms_oftype($item['term'],TERM_MENTION);
+	$terms = ((isset($item['term'])) ? get_terms_oftype($item['term'],TERM_MENTION) : false);
 
 	if ($terms) {
 		foreach ($terms as $term) {
