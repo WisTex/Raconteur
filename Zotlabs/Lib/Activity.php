@@ -876,7 +876,7 @@ class Activity {
 			return $ret;
 		}
 
-		if ($i['obj']) {
+		if (isset($i['obj'])) {
 			if (is_array($i['obj'])) {
 				$ret = $i['obj'];
 			}
@@ -938,7 +938,7 @@ class Activity {
 			$ret['directMessage'] = true;
 		}
 
-		if (intval($item['item_nocomment']))  {
+		if (intval($i['item_nocomment']))  {
 			if($ret['commentPolicy']) {
 				$ret['commentPolicy'] .= ' ';
 			}
@@ -980,7 +980,7 @@ class Activity {
 				}
 			}
 		}
-		if (! $cnv) {
+		if (! isset($cnv)) {
 			$cnv = get_iconfig($i,'ostatus','conversation');
 		}
 		if ($cnv) {
@@ -1017,7 +1017,7 @@ class Activity {
 			$opts = [ $bbopts => true ];
 			$ret['content'] = bbcode($i['body'], $opts);
 			$ret['source'] = [ 'content' => $i['body'], 'mediaType' => 'text/bbcode' ];
-			if ($ret['summary']) {
+			if (isset($ret['summary']))  {
 				$ret['source']['summary'] = $i['summary'];
 			}
 		}
@@ -1026,7 +1026,7 @@ class Activity {
 			$ret['content'] = $i['body'];
 		}
 
-		if (! ($ret['actor'] || $ret['attributedTo'])) {
+		if (! (isset($ret['actor']) || isset($ret['attributedTo']))) {
 			$actor = self::encode_person($i['author'],false);
 			if ($actor) {
 				$ret['actor'] = $actor;
@@ -1036,7 +1036,7 @@ class Activity {
 			}
 		}
 
-		if (! $ret['url']) {
+		if (! isset($ret['url'])) {
 			$ret['url'] = $ret['id'];
 		}
 

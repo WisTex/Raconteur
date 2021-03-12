@@ -168,7 +168,7 @@ function import_config($channel, $configs) {
 			if ($config['cat'] === 'system' && $config['k'] === 'import_system_apps') {
 				continue;
 			}
-			create_table_from_array('pconfig', $config);
+			set_pconfig($channel['channel_id'],$config['cat'],$config['k'],$config['v']);
 		}
 
 		load_pconfig($channel['channel_id']);
