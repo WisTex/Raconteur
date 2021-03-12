@@ -1796,7 +1796,7 @@ class Activity {
 					}
 				}
 			}
-			else (
+			else {
 				$icon = $person_obj['icon'];
 			}
 		}
