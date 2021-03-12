@@ -760,18 +760,18 @@ class Item extends Controller {
 			}
 	
 	
-			$location          = notags(trim($_REQUEST['location']));
-			$coord             = notags(trim($_REQUEST['coord']));
-			$verb              = notags(trim($_REQUEST['verb']));
-			$title             = escape_tags(trim($_REQUEST['title']));
-			$summary           = trim($_REQUEST['summary']);
-			$body              = trim($_REQUEST['body']);
-			$body              .= trim($_REQUEST['attachment']);
+			$location          = ((isset($_REQUEST['location'])) ? notags(trim($_REQUEST['location'])) : EMPTY_STR);
+			$coord             = ((isset($_REQUEST['coord'])) ? notags(trim($_REQUEST['coord'])) : EMPTY_STR);
+			$verb              = ((isset($_REQUEST['verb'])) ? notags(trim($_REQUEST['verb'])) : EMPTY_STR);
+			$title             = ((isset($_REQUEST['title'])) ? escape_tags(trim($_REQUEST['title'])) : EMPTY_STR);
+			$summary           = ((isset($_REQUEST['summary'])) ? trim($_REQUEST['summary']) : EMPTY_STR);;
+			$body              = ((isset($_REQUEST['body'])) ? trim($_REQUEST['body']) : EMPTY_STR);
+			$body              .= ((isset($_REQUEST['attachment'])) ? trim($_REQUEST['attachment']) : EMPTY_STR);
 			$postopts          = '';
 
 			$allow_empty       = ((array_key_exists('allow_empty',$_REQUEST)) ? intval($_REQUEST['allow_empty']) : 0);	
 
-			$private = (($private) ? $private : intval($acl->is_private() || ($public_policy)));
+			$private = ((isset($private) && $private) ? $private : intval($acl->is_private() || ($public_policy)));
 	
 			// If this is a comment, set the permissions from the parent.
 	
@@ -1132,7 +1132,7 @@ class Item extends Controller {
 	
 	
 		$item_unseen = ((local_channel() != $profile_uid) ? 1 : 0);
-		$item_wall = (($_REQUEST['type'] === 'wall' || $_REQUEST['type'] === 'wall-comment') ? 1 : 0);
+		$item_wall = ((isset($_REQUEST['type']) && ($_REQUEST['type'] === 'wall' || $_REQUEST['type'] === 'wall-comment')) ? 1 : 0);
 		$item_origin = (($origin) ? 1 : 0);
 		$item_nocomment = (($nocomment) ? 1 : 0);
 	
@@ -1158,7 +1158,7 @@ class Item extends Controller {
 	
 		$notify_type = (($parent) ? 'comment-new' : 'wall-new' );
 	
-		if(! $mid) {
+		if (! (isset($mid) && $mid)) {
 			if($message_id) {
 				$mid = $message_id;
 			}

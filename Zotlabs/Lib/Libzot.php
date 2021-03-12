@@ -1648,8 +1648,8 @@ class Libzot {
 			}
 		}
 
-		if ($act->implied_activity) {
-			logger('implied activity. Not delivering/storing.');
+		if ($act->implied_create) {
+			logger('implied create activity. Not delivering/storing.');
 			return;
 		}
 

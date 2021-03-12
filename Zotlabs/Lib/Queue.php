@@ -116,7 +116,7 @@ class Queue {
 			dbesc($arr['hash']),
 			intval($arr['account_id']),
 			intval($arr['channel_id']),
-			dbesc(($arr['driver']) ? $arr['driver'] : 'zot6'),
+			dbesc((isset($arr['driver']) && $arr['driver']) ? $arr['driver'] : 'zot6'),
 			dbesc($arr['posturl']),
 			intval(1),
 			intval((isset($arr['priority'])) ? $arr['priority'] : 0),
