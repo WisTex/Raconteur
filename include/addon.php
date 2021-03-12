@@ -926,8 +926,9 @@ function script_path() {
 }
 
 function head_add_js($src, $priority = 0) {
-	if(! is_array(App::$js_sources[$priority]))
-		App::$js_sources[$priority] = array();
+	if(! (isset(App::$js_sources[$priority]) && is_array(App::$js_sources[$priority]))) {
+		App::$js_sources[$priority] = [];
+	}
 	App::$js_sources[$priority][] = $src;
 }
 

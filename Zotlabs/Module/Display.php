@@ -86,7 +86,7 @@ class Display extends Controller {
 			);
 	
 			$o = '<div id="jot-popup">';
-			$o .= status_editor($a,$x);
+			$o .= status_editor($x);
 			$o .= '</div>';
 		}
 	

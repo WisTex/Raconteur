@@ -16,7 +16,7 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '21.03.11' );
+define ( 'STD_VERSION',             '21.03.12' );
 define ( 'ZOT_REVISION',            '6.0' );
 
 define ( 'DB_UPDATE_VERSION',       1247 );
@@ -1170,7 +1170,7 @@ class App {
 				'$linkrel'         => head_get_links(),
 				'$js_strings'      => js_strings(),
 				'$zid'             => get_my_address(),
-				'$channel_id'      => self::$profile['uid']
+				'$channel_id'      => ((isset(self::$profile) && is_array(self::$profile) && array_key_exists('uid',self::$profile)) ? self::$profile['uid'] : '')
 			]
 		) . self::$page['htmlhead'];
 

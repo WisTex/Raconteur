@@ -858,8 +858,8 @@ class Libzot {
 					'xchan_guid'           => $arr['id'],
 					'xchan_guid_sig'       => $arr['id_sig'],
 					'xchan_pubkey'         => $arr['public_key'],
-					'xchan_photo_mimetype' => $arr['photo_mimetype'],
-					'xchan_photo_l'        => $arr['photo'],
+					'xchan_photo_mimetype' => $arr['photo']['type'],
+					'xchan_photo_l'        => $arr['photo']['url'],
 					'xchan_addr'           => escape_tags($arr['primary_location']['address']),
 					'xchan_url'            => escape_tags($arr['primary_location']['url']),
 					'xchan_connurl'        => $arr['primary_location']['connections_url'],
@@ -868,7 +868,7 @@ class Libzot {
 					'xchan_name'           => (($arr['name']) ? escape_tags($arr['name']) : '-'),
 					'xchan_network'        => 'zot6',
 					'xchan_updated'        => datetime_convert(),
-					'xchan_photo_date'     => $arr['photo_updated'],
+					'xchan_photo_date'     => $arr['photo']['updated'],
 					'xchan_name_date'      => $arr['name_updated'],
 					'xchan_hidden'         => intval(1 - intval($arr['searchable'])),
 					'xchan_selfcensored'   => $arr['adult_content'],
@@ -1648,8 +1648,8 @@ class Libzot {
 			}
 		}
 
-		if ($act->implied_activity) {
-			logger('implied activity. Not delivering/storing.');
+		if ($act->implied_create) {
+			logger('implied create activity. Not delivering/storing.');
 			return;
 		}
 

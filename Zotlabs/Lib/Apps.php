@@ -432,7 +432,7 @@ class Apps {
 
 		self::translate_system_apps($papp);
 
-		if (trim($papp['plugin']) && (! addon_is_installed(trim($papp['plugin'])))) {
+		if (isset($papp['plugin']) && trim($papp['plugin']) && (! addon_is_installed(trim($papp['plugin'])))) {
 			return '';
 		}
 
@@ -541,7 +541,7 @@ class Apps {
 		$hosturl = '';
 
 		if (local_channel()) {
-			if (self::app_installed(local_channel(),$papp) && !$papp['deleted']) {
+			if (self::app_installed(local_channel(),$papp) && (! (isset($papp['deleted']) && intval($papp['deleted'])))) {
 				$installed = true;
 			}
 
@@ -575,16 +575,16 @@ class Apps {
 			'$app' => $papp,
 			'$icon' => $icon,
 			'$hosturl' => $hosturl,
-			'$purchase' => (($papp['page'] && (! $installed)) ? t('Purchase') : ''),
+			'$purchase' => ((isset($papp['page']) && $papp['page'] && (! $installed)) ? t('Purchase') : ''),
 			'$installed' => $installed,
 			'$action_label' => (($hosturl && in_array($mode, ['view','install'])) ? $install_action : ''),
 			'$edit' => ((local_channel() && $installed && $mode === 'edit') ? t('Edit') : ''),
 			'$delete' => ((local_channel() && $installed && $mode === 'edit') ? t('Delete') : ''),
 			'$undelete' => ((local_channel() && $installed && $mode === 'edit') ? t('Undelete') : ''),
 			'$settings_url' => ((local_channel() && $installed && $mode === 'list') ? $papp['settings_url'] : ''),
-			'$deleted' => $papp['deleted'],
-			'$feature' => (($papp['embed'] || $mode === 'edit') ? false : true),
-			'$pin' => (($papp['embed'] || $mode === 'edit') ? false : true),
+			'$deleted' => ((isset($papp['deleted'])) ? intval($papp['deleted']) : false),
+			'$feature' => (((isset($papp['embed']) && $papp['embed']) || $mode === 'edit') ? false : true),
+			'$pin' => (((isset($papp['embed']) && $papp['embed']) || $mode === 'edit') ? false : true),
 			'$featured' => ((strpos($papp['categories'], 'nav_featured_app') === false) ? false : true),
 			'$pinned' => ((strpos($papp['categories'], 'nav_pinned_app') === false) ? false : true),
 			'$navapps' => (($mode === 'nav') ? true : false),

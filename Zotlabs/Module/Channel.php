@@ -288,7 +288,7 @@ class Channel extends Controller {
 					'reset' => t('Reset form')
 				);
 
-				$o .= status_editor($a,$x);
+				$o .= status_editor($x);
 			}
 
 			if (! $mid && ! $search) {

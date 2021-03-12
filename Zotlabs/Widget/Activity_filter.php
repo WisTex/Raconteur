@@ -9,16 +9,22 @@ class Activity_filter {
 
 	function widget($arr) {
 
-		if(! local_channel())
-			return '';
+		if (! local_channel()) {
+			return EMPTY_STR;
+		}
 
 		$cmd = App::$cmd;
-		$filter_active = false;
 
+		$filter_active = false;
+		$events_active = false;
+		$polls_active = false;
+		$group_active = false;
+		$forum_active = false;
+		
 		$tabs = [];
 
-		if(x($_GET,'dm')) {
-			$dm_active = (($_GET['dm'] == 1) ? 'active' : '');
+		$dm_active = ((isset($_GET['dm']) && intval($_GET['dm'])) ? 'active' : '');
+		if ($dm_active) {
 			$filter_active = 'dm';
 		}
 
@@ -30,8 +36,9 @@ class Activity_filter {
 			'title' => t('Show direct (private) messages')
 		];
 
-		if(x($_GET,'conv')) {
-			$conv_active = (($_GET['conv'] == 1) ? 'active' : '');
+
+		$conv_active = ((isset($_GET['conv']) && intval($_GET['conv'])) ? 'active' : '');
+		if ($conv_active) {
 			$filter_active = 'personal';
 		}
 
@@ -43,8 +50,8 @@ class Activity_filter {
 			'title' => t('Show posts that mention or involve me')
 		];
 
-		if(x($_GET,'star')) {
-			$starred_active = (($_GET['star'] == 1) ? 'active' : '');
+		$starred_active = ((isset($_GET['star']) && intval($_GET['star'])) ? 'active' : '');
+		if ($starred_active) {
 			$filter_active = 'star';
 		}
 
@@ -156,7 +163,7 @@ class Activity_filter {
 					'url' => z_root() . '/' . $cmd . '/?f=&pf=1&cid=' . $f['abook_id'],
 					'sel' => $forum_active,
 					'title' => t('Show posts to this group'),
-					'lock' => (($f['private_forum']) ? 'lock' : ''),
+					'lock' => ((isset($f['private_forum']) && $f['private_forum']) ? 'lock' : ''),
 					'edit' => t('New post'),
 					'edit_url' => $f['xchan_url']
 				];
@@ -210,7 +217,7 @@ class Activity_filter {
 		$ft = get_pconfig(local_channel(),'system','followed_tags', EMPTY_STR);
 		if (is_array($ft) && $ft) {
 			foreach($ft as $t) {
-				$tag_active = (($_GET['netsearch'] === '#' . $t) ? 'active' : '');
+				$tag_active = ((isset($_GET['netsearch']) && $_GET['netsearch'] === '#' . $t) ? 'active' : '');
 				if ($tag_active) {
 					$filter_active = 'tags';
 				}
@@ -250,7 +257,7 @@ class Activity_filter {
 //		}
 
 		$name = [];
-		if($_GET['name']) {
+		if(isset($_GET['name']) && $_GET['name']) {
 			$filter_active = 'name';
 		}
 		$name = [

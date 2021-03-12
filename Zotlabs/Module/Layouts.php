@@ -147,7 +147,7 @@ class Layouts extends Controller {
 		if($_REQUEST['pagetitle'])
 			$x['pagetitle'] = $_REQUEST['pagetitle'];
 
-		$editor = status_editor($a,$x);
+		$editor = status_editor($x);
 
 		$r = q("select iconfig.iid, iconfig.v, mid, title, body, mimetype, created, edited, item_type from iconfig 
 			left join item on iconfig.iid = item.id

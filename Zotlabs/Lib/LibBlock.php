@@ -11,15 +11,15 @@ class LibBlock {
 	// This limits the number of DB queries for fetch_by_entity to once per page load.
 	
 	static function fetch_from_cache($channel_id,$entity) {
-		if (! self::$cache[$channel_id]) {
-			if (! self::$empty[$channel_id]) {
+		if (! isset(self::$cache[$channel_id])) {
+			if (! isset(self::$empty[$channel_id])) {
 				self::$cache[$channel_id] = self::fetch($channel_id);
 				if (! self::$cache[$channel_id]) {
 					self::$empty[$channel_id] = true;
 				}
 			}
 		}
-		if (self::$cache[$channel_id] && is_array(self::$cache[$channel_id])) {
+		if (isset(self::$cache[$channel_id]) && self::$cache[$channel_id] && is_array(self::$cache[$channel_id])) {
 			foreach (self::$cache[$channel_id] as $entry) {
 				if (is_array($entry) && strcasecmp($entry['block_entity'],$entity) === 0) {
 					return $entry;

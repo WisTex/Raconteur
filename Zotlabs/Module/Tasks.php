@@ -20,7 +20,7 @@ class Tasks extends Controller {
 			
 			$x = tasks_fetch($arr);
 			$x['html'] = '';
-			if($x['tasks']) {
+			if(isset($x['tasks']) && is_array($x['tasks'])) {
 				foreach($x['tasks'] as $y) {
 					$x['html'] .= '<div class="tasklist-item"><input type="checkbox" onchange="taskComplete(' . $y['id'] . '); return false;" /> ' . $y['summary'] . '</div>';
 				}

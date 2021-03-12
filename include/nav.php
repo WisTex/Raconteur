@@ -16,8 +16,12 @@ function nav($template = 'default') {
 	 *
 	 */
 
-	if(!(x(App::$page,'nav')))
-		App::$page['nav'] = '';
+	if (! isset(App::$page['nav'])) {
+		App::$page['nav'] = EMPTY_STR;
+	}
+	if (! isset(App::$page['htmlhead'])) {
+		App::$page['htmlhead'] = EMPTY_STR;
+	}
 
 	App::$page['htmlhead'] .= '<script>$(document).ready(function() { $("#nav-search-text").search_autocomplete(\'' . z_root() . '/acl' . '\');});</script>';
 
@@ -30,7 +34,7 @@ function nav($template = 'default') {
 			intval($channel['channel_id'])
 		);
 
-		if(! $_SESSION['delegate']) {
+		if(! (isset($_SESSION['delegate']) && $_SESSION['delegate'])) {
 			$chans = q("select channel_name, channel_id from channel left join pconfig on channel_id = pconfig.uid where channel_account_id = %d and channel_removed = 0 and pconfig.cat = 'system' and pconfig.k = 'include_in_menu' and pconfig.v = '1' order by channel_name ",
 				intval(get_account_id())
 			);
@@ -45,12 +49,15 @@ function nav($template = 'default') {
 
 	require_once('include/conversation.php');
 
-	$channel_apps[] = channel_apps($is_owner, App::$profile['channel_address']);
+
+	$channel_apps[] = ((isset(App::$profile)) ? channel_apps($is_owner, App::$profile['channel_address']) : []);
 
 	$site_icon = System::get_site_icon();
 
 	$banner = System::get_site_name();
-
+	if (! isset(App::$page['header'])) {
+		App::$page['header'] = EMPTY_STR;
+	}
 	App::$page['header'] .= replace_macros(get_markup_template('hdr.tpl'), array(
 		//we could additionally use this to display important system notifications e.g. for updates
 	));
@@ -84,7 +91,7 @@ function nav($template = 'default') {
 
 	if(local_channel()) {
 
- 		if(! $_SESSION['delegate']) {
+ 		if(! (isset($_SESSION['delegate']) && $_SESSION['delegate'])) {
 			$nav['manage'] = array('manage', t('Channels'), "", t('Manage your channels'),'manage_nav_btn');
  		}
 
@@ -298,16 +305,16 @@ function nav($template = 'default') {
 		'$powered_by' => $powered_by,
 		'$help' => t('@name, #tag, ?doc, content'), 
 		'$pleasewait' => t('Please wait...'),
-		'$nav_apps' => $nav_apps,
-		'$navbar_apps' => $navbar_apps,
+		'$nav_apps' => ((isset($nav_apps)) ? $nav_apps : []),
+		'$navbar_apps' => ((isset($navbar_apps)) ? $navbar_apps : []),
 		'$channel_menu' => get_pconfig(App::$profile_uid,'system','channel_menu',get_config('system','channel_menu')),
 		'$channel_thumb' => ((App::$profile) ? App::$profile['thumb'] : ''),
-		'$channel_apps' => $channel_apps,
+		'$channel_apps' => ((isset($channel_apps)) ? $channel_apps : []),
 		'$manageapps' => t('My Apps'),
 		'$addapps' => t('Available Apps'),
 		'$orderapps' => t('Arrange Apps'),
 		'$sysapps_toggle' => t('Toggle System Apps'),
-		'$url' => (($url) ? $url : App::$cmd)
+		'$url' => ((isset($url) && $url) ? $url : App::$cmd)
 	));
 
 	if(x($_SESSION, 'reload_avatar') && $observer) {
@@ -342,8 +349,6 @@ function channel_apps($is_owner = false, $nickname = null) {
 	if(App::$is_sys)
 		return '';
 
-	if(! get_pconfig($uid, 'system', 'channelapps','1'))
-		return '';
 
 	$channel = App::get_channel();
 
@@ -352,6 +357,10 @@ function channel_apps($is_owner = false, $nickname = null) {
 
 	$uid = ((App::$profile['profile_uid']) ? App::$profile['profile_uid'] : local_channel());
 	$account_id = ((App::$profile['profile_uid']) ? App::$profile['channel_account_id'] : App::$channel['channel_account_id']);
+
+	if (! get_pconfig($uid, 'system', 'channelapps','1')) {
+		return '';
+	}
 
 	if($uid == local_channel()) {
 		return;

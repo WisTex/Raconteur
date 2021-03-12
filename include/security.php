@@ -269,7 +269,7 @@ function change_channel($change_channel) {
 
 			// Update the active timestamp at most once a day
 
-			if(substr($r[0]['channel_active'],0,10) !== substr(datetime_convert(),0,10) && (! $_SESSION['sudo'])) {
+			if(substr($r[0]['channel_active'],0,10) !== substr(datetime_convert(),0,10) && (! (isset($_SESSION['sudo']) && $_SESSION['sudo']))) {
 				$z = q("UPDATE channel SET channel_active = '%s' WHERE channel_id = %d",
 					dbesc(datetime_convert()),
 					intval($r[0]['channel_id'])

@@ -592,7 +592,7 @@ class Notifier {
 		$dead    = []; // known dead hubs - report them as undeliverable
 		
 		foreach ($hubs as $hub) {
-			if (intval($hub['site_dead'])) {
+			if (isset($hub['site_dead']) && intval($hub['site_dead'])) {
 				$dead[] = $hub;
 				continue;
 			}
