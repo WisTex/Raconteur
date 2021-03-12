@@ -481,7 +481,7 @@ class ActivityPub {
 				}
 			}
 		}
-		if ($person_obj) {
+		if (isset($person_obj)) {
 			Activity::actor_store($person_obj['id'],$person_obj, $force);
 			return $person_obj['id'];
 		}

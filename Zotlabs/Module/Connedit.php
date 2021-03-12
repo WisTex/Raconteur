@@ -361,7 +361,7 @@ class Connedit extends Controller {
 				intval(local_channel())
 			);
 	
-			if(! $orig_record) {
+			if (! $orig_record) {
 				notice( t('Could not access address book record.') . EOL);
 				goaway(z_root() . '/connections');
 			}
@@ -374,25 +374,21 @@ class Connedit extends Controller {
 				goaway(z_root() . '/connedit/' . $contact_id);
 			}
 
-			if($cmd === 'fetchvc') {
+			if ($cmd === 'fetchvc') {
 				$url = str_replace('/channel/','/profile/',$orig_record['xchan_url']) . '/vcard';
 				$recurse = 0;
 				$x = z_fetch_url(zid($url),false,$recurse,['session' => true]);
 				if ($x['success']) {
 					$h = new HTTPHeaders($x['header']);
-					$fields = $h->fetch();
-					if ($fields) {
-						foreach ($fields as $y) {
-							 if (array_key_exists('content-type',$y)) {
-								$type = explode(';',trim($y['content-type']));
-								if ($type && $type[0] === 'text/vcard' && $x['body']) {
-									$vc = Reader::read($x['body']);
-									$vcard = $vc->serialize();
-									if ($vcard) {
-										set_abconfig(local_channel(),$orig_record['abook_xchan'],'system','vcard',$vcard);
-										$this->connedit_clone($a);
-									}
-								}
+					$fields = $h->fetcharr();
+					if ($fields && array_key_exists('content-type',$fields)) {
+						$type = explode(';',trim($fields['content-type']));
+						if ($type && $type[0] === 'text/vcard' && $x['body']) {
+							$vc = Reader::read($x['body']);
+							$vcard = $vc->serialize();
+							if ($vcard) {
+								set_abconfig(local_channel(),$orig_record['abook_xchan'],'system','vcard',$vcard);
+								$this->connedit_clone($a);
 							}
 						}
 					}
@@ -496,7 +492,7 @@ class Connedit extends Controller {
 				Libsync::build_sync_packet(0, [ 'abook' => [ 'abook_xchan' => $orig_record['abook_xchan'], 'entry_deleted' => true ] ] );
 	
 				info( t('Connection has been removed.') . EOL );
-				if (x($_SESSION,'return_url')) {
+				if (isset($_SESSION['return_url']) && $_SESSION['return_url']) {
 					goaway(z_root() . '/' . $_SESSION['return_url']);
 				}
 				goaway(z_root() . '/contacts');
@@ -625,7 +621,6 @@ class Connedit extends Controller {
 					'title' => t('Fetch electronic calling card for this connection')
 				];
 			}
-
 
 			$sections = [];
 
