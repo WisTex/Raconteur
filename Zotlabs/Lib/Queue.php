@@ -137,7 +137,7 @@ class Queue {
 		$base = null;
 		$h = parse_url($outq['outq_posturl']);
 		if($h !== false) 
-			$base = $h['scheme'] . '://' . $h['host'] . (($h['port']) ? ':' . $h['port'] : '');
+			$base = $h['scheme'] . '://' . $h['host'] . ((isset($h['port']) && intval($h['port'])) ? ':' . $h['port'] : '');
 
 		if(($base) && ($base !== z_root()) && ($immediate)) {
 			$y = q("select site_update, site_dead from site where site_url = '%s' ",

@@ -3862,33 +3862,32 @@ function fetch_post_tags($items, $link = false) {
 		);
 	}
 
-	for($x = 0; $x < count($items); $x ++) {
-		if($tags) {
-			foreach($tags as $t) {
-//				if(($link) && ($t['ttype'] == TERM_MENTION))
-//					$t['url'] = chanlink_url($t['url']);
-				if(array_key_exists('item_id',$items[$x])) {
-					if($t['oid'] == $items[$x]['item_id']) {
-						if(! (isset($items[$x]['term']) && is_array($items[$x]['term']))) {
+	for ($x = 0; $x < count($items); $x ++) {
+		if ($tags) {
+			foreach ($tags as $t) {
+				if (array_key_exists('item_id',$items[$x])) {
+					if ($t['oid'] == $items[$x]['item_id']) {
+						if (! (isset($items[$x]['term']) && is_array($items[$x]['term']))) {
 							$items[$x]['term'] = array();
 						}
 						$items[$x]['term'][] = $t;
 					}
 				}
 				else {
-					if($t['oid'] == $items[$x]['id']) {
-						if(! is_array($items[$x]['term']))
+					if ($t['oid'] == $items[$x]['id']) {
+						if (! is_array($items[$x]['term'])) {
 							$items[$x]['term'] = array();
+						}
 						$items[$x]['term'][] = $t;
 					}
 				}
 			}
 		}
-		if($imeta) {
-			foreach($imeta as $i) {
-				if(array_key_exists('item_id',$items[$x])) {
-					if($i['iid'] == $items[$x]['item_id']) {
-						if(! (isset($items[$x]['iconfig']) && is_array($items[$x]['iconfig']))) {
+		if ($imeta) {
+			foreach ($imeta as $i) {
+				if (array_key_exists('item_id',$items[$x])) {
+					if ($i['iid'] == $items[$x]['item_id']) {
+						if (! (isset($items[$x]['iconfig']) && is_array($items[$x]['iconfig']))) {
 							$items[$x]['iconfig'] = array();
 						}
 						$i['v'] = unserialise($i['v']);
@@ -3896,9 +3895,10 @@ function fetch_post_tags($items, $link = false) {
 					}
 				}
 				else {
-					if($i['iid'] == $items[$x]['id']) {
-						if(! is_array($items[$x]['iconfig']))
+					if ($i['iid'] == $items[$x]['id']) {
+						if (! (isset($items[$x]['iconfig']) && is_array($items[$x]['iconfig']))) {
 							$items[$x]['iconfig'] = array();
+						}
 						$i['v'] = unserialise($i['v']);
 						$items[$x]['iconfig'][] = $i;
 					}
