@@ -367,7 +367,14 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 
 	if ($result['success']) {
 		$type = guess_image_type($photo, $result['header']);
-		
+		if ((! $type) || strpos($type,'image') === false) {
+			@file_put_contents('cache/' . $hash, $result['body']);
+			$info = getimagesize('cache/' . $hash);
+			@unlink('cache/' . $hash);
+			if (isset($info) && array_key_exists('mime',$info)) {
+				$type = $info['mime'];
+			}
+		}
 		if ($type) {
 			$failed = false;
 		}
