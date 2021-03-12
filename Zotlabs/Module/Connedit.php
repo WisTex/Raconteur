@@ -415,6 +415,9 @@ class Connedit extends Controller {
 					}
 				}
 				else {
+					if ($orig_record['xchan_network'] === 'activitypub') {
+						ActivityPub::discover($orig_record['xchan_hash'],true);
+					}
 					// if they are on a different network we'll force a refresh of the connection basic info
 					Run::Summon( [ 'Notifier', 'permissions_update', $contact_id ]);
 				}
