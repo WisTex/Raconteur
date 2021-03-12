@@ -307,7 +307,27 @@ class Item extends Controller {
 		$observer = null;
 		$token    = EMPTY_STR;
 		$datarray = [];
-	
+		$item_starred = false;
+		$item_uplink = false;
+		$item_notshown = false;
+		$item_nsfw = false;
+		$item_relay = false;
+		$item_mentionsme = false;
+		$item_verified = false;
+		$item_retained = false;
+		$item_rss = false;
+		$item_deleted = false;
+		$item_hidden = false;
+		$item_delayed = false;
+		$item_pending_remove = false;
+		$item_blocked = false;
+
+		$post_tags = false;
+
+
+
+
+
 		/**
 		 * Is this a reply to something?
 		 */
@@ -359,7 +379,7 @@ class Item extends Controller {
 			$channel_comments_closed = NULL_DATE;
 		}
 
-		$comments_closed = ((isset($_REQUEST['comments_closed'])) ? datetime_convert(date_default_timezone_get(),'UTC',$_REQUEST['comments_closed']) : $channel_comments_closed);
+		$comments_closed = ((isset($_REQUEST['comments_closed']) && $_REQUEST['comments_closed']) ? datetime_convert(date_default_timezone_get(),'UTC',$_REQUEST['comments_closed']) : $channel_comments_closed);
 
 		$is_poll = ((trim($_REQUEST['poll_answers'][0]) != '' && trim($_REQUEST['poll_answers'][1]) != '') ? true : false);
 
@@ -673,7 +693,7 @@ class Item extends Controller {
 		$acl = new AccessControl($channel);
 
 		$view_policy = PermissionLimits::Get($channel['channel_id'],'view_stream');	
-		$comment_policy = ((isset($_REQUEST['comments_from'])) ? intval($_REQUEST['comments_from']) : PermissionLimits::Get($channel['channel_id'],'post_comments'));
+		$comment_policy = ((isset($_REQUEST['comments_from']) && intval($_REQUEST['comments_from'])) ? intval($_REQUEST['comments_from']) : PermissionLimits::Get($channel['channel_id'],'post_comments'));
 
 		$public_policy = ((x($_REQUEST,'public_policy')) ? escape_tags($_REQUEST['public_policy']) : map_scope($view_policy,true));
 		if($webpage)
@@ -845,7 +865,7 @@ class Item extends Controller {
 				if ($netgroups)  {
 					foreach($netgroups as $ng) {
 						if ($ng['xchan_hash'] == $cida[0]) {
-							if (! isset($post_tags)) {
+							if (! is_array($post_tags)) {
 								$post_tags = [];
 							}
 							$post_tags[] = array(
@@ -1241,11 +1261,11 @@ class Item extends Controller {
 			}
 		}
 
-		if ((! $plink) && ($item_thread_top)) {
+		if ((! (isset($plink) && $plink)) && $item_thread_top) {
 			$plink = z_root() . '/item/' . $uuid;
 		}
 
-		if ($datarray['obj']) {
+		if (array_path_exists('obj/id',$datarray)) {
 			$datarray['obj']['id'] = $mid;
 		}
 

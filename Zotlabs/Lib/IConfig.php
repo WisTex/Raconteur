@@ -25,7 +25,10 @@ class IConfig {
 				$iid = $item['item_id'];
 			}
 			else {
-				$iid = $item['id'];
+				$iid = ((isset($item['id'])) ? $item['id'] : 0);
+				if ($iid === 0) {
+					btlogger('iid is 0');
+				}
 			}
 			
 			if (array_key_exists('iconfig',$item) && is_array($item['iconfig'])) {
