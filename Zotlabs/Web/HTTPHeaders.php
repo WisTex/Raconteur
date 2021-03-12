@@ -51,7 +51,6 @@ class HTTPHeaders {
 				}
 			}
 		}
-		logger('fetcharr: ' . print_r($ret,true));
 		return $ret;
 	}
 
