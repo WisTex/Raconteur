@@ -412,7 +412,7 @@ function poco() {
 	if(argc() > 1) {
 		$user = notags(trim(argv(1)));
 	}
-	if(! x($user)) {
+	if(! (isset($user) && $user)) {
 		$c = q("select * from pconfig where cat = 'system' and k = 'suggestme' and v = '1'");
 		if(! $c) {
 			logger('mod_poco: system mode. No candidates.', LOGGER_DEBUG);

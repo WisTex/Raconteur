@@ -103,7 +103,7 @@ class ThreadItem {
 		$is_item = false;
 		$osparkle = '';
 		$total_children = $this->count_descendants();
-		$unseen_comments = (($item['real_uid']) ? 0 : $this->count_unseen_descendants());
+		$unseen_comments = ((isset($item['real_uid']) && $item['real_uid']) ? 0 : $this->count_unseen_descendants());
 
 		$conv = $this->get_conversation();
 		$observer = $conv->get_observer();
@@ -161,7 +161,7 @@ class ThreadItem {
 			$drop = [ 'dropping' => true, 'delete' => t('Admin Delete') ];
 		}
 
-		if($observer_is_pageowner) {		
+		if(isset($observer_is_pageowner) && $observer_is_pageowner) {		
 			$multidrop = array(
 				'select' => t('Select'), 
 			);
@@ -271,7 +271,7 @@ class ThreadItem {
 		}
 
 		$has_bookmarks = false;
-		if(is_array($item['term'])) {
+		if(isset($item['term']) && is_array($item['term'])) {
 			foreach($item['term'] as $t) {
 				if($t['ttype'] == TERM_BOOKMARK)
 					$has_bookmarks = true;
@@ -286,6 +286,8 @@ class ThreadItem {
 			$like = array( t("I like this \x28toggle\x29"), t("like"));
 			$dislike = array( t("I don't like this \x28toggle\x29"), t("dislike"));
 		}
+
+		$share = $embed = EMPTY_STR;
 
 		if ($shareable) {
 			$share = t('Repeat This');
@@ -302,9 +304,11 @@ class ThreadItem {
 			$dreport = t('Delivery Report');
 			$dreport_link = gen_link_id($item['mid']);
 		}
-		if(strcmp(datetime_convert('UTC','UTC',$item['created']),datetime_convert('UTC','UTC','now - 12 hours')) > 0)
+		$is_new = false;
+		
+		if (strcmp(datetime_convert('UTC','UTC',$item['created']),datetime_convert('UTC','UTC','now - 12 hours')) > 0) {
 			$is_new = true;
-
+		}
 
 		localize_item($item);
 
@@ -376,7 +380,7 @@ class ThreadItem {
 			'thread_action_menu' => thread_action_menu($item,$conv->get_mode()),
 			'thread_author_menu' => thread_author_menu($item,$conv->get_mode()),
 			'dreport' => $dreport,
-			'dreport_link' => $dreport_link,
+			'dreport_link' => ((isset($dreport_link) && $dreport_link) ? $dreport_link : EMPTY_STR),
 			'name' => $profile_name,
 			'thumb' => $profile_avatar,
 			'osparkle' => $osparkle,
@@ -461,7 +465,7 @@ class ThreadItem {
 			'modal_dismiss' => t('Close'),
 			'showlike' => $showlike,
 			'showdislike' => $showdislike,
-			'comment' => ($item['item_delayed'] ? '' : $this->get_comment_box($indent)),
+			'comment' => ($item['item_delayed'] ? '' : $this->get_comment_box()),
 			'previewing' => ($conv->is_preview() ? true : false ),
 			'preview_lbl' => t('This is an unsaved preview'),
 			'wait' => t('Please wait'),
@@ -490,7 +494,7 @@ class ThreadItem {
 			}
 					
 			// Add any mentions from the immediate parent, unless they are mentions of the current viewer or duplicates
-			if ($item['term']) {
+			if (isset($item['term']) && is_array($item['term'])) {
 				$additional_mentions = [];
 				foreach ($item['term'] as $t) {
 					if ($t['ttype'] == TERM_MENTION) {
@@ -835,7 +839,7 @@ class ThreadItem {
 	 *      _ The comment box string (empty if no comment box)
 	 *      _ false on failure
 	 */
-	private function get_comment_box($indent) {
+	private function get_comment_box($indent = 0) {
 
 		if(!$this->is_toplevel() && !get_config('system','thread_allow',true)) {
 			return '';

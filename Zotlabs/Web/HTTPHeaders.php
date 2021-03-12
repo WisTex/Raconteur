@@ -31,7 +31,7 @@ class HTTPHeaders {
 				}
 
 			}
-			if ($this->in_progress['k']) {
+			if (isset($this->in_progress['k'])) {
 				$this->parsed[] = [ $this->in_progress['k'] => $this->in_progress['v'] ];
 				$this->in_progress = [];
 			}

@@ -1370,6 +1370,8 @@ function unobscure_mail(&$item) {
 
 function theme_attachments(&$item) {
 
+	$s = EMPTY_STR;
+
 	$arr = json_decode($item['attach'],true);
 
 	if (is_array($arr) && count($arr)) {
@@ -1423,7 +1425,12 @@ function theme_attachments(&$item) {
 
 
 function format_categories(&$item,$writeable) {
-	$s = '';
+
+	$s = EMPTY_STR;
+
+	if (! (isset($item['term']) && $item['term'])) {
+		return $s;
+	}
 
 	$terms = get_terms_oftype($item['term'],TERM_CATEGORY);
 	if($terms) {
@@ -1485,7 +1492,7 @@ function format_hashtags(&$item) {
 
 
 function format_mentions(&$item) {
-	$s = '';
+	$s = EMPTY_STR;
 
 	$pref = intval(PConfig::Get($item['uid'],'system','tag_username',Config::Get('system','tag_username',false)));
 
@@ -1493,13 +1500,16 @@ function format_mentions(&$item) {
 
 	$show = intval(PConfig::Get($item['uid'],'system','show_auto_mentions',false));
 	if ((! $show) && (! $item['resource_type'])) {
-		return;
+		return $s;
 	}
 
 	if ($pref === 127) {
-		return;
+		return $s;
 	}
 
+	if (! (isset($item['term']) && is_array($item['term']) && $item['term'])) {
+		return $s; 
+	}
 	$terms = get_terms_oftype($item['term'],TERM_MENTION);
 	if($terms) {
 		foreach($terms as $t) {
@@ -1548,7 +1558,11 @@ function format_mentions(&$item) {
 
 
 function format_filer(&$item) {
-	$s = '';
+	$s = EMPTY_STR;
+
+	if (! (isset($item['term']) && $item['term'])) {
+		return $s;
+	}
 
 	$terms = get_terms_oftype($item['term'],TERM_FILE);
 	if($terms) {

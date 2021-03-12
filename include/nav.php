@@ -16,8 +16,12 @@ function nav($template = 'default') {
 	 *
 	 */
 
-	if(!(x(App::$page,'nav')))
-		App::$page['nav'] = '';
+	if (! isset(App::$page['nav'])) {
+		App::$page['nav'] = EMPTY_STR;
+	}
+	if (! isset(App::$page['htmlhead'])) {
+		App::$page['htmlhead'] = EMPTY_STR;
+	}
 
 	App::$page['htmlhead'] .= '<script>$(document).ready(function() { $("#nav-search-text").search_autocomplete(\'' . z_root() . '/acl' . '\');});</script>';
 
@@ -301,16 +305,16 @@ function nav($template = 'default') {
 		'$powered_by' => $powered_by,
 		'$help' => t('@name, #tag, ?doc, content'), 
 		'$pleasewait' => t('Please wait...'),
-		'$nav_apps' => $nav_apps,
-		'$navbar_apps' => $navbar_apps,
+		'$nav_apps' => ((isset($nav_apps)) ? $nav_apps : []),
+		'$navbar_apps' => ((isset($navbar_apps)) ? $navbar_apps : []),
 		'$channel_menu' => get_pconfig(App::$profile_uid,'system','channel_menu',get_config('system','channel_menu')),
 		'$channel_thumb' => ((App::$profile) ? App::$profile['thumb'] : ''),
-		'$channel_apps' => $channel_apps,
+		'$channel_apps' => ((isset($channel_apps)) ? $channel_apps : []),
 		'$manageapps' => t('My Apps'),
 		'$addapps' => t('Available Apps'),
 		'$orderapps' => t('Arrange Apps'),
 		'$sysapps_toggle' => t('Toggle System Apps'),
-		'$url' => (($url) ? $url : App::$cmd)
+		'$url' => ((isset($url) && $url) ? $url : App::$cmd)
 	));
 
 	if(x($_SESSION, 'reload_avatar') && $observer) {

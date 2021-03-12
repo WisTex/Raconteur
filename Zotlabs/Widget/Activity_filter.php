@@ -19,6 +19,7 @@ class Activity_filter {
 		$events_active = false;
 		$polls_active = false;
 		$group_active = false;
+		$forum_active = false;
 		
 		$tabs = [];
 
@@ -162,7 +163,7 @@ class Activity_filter {
 					'url' => z_root() . '/' . $cmd . '/?f=&pf=1&cid=' . $f['abook_id'],
 					'sel' => $forum_active,
 					'title' => t('Show posts to this group'),
-					'lock' => (($f['private_forum']) ? 'lock' : ''),
+					'lock' => ((isset($f['private_forum']) && $f['private_forum']) ? 'lock' : ''),
 					'edit' => t('New post'),
 					'edit_url' => $f['xchan_url']
 				];
@@ -216,7 +217,7 @@ class Activity_filter {
 		$ft = get_pconfig(local_channel(),'system','followed_tags', EMPTY_STR);
 		if (is_array($ft) && $ft) {
 			foreach($ft as $t) {
-				$tag_active = (($_GET['netsearch'] === '#' . $t) ? 'active' : '');
+				$tag_active = ((isset($_GET['netsearch']) && $_GET['netsearch'] === '#' . $t) ? 'active' : '');
 				if ($tag_active) {
 					$filter_active = 'tags';
 				}

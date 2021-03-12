@@ -155,13 +155,10 @@ class Acl extends Controller {
 
 				$r = q("SELECT abook_id as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, xchan_type, abook_flags, abook_self 
 					FROM abook left join xchan on abook_xchan = xchan_hash 
-					WHERE (abook_channel = %d $extra_channels_sql) AND abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 $sql_extra4 order by xchan_name asc limit $count" ,
+					WHERE abook_channel = %d AND abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 $sql_extra4 order by xchan_name asc limit $count" ,
 					intval(local_channel())
 				);
 
-				if($r && $r2) {
-					$r = array_merge($r2,$r);
-				}
 			}
 			else { // Visitors
 				$r = q("SELECT xchan_hash as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, 0 as abook_flags, 0 as abook_self
