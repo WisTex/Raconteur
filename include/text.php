@@ -1370,6 +1370,8 @@ function unobscure_mail(&$item) {
 
 function theme_attachments(&$item) {
 
+	$s = EMPTY_STR;
+
 	$arr = json_decode($item['attach'],true);
 
 	if (is_array($arr) && count($arr)) {
@@ -1379,7 +1381,7 @@ function theme_attachments(&$item) {
 			$label = EMPTY_STR;
 			$icon = getIconFromType($r['type']);
 			
-			if ($r['title']) {
+			if (isset($r['title']) && $r['title']) {
 				$label = urldecode(htmlspecialchars($r['title'], ENT_COMPAT, 'UTF-8'));
 			}
 
@@ -1397,13 +1399,13 @@ function theme_attachments(&$item) {
 				$label = t('Unknown Attachment');
 			}
 
-			$title = t('Size') . ' ' . (($r['length']) ? userReadableSize($r['length']) : t('unknown'));
+			$title = t('Size') . ' ' . ((isset($r['length']) && $r['length']) ? userReadableSize($r['length']) : t('unknown'));
 
 			if (is_foreigner($item['author_xchan'])) {
 				$url = $r['href'];
 			}
 			else {
-				$url = z_root() . '/magic?f=&owa=1&hash=' . $item['author_xchan'] . '&bdest=' . bin2hex($r['href'] . '/' . $r['revision']);
+				$url = z_root() . '/magic?f=&owa=1&hash=' . $item['author_xchan'] . '&bdest=' . bin2hex($r['href'] . ((isset($r['revision']) ? '/' . $r['revision'] : '')));
 			}
 			$attaches[] = [ 
 				'label' => $label, 
@@ -1423,7 +1425,12 @@ function theme_attachments(&$item) {
 
 
 function format_categories(&$item,$writeable) {
-	$s = '';
+
+	$s = EMPTY_STR;
+
+	if (! (isset($item['term']) && $item['term'])) {
+		return $s;
+	}
 
 	$terms = get_terms_oftype($item['term'],TERM_CATEGORY);
 	if($terms) {
@@ -1455,6 +1462,10 @@ function format_categories(&$item,$writeable) {
 function format_hashtags(&$item) {
 	$s = '';
 
+	if (! isset($item['term'])) {
+		return $s;
+	}
+
 	$terms = get_terms_oftype($item['term'], array(TERM_HASHTAG,TERM_COMMUNITYTAG));
 	if($terms) {
 		foreach($terms as $t) {
@@ -1481,7 +1492,7 @@ function format_hashtags(&$item) {
 
 
 function format_mentions(&$item) {
-	$s = '';
+	$s = EMPTY_STR;
 
 	$pref = intval(PConfig::Get($item['uid'],'system','tag_username',Config::Get('system','tag_username',false)));
 
@@ -1489,13 +1500,16 @@ function format_mentions(&$item) {
 
 	$show = intval(PConfig::Get($item['uid'],'system','show_auto_mentions',false));
 	if ((! $show) && (! $item['resource_type'])) {
-		return;
+		return $s;
 	}
 
 	if ($pref === 127) {
-		return;
+		return $s;
 	}
 
+	if (! (isset($item['term']) && is_array($item['term']) && $item['term'])) {
+		return $s; 
+	}
 	$terms = get_terms_oftype($item['term'],TERM_MENTION);
 	if($terms) {
 		foreach($terms as $t) {
@@ -1544,7 +1558,11 @@ function format_mentions(&$item) {
 
 
 function format_filer(&$item) {
-	$s = '';
+	$s = EMPTY_STR;
+
+	if (! (isset($item['term']) && $item['term'])) {
+		return $s;
+	}
 
 	$terms = get_terms_oftype($item['term'],TERM_FILE);
 	if($terms) {
@@ -1698,14 +1716,14 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 	// Eventually we may wish to add/remove to/from calendar in the message title area but it will take a chunk
 	// of code re-factoring to make that happen.
 
-	if($event['header'] && $item['resource_id']) {
+	if(is_array($event) && $event['header'] && $item['resource_id']) {
 		$event['header'] .= '<i class="fa fa-asterisk" title="' . t('Added to your calendar') . '"></i>' . '&nbsp;' . t('Added to your calendar');
 	}
 
 	$prep_arr = array(
 		'item' => $item,
 		'html' => $event ? $event['content'] : $s,
-		'event' => $event['header'],
+		'event' => ((is_array($event)) ? $event['header'] : EMPTY_STR),
 		'photo' => $photo
 	);
 

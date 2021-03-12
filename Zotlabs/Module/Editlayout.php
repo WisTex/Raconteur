@@ -135,7 +135,7 @@ class Editlayout extends \Zotlabs\Web\Controller {
 			'profile_uid' => intval($owner),
 		);
 
-		$editor = status_editor($a, $x);
+		$editor = status_editor($x);
 
 		$o .= replace_macros(get_markup_template('edpost_head.tpl'), array(
 			'$title' => t('Edit Layout'),

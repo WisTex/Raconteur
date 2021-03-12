@@ -420,7 +420,7 @@ class Activity {
 
 		$ret = [];
 
-		if ($item['term']) {
+		if (isset($item['term']) && is_array($item['term']) && $item['term']) {
 			foreach ($item['term'] as $t) {
 				switch($t['ttype']) {
 					case TERM_HASHTAG:
@@ -720,10 +720,10 @@ class Activity {
 			}
 		}
 
-		if (! $cnv) {
+		if (! (isset($cnv) && $cnv)) {
 			$cnv = get_iconfig($i,'ostatus','conversation');
 		}
-		if ($cnv) {
+		if (isset($cnv) && $cnv) {
 			$ret['conversation'] = $cnv;
 		}
 

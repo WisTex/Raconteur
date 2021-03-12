@@ -143,7 +143,7 @@ class Rpost extends Controller {
 			'reset'               => t('Reset form')
 		];
 	
-		$editor = status_editor($a,$x);
+		$editor = status_editor($x);
 	
 		$o .= replace_macros(get_markup_template('edpost_head.tpl'), [
 			'$title' => t('Edit post'),

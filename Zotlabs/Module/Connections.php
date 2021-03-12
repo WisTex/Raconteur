@@ -46,7 +46,7 @@ class Connections extends Controller {
 		$unconnected = false;
 		$all         = false;
 	
-		if (! $_REQUEST['aj']) {
+		if (! (isset($_REQUEST['aj']) && $_REQUEST['aj'])) {
 			$_SESSION['return_url'] = App::$query_string;
 		}
 		
@@ -195,12 +195,12 @@ class Connections extends Controller {
 		}
 		$sql_extra .= (($searching) ? " AND ( xchan_name like '%%$search_txt%%' OR abook_alias like '%%$search_txt%%' ) " : "");
 	
-		if($_REQUEST['gid']) {
+		if (isset($_REQUEST['gid']) && intval($_REQUEST['gid'])) {
 			$sql_extra .= " and xchan_hash in ( select xchan from pgrp_member where gid = " . intval($_REQUEST['gid']) . " and uid = " . intval(local_channel()) . " ) ";
 		}
 	 	
 		$r = q("SELECT COUNT(abook.abook_id) AS total FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash 
-			where abook_channel = %d and abook_self = 0 and xchan_deleted = 0 and xchan_orphan = 0 $sql_extra $sql_extra2 ",
+			where abook_channel = %d and abook_self = 0 and xchan_deleted = 0 and xchan_orphan = 0 $sql_extra ",
 			intval(local_channel())
 		);
 		if($r) {
@@ -208,20 +208,23 @@ class Connections extends Controller {
 			$total = $r[0]['total'];
 		}
 
-		switch($_REQUEST['order']) {
-			case 'date':
-				$order_q = 'abook_created desc';
-				break;
-			case 'created':
-				$order_q = 'abook_created';
-				break;
-			case 'cmax':
-				$order_q = 'abook_closeness';
-				break;
-			case 'name':
-			default:
-				$order_q = 'xchan_name';
-				break;
+		$order_q = 'xchan_name';
+		if (isset($_REQUEST['order'])) {		
+			switch ($_REQUEST['order']) {
+				case 'date':
+					$order_q = 'abook_created desc';
+					break;
+				case 'created':
+					$order_q = 'abook_created';
+					break;
+				case 'cmax':
+					$order_q = 'abook_closeness';
+					break;
+				case 'name':
+				default:
+					$order_q = 'xchan_name';
+					break;
+			}
 		}
 
 
@@ -230,21 +233,21 @@ class Connections extends Controller {
 			'name' => array(
 				'label' => t('Name'),
 				'url'   => z_root() . '/connections' . ((argv(1)) ? '/' . argv(1) : '')  . '?order=name', 
-				'sel'   => ($_REQUEST['order'] === 'name' || (! isset($_REQUEST['order']))) ? 'active' : '',
+				'sel'   => ((isset($_REQUEST['order']) && $_REQUEST['order'] !== 'name') ? 'active' : ''),
 				'title' => t('Order by name'),
 			),
 
 			'date' => array(
 				'label' => t('Recent'),
 				'url'   => z_root() . '/connections' . ((argv(1)) ? '/' . argv(1) : '') . '?order=date', 
-				'sel'   => ($_REQUEST['order'] === 'date') ? 'active' : '',
+				'sel'   => ((isset($_REQUEST['order']) && $_REQUEST['order'] === 'date') ? 'active' : ''),
 				'title' => t('Order by recent'),
 			),
 
 			'created' => array(
 				'label' => t('Created'),
 				'url'   => z_root() . '/connections' . ((argv(1)) ? '/' . argv(1) : '') . '?order=created', 
-				'sel'   => ($_REQUEST['order'] === 'created') ? 'active' : '',
+				'sel'   => ((isset($_REQUEST['order']) && $_REQUEST['order'] === 'created') ? 'active' : ''),
 				'title' => t('Order by date'),
 			),
 // reserved for cmax
@@ -261,7 +264,7 @@ class Connections extends Controller {
 
 
 		$r = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash
-			WHERE abook_channel = %d and abook_self = 0 and xchan_deleted = 0 and xchan_orphan = 0 $sql_extra $sql_extra2 ORDER BY $order_q LIMIT %d OFFSET %d ",
+			WHERE abook_channel = %d and abook_self = 0 and xchan_deleted = 0 and xchan_orphan = 0 $sql_extra ORDER BY $order_q LIMIT %d OFFSET %d ",
 			intval(local_channel()),
 			intval(App::$pager['itemspage']),
 			intval(App::$pager['start'])
@@ -280,14 +283,14 @@ class Connections extends Controller {
 				}
 				if($rr['xchan_url']) {
 
-					if(($rr['vcard']) && is_array($rr['vcard']['tels']) && $rr['vcard']['tels'][0]['nr'])
+					if((isset($rr['vcard']) && $rr['vcard']) && is_array($rr['vcard']['tels']) && $rr['vcard']['tels'][0]['nr'])
 						$phone = $rr['vcard']['tels'][0]['nr'];
 					else
 						$phone = '';
 	
 					$status_str = '';
 					$status = array(
-						((intval($rr['abook_active'])) ? t('Active') : ''),
+						((isset($rr['abook_active']) && intval($rr['abook_active'])) ? t('Active') : ''),
 						((intval($rr['abook_pending'])) ? t('Pending approval') : ''),
 						((intval($rr['abook_archived'])) ? t('Archived') : ''),
 						((intval($rr['abook_hidden'])) ? t('Hidden') : ''),
@@ -369,7 +372,7 @@ class Connections extends Controller {
 				'$sort' => t('Filter by'),
 				'$sortorder' => t('Sort by'),
 				'$total' => $total,
-				'$search' => $search_hdr,
+				'$search' => ((isset($search_hdr)) ? $search_hdr : EMPTY_STR),
 				'$label' => t('Search'),
 				'$desc' => t('Search your connections'),
 				'$finding' => (($searching) ? t('Connections search') . ": '" . $search . "'" : ""),

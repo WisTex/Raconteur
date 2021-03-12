@@ -1016,11 +1016,12 @@ function thread_author_menu($item, $mode = '') {
 
 	if($contact) {
 		$poke_link = z_root() . '/poke/?f=&c=' . $contact['abook_id'];
-		if (! intval($contact['abook_self']))  
+		if (! (isset($contact['abook_self']) && intval($contact['abook_self']))) {  
 			$contact_url = z_root() . '/connedit/' . $contact['abook_id'];
+		}
 		$posts_link = z_root() . '/stream/?cid=' . $contact['abook_id'];
 
-		$clean_url = normalise_link($item['author-link']);
+		$clean_url = $item['author']['xchan_url'];
 	}
 
 
@@ -1034,7 +1035,7 @@ function thread_author_menu($item, $mode = '') {
 		];
 	}
 
-	if($posts_link) {
+	if(isset($posts_link) && $posts_link) {
 		$menu[] = [ 
 			'menu' => 'view_posts',
 			'title' => t('Recent Activity'),
@@ -1044,7 +1045,7 @@ function thread_author_menu($item, $mode = '') {
 		];
 	}
 
-	if($follow_url) {
+	if(isset($follow_url) && $follow_url) {
 		$menu[] = [ 
 			'menu' => 'follow',
 			'title' => t('Connect'),
@@ -1054,7 +1055,7 @@ function thread_author_menu($item, $mode = '') {
 		];
 	}
 
-	if($contact_url) {
+	if(isset($contact_url) && $contact_url) {
 		$menu[] = [ 
 			'menu' => 'connedit',
 			'title' => t('Edit Connection'),
@@ -1064,7 +1065,7 @@ function thread_author_menu($item, $mode = '') {
 		];
 	}
 
-	if($pm_url) {
+	if(isset($pm_url) && $pm_url) {
 		$menu[] = [ 
 			'menu' => 'prv_message',
 			'title' => t('Message'),
@@ -1218,11 +1219,11 @@ function format_like($cnt, $arr, $type, $id) {
 /**
  * Wrapper to allow addons to replace the status editor if desired.
  */
-function status_editor($a, $x, $popup = false, $module='') {
+function status_editor($x, $popup = false, $module='') {
     $hook_info = ['editor_html' => '', 'x' => $x, 'popup' => $popup, 'module' => $module];
     call_hooks('status_editor',$hook_info);
     if ($hook_info['editor_html'] == '') {
-		return z_status_editor($a, $x, $popup);
+		return z_status_editor($x, $popup);
     } 
 	else {
 		return $hook_info['editor_html'];
@@ -1236,7 +1237,7 @@ function status_editor($a, $x, $popup = false, $module='') {
  * They are referring to the content editor or components thereof. 
  */
 
-function z_status_editor($a, $x, $popup = false) {
+function z_status_editor($x, $popup = false) {
 
 	$o = '';
 
@@ -1245,7 +1246,7 @@ function z_status_editor($a, $x, $popup = false) {
 		return $o;
 
 	$plaintext = true;
-
+	$webpage = false;
 	$feature_voting = false;
 
 	$feature_comment_control = Apps::system_app_installed($x['profile_uid'], 'Comment Control');
@@ -1317,6 +1318,10 @@ function z_status_editor($a, $x, $popup = false) {
 	$feature_auto_save_draft = ((feature_enabled($x['profile_uid'], 'auto_save_draft')) ? "true" : "false");
 	
 	$tpl = get_markup_template('jot-header.tpl');
+
+	if (! isset(App::$page['htmlhead'])) {
+		App::$page['htmlhead'] = EMPTY_STR;
+	}
 
 	App::$page['htmlhead'] .= replace_macros($tpl, array(
 		'$baseurl' => z_root(),
@@ -1475,7 +1480,7 @@ function z_status_editor($a, $x, $popup = false) {
 		'$commentstate' => ((array_key_exists('item',$x)) ? 1 - $x['item']['item_nocomment'] : 1),
 		'$feature_comment_control' => $feature_comment_control,
 		'$commctrl' => t('Comment Control'),
-		'$comments_closed' => (($x['item']['comments_closed']) ? $x['item']['comments_closed'] : ''),
+		'$comments_closed' => ((isset($x['item']) && isset($x['item']['comments_closed']) && $x['item']['comments_closed']) ? $x['item']['comments_closed'] : ''),
 		'$commclosedate' => t('Disable comments after (date)'),
 		'$comment_perms' => $comment_perms,
 		'$clearloc' => $clearloc,

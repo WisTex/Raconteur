@@ -58,7 +58,7 @@ function format_event_html($ev) {
 
 	$o .= '<div class="event-description">' . zidify_links(smilies(bbcode($ev['description']))) .  '</div>' . "\r\n";
 
-	if(strlen($ev['location']))
+	if(isset($ev['location']) && strlen($ev['location']))
 		$o .= '<div class="event-location"><span class="event-label"> ' . t('Location:') . '</span>&nbsp;<span class="location">'
 			. zidify_links(smilies(bbcode($ev['location'])))
 			. '</span></div>' . "\r\n";
@@ -100,7 +100,7 @@ function format_event_obj($jobject) {
 
 		$bd_format = t('l F d, Y \@ g:i A'); // Friday January 18, 2011 @ 8:01 AM
 		$dtend = ((array_key_exists('endTime',$object)) ? $object['endTime'] : NULL_DATE);
-		$title = (($object['summary']) ? zidify_links(smilies(bbcode($object['summary']))) : $object['name']);
+		$title = ((isset($object['summary']) && $object['summary']) ? zidify_links(smilies(bbcode($object['summary']))) : $object['name']);
 
 		$event['header'] = replace_macros(get_markup_template('event_item_header.tpl'),array(
 			'$title'	 => $title,

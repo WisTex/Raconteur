@@ -1690,8 +1690,9 @@ function getBestSupportedMimeType($mimeTypes = null, $acceptedTypes = false) {
 	// Values will be stored in this array
 	$AcceptTypes = [];
 
-	if($acceptedTypes === false)
-		$acceptedTypes = $_SERVER['HTTP_ACCEPT'];
+	if($acceptedTypes === false) {
+		$acceptedTypes = ((isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT']) ? $_SERVER['HTTP_ACCEPT'] : EMPTY_STR);
+	}
 
 	// Accept header is case insensitive, and whitespace isn’t important
 	$accept = strtolower(str_replace(' ', '', $acceptedTypes));
