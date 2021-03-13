@@ -2296,10 +2296,12 @@ class Activity {
 			return false;
 		}
 
-		// Within our family of projects, Unfollow is an internal activity which should not be transmitted, hence if we receive it - ignore or reject it.
-		// Unfollow is not defined by ActivityStreams, which prefers Undo->Follow. 
+		// Within our family of projects, Follow/Unfollow of a thread is an internal activity which should not be transmitted,
+		// hence if we receive it - ignore or reject it.
+		// Unfollow is not defined by ActivityStreams, which prefers Undo->Follow.
+		// This may have to be revisited if AP projects start using Follow for objects other than actors.
 		
-		if ($act->type === 'Unfollow') {
+		if (in_array($act->type, [ ACTIVITY_FOLLOW, ACTIVITY_UNFOLLOW ])) {
 			return false;
 		}
 

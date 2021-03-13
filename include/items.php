@@ -4069,8 +4069,8 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 		$item_uids = " item.uid = " . intval($uid) . " ";
 	}
 
-	if (! (isset($arr['include_unfollow']) && intval($arr['include_unfollow']))) {
-		$sql_options .= " and verb != 'Unfollow' ";
+	if (! (isset($arr['include_follow']) && intval($arr['include_follow']))) {
+		$sql_options .= " and not verb in ( 'Follow' , 'Unfollow' ) ";
 	}
 
 	if($arr['star'])

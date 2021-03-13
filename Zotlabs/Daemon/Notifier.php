@@ -305,8 +305,8 @@ class Notifier {
 				return;
 			}
 
-			if ($target_item['verb'] === ACTIVITY_UNFOLLOW) {
-				logger('not fowarding unfollow->note activity');
+			if (in_array($target_item['verb'], [ ACTIVITY_FOLLOW, ACTIVITY_UNFOLLOW ])) {
+				logger('not fowarding follow|unfollow->note activity');
 				return;
 			}
 
