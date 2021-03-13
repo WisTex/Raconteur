@@ -2296,6 +2296,14 @@ class Activity {
 			return false;
 		}
 
+		// Within our family of projects, Unfollow is an internal activity which should not be transmitted, hence if we receive it - ignore or reject it.
+		// Unfollow is not defined by ActivityStreams, which prefers Undo->Follow. 
+		
+		if ($act->type === 'Unfollow') {
+			return false;
+		}
+
+
 		$s['owner_xchan']  = $act->actor['id'];
 		$s['author_xchan'] = $act->actor['id'];
 
