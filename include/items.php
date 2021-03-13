@@ -4069,6 +4069,10 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 		$item_uids = " item.uid = " . intval($uid) . " ";
 	}
 
+	if (! (isset($arr['include_unfollow']) && intval($arr['include_unfollow']))) {
+		$sql_options .= " and verb != 'Unfollow' ";
+	}
+
 	if($arr['star'])
 		$sql_options .= " and item_starred = 1 ";
 
