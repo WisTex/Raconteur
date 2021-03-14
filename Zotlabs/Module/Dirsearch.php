@@ -62,6 +62,7 @@ class Dirsearch extends Controller {
 	
 		$hash     = ((x($_REQUEST['hash']))    ? $_REQUEST['hash']     : '');
 		$name     = ((x($_REQUEST,'name'))     ? $_REQUEST['name']     : '');
+		$url      = ((x($_REQUEST,'url'))      ? $_REQUEST['url']      : '');
 		$hub      = ((x($_REQUEST,'hub'))      ? $_REQUEST['hub']      : '');
 		$address  = ((x($_REQUEST,'address'))  ? $_REQUEST['address']  : '');
 		$locale   = ((x($_REQUEST,'locale'))   ? $_REQUEST['locale']   : '');
@@ -110,6 +111,18 @@ class Dirsearch extends Controller {
 			$hub_query = '';
 		}
 		
+		if ($url) {
+			logger('searching url: ' . $url);
+			$r = q("select hubloc_addr from hubloc where hubloc_url = '%s' or hubloc_id_url = '%s'",
+				dbesc($url),
+				dbesc($url)
+			);
+			logger('hubloc return: ' . print_r($r,true));
+			if ($r) {
+				$address = $r[0]['hubloc_addr'];
+			}
+		}
+
 		// The order identifier is validated further below
 		
 		$sort_order  = ((x($_REQUEST,'order')) ? $_REQUEST['order'] : '');
@@ -233,12 +246,12 @@ class Dirsearch extends Controller {
 	
 	
 		// normal directory query
-
+dbg(2);
 		$r = q("SELECT xchan.*, xprof.* from xchan left join xprof on xchan_hash = xprof_hash 
 			where ( $logic $sql_extra ) $hub_query $network and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 
 			$safesql $order $qlimit "
 		);
-		
+dbg(0);		
 		$ret['page'] = $page + 1;
 		$ret['records'] = count($r);		
 	

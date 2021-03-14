@@ -206,6 +206,9 @@ class Directory extends Controller {
 			if (strpos($search,'@')) {
 				$query .= '&address=' . urlencode($search);
 			}
+			if (strpos($search,'http') === 0) {
+				$query .= '&url=' . urlencode($search);
+			}
 			if ($keywords) {
 				$query .= '&keywords=' . urlencode($keywords);
 			}
