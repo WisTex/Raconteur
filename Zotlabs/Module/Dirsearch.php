@@ -112,14 +112,12 @@ class Dirsearch extends Controller {
 		}
 		
 		if ($url) {
-			logger('searching url: ' . $url);
-			$r = q("select hubloc_addr from hubloc where hubloc_url = '%s' or hubloc_id_url = '%s'",
+			$r = q("select xchan_name from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_url = '%s' or hubloc_id_url = '%s'",
 				dbesc($url),
 				dbesc($url)
 			);
-			logger('hubloc return: ' . print_r($r,true));
-			if ($r) {
-				$address = $r[0]['hubloc_addr'];
+			if ($r && $r[0]['xchan_name']) {
+				$name = $r[0]['xchan_name'];
 			}
 		}
 
@@ -246,12 +244,12 @@ class Dirsearch extends Controller {
 	
 	
 		// normal directory query
-dbg(2);
+
 		$r = q("SELECT xchan.*, xprof.* from xchan left join xprof on xchan_hash = xprof_hash 
 			where ( $logic $sql_extra ) $hub_query $network and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 
 			$safesql $order $qlimit "
 		);
-dbg(0);		
+
 		$ret['page'] = $page + 1;
 		$ret['records'] = count($r);		
 	

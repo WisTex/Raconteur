@@ -233,7 +233,7 @@ class Directory extends Controller {
 				$query .= '&p=' . App::$pager['page'];
 			}
 	
-			logger('mod_directory: query: ' . $query);
+			// logger('mod_directory: query: ' . $query);
 	
 			$x = z_fetch_url($query);
 			// logger('directory: return from upstream: ' . print_r($x,true), LOGGER_DATA);
@@ -463,6 +463,9 @@ class Directory extends Controller {
 						if (App::$pager['page'] == 1 && $j['records'] == 0) {
 							if (strpos($search,'@')) {
 								goaway(z_root() . '/chanview/?f=&address=' . $search);
+							}
+							elseif(strpos($search,'http') === 0) {
+								goaway(z_root() . '/chanview/?f=&url=' . $search);
 							}
 							else {
 								$r = q("select xchan_hash from xchan where xchan_name = '%s' limit 1",
