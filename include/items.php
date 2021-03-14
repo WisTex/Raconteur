@@ -4047,8 +4047,9 @@ function zot_feed($uid, $observer_hash, $arr) {
 
 function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = CLIENT_MODE_NORMAL,$module = 'stream') {
 
-	$result = array('success' => false);
+	$result = [ 'success' => false ];
 
+	$uid = 0;
 	$sql_extra = '';
 	$sql_nets = '';
 	$sql_options = '';
@@ -4059,11 +4060,11 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 	$item_uids = ' true ';
 	$item_normal = item_normal();
 
-	if($arr['uid']) {
+	if (isset($arr['uid']) && $arr['uid']) {
 		$uid = $arr['uid'];
 	}
 
-	if($channel) {
+	if ($channel) {
 		$uid = $channel['channel_id'];
 		$uidhash = $channel['channel_hash'];
 		$item_uids = " item.uid = " . intval($uid) . " ";
@@ -4073,32 +4074,38 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 		$sql_options .= " and not verb in ( 'Follow' , 'Unfollow' ) ";
 	}
 
-	if($arr['star'])
+	if (isset($arr['star']) && $arr['star']) {
 		$sql_options .= " and item_starred = 1 ";
+	}
 
-	if($arr['wall'])
+	if (isset($arr['wall']) && $arr['wall']) {
 		$sql_options .= " and item_wall = 1 ";
+	}
 
-	if($arr['item_id'])
+	if (isset($arr['item_id']) && $arr['item_id']) {
 		$sql_options .= " and parent = " . intval($arr['item_id']) . " ";
+	}
 
-	if($arr['mid'])
+	if (isset($arr['mid']) && $arr['mid']) {
 		$sql_options .= " and parent_mid = '" . dbesc($arr['mid']) . "' ";
-
+	}
+	
 	$sql_extra = " AND item.parent IN ( SELECT parent FROM item WHERE item_thread_top = 1 $sql_options $item_normal ) ";
 
-	if($arr['since_id'])
+	if(isset($arr['since_id']) && $arr['since_id']) {
 		$sql_extra .= " and item.id > " . $since_id . " ";
-
-	if($arr['cat'])
+	}
+	
+	if (isset($arr['cat']) && $arr['cat']) {
 		$sql_extra .= protect_sprintf(term_query('item', $arr['cat'], TERM_CATEGORY));
-
-	if($arr['gid'] && $uid) {
+	}
+	
+	if (isset($arr['gid']) && $arr['gid'] && $uid) {
 		$r = q("SELECT * FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
 			intval($arr['group']),
 			intval($uid)
 		);
-		if(! $r) {
+		if (! $r) {
 			$result['message']  = t('Access list not found.');
 			return $result;
 		}
@@ -4107,13 +4114,14 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 
 		$contacts = AccessList::members($uid,$r[0]['id']);
 		if ($contacts) {
-			foreach($contacts as $c) {
-				if($contact_str)
+			foreach ($contacts as $c) {
+				if ($contact_str) {
 					$contact_str .= ',';
-
+				}
 				$contact_str .= "'" . $c['xchan'] . "'";
 			}
-		} else {
+		}
+		else {
 			$contact_str = ' 0 ';
 			$result['message'] = t('Privacy group is empty.');
 			return $result;
@@ -4124,7 +4132,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 		$x = AccessList::rec_byhash($uid,$r[0]['hash']);
 		$result['headline'] = sprintf( t('Access list: %s'),$x['gname']);
 	}
-	elseif($arr['cid'] && $uid) {
+	elseif (isset($arr['cid']) && $arr['cid'] && $uid) {
 
 		$r = q("SELECT abook.*, xchan.* from abook left join xchan on abook_xchan = xchan_hash where abook_id = %d and abook_channel = %d and abook_blocked = 0 limit 1",
 			intval($arr['cid']),
@@ -4133,13 +4141,14 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 		if ($r) {
 			$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND uid = " . intval($arr['uid']) . " AND ( author_xchan = '" . dbesc($r[0]['abook_xchan']) . "' or owner_xchan = '" . dbesc($r[0]['abook_xchan']) . "' ) $item_normal ) ";
 			$result['headline'] = sprintf( t('Connection: %s'),$r[0]['xchan_name']);
-		} else {
+		}
+		else {
 			$result['message'] = t('Channel not found.');
 			return $result;
 		}
 	}
 
-	if($channel && intval($arr['compat']) === 1) {
+	if ($channel && intval($arr['compat']) === 1) {
 		$sql_extra = " AND author_xchan = '" . $channel['channel_hash'] . "' and item_private = 0 $item_normal ";
 	}
 
@@ -4150,20 +4159,23 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 		$sql_extra3 .= protect_sprintf(sprintf(" AND item.created >= '%s' ", dbesc(datetime_convert('UTC','UTC',$arr['datequery2']))));
 	}
 
-	if($arr['search']) {
-		if(strpos($arr['search'],'#') === 0)
+	if ($arr['search']) {
+		if (strpos($arr['search'],'#') === 0) {
 			$sql_extra .= term_query('item',substr($arr['search'],1),TERM_HASHTAG,TERM_COMMUNITYTAG);
-		else
+
+		}
+		else {
 			$sql_extra .= sprintf(" AND item.body like '%s' ",
 				dbesc(protect_sprintf('%' . $arr['search'] . '%'))
 			);
+		}
 	}
 
-	if(strlen($arr['file'])) {
-		$sql_extra .= term_query('item',$arr['files'],TERM_FILE);
+	if (isset($arr['file']) && strlen($arr['file'])) {
+		$sql_extra .= term_query('item',$arr['file'],TERM_FILE);
 	}
 
-	if($arr['conv'] && $channel) {
+	if (isset($arr['conv']) && $arr['conv'] && $channel) {
 		$sql_extra .= sprintf(" AND parent IN (SELECT distinct parent from item where ( author_xchan like '%s' or item_mentionsme = 1 )) ",
 			dbesc(protect_sprintf($uidhash))
 		);
@@ -4172,16 +4184,18 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 	if (($client_mode & CLIENT_MODE_UPDATE) && (! ($client_mode & CLIENT_MODE_LOAD))) {
 		// only setup pagination on initial page view
 		$pager_sql = '';
-	} else {
-		if(! $arr['total']) {
+	}
+	else {
+		if (! (isset($arr['total']) && $arr['total'])) {
 			$itemspage = (($channel) ? get_pconfig($uid,'system','itemspage') : 20);
 			App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
 			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 		}
 	}
 
-	if (isset($arr['start']) && isset($arr['records']))
+	if (isset($arr['start']) && isset($arr['records'])) {
 		$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval($arr['records']), intval($arr['start']));
+	}
 
 	if (array_key_exists('cmin',$arr) || array_key_exists('cmax',$arr)) {
 		if (($arr['cmin'] != 0) || ($arr['cmax'] != 99)) {
@@ -4205,28 +4219,29 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 	}
 
 	$simple_update = (($client_mode & CLIENT_MODE_UPDATE) ? " and item.item_unseen = 1 " : '');
-	if($client_mode & CLIENT_MODE_LOAD)
+	if ($client_mode & CLIENT_MODE_LOAD) {
 		$simple_update = '';
+	}
 
-	//$start = dba_timer();
-
-	require_once('include/security.php');
 	$sql_extra .= item_permissions_sql($channel['channel_id'],$observer_hash);
 
 
-	if($arr['pages'])
+	if (isset($arr['pages']) && $arr['pages']) {
 		$item_restrict = " AND item_type = " . ITEM_TYPE_WEBPAGE . " ";
-	else
+	}
+	else {
 		$item_restrict = " AND item_type = 0 ";
+	}
 
-	if($arr['item_type'] === '*')
+	if (isset($arr['item_type']) && $arr['item_type'] === '*') {
 		$item_restrict = '';
+	}
 
-	if ((($arr['compat']) || ($arr['nouveau'] && ($client_mode & CLIENT_MODE_LOAD))) && $channel) {
+	if (((isset($arr['compat']) && $arr['compat']) || ((isset($arr['nouveau']) && $arr['nouveau']) && ($client_mode & CLIENT_MODE_LOAD))) && $channel) {
 
 		// "New Item View" - show all items unthreaded in reverse created date order
 
-		if ($arr['total']) {
+		if (isset($arr['total']) && $arr['total']) {
 			$items = q("SELECT count(item.id) AS total FROM item
 				WHERE $item_uids $item_restrict
 				$simple_update
@@ -4254,12 +4269,14 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 
 		// Normal conversation view
 
-		if($arr['order'] === 'post')
+		if (isset($arr['order']) && $arr['order'] === 'post') {
 			$ordering = "created";
-		else
+		}
+		else {
 			$ordering = "commented";
+		}
 
-		if(($client_mode & CLIENT_MODE_LOAD) || ($client_mode == CLIENT_MODE_NORMAL)) {
+		if (($client_mode & CLIENT_MODE_LOAD) || ($client_mode == CLIENT_MODE_NORMAL)) {
 
 			// Fetch a page full of parent items for this page
 
@@ -4282,17 +4299,15 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 			);
 		}
 
-		//$first = dba_timer();
-
 		// Then fetch all the children of the parents that are on this page
 
-		if($r) {
+		if(isset($r) && $r) {
 
 			$parents_str = ids_to_querystr($r,'item_id');
 
-			if($arr['top'])
+			if (isset($arr['top']) && $arr['top']) {
 				$sql_extra = ' and id = parent ' . $sql_extra;
-
+			}
 			$items = q("SELECT item.*, item.id AS item_id FROM item
 				WHERE $item_uids $item_restrict
 				AND item.parent IN ( %s )
@@ -4300,27 +4315,21 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 				dbesc($parents_str)
 			);
 
-			//$second = dba_timer();
-
 			xchan_query($items);
-
-			//$third = dba_timer();
-
 			$items = fetch_post_tags($items,false);
-
-			//$fourth = dba_timer();
 
 			require_once('include/conversation.php');
 			$items = conv_sort($items,$ordering);
 
-			//logger('items: ' . print_r($items,true));
-		} else {
-			$items = array();
+		}
+		else {
+			$items = [];
 		}
 
-		if($parents_str && $arr['mark_seen'])
+		if (isset($parents_str) && $parents_str && isset($arr['mark_seen']) && $arr['mark_seen']) {
 			$update_unseen = ' AND parent IN ( ' . dbesc($parents_str) . ' )';
 			/** @FIXME finish mark unseen sql */
+		}
 	}
 
 	return $items;
@@ -4328,17 +4337,17 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 
 function webpage_to_namespace($webpage) {
 
-	if($webpage == ITEM_TYPE_WEBPAGE)
+	if ($webpage == ITEM_TYPE_WEBPAGE)
 		$page_type = 'WEBPAGE';
-	elseif($webpage == ITEM_TYPE_BLOCK)
+	elseif ($webpage == ITEM_TYPE_BLOCK)
 		$page_type = 'BUILDBLOCK';
-	elseif($webpage == ITEM_TYPE_PDL)
+	elseif ($webpage == ITEM_TYPE_PDL)
 		$page_type = 'PDL';
-	elseif($webpage == ITEM_TYPE_CARD)
+	elseif ($webpage == ITEM_TYPE_CARD)
 		$page_type = 'CARD';
-	elseif($webpage == ITEM_TYPE_ARTICLE)
+	elseif ($webpage == ITEM_TYPE_ARTICLE)
 		$page_type = 'ARTICLE';
-	elseif($webpage == ITEM_TYPE_DOC)
+	elseif ($webpage == ITEM_TYPE_DOC)
 		$page_type = 'docfile';
 	else
 		$page_type = 'unknown';
@@ -4349,12 +4358,13 @@ function webpage_to_namespace($webpage) {
 
 function update_remote_id($channel,$post_id,$webpage,$pagetitle,$namespace,$remote_id,$mid) {
 
-	if(! $post_id)
+	if (! $post_id) {
 		return;
+	}
 
 	$page_type = webpage_to_namespace($webpage);
 
-	if($page_type == 'unknown' && $namespace && $remote_id) {
+	if ($page_type == 'unknown' && $namespace && $remote_id) {
 		$page_type = $namespace;
 		$pagetitle = $remote_id;
 	}
@@ -4362,7 +4372,7 @@ function update_remote_id($channel,$post_id,$webpage,$pagetitle,$namespace,$remo
 		$page_type = '';
 	}
 
-	if($page_type) {
+	if ($page_type) {
 
 		// store page info as an alternate message_id so we can access it via
 		//    https://sitename/page/$channelname/$pagetitle
@@ -4394,7 +4404,7 @@ function item_add_cid($xchan_hash, $mid, $uid) {
 		intval($uid),
 		dbesc('<' . $xchan_hash . '>')
 	);
-	if(! $r) {
+	if (! $r) {
 		$r = q("update item set allow_cid = concat(allow_cid,'%s') where mid = '%s' and uid = %d",
 			dbesc('<' . $xchan_hash . '>'),
 			dbesc($mid),
@@ -4409,7 +4419,7 @@ function item_remove_cid($xchan_hash,$mid,$uid) {
 		intval($uid),
 		dbesc('<' . $xchan_hash . '>')
 	);
-	if($r) {
+	if ($r) {
 		$x = q("update item set allow_cid = '%s' where mid = '%s' and uid = %d",
 			dbesc(str_replace('<' . $xchan_hash . '>','',$r[0]['allow_cid'])),
 			dbesc($mid),
@@ -4474,10 +4484,11 @@ function send_profile_photo_activity($channel,$photo,$profile) {
 
 	// for now only create activities for the default profile
 
-	if(! intval($profile['is_default']))
+	if (! (isset($profile) && isset($profile['is_default']) && intval($profile['is_default']))) {
 		return;
+	}
 
-	$arr = array();
+	$arr = [];
 	$arr['item_thread_top'] = 1;
 	$arr['item_origin'] = 1;
 	$arr['item_wall'] = 1;
