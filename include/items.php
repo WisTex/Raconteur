@@ -4038,7 +4038,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 	}
 
 	if (! (isset($arr['include_follow']) && intval($arr['include_follow']))) {
-		$sql_options .= " and not verb in ( 'Follow' , 'Unfollow' ) ";
+		$item_normal .= " and not verb in ( 'Follow' , 'Unfollow' ) ";
 	}
 
 	if (isset($arr['star']) && $arr['star']) {
