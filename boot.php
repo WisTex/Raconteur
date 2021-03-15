@@ -16,8 +16,8 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '21.03.12' );
-define ( 'ZOT_REVISION',            '6.0' );
+define ( 'STD_VERSION',             '21.03.16' );
+define ( 'ZOT_REVISION',            '10.0' );
 
 define ( 'DB_UPDATE_VERSION',       1247 );
 
@@ -27,7 +27,10 @@ define ( 'PLATFORM_ARCHITECTURE',   'zap' );
 define ( 'PROJECT_BASE',   __DIR__ );
 
 // This configures the default state of activitypub at the project level.
-define ( 'ACTIVITYPUB_ENABLED', true );
+
+if (! defined('ACTIVITYPUB_ENABLED')) {
+	define ( 'ACTIVITYPUB_ENABLED', true );
+}
 
 // composer autoloader for all namespaced Classes
 require_once('vendor/autoload.php');
