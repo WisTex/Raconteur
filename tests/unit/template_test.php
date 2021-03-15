@@ -10,7 +10,7 @@ require_once('include/template_processor.php');
 require_once('include/text.php');
 
 class TemplateMockApp {
-	public $theme_info=array();
+	public $theme_info=[];
 }
 
 if(!function_exists('current_theme')) {
@@ -83,7 +83,7 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
 	public function testConditionalFail() {
 		$tpl='There {{ if $num!=1 }} are $num new messages{{ else }} is 1 new message{{ endif }}!';
 
-		$text1=replace_macros($tpl, array());
+		$text1=replace_macros($tpl, []);
 
 		//$this->assertEquals('There is 1 new message!', $text1);
 	}
@@ -115,7 +115,7 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
 	public function testForEmpty() {
 		$tpl='messages: {{for $messages as $message}} from: $message.from to $message.to  {{ endfor }}';
 
-		$text=replace_macros($tpl, array('$messages'=>array()));
+		$text=replace_macros($tpl, array('$messages'=>[]));
 
 		$this->assertEquals('messages: ', $text);
 	}

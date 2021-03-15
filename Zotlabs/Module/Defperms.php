@@ -193,7 +193,7 @@ class Defperms extends \Zotlabs\Web\Controller {
 			$tpl = get_markup_template('defperms.tpl');
 	
 	
-			$perms = array();
+			$perms = [];
 			$channel = \App::get_channel();
 
 			$contact = \App::$poi;

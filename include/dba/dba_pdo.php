@@ -91,7 +91,7 @@ class dba_pdo extends dba_driver {
 			return $result;
 		}
 
-		$r = array();
+		$r = [];
 		if($result) {
 			foreach($result as $x) {
 				$r[] = $x;

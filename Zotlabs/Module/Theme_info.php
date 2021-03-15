@@ -10,7 +10,7 @@ class Theme_info extends \Zotlabs\Web\Controller {
 		if(! $theme)
 			killme();
 		
-		$schemalist = array();
+		$schemalist = [];
 
 		$theme_config = "";
 		if(($themeconfigfile = $this->get_theme_config_file($theme)) != null){

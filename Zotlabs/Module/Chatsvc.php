@@ -105,7 +105,7 @@ class Chatsvc extends \Zotlabs\Web\Controller {
 			if(! $r)
 				json_return_and_die($ret);
 	
-			$inroom = array();
+			$inroom = [];
 	
 			$r = q("select * from chatpresence left join xchan on xchan_hash = cp_xchan where cp_room = %d order by xchan_name",
 				intval(\App::$data['chat']['room_id'])
@@ -142,7 +142,7 @@ class Chatsvc extends \Zotlabs\Web\Controller {
 				}
 			}
 	
-			$chats = array();
+			$chats = [];
 	
 			$r = q("select * from chat left join xchan on chat_xchan = xchan_hash where chat_room = %d and chat_id > %d order by created",
 				intval(\App::$data['chat']['room_id']),

@@ -203,7 +203,7 @@ class Thing extends Controller {
 		}
 
 		if($activity) {
-			$arr = array();
+			$arr = [];
 			$links = array(array('rel' => 'alternate','type' => 'text/html', 'href' => $url));
 			if($local_photo)
 				$links[] = array('rel' => 'photo', 'type' => $local_photo_type, 'href' => $local_photo);

@@ -219,7 +219,7 @@ class SimpleTemplate implements TemplateEngine {
 	}
 
 	private function var_replace($s) {
-		$m = array();
+		$m = [];
 		/** regexp:
 		 * \$ 						literal $
 		 * (\[)?					optional open square bracket

@@ -106,7 +106,7 @@ class Poke extends Controller {
 		}
 	
 	
-		$arr = array();
+		$arr = [];
 	
 
 
@@ -186,7 +186,7 @@ class Poke extends Controller {
 	
 		$verbs = get_poke_verbs();
 	
-		$shortlist = array();
+		$shortlist = [];
 		foreach($verbs as $k => $v)
 			if($v[1] !== 'NOTRANSLATION')
 				$shortlist[] = array($k,$v[1]);

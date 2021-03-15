@@ -22,7 +22,7 @@ class PermissionRoles {
 
 	static function role_perms($role) {
 
-		$ret = array();
+		$ret = [];
 
 		$ret['role'] = $role;
 

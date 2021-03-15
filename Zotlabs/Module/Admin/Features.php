@@ -13,7 +13,7 @@ class Features {
 	
 		logger('postvars: ' . print_r($_POST,true));
 	
-		$arr = array();
+		$arr = [];
 		$features = get_features(false);
 	
 		foreach($features as $fname => $fdata) {
@@ -40,11 +40,11 @@ class Features {
 	function get() {
 		
 		if((argc() > 1) && (argv(1) === 'features')) {
-			$arr = array();
+			$arr = [];
 			$features = get_features(false);
 	
 			foreach($features as $fname => $fdata) {
-				$arr[$fname] = array();
+				$arr[$fname] = [];
 				$arr[$fname][0] = $fdata[0];
 				foreach(array_slice($fdata,1) as $f) {
 	

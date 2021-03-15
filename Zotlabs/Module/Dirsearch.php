@@ -311,7 +311,7 @@ dbg(0);
 			if ($kw) {
 				$k = dir_tagadelic($kw, $hub, $type,$safesql);
 				if ($k) {
-					$ret['keywords'] = array();
+					$ret['keywords'] = [];
 					foreach ($k as $kv) {
 						$ret['keywords'][] = [ 'term' => $kv[0], 'weight' => $kv[1], 'normalise' => $kv[2] ];
 					}
@@ -335,8 +335,8 @@ dbg(0);
 	
 	function dir_parse_query($s) {
 	
-		$ret = array();
-		$curr = array();
+		$ret = [];
+		$curr = [];
 		$all = explode(' ',$s);
 		$quoted_string = false;
 	
@@ -368,12 +368,12 @@ dbg(0);
 						elseif ($curr['value'][0] == '"' && $curr['value'][strlen($curr['value'])-1] == '"') {
 							$curr['value'] = substr($curr['value'],1,strlen($curr['value'])-2);
 							$ret[] = $curr;
-							$curr = array();
+							$curr = [];
 							continue;
 						}	
 						else {
 							$ret[] = $curr;
-							$curr = array();
+							$curr = [];
 							continue;
 						}
 					}
@@ -382,7 +382,7 @@ dbg(0);
 					if ($q[strlen($q)-1] == '"') {
 						$curr['value'] .= ' ' . str_replace('"','',trim($q));
 						$ret[] = $curr;
-						$curr = array();
+						$curr = [];
 						$quoted_string = false;
 					}
 					else
@@ -408,7 +408,7 @@ dbg(0);
 	
 		if ($r) {
 			$ret['success'] = true;
-			$ret['sites'] = array();
+			$ret['sites'] = [];
 	
 			foreach ($r as $rr) {
 				

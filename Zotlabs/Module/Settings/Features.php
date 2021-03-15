@@ -41,7 +41,7 @@ class Features {
 		$features = get_features(true);
 
 		foreach($features as $fname => $fdata) {
-			$arr[$fname] = array();
+			$arr[$fname] = [];
 			$arr[$fname][0] = $fdata[0];
 			foreach(array_slice($fdata,1) as $f) {
 				$arr[$fname][1][] = array('feature_' . $f[0],$f[1],((intval(feature_enabled(local_channel(),$f[0]))) ? "1" : ''),$f[2],array(t('Off'),t('On')));

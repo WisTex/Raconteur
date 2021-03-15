@@ -68,7 +68,7 @@ class Oep extends \Zotlabs\Web\Controller {
 	
 	function oep_display_reply($args) {
 	
-		$ret = array();
+		$ret = [];
 		$url = $args['url'];
 		$maxwidth  = intval($args['maxwidth']);
 		$maxheight = intval($args['maxheight']);
@@ -326,7 +326,7 @@ class Oep extends \Zotlabs\Web\Controller {
 	
 	function oep_mid_reply($args) {
 	
-		$ret = array();
+		$ret = [];
 		$url = $args['url'];
 		$maxwidth  = intval($args['maxwidth']);
 		$maxheight = intval($args['maxheight']);
@@ -434,7 +434,7 @@ class Oep extends \Zotlabs\Web\Controller {
 				$height = $maxheight;
 			}
 		} 
-		$ret = array();
+		$ret = [];
 	
 		$ret['type'] = 'rich';
 		$ret['width'] = intval($width);
@@ -448,7 +448,7 @@ class Oep extends \Zotlabs\Web\Controller {
 	
 	function oep_album_reply($args) {
 	
-		$ret = array();
+		$ret = [];
 		$url = $args['url'];
 		$maxwidth  = intval($args['maxwidth']);
 		$maxheight = intval($args['maxheight']);
@@ -513,7 +513,7 @@ class Oep extends \Zotlabs\Web\Controller {
 	
 	function oep_phototop_reply($args) {
 	
-		$ret = array();
+		$ret = [];
 		$url = $args['url'];
 		$maxwidth  = intval($args['maxwidth']);
 		$maxheight = intval($args['maxheight']);
@@ -576,7 +576,7 @@ class Oep extends \Zotlabs\Web\Controller {
 	
 	function oep_photo_reply($args) {
 	
-		$ret = array();
+		$ret = [];
 		$url = $args['url'];
 		$maxwidth  = intval($args['maxwidth']);
 		$maxheight = intval($args['maxheight']);

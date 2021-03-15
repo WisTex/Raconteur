@@ -116,7 +116,7 @@ class Profs {
 		}
 	
 		$basic = '';
-		$barr = array();
+		$barr = [];
 		$fields = get_profile_fields_basic();
 
 		if(! $fields)

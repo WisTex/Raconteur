@@ -270,7 +270,7 @@ class Connections extends Controller {
 			intval(App::$pager['start'])
 		);
 	
-		$contacts = array();
+		$contacts = [];
 	
 		if($r) {
 

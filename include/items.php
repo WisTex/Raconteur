@@ -43,7 +43,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 
 
 	$private_envelope = ((intval($item['item_private'])) ? true : false);
-	$recipients = array();
+	$recipients = [];
 
 	if ($item['allow_cid'] || $item['allow_gid'] || $item['deny_cid'] || $item['deny_gid']) {
 
@@ -643,7 +643,7 @@ function limit_body_size($body) {
 
 function get_item_elements($x,$allow_code = false) {
 
-	$arr = array();
+	$arr = [];
 
 	$arr['body'] = $x['body'];
 	$arr['summary'] = $x['summary'];
@@ -763,14 +763,14 @@ function get_item_elements($x,$allow_code = false) {
 	if($xchan_hash)
 		$arr['author_xchan'] = $xchan_hash;
 	else
-		return array();
+		return [];
 
 	$xchan_hash = import_author_xchan($x['owner']);
 	if($xchan_hash) {
 		$arr['owner_xchan'] = $xchan_hash;
 	}
 	else {
-		return array();
+		return [];
 	}
 
 	// Check signature on the body text received.
@@ -1209,7 +1209,7 @@ function translate_scope($scope) {
  * @return array an associative array
  */
 function encode_item_xchan($xchan) {
-	$ret = array();
+	$ret = [];
 
 	$ret['name']     = $xchan['xchan_name'];
 	$ret['address']  = $xchan['xchan_addr'];
@@ -1224,7 +1224,7 @@ function encode_item_xchan($xchan) {
 }
 
 function encode_item_terms($terms,$mirror = false) {
-	$ret = array();
+	$ret = [];
 
 	$allowed_export_terms = array( TERM_UNKNOWN, TERM_HASHTAG, TERM_MENTION, TERM_CATEGORY, TERM_BOOKMARK, TERM_COMMUNITYTAG, TERM_FORUM );
 
@@ -1244,7 +1244,7 @@ function encode_item_terms($terms,$mirror = false) {
 }
 
 function encode_item_meta($meta,$mirror = false) {
-	$ret = array();
+	$ret = [];
 
 	if($meta) {
 		foreach($meta as $m) {
@@ -1257,7 +1257,7 @@ function encode_item_meta($meta,$mirror = false) {
 }
 
 function decode_item_meta($meta) {
-	$ret = array();
+	$ret = [];
 
 	if(is_array($meta) && $meta) {
 		foreach($meta as $m) {
@@ -1290,9 +1290,9 @@ function termtype($t) {
  */
 function decode_tags($t) {
 	if($t) {
-		$ret = array();
+		$ret = [];
 		foreach($t as $x) {
-			$tag = array();
+			$tag = [];
 			$tag['term'] = htmlspecialchars($x['tag'], ENT_COMPAT, 'UTF-8', false);
 			$tag['url']  = htmlspecialchars($x['url'], ENT_COMPAT, 'UTF-8', false);
 			switch($x['type']) {
@@ -1374,7 +1374,7 @@ function purify_imported_object($obj) {
 function activity_sanitise($arr) {
 	if($arr) {
 		if(is_array($arr)) {
-			$ret = array();
+			$ret = [];
 			foreach($arr as $k => $x) {
 				if ($k === 'source' && array_path_exists('source/mediaType',$arr)) {
 					if (array_path_exists('source/content',$arr) && isset($arr['source']['mediaType']) && in_array($arr['source']['mediaType'], [ 'text/bbcode', 'text/x-multicode' ])) {
@@ -1416,7 +1416,7 @@ function activity_sanitise($arr) {
  */
 function array_sanitise($arr) {
 	if($arr) {
-		$ret = array();
+		$ret = [];
 		foreach($arr as $x) {
 			$ret[] = htmlspecialchars($x, ENT_COMPAT,'UTF-8',false);
 		}
@@ -1431,7 +1431,7 @@ function encode_item_flags($item) {
 //	most of item_flags and item_restrict are local settings which don't apply when transmitted.
 //  We may need those for the case of syncing other hub locations which you are attached to.
 
-	$ret = array();
+	$ret = [];
 
 	if(intval($item['item_deleted']))
 		$ret[] = 'deleted';
@@ -1456,12 +1456,12 @@ function encode_item_flags($item) {
 
 function get_profile_elements($x) {
 
-	$arr = array();
+	$arr = [];
 
 	if(($xchan_hash = import_author_xchan($x['from'])) !== false)
 		$arr['xprof_hash'] = $xchan_hash;
 	else
-		return array();
+		return [];
 
 	$arr['desc']         = (($x['title']) ? htmlspecialchars($x['title'],ENT_COMPAT,'UTF-8',false) : '');
 
@@ -1476,7 +1476,7 @@ function get_profile_elements($x) {
 	$arr['postcode']     = (($x['postcode'])  ? htmlspecialchars($x['postcode'],  ENT_COMPAT,'UTF-8',false) : '');
 	$arr['country']      = (($x['country'])   ? htmlspecialchars($x['country'],   ENT_COMPAT,'UTF-8',false) : '');
 
-	$arr['keywords']     = (($x['keywords'] && is_array($x['keywords'])) ? array_sanitise($x['keywords']) : array());
+	$arr['keywords']     = (($x['keywords'] && is_array($x['keywords'])) ? array_sanitise($x['keywords']) : []);
 
 	return $arr;
 }
@@ -2672,7 +2672,7 @@ function tag_deliver($uid, $item_id) {
 			$body = preg_replace('/\[share(.*?)\[\/share\]/','',$item['body']);
 
 			$tagged = false;
-			$matches = array();
+			$matches = [];
 
 			$pattern = '/[\!@]\!?\[[uz]rl\=' . preg_quote($term['url'],'/') . '\](.*?)\[\/[uz]rl\]/';
 			if (preg_match($pattern,$body,$matches))
@@ -3835,7 +3835,7 @@ function fetch_post_tags($items, $link = false) {
 				if (array_key_exists('item_id',$items[$x])) {
 					if ($t['oid'] == $items[$x]['item_id']) {
 						if (! (isset($items[$x]['term']) && is_array($items[$x]['term']))) {
-							$items[$x]['term'] = array();
+							$items[$x]['term'] = [];
 						}
 						$items[$x]['term'][] = $t;
 					}
@@ -3843,7 +3843,7 @@ function fetch_post_tags($items, $link = false) {
 				else {
 					if ($t['oid'] == $items[$x]['id']) {
 						if (! is_array($items[$x]['term'])) {
-							$items[$x]['term'] = array();
+							$items[$x]['term'] = [];
 						}
 						$items[$x]['term'][] = $t;
 					}
@@ -3855,7 +3855,7 @@ function fetch_post_tags($items, $link = false) {
 				if (array_key_exists('item_id',$items[$x])) {
 					if ($i['iid'] == $items[$x]['item_id']) {
 						if (! (isset($items[$x]['iconfig']) && is_array($items[$x]['iconfig']))) {
-							$items[$x]['iconfig'] = array();
+							$items[$x]['iconfig'] = [];
 						}
 						$i['v'] = unserialise($i['v']);
 						$items[$x]['iconfig'][] = $i;
@@ -3864,7 +3864,7 @@ function fetch_post_tags($items, $link = false) {
 				else {
 					if ($i['iid'] == $items[$x]['id']) {
 						if (! (isset($items[$x]['iconfig']) && is_array($items[$x]['iconfig']))) {
-							$items[$x]['iconfig'] = array();
+							$items[$x]['iconfig'] = [];
 						}
 						$i['v'] = unserialise($i['v']);
 						$items[$x]['iconfig'][] = $i;
@@ -3888,7 +3888,7 @@ function fetch_post_tags($items, $link = false) {
  */
 function zot_feed($uid, $observer_hash, $arr) {
 
-	$result = array();
+	$result = [];
 	$mindate = null;
 	$message_id = null;
 	$wall = true;
@@ -3996,7 +3996,7 @@ function zot_feed($uid, $observer_hash, $arr) {
 		$items = conv_sort($items,'ascending');
 	}
 	else
-		$items = array();
+		$items = [];
 
 	logger('zot_feed: number items: ' . count($items),LOGGER_DEBUG);
 

@@ -234,7 +234,7 @@ function store_doc_file($s) {
 	if(is_dir($s))
 		return;
 
-	$item = array();
+	$item = [];
 	$sys = get_sys_channel();
 
 	$item['aid'] = 0;

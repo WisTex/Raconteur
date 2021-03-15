@@ -24,7 +24,7 @@ class Sitesearch {
 
 		$o = '';
 
-		$saved = array();
+		$saved = [];
 
 		$tpl = get_markup_template("sitesearch.tpl");
 		$o = replace_macros($tpl, array(

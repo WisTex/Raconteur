@@ -164,7 +164,7 @@ class Security {
 
 
 	function trim_array_elems($arr) {
-		$narr = array();
+		$narr = [];
 	
 		if($arr && is_array($arr)) {
 			for($x = 0; $x < count($arr); $x ++) {

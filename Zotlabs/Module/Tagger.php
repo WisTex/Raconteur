@@ -127,7 +127,7 @@ class Tagger extends \Zotlabs\Web\Controller {
 	
 		$channel = \App::get_channel();
 	
-		$arr = array();
+		$arr = [];
 	
 		$arr['owner_xchan'] = $item['owner_xchan'];
 		$arr['author_xchan'] = $channel['channel_hash'];

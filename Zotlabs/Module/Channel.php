@@ -207,7 +207,7 @@ class Channel extends Controller {
 		$static   = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
 		$search   = ((x($_GET,'search')) ? $_GET['search'] : EMPTY_STR);
 
-		$groups = array();
+		$groups = [];
 
 		$o = '';
 

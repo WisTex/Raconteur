@@ -7,7 +7,7 @@ class Smilies extends \Zotlabs\Web\Controller {
 	function get() { 
 		if (\App::$argv[1]==="json"){
 			$tmp = list_smilies();
-			$results = array();
+			$results = [];
 			for($i = 0; $i < count($tmp['texts']); $i++) {
 				$results[] = array('text' => $tmp['texts'][$i], 'icon' => $tmp['icons'][$i]);
 			}

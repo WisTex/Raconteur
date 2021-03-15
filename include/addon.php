@@ -208,7 +208,7 @@ function reload_plugins() {
 		if(count($r))
 			$installed = $r;
 		else
-			$installed = array();
+			$installed = [];
 
 		$parr = explode(',', $plugins);
 
@@ -324,7 +324,7 @@ function plugins_sync() {
 function visible_plugin_list() {
 	
 	$r = q("select * from addon where hidden = 0 order by aname asc");
-	$x = (($r) ? ids_to_array($r,'aname') : array());
+	$x = (($r) ? ids_to_array($r,'aname') : []);
 	$y = [];
 	if($x) {
 		foreach($x as $xv) {
@@ -453,10 +453,10 @@ function load_hooks() {
 function insert_hook($hook, $fn, $version = 0, $priority = 0) {
 
 	if(! is_array(App::$hooks))
-		App::$hooks = array();
+		App::$hooks = [];
 
 	if(! array_key_exists($hook, App::$hooks))
-		App::$hooks[$hook] = array();
+		App::$hooks[$hook] = [];
 
 	App::$hooks[$hook][] = array('', $fn, $priority, $version);
 }
@@ -529,12 +529,12 @@ function call_hooks($name, &$data = null) {
  * @return array with the plugin information
  */
 function get_plugin_info($plugin){
-	$m = array();
+	$m = [];
 	$info = array(
 		'name' => $plugin,
 		'description' => '',
-		'author' => array(),
-		'maintainer' => array(),
+		'author' => [],
+		'maintainer' => [],
 		'version' => '',
 		'requires' => ''
 	);
@@ -587,12 +587,12 @@ function get_plugin_info($plugin){
  * @return array with the information
  */
 function get_widget_info($widget){
-	$m = array();
+	$m = [];
 	$info = array(
 		'name' => $widget,
 		'description' => '',
-		'author' => array(),
-		'maintainer' => array(),
+		'author' => [],
+		'maintainer' => [],
 		'version' => '',
 		'requires' => ''
 	);
@@ -728,17 +728,17 @@ function check_plugin_versions($info) {
  * @return array
  */
 function get_theme_info($theme){
-	$m = array();
+	$m = [];
 	$info = array(
 		'name' => $theme,
 		'description' => '',
-		'author' => array(),
+		'author' => [],
 		'version' => '',
 		'minversion' => '',
 		'maxversion' => '',
 		'compat' => '',
 		'credits' => '',
-		'maintainer' => array(),
+		'maintainer' => [],
 		'experimental' => false,
 		'unsupported' => false
 	);

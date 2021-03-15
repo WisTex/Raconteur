@@ -39,13 +39,13 @@ class Themes {
 	function get(){
 		$allowed_themes_str = get_config('system', 'allowed_themes');
 		$allowed_themes_raw = explode(',', $allowed_themes_str);
-		$allowed_themes = array();
+		$allowed_themes = [];
 		if(count($allowed_themes_raw))
 			foreach($allowed_themes_raw as $x)
 				if(strlen(trim($x)))
 					$allowed_themes[] = trim($x);
 
-		$themes = array();
+		$themes = [];
 		$files = glob('view/theme/*');
 		if($files) {
 			foreach($files as $file) {
@@ -144,7 +144,7 @@ class Themes {
 		 * List themes
 		 */
 
-		$xthemes = array();
+		$xthemes = [];
 		if($themes) {
 			foreach($themes as $th) {
 				$xthemes[] = array($th['name'],(($th['allowed']) ? "on" : "off"), get_theme_info($th['name']));

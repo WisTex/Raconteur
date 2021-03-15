@@ -114,14 +114,14 @@ class Display {
 
 		$allowed_themes_str = get_config('system','allowed_themes');
 		$allowed_themes_raw = explode(',',$allowed_themes_str);
-		$allowed_themes = array();
+		$allowed_themes = [];
 		if(count($allowed_themes_raw))
 			foreach($allowed_themes_raw as $x)
 				if(strlen(trim($x)) && is_dir("view/theme/$x"))
 					$allowed_themes[] = trim($x);
 
 
-		$themes = array();
+		$themes = [];
 		$files = glob('view/theme/*');
 		if($allowed_themes) {
 			foreach($allowed_themes as $th) {

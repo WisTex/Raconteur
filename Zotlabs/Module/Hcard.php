@@ -67,7 +67,7 @@ class Hcard extends Controller {
 	function get() {
 
 		$x = new \Zotlabs\Widget\Profile();	
-		return $x->widget(array());
+		return $x->widget([]);
 	
 	}
 	

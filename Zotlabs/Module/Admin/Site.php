@@ -175,7 +175,7 @@ class Site {
 	function get() {
 
 		/* Installed langs */
-		$lang_choices = array();
+		$lang_choices = [];
 		$langs = glob('view/*/strings.php');
 
 		if (is_array($langs) && count($langs)) {
@@ -190,7 +190,7 @@ class Site {
 
 		/* Installed themes */
 		$theme_choices_mobile["---"] = t("Default");
-		$theme_choices = array();
+		$theme_choices = [];
 		$files = glob('view/theme/*');
 		if ($files) {
 			foreach ($files as $file) {
@@ -237,7 +237,7 @@ class Site {
 				dbesc($realm)
 			);
 			if ($x) {
-				$dir_choices = array();
+				$dir_choices = [];
 				foreach ($x as $xx) {
 					$dir_choices[$xx['site_url']] = $xx['site_url'];
 				}

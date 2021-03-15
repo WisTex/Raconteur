@@ -1679,7 +1679,7 @@ class Activity {
 					Run::Summon([ 'Notifier', 'permissions_create', $new_connection[0]['abook_id'] ]);
 				}
 
-				$clone = array();
+				$clone = [];
 				foreach ($new_connection[0] as $k => $v) {
 					if (strpos($k,'abook_') === 0) {
 						$clone[$k] = $v;
@@ -1691,9 +1691,9 @@ class Activity {
 		
 				$abconfig = load_abconfig($channel['channel_id'],$clone['abook_xchan']);
 
-				if ($abconfig)
+				if ($abconfig) {
 					$clone['abconfig'] = $abconfig;
-
+				}
 				Libsync::build_sync_packet($channel['channel_id'], [ 'abook' => array($clone) ] );
 			}
 		}
@@ -1703,8 +1703,9 @@ class Activity {
 
 		if ($channel['channel_default_group'] && $automatic) {
 			$g = AccessList::rec_byhash($channel['channel_id'],$channel['channel_default_group']);
-			if ($g)
+			if ($g) {
 				AccessList::member_add($channel['channel_id'],'',$ret['xchan_hash'],$g['id']);
+			}
 		}
 
 		return;
@@ -1933,7 +1934,7 @@ class Activity {
 			// Record exists. Cache existing records for a set number of days
 			// then refetch to catch updated profile photos, names, etc. 
 
-			if ($r[0]['xchan_name_date'] >= datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days')) {
+			if ($r[0]['xchan_name_date'] >= datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days') && (! $force)) {
 				return;
 			}
 

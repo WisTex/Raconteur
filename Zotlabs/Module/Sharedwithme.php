@@ -58,7 +58,7 @@ class Sharedwithme extends \Zotlabs\Web\Controller {
 			dbesc($channel['channel_hash'])
 		);
 	
-		$items =array();
+		$items =[];
 		$ids = '';
 	
 		if($r) {
@@ -66,7 +66,7 @@ class Sharedwithme extends \Zotlabs\Web\Controller {
 			foreach($r as $rr) {
 				$object = json_decode($rr['obj'],true);
 	
-				$item = array();
+				$item = [];
 				$item['id'] = $rr['id'];
 				$item['objfiletype'] = $object['filetype'];
 				$item['objfiletypeclass'] = getIconFromType($object['filetype']);
