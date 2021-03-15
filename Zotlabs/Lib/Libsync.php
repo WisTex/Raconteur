@@ -685,7 +685,7 @@ class Libsync {
 					&& count($arr['collection_members'])) {
 
 					// first sort into groups keyed by the group hash
-					$members = array();
+					$members = [];
 					foreach ($arr['collection_members'] as $cm) {
 						if (! array_key_exists($cm['collection'],$members)) {
 							$members[$cm['collection']] = [];
@@ -851,7 +851,7 @@ class Libsync {
 
 	static function sync_locations($sender, $arr, $absolute = false) {
 
-		$ret = array();
+		$ret = [];
 
 		if($arr['locations']) {
 

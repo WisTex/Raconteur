@@ -80,18 +80,18 @@ function reduce($fileset, $ps) {
 	$parts=array_filter($parts, "runs");
 	//melt remaining parts together
 	if(is_array($parts)) {
-		return array_reduce($parts, "array_merge", array());
+		return array_reduce($parts, "array_merge", []);
 	}
-	return array();
+	return [];
 };
 
 //return from util folder to frindica base dir
 $dir='..';
 
 //stack for dirs to search
-$dirstack=array();
+$dirstack=[];
 //list of source files
-$filelist=array();
+$filelist=[];
 
 //loop over all files in $dir
 while($dh=opendir($dir)) {
@@ -131,7 +131,7 @@ do {
 } while(count($res)<$i);
 
 //check one file after another
-$needed=array();
+$needed=[];
 
 while(count($res)!=0) {
 	$file=array_pop($res);

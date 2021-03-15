@@ -23,7 +23,7 @@ require_once('include/menu.php');
 class Comanche {
 
 	function parse($s, $pass = 0) {
-		$matches = array();
+		$matches = [];
 
 		$cnt = preg_match_all("/\[comment\](.*?)\[\/comment\]/ism", $s, $matches, PREG_SET_ORDER);
 		if ($cnt) {
@@ -57,7 +57,7 @@ class Comanche {
 				$switch_done = 0;
 				$switch_var = $this->get_condition_var($mtch[1]);
 				$default = $mtch[3];
-				$cases = array();
+				$cases = [];
 				$cntt = preg_match_all("/\[case (.*?)\](.*?)\[\/case\]/ism", $mtch[2], $cases, PREG_SET_ORDER);
 				if ($cntt) {
 					foreach ($cases as $case) {
@@ -381,8 +381,8 @@ class Comanche {
 	 * @return string parsed HTML of block
 	 */
 	function block($s, $class = '') {
-		$var = array();
-		$matches = array();
+		$var = [];
+		$matches = [];
 		$name = $s;
 		$class = (($class) ? $class : 'bblock widget');
 
@@ -504,8 +504,8 @@ class Comanche {
 	 * @return array
 	 */
 	function webpage(&$a, $s) {
-		$ret = array();
-		$matches = array();
+		$ret = [];
+		$matches = [];
 
 		$cnt = preg_match_all("/\[authored\](.*?)\[\/authored\]/ism", $s, $matches, PREG_SET_ORDER);
 		if ($cnt) {
@@ -524,8 +524,8 @@ class Comanche {
 	 * @param string $text
 	 */
 	function widget($name, $text) {
-		$vars = array();
-		$matches = array();
+		$vars = [];
+		$matches = [];
 
 		$cnt = preg_match_all("/\[var=(.*?)\](.*?)\[\/var\]/ism", $text, $matches, PREG_SET_ORDER);
 		if ($cnt) {
@@ -605,7 +605,7 @@ class Comanche {
 
 		$s = str_replace('$region',$region_name,$s);
 
-		$matches = array();
+		$matches = [];
 
 		$cnt = preg_match_all("/\[menu\](.*?)\[\/menu\]/ism", $s, $matches, PREG_SET_ORDER);
 		if ($cnt) {

@@ -854,7 +854,7 @@ function identity_basic_export($channel_id, $sections = null) {
 	}
 
 	if (in_array('connections',$sections)) {
-		$xchans = array();
+		$xchans = [];
 		$r = q("select * from abook where abook_channel = %d ",
 			intval($channel_id)
 		);
@@ -1001,7 +1001,7 @@ function identity_basic_export($channel_id, $sections = null) {
 			intval($channel_id)
 		);
 		if ($r) {
-			$ret['event_item'] = array();
+			$ret['event_item'] = [];
 			xchan_query($r);
 			$r = fetch_post_tags($r,true);
 			foreach ($r as $rr) {
@@ -1026,7 +1026,7 @@ function identity_basic_export($channel_id, $sections = null) {
 			db_quoteinterval('3 MONTH')
 		);
 		if ($r) {
-			$ret['item'] = array();
+			$ret['item'] = [];
 			xchan_query($r);
 			$r = fetch_post_tags($r,true);
 			foreach ($r as $rr) {
@@ -1114,7 +1114,7 @@ function channel_export_items_date($channel_id, $start, $finish) {
 		return [];
 	}
 
-	$ret = array();
+	$ret = [];
 
 	$ch = channelx_by_n($channel_id);
 	if ($ch) {
@@ -1131,7 +1131,7 @@ function channel_export_items_date($channel_id, $start, $finish) {
 	);
 
 	if ($r) {
-		$ret['item'] = array();
+		$ret['item'] = [];
 		xchan_query($r);
 		$r = fetch_post_tags($r, true);
 		foreach ($r as $rr) {
@@ -1202,7 +1202,7 @@ function channel_export_items_page($channel_id, $start, $finish, $page = 0, $lim
 	);
 
 	if ($r) {
-		$ret['item'] = array();
+		$ret['item'] = [];
 		xchan_query($r);
 		$r = fetch_post_tags($r, true);
 		foreach ($r as $rr) {
@@ -1496,7 +1496,7 @@ function get_profile_fields_basic($filter = 0) {
 		$profile_fields_basic = array('fullname','pdesc','chandesc','basic_gender','pronouns','dob','dob_tz','region','country_name','marital','sexual','homepage','hometown','keywords','about','contact');
 	}
 	
-	$x = array();
+	$x = [];
 	if ($profile_fields_basic)
 		foreach ($profile_fields_basic as $f)
 			$x[$f] = 1;
@@ -1511,7 +1511,7 @@ function get_profile_fields_advanced($filter = 0) {
 	if (! $profile_fields_advanced) {
 		$profile_fields_advanced = array('comms', 'address','locality','postal_code','advanced_gender', 'partner','howlong','politic','religion','likes','dislikes','interest','channels','music','book','film','tv','romance','employment','education');
 	}
-	$x = array();
+	$x = [];
 	if ($basic) {
 		foreach ($basic as $f => $v) {
 			$x[$f] = $v;
@@ -1675,7 +1675,7 @@ function get_cover_photo($channel_id,$format = 'bbcode', $res = PHOTO_RES_COVER_
  * @param array $args (optional)
  * @return string parsed HTML from \e zcard template
  */
-function get_zcard($channel, $observer_hash = '', $args = array()) {
+function get_zcard($channel, $observer_hash = '', $args = []) {
 
 	logger('get_zcard');
 
@@ -1749,7 +1749,7 @@ function get_zcard($channel, $observer_hash = '', $args = array()) {
  * @param array $args (optional)
  * @return string parsed HTML from \e zcard_embed template
  */
-function get_zcard_embed($channel, $observer_hash = '', $args = array()) {
+function get_zcard_embed($channel, $observer_hash = '', $args = []) {
 
 	logger('get_zcard_embed');
 

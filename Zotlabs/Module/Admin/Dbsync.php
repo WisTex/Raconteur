@@ -83,7 +83,7 @@ class Dbsync {
 			return $o;
 		}
 	
-		$failed = array();
+		$failed = [];
 		$r = q("select * from config where cat = 'database' ");
 		if(count($r)) {
 			foreach($r as $rr) {

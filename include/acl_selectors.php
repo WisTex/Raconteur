@@ -47,13 +47,13 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 
 	if (is_array($defaults)) {
 		$allow_cid = ((strlen($defaults['allow_cid']))
-			? explode('><', $defaults['allow_cid']) : array() );
+			? explode('><', $defaults['allow_cid']) : [] );
 		$allow_gid = ((strlen($defaults['allow_gid']))
-			? explode('><', $defaults['allow_gid']) : array() );
+			? explode('><', $defaults['allow_gid']) : [] );
 		$deny_cid  = ((strlen($defaults['deny_cid']))
-			? explode('><', $defaults['deny_cid']) : array() );
+			? explode('><', $defaults['deny_cid']) : [] );
 		$deny_gid  = ((strlen($defaults['deny_gid']))
-			? explode('><', $defaults['deny_gid']) : array() );
+			? explode('><', $defaults['deny_gid']) : [] );
 		array_walk($allow_cid,'fixacl');
 		array_walk($allow_gid,'fixacl');
 		array_walk($deny_cid,'fixacl');

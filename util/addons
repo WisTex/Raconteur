@@ -19,14 +19,14 @@ require_once('include/cli_startup.php');
 cli_startup();
 
 	$plugs = get_config('system', 'addon');
-	$plugins_arr = array();
+	$plugins_arr = [];
 
 	if($plugs)
 		$plugins_arr = explode(',', str_replace(' ', '', $plugs));
 
 	App::$plugins = $plugins_arr;
 
-	$plugins = array();
+	$plugins = [];
 	$files = glob('addon/*/');
 	if($files) {
 		foreach($files as $file) {

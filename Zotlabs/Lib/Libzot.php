@@ -3052,7 +3052,7 @@ class Libzot {
 			intval($e['channel_id'])
 		);
 
-		$profile = array();
+		$profile = [];
 
 		if ($p) {
 
@@ -3080,7 +3080,7 @@ class Libzot {
 			$profile['hometown']      = $p[0]['hometown'];
 
 			if ($p[0]['keywords']) {
-				$tags = array();
+				$tags = [];
 				$k = explode(' ',$p[0]['keywords']);
 				if ($k) {
 					foreach ($k as $kk) {

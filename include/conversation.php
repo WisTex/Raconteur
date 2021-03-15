@@ -11,7 +11,7 @@ use Zotlabs\Access\PermissionLimits;
 
 function item_extract_images($body) {
 
-	$saved_image = array();
+	$saved_image = [];
 	$orig_body = $body;
 	$new_body = '';
 
@@ -321,7 +321,7 @@ function localize_item(&$item){
 			default:
 				if($obj['resource_id']){
 					$post_type = t('photo');
-					$m=array(); preg_match("/\[[zu]rl=([^]]*)\]/", $obj['body'], $m);
+					$m=[]; preg_match("/\[[zu]rl=([^]]*)\]/", $obj['body'], $m);
 					$rr['plink'] = $m[1];
 				} else {
 					$post_type = t('status');
@@ -623,7 +623,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
 
 	// array with html for each thread (parent+comments)
-	$threads = array();
+	$threads = [];
 	$threadsid = -1;
 
 	$page_template = get_markup_template("conversation.tpl");
@@ -713,7 +713,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
 				$unverified = '';
 
-//				$tags=array();
+//				$tags=[];
 //				$terms = get_terms_oftype($item['term'],array(TERM_HASHTAG,TERM_MENTION,TERM_UNKNOWN,TERM_COMMUNITYTAG));
 //				if(count($terms))
 //					foreach($terms as $tag)
@@ -825,7 +825,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 			// this shouldn't be needed, as we should have only them in our array
 			// But for now, this array respects the old style, just in case
 
-			$threads = array();
+			$threads = [];
 			foreach($items as $item) {
 
 
@@ -861,7 +861,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 			$threads = $conv->get_template_data($conv_responses);
 			if(!$threads) {
 				logger('[ERROR] conversation : Failed to get template data.', LOGGER_DEBUG);
-				$threads = array();
+				$threads = [];
 			}
 			//logger('threads: ' . print_r($threads,true), LOGGER_DATA);
 		}
@@ -1157,7 +1157,7 @@ function builtin_activity_puller($item, &$conv_responses) {
 
 			if(! ((isset($conv_responses[$mode][$item['thr_parent'] . '-l'])) 
 				&& (is_array($conv_responses[$mode][$item['thr_parent'] . '-l']))))
-				$conv_responses[$mode][$item['thr_parent'] . '-l'] = array();
+				$conv_responses[$mode][$item['thr_parent'] . '-l'] = [];
 
 			// only list each unique author once
 			if(in_array($url,$conv_responses[$mode][$item['thr_parent'] . '-l']))
@@ -1267,7 +1267,7 @@ function z_status_editor($x, $popup = false) {
 		$feature_markup = false;
 
 
-	$geotag = (($x['allow_location']) ? replace_macros(get_markup_template('jot_geotag.tpl'), array()) : '');
+	$geotag = (($x['allow_location']) ? replace_macros(get_markup_template('jot_geotag.tpl'), []) : '');
 	$setloc = t('Set your location');
 	$clearloc = ((get_pconfig($x['profile_uid'], 'system', 'use_browser_location')) ? t('Clear browser location') : '');
 	if(x($x, 'hide_location'))
@@ -2119,9 +2119,9 @@ function profile_tabs($a, $is_owner = false, $nickname = null){
 
 function get_responses($conv_responses,$response_verbs,$ob,$item) {
 
-	$ret = array();
+	$ret = [];
 	foreach($response_verbs as $v) {
-		$ret[$v] = array();
+		$ret[$v] = [];
 		$ret[$v]['count'] = ((x($conv_responses[$v],$item['mid'])) ? $conv_responses[$v][$item['mid']] : '');
 		$ret[$v]['list']  = ((x($conv_responses[$v],$item['mid'])) ? $conv_responses[$v][$item['mid'] . '-l'] : '');
 		$ret[$v]['button'] = get_response_button_text($v,$ret[$v]['count']);

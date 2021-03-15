@@ -75,7 +75,7 @@ class Profperm extends Controller {
 				dbesc($profile['profile_guid'])
 			);
 	
-			$ingroup = array();
+			$ingroup = [];
 			if($r)
 				foreach($r as $member)
 					$ingroup[] = $member['abook_id'];
@@ -106,7 +106,7 @@ class Profperm extends Controller {
 	
 				$members = $r;
 	
-				$ingroup = array();
+				$ingroup = [];
 				if(count($r))
 					foreach($r as $member)
 						$ingroup[] = $member['abook_id'];

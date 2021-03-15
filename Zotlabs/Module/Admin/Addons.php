@@ -368,7 +368,7 @@ class Addons {
 		/*
 		 * List plugins
 		 */
-		$plugins = array();
+		$plugins = [];
 		$files = glob('addon/*/');
 		if($files) {
 			foreach($files as $file) {

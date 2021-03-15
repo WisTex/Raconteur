@@ -12,7 +12,7 @@ require_once('include/text.php');
 
 class ThreadStream {
 
-	private $threads = array();
+	private $threads = [];
 	private $mode = null;
 	private $observer = null;
 	private $writable = false;
@@ -211,7 +211,7 @@ class ThreadStream {
 	 *      _ false on failure
 	 */
 	public function get_template_data($conv_responses) {
-		$result = array();
+		$result = [];
 
 		foreach($this->threads as $item) {
 

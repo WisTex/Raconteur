@@ -80,7 +80,7 @@ function abook_connections($channel_id, $sql_conditions = '') {
 		and abook_self = 0 $sql_conditions",
 		intval($channel_id)
 	);
-	return(($r) ? $r : array());
+	return(($r) ? $r : []);
 }	
 
 
@@ -98,7 +98,7 @@ function abook_self($channel_id) {
 		and abook_self = 1 limit 1",
 		intval($channel_id)
 	);
-	return(($r) ? $r[0] : array());
+	return(($r) ? $r[0] : []);
 }	
 
 

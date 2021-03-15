@@ -21,7 +21,7 @@ class Appcategories {
 			$srchurl .= '/available';
 
 
-		$terms = array();
+		$terms = [];
 
 		$r = q("select distinct(term.term)
 	        from term join app on term.oid = app.id

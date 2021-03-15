@@ -115,7 +115,7 @@ function import_channel($channel, $account_id, $seize, $newname = '') {
 		'channel_moved',      'channel_removed',     'channel_deleted',   'channel_system'
 	];
 
-	$clean = array();
+	$clean = [];
 	foreach ($channel as $k => $v) {
 		if (in_array($k,$disallowed)) {
 			continue;
@@ -1061,7 +1061,7 @@ function import_menus($channel, $menus) {
 
 	if ($channel && $menus) {
 		foreach ($menus as $menu) {
-			$m = array();
+			$m = [];
 			$m['menu_channel_id'] = $channel['channel_id'];
 			$m['menu_name'] = $menu['pagetitle'];
 			$m['menu_desc'] = $menu['desc'];
@@ -1941,8 +1941,8 @@ function get_webpage_elements($channel, $type = 'all') {
 			$pages = null;
 
 			if ($r) {
-				$elements['pages'] = array();
-				$pages = array();
+				$elements['pages'] = [];
+				$pages = [];
 				foreach ($r as $rr) {
 					unobscure($rr);
 
@@ -1989,7 +1989,7 @@ function get_webpage_elements($channel, $type = 'all') {
 			);
 
 			if ($r) {
-				$elements['layouts'] = array();
+				$elements['layouts'] = [];
 
 				foreach ($r as $rr) {
 					unobscure($rr);
@@ -2026,7 +2026,7 @@ function get_webpage_elements($channel, $type = 'all') {
 			);
 
 			if ($r) {
-				$elements['blocks'] = array();
+				$elements['blocks'] = [];
 
 				foreach ($r as $rr) {
 					unobscure($rr);
@@ -2069,7 +2069,7 @@ function create_zip_file($files = [], $destination = '', $overwrite = false) {
 		return false;
 	}
 	//vars
-	$valid_files = array();
+	$valid_files = [];
 	// if files were passed in...
 	if (is_array($files)) {
 		// cycle through each file

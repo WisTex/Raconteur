@@ -869,7 +869,7 @@ function photos_create_item($channel, $creator_hash, $photo, $visible = false) {
 	$uuid = new_uuid();
 	$mid = z_root() . '/item/' . $uuid;
 
-	$arr = array();
+	$arr = [];
 
 	$arr['aid']             = $channel['channel_account_id'];
 	$arr['uid']             = $channel['channel_id'];

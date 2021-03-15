@@ -29,7 +29,7 @@ class Tagrm extends \Zotlabs\Web\Controller {
 		$r = fetch_post_tags($r,true);
 	
 		$item = $r[0];
-		$new_tags = array();
+		$new_tags = [];
 	
 		if($item['term']) {
 			for($x = 0; $x < count($item['term']); $x ++) {
@@ -79,7 +79,7 @@ class Tagrm extends \Zotlabs\Web\Controller {
 	
 			$item = $r[0];
 	
-			$new_tags = array();
+			$new_tags = [];
 	
 			if($item['term']) {
 				for($x = 0; $x < count($item['term']); $x ++) {

@@ -242,7 +242,7 @@ class Setup extends Controller {
 		switch ($this->install_wizard_pass){
 			case 1: { // System check
 
-				$checks = array();
+				$checks = [];
 
 				$this->check_funcs($checks);
 
@@ -506,7 +506,7 @@ class Setup extends Controller {
 	 * @param[in,out] array &$checks
 	 */
 	function check_funcs(&$checks) {
-		$ck_funcs = array();
+		$ck_funcs = [];
 
 		$disabled = explode(',',ini_get('disable_functions'));
 		if($disabled)
@@ -815,7 +815,7 @@ class Setup extends Controller {
 	 */
 
 	static private function getPhpiniUploadLimits() {
-	    $ret = array();
+	    $ret = [];
 
     	// max size of the complete POST
 	    $ret['post_max_size'] = self::phpiniSizeToBytes(ini_get('post_max_size'));

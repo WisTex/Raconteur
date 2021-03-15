@@ -378,7 +378,7 @@ use Zotlabs\Lib\MastAPI;
 					xchan_query($ii,true,0);
 					$ii = fetch_post_tags($ii,true);
 					if($ii) {
-						$ret['item'] = array();
+						$ret['item'] = [];
 						foreach($ii as $iii)
 							$ret['item'][] = encode_item($iii,true);
 					}
@@ -558,7 +558,7 @@ use Zotlabs\Lib\MastAPI;
 			$arr = array('item_id' => $_REQUEST['item_id']);
 		}
 		else
-			json_return_and_die(array());
+			json_return_and_die([]);
 
 		$arr['start'] = 0;
 		$arr['records'] = 999999;
@@ -567,10 +567,10 @@ use Zotlabs\Lib\MastAPI;
 		$i = items_fetch($arr,App::get_channel(),get_observer_hash());
 
 		if(! $i)
-			json_return_and_die(array());
+			json_return_and_die([]);
 
-		$ret = array();
-		$tmp = array();
+		$ret = [];
+		$tmp = [];
 		foreach($i as $ii) {
 			$tmp[] = encode_item($ii,true);
 		}

@@ -504,7 +504,7 @@ class Enotify {
 	} while ($dups === true);
 
 
-	$datarray = array();
+	$datarray = [];
 	$datarray['hash']   = $hash;
 	$datarray['sender_hash'] = $sender['xchan_hash'];
 	$datarray['xname']   = $sender['xchan_name'];
@@ -653,7 +653,7 @@ class Enotify {
 		unset($_SESSION['zid_override']);
 		unset($_SESSION['zrl_override']);
 
-		$datarray = array();
+		$datarray = [];
 		$datarray['banner']       = $banner;
 		$datarray['product']      = $product;
 		$datarray['preamble']     = $preamble;

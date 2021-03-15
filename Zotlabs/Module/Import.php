@@ -452,7 +452,7 @@ class Import extends Controller {
 		// import groups
 		$groups = $data['group'];
 		if ($groups) {
-			$saved = array();
+			$saved = [];
 			foreach ($groups as $group) {
 				$saved[$group['hash']] = [ 'old' => $group['id'] ];
 				if (array_key_exists('name', $group)) {

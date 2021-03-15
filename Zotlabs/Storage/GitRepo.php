@@ -120,7 +120,7 @@ class GitRepo {
 
 	public function probeRepo() {
 		$git = $this->git;
-		$repo = array();
+		$repo = [];
 		$repo['remote'] = $git->remote();
 		$repo['branches'] = $git->branch(['all' => true]);
 		$repo['logs'] = $git->log(array('limit' => 50));
@@ -128,7 +128,7 @@ class GitRepo {
 	}
 	
 	// Commit changes to the repo. Default is to stage all changes and commit everything.
-	public function commit($msg, $options = array()) {
+	public function commit($msg, $options = []) {
 		try {
 			return $this->git->commit($msg, $options);
 		} catch (\PHPGit\Exception\GitException $ex) {

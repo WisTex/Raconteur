@@ -19,11 +19,11 @@ class Apps extends \Zotlabs\Web\Controller {
 
 		$_SESSION['return_url'] = \App::$query_string;
 	
-		$apps = array();
+		$apps = [];
 	
 		if(local_channel()) {
 			Zlib\Apps::import_system_apps();
-			$syslist = array();
+			$syslist = [];
 			$cat = ((array_key_exists('cat',$_GET) && $_GET['cat']) ? [ escape_tags($_GET['cat']) ] : '');
 			$list = Zlib\Apps::app_list((($available) ? 0 : local_channel()), (($mode == 'edit') ? true : false), $cat);
 			if($list) {

@@ -16,7 +16,7 @@ class Config {
 	 */
 	static public function Load($family) {
 		if(! array_key_exists($family, \App::$config))
-			\App::$config[$family] = array();
+			\App::$config[$family] = [];
 
 		if(! array_key_exists('config_loaded', \App::$config[$family])) {
 			$r = q("SELECT * FROM config WHERE cat = '%s'", dbesc($family));

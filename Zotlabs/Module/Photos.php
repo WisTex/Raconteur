@@ -117,7 +117,7 @@ class Photos extends Controller {
 				$folder_hash = $r[0]['hash'];
 	
 	
-				$res = array();
+				$res = [];
 				$admin_delete = false;
 
 				// get the list of photos we are about to delete
@@ -398,7 +398,7 @@ class Photos extends Controller {
 				$results = linkify_tags($rawtags, (local_channel()) ? local_channel() : $profile_uid);
 	
 				$success = $results['success'];
-				$post_tags = array();
+				$post_tags = [];
 	
 				foreach($results as $result) {
 					$success = $result['success'];
@@ -782,7 +782,7 @@ class Photos extends Controller {
 			];
 				
 	
-			$photos = array();
+			$photos = [];
 			if(count($r)) {
 				$twist = 'rotright';
 				foreach($r as $rr) {
@@ -1006,7 +1006,7 @@ class Photos extends Controller {
 					$r = conv_sort($r,'commented');
 				}
 	
-				$tags = array();
+				$tags = [];
 				if($link_item['term']) {
 					$cnt = 0;
 					foreach($link_item['term'] as $t) {
@@ -1121,8 +1121,8 @@ class Photos extends Controller {
 					}
 				}
 	
-				$alike = array();
-				$dlike = array();
+				$alike = [];
+				$dlike = [];
 				
 				$like = '';
 				$dislike = '';

@@ -214,7 +214,7 @@ class Webpages extends Controller {
 		$pages = null;
 	
 		if($r) {
-			$pages = array();
+			$pages = [];
 			foreach($r as $rr) {
 				unobscure($rr);
 	
@@ -584,7 +584,7 @@ class Webpages extends Controller {
 										if($p) {
 												foreach ($p as $pp) {
 														// Get the associated layout
-														$layoutinfo = array();
+														$layoutinfo = [];
 														if($pp['layout_mid']) {
 																$l = q("select iconfig.v, iconfig.k, mimetype, title, body from iconfig 
 																		left join item on item.id = iconfig.iid 

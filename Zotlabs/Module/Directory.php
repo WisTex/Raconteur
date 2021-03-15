@@ -139,8 +139,8 @@ class Directory extends Controller {
 			}
 	
 			// Remember in which order the suggestions were
-			$addresses = array();
-			$common = array();
+			$addresses = [];
+			$common = [];
 			$index = 0;
 			foreach ($r as $rr) {
 				$common[$rr['xchan_hash']] = ((intval($rr['total']) > 0) ? intval($rr['total']) - 1 : 0);
@@ -168,7 +168,7 @@ class Directory extends Controller {
 			$directory_admin = true;
 		}
 	
-		$contacts = array();
+		$contacts = [];
 	
 		if (local_channel()) {
 			$x = q("select abook_xchan from abook where abook_channel = %d",
@@ -251,7 +251,7 @@ class Directory extends Controller {
 							$results = self::reorder_results($results,$addresses);
 						}
 
-						$entries = array();
+						$entries = [];
 	
 						$photo = 'thumb';
 	

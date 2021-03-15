@@ -146,7 +146,7 @@ class Like extends Controller {
 				$objtype = ACTIVITY_OBJ_PROFILE;
 				$tgttype = ACTIVITY_OBJ_THING;
 	
-				$links   = array();
+				$links   = [];
 				$links[] = array('rel' => 'alternate', 'type' => 'text/html',
 					'href' => z_root() . '/thing/' . $r[0]['obj_obj']);
 				if($r[0]['imgurl'])	
@@ -331,7 +331,7 @@ class Like extends Controller {
 	
 		$uuid = new_uuid();
 	
-		$arr = array();
+		$arr = [];
 
 		$arr['uuid']  = $uuid;
         $arr['mid'] = z_root() . (($is_rsvp) ? '/activity/' : '/item/' ) . $uuid;

@@ -30,7 +30,7 @@ function menu_fetch($name,$uid,$observer_xchan) {
 	
 function menu_element($channel,$menu) {
 
-	$arr = array();
+	$arr = [];
 	$arr['type'] = 'menu';
 	$arr['pagetitle'] = $menu['menu']['menu_name'];
 	$arr['desc'] = $menu['menu']['menu_desc'];
@@ -39,16 +39,16 @@ function menu_element($channel,$menu) {
 
 	$arr['baseurl'] = z_root();
 	if($menu['menu']['menu_flags']) {
-		$arr['flags'] = array();
+		$arr['flags'] = [];
 		if($menu['menu']['menu_flags'] & MENU_BOOKMARK)
 			$arr['flags'][] = 'bookmark';
 		if($menu['menu']['menu_flags'] & MENU_SYSTEM)
 			$arr['flags'][] = 'system';
 	}
 	if($menu['items']) {
-		$arr['items'] = array();
+		$arr['items'] = [];
 		foreach($menu['items'] as $it) {
-			$entry = array();
+			$entry = [];
 
 			$entry['link'] = str_replace(z_root() . '/channel/' . $channel['channel_address'],'[channelurl]',$it['mitem_link']);
 			$entry['link'] = str_replace(z_root() . '/page/' . $channel['channel_address'],'[pageurl]',$it['mitem_link']);
@@ -58,7 +58,7 @@ function menu_element($channel,$menu) {
 			$entry['desc'] = $it['mitem_desc'];
 			$entry['order'] = $it['mitem_order'];
 			if($it['mitem_flags']) {
-				$entry['flags'] = array();
+				$entry['flags'] = [];
 				if($it['mitem_flags'] & MENU_ITEM_ZID)
 					$entry['flags'][] = 'zid';
 				if($it['mitem_flags'] & MENU_ITEM_NEWWIN)
@@ -75,7 +75,7 @@ function menu_element($channel,$menu) {
 
 
 
-function menu_render($menu, $class='', $edit = false, $var = array()) {
+function menu_render($menu, $class='', $edit = false, $var = []) {
 
 	if(! $menu)
 		return '';
@@ -89,7 +89,7 @@ function menu_render($menu, $class='', $edit = false, $var = array()) {
 		return '';
 
 	$menu_list = menu_list($channel_id);
-	$menu_names = array();
+	$menu_names = [];
 
 	foreach($menu_list as $menus) {
 		if($menus['menu_name'] != $menu['menu']['menu_name'])
