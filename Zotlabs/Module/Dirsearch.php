@@ -62,6 +62,7 @@ class Dirsearch extends Controller {
 	
 		$hash     = ((x($_REQUEST['hash']))    ? $_REQUEST['hash']     : '');
 		$name     = ((x($_REQUEST,'name'))     ? $_REQUEST['name']     : '');
+		$url      = ((x($_REQUEST,'url'))      ? $_REQUEST['url']      : '');
 		$hub      = ((x($_REQUEST,'hub'))      ? $_REQUEST['hub']      : '');
 		$address  = ((x($_REQUEST,'address'))  ? $_REQUEST['address']  : '');
 		$locale   = ((x($_REQUEST,'locale'))   ? $_REQUEST['locale']   : '');
@@ -110,6 +111,16 @@ class Dirsearch extends Controller {
 			$hub_query = '';
 		}
 		
+		if ($url) {
+			$r = q("select xchan_name from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_url = '%s' or hubloc_id_url = '%s'",
+				dbesc($url),
+				dbesc($url)
+			);
+			if ($r && $r[0]['xchan_name']) {
+				$name = $r[0]['xchan_name'];
+			}
+		}
+
 		// The order identifier is validated further below
 		
 		$sort_order  = ((x($_REQUEST,'order')) ? $_REQUEST['order'] : '');
@@ -238,7 +249,7 @@ class Dirsearch extends Controller {
 			where ( $logic $sql_extra ) $hub_query $network and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 
 			$safesql $order $qlimit "
 		);
-		
+
 		$ret['page'] = $page + 1;
 		$ret['records'] = count($r);		
 	

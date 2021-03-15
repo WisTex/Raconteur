@@ -38,7 +38,8 @@ class Chanview extends Controller {
 			// if somebody re-installed they will have more than one xchan, use the most recent name date as this is
 			// the most useful consistently ascending table item we have. 
 	
-			$r = q("select * from xchan where xchan_url = '%s' order by xchan_name_date desc limit 1",
+			$r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_url = '%s' or hubloc_id_url = '%s' order by xchan_name_date desc limit 1",
+				dbesc($_REQUEST['url']),
 				dbesc($_REQUEST['url'])
 			);
 		}

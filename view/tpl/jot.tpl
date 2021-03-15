@@ -217,7 +217,7 @@
 				</button>
 				{{/if}}
 				{{if $save}}
-				<button class="btn btn-sm{{if $is_draft}} btn-primary{{else}} btn-outline-secondary{{/if}}" onclick="save_draft();return false;" title="{{$save}}">
+				<button class="btn btn-sm{{if $is_draft}} btn-warning{{else}} btn-outline-secondary{{/if}}" onclick="save_draft();return false;" title="{{$save}}">
 					<i class="fa fa-floppy-o jot-icons" ></i>
 				</button>
 				{{/if}}

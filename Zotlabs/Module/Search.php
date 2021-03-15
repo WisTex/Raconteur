@@ -66,14 +66,25 @@ class Search extends Controller {
 			$j = Activity::fetch($search,App::get_channel());
 			if ($j) {
 				$AS = new ActivityStreams($j, null, true);
-				if ($AS->is_valid()) {
-					if (is_array($AS->obj) && ! ActivityStreams::is_an_actor($AS->obj)) {
-						// The boolean flag enables html cache of the item
-						$item = Activity::decode_note($AS,true);
-						if ($item) {
-							logger('parsed_item: ' . print_r($item,true),LOGGER_DATA);
-							Activity::store(App::get_channel(),get_observer_hash(),$AS,$item, true, true);
-							goaway(z_root() . '/display/' . gen_link_id($item['mid']));
+				if ($AS->is_valid() && isset($AS->data['type'])) {
+					if (ActivityStreams::is_an_actor($AS->data['type'])) {
+						Activity::actor_store($AS->data['id'],$AS->data);
+						goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);			
+					}
+					if (is_array($AS->obj)) {
+						if (isset($AS->obj['type']) && strpos($AS->obj['type'],'Collection')) {
+							// @TODO implement collection fetch here (?) - the issue is
+							// what kind of limits to provide as to how much you are willing
+							// to import
+						}
+						else {
+							// The boolean flag enables html cache of the item
+							$item = Activity::decode_note($AS,true);
+							if ($item) {
+								logger('parsed_item: ' . print_r($item,true),LOGGER_DATA);
+								Activity::store(App::get_channel(),get_observer_hash(),$AS,$item, true, true);
+								goaway(z_root() . '/display/' . gen_link_id($item['mid']));
+							}
 						}
 					}
 				}

@@ -39,7 +39,7 @@
 					    <span class="float-right wall-item-pinned" title="{{$item.pinned}}" id="wall-item-pinned-{{$item.id}}"><i class="fa fa-thumb-tack">&nbsp;</i></span>
 					{{/if}}
 					{{if $item.isdraft}}
-					    <span class="float-right wall-item-draft" title="{{$item.draft_txt}}" id="wall-item-draft-{{$item.id}}"><i class="fa fa-floppy-o">&nbsp;</i></span>
+					    <span class="float-right wall-item-draft" title="{{$item.draft_txt}}" id="wall-item-draft-{{$item.id}}"><a href="editpost/{{$item.id}}"><i class="fa fa-floppy-o">&nbsp;</i></a></span>
 					{{/if}}
 
 					<div class="wall-item-info " id="wall-item-info-{{$item.id}}" >
