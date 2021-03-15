@@ -93,7 +93,7 @@ class Profile extends \Zotlabs\Web\Controller {
 			return login();
 		}
 	
-		$groups = array();
+		$groups = [];
 
 
 

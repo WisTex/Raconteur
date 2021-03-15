@@ -62,7 +62,7 @@ class Portfolio {
 		//edit album name
 		$album_edit = null;
 
-		$photos = array();
+		$photos = [];
 		if($r) {
 			$twist = 'rotright';
 			foreach($r as $rr) {

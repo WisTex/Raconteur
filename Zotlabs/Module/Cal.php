@@ -127,7 +127,7 @@ class Cal extends Controller {
 	
 			// Passed parameters overrides anything found in the DB
 			if(!x($orig_event))
-				$orig_event = array();
+				$orig_event = [];
 	
 	
 	
@@ -247,7 +247,7 @@ class Cal extends Controller {
 	
 			}
 	
-			$links = array();
+			$links = [];
 	
 			if($r) {
 				xchan_query($r);
@@ -264,7 +264,7 @@ class Cal extends Controller {
 				}
 			}
 	
-			$events=array();
+			$events=[];
 	
 			$last_date = '';
 			$fmt = t('l, F j');

@@ -29,7 +29,7 @@ class New_channel extends Controller {
 			if((! $x) || strlen($x) > 64)
 				$x = strtolower(\URLify::transliterate($n));
 	
-			$test = array();
+			$test = [];
 	
 			// first name
 			if(strpos($x,' '))
@@ -65,7 +65,7 @@ class New_channel extends Controller {
 				$x = strtolower(\URLify::transliterate($n));
 
 
-			$test = array();
+			$test = [];
 	
 			// first name
 			if(strpos($x,' '))

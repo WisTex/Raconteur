@@ -600,7 +600,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 	 * @throw "\Sabre\DAV\Exception\NotFound"
 	 */
 	function CollectionData($file, &$auth) {
-		$ret = array();
+		$ret = [];
 
 		$x = strpos($file, '/cloud');
 		if ($x === 0) {

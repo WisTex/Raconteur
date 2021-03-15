@@ -12,7 +12,7 @@ require_once('include/text.php');
 
 class ThreadItem {
 
-	public  $data = array();
+	public  $data = [];
 	private $template = 'conv_item.tpl';
 	private $comment_box_template = 'comment_item.tpl';
 	private $commentable = false;
@@ -20,7 +20,7 @@ class ThreadItem {
 	// Deprecated. Use your operating system or a browser plugin. 
 	private $reactions = ['1f60a','1f44f','1f37e','1f48b','1f61e','2665','1f606','1f62e','1f634','1f61c','1f607','1f608'];
 	private $toplevel = false;
-	private $children = array();
+	private $children = [];
 	private $parent = null;
 	private $conversation = null;
 	private $redirect_url = null;
@@ -89,7 +89,7 @@ class ThreadItem {
 
 	public function get_template_data($conv_responses, $thread_level = 1) {
 	
-		$result = array();
+		$result = [];
 
 		$item     = $this->get_data();
 

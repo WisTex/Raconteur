@@ -150,7 +150,7 @@ class Markdown {
 
 	static public function from_bbcode_share($match) {
 
-		$matches = array();
+		$matches = [];
 		$attributes = $match[1];
 
 		$author = "";

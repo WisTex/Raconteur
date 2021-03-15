@@ -45,7 +45,7 @@ class AntiXSSTest extends TestCase {
 
 		$xml_parser=xml_parser_create();
 		//should be possible to parse it
-		$values=array(); $index=array();
+		$values=[]; $index=[];
 		$this->assertEquals(1, xml_parse_into_struct($xml_parser, $text, $values, $index));
 
 		$this->assertEquals(array('TEXT'=>array(0)),

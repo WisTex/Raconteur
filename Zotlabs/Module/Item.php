@@ -1058,7 +1058,7 @@ class Item extends Controller {
 			$match = false;
 	
 			if(preg_match_all('/(\[attachment\](.*?)\[\/attachment\])/',$body,$match)) {
-				$attachments = array();
+				$attachments = [];
 				$i = 0;
 				foreach($match[2] as $mtch) {
 					$attach_link = '';

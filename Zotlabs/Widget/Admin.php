@@ -37,7 +37,7 @@ class Admin {
 
 		$r = q("SELECT * FROM addon WHERE plugin_admin = 1");
 
-		$plugins = array();
+		$plugins = [];
 		if($r) {
 			foreach ($r as $h){
 				$plugin = $h['aname'];

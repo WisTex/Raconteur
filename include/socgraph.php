@@ -375,7 +375,7 @@ function common_friends($uid,$xchan,$start = 0,$limit=100000000,$shuffle = false
 function suggestion_query($uid, $myxchan, $start = 0, $limit = 80) {
 
 	if((! $uid) || (! $myxchan))
-		return array();
+		return [];
 
 	$r = q("SELECT count(xlink_xchan) as total, xchan.* from xchan
 		left join xlink on xlink_link = xchan_hash
@@ -504,7 +504,7 @@ function poco() {
 		);
 	}
 
-	$ret = array();
+	$ret = [];
 	if(x($_GET,'sorted'))
 		$ret['sorted'] = 'false';
 	if(x($_GET,'filtered'))
@@ -517,13 +517,13 @@ function poco() {
 	$ret['totalResults'] = (string) $totalResults;
 
 	if($rooms) {
-		$ret['chatrooms'] = array();
+		$ret['chatrooms'] = [];
 		foreach($rooms as $room) {
 			$ret['chatrooms'][] = array('url' => $room['mitem_link'], 'desc' => $room['mitem_desc']);
 		}
 	}
 
-	$ret['entry'] = array();
+	$ret['entry'] = [];
 
 	$fields_ret = array(
 		'id' => false,
@@ -549,7 +549,7 @@ function poco() {
 	if(is_array($r)) {
 		if(count($r)) {
 			foreach($r as $rr) {
-				$entry = array();
+				$entry = [];
 				if($fields_ret['id'])
 					$entry['id'] = $rr['abook_id'];
 				if($fields_ret['guid'])
@@ -575,7 +575,7 @@ function poco() {
 			}
 		}
 		else
-			$ret['entry'][] = array();
+			$ret['entry'][] = [];
 	}
 	else
 		http_status_exit(500);

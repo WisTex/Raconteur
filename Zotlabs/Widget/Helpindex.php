@@ -22,7 +22,7 @@ class Helpindex {
 
 		$level_0 = preg_replace('/\<ul(.*?)\>/','<ul class="nav nav-pills flex-column">',$level_0);
 
-		$levels = array();
+		$levels = [];
 
 
 		// TODO: Implement support for translations in hierarchical table of content files

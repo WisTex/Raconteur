@@ -174,7 +174,7 @@ class Libzotdir {
 			intval($uid)
 		);
 
-		$profile = array();
+		$profile = [];
 		$profile['encoding'] = 'zot';
 
 		if ($p) {
@@ -197,7 +197,7 @@ class Libzotdir {
 			$profile['hometown']    = $p[0]['hometown'];
 
 			if ($p[0]['keywords']) {
-				$tags = array();
+				$tags = [];
 				$k = explode(' ', $p[0]['keywords']);
 				if ($k)
 					foreach ($k as $kk)
@@ -266,7 +266,7 @@ class Libzotdir {
 		if (! $hash)
 			return false;
 
-		$arr = array();
+		$arr = [];
 
 		$arr['xprof_hash']         = $hash;
 		$arr['xprof_dob']          = (($profile['birthday'] === '0000-00-00') ? $profile['birthday'] : datetime_convert('','',$profile['birthday'],'Y-m-d')); // !!!! check this for 0000 year
@@ -284,7 +284,7 @@ class Libzotdir {
 		$arr['xprof_homepage']     = (($profile['homepage'])    ? htmlspecialchars($profile['homepage'],    ENT_COMPAT,'UTF-8',false) : '');
 		$arr['xprof_hometown']     = (($profile['hometown'])    ? htmlspecialchars($profile['hometown'],    ENT_COMPAT,'UTF-8',false) : '');
 
-		$clean = array();
+		$clean = [];
 		if (array_key_exists('keywords', $profile) and is_array($profile['keywords'])) {
 			self::import_directory_keywords($hash,$profile['keywords']);
 			foreach ($profile['keywords'] as $kw) {
@@ -420,7 +420,7 @@ class Libzotdir {
 
 	static function import_directory_keywords($hash, $keywords) {
 
-		$existing = array();
+		$existing = [];
 		$r = q("select * from xtag where xtag_hash = '%s' and xtag_flags = 0",
 			dbesc($hash)
 		);
@@ -430,7 +430,7 @@ class Libzotdir {
 				$existing[] = $rr['xtag_term'];
 		}
 
-		$clean = array();
+		$clean = [];
 		foreach($keywords as $kw) {
 			$kw = trim(htmlspecialchars($kw,ENT_COMPAT, 'UTF-8', false));
 			$kw = trim($kw, ',');

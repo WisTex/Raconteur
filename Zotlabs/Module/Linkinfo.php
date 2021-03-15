@@ -115,7 +115,7 @@ class Linkinfo extends Controller {
 
 		$result = z_fetch_url($url,false,0,array('novalidate' => true, 'nobody' => true));
 		if ($result['success']) {
-			$hdrs=array();
+			$hdrs=[];
 			$h = explode("\n",$result['header']);
 			foreach ($h as $l) {
 				list($k,$v) = array_map("trim", explode(":", trim($l), 2));
@@ -398,7 +398,7 @@ class Linkinfo extends Controller {
 
 	
 	public static function parseurl_getsiteinfo($url) {
-		$siteinfo = array();
+		$siteinfo = [];
 	
 	
 		$result = z_fetch_url($url,false,0,array('novalidate' => true));
@@ -441,7 +441,7 @@ class Linkinfo extends Controller {
 		//$list = $xpath->query("head/meta[@name]");
 		$list = $xpath->query("//meta[@name]");
 		foreach ($list as $node) {
-			$attr = array();
+			$attr = [];
 			if ($node->attributes->length)
 	                        foreach ($node->attributes as $attribute)
 	                                $attr[$attribute->name] = $attribute->value;
@@ -493,7 +493,7 @@ class Linkinfo extends Controller {
 		//$list = $xpath->query("head/meta[@property]");
 		$list = $xpath->query("//meta[@property]");
 		foreach ($list as $node) {
-			$attr = array();
+			$attr = [];
 			if ($node->attributes->length)
 	                        foreach ($node->attributes as $attribute)
 	                                $attr[$attribute->name] = $attribute->value;
@@ -516,7 +516,7 @@ class Linkinfo extends Controller {
 		if ($siteinfo["image"] == "") {
 	            $list = $xpath->query("//img[@src]");
 	            foreach ($list as $node) {
-	                $attr = array();
+	                $attr = [];
 	                if ($node->attributes->length)
 	                    foreach ($node->attributes as $attribute)
 	                        $attr[$attribute->name] = $attribute->value;

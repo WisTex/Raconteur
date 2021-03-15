@@ -9,7 +9,7 @@ class Account {
 		
 		call_hooks('account_settings_post', $_POST);
 	
-		$errs = array();
+		$errs = [];
 	
 		$email = ((x($_POST,'email')) ? trim(notags($_POST['email'])) : '');
 
@@ -35,7 +35,7 @@ class Account {
 		if($errs) {
 			foreach($errs as $err)
 				notice($err . EOL);
-			$errs = array();
+			$errs = [];
 		}
 	
 	

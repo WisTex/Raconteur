@@ -232,7 +232,7 @@ class Search extends Controller {
 		}
 
 		if ($format == 'json') {
-			$result = array();
+			$result = [];
 			require_once('include/conversation.php');
 			foreach ($items as $item) {
 				$item['html'] = zidify_links(bbcode($item['body']));

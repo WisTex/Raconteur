@@ -61,7 +61,7 @@ class Savedsearch {
 			intval(TERM_SAVEDSEARCH)
 		);
 
-		$saved = array();
+		$saved = [];
 
 		if(count($r)) {
 			foreach($r as $rr) {

@@ -53,7 +53,7 @@ class XConfig {
 				$k = $rr['k'];
 				$c = $rr['cat'];
 				if(! array_key_exists($c, App::$config[$xchan])) {
-					App::$config[$xchan][$c] = array();
+					App::$config[$xchan][$c] = [];
 					App::$config[$xchan][$c]['config_loaded'] = true;
 				}
 				App::$config[$xchan][$c][$k] = $rr['v'];

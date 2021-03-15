@@ -44,7 +44,7 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
 	$onsite_checked  = false;
 	$abook_checked   = false;
 
-	$ret = array();
+	$ret = [];
 
 	$abperms = (($uid && $observer_xchan) ? get_abconfig($uid,$observer_xchan,'system','my_perms','') : '');
 
@@ -412,7 +412,7 @@ function get_all_api_perms($uid,$api) {
 
 	$global_perms = Permissions::Perms();
 
-	$ret = array();
+	$ret = [];
 
 	$r = q("select * from xperm where xp_client = '%s' and xp_channel = %d",
 		dbesc($api),
@@ -423,7 +423,7 @@ function get_all_api_perms($uid,$api) {
 		return false;
 
 	$allow_all = false;
-	$allowed = array();
+	$allowed = [];
 	foreach($r as $rr) {
 		if($rr['xp_perm'] === 'all')
 			$allow_all = true;
@@ -489,7 +489,7 @@ function api_perm_is_allowed($uid,$api,$permission) {
 // return a simple array of those with permission
 
 function check_list_permissions($uid, $arr, $perm) {
-	$result = array();
+	$result = [];
 	if($arr)
 		foreach($arr as $x)
 			if(perm_is_allowed($uid, $x, $perm))
@@ -505,7 +505,7 @@ function check_list_permissions($uid, $arr, $perm) {
  */
 function site_default_perms() {
 
-	$ret = array();
+	$ret = [];
 
 	$typical = array(
 		'view_stream'   => PERMS_PUBLIC,

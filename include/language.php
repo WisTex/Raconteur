@@ -25,8 +25,8 @@ use Zotlabs\Lib\System;
  * @return array with ordered list of preferred languages from browser
  */
 function get_browser_language() {
-	$langs = array();
-	$lang_parse = array();
+	$langs = [];
+	$lang_parse = [];
 
 	if (x($_SERVER, 'HTTP_ACCEPT_LANGUAGE')) {
 		// break up string into pieces (languages and q factors)
@@ -131,7 +131,7 @@ function push_lang($language) {
 	if(isset(App::$strings) && count(App::$strings)) {
 		App::$stringsave = App::$strings;
 	}
-	App::$strings = array();
+	App::$strings = [];
 	load_translation_table($language);
 	App::$language = $language;
 }
@@ -144,7 +144,7 @@ function pop_lang() {
 	if(isset(App::$stringsave) && is_array(App::$stringsave))
 		App::$strings = App::$stringsave;
 	else
-		App::$strings = array();
+		App::$strings = [];
 
 	App::$language = App::$langsave;
 }
@@ -157,7 +157,7 @@ function pop_lang() {
  */
 function load_translation_table($lang, $install = false) {
 
-	App::$strings = array();
+	App::$strings = [];
 
 	if(file_exists("view/$lang/strings.php")) {
 		include("view/$lang/strings.php");
@@ -363,7 +363,7 @@ function language_list() {
 
 	$langs = glob('view/*/strings.php');
 
-	$lang_options = array();
+	$lang_options = [];
 	$selected = "";
 
 	if(is_array($langs) && count($langs)) {
@@ -383,7 +383,7 @@ function lang_selector() {
 
 	$langs = glob('view/*/strings.php');
 
-	$lang_options = array();
+	$lang_options = [];
 	$selected = "";
 
 	if(is_array($langs) && count($langs)) {

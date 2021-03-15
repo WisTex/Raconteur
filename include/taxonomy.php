@@ -119,7 +119,7 @@ function store_item_tag($uid,$iid,$otype,$type,$term,$url = '') {
 
 
 function get_terms_oftype($arr,$type) {
-	$ret = array();
+	$ret = [];
 	if(! (is_array($arr) && count($arr)))
 		return $ret;
 
@@ -160,7 +160,7 @@ function tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0, $re
 	require_once('include/security.php');
 
 	if(! perm_is_allowed($uid,get_observer_hash(),'view_stream'))
-		return array();
+		return [];
 
 
 	$item_normal = item_normal();
@@ -198,7 +198,7 @@ function tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0, $re
 
 
 	if(! $r)
-		return array();
+		return [];
 
 	return Zotlabs\Text\Tagadelic::calc($r);
 
@@ -211,7 +211,7 @@ function card_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0
 	require_once('include/security.php');
 
 	if(! perm_is_allowed($uid,get_observer_hash(),'view_pages'))
-		return array();
+		return [];
 
 	$item_normal = " and item.item_hidden = 0 and item.item_deleted = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_pending_remove = 0
 		and item.item_blocked = 0 and item.obj_type != 'http://purl.org/zot/activity/file' ";
@@ -251,7 +251,7 @@ function card_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0
 	);
 
 	if(! $r)
-		return array();
+		return [];
 
 	return Zotlabs\Text\Tagadelic::calc($r);
 
@@ -262,7 +262,7 @@ function article_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags 
 	require_once('include/security.php');
 
 	if(! perm_is_allowed($uid,get_observer_hash(),'view_pages'))
-		return array();
+		return [];
 
 
 	$item_normal = " and item.item_hidden = 0 and item.item_deleted = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_pending_remove = 0
@@ -302,7 +302,7 @@ function article_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags 
 	);
 
 	if(! $r)
-		return array();
+		return [];
 
 	return Zotlabs\Text\Tagadelic::calc($r);
 
@@ -369,7 +369,7 @@ function pub_tagadelic($net,$site,$limit,$recent,$safemode,$type) {
 	);
 
 	if(! $r)
-		return array();
+		return [];
 
 	return Zotlabs\Text\Tagadelic::calc($r);
 
@@ -443,7 +443,7 @@ function app_tagadelic($count = 0) {
 	);
 
 	if(! $r)
-		return array();
+		return [];
 
 	return Zotlabs\Text\Tagadelic::calc($r);
 
@@ -620,7 +620,7 @@ function get_things($profile_hash,$uid) {
 
 	$things = $sorted_things = null;
 
-	$profile_hashes = array();
+	$profile_hashes = [];
 
 	if($r) {
 
@@ -646,7 +646,7 @@ function get_things($profile_hash,$uid) {
 			}
  		}
 
-		$things = array();
+		$things = [];
 
 		// Use the system obj_verbs array as a sort key, since we don't really
 		// want an alphabetic sort. To change the order, use a plugin to
@@ -670,11 +670,11 @@ function get_things($profile_hash,$uid) {
 				$l[$x]['xchan_photo_s'] = zid($l[$x]['xchan_photo_s']);
 			}
 			if(! $things[$rr['obj_verb']])
-				$things[$rr['obj_verb']] = array();
+				$things[$rr['obj_verb']] = [];
 
 			$things[$rr['obj_verb']][] = array('term' => $rr['obj_term'],'url' => $rr['obj_url'],'img' => $rr['obj_imgurl'], 'editurl' => z_root() . '/thing/' . $rr['obj_obj'], 'profile' => $rr['profile_name'],'term_hash' => $rr['obj_obj'], 'likes' => $l,'like_count' => count($l),'like_label' => tt('Like','Likes',count($l),'noun'));
 		} 
-		$sorted_things = array();
+		$sorted_things = [];
 		if($things) {
 			foreach($things as $k => $v) {
 				if(is_array($things[$k])) {

@@ -145,7 +145,7 @@ class Dreport extends \Zotlabs\Web\Controller {
 	
 		usort($r,'self::dreport_gravity_sort');
 
-		$entries = array();
+		$entries = [];
 		foreach($r as $rr) {
 			$entries[] = [ 
 				'name' => escape_tags($rr['dreport_name'] ?: $rr['dreport_recip']),					

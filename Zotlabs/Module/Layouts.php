@@ -159,7 +159,7 @@ class Layouts extends Controller {
 		$pages = null;
 
 		if($r) {
-			$pages = array();
+			$pages = [];
 			foreach($r as $rr) {
 				$element_arr = array(
 					'type'      => 'layout',

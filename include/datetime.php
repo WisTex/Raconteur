@@ -44,7 +44,7 @@ function get_timezones( ){
 
 	usort($timezone_identifiers, 'timezone_cmp');
 	$continent = '';
-	$continents = array();
+	$continents = [];
 	foreach ($timezone_identifiers as $value) {
 		$ex = explode("/", $value);
 		if (count($ex) > 1) {
@@ -59,7 +59,7 @@ function get_timezones( ){
 		}
 		$city = str_replace('_', ' ', t($city));
 
-		if (!x($continents, $ex[0])) $continents[$ex[0]] = array();
+		if (!x($continents, $ex[0])) $continents[$ex[0]] = [];
 		$continents[$continent][$value] = $city;
 	}
 

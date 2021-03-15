@@ -189,7 +189,7 @@ class Apps {
 
 	static public function parse_app_description($f,$translate = true) {
 
-		$ret = array();
+		$ret = [];
 
 		$baseurl = z_root();
 		$channel = App::get_channel();
@@ -970,7 +970,7 @@ class Apps {
 	}
 
 	static function movedown($uid,$guid,$menu) {
-		$syslist = array();
+		$syslist = [];
 
 		$conf = (($menu === 'nav_featured_app') ? 'app_order' : 'app_pin_order');
 
@@ -1240,7 +1240,7 @@ class Apps {
 
 	static public function app_encode($app,$embed = false) {
 
-		$ret = array();
+		$ret = [];
 
 		$ret['type'] = 'personal';
 	

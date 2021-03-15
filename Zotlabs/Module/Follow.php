@@ -132,7 +132,7 @@ class Follow extends Controller {
 	
 		info( t('Connection added.') . EOL);
 	
-		$clone = array();
+		$clone = [];
 		foreach ($result['abook'] as $k => $v) {
 			if (strpos($k,'abook_') === 0) {
 				$clone[$k] = $v;

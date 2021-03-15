@@ -843,8 +843,8 @@ function activity_match($haystack,$needle) {
  * @return Returns array of tags found, or empty array.
  */
 function get_tags($s) {
-	$ret = array();
-	$match = array();
+	$ret = [];
+	$match = [];
 
 	// ignore anything in a code or svg block
 
@@ -1375,7 +1375,7 @@ function theme_attachments(&$item) {
 	$arr = json_decode($item['attach'],true);
 
 	if (is_array($arr) && count($arr)) {
-		$attaches = array();
+		$attaches = [];
 		foreach ($arr as $r) {
 
 			$label = EMPTY_STR;
@@ -1434,7 +1434,7 @@ function format_categories(&$item,$writeable) {
 
 	$terms = get_terms_oftype($item['term'],TERM_CATEGORY);
 	if($terms) {
-		$categories = array();
+		$categories = [];
 		foreach($terms as $t) {
 			$term = htmlspecialchars($t['term'],ENT_COMPAT,'UTF-8',false) ;
 			if(! trim($term))
@@ -1566,7 +1566,7 @@ function format_filer(&$item) {
 
 	$terms = get_terms_oftype($item['term'],TERM_FILE);
 	if($terms) {
-		$categories = array();
+		$categories = [];
 		foreach($terms as $t) {
 			$term = htmlspecialchars($t['term'],ENT_COMPAT,'UTF-8',false) ;
 			if(! trim($term))
@@ -2346,7 +2346,7 @@ function check_webbie($arr) {
 }
 
 function ids_to_array($arr,$idx = 'id') {
-	$t = array();
+	$t = [];
 	if($arr) {
 		foreach($arr as $x) {
 			if(array_key_exists($idx,$x) && strlen($x[$idx]) && (! in_array($x[$idx],$t))) {
@@ -2361,7 +2361,7 @@ function ids_to_array($arr,$idx = 'id') {
 
 
 function ids_to_querystr($arr,$idx = 'id',$quote = false) {
-	$t = array();
+	$t = [];
 	if($arr) {
 		foreach($arr as $x) {
 			if(! in_array($x[$idx],$t)) {
@@ -2420,7 +2420,7 @@ function trim_and_unpunify($s) {
  * @param number $effective_uid
  */
 function xchan_query(&$items, $abook = true, $effective_uid = 0) {
-	$arr = array();
+	$arr = [];
 
 	if($items && count($items)) {
 
@@ -2465,7 +2465,7 @@ function xchan_query(&$items, $abook = true, $effective_uid = 0) {
 }
 
 function xchan_mail_query(&$item) {
-	$arr = array();
+	$arr = [];
 	$chans = null;
 	if($item) {
 		if($item['from_xchan'] && (! in_array("'" . dbesc($item['from_xchan']) . "'",$arr)))
@@ -2493,7 +2493,7 @@ function find_xchan_in_array($xchan,$arr) {
 			}
 		}
 	}
-	return array();
+	return [];
 }
 
 function get_rel_link($j,$rel) {
@@ -2727,7 +2727,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 	$channel = App::get_channel();
 	$replaced = false;
 	$r = null;
-	$match = array();
+	$match = [];
 
 	$termtype = ((strpos($tag,'#') === 0)   ? TERM_HASHTAG  : TERM_UNKNOWN);
 	$termtype = ((strpos($tag,'@') === 0)   ? TERM_MENTION  : $termtype);
@@ -3257,7 +3257,7 @@ function perms2str($p) {
  * @return array
  */
 function expand_acl($s) {
-	$ret = array();
+	$ret = [];
 
 	if(strlen($s)) {
 		$t = str_replace('<','',$s);
@@ -3593,9 +3593,9 @@ function punify($s) {
 
 
 function unique_multidim_array($array, $key) {
-    $temp_array = array();
+    $temp_array = [];
     $i = 0;
-    $key_array = array();
+    $key_array = [];
    
     foreach($array as $val) {
         if (!in_array($val[$key], $key_array)) {

@@ -294,7 +294,7 @@ class Lists extends Controller {
 
 			$members = AccessList::members(local_channel(), $group['id']);
 
-			$preselected = array();
+			$preselected = [];
 			if(count($members))	{
 				foreach($members as $member)
 					if(! in_array($member['xchan_hash'],$preselected))
@@ -312,7 +312,7 @@ class Lists extends Controller {
 	
 				$members = AccessList::members(local_channel(), $group['id']);
 	
-				$preselected = array();
+				$preselected = [];
 				if(count($members))	{
 					foreach($members as $member)
 						$preselected[] = $member['xchan_hash'];
@@ -338,9 +338,9 @@ class Lists extends Controller {
 	
 		$groupeditor = array(
 			'label_members' => t('List members'),
-			'members' => array(),
+			'members' => [],
 			'label_contacts' => t('Not in this list'),
-			'contacts' => array(),
+			'contacts' => [],
 		);
 			
 		$sec_token = addslashes(get_form_security_token('group_member_change'));
