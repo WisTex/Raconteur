@@ -305,6 +305,11 @@ class Notifier {
 				return;
 			}
 
+			if (in_array($target_item['verb'], [ ACTIVITY_FOLLOW, ACTIVITY_UNFOLLOW ])) {
+				logger('not fowarding follow|unfollow->note activity');
+				return;
+			}
+
 			$s = q("select * from channel left join xchan on channel_hash = xchan_hash where channel_id = %d limit 1",
 				intval($target_item['uid'])
 			);
