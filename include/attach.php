@@ -483,7 +483,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 	$visible = (($arr && $arr['visible']) ? $arr['visible'] : '');
 	$notify = (($arr && $arr['notify']) ? $arr['notify'] : '');
 	$flags = (($arr && array_key_exists('flags',$arr)) ? intval($arr['flags']) : 0);
-	$observer = array();
+	$observer = [];
 
 	$dosync = ((array_key_exists('nosync',$arr) && $arr['nosync']) ? 0 : 1);
 
@@ -1821,7 +1821,7 @@ function file_activity($channel_id, $object, $allow_cid, $allow_gid, $deny_cid, 
 
 	$objtype = ACTIVITY_OBJ_FILE;
 
-	$arr = array();
+	$arr = [];
 	$arr['aid']           = get_account_id();
 	$arr['uid']           = $channel_id;
 	$arr['uuid']          = $uuid;
@@ -1936,7 +1936,7 @@ function get_file_activity_object($channel_id, $hash, $url) {
 
 	$url = rawurlencode($url);
 
-	$links   = array();
+	$links   = [];
 	$links[] = array(
 		'rel'  => 'alternate',
 		'type' => 'text/html',
@@ -1982,9 +1982,9 @@ function get_file_activity_object($channel_id, $hash, $url) {
  */
 function attach_recursive_perms($arr_allow_cid, $arr_allow_gid, $arr_deny_cid, $arr_deny_gid, $folder_hash) {
 
-	$ret = array();
-	$parent_arr = array();
-	$count_values = array();
+	$ret = [];
+	$parent_arr = [];
+	$count_values = [];
 	$poster = App::get_observer();
 
 	//lookup all channels in sharee group and add them to sharee $arr_allow_cid
@@ -2127,9 +2127,9 @@ function filepath_macro($s) {
 
 function attach_export_data($channel, $resource_id, $deleted = false) {
 
-	$ret = array();
+	$ret = [];
 
-	$paths = array();
+	$paths = [];
 
 	$hash_ptr = $resource_id;
 
@@ -2196,7 +2196,7 @@ function attach_export_data($channel, $resource_id, $deleted = false) {
 			intval($channel['channel_id'])
 		);
 		if($r) {
-			$ret['item'] = array();
+			$ret['item'] = [];
 			$items = q("select item.*, item.id as item_id from item where item.parent = %d ",
 				intval($r[0]['id'])
 			);

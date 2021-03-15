@@ -713,7 +713,7 @@ class Connedit extends Controller {
 			}
 	
 	
-			$perms = array();
+			$perms = [];
 			$channel = App::get_channel();
 	
 			$global_perms = Permissions::Perms();

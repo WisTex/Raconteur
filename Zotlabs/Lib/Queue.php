@@ -206,7 +206,7 @@ class Queue {
 						dbesc($outq['outq_posturl'])
 					);
 	
-					$piled_up = array();
+					$piled_up = [];
 					if($x) {
 						foreach($x as $xx) {
 							 $piled_up[] = $xx['outq_hash'];
@@ -280,7 +280,7 @@ class Queue {
 						dbesc($outq['outq_posturl'])
 					);
 
-					$piled_up = array();
+					$piled_up = [];
 					if($x) {
 						foreach($x as $xx) {
 							 $piled_up[] = $xx['outq_hash'];
@@ -317,7 +317,7 @@ class Queue {
 					dbesc($outq['outq_posturl'])
 				);
 
-				$piled_up = array();
+				$piled_up = [];
 				if($x) {
 					foreach($x as $xx) {
 						 $piled_up[] = $xx['outq_hash'];

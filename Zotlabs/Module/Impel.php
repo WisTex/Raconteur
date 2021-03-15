@@ -30,7 +30,7 @@ class Impel extends \Zotlabs\Web\Controller {
 
 		$channel = \App::get_channel();
 	
-		$arr = array();
+		$arr = [];
 		$is_menu = false;
 	
 		// a portable menu has its links rewritten with the local baseurl
@@ -65,7 +65,7 @@ class Impel extends \Zotlabs\Web\Controller {
 		}
 	
 		if($is_menu) {
-			$m = array();
+			$m = [];
 			$m['menu_channel_id'] = local_channel();
 			$m['menu_name'] = $j['pagetitle'];
 			$m['menu_desc'] = $j['desc'];
@@ -88,7 +88,7 @@ class Impel extends \Zotlabs\Web\Controller {
 			if($menu_id) {
 				if(is_array($j['items'])) {
 					foreach($j['items'] as $it) {
-						$mitem = array();
+						$mitem = [];
 	
 						$mitem['mitem_link'] = str_replace('[channelurl]',z_root() . '/channel/' . $channel['channel_address'],$it['link']);
 						$mitem['mitem_link'] = str_replace('[pageurl]',z_root() . '/page/' . $channel['channel_address'],$it['link']);

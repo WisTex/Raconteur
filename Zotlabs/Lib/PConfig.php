@@ -37,7 +37,7 @@ class PConfig {
 		}
 
 		if(! array_key_exists($uid, \App::$config)) {
-			\App::$config[$uid] = array();
+			\App::$config[$uid] = [];
 		}
 
 		if(! is_array(\App::$config[$uid])) {
@@ -53,7 +53,7 @@ class PConfig {
 				$k = $rr['k'];
 				$c = $rr['cat'];
 				if(! array_key_exists($c, \App::$config[$uid])) {
-					\App::$config[$uid][$c] = array();
+					\App::$config[$uid][$c] = [];
 					\App::$config[$uid][$c]['config_loaded'] = true;
 				}
 				\App::$config[$uid][$c][$k] = $rr['v'];
@@ -129,9 +129,9 @@ class PConfig {
 
 		if(self::Get($uid, $family, $key) === false) {
 			if(! array_key_exists($uid, \App::$config))
-				\App::$config[$uid] = array();
+				\App::$config[$uid] = [];
 			if(! array_key_exists($family, \App::$config[$uid]))
-				\App::$config[$uid][$family] = array();
+				\App::$config[$uid][$family] = [];
 
 			$ret = q("INSERT INTO pconfig ( uid, cat, k, v ) VALUES ( %d, '%s', '%s', '%s' ) ",
 				intval($uid),
@@ -155,9 +155,9 @@ class PConfig {
 		// synchronise channel clones.
 
 		if(! array_key_exists('transient', \App::$config[$uid]))
-			\App::$config[$uid]['transient'] = array();
+			\App::$config[$uid]['transient'] = [];
 		if(! array_key_exists($family, \App::$config[$uid]['transient']))
-			\App::$config[$uid]['transient'][$family] = array();
+			\App::$config[$uid]['transient'][$family] = [];
 
 		\App::$config[$uid][$family][$key] = $value;
 		\App::$config[$uid]['transient'][$family][$key] = $value;

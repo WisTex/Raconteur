@@ -177,7 +177,7 @@ function bb_unspacefy_and_trim($st) {
 
 function bb_extract_images($body) {
 
-	$saved_image = array();
+	$saved_image = [];
 	$orig_body = $body;
 	$new_body = '';
 
@@ -556,7 +556,7 @@ function getAttachmentData($body) {
 
 function bb_ShareAttributes($match) {
 
-	$matches = array();
+	$matches = [];
 	$attributes = $match[1];
 
 	$author = "";
@@ -658,7 +658,7 @@ function bb_iframe($match) {
 
 function bb_ShareAttributesSimple($match) {
 
-	$matches = array();
+	$matches = [];
 	$attributes = $match[1];
 
 	$author = "";
@@ -806,7 +806,7 @@ function bb_sanitize_style($input) {
 	// determine if input is string or array
 	
 	$input_is_array = is_array($input);
-	$css = array();
+	$css = [];
 	$css_string = (($input_is_array) ? $input[1] : $input);
 	$a = explode(';', $css_string);
 

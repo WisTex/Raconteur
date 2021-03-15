@@ -27,7 +27,7 @@ class Photo_rand {
 
 		$ret = photos_list_photos(array('channel_id' => $channel_id),\App::get_observer(),$album);
 
-		$filtered = array();
+		$filtered = [];
 		if($ret['success'] && $ret['photos'])
 		foreach($ret['photos'] as $p)
 			if($p['imgscale'] == $scale)

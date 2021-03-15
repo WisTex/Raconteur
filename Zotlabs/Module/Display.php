@@ -315,7 +315,7 @@ class Display extends Controller {
 		}
 	
 		else {
-			$r = array();
+			$r = [];
 		}
 
 		if($r) {
@@ -332,7 +332,7 @@ class Display extends Controller {
 			}
 		}
 		else {
-			$items = array();
+			$items = [];
 		}
 
 		// see if the top-level post owner chose to block search engines

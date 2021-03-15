@@ -36,7 +36,7 @@ class Invite extends Controller {
 		};
 	
 	
-		$recips  = ((x($_POST,'recipients')) ? explode("\n",$_POST['recipients']) : array());
+		$recips  = ((x($_POST,'recipients')) ? explode("\n",$_POST['recipients']) : []);
 		$message = ((x($_POST,'message'))    ? notags(trim($_POST['message']))    : '');
 	
 		$total = 0;

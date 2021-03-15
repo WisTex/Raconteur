@@ -449,7 +449,7 @@ class Profiles extends Controller {
 				}
 			}
 														
-			$changes = array();
+			$changes = [];
 			$value = '';
 			if($is_default) {
 				if($marital != $orig[0]['marital']) {
@@ -680,7 +680,7 @@ class Profiles extends Controller {
 	
 			$q = q("select * from profdef where true");
 			if($q) {
-				$extra_fields = array();
+				$extra_fields = [];
 	
 				foreach($q as $qq) {
 					$mine = q("select v from profext where k = '%s' and hash = '%s' and channel_id = %d limit 1",
@@ -853,7 +853,7 @@ class Profiles extends Controller {
 		if(! $self)
 			return;
 
-		$arr = array();
+		$arr = [];
 		$uuid = new_uuid();
 		$mid = z_root() . '/item/' . $uuid;
 

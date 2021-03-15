@@ -271,7 +271,7 @@ class Pubstream extends Controller {
 				$items = conv_sort($items,$ordering);
 			}
 			else {
-				$items = array();
+				$items = [];
 			}
 	
 		}

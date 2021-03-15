@@ -55,7 +55,7 @@ function get_capath() {
  *  * \e string \b header => HTTP headers
  *  * \e string \b body => fetched content
  */
-function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
+function z_fetch_url($url, $binary = false, $redirects = 0, $opts = []) {
 
 	$ret = array('return_code' => 0, 'success' => false, 'header' => "", 'body' => "");
 	$passthru = false;
@@ -201,7 +201,7 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
 	}
 
 	if($http_code == 301 || $http_code == 302 || $http_code == 303 || $http_code == 307 || $http_code == 308) {
-		$matches = array();
+		$matches = [];
 		preg_match('/(Location:|URI:)(.*?)\n/i', $header, $matches);
 		$newurl = trim(array_pop($matches));
 		if(strpos($newurl,'/') === 0) {
@@ -273,7 +273,7 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = array()) {
  *  * \e string \b body => content
  *  * \e string \b debug => from curl_info()
  */
-function z_post_url($url, $params, $redirects = 0, $opts = array()) {
+function z_post_url($url, $params, $redirects = 0, $opts = []) {
 
 //	logger('url: ' . $url);
 //	logger('params: ' . print_r($params,true));
@@ -403,7 +403,7 @@ function z_post_url($url, $params, $redirects = 0, $opts = array()) {
 	}
 
 	if($http_code == 301 || $http_code == 302 || $http_code == 303 || $http_code == 307 || $http_code == 308) {
-		$matches = array();
+		$matches = [];
 		preg_match('/(Location:|URI:)(.*?)\n/', $header, $matches);
 		$newurl = trim(array_pop($matches));
 		if(strpos($newurl,'/') === 0) {
@@ -566,7 +566,7 @@ function convert_xml_element_to_array($xml_element, &$recursion_depth=0) {
 	}
 
 	if (is_array($xml_element)) {
-		$result_array = array();
+		$result_array = [];
 		if (count($xml_element) <= 0) {
 			return (trim(strval($xml_element_copy)));
 		}
@@ -769,7 +769,7 @@ function sxml2array ( $xmlObject, $out = array () )
 }
 
 /**
- * @brief xml2array() will convert the given XML text to an array in the XML structure.
+ * @brief xml2[] will convert the given XML text to an array in the XML structure.
  *
  * Link: http://www.bin-co.com/php/scripts/xml2array/
  * Portions significantly re-written by mike@macgirvin.com 
@@ -787,11 +787,11 @@ function sxml2array ( $xmlObject, $out = array () )
  */
 function xml2array($contents, $namespaces = true, $get_attributes=1, $priority = 'attribute') {
 	if(!$contents)
-		return array();
+		return [];
 
 	if(!function_exists('xml_parser_create')) {
 		logger('xml2array: parser function missing');
-		return array();
+		return [];
 	}
 
 	libxml_use_internal_errors(true);
@@ -804,7 +804,7 @@ function xml2array($contents, $namespaces = true, $get_attributes=1, $priority =
 
 	if(! $parser) {
 		logger('xml2array: xml_parser_create: no resource');
-		return array();
+		return [];
 	}
 
 	xml_parser_set_option($parser, XML_OPTION_TARGET_ENCODING, "UTF-8");
@@ -824,15 +824,15 @@ function xml2array($contents, $namespaces = true, $get_attributes=1, $priority =
 	}
 
 	//Initializations
-	$xml_array = array();
-	$parents = array();
-	$opened_tags = array();
-	$arr = array();
+	$xml_array = [];
+	$parents = [];
+	$opened_tags = [];
+	$arr = [];
 
 	$current = &$xml_array; // Reference
 
 	// Go through the tags.
-	$repeated_tag_index = array(); // Multiple tags with same name will be turned into an array
+	$repeated_tag_index = []; // Multiple tags with same name will be turned into an array
 	foreach($xml_values as $data) {
 		unset($attributes,$value); // Remove existing values, or there will be trouble
 
@@ -840,8 +840,8 @@ function xml2array($contents, $namespaces = true, $get_attributes=1, $priority =
 		// tag(string), type(string), level(int), attributes(array).
 		extract($data); // We could use the array by itself, but this cooler.
 
-		$result = array();
-		$attributes_data = array();
+		$result = [];
+		$attributes_data = [];
 
 		if(isset($value)) {
 			if($priority == 'tag') $result = $value;
@@ -1158,7 +1158,7 @@ function do_delivery($deliveries, $force = false) {
 		$deliveries_per_process = 1;
 
 
-	$deliver = array();
+	$deliver = [];
 	foreach($deliveries as $d) {
 
 		if(! $d)
@@ -1168,7 +1168,7 @@ function do_delivery($deliveries, $force = false) {
 
 		if(count($deliver) >= $deliveries_per_process) {
 			Run::Summon(array('Deliver',$deliver));
-			$deliver = array();
+			$deliver = [];
 			if($interval)
 				@time_sleep_until(microtime(true) + (float) $interval);
 		}
@@ -1193,7 +1193,7 @@ function get_site_info() {
 
 
 	if($r) {
-		$admin = array();
+		$admin = [];
 		foreach($r as $rr) {
 			if($rr['channel_pageflags'] & PAGE_HUBADMIN)
 				$admin[] = array( 'name' => $rr['channel_name'], 'address' => channel_reddress($rr), 'channel' => z_root() . '/channel/' . $rr['channel_address']);
@@ -1248,7 +1248,7 @@ function get_site_info() {
 	$site_expire = intval(get_config('system', 'default_expire_days'));
 
 	load_config('feature_lock');
-	$locked_features = array();
+	$locked_features = [];
 	if(is_array(App::$config['feature_lock']) && count(App::$config['feature_lock'])) {
 		foreach(App::$config['feature_lock'] as $k => $v) {
 			if($k === 'config_loaded')

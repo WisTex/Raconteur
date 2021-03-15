@@ -105,10 +105,10 @@ class Ping extends Controller {
 			unset($_SESSION['sysmsg_info']);
 		}
 		if (! ($vnotify & VNOTIFY_INFO)) {
-			$result['info'] = array();
+			$result['info'] = [];
 		}
 		if (! ($vnotify & VNOTIFY_ALERT)) {
-			$result['notice'] = array();
+			$result['notice'] = [];
 		}
 
 		// If we're currently installing, there won't be a populated database.
@@ -325,7 +325,7 @@ class Ping extends Controller {
 		}
 
 		if (argc() > 1 && (argv(1) === 'stream' || argv(1) === 'home')) {
-			$local_result = array();
+			$local_result = [];
 			$item_normal_moderate = $item_normal;
 
 			if (argv(1) === 'home') {
@@ -358,7 +358,7 @@ class Ping extends Controller {
 		}
 
 		if (argc() > 1 && (argv(1) === 'intros')) {
-			$local_result = array();
+			$local_result = [];
 
 			$r = q("SELECT * FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash where abook_channel = %d and abook_pending = 1 and abook_self = 0 and abook_ignored = 0 and xchan_deleted = 0 and xchan_orphan = 0 ORDER BY abook_created DESC LIMIT 50",
 				intval(local_channel())
@@ -383,7 +383,7 @@ class Ping extends Controller {
 		}
 
 		if( (argc() > 1 && (argv(1) === 'register')) && is_site_admin()) {
-			$result = array();
+			$result = [];
 
 			$r = q("SELECT account_email, account_created from account where (account_flags & %d) > 0",
 				intval(ACCOUNT_PENDING)
@@ -409,7 +409,7 @@ class Ping extends Controller {
 		if (argc() > 1 && (argv(1) === 'all_events')) {
 			$bd_format = t('g A l F d') ; // 8 AM Friday January 18
 
-			$result = array();
+			$result = [];
 
 			$r = q("SELECT * FROM event left join xchan on event_xchan = xchan_hash
 				WHERE event.uid = %d AND dtstart < '%s' AND dtstart > '%s' and dismissed = 0
@@ -444,7 +444,7 @@ class Ping extends Controller {
 		}
 
 		if (argc() > 1 && (argv(1) === 'files')) {
-			$result = array();
+			$result = [];
 
 			$r = q("SELECT item.created, xchan.xchan_name, xchan.xchan_addr, xchan.xchan_url, xchan.xchan_photo_s FROM item 
 				LEFT JOIN xchan on author_xchan = xchan_hash

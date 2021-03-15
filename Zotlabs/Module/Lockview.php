@@ -7,7 +7,7 @@ class Lockview extends \Zotlabs\Web\Controller {
 
 	function get() {
 
-		$atokens = array();
+		$atokens = [];
 
 		if(local_channel()) {
 			$at = q("select * from atoken where atoken_uid = %d",
@@ -94,7 +94,7 @@ class Lockview extends \Zotlabs\Web\Controller {
 		$deny_groups = expand_acl($item['deny_gid']);
 	
 		$o = '<div class="dropdown-item">' . t('Visible to:') . '</div>';
-		$l = array();
+		$l = [];
 	
 		stringify_array_elms($allowed_groups,true);
 		stringify_array_elms($allowed_users,true);

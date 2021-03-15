@@ -116,7 +116,7 @@ class Notifier {
 
 		$top_level = false;
 
-		$url_recipients = array();
+		$url_recipients = [];
 		$normal_mode = true;
 
 		if ($cmd === 'request') {

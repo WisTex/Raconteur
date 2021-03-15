@@ -36,7 +36,7 @@ class Filer extends \Zotlabs\Web\Controller {
 			}
 		} 
 		else {
-			$filetags = array();
+			$filetags = [];
 			$r = q("select distinct(term) from term where uid = %d and ttype = %d order by term asc",
 				intval(local_channel()),
 				intval(TERM_FILE)

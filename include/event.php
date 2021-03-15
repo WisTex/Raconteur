@@ -293,7 +293,7 @@ function bbtovcal($s) {
 
 function bbtoevent($s) {
 
-	$ev = array();
+	$ev = [];
 
 	$match = '';
 	if(preg_match("/\[event\](.*?)\[\/event\]/is",$s,$match)) {
@@ -811,7 +811,7 @@ function event_import_ical($ical, $uid) {
 		return false;
 
 	$channel = $c[0];
-	$ev = array();
+	$ev = [];
 
 
 	if(! isset($ical->DTSTART)) {
@@ -911,7 +911,7 @@ function event_import_ical_task($ical, $uid) {
 		return false;
 
 	$channel = $c[0];
-	$ev = array();
+	$ev = [];
 
 
 	if(! isset($ical->DTSTART)) {
@@ -1053,7 +1053,7 @@ function event_store_item($arr, $event) {
 	}
 
 
-	$item_arr = array();
+	$item_arr = [];
 	$prefix = '';
 //	$birthday = false;
 
@@ -1301,7 +1301,7 @@ function tasks_fetch($arr) {
 	if(! local_channel())
 		return;
 
-	$ret = array();
+	$ret = [];
 	$sql_extra = " and event_status != 'COMPLETED' ";
 	if($arr && $arr['all'] == 1)
 		$sql_extra = '';

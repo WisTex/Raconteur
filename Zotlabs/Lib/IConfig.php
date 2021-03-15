@@ -90,7 +90,7 @@ class IConfig {
 		if(is_array($item)) {
 			$is_item = true;
 			if((! array_key_exists('iconfig',$item)) || (! is_array($item['iconfig'])))
-				$item['iconfig'] = array();
+				$item['iconfig'] = [];
 			elseif($item['iconfig']) {
 				for($x = 0; $x < count($item['iconfig']); $x ++) {
 					if($item['iconfig'][$x]['cat'] == $family && $item['iconfig'][$x]['k'] == $key) {

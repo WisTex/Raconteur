@@ -36,7 +36,7 @@ class RedbasicConfig {
 			return;
 		}
 
-		$arr = array();
+		$arr = [];
 		$arr['narrow_navbar'] = get_pconfig(local_channel(),'redbasic', 'narrow_navbar' );
 		$arr['nav_bg'] = get_pconfig(local_channel(),'redbasic', 'nav_bg' );
 		$arr['nav_icon_colour'] = get_pconfig(local_channel(),'redbasic', 'nav_icon_colour' );

@@ -184,7 +184,7 @@ class Libprofile {
 		if ($is_owner) {
 			$ret['menu'] = array(
 				'chg_photo' => t('Change profile photo'),
-				'entries' => array(),
+				'entries' => [],
 			);
 
 			$multi_profiles = feature_enabled(local_channel(), 'multi_profiles');
@@ -434,7 +434,7 @@ class Libprofile {
 			else
 				$fields = $profile_fields_basic;
 
-			$clean_fields = array();
+			$clean_fields = [];
 			if($fields) {
 				foreach($fields as $k => $v) {
 					$clean_fields[] = trim($k);
@@ -444,7 +444,7 @@ class Libprofile {
 
 			$tpl = get_markup_template('profile_advanced.tpl');
 
-			$profile = array();
+			$profile = [];
 
 			$profile['fullname'] = array( t('Full Name:'), App::$profile['fullname'] ) ;
 
@@ -465,7 +465,7 @@ class Libprofile {
 //				dbesc(ACTIVITY_OBJ_PROFILE),
 //				dbesc(ACTIVITY_LIKE)
 //			);
-//			$profile['likers'] = array();
+//			$profile['likers'] = [];
 //			$profile['like_count'] = count($likers);
 //			$profile['like_button_label'] = tt('Like','Likes',$profile['like_count'],'noun');
 

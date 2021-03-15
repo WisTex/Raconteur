@@ -73,7 +73,7 @@ class Mood extends Controller {
 	
 		$action = sprintf( t('%1$s is %2$s','mood'), '[zrl=' . $poster['xchan_url'] . ']' . $poster['xchan_name'] . '[/zrl]' , $verbs[$verb]); 
 	
-		$arr = array();
+		$arr = [];
 	
 		$arr['aid']           = get_account_id();
 		$arr['uid']           = $uid;
@@ -140,7 +140,7 @@ class Mood extends Controller {
 	
 		$verbs = get_mood_verbs();
 	
-		$shortlist = array();
+		$shortlist = [];
 		foreach($verbs as $k => $v)
 			if($v !== 'NOTRANSLATION')
 				$shortlist[] = array($k,$v);

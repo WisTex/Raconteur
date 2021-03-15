@@ -24,7 +24,7 @@ function get_data($prompt, $regex) {
 
 function parse_htconfig($file) {
 	if(!file_exists($file))
-		return array();
+		return [];
 	$conf = file_get_contents($file);
 	preg_match_all('/\$db\_(host|port|user|pass|data|type)\s*=\s*\'([[:print:]]+)\'/', $conf, $matches);
 	return array_combine($matches[1], $matches[2]);
@@ -237,7 +237,7 @@ if($res === false) {
 	var_export($pgdb->errorInfo());
 	exit();
 }
-$schema = array();
+$schema = [];
 while(($row = $res->fetch()) !== false)
 	$schema[$row[0]][$row[1]] = $row[2];
 	
@@ -247,7 +247,7 @@ if($res === false) {
 	var_export($pgdb->errorInfo());
 	exit();
 }
-$pkeys = array();
+$pkeys = [];
 while(($row = $res->fetch()) !== false)
 	$pkeys[$row[0]] = $row[1];
 

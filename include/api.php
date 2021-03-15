@@ -18,7 +18,7 @@ require_once('include/api_zot.php');
 	 */
 
 
-	$API = array();
+	$API = [];
 
 	$called_api = null;
 

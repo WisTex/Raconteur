@@ -193,7 +193,7 @@ class Events extends Controller {
 			}
 		}
 	
-		$post_tags = array();
+		$post_tags = [];
 
 		$ac = $acl->get();
 	
@@ -210,7 +210,7 @@ class Events extends Controller {
 			}
 		}
 	
-		$datarray = array();
+		$datarray = [];
 		$datarray['dtstart'] = $start;
 		$datarray['dtend'] = $finish;
 		$datarray['summary'] = $summary;
@@ -378,7 +378,7 @@ class Events extends Controller {
 	
 			// Passed parameters overrides anything found in the DB
 			if(!x($orig_event))
-				$orig_event = array();
+				$orig_event = [];
 	
 			// In case of an error the browser is redirected back here, with these parameters filled in with the previous values
 			/*
@@ -620,7 +620,7 @@ class Events extends Controller {
 				);
 			}
 	
-			$links = array();
+			$links = [];
 	
 			if($r && ! $export) {
 				xchan_query($r);
@@ -637,7 +637,7 @@ class Events extends Controller {
 				}
 			}
 	
-			$events=array();
+			$events=[];
 	
 			$last_date = '';
 			$fmt = t('l, F j');

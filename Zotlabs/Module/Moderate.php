@@ -99,7 +99,7 @@ class Moderate extends \Zotlabs\Web\Controller {
 			$items = fetch_post_tags($r,true);
 		}
 		else {
-			$items = array();
+			$items = [];
 		}
 
 		$o = conversation($items,'moderate',false,'traditional');

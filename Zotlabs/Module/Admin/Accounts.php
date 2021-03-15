@@ -17,9 +17,9 @@ class Accounts {
 
 	function post() {
 
-		$pending = ( x($_POST, 'pending') ? $_POST['pending'] : array() );
-		$users   = ( x($_POST, 'user')    ? $_POST['user']    : array() );
-		$blocked = ( x($_POST, 'blocked') ? $_POST['blocked'] : array() );
+		$pending = ( x($_POST, 'pending') ? $_POST['pending'] : [] );
+		$users   = ( x($_POST, 'user')    ? $_POST['user']    : [] );
+		$blocked = ( x($_POST, 'blocked') ? $_POST['blocked'] : [] );
 	
 		check_form_security_token_redirectOnErr('/admin/accounts', 'admin_accounts');
 	

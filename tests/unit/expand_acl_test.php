@@ -57,7 +57,7 @@ class ExpandAclTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testExpandAclEmpty() {
 		$text=""; 
-		$this->assertEquals(array(), expand_acl($text));
+		$this->assertEquals([], expand_acl($text));
 	}
 	
 	/**
@@ -67,7 +67,7 @@ class ExpandAclTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testExpandAclNoBrackets() {
 		$text="According to documentation, that's invalid. "; //should be invalid
-		$this->assertEquals(array(), expand_acl($text));
+		$this->assertEquals([], expand_acl($text));
 	}
 	
 	/**
@@ -77,7 +77,7 @@ class ExpandAclTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testExpandAclJustOneBracket1() {
 		$text="<Another invalid string"; //should be invalid
-		$this->assertEquals(array(), expand_acl($text));
+		$this->assertEquals([], expand_acl($text));
 	}
 	
 	/**
@@ -87,7 +87,7 @@ class ExpandAclTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testExpandAclJustOneBracket2() {
 		$text="Another invalid> string"; //should be invalid
-		$this->assertEquals(array(), expand_acl($text));
+		$this->assertEquals([], expand_acl($text));
 	}
 	
 	/**
@@ -97,7 +97,7 @@ class ExpandAclTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testExpandAclCloseOnly() {
 		$text="Another> invalid> string>"; //should be invalid
-		$this->assertEquals(array(), expand_acl($text));
+		$this->assertEquals([], expand_acl($text));
 	}
 	
 	/**
@@ -107,7 +107,7 @@ class ExpandAclTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testExpandAclOpenOnly() {
 		$text="<Another< invalid string<"; //should be invalid
-		$this->assertEquals(array(), expand_acl($text));
+		$this->assertEquals([], expand_acl($text));
 	}
 	
 	/**
@@ -117,7 +117,7 @@ class ExpandAclTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testExpandAclNoMatching1() {
 		$text="<Another<> invalid <string>"; //should be invalid
-		$this->assertEquals(array(), expand_acl($text));
+		$this->assertEquals([], expand_acl($text));
 	}
 	
 	/**
@@ -132,7 +132,7 @@ class ExpandAclTest extends PHPUnit_Framework_TestCase {
 // we may wish to eliminate 2 from the results, though it isn't harmful
 // It would be a better test to figure out if there is any ACL input which can
 // produce this $text and fix that instead.
-//		$this->assertEquals(array(), expand_acl($text));
+//		$this->assertEquals([], expand_acl($text));
 	}
 	
 	/**

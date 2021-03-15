@@ -51,7 +51,7 @@ class Categories {
 			and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_pending_remove = 0
 			and item.item_blocked = 0 ";
 
-		$terms = array();
+		$terms = [];
 		$r = q("select distinct(term.term)
 			from term join item on term.oid = item.id
 			where item.uid = %d
@@ -95,7 +95,7 @@ class Categories {
 			and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_pending_remove = 0
 			and item.item_blocked = 0 ";
 
-		$terms = array();
+		$terms = [];
 		$r = q("select distinct(term.term)
 			from term join item on term.oid = item.id
 			where item.uid = %d
@@ -140,7 +140,7 @@ class Categories {
 	
 		$item_normal = item_normal();
 
-		$terms = array();
+		$terms = [];
 		$r = q("select distinct(term.term) from term join item on term.oid = item.id
 			where item.uid = %d
 			and term.uid = item.uid

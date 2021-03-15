@@ -57,7 +57,7 @@ class Sitelist extends Controller {
 		);
 	
 		$result['results'] = 0;
-		$result['entries'] = array();
+		$result['entries'] = [];
 	
 		if($r) {
 			$result['success'] = true;		
