@@ -290,7 +290,7 @@ class HTTPSig {
 		$url = ((strpos($id,'#')) ? substr($id,0,strpos($id,'#')) : $id);
 
 		if (! $force) {
-			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' ",
+			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' order by hubloc_id desc",
 				dbesc(str_replace('acct:','',$url)),
 				dbesc($url)
 			);
@@ -321,7 +321,7 @@ class HTTPSig {
 	static function get_webfinger_key($id,$force = false) {
 
 		if (! $force) {
-			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' ",
+			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' order by hubloc_id desc",
 				dbesc(str_replace('acct:','',$id)),
 				dbesc($id)
 			);
@@ -361,7 +361,7 @@ class HTTPSig {
 	static function get_zotfinger_key($id,$force = false) {
 
 		if (! $force) {
-			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' and hubloc_network = 'zot6'",
+			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' and hubloc_network = 'zot6' order by hubloc_id desc",
 				dbesc(str_replace('acct:','',$id)),
 				dbesc($id)
 			);
@@ -400,7 +400,7 @@ class HTTPSig {
 							if ($i['success']) {
 								$key['portable_id'] = $i['hash'];
 
-								$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' limit 1",
+								$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' order by hubloc_id desc limit 1",
 									dbesc($l['href'])
 								);
 								if ($x) {

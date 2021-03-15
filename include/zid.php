@@ -10,19 +10,20 @@ function is_matrix_url($url) {
 	static $remembered = [];
 
 	$m = @parse_url($url);
-	if($m['host']) {
+	if (isset($m['host']) && $m['host']) {
 
-		if(array_key_exists($m['host'],$remembered))
-			return $remembered[$m['host']];
+		if (in_array($m['host'],$remembered)) {
+			return true;
+		}
 
 		$r = q("select hubloc_url from hubloc where hubloc_host = '%s' and hubloc_network = 'zot6' limit 1",
 			dbesc($m['host'])
 		);
-		if($r) {
-			$remembered[$m['host']] = true;
+		if ($r) {
+			$remembered[] = $m['host'];
 			return true;
 		}
-		$remembered[$m['host']] = false;
+
 	}
 
 	return false;
@@ -38,18 +39,22 @@ function is_matrix_url($url) {
  * @return string
  */
 function zid($s, $address = '') {
-	if (! strlen($s) || strpos($s,'zid='))
+
+	if (! strlen($s) || strpos($s,'zid=')) {
 		return $s;
+	}
 
 	$m = parse_url($s);
 	$fragment = ((array_key_exists('fragment',$m) && $m['fragment']) ? $m['fragment'] : false);
-	if($fragment !== false)
+	if ($fragment !== false) {
 		$s = str_replace('#' . $fragment,'',$s);
+	}
 
 	$has_params = ((strpos($s,'?')) ? true : false);
 	$num_slashes = substr_count($s, '/');
-	if (! $has_params)
+	if (! $has_params) {
 		$has_params = ((strpos($s, '&')) ? true : false);
+	}
 
 	$achar = strpos($s,'?') ? '&' : '?';
 
@@ -60,20 +65,23 @@ function zid($s, $address = '') {
 	$s_parsed = parse_url($s);
 	$url_match = false;
 
-	if(isset($mine_parsed['host']) && isset($s_parsed['host'])
+	if (isset($mine_parsed['host']) && isset($s_parsed['host'])
 		&& $mine_parsed['host'] === $s_parsed['host']) {
 		$url_match = true;
 	}
 
-	if ($mine && $myaddr && (! $url_match))
+	if ($mine && $myaddr && (! $url_match)) {
 		$zurl = $s . (($num_slashes >= 3) ? '' : '/') . (($achar === '?') ? '?f=&' : '&') . 'zid=' . urlencode($myaddr);
-	else
+	}
+	else {
 		$zurl = $s;
+	}
 
 	// put fragment at the end
 
-	if($fragment)
+	if ($fragment) {
 		$zurl .= '#' . $fragment;
+	}
 
 	$arr = [
 			'url' => $s,
@@ -212,15 +220,18 @@ function red_zrl_callback($matches) {
 	$zrl = is_matrix_url($matches[2]);
 
 	$t = strip_zids($matches[2]);
-	if($t !== $matches[2]) {
+	if ($t !== $matches[2]) {
 		$zrl = true;
 		$matches[2] = $t;
 	}
 
-	if($matches[1] === '#^')
+	if ($matches[1] === '#^') {
 		$matches[1] = '';
-	if($zrl)
+	}
+	
+	if ($zrl) {
 		return $matches[1] . '[zrl=' . $matches[2] . ']' . $matches[2] . '[/zrl]';
+	}
 
 	return $matches[1] . '[url=' . $matches[2] . ']' . $matches[2] . '[/url]';
 }
@@ -236,8 +247,9 @@ function red_escape_zrl_callback($matches) {
 
 	// Uncertain why the url/zrl forms weren't picked up by the non-greedy regex.
 
-	if((strpos($matches[3], 'zmg') !== false) || (strpos($matches[3], 'img') !== false) || (strpos($matches[3],'zrl') !== false) || (strpos($matches[3],'url') !== false))
+	if ((strpos($matches[3], 'zmg') !== false) || (strpos($matches[3], 'img') !== false) || (strpos($matches[3],'zrl') !== false) || (strpos($matches[3],'url') !== false)) {
 		return $matches[0];
+	}
 
 	return '[' . $matches[1] . 'rl' . $matches[2] . ']' . $matches[3] . '"' . $matches[4] . '"' . $matches[5] . '[/' . $matches[6] . 'rl]';
 }
@@ -256,13 +268,14 @@ function red_zrlify_img_callback($matches) {
 	$zrl = is_matrix_url($matches[2]);
 
 	$t = strip_zids($matches[2]);
-	if($t !== $matches[2]) {
+	if ($t !== $matches[2]) {
 		$zrl = true;
 		$matches[2] = $t;
 	}
 
-	if($zrl)
+	if ($zrl) {
 		return '[zmg' . $matches[1] . ']' . $matches[2] . '[/zmg]';
+	}
 
 	return $matches[0];
 }
@@ -275,11 +288,13 @@ function red_zrlify_img_callback($matches) {
  */
 function owt_init($token) {
 
+	require_once('include/security.php');
+	
 	Verify::purge('owt', '3 MINUTE');
 
 	$ob_hash = Verify::get_meta('owt', 0, $token);
 
-	if($ob_hash === false) {
+	if ($ob_hash === false) {
 		return;
 	}
 
@@ -290,10 +305,10 @@ function owt_init($token) {
 		dbesc($ob_hash)
 	);
 
-	if(! $r) {
+	if (! $r) {
 		// finger them if they can't be found.
 		$wf = discover_by_webbie($ob_hash);
-		if($wf) {
+		if ($wf) {
 			$r = q("select * from hubloc left join xchan on xchan_hash = hubloc_hash
 				where hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s' order by hubloc_id desc",
 				dbesc($ob_hash),
@@ -302,7 +317,7 @@ function owt_init($token) {
 			);
 		}
 	}
-	if(! $r) {
+	if (! $r) {
 		logger('owt: unable to finger ' . $ob_hash);
 		return;
 	}
@@ -314,17 +329,16 @@ function owt_init($token) {
 	$_SESSION['authenticated'] = 1;
 
 	$delegate_success = false;
-	if($_REQUEST['delegate']) {
+	if ($_REQUEST['delegate']) {
 		$r = q("select * from channel left join xchan on channel_hash = xchan_hash where xchan_addr = '%s' limit 1",
 			dbesc($_REQUEST['delegate'])
 		);
 		if ($r && intval($r[0]['channel_id'])) {
 			$allowed = perm_is_allowed($r[0]['channel_id'],$hubloc['xchan_hash'],'delegate');
-			if($allowed) {
+			if ($allowed) {
 				$_SESSION['delegate_channel'] = $r[0]['channel_id'];
 				$_SESSION['delegate'] = $hubloc['xchan_hash'];
 				$_SESSION['account_id'] = intval($r[0]['channel_account_id']);
-				require_once('include/security.php');
 				// this will set the local_channel authentication in the session
 				change_channel($r[0]['channel_id']);
 				$delegate_success = true;
@@ -356,17 +370,20 @@ function owt_init($token) {
 	call_hooks('magic_auth_success', $arr);
 
 	App::set_observer($hubloc);
-	require_once('include/security.php');
 	App::set_groups(init_groups_visitor($_SESSION['visitor_id']));
-	if(! get_config('system', 'hide_owa_greeting'))
+	if (! get_config('system', 'hide_owa_greeting')) {
 		info(sprintf( t('OpenWebAuth: %1$s welcomes %2$s'),App::get_hostname(), $hubloc['xchan_name']));
+	}
 
 	logger('OpenWebAuth: auth success from ' . $hubloc['xchan_addr']);
+	return;
 }
 
 function observer_auth($ob_hash) {
 
-	if($ob_hash === false) {
+	require_once('include/security.php');
+
+	if ($ob_hash === false) {
 		return;
 	}
 
@@ -377,10 +394,10 @@ function observer_auth($ob_hash) {
 		dbesc($ob_hash)
 	);
 
-	if(! $r) {
+	if (! $r) {
 		// finger them if they can't be found.
 		$wf = discover_by_webbie($ob_hash);
-		if($wf) {
+		if ($wf) {
 			$r = q("select * from hubloc left join xchan on xchan_hash = hubloc_hash
 				where hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s' order by hubloc_id desc",
 				dbesc($ob_hash),
@@ -389,7 +406,7 @@ function observer_auth($ob_hash) {
 			);
 		}
 	}
-	if(! $r) {
+	if (! $r) {
 		logger('unable to finger ' . $ob_hash);
 		return;
 	}
@@ -406,7 +423,6 @@ function observer_auth($ob_hash) {
 	$_SESSION['DNT'] = 1;
 
 	App::set_observer($hubloc);
-	require_once('include/security.php');
 	App::set_groups(init_groups_visitor($_SESSION['visitor_id']));
 
 }
