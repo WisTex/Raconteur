@@ -29,9 +29,10 @@ require_once('include/security.php');
 function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_ignored = true) {
 
 	$api = App::get_oauth_key();
-	if($api)
+	if ($api) {
 		return get_all_api_perms($uid,$api);	
-
+	}
+	
 	$global_perms = Permissions::Perms();
 
 	// Save lots of individual lookups
@@ -48,13 +49,13 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
 
 	$abperms = (($uid && $observer_xchan) ? get_abconfig($uid,$observer_xchan,'system','my_perms','') : '');
 
-	foreach($global_perms as $perm_name => $permission) {
+	foreach ($global_perms as $perm_name => $permission) {
 
 		// First find out what the channel owner declared permissions to be.
 
 		$channel_perm = intval(PermissionLimits::Get($uid,$perm_name));
 
-		if(! $channel_checked) {
+		if (! $channel_checked) {
 			$r = q("select * from channel where channel_id = %d limit 1",
 				intval($uid)
 			);
@@ -257,17 +258,19 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
 function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = true) {
 
 	$api = App::get_oauth_key();
-	if($api)
+	if ($api) {
 		return api_perm_is_allowed($uid,$api,$permission);
+	}
 
-	$arr = array(
+	$arr = [
 		'channel_id'    => $uid,
 		'observer_hash' => $observer_xchan,
 		'permission'    => $permission,
-		'result'        => 'unset');
+		'result'        => 'unset'
+	];
 
 	call_hooks('perm_is_allowed', $arr);
-	if($arr['result'] !== 'unset') {
+	if ($arr['result'] !== 'unset') {
 		return $arr['result'];
 	}
 
@@ -283,15 +286,16 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
 	$r = q("select channel_pageflags, channel_moved, channel_hash from channel where channel_id = %d limit 1",
 		intval($uid)
 	);
-	if(! $r)
+	if (! $r) {
 		return false;
-
+	}
 
 	$blocked_anon_perms = Permissions::BlockedAnonPerms();
 
-	if($observer_xchan) {
-		if($channel_perm & PERMS_AUTHED)
+	if ($observer_xchan) {
+		if ($channel_perm & PERMS_AUTHED) {
 			return true;
+		}
 
 		$x = q("select abook_blocked, abook_ignored, abook_pending, xchan_network from abook left join xchan on abook_xchan = xchan_hash 
 			where abook_channel = %d and abook_xchan = '%s' and abook_self = 0 limit 1",
@@ -301,19 +305,20 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
 
 		// If they're blocked - they can't read or write
  
-		if(($x) && intval($x[0]['abook_blocked']))
+		if (($x) && intval($x[0]['abook_blocked'])) {
 			return false;
+		}
 
-		if(($x) && in_array($permission,$blocked_anon_perms) && intval($x[0]['abook_ignored']))
+		if (($x) && in_array($permission,$blocked_anon_perms) && intval($x[0]['abook_ignored'])) {
 			return false;
+		}
 
-		if(! $x) {
+		if (! $x) {
 			// see if they've got a guest access token
 			$y = atoken_abook($uid,$observer_xchan);
-			if($y)
+			if ($y) {
 				$x = [ $y ];
-
-
+			}
 		}
 		$abperms = get_abconfig($uid,$observer_xchan,'system','my_perms','');
 	}
@@ -321,80 +326,86 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
 
 	// system is blocked to anybody who is not authenticated
 
-	if(($check_siteblock) && (! $observer_xchan) && intval(get_config('system', 'block_public')))
+	if (($check_siteblock) && (! $observer_xchan) && intval(get_config('system', 'block_public'))) {
 		return false;
+	}
 
 	// Check if this $uid is actually the $observer_xchan
 	// you will have full access unless the channel was moved - 
 	// in which case you will have read_only access
 
-	if($r[0]['channel_hash'] === $observer_xchan) {
+	if ($r[0]['channel_hash'] === $observer_xchan) {
 		// moderated is a negative permission
-		if($permission === 'moderated')
+		if ($permission === 'moderated') {
 			return false;
-		if($r[0]['channel_moved'] && (in_array($permission,$blocked_anon_perms)))
+		}
+		if ($r[0]['channel_moved'] && (in_array($permission,$blocked_anon_perms))) {
 			return false;
-		else
+		}
+		else {
 			return true;
+		}
 	}
 
-	if($channel_perm & PERMS_PUBLIC)
+	if ($channel_perm & PERMS_PUBLIC) {
 		return true;
+	}
 
 	// If it's an unauthenticated observer, we only need to see if PERMS_PUBLIC is set
 
-	if(! $observer_xchan) {
+	if (! $observer_xchan) {
 		return false;
 	}
 
 	// If we're still here, we have an observer, check the network.
 
-	if($channel_perm & PERMS_NETWORK) {
-		if ($x && $x[0]['xchan_network'] === 'zot6') 
+	if ($channel_perm & PERMS_NETWORK) {
+		if ($x && $x[0]['xchan_network'] === 'zot6') {
 			return true;
+		}
 	}
 
 	// If PERMS_SITE is specified, find out if they've got an account on this hub
 
-	if($channel_perm & PERMS_SITE) {
+	if ($channel_perm & PERMS_SITE) {
 		$c = q("select channel_hash from channel where channel_hash = '%s' limit 1",
 			dbesc($observer_xchan)
 		);
-		if($c)
+		if ($c) {
 			return true;
-
+		}
 		return false;
 	}
 
 	// From here on we require that the observer be a connection and
 	// handle whether we're allowing any, approved or specific ones
 
-	if(! $x) {
+	if (! $x) {
 		return false;
 	}
 
 	// They are in your address book, but haven't been approved
 
-	if($channel_perm & PERMS_PENDING) {
+	if ($channel_perm & PERMS_PENDING) {
 		return true;
 	}
 
-	if(intval($x[0]['abook_pending'])) {
+	if (intval($x[0]['abook_pending'])) {
 		return false;
 	}
 
 	// They're a contact, so they have permission
 
-	if($channel_perm & PERMS_CONTACTS) {
+	if ($channel_perm & PERMS_CONTACTS) {
 		return true;
 	}
 
 	// Permission granted to certain channels. Let's see if the observer is one of them
 
-	if(($r) && ($channel_perm & PERMS_SPECIFIC)) {
-		if($abperms) {
+	if (($r) && ($channel_perm & PERMS_SPECIFIC)) {
+		if ($abperms) {
 			$arr = explode(',',$abperms);
-			if($arr) {
+			if ($arr) {
 				if (in_array($permission,$arr)) {
 					return true;
 				}
