@@ -10,18 +10,20 @@ class Pconfig extends Controller {
 
 	function post() {
 	
-		if(! local_channel())
+		if (! local_channel()) {
 			return;
+		}
 	
-		if($_SESSION['delegate'])
+		if (isset($_SESSION['delegate']) && $_SESSION['delegate']) {
 	        return;
+		}
 	
 		check_form_security_token_redirectOnErr('/pconfig', 'pconfig');
 	
-		$cat = trim(escape_tags($_POST['cat']));
-		$k = trim(escape_tags($_POST['k']));
-		$v = trim($_POST['v']);
-		$aj = intval($_POST['aj']);	
+		$cat = trim(escape_tags((isset($_POST['cat']) && $_POST['cat']) ? $_POST['cat'] : EMPTY_STR));
+		$k   = trim(escape_tags((isset($_POST['k']) && $_POST['k']) ? $_POST['k'] : EMPTY_STR));
+		$v   = trim((isset($_POST['v']) && $_POST['v']) ? $_POST['v'] : EMPTY_STR);
+		$aj  = intval((isset($_POST['aj']) && $_POST['aj']) ? $_POST['aj'] : 0);	
 
 		// Do not store "serialized" data received in the $_POST
 	
@@ -29,19 +31,19 @@ class Pconfig extends Controller {
 			return;
 		}
 			
-		if(in_array(argv(2),$this->disallowed_pconfig())) {
+		if (in_array(argv(2),$this->disallowed_pconfig())) {
 			notice( t('This setting requires special processing and editing has been blocked.') . EOL);
 			return;
 		}
 		
-		if(strpos($k,'password') !== false) {
+		if (strpos($k,'password') !== false) {
 			$v = obscurify($v);
 		}
 	
 		set_pconfig(local_channel(),$cat,$k,$v);
 		Libsync::build_sync_packet();
 	
-		if($aj) {
+		if ($aj) {
 			killme();
 		}
 
@@ -52,7 +54,7 @@ class Pconfig extends Controller {
 	
 	function get() {
 	
-		if(! local_channel()) {
+		if (! local_channel()) {
 			return login();
 		}
 	

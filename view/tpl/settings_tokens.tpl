@@ -19,10 +19,10 @@
 			</div>
 	</div>
 
-	<div class="panel">
+	<div class="panel" id="permission-settings">
 		<div class="section-subtitle-wrapper" role="tab" id="perms-tool">
 			<h3>
-				<a data-toggle="collapse" data-parent="#contact-edit-tools" href="#perms-tool-collapse" aria-expanded="true" aria-controls="perms-tool-collapse">
+				<a data-toggle="collapse" data-parent="#permission-settings" href="#perms-tool-collapse" aria-expanded="true" aria-controls="perms-tool-collapse">
 				{{$permlbl}}
 				</a>
 			</h3>

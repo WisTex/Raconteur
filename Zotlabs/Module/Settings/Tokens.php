@@ -74,7 +74,7 @@ class Tokens {
 					$p .= $perm;
 				}
 			}
-			set_abconfig(local_channel(),$atoken_xchan,'system','their_perms',$p);
+			set_abconfig(local_channel(),$atoken_xchan,'system','my_perms',$p);
 		}
 		
 
@@ -85,7 +85,7 @@ class Tokens {
 
 	function get() {
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
 		$atoken = null;
 		$atoken_xchan = '';
@@ -144,7 +144,9 @@ class Tokens {
 
 			$perms[] = array('perms_' . $k, $v, ((array_key_exists($k,$their_perms)) ? intval($their_perms[$k]) : ''),$thisperm, 1, (($checkinherited & PERMS_SPECIFIC) ? '' : '1'), '', $checkinherited);
 		}
-	
+
+logger('perms: ' . print_r($perms,true));
+
 		$tpl = get_markup_template("settings_tokens.tpl");
 		$o .= replace_macros($tpl, array(
 			'$form_security_token' => get_form_security_token("settings_tokens"),
@@ -157,7 +159,7 @@ class Tokens {
 			'$url1' => z_root() . '/channel/' . $channel['channel_address'],
 			'$url2' => z_root() . '/photos/' . $channel['channel_address'],
 			'$name' => array('name', t('Login Name') . ' <span class="required">*</span>', (($atoken) ? $atoken['atoken_name'] : ''),''),
-			'$token'=> array('token', t('Login Password') . ' <span class="required">*</span>',(($atoken) ? $atoken['atoken_token'] : autoname(8)), ''),
+			'$token'=> array('token', t('Login Password') . ' <span class="required">*</span>',(($atoken) ? $atoken['atoken_token'] : new_token()), ''),
 			'$expires'=> array('expires', t('Expires (yyyy-mm-dd)'), (($atoken['atoken_expires'] && $atoken['atoken_expires'] > NULL_DATE) ? datetime_convert('UTC',date_default_timezone_get(),$atoken['atoken_expires']) : ''), ''),
 			'$them' => t('Their Settings'),
 			'$me' => t('My Settings'),

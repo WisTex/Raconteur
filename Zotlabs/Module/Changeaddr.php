@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Web\Controller;
 
 /*
@@ -19,11 +20,13 @@ class Changeaddr extends Controller {
 			return;
 		}
 
-		if (! local_channel())
+		if (! local_channel()) {
 			return;
+		}
 	
-		if ($_SESSION['delegate'])
+		if (isset($_SESSION['delegate']) && $_SESSION['delegate']) {
 			return;
+		}
 	
 		if ((! x($_POST,'qxz_password')) || (! strlen(trim($_POST['qxz_password']))))
 			return;
@@ -35,12 +38,13 @@ class Changeaddr extends Controller {
 			return;
 	
 	
-		$account = \App::get_account();
-		$channel = \App::get_channel();
+		$account = App::get_account();
+		$channel = App::get_channel();
 	
 		$x = account_verify_password($account['account_email'],$_POST['qxz_password']);
-		if (! ($x && $x['account']))
+		if (! ($x && $x['account'])) {
 			return;
+		}
 	
 		if ($account['account_password_changed'] > NULL_DATE) {
 			$d1 = datetime_convert('UTC','UTC','now - 48 hours');
@@ -80,10 +84,11 @@ class Changeaddr extends Controller {
 		}
 
 
-		if (! local_channel())
+		if (! local_channel()) {
 			goaway(z_root());
+		}
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
 		$hash = random_string();
 	
