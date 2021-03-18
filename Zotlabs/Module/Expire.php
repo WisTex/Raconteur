@@ -30,7 +30,7 @@ class Expire extends Controller {
 
 	function get() {
 
-        $desc = t('This app allows you to set an optional expiration date/time for posts, after which they will be deleted. This must be at least fifteen minutes into the future. You may also choose to automatically delete all your posts after a set number of days');
+        $desc = t('This app allows you to set an optional expiration date/time for your own posts, after which they will be deleted. This must be at least fifteen minutes into the future. You may also choose to automatically delete all your posts after a set number of days');
 
         $text = '<div class="section-content-info-wrapper">' . $desc . '</div>';
 

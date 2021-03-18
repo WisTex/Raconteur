@@ -863,6 +863,30 @@ class Activity {
 	}
 
 
+	static function nomadic_locations($item) {
+		$synchubs = [];
+		$h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url 
+			where hubloc_hash = '%s' and hubloc_network = 'zot6' and hubloc_deleted = 0",
+			dbesc($item['author_xchan'])
+		);
+
+		if (! $h) {
+			return [];
+		}
+
+		foreach ($h as $x) {
+			$y = q("select site_dead from site where site_url = '%s' limit 1",
+				dbesc($x['hubloc_url'])
+			);
+
+			if ((! $y) || intval($y[0]['site_dead']) === 0) {
+				$synchubs[] = $x;
+			}
+		}
+		
+		return $synchubs;
+	}
+
 
 	static function encode_item($i, $activitypub = false) {
 
