@@ -67,6 +67,24 @@ class Cron_daily {
 			db_quoteinterval($keep_reports . ' DAY')
 		);
 
+		// delete accounts that did not submit email verification within 3 days
+
+		$r = q("select * from register where password = 'verify' and created < %s - INTERVAL %s",
+			db_utcnow(),
+			db_quoteinterval('3 DAY')
+		);
+		if ($r) {
+			foreach ($r as $rv) {
+				q("DELETE FROM account WHERE account_id = %d",
+					intval($rv['uid'])
+				);
+
+				q("DELETE FROM register WHERE id = %d",
+					intval($rv['id'])
+				);
+			}
+		}
+
 		// expire any expired accounts
 		downgrade_accounts();
 
