@@ -889,6 +889,7 @@ function import_items($channel, $items, $sync = false, $relocate = null) {
 		foreach ($items as $i) {
 			$item_result = false;
 			$item = get_item_elements($i,$allow_code);
+
 			if (! $item)
 				continue;
 

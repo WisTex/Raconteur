@@ -306,12 +306,16 @@ class Libzot {
 			return false;
 		}
 
+		$m = parse_url($url);
+		$site_url = unparse_url([ 'scheme' => $m['scheme'], 'host' => $m['host'] ]);
+
+
 		$s = q("select site_dead from site where site_url = '%s' limit 1",
-			dbesc($url)
+			dbesc($site_url)
 		);
 
 		if ($s && intval($s[0]['site_dead']) && (! $force)) {
-			logger('zot_refresh: site ' . $url . ' is marked dead and force flag is not set. Cancelling operation.');
+			logger('zot_refresh: site ' . $site_url . ' is marked dead and force flag is not set. Cancelling operation.');
 			return false;
 		}
 
@@ -518,6 +522,9 @@ class Libzot {
 				}
 
 			}
+			return true;
+		}
+		else {
 			return true;
 		}
 		return false;
