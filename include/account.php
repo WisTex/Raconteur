@@ -529,7 +529,7 @@ function account_deny($hash) {
 	);
 
 	$r = q("DELETE FROM register WHERE id = %d",
-		dbesc($register[0]['id'])
+		intval($register[0]['id'])
 	);
 	notice( sprintf(t('Registration revoked for %s'), $account[0]['account_email']) . EOL);
 
