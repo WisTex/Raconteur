@@ -745,6 +745,51 @@ class Activity {
 		else
 			return []; 
 
+		if (! isset($ret['url'])) {
+			$urls = [];
+			if (intval($i['item_wall'])) {
+				$locs = self::nomadic_locations($i);
+				if ($locs) {
+					foreach ($locs as $l) {
+						if (strpos($ret['id'],$l['hubloc_url']) !== false) {
+							continue;
+						}
+						$urls[] = [
+							'type' => 'Link',
+							'href' => str_replace(z_root(),$l['hubloc_url'],$ret['id']),
+							'rel' => 'alternate',
+							'mediaType' => 'text/html'
+						];
+						$urls[] = [
+							'type' => 'Link',
+							'href' => str_replace(z_root(),$l['hubloc_url'],$ret['id']),
+							'rel' => 'alternate',
+							'mediaType' => 'application/activity+json'
+						];
+						$urls[] = [
+							'type' => 'Link',
+							'href' => str_replace(z_root(),$l['hubloc_url'],$ret['id']),
+							'rel' => 'alternate',
+							'mediaType' => 'application/x-zot+json'
+						];
+					}
+				}
+			}
+			if ($urls) {
+				$curr[] = [
+					'type'      => 'Link',
+					'href'      => $ret['id'],
+					'rel'       => 'alternate',
+					'mediaType' => 'text/html'
+				];				
+				$ret['url'] = array_merge($curr, $urls);
+			}
+			else {
+				$ret['url'] = $ret['id'];
+			}
+		}
+
+
 		if ($i['obj']) {
 			if (! is_array($i['obj'])) {
 				$i['obj'] = json_decode($i['obj'],true);
@@ -1072,18 +1117,48 @@ class Activity {
 		}
 
 		if (! isset($ret['url'])) {
-			$ret['url'] = $ret['id'];
+			$urls = [];
+			if (intval($i['item_wall'])) {
+				$locs = self::nomadic_locations($i);
+				if ($locs) {
+					foreach ($locs as $l) {
+						if (strpos($i['mid'],$l['hubloc_url']) !== false) {
+							continue;
+						}
+						$urls[] = [
+							'type' => 'Link',
+							'href' => str_replace(z_root(),$l['hubloc_url'],$ret['id']),
+							'rel' => 'alternate',
+							'mediaType' => 'text/html'
+						];
+						$urls[] = [
+							'type' => 'Link',
+							'href' => str_replace(z_root(),$l['hubloc_url'],$ret['id']),
+							'rel' => 'alternate',
+							'mediaType' => 'application/activity+json'
+						];
+						$urls[] = [
+							'type' => 'Link',
+							'href' => str_replace(z_root(),$l['hubloc_url'],$ret['id']),
+							'rel' => 'alternate',
+							'mediaType' => 'application/x-zot+json'
+						];
+					}
+				}
+			}
+			if ($urls) {
+				$curr[] = [
+					'type'      => 'Link',
+					'href'      => $ret['id'],
+					'rel'       => 'alternate',
+					'mediaType' => 'text/html'
+				];				
+				$ret['url'] = array_merge($curr, $urls);
+			}
+			else {
+				$ret['url'] = $ret['id'];
+			}
 		}
-
-		// Very few ActivityPub projects currently support url as array
-		// and most will choke and die if you supply one here.
-		
-		//		$ret['url'] = [
-		//			'type'      => 'Link',
-		//			'rel'       => 'alternate',
-		//			'mediaType' => 'text/html',
-		//			'href'      => $ret['id']
-		//		];
 
 		$t = self::encode_taxonomy($i);
 		if ($t) {
