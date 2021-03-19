@@ -1493,6 +1493,7 @@ function bbcode($Text, $options = []) {
 
 		// blockquotes
 		$Text = preg_replace('#^(&gt;)+ +(.*?)$#m','<blockquote>$2</blockquote>',$Text);
+		$Text = preg_replace('#^(\>)+ +(.*?)$#m','<blockquote>$2</blockquote>',$Text);
 		$Text = preg_replace('#</blockquote>\n<blockquote>#',"\n", $Text);
 
 		// links
