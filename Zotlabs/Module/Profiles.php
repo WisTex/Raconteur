@@ -909,7 +909,7 @@ class Profiles extends Controller {
 		$arr['obj'] = [
 			'type'    => ACTIVITY_OBJ_PROFILE,
 			'summary' => bbcode($message),
-			'source'  => [ 'mediaType' => 'text/bbcode', 'summary' => $message ],
+			'source'  => [ 'mediaType' => 'text/x-multicode', 'summary' => $message ],
 			'id'      => $self['xchan_url'],
 			'url'     => z_root() . '/profile/' . $self['channel_address']
 		];

@@ -462,7 +462,7 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 	}
 
 	if (! array_key_exists('mimetype',$arr)) {
-		$arr['mimetype'] = 'text/bbcode';
+		$arr['mimetype'] = 'text/x-multicode';
 	}
 
     if (! isset($arr['mid']) && $arr['mid']) {
@@ -1379,7 +1379,7 @@ function activity_sanitise($arr) {
 				if ($k === 'source' && array_path_exists('source/mediaType',$arr)) {
 					if (array_path_exists('source/content',$arr) && isset($arr['source']['mediaType']) && in_array($arr['source']['mediaType'], [ 'text/bbcode', 'text/x-multicode' ])) {
 						// @FIXME multicode
-						$ret[$k] = [ 'mediaType' => 'text/bbcode' ];
+						$ret[$k] = [ 'mediaType' => 'text/x-multicode' ];
 						if (is_string($arr['source']['content'])) {
 							$ret[$k]['content'] = multicode_purify($arr['source']['content']);
 						}
@@ -1564,7 +1564,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	if(array_key_exists('parent',$arr))
 		unset($arr['parent']);
 
-	$arr['mimetype']      = ((x($arr,'mimetype'))      ? notags(trim($arr['mimetype']))      : 'text/bbcode');
+	$arr['mimetype']      = ((x($arr,'mimetype'))      ? notags(trim($arr['mimetype']))      : 'text/x-multicode');
 
 	if(($arr['mimetype'] == 'application/x-php') && (! $allow_exec)) {
 		logger('item_store: php mimetype but allow_exec is denied.');
@@ -2079,7 +2079,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 	if(array_key_exists('edit',$arr))
 		unset($arr['edit']);
 
-	$arr['mimetype']      = ((x($arr,'mimetype'))      ? notags(trim($arr['mimetype']))      : 'text/bbcode');
+	$arr['mimetype']      = ((x($arr,'mimetype'))      ? notags(trim($arr['mimetype']))      : 'text/x-multicode');
 
 	if(($arr['mimetype'] == 'application/x-php') && (! $allow_exec)) {
 		logger('item_store: php mimetype but allow_exec is denied.');
@@ -4484,7 +4484,7 @@ function send_profile_photo_activity($channel,$photo,$profile) {
 		'updated'   => datetime_convert('UTC','UTC',$photo['edited'],ATOM_TIME),
 		'id'        => $arr['mid'],
 		'url'       => [ 'type' => 'Link', 'mediaType' => $photo['mimetype'], 'href' => z_root() . '/photo/profile/l/' . $channel['channel_id'] ],
-		'source'    => [ 'content' => $arr['body'], 'mediaType' => 'text/bbcode' ],
+		'source'    => [ 'content' => $arr['body'], 'mediaType' => 'text/x-multicode' ],
 		'content'   => bbcode($arr['body']),
 		'actor'     => Activity::encode_person($channel,false),
 	];

@@ -119,7 +119,7 @@ class Cards extends Controller {
 				'hide_location'     => false,
 				'hide_voting'       => false,
 				'profile_uid'       => intval($owner),
-				'mimetype'          => 'text/bbcode',
+				'mimetype'          => 'text/x-multicode',
 				'mimeselect'        => false,
 				'layoutselect'      => false,
 				'expanded'          => false,

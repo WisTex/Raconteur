@@ -86,7 +86,7 @@ var activeCommentText = '';
 
 		function jotSetMime() { 
 			var mtype = $('#id_mimetype').val(); 
-			if(mtype == 'text/bbcode')
+			if(mtype == 'text/bbcode' || mtype == 'text/x-multicode')
 				$('#profile-jot-submit-left').show();
 			else
 				$('#profile-jot-submit-left').hide();

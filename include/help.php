@@ -240,7 +240,7 @@ function store_doc_file($s) {
 	$item['aid'] = 0;
 	$item['uid'] = $sys['channel_id'];
 
-	$mimetype = 'text/bbcode';
+	$mimetype = 'text/x-multicode';
 
 	require_once('include/html2plain.php');
 
