@@ -1492,8 +1492,8 @@ function bbcode($Text, $options = []) {
 		// Perform some markdown conversions before translating linefeeds so as to keep the regexes manageable
 		// The preceding character check in bold/italic sequences is so we don't mistake underscore/asterisk in the middle of conversational text as an italic trigger. 
 
-		$Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_]{3})([^\n]+?)\1#','md_bolditalic',$Text);
-		$Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_]{2})([^\n]+?)\1#','md_bold',$Text);
+		$Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_]{3})([^\n]+?)\2#','md_bolditalic',$Text);
+		$Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_]{2})([^\n]+?)\2#','md_bold',$Text);
 		$Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_])([^\n|`]+?)\2#m','md_italic',$Text);
 		$Text = preg_replace_callback('{ ^(.+?)[ ]*\n(=+|-+)[ ]*\n+ }mx','md_topheader', $Text);
 		$Text = preg_replace_callback('#^(\#{1,6})\s+([^\#]+?)\s*\#*$#m','md_header', $Text);
