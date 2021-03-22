@@ -1143,6 +1143,19 @@ function md_italic($content) {
 	return '<em>' . $content[1] . $content[3] . '</em>';
 }
 
+function md_bold($content) {
+
+	return '<strong>' . $content[1] . $content[3] . '</strong>';
+}
+
+function md_bolditalic($content) {
+
+	return '<strong><em>' . $content[1] . $content[3] . '</em></strong>';
+}
+
+
+
+
 function md_image($content) {
 	$url = filter_var($content[1], FILTER_SANITIZE_URL);
 	$alt = '';
@@ -1477,10 +1490,10 @@ function bbcode($Text, $options = []) {
 		//		}
 
 		// Perform some markdown conversions before translating linefeeds so as to keep the regexes manageable
+		// The preceding character check in bold/italic sequences is so we don't mistake underscore/asterisk in the middle of conversational text as an italic trigger. 
 
-		$Text = preg_replace('#(?<!\\\)([*_]{3})([^\n]+?)\1#','<strong><em>$2</em></strong>',$Text);
-		$Text = preg_replace('#(?<!\\\)([*_]{2})([^\n]+?)\1#','<strong>$2</strong>',$Text);
-		// The character check is so we don't mistake underscore in the middle of conversational text as an italic trigger. 
+		$Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_]{3})([^\n]+?)\2#','md_bolditalic',$Text);
+		$Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_]{2})([^\n]+?)\2#','md_bold',$Text);
 		$Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_])([^\n|`]+?)\2#m','md_italic',$Text);
 		$Text = preg_replace_callback('{ ^(.+?)[ ]*\n(=+|-+)[ ]*\n+ }mx','md_topheader', $Text);
 		$Text = preg_replace_callback('#^(\#{1,6})\s+([^\#]+?)\s*\#*$#m','md_header', $Text);
