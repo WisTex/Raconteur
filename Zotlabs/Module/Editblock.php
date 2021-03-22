@@ -111,13 +111,13 @@ class Editblock extends Controller {
 
 		$x = array(
 			'nickname' => $channel['channel_address'],
-			'bbco_autocomplete'=> (($mimetype  == 'text/bbcode') ? 'bbcode' : 'comanche-block'),
+			'bbco_autocomplete'=> ((in_array($mimetype, [ 'text/bbcode', 'text/x-multicode' ])) ? 'bbcode' : 'comanche-block'),
 			'return_path' => $rp,
 			'webpage' => ITEM_TYPE_BLOCK,
 			'ptlabel' => t('Block Name'),
 			'button' => t('Edit'),
-			'writefiles' => (($mimetype  == 'text/bbcode') ? perm_is_allowed($owner, get_observer_hash(), 'write_storage') : false),
-			'weblink' => (($mimetype  == 'text/bbcode') ? t('Insert web link') : false),
+			'writefiles' => ((in_array($mimetype, [ 'text/bbcode', 'text/x-multicode' ])) ? perm_is_allowed($owner, get_observer_hash(), 'write_storage') : false),
+			'weblink' => ((in_array($mimetype, [ 'text/bbcode' , 'text/x-multicode' ])) ? t('Insert web link') : false),
 			'hide_voting' => true,
 			'hide_future' => true,
 			'hide_location' => true,
@@ -133,7 +133,7 @@ class Editblock extends Controller {
 			'placeholdertitle' => t('Title (optional)'),
 			'pagetitle' => $block_title,
 			'profile_uid' => (intval($channel['channel_id'])),
-			'bbcode' => (($mimetype  == 'text/bbcode') ? true : false)
+			'bbcode' => ((in_array($mimetype, [ 'text/bbcode' , 'text/x-multicode' ])) ? true : false)
 		);
 
 		$editor = status_editor($x);

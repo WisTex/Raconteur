@@ -830,7 +830,7 @@ class Item extends Controller {
 
 		$mimetype = notags(trim($_REQUEST['mimetype']));
 		if(! $mimetype)
-			$mimetype = 'text/bbcode';
+			$mimetype = 'text/x-multicode';
 	
 
 		$execflag = ((intval($uid) == intval($profile_uid) 
@@ -901,7 +901,7 @@ class Item extends Controller {
 		}
 
 
-		if($mimetype === 'text/bbcode') {
+		if(in_array($mimetype, [ 'text/bbcode', 'text/x-multicode' ])) {
 		
 			// BBCODE alert: the following functions assume bbcode input
 			// and will require alternatives for alternative content-types (text/html, text/markdown, text/plain, etc.)

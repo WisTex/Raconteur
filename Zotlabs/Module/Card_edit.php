@@ -121,7 +121,7 @@ class Card_edit extends \Zotlabs\Web\Controller {
 			'profile_uid' => (intval($channel['channel_id'])),
 			'catsenabled' => $catsenabled,
 			'category' => $category,
-			'bbcode' => (($mimetype  == 'text/bbcode') ? true : false)
+			'bbcode' => ((in_array($mimetype, [ 'text/bbcode', 'text/x-multicode' ])) ? true : false)
 		);
 
 		$editor = status_editor($x);

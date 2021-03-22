@@ -1863,6 +1863,7 @@ function import_webpage_element($element, $channel, $type) {
 	// Import mimetype if it is a valid mimetype for the element
 	$mimetypes = [
 		'text/bbcode',
+		'text/x-multicode',
 		'text/html',
 		'text/markdown',
 		'text/plain',
@@ -1874,7 +1875,7 @@ function import_webpage_element($element, $channel, $type) {
 		$arr['mimetype'] = $element['mimetype'];
 	}
 	else {
-		$arr['mimetype'] = 'text/bbcode';
+		$arr['mimetype'] = 'text/x-multicode';
 	}
 
 	// Verify ability to use html or php!!!

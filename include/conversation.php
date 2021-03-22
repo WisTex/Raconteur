@@ -1275,7 +1275,7 @@ function z_status_editor($x, $popup = false) {
 
 	$summaryenabled = ((array_key_exists('allow_summary',$x)) ? intval($x['allow_summary']) : false);
 
-	$mimetype = ((x($x,'mimetype')) ? $x['mimetype'] : 'text/bbcode');
+	$mimetype = ((x($x,'mimetype')) ? $x['mimetype'] : 'text/x-multicode');
 
 	$mimeselect = ((x($x,'mimeselect')) ? $x['mimeselect'] : false);
 	if($mimeselect)
@@ -1283,13 +1283,13 @@ function z_status_editor($x, $popup = false) {
 	else
 		$mimeselect = '<input type="hidden" name="mimetype" value="' . $mimetype . '" />';
 
-	$weblink = (($mimetype === 'text/bbcode') ? t('Insert web link') : false);
+	$weblink = ((in_array($mimetype, [ 'text/bbcode', 'text/x-multicode' ])) ? t('Insert web link') : false);
 	if(x($x, 'hide_weblink'))
 		$weblink = false;
 	
 	$embedPhotos = t('Embed (existing) photo from your photo albums');
 
-	$writefiles = (($mimetype === 'text/bbcode') ? perm_is_allowed($x['profile_uid'], get_observer_hash(), 'write_storage') : false);
+	$writefiles = ((in_array($mimetype, ['text/bbcode', 'text/x-multicode'])) ? perm_is_allowed($x['profile_uid'], get_observer_hash(), 'write_storage') : false);
 	if(x($x, 'hide_attach'))
 		$writefiles = false;
 	if(perm_is_allowed($x['profile_uid'],get_observer_hash(),'moderated')) {

@@ -131,7 +131,7 @@ class Impel extends \Zotlabs\Web\Controller {
 			$arr['edited'] = datetime_convert('UTC','UTC',$j['edited']);
 			$arr['owner_xchan'] = get_observer_hash();
 			$arr['author_xchan'] = (($j['author_xchan']) ? $j['author_xchan'] : get_observer_hash());
-			$arr['mimetype'] = (($j['mimetype']) ? $j['mimetype'] : 'text/bbcode');
+			$arr['mimetype'] = (($j['mimetype']) ? $j['mimetype'] : 'text/x-multicode');
 	
 			if(! $j['mid']) {
 				$j['uuid'] = new_uuid();

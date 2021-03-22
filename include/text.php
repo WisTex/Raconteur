@@ -104,7 +104,7 @@ function escape_tags($string) {
 }
 
 
-function z_input_filter($s, $type = 'text/bbcode', $allow_code = false) {
+function z_input_filter($s, $type = 'text/x-multicode', $allow_code = false) {
 
 	if (in_array($type, [ 'text/bbcode', 'text/x-multicode' ])) {
 		return (multicode_purify($s));
@@ -1917,7 +1917,7 @@ function prepare_binary($item) {
  *
  * @return string
  */
-function prepare_text($text, $content_type = 'text/bbcode', $opts = false) {
+function prepare_text($text, $content_type = 'text/x-multicode', $opts = false) {
 
 
 	switch($content_type) {
@@ -2034,10 +2034,11 @@ function layout_select($channel_id, $current = '') {
 }
 
 
-function mimetype_select($channel_id, $current = 'text/bbcode', $choices = null, $element = 'mimetype') {
+function mimetype_select($channel_id, $current = 'text/x-multicode', $choices = null, $element = 'mimetype') {
 
 	$x = (($choices) ? $choices : [
 		'text/bbcode'       => t('BBcode'),
+		'text/x-multicode'  => t('Multicode'),
 		'text/html'         => t('HTML'),
 		'text/markdown'     => t('Markdown'),
 		'text/plain'        => t('Text'),

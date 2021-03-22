@@ -137,14 +137,14 @@ class Editwebpage extends Controller {
 
 		$x = array(
 			'nickname' => $channel['channel_address'],
-			'bbco_autocomplete'=> (($mimetype  == 'text/bbcode') ? 'bbcode' : ''),
+			'bbco_autocomplete'=> ((in_array($mimetype, [ 'text/bbcode', 'text/x-multicode' ])) ? 'bbcode' : ''),
 			'return_path' => $rp,
 			'webpage' => ITEM_TYPE_WEBPAGE,
 			'ptlabel' => t('Page link'),
 			'pagetitle' => $page_title,
-			'writefiles' => (($mimetype  == 'text/bbcode') ? perm_is_allowed($owner, get_observer_hash(), 'write_storage') : false),
+			'writefiles' => ((in_array($mimetype, [ 'text/bbcode', 'text/x-multicode' ])) ? perm_is_allowed($owner, get_observer_hash(), 'write_storage') : false),
 			'button' => t('Edit'),
-			'weblink' => (($mimetype  == 'text/bbcode') ? t('Insert web link') : false),
+			'weblink' => ((in_array($mimetype, [ 'text/bbcode', 'text/x-multicode' ])) ? t('Insert web link') : false),
 			'hide_location' => true,
 			'hide_voting' => true,
 			'ptyp' => $itm[0]['type'],
@@ -161,7 +161,7 @@ class Editwebpage extends Controller {
 			'title' => htmlspecialchars($itm[0]['title'],ENT_COMPAT,'UTF-8'),
 			'lockstate' => (((strlen($itm[0]['allow_cid'])) || (strlen($itm[0]['allow_gid'])) || (strlen($itm[0]['deny_cid'])) || (strlen($itm[0]['deny_gid']))) ? 'lock' : 'unlock'),
 			'profile_uid' => (intval($owner)),
-			'bbcode' => (($mimetype  == 'text/bbcode') ? true : false)
+			'bbcode' => ((in_array($mimetype, [ 'text/bbcode', 'text/x-multicode' ])) ? true : false)
 		);
 
 		$editor = status_editor($x);

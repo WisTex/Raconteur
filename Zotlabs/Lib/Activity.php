@@ -679,7 +679,7 @@ class Activity {
 			$ret['content'] = bbcode($tmp, [ 'export' => true ]);
 			$ret['source'] = [
 				'content' => $i['body'],
-				'mediaType' => 'text/bbcode'
+				'mediaType' => 'text/x-multicode'
 			];
 		}
 
@@ -1045,13 +1045,13 @@ class Activity {
 			$ret['name'] = $i['title'];
 		}
 
-		if ($i['mimetype'] === 'text/bbcode') {
+		if ($i['mimetype'] === 'text/x-multicode') {
 			if ($i['summary']) {
 				$ret['summary'] = bbcode($i['summary'], [ $bbopts => true ]);
 			}
 			$opts = [ $bbopts => true ];
 			$ret['content'] = bbcode($i['body'], $opts);
-			$ret['source'] = [ 'content' => $i['body'], 'mediaType' => 'text/bbcode' ];
+			$ret['source'] = [ 'content' => $i['body'], 'mediaType' => 'text/x-multicode' ];
 			if (isset($ret['summary']))  {
 				$ret['source']['summary'] = $i['summary'];
 			}
@@ -3524,7 +3524,7 @@ class Activity {
 
 		if (array_path_exists('source/mediaType',$act) && array_path_exists('source/content',$act)) {
 			if (in_array($act['source']['mediaType'], [ 'text/bbcode', 'text/x-multicode' ])) {
-				if (is_string($act['source']['content']) && strpos($act['source']['content'],'<') !== false) {
+				if (is_string($act['source']['content']) && (strpos($act['source']['content'],'<') !== false || strpos($act['source']['content'],'>') !== false)) {
 					$content['bbcode'] = multicode_purify($act['source']['content']);
 				}
 				else {

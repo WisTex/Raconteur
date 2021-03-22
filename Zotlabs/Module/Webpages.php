@@ -495,6 +495,7 @@ class Webpages extends Controller {
 																$block_ext = 'html';
 																break;
 														case 'text/bbcode':
+														case 'text/x-multicode':
 																$block_ext = 'bbcode';
 																break;
 														case 'text/markdown':
@@ -550,6 +551,7 @@ class Webpages extends Controller {
 												);
 												switch ($layoutinfo['mimetype']) {
 														case 'text/bbcode':
+														case 'text/x-multicode':
 														default:
 																$layout_ext = 'bbcode';
 																break;
@@ -606,6 +608,7 @@ class Webpages extends Controller {
 																		);
 																		switch ($layoutinfo['mimetype']) {
 																				case 'text/bbcode':
+																				case 'text/x-multicode':
 																				default:
 																						$layout_ext = 'bbcode';
 																						break;
@@ -628,6 +631,7 @@ class Webpages extends Controller {
 																		$page_ext = 'html';
 																		break;
 																case 'text/bbcode':
+																case 'text/x-multicode':
 																		$page_ext = 'bbcode';
 																		break;
 																case 'text/markdown':

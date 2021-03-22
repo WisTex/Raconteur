@@ -412,7 +412,7 @@ function photo_upload($channel, $observer, $args) {
 		// This is a placeholder and will get over-ridden by the item mid, which is critical for sharing as a conversational item over activitypub
 		'id'        => z_root() . '/photo/' . $photo_hash,
 		'url'       => $url,
-		'source'    => [ 'content' => $summary, 'mediaType' => 'text/bbcode' ],
+		'source'    => [ 'content' => $summary, 'mediaType' => 'text/x-multicode' ],
 		'content'   => bbcode($summary)
 	];
 
@@ -445,7 +445,7 @@ function photo_upload($channel, $observer, $args) {
 
 				$object['id'] = $item['mid'];
 				$item['body'] = $summary;
-				$item['mimetype'] = 'text/bbcode';
+				$item['mimetype'] = 'text/x-multicode';
 				$item['obj_type'] = ACTIVITY_OBJ_PHOTO;
 				$item['obj']	= json_encode($object);
 
