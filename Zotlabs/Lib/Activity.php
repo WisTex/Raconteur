@@ -681,6 +681,9 @@ class Activity {
 				'content' => $i['body'],
 				'mediaType' => 'text/bbcode'
 			];
+			if ($i['summary']) {
+				$ret['source']['summary'] = $i['summary'];
+			}
 		}
 
 		$ret['published'] = datetime_convert('UTC','UTC',$i['created'],ATOM_TIME);
