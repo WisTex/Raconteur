@@ -109,7 +109,7 @@ class Search extends Controller {
 		}
 	
 		// look for a naked webbie
-		if (strpos($search,'@') !== false) {
+		if (strpos($search,'@') !== false && strpos($search,'http') !== 0) {
 			goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
 		}
 	

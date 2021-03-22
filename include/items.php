@@ -3397,6 +3397,14 @@ function item_expire($uid,$days,$comment_days = 7) {
 			continue;
 		}
 
+		// don't expire pinned items either
+		
+		$pinned = PConfig::Get($item['uid'], 'pinned', $item['item_type'], []);
+		if (in_array($item['mid'], $pinned)) {
+			retain_item($item['id']);
+			continue;
+		}
+
 		drop_item($item['id'],false);
 	}
 
