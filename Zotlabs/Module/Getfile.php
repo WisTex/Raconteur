@@ -39,7 +39,7 @@ class Getfile extends Controller {
 		$hash     = $_POST['hash'];
 		$resource = $_POST['resource'];
 		$revision = intval($_POST['revision']);
-		$resolution = (-1);
+		$resolution = ((isset($_POST['resolution'])) ? intval($_POST['resolution']) : (-1));
 
 		if(argc() > 1) {
 			$verify_hash = argv(1);
@@ -85,11 +85,6 @@ class Getfile extends Controller {
 			killme();
 		}
 	
-		if(substr($resource,-2,1) == '-') {
-			$resolution = intval(substr($resource,-1,1));
-			$resource = substr($resource,0,-2);
-		}			
-
 		if($resolution > 0) {
 			$r = q("select * from photo where resource_id = '%s' and uid = %d and imgscale = %d limit 1",
 				dbesc($resource),
