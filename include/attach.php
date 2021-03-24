@@ -2139,7 +2139,7 @@ function attach_export_data($channel, $resource_id, $deleted = false) {
 
 
 	if($deleted) {
-		$ret['attach'] = array(array('hash' => $resource_id, 'deleted' => 1));
+		$ret['attach'] = [ [ 'hash' => $resource_id, 'deleted' => 1 ] ];
 		return $ret;
 	}
 

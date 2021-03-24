@@ -1,7 +1,11 @@
 <?php
 namespace Zotlabs\Storage;
 
+use App;
 use Sabre\DAV;
+use Zotlabs\Lib\PermissionDescription;
+use Zotlabs\Access\AccessControl;
+use Zotlabs\Render\Theme;
 
 //require_once('include/conversation.php');
 //require_once('include/text.php');
@@ -296,7 +300,7 @@ class Browser extends DAV\Browser\Plugin {
 				'$is_admin' => is_site_admin(),
 				'$admin_delete' => t('Admin Delete'),
 				'$parentpath' => $parentpath,
-				'$cpath' => bin2hex(\App::$query_string),
+				'$cpath' => bin2hex(App::$query_string),
 				'$tiles' => intval($_SESSION['cloud_tiles']),
 				'$entries' => $f,
 				'$name' => t('Name'),
@@ -315,10 +319,10 @@ class Browser extends DAV\Browser\Plugin {
 
 		nav_set_selected('Files');
 
-		\App::$page['content'] = $html;
+		App::$page['content'] = $html;
 		load_pdl();
 
-		$current_theme = \Zotlabs\Render\Theme::current();
+		$current_theme = Theme::current();
 
 		$theme_info_file = 'view/theme/' . $current_theme[0] . '/php/theme.php';
 		if (file_exists($theme_info_file)) {
@@ -358,11 +362,11 @@ class Browser extends DAV\Browser\Plugin {
 		if ($this->auth->owner_id) {
 			$channel = channelx_by_n($this->auth->owner_id);
 			if ($channel) {
-				$acl = new \Zotlabs\Access\AccessControl($channel);
+				$acl = new AccessControl($channel);
 				$channel_acl = $acl->get();
 				$lockstate = (($acl->is_private()) ? 'lock' : 'unlock');
 
-				$aclselect = ((local_channel() == $this->auth->owner_id) ? populate_acl($channel_acl,false, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_storage')) : '');
+				$aclselect = ((local_channel() == $this->auth->owner_id) ? populate_acl($channel_acl,false,PermissionDescription::fromGlobalPermission('view_storage')) : '');
 			}
 
 			// Storage and quota for the account (all channels of the owner of this directory)!
@@ -417,7 +421,7 @@ class Browser extends DAV\Browser\Plugin {
 				'$deny_cid' => acl2json($channel_acl['deny_cid']),
 				'$deny_gid' => acl2json($channel_acl['deny_gid']),
 				'$lockstate' => $lockstate,
-				'$return_url' => \App::$cmd,
+				'$return_url' => App::$cmd,
 				'$path' => $path,
 				'$folder' => find_folder_hash_by_path($this->auth->owner_id, $path),
 				'$dragdroptext' => t('Drop files here to immediately upload'),
