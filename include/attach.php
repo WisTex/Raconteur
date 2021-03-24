@@ -13,6 +13,7 @@
 
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\AccessList;
+use Zotlabs\Daemon\Run;
 
 require_once('include/permissions.php');
 require_once('include/security.php');
@@ -376,25 +377,27 @@ function attach_can_view_folder($uid,$ob_hash,$folder_hash,$token = EMPTY_STR) {
  */
 function attach_by_hash_nodata($hash, $observer_hash, $rev = 0) {
 
-	$ret = array('success' => false);
+	$ret = [ 'success' => false ];
 
 	// Check for existence, which will also provide us the owner uid
 
 	$sql_extra = '';
-	if($rev == (-1))
+	if ($rev == (-1)) {
 		$sql_extra = " order by revision desc ";
-	elseif($rev)
+	}
+	elseif ($rev) {
 		$sql_extra = " and revision = " . intval($rev) . " ";
+	}
 
 	$r = q("SELECT uid FROM attach WHERE hash = '%s' $sql_extra LIMIT 1",
 		dbesc($hash)
 	);
-	if(! $r) {
+	if (! $r) {
 		$ret['message'] = t('Item was not found.');
 		return $ret;
 	}
 
-	if(! perm_is_allowed($r[0]['uid'], $observer_hash, 'view_storage')) {
+	if (! perm_is_allowed($r[0]['uid'], $observer_hash, 'view_storage')) {
 		$ret['message'] = t('Permission denied.');
 		return $ret;
 	}
@@ -403,26 +406,26 @@ function attach_by_hash_nodata($hash, $observer_hash, $rev = 0) {
 
 	// Now we'll see if we can access the attachment
 
-	$r = q("select id, aid, uid, hash, creator, filename, filetype, filesize, revision, folder, os_storage, is_photo, os_path, display_path, is_dir, flags, created, edited, allow_cid, allow_gid, deny_cid, deny_gid from attach where uid = %d and hash = '%s' $sql_extra limit 1",
+	$a = q("select id, aid, uid, hash, creator, filename, filetype, filesize, revision, folder, os_storage, is_photo, os_path, display_path, is_dir, flags, created, edited, allow_cid, allow_gid, deny_cid, deny_gid from attach where uid = %d and hash = '%s' $sql_extra limit 1",
 		intval($r[0]['uid']),
 		dbesc($hash)
 	);
 
-	if(! $r) {
+	if (! $a) {
 		$ret['message'] = t('Permission denied.');
 		return $ret;
 	}
 
-	if($r[0]['folder']) {
-		$x = attach_can_view_folder($r[0]['uid'], $observer_hash, $r[0]['folder']);
-		if(! $x) {
+	if ($a[0]['folder']) {
+		$x = attach_can_view_folder($a[0]['uid'], $observer_hash, $a[0]['folder']);
+		if (! $x) {
 			$ret['message'] = t('Permission denied.');
 			return $ret;
 		}
 	}
 
 	$ret['success'] = true;
-	$ret['data'] = $r[0];
+	$ret['data'] = array_shift($a);
 
 	return $ret;
 }
@@ -1019,7 +1022,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 		call_hooks('photo_upload_end', $ret);
 	}
 
-	\Zotlabs\Daemon\Run::Summon([ 'Thumbnail' , $hash ]);
+	Run::Summon([ 'Thumbnail' , $hash ]);
 
 
 	if($dosync) {
@@ -1054,39 +1057,41 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
  *  * \e array \b data array of attach DB entries without data component
  */
 function z_readdir($channel_id, $observer_hash, $pathname, $parent_hash = '') {
-	$ret = array('success' => false);
 
-	if(! perm_is_allowed($channel_id, get_observer_hash(), 'view_storage')) {
+	$ret = [ 'success' => false ];
+
+	if (! perm_is_allowed($channel_id, $observer_hash, 'view_storage')) {
 		$ret['message'] = t('Permission denied.');
 		return $ret;
 	}
 
-	if(strpos($pathname, '/')) {
+	if (strpos($pathname, '/')) {
 		$paths = explode('/', $pathname);
-		if(count($paths) > 1) {
+		if (count($paths) > 1) {
 			$curpath = array_shift($paths);
 
 			$r = q("select hash, id, is_dir from attach where uid = %d and filename = '%s' and is_dir != 0 " . permissions_sql($channel_id,$observer_hash) . " limit 1",
 				intval($channel_id),
 				dbesc($curpath)
 			);
-			if(! $r) {
+			if (! $r) {
 				$ret['message'] = t('Path not available.');
 				return $ret;
 			}
-
+			// recurse
 			return z_readdir($channel_id, $observer_hash, implode('/', $paths), $r[0]['hash']);
 		}
 	}
-	else
+	else {
 		$paths = array($pathname);
-
+	}
+	
 	$r = q("select id, aid, uid, hash, creator, filename, filetype, filesize, revision, folder, os_path, display_path, is_photo, is_dir, os_storage, flags, created, edited, allow_cid, allow_gid, deny_cid, deny_gid from attach where id = %d and folder = '%s' and filename = '%s' and is_dir != 0 " . permissions_sql($channel_id),
 		intval($channel_id),
 		dbesc($parent_hash),
 		dbesc($paths[0])
 	);
-	if(! $r) {
+	if (! $r) {
 		$ret['message'] = t('Path not available.');
 		return $ret;
 	}
@@ -1122,20 +1127,20 @@ function attach_mkdir($channel, $observer_hash, $arr = null) {
 
 	$os_basepath = 'store/' . $channel['channel_address'];
 
-	logger('basepath: ' . $os_basepath);
+	logger('basepath: ' . $os_basepath, LOGGER_DEBUG);
 
-	if(! is_dir($os_basepath))
+	if (! is_dir($os_basepath)) {
 		os_mkdir($os_basepath,STORAGE_DEFAULT_PERMISSIONS, true);
-
+	}
 
 	$os_basepath .= '/';
 
-	if(! perm_is_allowed($channel_id, $observer_hash, 'write_storage')) {
+	if (! perm_is_allowed($channel_id, $observer_hash, 'write_storage')) {
 		$ret['message'] = t('Permission denied.');
 		return $ret;
 	}
 
-	if(! $arr['filename']) {
+	if (! $arr['filename']) {
 		$ret['message'] = t('Empty pathname');
 		return $ret;
 	}
@@ -1151,22 +1156,22 @@ function attach_mkdir($channel, $observer_hash, $arr = null) {
 		dbesc($arr['folder']),
 		intval($channel['channel_id'])
 	);
-	if($r) {
-		if(array_key_exists('force',$arr) && intval($arr['force'])
-			&& (intval($r[0]['is_dir']))) {
-				$ret['success'] = true;
-				$r = q("select * from attach where id = %d limit 1",
-					intval($r[0]['id'])
-				);
-				if($r)
-					$ret['data'] = $r[0];
-				return $ret;
+	if ($r) {
+		if (array_key_exists('force',$arr) && intval($arr['force']) && (intval($r[0]['is_dir']))) {
+			$ret['success'] = true;
+			$r = q("select * from attach where id = %d limit 1",
+				intval($r[0]['id'])
+			);
+			if ($r) {
+				$ret['data'] = $r[0];
+			}
+			return $ret;
 		}
 		$ret['message'] = t('duplicate filename or path');
 		return $ret;
 	}
 
-	if($arr['folder']) {
+	if ($arr['folder']) {
 
 		// Walk the directory tree from parent back to root to make sure the parent is valid and name is unique and we
 		// have permission to see this path. This implies the root directory itself is public since we won't have permissions
@@ -1185,7 +1190,7 @@ function attach_mkdir($channel, $observer_hash, $arr = null) {
 				intval($channel['channel_id']),
 				dbesc($lfile)
 			);
-			if(! $r) {
+			if (! $r) {
 				logger('attach_mkdir: hash ' . $lfile . ' not found in ' . $lpath);
 				$ret['message'] = t('Path not found.');
 				return $ret;
@@ -1193,8 +1198,9 @@ function attach_mkdir($channel, $observer_hash, $arr = null) {
 
 			$dpath = $r[0]['filename'] . (($dpath) ? '/' . $dpath : '');
 
-			if($lfile)
+			if ($lfile) {
 				$lpath = $r[0]['hash'] . (($lpath) ? '/' . $lpath : '');
+			}
 
 			$lfile = $r[0]['folder'];
 
@@ -1202,8 +1208,9 @@ function attach_mkdir($channel, $observer_hash, $arr = null) {
 
 		$path = $lpath;
 	}
-	else
+	else {
 		$path = '';
+	}
 
 	$created = datetime_convert();
 
@@ -1235,8 +1242,8 @@ function attach_mkdir($channel, $observer_hash, $arr = null) {
 		dbesc(($arr && array_key_exists('deny_gid',$arr))  ? $arr['deny_gid']  : $channel['channel_deny_gid'])
 	);
 
-	if($r) {
-		if(os_mkdir($os_basepath . $os_path, STORAGE_DEFAULT_PERMISSIONS, true)) {
+	if ($r) {
+		if (os_mkdir($os_basepath . $os_path, STORAGE_DEFAULT_PERMISSIONS, true)) {
 			$ret['success'] = true;
 
 			// update the parent folder's lastmodified timestamp
@@ -1250,8 +1257,9 @@ function attach_mkdir($channel, $observer_hash, $arr = null) {
 				dbesc($arr['hash']),
 				intval($channel_id)
 			);
-			if($z)
+			if ($z) {
 				$ret['data'] = $z[0];
+			}
 		}
 		else {
 			logger('attach_mkdir: ' . mkdir . ' ' . $os_basepath . $os_path . ' failed.');
@@ -1283,56 +1291,63 @@ function attach_mkdir($channel, $observer_hash, $arr = null) {
  */
 function attach_mkdirp($channel, $observer_hash, $arr = null) {
 
-	$ret = array('success' => false);
+	$ret = [ 'success' => false ];
 	$channel_id = $channel['channel_id'];
 
 	$sql_options = '';
 
 	$basepath = 'store/' . $channel['channel_address'];
 
-	logger('basepath: ' . $basepath);
+	logger('basepath: ' . $basepath, LOGGER_DEBUG);
 
-	if(! is_dir($basepath))
+	if (! is_dir($basepath)) {
 		os_mkdir($basepath,STORAGE_DEFAULT_PERMISSIONS, true);
+	}
 
-	if(! perm_is_allowed($channel_id, $observer_hash, 'write_storage')) {
+	if (! perm_is_allowed($channel_id, $observer_hash, 'write_storage')) {
 		$ret['message'] = t('Permission denied.');
 		return $ret;
 	}
 
-	if(! $arr['pathname']) {
+	if (! $arr['pathname']) {
 		$ret['message'] = t('Empty pathname');
 		return $ret;
 	}
 
 	$paths = explode('/',$arr['pathname']);
-	if(! $paths) {
+	if (! $paths) {
 		$ret['message'] = t('Empty path');
 		return $ret;
 	}
 
 	$current_parent = '';
 
-	foreach($paths as $p) {
-		if(! $p)
+	foreach ($paths as $p) {
+		if (! $p) {
 			continue;
+		}
 
-		$arx = array(
+		$arx = [
 			'filename' => $p,
 			'folder' => $current_parent,
 			'force' => 1
-		);
-		if(array_key_exists('allow_cid',$arr))
+		];
+		
+		if (array_key_exists('allow_cid',$arr)) {
 			$arx['allow_cid'] = $arr['allow_cid'];
-		if(array_key_exists('deny_cid',$arr))
+		}
+		if (array_key_exists('deny_cid',$arr)) {
 			$arx['deny_cid'] = $arr['deny_cid'];
-		if(array_key_exists('allow_gid',$arr))
+		}
+		if (array_key_exists('allow_gid',$arr)) {
 			$arx['allow_gid'] = $arr['allow_gid'];
-		if(array_key_exists('deny_gid',$arr))
+		}
+		if (array_key_exists('deny_gid',$arr)) {
 			$arx['deny_gid'] = $arr['deny_gid'];
+		}
 
 		$x = attach_mkdir($channel, $observer_hash, $arx);
-		if($x['success']) {
+		if ($x['success']) {
 			$current_parent = $x['data']['hash'];
 		}
 		else {
@@ -1340,7 +1355,7 @@ function attach_mkdirp($channel, $observer_hash, $arr = null) {
 			return $ret;
 		}
 	}
-	if(isset($x)) {
+	if (isset($x)) {
 		$ret['success'] = true;
 		$ret['data'] = $x['data'];
 	}
@@ -1395,14 +1410,14 @@ function attach_change_permissions($channel_id, $resource, $allow_cid, $allow_gi
 		}
 	}
 
-	if(intval($r[0]['is_dir'])) {
-		if($recurse) {
+	if (intval($r[0]['is_dir'])) {
+		if ($recurse) {
 			$r = q("select hash, flags, is_dir from attach where folder = '%s' and uid = %d",
 				dbesc($resource),
 				intval($channel_id)
 			);
-			if($r) {
-				foreach($r as $rr) {
+			if ($r) {
+				foreach ($r as $rr) {
 					attach_change_permissions($channel_id, $rr['hash'], $allow_cid, $allow_gid, $deny_cid, $deny_gid, $recurse, $sync);
 				}
 			}
@@ -1417,7 +1432,7 @@ function attach_change_permissions($channel_id, $resource, $allow_cid, $allow_gi
 		dbesc($resource),
 		intval($channel_id)
 	);
-	if($r[0]['is_photo']) {
+	if ($r[0]['is_photo']) {
 		$x = q("update photo set allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s' where resource_id = '%s' and uid = %d",
 			dbesc($allow_cid),
 			dbesc($allow_gid),
@@ -1437,11 +1452,12 @@ function attach_change_permissions($channel_id, $resource, $allow_cid, $allow_gi
 
 	}
 
-	if($sync) {
+	if ($sync) {
 		$data = attach_export_data($channel,$resource);
 
-		if($data)
-			Libsync::build_sync_packet($channel['channel_id'],array('file' => array($data)));
+		if ($data) {
+			Libsync::build_sync_packet($channel['channel_id'], [ 'file' => [ $data ] ]);
+		}
 	}
 }
 
@@ -1472,7 +1488,7 @@ function attach_delete($channel_id, $resource, $is_photo = 0) {
 		intval($channel_id)
 	);
 
-	if(! $r) {
+	if (! $r) {
 		attach_drop_photo($channel_id,$resource);
 		$arr = ['channel_id' => $channel_id, 'resource' => $resource, 'is_photo'=>$is_photo];
 		call_hooks("attach_delete",$arr);
@@ -1483,36 +1499,40 @@ function attach_delete($channel_id, $resource, $is_photo = 0) {
 	$object = get_file_activity_object($channel_id, $resource, $url);
 
 	// If resource is a directory delete everything in the directory recursive
-	if(intval($r[0]['is_dir'])) {
+	if (intval($r[0]['is_dir'])) {
 		$x = q("SELECT hash, os_storage, is_dir, flags FROM attach WHERE folder = '%s' AND uid = %d",
 			dbesc($resource),
 			intval($channel_id)
 		);
-		if($x) {
-			foreach($x as $xx) {
+		if ($x) {
+			foreach ($x as $xx) {
 				attach_delete($channel_id, $xx['hash']);
 			}
 		}
 	}
 
 	// delete a file from filesystem
-	if(intval($r[0]['os_storage'])) {
+	if (intval($r[0]['os_storage'])) {
 		$y = q("SELECT content FROM attach WHERE hash = '%s' AND uid = %d LIMIT 1",
 			dbesc($resource),
 			intval($channel_id)
 		);
 
-		if($y) {
+		if ($y) {
 			$y[0]['content'] = dbunescbin($y[0]['content']);
-			if(strpos($y[0]['content'],'store') === false)
+			if (strpos($y[0]['content'],'store') === false) {
 				$f = 'store/' . $channel_address . '/' . $y[0]['content'];
-			else
+			}
+			else {
 				$f = $y[0]['content'];
+			}
 
-			if(is_dir($f))
+			if (is_dir($f)) {
 				@rmdir($f);
-			elseif(file_exists($f))
+			}
+			elseif (file_exists($f)) {
 				unlink($f);
+			}
 		}
 	}
 
@@ -1522,7 +1542,7 @@ function attach_delete($channel_id, $resource, $is_photo = 0) {
 		intval($channel_id)
 	);
 
-	if($r[0]['is_photo']) {
+	if ($r[0]['is_photo']) {
 		attach_drop_photo($channel_id,$resource);
 	}
 
@@ -1549,7 +1569,7 @@ function attach_drop_photo($channel_id,$resource) {
 		dbesc($resource),
 		intval($channel_id)
 	);
-	if($x) {
+	if ($x) {
 		drop_item($x[0]['id'],false,(($x[0]['item_hidden']) ? DROPITEM_NORMAL : DROPITEM_PHASE1),true);
 	}
 	$r = q("select content from photo where uid = %d and resource_id = '%s' and os_storage = 1",
@@ -1589,17 +1609,18 @@ function attach_drop_photo($channel_id,$resource) {
 function get_cloudpath($arr) {
 	$basepath = 'cloud/';
 
-	if($arr['uid']) {
+	if ($arr['uid']) {
 		$r = q("select channel_address from channel where channel_id = %d limit 1",
 			intval($arr['uid'])
 		);
-		if($r)
+		if ($r) {
 			$basepath .= $r[0]['channel_address'] . '/';
+		}
 	}
 
 	$path = $basepath;
 
-	if($arr['folder']) {
+	if ($arr['folder']) {
 		$lpath = '';
 		$lfile = $arr['folder'];
 
@@ -1610,11 +1631,13 @@ function get_cloudpath($arr) {
 				dbesc($lfile)
 			);
 
-			if(! $r)
+			if (! $r) {
 				break;
+			}
 
-			if($lfile)
+			if ($lfile) {
 				$lpath = $r[0]['filename'] . '/' . $lpath;
+			}
 			$lfile = $r[0]['folder'];
 
 		} while ( ($r[0]['folder']) && intval($r[0]['is_dir']));
@@ -1673,12 +1696,14 @@ function find_folder_hash_by_attach_hash($channel_id, $attachHash, $recurse = fa
 		intval($channel_id),
 		dbesc($attachHash)
 	);
-	$hash = '';
-	if($r && $r[0]['folder']) {
-		if($recurse)
+	$hash = EMPTY_STR;
+	if ($r && $r[0]['folder']) {
+		if ($recurse) {
 			$hash = find_folder_hash_by_attach_hash($channel_id,$r[0]['folder'],true) . '/' . $r[0]['folder'];
-		else
+		}
+		else {
 			$hash = $r[0]['folder'];
+		}
 	}
 
 	return $hash;
@@ -1693,21 +1718,22 @@ function find_folder_hash_by_attach_hash($channel_id, $attachHash, $recurse = fa
  */
 function find_folder_hash_by_path($channel_id, $path) {
 
-	if(! $path)
-		return '';
-
+	if (! $path) {
+		return EMPTY_STR;
+	}
+	
 	$comps        = explode('/',$path);
 	$errors       = false;
 	$parent_hash  = '';
 
-	for($x = 0; $x < count($comps); $x ++) {
+	for ($x = 0; $x < count($comps); $x ++) {
 		$element = $comps[$x];
 		$r = q("SELECT hash FROM attach WHERE uid = %d AND filename = '%s' AND folder = '%s' LIMIT 1",
 			intval($channel_id),
 			dbesc($element),
 			dbesc($parent_hash)
 		);
-		if($r) {
+		if ($r) {
 			$parent_hash = $r[0]['hash'];
 		}
 		else {
@@ -1716,8 +1742,9 @@ function find_folder_hash_by_path($channel_id, $path) {
 		}
 	}
 
-	if($errors)
-		return '';
+	if ($errors) {
+		return EMPTY_STR;
+	}
 
 	return $parent_hash;
 }
@@ -1755,9 +1782,9 @@ function find_filename_by_hash($channel_id, $attachHash) {
  */
 function pipe_streams($in, $out, $bufsize = 16384) {
 	$size = 0;
-	while (!feof($in))
+	while (!feof($in)) {
 		$size += fwrite($out, fread($in, $bufsize));
-
+	}
 	return $size;
 }
 
@@ -1778,8 +1805,9 @@ function file_activity($channel_id, $object, $allow_cid, $allow_gid, $deny_cid, 
 	$poster = App::get_observer();
 
 	//if we got no object something went wrong
-	if(!$object)
+	if (!$object) {
 		return;
+	}
 
 	//turn strings into arrays
 	$arr_allow_cid = expand_acl($allow_cid);
@@ -1793,18 +1821,21 @@ function file_activity($channel_id, $object, $allow_cid, $allow_gid, $deny_cid, 
 	$is_dir = (intval($object['is_dir']) ? true : false);
 
 	//do not send activity for folders for now
-	if($is_dir)
+	if ($is_dir) {
 		return;
+	}
 
 	//check for recursive perms if we are in a folder
-	if($object['folder']) {
+	if ($object['folder']) {
 
 		$folder_hash = $object['folder'];
 
 		$r_perms = attach_recursive_perms($arr_allow_cid, $arr_allow_gid, $arr_deny_cid, $arr_deny_gid, $folder_hash);
 
-		if($r_perms === false) //nobody has recursive perms - nobody must be notified
+		if ($r_perms === false) {
+			// nobody has recursive perms - nobody must be notified
 			return;
+		}
 
 		//split up returned perms
 		$arr_allow_cid = $r_perms['allow_cid'];
@@ -1848,7 +1879,7 @@ function file_activity($channel_id, $object, $allow_cid, $allow_gid, $deny_cid, 
 		intval(local_channel())
 	);
 
-	if($y) {
+	if ($y) {
 		$update = true;
 		$object['d_mid'] = $y[0]['mid']; //attach mid of the old object
 		$u_jsonobject = json_encode($object);
@@ -1863,7 +1894,7 @@ function file_activity($channel_id, $object, $allow_cid, $allow_gid, $deny_cid, 
 	}
 
 	//send update activity and create a new one
-	if($update && $verb == 'post' ) {
+	if ($update && $verb == 'post' ) {
 		//updates should be sent to everybody with recursive perms and all eventual former allowed members ($object['allow_cid'] etc.).
 		$u_arr_allow_cid = array_unique(array_merge($arr_allow_cid, expand_acl($object['allow_cid'])));
 		$u_arr_allow_gid = array_unique(array_merge($arr_allow_gid, expand_acl($object['allow_gid'])));
@@ -1893,13 +1924,13 @@ function file_activity($channel_id, $object, $allow_cid, $allow_gid, $deny_cid, 
 	}
 
 	//don't create new activity if notify was not enabled
-	if(! $notify) {
+	if (! $notify) {
 		return;
 	}
 
 	//don't create new activity if we have an update request but there is no item to update
 	//this can e.g. happen when deleting images
-	if(! $y && $verb == 'update') {
+	if ((! $y) && ($verb == 'update')) {
 		return;
 	}
 
@@ -1937,13 +1968,13 @@ function get_file_activity_object($channel_id, $hash, $url) {
 	$url = rawurlencode($url);
 
 	$links   = [];
-	$links[] = array(
+	$links[] = [
 		'rel'  => 'alternate',
 		'type' => 'text/html',
 		'href' => $url
-	);
+	];
 
-	$object = array(
+	$object = [
 		'type'  => ACTIVITY_OBJ_FILE,
 		'title' => $x[0]['filename'],
 		'id'    => $url,
@@ -1966,7 +1997,7 @@ function get_file_activity_object($channel_id, $hash, $url) {
 		'allow_gid'	=> $x[0]['allow_gid'],
 		'deny_cid'	=> $x[0]['deny_cid'],
 		'deny_gid'	=> $x[0]['deny_gid']
-	);
+	];
 
 	return $object;
 }
@@ -1988,20 +2019,20 @@ function attach_recursive_perms($arr_allow_cid, $arr_allow_gid, $arr_deny_cid, $
 	$poster = App::get_observer();
 
 	//lookup all channels in sharee group and add them to sharee $arr_allow_cid
-	if($arr_allow_gid) {
+	if ($arr_allow_gid) {
 		$in_group = AccessList::expand($arr_allow_gid);
 		$arr_allow_cid = array_unique(array_merge($arr_allow_cid, $in_group));
 	}
 
 	//count existing parent folders - we will compare to that count later
 	$count = 0;
-	while($folder_hash) {
+	while ($folder_hash) {
 		$x = q("SELECT allow_cid, allow_gid, deny_cid, deny_gid, folder FROM attach WHERE hash = '%s' LIMIT 1",
 			dbesc($folder_hash)
 		);
 
 		//only process private folders
-		if($x[0]['allow_cid'] || $x[0]['allow_gid'] || $x[0]['deny_cid'] || $x[0]['deny_gid']) {
+		if ($x[0]['allow_cid'] || $x[0]['allow_gid'] || $x[0]['deny_cid'] || $x[0]['deny_gid']) {
 			$parent_arr['allow_cid'][] = expand_acl($x[0]['allow_cid']);
 			$parent_arr['allow_gid'][] = expand_acl($x[0]['allow_gid']);
 			$parent_arr['deny_cid'][] = expand_acl($x[0]['deny_cid']);
@@ -2017,7 +2048,7 @@ function attach_recursive_perms($arr_allow_cid, $arr_allow_gid, $arr_deny_cid, $
 	//logger(EOL . 'parent_arr: ' . print_r($parent_arr,true));
 
 	//if none of the parent folders is private just return file perms
-	if(!$parent_arr['allow_cid'] && !$parent_arr['allow_gid'] && !$parent_arr['deny_cid'] && !$parent_arr['deny_gid']) {
+	if (!$parent_arr['allow_cid'] && !$parent_arr['allow_gid'] && !$parent_arr['deny_cid'] && !$parent_arr['deny_gid']) {
 		$ret['allow_gid'] = $arr_allow_gid;
 		$ret['allow_cid'] = $arr_allow_cid;
 		$ret['deny_gid'] = $arr_deny_gid;
@@ -2027,7 +2058,7 @@ function attach_recursive_perms($arr_allow_cid, $arr_allow_gid, $arr_deny_cid, $
 	}
 
 	//if there are no perms on the file we will work with the perms from the first parent folder
-	if(!$arr_allow_cid && !$arr_allow_gid && !$arr_deny_cid && !$arr_deny_gid) {
+	if (!$arr_allow_cid && !$arr_allow_gid && !$arr_deny_cid && !$arr_deny_gid) {
 		$arr_allow_cid = $parent_arr['allow_cid'][0];
 		$arr_allow_gid = $parent_arr['allow_gid'][0];
 		$arr_deny_cid = $parent_arr['deny_cid'][0];
@@ -2043,32 +2074,34 @@ function attach_recursive_perms($arr_allow_cid, $arr_allow_gid, $arr_deny_cid, $
 
 	$r_arr_allow_cid = [];
 
-	if($parent_arr['allow_cid']) {
+	if ($parent_arr['allow_cid']) {
 		//check sharee arr_allow_cid against allow_cid of all parent folders
-		foreach($parent_arr['allow_cid'] as $folder_arr_allow_cid) {
-			foreach($folder_arr_allow_cid as $ac_hash) {
+		foreach ($parent_arr['allow_cid'] as $folder_arr_allow_cid) {
+			foreach ($folder_arr_allow_cid as $ac_hash) {
 				$count_values[$ac_hash]++;
 			}
 		}
-		foreach($arr_allow_cid as $fac_hash) {
-			if($count_values[$fac_hash] == $count)
+		foreach ($arr_allow_cid as $fac_hash) {
+			if ($count_values[$fac_hash] == $count) {
 				$r_arr_allow_cid[] = $fac_hash;
+			}
 		}
 		//logger(EOL . 'r_arr_allow_cid: ' . print_r($r_arr_allow_cid,true));
 	}
 
-	if($parent_arr['allow_gid']) {
+	if ($parent_arr['allow_gid']) {
 		//check sharee arr_allow_cid against members of allow_gid of all parent folders
-		foreach($parent_arr['allow_gid'] as $folder_arr_allow_gid) {
+		foreach ($parent_arr['allow_gid'] as $folder_arr_allow_gid) {
 			//get the group members
 			$folder_arr_allow_cid = AccessList::expand($folder_arr_allow_gid);
-			foreach($folder_arr_allow_cid as $ac_hash) {
+			foreach ($folder_arr_allow_cid as $ac_hash) {
 				$count_values[$ac_hash]++;
 			}
 		}
-		foreach($arr_allow_cid as $fac_hash) {
-			if($count_values[$fac_hash] == $count)
+		foreach ($arr_allow_cid as $fac_hash) {
+			if ($count_values[$fac_hash] == $count) {
 				$r_arr_allow_cid[] = $fac_hash;
+			}
 		}
 		//logger(EOL . 'groups - r_arr_allow_cid: ' . print_r($r_arr_allow_cid,true));
 	}
@@ -2083,8 +2116,8 @@ function attach_recursive_perms($arr_allow_cid, $arr_allow_gid, $arr_deny_cid, $
 	//deny_cid
 	$r_arr_deny_cid = [];
 
-	if($parent_arr['deny_cid']) {
-		foreach($parent_arr['deny_cid'] as $folder_arr_deny_cid) {
+	if ($parent_arr['deny_cid']) {
+		foreach ($parent_arr['deny_cid'] as $folder_arr_deny_cid) {
 			$r_arr_deny_cid = array_merge($arr_deny_cid, $folder_arr_deny_cid);
 		}
 		$r_arr_deny_cid = array_unique($r_arr_deny_cid);
@@ -2094,8 +2127,8 @@ function attach_recursive_perms($arr_allow_cid, $arr_allow_gid, $arr_deny_cid, $
 	//deny_gid
 	$r_arr_deny_gid = [];
 
-	if($parent_arr['deny_cid']) {
-		foreach($parent_arr['deny_gid'] as $folder_arr_deny_gid) {
+	if ($parent_arr['deny_cid']) {
+		foreach ($parent_arr['deny_gid'] as $folder_arr_deny_gid) {
 			$r_arr_deny_gid = array_merge($arr_deny_gid, $folder_arr_deny_gid);
 		}
 		$r_arr_deny_gid = array_unique($r_arr_deny_gid);
@@ -2103,8 +2136,9 @@ function attach_recursive_perms($arr_allow_cid, $arr_allow_gid, $arr_deny_cid, $
 	}
 
 	//if no channel is allowed return false
-	if(! $r_arr_allow_cid)
+	if (! $r_arr_allow_cid) {
 		return false;
+	}
 
 	$ret['allow_gid'] = []; // eventual group members are already collected in $r_arr_allow_cid
 	$ret['allow_cid'] = $r_arr_allow_cid;
@@ -2117,11 +2151,11 @@ function attach_recursive_perms($arr_allow_cid, $arr_allow_gid, $arr_deny_cid, $
 function filepath_macro($s) {
 
 	return str_replace(
-		array( '%Y', '%m', '%d' ),
-		array( datetime_convert('UTC',date_default_timezone_get(),'now', 'Y'),
-			datetime_convert('UTC',date_default_timezone_get(),'now', 'm'),
-			datetime_convert('UTC',date_default_timezone_get(),'now', 'd')
-		), $s);
+		[ '%Y', '%m', '%d' ],
+		[ datetime_convert('UTC',date_default_timezone_get(),'now', 'Y'),
+		  datetime_convert('UTC',date_default_timezone_get(),'now', 'm'),
+		  datetime_convert('UTC',date_default_timezone_get(),'now', 'd')
+		], $s);
 
 }
 
@@ -2137,7 +2171,7 @@ function attach_export_data($channel, $resource_id, $deleted = false) {
 	$ret['original_channel'] = $channel['channel_address'];
 
 
-	if($deleted) {
+	if ($deleted) {
 		$ret['attach'] = [ [ 'hash' => $resource_id, 'deleted' => 1 ] ];
 		return $ret;
 	}
@@ -2147,10 +2181,11 @@ function attach_export_data($channel, $resource_id, $deleted = false) {
 			dbesc($hash_ptr),
 			intval($channel['channel_id'])
 		);
-		if(! $r)
+		if (! $r) {
 			break;
+		}
 
-		if($hash_ptr === $resource_id) {
+		if ($hash_ptr === $resource_id) {
 			$attach_ptr = $r[0];
 		}
 		$r[0]['content'] = dbunescbin($r[0]['content']);
@@ -2165,46 +2200,34 @@ function attach_export_data($channel, $resource_id, $deleted = false) {
 	$ret['attach'] = $paths;
 
 
-	if($attach_ptr['is_photo']) {
-
-		// This query could potentially result in a few megabytes of data use.  
+	if ($attach_ptr['is_photo']) {
 
 		$r = q("select * from photo where resource_id = '%s' and uid = %d order by imgscale asc",
 			dbesc($resource_id),
 			intval($channel['channel_id'])
 		);
-		if($r) {
-			for($x = 0; $x < count($r); $x ++) {
+		if ($r) {
+			for ($x = 0; $x < count($r); $x ++) {
 				$r[$x]['content'] = base64_encode(dbunescbin($r[$x]['content']));
 			}
 			$ret['photo'] = $r;
 		}
 
-//	This query can be used instead in memory starved environments. There will be a corresponding
-//  performance hit during sync because the data will need to be fetched over the network.
-//		$r = q("select aid,uid,xchan,resource_id,created,edited,title,description,album,filename,mimetype,height,width,filesize,imgscale,photo_usage,profile,is_nsfw,os_storage,display_path,photo_flags,allow_cid,allow_gid,deny_cid,deny_gid from photo where resource_id = '%s' and uid = %d order by imgscale asc",
-//			dbesc($resource_id),
-//			intval($channel['channel_id'])
-//		);
-
-//		if($r) {
-//			$ret['photo'] = $r;
-//		}
-
 		$r = q("select * from item where resource_id = '%s' and resource_type = 'photo' and uid = %d ",
 			dbesc($resource_id),
 			intval($channel['channel_id'])
 		);
-		if($r) {
+		if ($r) {
 			$ret['item'] = [];
 			$items = q("select item.*, item.id as item_id from item where item.parent = %d ",
 				intval($r[0]['id'])
 			);
-			if($items) {
+			if ($items) {
 				xchan_query($items);
 				$items = fetch_post_tags($items,true);
-				foreach($items as $rr)
+				foreach ($items as $rr) {
 					$ret['item'][] = encode_item($rr,true);
+				}
 			}
 		}
 	}
@@ -2221,9 +2244,9 @@ function attach_export_data($channel, $resource_id, $deleted = false) {
  */
 function get_attach_binname($s) {
 	$p = $s;
-	if(strpos($s, 'store/') === 0) {
+	if (strpos($s, 'store/') === 0) {
 		$p = substr($s, 6);
-		$p = substr($p, strpos($p, '/')+1);
+		$p = substr($p, strpos($p, '/') + 1);
 	}
 
 	return $p;
@@ -2236,13 +2259,13 @@ function get_dirpath_by_cloudpath($channel, $path) {
 
 	$h = @parse_url($path);
 
-	if(! $h || !x($h, 'path')) {
+	if (! $h || !x($h, 'path')) {
 		return null;
 	}
-	if(substr($h['path'], -1, 1) === '/') {
+	if (substr($h['path'], -1, 1) === '/') {
 		$h['path'] = substr($h['path'], 0, -1);
 	}
-	if(substr($h['path'],0,1) === '/') {
+	if (substr($h['path'],0,1) === '/') {
 		$h['path'] = substr($h['path'], 1);
 	}
 	$folders = explode('/', $h['path']);
@@ -2250,43 +2273,45 @@ function get_dirpath_by_cloudpath($channel, $path) {
 
 	$nick = $channel['channel_address'];
 	//check to see if the absolute path was provided (/cloud/channelname/path/to/folder)
-	if($f === 'cloud' ) {
+	if ($f === 'cloud' ) {
 		$g = array_shift($folders);
-		if( $g !== $nick) {
+		if ($g !== $nick) {
 			// if nick does not follow "cloud", then the top level folder must be called  "cloud"
 			// and the given path must be relative to "/cloud/channelname/".
 			$folders = array_unshift(array_unshift($folders, $g), $f);
 		}
-	} else {
+	}
+	else {
 		array_unshift($folders, $f);
 	}
 	$clouddir = 'store/' . $nick . '/' ;
 	$subdir = '/';
 	$valid = true;
-	while($folders && $valid && is_dir($clouddir . $subdir) && is_readable($clouddir . $subdir)) {
+	while ($folders && $valid && is_dir($clouddir . $subdir) && is_readable($clouddir . $subdir)) {
 		$valid = false;
 		$f = array_shift($folders);
 		$items = array_diff(scandir($clouddir . $subdir), array('.', '..')); // hashed names
-		foreach($items as $item) {
+		foreach ($items as $item) {
 			$filename = find_filename_by_hash($channel['channel_id'], $item);
-			if($filename === $f) {
+			if ($filename === $f) {
 				$subdir .= $item . '/';
 				$valid = true;
 			}
 		}
 	}
-	if(!$valid) {
+	if (! $valid) {
 		return null;
-	} else {
+	}
+	else {
 		return $clouddir . $subdir;
 	}
 }
 
 function get_filename_by_cloudname($cloudname, $channel, $storepath) {
 	$items = array_diff(scandir($storepath), array('.', '..')); // hashed names
-	foreach($items as $item) {
+	foreach ($items as $item) {
 		$filename = find_filename_by_hash($channel['channel_id'], $item);
-		if($filename === $cloudname) {
+		if ($filename === $cloudname) {
 			return $item;
 		}
 	}
@@ -2311,32 +2336,34 @@ function copy_folder_to_cloudfiles($channel, $observer_hash, $srcpath, $cloudpat
 	foreach ($nodes as $node) {
 		$clouddir = $cloudpath . '/' . $node;  // Sub-folder in cloud files destination
 		$nodepath = $srcpath . '/' . $node;    // Sub-folder in source path
-		if(is_dir($nodepath)) {
+		if (is_dir($nodepath)) {
 			$x = attach_mkdirp($channel, $observer_hash, array('pathname' => $clouddir));
-			if(!$x['success']) {
+			if (!$x['success']) {
 				logger('Error creating cloud path: ' . $clouddir, LOGGER_NORMAL);
 				return false;
 			}
 			// Recursively call this function where the source and destination are the subfolders
 			$success = copy_folder_to_cloudfiles($channel, $observer_hash, $nodepath, $clouddir);
-			if(!$success) {
+			if (! $success) {
 				logger('Error copying contents of folder: ' . $nodepath, LOGGER_NORMAL);
 				return false;
 			}
-		} elseif(is_file($nodepath) && is_readable($nodepath)) {
-			$x = attach_store($channel, $observer_hash, 'import', array(
-					'directory' => $cloudpath,
-					'src' => $nodepath,
-					'filename' => $node,
-					'filesize' => @filesize($nodepath),
-					'preserve_original' => true
-			));
-			if(!$x['success']) {
+		}
+		elseif (is_file($nodepath) && is_readable($nodepath)) {
+			$x = attach_store($channel, $observer_hash, 'import', [
+				'directory' => $cloudpath,
+				'src' => $nodepath,
+				'filename' => $node,
+				'filesize' => @filesize($nodepath),
+				'preserve_original' => true
+			]);
+			if (! $x['success']) {
 				logger('Error copying file: ' . $nodepath, LOGGER_NORMAL);
 				logger('Return value: ' . json_encode($x), LOGGER_NORMAL);
 				return false;
 			}
-		} else {
+		}
+		else {
 			logger('Error scanning source path', LOGGER_NORMAL);
 			return false;
 		}
@@ -2364,8 +2391,9 @@ function copy_folder_to_cloudfiles($channel, $observer_hash, $srcpath, $cloudpat
 function attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '') {
 
 	$c = channelx_by_n($channel_id);
-	if(! ($c && $resource_id))
+	if (! ($c && $resource_id)) {
 		return false;
+	}
 
 
 	// find the resource to be moved
@@ -2374,7 +2402,7 @@ function attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '')
 		dbesc($resource_id),
 		intval($channel_id)
 	);
-	if(! $r) {
+	if (! $r) {
 		logger('resource_id not found');
 		return false;
 	}
@@ -2384,13 +2412,14 @@ function attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '')
 
 	// find the resource we are moving to
 
-	if($new_folder_hash) {
+	if ($new_folder_hash) {
 		$n = q("select * from attach where hash = '%s' and uid = %d and is_dir = 1 limit 1",
 			dbesc($new_folder_hash),
 			intval($channel_id)
 		);
-		if(! $n)
+		if (! $n) {
 			return false;
+		}
 
 		$newdirname = $n[0]['filename'];
 		$newalbumname = $n[0]['display_path'];
@@ -2414,21 +2443,21 @@ function attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '')
 
 	// don't do duplicate check unless our parent folder has changed. 
 
-	if($r[0]['folder'] !== $new_folder_hash) {
+	if ($r[0]['folder'] !== $new_folder_hash) {
 
 		$s = q("select filename, id, hash, filesize from attach where filename = '%s' and folder = '%s' ",
 			dbesc($newfilename),
 			dbesc($new_folder_hash)
 		);
 
-		if($s) {
+		if ($s) {
 			$overwrite = get_pconfig($channel_id,'system','overwrite_dup_files');
-			if($overwrite) {
+			if ($overwrite) {
 				/// @fixme
 				return;
 			}
 			else {
-				if(strpos($newfilename,'.') !== false) {
+				if (strpos($newfilename,'.') !== false) {
 					$basename = substr($newfilename,0,strrpos($newfilename,'.'));
 					$ext = substr($newfilename,strrpos($newfilename,'.'));
 				}
@@ -2438,8 +2467,9 @@ function attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '')
 				}
 
 				$matches = false;
-				if(preg_match('/(.*?)\([0-9]{1,}\)$/',$basename,$matches))
+				if (preg_match('/(.*?)\([0-9]{1,}\)$/',$basename,$matches)) {
 					$basename = $matches[1];
+				}
 
 				$v = q("select filename from attach where ( filename = '%s' OR filename like '%s' ) and folder = '%s' ",
 					dbesc($basename . $ext),
@@ -2447,25 +2477,27 @@ function attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '')
 					dbesc($new_folder_hash)
 				);
 
-				if($v) {
+				if ($v) {
 					$x = 1;
 
 					do {
 						$found = false;
-						foreach($v as $vv) {
-							if($vv['filename'] === $basename . '(' . $x . ')' . $ext) {
+						foreach ($v as $vv) {
+							if ($vv['filename'] === $basename . '(' . $x . ')' . $ext) {
 								$found = true;
 								break;
 							}
 						}
-						if($found)
+						if ($found) {
 							$x++;
-					}
-					while($found);
+						}
+					} while ($found);
+					
 					$newfilename = $basename . '(' . $x . ')' . $ext;
 				}
-				else
+				else {
 					$newfilename = $basename . $ext;
+				}
 			}
 		}
 	}
@@ -2487,7 +2519,7 @@ function attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '')
 	);
 
 
-	if($r[0]['is_photo']) {
+	if ($r[0]['is_photo']) {
 		$t = q("update photo set album = '%s', filename = '%s', os_path = '%s', display_path = '%s'
 			where resource_id = '%s' and uid = %d",
 			dbesc($newalbumname),
@@ -2505,16 +2537,16 @@ function attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '')
 		);
 	}
 
-	if($r[0]['is_dir']) {
+	if ($r[0]['is_dir']) {
 		$move_success = true;
 		$x = q("select hash from attach where folder = '%s' and uid = %d",
 			dbesc($r[0]['hash']),
 			intval($channel_id)
 		);
-		if($x) {
-			foreach($x as $xv) {
+		if ($x) {
+			foreach ($x as $xv) {
 				$rs = attach_move($channel_id,$xv['hash'],$r[0]['hash']);
-				if(! $rs) {
+				if (! $rs) {
 					$move_success = false;
 					break;
 				}
@@ -2525,11 +2557,6 @@ function attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '')
 
 	return true;
 }
-
-
-
-
-
 
 
 /**
@@ -2546,10 +2573,10 @@ function attach_folder_select_list($channel_id) {
 	$out = [];
 	$out[''] = '/';
 
-	if($r) {
-		foreach($r as $rv) {
+	if ($r) {
+		foreach ($r as $rv) {
 			$x = attach_folder_rpaths($r,$rv);
-			if($x) {
+			if ($x) {
 				$out[$x[0]] = $x[1];
 			}
 		}
@@ -2566,22 +2593,24 @@ function attach_folder_rpaths($all_folders,$that_folder) {
 	$error        = false;
 	$found        = false;
 
-	if($parent_hash) {
+	if ($parent_hash) {
 		do {
-			foreach($all_folders as $selected) {
-				if(! $selected['is_dir'])
+			foreach ($all_folders as $selected) {
+				if (! $selected['is_dir']) {
 					continue;
-				if($selected['hash'] == $parent_hash) {
+				}
+				if ($selected['hash'] == $parent_hash) {
 					$path         = '/' . $selected['filename'] . $path;
 					$parent_hash  = $selected['folder'];
 					$found = true;
 					break;
 				}
 			}
-			if(! $found)
+			if (! $found) {
 				$error = true;
+			}
 		}
-		while((! $found) && (! $error) && ($parent_hash != ''));
+		while ((! $found) && (! $error) && ($parent_hash != ''));
 	}
 
 	return (($error) ? false : [ $current_hash , $path ]);
@@ -2609,8 +2638,7 @@ function attach_syspaths($channel_id,$attach_hash) {
 		$os_path = $r[0]['hash'] . (($os_path) ? '/' . $os_path : '');
 		$path = $r[0]['filename'] . (($path) ? '/' . $path : '');
 		$attach_hash = $r[0]['folder'];
-	}
-	while($attach_hash);
+	} while ($attach_hash);
 
 	return [ 'os_path' => $os_path, 'path' => $path ];
 }
@@ -2627,14 +2655,13 @@ function attach_syspaths($channel_id,$attach_hash) {
  */
 
 
-
 function attach_upgrade() {
 
 	$r = q("select id, uid, hash from attach where os_path = '' and display_path = '' limit 100");
-	if($r) {
-		foreach($r as $rv) {
+	if ($r) {
+		foreach ($r as $rv) {
 			$x = attach_syspaths($rv['uid'],$rv['hash']);
-			if($x) {
+			if ($x) {
 				$w = q("update attach set os_path = '%s', display_path = '%s' where id = %d",
 					dbesc($x['os_path']),
 					dbesc($x['path']),
@@ -2673,25 +2700,25 @@ function save_chunk($channel,$start,$end,$len) {
 
 	$new_path = $new_base . '/' . $_FILES['files']['name'] . '.ftmp';
 
-	if(file_exists($new_path) && intval($start) === 0) {
+	if (file_exists($new_path) && intval($start) === 0) {
 		$result['partial'] = true;
 		$result['length']  = intval(filesize($new_path));
 		return $result;
 	}
 
-	if(! file_exists($new_path)) {
+	if (! file_exists($new_path)) {
 		rename($tmp_path,$new_path);
 	}
 	else {
 		$istream = fopen($tmp_path,'rb');
 		$ostream = fopen($new_path,'ab');
-		if($istream && $ostream) {
+		if ($istream && $ostream) {
 			pipe_streams($istream,$ostream);
 			fclose($istream);
 			fclose($ostream);
 		}
 	}
-	if(($len - 1) == $end) {
+	if (($len - 1) == $end) {
 		unlink($tmp_path);
 		$result['name']     = $_FILES['files']['name'];
 		$result['type']     = $_FILES['files']['type'];
