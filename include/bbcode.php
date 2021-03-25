@@ -1495,6 +1495,10 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_]{3})([^\n]+?)\2#','md_bolditalic',$Text);
 		$Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_]{2})([^\n]+?)\2#','md_bold',$Text);
 		$Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_])([^\n|`]+?)\2#m','md_italic',$Text);
+
+		// strip the backslash from escaped bold/italic markdown sequences
+		$Text = preg_replace('#(\\\)([*_])#','$2',$Text);
+
 		$Text = preg_replace_callback('{ ^(.+?)[ ]*\n(=+|-+)[ ]*\n+ }mx','md_topheader', $Text);
 		$Text = preg_replace_callback('#^(\#{1,6})\s+([^\#]+?)\s*\#*$#m','md_header', $Text);
 		$Text = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#','md_codeblock',$Text);
@@ -1502,6 +1506,8 @@ function bbcode($Text, $options = []) {
 		//		$Text = preg_replace('#^(?:\0(.*?)\0\n)?( {4}|\t)(.*?)$#m','<pre><code>$3</code></pre>',$Text);
 		// markdown inline code blocks must be preceded by space or linebreak
 		$Text = preg_replace('#(^|\n| )(?<!\\\)`([^\n]+?)`#','$1<code class="inline-code">$2</code>', $Text);
+		// strip backslash escape for inline code
+		$Text = preg_replace('#(\\\)`#','`',$Text);
 		$Text = preg_replace('#<\/code><\/pre>\n<pre><code(>| .*?>)#','<br>',$Text);
 
 		// blockquotes
@@ -1514,7 +1520,9 @@ function bbcode($Text, $options = []) {
 		$Text = preg_replace('#\[([^\[]+)\]\((?:javascript:)?([^\)]+)\)(?!`)#','<a href="$2">$1</a>',$Text);
 
 		// unordered lists
-		$Text = preg_replace('#^ *[*\-+] +(.*?)$#m','<ul><li>$1</li></ul>',$Text);
+		$Text = preg_replace('#^(?<!\\\)[*\-+] +(.*?)$#m','<ul><li>$1</li></ul>',$Text);
+		// strip the backslash escape if present
+		$Text = preg_replace('#^(\\\)([*\-+]) #m','$2',$Text);
 		// order lists
 		$Text = preg_replace('#^\d+[\.] +(.*?)$#m','<ol><li>$1</li></ol>',$Text);
 
