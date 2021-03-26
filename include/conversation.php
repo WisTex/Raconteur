@@ -1020,11 +1020,21 @@ function thread_author_menu($item, $mode = '') {
 			$contact_url = z_root() . '/connedit/' . $contact['abook_id'];
 		}
 		$posts_link = z_root() . '/stream/?cid=' . $contact['abook_id'];
-
 		$clean_url = $item['author']['xchan_url'];
 	}
 
+	$can_dm = false;
 
+	if ($local_channel && $contact) {
+		$can_dm = perm_is_allowed($local_channel,$item['author_xchan'],'send_stream');
+	}
+	elseif ($item['author']['xchan_network'] === 'activitypub') {
+		$can_dm = true;
+	}
+//	if ($can_dm) {
+//		$pm_url = z_root() . '/rpost?to=' . urlencode($item['author_xchan']);
+//	}
+	
 	if($profile_link) {
 		$menu[] = [ 
 			'menu' => 'view_profile',
@@ -1068,7 +1078,7 @@ function thread_author_menu($item, $mode = '') {
 	if(isset($pm_url) && $pm_url) {
 		$menu[] = [ 
 			'menu' => 'prv_message',
-			'title' => t('Message'),
+			'title' => t('Direct Message'),
 			'icon' => 'fw',
 			'action' => '',
 			'href' => $pm_url
