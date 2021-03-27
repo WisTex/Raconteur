@@ -104,10 +104,17 @@ class Rpost extends Controller {
 		}
 	
 		$channel = App::get_channel();
-	
-	
+
 		$acl = new AccessControl($channel);
 	
+		if (array_key_exists('to',$_REQUEST) && $_REQUEST['to']) {
+			$acl->set([ 'allow_cid' => '<' . $_REQUEST['to'] . '>',
+				'allow_gid' => EMPTY_STR,
+				'deny_cid' => EMPTY_STR,
+				'deny_gid' => EMPTY_STR ]
+			);
+		}
+
 		$channel_acl = $acl->get();
 	
 		if($_REQUEST['url']) {
