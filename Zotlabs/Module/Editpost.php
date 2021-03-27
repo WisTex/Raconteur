@@ -110,7 +110,7 @@ class Editpost extends \Zotlabs\Web\Controller {
 			'visitor' => true,
 			'title' => htmlspecialchars_decode($itm[0]['title'],ENT_COMPAT),
 			'category' => $category,
-			'showacl' => ((intval($itm[0]['unpublished'])) ? true : false),
+			'showacl' => ((intval($itm[0]['item_unpublished'])) ? true : false),
 			// @todo - need acl and lockstate when item_unpublished is 1
 			'permissions' => $itm[0],
 			'profile_uid' => $owner_uid,

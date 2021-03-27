@@ -60,7 +60,6 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 		array_walk($deny_gid,'fixacl');
 	}
 
-
 	$channel = ((local_channel()) ? App::get_channel() : '');
 	$has_acl = false;
 	$single_group = false;
@@ -77,7 +76,7 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 		$custom = false;
 	}
 
-	if (count($allow_cid) === 1 && $channel && $allow_cid[0] = $channel['channel_hash'] && (! $allow_gid) && (! $deny_gid) && (! $deny_cid)) {
+	if (count($allow_cid) === 1 && $channel && $allow_cid[0] === $channel['channel_hash'] && (! $allow_gid) && (! $deny_gid) && (! $deny_cid)) {
 		$just_me = true;
 		$custom = false;
 	}
@@ -105,16 +104,27 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 		$selected = (($single_group && 'zot:' . $channel['channel_hash'] === $allow_gid[0]) ? ' selected = "selected" ' : '');
 		$groups .= '<option id="vg3" value="zot:' . $channel['channel_hash'] . '"' . $selected . '>' . t('My Zot connections') . ' ' . t('(Virtual List)') . '</option>' . "\r\n";
 
-
-
 	}
 
-	$forums = get_forum_channels(local_channel(),1);
 
+	$forums = get_forum_channels(local_channel(),1);
+	$selected = false;
 	if ($forums) {
 		foreach ($forums as $f) {
 			$selected = (($single_group && $f['hash'] === $allow_cid[0]) ? ' selected = "selected" ' : '');
 			$groups .= '<option id="^' . $f['abook_id'] . '" value="^' . $f['xchan_hash'] . '"' . $selected . '>' . $f['xchan_name'] . ' ' . t('(Group)') . '</option>' . "\r\n";
+		}
+	}
+
+	// preset acl with DM to a single xchan (not a group)
+	if ($selected === false && count($allow_cid) === 1 && $channel && $allow_cid[0] !== $channel['channel_hash'] && (! $allow_gid) && (! $deny_gid) && (! $deny_cid)) {
+		$f = q("select * from xchan where xchan_hash = '%s'",
+			dbesc($allow_cid[0])
+		);
+		if ($f) {
+			$custom = false;
+			$selected = ' selected="selected" ';
+			$groups .= '<option id="^DM" value="^' . $f[0]['xchan_hash'] . '"' . $selected . '>' . $f[0]['xchan_name'] . ' ' . t('(DM)') . '</option>' . "\r\n";
 		}
 	}
 
@@ -123,9 +133,9 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 		'$showall'         => $showall_caption,
 		'$onlyme'          => t('Only me'),
 		'$groups'	       => $groups,
-		'$public_selected' => (($has_acl) ? false : true),
-		'$justme_selected' => $just_me,
-		'$custom_selected' => $custom,
+		'$public_selected' => (($has_acl) ? false : ' selected="selected" '),
+		'$justme_selected' => (($just_me) ? ' selected="selected" ' : ''),
+		'$custom_selected' => (($custom) ? ' selected="selected" ' : ''),
 		'$showallOrigin'   => $showall_origin,
 		'$showallIcon'     => $showall_icon,
 		'$select_label'    => t('Who can see this?'),
@@ -165,11 +175,11 @@ function get_post_aclDialogDescription() {
 	// *shown* the post, istead of who is able to see the post, i.e. make it clear that clicking
 	// the "Show"  button on a group does not post it to the feed of people in that group, it
 	// mearly allows those people to view the post if they are viewing/following this channel.
-	$description = t('Post permissions cannot be changed after a post is shared.</br />These permissions set who is allowed to view the post.');
+	$description = t('Post permissions cannot be changed after a post is shared.<br>These permissions set who is allowed to view the post.');
 
 	// Lets keep the emphasis styling seperate from the translation. It may change.
-	$emphasisOpen  = '<b><a href="' . z_root() . '/help/acl_dialog_post" target="hubzilla-help">';
-	$emphasisClose = '</a></b>';
+	//$emphasisOpen  = '<b><a href="' . z_root() . '/help/acl_dialog_post" target="hubzilla-help">';
+	//$emphasisClose = '</a></b>';
 
 	return $description;
 }
