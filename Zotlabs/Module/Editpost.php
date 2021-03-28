@@ -2,6 +2,7 @@
 namespace Zotlabs\Module; /** @file */
 
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\PermissionDescription;
 
 require_once('include/acl_selectors.php');
 require_once('include/taxonomy.php');
@@ -111,7 +112,9 @@ class Editpost extends \Zotlabs\Web\Controller {
 			'title' => htmlspecialchars_decode($itm[0]['title'],ENT_COMPAT),
 			'category' => $category,
 			'showacl' => ((intval($itm[0]['item_unpublished'])) ? true : false),
-			// @todo - need acl and lockstate when item_unpublished is 1
+			'lockstate'   => (($itm[0]['allow_cid'] || $itm[0]['allow_gid'] || $itm[0]['deny_cid'] || $itm[0]['deny_gid']) ? 'lock' : 'unlock'),
+			'acl'         => populate_acl($itm[0], true, PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
+			'bang'        => EMPTY_STR,
 			'permissions' => $itm[0],
 			'profile_uid' => $owner_uid,
 			'catsenabled' => $catsenabled,
