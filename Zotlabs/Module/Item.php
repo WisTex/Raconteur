@@ -706,8 +706,8 @@ class Item extends Controller {
 		if($orig_post) {
 
 			$private = 0;
-			// webpages are allowed to change ACLs after the fact. Normal conversation items aren't. 
-			if($webpage) {
+			// webpages and unpublished drafts are allowed to change ACLs after the fact. Normal conversation items aren't. 
+			if($webpage || intval($orig_post['item_unpublished'])) {
 				$acl->set_from_array($_REQUEST);
 			}
 			else {
