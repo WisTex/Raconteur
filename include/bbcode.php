@@ -1118,13 +1118,21 @@ function bb_code_options($match) {
 	}
 }
 
+function md_protect($match) {
+	return bb_code_protect($match[1]);
+}
+
+function html_protect($match) {
+	return str_replace(['<','>'],['&lt;','&gt;'],$match[1]);
+}
+
 function md_header($content) {
 
-	$headingLevel = \strlen($content[1]);
+	$headingLevel = strlen($content[1]);
 	$header = trim($content[2]);
-	// Build anker without space, numbers.
-    $anker = preg_replace('#[^a-z?!]#', '', strtolower($header));
-    return sprintf('<h%d id="%s">%s</h%d>', $headingLevel, $anker, $header, $headingLevel);
+	// Build anchor without space, numbers.
+    $anchor = preg_replace('#[^a-z?!]#', '', strtolower($header));
+    return sprintf('<h%d id="%s">%s</h%d>', $headingLevel, $anchor, $header, $headingLevel);
 
 }
 
@@ -1488,6 +1496,16 @@ function bbcode($Text, $options = []) {
 		//		if (strpbrk($Text,'<>') !== false) {
 		//			$Text = purify_html($Text, [ 'escape' ]);
 		//		}
+
+		// the bbcode tag 'nomd' will bypass markdown processing for any given text region
+
+		$Text = preg_replace_callback('#\[nomd\](.*?)\[\/nomd\]#ism','md_protect',$Text);
+
+		// and for completeness, there's 'nohtml'
+
+
+		$Text = preg_replace_callback('#\[nohtml\](.*?)\[\/nohtml\]#ism','html_protect',$Text);
+
 
 		// Perform some markdown conversions before translating linefeeds so as to keep the regexes manageable
 		// The preceding character check in bold/italic sequences is so we don't mistake underscore/asterisk in the middle of conversational text as an italic trigger. 
