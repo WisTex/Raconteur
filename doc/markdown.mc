@@ -41,7 +41,7 @@ Level headers must occur at the beginning of a line and be separated from the he
 
 [h3]Code and quotes[/h3]
 
-The markdown specification allows code blocks to be any line beginning with 4 spaces or a tab. This particular syntax rule may produce undesirable results with normal text that wasn't intended to be part of a code block and is not supported in this application. Additionally, inline code must be preceded by at least one space character or occur at the beginning of a line. If you wish to insert backtick characters without triggering a code block, precede them with a backslash character or wrap the text in [nobb][nomd][/nomd][/nobb].
+The markdown specification allows code blocks to be any line beginning with 4 spaces or a tab. This particular syntax rule may produce undesirable results with normal text that wasn't intended to be part of a code block and is not supported in this application. Additionally, inline code must be preceded by at least one space character ***or*** occur at the beginning of a line and may not include line breaks. If you wish to insert backtick characters without triggering a code block, precede them with a backslash character or wrap the text in [nobb][nomd][/nomd][/nobb].
 
 [table]
 [tr][td]Markdown[/td][td]Result[/td][/tr]
