@@ -1523,7 +1523,7 @@ function bbcode($Text, $options = []) {
 		// do not use the "indent by tab or 4 spaces" markdown codeblock trigger - this produces way too many false positives
 		//		$Text = preg_replace('#^(?:\0(.*?)\0\n)?( {4}|\t)(.*?)$#m','<pre><code>$3</code></pre>',$Text);
 		// markdown inline code blocks must be preceded by space or linebreak
-		$Text = preg_replace('# (?<!\\\)`([^\n]+?)`#',' <code class="inline-code">$1</code>', $Text);
+		$Text = preg_replace('#(^|\n| )(?<!\\\)`([^\n`]+?)`#','$1<code class="inline-code">$2</code>', $Text);
 		// strip backslash escape for inline code
 		$Text = preg_replace('#(\\\)`#','`',$Text);
 		$Text = preg_replace('#<\/code><\/pre>\n<pre><code(>| .*?>)#','<br>',$Text);
