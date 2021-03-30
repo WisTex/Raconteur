@@ -1429,7 +1429,12 @@ class Activity {
 				$ret['followers']   = z_root() . '/followers/' . $c['channel_address'];
 				$ret['following']   = z_root() . '/following/' . $c['channel_address'];
 
-				$ret['endpoints']   = [ 'sharedInbox' => z_root() . '/inbox' ];
+				$ret['endpoints']   = [
+					'sharedInbox' => z_root() . '/inbox',
+					'oauthAuthorizationEndpoint' => z_root() . '/authorize',
+					'oauthTokenEndpoint' => z_root() . '/token'
+				];
+				
 				$ret['discoverable'] = ((1 - intval($p['xchan_hidden'])) ? true : false);				
 				$ret['publicKey'] = [
 					'id'           => $p['xchan_url'],
@@ -2869,7 +2874,7 @@ class Activity {
 
 		$s['item_private'] = 1;
 		
-		if ($act->recips && in_array(ACTIVITY_PUBLIC_INBOX,$act->recips)) {
+		if ($act->recips && (in_array(ACTIVITY_PUBLIC_INBOX,$act->recips) || in_array('Public',$act->recips) || in_array('as:Public',$act->recips))) {
 			$s['item_private'] = 0;
 		}
 
@@ -3056,7 +3061,7 @@ class Activity {
 		// They are hidden in the public timeline if the public inbox is listed in the 'cc' field.
 		// This is not part of the activitypub protocol - we might change this to show all public posts in pubstream at some point.
 
-		$pubstream = ((is_array($act->obj) && array_key_exists('to', $act->obj) && is_array($act->obj['to']) && in_array(ACTIVITY_PUBLIC_INBOX, $act->obj['to'])) ? true : false);
+		$pubstream = ((is_array($act->obj) && array_key_exists('to', $act->obj) && is_array($act->obj['to']) && (in_array(ACTIVITY_PUBLIC_INBOX, $act->obj['to']) || in_array('Public',$act->obj['to']) || in_array('as:Public',$act->obj['to']))) ? true : false);
 
 		// very unpleasant and imperfect way of determining a Mastodon DM
 		
