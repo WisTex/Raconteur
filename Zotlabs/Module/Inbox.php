@@ -207,7 +207,7 @@ class Inbox extends Controller {
 				$channels = [];
 			}
 
-			if (in_array(ACTIVITY_PUBLIC_INBOX,$AS->recips)) {
+			if (in_array(ACTIVITY_PUBLIC_INBOX,$AS->recips) || in_array('Public',$AS->recips) || in_array('as:Public',$AS->recips)) {
 
 				// look for channels with send_stream = PERMS_PUBLIC (accept posts from anybody on the internet)
 
