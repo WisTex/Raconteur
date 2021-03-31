@@ -215,7 +215,7 @@ To register a hook using a class method as a callback, a couple of things need t
 function myplugin_load() {
 	Zotlabs\Extend\Hook::register('hook_name','addon/myplugin/myplugin.php','\\Myplugin::foo');
 [b]or[/b]
-	Zotlabs\Extend\Hook::register('hook_name','addon/myplugin/myplugin.php',array('\\Myplugin','foo'));
+	Zotlabs\Extend\Hook::register('hook_name','addon/myplugin/myplugin.php', [ '\\Myplugin', 'foo' ]);
 }
  
 class Myplugin {
@@ -225,11 +225,4 @@ class Myplugin {
 	}
 }
 [/code]
-
-If you want to keep your plugin hidden from the siteinfo page, simply create a file called '.hidden' in your addon directory
-[code]
-	touch addon/<addon name>/.hidden
-[/code]
-
-***Porting Friendica Plugins***
 
