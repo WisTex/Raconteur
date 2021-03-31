@@ -214,14 +214,14 @@ To register a hook using a class method as a callback, a couple of things need t
 
 function myplugin_load() {
 	Zotlabs\Extend\Hook::register('hook_name','addon/myplugin/myplugin.php','\\Myplugin::foo');
-[b]or[/b]
+	/* The next line is identical in how it behaves, but uses a slightly different method */
 	Zotlabs\Extend\Hook::register('hook_name','addon/myplugin/myplugin.php', [ '\\Myplugin', 'foo' ]);
 }
  
 class Myplugin {
 
 	public static function foo($params) {
-		// handler for 'hook_name'
+		/* handler for 'hook_name' */
 	}
 }
 [/code]
