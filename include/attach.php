@@ -1804,28 +1804,28 @@ function file_activity($channel_id, $object, $allow_cid, $allow_gid, $deny_cid, 
 
 	$poster = App::get_observer();
 
-	//if we got no object something went wrong
+	// if we got no object something went wrong
 	if (!$object) {
 		return;
 	}
 
-	//turn strings into arrays
+	// turn strings into arrays
 	$arr_allow_cid = expand_acl($allow_cid);
 	$arr_allow_gid = expand_acl($allow_gid);
 	$arr_deny_cid = expand_acl($deny_cid);
 	$arr_deny_gid = expand_acl($deny_gid);
 
-	//filter out receivers which do not have permission to view filestorage
+	// filter out receivers which do not have permission to view filestorage
 	$arr_allow_cid = check_list_permissions($channel_id, $arr_allow_cid, 'view_storage');
 
 	$is_dir = (intval($object['is_dir']) ? true : false);
 
-	//do not send activity for folders for now
+	// do not send activity for folders for now
 	if ($is_dir) {
 		return;
 	}
 
-	//check for recursive perms if we are in a folder
+	// check for recursive perms if we are in a folder
 	if ($object['folder']) {
 
 		$folder_hash = $object['folder'];
@@ -1837,31 +1837,31 @@ function file_activity($channel_id, $object, $allow_cid, $allow_gid, $deny_cid, 
 			return;
 		}
 
-		//split up returned perms
+		// split up returned perms
 		$arr_allow_cid = $r_perms['allow_cid'];
 		$arr_allow_gid = $r_perms['allow_gid'];
 		$arr_deny_cid = $r_perms['deny_cid'];
 		$arr_deny_gid = $r_perms['deny_gid'];
 
-		//filter out receivers which do not have permission to view filestorage
+		// filter out receivers which do not have permission to view filestorage
 		$arr_allow_cid = check_list_permissions($channel_id, $arr_allow_cid, 'view_storage');
 	}
 
 	$uuid = new_uuid();
 	$mid = z_root() . '/item/' . $uuid;
 
-	$objtype = ACTIVITY_OBJ_FILE;
+	$objtype = 'Document';
 
 	$arr = [];
 	$arr['aid']           = get_account_id();
 	$arr['uid']           = $channel_id;
 	$arr['uuid']          = $uuid;
-	$arr['item_wall'] = 1;
-	$arr['item_origin'] = 1;
-	$arr['item_unseen'] = 1;
+	$arr['item_wall']     = 1;
+	$arr['item_origin']   = 1;
+	$arr['item_unseen']   = 1;
 	$arr['author_xchan']  = $poster['xchan_hash'];
-	$arr['owner_xchan']   = $poster['xchan_hash'];
-	$arr['title']         = '';
+	$arr['owner_xchan']   = $poster['xchan_hash']; //??
+	$arr['title']         = $object['filename'];
 	$arr['item_notshown'] = 1;
 	$arr['obj_type']      = $objtype;
 	$arr['resource_id']   = $object['hash'];
@@ -1869,7 +1869,20 @@ function file_activity($channel_id, $object, $allow_cid, $allow_gid, $deny_cid, 
 
 	$private = (($arr_allow_cid[0] || $arr_allow_gid[0] || $arr_deny_cid[0] || $arr_deny_gid[0]) ? 1 : 0);
 
-	$jsonobject = json_encode($object);
+	$obj= [
+		'type' => 'Document',
+		'id'   => z_root() . '/attach/' . $object['hash'],
+		'name' => $object['filename'],		
+	];
+
+	$obj['url'] = array_merge($object['url'],[
+		'type' => 'Link',
+		'mediaType' => $object['filetype'],
+		'href' => z_root() . '/attach/' . $object['hash']
+	]);
+
+
+	$jsonobject = json_encode($obj);
 
 	//check if item for this object exists
 	$y = q("SELECT mid FROM item WHERE verb = '%s' AND obj_type = '%s' AND resource_id = '%s' AND uid = %d LIMIT 1",
@@ -1882,9 +1895,9 @@ function file_activity($channel_id, $object, $allow_cid, $allow_gid, $deny_cid, 
 	if ($y) {
 		$update = true;
 		$object['d_mid'] = $y[0]['mid']; //attach mid of the old object
-		$u_jsonobject = json_encode($object);
+		$u_jsonobject = json_encode($obj);
 
-		//we have got the relevant info - delete the old item before we create the new one
+		// we have got the relevant info - delete the old item before we create the new one
 		$z = q("DELETE FROM item WHERE obj_type = '%s' AND verb = '%s' AND mid = '%s'",
 			dbesc(ACTIVITY_OBJ_FILE),
 			dbesc(ACTIVITY_POST),
@@ -1893,7 +1906,7 @@ function file_activity($channel_id, $object, $allow_cid, $allow_gid, $deny_cid, 
 
 	}
 
-	//send update activity and create a new one
+	// send update activity and create a new one
 	if ($update && $verb == 'post' ) {
 		//updates should be sent to everybody with recursive perms and all eventual former allowed members ($object['allow_cid'] etc.).
 		$u_arr_allow_cid = array_unique(array_merge($arr_allow_cid, expand_acl($object['allow_cid'])));
@@ -1923,7 +1936,7 @@ function file_activity($channel_id, $object, $allow_cid, $allow_gid, $deny_cid, 
 		$update = false;
 	}
 
-	//don't create new activity if notify was not enabled
+	// don't create new activity if notify was not enabled
 	if (! $notify) {
 		return;
 	}
@@ -1964,40 +1977,26 @@ function get_file_activity_object($channel_id, $hash, $url) {
 		intval($channel_id),
 		dbesc($hash)
 	);
-
+	if (! $x) {
+		return null;
+	}
+	
 	$url = rawurlencode($url);
 
 	$links   = [];
 	$links[] = [
 		'rel'  => 'alternate',
-		'type' => 'text/html',
+		'mediaType' => 'text/html',
 		'href' => $url
 	];
 
-	$object = [
+	$object = array_merge( [
 		'type'  => ACTIVITY_OBJ_FILE,
 		'title' => $x[0]['filename'],
 		'id'    => $url,
-		'link'  => $links,
-
-		'hash'		=> $hash,
-		'creator'	=> $x[0]['creator'],
-		'filename'	=> $x[0]['filename'],
-		'filetype'	=> $x[0]['filetype'],
-		'filesize'	=> $x[0]['filesize'],
-		'revision'	=> $x[0]['revision'],
-		'folder'	=> $x[0]['folder'],
-		'flags'		=> $x[0]['flags'],
-		'os_storage' => $x[0]['os_storage'],
-		'is_photo'  => $x[0]['is_photo'],
-		'is_dir'    => $x[0]['is_dir'],
-		'created'	=> $x[0]['created'],
-		'edited'	=> $x[0]['edited'],
-		'allow_cid'	=> $x[0]['allow_cid'],
-		'allow_gid'	=> $x[0]['allow_gid'],
-		'deny_cid'	=> $x[0]['deny_cid'],
-		'deny_gid'	=> $x[0]['deny_gid']
-	];
+		'url'   => $links,
+		'hash'  => $hash,
+		], $x[0]);
 
 	return $object;
 }

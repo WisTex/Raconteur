@@ -503,9 +503,7 @@ define ( 'ACTIVITY_OBJ_P_PHOTO', 'Icon' );
 define ( 'ACTIVITY_OBJ_PROFILE', 'Profile');
 define ( 'ACTIVITY_OBJ_EVENT',   'Event' );
 define ( 'ACTIVITY_OBJ_POLL',    'Question');
-
-
-
+define ( 'ACTIVITY_OBJ_FILE',    'Document');
 
 
 define ( 'ACTIVITY_REACT',       NAMESPACE_ZOT   . '/activity/react' );
@@ -545,7 +543,7 @@ define ( 'ACTIVITY_OBJ_WIKI',    NAMESPACE_ACTIVITY_SCHEMA . 'wiki' );
 define ( 'ACTIVITY_OBJ_TAGTERM', NAMESPACE_ZOT  . '/activity/tagterm' );
 define ( 'ACTIVITY_OBJ_THING',   NAMESPACE_ZOT  . '/activity/thing' );
 define ( 'ACTIVITY_OBJ_LOCATION',NAMESPACE_ZOT  . '/activity/location' );
-define ( 'ACTIVITY_OBJ_FILE',    NAMESPACE_ZOT  . '/activity/file' );
+// define ( 'ACTIVITY_OBJ_FILE',    NAMESPACE_ZOT  . '/activity/file' );
 define ( 'ACTIVITY_OBJ_CARD',    NAMESPACE_ZOT  . '/activity/card' );
 
 /**
