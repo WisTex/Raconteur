@@ -357,6 +357,32 @@ class Activity {
 
 
 
+	static function encode_simple_collection($items,$id,$type,$total = 0,$extra = null) {
+
+		$ret = [
+			'id' => z_root() . '/' . $id,
+			'type' => $type,
+			'totalItems' => $total,
+		];
+		
+		if ($extra) {
+			$ret = array_merge($ret,$extra);
+		}
+
+		if ($items) {
+			if ($type === 'OrderedCollection') {
+				$ret['orderedItems'] = $items;
+			}
+			else {
+				$ret['items'] = $items;
+			}
+		}
+
+		return $ret;
+	}
+
+
+
 
 
 	static function decode_taxonomy($item) {
