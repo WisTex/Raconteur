@@ -20,6 +20,41 @@ class Outbox extends Controller {
 
 	function init() {
 
+
+	}
+
+
+
+
+	function post() {
+		if (argc() < 2) {
+			killme();
+		}
+
+		$channel = channelx_by_nick(argv(1));
+		if (! $channel) { 
+			killme();
+		}
+
+		if (intval($channel['channel_system'])) {
+			killme();
+		}
+
+		$observer = App::get_observer();
+		if (! $observer) {
+			killme();
+		}
+		
+		
+
+
+
+
+	}
+
+
+	function get() {
+
 		if (observer_prohibited(true)) {
 			killme();
 		}

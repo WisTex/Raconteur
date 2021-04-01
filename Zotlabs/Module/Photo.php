@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Config;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Web\HTTPSig;
 
@@ -19,6 +20,22 @@ class Photo extends Controller {
 	
 
 		if (ActivityStreams::is_as_request()) {
+
+			$sigdata = HTTPSig::verify(EMPTY_STR);
+			if ($sigdata['portable_id'] && $sigdata['header_valid']) {
+				$portable_id = $sigdata['portable_id'];
+				if (! check_channelallowed($portable_id)) {
+					http_status_exit(403, 'Permission denied');
+				}
+				if (! check_siteallowed($sigdata['signer'])) {
+					http_status_exit(403, 'Permission denied');
+				}
+				observer_auth($portable_id);
+			}
+			elseif (Config::get('system','require_authenticated_fetch',false)) {
+				http_status_exit(403,'Permission denied');
+			}
+
 			$observer_xchan = get_observer_hash();
 			$allowed = false;
 

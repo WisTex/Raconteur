@@ -172,6 +172,7 @@ class File extends DAV\Node implements DAV\IFile {
 			$os_path = $r[0]['os_path'];
 			$display_path = $r[0]['display_path'];
 			$filename = $r[0]['filename'];
+			$folder_hash = $r[0]['folder'];
 
 			if (intval($r[0]['os_storage'])) {
 				$d = q("select folder, content from attach where hash = '%s' and uid = %d limit 1",
@@ -261,6 +262,7 @@ class File extends DAV\Node implements DAV\IFile {
 			$args = [
 				'resource_id'  => $this->data['hash'],
 				'album'        => $album,
+				'folder'       => $folder_hash,
 				'os_syspath'   => $f,
 				'os_path'      => $os_path,
 				'display_path' => $display_path,
