@@ -740,13 +740,14 @@ class Photos extends Controller {
 				$order = 'created DESC';
 
 			$r = q("SELECT p.resource_id, p.id, p.filename, p.mimetype, p.imgscale, p.description, p.created FROM photo p INNER JOIN
-					(SELECT resource_id, max(imgscale) imgscale FROM photo left join attach on folder = '%s' and photo.resource_id = attach.hash WHERE attach.uid = %d AND imgscale <= 4 AND photo_usage IN ( %d, %d ) and is_nsfw = %d $sql_extra GROUP BY resource_id) ph 
+					(SELECT resource_id, max(imgscale) imgscale FROM photo left join attach on folder = '%s' and photo.resource_id = attach.hash WHERE attach.uid = %d AND imgscale <= 4 AND photo_usage IN ( %d, %d, %d ) and is_nsfw = %d $sql_extra GROUP BY resource_id) ph 
 					ON (p.resource_id = ph.resource_id AND p.imgscale = ph.imgscale)
 				ORDER BY $order LIMIT %d OFFSET %d",
 				dbesc($x['hash']),
 				intval($owner_uid),
 				intval(PHOTO_NORMAL),
 				intval(PHOTO_PROFILE),
+				intval(PHOTO_COVER),
 				intval($unsafe),
 				intval(App::$pager['itemspage']),
 				intval(App::$pager['start'])
