@@ -42,7 +42,7 @@ class System {
 
 
 	static public function get_project_version() {
-		if((! array_path_exists('system/hide_version', App::$config)) || App::$config['system']['hide_version'])
+		if(array_path_exists('system/hide_version', App::$config) && intval(App::$config['system']['hide_version']))
 			return '';
 		if(is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('std_version',App::$config['system']))
 			return App::$config['system']['std_version'];
@@ -112,7 +112,7 @@ class System {
 
 	static public function compatible_project($p) {
 
-		if (in_array(strtolower($p),['hubzilla','zap','red','misty','mistpark','redmatrix','osada'])) {
+		if (in_array(strtolower($p),['hubzilla','zap','red','misty','mistpark','redmatrix','osada', 'roadhouse'])) {
 			return true;
 		}
 		return false;
