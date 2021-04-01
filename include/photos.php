@@ -426,13 +426,11 @@ function photo_upload($channel, $observer, $args) {
 		$object['to'] = Activity::map_acl(array_merge($ac, ['item_private' => 1 - intval($public) ]));
 	}
 
-
-// @FIXME - update to collection
-//	$target = array(
-//		'type'    => ACTIVITY_OBJ_ALBUM,
-//		'title'   => (($album) ? $album : '/'),
-//		'id'      => z_root() . '/photos/' . $channel['channel_address'] . '/album/' . bin2hex($album)
-//	);
+	$target = [
+		'type'    => 'orderedCollection',
+		'name'    => ((strlen($album)) ? $album : '/'),  
+		'id'      => z_root() . '/album/' . $channel['channel_address'] . ((isset($args['folder'])) ? '/' . $args['folder'] : EMPTY_STR)
+	];
 
 	// Create item container
 	if($args['item']) {
@@ -449,8 +447,8 @@ function photo_upload($channel, $observer, $args) {
 				$item['obj_type'] = ACTIVITY_OBJ_PHOTO;
 				$item['obj']	= json_encode($object);
 
-//				$item['tgt_type'] = ACTIVITY_OBJ_ALBUM;
-//				$item['target']	= json_encode($target);
+				$item['tgt_type'] = 'orderedCollection';
+				$item['target']	= json_encode($target);
 
 				$force = true;
 			}
@@ -501,8 +499,8 @@ function photo_upload($channel, $observer, $args) {
 			'verb'            => ACTIVITY_POST,
 			'obj_type'        => ACTIVITY_OBJ_PHOTO,
 			'obj'             => json_encode($object),
-//			'tgt_type'        => ACTIVITY_OBJ_ALBUM,
-//			'target'	      => json_encode($target),
+			'tgt_type'        => 'orderedCollection',
+			'target'	      => json_encode($target),
 			'item_wall'       => 1,
 			'item_origin'     => 1,
 			'item_thread_top' => 1,

@@ -374,6 +374,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 			$args = [
 				'resource_id'  => $hash,
 				'album'        => $album,
+				'folder'       => $this->folder_hash,
 				'os_syspath'   => $f,
 				'os_path'      => $xpath['os_path'],
 				'display_path' => $xpath['path'],

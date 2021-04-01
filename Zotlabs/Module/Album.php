@@ -45,23 +45,37 @@ class Album extends Controller {
 				logger('bear: ' . $bear, LOGGER_DEBUG);
 			}
 
-			$r = q("select * from attach where is_dir = 1 and hash = '%s' limit 1",
-				dbesc(argv(1))
-			);
-			if ($r) {
-				$allowed = attach_can_view($r[0]['uid'],$observer_xchan,argv(1),$bear);
+			$channel = null;
+			
+			if (argc() > 1) {
+				$channel = channelx_by_nick(argv(1));
 			}
+			if (! $channel) {
+				http_status_exit(404,'Not found.');
+			}
+
+			$sql_extra = permissions_sql($channel['channel_id'],$observer_xchan);
+
+			if (argc() > 2) {
+				$folder = argv(2);
+				$r = q("select * from attach where is_dir = 1 and hash = '%s' and uid = %d $sql_extra limit 1",
+					dbesc($folder),
+					intval($channel['channel_id'])
+				);
+				$allowed = (($r) ? attach_can_view($channel['channel_id'],$observer_xchan,$r[0]['hash'],$bear) : false);
+			}
+			else {
+				$folder = EMPTY_STR;
+				$allowed = perm_is_allowed($channel['channel_id'],$observer_xchan,'view_storage');
+			}
+
 			if (! $allowed) {
-				http_status_exit(404,'Permission denied.');
+				http_status_exit(403,'Permission denied.');
 			}
-
-			$channel = channelx_by_n($r[0]['uid']);
-
-			$sql_extra = permissions_sql($r[0]['uid'],$observer_xchan);
 
 			$x = q("select * from attach where folder = '%s' and uid = %d $sql_extra",
-				dbesc($r[0]['hash']),
-				intval($r[0]['uid'])
+				dbesc($folder),
+				intval($channel['channel_id'])
 			);
 
 			$contents = [];
@@ -69,6 +83,9 @@ class Album extends Controller {
 			if ($x) {
 				foreach ($x as $xv) {
 					if (intval($xv['is_dir'])) {
+						continue;
+					}
+					if (! attach_can_view($channel['channel_id'],$observer_xchan,$xv['hash'],$bear)) {
 						continue;
 					}
 					if (intval($xv['is_photo'])) {
