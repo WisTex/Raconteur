@@ -1588,10 +1588,16 @@ function format_filer(&$item) {
 function generate_map($coord) {
 
 	$coord = str_replace(array(',','/','  '),array(' ',' ',' '),trim($coord));
-	$zoom = substr($coord,strpos($coord,'?z=')+3);
+
+	
+	$zoom = ((strpos($coord,'?z=') !== false) ? substr($coord,strpos($coord,'?z=')+3) : 0);
+
 	if ($zoom) {
 		$coord = substr($coord,0,strpos($coord,'?'));
 	}	
+	else {
+		$zoom = 16;
+	}
 
 	$arr = [
 		'lat' => trim(substr($coord, 0, strpos($coord, ' '))),
