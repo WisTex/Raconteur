@@ -4,7 +4,7 @@
 	<input type="hidden" name="uid" value="{{$uid}}" />
 	<input type="hidden" name="fileid" value="{{$file.id}}" />
 	{{if !$isadir}}
-	{{include file="field_checkbox.tpl" field=$notify}}
+	{{*include file="field_checkbox.tpl" field=$notify*}}
 	{{/if}}
 	{{if $isadir}}
 	{{include file="field_checkbox.tpl" field=$recurse}}

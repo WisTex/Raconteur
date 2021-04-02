@@ -1,5 +1,10 @@
 <?php
 namespace Zotlabs\Module;
+
+
+use App;
+use Zotlabs\Web\Controller;
+
 require_once('include/conversation.php');
 require_once('include/text.php');
 
@@ -9,7 +14,7 @@ require_once('include/text.php');
  *
  */
 
-class Sharedwithme extends \Zotlabs\Web\Controller {
+class Sharedwithme extends Controller {
 
 	function get() {
 		if(! local_channel()) {
@@ -17,7 +22,7 @@ class Sharedwithme extends \Zotlabs\Web\Controller {
 			return;
 		}
 		
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 		$is_owner = (local_channel() && (local_channel() == $channel['channel_id']));
 	
