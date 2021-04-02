@@ -80,7 +80,7 @@ class Filestorage extends Controller {
 			Libsync::build_sync_packet($channel_id,array('file' => array($sync)));
 		}
 
-		file_activity($channel_id, $object, $x['allow_cid'], $x['allow_gid'], $x['deny_cid'], $x['deny_gid'], 'post', $notify);
+//		file_activity($channel_id, $object, $x['allow_cid'], $x['allow_gid'], $x['deny_cid'], $x['deny_gid'], 'post', $notify);
 
 		goaway(dirname($url));
 	}
