@@ -870,6 +870,10 @@ class Libsync {
 				dbesc($sender['hash'])
 			);
 
+			if (! $xisting) {
+				$xisting = [];
+			}
+			
 			// See if a primary is specified
 
 			$has_primary = false;
