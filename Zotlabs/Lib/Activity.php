@@ -766,14 +766,17 @@ class Activity {
 			$ret['directMessage'] = true;
 		}
 
-//		$ret['inheritPrivacy'] = true;
-
 		$actor = self::encode_person($i['author'],false);
 		if ($actor)
 			$ret['actor'] = $actor;
 		else
 			return []; 
 
+		$replyto = self::encode_person($i['owner'],false);
+//		if ($replyto) {
+//			$ret['replyTo'] = $replyto;
+//		}
+		
 		if (! isset($ret['url'])) {
 			$urls = [];
 			if (intval($i['item_wall'])) {
@@ -1055,7 +1058,7 @@ class Activity {
 			$ret['commentPolicy'] .= 'until=' . datetime_convert('UTC','UTC',$i['comments_closed'],ATOM_TIME);
 		}
 		
-		$ret['attributedTo'] = $i['author']['xchan_url'];
+		$ret['attributedTo'] = (($i['author']['xchan_network'] === 'zot6') ? $i['author']['xchan_url'] : $i['author']['xchan_hash']);
 
 		if ($i['mid'] !== $i['parent_mid']) {
 			$ret['inReplyTo'] = $i['thr_parent'];
@@ -1145,6 +1148,11 @@ class Activity {
 			}
 		}
 
+		$replyto = self::encode_person($i['owner'],false);
+//		if ($replyto) {
+//			$ret['replyTo'] = $replyto;
+//		}
+		
 		if (! isset($ret['url'])) {
 			$urls = [];
 			if (intval($i['item_wall'])) {
@@ -2478,7 +2486,10 @@ class Activity {
 
 			$s['mid'] = $act->id;
 			$s['parent_mid'] = $act->obj['id'];
-			$s['replyto'] = $act->replyto;
+
+//			if (isset($act->replyto) && ! empty($act->replyto)) {
+//				$s['replyto'] = $act->replyto;
+//			}
 			
 			// over-ride the object timestamp with the activity
 
