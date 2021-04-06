@@ -623,6 +623,9 @@ class Activity {
 					$entry['type'] = $att['mediaType'];
 				elseif (array_key_exists('type',$att) && $att['type'] === 'Image')
 					$entry['type'] = 'image/jpeg';
+				if (array_key_exists('name',$att) && $att['name']) {
+					$entry['name'] = html2plain(purify_html($att['name']),256);
+				}
 				if ($entry)
 					$ret[] = $entry;
 			}
@@ -1208,11 +1211,17 @@ class Activity {
 		}
 
 		if ($activitypub && $has_images && $ret['type'] === 'Note') {
-			$img = [];
         	foreach ($images as $match) {
-				// handle Friendica-style img links with [img=$url]$alttext[/img]
+				$img = [];
+				// handle Friendica/Hubzilla style img links with [img=$url]$alttext[/img]
 				if (strpos($match[1],'=http') === 0) {
-					$img[] =  [ 'type' => 'Image', 'url' => substr($match[1],1) ];
+					$img[] =  [ 'type' => 'Image', 'url' => substr($match[1],1), 'name' => $match[2] ];
+				}
+				// preferred mechanism for adding alt text
+				elseif (strpos($match[1],'alt=') !== false) {
+					$txt = str_replace('&quot;','"',$match[1]);
+					$txt = substr($match[1],strpos($match[1],'alt="')+5,-1);
+					$img[] =  [ 'type' => 'Image', 'url' => $match[2], 'name' => $txt ];
 				}
 				else {
 					$img[] =  [ 'type' => 'Image', 'url' => $match[2] ];
@@ -1221,7 +1230,17 @@ class Activity {
 	        	if (! $ret['attachment']) {
     	        	$ret['attachment'] = [];
 				}
-    	    	$ret['attachment'] = array_merge($img,$ret['attachment']);
+				$already_added = false;
+				if ($img) {
+					foreach ($ret['attachment'] as $a) {
+						if (isset($a['url']) && $a['url'] === $img[0]['url']) {
+							$already_added = true;
+						}
+					}
+					if (! $already_added) {
+						$ret['attachment'] = array_merge($img,$ret['attachment']);
+					}
+				}				
     		}
 		}
 
@@ -2638,7 +2657,7 @@ class Activity {
 				$s['location'] = escape_tags($location['name']);
 			}
 			if (array_key_exists('content',$location)) {
-				$s['location'] = html2plain(html2plain(purify_html($location['content']),256));
+				$s['location'] = html2plain(purify_html($location['content']),256);
 			}
 			
 			if (array_key_exists('latitude',$location) && array_key_exists('longitude',$location)) {
@@ -3517,7 +3536,13 @@ class Activity {
 		foreach ($attach as $a) {
 			if (array_key_exists('type',$a) && stripos($a['type'],'image') !== false) {
 				if (self::media_not_in_body($a['href'],$body)) {
-					$ret .= "\n\n" . '[img]' . $a['href'] . '[/img]';
+					if (isset($a['name']) && $a['name']) {
+						$alt = htmlspecialchars($a['name'],ENT_QUOTES);
+						$ret .= "\n\n" . '[img alt="' . $alt . '"]' . $a['href'] . '[/img]';
+					}
+					else {
+						$ret .= "\n\n" . '[img]' . $a['href'] . '[/img]';
+					}
 				}
 			}
 			if (array_key_exists('type',$a) && stripos($a['type'], 'video') !== false) {
@@ -3618,6 +3643,9 @@ class Activity {
 		foreach ([ 'name', 'summary', 'content' ] as $a) {
 			if (($x = self::get_textfield($act,$a,$binary)) !== false) {
 				$content[$a] = $x;
+			}
+			if (isset($content['name'])) {
+				$content['name'] = html2plain(purify_html($content['name']),256);
 			}
 		}
 
