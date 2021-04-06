@@ -36,7 +36,7 @@ class Stream extends Controller {
 			$_SESSION['return_url'] = App::$query_string;
 			return login(false);
 		}
-	
+
 		$o = '';
 
 		if ($load) {
@@ -171,9 +171,6 @@ class Stream extends Controller {
 		$deftag = '';
 	
 
-		if ($draft) {
-			$item_normal = item_normal_draft(); 
-		}
 		
 		if (x($_GET,'search') || $file || (!$pf && $cid)) {
 			$nouveau = true;
@@ -269,7 +266,12 @@ class Stream extends Controller {
 		$item_thread_top = ' AND item_thread_top = 1 ';
 	
 		$sql_extra = '';
-	
+
+		if ($draft) {
+			$item_normal = item_normal_draft();
+			$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE item_unpublished = 1 ) ";
+		}
+
 		if ($group) {
 			$contact_str = '';
 			$contacts = AccessList::members(local_channel(),$group);
@@ -568,7 +570,7 @@ class Stream extends Controller {
 				$ordering = "created";
 			else
 				$ordering = "commented";
-	
+
 			if ($load) {
 				// Fetch a page full of parent items for this page
 				$r = q("SELECT item.parent AS item_id FROM item 
@@ -595,7 +597,6 @@ class Stream extends Controller {
 				$_SESSION['loadtime'] = datetime_convert();
 			}
 
-	
 			if ($r) {
 	
 				$parents_str = ids_to_querystr($r,'item_id');
