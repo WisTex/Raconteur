@@ -269,7 +269,7 @@ class Stream extends Controller {
 
 		if ($draft) {
 			$item_normal = item_normal_draft();
-			$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE item_unpublished = 1 ) ";
+			$sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE item_unpublished = 1 and item_deleted = 0 ) ";
 		}
 
 		if ($group) {
