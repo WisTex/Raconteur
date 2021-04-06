@@ -5,6 +5,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\ASCollection;
 
 require_once("include/bbcode.php");
 require_once('include/security.php');
@@ -72,10 +73,35 @@ class Search extends Controller {
 						goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);			
 					}
 					if (is_array($AS->obj)) {
+						// matches Collection and orderedCollection
 						if (isset($AS->obj['type']) && strpos($AS->obj['type'],'Collection')) {
-							// @TODO implement collection fetch here (?) - the issue is
-							// what kind of limits to provide as to how much you are willing
-							// to import
+							$max = intval(get_config('system','max_imported_search_collection',10));
+							if (intval($max)) {
+								$obj = new ASCollection($search, App::get_channel(), 0, $max);
+								$messages = $obj->get();
+								$author = null;
+								if ($messages) {	
+									foreach ($messages as $message) {
+										if (is_string($message)) {
+											$message = Activity::fetch($message,App::get_channel());
+										}
+										$AS = new ActivityStreams($message,null,true);
+										if ($AS->is_valid() && is_array($AS->obj)) {
+											$item = Activity::decode_note($AS,true);
+										}
+										if ($item) {
+											if (! $author) {
+												$author = $item['author_xchan'];
+											}
+											Activity::store(App::get_channel(),get_observer_hash(),$AS,$item);
+										}
+									}
+								}
+								if ($author) {
+									goaway(z_root() . '/stream/?xid=' . urlencode($author));
+								}
+								goaway(z_root() . '/stream');
+							}
 						}
 						else {
 							// The boolean flag enables html cache of the item

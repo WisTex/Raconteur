@@ -218,8 +218,7 @@ function item_normal() {
 
 function item_normal_draft() {
 	return " and item.item_hidden = 0 and item.item_type = 0 and item.item_deleted = 0
-		and item.item_unpublished = 1 and item.item_pending_remove = 0
-		and item.item_blocked = 0 and item.obj_type != '" . ACTIVITY_OBJ_FILE . "' ";
+		and item.item_pending_remove = 0 and item.item_blocked = 0 and item.obj_type != '" . ACTIVITY_OBJ_FILE . "' ";
 }
 
 function item_normal_search() {

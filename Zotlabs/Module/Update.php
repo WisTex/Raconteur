@@ -15,7 +15,7 @@ use Zotlabs\Web\Controller;
 class Update extends Controller {
 
 	function get() {
-	
+
 		$profile_uid = intval($_GET['p']);
 
 		// Change a profile_uid of 0 (not logged in) to (-1) for selected controllers
