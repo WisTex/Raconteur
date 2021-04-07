@@ -45,10 +45,29 @@ class Outbox extends Controller {
 			killme();
 		}
 		
+		$data = file_get_contents('php://input');
+		if (! $data) {
+			return;
+		}
+
+		logger('outbox_activity: ' . jindent($data), LOGGER_DATA);
+		
+		$AS = new ActivityStreams($data);
+
+		if (! $AS->is_valid()) {
+			return;
+		}
 		
 
 
 
+
+
+
+
+
+
+		return;
 
 	}
 
