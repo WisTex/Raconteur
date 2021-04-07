@@ -271,7 +271,12 @@ class Search extends Controller {
 		
 			if ($load) {
 				$r = null;
-						
+
+				// if logged in locally, first look in the items you own
+				// and if this returns zero results, resort to searching elsewhere on the site.
+				// Ideally these results would be merged but this can be difficult
+				// and results in lots of duplicated content and/or messed up pagination
+				
 				if (local_channel()) {
 					$r = q("SELECT mid, MAX(id) as item_id from item where uid = %d
 						$item_normal
@@ -280,7 +285,7 @@ class Search extends Controller {
 						intval(local_channel())
 					);
 				}
-				if ($r === null) {
+				if (! $r) {
 					$r = q("SELECT mid, MAX(id) as item_id from item WHERE true $pub_sql
 						$item_normal
 						$sql_extra 
