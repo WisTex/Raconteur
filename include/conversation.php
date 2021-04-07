@@ -498,7 +498,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 			// way and also you aren't writing a comment (discovered in javascript).
 
 			$live_update_div = '<div id="live-stream"></div>' . "\r\n"
-				. "<script> var profile_uid = " . $_SESSION['uid']
+				. "<script> var profile_uid = " . ((isset($_SESSION['uid'])) ? intval($_SESSION['uid']) : 0)
 				. "; var netargs = '" . substr(App::$cmd,8)
 				. '?f='
 				. ((x($_GET,'cid'))    ? '&cid='    . $_GET['cid']    : '')
