@@ -3030,7 +3030,7 @@ function linkify_tags(&$body, $uid, $in_network = true) {
 
 	$tags = get_tags($body);
 
-	if(count($tags)) {
+	if(is_array($tags) && count($tags)) {
 		foreach($tags as $tag) {
 
 			$success = handle_tag($body, $str_tags, ($uid) ? $uid : App::$profile_uid , $tag, $in_network);
