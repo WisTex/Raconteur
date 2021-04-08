@@ -91,7 +91,7 @@ if($argc == 2) {
 }
 
 if($argc == 1) {
-	$r = q("select channel_id, channel_name from channel");
+	$r = q("select channel_id, channel_name from channel where channel_removed = 0");
 	if($r) {
 		foreach($r as $rr) {
 			echo sprintf('%4u %s', $rr['channel_id'], $rr['channel_name']) . PHP_EOL;
