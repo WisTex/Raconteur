@@ -6,6 +6,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\ASCollection;
+use Zotlabs\Daemon\Run;
 
 require_once("include/bbcode.php");
 require_once('include/security.php');
@@ -63,25 +64,62 @@ class Search extends Controller {
 	
 		$o .= search($search,'search-box','/search',((local_channel()) ? true : false));
 
+		// ActivityStreams object fetches from the navbar
+		
 		if (local_channel() && strpos($search,'https://') === 0) {
-			$j = Activity::fetch($search,App::get_channel());
+			$channel = App::get_channel();
+			$hash = EMPTY_STR;
+			$j = Activity::fetch($search,$channel);
 			if ($j) {
+				if (isset($j['type']) && ActivityStreams::is_an_actor($j['type'])) {
+					Activity::actor_store($j['id'],$j);
+					goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);			
+				}
 				$AS = new ActivityStreams($j, null, true);
 				if ($AS->is_valid() && isset($AS->data['type'])) {
-					if (ActivityStreams::is_an_actor($AS->data['type'])) {
-						Activity::actor_store($AS->data['id'],$AS->data);
-						goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);			
-					}
 					if (is_array($AS->obj)) {
 						// matches Collection and orderedCollection
 						if (isset($AS->obj['type']) && strpos($AS->obj['type'],'Collection')) {
-							$max = intval(get_config('system','max_imported_search_collection',10));
+						
+							// Collections are awkward to process because they can be huge.
+							// Our strategy is to limit a navbar search to 100 Collection items
+							// and only fetch the first 10 conversations in the foreground.
+							// We'll queue the rest, and then send you to a page where
+							// you can see something we've imported. 
+							// In theory you'll start to see notifications as other conversations
+ 							// are fetched in the background while you're looking at the first ones.
+							
+							$max = intval(get_config('system','max_imported_search_collection',100));
 							if (intval($max)) {
-								$obj = new ASCollection($search, App::get_channel(), 0, $max);
+								$obj = new ASCollection($search, $channel, 0, $max);
 								$messages = $obj->get();
 								$author = null;
-								if ($messages) {	
+								if ($messages) {
+									$processed = 0;
 									foreach ($messages as $message) {
+										$processed ++;
+										// only process the first several items in the foreground and
+										// queue the remainder.
+										if ($processed > 10) {
+											$fetch_url = ((is_string($message)) ? $message : EMPTY_STR);
+											$fetch_url = ((is_array($message) && array_key_exists('id',$message)) ? $message_id : $fetch_url);
+											if (! $fetch_url) {
+												continue;
+											}
+											$hash = new_uuid();
+											Queue::insert(
+											[
+												'hash'       => $hash,
+												'account_id' => $channel['channel_account_id'],
+												'channel_id' => $channel['channel_id'],
+												'posturl'    => $fetch_url,
+												'notify'     => EMPTY_STR,
+												'msg'        => EMPTY_STR,
+												'driver'     => 'asfetch'
+											]
+											);
+											continue;
+										}
 										if (is_string($message)) {
 											$message = Activity::fetch($message,App::get_channel());
 										}
@@ -96,18 +134,28 @@ class Search extends Controller {
 											Activity::store(App::get_channel(),get_observer_hash(),$AS,$item);
 										}
 									}
+									if ($hash) {
+										Run::Summon('Deliver', $hash);
+									}
 								}
+								
+								// This will go to the right place most but not all of the time.
+								// It will go to a relevant place all of the time, so we'll use it. 
+								
 								if ($author) {
-									goaway(z_root() . '/stream/?xid=' . urlencode($author));
+									goaway(z_root() . '/stream/?xchan=' . urlencode($author));
 								}
 								goaway(z_root() . '/stream');
 							}
 						}
 						else {
-							// The boolean flag enables html cache of the item
+						
+							// It wasn't a Collection object and wasn't an Actor object,
+							// so let's see if it decodes. The boolean flag enables html
+							// cache of the item
+							
 							$item = Activity::decode_note($AS,true);
 							if ($item) {
-								logger('parsed_item: ' . print_r($item,true),LOGGER_DATA);
 								Activity::store(App::get_channel(),get_observer_hash(),$AS,$item, true, true);
 								goaway(z_root() . '/display/' . gen_link_id($item['mid']));
 							}
@@ -223,7 +271,12 @@ class Search extends Controller {
 		
 			if ($load) {
 				$r = null;
-						
+
+				// if logged in locally, first look in the items you own
+				// and if this returns zero results, resort to searching elsewhere on the site.
+				// Ideally these results would be merged but this can be difficult
+				// and results in lots of duplicated content and/or messed up pagination
+				
 				if (local_channel()) {
 					$r = q("SELECT mid, MAX(id) as item_id from item where uid = %d
 						$item_normal
@@ -232,7 +285,7 @@ class Search extends Controller {
 						intval(local_channel())
 					);
 				}
-				if ($r === null) {
+				if (! $r) {
 					$r = q("SELECT mid, MAX(id) as item_id from item WHERE true $pub_sql
 						$item_normal
 						$sql_extra 

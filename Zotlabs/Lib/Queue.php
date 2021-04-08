@@ -4,6 +4,8 @@ namespace Zotlabs\Lib;
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
+use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\ActivityStreams;
 
 class Queue {
 
@@ -122,7 +124,7 @@ class Queue {
 			intval((isset($arr['priority'])) ? $arr['priority'] : 0),
 			dbesc(datetime_convert()),
 			dbesc(datetime_convert()),
-			dbesc(datetime_convert()),
+			dbesc((isset($arr['scheduled'])) ? $arr['scheduled'] : datetime_convert()),
 			dbesc($arr['notify']),
 			dbesc(($arr['msg']) ? $arr['msg'] : '')
 		);
@@ -226,6 +228,59 @@ class Queue {
 			return;
 		}
 
+		if ($outq['outq_driver'] === 'asfetch') {
+
+			$channel = channelx_by_n($outq['outq_channel']);
+			if (! $channel) {
+				logger('missing channel: ' . $outq['outq_channel']);
+				return;
+			}
+			
+			$j = Activity::fetch($outq['outq_posturl'],$channel);
+			if ($j) {
+				$AS = new ActivityStreams($j, null, true);
+				if ($AS->is_valid() && isset($AS->data['type'])) {
+					if (ActivityStreams::is_an_actor($AS->data['type'])) {
+						Activity::actor_store($AS->data['id'],$AS->data);
+					}
+					if (strpos($AS->data['type'],'Collection')) {
+						self::remove($outq['outq_hash']);
+						return;
+					}
+					$item = Activity::decode_note($AS,true);
+					if ($item) {
+						Activity::store($channel,$channel['channnel_hash'],$AS,$item,true,true);
+					}
+				}
+				logger('deliver: queue fetch success from ' . $outq['outq_posturl'], LOGGER_DEBUG);
+				self::remove($outq['outq_hash']);
+
+				// server is responding - see if anything else is going to this destination and is piled up 
+				// and try to send some more. We're relying on the fact that do_delivery() results in an 
+				// immediate delivery otherwise we could get into a queue loop. 
+
+				if (! $immediate) {
+					$x = q("select outq_hash from outq where outq_driver = 'asfetch' and outq_channel = %d and outq_delivered = 0",
+						dbesc($outq['outq_channel'])
+					);
+
+					$piled_up = [];
+					if ($x) {
+						foreach ($x as $xx) {
+							 $piled_up[] = $xx['outq_hash'];
+						}
+					}
+					if ($piled_up) {
+						do_delivery($piled_up,true);
+					}
+				}
+			}
+			else {
+				logger('deliver: queue fetch failed' . ' from ' . $outq['outq_posturl'],LOGGER_DEBUG);
+					self::update($outq['outq_hash'],10);
+			}
+			return;
+		}
 
 		if($outq['outq_driver'] === 'activitypub') {
 

@@ -266,7 +266,7 @@ class HTTPSig {
 			return Keyutils::rsatopem($key);
 		}
 		elseif (substr($key,0,5) === 'data:') {
-			return Keyutils::convert_salmon_key($key);
+			return Keyutils::convertSalmonKey($key);
 		}
 		else {
 			return $key;

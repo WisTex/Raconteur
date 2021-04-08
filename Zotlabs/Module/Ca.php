@@ -34,6 +34,7 @@ class Ca extends Controller {
 				fclose($outfile);
 				killme();
 			}
+
 			if ($_GET['url']) {
 				goaway($url);
 			}
