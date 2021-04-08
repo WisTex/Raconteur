@@ -26,9 +26,6 @@ class IConfig {
 			}
 			else {
 				$iid = ((isset($item['id'])) ? $item['id'] : 0);
-				if ($iid === 0) {
-					btlogger('iid is 0');
-				}
 			}
 			
 			if (array_key_exists('iconfig',$item) && is_array($item['iconfig'])) {
@@ -41,12 +38,12 @@ class IConfig {
 		}
 		elseif (intval($item)) {
 			$iid = $item;
-
-			if (! $iid) {
-				return $default;
-			}
 		}
-		
+
+		if (! $iid) {
+			return $default;
+		}
+
 		$r = q("select * from iconfig where iid = %d and cat = '%s' and k = '%s' limit 1",
 			intval($iid),
 			dbesc($family),
