@@ -74,7 +74,6 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = []) {
 	@curl_setopt($ch, CURLOPT_CAINFO, get_capath());
 	@curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 	@curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
-	@curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; zot)");
 	@curl_setopt($ch, CURLOPT_ENCODING, '');
 	
 	$ciphers = @get_config('system','curl_ssl_ciphers');
@@ -86,6 +85,13 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = []) {
 		@curl_setopt($ch, CURLOPT_HEADER, false);
 		@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 		$passthru = true;
+	}
+
+	if (x($opts['useragent'])) {
+		@curl_setopt($ch, CURLOPT_USERAGENT, $opts['useragent']);
+	}
+	else {
+		@curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; zot)");
 	}
 
 	if(x($opts,'upload'))
@@ -296,7 +302,6 @@ function z_post_url($url, $params, $redirects = 0, $opts = []) {
 	@curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
 	@curl_setopt($ch, CURLOPT_POST,1);
 	@curl_setopt($ch, CURLOPT_POSTFIELDS,$params);
-	@curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; zot)");
 	@curl_setopt($ch, CURLOPT_ENCODING, '');
 	
 	$ciphers = @get_config('system','curl_ssl_ciphers');
@@ -307,6 +312,14 @@ function z_post_url($url, $params, $redirects = 0, $opts = []) {
 		@curl_setopt($ch, CURLOPT_FILE, $opts['filep']);
 		@curl_setopt($ch, CURLOPT_HEADER, false);
 	}
+
+	if (x($opts['useragent'])) {
+		@curl_setopt($ch, CURLOPT_USERAGENT, $opts['useragent']);
+	}
+	else {
+		@curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; zot)");
+	}
+
 
 	$instance_headers = ((array_key_exists('headers',$opts) && is_array($opts['headers'])) ? $opts['headers'] : []);
 

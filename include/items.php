@@ -2829,13 +2829,18 @@ function tgroup_check($uid, $item) {
 		}
 	}
 
+	$u = channelx_by_n($uid);
+	if (! $u) {
+		return false;
+	}
+
 	// post to group via DM
 
 	if ($is_group) {
 		if (intval($item['item_private']) === 2 && $item['mid'] === $item['parent_mid']) {
 			return true;
 		}
-		if (get_pconfig($uid,'system','post_via_mentions',in_array($role, ['forum','forum_moderated']))) {
+		if (get_pconfig($uid,'system','post_via_mentions',in_array($role, ['forum','forum_moderated'])) && i_am_mentioned($u,$item)) {
 			return true;
 		}
 	}
@@ -2851,10 +2856,6 @@ function tgroup_check($uid, $item) {
 		return true;
 	}
 	
-	$u = channelx_by_n($uid);
-	if (! $u) {
-		return false;
-	}
 	
 	if (($is_collection) && (perm_is_allowed($uid,$item['author_xchan'],'write_collection') || $item['author_xchan'] === $u['channel_parent'])) {
 		return true;

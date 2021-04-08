@@ -113,7 +113,7 @@ class Linkinfo extends Controller {
 			killme();
 		}
 
-		$result = z_fetch_url($url,false,0,array('novalidate' => true, 'nobody' => true));
+		$result = z_fetch_url($url, false, 0, [ 'novalidate' => true, 'nobody' => true ] );
 		if ($result['success']) {
 			$hdrs=[];
 			$h = explode("\n",$result['header']);
