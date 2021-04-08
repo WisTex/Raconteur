@@ -355,11 +355,13 @@ class Item extends Controller {
 
 		$profile_uid = ((isset($_REQUEST['profile_uid'])) ? intval($_REQUEST['profile_uid'])    : 0);
 
-		// *If* you are logged in as the site admin you are allowed to create items for the sys channel.
+		// *If* you are logged in as the site admin you are allowed to create top-level items for the sys channel.
 		// This would typically be a webpage or webpage element.
+		// Comments and replies are excluded because further below we also check for sys channel ownership and
+		// will make a copy of the parent that you can interact with in your own stream
 		
 		$sys = get_sys_channel();
-		if ($sys && $profile_uid && ($sys['channel_id'] == $profile_uid) && is_site_admin()) {
+		if ($sys && $profile_uid && ($sys['channel_id'] == $profile_uid) && is_site_admin() && ! $parent) {
 			$uid = intval($sys['channel_id']);
 			$channel = $sys;
 			$observer = $sys;

@@ -2575,14 +2575,18 @@ function tag_deliver($uid, $item_id) {
 		$mail_notify = true;
 	}
 
-
-
 	// important - ignore wall posts here else dm's by group owner will be sent to group.
+
 	if ($is_group && intval($item['item_private']) === 2 && intval($item['item_thread_top']) && (! intval($item['item_wall']))) {
-		// group delivery via DM - use post_wall permission since send_stream is probably turned off and this will be turned into an embedded wall-to-wall post
-		if(perm_is_allowed($uid,$item['owner_xchan'],'post_wall')) {
+		// group delivery via DM - use post_wall permission since send_stream is probably turned off
+		// and this will be turned into an embedded wall-to-wall post
+		if(perm_is_allowed($uid,$item['author_xchan'],'post_wall')) {
 			logger('group DM delivery for ' . $u['channel_address']);
 			start_delivery_chain($u, $item, $item_id, 0, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
+			q("update item set item_blocked = %d where id = %d",
+				intval(ITEM_HIDDEN),
+				intval($item_id)
+			);
 		}
 		return;
 	}
@@ -2601,8 +2605,6 @@ function tag_deliver($uid, $item_id) {
 		);
 		return;
 	}
-
-
 
 	/*
 	 * A "union" is a message which our channel has sourced from another channel.
@@ -2666,7 +2668,6 @@ function tag_deliver($uid, $item_id) {
 
 			// At this point we've determined that the person receiving this post was mentioned in it or it is a union.
 			// Now let's check if this mention was inside a reshare so we don't spam a forum
-			// If it's private we may have to unobscure it momentarily so that we can parse it.
 
 			$body = preg_replace('/\[share(.*?)\[\/share\]/','',$item['body']);
 
@@ -2702,6 +2703,23 @@ function tag_deliver($uid, $item_id) {
 			 */
 
 			call_hooks('tagged', $arr);
+
+			/**
+			 * post to a group (aka forum) via normal @-mentions *only if* the group is public
+			 * but let the owner change this with a hidden pconfig and either allow
+			 * or deny this option regardless of the type of group
+			 */
+			 
+			if ($is_group && intval($item['item_thread_top']) && (! intval($item['item_wall']))) {
+				if (get_pconfig($uid,'system','post_via_mentions',in_array($role,['forum','forum_moderated'])) && perm_is_allowed($uid,$item['author_xchan'],'post_wall')) {
+					logger('group mention delivery for ' . $u['channel_address']);
+					start_delivery_chain($u, $item, $item_id, 0, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
+					q("update item set item_blocked = %d where id = %d",
+						intval(ITEM_HIDDEN),
+						intval($item_id)
+					);
+				}
+			}
 
 			/*
 			 * Send a mention notification - unless we just sent a mail notification for the same item
@@ -2812,9 +2830,12 @@ function tgroup_check($uid, $item) {
 	}
 
 	// post to group via DM
-	
+
 	if ($is_group) {
 		if (intval($item['item_private']) === 2 && $item['mid'] === $item['parent_mid']) {
+			return true;
+		}
+		if (get_pconfig($uid,'system','post_via_mentions',in_array($role, ['forum','forum_moderated']))) {
 			return true;
 		}
 	}

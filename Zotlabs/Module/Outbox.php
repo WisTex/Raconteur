@@ -23,9 +23,6 @@ class Outbox extends Controller {
 
 	}
 
-
-
-
 	function post() {
 		if (argc() < 2) {
 			killme();
@@ -40,15 +37,38 @@ class Outbox extends Controller {
 			killme();
 		}
 
+		// At this point there is unlikely to be an authenticated observer using the C2S ActivityPub API.
+		// Mostly we're protecting the page from malicious mischief until the project's OAuth2 interface
+		// is linked to this page. 
+
 		$observer = App::get_observer();
 		if (! $observer) {
 			killme();
 		}
 		
+		$data = file_get_contents('php://input');
+		if (! $data) {
+			return;
+		}
+
+		logger('outbox_activity: ' . jindent($data), LOGGER_DATA);
+		
+		$AS = new ActivityStreams($data);
+
+		if (! $AS->is_valid()) {
+			return;
+		}
 		
 
 
 
+
+
+
+
+
+
+		return;
 
 	}
 

@@ -1385,8 +1385,12 @@ function theme_attachments(&$item) {
 				$label = urldecode(htmlspecialchars($r['title'], ENT_COMPAT, 'UTF-8'));
 			}
 
+			if (isset($r['name']) && $r['name']) {
+				$label = urldecode(htmlspecialchars($r['name'], ENT_COMPAT, 'UTF-8'));
+			}
+
 			if (! $label) {
-				if ($r['href']) {
+				if (isset($r['href']) && $r['href']) {
 					$m = parse_url($r['href']);
 					if ($m && $m['path']) {
 						$label = basename($m['path']);
@@ -1400,6 +1404,10 @@ function theme_attachments(&$item) {
 			}
 
 			$title = t('Size') . ' ' . ((isset($r['length']) && $r['length']) ? userReadableSize($r['length']) : t('unknown'));
+
+			if (! (isset($r['href']))) {
+				continue;
+			}
 
 			if (is_foreigner($item['author_xchan'])) {
 				$url = $r['href'];
@@ -3023,7 +3031,7 @@ function linkify_tags(&$body, $uid, $in_network = true) {
 
 	$tags = get_tags($body);
 
-	if(count($tags)) {
+	if(is_array($tags) && count($tags)) {
 		foreach($tags as $tag) {
 
 			$success = handle_tag($body, $str_tags, ($uid) ? $uid : App::$profile_uid , $tag, $in_network);
@@ -3511,6 +3519,8 @@ function cleanup_bbcode($body) {
 	$body = preg_replace_callback('/\[url(.*?)\[\/(url)\]/ism','\red_escape_codeblock',$body);
 	$body = preg_replace_callback('/\[zrl(.*?)\[\/(zrl)\]/ism','\red_escape_codeblock',$body);
 	$body = preg_replace_callback('/\[svg(.*?)\[\/(svg)\]/ism','\red_escape_codeblock',$body);
+	$body = preg_replace_callback('/\[img(.*?)\[\/(img)\]/ism','\red_escape_codeblock',$body);
+	$body = preg_replace_callback('/\[zmg(.*?)\[\/(zmg)\]/ism','\red_escape_codeblock',$body);
 
 	$body = preg_replace_callback("/([^\]\='".'"'."\;\/\{\(]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\+\,\(\)]+)/ismu", '\nakedoembed', $body);
 
@@ -3521,6 +3531,8 @@ function cleanup_bbcode($body) {
 	$body = preg_replace_callback('/\[\$b64url(.*?)\[\/(url)\]/ism','\red_unescape_codeblock',$body);
 	$body = preg_replace_callback('/\[\$b64zrl(.*?)\[\/(zrl)\]/ism','\red_unescape_codeblock',$body);
 	$body = preg_replace_callback('/\[\$b64svg(.*?)\[\/(svg)\]/ism','\red_unescape_codeblock',$body);
+	$body = preg_replace_callback('/\[\$b64img(.*?)\[\/(img)\]/ism','\red_unescape_codeblock',$body);
+	$body = preg_replace_callback('/\[\$b64zmg(.*?)\[\/(zmg)\]/ism','\red_unescape_codeblock',$body);
 
 	// fix any img tags that should be zmg
 

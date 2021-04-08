@@ -1,9 +1,17 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Exception;
+use OAuth1Request;
+use OAuth1Consumer;
+use OAuth1Util;
+
+use Zotlabs\Web\Controller;
+
 require_once('include/api.php');
 
-class Api extends \Zotlabs\Web\Controller {
+class Api extends Controller {
 
 
 	function init() {
@@ -29,19 +37,19 @@ class Api extends \Zotlabs\Web\Controller {
 	
 	function get() {
 
-		if(\App::$cmd === 'api/oauth/authorize'){
+		if(App::$cmd === 'api/oauth/authorize'){
 	
 			/* 
 			 * api/oauth/authorize interact with the user. return a standard page
 			 */
 			
-			\App::$page['template'] = 'minimal';
+			App::$page['template'] = 'minimal';
 					
 			// get consumer/client from request token
 			try {
-				$request = \OAuth1Request::from_request();
+				$request = OAuth1Request::from_request();
 			}
-			catch(\Exception $e) {
+			catch(Exception $e) {
 				logger('OAuth exception: ' . print_r($e,true));
 				// echo "<pre>"; var_dump($e); 
 				killme();
@@ -54,7 +62,7 @@ class Api extends \Zotlabs\Web\Controller {
 				if (is_null($app)) 
 					return "Invalid request. Unknown token.";
 
-				$consumer = new \OAuth1Consumer($app['client_id'], $app['pw'], $app['redirect_uri']);
+				$consumer = new OAuth1Consumer($app['client_id'], $app['pw'], $app['redirect_uri']);
 	
 				$verifier = md5($app['secret'] . local_channel());
 				set_config('oauth', $verifier, local_channel());
@@ -65,7 +73,7 @@ class Api extends \Zotlabs\Web\Controller {
 					$glue = '?';
 					if(strstr($consumer->callback_url,$glue))
 						$glue = '?';
-					goaway($consumer->callback_url . $glue . "oauth_token=" . \OAuth1Util::urlencode_rfc3986($params['oauth_token']) . "&oauth_verifier=" . \OAuth1Util::urlencode_rfc3986($verifier));
+					goaway($consumer->callback_url . $glue . "oauth_token=" . OAuth1Util::urlencode_rfc3986($params['oauth_token']) . "&oauth_verifier=" . OAuth1Util::urlencode_rfc3986($verifier));
 					killme();
 				}
 							
@@ -81,7 +89,7 @@ class Api extends \Zotlabs\Web\Controller {
 			
 			
 			if(! local_channel()) {
-				//TODO: we need login form to redirect to this page
+				// TODO: we need login form to redirect to this page
 				notice( t('Please login to continue.') . EOL );
 				return login(false,'api-login',$request->get_parameters());
 			}
@@ -99,7 +107,7 @@ class Api extends \Zotlabs\Web\Controller {
 				'$no'	     => t('No'),
 			));
 			
-			//echo "<pre>"; var_dump($app); killme();
+			// echo "<pre>"; var_dump($app); killme();
 			
 			return $o;
 		}
