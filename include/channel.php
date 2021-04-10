@@ -1297,7 +1297,7 @@ function zat_init() {
 	);
 	if ($r) {
 		$xchan = atoken_xchan($r[0]);
-		atoken_create_xchan($xchan);
+//		atoken_create_xchan($xchan);
 		atoken_login($xchan);
 	}
 }
