@@ -413,9 +413,26 @@ function contact_remove($channel_id, $abook_id) {
 		return false;
 	}
 
+	// if this is an atoken, delete the atoken record
+	
+	$xchan = q("select * from xchan where xchan_hash = '%s'",
+		dbesc($abook['abook_xchan'])
+	);
+	if (strpos($xchan['xchan_addr'],'guest:') === 0 && strpos($abook['abook_xchan'],'.')){
+		$atoken_guid = substr($abook['abook_xchan'],strrpos($abook['abook_xchan'],'.') + 1);
+		if ($atoken_guid) {
+			q("delete from atoken where atoken_guid = '%s' and atoken_uid = %d",
+				dbesc($atoken_guid),
+				intval($channel_id)
+			);
+		}
+	}
+
 	// remove items in the background as this can take some time
 
 	Run::Summon( [ 'Delxitems', $channel_id, $abook['abook_xchan'] ] );
+
+
 
 	
 	$r = q("delete from abook where abook_id = %d and abook_channel = %d",
