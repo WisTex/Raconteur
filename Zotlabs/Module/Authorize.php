@@ -2,9 +2,16 @@
 
 namespace Zotlabs\Module;
 
+use App;
+use DBA;
+use Zotlabs\Web\Controller;
+use Zotlabs\Identity\OAuth2Server;
 use Zotlabs\Identity\OAuth2Storage;
+use OAuth2\Request;
+use OAuth2\Response;
 
-class Authorize extends \Zotlabs\Web\Controller {
+
+class Authorize extends Controller {
 
 	function get() {
 		if (! local_channel()) {
@@ -44,8 +51,8 @@ class Authorize extends \Zotlabs\Web\Controller {
 			return;
 		}
 
-		$storage = new OAuth2Storage(\DBA::$dba->db);
-		$s = new \Zotlabs\Identity\OAuth2Server($storage);
+		$storage = new OAuth2Storage(DBA::$dba->db);
+		$s = new OAuth2Server($storage);
 
 		// TODO: The automatic client registration protocol below should adhere more
 		// closely to "OAuth 2.0 Dynamic Client Registration Protocol" defined
@@ -72,8 +79,8 @@ class Authorize extends \Zotlabs\Web\Controller {
 			$redirect_uri = $_POST['redirect_uri'] = 'https://fake.example.com/oauth';
 		}
 
-		$request = \OAuth2\Request::createFromGlobals();
-		$response = new \OAuth2\Response();
+		$request = Request::createFromGlobals();
+		$response = new Response();
 
 		// Note, "sub" field must match type and content. $user_id is used to populate - make sure it's a string. 
 		$channel = channelx_by_n(local_channel());
@@ -82,7 +89,7 @@ class Authorize extends \Zotlabs\Web\Controller {
 		$client_found = false;
 		$client = $storage->getClientDetails($client_id);
 
-logger('client: ' . print_r($client,true));
+		logger('client: ' . print_r($client,true),LOGGER_DATA);
 
 		if ($client) {
 			if (intval($client['user_id']) === 0 || intval($client['user_id']) === intval($user_id)) {

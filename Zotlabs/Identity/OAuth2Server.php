@@ -14,9 +14,10 @@ class OAuth2Server extends Server {
 
 		if (! is_array($config)) {
 			$config = [
-				'use_openid_connect' => true,
+//				'use_openid_connect' => true,
 				'issuer' => System::get_site_name(),
-				'use_jwt_access_tokens' => true
+//				'use_jwt_access_tokens' => true,
+//				'enforce_state' => false
 			];
 		}
 

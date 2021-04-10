@@ -127,7 +127,8 @@ class Cloud extends Controller {
 			notice( t('Permission denied') . EOL);
 		}
 		elseif ($err instanceof \Sabre\DAV\Exception\NotImplemented) {
-			notice( t('Please refresh page') . EOL);
+			// notice( t('Please refresh page') . EOL);
+			goaway(z_root() . '/' . App::$query_string);
 		}
 		else {
 			notice( t('Unknown error') . EOL);

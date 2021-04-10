@@ -2,9 +2,13 @@
 
 namespace Zotlabs\Module;
 
-
+use App;
+use DBA;
 use Zotlabs\Web\Controller;
+use Zotlabs\Identity\OAuth2Server;
 use Zotlabs\Identity\OAuth2Storage;
+use OAuth2\Request;
+use OAuth2\Response;
 
 
 class Token extends Controller {
@@ -32,9 +36,9 @@ class Token extends Controller {
 			}
 		}
 		
-		$storage = new OAuth2Storage(\DBA::$dba->db);
-		$s = new \Zotlabs\Identity\OAuth2Server($storage);
-		$request = \OAuth2\Request::createFromGlobals();
+		$storage = new OAuth2Storage(DBA::$dba->db);
+		$s = new OAuth2Server($storage);
+		$request = Request::createFromGlobals();
 		$response = $s->handleTokenRequest($request);
 		$response->send();
 		killme();
