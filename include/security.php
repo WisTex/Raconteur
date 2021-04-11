@@ -149,8 +149,6 @@ function atoken_delete($atoken_id) {
 		return;
 	}
 
-	$old_atoken = array_shift($r);
-	
 	$c = q("select channel_id, channel_hash from channel where channel_id = %d",
 		intval($r[0]['atoken_uid'])
 	);

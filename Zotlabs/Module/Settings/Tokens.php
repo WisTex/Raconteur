@@ -162,7 +162,7 @@ class Tokens {
 			unset($clone['abook_id']);
 			unset($clone['abook_account']);
 			unset($clone['abook_channel']);
-	
+				
 			$abconfig = load_abconfig($channel['channel_id'],$clone['abook_xchan']);
 			if ($abconfig) {
 				$clone['abconfig'] = $abconfig;
@@ -217,7 +217,9 @@ class Tokens {
 				unset($clone['abook_id']);
 				unset($clone['abook_account']);
 				unset($clone['abook_channel']);
-	
+
+				$clone['deleted'] = true;
+				
 				$abconfig = load_abconfig($channel['channel_id'],$clone['abook_xchan']);
 				if ($abconfig) {
 					$clone['abconfig'] = $abconfig;

@@ -2,6 +2,7 @@
 
 use Zotlabs\Daemon\Run;
 
+use Zotlabs\Lib\Libsync;
 
 function abook_store_lowlevel($arr) {
 
@@ -421,10 +422,7 @@ function contact_remove($channel_id, $abook_id) {
 	if (strpos($xchan['xchan_addr'],'guest:') === 0 && strpos($abook['abook_xchan'],'.')){
 		$atoken_guid = substr($abook['abook_xchan'],strrpos($abook['abook_xchan'],'.') + 1);
 		if ($atoken_guid) {
-			q("delete from atoken where atoken_guid = '%s' and atoken_uid = %d",
-				dbesc($atoken_guid),
-				intval($channel_id)
-			);
+			atoken_delete_and_sync($channel_id,$atoken_guid);
 		}
 	}
 

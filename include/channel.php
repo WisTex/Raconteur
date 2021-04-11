@@ -20,6 +20,8 @@ use Zotlabs\Render\Comanche;
 require_once('include/menu.php');
 require_once('include/photo_factory.php');
 
+require_once('include/security.php');
+
 /**
  * @brief Called when creating a new channel.
  *
@@ -1309,6 +1311,18 @@ function zat_init() {
 	}
 }
 
+function atoken_delete_and_sync($channel_id,$atoken_guid) {
+	$r = q("select * from atoken where atoken_guid = '%s' and atoken_uid = %d",
+		dbesc($atoken_guid),
+		intval($channel_id)
+	);
+	if ($r) {
+		$atok = array_shift($r);
+		$atok['deleted'] = true;
+		atoken_delete($atok['atoken_id']);
+		Libsync::build_sync_packet($channel_id, [ 'atoken' => [ $atok ] ] );
+	}
+}
 
 /**
  * @brief Used from within PCSS themes to set theme parameters.
