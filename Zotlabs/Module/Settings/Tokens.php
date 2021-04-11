@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Lib\AccessList;
+use Zotlabs\Lib\Libsync;
 
 require_once('include/security.php');
 
@@ -144,6 +145,32 @@ class Tokens {
 					AccessList::member_add($uid,'',$atoken_xchan,$g['id']);
 				}
 			}
+
+
+			$r = q("SELECT abook.*, xchan.*
+				FROM abook left join xchan on abook_xchan = xchan_hash
+				WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
+				intval($channel['chnnel_id']),
+				dbesc($atoken_xchan)
+			);
+			if (! $r) {
+				return;
+			}
+
+			$clone = array_shift($r);
+	
+			unset($clone['abook_id']);
+			unset($clone['abook_account']);
+			unset($clone['abook_channel']);
+	
+			$abconfig = load_abconfig($channel['channel_id'],$clone['abook_xchan']);
+			if ($abconfig) {
+				$clone['abconfig'] = $abconfig;
+			}
+			
+			Libsync::build_sync_packet($channel['channel_id'],
+				[ 'abook' => [ $clone ], 'atoken' => $atok ],
+				true);
 		}
 
 		info( t('Token saved.') . EOL);
@@ -172,7 +199,35 @@ class Tokens {
 			}
 
 			if($atoken && argc() > 3 && argv(3) === 'drop') {
+				$atoken['deleted'] = true;
+				
+
+				$r = q("SELECT abook.*, xchan.*
+					FROM abook left join xchan on abook_xchan = xchan_hash
+					WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
+					intval($channel['chnnel_id']),
+					dbesc($atoken_xchan)
+				);
+				if (! $r) {
+					return;
+				}
+
+				$clone = array_shift($r);
+	
+				unset($clone['abook_id']);
+				unset($clone['abook_account']);
+				unset($clone['abook_channel']);
+	
+				$abconfig = load_abconfig($channel['channel_id'],$clone['abook_xchan']);
+				if ($abconfig) {
+					$clone['abconfig'] = $abconfig;
+				}
+
 				atoken_delete($id);
+				Libsync::build_sync_packet($channel['channel_id'],
+					[ 'abook' => [ $clone ], 'atoken' => [ $atoken ] ],
+					true);
+
 				$atoken = null;
 				$atoken_xchan = '';
 			}

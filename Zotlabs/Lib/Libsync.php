@@ -352,6 +352,9 @@ class Libsync {
 				}
 			}
 
+			if (array_key_exists('atoken',$arr) && $arr['atoken']) {
+				sync_atoken($channel,$arr['atoken']);
+			}
 
 			if (array_key_exists('xign',$arr) && $arr['xign']) {
 				sync_xign($channel,$arr['xign']);
