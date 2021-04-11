@@ -855,7 +855,7 @@ function identity_basic_export($channel_id, $sections = null) {
 
 	if (in_array('connections',$sections)) {
 		$r = q("select * from atoken where atoken_uid = %d",
-			intval($channel_id);
+			intval($channel_id)
 		);
 		if ($r) {
 			$ret['atoken'] = $r;
