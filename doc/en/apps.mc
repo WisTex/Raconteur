@@ -71,6 +71,10 @@ Set a post to be published at/after a certain date/time. Usually used for automa
 
 Requires the 'gallery' addon. This provides an improved image browser to your photos than the stock 'Photos' app. Interactions with photos in your stream are modified slightly.
 
+### Guest Pass
+
+Does not require app installation, although it will be more accessible if the app is installed. This lets you create guest accounts and/or create links which can access some of your private resources. For instance if you want to send links via email to let the grandparents see a private photo of their grandchildren.
+
 ### Hexit
 
 Requires the 'hexit' addon. This provides an online hexadecimal/decimal converter. 

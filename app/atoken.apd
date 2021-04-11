@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/settings/tokens
+requires: local_channel
+name: Guest Pass
+photo: icon:ticket
+categories: nav_featured_app, Networking
