@@ -151,12 +151,14 @@ CREATE TABLE IF NOT EXISTS `app` (
 
 CREATE TABLE IF NOT EXISTS `atoken` (
   `atoken_id` int(11) NOT NULL AUTO_INCREMENT,
+  `atoken_guid` char(191) NOT NULL DEFAULT '',
   `atoken_aid` int(11) NOT NULL DEFAULT 0 ,
   `atoken_uid` int(11) NOT NULL DEFAULT 0 ,
   `atoken_name` char(191) NOT NULL DEFAULT '',
   `atoken_token` char(191) NOT NULL DEFAULT '',
   `atoken_expires` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   PRIMARY KEY (`atoken_id`),
+  KEY `atoken_guid` (`atoken_guid`),
   KEY `atoken_aid` (`atoken_aid`),
   KEY `atoken_uid` (`atoken_uid`),
   KEY `atoken_uid_2` (`atoken_uid`),

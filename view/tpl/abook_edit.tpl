@@ -227,6 +227,7 @@
 				{{/if}}
 				<div id="perms-tool-collapse" class="panel-collapse collapse{{if $self || $section === 'perms'}} show{{/if}}" role="tabpanel" aria-labelledby="perms-tool">
 					<div class="section-content-tools-wrapper">
+						{{include file="field_checkbox.tpl" field=$block_announce}}
 						<div class="section-content-warning-wrapper">
 						{{if $notself}}{{$permnote}}{{/if}}
 						{{if $self}}{{$permnote_self}}{{/if}}

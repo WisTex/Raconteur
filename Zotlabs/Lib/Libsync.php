@@ -352,6 +352,9 @@ class Libsync {
 				}
 			}
 
+			if (array_key_exists('atoken',$arr) && $arr['atoken']) {
+				sync_atoken($channel,$arr['atoken']);
+			}
 
 			if (array_key_exists('xign',$arr) && $arr['xign']) {
 				sync_xign($channel,$arr['xign']);
@@ -509,19 +512,41 @@ class Libsync {
 					// This relies on the undocumented behaviour that red sites send xchan info with the abook
 					// and import_author_xchan will look them up on all federated networks
 
-					if ($abook['abook_xchan'] && $abook['xchan_addr']) {
+					$found = false;
+					if ($abook['abook_xchan'] && $abook['xchan_addr'] && (! in_array($abook['xchan_network'], [ 'token', 'unknown' ]))) {
 						$h = Libzot::get_hublocs($abook['abook_xchan']);
-						if (! $h) {
+						if ($h) {
+							$found = true;
+						}
+						else {
 							$xhash = import_author_xchan(encode_item_xchan($abook));
-							if (! $xhash) {
+							if ($xhash) {
+								$found = true;
+							}
+							else {
 								logger('Import of ' . $abook['xchan_addr'] . ' failed.');
-								continue;
 							}
 						}
 					}
 
+					if ((! $found) && (! in_array($abook['xchan_network'], [ 'zot6', 'activitypub' ]))) {
+						// just import the record.
+						$xc = [];
+						foreach ($abook as $k => $v) {
+							if (strpos($k,'xchan_') === 0) {
+								$xc[$k] = $v;
+							}
+						}
+						$r = q("select * from xchan where xchan_hash = '%s'",
+							dbesc($xc['xchan_hash'])
+						);
+						if (! $r) {
+							xchan_store_lowlevel($xc);
+						}
+					}
+
 					foreach ($abook as $k => $v) {
-						if (in_array($k,$disallowed) || (strpos($k,'abook') !== 0)) {
+						if (in_array($k,$disallowed) || (strpos($k,'abook_') !== 0)) {
 							continue;
 						}
 						if (! in_array($k,$fields)) {
@@ -536,9 +561,18 @@ class Libsync {
 
 					$reconnect = false;
 					if (array_key_exists('abook_instance',$clean) && $clean['abook_instance'] && strpos($clean['abook_instance'],z_root()) === false) {
-						$clean['abook_not_here'] = 1;
-						if (! ($abook['abook_pending'] || $abook['abook_blocked']))  {
-							$reconnect = true;
+						// guest pass or access token - don't try to probe since it is one-way
+						// we are relying on the undocumented behaviour that the abook record also contains the xchan
+						if ($abook['xchan_network'] === 'token') {
+							$clean['abook_instance'] .= ',';
+							$clean['abook_instance'] .= z_root();
+							$clean['abook_not_here'] = 0;
+						}
+						else {
+							$clean['abook_not_here'] = 1;
+							if (! ($abook['abook_pending'] || $abook['abook_blocked']))  {
+								$reconnect = true;
+							}
 						}
 					}
 

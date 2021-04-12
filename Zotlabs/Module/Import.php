@@ -491,6 +491,10 @@ class Import extends Controller {
 
 		logger('import step 9');
 
+
+		if (is_array($data['atoken'])) {
+			import_atoken($channel,$data['atoken']);
+		}
 		if (is_array($data['xign'])) {
 			import_xign($channel,$data['xign']);
 		}
