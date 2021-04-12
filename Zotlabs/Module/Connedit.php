@@ -493,7 +493,7 @@ class Connedit extends Controller {
 				
 				Run::Summon( [ 'Notifier' , 'purge', $orig_record['xchan_hash'] ] );
 				
-				Libsync::build_sync_packet(0, [ 'abook' => [ 'abook_xchan' => $orig_record['abook_xchan'], 'entry_deleted' => true ] ] );
+				Libsync::build_sync_packet(0, [ 'abook' => [ [ 'abook_xchan' => $orig_record['abook_xchan'], 'entry_deleted' => true ] ] ] );
 	
 				info( t('Connection has been removed.') . EOL );
 				if (isset($_SESSION['return_url']) && $_SESSION['return_url']) {
