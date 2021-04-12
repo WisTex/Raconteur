@@ -561,18 +561,19 @@ class Libsync {
 
 					$reconnect = false;
 					if (array_key_exists('abook_instance',$clean) && $clean['abook_instance'] && strpos($clean['abook_instance'],z_root()) === false) {
-						$clean['abook_not_here'] = 1;
-						if (! ($abook['abook_pending'] || $abook['abook_blocked']))  {
-							$reconnect = true;
-						}
 						// guest pass or access token - don't try to probe since it is one-way
 						// we are relying on the undocumented behaviour that the abook record also contains the xchan
 						if ($abook['xchan_network'] === 'token') {
-							$reconnect = false;
 							$clean['abook_instance'] .= ',';
 							$clean['abook_instance'] .= z_root();
+							$clean['abook_not_here'] = 0;
 						}
-
+						else {
+							$clean['abook_not_here'] = 1;
+							if (! ($abook['abook_pending'] || $abook['abook_blocked']))  {
+								$reconnect = true;
+							}
+						}
 					}
 
 					$r = q("select * from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
