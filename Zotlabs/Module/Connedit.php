@@ -487,7 +487,7 @@ class Connedit extends Controller {
 				if ($orig_record['xchan_network'] === 'activitypub') {
 					ActivityPub::contact_remove(local_channel(), $orig_record);
 				}
-				contact_remove(local_channel(), $orig_record['abook_id']);
+				contact_remove(local_channel(), $orig_record['abook_id'], true);
 
 				// The purge notification is sent to the xchan_hash as the abook record will have just been removed
 				
