@@ -146,14 +146,15 @@ class Tokens {
 				}
 			}
 
-
 			$r = q("SELECT abook.*, xchan.*
 				FROM abook left join xchan on abook_xchan = xchan_hash
 				WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
-				intval($channel['chnnel_id']),
+				intval($channel['channel_id']),
 				dbesc($atoken_xchan)
 			);
+
 			if (! $r) {
+				logger('abook or xchan record not saved correctly');
 				return;
 			}
 
@@ -201,11 +202,10 @@ class Tokens {
 			if($atoken && argc() > 3 && argv(3) === 'drop') {
 				$atoken['deleted'] = true;
 				
-
 				$r = q("SELECT abook.*, xchan.*
 					FROM abook left join xchan on abook_xchan = xchan_hash
 					WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
-					intval($channel['chnnel_id']),
+					intval($channel['channel_id']),
 					dbesc($atoken_xchan)
 				);
 				if (! $r) {

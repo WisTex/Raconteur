@@ -532,7 +532,7 @@ class Libsync {
 					if ((! $found) && (! in_array($abook['xchan_network'], [ 'zot6', 'activitypub' ]))) {
 						// just import the record.
 						$xc = [];
-						foreach($abook as $k => v) {
+						foreach ($abook as $k => $v) {
 							if (strpos($k,'xchan_') === 0) {
 								$xc[$k] = $v;
 							}
