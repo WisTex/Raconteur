@@ -1035,7 +1035,7 @@ function bb_imgoptions($match) {
 		$style .= 'float: ' . $float . '; ';
 	}
 	
-	$output .= (($style) ? 'style="' . $style . '" ' : '') . 'alt="' . htmlentities(($alt) ? $alt : t('Image/photo'),ENT_COMPAT,'UTF-8') . '" ';
+	$output .= (($style) ? 'style="' . $style . '" ' : '') . 'alt="' . htmlentities(($alt) ? $alt : t('Image/photo'),ENT_COMPAT,'UTF-8') . '" ' . 'title="' . htmlentities(($alt) ? $alt : t('Image/photo'),ENT_COMPAT,'UTF-8') . '" ';
 
 	$output .= 'src="' . $match[4] . '" >';
 	

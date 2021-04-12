@@ -128,6 +128,10 @@ class Cloud extends Controller {
 		}
 		elseif ($err instanceof \Sabre\DAV\Exception\NotImplemented) {
 			notice( t('Please refresh page') . EOL);
+			// It would be nice to do the following on remote authentication
+			// which provides an unexpected page query param, but we do not
+			// because if the exception has a different cause, it will loop.
+			// goaway(z_root() . '/' . App::$query_string);
 		}
 		else {
 			notice( t('Unknown error') . EOL);

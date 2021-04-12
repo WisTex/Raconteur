@@ -193,6 +193,66 @@ function import_config($channel, $configs) {
 }
 
 
+function import_atoken($channel, $atokens) {
+	if ($channel && $atokens) {
+		foreach ($atokens as $atoken) {
+			unset($atoken['atoken_id']);
+			$atoken['atoken_aid'] = $channel['channel_account_id'];
+			$atoken['atoken_uid'] = $channel['channel_id'];
+			create_table_from_array('atoken', $atoken);
+		}
+	}
+}
+
+function sync_atoken($channel, $atokens) {
+
+	if ($channel && $atokens) {
+		foreach ($atokens as $atoken) {
+			unset($atoken['atoken_id']);
+			$atoken['atoken_aid'] = $channel['channel_account_id'];
+			$atoken['atoken_uid'] = $channel['channel_id'];
+
+			if ($atoken['deleted']) {
+				q("delete from atoken where atoken_uid = %d and atoken_guid = '%s' ",
+					intval($atoken['atoken_uid']),
+					dbesc($atoken['atoken_guid'])
+				);
+				continue;
+			}
+
+			$r = q("select * from atoken where atoken_uid = %d and atoken_guid = '%s' ",
+				intval($atoken['atoken_uid']),
+				dbesc($atoken['atoken_guid'])
+			);
+			if (! $r) {
+				create_table_from_array('atoken', $atoken);
+			}
+			else {
+				$columns = db_columns('atoken');
+				foreach ($atoken as $k => $v) {
+					if (! in_array($k,$columns)) {
+						continue;
+					}
+					
+					if (in_array($k, ['atoken_guid','atoken_uid','atoken_aid'])) {
+						continue;
+					}
+					
+					$r = q("UPDATE atoken SET " . TQUOT . "%s" . TQUOT . " = '%s' WHERE atoken_guid = '%s' AND atoken_uid = %d",
+						dbesc($k),
+						dbesc($v),
+						dbesc($atoken['atoken_guid']),
+						intval($channel['channel_id'])
+					);
+				}
+			}
+		}
+	}
+}
+
+
+
+
 function import_xign($channel, $xigns) {
 
 	if ($channel && $xigns) {

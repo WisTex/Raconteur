@@ -1866,7 +1866,13 @@ class Libzot {
 
 					$friendofriend = true;
 				}
-        
+
+				if (get_abconfig($channel['channel_id'],$sender,'system','block_announce', false)) {
+					if ($arr['verb'] === 'Announce' || strpos($arr['body'],'[/share]')) {
+						$allowed = false;
+					}
+				}
+
 				if (! $allowed) {
 					logger("permission denied for delivery to channel {$channel['channel_id']} {$channel['channel_address']}");
 					$DR->update('permission denied');

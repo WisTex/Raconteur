@@ -337,7 +337,7 @@ class Apps {
 			'Friend Zoom' => t('Friend Zoom'),
 			'Future Posting' => t('Future Posting'),
 			'Gallery' => t('Gallery'),
-			'Guest Access' => t('Guest Access'),
+			'Guest Pass' => t('Guest Pass'),
 			'Help' => t('Help'),
 			'Invite' => t('Invite'),
 			'Language' => t('Language'),

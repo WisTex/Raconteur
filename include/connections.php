@@ -2,6 +2,7 @@
 
 use Zotlabs\Daemon\Run;
 
+use Zotlabs\Lib\Libsync;
 
 function abook_store_lowlevel($arr) {
 
@@ -135,7 +136,7 @@ function vcard_from_xchan($xchan, $observer = null, $mode = '') {
 
 	// don't provide a connect button for transient or one-way identities
 
-	if (in_array($xchan['xchan_network'],['rss','anon','unknown']) || strpos($xchan['xchan_addr'],'guest:') === 0) {
+	if (in_array($xchan['xchan_network'],[ 'rss','anon','token','unknown' ])) {
 		$connect = false;
 	}
 
@@ -373,7 +374,7 @@ function remove_all_xchan_resources($xchan, $channel_id = 0) {
 
 
 
-function contact_remove($channel_id, $abook_id) {
+function contact_remove($channel_id, $abook_id, $atoken_sync = false) {
 
 	if ((! $channel_id) || (! $abook_id)) {
 		return false;
@@ -413,11 +414,24 @@ function contact_remove($channel_id, $abook_id) {
 		return false;
 	}
 
+	// if this is an atoken, delete the atoken record
+
+	if ($atoken_sync) {
+		$xchan = q("select * from xchan where xchan_hash = '%s'",
+			dbesc($abook['abook_xchan'])
+		);
+		if ($xchan && strpos($xchan[0]['xchan_addr'],'guest:') === 0 && strpos($abook['abook_xchan'],'.')){
+			$atoken_guid = substr($abook['abook_xchan'],strrpos($abook['abook_xchan'],'.') + 1);
+			if ($atoken_guid) {
+				atoken_delete_and_sync($channel_id,$atoken_guid);
+			}
+		}
+	}
+
 	// remove items in the background as this can take some time
 
 	Run::Summon( [ 'Delxitems', $channel_id, $abook['abook_xchan'] ] );
 
-	
 	$r = q("delete from abook where abook_id = %d and abook_channel = %d",
 		intval($abook['abook_id']),
 		intval($channel_id)

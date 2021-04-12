@@ -189,12 +189,15 @@ require_once('include/api_zot.php');
 
 	function api_client_register($type) {
 
+		logger('api_client_register: ' . print_r($_REQUEST,true));
+		
 		$ret = [];
 		$key = random_string(16);
 		$secret = random_string(16);
 		$name = trim(escape_tags($_REQUEST['client_name']));
 		if (! $name) {
-			json_return_and_die($ret);
+			// json_return_and_die($ret);
+			$name = random_string(8);
 		}
 		if (is_array($_REQUEST['redirect_uris'])) {
 			$redirect = trim($_REQUEST['redirect_uris'][0]);
@@ -205,6 +208,7 @@ require_once('include/api_zot.php');
 		$grant_types = trim($_REQUEST['grant_types']);
 		$scope = trim($_REQUEST['scopes']);
 		$icon = trim($_REQUEST['logo_uri']);
+
 		$r = q("INSERT INTO oauth_clients (client_id, client_secret, redirect_uri, grant_types, scope, user_id, client_name)
 			VALUES ( '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) ",
 			dbesc($key),
@@ -212,7 +216,8 @@ require_once('include/api_zot.php');
 			dbesc($redirect),
 			dbesc($grant_types),
 			dbesc($scope),
-			dbesc((string) api_user())
+			dbesc((string) api_user()),
+			dbesc($name)
 		);  
 
 		$ret['client_id'] = $key;

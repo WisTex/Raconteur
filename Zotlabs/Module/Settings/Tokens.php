@@ -5,6 +5,10 @@ namespace Zotlabs\Module\Settings;
 use App;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Lib\AccessList;
+use Zotlabs\Lib\Libsync;
+
+require_once('include/security.php');
 
 class Tokens {
 
@@ -16,6 +20,9 @@ class Tokens {
 		$token_errs = 0;
 		if(array_key_exists('token',$_POST)) {
 			$atoken_id = (($_POST['atoken_id']) ? intval($_POST['atoken_id']) : 0);
+			if (! $atoken_id) {
+				$atoken_guid = new_uuid();
+			}
 			$name = trim(escape_tags($_POST['name']));
 			$token = trim($_POST['token']);
 			if((! $name) || (! $token))
@@ -39,6 +46,16 @@ class Tokens {
 			notice( t('Name and Password are required.') . EOL);
 			return;
 		}
+
+		$old_atok = q("select * from atoken where atoken_uid = %d and atoken_name = '%s'",
+			intval($channel['channel_id']),
+			dbesc($name)
+		);
+		if ($old_atok) {
+			$old_atok = array_shift($old_atok);
+			$old_xchan = atoken_xchan($old_atok);
+		}
+		
 		if($atoken_id) {
 			$r = q("update atoken set atoken_name = '%s', atoken_token = '%s', atoken_expires = '%s' 
 				where atoken_id = %d and atoken_uid = %d",
@@ -50,8 +67,9 @@ class Tokens {
 			);
 		}
 		else {
-			$r = q("insert into atoken ( atoken_aid, atoken_uid, atoken_name, atoken_token, atoken_expires )
-				values ( %d, %d, '%s', '%s', '%s' ) ",
+			$r = q("insert into atoken ( atoken_guid, atoken_aid, atoken_uid, atoken_name, atoken_token, atoken_expires )
+				values ( '%s', %d, %d, '%s', '%s', '%s' ) ",
+				dbesc($atoken_guid),
 				intval($channel['channel_account_id']),
 				intval($channel['channel_id']),
 				dbesc($name),
@@ -59,8 +77,21 @@ class Tokens {
 				dbesc($expires)
 			);
 		}
-
-		$atoken_xchan = substr($channel['channel_hash'],0,16) . '.' . $name;
+		$atok = q("select * from atoken where atoken_uid = %d and atoken_name = '%s'",
+			intval($channel['channel_id']),
+			dbesc($name)
+		);
+		if ($atok) {
+			$xchan = atoken_xchan($atok[0]);
+			atoken_create_xchan($xchan);
+			$atoken_xchan = $xchan['xchan_hash'];
+			if ($old_atok && $old_xchan) {
+				$r = q("update xchan set xchan_name = '%s' where xchan_hash = '%s'",
+					dbesc($xchan['xchan_name']),
+					dbesc($old_xchan['xchan_hash'])
+				);
+			}			
+		}
 
 		$all_perms = Permissions::Perms();
 
@@ -75,8 +106,73 @@ class Tokens {
 				}
 			}
 			set_abconfig(local_channel(),$atoken_xchan,'system','my_perms',$p);
+			if ($old_atok) {
+
+
+			}
 		}
 		
+		if (! $atoken_id) {
+		
+			// If this is a new token, create a new abook record
+
+			$closeness = get_pconfig($uid,'system','new_abook_closeness',80);
+			$profile_assign = get_pconfig($uid,'system','profile_assign','');
+
+			$r = abook_store_lowlevel(
+				[
+					'abook_account'   => $channel['channel_account_id'],
+					'abook_channel'   => $channel['channel_id'],
+					'abook_closeness' => intval($closeness),
+					'abook_xchan'     => $atoken_xchan,
+					'abook_profile'   => $profile_assign,
+					'abook_feed'      => 0,
+					'abook_created'   => datetime_convert(),
+					'abook_updated'   => datetime_convert(),
+					'abook_instance'  => z_root()
+				]
+			);
+
+			if (! $r) {
+				logger('abook creation failed');
+			}
+
+			/** If there is a default group for this channel, add this connection to it */
+
+			if ($channel['channel_default_group']) {
+				$g = AccessList::rec_byhash($uid,$channel['channel_default_group']);
+				if ($g) {
+					AccessList::member_add($uid,'',$atoken_xchan,$g['id']);
+				}
+			}
+
+			$r = q("SELECT abook.*, xchan.*
+				FROM abook left join xchan on abook_xchan = xchan_hash
+				WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
+				intval($channel['channel_id']),
+				dbesc($atoken_xchan)
+			);
+
+			if (! $r) {
+				logger('abook or xchan record not saved correctly');
+				return;
+			}
+
+			$clone = array_shift($r);
+	
+			unset($clone['abook_id']);
+			unset($clone['abook_account']);
+			unset($clone['abook_channel']);
+				
+			$abconfig = load_abconfig($channel['channel_id'],$clone['abook_xchan']);
+			if ($abconfig) {
+				$clone['abconfig'] = $abconfig;
+			}
+			
+			Libsync::build_sync_packet($channel['channel_id'],
+				[ 'abook' => [ $clone ], 'atoken' => $atok ],
+				true);
+		}
 
 		info( t('Token saved.') . EOL);
 		return;
@@ -100,11 +196,40 @@ class Tokens {
 
 			if($atoken) {
 				$atoken = $atoken[0];
-				$atoken_xchan = substr($channel['channel_hash'],0,16) . '.' . $atoken['atoken_name'];
+				$atoken_xchan = substr($channel['channel_hash'],0,16) . '.' . $atoken['atoken_guid'];
 			}
 
 			if($atoken && argc() > 3 && argv(3) === 'drop') {
+				$atoken['deleted'] = true;
+				
+				$r = q("SELECT abook.*, xchan.*
+					FROM abook left join xchan on abook_xchan = xchan_hash
+					WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
+					intval($channel['channel_id']),
+					dbesc($atoken_xchan)
+				);
+				if (! $r) {
+					return;
+				}
+
+				$clone = array_shift($r);
+	
+				unset($clone['abook_id']);
+				unset($clone['abook_account']);
+				unset($clone['abook_channel']);
+
+				$clone['entry_deleted'] = true;
+				
+				$abconfig = load_abconfig($channel['channel_id'],$clone['abook_xchan']);
+				if ($abconfig) {
+					$clone['abconfig'] = $abconfig;
+				}
+
 				atoken_delete($id);
+				Libsync::build_sync_packet($channel['channel_id'],
+					[ 'abook' => [ $clone ], 'atoken' => [ $atoken ] ],
+					true);
+
 				$atoken = null;
 				$atoken_xchan = '';
 			}
@@ -124,7 +249,7 @@ class Tokens {
 
 		$theirs = get_abconfig(local_channel(),$atoken_xchan,'system','their_perms',EMPTY_STR);
 
-		$their_perms = \Zotlabs\Access\Permissions::FilledPerms(explode(',',$theirs));
+		$their_perms = Permissions::FilledPerms(explode(',',$theirs));
 		foreach($global_perms as $k => $v) {
 			if(! array_key_exists($k,$their_perms))
 				$their_perms[$k] = 1;
@@ -145,7 +270,6 @@ class Tokens {
 			$perms[] = array('perms_' . $k, $v, ((array_key_exists($k,$their_perms)) ? intval($their_perms[$k]) : ''),$thisperm, 1, (($checkinherited & PERMS_SPECIFIC) ? '' : '1'), '', $checkinherited);
 		}
 
-logger('perms: ' . print_r($perms,true));
 
 		$tpl = get_markup_template("settings_tokens.tpl");
 		$o .= replace_macros($tpl, array(

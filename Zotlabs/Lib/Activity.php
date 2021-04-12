@@ -3133,7 +3133,7 @@ class Activity {
 		$allowed = false;
 		$reason = [ 'init' ];
 		$permit_mentions = intval(PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$item));
-		
+
 		if ($is_child_node) {		
 			$p = q("select * from item where mid = '%s' and uid = %d and item_wall = 1",
 				dbesc($item['parent_mid']),
@@ -3206,6 +3206,13 @@ class Activity {
 			set_iconfig($item,'activitypub','rawmsg',$act->raw,1);
 			$allowed = true;
 		}
+
+		if (get_abconfig($channel['channel_id'],$observer_hash,'system','block_announce', false)) {
+			if ($item['verb'] === 'Announce' || strpos($item['body'],'[/share]')) {
+				$allowed = false;
+			}
+		}
+
 
 		if ($is_sys_channel) {
 

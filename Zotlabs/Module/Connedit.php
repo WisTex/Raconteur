@@ -120,6 +120,10 @@ class Connedit extends Controller {
 		$abook_excl = ((array_key_exists('abook_excl',$_POST)) ? escape_tags($_POST['abook_excl']) : $orig_record['abook_excl']);
 		$abook_alias = ((array_key_exists('abook_alias',$_POST)) ? escape_tags(trim($_POST['abook_alias'])) : $orig_record['abook_alias']);
 
+		$block_announce = ((array_key_exists('block_announce',$_POST)) ? intval($_POST['block_announce']) : 0);
+	
+		set_abconfig($channel['channel_id'],$orig_record['abook_xchan'],'system','block_announce',$block_announce);
+
 		$hidden = intval($_POST['hidden']);
 	
 		$priority = intval($_POST['poll']);
@@ -483,13 +487,13 @@ class Connedit extends Controller {
 				if ($orig_record['xchan_network'] === 'activitypub') {
 					ActivityPub::contact_remove(local_channel(), $orig_record);
 				}
-				contact_remove(local_channel(), $orig_record['abook_id']);
+				contact_remove(local_channel(), $orig_record['abook_id'], true);
 
 				// The purge notification is sent to the xchan_hash as the abook record will have just been removed
 				
 				Run::Summon( [ 'Notifier' , 'purge', $orig_record['xchan_hash'] ] );
 				
-				Libsync::build_sync_packet(0, [ 'abook' => [ 'abook_xchan' => $orig_record['abook_xchan'], 'entry_deleted' => true ] ] );
+				Libsync::build_sync_packet(0, [ 'abook' => [ [ 'abook_xchan' => $orig_record['abook_xchan'], 'entry_deleted' => true ] ] ] );
 	
 				info( t('Connection has been removed.') . EOL );
 				if (isset($_SESSION['return_url']) && $_SESSION['return_url']) {
@@ -720,7 +724,7 @@ class Connedit extends Controller {
 
 			$existing = get_all_perms(local_channel(),$contact['abook_xchan'],false);
 	
-			$unapproved = array('pending', t('Approve this connection'), '', t('Accept connection to allow communication'), array(t('No'),('Yes')));
+			$unapproved = array('pending', t('Approve this connection'), '', t('Accept connection to allow communication'), array(t('No'),t('Yes')));
 	
 			$multiprofs = ((feature_enabled(local_channel(),'multi_profiles')) ? true : false);
 	
@@ -794,6 +798,7 @@ class Connedit extends Controller {
 				'$permcat_enable' => feature_enabled(local_channel(),'permcats'),
 				'$addr'           => unpunify($contact['xchan_addr']),
 				'$primeurl'       => unpunify($contact['xchan_url']),
+				'$block_announce' => [ 'block_announce', t('Ignore shares and repeats this connection posts'), get_abconfig(local_channel(),$contact['xchan_hash'],'system','block_announce',false),'', [ t('No'), t('Yes') ] ],
 				'$section'        => $section,
 				'$sections'       => $sections,
 				'$vcard'          => $vcard,

@@ -1790,12 +1790,19 @@ function jsonld_document_loader($url) {
 
 
 function is_https_request() {
+
 	$https = false;
-	if(array_key_exists('HTTPS',$_SERVER) && $_SERVER['HTTPS'])
+
+	if (array_key_exists('HTTPS',$_SERVER) && $_SERVER['HTTPS']) {
 		$https = true;
-	elseif(array_key_exists('SERVER_PORT',$_SERVER) && intval($_SERVER['SERVER_PORT']) === 443)
+	}
+	elseif (array_key_exists('SERVER_PORT',$_SERVER) && intval($_SERVER['SERVER_PORT']) === 443) {
 		$https = true;
-	
+	}
+	elseif (array_key_exists('HTTP_X_FORWARDED_PROTO',$_SERVER) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+		$https = true; // technically this is not true, but pretending it is will allow reverse proxies to work
+	}
+
 	return $https;
 }
 
