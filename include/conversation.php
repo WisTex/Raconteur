@@ -1008,7 +1008,7 @@ function thread_author_menu($item, $mode = '') {
 			$contact = App::$contacts[$item['author_xchan']];
 		}
 		else {
-			if($local_channel && (! in_array($item['author']['xchan_network'],[ 'rss', 'anon','unknown' ]))) {
+			if($local_channel && (! in_array($item['author']['xchan_network'],[ 'rss', 'anon','token','unknown' ]))) {
 				$follow_url = z_root() . '/follow/?f=&url=' . urlencode(($item['author']['xchan_addr']) ? $item['author']['xchan_addr'] : $item['author']['xchan_url']) . '&interactive=0';
 			}
 		}
