@@ -253,7 +253,8 @@ class Queue {
 					if (ActivityStreams::is_an_actor($AS->data['type'])) {
 						Activity::actor_store($AS->data['id'],$AS->data);
 					}
-					if (strpos($AS->data['type'],'Collection')) {
+					if (strpos($AS->data['type'],'Collection') !== false) {
+						// we are probably fetching a collection already - and do not support collection recursion at this time
 						self::remove($outq['outq_hash']);
 						return;
 					}
