@@ -1854,7 +1854,7 @@ class Activity {
 				if ($abconfig) {
 					$clone['abconfig'] = $abconfig;
 				}
-				Libsync::build_sync_packet($channel['channel_id'], [ 'abook' => array($clone) ] );
+				Libsync::build_sync_packet($channel['channel_id'], [ 'abook' => [ $clone ] ] );
 			}
 		}
 
