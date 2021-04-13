@@ -262,7 +262,7 @@ class Events extends Controller {
 		}
 	
 		if($share)
-			Run::Summon(array('Notifier','event',$item_id));
+			Run::Summon( [ 'Notifier', 'event', $item_id ] );
 	
 	}
 	

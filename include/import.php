@@ -1372,8 +1372,8 @@ function import_mail($channel, $mails, $sync = false) {
 			$m['channel_id'] = $channel['channel_id'];
 			$mail_id = mail_store($m);
 			if ($sync && $mail_id) {
-				// Not applicable to Zap which does not federate with singletons
-				// Run::Summon(array('Notifier','single_mail',$mail_id));
+				// Not applicable to Zap which does not support mail
+				// Run::Summon( [ 'Notifier','single_mail',$mail_id ] );
 			}
  		}
 	}

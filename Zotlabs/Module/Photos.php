@@ -433,7 +433,7 @@ class Photos extends Controller {
 			}
 
 			if($visibility) {
-				Run::Summon(array('Notifier','edit_post',$item_id));
+				Run::Summon( [ 'Notifier', 'edit_post', $item_id ] );
 			}
 
 			$sync = attach_export_data(App::$data['channel'],$resource_id);

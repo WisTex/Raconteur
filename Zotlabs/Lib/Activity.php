@@ -3407,7 +3407,7 @@ class Activity {
 			if ($is_child_node) {
 				if ($item['owner_xchan'] === $channel['channel_hash']) {
 					// We are the owner of this conversation, so send all received comments back downstream
-					Run::Summon(array('Notifier','comment-import',$x['item_id']));
+					Run::Summon( [ 'Notifier','comment-import',$x['item_id'] ] );
 				}
 				$r = q("select * from item where id = %d limit 1",
 					intval($x['item_id'])

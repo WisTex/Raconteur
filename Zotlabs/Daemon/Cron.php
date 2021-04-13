@@ -34,9 +34,9 @@ class Cron {
 	
 		// run queue delivery process in the background
 
-		Run::Summon(array('Queue'));
+		Run::Summon( [ 'Queue' ] );
 
-		Run::Summon(array('Poller'));
+		Run::Summon( [ 'Poller' ] );
 
 		// maintenance for mod sharedwithme - check for updated items and remove them
 
@@ -82,7 +82,7 @@ class Cron {
 		);
 		if($r) {
 			foreach($r as $rr) {
-				Run::Summon(array('Directory',$rr['channel_id'],'force'));
+				Run::Summon( [ 'Directory', $rr['channel_id'], 'force' ] );
 				if($interval)
 					@time_sleep_until(microtime(true) + (float) $interval);
 			}
@@ -114,7 +114,7 @@ class Cron {
 							]
 						);
 					}
-					Run::Summon(array('Notifier','wall-new',$rr['id']));
+					Run::Summon( [ 'Notifier','wall-new',$rr['id'] ] );
 				}
 			}
 		}
@@ -143,7 +143,7 @@ class Cron {
 
 
 		if(($d2 != $d1) && ($h1 == $h2)) {
-			Run::Summon(array('Cron_daily'));
+			Run::Summon( [ 'Cron_daily' ] );
 		}
 
 		// update any photos which didn't get imported properly
@@ -189,7 +189,7 @@ class Cron {
 		// TODO check to see if there are any cronhooks before wasting a process
 
 		if(! $restart)
-			Run::Summon(array('Cronhooks'));
+			Run::Summon( [ 'Cronhooks' ] );
 
 		set_config('system','lastcron',datetime_convert());
 

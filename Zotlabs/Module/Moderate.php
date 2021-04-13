@@ -2,12 +2,15 @@
 
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Daemon\Run;
 
 require_once('include/conversation.php');
 
 
-class Moderate extends \Zotlabs\Web\Controller {
+class Moderate extends Controller {
 
 
 	function get() {
@@ -16,8 +19,8 @@ class Moderate extends \Zotlabs\Web\Controller {
 			return;
 		}
 
-		\App::set_pager_itemspage(60);
-		$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));               
+		App::set_pager_itemspage(60);
+		$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));               
 
 		//show all items
 		if(argc() == 1) {
@@ -31,7 +34,7 @@ class Moderate extends \Zotlabs\Web\Controller {
 
 		}
 
-		//show a single item
+		// show a single item
 		if(argc() == 2) {
 			$post_id = escape_tags(argv(1));
 			if(strpos($post_id,'b64.') === 0) {
@@ -88,7 +91,7 @@ class Moderate extends \Zotlabs\Web\Controller {
 					Libsync::build_sync_packet(local_channel(),array('item' => array(encode_item($sync_item[0],true))));
 				}
 				if($action === 'approve') {
-					\Zotlabs\Daemon\Run::Summon(array('Notifier', 'comment-new', $post_id));
+					Run::Summon( [ 'Notifier', 'comment-new', $post_id ] );
 				}
 				goaway(z_root() . '/moderate');
 			}
