@@ -6,6 +6,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\ASCollection;
+use Zotlabs\Lib\Queue;
 use Zotlabs\Daemon\Run;
 
 require_once("include/bbcode.php");
@@ -66,7 +67,8 @@ class Search extends Controller {
 
 		// ActivityStreams object fetches from the navbar
 		
-		if (local_channel() && strpos($search,'https://') === 0) {
+		if (local_channel() && strpos($search,'https://') === 0 && (! $update) && (! $load)) {
+			logger('searching for ActivityPub');
 			$channel = App::get_channel();
 			$hash = EMPTY_STR;
 			$j = Activity::fetch($search,$channel);
@@ -79,8 +81,8 @@ class Search extends Controller {
 				if ($AS->is_valid() && isset($AS->data['type'])) {
 					if (is_array($AS->obj)) {
 						// matches Collection and orderedCollection
-						if (isset($AS->obj['type']) && strpos($AS->obj['type'],'Collection')) {
-						
+						if (isset($AS->obj['type']) && strpos($AS->obj['type'],'Collection') !== false) {
+
 							// Collections are awkward to process because they can be huge.
 							// Our strategy is to limit a navbar search to 100 Collection items
 							// and only fetch the first 10 conversations in the foreground.
@@ -90,22 +92,28 @@ class Search extends Controller {
  							// are fetched in the background while you're looking at the first ones.
 							
 							$max = intval(get_config('system','max_imported_search_collection',100));
+
 							if (intval($max)) {
 								$obj = new ASCollection($search, $channel, 0, $max);
 								$messages = $obj->get();
+								// logger('received: ' . print_r($messages,true));
 								$author = null;
 								if ($messages) {
+									logger('received ' . count($messages) . ' items from collection.', LOGGER_DEBUG);
 									$processed = 0;
 									foreach ($messages as $message) {
 										$processed ++;
 										// only process the first several items in the foreground and
 										// queue the remainder.
 										if ($processed > 10) {
+
 											$fetch_url = ((is_string($message)) ? $message : EMPTY_STR);
-											$fetch_url = ((is_array($message) && array_key_exists('id',$message)) ? $message_id : $fetch_url);
+											$fetch_url = ((is_array($message) && array_key_exists('id',$message)) ? $message['id'] : $fetch_url);
+
 											if (! $fetch_url) {
 												continue;
 											}
+											
 											$hash = new_uuid();
 											Queue::insert(
 											[
@@ -120,6 +128,7 @@ class Search extends Controller {
 											);
 											continue;
 										}
+
 										if (is_string($message)) {
 											$message = Activity::fetch($message,App::get_channel());
 										}

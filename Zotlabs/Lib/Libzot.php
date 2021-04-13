@@ -513,11 +513,11 @@ class Libzot {
 						unset($new_connection[0]['abook_id']);
 						unset($new_connection[0]['abook_account']);
 						unset($new_connection[0]['abook_channel']);
-						$abconfig = load_abconfig($channel['channel_id'],$new_connection['abook_xchan']);
+						$abconfig = load_abconfig($channel['channel_id'],$new_connection[0]['abook_xchan']);
 						if ($abconfig) {
-							$new_connection['abconfig'] = $abconfig;
+							$new_connection[0]['abconfig'] = $abconfig;
 						}
-						Libsync::build_sync_packet($channel['channel_id'], array('abook' => $new_connection));
+						Libsync::build_sync_packet($channel['channel_id'], [ 'abook' => $new_connection ]);
 					}
 				}
 
