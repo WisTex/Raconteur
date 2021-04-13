@@ -341,7 +341,7 @@ class ActivityStreams {
 
 	function get_actor($property,$base='',$namespace = '') {
 		$x = $this->get_property_obj($property, $base, $namespace);
-		if ($this->is_url($x)) {
+		if (self::is_url($x)) {
 
 			// SECURITY: If we have already stored the actor profile, re-generate it 
 			// from cached data - don't refetch it from the network
@@ -380,7 +380,7 @@ class ActivityStreams {
 	 
 	function get_compound_property($property, $base = '', $namespace = '', $first = false) {
 		$x = $this->get_property_obj($property, $base, $namespace);
-		if ($this->is_url($x)) {
+		if (self::is_url($x)) {
 			$y = $this->fetch_property($x);
 			if (is_array($y)) {
 				$x = $y;
@@ -420,7 +420,7 @@ class ActivityStreams {
 	 * @return boolean
 	 */
 	 
-	function is_url($url) {
+	static public function is_url($url) {
 		if (($url) && (! is_array($url)) && ((strpos($url, 'http') === 0) || (strpos($url,'x-zot') === 0) || (strpos($url,'bear') === 0))) {
 			return true;
 		}
