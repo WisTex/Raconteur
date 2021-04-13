@@ -106,11 +106,15 @@ class Queue {
 
 	static function insert($arr) {
 
+		logger('insert: ' . print_r($arr,true), LOGGER_DATA);
+
 		// do not queue anything with no destination
 
-		if(! (array_key_exists('posturl',$arr) && trim($arr['posturl']))) {
+		if (! (array_key_exists('posturl',$arr) && trim($arr['posturl']))) {
+			logger('no destination');
 			return false;
 		}
+
 
 		$x = q("insert into outq ( outq_hash, outq_account, outq_channel, outq_driver, outq_posturl, outq_async, outq_priority,
 			outq_created, outq_updated, outq_scheduled, outq_notify, outq_msg ) 
@@ -235,7 +239,13 @@ class Queue {
 				logger('missing channel: ' . $outq['outq_channel']);
 				return;
 			}
-			
+
+			if (! ActivityStreams::is_url($outq['outq_posturl'])) {
+				logger('fetch item is not url: ' . $outq['outq_posturl']);
+				self::remove($outq['outq_hash']);
+				return;
+			}
+
 			$j = Activity::fetch($outq['outq_posturl'],$channel);
 			if ($j) {
 				$AS = new ActivityStreams($j, null, true);

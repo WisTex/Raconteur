@@ -481,6 +481,13 @@ class Libsync {
 
 				foreach ($arr['abook'] as $abook) {
 
+					// this is here for debugging so we can find the issue source
+					
+					if (! is_array($abook)) {
+						btlogger('abook is not an array');
+						continue;
+					}
+					
 					$abconfig = null;
 
 					if (array_key_exists('abconfig',$abook) && is_array($abook['abconfig']) && count($abook['abconfig'])) {
