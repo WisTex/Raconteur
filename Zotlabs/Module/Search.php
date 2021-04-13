@@ -144,7 +144,7 @@ class Search extends Controller {
 										}
 									}
 									if ($hash) {
-										Run::Summon('Deliver', $hash);
+										Run::Summon( [ 'Deliver', $hash ] );
 									}
 								}
 								
