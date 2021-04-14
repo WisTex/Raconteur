@@ -615,7 +615,7 @@ class Profiles extends Controller {
 			}
 	
 			if($is_default) {
-				Run::Summon(array('Directory',local_channel()));
+				Run::Summon( [ 'Directory', local_channel() ] );
 				goaway(z_root() . '/profiles/' . $sync[0]['id']);
 			}
 		}
@@ -925,7 +925,7 @@ class Profiles extends Controller {
 
 		if($i) {
 			// FIXME - limit delivery in notifier.php to those specificed in the perms argument
-	   		Zotlabs\Daemon\Run::Summon(array('Notifier','activity', $i, 'PERMS_R_PROFILE'));
+	   		Run::Summon( [ 'Notifier','activity', $i, 'PERMS_R_PROFILE' ] );
 		}
 
 	}

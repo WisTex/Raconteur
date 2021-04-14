@@ -319,7 +319,7 @@ class Like extends Controller {
 					// drop_item was not done interactively, so we need to invoke the notifier
 					// in order to push the changes to connections
 	
-					Run::Summon(array('Notifier','drop',$rr['id']));
+					Run::Summon( [ 'Notifier','drop',$rr['id'] ] );
 	
 				}
 	
@@ -382,7 +382,7 @@ class Like extends Controller {
 					Libsync::build_sync_packet($ch[0]['channel_id'], [ 'item' => [ encode_item($sync_item[0],true) ] ]);
 				}
 
-				Run::Summon(array('Notifier','wall-new',$item['id']));
+				Run::Summon( [ 'Notifier','wall-new',$item['id'] ] );
 			}	
 	
 		}
@@ -515,7 +515,7 @@ class Like extends Controller {
 		}
 	
 	
-		\Zotlabs\Daemon\Run::Summon(array('Notifier','like',$post_id));
+		Run::Summon( [ 'Notifier', 'like', $post_id ] );
 	
 		killme();
 	}

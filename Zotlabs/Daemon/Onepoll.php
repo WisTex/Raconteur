@@ -124,7 +124,7 @@ class Onepoll {
 		// prohibitive as deletion requests would need to be relayed over potentially hostile networks.
 
 		if($fetch_feed) {
-			$max = intval(get_config('system','max_imported_posts',50));
+			$max = intval(get_config('system','max_imported_posts',100));
 			if (intval($max)) {
 				$cl = get_xconfig($xchan,'activitypub','collections');
 				if (is_array($cl) && $cl) {
@@ -139,10 +139,14 @@ class Onepoll {
 								if (is_string($message)) {
 									$message = Activity::fetch($message,$importer);
 								}
-								$AS = new ActivityStreams($message,null,true);
-								if ($AS->is_valid() && is_array($AS->obj)) {
-									$item = Activity::decode_note($AS,true);
-									Activity::store($importer,$contact['abook_xchan'],$AS,$item);
+								if (is_array($message)) {
+									$AS = new ActivityStreams($message,null,true);
+									if ($AS->is_valid() && is_array($AS->obj)) {
+										$item = Activity::decode_note($AS,true);
+										if ($item) {
+											Activity::store($importer,$contact['abook_xchan'],$AS, $item, true, true);
+										}
+									}
 								}
 							}
 						}

@@ -85,13 +85,6 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
 					intval($uid),
 					dbesc($observer_xchan)
 				);
-				if(! $x) {
-					// see if they've got a guest access token; these are treated as connections
-					$y = atoken_abook($uid,$observer_xchan);
-					if($y)
-						$x = [ $y ];
-
-				}
 
 				$abook_checked = true;
 			}
@@ -313,13 +306,6 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
 			return false;
 		}
 
-		if (! $x) {
-			// see if they've got a guest access token
-			$y = atoken_abook($uid,$observer_xchan);
-			if ($y) {
-				$x = [ $y ];
-			}
-		}
 		$abperms = get_abconfig($uid,$observer_xchan,'system','my_perms','');
 	}
 	

@@ -258,6 +258,7 @@ function red_escape_codeblock($m) {
 	return '[$b64' . $m[2] . base64_encode($m[1]) . '[/' . $m[2] . ']';
 }
 
+
 function red_unescape_codeblock($m) {
 	return '[' . $m[2] . base64_decode($m[1]) . '[/' . $m[2] . ']';
 }

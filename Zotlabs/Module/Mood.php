@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Web\Controller;
+use Zotlabs\Daemon\Run;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
@@ -105,7 +106,7 @@ class Mood extends Controller {
 		$item_id = $post['item_id'];
 	
 		if($item_id) {
-			\Zotlabs\Daemon\Run::Summon(array('Notifier','activity', $item_id));
+			Run::Summon( [ 'Notifier','activity', $item_id ] );
 		}
 	
 		call_hooks('post_local_end', $arr);

@@ -505,7 +505,7 @@ function create_identity($arr) {
 
 		call_hooks('create_identity', $newuid);
 
-		Run::Summon(array('Directory', $ret['channel']['channel_id']));
+		Run::Summon( [ 'Directory', $ret['channel']['channel_id'] ] );
 	}
 
 	$ret['success'] = true;
@@ -721,7 +721,7 @@ function channel_change_address($channel,$new_address) {
 		}
 	}
 
-	Run::Summon(array('Notifier', 'refresh_all', $channel['channel_id']));
+	Run::Summon( [ 'Notifier', 'refresh_all', $channel['channel_id'] ] );
 
 	$ret['success'] = true;
 	return $ret;
@@ -1272,7 +1272,7 @@ function zid_init() {
 				dbesc($tmp_str)
 			);
 			if (! $r) {
-				Run::Summon(array('Gprobe',bin2hex($tmp_str)));
+				Run::Summon( [ 'Gprobe', bin2hex($tmp_str) ] );
 			}
 			if ($r && remote_channel() && remote_channel() === $r[0]['hubloc_hash']) {
 				return;

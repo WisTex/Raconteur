@@ -24,7 +24,7 @@ class Cron_daily {
  
 		$d3 = intval(datetime_convert('UTC','UTC','now','N'));
 		if ($d3 == 7) {
-			Run::Summon(array('Cron_weekly'));
+			Run::Summon( [ 'Cron_weekly' ] );
 		}
 
 		// once daily run birthday_updates and then expire in background
@@ -88,7 +88,7 @@ class Cron_daily {
 		// expire any expired accounts
 		downgrade_accounts();
 
-		Run::Summon(array('Expire'));
+		Run::Summon( [ 'Expire' ] );
 
 
 		// remove xchan photos that were stored in the DB ine earlier versions
