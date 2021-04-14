@@ -73,9 +73,10 @@ class Dirsearch extends Controller {
 		$marital  = ((x($_REQUEST,'marital'))  ? $_REQUEST['marital']  : '');
 		$sexual   = ((x($_REQUEST,'sexual'))   ? $_REQUEST['sexual']   : '');
 		$keywords = ((x($_REQUEST,'keywords')) ? $_REQUEST['keywords'] : '');
-		$agege    = ((x($_REQUEST,'agege'))    ? intval($_REQUEST['agege']) : 0 );
-		$agele    = ((x($_REQUEST,'agele'))    ? intval($_REQUEST['agele']) : 0 );
-		$kw       = ((x($_REQUEST,'kw'))       ? intval($_REQUEST['kw'])    : 0 );
+		$agege    = ((x($_REQUEST,'agege'))    ? intval($_REQUEST['agege'])  : 0 );
+		$agele    = ((x($_REQUEST,'agele'))    ? intval($_REQUEST['agele'])  : 0 );
+		$kw       = ((x($_REQUEST,'kw'))       ? intval($_REQUEST['kw'])     : 0 );
+		$active   = ((x($_REQUEST,'active'))   ? intval($_REQUEST['active']) : 0 );
 		$type     = ((array_key_exists('type',$_REQUEST)) ? intval($_REQUEST['type']) : 0);
 
 		// allow a site to disable the directory's keyword list
@@ -212,14 +213,18 @@ class Dirsearch extends Controller {
 		if ($type) {
 			$safesql .= " and xchan_type = " . intval($type);
 		}
-	
+
+		if ($active) {
+			$activedir = "and xchan_updated > '" . datetime_convert(date_default_timezone_get(),'UTC','now - 60 days') . '" ';
+		}
+
 		if ($limit) {
 			$qlimit = " LIMIT $limit ";
 		}
 		else {
 			$qlimit = " LIMIT " . intval($perpage) . " OFFSET " . intval($startrec);
 			if ($return_total) {
-				$r = q("SELECT COUNT(xchan_hash) AS total FROM xchan left join xprof on xchan_hash = xprof_hash where $logic $sql_extra $network and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 $safesql ");
+				$r = q("SELECT COUNT(xchan_hash) AS total FROM xchan left join xprof on xchan_hash = xprof_hash where $logic $sql_extra $network and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 $safesql $activedir ");
 				if ($r) {
 					$ret['total_items'] = $r[0]['total'];
 				}
@@ -247,7 +252,7 @@ class Dirsearch extends Controller {
 
 		$r = q("SELECT xchan.*, xprof.* from xchan left join xprof on xchan_hash = xprof_hash 
 			where ( $logic $sql_extra ) $hub_query $network and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 
-			$safesql $order $qlimit "
+			$safesql $activedir $order $qlimit "
 		);
 
 		$ret['page'] = $page + 1;
