@@ -2599,7 +2599,7 @@ class Activity {
 			if (isset($act->obj['commentPolicy'])) {
 				$until = strpos($act->obj['commentPolicy'],'until=');
 				if ($until !== false) {
-					$item['comments_closed'] = datetime_convert('UTC','UTC',substr($act->obj['commentPolicy'],'until=') + 6);
+					$item['comments_closed'] = datetime_convert('UTC','UTC',substr($act->obj['commentPolicy'],$until + 6));
 					if ($item['comments_closed'] < datetime_convert()) {
 						$item['nocomment'] = true;
 					}
