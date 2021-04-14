@@ -566,7 +566,7 @@ class Item extends Controller {
 				}
 			}
 	
-			if(! $can_comment) {
+			if (! $can_comment) {
 				notice( t('Permission denied.') . EOL) ;
 				if($api_source)
 					return ( [ 'success' => false, 'message' => 'permission denied' ] );	
@@ -806,6 +806,9 @@ class Item extends Controller {
 				$public_policy     = $parent_item['public_policy'];
 				$owner_hash        = $parent_item['owner_xchan'];
 				$webpage           = $parent_item['item_type'];
+				$comment_policy    = $parent_item['comment_policy'];
+				$item_nocomment    = $parent_item['item_nocomment'];
+				$comments_closed   = $parent_item['comments_closed'];
 			}
 		
 			if((! $allow_empty) && (! strlen($body))) {
@@ -1158,7 +1161,7 @@ class Item extends Controller {
 		$item_unseen = ((local_channel() != $profile_uid) ? 1 : 0);
 		$item_wall = ((isset($_REQUEST['type']) && ($_REQUEST['type'] === 'wall' || $_REQUEST['type'] === 'wall-comment')) ? 1 : 0);
 		$item_origin = (($origin) ? 1 : 0);
-		$item_nocomment = (($nocomment) ? 1 : 0);
+		$item_nocomment = ((isset($item_nocomment) ? $item_nocomment : $nocomment);
 	
 	
 		// determine if this is a wall post
@@ -1330,7 +1333,7 @@ class Item extends Controller {
 		$datarray['item_blocked']        = intval($item_blocked);	
 		$datarray['layout_mid']          = $layout_mid;
 		$datarray['public_policy']       = $public_policy;
-		$datarray['comment_policy']      = map_scope($comment_policy); 
+		$datarray['comment_policy']      = ((ctype_digit($comment_policy)) ? map_scope($comment_policy) : $comment_policy); // only map scope if it is numeric, otherwise use what we have
 		$datarray['term']                = $post_tags;
 		$datarray['plink']               = $plink;
 		$datarray['route']               = $route;
