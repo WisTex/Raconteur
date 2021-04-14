@@ -1332,7 +1332,12 @@ function check_siteallowed($url) {
 	}
 
 	$bl1 = get_config('system','allowed_sites');
+	$bl2 = get_config('system','denied_sites');
+
 	if (is_array($bl1) && $bl1) {
+		if (! (is_array($bl2) && $bl2)) {
+			$retvalue = false;
+		}
 		foreach ($bl1 as $bl) {
 			if ($bl === '*') {
 				$retvalue = true;
@@ -1341,9 +1346,8 @@ function check_siteallowed($url) {
 				return true;
 		}
 	}
-	$bl1 = get_config('system','denied_sites');
-	if (is_array($bl1) && $bl1) {
-		foreach ($bl1 as $bl) {
+	if (is_array($bl2) && $bl2) {
+		foreach ($bl2 as $bl) {
 			if ($bl === '*') {
 				$retvalue = false;
 			}
@@ -1379,7 +1383,12 @@ function check_pubstream_siteallowed($url) {
 		return $arr['allowed'];
 
 	$bl1 = get_config('system','pubstream_allowed_sites');
+	$bl2 = get_config('system','pubstream_denied_sites');
+
 	if(is_array($bl1) && $bl1) {
+		if (! (is_array($bl2) && $bl2)) {
+			$retvalue = false;
+		}
 		foreach($bl1 as $bl) {
 			if($bl === '*')
 				$retvalue = true;
@@ -1387,9 +1396,8 @@ function check_pubstream_siteallowed($url) {
 				return true;
 		}
 	}
-	$bl1 = get_config('system','pubstream_denied_sites');
-	if(is_array($bl1) && $bl1) {
-		foreach($bl1 as $bl) {
+	if(is_array($bl2) && $bl2) {
+		foreach($bl2 as $bl) {
 			if($bl === '*')
 				$retvalue = false;
 			if($bl && strpos($url,$bl) !== false) {
@@ -1427,7 +1435,12 @@ function check_channelallowed($hash) {
 	}
 
 	$bl1 = get_config('system','allowed_channels');
+	$bl2 = get_config('system','denied_channels');
+
 	if (is_array($bl1) && $bl1) {
+		if (! (is_array($bl2) && $bl2)) {
+			$retvalue = false;
+		}
 		foreach ($bl1 as $bl) {
 			if ($bl === '*') {
 				$retvalue = true;
@@ -1437,9 +1450,8 @@ function check_channelallowed($hash) {
 			}
 		}
 	}
-	$bl1 = get_config('system','denied_channels');
-	if (is_array($bl1) && $bl1) {
-		foreach ($bl1 as $bl) {
+	if (is_array($bl2) && $bl2) {
+		foreach ($bl2 as $bl) {
 			if ($bl === '*') {
 				$retvalue = false;
 			}
@@ -1476,7 +1488,12 @@ function check_pubstream_channelallowed($hash) {
 		return $arr['allowed'];
 
 	$bl1 = get_config('system','pubstream_allowed_channels');
+	$bl2 = get_config('system','pubstream_denied_channels');
+
 	if(is_array($bl1) && $bl1) {
+		if (! (is_array($bl2) && $bl2)) {
+			$retvalue = false;
+		}
 		foreach($bl1 as $bl) {
 			if($bl === '*')
 				$retvalue = true;
@@ -1484,9 +1501,8 @@ function check_pubstream_channelallowed($hash) {
 				return true;
 		}
 	}
-	$bl1 = get_config('system','pubstream_denied_channels');
-	if(is_array($bl1) && $bl1) {
-		foreach($bl1 as $bl) {
+	if(is_array($bl2) && $bl2) {
+		foreach($bl2 as $bl) {
 			if($bl === '*')
 				$retvalue = false;
 			if($bl && strpos($hash,$bl) !== false) {
