@@ -41,7 +41,7 @@ class Connect extends Controller {
 					intval(local_channel()) 
 				);
 				
-				Run::Summon(array('Notifier','refresh_all',App::$data['channel']['channel_id']));
+				Run::Summon( [ 'Notifier','refresh_all',App::$data['channel']['channel_id'] ] );
 			}
 			set_pconfig(App::$data['channel']['channel_id'],'system','selltext',$text);
 			// reload the page completely to get fresh data

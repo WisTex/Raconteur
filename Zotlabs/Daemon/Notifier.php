@@ -433,7 +433,7 @@ class Notifier {
 					// don't uplink a relayed post to the relay owner
 					if ($parent_item['source_xchan'] !== $parent_item['owner_xchan']) {
 						logger('notifier: uplinking this item');
-						Run::Summon(array('Notifier','uplink',$item_id));
+						Run::Summon( [ 'Notifier','uplink',$item_id ] );
 					}
 				}
 

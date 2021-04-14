@@ -47,7 +47,7 @@ class Directory {
 
 		// Now update all the connections
 		if ($pushall) {
-			Run::Summon(array('Notifier','refresh_all',$channel['channel_id']));
+			Run::Summon( [ 'Notifier','refresh_all',$channel['channel_id'] ] );
 		}
 	}
 }

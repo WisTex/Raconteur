@@ -284,7 +284,7 @@ var activeCommentText = '';
 				$('#jot-commentstate').val(0);
 			}				
 			
-			var post_comments = $('#post_comments').val();
+			var post_comments = $('#id_post_comments').val();
 			if (post_comments && post_comments.length) {
 				$('#jot-commfrom').val(post_comments);
 			}

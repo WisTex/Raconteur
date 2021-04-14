@@ -140,7 +140,7 @@ class Search extends Controller {
 											if (! $author) {
 												$author = $item['author_xchan'];
 											}
-											Activity::store(App::get_channel(),get_observer_hash(),$AS,$item);
+											Activity::store(App::get_channel(),get_observer_hash(),$AS,$item, true, true);
 										}
 									}
 									if ($hash) {

@@ -2458,7 +2458,7 @@ function check_cron_broken() {
 	$d = get_config('system','lastcron');
 
 	if((! $d) || ($d < datetime_convert('UTC','UTC','now - 4 hours'))) {
-		Run::Summon(array('Cron'));
+		Run::Summon( [ 'Cron' ] );
 		set_config('system','lastcron',datetime_convert());
 	}
 

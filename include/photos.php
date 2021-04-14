@@ -7,7 +7,9 @@
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Access\AccessControl;
+use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Web\HTTPHeaders;
+use Zotlabs\Daemon\Run;
 
 require_once('include/permissions.php');
 require_once('include/photo_factory.php');
@@ -520,7 +522,7 @@ function photo_upload($channel, $observer, $args) {
 		// in the photos pages - using the photos permissions instead. We need the public policy to keep the photo
 		// linked item from leaking into the feed when somebody has a channel with read_stream restrictions.
 
-		$arr['public_policy']   = map_scope(\Zotlabs\Access\PermissionLimits::Get($channel['channel_id'],'view_stream'),true);
+		$arr['public_policy']   = map_scope(PermissionLimits::Get($channel['channel_id'],'view_stream'),true);
 		if($arr['public_policy'])
 			$arr['item_private'] = 1;
 
@@ -529,7 +531,7 @@ function photo_upload($channel, $observer, $args) {
 		$item_id = $result['item_id'];
 
 		if($visible && $deliver)
-			Zotlabs\Daemon\Run::Summon(array('Notifier', 'wall-new', $item_id));
+			Run::Summon( [ 'Notifier', 'wall-new', $item_id ] );
 	}
 
 	$ret['success'] = true;
