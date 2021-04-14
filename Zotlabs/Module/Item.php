@@ -1161,7 +1161,7 @@ class Item extends Controller {
 		$item_unseen = ((local_channel() != $profile_uid) ? 1 : 0);
 		$item_wall = ((isset($_REQUEST['type']) && ($_REQUEST['type'] === 'wall' || $_REQUEST['type'] === 'wall-comment')) ? 1 : 0);
 		$item_origin = (($origin) ? 1 : 0);
-		$item_nocomment = ((isset($item_nocomment) ? $item_nocomment : $nocomment);
+		$item_nocomment = ((isset($item_nocomment)) ? $item_nocomment : $nocomment);
 	
 	
 		// determine if this is a wall post
