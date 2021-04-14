@@ -1372,6 +1372,16 @@ function z_status_editor($x, $popup = false) {
 	}
 
 
+	$defclosecomm = ((($z = get_pconfig($x['profile_uid'], 'system', 'close_comments',0)) && (! $webpage)) ? intval($z) : '');
+	if($defclosecomm) {
+		$closecommdays = intval($defclosecomm);
+	}
+	else {
+		$closecommdays = EMPTY_STR;
+	}
+
+	$defcommuntil = (($closecommdays) ? datetime_convert('UTC', date_default_timezone_get(), 'now + ' . $closecommdays . ' days') : EMPTY_STR);
+
 	$defpublish = ((($z = get_pconfig($x['profile_uid'], 'system', 'default_post_publish')) && (! $webpage)) ? $z : '');
 	if($defpublish)
 		$defpublish = datetime_convert('UTC',date_default_timezone_get(),$defpublish,'Y-m-d H:i');
@@ -1426,7 +1436,8 @@ function z_status_editor($x, $popup = false) {
 		}
 	}
 
-
+	$defcommpolicy = $limits['post_comments'];
+	
 	// avoid illegal offset errors
 	if(! array_key_exists('permissions',$x)) 
 		$x['permissions'] = [ 'allow_cid' => '', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => '' ];
@@ -1493,6 +1504,8 @@ function z_status_editor($x, $popup = false) {
 		'$comments_closed' => ((isset($x['item']) && isset($x['item']['comments_closed']) && $x['item']['comments_closed']) ? $x['item']['comments_closed'] : ''),
 		'$commclosedate' => t('Disable comments after (date)'),
 		'$comment_perms' => $comment_perms,
+		'$defcommpolicy' => $defcommpolicy,
+		'$defcommuntil' => $defcommuntil,
 		'$clearloc' => $clearloc,
 		'$title' => ((x($x, 'title')) ? htmlspecialchars($x['title'], ENT_COMPAT,'UTF-8') : ''),
 		'$placeholdertitle' => ((x($x, 'placeholdertitle')) ? $x['placeholdertitle'] : t('Title (optional)')),
