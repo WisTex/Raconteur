@@ -22,7 +22,7 @@ class Dirsearch extends Controller {
 	
 		$ret = [ 'success' => false ];
 	
-	//	logger('request: ' . print_r($_REQUEST,true));
+		// logger('request: ' . print_r($_REQUEST,true));
 	
 
 		if (argc() > 1 && argv(1) === 'sites') {
@@ -214,8 +214,10 @@ class Dirsearch extends Controller {
 			$safesql .= " and xchan_type = " . intval($type);
 		}
 
+		$activesql = EMPTY_STR;
+		
 		if ($active) {
-			$activedir = "and xchan_updated > '" . datetime_convert(date_default_timezone_get(),'UTC','now - 60 days') . '" ';
+			$activesql = "and xchan_updated > '" . datetime_convert(date_default_timezone_get(),'UTC','now - 60 days') . "' ";
 		}
 
 		if ($limit) {
@@ -224,7 +226,7 @@ class Dirsearch extends Controller {
 		else {
 			$qlimit = " LIMIT " . intval($perpage) . " OFFSET " . intval($startrec);
 			if ($return_total) {
-				$r = q("SELECT COUNT(xchan_hash) AS total FROM xchan left join xprof on xchan_hash = xprof_hash where $logic $sql_extra $network and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 $safesql $activedir ");
+				$r = q("SELECT COUNT(xchan_hash) AS total FROM xchan left join xprof on xchan_hash = xprof_hash where $logic $sql_extra $network and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 $safesql $activesql ");
 				if ($r) {
 					$ret['total_items'] = $r[0]['total'];
 				}
@@ -252,7 +254,7 @@ class Dirsearch extends Controller {
 
 		$r = q("SELECT xchan.*, xprof.* from xchan left join xprof on xchan_hash = xprof_hash 
 			where ( $logic $sql_extra ) $hub_query $network and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 
-			$safesql $activedir $order $qlimit "
+			$safesql $activesql $order $qlimit "
 		);
 
 		$ret['page'] = $page + 1;

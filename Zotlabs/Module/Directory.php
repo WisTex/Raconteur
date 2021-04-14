@@ -36,7 +36,8 @@ class Directory extends Controller {
 		$global_changed = false;
 		$safe_changed = false;
 		$type_changed = false;
-	
+		$active_changed = false;
+		
 		if (array_key_exists('global',$_REQUEST)) {
 			$globaldir = intval($_REQUEST['global']);
 			if (get_config('system','localdir_hide')) {
@@ -80,7 +81,7 @@ class Directory extends Controller {
 		if ($active_changed) {
 			$_SESSION['activedir'] = $active;
 			if ($observer) {
-				set_xconfig($observer,'directory','activedir',$type);
+				set_xconfig($observer,'directory','activedir',$active);
 			}
 		}
 
@@ -138,6 +139,7 @@ class Directory extends Controller {
 			
 			$globaldir = 1;
 			$safe_mode = 1;
+			$active = 1;
 			$type = 0;
 
 			// only return DIRECTORY_PAGESIZE suggestions as the suggestion sorting
@@ -247,8 +249,8 @@ class Directory extends Controller {
 				$query .= '&p=' . App::$pager['page'];
 			}
 
-			if ($active) {
-				$query .= '&active=1';
+			if (isset($active)) {
+				$query .= '&active=' . intval($active);
 			}
 
 

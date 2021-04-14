@@ -52,7 +52,7 @@ class Libzotdir {
 		if($ret === false) {
 			$ret = get_config('directory', $setting);
 			if($ret === false) {
-				$ret = (in_array($setting,['globaldir','safemode']) ? 1 : 0);
+				$ret = (in_array($setting,[ 'globaldir','safemode', 'activedir' ]) ? 1 : 0);
 			}
 		}
 
@@ -75,7 +75,7 @@ class Libzotdir {
 		$globaldir = self::get_directory_setting($observer, 'globaldir');
 		$pubforums = self::get_directory_setting($observer, 'chantype');
 		$activedir = self::get_directory_setting($observer, 'activedir');
-		
+
 		$hide_local = intval(get_config('system','localdir_hide'));
 		if ($hide_local) {
 			$globaldir = 1;
@@ -114,7 +114,7 @@ class Libzotdir {
 			'$collections' => array('collections', t('Collections Only'),(($pubforums == 2) ? true : false),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&type="+(this.checked ? 2 : 0)\''),
 			'$hide_local' => $hide_local,
 			'$globaldir' => array('globaldir', t('This Website Only'), 1-intval($globaldir),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&global="+(this.checked ? 0 : 1)\''),
-			'$activedir' => array('activedir', t('Recently Updated'), 1-intval($activedir),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&active="+(this.checked ? 0 : 1)\''),
+			'$activedir' => array('activedir', t('Recently Updated'), intval($activedir),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&active="+(this.checked ? 1 : 0)\''),
 		]);
 
 		return $o;
