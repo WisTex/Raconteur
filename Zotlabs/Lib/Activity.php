@@ -2594,23 +2594,25 @@ class Activity {
 			}
 		}
 
+		$s['comment_policy'] = 'authenticated';
+
 		if ($s['mid'] === $s['parent_mid']) {
 			// it is a parent node - decode the comment policy info if present
 			if (isset($act->obj['commentPolicy'])) {
 				$until = strpos($act->obj['commentPolicy'],'until=');
 				if ($until !== false) {
-					$item['comments_closed'] = datetime_convert('UTC','UTC',substr($act->obj['commentPolicy'],$until + 6));
-					if ($item['comments_closed'] < datetime_convert()) {
-						$item['nocomment'] = true;
+					$s['comments_closed'] = datetime_convert('UTC','UTC',substr($act->obj['commentPolicy'],$until + 6));
+					if ($s['comments_closed'] < datetime_convert()) {
+						$s['nocomment'] = true;
 					}
 				}
 				$remainder = substr($act->obj['commentPolicy'],0,(($until) ? $until : strlen($act->obj['commentPolicy'])));
 				if ($remainder) {
-					$item['comment_policy'] = $remainder;
+					$s['comment_policy'] = $remainder;
 				}
-			}
-			else {
-				$item['comment_policy'] = 'authenticated';
+				if (! (isset($item['comment_policy']) && strlen($item['comment_policy']))) {
+					$s['comment_policy'] = 'contacts';
+				}
 			}
 		}
 
