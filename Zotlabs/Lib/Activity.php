@@ -1041,7 +1041,7 @@ class Activity {
 		}
 
 		if (intval($i['item_wall']) && $i['mid'] === $i['parent_mid']) {
-			$ret['commentPolicy'] = map_scope(PermissionLimits::Get($i['uid'],'post_comments'));
+			$ret['commentPolicy'] = $i['comment_policy'];
 		}
 
 		if (intval($i['item_private']) === 2) {
@@ -2594,6 +2594,26 @@ class Activity {
 			}
 		}
 
+		if ($s['mid'] === $s['parent_mid']) {
+			// it is a parent node - decode the comment policy info if present
+			if (isset($act->obj['commentPolicy'])) {
+				$until = strpos($act->obj['commentPolicy'],'until=');
+				if ($until !== false) {
+					$item['comments_closed'] = datetime_convert('UTC','UTC',substr($act->obj['commentPolicy'],'until=') + 6);
+					if ($item['comments_closed'] < datetime_convert()) {
+						$item['nocomment'] = true;
+					}
+				}
+				$remainder = substr($act->obj['commentPolicy'],0,(($until) ? $until : strlen($act->obj['commentPolicy'])));
+				if ($remainder) {
+					$item['comment_policy'] = $remainder;
+				}
+			}
+			else {
+				$item['comment_policy'] = 'authenticated';
+			}
+		}
+
 		if (! (array_key_exists('created',$s) && $s['created'])) {
 			$s['created'] = datetime_convert();
 		}
@@ -3299,9 +3319,6 @@ class Activity {
 			set_iconfig($item,'ostatus','conversation',$act->obj['conversation'],1);
 		}
 
-		// This isn't perfect but the best we can do for now.
-
-		$item['comment_policy'] = 'authenticated';
 
 		set_iconfig($item,'activitypub','recips',$act->raw_recips);
 
@@ -3349,6 +3366,10 @@ class Activity {
 					}
 				}
 			}
+
+			$item['comment_policy']  = $parent[0]['comment_policy'];
+			$item['item_nocomment']  = $parent[0]['item_nocomment'];
+			$item['comments_closed'] = $parent[0]['comments_closed'];
 			
 			if ($parent[0]['parent_mid'] !== $item['parent_mid']) {
 				$item['thr_parent'] = $item['parent_mid'];

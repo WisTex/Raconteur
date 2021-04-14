@@ -306,7 +306,7 @@
 				{{include file="field_checkbox.tpl" field=$comments_allowed}}				
 				{{include file="field_select.tpl" field=$comment_perms}}
 				<div class="date">
-					<label for="id_oembed">{{$commclosedate}}</label>
+					<label for="commclose-date">{{$commclosedate}}</label>
 					<input type="text" placeholder="yyyy-mm-dd HH:MM" name="start_text" value="{{$comments_closed}}" id="commclose-date" class="form-control" />
 				</div>
 				<script>
