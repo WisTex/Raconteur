@@ -36,7 +36,8 @@ class Directory extends Controller {
 		$global_changed = false;
 		$safe_changed = false;
 		$type_changed = false;
-	
+		$active_changed = false;
+		
 		if (array_key_exists('global',$_REQUEST)) {
 			$globaldir = intval($_REQUEST['global']);
 			if (get_config('system','localdir_hide')) {
@@ -72,6 +73,18 @@ class Directory extends Controller {
 				set_xconfig($observer,'directory','chantype',$type);
 			}
 		}
+
+		if (array_key_exists('active',$_REQUEST)) {
+			$active = intval($_REQUEST['active']);
+			$active_changed = true;
+		}
+		if ($active_changed) {
+			$_SESSION['activedir'] = $active;
+			if ($observer) {
+				set_xconfig($observer,'directory','activedir',$active);
+			}
+		}
+
 	}
 	
 	function get() {
@@ -98,7 +111,9 @@ class Directory extends Controller {
 		$safe_mode = Libzotdir::get_directory_setting($observer, 'safemode');
 	
 		$type = Libzotdir::get_directory_setting($observer, 'chantype');
-	
+
+		$active = Libzotdir::get_directory_setting($observer, 'activedir');
+
 		$o = '';
 		nav_set_selected('Directory');
 	
@@ -124,6 +139,7 @@ class Directory extends Controller {
 			
 			$globaldir = 1;
 			$safe_mode = 1;
+			$active = 1;
 			$type = 0;
 
 			// only return DIRECTORY_PAGESIZE suggestions as the suggestion sorting
@@ -232,7 +248,12 @@ class Directory extends Controller {
 			if (App::$pager['page'] != 1) {
 				$query .= '&p=' . App::$pager['page'];
 			}
-	
+
+			if (isset($active)) {
+				$query .= '&active=' . intval($active);
+			}
+
+
 			// logger('mod_directory: query: ' . $query);
 	
 			$x = z_fetch_url($query);
