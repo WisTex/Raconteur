@@ -378,8 +378,12 @@ class Item extends Controller {
 			$nocomment = 1 - intval($_REQUEST['comments_enabled']);
 		}
 
+		// this is in days, convert to absolute time
 		$channel_comments_closed = get_pconfig($profile_uid,'system','close_comments');
-		if (! intval($channel_comments_closed)) {
+		if (intval($channel_comments_closed)) {
+			$channel_comments_closed = datetime_convert(date_Default_timezone_get(),'UTC', 'now + ' . intval($channel_comments_closed) . ' days');
+		}
+		else {
 			$channel_comments_closed = NULL_DATE;
 		}
 
@@ -1333,7 +1337,7 @@ class Item extends Controller {
 		$datarray['item_blocked']        = intval($item_blocked);	
 		$datarray['layout_mid']          = $layout_mid;
 		$datarray['public_policy']       = $public_policy;
-		$datarray['comment_policy']      = ((ctype_digit($comment_policy)) ? map_scope($comment_policy) : $comment_policy); // only map scope if it is numeric, otherwise use what we have
+		$datarray['comment_policy']      = ((is_numeric($comment_policy)) ? map_scope($comment_policy) : $comment_policy); // only map scope if it is numeric, otherwise use what we have
 		$datarray['term']                = $post_tags;
 		$datarray['plink']               = $plink;
 		$datarray['route']               = $route;

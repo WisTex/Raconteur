@@ -18,8 +18,8 @@
 		<input type="hidden" name="return" value="{{$return_path}}" />
 		<input type="hidden" name="location" id="jot-location" value="{{$defloc}}" />
 		<input type="hidden" name="expire" id="jot-expire" value="{{$defexpire}}" />
-		<input type="hidden" name="comments_closed" id="jot-commclosed" value="{{$defexpire}}" />
-		<input type="hidden" name="comments_from" id="jot-commfrom" value="{{$defexpire}}" />
+		<input type="hidden" name="comments_closed" id="jot-commclosed" value="{{$defcommuntil}}" />
+		<input type="hidden" name="comments_from" id="jot-commfrom" value="{{$defcommpolicy}}" />
 		<input type="hidden" name="created" id="jot-created" value="{{$defpublish}}" />
 		<input type="hidden" name="media_str" id="jot-media" value="" />
 		<input type="hidden" name="source" id="jot-source" value="{{$source}}" />
