@@ -3782,3 +3782,10 @@ function is_phone_number($s) {
 	return ((ctype_digit($s)) ? $s . $rext : false);
 }
 
+/**
+ * fnmatch seems a bit unpredictable, so use this instead.
+ */
+
+function wildmat($pattern,$string) {
+	return preg_match("#^".strtr(preg_quote($pattern, '#'), [ '\*' => '.*', '\?' => '.', '\[' => '[', '\]' => ']' ] ) . "$#i", $string);
+}
