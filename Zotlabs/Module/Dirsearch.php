@@ -263,23 +263,46 @@ class Dirsearch extends Controller {
 		if ($r) {
 	
 			$entries = [];
-	
-			foreach ($r as $rr) {
+			$dups    = [];
+			$isdup   = EMPTY_STR;
 
-				// We need a better way to do this than one query for every
-				// AP record. Leaving this for the moment because it produces
-				// the desired results of not having duplicate entries for
-				// a channel that has multiple identities across multiple
-				// networks.
-				
-				if ($rr['xchan_network'] === 'activitypub') {
-					$z = q("select xchan_hash from xchan where xchan_url = '%s' and xchan_network = 'zot6' limit 1",
-						dbesc($rr['xchan_url'])
-					);
+			// Collect activitypub identities and query which also have zot6 identities.
+			// Do this once per page fetch rather than once per entry.
+
+			foreach ($r as $rv) {
+				if ($rv['xchan_network'] === 'activitypub') {
+					if ($isdup) {
+						$isdup .= ',';
+					}
+					$isdup .= "'" . dbesc($rv['xchan_url']) . "'";
+				}
+				if ($isdup) {
+					$isdup = protect_sprintf($isdup);
+					$z = q("select xchan_url, xchan_hash from xchan where xchan_url in  ( $isdup ) and xchan_network = 'zot6'");
 					if ($z) {
-						continue;
+						foreach($z as $zv) {
+							$dups[$zv['xchan_url']] = $zv['xchan_hash'];
+						}
 					}
 				}
+			}
+			
+			foreach ($r as $rr) {
+
+				// If it's an activitypub record and the channel also has a zot6 address, don't return it.
+				
+				if (array_key_exists($rr['xchan_url'],$dups)) {
+					continue;
+				}
+
+				if (! check_siteallowed($rr['xchan_url'])) {
+					continue;
+				}
+
+				if (! check_channelallowed($rr['xchan_hash'])) {
+					continue;
+				}
+
 
 				$entry = [];
 		
