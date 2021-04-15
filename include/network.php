@@ -1331,6 +1331,11 @@ function check_siteallowed($url) {
 		return $arr['allowed'];
 	}
 
+	// your own site is always allowed
+	if (strpos($url, z_root()) !== false) {
+		return $retvalue;
+	}
+
 	$bl1 = get_config('system','allowed_sites');
 	$bl2 = get_config('system','denied_sites');
 
@@ -1381,6 +1386,11 @@ function check_pubstream_siteallowed($url) {
 
 	if(array_key_exists('allowed',$arr))
 		return $arr['allowed'];
+
+	// your own site is always allowed
+	if (strpos($url, z_root()) !== false) {
+		return $retvalue;
+	}
 
 	$bl1 = get_config('system','pubstream_allowed_sites');
 	$bl2 = get_config('system','pubstream_denied_sites');
