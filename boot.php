@@ -2323,8 +2323,14 @@ function construct_page() {
 		header("X-Content-Type-Options: nosniff");
 	}
 
-	// Create a preference for this if you wish. But make sure the default is privacy-respecting. 
-	header("Permissions-Policy: interest-cohort=()");
+
+	if (isset(App::$config['system']['perm_policy_header']) && App::$config['system']['perm_policy_header']) {
+		header("Permissions-Policy: " . App::$config['system']['perm_policy_header']);
+	}
+	else {
+		// opt-out this site from federated browser surveillance
+		header("Permissions-Policy: interest-cohort=()");
+	}
 
 	if (isset(App::$config['system']['public_key_pins']) && App::$config['system']['public_key_pins']) {
 		header("Public-Key-Pins: " . App::$config['system']['public_key_pins']);
