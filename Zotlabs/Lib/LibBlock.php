@@ -75,7 +75,9 @@ class LibBlock {
 	}
 
 	static function fetch_by_id($channel_id,$id) {
-
+		if (! intval($channel_id)) {
+			return false;
+		}
 		$r = q("select * from block where block_channel_id = %d and block_id = %d ",
 			intval($channel_id)
 		);
@@ -84,12 +86,18 @@ class LibBlock {
 
 
 	static function fetch_by_entity($channel_id,$entity) {
+		if (! intval($channel_id)) {
+			return false;
+		}
 
 		return self::fetch_from_cache($channel_id,$entity);
 		
 	}
 
 	static function fetch($channel_id,$type = false) {
+		if (! intval($channel_id)) {
+			return [];
+		}
 
 		$sql_extra = (($type === false) ? EMPTY_STR : " and block_type = " . intval($type));
 			

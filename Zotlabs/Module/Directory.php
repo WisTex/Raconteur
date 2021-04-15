@@ -408,11 +408,21 @@ class Directory extends Controller {
 								'common_count'      => intval($common[$rr['hash']]),
 								'safe'              => $safe_mode
 							];
-	
+
+
+							$blocked = LibBlock::fetch($channel['channel_id'],BLOCKTYPE_SERVER);
+							if ($blocked) {
+								foreach ($blocked as $b) {
+									if (strpos($rr['url'],$b['block_entity']) !== false) {
+										continue;
+									}
+								}
+							}
+
 							if (LibBlock::fetch_by_entity(local_channel(), $entry['hash'])) {
 								continue;
 							}
-							
+
 							$arr = array('contact' => $rr, 'entry' => $entry);
 	
 							call_hooks('directory_item', $arr);
