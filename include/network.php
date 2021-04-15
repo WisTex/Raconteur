@@ -1347,8 +1347,9 @@ function check_siteallowed($url) {
 			if ($bl === '*') {
 				$retvalue = true;
 			}
-			if ($bl && strpos($url,$bl) !== false)
+			if ($bl && (strpos($url,$bl) !== false || wildmat($bl,$url))) {
 				return true;
+			}
 		}
 	}
 	if (is_array($bl2) && $bl2) {
@@ -1356,7 +1357,7 @@ function check_siteallowed($url) {
 			if ($bl === '*') {
 				$retvalue = false;
 			}
-			if ($bl && strpos($url,$bl) !== false) {
+			if ($bl && (strpos($url,$bl) !== false || wildmat($bl,$url))) {
 				return false;
 			}
 		}
@@ -1384,8 +1385,9 @@ function check_pubstream_siteallowed($url) {
 	 */
 	call_hooks('pubstream_check_siteallowed', $arr);
 
-	if(array_key_exists('allowed',$arr))
+	if (array_key_exists('allowed',$arr)) {
 		return $arr['allowed'];
+	}
 
 	// your own site is always allowed
 	if (strpos($url, z_root()) !== false) {
@@ -1395,22 +1397,25 @@ function check_pubstream_siteallowed($url) {
 	$bl1 = get_config('system','pubstream_allowed_sites');
 	$bl2 = get_config('system','pubstream_denied_sites');
 
-	if(is_array($bl1) && $bl1) {
+	if (is_array($bl1) && $bl1) {
 		if (! (is_array($bl2) && $bl2)) {
 			$retvalue = false;
 		}
-		foreach($bl1 as $bl) {
-			if($bl === '*')
+		foreach ($bl1 as $bl) {
+			if ($bl === '*') {
 				$retvalue = true;
-			if($bl && strpos($url,$bl) !== false)
+			}
+			if ($bl && (strpos($url,$bl) !== false || wildmat($bl,$url))) {
 				return true;
+			}
 		}
 	}
-	if(is_array($bl2) && $bl2) {
-		foreach($bl2 as $bl) {
-			if($bl === '*')
+	if (is_array($bl2) && $bl2) {
+		foreach ($bl2 as $bl) {
+			if ($bl === '*') {
 				$retvalue = false;
-			if($bl && strpos($url,$bl) !== false) {
+			}
+			if ($bl && (strpos($url,$bl) !== false || wildmat($bl,$url))) {
 				return false;
 			}
 		}
@@ -1455,7 +1460,7 @@ function check_channelallowed($hash) {
 			if ($bl === '*') {
 				$retvalue = true;
 			}
-			if ($bl && strpos($hash,$bl) !== false) {
+			if ($bl && (strpos($url,$bl) !== false || wildmat($bl,$url))) {
 				return true;
 			}
 		}
@@ -1465,7 +1470,7 @@ function check_channelallowed($hash) {
 			if ($bl === '*') {
 				$retvalue = false;
 			}
-			if ($bl && strpos($hash,$bl) !== false) {
+			if ($bl && (strpos($url,$bl) !== false || wildmat($bl,$url))) {
 				return false;
 			}
 		}
@@ -1494,28 +1499,32 @@ function check_pubstream_channelallowed($hash) {
 	 */
 	call_hooks('check_pubstream_channelallowed', $arr);
 
-	if(array_key_exists('allowed',$arr))
+	if (array_key_exists('allowed',$arr)) {
 		return $arr['allowed'];
+	}
 
 	$bl1 = get_config('system','pubstream_allowed_channels');
 	$bl2 = get_config('system','pubstream_denied_channels');
 
-	if(is_array($bl1) && $bl1) {
+	if (is_array($bl1) && $bl1) {
 		if (! (is_array($bl2) && $bl2)) {
 			$retvalue = false;
 		}
-		foreach($bl1 as $bl) {
-			if($bl === '*')
+		foreach ($bl1 as $bl) {
+			if ($bl === '*') {
 				$retvalue = true;
-			if($bl && strpos($hash,$bl) !== false)
+			}
+			if ($bl && (strpos($url,$bl) !== false || wildmat($bl,$url))) {
 				return true;
+			}
 		}
 	}
-	if(is_array($bl2) && $bl2) {
-		foreach($bl2 as $bl) {
-			if($bl === '*')
+	if (is_array($bl2) && $bl2) {
+		foreach ($bl2 as $bl) {
+			if ($bl === '*') {
 				$retvalue = false;
-			if($bl && strpos($hash,$bl) !== false) {
+			}
+			if ($bl && (strpos($url,$bl) !== false || wildmat($bl,$url))) {
 				return false;
 			}
 		}

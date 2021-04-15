@@ -2,6 +2,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libzotdir;
+use Zotlabs\Lib\LibBlock;
 
 class Sites extends \Zotlabs\Web\Controller {
 
@@ -14,9 +15,29 @@ class Sites extends \Zotlabs\Web\Controller {
 		$j = [];
 
 		$r = q("select * from site where site_flags != 256 and site_dead = 0 $sql_extra order by site_update desc");
-			
+
+
 		if ($r) {
-			foreach ($r as $rr) {				
+
+			$blocked = LibBlock::fetch($channel['channel_id'],BLOCKTYPE_SERVER);
+			foreach ($r as $rr) {
+				$found_block = false;
+				if ($blocked) {
+					foreach ($blocked as $b) {
+						if (strpos($rr['site_url'],$b['block_entity']) !== false) {
+							$found_block = true;
+							break;
+						}
+					}
+					if ($found_block) {
+						continue;
+					}
+				}
+
+				if (! check_siteallowed($rr['site_url'])) {
+					continue;
+				}
+
 				if ($rr['site_access'] == ACCESS_FREE)
 					$access = t('free');
 				elseif ($rr['site_access'] == ACCESS_PAID)

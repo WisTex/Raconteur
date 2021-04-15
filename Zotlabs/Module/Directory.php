@@ -411,11 +411,17 @@ class Directory extends Controller {
 
 
 							$blocked = LibBlock::fetch($channel['channel_id'],BLOCKTYPE_SERVER);
+
+							$found_block = false;
 							if ($blocked) {
 								foreach ($blocked as $b) {
-									if (strpos($rr['url'],$b['block_entity']) !== false) {
-										continue;
+									if (strpos($rr['site_url'],$b['block_entity']) !== false) {
+										$found_block = true;
+										break;
 									}
+								}
+								if ($found_block) {
+									continue;
 								}
 							}
 
