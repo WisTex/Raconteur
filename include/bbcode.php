@@ -282,7 +282,7 @@ function bb_parse_crypt($match) {
 	$onclick = 'onclick="' . $f . '(\'' . $algorithm . '\',\'' . $hint . '\',\'' . $match[2] . '\',\'#' . $x . '\');"';
 	$label = t('Encrypted content');
 
-	$Text = '<br /><div id="' . $x . '"><img class="cursor-pointer" src="' . z_root() . '/images/lock_icon.svg" ' . $onclick . ' alt="' . $label . '" title="' . $label . '" /></div><br />';
+	$Text = '<br><div id="' . $x . '"><img class="cursor-pointer" src="' . z_root() . '/images/lock_icon.svg" ' . $onclick . ' alt="' . $label . '" title="' . $label . '" /></div><br><br>' . bb_parse_b64_crypt($match);
 
 	return $Text;
 }
@@ -298,9 +298,11 @@ function bb_parse_b64_crypt($match) {
 	if(empty($match[2]))
 		return;
 
-	$r .= '----- ENCRYPTED CONTENT -----' . PHP_EOL;
-	$r .= $match[2] . PHP_EOL;
-	$r .= '----- END ENCRYPTED CONTENT -----';
+	$r .= '----- ENCRYPTED CONTENT -----' . "\n";
+	$r .= base64_encode($match[1]) . "." . $match[2] . "\n";
+	$r .= '----- END ENCRYPTED CONTENT -----' . "\n";
+
+	$r = '<code>' . str_replace("\n",'<br>',wordwrap($r,75,"\n",true)) . '</code>';
 
 	return $r;
 
