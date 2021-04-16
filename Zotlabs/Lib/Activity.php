@@ -1483,9 +1483,10 @@ class Activity {
 				$ret['following']   = z_root() . '/following/' . $c['channel_address'];
 
 				$ret['endpoints']   = [
-					'sharedInbox' => z_root() . '/inbox',
+					'sharedInbox'                => z_root() . '/inbox',
+					'oauthRegistrationEndpoint'  => z_root() . '/api/client/register',
 					'oauthAuthorizationEndpoint' => z_root() . '/authorize',
-					'oauthTokenEndpoint' => z_root() . '/token'
+					'oauthTokenEndpoint'         => z_root() . '/token'
 				];
 				
 				$ret['discoverable'] = ((1 - intval($p['xchan_hidden'])) ? true : false);				
@@ -3790,8 +3791,10 @@ class Activity {
 			'toot'                      => 'http://joinmastodon.org/ns#',
 			'ostatus'                   => 'http://ostatus.org#',
 			'schema'                    => 'http://schema.org#',
+			'litepub'                   => 'http://litepub.social/ns#',
 			'conversation'              => 'ostatus:conversation',
 			'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
+			'oauthRegistrationEndpoint' => 'litepub:oauthRegistrationEndpoint',
 			'sensitive'                 => 'as:sensitive',
 			'movedTo'                   => 'as:movedTo',
 			'copiedTo'                  => 'as:copiedTo',

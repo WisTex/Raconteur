@@ -196,8 +196,7 @@ require_once('include/api_zot.php');
 		$secret = random_string(16);
 		$name = trim(escape_tags($_REQUEST['client_name']));
 		if (! $name) {
-			// json_return_and_die($ret);
-			$name = random_string(8);
+			json_return_and_die($ret);
 		}
 		if (is_array($_REQUEST['redirect_uris'])) {
 			$redirect = trim($_REQUEST['redirect_uris'][0]);
