@@ -93,3 +93,8 @@ By default the mention format is '@Display Name', but other options are availabl
 
 Our projects send comment notifications if somebody replies to a post you either created or have previously interacted with in some way. They also are able to send a "mention" notification if you were mentioned in the post. This differs from Mastodon which does not appear to support comment notifications at all and only provides mention notifications. For this reason, Mastodon users don't typically get notified unless the author they are replying to is mentioned in the post. We provide this mention in the 'tag' field of the generated Activity, but normally don't include it in the message body, as we don't actually require mentions that were created for the sole purpose of triggering a notification.
 
+Conversation Completion
+
+(2021-04-17) It's easy to fetch missing pieces of a conversation going "upstream", but there is no agreed-on method to fetch a complete conversation from the viewpoint of the origin actor. We intend to use 'context' to return a collection containing the entire converstion and would like to see participation by other projects to provide the most complete conversations as practical as seen by the initator. This is expected in Q2 2021. Use of 'replies' for this purpose will be provided to ActivityPub viewers as well but that collection does not contain the origin post. It still requires traversing the conversation upstream, whereas carrying a 'context' field throughout the conversation would allow a single authoritative fetchable pointer of the thread head and all its descendants.
+
+So our plan is to re-use a supplied 'context' on all descendants, much as we do with ostatus:conversation, and provide a collection at the context endpoint.
