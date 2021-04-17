@@ -782,10 +782,11 @@ class Activity {
 		else
 			return []; 
 
-		$replyto = self::encode_person($i['owner'],false);
-//		if ($replyto) {
-//			$ret['replyTo'] = $replyto;
-//		}
+		
+		$replyto = unserialise($i['replyto']);
+		if ($replyto) {
+			$ret['replyTo'] = $replyto;
+		}
 		
 		if (! isset($ret['url'])) {
 			$urls = [];
@@ -1166,10 +1167,10 @@ class Activity {
 			}
 		}
 
-		$replyto = self::encode_person($i['owner'],false);
-//		if ($replyto) {
-//			$ret['replyTo'] = $replyto;
-//		}
+		$replyto = unserialise($i['replyto']);
+		if ($replyto) {
+			$ret['replyTo'] = $replyto;
+		}
 		
 		if (! isset($ret['url'])) {
 			$urls = [];
@@ -2515,6 +2516,15 @@ class Activity {
 			$s['mid'] = $s['parent_mid'] = $act->id;
 		}
 
+		if (isset($act->replyto) && ! empty($act->replyto)) {
+			if (is_array($act->replyto) && isset($act->replyto['id'])) {
+				$s['replyto'] = $act->replyto['id'];
+			}
+			else {
+				$s['replyto'] = $act->replyto;
+			}
+		}
+
 		if (ActivityStreams::is_response_activity($act->type)) {
 
 			$response_activity = true;
@@ -2522,9 +2532,6 @@ class Activity {
 			$s['mid'] = $act->id;
 			$s['parent_mid'] = $act->obj['id'];
 
-//			if (isset($act->replyto) && ! empty($act->replyto)) {
-//				$s['replyto'] = $act->replyto;
-//			}
 			
 			// over-ride the object timestamp with the activity
 

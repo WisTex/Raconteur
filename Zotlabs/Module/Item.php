@@ -533,6 +533,10 @@ class Item extends Controller {
 	
 		}
 
+		if ($parent_item && isset($parent_item['replyto']) && $parent_item['replyto']) {
+			$replyto = unserialise($parent_item['replyto']);
+		}
+
 		$moderated = false;
 	
 		if (! $observer) {
@@ -696,7 +700,17 @@ class Item extends Controller {
 				}
 			}
 		}
-	
+
+		if (! isset($replyto)) {
+			if (strpos($owner_xchan['xchan_hash'],'http') === 0) {
+				$replyto = $owner_xchan['xchan_hash'];
+			}
+			else {
+				$replyto = $owner_xchan['xchan_url'];
+			}
+		}
+				
+
 		$acl = new AccessControl($channel);
 
 		$view_policy = PermissionLimits::Get($channel['channel_id'],'view_stream');	
@@ -1340,7 +1354,7 @@ class Item extends Controller {
 		$datarray['term']                = $post_tags;
 		$datarray['plink']               = $plink;
 		$datarray['route']               = $route;
-
+		$datarray['replyto']             = $replyto;
 
 		// A specific ACL over-rides public_policy completely
  
