@@ -9,6 +9,7 @@
 # - misty : https://zotlabs.com/misty/
 # - osada : https://codeberg.org/zot/osada
 # - redmatrix : https://codeberg.org/zot/redmatrix
+# - roadhouse : https://codeberg.org/zot/roadhouse
 # under Debian Linux "Buster"
 #
 # 1) Copy the file "zotserver-config.txt.template" to "zotserver-config.txt"
@@ -532,8 +533,11 @@ function zotserver_name {
     elif git remote -v | grep -i "origin.*redmatrix.*"
     then
         zotserver=redmatrix
+    elif git remote -v | grep -i "origin.*roadhouse.*"
+    then
+        zotserver=roadhouse
     else
-        die "neither redmatrix, osada, misty, zap nor hubzilla repository > did not install redmatrix/osada/misty/zap/hubzilla"
+        die "neither roadhouse, redmatrix, osada, misty, zap nor hubzilla repository > did not install roadhouse/redmatrix/osada/misty/zap/hubzilla"
     fi
 }
 
@@ -560,8 +564,12 @@ function install_zotserver {
     then
         print_info "redmatrix"
         util/add_addon_repo https://codeberg.org/zot/redmatrix-addons.git raddons
+    elif [ $zotserver = "roadhouse" ]
+    then
+        print_info "roadhouse"
+        util/add_addon_repo https://codeberg.org/zot/roadhouse-addons.git rhaddons
     else
-        die "neither redmatrix, osada, misty, zap nor hubzilla repository > did not install addons or redmatrix/osada/misty/zap/hubzilla"
+        die "neither roadhouse, redmatrix, osada, misty, zap nor hubzilla repository > did not install addons or roadhouse/redmatrix/osada/misty/zap/hubzilla"
     fi
     mkdir -p "cache/smarty3"
     mkdir -p "store"
