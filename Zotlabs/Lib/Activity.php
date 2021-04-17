@@ -745,7 +745,10 @@ class Activity {
 			
 			if (! in_array($ret['type'],[ 'Create','Update','Accept','Reject','TentativeAccept','TentativeReject' ])) {
 				$ret['inReplyTo'] = $i['thr_parent'];
-				$cnv = get_iconfig($i['parent'],'ostatus','conversation');
+				$cnv = get_iconfig($i['parent'],'activitypub','context');
+				if (! $cnv) {
+					$cnv = get_iconfig($i['parent'],'ostatus','conversation');
+				}
 				if (! $cnv) {
 					$cnv = $ret['parent_mid'];
 				}
@@ -753,15 +756,19 @@ class Activity {
 		}
 
 		if (! (isset($cnv) && $cnv)) {
-			// This method may be called before the item is actually saved - in which case there is no id and IConfig cannot be used
-			if ($i['id']) {
+			$cnv = get_iconfig($i,'activitypub','context');
+			if (! $cnv) {
 				$cnv = get_iconfig($i,'ostatus','conversation');
 			}
-			else {
+			if (! $cnv) {
 				$cnv = $i['parent_mid'];
 			}
 		}
 		if (isset($cnv) && $cnv) {
+			if (strpos($cnv,z_root()) === 0) {
+				$cnv = str_replace(['/item/','/activity/'],[ '/conversation/', '/conversation/' ], $cnv);
+			}
+			$ret['context'] = $cnv;
 			$ret['conversation'] = $cnv;
 		}
 
@@ -1065,7 +1072,10 @@ class Activity {
 
 		if ($i['mid'] !== $i['parent_mid']) {
 			$ret['inReplyTo'] = $i['thr_parent'];
-			$cnv = get_iconfig($i['parent'],'ostatus','conversation');
+			$cnv = get_iconfig($i['parent'],'activitypub','context');
+			if (! $cnv) {
+				$cnv = get_iconfig($i['parent'],'ostatus','conversation');
+			}
 			if (! $cnv) {
 				$cnv = $ret['parent_mid'];
 			}
@@ -1091,14 +1101,19 @@ class Activity {
 			}
 		}
 		if (! isset($cnv)) {
-			if ($i['id']) {
+			$cnv = get_iconfig($i,'activitypub','context');
+			if (! $cnv) {
 				$cnv = get_iconfig($i,'ostatus','conversation');
 			}
-			else {
+			if (! $cnv) {
 				$cnv = $i['parent_mid'];
 			}
 		}
-		if ($cnv) {
+		if (isset($cnv) && $cnv) {
+			if (strpos($cnv,z_root()) === 0) {
+				$cnv = str_replace(['/item/','/activity/'],[ '/conversation/', '/conversation/' ], $cnv);
+			}
+			$ret['context'] = $cnv;
 			$ret['conversation'] = $cnv;
 		}
 
@@ -3318,10 +3333,13 @@ class Activity {
 			return;
 		}
 
+		if ($act->obj['context']) {
+			set_iconfig($item,'activitypub','context',$act->obj['context'],1);
+		}
+
 		if ($act->obj['conversation']) {
 			set_iconfig($item,'ostatus','conversation',$act->obj['conversation'],1);
 		}
-
 
 		set_iconfig($item,'activitypub','recips',$act->raw_recips);
 
