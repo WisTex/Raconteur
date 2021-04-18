@@ -16,23 +16,25 @@ class Notifications extends \Zotlabs\Web\Controller {
 	
 		$o = '';
 
-		$r = q("select count(*) as total from notify where uid = %d and seen = 0",
+		$n = q("select count(*) as total from notify where uid = %d and seen = 0",
 			intval(local_channel())
 		);
-		if($r && intval($r[0]['total']) > 49) {
+		if($n && intval($n[0]['total']) > 49) {
 			$r = q("select * from notify where uid = %d
 				and seen = 0 order by created desc limit 50",
 				intval(local_channel())
 			);
-		} else {
+		}
+		else {
 			$r1 = q("select * from notify where uid = %d
 				and seen = 0 order by created desc limit 50",
 				intval(local_channel())
 			);
+
 			$r2 = q("select * from notify where uid = %d
 				and seen = 1 order by created desc limit %d",
 				intval(local_channel()),
-				intval(50 - intval($r[0]['total']))
+				intval(50 - intval($n[0]['total']))
 			);
 			$r = array_merge($r1,$r2);
 		}
@@ -41,7 +43,7 @@ class Notifications extends \Zotlabs\Web\Controller {
 			$notifications_available = 1;
 			foreach ($r as $rr) {
 				$x = strip_tags(bbcode($rr['msg']));
-				$notif_content = replace_macros(get_markup_template('notify.tpl'),array(
+				$notif_content .= replace_macros(get_markup_template('notify.tpl'),array(
 					'$item_link' => z_root().'/notify/view/'. $rr['id'],
 					'$item_image' => $rr['photo'],
 					'$item_text' => $x,

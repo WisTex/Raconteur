@@ -234,8 +234,7 @@ class Item extends Controller {
 				http_status_exit(403, 'Forbidden');
 			}
 
-
-			$i = Activity::encode_item_collection($items,'conversation/' . $item_id,'OrderedCollection',true);
+			$i = Activity::encode_item_collection($items,'conversation/' . $item_id,'OrderedCollection',true, count($nitems));
 			if ($portable_id && (! intval($items[0]['item_private']))) {
 				ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
 			}
@@ -534,6 +533,10 @@ class Item extends Controller {
 	
 		}
 
+		if ($parent_item && isset($parent_item['replyto']) && $parent_item['replyto']) {
+			$replyto = unserialise($parent_item['replyto']);
+		}
+
 		$moderated = false;
 	
 		if (! $observer) {
@@ -697,7 +700,17 @@ class Item extends Controller {
 				}
 			}
 		}
-	
+
+		if (! isset($replyto)) {
+			if (strpos($owner_xchan['xchan_hash'],'http') === 0) {
+				$replyto = $owner_xchan['xchan_hash'];
+			}
+			else {
+				$replyto = $owner_xchan['xchan_url'];
+			}
+		}
+				
+
 		$acl = new AccessControl($channel);
 
 		$view_policy = PermissionLimits::Get($channel['channel_id'],'view_stream');	
@@ -1341,7 +1354,7 @@ class Item extends Controller {
 		$datarray['term']                = $post_tags;
 		$datarray['plink']               = $plink;
 		$datarray['route']               = $route;
-
+		$datarray['replyto']             = $replyto;
 
 		// A specific ACL over-rides public_policy completely
  
