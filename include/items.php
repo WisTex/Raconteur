@@ -724,6 +724,7 @@ function get_item_elements($x,$allow_code = false) {
 	}
 
 	$arr['attach']       = activity_sanitise($x['attach']);
+	$arr['replyto']      = activity_sanitise($c['replyto']);
 	$arr['term']         = decode_tags($x['tags']);
 	$arr['iconfig']      = decode_item_meta($x['meta']);
 
@@ -1115,6 +1116,7 @@ function encode_item($item,$mirror = false) {
 	$x['longlat']         = $item['coord'];
 	$x['signature']       = $item['sig'];
 	$x['route']           = $item['route'];
+	$x['replyto']         = $item['replyto'];
 	$x['owner']           = encode_item_xchan($item['owner']);
 	$x['author']          = encode_item_xchan($item['author']);
 
@@ -3058,6 +3060,9 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		$arr['deny_gid']  = $channel['channel_deny_gid'];
 		$arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
 
+		$arr['replyto'] = z_root() . '/channel/' . $channel['channel_address'];
+
+
 		if ($arr['id']) {
 			$post = item_store_update($arr);
 		}
@@ -3117,12 +3122,13 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 	$title = $item['title'];
 	$body  = $item['body'];
 
-	$r = q("update item set item_uplink = %d, item_nocomment = %d, item_flags = %d, owner_xchan = '%s', allow_cid = '%s', allow_gid = '%s',
+	$r = q("update item set item_uplink = %d, item_nocomment = %d, item_flags = %d, owner_xchan = '%s', replyto = '%s', allow_cid = '%s', allow_gid = '%s',
 		deny_cid = '%s', deny_gid = '%s', item_private = %d, comment_policy = '%s', title = '%s', body = '%s', item_wall = %d, item_origin = %d  where id = %d",
 		intval($item_uplink),
 		intval($item_nocomment),
 		intval($flag_bits),
 		dbesc($channel['channel_hash']),
+		dbesc(channel_url($channel)),
 		dbesc($channel['channel_allow_cid']),
 		dbesc($channel['channel_allow_gid']),
 		dbesc($channel['channel_deny_cid']),

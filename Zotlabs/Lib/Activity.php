@@ -745,7 +745,10 @@ class Activity {
 			
 			if (! in_array($ret['type'],[ 'Create','Update','Accept','Reject','TentativeAccept','TentativeReject' ])) {
 				$ret['inReplyTo'] = $i['thr_parent'];
-				$cnv = get_iconfig($i['parent'],'ostatus','conversation');
+				$cnv = get_iconfig($i['parent'],'activitypub','context');
+				if (! $cnv) {
+					$cnv = get_iconfig($i['parent'],'ostatus','conversation');
+				}
 				if (! $cnv) {
 					$cnv = $ret['parent_mid'];
 				}
@@ -753,15 +756,19 @@ class Activity {
 		}
 
 		if (! (isset($cnv) && $cnv)) {
-			// This method may be called before the item is actually saved - in which case there is no id and IConfig cannot be used
-			if ($i['id']) {
+			$cnv = get_iconfig($i,'activitypub','context');
+			if (! $cnv) {
 				$cnv = get_iconfig($i,'ostatus','conversation');
 			}
-			else {
+			if (! $cnv) {
 				$cnv = $i['parent_mid'];
 			}
 		}
 		if (isset($cnv) && $cnv) {
+			if (strpos($cnv,z_root()) === 0) {
+				$cnv = str_replace(['/item/','/activity/'],[ '/conversation/', '/conversation/' ], $cnv);
+			}
+			$ret['context'] = $cnv;
 			$ret['conversation'] = $cnv;
 		}
 
@@ -775,10 +782,11 @@ class Activity {
 		else
 			return []; 
 
-		$replyto = self::encode_person($i['owner'],false);
-//		if ($replyto) {
-//			$ret['replyTo'] = $replyto;
-//		}
+		
+		$replyto = unserialise($i['replyto']);
+		if ($replyto) {
+			$ret['replyTo'] = $replyto;
+		}
 		
 		if (! isset($ret['url'])) {
 			$urls = [];
@@ -1065,7 +1073,10 @@ class Activity {
 
 		if ($i['mid'] !== $i['parent_mid']) {
 			$ret['inReplyTo'] = $i['thr_parent'];
-			$cnv = get_iconfig($i['parent'],'ostatus','conversation');
+			$cnv = get_iconfig($i['parent'],'activitypub','context');
+			if (! $cnv) {
+				$cnv = get_iconfig($i['parent'],'ostatus','conversation');
+			}
 			if (! $cnv) {
 				$cnv = $ret['parent_mid'];
 			}
@@ -1091,14 +1102,19 @@ class Activity {
 			}
 		}
 		if (! isset($cnv)) {
-			if ($i['id']) {
+			$cnv = get_iconfig($i,'activitypub','context');
+			if (! $cnv) {
 				$cnv = get_iconfig($i,'ostatus','conversation');
 			}
-			else {
+			if (! $cnv) {
 				$cnv = $i['parent_mid'];
 			}
 		}
-		if ($cnv) {
+		if (isset($cnv) && $cnv) {
+			if (strpos($cnv,z_root()) === 0) {
+				$cnv = str_replace(['/item/','/activity/'],[ '/conversation/', '/conversation/' ], $cnv);
+			}
+			$ret['context'] = $cnv;
 			$ret['conversation'] = $cnv;
 		}
 
@@ -1151,10 +1167,10 @@ class Activity {
 			}
 		}
 
-		$replyto = self::encode_person($i['owner'],false);
-//		if ($replyto) {
-//			$ret['replyTo'] = $replyto;
-//		}
+		$replyto = unserialise($i['replyto']);
+		if ($replyto) {
+			$ret['replyTo'] = $replyto;
+		}
 		
 		if (! isset($ret['url'])) {
 			$urls = [];
@@ -1483,9 +1499,10 @@ class Activity {
 				$ret['following']   = z_root() . '/following/' . $c['channel_address'];
 
 				$ret['endpoints']   = [
-					'sharedInbox' => z_root() . '/inbox',
+					'sharedInbox'                => z_root() . '/inbox',
+					'oauthRegistrationEndpoint'  => z_root() . '/api/client/register',
 					'oauthAuthorizationEndpoint' => z_root() . '/authorize',
-					'oauthTokenEndpoint' => z_root() . '/token'
+					'oauthTokenEndpoint'         => z_root() . '/token'
 				];
 				
 				$ret['discoverable'] = ((1 - intval($p['xchan_hidden'])) ? true : false);				
@@ -2499,6 +2516,15 @@ class Activity {
 			$s['mid'] = $s['parent_mid'] = $act->id;
 		}
 
+		if (isset($act->replyto) && ! empty($act->replyto)) {
+			if (is_array($act->replyto) && isset($act->replyto['id'])) {
+				$s['replyto'] = $act->replyto['id'];
+			}
+			else {
+				$s['replyto'] = $act->replyto;
+			}
+		}
+
 		if (ActivityStreams::is_response_activity($act->type)) {
 
 			$response_activity = true;
@@ -2506,9 +2532,6 @@ class Activity {
 			$s['mid'] = $act->id;
 			$s['parent_mid'] = $act->obj['id'];
 
-//			if (isset($act->replyto) && ! empty($act->replyto)) {
-//				$s['replyto'] = $act->replyto;
-//			}
 			
 			// over-ride the object timestamp with the activity
 
@@ -3317,10 +3340,13 @@ class Activity {
 			return;
 		}
 
+		if ($act->obj['context']) {
+			set_iconfig($item,'activitypub','context',$act->obj['context'],1);
+		}
+
 		if ($act->obj['conversation']) {
 			set_iconfig($item,'ostatus','conversation',$act->obj['conversation'],1);
 		}
-
 
 		set_iconfig($item,'activitypub','recips',$act->raw_recips);
 
@@ -3790,8 +3816,10 @@ class Activity {
 			'toot'                      => 'http://joinmastodon.org/ns#',
 			'ostatus'                   => 'http://ostatus.org#',
 			'schema'                    => 'http://schema.org#',
+			'litepub'                   => 'http://litepub.social/ns#',
 			'conversation'              => 'ostatus:conversation',
 			'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
+			'oauthRegistrationEndpoint' => 'litepub:oauthRegistrationEndpoint',
 			'sensitive'                 => 'as:sensitive',
 			'movedTo'                   => 'as:movedTo',
 			'copiedTo'                  => 'as:copiedTo',
