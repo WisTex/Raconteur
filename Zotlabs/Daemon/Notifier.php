@@ -400,15 +400,20 @@ class Notifier {
 			if (($relay_to_owner || $uplink) && ($cmd !== 'relay')) {
 				logger('followup relay (upstream delivery)', LOGGER_DEBUG);
 				$sendto = ($uplink) ? $parent_item['source_xchan'] : $parent_item['owner_xchan'];
+				self::$recipients = [ $sendto ];
+
 if (defined('X-REPLY-TO'))  {
 // experimental until debugging is completed
-				if ($parent_item['replyto']) {
+
+				if ($parent_item['replyto'] && (! $uplink)) {
 					$ptr = unserialise($parent_item['replyto']);
 					if (is_string($ptr)) {
-						$sendto = $ptr;
-						self::$recipients = [ $sendto ];
+						if (ActivityStreams::is_url($sendto)) {
+							$sendto = $ptr;
+							self::$recipients = [ $sendto ];
+						}
 					}
-					elseif (is_array($tr)) {
+					elseif (is_array($ptr)) {
 						$sendto = [];
 						foreach ($ptr as $rto) {
 							if (is_string($rto)) {
@@ -421,10 +426,10 @@ if (defined('X-REPLY-TO'))  {
 						self::$recipients = $sendto;
 					}
 				}
-else // X-REPLY-TO
-				self::$recipients = [ $sendto ];
+
 }
-// END X-REPLY-TO
+// END defined('X-REPLY-TO')
+
 				self::$private = true;
 				$upstream = true;
 				self::$packet_type = 'response';
