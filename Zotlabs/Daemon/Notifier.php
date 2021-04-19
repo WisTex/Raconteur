@@ -406,6 +406,7 @@ if (defined('X-REPLY-TO'))  {
 // experimental until debugging is completed
 
 				if ($parent_item['replyto'] && (! $uplink)) {
+					logger('replyto: over-riding owner '  . $sendto, LOGGER_DEBUG); 
 					$ptr = unserialise($parent_item['replyto']);
 					if (is_string($ptr)) {
 						if (ActivityStreams::is_url($sendto)) {
@@ -426,9 +427,10 @@ if (defined('X-REPLY-TO'))  {
 						self::$recipients = $sendto;
 					}
 				}
-
-}
-// END defined('X-REPLY-TO')
+				
+				logger('replyto: upstream recipients ' . print_r($sendto,true), LOGGER_DEBUG);
+				
+} // END defined('X-REPLY-TO')
 
 				self::$private = true;
 				$upstream = true;
