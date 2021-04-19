@@ -103,7 +103,7 @@ class ActivityStreams {
 			$this->tgt     = $this->get_compound_property('target');
 			$this->origin  = $this->get_compound_property('origin');
 			$this->recips  = $this->collect_recips();
-			$this->replyto = $this->get_compound_property('replyTo');
+			$this->replyto = $this->get_property_obj('replyTo');
 			
 			$this->ldsig = $this->get_compound_property('signature');
 			if ($this->ldsig) {

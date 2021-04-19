@@ -11,10 +11,13 @@ class Notifications extends \Zotlabs\Web\Controller {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
-	
+		
+
 		nav_set_selected('Notifications');
 	
 		$o = '';
+		$notif_content = '';
+		$notifications_available = false;
 
 		$n = q("select count(*) as total from notify where uid = %d and seen = 0",
 			intval(local_channel())
@@ -40,7 +43,7 @@ class Notifications extends \Zotlabs\Web\Controller {
 		}
 			
 		if($r) {
-			$notifications_available = 1;
+			$notifications_available = true;
 			foreach ($r as $rr) {
 				$x = strip_tags(bbcode($rr['msg']));
 				$notif_content .= replace_macros(get_markup_template('notify.tpl'),array(
