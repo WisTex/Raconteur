@@ -33,7 +33,6 @@ class Img_cache {
 		return self::url_to_cache($url,$path);
 	}
 
-
 	static function url_to_cache($url,$file) {
 
 		$fp = fopen($file,'wb');
@@ -48,9 +47,6 @@ class Img_cache {
 
 		fclose($fp);
 		
-		// $file *should* exist. The existence check was added because in at least one case
-		// this code was reached and $file did not exist. Go figure... 
-
 		if ($x['success'] && file_exists($file)) {
 			$i = @getimagesize($file);
 			if ($i && $i[2]) {  // looking for non-zero imagetype
@@ -58,9 +54,13 @@ class Img_cache {
 				return true;
 			}
 		}
-		// Ignore errors - we don't care if it doesn't exist here.
-		@unlink($file);
 
+		// We could not cache the image for some reason. Leave an empty file here
+		// to provide a record of the attempt. We'll use this as a flag to avoid
+		// doing it again repeatedly.
+
+		file_put_contents($file, EMPTY_STR);
+		logger('cache failed ' . $file);
 		return false;
 	}
 
