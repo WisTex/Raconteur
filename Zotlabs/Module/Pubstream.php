@@ -154,7 +154,8 @@ class Pubstream extends Controller {
 			$pager_sql = '';
 		}
 		else {
-			App::set_pager_itemspage(20);
+			$itemspage = ((local_channel()) ? get_pconfig(local_channel(),'system','itemspage', 20) : 20);
+			App::set_pager_itemspage($itemspage);
 			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 		}
 	
