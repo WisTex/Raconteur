@@ -1023,6 +1023,17 @@ function linkify($s, $me = false) {
  */
 function sslify($s, $cache_enable = true) {
 
+	if (! $cache_enable) {
+
+		// we're fetching an old item and we are no longer
+		// caching photos for it. Remove any existing cached photos.
+		// Cron_weekly tasks will also remove these, but if the cache
+		// entry was updated recently they might not get removed for
+		// another couple of months.
+		
+		uncache($s);
+	}
+
 	if ((! $cache_enable) || (! intval(get_config('system','cache_images', 1)))) {
 
 		// if caching is prevented for whatever reason, proxy any non-SSL photos
@@ -1066,6 +1077,30 @@ function sslify($s, $cache_enable = true) {
 
 	return $s;
 }
+
+// clean out the image cache
+
+function uncache($s) {
+
+	$pattern = "/\<img(.*?)src=\"(https?\:.*?)\"(.*?)\>/ism";
+	
+	$matches = null;
+	$cnt = preg_match_all($pattern,$s,$matches,PREG_SET_ORDER);
+	if ($cnt) {
+		foreach ($matches as $match) {
+			// repeat the filename generation procedure we used when creating the cache entry
+			$clean = strip_zids(strip_query_param($match[2],'f'));
+			$file = Img_cache::get_filename($clean,'cache/img');
+			if (file_exists($file)) {
+				unlink($file);
+			}
+		}
+	}
+
+	return $s;
+}
+
+
 
 /**
  * @brief Get an array of poke verbs.
@@ -1781,6 +1816,8 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 		$cache_expire = 60;
 	}
 	$cache_enable = ((($cache_expire) && ($item['created'] < datetime_convert('UTC','UTC', 'now - ' . $cache_expire . ' days'))) ? false : true);
+
+
 
 	if($s)
 		$s = sslify($s, $cache_enable);

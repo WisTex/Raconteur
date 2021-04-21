@@ -7,11 +7,16 @@ use Zotlabs\Daemon\Run;
 class Img_cache {
 
 	static $cache_life = 18600 * 7;
-
+	
 	static function get_filename($url, $prefix = '.') {
 		return Hashpath::path($url,$prefix);
 	}
 
+	// Check to see if we have this url in our cache
+	// If we have it return true.
+	// If we do not, or the cache file is empty or expired, return false
+	// but attempt to fetch the entry in the background
+	
 	static function check($url, $prefix = '.') {
 
 		if (strpos($url,z_root()) !== false) {
@@ -22,15 +27,16 @@ class Img_cache {
 		if (file_exists($path)) {
 			$t = filemtime($path);
 			if ($t && time() - $t >= self::$cache_life) {
-				if (self::url_to_cache($url,$path)) {
-					return true;
-				}
+				Run::Summon( [ 'Cache_image', $url, $path ] );
 				return false;
 			}
-			return true;
+			else {
+				return ((filesize($path)) ? true : false);
+			}
 		}
 
-		return self::url_to_cache($url,$path);
+		Run::Summon( [ 'Cache_image', $url, $path ] );
+		return false;
 	}
 
 	static function url_to_cache($url,$file) {
