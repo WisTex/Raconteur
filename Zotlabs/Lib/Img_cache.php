@@ -12,6 +12,11 @@ class Img_cache {
 		return Hashpath::path($url,$prefix);
 	}
 
+	// Check to see if we have this url in our cache
+	// If we have it return true.
+	// If we do not, or the cache file is empty or expired, return false
+	// but attempt to fetch the entry in the background
+	
 	static function check($url, $prefix = '.') {
 
 		if (strpos($url,z_root()) !== false) {
