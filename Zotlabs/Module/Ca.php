@@ -9,7 +9,7 @@ class Ca extends Controller {
 		if (argc() > 1) {
 			$path = 'cache/img/' . substr(argv(1),0,2) . '/' . argv(1);
 
-			if (file_exists($path)) {
+			if (file_exists($path) && filesize($path)) {
 				$x = @getimagesize($path);
 				if ($x) {
 					header('Content-Type: ' . $x['mime']);
