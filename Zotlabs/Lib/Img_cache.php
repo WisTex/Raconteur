@@ -7,7 +7,7 @@ use Zotlabs\Daemon\Run;
 class Img_cache {
 
 	static $cache_life = 18600 * 7;
-
+	
 	static function get_filename($url, $prefix = '.') {
 		return Hashpath::path($url,$prefix);
 	}
@@ -22,10 +22,7 @@ class Img_cache {
 		if (file_exists($path)) {
 			$t = filemtime($path);
 			if ($t && time() - $t >= self::$cache_life) {
-				if (self::url_to_cache($url,$path)) {
-					return true;
-				}
-				return false;
+				return self::url_to_cache($url,$path);
 			}
 			return true;
 		}
