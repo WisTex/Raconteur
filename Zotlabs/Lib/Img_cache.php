@@ -22,12 +22,16 @@ class Img_cache {
 		if (file_exists($path)) {
 			$t = filemtime($path);
 			if ($t && time() - $t >= self::$cache_life) {
-				return self::url_to_cache($url,$path);
+				Run::Summon( [ 'Cache_image', $url, $path ] );
+				return false;
 			}
-			return true;
+			else {
+				return ((filesize($path)) ? true : false);
+			}
 		}
 
-		return self::url_to_cache($url,$path);
+		Run::Summon( [ 'Cache_image', $url, $path ] );
+		return false;
 	}
 
 	static function url_to_cache($url,$file) {
