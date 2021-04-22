@@ -132,7 +132,7 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = []) {
 		@curl_setopt($ch, CURLOPT_TIMEOUT, intval($opts['timeout']));
 	}
 	else {
-		$curl_time = intval(@get_config('system','curl_timeout',60));
+		$curl_time = intval(get_config('system','curl_timeout',60));
 		@curl_setopt($ch, CURLOPT_TIMEOUT, $curl_time);
 	}
 
