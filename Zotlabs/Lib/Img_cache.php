@@ -34,7 +34,9 @@ class Img_cache {
 				return ((filesize($path)) ? true : false);
 			}
 		}
-
+		
+		// Cache_image invokes url_to_cache() as a background task
+		
 		Run::Summon( [ 'Cache_image', $url, $path ] );
 		return false;
 	}
@@ -47,9 +49,14 @@ class Img_cache {
 			logger('failed to open storage file: ' . $file,LOGGER_NORMAL,LOG_ERR);
 			return false;
 		}
+
+		// don't check certs, and since we're running in the background,
+		// allow a two-minute timeout rather than the default one minute.
+		// This is a compromise. We want to cache all the slow sites we can,
+		// but don't want to rack up too many processes doing so. 
 		
 		$redirects = 0;
-		$x = z_fetch_url($url,true,$redirects,[ 'filep' => $fp, 'novalidate' => true ]);
+		$x = z_fetch_url($url,true,$redirects,[ 'filep' => $fp, 'novalidate' => true, 'timeout' => 120 ]);
 
 		fclose($fp);
 		
@@ -66,7 +73,7 @@ class Img_cache {
 		// doing it again repeatedly.
 
 		file_put_contents($file, EMPTY_STR);
-		logger('cache failed ' . $file);
+		logger('cache failed from  ' . $url);
 		return false;
 	}
 
