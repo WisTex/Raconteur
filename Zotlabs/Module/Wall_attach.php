@@ -103,69 +103,71 @@ class Wall_attach extends Controller {
 			notice( $r['message'] . EOL);
 			killme();
 		}
-	
+
+		$s = EMPTY_STR;
+		
 		if (intval($r['data']['is_photo'])) {
-			$s = "\n\n" . $r['body'] . "\n\n";
+			$s .= "\n\n" . $r['body'] . "\n\n";
 		}
-		else {
 
-			$url = z_root() . '/cloud/' . $channel['channel_address'] . '/' . $r['data']['display_path'];
+		$url = z_root() . '/cloud/' . $channel['channel_address'] . '/' . $r['data']['display_path'];
 
-			if (strpos($r['data']['filetype'],'video') === 0) {
-				for ($s = 0; $s < 15; $s ++) {
-					$thumb = Linkinfo::get_video_poster($url);
-					if ($thumb) {
-						break;
-					}
-					sleep(1);
-					continue;
-				}
-
+		if (strpos($r['data']['filetype'],'video') === 0) {
+			for ($n = 0; $n < 15; $n ++) {
+				$thumb = Linkinfo::get_video_poster($url);
 				if ($thumb) {
-					$s = "\n\n" . '[zvideo poster=\'' . $thumb . '\']' . $url . '[/zvideo]' . "\n\n";
+					break;
 				}
-				else {
-					$s = "\n\n" . '[zvideo]' . $url . '[/zvideo]' . "\n\n";
-				}
+				sleep(1);
+				continue;
 			}
-			if (strpos($r['data']['filetype'],'audio') === 0) {
-				$s = "\n\n" . '[zaudio]' . $url . '[/zaudio]' . "\n\n";
+
+			if ($thumb) {
+				$s .= "\n\n" . '[zvideo poster=\'' . $thumb . '\']' . $url . '[/zvideo]' . "\n\n";
 			}
-			if ($r['data']['filetype'] === 'image/svg+xml') {
-				$x = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
-				if ($x) {
-					$bb = svg2bb($x);
-					if ($bb) {
-						$s .= "\n\n" . $bb;
-					}
-					else {
-						logger('empty return from svgbb');
-					}
-				}
-				else {
-					logger('unable to read svg data file: ' . 'store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
-				}
+			else {
+				$s .= "\n\n" . '[zvideo]' . $url . '[/zvideo]' . "\n\n";
 			}
-			if ($r['data']['filetype'] === 'text/vnd.abc' && addon_is_installed('abc')) {
-				$x = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
-				if ($x) {
-					$s .= "\n\n" . '[abc]' . $x . '[/abc]';
-				}
-				else {
-					logger('unable to read ABC data file: ' . 'store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
-				}
-			}
-			if ($r['data']['filetype'] === 'text/calendar') {
-				$content = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
-				if ($content) {
-					$ev = ical_to_ev($content);
-					if ($ev) {
-						$s .= "\n\n" . format_event_bbcode($ev[0]) . "\n\n";
-					}
-				}
-			}			
-			$s .=  "\n\n" . '[attachment]' . $r['data']['hash'] . ',' . $r['data']['revision'] . '[/attachment]' . "\n";
 		}
+		if (strpos($r['data']['filetype'],'audio') === 0) {
+			$s .= "\n\n" . '[zaudio]' . $url . '[/zaudio]' . "\n\n";
+		}
+		if ($r['data']['filetype'] === 'image/svg+xml') {
+			$x = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+			if ($x) {
+				$bb = svg2bb($x);
+				if ($bb) {
+					$s .= "\n\n" . $bb;
+				}
+				else {
+					logger('empty return from svgbb');
+				}
+			}
+			else {
+				logger('unable to read svg data file: ' . 'store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+			}
+		}
+		if ($r['data']['filetype'] === 'text/vnd.abc' && addon_is_installed('abc')) {
+			$x = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+			if ($x) {
+				$s .= "\n\n" . '[abc]' . $x . '[/abc]';
+			}
+			else {
+				logger('unable to read ABC data file: ' . 'store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+			}
+		}
+		if ($r['data']['filetype'] === 'text/calendar') {
+			$content = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+			if ($content) {
+				$ev = ical_to_ev($content);
+				if ($ev) {
+					$s .= "\n\n" . format_event_bbcode($ev[0]) . "\n\n";
+				}
+			}
+		}			
+
+		$s .=  "\n\n" . '[attachment]' . $r['data']['hash'] . ',' . $r['data']['revision'] . '[/attachment]' . "\n";
+
 	
 		if ($using_api) {
 			return $s;
