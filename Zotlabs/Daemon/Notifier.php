@@ -401,12 +401,10 @@ class Notifier {
 				logger('followup relay (upstream delivery)', LOGGER_DEBUG);
 				$sendto = ($uplink) ? $parent_item['source_xchan'] : $parent_item['owner_xchan'];
 				self::$recipients = [ $sendto ];
-
-if (defined('X-REPLY-TO'))  {
-// experimental until debugging is completed
-
+				// over-ride upstream recipients if 'replyTo' was set in the parent.
 				if ($parent_item['replyto'] && (! $uplink)) {
-					logger('replyto: over-riding owner '  . $sendto, LOGGER_DEBUG); 
+					logger('replyto: over-riding owner '  . $sendto, LOGGER_DEBUG);
+					// unserialise is a no-op if presented with data that wasn't serialised. 
 					$ptr = unserialise($parent_item['replyto']);
 					if (is_string($ptr)) {
 						if (ActivityStreams::is_url($sendto)) {
@@ -430,7 +428,6 @@ if (defined('X-REPLY-TO'))  {
 				
 				logger('replyto: upstream recipients ' . print_r($sendto,true), LOGGER_DEBUG);
 				
-} // END defined('X-REPLY-TO')
 
 				self::$private = true;
 				$upstream = true;

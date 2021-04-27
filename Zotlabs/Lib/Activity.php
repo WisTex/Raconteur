@@ -3340,6 +3340,18 @@ class Activity {
 			return;
 		}
 
+		$maxlen = get_max_import_size();
+
+		if($maxlen && mb_strlen($item['body']) > $maxlen) {
+			$item['body'] = mb_substr($item['body'],0,$maxlen,'UTF-8');
+			logger('message length exceeds max_import_size: truncated');
+		}
+
+		if($maxlen && mb_strlen($item['summary']) > $maxlen) {
+			$item['summary'] = mb_substr($item['summary'],0,$maxlen,'UTF-8');
+			logger('message summary length exceeds max_import_size: truncated');
+		}
+
 		if ($act->obj['context']) {
 			set_iconfig($item,'activitypub','context',$act->obj['context'],1);
 		}

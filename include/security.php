@@ -176,7 +176,7 @@ function atoken_delete($atoken_id) {
  * @brief
  *
  * In order for atoken logins to create content (such as posts) they need a stored xchan.
- * we'll create one on the first atoken_login; it can't really ever go away but perhaps
+ * we'll create one on atoken creation; it can't really ever go away but perhaps
  * @fixme we should set xchan_deleted if it's expired or removed
  *
  * @param array $xchan
