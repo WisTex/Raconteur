@@ -3,7 +3,7 @@ Available apps
 
 ### Calendar
 
-This app provides access to a local CalDAV server which can be used to sync/manage calendars from your operating system or email program. It is not the same as the Events app and should only be installed if you have a specific need for CalDAV.
+This app provides access to a local CalDAV server which can be used to sync/manage calendars from your operating system or email program. It is not the same as the Events app and should only be installed if you have a specific need for a CalDAV server.
 
 ### Categories
 
@@ -15,7 +15,7 @@ Installed by default. This app provides access to your channel home page.
 
 ### Clients
 
-This app allows you to create Oauth2/Openid access credentials. Typically used to provide authentication for mobile and third-party client applications.
+This app allows you to create and manage Oauth2 access credentials, which are typically used to provide authentication for mobile and third-party client applications.
 
 ### Comment Control
 
@@ -27,11 +27,11 @@ Installed by default. This app manages your connections (followers and following
 
 ### Content Filter
 
-Allows you to specify different rules to incoming posts and comments, either on a per connection basis or as a global filter which applies to all incoming messages. Filtering can take place using hashtags, categories, regular expressions, text content, and language matching.
+Allows you to specify different rules to incoming posts and comments, either on a per connection basis or as a global filter which applies to all incoming messages. Filtering can take place using hashtags, categories, regular expressions, text content, and language matching. Posts and comments matching the rules are rejected and will not be stored.
 
 ### Content Import
 
-Requires the 'content_import' addon. When migrating to a new site, first import the identity and settings. Then install/run this app to import your content - such as posts, comments, files, and photos.
+Requires the site administrator to install the 'content_import' addon. This allows you to migrate content from another instance of this channel. It should not be needed unless there were issues importing content and/or file storage when the channel was first imported.
 
 ### Directory
 
@@ -57,7 +57,7 @@ Installed by default. This app provides access to your cloud storage and WebDAV 
 
 ### Followlist
 
-This app is only present if the 'followlist' addon is installed. It allows you to bulk connect with a list of channels. Typically this will be the 'following' ActivityPub collection on another server. We also accept Mastodon contact export files.
+This app is only present if the 'followlist' addon is installed by the site administrator. It allows you to bulk connect with a list of channels. Typically this will be the 'following' ActivityPub collection on another server. We also accept Mastodon contact export files.
 
 ### Friend Zoom
 
@@ -69,7 +69,7 @@ Set a post to be published at/after a certain date/time. Usually used for automa
 
 ### Gallery
 
-Requires the 'gallery' addon. This provides an improved image browser to your photos than the stock 'Photos' app. Interactions with photos in your stream are modified slightly.
+Available if the 'gallery' addon has been installed by the site administrator. This provides an improved image browser to your photos than the stock 'Photos' app. Interactions with photos in your stream are modified slightly.
 
 ### Guest Pass
 
@@ -77,7 +77,7 @@ Does not require app installation, although it will be more accessible if the ap
 
 ### Hexit
 
-Requires the 'hexit' addon. This provides an online hexadecimal/decimal converter. 
+Available if the 'hexit' addon has been installed by the site administrator. This provides an online hexadecimal/decimal converter. 
 
 ### Language
 
@@ -89,7 +89,7 @@ Installed by default. Some software refers to this functionality as 'Aspects' (D
 
 ### Markup
 
-Provides editor buttons for bold, italic, underline, etc. Otherwise the relevant codes will need to be entered manually. This software recognises both Markdown and bbcode.
+Provides editor buttons for bold, italic, underline, etc. Otherwise the relevant codes will need to be entered manually. This software recognises Markdown, HTML, and bbcode.
 
 ### Notes
 
@@ -97,11 +97,15 @@ Provides a simple notepad on your stream page for making notes and reminders.
 
 ### NSFW
 
-"Not Safe For Work". Requires the 'nsfw' addon. By default this will collapse and hide posts matching any of your rules unless you are running in "safe mode". These rules are based on hashtags, text content, regular expressions, and language. It is like the 'Content Filter' app except that all matching posts are present in your stream but require you to open each such message to view. Posts matching 'Content Filter' rules are rejected and will not be present in your stream. You can select whether or not you are running in 'safe mode' in your personal menu, and this setting is preserved separately for each login. This means your work computer can be in 'safe mode' and questionable content hidden, while your home computer may be configured to show everything by default.
+"Not Safe For Work". Available if the 'nsfw' addon has been installed on this site. By default this will collapse and hide posts matching any of your rules unless you are running in "safe mode". These rules are based on hashtags, text content, regular expressions, and language.
+
+It is like the 'Content Filter' app except that all matching posts are present in your stream but require you to open each such message to view. Posts matching 'Content Filter' rules are rejected and will not be present in your stream.
+
+You can select whether or not you are running in 'safe mode' in your personal menu, and this setting is preserved separately for each login. This means your work computer can be in 'safe mode' and questionable content hidden, while your home computer may be configured to show everything by default.
 
 ### Photomap
 
-If your uploaded photos have location support, this addon provides an optional map display of those locations in your 'Photos' app. This may require installing either the 'openstreetmap' addon or some other map provider.
+If your uploaded photos have location support, this addon provides an optional map display of those locations in your 'Photos' app. This may require the site administrator to install a map provider addon such as 'openstreetmap'.
 
 ### Photos
 
@@ -113,11 +117,11 @@ This app lets you open a post editor at any time.
 
 ### Qrator
 
-Requires the 'qrator' addon and provides a page to generate QR codes for your requirements.
+Available if the 'qrator' addon has been installed. This provides a page to generate QR codes for your requirements.
 
 ### Rainbow Tag
 
-Requires both the 'rainbowtag' addon and Tagadelic app. This converts the tag clouds provided by Tagadelic from monochrome into color.
+Available if the 'rainbowtag' addon has been installed on the site. Also requires the Tagadelic app. This converts the tag clouds provided by Tagadelic from monochrome into color.
 
 ### Search
 
@@ -142,7 +146,7 @@ Installed by default. This represents the conversations of you and your connecti
 
 ### Stream Order
 
-Requires the 'stream_order' addon. Provides a setting on the Stream page to select between various sort orders, such as 'last commented date' (conversational), 'posted date' (also conversational) and 'date unthreaded' which lists every activity as a separate message.
+Available if the 'stream_order' addon is installed on the site. Provides a setting on the Stream page to select between various sort orders, such as 'last commented date' (conversational), 'posted date' (also conversational) and 'date unthreaded' which lists every activity as a separate message.
 
 ### Suggest Channels
 
@@ -163,7 +167,7 @@ This is like 'Lists', except you do not need to manage the list membership. By d
 
 ### Zotpost
 
-Requires the 'zotpost' addon. This configures the zotpost addon to automatically cross-post to your channel on another Zot6 site.
+Available if the 'zotpost' addon has been installed on the site. This configures the zotpost addon to automatically cross-post to your channel on another Zot6 site.
 
 
 

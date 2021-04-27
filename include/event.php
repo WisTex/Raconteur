@@ -7,6 +7,7 @@
 use Sabre\VObject;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Access\AccessControl;
 
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
@@ -610,7 +611,7 @@ function event_addtocal($item_id, $uid) {
 		if($ev['private'])
 			$ev['allow_cid'] = '<' . $channel['channel_hash'] . '>';
 		else {
-			$acl = new Zotlabs\Access\AccessControl($channel);
+			$acl = new AccessControl($channel);
 			$x = $acl->get();
 			$ev['allow_cid'] = $x['allow_cid'];
 			$ev['allow_gid'] = $x['allow_gid'];
