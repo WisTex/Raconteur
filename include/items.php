@@ -4778,26 +4778,26 @@ function copy_of_pubitem($channel,$mid) {
 		intval($channel['channel_id'])
 	);
 
-	if($r) {
+	if ($r) {
 		logger('exists');
 		$item = fetch_post_tags($r,true);
 		return $item[0];
 	}
 
 
-	$r = q("select * from item where parent_mid = (select parent_mid from item where mid = '%s' and ( uid = %d OR ( item_private = 0 and item_wall = 1 ) ) ) order by id ",
+	$r = q("select * from item where parent_mid = ( select parent_mid from item where mid = '%s' and uid = %d ) order by id ",
 		dbesc($mid),
 		intval($syschan['channel_id'])
 	);
 		
-	if($r) {
+	if ($r) {
 		$items = fetch_post_tags($r,true);
-		foreach($items as $rv) {
+		foreach ($items as $rv) {
 			$d = q("select id from item where mid = '%s' and uid = %d limit 1",
 				dbesc($rv['mid']),
 				intval($channel['channel_id'])
 			);
-			if($d) {
+			if ($d) {
 				continue;
 			}
 
@@ -4809,7 +4809,7 @@ function copy_of_pubitem($channel,$mid) {
 			$rv['item_origin'] = 0;
 
 			$x = item_store($rv);
-			if($x['item_id'] && $x['item']['mid'] === $mid) {
+			if ($x['item_id'] && $x['item']['mid'] === $mid) {
 				$result = $x['item'];
 			}
 
