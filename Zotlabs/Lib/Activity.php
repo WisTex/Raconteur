@@ -2854,7 +2854,7 @@ class Activity {
 							$ptr = [ $act->obj['url'] ];
 						}
 						foreach ($ptr as $vurl) {
-							if (in_array($vurl['mediaType'], $atypes) && self::media_not_in_body($vurl['href'],$s['body'])) {
+							if (isset($vurl['mediaType']) && in_array($vurl['mediaType'], $atypes) && self::media_not_in_body($vurl['href'],$s['body'])) {
 								$s['body'] .= "\n\n" . '[audio]' . $vurl['href'] . '[/audio]';
 								break;
 							}
@@ -2886,7 +2886,7 @@ class Activity {
 							$ptr = [ $act->obj['url'] ];
 						}
 						foreach ($ptr as $vurl) {
-							if (strpos($s['body'],$vurl['href']) === false) {
+							if (is_array($vurl) && isset($vurl['href']) && strpos($s['body'],$vurl['href']) === false) {
 								$s['body'] .= "\n\n" . '[zmg]' . $vurl['href'] . '[/zmg]';
 								break;
 							}
@@ -2915,7 +2915,7 @@ class Activity {
 							$ptr = [ $act->obj['url'] ];
 						}
 						foreach ($ptr as $vurl) {
-							if (array_key_exists('mediaType',$vurl) && $vurl['mediaType'] === 'text/html') {
+							if (is_array($vurl) && array_key_exists('mediaType',$vurl) && $vurl['mediaType'] === 'text/html') {
 								$purl = $vurl['href'];
 								break;
 							}
@@ -2955,7 +2955,7 @@ class Activity {
 						$ptr = [ $act->obj['url'] ];
 					}
 					foreach ($ptr as $vurl) {
-						if (array_key_exists('mediaType',$vurl) && $vurl['mediaType'] === 'text/html') {
+						if (is_array($vurl) && array_key_exists('mediaType',$vurl) && $vurl['mediaType'] === 'text/html') {
 							$s['plink'] = $vurl['href'];
 							break;
 						}
