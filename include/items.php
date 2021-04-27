@@ -4771,7 +4771,7 @@ function copy_of_pubitem($channel,$mid) {
 	$result = null;
 	$syschan = get_sys_channel();
 
-	// logger('copy_of_pubitem: ' . $channel['channel_id'] . ' mid: ' . $mid);
+	logger('copy_of_pubitem: ' . $channel['channel_id'] . ' mid: ' . $mid);
 
 	$r = q("select * from item where mid = '%s' and uid = %d limit 1",
 		dbesc($mid),
@@ -4798,6 +4798,7 @@ function copy_of_pubitem($channel,$mid) {
 				intval($channel['channel_id'])
 			);
 			if ($d) {
+				logger('mid: ' . $mid . ' already copied. Continuing.');
 				continue;
 			}
 
@@ -4814,6 +4815,9 @@ function copy_of_pubitem($channel,$mid) {
 			}
 
 		}
+	}
+	else {
+		logger('copy query failed.');
 	}
 	return $result;		
 }
