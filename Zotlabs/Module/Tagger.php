@@ -40,7 +40,12 @@ class Tagger extends \Zotlabs\Web\Controller {
 				intval($item_id),
 				intval($sys['channel_id'])
 			);	
-			if($r) {
+			if (! $r) {
+				$r = q("select * from item where id = %d and item_private = 0 and item_wall = 1",
+					intval($item_id)
+				);
+			}
+			if ($r) {
 				$r = [ copy_of_pubitem($channel, $i[0]['mid']) ];
                 $item_id = (($r) ? $r[0]['id'] : 0);
 			}

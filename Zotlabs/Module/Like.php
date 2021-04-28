@@ -238,11 +238,10 @@ class Like extends Controller {
 			);
 
 			// if interacting with a pubstream item,
-			// create a copy of the parent in your stream. If not the conversation
-			// parent, copy that as well.
+			// create a copy of the parent in your stream.
 
-			if($r) {
-				if($r[0]['uid'] === $sys_channel['channel_id'] && local_channel()) {
+			if ($r) {
+				if (local_channel()) {
 					$r = [ copy_of_pubitem(App::get_channel(), $r[0]['mid']) ];
 				}
 			}
