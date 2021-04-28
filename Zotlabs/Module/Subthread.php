@@ -36,10 +36,17 @@ class Subthread extends Controller {
 		);
 
 		if (! $i) {
+			// try the global public stream
 			$i = q("select * from item where id = %d and uid = %d",
 				intval($postid),
 				intval($sys['channel_id'])
 			);
+			// try the local public stream
+			if (! $i) {
+				$i = q("select * from item where id = %d and item_wall = 1 and item_private = 0",
+					intval($postid)
+				);
+			}
 
 			if ($i) {
 				$i = [ copy_of_pubitem($channel, $i[0]['mid']) ];

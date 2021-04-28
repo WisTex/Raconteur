@@ -268,6 +268,13 @@ class Libzotdir {
 		if (! $hash)
 			return false;
 
+
+		$maxlen = get_max_import_size();
+
+		if($maxlen && mb_strlen($profile['about']) > $maxlen) {
+			$profile['about'] = mb_substr($profile['about'],0,$maxlen,'UTF-8');
+		}
+
 		$arr = [];
 
 		$arr['xprof_hash']         = $hash;
