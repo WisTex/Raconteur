@@ -491,6 +491,7 @@ class Item extends Controller {
 					intval($uid)
 				);
 			}
+
 			// if this isn't the real parent of the conversation, find it
 			if ($r) {
 				$parid = $r[0]['parent'];
@@ -504,7 +505,7 @@ class Item extends Controller {
 				// if interacting with a pubstream item (owned by the sys channel), 
 				// create a copy of the parent in your stream
 
-				if ($r[0]['uid'] === $sys['channel_id'] && local_channel()) {
+				if (local_channel()) {
 					$r = [ copy_of_pubitem(App::get_channel(), $r[0]['mid']) ];
 				}
 			}
