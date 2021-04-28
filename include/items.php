@@ -4771,7 +4771,7 @@ function copy_of_pubitem($channel,$mid) {
 	$result = null;
 	$syschan = get_sys_channel();
 
-	// logger('copy_of_pubitem: ' . $channel['channel_id'] . ' mid: ' . $mid);
+	logger('copy_of_pubitem: ' . $channel['channel_id'] . ' mid: ' . $mid);
 
 	$r = q("select * from item where mid = '%s' and uid = %d limit 1",
 		dbesc($mid),
@@ -4784,11 +4784,21 @@ function copy_of_pubitem($channel,$mid) {
 		return $item[0];
 	}
 
-
+	// this query is used for the global public stream
 	$r = q("select * from item where parent_mid = ( select parent_mid from item where mid = '%s' and uid = %d ) order by id ",
 		dbesc($mid),
 		intval($syschan['channel_id'])
 	);
+
+	// if that failed, try to find entries that would have been posted in the local public stream
+	if (! $r) {
+		$r = q("select * from item where parent_mid = ( select distinct (parent_mid) from item where mid = '%s' and item_wall = 1 and item_private = 0 ) order by id ",
+			dbesc($mid),
+			intval($syschan['channel_id'])
+		);
+	}
+
+
 		
 	if ($r) {
 		$items = fetch_post_tags($r,true);
@@ -4798,6 +4808,7 @@ function copy_of_pubitem($channel,$mid) {
 				intval($channel['channel_id'])
 			);
 			if ($d) {
+				logger('mid: ' . $rv['mid'] . ' already copied. Continuing.');
 				continue;
 			}
 
@@ -4814,6 +4825,9 @@ function copy_of_pubitem($channel,$mid) {
 			}
 
 		}
+	}
+	else {
+		logger('copy query failed.');
 	}
 	return $result;		
 }
