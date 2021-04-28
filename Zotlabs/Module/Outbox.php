@@ -9,6 +9,7 @@ use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\ThreadListener;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\ActivityPub;
 use Zotlabs\Lib\Config;
 
 /**
@@ -17,11 +18,6 @@ use Zotlabs\Lib\Config;
 
 
 class Outbox extends Controller {
-
-	function init() {
-
-
-	}
 
 	function post() {
 		if (argc() < 2) {
@@ -45,7 +41,17 @@ class Outbox extends Controller {
 		if (! $observer) {
 			killme();
 		}
-		
+
+		if ($observer['xchan_hash'] !== $channel['channel_hash']) {
+			if (! perm_is_allowed($channel['channel_id'],$observer['xchan_hash'],'post_wall')) {
+				logger('outbox post permission denied to ' . $observer['xchan_name']);
+				killme();
+			}
+		}
+// disable C2S until we've fully tested it.
+return;
+
+
 		$data = file_get_contents('php://input');
 		if (! $data) {
 			return;
@@ -59,15 +65,131 @@ class Outbox extends Controller {
 			return;
 		}
 		
+		if (! PConfig::Get($channel['channel_id'],'system','activitypub',Config::Get('system','activitypub',ACTIVITYPUB_ENABLED))) {
+			return;
+		}
+			
+		logger('outbox_channel: ' . $channel['channel_address'],LOGGER_DEBUG);
 
+//		switch ($AS->type) {
+//			case 'Follow':
+//				if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStreams::is_an_actor($AS->obj['type']) && isset($AS->obj['id'])) {
+//					// do follow activity
+//					Activity::follow($channel,$AS);
+//				}
+//				break;
+//			case 'Invite':
+//				if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
+//					// do follow activity
+//					Activity::follow($channel,$AS);
+//				}
+//				break;
+//			case 'Join':
+//				if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
+//					// do follow activity
+//					Activity::follow($channel,$AS);
+//				}
+//				break;
+//			case 'Accept':			
+//				// Activitypub for wordpress sends lowercase 'follow' on accept.
+//				// https://github.com/pfefferle/wordpress-activitypub/issues/97
+//				// Mobilizon sends Accept/"Member" (not in vocabulary) in response to Join/Group
+//				if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && in_array($AS->obj['type'], ['Follow','follow', 'Member'])) {
+//					// do follow activity
+//					Activity::follow($channel,$AS);
+//				}
+//				break;
+//			case 'Reject':
+//			default:
+//				break;
+//
+//		}
 
+		// These activities require permissions		
 
+		$item = null;
 
+		switch ($AS->type) {
+			case 'Update':
+				if (is_array($AS->obj) && array_key_exists('type',$AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])) {
+					// pretend this is an old cache entry to force an update of all the actor details
+					$AS->obj['cached'] = true;
+					$AS->obj['updated'] = datetime_convert('UTC','UTC','1980-01-01', ATOM_TIME);
+					Activity::actor_store($AS->obj['id'],$AS->obj);
+					break;
+				}
+			case 'Accept':
+				if (is_array($AS->obj) && array_key_exists('type',$AS->obj) && (ActivityStreams::is_an_actor($AS->obj['type']) || $AS->obj['type'] === 'Member')) {
+					break;
+				}
+			case 'Create':
+			case 'Like':
+			case 'Dislike':
+			case 'Announce':
+			case 'Reject':
+			case 'TentativeAccept':
+			case 'TentativeReject':
+			case 'Add':
+			case 'Arrive':
+			case 'Block':
+			case 'Flag':
+			case 'Ignore':
+			case 'Invite':
+			case 'Listen':
+			case 'Move':
+			case 'Offer':
+			case 'Question':
+			case 'Read':
+			case 'Travel':
+			case 'View':
+			case 'emojiReaction':
+			case 'EmojiReaction':
+			case 'EmojiReact':
+				// These require a resolvable object structure
+				if (is_array($AS->obj)) {
+					// The boolean flag enables html cache of the item
+					$item = Activity::decode_note($AS,true);
+				}
+				else {
+					logger('unresolved object: ' . print_r($AS->obj,true));
+				}
+				break;
+			case 'Undo':
+				if ($AS->obj && is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Follow') {
+					// do unfollow activity
+					Activity::unfollow($channel,$AS);
+					break;
+				}
+			case 'Leave':
+				if ($AS->obj && is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
+					// do unfollow activity
+					Activity::unfollow($channel,$AS);
+					break;
+				}
+			case 'Tombstone':
+			case 'Delete':
+				Activity::drop($channel,$observer_hash,$AS);
+				break;
+			case 'Move':
+				if($observer_hash && $observer_hash === $AS->actor
+				&& is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStream::is_an_actor($AS->obj['type'])
+				&& is_array($AS->tgt) && array_key_exists('type', $AS->tgt) && ActivityStream::is_an_actor($AS->tgt['type'])) {
+					ActivityPub::move($AS->obj,$AS->tgt);
+				}
+				break;
+			case 'Add':
+			case 'Remove':
+			default:
+				break;
 
+		}
 
+		if ($item) {
+			logger('parsed_item: ' . print_r($item,true),LOGGER_DATA);
+			Activity::store($channel,$observer_hash,$AS,$item);
+		}
 
-
-
+		http_status_exit(200,'OK');
 		return;
 
 	}

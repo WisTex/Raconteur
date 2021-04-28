@@ -4771,33 +4771,44 @@ function copy_of_pubitem($channel,$mid) {
 	$result = null;
 	$syschan = get_sys_channel();
 
-	// logger('copy_of_pubitem: ' . $channel['channel_id'] . ' mid: ' . $mid);
+	logger('copy_of_pubitem: ' . $channel['channel_id'] . ' mid: ' . $mid);
 
 	$r = q("select * from item where mid = '%s' and uid = %d limit 1",
 		dbesc($mid),
 		intval($channel['channel_id'])
 	);
 
-	if($r) {
+	if ($r) {
 		logger('exists');
 		$item = fetch_post_tags($r,true);
 		return $item[0];
 	}
 
-
-	$r = q("select * from item where parent_mid = (select parent_mid from item where mid = '%s' and ( uid = %d OR ( item_private = 0 and item_wall = 1 ) ) ) order by id ",
+	// this query is used for the global public stream
+	$r = q("select * from item where parent_mid = ( select parent_mid from item where mid = '%s' and uid = %d ) order by id ",
 		dbesc($mid),
 		intval($syschan['channel_id'])
 	);
+
+	// if that failed, try to find entries that would have been posted in the local public stream
+	if (! $r) {
+		$r = q("select * from item where parent_mid = ( select distinct (parent_mid) from item where mid = '%s' and item_wall = 1 and item_private = 0 ) order by id ",
+			dbesc($mid),
+			intval($syschan['channel_id'])
+		);
+	}
+
+
 		
-	if($r) {
+	if ($r) {
 		$items = fetch_post_tags($r,true);
-		foreach($items as $rv) {
+		foreach ($items as $rv) {
 			$d = q("select id from item where mid = '%s' and uid = %d limit 1",
 				dbesc($rv['mid']),
 				intval($channel['channel_id'])
 			);
-			if($d) {
+			if ($d) {
+				logger('mid: ' . $rv['mid'] . ' already copied. Continuing.');
 				continue;
 			}
 
@@ -4809,11 +4820,14 @@ function copy_of_pubitem($channel,$mid) {
 			$rv['item_origin'] = 0;
 
 			$x = item_store($rv);
-			if($x['item_id'] && $x['item']['mid'] === $mid) {
+			if ($x['item_id'] && $x['item']['mid'] === $mid) {
 				$result = $x['item'];
 			}
 
 		}
+	}
+	else {
+		logger('copy query failed.');
 	}
 	return $result;		
 }
