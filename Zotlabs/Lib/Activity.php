@@ -66,6 +66,11 @@ class Activity {
 			$channel = get_sys_channel();
 		}
 
+		$idn = parse_url($url);
+		if ($idn['host'] !== punify($idn['host'])) {
+			$url = str_replace($idn['host'],punify($idn['host']),$url);
+		}
+
 		logger('fetch: ' . $url, LOGGER_DEBUG);
 
 		if (strpos($url,'x-zot:') === 0) {
