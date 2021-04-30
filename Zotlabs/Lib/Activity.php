@@ -2046,6 +2046,9 @@ class Activity {
 			if (array_key_exists('following',$person_obj) && is_string($person_obj['following'])) {
 				$collections['following'] = $person_obj['following'];
 			}
+			if (array_key_exists('wall',$person_obj) && is_string($person_obj['wall'])) {
+				$collections['wall'] = $person_obj['wall'];
+			}
 			if (array_path_exists('endpoints/sharedInbox',$person_obj) && is_string($person_obj['endpoints']['sharedInbox'])) {
 				$collections['sharedInbox'] = $person_obj['endpoints']['sharedInbox'];
 			}
@@ -3844,6 +3847,7 @@ class Activity {
 			'ostatus'                   => 'http://ostatus.org#',
 			'schema'                    => 'http://schema.org#',
 			'litepub'                   => 'http://litepub.social/ns#',
+			'sm'                        => 'http://smithereen.software/ns#',
 			'conversation'              => 'ostatus:conversation',
 			'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
 			'oauthRegistrationEndpoint' => 'litepub:oauthRegistrationEndpoint',
@@ -3864,6 +3868,7 @@ class Activity {
 			'PropertyValue'             => 'schema:PropertyValue',
 			'value'                     => 'schema:value',
 			'discoverable'              => 'toot:discoverable',
+			'wall'                      => 'sm:wall',
 		];
 
 	}
