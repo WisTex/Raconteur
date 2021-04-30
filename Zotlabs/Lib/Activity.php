@@ -2700,7 +2700,7 @@ class Activity {
 			}
 			// We shouldn't need to store collection contents which could be large. We will often only require the meta-data
 			if (isset($s['tgt_type']) && strpos($s['tgt_type'],'Collection') !== false) {
-				$s['target'] = [ 'id' => $act->tgt['id'], 'type' => $s['tgt_type'] ];
+				$s['target'] = [ 'id' => $act->tgt['id'], 'type' => $s['tgt_type'], 'attributedTo' => ((isset($act->tgt['attributedTo'])) ? $act->tgt['attributedTo'] : $act->tgt['actor']) ];
 			}
 		}
 
