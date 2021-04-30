@@ -2598,7 +2598,13 @@ function tag_deliver($uid, $item_id) {
 	if ($is_group && intval($item['item_thread_top']) && (! intval($item['item_wall'])) && (strpos($item['tgt_type'],'Collection') !== false) && $item['target']) {
 		// group delivery via target - use post_wall permission since send_stream is probably turned off
 		// and this will be turned into an embedded wall-to-wall post
-		$a = json_decode($item['target'],true);
+		if (is_array($item['target'])) {
+			$a = $item['target'];
+		}
+		else {
+			$a = json_decode($item['target'],true);
+		}
+		
 		if ($a) {
 			$id = ((is_string($a)) ? $a : EMPTY_STR);
 			if (is_array($a) && isset($a['id'])) {
