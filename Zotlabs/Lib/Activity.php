@@ -2691,7 +2691,15 @@ class Activity {
 			$s['obj']['actor'] = $s['obj']['actor']['id'];
 		}
 
-		// @todo add target if present
+		if (is_array($act->tgt) && $act->tgt) {
+			if (array_key_exists('type',$act->tgt)) {
+				$s['tgt_type'] = self::activity_obj_mapper($act->tgt['type']);
+			}
+			// We shouldn't need to store collection contents which could be large. We will often only require the meta-data
+			if (isset($s['tgt_type']) && strpos($s['tgt_type'],'Collection') !== false) {
+				$s['target'] = [ 'id' => $act->tgt['id'], 'type' => $s['tgt_type'] ];
+			}
+		}
 
 		$generator = $act->get_property_obj('generator');
 		if ((! $generator) && (! $response_activity)) {

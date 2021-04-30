@@ -100,7 +100,7 @@ class ActivityStreams {
 			$this->type    = $this->get_primary_type();
 			$this->actor   = $this->get_actor('actor','','');
 			$this->obj     = $this->get_compound_property('object');
-			$this->tgt     = $this->get_compound_property('target');
+			$this->tgt     = $this->get_compound_property('target'); 
 			$this->origin  = $this->get_compound_property('origin');
 			$this->recips  = $this->collect_recips();
 			$this->replyto = $this->get_property_obj('replyTo');

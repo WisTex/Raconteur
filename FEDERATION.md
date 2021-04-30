@@ -25,6 +25,8 @@ Groups may be public or private. The initial thread starting post to a group is 
 
 Update: as of 2021-04-08 @mentions are now permitted for posting to public and moderated groups but are not permitted for posting to  restricted or private groups. The group owner can over-ride this behaviour as desired based on the group's security and privacy expectations. DMs (and wall-to-wall posts) are still the recommended methods for posting to groups because they can be used for any groups without needing to remember which are public and which are private; and which may have allowed or disallowed posting via mentions. 
 
+Update: as of 2021-04-30 We will support incoming group posts of the form Add/Note/Collection where Collection is the group outbox. This should match the behaviour of the Smithereen project. If we can determine a way to reliably identify this project or posting method we will attempt to apply it automatically on outbound group posts. This may remain untested until there is an open Smithereen instance of at least alpha quality to test against. 
+
 Comments
 
 This project provides permission control and moderation of comments. By default comments are only accepted from existing connections. This can be changed by the individual. Other sites MAY use zot:commentPolicy (string) as a guide if they do not wish to provide comment abilities where it is known in advance they will be rejected. A Reject/Note activity will be sent if the comment is not permitted. There is currently no response for moderated content, but will likely also be represented by Reject/Note.
