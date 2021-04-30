@@ -46,10 +46,11 @@ class Follow extends Controller {
 			// subsequent accept/reject actions.
 			
 			$orig_follow = get_abconfig($chan['channel_id'],$r[0]['xchan_hash'],'activitypub','their_follow_id');
-
+			$orig_follow_type = get_abconfig($chan['channel_id'],$r[0]['xchan_hash'],'activitypub','their_follow_type');
+			
 			as_return_and_die([
 				'id'     => z_root() . '/follow/' . $r[0]['abook_id'] . (($orig_follow) ? '/' . md5($orig_follow) : EMPTY_STR),                                 
-                'type'   => 'Follow',
+                'type'   => (($orig_follow_type) ? $orig_follow_type : 'Follow'),
                 'actor'  => $actor,
 				'object' => $r[0]['xchan_url']
 			], $chan);

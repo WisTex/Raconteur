@@ -1741,6 +1741,7 @@ class Activity {
 					// Send an Accept back to them
 
 					set_abconfig($channel['channel_id'],$person_obj['id'],'activitypub','their_follow_id', $their_follow_id);
+					set_abconfig($channel['channel_id'],$person_obj['id'],'activitypub','their_follow_type', $act->type);
 					Run::Summon([ 'Notifier', 'permissions_accept', $contact['abook_id'] ]);
 					return;
 
@@ -1782,6 +1783,7 @@ class Activity {
 		// From here on out we assume a Follow activity to somebody we have no existing relationship with
 
 		set_abconfig($channel['channel_id'],$person_obj['id'],'activitypub','their_follow_id', $their_follow_id);
+		set_abconfig($channel['channel_id'],$person_obj['id'],'activitypub','their_follow_type', $act->type);
 
 		// The xchan should have been created by actor_store() above
 
