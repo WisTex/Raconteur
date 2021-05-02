@@ -11,7 +11,7 @@ class Vlists extends Controller {
 
 	function get() {
 
-        $desc = t('This app creates dynamic access lists corresponding to [1] all connections, [2] all ActivityPub protocol connections, and [3] all Zot/6 protocol connections. These additional selections will be found within the Permissions setting tool.');
+        $desc = t('This app creates dynamic access lists corresponding to [1] all connections, [2] all ActivityPub protocol connections, and [3] all Nomad or Zot/6 protocol connections. These additional selections will be found within the Permissions setting tool.');
 
         $text = '<div class="section-content-info-wrapper">' . $desc . '</div>';
 

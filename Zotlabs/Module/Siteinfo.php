@@ -16,7 +16,7 @@ class Siteinfo extends Controller {
 		
 	function get() {
 
-		$federated = 'Zot6';
+		$federated = 'Nomad';
 		if (Config::get('system','activitypub',true)) {
 			$federated .= ', ActivityPub';
 		}
@@ -37,7 +37,7 @@ class Siteinfo extends Controller {
 				'$terms' => t('Terms of Service'),
 				'$prj_header' => t('Software and Project information'),
 				'$prj_name' => t('This site is powered by $Projectname'),
-				'$prj_transport' => t('Federated and decentralised networking and identity services provided by Zot'),
+				'$prj_transport' => t('Federated and decentralised networking and identity services provided by Nomad'),
 				'$transport_link' => '<a href="https://zotlabs.com">https://zotlabs.com</a>',
 
 				'$ebs' => System::ebs(),

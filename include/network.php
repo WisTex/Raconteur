@@ -1589,6 +1589,7 @@ function network_to_name($s) {
 		NETWORK_MAIL        => t('Email'),
 		NETWORK_DIASPORA    => t('Diaspora'),
 		NETWORK_FACEBOOK    => t('Facebook'),
+		NETWORK_ZOT6        => t('Nomad'),
 		NETWORK_ZOT         => t('Zot'),
 		NETWORK_LINKEDIN    => t('LinkedIn'),
 		NETWORK_XMPP        => t('XMPP/IM'),
