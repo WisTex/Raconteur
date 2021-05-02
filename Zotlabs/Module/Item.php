@@ -900,6 +900,17 @@ class Item extends Controller {
 								'term'  => $ng['xchan_name'],
 								'url'   => $ng['xchan_url']
 							);
+							if ($ng['xchan_network'] === 'activitypub') {
+								$colls = get_xconfig($ng['xchan_hash'],'activitypub','collections');
+								if ($colls && is_array($colls) && isset($colls['wall'])) {
+									$datarray['target'] = [
+										'id'           => $colls['wall'],
+										'type'         => 'Collection',
+										'attributedTo' => $ng['xchan_hash']
+									];
+									$datarray['tgt_type'] = 'Collection';
+								}
+							}
 						}
 					}
 				}

@@ -273,6 +273,7 @@ class ActivityPub {
 		}
 
 		$orig_follow = get_abconfig($x['sender']['channel_id'],$x['recipient']['xchan_hash'],'activitypub','their_follow_id');
+		$orig_follow_type = get_abconfig($x['sender']['channel_id'],$x['recipient']['xchan_hash'],'activitypub','their_follow_type');
 
 		$msg = array_merge(['@context' => [
 				ACTIVITYSTREAMS_JSONLD_REV,
@@ -281,7 +282,7 @@ class ActivityPub {
 			]], 
 			[
 				'id'     => z_root() . '/follow/' . $x['recipient']['abook_id'] . (($orig_follow) ? '/' . md5($orig_follow) : EMPTY_STR),
-				'type'   => 'Follow',
+				'type'   => (($orig_follow_type) ? $orig_follow_type : 'Follow'),
 				'actor'  => $p,
 				'object' => $x['recipient']['xchan_hash'],
 				'to'     => [ $x['recipient']['xchan_hash'] ]
@@ -334,6 +335,7 @@ class ActivityPub {
 		// we currently are not handling send of reject follow activities; this is permitted by protocol
 
 		$accept = get_abconfig($x['recipient']['abook_channel'],$x['recipient']['xchan_hash'],'activitypub','their_follow_id');
+		$follow_type = get_abconfig($x['recipient']['abook_channel'],$x['recipient']['xchan_hash'],'activitypub','their_follow_type');
 		if (! $accept) {
 			return;
 		}
@@ -353,7 +355,7 @@ class ActivityPub {
 				'type'   => 'Accept',
 				'actor'  => $p,
 				'object' => [
-					'type'   => 'Follow',
+					'type'   => (($follow_type) ? $follow_type : 'Follow'),
 					'id'     => $accept,
 					'actor'  => $x['recipient']['xchan_hash'],
 					'object' => z_root() . '/channel/' . $x['sender']['channel_address']
