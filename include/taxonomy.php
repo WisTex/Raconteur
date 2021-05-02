@@ -319,7 +319,7 @@ function pubtagblock($net,$site,$limit,$recent = 0,$safemode = 1, $type = TERM_H
 	$link = z_root() . '/pubstream';
 
 	if($r) {
-		$o = '<div class="tagblock widget"><h3>' . (($recent) ? t('Trending') : t('Tags')) . '</h3><div class="tags" align="center">';
+		$o = '<div class="tagblock widget"><h3>' . (($recent) ? t('Popular Tags') : t('Tags')) . '</h3><div class="tags" align="center">';
 		foreach($r as $rr) { 
 		  $o .= '<span class="tag'.$rr[2].'">#</span><a href="'.$link .'/' . '?f=&tag=' . urlencode($rr[0]).'" class="tag'.$rr[2].'">'.$rr[0].'</a> ' . "\r\n";
 		}

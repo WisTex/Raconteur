@@ -163,11 +163,11 @@ Provides a very simple to-do list on your Stream page (and also the 'tasks' page
 
 ### Virtual Lists
 
-This is like 'Lists', except you do not need to manage the list membership. By default, three dynamic lists are created: all connections, all zot6 (protocol) connections, and all activitypub (protocol) connections. These virtual lists may be used anywhere you can use a list; either as permission controls, post audiences, or stream filtering.
+This is like 'Lists', except you do not need to manage the list membership. By default, three dynamic lists are created: all connections, all Nomad (protocol) connections, and all ActivityPub (protocol) connections. These virtual lists may be used anywhere you can use a list; either as permission controls, post audiences, or stream filtering.
 
 ### Zotpost
 
-Available if the 'zotpost' addon has been installed on the site. This configures the zotpost addon to automatically cross-post to your channel on another Zot6 site.
+Available if the 'zotpost' addon has been installed on the site. This configures the zotpost addon to automatically cross-post to your channel on another Zot6 or Nomad site.
 
 
 

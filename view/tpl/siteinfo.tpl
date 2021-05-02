@@ -38,7 +38,7 @@
 <div><a href="{{$prj_src}}">{{$prj_src}}</a></div>
 
 <br><br>
-<div>{{$prj_transport}} ({{$transport_link}})</div>
+<div>{{$prj_transport}}</div>
 
 {{if $additional_fed}}
 <div>{{$additional_text}} {{$additional_fed}}</div>
