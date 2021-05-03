@@ -16,7 +16,7 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '21.04.30' );
+define ( 'STD_VERSION',             '21.05.03' );
 define ( 'ZOT_REVISION',            '10.0' );
 
 define ( 'DB_UPDATE_VERSION',       1248 );
