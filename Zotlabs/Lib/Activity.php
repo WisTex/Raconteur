@@ -26,7 +26,7 @@ class Activity {
 
 	static function encode_object($x) {
 
-		if (($x) && (! is_array($x)) && (substr(trim($x),0,1)) === '{' ) {
+		if (($x) && (! is_array($x)) && (substr(trim($x),0,1)) === "{" ) {
 			$x = json_decode($x,true);
 		}
 
@@ -1231,6 +1231,7 @@ class Activity {
 			$ret['attachment'] = $a;
 		}
 
+
 		if ($activitypub && $has_images && $ret['type'] === 'Note') {
         	foreach ($images as $match) {
 				$img = [];
@@ -1253,12 +1254,16 @@ class Activity {
 				}
 				$already_added = false;
 				if ($img) {
-					foreach ($ret['attachment'] as $a) {
-						if (isset($a['url']) && $a['url'] === $img[0]['url']) {
+					for ($pc = 0; $pc < count($ret['attachment']); $pc ++) {
+						// caution: image attachments use url and links use href, and our own links will be 'attach' links based on the image href
+						if ((isset($ret['attachment'][$pc]['href']) && strpos($img[0]['url'],str_replace('/attach/','/photo/',$ret['attachment'][$pc]['href'])) !== false) || (isset($ret['attachment'][$pc]['url']) && $ret['attachment'][$pc]['url'] === $img[0]['url'])) {
+							// if it's already there, replace it with our alt-text aware version
+							$ret['attachment'][$pc] = $img[0];
 							$already_added = true;
 						}
 					}
 					if (! $already_added) {
+						// add it
 						$ret['attachment'] = array_merge($img,$ret['attachment']);
 					}
 				}				
