@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 21.04.30\n"
+"Project-Id-Version: 21.05.03\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-29 22:30-0700\n"
+"POT-Creation-Date: 2021-05-03 20:05-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -436,7 +436,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Viewconnections.php:37
 #: ../../Zotlabs/Module/Suggestions.php:31 ../../Zotlabs/Module/Inspect.php:16
 #: ../../Zotlabs/Web/WebServer.php:133 ../../include/photos.php:34
-#: ../../include/items.php:3630 ../../include/attach.php:157
+#: ../../include/items.php:3636 ../../include/attach.php:157
 #: ../../include/attach.php:204 ../../include/attach.php:280
 #: ../../include/attach.php:401 ../../include/attach.php:415
 #: ../../include/attach.php:422 ../../include/attach.php:500
@@ -874,6 +874,7 @@ msgstr ""
 #: ../../extend/addon/a/faces/faces.php:125
 #: ../../extend/addon/a/faces/Mod_Faces.php:180
 #: ../../extend/addon/a/followlist/Mod_followlist.php:136
+#: ../../extend/addon/a/fuzzloc/Mod_Fuzzloc.php:56
 msgid "Submit"
 msgstr ""
 
@@ -2505,7 +2506,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Display.php:50 ../../Zotlabs/Module/Display.php:497
 #: ../../Zotlabs/Module/Filestorage.php:34 ../../Zotlabs/Module/Thing.php:101
 #: ../../Zotlabs/Module/Viewsrc.php:27 ../../Zotlabs/Module/Inspect.php:33
-#: ../../include/items.php:3528
+#: ../../include/items.php:3534
 #: ../../extend/addon/a/flashcards/Mod_Flashcards.php:284
 #: ../../extend/addon/a/flashcards/Mod_Flashcards.php:285
 msgid "Item not found."
@@ -3553,7 +3554,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Cal.php:70 ../../Zotlabs/Module/Block.php:42
 #: ../../Zotlabs/Module/Chanview.php:95 ../../Zotlabs/Module/Card_edit.php:46
 #: ../../Zotlabs/Module/Page.php:79 ../../Zotlabs/Module/Wall_upload.php:31
-#: ../../Zotlabs/Module/Superblock.php:62 ../../include/items.php:4177
+#: ../../Zotlabs/Module/Superblock.php:62 ../../include/items.php:4183
 msgid "Channel not found."
 msgstr ""
 
@@ -3787,6 +3788,7 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Cdav.php:882
 #: ../../extend/addon/a/gallery/Mod_Gallery.php:59
+#: ../../extend/addon/a/fuzzloc/Mod_Fuzzloc.php:37
 msgid "Not Installed"
 msgstr ""
 
@@ -4300,7 +4302,7 @@ msgstr ""
 msgid "Connection Default Permissions"
 msgstr ""
 
-#: ../../Zotlabs/Module/Connedit.php:794 ../../include/items.php:4174
+#: ../../Zotlabs/Module/Connedit.php:794 ../../include/items.php:4180
 #, php-format
 msgid "Connection: %s"
 msgstr ""
@@ -4684,25 +4686,25 @@ msgstr ""
 msgid "Location (URL) to purchase app"
 msgstr ""
 
-#: ../../Zotlabs/Module/Cover_photo.php:284 ../../include/items.php:4531
+#: ../../Zotlabs/Module/Cover_photo.php:284 ../../include/items.php:4537
 msgid "female"
 msgstr ""
 
-#: ../../Zotlabs/Module/Cover_photo.php:285 ../../include/items.php:4532
+#: ../../Zotlabs/Module/Cover_photo.php:285 ../../include/items.php:4538
 #, php-format
 msgid "%1$s updated her %2$s"
 msgstr ""
 
-#: ../../Zotlabs/Module/Cover_photo.php:287 ../../include/items.php:4533
+#: ../../Zotlabs/Module/Cover_photo.php:287 ../../include/items.php:4539
 msgid "male"
 msgstr ""
 
-#: ../../Zotlabs/Module/Cover_photo.php:288 ../../include/items.php:4534
+#: ../../Zotlabs/Module/Cover_photo.php:288 ../../include/items.php:4540
 #, php-format
 msgid "%1$s updated his %2$s"
 msgstr ""
 
-#: ../../Zotlabs/Module/Cover_photo.php:291 ../../include/items.php:4536
+#: ../../Zotlabs/Module/Cover_photo.php:291 ../../include/items.php:4542
 #, php-format
 msgid "%1$s updated their %2$s"
 msgstr ""
@@ -4976,8 +4978,7 @@ msgstr ""
 msgid "Edit Layout"
 msgstr ""
 
-#: ../../Zotlabs/Module/Stream.php:126
-#: ../../Zotlabs/Widget/Activity_filter.php:118 ../../include/network.php:1592
+#: ../../Zotlabs/Module/Stream.php:126 ../../include/network.php:1593
 msgid "Zot"
 msgstr ""
 
@@ -5002,7 +5003,7 @@ msgstr ""
 msgid "Access list is empty"
 msgstr ""
 
-#: ../../Zotlabs/Module/Stream.php:298 ../../include/items.php:4164
+#: ../../Zotlabs/Module/Stream.php:298 ../../include/items.php:4170
 #, php-format
 msgid "Access list: %s"
 msgstr ""
@@ -5617,7 +5618,7 @@ msgid "Could not create access list."
 msgstr ""
 
 #: ../../Zotlabs/Module/Lists.php:121 ../../Zotlabs/Module/Lists.php:290
-#: ../../include/items.php:4140
+#: ../../include/items.php:4146
 msgid "Access list not found."
 msgstr ""
 
@@ -8913,7 +8914,8 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Siteinfo.php:40
 msgid ""
-"Federated and decentralised networking and identity services provided by Zot"
+"Federated and decentralised networking and identity services provided by "
+"Nomad"
 msgstr ""
 
 #: ../../Zotlabs/Module/Siteinfo.php:44
@@ -9248,6 +9250,18 @@ msgid ""
 "suggestions."
 msgstr ""
 
+#: ../../Zotlabs/Module/Vlists.php:14
+msgid ""
+"This app creates dynamic access lists corresponding to [1] all connections, "
+"[2] all ActivityPub protocol connections, and [3] all Nomad or Zot/6 "
+"protocol connections. These additional selections will be found within the "
+"Permissions setting tool."
+msgstr ""
+
+#: ../../Zotlabs/Module/Vlists.php:21
+msgid "This app is installed. "
+msgstr ""
+
 #: ../../Zotlabs/Module/Clients.php:14
 msgid ""
 "This app allows you to authorize mobile apps using OAuth and OpenID to "
@@ -9285,18 +9299,6 @@ msgstr ""
 #: ../../Zotlabs/Module/Superblock.php:248
 #: ../../Zotlabs/Widget/Settings_menu.php:58
 msgid "Manage Blocks"
-msgstr ""
-
-#: ../../Zotlabs/Module/Vlists.php:14
-msgid ""
-"This app creates dynamic access lists corresponding to [1] all connections, "
-"[2] all ActivityPub protocol connections, and [3] all Zot/6 protocol "
-"connections. These additional selections will be found within the "
-"Permissions setting tool."
-msgstr ""
-
-#: ../../Zotlabs/Module/Vlists.php:21
-msgid "This app is installed. "
 msgstr ""
 
 #: ../../Zotlabs/Module/Tagadelic.php:29
@@ -9817,6 +9819,10 @@ msgstr ""
 #: ../../Zotlabs/Widget/Activity_filter.php:137
 #, php-format
 msgid "Show posts related to the %s access list"
+msgstr ""
+
+#: ../../Zotlabs/Widget/Activity_filter.php:118 ../../include/network.php:1592
+msgid "Nomad"
 msgstr ""
 
 #: ../../Zotlabs/Widget/Activity_filter.php:147
@@ -10378,6 +10384,38 @@ msgstr ""
 msgid "Cannot locate DNS info for database server '%s'"
 msgstr ""
 
+#: ../../include/taxonomy.php:322
+msgid "Popular Tags"
+msgstr ""
+
+#: ../../include/taxonomy.php:566
+msgid "Keywords"
+msgstr ""
+
+#: ../../include/taxonomy.php:587
+msgid "have"
+msgstr ""
+
+#: ../../include/taxonomy.php:587
+msgid "has"
+msgstr ""
+
+#: ../../include/taxonomy.php:588
+msgid "want"
+msgstr ""
+
+#: ../../include/taxonomy.php:588
+msgid "wants"
+msgstr ""
+
+#: ../../include/taxonomy.php:589
+msgid "likes"
+msgstr ""
+
+#: ../../include/taxonomy.php:590
+msgid "dislikes"
+msgstr ""
+
 #: ../../include/text.php:501
 msgid "prev"
 msgstr ""
@@ -10889,15 +10927,15 @@ msgstr ""
 msgid "Facebook"
 msgstr ""
 
-#: ../../include/network.php:1593
+#: ../../include/network.php:1594
 msgid "LinkedIn"
 msgstr ""
 
-#: ../../include/network.php:1594
+#: ../../include/network.php:1595
 msgid "XMPP/IM"
 msgstr ""
 
-#: ../../include/network.php:1595
+#: ../../include/network.php:1596
 msgid "MySpace"
 msgstr ""
 
@@ -11061,7 +11099,7 @@ msgid "My ActivityPub connections"
 msgstr ""
 
 #: ../../include/acl_selectors.php:105
-msgid "My Zot connections"
+msgid "My Nomad connections"
 msgstr ""
 
 #: ../../include/acl_selectors.php:115
@@ -11164,59 +11202,27 @@ msgstr ""
 msgid "Visible to specific connections."
 msgstr ""
 
-#: ../../include/items.php:4157
+#: ../../include/items.php:4163
 msgid "Privacy group is empty."
 msgstr ""
 
-#: ../../include/items.php:4538
+#: ../../include/items.php:4544
 msgid "profile photo"
 msgstr ""
 
-#: ../../include/items.php:4742
+#: ../../include/items.php:4748
 #, php-format
 msgid "[Edited %s]"
 msgstr ""
 
-#: ../../include/items.php:4742
+#: ../../include/items.php:4748
 msgctxt "edit_activity"
 msgid "Post"
 msgstr ""
 
-#: ../../include/items.php:4742
+#: ../../include/items.php:4748
 msgctxt "edit_activity"
 msgid "Comment"
-msgstr ""
-
-#: ../../include/taxonomy.php:322
-msgid "Popular Tags"
-msgstr ""
-
-#: ../../include/taxonomy.php:566
-msgid "Keywords"
-msgstr ""
-
-#: ../../include/taxonomy.php:587
-msgid "have"
-msgstr ""
-
-#: ../../include/taxonomy.php:587
-msgid "has"
-msgstr ""
-
-#: ../../include/taxonomy.php:588
-msgid "want"
-msgstr ""
-
-#: ../../include/taxonomy.php:588
-msgid "wants"
-msgstr ""
-
-#: ../../include/taxonomy.php:589
-msgid "likes"
-msgstr ""
-
-#: ../../include/taxonomy.php:590
-msgid "dislikes"
 msgstr ""
 
 #: ../../include/security.php:621
@@ -12522,6 +12528,31 @@ msgstr ""
 
 #: ../../extend/addon/a/randplace/Mod_randplace.php:27
 msgid "This app has been installed."
+msgstr ""
+
+#: ../../extend/addon/a/fuzzloc/Mod_Fuzzloc.php:24
+msgid "Fuzzloc Settings updated."
+msgstr ""
+
+#: ../../extend/addon/a/fuzzloc/Mod_Fuzzloc.php:37
+msgid "Fuzzy Location App"
+msgstr ""
+
+#: ../../extend/addon/a/fuzzloc/Mod_Fuzzloc.php:38
+msgid ""
+"Blur your precise location if your channel uses browser location mapping"
+msgstr ""
+
+#: ../../extend/addon/a/fuzzloc/Mod_Fuzzloc.php:43
+msgid "Minimum offset in meters"
+msgstr ""
+
+#: ../../extend/addon/a/fuzzloc/Mod_Fuzzloc.php:47
+msgid "Maximum offset in meters"
+msgstr ""
+
+#: ../../extend/addon/a/fuzzloc/Mod_Fuzzloc.php:53
+msgid "Fuzzy Location"
 msgstr ""
 
 #: ../../boot.php:1644
