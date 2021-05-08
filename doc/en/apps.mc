@@ -67,6 +67,10 @@ This provides a slider control at the top of your stream. Every connection may b
 
 Set a post to be published at/after a certain date/time. Usually used for automatically posting while you are on vacation. The specified date/time must be at least fifteen minutes in the future in order for publishing to be delayed. Otherwise it is published immediately but with the provided date/time.
 
+### Fuzzloc
+
+Available if the 'fuzzloc' addon has been installed by the site administrator. When you are using browser location services to mark your post location, this allows you to set the min/max distance from your precise location you would like to display in your posts. A randomly generated location will be generated based on these parameters.  
+
 ### Gallery
 
 Available if the 'gallery' addon has been installed by the site administrator. This provides an improved image browser to your photos than the stock 'Photos' app. Interactions with photos in your stream are modified slightly.

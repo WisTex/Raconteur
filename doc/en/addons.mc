@@ -27,6 +27,10 @@ Grandma style learning method that uses spaced repetition as a learning techniqu
 
 follow everybody in an ActivityPub followers/following list or Mastodon contact export file
 
+### Fuzzloc
+
+If you use browser location services to mark your post location, this addon allows you to obscure the exact location and instead provide a rough approximation.
+
 ### Gallery
 
 Album gallery and photo viewer based on photoswipe
