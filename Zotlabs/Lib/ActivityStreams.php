@@ -180,7 +180,8 @@ class ActivityStreams {
 
 		$fields = [ 'to', 'cc', 'bto', 'bcc', 'audience'];
 		foreach ($fields as $f) {
-			$y = $this->get_compound_property($f, $base, $namespace);
+			// don't expand these yet
+			$y = $this->get_property_obj($f, $base, $namespace);
 			if ($y) {
 				if (! is_array($this->raw_recips)) {
 					$this->raw_recips = [];
@@ -308,7 +309,7 @@ class ActivityStreams {
 	 * @return NULL|mixed
 	 */
 
-	function fetch_property($url,$channel = null,$hub = null) {
+	function fetch_property($url,$channel = null,$hub = null) {		
 		return Activity::fetch($url,$channel,$hub);
 	}
 
