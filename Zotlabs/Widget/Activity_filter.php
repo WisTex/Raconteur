@@ -115,7 +115,7 @@ class Activity_filter {
 							$gname = t('Connections');
 							break;
 						case ':2':
-							$gname = t('Zot');
+							$gname = t('Nomad');
 							break;
 						case ':3':
 							$gname = t('ActivityPub');

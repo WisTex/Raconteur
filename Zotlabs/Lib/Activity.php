@@ -26,7 +26,7 @@ class Activity {
 
 	static function encode_object($x) {
 
-		if (($x) && (! is_array($x)) && (substr(trim($x),0,1)) === '{' ) {
+		if (($x) && (! is_array($x)) && (substr(trim($x),0,1)) === "{" ) {
 			$x = json_decode($x,true);
 		}
 
@@ -64,6 +64,11 @@ class Activity {
 		}
 		if (! $channel) {
 			$channel = get_sys_channel();
+		}
+
+		$idn = parse_url($url);
+		if ($idn['host'] !== punify($idn['host'])) {
+			$url = str_replace($idn['host'],punify($idn['host']),$url);
 		}
 
 		logger('fetch: ' . $url, LOGGER_DEBUG);
@@ -1226,6 +1231,7 @@ class Activity {
 			$ret['attachment'] = $a;
 		}
 
+
 		if ($activitypub && $has_images && $ret['type'] === 'Note') {
         	foreach ($images as $match) {
 				$img = [];
@@ -1248,12 +1254,16 @@ class Activity {
 				}
 				$already_added = false;
 				if ($img) {
-					foreach ($ret['attachment'] as $a) {
-						if (isset($a['url']) && $a['url'] === $img[0]['url']) {
+					for ($pc = 0; $pc < count($ret['attachment']); $pc ++) {
+						// caution: image attachments use url and links use href, and our own links will be 'attach' links based on the image href
+						if ((isset($ret['attachment'][$pc]['href']) && strpos($img[0]['url'],str_replace('/attach/','/photo/',$ret['attachment'][$pc]['href'])) !== false) || (isset($ret['attachment'][$pc]['url']) && $ret['attachment'][$pc]['url'] === $img[0]['url'])) {
+							// if it's already there, replace it with our alt-text aware version
+							$ret['attachment'][$pc] = $img[0];
 							$already_added = true;
 						}
 					}
 					if (! $already_added) {
+						// add it
 						$ret['attachment'] = array_merge($img,$ret['attachment']);
 					}
 				}				
@@ -1736,6 +1746,7 @@ class Activity {
 					// Send an Accept back to them
 
 					set_abconfig($channel['channel_id'],$person_obj['id'],'activitypub','their_follow_id', $their_follow_id);
+					set_abconfig($channel['channel_id'],$person_obj['id'],'activitypub','their_follow_type', $act->type);
 					Run::Summon([ 'Notifier', 'permissions_accept', $contact['abook_id'] ]);
 					return;
 
@@ -1777,6 +1788,7 @@ class Activity {
 		// From here on out we assume a Follow activity to somebody we have no existing relationship with
 
 		set_abconfig($channel['channel_id'],$person_obj['id'],'activitypub','their_follow_id', $their_follow_id);
+		set_abconfig($channel['channel_id'],$person_obj['id'],'activitypub','their_follow_type', $act->type);
 
 		// The xchan should have been created by actor_store() above
 
@@ -2038,6 +2050,9 @@ class Activity {
 			}
 			if (array_key_exists('following',$person_obj) && is_string($person_obj['following'])) {
 				$collections['following'] = $person_obj['following'];
+			}
+			if (array_key_exists('wall',$person_obj) && is_string($person_obj['wall'])) {
+				$collections['wall'] = $person_obj['wall'];
 			}
 			if (array_path_exists('endpoints/sharedInbox',$person_obj) && is_string($person_obj['endpoints']['sharedInbox'])) {
 				$collections['sharedInbox'] = $person_obj['endpoints']['sharedInbox'];
@@ -2684,7 +2699,15 @@ class Activity {
 			$s['obj']['actor'] = $s['obj']['actor']['id'];
 		}
 
-		// @todo add target if present
+		if (is_array($act->tgt) && $act->tgt) {
+			if (array_key_exists('type',$act->tgt)) {
+				$s['tgt_type'] = self::activity_obj_mapper($act->tgt['type']);
+			}
+			// We shouldn't need to store collection contents which could be large. We will often only require the meta-data
+			if (isset($s['tgt_type']) && strpos($s['tgt_type'],'Collection') !== false) {
+				$s['target'] = [ 'id' => $act->tgt['id'], 'type' => $s['tgt_type'], 'attributedTo' => ((isset($act->tgt['attributedTo'])) ? $act->tgt['attributedTo'] : $act->tgt['actor']) ];
+			}
+		}
 
 		$generator = $act->get_property_obj('generator');
 		if ((! $generator) && (! $response_activity)) {
@@ -3829,6 +3852,7 @@ class Activity {
 			'ostatus'                   => 'http://ostatus.org#',
 			'schema'                    => 'http://schema.org#',
 			'litepub'                   => 'http://litepub.social/ns#',
+			'sm'                        => 'http://smithereen.software/ns#',
 			'conversation'              => 'ostatus:conversation',
 			'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
 			'oauthRegistrationEndpoint' => 'litepub:oauthRegistrationEndpoint',
@@ -3849,6 +3873,7 @@ class Activity {
 			'PropertyValue'             => 'schema:PropertyValue',
 			'value'                     => 'schema:value',
 			'discoverable'              => 'toot:discoverable',
+			'wall'                      => 'sm:wall',
 		];
 
 	}

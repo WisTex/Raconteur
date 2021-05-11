@@ -13,6 +13,11 @@ class Zotfinger {
 		}
 
 		$m = parse_url($resource);
+		
+		if ($m['host'] !== punify($m['host'])) {
+			$url = str_replace($m['host'],punify($m['host']),$url);
+			$m['host'] = punify($m['host']);
+		}
 
 		$data = json_encode([ 'zot_token' => random_string() ]);
 

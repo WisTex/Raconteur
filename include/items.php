@@ -2593,6 +2593,36 @@ function tag_deliver($uid, $item_id) {
 		return;
 	}
 
+	// Deliver to group via target collection
+
+	if ($is_group && intval($item['item_thread_top']) && (! intval($item['item_wall'])) && (strpos($item['tgt_type'],'Collection') !== false) && $item['target']) {
+		// group delivery via target - use post_wall permission since send_stream is probably turned off
+		// and this will be turned into an embedded wall-to-wall post
+		if (is_array($item['target'])) {
+			$a = $item['target'];
+		}
+		else {
+			$a = json_decode($item['target'],true);
+		}
+		
+		if ($a) {
+			$id = ((is_string($a)) ? $a : EMPTY_STR);
+			if (is_array($a) && isset($a['id'])) {
+				$id = $a['id'];
+			}
+			if ($id == z_root() . '/outbox/' . $u['channel_address']) {
+				if(perm_is_allowed($uid,$item['author_xchan'],'post_wall')) {
+					logger('group collection delivery for ' . $u['channel_address']);
+					start_delivery_chain($u, $item, $item_id, 0, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
+					q("update item set item_blocked = %d where id = %d",
+						intval(ITEM_HIDDEN),
+						intval($item_id)
+					);
+				}
+				return;
+			}
+		}
+	}
 
 	if ($is_group && intval($item['item_thread_top']) && intval($item['item_wall']) && $item['author_xchan'] !== $item['owner_xchan']) {
 		if (strpos($item['body'],'[/share]')) {
@@ -2842,6 +2872,11 @@ function tgroup_check($uid, $item) {
 		if (intval($item['item_private']) === 2 && $item['mid'] === $item['parent_mid']) {
 			return true;
 		}
+
+		if ($item['mid'] === $item['parent_mid'] && (! intval($item['item_wall'])) && (strpos($item['tgt_type'],'Collection') !== false) && $item['target']) {
+			return true;
+		}
+
 		if (get_pconfig($uid,'system','post_via_mentions',in_array($role, ['forum','forum_moderated'])) && i_am_mentioned($u,$item)) {
 			return true;
 		}

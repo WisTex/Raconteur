@@ -799,7 +799,10 @@ class Libzot {
 			if (isset($arr['primary_location']['followers'])) {
 				$collections['followers'] = $arr['primary_location']['followers'];
 			}
-			if ($collections) {	
+			if (isset($arr['primary_location']['wall'])) {
+				$collections['wall'] = $arr['primary_location']['wall'];
+			}
+			if ($collections) {
 				set_xconfig($xchan_hash,'activitypub','collections',$collections);
 			}
 
@@ -3131,6 +3134,7 @@ class Libzot {
 			'url'                => $e['xchan_url'],
 			'connections_url'    => $e['xchan_connurl'],
 			'follow_url'         => $e['xchan_follow'],
+			'wall'               => z_root() . '/outbox/'    . $e['channel_address'],
 			'followers'          => z_root() . '/followers/' . $e['channel_address'],
 			'following'          => z_root() . '/following/' . $e['channel_address']
 		];
@@ -3426,7 +3430,7 @@ class Libzot {
 
 	static function is_zot_request() {
 
-		$x = getBestSupportedMimeType([ 'application/x-zot+json' ]);
+		$x = getBestSupportedMimeType([ 'application/x-zot+json', 'application/x-nomad' ]);
 		return(($x) ? true : false);
 	}
 

@@ -67,6 +67,10 @@ This provides a slider control at the top of your stream. Every connection may b
 
 Set a post to be published at/after a certain date/time. Usually used for automatically posting while you are on vacation. The specified date/time must be at least fifteen minutes in the future in order for publishing to be delayed. Otherwise it is published immediately but with the provided date/time.
 
+### Fuzzloc
+
+Available if the 'fuzzloc' addon has been installed by the site administrator. When you are using browser location services to mark your post location, this allows you to set the min/max distance from your precise location you would like to display in your posts. A randomly generated location will be generated based on these parameters.  
+
 ### Gallery
 
 Available if the 'gallery' addon has been installed by the site administrator. This provides an improved image browser to your photos than the stock 'Photos' app. Interactions with photos in your stream are modified slightly.
@@ -163,11 +167,11 @@ Provides a very simple to-do list on your Stream page (and also the 'tasks' page
 
 ### Virtual Lists
 
-This is like 'Lists', except you do not need to manage the list membership. By default, three dynamic lists are created: all connections, all zot6 (protocol) connections, and all activitypub (protocol) connections. These virtual lists may be used anywhere you can use a list; either as permission controls, post audiences, or stream filtering.
+This is like 'Lists', except you do not need to manage the list membership. By default, three dynamic lists are created: all connections, all Nomad (protocol) connections, and all ActivityPub (protocol) connections. These virtual lists may be used anywhere you can use a list; either as permission controls, post audiences, or stream filtering.
 
 ### Zotpost
 
-Available if the 'zotpost' addon has been installed on the site. This configures the zotpost addon to automatically cross-post to your channel on another Zot6 site.
+Available if the 'zotpost' addon has been installed on the site. This configures the zotpost addon to automatically cross-post to your channel on another Zot6 or Nomad site.
 
 
 

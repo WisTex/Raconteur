@@ -25,6 +25,8 @@ Groups may be public or private. The initial thread starting post to a group is 
 
 Update: as of 2021-04-08 @mentions are now permitted for posting to public and moderated groups but are not permitted for posting to  restricted or private groups. The group owner can over-ride this behaviour as desired based on the group's security and privacy expectations. DMs (and wall-to-wall posts) are still the recommended methods for posting to groups because they can be used for any groups without needing to remember which are public and which are private; and which may have allowed or disallowed posting via mentions. 
 
+Update: as of 2021-04-30 We will support incoming group posts of the form Create/Note/Collection or Add/Note/Collection where the target Collection|orderedCollection is the group outbox or "wall". This should match the behaviour of the Smithereen project and is documented in Fediverse Enhancement Proposal FEP-400e. We also provide this structure automatically on outbound group posts if the actor record contains 'wall' (sm:wall); and add a mention tag in the activity to support group/relay implementations that only trigger on mentions. 
+
 Comments
 
 This project provides permission control and moderation of comments. By default comments are only accepted from existing connections. This can be changed by the individual. Other sites MAY use zot:commentPolicy (string) as a guide if they do not wish to provide comment abilities where it is known in advance they will be rejected. A Reject/Note activity will be sent if the comment is not permitted. There is currently no response for moderated content, but will likely also be represented by Reject/Note.
@@ -51,7 +53,7 @@ This project provides permission control and moderation of comments. By default 
 
 Private Media
 
-Private media MAY be accessed using OCAP or OpenWebAuth.
+Private media MAY be accessed using OCAP or OpenWebAuth. Bearcaps are supported but not generated. 
 
 
 Permission System
@@ -75,13 +77,13 @@ Edited posts and comments are sent with Update/Note and an 'updated' timestamp a
 
 Announce
 
-Announce and relay activities use two mechanisms. As wll as the Announce activity, a new message is generated with an embedded rendering of the shared content as the message content. This message may (should) contain additional commentary in order to comply with the Fair Use provisions of copyright law. The other reason is our use of comment permissions. Comments to Announce activities are sent to the author (who typically accepts comments only from connections). Comment to embedded forwards are sent to the sender. This difference in behaviour allows groups to work correctly in the presence of comment permissions.
+Announce and relay activities use two mechanisms. As well as the Announce activity, a new message is generated with an embedded rendering of the shared content as the message content. This message may (should) contain additional commentary in order to comply with the Fair Use provisions of copyright law. The other reason is our use of comment permissions. Comments to Announce activities are sent to the author (who typically accepts comments only from connections). Comment to embedded forwards are sent to the sender. This difference in behaviour allows groups to work correctly in the presence of comment permissions.
 
 Discussion (2021-04-17): In the email world this type of conflict is resolved by the use of the reply-to header (e.g. in this case reply to the group rather than to the author) as well as the concept of a 'sender' which is different than 'from' (the author). We will soon be modelling the first one in ActivityPub with the use of 'replyTo'. If you see 'replyTo' in an activity it indicates that replies SHOULD go to that address rather than the author's inbox. We will implement this first and come up with a proposal for 'sender' if this gets any traction. If enough projects support these constructs we can eliminate the multiple relay mechanisms and in the process make ActivityPub much more versatile when it comes to organisational and group communications. Our primary use case for 'sender' is to provide an ActivityPub origin to a message that was imported from another system entirely (such as Diaspora or from RSS source). In this case we would set 'attributedTo' to the remote identity that authored the content, and 'sender' to the person that posted it in ActivityPub. 
 
 Mastodon Custom Emojis
 
-Mastodon Custom Emojis are only supported for post content. Display names and message titles are considered text only fields and embedded images (the mechanism behind custom emojis) are not supported in these locations.
+Mastodon Custom Emojis are only supported for post content. Display names and message titles (ActivityStreams "name" field) are considered text only fields and embedded images (the mechanism behind custom emojis) are not supported in these locations.
 
 
 Mentions and private mentions
