@@ -2874,7 +2874,11 @@ function tgroup_check($uid, $item) {
 		}
 
 		if ($item['mid'] === $item['parent_mid'] && (! intval($item['item_wall'])) && (strpos($item['tgt_type'],'Collection') !== false) && $item['target']) {
-			return true;
+			// accept posts to collections only if the collection belongs to us
+			if ((is_string($item['target']) && strpos($item['target'],z_root()) !== false)
+				|| (isset($item['target']['id']) && strpos($item['target']['id'],z_root()) !== false)) {
+				return true;
+			}
 		}
 
 		if (get_pconfig($uid,'system','post_via_mentions',in_array($role, ['forum','forum_moderated'])) && i_am_mentioned($u,$item)) {
