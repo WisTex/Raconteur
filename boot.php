@@ -492,7 +492,7 @@ define ( 'ACTIVITY_LIKE',        'Like' );
 define ( 'ACTIVITY_DISLIKE',     'Dislike' );
 define ( 'ACTIVITY_SHARE',       'Announce' );
 define ( 'ACTIVITY_FOLLOW',      'Follow' );
-define ( 'ACTIVITY_UNFOLLOW',    'Unfollow');
+define ( 'ACTIVITY_IGNORE',      'Ignore');
 
 define ( 'ACTIVITY_OBJ_COMMENT', 'Note' );
 define ( 'ACTIVITY_OBJ_NOTE',    'Note' );

@@ -81,9 +81,13 @@ Announce and relay activities use two mechanisms. As well as the Announce activi
 
 Discussion (2021-04-17): In the email world this type of conflict is resolved by the use of the reply-to header (e.g. in this case reply to the group rather than to the author) as well as the concept of a 'sender' which is different than 'from' (the author). We will soon be modelling the first one in ActivityPub with the use of 'replyTo'. If you see 'replyTo' in an activity it indicates that replies SHOULD go to that address rather than the author's inbox. We will implement this first and come up with a proposal for 'sender' if this gets any traction. If enough projects support these constructs we can eliminate the multiple relay mechanisms and in the process make ActivityPub much more versatile when it comes to organisational and group communications. Our primary use case for 'sender' is to provide an ActivityPub origin to a message that was imported from another system entirely (such as Diaspora or from RSS source). In this case we would set 'attributedTo' to the remote identity that authored the content, and 'sender' to the person that posted it in ActivityPub. 
 
+Emoji Reactions
+
+We consider a reply message containing exactly one emoji and no other text or markup to be an emoji reaction. We indicate this state internally on receipt but do nothing to identify it specifically to downstream recipients.
+
 Mastodon Custom Emojis
 
-Mastodon Custom Emojis are only supported for post content. Display names and message titles (ActivityStreams "name" field) are considered text only fields and embedded images (the mechanism behind custom emojis) are not supported in these locations.
+Mastodon Custom Emojis are only supported for post content and are not considered as emoji reactions. Display names and message titles (ActivityStreams "name" field) are considered text only fields and embedded images (the mechanism behind custom emojis) are not supported in these locations.
 
 
 Mentions and private mentions
