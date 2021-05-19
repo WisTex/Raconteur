@@ -23,7 +23,7 @@ class Conversation extends Controller {
 
 			$portable_id = EMPTY_STR;
 
-			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 and not verb in ( 'Follow', 'Unfollow' ) ";
+			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 and not verb in ( 'Follow', 'Ignore' ) ";
 
 			$i = null;
 

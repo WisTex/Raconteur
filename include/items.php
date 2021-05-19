@@ -2441,7 +2441,7 @@ function send_status_notifications($post_id,$item) {
 				// check for an unfollow thread activity - we should probably decode the obj and check the id
 				// but it will be extremely rare for this to be wrong.
 
-				if(($xx['verb'] === ACTIVITY_UNFOLLOW)
+				if(($xx['verb'] === ACTIVITY_IGNORE)
 					&& ($xx['obj_type'] === ACTIVITY_OBJ_NOTE || $xx['obj_type'] === ACTIVITY_OBJ_PHOTO)
 					&& ($xx['parent'] != $xx['id']))
 					$unfollowed = true;
@@ -4112,7 +4112,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 	}
 
 	if (! (isset($arr['include_follow']) && intval($arr['include_follow']))) {
-		$item_normal .= " and not verb in ( 'Follow' , 'Unfollow' ) ";
+		$item_normal .= " and not verb in ( 'Follow' , 'Ignore' ) ";
 	}
 
 	if (isset($arr['star']) && $arr['star']) {
