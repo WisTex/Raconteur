@@ -42,7 +42,7 @@ class Hq extends Controller {
 			return;
 
 		if($load)
-			$_SESSION['loadtime'] = datetime_convert();
+			$_SESSION['loadtime_hq'] = datetime_convert();
 	
 		if(argc() > 1 && argv(1) !== 'load') {
 			$item_hash = argv(1);
@@ -94,8 +94,8 @@ class Hq extends Controller {
 
 			$simple_update = (($update) ? " AND item_unseen = 1 " : '');
 				
-			if($update && $_SESSION['loadtime'])
-				$simple_update = " AND (( item_unseen = 1 AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' )  OR item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' ) ";
+			if($update && $_SESSION['loadtime_hq'])
+				$simple_update = " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime_hq']) . "' ";
 		
 			if($static && $simple_update)
 				$simple_update .= " and item_thread_top = 0 and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
@@ -264,7 +264,7 @@ class Hq extends Controller {
 				);
 			}
 
-			$_SESSION['loadtime'] = datetime_convert();
+			$_SESSION['loadtime_hq'] = datetime_convert();
 		}
 		else {
 			$r = [];

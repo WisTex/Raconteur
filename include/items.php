@@ -2372,7 +2372,7 @@ function item_update_parent_commented($item) {
 	// - unless this is a moderated comment or a potential clone of an older item
 	// which we don't wish to bring to the surface. As the queue only holds deliveries 
 	// for 3 days, it's suspected of being an older cloned item if the creation time 
-	//is older than that.
+	// is older than that.
 
 	if(intval($item['item_blocked']) === ITEM_MODERATED)
 		$update_parent = false;

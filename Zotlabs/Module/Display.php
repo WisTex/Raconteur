@@ -28,7 +28,7 @@ class Display extends Controller {
 		}
 
 		if($load)
-			$_SESSION['loadtime'] = datetime_convert();
+			$_SESSION['loadtime_display'] = datetime_convert();
 	
 		if(observer_prohibited()) {
 			notice( t('Public access denied.') . EOL);
@@ -193,8 +193,8 @@ class Display extends Controller {
 	
 		$simple_update = (($update) ? " AND item_unseen = 1 " : '');
 			
-		if($update && $_SESSION['loadtime'])
-			$simple_update = " AND (( item_unseen = 1 AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' )  OR item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' ) ";
+		if($update && $_SESSION['loadtime_display'])
+			$simple_update = " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime_display']) . "' ";
 		if($load)
 			$simple_update = '';
 	
@@ -311,7 +311,7 @@ class Display extends Controller {
 					dbesc($target_item['parent_mid'])
 				);
 			}
-			$_SESSION['loadtime'] = datetime_convert();
+			$_SESSION['loadtime_display'] = datetime_convert();
 		}
 	
 		else {
