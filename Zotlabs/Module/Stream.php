@@ -35,7 +35,7 @@ class Stream extends Controller {
 		$o = '';
 
 		if ($load) {
-			$_SESSION['loadtime'] = datetime_convert();
+			$_SESSION['loadtime_stream'] = datetime_convert();
 		}
 
 		$arr = [ 'query' => App::$query_string ];
@@ -524,8 +524,8 @@ class Stream extends Controller {
 		// by storing in your session the current UTC time whenever you LOAD a network page, and only UPDATE items
 		// which are both ITEM_UNSEEN and have "changed" since that time. Cross fingers...
 	
-		if ($update && $_SESSION['loadtime'])
-			$simple_update = " AND (( item_unseen = 1 AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' )  OR item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' ) ";
+		if ($update && $_SESSION['loadtime_stream'])
+			$simple_update = " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime_stream']) . "' ";
 		if ($load)
 			$simple_update = '';
 
@@ -582,7 +582,7 @@ class Stream extends Controller {
 					and (abook.abook_blocked = 0 or abook.abook_flags is null)
 					$sql_extra3 $sql_extra $sql_options $sql_nets $net_query2"
 				);
-				$_SESSION['loadtime'] = datetime_convert();
+				$_SESSION['loadtime_stream'] = datetime_convert();
 			}
 
 			if ($r) {
