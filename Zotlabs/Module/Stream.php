@@ -557,7 +557,7 @@ class Stream extends Controller {
 			if($order === 'post')
 				$ordering = "created";
 			else
-				$ordering = "commented";
+				$ordering = "changed";
 
 			if ($load) {
 				// Fetch a page full of parent items for this page
