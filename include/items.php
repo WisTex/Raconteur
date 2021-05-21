@@ -728,8 +728,7 @@ function get_item_elements($x,$allow_code = false) {
 	$arr['term']         = decode_tags($x['tags']);
 	$arr['iconfig']      = decode_item_meta($x['meta']);
 
-	$arr['item_private'] = ((array_key_exists('flags',$x) && is_array($x['flags']) && in_array('private',$x['flags'])) ? 1 : 0);
-
+	$arr['item_private'] = 0;
 	$arr['item_flags'] = 0;
 
 	if(array_key_exists('flags',$x)) {
@@ -750,6 +749,12 @@ function get_item_elements($x,$allow_code = false) {
 
 		if(in_array('hidden',$x['flags']))
 			$arr['item_hidden'] = 1;
+
+		if(in_array('private',$x['flags']))
+			$arr['item_private'] = 1;
+
+		if(in_array('direct',$x['flags']))
+			$arr['item_private'] = 2;
 
 	}
 
@@ -1448,8 +1453,10 @@ function encode_item_flags($item) {
 		$ret[] = 'consensus';
 	if(intval($item['item_obscured']))
 		$ret[] = 'obscured';
-	if(intval($item['item_private']))
+	if(intval($item['item_private']) === 1)
 		$ret[] = 'private';
+	if(intval($item['item_private']) === 2)
+        $ret[] = 'direct';
 
 	return $ret;
 }
@@ -2365,7 +2372,7 @@ function item_update_parent_commented($item) {
 	// - unless this is a moderated comment or a potential clone of an older item
 	// which we don't wish to bring to the surface. As the queue only holds deliveries 
 	// for 3 days, it's suspected of being an older cloned item if the creation time 
-	//is older than that.
+	// is older than that.
 
 	if(intval($item['item_blocked']) === ITEM_MODERATED)
 		$update_parent = false;

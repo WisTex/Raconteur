@@ -17,7 +17,7 @@ class Pubstream extends Controller {
 		$items = [];
 		
 		if($load)
-			$_SESSION['loadtime'] = datetime_convert();
+			$_SESSION['loadtime_pubstream'] = datetime_convert();
 
 		if((observer_prohibited(true))) {
 			return login();
@@ -188,7 +188,8 @@ class Pubstream extends Controller {
 		if (isset(App::$profile) && isset(App::$profile['profile_uid'])) {
 			$abook_uids = " and abook.abook_channel = " . intval(App::$profile['profile_uid']) . " ";
 		}
-		$simple_update = ((isset($_SESSION['loadtime']) && $_SESSION['loadtime']) ? " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' " : '');
+		
+		$simple_update = ((isset($_SESSION['loadtime_pubstream']) && $_SESSION['loadtime_pubstream']) ? " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime_pubstream']) . "' " : '');
 	
 		if($load)
 			$simple_update = '';
@@ -246,7 +247,7 @@ class Pubstream extends Controller {
 						$sql_extra $net_query2"
 					);
 				}
-				$_SESSION['loadtime'] = datetime_convert();
+				$_SESSION['loadtime_pubstream'] = datetime_convert();
 			}
 
 			// Then fetch all the children of the parents that are on this page
