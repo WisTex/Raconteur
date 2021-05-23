@@ -8,6 +8,7 @@ use Zotlabs\Lib\AccessList;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Permcat;
@@ -618,7 +619,7 @@ class Channel {
 			'$maxreq' 	=> array('maxreq', t('Maximum Friend Requests/Day:'), intval($channel['channel_max_friend_req']) , t('May reduce spam activity')),
 			'$permissions' => t('Default Access List'),
 			'$permdesc' => t("(click to open/close)"),
-			'$aclselect' => populate_acl($perm_defaults, false, \Zotlabs\Lib\PermissionDescription::fromDescription(t('Use my default audience setting for the type of object published'))),
+			'$aclselect' => populate_acl($perm_defaults, false, PermissionDescription::fromDescription(t('Use my default audience setting for the type of object published'))),
 			'$profseltxt' => t('Profile to assign new connections'),
 			'$profselect' => ((feature_enabled(local_channel(),'multi_profiles')) ? contact_profile_assign(get_pconfig(local_channel(),'system','profile_assign','')) : ''),
 
@@ -637,7 +638,7 @@ class Channel {
 			'$hide_friends' => $hide_friends,
 			'$hide_wall' => $hide_wall,
 			'$unkmail' => $unkmail,		
-			'$cntunkmail' 	=> array('cntunkmail', t('Maximum private messages per day from unknown people:'), intval($channel['channel_max_anon_mail']) ,t("Useful to reduce spamming")),
+			'$cntunkmail' 	=> array('cntunkmail', t('Maximum direct messages per day from unknown people:'), intval($channel['channel_max_anon_mail']) ,t("Useful to reduce spamming if you allow direct messages from unknown people")),
 			
 			'$autoperms' => $autoperms,			
 //			'$anymention' => $anymention,			

@@ -17,11 +17,6 @@ class Stream extends Controller {
 		if (! local_channel()) {
 			return;
 		}
-
-		// @fixme - the @ form blocks the network connection search in the get() function, and the ? search probably breaks the url
-		//		if (in_array(substr($_GET['search'],0,1),[ '@', '!', '?'])) {
-		//			goaway('search' . '?f=&search=' . $_GET['search']);
-		//		}
 	
 		$channel = App::get_channel();
 		App::$profile_uid = local_channel();
@@ -40,7 +35,7 @@ class Stream extends Controller {
 		$o = '';
 
 		if ($load) {
-			$_SESSION['loadtime'] = datetime_convert();
+			$_SESSION['loadtime_stream'] = datetime_convert();
 		}
 
 		$arr = [ 'query' => App::$query_string ];
@@ -118,15 +113,15 @@ class Stream extends Controller {
 				$g = substr($gid,1);
 				switch ($g) {
 					case '1':
-						$r = [ 'hash' => 'connections:' . $channel['channel_hash'] ];
+						$r = [[ 'hash' => 'connections:' . $channel['channel_hash'] ]];
 						$vg = t('Connections');
 						break;
 					case '2':
-						$r = [ 'hash' => 'zot:' . $channel['channel_hash'] ];
-						$vg = t('Zot');
+						$r = [[ 'hash' => 'zot:' . $channel['channel_hash'] ]];
+						$vg = t('Nomad');
 						break;
 					case '3':
-						$r = [ 'hash' => 'activitypub:' . $channel['channel_hash'] ];
+						$r = [[ 'hash' => 'activitypub:' . $channel['channel_hash'] ]];
 						$vg = t('ActivityPub');
 						break;
 					default:
@@ -146,10 +141,12 @@ class Stream extends Controller {
 					goaway(z_root() . '/stream');
 				}
 			}
-	
+
+
+
 			$group      = $gid;
 			$group_hash = $r[0]['hash'];
-			$def_acl    = [ 'allow_gid' => '<' . $r[0]['hash'] . '>' ];
+
 		}
 	
 		$default_cmin = ((Apps::system_app_installed(local_channel(),'Friend Zoom')) ? get_pconfig(local_channel(),'affinity','cmin',0) : (-1));
@@ -189,9 +186,7 @@ class Stream extends Controller {
 				notice( t('No such channel') . EOL );
 				goaway(z_root() . '/stream');
 			}
-
-			$def_acl = [ 'allow_cid' => '<' . $cid_r[0]['abook_xchan'] . '>', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => '' ];
-
+			
 		}
 	
 		if (! $update) {
@@ -204,13 +199,6 @@ class Stream extends Controller {
 			}
 
 			$body = EMPTY_STR;
-
-//	When viewing groups, automatically add a private mention to the editor
-//  This is disabled for now as well as setting the ACL for access lists, as the change in message scope could be unexpected.
-//			if (intval($pf) === 1 && $cid_r) {
-//				$backup = ((strpos($cid_r[0]['xchan_guid'],'http') === 0) ? $cid_r[0]['xchan_guid'] : $cid_r[0]['xchan_url']);
-//				$body = '@!{' . (($cid_r[0]['xchan_addr']) ? $cid_r[0]['xchan_addr'] : $backup) . '}' . "\n";
-//			}
 
 			nav_set_selected('Stream');
 
@@ -525,7 +513,7 @@ class Stream extends Controller {
 		$items = [];
 		
 		// This fixes a very subtle bug so I'd better explain it. You wake up in the morning or return after a day
-		// or three and look at your matrix page - after opening up your browser. The first page loads just as it
+		// or three and look at your stream page - after opening up your browser. The first page loads just as it
 		// should. All of a sudden a few seconds later, page 2 will get inserted at the beginning of the page
 		// (before the page 1 content). The update code is actually doing just what it's supposed
 		// to, it's fetching posts that have the ITEM_UNSEEN bit set. But the reason that page 2 content is being
@@ -536,8 +524,8 @@ class Stream extends Controller {
 		// by storing in your session the current UTC time whenever you LOAD a network page, and only UPDATE items
 		// which are both ITEM_UNSEEN and have "changed" since that time. Cross fingers...
 	
-		if ($update && $_SESSION['loadtime'])
-			$simple_update = " AND (( item_unseen = 1 AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' )  OR item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' ) ";
+		if ($update && $_SESSION['loadtime_stream'])
+			$simple_update = " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime_stream']) . "' ";
 		if ($load)
 			$simple_update = '';
 
@@ -594,7 +582,7 @@ class Stream extends Controller {
 					and (abook.abook_blocked = 0 or abook.abook_flags is null)
 					$sql_extra3 $sql_extra $sql_options $sql_nets $net_query2"
 				);
-				$_SESSION['loadtime'] = datetime_convert();
+				$_SESSION['loadtime_stream'] = datetime_convert();
 			}
 
 			if ($r) {

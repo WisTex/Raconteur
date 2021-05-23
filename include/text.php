@@ -283,7 +283,7 @@ function purify_html($s, $opts = []) {
 	$def->addElement('footer',  'Block', 'Flow', 'Common');
 	//Inline
 	$def->addElement('button',  'Inline', 'Inline', 'Common');
-
+	$def->addElement('mark', 'Inline', 'Inline', 'Common');
 
 	if(in_array('allow_position', $opts)) {
 		$cssDefinition = $config->getCSSDefinition();
@@ -846,9 +846,10 @@ function get_tags($s) {
 	$ret = [];
 	$match = [];
 
-	// ignore anything in a code or svg block
+	// ignore anything in a code or svg block or HTML tag
 
 	$s = preg_replace('/\[code(.*?)\](.*?)\[\/code\]/sm','',$s);
+	$s = preg_replace('/\<(.*?)\>/sm','',$s);
 	$s = preg_replace('/\[svg(.*?)\](.*?)\[\/svg\]/sm','',$s);
 
 	// ignore anything in [style= ]

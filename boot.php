@@ -16,7 +16,7 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '21.05.09' );
+define ( 'STD_VERSION',             '21.05.21' );
 define ( 'ZOT_REVISION',            '10.0' );
 
 define ( 'DB_UPDATE_VERSION',       1248 );
@@ -492,7 +492,7 @@ define ( 'ACTIVITY_LIKE',        'Like' );
 define ( 'ACTIVITY_DISLIKE',     'Dislike' );
 define ( 'ACTIVITY_SHARE',       'Announce' );
 define ( 'ACTIVITY_FOLLOW',      'Follow' );
-define ( 'ACTIVITY_UNFOLLOW',    'Unfollow');
+define ( 'ACTIVITY_IGNORE',      'Ignore');
 
 define ( 'ACTIVITY_OBJ_COMMENT', 'Note' );
 define ( 'ACTIVITY_OBJ_NOTE',    'Note' );

@@ -27,7 +27,7 @@ class Subthread extends Controller {
 			$activity = ACTIVITY_FOLLOW;
 		}
 		elseif (argv(1) === 'unsub') {
-			$activity = ACTIVITY_UNFOLLOW;
+			$activity = ACTIVITY_IGNORE;
 		}
 	
 		$i = q("select * from item where id = %d and uid = %d",
@@ -132,7 +132,7 @@ class Subthread extends Controller {
 		if ($activity === ACTIVITY_FOLLOW) {
 			$bodyverb = t('%1$s is following %2$s\'s %3$s');
 		}
-		if ($activity === ACTIVITY_UNFOLLOW) {
+		if ($activity === ACTIVITY_IGNORE) {
 			$bodyverb = t('%1$s stopped following %2$s\'s %3$s');
 		}
 		
