@@ -52,7 +52,6 @@ class Site {
 		$mirror_frontpage	=	((x($_POST,'mirror_frontpage'))	? intval(trim($_POST['mirror_frontpage']))		: 0);
 		$directory_server	=	((x($_POST,'directory_server')) ? trim($_POST['directory_server']) : '');
 		$force_publish		=	((x($_POST,'publish_all'))		? True	: False);
-		$block_public_dir	=	((x($_POST,'block_public_directory'))	? True	: False);
 		$disable_discover_tab =	((x($_POST,'disable_discover_tab'))		? False	:	True);
 		$site_firehose      =   ((x($_POST,'site_firehose')) ? True : False);
 		$open_pubstream     =   ((x($_POST,'open_pubstream')) ? True : False);
@@ -115,7 +114,6 @@ class Site {
 		set_config('system', 'show_like_counts', $show_like_counts);
 		set_config('system', 'pubstream_incl',$pub_incl);
 		set_config('system', 'pubstream_excl',$pub_excl);
-		set_config('system', 'block_public_directory', $block_public_dir);
 		set_config('system', 'max_imported_follow', $max_imported_follow);
 		set_config('system', 'animated_avatars', $animations);
 		
