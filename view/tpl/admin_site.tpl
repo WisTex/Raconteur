@@ -111,7 +111,6 @@
 					{{include file="field_checkbox.tpl" field=$show_like_counts}}
 					{{include file="field_checkbox.tpl" field=$ap_contacts}}
 					{{include file="field_checkbox.tpl" field=$animations}}
-					{{include file="field_checkbox.tpl" field=$block_public_dir}}
 					{{include file="field_checkbox.tpl" field=$force_publish}}
 					{{include file="field_checkbox.tpl" field=$disable_discover_tab}}
 					{{include file="field_checkbox.tpl" field=$site_firehose}}

@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Lib\System;
+use Zotlabs\Lib\PConfig;
 use Zotlabs\Web\Controller;
 
 require_once("include/bbcode.php");
@@ -311,7 +312,6 @@ class Display extends Controller {
 					dbesc($target_item['parent_mid'])
 				);
 			}
-			$_SESSION['loadtime_display'] = datetime_convert();
 		}
 	
 		else {
@@ -404,6 +404,16 @@ class Display extends Controller {
 			}
 		} 
 
+		if (local_channel() && $items) {
+			$ids = ids_to_array($items,'item_id');
+			$seen = PConfig::Get(local_channel(),'system','seen_items');
+			if (! $seen) {
+				$seen = [];
+			}
+			$seen = array_unique(array_merge($ids,$seen));
+			PConfig::Set(local_channel(),'system','seen_items',$seen);
+		}
+
 		switch($module_format) {
 			
 		case 'html':
@@ -475,6 +485,8 @@ class Display extends Controller {
 				intval(local_channel()),
 				intval($r[0]['item_id'])
 			);
+
+
 		}
 
 		$o .= '<div id="content-complete"></div>';

@@ -8,6 +8,7 @@ use Zotlabs\Render\Comanche;
 use Zotlabs\Render\Theme;
 use Zotlabs\Lib\DB_Upgrade;
 use Zotlabs\Lib\System;
+use Zotlabs\Lib\PConfig;
 use Zotlabs\Daemon\Run;
 
 /**
@@ -2549,4 +2550,19 @@ function get_host() {
 		$host = substr($host,0,strpos($host,':'));
 	}
 	return trim($host);
+}
+
+function get_loadtime($module) {
+	$n  = 'loadtime_' . $module;
+	if (isset($_SESSION[$n])) {
+		return $_SESSION[$n];
+	}
+	if (local_channel()) {
+		$x = PConfig::Get(local_channel(),'system',$n, false);
+		if ($x) {
+			return ($x);
+		}
+	}
+	return datetime_convert();
+
 }

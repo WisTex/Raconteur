@@ -140,7 +140,7 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = []) {
 		@curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, intval($opts['connecttimeout']));
 	}
 	else {
-		$curl_contime = intval(@get_config('system','curl_connecttimeout',30));
+		$curl_contime = intval(@get_config('system','curl_connecttimeout',60));
 		@curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $curl_contime);
 	}
 
@@ -352,7 +352,7 @@ function z_post_url($url, $params, $redirects = 0, $opts = []) {
 		@curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, intval($opts['connecttimeout']));
 	}
 	else {
-		$curl_contime = intval(@get_config('system','curl_connecttimeout',30));
+		$curl_contime = intval(@get_config('system','curl_connecttimeout',60));
 		@curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $curl_contime);
 	}
 
