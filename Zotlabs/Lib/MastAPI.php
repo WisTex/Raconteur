@@ -81,7 +81,7 @@ class MastAPI {
 		$ret = [];
 		$ret['uri'] = z_root();
 		$ret['title'] = System::get_site_name();
-		$ret['description'] = bbcode(get_config('system','siteinfo'), [ 'export' => true ] );
+		$ret['description'] = bbcode(get_config('system','siteinfo',''), [ 'export' => true ] );
 		$ret['email'] = get_config('system','admin_email');
 		$ret['version'] = System::get_project_version();
 		$ret['registrations'] = (($register) ? true : false);
