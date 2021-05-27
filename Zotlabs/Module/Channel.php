@@ -8,6 +8,7 @@ use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\Crypto;
+use Zotlabs\Lib\PConfig;
 use Zotlabs\Web\HTTPSig;
 
 use App;
@@ -180,8 +181,6 @@ class Channel extends Controller {
 
 		$noscript_content = get_config('system', 'noscript_content', '1');
 
-		if($load)
-			$_SESSION['loadtime'] = datetime_convert();
 
 		$category = $datequery = $datequery2 = '';
 
@@ -192,7 +191,6 @@ class Channel extends Controller {
 				$mid = $decoded;
 			}
 		}
-
 
 		$datequery = ((x($_GET,'dend') && is_a_date_arg($_GET['dend'])) ? notags($_GET['dend']) : '');
 		$datequery2 = ((x($_GET,'dbegin') && is_a_date_arg($_GET['dbegin'])) ? notags($_GET['dbegin']) : '');
@@ -223,6 +221,15 @@ class Channel extends Controller {
 		$ob_hash = (($observer) ? $observer['xchan_hash'] : '');
 
 		$perms = get_all_perms(App::$profile['profile_uid'],$ob_hash);
+
+
+		if ($load && ! $mid) {
+			$_SESSION['loadtime_channel'] = datetime_convert();
+			if ($is_owner) {
+				PConfig::Set(local_channel(),'system','loadtime_channel',$_SESSION['loadtime_channel']);
+			}
+		}
+
 
 
 		if(! $perms['view_stream']) {
@@ -543,6 +550,14 @@ class Channel extends Controller {
 					intval(local_channel())
 				);
 			}
+
+			$ids = ids_to_array($items,'item_id');
+			$seen = PConfig::Get(local_channel(),'system','seen_items');
+			if (! $seen) {
+				$seen = [];
+			}
+			$seen = array_merge($ids,$seen);
+			PConfig::Set(local_channel(),'system','seen_items',$seen);
 		}
 
 		$mode = (($search) ? 'search' : 'channel');

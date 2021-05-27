@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\PermissionDescription;
+use Zotlabs\Lib\PConfig;
 
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
@@ -16,9 +17,10 @@ class Pubstream extends Controller {
 		$o = EMPTY_STR;
 		$items = [];
 		
-		if($load)
+		if ($load && ! $mid) {
 			$_SESSION['loadtime_pubstream'] = datetime_convert();
-
+		}
+		
 		if((observer_prohibited(true))) {
 			return login();
 		}
@@ -97,9 +99,10 @@ class Pubstream extends Controller {
 
 			nav_set_selected(t('Public Stream'));
 
-			if(!$mid)
-				$_SESSION['static_loadtime'] = datetime_convert();
-
+			if (! $mid) {
+				$_SESSION['loadtime_pubstream'] = datetime_convert();
+			}
+			
 			$static  = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 1);
 	
 			$maxheight = get_config('system','home_divmore_height');
@@ -191,8 +194,15 @@ class Pubstream extends Controller {
 		
 		$simple_update = ((isset($_SESSION['loadtime_pubstream']) && $_SESSION['loadtime_pubstream']) ? " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime_pubstream']) . "' " : '');
 	
-		if($load)
+		if ($load) {
 			$simple_update = '';
+			if (! $mid) {
+				$_SESSION['loadtime_pubstream'] = datetime_convert();
+				if (local_channel()) {
+					PConfig::Set(local_channel(),'system','loadtime_pubstream',$_SESSION['loadtime_pubstream']);
+				}
+			}
+		}
 
 		if($static && $simple_update)
 			$simple_update .= " and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
@@ -212,7 +222,7 @@ class Pubstream extends Controller {
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
 						$sql_extra $net_query2 LIMIT 1",
 						dbesc($mid . '%')
-					);
+					);						
 				}
 				else {
 					// Fetch a page full of parent items for this page
@@ -236,6 +246,8 @@ class Pubstream extends Controller {
 						$sql_extra $net_query2 LIMIT 1",
 						dbesc($mid . '%')
 					);
+
+
 				}
 				else {
 					$r = q("SELECT parent AS item_id FROM item
@@ -247,7 +259,6 @@ class Pubstream extends Controller {
 						$sql_extra $net_query2"
 					);
 				}
-				$_SESSION['loadtime_pubstream'] = datetime_convert();
 			}
 
 			// Then fetch all the children of the parents that are on this page
@@ -277,7 +288,17 @@ class Pubstream extends Controller {
 			}
 	
 		}
-	
+
+		if ($mid && local_channel()) {
+			$ids = ids_to_array($items,'item_id');
+			$seen = PConfig::Get(local_channel(),'system','seen_items',[]);
+			if (! $seen) {
+				$seen = [];
+			}
+			$seen = array_merge($ids,$seen);
+			PConfig::Set(local_channel(),'system','seen_items',$seen);
+		}
+
 		// fake it
 		$mode = ('pubstream');
 	
