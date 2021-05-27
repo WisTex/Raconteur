@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Enotify;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\PConfig;
 
 require_once('include/bbcode.php');
 
@@ -50,10 +51,6 @@ class Ping extends Controller {
 		$result['forums'] = 0;
 		$result['forums_sub'] = [];
 		$result['reports'] = 0;
-		
-		if (! (isset($_SESSION['static_loadtime']) && $_SESSION['static_loadtime'])) {
-			$_SESSION['static_loadtime'] = datetime_convert();
-		}
 		
 		$vnotify = false;
 		$evdays = 3;
@@ -172,16 +169,29 @@ class Ping extends Controller {
 
 		$sys = get_sys_channel();
 
+		$seenstr = EMPTY_STR;
+
+
+		if (local_channel()) {
+			$seen = PConfig::Get(local_channel(),'system','seen_items',[]);
+			if ($seen) {
+				$seenstr = " and not item.id in (" . implode(',',$seen) . ") ";
+			}
+		}
+
+		$loadtime = get_loadtime('pubstream');
+
 		if ($notify_pubs) {
 			$pubs = q("SELECT count(id) as total from item
 				WHERE uid = %d
-				AND item_unseen = 1
 				AND author_xchan != '%s'
-				AND created > '" . datetime_convert('UTC','UTC',$_SESSION['static_loadtime']) . "'
+				AND created > '%s'
+				$seenstr
 				$item_normal
 				$sql_extra",
 				intval($sys['channel_id']),
-				dbesc(get_observer_hash())
+				dbesc(get_observer_hash()),
+				dbesc($loadtime)
 			);
 
 			if ($pubs) {
@@ -195,15 +205,16 @@ class Ping extends Controller {
 
 			$r = q("SELECT * FROM item
 				WHERE uid = %d
-				AND item_unseen = 1
 				AND author_xchan != '%s'
-				AND created > '" . datetime_convert('UTC','UTC',$_SESSION['static_loadtime']) . "'
+				AND created > '%s'
+				$seenstr
 				$item_normal
 				$sql_extra
 				ORDER BY created DESC
 				LIMIT 300",
 				intval($sys['channel_id']),
-				dbesc(get_observer_hash())
+				dbesc(get_observer_hash()),
+				dbesc($loadtime)
 			);
 
 			if ($r) {
@@ -239,11 +250,15 @@ class Ping extends Controller {
 					$r = q("UPDATE item SET item_unseen = 0 WHERE uid = %d AND item_unseen = 1",
 						intval(local_channel())
 					);
+					$_SESSION['loadtime_stream'] = datetime_convert();
+					PConfig::Set(local_channel(),'system','loadtime_stream',$_SESSION['loadtime_stream']);
 					break;
 				case 'home':
 					$r = q("UPDATE item SET item_unseen = 0 WHERE uid = %d AND item_unseen = 1 AND item_wall = 1",
 						intval(local_channel())
 					);
+					$_SESSION['loadtime_channel'] = datetime_convert();
+					PConfig::Set(local_channel(),'system','loadtime_channel',$_SESSION['loadtime_channel']);
 					break;
 				case 'all_events':
 					$r = q("UPDATE event SET dismissed = 1 WHERE uid = %d AND dismissed = 0 AND dtstart < '%s' AND dtstart > '%s' ",
@@ -258,7 +273,9 @@ class Ping extends Controller {
 					);
 					break;
 				case 'pubs':
-					unset($_SESSION['static_loadtime']);
+
+					$_SESSION['loadtime_pubstream'] = datetime_convert();
+					PConfig::Set(local_channel(),'system','loadtime_pubstream',$_SESSION['loadtime_pubstream']);
 					break;
 				default:
 					break;
@@ -270,6 +287,12 @@ class Ping extends Controller {
 				intval(local_channel()),
 				intval($_REQUEST['markItemRead'])
 			);
+			$id = intval($_REQUEST['markItemRead']);
+			$seen = PConfig::Get(local_channel(),'system','seen_items',[]);
+			if (! in_array($id,$seen)) {
+				$seen[] = $id;
+			}
+			PConfig::Set(local_channel(),'system','seen_items',$seen);
 		}
 
 		/**
@@ -324,24 +347,24 @@ class Ping extends Controller {
 			json_return_and_die( [ 'notify' => $notifs ] );
 		}
 
-		if (argc() > 1 && (argv(1) === 'stream' || argv(1) === 'home')) {
+		if (argc() > 1 && (argv(1) === 'stream')) {
 			$local_result = [];
-			$item_normal_moderate = $item_normal;
 
-			if (argv(1) === 'home') {
-				$sql_extra .= " and item_wall = 1 ";
-				$item_normal_moderate = item_normal_moderate();
-			}
+			$item_normal_moderate = $item_normal;
+			$loadtime = get_loadtime('stream');
+			
 			$r = q("SELECT * FROM item 
 				WHERE uid = %d
-				AND item_unseen = 1
 				AND author_xchan != '%s'
+				AND changed > '%s'
+				$seenstr
 				$item_normal_moderate
 				$sql_extra
 				ORDER BY created DESC
 				LIMIT 300",
 				intval(local_channel()),
-				dbesc($ob_hash)
+				dbesc($ob_hash),
+				dbesc($loadtime)
 			);
 			if ($r) {
 				xchan_query($r);
@@ -356,6 +379,44 @@ class Ping extends Controller {
 
 			json_return_and_die( [ 'notify' => $local_result ] );
 		}
+
+		if (argc() > 1 && (argv(1) === 'home')) {
+			$local_result = [];
+			$item_normal_moderate = $item_normal;
+
+			$sql_extra .= " and item_wall = 1 ";
+			$item_normal_moderate = item_normal_moderate();
+
+			$loadtime = get_loadtime('channel');
+
+			$r = q("SELECT * FROM item 
+				WHERE uid = %d
+				AND author_xchan != '%s'
+				AND changed > '%s'
+				$seenstr
+				$item_normal_moderate
+				$sql_extra
+				ORDER BY created DESC
+				LIMIT 300",
+				intval(local_channel()),
+				dbesc($ob_hash),
+				dbesc($loadtime)
+			);
+			if ($r) {
+				xchan_query($r);
+				foreach ($r as $item) {
+					$z = Enotify::format($item);
+
+					if($z) {
+						$local_result[] = $z;
+					}
+				}
+			}
+
+			json_return_and_die( [ 'notify' => $local_result ] );
+		}
+
+
 
 		if (argc() > 1 && (argv(1) === 'intros')) {
 			$local_result = [];
@@ -536,14 +597,41 @@ class Ping extends Controller {
 		}
 
 
-		if ($vnotify & (VNOTIFY_NETWORK|VNOTIFY_CHANNEL)) {
-
-			$r = q("SELECT id, item_wall FROM item 
-				WHERE uid = %d and item_unseen = 1 
+		if ($vnotify & VNOTIFY_NETWORK) {
+			$loadtime = get_loadtime('stream');
+			$r = q("SELECT id FROM item 
+				WHERE uid = %d and changed > '%s' 
+				$seenstr
 				$item_normal
 				$sql_extra
 				AND author_xchan != '%s'",
 				intval(local_channel()),
+				dbesc($loadtime),
+				dbesc($ob_hash)
+			);
+
+			if($r) {
+				$arr = array('items' => $r);
+				call_hooks('network_ping', $arr);
+
+				foreach ($r as $it) {
+					$result['stream'] ++;
+				}
+			}
+		}
+		if (! ($vnotify & VNOTIFY_NETWORK))
+			$result['stream'] = 0;
+
+		if ($vnotify & VNOTIFY_CHANNEL) {
+			$loadtime = get_loadtime('channel');
+			$r = q("SELECT id FROM item 
+				WHERE item_wall = 1 and uid = %d and changed > '%s'
+				$seenstr 
+				$item_normal
+				$sql_extra
+				AND author_xchan != '%s'",
+				intval(local_channel()),
+				dbesc($loadtime),
 				dbesc($ob_hash)
 			);
 
@@ -561,8 +649,6 @@ class Ping extends Controller {
 				}
 			}
 		}
-		if (! ($vnotify & VNOTIFY_NETWORK))
-			$result['stream'] = 0;
 		if (! ($vnotify & VNOTIFY_CHANNEL))
 			$result['home'] = 0;
 
@@ -693,6 +779,21 @@ class Ping extends Controller {
 
 				$result['forums_sub'] = $forums;
 			}
+		}
+
+		// Mark all of the stream notifications seen if all three of them are caught up.
+		// This also resets the pconfig storage for items_seen
+		
+		if (! (intval($result['home']) + intval($result['stream']) + intval($result['pubs']))) {
+			PConfig::Delete(local_channel(),'system','seen_items');
+			
+			$_SESSION['loadtime_channel']   = datetime_convert();
+			$_SESSION['loadtime_stream']    = datetime_convert();
+			$_SESSION['loadtime_pubstream'] = datetime_convert();
+			
+			PConfig::Set(local_channel(),'system','loadtime_channel',   $_SESSION['loadtime_channel']);
+			PConfig::Set(local_channel(),'system','loadtime_stream',    $_SESSION['loadtime_stream']);
+			PConfig::Set(local_channel(),'system','loadtime_pubstream', $_SESSION['loadtime_pubstream']);
 		}
 
 		json_return_and_die($result);
