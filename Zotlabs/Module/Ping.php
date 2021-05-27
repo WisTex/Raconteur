@@ -619,8 +619,9 @@ class Ping extends Controller {
 				}
 			}
 		}
-		if (! ($vnotify & VNOTIFY_NETWORK))
+		if (! ($vnotify & VNOTIFY_NETWORK)) {
 			$result['stream'] = 0;
+		}
 
 		if ($vnotify & VNOTIFY_CHANNEL) {
 			$loadtime = get_loadtime('channel');
@@ -635,22 +636,15 @@ class Ping extends Controller {
 				dbesc($ob_hash)
 			);
 
-			if($r) {
-				$arr = array('items' => $r);
-				call_hooks('network_ping', $arr);
-
+			if ($r) {
 				foreach ($r as $it) {
-					if (intval($it['item_wall'])) {
-						$result['home'] ++;
-					}
-					else {
-						$result['stream'] ++;
-					}
+					$result['home'] ++;
 				}
 			}
 		}
-		if (! ($vnotify & VNOTIFY_CHANNEL))
+		if (! ($vnotify & VNOTIFY_CHANNEL)) {
 			$result['home'] = 0;
+		}
 
 
 		if ($vnotify & VNOTIFY_INTRO) {
