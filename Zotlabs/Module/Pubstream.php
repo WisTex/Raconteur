@@ -17,10 +17,6 @@ class Pubstream extends Controller {
 		$o = EMPTY_STR;
 		$items = [];
 		
-		if ($load && ! $mid) {
-			$_SESSION['loadtime_pubstream'] = datetime_convert();
-		}
-		
 		if((observer_prohibited(true))) {
 			return login();
 		}
@@ -101,6 +97,9 @@ class Pubstream extends Controller {
 
 			if (! $mid) {
 				$_SESSION['loadtime_pubstream'] = datetime_convert();
+				if (local_channel()) {
+					PConfig::Set(local_channel(),'system','loadtime_pubstream',$_SESSION['loadtime_pubstream']);
+				}
 			}
 			
 			$static  = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 1);
@@ -196,12 +195,6 @@ class Pubstream extends Controller {
 	
 		if ($load) {
 			$simple_update = '';
-			if (! $mid) {
-				$_SESSION['loadtime_pubstream'] = datetime_convert();
-				if (local_channel()) {
-					PConfig::Set(local_channel(),'system','loadtime_pubstream',$_SESSION['loadtime_pubstream']);
-				}
-			}
 		}
 
 		if($static && $simple_update)
