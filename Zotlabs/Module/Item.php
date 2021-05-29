@@ -29,6 +29,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\ThreadListener;
 use Zotlabs\Lib\Config;
 use Zotlabs\Lib\IConfig;
+use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\Enotify;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Access\PermissionLimits;
@@ -324,7 +325,7 @@ class Item extends Controller {
 		$item_blocked = false;
 
 		$post_tags = false;
-
+		$pub_copy = false;
 
 
 
@@ -507,6 +508,7 @@ class Item extends Controller {
 
 				if (local_channel()) {
 					$r = [ copy_of_pubitem(App::get_channel(), $r[0]['mid']) ];
+					$pub_copy = true;
 				}
 			}
 
@@ -1408,7 +1410,7 @@ class Item extends Controller {
 		// as a duplicate if you're editing it very soon after posting it initially and you edited
 		// some attribute besides the content, such as title or categories. 
 
-		if(feature_enabled($profile_uid,'suppress_duplicates') && (! $orig_post)) {
+		if(PConfig::Get($profile_uid,'system','suppress_duplicates',true) && (! $orig_post)) {
 	
 			$z = q("select created from item where uid = %d and created > %s - INTERVAL %s and body = '%s' limit 1",
 				intval($profile_uid),
@@ -1469,18 +1471,18 @@ class Item extends Controller {
 					Libsync::build_sync_packet($profile_uid,array('item' => array(encode_item($sync_item[0],true))));
 				}
 			}
-			if(! $nopush)
+			if (! $nopush) {
 				Run::Summon( [ 'Notifier', 'edit_post', $post_id ] );
-	
+			}
 
-			if($api_source)
+			if ($api_source) {
 				return($x);
+			}
 
 
 			if (intval($datarray['item_unpublished'])) {
 				info($draft_msg);
 			}
-
 
 
 			if((x($_REQUEST,'return')) && strlen($return_path)) {
@@ -1493,9 +1495,15 @@ class Item extends Controller {
 			$post_id = 0;
 	
 		$post = item_store($datarray,$execflag);
-	
+
+		if ($pub_copy) {
+			info( t('Your comment has been posted.') . EOL);
+		}
+
 		$post_id = $post['item_id'];
 		$datarray = $post['item'];
+
+
 
 		if($post_id) {
 			logger('mod_item: saved item ' . $post_id);

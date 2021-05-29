@@ -5,6 +5,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\PermissionDescription;
 
 require_once('include/conversation.php');
@@ -36,6 +37,7 @@ class Stream extends Controller {
 
 		if ($load) {
 			$_SESSION['loadtime_stream'] = datetime_convert();
+			PConfig::Set(local_channel(),'system','loadtime_stream',$_SESSION['loadtime_stream']);
 		}
 
 		$arr = [ 'query' => App::$query_string ];
@@ -506,7 +508,7 @@ class Stream extends Controller {
 		else
 			$page_mode = 'client';
 	
-		$simple_update = (($update) ? " and item_unseen = 1 " : '');
+		$simple_update = (($update) ? " and item_changed >  = '" . $_SESSION['loadtime_stream'] . "' " : '');
 
 		$parents_str = '';
 		$update_unseen = '';
@@ -531,7 +533,19 @@ class Stream extends Controller {
 
 		if ($static && $simple_update)
 			$simple_update .= " and item_thread_top = 0 and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";	
-	
+
+
+		// we are not yet using this in updates because the content may have just been marked seen
+		// and this might prevent us from loading the update. Will need to test further.
+		
+		$seenstr = EMPTY_STR;
+		if (local_channel()) {
+			$seen = PConfig::Get(local_channel(),'system','seen_items',[]);
+			if ($seen) {
+				$seenstr = " and not item.id in (" . implode(',',$seen) . ") ";
+			}
+		}
+
 		if ($nouveau && $load) {
 			// "New Item View" - show all items unthreaded in reverse created date order
 	
@@ -575,6 +589,7 @@ class Stream extends Controller {
 			else {
 
 				// this is an update
+
 				$r = q("SELECT item.parent AS item_id FROM item
 					left join abook on ( item.owner_xchan = abook.abook_xchan $abook_uids )
 					$net_query
