@@ -506,9 +506,15 @@ class Item extends Controller {
 				// if interacting with a pubstream item (owned by the sys channel), 
 				// create a copy of the parent in your stream
 
-				if (local_channel()) {
+				// $r may have changed. Check it again before trying to use it.
+				
+				if ($r && local_channel()) {
+					$old_id = $r[0]['id'];
 					$r = [ copy_of_pubitem(App::get_channel(), $r[0]['mid']) ];
-					$pub_copy = true;
+					if ($r[0]['id'] !== $old_id) {
+						// keep track that a copy was made to  display a special status notice that is unique to this condition
+						$pub_copy = true;
+					}
 				}
 			}
 
