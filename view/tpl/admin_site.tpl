@@ -65,7 +65,6 @@
 					{{include file="field_input.tpl" field=$frontpage}}
 					{{include file="field_checkbox.tpl" field=$mirror_frontpage}}
 					{{include file="field_checkbox.tpl" field=$login_on_homepage}}
-					{{include file="field_checkbox.tpl" field=$enable_context_help}}
 					<div class="settings-submit-wrapper" >
 						<button type="submit" name="page_site" class="btn btn-primary" value="1" >{{$submit}}</button>
 					</div>
