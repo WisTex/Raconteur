@@ -69,7 +69,7 @@ function check_account_invite($invite_code) {
 
 	$using_invites = get_config('system','invitation_only');
 
-	if ($using_invites) {
+	if ($using_invites && defined('INVITE_WORKING')) {
 		if (! $invite_code) {
 			$result['message'] .= t('An invitation is required.') . EOL;
 		}
