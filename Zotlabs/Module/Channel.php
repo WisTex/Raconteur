@@ -349,8 +349,8 @@ class Channel extends Controller {
 			'title' => 'oembed'
 		]);
 
-		if ($update && isset($_SESSION['loadtime'])) {
-			$simple_update = " AND (( item_unseen = 1 AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' )  OR item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' ) ";
+		if ($update && isset($_SESSION['loadtime_channel'])) {
+			$simple_update = " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime_channel']) . "' ";
 		}
 		if ($load) {
 			$simple_update = '';
@@ -368,7 +368,6 @@ class Channel extends Controller {
 					dbesc($mid . '%'),
 					intval(App::$profile['profile_uid'])
 				);
-				$_SESSION['loadtime'] = datetime_convert();
 			}
 			else {
 				$r = q("SELECT parent AS item_id from item
@@ -380,7 +379,6 @@ class Channel extends Controller {
 					ORDER BY created DESC",
 					intval(App::$profile['profile_uid'])
 				);
-				$_SESSION['loadtime'] = datetime_convert();
 			}
 
 		}

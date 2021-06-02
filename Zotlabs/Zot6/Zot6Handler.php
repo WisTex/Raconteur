@@ -166,7 +166,7 @@ class Zot6Handler implements IHandler {
 					dbesc($recip)
 				);
 				if ($channel) {
-					$abook = q("select abook_id from abook where uid = %d and abook_xchan = '%s' limit 1",
+					$abook = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s' limit 1",
 						intval($channel[0]['channel_id']),
 						dbesc($sender)
 					);
