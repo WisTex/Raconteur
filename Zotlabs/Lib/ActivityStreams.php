@@ -160,6 +160,7 @@ class ActivityStreams {
 	 *
 	 * @return boolean Return true if the JSON string could be decoded.
 	 */
+
 	function is_valid() {
 		return $this->valid;
 	}

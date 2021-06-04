@@ -67,16 +67,18 @@ class Activity extends Controller {
 				$sql_extra = item_permissions_sql(0);
 			}
 
-			$r = q("select * from item where uuid = '%s' $item_normal $sql_extra limit 1",
-				dbesc($item_id)
+			$r = q("select * from item where ( uuid = '%s' or mid = '%s' ) $item_normal $sql_extra limit 1",
+				dbesc($item_id),
+				dbesc(z_root() . '/activity/' . $item_id)
 			);
 
 			if (! $r) {
-				$r = q("select * from item where uuid = '%s' $item_normal limit 1",
-					dbesc($item_id)
+				$r = q("select * from item where ( uuid = '%s' or mid = '%s' ) $item_normal limit 1",
+					dbesc($item_id),
+					dbesc(z_root() . '/activity/' . $item_id)
 				);
 
-				if($r) {
+				if ($r) {
 					http_status_exit(403, 'Forbidden');
 				}
 				http_status_exit(404, 'Not found');
