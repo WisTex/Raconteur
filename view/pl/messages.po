@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 21.04.28\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-27 23:52-0700\n"
-"PO-Revision-Date: 2021-06-05 20:38+0200\n"
+"PO-Revision-Date: 2021-06-05 21:16+0200\n"
 "Last-Translator: Andrzej Budziński <astabski@gmail.com>\n"
 "Language-Team: isfera.org <mail@isfera.org>\n"
 "Language: pl_PL\n"
@@ -10757,11 +10757,11 @@ msgstr "Ustawienia kanału/konta"
 
 #: ../../include/nav.php:102
 msgid "(is on)"
-msgstr "(jest włączone)"
+msgstr "(jest włączony)"
 
 #: ../../include/nav.php:102
 msgid "(is off)"
-msgstr "(jest wyłączone)"
+msgstr "(jest wyłączony)"
 
 #: ../../include/nav.php:102
 msgid "Content filtering"
