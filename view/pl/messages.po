@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 21.04.28\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-27 23:52-0700\n"
-"PO-Revision-Date: 2021-06-05 00:46+0200\n"
+"PO-Revision-Date: 2021-06-05 20:38+0200\n"
 "Last-Translator: Andrzej Budziński <astabski@gmail.com>\n"
 "Language-Team: isfera.org <mail@isfera.org>\n"
 "Language: pl_PL\n"
@@ -315,7 +315,7 @@ msgstr "Pochwał:"
 
 #: ../../Zotlabs/Lib/Libprofile.php:539
 msgid "Dislikes:"
-msgstr "Nagan:"
+msgstr "Zganień:"
 
 #: ../../Zotlabs/Lib/Libprofile.php:541
 msgid "Contact information and Social Networks:"
@@ -596,15 +596,15 @@ msgstr "Pochwały"
 msgctxt "noun"
 msgid "Dislike"
 msgid_plural "Dislikes"
-msgstr[0] "Nagana"
-msgstr[1] "Nagany"
-msgstr[2] "Nagan"
+msgstr[0] "Zganienie"
+msgstr[1] "Zganienia"
+msgstr[2] "Zganień"
 
 #: ../../Zotlabs/Lib/ThreadItem.php:225 ../../Zotlabs/Lib/ThreadItem.php:460
 #: ../../Zotlabs/Module/Photos.php:1279 ../../include/conversation.php:2185
 msgctxt "noun"
 msgid "Dislikes"
-msgstr "Nagany"
+msgstr "Zganienia"
 
 #: ../../Zotlabs/Lib/ThreadItem.php:251 ../../Zotlabs/Module/Admin/Profs.php:94
 #: ../../Zotlabs/Module/Admin/Profs.php:114 ../../Zotlabs/Module/Filer.php:51
@@ -640,7 +640,7 @@ msgstr "Nie podoba mi się to (przełącz)"
 
 #: ../../Zotlabs/Lib/ThreadItem.php:287 ../../include/taxonomy.php:590
 msgid "dislike"
-msgstr "nagana"
+msgstr "zganienie"
 
 #: ../../Zotlabs/Lib/ThreadItem.php:293
 msgid "Repeat This"
@@ -903,7 +903,7 @@ msgstr "Twój adres e-mail (wymagane)"
 
 #: ../../Zotlabs/Lib/ThreadItem.php:906
 msgid "Your website URL (optional)"
-msgstr "Adres URL Twojej witryny (opcjonalnie)"
+msgstr "Adres URL Twojego portalu (opcjonalnie)"
 
 #: ../../Zotlabs/Lib/Share.php:122 ../../Zotlabs/Lib/Activity.php:2616
 #: ../../Zotlabs/Module/Share.php:103
@@ -2407,16 +2407,16 @@ msgid ""
 "Your site photo is visible to anybody on the internet and may be distributed "
 "to other websites."
 msgstr ""
-"Zdjęcie Twojej witryny jest widoczne dla każdego w internecie i może być "
-"rozpowszechniane na innych witrynach internetowych."
+"Zdjęcie Twojego portalu jest widoczne dla każdego w internecie i może być "
+"rozpowszechniane na innych portali."
 
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:464
 msgid "Use Photo for Site Logo"
-msgstr "Użyj zdjęcia jako logo witryny"
+msgstr "Użyj zdjęcia jako logo portalu"
 
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:464
 msgid "Change Site Logo"
-msgstr "Zmień logo witryny"
+msgstr "Zmień logo portalu"
 
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:465
 #: ../../Zotlabs/Module/Profile_photo.php:505
@@ -2874,7 +2874,7 @@ msgid ""
 "sites:"
 msgstr ""
 "Zalecanym ustawieniem jest zezwolenie na niefiltrowany kod HTML tylko z "
-"następujących witryn:"
+"następujących portali:"
 
 #: ../../Zotlabs/Module/Admin/Security.php:126
 msgid ""
@@ -2890,7 +2890,7 @@ msgid ""
 "embedded content from that site is explicitly blocked."
 msgstr ""
 "Wszystkie inne osadzone treści będą filtrowane, <strong> chyba że </strong> "
-"osadzone treści z tej witryny są jawnie zablokowane."
+"osadzone treści z tego portalu są jawnie zablokowane."
 
 #: ../../Zotlabs/Module/Admin/Security.php:132
 #: ../../Zotlabs/Widget/Admin.php:27
@@ -3230,7 +3230,7 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Site.php:303
 msgid "Does this site allow new member registration?"
-msgstr "Czy ta witryna umożliwia rejestrację nowych członków?"
+msgstr "Czy ten portal umożliwia rejestrację nowych członków?"
 
 #: ../../Zotlabs/Module/Admin/Site.php:304
 msgid "Invitation only"
@@ -3266,7 +3266,7 @@ msgid ""
 "the public server site list."
 msgstr ""
 "Jeśli została wybrana zasada serwera publicznego, informacje te mogą być "
-"wyświetlane na liście witryn serwerów publicznych."
+"wyświetlane na liście portali serwerów publicznych."
 
 #: ../../Zotlabs/Module/Admin/Site.php:307
 msgid "Register text"
@@ -3312,7 +3312,7 @@ msgid ""
 "Will not waste system resources polling external sites for abandonded "
 "accounts. Enter 0 for no time limit."
 msgstr ""
-"Nie marnuje zasobów systemowych na odpytywanie zewnętrznych witryn w "
+"Nie marnuje zasobów systemowych na odpytywanie zewnętrznych portali w "
 "poszukiwaniu porzuconych kont. Wpisz 0, aby nie mieć ograniczeń czasowych."
 
 #: ../../Zotlabs/Module/Admin/Site.php:313
@@ -3346,7 +3346,7 @@ msgid ""
 "Provide access to public content from other sites. Warning: this content is "
 "unmoderated."
 msgstr ""
-"Zapewnij dostęp do treści publicznych z innych witryn. Ostrzeżenie: ta "
+"Zapewnij dostęp do treści publicznych z innych portali. Ostrzeżenie: ta "
 "zawartość jest niemoderowana."
 
 #: ../../Zotlabs/Module/Admin/Site.php:316
@@ -3375,14 +3375,14 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Site.php:318
 msgid "Show numbers of likes and dislikes in conversations"
-msgstr "Pokaż w rozmowach liczbę pochwał i nagan"
+msgstr "Pokaż w rozmowach liczbę pochwał i zganień"
 
 #: ../../Zotlabs/Module/Admin/Site.php:318
 msgid ""
 "If disabled, the presence of likes and dislikes will be shown, but without "
 "totals."
 msgstr ""
-"Jeśli ta opcja jest wyłączona, liczba pochwał i nagan będzie widoczna, ale "
+"Jeśli ta opcja jest wyłączona, liczba pochwał i zganień będzie widoczna, ale "
 "bez podsumowania."
 
 #: ../../Zotlabs/Module/Admin/Site.php:319
@@ -4059,7 +4059,7 @@ msgstr "Komunikator internetowy"
 #: ../../Zotlabs/Module/Cdav.php:1355 ../../Zotlabs/Module/Connedit.php:858
 #: ../../Zotlabs/Module/Profiles.php:790
 msgid "Website"
-msgstr "Witryna internetowa"
+msgstr "Portal"
 
 #: ../../Zotlabs/Module/Cdav.php:1357 ../../Zotlabs/Module/Connedit.php:860
 #: ../../Zotlabs/Module/Profiles.php:792
@@ -5423,7 +5423,7 @@ msgid ""
 "<a href=\"sites\">Show affiliated sites - some of which may allow "
 "registration.</a>"
 msgstr ""
-"<a href=\"sites\">Pokaż stowarzyszone witryny - niektóre z nich mogą "
+"<a href=\"sites\">Pokaż stowarzyszone portale - niektóre z nich mogą "
 "zezwalać na rejestrację.</a>"
 
 #: ../../Zotlabs/Module/Register.php:299 ../../Zotlabs/Module/Sites.php:51
@@ -5524,7 +5524,7 @@ msgid ""
 "currently known to this system. These are a small fraction of the thousands "
 "of websites and dozens of projects and providers which make up the fediverse."
 msgstr ""
-"Ta strona zawiera informacje o powiązanych projektach i witrynach "
+"Ta strona zawiera informacje o powiązanych projektach i portalach "
 "internetowych, które są obecnie znane temu systemowi. To niewielki ułamek "
 "tysięcy stron internetowych i dziesiątek projektów i dostawców, które tworzą "
 "Fediverse."
@@ -7267,7 +7267,7 @@ msgid ""
 "to this site."
 msgstr ""
 "Nie można zweryfikować certyfikatu SSL. Napraw certyfikat lub wyłącz dostęp "
-"https do tej witryny."
+"https do tego portalu."
 
 #: ../../Zotlabs/Module/Setup.php:681
 msgid ""
@@ -7294,9 +7294,9 @@ msgid ""
 "themselves have valid certificates) will get a warning message on their own "
 "site complaining about security issues."
 msgstr ""
-"Jeśli Twój certyfikat nie zostanie rozpoznany, członkowie innych witryn "
+"Jeśli Twój certyfikat nie zostanie rozpoznany, członkowie innych portali "
 "(którzy sami mogą mieć ważne certyfikaty) otrzymają komunikat ostrzegawczy "
-"we własnej witrynie, ostrzegający o problemie z bezpieczeństwem."
+"we własnym portalu, ostrzegający o problemie z bezpieczeństwem."
 
 #: ../../Zotlabs/Module/Setup.php:684
 msgid ""
@@ -7407,7 +7407,7 @@ msgstr "Pochwały"
 
 #: ../../Zotlabs/Module/Profiles.php:468 ../../Zotlabs/Module/Profiles.php:774
 msgid "Dislikes"
-msgstr "Nagany"
+msgstr "Zganienia"
 
 #: ../../Zotlabs/Module/Profiles.php:472 ../../Zotlabs/Module/Profiles.php:781
 msgid "Work/Employment"
@@ -8058,7 +8058,7 @@ msgstr "Pochwał"
 #: ../../Zotlabs/Module/Photos.php:1133 ../../include/conversation.php:618
 msgctxt "title"
 msgid "Dislikes"
-msgstr "Nagan"
+msgstr "Zganień"
 
 #: ../../Zotlabs/Module/Photos.php:1134 ../../include/conversation.php:619
 msgctxt "title"
@@ -8714,7 +8714,7 @@ msgid ""
 "Examples:"
 msgstr ""
 "Możesz także udostępnić znajomym i współpracownikom łącza dostępu w stylu "
-"<em>dropbox</em>, dodając hasło logowania do dowolnego adresu URL witryny, "
+"<em>dropbox</em>, dodając hasło logowania do dowolnego adresu URL portalu, "
 "jak pokazano na ilustracji. Przykłady:"
 
 #: ../../Zotlabs/Module/Settings/Tokens.php:277
@@ -8881,7 +8881,7 @@ msgid ""
 msgstr ""
 "Włącz, aby wskazać, czy ten kanał często lub regularnie publikuje treści dla "
 "dorosłych. (Proszę również oznaczyć wszelkie materiały dla dorosłych oraz "
-"nagość #NSFW)"
+"nagość hasztagiem #NSFW)"
 
 #: ../../Zotlabs/Module/Settings/Channel.php:604
 msgid "Security and Privacy"
@@ -9099,7 +9099,7 @@ msgstr "Niewidoczna aktywność publiczna"
 
 #: ../../Zotlabs/Module/Settings/Channel.php:682
 msgid "Unseen likes and dislikes"
-msgstr "Niewidoczne pochwały i nagany"
+msgstr "Niewidoczne pochwały i zganienia"
 
 #: ../../Zotlabs/Module/Settings/Channel.php:683
 msgid "Unseen forum posts"
@@ -10035,7 +10035,7 @@ msgstr "Ustawienia kanału"
 
 #: ../../Zotlabs/Widget/Settings_menu.php:52
 msgid "Display settings"
-msgstr "\"Ustawienia wyświetlania"
+msgstr "Ustawienia wyświetlania"
 
 #: ../../Zotlabs/Widget/Settings_menu.php:66
 msgid "Manage locations"
@@ -10699,7 +10699,7 @@ msgstr "Możliwość umieszczania postów w folderach"
 
 #: ../../include/features.php:501
 msgid "Dislike Posts"
-msgstr "Nagany wpisów"
+msgstr "Zganienia wpisów"
 
 #: ../../include/features.php:502
 msgid "Ability to dislike posts/comments"
@@ -10770,7 +10770,7 @@ msgstr "Filtrowanie treści"
 #: ../../include/nav.php:109 ../../include/nav.php:138
 #: ../../include/nav.php:157 ../../boot.php:1665
 msgid "Logout"
-msgstr "Wyloguj soę"
+msgstr "Wyloguj się"
 
 #: ../../include/nav.php:109 ../../include/nav.php:138
 msgid "End this session"
@@ -11959,7 +11959,7 @@ msgstr "tylko a-z, 0-9, - i _"
 
 #: ../../include/text.php:2674
 msgid "Design Tools"
-msgstr "Narzędzia wystroju"
+msgstr "Narzędzia projektanckie"
 
 #: ../../include/text.php:2680
 msgid "Pages"
@@ -12464,7 +12464,7 @@ msgid ""
 "to install it on this site."
 msgstr ""
 "Ten wpis zawiera element %s, który można instalować, jednak nie masz "
-"uprawnień do zainstalowania go w tej witrynie."
+"uprawnień do zainstalowania go na tym portalu."
 
 #: ../../include/bbcode.php:623
 msgid "card"
