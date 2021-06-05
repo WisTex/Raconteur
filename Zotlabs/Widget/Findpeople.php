@@ -11,7 +11,7 @@ class Findpeople {
 
 	static function findpeople_widget() {
 
-		if(get_config('system','invitation_only')) {
+		if(get_config('system','invitation_only') && defined('INVITE_WORKING')) {
 			$x = get_pconfig(local_channel(),'system','invites_remaining');
 			if($x || is_site_admin()) {
 				App::$page['aside'] .= '<div class="side-link" id="side-invite-remain">' 

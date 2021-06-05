@@ -124,7 +124,7 @@ class Register extends Controller {
 		$num_invites   = intval(get_config('system','number_invites'));
 		$invite_code   = ((x($_POST,'invite_code'))  ? notags(trim($_POST['invite_code']))  : '');
 	
-		if ($using_invites && $invite_code) {
+		if ($using_invites && $invite_code && defined('INVITE_WORKING')) {
 			q("delete from register where hash = '%s'", dbesc($invite_code));
 			// @FIXME - this also needs to be considered when using 'invites_remaining' in mod/invite.php
 			set_aconfig($result['account']['account_id'],'system','invites_remaining',$num_invites);
@@ -215,7 +215,7 @@ class Register extends Controller {
 
 		$invitations = false;
 
-		if (intval(get_config('system','invitation_only'))) {
+		if (intval(get_config('system','invitation_only')) && defined('INVITE_WORKING')) {
 			$invitations = true;
 			$registration_is = t('Registration on this site is by invitation only.');
 			$other_sites = true;

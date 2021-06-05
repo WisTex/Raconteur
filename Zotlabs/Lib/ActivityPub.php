@@ -51,10 +51,10 @@ class ActivityPub {
 		if ($purge_all) {
 
 			$ti = [
-				'id' => channel_url($channel) . '#delete',
-				'actor' => channel_url($channel),
+				'id' => channel_url($arr['channel']) . '#delete',
+				'actor' => channel_url($arr['channel']),
 				'type' => 'Delete',
-				'object' => channel_url($channel),
+				'object' => channel_url($arr['channel']),
 				'to' => [ 'https://www.w3.org/ns/activitystreams#Public' ]
 			];
 

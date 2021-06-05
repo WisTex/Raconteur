@@ -15,6 +15,7 @@ use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ASCollection;
+use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Daemon\Run;
 
 require_once('include/html2bbcode.php');

@@ -203,7 +203,7 @@
 									<div class="dropdown-divider"></div>
                                                                         {{$item.dropdown_extras}}
 									{{/if}}
-									{{if $item.edpost && $item.dreport}}
+									{{if ($item.edpost || $item.myconv) && $item.dreport}}
 									<div class="dropdown-divider"></div>
 									<a class="dropdown-item" href="dreport/{{$item.dreport_link}}">{{$item.dreport}}</a>
 									{{/if}}
