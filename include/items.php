@@ -3090,7 +3090,13 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		$bb .= "[/share]";
 
 		$arr['body'] = $bb;
-
+		// Conversational objects shouldn't be copied, but other objects should. We'll start with photos and events since those are the most likely.
+		if (in_array($item['obj_type'], [ 'Image', 'Event' ])) { 
+			$arr['obj'] = $item['obj'];
+		}
+		$arr['tgt_type'] = $item['tgt_type'];
+		$arr['target'] = $item['target'];
+		
 		$arr['term'] = $item['term'];
 
 		$arr['author_xchan'] = $channel['channel_hash'];
