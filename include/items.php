@@ -3055,9 +3055,9 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 
 		}
 		else {
-			$arr['mid'] = str_replace('/item/','/activity/',item_message_id());
+			$arr['mid'] = item_message_id();
 			$arr['parent_mid'] = $arr['mid'];
-			IConfig::Set($arr,'activitypub','context', str_replace('/activity/','/conversation/',$arr['mid']));
+			IConfig::Set($arr,'activitypub','context', str_replace('/item/','/conversation/',$arr['mid']));
 		}
 		
 		$arr['aid'] = $channel['channel_account_id'];
@@ -3342,7 +3342,7 @@ function compare_permissions($obj1,$obj2) {
 }
 
 /**
- * @brief Returns an array of contact-ids that are allowed to see this object.
+ * @brief Returns an array of connection identifiers that are allowed to see this object.
  *
  * @param object $obj
  * @return array
