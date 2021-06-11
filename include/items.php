@@ -3057,6 +3057,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		else {
 			$arr['mid'] = str_replace('/item/','/activity/',item_message_id());
 			$arr['parent_mid'] = $arr['mid'];
+			IConfig::Set($arr,'activitypub','context', str_replace('/activity/','/conversation/',$arr['mid']));
 		}
 		
 		$arr['aid'] = $channel['channel_account_id'];
