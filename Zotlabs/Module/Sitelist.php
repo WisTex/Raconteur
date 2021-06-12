@@ -31,14 +31,6 @@ class Sitelist extends Controller {
 			$sql_extra = " and site_register = " . intval(REGISTER_OPEN) . " ";
 		}
 		
-		$realm = get_directory_realm();
-
-		if ($realm == DIRECTORY_REALM) {
-			$sql_extra .= " and ( site_realm = '" . dbesc($realm) . "' or site_realm = '') ";
-		}
-		else
-			$sql_extra .= " and site_realm = '" . dbesc($realm) . "' ";
-	
 		$result = [ 'success' => false ];
 	
 		$r = q("select count(site_url) as total from site where site_type = %d and site_dead = 0 $sql_extra ",
