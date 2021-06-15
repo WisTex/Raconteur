@@ -1,35 +1,33 @@
 
-Dear {{$username}},
-	A request was recently received at {{$sitename}} to reset your account 
-password. In order to confirm this request, please select the verification link
-below or paste it into your web browser address bar. 
+DDrogi/Droga {{$username}},
+	Niedawno otrzymaliśmy prośbę o zresetowanie hasła do konta na {{$ sitename}}.
+Aby potwierdzić tę prośbę, wybierz link weryfikacyjny poniżej lub wklej go w pasku
+adresu przeglądarki internetowej. 
 
-If you did NOT request this change, please DO NOT follow the link
-provided and ignore and/or delete this email. 
+Jeśli jest to pomyłka i nie chcesz zmieniać hasła, NIE klikaj podanego linku i
+zignoruj albo usuń tą wiadomość e-mail. 
 
-Your password will not be changed unless we can verify that you
-issued this request. 
+Twoje hasło nie zostanie zmienione, chyba że potwierdzisz prawdziwość tego żądania.
 
-Follow this link to verify your identity:
+Kliknij ten link, aby zweryfikować swoją tożsamość i potwierdzić żądanie zmiany hasła:
 
 {{$reset_link}}
 
-You will then receive a follow-up message containing the new password.
+Następnie otrzymasz wiadomość uzupełniającą. która zawiera nowe hasło.
 
-You may change that password from your account settings page after logging in.
+Możesz zmienić to hasło na stronie ustawień konta, po zalogowaniu się.
 
-The login details are as follows:
+Dane logowania są następujące:
 
-Site Location:	{{$siteurl}}
-Login Name:	{{$email}}
-
-
+Lokalizacja serwisu: {{$siteurl}}
+Nazwa logowania: {{$email}}
 
 
-Sincerely,
+
+Z poważaniem,
 	{{$sitename}} Administrator
 
 --
-Terms Of Service:
-{{$siteurl}}/help/TermsOfService
+Warunki świadczenia usług:
+{{$siteurl}}/help/pl/TermsOfService
  

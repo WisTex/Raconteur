@@ -1,22 +1,22 @@
-Apologies but this may be urgent.
+Przepraszamy, ale to może być ważne.
 
-This is the web server at {{$sitename}};
+Jest to komunikat wygenerowany przez serwer WWW na {{$sitename}};
    
-The project developers released update {{$update}} recently, 
-but during the attempt to automatically install it, something went terribly wrong.  
-This needs to be fixed soon and it requires human intervention. 
-Please contact a project developer if you can not figure out how to 
-fix it on your own. Your web server database configuration might be invalid. 
+Twórcy projektu opublikowali niedawno aktualizację {{$update}},
+ale podczas próby automatycznej instalacji coś poszło nie tak.
+Należy to szybko naprawić i wymaga interwencji człowieka.
+Skontaktuj się z deweloperem projektu, jeśli nie wiesz, jak samemu
+naprawić ten problem. Konfiguracja bazy danych serwera WWW może być nieprawidłowa.
 
-The error message is '{{$error}}'.   
+Komunikat błędu, to '{{$error}}'.   
 
-You may attempt to re-apply this update by visiting
+Możesz spróbować ponownie zastosować tę aktualizację, odwiedzając stronę
 
 {{$baseurl}}/admin/dbsync
 
-while logged into the admin account. 
+po zalogowaniu się na konto administratora.
 
 {{$source}}
 
-Apologies for the inconvenience, 
-	your web server at {{$siteurl}}
+Przepraszam za utrudnienia, 
+	Twój serwer WWW na {{$siteurl}}

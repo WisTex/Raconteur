@@ -1,17 +1,15 @@
 Jest to komunikat serwera internetowego portalu {{$sitename}};
    
-A routine check indicates the scheduled maintenance tasks on this
-website are not running. Please review your "cron" jobs or the
-equivalent mechanism on your operating system and ensure these are
-running. Please review the INSTALL instructions if you are seeing
-this message for the first time. If these maintenance tasks have
-been running normally until now, please check to see if anything
-may have gone wrong to account for them not running currently. 
-This check is run approximately every three days. 
+Rutynowa kontrola wskazuje, że zaplanowane zadania konserwacyjne w tym portalu
+nie działają. Przejrzyj swoje zadania "cron" lub równoważnego mechanizm w Twoim
+systemie operacyjnym i upewnij się, że są one uruchomione. Jeśli widzisz ten
+komunikat po raz pierwszy, przejrzyj instrukcje w pliku INSTALL. Jeśli te zadania
+konserwacyjne do tej pory działały normalnie, proszę sprawdzić, czy w międzuczasie
+coś poszło nie tak. Ta kontrola jest przeprowadzana mniej więcej co trzy dni.
 
-The error message is '{{$error}}'.   
+Komunikat błędu brzmi: '{{$error}}'.   
 
-The last successful execution was '{{$lastdate}}'. 
+Ostatnim udanym wykonaniem było '{{$lastdate}}'. 
 
-Apologies for the inconvenience, 
-	your web server at {{$siteurl}}
+Przepraszamy za utrudnienia, 
+	Twój serwer internetowy na {{$siteurl}}

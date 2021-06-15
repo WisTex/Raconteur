@@ -1,25 +1,21 @@
+Drogi/Droga {{$username}},
+	Twoje hasło zostało zmienione zgodnie z żądaniem. Zachowaj te informacje
+w swojej dokumentacji (lub natychmiast zmień swoje hasło na coś, co zapamiętasz).
+	
+Twoje dane logowania są następujące:
 
-Dear {{$username}},
-	Your password has been changed as requested. Please retain this 
-information for your records (or change your password immediately to 
-something that you will remember).
+Lokalizacja serwisu: {{$siteurl}}
+Nazwa logowania: {{$email}}
+Hasło: {{$new_password}}
 
-
-Your login details are as follows:
-
-Site Location:	{{$siteurl}}
-Login Name:	{{$email}}
-Password:	{{$new_password}}
-
-You may change that password from your account settings page after logging in.
+Możesz zmienić to hasło na stronie ustawień konta, po zalogowaniu się.
 
 
-Sincerely,
+Z poważaniem,
 	{{$sitename}} Administrator
 
  
 
 --
-Terms Of Service:
+Warunki świadczenia usług:
 {{$siteurl}}/help/TermsOfService
-

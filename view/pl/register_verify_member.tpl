@@ -1,35 +1,33 @@
 
-Thank you for registering at {{$sitename}}.
+Dziękujemy za zarejestrowanie się na serwisie {{$sitename}}.
 
-Your login details are as follows:
+Szczegóły Twojego logowania są następujące:
 
-Site Location:	{{$siteurl}}
-Login Name:	{{$email}}
+Lokalizacja serwisu:	{{$siteurl}}
+Nazwa logowania:	{{$email}}
 
-Login with the password you chose at registration.
+Zaloguj się za pomocą hasła wybranego podczas rejestracji.
 
-We need to verify your email address in order to give you full access.
+Musimy zweryfikować Twój adres e-mail, aby zapewnić Ci pełny dostęp.
 
-Your validation code is
+Twój kod weryfikacyjny, to:
 
 {{$hash}}
 
-
-If you registered this account, please enter the validation code when requested or visit the following link:
+Jeśli zarejestrowałeś to konto, wprowadź kod weryfikacyjny do żądania lub odwiedź
+poniższy link:
 
 {{$siteurl}}/regver/allow/{{$hash}} 
 
-
-To deny the request and remove the account, please visit:
-
+Aby odrzucić rejestrację i usunąć konto, odwiedź:
 
 {{$siteurl}}/regver/deny/{{$hash}}
 
 
-Thank you.
+Dziękjemy.
 
 
 --
-Terms Of Service:
+Warunki świadczenia usług:
 {{$siteurl}}/help/TermsOfService
 
