@@ -1288,7 +1288,7 @@ function get_site_info() {
 		'protocols'                    => $protocols,
 		'plugins'                      => $visible_plugins,
 		'register_policy'              =>  $register_policy[get_config('system','register_policy')],
-		'invitation_only'              => (bool) intval(get_config('system','invitation_only')),
+		'invitation_only'              => (bool) (defined('INVITE_WORKING') && intval(get_config('system','invitation_only'))),
 		'directory_mode'               =>  $directory_mode[get_config('system','directory_mode')],
 //		'directory_server'             => get_config('system','directory_server'),
 		'language'                     => get_config('system','language'),

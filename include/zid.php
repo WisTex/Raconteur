@@ -418,8 +418,20 @@ function observer_auth($ob_hash) {
 
 	// normal visitor (remote_channel) login session credentials
 	$_SESSION['visitor_id'] = $hubloc['xchan_hash'];
-	$_SESSION['my_url'] = $hubloc['xchan_url'];
-	$_SESSION['my_address'] = $hubloc['hubloc_addr'];
+	$_SESSION['my_url']     = $hubloc['xchan_url'];
+
+	// For now, only enable authenticated link substitution for zot6 channels or
+	// those that arrive with a zid.
+	// This is to prevent signed ActivityPub fetches from getting zid-enabled links.
+	// If a pre-set zid applies, $_SESSION['my_address'] will have been set already
+	// in Zotlabs\Web\WebServer.php
+	// @FIXME: to work seamlessly with Friendica and other platforms that choose to
+	// provide OWA we will need to store the OWA endpoints for each site in SConfig
+	// and refer to this to determine whether or not to provide "zidified" links. 
+
+	if ($hubloc['hubloc_network'] === 'zot6') {
+		$_SESSION['my_address'] = $hubloc['hubloc_addr'];
+	}
 	$_SESSION['remote_hub'] = $hubloc['hubloc_url'];
 	$_SESSION['DNT'] = 1;
 

@@ -365,8 +365,10 @@ class Notifier {
 					Activity::ap_schema()
 					]], Activity::encode_activity($target_item,true)
 				);
+				self::$encoded_item['signature'] = LDSignatures::sign(self::$encoded_item,self::$channel);
 			}
- 
+
+
 			logger('target_item: ' . print_r($target_item,true), LOGGER_DEBUG);
 			logger('encoded: ' . print_r(self::$encoded_item,true), LOGGER_DEBUG);
 		

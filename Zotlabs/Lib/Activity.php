@@ -877,10 +877,24 @@ class Activity {
 
 			$public = (($i['item_private']) ? false : true);
 			$top_level = (($reply) ? false : true);
-			
+
+			if (! $top_level) {
+				$recips = get_iconfig($i['parent'], 'activitypub', 'recips');
+				if ($recips) {
+					$parent_i['to'] = $recips['to'];
+					$parent_i['cc'] = $recips['cc'];
+				}
+			}
+
 			if ($public) {
 				$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
+				if (isset($parent_i['to']) && is_array($parent_i['to'])) {
+					$ret['to'] = array_values(array_unique(array_merge($ret['to'],$parent_i['to'])));
+				}
 				$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
+				if (isset($parent_i['cc']) && is_array($parent_i['cc'])) {
+					$ret['cc'] = array_values(array_unique(array_merge($ret['cc'],$parent_i['cc'])));
+				}
 			}
 			else {
 			
@@ -888,9 +902,16 @@ class Activity {
 				
 				if ($top_level) {
 					$ret['to'] = self::map_acl($i);
+					if (isset($parent_i['to']) && is_array($parent_i['to'])) {
+						$ret['to'] = array_values(array_unique(array_merge($ret['to'],$parent_i['to'])));
+					}
 				}
 				else {
 					$ret['cc'] = self::map_acl($i);
+					if (isset($parent_i['cc']) && is_array($parent_i['cc'])) {
+						$ret['cc'] = array_values(array_unique(array_merge($ret['cc'],$parent_i['cc'])));
+					}
+
 					if ($ret['tag']) {
 						foreach ($ret['tag'] as $mention) {
 							if (is_array($mention) && array_key_exists('ttype',$mention) && in_array($mention['ttype'],[ TERM_FORUM, TERM_MENTION]) && array_key_exists('href',$mention) && $mention['href']) {
@@ -1276,10 +1297,39 @@ class Activity {
 
 			$public = (($i['item_private']) ? false : true);
 			$top_level = (($i['mid'] === $i['parent_mid']) ? true : false);
-			
+
+			if (! $top_level) {
+				
+				if (intval($i['parent'])) {
+					$recips = get_iconfig($i['parent'], 'activitypub', 'recips');
+				}
+				else {
+					// if we are encoding this item for storage there won't be a parent. 
+					$p = q("select parent from item where parent_mid = '%s' and uid = %d",
+						dbesc($i['parent_mid']),
+						intval($i['uid'])
+					);
+					if ($p) {
+						$recips = get_iconfig($p[0]['parent'], 'activitypub', 'recips');
+					}
+				}
+				if ($recips) {
+					$parent_i['to'] = $recips['to'];
+					$parent_i['cc'] = $recips['cc'];
+				}
+			}
+
+
 			if ($public) {
 				$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
+				if (isset($parent_i['to']) && is_array($parent_i['to'])) {
+					$ret['to'] = array_values(array_unique(array_merge($ret['to'],$parent_i['to'])));
+				}
 				$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
+				if (isset($parent_i['cc']) && is_array($parent_i['cc'])) {
+					$ret['cc'] = array_values(array_unique(array_merge($ret['cc'],$parent_i['cc'])));
+				}
+
 			}
 			else {
 			
@@ -1287,9 +1337,15 @@ class Activity {
 				
 				if ($top_level) {
 					$ret['to'] = self::map_acl($i);
+					if (isset($parent_i['to']) && is_array($parent_i['to'])) {
+						$ret['to'] = array_values(array_unique(array_merge($ret['to'],$parent_i['to'])));
+					}
 				}
 				else {
 					$ret['cc'] = self::map_acl($i);
+					if (isset($parent_i['cc']) && is_array($parent_i['cc'])) {
+						$ret['cc'] = array_values(array_unique(array_merge($ret['cc'],$parent_i['cc'])));
+					}
 					if ($ret['tag']) {
 						foreach ($ret['tag'] as $mention) {
 							if (is_array($mention) && array_key_exists('ttype',$mention) && in_array($mention['ttype'],[ TERM_FORUM, TERM_MENTION]) && array_key_exists('href',$mention) && $mention['href']) {

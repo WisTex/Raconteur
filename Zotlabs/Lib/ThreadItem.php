@@ -132,6 +132,12 @@ class ThreadItem {
 		else
 			$edpost = false;
 
+		if(local_channel() && $observer['xchan_hash'] === $item['owner_xchan'])
+			$myconv = true;
+		else
+			$myconv = false;
+
+
 		if($item['verb'] === 'Announce') {
 			$edpost = false;
 		}
@@ -173,8 +179,7 @@ class ThreadItem {
 		$profile_link   = chanlink_hash($item['author_xchan']);
 		$profile_name   = $item['author']['xchan_name'];
 
-		$profile_addr = $item['author']['xchan_addr'] ? : $item['author']['xchan_url'];
-
+		$profile_addr = $item['author']['xchan_addr'] ? $item['author']['xchan_addr'] : $item['author']['xchan_url'];
 
 		$location = format_location($item);
 		$isevent = false;
@@ -381,6 +386,7 @@ class ThreadItem {
 			'thread_author_menu' => thread_author_menu($item,$conv->get_mode()),
 			'dreport' => $dreport,
 			'dreport_link' => ((isset($dreport_link) && $dreport_link) ? $dreport_link : EMPTY_STR),
+			'myconv' => $myconv, 
 			'name' => $profile_name,
 			'thumb' => $profile_avatar,
 			'osparkle' => $osparkle,

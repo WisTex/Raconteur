@@ -67,16 +67,20 @@ class Activity extends Controller {
 				$sql_extra = item_permissions_sql(0);
 			}
 
-			$r = q("select * from item where uuid = '%s' $item_normal $sql_extra limit 1",
-				dbesc($item_id)
+			$r = q("select * from item where ( uuid = '%s' or mid = '%s' or mid = '%s' ) $item_normal $sql_extra limit 1",
+				dbesc($item_id),
+				dbesc(z_root() . '/activity/' . $item_id),
+				dbesc(z_root() . '/item/' . $item_id)
 			);
 
 			if (! $r) {
-				$r = q("select * from item where uuid = '%s' $item_normal limit 1",
-					dbesc($item_id)
+				$r = q("select * from item where ( uuid = '%s' or mid = '%s' or mid = '%s' ) $item_normal limit 1",
+					dbesc($item_id),
+					dbesc(z_root() . '/activity/' . $item_id),
+					dbesc(z_root() . '/item/' . $item_id)
 				);
 
-				if($r) {
+				if ($r) {
 					http_status_exit(403, 'Forbidden');
 				}
 				http_status_exit(404, 'Not found');
@@ -105,9 +109,10 @@ class Activity extends Controller {
 
 			$item_id = argv(1);
 
-			if (! $item_id)
+			if (! $item_id) {
 				http_status_exit(404, 'Not found');
-
+			}
+			
 			$portable_id = EMPTY_STR;
 
 			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 and not verb in ( 'Follow', 'Ignore' ) ";
