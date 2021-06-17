@@ -3524,7 +3524,7 @@ class Activity {
 
 // experimental code that needs more work. What this did was once we fetched a conversation to find the root node,
 // start at that root node and fetch children so you get all the branches and not just the branch related to the current node.
-// Unfortunately there is no standard method for achieving this. Matodon provides a 'replies' collection and Nomad projects
+// Unfortunately there is no standard method for achieving this. Mastodon provides a 'replies' collection and Nomad projects
 // can fetch the 'context'. For other platforms it's a wild guess. Additionally when we tested this, it started an infinite
 // recursion and has been disabled until the recursive behaviour is tracked down and fixed. 
 
