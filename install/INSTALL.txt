@@ -99,7 +99,7 @@ web server platforms.
     software much easier to update. The Linux command to clone the repository 
     into a directory "mywebsite" would be
 
-        git clone https://codeberg.org/zot/redmatrix.git mywebsite
+        git clone https://codeberg.org/zot/roadhouse.git mywebsite
 
     - and then you can pick up the latest changes at any time with
 
@@ -131,7 +131,7 @@ web server platforms.
          a nickname of 'zaddons'. You can pull in other addon repositories by 
          giving them different nicknames.
 
-            util/add_addon_repo https://codeberg.org/zot/redmatrix-addons.git zaddons
+            util/add_addon_repo https://codeberg.org/zot/roadhouse-addons.git zaddons
 
     - For keeping the addon tree updated, you should be on your top level website 
 		directory and issue an update command for that repository.
