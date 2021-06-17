@@ -99,7 +99,7 @@ class System {
 	}
 
 	static public function get_zot_revision() {
-		$x = [ 'revision' => ZOT_REVISION ]; 
+		$x = [ 'revision' => NOMAD_REVISION ]; 
 		call_hooks('zot_revision',$x);
 		return $x['revision'];
 	}
