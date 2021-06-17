@@ -3298,6 +3298,11 @@ class Activity {
 				}
 			}
 			else {
+			
+				// By default if we allow you to send_stream and comments and this is a comment, it is allowed.
+				// A side effect of this action is that if you take away send_stream permission, comments to those
+				// posts you previously allowed will still be accepted. It is possible but might be difficult to fix this.
+				
 				$allowed = true;
 
 				// reject public stream comments that weren't sent by the conversation owner
@@ -3516,6 +3521,12 @@ class Activity {
 		else {
 			$x = item_store($item);
 		}
+
+// experimental code that needs more work. What this did was once we fetched a conversation to find the root node,
+// start at that root node and fetch children so you get all the branches and not just the branch related to the current node.
+// Unfortunately there is no standard method for achieving this. Matodon provides a 'replies' collection and Nomad projects
+// can fetch the 'context'. For other platforms it's a wild guess. Additionally when we tested this, it started an infinite
+// recursion and has been disabled until the recursive behaviour is tracked down and fixed. 
 
 //		if ($fetch_parents && $parent && ! intval($parent[0]['item_private'])) {
 //			logger('topfetch', LOGGER_DEBUG);
