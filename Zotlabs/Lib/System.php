@@ -52,7 +52,7 @@ class System {
 
 	static public function get_update_version() {
 		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['hide_version'])
-			return '';
+			return EMPTY_STR;
 		return DB_UPDATE_VERSION;
 	}
 
@@ -87,10 +87,6 @@ class System {
 		return 'https://codeberg.org/zot/' . PLATFORM_NAME;
 	}
 
-	static public function get_server_role() {
-		return 'pro';
-	}
-
 	static public function ebs() {
 		if(defined('EBSSTATE')) {
 			return EBSSTATE;
@@ -112,7 +108,7 @@ class System {
 
 	static public function compatible_project($p) {
 
-		if (in_array(strtolower($p),['hubzilla','zap','red','misty','mistpark','redmatrix','osada', 'roadhouse'])) {
+		if (in_array(strtolower($p),['hubzilla', 'zap', 'red', 'misty', 'mistpark', 'redmatrix', 'osada', 'roadhouse'])) {
 			return true;
 		}
 		return false;

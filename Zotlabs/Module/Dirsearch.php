@@ -6,11 +6,6 @@ use App;
 use Zotlabs\Web\Controller;
 
 // This is the primary endpoint for communicating with Zot directory services.
-// Additionally the 'sitelist' endpoint may be used to query directory knowledge
-// of discovered sites. That endpoint should be merged so that there is one
-// definitive endpoint for directory services and since this endpoint already
-// performs some site query functions. 
-
 
 class Dirsearch extends Controller {
 

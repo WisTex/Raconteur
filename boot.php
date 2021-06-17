@@ -639,8 +639,6 @@ function sys_boot() {
 		App::$config['system']['timezone'] = $default_timezone;
 	}
 
-	App::$config['system']['server_role'] = 'pro';
-
 	App::$timezone = (isset(App::$config['system']['timezone']) ? App::$config['system']['timezone'] : 'UTC');
 	date_default_timezone_set(App::$timezone);
 
