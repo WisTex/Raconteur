@@ -64,7 +64,7 @@ class System {
 	}
 
 	static public function get_site_icon() {
-		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['site_icon_url'])
+		if(is_array(App::$config) && is_array(App::$config['system']) && isset(App::$config['system']['site_icon_url']) && App::$config['system']['site_icon_url'])
 			return App::$config['system']['site_icon_url'];
 		return self::get_project_icon();
 	}

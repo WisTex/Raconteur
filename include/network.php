@@ -87,7 +87,7 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = []) {
 		$passthru = true;
 	}
 
-	if (x($opts['useragent'])) {
+	if (x($opts,'useragent')) {
 		@curl_setopt($ch, CURLOPT_USERAGENT, $opts['useragent']);
 	}
 	else {

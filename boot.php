@@ -1125,7 +1125,7 @@ class App {
 		}
 
 		if (! x(self::$page,'title')) {
-			self::$page['title'] = self::$config['system']['sitename'];
+			self::$page['title'] = ((array_path_exists('system/sitename',self::$config)) ? self::$config['system']['sitename'] : EMPTY_STR);
 		}
 
 		if (! self::$meta->get_field('og:title')) {
@@ -1155,6 +1155,10 @@ class App {
 		 * being first
 		 */
 
+		if (! isset(self::$page['htmlhead'])) {
+			self::$page['htmlhead'] = EMPTY_STR; // needed to silence warning
+		}
+		
 		self::$page['htmlhead'] = replace_macros(get_markup_template('head.tpl'),
 			[
 				'$preload_images'  => $preload_images,
@@ -2367,7 +2371,7 @@ function head_set_icon($icon) {
  */
 function head_get_icon() {
 
-	$icon = App::$data['pageicon'];
+	$icon = ((isset(App::$data['pageicon'])) ? App::$data['pageicon'] : EMPTY_STR);
 	if($icon && ! strpos($icon, '://'))
 		$icon = z_root() . $icon;
 

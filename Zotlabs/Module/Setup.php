@@ -455,6 +455,7 @@ class Setup extends Controller {
 	function check_phpconfig(&$checks) {
 
 		$help = '';
+		$mem_warning = EMPTY_STR;
 
 		$result = self::getPhpiniUploadLimits();
 		if($result['post_max_size'] < (2 * 1024 * 1024) || $result['max_upload_filesize'] < (2 * 1024 * 1024)) {
@@ -849,6 +850,8 @@ class Setup extends Controller {
 	static private function phpiniSizeToBytes($val) {
     	$val = trim($val);
 	    $unit = strtolower($val[strlen($val)-1]);
+		// strip off any non-numeric portion
+		$val = intval($val);
     	switch($unit) {
         	case 'g':
             	$val *= 1024;
