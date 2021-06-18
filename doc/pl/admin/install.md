@@ -4,7 +4,7 @@ Bardzo się staraliśmy, aby to oprogramowanie działało na popularnych platfor
 
 Należy pamiętać, że to oprogramowanie to coś więcej niż prosta aplikacja internetowa. Jest to złożony system komunikacji i zarządzania treścią, który bardziej przypomina serwer poczty internetowej niż serwer WWW. Aby zapewnić niezawodność i wydajność, komunikaty są dostarczane w tle i umieszczane w kolejce do późniejszego dostarczenia, gdy lokacje są niedostępne. Ten rodzaj funkcjonalności wymaga nieco więcej od systemu hosta niż typowy blog. Nie każdy dostawca hostingu PHP/MySQL będzie w stanie spełnić te wymagania. Wielu to zapewnia - ale lepiej jest zapoznać się z wymaganiami i potwierdzić je u dostawcy usług hostingowych jeszcze przed instalacją (a w szczególności przed zawarciem długoterminowej umowy).
 
-Jeśli napotkasz problemy z instalacją, prosimy o informację o tym, za pośrednictwem [systemu śledzenia spraw projektu](https://github.com/isfera/social), skąd pobrałeś oprogramowanie. Podaj jak najwięcej informacji o swoim środowisku operacyjnym i jak najwięcej szczegółów na temat wszelkich komunikatów o błędach, które możesz zobaczyć, abyśmy mogli zapobiec temu w przyszłości. Ze względu na dużą różnorodność działania istniejących systemów i platform PHP, możemy mieć tylko ograniczone możliwości debugowania instalację PHP lub pozyskania brakujących modułów - ale zrobimy to, starając się rozwiązywać ogólne problemy z kodem.
+Jeśli napotkasz problemy z instalacją, prosimy o informację o tym, za pośrednictwem [systemu śledzenia spraw projektu](https://codeberg.org/zot/zap), skąd pobrałeś oprogramowanie. Podaj jak najwięcej informacji o swoim środowisku operacyjnym i jak najwięcej szczegółów na temat wszelkich komunikatów o błędach, które możesz zobaczyć, abyśmy mogli zapobiec temu w przyszłości. Ze względu na dużą różnorodność działania istniejących systemów i platform PHP, możemy mieć tylko ograniczone możliwości debugowania instalację PHP lub pozyskania brakujących modułów - ale zrobimy to, starając się rozwiązywać ogólne problemy z kodem.
 
 ### Zanim zaczniesz 
 
@@ -12,7 +12,7 @@ Wybierz nazwę domeny i ewentualnie poddomeny dla swojego serwera.
 
 Oprogramowanie można zainstalować tylko w katalogu głównym domeny lub poddomeny i nie może ono działać na alternatywnych portach TCP.
 
-Wymagane jest szyfrowanie SSL komunikacji z serwerem WWW a stosowany certyfikat SSL musi buć "prawidłowy dla przeglądarki". Nie można uzywać certyfikatów z podpisem własnym!
+Wymagane jest szyfrowanie SSL komunikacji z serwerem WWW a stosowany certyfikat SSL musi być "prawidłowy dla przeglądarki". Nie można używać certyfikatów z podpisem własnym!
 
 Przetestuj swój certyfikat przed instalacją. Narzędzie internetowe do testowania certyfikatu jest dostępne pod adresem "http://www.digicert.com/help/". Odwiedzając witrynę po raz pierwszy, użyj adresu URL SSL („https://”). Pozwoli to uniknąć późniejszych problemów. 
 
@@ -49,7 +49,7 @@ Jeśli kopiujesz drzewo katalogów na swój serwer WWW, upewnij się, że kopiuj
 
 Jeśli możesz to zrobić, zalecamy użycie git do sklonowania repozytorium źródłowego, zamiast używania spakowanego pliku tar lub zip. To znacznie ułatwia aktualizację oprogramowania. Polecenie Linuksa do sklonowania repozytorium do katalogu `mywebsite` jest następujące 
 
-        git clone https://github.com/isfera/social.git mywebsite
+        git clone https://codeberg.org/zot/zap.git mywebsite
         cd mywebsite
 
 a następnie w dowolnym momencie możesz pobrać najnowsze zmiany za pomocą polecenia
@@ -69,7 +69,8 @@ Tu zakładamy, że katalog instalacyjny $Projectname (lub wirtualnego hosta) jes
 
 Następnie należy sklonować repozytorium dodatków (osobno). Dla przykładu nadamy temu repozytorium nazwę `zaddons` (w Twoim przypadku może to być inna nazwa, ale uwzglednij to w poleceniach).
 
-		util/add_addon_repo https://github.com/isfera/social-addons.git zaddons
+		cd mywebsite
+		util/add_addon_repo https://codeberg.org/zot/zap-addons.git zaddons
 
 Aby aktualizować drzewo dodatków trzeba znajdować się w głównym katalogu instalacji $Projectname i wydać polecenie aktualizacji dla tego repozytorium.
 
@@ -147,7 +148,7 @@ Możliwe, że Twój serwer sieciowy zgłosił źródło problemu w swoich plikac
 
 Najpierw sprawdź swoje uprawnienia do plików. Wszystkie katalogi i pliki portalu i wszystkie treści muszą być możliwe do odczytu przez wszystkich.
 
-Upewnij się, że moduł mod-rewrite jest zainstalowany i działa i uzywany jest plik .htaccess. Aby zweryfikować to drugie, utwórz plik test.out zawierający słowo "test" w górnym katalogu sieciowym, uczyń go czytelnym dla wszystkich i skieruj przeglądarkę na adres
+Upewnij się, że moduł mod-rewrite jest zainstalowany i działa i używany jest plik .htaccess. Aby zweryfikować to drugie, utwórz plik test.out zawierający słowo "test" w górnym katalogu sieciowym, uczyń go czytelnym dla wszystkich i skieruj przeglądarkę na adres
 
 http://yoursitenamehere.com/test.out
 
