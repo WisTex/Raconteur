@@ -12,7 +12,7 @@ Wybierz nazwę domeny i ewentualnie poddomeny dla swojego serwera.
 
 Oprogramowanie można zainstalować tylko w katalogu głównym domeny lub poddomeny i nie może ono działać na alternatywnych portach TCP.
 
-Wymagane jest szyfrowanie SSL komunikacji z serwerem WWW a stosowany certyfikat SSL musi buć "prawidłowy dla przeglądarki". Nie można uzywać certyfikatów z podpisem własnym!
+Wymagane jest szyfrowanie SSL komunikacji z serwerem WWW a stosowany certyfikat SSL musi być "prawidłowy dla przeglądarki". Nie można używać certyfikatów z podpisem własnym!
 
 Przetestuj swój certyfikat przed instalacją. Narzędzie internetowe do testowania certyfikatu jest dostępne pod adresem "http://www.digicert.com/help/". Odwiedzając witrynę po raz pierwszy, użyj adresu URL SSL („https://”). Pozwoli to uniknąć późniejszych problemów. 
 
@@ -69,7 +69,8 @@ Tu zakładamy, że katalog instalacyjny $Projectname (lub wirtualnego hosta) jes
 
 Następnie należy sklonować repozytorium dodatków (osobno). Dla przykładu nadamy temu repozytorium nazwę `zaddons` (w Twoim przypadku może to być inna nazwa, ale uwzglednij to w poleceniach).
 
-		util/add_addon_repo https://github.com/isfera/social-addons.git zaddons
+		cd mywebsite
+		util/add_addon_repo https://codeberg.org/zot/zap-addons.git zaddons
 
 Aby aktualizować drzewo dodatków trzeba znajdować się w głównym katalogu instalacji $Projectname i wydać polecenie aktualizacji dla tego repozytorium.
 
@@ -147,7 +148,7 @@ Możliwe, że Twój serwer sieciowy zgłosił źródło problemu w swoich plikac
 
 Najpierw sprawdź swoje uprawnienia do plików. Wszystkie katalogi i pliki portalu i wszystkie treści muszą być możliwe do odczytu przez wszystkich.
 
-Upewnij się, że moduł mod-rewrite jest zainstalowany i działa i uzywany jest plik .htaccess. Aby zweryfikować to drugie, utwórz plik test.out zawierający słowo "test" w górnym katalogu sieciowym, uczyń go czytelnym dla wszystkich i skieruj przeglądarkę na adres
+Upewnij się, że moduł mod-rewrite jest zainstalowany i działa i używany jest plik .htaccess. Aby zweryfikować to drugie, utwórz plik test.out zawierający słowo "test" w górnym katalogu sieciowym, uczyń go czytelnym dla wszystkich i skieruj przeglądarkę na adres
 
 http://yoursitenamehere.com/test.out
 
