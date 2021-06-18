@@ -4,7 +4,7 @@ Bardzo się staraliśmy, aby to oprogramowanie działało na popularnych platfor
 
 Należy pamiętać, że to oprogramowanie to coś więcej niż prosta aplikacja internetowa. Jest to złożony system komunikacji i zarządzania treścią, który bardziej przypomina serwer poczty internetowej niż serwer WWW. Aby zapewnić niezawodność i wydajność, komunikaty są dostarczane w tle i umieszczane w kolejce do późniejszego dostarczenia, gdy lokacje są niedostępne. Ten rodzaj funkcjonalności wymaga nieco więcej od systemu hosta niż typowy blog. Nie każdy dostawca hostingu PHP/MySQL będzie w stanie spełnić te wymagania. Wielu to zapewnia - ale lepiej jest zapoznać się z wymaganiami i potwierdzić je u dostawcy usług hostingowych jeszcze przed instalacją (a w szczególności przed zawarciem długoterminowej umowy).
 
-Jeśli napotkasz problemy z instalacją, prosimy o informację o tym, za pośrednictwem [systemu śledzenia spraw projektu](https://github.com/isfera/social), skąd pobrałeś oprogramowanie. Podaj jak najwięcej informacji o swoim środowisku operacyjnym i jak najwięcej szczegółów na temat wszelkich komunikatów o błędach, które możesz zobaczyć, abyśmy mogli zapobiec temu w przyszłości. Ze względu na dużą różnorodność działania istniejących systemów i platform PHP, możemy mieć tylko ograniczone możliwości debugowania instalację PHP lub pozyskania brakujących modułów - ale zrobimy to, starając się rozwiązywać ogólne problemy z kodem.
+Jeśli napotkasz problemy z instalacją, prosimy o informację o tym, za pośrednictwem [systemu śledzenia spraw projektu](https://codeberg.org/zot/zap), skąd pobrałeś oprogramowanie. Podaj jak najwięcej informacji o swoim środowisku operacyjnym i jak najwięcej szczegółów na temat wszelkich komunikatów o błędach, które możesz zobaczyć, abyśmy mogli zapobiec temu w przyszłości. Ze względu na dużą różnorodność działania istniejących systemów i platform PHP, możemy mieć tylko ograniczone możliwości debugowania instalację PHP lub pozyskania brakujących modułów - ale zrobimy to, starając się rozwiązywać ogólne problemy z kodem.
 
 ### Zanim zaczniesz 
 
@@ -49,7 +49,7 @@ Jeśli kopiujesz drzewo katalogów na swój serwer WWW, upewnij się, że kopiuj
 
 Jeśli możesz to zrobić, zalecamy użycie git do sklonowania repozytorium źródłowego, zamiast używania spakowanego pliku tar lub zip. To znacznie ułatwia aktualizację oprogramowania. Polecenie Linuksa do sklonowania repozytorium do katalogu `mywebsite` jest następujące 
 
-        git clone https://github.com/isfera/social.git mywebsite
+        git clone https://codeberg.org/zot/zap.git mywebsite
         cd mywebsite
 
 a następnie w dowolnym momencie możesz pobrać najnowsze zmiany za pomocą polecenia
