@@ -1638,25 +1638,19 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 		$arr = $translate['item'];
 	}
 
-	if (x($arr,'obj')) {
+	if((x($arr,'obj')) && is_array($arr['obj'])) {
 		activity_sanitise($arr['obj']);
-		if (json_decode($arr['obj']) === NULL) {
-			$arr['obj'] = json_encode($arr['obj'],JSON_UNESCAPED_SLASHES);
-		}
+		$arr['obj'] = json_encode($arr['obj'],JSON_UNESCAPED_SLASHES);
 	}
 
-	if (x($arr,'target')) {
+	if((x($arr,'target')) && is_array($arr['target'])) {
 		activity_sanitise($arr['target']);
-		if (json_decode($arr['target']) === NULL) {
-			$arr['target'] = json_encode($arr['target'],JSON_UNESCAPED_SLASHES);
-		}
+		$arr['target'] = json_encode($arr['target'],JSON_UNESCAPED_SLASHES);
 	}
 
-	if (x($arr,'attach')) {
+	if((x($arr,'attach')) && is_array($arr['attach'])) {
 		activity_sanitise($arr['attach']);
-		if (json_decode($arr['attach']) === NULL) {
-			$arr['attach'] = json_encode($arr['attach'],JSON_UNESCAPED_SLASHES);
-		}
+		$arr['attach'] = json_encode($arr['attach'],JSON_UNESCAPED_SLASHES);
 	}
 
 	$arr['aid']           = ((x($arr,'aid'))           ? intval($arr['aid'])                           : 0);
@@ -2149,26 +2143,21 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 		$arr = $translate['item'];
 	}
 
-	if (x($arr,'obj')) {
+	if(x($arr,'obj') && is_array($arr['obj'])) {
 		activity_sanitise($arr['obj']);
-		if (json_decode($arr['obj']) === NULL) {
-			$arr['obj'] = json_encode($arr['obj'],JSON_UNESCAPED_SLASHES);
-		}
+		$arr['obj'] = json_encode($arr['obj'],JSON_UNESCAPED_SLASHES);
 	}
 
-	if (x($arr,'target')) {
+	if((x($arr,'target')) && is_array($arr['target'])) {
 		activity_sanitise($arr['target']);
-		if (json_decode($arr['target']) === NULL) {
-			$arr['target'] = json_encode($arr['target'],JSON_UNESCAPED_SLASHES);
-		}
+		$arr['target'] = json_encode($arr['target'],JSON_UNESCAPED_SLASHES);
 	}
 
-	if (x($arr,'attach')) {
+	if((x($arr,'attach')) && is_array($arr['attach'])) {
 		activity_sanitise($arr['attach']);
-		if (json_decode($arr['attach']) === NULL) {
-			$arr['attach'] = json_encode($arr['attach'],JSON_UNESCAPED_SLASHES);
-		}
+		$arr['attach'] = json_encode($arr['attach'],JSON_UNESCAPED_SLASHES);
 	}
+
 
 	unset($arr['id']);
 	unset($arr['uid']);
