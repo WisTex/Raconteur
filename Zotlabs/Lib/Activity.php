@@ -24,12 +24,19 @@ class Activity {
 
 	static $ACTOR_CACHE_DAYS = 3;
 
+	// $x (string|array)
+	// if json string, decode it
+	// returns activitystreams object as an array except if it is a URL
+	// which returns the URL as string
+	
 	static function encode_object($x) {
 
 		if ($x) {
-			$tmp = json_decode($x,true);
-			if ($tmp !== NULL) {
-				$x = $tmp;
+			if (is_string($x)) {
+				$tmp = json_decode($x,true);
+				if ($tmp !== NULL) {
+					$x = $tmp;
+				}
 			}
 		}
 
@@ -849,9 +856,11 @@ class Activity {
 
 
 		if ($i['obj']) {
-			$tmp = json_decode($i['obj'],true);
-			if ($tmp !== NULL) {
-				$i['obj'] = $tmp;
+			if (is_string($i['obj'])) {
+				$tmp = json_decode($i['obj'],true);
+				if ($tmp !== NULL) {
+					$i['obj'] = $tmp;
+				}
 			}
 			$obj = self::encode_object($i['obj']);
 			if ($obj)
@@ -870,9 +879,11 @@ class Activity {
 		}
 
 		if ($i['target']) {
-			$tmp = json_decode($i['target'],true);
-			if ($tmp !== NULL) {
-				$i['target'] = $tmp;
+			if (is_string($i['target'])) {
+				$tmp = json_decode($i['target'],true);
+				if ($tmp !== NULL) {
+					$i['target'] = $tmp;
+				}
 			}
 			$tgt = self::encode_object($i['target']);
 			if ($tgt) {
@@ -1035,12 +1046,13 @@ class Activity {
 		}
 
 		if (isset($i['obj'])) {
-			if (is_array($i['obj'])) {
-				$ret = $i['obj'];
+			if (is_string($i['obj'])) {
+				$tmp = json_decode($i['obj'],true);
+				if ($tmp !== NULL) {
+					$i['obj'] = $tmp;
+				}
 			}
-			else {
-				$ret = json_decode($i['obj'],true);
-			}
+			$ret = $i['obj'];
 		}
 
 		$ret['type'] = $objtype;
