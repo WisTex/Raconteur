@@ -176,7 +176,24 @@ class Activity extends Controller {
 				);
 			}
 
-			if(! $i) {
+			$bear = Activity::token_from_request();
+			if ($bear) {
+				logger('bear: ' . $bear, LOGGER_DEBUG);
+				if (! $i) {
+					$t = q("select * from iconfig where cat = 'ocap' and k = 'relay' and v = '%s'",
+						dbesc($bear)
+					);
+					if ($t) {
+						$i = q("select id as item_id from item where uuid = '%s' and id = %d $item_normal limit 1",
+							dbesc($item_id),
+							intval($t[0]['iid'])
+						);
+					}
+				}
+			}
+
+
+			if (! $i) {
 				http_status_exit(403,'Forbidden');
 			}
 
