@@ -26,8 +26,15 @@ class Activity {
 
 	static function encode_object($x) {
 
-		if (($x) && (! is_array($x)) && (substr(trim($x),0,1)) === "{" ) {
-			$x = json_decode($x,true);
+		if ($x) {
+			$tmp = json_decode($x,true);
+			if ($tmp !== NULL) {
+				$x = $tmp;
+			}
+		}
+
+		if (is_string($x)) {
+			return ($x);
 		}
 
 		if ($x['type'] === ACTIVITY_OBJ_PERSON) {
@@ -776,7 +783,7 @@ class Activity {
 			$ret['context'] = $cnv;
 			$ret['conversation'] = $cnv;
 		}
-
+		
 		if (intval($i['item_private']) === 2) {
 			$ret['directMessage'] = true;
 		}
@@ -792,7 +799,10 @@ class Activity {
 		if ($replyto) {
 			$ret['replyTo'] = $replyto;
 		}
-		
+
+
+
+
 		if (! isset($ret['url'])) {
 			$urls = [];
 			if (intval($i['item_wall'])) {
@@ -839,8 +849,9 @@ class Activity {
 
 
 		if ($i['obj']) {
-			if (! is_array($i['obj'])) {
-				$i['obj'] = json_decode($i['obj'],true);
+			$tmp = json_decode($i['obj'],true);
+			if ($tmp !== NULL) {
+				$i['obj'] = $tmp;
 			}
 			$obj = self::encode_object($i['obj']);
 			if ($obj)
@@ -850,15 +861,18 @@ class Activity {
 		}
 		else {
 			$obj = self::encode_item($i,$activitypub);
-			if ($obj)
+			if ($obj) {
 				$ret['object'] = $obj;
-			else
+			}
+			else {
 				return [];
+			}
 		}
 
 		if ($i['target']) {
-			if (! is_array($i['target'])) {
-				$i['target'] = json_decode($i['target'],true);
+			$tmp = json_decode($i['target'],true);
+			if ($tmp !== NULL) {
+				$i['target'] = $tmp;
 			}
 			$tgt = self::encode_object($i['target']);
 			if ($tgt) {
@@ -1051,6 +1065,16 @@ class Activity {
 		$has_images = preg_match_all('/\[[zi]mg(.*?)\](.*?)\[/ism',$i['body'],$images,PREG_SET_ORDER);
 
 		$ret['id'] = $i['mid'];
+
+		$token = IConfig::get($i,'ocap','relay');
+		if ($token) {
+			if (defined('USE_BEARCAPS')) {
+				$ret['id'] = 'bear:?u=' . $ret['id'] . '&t=' . $token;
+			}
+			else {
+				$ret['id'] = $ret['id'] . '?token=' . $token;
+			}
+		}
 
 		$ret['published'] = datetime_convert('UTC','UTC',$i['created'],ATOM_TIME);
 		if ($i['created'] !== $i['edited']) {

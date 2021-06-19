@@ -1659,7 +1659,7 @@ class Libzot {
 
 		$result = [];
 
-		//logger('msg_arr: ' . print_r($msg_arr,true),LOGGER_ALL);
+		// logger('msg_arr: ' . print_r($msg_arr,true),LOGGER_ALL);
 
 		// If an upstream hop used ActivityPub, set the identities to zot6 nomadic identities where applicable
 		// else things could easily get confused
@@ -1687,6 +1687,12 @@ class Libzot {
 
 			// if any further changes are to be made, change a copy and not the original
 			$arr = $msg_arr;
+
+//			if (! $msg_arr['mid']) {
+//				logger('no mid2: ' . print_r($msg_arr,true));
+//				logger('recip: ' . $d);
+//			}
+
 
 			$DR = new DReport(z_root(),$sender,$d,$arr['mid']);
 
@@ -1877,7 +1883,7 @@ class Libzot {
 					// doesn't exist. 
 
 					if ($perm === 'send_stream') {
-						if (get_pconfig($channel['channel_id'],'system','hyperdrive',false)) {
+						if (get_pconfig($channel['channel_id'],'system','hyperdrive',true)) {
 							$allowed = true;
 						}
 					}
@@ -1913,16 +1919,33 @@ class Libzot {
 				// this is so that permissions mismatches between senders apply to the entire conversation
 				// As a side effect we will also do a preliminary check that we have the top-level-post, otherwise
 				// processing it is pointless.
-	
+
+				// The original author won't have a token in their copy of the message
+				
+				$prnt = ((strpos($arr['parent_mid'],'token=') !== false) ? substr($arr['parent_mid'],0,strpos($arr['parent_mid'],'?')) : '');
+
 				$r = q("select route, id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
 					dbesc($arr['parent_mid']),
 					intval($channel['channel_id'])
 				);
+				if (! $r) {
+					$r = q("select route, id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
+						dbesc($prnt),
+						intval($channel['channel_id'])
+					);
+				}
+
 				if ($r) {
 					// if this is a multi-threaded conversation, preserve the threading information
 					if ($r[0]['parent_mid'] !== $r[0]['mid']) {
 						$arr['thr_parent'] = $arr['parent_mid'];
 						$arr['parent_mid'] = $r[0]['parent_mid'];
+						if ($act->replyto) {
+							q("update item set replyto = '%s' where id = %d",
+								dbesc($act->replyto),
+								intval($r[0]['id'])
+							);
+						}
 					}	
 
 					if ($r[0]['obj_type'] === 'Question') {

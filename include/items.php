@@ -1638,19 +1638,25 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 		$arr = $translate['item'];
 	}
 
-	if((x($arr,'obj')) && is_array($arr['obj'])) {
+	if (x($arr,'obj')) {
 		activity_sanitise($arr['obj']);
-		$arr['obj'] = json_encode($arr['obj'],JSON_UNESCAPED_SLASHES);
+		if (json_decode($arr['obj']) === NULL) {
+			$arr['obj'] = json_encode($arr['obj'],JSON_UNESCAPED_SLASHES);
+		}
 	}
 
-	if((x($arr,'target')) && is_array($arr['target'])) {
+	if (x($arr,'target')) {
 		activity_sanitise($arr['target']);
-		$arr['target'] = json_encode($arr['target'],JSON_UNESCAPED_SLASHES);
+		if (json_decode($arr['target']) === NULL) {
+			$arr['target'] = json_encode($arr['target'],JSON_UNESCAPED_SLASHES);
+		}
 	}
 
-	if((x($arr,'attach')) && is_array($arr['attach'])) {
+	if (x($arr,'attach')) {
 		activity_sanitise($arr['attach']);
-		$arr['attach'] = json_encode($arr['attach'],JSON_UNESCAPED_SLASHES);
+		if (json_decode($arr['attach']) === NULL) {
+			$arr['attach'] = json_encode($arr['attach'],JSON_UNESCAPED_SLASHES);
+		}
 	}
 
 	$arr['aid']           = ((x($arr,'aid'))           ? intval($arr['aid'])                           : 0);
@@ -1750,8 +1756,21 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 			intval($arr['uid'])
 		);
 
+		// We may have this parent_mid without a token, so try that if we find a token
 
-		if($r) {
+		if (! $r) {
+			if (strpos($arr['parent_mid'],'token=')) {
+				$r = q("SELECT * FROM item WHERE mid = '%s' AND uid = %d ORDER BY id ASC LIMIT 1",
+					dbesc(substr($arr['parent_mid'],0,strpos($arr['parent_mid'],'?'))),
+					intval($arr['uid'])
+				);
+				if ($r) {
+					$arr['parent_mid'] = $arr['thr_parent'] = substr($arr['parent_mid'],0,strpos($arr['parent_mid'],'?'));
+				}
+			}
+		}
+
+		if ($r) {
 
 			// in case item_store was killed before the parent's parent attribute got set,
 			// set it now. This happens with some regularity on Dreamhost. This will keep
@@ -2130,19 +2149,25 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 		$arr = $translate['item'];
 	}
 
-	if((array_key_exists('obj',$arr)) && is_array($arr['obj'])) {
+	if (x($arr,'obj')) {
 		activity_sanitise($arr['obj']);
-		$arr['obj'] = json_encode($arr['obj'],JSON_UNESCAPED_SLASHES);
+		if (json_decode($arr['obj']) === NULL) {
+			$arr['obj'] = json_encode($arr['obj'],JSON_UNESCAPED_SLASHES);
+		}
 	}
 
-	if((array_key_exists('target',$arr)) && is_array($arr['target'])) {
+	if (x($arr,'target')) {
 		activity_sanitise($arr['target']);
-		$arr['target'] = json_encode($arr['target'],JSON_UNESCAPED_SLASHES);
+		if (json_decode($arr['target']) === NULL) {
+			$arr['target'] = json_encode($arr['target'],JSON_UNESCAPED_SLASHES);
+		}
 	}
 
-	if((array_key_exists('attach',$arr)) && is_array($arr['attach'])) {
+	if (x($arr,'attach')) {
 		activity_sanitise($arr['attach']);
-		$arr['attach'] = json_encode($arr['attach'],JSON_UNESCAPED_SLASHES);
+		if (json_decode($arr['attach']) === NULL) {
+			$arr['attach'] = json_encode($arr['attach'],JSON_UNESCAPED_SLASHES);
+		}
 	}
 
 	unset($arr['id']);
@@ -3104,7 +3129,9 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		$arr['owner_xchan']  = $channel['channel_hash'];
 
 		$arr['obj_type'] = $item['obj_type'];
+
 		$arr['verb'] = 'Create';
+	
 		$arr['item_restrict'] = 1;
 
 		$arr['allow_cid'] = $channel['channel_allow_cid'];
