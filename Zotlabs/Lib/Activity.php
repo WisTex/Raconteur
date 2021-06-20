@@ -1045,7 +1045,7 @@ class Activity {
 			return $ret;
 		}
 
-		if (isset($i['obj'])) {
+		if (isset($i['obj']) && $i['obj']) {
 			if (is_string($i['obj'])) {
 				$tmp = json_decode($i['obj'],true);
 				if ($tmp !== NULL) {
