@@ -1053,7 +1053,11 @@ class Activity {
 				}
 			}
 			$ret = $i['obj'];
+			if (is_string($ret)) {
+				return $ret;
+			}
 		}
+
 
 		$ret['type'] = $objtype;
 
