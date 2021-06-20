@@ -371,7 +371,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$large_photos = 1;
 
-	linkify_tags($args['body'], $channel_id);
+	$found_tags = linkify_tags($args['body'], $channel_id);
 	
 	$alt = ' alt="' . $title . '"' ;
 
@@ -434,6 +434,23 @@ function photo_upload($channel, $observer, $args) {
 		'id'      => z_root() . '/album/' . $channel['channel_address'] . ((isset($args['folder'])) ? '/' . $args['folder'] : EMPTY_STR)
 	];
 
+	$post_tags = [];
+
+	if($found_tags) {
+		foreach($found_tags as $result) {
+			$success = $result['success'];
+			if($success['replaced']) {
+				$post_tags[] = array(
+					'uid'   => $channel['channel_id'],
+					'ttype' => $success['termtype'],
+					'otype' => TERM_OBJ_POST,
+					'term'  => $success['term'],
+					'url'   => $success['url']
+				);
+			}
+		}
+	}
+
 	// Create item container
 	if($args['item']) {
 		foreach($args['item'] as $i) {
@@ -451,7 +468,9 @@ function photo_upload($channel, $observer, $args) {
 
 				$item['tgt_type'] = 'orderedCollection';
 				$item['target']	= json_encode($target);
-
+				if ($post_tags) {
+					$arr['term'] = $post_tags;
+				}
 				$force = true;
 			}
 			$r = q("select id, edited from item where mid = '%s' and uid = %d limit 1",
@@ -509,6 +528,10 @@ function photo_upload($channel, $observer, $args) {
 			'item_private'    => intval($acl->is_private()),
 			'body'            => $summary
 		];
+
+		if ($post_tags) {
+			$arr['term'] = $post_tags;
+		}
 
 		$arr['plink']           = z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . urlencode($arr['mid']);
 
