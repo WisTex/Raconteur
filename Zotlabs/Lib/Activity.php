@@ -3758,13 +3758,21 @@ class Activity {
 	// check for the existence of existing media link in body
 
 	static function media_not_in_body($s,$body) {
-		
+
+		$s_alt = htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
+
 		if ((strpos($body,']' . $s . '[/img]') === false) && 
 			(strpos($body,']' . $s . '[/zmg]') === false) && 
 			(strpos($body,']' . $s . '[/video]') === false) && 
 			(strpos($body,']' . $s . '[/zvideo]') === false) && 
 			(strpos($body,']' . $s . '[/audio]') === false) && 
-			(strpos($body,']' . $s . '[/zaudio]') === false)) {
+			(strpos($body,']' . $s . '[/zaudio]') === false) &&
+			(strpos($body,']' . $s_alt . '[/img]') === false) && 
+			(strpos($body,']' . $s_alt . '[/zmg]') === false) && 
+			(strpos($body,']' . $s_alt . '[/video]') === false) && 
+			(strpos($body,']' . $s_alt . '[/zvideo]') === false) && 
+			(strpos($body,']' . $s_alt . '[/audio]') === false) && 
+			(strpos($body,']' . $s_alt . '[/zaudio]') === false)) {
 			return true;
 		}
 		return false;
