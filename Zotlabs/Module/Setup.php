@@ -198,13 +198,13 @@ class Setup extends Controller {
 		}
 		$db_return_text = '';
 		if(x(App::$data, 'db_installed')) {
-			$pass = 'Installation succeeded!';
+			$pass = t('Installation succeeded!');
 			$icon = 'check';
 			$txt = t('Your site database has been installed.') . EOL;
 			$db_return_text .= $txt;
 		}
 		if(x(App::$data, 'db_failed')) {
-			$pass = 'Database install failed!';
+			$pass = t('Database install failed!');
 			$icon = 'exclamation-triangle';
 			$txt = t('You may need to import the file "install/schema_xxx.sql" manually using a database client.') . EOL;
 			$txt .= t('Please see the file "install/INSTALL.txt".') . EOL ."<hr>" ;

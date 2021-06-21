@@ -6,15 +6,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 21.04.28\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-21 14:27+0200\n"
-"PO-Revision-Date: 2021-06-21 15:12+0200\n"
+"POT-Creation-Date: 2021-06-21 16:28+0200\n"
+"PO-Revision-Date: 2021-06-21 16:32+0200\n"
 "Last-Translator: Andrzej Budziński <astabski@gmail.com>\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2));\n"
 "Language-Team: \n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: pl\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2))\n"
 "X-Generator: Poedit 2.3\n"
 
 #: ../../Zotlabs/Access/Permissions.php:56
@@ -6304,9 +6304,17 @@ msgstr ""
 msgid "Could not create table."
 msgstr "Nie udało się utworzyć tabeli."
 
+#: ../../Zotlabs/Module/Setup.php:201
+msgid "Installation succeeded!"
+msgstr "Instacja zakończyła sie pomyślnie!"
+
 #: ../../Zotlabs/Module/Setup.php:203
 msgid "Your site database has been installed."
 msgstr "Baza danych portalu została zainstalowana."
+
+#: ../../Zotlabs/Module/Setup.php:207
+msgid "Database install failed!"
+msgstr "Błąd instalacji bazy danych!"
 
 #: ../../Zotlabs/Module/Setup.php:209
 msgid ""

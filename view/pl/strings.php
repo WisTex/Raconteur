@@ -2,7 +2,7 @@
 
 if(! function_exists("string_plural_select_pl")) {
 function string_plural_select_pl($n){
-	return ($n==1 ? 0 : ($n%10>=2 && $n%10<=4 && ($n%100<12 || $n%100>14) ? 1 : 2));;
+	return ($n==1 ? 0 : ($n%10>=2 && $n%10<=4 && ($n%100<12 || $n%100>14) ? 1 : 2));
 }}
 App::$rtl = 0;
 App::$strings["Grant viewing access to and delivery of your channel stream and posts"] = "Przyznaj dostęp do oglądania i dostarczania strumienia i wpisów na swoim kanale";
@@ -1275,7 +1275,9 @@ App::$strings["\$Projectname Server - Setup"] = "Serwer \$Projectname - Konfigur
 App::$strings["Could not connect to database."] = "Nie można połączyć się z bazą danych.";
 App::$strings["Could not connect to specified site URL. Possible SSL certificate or DNS issue."] = "Nie można połączyć się z określonym adresem URL portalu. Możliwy problem z certyfikatem SSL lub DNS.";
 App::$strings["Could not create table."] = "Nie udało się utworzyć tabeli.";
+App::$strings["Installation succeeded!"] = "Instacja zakończyła sie pomyślnie!";
 App::$strings["Your site database has been installed."] = "Baza danych portalu została zainstalowana.";
+App::$strings["Database install failed!"] = "Błąd instalacji bazy danych!";
 App::$strings["You may need to import the file \"install/schema_xxx.sql\" manually using a database client."] = "Może być konieczne ręczne zaimportowanie pliku \"install/schema_xxx.sql\" za pomocą klienta bazy danych.";
 App::$strings["Please see the file \"install/INSTALL.txt\"."] = "Proszę zobaczyć plik \"install/INSTALL.txt\".";
 App::$strings["System check"] = "Sprawdzanie systemu";
