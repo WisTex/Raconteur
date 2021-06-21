@@ -42,7 +42,7 @@ class Setup extends Controller {
 		// throw a white screen because these error messages divulge information which can
 		// potentially be useful to hackers.
 
-		error_reporting(E_ERROR | E_WARNING | E_PARSE );
+		error_reporting(E_ERROR | E_PARSE );
 		ini_set('log_errors', '0');
 		ini_set('display_errors', '1');
 
