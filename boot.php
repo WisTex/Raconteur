@@ -17,7 +17,7 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '21.06.12' );
+define ( 'STD_VERSION',             '21.06.20' );
 define ( 'NOMAD_REVISION',          '10.0' );
 
 define ( 'DB_UPDATE_VERSION',       1248 );
@@ -639,8 +639,6 @@ function sys_boot() {
 		App::$config['system']['timezone'] = $default_timezone;
 	}
 
-	App::$config['system']['server_role'] = 'pro';
-
 	App::$timezone = (isset(App::$config['system']['timezone']) ? App::$config['system']['timezone'] : 'UTC');
 	date_default_timezone_set(App::$timezone);
 
@@ -1127,7 +1125,7 @@ class App {
 		}
 
 		if (! x(self::$page,'title')) {
-			self::$page['title'] = self::$config['system']['sitename'];
+			self::$page['title'] = ((array_path_exists('system/sitename',self::$config)) ? self::$config['system']['sitename'] : EMPTY_STR);
 		}
 
 		if (! self::$meta->get_field('og:title')) {
@@ -1157,6 +1155,10 @@ class App {
 		 * being first
 		 */
 
+		if (! isset(self::$page['htmlhead'])) {
+			self::$page['htmlhead'] = EMPTY_STR; // needed to silence warning
+		}
+		
 		self::$page['htmlhead'] = replace_macros(get_markup_template('head.tpl'),
 			[
 				'$preload_images'  => $preload_images,
@@ -2369,7 +2371,7 @@ function head_set_icon($icon) {
  */
 function head_get_icon() {
 
-	$icon = App::$data['pageicon'];
+	$icon = ((isset(App::$data['pageicon'])) ? App::$data['pageicon'] : EMPTY_STR);
 	if($icon && ! strpos($icon, '://'))
 		$icon = z_root() . $icon;
 

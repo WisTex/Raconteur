@@ -1511,6 +1511,32 @@ function item_sign(&$item) {
 	$item['item_verified'] = 1;
 }
 
+// packs  json data for storage.
+// if it is a string, check if it is already json encoded.
+// Otherwise json encode it
+// If it is an array, sanitise it and  then json_encode it.
+
+
+function item_json_encapsulate($arr,$k)  {
+	$retval = null;
+	
+	if (isset($arr[$k])) {
+		if (is_string($arr[$k])) {
+			// determine if it is json encoded already
+			$test = json_decode($arr[$k]);
+			// assume it is json encoded already
+			$retval = $arr[$k];
+			if ($test === NULL) {
+				$retval = json_encode($arr[$k], JSON_UNESCAPED_SLASHES);
+			}
+		}
+		else {
+			activity_sanitise($arr[$k]);
+			$retval = json_encode($arr[$k], JSON_UNESCAPED_SLASHES);
+		}
+	}
+	return $retval;
+}
 
 /**
  * @brief Stores an item type record.
@@ -1638,20 +1664,18 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 		$arr = $translate['item'];
 	}
 
-	if((x($arr,'obj')) && is_array($arr['obj'])) {
-		activity_sanitise($arr['obj']);
-		$arr['obj'] = json_encode($arr['obj'],JSON_UNESCAPED_SLASHES);
+	if(x($arr,'obj')) {
+		$arr['obj'] = item_json_encapsulate($arr,'obj');
 	}
 
-	if((x($arr,'target')) && is_array($arr['target'])) {
-		activity_sanitise($arr['target']);
-		$arr['target'] = json_encode($arr['target'],JSON_UNESCAPED_SLASHES);
+	if(x($arr,'target')) {
+		$arr['target'] = item_json_encapsulate($arr,'target');
 	}
 
-	if((x($arr,'attach')) && is_array($arr['attach'])) {
-		activity_sanitise($arr['attach']);
-		$arr['attach'] = json_encode($arr['attach'],JSON_UNESCAPED_SLASHES);
+	if(x($arr,'attach')) {
+		$arr['attach'] = item_json_encapsulate($arr,'attach');
 	}
+
 
 	$arr['aid']           = ((x($arr,'aid'))           ? intval($arr['aid'])                           : 0);
 	$arr['mid']           = ((x($arr,'mid'))           ? notags(trim($arr['mid']))                     : random_string());
@@ -1750,8 +1774,21 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 			intval($arr['uid'])
 		);
 
+		// We may have this parent_mid without a token, so try that if we find a token
 
-		if($r) {
+		if (! $r) {
+			if (strpos($arr['parent_mid'],'token=')) {
+				$r = q("SELECT * FROM item WHERE mid = '%s' AND uid = %d ORDER BY id ASC LIMIT 1",
+					dbesc(substr($arr['parent_mid'],0,strpos($arr['parent_mid'],'?'))),
+					intval($arr['uid'])
+				);
+				if ($r) {
+					$arr['parent_mid'] = $arr['thr_parent'] = substr($arr['parent_mid'],0,strpos($arr['parent_mid'],'?'));
+				}
+			}
+		}
+
+		if ($r) {
 
 			// in case item_store was killed before the parent's parent attribute got set,
 			// set it now. This happens with some regularity on Dreamhost. This will keep
@@ -2130,19 +2167,17 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 		$arr = $translate['item'];
 	}
 
-	if((array_key_exists('obj',$arr)) && is_array($arr['obj'])) {
-		activity_sanitise($arr['obj']);
-		$arr['obj'] = json_encode($arr['obj'],JSON_UNESCAPED_SLASHES);
+
+	if(x($arr,'obj')) {
+		$arr['obj'] = item_json_encapsulate($arr,'obj');
 	}
 
-	if((array_key_exists('target',$arr)) && is_array($arr['target'])) {
-		activity_sanitise($arr['target']);
-		$arr['target'] = json_encode($arr['target'],JSON_UNESCAPED_SLASHES);
+	if(x($arr,'target')) {
+		$arr['target'] = item_json_encapsulate($arr,'target');
 	}
 
-	if((array_key_exists('attach',$arr)) && is_array($arr['attach'])) {
-		activity_sanitise($arr['attach']);
-		$arr['attach'] = json_encode($arr['attach'],JSON_UNESCAPED_SLASHES);
+	if(x($arr,'attach')) {
+		$arr['attach'] = item_json_encapsulate($arr,'attach');
 	}
 
 	unset($arr['id']);
@@ -3104,7 +3139,9 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		$arr['owner_xchan']  = $channel['channel_hash'];
 
 		$arr['obj_type'] = $item['obj_type'];
+
 		$arr['verb'] = 'Create';
+	
 		$arr['item_restrict'] = 1;
 
 		$arr['allow_cid'] = $channel['channel_allow_cid'];

@@ -42,7 +42,7 @@ class Setup extends Controller {
 		// throw a white screen because these error messages divulge information which can
 		// potentially be useful to hackers.
 
-		error_reporting(E_ERROR | E_WARNING | E_PARSE );
+		error_reporting(E_ERROR | E_PARSE );
 		ini_set('log_errors', '0');
 		ini_set('display_errors', '1');
 
@@ -283,15 +283,16 @@ class Setup extends Controller {
 			case 2: { // Database config
 
 				$dbhost = ((x($_POST,'dbhost')) ? trim($_POST['dbhost']) : '127.0.0.1');
-				$dbuser = trim($_POST['dbuser']);
-				$dbport = intval(trim($_POST['dbport']));
-				$dbpass = trim($_POST['dbpass']);
-				$dbdata = trim($_POST['dbdata']);
-				$dbtype = intval(trim($_POST['dbtype']));
-				$phpath = trim($_POST['phpath']);
-				$adminmail = trim($_POST['adminmail']);
-				$siteurl = trim($_POST['siteurl']);
-				$servertype = intval(trim($_POST['servertype']));
+				$dbuser = ((x($_POST,'dbuser')) ? trim($_POST['dbuser']): EMPTY_STR);
+				$dbport = ((x($_POST,'dbport')) ? intval(trim($_POST['dbport'])) : 0);
+				$dbpass = ((x($_POST,'dbpass')) ? trim($_POST['dbpass']): EMPTY_STR);
+				$dbdata = ((x($_POST,'dbdata')) ? trim($_POST['dbdata']): EMPTY_STR);
+				$dbtype = ((x($_POST,'dbtype')) ? intval(trim($_POST['dbtype'])) : 0);
+				$phpath = ((x($_POST,'phpath')) ? trim($_POST['phpath']): EMPTY_STR);
+				$adminmail = ((x($_POST,'adminmail')) ? trim($_POST['adminmail']): EMPTY_STR);
+				$siteurl = ((x($_POST,'siteurl')) ? trim($_POST['siteurl']): EMPTY_STR);
+
+				$servertype = EMPTY_STR;
 
 				$tpl = get_markup_template('install_db.tpl');
 				$o .= replace_macros($tpl, array(
@@ -323,18 +324,18 @@ class Setup extends Controller {
 				return $o;
 			}; break;
 			case 3: { // Site settings
-				require_once('include/datetime.php');
 				$dbhost = ((x($_POST,'dbhost')) ? trim($_POST['dbhost']) : '127.0.0.1');
-				$dbport = intval(trim($_POST['dbuser']));
-				$dbuser = trim($_POST['dbuser']);
-				$dbpass = trim($_POST['dbpass']);
-				$dbdata = trim($_POST['dbdata']);
-				$dbtype = intval(trim($_POST['dbtype']));
-				$phpath = trim($_POST['phpath']);
-				$servertype = 0;
+				$dbuser = ((x($_POST,'dbuser')) ? trim($_POST['dbuser']): EMPTY_STR);
+				$dbport = ((x($_POST,'dbport')) ? intval(trim($_POST['dbport'])) : 0);
+				$dbpass = ((x($_POST,'dbpass')) ? trim($_POST['dbpass']): EMPTY_STR);
+				$dbdata = ((x($_POST,'dbdata')) ? trim($_POST['dbdata']): EMPTY_STR);
+				$dbtype = ((x($_POST,'dbtype')) ? intval(trim($_POST['dbtype'])) : 0);
+				$phpath = ((x($_POST,'phpath')) ? trim($_POST['phpath']): EMPTY_STR);
 
-				$adminmail = trim($_POST['adminmail']);
-				$siteurl = trim($_POST['siteurl']);
+				$servertype = EMPTY_STR;
+
+				$adminmail = ((x($_POST,'adminmail')) ? trim($_POST['adminmail']): EMPTY_STR);
+				$siteurl = ((x($_POST,'siteurl')) ? trim($_POST['siteurl']): EMPTY_STR);
 				$timezone = ((x($_POST,'timezone')) ? ($_POST['timezone']) : 'America/Los_Angeles');
 
 
@@ -455,6 +456,7 @@ class Setup extends Controller {
 	function check_phpconfig(&$checks) {
 
 		$help = '';
+		$mem_warning = EMPTY_STR;
 
 		$result = self::getPhpiniUploadLimits();
 		if($result['post_max_size'] < (2 * 1024 * 1024) || $result['max_upload_filesize'] < (2 * 1024 * 1024)) {
@@ -849,6 +851,8 @@ class Setup extends Controller {
 	static private function phpiniSizeToBytes($val) {
     	$val = trim($val);
 	    $unit = strtolower($val[strlen($val)-1]);
+		// strip off any non-numeric portion
+		$val = intval($val);
     	switch($unit) {
         	case 'g':
             	$val *= 1024;

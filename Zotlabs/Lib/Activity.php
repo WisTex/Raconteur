@@ -24,10 +24,24 @@ class Activity {
 
 	static $ACTOR_CACHE_DAYS = 3;
 
+	// $x (string|array)
+	// if json string, decode it
+	// returns activitystreams object as an array except if it is a URL
+	// which returns the URL as string
+	
 	static function encode_object($x) {
 
-		if (($x) && (! is_array($x)) && (substr(trim($x),0,1)) === "{" ) {
-			$x = json_decode($x,true);
+		if ($x) {
+			if (is_string($x)) {
+				$tmp = json_decode($x,true);
+				if ($tmp !== NULL) {
+					$x = $tmp;
+				}
+			}
+		}
+
+		if (is_string($x)) {
+			return ($x);
 		}
 
 		if ($x['type'] === ACTIVITY_OBJ_PERSON) {
@@ -776,7 +790,7 @@ class Activity {
 			$ret['context'] = $cnv;
 			$ret['conversation'] = $cnv;
 		}
-
+		
 		if (intval($i['item_private']) === 2) {
 			$ret['directMessage'] = true;
 		}
@@ -792,7 +806,10 @@ class Activity {
 		if ($replyto) {
 			$ret['replyTo'] = $replyto;
 		}
-		
+
+
+
+
 		if (! isset($ret['url'])) {
 			$urls = [];
 			if (intval($i['item_wall'])) {
@@ -839,8 +856,11 @@ class Activity {
 
 
 		if ($i['obj']) {
-			if (! is_array($i['obj'])) {
-				$i['obj'] = json_decode($i['obj'],true);
+			if (is_string($i['obj'])) {
+				$tmp = json_decode($i['obj'],true);
+				if ($tmp !== NULL) {
+					$i['obj'] = $tmp;
+				}
 			}
 			$obj = self::encode_object($i['obj']);
 			if ($obj)
@@ -850,15 +870,20 @@ class Activity {
 		}
 		else {
 			$obj = self::encode_item($i,$activitypub);
-			if ($obj)
+			if ($obj) {
 				$ret['object'] = $obj;
-			else
+			}
+			else {
 				return [];
+			}
 		}
 
 		if ($i['target']) {
-			if (! is_array($i['target'])) {
-				$i['target'] = json_decode($i['target'],true);
+			if (is_string($i['target'])) {
+				$tmp = json_decode($i['target'],true);
+				if ($tmp !== NULL) {
+					$i['target'] = $tmp;
+				}
 			}
 			$tgt = self::encode_object($i['target']);
 			if ($tgt) {
@@ -1020,14 +1045,19 @@ class Activity {
 			return $ret;
 		}
 
-		if (isset($i['obj'])) {
-			if (is_array($i['obj'])) {
-				$ret = $i['obj'];
+		if (isset($i['obj']) && $i['obj']) {
+			if (is_string($i['obj'])) {
+				$tmp = json_decode($i['obj'],true);
+				if ($tmp !== NULL) {
+					$i['obj'] = $tmp;
+				}
 			}
-			else {
-				$ret = json_decode($i['obj'],true);
+			$ret = $i['obj'];
+			if (is_string($ret)) {
+				return $ret;
 			}
 		}
+
 
 		$ret['type'] = $objtype;
 
@@ -1051,6 +1081,16 @@ class Activity {
 		$has_images = preg_match_all('/\[[zi]mg(.*?)\](.*?)\[/ism',$i['body'],$images,PREG_SET_ORDER);
 
 		$ret['id'] = $i['mid'];
+
+		$token = IConfig::get($i,'ocap','relay');
+		if ($token) {
+			if (defined('USE_BEARCAPS')) {
+				$ret['id'] = 'bear:?u=' . $ret['id'] . '&t=' . $token;
+			}
+			else {
+				$ret['id'] = $ret['id'] . '?token=' . $token;
+			}
+		}
 
 		$ret['published'] = datetime_convert('UTC','UTC',$i['created'],ATOM_TIME);
 		if ($i['created'] !== $i['edited']) {
@@ -2814,7 +2854,7 @@ class Activity {
 
 
 
-		if ($act->obj['type'] === 'Note' && $s['attach']) {
+		if ($act->obj['type'] === 'Note' && isset($s['attach']) && $s['attach']) {
 			$s['body'] .= self::bb_attach($s['attach'],$s['body']);
 		}
 
@@ -3298,6 +3338,11 @@ class Activity {
 				}
 			}
 			else {
+			
+				// By default if we allow you to send_stream and comments and this is a comment, it is allowed.
+				// A side effect of this action is that if you take away send_stream permission, comments to those
+				// posts you previously allowed will still be accepted. It is possible but might be difficult to fix this.
+				
 				$allowed = true;
 
 				// reject public stream comments that weren't sent by the conversation owner
@@ -3517,6 +3562,12 @@ class Activity {
 			$x = item_store($item);
 		}
 
+// experimental code that needs more work. What this did was once we fetched a conversation to find the root node,
+// start at that root node and fetch children so you get all the branches and not just the branch related to the current node.
+// Unfortunately there is no standard method for achieving this. Mastodon provides a 'replies' collection and Nomad projects
+// can fetch the 'context'. For other platforms it's a wild guess. Additionally when we tested this, it started an infinite
+// recursion and has been disabled until the recursive behaviour is tracked down and fixed. 
+
 //		if ($fetch_parents && $parent && ! intval($parent[0]['item_private'])) {
 //			logger('topfetch', LOGGER_DEBUG);
 //			// if the thread owner is a connnection, we will already receive any additional comments to their posts
@@ -3666,16 +3717,13 @@ class Activity {
 	}
 
 
-	// This function is designed to work with both ActivityPub and Zot attachments.
-	// The 'type' of each is different ('Image' vs 'image/jpeg' for example).
-	// If editing this function please be aware of the need to support both formats
-	// which we accomplish here through the use of stripos(). 
+	// This function is designed to work with Zot attachments and item body
 
 	static function bb_attach($attach,$body) {
 
 		$ret = false;
 
-		if (! $attach) {
+		if (! (is_array($attach) && $attach)) {
 			return EMPTY_STR;
 		}
 
@@ -3710,13 +3758,21 @@ class Activity {
 	// check for the existence of existing media link in body
 
 	static function media_not_in_body($s,$body) {
-		
+
+		$s_alt = htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
+
 		if ((strpos($body,']' . $s . '[/img]') === false) && 
 			(strpos($body,']' . $s . '[/zmg]') === false) && 
 			(strpos($body,']' . $s . '[/video]') === false) && 
 			(strpos($body,']' . $s . '[/zvideo]') === false) && 
 			(strpos($body,']' . $s . '[/audio]') === false) && 
-			(strpos($body,']' . $s . '[/zaudio]') === false)) {
+			(strpos($body,']' . $s . '[/zaudio]') === false) &&
+			(strpos($body,']' . $s_alt . '[/img]') === false) && 
+			(strpos($body,']' . $s_alt . '[/zmg]') === false) && 
+			(strpos($body,']' . $s_alt . '[/video]') === false) && 
+			(strpos($body,']' . $s_alt . '[/zvideo]') === false) && 
+			(strpos($body,']' . $s_alt . '[/audio]') === false) && 
+			(strpos($body,']' . $s_alt . '[/zaudio]') === false)) {
 			return true;
 		}
 		return false;

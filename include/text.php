@@ -154,6 +154,10 @@ function purify_html($s, $opts = []) {
 	$config->set('Cache.DefinitionImpl', null);
 	$config->set('Attr.EnableID', true);
 
+	// disable Unicode version of RTL over-ride 
+	$s = str_replace([ '&#x202e;', '&#x202E;', html_entity_decode('&#x202e;', ENT_QUOTES,'UTF-8') ],[ '','','' ],$s); 
+
+
 	// This will escape invalid tags in the output instead of removing.
 	// This is necessary for mixed format (text+bbcode+html+markdown) messages or
 	// some angle brackets in plaintext may get stripped if they look like an HTML tag
@@ -1818,7 +1822,8 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 	}
 	$cache_enable = ((($cache_expire) && ($item['created'] < datetime_convert('UTC','UTC', 'now - ' . $cache_expire . ' days'))) ? false : true);
 
-
+	// disable Unicode RTL over-ride since it can destroy presentation in some cases, use HTML or CSS instead 
+	$s = str_replace([ '&#x202e;', '&#x202E;', html_entity_decode('&#x202e;', ENT_QUOTES,'UTF-8') ],[ '','','' ],$s); 
 
 	if($s)
 		$s = sslify($s, $cache_enable);

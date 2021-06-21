@@ -101,18 +101,18 @@ class ActivityPub {
 					return;
 				}
 
-				$token = IConfig::get($target_item['id'],'ocap','relay');
-				if ($token) {
-					if (defined('USE_BEARCAPS')) {
-						$ti['id'] = 'bear:?u=' . $ti['id'] . '&t=' . $token;
-					}
-					else {
-						$ti['id'] = $ti['id'] . '?token=' . $token;
-					}
-					if ($ti['url'] && is_string($ti['url'])) {
-						$ti['url'] .= '?token=' . $token;
-					}
-				}
+//				$token = IConfig::get($target_item['id'],'ocap','relay');
+//				if ($token) {
+//					if (defined('USE_BEARCAPS')) {
+//						$ti['id'] = 'bear:?u=' . $ti['id'] . '&t=' . $token;
+//					}
+//					else {
+//						$ti['id'] = $ti['id'] . '?token=' . $token;
+//					}
+//					if ($ti['url'] && is_string($ti['url'])) {
+//						$ti['url'] .= '?token=' . $token;
+//					}
+//				}
 
 				$msg = array_merge(['@context' => [
 					ACTIVITYSTREAMS_JSONLD_REV,

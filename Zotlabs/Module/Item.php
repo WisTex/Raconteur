@@ -108,6 +108,22 @@ class Item extends Controller {
 				);
 			}
 
+			$bear = Activity::token_from_request();
+			if ($bear) {
+				logger('bear: ' . $bear, LOGGER_DEBUG);
+				if (! $i) {
+					$t = q("select * from iconfig where cat = 'ocap' and k = 'relay' and v = '%s'",
+						dbesc($bear)
+					);
+					if ($t) {
+						$i = q("select id as item_id from item where uuid = '%s' and id = %d $item_normal limit 1",
+							dbesc($item_id),
+							intval($t[0]['iid'])
+						);
+					}
+				}
+			}
+
 			if (! $i) {
 				http_status_exit(403,'Forbidden');
 			}
@@ -203,6 +219,22 @@ class Item extends Controller {
 				$i = q("select id as item_id from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
 					dbesc($r[0]['parent_mid'])
 				);
+			}
+
+			$bear = Activity::token_from_request();
+			if ($bear) {
+				logger('bear: ' . $bear, LOGGER_DEBUG);
+				if (! $i) {
+					$t = q("select * from iconfig where cat = 'ocap' and k = 'relay' and v = '%s'",
+						dbesc($bear)
+					);
+					if ($t) {
+						$i = q("select id as item_id from item where uuid = '%s' and id = %d $item_normal limit 1",
+							dbesc($item_id),
+							intval($t[0]['iid'])
+						);
+					}
+				}
 			}
 
 			if (! $i) {
@@ -908,16 +940,15 @@ class Item extends Controller {
 								'term'  => $ng['xchan_name'],
 								'url'   => $ng['xchan_url']
 							);
-							if ($ng['xchan_network'] === 'activitypub') {
-								$colls = get_xconfig($ng['xchan_hash'],'activitypub','collections');
-								if ($colls && is_array($colls) && isset($colls['wall'])) {
-									$datarray['target'] = [
-										'id'           => $colls['wall'],
-										'type'         => 'Collection',
-										'attributedTo' => $ng['xchan_hash']
-									];
-									$datarray['tgt_type'] = 'Collection';
-								}
+
+							$colls = get_xconfig($ng['xchan_hash'],'activitypub','collections');
+							if ($colls && is_array($colls) && isset($colls['wall'])) {
+								$datarray['target'] = [
+									'id'           => $colls['wall'],
+									'type'         => 'Collection',
+									'attributedTo' => (($ng['xchan_network'] === 'zot6') ? $ng['xchan_url'] : $ng['xchan_hash'])
+								];
+								$datarray['tgt_type'] = 'Collection';
 							}
 						}
 					}

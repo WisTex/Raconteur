@@ -436,7 +436,7 @@ class Notifier {
 				self::$packet_type = 'response';
 				$is_moderated = their_perms_contains($parent_item['uid'],$sendto,'moderated');
 				if ($relay_to_owner && $thread_is_public && (! $is_moderated)) {
-					if (get_pconfig($target_item['uid'],'system','hyperdrive',false)) {
+					if (get_pconfig($target_item['uid'],'system','hyperdrive',true)) {
 						Run::Summon([ 'Notifier' , 'hyper', $item_id ]);
 					}
 				}

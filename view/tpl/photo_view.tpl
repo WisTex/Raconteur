@@ -66,10 +66,10 @@
 				<label id="photo-edit-caption-label" for="photo-edit-caption">{{$edit.capt_label}}</label>
 				<input id="photo-edit-caption" class="form-control" type="text" name="desc" value="{{$edit.caption}}" />
 			</div>
-			<div class="form-group">
+			{{* <div class="form-group">
 				<label id="photo-edit-tags-label" for="photo-edit-newtag">{{$edit.tag_label}}</label>
 				<input name="newtag" id="photo-edit-newtag" class="form-control" title="{{$edit.help_tags}}" type="text" />
-			</div>
+			</div> *}}
 			<div class="form-group">
 				{{include file="field_select.tpl" field=$edit.album_select}}
 			</div>

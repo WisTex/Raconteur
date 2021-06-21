@@ -52,7 +52,7 @@ class System {
 
 	static public function get_update_version() {
 		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['hide_version'])
-			return '';
+			return EMPTY_STR;
 		return DB_UPDATE_VERSION;
 	}
 
@@ -64,7 +64,7 @@ class System {
 	}
 
 	static public function get_site_icon() {
-		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['site_icon_url'])
+		if(is_array(App::$config) && is_array(App::$config['system']) && isset(App::$config['system']['site_icon_url']) && App::$config['system']['site_icon_url'])
 			return App::$config['system']['site_icon_url'];
 		return self::get_project_icon();
 	}
@@ -85,10 +85,6 @@ class System {
 		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['project_srclink'])
 			return App::$config['system']['project_srclink'];
 		return 'https://codeberg.org/zot/' . PLATFORM_NAME;
-	}
-
-	static public function get_server_role() {
-		return 'pro';
 	}
 
 	static public function ebs() {
@@ -112,7 +108,7 @@ class System {
 
 	static public function compatible_project($p) {
 
-		if (in_array(strtolower($p),['hubzilla','zap','red','misty','mistpark','redmatrix','osada', 'roadhouse'])) {
+		if (in_array(strtolower($p),['hubzilla', 'zap', 'red', 'misty', 'mistpark', 'redmatrix', 'osada', 'roadhouse'])) {
 			return true;
 		}
 		return false;
