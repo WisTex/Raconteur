@@ -2854,7 +2854,7 @@ class Activity {
 
 
 
-		if ($act->obj['type'] === 'Note' && $s['attach']) {
+		if ($act->obj['type'] === 'Note' && isset($s['attach']) && $s['attach']) {
 			$s['body'] .= self::bb_attach($s['attach'],$s['body']);
 		}
 
@@ -3717,16 +3717,13 @@ class Activity {
 	}
 
 
-	// This function is designed to work with both ActivityPub and Zot attachments.
-	// The 'type' of each is different ('Image' vs 'image/jpeg' for example).
-	// If editing this function please be aware of the need to support both formats
-	// which we accomplish here through the use of stripos(). 
+	// This function is designed to work with Zot attachments and item body
 
 	static function bb_attach($attach,$body) {
 
 		$ret = false;
 
-		if (! $attach) {
+		if (! (is_array($attach) && $attach)) {
 			return EMPTY_STR;
 		}
 
