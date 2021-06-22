@@ -364,7 +364,6 @@ class Photos extends Controller {
 			$matches = [];
 
 			if (preg_match('/\[footer\](.*?)\[\/footer\]/ism',$orig_text,$matches)) {
-			logger('matches: ' . print_r($matches,true));
 				$footer_text = $matches[0];
 			}
 	
