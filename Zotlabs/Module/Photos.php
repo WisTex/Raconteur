@@ -415,7 +415,7 @@ class Photos extends Controller {
 				}
 			}
 
-			$body = z_input_filter($body,'text/bbcode');
+			$body = z_input_filter($body,'text/x-multicode');
 
 			$obj = EMPTY_STR;
 
@@ -425,7 +425,7 @@ class Photos extends Controller {
 				$obj['name'] = (($title) ? $title : $p[0]['filename']);
 				$obj['summary'] = (($desc) ? $desc : $p[0]['filename']);
 				$obj['updated'] = datetime_convert('UTC','UTC','now',ATOM_TIME);
-				$obj['source'] = [ 'content' => $body, 'mediaType' => 'text/bbcode' ];
+				$obj['source'] = [ 'content' => $body, 'mediaType' => 'text/x-multicode' ];
 				$obj['content'] = bbcode($body . $footer_text, [ 'export' => true ]);
 				if (isset($obj['url']) && is_array($obj['url'])) {
 					for ($x = 0; $x < count($obj['url']); $x ++) {
