@@ -198,13 +198,13 @@ class Setup extends Controller {
 		}
 		$db_return_text = '';
 		if(x(App::$data, 'db_installed')) {
-			$pass = 'Installation succeeded!';
+			$pass = t('Installation succeeded!');
 			$icon = 'check';
 			$txt = t('Your site database has been installed.') . EOL;
 			$db_return_text .= $txt;
 		}
 		if(x(App::$data, 'db_failed')) {
-			$pass = 'Database install failed!';
+			$pass = t('Database install failed!');
 			$icon = 'exclamation-triangle';
 			$txt = t('You may need to import the file "install/schema_xxx.sql" manually using a database client.') . EOL;
 			$txt .= t('Please see the file "install/INSTALL.txt".') . EOL ."<hr>" ;
@@ -785,7 +785,7 @@ class Setup extends Controller {
 			."<div class=\"alert alert-info\">".t('IMPORTANT: You will need to [manually] setup a scheduled task for the poller.').EOL
 			.t('Please see the file "install/INSTALL.txt".')
 			."</div><div>"
-			.t("Go to your new hub <a href='$baseurl/register'>registration page</a> and register as new member. Remember to use the same email you have entered as administrator email. This will allow you to enter the site admin panel.")
+			.t('Go to your new hub <a href="$baseurl/register">registration page</a> and register as new member. Remember to use the same email you have entered as administrator email. This will allow you to enter the site admin panel.')
 			."</div>";
 	}
 
