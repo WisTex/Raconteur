@@ -262,8 +262,12 @@ function photo_upload($channel, $observer, $args) {
 		$p['edited'] = $args['edited'];
 	if($args['title'])
 		$p['title'] = $args['title'];
-	if($args['description'])
+
+	if ($args['description']) {
 		$p['description'] = $args['description'];
+	}
+
+	$alt_desc = ((isset($p['description']) && $p['description']) ? $p['description'] : $p['filename']);
 
 	$url = [];
 
@@ -271,6 +275,7 @@ function photo_upload($channel, $observer, $args) {
 	$url[0] = [
 		'type' => 'Link',
 		'mediaType' => $type,
+		'summary' => $alt_desc,
 		'href' => z_root() . '/photo/' . $photo_hash . '-0.' . $ph->getExt(),
 		'width' => $width,
 		'height' => $height
@@ -291,6 +296,7 @@ function photo_upload($channel, $observer, $args) {
 	$url[1] = [
 		'type' => 'Link',
 		'mediaType' => $type,
+		'summary' => $alt_desc,
 		'href' => z_root() . '/photo/' . $photo_hash . '-1.' . $ph->getExt(),
 		'width' => $ph->getWidth(),
 		'height' => $ph->getHeight()
@@ -306,6 +312,7 @@ function photo_upload($channel, $observer, $args) {
 	$url[2] = [
 		'type' => 'Link',
 		'mediaType' => $type,
+		'summary' => $alt_desc,
 		'href' => z_root() . '/photo/' . $photo_hash . '-2.' . $ph->getExt(),
 		'width' => $ph->getWidth(),
 		'height' => $ph->getHeight()
@@ -321,6 +328,7 @@ function photo_upload($channel, $observer, $args) {
 	$url[3] = [
 		'type' => 'Link',
 		'mediaType' => $type,
+		'summary' => $alt_desc,
 		'href' => z_root() . '/photo/' . $photo_hash . '-3.' . $ph->getExt(),
 		'width' => $ph->getWidth(),
 		'height' => $ph->getHeight()
@@ -367,26 +375,18 @@ function photo_upload($channel, $observer, $args) {
 		}
 	}
 
-	$title = (($args['description']) ? $args['description'] : $args['filename']);
+	$title = ((isset($args['title']) && $args['title']) ? $args['title'] : $args['filename']);
 
-	$large_photos = 1;
-
+	$desc = htmlspecialchars($alt_desc);
+	
 	$found_tags = linkify_tags($args['body'], $channel_id);
 	
-	$alt = ' alt="' . $title . '"' ;
+	$alt = ' alt="' . $desc . '"' ;
 
-	if($large_photos) {
-		$scale = 1;
-		$width = $url[1]['width'];
-		$height = $url[1]['height'];
-		$tag = (($r1) ? '[zmg width="' . $width . '" height="' . $height . '"' . $alt . ']' : '[zmg' . $alt . ']');
-	}
-	else {
-		$scale = 2;
-		$width = $url[2]['width'];
-		$height = $url[2]['height'];
-		$tag = (($r2) ? '[zmg width="' . $width . '" height="' . $height . '"' . $alt . ']' : '[zmg' . $alt . ']');
-	}
+	$scale = 1;
+	$width = $url[1]['width'];
+	$height = $url[1]['height'];
+	$tag = (($r1) ? '[zmg width="' . $width . '" height="' . $height . '"' . $alt . ']' : '[zmg' . $alt . ']');
 
 	$author_link = '[zrl=' . z_root() . '/channel/' . $channel['channel_address'] . ']' . $channel['channel_name'] . '[/zrl]';
 
@@ -396,7 +396,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$activity_format = sprintf(t('%1$s posted %2$s to %3$s','photo_upload'), $author_link, $photo_link, $album_link);
 
-	$summary = (($args['body']) ? $args['body'] : '') . '[footer]' . $activity_format . '[/footer]';
+	$body = (($args['body']) ? $args['body'] : '') . '[footer]' . $activity_format . '[/footer]';
 
 	// If uploaded into a post, this is the text that is returned to the webapp for inclusion in the post.
 
@@ -414,8 +414,8 @@ function photo_upload($channel, $observer, $args) {
 		// This is a placeholder and will get over-ridden by the item mid, which is critical for sharing as a conversational item over activitypub
 		'id'        => z_root() . '/photo/' . $photo_hash,
 		'url'       => $url,
-		'source'    => [ 'content' => $summary, 'mediaType' => 'text/x-multicode' ],
-		'content'   => bbcode($summary)
+		'source'    => [ 'content' => $body, 'mediaType' => 'text/x-multicode' ],
+		'content'   => bbcode($body, [ 'export' => true ])
 	];
 
 	$public = (($ac['allow_cid'] || $ac['allow_gid'] || $ac['deny_cid'] || $ac['deny_gid']) ? false : true);
@@ -436,7 +436,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$post_tags = [];
 
-	if($found_tags) {
+	if ($found_tags) {
 		foreach($found_tags as $result) {
 			$success = $result['success'];
 			if($success['replaced']) {
@@ -452,8 +452,8 @@ function photo_upload($channel, $observer, $args) {
 	}
 
 	// Create item container
-	if($args['item']) {
-		foreach($args['item'] as $i) {
+	if ($args['item']) {
+		foreach ($args['item'] as $i) {
 
 			$item = get_item_elements($i);
 			$force = false;
@@ -461,7 +461,8 @@ function photo_upload($channel, $observer, $args) {
 			if($item['mid'] === $item['parent_mid']) {
 
 				$object['id'] = $item['mid'];
-				$item['body'] = $summary;
+				$item['summary'] = $summary;
+				$item['body'] = $body; 
 				$item['mimetype'] = 'text/x-multicode';
 				$item['obj_type'] = ACTIVITY_OBJ_PHOTO;
 				$item['obj']	= json_encode($object);
@@ -477,8 +478,8 @@ function photo_upload($channel, $observer, $args) {
 				dbesc($item['mid']),
 				intval($channel['channel_id'])
 			);
-			if($r) {
-				if(($item['edited'] > $r[0]['edited']) || $force) {
+			if ($r) {
+				if (($item['edited'] > $r[0]['edited']) || $force) {
 					$item['id'] = $r[0]['id'];
 					$item['uid'] = $channel['channel_id'];
 					item_store_update($item,false,$deliver);
@@ -526,7 +527,8 @@ function photo_upload($channel, $observer, $args) {
 			'item_origin'     => 1,
 			'item_thread_top' => 1,
 			'item_private'    => intval($acl->is_private()),
-			'body'            => $summary
+			'summary'         => $summary,
+			'body'            => $body
 		];
 
 		if ($post_tags) {
@@ -826,7 +828,9 @@ function photos_album_rename($channel_id, $oldname, $newname) {
 }
 
 /**
- * @brief
+ * @brief returns the DB escaped comma separated list of the contents (by hash name) of a given photo album
+ * based on the creator. This is used to ensure guests can only edit content they created. The page owner and site
+ * admin can edit any content owned by this channel.
  *
  * @param int $channel_id
  * @param string $album
