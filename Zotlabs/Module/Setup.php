@@ -785,7 +785,9 @@ class Setup extends Controller {
 			."<div class=\"alert alert-info\">".t('IMPORTANT: You will need to [manually] setup a scheduled task for the poller.').EOL
 			.t('Please see the file "install/INSTALL.txt".')
 			."</div><div>"
-			.t('Go to your new hub <a href="$baseurl/register">registration page</a> and register as new member. Remember to use the same email you have entered as administrator email. This will allow you to enter the site admin panel.')
+			.t('Go to your new hub ')
+			."<a href=\"$baseurl/register\">".t('registration page')."</a>"
+			.t('and register as new member. Remember to use the same email you have entered as administrator email. This will allow you to enter the site admin panel.')
 			."</div>";
 	}
 
