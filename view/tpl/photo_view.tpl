@@ -38,7 +38,7 @@
 			</div>
 			{{/if}}
 		</div>
-		<h2>{{if $desc}}{{$desc}}{{elseif $filename}}{{$filename}}{{else}}{{$unknown}}{{/if}}</h2>
+		<h2>{{if $title}}{{$title}}{{elseif $filename}}{{$filename}}{{else}}{{$unknown}}{{/if}}</h2>
 		<div class="clear"></div>
 	</div>
 	<div id="photo-map">
@@ -63,8 +63,11 @@
 			</div>
 			*}}
 			<div class="form-group">
-				<label id="photo-edit-caption-label" for="photo-edit-caption">{{$edit.capt_label}}</label>
-				<input id="photo-edit-caption" class="form-control" type="text" name="desc" value="{{$edit.caption}}" />
+
+				{{include file="field_input.tpl" field=$edit.desc}}
+				{{include file="field_input.tpl" field=$edit.title}}
+				{{include file="field_textarea.tpl" field=$edit.body}}
+
 			</div>
 			{{* <div class="form-group">
 				<label id="photo-edit-tags-label" for="photo-edit-newtag">{{$edit.tag_label}}</label>
@@ -95,7 +98,7 @@
 		<div id="photo-edit-end" class="clear"></div>
 	</div>
 	<div id="photo-view-wrapper">
-		<div id="photo-photo"><a href="{{$photo.href}}" title="{{$photo.title}}" onclick="$.colorbox({href: '{{$photo.href}}'}); return false;"><img style="width: 100%;" src="{{$photo.src}}"></a></div>
+		<div id="photo-photo"><a href="{{$photo.href}}" title="{{$desc}}" onclick="$.colorbox({href: '{{$photo.href}}'}); return false;"><img style="width: 100%;" src="{{$photo.src}}" alt="{{$desc}}"></a></div>
 		<div id="photo-photo-end" class="clear"></div>
 		{{if $tags}}
 		<div class="photo-item-tools-left" id="in-this-photo">

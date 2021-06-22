@@ -953,11 +953,15 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 		if($arr['item'])
 			$args['item'] = $arr['item'];
 
+		if($arr['description'])
+			$args['description'] = $arr['description'];
+
+		if($arr['title'])
+			$args['title'] = $arr['title'];
+
 		if($arr['body'])
 			$args['body'] = $arr['body'];
 
-		if($arr['description'])
-			$args['description'] = $arr['description'];
 
 		$args['deliver'] = $dosync;
 
