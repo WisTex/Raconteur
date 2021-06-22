@@ -337,7 +337,16 @@ function visible_activity($item) {
 	if ($item['obj_type'] === 'Answer') {
 		return false;
 	}
+
+	// This is an experiment at group federation with microblog platforms.
+	// We need the Announce or "boost" for group replies by non-connections to end up in the personal timeline
+	// of those patforms. Hide them on our own platform because they make the conversation look like dung.
+	// Performance wise this is a mess because we need to send two activities for every group comment. 
 	
+	if ($item['verb'] === 'Announce' && $item['author_xchan'] === $item['owner_xchan']) {
+		return false;
+	}
+
 	foreach($hidden_activities as $act) {
 		if((activity_match($item['verb'], $act)) && ($item['mid'] != $item['parent_mid'])) {
 			return false;

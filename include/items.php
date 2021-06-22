@@ -3174,6 +3174,72 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		return;
 	}
 
+if (defined('MASTOGROUPS')) {
+
+	// work in progress experiment to send Announce activities for group comments
+	// so they will show up in microblog streams
+
+	if ($group && $parent) {
+
+		$arr = [];
+		
+		if ($edit) {
+			if (intval($item['item_deleted'])) {
+				drop_item($item['id'],false,DROPITEM_PHASE1);
+				Run::Summon([ 'Notifier','drop',$item['id'] ]);
+				return;
+			}
+
+			return;
+		}
+		else {
+			$arr['mid'] = item_message_id();
+			$arr['parent_mid'] = $item['parent_mid'];
+			IConfig::Set($arr,'activitypub','context', str_replace('/item/','/conversation/',$item['parent_mid']));
+		}
+		
+		$arr['aid'] = $channel['channel_account_id'];
+		$arr['uid'] = $channel['channel_id'];
+
+		$arr['verb'] = 'Announce';
+
+		$arr['obj'] = $item['mid'];
+
+		$arr['author_xchan'] = $channel['channel_hash'];
+
+		$arr['item_wall'] = 1;
+
+		$arr['item_private'] = (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
+
+		$arr['item_origin'] = 1;
+		
+		$arr['item_thread_top'] = 0;
+	
+		$arr['allow_cid'] = $channel['channel_allow_cid'];
+		$arr['allow_gid'] = $channel['channel_allow_gid'];
+		$arr['deny_cid']  = $channel['channel_deny_cid'];
+		$arr['deny_gid']  = $channel['channel_deny_gid'];
+		$arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
+
+		$arr['replyto'] = z_root() . '/channel/' . $channel['channel_address'];
+
+
+		$post = item_store($arr);
+		$post_id = $post['item_id'];
+
+		if ($post_id) {
+			Run::Summon([ 'Notifier','tgroup',$post_id ]);
+		}
+
+		q("update channel set channel_lastpost = '%s' where channel_id = %d",
+			dbesc(datetime_convert()),
+			intval($channel['channel_id'])
+		);
+
+		return;
+	}
+} // end MASTOGROUPS
+
 
 	// Change this copy of the post to a forum head message and deliver to all the tgroup members
 	// also reset all the privacy bits to the forum default permissions
