@@ -2707,7 +2707,11 @@ function tag_deliver($uid, $item_id) {
 					return;
 				}
 				// don't boost moderated content until it has been approved
-				if(intval($item['item_blocked']) === ITEM_MODERATED) {
+				if (intval($item['item_blocked']) === ITEM_MODERATED) {
+					return;
+				}
+				// don't boost likes
+				if (in_array($item['verb'], [ 'Like','Dislike' ])) {
 					return;
 				}
 				logger('group_comment');
