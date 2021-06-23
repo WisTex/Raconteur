@@ -176,7 +176,7 @@ class Activity extends Controller {
 				);
 			}
 
-			$bear = Activity::token_from_request();
+			$bear = ZlibActivity::token_from_request();
 			if ($bear) {
 				logger('bear: ' . $bear, LOGGER_DEBUG);
 				if (! $i) {
