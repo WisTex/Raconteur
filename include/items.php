@@ -2691,7 +2691,7 @@ function tag_deliver($uid, $item_id) {
 		logger('check_item_source returns true');
 	}
 
-	// This might be a followup (e.g. comment) by the original post author to an already uplinked item
+	// This might be a followup (e.g. comment) to an already uplinked item
 	// If so setup a second delivery chain
 
 	if (! intval($item['item_thread_top'])) {
@@ -2704,6 +2704,10 @@ function tag_deliver($uid, $item_id) {
 			if ($is_group) {
 				// don't let the forked delivery chain recurse
 				if ($item['verb'] === 'Announce' && $item['author_xchan'] === $u['channel_hash']) {
+					return;
+				}
+				// don't boost moderated content until it has been approved
+				if(intval($item['item_blocked']) === ITEM_MODERATED) {
 					return;
 				}
 				logger('group_comment');
