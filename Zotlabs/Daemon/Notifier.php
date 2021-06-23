@@ -715,6 +715,13 @@ class Notifier {
 
 			// default: zot protocol
 
+			// Prevent zot6 delivery of group comment boosts, which are not required for conversational platform.
+			// Other non-zot6 conversational platforms may need to filter these if they don't want them. 
+			
+			if (isset($target_item) && isset($target_item['verb']) && $target_item['verb'] === 'Announce' && $target_item['author_xchan'] === $target_item['owner_xchan']) {
+				continue;
+			}
+
 			$hash = new_uuid();
 
 			$env = (($hub_env && $hub_env[$hub['hubloc_site_id']]) ? $hub_env[$hub['hubloc_site_id']] : '');
