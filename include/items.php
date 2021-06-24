@@ -3237,6 +3237,12 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 			$arr['obj'] = $item['mid'];
 		}
 
+		if (is_array($arr['obj'])) {
+			$obj_actor = ((isset($arr['obj']['actor'])) ? $arr['obj']['actor'] : $arr['obj']['attributedTo']);
+			$mention = Activity::get_actor_bbmention($obj_actor);
+			$arr['body'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $arr['obj']['type']);
+		}
+
 		$arr['author_xchan'] = $channel['channel_hash'];
 
 		$arr['item_wall'] = 1;
