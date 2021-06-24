@@ -723,7 +723,7 @@ class Notifier {
 			// This shouldn't produce false positives on comment boosts that were generated on other platforms
 			// because we won't be delivering them. 
 			
-			if (isset($target_item) && isset($target_item['verb']) && $target_item['verb'] === 'Announce' && $target_item['author_xchan'] === $target_item['owner_xchan'] && $target_item['thr_parent'] !== $target_item['parent_mid']) {
+			if (isset($target_item) && isset($target_item['verb']) && $target_item['verb'] === 'Announce' && $target_item['author_xchan'] === $target_item['owner_xchan'] && ! intval($target_item['item_thread_top'])) {
 				continue;
 			}
 
