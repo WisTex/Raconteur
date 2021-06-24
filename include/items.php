@@ -3226,7 +3226,16 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 
 		$arr['verb'] = 'Announce';
 
-		$arr['obj'] = $item['mid'];
+		if (is_array($item['obj'])) {
+			$arr['obj'] = $item['obj'];
+		}
+		elseif (is_string($item['obj']) && strlen($item['obj'])) {
+			$arr['obj'] = json_decode($item['obj'],true);
+		}
+		
+		if (! $arr['obj']) {
+			$arr['obj'] = $item['mid'];
+		}
 
 		$arr['author_xchan'] = $channel['channel_hash'];
 
