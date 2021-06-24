@@ -91,6 +91,18 @@ class Moderate extends Controller {
 					Libsync::build_sync_packet(local_channel(),array('item' => array(encode_item($sync_item[0],true))));
 				}
 				if($action === 'approve') {
+					if ($item['id'] !== $item['parent']) {
+						// if this is a group comment, call tag_deliver() to generate the associated
+						// Announce activity so microblog destinations will see it in their home timeline
+						$role = get_pconfig(local_channel(),'system','permissions_role');
+						$rolesettings = PermissionRoles::role_perms($role);
+						$channel_type = isset($rolesettings['channel_type']) ? $rolesettings['channel_type'] : 'normal';
+
+						$is_group = (($channel_type === 'group') ? true : false);
+						if ($is_group) {
+							tag_deliver(local_channel(),$post_id);
+						}
+					}
 					Run::Summon( [ 'Notifier', 'comment-new', $post_id ] );
 				}
 				goaway(z_root() . '/moderate');

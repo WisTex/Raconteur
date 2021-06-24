@@ -2691,7 +2691,7 @@ function tag_deliver($uid, $item_id) {
 		logger('check_item_source returns true');
 	}
 
-	// This might be a followup (e.g. comment) by the original post author to an already uplinked item
+	// This might be a followup (e.g. comment) to an already uplinked item
 	// If so setup a second delivery chain
 
 	if (! intval($item['item_thread_top'])) {
@@ -2700,8 +2700,26 @@ function tag_deliver($uid, $item_id) {
 			intval($uid)
 		);
 
-		if (($x) && intval($x[0]['item_uplink'])) {
-			start_delivery_chain($u,$item,$item_id,$x[0]);
+		if ($x) {
+			if ($is_group) {
+				// don't let the forked delivery chain recurse
+				if ($item['verb'] === 'Announce' && $item['author_xchan'] === $u['channel_hash']) {
+					return;
+				}
+				// don't boost moderated content until it has been approved
+				if (intval($item['item_blocked']) === ITEM_MODERATED) {
+					return;
+				}
+				// don't boost likes
+				if (in_array($item['verb'], [ 'Like','Dislike' ])) {
+					return;
+				}
+				logger('group_comment');
+				start_delivery_chain($u, $item, $item_id, $x[0], true, (($item['edited'] != $item['created']) || $item['item_deleted']));
+			}
+			elseif (intval($x[0]['item_uplink'])) {
+				start_delivery_chain($u,$item,$item_id,$x[0]);
+			}
 		}
 	}
 
@@ -3174,22 +3192,27 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		return;
 	}
 
-if (defined('MASTOGROUPS')) {
 
 	// work in progress experiment to send Announce activities for group comments
 	// so they will show up in microblog streams
 
 	if ($group && $parent) {
-
+		logger('comment arrived in group', LOGGER_DEBUG);
 		$arr = [];
+
+		// don't let this recurse. We checked for this before calling, but this ensures
+		// it doesn't sneak through another way because recursion is nasty.
 		
+		if ($item['verb'] === 'Announce' && $item['author_xchan'] === $channel['channel_hash']) {
+			return;
+		}
+
 		if ($edit) {
 			if (intval($item['item_deleted'])) {
 				drop_item($item['id'],false,DROPITEM_PHASE1);
 				Run::Summon([ 'Notifier','drop',$item['id'] ]);
 				return;
 			}
-
 			return;
 		}
 		else {
@@ -3203,7 +3226,16 @@ if (defined('MASTOGROUPS')) {
 
 		$arr['verb'] = 'Announce';
 
-		$arr['obj'] = $item['mid'];
+		if (is_array($item['obj'])) {
+			$arr['obj'] = $item['obj'];
+		}
+		elseif (is_string($item['obj']) && strlen($item['obj'])) {
+			$arr['obj'] = json_decode($item['obj'],true);
+		}
+		
+		if (! $arr['obj']) {
+			$arr['obj'] = $item['mid'];
+		}
 
 		$arr['author_xchan'] = $channel['channel_hash'];
 
@@ -3238,7 +3270,7 @@ if (defined('MASTOGROUPS')) {
 
 		return;
 	}
-} // end MASTOGROUPS
+
 
 
 	// Change this copy of the post to a forum head message and deliver to all the tgroup members

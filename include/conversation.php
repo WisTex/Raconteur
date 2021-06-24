@@ -104,11 +104,12 @@ function localize_item(&$item){
 		}
 
 		$obj = ((is_array($item['obj'])) ? $item['obj'] : json_decode($item['obj'],true));
-		if ((! $obj) && ($item['obj'])) {
+		if (! is_array($obj)) {
 			logger('localize_item: failed to decode object: ' . print_r($item['obj'],true));
+			return;
 		}
 		
-		if ($obj['author'] && $obj['author']['link']) {
+		if (isset($obj['author']) && $obj['author'] && $obj['author']['link']) {
 			$author_link = get_rel_link($obj['author']['link'],'alternate');
 		}
 		else {

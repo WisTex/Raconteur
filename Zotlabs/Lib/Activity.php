@@ -2600,7 +2600,11 @@ class Activity {
 		// ensure we store the original actor
 		self::actor_store($act->actor['id'],$act->actor);
 
-		$s['mid']        = $act->obj['id'];
+		$s['mid']        = ((is_array($act->obj) && isset($act->obj['id'])) ? $act->obj['id'] : $act->obj);
+		if (! $s['mid']) {
+			return false;
+		}
+		
 		$s['parent_mid'] = $act->parent_id;
 
 		if (array_key_exists('published',$act->data) && $act->data['published']) {
@@ -2622,7 +2626,7 @@ class Activity {
 			$s['expires'] = datetime_convert('UTC','UTC',$act->obj['expires']);
 		}
 
-		if ($act->type === 'Invite' && array_key_exists('type',$act->obj) && $act->obj['type'] === 'Event') {
+		if ($act->type === 'Invite' && is_array($act->obj) && array_key_exists('type',$act->obj) && $act->obj['type'] === 'Event') {
 			$s['mid'] = $s['parent_mid'] = $act->id;
 		}
 
@@ -2640,7 +2644,7 @@ class Activity {
 			$response_activity = true;
 
 			$s['mid'] = $act->id;
-			$s['parent_mid'] = $act->obj['id'];
+			$s['parent_mid'] = ((is_array($act->obj) && isset($act->obj['id'])) ? $act->obj['id'] : $act->obj);
 
 			
 			// over-ride the object timestamp with the activity
@@ -3305,6 +3309,18 @@ class Activity {
 			if ($p) {
 				// set the owner to the owner of the parent
 				$item['owner_xchan'] = $p[0]['owner_xchan'];
+
+				// quietly reject group comment boosts by group owner
+				// (usually only sent via ActivityPub so groups will work on microblog platforms)
+				// This catches those activities if they slipped in via a conversation fetch
+				
+				if ($p[0]['parent_mid'] !== $item['parent_mid']) {
+					if ($item['verb'] === 'Announce' && $item['author_xchan'] === $item['owner_xchan']) {
+						logger('group boost activity by group owner rejected');
+						return;
+					}
+				}
+
 				// check permissions against the author, not the sender
 				$allowed = perm_is_allowed($channel['channel_id'],$item['author_xchan'],'post_comments');
 				if (! $allowed) {
@@ -3323,7 +3339,7 @@ class Activity {
 					$allowed = false;
 					$reason[] = 'absolutely';
 				}
-				
+
 				if (! $allowed) {
 					logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
 					logger('rejected reason ' . print_r($reason,true));

@@ -1302,8 +1302,6 @@ class Libzot {
 
 		}
 
-
-
 		$deliveries = null;
 
 		if (array_key_exists('recipients',$env) && count($env['recipients'])) {
