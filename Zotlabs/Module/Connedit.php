@@ -798,7 +798,7 @@ class Connedit extends Controller {
 				'$permcat_enable' => feature_enabled(local_channel(),'permcats'),
 				'$addr'           => unpunify($contact['xchan_addr']),
 				'$primeurl'       => unpunify($contact['xchan_url']),
-				'$block_announce' => [ 'block_announce', t('Ignore shares and repeats this connection posts'), get_abconfig(local_channel(),$contact['xchan_hash'],'system','block_announce',false),'', [ t('No'), t('Yes') ] ],
+				'$block_announce' => [ 'block_announce', t('Ignore shares and repeats this connection posts'), get_abconfig(local_channel(),$contact['xchan_hash'],'system','block_announce',false),t('Note: This is not recommended for Groups.'), [ t('No'), t('Yes') ] ],
 				'$section'        => $section,
 				'$sections'       => $sections,
 				'$vcard'          => $vcard,

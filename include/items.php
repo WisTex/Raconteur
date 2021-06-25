@@ -9,6 +9,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Apps;
 
 use Zotlabs\Lib as Zlib;
@@ -2701,7 +2702,12 @@ function tag_deliver($uid, $item_id) {
 		);
 
 		if ($x) {
-			if ($is_group) {
+
+			// group comments don't normally require a second delivery chain
+			// but we create a linked Announce so they will show up in the home timeline
+			// on microblog platforms and this creates a second delivery chain
+		
+			if ($is_group && intval($x[0]['item_wall'])) {
 				// don't let the forked delivery chain recurse
 				if ($item['verb'] === 'Announce' && $item['author_xchan'] === $u['channel_hash']) {
 					return;
@@ -2710,8 +2716,11 @@ function tag_deliver($uid, $item_id) {
 				if (intval($item['item_blocked']) === ITEM_MODERATED) {
 					return;
 				}
-				// don't boost likes
-				if (in_array($item['verb'], [ 'Like','Dislike' ])) {
+				
+				// don't boost likes and other response activities as it is likely that
+				// few platforms will handle this in an elegant way
+				
+				if (ActivityStreams::is_response_activity($item['verb'])) {
 					return;
 				}
 				logger('group_comment');
@@ -3078,9 +3087,18 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		}
 	}
 
+	// This creates an embedded share authored by the group actor.
+	// The original message is no longer needed and its presence can cause
+	// confusion so make it hidden.
+
 	if ($group && (! $parent)) {
 
 		$arr = [];
+
+		// hide original message
+		q("update item set item_hidden = 1 where id = %d",
+			intval($item_id)
+		);
 		
 		if ($edit) {
 			// process edit or delete action
@@ -3235,6 +3253,12 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		
 		if (! $arr['obj']) {
 			$arr['obj'] = $item['mid'];
+		}
+
+		if (is_array($arr['obj'])) {
+			$obj_actor = ((isset($arr['obj']['actor'])) ? $arr['obj']['actor'] : $arr['obj']['attributedTo']);
+			$mention = Activity::get_actor_bbmention($obj_actor);
+			$arr['body'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $arr['obj']['type']);
 		}
 
 		$arr['author_xchan'] = $channel['channel_hash'];
