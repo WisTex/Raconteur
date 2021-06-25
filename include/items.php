@@ -3087,9 +3087,18 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		}
 	}
 
+	// This creates an embedded share authored by the group actor.
+	// The original message is no longer needed and its presence can cause
+	// confusion so make it hidden.
+
 	if ($group && (! $parent)) {
 
 		$arr = [];
+
+		// hide original message
+		q("update item set item_hidden = 1 where id = %d",
+			intval($item_id)
+		);
 		
 		if ($edit) {
 			// process edit or delete action
