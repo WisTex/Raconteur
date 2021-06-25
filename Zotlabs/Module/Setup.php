@@ -311,8 +311,8 @@ class Setup extends Controller {
 					'$dbdata' => array('dbdata', t('Database Name'), $dbdata, ''),
 					'$dbtype' => array('dbtype', t('Database Type'), $dbtype, '', array( 0=>'MySQL', 1=>'PostgreSQL' )),
 
-					'$adminmail' => array('adminmail', t('Site administrator email address'), $adminmail, t('Your account email address must match this in order to use the web admin panel.')),
-					'$siteurl' => array('siteurl', t('Website URL'), z_root(), t('Please use SSL (https) URL if available.')),
+					'$adminmail' => array('adminmail', t('Site administrator email address'), $adminmail, t('Required. Your account email address must match this in order to use the web admin panel.')),
+					'$siteurl' => array('siteurl', t('Website URL'), z_root(), t('Required. Please use SSL (https) URL if available.')),
 					'$lbl_10' => t('Please select a default timezone for your website'),
 
 					'$baseurl' => z_root(),
@@ -776,19 +776,20 @@ class Setup extends Controller {
 			set_config('system','curl_ssl_ciphers','ALL:!eNULL');
 
 		// Create a system channel
-		require_once ('include/channel.php');
+		
 		create_sys_channel();
 
-		$baseurl = z_root();
+		$register_link = '<a href="' . z_root() . '/register">' . t('registration page') . '</a>' ;
+		
 		return
 			t('<h1>What next?</h1>')
-			."<div class=\"alert alert-info\">".t('IMPORTANT: You will need to [manually] setup a scheduled task for the poller.').EOL
-			.t('Please see the file "install/INSTALL.txt".')
-			."</div><div>"
-			.t('Go to your new hub ')
-			."<a href=\"$baseurl/register\">".t('registration page')."</a>"
-			.t('and register as new member. Remember to use the same email you have entered as administrator email. This will allow you to enter the site admin panel.')
-			."</div>";
+			. '<div class="alert alert-info">'
+			. t('IMPORTANT: You will need to [manually] setup a scheduled task for the poller.')
+			. EOL
+			. t('Please see the file "install/INSTALL.txt" for more information and instructions.')
+			. '</div><div>'
+			. sprintf( t('Go to your new hub %s and register as new member. Please use the same email address that you entered for the administrator email as this will allow your new account to enter the site admin panel.'), $register_link )
+			.'</div>';
 	}
 
 	/**

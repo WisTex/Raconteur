@@ -2233,7 +2233,7 @@ function reltoabs($text, $base) {
 }
 
 function item_post_type($item) {
-	switch($item['resource_type']) {
+	switch ($item['resource_type']) {
 		case 'photo':
 			$post_type = t('photo');
 			break;
@@ -2241,13 +2241,13 @@ function item_post_type($item) {
 			$post_type = t('event');
 			break;
 		default:
-			$post_type = t('status');
-			if($item['mid'] != $item['parent_mid'])
+			$post_type = t('post');
+			if ($item['mid'] !== $item['parent_mid'])
 				$post_type = t('comment');
 			break;
 	}
 
-	if(strlen($item['verb']) && (! activity_match($item['verb'],ACTIVITY_POST)))
+	if (strlen($item['verb']) && (! activity_match($item['verb'],ACTIVITY_POST)))
 		$post_type = t('activity');
 
 	return $post_type;
