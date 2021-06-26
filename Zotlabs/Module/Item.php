@@ -52,8 +52,8 @@ class Item extends Controller {
 
 
 		if (ActivityStreams::is_as_request()) {
-			$item_id = argv(1);
-			if (! $item_id) {
+			$item_uuid = argv(1);
+			if (! $item_uuid) {
 				http_status_exit(404, 'Not found');
 			}
 			$portable_id = EMPTY_STR;
@@ -66,8 +66,8 @@ class Item extends Controller {
 			// add preferential bias to item owners (item_wall = 1)
 
 			$r = q("select * from item where (mid = '%s' or uuid = '%s') $item_normal order by item_wall desc limit 1",
-				dbesc(z_root() . '/item/' . $item_id),
-				dbesc($item_id)
+				dbesc(z_root() . '/item/' . $item_uuid),
+				dbesc($item_uuid)
 			);
 
 			if (! $r) {
@@ -117,7 +117,7 @@ class Item extends Controller {
 					);
 					if ($t) {
 						$i = q("select id as item_id from item where uuid = '%s' and id = %d $item_normal limit 1",
-							dbesc($item_id),
+							dbesc($item_uuid),
 							intval($t[0]['iid'])
 						);
 					}
@@ -155,7 +155,7 @@ class Item extends Controller {
 					dbesc($portable_id)
 				);
 				if (! $c) {
-					ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
+					ThreadListener::store(z_root() . '/item/' . $item_uuid,$portable_id);
 				}
 			}
 			
@@ -166,9 +166,9 @@ class Item extends Controller {
 
 			$conversation = false;
 
-			$item_id = argv(1);
+			$item_uuid = argv(1);
 
-			if (! $item_id) {
+			if (! $item_uuid) {
 				http_status_exit(404, 'Not found');
 			}
 			$portable_id = EMPTY_STR;
@@ -180,8 +180,8 @@ class Item extends Controller {
 			// do we have the item (at all)?
 
 			$r = q("select * from item where (mid = '%s' or uuid = '%s') $item_normal limit 1",
-				dbesc(z_root() . '/item/' . $item_id),
-				dbesc($item_id)
+				dbesc(z_root() . '/item/' . $item_uuid),
+				dbesc($item_uuid)
 			);
 
 			if (! $r) {
@@ -230,7 +230,7 @@ class Item extends Controller {
 					);
 					if ($t) {
 						$i = q("select id as item_id from item where uuid = '%s' and id = %d $item_normal limit 1",
-							dbesc($item_id),
+							dbesc($item_uuid),
 							intval($t[0]['iid'])
 						);
 					}
@@ -267,9 +267,9 @@ class Item extends Controller {
 				http_status_exit(403, 'Forbidden');
 			}
 
-			$i = Activity::encode_item_collection($items,'conversation/' . $item_id,'OrderedCollection',true, count($items));
+			$i = Activity::encode_item_collection($items,'conversation/' . $item_uuid,'OrderedCollection',true, count($items));
 			if ($portable_id && (! intval($items[0]['item_private']))) {
-				ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
+				ThreadListener::store(z_root() . '/item/' . $item_uuid,$portable_id);
 			}
 
 			if (! $i) {

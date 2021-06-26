@@ -30,6 +30,7 @@ class Setup extends Controller {
 	 */
 
 	function init() {
+
 		// Ensure that if somebody hasn't read the install documentation and doesn't have all
 		// the required modules or has a totally borked shared hosting provider and they can't
 		// figure out what the hell is going on - that we at least spit out an error message which
@@ -42,11 +43,15 @@ class Setup extends Controller {
 		// throw a white screen because these error messages divulge information which can
 		// potentially be useful to hackers.
 
+		// We can only set E_WARNING once the code has been thoroughly cleansed of referencing
+		// undeclared or unset variables which were once legal or accepted in PHP.
+		
 		error_reporting(E_ERROR | E_PARSE );
 		ini_set('log_errors', '0');
 		ini_set('display_errors', '1');
 
 		// $baseurl/setup/testrewrite to test if rewrite in .htaccess is working
+		
 		if (argc() == 2 && argv(1) == "testrewrite") {
 			echo 'ok';
 			killme();
@@ -54,7 +59,8 @@ class Setup extends Controller {
 
 		if (x($_POST, 'pass')) {
 			$this->install_wizard_pass = intval($_POST['pass']);
-		} else {
+		}
+		else {
 			$this->install_wizard_pass = 1;
 		}
 	}
@@ -91,7 +97,7 @@ class Setup extends Controller {
 
 				$db = DBA::dba_factory($dbhost, $dbport, $dbuser, $dbpass, $dbdata, $dbtype, true);
 
-				if(! DBA::$dba->connected) {
+				if (! DBA::$dba->connected) {
 					echo 'Database Connect failed: ' . DBA::$dba->error;
 					killme();
 				}
@@ -111,27 +117,26 @@ class Setup extends Controller {
 				$adminmail = trim($_POST['adminmail']);
 				$siteurl = trim($_POST['siteurl']);
 
-				if($siteurl != z_root()) {
-					$test = z_fetch_url($siteurl."/setup/testrewrite");
-					if((! $test['success']) || ($test['body'] != 'ok'))  {
+				if ($siteurl != z_root()) {
+					$test = z_fetch_url($siteurl . '/setup/testrewrite');
+					if ((! $test['success']) || ($test['body'] !== 'ok'))  {
 						App::$data['url_fail'] = true;
 						App::$data['url_error'] = $test['error'];
 						return;
 					}
 				}
 
-				if(! DBA::$dba->connected) {
+				if (! DBA::$dba->connected) {
 					// connect to db
 					$db = DBA::dba_factory($dbhost, $dbport, $dbuser, $dbpass, $dbdata, $dbtype, true);
 				}
 
-				if(! DBA::$dba->connected) {
+				if (! DBA::$dba->connected) {
 					echo 'CRITICAL: DB not connected.';
 					killme();
 				}
 
-				$tpl = get_intltext_template('htconfig.tpl');
-				$txt = replace_macros($tpl,array(
+				$txt = replace_macros(get_intltext_template('htconfig.tpl'), [
 					'$dbhost'      => $dbhost,
 					'$dbport'      => $dbport,
 					'$dbuser'      => $dbuser,
@@ -146,20 +151,22 @@ class Setup extends Controller {
 					'$site_id'     => random_string(),
 					'$phpath'      => $phpath,
 					'$adminmail'   => $adminmail
-				));
+				]);
 
 				$result = file_put_contents('.htconfig.php', $txt);
-				if(! $result) {
+				if (! $result) {
 					App::$data['txt'] = $txt;
 				}
 
 				$errors = $this->load_database($db);
 
-				if($errors)
+				if ($errors) {
 					App::$data['db_failed'] = $errors;
-				else
+				}
+				else {
 					App::$data['db_installed'] = true;
-
+				}
+				
 				return;
 				// implied break;
 			default:
@@ -177,70 +184,72 @@ class Setup extends Controller {
 
 	function get() {
 
-		$o = '';
-		$wizard_status = '';
+		$o = EMPTY_STR;
+		$wizard_status = EMPTY_STR;
+		$db_return_text = EMPTY_STR;
 		$install_title = t('$Projectname Server - Setup');
 
-		if(x(App::$data, 'db_conn_failed')) {
+		if (x(App::$data, 'db_conn_failed')) {
 			$this->install_wizard_pass = 2;
 			$wizard_status =  t('Could not connect to database.');
 		}
-		if(x(App::$data, 'url_fail')) {
+		if (x(App::$data, 'url_fail')) {
 			$this->install_wizard_pass = 3;
 			$wizard_status =  t('Could not connect to specified site URL. Possible SSL certificate or DNS issue.');
-			if(App::$data['url_error'])
+			if (App::$data['url_error']) {
 				$wizard_status .= ' ' . App::$data['url_error'];
+			}
 		}
 
-		if(x(App::$data, 'db_create_failed')) {
+		if (x(App::$data, 'db_create_failed')) {
 			$this->install_wizard_pass = 2;
 			$wizard_status =  t('Could not create table.');
 		}
-		$db_return_text = '';
-		if(x(App::$data, 'db_installed')) {
+		if (x(App::$data, 'db_installed')) {
 			$pass = t('Installation succeeded!');
 			$icon = 'check';
 			$txt = t('Your site database has been installed.') . EOL;
 			$db_return_text .= $txt;
 		}
-		if(x(App::$data, 'db_failed')) {
+		if (x(App::$data, 'db_failed')) {
 			$pass = t('Database install failed!');
 			$icon = 'exclamation-triangle';
 			$txt = t('You may need to import the file "install/schema_xxx.sql" manually using a database client.') . EOL;
-			$txt .= t('Please see the file "install/INSTALL.txt".') . EOL ."<hr>" ;
-			$txt .= "<pre>" . App::$data['db_failed'] . "</pre>". EOL ;
+			$txt .= t('Please see the file "install/INSTALL.txt".') . EOL . '<hr>' ;
+			$txt .= '<pre>' . App::$data['db_failed'] . '</pre>' . EOL ;
 			$db_return_text .= $txt;
 		}
-		if(DBA::$dba && DBA::$dba->connected) {
+		if (DBA::$dba && DBA::$dba->connected) {
 			$r = q("SELECT COUNT(*) as total FROM account");
-			if($r && count($r) && $r[0]['total']) {
-				$tpl = get_markup_template('install.tpl');
-				return replace_macros($tpl, array(
-					'$title' => $install_title,
-					'$pass' => '',
+			if ($r && count($r) && $r[0]['total']) {
+				return replace_macros(get_markup_template('install.tpl'), [
+					'$title'  => $install_title,
+					'$pass'   => '',
 					'$status' => t('Permission denied.'),
-					'$text' => '',
-				));
+					'$text'   => '',
+				]);
 			}
 		}
 
-		if(x(App::$data, 'txt') && strlen(App::$data['txt'])) {
+		if (x(App::$data, 'txt') && strlen(App::$data['txt'])) {
 			$db_return_text .= $this->manual_config($a);
 		}
 
-		if ($db_return_text != "") {
+		if ($db_return_text !== EMPTY_STR) {
 			$tpl = get_markup_template('install.tpl');
-			return replace_macros($tpl, array(
-				'$title' => $install_title,
-				'$icon' => $icon,
-				'$pass' => $pass,
-				'$text' => $db_return_text,
+			return replace_macros(get_markup_template('install.tpl'), [
+				'$title'     => $install_title,
+				'$icon'      => $icon,
+				'$pass'      => $pass,
+				'$text'      => $db_return_text,
 				'$what_next' => $this->what_next()
-			));
+			]);
 		}
 
-		switch ($this->install_wizard_pass){
-			case 1: { // System check
+		switch ($this->install_wizard_pass) {
+		
+			case 1: {
+				// System check
 
 				$checks = [];
 
@@ -254,9 +263,10 @@ class Setup extends Controller {
 
 				$this->check_keys($checks);
 
-				if (x($_POST, 'phpath'))
+				if (x($_POST, 'phpath')) {
 					$phpath = notags(trim($_POST['phpath']));
-
+				}
+				
 				$this->check_php($phpath, $checks);
 
 				$this->check_phpconfig($checks);
@@ -265,22 +275,23 @@ class Setup extends Controller {
 
 				$checkspassed = array_reduce($checks, "self::check_passed", true);
 
-				$tpl = get_markup_template('install_checks.tpl');
-				$o .= replace_macros($tpl, array(
-					'$title' => $install_title,
-					'$pass' => t('System check'),
-					'$checks' => $checks,
-					'$passed' => $checkspassed,
+				$o .= replace_macros(get_markup_template('install_checks.tpl'), [
+					'$title'       => $install_title,
+					'$pass'        => t('System check'),
+					'$checks'      => $checks,
+					'$passed'      => $checkspassed,
 					'$see_install' => t('Please see the file "install/INSTALL.txt".'),
-					'$next' => t('Next'),
-					'$reload' => t('Check again'),
-					'$phpath' => $phpath,
-					'$baseurl' => z_root(),
-				));
+					'$next'        => t('Next'),
+					'$reload'      => t('Check again'),
+					'$phpath'      => $phpath,
+					'$baseurl'     => z_root(),
+				]);
 				return $o;
-			}; break;
+				break;
+			} 
 
-			case 2: { // Database config
+			case 2: {
+				// Database config
 
 				$dbhost = ((x($_POST,'dbhost')) ? trim($_POST['dbhost']) : '127.0.0.1');
 				$dbuser = ((x($_POST,'dbuser')) ? trim($_POST['dbuser']): EMPTY_STR);
@@ -294,8 +305,7 @@ class Setup extends Controller {
 
 				$servertype = EMPTY_STR;
 
-				$tpl = get_markup_template('install_db.tpl');
-				$o .= replace_macros($tpl, array(
+				$o .= replace_macros(get_markup_template('install_db.tpl'), [
 					'$title' => $install_title,
 					'$pass' => t('Database connection'),
 					'$info_01' => t('In order to install this software we need to know how to connect to your database.'),
@@ -314,16 +324,16 @@ class Setup extends Controller {
 					'$adminmail' => array('adminmail', t('Site administrator email address'), $adminmail, t('Required. Your account email address must match this in order to use the web admin panel.')),
 					'$siteurl' => array('siteurl', t('Website URL'), z_root(), t('Required. Please use SSL (https) URL if available.')),
 					'$lbl_10' => t('Please select a default timezone for your website'),
-
 					'$baseurl' => z_root(),
-
 					'$phpath' => $phpath,
-
 					'$submit' => t('Submit'),
-				));
+				]);
+				
 				return $o;
-			}; break;
-			case 3: { // Site settings
+				break;
+			} 
+			case 3: {
+				// Site settings
 				$dbhost = ((x($_POST,'dbhost')) ? trim($_POST['dbhost']) : '127.0.0.1');
 				$dbuser = ((x($_POST,'dbuser')) ? trim($_POST['dbuser']): EMPTY_STR);
 				$dbport = ((x($_POST,'dbport')) ? intval(trim($_POST['dbport'])) : 0);
@@ -338,11 +348,9 @@ class Setup extends Controller {
 				$siteurl = ((x($_POST,'siteurl')) ? trim($_POST['siteurl']): EMPTY_STR);
 				$timezone = ((x($_POST,'timezone')) ? ($_POST['timezone']) : 'America/Los_Angeles');
 
-
-				$tpl = get_markup_template('install_settings.tpl');
-				$o .= replace_macros($tpl, array(
-					'$title' => $install_title,
-					'$pass' => t('Site settings'),
+				$o .= replace_macros(get_markup_template('install_settings.tpl'), [
+					'$title'  => $install_title,
+					'$pass'   => t('Site settings'),
 					'$status' => $wizard_status,
 
 					'$dbhost' => $dbhost,
@@ -354,18 +362,19 @@ class Setup extends Controller {
 					'$dbtype' => $dbtype,
 					'$servertype' => $servertype,
 
-					'$adminmail' => array('adminmail', t('Site administrator email address'), $adminmail, t('Your account email address must match this in order to use the web admin panel.')),
+					'$adminmail' => [ 'adminmail', t('Site administrator email address'), $adminmail, t('Required. Your account email address must match this in order to use the web admin panel.') ],
 
-					'$siteurl' => array('siteurl', t('Website URL'), z_root(), t('Please use SSL (https) URL if available.')),
+					'$siteurl' => [ 'siteurl', t('Website URL'), z_root(), t('Required. Please use SSL (https) URL if available.')],
 
-					'$timezone' => array('timezone', t('Please select a default timezone for your website'), $timezone, '', get_timezones()),
+					'$timezone' => [ 'timezone', t('Please select a default timezone for your website'), $timezone, '', get_timezones() ],
 
 					'$baseurl' => z_root(),
 
 					'$submit' => t('Submit'),
-				));
+				]);
 				return $o;
-			}; break;
+				break;
+			}
 		}
 	}
 
@@ -396,7 +405,7 @@ class Setup extends Controller {
 	function check_php(&$phpath, &$checks) {
 		$help = '';
 
-		if(version_compare(PHP_VERSION, '7.1') < 0) {
+		if (version_compare(PHP_VERSION, '7.1') < 0) {
 			$help .= t('PHP version 7.1 or greater is required.');
 			$this->check_add($checks, t('PHP version'), false, true, $help);
 		}
@@ -404,39 +413,42 @@ class Setup extends Controller {
 		if (strlen($phpath)) {
 			$passed = file_exists($phpath);
 		}
-		elseif(function_exists('shell_exec')) {
-			if(is_windows())
+		elseif (function_exists('shell_exec')) {
+			if (is_windows()) {
 				$phpath = trim(shell_exec('where php'));
-			else
+			}
+			else {
 				$phpath = trim(shell_exec('which php'));
-
+			}
 			$passed = strlen($phpath);
 		}
 
-		if(!$passed) {
+		if (!$passed) {
 			$help .= t('Could not find a command line version of PHP in the web server PATH.'). EOL;
 			$help .= t('If you do not have a command line version of PHP installed on server, you will not be able to run background tasks - including message delivery.') . EOL;
 			$help .= EOL;
-			$tpl = get_markup_template('field_input.tpl');
-			$help .= replace_macros($tpl, array(
-				'$field' => array('phpath', t('PHP executable path'), $phpath, t('Enter full path to php executable. You can leave this blank to continue the installation.')),
-			));
+
+			$help .= replace_macros(get_markup_template('field_input.tpl'), [
+				'$field' => [ 'phpath', t('PHP executable path'), $phpath, t('Enter full path to php executable. You can leave this blank to continue the installation.')],
+			]);
 			$phpath = '';
 		}
 
-		$this->check_add($checks, t('Command line PHP').($passed?" (<tt>$phpath</tt>)":""), $passed, false, $help);
+		$this->check_add($checks, t('Command line PHP') . ($passed ? " (<tt>$phpath</tt>)" : EMPTY_STR), $passed, false, $help);
 
-		if($passed) {
+		if ($passed) {
 			$str = autoname(8);
 			$cmd = "$phpath install/testargs.php $str";
 			$help = '';
 
-			if(function_exists('shell_exec'))
+			if (function_exists('shell_exec')) {
 				$result = trim(shell_exec($cmd));
-			else
+			}
+			else {
 				$help .= t('Unable to check command line PHP, as shell_exec() is disabled. This is required.') . EOL;
-			$passed2 = (($result == $str) ? true : false);
-			if(!$passed2) {
+			}
+			$passed2 = (($result === $str) ? true : false);
+			if (!$passed2) {
 				$help .= t('The command line version of PHP on your system does not have "register_argc_argv" enabled.'). EOL;
 				$help .= t('This is required for message delivery to work.');
 			}
@@ -511,11 +523,12 @@ class Setup extends Controller {
 		$ck_funcs = [];
 
 		$disabled = explode(',',ini_get('disable_functions'));
-		if($disabled)
+		if ($disabled) {
 			array_walk($disabled,'array_trim');
-
+		}
 
 		// add check metadata, the real check is done bit later and return values set
+
 		$this->check_add($ck_funcs, t('libCurl PHP module'), true, true);
 		$this->check_add($ck_funcs, t('GD graphics PHP module'), true, true);
 		$this->check_add($ck_funcs, t('OpenSSL PHP module'), true, true);
@@ -524,58 +537,59 @@ class Setup extends Controller {
 		$this->check_add($ck_funcs, t('xml PHP module'), true, true);
 		$this->check_add($ck_funcs, t('zip PHP module'), true, true);
 
-		if(function_exists('apache_get_modules')){
+		if (function_exists('apache_get_modules')){
 			if (! in_array('mod_rewrite', apache_get_modules())) {
 				$this->check_add($ck_funcs, t('Apache mod_rewrite module'), false, true, t('Error: Apache webserver mod-rewrite module is required but not installed.'));
-			} else {
+			}
+			else {
 				$this->check_add($ck_funcs, t('Apache mod_rewrite module'), true, true);
 			}
 		}
-		if((! function_exists('exec')) || in_array('exec',$disabled)) {
+		if ((! function_exists('exec')) || in_array('exec',$disabled)) {
 			$this->check_add($ck_funcs, t('exec'), false, true, t('Error: exec is required but is either not installed or has been disabled in php.ini'));
 		}
 		else {
 			$this->check_add($ck_funcs, t('exec'), true, true);
 		}
-		if((! function_exists('shell_exec')) || in_array('shell_exec',$disabled)) {
+		if ((! function_exists('shell_exec')) || in_array('shell_exec',$disabled)) {
 			$this->check_add($ck_funcs, t('shell_exec'), false, true, t('Error: shell_exec is required but is either not installed or has been disabled in php.ini'));
 		}
 		else {
 			$this->check_add($ck_funcs, t('shell_exec'), true, true);
 		}
 
-		if(! function_exists('curl_init')) {
+		if (! function_exists('curl_init')) {
 			$ck_funcs[0]['status'] = false;
 			$ck_funcs[0]['help'] = t('Error: libCURL PHP module required but not installed.');
 		}
-		if((! function_exists('imagecreatefromjpeg')) && (! class_exists('\\Imagick'))) {
+		if ((! function_exists('imagecreatefromjpeg')) && (! class_exists('\\Imagick'))) {
 			$ck_funcs[1]['status'] = false;
 			$ck_funcs[1]['help'] = t('Error: GD PHP module with JPEG support or ImageMagick graphics library required but not installed.');
 		}
-		if(! function_exists('openssl_public_encrypt')) {
+		if (! function_exists('openssl_public_encrypt')) {
 			$ck_funcs[2]['status'] = false;
 			$ck_funcs[2]['help'] = t('Error: openssl PHP module required but not installed.');
 		}
-		if(class_exists('\\PDO')) {
+		if (class_exists('\\PDO')) {
 			$x = \PDO::getAvailableDrivers();
-			if((! in_array('mysql',$x)) && (! in_array('pgsql',$x))) {
+			if ((! in_array('mysql',$x)) && (! in_array('pgsql',$x))) {
 				$ck_funcs[3]['status'] = false;
 				$ck_funcs[3]['help'] = t('Error: PDO database PHP module missing a driver for either mysql or pgsql.');
 			}
 		}
-		if(! class_exists('\\PDO')) {
+		if (! class_exists('\\PDO')) {
 			$ck_funcs[3]['status'] = false;
 			$ck_funcs[3]['help'] = t('Error: PDO database PHP module required but not installed.');
 		}
-		if(! function_exists('mb_strlen')) {
+		if (! function_exists('mb_strlen')) {
 			$ck_funcs[4]['status'] = false;
 			$ck_funcs[4]['help'] = t('Error: mb_string PHP module required but not installed.');
 		}
-		if(! extension_loaded('xml')) {
+		if (! extension_loaded('xml')) {
 			$ck_funcs[5]['status'] = false;
 			$ck_funcs[5]['help'] = t('Error: xml PHP module required for DAV but not installed.');
 		}
-		if(! extension_loaded('zip')) {
+		if (! extension_loaded('zip')) {
 			$ck_funcs[6]['status'] = false;
 			$ck_funcs[6]['help'] = t('Error: zip PHP module required but not installed.');
 		}
@@ -590,7 +604,7 @@ class Setup extends Controller {
 	 */
 	function check_htconfig(&$checks) {
 		$status = true;
-		$help = '';
+		$help = EMPTY_STR;
 
 		$fname = '.htconfig.php';
 
@@ -601,7 +615,7 @@ class Setup extends Controller {
 		}
 
 		$status = false;
-		$help = t('The web installer needs to be able to create a file called ".htconfig.php" in the top folder of your web server and it is unable to do so.') .EOL;
+		$help .= t('The web installer needs to be able to create a file called ".htconfig.php" in the top folder of your web server and it is unable to do so.') .EOL;
 		$help .= t('This is most often a permission setting, as the web server may not be able to write files in your folder - even if you can.').EOL;
 		$help .= t('Please see install/INSTALL.txt for additional information.');
 
@@ -619,12 +633,11 @@ class Setup extends Controller {
 
 		@os_mkdir(TEMPLATE_BUILD_PATH, STORAGE_DEFAULT_PERMISSIONS, true);
 
-		if(! is_writable(TEMPLATE_BUILD_PATH) ) {
+		if (! is_writable(TEMPLATE_BUILD_PATH) ) {
 			$status = false;
-			$help = t('This software uses the Smarty3 template engine to render its web views. Smarty3 compiles templates to PHP to speed up rendering.') .EOL;
+			$help .= t('This software uses the Smarty3 template engine to render its web views. Smarty3 compiles templates to PHP to speed up rendering.') .EOL;
 			$help .= sprintf( t('In order to store these compiled templates, the web server needs to have write access to the directory %s under the top level web folder.'), TEMPLATE_BUILD_PATH) . EOL;
-			$help .= t('Please ensure that the user that your web server runs as (e.g. www-data) has write access to this folder.').EOL;
-			$help .= sprintf( t('Note: as a security measure, you should give the web server write access to %s only--not the template files (.tpl) that it contains.'), TEMPLATE_BUILD_PATH) . EOL;
+			$help .= t('Please ensure that the user that your web server runs as (e.g. www-data) has write access to this folder.') . EOL;
 		}
 
 		$this->check_add($checks, sprintf( t('%s is writable'), TEMPLATE_BUILD_PATH), $status, true, $help);
@@ -641,7 +654,7 @@ class Setup extends Controller {
 
 		@os_mkdir('store', STORAGE_DEFAULT_PERMISSIONS, true);
 		
-		if(! is_writable('store')) {
+		if (! is_writable('store')) {
 			$status = false;
 			$help = t('This software uses the store directory to save uploaded files. The web server needs to have write access to the store directory under the top level web folder') . EOL;
 			$help .= t('Please ensure that the user that your web server runs as (e.g. www-data) has write access to this folder.').EOL;
@@ -662,24 +675,24 @@ class Setup extends Controller {
 
 		$url = z_root() . '/setup/testrewrite';
 
-		if (function_exists('curl_init')){
+		if (function_exists('curl_init')) {
 			$test = z_fetch_url($url);
-			if(! $test['success']) {
-				if(strstr($url,'https://')) {
-					$test = z_fetch_url($url,false,0,array('novalidate' => true));
-					if($test['success']) {
+			if (! $test['success']) {
+				if (strstr($url,'https://')) {
+					$test = z_fetch_url($url,false,0, [ 'novalidate' => true ]);
+					if ($test['success']) {
 						$ssl_error = true;
 					}
 				}
 				else {
-					$test = z_fetch_url(str_replace('http://','https://',$url),false,0,array('novalidate' => true));
-					if($test['success']) {
+					$test = z_fetch_url(str_replace('http://','https://',$url),false,0, [ 'novalidate' => true ]);
+					if ($test['success']) {
 						$ssl_error = true;
 					}
 				}
 
-				if($ssl_error) {
-					$help = t('SSL certificate cannot be validated. Fix certificate or disable https access to this site.') . EOL;
+				if ($ssl_error) {
+					$help .= t('SSL certificate cannot be validated. Fix certificate or disable https access to this site.') . EOL;
 					$help .= t('If you have https access to your website or allow connections to TCP port 443 (the https: port), you MUST use a browser-valid certificate. You MUST NOT use self-signed certificates!') . EOL;
 					$help .= t('This restriction is incorporated because public posts from you may for example contain references to images on your own hub.') . EOL;
 					$help .= t('If your certificate is not recognized, members of other sites (who may themselves have valid certificates) will get a warning message on their own site complaining about security issues.') . EOL;
@@ -692,13 +705,14 @@ class Setup extends Controller {
 				}
 			}
 
-			if ((! $test['success']) || ($test['body'] != "ok")) {
+			if ((! $test['success']) || ($test['body'] !== 'ok')) {
 				$status = false;
-				$help = t('Url rewrite in .htaccess is not working. Check your server configuration.'.'Test: '.var_export($test,true));
+				$help = t('Url rewrite in .htaccess is not working. Check your server configuration.' . 'Test: ' . var_export($test,true));
 			}
 
 			$this->check_add($checks, t('Url rewrite is working'), $status, true, $help);
-		} else {
+		}
+		else {
 			// cannot check modrewrite if libcurl is not installed
 		}
 	}
@@ -717,12 +731,13 @@ class Setup extends Controller {
 		return $o;
 	}
 
-	function load_database_rem($v, $i){
+	function load_database_rem($v, $i) {
 		$l = trim($i);
-		if (strlen($l)>1 && ($l[0]=="-" || ($l[0]=="/" && $l[1]=="*"))){
+		if (strlen($l) > 1 && ($l[0] === '-' || ($l[0] === '/' && $l[1] === '*'))) {
 			return $v;
-		} else  {
-			return $v."\n".$i;
+		}
+		else  {
+			return $v . "\n" . $i;
 		}
 	}
 
@@ -731,10 +746,10 @@ class Setup extends Controller {
 		$str = file_get_contents(DBA::$dba->get_install_script());
 		$arr = explode(';', $str);
 		$errors = false;
-		foreach($arr as $a) {
-			if(strlen(trim($a))) {
+		foreach ($arr as $a) {
+			if (strlen(trim($a))) {
 				$r = dbq(trim($a));
-				if(! $r) {
+				if (! $r) {
 					$errors .=  t('Errors encountered creating database tables.') . $a . EOL;
 				}
 			}
@@ -753,10 +768,9 @@ class Setup extends Controller {
 		set_config('system', 'allowed_themes', 'redbasic');
 
 		// if imagick converter is installed, use it
-		if(@is_executable('/usr/bin/convert')) {
+		if (@is_executable('/usr/bin/convert')) {
 			set_config('system','imagick_convert_path','/usr/bin/convert');
 		}
-
 
 		// Set a lenient list of ciphers if using openssl. Other ssl engines
 		// (e.g. NSS used in RedHat) require different syntax, so hopefully
@@ -800,9 +814,9 @@ class Setup extends Controller {
 	 * @return array
 	 */
 	static private function check_passed($v, $c) {
-		if ($c['required'])
+		if ($c['required']) {
 			$v = $v && $c['status'];
-
+		}
 		return $v;
 	}
 
