@@ -345,10 +345,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 	$path =	Hashpath::path((($thing) ? $photo . $xchan : $xchan),'cache/xp',2);
 	$hash = basename($path);
 
-
 	$animated = get_config('system','animated_avatars',true);
-
-	$modified = ((file_exists($outfile)) ? @filemtime($outfile) : 0);
 
 	// Maybe it's already a cached xchan photo
 	
@@ -356,14 +353,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 		return false;
 	}
 	
-	if ($modified) {
-		$h = [ 'headers' => [ 'If-Modified-Since: ' . gmdate('D, d M Y H:i:s \\G\\M\\T', $modified) . ' GMT' ] ];
-		$recurse = 0;
-		$result = z_fetch_url($photo, true, $recurse, $h);
-	}
-	else {
-		$result = z_fetch_url($photo, true);
-	}
+	$result = z_fetch_url($photo, true);
 
 	if ($result['success']) {
 		$type = guess_image_type($photo, $result['header']);
