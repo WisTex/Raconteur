@@ -1440,9 +1440,14 @@ class Item extends Controller {
 			echo json_encode(array('preview' => $o));
 			killme();
 		}
-		if($orig_post)
+		
+		// Let 'post_local' event listeners know if this is an edit. 
+		// We will unset it immediately afterward.
+		
+		if ($orig_post) {
 			$datarray['edit'] = true;
-	
+		}
+		
 		// suppress duplicates, *unless* you're editing an existing post. This could get picked up
 		// as a duplicate if you're editing it very soon after posting it initially and you edited
 		// some attribute besides the content, such as title or categories. 
@@ -1464,17 +1469,21 @@ class Item extends Controller {
 		}
 	
 		call_hooks('post_local',$datarray);
-	
-		if(x($datarray,'cancel')) {
+		
+		// This is no longer needed
+		unset($datarray['edit']);
+
+		if (x($datarray,'cancel')) {
 			logger('mod_item: post cancelled by plugin or duplicate suppressed.');
-			if($return_path)
+			if ($return_path) {
 				goaway(z_root() . "/" . $return_path);
-			if($api_source)
-				return ( [ 'success' => false, 'message' => 'operation cancelled' ] );	
+			}
+			if ($api_source) {
+				return ( [ 'success' => false, 'message' => 'operation cancelled' ] );
+			}
 			$json = array('cancel' => 1);
 			$json['reload'] = z_root() . '/' . $_REQUEST['jsreload'];
-			echo json_encode($json);
-			killme();
+			json_return_and_die($json);
 		}
 	
 	
