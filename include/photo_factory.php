@@ -340,12 +340,17 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 
 //	logger('Updating channel photo from ' . $photo . ' for ' . $xchan, LOGGER_DEBUG);
 
+	// Assume the worst.
 	$failed  = true;
 
 	$path =	Hashpath::path((($thing) ? $photo . $xchan : $xchan),'cache/xp',2);
 	$hash = basename($path);
 
+	$cached_file = $path . '-4' . (($thing) ? '.obj' : EMPTY_STR);
+
 	$animated = get_config('system','animated_avatars',true);
+
+	$modified = ((file_exists($cached_file)) ? @filemtime($cached_file) : 0);
 
 	// Maybe it's already a cached xchan photo
 	
@@ -353,7 +358,14 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 		return false;
 	}
 	
-	$result = z_fetch_url($photo, true);
+	if ($modified) {
+		$h = [ 'headers' => [ 'If-Modified-Since: ' . gmdate('D, d M Y H:i:s', $modified) . ' GMT' ] ];
+		$recurse = 0;
+		$result = z_fetch_url($photo, true, $recurse, $h);
+	}
+	else {
+		$result = z_fetch_url($photo, true);
+	}
 
 	if ($result['success']) {
 		$type = guess_image_type($photo, $result['header']);
@@ -370,6 +382,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 		}
 	}
 	elseif ($result['return_code'] == 304) {
+		// continue using our cached copy
 		$photo = z_root() . '/xp/' . $hash . '-4' . (($thing) ? '.obj' : EMPTY_STR);
 		$thumb = z_root() . '/xp/' . $hash . '-5' . (($thing) ? '.obj' : EMPTY_STR);
 		$micro = z_root() . '/xp/' . $hash . '-6' . (($thing) ? '.obj' : EMPTY_STR);
