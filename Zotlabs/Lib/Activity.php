@@ -1082,15 +1082,15 @@ class Activity {
 
 		$ret['id'] = $i['mid'];
 
-		$token = IConfig::get($i,'ocap','relay');
-		if ($token) {
-			if (defined('USE_BEARCAPS')) {
-				$ret['id'] = 'bear:?u=' . $ret['id'] . '&t=' . $token;
-			}
-			else {
-				$ret['id'] = $ret['id'] . '?token=' . $token;
-			}
-		}
+//		$token = IConfig::get($i,'ocap','relay');
+//		if ($token) {
+//			if (defined('USE_BEARCAPS')) {
+//				$ret['id'] = 'bear:?u=' . $ret['id'] . '&t=' . $token;
+//			}
+//			else {
+//				$ret['id'] = $ret['id'] . '?token=' . $token;
+//			}
+//		}
 
 		$ret['published'] = datetime_convert('UTC','UTC',$i['created'],ATOM_TIME);
 		if ($i['created'] !== $i['edited']) {
