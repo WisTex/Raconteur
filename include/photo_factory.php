@@ -381,7 +381,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 			$failed = false;
 		}
 	}
-	elseif ($result['return_code'] == 304) {
+	elseif (intval($result['return_code']) === 304) {
 		// continue using our cached copy
 		$photo = z_root() . '/xp/' . $hash . '-4' . (($thing) ? '.obj' : EMPTY_STR);
 		$thumb = z_root() . '/xp/' . $hash . '-5' . (($thing) ? '.obj' : EMPTY_STR);
@@ -390,7 +390,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 	}
 
 
-	if (! $failed && $result['return_code'] != 304) {
+	if (! $failed && intval($result['return_code']) !== 304) {
 		$img = photo_factory($result['body'], $type);
 		if ($img->is_valid()) {
 			$width = $img->getWidth();
@@ -463,7 +463,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 		$modified = gmdate('Y-m-d H:i:s', filemtime($default));
 	}
 
-	logger('HTTP code: ' . $result['return_code'] . '; modified: ' . $modified
+	logger('HTTP code: ' . $result['return_code'] . '; modified: ' . (($modified) ? gmdate('D, d M Y H:i:s', $modified) . ' GMT' : 0 )
 			. '; failure: ' . ($failed ? 'yes' : 'no') . '; URL: ' . $photo, LOGGER_DEBUG);
 
 	return([$photo, $thumb, $micro, $type, $failed, $modified]);
