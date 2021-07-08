@@ -460,7 +460,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 		$thumb    = z_root() . '/' . get_default_profile_photo(80);
 		$micro    = z_root() . '/' . get_default_profile_photo(48);
 		$type     = 'image/png';
-		$modified = gmdate('Y-m-d H:i:s', filemtime($default));
+		$modified = filemtime($default);
 	}
 
 	logger('HTTP code: ' . $result['return_code'] . '; modified: ' . (($modified) ? gmdate('D, d M Y H:i:s', $modified) . ' GMT' : 0 )
