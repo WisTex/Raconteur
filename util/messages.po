@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 21.06.26\n"
+"Project-Id-Version: 21.07.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-25 16:09-0700\n"
+"POT-Creation-Date: 2021-07-10 20:19-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -390,7 +390,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Blocks.php:84 ../../Zotlabs/Module/Connedit.php:330
 #: ../../Zotlabs/Module/Connections.php:33 ../../Zotlabs/Module/Item.php:596
 #: ../../Zotlabs/Module/Item.php:618 ../../Zotlabs/Module/Item.php:629
-#: ../../Zotlabs/Module/Item.php:1720 ../../Zotlabs/Module/Appman.php:87
+#: ../../Zotlabs/Module/Item.php:1729 ../../Zotlabs/Module/Appman.php:87
 #: ../../Zotlabs/Module/Cover_photo.php:342
 #: ../../Zotlabs/Module/Cover_photo.php:355
 #: ../../Zotlabs/Module/Defperms.php:164 ../../Zotlabs/Module/Display.php:505
@@ -409,7 +409,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Filestorage.php:193 ../../Zotlabs/Module/Thing.php:299
 #: ../../Zotlabs/Module/Thing.php:319 ../../Zotlabs/Module/Thing.php:360
 #: ../../Zotlabs/Module/Chat.php:107 ../../Zotlabs/Module/Chat.php:112
-#: ../../Zotlabs/Module/Moderate.php:18 ../../Zotlabs/Module/Setup.php:221
+#: ../../Zotlabs/Module/Moderate.php:18 ../../Zotlabs/Module/Setup.php:228
 #: ../../Zotlabs/Module/Lists.php:83 ../../Zotlabs/Module/Lists.php:94
 #: ../../Zotlabs/Module/Layouts.php:77 ../../Zotlabs/Module/Layouts.php:84
 #: ../../Zotlabs/Module/Layouts.php:95 ../../Zotlabs/Module/Channel.php:241
@@ -1151,7 +1151,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Invite.php:165 ../../Zotlabs/Module/Filestorage.php:241
 #: ../../Zotlabs/Module/Thing.php:345 ../../Zotlabs/Module/Thing.php:398
 #: ../../Zotlabs/Module/Chat.php:203 ../../Zotlabs/Module/Chat.php:240
-#: ../../Zotlabs/Module/Setup.php:322 ../../Zotlabs/Module/Setup.php:365
+#: ../../Zotlabs/Module/Setup.php:329 ../../Zotlabs/Module/Setup.php:373
 #: ../../Zotlabs/Module/Lists.php:230 ../../Zotlabs/Module/Lists.php:246
 #: ../../Zotlabs/Module/Import_items.php:132 ../../Zotlabs/Module/Mitem.php:263
 #: ../../Zotlabs/Module/Finger.php:22 ../../Zotlabs/Module/Pconfig.php:130
@@ -1402,7 +1402,7 @@ msgid "Comment Control"
 msgstr ""
 
 #: ../../Zotlabs/Lib/Apps.php:327 ../../Zotlabs/Module/Connedit.php:669
-#: ../../Zotlabs/Module/Connections.php:369 ../../Zotlabs/Module/Stream.php:119
+#: ../../Zotlabs/Module/Connections.php:369 ../../Zotlabs/Module/Stream.php:122
 #: ../../Zotlabs/Module/Affinity.php:62 ../../Zotlabs/Widget/Affinity.php:28
 #: ../../Zotlabs/Widget/Activity_filter.php:115
 #: ../../include/connections.php:908
@@ -1884,42 +1884,6 @@ msgstr ""
 msgid "Failed to remove event"
 msgstr ""
 
-#: ../../Zotlabs/Module/Ping.php:438
-msgid "added your channel"
-msgstr ""
-
-#: ../../Zotlabs/Module/Ping.php:462
-msgid "requires approval"
-msgstr ""
-
-#: ../../Zotlabs/Module/Ping.php:471
-msgid "g A l F d"
-msgstr ""
-
-#: ../../Zotlabs/Module/Ping.php:489
-msgid "[today]"
-msgstr ""
-
-#: ../../Zotlabs/Module/Ping.php:499
-msgid "posted an event"
-msgstr ""
-
-#: ../../Zotlabs/Module/Ping.php:532
-msgid "shared a file with you"
-msgstr ""
-
-#: ../../Zotlabs/Module/Ping.php:560
-msgid "reported content"
-msgstr ""
-
-#: ../../Zotlabs/Module/Ping.php:756
-msgid "Private group"
-msgstr ""
-
-#: ../../Zotlabs/Module/Ping.php:756
-msgid "Public group"
-msgstr ""
-
 #: ../../Zotlabs/Module/Admin/Logs.php:28
 msgid "Log settings updated."
 msgstr ""
@@ -2340,7 +2304,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Admin/Profile_photo.php:252
 #: ../../Zotlabs/Module/Profile_photo.php:116
 #: ../../Zotlabs/Module/Profile_photo.php:289
-#: ../../include/photo_factory.php:534
+#: ../../include/photo_factory.php:537
 msgid "Profile Photos"
 msgstr ""
 
@@ -3589,7 +3553,7 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Cal.php:345 ../../Zotlabs/Module/Cal.php:352
 #: ../../Zotlabs/Module/Cdav.php:1033 ../../Zotlabs/Module/Events.php:729
-#: ../../Zotlabs/Module/Events.php:738 ../../Zotlabs/Module/Setup.php:275
+#: ../../Zotlabs/Module/Events.php:738 ../../Zotlabs/Module/Setup.php:284
 #: ../../Zotlabs/Module/Photos.php:1006
 msgid "Next"
 msgstr ""
@@ -4644,38 +4608,38 @@ msgstr ""
 msgid "Empty post discarded."
 msgstr ""
 
-#: ../../Zotlabs/Module/Item.php:1461
+#: ../../Zotlabs/Module/Item.php:1466
 msgid "Duplicate post suppressed."
 msgstr ""
 
-#: ../../Zotlabs/Module/Item.php:1494
+#: ../../Zotlabs/Module/Item.php:1503
 msgid ""
 "Draft saved. Use <a href=\"stream?draft=1\">Drafts</a> app to continue "
 "editing."
 msgstr ""
 
-#: ../../Zotlabs/Module/Item.php:1537
+#: ../../Zotlabs/Module/Item.php:1546
 msgid "Your comment has been posted."
 msgstr ""
 
-#: ../../Zotlabs/Module/Item.php:1608
+#: ../../Zotlabs/Module/Item.php:1617
 msgid "System error. Post not saved."
 msgstr ""
 
-#: ../../Zotlabs/Module/Item.php:1648
+#: ../../Zotlabs/Module/Item.php:1657
 msgid "Your post/comment is awaiting approval."
 msgstr ""
 
-#: ../../Zotlabs/Module/Item.php:1803
+#: ../../Zotlabs/Module/Item.php:1812
 msgid "Unable to obtain post information from database."
 msgstr ""
 
-#: ../../Zotlabs/Module/Item.php:1811
+#: ../../Zotlabs/Module/Item.php:1820
 #, php-format
 msgid "You have reached your limit of %1$.0f top level posts."
 msgstr ""
 
-#: ../../Zotlabs/Module/Item.php:1818
+#: ../../Zotlabs/Module/Item.php:1827
 #, php-format
 msgid "You have reached your limit of %1$.0f webpages."
 msgstr ""
@@ -4853,7 +4817,7 @@ msgstr ""
 msgid "Public access denied."
 msgstr ""
 
-#: ../../Zotlabs/Module/Display.php:86 ../../Zotlabs/Module/Stream.php:230
+#: ../../Zotlabs/Module/Display.php:86 ../../Zotlabs/Module/Stream.php:233
 #: ../../Zotlabs/Module/Channel.php:295 ../../Zotlabs/Module/Hq.php:137
 #: ../../Zotlabs/Module/Rpost.php:150 ../../Zotlabs/Module/Pubstream.php:86
 msgid "Reset form"
@@ -5030,38 +4994,38 @@ msgstr ""
 msgid "Edit Layout"
 msgstr ""
 
-#: ../../Zotlabs/Module/Stream.php:123
+#: ../../Zotlabs/Module/Stream.php:126
 #: ../../Zotlabs/Widget/Activity_filter.php:118 ../../include/network.php:1591
 msgid "Nomad"
 msgstr ""
 
-#: ../../Zotlabs/Module/Stream.php:127
+#: ../../Zotlabs/Module/Stream.php:130
 #: ../../Zotlabs/Widget/Activity_filter.php:121 ../../include/network.php:1587
 msgid "ActivityPub"
 msgstr ""
 
-#: ../../Zotlabs/Module/Stream.php:142
+#: ../../Zotlabs/Module/Stream.php:145
 msgid "Access list not found"
 msgstr ""
 
-#: ../../Zotlabs/Module/Stream.php:188
+#: ../../Zotlabs/Module/Stream.php:191
 msgid "No such channel"
 msgstr ""
 
-#: ../../Zotlabs/Module/Stream.php:199 ../../Zotlabs/Module/Channel.php:255
+#: ../../Zotlabs/Module/Stream.php:202 ../../Zotlabs/Module/Channel.php:255
 msgid "Search Results For:"
 msgstr ""
 
-#: ../../Zotlabs/Module/Stream.php:274
+#: ../../Zotlabs/Module/Stream.php:277
 msgid "Access list is empty"
 msgstr ""
 
-#: ../../Zotlabs/Module/Stream.php:288 ../../include/items.php:4347
+#: ../../Zotlabs/Module/Stream.php:291 ../../include/items.php:4347
 #, php-format
 msgid "Access list: %s"
 msgstr ""
 
-#: ../../Zotlabs/Module/Stream.php:336
+#: ../../Zotlabs/Module/Stream.php:339
 #: ../../extend/addon/a/zotpost/Mod_zotpost.php:29
 msgid "Invalid channel."
 msgstr ""
@@ -5610,425 +5574,408 @@ msgstr ""
 msgid "Comment deleted"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:182
+#: ../../Zotlabs/Module/Setup.php:190
 msgid "$Projectname Server - Setup"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:186
+#: ../../Zotlabs/Module/Setup.php:194
 msgid "Could not connect to database."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:190
+#: ../../Zotlabs/Module/Setup.php:198
 msgid ""
 "Could not connect to specified site URL. Possible SSL certificate or DNS "
 "issue."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:197
+#: ../../Zotlabs/Module/Setup.php:206
 msgid "Could not create table."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:201
+#: ../../Zotlabs/Module/Setup.php:209
 msgid "Installation succeeded!"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:203
+#: ../../Zotlabs/Module/Setup.php:211
 msgid "Your site database has been installed."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:207
+#: ../../Zotlabs/Module/Setup.php:215
 msgid "Database install failed!"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:209
+#: ../../Zotlabs/Module/Setup.php:217
 msgid ""
 "You may need to import the file \"install/schema_xxx.sql\" manually using a "
 "database client."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:210 ../../Zotlabs/Module/Setup.php:274
+#: ../../Zotlabs/Module/Setup.php:218 ../../Zotlabs/Module/Setup.php:283
 msgid "Please see the file \"install/INSTALL.txt\"."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:271
+#: ../../Zotlabs/Module/Setup.php:280
 msgid "System check"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:276
+#: ../../Zotlabs/Module/Setup.php:285
 msgid "Check again"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:300
+#: ../../Zotlabs/Module/Setup.php:310
 msgid "Database connection"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:301
+#: ../../Zotlabs/Module/Setup.php:311
 msgid ""
 "In order to install this software we need to know how to connect to your "
 "database."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:302
+#: ../../Zotlabs/Module/Setup.php:312
 msgid ""
 "Please contact your hosting provider or site administrator if you have "
 "questions about these settings."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:303
+#: ../../Zotlabs/Module/Setup.php:313
 msgid ""
 "The database you specify below should already exist. If it does not, please "
 "create it before continuing."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:307
+#: ../../Zotlabs/Module/Setup.php:317
 msgid "Database Server Name"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:307
+#: ../../Zotlabs/Module/Setup.php:317
 msgid "Default is 127.0.0.1"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:308
+#: ../../Zotlabs/Module/Setup.php:318
 msgid "Database Port"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:308
+#: ../../Zotlabs/Module/Setup.php:318
 msgid "Communication port number - use 0 for default"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:309
+#: ../../Zotlabs/Module/Setup.php:319
 msgid "Database Login Name"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:310
+#: ../../Zotlabs/Module/Setup.php:320
 msgid "Database Login Password"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:311
+#: ../../Zotlabs/Module/Setup.php:321
 msgid "Database Name"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:312
+#: ../../Zotlabs/Module/Setup.php:322
 msgid "Database Type"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:314 ../../Zotlabs/Module/Setup.php:357
+#: ../../Zotlabs/Module/Setup.php:324 ../../Zotlabs/Module/Setup.php:365
 msgid "Site administrator email address"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:314
+#: ../../Zotlabs/Module/Setup.php:324 ../../Zotlabs/Module/Setup.php:365
 msgid ""
 "Required. Your account email address must match this in order to use the web "
 "admin panel."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:315 ../../Zotlabs/Module/Setup.php:359
+#: ../../Zotlabs/Module/Setup.php:325 ../../Zotlabs/Module/Setup.php:367
 msgid "Website URL"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:315
+#: ../../Zotlabs/Module/Setup.php:325 ../../Zotlabs/Module/Setup.php:367
 msgid "Required. Please use SSL (https) URL if available."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:316 ../../Zotlabs/Module/Setup.php:361
+#: ../../Zotlabs/Module/Setup.php:326 ../../Zotlabs/Module/Setup.php:369
 msgid "Please select a default timezone for your website"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:345
+#: ../../Zotlabs/Module/Setup.php:353
 msgid "Site settings"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:357
-msgid ""
-"Your account email address must match this in order to use the web admin "
-"panel."
-msgstr ""
-
-#: ../../Zotlabs/Module/Setup.php:359
-msgid "Please use SSL (https) URL if available."
-msgstr ""
-
-#: ../../Zotlabs/Module/Setup.php:400
+#: ../../Zotlabs/Module/Setup.php:409
 msgid "PHP version 7.1 or greater is required."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:401
+#: ../../Zotlabs/Module/Setup.php:410
 msgid "PHP version"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:417
+#: ../../Zotlabs/Module/Setup.php:427
 msgid "Could not find a command line version of PHP in the web server PATH."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:418
+#: ../../Zotlabs/Module/Setup.php:428
 msgid ""
 "If you do not have a command line version of PHP installed on server, you "
 "will not be able to run background tasks - including message delivery."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:422
+#: ../../Zotlabs/Module/Setup.php:432
 msgid "PHP executable path"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:422
+#: ../../Zotlabs/Module/Setup.php:432
 msgid ""
 "Enter full path to php executable. You can leave this blank to continue the "
 "installation."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:427
+#: ../../Zotlabs/Module/Setup.php:437
 msgid "Command line PHP"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:437
+#: ../../Zotlabs/Module/Setup.php:448
 msgid ""
 "Unable to check command line PHP, as shell_exec() is disabled. This is "
 "required."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:440
+#: ../../Zotlabs/Module/Setup.php:452
 msgid ""
 "The command line version of PHP on your system does not have "
 "\"register_argc_argv\" enabled."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:441
+#: ../../Zotlabs/Module/Setup.php:453
 msgid "This is required for message delivery to work."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:444
+#: ../../Zotlabs/Module/Setup.php:456
 msgid "PHP register_argc_argv"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:463
+#: ../../Zotlabs/Module/Setup.php:475
 msgid ""
 "This is not sufficient to upload larger images or files. You should be able "
 "to upload at least 2MB (2097152 bytes) at once."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:466
+#: ../../Zotlabs/Module/Setup.php:478
 #, php-format
 msgid ""
 "Your max allowed total upload size is set to %s. Maximum size of one file to "
 "upload is set to %s. You are allowed to upload up to %d files at once."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:473
+#: ../../Zotlabs/Module/Setup.php:485
 msgid "You can adjust these settings in the server php.ini file."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:475
+#: ../../Zotlabs/Module/Setup.php:487
 msgid "PHP upload limits"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:498
+#: ../../Zotlabs/Module/Setup.php:510
 msgid ""
 "Error: the \"openssl_pkey_new\" function on this system is not able to "
 "generate encryption keys"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:499
+#: ../../Zotlabs/Module/Setup.php:511
 msgid ""
 "If running under Windows, please see \"http://www.php.net/manual/en/openssl."
 "installation.php\"."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:502
+#: ../../Zotlabs/Module/Setup.php:514
 msgid "Generate encryption keys"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:519
+#: ../../Zotlabs/Module/Setup.php:532
 msgid "libCurl PHP module"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:520
+#: ../../Zotlabs/Module/Setup.php:533
 msgid "GD graphics PHP module"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:521
+#: ../../Zotlabs/Module/Setup.php:534
 msgid "OpenSSL PHP module"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:522
+#: ../../Zotlabs/Module/Setup.php:535
 msgid "PDO database PHP module"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:523
+#: ../../Zotlabs/Module/Setup.php:536
 msgid "mb_string PHP module"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:524
+#: ../../Zotlabs/Module/Setup.php:537
 msgid "xml PHP module"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:525
+#: ../../Zotlabs/Module/Setup.php:538
 msgid "zip PHP module"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:529 ../../Zotlabs/Module/Setup.php:531
+#: ../../Zotlabs/Module/Setup.php:542 ../../Zotlabs/Module/Setup.php:545
 msgid "Apache mod_rewrite module"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:529
+#: ../../Zotlabs/Module/Setup.php:542
 msgid ""
 "Error: Apache webserver mod-rewrite module is required but not installed."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:535 ../../Zotlabs/Module/Setup.php:538
+#: ../../Zotlabs/Module/Setup.php:549 ../../Zotlabs/Module/Setup.php:552
 msgid "exec"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:535
+#: ../../Zotlabs/Module/Setup.php:549
 msgid ""
 "Error: exec is required but is either not installed or has been disabled in "
 "php.ini"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:541 ../../Zotlabs/Module/Setup.php:544
+#: ../../Zotlabs/Module/Setup.php:555 ../../Zotlabs/Module/Setup.php:558
 msgid "shell_exec"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:541
+#: ../../Zotlabs/Module/Setup.php:555
 msgid ""
 "Error: shell_exec is required but is either not installed or has been "
 "disabled in php.ini"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:549
+#: ../../Zotlabs/Module/Setup.php:563
 msgid "Error: libCURL PHP module required but not installed."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:553
+#: ../../Zotlabs/Module/Setup.php:567
 msgid ""
 "Error: GD PHP module with JPEG support or ImageMagick graphics library "
 "required but not installed."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:557
+#: ../../Zotlabs/Module/Setup.php:571
 msgid "Error: openssl PHP module required but not installed."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:563
+#: ../../Zotlabs/Module/Setup.php:577
 msgid ""
 "Error: PDO database PHP module missing a driver for either mysql or pgsql."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:568
+#: ../../Zotlabs/Module/Setup.php:582
 msgid "Error: PDO database PHP module required but not installed."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:572
+#: ../../Zotlabs/Module/Setup.php:586
 msgid "Error: mb_string PHP module required but not installed."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:576
+#: ../../Zotlabs/Module/Setup.php:590
 msgid "Error: xml PHP module required for DAV but not installed."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:580
+#: ../../Zotlabs/Module/Setup.php:594
 msgid "Error: zip PHP module required but not installed."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:599 ../../Zotlabs/Module/Setup.php:608
+#: ../../Zotlabs/Module/Setup.php:613 ../../Zotlabs/Module/Setup.php:622
 msgid ".htconfig.php is writable"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:604
+#: ../../Zotlabs/Module/Setup.php:618
 msgid ""
 "The web installer needs to be able to create a file called \".htconfig.php\" "
 "in the top folder of your web server and it is unable to do so."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:605
+#: ../../Zotlabs/Module/Setup.php:619
 msgid ""
 "This is most often a permission setting, as the web server may not be able "
 "to write files in your folder - even if you can."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:606
+#: ../../Zotlabs/Module/Setup.php:620
 msgid "Please see install/INSTALL.txt for additional information."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:624
+#: ../../Zotlabs/Module/Setup.php:638
 msgid ""
 "This software uses the Smarty3 template engine to render its web views. "
 "Smarty3 compiles templates to PHP to speed up rendering."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:625
+#: ../../Zotlabs/Module/Setup.php:639
 #, php-format
 msgid ""
 "In order to store these compiled templates, the web server needs to have "
 "write access to the directory %s under the top level web folder."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:626 ../../Zotlabs/Module/Setup.php:647
+#: ../../Zotlabs/Module/Setup.php:640 ../../Zotlabs/Module/Setup.php:660
 msgid ""
 "Please ensure that the user that your web server runs as (e.g. www-data) has "
 "write access to this folder."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:627
-#, php-format
-msgid ""
-"Note: as a security measure, you should give the web server write access to "
-"%s only--not the template files (.tpl) that it contains."
-msgstr ""
-
-#: ../../Zotlabs/Module/Setup.php:630
+#: ../../Zotlabs/Module/Setup.php:643
 #, php-format
 msgid "%s is writable"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:646
+#: ../../Zotlabs/Module/Setup.php:659
 msgid ""
 "This software uses the store directory to save uploaded files. The web "
 "server needs to have write access to the store directory under the top level "
 "web folder"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:650
+#: ../../Zotlabs/Module/Setup.php:663
 msgid "store is writable"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:682
+#: ../../Zotlabs/Module/Setup.php:695
 msgid ""
 "SSL certificate cannot be validated. Fix certificate or disable https access "
 "to this site."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:683
+#: ../../Zotlabs/Module/Setup.php:696
 msgid ""
 "If you have https access to your website or allow connections to TCP port "
 "443 (the https: port), you MUST use a browser-valid certificate. You MUST "
 "NOT use self-signed certificates!"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:684
+#: ../../Zotlabs/Module/Setup.php:697
 msgid ""
 "This restriction is incorporated because public posts from you may for "
 "example contain references to images on your own hub."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:685
+#: ../../Zotlabs/Module/Setup.php:698
 msgid ""
 "If your certificate is not recognized, members of other sites (who may "
 "themselves have valid certificates) will get a warning message on their own "
 "site complaining about security issues."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:686
+#: ../../Zotlabs/Module/Setup.php:699
 msgid ""
 "This can cause usability issues elsewhere (not just on your own site) so we "
 "must insist on this requirement."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:687
+#: ../../Zotlabs/Module/Setup.php:700
 msgid ""
 "Providers are available that issue free certificates which are browser-valid."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:689
+#: ../../Zotlabs/Module/Setup.php:702
 msgid ""
 "If you are confident that the certificate is valid and signed by a trusted "
 "authority, check to see if you have failed to install an intermediate cert. "
@@ -6036,51 +5983,51 @@ msgid ""
 "server communications."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:691
+#: ../../Zotlabs/Module/Setup.php:704
 msgid "SSL certificate validation"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:697
+#: ../../Zotlabs/Module/Setup.php:710
 msgid ""
 "Url rewrite in .htaccess is not working. Check your server configuration."
 "Test: "
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:700
+#: ../../Zotlabs/Module/Setup.php:713
 msgid "Url rewrite is working"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:714
+#: ../../Zotlabs/Module/Setup.php:728
 msgid ""
 "The database configuration file \".htconfig.php\" could not be written. "
 "Please use the enclosed text to create a configuration file in your web "
 "server root."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:738 ../../extend/addon/a/faces/faces.php:219
+#: ../../Zotlabs/Module/Setup.php:753 ../../extend/addon/a/faces/faces.php:219
 msgid "Errors encountered creating database tables."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:782
+#: ../../Zotlabs/Module/Setup.php:796
 msgid "registration page"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:785
+#: ../../Zotlabs/Module/Setup.php:799
 msgid "<h1>What next?</h1>"
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:787
+#: ../../Zotlabs/Module/Setup.php:801
 msgid ""
 "IMPORTANT: You will need to [manually] setup a scheduled task for the poller."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:789
+#: ../../Zotlabs/Module/Setup.php:803
 msgid ""
 "Please see the file \"install/INSTALL.txt\" for more information and "
 "instructions."
 msgstr ""
 
-#: ../../Zotlabs/Module/Setup.php:791
+#: ../../Zotlabs/Module/Setup.php:805
 #, php-format
 msgid ""
 "Go to your new hub %s and register as new member. Please use the same email "
@@ -7082,6 +7029,42 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Pdledit.php:101
 msgid "System layout"
+msgstr ""
+
+#: ../../Zotlabs/Module/Ping.php:440
+msgid "added your channel"
+msgstr ""
+
+#: ../../Zotlabs/Module/Ping.php:464
+msgid "requires approval"
+msgstr ""
+
+#: ../../Zotlabs/Module/Ping.php:473
+msgid "g A l F d"
+msgstr ""
+
+#: ../../Zotlabs/Module/Ping.php:491
+msgid "[today]"
+msgstr ""
+
+#: ../../Zotlabs/Module/Ping.php:501
+msgid "posted an event"
+msgstr ""
+
+#: ../../Zotlabs/Module/Ping.php:534
+msgid "shared a file with you"
+msgstr ""
+
+#: ../../Zotlabs/Module/Ping.php:562
+msgid "reported content"
+msgstr ""
+
+#: ../../Zotlabs/Module/Ping.php:758
+msgid "Private group"
+msgstr ""
+
+#: ../../Zotlabs/Module/Ping.php:758
+msgid "Public group"
 msgstr ""
 
 #: ../../Zotlabs/Module/Profiles.php:28 ../../Zotlabs/Module/Profiles.php:182
@@ -8746,7 +8729,7 @@ msgid "System Registrations"
 msgstr ""
 
 #: ../../Zotlabs/Module/Settings/Channel.php:681
-msgid "Unseen public activity"
+msgid "Unseen public stream activity"
 msgstr ""
 
 #: ../../Zotlabs/Module/Settings/Channel.php:682
@@ -10195,6 +10178,16 @@ msgstr ""
 msgid ""
 "Provide optional browser-to-browser encryption of content with a shared "
 "secret key"
+msgstr ""
+
+#: ../../include/features.php:350
+msgid "Suppress Duplicate Posts/Comments"
+msgstr ""
+
+#: ../../include/features.php:351
+msgid ""
+"Prevent posts with identical content to be published with less than two "
+"minutes in between submissions."
 msgstr ""
 
 #: ../../include/features.php:359
