@@ -1586,7 +1586,7 @@ class Activity {
 			'width'     => 300,
 		];
 		$ret['url'] = $p['xchan_url'];
-		if ($p['channel_location']) {
+		if (isset($p['channel_location']) && $p['channel_location']) {
 			$ret['location'] = [ 'type' => 'Place', 'name' => $p['channel_location'] ];
 		}
 

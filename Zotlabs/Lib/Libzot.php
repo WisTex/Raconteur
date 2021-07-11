@@ -991,7 +991,7 @@ class Libzot {
 					$r = q("update xchan set xchan_updated = '%s', xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
 						where xchan_hash = '%s'",
 						dbesc(datetime_convert()),
-						dbesc(datetime_convert('UTC','UTC',$arr['photo_updated'])),
+						dbesc(datetime_convert('UTC','UTC',((isset($arr['photo_updated'])) ? $arr['photo_updated'] : 'now'))),
 						dbesc($photos[0]),
 						dbesc($photos[1]),
 						dbesc($photos[2]),
@@ -1010,25 +1010,27 @@ class Libzot {
 		$s = Libsync::sync_locations($arr, $arr);
 
 		if ($s) {
-			if ($s['change_message']) {
+			if (isset($s['change_message']) && $s['change_message']) {
 				$what .= $s['change_message'];
 			}
-			if ($s['changed']) {
+			if (isset($s['changed']) && $s['changed']) {
 				$changed = $s['changed'];
 			}
-			if ($s['message']) {
+			if (isset($s['message']) && $s['message']) {
 				$ret['message'] .= $s['message'];
 			}
 		}
 
 		// Which entries in the update table are we interested in updating?
-
-		$address = (($ud_arr && $ud_arr['ud_addr']) ? $ud_arr['ud_addr'] : $arr['address']);
-
+		$address = ((isset($arr['address']) && $arr['address']) ? $arr['address'] : EMPTY_STR);
+		if (isset($ud_arr) && isset($ud_arr['ud_addr'])) {
+			$address = $ud_arr['ud_addr'];
+		}
 
 		// Are we a directory server of some kind?
 
-//		$other_realm = false;
+		$other_realm = false;
+
 //		$realm = get_directory_realm();
 //		if (array_key_exists('site',$arr)
 //			&& array_key_exists('realm',$arr['site'])
@@ -2812,7 +2814,11 @@ class Libzot {
 				$access_policy = ACCESS_PRIVATE;
 		}
 
-		$directory_url = htmlspecialchars($arr['directory_url'],ENT_COMPAT,'UTF-8',false);
+		$site_about = EMPTY_STR;
+		$site_logo  = EMPTY_STR;
+		$sitename   = EMPTY_STR;
+
+		$directory_url = htmlspecialchars(isset($arr['directory_url']) ? $arr['directory_url'] : EMPTY_STR,ENT_COMPAT,'UTF-8',false);
 		$url = htmlspecialchars(strtolower($arr['url']),ENT_COMPAT,'UTF-8',false);
 		$sellpage = htmlspecialchars($arr['sellpage'],ENT_COMPAT,'UTF-8',false);
 		$site_location = htmlspecialchars($arr['location'],ENT_COMPAT,'UTF-8',false);

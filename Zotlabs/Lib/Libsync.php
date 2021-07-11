@@ -893,7 +893,8 @@ class Libsync {
 	static function sync_locations($sender, $arr, $absolute = false) {
 
 		$ret = [];
-
+		$what = EMPTY_STR;
+		
 		if($arr['locations']) {
 
 			$x = q("select * from xchan where xchan_hash = '%s'",

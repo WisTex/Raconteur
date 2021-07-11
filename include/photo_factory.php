@@ -77,8 +77,10 @@ function guess_image_type($filename, $headers = '') {
 		$hdrs = [];
 		$h = explode("\n", $headers);
 		foreach ($h as $l) {
-			list($k, $v) = array_map('trim', explode(':', trim($l), 2));
-			$hdrs[strtolower($k)] = $v;
+			if (strpos($l,':') !== false) {
+				list($k, $v) = array_map('trim', explode(':', trim($l), 2));
+				$hdrs[strtolower($k)] = $v;
+			}
 		}
 		logger('Curl headers: ' . print_r($hdrs, true), LOGGER_DEBUG);
 		if (array_key_exists('content-type', $hdrs)) {
@@ -419,8 +421,8 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 				'xchan'       => $xchan,
 				'resource_id' => $hash,
 				'filename'    => basename($photo),
-				'album'       => $album,
-				'photo_usage' => $flags,
+				'album'       => EMPTY_STR,
+				'photo_usage' => 0,
 				'imgscale'    => 4,
 				'edited'      => $modified,
 			];
