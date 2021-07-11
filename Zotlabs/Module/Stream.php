@@ -38,6 +38,9 @@ class Stream extends Controller {
 		if ($load) {
 			$_SESSION['loadtime_stream'] = datetime_convert();
 			PConfig::Set(local_channel(),'system','loadtime_stream',$_SESSION['loadtime_stream']);
+			// stream is a superset of channel when it comes to notifications
+			$_SESSION['loadtime_channel'] = datetime_convert();
+			PConfig::Set(local_channel(),'system','loadtime_channel',$_SESSION['loadtime_channel']);
 		}
 
 		$arr = [ 'query' => App::$query_string ];

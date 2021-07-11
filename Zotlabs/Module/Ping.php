@@ -252,6 +252,8 @@ class Ping extends Controller {
 					);
 					$_SESSION['loadtime_stream'] = datetime_convert();
 					PConfig::Set(local_channel(),'system','loadtime_stream',$_SESSION['loadtime_stream']);
+					$_SESSION['loadtime_channel'] = datetime_convert();
+					PConfig::Set(local_channel(),'system','loadtime_channel',$_SESSION['loadtime_channel']);
 					break;
 				case 'home':
 					$r = q("UPDATE item SET item_unseen = 0 WHERE uid = %d AND item_unseen = 1 AND item_wall = 1",

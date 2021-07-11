@@ -340,15 +340,17 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 
 //	logger('Updating channel photo from ' . $photo . ' for ' . $xchan, LOGGER_DEBUG);
 
+	// Assume the worst.
 	$failed  = true;
 
 	$path =	Hashpath::path((($thing) ? $photo . $xchan : $xchan),'cache/xp',2);
 	$hash = basename($path);
 
+	$cached_file = $path . '-4' . (($thing) ? '.obj' : EMPTY_STR);
 
 	$animated = get_config('system','animated_avatars',true);
 
-	$modified = ((file_exists($outfile)) ? @filemtime($outfile) : 0);
+	$modified = ((file_exists($cached_file)) ? @filemtime($cached_file) : 0);
 
 	// Maybe it's already a cached xchan photo
 	
@@ -357,7 +359,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 	}
 	
 	if ($modified) {
-		$h = [ 'headers' => [ 'If-Modified-Since: ' . gmdate('D, d M Y H:i:s \\G\\M\\T', $modified) . ' GMT' ] ];
+		$h = [ 'headers' => [ 'If-Modified-Since: ' . gmdate('D, d M Y H:i:s', $modified) . ' GMT' ] ];
 		$recurse = 0;
 		$result = z_fetch_url($photo, true, $recurse, $h);
 	}
@@ -379,7 +381,8 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 			$failed = false;
 		}
 	}
-	elseif ($result['return_code'] == 304) {
+	elseif (intval($result['return_code']) === 304) {
+		// continue using our cached copy
 		$photo = z_root() . '/xp/' . $hash . '-4' . (($thing) ? '.obj' : EMPTY_STR);
 		$thumb = z_root() . '/xp/' . $hash . '-5' . (($thing) ? '.obj' : EMPTY_STR);
 		$micro = z_root() . '/xp/' . $hash . '-6' . (($thing) ? '.obj' : EMPTY_STR);
@@ -387,7 +390,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 	}
 
 
-	if (! $failed && $result['return_code'] != 304) {
+	if (! $failed && intval($result['return_code']) !== 304) {
 		$img = photo_factory($result['body'], $type);
 		if ($img->is_valid()) {
 			$width = $img->getWidth();
@@ -457,10 +460,10 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 		$thumb    = z_root() . '/' . get_default_profile_photo(80);
 		$micro    = z_root() . '/' . get_default_profile_photo(48);
 		$type     = 'image/png';
-		$modified = gmdate('Y-m-d H:i:s', filemtime($default));
+		$modified = filemtime($default);
 	}
 
-	logger('HTTP code: ' . $result['return_code'] . '; modified: ' . $modified
+	logger('HTTP code: ' . $result['return_code'] . '; modified: ' . (($modified) ? gmdate('D, d M Y H:i:s', $modified) . ' GMT' : 0 )
 			. '; failure: ' . ($failed ? 'yes' : 'no') . '; URL: ' . $photo, LOGGER_DEBUG);
 
 	return([$photo, $thumb, $micro, $type, $failed, $modified]);
