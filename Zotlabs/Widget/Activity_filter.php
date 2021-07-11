@@ -65,14 +65,14 @@ class Activity_filter {
 		];
 
 		if(x($_GET,'search')) {
-			$video_active = (($_GET['search'] == '[video]') ? 'active' : '');
+			$video_active = (($_GET['search'] == 'video]') ? 'active' : '');
 			$filter_active = (($events_active) ? 'videos' : 'search');
 		}	
 
 		$tabs[] = [
 			'label' => t('Videos'),
 			'icon' => 'video',
-			'url' => z_root() . '/' . $cmd . '/?search=%5Bvideo%5D',
+			'url' => z_root() . '/' . $cmd . '/?search=video%5D',
 			'sel' => $video_active,
 			'title' => t('Show posts that include videos')
 		];
