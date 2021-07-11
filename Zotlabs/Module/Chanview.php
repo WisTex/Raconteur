@@ -115,7 +115,7 @@ class Chanview extends Controller {
 		$about = false;
 		$xprof = q("select * from xprof where xprof_hash = '%s'",
 			dbesc(App::$poi['xchan_hash'])
-		}
+		);
 		if ($xprof) {
 			$about = zidify_links(bbcode($xprof[0]['about']));
 		}

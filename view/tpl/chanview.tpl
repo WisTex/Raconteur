@@ -5,5 +5,5 @@
 {{if $about}}
 <br>
 <br>
-{{about}}
+{{$about}}
 {{/if}}
