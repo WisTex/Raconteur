@@ -130,6 +130,7 @@ class Chanview extends Controller {
 		else {	
 			$o = replace_macros(get_markup_template('chanview.tpl'), [
 				'$url' => $url,
+				'$visit' => t('Visit'),
 				'$full' => t('toggle full screen mode')
 			]);
 	

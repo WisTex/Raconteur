@@ -1,1 +1,1 @@
-<a href="{{$url}}">{{$url}}</a>
+<center><button class="btn btn-primary" style="color: white; margin-top: 50px;"><a href="{{$url}}" style="color: white;"><i class="fa fa-fw fa-external-link"></i>&nbsp;{{$visit}}</a></button></center>
