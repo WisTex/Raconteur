@@ -824,6 +824,10 @@ class Libzot {
 				set_xconfig($xchan_hash,'activitypub','collections',$collections);
 			}
 
+			if (isset($arr['cover_photo']) && isset($arr['cover_photo']['url']) && strlen($arr['cover_photo']['url'])) {
+				set_xconfig($xchan_hash,'system','cover_photo',$arr['cover_photo']['url']);
+			}
+
 			if (($r[0]['xchan_name_date'] != $arr['name_updated'])
 				|| ($r[0]['xchan_connurl'] != $arr['primary_location']['connections_url'])
 				|| ($r[0]['xchan_addr'] != $arr['primary_location']['address'])
@@ -907,6 +911,10 @@ class Libzot {
 
 			$what .= 'new_xchan';
 			$changed = true;
+		}
+
+		if (isset($arr['cover_photo']) && isset($arr['cover_photo']['url']) && strlen($arr['cover_photo']['url'])) {
+			set_xconfig($xchan_hash,'system','cover_photo',$arr['cover_photo']['url']);
 		}
 
 		if ($import_photos) {
@@ -3163,6 +3171,8 @@ class Libzot {
 			}
 		}
 
+		$cover_photo = get_cover_photo($e['channel_id'],'array');
+		
 		// Communication details
 
 		$ret['id']             = $e['xchan_guid'];
@@ -3187,6 +3197,14 @@ class Libzot {
 			'type'    => $e['xchan_photo_mimetype'],
 			'updated' => $e['xchan_photo_date']
 		];
+
+		if ($cover_photo) {
+			$ret['cover_photo'] = [
+				'url'     => $cover_photo['url'],
+				'type'    => $cover_photo['type'],
+				'updated' => $cover_photo['updated']
+			];
+		}
 
 		$ret['channel_role']   = get_pconfig($e['channel_id'],'system','permissions_role','custom');
 		$ret['channel_type']   = $channel_type;

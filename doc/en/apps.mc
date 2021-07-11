@@ -77,7 +77,7 @@ Available if the 'gallery' addon has been installed by the site administrator. T
 
 ### Guest Pass
 
-Does not require app installation, although it will be more accessible if the app is installed. This lets you create guest accounts and/or create links which can access some of your private resources. For instance if you want to send links via email to let the grandparents see a private photo of their grandchildren.
+This app allows you to create guest accounts and/or create links which can access some of your private resources. For instance if you want to send links via email to let the grandparents see a private photo of their grandchildren.
 
 ### Hexit
 
@@ -105,7 +105,7 @@ Provides a simple notepad on your stream page for making notes and reminders.
 
 It is like the 'Content Filter' app except that all matching posts are present in your stream but require you to open each such message to view. Posts matching 'Content Filter' rules are rejected and will not be present in your stream.
 
-You can select whether or not you are running in 'safe mode' in your personal menu, and this setting is preserved separately for each login. This means your work computer can be in 'safe mode' and questionable content hidden, while your home computer may be configured to show everything by default.
+You can select whether or not you are running in "safe mode" in your personal menu, and this setting is preserved separately for each login. This means your work computer can be in 'safe mode' and questionable content hidden, while your home computer may be configured to show everything by default.
 
 ### Photomap
 
@@ -154,7 +154,7 @@ Available if the 'stream_order' addon is installed on the site. Provides a setti
 
 ### Suggest Channels
 
-Analyses your own connections and those of your friends who have provided you with permission to see their other connections. It returns a page of channels ranked by how many of your other friends are friends with the given channel, but where you are not.
+Analyses your own connections and those of your friends who have provided you with permission to see their connections. It returns a page of channels ranked by how many of your other friends are friends with the given channel, but where you are not.
 
 ### Tagadelic
 
@@ -163,7 +163,7 @@ Named after the Drupal module of the same name. This provides a tag cloud of you
 
 ### Tasks
 
-Provides a very simple to-do list on your Stream page (and also the 'tasks' page).
+Provides a very simple to-do list on your Stream page (and also the Tasks app page).
 
 ### Virtual Lists
 

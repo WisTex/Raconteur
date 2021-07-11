@@ -1653,7 +1653,7 @@ function auto_channel_create($account_id) {
 
 function get_cover_photo($channel_id,$format = 'bbcode', $res = PHOTO_RES_COVER_1200) {
 
-	$r = q("select height, width, resource_id, mimetype from photo where uid = %d and imgscale = %d and photo_usage = %d",
+	$r = q("select height, width, resource_id, edited, mimetype from photo where uid = %d and imgscale = %d and photo_usage = %d",
 		intval($channel_id),
 		intval($res),
 		intval(PHOTO_COVER)
@@ -1678,6 +1678,7 @@ function get_cover_photo($channel_id,$format = 'bbcode', $res = PHOTO_RES_COVER_
 				'width' => $r[0]['width'],
 				'height' => $r[0]['height'],
 				'type' => $r[0]['mimetype'],
+				'updated' => $r[0]['edited'],
 				'url' => $url
 			);
 			break;
