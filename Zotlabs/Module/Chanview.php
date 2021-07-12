@@ -112,7 +112,14 @@ class Chanview extends Controller {
 				$connected = true;
 			}
 		}
-		
+		$about = false;
+		$xprof = q("select * from xprof where xprof_hash = '%s'",
+			dbesc(App::$poi['xchan_hash'])
+		);
+		if ($xprof) {
+			$about = zidify_links(bbcode($xprof[0]['xprof_about']));
+		}
+
 		// We will load the chanview template if it's a foreign network, 
 		// just so that we can provide a connect button along with a profile
 		// photo. Chances are we can't load the remote profile into an iframe
@@ -130,6 +137,10 @@ class Chanview extends Controller {
 		else {	
 			$o = replace_macros(get_markup_template('chanview.tpl'), [
 				'$url' => $url,
+				'$photo' => get_xconfig(App::$poi['xchan_hash'],'system','cover_photo'),
+				'$alt' => t('Cover photo for this channel'),
+				'$about' => $about,
+				'$visit' => t('Visit'),
 				'$full' => t('toggle full screen mode')
 			]);
 	

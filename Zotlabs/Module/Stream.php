@@ -197,7 +197,10 @@ class Stream extends Controller {
 		if (! $update) {
 	
 			// search terms header
-			if ($search) {
+			
+			// hide the terms we use to search for videos from
+			// the activity_filter widget because it doesn't look very good
+			if ($search && $search !== 'video]') {
 				$o .= replace_macros(get_markup_template("section_title.tpl"),
 					[ '$title' => t('Search Results For:') . ' ' . htmlspecialchars($search, ENT_COMPAT,'UTF-8') ]
 				);

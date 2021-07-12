@@ -1586,7 +1586,7 @@ class Activity {
 			'width'     => 300,
 		];
 		$ret['url'] = $p['xchan_url'];
-		if ($p['channel_location']) {
+		if (isset($p['channel_location']) && $p['channel_location']) {
 			$ret['location'] = [ 'type' => 'Place', 'name' => $p['channel_location'] ];
 		}
 
@@ -2090,6 +2090,17 @@ class Activity {
 			$icon = z_root() . '/' . get_default_profile_photo();
 		}
 
+		$cover_photo = false;
+
+		if (isset($person_obj['image'])) {
+			if (is_string($person_obj['image'])) {
+				$cover_photo = $person_obj['image'];
+			}
+			if (isset($person_obj['image']['url'])) {
+				$cover_photo = $person_obj['image']['url'];
+			}
+		}
+
 		$hidden = false;
 		if (array_key_exists('discoverable',$person_obj) && (! intval($person_obj['discoverable']))) {
 			$hidden = true;
@@ -2189,7 +2200,6 @@ class Activity {
 			set_xconfig($url,'system','protocols','zot6,activitypub');
 		}
 
-
 		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 			dbesc($url)
 		);
@@ -2245,6 +2255,11 @@ class Activity {
 				);
 			}
 		}
+
+		if ($cover_photo) {
+			set_xconfig($url,'system','cover_photo',$cover_photo);
+		}
+
 
 		$m = parse_url($url);
 		if ($m['scheme'] && $m['host']) {
