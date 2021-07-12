@@ -5,6 +5,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Webfinger;
+use Zotlabs\Lib\Activity;
 
 class Chanview extends Controller {
 
@@ -112,12 +113,30 @@ class Chanview extends Controller {
 				$connected = true;
 			}
 		}
+
 		$about = false;
 		$xprof = q("select * from xprof where xprof_hash = '%s'",
 			dbesc(App::$poi['xchan_hash'])
 		);
 		if ($xprof) {
 			$about = zidify_links(bbcode($xprof[0]['xprof_about']));
+		}
+
+		$followers = t('Not available');
+		$following = t('Not available');
+
+		$f = get_xconfig(App::$poi['xchan_hash'],'activitypub','collections');
+		if ($f && isset($f['followers'])) {
+			$m = Activity::fetch($f['followers']);
+			if (is_array($m) && isset($m['totalItems'])) {
+				$followers = intval($m['totalItems']);
+			}
+		}
+		if ($f && isset($f['following'])) {
+			$m = Activity::fetch($f['following']);
+			if (is_array($m) && isset($m['totalItems'])) {
+				$following = intval($m['totalItems']);
+			}
 		}
 
 		// We will load the chanview template if it's a foreign network, 
@@ -140,6 +159,10 @@ class Chanview extends Controller {
 				'$photo' => get_xconfig(App::$poi['xchan_hash'],'system','cover_photo'),
 				'$alt' => t('Cover photo for this channel'),
 				'$about' => $about,
+				'$followers_txt' => t('Followers'),
+				'$following_txt' => t('Following'),
+				'$followers' => $followers,
+				'$following' => $following,
 				'$visit' => t('Visit'),
 				'$full' => t('toggle full screen mode')
 			]);
