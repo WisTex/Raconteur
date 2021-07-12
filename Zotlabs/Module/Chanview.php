@@ -117,7 +117,7 @@ class Chanview extends Controller {
 			dbesc(App::$poi['xchan_hash'])
 		);
 		if ($xprof) {
-			$about = zidify_links(bbcode($xprof[0]['about']));
+			$about = zidify_links(bbcode($xprof[0]['xprof_about']));
 		}
 
 		// We will load the chanview template if it's a foreign network, 
