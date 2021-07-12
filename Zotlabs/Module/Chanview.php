@@ -114,30 +114,6 @@ class Chanview extends Controller {
 			}
 		}
 
-		$about = false;
-		$xprof = q("select * from xprof where xprof_hash = '%s'",
-			dbesc(App::$poi['xchan_hash'])
-		);
-		if ($xprof) {
-			$about = zidify_links(bbcode($xprof[0]['xprof_about']));
-		}
-
-		$followers = t('Not available');
-		$following = t('Not available');
-
-		$f = get_xconfig(App::$poi['xchan_hash'],'activitypub','collections');
-		if ($f && isset($f['followers'])) {
-			$m = Activity::fetch($f['followers']);
-			if (is_array($m) && isset($m['totalItems'])) {
-				$followers = intval($m['totalItems']);
-			}
-		}
-		if ($f && isset($f['following'])) {
-			$m = Activity::fetch($f['following']);
-			if (is_array($m) && isset($m['totalItems'])) {
-				$following = intval($m['totalItems']);
-			}
-		}
 
 		// We will load the chanview template if it's a foreign network, 
 		// just so that we can provide a connect button along with a profile
@@ -154,6 +130,32 @@ class Chanview extends Controller {
 			goaway($url);
 		}
 		else {	
+
+			$about = false;
+			$xprof = q("select * from xprof where xprof_hash = '%s'",
+				dbesc(App::$poi['xchan_hash'])
+			);
+			if ($xprof) {
+				$about = zidify_links(bbcode($xprof[0]['xprof_about']));
+			}
+
+			$followers = t('Not available');
+			$following = t('Not available');
+
+			$f = get_xconfig(App::$poi['xchan_hash'],'activitypub','collections');
+			if ($f && isset($f['followers'])) {
+				$m = Activity::fetch($f['followers']);
+				if (is_array($m) && isset($m['totalItems'])) {
+					$followers = intval($m['totalItems']);
+				}
+			}
+			if ($f && isset($f['following'])) {
+				$m = Activity::fetch($f['following']);
+				if (is_array($m) && isset($m['totalItems'])) {
+					$following = intval($m['totalItems']);
+				}
+			}
+
 			$o = replace_macros(get_markup_template('chanview.tpl'), [
 				'$url' => $url,
 				'$photo' => get_xconfig(App::$poi['xchan_hash'],'system','cover_photo'),
