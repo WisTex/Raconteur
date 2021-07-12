@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-FULLPATH=$(dirname $(readlink -f "$0"))
+#FULLPATH=$(dirname $(readlink -f "$0"))
 
 VINFO=`echo "<?php include 'boot.php'; echo PLATFORM_NAME . \" \" . STD_VERSION . \"\\n\";" | php`
 
@@ -26,12 +26,8 @@ then
     FINDSTARTDIR="."
     FINDOPTS=
 else
-    cd "$FULLPATH/../view/en/"
-    OUTFILE="$FULLPATH/messages.po"
-    FINDSTARTDIR="../../"
-    # skip addon folder                                                                                         
+    OUTFILE="util/messages.po"
     FINDOPTS=
-	RRIT="-wholename */extend -prune -o"
 fi
 
 
@@ -56,7 +52,7 @@ echo "extract strings to $OUTFILE.."
 
 
 rm "$OUTFILE"; touch "$OUTFILE"
-for f in $(find "$FINDSTARTDIR" $FINDOPTS -name "*.php" -type f)
+for f in $(find `cat util/gtfiles` $FINDOPTS -name "*.php" -type f)
 do
     if [ ! -d "$f" ]
     then
