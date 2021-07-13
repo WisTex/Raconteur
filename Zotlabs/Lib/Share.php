@@ -209,8 +209,13 @@ class Share {
 				"' posted='"        . $this->item['created'] .
 				"' message_id='"    . $this->item['mid'] .
 			"']";
-			if($this->item['title'])
+			if ($this->item['title']) {
 				$bb .= '[b]'.$this->item['title'].'[/b]'."\r\n";
+			}
+			if ($this->item['summary']) {
+				$bb .= $this->item['summary'] . "\r\n";
+			}
+				
 			$bb .= (($is_photo) ? $photo_bb . "\r\n" . $this->item['body'] : $this->item['body']);
 			$bb .= "[/share]";
 		}
