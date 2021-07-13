@@ -53,6 +53,7 @@
 						{{$anymention}}
 						{{include file="field_select.tpl" field=$comment_perms}}
 						{{include file="field_input.tpl" field=$close_comments}}
+						{{include file="field_select.tpl" field=$mail_perms}}
 						{{include file="field_checkbox.tpl" field=$permit_all_mentions}}
 						{{include file="field_input.tpl" field=$followed_tags}}
 						

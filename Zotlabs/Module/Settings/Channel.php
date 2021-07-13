@@ -131,6 +131,10 @@ class Channel {
 		$post_comments   = array_key_exists('post_comments',$_POST) ? intval($_POST['post_comments']) : PERMS_SPECIFIC;
 		PermissionLimits::Set(local_channel(),'post_comments',$post_comments);
 
+		$post_mail       = array_key_exists('post_mail',$_POST) ? intval($_POST['post_mail']) : PERMS_SPECIFIC;
+		PermissionLimits::Set(local_channel(),'post_mail',$post_mail);
+
+
 
 		$publish          = (((x($_POST,'profile_in_directory')) && (intval($_POST['profile_in_directory']) == 1)) ? 1: 0);
 		$username         = ((x($_POST,'username'))   ? escape_tags(trim($_POST['username']))     : '');
@@ -390,7 +394,6 @@ class Channel {
 			array( t('Approved connections'), PERMS_CONTACTS),
 			array( t('Any connections'), PERMS_PENDING),
 			array( t('Anybody on this website'), PERMS_SITE),
-			array( t('Anybody in this network'), PERMS_NETWORK),
 			array( t('Anybody authenticated'), PERMS_AUTHED),
 			array( t('Anybody on the internet'), PERMS_PUBLIC)
 		];
@@ -406,11 +409,11 @@ class Channel {
 					continue;
 				$options[$opt[1]] = $opt[0];
 			}
-			if($k === 'view_stream') {
-				$options = [$perm_opts[7][1] => $perm_opts[7][0]];
-			}
 			if($k === 'post_comments') {
-				$comment_perms = [ $k, $perm, $limits[$k],'',$options ];
+				$comment_perms = [ $k, $perm, $limits[$k],t('Specifically allowed includes approved connections, but allows you to revoke this permission from specific connections if desired'),$options ];
+			}
+			elseif ($k === 'post_mail') {
+				$mail_perms = [ $k, $perm, $limits[$k],t('Specifically allowed includes approved connections, but allows you to revoke this permission from specific connections if desired'),$options ];
 			}
 			else {
 				$permiss[] = array($k,$perm,$limits[$k],'',$options);			
@@ -609,6 +612,7 @@ class Channel {
 			'$hidefriends' => array('hide_friends', t('Allow others to view your friends and connections'), 1 - intval($profile['hide_friends']), '', $yes_no ),
 			'$permiss_arr' => $permiss,
 			'$comment_perms' => $comment_perms,
+			'$mail_perms' => $mail_perms,
 			'$noindex' => [ 'noindex', t('Forbid indexing of your channel content by search engines'), get_pconfig($channel['channel_id'],'system','noindex'), '', $yes_no],
 			'$close_comments' => [ 'close_comments', t('Disable acceptance of comments on my posts after this many days'), ((intval(get_pconfig(local_channel(),'system','close_comments'))) ? intval(get_pconfig(local_channel(),'system','close_comments')) : EMPTY_STR), t('Leave unset or enter 0 to allow comments indefinitely') ],
 			'$blocktags' => array('blocktags',t('Allow others to tag your posts'), 1-$blocktags, t('Often used by the community to retro-actively flag inappropriate content'), $yes_no),

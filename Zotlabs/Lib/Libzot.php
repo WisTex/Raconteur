@@ -1812,6 +1812,8 @@ class Libzot {
 				}
 			}
 
+			// perform pre-storage check to see if it's "likely" that this is a group or collection post
+
 			$tag_delivery = tgroup_check($channel['channel_id'],$arr);
 
 			$perm = 'send_stream';
@@ -1900,6 +1902,12 @@ class Libzot {
 					}
 
 					$friendofriend = true;
+				}
+
+				if (intval($arr['item_private']) === 2) {
+					if (! perm_is_allowed($channel['channel_id'],$sender,'post_mail')) {
+						$allowed = false;
+					}
 				}
 
 				if (get_abconfig($channel['channel_id'],$sender,'system','block_announce', false)) {
