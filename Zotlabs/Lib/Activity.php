@@ -3412,7 +3412,12 @@ class Activity {
 			}
 		}
 
-
+		if (intval($item['item_private']) === 2) {
+			if (! perm_is_allowed($channel['channel_id'],$observer_hash,'post_mail')) {
+				$allowed = false;
+			}
+		}
+		
 		if ($is_sys_channel) {
 
 			if (! $pubstream) {

@@ -1310,7 +1310,7 @@ function z_status_editor($x, $popup = false) {
 
 
 	// we only need the comment_perms for the editor, but this logic is complicated enough (from Settings/Channel)
-	// that we will just duplicate the entire code block
+	// that we will just duplicate most of that code block
 
 	$global_perms = Permissions::Perms();
 
@@ -1322,7 +1322,6 @@ function z_status_editor($x, $popup = false) {
 		array( t('Approved connections'), PERMS_CONTACTS),
 		array( t('Any connections'), PERMS_PENDING),
 		array( t('Anybody on this website'), PERMS_SITE),
-		array( t('Anybody in this network'), PERMS_NETWORK),
 		array( t('Anybody authenticated'), PERMS_AUTHED),
 		array( t('Anybody on the internet'), PERMS_PUBLIC)
 	];
@@ -1337,9 +1336,6 @@ function z_status_editor($x, $popup = false) {
 			if($opt[1] == PERMS_PUBLIC && (! $can_be_public))
 				continue;
 			$options[$opt[1]] = $opt[0];
-		}
-		if($k === 'view_stream') {
-			$options = [$perm_opts[7][1] => $perm_opts[7][0]];
 		}
 		if($k === 'post_comments') {
 			$comment_perms = [ $k, t('Accept delivery of comments and likes on this post from'), $limits[$k],'',$options ];
