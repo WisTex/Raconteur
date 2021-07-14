@@ -313,7 +313,7 @@ function z_post_url($url, $params, $redirects = 0, $opts = []) {
 		@curl_setopt($ch, CURLOPT_HEADER, false);
 	}
 
-	if (x($opts['useragent'])) {
+	if (x($opts,'useragent')) {
 		@curl_setopt($ch, CURLOPT_USERAGENT, $opts['useragent']);
 	}
 	else {

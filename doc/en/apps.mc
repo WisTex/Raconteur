@@ -1,10 +1,6 @@
 Available apps
 ===============
 
-### Calendar
-
-This app provides access to a local CalDAV server which can be used to sync/manage calendars from your operating system or email program. It is not the same as the Events app and should only be installed if you have a specific need for a CalDAV server.
-
 ### Categories
 
 This app allows you to add named categories to your posts. The major difference between categories and hashtags is that category searches only return your own posts. They are personal to you. Hashtag searches search all posts across all channels on your website/instance.

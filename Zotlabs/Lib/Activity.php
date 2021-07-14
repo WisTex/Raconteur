@@ -1559,11 +1559,16 @@ class Activity {
 		$c = ((array_key_exists('channel_id',$p)) ? $p : channelx_by_hash($p['xchan_hash']));
 
 		$ret['type']  = 'Person';
-
+		$auto_follow = false;
+		
 		if ($c) {
 			$role = PConfig::Get($c['channel_id'],'system','permissions_role');
 			if (strpos($role,'forum') !== false) {
 				$ret['type'] = 'Group';
+			}
+			$role_permissions = PermissionRoles::role_perms($role);
+			if (is_array($role_permissions) && isset($role_permissions['perms_auto'])) {
+				$auto_follow = intval($role_permissions['perms_auto']);
 			}
 		}
 
@@ -1618,6 +1623,7 @@ class Activity {
 					'publicKeyPem' => $p['xchan_pubkey']
 				];
 
+				$ret['manuallyApprovesFollowers'] = (($auto_follow) ? false : true);
 				// map other nomadic identities linked with this channel
 				
 				$locations = [];
