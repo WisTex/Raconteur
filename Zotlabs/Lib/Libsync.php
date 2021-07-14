@@ -894,6 +894,7 @@ class Libsync {
 
 		$ret = [];
 		$what = EMPTY_STR;
+		$changed = false;
 		
 		if($arr['locations']) {
 
