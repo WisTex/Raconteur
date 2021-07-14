@@ -71,55 +71,54 @@ class Follow extends Controller {
 		$interactive = (($_REQUEST['interactive']) ? intval($_REQUEST['interactive']) : 1);	
 		$channel = App::get_channel();
 
+		if ((strpos($url,'http') === 0) || strpos($url,'bear:') === 0 || strpos($url,'x-zot:') === 0) {
+			$n = Activity::fetch($url);
+			if ($n && isset($n['type']) && ! ActivityStreams::is_an_actor($n['type'])) {
+				// set client flag to convert objects to implied activities
+				$a = new ActivityStreams($n,null,true);
+				if ($a->type === 'Announce' && is_array($a->obj)
+					&& array_key_exists('object',$a->obj) && array_key_exists('actor',$a->obj)) {
+					// This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
+					// Reparse the encapsulated Activity and use that instead
+					logger('relayed activity',LOGGER_DEBUG);
+					$a = new ActivityStreams($a->obj,null,true);
+				}
+
+				if ($a->is_valid()) {
+
+					if (is_array($a->actor) && array_key_exists('id',$a->actor)) {
+						Activity::actor_store($a->actor['id'],$a->actor);
+					}
+
+					// ActivityPub sourced items are cacheable
+					$item = Activity::decode_note($a,true);
+	
+					if ($item) {
+						Activity::store($channel,get_observer_hash(),$a,$item,true);				
+			
+						$r = q("select * from item where mid = '%s' and uid = %d",
+							dbesc($item['mid']),
+							intval($uid)
+						);
+						if ($r) {
+							if ($interactive) {
+								goaway(z_root() . '/display/' . gen_link_id($item['mid']));
+							}
+							else {
+								$result['success'] = true;
+								json_return_and_die($result);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		
 		$result = Connect::connect($channel,$url);
 		
 		if ($result['success'] == false) {
-
-			if ((strpos($url,'http') === 0) || strpos($url,'bear:') === 0 || strpos($url,'x-zot:') === 0) {
-				$n = Activity::fetch($url);
-				if ($n) { 
-					// set client flag to convert objects to implied activities
-					$a = new ActivityStreams($n,null,true);
-					if ($a->type === 'Announce' && is_array($a->obj)
-						&& array_key_exists('object',$a->obj) && array_key_exists('actor',$a->obj)) {
-						// This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
-						// Reparse the encapsulated Activity and use that instead
-						logger('relayed activity',LOGGER_DEBUG);
-						$a = new ActivityStreams($a->obj,null,true);
-					}
-
-					if ($a->is_valid()) {
-
-						if (is_array($a->actor) && array_key_exists('id',$a->actor)) {
-							Activity::actor_store($a->actor['id'],$a->actor);
-						}
-
-						// ActivityPub sourced items are cacheable
-						$item = Activity::decode_note($a,true);
-	
-						if ($item) {
-							Activity::store($channel,get_observer_hash(),$a,$item,false);
-						}
-					}
-				}
-			}
-			
-			$r = q("select * from item where mid = '%s' and uid = %d",
-				dbesc($url),
-				intval($uid)
-			);
-			if ($r) {
-				if ($interactive) {
-					goaway(z_root() . '/display/' . gen_link_id($url));
-				}
-				else {
-					$result['success'] = true;
-					json_return_and_die($result);
-				}
-			}
-
-
-
+		
 			if ($result['message']) {
 				notice($result['message']);
 			}
