@@ -1184,7 +1184,7 @@ function dolike(ident, verb) {
 }
 
 function doprofilelike(ident, verb) {
-	$.get('like/' + ident + '?verb=' + verb, function() { window.location.href=window.location.href; });
+	$.get('plike/' + ident + '?verb=' + verb, function() { window.location.href=window.location.href; });
 }
 
 
