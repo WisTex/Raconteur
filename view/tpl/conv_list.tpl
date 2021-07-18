@@ -86,12 +86,12 @@
 						{{/if}}
 						<div class="btn-group">
 							{{if $item.like}}
-							<button type="button" title="{{$item.like.0}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$item.id}},{{if $item.my_responses.like}} 'Undo/' + {{/if}} 'Like' ); return false;">
+							<button type="button" title="{{if $item.my_responses.like}}{{$item.like.1}}{{else}}{{$item.like.0}}{{/if}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$item.id}},{{if $item.my_responses.like}} 'Undo/' + {{/if}} 'Like' ); return false;">
 								<i class="fa fa-thumbs-o-up{{if $item.my_responses.like}} ivoted{{/if}}" ></i>
 							</button>
 							{{/if}}
 							{{if $item.dislike}}
-							<button type="button" title="{{$item.dislike.0}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$item.id}},{{if $item.my_responses.dislike}} 'Undo/' + {{/if}} 'Dislike'); return false;">
+							<button type="button" title="{{if $item.my_responses.dislike}}{{$item.dislike.1}}{{else}}{{$item.dislike.0}}{{/if}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$item.id}},{{if $item.my_responses.dislike}} 'Undo/' + {{/if}} 'Dislike'); return false;">
 								<i class="fa fa-thumbs-o-down{{if $item.my_responses.dislike}} ivoted{{/if}}" ></i>
 							</button>
 							{{/if}}

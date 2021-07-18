@@ -142,6 +142,15 @@ class Like extends Controller {
 			$r = fetch_post_tags($r,true);
 			$r[0]['obj'] = json_decode($r[0]['obj'],true);
 			$object = Activity::encode_activity($r[0],true);
+			
+			// do not do either a federated or hard delete on the original reaction
+			// as we are going to send an Undo to perform this task
+			// just set item_deleted to update the local conversation
+
+			$retval = q("update item set item_deleted = 1 where id = %d",
+				intval($r[0]['id'])
+			);
+
 		}
 		else {
 			$object = Activity::fetch_item( [ 'id' => $item['mid'] ]);

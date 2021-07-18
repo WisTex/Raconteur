@@ -109,12 +109,12 @@
 						{{/if}}
 						<div class="btn-group">
 							{{if $item.like}}
-							<button type="button" title="{{$item.like.0}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$item.id}},{{if $item.my_responses.like}} 'Undo/' + {{/if}} 'Like' ); return false;">
+							<button type="button" title="{{if $item.my_responses.like}}{{$item.like.1}}{{else}}{{$item.like.0}}{{/if}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$item.id}},{{if $item.my_responses.like}} 'Undo/' + {{/if}} 'Like' ); return false;">
 								<i class="fa fa-thumbs-o-up{{if $item.my_responses.like}} ivoted{{/if}}" ></i>
 							</button>
 							{{/if}}
 							{{if $item.dislike}}
-							<button type="button" title="{{$item.dislike.0}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$item.id}},{{if $item.my_responses.dislike}} 'Undo/' + {{/if}} 'Dislike'); return false;">
+							<button type="button" title="{{if $item.my_responses.dislike}}{{$item.dislike.1}}{{else}}{{$item.dislike.0}}{{/if}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$item.id}},{{if $item.my_responses.dislike}} 'Undo/' + {{/if}} 'Dislike'); return false;">
 								<i class="fa fa-thumbs-o-down{{if $item.my_responses.dislike}} ivoted{{/if}}" ></i>
 							</button>
 							{{/if}}
@@ -129,13 +129,13 @@
 									<i class="fa fa-calendar-check-o"></i>
 								</button>
 								<div class="dropdown-menu dropdown-menu-right">
-									<a class="dropdown-item" href="#" title="{{$item.attend.0}}" onclick="itemAddToCal({{$item.id}}); dolike({{$item.id}},{{if $item.my_responses.attend}} 'Undo/' + {{/if}} 'Accept'); return false;">
+									<a class="dropdown-item" href="#" title="{{if $item.my_responses.attend}}{{$item.undo_attend}}{{else}}{{$item.attend.0}}{{/if}}" onclick="itemAddToCal({{$item.id}}); dolike({{$item.id}},{{if $item.my_responses.attend}} 'Undo/' + {{/if}} 'Accept'); return false;">
 										<i class="item-act-list fa fa-check{{if $item.my_responses.attend}} ivoted{{/if}}" ></i> {{$item.attend.0}}
 									</a>
-									<a class="dropdown-item" href="#" title="{{$item.attend.1}}" onclick="itemAddToCal({{$item.id}}), dolike({{$item.id}},{{if $item.my_responses.attendno}} 'Undo/' + {{/if}} 'Reject'); return false;">
+									<a class="dropdown-item" href="#" title="{{if $item.my_responses.attendno}}{{$item.undo_attend}}{{else}}{{$item.attend.1}}{{/if}}" onclick="itemAddToCal({{$item.id}}), dolike({{$item.id}},{{if $item.my_responses.attendno}} 'Undo/' + {{/if}} 'Reject'); return false;">
 										<i class="item-act-list fa fa-times{{if $item.my_responses.attendno}} ivoted{{/if}}" ></i> {{$item.attend.1}}
 									</a>
-									<a class="dropdown-item" href="#" title="{{$item.attend.2}}" onclick="itemAddToCal({{$item.id}}); dolike({{$item.id}},{{if $item.my_responses.attendmaybe}} 'Undo/' {{/if}} 'TentativeAccept'); return false;">
+									<a class="dropdown-item" href="#" title="{{if $item.my_responses.attendmaybe}}{{$item.undo_attend}}{{else}}{{$item.attend.2}}{{/if}}" onclick="itemAddToCal({{$item.id}}); dolike({{$item.id}},{{if $item.my_responses.attendmaybe}} 'Undo/' {{/if}} 'TentativeAccept'); return false;">
 										<i class="item-act-list fa fa-question{{if $item.my_responses.attendmaybe}} ivoted{{/if}}" ></i> {{$item.attend.2}}
 									</a>
 								</div>
