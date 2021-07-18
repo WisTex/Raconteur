@@ -1220,7 +1220,7 @@ class Apps {
 				intval(TERM_OBJ_APP),
 				intval($x[0]['id'])
 			);
-			if ($arr['categories']) {
+			if (isset($arr['categories']) && $arr['categories']) {
 				$y = explode(',',$arr['categories']);
 				if ($y) {
 					foreach ($y as $t) {

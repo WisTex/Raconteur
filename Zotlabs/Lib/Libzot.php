@@ -2565,6 +2565,15 @@ class Libzot {
 					);
 				}
 			}
+			else {
+				if ($stored['id'] !== $stored['parent']) {
+					q("update item set commented = '%s', changed = '%s' where id = %d",
+						dbesc(datetime_convert()),
+						dbesc(datetime_convert()),
+						intval($stored['parent'])
+					);
+				}
+			}
 
 
 			// Use phased deletion to set the deleted flag, call both tag_deliver and the notifier to notify downstream channels
