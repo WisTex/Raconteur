@@ -603,7 +603,6 @@ class Stream extends Controller {
 					and (abook.abook_blocked = 0 or abook.abook_flags is null)
 					$sql_extra3 $sql_extra $sql_options $sql_nets $net_query2"
 				);
-				$_SESSION['loadtime_stream'] = datetime_convert();
 			}
 
 			if ($r) {

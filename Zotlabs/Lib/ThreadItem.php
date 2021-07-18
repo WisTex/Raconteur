@@ -196,6 +196,7 @@ class ThreadItem {
 			if($this->is_commentable() && $observer) {
 				$isevent = true;
 				$attend = array( t('I will attend'), t('I will not attend'), t('I might attend'));
+				$undo_attend = t('Undo attendance');
 			}
 		}
 
@@ -288,8 +289,8 @@ class ThreadItem {
 			$has_event = true;
 
 		if($this->is_commentable() && $observer) {
-			$like = array( t("I like this \x28toggle\x29"), t("like"));
-			$dislike = array( t("I don't like this \x28toggle\x29"), t("dislike"));
+			$like = array( t('I like this'), t('Undo like'));
+			$dislike = array( t('I don\'t like this'), t('Undo dislike') );
 		}
 
 		$share = $embed = EMPTY_STR;
@@ -370,6 +371,7 @@ class ThreadItem {
 			'mid' => $item['mid'],
 			'isevent' => $isevent,
 			'attend' => $attend,
+			'undo_attend' => $undo_attend,
 			'consensus' => '',
 			'conlabels' => '',
 			'canvote' => $canvote,
