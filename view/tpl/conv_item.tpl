@@ -114,7 +114,7 @@
 							</button>
 							{{/if}}
 							{{if $item.dislike}}
-							<button type="button" title="{{$item.dislike.0}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$item.id}},{{if $item.my_responses.dislike}} 'Undo/' + {{if}} 'Dislike'); return false;">
+							<button type="button" title="{{$item.dislike.0}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$item.id}},{{if $item.my_responses.dislike}} 'Undo/' + {{/if}} 'Dislike'); return false;">
 								<i class="fa fa-thumbs-o-down{{if $item.my_responses.dislike}} ivoted{{/if}}" ></i>
 							</button>
 							{{/if}}
