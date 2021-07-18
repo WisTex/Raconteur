@@ -13,35 +13,6 @@ require_once('include/event.php');
 
 class Like extends Controller {
 
-	private function reaction_to_activity($reaction) {
-
-		$undo = false;
-
-		$acts = [
-			'like'        => 'Like',
-			'dislike'     => 'Dislike',
-			'attendyes'   => 'Accept',
-			'attendno'    => 'Reject',
-			'attendmaybe' => 'TentativeAccept', 
-		];
-
-		// unlike (etc.) reactions are an undo of positive reactions, rather than a negative action.
-		// The activity is the same in undo actions and will have the same activity mapping
-
-		if(substr($reaction,0,2) === 'un') {
-			$undo = true;
-			$reaction = substr($reaction,2);
-		}
-
-		if(array_key_exists($reaction,$acts)) {
-			return (($undo) ? 'Undo/' : EMPTY_STR) . $acts[$reaction];
-		}
-
-		return EMPTY_STR;
-
-	}
-
-
 
 	public function get() {
 
@@ -58,11 +29,9 @@ class Like extends Controller {
 
 		$observer = App::get_observer();
 	
-		$verb = ((array_key_exists('verb', $_GET)) ? notags(trim($_GET['verb'])) :  EMPTY_STR);
-
 		// Figure out what action we're performing
 		
-		$activity = $this->reaction_to_activity($verb);
+		$activity = ((array_key_exists('verb', $_GET)) ? notags(trim($_GET['verb'])) :  EMPTY_STR);
 
 		if (! $activity) {
 			return EMPTY_STR; 
@@ -72,9 +41,13 @@ class Like extends Controller {
 		// eg: 'Undo/Like' results in $undo conditional and $activity set to 'Like'
 		
 		$test = explode('/', $activity);
-		if (count($test) > 1) {
+		if (count($test) > 1 && $test[0] === 'Undo') {
 			$undo = true;
 			$activity = $test[1];
+		}
+
+		if (! in_array($activity, [ 'Like', 'Dislike', 'Accept', 'Reject', 'TentativeAccept' ])) {
+			killme();
 		}
 
 		$is_rsvp = in_array($activity, [ 'Accept', 'Reject', 'TentativeAccept' ]);
@@ -91,8 +64,9 @@ class Like extends Controller {
 		// this is used to like an item or comment
 	
 		$item_id = ((argc() == 2) ? notags(trim(argv(1))) : 0);
-	
-		logger('like: verb ' . $verb . ' item ' . $item_id, LOGGER_DEBUG);
+
+		logger('like: undo: ' . (($undo) ? 'true' : 'false'));
+		logger('like: verb ' . $activity . ' item ' . $item_id, LOGGER_DEBUG);
 	
 		// get the item. Allow linked photos (which are normally hidden) to be liked
 
@@ -155,12 +129,32 @@ class Like extends Controller {
 		else {
 			killme();
 		}
-			
-		$verbs = " '" . dbesc($activity)  . "' ";
-	
-	
+
+		if ($undo) {
+			$r = q("select * from item where thr_parent = '%s' and verb = '%s' and author_xchan = '%s' and uid = %d and item_deleted = 0 limit 1",
+				dbesc($item['thr_parent']),
+				dbesc($activity),
+				dbesc($observer['xchan_hash']),
+				intval($owner_uid)
+			);
+
+			xchan_query($r,true);
+			$r = fetch_post_tags($r,true);
+			$r[0]['obj'] = json_decode($r[0]['obj'],true);
+			$object = Activity::encode_activity($r[0],true);
+		}
+		else {
+			$object = Activity::fetch_item( [ 'id' => $item['mid'] ]);
+		}
+
+		if (! $object) {
+			killme();
+		}
+
 		$uuid = new_uuid();
-	
+
+		// we have everything we need - start building our new item
+
 		$arr = [];
 
 		$arr['uuid']  = $uuid;
@@ -175,7 +169,6 @@ class Like extends Controller {
 
 		$body = $item['body'];
 	
-		$object = json_encode(Activity::fetch_item( [ 'id' => $item['mid'] ]));
 	
 		if (! intval($item['item_thread_top'])) {
 			$post_type = 'comment';
@@ -207,26 +200,39 @@ class Like extends Controller {
 
 			Run::Summon( [ 'Notifier','wall-new',$item['id'] ] );
 		}	
+
+
+		if ($undo) {
+			$arr['body'] = t('Undo a previous action');
+			$arr['item_notshown'] = 1;
+		}
+		else {
+			if ($activity === 'Like') {
+				$bodyverb = t('%1$s likes %2$s\'s %3$s');
+			}
+			if ($activity === 'Dislike') {
+				$bodyverb = t('%1$s doesn\'t like %2$s\'s %3$s');
+			}
+			if ($activity === 'Accept') {
+				$bodyverb = t('%1$s is attending %2$s\'s %3$s');
+			}
+			if ($activity === 'Reject') {
+				$bodyverb = t('%1$s is not attending %2$s\'s %3$s');
+			}
+			if ($activity === 'TentativeAccept') {
+				$bodyverb = t('%1$s may attend %2$s\'s %3$s');
+			}
 	
-	
-		if ($activity === 'Like') {
-			$bodyverb = t('%1$s likes %2$s\'s %3$s');
-		}
-		if ($activity === 'Dislike') {
-			$bodyverb = t('%1$s doesn\'t like %2$s\'s %3$s');
-		}
-		if ($activity === 'Accept') {
-			$bodyverb = t('%1$s is attending %2$s\'s %3$s');
-		}
-		if ($activity === 'Reject') {
-			$bodyverb = t('%1$s is not attending %2$s\'s %3$s');
-		}
-		if ($activity === 'tentativeAccept') {
-			$bodyverb = t('%1$s may attend %2$s\'s %3$s');
-		}
-	
-		if (! isset($bodyverb)) {
-			killme(); 
+			if (! isset($bodyverb)) {
+				killme(); 
+			}
+
+			$ulink = '[zrl=' . $item_author['xchan_url'] . ']' . $item_author['xchan_name'] . '[/zrl]';
+			$alink = '[zrl=' . $observer['xchan_url'] . ']' . $observer['xchan_name'] . '[/zrl]';
+			$plink = '[zrl=' . z_root() . '/display/' . gen_link_id($item['mid']) . ']' . $post_type . '[/zrl]';
+
+			$arr['body'] = sprintf( $bodyverb, $alink, $ulink, $plink );
+
 		}
 
 
@@ -236,9 +242,6 @@ class Like extends Controller {
 		
 		$arr['parent']       = $item['id'];
 		$arr['thr_parent']   = $item['mid'];
-		$ulink = '[zrl=' . $item_author['xchan_url'] . ']' . $item_author['xchan_name'] . '[/zrl]';
-		$alink = '[zrl=' . $observer['xchan_url'] . ']' . $observer['xchan_name'] . '[/zrl]';
-		$plink = '[zrl=' . z_root() . '/display/' . gen_link_id($item['mid']) . ']' . $post_type . '[/zrl]';
 		$allow_cid       = $item['allow_cid'];
 		$allow_gid       = $item['allow_gid'];
 		$deny_cid        = $item['deny_cid'];
@@ -255,7 +258,6 @@ class Like extends Controller {
 		$arr['author_xchan'] = $observer['xchan_hash'];
 	
 		
-		$arr['body']          =  sprintf( $bodyverb, $alink, $ulink, $plink );
 	
 		$arr['verb']          = (($undo) ? 'Undo' : $activity);
 		$arr['obj_type']      = (($undo) ? $activity : $objtype);

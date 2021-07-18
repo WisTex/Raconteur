@@ -11,7 +11,7 @@ require_once('include/security.php');
 require_once('include/bbcode.php');
 require_once('include/event.php');
 
-class Like extends Controller {
+class Plike extends Controller {
 
 	private function reaction_to_activity($reaction) {
 

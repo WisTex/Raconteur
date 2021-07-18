@@ -82,32 +82,14 @@
 									<i class="fa fa-calendar-check-o"></i>
 								</button>
 								<div class="dropdown-menu dropdown-menu-right">
-									<a class="dropdown-item" href="#" title="{{$attend.0}}" onclick="itemAddToCal({{$id}}); dolike({{$id}},'attendyes'); return false;">
-										<i class="item-act-list fa fa-check{{if $my_responses.attend}} ivoted{{/if}}" ></i> {{$attend.0}}
+									<a class="dropdown-item" href="#" title="{{$item.attend.0}}" onclick="itemAddToCal({{$item.id}}); dolike({{$item.id}},{{if $item.my_responses.attend}} 'Undo/' + {{/if}} 'Accept'); return false;">
+										<i class="item-act-list fa fa-check{{if $item.my_responses.attend}} ivoted{{/if}}" ></i> {{$item.attend.0}}
 									</a>
-									<a class="dropdown-item" href="#" title="{{$attend.1}}" onclick="itemAddToCal({{$id}}), dolike({{$id}},'attendno'); return false;">
-										<i class="item-act-list fa fa-times{{if $my_responses.attendno}} ivoted{{/if}}" ></i> {{$attend.1}}
+									<a class="dropdown-item" href="#" title="{{$item.attend.1}}" onclick="itemAddToCal({{$item.id}}), dolike({{$item.id}},{{if $item.my_responses.attendno}} 'Undo/' + {{/if}} 'Reject'); return false;">
+										<i class="item-act-list fa fa-times{{if $item.my_responses.attendno}} ivoted{{/if}}" ></i> {{$item.attend.1}}
 									</a>
-									<a class="dropdown-item" href="#" title="{{$attend.2}}" onclick="itemAddToCal({{$id}}); dolike({{$id}},'attendmaybe'); return false;">
-										<i class="item-act-list fa fa-question{{if $my_responses.attendmaybe}} ivoted{{/if}}" ></i> {{$attend.2}}
-									</a>
-								</div>
-							</div>
-						{{/if}}
-						{{if $canvote}}
-							<div class="btn-group">
-								<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" id="pinned-item-consensus-menu-{{$id}}" title="{{$vote_title}}">
-									<i class="fa fa-check-square-o"></i>
-								</button>
-								<div class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="wall-item-consensus-menu-{{$id}}">
-									<a class="dropdown-item" href="#" title="{{$conlabels.0}}" onclick="dolike({{$id}},'agree'); return false;">
-										<i class="item-act-list fa fa-check{{if $my_responses.agree}} ivoted{{/if}}" ></i> {{$conlabels.0}}
-									</a>
-									<a class="dropdown-item" href="#" title="{{$conlabels.1}}" onclick="dolike({{$id}},'disagree'); return false;">
-										<i class="item-act-list fa fa-times{{if $my_responses.disagree}} ivoted{{/if}}" ></i> {{$conlabels.1}}
-									</a> 
-									<a class="dropdown-item" href="#" title="{{$conlabels.2}}" onclick="dolike({{$id}},'abstain'); return false;">
-										<i class="item-act-list fa fa-question{{if $my_responses.abstain}} ivoted{{/if}}" ></i> {{$conlabels.2}}
+									<a class="dropdown-item" href="#" title="{{$item.attend.2}}" onclick="itemAddToCal({{$item.id}}); dolike({{$item.id}},{{if $item.my_responses.attendmaybe}} 'Undo/' {{/if}} 'TentativeAccept'); return false;">
+										<i class="item-act-list fa fa-question{{if $item.my_responses.attendmaybe}} ivoted{{/if}}" ></i> {{$item.attend.2}}
 									</a>
 								</div>
 							</div>
