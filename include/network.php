@@ -234,7 +234,7 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = []) {
 		$dbg = [ 
 			'url' => $ret['debug']['url'],
 			'content_type' => $ret['debug']['content_type'],
-			'error_code'  => $ret['debug']['error_code'],
+			'error_code'  => ((isset($ret['debug']['error_code'])) ? $ret['debug']['error_code'] : 0),
 			'request_header' => $ret['debug']['request_header']
 		];
 		logger('z_fetch_url: error: ' . $url . ': ' . $ret['error'], LOGGER_DEBUG);
