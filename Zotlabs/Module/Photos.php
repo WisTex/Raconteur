@@ -17,6 +17,7 @@ require_once('include/bbcode.php');
 require_once('include/security.php');
 require_once('include/attach.php');
 require_once('include/text.php');
+require_once('include/conversation.php');
 
 
 class Photos extends Controller {
@@ -565,9 +566,6 @@ class Photos extends Controller {
 	
 		$unsafe = 1 - get_safemode();
 			
-		require_once('include/bbcode.php');
-		require_once('include/security.php');
-		require_once('include/conversation.php');
 	
 		if(! x(App::$data,'channel')) {
 			notice( t('No photos selected') . EOL );
@@ -644,7 +642,7 @@ class Photos extends Controller {
 		 * Display upload form
 		 */
 	
-		if( $can_post) {
+		if ($can_post) {
 	
 			$uploader = '';
 	
@@ -1008,9 +1006,10 @@ class Photos extends Controller {
 	
 			// Do we have an item for this photo?
 	
-			$linked_items = q("SELECT * FROM item WHERE resource_id = '%s' and resource_type = 'photo' 
+			$linked_items = q("SELECT * FROM item WHERE resource_id = '%s' and resource_type = 'photo' and uid = %d
 				$sql_item LIMIT 1",
-				dbesc($datum)
+				dbesc($datum),
+				intval($owner_uid)
 			);
 	
 			$map = null;
@@ -1033,8 +1032,8 @@ class Photos extends Controller {
 	
 				if($r) {
 					xchan_query($r);
-					$r = fetch_post_tags($r,true);
-					$r = conv_sort($r,'commented');
+					$items = fetch_post_tags($r,true);
+					$sorted_items = conv_sort($items,'commented');
 				}
 	
 				$tags = [];
@@ -1066,7 +1065,7 @@ class Photos extends Controller {
 	
 			// FIXME - remove this when we move to conversation module 
 	
-			$r = $r[0]['children'];
+			$comment_items = $sorted_items[0]['children'];
 
 			$edit = null;
 			if($can_post) {
@@ -1122,19 +1121,37 @@ class Photos extends Controller {
 				$like_tpl = get_markup_template('like_noshare.tpl');
 	
 				$likebuttons = '';
+				$ilike = false;
+				$inolike = false;
+
+
+				if ($items) {
+					foreach ($items as $i) {
+						if ($i['verb'] === 'Like' && $i['author_xchan'] === get_observer_hash() && $i['thr_parent'] = $link_item['mid']) {
+							$ilike = true;
+						}
+						if ($i['verb'] === 'Dislike' && $i['author_xchan'] === get_observer_hash() && $i['thr_parent'] === $link_item['mid']) {
+							$inolike = true;
+						}
+					}
+				}
 	
 				if($observer && ($can_post || $can_comment)) {
 					$likebuttons = [
 						'id'       => $link_item['id'],
-						'likethis' => t("I like this \x28toggle\x29"),
-						'nolike'   => t("I don't like this \x28toggle\x29"),
+						'likethis' => t('I like this'),
+						'ilike'    => $ilike,
+						'inolike'  => $inolike,
+						'nolike'   => t('I don\'t like this'),
+						'unlikethis' => t('Undo like'),
+						'unnolike' => t('Undo dislike'),
 						'share'    => t('Share'),
 						'wait'     => t('Please wait')
 					];
 				}
-	
+
 				$comments = '';
-				if(! $r) {
+				if(! $comment_items) {
 					if($observer && ($can_post || $can_comment)) {
 						$commentbox = replace_macros($cmnt_tpl,array(
 							'$return_path' => '', 
@@ -1205,7 +1222,7 @@ class Photos extends Controller {
 	
 					// display comments
 	
-					foreach($r as $item) {
+					foreach ($comment_items as $item) {
 						$comment = '';
 						$template = $tpl;
 						$sparkle = '';
@@ -1214,13 +1231,7 @@ class Photos extends Controller {
 							continue;
 						}
 	
-						$redirect_url = z_root() . '/redir/' . $item['cid'] ;
-				
-	
-						$profile_url = zid($item['author']['xchan_url']);
-						$sparkle = '';
-	
-	
+						$profile_url = zid($item['author']['xchan_url']);	
 						$profile_name   = $item['author']['xchan_name'];
 						$profile_avatar = $item['author']['xchan_photo_m'];
 	
