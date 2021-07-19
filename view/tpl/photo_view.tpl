@@ -147,11 +147,11 @@
 			{{/if}}
 			{{if $likebuttons}}
 			<div class="photo-item-tools-right btn-group pull-right">
-				<button type="button" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$likebuttons.id}},'Like'); return false">
-					<i class="fa fa-thumbs-o-up" title="{{$likebuttons.likethis}}"></i>
+				<button type="button" title="{{if $likebuttons.ilike}}{{$likebuttons.unlikethis}}{{else}}{{$likebuttons.likethis}}{{/if}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$likebuttons.id}},{{if $likebuttons.ilike}} 'Undo/' + {{/if}} 'Like' ); return false;">
+					<i class="fa fa-thumbs-o-up item-tool{{if $likebuttons.ilike}} ivoted{{/if}}" ></i>
 				</button>
-				<button type="button" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$likebuttons.id}},'Dislike'); return false">
-					<i class="fa fa-thumbs-o-down" title="{{$likebuttons.nolike}}"></i>
+				<button type="button" title="{{if $likebuttons.inolike}}{{$likebuttons.unnolike}}{{else}}{{$likebuttons.nolike}}{{/if}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$likebuttons.id}},{{if $likebuttons.inolike}} 'Undo/' + {{/if}} 'Dislike'); return false;">
+					<i class="fa fa-thumbs-o-down item-tool{{if $likebuttons.inolike}} ivoted{{/if}}" ></i>
 				</button>
 			</div>
 			<div id="like-rotator-{{$likebuttons.id}}" class="photo-like-rotator pull-right"></div>

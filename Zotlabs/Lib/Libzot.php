@@ -2575,7 +2575,6 @@ class Libzot {
 				}
 			}
 
-
 			// Use phased deletion to set the deleted flag, call both tag_deliver and the notifier to notify downstream channels
 			// and then clean up after ourselves with a cron job after several days to do the delete_item_lowlevel() (DROPITEM_PHASE2).
 
