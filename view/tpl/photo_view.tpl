@@ -44,7 +44,7 @@
 	<div id="photo-map">
 	{{$map}}
 	</div>
-	<div id="photo-edit" class="section-content-tools-wrapper">
+	<div id="photo-edit" class="section-content-tools-wrapper" style="display:{{if $edit.expandform}} block; {{else}} none;{{/if}}" >
 		<form action="photos/{{$edit.nickname}}/{{$edit.resource_id}}" method="post" id="photo_edit_form" class="acl-form" data-form_id="photo_edit_form" data-allow_cid='{{$edit.allow_cid}}' data-allow_gid='{{$edit.allow_gid}}' data-deny_cid='{{$edit.deny_cid}}' data-deny_gid='{{$edit.deny_gid}}'>
 			<input type="hidden" name="item_id" value="{{$edit.item_id}}" />
 			{{* album renaming is not supported atm.
