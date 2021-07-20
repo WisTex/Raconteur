@@ -1108,7 +1108,8 @@ class Photos extends Controller {
 					'adult_enabled'        => feature_enabled($owner_uid,'adult_photo_flagging'),
 					'adult'                => array('adult',t('Flag as adult in album view'), intval($ph[0]['is_nsfw']),''),
 					'submit'               => t('Submit'),
-					'delete'               => t('Delete Photo')
+					'delete'               => t('Delete Photo'),
+					'expandform'	       => ((x($_GET,'expandform')) ? true : false)
 				];
 			}
 	
