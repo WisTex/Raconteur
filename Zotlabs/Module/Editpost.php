@@ -35,7 +35,6 @@ class Editpost extends Controller {
 		);
 
 		// don't allow web editing of potentially binary content (item_obscured = 1)
-		// @FIXME how do we do it instead?
 
 		if ((! $item) || intval($item[0]['item_obscured'])) {
 			notice( t('Item is not editable') . EOL);
@@ -44,16 +43,17 @@ class Editpost extends Controller {
 
 		$item = array_shift($item);
 
-		if ($item['resource_type'] === 'photo' && $item['resource_id']) {
-			notice( t('Item is not editable') . EOL);
-			return;
+		$owner_uid = intval($item['uid']);
+		$owner = channelx_by_n($owner_uid);
+
+		if ($item['resource_type'] === 'photo' && $item['resource_id'] && $owner) {
+			goaway(z_root() . '/photos/' . $owner['channel_address'] . '/image/' . $item['resource_id'] . '?expandform=1');
 		}
 
 		if ($item['resource_type'] === 'event' && $item['resource_id']) {
 			goaway(z_root() . '/events/' . $item['resource_id'] . '?expandform=1');
 		}
 
-		$owner_uid = $item['uid'];
 
 		$channel = App::get_channel();
 

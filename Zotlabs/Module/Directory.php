@@ -497,7 +497,7 @@ class Directory extends Controller {
 							echo $o;
 							killme();
 						}
-						if (App::$pager['page'] == 1 && $j['records'] == 0) {
+						if ($search && App::$pager['page'] == 1 && $j['records'] == 0) {
 							if (strpos($search,'@')) {
 								goaway(z_root() . '/chanview/?f=&address=' . $search);
 							}

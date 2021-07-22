@@ -384,7 +384,15 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 		}
 	}
 	elseif (intval($result['return_code']) === 304) {
-		// continue using our cached copy
+	
+		// continue using our cached copy, although we still need to figure out the type
+		// for the benefit of upstream callers that may require it
+
+		$info = getimagesize('cache/xp/' . $hash . '-4' . (($thing) ? '.obj' : EMPTY_STR));
+		if (isset($info) && is_array($info) && array_key_exists('mime',$info)) {
+			$type = $info['mime'];
+		}
+		
 		$photo = z_root() . '/xp/' . $hash . '-4' . (($thing) ? '.obj' : EMPTY_STR);
 		$thumb = z_root() . '/xp/' . $hash . '-5' . (($thing) ? '.obj' : EMPTY_STR);
 		$micro = z_root() . '/xp/' . $hash . '-6' . (($thing) ? '.obj' : EMPTY_STR);
