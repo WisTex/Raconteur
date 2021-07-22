@@ -344,7 +344,8 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 
 	// Assume the worst.
 	$failed  = true;
-
+	$type = EMPTY_STR;
+	
 	$path =	Hashpath::path((($thing) ? $photo . $xchan : $xchan),'cache/xp',2);
 	$hash = basename($path);
 
