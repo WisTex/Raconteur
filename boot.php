@@ -2182,6 +2182,8 @@ function exec_pdl() {
  */
 function construct_page() {
 
+	call_hooks('page_end', App::$page['content']);
+
 	exec_pdl();
 
 	$comanche = ((isset(App::$layout) && is_array(App::$layout) && count(App::$layout)) ? true : false);

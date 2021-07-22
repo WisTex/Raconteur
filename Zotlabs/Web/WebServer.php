@@ -21,21 +21,62 @@ class WebServer {
 		
 		sys_boot();
 
+		$this->start_session();
 
-		App::$language = get_best_language();
-		load_translation_table(App::$language,App::$install);
+		$this->set_language();
 
+		$this->set_identities();
+		
+		$this->initialise_notifications();
+		
+		if (App::$install) {
+		
+			/*
+			 * During installation, only permit the view module and setup module.
+			 * The view module is required to expand/replace variables in style.css 
+			 */
+			 
+			if (App::$module !== 'view') {
+				App::$module = 'setup';
+			}
+		}
+		else {
 
-		/**
-		 *
-		 * Important stuff we always need to do.
-		 *
-		 * The order of these may be important so use caution if you think they're all
-		 * intertwingled with no logical order and decide to sort it out. Some of the
-		 * dependencies have changed, but at least at one time in the recent past - the
-		 * order was critical to everything working properly
-		 *
-		 */
+			/*
+			 * check_config() is responsible for running update scripts. These automatically
+			 * update the DB schema whenever we push a new one out. It also checks to see if
+			 * any plugins have been added or removed and reacts accordingly.
+			 */
+
+			check_config();
+		}
+
+		$this->create_channel_links();
+
+		$this->initialise_content();
+
+		$Router = new Router();
+		$Router->Dispatch();
+
+		// if the observer is a visitor, add some javascript to the page to let
+		// the application take them home.
+		
+		$this->set_homebase();
+
+		// now that we've been through the module content, see if the page reported
+		// a permission problem via session based notifications and if so, a 403
+		// response would seem to be in order.
+
+		if (is_array($_SESSION['sysmsg']) && stristr(implode("", $_SESSION['sysmsg']), t('Permission denied'))) {
+			header($_SERVER['SERVER_PROTOCOL'] . ' 403 ' . t('Permission denied.'));
+		}
+
+		construct_page();
+
+		killme();
+	}
+
+	private function start_session() {
 
 		if (App::$session) {
 			App::$session->start();
@@ -45,23 +86,44 @@ class WebServer {
 			register_shutdown_function('session_write_close');
   		}
 
-		/**
-		 * Language was set earlier, but we can over-ride it in the session.
-		 * We have to do it here because the session was just now opened.
+	}
+
+	private function set_language() {
+
+		/*
+		 * Determine the language of the interface
 		 */
 
+		// First use the browser preference, if available. This will fall back to 'en'
+		// if there is no built-in language support for the preferred languagge
+		 
+		
+		App::$language = get_best_language();
+		load_translation_table(App::$language, App::$install);
+
+		// See if there's a request to over-ride the language
+		// store it in the session.
+		
 		if (array_key_exists('system_language',$_REQUEST)) {
 			if (strlen($_REQUEST['system_language'])) {
 				$_SESSION['language'] = $_REQUEST['system_language'];
 			}
 			else {
+				// reset to default if it's an empty string
 				unset($_SESSION['language']);
 			}
 		}
-		if ((x($_SESSION, 'language')) && ($_SESSION['language'] !== $lang)) {
+		
+		// If we've over-ridden the language, set it now.
+		
+		if ((x($_SESSION, 'language')) && ($_SESSION['language'] !== App::$language)) {
 			App::$language = $_SESSION['language'];
 			load_translation_table(App::$language);
 		}
+
+	}
+
+	private function set_identities() {
 
 		if ((x($_GET,'zid')) && (! App::$install)) {
 			App::$query_string = strip_zids(App::$query_string);
@@ -90,7 +152,9 @@ class WebServer {
 		if ((x($_SESSION, 'authenticated')) || (x($_POST, 'auth-params')) || (App::$module === 'login')) {
 			require('include/auth.php');
 		}
+	}
 
+	private function initialise_notifications() {
 		if (! x($_SESSION, 'sysmsg')) {
 			$_SESSION['sysmsg'] = [];
 		}
@@ -98,48 +162,7 @@ class WebServer {
 		if (! x($_SESSION, 'sysmsg_info')) {
 			$_SESSION['sysmsg_info'] = [];
 		}
-
-
-		if (App::$install) {
-			/* Allow an exception for the view module so that pcss will be interpreted during installation */
-			if (App::$module !== 'view')
-				App::$module = 'setup';
-		}
-		else {
-
-			/*
-			 * check_config() is responsible for running update scripts. These automatically
-			 * update the DB schema whenever we push a new one out. It also checks to see if
-			 * any plugins have been added or removed and reacts accordingly.
-			 */
-
-			check_config();
-		}
-
-		$this->create_channel_links();
-
-		$Router = new Router();
-
-		$this->initialise_content();
-
-		$Router->Dispatch();
-
-		$this->set_homebase();
-
-		// now that we've been through the module content, see if the page reported
-		// a permission problem and if so, a 403 response would seem to be in order.
-
-		if (is_array($_SESSION['sysmsg']) && stristr(implode("", $_SESSION['sysmsg']), t('Permission denied'))) {
-			header($_SERVER['SERVER_PROTOCOL'] . ' 403 ' . t('Permission denied.'));
-		}
-
-		call_hooks('page_end', App::$page['content']);
-
-		construct_page();
-
-		killme();
 	}
-
 
 	private function initialise_content() {
 
