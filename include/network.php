@@ -344,7 +344,7 @@ function z_post_url($url, $params, $redirects = 0, $opts = []) {
 		@curl_setopt($ch, CURLOPT_TIMEOUT, intval($opts['timeout']));
 	}
 	else {
-		$curl_time = intval(@get_config('system','curl_timeout',60));
+		$curl_time = intval(@get_config('system','curl_post_timeout',90));
 		@curl_setopt($ch, CURLOPT_TIMEOUT, $curl_time);
 	}
 
@@ -352,7 +352,7 @@ function z_post_url($url, $params, $redirects = 0, $opts = []) {
 		@curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, intval($opts['connecttimeout']));
 	}
 	else {
-		$curl_contime = intval(@get_config('system','curl_connecttimeout',60));
+		$curl_contime = intval(@get_config('system','curl_post_connecttimeout',90));
 		@curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $curl_contime);
 	}
 

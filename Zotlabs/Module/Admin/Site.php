@@ -72,6 +72,7 @@ class Site {
 		$proxyuser         = ((x($_POST,'proxyuser'))        ? notags(trim($_POST['proxyuser']))  : '');
 		$proxy             = ((x($_POST,'proxy'))            ? notags(trim($_POST['proxy']))      : '');
 		$timeout           = ((x($_POST,'timeout'))          ? intval(trim($_POST['timeout']))    : 60);
+		$post_timeout      = ((x($_POST,'post_timeout'))     ? intval(trim($_POST['post_timeout']))    : 90);
 		$show_like_counts  = ((x($_POST,'show_like_counts')) ? intval(trim($_POST['show_like_counts'])) : 0);
 		$cache_images      = ((x($_POST,'cache_images')) ? intval(trim($_POST['cache_images'])) : 0);
 		$delivery_interval = ((x($_POST,'delivery_interval'))? intval(trim($_POST['delivery_interval'])) : 0);
@@ -159,6 +160,7 @@ class Site {
 		set_config('system','proxyuser', $proxyuser);
 		set_config('system','proxy', $proxy);
 		set_config('system','curl_timeout', $timeout);
+		set_config('system','curl_post_timeout', $post_timeout);
 
 		info( t('Site settings updated.') . EOL);
 		goaway(z_root() . '/admin/site' );
@@ -329,7 +331,8 @@ class Site {
 			'$directory_server'     => (($dir_choices) ?  [ 'directory_server', t("Directory Server URL"), get_config('system','directory_server'), t("Default directory server"), $dir_choices ] : null),
 			'$proxyuser'            => [ 'proxyuser', t("Proxy user"), get_config('system','proxyuser'), "" ],
 			'$proxy'                => [ 'proxy', t("Proxy URL"), get_config('system','proxy'), "" ],
-			'$timeout'              => [ 'timeout', t("Network timeout"), (x(get_config('system','curl_timeout'))?get_config('system','curl_timeout'):60), t("Value is in seconds. Set to 0 for unlimited (not recommended).") ],
+			'$timeout'              => [ 'timeout', t("Network fetch timeout"), (x(get_config('system','curl_timeout'))?get_config('system','curl_timeout'):60), t("Value is in seconds. Set to 0 for unlimited (not recommended).") ],
+			'$post_timeout'         => [ 'post_timeout', t("Network post timeout"), (x(get_config('system','curl_post_timeout'))?get_config('system','curl_post_timeout'):90), t("Value is in seconds. Set to 0 for unlimited (not recommended).") ],
 			'$delivery_interval'    => [ 'delivery_interval', t("Delivery interval"), (x(get_config('system','delivery_interval'))?get_config('system','delivery_interval'):2), t("Delay background delivery processes by this many seconds to reduce system load. Recommend: 4-5 for shared hosts, 2-3 for virtual private servers. 0-1 for large dedicated servers.") ],
 			'$delivery_batch_count' => [ 'delivery_batch_count', t('Deliveries per process'),(x(get_config('system','delivery_batch_count'))?get_config('system','delivery_batch_count'):3), t("Number of deliveries to attempt in a single operating system process. Adjust if necessary to tune system performance. Recommend: 1-5.") ],
 			'$force_queue'          => [ 'force_queue', t("Queue Threshold"), get_config('system','force_queue_threshold',3000), t("Always defer immediate delivery if queue contains more than this number of entries.") ],
