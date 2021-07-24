@@ -105,11 +105,18 @@ class Chanview extends Controller {
 			$is_zot = true;
 		}			
 		if (local_channel()) {
-			$c = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s' limit 1",
+			$c = q("select abook_id, abook_pending from abook where abook_channel = %d and abook_xchan = '%s' limit 1",
 				intval(local_channel()),
 				dbesc(App::$poi['xchan_hash'])
 			);
-			if ($c) {
+			
+			// if somebody followed us and we want to find out more, start
+			// by viewing their publicly accessible information.
+			// Otherwise the primary use of this page is to provide a connect
+			// button for anybody in the fediverse - which doesn't have to ask
+			// you who you are.
+			
+			if ($c  && intval($c[0]['abook_pending']) === 0) {
 				$connected = true;
 			}
 		}

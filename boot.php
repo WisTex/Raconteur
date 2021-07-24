@@ -723,7 +723,7 @@ class App {
 	public  static $channel    = null;            // channel record of the current channel of the logged-in account
 	public  static $observer   = null;            // xchan record of the page observer
 	public  static $profile_uid = 0;              // If applicable, the channel_id of the "page owner"
-	public  static $poi        = null;            // "person of interest", generally a referenced connection
+	public  static $poi        = null;            // "person of interest", generally a referenced connection or directory entry
 	private static $oauth_key  = null;            // consumer_id of oauth request, if used
 	public  static $layout     = [];              // Comanche parsed template
 	public  static $pdl        = null;            // Comanche page description
@@ -888,9 +888,13 @@ class App {
 			self::$path = $path;
 		}
 
+		// Rewrite rules on the server will convert incoming paths to a request parameter.
+		// Strip this path information from our stored copy of the query_string, in case
+		// we need to re-use the rest of the original query.
+		
 		if (isset($_SERVER['QUERY_STRING']) && substr($_SERVER['QUERY_STRING'], 0, 4) === "req=") {
 			self::$query_string = str_replace(['<','>'],['&lt;','&gt;'],substr($_SERVER['QUERY_STRING'], 4));
-			// removing trailing / - maybe a nginx problem
+			// removing leading '/' - maybe a nginx problem
 			if (substr(self::$query_string, 0, 1) == "/") {
 				self::$query_string = substr(self::$query_string, 1);
 			}
@@ -898,6 +902,10 @@ class App {
 			self::$query_string = preg_replace('/&/','?',self::$query_string,1);
 		}
 
+		// Here is where start breaking out the URL path information to both route the
+		// web request based on the leading path component, and also to use remaining
+		// path components as C-style arguments to our individual controller modules.
+		
 		if (isset($_GET['req'])) {
 			self::$cmd = escape_tags(trim($_GET['req'],'/\\'));
 		}
@@ -921,6 +929,12 @@ class App {
 		 *
 		 * If $argv[0] has a period in it, for example foo.json; rewrite
 		 * to module = 'foo' and set $_REQUEST['module_format'] = 'json';
+		 *
+		 * As a result, say you offered a feed for member bob. Most applications
+		 * would address it as /feed/bob.xml or /feed/bob.json
+		 * We would address it as /feed.xml/bob  and /feed.json/bob because
+		 * you're altering the output format of the feed module, and bob is
+		 * just an identifier or variable. 
 		 */
 
 		self::$argv = explode('/', self::$cmd);
@@ -2167,6 +2181,8 @@ function exec_pdl() {
  *
  */
 function construct_page() {
+
+	call_hooks('page_end', App::$page['content']);
 
 	exec_pdl();
 

@@ -138,6 +138,7 @@
 					{{include file="field_input.tpl" field=$proxy}}
 					{{include file="field_input.tpl" field=$proxyuser}}
 					{{include file="field_input.tpl" field=$timeout}}
+					{{include file="field_input.tpl" field=$post_timeout}}
 					{{include file="field_input.tpl" field=$delivery_interval}}
 					{{include file="field_input.tpl" field=$delivery_batch_count}}
 					{{include file="field_input.tpl" field=$force_queue}}
