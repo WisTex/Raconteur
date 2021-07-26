@@ -927,8 +927,9 @@ function thread_author_menu($item, $mode = '') {
 		}
 	}
 
+	$poke_label = ucfirst( t(get_pconfig($local_channel,'system','pokeverb','poke')) );
+
 	if($contact) {
-		$poke_link = z_root() . '/poke/?f=&c=' . $contact['abook_id'];
 		if (! (isset($contact['abook_self']) && intval($contact['abook_self']))) {  
 			$contact_url = z_root() . '/connedit/' . $contact['abook_id'];
 		}
@@ -995,6 +996,16 @@ function thread_author_menu($item, $mode = '') {
 			'icon' => 'fw',
 			'action' => '',
 			'href' => $pm_url
+		];
+	}
+
+	if (Apps::system_app_installed($local_channel,'Poke')) {
+		$menu[] = [ 
+			'menu'   => 'poke',
+			'title'  => $poke_label,
+			'icon'   => 'fw',
+			'action' => 'doPoke(\'' . urlencode($item['author_xchan']) . '\'); return false;',
+			'href'   => '#'
 		];
 	}
 

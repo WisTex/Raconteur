@@ -119,7 +119,7 @@
 							</button>
 							{{/if}}
 							{{if $item.comment && $item.thread_level > 1 && $item.thread_level < $item.thread_max }}
-							<button type="button" title="{{$item.comment_lbl}}" class="btn btn-outline-secondary btn-sm" onclick="openClose('wall-item-comment-wrapper-{{$item.id}}'); $('#comment-edit-text-{{$item.id}}').click(); return false;">
+							<button type="button" title="{{$item.comment_lbl}}" class="btn btn-outline-secondary btn-sm" onclick="doreply({{$item.parent}},{{$item.id}}); return false;">
 								<i class="fa fa-reply"></i>
 							</button>
 							{{/if}}

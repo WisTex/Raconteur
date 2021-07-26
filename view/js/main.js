@@ -261,6 +261,12 @@ function handle_comment_form(e) {
 	}
 }
 
+function doreply(parent, ident) {
+	showHideCommentBox(parent);
+	openClose('wall-item-comment-wrapper-' + ident.toString());
+}
+
+
 function commentClose(obj, id) {
 	if(obj.value === '') {
 		obj.value = aStr.comment;
@@ -433,6 +439,12 @@ function doFollowAuthor(url) {
 	$.get(url, function(data) { notificationsUpdate(); });
 	return true;
 }
+
+function doPoke(xchan) {
+	$.get('poke?xchan=' + xchan, function(data) { notificationsUpdate(); });
+	return true;
+}
+
 
 
 function update_role_text() {

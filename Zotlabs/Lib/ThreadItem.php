@@ -914,6 +914,7 @@ class ThreadItem {
 			'$anonurl'  => [ 'anonurl',  t('Your website URL (optional)') ],
 			'$auto_save_draft' => $feature_auto_save_draft,
 			'$save' => $permanent_draft,
+			'$top' => $this->is_toplevel()
 		));
 
 		return $comment_box;
