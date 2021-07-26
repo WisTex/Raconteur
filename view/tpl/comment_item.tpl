@@ -23,7 +23,7 @@
 					{{$anon_extras}}
 				</div>
 				{{/if}}
-				<textarea id="comment-edit-text-{{$id}}" class="comment-edit-text" placeholder="{{$comment}}" name="body" ondragenter="linkdropper(event);" ondragleave="linkdropexit(event);" ondragover="linkdropper(event);" ondrop="linkdrop(event);" ></textarea>
+				<textarea id="comment-edit-text-{{$id}}" class="comment-edit-text  {{if $top}}toplevel{{/if}}" placeholder="{{$comment}}" name="body" ondragenter="linkdropper(event);" ondragleave="linkdropexit(event);" ondragover="linkdropper(event);" ondrop="linkdrop(event);" ></textarea>
 				<div id="comment-tools-{{$id}}" class="pt-2 comment-tools">
 					<div id="comment-edit-bb-{{$id}}" class="btn-toolbar pull-left">
 						{{if $feature_markup}}

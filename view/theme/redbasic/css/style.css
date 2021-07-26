@@ -1203,10 +1203,13 @@ img.mail-conv-sender-photo {
 	font-size: 1rem;
 }
 
-
 .comment-edit-text {
-	border: 1px solid #ccc;
+	border: 1px solid #007bff;
 	border-radius: $radius;
+}
+
+.comment-edit-text.toplevel {
+	border: 1px solid #ccc;
 }
 
 .divgrow-showmore {

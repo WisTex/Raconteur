@@ -465,7 +465,7 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 		$arr['mimetype'] = 'text/bbcode';
 	}
 
-    if (! isset($arr['mid']) && $arr['mid']) {
+    if (! (isset($arr['mid']) && $arr['mid'])) {
         $arr['uuid'] = ((isset($arr['uuid'])) ? $arr['uuid'] : new_uuid());
     }
     $arr['mid']          = ((isset($arr['mid'])) ? $arr['mid'] : z_root() . '/item/' . $arr['uuid']);
@@ -492,7 +492,6 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 	if ((! $arr['plink']) && (intval($arr['item_thread_top']))) {
 		$arr['plink'] = substr(z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . urlencode($arr['mid']),0,190);
 	}
-
 
 	// for the benefit of plugins, we will behave as if this is an API call rather than a normal online post
 

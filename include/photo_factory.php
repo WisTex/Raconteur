@@ -389,9 +389,11 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false) {
 		// continue using our cached copy, although we still need to figure out the type
 		// for the benefit of upstream callers that may require it
 
-		$info = getimagesize('cache/xp/' . $hash . '-4' . (($thing) ? '.obj' : EMPTY_STR));
-		if (isset($info) && is_array($info) && array_key_exists('mime',$info)) {
-			$type = $info['mime'];
+		if (file_exists($cached_file)) {
+			$info = getimagesize($cached_file);
+			if (isset($info) && is_array($info) && array_key_exists('mime',$info)) {
+				$type = $info['mime'];
+			}
 		}
 		
 		$photo = z_root() . '/xp/' . $hash . '-4' . (($thing) ? '.obj' : EMPTY_STR);
