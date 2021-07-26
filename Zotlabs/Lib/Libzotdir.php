@@ -111,7 +111,7 @@ class Libzotdir {
 			'$forumsurl' => $forumsurl,
 			'$safemode'  => array('safemode', t('Safe Mode'),$safe_mode,'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&safe="+(this.checked ? 1 : 0)\''),
 			'$pubforums' => array('pubforums', t('Groups Only'),(($pubforums == 1) ? true : false),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&type="+(this.checked ? 1 : 0)\''),
-			'$collections' => array('collections', t('Collections Only'),(($pubforums == 2) ? true : false),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&type="+(this.checked ? 2 : 0)\''),
+//			'$collections' => array('collections', t('Collections Only'),(($pubforums == 2) ? true : false),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&type="+(this.checked ? 2 : 0)\''),
 			'$hide_local' => $hide_local,
 			'$globaldir' => array('globaldir', t('This Website Only'), 1-intval($globaldir),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&global="+(this.checked ? 0 : 1)\''),
 			'$activedir' => array('activedir', t('Recently Updated'), intval($activedir),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&active="+(this.checked ? 1 : 0)\''),
