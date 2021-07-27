@@ -150,12 +150,21 @@ class Queue {
 				dbesc($base)
 			);
 			if($y) {
-				if(intval($y[0]['site_dead'])) {
+				if(intval($y[0]['site_dead'])) {				
+					q("update dreport set dreport_result = '%s' where dreport_queue = '%s'",
+						dbesc('site dead'),
+						dbesc($outq['outq_hash'])
+					);
+
 					self::remove_by_posturl($outq['outq_posturl']);
 					logger('dead site ignored ' . $base);
 					return;
 				}
 				if($y[0]['site_update'] < datetime_convert('UTC','UTC','now - 1 month')) {
+					q("update dreport set dreport_log = '%s' where dreport_queue = '%s'",
+						dbesc('site deferred'),
+						dbesc($outq['outq_hash'])
+					);
 					self::update($outq['outq_hash'],10);
 					logger('immediate delivery deferred for site ' . $base);
 					return;
@@ -358,8 +367,16 @@ class Queue {
 				}
 			}
 			else {
-				logger('deliver: queue post returned ' . $result['return_code'] 
-					. ' from ' . $outq['outq_posturl'],LOGGER_DEBUG);
+				$dr = q("select * from dreport where dreport_queue = '%s'",
+					dbesc($outq['outq_hash'])
+				);
+				if ($dr) {
+					q("update dreport set dreport_log = '%s' where dreport_queue = '%s'",
+						dbesc($dr[0]['dreport_log'] . EOL . z_curl_error($result)),
+						dbesc($outq['outq_hash'])
+					);
+				}
+				logger('deliver: queue post returned ' . $result['return_code']	. ' from ' . $outq['outq_posturl'],LOGGER_DEBUG);
 					self::update($outq['outq_hash'],10);
 			}
 			return;
@@ -422,6 +439,16 @@ class Queue {
 				Libzot::process_response($outq['outq_posturl'],$result, $outq);
 			}
 			else {
+				$dr = q("select * from dreport where dreport_queue = '%s'",
+					dbesc($outq['outq_hash'])
+				);
+				if ($dr) {
+					q("update dreport set dreport_log = '%s' where dreport_queue = '%s'",
+						dbesc($dr[0]['dreport_log'] . EOL . z_curl_error($result)),
+						dbesc($outq['outq_hash'])
+					);
+				}
+					
 				logger('deliver: remote zot delivery failed to ' . $outq['outq_posturl']);
 				logger('deliver: remote zot delivery fail data: ' . print_r($result,true), LOGGER_DATA);
 				self::update($outq['outq_hash'],10);

@@ -466,6 +466,18 @@ function z_post_url($url, $params, $redirects = 0, $opts = []) {
 	return($ret);
 }
 
+function z_curl_error($ret) {
+	$output = EMPTY_STR;
+	if (isset($ret['debug'])) {
+		$output .= datetime_convert() . EOL;
+		$output .= t('url: ') . $ret['debug']['url'] . EOL;
+		$output .= t('error_code: ') . $ret['debug']['error_code'] . EOL;
+		$output .= t('error_string: ') . $ret['error'] . EOL;
+		$output .= t('content-type: ') . $ret['debug']['content_type'] . EOL;
+	}
+	return $output;
+}
+
 function json_return_and_die($x, $content_type = 'application/json', $debug = false) {
 	header("Content-type: $content_type");
 	if ($debug) {
