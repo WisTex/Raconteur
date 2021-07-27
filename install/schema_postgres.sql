@@ -398,6 +398,7 @@ CREATE TABLE IF NOT EXISTS "dreport" (
   "dreport_time" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "dreport_xchan" varchar(255) NOT NULL DEFAULT '',
   "dreport_queue" varchar(255) NOT NULL DEFAULT '',
+  "dreport_log" text NOT NULL,
   PRIMARY KEY ("dreport_id")
 );
 
