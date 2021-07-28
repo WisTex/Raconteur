@@ -97,7 +97,7 @@ class Poke extends Controller {
 				Libsync::build_sync_packet($uid, [  'item' => [ encode_item($sync_item[0],true) ] ] );
 			}
 			
-			info(sprintf( t('You %1$s %2$s'), $verbs[$verb][2]), $target['xchan_name']));  
+			info(sprintf( t('You %1$s %2$s'), $verbs[$verb][2], $target['xchan_name']));  
 		}
 
 		json_return_and_die([ 'success' => true ]);

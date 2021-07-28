@@ -51,9 +51,11 @@ class Dreport extends Controller {
 		}
 
 		if ($cmd === 'log') {
-			$r = q("select * from dreport where dreport_xchan = '%s' and dreport_mid = '%s'",
+			$host = escape_tags($_REQUEST['host']);
+			$r = q("select * from dreport where dreport_xchan = '%s' and dreport_mid = '%s' and dreport_recip = '%s'",
 				dbesc($channel['channel_hash']),
-				dbesc($message_id)
+				dbesc($message_id),
+				dbesc($host)
 			);
 			if ($r) {
 				$output = '<h3>' . t('Delivery Log') . '</h3>';
@@ -106,7 +108,7 @@ class Dreport extends Controller {
 					break;
 				case 'queued':
 					$r[$x]['gravity'] = 2;
-					$r[$x]['dreport_result'] = '<a href="' . z_root() . '/dreport/log/' . $mid . '" >' . t('queued') . '</a>';
+					$r[$x]['dreport_result'] = '<a href="' . z_root() . '/dreport/log/' . $mid . '?host=' . urlencode($r[$x]['dreport_recip']) . '" >' . t('queued') . '</a>';
 					break;
 				case 'site dead':
 					$r[$x]['gravity'] = 3;
