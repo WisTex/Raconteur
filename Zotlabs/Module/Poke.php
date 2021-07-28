@@ -76,7 +76,7 @@ class Poke extends Controller {
 		$arr['verb']          = 'Create';
 		$arr['item_private']  = 1;
 		$arr['obj_type']      = 'Note';
-		$arr['body']          = '[zrl=' . $channel['xchan_url'] . ']' . $channel['xchan_name'] . '[/zrl]' . ' ' . t($verbs[$verb][0]) . ' ' . '[zrl=' . $target['xchan_url'] . ']' . $target['xchan_name'] . '[/zrl]';
+		$arr['body']          = '[zrl=' . $channel['xchan_url'] . ']' . $channel['xchan_name'] . '[/zrl]' . ' ' . $verbs[$verb][2] . ' ' . '[zrl=' . $target['xchan_url'] . ']' . $target['xchan_name'] . '[/zrl]';
 	
 	
 		$arr['item_origin']   = 1;
@@ -97,7 +97,7 @@ class Poke extends Controller {
 				Libsync::build_sync_packet($uid, [  'item' => [ encode_item($sync_item[0],true) ] ] );
 			}
 			
-			info(sprintf( t('You %1$s %2$s'),t($verbs[$verb][0]), $target['xchan_name']));  
+			info(sprintf( t('You %1$s %2$s'), $verbs[$verb][2]), $target['xchan_name']));  
 		}
 
 		json_return_and_die([ 'success' => true ]);

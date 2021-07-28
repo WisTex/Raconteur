@@ -410,6 +410,7 @@ CREATE TABLE IF NOT EXISTS `dreport` (
   `dreport_time` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `dreport_xchan` char(191) NOT NULL DEFAULT '',
   `dreport_queue` char(191) NOT NULL DEFAULT '',
+  `dreport_log` text NOT NULL DEFAULT '',
   PRIMARY KEY (`dreport_id`),
   KEY `dreport_mid` (`dreport_mid`),
   KEY `dreport_site` (`dreport_site`),

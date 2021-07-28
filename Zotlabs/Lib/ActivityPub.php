@@ -234,14 +234,15 @@ class ActivityPub {
     	]);
 
 	    if ($message_id && (! get_config('system','disable_dreport'))) {
-    	    q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_result, dreport_time, dreport_xchan, dreport_queue ) values ( '%s','%s','%s','%s','%s','%s','%s' ) ",
+    	    q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_result, dreport_time, dreport_xchan, dreport_queue, dreport_log ) values ( '%s','%s','%s','%s','%s','%s','%s','%s' ) ",
         	    dbesc($message_id),
             	dbesc($dest_url),
 	            dbesc($dest_url),
     	        dbesc('queued'),
         	    dbesc(datetime_convert()),
             	dbesc($sender['channel_hash']),
-	            dbesc($hash)
+	            dbesc($hash),
+				dbesc(EMPTY_STR)
     	    );
     	}
 

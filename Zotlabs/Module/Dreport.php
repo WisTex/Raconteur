@@ -1,73 +1,76 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
+use Zotlabs\Daemon\Run;
 
-class Dreport extends \Zotlabs\Web\Controller {
+class Dreport extends Controller {
 
 	function get() {
 	
-		if(! local_channel()) {
+		if (! local_channel()) {
 			notice( t('Permission denied') . EOL);
 			return;
 		}
 	
 		$table = 'item';
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
+
+		if (argc() > 2) {
+			$cmd = argv(1);
+			$mid = argv(2);
+		}
+		elseif (argc() > 1) {
+			$cmd = EMPTY_STR;
+			$mid = argv(1);
+		}
+
+		if (strpos($mid,'b64.') === 0) {
+			$message_id = @base64url_decode(substr($mid,4));
+		}
+
+		if (! $message_id) {
+			notice( t('Invalid message') . EOL);
+			return;
+		}
 		
-		$mid = ((argc() > 1) ? argv(1) : '');
-
-		if(strpos($mid,'b64.') === 0)
-			$mid = @base64url_decode(substr($mid,4));
-
-
-		if($mid === 'push') {
-			$table = 'push';
-			$mid = ((argc() > 2) ? argv(2) : '');
-
-			if(strpos($mid,'b64.') === 0)
-				$mid = @base64url_decode(substr($mid,4));
-
-			if($mid) {	
-				$i = q("select id from item where mid = '%s' and uid = %d and ( author_xchan = '%s' or ( owner_xchan = '%s' and item_wall = 1 )) ",
-					dbesc($mid),
-					intval($channel['channel_id']),
-					dbesc($channel['channel_hash']),
-					dbesc($channel['channel_hash'])
-				);
-				if($i) {
-					\Zotlabs\Daemon\Run::Summon([ 'Notifier', 'edit_post', $i[0]['id'] ]);
-				}
+		if($cmd === 'push') {
+			$i = q("select id from item where mid = '%s' and uid = %d and ( author_xchan = '%s' or ( owner_xchan = '%s' and item_wall = 1 )) ",
+				dbesc($message_id),
+				intval($channel['channel_id']),
+				dbesc($channel['channel_hash']),
+				dbesc($channel['channel_hash'])
+			);
+			if ($i) {
+					Run::Summon([ 'Notifier', 'edit_post', $i[0]['id'] ]);
 			}
 			sleep(3);
 			goaway(z_root() . '/dreport/' . urlencode($mid));
 		}
 
-		if($mid === 'mail') {
-			$table = 'mail';
-			$mid = ((argc() > 2) ? argv(2) : '');
-			if(strpos($mid,'b64.') === 0)
-				$mid = @base64url_decode(substr($mid,4));
-
+		if ($cmd === 'log') {
+			$r = q("select * from dreport where dreport_xchan = '%s' and dreport_mid = '%s'",
+				dbesc($channel['channel_hash']),
+				dbesc($message_id)
+			);
+			if ($r) {
+				$output = '<h3>' . t('Delivery Log') . '</h3>';
+				$output .= EOL . $r[0]['dreport_log'];
+				return $output;
+			}
+			else {
+				notice( t('Item not found') . EOL);
+				return;
+			}
 		}
-	
-	
-		if(! $mid) {
-			notice( t('Invalid message') . EOL);
-			return;
-		}
-	
-		switch($table) {
+		
+		switch ($table) {
 			case 'item':
 				$i = q("select id from item where mid = '%s' and ( author_xchan = '%s' or ( owner_xchan = '%s' and item_wall = 1 )) ",
-					dbesc($mid),
+					dbesc($message_id),
 					dbesc($channel['channel_hash']),
-					dbesc($channel['channel_hash'])
-				);
-				break;
-			case 'mail':
-				$i = q("select id from mail where mid = '%s' and from_xchan = '%s'",
-					dbesc($mid),
 					dbesc($channel['channel_hash'])
 				);
 				break;
@@ -82,12 +85,11 @@ class Dreport extends \Zotlabs\Web\Controller {
 		
 		$r = q("select * from dreport where dreport_xchan = '%s' and dreport_mid = '%s'",
 			dbesc($channel['channel_hash']),
-			dbesc($mid)
+			dbesc($message_id)
 		);
 	
-		if(! $r) {
+		if (! $r) {
 			notice( t('no results') . EOL);
-//			return;
 		}
 		
 		for($x = 0; $x < count($r); $x++ ) {
@@ -104,7 +106,15 @@ class Dreport extends \Zotlabs\Web\Controller {
 					break;
 				case 'queued':
 					$r[$x]['gravity'] = 2;
-					$r[$x]['dreport_result'] = t('queued');
+					$r[$x]['dreport_result'] = '<a href="' . z_root() . '/dreport/log/' . $mid . '" >' . t('queued') . '</a>';
+					break;
+				case 'site dead':
+					$r[$x]['gravity'] = 3;
+					$r[$x]['dreport_result'] = t('site dead');
+					break;
+				case 'site deferred':
+					$r[$x]['gravity'] = 3;
+					$r[$x]['dreport_result'] = t('site might be dead - deferred');
 					break;
 				case 'posted':
 					$r[$x]['gravity'] = 3;
@@ -149,13 +159,13 @@ class Dreport extends \Zotlabs\Web\Controller {
 		foreach($r as $rr) {
 			$entries[] = [ 
 				'name' => escape_tags($rr['dreport_name'] ?: $rr['dreport_recip']),					
-				'result' => escape_tags($rr['dreport_result']),
+				'result' => $rr['dreport_result'],
 				'time' => escape_tags(datetime_convert('UTC',date_default_timezone_get(),$rr['dreport_time']))
 			];
 		}
 
-		$o = replace_macros(get_markup_template('dreport.tpl'), array(
-			'$title' => sprintf( t('Delivery report for %1$s'),basename($mid)) . '...',
+		$output = replace_macros(get_markup_template('dreport.tpl'), array(
+			'$title' => sprintf( t('Delivery report for %1$s'),basename($message_id)) . '...',
 			'$table' => $table,
 			'$mid' => urlencode($mid),
 			'$options' => t('Options'),
@@ -164,7 +174,7 @@ class Dreport extends \Zotlabs\Web\Controller {
 		));
 	
 	
-		return $o;
+		return $output;
 	
 	
 	

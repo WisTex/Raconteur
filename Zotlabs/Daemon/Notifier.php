@@ -750,8 +750,8 @@ class Notifier {
 
 			// only create delivery reports for normal undeleted items
 			if (is_array($target_item) && (! $target_item['item_deleted']) && (! get_config('system','disable_dreport'))) {
-				q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan, dreport_queue ) 
-					values ( '%s', '%s','%s','%s','%s','%s','%s','%s' ) ",
+				q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan, dreport_queue, dreport_log ) 
+					values ( '%s', '%s','%s','%s','%s','%s','%s','%s', '%s' ) ",
 					dbesc($target_item['mid']),
 					dbesc($hub['hubloc_host']),
 					dbesc($hub['hubloc_host']),
@@ -759,7 +759,8 @@ class Notifier {
 					dbesc('queued'),
 					dbesc(datetime_convert()),
 					dbesc(self::$channel['channel_hash']),
-					dbesc($hash)
+					dbesc($hash),
+					dbesc(EMPTY_STR)
 				);
 			}
 
@@ -781,8 +782,8 @@ class Notifier {
 		if ($dead) {
 			foreach ($dead as $deceased) {
 				if (is_array($target_item) && (! $target_item['item_deleted']) && (! get_config('system','disable_dreport'))) {
-					q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan, dreport_queue ) 
-						values ( '%s', '%s','%s','%s','%s','%s','%s','%s' ) ",
+					q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan, dreport_queue, dreport_log ) 
+						values ( '%s', '%s','%s','%s','%s','%s','%s','%s','%s' ) ",
 						dbesc($target_item['mid']),
 						dbesc($deceased['hubloc_host']),
 						dbesc($deceased['hubloc_host']),
@@ -790,7 +791,8 @@ class Notifier {
 						dbesc('undeliverable/unresponsive site'),
 						dbesc(datetime_convert()),
 						dbesc(self::$channel['channel_hash']),
-						dbesc(new_uuid())
+						dbesc(new_uuid()),
+						dbesc(EMPTY_STR)
 					);
 				}
 			}
