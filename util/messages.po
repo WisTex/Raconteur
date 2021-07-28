@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 21.07.27\n"
+"Project-Id-Version: 21.07.28\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-26 15:40-0700\n"
+"POT-Creation-Date: 2021-07-28 02:29-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1829,12 +1829,12 @@ msgid "Failed to remove event"
 msgstr ""
 
 #: Zotlabs/Module/Stream.php:126 Zotlabs/Widget/Activity_filter.php:131
-#: include/network.php:1591
+#: include/network.php:1603
 msgid "Nomad"
 msgstr ""
 
 #: Zotlabs/Module/Stream.php:130 Zotlabs/Widget/Activity_filter.php:134
-#: include/network.php:1587
+#: include/network.php:1599
 msgid "ActivityPub"
 msgstr ""
 
@@ -2345,7 +2345,7 @@ msgstr ""
 
 #: Zotlabs/Module/Admin/Accounts.php:171 Zotlabs/Module/Admin/Accounts.php:183
 #: Zotlabs/Module/Cdav.php:1353 Zotlabs/Module/Connedit.php:856
-#: Zotlabs/Module/Profiles.php:788 include/network.php:1588
+#: Zotlabs/Module/Profiles.php:788 include/network.php:1600
 msgid "Email"
 msgstr ""
 
@@ -4833,7 +4833,7 @@ msgstr ""
 #: Zotlabs/Module/Editlayout.php:83 Zotlabs/Module/Editwebpage.php:84
 #: Zotlabs/Module/Card_edit.php:19 Zotlabs/Module/Card_edit.php:35
 #: Zotlabs/Module/Editblock.php:83 Zotlabs/Module/Editblock.php:99
-#: Zotlabs/Module/Editpost.php:27
+#: Zotlabs/Module/Dreport.php:66 Zotlabs/Module/Editpost.php:27
 msgid "Item not found"
 msgstr ""
 
@@ -4852,8 +4852,8 @@ msgstr ""
 
 #: Zotlabs/Module/Like.php:109 Zotlabs/Module/Lists.php:166
 #: Zotlabs/Module/Lists.php:194 Zotlabs/Module/Import_items.php:123
-#: Zotlabs/Module/Cloud.php:127 Zotlabs/Module/Dreport.php:10
-#: Zotlabs/Module/Dreport.php:79 Zotlabs/Module/Share.php:70
+#: Zotlabs/Module/Cloud.php:127 Zotlabs/Module/Dreport.php:13
+#: Zotlabs/Module/Dreport.php:84 Zotlabs/Module/Share.php:70
 #: Zotlabs/Module/Profperm.php:32 Zotlabs/Module/Subthread.php:92
 #: Zotlabs/Web/WebServer.php:70 include/items.php:460
 msgid "Permission denied"
@@ -6242,68 +6242,80 @@ msgstr ""
 msgid "Edit Block"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:56
+#: Zotlabs/Module/Dreport.php:35
 msgid "Invalid message"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:89
+#: Zotlabs/Module/Dreport.php:61
+msgid "Delivery Log"
+msgstr ""
+
+#: Zotlabs/Module/Dreport.php:94
 msgid "no results"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:103
+#: Zotlabs/Module/Dreport.php:107
 msgid "channel sync processed"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:107
+#: Zotlabs/Module/Dreport.php:111
 msgid "queued"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:111
-msgid "posted"
-msgstr ""
-
 #: Zotlabs/Module/Dreport.php:115
-msgid "accepted for delivery"
+msgid "site dead"
 msgstr ""
 
 #: Zotlabs/Module/Dreport.php:119
+msgid "site might be dead - deferred"
+msgstr ""
+
+#: Zotlabs/Module/Dreport.php:123
+msgid "posted"
+msgstr ""
+
+#: Zotlabs/Module/Dreport.php:127
+msgid "accepted for delivery"
+msgstr ""
+
+#: Zotlabs/Module/Dreport.php:131
 msgid "updated"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:122
+#: Zotlabs/Module/Dreport.php:134
 msgid "update ignored"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:125
+#: Zotlabs/Module/Dreport.php:137
 msgid "permission denied"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:129
+#: Zotlabs/Module/Dreport.php:141
 msgid "recipient not found"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:132
+#: Zotlabs/Module/Dreport.php:144
 msgid "mail recalled"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:135
+#: Zotlabs/Module/Dreport.php:147
 msgid "duplicate mail received"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:138
+#: Zotlabs/Module/Dreport.php:150
 msgid "mail delivered"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:158
+#: Zotlabs/Module/Dreport.php:170
 #, php-format
 msgid "Delivery report for %1$s"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:161
+#: Zotlabs/Module/Dreport.php:173
 msgid "Options"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:162
+#: Zotlabs/Module/Dreport.php:174
 msgid "Redeliver"
 msgstr ""
 
@@ -11416,43 +11428,59 @@ msgstr ""
 msgid "Unable to retrieve modified identity"
 msgstr ""
 
-#: include/network.php:1582 include/network.php:1583
+#: include/network.php:473
+msgid "url: "
+msgstr ""
+
+#: include/network.php:474
+msgid "error_code: "
+msgstr ""
+
+#: include/network.php:475
+msgid "error_string: "
+msgstr ""
+
+#: include/network.php:476
+msgid "content-type: "
+msgstr ""
+
+#: include/network.php:1594 include/network.php:1595
 msgid "Friendica"
 msgstr ""
 
-#: include/network.php:1584
+#: include/network.php:1596
 msgid "OStatus"
 msgstr ""
 
-#: include/network.php:1585
+#: include/network.php:1597
 msgid "GNU-Social"
 msgstr ""
 
-#: include/network.php:1586
+#: include/network.php:1598
 msgid "RSS/Atom"
 msgstr ""
 
-#: include/network.php:1589
+#: include/network.php:1601
 msgid "Diaspora"
 msgstr ""
 
-#: include/network.php:1590
+#: include/network.php:1602
 msgid "Facebook"
 msgstr ""
 
-#: include/network.php:1592
+#: include/network.php:1604
 msgid "Zot"
 msgstr ""
 
-#: include/network.php:1593
+#: include/network.php:1605
 msgid "LinkedIn"
 msgstr ""
 
-#: include/network.php:1594
+#: include/network.php:1606
 msgid "XMPP/IM"
 msgstr ""
 
-#: include/network.php:1595
+#: include/network.php:1607
 msgid "MySpace"
 msgstr ""
 
