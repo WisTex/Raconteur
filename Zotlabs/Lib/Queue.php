@@ -142,15 +142,16 @@ class Queue {
 
 		$base = null;
 		$h = parse_url($outq['outq_posturl']);
-		if($h !== false) 
+		if ($h !== false)  {
 			$base = $h['scheme'] . '://' . $h['host'] . ((isset($h['port']) && intval($h['port'])) ? ':' . $h['port'] : '');
-
-		if(($base) && ($base !== z_root()) && ($immediate)) {
+		}
+		
+		if (($base) && ($base !== z_root()) && ($immediate)) {
 			$y = q("select site_update, site_dead from site where site_url = '%s' ",
 				dbesc($base)
 			);
-			if($y) {
-				if(intval($y[0]['site_dead'])) {				
+			if ($y) {
+				if (intval($y[0]['site_dead'])) {				
 					q("update dreport set dreport_result = '%s' where dreport_queue = '%s'",
 						dbesc('site dead'),
 						dbesc($outq['outq_hash'])
@@ -160,7 +161,7 @@ class Queue {
 					logger('dead site ignored ' . $base);
 					return;
 				}
-				if($y[0]['site_update'] < datetime_convert('UTC','UTC','now - 1 month')) {
+				if ($y[0]['site_update'] < datetime_convert('UTC','UTC','now - 1 month')) {
 					q("update dreport set dreport_log = '%s' where dreport_queue = '%s'",
 						dbesc('site deferred'),
 						dbesc($outq['outq_hash'])
@@ -371,9 +372,10 @@ class Queue {
 					dbesc($outq['outq_hash'])
 				);
 				if ($dr) {
-					q("update dreport set dreport_log = '%s' where dreport_queue = '%s'",
-						dbesc($dr[0]['dreport_log'] . EOL . z_curl_error($result)),
-						dbesc($outq['outq_hash'])
+					// update every queue entry going to this site with the most recent communication error
+					q("update dreport set dreport_log = '%s' where dreport_site = '%s'",
+						dbesc(z_curl_error($result)),
+						dbesc($dr[0]['dreport_site'])
 					);
 				}
 				logger('deliver: queue post returned ' . $result['return_code']	. ' from ' . $outq['outq_posturl'],LOGGER_DEBUG);
@@ -442,12 +444,12 @@ class Queue {
 				$dr = q("select * from dreport where dreport_queue = '%s'",
 					dbesc($outq['outq_hash'])
 				);
-				if ($dr) {
-					q("update dreport set dreport_log = '%s' where dreport_queue = '%s'",
-						dbesc($dr[0]['dreport_log'] . EOL . z_curl_error($result)),
-						dbesc($outq['outq_hash'])
-					);
-				}
+
+				// update every queue entry going to this site with the most recent communication error
+				q("update dreport set dreport_log = '%s' where dreport_site = '%s'",
+					dbesc(z_curl_error($result)),
+					dbesc($dr[0]['dreport_site'])
+				);
 					
 				logger('deliver: remote zot delivery failed to ' . $outq['outq_posturl']);
 				logger('deliver: remote zot delivery fail data: ' . print_r($result,true), LOGGER_DATA);
