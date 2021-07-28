@@ -150,6 +150,9 @@ class Dreport extends Controller {
 					$r[$x]['dreport_result'] = t('mail delivered');
 					break;
 				default:
+					if (strpos($r[$x]['dreport_result'],'delivery rejected') === 0) {
+						$r[$x]['dreport_result'] = t('delivery rejected') . ' ' . substr($r[$x]['dreport_result'],17);
+					}
 					$r[$x]['gravity'] = 1;
 					break;
 			}

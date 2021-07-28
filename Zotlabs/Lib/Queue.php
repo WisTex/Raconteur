@@ -368,15 +368,24 @@ class Queue {
 				}
 			}
 			else {
-				$dr = q("select * from dreport where dreport_queue = '%s'",
-					dbesc($outq['outq_hash'])
-				);
-				if ($dr) {
-					// update every queue entry going to this site with the most recent communication error
-					q("update dreport set dreport_log = '%s' where dreport_site = '%s'",
-						dbesc(z_curl_error($result)),
-						dbesc($dr[0]['dreport_site'])
+				if ($result['return_code'] >= 300) {
+					q("update dreport set dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
+						dbesc('delivery rejected' . ' ' . $result['return_code']),
+						dbesc(datetime_convert()),
+						dbesc($outq['outq_hash'])
 					);
+				}
+				else {
+					$dr = q("select * from dreport where dreport_queue = '%s'",
+						dbesc($outq['outq_hash'])
+					);
+					if ($dr) {
+						// update every queue entry going to this site with the most recent communication error
+						q("update dreport set dreport_log = '%s' where dreport_site = '%s'",
+							dbesc(z_curl_error($result)),
+							dbesc($dr[0]['dreport_site'])
+						);
+					}
 				}
 				logger('deliver: queue post returned ' . $result['return_code']	. ' from ' . $outq['outq_posturl'],LOGGER_DEBUG);
 					self::update($outq['outq_hash'],10);
