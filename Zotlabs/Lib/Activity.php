@@ -2206,6 +2206,9 @@ class Activity {
 			set_xconfig($url,'system','protocols','zot6,activitypub');
 		}
 
+		// there is no standard way to represent an 'instance actor' but this will at least subdue the multiple pages of Mastodon and Pleroma instance actors in the directory.
+		$censored = ((strpos($profile,'instance_actor') || strpos($profile,'/internal/fetch')) ? 1 : 0);
+
 		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 			dbesc($url)
 		);
@@ -2228,7 +2231,8 @@ class Activity {
 					'xchan_photo_l'        => z_root() . '/' . get_default_profile_photo(),
 					'xchan_photo_m'        => z_root() . '/' . get_default_profile_photo(80),
 					'xchan_photo_s'        => z_root() . '/' . get_default_profile_photo(48),
-					'xchan_photo_mimetype' => 'image/png',					
+					'xchan_photo_mimetype' => 'image/png',
+					'xchan_censored'       => $censored
 
 				]
 			);
@@ -2243,7 +2247,7 @@ class Activity {
 			}
 
 			// update existing record
-			$u = q("update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s', xchan_hidden = %d, xchan_type = %d where xchan_hash = '%s'",
+			$u = q("update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s', xchan_hidden = %d, xchan_type = %d, xchan_censored = %d where xchan_hash = '%s'",
 				dbesc(datetime_convert()),
 				dbesc($name),
 				dbesc($pubkey),
@@ -2251,6 +2255,7 @@ class Activity {
 				dbesc(datetime_convert()),
 				intval($hidden),
 				intval($xchan_type),
+				intval($censored),
 				dbesc($url)
 			);
 
