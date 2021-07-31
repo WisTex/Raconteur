@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 21.07.28\n"
+"Project-Id-Version: 21.07.31\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-28 02:29-0700\n"
+"POT-Creation-Date: 2021-07-31 04:12-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -346,8 +346,8 @@ msgstr ""
 msgid "School/education:"
 msgstr ""
 
-#: Zotlabs/Lib/Libprofile.php:578 Zotlabs/Lib/Activity.php:2714
-#: Zotlabs/Lib/Activity.php:2717 Zotlabs/Lib/Apps.php:364
+#: Zotlabs/Lib/Libprofile.php:578 Zotlabs/Lib/Activity.php:2719
+#: Zotlabs/Lib/Activity.php:2722 Zotlabs/Lib/Apps.php:364
 #: Zotlabs/Module/Profperm.php:117
 msgid "Profile"
 msgstr ""
@@ -435,57 +435,6 @@ msgstr ""
 msgid "Room is full"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2070 Zotlabs/Lib/Apps.php:1079
-#: Zotlabs/Lib/Apps.php:1168 Zotlabs/Module/Cdav.php:853
-#: Zotlabs/Module/Cdav.php:854 Zotlabs/Module/Cdav.php:861
-#: Zotlabs/Module/Embedphotos.php:216 Zotlabs/Module/Photos.php:841
-#: Zotlabs/Module/Photos.php:1311 Zotlabs/Storage/Browser.php:179
-#: Zotlabs/Widget/Portfolio.php:95 Zotlabs/Widget/Album.php:88
-#: include/conversation.php:1083
-msgid "Unknown"
-msgstr ""
-
-#: Zotlabs/Lib/Activity.php:2714
-#, php-format
-msgid "Likes %1$s's %2$s"
-msgstr ""
-
-#: Zotlabs/Lib/Activity.php:2717
-#, php-format
-msgid "Doesn't like %1$s's %2$s"
-msgstr ""
-
-#: Zotlabs/Lib/Activity.php:2723
-#, php-format
-msgid "Will attend %s's event"
-msgstr ""
-
-#: Zotlabs/Lib/Activity.php:2726
-#, php-format
-msgid "Will not attend %s's event"
-msgstr ""
-
-#: Zotlabs/Lib/Activity.php:2729
-#, php-format
-msgid "May attend %s's event"
-msgstr ""
-
-#: Zotlabs/Lib/Activity.php:2732
-#, php-format
-msgid "May not attend %s's event"
-msgstr ""
-
-#: Zotlabs/Lib/Activity.php:2737 Zotlabs/Lib/Share.php:122
-#: Zotlabs/Module/Share.php:103 include/items.php:3260
-#, php-format
-msgid "&#x1f501; Repeated %1$s's %2$s"
-msgstr ""
-
-#: Zotlabs/Lib/Activity.php:3200 include/text.php:1588 include/text.php:2972
-#, php-format
-msgid "%1$s (%2$s)"
-msgstr ""
-
 #: Zotlabs/Lib/PermissionDescription.php:34 include/acl_selectors.php:34
 msgid "Visible to your default audience"
 msgstr ""
@@ -545,6 +494,12 @@ msgstr ""
 
 #: Zotlabs/Lib/PermissionDescription.php:154
 msgid "This is your default setting for the audience of your webpages"
+msgstr ""
+
+#: Zotlabs/Lib/Share.php:122 Zotlabs/Lib/Activity.php:2742
+#: Zotlabs/Module/Share.php:103 include/items.php:3260
+#, php-format
+msgid "&#x1f501; Repeated %1$s's %2$s"
 msgstr ""
 
 #: Zotlabs/Lib/Enotify.php:66
@@ -860,6 +815,51 @@ msgstr ""
 
 #: Zotlabs/Lib/Libzot.php:745
 msgid "Unable to verify channel signature"
+msgstr ""
+
+#: Zotlabs/Lib/Activity.php:2070 Zotlabs/Lib/Apps.php:1079
+#: Zotlabs/Lib/Apps.php:1168 Zotlabs/Module/Cdav.php:853
+#: Zotlabs/Module/Cdav.php:854 Zotlabs/Module/Cdav.php:861
+#: Zotlabs/Module/Embedphotos.php:216 Zotlabs/Module/Photos.php:841
+#: Zotlabs/Module/Photos.php:1311 Zotlabs/Storage/Browser.php:179
+#: Zotlabs/Widget/Portfolio.php:95 Zotlabs/Widget/Album.php:88
+#: include/conversation.php:1083
+msgid "Unknown"
+msgstr ""
+
+#: Zotlabs/Lib/Activity.php:2719
+#, php-format
+msgid "Likes %1$s's %2$s"
+msgstr ""
+
+#: Zotlabs/Lib/Activity.php:2722
+#, php-format
+msgid "Doesn't like %1$s's %2$s"
+msgstr ""
+
+#: Zotlabs/Lib/Activity.php:2728
+#, php-format
+msgid "Will attend %s's event"
+msgstr ""
+
+#: Zotlabs/Lib/Activity.php:2731
+#, php-format
+msgid "Will not attend %s's event"
+msgstr ""
+
+#: Zotlabs/Lib/Activity.php:2734
+#, php-format
+msgid "May attend %s's event"
+msgstr ""
+
+#: Zotlabs/Lib/Activity.php:2737
+#, php-format
+msgid "May not attend %s's event"
+msgstr ""
+
+#: Zotlabs/Lib/Activity.php:3205 include/text.php:1588 include/text.php:2972
+#, php-format
+msgid "%1$s (%2$s)"
 msgstr ""
 
 #: Zotlabs/Lib/AccessList.php:28
@@ -3368,7 +3368,8 @@ msgstr ""
 msgid "Available Apps"
 msgstr ""
 
-#: Zotlabs/Module/Apps.php:50
+#: Zotlabs/Module/Apps.php:50 Zotlabs/Widget/Appstore.php:13
+#: include/nav.php:313
 msgid "Installed Apps"
 msgstr ""
 
@@ -6306,16 +6307,20 @@ msgstr ""
 msgid "mail delivered"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:170
+#: Zotlabs/Module/Dreport.php:154
+msgid "delivery rejected"
+msgstr ""
+
+#: Zotlabs/Module/Dreport.php:173
 #, php-format
 msgid "Delivery report for %1$s"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:173
+#: Zotlabs/Module/Dreport.php:176
 msgid "Options"
 msgstr ""
 
-#: Zotlabs/Module/Dreport.php:174
+#: Zotlabs/Module/Dreport.php:177
 msgid "Redeliver"
 msgstr ""
 
@@ -9305,10 +9310,6 @@ msgstr ""
 msgid "App Collections"
 msgstr ""
 
-#: Zotlabs/Widget/Appstore.php:13
-msgid "Installed apps"
-msgstr ""
-
 #: Zotlabs/Widget/Archive.php:43
 msgid "Archives"
 msgstr ""
@@ -10641,10 +10642,6 @@ msgstr ""
 
 #: include/nav.php:307
 msgid "Please wait..."
-msgstr ""
-
-#: include/nav.php:313
-msgid "My Apps"
 msgstr ""
 
 #: include/nav.php:315
