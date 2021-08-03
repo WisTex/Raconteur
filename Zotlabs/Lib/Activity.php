@@ -80,22 +80,23 @@ class Activity {
 			$channel = get_sys_channel();
 		}
 
-		$idn = parse_url($url);
-		if ($idn['host'] !== punify($idn['host'])) {
-			$url = str_replace($idn['host'],punify($idn['host']),$url);
+		$parsed = parse_url($url);
+
+		// perform IDN substitution
+		
+		if ($parsed['host'] !== punify($parsed['host'])) {
+			$url = str_replace($parsed['host'],punify($parsed['host']),$url);
 		}
 
 		logger('fetch: ' . $url, LOGGER_DEBUG);
 
-		if (strpos($url,'x-zot:') === 0) {
+		if (isset($parsed['scheme']) && $parsed['scheme'] === 'x-zot') {
 			$x = ZotURL::fetch($url,$channel,$hub);
 		}
 		else {
-			$m = parse_url($url);
-
 			// handle bearcaps
-			if ($m['scheme'] === 'bear' && $m['query']) {
-				$params = explode('&',$m['query']);
+			if (isset($parsed['scheme']) && isset($parsed['query']) && $parsed['scheme'] === 'bear' && $parsed['query'] !== EMPTY_STR) {
+				$params = explode('&', $parsed['query']);
 				if ($params) {
 					foreach ($params as $p) {
 						if (substr($p,0,2) === 'u=') {
@@ -105,18 +106,26 @@ class Activity {
 							$token = substr($p,2);
 						}
 					}
-					// re-parse the URL because it changed and we need the host in the next section
-					$m = parse_url($url);
+					// the entire URL just changed so parse it again
+					$parsed = parse_url($url);
 				}
-
 			}
+			
+			// Ignore fragments; as we are not in a browser and some platforms (e.g. Django or at least funkwhale) don't handle them well
+			unset($parsed['fragment']);
+
+			// rebuild the url
+			$url = unparse_url($parsed);
+
+			logger('fetch_actual: ' . $url, LOGGER_DEBUG);
 
 			$headers = [
 				'Accept'           => 'application/activity+json, application/x-zot-activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
-				'Host'             => $m['host'],
+				'Host'             => $parsed['host'],
 				'Date'             => datetime_convert('UTC','UTC', 'now', 'D, d M Y H:i:s \\G\\M\\T'),
 				'(request-target)' => 'get ' . get_request_string($url)
 			];
+			
 			if (isset($token)) {
 				$headers['Authorization'] = 'Bearer ' . $token;
 			}
@@ -129,15 +138,12 @@ class Activity {
 			$y = json_decode($x['body'],true);
 			logger('returned: ' . json_encode($y,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
 
-			$m = parse_url($url);
-			if ($m) {
-				$site_url = unparse_url( ['scheme' => $m['scheme'], 'host' => $m['host'], 'port' => ((array_key_exists('port',$m) && intval($m['port'])) ? $m['port'] : 0) ] );
-				q("update site set site_update = '%s' where site_url = '%s' and site_update < %s - INTERVAL %s",
-					dbesc(datetime_convert()),
-					dbesc($site_url),
-					db_utcnow(), db_quoteinterval('1 DAY')
-				);
-			}
+			$site_url = unparse_url( ['scheme' => $parsed['scheme'], 'host' => $parsed['host'], 'port' => ((array_key_exists('port',$parsed) && intval($parsed['port'])) ? $parsed['port'] : 0) ] );
+			q("update site set site_update = '%s' where site_url = '%s' and site_update < %s - INTERVAL %s",
+				dbesc(datetime_convert()),
+				dbesc($site_url),
+				db_utcnow(), db_quoteinterval('1 DAY')
+			);
 
 			// check for a valid signature, but only if this is not an actor object. If it is signed, it must be valid.
 			// Ignore actors because of the potential for infinite recursion if we perform this step while
@@ -153,8 +159,6 @@ class Activity {
 			}
 
 			return json_decode($x['body'], true);
-
-
 		}
 		else {
 			logger('fetch failed: ' . $url);

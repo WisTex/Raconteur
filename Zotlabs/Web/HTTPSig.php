@@ -285,24 +285,28 @@ class HTTPSig {
 
 	static function get_activitystreams_key($id,$force = false) {
 
-		// remove fragment
+		// Check the local cache first, but remove any fragments like #main-key since these won't be present in our cached data
 
-		$url = ((strpos($id,'#')) ? substr($id,0,strpos($id,'#')) : $id);
+		$cache_url = ((strpos($id,'#')) ? substr($id,0,strpos($id,'#')) : $id);
 
+		// $force is used to ignore the local cache and only use the remote data; for instance the cached key might be stale
+		
 		if (! $force) {
 			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' order by hubloc_id desc",
-				dbesc(str_replace('acct:','',$url)),
-				dbesc($url)
+				dbesc(str_replace('acct:','',$cache_url)),
+				dbesc($cache_url)
 			);
+
+			if ($x) {
+				$best = Libzot::zot_record_preferred($x);
+			}
+
+			if ($best && $best['xchan_pubkey']) {
+				return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'hubloc' => $best ];
+			}
 		}
 
-		if ($x) {
-			$best = Libzot::zot_record_preferred($x);
-		}
-
-		if ($best && $best['xchan_pubkey']) {
-			return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'hubloc' => $best ];
-		}
+		// The record wasn't in cache. Fetch it now. 
 
 		$r = Activity::fetch($id);
 
@@ -314,6 +318,9 @@ class HTTPSig {
 				}
 			}
 		}
+
+		// No key was found
+		
 		return false;
 	}
 
@@ -325,14 +332,14 @@ class HTTPSig {
 				dbesc(str_replace('acct:','',$id)),
 				dbesc($id)
 			);
-		}
 
-		if ($x) {
-			$best = Libzot::zot_record_preferred($x);
-		}
+			if ($x) {
+				$best = Libzot::zot_record_preferred($x);
+			}
 
-		if ($best && $best['xchan_pubkey']) {
-			return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'hubloc' => $best ];
+			if ($best && $best['xchan_pubkey']) {
+				return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'hubloc' => $best ];
+			}
 		}
 
 		$wf = Webfinger::exec($id);
@@ -365,16 +372,15 @@ class HTTPSig {
 				dbesc(str_replace('acct:','',$id)),
 				dbesc($id)
 			);
-		}
 
-		if ($x) {
-			$best = Libzot::zot_record_preferred($x);
-		}
+			if ($x) {
+				$best = Libzot::zot_record_preferred($x);
+			}
 
-		if ($best && $best['xchan_pubkey']) {
-			return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'hubloc' => $best ];
+			if ($best && $best['xchan_pubkey']) {
+				return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'hubloc' => $best ];
+			}
 		}
-
 
 		$wf = Webfinger::exec($id);
 		$key = [ 'portable_id' => '', 'public_key' => '', 'hubloc' => [] ];
