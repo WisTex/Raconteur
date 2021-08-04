@@ -1,14 +1,14 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 import sys, os
-import ConfigParser
+import configparser
 import requests
 from requests.auth import HTTPBasicAuth
 import  easywebdav
 import easywebdav.__version__ as easywebdavversion
 import base64
 
-__version__= "0.0.2"
+__version__= "0.0.3"
 
 SERVER = None
 USER = None
@@ -189,9 +189,9 @@ class ZotSH(object):
                 return name
         
         if show_hidden :
-            print _fmt('d', 0, "./")
+            print( _fmt('d', 0, "./"))
             if self.davclient.cwd!="/":
-                print _fmt('d', 0, "../")
+                print( _fmt('d', 0, "../"))
                 
         for f in r:
             name = f.name.replace("/dav"+self.davclient.cwd,"")
@@ -201,7 +201,7 @@ class ZotSH(object):
             if name!="":
                 if show_hidden  or not name.startswith("."):
                     if not show_only_dir or  type=="d":
-                        print _fmt(type, f.size , name)
+                        print( _fmt(type, f.size , name))
 
     def cmd_lpwd(self, *args):
         return os.getcwd()
@@ -215,24 +215,24 @@ class ZotSH(object):
         for f in os.listdir(os.getcwd()):
             if os.path.isdir(f):
                 f=f+"/"
-            print f
+            print( f)
             
     def cmd_help(self, *args):
-        print "ZotSH",__version__
-        print 
-        print "Commands:"
+        print("ZotSH",__version__)
+        print() 
+        print("Commands:")
         for c in self.commands:
-            print "\t",c
-        print
-        print "easywebdav", easywebdavversion.__version__, "(mod)"
-        print "requests", requests.__version__
+            print("\t",c)
+        print()
+        print("easywebdav", easywebdavversion.__version__, "(mod)")
+        print("requests", requests.__version__)
 
     def cmd_cat(self,*args):
         if (len(args)==0):
             return        
         rfile = args[0]
         resp = self.davclient._send('GET', rfile, (200,))
-        print resp.text
+        print(resp.text)
 
 def load_conf():
     global SERVER,USER,PASSWD,VERIFY_SSL
@@ -245,14 +245,14 @@ def load_conf():
         optsfile = os.path.join(homedir, ".zotshrc")
     
     if not os.path.isfile(optsfile):
-        print "Please create a configuration file called '.zotshrc':"
-        print "[zotsh]"
-        print "host = https://yourhost.com/"
-        print "username = your_username"
-        print "password = your_password"
+        print("Please create a configuration file called '.zotshrc':")
+        print("[zotsh]")
+        print("host = https://yourhost.com/")
+        print("username = your_username")
+        print("password = your_password")
         sys.exit(-1)
     
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     config.read(optsfile)
     SERVER = config.get('zotsh', 'host')
     USER = config.get('zotsh', 'username')
@@ -268,37 +268,37 @@ def zotsh():
     session_home = zotsh.get_host_session()
 
     #~ #login on home server
-    print "logging in..."
+    print("logging in...")
     r = session_home.get( 
         SERVER + "/api/z/1.0/verify",  
         auth=HTTPBasicAuth(USER, PASSWD), 
         verify=VERIFY_SSL    )
 
-    print "Hi - ", r.json()['channel_name']
+    print("Hi - ", r.json()['channel_name'])
 
     zotsh.session = session_home
 
     # command loop
-    input = raw_input(zotsh.PS1)
-    while (input != "quit"):
-        input = input.strip()
-        if len(input)>0:
-            toks = [ x.strip() for x in input.split(" ") ]
+    input_str = input(zotsh.PS1)
+    while (input_str != "quit"):
+        input_str = input_str.strip()
+        if len(input_str)>0:
+            toks = [ x.strip() for x in input_str.split(" ") ]
             
             command = toks[0]
             args = toks[1:]
             try:
                 ret = zotsh.do(command, *args)
-            except easywebdav.client.OperationFailed, e:
-                print e
-            except CommandNotFound, e:
-                print e
+            except easywebdav.client.OperationFailed as e:
+                print(e)
+            except CommandNotFound as e:
+                print(e)
             else:
                 if ret is not None:
-                    print ret
+                    print(ret)
         
 
-        input = raw_input(zotsh.PS1)
+        input_str = input(zotsh.PS1)
 
 
     
