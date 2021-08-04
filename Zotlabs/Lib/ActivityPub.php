@@ -51,7 +51,7 @@ class ActivityPub {
 		if ($purge_all) {
 
 			$ti = [
-				'id' => channel_url($arr['channel']) . '#delete',
+				'id' => channel_url($arr['channel']) . '?operation=delete',
 				'actor' => channel_url($arr['channel']),
 				'type' => 'Delete',
 				'object' => channel_url($arr['channel']),
@@ -416,7 +416,7 @@ class ActivityPub {
 				Activity::ap_schema()
 			]], 
 			[
-				'id'    => z_root() . '/follow/' . $recip[0]['abook_id'] . '/' . md5($orig_activity) . '#reject',
+				'id'    => z_root() . '/follow/' . $recip[0]['abook_id'] . '/' . md5($orig_activity) . '?operation=reject',
 				'type'  => 'Reject',
 				'actor' => $p,
 				'object'     => [
@@ -440,7 +440,7 @@ class ActivityPub {
 				Activity::ap_schema()
 			]], 
 			[
-				'id'    => z_root() . '/follow/' . $recip[0]['abook_id'] . (($orig_activity) ? '/' . md5($orig_activity) : EMPTY_STR) . '#Undo',
+				'id'    => z_root() . '/follow/' . $recip[0]['abook_id'] . (($orig_activity) ? '/' . md5($orig_activity) : EMPTY_STR) . '?operation=unfollow',
 				'type'  => 'Undo',
 				'actor' => $p,
 				'object'     => [

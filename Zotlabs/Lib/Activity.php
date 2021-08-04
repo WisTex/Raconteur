@@ -1622,7 +1622,7 @@ class Activity {
 				
 				$ret['discoverable'] = ((1 - intval($p['xchan_hidden'])) ? true : false);				
 				$ret['publicKey'] = [
-					'id'           => $p['xchan_url'],
+					'id'           => $p['xchan_url'] . '?operation=getkey',
 					'owner'        => $p['xchan_url'],
 					'publicKeyPem' => $p['xchan_pubkey']
 				];
