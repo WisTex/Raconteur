@@ -146,7 +146,7 @@ class ZotSH(object):
         newhostname = args[0]
         newhost = "https://%s/" % newhostname
         if newhostname == "~" or newhost == SERVER:
-            # bach to home server
+            # back to home server
             self.host = SERVER
             self.session = self.get_host_session(SERVER)
             return
@@ -277,6 +277,14 @@ def zotsh():
     print("Hi - ", r.json()['channel_name'])
 
     zotsh.session = session_home
+
+    # since the site directory may be empty, automatically cd to
+    # your own cloud storage folder
+    
+    try:
+        zotsh.do('cd', *[USER])        
+    except easywebdav.client.OperationFailed as e:
+        print(e)
 
     # command loop
     input_str = input(zotsh.PS1)
