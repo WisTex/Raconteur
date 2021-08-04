@@ -1,4 +1,4 @@
-ZotSH - v.0.0.2
+ZotSH - v.0.0.3
 
 Client for browsing RedDAVs.
 
@@ -8,9 +8,7 @@ Install
 ZotSH requires 'requests'(1).
 Please refer to requests docs on how to install it (2)
 
-The initially connected server must have the twitter_api plugin installed
-
-Extract somewere and launch zotsh.py
+Extract somewhere and launch zotsh.py
 
 
 Description
@@ -22,9 +20,15 @@ Have just looked at this after several years of bitrot and made some updates.
 it functions for cli DAV access on your assigned hub, but magic-auth to dav repos on other hubs
 (e.g. the host command) needs to be updated to work with openwebauth.
 
+The ability to browse remote WebDAV repositories outside your own server is not as useful as it was once was; as the top level WebDAV folder on each site might have been hidden by the administrator for security/privacy reasons. On these sites the root directory will be empty. You can only proceed by
+
+cd username
+
+if you know a username on that site and if they have given you the requisite permission *or* their directory contains publicly readable content. 
+
 ----
-ZotSH is a command line WebDAV client for Hubzilla.
-It knows how to magic-auth to remote hubs using Zot.
+ZotSH is a command line WebDAV client for Nomad platforms.
+It knows how to magic-auth to remote hubs using OpenWebAuth.
 
 ZotSH uses 'easywebdav' library (0) with small modifications
 to 'zotify' it. (See easywebdav/LICENSE)
@@ -38,7 +42,7 @@ host <hostname>
 	Authenticate to 'hostname' and switch to it
 
 cd <dirname|..>
-	changhe remote dir
+	change remote dir
 
 
 ls [path] [-a] [-l] [-d]
@@ -54,7 +58,7 @@ mkdir <name>
 	Create directory 'name'
 
 mkdirs <path>
-	Create parent directories to path, if they don't exists
+	Create parent directories to path, if they don't exist
 
 rmdir <name>
 	Delete directory 'name'
@@ -63,12 +67,12 @@ delete <path>
 	Delete file 'path'
 
 upload <local_path> [remote_path]
-	Upload local file 'local_paht' to 'remote_paht'
+	Upload local file 'local_path' to 'remote_path'
 
 download <remote_path> [local_path]
 	Download remote file 'remote_path' and save it as 'local_path'
 
-cat <remote_paht>
+cat <remote_path>
 	Print content of 'remote_path'
 
 pwd
@@ -77,7 +81,7 @@ pwd
 lcd
 lpwd
 lls
-	Local file management
+	Local file management (cd, pwd, and ls)
 
 quit
 help
