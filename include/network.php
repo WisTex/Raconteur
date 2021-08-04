@@ -1854,16 +1854,22 @@ function is_https_request() {
 }
 
 /**
- * @brief Given a URL, return everything after the host portion.
+ * @brief Given a URL, return everything after the host portion, but exclude any fragments.
  * example https://foobar.com/gravy?g=5&y=6
  * returns /gravy?g=5&y=6
+ * example https:://foobar.com/gravy?g=5&y=6#fragment
+ * also returns /gravy?g=5&y=6
  * result always returns the leading slash
  */
 
 function get_request_string($url) {
 
-	$a = explode('/',$url,4);
-	return '/' . ((count($a) > 3) ? $a[3] : EMPTY_STR);
+	$m = parse_url($url);
+	if ($m) {
+		return ( (isset($m['path']) ? $m['path'] : '/' ) . (isset($m['query']) ? '?' . $m['query'] : EMPTY_STR) );
+	}
+
+	return EMPTY_STR;
 
 }
 
