@@ -155,7 +155,7 @@ class ZotSH(object):
         session_home = self.get_host_session(SERVER)
 
         bnewhost = newhost + 'dav'
-        bnewhost = bnewhost.encode('hex')
+        bnewhost = bnewhost.encode('utf-8').hex()
         
         r = session_home.get( 
             SERVER + "magic",  
