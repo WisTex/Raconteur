@@ -278,7 +278,7 @@ class Browser extends DAV\Browser\Plugin {
 
 
 		$output = '';
-		if ($this->enablePost) {
+		if ($this->enablePost && $parentpath) {
 			$this->server->emit('onHTMLActionsPanel', array($parent, &$output, $path));
 		}
 
