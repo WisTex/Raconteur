@@ -1975,8 +1975,6 @@ class Libzot {
 					}
 				}
 				else {
-					$DR->update('comment parent not found');
-					$result[] = $DR->get();
 
 					// We don't seem to have a copy of this conversation or at least the parent
 					// - so request a copy of the entire conversation to date.
@@ -1991,8 +1989,31 @@ class Libzot {
 
 					if ((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {													
-						self::fetch_conversation($channel,$arr['parent_mid']);
+						$reports = self::fetch_conversation($channel,$arr['parent_mid']);
+						
+						// extract our delivery report from the fetched conversation
+						// if we can find it.
+						
+						if ($reports && is_array($reports)) {
+							$found_report = false;
+							foreach ($reports as $report) {
+								if ($report['message_id'] === $arr['mid']) {
+									$found_report = true;
+									$DR->update($report['status']);
+								}
+							}
+							if (! $found_report) {
+								$DR->update('conversation fetch failed');
+							}
+						}
+						else {
+							$DR->update('conversation fetch failed');
+						}
 					}
+					else {
+						$DR->update('comment parent not found');
+					}
+					$result[] = $DR->get();
 					continue;
 				}
 
