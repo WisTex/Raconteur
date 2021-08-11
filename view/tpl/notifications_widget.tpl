@@ -1,6 +1,6 @@
 {{if $notifications}}
 <script>
-	var notifications_parent;
+	let notifications_parent = 0;
 
 	$(document).ready(function() {
 		notifications_parent = $('#notifications_wrapper')[0].parentElement.id;
@@ -31,10 +31,10 @@
 
 	{{if $module == 'display' || $module == 'hq' || $startpage == 'hq'}}
 	$(document).on('click', '.notification', function(e) {
-		var b64mid = $(this).data('b64mid');
-		var notify_id = $(this).data('notify_id');
-		var path = $(this)[0].pathname.substr(1,7);
-		var stateObj = { b64mid: b64mid };
+		let b64mid = $(this).data('b64mid');
+		let notify_id = $(this).data('notify_id');
+		let path = $(this)[0].pathname.substr(1,7);
+		let stateObj = { b64mid: b64mid };
 
 		if(b64mid === 'undefined' && notify_id === 'undefined')
 			return;
@@ -92,7 +92,7 @@
 		$('#cn-{{$notification.type}}-input-clear').addClass('d-none');
 	});
 	$(document).on('input', '#cn-{{$notification.type}}-input', function(e) {
-		var val = $('#cn-{{$notification.type}}-input').val().toString().toLowerCase();
+		let val = $('#cn-{{$notification.type}}-input').val().toString().toLowerCase();
 
 		if(val) {
 			$('#cn-{{$notification.type}}-only').addClass('active sticky-top');
@@ -104,8 +104,8 @@
 		}
 
 		$("#nav-{{$notification.type}}-menu .notification").each(function(i, el){
-			var cn = $(el).data('contact_name').toString().toLowerCase();
-			var ca = $(el).data('contact_addr').toString().toLowerCase();
+			let cn = $(el).data('contact_name').toString().toLowerCase();
+			let ca = $(el).data('contact_addr').toString().toLowerCase();
 
 			if(cn.indexOf(val) === -1 && ca.indexOf(val) === -1)
 				$(this).addClass('d-none');

@@ -25,6 +25,10 @@ let liveRecurse = 0;
 let savedTitle = '';
 let initialLoad = true;
 let cached_data = [];
+let mode = '';
+let update_url = '';
+let update_mode = '';
+let orgHeight = 0;
 
 $.ajaxPrefilter(function( options, original_Options, jqXHR ) {
     options.async = true;
@@ -898,7 +902,7 @@ function collapseHeight() {
 	let position = $(window).scrollTop();
 
 	$(".wall-item-content, .directory-collapse").each(function() {
-		let orgHeight = $(this).outerHeight(true);
+		orgHeight = $(this).outerHeight(true);
 		if(orgHeight > divmore_height) {
 			if(! $(this).hasClass('divmore') && $(this).has('div.no-collapse').length == 0) {
 
@@ -981,6 +985,8 @@ function updateInit() {
 
 function liveUpdate(notify_id) {
 
+	let origHeight = 0;
+	
 	if(typeof profile_uid === 'undefined') profile_uid = false; /* Should probably be unified with channelId defined in head.tpl */
 
 	if((src === null) || (stopped) || (! profile_uid)) { $('.like-rotator').hide(); return; }
@@ -1003,8 +1009,6 @@ function liveUpdate(notify_id) {
 
 	in_progress = true;
 
-	let update_url;
-	let update_mode;
 
 	if(scroll_next) {
 		bParam_page = next_page;
@@ -1025,7 +1029,7 @@ function liveUpdate(notify_id) {
 	}
 	else {
 		update_mode = 'update';
-		let orgHeight = $("#region_2").height();
+		origHeight = $("#region_2").height();
 	}
 
 	let dstart = new Date();
@@ -1079,7 +1083,7 @@ function liveUpdate(notify_id) {
 
 				// adjust scroll position if new content was added above viewport
 				if(update_mode === 'update' && !justifiedGalleryActive) {
-					$(window).scrollTop($(window).scrollTop() + $("#region_2").height() - orgHeight + contentHeightDiff);
+					$(window).scrollTop($(window).scrollTop() + $("#region_2").height() - origHeight + contentHeightDiff);
 				}
 
 				in_progress = false;
@@ -1107,8 +1111,6 @@ function pageUpdate() {
 
 	in_progress = true;
 
-	let update_url;
-	let update_mode;
 
 	if(scroll_next) {
 		bParam_page = next_page;
