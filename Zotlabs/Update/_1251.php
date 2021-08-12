@@ -5,9 +5,11 @@ namespace Zotlabs\Update;
 class _1251 {
 
 	function run() {
-	
+
+		$default = ((ACTIVE_DBTYPE == DBTYPE_POSTGRES) ? " default ''" : '');
+
 	    q("START TRANSACTION");
-		$r = q("ALTER TABLE dreport ADD dreport_log text NOT NULL DEFAULT ''");
+		$r = q("ALTER TABLE dreport ADD dreport_log text NOT NULL $default");
 
 		if ($r) {
 			q("COMMIT");
