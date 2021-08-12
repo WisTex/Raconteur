@@ -1081,3 +1081,44 @@ function fetch_image_from_url($url,&$mimetype) {
 
 	return EMPTY_STR;
 }
+
+
+function isAnimatedGif($fileName)
+{
+    $fh = fopen($fileName, 'rb');
+
+    if (!$fh) {
+        return false;
+    }
+
+    $totalCount = 0;
+    $chunk = '';
+
+    // An animated gif contains multiple "frames", with each frame having a header made up of:
+    // * a static 4-byte sequence (\x00\x21\xF9\x04)
+    // * 4 variable bytes
+    // * a static 2-byte sequence (\x00\x2C) (some variants may use \x00\x21 ?)
+
+    // We read through the file until we reach the end of it, or we've found at least 2 frame headers.
+    while (!feof($fh) && $totalCount < 2) {
+        // Read 100kb at a time and append it to the remaining chunk.
+        $chunk .= fread($fh, 1024 * 100);
+        $count = preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+        $totalCount += $count;
+
+        // Execute this block only if we found at least one match,
+        // and if we did not reach the maximum number of matches needed.
+        if ($count > 0 && $totalCount < 2) {
+            // Get the last full expression match.
+            $lastMatch = end($matches[0]);
+            // Get the string after the last match.
+            $end = strrpos($chunk, $lastMatch) + strlen($lastMatch);
+            $chunk = substr($chunk, $end);
+        }
+    }
+
+    fclose($fh);
+
+    return $totalCount > 1;
+}
+
