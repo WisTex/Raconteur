@@ -1989,7 +1989,7 @@ class Libzot {
 
 					if ((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {													
-						$reports = self::fetch_conversation($channel,$arr['parent_mid']);
+						$reports = self::fetch_conversation($channel,$arr['mid']);
 						
 						// extract our delivery report from the fetched conversation
 						// if we can find it.
