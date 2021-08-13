@@ -195,9 +195,10 @@ function handle_comment_form(e) {
 	let form = $(this);
 	let fields = form.find(':input[type=text], textarea');
 	let fields_empty = true;
-
+	let commentElm = false;
+	
 	if(form.find('.comment-edit-text').length) {
-		let commentElm = form.find('.comment-edit-text').attr('id');
+		commentElm = form.find('.comment-edit-text').attr('id');
 		let commentId = commentElm.replace('comment-edit-text-','');
 		let submitElm = commentElm.replace(/text/,'submit');
 
@@ -782,7 +783,7 @@ function updateConvItems(mode,data) {
 		let commentBody = localStorage.getItem("comment_body-" + convId);
 
 		if(commentBody) {
-			let commentElm = $('#comment-edit-text-' + convId);
+			commentElm = $('#comment-edit-text-' + convId);
 			if(auto_save_draft) {
 				if($(commentElm).val() === '') {
 					$('#comment-edit-form-' + convId).show();
