@@ -164,13 +164,12 @@ class Item extends Controller {
 
 		if (Libzot::is_zot_request()) {
 
-			$conversation = false;
-
 			$item_uuid = argv(1);
 
 			if (! $item_uuid) {
 				http_status_exit(404, 'Not found');
 			}
+
 			$portable_id = EMPTY_STR;
 
 			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 and not verb in ( 'Follow', 'Ignore' ) ";

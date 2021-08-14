@@ -121,19 +121,13 @@ class Chanview extends Controller {
 			}
 		}
 
+		if ($is_zot && $observer) {
+			$url = zid($url);
+		}
 
-		// We will load the chanview template if it's a foreign network, 
-		// just so that we can provide a connect button along with a profile
-		// photo. Chances are we can't load the remote profile into an iframe
-		// because of cross-domain security headers. So provide a link to
-		// the remote profile. 
 		// If we are already connected, just go to the profile.
-		// Zot channels will usually have a connect link.
 	
-		if ($is_zot || $connected) {
-			if ($is_zot && $observer) {
-				$url = zid($url);
-			}
+		if ($connected) {
 			goaway($url);
 		}
 		else {	

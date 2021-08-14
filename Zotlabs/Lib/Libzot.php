@@ -1989,11 +1989,13 @@ class Libzot {
 
 					if ((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {													
-						$reports = self::fetch_conversation($channel,$arr['parent_mid']);
+						$reports = self::fetch_conversation($channel,$arr['mid']);
 						
 						// extract our delivery report from the fetched conversation
 						// if we can find it.
-						
+						logger('fetch_report for ' . $arr['mid'], LOGGER_ALL);
+						logger('fetch_report: ' . print_r($reports,true), LOGGER_ALL);
+
 						if ($reports && is_array($reports)) {
 							$found_report = false;
 							foreach ($reports as $report) {
