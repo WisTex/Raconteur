@@ -418,6 +418,9 @@ class Activity {
 				$ptr = [ $ptr ];
 			}
 			foreach ($ptr as $t) {
+				if (! is_array($t)) {
+					continue;
+				}
 				if (! array_key_exists('type',$t)) {
 					$t['type'] = 'Hashtag';
 				}
