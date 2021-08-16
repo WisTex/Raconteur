@@ -1145,7 +1145,13 @@ class App {
 		if (! self::$meta->get_field('og:title')) {
 			self::$meta->set('og:title',self::$page['title']);
 		}
+
+		// webmanifest
 		
+		head_add_link( [ 'rel' => 'manifest', 'href' => 'mainfest.webmanifest' ] );
+		self::$meta->set('application-name', System::get_platform_name() );
+
+
 		self::$meta->set('generator', System::get_platform_name());
 
 		$i = head_get_icon();
