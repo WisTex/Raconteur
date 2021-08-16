@@ -34,6 +34,11 @@ $.ajaxPrefilter(function( options, original_Options, jqXHR ) {
     options.async = true;
 });
 
+if ('serviceWorker' in navigator) {
+	navigator.serviceWorker.register('/view/js/sw.js');
+	console.log('service worker registered.');
+}
+
 // Clear the session and local storage if we switch channel or log out
 let cache_uid = '';
 if(sessionStorage.getItem('uid') !== null) {

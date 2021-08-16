@@ -14,7 +14,7 @@ class Manifest extends Controller {
 			'short_name' => System::get_platform_name(),
 			'icons' => [
 				[ 'src' => System::get_project_icon(), 'sizes' => '64x64' ],
-				[ 'src' => '/images/' . System::get_platform_name() . '.svg', 'sizes' => '128x128' ],
+				[ 'src' => '/images/' . System::get_platform_name() . '.svg', 'sizes' => '192x192' ],
 			],
 			'scope' => '/',
 			'start_url' => '/',
@@ -24,10 +24,14 @@ class Manifest extends Controller {
 			'background_color' => 'white',
 			'share_target' => [
 				'action' => '/rpost',
-				'method' => 'GET',
-				'title' => 'title',
-				'text' => 'body',
-				'url' => 'url',
+				'method' => 'POST',
+				'enctype' => 'multipart/form-data',
+				'params' => [
+					'title' => 'title',
+					'text' => 'body',
+					'url' => 'url',
+					'files' => [ 'name' => 'userfile', 'accept' => '*' ],
+				]
 			]
 				
 		];

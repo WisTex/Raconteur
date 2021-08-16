@@ -1160,6 +1160,8 @@ class App {
 		}
 		if ($i) {
 			head_add_link(['rel' => 'shortcut icon', 'href' => $i ]);
+			head_add_link(['rel' => 'icon', 'sizes' => '64x64', 'href' => System::get_site_icon() ]);
+			head_add_link(['rel' => 'icon', 'sizes' => '128x128', 'href' => 'images/' . System::get_platform_name() . '.svg' ]);
 		}
 
 		$x = [ 'header' => '' ];
