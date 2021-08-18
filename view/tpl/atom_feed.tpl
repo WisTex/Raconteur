@@ -6,6 +6,7 @@
 
   <id>{{$feed_id}}</id>
   <title>{{$feed_title}}</title>
+  <subtitle>{{$feed_title}}</subtitle>
   <generator uri="{{$generator_uri}}" version="{{$version}}">{{$generator}}</generator>
   {{if $profile_page}}
   <link rel="alternate" type="text/html" href="{{$profile_page}}" />
