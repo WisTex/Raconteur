@@ -122,7 +122,7 @@ class Getfile extends Controller {
 			return;
 		}
 			
-		$unsafe_types = array('text/html','text/css','application/javascript');
+		$unsafe_types = array('text/html','text/css','application/javascript','image/svg+xml');
 	
 		if(in_array($r['data']['filetype'],$unsafe_types) && (! channel_codeallowed($channel['channel_id']))) {
 				header('Content-type: text/plain');
