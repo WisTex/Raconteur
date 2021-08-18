@@ -907,6 +907,7 @@ class Activity {
 		
 		if ($activitypub) {
 
+			$parent_i = [];
 			$public = (($i['item_private']) ? false : true);
 			$top_level = (($reply) ? false : true);
 
@@ -923,7 +924,9 @@ class Activity {
 				if (isset($parent_i['to']) && is_array($parent_i['to'])) {
 					$ret['to'] = array_values(array_unique(array_merge($ret['to'],$parent_i['to'])));
 				}
-				$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
+				if ($i['item_origin']) {
+					$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
+				}
 				if (isset($parent_i['cc']) && is_array($parent_i['cc'])) {
 					$ret['cc'] = array_values(array_unique(array_merge($ret['cc'],$parent_i['cc'])));
 				}
@@ -1342,6 +1345,7 @@ class Activity {
 		
 		if ($activitypub) {
 
+			$parent_i = [];
 			$public = (($i['item_private']) ? false : true);
 			$top_level = (($i['mid'] === $i['parent_mid']) ? true : false);
 
@@ -1372,7 +1376,9 @@ class Activity {
 				if (isset($parent_i['to']) && is_array($parent_i['to'])) {
 					$ret['to'] = array_values(array_unique(array_merge($ret['to'],$parent_i['to'])));
 				}
-				$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
+				if ($i['item_origin']) {
+					$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
+				}
 				if (isset($parent_i['cc']) && is_array($parent_i['cc'])) {
 					$ret['cc'] = array_values(array_unique(array_merge($ret['cc'],$parent_i['cc'])));
 				}
