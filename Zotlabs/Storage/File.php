@@ -329,7 +329,7 @@ class File extends DAV\Node implements DAV\IFile {
 		);
 		if ($r) {
 			// @todo this should be a global definition
-			$unsafe_types = array('text/html', 'text/css', 'application/javascript');
+			$unsafe_types = array('text/html', 'text/css', 'application/javascript', 'image/svg+xml');
 
 			if (in_array($r[0]['filetype'], $unsafe_types) && (! channel_codeallowed($this->data['uid']))) {
 				header('Content-Disposition: attachment; filename="' . $r[0]['filename'] . '"');
@@ -379,7 +379,7 @@ class File extends DAV\Node implements DAV\IFile {
 
 	public function getContentType() {
 		// @todo this should be a global definition.
-		$unsafe_types = array('text/html', 'text/css', 'application/javascript');
+		$unsafe_types = array('text/html', 'text/css', 'application/javascript','image/svg+xml');
 		if (in_array($this->data['filetype'], $unsafe_types) && (! channel_codeallowed($this->data['uid']))) {
 			return 'text/plain';
 		}

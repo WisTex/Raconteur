@@ -191,7 +191,6 @@ function atom_author($tag, $nick, $name, $uri, $h, $w, $type, $photo) {
 	$photo = xmlify($photo);
 
 	$o .= "<$tag>\r\n";
-	$o .= "  <id>$uri</id>\r\n";
 	$o .= "  <name>$name</name>\r\n";
 	$o .= "  <uri>$uri</uri>\r\n";
 	$o .= '  <link rel="photo"  type="' . $type . '" media:width="' . $w . '" media:height="' . $h . '" href="' . $photo . '" />' . "\r\n";
@@ -227,10 +226,8 @@ function atom_render_author($tag, $xchan) {
 	$w = $h = 300;
 
 	$o = "<$tag>\r\n";
-	$o .= "  <id>$id</id>\r\n";
 	$o .= "  <name>$name</name>\r\n";
 	$o .= "  <uri>$id</uri>\r\n";
-	$o .= '  <link rel="alternate" type="text/html" href="' . $id . '" />' . "\r\n";
 	$o .= '  <link rel="photo"  type="' . $type . '" media:width="' . $w . '" media:height="' . $h . '" href="' . $photo . '" />' . "\r\n";
 	$o .= '  <link rel="avatar" type="' . $type . '" media:width="' . $w . '" media:height="' . $h . '" href="' . $photo . '" />' . "\r\n";
 

@@ -29,7 +29,7 @@ class Attach extends \Zotlabs\Web\Controller {
 			return;
 	
 	
-		$unsafe_types = array('text/html','text/css','application/javascript');
+		$unsafe_types = array('text/html','text/css','application/javascript','image/svg+xml');
 	
 		if(in_array($r['data']['filetype'],$unsafe_types) && (! channel_codeallowed($r['data']['uid']))) {
 				header('Content-type: text/plain');

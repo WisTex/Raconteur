@@ -3411,9 +3411,11 @@ class Activity {
 		}
 		else {
 			if (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') || ($is_sys_channel && $pubstream)) {
+				logger('allowed: permission allowed', LOGGER_DATA);
 				$allowed = true;
 			}
 			if ($permit_mentions) {
+				logger('allowed: permitted mention', LOGGER_DATA);
 				$allowed = true;
 			}
 		}
@@ -3421,6 +3423,7 @@ class Activity {
 		if (tgroup_check($channel['channel_id'],$item) && (! $is_child_node)) {
 			// for forum deliveries, make sure we keep a copy of the signed original
 			set_iconfig($item,'activitypub','rawmsg',$act->raw,1);
+			logger('allowed: tgroup');
 			$allowed = true;
 		}
 
@@ -3783,6 +3786,10 @@ class Activity {
 
 		foreach ($attach as $a) {
 			if (array_key_exists('type',$a) && stripos($a['type'],'image') !== false) {
+				// don't add inline image if it's an svg and we already have an inline svg
+				if ($a['type'] === 'image/svg+xml' && strpos($body,'[/svg]')) {
+					continue;
+				}
 				if (self::media_not_in_body($a['href'],$body)) {
 					if (isset($a['name']) && $a['name']) {
 						$alt = htmlspecialchars($a['name'],ENT_QUOTES);
