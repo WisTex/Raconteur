@@ -122,15 +122,7 @@ class Getfile extends Controller {
 			return;
 		}
 			
-		$unsafe_types = array('text/html','text/css','application/javascript','image/svg+xml');
-	
-		if(in_array($r['data']['filetype'],$unsafe_types) && (! channel_codeallowed($channel['channel_id']))) {
-				header('Content-type: text/plain');
-		}
-		else {
-			header('Content-type: ' . $r['data']['filetype']);
-		}
-
+		header('Content-type: ' . $r['data']['filetype']);
 		header('Content-Disposition: attachment; filename="' . $r['data']['filename'] . '"');
 		if(intval($r['data']['os_storage'])) {
 			$fname = dbunescbin($r['data']['content']);
