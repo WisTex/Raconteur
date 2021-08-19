@@ -113,7 +113,22 @@ class Inbox extends Controller {
 		// AND the signature is valid AND the signer is the actor.
 
 		if ($hsig['header_valid'] && $hsig['content_valid'] && $hsig['portable_id']) {
-		
+
+			// if the sender has the ability to send messages over zot/nomad, ignore messages sent via activitypub
+			// as observer aware features and client side markup will be unavailable
+			
+			$test = q("select * from hubloc where hubloc_hash = '%s' or hubloc_id_url = '%s'",
+				dbesc($hsig['portable_id']),
+				dbesc($hsig['portable_id'])
+			);
+			if ($test) {
+				foreach ($test as $t) {
+					if ($t['hubloc_network'] === 'zot6') {
+						https_status_exit(409,'Conflict');
+					}
+				}
+			}
+
 			// fetch the portable_id for the actor, which may or may not be the sender
 			
 			$v = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s'",
@@ -252,6 +267,9 @@ class Inbox extends Controller {
 
 
 		foreach ($channels as $channel) {
+
+			
+
 
 			if (! PConfig::Get($channel['channel_id'],'system','activitypub',Config::Get('system','activitypub',ACTIVITYPUB_ENABLED))) {
 				continue;
