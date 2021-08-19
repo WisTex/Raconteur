@@ -124,7 +124,7 @@ class Inbox extends Controller {
 			if ($test) {
 				foreach ($test as $t) {
 					if ($t['hubloc_network'] === 'zot6') {
-						https_status_exit(409,'Conflict');
+						http_status_exit(409,'Conflict');
 					}
 				}
 			}
