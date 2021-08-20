@@ -910,6 +910,8 @@ class Activity {
 			$parent_i = [];
 			$public = (($i['item_private']) ? false : true);
 			$top_level = (($reply) ? false : true);
+			$ret['to'] = [];
+			$ret['cc'] = [];
 
 			if (! $top_level) {
 				$recips = get_iconfig($i['parent'], 'activitypub', 'recips');
@@ -1346,6 +1348,9 @@ class Activity {
 		if ($activitypub) {
 
 			$parent_i = [];
+			$ret['to'] = [];
+			$ret['cc'] = [];
+			
 			$public = (($i['item_private']) ? false : true);
 			$top_level = (($i['mid'] === $i['parent_mid']) ? true : false);
 
