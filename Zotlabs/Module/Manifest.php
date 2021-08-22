@@ -17,7 +17,7 @@ class Manifest extends Controller {
 				[ 'src' => '/images/' . System::get_platform_name() . '.svg', 'sizes' => '192x192' ],
 			],
 			'scope' => '/',
-			'start_url' => '/',
+			'start_url' => z_root(),
 			'display' => 'fullscreen',
 			'orientation' => 'any',
 			'theme_color' => 'blue',
@@ -30,7 +30,16 @@ class Manifest extends Controller {
 					'title' => 'title',
 					'text' => 'body',
 					'url' => 'url',
-					'files' => [ 'name' => 'userfile', 'accept' => '*' ],
+					'files' => [
+						[ 'name' => 'userfile',
+							'accept' => [
+								'image/jpeg',
+								'image/gif',
+								'image/png',
+								'text/plain',
+							]
+						]
+					]
 				]
 			]
 				

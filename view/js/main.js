@@ -35,7 +35,9 @@ $.ajaxPrefilter(function( options, original_Options, jqXHR ) {
 });
 
 if ('serviceWorker' in navigator) {
-	navigator.serviceWorker.register('/view/js/sw.js');
+	navigator.serviceWorker.register('/ServiceWorker.js', { scope: '/' }).then(function(registration) {
+		console.log('scope is', registration.scope);
+	});
 	console.log('service worker registered.');
 }
 
