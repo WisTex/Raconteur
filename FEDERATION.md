@@ -50,6 +50,9 @@ This project provides permission control and moderation of comments. By default 
 'until=2001-01-01T00:00Z' - comments are closed after the date given. This can be supplied on its own or appended to any other commentPolicy string by preceding with a space; for example 'contacts until=2001-01-01T00:00Z'.
 
 
+Expiring content
+
+Activity objects may include an 'expires' field; after which time they are removed. The removal occurs with a federated Delete, but this is a best faith effort. We automatically delete any local objects we receive with an 'exires' field after it expires regardless of whether or not we receive a Delete activity. We also record external (3rd party) fetches of these items and send Delete activities to them as well. The expiration is specified as an ISO8601 date/time. 
 
 Private Media
 
