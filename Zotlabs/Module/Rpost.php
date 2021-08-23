@@ -72,11 +72,12 @@ class Rpost extends Controller {
 		if (local_channel() && array_key_exists('userfile',$_FILES)) {
 		
 			$channel = App::get_channel();
-			
+			$observer = App::get_observer();
+
 			$def_album  = get_pconfig($channel['channel_id'],'system','photo_path');
 			$def_attach = get_pconfig($channel['channel_id'],'system','attach_path');
 	
-			$r = attach_store($channel, '', '', [
+			$r = attach_store($channel, (($observer) ? $observer['xchan_hash'] : ''), '', [
 				'source'    => 'editor',
 				'visible'   => 0,
 				'album'     => $def_album,

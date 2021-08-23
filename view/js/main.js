@@ -36,9 +36,10 @@ $.ajaxPrefilter(function( options, original_Options, jqXHR ) {
 
 if ('serviceWorker' in navigator) {
 	navigator.serviceWorker.register('/ServiceWorker.js', { scope: '/' }).then(function(registration) {
-		console.log('scope is', registration.scope);
+		console.log('Service worker registered. scope is', registration.scope);
+	}).catch(function(error) {
+		console.log('Service worker registration failed because ' + error);
 	});
-	console.log('service worker registered.');
 }
 
 // Clear the session and local storage if we switch channel or log out

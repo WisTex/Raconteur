@@ -13,8 +13,10 @@ class Manifest extends Controller {
 			'name' => System::get_platform_name(),
 			'short_name' => System::get_platform_name(),
 			'icons' => [
-				[ 'src' => System::get_project_icon(), 'sizes' => '64x64' ],
-				[ 'src' => '/images/' . System::get_platform_name() . '.svg', 'sizes' => '192x192' ],
+				[ 'src' => '/images/' . System::get_platform_name() . '-64' . '.png', 'sizes' => '64x64' ],
+				[ 'src' => '/images/' . System::get_platform_name() . '-192' . '.png', 'sizes' => '192x192' ],
+				[ 'src' => '/images/' . System::get_platform_name() . '-512' . '.png', 'sizes' => '512x512' ],
+				[ 'src' => '/images/' . System::get_platform_name() . '.svg', 'sizes' => '600x600' ],
 			],
 			'scope' => '/',
 			'start_url' => z_root(),
@@ -32,12 +34,7 @@ class Manifest extends Controller {
 					'url' => 'url',
 					'files' => [
 						[ 'name' => 'userfile',
-							'accept' => [
-								'image/jpeg',
-								'image/gif',
-								'image/png',
-								'text/plain',
-							]
+							'accept' => [ 'image/*', 'audio/*', 'video/*', 'text/*', 'application/*' ]
 						]
 					]
 				]
