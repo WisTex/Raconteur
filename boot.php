@@ -1133,9 +1133,15 @@ class App {
 
 		$preload_images = ((local_channel()) ? get_pconfig(local_channel(),'system','preload_images',0) : 0);
 
-		$interval = ((local_channel()) ? get_pconfig(local_channel(),'system','update_interval',60000) : 60000);
-		if ($interval < 10000) {
-			$interval = 60000;
+
+		$interval = ((local_channel()) ? get_pconfig(local_channel(),'system','update_interval', 30000) : 30000);
+		if ($interval < 15000) {
+			$interval = 15000;
+		}
+
+		$alerts_interval = intval(get_config('system','alerts_interval',10000));
+		if ($alerts_interval < 5000) {
+			$alerts_interval = 5000;
 		}
 
 		if (! x(self::$page,'title')) {
@@ -1190,6 +1196,7 @@ class App {
 				'$metas'           => self::$meta->get(),
 				'$plugins'         => $x['header'],
 				'$update_interval' => $interval,
+				'$alerts_interval' => $alerts_interval,
 				'$head_css'        => head_get_css(),
 				'$head_js'         => head_get_js(),
 				'$linkrel'         => head_get_links(),

@@ -5,6 +5,7 @@ let msie = false;
 let stopped = false;
 let totStopped = false;
 let timer = null;
+let alertstimer = null;
 let pr = 0;
 let liking = 0;
 let in_progress = false;
@@ -86,7 +87,8 @@ $(document).ready(function() {
 	savedTitle = document.title;
 
 	updateInit();
-
+	alertsUpdate();
+	
 	$('a.notification-link').click(function(e){
 		let notifyType = $(this).data('type');
 
@@ -549,59 +551,68 @@ function markItemRead(itemId) {
 	$('.unseen-wall-indicator-'+itemId).hide();
 }
 
+function alertsUpdate() {
+	
+	let alertspingCmd = 'fastping' + ((localUser != 0) ? '?f=&uid=' + localUser : '');
+
+	$.get(alertspingCmd,function(data) {
+		if (! data) {
+			return;
+		}
+
+		if(data.invalid == 1) {
+			window.location.href=window.location.href;
+		}
+
+		$.jGrowl.defaults.closerTemplate = '<div>[ ' + aStr.closeAll + ']</div>';
+
+		$(data.notice).each(function() { $.jGrowl(this.message, { sticky: false, theme: 'notice', life: 10000 }); });
+
+		$(data.info).each(function() { $.jGrowl(this.message, { sticky: false, theme: 'info' }); });
+	});
+
+	if (alertstimer) {
+		clearTimeout(alertstimer);
+	}
+	alertstimer = setTimeout(alertsUpdate,alertsInterval);
+}
+
+
+
+
 function notificationsUpdate(cached_data) {
 	let pingCmd = 'ping' + ((localUser != 0) ? '?f=&uid=' + localUser : '');
 
 	if(cached_data !== undefined) {
 		handleNotifications(cached_data);
-	}
-	else {
+	} else {
 		$.get(pingCmd,function(data) {
 
-			if(! data)
-				return;
+			if(! data) return;
 
 			// Put the object into storage
-			sessionStorage.setItem('notifications_cache', JSON.stringify(data));
+			sessionStorage.setItem('notifications_cache',
+			JSON.stringify(data));
 
-			let fnotifs = [];
-			if(data.forums) {
-				$.each(data.forums_sub, function() {
-					fnotifs.push(this);
-				});
-				handleNotificationsItems('forums', fnotifs);
-			}
+			let fnotifs = []; if(data.forums) {
+			$.each(data.forums_sub, function() { fnotifs.push(this);
+			}); handleNotificationsItems('forums', fnotifs); }
 
 			if(data.invalid == 1) {
-				window.location.href=window.location.href;
-			}
+				window.location.href=window.location.href; }
 
 			handleNotifications(data);
-
-			$.jGrowl.defaults.closerTemplate = '<div>[ ' + aStr.closeAll + ']</div>';
-
-			$(data.notice).each(function() {
-				$.jGrowl(this.message, { sticky: false, theme: 'notice', life: 10000 });
-			});
-
-			$(data.info).each(function(){
-				$.jGrowl(this.message, { sticky: false, theme: 'info' });
-			});
 		});
 	}
 
-	let notifyType = null;
-	if($('.notification-content.show').length) {
-		notifyType = $('.notification-content.show').data('type');
-	}
-	if(notifyType !== null) {
-		loadNotificationItems(notifyType);
-	}
+	let notifyType = null; if($('.notification-content.show').length)
+	{ notifyType = $('.notification-content.show').data('type'); }
+	if(notifyType !== null) { loadNotificationItems(notifyType); }
 
 	if(timer) clearTimeout(timer);
 	timer = setTimeout(updateInit,updateInterval);
 }
-
+					  
 function handleNotifications(data) {
 	if(data.stream || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs || data.forums) {
 		$('.notifications-btn').css('opacity', 1);
@@ -632,7 +643,7 @@ function handleNotifications(data) {
 
 	$.each(data, function(index, item) {
 		//do not process those
-		let arr = ['notice', 'info', 'invalid'];
+		let arr = ['invalid'];
 		if(arr.indexOf(index) !== -1)
 			return;
 
@@ -1747,7 +1758,7 @@ function b2h(s) {
 	return y;
 }
 
-function zid(s) {
+function dozid(s) {
 	if((! s.length) || (s.indexOf('zid=') != (-1)))
 		return s;
 
