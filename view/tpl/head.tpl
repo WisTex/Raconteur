@@ -8,13 +8,14 @@
 {{$linkrel}}
 {{$plugins}}
 <script>
-	var updateInterval = {{$update_interval}};
-	var localUser = {{if $local_channel}}{{$local_channel}}{{else}}false{{/if}};
-	var zid = {{if $zid}}'{{$zid}}'{{else}}null{{/if}};
-	var justifiedGalleryActive = false;
-	{{if $channel_hash}}var channelHash = '{{$channel_hash}}';{{/if}}
-	{{if $channel_id}}var channelId = '{{$channel_id}}';{{/if}}{{* Used in e.g. autocomplete *}}
-	var preloadImages = {{$preload_images}};
+	let updateInterval = {{$update_interval}};
+	let alertsInterval = {{$alerts_interval}};
+	let localUser = {{if $local_channel}}{{$local_channel}}{{else}}false{{/if}};
+	let zid = {{if $zid}}'{{$zid}}'{{else}}null{{/if}};
+	let justifiedGalleryActive = false;
+	{{if $channel_hash}}let channelHash = '{{$channel_hash}}';{{/if}}
+	{{if $channel_id}}let channelId = '{{$channel_id}}';{{/if}}{{* Used in e.g. autocomplete *}}
+	let preloadImages = {{$preload_images}};
 </script>
 
 
