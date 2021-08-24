@@ -1133,9 +1133,10 @@ class App {
 
 		$preload_images = ((local_channel()) ? get_pconfig(local_channel(),'system','preload_images',0) : 0);
 
-		$interval = ((local_channel()) ? get_pconfig(local_channel(),'system','update_interval',60000) : 60000);
+		$interval = ((local_channel()) ? get_pconfig(local_channel(),'system','update_interval',10000) : 10000);
+		
 		if ($interval < 10000) {
-			$interval = 60000;
+			$interval = 10000;
 		}
 
 		if (! x(self::$page,'title')) {
