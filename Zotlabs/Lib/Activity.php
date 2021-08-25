@@ -2948,9 +2948,10 @@ class Activity {
 			}
 		}
 
-
-
-		if ($act->obj['type'] === 'Note' && isset($s['attach']) && $s['attach']) {
+		// Objects that might have media attachments which aren't already provided in the content element.
+		// We'll check specific media objects separately.
+		
+		if (in_array($act->obj['type'], [ 'Article', 'Document', 'Event', 'Note', 'Page', 'Place', 'Question']) && isset($s['attach']) && $s['attach']) {
 			$s['body'] .= self::bb_attach($s['attach'],$s['body']);
 		}
 
