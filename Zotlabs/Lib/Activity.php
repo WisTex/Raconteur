@@ -14,6 +14,7 @@ use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Markdown;
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\Nodeinfo;
+use Zotlabs\Lib\System;
 use Emoji;
 
 require_once('include/html2bbcode.php');
@@ -1703,6 +1704,53 @@ class Activity {
 
 		return $ret;
 	}
+
+
+
+	static function encode_site() {
+
+		$ret = [];
+
+		$ret['type']  = 'Service';
+		$ret['id'] = z_root();
+		
+		$auto_follow = false;
+		$sys = get_sys_channel();		
+
+		$ret['preferredUsername'] = System::get_site_name();
+		$ret['name']  = System::get_site_name();
+
+		$ret['icon']  = [
+			'type'      => 'Image',
+			'url'       => 	System::get_site_icon(),
+		];
+		
+		$ret['url'] = z_root();
+		$ret['inbox'] = z_root() . '/sysinbox';
+
+//		$ret['discoverable'] = ((1 - intval($p['xchan_hidden'])) ? true : false);				
+		$ret['publicKey'] = [
+				'id'           => z_root() . '?operation=getkey',
+				'owner'        => z_root(),
+				'publicKeyPem' => get_config('system','pubkey')
+		];
+
+		// $ret['manuallyApprovesFollowers'] = (($auto_follow) ? false : true);
+				
+		$cp = get_cover_photo($sys['channel_id'],'array');
+		if ($cp) {
+			$ret['image'] = [
+				'type' => 'Image',
+				'mediaType' => $cp['type'],
+				'url' => $cp['url']
+			];
+		}
+
+		$ret['summary'] = bbcode(get_config('system','siteinfo',''),['export' => true ]);
+
+		return $ret;
+	}
+
 
 
 	static function activity_mapper($verb) {
