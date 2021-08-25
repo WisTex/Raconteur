@@ -3,6 +3,9 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Web\Controller;
 
@@ -12,10 +15,36 @@ class Home extends Controller {
 
 	function init() {
 
+
+
 		$ret = [];
 	
 		call_hooks('home_init',$ret);
-	
+
+		if (ActivityStreams::is_as_request()) {
+			$x = array_merge(['@context' => [
+			ACTIVITYSTREAMS_JSONLD_REV,
+			'https://w3id.org/security/v1',
+			Activity::ap_schema()
+			]], Activity::encode_site() );
+
+			$headers = [];
+			$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
+			$x['signature'] = LDSignatures::sign($x,[ 'channel_address' => z_root(), 'channel_prvkey' => get_config('system','prvkey') ]);
+			$ret = json_encode($x, JSON_UNESCAPED_SLASHES);
+			logger('data: ' . jindent($ret), LOGGER_DATA);
+			$headers['Date'] = datetime_convert('UTC','UTC', 'now', 'D, d M Y H:i:s \\G\\M\\T');
+			$headers['Digest'] = HTTPSig::generate_digest_header($ret);
+			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
+
+			$h = HTTPSig::create_sig($headers,get_config('system','prvkey'),z_root());
+			HTTPSig::set_headers($h);
+
+			echo $ret;
+			killme();
+		}
+
+
 		if (Libzot::is_zot_request()) {
 
 			$key = get_config('system','prvkey');
