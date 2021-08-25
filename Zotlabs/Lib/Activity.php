@@ -1741,7 +1741,7 @@ class Activity {
 
 		$ret['summary'] = bbcode(get_config('system','siteinfo',''),['export' => true ]);
 		$ret['source'] = [
-			'mediaType' => 'text/bbcode',
+			'mediaType' => 'text/x-multicode',
 			'summary' => get_config('system','siteinfo','')
 		];
 
