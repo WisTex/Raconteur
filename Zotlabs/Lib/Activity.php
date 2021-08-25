@@ -1710,12 +1710,12 @@ class Activity {
 	static function encode_site() {
 
 		$ret = [];
+		$sys = get_sys_channel();		
 
 		$ret['type']  = 'Service';
 		$ret['id'] = z_root();
 		
 		$auto_follow = false;
-		$sys = get_sys_channel();		
 
 		$ret['preferredUsername'] = System::get_site_name();
 		$ret['name']  = System::get_site_name();
@@ -1724,18 +1724,11 @@ class Activity {
 			'type'      => 'Image',
 			'url'       => 	System::get_site_icon(),
 		];
-		
+	
 		$ret['url'] = z_root();
 		$ret['inbox'] = z_root() . '/sysinbox';
 
-//		$ret['discoverable'] = ((1 - intval($p['xchan_hidden'])) ? true : false);				
-		$ret['publicKey'] = [
-				'id'           => z_root() . '?operation=getkey',
-				'owner'        => z_root(),
-				'publicKeyPem' => get_config('system','pubkey')
-		];
-
-		// $ret['manuallyApprovesFollowers'] = (($auto_follow) ? false : true);
+		$ret['manuallyApprovesFollowers'] = ((get_config('system','allowed_sites')) ? true : false);
 				
 		$cp = get_cover_photo($sys['channel_id'],'array');
 		if ($cp) {
@@ -1747,6 +1740,16 @@ class Activity {
 		}
 
 		$ret['summary'] = bbcode(get_config('system','siteinfo',''),['export' => true ]);
+		$ret['source'] = [
+			'mediaType' => 'text/bbcode',
+			'summary' => get_config('system','siteinfo','')
+		];
+
+		$ret['publicKey'] = [
+			'id'           => z_root() . '?operation=getkey',
+			'owner'        => z_root(),
+			'publicKeyPem' => get_config('system','pubkey')
+		];
 
 		return $ret;
 	}
