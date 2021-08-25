@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 21.08.05\n"
+"Project-Id-Version: 21.08.25\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-05 01:34-0700\n"
+"POT-Creation-Date: 2021-08-24 23:03-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -346,8 +346,8 @@ msgstr ""
 msgid "School/education:"
 msgstr ""
 
-#: Zotlabs/Lib/Libprofile.php:578 Zotlabs/Lib/Activity.php:2723
-#: Zotlabs/Lib/Activity.php:2726 Zotlabs/Lib/Apps.php:364
+#: Zotlabs/Lib/Libprofile.php:578 Zotlabs/Lib/Activity.php:2785
+#: Zotlabs/Lib/Activity.php:2788 Zotlabs/Lib/Apps.php:364
 #: Zotlabs/Module/Profperm.php:117
 msgid "Profile"
 msgstr ""
@@ -386,8 +386,8 @@ msgstr ""
 #: Zotlabs/Module/Block.php:75 Zotlabs/Module/Cards.php:82
 #: Zotlabs/Module/Blocks.php:77 Zotlabs/Module/Blocks.php:84
 #: Zotlabs/Module/Connedit.php:330 Zotlabs/Module/Connections.php:33
-#: Zotlabs/Module/Item.php:596 Zotlabs/Module/Item.php:618
-#: Zotlabs/Module/Item.php:629 Zotlabs/Module/Item.php:1729
+#: Zotlabs/Module/Item.php:595 Zotlabs/Module/Item.php:617
+#: Zotlabs/Module/Item.php:628 Zotlabs/Module/Item.php:1728
 #: Zotlabs/Module/Appman.php:87 Zotlabs/Module/Cover_photo.php:342
 #: Zotlabs/Module/Cover_photo.php:355 Zotlabs/Module/Defperms.php:164
 #: Zotlabs/Module/Display.php:505 Zotlabs/Module/Events.php:295
@@ -435,7 +435,7 @@ msgstr ""
 msgid "Room is full"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2074 Zotlabs/Lib/Apps.php:1079
+#: Zotlabs/Lib/Activity.php:2136 Zotlabs/Lib/Apps.php:1079
 #: Zotlabs/Lib/Apps.php:1168 Zotlabs/Module/Cdav.php:853
 #: Zotlabs/Module/Cdav.php:854 Zotlabs/Module/Cdav.php:861
 #: Zotlabs/Module/Embedphotos.php:216 Zotlabs/Module/Photos.php:841
@@ -445,43 +445,43 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2723
+#: Zotlabs/Lib/Activity.php:2785
 #, php-format
 msgid "Likes %1$s's %2$s"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2726
+#: Zotlabs/Lib/Activity.php:2788
 #, php-format
 msgid "Doesn't like %1$s's %2$s"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2732
+#: Zotlabs/Lib/Activity.php:2794
 #, php-format
 msgid "Will attend %s's event"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2735
+#: Zotlabs/Lib/Activity.php:2797
 #, php-format
 msgid "Will not attend %s's event"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2738
+#: Zotlabs/Lib/Activity.php:2800
 #, php-format
 msgid "May attend %s's event"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2741
+#: Zotlabs/Lib/Activity.php:2803
 #, php-format
 msgid "May not attend %s's event"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2746 Zotlabs/Lib/Share.php:122
+#: Zotlabs/Lib/Activity.php:2808 Zotlabs/Lib/Share.php:122
 #: Zotlabs/Module/Share.php:103 include/items.php:3260
 #, php-format
 msgid "&#x1f501; Repeated %1$s's %2$s"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:3209 include/text.php:1588 include/text.php:2972
+#: Zotlabs/Lib/Activity.php:3271 include/text.php:1588 include/text.php:2972
 #, php-format
 msgid "%1$s (%2$s)"
 msgstr ""
@@ -569,8 +569,8 @@ msgstr ""
 msgid "This email was sent by %1$s at %2$s."
 msgstr ""
 
-#: Zotlabs/Lib/Enotify.php:72 Zotlabs/Module/Home.php:93
-#: Zotlabs/Module/Home.php:102 extend/addon/a/opensearch/Mod_opensearch.php:28
+#: Zotlabs/Lib/Enotify.php:72 Zotlabs/Module/Home.php:122
+#: Zotlabs/Module/Home.php:131 extend/addon/a/opensearch/Mod_opensearch.php:28
 msgid "$Projectname"
 msgstr ""
 
@@ -1225,6 +1225,10 @@ msgstr ""
 msgid "Your website URL (optional)"
 msgstr ""
 
+#: Zotlabs/Lib/Libzot.php:745
+msgid "Unable to verify channel signature"
+msgstr ""
+
 #: Zotlabs/Lib/AccessList.php:28
 msgid ""
 "A deleted list with this name was revived. Existing item permissions "
@@ -1440,7 +1444,7 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
-#: Zotlabs/Lib/Apps.php:345 boot.php:1682 include/nav.php:124
+#: Zotlabs/Lib/Apps.php:345 boot.php:1696 include/nav.php:124
 #: include/nav.php:128
 msgid "Login"
 msgstr ""
@@ -1650,10 +1654,6 @@ msgstr ""
 msgid "Unpin from navbar"
 msgstr ""
 
-#: Zotlabs/Lib/Libzot.php:745
-msgid "Unable to verify channel signature"
-msgstr ""
-
 #: Zotlabs/Lib/Libzotdir.php:110
 msgid "Directory Options"
 msgstr ""
@@ -1678,7 +1678,7 @@ msgstr ""
 #: Zotlabs/Module/Settings/Channel.php:374 Zotlabs/Module/Sources.php:122
 #: Zotlabs/Module/Sources.php:157 Zotlabs/Module/Photos.php:715
 #: Zotlabs/Module/Import.php:692 Zotlabs/Module/Import.php:696
-#: Zotlabs/Module/Import.php:697 Zotlabs/Storage/Browser.php:428 boot.php:1687
+#: Zotlabs/Module/Import.php:697 Zotlabs/Storage/Browser.php:428 boot.php:1701
 #: extend/addon/a/zotpost/Mod_zotpost.php:77
 #: extend/addon/a/content_import/Mod_content_import.php:137
 #: extend/addon/a/content_import/Mod_content_import.php:138
@@ -1703,7 +1703,7 @@ msgstr ""
 #: Zotlabs/Module/Settings/Channel.php:374 Zotlabs/Module/Sources.php:122
 #: Zotlabs/Module/Sources.php:157 Zotlabs/Module/Photos.php:715
 #: Zotlabs/Module/Import.php:692 Zotlabs/Module/Import.php:696
-#: Zotlabs/Module/Import.php:697 Zotlabs/Storage/Browser.php:428 boot.php:1687
+#: Zotlabs/Module/Import.php:697 Zotlabs/Storage/Browser.php:428 boot.php:1701
 #: extend/addon/a/zotpost/Mod_zotpost.php:77
 #: extend/addon/a/content_import/Mod_content_import.php:137
 #: extend/addon/a/content_import/Mod_content_import.php:138
@@ -1835,27 +1835,27 @@ msgstr ""
 msgid "Channel not found."
 msgstr ""
 
-#: Zotlabs/Module/Chanview.php:149 Zotlabs/Module/Chanview.php:150
+#: Zotlabs/Module/Chanview.php:143 Zotlabs/Module/Chanview.php:144
 msgid "Not available"
 msgstr ""
 
-#: Zotlabs/Module/Chanview.php:169
+#: Zotlabs/Module/Chanview.php:163
 msgid "Cover photo for this channel"
 msgstr ""
 
-#: Zotlabs/Module/Chanview.php:171
+#: Zotlabs/Module/Chanview.php:165
 msgid "Followers"
 msgstr ""
 
-#: Zotlabs/Module/Chanview.php:172
+#: Zotlabs/Module/Chanview.php:166
 msgid "Following"
 msgstr ""
 
-#: Zotlabs/Module/Chanview.php:175 include/conversation.php:955
+#: Zotlabs/Module/Chanview.php:169 include/conversation.php:955
 msgid "Visit"
 msgstr ""
 
-#: Zotlabs/Module/Chanview.php:176
+#: Zotlabs/Module/Chanview.php:170
 msgid "toggle full screen mode"
 msgstr ""
 
@@ -3867,39 +3867,39 @@ msgstr ""
 msgid "Rename Channel"
 msgstr ""
 
-#: Zotlabs/Module/Ping.php:440
+#: Zotlabs/Module/Ping.php:412
 msgid "added your channel"
 msgstr ""
 
-#: Zotlabs/Module/Ping.php:464
+#: Zotlabs/Module/Ping.php:436
 msgid "requires approval"
 msgstr ""
 
-#: Zotlabs/Module/Ping.php:473
+#: Zotlabs/Module/Ping.php:445
 msgid "g A l F d"
 msgstr ""
 
-#: Zotlabs/Module/Ping.php:491
+#: Zotlabs/Module/Ping.php:463
 msgid "[today]"
 msgstr ""
 
-#: Zotlabs/Module/Ping.php:501
+#: Zotlabs/Module/Ping.php:473
 msgid "posted an event"
 msgstr ""
 
-#: Zotlabs/Module/Ping.php:534
+#: Zotlabs/Module/Ping.php:506
 msgid "shared a file with you"
 msgstr ""
 
-#: Zotlabs/Module/Ping.php:562
+#: Zotlabs/Module/Ping.php:534
 msgid "reported content"
 msgstr ""
 
-#: Zotlabs/Module/Ping.php:758
+#: Zotlabs/Module/Ping.php:730
 msgid "Private group"
 msgstr ""
 
-#: Zotlabs/Module/Ping.php:758
+#: Zotlabs/Module/Ping.php:730
 msgid "Public group"
 msgstr ""
 
@@ -4487,50 +4487,50 @@ msgstr ""
 msgid "Find"
 msgstr ""
 
-#: Zotlabs/Module/Item.php:554 Zotlabs/Module/Pin.php:42
+#: Zotlabs/Module/Item.php:553 Zotlabs/Module/Pin.php:42
 msgid "Unable to locate original post."
 msgstr ""
 
-#: Zotlabs/Module/Item.php:647
+#: Zotlabs/Module/Item.php:646
 msgid "Comment may be moderated."
 msgstr ""
 
-#: Zotlabs/Module/Item.php:875
+#: Zotlabs/Module/Item.php:874
 msgid "Empty post discarded."
 msgstr ""
 
-#: Zotlabs/Module/Item.php:1466
+#: Zotlabs/Module/Item.php:1465
 msgid "Duplicate post suppressed."
 msgstr ""
 
-#: Zotlabs/Module/Item.php:1503
+#: Zotlabs/Module/Item.php:1502
 msgid ""
 "Draft saved. Use <a href=\"stream?draft=1\">Drafts</a> app to continue "
 "editing."
 msgstr ""
 
-#: Zotlabs/Module/Item.php:1546
+#: Zotlabs/Module/Item.php:1545
 msgid "Your comment has been posted."
 msgstr ""
 
-#: Zotlabs/Module/Item.php:1617
+#: Zotlabs/Module/Item.php:1616
 msgid "System error. Post not saved."
 msgstr ""
 
-#: Zotlabs/Module/Item.php:1657
+#: Zotlabs/Module/Item.php:1656
 msgid "Your post/comment is awaiting approval."
 msgstr ""
 
-#: Zotlabs/Module/Item.php:1812
+#: Zotlabs/Module/Item.php:1811
 msgid "Unable to obtain post information from database."
 msgstr ""
 
-#: Zotlabs/Module/Item.php:1820
+#: Zotlabs/Module/Item.php:1819
 #, php-format
 msgid "You have reached your limit of %1$.0f top level posts."
 msgstr ""
 
-#: Zotlabs/Module/Item.php:1827
+#: Zotlabs/Module/Item.php:1826
 #, php-format
 msgid "You have reached your limit of %1$.0f webpages."
 msgstr ""
@@ -4731,7 +4731,7 @@ msgid "No entries (some entries may be hidden)."
 msgstr ""
 
 #: Zotlabs/Module/Display.php:86 Zotlabs/Module/Channel.php:295
-#: Zotlabs/Module/Hq.php:137 Zotlabs/Module/Rpost.php:150
+#: Zotlabs/Module/Hq.php:137 Zotlabs/Module/Rpost.php:240
 #: Zotlabs/Module/Pubstream.php:86 Zotlabs/Module/Stream.php:236
 msgid "Reset form"
 msgstr ""
@@ -5115,7 +5115,7 @@ msgid ""
 "registration.</a>"
 msgstr ""
 
-#: Zotlabs/Module/Register.php:299 Zotlabs/Module/Sites.php:51 boot.php:1662
+#: Zotlabs/Module/Register.php:299 Zotlabs/Module/Sites.php:51 boot.php:1676
 #: include/nav.php:162
 msgid "Register"
 msgstr ""
@@ -6341,7 +6341,7 @@ msgid ""
 "Password reset failed."
 msgstr ""
 
-#: Zotlabs/Module/Lostpass.php:91 boot.php:1691
+#: Zotlabs/Module/Lostpass.php:91 boot.php:1705
 msgid "Password Reset"
 msgstr ""
 
@@ -6497,7 +6497,7 @@ msgstr ""
 msgid "Item is not editable"
 msgstr ""
 
-#: Zotlabs/Module/Editpost.php:139 Zotlabs/Module/Rpost.php:156
+#: Zotlabs/Module/Editpost.php:139 Zotlabs/Module/Rpost.php:246
 msgid "Edit post"
 msgstr ""
 
@@ -7527,7 +7527,7 @@ msgstr ""
 msgid "Authenticated fetch"
 msgstr ""
 
-#: Zotlabs/Module/Home.php:112
+#: Zotlabs/Module/Home.php:141
 #, php-format
 msgid "Welcome to %s"
 msgstr ""
@@ -7568,7 +7568,7 @@ msgstr ""
 msgid "Authentication failed."
 msgstr ""
 
-#: Zotlabs/Module/Rmagic.php:80 boot.php:1683 include/channel.php:1951
+#: Zotlabs/Module/Rmagic.php:80 boot.php:1697 include/channel.php:1951
 msgid "Remote Authentication"
 msgstr ""
 
@@ -7951,11 +7951,11 @@ msgid "Enable user zoom on mobile devices"
 msgstr ""
 
 #: Zotlabs/Module/Settings/Display.php:199
-msgid "Update browser every xx seconds"
+msgid "Update notifications every xx seconds"
 msgstr ""
 
 #: Zotlabs/Module/Settings/Display.php:199
-msgid "Minimum of 10 seconds, no maximum"
+msgid "Minimum of 15 seconds, no maximum"
 msgstr ""
 
 #: Zotlabs/Module/Settings/Display.php:200
@@ -9910,49 +9910,49 @@ msgstr ""
 msgid "Default Profile"
 msgstr ""
 
-#: boot.php:1661
+#: boot.php:1675
 msgid "Create an account to access services and applications"
 msgstr ""
 
-#: boot.php:1681 include/nav.php:109 include/nav.php:138 include/nav.php:157
+#: boot.php:1695 include/nav.php:109 include/nav.php:138 include/nav.php:157
 msgid "Logout"
 msgstr ""
 
-#: boot.php:1685
+#: boot.php:1699
 msgid "Login/Email"
 msgstr ""
 
-#: boot.php:1686
+#: boot.php:1700
 msgid "Password"
 msgstr ""
 
-#: boot.php:1687
+#: boot.php:1701
 msgid "Remember me"
 msgstr ""
 
-#: boot.php:1690
+#: boot.php:1704
 msgid "Forgot your password?"
 msgstr ""
 
-#: boot.php:2466
+#: boot.php:2480
 #, php-format
 msgid "[$Projectname] Website SSL error for %s"
 msgstr ""
 
-#: boot.php:2471
+#: boot.php:2485
 msgid "Website SSL certificate is not valid. Please correct."
 msgstr ""
 
-#: boot.php:2515
+#: boot.php:2529
 #, php-format
 msgid "[$Projectname] Cron tasks not running on %s"
 msgstr ""
 
-#: boot.php:2520
+#: boot.php:2534
 msgid "Cron/Scheduled tasks not running."
 msgstr ""
 
-#: boot.php:2521 include/datetime.php:240
+#: boot.php:2535 include/datetime.php:240
 msgid "never"
 msgstr ""
 
@@ -10541,6 +10541,34 @@ msgstr ""
 msgid "Provide a personal tag cloud on your channel page"
 msgstr ""
 
+#: include/channel.php:47
+msgid "Unable to obtain identity information from database"
+msgstr ""
+
+#: include/channel.php:80
+msgid "Empty name"
+msgstr ""
+
+#: include/channel.php:83
+msgid "Name too long"
+msgstr ""
+
+#: include/channel.php:199
+msgid "No account identifier"
+msgstr ""
+
+#: include/channel.php:211
+msgid "Nickname is required."
+msgstr ""
+
+#: include/channel.php:293
+msgid "Unable to retrieve created identity"
+msgstr ""
+
+#: include/channel.php:586 include/channel.php:676
+msgid "Unable to retrieve modified identity"
+msgstr ""
+
 #: include/auth.php:196
 msgid "Delegation session ended."
 msgstr ""
@@ -10559,6 +10587,37 @@ msgstr ""
 
 #: include/auth.php:322
 msgid "Login failed."
+msgstr ""
+
+#: include/photos.php:154
+#, php-format
+msgid "Image exceeds website size limit of %lu bytes"
+msgstr ""
+
+#: include/photos.php:165
+msgid "Image file is empty."
+msgstr ""
+
+#: include/photos.php:344
+msgid "Photo storage failed."
+msgstr ""
+
+#: include/photos.php:393
+msgid "a new photo"
+msgstr ""
+
+#: include/photos.php:397
+#, php-format
+msgctxt "photo_upload"
+msgid "%1$s posted %2$s to %3$s"
+msgstr ""
+
+#: include/photos.php:738 include/nav.php:420 include/conversation.php:1949
+msgid "Photo Albums"
+msgstr ""
+
+#: include/photos.php:743
+msgid "Upload New Photos"
 msgstr ""
 
 #: include/dba/dba_driver.php:179
@@ -10672,37 +10731,6 @@ msgstr ""
 
 #: include/account.php:834
 msgid "This action is not available under your subscription plan."
-msgstr ""
-
-#: include/photos.php:154
-#, php-format
-msgid "Image exceeds website size limit of %lu bytes"
-msgstr ""
-
-#: include/photos.php:165
-msgid "Image file is empty."
-msgstr ""
-
-#: include/photos.php:344
-msgid "Photo storage failed."
-msgstr ""
-
-#: include/photos.php:393
-msgid "a new photo"
-msgstr ""
-
-#: include/photos.php:397
-#, php-format
-msgctxt "photo_upload"
-msgid "%1$s posted %2$s to %3$s"
-msgstr ""
-
-#: include/photos.php:738 include/nav.php:420 include/conversation.php:1949
-msgid "Photo Albums"
-msgstr ""
-
-#: include/photos.php:743
-msgid "Upload New Photos"
 msgstr ""
 
 #: include/nav.php:89
@@ -11062,34 +11090,6 @@ msgstr ""
 
 #: include/network.php:1607
 msgid "MySpace"
-msgstr ""
-
-#: include/channel.php:47
-msgid "Unable to obtain identity information from database"
-msgstr ""
-
-#: include/channel.php:80
-msgid "Empty name"
-msgstr ""
-
-#: include/channel.php:83
-msgid "Name too long"
-msgstr ""
-
-#: include/channel.php:199
-msgid "No account identifier"
-msgstr ""
-
-#: include/channel.php:211
-msgid "Nickname is required."
-msgstr ""
-
-#: include/channel.php:293
-msgid "Unable to retrieve created identity"
-msgstr ""
-
-#: include/channel.php:586 include/channel.php:676
-msgid "Unable to retrieve modified identity"
 msgstr ""
 
 #: include/conversation.php:180
