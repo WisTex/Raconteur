@@ -2389,8 +2389,13 @@ function anon_identity_init($reqvars) {
 function channel_url($channel) {
 
 	// data validation - if this is wrong, log the call stack so we can find the issue
+
 	if (! is_array($channel)) {
 		btlogger('not a channel array: ' . print_r($channel,true));
+	}
+
+	if ($channel['channel_address'] === z_root()) {
+		return z_root();
 	}
 
 	return (($channel) ? z_root() . '/channel/' . $channel['channel_address'] : z_root());
