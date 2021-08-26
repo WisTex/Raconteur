@@ -1724,7 +1724,9 @@ class Activity {
 			'type'      => 'Image',
 			'url'       => 	System::get_site_icon(),
 		];
-	
+
+		$ret['generator'] = [ 'type' => 'Application', 'name' => System::get_platform_name() ];
+
 		$ret['url'] = z_root();
 		$ret['inbox'] = z_root() . '/sysinbox';
 
