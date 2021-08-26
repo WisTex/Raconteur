@@ -2754,6 +2754,11 @@ class Activity {
 
 			$obj_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj));
 
+			// Actor records themselves do not have an actor or attributedTo
+			if ((! $obj_actor) && isset($act->obj['type']) && Activitystreams::is_an_actor($act->obj['type'])) {
+				$obj_actor = $act->obj;
+			}
+
 			// We already check for admin blocks of third-party objects when fetching them explicitly.
 			// Repeat here just in case the entire object was supplied inline and did not require fetching
 			
@@ -2769,10 +2774,9 @@ class Activity {
 				}
 			}
 
-			// if the object is an actor, it is not really a response activity, so reset a couple of things
+			// if the object is an actor, it is not really a response activity, so reset it to a top level post
 			
 			if (ActivityStreams::is_an_actor($act->obj['type'])) {
-				$obj_actor = $act->actor;
 				$s['parent_mid'] = $s['mid'];
 			}
 
@@ -2808,7 +2812,7 @@ class Activity {
 			}
 			
 			if ($act->type === 'Announce') {
-				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $act->obj['type']);
+				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type']));
 			}
 
 			if ($act->type === 'emojiReaction') {
