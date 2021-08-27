@@ -30,7 +30,7 @@ function xchan_store_lowlevel($arr) {
 		'xchan_censored' => ((array_key_exists('xchan_censored',$arr)) ? intval($arr['xchan_censored']) : 0),
 		'xchan_selfcensored' => ((array_key_exists('xchan_selfcensored',$arr)) ? intval($arr['xchan_selfcensored']) : 0),
 		'xchan_system' => ((array_key_exists('xchan_system',$arr)) ? intval($arr['xchan_system']) : 0),
-		'xchan_type' => ((array_key_exists('xchan_type',$arr)) ? intval($arr['xchan_type']) : 0),
+		'xchan_type' => ((array_key_exists('xchan_type',$arr)) ? intval($arr['xchan_type']) : XCHAN_TYPE_PERSON),
 		'xchan_deleted' => ((array_key_exists('xchan_deleted',$arr)) ? intval($arr['xchan_deleted']) : 0)
 	];
 
