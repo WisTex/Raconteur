@@ -34,6 +34,7 @@ let orgHeight = 0;
 $.ajaxPrefilter(function( options, original_Options, jqXHR ) {
     options.async = true;
 });
+$.ajaxSetup({cache: false});
 
 if ('serviceWorker' in navigator) {
 	navigator.serviceWorker.register('/ServiceWorker.js', { scope: '/' }).then(function(registration) {
@@ -54,7 +55,6 @@ if(cache_uid !== localUser.toString()) {
 	sessionStorage.setItem('uid', localUser.toString());
 }
 
-$.ajaxSetup({cache: false});
 
 let region = 0;
 
@@ -1006,19 +1006,22 @@ function updateInit() {
 function liveUpdate(notify_id) {
 
 	let origHeight = 0;
+	let expanded = $('.comment-edit-text.expanded');
+
 	
 	if(typeof profile_uid === 'undefined') profile_uid = false; /* Should probably be unified with channelId defined in head.tpl */
 
-	if((src === null) || (stopped) || (! profile_uid)) { $('.like-rotator').hide(); return; }
+	if((src === null) || (! profile_uid)) { $('.like-rotator').hide(); return; }
 
-	if(in_progress || mediaPlaying) {
+	if(in_progress || mediaPlaying || expanded.length || stopped) {
+		console.log('liveUpdate: deferred');
 		if(livetime) {
 			clearTimeout(livetime);
 		}
 		livetime = setTimeout(liveUpdate, 10000);
 		return;
 	}
-
+	console.log('liveUpdate');
 	if(timer)
 		clearTimeout(timer);
 

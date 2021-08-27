@@ -294,7 +294,7 @@ class ActivityPub {
 
 		$join_msg = null;
 
-		if (intval($x['recipient']['xchan_type']) === 1) {
+		if (intval($x['recipient']['xchan_type']) === XCHAN_TYPE_GROUP) {
 			$join_msg = $msg;
 			$join_msg['type'] = 'Join';
 			$join_msg['signature'] = LDSignatures::sign($join_msg,$x['sender']);

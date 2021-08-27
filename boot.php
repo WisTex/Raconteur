@@ -93,6 +93,18 @@ define ( 'DIRECTORY_MODE_STANDALONE',  0x0100); // A detached (off the grid) hub
 
 define ( 'DIRECTORY_REALM',            'ZAP');
 
+
+// Types of xchan records. These are a superset of ActivityStreams Actor types
+
+define ('XCHAN_TYPE_PERSON',           0);
+define ('XCHAN_TYPE_GROUP',            1);
+define ('XCHAN_TYPE_COLLECTION',       2);
+define ('XCHAN_TYPE_SERVICE',          3);
+define ('XCHAN_TYPE_ORGANIZATION',     4);
+define ('XCHAN_TYPE_APPLICATION',      5);
+define ('XCHAN_TYPE_UNKNOWN',        127);
+
+
 /**
  *
  * Image storage quality. Lower numbers save space at cost of image detail.

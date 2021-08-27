@@ -2265,7 +2265,7 @@ class Activity {
 			}
 		}
 
-		$xchan_type = (($person_obj['type'] === 'Group') ? 1 : 0);
+		$xchan_type = self::get_xchan_type($person_obj['type']);
 		$about = ((isset($person_obj['summary'])) ? html2bbcode(purify_html($person_obj['summary'])) : EMPTY_STR);
 
 		$p = q("select * from xchan where xchan_url = '%s' and xchan_network = 'zot6' limit 1",
@@ -2275,7 +2275,10 @@ class Activity {
 			set_xconfig($url,'system','protocols','zot6,activitypub');
 		}
 
-		// there is no standard way to represent an 'instance actor' but this will at least subdue the multiple pages of Mastodon and Pleroma instance actors in the directory.
+		// there is no standard way to represent an 'instance actor' but this will at least subdue the multiple
+		// pages of Mastodon and Pleroma instance actors in the directory.
+		// @TODO - (2021-08-27) remove this if they provide a non-person xchan_type
+		// once extended xchan_type directory filtering is implemented.
 		$censored = ((strpos($profile,'instance_actor') || strpos($profile,'/internal/fetch')) ? 1 : 0);
 
 		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
@@ -4082,6 +4085,24 @@ class Activity {
 		return $auth;
 	}
 
+	static function get_xchan_type($type) {
+		switch ($type) {
+			case 'Person':
+				return XCHAN_TYPE_PERSON;
+			case 'Group':
+				return XCHAN_TYPE_GROUP;
+			case 'Service':
+				return XCHAN_TYPE_SERVICE;
+			case 'Organization':
+				return XCHAN_TYPE_ORGANIZATION;
+			case 'Application':
+				return XCHAN_TYPE_APPLICATION;
+			default:
+				return XCHAN_TYPE_UNKNOWN;
+		}
+	}
+
+
 	static function ap_schema() {
 
 		return [
@@ -4116,5 +4137,8 @@ class Activity {
 		];
 
 	}
+
+
+
 
 }

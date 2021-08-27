@@ -55,6 +55,7 @@ class Groups {
 			}
 		}
 
+		// note: XCHAN_TYPE_GROUP = 1
 		$sql_extra = (($xf) ? " and ( xchan_hash in (" . $xf . ") or xchan_type = 1 ) " : " and xchan_type = 1 "); 
 
 		$r1 = q("select abook_id, xchan_hash, xchan_name, xchan_url, xchan_photo_s from abook left join xchan on abook_xchan = xchan_hash where xchan_deleted = 0 and abook_channel = %d and abook_pending = 0 and abook_ignored = 0 and abook_blocked = 0 and abook_archived = 0 $sql_extra order by xchan_name $limit ",
