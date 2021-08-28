@@ -27,7 +27,7 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic {
 	 *
 	 * @var string|null $channel_name
 	 */
-	protected $channel_name = null;
+	public $channel_name = null;
 	/**
 	 * @brief channel_id of the current channel of the logged-in account.
 	 *
