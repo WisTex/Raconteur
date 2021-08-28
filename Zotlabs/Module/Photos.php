@@ -719,7 +719,7 @@ class Photos extends Controller {
 				'$nickname' => App::$data['channel']['channel_address'],
 				'$newalbum_label' => t('Enter an album name'),
 				'$newalbum_placeholder' => t('or select an existing album (doubleclick)'),
-				'$visible' => array('visible', t('Create a status post for this upload'), 0,'', array(t('No'), t('Yes')), 'onclick="showHideBodyTextarea();"'),
+				'$visible' => array('visible', t('Create a status post for this upload'), 0, t('If multiple files are selected, the message will be repeated for each photo'), array(t('No'), t('Yes')), 'onclick="showHideBodyTextarea();"'),
 				'$caption' => array('description', t('Please briefly describe this photo for vision-impaired viewers')),
 				'title' => [ 'title', t('Title (optional)') ],
 				'$body' => array('body', t('Your message (optional)'),'', 'This will only appear in the status post'),
