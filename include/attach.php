@@ -631,8 +631,13 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 
 	$def_extension = '';
 	$is_photo = 0;
-	$gis = @getimagesize($src);
-	logger('getimagesize: ' . print_r($gis,true), LOGGER_DATA);
+	$gis = false;
+
+	if ($src) {
+		$gis = @getimagesize($src);
+		logger('getimagesize: ' . print_r($gis,true), LOGGER_DATA);
+	}
+	
 	if(($gis) && in_array($gis[2], [ IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP ])) {
 		$is_photo = 1;
 		if($gis[2] === IMAGETYPE_GIF)
