@@ -1,6 +1,7 @@
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
 		<div class="pull-right">
+			<a href="{{$files_path}}" title="{{$file_view}}"><i class="fa fa-folder btn btn-outline-secondary btn-sm" title="{{$file_view}}"></i></a>
 			{{if $can_post}}
 			<button class="btn btn-sm btn-success acl-form-trigger" title="{{$usage}}" onclick="openClose('photo-upload-form');" data-form_id="photos-upload-form"><i class="fa fa-plus-circle"></i>&nbsp;{{$upload}}</button>
 			{{/if}}

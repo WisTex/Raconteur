@@ -497,8 +497,6 @@ class Photos extends Controller {
 		$matches = [];
 		$partial = false;
 
-
-
 		if(array_key_exists('HTTP_CONTENT_RANGE',$_SERVER)) {
 			$pm = preg_match('/bytes (\d*)\-(\d*)\/(\d*)/',$_SERVER['HTTP_CONTENT_RANGE'],$matches);
 			if($pm) {
@@ -542,9 +540,18 @@ class Photos extends Controller {
 	
 		if(! $r['success']) {
 			notice($r['message'] . EOL);
+			if (is_ajax()) {
+				killme();
+			}
 			goaway(z_root() . '/photos/' . App::$data['channel']['channel_address']);
-		}		
-
+		}
+		if ($r['success'] && ! intval($r['data']['is_photo'])) {
+			notice( sprintf( t('%s: Unsupported photo type. Saved as file.'), escape_tags($r['data']['filename'])));
+		}
+		if (is_ajax()) {
+			killme();
+		}
+		
 		goaway(z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/album/' . $r['data']['folder']);
 	
 	}
@@ -863,6 +870,8 @@ class Photos extends Controller {
 					'$photos' => $photos,
 					'$album' => $album,
 					'$album_id' => $datum,
+					'$file_view' => t('View files'),
+					'$files_path' => z_root() . '/cloud/' . App::$data['channel']['channel_address'] . '/' . $x['display_path'],
 					'$album_edit' => array(t('Edit Album'), $album_edit),
 					'$can_post' => $can_post,
 					'$upload' => array(t('Add Photos'), z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/upload/' . $datum),
@@ -1410,6 +1419,8 @@ class Photos extends Controller {
 			$o .= replace_macros(get_markup_template('photos_recent.tpl'), [
 				'$title'       => t('Recent Photos'),
 				'$album_id'    => bin2hex(t('Recent Photos')),
+				'$file_view' => t('View files'),
+				'$files_path' => z_root() . '/cloud/' . App::$data['channel']['channel_address'],
 				'$can_post'    => $can_post,
 				'$upload'      => t('Add Photos'),
 				'$photos'      => $photos,

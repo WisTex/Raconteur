@@ -1,3 +1,4 @@
+
 let src = null;
 let prev = null;
 let livetime = null;
@@ -584,8 +585,10 @@ function notificationsUpdate(cached_data) {
 	let pingCmd = 'ping' + ((localUser != 0) ? '?f=&uid=' + localUser : '');
 
 	if(cached_data !== undefined) {
+
 		handleNotifications(cached_data);
 	} else {
+
 		$.get(pingCmd,function(data) {
 
 			if(! data) return;
