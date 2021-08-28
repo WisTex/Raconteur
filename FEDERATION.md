@@ -56,7 +56,7 @@ Activity objects may include an 'expires' field; after which time they are remov
 
 Private Media
 
-Private media MAY be accessed using OCAP or OpenWebAuth. Bearcaps are supported but not generated. 
+Private media MAY be accessed using OCAP or OpenWebAuth. Bearcaps are supported but not currently generated. 
 
 
 Permission System
@@ -105,3 +105,6 @@ Conversation Completion
 
 (2021-04-17) It's easy to fetch missing pieces of a conversation going "upstream", but there is no agreed-on method to fetch a complete conversation from the viewpoint of the origin actor and upstream fetching only provides a single conversation branch, rather than the entire tree. We provide 'context' as a URL to a collection containing the entire conversation (all known branches) as seen by its creator. This requires special treatment and is very similar to ostatus:conversation in that if context is present, it needs to be replicated in conversation descendants. We still support ostatus:conversation but usage is deprecated. We do not use 'replies' to achieve the same purposes because 'replies' only applies to direct descendants at any point in the conversation tree. 
 
+Site Actors
+
+(2021-08-25) An actor record of type 'Service' is now available from an ActivityStreams fetch of the domain root. This was discussed recently in the Socialhub as it may open some novel applications which involve communication with sites and site administators; and also provides a simple ActivityPub centric method for discovering very basic information about a site that doesn't involve platform-centric APIS. At present this is just a skeleton which will be filled in as we better define the ways we see it being used.

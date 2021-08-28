@@ -202,12 +202,14 @@ class Browser extends DAV\Browser\Plugin {
 				}
 			}
 
+			$folderHash = '';
 			$parentHash = '';
 			$owner = $this->auth->owner_id;
 			$splitPath = explode('/', $fullPath);
 			if (count($splitPath) > 3) {
 				for ($i = 3; $i < count($splitPath); $i++) {
 					$attachName = urldecode($splitPath[$i]);
+					$folderHash = $parentHash;
 					$attachHash = $this->findAttachHash($owner, $parentHash, $attachName);
 					$parentHash = $attachHash;
 				}
@@ -302,6 +304,8 @@ class Browser extends DAV\Browser\Plugin {
 				'$parentpath' => $parentpath,
 				'$cpath' => bin2hex(App::$query_string),
 				'$tiles' => intval($_SESSION['cloud_tiles']),
+				'$photo_view' => (($parentpath) ? t('View photos') : EMPTY_STR),
+				'$photos_path' => z_root() . '/photos/' . $this->auth->owner_nick . '/album/' . $folderHash,
 				'$entries' => $f,
 				'$name' => t('Name'),
 				'$type' => t('Type'),

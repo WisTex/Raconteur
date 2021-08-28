@@ -17,7 +17,7 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '21.08.25' );
+define ( 'STD_VERSION',             '21.08.28' );
 define ( 'ZOT_REVISION',            '10.0' );
 
 define ( 'DB_UPDATE_VERSION',       1251 );
@@ -92,6 +92,18 @@ define ( 'DIRECTORY_MODE_STANDALONE',  0x0100); // A detached (off the grid) hub
 // point to go out and find the rest of the world.
 
 define ( 'DIRECTORY_REALM',            'ZAP');
+
+
+// Types of xchan records. These are a superset of ActivityStreams Actor types
+
+define ('XCHAN_TYPE_PERSON',           0);
+define ('XCHAN_TYPE_GROUP',            1);
+define ('XCHAN_TYPE_COLLECTION',       2);
+define ('XCHAN_TYPE_SERVICE',          3);
+define ('XCHAN_TYPE_ORGANIZATION',     4);
+define ('XCHAN_TYPE_APPLICATION',      5);
+define ('XCHAN_TYPE_UNKNOWN',        127);
+
 
 /**
  *

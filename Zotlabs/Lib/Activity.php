@@ -1724,7 +1724,9 @@ class Activity {
 			'type'      => 'Image',
 			'url'       => 	System::get_site_icon(),
 		];
-	
+
+		$ret['generator'] = [ 'type' => 'Application', 'name' => System::get_platform_name() ];
+
 		$ret['url'] = z_root();
 		$ret['inbox'] = z_root() . '/sysinbox';
 
@@ -2265,7 +2267,7 @@ class Activity {
 			}
 		}
 
-		$xchan_type = (($person_obj['type'] === 'Group') ? 1 : 0);
+		$xchan_type = self::get_xchan_type($person_obj['type']);
 		$about = ((isset($person_obj['summary'])) ? html2bbcode(purify_html($person_obj['summary'])) : EMPTY_STR);
 
 		$p = q("select * from xchan where xchan_url = '%s' and xchan_network = 'zot6' limit 1",
@@ -2275,7 +2277,10 @@ class Activity {
 			set_xconfig($url,'system','protocols','zot6,activitypub');
 		}
 
-		// there is no standard way to represent an 'instance actor' but this will at least subdue the multiple pages of Mastodon and Pleroma instance actors in the directory.
+		// there is no standard way to represent an 'instance actor' but this will at least subdue the multiple
+		// pages of Mastodon and Pleroma instance actors in the directory.
+		// @TODO - (2021-08-27) remove this if they provide a non-person xchan_type
+		// once extended xchan_type directory filtering is implemented.
 		$censored = ((strpos($profile,'instance_actor') || strpos($profile,'/internal/fetch')) ? 1 : 0);
 
 		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
@@ -2754,6 +2759,11 @@ class Activity {
 
 			$obj_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj));
 
+			// Actor records themselves do not have an actor or attributedTo
+			if ((! $obj_actor) && isset($act->obj['type']) && Activitystreams::is_an_actor($act->obj['type'])) {
+				$obj_actor = $act->obj;
+			}
+
 			// We already check for admin blocks of third-party objects when fetching them explicitly.
 			// Repeat here just in case the entire object was supplied inline and did not require fetching
 			
@@ -2769,10 +2779,9 @@ class Activity {
 				}
 			}
 
-			// if the object is an actor, it is not really a response activity, so reset a couple of things
+			// if the object is an actor, it is not really a response activity, so reset it to a top level post
 			
 			if (ActivityStreams::is_an_actor($act->obj['type'])) {
-				$obj_actor = $act->actor;
 				$s['parent_mid'] = $s['mid'];
 			}
 
@@ -2808,7 +2817,7 @@ class Activity {
 			}
 			
 			if ($act->type === 'Announce') {
-				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $act->obj['type']);
+				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type']));
 			}
 
 			if ($act->type === 'emojiReaction') {
@@ -4078,6 +4087,24 @@ class Activity {
 		return $auth;
 	}
 
+	static function get_xchan_type($type) {
+		switch ($type) {
+			case 'Person':
+				return XCHAN_TYPE_PERSON;
+			case 'Group':
+				return XCHAN_TYPE_GROUP;
+			case 'Service':
+				return XCHAN_TYPE_SERVICE;
+			case 'Organization':
+				return XCHAN_TYPE_ORGANIZATION;
+			case 'Application':
+				return XCHAN_TYPE_APPLICATION;
+			default:
+				return XCHAN_TYPE_UNKNOWN;
+		}
+	}
+
+
 	static function ap_schema() {
 
 		return [
@@ -4112,5 +4139,8 @@ class Activity {
 		];
 
 	}
+
+
+
 
 }
