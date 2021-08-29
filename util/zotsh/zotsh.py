@@ -96,7 +96,13 @@ class ZotSH(object):
             cmd = getattr(self.davclient, command)
         
         return cmd(*args)
-        
+
+    def cmd_cd(self, *args):
+        if len(args) == 0:
+            return;
+        if self.davclient.exists(args[0]):
+            self.davclient.cd(args[0])        
+    
     def cmd_exists(self, *args):
         if (len(args)==0):
             return
@@ -164,7 +170,7 @@ class ZotSH(object):
         bnewhost = bnewhost.encode('utf-8').hex()
         
         r = session_home.get( 
-            SERVER + "magic",  
+            SERVER + "/magic",  
             params={'bdest': bnewhost, 'owa': 1},
             allow_redirects=True,
             verify=VERIFY_SSL )
@@ -173,11 +179,10 @@ class ZotSH(object):
         self.session = session_remote
 
         if (ruser):
-            try:
-                self.do('cd', *[ruser])        
-            except easywebdav.client.OperationFailed as e:
-                print(e)
-
+            if (self.do('exists',*[ruser])):
+                self.do('cd', *[ruser])
+            else:
+                print('not found')
 
     def cmd_pwd(self, *args):
         return "%s%s" % ( self.davclient.baseurl, self.davclient.cwd )
@@ -293,10 +298,7 @@ def zotsh():
     # since the site directory may be empty, automatically cd to
     # your own cloud storage folder
     
-    try:
-        zotsh.do('cd', *[USER])        
-    except easywebdav.client.OperationFailed as e:
-        print(e)
+    zotsh.do('cd', *[USER])        
 
     # command loop
     input_str = input(zotsh.PS1)
