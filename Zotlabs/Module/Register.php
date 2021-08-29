@@ -118,8 +118,13 @@ class Register extends Controller {
 		if ($_REQUEST['permissions_role']) {
 			set_aconfig($result['account']['account_id'],'register','permissions_role',$_REQUEST['permissions_role']);
 		}
-	
-	
+
+		// At this point the account has been created without error. Purge any error messages from prior failed registration
+		// attempts which haven't yet been delivered to the browser and start fresh. If you're willing to figure out why they
+		// weren't delivered to the browser please adopt zap issue 34. 
+		
+		$_SESSION['sysmsg'] = [];
+		
 	 	$using_invites = intval(get_config('system','invitation_only'));
 		$num_invites   = intval(get_config('system','number_invites'));
 		$invite_code   = ((x($_POST,'invite_code'))  ? notags(trim($_POST['invite_code']))  : '');
