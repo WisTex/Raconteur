@@ -17,7 +17,7 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '21.08.28' );
+define ( 'STD_VERSION',             '21.08.29' );
 define ( 'ZOT_REVISION',            '10.0' );
 
 define ( 'DB_UPDATE_VERSION',       1251 );
@@ -1846,19 +1846,24 @@ function can_view_public_stream() {
  * @param string $s Text to display
  */
 function notice($s) {
-	if(! session_id())
-		return;
 
-	if(! x($_SESSION, 'sysmsg')) $_SESSION['sysmsg'] = [];
+	if (! session_id()) {
+		return;
+	}
+
+	if (! x($_SESSION, 'sysmsg')) {
+		$_SESSION['sysmsg'] = [];
+	}
 
 	// ignore duplicated error messages which haven't yet been displayed
 	// - typically seen as multiple 'permission denied' messages
 	// as a result of auto-reloading a protected page with &JS=1
 
-	if(in_array($s, $_SESSION['sysmsg']))
+	if (in_array($s, $_SESSION['sysmsg'])) {
 		return;
+	}
 
-	if(App::$interactive) {
+	if (App::$interactive) {
 		$_SESSION['sysmsg'][] = $s;
 	}
 }
@@ -1874,16 +1879,21 @@ function notice($s) {
  * @param string $s Text to display
  */
 function info($s) {
-	if(! session_id())
+	if (! session_id()) {
 		return;
-	if(! x($_SESSION, 'sysmsg_info'))
+	}
+	
+	if (! x($_SESSION, 'sysmsg_info')) {
 		$_SESSION['sysmsg_info'] = [];
+	}
 
-	if(in_array($s, $_SESSION['sysmsg_info']))
+	if (in_array($s, $_SESSION['sysmsg_info'])) {
 		return;
+	}
 
-	if(App::$interactive)
+	if (App::$interactive) {
 		$_SESSION['sysmsg_info'][] = $s;
+	}
 }
 
 /**
