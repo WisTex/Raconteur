@@ -2402,6 +2402,16 @@ function item_update_parent_commented($item) {
 
 
 	$update_parent = true;
+	$update_changed = true;
+	
+	$c = channelx_by_n($item['uid']);
+
+	// don't modify the changed time on the parent if we commented on it.
+	// This messes up the notification system, which ignores changes made by us
+	
+	if ($c && $c['author_xchan'] == $c['channel_hash']) {
+		$update_changed = false;
+	}
 
 	// update the commented timestamp on the parent 
 	// - unless this is a moderated comment or a potential clone of an older item
@@ -2421,11 +2431,17 @@ function item_update_parent_commented($item) {
 			intval($item['uid'])
 		);
 
-		q("UPDATE item set commented = '%s', changed = '%s' WHERE id = %d",
+		q("UPDATE item set commented = '%s' WHERE id = %d",
 			dbesc(($z) ? $z[0]['commented'] : datetime_convert()),
-			dbesc(datetime_convert()),
 			intval($item['parent'])
 		);
+		if ($update_changed) {
+			q("UPDATE item set changed = '%s' WHERE id = %d",
+				dbesc(datetime_convert()),
+				intval($item['parent'])
+			);
+		}
+			
 	}
 }
 
