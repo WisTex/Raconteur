@@ -330,7 +330,7 @@ class Ping extends Controller {
 			$r = q("SELECT * FROM item 
 				WHERE uid = %d
 				AND author_xchan != '%s'
-				AND changed > '%s'
+				AND updated > '%s'
 				$seenstr
 				$item_normal_moderate
 				$sql_extra
@@ -366,7 +366,7 @@ class Ping extends Controller {
 			$r = q("SELECT * FROM item 
 				WHERE uid = %d
 				AND author_xchan != '%s'
-				AND changed > '%s'
+				AND updated > '%s'
 				$seenstr
 				$item_normal_moderate
 				$sql_extra
@@ -574,7 +574,7 @@ class Ping extends Controller {
 		if ($vnotify & VNOTIFY_NETWORK) {
 			$loadtime = get_loadtime('stream');
 			$r = q("SELECT id FROM item 
-				WHERE uid = %d and changed > '%s' 
+				WHERE uid = %d and updated > '%s' 
 				$seenstr
 				$item_normal
 				$sql_extra
@@ -600,7 +600,7 @@ class Ping extends Controller {
 		if ($vnotify & VNOTIFY_CHANNEL) {
 			$loadtime = get_loadtime('channel');
 			$r = q("SELECT id FROM item 
-				WHERE item_wall = 1 and uid = %d and changed > '%s'
+				WHERE item_wall = 1 and uid = %d and updated > '%s'
 				$seenstr 
 				$item_normal
 				$sql_extra
