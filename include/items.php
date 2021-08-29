@@ -2409,7 +2409,7 @@ function item_update_parent_commented($item) {
 	// don't modify the changed time on the parent if we commented on it.
 	// This messes up the notification system, which ignores changes made by us
 	
-	if ($c && $c['author_xchan'] == $c['channel_hash']) {
+	if ($c && $item['author_xchan'] === $c['channel_hash']) {
 		$update_changed = false;
 	}
 
@@ -2441,7 +2441,6 @@ function item_update_parent_commented($item) {
 				intval($item['parent'])
 			);
 		}
-			
 	}
 }
 
