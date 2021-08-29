@@ -96,7 +96,13 @@ class ZotSH(object):
             cmd = getattr(self.davclient, command)
         
         return cmd(*args)
-        
+
+    def cmd_cd(self, *args):
+        if len(args) == 0:
+            return;
+        if self.davclient.exists(args[0]):
+            self.davclient.cd(args[0])        
+    
     def cmd_exists(self, *args):
         if (len(args)==0):
             return
@@ -292,10 +298,7 @@ def zotsh():
     # since the site directory may be empty, automatically cd to
     # your own cloud storage folder
     
-    try:
-        zotsh.do('cd', *[USER])        
-    except easywebdav.client.OperationFailed as e:
-        print(e)
+    zotsh.do('cd', *[USER])        
 
     # command loop
     input_str = input(zotsh.PS1)
