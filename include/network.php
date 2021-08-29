@@ -1283,7 +1283,7 @@ function get_site_info() {
 		}
 	}
 
-	$protocols = [ 'zot' ];
+	$protocols = [ 'nomad' ];
 	if (get_config('system','activitypub', ACTIVITYPUB_ENABLED)) {
 		$protocols[] = 'activitypub';
 	}
