@@ -24,6 +24,10 @@ The ability to browse remote WebDAV repositories outside your own server is not 
 
 cd username
 
+OR you can connect to the site using
+
+host username@hostname
+
 if you know a username on that site and if they have given you the requisite permission *or* their directory contains publicly readable content. 
 
 ----
@@ -41,9 +45,11 @@ Commands
 host <hostname>
 	Authenticate to 'hostname' and switch to it
 
+host <username@hostname>
+	Authenticate to 'hostname' and switch to it and automatically cd to the 'username' directory
+	
 cd <dirname|..>
 	change remote dir
-
 
 ls [path] [-a] [-l] [-d]
 	list remote files in current dir if 'path' not defined

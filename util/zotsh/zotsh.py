@@ -141,9 +141,15 @@ class ZotSH(object):
         return self.davclient.download(args[0], args[1])        
         
     def cmd_host(self, *args):
+        ruser = ''
         if (len(args)==0):
             return
         newhostname = args[0]
+        i = newhostname.find('@')
+        if (i != (-1)):
+            ruser = newhostname[0:i]
+            newhostname = newhostname[i+1:]
+            
         newhost = "https://%s/" % newhostname
         if newhostname == "~" or newhost == SERVER:
             # back to home server
@@ -165,7 +171,13 @@ class ZotSH(object):
         
         self.hostname = newhostname
         self.session = session_remote
-        
+
+        if (ruser):
+            try:
+                self.do('cd', *[ruser])        
+            except easywebdav.client.OperationFailed as e:
+                print(e)
+
 
     def cmd_pwd(self, *args):
         return "%s%s" % ( self.davclient.baseurl, self.davclient.cwd )
