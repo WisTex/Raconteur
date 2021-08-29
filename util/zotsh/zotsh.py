@@ -173,11 +173,10 @@ class ZotSH(object):
         self.session = session_remote
 
         if (ruser):
-            try:
-                self.do('cd', *[ruser])        
-            except easywebdav.client.OperationFailed as e:
-                print(e)
-
+            if (self.do('exists',*[ruser])):
+                self.do('cd', *[ruser])
+            else:
+                print('not found')
 
     def cmd_pwd(self, *args):
         return "%s%s" % ( self.davclient.baseurl, self.davclient.cwd )
