@@ -164,7 +164,7 @@ class ZotSH(object):
         bnewhost = bnewhost.encode('utf-8').hex()
         
         r = session_home.get( 
-            SERVER + "magic",  
+            SERVER + "/magic",  
             params={'bdest': bnewhost, 'owa': 1},
             allow_redirects=True,
             verify=VERIFY_SSL )
