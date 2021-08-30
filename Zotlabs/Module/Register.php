@@ -56,7 +56,7 @@ class Register extends Controller {
 			}
 		}
 	
-		if (! isset($_POST['tos']) && intval($_POST['tos'])) {
+		if (! (isset($_POST['tos']) && intval($_POST['tos']))) {
 			notice( t('Please indicate acceptance of the Terms of Service. Registration failed.') . EOL);
 			return;
 		}
