@@ -1429,10 +1429,12 @@ function theme_attachments(&$item) {
 				$label = urldecode(htmlspecialchars($r['name'], ENT_COMPAT, 'UTF-8'));
 			}
 
+			if (isset($r['href']) && $r['href']) {
+				$m = parse_url($r['href']);
+			}
 			if (! $label) {
 				if (isset($r['href']) && $r['href']) {
-					$m = parse_url($r['href']);
-					if ($m && $m['path']) {
+					if (isset($m) && $m && $m['path']) {
 						$label = basename($m['path']);
 					}
 				}
@@ -1446,6 +1448,10 @@ function theme_attachments(&$item) {
 			$title = t('Size') . ' ' . ((isset($r['length']) && $r['length']) ? userReadableSize($r['length']) : t('unknown'));
 
 			if (! (isset($r['href']))) {
+				continue;
+			}
+
+			if (isset($m) && $m && $m['scheme'] === 'data')  {
 				continue;
 			}
 
