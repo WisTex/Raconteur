@@ -100,7 +100,7 @@ class Session {
 
 	public function new_cookie($xtime) {
 
-		$newxtime = (($xtime> 0) ? (time() + $xtime) : 0);
+		$newxtime = (($xtime > 0) ? (time() + $xtime) : 0);
 
 		$old_sid = session_id();
 
