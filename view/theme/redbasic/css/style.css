@@ -167,6 +167,12 @@ input[type=text], textarea {
 	width: 100%;
 }
 
+#help_email, #help_password, #help_password2, #tos_container > small.form-text {
+	font-size: 1.2rem;
+	font-weight: bold;
+	color: #F00 !important;
+}
+
 #help-content pre code {
 	overflow-x: auto;
 	white-space: pre;
