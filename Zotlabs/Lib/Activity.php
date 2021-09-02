@@ -2123,7 +2123,7 @@ class Activity {
 
 		$ap_hubloc = null;
 
-		$hublocs = self::get_actor_hublocs($url, [ 'all' ]);
+		$hublocs = self::get_actor_hublocs($url);
 		if ($hublocs) {
 			foreach ($hublocs as $hub) {
 				if ($hub['hubloc_network'] === 'activitypub') {
@@ -2134,7 +2134,6 @@ class Activity {
 				}
 			}
 		}
-
 
 		if ($ap_hubloc) {
 			// we already have a stored record. Determine if it needs updating.
@@ -4134,31 +4133,28 @@ class Activity {
 	}
 
 
-	static function get_actor_hublocs($url, $options = []) {
+	static function get_actor_hublocs($url, $options = 'all') {
 
 		$hublocs = false;
 
-		if (! is_array($options)) {
-			$options = [];
-		}
-
-		if (in_array('all',$options)) {
-			$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where ( hubloc_id_url = '%s' OR hubloc_hash = '%s' ) ",
-				dbesc($url),
-				dbesc($url)
-			);
-		}
-
-		if (in_array('activitypub',$options)) {
-			$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_hash = '%s' ",
-				dbesc($url)
-			);
-		}
-
-		if (in_array('zot6',$options)) {
-			$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_id_url = '%s' ",
-				dbesc($url)
-			);
+		switch ($options) {
+			case 'activitypub':
+				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_hash = '%s' ",
+					dbesc($url)
+				);
+				break;
+			case 'zot6':
+				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_id_url = '%s' ",
+					dbesc($url)
+				);
+				break;
+			case 'all':
+			default:
+				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where ( hubloc_id_url = '%s' OR hubloc_hash = '%s' ) ",
+					dbesc($url),
+					dbesc($url)
+				);
+				break;
 		}
 
 		return $hublocs;		
