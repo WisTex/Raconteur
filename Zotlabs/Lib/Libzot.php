@@ -3557,4 +3557,11 @@ class Libzot {
 		return $arr[0];
 	}
 
+	static function update_cached_hubloc($hubloc) {
+		if ($hubloc['hubloc_updated'] > datetime_convert('UTC','UTC','now - 1 week') || $hubloc['hubloc_url'] === z_root()) {
+			return;
+		}
+		self::refresh( [ 'hubloc_id_url' => $hubloc['hubloc_id_url'] ] );
+	}
+
 }
