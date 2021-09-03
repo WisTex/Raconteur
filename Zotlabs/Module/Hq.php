@@ -63,17 +63,13 @@ class Hq extends Controller {
 			);
 
 			if($r[0]['mid']) {
-				$item_hash = 'b64.' . base64url_encode($r[0]['mid']);
+				$item_hash = gen_link_id($r[0]['mid']);
 			}
 		}
 
 		if($item_hash) {
 
-			if(strpos($item_hash,'b64.') === 0)
-				$decoded = @base64url_decode(substr($item_hash,4));
-
-			if($decoded)
-				$item_hash = $decoded;
+			$item_hash = unpack_link_id($item_hash);
 
 			$target_item = null;
 
@@ -158,8 +154,7 @@ class Hq extends Controller {
 				$mid = ((($target_item['verb'] == ACTIVITY_LIKE) || ($target_item['verb'] == ACTIVITY_DISLIKE)) ? $target_item['thr_parent'] : $target_item['mid']);
 
 				// if we got a decoded hash we must encode it again before handing to javascript 
-				if($decoded)
-					$mid = 'b64.' . base64url_encode($mid);
+				$mid = gen_link_id($mid);
 			}
 			else {
 				$mid = '';

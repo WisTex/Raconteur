@@ -27,9 +27,7 @@ class Dreport extends Controller {
 			$mid = argv(1);
 		}
 
-		if (strpos($mid,'b64.') === 0) {
-			$message_id = @base64url_decode(substr($mid,4));
-		}
+		$message_id = unpack_link_id($mid);
 
 		if (! $message_id) {
 			notice( t('Invalid message') . EOL);

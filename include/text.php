@@ -3610,8 +3610,16 @@ function cleanup_bbcode($body) {
 }
 
 function gen_link_id($mid) {
-	if(strpbrk($mid,':/&?<>"\'') !== false)
+	if (strpbrk($mid,':/&?<>"\'') !== false) {
 		return 'b64.' . base64url_encode($mid);
+	}
+	return $mid;
+}
+
+function unpack_link_id($mid) {
+	if (strpos($mid,'b64.') === 0) {
+		$mid = base64url_decode(preg_replace('/[^A-Za-z0-9\-_].*/','',substr($mid,4)));
+	}
 	return $mid;
 }
 

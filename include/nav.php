@@ -120,11 +120,11 @@ function nav($template = 'default') {
 	else {
 		if(! get_account_id())  {
 			if(App::$module === 'channel') {
-				$nav['login'] = login(true,'main-login',false,false);
+				$nav['login'] = login(true,'navbar-login',false,false);
 				$nav['loginmenu'][] = ['login',t('Login'),'',t('Sign in'),''];
 			}
 			else {
-				$nav['login'] = login(true,'main-login',false,false);
+				$nav['login'] = login(true,'navbar-login',false,false);
 				$nav['loginmenu'][] = ['login',t('Login'),'',t('Sign in'),'login_nav_btn'];
 				App::$page['content'] .= replace_macros(get_markup_template('nav_login.tpl'),
 					[ 

@@ -102,10 +102,7 @@ class Display extends Controller {
 	
 		$target_item = null;
 
-		if(strpos($item_hash,'b64.') === 0)
-			$decoded = @base64url_decode(substr($item_hash,4));
-		if($decoded)
-			$item_hash = $decoded;
+		$item_hash = unpack_link_id($item_hash);
 
 		$r = q("select id, uid, mid, parent_mid, thr_parent, verb, item_type, item_deleted, author_xchan, item_blocked from item where mid like '%s' limit 1",
 			dbesc($item_hash . '%')
@@ -210,9 +207,9 @@ class Display extends Controller {
 
 			$mid = ((($target_item['verb'] == ACTIVITY_LIKE) || ($target_item['verb'] == ACTIVITY_DISLIKE)) ? $target_item['thr_parent'] : $target_item['mid']);
 
-			// if we got a decoded hash we must encode it again before handing to javascript 
-			if($decoded)
-				$mid = 'b64.' . base64url_encode($mid);
+			// if we received a decoded hash originally we must encode it again before handing to javascript 
+
+			$mid = gen_link_id($mid);
 
 			$o .= '<div id="live-display"></div>' . "\r\n";
 			$o .= "<script> var profile_uid = " . ((intval(local_channel())) ? local_channel() : (-1))

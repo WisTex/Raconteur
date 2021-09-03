@@ -96,12 +96,8 @@ class Channel extends Controller {
 			// Make it do the right thing.
 			
 			$mid = ((x($_REQUEST,'mid')) ? $_REQUEST['mid'] : '');
-			if ($mid && strpos($mid,'b64.') === 0) {
-				$decoded = @base64url_decode(substr($mid,4));
-				if ($decoded) {
-					$mid = $decoded;
-				}
-			}
+			$mid = unpack_link_id($mid);
+
 			if ($mid) {
 				$obj = null;
 				if (strpos($mid, z_root() . '/item/') === 0) {
@@ -185,12 +181,7 @@ class Channel extends Controller {
 		$category = $datequery = $datequery2 = '';
 
 		$mid = ((x($_REQUEST,'mid')) ? $_REQUEST['mid'] : '');
-		if($mid && strpos($mid,'b64.') === 0) {
-			$decoded = @base64url_decode(substr($mid,4));
-			if($decoded) {
-				$mid = $decoded;
-			}
-		}
+		$mid = unpack_link_id($mid);
 
 		$datequery = ((x($_GET,'dend') && is_a_date_arg($_GET['dend'])) ? notags($_GET['dend']) : '');
 		$datequery2 = ((x($_GET,'dbegin') && is_a_date_arg($_GET['dbegin'])) ? notags($_GET['dbegin']) : '');
