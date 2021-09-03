@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 21.08.28\n"
+"Project-Id-Version: 21.09.03\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-27 22:32-0700\n"
+"POT-Creation-Date: 2021-09-02 20:31-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,7 +47,7 @@ msgstr ""
 
 #: Zotlabs/Access/PermissionRoles.php:187 Zotlabs/Module/Directory.php:399
 #: Zotlabs/Module/Manage.php:73 Zotlabs/Module/Manage.php:170
-#: Zotlabs/Storage/Browser.php:145 include/text.php:3106
+#: Zotlabs/Storage/Browser.php:145 include/text.php:3112
 msgid "Collection"
 msgstr ""
 
@@ -346,8 +346,8 @@ msgstr ""
 msgid "School/education:"
 msgstr ""
 
-#: Zotlabs/Lib/Libprofile.php:578 Zotlabs/Lib/Activity.php:2797
-#: Zotlabs/Lib/Activity.php:2800 Zotlabs/Lib/Activity.php:2820
+#: Zotlabs/Lib/Libprofile.php:578 Zotlabs/Lib/Activity.php:2821
+#: Zotlabs/Lib/Activity.php:2824 Zotlabs/Lib/Activity.php:2844
 #: Zotlabs/Lib/Apps.php:364 Zotlabs/Module/Profperm.php:117
 msgid "Profile"
 msgstr ""
@@ -423,11 +423,11 @@ msgstr ""
 #: Zotlabs/Module/Profile.php:104 Zotlabs/Module/Profile.php:120
 #: Zotlabs/Module/Viewconnections.php:32 Zotlabs/Module/Viewconnections.php:37
 #: Zotlabs/Module/Suggestions.php:31 Zotlabs/Module/Inspect.php:16
-#: Zotlabs/Web/WebServer.php:71 include/photos.php:34 include/items.php:3812
+#: Zotlabs/Web/WebServer.php:71 include/photos.php:34 include/items.php:3827
 #: include/attach.php:157 include/attach.php:204 include/attach.php:280
 #: include/attach.php:401 include/attach.php:415 include/attach.php:422
-#: include/attach.php:500 include/attach.php:1078 include/attach.php:1153
-#: include/attach.php:1322
+#: include/attach.php:500 include/attach.php:1083 include/attach.php:1158
+#: include/attach.php:1327
 msgid "Permission denied."
 msgstr ""
 
@@ -435,7 +435,7 @@ msgstr ""
 msgid "Room is full"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2141 Zotlabs/Lib/Apps.php:1079
+#: Zotlabs/Lib/Activity.php:2165 Zotlabs/Lib/Apps.php:1079
 #: Zotlabs/Lib/Apps.php:1168 Zotlabs/Module/Cdav.php:853
 #: Zotlabs/Module/Cdav.php:854 Zotlabs/Module/Cdav.php:861
 #: Zotlabs/Module/Embedphotos.php:216 Zotlabs/Module/Photos.php:848
@@ -445,43 +445,43 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2797
+#: Zotlabs/Lib/Activity.php:2821
 #, php-format
 msgid "Likes %1$s's %2$s"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2800
+#: Zotlabs/Lib/Activity.php:2824
 #, php-format
 msgid "Doesn't like %1$s's %2$s"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2806
+#: Zotlabs/Lib/Activity.php:2830
 #, php-format
 msgid "Will attend %s's event"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2809
+#: Zotlabs/Lib/Activity.php:2833
 #, php-format
 msgid "Will not attend %s's event"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2812
+#: Zotlabs/Lib/Activity.php:2836
 #, php-format
 msgid "May attend %s's event"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2815
+#: Zotlabs/Lib/Activity.php:2839
 #, php-format
 msgid "May not attend %s's event"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2820 Zotlabs/Lib/Share.php:122
-#: Zotlabs/Module/Share.php:103 include/items.php:3260
+#: Zotlabs/Lib/Activity.php:2844 Zotlabs/Lib/Share.php:122
+#: Zotlabs/Module/Share.php:103 include/items.php:3275
 #, php-format
 msgid "&#x1f501; Repeated %1$s's %2$s"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:3284 include/text.php:1588 include/text.php:2972
+#: Zotlabs/Lib/Activity.php:3308 include/text.php:1594 include/text.php:2978
 #, php-format
 msgid "%1$s (%2$s)"
 msgstr ""
@@ -1140,10 +1140,10 @@ msgstr ""
 #: Zotlabs/Module/Settings/Permcats.php:116
 #: Zotlabs/Module/Settings/Oauth2.php:105
 #: Zotlabs/Module/Settings/Account.php:104
-#: Zotlabs/Module/Settings/Display.php:190
 #: Zotlabs/Module/Settings/Features.php:59
 #: Zotlabs/Module/Settings/Tokens.php:296
-#: Zotlabs/Module/Settings/Channel.php:593 Zotlabs/Module/Sources.php:123
+#: Zotlabs/Module/Settings/Channel.php:593
+#: Zotlabs/Module/Settings/Display.php:190 Zotlabs/Module/Sources.php:123
 #: Zotlabs/Module/Sources.php:160 Zotlabs/Module/Photos.php:1119
 #: Zotlabs/Module/Photos.php:1178 Zotlabs/Module/Photos.php:1290
 #: Zotlabs/Module/Import.php:703 Zotlabs/Module/Xchan.php:15
@@ -1674,8 +1674,8 @@ msgstr ""
 #: Zotlabs/Module/Mitem.php:261 Zotlabs/Module/Menu.php:165
 #: Zotlabs/Module/Menu.php:224 Zotlabs/Module/Profiles.php:678
 #: Zotlabs/Module/Zot_probe.php:17 Zotlabs/Module/Ap_probe.php:20
-#: Zotlabs/Module/Settings/Display.php:103
-#: Zotlabs/Module/Settings/Channel.php:374 Zotlabs/Module/Sources.php:122
+#: Zotlabs/Module/Settings/Channel.php:374
+#: Zotlabs/Module/Settings/Display.php:103 Zotlabs/Module/Sources.php:122
 #: Zotlabs/Module/Sources.php:157 Zotlabs/Module/Photos.php:722
 #: Zotlabs/Module/Import.php:692 Zotlabs/Module/Import.php:696
 #: Zotlabs/Module/Import.php:697 Zotlabs/Storage/Browser.php:432 boot.php:1713
@@ -1699,8 +1699,8 @@ msgstr ""
 #: Zotlabs/Module/Mitem.php:261 Zotlabs/Module/Menu.php:165
 #: Zotlabs/Module/Menu.php:224 Zotlabs/Module/Profiles.php:678
 #: Zotlabs/Module/Zot_probe.php:17 Zotlabs/Module/Ap_probe.php:20
-#: Zotlabs/Module/Settings/Display.php:103
-#: Zotlabs/Module/Settings/Channel.php:374 Zotlabs/Module/Sources.php:122
+#: Zotlabs/Module/Settings/Channel.php:374
+#: Zotlabs/Module/Settings/Display.php:103 Zotlabs/Module/Sources.php:122
 #: Zotlabs/Module/Sources.php:157 Zotlabs/Module/Photos.php:722
 #: Zotlabs/Module/Import.php:692 Zotlabs/Module/Import.php:696
 #: Zotlabs/Module/Import.php:697 Zotlabs/Storage/Browser.php:432 boot.php:1713
@@ -1730,11 +1730,11 @@ msgid "%1$s wrote the following %2$s %3$s"
 msgstr ""
 
 #: Zotlabs/Lib/Markdown.php:205 Zotlabs/Module/Tagger.php:84
-#: include/conversation.php:158 include/text.php:2244 include/bbcode.php:627
+#: include/conversation.php:158 include/text.php:2250 include/bbcode.php:627
 msgid "post"
 msgstr ""
 
-#: Zotlabs/Lib/Language.php:408 include/language.php:396 include/text.php:2082
+#: Zotlabs/Lib/Language.php:408 include/language.php:396 include/text.php:2088
 msgid "default"
 msgstr ""
 
@@ -1804,7 +1804,7 @@ msgstr ""
 
 #: Zotlabs/Module/Calendar.php:252 Zotlabs/Module/Events.php:284
 #: Zotlabs/Module/Like.php:174 Zotlabs/Module/Tagger.php:80
-#: include/conversation.php:130 include/text.php:2241 include/event.php:1212
+#: include/conversation.php:130 include/text.php:2247 include/event.php:1212
 msgid "event"
 msgstr ""
 
@@ -1831,7 +1831,7 @@ msgstr ""
 #: Zotlabs/Module/Chanview.php:96 Zotlabs/Module/Cal.php:70
 #: Zotlabs/Module/Block.php:42 Zotlabs/Module/Card_edit.php:46
 #: Zotlabs/Module/Page.php:79 Zotlabs/Module/Wall_upload.php:31
-#: Zotlabs/Module/Superblock.php:62 include/items.php:4359
+#: Zotlabs/Module/Superblock.php:62 include/items.php:4374
 msgid "Channel not found."
 msgstr ""
 
@@ -2403,7 +2403,7 @@ msgstr ""
 #: Zotlabs/Module/Thing.php:101 Zotlabs/Module/Viewsrc.php:27
 #: Zotlabs/Module/Inspect.php:33
 #: extend/addon/a/flashcards/Mod_Flashcards.php:284
-#: extend/addon/a/flashcards/Mod_Flashcards.php:285 include/items.php:3710
+#: extend/addon/a/flashcards/Mod_Flashcards.php:285 include/items.php:3725
 msgid "Item not found."
 msgstr ""
 
@@ -2670,7 +2670,7 @@ msgstr ""
 msgid "Site settings updated."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:192 include/text.php:3377
+#: Zotlabs/Module/Admin/Site.php:192 include/text.php:3383
 #: view/theme/redbasic/php/config.php:15
 msgid "Default"
 msgstr ""
@@ -2729,7 +2729,7 @@ msgstr ""
 msgid "Site Configuration"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:290 Zotlabs/Module/Register.php:283
+#: Zotlabs/Module/Admin/Site.php:290 Zotlabs/Module/Register.php:288
 msgid "Registration"
 msgstr ""
 
@@ -3414,7 +3414,7 @@ msgid "l, F j"
 msgstr ""
 
 #: Zotlabs/Module/Cal.php:320 Zotlabs/Module/Events.php:699
-#: include/text.php:2064
+#: include/text.php:2070
 msgid "Link to Source"
 msgstr ""
 
@@ -3439,7 +3439,7 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: Zotlabs/Module/Cal.php:349 include/text.php:2709
+#: Zotlabs/Module/Cal.php:349 include/text.php:2715
 msgid "Import"
 msgstr ""
 
@@ -3567,7 +3567,7 @@ msgstr ""
 msgid "Block Name"
 msgstr ""
 
-#: Zotlabs/Module/Blocks.php:158 include/text.php:2685
+#: Zotlabs/Module/Blocks.php:158 include/text.php:2691
 msgid "Blocks"
 msgstr ""
 
@@ -4173,7 +4173,7 @@ msgstr ""
 msgid "Connection Default Permissions"
 msgstr ""
 
-#: Zotlabs/Module/Connedit.php:794 include/items.php:4356
+#: Zotlabs/Module/Connedit.php:794 include/items.php:4371
 #, php-format
 msgid "Connection: %s"
 msgstr ""
@@ -4594,25 +4594,25 @@ msgstr ""
 msgid "Location (URL) to purchase app"
 msgstr ""
 
-#: Zotlabs/Module/Cover_photo.php:284 include/items.php:4713
+#: Zotlabs/Module/Cover_photo.php:284 include/items.php:4728
 msgid "female"
 msgstr ""
 
-#: Zotlabs/Module/Cover_photo.php:285 include/items.php:4714
+#: Zotlabs/Module/Cover_photo.php:285 include/items.php:4729
 #, php-format
 msgid "%1$s updated her %2$s"
 msgstr ""
 
-#: Zotlabs/Module/Cover_photo.php:287 include/items.php:4715
+#: Zotlabs/Module/Cover_photo.php:287 include/items.php:4730
 msgid "male"
 msgstr ""
 
-#: Zotlabs/Module/Cover_photo.php:288 include/items.php:4716
+#: Zotlabs/Module/Cover_photo.php:288 include/items.php:4731
 #, php-format
 msgid "%1$s updated his %2$s"
 msgstr ""
 
-#: Zotlabs/Module/Cover_photo.php:291 include/items.php:4718
+#: Zotlabs/Module/Cover_photo.php:291 include/items.php:4733
 #, php-format
 msgid "%1$s updated their %2$s"
 msgstr ""
@@ -4976,8 +4976,8 @@ msgstr ""
 msgid "Validation token"
 msgstr ""
 
-#: Zotlabs/Module/Embedphotos.php:105 include/text.php:1728
-#: include/text.php:1729 include/bbcode.php:232 include/bbcode.php:1040
+#: Zotlabs/Module/Embedphotos.php:105 include/text.php:1734
+#: include/text.php:1735 include/bbcode.php:232 include/bbcode.php:1040
 #: include/bbcode.php:1916 include/bbcode.php:1918 include/bbcode.php:1921
 msgid "Image/photo"
 msgstr ""
@@ -5006,121 +5006,121 @@ msgstr ""
 msgid "Passwords do not match."
 msgstr ""
 
-#: Zotlabs/Module/Register.php:142
+#: Zotlabs/Module/Register.php:147
 msgid "Registration successful. Continue to create your first channel..."
 msgstr ""
 
-#: Zotlabs/Module/Register.php:145
+#: Zotlabs/Module/Register.php:150
 msgid ""
 "Registration successful. Please check your email for validation instructions."
 msgstr ""
 
-#: Zotlabs/Module/Register.php:152
+#: Zotlabs/Module/Register.php:157
 msgid "Your registration is pending approval by the site owner."
 msgstr ""
 
-#: Zotlabs/Module/Register.php:155
+#: Zotlabs/Module/Register.php:160
 msgid "Your registration can not be processed."
 msgstr ""
 
-#: Zotlabs/Module/Register.php:202
+#: Zotlabs/Module/Register.php:207
 msgid "Registration on this website is disabled."
 msgstr ""
 
-#: Zotlabs/Module/Register.php:212
+#: Zotlabs/Module/Register.php:217
 msgid "Registration on this website is by approval only."
 msgstr ""
 
-#: Zotlabs/Module/Register.php:220
+#: Zotlabs/Module/Register.php:225
 msgid "Registration on this site is by invitation only."
 msgstr ""
 
-#: Zotlabs/Module/Register.php:231
+#: Zotlabs/Module/Register.php:236
 msgid ""
 "This site has exceeded the number of allowed daily account registrations. "
 "Please try again tomorrow."
 msgstr ""
 
-#: Zotlabs/Module/Register.php:247 Zotlabs/Module/Siteinfo.php:37
+#: Zotlabs/Module/Register.php:252 Zotlabs/Module/Siteinfo.php:37
 msgid "Terms of Service"
 msgstr ""
 
-#: Zotlabs/Module/Register.php:253
+#: Zotlabs/Module/Register.php:258
 #, php-format
 msgid "I accept the %s for this website"
 msgstr ""
 
-#: Zotlabs/Module/Register.php:260
+#: Zotlabs/Module/Register.php:265
 #, php-format
 msgid "I am over %s years of age and accept the %s for this website"
 msgstr ""
 
-#: Zotlabs/Module/Register.php:265
+#: Zotlabs/Module/Register.php:270
 msgid "Your email address"
 msgstr ""
 
-#: Zotlabs/Module/Register.php:266
+#: Zotlabs/Module/Register.php:271
 msgid "Choose a password"
 msgstr ""
 
-#: Zotlabs/Module/Register.php:267
+#: Zotlabs/Module/Register.php:272
 msgid "Please re-enter your password"
 msgstr ""
 
-#: Zotlabs/Module/Register.php:268
+#: Zotlabs/Module/Register.php:273
 msgid "Please enter your invitation code"
 msgstr ""
 
-#: Zotlabs/Module/Register.php:269
+#: Zotlabs/Module/Register.php:274
 msgid "Your Name"
 msgstr ""
 
-#: Zotlabs/Module/Register.php:269
+#: Zotlabs/Module/Register.php:274
 msgid "Real names are preferred."
 msgstr ""
 
-#: Zotlabs/Module/Register.php:271 Zotlabs/Module/New_channel.php:184
+#: Zotlabs/Module/Register.php:276 Zotlabs/Module/New_channel.php:184
 msgid "Choose a short nickname"
 msgstr ""
 
-#: Zotlabs/Module/Register.php:271
+#: Zotlabs/Module/Register.php:276
 #, php-format
 msgid ""
 "Your nickname will be used to create an easy to remember channel address e."
 "g. nickname%s"
 msgstr ""
 
-#: Zotlabs/Module/Register.php:272 Zotlabs/Module/New_channel.php:185
+#: Zotlabs/Module/Register.php:277 Zotlabs/Module/New_channel.php:185
 #: Zotlabs/Module/Settings/Channel.php:638
 msgid "Channel role and privacy"
 msgstr ""
 
-#: Zotlabs/Module/Register.php:272
+#: Zotlabs/Module/Register.php:277
 msgid ""
 "Select a channel permission role for your usage needs and privacy "
 "requirements."
 msgstr ""
 
-#: Zotlabs/Module/Register.php:273
+#: Zotlabs/Module/Register.php:278
 msgid "no"
 msgstr ""
 
-#: Zotlabs/Module/Register.php:273
+#: Zotlabs/Module/Register.php:278
 msgid "yes"
 msgstr ""
 
-#: Zotlabs/Module/Register.php:286
+#: Zotlabs/Module/Register.php:291
 msgid ""
 "<a href=\"sites\">Show affiliated sites - some of which may allow "
 "registration.</a>"
 msgstr ""
 
-#: Zotlabs/Module/Register.php:299 Zotlabs/Module/Sites.php:51 boot.php:1688
+#: Zotlabs/Module/Register.php:304 Zotlabs/Module/Sites.php:51 boot.php:1688
 #: include/nav.php:162
 msgid "Register"
 msgstr ""
 
-#: Zotlabs/Module/Register.php:300
+#: Zotlabs/Module/Register.php:305
 msgid ""
 "This site requires email verification. After completing this form, please "
 "check your email for further instructions."
@@ -5940,7 +5940,7 @@ msgid "Could not create access list."
 msgstr ""
 
 #: Zotlabs/Module/Lists.php:121 Zotlabs/Module/Lists.php:290
-#: include/items.php:4322
+#: include/items.php:4337
 msgid "Access list not found."
 msgstr ""
 
@@ -6014,7 +6014,7 @@ msgstr ""
 msgid "Select a channel to toggle membership"
 msgstr ""
 
-#: Zotlabs/Module/Layouts.php:190 include/text.php:2687
+#: Zotlabs/Module/Layouts.php:190 include/text.php:2693
 msgid "Layouts"
 msgstr ""
 
@@ -6286,7 +6286,7 @@ msgstr ""
 
 #: Zotlabs/Module/Like.php:172 Zotlabs/Module/Subthread.php:119
 #: Zotlabs/Module/Tagger.php:76 include/conversation.php:127
-#: include/text.php:2238
+#: include/text.php:2244
 msgid "photo"
 msgstr ""
 
@@ -6422,7 +6422,7 @@ msgstr ""
 msgid "Submit and proceed"
 msgstr ""
 
-#: Zotlabs/Module/Menu.php:173 include/text.php:2686
+#: Zotlabs/Module/Menu.php:173 include/text.php:2692
 msgid "Menus"
 msgstr ""
 
@@ -7421,7 +7421,7 @@ msgstr ""
 msgid "Access list is empty"
 msgstr ""
 
-#: Zotlabs/Module/Stream.php:294 include/items.php:4346
+#: Zotlabs/Module/Stream.php:294 include/items.php:4361
 #, php-format
 msgid "Access list: %s"
 msgstr ""
@@ -7905,102 +7905,6 @@ msgstr ""
 
 #: Zotlabs/Module/Settings/Account.php:107
 msgid "Remove this account including all its channels"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:142
-#, php-format
-msgid "%s - (Experimental)"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:185
-msgid "Display Settings"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:186
-msgid "Theme Settings"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:187
-msgid "Custom Theme Settings"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:188
-msgid "Content Settings"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:194
-msgid "Display Theme:"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:195
-msgid "Select scheme"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:197
-msgid "Preload images before rendering the page"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:197
-msgid ""
-"The subjective page load time will be longer but the page will be ready when "
-"displayed"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:198
-msgid "Enable user zoom on mobile devices"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:199
-msgid "Update notifications every xx seconds"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:199
-msgid "Minimum of 15 seconds, no maximum"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:200
-msgid "Maximum number of conversations to load at any time:"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:200
-msgid "Maximum of 100 items"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:201
-msgid "Show emoticons (smilies) as images"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:202
-msgid "Provide channel menu in navigation bar"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:202
-msgid "Default: channel menu located in app menu"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:203
-msgid "System Page Layout Editor - (advanced)"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:206
-msgid "Channel page max height of content (in pixels)"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:206
-#: Zotlabs/Module/Settings/Display.php:207
-msgid "click to expand content exceeding this height"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:207
-msgid "Stream page max height of content (in pixels)"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:208
-msgid "Indent threaded comments this many pixels from the parent"
-msgstr ""
-
-#: Zotlabs/Module/Settings/Display.php:208
-msgid "0-20"
 msgstr ""
 
 #: Zotlabs/Module/Settings/Features.php:55
@@ -8517,38 +8421,134 @@ msgid "This varies by country/culture"
 msgstr ""
 
 #: Zotlabs/Module/Settings/Channel.php:719 include/text.php:1351
-#: include/js_strings.php:88
+#: include/js_strings.php:89
 msgid "Sunday"
 msgstr ""
 
 #: Zotlabs/Module/Settings/Channel.php:720 include/text.php:1351
-#: include/js_strings.php:89
+#: include/js_strings.php:90
 msgid "Monday"
 msgstr ""
 
 #: Zotlabs/Module/Settings/Channel.php:721 include/text.php:1351
-#: include/js_strings.php:90
+#: include/js_strings.php:91
 msgid "Tuesday"
 msgstr ""
 
 #: Zotlabs/Module/Settings/Channel.php:722 include/text.php:1351
-#: include/js_strings.php:91
+#: include/js_strings.php:92
 msgid "Wednesday"
 msgstr ""
 
 #: Zotlabs/Module/Settings/Channel.php:723 include/text.php:1351
-#: include/js_strings.php:92
+#: include/js_strings.php:93
 msgid "Thursday"
 msgstr ""
 
 #: Zotlabs/Module/Settings/Channel.php:724 include/text.php:1351
-#: include/js_strings.php:93
+#: include/js_strings.php:94
 msgid "Friday"
 msgstr ""
 
 #: Zotlabs/Module/Settings/Channel.php:725 include/text.php:1351
-#: include/js_strings.php:94
+#: include/js_strings.php:95
 msgid "Saturday"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:142
+#, php-format
+msgid "%s - (Experimental)"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:185
+msgid "Display Settings"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:186
+msgid "Theme Settings"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:187
+msgid "Custom Theme Settings"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:188
+msgid "Content Settings"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:194
+msgid "Display Theme:"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:195
+msgid "Select scheme"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:197
+msgid "Preload images before rendering the page"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:197
+msgid ""
+"The subjective page load time will be longer but the page will be ready when "
+"displayed"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:198
+msgid "Enable user zoom on mobile devices"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:199
+msgid "Update notifications every xx seconds"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:199
+msgid "Minimum of 15 seconds, no maximum"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:200
+msgid "Maximum number of conversations to load at any time:"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:200
+msgid "Maximum of 100 items"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:201
+msgid "Show emoticons (smilies) as images"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:202
+msgid "Provide channel menu in navigation bar"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:202
+msgid "Default: channel menu located in app menu"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:203
+msgid "System Page Layout Editor - (advanced)"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:206
+msgid "Channel page max height of content (in pixels)"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:206
+#: Zotlabs/Module/Settings/Display.php:207
+msgid "click to expand content exceeding this height"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:207
+msgid "Stream page max height of content (in pixels)"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:208
+msgid "Indent threaded comments this many pixels from the parent"
+msgstr ""
+
+#: Zotlabs/Module/Settings/Display.php:208
+msgid "0-20"
 msgstr ""
 
 #: Zotlabs/Module/Subthread.php:133
@@ -8570,7 +8570,7 @@ msgid "NEW"
 msgstr ""
 
 #: Zotlabs/Module/Sharedwithme.php:111 Zotlabs/Storage/Browser.php:312
-#: include/text.php:1446
+#: include/text.php:1448
 msgid "Size"
 msgstr ""
 
@@ -8959,7 +8959,7 @@ msgid "Post not found."
 msgstr ""
 
 #: Zotlabs/Module/Tagger.php:86 include/conversation.php:160
-#: include/text.php:2246
+#: include/text.php:2252
 msgid "comment"
 msgstr ""
 
@@ -9952,25 +9952,25 @@ msgstr ""
 msgid "Forgot your password?"
 msgstr ""
 
-#: boot.php:2492
+#: boot.php:2502
 #, php-format
 msgid "[$Projectname] Website SSL error for %s"
 msgstr ""
 
-#: boot.php:2497
+#: boot.php:2507
 msgid "Website SSL certificate is not valid. Please correct."
 msgstr ""
 
-#: boot.php:2541
+#: boot.php:2551
 #, php-format
 msgid "[$Projectname] Cron tasks not running on %s"
 msgstr ""
 
-#: boot.php:2546
+#: boot.php:2556
 msgid "Cron/Scheduled tasks not running."
 msgstr ""
 
-#: boot.php:2547 include/datetime.php:240
+#: boot.php:2557 include/datetime.php:240
 msgid "never"
 msgstr ""
 
@@ -10559,32 +10559,60 @@ msgstr ""
 msgid "Provide a personal tag cloud on your channel page"
 msgstr ""
 
-#: include/channel.php:47
-msgid "Unable to obtain identity information from database"
+#: include/network.php:473
+msgid "url: "
 msgstr ""
 
-#: include/channel.php:80
-msgid "Empty name"
+#: include/network.php:474
+msgid "error_code: "
 msgstr ""
 
-#: include/channel.php:83
-msgid "Name too long"
+#: include/network.php:475
+msgid "error_string: "
 msgstr ""
 
-#: include/channel.php:199
-msgid "No account identifier"
+#: include/network.php:476
+msgid "content-type: "
 msgstr ""
 
-#: include/channel.php:211
-msgid "Nickname is required."
+#: include/network.php:1594 include/network.php:1595
+msgid "Friendica"
 msgstr ""
 
-#: include/channel.php:293
-msgid "Unable to retrieve created identity"
+#: include/network.php:1596
+msgid "OStatus"
 msgstr ""
 
-#: include/channel.php:586 include/channel.php:676
-msgid "Unable to retrieve modified identity"
+#: include/network.php:1597
+msgid "GNU-Social"
+msgstr ""
+
+#: include/network.php:1598
+msgid "RSS/Atom"
+msgstr ""
+
+#: include/network.php:1601
+msgid "Diaspora"
+msgstr ""
+
+#: include/network.php:1602
+msgid "Facebook"
+msgstr ""
+
+#: include/network.php:1604
+msgid "Zot"
+msgstr ""
+
+#: include/network.php:1605
+msgid "LinkedIn"
+msgstr ""
+
+#: include/network.php:1606
+msgid "XMPP/IM"
+msgstr ""
+
+#: include/network.php:1607
+msgid "MySpace"
 msgstr ""
 
 #: include/auth.php:196
@@ -10605,37 +10633,6 @@ msgstr ""
 
 #: include/auth.php:322
 msgid "Login failed."
-msgstr ""
-
-#: include/photos.php:153
-#, php-format
-msgid "Image exceeds website size limit of %lu bytes"
-msgstr ""
-
-#: include/photos.php:164
-msgid "Image file is empty."
-msgstr ""
-
-#: include/photos.php:343
-msgid "Photo storage failed."
-msgstr ""
-
-#: include/photos.php:392
-msgid "a new photo"
-msgstr ""
-
-#: include/photos.php:396
-#, php-format
-msgctxt "photo_upload"
-msgid "%1$s posted %2$s to %3$s"
-msgstr ""
-
-#: include/photos.php:737 include/nav.php:420 include/conversation.php:1949
-msgid "Photo Albums"
-msgstr ""
-
-#: include/photos.php:742
-msgid "Upload New Photos"
 msgstr ""
 
 #: include/dba/dba_driver.php:179
@@ -10855,6 +10852,10 @@ msgstr ""
 msgid "Profile Details"
 msgstr ""
 
+#: include/nav.php:420 include/photos.php:737 include/conversation.php:1949
+msgid "Photo Albums"
+msgstr ""
+
 #: include/nav.php:428 include/conversation.php:1957
 msgid "Files and Storage"
 msgstr ""
@@ -11054,60 +11055,31 @@ msgstr ""
 msgid "Happy Birthday %1$s"
 msgstr ""
 
-#: include/network.php:473
-msgid "url: "
+#: include/photos.php:153
+#, php-format
+msgid "Image exceeds website size limit of %lu bytes"
 msgstr ""
 
-#: include/network.php:474
-msgid "error_code: "
+#: include/photos.php:164
+msgid "Image file is empty."
 msgstr ""
 
-#: include/network.php:475
-msgid "error_string: "
+#: include/photos.php:343
+msgid "Photo storage failed."
 msgstr ""
 
-#: include/network.php:476
-msgid "content-type: "
+#: include/photos.php:392
+msgid "a new photo"
 msgstr ""
 
-#: include/network.php:1594 include/network.php:1595
-msgid "Friendica"
+#: include/photos.php:396
+#, php-format
+msgctxt "photo_upload"
+msgid "%1$s posted %2$s to %3$s"
 msgstr ""
 
-#: include/network.php:1596
-msgid "OStatus"
-msgstr ""
-
-#: include/network.php:1597
-msgid "GNU-Social"
-msgstr ""
-
-#: include/network.php:1598
-msgid "RSS/Atom"
-msgstr ""
-
-#: include/network.php:1601
-msgid "Diaspora"
-msgstr ""
-
-#: include/network.php:1602
-msgid "Facebook"
-msgstr ""
-
-#: include/network.php:1604
-msgid "Zot"
-msgstr ""
-
-#: include/network.php:1605
-msgid "LinkedIn"
-msgstr ""
-
-#: include/network.php:1606
-msgid "XMPP/IM"
-msgstr ""
-
-#: include/network.php:1607
-msgid "MySpace"
+#: include/photos.php:742
+msgid "Upload New Photos"
 msgstr ""
 
 #: include/conversation.php:180
@@ -11477,25 +11449,25 @@ msgstr ""
 msgid "Visible to specific connections."
 msgstr ""
 
-#: include/items.php:4339
+#: include/items.php:4354
 msgid "Privacy group is empty."
 msgstr ""
 
-#: include/items.php:4720
+#: include/items.php:4735
 msgid "profile photo"
 msgstr ""
 
-#: include/items.php:4924
+#: include/items.php:4939
 #, php-format
 msgid "[Edited %s]"
 msgstr ""
 
-#: include/items.php:4924
+#: include/items.php:4939
 msgctxt "edit_activity"
 msgid "Post"
 msgstr ""
 
-#: include/items.php:4924
+#: include/items.php:4939
 msgctxt "edit_activity"
 msgid "Comment"
 msgstr ""
@@ -11520,50 +11492,78 @@ msgstr ""
 msgid "Cannot locate file to revise/update"
 msgstr ""
 
-#: include/attach.php:776
+#: include/attach.php:781
 #, php-format
 msgid "File exceeds size limit of %d"
 msgstr ""
 
-#: include/attach.php:797
+#: include/attach.php:802
 #, php-format
 msgid "You have reached your limit of %1$.0f Mbytes attachment storage."
 msgstr ""
 
-#: include/attach.php:988
+#: include/attach.php:993
 msgid "File upload failed. Possible system limit or action terminated."
 msgstr ""
 
-#: include/attach.php:1017
+#: include/attach.php:1022
 msgid "Stored file could not be verified. Upload failed."
 msgstr ""
 
-#: include/attach.php:1092 include/attach.php:1109
+#: include/attach.php:1097 include/attach.php:1114
 msgid "Path not available."
 msgstr ""
 
-#: include/attach.php:1158 include/attach.php:1327
+#: include/attach.php:1163 include/attach.php:1332
 msgid "Empty pathname"
 msgstr ""
 
-#: include/attach.php:1184
+#: include/attach.php:1189
 msgid "duplicate filename or path"
 msgstr ""
 
-#: include/attach.php:1209
+#: include/attach.php:1214
 msgid "Path not found."
 msgstr ""
 
-#: include/attach.php:1280
+#: include/attach.php:1285
 msgid "mkdir failed."
 msgstr ""
 
-#: include/attach.php:1284
+#: include/attach.php:1289
 msgid "database storage failed."
 msgstr ""
 
-#: include/attach.php:1333
+#: include/attach.php:1338
 msgid "Empty path"
+msgstr ""
+
+#: include/channel.php:47
+msgid "Unable to obtain identity information from database"
+msgstr ""
+
+#: include/channel.php:80
+msgid "Empty name"
+msgstr ""
+
+#: include/channel.php:83
+msgid "Name too long"
+msgstr ""
+
+#: include/channel.php:199
+msgid "No account identifier"
+msgstr ""
+
+#: include/channel.php:211
+msgid "Nickname is required."
+msgstr ""
+
+#: include/channel.php:293
+msgid "Unable to retrieve created identity"
+msgstr ""
+
+#: include/channel.php:586 include/channel.php:676
+msgid "Unable to retrieve modified identity"
 msgstr ""
 
 #: include/security.php:621
@@ -11785,19 +11785,19 @@ msgstr ""
 msgid "surprised"
 msgstr ""
 
-#: include/text.php:1355 include/js_strings.php:64
+#: include/text.php:1355 include/js_strings.php:65
 msgid "January"
 msgstr ""
 
-#: include/text.php:1355 include/js_strings.php:65
+#: include/text.php:1355 include/js_strings.php:66
 msgid "February"
 msgstr ""
 
-#: include/text.php:1355 include/js_strings.php:66
+#: include/text.php:1355 include/js_strings.php:67
 msgid "March"
 msgstr ""
 
-#: include/text.php:1355 include/js_strings.php:67
+#: include/text.php:1355 include/js_strings.php:68
 msgid "April"
 msgstr ""
 
@@ -11805,190 +11805,185 @@ msgstr ""
 msgid "May"
 msgstr ""
 
-#: include/text.php:1355 include/js_strings.php:69
+#: include/text.php:1355 include/js_strings.php:70
 msgid "June"
 msgstr ""
 
-#: include/text.php:1355 include/js_strings.php:70
+#: include/text.php:1355 include/js_strings.php:71
 msgid "July"
 msgstr ""
 
-#: include/text.php:1355 include/js_strings.php:71
+#: include/text.php:1355 include/js_strings.php:72
 msgid "August"
 msgstr ""
 
-#: include/text.php:1355 include/js_strings.php:72
+#: include/text.php:1355 include/js_strings.php:73
 msgid "September"
 msgstr ""
 
-#: include/text.php:1355 include/js_strings.php:73
+#: include/text.php:1355 include/js_strings.php:74
 msgid "October"
 msgstr ""
 
-#: include/text.php:1355 include/js_strings.php:74
+#: include/text.php:1355 include/js_strings.php:75
 msgid "November"
 msgstr ""
 
-#: include/text.php:1355 include/js_strings.php:75
+#: include/text.php:1355 include/js_strings.php:76
 msgid "December"
 msgstr ""
 
-#: include/text.php:1443
+#: include/text.php:1445
 msgid "Unknown Attachment"
 msgstr ""
 
-#: include/text.php:1446
+#: include/text.php:1448
 msgid "unknown"
 msgstr ""
 
-#: include/text.php:1495
+#: include/text.php:1501
 msgid "remove category"
 msgstr ""
 
-#: include/text.php:1627
+#: include/text.php:1633
 msgid "remove from file"
 msgstr ""
 
-#: include/text.php:1777
+#: include/text.php:1783
 msgid "Added to your calendar"
 msgstr ""
 
-#: include/text.php:1859
+#: include/text.php:1865
 msgid "Link"
 msgstr ""
 
-#: include/text.php:1945
+#: include/text.php:1951
 msgid "Poll has ended."
 msgstr ""
 
-#: include/text.php:1948
+#: include/text.php:1954
 #, php-format
 msgid "Poll ends: %1$s (%2$s)"
 msgstr ""
 
-#: include/text.php:1953
+#: include/text.php:1959
 msgid "vote"
 msgstr ""
 
-#: include/text.php:1965
+#: include/text.php:1971
 msgid "Download binary/encrypted content"
 msgstr ""
 
-#: include/text.php:2090
+#: include/text.php:2096
 msgid "Page layout"
 msgstr ""
 
-#: include/text.php:2090
+#: include/text.php:2096
 msgid "You can create your own with the layouts tool"
 msgstr ""
 
-#: include/text.php:2100
+#: include/text.php:2106
 msgid "BBcode"
 msgstr ""
 
-#: include/text.php:2101
+#: include/text.php:2107
 msgid "HTML"
 msgstr ""
 
-#: include/text.php:2102
+#: include/text.php:2108
 msgid "Markdown"
 msgstr ""
 
-#: include/text.php:2103
+#: include/text.php:2109
 msgid "Text"
 msgstr ""
 
-#: include/text.php:2104
+#: include/text.php:2110
 msgid "Comanche Layout"
 msgstr ""
 
-#: include/text.php:2109
+#: include/text.php:2115
 msgid "PHP"
 msgstr ""
 
-#: include/text.php:2118
+#: include/text.php:2124
 msgid "Page content type"
 msgstr ""
 
-#: include/text.php:2251
+#: include/text.php:2257
 msgid "activity"
 msgstr ""
 
-#: include/text.php:2355
+#: include/text.php:2361
 msgid "a-z, 0-9, -, and _ only"
 msgstr ""
 
-#: include/text.php:2682
+#: include/text.php:2688
 msgid "Design Tools"
 msgstr ""
 
-#: include/text.php:2688
+#: include/text.php:2694
 msgid "Pages"
 msgstr ""
 
-#: include/text.php:2710
+#: include/text.php:2716
 msgid "Import website..."
 msgstr ""
 
-#: include/text.php:2711
+#: include/text.php:2717
 msgid "Select folder to import"
 msgstr ""
 
-#: include/text.php:2712
+#: include/text.php:2718
 msgid "Import from a zipped folder:"
 msgstr ""
 
-#: include/text.php:2713
+#: include/text.php:2719
 msgid "Import from cloud files:"
 msgstr ""
 
-#: include/text.php:2714
+#: include/text.php:2720
 msgid "/cloud/channel/path/to/folder"
 msgstr ""
 
-#: include/text.php:2715
+#: include/text.php:2721
 msgid "Enter path to website files"
 msgstr ""
 
-#: include/text.php:2716
+#: include/text.php:2722
 msgid "Select folder"
 msgstr ""
 
-#: include/text.php:2717
+#: include/text.php:2723
 msgid "Export website..."
 msgstr ""
 
-#: include/text.php:2718
+#: include/text.php:2724
 msgid "Export to a zip file"
 msgstr ""
 
-#: include/text.php:2719
+#: include/text.php:2725
 msgid "website.zip"
 msgstr ""
 
-#: include/text.php:2720
+#: include/text.php:2726
 msgid "Enter a name for the zip file."
 msgstr ""
 
-#: include/text.php:2721
+#: include/text.php:2727
 msgid "Export to cloud files"
 msgstr ""
 
-#: include/text.php:2722
+#: include/text.php:2728
 msgid "/path/to/export/folder"
 msgstr ""
 
-#: include/text.php:2723
+#: include/text.php:2729
 msgid "Enter a path to a cloud files destination."
 msgstr ""
 
-#: include/text.php:2724
+#: include/text.php:2730
 msgid "Specify folder"
-msgstr ""
-
-#: include/zid.php:376
-#, php-format
-msgid "OpenWebAuth: %1$s welcomes %2$s"
 msgstr ""
 
 #: include/js_strings.php:8
@@ -12100,221 +12095,230 @@ msgstr ""
 msgid "Pinned"
 msgstr ""
 
-#: include/js_strings.php:44
-msgid "timeago.prefixAgo"
+#: include/js_strings.php:39
+msgid "Please accept terms to continue"
 msgstr ""
 
 #: include/js_strings.php:45
-msgid "timeago.prefixFromNow"
+msgid "timeago.prefixAgo"
 msgstr ""
 
 #: include/js_strings.php:46
-msgid "timeago.suffixAgo"
+msgid "timeago.prefixFromNow"
 msgstr ""
 
 #: include/js_strings.php:47
+msgid "timeago.suffixAgo"
+msgstr ""
+
+#: include/js_strings.php:48
 msgid "timeago.suffixFromNow"
 msgstr ""
 
-#: include/js_strings.php:50
+#: include/js_strings.php:51
 msgid "less than a minute"
 msgstr ""
 
-#: include/js_strings.php:51
+#: include/js_strings.php:52
 msgid "about a minute"
 msgstr ""
 
-#: include/js_strings.php:52
+#: include/js_strings.php:53
 #, php-format
 msgid "%d minutes"
 msgstr ""
 
-#: include/js_strings.php:53
+#: include/js_strings.php:54
 msgid "about an hour"
 msgstr ""
 
-#: include/js_strings.php:54
+#: include/js_strings.php:55
 #, php-format
 msgid "about %d hours"
 msgstr ""
 
-#: include/js_strings.php:55
+#: include/js_strings.php:56
 msgid "a day"
 msgstr ""
 
-#: include/js_strings.php:56
+#: include/js_strings.php:57
 #, php-format
 msgid "%d days"
 msgstr ""
 
-#: include/js_strings.php:57
+#: include/js_strings.php:58
 msgid "about a month"
 msgstr ""
 
-#: include/js_strings.php:58
+#: include/js_strings.php:59
 #, php-format
 msgid "%d months"
 msgstr ""
 
-#: include/js_strings.php:59
+#: include/js_strings.php:60
 msgid "about a year"
 msgstr ""
 
-#: include/js_strings.php:60
+#: include/js_strings.php:61
 #, php-format
 msgid "%d years"
 msgstr ""
 
-#: include/js_strings.php:61
+#: include/js_strings.php:62
 msgid " "
 msgstr ""
 
-#: include/js_strings.php:62
+#: include/js_strings.php:63
 msgid "timeago.numbers"
 msgstr ""
 
-#: include/js_strings.php:68
+#: include/js_strings.php:69
 msgctxt "long"
 msgid "May"
 msgstr ""
 
-#: include/js_strings.php:76
+#: include/js_strings.php:77
 msgid "Jan"
 msgstr ""
 
-#: include/js_strings.php:77
+#: include/js_strings.php:78
 msgid "Feb"
 msgstr ""
 
-#: include/js_strings.php:78
+#: include/js_strings.php:79
 msgid "Mar"
 msgstr ""
 
-#: include/js_strings.php:79
+#: include/js_strings.php:80
 msgid "Apr"
 msgstr ""
 
-#: include/js_strings.php:80
+#: include/js_strings.php:81
 msgctxt "short"
 msgid "May"
 msgstr ""
 
-#: include/js_strings.php:81
+#: include/js_strings.php:82
 msgid "Jun"
 msgstr ""
 
-#: include/js_strings.php:82
+#: include/js_strings.php:83
 msgid "Jul"
 msgstr ""
 
-#: include/js_strings.php:83
+#: include/js_strings.php:84
 msgid "Aug"
 msgstr ""
 
-#: include/js_strings.php:84
+#: include/js_strings.php:85
 msgid "Sep"
 msgstr ""
 
-#: include/js_strings.php:85
+#: include/js_strings.php:86
 msgid "Oct"
 msgstr ""
 
-#: include/js_strings.php:86
+#: include/js_strings.php:87
 msgid "Nov"
 msgstr ""
 
-#: include/js_strings.php:87
+#: include/js_strings.php:88
 msgid "Dec"
 msgstr ""
 
-#: include/js_strings.php:95
+#: include/js_strings.php:96
 msgid "Sun"
 msgstr ""
 
-#: include/js_strings.php:96
+#: include/js_strings.php:97
 msgid "Mon"
 msgstr ""
 
-#: include/js_strings.php:97
+#: include/js_strings.php:98
 msgid "Tue"
 msgstr ""
 
-#: include/js_strings.php:98
+#: include/js_strings.php:99
 msgid "Wed"
 msgstr ""
 
-#: include/js_strings.php:99
+#: include/js_strings.php:100
 msgid "Thu"
 msgstr ""
 
-#: include/js_strings.php:100
+#: include/js_strings.php:101
 msgid "Fri"
 msgstr ""
 
-#: include/js_strings.php:101
-msgid "Sat"
-msgstr ""
-
 #: include/js_strings.php:102
-msgctxt "calendar"
-msgid "today"
+msgid "Sat"
 msgstr ""
 
 #: include/js_strings.php:103
 msgctxt "calendar"
-msgid "month"
+msgid "today"
 msgstr ""
 
 #: include/js_strings.php:104
 msgctxt "calendar"
-msgid "week"
+msgid "month"
 msgstr ""
 
 #: include/js_strings.php:105
 msgctxt "calendar"
-msgid "day"
+msgid "week"
 msgstr ""
 
 #: include/js_strings.php:106
 msgctxt "calendar"
-msgid "All day"
+msgid "day"
 msgstr ""
 
 #: include/js_strings.php:107
+msgctxt "calendar"
+msgid "All day"
+msgstr ""
+
+#: include/js_strings.php:108
 msgid ""
 "A social networking profile that is public by default and private if desired"
 msgstr ""
 
-#: include/js_strings.php:108
+#: include/js_strings.php:109
 msgid ""
 "A social networking profile where content is private to your [Friends] "
 "Access List by default but can be made public if desired"
 msgstr ""
 
-#: include/js_strings.php:109
+#: include/js_strings.php:110
 msgid "A public group where members are allowed to upload media by default"
 msgstr ""
 
-#: include/js_strings.php:110
+#: include/js_strings.php:111
 msgid "A private group with no upload permission"
 msgstr ""
 
-#: include/js_strings.php:111
+#: include/js_strings.php:112
 msgid ""
 "A public group where posts are moderated by the owner. The [moderated] "
 "permission may be removed from any group member once trust is established"
 msgstr ""
 
-#: include/js_strings.php:112
+#: include/js_strings.php:113
 msgid ""
 "A sub-channel of your main channel - often devoted to a specific language or "
 "topic. Replies are sent back to your main channel"
 msgstr ""
 
-#: include/js_strings.php:113
+#: include/js_strings.php:114
 msgid ""
 "A private sub-channel of your main channel - often devoted to a specific "
 "language or topic. Replies are sent back to your main channel"
+msgstr ""
+
+#: include/zid.php:376
+#, php-format
+msgid "OpenWebAuth: %1$s welcomes %2$s"
 msgstr ""
 
 #: include/bbcode.php:283
