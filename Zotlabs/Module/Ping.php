@@ -289,7 +289,7 @@ class Ping extends Controller {
 
 
 					$mid = basename($tt['link']);
-					$mid = ((strpos($mid, 'b64.') === 0) ? @base64url_decode(substr($mid, 4)) : $mid);
+					$mid = unpack_link_id($mid);
 
 					if (in_array($tt['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) {
 						// we need the thread parent
@@ -298,10 +298,10 @@ class Ping extends Controller {
 							intval(local_channel())
 						);
 
-						$b64mid = ((strpos($r[0]['thr_parent'], 'b64.') === 0) ? $r[0]['thr_parent'] : 'b64.' . base64url_encode($r[0]['thr_parent']));
+						$b64mid = ((strpos($r[0]['thr_parent'], 'b64.') === 0) ? $r[0]['thr_parent'] : gen_link_id($r[0]['thr_parent']));
 					}
 					else {
-						$b64mid = ((strpos($mid, 'b64.') === 0) ? $mid : 'b64.' . base64url_encode($mid));
+						$b64mid = ((strpos($mid, 'b64.') === 0) ? $mid : gen_link_id($mid));
 					}
 
 					$notifs[] = array(

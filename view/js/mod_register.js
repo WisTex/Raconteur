@@ -27,6 +27,17 @@ $(document).ready(function() {
 		}
 	});
 
+	$('#newchannel-submit-button').on('click', function() {
+		if($('#id_tos').is(':checked')) {
+			$("#tos_container > small.form-text").html("");
+			zFormError("#tos_container > small.form-text", false);
+		}
+		else {
+			$("#tos_container > small.form-text").html(aStr.tos);
+			zFormError("#tos_container > small.form-text", true);
+		}
+	});		
+	
 	$("#id_name").blur(function() {
 		$("#name-spinner").show();
 		var zreg_name = $("#id_name").val();

@@ -9,10 +9,12 @@ use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\PConfig;
+use Zotlabs\Lib\XConfig;
 use Zotlabs\Lib\Config;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Markdown;
 use Zotlabs\Lib\Libzotdir;
+use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Nodeinfo;
 use Zotlabs\Lib\System;
 use Emoji;
@@ -2109,31 +2111,53 @@ class Activity {
 
 //		logger('person_obj: ' . print_r($person_obj,true));
 
-		// We may have been passed a cached entry. If it is, and the cache duration has expired
-		// fetch a fresh copy before continuing.
+		if (array_key_exists('movedTo',$person_obj) && $person_obj['movedTo'] && ! is_array($person_obj['movedTo'])) {
+			$tgt = self::fetch($person_obj['movedTo']);
+			if (is_array($tgt)) {
+				self::actor_store($person_obj['movedTo'],$tgt);
+				ActivityPub::move($person_obj['id'],$tgt);
+			}
+			return;
+		}
 
-		if (array_key_exists('cached',$person_obj)) {
-			if (array_key_exists('updated',$person_obj) && (datetime_convert('UTC','UTC',$person_obj['updated']) < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days') || $force)) {
+
+		$ap_hubloc = null;
+
+		$hublocs = self::get_actor_hublocs($url);
+		if ($hublocs) {
+			foreach ($hublocs as $hub) {
+				if ($hub['hubloc_network'] === 'activitypub') {
+					$ap_hubloc = $hub;
+				}
+				if ($hub['hubloc_network'] === 'zot6') {
+					Libzot::update_cached_hubloc($hub);
+				}
+			}
+		}
+
+		if ($ap_hubloc) {
+			// we already have a stored record. Determine if it needs updating.
+			if ($ap_hubloc['hubloc_updated'] < datetime_convert('UTC','UTC',' now - ' . self::$ACTOR_CACHE_DAYS . ' days') || $force) {
 				$person_obj = self::fetch($url);
 			}
 			else {
 				return;
 			}
 		}
-
-		if (is_array($person_obj) && array_key_exists('movedTo',$person_obj) && $person_obj['movedTo'] && ! is_array($person_obj['movedTo'])) {
-			$tgt = self::fetch($person_obj['movedTo']);
-			self::actor_store($person_obj['movedTo'],$tgt);
-			ActivityPub::move($person_obj['id'],$tgt);
-			return;
-		}
 		
-		$url = $person_obj['id'];
+
+
+		if (isset($person_obj['id'])) {
+			$url = $person_obj['id'];
+		}
 
 		if (! $url) {
 			return;
 		}
 
+		// store the actor record in XConfig 
+		XConfig::Set($url,'system','actor_record',$person_obj);
+	
 		$name = escape_tags($person_obj['name']);
 		if (! $name)
 			$name = escape_tags($person_obj['preferredUsername']);
@@ -3194,7 +3218,7 @@ class Activity {
 			}
 		}
 
-		if (! $s['plink']) {
+		if (! (isset($s['plink']) && $s['plink'])) {
 			$s['plink'] = $s['mid'];
 		}
 
@@ -3218,10 +3242,7 @@ class Activity {
 				$s['item_private'] = 2;
 		}
 
-		if ($parent) {
-			set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
-		}
-
+		set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
 
 		// Restrict html caching to ActivityPub senders.
 		// Zot has dynamic content and this library is used by both. 
@@ -3784,11 +3805,11 @@ class Activity {
 				break;
 			}
 			if (is_array($a->actor) && array_key_exists('id',$a->actor)) {
-				Activity::actor_store($a->actor['id'],$a->actor);
+				self::actor_store($a->actor['id'],$a->actor);
 			}
 
 			// ActivityPub sourced items are cacheable
-			$item = Activity::decode_note($a,true);
+			$item = self::decode_note($a,true);
 
 			if (! $item) {
 				break;
@@ -3836,7 +3857,7 @@ class Activity {
 		if ($p) {
 			foreach ($p as $pv) {
 				if ($pv[0]->is_valid()) {
-					Activity::store($channel,$observer_hash,$pv[0],$pv[1],false);
+					self::store($channel,$observer_hash,$pv[0],$pv[1],false);
 				}
 			}			
 			return true;
@@ -3928,7 +3949,7 @@ class Activity {
 				// $ret .= '[language=' . $k . ']' . html2bbcode($v) . '[/language]';
 			}
 		}
-		else {
+		elseif (isset($content['field'])) {
 			if ($field === 'bbcode' && array_key_exists('bbcode',$content)) {
 				$ret = $content[$field];
 			}
@@ -3936,7 +3957,10 @@ class Activity {
 				$ret = html2bbcode($content[$field]);
 			}
 		}
-		if ($field === 'content' && $content['event'] && (! strpos($ret,'[event'))) {
+		else {
+			$ret = EMPTY_STR;
+		}
+		if ($field === 'content' && isset($content['event']) && (! strpos($ret,'[event'))) {
 			$ret .= format_event_bbcode($content['event']);
 		}
 
@@ -4104,6 +4128,56 @@ class Activity {
 		}
 	}
 
+	static function get_cached_actor($id) {
+		return (XConfig::Get($id,'system','actor_record'));
+	}
+
+
+	static function get_actor_hublocs($url, $options = 'all') {
+
+		$hublocs = false;
+
+		switch ($options) {
+			case 'activitypub':
+				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_hash = '%s' ",
+					dbesc($url)
+				);
+				break;
+			case 'zot6':
+				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_id_url = '%s' ",
+					dbesc($url)
+				);
+				break;
+			case 'all':
+			default:
+				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where ( hubloc_id_url = '%s' OR hubloc_hash = '%s' ) ",
+					dbesc($url),
+					dbesc($url)
+				);
+				break;
+		}
+
+		return $hublocs;		
+	}
+
+	static function get_actor_collections($url) {
+		$ret = [];
+		$actor_record = XConfig::Get($url,'system','actor_record');
+		if (! $actor_record) {
+			return $ret;
+		}
+
+		foreach ( [ 'inbox','outbox','followers','following' ] as $collection) {
+			if (isset($actor_record[$collection]) && $actor_record[$collection]) {
+				$ret[$collection] = $actor_record[$collection];
+			}
+		}
+		if (array_path_exists('endpoints/sharedInbox',$actor_record) && $actor_record['endpoints']['sharedInbox']) {
+			$ret['sharedInbox'] = $actor_record['endpoints']['sharedInbox'];
+		}
+
+		return $ret;
+	}
 
 	static function ap_schema() {
 

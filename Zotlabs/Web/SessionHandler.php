@@ -28,7 +28,7 @@ class SessionHandler implements SessionHandlerInterface {
 				q("INSERT INTO session (sess_data, sid, expire) values ('%s', '%s', '%s')",
 					dbesc(''),
 					dbesc($id),
-					dbesc(time() + 300)
+					dbesc(time() + 1800)
 				);
 			}
 		}
@@ -46,13 +46,13 @@ class SessionHandler implements SessionHandlerInterface {
 			return true;
 		}
 
-		// Unless we authenticate somehow, only keep a session for 5 minutes
+		// Unless we authenticate somehow, only keep a session for 30 minutes
 		// The viewer can extend this by performing any web action using the
 		// original cookie, but this allows us to cleanup the hundreds or 
 		// thousands of empty sessions left around from web crawlers which are
 		// assigned cookies on each page that they never use. 
 
-		$expire = time() + 300;
+		$expire = time() + 1800;
 
 		if ($_SESSION) {
 			if (array_key_exists('remember_me',$_SESSION) && intval($_SESSION['remember_me']))

@@ -36,7 +36,8 @@ function js_strings() {
 		'$pinned'      => t('Pinned'),
 		'$pin_item'    => t('Pin this post'),
 		'$unpin_item'  => t('Unpin this post'),
-
+		'$tos'         => t('Please accept terms to continue'),
+		
 		// translatable prefix and suffix strings for jquery.timeago -
 		// using the defaults set below if left untranslated, empty strings if
 		// translated to "NONE" and the corresponding language strings

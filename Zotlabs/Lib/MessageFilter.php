@@ -11,9 +11,7 @@ class MessageFilter {
 
 		require_once('include/html2plain.php');
 
-		unobscure($item);
-
-		$text = prepare_text($item['body'],$item['mimetype']);
+		$text = prepare_text($item['body'],((isset($item['mimetype'])) ? $item['mimetype'] : 'text/bbcode'));
 		$text = html2plain(($item['title']) ? $item['title'] . ' ' . $text : $text);
 
 		$lang = null;
@@ -22,7 +20,7 @@ class MessageFilter {
 			$lang = detect_language($text);
 		}
 
-		$tags = ((is_array($item['term']) && count($item['term'])) ? $item['term'] : false);
+		$tags = ((isset($item['term']) && is_array($item['term']) && count($item['term'])) ? $item['term'] : false);
 
 		// exclude always has priority
 

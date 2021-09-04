@@ -36,10 +36,8 @@ class Moderate extends Controller {
 
 		// show a single item
 		if(argc() == 2) {
-			$post_id = escape_tags(argv(1));
-			if(strpos($post_id,'b64.') === 0) {
-				$post_id = @base64url_decode(substr($post_id,4));
-			}
+			$post_id = unpack_link_id(escape_tags(argv(1)));
+
 			$r = q("select item.id as item_id, item.* from item where item.mid = '%s' and item.uid = %d and item_blocked = %d and item_deleted = 0 order by created desc $pager_sql",
 				dbesc($post_id),
 				intval(local_channel()),

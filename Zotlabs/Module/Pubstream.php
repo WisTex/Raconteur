@@ -42,11 +42,7 @@ class Pubstream extends Controller {
 		$hashtags = ((x($_REQUEST,'tag')) ? $_REQUEST['tag'] : '');
 		$decoded = false;
 		
-
-		if(strpos($mid,'b64.') === 0) {
-			$mid = @base64url_decode(substr($mid,4));
-			$decoded = true;
-		}
+		$mid = unpack_link_id($mid);
 
 		$item_normal = item_normal();
 		$item_normal_update = item_normal_update();
@@ -113,10 +109,9 @@ class Pubstream extends Controller {
 				. "; var profile_page = " . App::$pager['page'] 
 				. "; divmore_height = " . intval($maxheight) . "; </script>\r\n";
 	
-			//if we got a decoded hash we must encode it again before handing to javascript 
-			if ($decoded) {
-				$mid = 'b64.' . base64url_encode($mid);
-			}
+			// if we got a decoded hash we must encode it again before handing to javascript 
+			$mid = gen_link_id($mid);
+
 			App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"),array(
 				'$baseurl' => z_root(),
 				'$pgtype'  => 'pubstream',
