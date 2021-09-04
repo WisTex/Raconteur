@@ -3949,7 +3949,7 @@ class Activity {
 				// $ret .= '[language=' . $k . ']' . html2bbcode($v) . '[/language]';
 			}
 		}
-		elseif (isset($content['field'])) {
+		elseif (isset($content[$field])) {
 			if ($field === 'bbcode' && array_key_exists('bbcode',$content)) {
 				$ret = $content[$field];
 			}
