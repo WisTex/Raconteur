@@ -1,40 +1,32 @@
-ZotSH - v.0.0.3
+NSH - v.0.0.3
 
-Client for browsing RedDAVs.
+Client for browsing Nomad DAV repositories.
 
 Install
 -------
 
-ZotSH requires 'requests'(1).
+NSH requires 'requests'(1).
 Please refer to requests docs on how to install it (2)
 
-Extract somewhere and launch zotsh.py
+Extract somewhere and launch nsh
+If installing in an alternattee location, copy the util/py directory to the
+directory containing the nsh script
 
 
 Description
 -----------
 
-Update: 2019-08-14
+You can connect to a repository using
 
-Have just looked at this after several years of bitrot and made some updates.
-it functions for cli DAV access on your assigned hub, but magic-auth to dav repos on other hubs
-(e.g. the host command) needs to be updated to work with openwebauth.
-
-The ability to browse remote WebDAV repositories outside your own server is not as useful as it was once was; as the top level WebDAV folder on each site might have been hidden by the administrator for security/privacy reasons. On these sites the root directory will be empty. You can only proceed by
-
-cd username
-
-OR you can connect to the site using
-
-host username@hostname
+connect username@hostname
 
 if you know a username on that site and if they have given you the requisite permission *or* their directory contains publicly readable content. 
 
 ----
-ZotSH is a command line WebDAV client for Nomad platforms.
+NSH is a command line WebDAV client for Nomad platforms.
 It knows how to magic-auth to remote hubs using OpenWebAuth.
 
-ZotSH uses 'easywebdav' library (0) with small modifications
+NSH uses 'easywebdav' library (0) with small modifications
 to 'zotify' it. (See easywebdav/LICENSE)
 
 
@@ -42,10 +34,12 @@ to 'zotify' it. (See easywebdav/LICENSE)
 Commands
 --------
 
-host <hostname>
-	Authenticate to 'hostname' and switch to it
+connect <hostname>
+	Authenticate to 'hostname' and switch to it. The root directory may be
+hidden/empty. If it is, the only way to proceed is if you know a username on
+that server. Then you can 'cd username'. 
 
-host <username@hostname>
+connect <username@hostname>
 	Authenticate to 'hostname' and switch to it and automatically cd to the 'username' directory
 	
 cd <dirname|..>
@@ -72,10 +66,10 @@ rmdir <name>
 delete <path>
 	Delete file 'path'
 
-upload <local_path> [remote_path]
+put <local_path> [remote_path]
 	Upload local file 'local_path' to 'remote_path'
 
-download <remote_path> [local_path]
+get <remote_path> [local_path]
 	Download remote file 'remote_path' and save it as 'local_path'
 
 cat <remote_path>
@@ -97,10 +91,10 @@ help
 Config
 ------
 
-Create a .zotshrc file in your home or in same folder with zotsh.py:
+Create a .nshrc file in your home or in same folder with the nsh script:
 
 
-	[zotsh]
+	[nsh]
 	host = https://yourhost.com/
 	username = your_username
 	password = your_password
@@ -115,6 +109,8 @@ to skip verification of ssl certs
 
 Changelog
 ----------
+0.0.3		Convert to python3 and rename from zotsh to nsh
+
 0.0.2		Fix "CommandNotFound" exception, new 'cat' command
 
 0.0.1		First release
