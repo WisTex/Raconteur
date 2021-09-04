@@ -25,7 +25,7 @@ class CommandNotFound(Exception):
 
 class NSH(object):
     commands = ['cd','ls','exists','mkdir','mkdirs','rmdir','delete','put','get',
-                        'connect', 'pwd','cat',
+                        'conn', 'connect', 'pwd','cat',
                         'lcd','lpwd', 'lls',
                         'quit', 'help']
     def __init__(self, host, session=None, davclient=None):
@@ -134,7 +134,10 @@ class NSH(object):
             args.append(args[0])
             
         return self.davclient.download(args[0], args[1])        
-        
+
+    def cmd_conn(self, *args):
+        return self.do('connect', *args)
+         
     def cmd_connect(self, *args):
         ruser = ''
         if (len(args)==0):
