@@ -3218,7 +3218,7 @@ class Activity {
 			}
 		}
 
-		if (! $s['plink']) {
+		if (! (isset($s['plink']) && $s['plink'])) {
 			$s['plink'] = $s['mid'];
 		}
 
@@ -3242,10 +3242,7 @@ class Activity {
 				$s['item_private'] = 2;
 		}
 
-		if ($parent) {
-			set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
-		}
-
+		set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
 
 		// Restrict html caching to ActivityPub senders.
 		// Zot has dynamic content and this library is used by both. 
@@ -3952,7 +3949,7 @@ class Activity {
 				// $ret .= '[language=' . $k . ']' . html2bbcode($v) . '[/language]';
 			}
 		}
-		else {
+		elseif (isset($content['field'])) {
 			if ($field === 'bbcode' && array_key_exists('bbcode',$content)) {
 				$ret = $content[$field];
 			}
@@ -3960,7 +3957,10 @@ class Activity {
 				$ret = html2bbcode($content[$field]);
 			}
 		}
-		if ($field === 'content' && $content['event'] && (! strpos($ret,'[event'))) {
+		else {
+			$ret = EMPTY_STR;
+		}
+		if ($field === 'content' && isset($content['event']) && (! strpos($ret,'[event'))) {
 			$ret .= format_event_bbcode($content['event']);
 		}
 
