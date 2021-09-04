@@ -11,7 +11,7 @@ class MessageFilter {
 
 		require_once('include/html2plain.php');
 
-		$text = prepare_text($item['body'],((isset($item['mimetype'])) ? $item['mimetype'] : 'text/bbcode'));
+		$text = prepare_text($item['body'],((isset($item['mimetype'])) ? $item['mimetype'] : 'text/x-multicode'));
 		$text = html2plain(($item['title']) ? $item['title'] . ' ' . $text : $text);
 
 		$lang = null;
