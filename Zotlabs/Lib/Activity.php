@@ -4133,24 +4133,40 @@ class Activity {
 	}
 
 
-	static function get_actor_hublocs($url, $options = 'all') {
+	static function get_actor_hublocs($url, $options = 'all,not_deleted') {
 
 		$hublocs = false;
+		$sql_options = EMPTY_STR;
+		
+		$options_arr = explode(',',$options);
+		if (count($options_arr) > 1) {
+			for ($x = 1; $x < count($options_arr); $x ++) {
+				switch (trim($options_arr[$x])) {
+					case 'not_deleted':
+						$sql_options .= ' and hubloc_deleted = 0 ';
+						break;
+					default:
+					break;
+				}
+			}
+		}
 
-		switch ($options) {
+
+
+		switch (trim($options_arr[0])) {
 			case 'activitypub':
-				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_hash = '%s' ",
+				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_hash = '%s' $sql_options ",
 					dbesc($url)
 				);
 				break;
 			case 'zot6':
-				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_id_url = '%s' ",
+				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_id_url = '%s' $sql_options ",
 					dbesc($url)
 				);
 				break;
 			case 'all':
 			default:
-				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where ( hubloc_id_url = '%s' OR hubloc_hash = '%s' ) ",
+				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where ( hubloc_id_url = '%s' OR hubloc_hash = '%s' ) $sql_options ",
 					dbesc($url),
 					dbesc($url)
 				);

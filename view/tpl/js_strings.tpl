@@ -1,7 +1,7 @@
 <script>
 
 	var aStr = {
-
+		'icon'        : "{{$icon}}",
 		'delitem'     : "{{$delitem}}",
 		'comment'     : "{{$comment}}",
 		'showmore'    : "{{$showmore}}",

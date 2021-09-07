@@ -108,6 +108,18 @@ $(document).ready(function() {
 		loadNotificationItems(notifyType);
 	}
 
+
+	$(document).on('z:handleNetWorkNotificationsItems', function(e, obj) {
+
+//		push_notification(
+//			obj.name,
+//			$('<p>' + obj.message + '</p>').text(),
+//			obj.b64mid
+//		);
+	});
+
+
+	
 	// Allow folks to stop the ajax page updates with the pause/break key
 	$(document).keydown(function(event) {
 		if(event.keyCode == '8') {
@@ -585,7 +597,6 @@ function notificationsUpdate(cached_data) {
 	let pingCmd = 'ping' + ((localUser != 0) ? '?f=&uid=' + localUser : '');
 
 	if(cached_data !== undefined) {
-
 		handleNotifications(cached_data);
 	} else {
 
@@ -644,6 +655,7 @@ function handleNotifications(data) {
 		$('.all_events-update').addClass('badge-secondary');
 	}
 
+	
 	$.each(data, function(index, item) {
 		//do not process those
 		let arr = ['invalid'];
@@ -667,6 +679,10 @@ function handleNotificationsItems(notifyType, data) {
 	notify_menu.html('');
 
 	$(data).each(function() {
+		if (notifyType == 'notify') {
+			$(document).trigger('z:handleNetWorkNotificationsItems', this);
+		}
+			
 		html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.addr,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top,this.unseen,this.private_forum);
 		notify_menu.append(html);
 	});
@@ -1776,4 +1792,30 @@ function dozid(s) {
 	s = s + achar + 'f=&zid=' + zid;
 
 	return s;
+}
+
+function push_notification_request(e) {
+    if ('Notification' in window) {
+		if (Notification.permission !== 'granted') {
+        	Notification.requestPermission(function(permission) {
+				if(permission === 'granted') {
+					$(e.target).closest('div').hide();
+				}
+			});
+		}
+    }
+}
+
+function push_notification(title, body, b64mid) {
+	let options = {
+		body: body,
+		data: b64mid,
+		icon: aStr.icon,
+		silent: false
+	}
+
+	let n = new Notification(title, options);
+	n.onclick = function (e) {
+		window.location.href = baseurl + '/display/' + e.target.data;
+	}
 }
