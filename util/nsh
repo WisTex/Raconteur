@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 import sys, os
+import pathlib
+sys.path.append('util/py')
+sys.path.append(str(pathlib.Path(__file__).parent.resolve()) + '/py')
 import configparser
 import requests
 from requests.auth import HTTPBasicAuth
@@ -20,9 +23,9 @@ VERIFY_SSL=True
 class CommandNotFound(Exception):
     pass
 
-class ZotSH(object):
-    commands = ['cd','ls','exists','mkdir','mkdirs','rmdir','delete','upload','download',
-                        'host', 'pwd','cat',
+class NSH(object):
+    commands = ['cd','ls','exists','mkdir','mkdirs','rmdir','delete','put','get',
+                        'conn', 'connect', 'pwd','cat',
                         'lcd','lpwd', 'lls',
                         'quit', 'help']
     def __init__(self, host, session=None, davclient=None):
@@ -66,25 +69,11 @@ class ZotSH(object):
         return "%s:%s> " % (self.hostname, self.davclient.cwd)
     
     def get_host_session(self, host=None):
-        #~ if host is None:
-            #~ host = self.host
-        #~ if not host.startswith("https"):
-            #~ host = "https://%s/" % (host)
-        #~ if host in self.sessions:
-            #~ session = self.sessions[host]
-        #~ else:
-            #~ session = requests.Session()
-            #~ self.sessions[host] = session
-        #~ if not host == SERVER
-            #~ session.params.update({'davguest':1})
-        #~ return session
-        
         if self.session is None:
             session = requests.Session()
             #session.params.update({'davguest':1})
         else:
             session = self.session
-        #session.params.update({'davguest': (not  host == SERVER) })
         return session
     
     def do(self, command, *args):
@@ -128,7 +117,7 @@ class ZotSH(object):
             return
         return self.davclient.delete(args[0])        
         
-    def cmd_upload(self, *args):
+    def cmd_put(self, *args):
         if (len(args)==0):
             return
         args = list(args)
@@ -137,7 +126,7 @@ class ZotSH(object):
             
         return self.davclient.upload(args[0], args[1])        
 
-    def cmd_download(self, *args):
+    def cmd_get(self, *args):
         if (len(args)==0):
             return
         args = list(args)
@@ -145,8 +134,11 @@ class ZotSH(object):
             args.append(args[0])
             
         return self.davclient.download(args[0], args[1])        
-        
-    def cmd_host(self, *args):
+
+    def cmd_conn(self, *args):
+        return self.do('connect', *args)
+         
+    def cmd_connect(self, *args):
         ruser = ''
         if (len(args)==0):
             return
@@ -235,7 +227,7 @@ class ZotSH(object):
             print( f)
             
     def cmd_help(self, *args):
-        print("ZotSH",__version__)
+        print("NSH",__version__)
         print() 
         print("Commands:")
         for c in self.commands:
@@ -257,13 +249,13 @@ def load_conf():
     if homedir is None:
         homedir = os.path.join(os.getenv("HOMEDRIVE"), os.getenv("HOMEPATH"))
     
-    optsfile = ".zotshrc"
+    optsfile = ".nshrc"
     if not os.path.isfile(optsfile):
-        optsfile = os.path.join(homedir, ".zotshrc")
+        optsfile = os.path.join(homedir, ".nshrc")
     
     if not os.path.isfile(optsfile):
-        print("Please create a configuration file called '.zotshrc':")
-        print("[zotsh]")
+        print("Please create a configuration file called '.nshrc':")
+        print("[nsh]")
         print("host = https://yourhost.com/")
         print("username = your_username")
         print("password = your_password")
@@ -271,18 +263,18 @@ def load_conf():
     
     config = configparser.ConfigParser()
     config.read(optsfile)
-    SERVER = config.get('zotsh', 'host')
-    USER = config.get('zotsh', 'username')
-    PASSWD = config.get('zotsh', 'password')
-    if config.has_option('zotsh', 'verify_ssl'):
-        VERIFY_SSL = config.getboolean('zotsh', 'verify_ssl')
+    SERVER = config.get('nsh', 'host')
+    USER = config.get('nsh', 'username')
+    PASSWD = config.get('nsh', 'password')
+    if config.has_option('nsh', 'verify_ssl'):
+        VERIFY_SSL = config.getboolean('nsh', 'verify_ssl')
 
 
-def zotsh():
+def nsh():
     
-    zotsh = ZotSH( SERVER)
+    nsh = NSH(SERVER)
     
-    session_home = zotsh.get_host_session()
+    session_home = nsh.get_host_session()
 
     #~ #login on home server
     print("logging in...")
@@ -293,15 +285,20 @@ def zotsh():
 
     print("Hi - ", r.json()['channel_name'])
 
-    zotsh.session = session_home
+    nsh.session = session_home
 
     # since the site directory may be empty, automatically cd to
     # your own cloud storage folder
     
-    zotsh.do('cd', *[USER])        
+    nsh.do('cd', *[USER])        
 
     # command loop
-    input_str = input(zotsh.PS1)
+    try:
+        input_str = input(nsh.PS1)
+
+    except EOFError as e:
+        input_str = "quit"
+        
     while (input_str != "quit"):
         input_str = input_str.strip()
         if len(input_str)>0:
@@ -310,7 +307,7 @@ def zotsh():
             command = toks[0]
             args = toks[1:]
             try:
-                ret = zotsh.do(command, *args)
+                ret = nsh.do(command, *args)
             except easywebdav.client.OperationFailed as e:
                 print(e)
             except CommandNotFound as e:
@@ -320,14 +317,14 @@ def zotsh():
                     print(ret)
         
 
-        input_str = input(zotsh.PS1)
+        input_str = input(nsh.PS1)
 
 
     
 
 if __name__=="__main__":
     load_conf()
-    zotsh()
+    nsh()
     sys.exit()
 
 

@@ -1711,7 +1711,12 @@ function bbcode($Text, $options = []) {
 	// Check for highlighted text
 	if (strpos($Text,'[/hl]') !== false) {
 		$Text = preg_replace("(\[hl\](.*?)\[\/hl\])ism", "<span style=\"background-color: yellow;\">$1</span>", $Text);
-		$Text = preg_replace_callback("(\[hl=(.*?)\](.*?)\[\/hl\])ism", 'bb_hltag', $Text);
+		$Text = preg_replace_callback("(\[mark=(.*?)\](.*?)\[\/mark\])ism", 'bb_hltag', $Text);
+	}
+	// Check for highlighted text
+	if (strpos($Text,'[/mark]') !== false) {
+		$Text = preg_replace("(\[mark\](.*?)\[\/mark\])ism", "<mark style=\"background-color: yellow;\">$1</mark>", $Text);
+		$Text = preg_replace_callback("(\[mark=(.*?)\](.*?)\[\/mark\])ism", 'bb_hltag', $Text);
 	}
 
 	// Check for sized text

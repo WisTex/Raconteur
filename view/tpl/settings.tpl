@@ -120,7 +120,12 @@
 					<div class="section-content-tools-wrapper">
 						<div id="settings-notifications">
 
-								{{include file="field_input.tpl" field=$mailhost}}
+							<div id="desktop-notifications-info" class="section-content-warning-wrapper" style="display: none;">
+								{{$desktop_notifications_info}}<br>
+								<a id="desktop-notifications-request" href="#">{{$desktop_notifications_request}}</a>
+							</div>
+
+							{{include file="field_input.tpl" field=$mailhost}}
 
 							<h3>{{$activity_options}}</h3>
 							<div class="group">

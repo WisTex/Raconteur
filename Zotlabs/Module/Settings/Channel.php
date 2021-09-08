@@ -686,6 +686,8 @@ class Channel {
 			'$vnotify14'	=> array('vnotify14', t('Unseen likes and dislikes'), ($vnotify & VNOTIFY_LIKE), VNOTIFY_LIKE, '', $yes_no),
 			'$vnotify15'	=> array('vnotify15', t('Unseen forum posts'), ($vnotify & VNOTIFY_FORUMS), VNOTIFY_FORUMS, '', $yes_no),
 			'$vnotify16'	=> ((is_site_admin()) ? array('vnotify16', t('Reported content'), ($vnotify & VNOTIFY_REPORTS), VNOTIFY_REPORTS, '', $yes_no) : [] ),
+			'$desktop_notifications_info' => t('Desktop notifications are unavailable because the required browser permission has not been granted'),
+			'$desktop_notifications_request' => t('Grant permission'),
 			'$mailhost' => [ 'mailhost', t('Email notifications sent from (hostname)'), get_pconfig(local_channel(),'system','email_notify_host',App::get_hostname()), sprintf( t('If your channel is mirrored to multiple locations, set this to your preferred location. This will prevent duplicate email notifications. Example: %s'),App::get_hostname()) ],
 			'$always_show_in_notices'  => array('always_show_in_notices', t('Show new wall posts, private messages and connections under Notices'), $always_show_in_notices, 1, '', $yes_no),
 			'$permit_all_mentions' => [ 'permit_all_mentions', t('Accept messages from strangers which mention me'), get_pconfig(local_channel(),'system','permit_all_mentions'), t('This setting bypasses normal permissions'), $yes_no ],
