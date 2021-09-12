@@ -4151,8 +4151,6 @@ class Activity {
 			}
 		}
 
-
-
 		switch (trim($options_arr[0])) {
 			case 'activitypub':
 				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_hash = '%s' $sql_options ",
