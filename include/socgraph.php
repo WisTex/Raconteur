@@ -399,18 +399,16 @@ function suggestion_query($uid, $myxchan, $start = 0, $limit = 120) {
 		$r1 = [];
 	}
 
-
-
-	$r2 = q("SELECT count(xtag_source) as total, xchan.* from xchan
+	$r2 = q("SELECT count(xtag_hash) as total, xchan.* from xchan
 		left join xtag on xtag_hash = xchan_hash
 		where xtag_hash != '%s' 
 		and not xtag_hash in ( select abook_xchan from abook where abook_channel = %d )
 		and xtag_term in ( select xtag_term from xtag where xtag_hash = '%s' )
-		and not xlink_link in ( select xchan from xign where uid = %d )
+		and not xtag_hash in ( select xchan from xign where uid = %d )
 		and xchan_hidden = 0
 		and xchan_deleted = 0
 		group by xchan_hash order by total desc limit %d offset %d ",
-		dbesc($myxchan)
+		dbesc($myxchan),
 		intval($uid),
 		dbesc($myxchan),
 		intval($uid),
@@ -418,13 +416,23 @@ function suggestion_query($uid, $myxchan, $start = 0, $limit = 120) {
 		intval($start)
 	);
 
-
 	if (! $r2) {
 		$r2 = [];
 	}
-	
-	return (array_merge($r1,$r2));
+
+	$result = array_merge($r1,$r2);
+	usort($result,'socgraph_total_sort');
+	return ($result);
 }
+
+function socgraph_total_sort($a,$b) {
+	if ($a['total'] === $b['total']) {
+		return 0;
+	}
+	
+	return((intval($a['total']) <  intval($b['total'])) ? 1 : -1 );
+}
+
 
 function poco() {
 
