@@ -420,9 +420,22 @@ function suggestion_query($uid, $myxchan, $start = 0, $limit = 120) {
 		$r2 = [];
 	}
 
-	$result = array_merge($r1,$r2);
-	usort($result,'socgraph_total_sort');
-	return ($result);
+	foreach ($r2 as $r) {
+		$found = false;
+		for ($x = 0; $x < count($r1); $x ++) {
+			if ($r['xchan_hash'] === $r1[$x]['xchan_hash']) {
+				$r1[$x]['total'] = intval($r1[$x]['total']) + intval($r['total']);
+				$found = true;
+				continue;
+			}
+		}
+		if (! $found) {
+			$r1[] = $r;
+		}
+	}
+
+	usort($r1,'socgraph_total_sort');
+	return ($r1);
 }
 
 function socgraph_total_sort($a,$b) {
