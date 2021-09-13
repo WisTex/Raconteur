@@ -410,7 +410,7 @@ function suggestion_query($uid, $myxchan, $start = 0, $limit = 120) {
 		and xchan_hidden = 0
 		and xchan_deleted = 0
 		group by xchan_hash order by total desc limit %d offset %d ",
-		dbesc($myxchan)
+		dbesc($myxchan),
 		intval($uid),
 		dbesc($myxchan),
 		intval($uid),
