@@ -117,10 +117,7 @@ class Inbox extends Controller {
 			// if the sender has the ability to send messages over zot/nomad, ignore messages sent via activitypub
 			// as observer aware features and client side markup will be unavailable
 			
-			$test = q("select * from hubloc where hubloc_hash = '%s' or hubloc_id_url = '%s'",
-				dbesc($hsig['portable_id']),
-				dbesc($hsig['portable_id'])
-			);
+			$test = get_actor_hublocs($hsig['portable_id'],'all,not_deleted');
 			if ($test) {
 				foreach ($test as $t) {
 					if ($t['hubloc_network'] === 'zot6') {
@@ -131,11 +128,8 @@ class Inbox extends Controller {
 
 			// fetch the portable_id for the actor, which may or may not be the sender
 			
-			$v = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s'",
-				dbesc($AS->actor['id']),
-				dbesc($AS->actor['id'])
-			);
-			
+			$v = get_actor_hublocs($AS->actor['id'],'activitypub,not_deleted');
+
 			if ($v && $v[0]['hubloc_hash'] !== $hsig['portable_id']) {
 				// The sender is not actually the activity actor, so verify the LD signature.
 				// litepub activities (with no LD signature) will always have a matching actor and sender
@@ -267,10 +261,6 @@ class Inbox extends Controller {
 
 
 		foreach ($channels as $channel) {
-
-			
-
-
 			if (! PConfig::Get($channel['channel_id'],'system','activitypub',Config::Get('system','activitypub',ACTIVITYPUB_ENABLED))) {
 				continue;
 			}
@@ -320,10 +310,7 @@ class Inbox extends Controller {
 			switch ($AS->type) {
 				case 'Update':
 					if (is_array($AS->obj) && array_key_exists('type',$AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])) {
-						// pretend this is an old cache entry to force an update of all the actor details
-						$AS->obj['cached'] = true;
-						$AS->obj['updated'] = datetime_convert('UTC','UTC','1980-01-01', ATOM_TIME);
-						Activity::actor_store($AS->obj['id'],$AS->obj);
+						Activity::actor_store($AS->obj['id'],$AS->obj, true /* force cache refresh */);
 						break;
 					}
 				case 'Accept':

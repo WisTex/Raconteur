@@ -571,6 +571,13 @@ class Apps {
 		if ($mode === 'install') {
 			$papp['embed'] = true;
 		}
+
+		$featured = $pinned = false;
+		if (isset($papp['categories'])) {
+			$featured = ((strpos($papp['categories'],'nav_featured_app') !== false) ? true : false);
+			$pinned = ((strpos($papp['categories'],'nav_pinned_app') !== false) ? true : false);
+		}
+
 		return replace_macros(get_markup_template('app.tpl'), [
 			'$app' => $papp,
 			'$icon' => $icon,
@@ -585,8 +592,8 @@ class Apps {
 			'$deleted' => ((isset($papp['deleted'])) ? intval($papp['deleted']) : false),
 			'$feature' => (((isset($papp['embed']) && $papp['embed']) || $mode === 'edit') ? false : true),
 			'$pin' => (((isset($papp['embed']) && $papp['embed']) || $mode === 'edit') ? false : true),
-			'$featured' => ((strpos($papp['categories'], 'nav_featured_app') === false) ? false : true),
-			'$pinned' => ((strpos($papp['categories'], 'nav_pinned_app') === false) ? false : true),
+			'$featured' => $featured,
+			'$pinned' => $pinned,
 			'$navapps' => (($mode === 'nav') ? true : false),
 			'$order' => (($mode === 'nav-order' || $mode === 'nav-order-pinned') ? true : false),
 			'$mode' => $mode,

@@ -62,7 +62,7 @@ class Site {
 		$no_community_page    = !((x($_POST,'no_community_page'))	? True	:	False);
 		$default_expire_days  = ((array_key_exists('default_expire_days',$_POST)) ? intval($_POST['default_expire_days']) : 0);
 		$active_expire_days  = ((array_key_exists('active_expire_days',$_POST)) ? intval($_POST['active_expire_days']) : 7);
-		$max_imported_follow = ((x($_POST,'max_imported_follow'))	? intval(trim($_POST['max_imported_follow']))	    :  10);
+		$max_imported_follow = ((x($_POST,'max_imported_follow'))	? intval(trim($_POST['max_imported_follow']))	    :  MAX_IMPORTED_FOLLOW);
 
 		$reply_address      = ((array_key_exists('reply_address',$_POST) && trim($_POST['reply_address'])) ? trim($_POST['reply_address']) : 'noreply@' . \App::get_hostname());
 		$from_email         = ((array_key_exists('from_email',$_POST) && trim($_POST['from_email'])) ? trim($_POST['from_email']) : 'Administrator@' . \App::get_hostname());
@@ -322,7 +322,7 @@ class Site {
 			'$animations'           => [ 'animations', t('Permit animated profile photos'), get_config('system','animated_avatars',true), t('Changing this may take several days to work through the system') ],
 			'$incl'                 => [ 'pub_incl',t('Only import Public stream posts with this text'), get_config('system','pubstream_incl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts') ],
 			'$excl'                 => [ 'pub_excl',t('Do not import Public stream posts with this text'), get_config('system','pubstream_excl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts') ],
-			'$max_imported_follow'  => [ 'max_imported_follow', t('Maximum number of imported friends of friends'), get_config('system','max_imported_follow',10), t('Warning: higher numbers will improve the quality of friend suggestions and directory results but can exponentially increase resource usage') ], 
+			'$max_imported_follow'  => [ 'max_imported_follow', t('Maximum number of imported friends of friends'), get_config('system','max_imported_follow', MAX_IMPORTED_FOLLOW), t('Warning: higher numbers will improve the quality of friend suggestions and directory results but can exponentially increase resource usage') ], 
 			'$login_on_homepage'	=> [ 'login_on_homepage', t("Login on Homepage"),((intval($homelogin) || $homelogin === false) ? 1 : '') , t("Present a login box to visitors on the home page if no other content has been configured.") ],
 			'$enable_context_help'	=> [ 'enable_context_help', t("Enable context help"),((intval($enable_context_help) === 1 || $enable_context_help === false) ? 1 : 0) , t("Display contextual help for the current page when the help button is pressed.") ],
 			'$reply_address'        => [ 'reply_address', t('Reply-to email address for system generated email.'), get_config('system','reply_address','noreply@' . \App::get_hostname()),'' ],
