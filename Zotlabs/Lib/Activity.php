@@ -1711,12 +1711,16 @@ class Activity {
 
 	static function encode_site() {
 
-		$ret = [];
+
 		$sys = get_sys_channel();		
+
+		// encode  the sys channel information and over-ride with site
+		// information
+		$ret = self::encode_person($sys,true,true);
 
 		$ret['type']  = 'Service';
 		$ret['id'] = z_root();
-		
+		$ret['alsoKnownAs'] = z_root() . '/channel/sys';
 		$auto_follow = false;
 
 		$ret['preferredUsername'] = System::get_site_name();
@@ -1730,7 +1734,6 @@ class Activity {
 		$ret['generator'] = [ 'type' => 'Application', 'name' => System::get_platform_name() ];
 
 		$ret['url'] = z_root();
-		$ret['inbox'] = z_root() . '/sysinbox';
 
 		$ret['manuallyApprovesFollowers'] = ((get_config('system','allowed_sites')) ? true : false);
 				

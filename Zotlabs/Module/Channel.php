@@ -114,7 +114,9 @@ class Channel extends Controller {
 					$obj->init();
 				}
 			}
-
+			if (intval($channel['channel_system'])) {
+				goaway(z_root());
+			}
 			as_return_and_die(Activity::encode_person($channel,true,true),$channel);
 		}
 

@@ -18,6 +18,8 @@
 .version*
 Thumbs.db
 
+*.pyc
+__pycache__
 
 ## Ignore site specific files and folders
 .htconfig.php
