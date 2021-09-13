@@ -145,6 +145,11 @@ if (! defined('STORAGE_DEFAULT_PERMISSIONS')) {
 	define ( 'STORAGE_DEFAULT_PERMISSIONS',   0770 );
 }
 
+// imported followers for friend suggestions.
+
+if (! defined('MAX_IMPORTED_FOLLOW')) {
+	define ( 'MAX_IMPORTED_FOLLOW', 10);
+}
 
 /**
  *
