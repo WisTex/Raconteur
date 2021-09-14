@@ -117,7 +117,7 @@ class Inbox extends Controller {
 			// if the sender has the ability to send messages over zot/nomad, ignore messages sent via activitypub
 			// as observer aware features and client side markup will be unavailable
 			
-			$test = get_actor_hublocs($hsig['portable_id'],'all,not_deleted');
+			$test = Activity::get_actor_hublocs($hsig['portable_id'],'all,not_deleted');
 			if ($test) {
 				foreach ($test as $t) {
 					if ($t['hubloc_network'] === 'zot6') {
@@ -128,7 +128,7 @@ class Inbox extends Controller {
 
 			// fetch the portable_id for the actor, which may or may not be the sender
 			
-			$v = get_actor_hublocs($AS->actor['id'],'activitypub,not_deleted');
+			$v = Activity::get_actor_hublocs($AS->actor['id'],'activitypub,not_deleted');
 
 			if ($v && $v[0]['hubloc_hash'] !== $hsig['portable_id']) {
 				// The sender is not actually the activity actor, so verify the LD signature.
