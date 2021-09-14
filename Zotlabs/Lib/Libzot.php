@@ -3049,8 +3049,8 @@ class Libzot {
 				dbesc($hash)
 			);
 			if ($r) {
-				logger('found another site that is not dead: ' . $r[0]['hubloc_url'], LOGGER_DEBUG,LOG_INFO);
-				$desturl = $r[0]['hubloc_url'];
+				logger('found another site that is not dead: ' . $r[0]['hubloc_id_url'], LOGGER_DEBUG,LOG_INFO);
+				$desturl = $r[0]['hubloc_id_url'];
 			}
 			else {
 				return $hash;
