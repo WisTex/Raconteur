@@ -1723,7 +1723,7 @@ class Activity {
 		$ret['alsoKnownAs'] = z_root() . '/channel/sys';
 		$auto_follow = false;
 
-		$ret['preferredUsername'] = System::get_site_name();
+		$ret['preferredUsername'] = 'sys';
 		$ret['name']  = System::get_site_name();
 
 		$ret['icon']  = [

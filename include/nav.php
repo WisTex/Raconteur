@@ -38,6 +38,10 @@ function nav($template = 'default') {
 			$chans = q("select channel_name, channel_id from channel left join pconfig on channel_id = pconfig.uid where channel_account_id = %d and channel_removed = 0 and pconfig.cat = 'system' and pconfig.k = 'include_in_menu' and pconfig.v = '1' order by channel_name ",
 				intval(get_account_id())
 			);
+			$q = get_sys_channel();
+			if (intval(get_pconfig($q['channel_id'],'system','include_in_menu'))) {
+				$chans = array_merge([$q],$chans);
+			}
 		}
 
 		$sitelocation = (($is_owner) ? '' : App::$profile['reddress']);
