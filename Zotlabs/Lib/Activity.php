@@ -3001,8 +3001,12 @@ class Activity {
 				$s['term'] = $a;
 				foreach ($a as $b) {
 					if ($b['ttype'] === TERM_EMOJI) {
-						// $s['title'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['title']);
 						$s['summary'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['summary']);
+
+						// @todo - @bug
+						// The emoji reference in the body might be inside a code block. In that case we shouldn't replace it.
+						// Currently we do.  
+						
 						$s['body'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['body']);
 					}
 				}

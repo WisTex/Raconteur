@@ -1369,7 +1369,7 @@ class Libzot {
 
 			if (in_array($env['type'],['activity','response'])) {
 
-				if (! is_array($AS->actor)) {
+				if (! (is_array($AS->actor) && isset($AS->actor['id']))) {
 					logger('No author!');
 					return;
 				}
