@@ -1673,12 +1673,44 @@ class Activity {
 						'url' => $cp['url']
 					];
 				}
-				$dp = q("select about from profile where uid = %d and is_default = 1",
-					intval($c['channel_id'])
-				);
-				if ($dp && $dp[0]['about']) {
-					$ret['summary'] = bbcode($dp[0]['about'],['export' => true ]);
-				}	
+				// only fill in profile information if the profile is publicly visible
+				if (perm_is_allowed($c['channel_id'],EMPTY_STR,'view_profile')) {
+					$dp = q("select * from profile where uid = %d and is_default = 1",
+						intval($c['channel_id'])
+					);
+					if ($dp) {
+						if ($dp[0]['about']) {
+							$ret['summary'] = bbcode($dp[0]['about'],['export' => true ]);
+						}
+						foreach ( [ 'pdesc', 'address', 'locality', 'region', 'postal_code', 'country_name',
+							'hometown', 'gender', 'marital', 'sexual', 'politic', 'religion', 'pronouns',
+							'homepage', 'contact', 'dob' ] as $k ) {
+							if ($dp[0][$k]) {
+								$key = $k;
+								if ($key === 'pdesc') {
+									$key = 'description';
+								}
+								if ($key == 'politic') {
+									$key = 'political';
+								}
+								if ($key === 'dob') {
+									$key = 'birthday';
+								}
+								$ret['attachment'][]  = [ 'type' => 'PropertyValue', 'name' => $key, 'value' => $dp[0][$k] ];
+							}
+						}
+						if ($dp[0]['keywords']) {
+							$kw = explode(' ', $dp[0]['keywords']);
+							if ($kw) {
+								foreach ($kw as $k) {
+									$k = trim($k);
+									$k = trim($k,'#,');
+									$ret['tag'][] = [ 'id' => z_root() . '/search?tag=' . urlencode($k), 'name' => '#' . urlencode($k) ];
+								}
+							}
+						}
+					}
+				}
 			}
 			else {
 				$collections = get_xconfig($p['xchan_hash'],'activitypub','collections',[]);
