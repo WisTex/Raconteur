@@ -1369,6 +1369,11 @@ class Libzot {
 
 			if (in_array($env['type'],['activity','response'])) {
 
+				if (! is_array($AS->actor)) {
+					logger('No author!');
+					return;
+				}
+				
 				$r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s'",
 					dbesc($AS->actor['id'])
 				); 
