@@ -1673,12 +1673,44 @@ class Activity {
 						'url' => $cp['url']
 					];
 				}
-				$dp = q("select about from profile where uid = %d and is_default = 1",
-					intval($c['channel_id'])
-				);
-				if ($dp && $dp[0]['about']) {
-					$ret['summary'] = bbcode($dp[0]['about'],['export' => true ]);
-				}	
+				// only fill in profile information if the profile is publicly visible
+				if (perm_is_allowed($c['channel_id'],EMPTY_STR,'view_profile')) {
+					$dp = q("select * from profile where uid = %d and is_default = 1",
+						intval($c['channel_id'])
+					);
+					if ($dp) {
+						if ($dp[0]['about']) {
+							$ret['summary'] = bbcode($dp[0]['about'],['export' => true ]);
+						}
+						foreach ( [ 'pdesc', 'address', 'locality', 'region', 'postal_code', 'country_name',
+							'hometown', 'gender', 'marital', 'sexual', 'politic', 'religion', 'pronouns',
+							'homepage', 'contact', 'dob' ] as $k ) {
+							if ($dp[0][$k]) {
+								$key = $k;
+								if ($key === 'pdesc') {
+									$key = 'description';
+								}
+								if ($key == 'politic') {
+									$key = 'political';
+								}
+								if ($key === 'dob') {
+									$key = 'birthday';
+								}
+								$ret['attachment'][]  = [ 'type' => 'PropertyValue', 'name' => $key, 'value' => $dp[0][$k] ];
+							}
+						}
+						if ($dp[0]['keywords']) {
+							$kw = explode(' ', $dp[0]['keywords']);
+							if ($kw) {
+								foreach ($kw as $k) {
+									$k = trim($k);
+									$k = trim($k,'#,');
+									$ret['tag'][] = [ 'id' => z_root() . '/search?tag=' . urlencode($k), 'name' => '#' . urlencode($k) ];
+								}
+							}
+						}
+					}
+				}
 			}
 			else {
 				$collections = get_xconfig($p['xchan_hash'],'activitypub','collections',[]);
@@ -2720,6 +2752,12 @@ class Activity {
 			return false;
 		}
 
+		// Do not proceed further if there is no actor.
+		
+		if (! isset($act->actor['id'])) {
+			logger('No actor!');
+			return false;
+		}
 
 		$s['owner_xchan']  = $act->actor['id'];
 		$s['author_xchan'] = $act->actor['id'];
@@ -2813,7 +2851,7 @@ class Activity {
 			}
 
 
-			// ensure we store the original actor
+			// ensure we store the original actor of the associated (parent) object
 			self::actor_store($obj_actor['id'],$obj_actor);
 
 			$mention = self::get_actor_bbmention($obj_actor['id']);
@@ -2969,8 +3007,12 @@ class Activity {
 				$s['term'] = $a;
 				foreach ($a as $b) {
 					if ($b['ttype'] === TERM_EMOJI) {
-						// $s['title'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['title']);
 						$s['summary'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['summary']);
+
+						// @todo - @bug
+						// The emoji reference in the body might be inside a code block. In that case we shouldn't replace it.
+						// Currently we do.  
+						
 						$s['body'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['body']);
 					}
 				}
@@ -2990,7 +3032,7 @@ class Activity {
 		// Objects that might have media attachments which aren't already provided in the content element.
 		// We'll check specific media objects separately.
 		
-		if (in_array($act->obj['type'], [ 'Article', 'Document', 'Event', 'Note', 'Page', 'Place', 'Question']) && isset($s['attach']) && $s['attach']) {
+		if (in_array($act->obj['type'], [ 'Article', 'Document', 'Event', 'Note', 'Page', 'Place', 'Question' ]) && isset($s['attach']) && $s['attach']) {
 			$s['body'] .= self::bb_attach($s['attach'],$s['body']);
 		}
 
@@ -3245,6 +3287,7 @@ class Activity {
 				$s['item_private'] = 2;
 		}
 
+
 		set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
 
 		// Restrict html caching to ActivityPub senders.
@@ -3420,6 +3463,7 @@ class Activity {
 		if ($act->raw_recips && array_key_exists('to',$act->raw_recips) && is_array($act->raw_recips['to']) && count($act->raw_recips['to']) === 1 && $act->raw_recips['to'][0] === channel_url($channel) && ! $act->raw_recips['cc']) {
 			$item['item_private'] = 2;
 		}
+
 
 
 		if ($item['parent_mid'] && $item['parent_mid'] !== $item['mid']) {
@@ -3638,17 +3682,6 @@ class Activity {
 
 		set_iconfig($item,'activitypub','recips',$act->raw_recips);
 
-		if (! (isset($act->data['inheritPrivacy']) && $act->data['inheritPrivacy'])) {				
-			if ($item['item_private']) {
-				$item['item_restrict'] = $item['item_restrict'] & 1;
-				if ($is_child_node) {
-					$item['allow_cid'] = '<' . $channel['channel_hash'] . '>';
-					$item['allow_gid'] = $item['deny_cid'] = $item['deny_gid'] = '';
-				}
-				logger('restricted');
-			}				
-		}
-
 		if (intval($act->sigok)) {
 			$item['item_verified'] = 1;
 		}
@@ -3694,6 +3727,32 @@ class Activity {
 				$item['thr_parent'] = $parent[0]['parent_mid'];
 			}
 			$item['parent_mid'] = $parent[0]['parent_mid'];
+
+			/*
+			 *
+			 * Check for conversation privacy mismatches
+			 * We can only do this if we have a channel and we have fetched the parent
+			 *
+			 */
+			 
+			// public conversation, but this comment went rogue and was published privately
+			// hide it from everybody except the channel owner
+			
+			if (intval($parent[0]['item_private']) === 0) {
+				if (intval($item['item_private'])) {
+					$item['item_restrict'] = $item['item_restrict'] | 1;
+					$item['allow_cid'] = '<' . $channel['channel_hash'] . '>';
+					$item['allow_gid'] = $item['deny_cid'] = $item['deny_gid'] = '';
+				}
+			}
+
+			// Private conversation, but this comment went rogue and was published publicly
+			// Set item_restrict to indicate this condition so we can flag it in the UI
+
+			if (intval($parent[0]['item_private']) !== 0 && $act->recips && (in_array(ACTIVITY_PUBLIC_INBOX,$act->recips) || in_array('Public',$act->recips) || in_array('as:Public',$act->recips))) {
+				$item['item_restrict'] = $item['item_restrict'] | 2;
+			}
+
 		}
 
 		self::rewrite_mentions($item);
@@ -4200,7 +4259,6 @@ class Activity {
 
 		return [
 			'zot'                       => z_root() . '/apschema#',
-//			'as'                        => 'https://www.w3.org/ns/activitystreams#',
 			'toot'                      => 'http://joinmastodon.org/ns#',
 			'ostatus'                   => 'http://ostatus.org#',
 			'schema'                    => 'http://schema.org#',
@@ -4213,7 +4271,6 @@ class Activity {
 			'movedTo'                   => 'as:movedTo',
 			'copiedTo'                  => 'as:copiedTo',
 			'alsoKnownAs'               => 'as:alsoKnownAs',
-			'inheritPrivacy'            => 'as:inheritPrivacy',
 			'EmojiReact'                => 'as:EmojiReact',
 			'commentPolicy'             => 'zot:commentPolicy',
 			'topicalCollection'         => 'zot:topicalCollection',
