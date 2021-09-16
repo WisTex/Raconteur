@@ -2752,6 +2752,12 @@ class Activity {
 			return false;
 		}
 
+		// Do not proceed further if there is no actor.
+		
+		if (! isset($act->actor['id'])) {
+			logger('No actor!');
+			return false;
+		}
 
 		$s['owner_xchan']  = $act->actor['id'];
 		$s['author_xchan'] = $act->actor['id'];
@@ -2845,7 +2851,7 @@ class Activity {
 			}
 
 
-			// ensure we store the original actor
+			// ensure we store the original actor of the associated (parent) object
 			self::actor_store($obj_actor['id'],$obj_actor);
 
 			$mention = self::get_actor_bbmention($obj_actor['id']);
@@ -3022,7 +3028,7 @@ class Activity {
 		// Objects that might have media attachments which aren't already provided in the content element.
 		// We'll check specific media objects separately.
 		
-		if (in_array($act->obj['type'], [ 'Article', 'Document', 'Event', 'Note', 'Page', 'Place', 'Question']) && isset($s['attach']) && $s['attach']) {
+		if (in_array($act->obj['type'], [ 'Article', 'Document', 'Event', 'Note', 'Page', 'Place', 'Question' ]) && isset($s['attach']) && $s['attach']) {
 			$s['body'] .= self::bb_attach($s['attach'],$s['body']);
 		}
 
@@ -4232,7 +4238,6 @@ class Activity {
 
 		return [
 			'zot'                       => z_root() . '/apschema#',
-//			'as'                        => 'https://www.w3.org/ns/activitystreams#',
 			'toot'                      => 'http://joinmastodon.org/ns#',
 			'ostatus'                   => 'http://ostatus.org#',
 			'schema'                    => 'http://schema.org#',
@@ -4245,7 +4250,6 @@ class Activity {
 			'movedTo'                   => 'as:movedTo',
 			'copiedTo'                  => 'as:copiedTo',
 			'alsoKnownAs'               => 'as:alsoKnownAs',
-			'inheritPrivacy'            => 'as:inheritPrivacy',
 			'EmojiReact'                => 'as:EmojiReact',
 			'commentPolicy'             => 'zot:commentPolicy',
 			'topicalCollection'         => 'zot:topicalCollection',
