@@ -104,6 +104,7 @@ class ThreadItem {
 		$osparkle = '';
 		$total_children = $this->count_descendants();
 		$unseen_comments = ((isset($item['real_uid']) && $item['real_uid']) ? 0 : $this->count_unseen_descendants());
+		$privacy_warning = false;
 
 		$conv = $this->get_conversation();
 		$observer = $conv->get_observer();
@@ -121,7 +122,11 @@ class ThreadItem {
 		if($item['author']['xchan_network'] === 'rss')
 			$shareable = true;
 
-		$privacy_warning = false;
+
+		if ($item['item_restrict'] & 2) {
+			$privacy_warning = true;
+			$lock = t('This comment is part of a private conversation, yet was shared with the public. Discretion advised.');
+		}
 
 		$mode = $conv->get_mode();
 

@@ -3283,6 +3283,7 @@ class Activity {
 				$s['item_private'] = 2;
 		}
 
+
 		set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
 
 		// Restrict html caching to ActivityPub senders.
@@ -3458,6 +3459,7 @@ class Activity {
 		if ($act->raw_recips && array_key_exists('to',$act->raw_recips) && is_array($act->raw_recips['to']) && count($act->raw_recips['to']) === 1 && $act->raw_recips['to'][0] === channel_url($channel) && ! $act->raw_recips['cc']) {
 			$item['item_private'] = 2;
 		}
+
 
 
 		if ($item['parent_mid'] && $item['parent_mid'] !== $item['mid']) {
@@ -3676,17 +3678,6 @@ class Activity {
 
 		set_iconfig($item,'activitypub','recips',$act->raw_recips);
 
-		if (! (isset($act->data['inheritPrivacy']) && $act->data['inheritPrivacy'])) {				
-			if ($item['item_private']) {
-				$item['item_restrict'] = $item['item_restrict'] & 1;
-				if ($is_child_node) {
-					$item['allow_cid'] = '<' . $channel['channel_hash'] . '>';
-					$item['allow_gid'] = $item['deny_cid'] = $item['deny_gid'] = '';
-				}
-				logger('restricted');
-			}				
-		}
-
 		if (intval($act->sigok)) {
 			$item['item_verified'] = 1;
 		}
@@ -3732,6 +3723,32 @@ class Activity {
 				$item['thr_parent'] = $parent[0]['parent_mid'];
 			}
 			$item['parent_mid'] = $parent[0]['parent_mid'];
+
+			/*
+			 *
+			 * Check for conversation privacy mismatches
+			 * We can only do this if we have a channel and we have fetched the parent
+			 *
+			 */
+			 
+			// public conversation, but this comment went rogue and was published privately
+			// hide it from everybody except the channel owner
+			
+			if (intval($parent[0]['item_private']) === 0) {
+				if (intval($item['item_private'])) {
+					$item['item_restrict'] = $item['item_restrict'] | 1;
+					$item['allow_cid'] = '<' . $channel['channel_hash'] . '>';
+					$item['allow_gid'] = $item['deny_cid'] = $item['deny_gid'] = '';
+				}
+			}
+
+			// Private conversation, but this comment went rogue and was published publicly
+			// Set item_restrict to indicate this condition so we can flag it in the UI
+
+			if (intval($parent[0]['item_private']) !== 0 && $act->recips && (in_array(ACTIVITY_PUBLIC_INBOX,$act->recips) || in_array('Public',$act->recips) || in_array('as:Public',$act->recips))) {
+				$item['item_restrict'] = $item['item_restrict'] | 2;
+			}
+
 		}
 
 		self::rewrite_mentions($item);
