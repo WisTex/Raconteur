@@ -603,10 +603,10 @@ class Profiles extends Controller {
 			$channel = App::get_channel();
 	
 			if($namechanged && $is_default) {
-				$r = q("UPDATE xchan SET xchan_name = '%s', xchan_name_date = '%s' WHERE xchan_url = '%s'",
+				$r = q("UPDATE xchan SET xchan_name = '%s', xchan_name_date = '%s' WHERE xchan_hash = '%s'",
 					dbesc($name),
 					dbesc(datetime_convert()),
-					dbesc(z_root() . '/channel/' . $channel['channel_address'])
+					dbesc($channel['xchan_hash'])
 				);
 				$r = q("UPDATE channel SET channel_name = '%s' WHERE channel_hash = '%s'",
 					dbesc($name),

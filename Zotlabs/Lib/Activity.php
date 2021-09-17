@@ -73,7 +73,7 @@ class Activity {
 
 
 
-	static function fetch($url,$channel = null,$hub = null) {
+	static function fetch($url,$channel = null,$hub = null,$debug = false) {
 		$redirects = 0;
 		if (! check_siteallowed($url)) {
 			logger('denied: ' . $url);
@@ -165,6 +165,9 @@ class Activity {
 		}
 		else {
 			logger('fetch failed: ' . $url);
+			if ($debug) {
+				return $x;
+			}
 		}
 		return null;
 	}

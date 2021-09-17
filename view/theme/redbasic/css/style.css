@@ -1508,6 +1508,12 @@ blockquote {
 	border-radius: $radius;
 }
 
+
+.wall-item-lock .dropdown-menu {
+	min-width: 20rem;
+}
+
+
 .dropdown-item {
 	color: $font_colour;
 }
