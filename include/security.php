@@ -92,7 +92,7 @@ function atoken_login($atoken) {
 	if (! $atoken) {
 		return false;
 	}
-	if ($App::$cmd === 'channel' && argv(1)) {
+	if (App::$cmd === 'channel' && argv(1)) {
 		$channel = channelx_by_nick(argv(1));
 		if (perm_is_allowed($channel['channel_id'],$atoken['xchan_hash'],'delegate')) {
 			$_SESSION['delegate_channel'] = $channel['channel_id'];

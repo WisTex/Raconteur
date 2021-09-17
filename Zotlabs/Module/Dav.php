@@ -56,6 +56,8 @@ class Dav extends Controller {
 					$keyId = str_replace('acct:','',$sigblock['keyId']);
 					if ($keyId) {
 						$r = q("select * from hubloc where ( hubloc_addr = '%s' OR hubloc_id_url = '%s' OR hubloc_hash = '%s') limit 1",
+							dbesc($keyId),
+							dbesc($keyId),
 							dbesc($keyId)
 						);
 						if ($r) {

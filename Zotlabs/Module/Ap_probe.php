@@ -30,7 +30,7 @@ class Ap_probe extends Controller {
 				}
 			}
 
-			$x = Activity::fetch($resource,$channel);
+			$x = Activity::fetch($resource,$channel,null,true);
 
 			if ($x) {
 				$o .= '<pre>' . str_replace('\\n',"\n",htmlspecialchars(json_encode($x,JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT))) . '</pre>';

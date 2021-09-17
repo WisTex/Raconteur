@@ -415,7 +415,7 @@ function insertCommentURL(comment, id) {
 	currentComment = comment;
 	currentID = id;
 	
-	$('#linkModal').modal();
+	$('#linkModal').modal('show');
 	$('#id_link_url').focus();
 	$('#link-modal-CancelButton').on('click', commentclearlinkmodal);
 	$('#link-modal-OKButton').on('click', commentgetlinkmodal);
