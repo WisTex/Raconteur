@@ -39,7 +39,7 @@ function nav($template = 'default') {
 				intval(get_account_id())
 			);
 			$q = get_sys_channel();
-			if (intval(get_pconfig($q['channel_id'],'system','include_in_menu'))) {
+			if (is_site_admin() && intval(get_pconfig($q['channel_id'],'system','include_in_menu'))) {
 				$chans = array_merge([$q],$chans);
 			}
 		}
