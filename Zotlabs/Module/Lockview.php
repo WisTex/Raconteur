@@ -1,9 +1,11 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
+
 require_once('include/security.php');
 
-class Lockview extends \Zotlabs\Web\Controller {
+class Lockview extends Controller {
 
 	function get() {
 
@@ -70,7 +72,7 @@ class Lockview extends \Zotlabs\Web\Controller {
 				$uid = $item['uid'];
 				break;
 		}
-logger('type: ' . $type);	
+
 		if ($type === 'item') {
 			$recips = get_iconfig($item['id'],'activitypub','recips');
 			if ($recips) {
@@ -88,22 +90,24 @@ logger('type: ' . $type);
 					}
 					$l = array_merge($l,$recips['cc']);
 				}
+				for ($x = 0; $x < count($l); $x ++) {
+					if($l[$x] !== ACTIVITY_PUBLIC_INBOX) {
+						$l[$x] = '<a href="' .  $l[$x] . '">' . $l[$x] . '</a>';
+					}
+				}
 				echo $o . implode(', ',$l);
 				killme();
 			}
 		}
 
-	
+			
 		if(intval($item['item_private']) && (! strlen($item['allow_cid'])) && (! strlen($item['allow_gid'])) 
 			&& (! strlen($item['deny_cid'])) && (! strlen($item['deny_gid']))) {
-	
-			// if the post is private, but public_policy is blank ("visible to the internet"), and there aren't any
-			// specific recipients, we're the recipient of a post with "bcc" or targeted recipients; so we'll just show it
-			// as unknown specific recipients. The sender will have the visibility list and will fall through to the
-			// next section.
-	 
-			echo '<div class="dropdown-item">' . translate_scope((! $item['public_policy']) ? 'specific' : $item['public_policy']) . '</div>';
-			killme();
+
+			if ($item['mid'] === $item['parent_mid']) {
+				echo '<div class="dropdown-item">' . translate_scope('specific') . '</div>';
+				killme();
+			}
 		}
 	
 		$allowed_users = expand_acl($item['allow_cid']);
