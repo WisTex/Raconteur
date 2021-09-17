@@ -187,7 +187,7 @@ var activeCommentText = '';
 			}
 		}
 	
-		$('#linkModal').modal();
+		$('#linkModal').modal('show');
 		$('#id_link_url').focus();
 		$('#link-modal-OKButton').on('click',jotgetlinkmodal);
 		$('#link-modal-CancelButton').on('click',jotclearmodal);
@@ -262,7 +262,7 @@ var activeCommentText = '';
 
 	function jotGetExpiry() {
 		//reply = prompt("{{$expirewhen}}", $('#jot-expire').val());
-		$('#expiryModal').modal();
+		$('#expiryModal').modal('show');
 		$('#expiry-modal-OKButton').on('click', function() {
 			reply=$('#expiration-date').val();
 			if(reply && reply.length) {
@@ -273,7 +273,7 @@ var activeCommentText = '';
 	}
 
 	function jotGetCommCtrl() {
-		$('#commModal').modal();
+		$('#commModal').modal('show');
 		$('#comm-modal-OKButton').on('click', function() {
 
 			var comment_state = $("input[name='comments_allowed']:checked").val();
@@ -298,7 +298,7 @@ var activeCommentText = '';
 
 
 	function jotGetPubDate() {
-		$('#createdModal').modal();
+		$('#createdModal').modal('show');
 		$('#created-modal-OKButton').on('click', function() {
 			reply=$('#created-date').val();
 			if(reply && reply.length) {
