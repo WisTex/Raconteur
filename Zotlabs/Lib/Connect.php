@@ -84,11 +84,36 @@ class Connect {
 
 			$r = Libzot::zot_record_preferred($r,'xchan_network');
 
-			// Some Hubzilla records were originally stored as activitypub. If we find one, force rediscovery
-			// since Zap cannot connect with them.
+			// ensure there's a valid hubloc for this xchan before proceeding - you cannot connect without it
 			
-			if (($r['xchan_network'] === 'activitypub') && (! $ap_allowed)) {
-				$r = null;
+			if (in_array($r['xchan_network'], [ 'zot6','activitypub' ])) {
+				$h = q("select * from hubloc where hubloc_hash = '%s'",
+					dbesc($r['xchan_hash'])
+				);
+				if (! $h) {
+					$r = null;
+				}
+			}
+
+			// we may have nulled out this record so check again
+			
+			if ($r) {			
+
+				// Check the site table to see if we should have a zot6 hubloc,
+				// If so, clear the xchan and start fresh
+
+				if ($r['xchan_network'] === 'activitypub') {
+					$m = parse_url($r['xchan_hash']);
+					unset($m['path']);
+					$h = unparse_url($m);
+					$s = q("select * from site where site_url = '%s'",
+						dbesc($h)
+					);
+					if (intval($s['site_type']) === SITE_TYPE_ZOT) {
+						logger('got zot - ignore activitypub entry');
+						$r = null;
+					}
+				}
 			}
 		}
 
