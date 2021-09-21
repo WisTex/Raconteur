@@ -44,19 +44,36 @@ class Home extends Controller {
 			killme();
 		}
 
-
 		if (Libzot::is_zot_request()) {
 
-			$key = get_config('system','prvkey');
-			$ret = json_encode(Libzot::site_info());
+			$channel = get_sys_channel();
+			$sigdata = HTTPSig::verify(file_get_contents('php://input'), EMPTY_STR, 'zot6');
 
-			$headers = [ 'Content-Type' => 'application/x-zot+json', 'Digest' => HTTPSig::generate_digest_header($ret) ];
-			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
-			$h = HTTPSig::create_sig($headers, $key, z_root());
+			if($sigdata && $sigdata['signer'] && $sigdata['header_valid']) {
+				$data = json_encode(Libzot::zotinfo([ 'guid_hash' => $channel['channel_hash'], 'target_url' => $sigdata['signer'] ]));
+				$s = q("select site_crypto, hubloc_sitekey from site left join hubloc on hubloc_url = site_url where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
+					dbesc($sigdata['signer'])
+				);
+
+				if($s && $s[0]['hubloc_sitekey'] && $s[0]['site_crypto']) {
+					$data = json_encode(Crypto::encapsulate($data,$s[0]['hubloc_sitekey'],Libzot::best_algorithm($s[0]['site_crypto'])));
+				}
+			}
+			else {
+				$data = json_encode(Libzot::zotinfo([ 'guid_hash' => $channel['channel_hash'] ]));
+			}
+
+			$headers = [ 
+				'Content-Type'     => 'application/x-zot+json', 
+				'Digest'           => HTTPSig::generate_digest_header($data),
+				'(request-target)' => strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI']
+			];
+			$h = HTTPSig::create_sig($headers,get_config('system','prvkey'),z_root());
 			HTTPSig::set_headers($h);
-			echo $ret;
+			echo $data;
 			killme();
 		}
+
 
 		$splash = ((argc() > 1 && argv(1) === 'splash') ? true : false);
 	
