@@ -606,7 +606,7 @@ class Notifier {
 				}
 			}
 		}
-		
+
 		if (! $hubs) {
 			logger('notifier: no hubs', LOGGER_NORMAL, LOG_NOTICE);
 			return;
