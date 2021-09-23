@@ -163,12 +163,13 @@ function create_sys_channel() {
 	}
 
 	create_identity([
-			'account_id' => 'xxx',  // Typecast trickery: account_id is required. This will create an identity with an (integer) account_id of 0
-			'nickname'   => 'sys',
-			'name'       => 'System',
-			'pageflags'  => 0,
-			'publish'    => 0,
-			'system'     => 1
+			'account_id'       => 'xxx',  // Typecast trickery: account_id is required. This will create an identity with an (integer) account_id of 0
+			'nickname'         => 'sys',
+			'name'             => 'System',
+			'permissions_role' => 'social',
+			'pageflags'        => 0,
+			'publish'          => 0,
+			'system'           => 1
 	]);
 }
 
@@ -2453,4 +2454,10 @@ function channel_url($channel) {
 	}
 
 	return (($channel) ? z_root() . '/channel/' . $channel['channel_address'] : z_root());
+}
+
+function is_group($uid) {
+	$role = get_pconfig($uid,'system','permissions_role');
+	$rolesettings = PermissionRoles::role_perms($role);
+	return ((isset($rolesettings['channel_type']) && $rolesettings['channel_type'] === 'group') ? true : false);
 }

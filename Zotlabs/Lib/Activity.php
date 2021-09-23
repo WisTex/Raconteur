@@ -1753,7 +1753,7 @@ class Activity {
 		// information
 		$ret = self::encode_person($sys,true,true);
 
-		$ret['type']  = 'Service';
+		$ret['type']  = ((is_group($sys['channel_id'])) ? 'Group' : 'Service');
 		$ret['id'] = z_root();
 		$ret['alsoKnownAs'] = z_root() . '/channel/sys';
 		$auto_follow = false;
@@ -1781,7 +1781,7 @@ class Activity {
 			];
 		}
 
-		$ret['summary'] = bbcode(get_config('system','siteinfo',''),['export' => true ]);
+		$ret['summary'] = bbcode(get_config('system','siteinfo',''),[ 'export' => true ]);
 		$ret['source'] = [
 			'mediaType' => 'text/bbcode',
 			'summary' => get_config('system','siteinfo','')
