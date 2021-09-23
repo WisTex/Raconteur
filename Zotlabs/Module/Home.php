@@ -6,6 +6,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Lib\Crypto;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Web\Controller;
 

@@ -133,8 +133,23 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 					}
 				}
 			}
+			
+			// We've determined it is public. If it is also a wall post and not owned by the sys channel,
+			// send this also to followers of the sys_channel
+			
+			$sys = get_sys_channel();
+			if ($sys && intval($item['uid']) !== intval($sys['channel_id']) && intval($item['item_wall'])) {
+				$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
+					intval($sys['channel_id'])
+				);
+				if ($r) {
+					foreach ($r as $rv) {
+						$recipients[] = $rv['abook_xchan'];
+					}
+				}
+			}
 		}
-
+		
 		// Add the authors of any posts in this thread, if they are known to us.
 		// This is specifically designed to forward wall-to-wall posts to the original author,
 		// in case they aren't a connection but have permission to write on our wall.
@@ -158,7 +173,8 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 	// This is a somewhat expensive operation but important.
 	// Don't send this item to anybody who isn't allowed to see it
 
-	$recipients = check_list_permissions($item['uid'],$recipients,'view_stream');
+	// Note: commented out - no longer needed in zap and later projects because we do not allow this permission to be changed.
+	// $recipients = check_list_permissions($item['uid'],$recipients,'view_stream');
 
 	// remove any upstream recipients from our list.
 	// If it is ourself we'll add it back in a second.

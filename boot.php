@@ -740,6 +740,7 @@ class App {
 	public  static $channel    = null;            // channel record of the current channel of the logged-in account
 	public  static $observer   = null;            // xchan record of the page observer
 	public  static $profile_uid = 0;              // If applicable, the channel_id of the "page owner"
+	public  static $sys_channel = null;           // cache sys channel lookups here
 	public  static $poi        = null;            // "person of interest", generally a referenced connection or directory entry
 	private static $oauth_key  = null;            // consumer_id of oauth request, if used
 	public  static $layout     = [];              // Comanche parsed template
@@ -1326,10 +1327,10 @@ class App {
 /**
  * @brief Multi-purpose function to check variable state.
  *
- * Usage: x($var) or $x($array, 'key')
+ * Usage: x($var) or x($array, 'key')
  *
  * returns false if variable/key is not set
- * if variable is set, returns 1 if has 'non-zero' value, otherwise returns 0.
+ * if variable is set, returns 1 if variable contains 'truthy' value, otherwise returns 0.
  * e.g. x('') or x(0) returns 0;
  *
  * @param string|array $s variable to check

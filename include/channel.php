@@ -180,11 +180,19 @@ function create_sys_channel() {
  * @return array|boolean
  */
 function get_sys_channel() {
+
+	// App::$sys_channel caches this lookup
+	
+	if (is_array(App::$sys_channel)) {
+		return App::$sys_channel;
+	}
+	
 	$r = q("select * from channel left join xchan on channel_hash = xchan_hash where channel_system = 1 limit 1");
 
-	if ($r)
-		return $r[0];
-
+	if ($r) {
+		App::$sys_channel = array_shift($r);
+		return App::$sys_channel;
+	}
 	return false;
 }
 
@@ -196,13 +204,10 @@ function get_sys_channel() {
  * @return boolean
  */
 function is_sys_channel($channel_id) {
-	$r = q("select channel_system from channel where channel_id = %d and channel_system = 1 limit 1",
-		intval($channel_id)
-	);
-
-	if($r)
-		return true;
-
+	$s = get_sys_channel();
+	if ($s) {
+		return (intval($s['channel_id']) === intval($channel_id));
+	}
 	return false;
 }
 
