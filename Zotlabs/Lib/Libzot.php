@@ -3207,7 +3207,7 @@ class Libzot {
 			$profile['region']        = $p[0]['region'];
 			$profile['postcode']      = $p[0]['postal_code'];
 			$profile['country']       = $p[0]['country_name'];
-			$profile['about']         = ((is_sys_channel($e['channel_id'])) ? get_config('system','siteinfo'), [ 'export' => true ]) : $p[0]['about']);
+			$profile['about']         = ((is_sys_channel($e['channel_id'])) ? get_config('system','siteinfo') : $p[0]['about']);
 			$profile['homepage']      = $p[0]['homepage'];
 			$profile['hometown']      = $p[0]['hometown'];
 
