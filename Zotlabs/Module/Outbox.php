@@ -210,9 +210,9 @@ return;
 			killme();
 		}
 
-		if (intval($channel['channel_system'])) {
-			killme();
-		}
+//		if (intval($channel['channel_system'])) {
+//			killme();
+//		}
 		
 		if (ActivityStreams::is_as_request()) {
 			$sigdata = HTTPSig::verify(($_SERVER['REQUEST_METHOD'] === 'POST') ? file_get_contents('php://input') : EMPTY_STR);

@@ -3584,11 +3584,6 @@ class Activity {
 		
 		if ($is_sys_channel) {
 
-			if (! $pubstream) {
-				$allowed = false;
-				$reason[] = 'unlisted post delivered to sys channel';
-			}
-
 			if (! check_pubstream_channelallowed($observer_hash)) {
 				$allowed = false;
 				$reason[] = 'pubstream channel blocked';

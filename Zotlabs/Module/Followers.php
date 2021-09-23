@@ -28,9 +28,9 @@ class Followers extends Controller {
 			http_status_exit(404, 'Not found');
 		}
 
-		if (intval($channel['channel_system'])) {
-			http_status_exit(403,'Permission denied');
-		}
+//		if (intval($channel['channel_system'])) {
+//			http_status_exit(403,'Permission denied');
+//		}
 
 		Libprofile::load(argv(1));
 

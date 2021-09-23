@@ -261,6 +261,8 @@ class Inbox extends Controller {
 
 
 		foreach ($channels as $channel) {
+
+			// Even though activitypub may be enabled for the site, check if the channel has specifically disabled it
 			if (! PConfig::Get($channel['channel_id'],'system','activitypub',Config::Get('system','activitypub',ACTIVITYPUB_ENABLED))) {
 				continue;
 			}
