@@ -487,7 +487,7 @@ class Notifier {
 					self::$recipients = collect_recipients($parent_item,self::$private);
 				}
 
-				// FIXME add any additional recipients such as mentions, etc.
+				// @FIXME add any additional recipients such as mentions, etc.
 
 				if ($top_level_post) {
 					// remove clones who will receive the post via sync
@@ -606,7 +606,7 @@ class Notifier {
 				}
 			}
 		}
-		
+
 		if (! $hubs) {
 			logger('notifier: no hubs', LOGGER_NORMAL, LOG_NOTICE);
 			return;

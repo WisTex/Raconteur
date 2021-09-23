@@ -20,6 +20,7 @@ class Activity_filter {
 		$video_active = false;
 		$polls_active = false;
 		$group_active = false;
+		$drafts_active = false;
 		$forum_active = false;
 		
 		$tabs = [];
@@ -63,6 +64,21 @@ class Activity_filter {
 			'sel'   => $starred_active,
 			'title' => t('Show posts that I have saved')
 		];
+
+		if (local_channel() && Apps::system_app_installed(local_channel(),'Drafts')) {
+			$drafts_active = ((isset($_GET['draft']) && intval($_GET['draft'])) ? 'active' : '');
+			if ($drafts_active) {
+				$filter_active = 'drafts';
+			}
+
+			$tabs[] = [
+				'label' => t('Drafts'),
+				'icon'  => 'floppy-o',
+				'url'   => z_root() . '/' . $cmd . '/?draft=1',
+				'sel'   => $drafts_active,
+				'title' => t('Show drafts that I have saved')
+			];
+		}
 
 		if(x($_GET,'search')) {
 			$video_active = (($_GET['search'] == 'video]') ? 'active' : '');

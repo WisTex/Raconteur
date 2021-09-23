@@ -64,7 +64,8 @@ class Manage extends Controller {
 		$account = App::get_account();
 	
 		if ($r && count($r)) {
-			$channels = $r;
+
+			$channels = ((is_site_admin()) ? array_merge ([ get_sys_channel() ], $r) : $r);
 			for ($x = 0; $x < count($channels); $x ++) {
 				$channels[$x]['link'] = 'manage/' . intval($channels[$x]['channel_id']);
 				$channels[$x]['include_in_menu'] = intval(PConfig::get($channels[$x]['channel_id'],'system','include_in_menu',0));

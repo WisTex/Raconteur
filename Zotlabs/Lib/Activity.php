@@ -1753,12 +1753,12 @@ class Activity {
 		// information
 		$ret = self::encode_person($sys,true,true);
 
-		$ret['type']  = 'Service';
+		$ret['type']  = ((is_group($sys['channel_id'])) ? 'Group' : 'Service');
 		$ret['id'] = z_root();
 		$ret['alsoKnownAs'] = z_root() . '/channel/sys';
 		$auto_follow = false;
 
-		$ret['preferredUsername'] = System::get_site_name();
+		$ret['preferredUsername'] = 'sys';
 		$ret['name']  = System::get_site_name();
 
 		$ret['icon']  = [
@@ -1781,7 +1781,7 @@ class Activity {
 			];
 		}
 
-		$ret['summary'] = bbcode(get_config('system','siteinfo',''),['export' => true ]);
+		$ret['summary'] = bbcode(get_config('system','siteinfo',''),[ 'export' => true ]);
 		$ret['source'] = [
 			'mediaType' => 'text/x-multicode',
 			'summary' => get_config('system','siteinfo','')
@@ -3583,11 +3583,6 @@ class Activity {
 		}
 		
 		if ($is_sys_channel) {
-
-			if (! $pubstream) {
-				$allowed = false;
-				$reason[] = 'unlisted post delivered to sys channel';
-			}
 
 			if (! check_pubstream_channelallowed($observer_hash)) {
 				$allowed = false;

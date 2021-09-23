@@ -3241,37 +3241,44 @@ function item_url_replace($channel,&$item,$old,$new,$oldnick = '') {
 
 	if($item['attach']) {
 		json_url_replace($old,$new,$item['attach']);
-		if($oldnick)
+		if($oldnick && ($oldnick !== $channel['channel_address']))
 			json_url_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['attach']);
 	}
 	if($item['object']) {
 		json_url_replace($old,$new,$item['object']);
-		if($oldnick)
+		if($oldnick && ($oldnick !== $channel['channel_address']))
 			json_url_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['object']);
 	}
 	if($item['target']) {
 		json_url_replace($old,$new,$item['target']);
-		if($oldnick)
+		if($oldnick && ($oldnick !== $channel['channel_address']))
 			json_url_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['target']);
 	}
 
-	if(string_replace($old,$new,$item['body'])) {
-		$item['sig'] = Libzot::sign($item['body'],$channel['channel_prvkey']);
-		$item['item_verified']  = 1;
-	}
+	$root_replaced = null;
+	$nick_replaced = null;
 
+	$item['body'] = str_replace($old, $new, $item['body']);
+
+	if($oldnick && ($oldnick !== $channel['channel_address'])) {
+		$item['body'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['body']);
+	}
+	
+	$item['sig'] = Libzot::sign($item['body'],$channel['channel_prvkey']);
+	$item['item_verified'] = 1;
+	
 	$item['plink'] = str_replace($old,$new,$item['plink']);
-	if($oldnick)
+	if($oldnick && ($oldnick !== $channel['channel_address']))
 		$item['plink'] = str_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['plink']);
 
 	$item['llink'] = str_replace($old,$new,$item['llink']);
-	if($oldnick)
+	if($oldnick && ($oldnick !== $channel['channel_address']))
 		$item['llink'] = str_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['llink']);
 
 	if($item['term']) {
 		for($x = 0; $x < count($item['term']); $x ++) {
 			$item['term'][$x]['url'] =  str_replace($old,$new,$item['term'][$x]['url']);
-			if ($oldnick) {
+			if($oldnick && ($oldnick !== $channel['channel_address'])) {
 				$item['term'][$x]['url'] = str_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['term'][$x]['url']);
 			}
 		}
