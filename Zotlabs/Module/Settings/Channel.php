@@ -336,7 +336,7 @@ class Channel {
 			intval($channel['channel_hash'])
 		);
 
-		if($name_change) {
+		if ($name_change) {
 			// catch xchans for all protocols by matching the url
 			$r = q("update xchan set xchan_name = '%s', xchan_name_date = '%s' where xchan_url = '%s'",
 				dbesc($username),
@@ -347,6 +347,9 @@ class Channel {
 				dbesc($username),
 				intval($channel['channel_id'])
 			);
+			if (is_sys_channel($channel['channel_id'])) {
+				set_config('system','sitename', $username);
+			}
 		}
 	
 		Run::Summon( [ 'Directory', local_channel() ] );

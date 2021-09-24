@@ -616,6 +616,9 @@ class Profiles extends Controller {
 					dbesc($name),
 					dbesc($channel['xchan_hash'])
 				);
+				if (is_sys_channel(local_channel())) {
+					set_config('system','sitename',$name);
+				}
 			}
 	
 			if($is_default) {
