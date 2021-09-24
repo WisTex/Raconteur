@@ -138,12 +138,13 @@ function create_sys_channel() {
 				dbesc(z_root()),
 				dbesc($sys['channel_hash'])
 			);
-
-			q("update hubloc set hubloc_guid_sig = '%s', hubloc_hash = '%s', hubloc_id_url = '%s', hubloc_url_sig = '%s', hubloc_site_id = '%s', hubloc_orphancheck = 0, hubloc_error = 0, hubloc_deleted = 0 where hubloc_hash = '%s'",
+			q("update hubloc set hubloc_guid_sig = '%s', hubloc_hash = '%s', hubloc_id_url = '%s', hubloc_url_sig = '%s', hubloc_url = '%s', hubloc_callback = '%s', hubloc_site_id = '%s', hubloc_orphancheck = 0, hubloc_error = 0, hubloc_deleted = 0 where hubloc_hash = '%s'",
 				dbesc($guid_sig),
 				dbesc($hash),
 				dbesc(z_root()),
 				dbesc(Libzot::sign(z_root(),$prvkey)),
+				dbesc(z_root()),
+				dbesc(z_root() . '/zot'),
 				dbesc(Libzot::make_xchan_hash(z_root(),$pubkey)),
 				dbesc($sys['channel_hash'])
 			);
