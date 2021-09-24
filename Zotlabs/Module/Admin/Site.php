@@ -137,6 +137,17 @@ class Site {
 				dbesc($siteinfo),
 				intval(local_channel())
 			);
+			if ($sitename) {
+				q("update channel set channel_name = '%s' where channel_id  = %d",
+					dbesc($sitename),
+					intval(local_channel())
+				);
+				q("update xchan set xchan_name = '%s' , xchan_name_updated = '%s' where xchan_hash = '%s'",
+					dbesc($sitename),
+					dbesc(datetime_convert()),
+					dbesc(get_observer_hash())
+				);
+			}
 		}
 				
 		set_config('system', 'language', $language);
