@@ -132,6 +132,13 @@ class Site {
 			set_config('system', 'admininfo', $admininfo);
 		}
 		set_config('system','siteinfo',$siteinfo);
+		if (is_sys_channel(local_channel())) {
+			q("update profile set about = '%s' where uid = %d and is_default = 1",
+				dbesc($siteinfo),
+				intval(local_channel())
+			);
+		}
+				
 		set_config('system', 'language', $language);
 		set_config('system', 'theme', $theme);
 	//	set_config('system','site_channel', $site_channel);
