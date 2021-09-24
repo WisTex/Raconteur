@@ -20,7 +20,7 @@ use Zotlabs\Daemon\Run;
 define ( 'STD_VERSION',             '21.09.24' );
 define ( 'ZOT_REVISION',            '10.0' );
 
-define ( 'DB_UPDATE_VERSION',       1251 );
+define ( 'DB_UPDATE_VERSION',       1252 );
 
 define ( 'PLATFORM_NAME',           'zap' );
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
@@ -1493,12 +1493,10 @@ function check_config() {
 
 	App::set_baseurl(z_root());
 
-	// Make sure each site has a system channel and that it has been upgraded.
-
-	$syschan_exists = get_sys_channel();
-	if ((! $syschan_exists) || ($syschan_exists['channel_pubkey'] !== get_config('system','pubkey'))) {	
-		create_sys_channel();
-	}
+	// Ensure the site has a system channel and that it has been upgraded.
+	// This function will only do work if work is required.
+	
+	create_sys_channel();
 	
 	$x = new DB_Upgrade(DB_UPDATE_VERSION);
 
