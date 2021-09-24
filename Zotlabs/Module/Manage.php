@@ -33,12 +33,14 @@ class Manage extends Controller {
 						intval(get_account_id())
 					);
 				}
+				goaway(z_root() . '/manage');
 			}
 			elseif (argv(2) === 'menu') {
 				$state = intval(PConfig::get($change_channel,'system','include_in_menu', 0));
 				PConfig::set($change_channel,'system','include_in_menu',1 - $state);
+				goaway(z_root() . '/manage');
 			}
-			goaway(z_root() . '/manage');
+			
 		}
 
 	
