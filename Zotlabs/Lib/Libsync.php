@@ -934,7 +934,7 @@ class Libsync {
 
 			foreach($arr['locations'] as $location) {
 				if(! Libzot::verify($location['url'],$location['url_sig'],$sender['public_key'])) {
-					logger('Unable to verify site signature for ' . $location['url']);
+					logger('Unable to verify site signature for ' . $location['url']);					
 					$ret['message'] .= sprintf( t('Unable to verify site signature for %s'), $location['url']) . EOL;
 					continue;
 				}
