@@ -540,7 +540,7 @@ class Item extends Controller {
 
 				// $r may have changed. Check it again before trying to use it.
 				
-				if ($r && local_channel()) {
+				if ($r && local_channel() && (! is_sys_channel(local_channel()))) {
 					$old_id = $r[0]['id'];
 					$r = [ copy_of_pubitem(App::get_channel(), $r[0]['mid']) ];
 					if ($r[0]['id'] !== $old_id) {
