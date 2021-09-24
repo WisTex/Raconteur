@@ -248,7 +248,7 @@ class Dirsearch extends Controller {
 		// normal directory query
 
 		$r = q("SELECT xchan.*, xprof.* from xchan left join xprof on xchan_hash = xprof_hash 
-			where ( $logic $sql_extra ) $hub_query $network and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 
+			where ( $logic $sql_extra ) $hub_query $network and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 
 			$safesql $activesql $order $qlimit "
 		);
 
