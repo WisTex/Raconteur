@@ -78,11 +78,30 @@ class Libzot {
 
 		/* Only search for active hublocs - e.g. those that haven't been marked deleted */
 
-		$ret = q("select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0 order by hubloc_url ",
+		$ret = q("select * from hubloc where hubloc_hash = '%s' order by hubloc_url ",
 			dbesc($hash)
 		);
 
-		return $ret;
+		$hubs = [];
+		
+		if ($ret) {
+			for ($x = 0; $x < count($ret); $x ++) {
+				if (intval($ret[$x]['hubloc_deleted'])) {
+					if ($ret[$x]['hubloc_id_url'] === z_root()) {
+						q("update hubloc set hubloc_deleted = 0 where hubloc_id = %d",
+							intval($ret[$x]['hubloc_id'])
+						);
+						$ret[$x]['hubloc_deleted'] = 0;
+					}
+					else {
+						continue;
+					}
+				}
+				$hubs[] = $ret[$x];
+			}
+		}
+				
+		return $hubs;
 	}
 
 	/**
