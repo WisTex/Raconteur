@@ -138,6 +138,10 @@ class Site {
 				intval(local_channel())
 			);
 			if ($sitename) {
+				q("update profile set fullname = '%s' where channel_id = %d and is_default = 1",
+					dbesc($sitename),
+					intval(local_channel())
+				);
 				q("update channel set channel_name = '%s' where channel_id  = %d",
 					dbesc($sitename),
 					intval(local_channel())
