@@ -599,7 +599,11 @@ class Profiles extends Controller {
 			if($sync) {
 				Libsync::build_sync_packet(local_channel(),array('profile' => $sync));
 			}
-	
+
+			if (is_sys_channel(local_channel())) {
+				set_config('system','siteinfo', $about);
+			}
+
 			$channel = App::get_channel();
 	
 			if($namechanged && $is_default) {
