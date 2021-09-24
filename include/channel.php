@@ -2454,7 +2454,7 @@ function channel_url($channel) {
 		btlogger('not a channel array: ' . print_r($channel,true));
 	}
 
-	if ($channel['channel_address'] === z_root()) {
+	if ($channel['channel_address'] === App::get_hostname() || intval($channel['channel_system'])) {
 		return z_root();
 	}
 
