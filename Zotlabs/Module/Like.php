@@ -80,7 +80,7 @@ class Like extends Controller {
 		// create a copy of the parent in your stream.
 
 		if ($r) {
-			if (local_channel()) {
+			if (local_channel() && (! is_sys_channel(local_channel()))) {
 				$r = [ copy_of_pubitem(App::get_channel(), $r[0]['mid']) ];
 			}
 		}
