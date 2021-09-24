@@ -525,9 +525,8 @@ function random_profile() {
 	for ($i = 0; $i < $retryrandom; $i++) {
 
 		$r = q("select xchan_url, xchan_hash from xchan left join hubloc on hubloc_hash = xchan_hash where
-			xchan_hidden = 0 and xchan_system = 0 and
-			xchan_network = 'zot6' and xchan_deleted = 0 and
-			hubloc_connected > %s - interval %s order by $randfunc limit 1",
+			xchan_hidden = 0 and xchan_network = 'zot6' and xchan_deleted = 0
+			and hubloc_connected > %s - interval %s order by $randfunc limit 1",
 			db_utcnow(),
 			db_quoteinterval('30 day')
 		);
