@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Module\Admin;
 
+use App;
 use Zotlabs\Lib\System;
 use Zotlabs\Access\PermissionRoles;
 
@@ -21,9 +22,11 @@ class Site {
 			return;
 		}
 
+		$sys = get_sys_channel();
+
 		check_form_security_token_redirectOnErr('/admin/site', 'admin_site');
 
-		$sitename 			=	((x($_POST,'sitename'))			? notags(trim($_POST['sitename']))			: '');
+		$sitename 			=	((x($_POST,'sitename'))			? notags(trim($_POST['sitename']))			: App::get_hostname());
 
 		$admininfo			=	((x($_POST,'admininfo'))		? trim($_POST['admininfo'])				: false);
 		$siteinfo			=	((x($_POST,'siteinfo'))		    ? trim($_POST['siteinfo'])				: '');
@@ -132,27 +135,26 @@ class Site {
 			set_config('system', 'admininfo', $admininfo);
 		}
 		set_config('system','siteinfo',$siteinfo);
-		if (is_sys_channel(local_channel())) {
-			q("update profile set about = '%s' where uid = %d and is_default = 1",
-				dbesc($siteinfo),
-				intval(local_channel())
-			);
-			if ($sitename) {
-				q("update profile set fullname = '%s' where uid = %d and is_default = 1",
-					dbesc($sitename),
-					intval(local_channel())
-				);
-				q("update channel set channel_name = '%s' where channel_id  = %d",
-					dbesc($sitename),
-					intval(local_channel())
-				);
-				q("update xchan set xchan_name = '%s' , xchan_name_updated = '%s' where xchan_hash = '%s'",
-					dbesc($sitename),
-					dbesc(datetime_convert()),
-					dbesc(get_observer_hash())
-				);
-			}
-		}
+
+		// sync sitename and siteinfo updates to the system channel
+		
+		q("update profile set about = '%s' where uid = %d and is_default = 1",
+			dbesc($siteinfo),
+			intval($sys['channel_id'])
+		);
+		q("update profile set fullname = '%s' where uid = %d and is_default = 1",
+			dbesc($sitename),
+			intval($sys['channel_id'])
+		);
+		q("update channel set channel_name = '%s' where channel_id  = %d",
+			dbesc($sitename),
+			intval($sys['channel_id'])
+		);
+		q("update xchan set xchan_name = '%s' , xchan_name_updated = '%s' where xchan_hash = '%s'",
+			dbesc($sitename),
+			dbesc(datetime_convert()),
+			dbesc($sys['channel_hash'])
+		);
 				
 		set_config('system', 'language', $language);
 		set_config('system', 'theme', $theme);
@@ -314,7 +316,7 @@ class Site {
 			'$corporate'            => t('Policies'),
 			'$advanced'             => t('Advanced'),
 			'$baseurl'              => z_root(),
-			'$sitename'             => [ 'sitename', t("Site name"), htmlspecialchars(get_config('system','sitename'), ENT_QUOTES, 'UTF-8'),'' ],
+			'$sitename'             => [ 'sitename', t("Site name"), htmlspecialchars(get_config('system','sitename', App::get_hostname()), ENT_QUOTES, 'UTF-8'),'' ],
 			'$admininfo'            => [ 'admininfo', t("Administrator Information"), $admininfo, t("Contact information for site administrators.  Displayed on siteinfo page.  BBCode may be used here.") ],
 			'$siteinfo'		        => [ 'siteinfo', t('Site Information'), get_config('system','siteinfo'), t("Publicly visible description of this site.  Displayed on siteinfo page.  BBCode may be used here.") ],
 			'$language'             => [ 'language', t("System language"), get_config('system','language','en'), "", $lang_choices ],
