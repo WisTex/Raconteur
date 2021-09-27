@@ -1551,6 +1551,7 @@ function item_json_encapsulate($arr,$k)  {
 			$retval = json_encode($arr[$k], JSON_UNESCAPED_SLASHES);
 		}
 	}
+
 	return $retval;
 }
 
@@ -3192,10 +3193,18 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		$bb .= "[/share]";
 
 		$arr['body'] = $bb;
-		// Conversational objects shouldn't be copied, but other objects should. We'll start with photos and events since those are the most likely.
-		if (in_array($item['obj_type'], [ 'Image', 'Event' ])) { 
+		
+		// Conversational objects shouldn't be copied, but other objects should.
+		if (in_array($item['obj_type'], [ 'Image', 'Event', 'Question' ])) { 
 			$arr['obj'] = $item['obj'];
+			$t = json_decode($arr['obj'],true);
+			if ($t !== NULL) {
+				$arr['obj'] = $t;
+			}
+			$arr['obj']['content'] = bbcode($bb, [ 'export' => true ]);
+			$arr['obj']['source']['content'] = $bb;
 		}
+
 		$arr['tgt_type'] = $item['tgt_type'];
 		$arr['target'] = $item['target'];
 		
