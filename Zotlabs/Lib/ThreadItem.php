@@ -122,6 +122,11 @@ class ThreadItem {
 		if($item['author']['xchan_network'] === 'rss')
 			$shareable = true;
 
+		// @fixme
+		if ($item['obj_type'] === 'Question') {
+			$shareable = false;
+		}
+
 
 		if ($item['item_restrict'] & 2) {
 			$privacy_warning = true;
