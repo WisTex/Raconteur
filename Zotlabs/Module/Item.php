@@ -1280,7 +1280,7 @@ class Item extends Controller {
 
 
 		if ($obj) {
-			$obj['url'] = $mid;
+			$obj['url'] = $obj['id'] = $mid;
 			$obj['attributedTo'] = channel_url($channel);
 			$datarray['obj'] = $obj;
 			$obj_type = 'Question';
