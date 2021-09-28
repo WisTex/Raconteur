@@ -3126,11 +3126,6 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 
 		$arr = [];
 
-		if ($item['obj_type'] === 'Question') {
-			return;
-		}
-
-
 		// hide original message
 		q("update item set item_hidden = 1 where id = %d",
 			intval($item_id)
