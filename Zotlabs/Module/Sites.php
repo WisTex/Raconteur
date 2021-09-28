@@ -109,7 +109,7 @@ class Sites extends \Zotlabs\Web\Controller {
 		}
 
 		$o = replace_macros(get_markup_template('sitentry_header.tpl'), [
-			'$dirlbl' => 'Affiliated Sites',
+			'$dirlbl' => t('Affiliated Sites'),
 			'$desc'     => $desc,
 			'$entries'  => $j,
 		]);

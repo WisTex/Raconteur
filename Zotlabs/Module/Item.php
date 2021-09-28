@@ -148,6 +148,7 @@ class Item extends Controller {
 			if (! $i) {
 				http_status_exit(404, 'Not found');
 			}
+
 			
 			if ($portable_id && (! intval($items[0]['item_private']))) {
 				$c = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s'",
@@ -539,7 +540,7 @@ class Item extends Controller {
 
 				// $r may have changed. Check it again before trying to use it.
 				
-				if ($r && local_channel()) {
+				if ($r && local_channel() && (! is_sys_channel(local_channel()))) {
 					$old_id = $r[0]['id'];
 					$r = [ copy_of_pubitem(App::get_channel(), $r[0]['mid']) ];
 					if ($r[0]['id'] !== $old_id) {
@@ -1279,7 +1280,7 @@ class Item extends Controller {
 
 
 		if ($obj) {
-			$obj['url'] = $mid;
+			$obj['url'] = $obj['id'] = $mid;
 			$obj['attributedTo'] = channel_url($channel);
 			$datarray['obj'] = $obj;
 			$obj_type = 'Question';
@@ -1422,6 +1423,15 @@ class Item extends Controller {
 			$copy = $datarray;
 			$copy['author'] = $observer;
 			$datarray['obj'] = Activity::encode_item($copy,((get_config('system','activitypub', ACTIVITYPUB_ENABLED)) ? true : false));
+			$recips = [];
+			$i = $datarray['obj'];
+			if ($i['to']) {
+				$recips['to'] = $i['to'];
+			}
+			if ($i['cc']) {
+				$recips['cc'] = $i['cc'];
+			}
+			IConfig::Set($datarray,'activitypub','recips',$recips);
 		}	
 
 		Activity::rewrite_mentions($datarray);

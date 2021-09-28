@@ -2,6 +2,7 @@
 
 function js_strings() {
 	return replace_macros(get_markup_template('js_strings.tpl'), array(
+		'$icon'        => '/images/' . PLATFORM_NAME . '-64.png',
 		'$delitem'     => t('Delete this item?'),
 		'$comment'     => t('Comment'),
 		'$showmore'    => sprintf( t('%s show all'), '<i class=\'fa fa-chevron-down\'></i>'),
@@ -36,7 +37,8 @@ function js_strings() {
 		'$pinned'      => t('Pinned'),
 		'$pin_item'    => t('Pin this post'),
 		'$unpin_item'  => t('Unpin this post'),
-
+		'$tos'         => t('Please accept terms to continue'),
+		
 		// translatable prefix and suffix strings for jquery.timeago -
 		// using the defaults set below if left untranslated, empty strings if
 		// translated to "NONE" and the corresponding language strings

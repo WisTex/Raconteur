@@ -47,7 +47,7 @@ function poco_load($xchan = '', $url = null) {
 		return;
 	}
 
-	$max = intval(get_config('system','max_imported_follow',10));
+	$max = intval(get_config('system','max_imported_follow', MAX_IMPORTED_FOLLOW));
 	if (! intval($max)) {
 		return;
 	}
@@ -237,7 +237,7 @@ function poco_load($xchan = '', $url = null) {
 
 function ap_poco_load($xchan) {
 
-	$max = intval(get_config('system','max_imported_follow',10));
+	$max = intval(get_config('system','max_imported_follow', MAX_IMPORTED_FOLLOW));
 	if (! intval($max)) {
 		return;
 	}
@@ -372,12 +372,13 @@ function common_friends($uid,$xchan,$start = 0,$limit=100000000,$shuffle = false
 }
 
 
-function suggestion_query($uid, $myxchan, $start = 0, $limit = 80) {
+function suggestion_query($uid, $myxchan, $start = 0, $limit = 120) {
 
-	if((! $uid) || (! $myxchan))
+	if ((! $uid) || (! $myxchan)) {
 		return [];
+	}
 
-	$r = q("SELECT count(xlink_xchan) as total, xchan.* from xchan
+	$r1 = q("SELECT count(xlink_xchan) as total, xchan.* from xchan
 		left join xlink on xlink_link = xchan_hash
 		where xlink_xchan in ( select abook_xchan from abook where abook_channel = %d )
 		and not xlink_link in ( select abook_xchan from abook where abook_channel = %d )
@@ -394,9 +395,57 @@ function suggestion_query($uid, $myxchan, $start = 0, $limit = 80) {
 		intval($start)
 	);
 
-	return (($r) ? $r : []);
+	if (! $r1) {
+		$r1 = [];
+	}
 
+	$r2 = q("SELECT count(xtag_hash) as total, xchan.* from xchan
+		left join xtag on xtag_hash = xchan_hash
+		where xtag_hash != '%s' 
+		and not xtag_hash in ( select abook_xchan from abook where abook_channel = %d )
+		and xtag_term in ( select xtag_term from xtag where xtag_hash = '%s' )
+		and not xtag_hash in ( select xchan from xign where uid = %d )
+		and xchan_hidden = 0
+		and xchan_deleted = 0
+		group by xchan_hash order by total desc limit %d offset %d ",
+		dbesc($myxchan),
+		intval($uid),
+		dbesc($myxchan),
+		intval($uid),
+		intval($limit),
+		intval($start)
+	);
+
+	if (! $r2) {
+		$r2 = [];
+	}
+
+	foreach ($r2 as $r) {
+		$found = false;
+		for ($x = 0; $x < count($r1); $x ++) {
+			if ($r['xchan_hash'] === $r1[$x]['xchan_hash']) {
+				$r1[$x]['total'] = intval($r1[$x]['total']) + intval($r['total']);
+				$found = true;
+				continue;
+			}
+		}
+		if (! $found) {
+			$r1[] = $r;
+		}
+	}
+
+	usort($r1,'socgraph_total_sort');
+	return ($r1);
 }
+
+function socgraph_total_sort($a,$b) {
+	if ($a['total'] === $b['total']) {
+		return 0;
+	}
+	
+	return((intval($a['total']) <  intval($b['total'])) ? 1 : -1 );
+}
+
 
 function poco() {
 

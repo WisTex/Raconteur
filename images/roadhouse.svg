@@ -7,145 +7,90 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="600"
+   height="600"
+   viewBox="0 0 158.75 158.75"
    version="1.1"
-   id="Capa_1"
-   x="0px"
-   y="0px"
-   width="460.298px"
-   height="460.297px"
-   viewBox="0 0 460.298 460.297"
-   style="enable-background:new 0 0 460.298 460.297;"
-   xml:space="preserve"
-   sodipodi:docname="roadhouse.svg"
-   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"><metadata
-   id="metadata1604"><rdf:RDF><cc:Work
-       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
-   id="defs1602" /><sodipodi:namedview
-   pagecolor="#ffffff"
-   bordercolor="#666666"
-   borderopacity="1"
-   objecttolerance="10"
-   gridtolerance="10"
-   guidetolerance="10"
-   inkscape:pageopacity="0"
-   inkscape:pageshadow="2"
-   inkscape:window-width="1433"
-   inkscape:window-height="829"
-   id="namedview1600"
-   showgrid="false"
-   inkscape:zoom="1.3242017"
-   inkscape:cx="230.149"
-   inkscape:cy="298.35742"
-   inkscape:window-x="277"
-   inkscape:window-y="115"
-   inkscape:window-maximized="0"
-   inkscape:current-layer="Capa_1" />
-
-<g
-   id="g1569">
-</g>
-<g
-   id="g1571">
-</g>
-<g
-   id="g1573">
-</g>
-<g
-   id="g1575">
-</g>
-<g
-   id="g1577">
-</g>
-<g
-   id="g1579">
-</g>
-<g
-   id="g1581">
-</g>
-<g
-   id="g1583">
-</g>
-<g
-   id="g1585">
-</g>
-<g
-   id="g1587">
-</g>
-<g
-   id="g1589">
-</g>
-<g
-   id="g1591">
-</g>
-<g
-   id="g1593">
-</g>
-<g
-   id="g1595">
-</g>
-<g
-   id="g1597">
-</g>
-<g
-   id="g1687"><g
-     id="g1567"
-     transform="matrix(1,0,0,0.59586056,0,-21.888286)"
-     style="fill:#0000ff">
-	<g
-   id="g1565"
-   style="fill:#0000ff">
-		<path
-   d="M 230.149,120.939 65.986,256.274 c 0,0.191 -0.048,0.472 -0.144,0.855 -0.094,0.38 -0.144,0.656 -0.144,0.852 v 137.041 c 0,4.948 1.809,9.236 5.426,12.847 3.616,3.613 7.898,5.431 12.847,5.431 h 109.63 V 303.664 h 73.097 v 109.64 h 109.629 c 4.948,0 9.236,-1.814 12.847,-5.435 3.617,-3.607 5.432,-7.898 5.432,-12.847 V 257.981 c 0,-0.76 -0.104,-1.334 -0.288,-1.707 z"
-   id="path1561"
-   style="fill:#0000ff" />
-		<path
-   d="M 457.122,225.438 394.6,173.476 V 56.989 c 0,-2.663 -0.856,-4.853 -2.574,-6.567 -1.704,-1.712 -3.894,-2.568 -6.563,-2.568 h -54.816 c -2.666,0 -4.855,0.856 -6.57,2.568 -1.711,1.714 -2.566,3.905 -2.566,6.567 v 55.673 L 251.849,54.417 c -6.084,-4.949 -13.318,-7.423 -21.694,-7.423 -8.375,0 -15.608,2.474 -21.698,7.423 L 3.172,225.438 c -1.903,1.52 -2.946,3.566 -3.14,6.136 -0.193,2.568 0.472,4.811 1.997,6.713 l 17.701,21.128 c 1.525,1.712 3.521,2.759 5.996,3.142 2.285,0.192 4.57,-0.476 6.855,-1.998 L 230.149,95.817 427.719,260.558 c 1.526,1.328 3.521,1.991 5.996,1.991 h 0.858 c 2.471,-0.376 4.463,-1.43 5.996,-3.138 l 17.703,-21.125 c 1.522,-1.906 2.189,-4.145 1.991,-6.716 -0.195,-2.563 -1.242,-4.609 -3.141,-6.132 z"
-   id="path1563"
-   style="fill:#0000ff" />
-	</g>
-</g><g
-     id="g961"
-     transform="matrix(0.92331596,0,0,0.65023823,1.906702,182.99171)"
-     style="fill:#666666"><g
-       id="g959"
-       style="fill:#666666"><polygon
-         points="146.667,72.985 119.178,72.985 0,423.015 60.237,423.015 "
-         id="polygon953"
-         style="fill:#666666" /><polygon
-         points="496,423.015 376.822,72.985 349.333,72.985 435.763,423.015 "
-         id="polygon955"
-         style="fill:#666666" /><path
-         d="M 170.176,72.985 83.93,423.015 h 127.624 l 3.514,-51.512 h 65.864 l 3.514,51.512 H 412.07 L 325.827,72.985 Z m 66.475,4.013 h 22.699 l 3.596,49.085 h -29.893 z m -7.193,98.169 h 37.086 l 3.597,49.084 h -44.283 z m -10.791,147.25 3.596,-49.082 h 51.475 l 3.599,49.082 z"
-         id="path957"
-         style="fill:#666666" /></g></g></g><g
-   id="g963"
-   transform="matrix(1,0,0,0.58989577,-21.399854,205.88581)" /><g
-   id="g965"
-   transform="matrix(1,0,0,0.58989577,-21.399854,205.88581)" /><g
-   id="g967"
-   transform="matrix(1,0,0,0.58989577,-21.399854,205.88581)" /><g
-   id="g969"
-   transform="matrix(1,0,0,0.58989577,-21.399854,205.88581)" /><g
-   id="g971"
-   transform="matrix(1,0,0,0.58989577,-21.399854,205.88581)" /><g
-   id="g973"
-   transform="matrix(1,0,0,0.58989577,-21.399854,205.88581)" /><g
-   id="g975"
-   transform="matrix(1,0,0,0.58989577,-21.399854,205.88581)" /><g
-   id="g977"
-   transform="matrix(1,0,0,0.58989577,-21.399854,205.88581)" /><g
-   id="g979"
-   transform="matrix(1,0,0,0.58989577,-21.399854,205.88581)" /><g
-   id="g981"
-   transform="matrix(1,0,0,0.58989577,-21.399854,205.88581)" /><g
-   id="g983"
-   transform="matrix(1,0,0,0.58989577,-21.399854,205.88581)" /><g
-   id="g985"
-   transform="matrix(1,0,0,0.58989577,-21.399854,205.88581)" /><g
-   id="g987"
-   transform="matrix(1,0,0,0.58989577,-21.399854,205.88581)" /><g
-   id="g989"
-   transform="matrix(1,0,0,0.58989577,-21.399854,205.88581)" /><g
-   id="g991"
-   transform="matrix(1,0,0,0.58989577,-21.399854,205.88581)" /></svg>
+   id="svg8"
+   inkscape:version="1.0.2 (e86c870879, 2021-01-15)"
+   sodipodi:docname="roadhouse.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.17"
+     inkscape:cx="289.30718"
+     inkscape:cy="284.43115"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1514"
+     inkscape:window-height="991"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline">
+    <g
+       id="g935"
+       transform="translate(5.2939634,-6.2108888)">
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:168.208px;line-height:1.25;font-family:Z003;-inkscape-font-specification:'Z003, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#800000;fill-opacity:1;stroke:none;stroke-width:4.20519"
+         x="-6.3918853"
+         y="114.04469"
+         id="text16"
+         transform="scale(0.88368547,1.1316244)"><tspan
+           sodipodi:role="line"
+           id="tspan14"
+           x="-6.3918853"
+           y="114.04469"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:168.208px;font-family:Z003;-inkscape-font-specification:'Z003, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#800000;fill-opacity:1;stroke-width:4.20519">R</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="130.55852"
+         y="28.864599"
+         id="text923"><tspan
+           sodipodi:role="line"
+           id="tspan921"
+           x="130.55852"
+           y="28.864599"
+           style="stroke-width:0.264583" /></text>
+      <text
+         xml:space="preserve"
+         style="font-size:144.226px;line-height:1.25;font-family:Z003;-inkscape-font-specification:'Z003, Normal';fill:#800000;fill-opacity:1;stroke-width:3.606;stroke-miterlimit:4;stroke-dasharray:none"
+         x="92.333"
+         y="113.51909"
+         id="text927"
+         transform="scale(0.88791059,1.1262395)"><tspan
+           sodipodi:role="line"
+           id="tspan925"
+           x="92.333"
+           y="113.51909"
+           style="fill:#800000;fill-opacity:1;stroke-width:3.606;stroke-miterlimit:4;stroke-dasharray:none">h</tspan></text>
+    </g>
+  </g>
+</svg>

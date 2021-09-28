@@ -91,7 +91,7 @@
                   $("#generic-modal-ok-{{$newRepoModalID}}").click(function () {
                     installAddonRepo();
                   });
-                  $('#generic-modal-{{$newRepoModalID}}').modal();
+                  $('#generic-modal-{{$newRepoModalID}}').modal('show');
                 } else {
                     window.console.log('Error adding repo :' + response['message']);
                 }
@@ -124,7 +124,7 @@
                       location.reload();
                     }
                   });
-                  $('#generic-modal-{{$newRepoModalID}}').modal();
+                  $('#generic-modal-{{$newRepoModalID}}').modal('show');
               
                 } else {
                     window.console.log('Error installing repo :' + response['message']);

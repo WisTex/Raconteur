@@ -118,7 +118,14 @@ class Lists extends Controller {
 				intval(local_channel())
 			);
 			if (! $r) {
-				notice( t('Access list not found.') . EOL );
+				$r = q("select * from pgrp where id = %d limit 1",
+					intval(argv(1))
+				);
+				if ($r) {
+					notice( t('Permission denied.') . EOL );
+				} else {
+					notice( t('Access list not found.') . EOL );
+				}
 				goaway(z_root() . '/connections');
 	
 			}
@@ -240,9 +247,6 @@ class Lists extends Controller {
 
 		}
 
-
-
-
 		$context = array('$submit' => t('Submit'));
 		$tpl = get_markup_template('group_edit.tpl');
 	
@@ -287,7 +291,15 @@ class Lists extends Controller {
 				intval(local_channel())
 			);
 			if(! $r) {
-				notice( t('Access list not found.') . EOL );
+				$r = q("SELECT * FROM pgrp WHERE id = %d AND deleted = 0 LIMIT 1",
+					intval(argv(1)),
+				);
+				if ($r) {
+					notice( t('Permission denied.') . EOL );
+				}
+				else {
+					notice( t('Access list not found.') . EOL );
+				}
 				goaway(z_root() . '/connections');
 			}
 			$group = $r[0];

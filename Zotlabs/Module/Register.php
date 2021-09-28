@@ -56,7 +56,7 @@ class Register extends Controller {
 			}
 		}
 	
-		if (! x($_POST,'tos')) {
+		if (! (isset($_POST['tos']) && intval($_POST['tos']))) {
 			notice( t('Please indicate acceptance of the Terms of Service. Registration failed.') . EOL);
 			return;
 		}
@@ -118,8 +118,13 @@ class Register extends Controller {
 		if ($_REQUEST['permissions_role']) {
 			set_aconfig($result['account']['account_id'],'register','permissions_role',$_REQUEST['permissions_role']);
 		}
-	
-	
+
+		// At this point the account has been created without error. Purge any error messages from prior failed registration
+		// attempts which haven't yet been delivered to the browser and start fresh. If you're willing to figure out why they
+		// weren't delivered to the browser please adopt zap issue 34. 
+		
+		$_SESSION['sysmsg'] = [];
+		
 	 	$using_invites = intval(get_config('system','invitation_only'));
 		$num_invites   = intval(get_config('system','number_invites'));
 		$invite_code   = ((x($_POST,'invite_code'))  ? notags(trim($_POST['invite_code']))  : '');
@@ -262,15 +267,15 @@ class Register extends Controller {
 
 		$enable_tos   = 1 - intval(get_config('system','no_termsofservice'));
 	
-		$email        = [ 'email', t('Your email address'), ((x($_REQUEST,'email')) ? strip_tags(trim($_REQUEST['email'])) : "")];
-		$password     = [ 'password', t('Choose a password'), '' ]; 
-		$password2    = [ 'password2', t('Please re-enter your password'), '' ]; 
+		$email        = [ 'email', t('Your email address'), ((x($_REQUEST,'email')) ? strip_tags(trim($_REQUEST['email'])) : ""), '' , '',' required '];
+		$password     = [ 'password', t('Choose a password'), '', '', '', ' required ' ]; 
+		$password2    = [ 'password2', t('Please re-enter your password'), '', '', '', ' required ' ]; 
 		$invite_code  = [ 'invite_code', t('Please enter your invitation code'), ((x($_REQUEST,'invite_code')) ? strip_tags(trim($_REQUEST['invite_code'])) : "")];
 		$name         = [ 'name', t('Your Name'), ((x($_REQUEST,'name')) ? $_REQUEST['name'] : ''), t('Real names are preferred.') ];
 		$nickhub      = '@' . str_replace(array('http://','https://','/'), '', get_config('system','baseurl'));
 		$nickname     = [ 'nickname', t('Choose a short nickname'), ((x($_REQUEST,'nickname')) ? $_REQUEST['nickname'] : ''), sprintf( t('Your nickname will be used to create an easy to remember channel address e.g. nickname%s'), $nickhub)];
 		$role         =  ['permissions_role' , t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel permission role for your usage needs and privacy requirements.'),$perm_roles];
-		$tos          = [ 'tos', $label_tos, '', '', [ t('no'), t('yes') ] ];
+		$tos          = [ 'tos', $label_tos, '', '', [ t('no'), t('yes') ], ' required ' ];
 
 
 		$auto_create  = (get_config('system','auto_channel_create') ? true : false);

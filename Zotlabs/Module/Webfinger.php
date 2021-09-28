@@ -2,6 +2,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\System;
 use App;
 
 class Webfinger extends Controller {
@@ -30,68 +31,55 @@ class Webfinger extends Controller {
 
 		logger('webfinger: ' . $resource, LOGGER_DEBUG);
 	
-		// Response for a site resource
+		// Determine whether to respond as a site actor
+		// or a normal channel
 
-		if (strcasecmp(rtrim($resource,'/'),z_root()) === 0) {
+		$site_query = false;
+		if (strcasecmp(rtrim($resource,'/'),z_root()) === 0
+			|| strcasecmp($resource,'acct:sys@' . App::get_hostname()) === 0
+			|| $resource === z_root() . '/channel/sys') {
+			$site_query = true;
 			$result['subject'] = $resource;
-			$result['properties'] = [
-					'https://w3id.org/security/v1#publicKeyPem' => get_config('system','pubkey')
-			];
-			$result['links'] = [
-				[
-					'rel'  => 'http://purl.org/openwebauth/v1',
-					'type' => 'application/x-zot+json',
-					'href' => z_root() . '/owa',
-				],
-			
-				[ 
-					'rel'  => 'http://purl.org/zot/protocol/6.0', 
-					'type' => 'application/x-zot+json', 
-					'href' => z_root(),
-				],
-
-			];
+			$resource = z_root() . '/channel/sys';
 		}
-		else {
 
-			// some other resource
-
-			if (strpos($resource,'tag:' === 0)) {
-				$arr = explode(':',$resource);
-				if (count($arr) > 3 && $arr[2] === 'zotid') {
-					$hash = $arr[3];
-					$channel_target = channelx_by_hash($hash);
-				}
+		if (strpos($resource,'tag:' === 0)) {
+			$arr = explode(':',$resource);
+			if (count($arr) > 3 && $arr[2] === 'zotid') {
+				$hash = $arr[3];
+				$channel_target = channelx_by_hash($hash);
 			}
+		}
  
-			if (strpos($resource,'acct:') === 0) {
-				$channel_nickname = punify(str_replace('acct:','',$resource));
-				if (strrpos($channel_nickname,'@') !== false) {
-					$host = punify(substr($channel_nickname,strrpos($channel_nickname,'@')+1));
+		if (strpos($resource,'acct:') === 0) {
+			$channel_nickname = punify(str_replace('acct:','',$resource));
+			if (strrpos($channel_nickname,'@') !== false) {
+				$host = punify(substr($channel_nickname,strrpos($channel_nickname,'@')+1));
 
-					// If the webfinger address points off site, redirect to the correct site
+				// If the webfinger address points off site, redirect to the correct site
 
-					if (strcasecmp($host, App::get_hostname())) {
-						goaway('https://' . $host . '/.well-known/webfinger?f=&resource=' . $resource);
-					}
-					$channel_nickname = substr($channel_nickname,0,strrpos($channel_nickname,'@'));
-				}		
-			}
-			if (strpos($resource,'http') === 0) {
-				$channel_nickname = str_replace( ['~','@'],['',''],basename($resource));
-			}
-
-			if ($channel_nickname) {	
-				$channel_target = channelx_by_nick($channel_nickname);
-			}
+				if (strcasecmp($host, App::get_hostname())) {
+					goaway('https://' . $host . '/.well-known/webfinger?f=&resource=' . $resource);
+				}
+				$channel_nickname = substr($channel_nickname,0,strrpos($channel_nickname,'@'));
+			}		
+		}
+		if (strpos($resource,'http') === 0) {
+			$channel_nickname = str_replace( ['~','@'],['',''],basename($resource));
 		}
 
-		if ($channel_target) {
+		if ($channel_nickname) {	
+			$channel_target = channelx_by_nick($channel_nickname);
+		}
+	
+		if ($channel_target || $site_query) {
 	
 			$h = get_hubloc_addrs_by_hash($channel_target['channel_hash']);
-	
-			$result['subject'] = $resource;
-	
+
+			if (! isset($result['subject'])) {
+				$result['subject'] = $resource;
+			}
+
 			$aliases = [
 				z_root() . '/channel/' . $channel_target['channel_address'],
 				z_root() . '/~' . $channel_target['channel_address'],
@@ -108,14 +96,19 @@ class Webfinger extends Controller {
 			$result['aliases'] = [];
 	
 			$result['properties'] = [
-				'http://webfinger.net/ns/name'   => $channel_target['channel_name'],
-				'http://xmlns.com/foaf/0.1/name' => $channel_target['channel_name'],
-				'https://w3id.org/security/v1#publicKeyPem' => $channel_target['xchan_pubkey'],
+				'http://webfinger.net/ns/name'   => $site_query ? System::get_site_name() : $channel_target['channel_name'],
+				'http://xmlns.com/foaf/0.1/name' => $site_query ? System::get_site_name() : $channel_target['channel_name'],
+				'https://w3id.org/security/v1#publicKeyPem' => (($site_query) ? get_config('system','pubkey') : $channel_target['xchan_pubkey']),
 				'http://purl.org/zot/federation' => ((get_config('system','activitypub', ACTIVITYPUB_ENABLED)) ? 'zot6,activitypub' : 'zot6')
 			];
+
+			if ($site_query) {
+				$aliases[] = z_root();
+				$aliases[] = 'acct:sys@' . App::get_hostname();
+			}
 	
 			foreach ($aliases as $alias) { 
-				if ($alias != $resource) {
+				if ($alias !== $result['subject']) {
 					$result['aliases'][] = $alias;
 				}
 			}
@@ -141,7 +134,7 @@ class Webfinger extends Controller {
 				[ 
 					'rel'  => 'http://purl.org/zot/protocol/6.0', 
 					'type' => 'application/x-zot+json', 
-					'href' => z_root() . '/channel/' . $channel_target['channel_address'],
+					'href' => (($site_query) ? z_root() : z_root() . '/channel/' . $channel_target['channel_address']),
 				],
 
 				[
@@ -153,13 +146,13 @@ class Webfinger extends Controller {
 				[
 					'rel'  => 'self',
 					'type' => 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
-					'href' => z_root() . '/channel/' . $channel_target['channel_address']
+					'href' => (($site_query) ? z_root() : z_root() . '/channel/' . $channel_target['channel_address'])
     			],
 				
 				[
 					'rel'  => 'self',
 					'type' => 'application/activity+json',
-					'href' => z_root() . '/channel/' . $channel_target['channel_address']
+					'href' => (($site_query) ? z_root() : z_root() . '/channel/' . $channel_target['channel_address'])
     			],
 
 				[ 

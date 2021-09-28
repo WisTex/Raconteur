@@ -8,7 +8,7 @@ use Zotlabs\Lib\Config;
 /**
  *  SVGSantiizer
  * 
- *  Whitelist-based PHP SVG sanitizer.
+ *  Allowlist-based PHP SVG sanitizer.
  * 
  *  @link https://github.com/alister-/SVG-Sanitizer}
  *  @author Alister Norris
@@ -25,8 +25,8 @@ class SvgSanitizer {
 
 	private static $allowed_functions = [ 'matrix', 'url', 'translate', 'rgb' ];
 
-	// defines the whitelist of elements and attributes allowed.
-	private static $whitelist = [
+	// defines the allowlist of elements and attributes allowed.
+	private static $allowlist = [
 		'a' => [ 'class', 'clip-path', 'clip-rule', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'id', 'mask', 'opacity', 'stroke', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke-width', 'style', 'systemLanguage', 'transform', 'href', 'xlink:href', 'xlink:title' ],
 		'circle' => [ 'class', 'clip-path', 'clip-rule', 'cx', 'cy', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'id', 'mask', 'opacity', 'r', 'requiredFeatures', 'stroke', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke-width', 'style', 'systemLanguage', 'transform' ],
 		'clipPath' => [ 'class', 'clipPathUnits', 'id' ],
@@ -99,10 +99,10 @@ class SvgSanitizer {
 			// logger('current_node: ' . print_r($currentNode,true));
 
 			// array of allowed attributes in specific element
-			$whitelist_attr_arr = self::$whitelist[$currentNode->tagName];
+			$allowlist_attr_arr = self::$allowlist[$currentNode->tagName];
 
-			// does element exist in whitelist?
-		    if(isset($whitelist_attr_arr)) {
+			// does element exist in allowlist?
+		    if(isset($allowlist_attr_arr)) {
 					$total = $currentNode->attributes->length;
 					
 		    		for($x = 0; $x < $total; $x++) {
@@ -113,8 +113,8 @@ class SvgSanitizer {
 						// logger('checking: ' . print_r($currentNode->attributes->item($x),true));
 						$matches = false;
 						
-		    			// check if attribute isn't in whitelist
-		    			if(! in_array($attrName, $whitelist_attr_arr)) {
+		    			// check if attribute isn't in allowlist
+		    			if(! in_array($attrName, $allowlist_attr_arr)) {
 							$this->removedattrs[] = $attrName;
 		    			}
 						// check for disallowed functions

@@ -17,10 +17,10 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '21.08.20' );
+define ( 'STD_VERSION',             '21.09.24' );
 define ( 'ZOT_REVISION',            '10.0' );
 
-define ( 'DB_UPDATE_VERSION',       1251 );
+define ( 'DB_UPDATE_VERSION',       1252 );
 
 define ( 'PLATFORM_NAME',           'zap' );
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
@@ -93,6 +93,18 @@ define ( 'DIRECTORY_MODE_STANDALONE',  0x0100); // A detached (off the grid) hub
 
 define ( 'DIRECTORY_REALM',            'ZAP');
 
+
+// Types of xchan records. These are a superset of ActivityStreams Actor types
+
+define ('XCHAN_TYPE_PERSON',           0);
+define ('XCHAN_TYPE_GROUP',            1);
+define ('XCHAN_TYPE_COLLECTION',       2);
+define ('XCHAN_TYPE_SERVICE',          3);
+define ('XCHAN_TYPE_ORGANIZATION',     4);
+define ('XCHAN_TYPE_APPLICATION',      5);
+define ('XCHAN_TYPE_UNKNOWN',        127);
+
+
 /**
  *
  * Image storage quality. Lower numbers save space at cost of image detail.
@@ -133,6 +145,11 @@ if (! defined('STORAGE_DEFAULT_PERMISSIONS')) {
 	define ( 'STORAGE_DEFAULT_PERMISSIONS',   0770 );
 }
 
+// imported followers for friend suggestions.
+
+if (! defined('MAX_IMPORTED_FOLLOW')) {
+	define ( 'MAX_IMPORTED_FOLLOW', 10);
+}
 
 /**
  *
@@ -723,6 +740,7 @@ class App {
 	public  static $channel    = null;            // channel record of the current channel of the logged-in account
 	public  static $observer   = null;            // xchan record of the page observer
 	public  static $profile_uid = 0;              // If applicable, the channel_id of the "page owner"
+	public  static $sys_channel = null;           // cache sys channel lookups here
 	public  static $poi        = null;            // "person of interest", generally a referenced connection or directory entry
 	private static $oauth_key  = null;            // consumer_id of oauth request, if used
 	public  static $layout     = [];              // Comanche parsed template
@@ -1133,9 +1151,15 @@ class App {
 
 		$preload_images = ((local_channel()) ? get_pconfig(local_channel(),'system','preload_images',0) : 0);
 
-		$interval = ((local_channel()) ? get_pconfig(local_channel(),'system','update_interval',60000) : 60000);
-		if ($interval < 10000) {
-			$interval = 60000;
+
+		$interval = ((local_channel()) ? get_pconfig(local_channel(),'system','update_interval', 30000) : 30000);
+		if ($interval < 15000) {
+			$interval = 15000;
+		}
+
+		$alerts_interval = intval(get_config('system','alerts_interval',10000));
+		if ($alerts_interval < 5000) {
+			$alerts_interval = 5000;
 		}
 
 		if (! x(self::$page,'title')) {
@@ -1150,7 +1174,6 @@ class App {
 		
 		head_add_link( [ 'rel' => 'manifest', 'href' => z_root() . '/manifest.webmanifest' ] );
 		self::$meta->set('application-name', System::get_platform_name() );
-
 
 		self::$meta->set('generator', System::get_platform_name());
 
@@ -1191,6 +1214,7 @@ class App {
 				'$metas'           => self::$meta->get(),
 				'$plugins'         => $x['header'],
 				'$update_interval' => $interval,
+				'$alerts_interval' => $alerts_interval,
 				'$head_css'        => head_get_css(),
 				'$head_js'         => head_get_js(),
 				'$linkrel'         => head_get_links(),
@@ -1303,10 +1327,10 @@ class App {
 /**
  * @brief Multi-purpose function to check variable state.
  *
- * Usage: x($var) or $x($array, 'key')
+ * Usage: x($var) or x($array, 'key')
  *
  * returns false if variable/key is not set
- * if variable is set, returns 1 if has 'non-zero' value, otherwise returns 0.
+ * if variable is set, returns 1 if variable contains 'truthy' value, otherwise returns 0.
  * e.g. x('') or x(0) returns 0;
  *
  * @param string|array $s variable to check
@@ -1469,13 +1493,11 @@ function check_config() {
 
 	App::set_baseurl(z_root());
 
-	// Make sure each site has a system channel.  This is now created on install
-	// so we just need to keep this around a couple of weeks until the hubs that
-	// already exist have one
-	$syschan_exists = get_sys_channel();
-	if (! $syschan_exists)
-		create_sys_channel();
-
+	// Ensure the site has a system channel and that it has been upgraded.
+	// This function will only do work if work is required.
+	
+	create_sys_channel();
+	
 	$x = new DB_Upgrade(DB_UPDATE_VERSION);
 
 	plugins_sync();
@@ -1828,19 +1850,24 @@ function can_view_public_stream() {
  * @param string $s Text to display
  */
 function notice($s) {
-	if(! session_id())
-		return;
 
-	if(! x($_SESSION, 'sysmsg')) $_SESSION['sysmsg'] = [];
+	if (! session_id()) {
+		return;
+	}
+
+	if (! x($_SESSION, 'sysmsg')) {
+		$_SESSION['sysmsg'] = [];
+	}
 
 	// ignore duplicated error messages which haven't yet been displayed
 	// - typically seen as multiple 'permission denied' messages
 	// as a result of auto-reloading a protected page with &JS=1
 
-	if(in_array($s, $_SESSION['sysmsg']))
+	if (in_array($s, $_SESSION['sysmsg'])) {
 		return;
+	}
 
-	if(App::$interactive) {
+	if (App::$interactive) {
 		$_SESSION['sysmsg'][] = $s;
 	}
 }
@@ -1856,16 +1883,21 @@ function notice($s) {
  * @param string $s Text to display
  */
 function info($s) {
-	if(! session_id())
+	if (! session_id()) {
 		return;
-	if(! x($_SESSION, 'sysmsg_info'))
+	}
+	
+	if (! x($_SESSION, 'sysmsg_info')) {
 		$_SESSION['sysmsg_info'] = [];
+	}
 
-	if(in_array($s, $_SESSION['sysmsg_info']))
+	if (in_array($s, $_SESSION['sysmsg_info'])) {
 		return;
+	}
 
-	if(App::$interactive)
+	if (App::$interactive) {
 		$_SESSION['sysmsg_info'][] = $s;
+	}
 }
 
 /**

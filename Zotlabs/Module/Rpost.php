@@ -39,8 +39,8 @@ class Rpost extends Controller {
 	
 		$o = '';
 	
-		if(! local_channel()) {
-			if(remote_channel()) {
+		if (! local_channel()) {
+			if (remote_channel()) {
 				// redirect to your own site.
 				// We can only do this with a GET request so you'll need to keep the text short or risk getting truncated
 				// by the wretched beast called 'suhosin'. All the browsers now allow long GET requests, but suhosin
@@ -48,9 +48,9 @@ class Rpost extends Controller {
 	
 				$url = Libzot::get_rpost_path(App::get_observer());
 				// make sure we're not looping to our own hub
-				if(($url) && (! stristr($url, App::get_hostname()))) {
-					foreach($_GET as $key => $arg) {
-						if($key === 'req')
+				if (($url) && (! stristr($url, App::get_hostname()))) {
+					foreach ($_GET as $key => $arg) {
+						if ($key === 'req')
 							continue;
 						$url .= '&' . $key . '=' . $arg;
 					}
@@ -61,7 +61,7 @@ class Rpost extends Controller {
 			// The login procedure is going to bugger our $_REQUEST variables
 			// so save them in the session.
 	
-			if(array_key_exists('body',$_REQUEST)) {
+			if (array_key_exists('body',$_REQUEST)) {
 				$_SESSION['rpost'] = $_REQUEST;
 			}
 			return login();
@@ -72,11 +72,12 @@ class Rpost extends Controller {
 		if (local_channel() && array_key_exists('userfile',$_FILES)) {
 		
 			$channel = App::get_channel();
-			
+			$observer = App::get_observer();
+
 			$def_album  = get_pconfig($channel['channel_id'],'system','photo_path');
 			$def_attach = get_pconfig($channel['channel_id'],'system','attach_path');
 	
-			$r = attach_store($channel, '', '', [
+			$r = attach_store($channel, (($observer) ? $observer['xchan_hash'] : ''), '', [
 				'source'    => 'editor',
 				'visible'   => 0,
 				'album'     => $def_album,
@@ -157,34 +158,36 @@ class Rpost extends Controller {
 
 		// If we have saved rpost session variables, but nothing in the current $_REQUEST, recover the saved variables
 	
-		if((! array_key_exists('body',$_REQUEST)) && (array_key_exists('rpost',$_SESSION))) {
+		if ((! array_key_exists('body',$_REQUEST)) && (array_key_exists('rpost',$_SESSION))) {
 			$_REQUEST = $_SESSION['rpost'];
 			unset($_SESSION['rpost']);
 		}
 	
-		if(array_key_exists('channel',$_REQUEST)) {
+		if (array_key_exists('channel',$_REQUEST)) {
 			$r = q("select channel_id from channel where channel_account_id = %d and channel_address = '%s' limit 1",
 				intval(get_account_id()),
 				dbesc($_REQUEST['channel'])
 			);
-			if($r) {
+			if ($r) {
 				require_once('include/security.php');
 				$change = change_channel($r[0]['channel_id']);
 			}
 		}
 	
-		if($_REQUEST['remote_return']) {
+		if ($_REQUEST['remote_return']) {
 			$_SESSION['remote_return'] = $_REQUEST['remote_return'];
 		}
-		if(argc() > 1 && argv(1) === 'return') {
-			if($_SESSION['remote_return'])
+		
+		if (argc() > 1 && argv(1) === 'return') {
+			if($_SESSION['remote_return']) {
 				goaway($_SESSION['remote_return']);
+			}
 			goaway(z_root() . '/stream');
 		}
 	
 		$plaintext = true;
 	
-		if(array_key_exists('type', $_REQUEST) && $_REQUEST['type'] === 'html') {
+		if (array_key_exists('type', $_REQUEST) && $_REQUEST['type'] === 'html' && isset($_REQUEST['body'])) {
 			require_once('include/html2bbcode.php');
 			$_REQUEST['body'] = html2bbcode($_REQUEST['body']); 
 		}
@@ -203,13 +206,14 @@ class Rpost extends Controller {
 
 		$channel_acl = $acl->get();
 	
-		if($_REQUEST['url']) {
+		if ($_REQUEST['url']) {
 			$x = z_fetch_url(z_root() . '/linkinfo?f=&url=' . urlencode($_REQUEST['url']) . '&oembed=1&zotobj=1');
-			if($x['success'])
+			if ($x['success']) {
 				$_REQUEST['body'] = $_REQUEST['body'] . $x['body'];
+			}
 		}
 
-		if($_REQUEST['post_id']) {
+		if ($_REQUEST['post_id']) {
 			$_REQUEST['body'] .= '[share=' . intval($_REQUEST['post_id']) . '][/share]';
 		}
 	

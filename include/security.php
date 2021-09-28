@@ -92,7 +92,7 @@ function atoken_login($atoken) {
 	if (! $atoken) {
 		return false;
 	}
-	if ($App::$cmd === 'channel' && argv(1)) {
+	if (App::$cmd === 'channel' && argv(1)) {
 		$channel = channelx_by_nick(argv(1));
 		if (perm_is_allowed($channel['channel_id'],$atoken['xchan_hash'],'delegate')) {
 			$_SESSION['delegate_channel'] = $channel['channel_id'];
@@ -268,13 +268,11 @@ function change_channel($change_channel) {
 		);
 
 		// It's not there.  Is this an administrator, and is this the sys channel?
-		if (is_developer()) {
-			if (! $r) {
-				if (is_site_admin()) {
-					$r = q("select channel.*, xchan.* from channel left join xchan on channel.channel_hash = xchan.xchan_hash where channel_id = %d and channel_system = 1 and channel_removed = 0 limit 1",
-						intval($change_channel)
-					);
-				}
+		if (! $r) {
+			if (is_developer() || is_site_admin()) {
+				$r = q("select channel.*, xchan.* from channel left join xchan on channel.channel_hash = xchan.xchan_hash where channel_id = %d and channel_system = 1 and channel_removed = 0 limit 1",
+					intval($change_channel)
+				);
 			}
 		}
 

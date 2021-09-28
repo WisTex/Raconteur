@@ -33,12 +33,14 @@ class Manage extends Controller {
 						intval(get_account_id())
 					);
 				}
+				goaway(z_root() . '/manage');
 			}
 			elseif (argv(2) === 'menu') {
 				$state = intval(PConfig::get($change_channel,'system','include_in_menu', 0));
 				PConfig::set($change_channel,'system','include_in_menu',1 - $state);
+				goaway(z_root() . '/manage');
 			}
-			goaway(z_root() . '/manage');
+			
 		}
 
 	
@@ -64,7 +66,8 @@ class Manage extends Controller {
 		$account = App::get_account();
 	
 		if ($r && count($r)) {
-			$channels = $r;
+
+			$channels = ((is_site_admin()) ? array_merge ([ get_sys_channel() ], $r) : $r);
 			for ($x = 0; $x < count($channels); $x ++) {
 				$channels[$x]['link'] = 'manage/' . intval($channels[$x]['channel_id']);
 				$channels[$x]['include_in_menu'] = intval(PConfig::get($channels[$x]['channel_id'],'system','include_in_menu',0));

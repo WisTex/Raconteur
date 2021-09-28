@@ -104,6 +104,7 @@ class ThreadItem {
 		$osparkle = '';
 		$total_children = $this->count_descendants();
 		$unseen_comments = ((isset($item['real_uid']) && $item['real_uid']) ? 0 : $this->count_unseen_descendants());
+		$privacy_warning = false;
 
 		$conv = $this->get_conversation();
 		$observer = $conv->get_observer();
@@ -115,13 +116,22 @@ class ThreadItem {
 
 		$locktype = $item['item_private'];
 
-		$shareable = ((($conv->get_profile_owner() == local_channel() && local_channel()) && ($item['item_private'] != 1)) ? true : false);
+		$shareable = ((($conv->get_profile_owner() == local_channel() && local_channel()) && (! intval($item['item_private']))) ? true : false);
 
 		// allow an exemption for sharing stuff from your private feeds
 		if($item['author']['xchan_network'] === 'rss')
 			$shareable = true;
 
-		$privacy_warning = false;
+		// @fixme
+		if ($item['obj_type'] === 'Question') {
+			$shareable = false;
+		}
+
+
+		if ($item['item_restrict'] & 2) {
+			$privacy_warning = true;
+			$lock = t('This comment is part of a private conversation, yet was shared with the public. Discretion advised.');
+		}
 
 		$mode = $conv->get_mode();
 

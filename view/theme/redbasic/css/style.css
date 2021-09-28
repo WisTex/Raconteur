@@ -167,6 +167,12 @@ input[type=text], textarea {
 	width: 100%;
 }
 
+#help_email, #help_password, #help_password2, #tos_container > small.form-text {
+	font-size: 1.2rem;
+	font-weight: bold;
+	color: #F00 !important;
+}
+
 #help-content pre code {
 	overflow-x: auto;
 	white-space: pre;
@@ -1501,6 +1507,12 @@ blockquote {
 	font-size: 0.9rem;
 	border-radius: $radius;
 }
+
+
+.wall-item-lock .dropdown-menu {
+	min-width: 20rem;
+}
+
 
 .dropdown-item {
 	color: $font_colour;

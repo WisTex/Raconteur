@@ -1291,7 +1291,6 @@ class Libzot {
 				logger($AS->debug(), LOGGER_DATA);
 		}
 
-
 		// There is nothing inherently wrong with getting a message-id which isn't a canonical URI/URL, but 
 		// at the present time (2019/02) during the Hubzilla transition to zot6 it is likely to cause lots of duplicates for 
 		// messages arriving from different protocols and sources with different message-id semantics. This
@@ -1369,6 +1368,11 @@ class Libzot {
 
 			if (in_array($env['type'],['activity','response'])) {
 
+				if (! (is_array($AS->actor) && isset($AS->actor['id']))) {
+					logger('No author!');
+					return;
+				}
+				
 				$r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s'",
 					dbesc($AS->actor['id'])
 				); 
@@ -3004,21 +3008,26 @@ class Libzot {
 
 		$desturl = $x['url'];
 
+		$found_primary = false;
+
 		$r1 = q("select hubloc_url, hubloc_updated, site_dead from hubloc left join site on
 			hubloc_url = site_url where hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_primary = 1 limit 1",
 			dbesc($x['id']),
 			dbesc($x['id_sig'])
 		);
+		if ($r1) {
+			$found_primary = true;
+		}
 
 		$r2 = q("select xchan_hash from xchan where xchan_guid = '%s' and xchan_guid_sig = '%s' limit 1",
 			dbesc($x['id']),
 			dbesc($x['id_sig'])
 		);
 
-		$site_dead = false;
+		$primary_dead = false;
 
 		if ($r1 && intval($r1[0]['site_dead'])) {
-			$site_dead = true;
+			$primary_dead = true;
 		}
 
 		// We have valid and somewhat fresh information. Always true if it is our own site.
@@ -3036,16 +3045,16 @@ class Libzot {
 		// cached entry and the identity is valid. It's just unreachable until they bring back their
 		// server from the grave or create another clone elsewhere.
 
-		if ($site_dead) {
-			logger('dead site - ignoring', LOGGER_DEBUG,LOG_INFO);
+		if ($primary_dead || ! $found_primary) {
+			logger('dead or site - ignoring', LOGGER_DEBUG,LOG_INFO);
 
 			$r = q("select hubloc_id_url from hubloc left join site on hubloc_url = site_url
 				where hubloc_hash = '%s' and site_dead = 0",
 				dbesc($hash)
 			);
 			if ($r) {
-				logger('found another site that is not dead: ' . $r[0]['hubloc_url'], LOGGER_DEBUG,LOG_INFO);
-				$desturl = $r[0]['hubloc_url'];
+				logger('found another site that is not dead: ' . $r[0]['hubloc_id_url'], LOGGER_DEBUG,LOG_INFO);
+				$desturl = $r[0]['hubloc_id_url'];
 			}
 			else {
 				return $hash;
@@ -3197,7 +3206,7 @@ class Libzot {
 			$profile['region']        = $p[0]['region'];
 			$profile['postcode']      = $p[0]['postal_code'];
 			$profile['country']       = $p[0]['country_name'];
-			$profile['about']         = $p[0]['about'];
+			$profile['about']         = ((is_sys_channel($e['channel_id'])) ? get_config('system','siteinfo') : $p[0]['about']);
 			$profile['homepage']      = $p[0]['homepage'];
 			$profile['hometown']      = $p[0]['hometown'];
 
@@ -3550,6 +3559,13 @@ class Libzot {
 			}
 		}
 		return $arr[0];
+	}
+
+	static function update_cached_hubloc($hubloc) {
+		if ($hubloc['hubloc_updated'] > datetime_convert('UTC','UTC','now - 1 week') || $hubloc['hubloc_url'] === z_root()) {
+			return;
+		}
+		self::refresh( [ 'hubloc_id_url' => $hubloc['hubloc_id_url'] ] );
 	}
 
 }

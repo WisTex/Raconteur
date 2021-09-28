@@ -631,8 +631,13 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 
 	$def_extension = '';
 	$is_photo = 0;
-	$gis = @getimagesize($src);
-	logger('getimagesize: ' . print_r($gis,true), LOGGER_DATA);
+	$gis = false;
+
+	if ($src) {
+		$gis = @getimagesize($src);
+		logger('getimagesize: ' . print_r($gis,true), LOGGER_DATA);
+	}
+	
 	if(($gis) && in_array($gis[2], [ IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP ])) {
 		$is_photo = 1;
 		if($gis[2] === IMAGETYPE_GIF)
@@ -653,23 +658,29 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 
 	$pathname = '';
 
-	if($is_photo) {
-		if($newalbum) {
+
+	// If we were called from the Photos module there is a slightly different mechanism
+	// for setting the parent path than if we were called from the Files (cloud) module.
+	
+	if ($source === 'photos') {	
+		if ($newalbum) {
 			$pathname = filepath_macro($newalbum);
 		}
-		elseif(array_key_exists('folder',$arr)) {
+		elseif (array_key_exists('folder',$arr)) {
 			$x = q("select filename from attach where hash = '%s' and uid = %d limit 1",
 				dbesc($arr['folder']),
 				intval($channel['channel_id'])
 			);
-			if($x)
+			if ($x) {
 				$pathname = $x[0]['filename'];
+			}
 		}
 		else {
 			$pathname = filepath_macro($album);
 		}
 	}
-	if(! $pathname) {
+
+	if (! $pathname) {
 		$pathname = filepath_macro($upload_path);
 	}
 
@@ -685,11 +696,11 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 
 	$direct = null;
 
-	if($pathname) {
+	if ($pathname) {
 		$x = attach_mkdirp($channel, $observer_hash, $darr);
 		$folder_hash = (($x['success']) ? $x['data']['hash'] : '');
 		$direct = (($x['success']) ? $x['data'] : null);
-		if((! $str_contact_allow) && (! $str_group_allow) && (! $str_contact_deny) && (! $str_group_deny)) {
+		if ((! $str_contact_allow) && (! $str_group_allow) && (! $str_contact_deny) && (! $str_group_deny)) {
 			$str_contact_allow = $x['data']['allow_cid'];
 			$str_group_allow = $x['data']['allow_gid'];
 			$str_contact_deny = $x['data']['deny_cid'];
@@ -928,8 +939,12 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 		);
 	}
 
-	if($is_photo) {
-
+	if ($is_photo) {
+	
+		// Call the photos library to generate all the standard thumbnails.
+		// This may fail if the image format isn't supported by the image library *or* memory is exhausted during the attempt.
+		// That's why this is called at the end of the upload when all the important work to store as a normal file has been accomplished.
+		
 		$args = array( 'source' => $source, 'visible' => $visible, 'resource_id' => $hash, 'album' => $pathname, 'folder' => $folder_hash, 'os_syspath' => $os_basepath . $os_relpath, 'os_path' => $os_path, 'display_path' => $display_path, 'filename' => $filename, 'getimagesize' => $gis, 'directory' => $direct, 'options' => $options );
 		if($arr['contact_allow'])
 			$args['contact_allow'] = $arr['contact_allow'];

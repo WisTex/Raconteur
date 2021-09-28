@@ -33,7 +33,7 @@ class Owa extends Controller {
 				$keyId = $sigblock['keyId'];
 				if ($keyId) {
 					$r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash 
-						where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) ",
+						where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and xchan_pubkey != '' ",
 						dbesc(str_replace('acct:','',$keyId)),
 						dbesc($keyId)
 					);
@@ -41,14 +41,14 @@ class Owa extends Controller {
 						$found = discover_by_webbie(str_replace('acct:','',$keyId));
 						if ($found) {
 							$r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash 
-								where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) ",
+								where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and xchan_pubkey != '' ",
 								dbesc(str_replace('acct:','',$keyId)),
 								dbesc($keyId)
 							);
 						}
 					}
 					if ($r) {
-						foreach ($r as $hubloc) {
+						foreach ($r as $hubloc) {							
 							$verified = HTTPSig::verify(file_get_contents('php://input'), $hubloc['xchan_pubkey']);	
 							if ($verified && $verified['header_signed'] && $verified['header_valid'] && ($verified['content_valid'] || (! $verified['content_signed']))) {
 								logger('OWA header: ' . print_r($verified,true),LOGGER_DATA);	

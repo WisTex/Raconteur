@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Module\Admin;
 
+use App;
 use Zotlabs\Lib\System;
 use Zotlabs\Access\PermissionRoles;
 
@@ -21,9 +22,11 @@ class Site {
 			return;
 		}
 
+		$sys = get_sys_channel();
+
 		check_form_security_token_redirectOnErr('/admin/site', 'admin_site');
 
-		$sitename 			=	((x($_POST,'sitename'))			? notags(trim($_POST['sitename']))			: '');
+		$sitename 			=	((x($_POST,'sitename'))			? notags(trim($_POST['sitename']))			: App::get_hostname());
 
 		$admininfo			=	((x($_POST,'admininfo'))		? trim($_POST['admininfo'])				: false);
 		$siteinfo			=	((x($_POST,'siteinfo'))		    ? trim($_POST['siteinfo'])				: '');
@@ -62,7 +65,7 @@ class Site {
 		$no_community_page    = !((x($_POST,'no_community_page'))	? True	:	False);
 		$default_expire_days  = ((array_key_exists('default_expire_days',$_POST)) ? intval($_POST['default_expire_days']) : 0);
 		$active_expire_days  = ((array_key_exists('active_expire_days',$_POST)) ? intval($_POST['active_expire_days']) : 7);
-		$max_imported_follow = ((x($_POST,'max_imported_follow'))	? intval(trim($_POST['max_imported_follow']))	    :  10);
+		$max_imported_follow = ((x($_POST,'max_imported_follow'))	? intval(trim($_POST['max_imported_follow']))	    :  MAX_IMPORTED_FOLLOW);
 
 		$reply_address      = ((array_key_exists('reply_address',$_POST) && trim($_POST['reply_address'])) ? trim($_POST['reply_address']) : 'noreply@' . \App::get_hostname());
 		$from_email         = ((array_key_exists('from_email',$_POST) && trim($_POST['from_email'])) ? trim($_POST['from_email']) : 'Administrator@' . \App::get_hostname());
@@ -132,6 +135,27 @@ class Site {
 			set_config('system', 'admininfo', $admininfo);
 		}
 		set_config('system','siteinfo',$siteinfo);
+
+		// sync sitename and siteinfo updates to the system channel
+		
+		q("update profile set about = '%s' where uid = %d and is_default = 1",
+			dbesc($siteinfo),
+			intval($sys['channel_id'])
+		);
+		q("update profile set fullname = '%s' where uid = %d and is_default = 1",
+			dbesc($sitename),
+			intval($sys['channel_id'])
+		);
+		q("update channel set channel_name = '%s' where channel_id  = %d",
+			dbesc($sitename),
+			intval($sys['channel_id'])
+		);
+		q("update xchan set xchan_name = '%s' , xchan_name_updated = '%s' where xchan_hash = '%s'",
+			dbesc($sitename),
+			dbesc(datetime_convert()),
+			dbesc($sys['channel_hash'])
+		);
+				
 		set_config('system', 'language', $language);
 		set_config('system', 'theme', $theme);
 	//	set_config('system','site_channel', $site_channel);
@@ -292,7 +316,7 @@ class Site {
 			'$corporate'            => t('Policies'),
 			'$advanced'             => t('Advanced'),
 			'$baseurl'              => z_root(),
-			'$sitename'             => [ 'sitename', t("Site name"), htmlspecialchars(get_config('system','sitename'), ENT_QUOTES, 'UTF-8'),'' ],
+			'$sitename'             => [ 'sitename', t("Site name"), htmlspecialchars(get_config('system','sitename', App::get_hostname()), ENT_QUOTES, 'UTF-8'),'' ],
 			'$admininfo'            => [ 'admininfo', t("Administrator Information"), $admininfo, t("Contact information for site administrators.  Displayed on siteinfo page.  BBCode may be used here.") ],
 			'$siteinfo'		        => [ 'siteinfo', t('Site Information'), get_config('system','siteinfo'), t("Publicly visible description of this site.  Displayed on siteinfo page.  BBCode may be used here.") ],
 			'$language'             => [ 'language', t("System language"), get_config('system','language','en'), "", $lang_choices ],
@@ -322,7 +346,7 @@ class Site {
 			'$animations'           => [ 'animations', t('Permit animated profile photos'), get_config('system','animated_avatars',true), t('Changing this may take several days to work through the system') ],
 			'$incl'                 => [ 'pub_incl',t('Only import Public stream posts with this text'), get_config('system','pubstream_incl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts') ],
 			'$excl'                 => [ 'pub_excl',t('Do not import Public stream posts with this text'), get_config('system','pubstream_excl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts') ],
-			'$max_imported_follow'  => [ 'max_imported_follow', t('Maximum number of imported friends of friends'), get_config('system','max_imported_follow',10), t('Warning: higher numbers will improve the quality of friend suggestions and directory results but can exponentially increase resource usage') ], 
+			'$max_imported_follow'  => [ 'max_imported_follow', t('Maximum number of imported friends of friends'), get_config('system','max_imported_follow', MAX_IMPORTED_FOLLOW), t('Warning: higher numbers will improve the quality of friend suggestions and directory results but can exponentially increase resource usage') ], 
 			'$login_on_homepage'	=> [ 'login_on_homepage', t("Login on Homepage"),((intval($homelogin) || $homelogin === false) ? 1 : '') , t("Present a login box to visitors on the home page if no other content has been configured.") ],
 			'$enable_context_help'	=> [ 'enable_context_help', t("Enable context help"),((intval($enable_context_help) === 1 || $enable_context_help === false) ? 1 : 0) , t("Display contextual help for the current page when the help button is pressed.") ],
 			'$reply_address'        => [ 'reply_address', t('Reply-to email address for system generated email.'), get_config('system','reply_address','noreply@' . \App::get_hostname()),'' ],

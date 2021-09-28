@@ -133,8 +133,23 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 					}
 				}
 			}
+			
+			// We've determined it is public. If it is also a wall post and not owned by the sys channel,
+			// send this also to followers of the sys_channel
+			
+			$sys = get_sys_channel();
+			if ($sys && intval($item['uid']) !== intval($sys['channel_id']) && intval($item['item_wall'])) {
+				$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
+					intval($sys['channel_id'])
+				);
+				if ($r) {
+					foreach ($r as $rv) {
+						$recipients[] = $rv['abook_xchan'];
+					}
+				}
+			}
 		}
-
+		
 		// Add the authors of any posts in this thread, if they are known to us.
 		// This is specifically designed to forward wall-to-wall posts to the original author,
 		// in case they aren't a connection but have permission to write on our wall.
@@ -158,7 +173,8 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 	// This is a somewhat expensive operation but important.
 	// Don't send this item to anybody who isn't allowed to see it
 
-	$recipients = check_list_permissions($item['uid'],$recipients,'view_stream');
+	// Note: commented out - no longer needed in zap and later projects because we do not allow this permission to be changed.
+	// $recipients = check_list_permissions($item['uid'],$recipients,'view_stream');
 
 	// remove any upstream recipients from our list.
 	// If it is ourself we'll add it back in a second.
@@ -1535,6 +1551,7 @@ function item_json_encapsulate($arr,$k)  {
 			$retval = json_encode($arr[$k], JSON_UNESCAPED_SLASHES);
 		}
 	}
+
 	return $retval;
 }
 
@@ -2402,6 +2419,16 @@ function item_update_parent_commented($item) {
 
 
 	$update_parent = true;
+	$update_changed = true;
+	
+	$c = channelx_by_n($item['uid']);
+
+	// don't modify the changed time on the parent if we commented on it.
+	// This messes up the notification system, which ignores changes made by us
+	
+	if ($c && $item['author_xchan'] === $c['channel_hash']) {
+		$update_changed = false;
+	}
 
 	// update the commented timestamp on the parent 
 	// - unless this is a moderated comment or a potential clone of an older item
@@ -2421,11 +2448,16 @@ function item_update_parent_commented($item) {
 			intval($item['uid'])
 		);
 
-		q("UPDATE item set commented = '%s', changed = '%s' WHERE id = %d",
+		q("UPDATE item set commented = '%s' WHERE id = %d",
 			dbesc(($z) ? $z[0]['commented'] : datetime_convert()),
-			dbesc(datetime_convert()),
 			intval($item['parent'])
 		);
+		if ($update_changed) {
+			q("UPDATE item set changed = '%s' WHERE id = %d",
+				dbesc(datetime_convert()),
+				intval($item['parent'])
+			);
+		}
 	}
 }
 
@@ -3094,6 +3126,11 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 
 		$arr = [];
 
+		if ($item['obj_type'] === 'Question') {
+			return;
+		}
+
+
 		// hide original message
 		q("update item set item_hidden = 1 where id = %d",
 			intval($item_id)
@@ -3161,10 +3198,18 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		$bb .= "[/share]";
 
 		$arr['body'] = $bb;
-		// Conversational objects shouldn't be copied, but other objects should. We'll start with photos and events since those are the most likely.
-		if (in_array($item['obj_type'], [ 'Image', 'Event' ])) { 
+		
+		// Conversational objects shouldn't be copied, but other objects should.
+		if (in_array($item['obj_type'], [ 'Image', 'Event', 'Question' ])) { 
 			$arr['obj'] = $item['obj'];
+			$t = json_decode($arr['obj'],true);
+			if ($t !== NULL) {
+				$arr['obj'] = $t;
+			}
+			$arr['obj']['content'] = bbcode($bb, [ 'export' => true ]);
+			$arr['obj']['source']['content'] = $bb;
 		}
+
 		$arr['tgt_type'] = $item['tgt_type'];
 		$arr['target'] = $item['target'];
 		

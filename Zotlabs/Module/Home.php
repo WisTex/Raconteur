@@ -3,6 +3,10 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Lib\Crypto;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Web\Controller;
 
@@ -12,22 +16,65 @@ class Home extends Controller {
 
 	function init() {
 
+
+
 		$ret = [];
 	
 		call_hooks('home_init',$ret);
-	
-		if (Libzot::is_zot_request()) {
 
-			$key = get_config('system','prvkey');
-			$ret = json_encode(Libzot::site_info());
+		if (ActivityStreams::is_as_request()) {
+			$x = array_merge(['@context' => [
+			ACTIVITYSTREAMS_JSONLD_REV,
+			'https://w3id.org/security/v1',
+			Activity::ap_schema()
+			]], Activity::encode_site() );
 
-			$headers = [ 'Content-Type' => 'application/x-zot+json', 'Digest' => HTTPSig::generate_digest_header($ret) ];
+			$headers = [];
+			$headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;
+			$x['signature'] = LDSignatures::sign($x,[ 'channel_address' => z_root(), 'channel_prvkey' => get_config('system','prvkey') ]);
+			$ret = json_encode($x, JSON_UNESCAPED_SLASHES);
+			logger('data: ' . jindent($ret), LOGGER_DATA);
+			$headers['Date'] = datetime_convert('UTC','UTC', 'now', 'D, d M Y H:i:s \\G\\M\\T');
+			$headers['Digest'] = HTTPSig::generate_digest_header($ret);
 			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
-			$h = HTTPSig::create_sig($headers, $key, z_root());
+
+			$h = HTTPSig::create_sig($headers,get_config('system','prvkey'),z_root());
 			HTTPSig::set_headers($h);
+
 			echo $ret;
 			killme();
 		}
+
+		if (Libzot::is_zot_request()) {
+
+			$channel = get_sys_channel();
+			$sigdata = HTTPSig::verify(file_get_contents('php://input'), EMPTY_STR, 'zot6');
+
+			if($sigdata && $sigdata['signer'] && $sigdata['header_valid']) {
+				$data = json_encode(Libzot::zotinfo([ 'guid_hash' => $channel['channel_hash'], 'target_url' => $sigdata['signer'] ]));
+				$s = q("select site_crypto, hubloc_sitekey from site left join hubloc on hubloc_url = site_url where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
+					dbesc($sigdata['signer'])
+				);
+
+				if($s && $s[0]['hubloc_sitekey'] && $s[0]['site_crypto']) {
+					$data = json_encode(Crypto::encapsulate($data,$s[0]['hubloc_sitekey'],Libzot::best_algorithm($s[0]['site_crypto'])));
+				}
+			}
+			else {
+				$data = json_encode(Libzot::zotinfo([ 'guid_hash' => $channel['channel_hash'] ]));
+			}
+
+			$headers = [ 
+				'Content-Type'     => 'application/x-zot+json', 
+				'Digest'           => HTTPSig::generate_digest_header($data),
+				'(request-target)' => strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI']
+			];
+			$h = HTTPSig::create_sig($headers,get_config('system','prvkey'),z_root());
+			HTTPSig::set_headers($h);
+			echo $data;
+			killme();
+		}
+
 
 		$splash = ((argc() > 1 && argv(1) === 'splash') ? true : false);
 	
