@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 21.04.28\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-17 05:52-0700\n"
-"PO-Revision-Date: 2021-09-17 22:23+0200\n"
+"POT-Creation-Date: 2021-09-23 16:32-0700\n"
+"PO-Revision-Date: 2021-09-25 13:58+0200\n"
 "Last-Translator: Andrzej Budziński <astabski@gmail.com>\n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -898,8 +898,8 @@ msgstr "Kontrola komentarzy"
 
 #: Zotlabs/Lib/Apps.php:327 Zotlabs/Module/Connedit.php:669
 #: Zotlabs/Module/Connections.php:369 Zotlabs/Module/Stream.php:122
-#: Zotlabs/Module/Affinity.php:62 Zotlabs/Widget/Affinity.php:28
-#: Zotlabs/Widget/Activity_filter.php:128 include/connections.php:908
+#: Zotlabs/Module/Affinity.php:62 Zotlabs/Widget/Activity_filter.php:144
+#: Zotlabs/Widget/Affinity.php:28 include/connections.php:908
 msgid "Connections"
 msgstr "Znajomi z sieci"
 
@@ -916,11 +916,11 @@ msgstr "Import treści"
 msgid "Directory"
 msgstr "Katalog"
 
-#: Zotlabs/Lib/Apps.php:331
+#: Zotlabs/Lib/Apps.php:331 Zotlabs/Widget/Activity_filter.php:75
 msgid "Drafts"
 msgstr "Szkice"
 
-#: Zotlabs/Lib/Apps.php:332 Zotlabs/Widget/Activity_filter.php:87
+#: Zotlabs/Lib/Apps.php:332 Zotlabs/Widget/Activity_filter.php:103
 #: include/conversation.php:1965 include/conversation.php:1968
 msgid "Events"
 msgstr "Wydarzenia"
@@ -974,7 +974,7 @@ msgid "Language"
 msgstr "Język"
 
 #: Zotlabs/Lib/Apps.php:344 Zotlabs/Lib/AccessList.php:367
-#: Zotlabs/Widget/Activity_filter.php:156 include/nav.php:98
+#: Zotlabs/Widget/Activity_filter.php:172 include/nav.php:98
 msgid "Lists"
 msgstr "Listy"
 
@@ -1409,7 +1409,7 @@ msgstr "domyślnie"
 msgid "Select an alternate language"
 msgstr "Wybierz alternatywny język"
 
-#: Zotlabs/Lib/Connect.php:48 Zotlabs/Lib/Connect.php:144
+#: Zotlabs/Lib/Connect.php:48 Zotlabs/Lib/Connect.php:169
 msgid "Channel is blocked on this site."
 msgstr "Kanał jest zablokowany na tym portalu."
 
@@ -1417,23 +1417,23 @@ msgstr "Kanał jest zablokowany na tym portalu."
 msgid "Channel location missing."
 msgstr "Brak lokalizacji kanału."
 
-#: Zotlabs/Lib/Connect.php:105
+#: Zotlabs/Lib/Connect.php:130
 msgid "Remote channel or protocol unavailable."
 msgstr "Niedostępny jest zdalny kanał lub protokół."
 
-#: Zotlabs/Lib/Connect.php:138
+#: Zotlabs/Lib/Connect.php:163
 msgid "Channel discovery failed."
 msgstr "Wyszukanie kanału nie powiodło się."
 
-#: Zotlabs/Lib/Connect.php:153
+#: Zotlabs/Lib/Connect.php:178
 msgid "Protocol not supported"
 msgstr "Protokół  nie jest obsługiwany"
 
-#: Zotlabs/Lib/Connect.php:166
+#: Zotlabs/Lib/Connect.php:191
 msgid "Cannot connect to yourself."
 msgstr "Nie można połączyć się ze sobą."
 
-#: Zotlabs/Lib/Connect.php:244
+#: Zotlabs/Lib/Connect.php:269
 msgid "error saving data"
 msgstr "błąd podczas zapisywania danych"
 
@@ -2082,7 +2082,7 @@ msgstr "UID"
 #: Zotlabs/Module/Settings/Oauth.php:90 Zotlabs/Module/Settings/Oauth.php:116
 #: Zotlabs/Module/Settings/Oauth2.php:107
 #: Zotlabs/Module/Settings/Oauth2.php:136 Zotlabs/Module/Sharedwithme.php:109
-#: Zotlabs/Storage/Browser.php:310 Zotlabs/Widget/Activity_filter.php:277
+#: Zotlabs/Storage/Browser.php:310 Zotlabs/Widget/Activity_filter.php:293
 msgid "Name"
 msgstr "Nazwa"
 
@@ -2931,7 +2931,7 @@ msgstr "Zablokuj osadzony kod HTML z tych domen"
 msgid "Site settings updated."
 msgstr "Zaktualizowano ustawienia portalu."
 
-#: Zotlabs/Module/Admin/Site.php:192 include/text.php:3383
+#: Zotlabs/Module/Admin/Site.php:192 include/text.php:3390
 #: view/theme/redbasic/php/config.php:15
 msgid "Default"
 msgstr "Domyślnie"
@@ -5309,7 +5309,6 @@ msgstr ""
 "Twój pseudonim posłuży do stworzenia łatwego do zapamiętania adresu kanału %s"
 
 #: Zotlabs/Module/Register.php:277 Zotlabs/Module/New_channel.php:185
-#: Zotlabs/Module/Settings/Channel.php:638
 msgid "Channel role and privacy"
 msgstr "Rola kanału i prywatność"
 
@@ -7755,12 +7754,12 @@ msgstr "Nie obchodzi mnie to"
 msgid "Ask me"
 msgstr "Zapytaj mnie"
 
-#: Zotlabs/Module/Stream.php:126 Zotlabs/Widget/Activity_filter.php:131
+#: Zotlabs/Module/Stream.php:126 Zotlabs/Widget/Activity_filter.php:147
 #: include/network.php:1603
 msgid "Nomad"
 msgstr "Nomad"
 
-#: Zotlabs/Module/Stream.php:130 Zotlabs/Widget/Activity_filter.php:134
+#: Zotlabs/Module/Stream.php:130 Zotlabs/Widget/Activity_filter.php:150
 #: include/network.php:1599
 msgid "ActivityPub"
 msgstr "ActivityPub"
@@ -8675,6 +8674,10 @@ msgstr ""
 #: Zotlabs/Module/Settings/Channel.php:627
 msgid "Profile to assign new connections"
 msgstr "Profil do przypisywania nowych połączeń"
+
+#: Zotlabs/Module/Settings/Channel.php:638
+msgid "Channel type and privacy"
+msgstr "Typ kanału i prywatność"
 
 #: Zotlabs/Module/Settings/Channel.php:639
 msgid "Default Permissions Group"
@@ -9945,6 +9948,116 @@ msgstr "Eksport Kanału"
 msgid "Client apps"
 msgstr "Aplikacje klienckie"
 
+#: Zotlabs/Widget/Activity_filter.php:34
+msgid "Direct Messages"
+msgstr "Bezpośrednie wiadomości"
+
+#: Zotlabs/Widget/Activity_filter.php:38
+msgid "Show direct (private) messages"
+msgstr "Pokaż bezpośrednie (prywatne) wiadomości"
+
+#: Zotlabs/Widget/Activity_filter.php:48
+msgid "Personal Posts"
+msgstr "Osobiste wpisy"
+
+#: Zotlabs/Widget/Activity_filter.php:52
+msgid "Show posts that mention or involve me"
+msgstr "Pokaż wpisy, które wspominają o mnie lub mnie dotyczą"
+
+#: Zotlabs/Widget/Activity_filter.php:61
+msgid "Saved Posts"
+msgstr "Zapisane wpisy"
+
+#: Zotlabs/Widget/Activity_filter.php:65
+msgid "Show posts that I have saved"
+msgstr "Pokaż wpisy, które zapisałem"
+
+#: Zotlabs/Widget/Activity_filter.php:79
+msgid "Show drafts that I have saved"
+msgstr "Pokaż szkice, które zapisałem"
+
+#: Zotlabs/Widget/Activity_filter.php:89
+msgid "Videos"
+msgstr "Filmy wideo"
+
+#: Zotlabs/Widget/Activity_filter.php:93
+msgid "Show posts that include videos"
+msgstr "Pokaż wpisy zawierające wideo"
+
+#: Zotlabs/Widget/Activity_filter.php:107
+msgid "Show posts that include events"
+msgstr "Pokaż wpisy zawierające wydarzenia"
+
+#: Zotlabs/Widget/Activity_filter.php:111
+msgid "Polls"
+msgstr "Ankiety"
+
+#: Zotlabs/Widget/Activity_filter.php:115
+msgid "Show posts that include polls"
+msgstr "Pokaż wpisy zawierające ankiety"
+
+#: Zotlabs/Widget/Activity_filter.php:136
+#: Zotlabs/Widget/Activity_filter.php:166
+#, php-format
+msgid "Show posts related to the %s access list"
+msgstr "Pokaż wpisy związane z grupą prywatności %s"
+
+#: Zotlabs/Widget/Activity_filter.php:176
+msgid "Show my access lists"
+msgstr "Pokaż moje listy dostępu"
+
+#: Zotlabs/Widget/Activity_filter.php:194
+msgid "Show posts to this group"
+msgstr "Pokaż wpiy w tej grupie"
+
+#: Zotlabs/Widget/Activity_filter.php:196
+msgid "New post"
+msgstr "Nowy wpis"
+
+#: Zotlabs/Widget/Activity_filter.php:203 Zotlabs/Widget/Notifications.php:105
+#: Zotlabs/Widget/Notifications.php:106 Zotlabs/Widget/Groups.php:108
+msgid "Groups"
+msgstr "Grupy"
+
+#: Zotlabs/Widget/Activity_filter.php:207
+msgid "Show groups"
+msgstr "Pokaż grupy"
+
+#: Zotlabs/Widget/Activity_filter.php:229
+#, php-format
+msgid "Show posts that I have filed to %s"
+msgstr "Pokaż wpisy przesłane przeze mnie do %s"
+
+#: Zotlabs/Widget/Activity_filter.php:235 Zotlabs/Widget/Filer.php:28
+#: include/features.php:492
+msgid "Saved Folders"
+msgstr "Zapisane foldery"
+
+#: Zotlabs/Widget/Activity_filter.php:239
+msgid "Show filed post categories"
+msgstr "Pokaż wprowadzone kategorie wpisów"
+
+#: Zotlabs/Widget/Activity_filter.php:259
+#, php-format
+msgid "Show posts with hashtag %s"
+msgstr "Pokaż wpisy z hasztagiem %s"
+
+#: Zotlabs/Widget/Activity_filter.php:265
+msgid "Followed Hashtags"
+msgstr "Obserwowane hasztagi"
+
+#: Zotlabs/Widget/Activity_filter.php:269
+msgid "Show followed hashtags"
+msgstr "Pokaż obserwowane hasztagi"
+
+#: Zotlabs/Widget/Activity_filter.php:307
+msgid "Remove active filter"
+msgstr "Usuń aktywny filtr"
+
+#: Zotlabs/Widget/Activity_filter.php:323
+msgid "Stream Filters"
+msgstr "Filtry strumienia"
+
 #: Zotlabs/Widget/Hq_controls.php:14
 msgid "HQ Control Panel"
 msgstr "Panel kontrolny HQ"
@@ -10117,11 +10230,6 @@ msgstr "Pokaż wszystkie powiadomienia"
 msgid "Mark all notices seen"
 msgstr "Oznacz wszystkie powiadomienia jako oglądnięte"
 
-#: Zotlabs/Widget/Notifications.php:105 Zotlabs/Widget/Notifications.php:106
-#: Zotlabs/Widget/Activity_filter.php:187 Zotlabs/Widget/Groups.php:108
-msgid "Groups"
-msgstr "Grupy"
-
 #: Zotlabs/Widget/Notifications.php:118
 msgid "New Registrations"
 msgstr "Nowe rejestracje"
@@ -10157,107 +10265,6 @@ msgstr "Propozycje"
 #: Zotlabs/Widget/Suggestions.php:55
 msgid "See more..."
 msgstr "Zobacz więcej..."
-
-#: Zotlabs/Widget/Activity_filter.php:33
-msgid "Direct Messages"
-msgstr "Bezpośrednie wiadomości"
-
-#: Zotlabs/Widget/Activity_filter.php:37
-msgid "Show direct (private) messages"
-msgstr "Pokaż bezpośrednie (prywatne) wiadomości"
-
-#: Zotlabs/Widget/Activity_filter.php:47
-msgid "Personal Posts"
-msgstr "Osobiste wpisy"
-
-#: Zotlabs/Widget/Activity_filter.php:51
-msgid "Show posts that mention or involve me"
-msgstr "Pokaż wpisy, które wspominają o mnie lub mnie dotyczą"
-
-#: Zotlabs/Widget/Activity_filter.php:60
-msgid "Saved Posts"
-msgstr "Zapisane wpisy"
-
-#: Zotlabs/Widget/Activity_filter.php:64
-msgid "Show posts that I have saved"
-msgstr "Pokaż wpisy, które zapisałem"
-
-#: Zotlabs/Widget/Activity_filter.php:73
-msgid "Videos"
-msgstr "Filmy wideo"
-
-#: Zotlabs/Widget/Activity_filter.php:77
-msgid "Show posts that include videos"
-msgstr "Pokaż wpisy zawierające wideo"
-
-#: Zotlabs/Widget/Activity_filter.php:91
-msgid "Show posts that include events"
-msgstr "Pokaż wpisy zawierające wydarzenia"
-
-#: Zotlabs/Widget/Activity_filter.php:95
-msgid "Polls"
-msgstr "Ankiety"
-
-#: Zotlabs/Widget/Activity_filter.php:99
-msgid "Show posts that include polls"
-msgstr "Pokaż wpisy zawierające ankiety"
-
-#: Zotlabs/Widget/Activity_filter.php:120
-#: Zotlabs/Widget/Activity_filter.php:150
-#, php-format
-msgid "Show posts related to the %s access list"
-msgstr "Pokaż wpisy związane z grupą prywatności %s"
-
-#: Zotlabs/Widget/Activity_filter.php:160
-msgid "Show my access lists"
-msgstr "Pokaż moje listy dostępu"
-
-#: Zotlabs/Widget/Activity_filter.php:178
-msgid "Show posts to this group"
-msgstr "Pokaż wpiy w tej grupie"
-
-#: Zotlabs/Widget/Activity_filter.php:180
-msgid "New post"
-msgstr "Nowy wpis"
-
-#: Zotlabs/Widget/Activity_filter.php:191
-msgid "Show groups"
-msgstr "Pokaż grupy"
-
-#: Zotlabs/Widget/Activity_filter.php:213
-#, php-format
-msgid "Show posts that I have filed to %s"
-msgstr "Pokaż wpisy przesłane przeze mnie do %s"
-
-#: Zotlabs/Widget/Activity_filter.php:219 Zotlabs/Widget/Filer.php:28
-#: include/features.php:492
-msgid "Saved Folders"
-msgstr "Zapisane foldery"
-
-#: Zotlabs/Widget/Activity_filter.php:223
-msgid "Show filed post categories"
-msgstr "Pokaż wprowadzone kategorie wpisów"
-
-#: Zotlabs/Widget/Activity_filter.php:243
-#, php-format
-msgid "Show posts with hashtag %s"
-msgstr "Pokaż wpisy z hasztagiem %s"
-
-#: Zotlabs/Widget/Activity_filter.php:249
-msgid "Followed Hashtags"
-msgstr "Obserwowane hasztagi"
-
-#: Zotlabs/Widget/Activity_filter.php:253
-msgid "Show followed hashtags"
-msgstr "Pokaż obserwowane hasztagi"
-
-#: Zotlabs/Widget/Activity_filter.php:291
-msgid "Remove active filter"
-msgstr "Usuń aktywny filtr"
-
-#: Zotlabs/Widget/Activity_filter.php:307
-msgid "Stream Filters"
-msgstr "Filtry strumienia"
 
 #: Zotlabs/Widget/Activity.php:58
 msgctxt "widget"
