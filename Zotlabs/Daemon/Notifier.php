@@ -452,6 +452,10 @@ class Notifier {
 				$upstream = false;
 
 				if ($parent_item && $parent_item['item_private'] !== $target_item['item_private']) {
+
+					logger('parent_item: ' . $parent_item['id'] . ' item_private: ' . $parent_item['item_private']);
+					logger('target_item: ' . $target_item['id'] . ' item_private: ' . $target_item['item_private']);
+					
 					logger('conversation privacy mismatch - downstream delivery prevented');
 					return;
 				}

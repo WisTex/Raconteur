@@ -3203,6 +3203,8 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 			}
 			$arr['obj']['content'] = bbcode($bb, [ 'export' => true ]);
 			$arr['obj']['source']['content'] = $bb;
+			$arr['obj']['id'] = $arr['mid'];
+			
 			if (! array_path_exists('obj/source/mediaType',$arr)) {
 				$arr['obj']['source']['mediaType'] = 'text/bbcode';
 			}
@@ -3229,7 +3231,6 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		$arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
 
 		$arr['replyto'] = z_root() . '/channel/' . $channel['channel_address'];
-
 
 		if ($arr['id']) {
 			$post = item_store_update($arr);
