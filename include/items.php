@@ -3254,8 +3254,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 	}
 
 
-	// work in progress experiment to send Announce activities for group comments
-	// so they will show up in microblog streams
+	// Send Announce activities for group comments so they will show up in microblog streams
 
 	if ($group && $parent) {
 		logger('comment arrived in group', LOGGER_DEBUG);
@@ -3265,6 +3264,12 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		// it doesn't sneak through another way because recursion is nasty.
 		
 		if ($item['verb'] === 'Announce' && $item['author_xchan'] === $channel['channel_hash']) {
+			return;
+		}
+
+		// Don't send Announce activities for poll responses.
+		
+		if ($item['obj_type'] === 'Answer') {
 			return;
 		}
 
