@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys, os
+import readline
 import pathlib
 sys.path.append('util/py')
 sys.path.append(str(pathlib.Path(__file__).parent.resolve()) + '/py')
