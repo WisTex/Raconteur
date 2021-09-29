@@ -3206,7 +3206,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 			$arr['obj']['id'] = $arr['mid'];
 			
 			if (! array_path_exists('obj/source/mediaType',$arr)) {
-				$arr['obj']['source']['mediaType'] = 'text/bbcode';
+				$arr['obj']['source']['mediaType'] = 'text/x-multicode';
 			}
 		}
 
