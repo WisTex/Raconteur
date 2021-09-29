@@ -2598,6 +2598,9 @@ class Activity {
 	}
 
 	static function update_poll($item,$post) {
+
+		logger('updating poll');
+		
 		$multi = false;
 		$mid = $post['mid'];
 		$content = $post['title'];
