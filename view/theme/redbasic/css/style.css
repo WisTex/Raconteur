@@ -195,6 +195,12 @@ pre {
 	border-radius: $radius;
 }
 
+audio, video {
+	border-radius: $radius;
+	box-shadow: $shadowpx $shadowpx $shadowpx 0 #444444;
+
+}
+
 .heart {
 	color: #FF0000;
 }

@@ -1291,7 +1291,6 @@ class Libzot {
 				logger($AS->debug(), LOGGER_DATA);
 		}
 
-
 		// There is nothing inherently wrong with getting a message-id which isn't a canonical URI/URL, but 
 		// at the present time (2019/02) during the Hubzilla transition to zot6 it is likely to cause lots of duplicates for 
 		// messages arriving from different protocols and sources with different message-id semantics. This

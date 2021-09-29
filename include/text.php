@@ -154,6 +154,7 @@ function purify_html($s, $opts = []) {
 	$config->set('Cache.DefinitionImpl', null);
 	$config->set('Attr.EnableID', true);
 
+
 	// disable Unicode version of RTL over-ride 
 	$s = str_replace([ '&#x202e;', '&#x202E;', html_entity_decode('&#x202e;', ENT_QUOTES,'UTF-8') ],[ '','','' ],$s); 
 

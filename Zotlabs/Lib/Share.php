@@ -190,10 +190,10 @@ class Share {
 			}
 		}
 
-		$is_photo = (($this->item['obj_type'] === ACTIVITY_OBJ_PHOTO) ? true : false);
-		if($is_photo) {
+		$special_object = (in_array($this->item['obj_type'], [ ACTIVITY_OBJ_PHOTO, 'Event', 'Question' ]) ? true : false);
+		if($special_object) {
 			$object = json_decode($this->item['obj'],true);
-			$photo_bb = (($object['source']) ? $object['source']['content'] : $object['body']);
+			$special = (($object['source']) ? $object['source']['content'] : $object['body']);
 		}
 	
 		if (strpos($this->item['body'], "[/share]") !== false) {
@@ -216,7 +216,7 @@ class Share {
 				$bb .= $this->item['summary'] . "\r\n";
 			}
 				
-			$bb .= (($is_photo) ? $photo_bb . "\r\n" . $this->item['body'] : $this->item['body']);
+			$bb .= (($special_object) ? $special . "\r\n" . $this->item['body'] : $this->item['body']);
 			$bb .= "[/share]";
 		}
 
