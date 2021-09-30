@@ -91,8 +91,8 @@ class Vote extends Controller {
 			$item['title'] = $res;
 			$item['author_xchan'] = $channel['channel_hash'];
 			$item['owner_xchan'] = $fetch[0]['author_xchan'];
-			$item['allow_cid'] = '<' . $fetch[0]['author_xchan'] . '>';
-			$item['item_private'] = 1;
+//			$item['allow_cid'] = '<' . $fetch[0]['author_xchan'] . '>';
+//			$item['item_private'] = 1;
 			
 			// These two are placeholder values that will be reset after
 			// we encode the item

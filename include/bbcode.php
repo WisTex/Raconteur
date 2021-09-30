@@ -616,9 +616,10 @@ function bb_ShareAttributes($match) {
 
 	$headline = '<div class="shared_container"> <div class="shared_header">';
 
-	if ($avatar != "")
+	if ($avatar != "") {
 		$headline .= '<a href="' . (($auth) ? zid($profile) : $profile) . '" ><img src="' . $avatar . '" alt="' . htmlspecialchars($author,ENT_COMPAT,'UTF-8',false) . '" height="32" width="32" /></a>';
-
+	}
+	
 	if(strpos($link,'/cards/'))
 		$type = t('card');
 	elseif(strpos($link,'/articles/'))
@@ -1054,8 +1055,10 @@ function multicode_purify($s) {
 	$s = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#', function ($match) {
 		return $match[1] . $match[2] . "\n" . bb_code_protect($match[4]) . "\n" . $match[2] . (($match[5]) ? $match[5] : "\n");
 	}, $s);
-	
-	$s = purify_html($s, [ 'escape' ]);
+
+//	if (strpos($s,'<') !== false || strpos($s,'>') !== false) {
+		$s = purify_html($s, [ 'escape' ]);
+//	}
 
 	return bb_code_unprotect($s);
 

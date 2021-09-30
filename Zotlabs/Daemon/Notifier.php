@@ -435,7 +435,7 @@ class Notifier {
 				$upstream = true;
 				self::$packet_type = 'response';
 				$is_moderated = their_perms_contains($parent_item['uid'],$sendto,'moderated');
-				if ($relay_to_owner && $thread_is_public && (! $is_moderated)) {
+				if ($relay_to_owner && $thread_is_public && (! $is_moderated) && (! is_group($parent_item['uid']))) {
 					if (get_pconfig($target_item['uid'],'system','hyperdrive',true)) {
 						Run::Summon([ 'Notifier' , 'hyper', $item_id ]);
 					}
@@ -452,6 +452,10 @@ class Notifier {
 				$upstream = false;
 
 				if ($parent_item && $parent_item['item_private'] !== $target_item['item_private']) {
+
+					logger('parent_item: ' . $parent_item['id'] . ' item_private: ' . $parent_item['item_private']);
+					logger('target_item: ' . $target_item['id'] . ' item_private: ' . $target_item['item_private']);
+					
 					logger('conversation privacy mismatch - downstream delivery prevented');
 					return;
 				}

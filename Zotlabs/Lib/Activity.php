@@ -2598,6 +2598,9 @@ class Activity {
 	}
 
 	static function update_poll($item,$post) {
+
+		logger('updating poll');
+		
 		$multi = false;
 		$mid = $post['mid'];
 		$content = $post['title'];
@@ -2769,6 +2772,7 @@ class Activity {
 		self::actor_store($act->actor['id'],$act->actor);
 
 		$s['mid']        = ((is_array($act->obj) && isset($act->obj['id'])) ? $act->obj['id'] : $act->obj);
+		
 		if (! $s['mid']) {
 			return false;
 		}
