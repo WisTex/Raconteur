@@ -743,7 +743,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 	function ChannelList(&$auth) {
 		$ret = [];
 
-		$disabled = intval(get_config('system','cloud_disable_siteroot'));
+		$disabled = intval(get_config('system','cloud_disable_siteroot',true));
 		
 		$r = q("SELECT channel_id, channel_address, profile.publish FROM channel left join profile on profile.uid = channel.channel_id WHERE channel_removed = 0 AND channel_system = 0 AND (channel_pageflags & %d) = 0 and profile.is_default = 1",
 			intval(PAGE_HIDDEN)
