@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 21.04.28\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-23 16:32-0700\n"
-"PO-Revision-Date: 2021-09-25 13:58+0200\n"
+"PO-Revision-Date: 2021-09-30 18:14+0200\n"
 "Last-Translator: Andrzej Budziński <astabski@gmail.com>\n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -248,7 +248,7 @@ msgstr "Ona"
 
 #: Zotlabs/Lib/Libprofile.php:412
 msgid "Him"
-msgstr "Jemu"
+msgstr "Jego"
 
 #: Zotlabs/Lib/Libprofile.php:414
 msgid "Them"
@@ -256,7 +256,7 @@ msgstr "Ich"
 
 #: Zotlabs/Lib/Libprofile.php:449
 msgid "Full Name:"
-msgstr "Pełna nazw (imię i nazwisko)"
+msgstr "Pełna nazwa (imię i nazwisko)"
 
 #: Zotlabs/Lib/Libprofile.php:484
 msgid "j F, Y"
@@ -927,7 +927,7 @@ msgstr "Wydarzenia"
 
 #: Zotlabs/Lib/Apps.php:333
 msgid "Expire Posts"
-msgstr "Wpisy wygaszone"
+msgstr "Wygaszone wpisy"
 
 #: Zotlabs/Lib/Apps.php:334
 msgid "Features"
@@ -941,7 +941,7 @@ msgstr "Pliki"
 
 #: Zotlabs/Lib/Apps.php:336 extend/addon/a/followlist/Mod_followlist.php:129
 msgid "Followlist"
-msgstr "Lista obserwacyjna"
+msgstr "Lista obserwacji "
 
 #: Zotlabs/Lib/Apps.php:337 Zotlabs/Module/Connedit.php:658
 msgid "Friend Zoom"
@@ -1001,7 +1001,7 @@ msgstr "Moje czaty"
 
 #: Zotlabs/Lib/Apps.php:350
 msgid "No Comment"
-msgstr "Bez komentarza"
+msgstr "Brak komentarzy"
 
 #: Zotlabs/Lib/Apps.php:351 Zotlabs/Widget/Notes.php:20
 msgid "Notes"
@@ -1350,7 +1350,7 @@ msgstr "Tylko grupy"
 
 #: Zotlabs/Lib/Libzotdir.php:116
 msgid "This Website Only"
-msgstr "Tylko witryna"
+msgstr "Tylko ta witryna"
 
 #: Zotlabs/Lib/Libzotdir.php:117
 msgid "Recently Updated"
@@ -1875,7 +1875,7 @@ msgstr "Obserwujący"
 
 #: Zotlabs/Module/Chanview.php:166
 msgid "Following"
-msgstr "Obserwuj"
+msgstr "Obserwowani"
 
 #: Zotlabs/Module/Chanview.php:169 include/conversation.php:955
 msgid "Visit"
@@ -2766,7 +2766,7 @@ msgid ""
 "site unless you are currently authenticated."
 msgstr ""
 "Zaznacz, aby zablokować publiczny dostęp do wszystkich innych publicznych "
-"stron osobistych na tym portali, chyba że jesteś obecnie uwierzytelniony."
+"stron osobistych na tym portalu, chyba że jesteś obecnie uwierzytelniony."
 
 #: Zotlabs/Module/Admin/Security.php:135
 msgid "Block public search"

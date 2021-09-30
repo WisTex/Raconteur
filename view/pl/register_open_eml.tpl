@@ -1,5 +1,5 @@
 
-Na portalu {{$ sitename}} zostało utworzone konto dla tego adresu e-mail.
+Na portalu {{$sitename}} zostało utworzone konto dla tego adresu e-mail.
 Dane logowania są następujące:
 
 Lokalizacja serwisu: {{$siteurl}}
@@ -10,7 +10,7 @@ Jeśli to konto zostało utworzone bez Twojej wiedzy i nie jest pożądane, moż
 odwiedić nasz serwis i zresetować ustawione hasło. Umożliwi to usunięcie konta
 linkiem na stronie "Ustawienia", a my przepraszamy za wszelkie niedogodności.
 
-Dziękujemy i witamu na serwisie {{$sitename}}.
+Dziękujemy i witamy na serwisie {{$sitename}}.
 
 Z poważaniem,
-	{{$sitename}} Administrator
+	Administrator {{$sitename}}
