@@ -11,7 +11,7 @@ class Channel_purge {
 
 		$channel_id = intval($argv[1]);
 
-		$channel = q("select * from channel where channel_id = %d and channel_removed = 1"
+		$channel = q("select * from channel where channel_id = %d and channel_removed = 1",
 			intval($channel_id)
 		);
 
