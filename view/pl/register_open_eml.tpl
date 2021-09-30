@@ -1,5 +1,5 @@
 
-Na portalu {{$ sitename}} zostało utworzone konto dla tego adresu e-mail.
+Na portalu {{$sitename}} zostało utworzone konto dla tego adresu e-mail.
 Dane logowania są następujące:
 
 Lokalizacja serwisu: {{$siteurl}}

@@ -1,6 +1,6 @@
 
 DDrogi/Droga {{$username}},
-	Niedawno otrzymaliśmy prośbę o zresetowanie hasła do konta na {{$ sitename}}.
+	Niedawno otrzymaliśmy prośbę o zresetowanie hasła do konta na {{$sitename}}.
 Aby potwierdzić tę prośbę, wybierz link weryfikacyjny poniżej lub wklej go w pasku
 adresu przeglądarki internetowej. 
 
