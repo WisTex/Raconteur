@@ -2081,7 +2081,7 @@ class Libzot {
 			);
 			$abook = (($ab) ? $ab[0] : null);
 
-			if (intval($arr['item_deleted'])) {
+			if (isset($arr['item_deleted']) && intval($arr['item_deleted'])) {
 
 				// set these just in case we need to store a fresh copy of the deleted post.
 				// This could happen if the delete got here before the original post did.
