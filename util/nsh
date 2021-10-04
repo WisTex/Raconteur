@@ -4,52 +4,119 @@ import sys, os
 import readline
 import pathlib
 import urllib3
-# use sys to amend the path so we can find/import the rest of our files
-sys.path.append('util/py')
-sys.path.append(str(pathlib.Path(__file__).parent.resolve()) + '/py')
 import configparser
 import requests
 from requests.auth import HTTPBasicAuth
-import  easywebdav
-import easywebdav.__version__ as easywebdavversion
 import base64
 
-__version__= "0.0.3"
+# use sys and pathlib to amend the path so we can find/import easywebdav
+sys.path.append('util/py')
+sys.path.append(str(pathlib.Path(__file__).parent.resolve()) + '/py')
+import easywebdav
+import easywebdav.__version__ as easywebdavversion
+
+__version__= "2021.10.05"
 
 SERVER = None
 USER = None
 PASSWD = None
 VERIFY_SSL=True
 
-# this is filled in during the connection to your base server with a list of your Nomad connections
-nomads = []
-
-readline.parse_and_bind("tab:complete");
 
 
-def complete(text,state):
+class Completer():
 
-    basecmd = ['cd','ls','exists','mkdir','mkdirs','rmdir','delete','put','get', 'conn', 'connect', 'pwd','cat', 'lcd','lpwd', 'lls', 'quit', 'help']
-    matches = basecmd
+    matches  = []
+    _commnd  = []
+    _rfiles  = []
+    _lfiles  = []
+    _nomads  = []
+    
+    def __init__(self):
+        # Setup autocompletion
+        readline.parse_and_bind("tab:complete");
+        readline.set_completer(self.complete)
+        return
 
-    if get_cur_cmd() in [ 'conn', 'connect' ]:
-        matches = nomads
+    @property
+    def commnd(self):
+        return self._commnd
+
+    @commnd.setter
+    def commnd(self,names):
+        self._commnd = names
+
+
+    def get_command(self):
+        return self._commnd
+    
+    @property
+    def lfiles(self):
+        return self._lfiles
+
+    @lfiles.setter
+    def lfiles(self,names):
+        self._lfiles = names
+
+    @property
+    def rfiles(self):
+        return self._rfiles
+
+    @rfiles.setter
+    def rfiles(self,names):
+        self._rfiles = names
+
+    @property
+    def nomads(self):
+        return self._nomads
+
+    @nomads.setter
+    def nomads(self,names):
+        self._nomads = names
+        
+   
+    # this is the completion function 
+    def complete(self,text,state):
+
+        # set initial return state to base commands
+        self.matches = self._commnd
+
+        # peek at the typed input state and reconfigure the completion
+        # base map accordingly
+
+        current = self.get_cur_cmd()
+        
+        if current in [ 'conn', 'connect' ]:
+            self.matches = self._nomads
+        
+        if current in [ 'put', 'lcd', 'lls' ]:
+            self.matches = self._lfiles
+        
+        if current in [ 'get', 'cd', 'delete', 'cat', 'ls', 'rmdir', 'exists' ]:
+            self.matches = self._rfiles
+
+        if current in [ 'mkdir', 'mkdirs', 'pwd', 'lpwd', 'quit' ]:
+            self.matches = []
             
-    if text != "":
-        matches =  [x for x in matches if x.startswith(text)]
+        # On the current "word" reduce the base map to a subset of the results      
+        if text != "":
+            self.matches = [x + " " for x in self.matches if x.startswith(text)]
+            
+        try:
+            response = self.matches[state]
+        except IndexError:
+            response = None
 
-    if matches == basecmd and state > len('connect'):  #longest word in set               
-        return None;
-    return matches[state]
+        return response
+        
+
+    def get_cur_cmd(self):
+        idx = readline.get_begidx()
+        full = readline.get_line_buffer()
+        n = full[:idx].split()
+        return n[0] if len(n) > 0 else ""
 
 
-readline.set_completer(complete)
-
-def get_cur_cmd():
-    idx = readline.get_begidx()
-    full = readline.get_line_buffer()
-    n = full[:idx].split()
-    return n[0] if len(n) > 0 else ""
 
 
 #####################################################
@@ -61,7 +128,7 @@ class NSH(object):
     commands = ['cd','ls','exists','mkdir','mkdirs','rmdir','delete','put','get',
                         'conn', 'connect', 'pwd','cat',
                         'lcd','lpwd', 'lls',
-                        'quit', 'help']
+                        'quit', 'help','rfiles']
     def __init__(self, host, session=None, davclient=None):
         self.sessions = {}
         self.host = host
@@ -70,7 +137,7 @@ class NSH(object):
         
 
     @property
-    def  host(self):
+    def host(self):
         return self._host
     
     @host.setter
@@ -79,12 +146,12 @@ class NSH(object):
         self._hostname = host.replace("https:","").replace("/","")       
 
     @property
-    def  hostname(self):
+    def hostname(self):
         return self._hostname
     
     @hostname.setter
     def hostname(self, hostname):
-        self._host = "https://%s/" % (hostname)
+        self._host = "https://{}/".format(hostname)
         self._hostname = hostname 
     
     @property
@@ -100,21 +167,20 @@ class NSH(object):
     def PS1(self):
         if self.davclient is None:
             return "[!]> "
-        return "%s:%s> " % (self.hostname, self.davclient.cwd)
+        return "{}:{}> ".format(self.hostname, self.davclient.cwd)
     
     def get_host_session(self, host=None):
         if self.session is None:
             session = requests.Session()
-            #session.params.update({'davguest':1})
         else:
             session = self.session
         return session
     
     def do(self, command, *args):
         if not command in self.commands:
-            raise CommandNotFound("Unknown command '%s'" % command)
+            raise CommandNotFound("Unknown command '{}'".format(command))
         
-        cmd = getattr(self, "cmd_%s"%command, None)
+        cmd = getattr(self, "cmd_{}".format(command), None)
         if cmd is None:
             cmd = getattr(self.davclient, command)
         
@@ -182,7 +248,7 @@ class NSH(object):
             ruser = newhostname[0:i]
             newhostname = newhostname[i+1:]
             
-        newhost = "https://%s/" % newhostname
+        newhost = "https://{}/".format(newhostname)
         if newhostname == "~" or newhost == SERVER:
             # back to home server
             self.host = SERVER
@@ -211,7 +277,7 @@ class NSH(object):
                 print('not found')
 
     def cmd_pwd(self, *args):
-        return "%s%s" % ( self.davclient.baseurl, self.davclient.cwd )
+        return "{}:{}".format( self.hostname, self.davclient.cwd )
 
     def cmd_ls(self, *args):
         extra_args = ["-a", "-l",  "-d"]
@@ -225,9 +291,9 @@ class NSH(object):
         r = self.davclient.ls(*args)
         l = max([ len(str(f.size)) for f in r ] + [7,])
         
-        def _fmt(type, size, name):
+        def _fmt(typ, size, name):
             if show_list:
-                return "%s %*d %s" % (type, l, f.size , name)
+                return "{t} {num: {width}} {nm}".format(t = typ, num = f.size, width = l, nm = name)
             else:
                 return name
         
@@ -245,6 +311,16 @@ class NSH(object):
                 if show_hidden  or not name.startswith("."):
                     if not show_only_dir or  type=="d":
                         print( _fmt(type, f.size , name))
+
+
+    # This isn't a normal "user" command, but exists to update the
+    # autocompleter as it has intimate access to the current remote environment
+    def cmd_rfiles(self, *args):
+        ret = []
+        r = self.davclient.ls(*args)
+        for f in r:
+            ret.append(f.name.replace("/cloud" + self.davclient.cwd,""))
+        return ret
 
     def cmd_lpwd(self, *args):
         return os.getcwd()
@@ -265,7 +341,8 @@ class NSH(object):
         print() 
         print("Commands:")
         for c in self.commands:
-            print("\t",c)
+            if c != 'rfiles':    
+                print("\t",c)
         print()
         print("easywebdav", easywebdavversion.__version__, "(mod)")
         print("requests", requests.__version__)
@@ -303,12 +380,19 @@ def load_conf():
     if config.has_option('nsh', 'verify_ssl'):
         VERIFY_SSL = config.getboolean('nsh', 'verify_ssl')
 
+def get_lfiles():
+    ret = []
+    for f in os.listdir(os.getcwd()):
+        if os.path.isdir(f):
+            f=f+"/"
+        ret.append(f)
 
+    return ret
+        
 def nsh():
-
-    global nomads
-
+    
     nsh = NSH(SERVER)
+    completer = Completer()
     
     session_home = nsh.get_host_session()
 
@@ -323,14 +407,24 @@ def nsh():
 
     nsh.session = session_home
 
-    r = session_home.get(SERVER + "/connac")
+    completer.commnd = ['cd','ls','exists','mkdir','mkdirs','rmdir','delete','put','get', 'conn', 'connect', 'pwd','cat', 'lcd','lpwd', 'lls', 'quit', 'help']
 
-    nomads = r.json()
+
+    # initialise list of available connections from json endpoint
+    # this will not change
+    
+    r = session_home.get(SERVER + "/connac")
+    completer.nomads = r.json() if r else []
+
+    # initialise local file list
+    completer.lfiles = get_lfiles()
+
 
     # since the site directory may be empty, automatically cd to
-    # your own cloud storage folder
+    # your own cloud storage folder and update remote file list
     
     nsh.do('cd', *[USER])        
+    completer.rfiles = nsh.do('rfiles', *[])
 
     # command loop
     try:
@@ -348,6 +442,15 @@ def nsh():
             args = toks[1:]
             try:
                 ret = nsh.do(command, *args)
+                
+                # update the internal file lists for the autocompleter if we just
+                # performed an action which may have changed them
+                
+                if command in [ 'cd', 'conn', 'connect', 'mkdir','mkdirs','rmdir','delete','put']:
+                    completer.rfiles = nsh.do('rfiles', *[])
+                if command in [ 'get', 'lcd' ]:
+                    completer.lfiles = get_lfiles()
+                    
             except easywebdav.client.OperationFailed as e:
                 print(e)
             except CommandNotFound as e:
@@ -367,7 +470,9 @@ def nsh():
 
         except EOFError as e:
             input_str = "quit"
-            
+
+
+
 
 if __name__=="__main__":
     load_conf()
