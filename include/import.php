@@ -404,7 +404,8 @@ function import_hublocs($channel, $hublocs, $seize, $moving = false) {
 				'id'           => $hubloc['hubloc_guid'],
 				'id_sig'       => $hubloc['hubloc_guid_sig'],
 				'location'     => $hubloc['hubloc_url'],
-				'location_sig' => $hubloc['hubloc_url_sig']
+				'location_sig' => $hubloc['hubloc_url_sig'],
+				'site_id'      => $hubloc['hubloc_site_id']
 			];
 
 			if (($hubloc['hubloc_hash'] === $channel['channel_hash']) && intval($hubloc['hubloc_primary']) && ($seize)) {

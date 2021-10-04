@@ -59,9 +59,12 @@ class Channel extends Controller {
 			$profile = argv(1);
 		}
 
-		$channel = channelx_by_nick($which);
+		$channel = channelx_by_nick($which, true);
 		if (! $channel) {
 			http_status_exit(404, 'Not found');
+		}
+		if ($channel['channel_removed']) {
+			http_status_exit(410,'Gone');
 		}
 
 		if (get_pconfig($channel['channel_id'],'system','noindex')) {

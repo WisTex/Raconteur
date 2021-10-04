@@ -3,6 +3,8 @@
 import sys, os
 import readline
 import pathlib
+import urllib3
+# use sys to amend the path so we can find/import the rest of our files
 sys.path.append('util/py')
 sys.path.append(str(pathlib.Path(__file__).parent.resolve()) + '/py')
 import configparser
@@ -18,6 +20,37 @@ SERVER = None
 USER = None
 PASSWD = None
 VERIFY_SSL=True
+
+# this is filled in during the connection to your base server with a list of your Nomad connections
+nomads = []
+
+readline.parse_and_bind("tab:complete");
+
+
+def complete(text,state):
+
+    basecmd = ['cd','ls','exists','mkdir','mkdirs','rmdir','delete','put','get', 'conn', 'connect', 'pwd','cat', 'lcd','lpwd', 'lls', 'quit', 'help']
+    matches = basecmd
+
+    if get_cur_cmd() in [ 'conn', 'connect' ]:
+        matches = nomads
+            
+    if text != "":
+        matches =  [x for x in matches if x.startswith(text)]
+
+    if matches == basecmd and state > len('connect'):  #longest word in set               
+        return None;
+    return matches[state]
+
+
+readline.set_completer(complete)
+
+def get_cur_cmd():
+    idx = readline.get_begidx()
+    full = readline.get_line_buffer()
+    n = full[:idx].split()
+    return n[0] if len(n) > 0 else ""
+
 
 #####################################################
 
@@ -272,7 +305,9 @@ def load_conf():
 
 
 def nsh():
-    
+
+    global nomads
+
     nsh = NSH(SERVER)
     
     session_home = nsh.get_host_session()
@@ -288,6 +323,10 @@ def nsh():
 
     nsh.session = session_home
 
+    r = session_home.get(SERVER + "/connac")
+
+    nomads = r.json()
+
     # since the site directory may be empty, automatically cd to
     # your own cloud storage folder
     
@@ -302,7 +341,7 @@ def nsh():
         
     while (input_str != "quit"):
         input_str = input_str.strip()
-        if len(input_str)>0:
+        if len(input_str) > 0:
             toks = [ x.strip() for x in input_str.split(" ") ]
             
             command = toks[0]
@@ -313,15 +352,22 @@ def nsh():
                 print(e)
             except CommandNotFound as e:
                 print(e)
+            except urllib3.exceptions.NewConnectionError as e:
+                print(e)
+            except urllib3.exceptions.MaxRetryError as e:
+                print(e)
+            except requests.exceptions.ConnectionError as e:
+                print(e)
             else:
                 if ret is not None:
                     print(ret)
         
+        try:
+            input_str = input(nsh.PS1)
 
-        input_str = input(nsh.PS1)
-
-
-    
+        except EOFError as e:
+            input_str = "quit"
+            
 
 if __name__=="__main__":
     load_conf()
