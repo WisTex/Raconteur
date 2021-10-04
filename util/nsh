@@ -3,7 +3,8 @@
 import sys, os
 import readline
 import pathlib
-import urllib3
+
+import urllib
 import configparser
 import requests
 from requests.auth import HTTPBasicAuth
@@ -292,6 +293,10 @@ class NSH(object):
         l = max([ len(str(f.size)) for f in r ] + [7,])
         
         def _fmt(typ, size, name):
+            clean = urllib.parse.unquote(name)
+            if clean != name:
+                name = name + " (\"" + clean.rstrip('/') + "\")"
+                
             if show_list:
                 return "{t} {num: {width}} {nm}".format(t = typ, num = f.size, width = l, nm = name)
             else:
@@ -455,9 +460,9 @@ def nsh():
                 print(e)
             except CommandNotFound as e:
                 print(e)
-            except urllib3.exceptions.NewConnectionError as e:
+            except urllib.exceptions.NewConnectionError as e:
                 print(e)
-            except urllib3.exceptions.MaxRetryError as e:
+            except urllib.exceptions.MaxRetryError as e:
                 print(e)
             except requests.exceptions.ConnectionError as e:
                 print(e)
