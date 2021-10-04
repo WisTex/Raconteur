@@ -1907,7 +1907,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 		return $ret;
 	}
 
-	if (LibBlock::fetch_by_entity($arr['uid'],$arr['owner_chan']) || LibBlock::fetch_by_entity($arr['uid'],$arr['author_xchan'])) {
+	if (LibBlock::fetch_by_entity($arr['uid'],$arr['owner_xchan']) || LibBlock::fetch_by_entity($arr['uid'],$arr['author_xchan'])) {
 		logger('Post cancelled by block rule.');
 		$ret['message'] = 'cancelled.';
 		return $ret;
@@ -2497,7 +2497,7 @@ function send_status_notifications($post_id,$item) {
 
 	// I'm the owner - notify me
 
-	if($item['owner_hash'] === $r[0]['channel_hash'])
+	if($item['owner_xchan'] === $r[0]['channel_hash'])
 		$notify = true;
 
 	// Was I involved in this conversation?
@@ -3427,7 +3427,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 function check_item_source($uid, $item) {
 
 	logger('source: uid: ' . $uid, LOGGER_DEBUG);
-	$xchan = (($item['source_xchan'] && intval($item['item_uplink'])) ?  $item['source_xchan'] : $item['owner_xchan']);
+	$xchan = ((isset($item['source_xchan']) && $item['source_xchan'] && isset($item['item_uplink']) && intval($item['item_uplink'])) ?  $item['source_xchan'] : $item['owner_xchan']);
 
 	$r = q("select * from source where src_channel_id = %d and ( src_xchan = '%s' or src_xchan = '*' ) limit 1",
 		intval($uid),

@@ -1905,8 +1905,10 @@ function get_zcard_embed($channel, $observer_hash = '', $args = []) {
  *   - false if no channel with $nick was found
  */
 
-function channelx_by_nick($nick) {
+function channelx_by_nick($nick,$include_removed = false) {
 
+	$sql_extra = (($include_removed) ? "" : " and channel_removed = 0 ");
+	
 	// If we are provided a Unicode nickname convert to IDN
 
 	$nick = punify($nick);
@@ -1920,7 +1922,7 @@ function channelx_by_nick($nick) {
 		return App::$channel;
 	}
 
-	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_address = '%s'  and channel_removed = 0 LIMIT 1",
+	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_address = '%s' $sql_extra LIMIT 1",
 		dbesc($nick)
 	);
 
@@ -1934,14 +1936,16 @@ function channelx_by_nick($nick) {
  * @return array|boolean false if channel ID not found, otherwise the channel array
  */
 
-function channelx_by_hash($hash) {
+function channelx_by_hash($hash, $include_removed = false) {
+
+	$sql_extra = (($include_removed) ? "" : " and channel_removed = 0 ");
 
 	if (App::$channel && is_array(App::$channel) && array_key_exists('channel_hash',App::$channel)
 		&& array_key_exists('xchan_hash',App::$channel) && App::$channel['channel_hash'] === $hash) {
 		return App::$channel;
 	}
 
-	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_hash = '%s' and channel_removed = 0 LIMIT 1",
+	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_hash = '%s' $sql_extra LIMIT 1",
 		dbesc($hash)
 	);
 
@@ -1956,14 +1960,16 @@ function channelx_by_hash($hash) {
  * @return array|boolean false if channel ID not found, otherwise the channel array
  */
 
-function channelx_by_n($id) {
+function channelx_by_n($id, $include_removed = false) {
+
+	$sql_extra = (($include_removed) ? "" : " and channel_removed = 0 ");
 
 	if (App::$channel && is_array(App::$channel) && array_key_exists('channel_id',App::$channel)
 		&& array_key_exists('xchan_hash',App::$channel) && intval(App::$channel['channel_id']) === intval($id)) {
 		return App::$channel;
 	}
 
-	$r = q("SELECT * FROM channel LEFT JOIN xchan ON channel_hash = xchan_hash WHERE channel_id = %d AND channel_removed = 0 LIMIT 1",
+	$r = q("SELECT * FROM channel LEFT JOIN xchan ON channel_hash = xchan_hash WHERE channel_id = %d $sql_extra LIMIT 1",
 		dbesc($id)
 	);
 

@@ -1,6 +1,6 @@
 
-DDrogi/Droga {{$username}},
-	Niedawno otrzymaliśmy prośbę o zresetowanie hasła do konta na {{$ sitename}}.
+Drogi/Droga {{$username}},
+	Niedawno otrzymaliśmy prośbę o zresetowanie hasła do konta na {{$sitename}}.
 Aby potwierdzić tę prośbę, wybierz link weryfikacyjny poniżej lub wklej go w pasku
 adresu przeglądarki internetowej. 
 
@@ -25,7 +25,7 @@ Nazwa logowania: {{$email}}
 
 
 Z poważaniem,
-	{{$sitename}} Administrator
+	Administrator {{$sitename}}
 
 --
 Warunki świadczenia usług:

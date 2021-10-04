@@ -1,5 +1,5 @@
 
-Otrzymaliśmy prośbę o rejestrację użytkownika na serwisie {{$ sitename}}, co
+Otrzymaliśmy prośbę o rejestrację użytkownika na serwisie {{$sitename}}, co
 wymaga Twojej zgody.
 
 Szczegóły logowania są następujące:

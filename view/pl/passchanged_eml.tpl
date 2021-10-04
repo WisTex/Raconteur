@@ -12,7 +12,7 @@ Możesz zmienić to hasło na stronie ustawień konta, po zalogowaniu się.
 
 
 Z poważaniem,
-	{{$sitename}} Administrator
+	Administrator {{$sitename}}
 
  
 

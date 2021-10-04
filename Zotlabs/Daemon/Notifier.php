@@ -205,7 +205,7 @@ class Notifier {
 		elseif ($cmd === 'refresh_all') {
 			logger('notifier: refresh_all: ' . $item_id);
 
-			self::$channel = channelx_by_n($item_id);
+			self::$channel = channelx_by_n($item_id,true);
 			$r = q("select abook_xchan from abook where abook_channel = %d",
 				intval($item_id)
 			);
@@ -214,6 +214,7 @@ class Notifier {
 					self::$recipients[] = $rr['abook_xchan'];
 				}
 			}
+			self::$recipients[] = self::$channel['channel_hash'];
 			self::$private = false;
 			self::$packet_type = 'refresh';
 		}
@@ -224,14 +225,14 @@ class Notifier {
 				return;
 			}
 			
-			self::$channel     = channelx_by_n($item_id);
+			self::$channel     = channelx_by_n($item_id,true);
 			self::$recipients  = [ $xchan ];
 			self::$private     = true;
 			self::$packet_type = 'purge';
 		}
 		elseif ($cmd === 'purge_all') {
 			logger('notifier: purge_all: ' . $item_id);
-			self::$channel = channelx_by_n($item_id);
+			self::$channel = channelx_by_n($item_id,true);
 
 			self::$recipients = [];
 			$r = q("select abook_xchan from abook where abook_channel = %d and abook_self = 0",

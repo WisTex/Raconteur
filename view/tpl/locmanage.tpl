@@ -27,12 +27,12 @@
 				<th>{{$drop}}</th>
 			</tr>
 			{{foreach $hubs as $hub}}
-			{{if ! $hub.deleted }}
+			{{if ! $hub.hubloc_deleted }}
 			<tr class="locs-index-row">
 				<td>{{$hub.hubloc_addr}}</td>
 				<td class="d-none d-md-table-cell">{{$hub.hubloc_url}}</td>
-				<td>{{if $hub.primary}}<i class="fa fa-check-square-o"></i>{{else}}<i class="fa fa-square-o primehub" onclick="primehub({{$hub.hubloc_id}}); return false;"></i>{{/if}}</td>
-				<td><i class="fa fa-trash-o drophub" onclick="drophub({{$hub.hubloc_id}}); return false;"></i></td>
+				<td>{{if $hub.hubloc_primary}}<i class="fa fa-check-square-o"></i>{{else}}<i class="fa fa-square-o primehub" onclick="primehub({{$hub.hubloc_id}}); return false;"></i>{{/if}}</td>
+				<td>{{if $hub.hubloc_url != $base_url}}<i class="fa fa-trash-o drophub" onclick="drophub({{$hub.hubloc_id}}); return false;"></i></td>{{/if}}
 			</tr>
 			{{/if}}
 			{{/foreach}}

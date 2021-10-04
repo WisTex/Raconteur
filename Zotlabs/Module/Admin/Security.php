@@ -135,7 +135,7 @@ class Security {
 	        '$block_public_search'     => array('block_public_search', t("Block public search"), get_config('system','block_public_search', 1), t("Prevent access to search content unless you are currently authenticated.")),
 			'$block_public_dir'     => [ 'block_public_directory', t('Block directory from visitors'), get_config('system','block_public_directory',true), t('Only allow authenticated access to directory.') ],
 			'$localdir_hide'     => [ 'localdir_hide', t('Hide local directory'), intval(get_config('system','localdir_hide')), t('Only use the global directory') ], 
-			'$cloud_noroot'     => [ 'cloud_noroot', t('Provide a cloud root directory'), 1 - intval(get_config('system','cloud_disable_siteroot')), t('The cloud root directory lists all channel names which provide public files. Otherwise only the names of connections are shown.') ], 
+			'$cloud_noroot'     => [ 'cloud_noroot', t('Provide a cloud root directory'), 1 - intval(get_config('system','cloud_disable_siteroot',true)), t('The cloud root directory lists all channel names which provide public files. Otherwise only the names of connections are shown.') ], 
 			'$cloud_disksize'     => [ 'cloud_disksize', t('Show total disk space available to cloud uploads'), intval(get_config('system','cloud_report_disksize')), '' ],
 			'$thumbnail_security'   => [ 'thumbnail_security', t("Allow SVG thumbnails in file browser"), get_config('system','thumbnail_security',0), t("WARNING: SVG images may contain malicious code.") ],
 

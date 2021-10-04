@@ -2316,7 +2316,7 @@ class Activity {
 
 		$keywords = [];
 		
-		if (is_array($person_obj['tag'])) {
+		if (isset($person_obj['tag']) && is_array($person_obj['tag'])) {
 			foreach ($person_obj['tag'] as $t) {
 				if (is_array($t) && isset($t['type']) && $t['type'] === 'Hashtag') {
 					if (isset($t['name'])) {
@@ -2466,7 +2466,7 @@ class Activity {
 		$m = parse_url($url);
 		if ($m) {
 			$hostname = $m['host'];
-			$baseurl = $m['scheme'] . '://' . $m['host'] . (($m['port']) ? ':' . $m['port'] : '');
+			$baseurl = $m['scheme'] . '://' . $m['host'] . ((isset($m['port']) && intval($m['port'])) ? ':' . $m['port'] : '');
 		}
 
 		if (! $h) {
@@ -2821,11 +2821,11 @@ class Activity {
 			
 			// over-ride the object timestamp with the activity
 
-			if ($act->data['published']) {
+			if (isset($act->data['published']) && $act->data['published']) {
 				$s['created'] = datetime_convert('UTC','UTC',$act->data['published']);
 			}
 
-			if ($act->data['updated']) {
+			if (isset($act->data['updated']) && $act->data['updated']) {
 				$s['edited'] = datetime_convert('UTC','UTC',$act->data['updated']);
 			}
 
@@ -3411,7 +3411,7 @@ class Activity {
 		// $s['html'] will be populated if caching was enabled.
 		// This is usually the case for ActivityPub sourced content, while Zot6 content is not cached.
 
-		if ($s['html']) {
+		if (isset($s['html']) && $s['html']) {
 			$s['html'] = bbcode($s['body'], [ 'bbonly' => true ] );
 		}
 
