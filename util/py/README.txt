@@ -110,6 +110,7 @@ to skip verification of ssl certs
 
 Changelog
 ----------
+2021.10.06	Add alternate configuration support and cmdline arg processing
 2021.10.05	Add autocompletion
 
 0.0.3		Convert to python3 and rename from zotsh to nsh

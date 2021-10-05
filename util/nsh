@@ -16,7 +16,7 @@ sys.path.append(str(pathlib.Path(__file__).parent.resolve()) + '/py')
 import easywebdav
 import easywebdav.__version__ as easywebdavversion
 
-__version__= "2021.10.05"
+__version__= "2021.10.06"
 
 SERVER = None
 USER = None
