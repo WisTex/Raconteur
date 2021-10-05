@@ -6,6 +6,7 @@ import pathlib
 import urllib
 import configparser
 import requests
+import argparse
 from requests.auth import HTTPBasicAuth
 import base64
 
@@ -477,10 +478,22 @@ def nsh():
 
 if __name__=="__main__":
     conffile = ""
-    if len(sys.argv) > 1:
-        conffile = sys.argv[1]
+    parser = argparse.ArgumentParser(description = "Nomad shell - CLI for accessing local/remote Nomad|Zot cloud storage resources")
+    parser.add_argument('-c', nargs=1, metavar="name", help="load alternate configuration .nshrc.name", default="")
+    parser.add_argument('--version', action="store_true", help="print version and exit")
+    
+    args = parser.parse_args()
 
+    if args.c:
+        conffile = args.c[0]
+
+    if args.version:
+        print (__version__)
+        sys.exit()
+        
     load_conf(conffile)
+
+    # @todo allow scripts or files in args and pass to nsh
     nsh()
     sys.exit()
 
