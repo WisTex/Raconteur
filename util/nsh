@@ -399,13 +399,15 @@ def nsh():
     session_home = nsh.get_host_session()
 
     #~ #login on home server
-    print("logging in...")
+    if(sys.stdin.isatty()):
+           print("logging in...")
     r = session_home.get( 
         SERVER + "/api/z/1.0/verify",  
         auth=HTTPBasicAuth(USER, PASSWD), 
         verify=VERIFY_SSL    )
 
-    print("Hi - ", r.json()['channel_name'])
+    if(sys.stdin.isatty()):
+           print("Hi - ", r.json()['channel_name'])
 
     nsh.session = session_home
 
@@ -430,7 +432,7 @@ def nsh():
 
     # command loop
     try:
-        input_str = input(nsh.PS1)
+        input_str = input(nsh.PS1 if sys.stdin.isatty() else "")
 
     except EOFError as e:
         input_str = "quit"
@@ -468,7 +470,7 @@ def nsh():
                     print(ret)
         
         try:
-            input_str = input(nsh.PS1)
+            input_str = input(nsh.PS1 if sys.stdin.isatty() else "")
 
         except EOFError as e:
             input_str = "quit"
