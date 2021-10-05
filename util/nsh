@@ -494,8 +494,6 @@ if __name__=="__main__":
         sys.exit()
         
     load_conf(conffile)
-
-    # @todo allow scripts or files in args and pass to nsh
     nsh()
     sys.exit()
 
