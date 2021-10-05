@@ -3,7 +3,6 @@
 import sys, os
 import readline
 import pathlib
-
 import urllib
 import configparser
 import requests
@@ -87,7 +86,7 @@ class Completer():
 
         current = self.get_cur_cmd()
         
-        if current in [ 'conn', 'connect' ]:
+        if current in [ 'connect' ]:
             self.matches = self._nomads
         
         if current in [ 'put', 'lcd', 'lls' ]:
@@ -127,7 +126,7 @@ class CommandNotFound(Exception):
 
 class NSH(object):
     commands = ['cd','ls','exists','mkdir','mkdirs','rmdir','delete','put','get',
-                        'conn', 'connect', 'pwd','cat',
+                        'connect', 'pwd','cat',
                         'lcd','lpwd', 'lls',
                         'quit', 'help','rfiles']
     def __init__(self, host, session=None, davclient=None):
@@ -236,9 +235,6 @@ class NSH(object):
             
         return self.davclient.download(args[0], args[1])        
 
-    def cmd_conn(self, *args):
-        return self.do('connect', *args)
-         
     def cmd_connect(self, *args):
         ruser = ''
         if (len(args)==0):
@@ -359,18 +355,18 @@ class NSH(object):
         resp = self.davclient._send('GET', rfile, (200,))
         print(resp.text)
 
-def load_conf():
+def load_conf(conffile):
     global SERVER,USER,PASSWD,VERIFY_SSL
     homedir = os.getenv("HOME")
     if homedir is None:
         homedir = os.path.join(os.getenv("HOMEDRIVE"), os.getenv("HOMEPATH"))
     
-    optsfile = ".nshrc"
+    optsfile = ".nshrc" + "." + conffile if conffile else ".nshrc"
     if not os.path.isfile(optsfile):
-        optsfile = os.path.join(homedir, ".nshrc")
+        optsfile = os.path.join(homedir, optsfile)
     
     if not os.path.isfile(optsfile):
-        print("Please create a configuration file called '.nshrc':")
+        print("Please create a configuration file called '{}':".format(optsfile))
         print("[nsh]")
         print("host = https://yourhost.com/")
         print("username = your_username")
@@ -412,7 +408,7 @@ def nsh():
 
     nsh.session = session_home
 
-    completer.commnd = ['cd','ls','exists','mkdir','mkdirs','rmdir','delete','put','get', 'conn', 'connect', 'pwd','cat', 'lcd','lpwd', 'lls', 'quit', 'help']
+    completer.commnd = ['cd','ls','exists','mkdir','mkdirs','rmdir','delete','put','get', 'connect', 'pwd','cat', 'lcd','lpwd', 'lls', 'quit', 'help']
 
 
     # initialise list of available connections from json endpoint
@@ -451,7 +447,7 @@ def nsh():
                 # update the internal file lists for the autocompleter if we just
                 # performed an action which may have changed them
                 
-                if command in [ 'cd', 'conn', 'connect', 'mkdir','mkdirs','rmdir','delete','put']:
+                if command in [ 'cd', 'connect', 'mkdir','mkdirs','rmdir','delete','put']:
                     completer.rfiles = nsh.do('rfiles', *[])
                 if command in [ 'get', 'lcd' ]:
                     completer.lfiles = get_lfiles()
@@ -480,7 +476,11 @@ def nsh():
 
 
 if __name__=="__main__":
-    load_conf()
+    conffile = ""
+    if len(sys.argv) > 1:
+        conffile = sys.argv[1]
+
+    load_conf(conffile)
     nsh()
     sys.exit()
 
