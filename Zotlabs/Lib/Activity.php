@@ -2177,6 +2177,10 @@ class Activity {
 			// we already have a stored record. Determine if it needs updating.
 			if ($ap_hubloc['hubloc_updated'] < datetime_convert('UTC','UTC',' now - ' . self::$ACTOR_CACHE_DAYS . ' days') || $force) {
 				$person_obj = self::fetch($url);
+				// ensure we received something
+				if (! is_array($person_obj)) {
+					return;
+				}
 			}
 			else {
 				return;
