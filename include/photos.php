@@ -403,6 +403,8 @@ function photo_upload($channel, $observer, $args) {
 		. $tag . z_root() . "/photo/{$photo_hash}-{$scale}." . $ph->getExt() . '[/zmg]'
 		. '[/zrl]';
 
+	$attribution = (($visitor) ? $visitor['xchan_url'] : $channel['xchan_url']);
+
 	// Create item object
 	$object = [
 		'type'      => ACTIVITY_OBJ_PHOTO,
@@ -410,6 +412,7 @@ function photo_upload($channel, $observer, $args) {
 		'summary'   => $p['description'],
 		'published' => datetime_convert('UTC','UTC',$p['created'],ATOM_TIME),
 		'updated'   => datetime_convert('UTC','UTC',$p['edited'],ATOM_TIME),
+		'attributedTo' => $attribution,
 		// This is a placeholder and will get over-ridden by the item mid, which is critical for sharing as a conversational item over activitypub
 		'id'        => z_root() . '/photo/' . $photo_hash,
 		'url'       => $url,
