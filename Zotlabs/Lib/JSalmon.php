@@ -40,10 +40,10 @@ class JSalmon {
 		$ret = [ 'results' => [] ];
 
 		if(! is_array($x)) {
-			return $false;
+			return false;
 		}
 		if(! ( array_key_exists('signed',$x) && $x['signed'])) {
-			return $false;
+			return false;
 		}
 
 		$signed_data = preg_replace('/\s+/','',$x['data']) . '.' 

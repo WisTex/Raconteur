@@ -81,6 +81,44 @@ def zot_verify(data: str, sig: str, pubkey: str) -> bool:
     return False
 
 
+def rsa_sign(data: str, prvkey: str) -> str:
+    key = serialization.load_pem_private_key(prvkey.encode("ascii"),password = None)    
+    rawsig = key.sign(hashlib.sha256(data.encode("utf-8")).hexdigest().encode("utf-8"), padding.PKCS1v15(), hashes.SHA256())
+    return base64.b64encode(rawsig).decode("utf-8")
+
+def rsa_verify(data: str, sig: str, pubkey: str) -> bool:
+    key = serialization.load_pem_public_key(pubkey.encode("ascii"))
+
+    hashed = hashlib.sha256(data.encode("utf-8")).hexdigest().encode("utf-8")
+    algorithm = hashes.SHA256()
+        
+    rawsig = base64.b64decode(sig)
+
+    try:
+        key.verify(rawsig, hashed, padding.PKCS1v15(), algorithm)
+        return True
+
+    except UnsupportedAlgorithm:
+        pass
+    except AlreadyFinalized:
+        pass
+    except InvalidSignature:
+        pass
+    except NotYetFinalized:
+        pass
+    except AlreadyUpdated:
+        pass
+    except InvalidKey:
+        pass
+    except BaseException:
+        pass
+    return False
+
+
+
+
+
+
 def make_xchan_hash(id_str: str,id_pubkey: str) -> str:
     wp = whirlpool.new(id_str.encode("utf-8") + id_pubkey.encode("utf-8"))
     return base64urlnopad_encode(wp.digest());
