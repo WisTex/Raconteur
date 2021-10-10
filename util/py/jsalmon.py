@@ -15,12 +15,12 @@ class JSalmon:
         data = re.sub(r'\s+',"",data)
         fields = data + "." + base64urlnopad_encode(data_type) + base64urlnopad_encode(encoding) + "." + base64urlnopad_encode(algorithm)
         signature = base64urlnopad_encode(rsa_sign(fields,key))
-        return [
-            'signed' = true,
-            'data' = data,
-            'data_type' = date_type,
-            'encoding' = encoding,
-            'sigs' = [ 'value' = signature, 'key_id' = base64urlnopad_encode(key_id) ]];
+        return {
+            'signed' : true,
+            'data' : data,
+            'data_type' : date_type,
+            'encoding' : encoding,
+            'sigs' = { 'value' : signature, 'key_id' : base64urlnopad_encode(key_id) }}
 
 
     def verify(x,key):
