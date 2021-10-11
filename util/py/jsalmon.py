@@ -14,20 +14,21 @@ class JSalmon:
 
         data = re.sub(r'\s+',"",data)
         fields = data + "." + base64urlnopad_encode(data_type.encode("utf-8")) + "." + base64urlnopad_encode(encoding.encode("utf-8")) + "." + base64urlnopad_encode(algorithm.encode("utf-8"))
-        signature = base64urlnopad_encode(rsa_sign(fields,key)).encode("utf-8")
+        signature = base64urlnopad_encode(rsa_sign(fields,key).encode("utf-8"))
         return {
-            'signed' : true,
+            'signed' : True,
             'data' : data,
-            'data_type' : date_type,
+            'data_type' : data_type,
             'encoding' : encoding,
-            'sigs' : { 'value' : signature, 'key_id' : base64urlnopad_encode(key_id).encode("utf-8") }}
+            'alg'  : algorithm,
+            'sigs' : { 'value' : signature, 'key_id' : base64urlnopad_encode(key_id.encode("utf-8")) }}
 
 
     def verify(x,key):
         if x['signed'] != True:
             return false
 
-        signed_data = re.sub(r'\s+','', x['data'] + "." + base64urlnopad_encode(x['data_type']) + "." + base64urlnopad_encode(x['encoding']) + "." + base64urlnopad_encode(x['alg']))
+        signed_data = re.sub(r'\s+','', x['data'] + "." + base64urlnopad_encode(x['data_type'].encode("utf-8")) + "." + base64urlnopad_encode(x['encoding'].encode("utf-8")) + "." + base64urlnopad_encode(x['alg'].encode("utf-8")))
 
         binsig = base64urlnopad_decode(x['sigs']['value'])
         
@@ -41,13 +42,13 @@ class JSalmon:
 
 
         
-if __name__=="__main__":
-    prvkey,pubkey = generate_rsa_keypair()
+#if __name__=="__main__":
+#    prvkey,pubkey = generate_rsa_keypair()
 
-    s = JSalmon.sign('abc123','mykeyid',prvkey)
-    print (s)
+#    s = JSalmon.sign('abc123','mykeyid',prvkey)
+#    print (s)
 
-    if JSalmon.verify(s,pubkey):
-        print ('verified')
-    else:
-        print ('failed')
+#    if JSalmon.verify(s,pubkey):
+#        print ('verified')
+#    else:
+#        print ('failed')
