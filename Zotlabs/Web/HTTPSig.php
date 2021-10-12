@@ -292,8 +292,9 @@ class HTTPSig {
 		// $force is used to ignore the local cache and only use the remote data; for instance the cached key might be stale
 		
 		if (! $force) {
-			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' order by hubloc_id desc",
+			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') order by hubloc_id desc",
 				dbesc(str_replace('acct:','',$cache_url)),
+				dbesc($cache_url),
 				dbesc($cache_url)
 			);
 

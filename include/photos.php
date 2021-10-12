@@ -273,6 +273,7 @@ function photo_upload($channel, $observer, $args) {
 	$r0 = $ph->save($p);
 	$url[0] = [
 		'type' => 'Link',
+		'rel' => 'alternate',
 		'mediaType' => $type,
 		'summary' => $alt_desc,
 		'href' => z_root() . '/photo/' . $photo_hash . '-0.' . $ph->getExt(),
@@ -294,6 +295,7 @@ function photo_upload($channel, $observer, $args) {
 	$r1 = $ph->storeThumbnail($p, PHOTO_RES_1024);
 	$url[1] = [
 		'type' => 'Link',
+		'rel' => 'alternate',
 		'mediaType' => $type,
 		'summary' => $alt_desc,
 		'href' => z_root() . '/photo/' . $photo_hash . '-1.' . $ph->getExt(),
@@ -310,6 +312,7 @@ function photo_upload($channel, $observer, $args) {
 	$r2 = $ph->storeThumbnail($p, PHOTO_RES_640);
 	$url[2] = [
 		'type' => 'Link',
+		'rel' => 'alternate',
 		'mediaType' => $type,
 		'summary' => $alt_desc,
 		'href' => z_root() . '/photo/' . $photo_hash . '-2.' . $ph->getExt(),
@@ -326,6 +329,7 @@ function photo_upload($channel, $observer, $args) {
 	$r3 = $ph->storeThumbnail($p, PHOTO_RES_320);
 	$url[3] = [
 		'type' => 'Link',
+		'rel' => 'alternate',
 		'mediaType' => $type,
 		'summary' => $alt_desc,
 		'href' => z_root() . '/photo/' . $photo_hash . '-3.' . $ph->getExt(),
@@ -352,6 +356,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$url[] = [ 
 		'type'      => 'Link',
+		'rel'       => 'about',
 		'mediaType' => 'text/html',
 		'href'      => z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo_hash
 	];

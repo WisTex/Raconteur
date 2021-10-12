@@ -18,7 +18,8 @@ class Stream extends Controller {
 		if (! local_channel()) {
 			return;
 		}
-	
+
+		// setup identity information for page
 		$channel = App::get_channel();
 		App::$profile_uid = local_channel();
 		App::$data['channel'] = $channel;
@@ -48,7 +49,7 @@ class Stream extends Controller {
 	
 		$channel = ((isset(App::$data['channel'])) ? App::$data['channel'] : null);
 
-		// if called from liveUpdate() we will not have called Stream::init() on this request and $channel will not be set
+		// if called from liveUpdate() we will not have called Stream->init() on this request and $channel will not be set
 		
 		if (! $channel) {
 			$channel = App::get_channel();
