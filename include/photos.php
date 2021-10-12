@@ -273,6 +273,7 @@ function photo_upload($channel, $observer, $args) {
 	$r0 = $ph->save($p);
 	$url[0] = [
 		'type' => 'Link',
+		'rel' => 'alternate',
 		'mediaType' => $type,
 		'summary' => $alt_desc,
 		'href' => z_root() . '/photo/' . $photo_hash . '-0.' . $ph->getExt(),
@@ -294,6 +295,7 @@ function photo_upload($channel, $observer, $args) {
 	$r1 = $ph->storeThumbnail($p, PHOTO_RES_1024);
 	$url[1] = [
 		'type' => 'Link',
+		'rel' => 'alternate',
 		'mediaType' => $type,
 		'summary' => $alt_desc,
 		'href' => z_root() . '/photo/' . $photo_hash . '-1.' . $ph->getExt(),
@@ -310,6 +312,7 @@ function photo_upload($channel, $observer, $args) {
 	$r2 = $ph->storeThumbnail($p, PHOTO_RES_640);
 	$url[2] = [
 		'type' => 'Link',
+		'rel' => 'alternate',
 		'mediaType' => $type,
 		'summary' => $alt_desc,
 		'href' => z_root() . '/photo/' . $photo_hash . '-2.' . $ph->getExt(),
@@ -326,6 +329,7 @@ function photo_upload($channel, $observer, $args) {
 	$r3 = $ph->storeThumbnail($p, PHOTO_RES_320);
 	$url[3] = [
 		'type' => 'Link',
+		'rel' => 'alternate',
 		'mediaType' => $type,
 		'summary' => $alt_desc,
 		'href' => z_root() . '/photo/' . $photo_hash . '-3.' . $ph->getExt(),
@@ -352,6 +356,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$url[] = [ 
 		'type'      => 'Link',
+		'rel'       => 'about',
 		'mediaType' => 'text/html',
 		'href'      => z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo_hash
 	];
@@ -403,6 +408,8 @@ function photo_upload($channel, $observer, $args) {
 		. $tag . z_root() . "/photo/{$photo_hash}-{$scale}." . $ph->getExt() . '[/zmg]'
 		. '[/zrl]';
 
+	$attribution = (($visitor) ? $visitor['xchan_url'] : $channel['xchan_url']);
+
 	// Create item object
 	$object = [
 		'type'      => ACTIVITY_OBJ_PHOTO,
@@ -410,6 +417,7 @@ function photo_upload($channel, $observer, $args) {
 		'summary'   => $p['description'],
 		'published' => datetime_convert('UTC','UTC',$p['created'],ATOM_TIME),
 		'updated'   => datetime_convert('UTC','UTC',$p['edited'],ATOM_TIME),
+		'attributedTo' => $attribution,
 		// This is a placeholder and will get over-ridden by the item mid, which is critical for sharing as a conversational item over activitypub
 		'id'        => z_root() . '/photo/' . $photo_hash,
 		'url'       => $url,

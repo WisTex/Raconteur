@@ -1,4 +1,4 @@
-NSH - v.0.0.3
+NSH - 2021.10.05
 
 Client for browsing Nomad DAV repositories.
 
@@ -18,7 +18,6 @@ Description
 
 You can connect to a repository using
 
-conn username@hostname
 connect username@hostname
 
 if you know a username on that site and if they have given you the requisite permission *or* their directory contains publicly readable content. 
@@ -35,13 +34,12 @@ to 'zotify' it. (See easywebdav/LICENSE)
 Commands
 --------
 
-conn <hostname>
+
 connect <hostname>
 	Authenticate to 'hostname' and switch to it. The root directory may be
 hidden/empty. If it is, the only way to proceed is if you know a username on
 that server. Then you can 'cd username'. 
 
-conn <username@hostname>
 connect <username@hostname>
 	Authenticate to 'hostname' and switch to it and automatically cd to the 'username' directory
 	
@@ -112,6 +110,9 @@ to skip verification of ssl certs
 
 Changelog
 ----------
+2021.10.06	Add alternate configuration support and cmdline arg processing
+2021.10.05	Add autocompletion
+
 0.0.3		Convert to python3 and rename from zotsh to nsh
 
 0.0.2		Fix "CommandNotFound" exception, new 'cat' command

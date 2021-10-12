@@ -56,7 +56,6 @@ class Photo extends Controller {
 			$channel = channelx_by_n($r[0]['uid']);
 		
 			$obj = json_decode($r[0]['obj'],true);
-			$obj['actor'] = $obj['attributedTo'] = Activity::encode_person($channel,false);
 
 			as_return_and_die($obj,$channel);
 
