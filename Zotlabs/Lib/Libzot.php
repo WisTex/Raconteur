@@ -108,8 +108,6 @@ class Libzot {
 
 	static function build_packet($channel, $type = 'activity', $recipients = null, $msg = '', $encoding = 'activitystreams', $remote_key = null, $methods = '') {
 
-		$sig_method = get_config('system','signature_algorithm','sha256');
-
 		$data = [
 			'type'      => $type,
 			'encoding'  => $encoding,

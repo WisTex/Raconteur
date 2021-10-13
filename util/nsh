@@ -4,6 +4,7 @@ import sys, os
 import readline
 import pathlib
 import urllib
+import fnmatch
 import configparser
 import requests
 import argparse
@@ -283,9 +284,19 @@ class NSH(object):
         show_hidden = "-a" in args
         show_list = "-l" in args
         show_only_dir = "-d" in args
-        args = [ a for  a in args if not a in extra_args ]
+        args = [ a for a in args if not a in extra_args ]
+        wildcards = set('?*[]')
+        pattern = False
+
+        # if we see any wildcard characters in non-flag arguments, unset args and set pattern
+        # instead. We will filter the result set (the entire directory list) by pattern.
+        # It would be better to perform this matching inside easywebdav but that is an
+        # imported standalone component which we may have no direct control over.
         
-        
+        if args and any((c in wildcards) for c in args[0]):
+            pattern = args[0]
+            args = [];
+                
         r = self.davclient.ls(*args)
         l = max([ len(str(f.size)) for f in r ] + [7,])
         
@@ -305,13 +316,19 @@ class NSH(object):
                 print( _fmt('d', 0, "../"))
                 
         for f in r:
+            
             name = f.name.replace("/cloud"+self.davclient.cwd,"")
+            #print (name)
+            #print (pattern)
+            if pattern and not fnmatch.fnmatch(name,pattern):
+                continue
+
             type = "-"
             if name.endswith("/"):
                 type = "d"
-            if name!="":
-                if show_hidden  or not name.startswith("."):
-                    if not show_only_dir or  type=="d":
+            if name != "":
+                if show_hidden or not name.startswith("."):
+                    if not show_only_dir or type=="d":
                         print( _fmt(type, f.size , name))
 
 
