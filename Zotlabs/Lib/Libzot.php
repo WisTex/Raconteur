@@ -1529,8 +1529,8 @@ class Libzot {
 		$include_sys = false;
 
 		if ($msg['type'] === 'activity') {
-			$disable_discover_tab = get_config('system','disable_discover_tab') || get_config('system','disable_discover_tab') === false;
-			if (! $disable_discover_tab) {
+			$public_stream_mode = intval(get_config('system','public_stream_mode',PUBLIC_STREAM_NONE));
+			if ($public_stream_mode === PUBLIC_STREAM_FULL) {
 				$include_sys = true;
 			}
 

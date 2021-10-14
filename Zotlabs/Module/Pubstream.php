@@ -22,22 +22,17 @@ class Pubstream extends Controller {
 		}
 
 		if(! intval(get_config('system','open_pubstream',1))) {
-			if(! get_observer_hash()) {
+			if(! local_channel()) {
 				return login();
 			}
 		}
 
-		$site_firehose = ((intval(get_config('system','site_firehose',0))) ? true : false);
-		$net_firehose  = ((get_config('system','disable_discover_tab',1)) ? false : true);
+		$public_stream_mode = intval(get_config('system','public_stream_mode', PUBLIC_STREAM_NONE));
 
-		if(! ($site_firehose || $net_firehose)) {
+		if (! $public_stream_mode) {
 			return '';
 		}
-
-		if($net_firehose) {
-			$site_firehose = false;
-		}
-
+		
 		$mid = ((x($_REQUEST,'mid')) ? $_REQUEST['mid'] : '');
 		$hashtags = ((x($_REQUEST,'tag')) ? $_REQUEST['tag'] : '');
 		$decoded = false;
@@ -159,7 +154,7 @@ class Pubstream extends Controller {
 		require_once('include/channel.php');
 		require_once('include/security.php');
 	
-		if($site_firehose) {
+		if ($public_stream_mode === PUBLIC_STREAM_SITE) {
 			$uids = " and item_private = 0  and item_wall = 1 ";
 		}
 		else {

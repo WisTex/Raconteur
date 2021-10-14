@@ -7,25 +7,20 @@ class Pubtagcloud {
 	function widget($arr) {
 
 		$trending = ((array_key_exists('trending',$arr)) ? intval($arr['trending']) : 0);
-	    if((observer_prohibited(true))) {
+	    if ((observer_prohibited(true))) {
             return EMPTY_STR;
         }
 
-        if(! intval(get_config('system','open_pubstream',1))) {
-            if(! get_observer_hash()) {
+        if (! intval(get_config('system','open_pubstream',1))) {
+            if (! local_channel()) {
                 return EMPTY_STR;
             }
         }
 
-        $site_firehose = ((intval(get_config('system','site_firehose',0))) ? true : false);
-        $net_firehose  = ((get_config('system','disable_discover_tab',1)) ? false : true);
+		$public_stream_mode = intval(get_config('system','public_stream_mode', PUBLIC_STREAM_NONE));
 
-        if(! ($site_firehose || $net_firehose)) {
+        if (! $public_stream_mode) {
             return EMPTY_STR;
-        }
-
-        if($net_firehose) {
-            $site_firehose = false;
         }
 
 		$safemode = get_xconfig(get_observer_hash(),'directory','safemode',1);
@@ -34,7 +29,7 @@ class Pubtagcloud {
 
 		$limit = ((array_key_exists('limit', $arr)) ? intval($arr['limit']) : 75);
 
-		return pubtagblock($net_firehose,$site_firehose, $limit, $trending, $safemode);
+		return pubtagblock($public_stream_mode, $limit, $trending, $safemode);
 
 		return '';
 	}

@@ -55,9 +55,7 @@ class Site {
 		$mirror_frontpage	=	((x($_POST,'mirror_frontpage'))	? intval(trim($_POST['mirror_frontpage']))		: 0);
 		$directory_server	=	((x($_POST,'directory_server')) ? trim($_POST['directory_server']) : '');
 		$force_publish		=	((x($_POST,'publish_all'))		? True	: False);
-		$disable_discover_tab =	((x($_POST,'disable_discover_tab'))		? False	:	True);
-		$site_firehose      =   ((x($_POST,'site_firehose')) ? True : False);
-		$open_pubstream     =   ((x($_POST,'open_pubstream')) ? True : False);
+		$public_stream_mode =   ((x($_POST,'public_stream_mode')) ? intval($_POST['public_stream_mode']) : PUBLIC_STREAM_NONE);
 		$animations         =   ((x($_POST,'animations')) ? True : False);
 		$login_on_homepage	=	((x($_POST,'login_on_homepage'))		? True	:	False);
 		$enable_context_help = ((x($_POST,'enable_context_help'))		? True	:	False);
@@ -168,8 +166,7 @@ class Site {
 		set_config('system','account_abandon_days', $abandon_days);
 		set_config('system','register_text', $register_text);
 		set_config('system','publish_all', $force_publish);
-		set_config('system','disable_discover_tab', $disable_discover_tab);
-		set_config('system','site_firehose', $site_firehose);
+		set_config('system','public_stream_mode', $public_stream_mode);
 		set_config('system','open_pubstream', $open_pubstream);
 		set_config('system','force_queue_threshold', $force_queue);
 		if ($global_directory == '') {
@@ -288,15 +285,6 @@ class Site {
 			ACCESS_TIERED  => t("My site provides free public access and premium paid plans")
 		];
 
-		$discover_tab = get_config('system','disable_discover_tab');
-
-		// $disable public streams by default
-		if($discover_tab === false)
-			$discover_tab = 1;
-		// now invert the logic for the setting.
-		$discover_tab = (1 - intval($discover_tab));
-
-
 		$perm_roles = PermissionRoles::roles();
 		$default_role = get_config('system','default_permissions_role','social');
 
@@ -339,8 +327,13 @@ class Site {
 			'$block_public_dir'     => [ 'block_public_directory', t('Block directory from visitors'), get_config('system','block_public_directory',true), t('Only allow authenticated access to directory.') ],
 			'$verify_email'         => [ 'verify_email', t("Verify Email Addresses"), get_config('system','verify_email'), t("Check to verify email addresses used in account registration (recommended).") ],
 			'$force_publish'        => [ 'publish_all', t("Force publish in directory"), get_config('system','publish_all'), t("Check to force all profiles on this site to be listed in the site directory.") ],
-			'$disable_discover_tab'	=> [ 'disable_discover_tab', t('Public stream'), $discover_tab, t('Provide access to public content from other sites. Warning: this content is unmoderated.') ],
-			'$site_firehose'	    => [ 'site_firehose', t('Site only Public stream'), get_config('system','site_firehose'), t('Provide access to public content originating only from this site if Public stream is disabled.') ],
+
+			'$public_stream_mode'   => [ 'public_stream_mode', t('Public Stream'), intval(get_config('system','public_stream_mode',0)), t('Provide a Public Stream on your site. This content is unmoderated.'), [
+					0 => t('the Public stream is disabled'),
+					1 => t('the Public stream contains site conversations only'),
+					2 => t('the Public stream is enabled'),
+				]],
+			
 			'$open_pubstream'	    => [ 'open_pubstream', t('Allow anybody on the internet to access the Public stream'), get_config('system','open_pubstream',0), t('Default is to only allow viewing by site members. Warning: this content is unmoderated.') ],
 			'$show_like_counts'	    => [ 'show_like_counts', t('Show numbers of likes and dislikes in conversations'), get_config('system','show_like_counts',1), t('If disabled, the presence of likes and dislikes will be shown, but without totals.') ],
 			'$animations'           => [ 'animations', t('Permit animated profile photos'), get_config('system','animated_avatars',true), t('Changing this may take several days to work through the system') ],

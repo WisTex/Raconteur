@@ -20,7 +20,7 @@ use Zotlabs\Daemon\Run;
 define ( 'STD_VERSION',             '21.10.06' );
 define ( 'ZOT_REVISION',            '10.0' );
 
-define ( 'DB_UPDATE_VERSION',       1252 );
+define ( 'DB_UPDATE_VERSION',       1253 );
 
 define ( 'PLATFORM_NAME',           'zap' );
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
@@ -168,6 +168,11 @@ if (! defined('MAX_IMPORTED_FOLLOW')) {
  *
  */
 define ( 'MAX_IMAGE_LENGTH',        -1  );
+
+
+define ( 'PUBLIC_STREAM_NONE',       0  );
+define ( 'PUBLIC_STREAM_SITE',       1  );
+define ( 'PUBLIC_STREAM_FULL',       2  );
 
 
 /**
@@ -1828,14 +1833,9 @@ function can_view_public_stream() {
 		}
 	}
 
-	$site_firehose = ((intval(get_config('system','site_firehose',0))) ? true : false);
-	$net_firehose  = ((get_config('system','disable_discover_tab',1)) ? false : true);
-
-	if (! ($site_firehose || $net_firehose)) {
-		return false;
-	}
-
-	return true;
+	$public_stream_mode = intval(get_config('system','public_stream_mode',PUBLIC_STREAM_NONE));
+	return (($public_stream_mode) ? true : false);
+	
 }
 
 
