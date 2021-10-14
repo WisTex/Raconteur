@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 21.10.14\n"
+"Project-Id-Version: 21.10.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-14 04:55-0700\n"
+"POT-Creation-Date: 2021-10-14 16:51-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -507,7 +507,7 @@ msgstr ""
 
 #: Zotlabs/Lib/Libzotdir.php:112 Zotlabs/Lib/Libzotdir.php:113
 #: Zotlabs/Lib/Libzotdir.php:116 Zotlabs/Lib/Libzotdir.php:117
-#: Zotlabs/Module/Admin/Site.php:275 Zotlabs/Module/Api.php:107
+#: Zotlabs/Module/Admin/Site.php:276 Zotlabs/Module/Api.php:107
 #: Zotlabs/Module/Connedit.php:337 Zotlabs/Module/Connedit.php:727
 #: Zotlabs/Module/Connedit.php:801 Zotlabs/Module/Defperms.php:171
 #: Zotlabs/Module/Events.php:501 Zotlabs/Module/Events.php:502
@@ -532,7 +532,7 @@ msgstr ""
 
 #: Zotlabs/Lib/Libzotdir.php:112 Zotlabs/Lib/Libzotdir.php:113
 #: Zotlabs/Lib/Libzotdir.php:116 Zotlabs/Lib/Libzotdir.php:117
-#: Zotlabs/Module/Admin/Site.php:277 Zotlabs/Module/Api.php:106
+#: Zotlabs/Module/Admin/Site.php:278 Zotlabs/Module/Api.php:106
 #: Zotlabs/Module/Connedit.php:337 Zotlabs/Module/Connedit.php:727
 #: Zotlabs/Module/Connedit.php:801 Zotlabs/Module/Defperms.php:171
 #: Zotlabs/Module/Events.php:501 Zotlabs/Module/Events.php:502
@@ -1165,8 +1165,8 @@ msgstr ""
 msgid "Profiles"
 msgstr ""
 
-#: Zotlabs/Lib/Apps.php:367 Zotlabs/Module/Admin/Site.php:331
-#: Zotlabs/Module/Pubstream.php:87 Zotlabs/Widget/Notifications.php:128
+#: Zotlabs/Lib/Apps.php:367 Zotlabs/Module/Pubstream.php:87
+#: Zotlabs/Widget/Notifications.php:128
 msgid "Public Stream"
 msgstr ""
 
@@ -1625,7 +1625,7 @@ msgstr ""
 #: Zotlabs/Module/Admin/Channels.php:154 Zotlabs/Module/Admin/Accounts.php:168
 #: Zotlabs/Module/Admin/Addons.php:439 Zotlabs/Module/Admin/Profs.php:178
 #: Zotlabs/Module/Admin/Themes.php:158 Zotlabs/Module/Admin/Security.php:165
-#: Zotlabs/Module/Admin/Site.php:300 Zotlabs/Module/Cal.php:350
+#: Zotlabs/Module/Admin/Site.php:301 Zotlabs/Module/Cal.php:350
 #: Zotlabs/Module/Expire.php:46 Zotlabs/Module/Connedit.php:833
 #: Zotlabs/Module/Appman.php:144 Zotlabs/Module/Defperms.php:239
 #: Zotlabs/Module/Events.php:524 Zotlabs/Module/Email_validation.php:40
@@ -1870,7 +1870,7 @@ msgstr ""
 #: Zotlabs/Module/Admin/Accounts.php:166 Zotlabs/Module/Admin/Addons.php:339
 #: Zotlabs/Module/Admin/Addons.php:437 Zotlabs/Module/Admin/Themes.php:122
 #: Zotlabs/Module/Admin/Themes.php:156 Zotlabs/Module/Admin/Security.php:131
-#: Zotlabs/Module/Admin/Site.php:298 Zotlabs/Module/Admin.php:175
+#: Zotlabs/Module/Admin/Site.php:299 Zotlabs/Module/Admin.php:175
 msgid "Administration"
 msgstr ""
 
@@ -2716,11 +2716,11 @@ msgid ""
 "Prevent access to search content unless you are currently authenticated."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Security.php:136 Zotlabs/Module/Admin/Site.php:327
+#: Zotlabs/Module/Admin/Security.php:136 Zotlabs/Module/Admin/Site.php:328
 msgid "Block directory from visitors"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Security.php:136 Zotlabs/Module/Admin/Site.php:327
+#: Zotlabs/Module/Admin/Security.php:136 Zotlabs/Module/Admin/Site.php:328
 msgid "Only allow authenticated access to directory."
 msgstr ""
 
@@ -2848,462 +2848,467 @@ msgstr ""
 msgid "Block embedded HTML from these domains"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:186
+#: Zotlabs/Module/Admin/Site.php:187
 msgid "Site settings updated."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:213 include/text.php:3391
+#: Zotlabs/Module/Admin/Site.php:214 include/text.php:3391
 #: view/theme/redbasic/php/config.php:15
 msgid "Default"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:224 Zotlabs/Module/Settings/Display.php:133
+#: Zotlabs/Module/Admin/Site.php:225 Zotlabs/Module/Settings/Display.php:133
 #, php-format
 msgid "%s - (Incompatible)"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:231
+#: Zotlabs/Module/Admin/Site.php:232
 msgid "mobile"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:233
+#: Zotlabs/Module/Admin/Site.php:234
 msgid "experimental"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:235
+#: Zotlabs/Module/Admin/Site.php:236
 msgid "unsupported"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:276
+#: Zotlabs/Module/Admin/Site.php:277
 msgid "Yes - with approval"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:282
+#: Zotlabs/Module/Admin/Site.php:283
 msgid "My site is not a public server"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:283
+#: Zotlabs/Module/Admin/Site.php:284
 msgid "My site provides free public access"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:284
+#: Zotlabs/Module/Admin/Site.php:285
 msgid "My site provides paid public access"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:285
+#: Zotlabs/Module/Admin/Site.php:286
 msgid "My site provides free public access and premium paid plans"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:291
+#: Zotlabs/Module/Admin/Site.php:292
 msgid "Default permission role for new accounts"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:291
+#: Zotlabs/Module/Admin/Site.php:292
 msgid ""
 "This role will be used for the first channel created after registration."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:299 Zotlabs/Widget/Admin.php:22
+#: Zotlabs/Module/Admin/Site.php:300 Zotlabs/Widget/Admin.php:22
 msgid "Site"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:301
+#: Zotlabs/Module/Admin/Site.php:302
 msgid "Site Configuration"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:302 Zotlabs/Module/Register.php:288
+#: Zotlabs/Module/Admin/Site.php:303 Zotlabs/Module/Register.php:288
 msgid "Registration"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:303
+#: Zotlabs/Module/Admin/Site.php:304
 msgid "File upload"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:304
+#: Zotlabs/Module/Admin/Site.php:305
 msgid "Policies"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:305 Zotlabs/Widget/Findpeople.php:23
+#: Zotlabs/Module/Admin/Site.php:306 Zotlabs/Widget/Findpeople.php:23
 msgid "Advanced"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:307
+#: Zotlabs/Module/Admin/Site.php:308
 msgid "Site name"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:308
+#: Zotlabs/Module/Admin/Site.php:309
 msgid "Administrator Information"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:308
+#: Zotlabs/Module/Admin/Site.php:309
 msgid ""
 "Contact information for site administrators.  Displayed on siteinfo page.  "
 "BBCode may be used here."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:309 Zotlabs/Module/Siteinfo.php:33
+#: Zotlabs/Module/Admin/Site.php:310 Zotlabs/Module/Siteinfo.php:33
 msgid "Site Information"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:309
+#: Zotlabs/Module/Admin/Site.php:310
 msgid ""
 "Publicly visible description of this site.  Displayed on siteinfo page.  "
 "BBCode may be used here."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:310
+#: Zotlabs/Module/Admin/Site.php:311
 msgid "System language"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:311
+#: Zotlabs/Module/Admin/Site.php:312
 msgid "System theme"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:311
+#: Zotlabs/Module/Admin/Site.php:312
 msgid ""
 "Default system theme - may be over-ridden by user profiles - <a href='#' "
 "id='cnftheme'>change theme settings</a>"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:314
+#: Zotlabs/Module/Admin/Site.php:315
 msgid "ActivityPub protocol"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:314
+#: Zotlabs/Module/Admin/Site.php:315
 msgid "Provides access to software supporting the ActivityPub protocol."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:315
+#: Zotlabs/Module/Admin/Site.php:316
 msgid "Maximum image size"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:315
+#: Zotlabs/Module/Admin/Site.php:316
 msgid ""
 "Maximum size in bytes of uploaded images. Default is 0, which means no "
 "limits."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:316
+#: Zotlabs/Module/Admin/Site.php:317
 msgid "Cache all public images"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:316
+#: Zotlabs/Module/Admin/Site.php:317
 msgid "If disabled, proxy non-SSL images, but do not store locally"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:317
+#: Zotlabs/Module/Admin/Site.php:318
 msgid "Does this site allow new member registration?"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:318
+#: Zotlabs/Module/Admin/Site.php:319
 msgid "Invitation only"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:318
+#: Zotlabs/Module/Admin/Site.php:319
 msgid ""
 "Only allow new member registrations with an invitation code. New member "
 "registration must be allowed for this to work."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:320
+#: Zotlabs/Module/Admin/Site.php:321
 msgid "Minimum age"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:320
+#: Zotlabs/Module/Admin/Site.php:321
 msgid "Minimum age (in years) for who may register on this site."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:321
+#: Zotlabs/Module/Admin/Site.php:322
 msgid "Which best describes the types of account offered by this hub?"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:321
+#: Zotlabs/Module/Admin/Site.php:322
 msgid ""
 "If a public server policy is selected, this information may be displayed on "
 "the public server site list."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:322
+#: Zotlabs/Module/Admin/Site.php:323
 msgid "Register text"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:322
+#: Zotlabs/Module/Admin/Site.php:323
 msgid "Will be displayed prominently on the registration page."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:324
+#: Zotlabs/Module/Admin/Site.php:325
 msgid "Site homepage to show visitors (default: login box)"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:324
+#: Zotlabs/Module/Admin/Site.php:325
 msgid ""
 "example: 'public' to show public stream, 'page/sys/home' to show a system "
 "webpage called 'home' or 'include:home.html' to include a file."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:325
+#: Zotlabs/Module/Admin/Site.php:326
 msgid "Preserve site homepage URL"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:325
+#: Zotlabs/Module/Admin/Site.php:326
 msgid ""
 "Present the site homepage in a frame at the original location instead of "
 "redirecting"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:326
+#: Zotlabs/Module/Admin/Site.php:327
 msgid "Accounts abandoned after x days"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:326
+#: Zotlabs/Module/Admin/Site.php:327
 msgid ""
 "Will not waste system resources polling external sites for abandonded "
 "accounts. Enter 0 for no time limit."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:328
+#: Zotlabs/Module/Admin/Site.php:329
 msgid "Verify Email Addresses"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:328
+#: Zotlabs/Module/Admin/Site.php:329
 msgid ""
 "Check to verify email addresses used in account registration (recommended)."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:329
+#: Zotlabs/Module/Admin/Site.php:330
 msgid "Force publish in directory"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:329
+#: Zotlabs/Module/Admin/Site.php:330
 msgid ""
 "Check to force all profiles on this site to be listed in the site directory."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:331
-msgid "Provide a Public Stream on your site. This content is unmoderated."
+#: Zotlabs/Module/Admin/Site.php:332
+msgid "Public stream"
 msgstr ""
 
 #: Zotlabs/Module/Admin/Site.php:332
-msgid "the Public stream is disabled"
+msgid "Provide a Public stream on your site. This content is unmoderated."
 msgstr ""
 
 #: Zotlabs/Module/Admin/Site.php:333
-msgid "the Public stream contains site conversations only"
+msgid "the Public stream is disabled"
 msgstr ""
 
 #: Zotlabs/Module/Admin/Site.php:334
-msgid "the Public stream is enabled"
+msgid "the Public stream contains public conversations from this site only"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:337
+#: Zotlabs/Module/Admin/Site.php:335
+msgid ""
+"the Public stream contains public conversations from anywhere on the internet"
+msgstr ""
+
+#: Zotlabs/Module/Admin/Site.php:338
 msgid "Allow anybody on the internet to access the Public stream"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:337
+#: Zotlabs/Module/Admin/Site.php:338
 msgid ""
 "Default is to only allow viewing by site members. Warning: this content is "
 "unmoderated."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:338
+#: Zotlabs/Module/Admin/Site.php:339
 msgid "Show numbers of likes and dislikes in conversations"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:338
+#: Zotlabs/Module/Admin/Site.php:339
 msgid ""
 "If disabled, the presence of likes and dislikes will be shown, but without "
 "totals."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:339
+#: Zotlabs/Module/Admin/Site.php:340
 msgid "Permit animated profile photos"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:339
+#: Zotlabs/Module/Admin/Site.php:340
 msgid "Changing this may take several days to work through the system"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:340
+#: Zotlabs/Module/Admin/Site.php:341
 msgid "Only import Public stream posts with this text"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:340 Zotlabs/Module/Admin/Site.php:341
+#: Zotlabs/Module/Admin/Site.php:341 Zotlabs/Module/Admin/Site.php:342
 msgid ""
 "words one per line or #tags or /patterns/ or lang=xx, leave blank to import "
 "all posts"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:341
+#: Zotlabs/Module/Admin/Site.php:342
 msgid "Do not import Public stream posts with this text"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:342
+#: Zotlabs/Module/Admin/Site.php:343
 msgid "Maximum number of imported friends of friends"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:342
+#: Zotlabs/Module/Admin/Site.php:343
 msgid ""
 "Warning: higher numbers will improve the quality of friend suggestions and "
 "directory results but can exponentially increase resource usage"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:343
+#: Zotlabs/Module/Admin/Site.php:344
 msgid "Login on Homepage"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:343
+#: Zotlabs/Module/Admin/Site.php:344
 msgid ""
 "Present a login box to visitors on the home page if no other content has "
 "been configured."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:344
+#: Zotlabs/Module/Admin/Site.php:345
 msgid "Enable context help"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:344
+#: Zotlabs/Module/Admin/Site.php:345
 msgid ""
 "Display contextual help for the current page when the help button is pressed."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:345
+#: Zotlabs/Module/Admin/Site.php:346
 msgid "Reply-to email address for system generated email."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:346
+#: Zotlabs/Module/Admin/Site.php:347
 msgid "Sender (From) email address for system generated email."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:347
+#: Zotlabs/Module/Admin/Site.php:348
 msgid "Display name of email sender for system generated email."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:348
+#: Zotlabs/Module/Admin/Site.php:349
 msgid "Directory Server URL"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:348
+#: Zotlabs/Module/Admin/Site.php:349
 msgid "Default directory server"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:349
+#: Zotlabs/Module/Admin/Site.php:350
 msgid "Proxy user"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:350
+#: Zotlabs/Module/Admin/Site.php:351
 msgid "Proxy URL"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:351
+#: Zotlabs/Module/Admin/Site.php:352
 msgid "Network fetch timeout"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:351 Zotlabs/Module/Admin/Site.php:352
+#: Zotlabs/Module/Admin/Site.php:352 Zotlabs/Module/Admin/Site.php:353
 msgid "Value is in seconds. Set to 0 for unlimited (not recommended)."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:352
+#: Zotlabs/Module/Admin/Site.php:353
 msgid "Network post timeout"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:353
+#: Zotlabs/Module/Admin/Site.php:354
 msgid "Delivery interval"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:353
+#: Zotlabs/Module/Admin/Site.php:354
 msgid ""
 "Delay background delivery processes by this many seconds to reduce system "
 "load. Recommend: 4-5 for shared hosts, 2-3 for virtual private servers. 0-1 "
 "for large dedicated servers."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:354
+#: Zotlabs/Module/Admin/Site.php:355
 msgid "Deliveries per process"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:354
+#: Zotlabs/Module/Admin/Site.php:355
 msgid ""
 "Number of deliveries to attempt in a single operating system process. Adjust "
 "if necessary to tune system performance. Recommend: 1-5."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:355
+#: Zotlabs/Module/Admin/Site.php:356
 msgid "Queue Threshold"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:355
+#: Zotlabs/Module/Admin/Site.php:356
 msgid ""
 "Always defer immediate delivery if queue contains more than this number of "
 "entries."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:356
+#: Zotlabs/Module/Admin/Site.php:357
 msgid "Poll interval"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:356
+#: Zotlabs/Module/Admin/Site.php:357
 msgid ""
 "Delay background polling processes by this many seconds to reduce system "
 "load. If 0, use delivery interval."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:357
+#: Zotlabs/Module/Admin/Site.php:358
 msgid "Path to ImageMagick convert program"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:357
+#: Zotlabs/Module/Admin/Site.php:358
 msgid ""
 "If set, use this program to generate photo thumbnails for huge images ( > "
 "4000 pixels in either dimension), otherwise memory exhaustion may occur. "
 "Example: /usr/bin/convert"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:358
+#: Zotlabs/Module/Admin/Site.php:359
 msgid "Maximum Load Average"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:358
+#: Zotlabs/Module/Admin/Site.php:359
 msgid ""
 "Maximum system load before delivery and poll processes are deferred - "
 "default 50."
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:359
+#: Zotlabs/Module/Admin/Site.php:360
 msgid "Expiration period in days for imported streams and cached images"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:359
+#: Zotlabs/Module/Admin/Site.php:360
 msgid "0 for no expiration of imported content"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:360
+#: Zotlabs/Module/Admin/Site.php:361
 msgid ""
 "Do not expire any posts which have comments less than this many days ago"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:361
+#: Zotlabs/Module/Admin/Site.php:362
 msgid ""
 "Public servers: Optional landing (marketing) webpage for new registrants"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:361
+#: Zotlabs/Module/Admin/Site.php:362
 #, php-format
 msgid "Create this page first. Default is %s/register"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:362
+#: Zotlabs/Module/Admin/Site.php:363
 msgid "Page to display after creating a new channel"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:362
+#: Zotlabs/Module/Admin/Site.php:363
 msgid "Default: profiles"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:363
+#: Zotlabs/Module/Admin/Site.php:364
 msgid "Site location"
 msgstr ""
 
-#: Zotlabs/Module/Admin/Site.php:363
+#: Zotlabs/Module/Admin/Site.php:364
 msgid "Region or country - shared with other sites"
 msgstr ""
 
