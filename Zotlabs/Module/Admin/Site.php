@@ -55,6 +55,7 @@ class Site {
 		$mirror_frontpage	=	((x($_POST,'mirror_frontpage'))	? intval(trim($_POST['mirror_frontpage']))		: 0);
 		$directory_server	=	((x($_POST,'directory_server')) ? trim($_POST['directory_server']) : '');
 		$force_publish		=	((x($_POST,'publish_all'))		? True	: False);
+		$open_pubstream     =   ((x($_POST,'open_pubstream'))   ? True  : False);
 		$public_stream_mode =   ((x($_POST,'public_stream_mode')) ? intval($_POST['public_stream_mode']) : PUBLIC_STREAM_NONE);
 		$animations         =   ((x($_POST,'animations')) ? True : False);
 		$login_on_homepage	=	((x($_POST,'login_on_homepage'))		? True	:	False);
@@ -328,10 +329,10 @@ class Site {
 			'$verify_email'         => [ 'verify_email', t("Verify Email Addresses"), get_config('system','verify_email'), t("Check to verify email addresses used in account registration (recommended).") ],
 			'$force_publish'        => [ 'publish_all', t("Force publish in directory"), get_config('system','publish_all'), t("Check to force all profiles on this site to be listed in the site directory.") ],
 
-			'$public_stream_mode'   => [ 'public_stream_mode', t('Public Stream'), intval(get_config('system','public_stream_mode',0)), t('Provide a Public Stream on your site. This content is unmoderated.'), [
+			'$public_stream_mode'   => [ 'public_stream_mode', t('Public stream'), intval(get_config('system','public_stream_mode',0)), t('Provide a Public stream on your site. This content is unmoderated.'), [
 					0 => t('the Public stream is disabled'),
-					1 => t('the Public stream contains site conversations only'),
-					2 => t('the Public stream is enabled'),
+					1 => t('the Public stream contains public conversations from this site only'),
+					2 => t('the Public stream contains public conversations from anywhere on the internet'),
 				]],
 			
 			'$open_pubstream'	    => [ 'open_pubstream', t('Allow anybody on the internet to access the Public stream'), get_config('system','open_pubstream',0), t('Default is to only allow viewing by site members. Warning: this content is unmoderated.') ],
