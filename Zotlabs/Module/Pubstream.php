@@ -21,7 +21,7 @@ class Pubstream extends Controller {
 			return login();
 		}
 
-		if(! intval(get_config('system','open_pubstream',1))) {
+		if(! intval(get_config('system','open_pubstream',0))) {
 			if(! local_channel()) {
 				return login();
 			}

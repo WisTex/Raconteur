@@ -1827,7 +1827,7 @@ function can_view_public_stream() {
 		return false;
 	}
 
-	if (! (intval(get_config('system','open_pubstream',1)))) {
+	if (! (intval(get_config('system','open_pubstream',0)))) {
 		if (! local_channel()) {
 			return false;
 		}

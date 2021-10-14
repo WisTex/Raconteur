@@ -11,7 +11,7 @@ class Pubtagcloud {
             return EMPTY_STR;
         }
 
-        if (! intval(get_config('system','open_pubstream',1))) {
+        if (! intval(get_config('system','open_pubstream',0))) {
             if (! local_channel()) {
                 return EMPTY_STR;
             }
