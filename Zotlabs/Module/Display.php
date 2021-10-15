@@ -16,9 +16,17 @@ require_once('include/acl_selectors.php');
 
 class Display extends Controller {
 
-	function get($update = 0, $load = false) {
 
-		$noscript_content = (get_config('system', 'noscript_content', '1') && (! $update));
+	// State passed in from the Update module.
+	
+	public $profile_uid = 0;
+	public $loading     = 0;
+	public $updating    = 0;
+
+
+	function get() {
+
+		$noscript_content = (get_config('system', 'noscript_content', '1') && (! $this->updating));
 
 		$module_format = 'html';
 
@@ -28,7 +36,7 @@ class Display extends Controller {
 				$module_format = 'html';			
 		}
 
-		if($load)
+		if($this->loading)
 			$_SESSION['loadtime_display'] = datetime_convert();
 	
 		if(observer_prohibited()) {
@@ -55,7 +63,7 @@ class Display extends Controller {
 		$observer_is_owner = false;
 		$updateable = false;
 
-		if(local_channel() && (! $update)) {
+		if(local_channel() && (! $this->updating)) {
 	
 			$channel = \App::get_channel();
 
@@ -189,17 +197,17 @@ class Display extends Controller {
 		$static = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
 	
 	
-		$simple_update = (($update) ? " AND item_unseen = 1 " : '');
+		$simple_update = (($this->updating) ? " AND item_unseen = 1 " : '');
 			
-		if($update && $_SESSION['loadtime_display'])
+		if($this->updating && $_SESSION['loadtime_display'])
 			$simple_update = " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime_display']) . "' ";
-		if($load)
+		if($this->loading)
 			$simple_update = '';
 	
 		if($static && $simple_update)
 			$simple_update .= " and item_thread_top = 0 and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
 	
-		if((! $update) && (! $load)) {
+		if((! $this->updating) && (! $this->loading)) {
 
 			$static  = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 1);
 
@@ -263,7 +271,7 @@ class Display extends Controller {
 
 		$sql_extra = ((local_channel()) ? EMPTY_STR : item_permissions_sql(0, $observer_hash));
 
-		if($noscript_content || $load) {
+		if($noscript_content || $this->loading) {
 
 			$r = null;
 
@@ -287,7 +295,7 @@ class Display extends Controller {
 				);
 			}
 		}
-		elseif ($update && !$load) {
+		elseif ($this->updating && !$this->loading) {
 			$r = null;
 
 			require_once('include/channel.php');
@@ -415,13 +423,13 @@ class Display extends Controller {
 			
 		case 'html':
 
-			if ($update) {
-				$o .= conversation($items, 'display', $update, 'client');
+			if ($this->updating) {
+				$o .= conversation($items, 'display', $this->updating, 'client');
 			}
 			else {
 				$o .= '<noscript>';
 				if($noscript_content) {
-					$o .= conversation($items, 'display', $update, 'traditional');
+					$o .= conversation($items, 'display', $this->updating, 'traditional');
 				}
 				else {
 					$o .= '<div class="section-content-warning-wrapper">' . t('You must enable javascript for your browser to be able to view this content.') . '</div>';
@@ -430,7 +438,7 @@ class Display extends Controller {
 
 				App::$page['title'] = (($items[0]['title']) ? $items[0]['title'] . " - " . App::$page['title'] : App::$page['title']);
 
-				$o .= conversation($items, 'display', $update, 'client');
+				$o .= conversation($items, 'display', $this->updating, 'client');
 			} 
 
 			break;
@@ -488,7 +496,7 @@ class Display extends Controller {
 
 		$o .= '<div id="content-complete"></div>';
 
-		if((($update && $load) || $noscript_content) && (! $items)) {
+		if((($this->updating && $this->loading) || $noscript_content) && (! $items)) {
 			
 			$r = q("SELECT id, item_deleted FROM item WHERE mid = '%s' LIMIT 1",
 				dbesc($item_hash)
