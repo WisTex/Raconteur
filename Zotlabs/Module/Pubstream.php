@@ -12,15 +12,7 @@ require_once('include/acl_selectors.php');
 
 class Pubstream extends Controller {
 
-	// State passed in from the Update module.
-	
-	public $profile_uid = 0;
-	public $loading     = 0;
-	public $updating    = 0;
-
-
-
-	function get() {
+	function get($update = 0, $load = false) {
 
 		$o = EMPTY_STR;
 		$items = [];
@@ -54,7 +46,7 @@ class Pubstream extends Controller {
 		$net    = ((array_key_exists('net',$_REQUEST))    ? escape_tags($_REQUEST['net']) : '');
 
 
-		if(local_channel() && (! $this->updating)) {
+		if(local_channel() && (! $update)) {
 	
 			$channel = App::get_channel();
 
@@ -90,7 +82,7 @@ class Pubstream extends Controller {
 			$o .= '</div>';
 		}
 	
-		if(! $this->updating && !$this->loading) {
+		if(! $update && !$load) {
 
 			nav_set_selected(t('Public Stream'));
 
@@ -149,7 +141,7 @@ class Pubstream extends Controller {
 			));
 		}
 	
-		if($this->updating && ! $this->loading) {
+		if($update && ! $load) {
 			// only setup pagination on initial page view
 			$pager_sql = '';
 		}
@@ -191,20 +183,20 @@ class Pubstream extends Controller {
 		
 		$simple_update = ((isset($_SESSION['loadtime_pubstream']) && $_SESSION['loadtime_pubstream']) ? " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime_pubstream']) . "' " : '');
 	
-		if ($this->loading) {
+		if ($load) {
 			$simple_update = '';
 		}
 
 		if($static && $simple_update)
 			$simple_update .= " and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
 
-		//logger('update: ' . $this->updating . ' load: ' . $this->loading);
+		//logger('update: ' . $update . ' load: ' . $load);
 
-		if($this->updating) {
+		if($update) {
 	
 			$ordering = "commented";
 	
-			if($this->loading) {
+			if($load) {
 				if($mid) {
 					$r = q("SELECT parent AS item_id FROM item
 						left join abook on item.author_xchan = abook.abook_xchan 
@@ -227,7 +219,7 @@ class Pubstream extends Controller {
 					);
 				}
 			}
-			elseif($this->updating) {
+			elseif($update) {
 				if($mid) {
 					$r = q("SELECT parent AS item_id FROM item
 						left join abook on item.author_xchan = abook.abook_xchan
@@ -293,12 +285,12 @@ class Pubstream extends Controller {
 		// fake it
 		$mode = ('pubstream');
 	
-		$o .= conversation($items,$mode,$this->updating,$page_mode);
+		$o .= conversation($items,$mode,$update,$page_mode);
 
 		if($mid)
 			$o .= '<div id="content-complete"></div>';
 	
-		if(($items) && (! $this->updating))
+		if(($items) && (! $update))
 			$o .= alt_pager(count($items));
 
 		return $o;

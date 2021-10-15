@@ -13,14 +13,6 @@ require_once('include/acl_selectors.php');
 
 class Hq extends Controller {
 
-
-	// State passed in from the Update module.
-	
-	public $profile_uid = 0;
-	public $loading     = 0;
-	public $updating    = 0;
-
-
 	function init() {
 		if(! local_channel())
 			return;
@@ -44,12 +36,12 @@ class Hq extends Controller {
 
 	}
 
-	function get() {
+	function get($update = 0, $load = false) {
 
 		if(!local_channel())
 			return;
 
-		if($this->loading)
+		if($load)
 			$_SESSION['loadtime_hq'] = datetime_convert();
 	
 		if(argc() > 1 && argv(1) !== 'load') {
@@ -96,9 +88,9 @@ class Hq extends Controller {
 		
 			$static = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
 
-			$simple_update = (($this->updating) ? " AND item_unseen = 1 " : '');
+			$simple_update = (($update) ? " AND item_unseen = 1 " : '');
 				
-			if($this->updating && $_SESSION['loadtime_hq'])
+			if($update && $_SESSION['loadtime_hq'])
 				$simple_update = " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime_hq']) . "' ";
 		
 			if($static && $simple_update)
@@ -111,7 +103,7 @@ class Hq extends Controller {
 
 		}
 	
-		if(! $this->updating) {
+		if(! $update) {
 			$channel = App::get_channel();
 
 			$channel_acl = [
@@ -151,7 +143,7 @@ class Hq extends Controller {
 
 		}
 
-		if(! $this->updating && ! $this->loading) {
+		if(! $update && ! $load) {
 
 			nav_set_selected('HQ');
 
@@ -208,7 +200,7 @@ class Hq extends Controller {
 
 		$updateable = false;
 
-		if($this->loading && $target_item) {
+		if($load && $target_item) {
 			$r = null;
 
 			$r = q("SELECT item.id AS item_id FROM item
@@ -237,7 +229,7 @@ class Hq extends Controller {
 				);
 			}
 		}
-		elseif($this->updating && $target_item) {
+		elseif($update && $target_item) {
 			$r = null;
 
 			$r = q("SELECT item.parent AS item_id FROM item
@@ -288,7 +280,7 @@ class Hq extends Controller {
 			$items = [];
 		}
 
-		$o .= conversation($items, 'hq', $this->updating, 'client');
+		$o .= conversation($items, 'hq', $update, 'client');
 
 		if($updateable) {
 			$x = q("UPDATE item SET item_unseen = 0 WHERE item_unseen = 1 AND uid = %d AND parent = %d ",

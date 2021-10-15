@@ -113,7 +113,7 @@ class Home extends Controller {
 	}
 	
 	
-	function get() {
+	function get($update = 0, $load = false) {
 	
 		$o = EMPTY_STR;
 	
