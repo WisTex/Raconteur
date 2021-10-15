@@ -157,6 +157,7 @@ class HTTPSig {
 		$signed_data = rtrim($signed_data,"\n");
 
 		$algorithm = null;
+		
 		if ($sig_block['algorithm'] === 'rsa-sha256') {
 			$algorithm = 'sha256';
 		}
@@ -171,6 +172,18 @@ class HTTPSig {
 		$result['signer'] = $sig_block['keyId'];
 
 		$fkey = self::get_key($key,$keytype,$result['signer']);
+
+		if ($sig_block['algorithm'] === 'hs2019') {
+			if (isset($fkey['algorithm'])) {
+				if (strpos($fkey['algorithm'],'rsa-sha256') !== false) {
+					$algorithm= 'sha256';
+				}
+				if (strpos($fkey['algorithm'],'rsa-sha512') !== false) {
+					$algorithm= 'sha512';
+				}
+			}
+		}
+				
 
 		if (! ($fkey && $fkey['public_key'])) {
 			return $result;
@@ -303,7 +316,7 @@ class HTTPSig {
 			}
 
 			if ($best && $best['xchan_pubkey']) {
-				return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'hubloc' => $best ];
+				return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'algorithm' => get_xconfig($best['xchan_hash'],'system','signing_algorithm'), 'hubloc' => $best ];
 			}
 		}
 
@@ -315,7 +328,10 @@ class HTTPSig {
 			if (array_key_exists('publicKey',$r) && array_key_exists('publicKeyPem',$r['publicKey']) && array_key_exists('id',$r['publicKey'])) {
 				if ($r['publicKey']['id'] === $id || $r['id'] === $id) {
 					$portable_id = ((array_key_exists('owner',$r['publicKey'])) ? $r['publicKey']['owner'] : EMPTY_STR);
-					return [ 'public_key' => self::convertKey($r['publicKey']['publicKeyPem']), 'portable_id' => $portable_id, 'hubloc' => [] ];
+					if (isset($r['publicKey']['signingAlgorithm'])) {
+						set_xconfig($portable_id,'system','signing_algorithm',$r['publicKey']['signingAlgorithm']);
+					}
+					return [ 'public_key' => self::convertKey($r['publicKey']['publicKeyPem']), 'portable_id' => $portable_id, 'algorithm' => ((isset($r['publicKey']['signingAlgorithm'])) ? $r['publicKey']['signingAlgorithm'] : EMPTY_STR), 'hubloc' => [] ];
 				}
 			}
 		}
@@ -340,12 +356,12 @@ class HTTPSig {
 			}
 
 			if ($best && $best['xchan_pubkey']) {
-				return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'hubloc' => $best ];
+				return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'algorithm' => get_xconfig($best['xchan_hash'],'system','signing_algorithm'), 'hubloc' => $best ];
 			}
 		}
 
 		$wf = Webfinger::exec($id);
-		$key = [ 'portable_id' => '', 'public_key' => '', 'hubloc' => [] ];
+		$key = [ 'portable_id' => '', 'public_key' => '', 'algorithm' => '', 'hubloc' => [] ];
 
 		if ($wf) {
 		 	if (array_key_exists('properties',$wf) && array_key_exists('https://w3id.org/security/v1#publicKeyPem',$wf['properties'])) {
@@ -380,12 +396,12 @@ class HTTPSig {
 			}
 
 			if ($best && $best['xchan_pubkey']) {
-				return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'hubloc' => $best ];
+				return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] ,  'algorithm' => get_xconfig($best['xchan_hash'],'system','signing_algorithm'), 'hubloc' => $best ];
 			}
 		}
 
 		$wf = Webfinger::exec($id);
-		$key = [ 'portable_id' => '', 'public_key' => '', 'hubloc' => [] ];
+		$key = [ 'portable_id' => '', 'public_key' => '', 'algorithm' => '', 'hubloc' => [] ];
 
 		if ($wf) {
 		 	if (array_key_exists('properties',$wf) && array_key_exists('https://w3id.org/security/v1#publicKeyPem',$wf['properties'])) {

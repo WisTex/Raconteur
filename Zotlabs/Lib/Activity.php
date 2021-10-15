@@ -1642,9 +1642,10 @@ class Activity {
 				
 				$ret['discoverable'] = ((1 - intval($p['xchan_hidden'])) ? true : false);				
 				$ret['publicKey'] = [
-					'id'           => $p['xchan_url'] . '?operation=getkey',
-					'owner'        => $p['xchan_url'],
-					'publicKeyPem' => $p['xchan_pubkey']
+					'id'                 => $p['xchan_url'] . '?operation=getkey',
+					'owner'              => $p['xchan_url'],
+					'signatureAlgorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+					'publicKeyPem'       => $p['xchan_pubkey']
 				];
 
 				$ret['manuallyApprovesFollowers'] = (($auto_follow) ? false : true);
