@@ -12,7 +12,15 @@ require_once('include/acl_selectors.php');
 
 class Pubstream extends Controller {
 
-	function get($update = 0, $load = false) {
+	// State passed in from the Update module.
+	
+	public $profile_uid = 0;
+	public $loading     = 0;
+	public $updating    = 0;
+
+
+
+	function get() {
 
 		$o = EMPTY_STR;
 		$items = [];
@@ -21,23 +29,18 @@ class Pubstream extends Controller {
 			return login();
 		}
 
-		if(! intval(get_config('system','open_pubstream',1))) {
-			if(! get_observer_hash()) {
+		if(! intval(get_config('system','open_pubstream',0))) {
+			if(! local_channel()) {
 				return login();
 			}
 		}
 
-		$site_firehose = ((intval(get_config('system','site_firehose',0))) ? true : false);
-		$net_firehose  = ((get_config('system','disable_discover_tab',1)) ? false : true);
+		$public_stream_mode = intval(get_config('system','public_stream_mode', PUBLIC_STREAM_NONE));
 
-		if(! ($site_firehose || $net_firehose)) {
+		if (! $public_stream_mode) {
 			return '';
 		}
-
-		if($net_firehose) {
-			$site_firehose = false;
-		}
-
+		
 		$mid = ((x($_REQUEST,'mid')) ? $_REQUEST['mid'] : '');
 		$hashtags = ((x($_REQUEST,'tag')) ? $_REQUEST['tag'] : '');
 		$decoded = false;
@@ -51,7 +54,7 @@ class Pubstream extends Controller {
 		$net    = ((array_key_exists('net',$_REQUEST))    ? escape_tags($_REQUEST['net']) : '');
 
 
-		if(local_channel() && (! $update)) {
+		if(local_channel() && (! $this->updating)) {
 	
 			$channel = App::get_channel();
 
@@ -87,7 +90,7 @@ class Pubstream extends Controller {
 			$o .= '</div>';
 		}
 	
-		if(! $update && !$load) {
+		if(! $this->updating && !$this->loading) {
 
 			nav_set_selected(t('Public Stream'));
 
@@ -146,7 +149,7 @@ class Pubstream extends Controller {
 			));
 		}
 	
-		if($update && ! $load) {
+		if($this->updating && ! $this->loading) {
 			// only setup pagination on initial page view
 			$pager_sql = '';
 		}
@@ -159,7 +162,7 @@ class Pubstream extends Controller {
 		require_once('include/channel.php');
 		require_once('include/security.php');
 	
-		if($site_firehose) {
+		if ($public_stream_mode === PUBLIC_STREAM_SITE) {
 			$uids = " and item_private = 0  and item_wall = 1 ";
 		}
 		else {
@@ -188,20 +191,20 @@ class Pubstream extends Controller {
 		
 		$simple_update = ((isset($_SESSION['loadtime_pubstream']) && $_SESSION['loadtime_pubstream']) ? " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime_pubstream']) . "' " : '');
 	
-		if ($load) {
+		if ($this->loading) {
 			$simple_update = '';
 		}
 
 		if($static && $simple_update)
 			$simple_update .= " and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
 
-		//logger('update: ' . $update . ' load: ' . $load);
+		//logger('update: ' . $this->updating . ' load: ' . $this->loading);
 
-		if($update) {
+		if($this->updating) {
 	
 			$ordering = "commented";
 	
-			if($load) {
+			if($this->loading) {
 				if($mid) {
 					$r = q("SELECT parent AS item_id FROM item
 						left join abook on item.author_xchan = abook.abook_xchan 
@@ -224,7 +227,7 @@ class Pubstream extends Controller {
 					);
 				}
 			}
-			elseif($update) {
+			elseif($this->updating) {
 				if($mid) {
 					$r = q("SELECT parent AS item_id FROM item
 						left join abook on item.author_xchan = abook.abook_xchan
@@ -290,12 +293,12 @@ class Pubstream extends Controller {
 		// fake it
 		$mode = ('pubstream');
 	
-		$o .= conversation($items,$mode,$update,$page_mode);
+		$o .= conversation($items,$mode,$this->updating,$page_mode);
 
 		if($mid)
 			$o .= '<div id="content-complete"></div>';
 	
-		if(($items) && (! $update))
+		if(($items) && (! $this->updating))
 			$o .= alt_pager(count($items));
 
 		return $o;

@@ -578,8 +578,7 @@ class Channel {
 		$plugin = [ 'basic' => '', 'security' => '', 'notify' => '', 'misc' => '' ];
 		call_hooks('channel_settings',$plugin);
 
-		$disable_discover_tab = intval(get_config('system','disable_discover_tab',1)) == 1;
-		$site_firehose = intval(get_config('system','site_firehose',0)) == 1;
+		$public_stream_mode = intval(get_config('system','public_stream_mode', PUBLIC_STREAM_NONE));
 
 		$ft = get_pconfig(local_channel(),'system','followed_tags','');
 		if ($ft && is_array($ft)) {
@@ -685,7 +684,7 @@ class Channel {
 			'$vnotify10'  => array('vnotify10', t('New connections'), ($vnotify & VNOTIFY_INTRO), VNOTIFY_INTRO, t('Recommended'), $yes_no),
 			'$vnotify11'  => ((is_site_admin()) ? array('vnotify11', t('System Registrations'), ($vnotify & VNOTIFY_REGISTER), VNOTIFY_REGISTER, '', $yes_no) : []),
 //			'$vnotify12'  => array('vnotify12', t('Unseen shared files'), ($vnotify & VNOTIFY_FILES), VNOTIFY_FILES, '', $yes_no),
-			'$vnotify13'  => (($disable_discover_tab && !$site_firehose) ? [] : array('vnotify13', t('Unseen public stream activity'), ($vnotify & VNOTIFY_PUBS), VNOTIFY_PUBS, '', $yes_no)),
+			'$vnotify13'  => (($public_stream_mode) ? [ 'vnotify13', t('Unseen public stream activity'), ($vnotify & VNOTIFY_PUBS), VNOTIFY_PUBS, '', $yes_no] : []),
 			'$vnotify14'	=> array('vnotify14', t('Unseen likes and dislikes'), ($vnotify & VNOTIFY_LIKE), VNOTIFY_LIKE, '', $yes_no),
 			'$vnotify15'	=> array('vnotify15', t('Unseen forum posts'), ($vnotify & VNOTIFY_FORUMS), VNOTIFY_FORUMS, '', $yes_no),
 			'$vnotify16'	=> ((is_site_admin()) ? array('vnotify16', t('Reported content'), ($vnotify & VNOTIFY_REPORTS), VNOTIFY_REPORTS, '', $yes_no) : [] ),

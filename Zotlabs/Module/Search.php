@@ -16,6 +16,13 @@ require_once('include/conversation.php');
 
 class Search extends Controller {
 
+	// State passed in from the Update module.
+	
+	public $profile_uid = 0;
+	public $loading     = 0;
+	public $updating    = 0;
+
+
 	function init() {
 		if (x($_REQUEST,'search')) {
 			App::$data['search'] = escape_tags($_REQUEST['search']);
@@ -23,7 +30,7 @@ class Search extends Controller {
 	}
 	
 	
-	function get($update = 0, $load = false) {
+	function get() {
 
 		if ((get_config('system','block_public')) || (get_config('system','block_public_search',1))) {
 			if ((! local_channel()) && (! remote_channel())) {
@@ -32,14 +39,14 @@ class Search extends Controller {
 			}
 		}
 	
-		if ($load) {
+		if ($this->loading) {
 			$_SESSION['loadtime'] = datetime_convert();
 		}
 		nav_set_selected('Search');
 	
 		$format = (($_REQUEST['format']) ? $_REQUEST['format'] : '');
 		if ($format !== '') {
-			$update = $load = 1;
+			$this->updating = $this->loading = 1;
 		}
 	
 		$observer = App::get_observer();
@@ -67,7 +74,7 @@ class Search extends Controller {
 
 		// ActivityStreams object fetches from the navbar
 		
-		if (local_channel() && strpos($search,'https://') === 0 && (! $update) && (! $load)) {
+		if (local_channel() && strpos($search,'https://') === 0 && (! $this->updating) && (! $this->loading)) {
 			logger('searching for ActivityPub');
 			$channel = App::get_channel();
 			$hash = EMPTY_STR;
@@ -220,7 +227,7 @@ class Search extends Controller {
 		// No items will be shown if the member has a blocked profile wall. 
 	
 
-		if ((! $update) && (! $load)) {
+		if ((! $this->updating) && (! $this->loading)) {
 	
 			$static  = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 0);
 
@@ -273,12 +280,12 @@ class Search extends Controller {
 		
 		$sys = get_sys_channel();
 	
-		if (($update) && ($load)) {
+		if (($this->updating) && ($this->loading)) {
 			$itemspage = get_pconfig(local_channel(),'system','itemspage');
 			App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
 			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 		
-			if ($load) {
+			if ($this->loading) {
 				$r = null;
 
 				// if logged in locally, first look in the items you own
@@ -336,7 +343,7 @@ class Search extends Controller {
 		else
 			$o .= '<h2>' . sprintf( t('Search results for: %s'), $search) . '</h2>';
 	
-		$o .= conversation($items,'search',$update,'client');
+		$o .= conversation($items,'search',$this->updating,'client');
 	
 		$o .= '</div>';
 	

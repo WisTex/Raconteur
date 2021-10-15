@@ -142,6 +142,28 @@ class HTTPSig {
 			if (array_key_exists($h,$headers)) {
 				$signed_data .= $h . ': ' . $headers[$h] . "\n";
 			}
+			if ($h === '(created)') {
+				if ($sig_block['algorithm'] && (strpos($sig_block['algorithm'],'rsa') !== false || strpos($sig_block['algorithm'],'hmac') !== false || strpos($sig_block['algorithm'],'ecdsa') !== false)) {
+					logger('created not allowed here');
+					return $result;
+				}
+				if ((! isset($sig_block['(created)'])) || (! intval($sig_block['(created)'])) || intval($sig_block['(created)']) > time()) {
+					logger('created in future');
+					return $result;
+				}
+				$signed_data .= '(created): ' . $sig_block['(created)'] . "\n";
+			}
+			if ($h === '(expires)') {
+				if ($sig_block['algorithm'] && (strpos($sig_block['algorithm'],'rsa') !== false || strpos($sig_block['algorithm'],'hmac') !== false || strpos($sig_block['algorithm'],'ecdsa') !== false)) {
+					logger('expires not allowed here');
+					return $result;
+				}
+				if ((! isset($sig_block['(expires)'])) || (! intval($sig_block['(expires)'])) || intval($sig_block['(expires)']) < time()) {
+					logger('signature expired');
+					return $result;
+				}
+				$signed_data .= '(expires): ' . $sig_block['(expires)'] . "\n";
+			}
 			if ($h === 'date') {
 				$d = new \DateTime($headers[$h]);
 				$d->setTimeZone(new \DateTimeZone('UTC'));
@@ -157,6 +179,7 @@ class HTTPSig {
 		$signed_data = rtrim($signed_data,"\n");
 
 		$algorithm = null;
+		
 		if ($sig_block['algorithm'] === 'rsa-sha256') {
 			$algorithm = 'sha256';
 		}
@@ -171,6 +194,18 @@ class HTTPSig {
 		$result['signer'] = $sig_block['keyId'];
 
 		$fkey = self::get_key($key,$keytype,$result['signer']);
+
+		if ($sig_block['algorithm'] === 'hs2019') {
+			if (isset($fkey['algorithm'])) {
+				if (strpos($fkey['algorithm'],'rsa-sha256') !== false) {
+					$algorithm = 'sha256';
+				}
+				if (strpos($fkey['algorithm'],'rsa-sha512') !== false) {
+					$algorithm = 'sha512';
+				}
+			}
+		}
+				
 
 		if (! ($fkey && $fkey['public_key'])) {
 			return $result;
@@ -303,7 +338,7 @@ class HTTPSig {
 			}
 
 			if ($best && $best['xchan_pubkey']) {
-				return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'hubloc' => $best ];
+				return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'algorithm' => get_xconfig($best['xchan_hash'],'system','signing_algorithm'), 'hubloc' => $best ];
 			}
 		}
 
@@ -315,7 +350,10 @@ class HTTPSig {
 			if (array_key_exists('publicKey',$r) && array_key_exists('publicKeyPem',$r['publicKey']) && array_key_exists('id',$r['publicKey'])) {
 				if ($r['publicKey']['id'] === $id || $r['id'] === $id) {
 					$portable_id = ((array_key_exists('owner',$r['publicKey'])) ? $r['publicKey']['owner'] : EMPTY_STR);
-					return [ 'public_key' => self::convertKey($r['publicKey']['publicKeyPem']), 'portable_id' => $portable_id, 'hubloc' => [] ];
+					if (isset($r['publicKey']['signingAlgorithm'])) {
+						set_xconfig($portable_id,'system','signing_algorithm',$r['publicKey']['signingAlgorithm']);
+					}
+					return [ 'public_key' => self::convertKey($r['publicKey']['publicKeyPem']), 'portable_id' => $portable_id, 'algorithm' => ((isset($r['publicKey']['signingAlgorithm'])) ? $r['publicKey']['signingAlgorithm'] : EMPTY_STR), 'hubloc' => [] ];
 				}
 			}
 		}
@@ -329,8 +367,9 @@ class HTTPSig {
 	static function get_webfinger_key($id,$force = false) {
 
 		if (! $force) {
-			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' order by hubloc_id desc",
+			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') order by hubloc_id desc",
 				dbesc(str_replace('acct:','',$id)),
+				dbesc($id),
 				dbesc($id)
 			);
 
@@ -339,12 +378,12 @@ class HTTPSig {
 			}
 
 			if ($best && $best['xchan_pubkey']) {
-				return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'hubloc' => $best ];
+				return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'algorithm' => get_xconfig($best['xchan_hash'],'system','signing_algorithm'), 'hubloc' => $best ];
 			}
 		}
 
 		$wf = Webfinger::exec($id);
-		$key = [ 'portable_id' => '', 'public_key' => '', 'hubloc' => [] ];
+		$key = [ 'portable_id' => '', 'public_key' => '', 'algorithm' => '', 'hubloc' => [] ];
 
 		if ($wf) {
 		 	if (array_key_exists('properties',$wf) && array_key_exists('https://w3id.org/security/v1#publicKeyPem',$wf['properties'])) {
@@ -369,7 +408,7 @@ class HTTPSig {
 	static function get_zotfinger_key($id,$force = false) {
 
 		if (! $force) {
-			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_addr = '%s' or hubloc_id_url = '%s' and hubloc_network = 'zot6' order by hubloc_id desc",
+			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and hubloc_network = 'zot6' order by hubloc_id desc",
 				dbesc(str_replace('acct:','',$id)),
 				dbesc($id)
 			);
@@ -379,12 +418,12 @@ class HTTPSig {
 			}
 
 			if ($best && $best['xchan_pubkey']) {
-				return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] , 'hubloc' => $best ];
+				return [ 'portable_id' => $best['xchan_hash'], 'public_key' => $best['xchan_pubkey'] ,  'algorithm' => get_xconfig($best['xchan_hash'],'system','signing_algorithm'), 'hubloc' => $best ];
 			}
 		}
 
 		$wf = Webfinger::exec($id);
-		$key = [ 'portable_id' => '', 'public_key' => '', 'hubloc' => [] ];
+		$key = [ 'portable_id' => '', 'public_key' => '', 'algorithm' => '', 'hubloc' => [] ];
 
 		if ($wf) {
 		 	if (array_key_exists('properties',$wf) && array_key_exists('https://w3id.org/security/v1#publicKeyPem',$wf['properties'])) {
@@ -413,6 +452,7 @@ class HTTPSig {
 								if ($x) {
 									$key['hubloc'] = $x[0];
 								}
+								$key['algorithm'] = getxconfig($i['hash'],'system','signing_algorithm');
 							}
 						}
 					}
@@ -556,8 +596,15 @@ class HTTPSig {
 		if (preg_match('/iv="(.*?)"/ism',$header,$matches)) {
 			$header = self::decrypt_sigheader($header);
 		}
+
 		if (preg_match('/keyId="(.*?)"/ism',$header,$matches)) {
 			$ret['keyId'] = $matches[1];
+		}
+		if (preg_match('/created=([0-9]*)/ism',$header,$matches)) {
+			$ret['(created)'] = $matches[1];
+		}
+		if (preg_match('/expires=([0-9]*)/ism',$header,$matches)) {
+			$ret['(expires)'] = $matches[1];
 		}
 		if (preg_match('/algorithm="(.*?)"/ism',$header,$matches)) {
 			$ret['algorithm'] = $matches[1];

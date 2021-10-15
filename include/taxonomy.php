@@ -311,10 +311,10 @@ function article_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags 
 
 
 
-function pubtagblock($net,$site,$limit,$recent = 0,$safemode = 1, $type = TERM_HASHTAG) {
+function pubtagblock($mode,$limit,$recent = 0,$safemode = 1, $type = TERM_HASHTAG) {
 	$o = '';
 
-	$r = pub_tagadelic($net,$site,$limit,$recent,$safemode,$type);
+	$r = pub_tagadelic($mode,$limit,$recent,$safemode,$type);
 
 	$link = z_root() . '/pubstream';
 
@@ -329,13 +329,13 @@ function pubtagblock($net,$site,$limit,$recent = 0,$safemode = 1, $type = TERM_H
 	return $o;
 }
 
-function pub_tagadelic($net,$site,$limit,$recent,$safemode,$type) {
+function pub_tagadelic($mode,$limit,$recent,$safemode,$type) {
 
 
 	$item_normal = item_normal();
 	$count = intval($limit);
 
-	if($site) {
+	if (intval($mode) === PUBLIC_STREAM_SITE) {
     	$uids = " and item_private = 0  and item_wall = 1 ";
 	}
     else {
@@ -344,11 +344,11 @@ function pub_tagadelic($net,$site,$limit,$recent,$safemode,$type) {
 		$sql_extra = " and item_private = 0 ";
     }
 
-	if($recent)
+	if ($recent) {
 		$sql_extra .= " and item.created > '" . datetime_convert('UTC','UTC', 'now - ' . intval($recent) . ' days ') . "' ";   
+	}
 
-
-	if($safemode) {
+	if ($safemode) {
 		$unsafetags = get_config('system','unsafepubtags', [ 'boobs', 'bot', 'rss', 'girl','girls', 'nsfw', 'sexy', 'nude' ]);
 		if($unsafetags) {
 			$sql_extra .= " and not term.term in ( " . stringify_array($unsafetags,true) . ") ";
@@ -368,9 +368,9 @@ function pub_tagadelic($net,$site,$limit,$recent,$safemode,$type) {
 		((intval($count)) ? "limit $count" : '')
 	);
 
-	if(! $r)
+	if (! $r) {
 		return [];
-
+	}
 	return Zotlabs\Text\Tagadelic::calc($r);
 
 }
