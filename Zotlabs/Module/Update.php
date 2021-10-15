@@ -50,7 +50,7 @@ class Update extends Controller {
 		if (isset($mod->updating)) {
 			$mod->updating = 1;
 		}
-		if (isset($mod->loading)) {
+		if (isset($mod->loading) && $load) {
 			$mod->loading = 1;
 		}
 
