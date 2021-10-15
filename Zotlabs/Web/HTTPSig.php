@@ -198,10 +198,10 @@ class HTTPSig {
 		if ($sig_block['algorithm'] === 'hs2019') {
 			if (isset($fkey['algorithm'])) {
 				if (strpos($fkey['algorithm'],'rsa-sha256') !== false) {
-					$algorithm= 'sha256';
+					$algorithm = 'sha256';
 				}
 				if (strpos($fkey['algorithm'],'rsa-sha512') !== false) {
-					$algorithm= 'sha512';
+					$algorithm = 'sha512';
 				}
 			}
 		}
@@ -452,6 +452,7 @@ class HTTPSig {
 								if ($x) {
 									$key['hubloc'] = $x[0];
 								}
+								$key['algorithm'] = getxconfig($i['hash'],'system','signing_algorithm');
 							}
 						}
 					}

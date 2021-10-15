@@ -826,6 +826,11 @@ class Libzot {
 				set_xconfig($xchan_hash,'system','cover_photo',$arr['cover_photo']['url']);
 			}
 
+			if (isset($arr['signing_algorithm']) && strlen($arr['signing_algorithm'])) {
+				set_xconfig($xchan_hash,'system','signing_algorithm',$arr['signing_algorithm']);
+			}
+
+
 			if (($r[0]['xchan_name_date'] != $arr['name_updated'])
 				|| ($r[0]['xchan_connurl'] != $arr['primary_location']['connections_url'])
 				|| ($r[0]['xchan_addr'] != $arr['primary_location']['address'])
@@ -3241,10 +3246,11 @@ class Libzot {
 			'following'          => z_root() . '/following/' . $e['channel_address']
 		];
 
-		$ret['public_key']     = $e['xchan_pubkey'];
-		$ret['username']       = $e['channel_address'];
-		$ret['name']           = $e['xchan_name'];
-		$ret['name_updated']   = $e['xchan_name_date'];
+		$ret['public_key']        = $e['xchan_pubkey'];
+		$ret['signing_algorithm'] = 'rsa-sha256';
+		$ret['username']          = $e['channel_address'];
+		$ret['name']              = $e['xchan_name'];
+		$ret['name_updated']      = $e['xchan_name_date'];
 		$ret['photo'] = [
 			'url'     => $e['xchan_photo_l'],
 			'type'    => $e['xchan_photo_mimetype'],
