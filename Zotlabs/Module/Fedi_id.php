@@ -41,7 +41,7 @@ class Fedi_id extends Controller {
 		return replace_macros(get_markup_template('fedi_id.tpl'),
 			[
 				'$title'   => t('Home instance'),
-				'$address' => [ 'address', t('Enter your channel address or fediverse ID (e.g. channel@example.com)'), '', '' ],
+				'$address' => [ 'address', t('Enter your channel address or fediverse ID (e.g. channel@example.com)'), t('If you do not have a fediverse ID, please use your browser \'back\' button to return to the previous page'), '' ],
 				'$action'  => 'fedi_id/' . argv(1),
 				'$method'  => 'post',
 				'$submit'  => t('Connect')
