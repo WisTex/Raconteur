@@ -3,11 +3,21 @@ namespace Zotlabs\Module;
 
 /*
  * Update
- * Performs AJAX liveUpdate of conversational content by calling the appropriate
- * controller (passed as argv(1)) and passing the profile_uid (passed as $_GET['p'])
- * and load flag (argv(2) === 'load') to the get() function of the controller.
- * Conversational controllers have been written to expect this input. Other controllers
- * have not.
+ * Called by main.js to load or fetch updates of content for various conversation streams/timelines.
+ * It invokes the appropriate module's get() function to return an array of HTML rendered conversations/posts.
+ * Some state is passed to the module controller prior to calling module->get() to indicate that
+ * the existing content should either be replaced or appended to.
+ * The current modules that support this manner of update are
+ *  channel, hq, stream, display, search, and pubstream.
+ * The state we are passing is the profile_uid (passed to us as $_GET['p']), and argv(2) === 'load'
+ * to indicate that we're replacing original content.
+ *
+ * module->profile_uid - tell the module who owns this data
+ * module->loading - tell the module to replace existing  content
+ * module->updating - always true to tell the module that this is a js initiated request
+ *
+ * Inside main.js we also append all of the relevant content query params which were initially used on that
+ * page via buildCmd so those are passed to this instance of update and are therefore available from the module.
  */
 
 use App;
