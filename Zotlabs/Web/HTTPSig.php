@@ -452,7 +452,7 @@ class HTTPSig {
 								if ($x) {
 									$key['hubloc'] = $x[0];
 								}
-								$key['algorithm'] = getxconfig($i['hash'],'system','signing_algorithm');
+								$key['algorithm'] = get_xconfig($i['hash'],'system','signing_algorithm');
 							}
 						}
 					}
