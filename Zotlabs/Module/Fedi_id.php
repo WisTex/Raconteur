@@ -15,9 +15,6 @@ class Fedi_id extends Controller {
 		if ($_REQUEST['address']) {
 			$x = discover_by_webbie(trim($_REQUEST['address']));
 			if ($x) {
-				$r = q("select * from xchan where xchan_hash = '%s'",
-					dbesc($x)
-				);
 				$ab = q("select * from abook where abook_xchan = '%s' and abook_channel = %d",
 					dbesc($x),
 					intval($channel['channel_id'])
@@ -26,6 +23,9 @@ class Fedi_id extends Controller {
 					notice( t('You are already connected with this channel.') );
 					goaway(channel_url($channel));
 				}
+				$r = q("select * from xchan where xchan_hash = '%s'",
+					dbesc($x)
+				);
 				if ($r && $r[0]['xchan_follow']) {
 					goaway(sprintf($r[0]['xchan_follow'],urlencode(channel_reddress($channel))));
 				}				
