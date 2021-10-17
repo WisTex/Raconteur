@@ -43,7 +43,7 @@ function abook_store_lowlevel($arr) {
 function rconnect_url($channel_id,$xchan) {
 
 	if (! $xchan) {
-		return EMPTY_STR;
+		return z_root() . '/fedi_id/' . $channel_id;
 	}
 
 	$r = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s' limit 1",
