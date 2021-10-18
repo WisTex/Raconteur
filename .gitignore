@@ -60,6 +60,7 @@ tests/results/
 .buildpath
 .externalToolBuilders
 .settings/
+.pydevproject
 # NetBeans project folder
 nbproject/
 # Kdevelop project files
