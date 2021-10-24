@@ -194,7 +194,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$ph = photo_factory($imagedata, $type);
 
-	if (! $ph->is_valid()) {
+	if (! ($ph && $ph->is_valid())) {
 		$ret['message'] = t('Unable to process image');
 		logger('unable to process image');
 		@unlink($src);
