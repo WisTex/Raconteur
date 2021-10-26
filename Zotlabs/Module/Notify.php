@@ -34,7 +34,7 @@ class Notify extends Controller {
 				}
 				goaway($r[0]['link']);
 			}
-			notice( sprintf( t('A notification with that id was not found for channel '%s'), $channel['channel_name']));
+			notice( sprintf( t('A notification with that id was not found for channel \'%s\''), $channel['channel_name']));
 			goaway(z_root());
 		}
 	
