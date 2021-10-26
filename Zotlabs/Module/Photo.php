@@ -262,7 +262,7 @@ class Photo extends Controller {
 	
 		if (isset($res) && intval($res) && $res < 500) {
 			$ph = photo_factory($data, $mimetype);
-			if ($ph->is_valid()) {
+			if ($ph && $ph->is_valid()) {
 				$ph->scaleImageSquare($res);
 				$data = $ph->imageString();
 				$mimetype = $ph->getType();

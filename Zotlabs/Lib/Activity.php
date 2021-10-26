@@ -1619,11 +1619,14 @@ class Activity {
 			$ret['location'] = [ 'type' => 'Place', 'name' => $p['channel_location'] ];
 		}
 
+		$ret['tag'] = [ [ 'type' => 'PropertyValue','name' => 'Protocol','value' => 'zot6'] ];
+
 		if ($activitypub && get_config('system','activitypub', ACTIVITYPUB_ENABLED)) {	
 
 			if ($c) {
 				if (get_pconfig($c['channel_id'],'system','activitypub', ACTIVITYPUB_ENABLED)) {
-					$ret['inbox']       = z_root() . '/inbox/'     . $c['channel_address'];
+					$ret['inbox'] = z_root() . '/inbox/'     . $c['channel_address'];
+					$ret['tag'][] = [ 'type' => 'PropertyValue','name' => 'Protocol','value' => 'activitypub'];
 				}
 				else {
 					$ret['inbox'] = null;
@@ -2331,6 +2334,11 @@ class Activity {
 						}
 					}
 				}
+				if (is_array($t) && isset($t['type']) && $t['type'] === 'PropertyValue') {
+					if (isset($t['name']) && isset($t['value']) && $t['name'] === 'Protocol') {
+						self::update_protocols($url,trim($t['value']));
+					}
+				}
 			}
 		}
 
@@ -2535,6 +2543,15 @@ class Activity {
 		Run::Summon( [ 'Xchan_photo', bin2hex($icon), bin2hex($url) ] );
 
 	}
+
+	static function update_protocols($xchan,$str) {
+		$existing = explode(',',get_xconfig($xchan,'system','protocols',EMPTY_STR));
+		if (! in_array($str,$existing)) {
+			$existing[] = $str;
+			set_xconfig($xchan,'system','protocols', implode(',',$existing));
+		}
+	}
+			
 
 	static function drop($channel,$observer,$act) {
 		$r = q("select * from item where mid = '%s' and uid = %d limit 1",

@@ -243,7 +243,7 @@ class Photos extends Controller {
 			if ($r) {
 					
 				$ph = photo_factory(@file_get_contents(dbunescbin($r[0]['content'])), $r[0]['mimetype']);
-				if ($ph->is_valid()) {
+				if ($ph && $ph->is_valid()) {
 					$rotate_deg = ( (intval($_POST['rotate']) == 1) ? 270 : 90 );
 					$ph->rotate($rotate_deg);
 

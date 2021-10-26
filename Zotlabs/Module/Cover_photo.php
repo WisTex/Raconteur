@@ -127,7 +127,7 @@ logger('gis: ' . print_r($gis,true));
 				}
 
 				$im = photo_factory($base_image['content'], $base_image['mimetype']);
-				if ($im->is_valid()) {
+				if ($im && $im->is_valid()) {
 	
 					// We are scaling and cropping the relative pixel locations to the original photo instead of the 
 					// scaled photo we operated on.
@@ -394,7 +394,7 @@ logger('gis: ' . print_r($gis,true));
 	
 			$ph = photo_factory($data, $r[0]['mimetype']);
 			$smallest = 0;
-			if ($ph->is_valid()) {
+			if ($ph && $ph->is_valid()) {
 				// go ahead as if we have just uploaded a new photo to crop
 				$i = q("select resource_id, imgscale from photo where resource_id = '%s' and uid = %d and imgscale = 0",
 					dbesc($r[0]['resource_id']),
