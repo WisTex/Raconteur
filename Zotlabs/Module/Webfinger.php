@@ -138,13 +138,13 @@ class Webfinger extends Controller {
 				],
 
 				[ 
-					'rel'  => 'http://purl.org/macgirvin/nomad', 
+					'rel'  => 'http://purl.org/nomad', 
 					'type' => 'application/x-nomad+json', 
 					'href' => (($site_query) ? z_root() : z_root() . '/channel/' . $channel_target['channel_address']),
 				],
 
 				[
-					'rel'  => 'http://purl.org/macgirvin/nomad/auth',
+					'rel'  => 'http://purl.org/nomad/auth',
 					'type' => 'application/x-nomad+json',
 					'href' => z_root() . '/owa'
 				],

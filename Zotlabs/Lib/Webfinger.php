@@ -97,7 +97,7 @@ class Webfinger {
 
 		if (is_array($arr) && array_key_exists('links',$arr)) {
 			foreach ($arr['links'] as $link) {
-				if (array_key_exists('rel',$link) && $link['rel'] === PROTOCOL_ZOT6) {
+				if (array_key_exists('rel',$link) && in_array($link['rel'], [ PROTOCOL_NOMAD, PROTOCOL_ZOT6 ]) {
 					if (array_key_exists('href',$link) && $link['href'] !== EMPTY_STR) {
 						return $link['href'];
 					}

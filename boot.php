@@ -470,6 +470,7 @@ define ( 'TERM_OBJ_APP',     7 );
 /**
  * various namespaces we may need to parse
  */
+define ( 'PROTOCOL_NOMAD',            'http://purl.org/nomad' );
 define ( 'PROTOCOL_ZOT',              'http://purl.org/zot/protocol' );
 define ( 'PROTOCOL_ZOT6',             'http://purl.org/zot/protocol/6.0' );
 define ( 'NAMESPACE_ZOT',             'http://purl.org/zot' );

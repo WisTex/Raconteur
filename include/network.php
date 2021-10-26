@@ -1050,7 +1050,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true) {
 				// If we discover zot - don't search further; grab the info and get out of
 				// here.
 
-				if($link['rel'] === PROTOCOL_ZOT6 && ((! $protocol) || (strtolower($protocol) === 'zot6'))) {
+				if(in_array($link['rel'], [ PROTOCOL_NOMAD, PROTOCOL_ZOT6 ]) && ((! $protocol) || (in_array(strtolower($protocol), [ 'nomad','zot6' ])))) {
 					logger('zot6 found for ' . $webbie, LOGGER_DEBUG);
 					$record = Zotfinger::exec($link['href'], null, $verify);
 

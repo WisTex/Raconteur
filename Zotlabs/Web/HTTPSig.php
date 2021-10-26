@@ -434,7 +434,7 @@ class HTTPSig {
 					if (! (is_array($l) && array_key_exists('rel',$l))) {
 						continue;
 					}
-					if ($l['rel'] === 'http://purl.org/zot/protocol/6.0' && array_key_exists('href',$l) && $l['href'] !== EMPTY_STR) {
+					if (in_array($l['rel'], ['http://purl.org/nomad', 'http://purl.org/zot/protocol/6.0']) && array_key_exists('href',$l) && $l['href'] !== EMPTY_STR) {
 
 						// The third argument to Zotfinger::exec() tells it not to verify signatures
 						// Since we're inside a function that is fetching keys with which to verify signatures,
