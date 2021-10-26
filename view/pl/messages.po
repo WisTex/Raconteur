@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 21.04.28\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-16 15:28-0700\n"
-"PO-Revision-Date: 2021-10-18 01:24+0200\n"
+"POT-Creation-Date: 2021-10-24 14:40-0700\n"
+"PO-Revision-Date: 2021-10-26 19:11+0200\n"
 "Last-Translator: Andrzej Budziński <astabski@gmail.com>\n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -353,8 +353,8 @@ msgid "School/education:"
 msgstr "Szkoła/Wykształcenie:"
 
 #: Zotlabs/Lib/Libprofile.php:578 Zotlabs/Lib/Apps.php:364
-#: Zotlabs/Lib/Activity.php:2874 Zotlabs/Lib/Activity.php:2877
-#: Zotlabs/Lib/Activity.php:2897 Zotlabs/Module/Profperm.php:117
+#: Zotlabs/Lib/Activity.php:2891 Zotlabs/Lib/Activity.php:2894
+#: Zotlabs/Lib/Activity.php:2914 Zotlabs/Module/Profperm.php:117
 msgid "Profile"
 msgstr "Profil"
 
@@ -1273,7 +1273,7 @@ msgid "Unpin from navbar"
 msgstr "Odepnij od paska nawigacyjnego"
 
 #: Zotlabs/Lib/Apps.php:1086 Zotlabs/Lib/Apps.php:1175
-#: Zotlabs/Lib/Activity.php:2208 Zotlabs/Module/Cdav.php:853
+#: Zotlabs/Lib/Activity.php:2211 Zotlabs/Module/Cdav.php:853
 #: Zotlabs/Module/Cdav.php:854 Zotlabs/Module/Cdav.php:861
 #: Zotlabs/Module/Embedphotos.php:216 Zotlabs/Module/Photos.php:848
 #: Zotlabs/Module/Photos.php:1320 Zotlabs/Storage/Browser.php:179
@@ -1282,7 +1282,7 @@ msgstr "Odepnij od paska nawigacyjnego"
 msgid "Unknown"
 msgstr "Nieznane"
 
-#: Zotlabs/Lib/Share.php:122 Zotlabs/Lib/Activity.php:2897
+#: Zotlabs/Lib/Share.php:122 Zotlabs/Lib/Activity.php:2914
 #: Zotlabs/Module/Share.php:103 include/items.php:3309
 #, php-format
 msgid "&#x1f501; Repeated %1$s's %2$s"
@@ -1357,37 +1357,37 @@ msgctxt "permcat"
 msgid "publisher"
 msgstr "wydawca"
 
-#: Zotlabs/Lib/Activity.php:2874
+#: Zotlabs/Lib/Activity.php:2891
 #, php-format
 msgid "Likes %1$s's %2$s"
 msgstr "Pochwala %2$s %1$s"
 
-#: Zotlabs/Lib/Activity.php:2877
+#: Zotlabs/Lib/Activity.php:2894
 #, php-format
 msgid "Doesn't like %1$s's %2$s"
 msgstr "Gani %2$s %1$s"
 
-#: Zotlabs/Lib/Activity.php:2883
+#: Zotlabs/Lib/Activity.php:2900
 #, php-format
 msgid "Will attend %s's event"
 msgstr "Weźmie udział w wydarzeniu %s"
 
-#: Zotlabs/Lib/Activity.php:2886
+#: Zotlabs/Lib/Activity.php:2903
 #, php-format
 msgid "Will not attend %s's event"
 msgstr "Nie weźmie udziału w wydarzeniu %s"
 
-#: Zotlabs/Lib/Activity.php:2889
+#: Zotlabs/Lib/Activity.php:2906
 #, php-format
 msgid "May attend %s's event"
 msgstr "Może uczestniczyć w wydarzeniu %s"
 
-#: Zotlabs/Lib/Activity.php:2892
+#: Zotlabs/Lib/Activity.php:2909
 #, php-format
 msgid "May not attend %s's event"
 msgstr "Nie może uczestniczyć w wydarzeniu %s"
 
-#: Zotlabs/Lib/Activity.php:3363 include/text.php:1595 include/text.php:2979
+#: Zotlabs/Lib/Activity.php:3380 include/text.php:1595 include/text.php:2979
 #, php-format
 msgid "%1$s (%2$s)"
 msgstr "Szukaj %1$s (%2$s)"
@@ -7012,13 +7012,17 @@ msgstr "(Właściciel kanału nie przekazał żadnych szczegółowych instrukcji
 msgid "Restricted or Premium Channel"
 msgstr "Kanał z ograniczeniami lub premium"
 
-#: Zotlabs/Module/Notifications.php:60 Zotlabs/Module/Notify.php:63
+#: Zotlabs/Module/Notifications.php:60
 msgid "No more system notifications."
 msgstr "Nigdy więcej powiadomień systemowych."
 
-#: Zotlabs/Module/Notifications.php:64 Zotlabs/Module/Notify.php:67
+#: Zotlabs/Module/Notifications.php:64
 msgid "System Notifications"
 msgstr "Powiadomienia systemowe"
+
+#: Zotlabs/Module/Notify.php:37
+msgid "A notification with that id was not found for channel "
+msgstr "Nie znaleziono powiadomienia o tym identyfikatorze dla kanału "
 
 #: Zotlabs/Module/Acl.php:277
 msgid "network"
@@ -9676,7 +9680,7 @@ msgstr "Brak obecnie zablokowanych serwerów"
 msgid "Manage Blocks"
 msgstr "Zarządzaj blokadami"
 
-#: Zotlabs/Module/Fedi_id.php:26
+#: Zotlabs/Module/Fedi_id.php:23
 msgid "You are already connected with this channel."
 msgstr "Już masz łączność z tym kanałem."
 
