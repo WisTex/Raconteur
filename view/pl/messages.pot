@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 21.10.17\n"
+"Project-Id-Version: 21.10.25\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-16 15:28-0700\n"
+"POT-Creation-Date: 2021-10-24 14:40-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -348,8 +348,8 @@ msgid "School/education:"
 msgstr ""
 
 #: Zotlabs/Lib/Libprofile.php:578 Zotlabs/Lib/Apps.php:364
-#: Zotlabs/Lib/Activity.php:2874 Zotlabs/Lib/Activity.php:2877
-#: Zotlabs/Lib/Activity.php:2897 Zotlabs/Module/Profperm.php:117
+#: Zotlabs/Lib/Activity.php:2891 Zotlabs/Lib/Activity.php:2894
+#: Zotlabs/Lib/Activity.php:2914 Zotlabs/Module/Profperm.php:117
 msgid "Profile"
 msgstr ""
 
@@ -1259,7 +1259,7 @@ msgid "Unpin from navbar"
 msgstr ""
 
 #: Zotlabs/Lib/Apps.php:1086 Zotlabs/Lib/Apps.php:1175
-#: Zotlabs/Lib/Activity.php:2208 Zotlabs/Module/Cdav.php:853
+#: Zotlabs/Lib/Activity.php:2211 Zotlabs/Module/Cdav.php:853
 #: Zotlabs/Module/Cdav.php:854 Zotlabs/Module/Cdav.php:861
 #: Zotlabs/Module/Embedphotos.php:216 Zotlabs/Module/Photos.php:848
 #: Zotlabs/Module/Photos.php:1320 Zotlabs/Storage/Browser.php:179
@@ -1268,7 +1268,7 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: Zotlabs/Lib/Share.php:122 Zotlabs/Lib/Activity.php:2897
+#: Zotlabs/Lib/Share.php:122 Zotlabs/Lib/Activity.php:2914
 #: Zotlabs/Module/Share.php:103 include/items.php:3309
 #, php-format
 msgid "&#x1f501; Repeated %1$s's %2$s"
@@ -1339,37 +1339,37 @@ msgctxt "permcat"
 msgid "publisher"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2874
+#: Zotlabs/Lib/Activity.php:2891
 #, php-format
 msgid "Likes %1$s's %2$s"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2877
+#: Zotlabs/Lib/Activity.php:2894
 #, php-format
 msgid "Doesn't like %1$s's %2$s"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2883
+#: Zotlabs/Lib/Activity.php:2900
 #, php-format
 msgid "Will attend %s's event"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2886
+#: Zotlabs/Lib/Activity.php:2903
 #, php-format
 msgid "Will not attend %s's event"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2889
+#: Zotlabs/Lib/Activity.php:2906
 #, php-format
 msgid "May attend %s's event"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:2892
+#: Zotlabs/Lib/Activity.php:2909
 #, php-format
 msgid "May not attend %s's event"
 msgstr ""
 
-#: Zotlabs/Lib/Activity.php:3363 include/text.php:1595 include/text.php:2979
+#: Zotlabs/Lib/Activity.php:3380 include/text.php:1595 include/text.php:2979
 #, php-format
 msgid "%1$s (%2$s)"
 msgstr ""
@@ -6671,12 +6671,16 @@ msgstr ""
 msgid "Restricted or Premium Channel"
 msgstr ""
 
-#: Zotlabs/Module/Notifications.php:60 Zotlabs/Module/Notify.php:63
+#: Zotlabs/Module/Notifications.php:60
 msgid "No more system notifications."
 msgstr ""
 
-#: Zotlabs/Module/Notifications.php:64 Zotlabs/Module/Notify.php:67
+#: Zotlabs/Module/Notifications.php:64
 msgid "System Notifications"
+msgstr ""
+
+#: Zotlabs/Module/Notify.php:37
+msgid "A notification with that id was not found for channel "
 msgstr ""
 
 #: Zotlabs/Module/Acl.php:277
@@ -9203,7 +9207,7 @@ msgstr ""
 msgid "Manage Blocks"
 msgstr ""
 
-#: Zotlabs/Module/Fedi_id.php:26
+#: Zotlabs/Module/Fedi_id.php:23
 msgid "You are already connected with this channel."
 msgstr ""
 
