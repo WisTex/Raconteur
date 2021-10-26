@@ -3546,7 +3546,7 @@ class Libzot {
 
 	static function is_zot_request() {
 
-		$x = getBestSupportedMimeType([ 'application/x-zot+json', 'application/x-nomad' ]);
+		$x = getBestSupportedMimeType([ 'application/x-zot+json', 'application/x-nomad+json' ]);
 		return(($x) ? true : false);
 	}
 

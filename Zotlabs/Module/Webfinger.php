@@ -99,7 +99,7 @@ class Webfinger extends Controller {
 				'http://webfinger.net/ns/name'   => $site_query ? System::get_site_name() : $channel_target['channel_name'],
 				'http://xmlns.com/foaf/0.1/name' => $site_query ? System::get_site_name() : $channel_target['channel_name'],
 				'https://w3id.org/security/v1#publicKeyPem' => (($site_query) ? get_config('system','pubkey') : $channel_target['xchan_pubkey']),
-				'http://purl.org/zot/federation' => ((get_config('system','activitypub', ACTIVITYPUB_ENABLED)) ? 'zot6,activitypub' : 'zot6')
+				'http://purl.org/zot/federation' => ((get_config('system','activitypub', ACTIVITYPUB_ENABLED)) ? 'nomad,zot6,activitypub' : 'nomad,zot6')
 			];
 
 			if ($site_query) {
@@ -137,6 +137,17 @@ class Webfinger extends Controller {
 					'href' => (($site_query) ? z_root() : z_root() . '/channel/' . $channel_target['channel_address']),
 				],
 
+				[ 
+					'rel'  => 'http://purl.org/macgirvin/nomad', 
+					'type' => 'application/x-nomad+json', 
+					'href' => (($site_query) ? z_root() : z_root() . '/channel/' . $channel_target['channel_address']),
+				],
+
+				[
+					'rel'  => 'http://purl.org/macgirvin/nomad/auth',
+					'type' => 'application/x-nomad+json',
+					'href' => z_root() . '/owa'
+				],
 				[
 					'rel'  => 'http://purl.org/openwebauth/v1',
 					'type' => 'application/x-zot+json',
