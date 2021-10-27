@@ -1477,7 +1477,7 @@ App::$strings["(No specific instructions have been provided by the channel owner
 App::$strings["Restricted or Premium Channel"] = "Kanał z ograniczeniami lub premium";
 App::$strings["No more system notifications."] = "Nigdy więcej powiadomień systemowych.";
 App::$strings["System Notifications"] = "Powiadomienia systemowe";
-App::$strings["A notification with that id was not found for channel "] = "Nie znaleziono powiadomienia o tym identyfikatorze dla kanału ";
+App::$strings["A notification with that id was not found for channel '%s'"] = "Nie znaleziono powiadomienia o tym identyfikatorze dla kanału '%s'";
 App::$strings["network"] = "sieć";
 App::$strings["__ctx:mood__ %1\$s is %2\$s"] = "%1\$s to %2\$s";
 App::$strings["Set your current mood and tell your friends"] = "Ustaw swój aktualny i podziel się tym ze znajomych";

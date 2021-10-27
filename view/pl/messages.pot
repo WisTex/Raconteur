@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 21.10.25\n"
+"Project-Id-Version: 21.10.27\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-24 14:40-0700\n"
+"POT-Creation-Date: 2021-10-26 12:54-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6671,16 +6671,17 @@ msgstr ""
 msgid "Restricted or Premium Channel"
 msgstr ""
 
-#: Zotlabs/Module/Notifications.php:60
+#: Zotlabs/Module/Notifications.php:60 Zotlabs/Module/Notify.php:70
 msgid "No more system notifications."
 msgstr ""
 
-#: Zotlabs/Module/Notifications.php:64
+#: Zotlabs/Module/Notifications.php:64 Zotlabs/Module/Notify.php:74
 msgid "System Notifications"
 msgstr ""
 
-#: Zotlabs/Module/Notify.php:37
-msgid "A notification with that id was not found for channel "
+#: Zotlabs/Module/Notify.php:38
+#, php-format
+msgid "A notification with that id was not found for channel '%s'"
 msgstr ""
 
 #: Zotlabs/Module/Acl.php:277
