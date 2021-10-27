@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 21.04.28\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-24 14:40-0700\n"
-"PO-Revision-Date: 2021-10-26 19:11+0200\n"
+"POT-Creation-Date: 2021-10-26 12:54-0700\n"
+"PO-Revision-Date: 2021-10-27 22:27+0200\n"
 "Last-Translator: Andrzej Budziński <astabski@gmail.com>\n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -7012,17 +7012,18 @@ msgstr "(Właściciel kanału nie przekazał żadnych szczegółowych instrukcji
 msgid "Restricted or Premium Channel"
 msgstr "Kanał z ograniczeniami lub premium"
 
-#: Zotlabs/Module/Notifications.php:60
+#: Zotlabs/Module/Notifications.php:60 Zotlabs/Module/Notify.php:70
 msgid "No more system notifications."
 msgstr "Nigdy więcej powiadomień systemowych."
 
-#: Zotlabs/Module/Notifications.php:64
+#: Zotlabs/Module/Notifications.php:64 Zotlabs/Module/Notify.php:74
 msgid "System Notifications"
 msgstr "Powiadomienia systemowe"
 
-#: Zotlabs/Module/Notify.php:37
-msgid "A notification with that id was not found for channel "
-msgstr "Nie znaleziono powiadomienia o tym identyfikatorze dla kanału "
+#: Zotlabs/Module/Notify.php:38
+#, php-format
+msgid "A notification with that id was not found for channel '%s'"
+msgstr "Nie znaleziono powiadomienia o tym identyfikatorze dla kanału '%s'"
 
 #: Zotlabs/Module/Acl.php:277
 msgid "network"
