@@ -379,7 +379,7 @@ function import_hublocs($channel, $hublocs, $seize, $moving = false) {
 			// verify the hash. We can only do this if we already stored the xchan corresponding to this hubloc
 			// as we need the public key from there
 
-			if (in_array($hubloc['hubloc_network'],['nomad','zot6']) {
+			if (in_array($hubloc['hubloc_network'],['nomad','zot6'])) {
 				$x = q("select xchan_pubkey from xchan where xchan_guid = '%s' and xchan_hash = '%s'",
 					dbesc($hubloc['hubloc_guid']),
 					dbesc($hubloc['hubloc_hash'])
