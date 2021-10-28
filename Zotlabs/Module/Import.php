@@ -239,7 +239,7 @@ class Import extends Controller {
 					'xchan_connurl'        => z_root() . '/poco/' . $channel['channel_address'],
 					'xchan_follow'         => z_root() . '/follow?f=&url=%s',
 					'xchan_name'           => $channel['channel_name'],
-					'xchan_network'        => 'zot6',
+					'xchan_network'        => 'nomad',
 					'xchan_updated'        => datetime_convert(),
 					'xchan_photo_date'     => datetime_convert(),
 					'xchan_name_date'      => datetime_convert()
@@ -325,7 +325,7 @@ class Import extends Controller {
 					'hubloc_id_url'   => channel_url($channel),
 					'hubloc_hash'     => $channel['channel_hash'],
 					'hubloc_addr'     => channel_reddress($channel),
-					'hubloc_network'  => 'zot6',
+					'hubloc_network'  => 'nomad',
 					'hubloc_primary'  => (($seize) ? 1 : 0),
 					'hubloc_url'      => z_root(),
 					'hubloc_url_sig'  => Libzot::sign(z_root(),$channel['channel_prvkey']),

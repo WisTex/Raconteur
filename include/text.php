@@ -2062,7 +2062,7 @@ function get_plink($item,$conversation_mode = true) {
 
 	$zidify = true;
 
-	if(array_key_exists('author',$item) && $item['author']['xchan_network'] !== 'zot6')
+	if(array_key_exists('author',$item) && ! in_array($item['author']['xchan_network'],['nomad','zot6']))
 		$zidify = false;
 
 	if(x($item,$key)) {
@@ -2991,7 +2991,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
                     //create profile link
                     $profile = str_replace(',','%2c',$profile);
                     $url = $profile;
-					$zrl = (($xc['xchan_network'] === 'zot6') ? 'zrl' : 'url');
+					$zrl = (in_array($xc['xchan_network'],['nomad','zot6']) ? 'zrl' : 'url');
 					$newtag = '@' . (($exclusive) ? '!' : '') . '[' . $zrl . '=' . $profile . ']' . $newname . '[/' . $zrl . ']';
 					
 					$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);

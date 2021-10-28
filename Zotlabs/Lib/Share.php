@@ -205,7 +205,7 @@ class Share {
 				"' portable_id='"   . $this->item['author']['xchan_hash'] . 
 				"' avatar='"        . $this->item['author']['xchan_photo_s'] .
 				"' link='"          . $this->item['plink'] .
-				"' auth='"          . (($this->item['author']['network'] === 'zot6') ? 'true' : 'false') .
+				"' auth='"          . (in_array($this->item['author']['network'],['nomad','zot6']) ? 'true' : 'false') .
 				"' posted='"        . $this->item['created'] .
 				"' message_id='"    . $this->item['mid'] .
 			"']";

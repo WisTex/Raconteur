@@ -52,7 +52,7 @@ class Home extends Controller {
 
 			if($sigdata && $sigdata['signer'] && $sigdata['header_valid']) {
 				$data = json_encode(Libzot::zotinfo([ 'guid_hash' => $channel['channel_hash'], 'target_url' => $sigdata['signer'] ]));
-				$s = q("select site_crypto, hubloc_sitekey from site left join hubloc on hubloc_url = site_url where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
+				$s = q("select site_crypto, hubloc_sitekey from site left join hubloc on hubloc_url = site_url where hubloc_id_url = '%s' and hubloc_network in ('nomad','zot6') limit 1",
 					dbesc($sigdata['signer'])
 				);
 

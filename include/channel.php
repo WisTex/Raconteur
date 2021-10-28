@@ -412,7 +412,7 @@ function create_identity($arr) {
 			'hubloc_host'     => App::get_hostname(),
 			'hubloc_callback' => z_root() . '/zot',
 			'hubloc_sitekey'  => get_config('system','pubkey'),
-			'hubloc_network'  => 'zot6',
+			'hubloc_network'  => 'nomad',
 			'hubloc_updated'  => datetime_convert()
 		]
 	);
@@ -436,7 +436,7 @@ function create_identity($arr) {
 			'xchan_follow'     => z_root() . '/follow?f=&url=%s',
 			'xchan_connurl'    => z_root() . '/poco/' . $ret['channel']['channel_address'],
 			'xchan_name'       => $ret['channel']['channel_name'],
-			'xchan_network'    => 'zot6',
+			'xchan_network'    => 'nomad',
 			'xchan_updated'    => datetime_convert(),
 			'xchan_photo_date' => datetime_convert(),
 			'xchan_name_date'  => datetime_convert(),

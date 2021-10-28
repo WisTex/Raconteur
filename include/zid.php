@@ -16,7 +16,7 @@ function is_matrix_url($url) {
 			return true;
 		}
 
-		$r = q("select hubloc_url from hubloc where hubloc_host = '%s' and hubloc_network = 'zot6' limit 1",
+		$r = q("select hubloc_url from hubloc where hubloc_host = '%s' and hubloc_network in ('nomad','zot6') limit 1",
 			dbesc($m['host'])
 		);
 		if ($r) {
@@ -429,7 +429,7 @@ function observer_auth($ob_hash) {
 	// provide OWA we will need to store the OWA endpoints for each site in SConfig
 	// and refer to this to determine whether or not to provide "zidified" links. 
 
-	if ($hubloc['hubloc_network'] === 'zot6') {
+	if (in_array($hubloc['hubloc_network'],['nomad','zot6'])) {
 		$_SESSION['my_address'] = $hubloc['hubloc_addr'];
 	}
 	$_SESSION['remote_hub'] = $hubloc['hubloc_url'];

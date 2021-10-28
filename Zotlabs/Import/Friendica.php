@@ -131,7 +131,7 @@ class Friendica {
 				'hubloc_host'     => App::get_hostname(),
 				'hubloc_callback' => z_root() . '/zot',
 				'hubloc_sitekey'  => get_config('system','pubkey'),
-				'hubloc_network'  => 'zot6',
+				'hubloc_network'  => 'nomad',
 				'hubloc_updated'  => datetime_convert()
 			]
 		);
@@ -176,7 +176,7 @@ class Friendica {
 				'xchan_follow'     => z_root() . '/follow?f=&url=%s',
 				'xchan_connurl'    => z_root() . '/poco/' . $channel['channel_address'],
 				'xchan_name'       => $channel['channel_name'],
-				'xchan_network'    => 'zot6',
+				'xchan_network'    => 'nomad',
 				'xchan_updated'    => datetime_convert(),
 				'xchan_photo_date' => datetime_convert(),
 				'xchan_name_date'  => datetime_convert(),

@@ -122,7 +122,7 @@ class Queue {
 			dbesc($arr['hash']),
 			intval($arr['account_id']),
 			intval($arr['channel_id']),
-			dbesc((isset($arr['driver']) && $arr['driver']) ? $arr['driver'] : 'zot6'),
+			dbesc((isset($arr['driver']) && $arr['driver']) ? $arr['driver'] : 'nomad'),
 			dbesc($arr['posturl']),
 			intval(1),
 			intval((isset($arr['priority'])) ? $arr['priority'] : 0),
@@ -433,7 +433,7 @@ class Queue {
 			$host_crypto = null;
 
 			if($channel && $base) {
-				$h = q("select hubloc_sitekey, site_crypto from hubloc left join site on hubloc_url = site_url where site_url = '%s' and hubloc_network = 'zot6' order by hubloc_id desc limit 1",
+				$h = q("select hubloc_sitekey, site_crypto from hubloc left join site on hubloc_url = site_url where site_url = '%s' and hubloc_network in ('nomad','zot6') order by hubloc_id desc limit 1",
 					dbesc($base)
 				);
 				if($h) {

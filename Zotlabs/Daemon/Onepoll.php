@@ -64,7 +64,7 @@ class Onepoll {
 			: datetime_convert('UTC','UTC',$contact['abook_updated'] . ' - 2 days')
 		);
 
-		if($contact['xchan_network'] === 'zot6') {
+		if(in_array($contact['xchan_network'],['nomad']['zot6'])) {
 
 			// update permissions
 

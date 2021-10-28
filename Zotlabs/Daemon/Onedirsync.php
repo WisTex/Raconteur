@@ -32,7 +32,7 @@ class Onedirsync {
 		// (where we received this update from) ?
 		// If we have, we don't need to do anything except mark any older entries updated
 
-		$x = q("select * from updates where ud_addr = '%s' and ud_date > '%s' and ( ud_flags & %d )>0 order by ud_date desc limit 1",
+		$x = q("select * from updates where ud_addr = '%s' and ud_date > '%s' and ( ud_flags & %d ) > 0 order by ud_date desc limit 1",
 			dbesc($r[0]['ud_addr']),
 			dbesc($r[0]['ud_date']),
 			intval(UPDATE_FLAGS_UPDATED)
@@ -65,7 +65,7 @@ class Onedirsync {
 		// we might have to pull this out some day, but for now update_directory_entry() 
 		// runs zot_finger() and is kind of zot specific
 
-		if($h && $h[0]['hubloc_network'] !== 'zot6')
+		if($h && in_array($h[0]['hubloc_network'],['nomad','zot6']))
 			return;
 
 		Libzotdir::update_directory_entry($r[0]);		

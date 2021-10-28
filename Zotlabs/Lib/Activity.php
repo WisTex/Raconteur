@@ -57,7 +57,8 @@ class Activity {
 
 			// Use Mastodon-specific note and media hacks if nomadic. Else HTML.
 			// Eventually this needs to be passed in much further up the stack
-			// and base the decision on whether or not we are encoding for ActivityPub or Zot6
+			// and base the decision on whether or not we are encoding for
+			// ActivityPub or Zot6 or Nomad
 
 			return self::fetch_item($x,((get_config('system','activitypub', ACTIVITYPUB_ENABLED)) ? true : false)); 
 		}
@@ -1023,7 +1024,7 @@ class Activity {
 	static function nomadic_locations($item) {
 		$synchubs = [];
 		$h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url 
-			where hubloc_hash = '%s' and hubloc_network = 'zot6' and hubloc_deleted = 0",
+			where hubloc_hash = '%s' and hubloc_network in ('nomad','zot6') and hubloc_deleted = 0",
 			dbesc($item['author_xchan'])
 		);
 
@@ -1153,7 +1154,7 @@ class Activity {
 			$ret['commentPolicy'] .= 'until=' . datetime_convert('UTC','UTC',$i['comments_closed'],ATOM_TIME);
 		}
 		
-		$ret['attributedTo'] = (($i['author']['xchan_network'] === 'zot6') ? $i['author']['xchan_url'] : $i['author']['xchan_hash']);
+		$ret['attributedTo'] = (in_array($i['author']['xchan_network'],['nomad']['zot6']) ? $i['author']['xchan_url'] : $i['author']['xchan_hash']);
 
 		if ($i['mid'] !== $i['parent_mid']) {
 			$ret['inReplyTo'] = $i['thr_parent'];
@@ -1620,6 +1621,7 @@ class Activity {
 		}
 
 		$ret['tag'] = [ [ 'type' => 'PropertyValue','name' => 'Protocol','value' => 'zot6'] ];
+		$ret['tag'] = [ [ 'type' => 'PropertyValue','name' => 'Protocol','value' => 'nomad'] ];
 
 		if ($activitypub && get_config('system','activitypub', ACTIVITYPUB_ENABLED)) {	
 
@@ -2171,7 +2173,7 @@ class Activity {
 				if ($hub['hubloc_network'] === 'activitypub') {
 					$ap_hubloc = $hub;
 				}
-				if ($hub['hubloc_network'] === 'zot6') {
+				if (in_array($hub['hubloc_network'],['nomad','zot6'])) {
 					Libzot::update_cached_hubloc($hub);
 				}
 			}
@@ -2345,7 +2347,7 @@ class Activity {
 		$xchan_type = self::get_xchan_type($person_obj['type']);
 		$about = ((isset($person_obj['summary'])) ? html2bbcode(purify_html($person_obj['summary'])) : EMPTY_STR);
 
-		$p = q("select * from xchan where xchan_url = '%s' and xchan_network = 'zot6' limit 1",
+		$p = q("select * from xchan where xchan_url = '%s' and xchan_network in ('nomad','zot6') limit 1",
 			dbesc($url)
 		);
 		if ($p) {
@@ -2532,7 +2534,7 @@ class Activity {
 		// and adding zot discovery urls to the actor record will cause federation to fail with the 20-30 projects which don't accept arrays in the url field. 
 		
 		if (strpos($url,'/channel/') !== false) {
-			$zx = q("select * from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6'",
+			$zx = q("select * from hubloc where hubloc_id_url = '%s' and hubloc_network in ('nomad','zot6')",
 				dbesc($url)
 			);	
 			if (($username) && strpos($username,'@') && (! $zx)) {
@@ -4244,6 +4246,7 @@ class Activity {
 				);
 				break;
 			case 'zot6':
+			case 'nomad':
 				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_id_url = '%s' $sql_options ",
 					dbesc($url)
 				);

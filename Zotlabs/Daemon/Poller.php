@@ -112,7 +112,7 @@ class Poller {
 				}
 
 
-				if($contact['xchan_network'] !== 'zot6')
+				if(! in_array($contact['xchan_network'],['nomad','zot6']))
 					continue;
 
 				if($c == $t) {

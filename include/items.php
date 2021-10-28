@@ -914,13 +914,14 @@ function import_author_xchan($x) {
 
 	$y = false;
 
-	if((! array_key_exists('network', $x)) || ($x['network'] === 'zot6')) {
+	if((! array_key_exists('network', $x)) || in_array($x['network'],['nomad','zot6'])) {
 		$y = Libzot::import_author_zot($x);
 	}
 
 	// if we were told that it's a zot connection, don't probe/import anything else
-	if(array_key_exists('network',$x) && $x['network'] === 'zot6')
+	if(array_key_exists('network',$x) && in_array($x['network'],['nomad','zot6'])) {
 		return $y;
+	}
 
 	if(! $y) {
 		$y = import_author_activitypub($x);
@@ -3181,7 +3182,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 			"' portable_id='"   . $item['author']['xchan_hash'] . 
 			"' avatar='"        . $item['author']['xchan_photo_s'] .
 			"' link='"          . $item['plink'] .
-			"' auth='"          . (($item['author']['xchan_network'] === 'zot6') ? 'true' : 'false') .
+			"' auth='"          . (in_array($item['author']['xchan_network'],['nomad', 'zot6']) ? 'true' : 'false') .
 			"' posted='"        . $item['created'] .
 			"' message_id='"    . $item['mid'] .
 		"']";

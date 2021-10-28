@@ -101,7 +101,7 @@ class Chanview extends Controller {
 		$connected = false;
 	
 		$url = App::$poi['xchan_url'];
-		if (App::$poi['xchan_network'] === 'zot6') {
+		if (in_array(App::$poi['xchan_network'],['nomad','zot6'])) {
 			$is_zot = true;
 		}			
 		if (local_channel()) {

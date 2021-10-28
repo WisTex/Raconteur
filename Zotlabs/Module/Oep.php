@@ -120,13 +120,13 @@ class Oep extends \Zotlabs\Web\Controller {
 
 	        
 		$o = "[share author='".urlencode($p[0]['author']['xchan_name']).
-            "' profile='".$p[0]['author']['xchan_url'] .
-            "' portable_id='".$p[0]['author']['xchan_hash'] .
-            "' avatar='".$p[0]['author']['xchan_photo_s'].
-            "' link='".$p[0]['plink'].
-			"' auth='".(($p[0]['author']['network'] === 'zot6') ? 'true' : 'false') .
-            "' posted='".$p[0]['created'].
-            "' message_id='".$p[0]['mid']."']";
+            "' profile='" . $p[0]['author']['xchan_url'] .
+            "' portable_id='" . $p[0]['author']['xchan_hash'] .
+            "' avatar='" . $p[0]['author']['xchan_photo_s'].
+            "' link='" . $p[0]['plink'].
+			"' auth='" . (in_array($p[0]['author']['network'],['nomad','zot6']) ? 'true' : 'false') .
+            "' posted='" . $p[0]['created'].
+            "' message_id='" . $p[0]['mid']."']";
 	    if($p[0]['title'])
             $o .= '[b]'.$p[0]['title'].'[/b]'."\r\n";
 
@@ -210,7 +210,7 @@ class Oep extends \Zotlabs\Web\Controller {
             "' portable_id='".$p[0]['author']['xchan_hash'] .
             "' avatar='".$p[0]['author']['xchan_photo_s'].
             "' link='".$p[0]['plink'].
-			"' auth='".(($p[0]['author']['network'] === 'zot6') ? 'true' : 'false') .
+			"' auth='" . (in_array($p[0]['author']['network'],['nomad','zot6']) ? 'true' : 'false') .
             "' posted='".$p[0]['created'].
             "' message_id='".$p[0]['mid']."']";
 	    if($p[0]['title'])
@@ -295,7 +295,7 @@ class Oep extends \Zotlabs\Web\Controller {
             "' portable_id='".$p[0]['author']['xchan_hash'] .
             "' avatar='".$p[0]['author']['xchan_photo_s'].
             "' link='".$p[0]['plink'].
-			"' auth='".(($p[0]['author']['network'] === 'zot6') ? 'true' : 'false') .
+			"' auth='" . (in_array($p[0]['author']['network'],['nomad','zot6']) ? 'true' : 'false') .
             "' posted='".$p[0]['created'].
             "' message_id='".$p[0]['mid']."']";
 	    if($p[0]['title'])
@@ -371,7 +371,7 @@ class Oep extends \Zotlabs\Web\Controller {
             "' portable_id='".$p[0]['author']['xchan_hash'] .
 			"' avatar='".$p[0]['author']['xchan_photo_s'].
 			"' link='".$p[0]['plink'].
-			"' auth='".(($p[0]['author']['network'] === 'zot6') ? 'true' : 'false') .
+			"' auth='" . (in_array($p[0]['author']['network'],['nomad','zot6']) ? 'true' : 'false') .
 			"' posted='".$p[0]['created'].
 			"' message_id='".$p[0]['mid']."']";
 		if($p[0]['title'])

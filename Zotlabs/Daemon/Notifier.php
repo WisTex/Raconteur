@@ -649,7 +649,7 @@ class Notifier {
 			}
 			
 
-			if ($hub['hubloc_network'] === 'zot6') {
+			if (in_array($hub['hubloc_network'],['nomad','zot6'])) {
 				if (! in_array($hub['hubloc_sitekey'],$keys)) {
 					$hublist[] = $hub['hubloc_host'] . ' ' . $hub['hubloc_network'];
 					$dhubs[]   = $hub;
@@ -673,7 +673,7 @@ class Notifier {
 
 			// deliver to any non-zot networks
 
-			if ($hub['hubloc_network'] !== 'zot6') {
+			if (! in_array($hub['hubloc_network'],['nomad','zot6'])) {
 				$narr = [
 					'channel'        => self::$channel,
 					'upstream'       => $upstream,

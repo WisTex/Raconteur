@@ -86,7 +86,7 @@ class Connect {
 
 			// ensure there's a valid hubloc for this xchan before proceeding - you cannot connect without it
 			
-			if (in_array($r['xchan_network'], [ 'zot6','activitypub' ])) {
+			if (in_array($r['xchan_network'], [ 'nomad','zot6','activitypub' ])) {
 				$h = q("select * from hubloc where hubloc_hash = '%s'",
 					dbesc($r['xchan_hash'])
 				);

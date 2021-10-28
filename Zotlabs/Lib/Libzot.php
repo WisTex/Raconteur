@@ -294,7 +294,7 @@ class Libzot {
 			// We are looking for the most recently created primary hub, and the most recently created if for some reason we do not have a primary.
 			// hubloc_id_url is set to the channel home, which corresponds to an ActivityStreams actor id.
 			
-			$r = q("select hubloc_id_url, hubloc_primary from hubloc where hubloc_hash = '%s' and hubloc_network = 'zot6' order by hubloc_id desc",
+			$r = q("select hubloc_id_url, hubloc_primary from hubloc where hubloc_hash = '%s' and hubloc_network in ('nomad','zot6') order by hubloc_id desc",
 				dbesc($them['xchan_hash'])
 			);
 
@@ -580,7 +580,7 @@ class Libzot {
 			$r = q("select hubloc.*, site.site_crypto from hubloc left join site on hubloc_url = site_url
 					where hubloc_guid = '%s' and hubloc_guid_sig = '%s'
 					and hubloc_url = '%s' and hubloc_url_sig = '%s'
-					and hubloc_site_id = '%s' and hubloc_network = 'zot6' 
+					and hubloc_site_id = '%s' and hubloc_network in ('nomad','zot6') 
 					$limit",
 				dbesc($arr['id']),
 				dbesc($arr['id_sig']),
@@ -801,7 +801,7 @@ class Libzot {
 
 			if ($arr['protocols']) {
 				$protocols = implode(',',$arr['protocols']);
-				if ($protocols !== 'zot6') {
+				if ($protocols) {
 					set_xconfig($xchan_hash,'system','protocols',$protocols);
 				}
 				else {
@@ -887,6 +887,8 @@ class Libzot {
 				$px = 1;
 			}
 
+			$network = isset($arr['site']['protocol_version']) && intval($arr['site']['protocol_version']) > 10 : 'nomad' : 'zot6';
+
 			$x = xchan_store_lowlevel(
 				[
 					'xchan_hash'           => $xchan_hash,
@@ -901,7 +903,7 @@ class Libzot {
 					'xchan_follow'         => $arr['primary_location']['follow_url'],
 					'xchan_connpage'       => $arr['connect_url'],
 					'xchan_name'           => (($arr['name']) ? escape_tags($arr['name']) : '-'),
-					'xchan_network'        => 'zot6',
+					'xchan_network'        => $network,
 					'xchan_updated'        => datetime_convert(),
 					'xchan_photo_date'     => $arr['photo']['updated'],
 					'xchan_name_date'      => $arr['name_updated'],
@@ -1390,7 +1392,7 @@ class Libzot {
 					return;
 				}
 
-				$s = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
+				$s = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network in ('nomad','zot6') limit 1",
 					dbesc($env['sender'])
 				); 
 
@@ -2285,7 +2287,7 @@ class Libzot {
 		$ret = [];
 
 
-		$signer = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
+		$signer = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network in ('nomad','zot6') limit 1",
 			dbesc($a['signature']['signer'])
 		); 
 
@@ -2639,36 +2641,6 @@ class Libzot {
 		}
 	}
 
-
-	/**
-	 * @brief
-	 *
-	 * @param array $sender an associative array
-	 *   * \e string \b hash a xchan_hash
-	 * @param array $arr
-	 * @param array $deliveries (unused) deliveries is irrelevant
-	 */
-	static function process_location_delivery($sender, $arr, $deliveries) {
-
-		// deliveries is irrelevant
-		logger('process_location_delivery', LOGGER_DEBUG);
-
-		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
-			dbesc($sender)
-		);
-		if ($r) {
-			$xchan = [ 'id' => $r[0]['xchan_guid'], 'id_sig' => $r[0]['xchan_guid_sig'],
-				'hash' => $r[0]['xchan_hash'], 'public_key' => $r[0]['xchan_pubkey'] ];
-		}
-		if (array_key_exists('locations',$arr) && $arr['locations']) {
-			$x = Libsync::sync_locations($xchan,$arr,true);
-			logger('results: ' . print_r($x,true), LOGGER_DEBUG);
-			if ($x['changed']) {
-				$guid = random_string() . '@' . App::get_hostname();
-				Libzotdir::update_modtime($sender,$r[0]['xchan_guid'],$arr['locations'][0]['address'],UPDATE_FLAGS_UPDATED);
-			}
-		}
-	}
 
 	/**
 	 * @brief Checks for a moved channel and sets the channel_moved flag.
@@ -3088,7 +3060,7 @@ class Libzot {
 		$feed      = ((x($arr,'feed'))       ? intval($arr['feed']) : 0);
 
 		if ($ztarget) {
-			$t = q("select * from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
+			$t = q("select * from hubloc where hubloc_id_url = '%s' and hubloc_network in ('nomad','zot6') limit 1",
 				dbesc($ztarget)
 			);
 			if ($t) {
@@ -3267,7 +3239,7 @@ class Libzot {
 
 		$ret['channel_role']   = get_pconfig($e['channel_id'],'system','permissions_role','custom');
 		$ret['channel_type']   = $channel_type;
-		$ret['protocols']      = [ 'zot6' ];
+		$ret['protocols']      = [ 'nomad', 'zot6' ];
 		if (get_pconfig($e['channel_id'],'system','activitypub',get_config('system','activitypub', ACTIVITYPUB_ENABLED))) {
 			$ret['protocols'][] = 'activitypub';
 		}
@@ -3432,6 +3404,7 @@ class Libzot {
 			$ret['site']['logo']       = System::get_site_icon();
 			$ret['site']['project']    = System::get_platform_name();
 			$ret['site']['version']    = System::get_project_version();
+			$ret['site']['protocol_version'] = ZOT_REVISION;
 		}
 
 		return $ret['site'];
@@ -3557,6 +3530,11 @@ class Libzot {
 			return $arr;
 		}
 
+		foreach ($arr as $v) {
+			if($v[$check] === 'nomad') {
+				return $v;
+			}
+		}
 		foreach ($arr as $v) {
 			if($v[$check] === 'zot6') {
 				return $v;

@@ -55,7 +55,7 @@ class Libsync {
 		unset($channel['channel_salt']);
 
 		$h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url 
-			where hubloc_hash = '%s' and hubloc_network = 'zot6' and hubloc_deleted = 0",
+			where hubloc_hash = '%s' and hubloc_network in ('nomad','zot6') and hubloc_deleted = 0",
 			dbesc(($keychange) ? $packet['keychange']['old_hash'] : $channel['channel_hash'])
 		);
 
@@ -210,7 +210,7 @@ class Libsync {
 
 		$hashes = ids_to_querystr($l,'link',true);
 		
-		$h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url where hubloc_hash in (" . protect_sprintf($hashes) . ") and hubloc_network = 'zot6' and hubloc_deleted = 0");
+		$h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url where hubloc_hash in (" . protect_sprintf($hashes) . ") and hubloc_network in ('nomad','zot6') and hubloc_deleted = 0");
 
 		if (! $h) {
 			return;
@@ -536,7 +536,7 @@ class Libsync {
 						}
 					}
 
-					if ((! $found) && (! in_array($abook['xchan_network'], [ 'zot6', 'activitypub' ]))) {
+					if ((! $found) && (! in_array($abook['xchan_network'], [ 'nomad', 'zot6', 'activitypub' ]))) {
 						// just import the record.
 						$xc = [];
 						foreach ($abook as $k => $v) {
@@ -943,6 +943,14 @@ class Libsync {
 				$arr['locations'][0]['primary'] = true;
 
 			foreach($arr['locations'] as $location) {
+
+				$network = 'zot6';
+				// only set nomad if the location info is coming from the same site as the original zotinfo packet
+				if (isset($sender['site']) && isset($sender['site']['url']) && $sender['site']['url'] === $location['url']) {
+					if (isset($sender['site']['protocol_version']) && intval($sender['site']['protocol_version']) > 10) {
+						$network = 'nomad';
+					}
+				}
 				if(! Libzot::verify($location['url'],$location['url_sig'],$sender['public_key'])) {
 					logger('Unable to verify site signature for ' . $location['url']);					
 					$ret['message'] .= sprintf( t('Unable to verify site signature for %s'), $location['url']) . EOL;
@@ -1031,7 +1039,7 @@ class Libsync {
 						$what .= 'primary_hub ';
 						$changed = true;
 					}
-					elseif((! intval($r[0]['hubloc_primary'])) && ($location['primary'])) {
+					elseif ((! intval($r[0]['hubloc_primary'])) && ($location['primary'])) {
 						$m = q("update hubloc set hubloc_primary = 1, hubloc_updated = '%s' where hubloc_id = %d",
 							dbesc(datetime_convert()),
 							intval($r[0]['hubloc_id'])
@@ -1042,7 +1050,7 @@ class Libsync {
 						$what .= 'primary_hub ';
 						$changed = true;
 					}
-					elseif($absolute) {
+					elseif  ($absolute) {
 						// Absolute sync - make sure the current primary is correctly reflected in the xchan
 						$pr = hubloc_change_primary($r[0]);
 						if($pr) {
@@ -1097,7 +1105,7 @@ class Libsync {
 						'hubloc_id_url'    => $location['id_url'],
 						'hubloc_hash'      => $sender['hash'],
 						'hubloc_addr'      => $location['address'],
-						'hubloc_network'   => 'zot6',
+						'hubloc_network'   => $network,
 						'hubloc_primary'   => intval($location['primary']),
 						'hubloc_url'       => $location['url'],
 						'hubloc_url_sig'   => $location['url_sig'],

@@ -273,7 +273,7 @@ class Dirsearch extends Controller {
 				}
 				if ($isdup) {
 					$isdup = protect_sprintf($isdup);
-					$z = q("select xchan_url, xchan_hash from xchan where xchan_url in  ( $isdup ) and xchan_network = 'zot6'");
+					$z = q("select xchan_url, xchan_hash from xchan where xchan_url in  ( $isdup ) and xchan_network in ('nomad','zot6')");
 					if ($z) {
 						foreach($z as $zv) {
 							$dups[$zv['xchan_url']] = $zv['xchan_hash'];

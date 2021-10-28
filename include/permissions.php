@@ -150,7 +150,7 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
 		// If we're still here, we have an observer, check the network.
 
 		if($channel_perm & PERMS_NETWORK) {
-			if($x && $x[0]['xchan_network'] === 'zot6') {
+			if($x && in_array($x[0]['xchan_network'],['nomad','zot6'])) {
 				$ret[$perm_name] = true;
 				continue;
 			}
@@ -346,7 +346,7 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
 	// If we're still here, we have an observer, check the network.
 
 	if ($channel_perm & PERMS_NETWORK) {
-		if ($x && $x[0]['xchan_network'] === 'zot6') {
+		if ($x && in_array($x[0]['xchan_network'],['nomad','zot6'])) {
 			return true;
 		}
 	}

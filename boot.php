@@ -18,7 +18,7 @@ use Zotlabs\Daemon\Run;
  */
 
 define ( 'STD_VERSION',             '21.10.27' );
-define ( 'ZOT_REVISION',            '10.0' );
+define ( 'ZOT_REVISION',            '11.0' );
 
 define ( 'DB_UPDATE_VERSION',       1253 );
 

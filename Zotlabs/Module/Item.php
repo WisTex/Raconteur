@@ -946,7 +946,7 @@ class Item extends Controller {
 								$datarray['target'] = [
 									'id'           => $colls['wall'],
 									'type'         => 'Collection',
-									'attributedTo' => (($ng['xchan_network'] === 'zot6') ? $ng['xchan_url'] : $ng['xchan_hash'])
+									'attributedTo' => (in_array($ng['xchan_network'],['nomad','zot6']) ? $ng['xchan_url'] : $ng['xchan_hash'])
 								];
 								$datarray['tgt_type'] = 'Collection';
 							}

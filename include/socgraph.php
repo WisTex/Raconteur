@@ -137,7 +137,7 @@ function poco_load($xchan = '', $url = null) {
 					$profile_url = $url['value'];
 					continue;
 				}
-				if(in_array($url['type'], ['zot6','activitypub'] )) {
+				if(in_array($url['type'], ['nomad','zot6','activitypub'] )) {
 					$network = $url['type'];
 					$address = str_replace('acct:' , '', $url['value']);
 					continue;
@@ -153,7 +153,7 @@ function poco_load($xchan = '', $url = null) {
 			}
 		}
 
-		if (! in_array($network, ['zot6' , 'activitypub'])) {
+		if (! in_array($network, ['nomad','zot6','activitypub'])) {
 			continue;
 		}
 
@@ -172,7 +172,7 @@ function poco_load($xchan = '', $url = null) {
 
 		if(($x !== false) && (! count($x))) {
 			if($address) {
-				if(in_array($network, ['zot6' , 'activitypub'])) {
+				if(in_array($network, ['nomad','zot6','activitypub'])) {
 					$wf = discover_by_webbie($profile_url);
 					if ($wf) {
 						$x = q("select xchan_hash from xchan where ( xchan_hash = '%s' or xchan_url = '%s') order by xchan_network desc limit 1",

@@ -20,7 +20,7 @@ class Connac extends Controller {
 		}
 
 		
-		$r = q("select xchan_addr from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and xchan_network = 'zot6'",
+		$r = q("select xchan_addr from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and xchan_network in ('nomad','zot6')",
 			intval(local_channel())
 		);
 		if ($r) {

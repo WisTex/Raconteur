@@ -408,7 +408,7 @@ class HTTPSig {
 	static function get_zotfinger_key($id,$force = false) {
 
 		if (! $force) {
-			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and hubloc_network = 'zot6' order by hubloc_id desc",
+			$x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and hubloc_network in ('nomad','zot6') order by hubloc_id desc",
 				dbesc(str_replace('acct:','',$id)),
 				dbesc($id)
 			);

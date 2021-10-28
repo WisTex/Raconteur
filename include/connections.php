@@ -242,7 +242,7 @@ function mark_orphan_hubsxchans() {
 	}
 
 	$r = q("update hubloc set hubloc_deleted = 1 where hubloc_deleted = 0 
-		and hubloc_network = 'zot6' and hubloc_connected < %s - interval %s",
+		and hubloc_network in ('nomad','zot6') and hubloc_connected < %s - interval %s",
 		db_utcnow(), db_quoteinterval('36 day')
 	);
 
@@ -525,7 +525,7 @@ function random_profile() {
 	for ($i = 0; $i < $retryrandom; $i++) {
 
 		$r = q("select xchan_url, xchan_hash from xchan left join hubloc on hubloc_hash = xchan_hash where
-			xchan_hidden = 0 and xchan_network = 'zot6' and xchan_deleted = 0
+			xchan_hidden = 0 and xchan_network in ('nomad','zot6') and xchan_deleted = 0
 			and hubloc_connected > %s - interval %s order by $randfunc limit 1",
 			db_utcnow(),
 			db_quoteinterval('30 day')

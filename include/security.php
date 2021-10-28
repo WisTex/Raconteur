@@ -707,7 +707,7 @@ function get_security_ids($channel_id, $ob_hash) {
 			if ($r) {
 				foreach ($r as $rv) {
 					$groups[] = 'connections:' . $rv['channel_hash'];
-					if ($xchans[0]['xchan_network'] === 'zot6') {
+					if (in_array($xchans[0]['xchan_network'],['nomad','zot6'])) {
 						$groups[] = 'zot:' . $rv['channel_hash'];
 					}
 					if ($xchans[0]['xchan_network'] === 'activitypub') {

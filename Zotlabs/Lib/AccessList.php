@@ -231,7 +231,7 @@ class AccessList {
 					$sql_extra = EMPTY_STR;
 					break;
 				case '2':
-					$sql_extra = " and xchan_network = 'zot6' ";
+					$sql_extra = " and xchan_network in ('nomad','zot6') ";
 					break;
 				case '3':
 					$sql_extra = " and xchan_network = 'activitypub' ";
@@ -394,7 +394,7 @@ class AccessList {
 				$sql_extra = EMPTY_STR;
 				$channel_hash = substr($gv,strpos($gv,':') + 1);
 				if (strpos($gv,'zot:') === 0) {
-					$sql_extra = " and xchan_network = 'zot6' ";
+					$sql_extra = " and xchan_network in ('nomad','zot6') ";
 				}
 				if (strpos($gv,'activitypub:') === 0) {
 					$sql_extra = " and xchan_network = 'activitypub' ";

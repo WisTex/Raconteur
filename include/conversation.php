@@ -890,11 +890,13 @@ function author_is_pmable($xchan, $abook) {
 
 	$x = [ 'xchan' => $xchan, 'abook' => $abook, 'result' => 'unset' ];
 	call_hooks('author_is_pmable',$x);
-	if($x['result'] !== 'unset')
+	if ($x['result'] !== 'unset') {
 		return $x['result'];
+	}
 	
-	if($xchan['xchan_network'] === 'zot6' && get_observer_hash())
+	if (in_array($xchan['xchan_network'],['nomad','zot6']) && get_observer_hash()) {
 		return true;
+	}
 	return false;
 
 }

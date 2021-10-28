@@ -34,10 +34,16 @@ class Gprobe {
 					$protocols[] = 'activitypub';
 					continue;
 				}
+				if ($rv['hubloc_network'] === 'nomad') {
+					$protocols[] = 'nomad';
+					$protocols[] = 'zot6';
+					continue;
+				}
 				if ($rv['hubloc_network'] === 'zot6') {
 					$protocols[] = 'zot6';
 					continue;
 				}
+
 			}
 		}
 
