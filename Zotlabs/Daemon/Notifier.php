@@ -718,7 +718,7 @@ class Notifier {
 				continue;
 			}
 
-			// default: zot protocol
+			// default: nomad or zot protocol
 
 			// Prevent zot6 delivery of group comment boosts, which are not required for conversational platforms.
 			// ActivityPub conversational platforms may wish to filter these if they don't want or require them.
@@ -748,6 +748,7 @@ class Notifier {
 					'account_id' => self::$channel['channel_account_id'],
 					'channel_id' => self::$channel['channel_id'],
 					'posturl'    => $hub['hubloc_callback'],
+					'driver'     => $hub['hubloc_network'],
 					'notify'     => $packet,
 					'msg'        => EMPTY_STR
 				]

@@ -31,7 +31,7 @@ class Zot_probe extends \Zotlabs\Web\Controller {
 
 				$o .= '<pre>' . htmlspecialchars(print_array($x)) . '</pre>';
 
-				$headers = 'Accept: application/x-zot+json, application/jrd+json, application/json';
+				$headers = 'Accept: application/x-nomad+json, application/x-zot+json, application/jrd+json, application/json';
 
 				$redirects = 0;
 		    	$x = z_fetch_url($resource,true,$redirects, [ 'headers' => [ $headers ]]);

@@ -21,7 +21,7 @@ class Zot extends Controller {
 
 	function init() {
 		$zot = new Receiver(new Zot6Handler());
-		json_return_and_die($zot->run(),'application/x-zot+json');
+		json_return_and_die($zot->run(),'application/x-nomad+json');
 	}
 
 }

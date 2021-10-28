@@ -241,6 +241,30 @@ class Libzot {
 	}
 
 
+	static function nomad($url, $data, $channel = null,$crypto = null) {
+
+		if ($channel) {
+			$headers = [ 
+				'X-Nomad-Token'    => random_string(), 
+				'Digest'           => HTTPSig::generate_digest_header($data), 
+				'Content-type'     => 'application/x-nomad+json',
+				'(request-target)' => 'post ' . get_request_string($url)
+			];
+
+			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false,'sha512', 
+				(($crypto) ? [ 'key' => $crypto['hubloc_sitekey'], 'algorithm' => self::best_algorithm($crypto['site_crypto']) ] : false));
+		}
+		else {
+			$h = [];
+		}
+
+		$redirects = 0;
+
+		return z_post_url($url,$data,$redirects,((empty($h)) ? [] : [ 'headers' => $h ]));
+	}
+
+
+
 	/**
 	 * @brief Refreshes after permission changed or friending, etc.
 	 *
@@ -887,7 +911,7 @@ class Libzot {
 				$px = 1;
 			}
 
-			$network = isset($arr['site']['protocol_version']) && intval($arr['site']['protocol_version']) > 10 : 'nomad' : 'zot6';
+			$network = isset($arr['site']['protocol_version']) && intval($arr['site']['protocol_version']) > 10 ? 'nomad' : 'zot6';
 
 			$x = xchan_store_lowlevel(
 				[

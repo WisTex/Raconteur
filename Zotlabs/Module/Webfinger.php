@@ -144,13 +144,8 @@ class Webfinger extends Controller {
 				],
 
 				[
-					'rel'  => 'http://purl.org/nomad/auth',
-					'type' => 'application/x-nomad+json',
-					'href' => z_root() . '/owa'
-				],
-				[
 					'rel'  => 'http://purl.org/openwebauth/v1',
-					'type' => 'application/x-zot+json',
+					'type' => 'application/x-nomad+json',
 					'href' => z_root() . '/owa'
 				],
 

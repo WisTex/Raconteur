@@ -68,6 +68,6 @@ class Owa extends Controller {
 				}
 			}
 		}
-		json_return_and_die($ret,'application/x-zot+json');
+		json_return_and_die($ret,'application/x-nomad+json');
 	}
 }

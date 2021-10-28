@@ -40,8 +40,8 @@ class ZotURL {
 			if($channel && $m) {
 
 				$headers = [ 
-					'Accept'           => 'application/x-zot+json', 
-					'Content-Type'     => 'application/x-zot+json',
+					'Accept'           => 'application/x-nomad+json, application/x-zot+json', 
+					'Content-Type'     => 'application/x-nomad+json',
 					'X-Zot-Token'      => random_string(),
 					'Digest'           => HTTPSig::generate_digest_header($data),
 					'Host'             => $m['host'],
@@ -50,7 +50,7 @@ class ZotURL {
 				$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false);
 			}
 			else {
-				$h = [ 'Accept: application/x-zot+json' ]; 
+				$h = [ 'Accept: application/x-nomad+json' ]; 
 			}
 				
 			$result = [];

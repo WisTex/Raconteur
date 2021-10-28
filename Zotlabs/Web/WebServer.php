@@ -192,8 +192,14 @@ class WebServer {
 				],
 
 				[
-					'rel'  => 'zot',
+					'rel'  => 'alternate',
 					'type' => 'application/x-zot+json',
+					'href'  => z_root() . '/channel/' . argv(1)
+				],
+
+				[
+					'rel'  => 'alternate',
+					'type' => 'application/x-nomad+json',
 					'href'  => z_root() . '/channel/' . argv(1)
 				],
 

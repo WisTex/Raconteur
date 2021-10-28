@@ -849,7 +849,7 @@ class Activity {
 							'type' => 'Link',
 							'href' => str_replace(z_root(),$l['hubloc_url'],$ret['id']),
 							'rel' => 'alternate',
-							'mediaType' => 'application/x-zot+json'
+							'mediaType' => 'application/x-nomad+json'
 						];
 					}
 				}
@@ -1282,7 +1282,7 @@ class Activity {
 							'type' => 'Link',
 							'href' => str_replace(z_root(),$l['hubloc_url'],$ret['id']),
 							'rel' => 'alternate',
-							'mediaType' => 'application/x-zot+json'
+							'mediaType' => 'application/x-nomad+json'
 						];
 					}
 				}

@@ -104,8 +104,8 @@ class Magic extends Controller {
 				$data = json_encode([ 'OpenWebAuth' => random_string() ]);
 				
 				$headers = [];
-				$headers['Accept'] = 'application/x-zot+json' ;
-				$headers['Content-Type'] = 'application/x-zot+json' ;
+				$headers['Accept'] = 'application/x-nomad+json, application/x-zot+json';
+				$headers['Content-Type'] = 'application/x-nomad+json';
 				$headers['X-Open-Web-Auth'] = random_string();
 				$headers['Digest'] = HTTPSig::generate_digest_header($data);
 				$headers['Host'] = $parsed['host'];

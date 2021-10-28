@@ -1593,7 +1593,7 @@ function sync_files($channel, $files) {
 						$m = parse_url($fetch_url);
 
 						$headers = [ 
-							'Accept'           => 'application/x-zot+json', 
+							'Accept'           => 'application/x-nomad+json, application/x-zot+json', 
 							'Sigtoken'         => random_string(),
 							'Host'             => $m['host'],
 							'(request-target)' => 'post ' . $m['path'] . '/' . $att['hash']
@@ -1687,7 +1687,7 @@ function sync_files($channel, $files) {
 						$m = parse_url($fetch_url);
 
 						$headers = [ 
-							'Accept'           => 'application/x-zot+json', 
+							'Accept'           => 'application/x-nomad+json, application/x-zot+json', 
 							'Sigtoken'         => random_string(),
 							'Host'             => $m['host'],
 							'(request-target)' => 'post ' . $m['path'] . '/' . $att['hash']

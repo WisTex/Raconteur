@@ -282,7 +282,7 @@ class Item extends Controller {
 				]], $i);
 
 			$headers = [];
-			$headers['Content-Type'] = 'application/x-zot+json' ;
+			$headers['Content-Type'] = 'application/x-nomad+json' ;
 			$x['signature'] = LDSignatures::sign($x,$chan);
 			$ret = json_encode($x, JSON_UNESCAPED_SLASHES);
 			$headers['Digest'] = HTTPSig::generate_digest_header($ret);

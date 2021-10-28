@@ -65,7 +65,7 @@ class Home extends Controller {
 			}
 
 			$headers = [ 
-				'Content-Type'     => 'application/x-zot+json', 
+				'Content-Type'     => 'application/x-nomad+json', 
 				'Digest'           => HTTPSig::generate_digest_header($data),
 				'(request-target)' => strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI']
 			];

@@ -7,7 +7,7 @@ import json
 
 class JSalmon:
 
-    def sign(data,key_id,key,data_type = 'application/x-zot+json'):
+    def sign(data,key_id,key,data_type = 'application/x-nomad+json'):
         data = base64urlnopad_encode(data.encode("utf-8"))
         encoding = 'base64url'
         algorithm = 'RSA-SHA256'

@@ -443,10 +443,16 @@ class Queue {
 
 			$msg = $outq['outq_notify'];
 
-			$result = Libzot::zot($outq['outq_posturl'],$msg,$channel,$host_crypto);
+
+			if ($outq['outq_driver'] === 'nomad') {
+				$result = Libzot::nomad($outq['outq_posturl'],$msg,$channel,$host_crypto);
+			}
+			else {
+				$result = Libzot::zot($outq['outq_posturl'],$msg,$channel,$host_crypto);
+			}
 
 			if($result['success']) {
-				logger('deliver: remote zot delivery succeeded to ' . $outq['outq_posturl']);
+				logger('deliver: remote nomad/zot delivery succeeded to ' . $outq['outq_posturl']);
 				Libzot::process_response($outq['outq_posturl'],$result, $outq);
 			}
 			else {

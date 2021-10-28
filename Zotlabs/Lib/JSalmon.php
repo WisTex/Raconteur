@@ -6,7 +6,7 @@ use Zotlabs\Web\HTTPSig;
 
 class JSalmon {
 
-	static function sign($data,$key_id,$key,$data_type = 'application/x-zot+json') {
+	static function sign($data,$key_id,$key,$data_type = 'application/x-nomad+json') {
 
 		$data      = base64url_encode(json_encode($data,true),true); // strip padding
 		$encoding  = 'base64url';
