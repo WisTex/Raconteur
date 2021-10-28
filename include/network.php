@@ -1042,6 +1042,45 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true) {
     }
 
 	if($x && array_key_exists('links',$x) && is_array($x['links'])) {
+
+		// look for Nomad first
+
+		foreach($x['links'] as $link) {
+			if(array_key_exists('rel',$link)) {
+				$apurl = null;
+
+				// If we discover zot - don't search further; grab the info and get out of
+				// here.
+
+				if(in_array($link['rel'], [ PROTOCOL_NOMAD ]) && ((! $protocol) || (in_array(strtolower($protocol), [ 'nomad' ])))) {
+					logger('nomad found for ' . $webbie, LOGGER_DEBUG);
+					$record = Zotfinger::exec($link['href'], null, $verify);
+
+					// Check the HTTP signature
+
+					if ($verify) {
+
+						$hsig = $record['signature'];
+						if($hsig && ($hsig['signer'] === $url || $hsig['signer'] === $link['href']) && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
+							$hsig_valid = true;
+						}
+
+						if(! $hsig_valid) {
+							logger('http signature not valid: ' . print_r($hsig,true));
+							continue;
+						}
+					}
+
+					$x = Libzot::import_xchan($record['data']);
+					if($x['success']) {
+						return $x['hash'];
+					}
+				}
+			}
+		}
+
+		// if we reached this point, nomad wasn't found.
+
 		foreach($x['links'] as $link) {
 			if(array_key_exists('rel',$link)) {
 
@@ -1050,7 +1089,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true) {
 				// If we discover zot - don't search further; grab the info and get out of
 				// here.
 
-				if(in_array($link['rel'], [ PROTOCOL_NOMAD, PROTOCOL_ZOT6 ]) && ((! $protocol) || (in_array(strtolower($protocol), [ 'nomad','zot6' ])))) {
+				if(in_array($link['rel'], [ PROTOCOL_ZOT6 ]) && ((! $protocol) || (in_array(strtolower($protocol), [ 'zot6' ])))) {
 					logger('zot6 found for ' . $webbie, LOGGER_DEBUG);
 					$record = Zotfinger::exec($link['href'], null, $verify);
 

@@ -132,12 +132,6 @@ class Webfinger extends Controller {
 				],
 
 				[ 
-					'rel'  => 'http://purl.org/zot/protocol/6.0', 
-					'type' => 'application/x-zot+json', 
-					'href' => (($site_query) ? z_root() : z_root() . '/channel/' . $channel_target['channel_address']),
-				],
-
-				[ 
 					'rel'  => 'http://purl.org/nomad', 
 					'type' => 'application/x-nomad+json', 
 					'href' => (($site_query) ? z_root() : z_root() . '/channel/' . $channel_target['channel_address']),
@@ -147,6 +141,12 @@ class Webfinger extends Controller {
 					'rel'  => 'http://purl.org/openwebauth/v1',
 					'type' => 'application/x-nomad+json',
 					'href' => z_root() . '/owa'
+				],
+
+				[ 
+					'rel'  => 'http://purl.org/zot/protocol/6.0', 
+					'type' => 'application/x-zot+json', 
+					'href' => (($site_query) ? z_root() : z_root() . '/channel/' . $channel_target['channel_address']),
 				],
 
 				[
