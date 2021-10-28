@@ -256,7 +256,7 @@ class Import extends Controller {
 
 				$hash = Libzot::make_xchan_hash($xchan['xchan_guid'],$xchan['xchan_pubkey']);
 
-				if ($xchan['xchan_network'] === 'zot6' && $hash !== $xchan['xchan_hash']) {
+				if (in_array($xchan['xchan_network'],['nomad','zot6']) && $hash !== $xchan['xchan_hash']) {
 					logger('forged xchan: ' . print_r($xchan,true));
 					continue;
 				}
