@@ -1571,7 +1571,13 @@ function deliverable_singleton($channel_id,$xchan) {
 
 function get_repository_version($branch = 'release') {
 
-	$path = "https://codeberg.org/zot/" . ((PLATFORM_NAME === 'mistpark') ? 'misty' : PLATFORM_NAME) . "/raw/$branch/boot.php";
+
+	if (PLATFORM_NAME === 'streams') {
+		$path = "https://codeberg.org/streams/" . PLATFORM_NAME . "/raw/$branch/boot.php";
+	}
+	else {
+		$path = "https://codeberg.org/zot/" . ((PLATFORM_NAME === 'mistpark') ? 'misty' : PLATFORM_NAME) . "/raw/$branch/boot.php";
+	}
 
 	$x = z_fetch_url($path);
 	if($x['success']) {
@@ -1600,6 +1606,7 @@ function network_to_name($s) {
 		NETWORK_MAIL        => t('Email'),
 		NETWORK_DIASPORA    => t('Diaspora'),
 		NETWORK_FACEBOOK    => t('Facebook'),
+		NETWORK_NOMAD       => t('Nomad'),
 		NETWORK_ZOT6        => t('Nomad'),
 		NETWORK_ZOT         => t('Zot'),
 		NETWORK_LINKEDIN    => t('LinkedIn'),

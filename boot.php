@@ -22,7 +22,7 @@ define ( 'ZOT_REVISION',            '10.0' );
 
 define ( 'DB_UPDATE_VERSION',       1253 );
 
-define ( 'PLATFORM_NAME',           'roadhouse' );
+define ( 'PLATFORM_NAME',           'streams' );
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
 
 define ( 'PROJECT_BASE',   __DIR__ );

@@ -84,6 +84,9 @@ class System {
 	static public function get_project_srclink() {
 		if(is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['project_srclink'])
 			return App::$config['system']['project_srclink'];
+		if (PLATFORM_NAME === 'streams') {
+			return 'https://codeberg.org/streams/' . PLATFORM_NAME;
+		}
 		return 'https://codeberg.org/zot/' . PLATFORM_NAME;
 	}
 
@@ -108,7 +111,7 @@ class System {
 
 	static public function compatible_project($p) {
 
-		if (in_array(strtolower($p),['hubzilla', 'zap', 'red', 'misty', 'mistpark', 'redmatrix', 'osada', 'roadhouse'])) {
+		if (in_array(strtolower($p),['hubzilla', 'zap', 'red', 'misty', 'mistpark', 'redmatrix', 'osada', 'roadhouse', 'streams'])) {
 			return true;
 		}
 		return false;

@@ -17,7 +17,7 @@ requirements and confirm these with your hosting provider prior to
 installation. (And preferably before entering into a long-term contract.)
 
 If you encounter installation issues, please let us know via the issue 
-tracker at https://codeberg.org/zot/roadhouse where you downloaded the software.
+tracker at https://codeberg.org/streams/streams where you downloaded the software.
 Please be as clear as you can about your operating environment and provide as
 much detail as possible about any error messages you may see, so that we can
 prevent it from happening in the future. Due to the large variety of operating
@@ -99,7 +99,7 @@ web server platforms.
     software much easier to update. The Linux command to clone the repository 
     into a directory "mywebsite" would be
 
-        git clone https://codeberg.org/zot/roadhouse.git mywebsite
+        git clone https://codeberg.org/streams/streams.git mywebsite
 
     - and then you can pick up the latest changes at any time with
 
@@ -131,7 +131,7 @@ web server platforms.
          a nickname of 'zaddons'. You can pull in other addon repositories by 
          giving them different nicknames.
 
-            util/add_addon_repo https://codeberg.org/zot/roadhouse-addons.git zaddons
+            util/add_addon_repo https://codeberg.org/streams/streams-addons.git zaddons
 
     - For keeping the addon tree updated, you should be on your top level website 
 		directory and issue an update command for that repository.
