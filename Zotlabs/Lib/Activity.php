@@ -1621,7 +1621,7 @@ class Activity {
 		}
 
 		$ret['tag'] = [ [ 'type' => 'PropertyValue','name' => 'Protocol','value' => 'zot6'] ];
-		$ret['tag'] = [ [ 'type' => 'PropertyValue','name' => 'Protocol','value' => 'nomad'] ];
+		$ret['tag'][] = [ 'type' => 'PropertyValue','name' => 'Protocol','value' => 'nomad'] ;
 
 		if ($activitypub && get_config('system','activitypub', ACTIVITYPUB_ENABLED)) {	
 

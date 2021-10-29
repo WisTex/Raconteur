@@ -3373,7 +3373,6 @@ class Libzot {
 
 
 		$ret['site']['encryption'] = Crypto::methods();
-		$ret['site']['zot'] = System::get_zot_revision();
 
 		// hide detailed site information if you're off the grid
 
@@ -3423,7 +3422,6 @@ class Libzot {
 			$ret['site']['sitehash']   = get_config('system','location_hash');
 			$ret['site']['sellpage']   = get_config('system','sellpage');
 			$ret['site']['location']   = get_config('system','site_location');
-			$ret['site']['realm']      = get_directory_realm();
 			$ret['site']['sitename']   = System::get_site_name();
 			$ret['site']['logo']       = System::get_site_icon();
 			$ret['site']['project']    = System::get_platform_name();
