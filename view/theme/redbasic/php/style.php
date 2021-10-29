@@ -72,7 +72,7 @@ if ((!$schema) || ($schema == '---')) {
 //Set some defaults - we have to do this after pulling owner settings, and we have to check for each setting
 //individually.  If we don't, we'll have problems if a user has set one, but not all options.
 if (! (isset($nav_bg) && $nav_bg))
-	$nav_bg = '#343a40';
+	$nav_bg = '#777';
 if (! (isset($nav_icon_colour) && $nav_icon_colour))
 	$nav_icon_colour = 'rgba(255, 255, 255, 0.5)';
 if (! (isset($nav_active_icon_colour) && $nav_active_icon_colour))
@@ -82,13 +82,13 @@ if (! (isset($link_colour) && $link_colour))
 if (! (isset($banner_colour) && $banner_colour))
 	$banner_colour = '#fff';
 if (! (isset($bgcolour) && $bgcolour))
-	$bgcolour = 'rgb(254,254,254)';
+	$bgcolour = '#eee';
 if (! (isset($background_image) && $background_image))
 	$background_image ='';
 if (! (isset($item_colour) && $item_colour))
-	$item_colour = 'rgb(238,238,238)';
+	$item_colour = '#fff';
 if (! (isset($comment_item_colour) && $comment_item_colour))
-	$comment_item_colour = 'rgb(255,255,255)';
+	$comment_item_colour = '#fff';
 if (! (isset($item_opacity) && $item_opacity))
 	$item_opacity = '1';
 if (! (isset($font_size) && $font_size))

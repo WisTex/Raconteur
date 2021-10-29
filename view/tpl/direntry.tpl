@@ -1,4 +1,5 @@
 <div class="directory-item{{if $entry.safe}} safe{{/if}}" id="directory-item-{{$entry.hash}}" >
+	<hr>
 	<div class="section-subtitle-wrapper clearfix">
 		<div class="pull-right">
 			{{if $entry.ignlink}}

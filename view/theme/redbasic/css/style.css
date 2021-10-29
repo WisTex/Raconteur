@@ -1082,6 +1082,7 @@ img.mail-conv-sender-photo {
 	background-color: rgba(254, 254, 254, 1);
 	border: 1px solid rgba(0, 0, 0, .2);
 	border-radius: $radius;
+	box-shadow: 3px 3px 3px 0 #444444;
 
 }
 
@@ -1155,6 +1156,10 @@ img.mail-conv-sender-photo {
 	border-top-left-radius: 0px;
 }
 
+.thread-wrapper {
+	box-shadow: 3px 3px 3px 0 #444444;
+}
+
 /*
 .thread-wrapper.u-comment {
 	border-left: 8px solid $item_colour;
@@ -1177,7 +1182,7 @@ img.mail-conv-sender-photo {
 
 .wall-item-comment-wrapper {
 	padding: 7px 10px;
-	background-color: $item_colour;
+	background-color: $eee;
 	border-radius: 0px;
 	border-bottom-right-radius: $radius;
 	border-bottom-left-radius: $radius;
@@ -1237,13 +1242,22 @@ img.mail-conv-sender-photo {
 .directory-item .divgrow-showmore {
 	background-color: $comment_item_colour;
 }
+.directory-item hr {
+	background-color: #fff;
+  	border: none;
+  	border-top: 1px solid #eee;
+	margin: 0 auto; 
+  	width: 67%;
+	padding: 0;
+}
 
 /* widgets */
 
 .widget {
-	background-color: rgba(254,254,254,.5);
-	border: 1px solid rgba(254,254,254,.5);
+	background-color: rgb(255,255,255);
+	border: 1px solid rgb(254,254,254);
 	border-radius: $radius;
+	box-shadow: 3px 3px 3px 0 #444444;
 }
 
 #note-text {
@@ -1337,12 +1351,16 @@ img.mail-conv-sender-photo {
 	background-color: $bgcolour;
 	padding: 10px;
 	border-radius: $radius;
+	box-shadow: 3px 3px 3px 0 #444444;
+
 }
 
 .generic-content-wrapper {
 	border: 1px solid rgba(0, 0, 0, .2);
 	border-radius: $radius;
 	margin-bottom: 1.5rem;
+	box-shadow: 3px 3px 3px 0 #444444;
+
 }
 
 .section-title-wrapper {
