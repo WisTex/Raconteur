@@ -58,32 +58,37 @@ class Apps {
 
 	static public function get_base_apps() {
 
+		// to add additional default "base" apps to your site, put their English name, one per line,
+		// into 'cache/default_apps'. This will be merged with the default project base apps.
+
 		if (file_exists('cache/default_apps')) {
-			$default_apps = file('cache/default_apps', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+			$custom_apps = file('cache/default_apps', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 			// do some cleanup in case the file was edited by hand and contains accidentally introduced whitespace
-			if (is_array($default_apps) && $default_apps) {
-				$default_apps = array_map('trim', $default_apps);
+			if (is_array($custom_apps) && $custom_apps) {
+				$custom_apps = array_map('trim', $custom_apps);
 			}
 		}
-		if (! (isset($default_apps) && $default_apps)) {
-			$default_apps = [ 
-				'Channel Home',
-				'Connections',
-				'Directory',
-				'Events',
-				'Files',
-				'Help',
-				'Lists',
-				'Photos',
-				'Profile Photo',
-				'Search',
-				'Settings',
-				'Stream',
-				'Suggest Channels',
-				'View Profile'
-			];
-			file_put_contents('cache/default_apps', implode("\n",$default_apps));
+
+		$default_apps = [ 
+			'Channel Home',
+			'Connections',
+			'Directory',
+			'Events',
+			'Files',
+			'Help',
+			'Lists',
+			'Photos',
+			'Profile Photo',
+			'Search',
+			'Settings',
+			'Stream',
+			'Suggest Channels',
+			'View Profile'
+		];
+		if (is_array($custom_apps)) {
+			$default_apps = array_values(array_unique(array_merge($default_apps,$custom_apps)));
 		}
+
 		$x = get_config('system','base_apps',$default_apps);
 		call_hooks('get_base_apps',$x);
 		return $x;
