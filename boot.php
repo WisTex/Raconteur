@@ -280,7 +280,7 @@ define ( 'NETWORK_FRND',             'friendica-over-diaspora');    // Friendica
 define ( 'NETWORK_DFRN',             'dfrn');    // Friendica, Mistpark, other DFRN implementations
 define ( 'NETWORK_ZOT',              'zot');     // Zot!
 define ( 'NETWORK_ZOT6',             'zot6');
-
+define ( 'NETWORK_NOMAD',            'nomad');
 define ( 'NETWORK_OSTATUS',          'stat');    // status.net, identi.ca, GNU-social, other OStatus implementations
 define ( 'NETWORK_GNUSOCIAL',        'gnusoc');    // status.net, identi.ca, GNU-social, other OStatus implementations
 define ( 'NETWORK_FEED',             'rss');    // RSS/Atom feeds with no known "post/notify" protocol

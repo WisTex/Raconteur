@@ -42,7 +42,8 @@ class Apporder extends \Zotlabs\Web\Controller {
 		}
 
 		return replace_macros(get_markup_template('apporder.tpl'), [
-				'$header'      => [ t('Change Order of Pinned Navbar Apps'), t('Change Order of App Tray Apps') ],
+				'$arrange'     => t('Arrange Apps'),
+				'$header'      => [ t('Change order of pinned navbar apps'), t('Change order of app tray apps') ],
 				'$desc'        => [ t('Use arrows to move the corresponding app left (top) or right (bottom) in the navbar'),
 					t('Use arrows to move the corresponding app up or down in the app tray') ],
 				'$nav_apps'    => $nav_apps,
