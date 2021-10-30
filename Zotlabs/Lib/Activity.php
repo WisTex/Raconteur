@@ -1652,6 +1652,9 @@ class Activity {
 				];
 
 				$ret['manuallyApprovesFollowers'] = (($auto_follow) ? false : true);
+				if ($ret['type'] === 'Group') {
+					$ret['capabilities'] = [ 'acceptsJoins' => true ];
+				}
 				// map other nomadic identities linked with this channel
 				
 				$locations = [];
@@ -4308,6 +4311,8 @@ class Activity {
 			'value'                     => 'schema:value',
 			'discoverable'              => 'toot:discoverable',
 			'wall'                      => 'sm:wall',
+			'capabilities'              => 'litepub:capabilities',
+			'acceptsJoins'              => 'litepub:acceptsJoins',
 		];
 
 	}
