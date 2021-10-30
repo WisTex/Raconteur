@@ -1,6 +1,6 @@
-<div class="generic-content-wrapper-styled" id='adminpage'>
-	<h1>{{$title}} - {{$page}}</h1>
-	
+<div class="generic-content-wrapper" id='adminpage'>
+	<div class="section-title-wrapper"><h1>{{$title}} - {{$page}}</h1></div>
+	<div class="section-content-wrapper">
 	<form action="{{$baseurl}}/admin/logs" method="post">
     <input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
 
@@ -16,4 +16,5 @@
 	<div style="width:100%; height:400px; overflow: auto; "><pre>{{$data}}</pre></div>
 <!--	<iframe src='{{$baseurl}}/{{$logname}}' style="width:100%; height:400px"></iframe> -->
 	<!-- <div class="submit"><input type="submit" name="page_logs_clear_log" value="{{$clear}}" /></div> -->
+	</div>
 </div>

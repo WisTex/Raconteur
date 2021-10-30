@@ -2,6 +2,7 @@
 	<div class="section-title-wrapper">
 		<h2>{{$title}}</h2>
 	</div>
+	<div class="section-content-wrapper">
 	<form action="admin/features" method="post" autocomplete="off">
 	<input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
 	<div class="panel-group" id="settings" role="tablist" aria-multiselectable="true">
@@ -27,5 +28,7 @@
 			</div>
 		</div>
 		{{/foreach}}
+	</div>
+	</form>
 	</div>
 </div>

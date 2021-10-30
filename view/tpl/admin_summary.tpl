@@ -1,5 +1,6 @@
-<div class="generic-content-wrapper-styled" id='adminpage'>
-	<h1>{{$title}} - {{$page}}</h1>
+<div class="generic-content-wrapper" id='adminpage'>
+	<div class="section-title-wrapper"><h1>{{$title}} - {{$page}}</h1></div>
+	<div class="section-content-wrapper">
 {{if $adminalertmsg}}
 	<p class="alert alert-warning" role="alert">{{$adminalertmsg}}</p>
 {{/if}}
@@ -46,4 +47,5 @@
 		<dd>{{$vdev.1}}</dd>
 	</dl>
 	{{/if}}
+	</div>
 </div>
