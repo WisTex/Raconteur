@@ -1,6 +1,6 @@
-<div class="generic-content-wrapper-styled">
-<h3>{{$banner}}</h3>
-
+<div class="generic-content-wrapper">
+<div class="section-title-wrapper"><h3>{{$banner}}</h3></div>
+<div class="section-content-wrapper">
 {{if $hasentries}}
 
 <table cellpadding="10" id="admin-queue-table"><tr><td>{{$numentries}}&nbsp;&nbsp;</td><td>{{$desturl}}</td><td>{{$priority}}</td><td>&nbsp;</td><td>&nbsp;</td></tr>
@@ -13,3 +13,5 @@
 </table>
 
 {{/if}}
+</div>
+</div>

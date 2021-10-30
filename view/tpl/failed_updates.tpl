@@ -1,6 +1,6 @@
-<div class="generic-content-wrapper-styled">
-<h2>{{$banner}}</h2>
-
+<div class="generic-content-wrapper">
+<div class="section-title-wrapper"><h2>{{$banner}}</h2></div>
+<div class="section-content-wrapper">
 <div id="failed_updates_desc">{{$desc}}</div>
 
 {{if $failed}}
@@ -16,4 +16,5 @@
 <hr />
 {{/foreach}}
 {{/if}}
+</div>
 </div>

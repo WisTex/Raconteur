@@ -10,9 +10,9 @@
 		return false;
 	}
 </script>
-<div class = "generic-content-wrapper-styled" id='adminpage'>
-	<h1>{{$title}} - {{$page}}</h1>
-	
+<div class = "generic-content-wrapper" id='adminpage'>
+	<div class="section-title-wrapper"><h1>{{$title}} - {{$page}}</h1></div>
+	<div class="section-content-wrapper">
 	<form action="{{$baseurl}}/admin/channels" method="post">
         <input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
 		
@@ -48,4 +48,5 @@
 			NO CHANNELS?!?
 		{{/if}}
 	</form>
+	</div>
 </div>
