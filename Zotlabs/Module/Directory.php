@@ -185,7 +185,7 @@ class Directory extends Controller {
 		$directory_admin = false;
 
 		$url = z_root() . '/dirsearch';
-		if (is_site_admin()) {
+		if (is_sys_channel(local_channel())) {
 			$directory_admin = true;
 		}
 	

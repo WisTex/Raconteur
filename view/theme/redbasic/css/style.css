@@ -197,7 +197,7 @@ pre {
 
 audio, video {
 	border-radius: $radius;
-	box-shadow: $shadowpx $shadowpx $shadowpx 0 #444444;
+	box-shadow: $shadowpx $shadowpx $shadowpx 0 #aaaaaa;
 
 }
 
@@ -436,7 +436,7 @@ footer {
 .fn {
 	font-weight: bold;
 	font-size: 1rem;
-	color: #444444;
+	color: #888888;
 }
 
 .vcard {
@@ -538,7 +538,7 @@ footer {
 .photo,
 .contact-block-img {
 	border-radius: $radius;
-	box-shadow: $shadowpx $shadowpx $shadowpx 0 #444444;
+	box-shadow: $shadowpx $shadowpx $shadowpx 0 #aaaaaa;
 }
 
 #side-bar-photos-albums {
@@ -552,7 +552,7 @@ footer {
 .profile-match-photo img,
 .directory-photo-img {
 	border-radius: $radius;
-	box-shadow: $shadowpx $shadowpx $shadowpx 0 #444444;
+	box-shadow: $shadowpx $shadowpx $shadowpx 0 #aaaaaa;
 }
 
 .profile-match-photo img {
@@ -1082,7 +1082,7 @@ img.mail-conv-sender-photo {
 	background-color: rgba(254, 254, 254, 1);
 	border: 1px solid rgba(0, 0, 0, .2);
 	border-radius: $radius;
-	box-shadow: 3px 3px 3px 0 #444444;
+	box-shadow: 3px 3px 3px 0 #aaaaaa;
 
 }
 
@@ -1157,7 +1157,7 @@ img.mail-conv-sender-photo {
 }
 
 .thread-wrapper {
-	box-shadow: 3px 3px 3px 0 #444444;
+	box-shadow: 3px 3px 3px 0 #aaaaaa;
 }
 
 /*
@@ -1199,7 +1199,7 @@ img.mail-conv-sender-photo {
 	height: $top_photo;
 	border: none;
 	border-radius: $radius;
-	box-shadow: $shadowpx $shadowpx $shadowpx 0 #444444;
+	box-shadow: $shadowpx $shadowpx $shadowpx 0 #aaaaaa;
 }
 
 .comment .wall-item-photo {
@@ -1257,7 +1257,7 @@ img.mail-conv-sender-photo {
 	background-color: rgb(255,255,255);
 	border: 1px solid rgb(254,254,254);
 	border-radius: $radius;
-	box-shadow: 3px 3px 3px 0 #444444;
+	box-shadow: 3px 3px 3px 0 #aaaaaa;
 }
 
 #note-text {
@@ -1351,7 +1351,7 @@ img.mail-conv-sender-photo {
 	background-color: $bgcolour;
 	padding: 10px;
 	border-radius: $radius;
-	box-shadow: 3px 3px 3px 0 #444444;
+	box-shadow: 3px 3px 3px 0 #aaaaaa;
 
 }
 
@@ -1359,7 +1359,7 @@ img.mail-conv-sender-photo {
 	border: 1px solid rgba(0, 0, 0, .2);
 	border-radius: $radius;
 	margin-bottom: 1.5rem;
-	box-shadow: 3px 3px 3px 0 #444444;
+	box-shadow: 3px 3px 3px 0 #aaaaaa;
 
 }
 
