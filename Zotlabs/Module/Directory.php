@@ -150,6 +150,11 @@ class Directory extends Controller {
 			$r = suggestion_query(local_channel(),get_observer_hash(),App::$pager['start'],DIRECTORY_PAGESIZE);
 
 			if (! $r) {
+				if ($_REQUEST['aj']) {
+					echo '<div id="content-complete"></div>';
+					killme();
+				}
+
 				notice( t('No default suggestions were found.') . EOL);
 				return;
 			}
