@@ -34,7 +34,7 @@ class Zotfinger {
 			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false);
 		}
 		else {
-			$h = [ 'Accept: application/x-nomad+json' ]; 
+			$h = [ 'Accept: application/x-nomad+json, application/x-zot+json' ]; 
 		}
 				
 		$result = [];

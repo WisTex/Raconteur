@@ -787,7 +787,7 @@ class Connedit extends Controller {
 					
 
 
-			if(intval($contact['abook_not_here']) && $unclonable)
+			if(intval($contact['abook_not_here']) && ! $clonable)
 				$not_here = t('This connection is unreachable from this location. Location independence is not supported by their network.');
 	
 			$o .= replace_macros($tpl, [
