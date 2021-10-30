@@ -1,4 +1,4 @@
-<div id="vcard" class="vcard h-card">
+<div id="vcard" class="vcard h-card widget">
 <div id="profile-photo-wrapper"><a href="{{$link}}"><img class="vcard-photo photo u-photo" src="{{$photo}}" alt="{{$name}}" /></a></div>
 {{if $connect}}
 <div class="connect-btn-wrapper"><a href="follow?f=&url={{$follow}}" rel="nofollow noopener" class="btn btn-block btn-success btn-sm"><i class="fa fa-plus"></i> {{$connect}}</a></div>

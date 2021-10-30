@@ -1,4 +1,4 @@
-<div class="vcard h-card">
+<div class="vcard h-card widget">
 	{{if ! $zcard}}
 	<div id="profile-photo-wrapper">{{if $editmenu}}<a href="profile_photo" title="{{$change_photo}}">{{/if}}<img class="photo u-photo" src="{{$profile.photo}}?rev={{$profile.picdate}}" alt="{{$profile.fullname}}">{{if $editmenu}}</a>{{/if}}</div>
 	{{/if}}
