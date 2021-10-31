@@ -9,11 +9,14 @@ class Security {
 		check_form_security_token_redirectOnErr('/admin/security', 'admin_security');
 	
 		$allowed_email        = ((x($_POST,'allowed_email'))	    ? notags(trim($_POST['allowed_email']))		: '');
-		$not_allowed_email    = ((x($_POST,'not_allowed_email'))	? notags(trim($_POST['not_allowed_email']))		: '');
-
 		set_config('system','allowed_email', $allowed_email);
+
+		$not_allowed_email    = ((x($_POST,'not_allowed_email'))	? notags(trim($_POST['not_allowed_email']))		: '');
 		set_config('system','not_allowed_email', $not_allowed_email);	
 
+		$anonymous_comments   = ((x($_POST,'anonymous_comments'))   ? intval($_POST['anonymous_comments']) : 0);
+		set_config('system','anonymous_comments', $anonymous_comments);
+		
 		$block_public         = ((x($_POST,'block_public'))		? True	: False);
 		set_config('system','block_public',$block_public);
 
@@ -140,7 +143,7 @@ class Security {
 			'$thumbnail_security'   => [ 'thumbnail_security', t("Allow SVG thumbnails in file browser"), get_config('system','thumbnail_security',0), t("WARNING: SVG images may contain malicious code.") ],
 
 			'$inline_pdf'   => [ 'inline_pdf', t("Allow embedded (inline) PDF files"), get_config('system','inline_pdf',0), '' ],
-
+			'$anonymous_comments' => [ 'anonymous_comments', t('Permit anonymous comments'), intval(get_config('system','anonymous_comments')), t('Moderation will be performed by channels that select this comment option.') ],
 			'$transport_security' => array('transport_security', t('Set "Transport Security" HTTP header'),intval(get_config('system','transport_security_header')),''),
 			'$content_security' => array('content_security', t('Set "Content Security Policy" HTTP header'),intval(get_config('system','content_security_policy')),''),
 			'$allowed_email'	=> array('allowed_email', t("Allowed email domains"), get_config('system','allowed_email'), t("Comma separated list of domains which are allowed in email addresses for registrations to this site. Wildcards are accepted. Empty to allow any domains")),
