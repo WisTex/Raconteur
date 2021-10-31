@@ -392,17 +392,13 @@ class Channel {
 		$permiss = [];
 	
 		$perm_opts = [
-			array( t('Nobody except yourself'), 0),
-			array( t('Only those you specifically allow'), PERMS_SPECIFIC), 
-			array( t('Approved connections'), PERMS_CONTACTS),
-			array( t('Any connections'), PERMS_PENDING),
-			array( t('Anybody on this website'), PERMS_SITE),
-			array( t('Anybody authenticated'), PERMS_AUTHED),
-			array( t('Anybody on the internet'), PERMS_PUBLIC)
+			[ t('Restricted - from connections only'), PERMS_SPECIFIC ], 
+			[ t('Semi-public - from anybody that can be identified'), PERMS_AUTHED ],
+			[ t('Public - from anybody on the internet'), PERMS_PUBLIC ]
 		];
 	
 		$limits = PermissionLimits::Get(local_channel());
-		$anon_comments = get_config('system','anonymous_comments',true);
+		$anon_comments = get_config('system','anonymous_comments');
 	
 		foreach($global_perms as $k => $perm) {
 			$options = [];
@@ -413,10 +409,10 @@ class Channel {
 				$options[$opt[1]] = $opt[0];
 			}
 			if($k === 'post_comments') {
-				$comment_perms = [ $k, $perm, $limits[$k],t('Specifically allowed includes approved connections, but allows you to revoke this permission from specific connections if desired'),$options ];
+				$comment_perms = [ $k, $perm, $limits[$k],'',$options ];
 			}
 			elseif ($k === 'post_mail') {
-				$mail_perms = [ $k, $perm, $limits[$k],t('Specifically allowed includes approved connections, but allows you to revoke this permission from specific connections if desired'),$options ];
+				$mail_perms = [ $k, $perm, $limits[$k],'',$options ];
 			}
 			else {
 				$permiss[] = array($k,$perm,$limits[$k],'',$options);			

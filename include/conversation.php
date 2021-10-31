@@ -1330,17 +1330,13 @@ function z_status_editor($x, $popup = false) {
 	$permiss = [];
 	
 	$perm_opts = [
-		array( t('Nobody except yourself'), 0),
-		array( t('Only those you specifically allow'), PERMS_SPECIFIC), 
-		array( t('Approved connections'), PERMS_CONTACTS),
-		array( t('Any connections'), PERMS_PENDING),
-		array( t('Anybody on this website'), PERMS_SITE),
-		array( t('Anybody authenticated'), PERMS_AUTHED),
-		array( t('Anybody on the internet'), PERMS_PUBLIC)
+		[ t('Restricted - from connections only'), PERMS_SPECIFIC ], 
+		[ t('Semi-public - from anybody that can be identified'), PERMS_AUTHED ],
+		[ t('Public - from anybody on the internet'), PERMS_PUBLIC ]
 	];
 	
 	$limits = PermissionLimits::Get(local_channel());
-	$anon_comments = get_config('system','anonymous_comments',true);
+	$anon_comments = get_config('system','anonymous_comments');
 	
 	foreach($global_perms as $k => $perm) {
 		$options = [];
@@ -1408,7 +1404,6 @@ function z_status_editor($x, $popup = false) {
 		'$embedPhotosModalCancel' => t('Cancel'),
 		'$embedPhotosModalOK' => t('OK'),
 		'$setloc' => $setloc,
-		'$voting' => t('Toggle voting'),
 		'$poll' => t('Toggle poll'),
 		'$poll_option_label' => t('Option'),
 		'$poll_add_option_label' => t('Add option'),
@@ -1424,7 +1419,7 @@ function z_status_editor($x, $popup = false) {
 		'$feature_comment_control' => $feature_comment_control,
 		'$commctrl' => t('Comment Control'),
 		'$comments_closed' => ((isset($x['item']) && isset($x['item']['comments_closed']) && $x['item']['comments_closed']) ? $x['item']['comments_closed'] : ''),
-		'$commclosedate' => t('Disable comments after (date)'),
+		'$commclosedate' => t('Optional: disable comments after (date)'),
 		'$comment_perms' => $comment_perms,
 		'$defcommpolicy' => $defcommpolicy,
 		'$defcommuntil' => $defcommuntil,

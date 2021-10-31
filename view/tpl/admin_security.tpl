@@ -9,6 +9,8 @@
 	{{include file="field_checkbox.tpl" field=$block_public}}
 	{{include file="field_checkbox.tpl" field=$block_public_search}}
 	{{include file="field_checkbox.tpl" field=$block_public_dir}}
+	{{include file="field_checkbox.tpl" field=$anonymous_comments}}
+
 	{{include file="field_checkbox.tpl" field=$localdir_hide}}
 	{{include file="field_checkbox.tpl" field=$cloud_noroot}}
 	{{include file="field_checkbox.tpl" field=$cloud_disksize}}
