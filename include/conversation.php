@@ -1328,9 +1328,9 @@ function z_status_editor($x, $popup = false) {
 	$permiss = [];
 	
 	$perm_opts = [
-		array( t('Connections only'), PERMS_SPECIFIC), 
-		array( t('Semi-public - anybody identifiable'), PERMS_AUTHED),
-		array( t('Public - anybody on the internet'), PERMS_PUBLIC)
+		[ t('Restricted - from connections only'), PERMS_SPECIFIC ], 
+		[ t('Semi-public - from anybody that can be identified'), PERMS_AUTHED ],
+		[ t('Public - from anybody on the internet'), PERMS_PUBLIC ]
 	];
 	
 	$limits = PermissionLimits::Get(local_channel());
