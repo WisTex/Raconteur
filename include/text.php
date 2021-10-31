@@ -3782,7 +3782,7 @@ function get_forum_channels($uid,$collections = 0) {
 		$pagetype = 1;
 	}
 
-	$r = q("select abook_id, xchan_hash, xchan_network, xchan_name, xchan_url, xchan_photo_s from abook left join xchan on abook_xchan = xchan_hash where xchan_deleted = 0 and abook_channel = %d and abook_pending = 0 and abook_ignored = 0 and abook_blocked = 0 and abook_archived = 0 and xchan_type = %d order by xchan_name",
+	$r = q("select abook_id, xchan_hash, xchan_network, xchan_name, xchan_url, xchan_photo_s from abook left join xchan on abook_xchan = xchan_hash where xchan_deleted = 0 and abook_channel = %d and abook_pending = 0 and abook_ignored = 0 and abook_blocked = 0 and abook_archived = 0 and abook_self = 0 and xchan_type = %d order by xchan_name",
 		intval($uid),
 		intval($pagetype)
 	);
