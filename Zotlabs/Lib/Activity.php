@@ -1154,7 +1154,7 @@ class Activity {
 			$ret['commentPolicy'] .= 'until=' . datetime_convert('UTC','UTC',$i['comments_closed'],ATOM_TIME);
 		}
 		
-		$ret['attributedTo'] = (in_array($i['author']['xchan_network'],['nomad']['zot6']) ? $i['author']['xchan_url'] : $i['author']['xchan_hash']);
+		$ret['attributedTo'] = (in_array($i['author']['xchan_network'],['nomad','zot6']) ? $i['author']['xchan_url'] : $i['author']['xchan_hash']);
 
 		if ($i['mid'] !== $i['parent_mid']) {
 			$ret['inReplyTo'] = $i['thr_parent'];
