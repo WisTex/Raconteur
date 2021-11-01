@@ -246,8 +246,8 @@ a.wikilist {
 	overflow: auto;
 }
 
-#notifications {
-/*	margin-bottom: 1rem; */
+#notifications_wrapper {
+	margin-bottom: 1rem; 
 }
 
 /* contact block */
