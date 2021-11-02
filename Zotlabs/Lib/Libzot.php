@@ -854,6 +854,14 @@ class Libzot {
 				set_xconfig($xchan_hash,'system','signing_algorithm',$arr['signing_algorithm']);
 			}
 
+			// upgrade zot6 connections to nomad if applicable
+			
+			if ($r[0]['xchan_network'] === 'zot6' && intval($arr['site']['protocol_version']) > 10) {
+				q("update xchan set xchan_network = 'nomad' where xchan_hash = '%s'",
+					dbesc($xchan_hash)
+				);
+			}
+
 
 			if (($r[0]['xchan_name_date'] != $arr['name_updated'])
 				|| ($r[0]['xchan_connurl'] != $arr['primary_location']['connections_url'])
@@ -2765,6 +2773,7 @@ class Libzot {
 					'site_id'  => $hub['hubloc_site_id'],
 					'callback' => $hub['hubloc_callback'],
 					'sitekey'  => $hub['hubloc_sitekey'],
+					'driver'   => $hub['hubloc_network'],
 					'deleted'  => (intval($hub['hubloc_deleted']) ? true : false)
 				];
 			}

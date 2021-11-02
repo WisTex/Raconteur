@@ -944,7 +944,7 @@ class Libsync {
 
 			foreach($arr['locations'] as $location) {
 
-				$network = 'zot6';
+				$network = isset($location['driver']) ? $location['driver'] : 'zot6';
 				// only set nomad if the location info is coming from the same site as the original zotinfo packet
 				if (isset($sender['site']) && isset($sender['site']['url']) && $sender['site']['url'] === $location['url']) {
 					if (isset($sender['site']['protocol_version']) && intval($sender['site']['protocol_version']) > 10) {
@@ -984,7 +984,7 @@ class Libsync {
 					dbesc($location['callback']),
 					dbesc($location['sitekey'])
 				);
-				if($r) {
+				if ($r) {
 					logger('Hub exists: ' . $location['url'], LOGGER_DEBUG);
 	
 					// update connection timestamp if this is the site we're talking to
@@ -993,6 +993,15 @@ class Libsync {
 					$current_site = false;
 
 					$t = datetime_convert('UTC','UTC','now - 15 minutes');
+
+					// upgrade network driver if required
+					
+					if (isset($location['driver']) && $location['driver'] === 'nomad' && $location['driver'] !== $r[0]['hubloc_network']) {
+						q("update hubloc set hubloc_network = '%s' where hubloc_id = %d",
+							dbesc($location['driver']),
+							intval($r[0]['hubloc_id'])
+						);
+					}
 	
 					if(array_key_exists('site',$arr) && $location['url'] == $arr['site']['url']) {
 						q("update hubloc set hubloc_connected = '%s', hubloc_updated = '%s' where hubloc_id = %d and hubloc_updated < '%s'",
