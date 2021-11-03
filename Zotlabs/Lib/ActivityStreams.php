@@ -457,6 +457,7 @@ class ActivityStreams {
 			'application/ld+json;profile="https://www.w3.org/ns/activitystreams"',
 			'application/activity+json',
 			'application/ld+json;profile="http://www.w3.org/ns/activitystreams"',
+			'application/ld+json', // required for Friendica ~2021-09, can possibly be removed after next release of that project
 			'application/x-zot-activity+json'
 		]);
 
