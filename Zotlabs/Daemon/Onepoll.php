@@ -124,7 +124,7 @@ class Onepoll {
 		// prohibitive as deletion requests would need to be relayed over potentially hostile networks.
 
 		if($fetch_feed) {
-			$max = intval(get_config('system','max_imported_posts',100));
+			$max = intval(get_config('system','max_imported_posts',20));
 			if (intval($max)) {
 				$cl = get_xconfig($xchan,'activitypub','collections');
 				if (is_array($cl) && $cl) {
