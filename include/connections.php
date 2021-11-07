@@ -463,9 +463,9 @@ function contact_remove($channel_id, $abook_id, $atoken_sync = false) {
 
 function remove_abook_items($channel_id,$xchan_hash) {
 
-	$r = q("select id from item where (owner_xchan = '%s' or author_xchan = '%s') and uid = %d and item_retained = 0 and item_starred = 0",
-		dbesc($abook['xchan_hash']),
-		dbesc($abook['xchan_hash']),
+	$r = q("select id, parent from item where (owner_xchan = '%s' or author_xchan = '%s') and uid = %d and item_retained = 0 and item_starred = 0",
+		dbesc($xchan_hash),
+		dbesc($xchan_hash),
 		intval($channel_id)
 	);
 	if (! $r) {
