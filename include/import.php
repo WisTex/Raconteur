@@ -376,6 +376,12 @@ function import_hublocs($channel, $hublocs, $seize, $moving = false) {
 	if ($channel && $hublocs) {
 		foreach ($hublocs as $hubloc) {
 
+			// Provide backward compatibility for zot11 based projects
+			
+			if ($hubloc['hubloc_network'] === 'nomad' && version_compare(ZOT_REVISION, '10.0') <= 0) {
+				$hubloc['hubloc_network'] = 'zot6';
+			}
+
 			// verify the hash. We can only do this if we already stored the xchan corresponding to this hubloc
 			// as we need the public key from there
 

@@ -17,12 +17,11 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '21.11.01' );
-define ( 'ZOT_REVISION',            '11.0' );
+define ( 'STD_VERSION',             '21.11.08' );
+define ( 'PLATFORM_NAME',           'streams' );
 
 define ( 'DB_UPDATE_VERSION',       1253 );
-
-define ( 'PLATFORM_NAME',           'streams' );
+define ( 'ZOT_REVISION',            '11.0' );
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
 
 define ( 'PROJECT_BASE',   __DIR__ );
