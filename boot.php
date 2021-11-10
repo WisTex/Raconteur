@@ -20,7 +20,7 @@ use Zotlabs\Daemon\Run;
 define ( 'STD_VERSION',             '21.11.08' );
 define ( 'ZOT_REVISION',            '10.0' );
 
-define ( 'DB_UPDATE_VERSION',       1253 );
+define ( 'DB_UPDATE_VERSION',       1254 );
 
 define ( 'PLATFORM_NAME',           'zap' );
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
@@ -415,6 +415,7 @@ define ( 'NOTIFY_TAGSELF',  0x0080 );
 define ( 'NOTIFY_TAGSHARE', 0x0100 );
 define ( 'NOTIFY_POKE',     0x0200 );
 define ( 'NOTIFY_LIKE',     0x0400 );
+define ( 'NOTIFY_RESHARE',  0x0800 );
 
 define ( 'NOTIFY_SYSTEM',   0x8000 );
 
