@@ -19,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: es_ES\n"
-"Plural-Forms: nplurals=2; plural=(n != 1 ? 1 : 0);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../../Zotlabs/Access/Permissions.php:56
 msgid "Grant viewing access to and delivery of your channel stream and posts"
