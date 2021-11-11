@@ -2544,7 +2544,7 @@ function send_status_notifications($post_id,$item) {
 	if (intval($item['item_private']) === 2) {
 		$notify_type = NOTIFY_MAIL;
 	}
-	elseif (item['verb'] === 'Announce') {
+	elseif ($item['verb'] === 'Announce') {
 		$notify_type = NOTIFY_RESHARE;
 	}
 	else {
