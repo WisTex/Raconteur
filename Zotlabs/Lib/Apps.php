@@ -558,6 +558,9 @@ class Apps {
 		if (local_channel()) {
 			if (self::app_installed(local_channel(),$papp) && (! (isset($papp['deleted']) && intval($papp['deleted'])))) {
 				$installed = true;
+				if ($mode === 'install') {
+					return '';
+				}
 			}
 
 			$hosturl = z_root() . '/';
@@ -573,7 +576,7 @@ class Apps {
 			} 
 		}
 
-		$install_action = (($installed) ? t('Update') : t('Install'));
+		$install_action = (($installed) ? t('Installed') : t('Install'));
 		$icon = ((strpos($papp['photo'],'icon:') === 0) ? substr($papp['photo'],5) : '');
 
 		if ($mode === 'navbar') {
