@@ -140,6 +140,7 @@
 								{{*include file="field_intcheckbox.tpl" field=$notify2*}}
 								{{include file="field_intcheckbox.tpl" field=$notify3}}
 								{{include file="field_intcheckbox.tpl" field=$notify4}}
+								{{include file="field_intcheckbox.tpl" field=$notify10}}
 								{{*include file="field_intcheckbox.tpl" field=$notify9*}}
 								{{include file="field_intcheckbox.tpl" field=$notify5}}
 								{{*include file="field_intcheckbox.tpl" field=$notify6*}}

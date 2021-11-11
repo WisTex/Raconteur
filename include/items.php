@@ -2536,20 +2536,24 @@ function send_status_notifications($post_id,$item) {
 		intval($item['uid'])
 	);
 
-	if($y)
+	if ($y) {
 		$notify = false;
-
+	}
 
 	if (intval($item['item_private']) === 2) {
 		$notify_type = NOTIFY_MAIL;
+	}
+	elseif (item['verb'] === 'Announce') {
+		$notify_type = NOTIFY_RESHARE;
 	}
 	else {
 		$notify_type = NOTIFY_COMMENT;
 	}
 
 
-	if(! $notify)
+	if (! $notify) {
 		return;
+	}
 
 
 	Enotify::submit(array(
