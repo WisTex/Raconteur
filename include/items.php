@@ -2543,7 +2543,7 @@ function send_status_notifications($post_id,$item) {
 	if (intval($item['item_private']) === 2) {
 		$notify_type = NOTIFY_MAIL;
 	}
-	elseif (item['verb'] === 'Announce' || strpos($item['body'],'[/share]') !== false) {
+	elseif ($item['verb'] === 'Announce' || strpos($item['body'],'[/share]') !== false) {
 		$notify_type = NOTIFY_RESHARE;
 	}
 	else {
