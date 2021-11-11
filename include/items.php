@@ -2570,21 +2570,6 @@ function send_status_notifications($post_id,$item) {
 	));
 }
 
-
-function get_item_contact($item,$contacts) {
-	if(! count($contacts) || (! is_array($item)))
-		return false;
-
-	foreach($contacts as $contact) {
-		if($contact['id'] == $item['contact-id']) {
-			return $contact;
-			break; // NOTREACHED
-		}
-	}
-
-	return false;
-}
-
 /**
  * @brief Called when we deliver things that might be tagged in ways that require delivery processing.
  *
