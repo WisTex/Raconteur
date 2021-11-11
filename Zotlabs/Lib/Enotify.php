@@ -147,7 +147,7 @@ class Enotify {
 		$itemlink = z_root() . '/display/' . gen_link_id($params['item']['mid']);
 	}
 
-	if ($params['type'] == NOTIFY_COMMENT) {
+	if (in_array(intval($params['type']), [ NOTIFY_COMMENT, NOTIFY_RESHARE ] ) {
 		// logger("notification: params = " . print_r($params, true), LOGGER_DEBUG);
 
 		$moderated = (($params['item']['item_blocked'] == ITEM_MODERATED) ? true : false);
@@ -695,6 +695,7 @@ class Enotify {
 				case NOTIFY_WALL:
 				case NOTIFY_TAGSELF:
 				case NOTIFY_POKE:
+				case NOTIFY_RESHARE:
 				case NOTIFY_COMMENT:
 					if (! $private)
 						break;

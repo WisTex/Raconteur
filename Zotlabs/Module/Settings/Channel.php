@@ -214,6 +214,8 @@ class Channel {
 			$notify += intval($_POST['notify7']);
 		if(x($_POST,'notify8'))
 			$notify += intval($_POST['notify8']);
+		if(x($_POST,'notify10'))
+			$notify += intval($_POST['notify10']);
 	
 	
 		$vnotify = 0;
@@ -658,6 +660,7 @@ class Channel {
 //			'$notify2'	=> array('notify2', t('Your connections are confirmed'), ($notify & NOTIFY_CONFIRM), NOTIFY_CONFIRM, '', $yes_no),
 			'$notify3'	=> array('notify3', t('Someone writes on your profile wall'), ($notify & NOTIFY_WALL), NOTIFY_WALL, '', $yes_no),
 			'$notify4'	=> array('notify4', t('Someone writes a followup comment'), ($notify & NOTIFY_COMMENT), NOTIFY_COMMENT, '', $yes_no),
+			'$notify10'	=> array('notify10', t('Someone shares a followed conversation'), ($notify & NOTIFY_RESHARE), NOTIFY_RESHARE, '', $yes_no),
 			'$notify5'	=> array('notify5', t('You receive a direct (private) message'), ($notify & NOTIFY_MAIL), NOTIFY_MAIL, '', $yes_no),
 //			'$notify6'  => array('notify6', t('You receive a friend suggestion'), ($notify & NOTIFY_SUGGEST), NOTIFY_SUGGEST, '', $yes_no),
 			'$notify7'  => array('notify7', t('You are tagged in a post'), ($notify & NOTIFY_TAGSELF), NOTIFY_TAGSELF, '', $yes_no),

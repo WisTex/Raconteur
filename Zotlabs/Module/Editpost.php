@@ -61,10 +61,13 @@ class Editpost extends Controller {
 		$collections = [];
 		$catsenabled = ((Apps::system_app_installed($owner_uid,'Categories')) ? 'categories' : '');
 
-		$item = fetch_post_tags($item);
+		// we have a single item, but fetch_post_tags expects an array. Convert it before and after.
+
+		$item = array_shift(fetch_post_tags([$item]));
 
 		if ($catsenabled) {
 			$cats = get_terms_oftype($item['term'], TERM_CATEGORY);
+
 			if ($cats) {
 				foreach ($cats as $cat) {
 					if (strlen($category)) {
@@ -74,7 +77,7 @@ class Editpost extends Controller {
 				}
 			}
 		}
-		
+
 		$clcts = get_terms_oftype($item['term'], TERM_PCATEGORY);
 		if ($clcts) {
 			foreach ($clcts as $clct) {
