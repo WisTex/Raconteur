@@ -5,7 +5,6 @@ function string_plural_select_es_es($n){
 	return ($n != 1);;
 }}
 App::$rtl = 0;
-App::$strings["plural_function_code"] = "(n != 1 ? 1 : 0)";
 App::$strings["Grant viewing access to and delivery of your channel stream and posts"] = "Permitir acceso de visualización y transmisión de su stream de canal y sus publicaciones";
 App::$strings["Grant viewing access to your default channel profile"] = "Otorgar acceso de visualización a su perfil de canal predeterminado";
 App::$strings["Grant viewing access to your address book (connections)"] = "Conceder acceso de visualización a su libreta de direcciones (conexiones)";
