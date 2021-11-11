@@ -111,6 +111,7 @@ function populate_acl($defaults = null,$show_jotnets = true, $emptyACL_descripti
 	$selected = false;
 	if ($forums) {
 		foreach ($forums as $f) {
+
 			$selected = (($single_group && $f['hash'] === $allow_cid[0]) ? ' selected = "selected" ' : '');
 			$groups .= '<option id="^' . $f['abook_id'] . '" value="^' . $f['xchan_hash'] . '"' . $selected . '>' . $f['xchan_name'] . ' ' . t('(Group)') . '</option>' . "\r\n";
 		}

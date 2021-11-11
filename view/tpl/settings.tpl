@@ -53,6 +53,7 @@
 						{{$anymention}}
 						{{include file="field_select.tpl" field=$comment_perms}}
 						{{include file="field_input.tpl" field=$close_comments}}
+						{{include file="field_select.tpl" field=$mail_perms}}
 						{{include file="field_checkbox.tpl" field=$permit_all_mentions}}
 						{{include file="field_input.tpl" field=$followed_tags}}
 						
@@ -119,7 +120,12 @@
 					<div class="section-content-tools-wrapper">
 						<div id="settings-notifications">
 
-								{{include file="field_input.tpl" field=$mailhost}}
+							<div id="desktop-notifications-info" class="section-content-warning-wrapper" style="display: none;">
+								{{$desktop_notifications_info}}<br>
+								<a id="desktop-notifications-request" href="#">{{$desktop_notifications_request}}</a>
+							</div>
+
+							{{include file="field_input.tpl" field=$mailhost}}
 
 							<h3>{{$activity_options}}</h3>
 							<div class="group">
@@ -134,6 +140,7 @@
 								{{*include file="field_intcheckbox.tpl" field=$notify2*}}
 								{{include file="field_intcheckbox.tpl" field=$notify3}}
 								{{include file="field_intcheckbox.tpl" field=$notify4}}
+								{{include file="field_intcheckbox.tpl" field=$notify10}}
 								{{*include file="field_intcheckbox.tpl" field=$notify9*}}
 								{{include file="field_intcheckbox.tpl" field=$notify5}}
 								{{*include file="field_intcheckbox.tpl" field=$notify6*}}

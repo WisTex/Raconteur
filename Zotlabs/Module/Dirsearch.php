@@ -6,11 +6,6 @@ use App;
 use Zotlabs\Web\Controller;
 
 // This is the primary endpoint for communicating with Zot directory services.
-// Additionally the 'sitelist' endpoint may be used to query directory knowledge
-// of discovered sites. That endpoint should be merged so that there is one
-// definitive endpoint for directory services and since this endpoint already
-// performs some site query functions. 
-
 
 class Dirsearch extends Controller {
 
@@ -253,7 +248,7 @@ class Dirsearch extends Controller {
 		// normal directory query
 
 		$r = q("SELECT xchan.*, xprof.* from xchan left join xprof on xchan_hash = xprof_hash 
-			where ( $logic $sql_extra ) $hub_query $network and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 
+			where ( $logic $sql_extra ) $hub_query $network and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 
 			$safesql $activesql $order $qlimit "
 		);
 

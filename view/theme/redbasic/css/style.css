@@ -167,6 +167,12 @@ input[type=text], textarea {
 	width: 100%;
 }
 
+#help_email, #help_password, #help_password2, #tos_container > small.form-text {
+	font-size: 1.2rem;
+	font-weight: bold;
+	color: #F00 !important;
+}
+
 #help-content pre code {
 	overflow-x: auto;
 	white-space: pre;
@@ -187,6 +193,12 @@ pre {
 	color: #333;
 	border:1px solid #ccc;
 	border-radius: $radius;
+}
+
+audio, video {
+	border-radius: $radius;
+	box-shadow: $shadowpx $shadowpx $shadowpx 0 #444444;
+
 }
 
 .heart {
@@ -1203,10 +1215,13 @@ img.mail-conv-sender-photo {
 	font-size: 1rem;
 }
 
-
 .comment-edit-text {
-	border: 1px solid #ccc;
+	border: 1px solid #007bff;
 	border-radius: $radius;
+}
+
+.comment-edit-text.toplevel {
+	border: 1px solid #ccc;
 }
 
 .divgrow-showmore {
@@ -1498,6 +1513,12 @@ blockquote {
 	font-size: 0.9rem;
 	border-radius: $radius;
 }
+
+
+.wall-item-lock .dropdown-menu {
+	min-width: 20rem;
+}
+
 
 .dropdown-item {
 	color: $font_colour;

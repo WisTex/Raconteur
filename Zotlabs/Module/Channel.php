@@ -28,6 +28,13 @@ require_once('include/acl_selectors.php');
 
 class Channel extends Controller {
 
+	// State passed in from the Update module.
+	
+	public $profile_uid = 0;
+	public $loading     = 0;
+	public $updating    = 0;
+
+
 	function init() {
 
 		if (isset($_GET['search']) && (in_array(substr($_GET['search'],0,1),[ '@', '!', '?'])  || strpos($_GET['search'],'https://') === 0)) {
@@ -59,9 +66,12 @@ class Channel extends Controller {
 			$profile = argv(1);
 		}
 
-		$channel = channelx_by_nick($which);
+		$channel = channelx_by_nick($which, true);
 		if (! $channel) {
 			http_status_exit(404, 'Not found');
+		}
+		if ($channel['channel_removed']) {
+			http_status_exit(410,'Gone');
 		}
 
 		if (get_pconfig($channel['channel_id'],'system','noindex')) {
@@ -96,12 +106,8 @@ class Channel extends Controller {
 			// Make it do the right thing.
 			
 			$mid = ((x($_REQUEST,'mid')) ? $_REQUEST['mid'] : '');
-			if ($mid && strpos($mid,'b64.') === 0) {
-				$decoded = @base64url_decode(substr($mid,4));
-				if ($decoded) {
-					$mid = $decoded;
-				}
-			}
+			$mid = unpack_link_id($mid);
+
 			if ($mid) {
 				$obj = null;
 				if (strpos($mid, z_root() . '/item/') === 0) {
@@ -118,7 +124,9 @@ class Channel extends Controller {
 					$obj->init();
 				}
 			}
-
+			if (intval($channel['channel_system'])) {
+				goaway(z_root());
+			}
 			as_return_and_die(Activity::encode_person($channel,true,true),$channel);
 		}
 
@@ -174,23 +182,14 @@ class Channel extends Controller {
 		}
 	}
 
-	function get($update = 0, $load = false) {
-
-
-
+	function get() {
 
 		$noscript_content = get_config('system', 'noscript_content', '1');
-
 
 		$category = $datequery = $datequery2 = '';
 
 		$mid = ((x($_REQUEST,'mid')) ? $_REQUEST['mid'] : '');
-		if($mid && strpos($mid,'b64.') === 0) {
-			$decoded = @base64url_decode(substr($mid,4));
-			if($decoded) {
-				$mid = $decoded;
-			}
-		}
+		$mid = unpack_link_id($mid);
 
 		$datequery = ((x($_GET,'dend') && is_a_date_arg($_GET['dend'])) ? notags($_GET['dend']) : '');
 		$datequery2 = ((x($_GET,'dbegin') && is_a_date_arg($_GET['dbegin'])) ? notags($_GET['dbegin']) : '');
@@ -209,9 +208,9 @@ class Channel extends Controller {
 
 		$o = '';
 
-		if($update) {
+		if($this->updating) {
 			// Ensure we've got a profile owner if updating.
-			App::$profile['profile_uid'] = App::$profile_uid = $update;
+			App::$profile['profile_uid'] = App::$profile_uid = $this->profile_uid;
 		}
 
 		$is_owner = (((local_channel()) && (App::$profile['profile_uid'] == local_channel())) ? true : false);
@@ -223,7 +222,7 @@ class Channel extends Controller {
 		$perms = get_all_perms(App::$profile['profile_uid'],$ob_hash);
 
 
-		if ($load && ! $mid) {
+		if ($this->loading && ! $mid) {
 			$_SESSION['loadtime_channel'] = datetime_convert();
 			if ($is_owner) {
 				PConfig::Set(local_channel(),'system','loadtime_channel',$_SESSION['loadtime_channel']);
@@ -243,7 +242,7 @@ class Channel extends Controller {
 		}
 
 
-		if(! $update) {
+		if(! $this->updating) {
 
 			nav_set_selected('Channel Home');
 
@@ -326,7 +325,7 @@ class Channel extends Controller {
 		
 		$abook_uids = " and abook.abook_channel = " . intval(App::$profile['profile_uid']) . " ";
 
-		$simple_update = (($update) ? " AND item_unseen = 1 " : '');
+		$simple_update = (($this->updating) ? " AND item_unseen = 1 " : '');
 
 		if ($search) {
 			$search = escape_tags($search);
@@ -349,10 +348,10 @@ class Channel extends Controller {
 			'title' => 'oembed'
 		]);
 
-		if ($update && isset($_SESSION['loadtime'])) {
-			$simple_update = " AND (( item_unseen = 1 AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' )  OR item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime']) . "' ) ";
+		if ($this->updating && isset($_SESSION['loadtime_channel'])) {
+			$simple_update = " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime_channel']) . "' ";
 		}
-		if ($load) {
+		if ($this->loading) {
 			$simple_update = '';
 		}
 		
@@ -360,7 +359,7 @@ class Channel extends Controller {
 			$simple_update .= " and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
 		}
 		
-		if (($update) && (! $load)) {
+		if (($this->updating) && (! $this->loading)) {
 
 			if ($mid) {
 				$r = q("SELECT parent AS item_id from item where mid like '%s' and uid = %d $item_normal_update
@@ -368,7 +367,6 @@ class Channel extends Controller {
 					dbesc($mid . '%'),
 					intval(App::$profile['profile_uid'])
 				);
-				$_SESSION['loadtime'] = datetime_convert();
 			}
 			else {
 				$r = q("SELECT parent AS item_id from item
@@ -380,7 +378,6 @@ class Channel extends Controller {
 					ORDER BY created DESC",
 					intval(App::$profile['profile_uid'])
 				);
-				$_SESSION['loadtime'] = datetime_convert();
 			}
 
 		}
@@ -416,7 +413,7 @@ class Channel extends Controller {
 			App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
 			$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 
-			if ($noscript_content || $load) {
+			if ($noscript_content || $this->loading) {
 				if ($mid) {
 					$r = q("SELECT parent AS item_id from item where mid like '%s' and uid = %d $item_normal
 						AND item_wall = 1 $sql_extra limit 1",
@@ -460,7 +457,7 @@ class Channel extends Controller {
 			$items = fetch_post_tags($items, true);
 			$items = conv_sort($items,$ordering);
 
-			if ($load && $mid && (! count($items))) {
+			if ($this->loading && $mid && (! count($items))) {
 				// This will happen if we don't have sufficient permissions
 				// to view the parent item (or the item itself if it is toplevel)
 				notice( t('Permission denied.') . EOL);
@@ -471,7 +468,7 @@ class Channel extends Controller {
 			$items = [];
 		}
 
-		if ((! $update) && (! $load)) {
+		if ((! $this->updating) && (! $this->loading)) {
 
 			// This is ugly, but we can't pass the profile_uid through the session to the ajax updater,
 			// because browser prefetching might change it on us. We have to deliver it with the page.
@@ -562,14 +559,14 @@ class Channel extends Controller {
 
 		$mode = (($search) ? 'search' : 'channel');
 
-		if($update) {
-			$o .= conversation($items,$mode,$update,$page_mode);
+		if($this->updating) {
+			$o .= conversation($items,$mode,$this->updating,$page_mode);
 		}
 		else {
 
 			$o .= '<noscript>';
 			if ($noscript_content) {
-				$o .= conversation($items,$mode,$update,'traditional');
+				$o .= conversation($items,$mode,$this->updating,'traditional');
 				$o .= alt_pager(count($items));
 			}
 			else {
@@ -577,7 +574,7 @@ class Channel extends Controller {
 			}
 			$o .= '</noscript>';
 
-			$o .= conversation($items,$mode,$update,$page_mode);
+			$o .= conversation($items,$mode,$this->updating,$page_mode);
 
 			if ($mid && $items[0]['title'])
 				App::$page['title'] = $items[0]['title'] . " - " . App::$page['title'];

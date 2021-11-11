@@ -56,7 +56,6 @@ class Photo extends Controller {
 			$channel = channelx_by_n($r[0]['uid']);
 		
 			$obj = json_decode($r[0]['obj'],true);
-			$obj['actor'] = $obj['attributedTo'] = Activity::encode_person($channel,false);
 
 			as_return_and_die($obj,$channel);
 
@@ -263,7 +262,7 @@ class Photo extends Controller {
 	
 		if (isset($res) && intval($res) && $res < 500) {
 			$ph = photo_factory($data, $mimetype);
-			if ($ph->is_valid()) {
+			if ($ph && $ph->is_valid()) {
 				$ph->scaleImageSquare($res);
 				$data = $ph->imageString();
 				$mimetype = $ph->getType();

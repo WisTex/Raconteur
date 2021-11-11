@@ -109,17 +109,17 @@
 						{{/if}}
 						<div class="btn-group">
 							{{if $item.like}}
-							<button type="button" title="{{$item.like.0}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$item.id}},'like'); return false;">
+							<button type="button" title="{{if $item.my_responses.like}}{{$item.like.1}}{{else}}{{$item.like.0}}{{/if}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$item.id}},{{if $item.my_responses.like}} 'Undo/' + {{/if}} 'Like' ); return false;">
 								<i class="fa fa-thumbs-o-up{{if $item.my_responses.like}} ivoted{{/if}}" ></i>
 							</button>
 							{{/if}}
 							{{if $item.dislike}}
-							<button type="button" title="{{$item.dislike.0}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$item.id}},'dislike'); return false;">
+							<button type="button" title="{{if $item.my_responses.dislike}}{{$item.dislike.1}}{{else}}{{$item.dislike.0}}{{/if}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$item.id}},{{if $item.my_responses.dislike}} 'Undo/' + {{/if}} 'Dislike'); return false;">
 								<i class="fa fa-thumbs-o-down{{if $item.my_responses.dislike}} ivoted{{/if}}" ></i>
 							</button>
 							{{/if}}
 							{{if $item.comment && $item.thread_level > 1 && $item.thread_level < $item.thread_max }}
-							<button type="button" title="{{$item.comment_lbl}}" class="btn btn-outline-secondary btn-sm" onclick="openClose('wall-item-comment-wrapper-{{$item.id}}'); $('#comment-edit-text-{{$item.id}}').click(); return false;">
+							<button type="button" title="{{$item.comment_lbl}}" class="btn btn-outline-secondary btn-sm" onclick="doreply({{$item.parent}},{{$item.id}}); return false;">
 								<i class="fa fa-reply"></i>
 							</button>
 							{{/if}}
@@ -129,32 +129,14 @@
 									<i class="fa fa-calendar-check-o"></i>
 								</button>
 								<div class="dropdown-menu dropdown-menu-right">
-									<a class="dropdown-item" href="#" title="{{$item.attend.0}}" onclick="itemAddToCal({{$item.id}}); dolike({{$item.id}},'attendyes'); return false;">
+									<a class="dropdown-item" href="#" title="{{if $item.my_responses.attend}}{{$item.undo_attend}}{{else}}{{$item.attend.0}}{{/if}}" onclick="itemAddToCal({{$item.id}}); dolike({{$item.id}},{{if $item.my_responses.attend}} 'Undo/' + {{/if}} 'Accept'); return false;">
 										<i class="item-act-list fa fa-check{{if $item.my_responses.attend}} ivoted{{/if}}" ></i> {{$item.attend.0}}
 									</a>
-									<a class="dropdown-item" href="#" title="{{$item.attend.1}}" onclick="itemAddToCal({{$item.id}}), dolike({{$item.id}},'attendno'); return false;">
+									<a class="dropdown-item" href="#" title="{{if $item.my_responses.attendno}}{{$item.undo_attend}}{{else}}{{$item.attend.1}}{{/if}}" onclick="itemAddToCal({{$item.id}}), dolike({{$item.id}},{{if $item.my_responses.attendno}} 'Undo/' + {{/if}} 'Reject'); return false;">
 										<i class="item-act-list fa fa-times{{if $item.my_responses.attendno}} ivoted{{/if}}" ></i> {{$item.attend.1}}
 									</a>
-									<a class="dropdown-item" href="#" title="{{$item.attend.2}}" onclick="itemAddToCal({{$item.id}}); dolike({{$item.id}},'attendmaybe'); return false;">
+									<a class="dropdown-item" href="#" title="{{if $item.my_responses.attendmaybe}}{{$item.undo_attend}}{{else}}{{$item.attend.2}}{{/if}}" onclick="itemAddToCal({{$item.id}}); dolike({{$item.id}},{{if $item.my_responses.attendmaybe}} 'Undo/' {{/if}} 'TentativeAccept'); return false;">
 										<i class="item-act-list fa fa-question{{if $item.my_responses.attendmaybe}} ivoted{{/if}}" ></i> {{$item.attend.2}}
-									</a>
-								</div>
-							</div>
-							{{/if}}
-							{{if $item.canvote}}
-							<div class="btn-group">
-								<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" id="wall-item-consensus-menu-{{$item.id}}" title="{{$item.vote_title}}">
-									<i class="fa fa-check-square-o"></i>
-								</button>
-								<div class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="wall-item-consensus-menu-{{$item.id}}">
-									<a class="dropdown-item" href="#" title="{{$item.conlabels.0}}" onclick="dolike({{$item.id}},'agree'); return false;">
-										<i class="item-act-list fa fa-check{{if $item.my_responses.agree}} ivoted{{/if}}" ></i> {{$item.conlabels.0}}
-									</a>
-									<a class="dropdown-item" href="#" title="{{$item.conlabels.1}}" onclick="dolike({{$item.id}},'disagree'); return false;">
-										 <i class="item-act-list fa fa-times{{if $item.my_responses.disagree}} ivoted{{/if}}" ></i> {{$item.conlabels.1}}
-									</a> 
-									<a class="dropdown-item" href="#" title="{{$item.conlabels.2}}" onclick="dolike({{$item.id}},'abstain'); return false;">
-										<i class="item-act-list fa fa-question{{if $item.my_responses.abstain}} ivoted{{/if}}" ></i> {{$item.conlabels.2}}
 									</a>
 								</div>
 							</div>
@@ -203,7 +185,7 @@
 									<div class="dropdown-divider"></div>
                                                                         {{$item.dropdown_extras}}
 									{{/if}}
-									{{if $item.edpost && $item.dreport}}
+									{{if ($item.edpost || $item.myconv) && $item.dreport}}
 									<div class="dropdown-divider"></div>
 									<a class="dropdown-item" href="dreport/{{$item.dreport_link}}">{{$item.dreport}}</a>
 									{{/if}}

@@ -101,24 +101,76 @@ function validate_channelname($name) {
  *
  */
 function create_sys_channel() {
-	if (get_sys_channel())
-		return;
 
 	// Ensure that there is a host keypair.
 
-	if ((! get_config('system', 'pubkey')) && (! get_config('system', 'prvkey'))) {
+	if ((! get_config('system', 'pubkey')) || (! get_config('system', 'prvkey'))) {
 		$hostkey = Crypto::new_keypair(4096);
 		set_config('system', 'pubkey', $hostkey['pubkey']);
 		set_config('system', 'prvkey', $hostkey['prvkey']);
 	}
 
+	$sys = get_sys_channel();
+
+	if ($sys) {
+		if (isset($sys['channel_pubkey']) && $sys['channel_pubkey'] && $sys['channel_pubkey'] === get_config('system','pubkey')) {
+			return;
+		}
+		else {
+			// upgrade the sys channel and return
+			$pubkey = get_config('system','pubkey');
+			$prvkey = get_config('system','prvkey');
+			$guid_sig = Libzot::sign($sys['channel_guid'],$prvkey);
+			$hash = Libzot::make_xchan_hash($sys['channel_guid'],$pubkey);
+
+			q("update channel set channel_guid_sig = '%s', channel_hash = '%s', channel_pubkey = '%s', channel_prvkey = '%s' where channel_id = %d",
+				dbesc($guid_sig),
+				dbesc($hash),
+				dbesc($pubkey),
+				dbesc($prvkey),
+				dbesc($sys['channel_id'])
+			);
+
+			q("update xchan set xchan_guid_sig = '%s', xchan_hash = '%s', xchan_pubkey = '%s', xchan_url = '%s' where xchan_hash = '%s'",
+				dbesc($guid_sig),
+				dbesc($hash),
+				dbesc($pubkey),
+				dbesc(z_root()),
+				dbesc($sys['channel_hash'])
+			);
+			q("update hubloc set hubloc_guid_sig = '%s', hubloc_hash = '%s', hubloc_id_url = '%s', hubloc_url_sig = '%s', hubloc_url = '%s', hubloc_callback = '%s', hubloc_site_id = '%s', hubloc_orphancheck = 0, hubloc_error = 0, hubloc_deleted = 0 where hubloc_hash = '%s'",
+				dbesc($guid_sig),
+				dbesc($hash),
+				dbesc(z_root()),
+				dbesc(Libzot::sign(z_root(),$prvkey)),
+				dbesc(z_root()),
+				dbesc(z_root() . '/zot'),
+				dbesc(Libzot::make_xchan_hash(z_root(),$pubkey)),
+				dbesc($sys['channel_hash'])
+			);
+
+			q("update abook set abook_xchan = '%s' where abook_xchan = '%s'",
+				dbesc($hash),
+				dbesc($sys['channel_hash'])
+			);
+
+			q("update abconfig set xchan = '%s' where xchan = '%s'",
+				dbesc($hash),
+				dbesc($sys['channel_hash'])
+			);
+
+			return;
+		}
+	}
+
 	create_identity([
-			'account_id' => 'xxx',  // Typecast trickery: account_id is required. This will create an identity with an (integer) account_id of 0
-			'nickname'   => 'sys',
-			'name'       => 'System',
-			'pageflags'  => 0,
-			'publish'    => 0,
-			'system'     => 1
+			'account_id'       => 'xxx',  // Typecast trickery: account_id is required. This will create an identity with an (integer) account_id of 0
+			'nickname'         => 'sys',
+			'name'             => 'System',
+			'permissions_role' => 'social',
+			'pageflags'        => 0,
+			'publish'          => 0,
+			'system'           => 1
 	]);
 }
 
@@ -129,11 +181,19 @@ function create_sys_channel() {
  * @return array|boolean
  */
 function get_sys_channel() {
+
+	// App::$sys_channel caches this lookup
+	
+	if (is_array(App::$sys_channel)) {
+		return App::$sys_channel;
+	}
+	
 	$r = q("select * from channel left join xchan on channel_hash = xchan_hash where channel_system = 1 limit 1");
 
-	if ($r)
-		return $r[0];
-
+	if ($r) {
+		App::$sys_channel = array_shift($r);
+		return App::$sys_channel;
+	}
 	return false;
 }
 
@@ -145,13 +205,10 @@ function get_sys_channel() {
  * @return boolean
  */
 function is_sys_channel($channel_id) {
-	$r = q("select channel_system from channel where channel_id = %d and channel_system = 1 limit 1",
-		intval($channel_id)
-	);
-
-	if($r)
-		return true;
-
+	$s = get_sys_channel();
+	if ($s) {
+		return (intval($s['channel_id']) === intval($channel_id));
+	}
 	return false;
 }
 
@@ -232,8 +289,14 @@ function create_identity($arr) {
 	}
 
 	$guid = Libzot::new_uid($nick);
-	$key = Crypto::new_keypair(4096);
 
+	if ($system) {
+		$key = [ 'pubkey' => get_config('system','pubkey'), 'prvkey' => get_config('system','prvkey') ];
+	}
+	else {
+		$key = Crypto::new_keypair(4096);
+	}
+	
 	$sig = Libzot::sign($guid,$key['prvkey']);
 	$hash = Libzot::make_xchan_hash($guid,$key['pubkey']);
 
@@ -339,7 +402,7 @@ function create_identity($arr) {
 		[
 			'hubloc_guid'     => $guid,
 			'hubloc_guid_sig' => $sig,
-			'hubloc_id_url'   => channel_url($ret['channel']),
+			'hubloc_id_url'   => (($system) ? z_root() : channel_url($ret['channel'])),
 			'hubloc_hash'     => $hash,
 			'hubloc_addr'     => channel_reddress($ret['channel']),
 			'hubloc_primary'  => intval($primary),
@@ -369,7 +432,7 @@ function create_identity($arr) {
 			'xchan_photo_m'    => z_root() . "/photo/profile/m/{$newuid}",
 			'xchan_photo_s'    => z_root() . "/photo/profile/s/{$newuid}",
 			'xchan_addr'       => channel_reddress($ret['channel']),
-			'xchan_url'        => channel_url($ret['channel']),
+			'xchan_url'        => (($system) ? z_root() : channel_url($ret['channel'])),
 			'xchan_follow'     => z_root() . '/follow?f=&url=%s',
 			'xchan_connurl'    => z_root() . '/poco/' . $ret['channel']['channel_address'],
 			'xchan_name'       => $ret['channel']['channel_name'],
@@ -455,11 +518,9 @@ function create_identity($arr) {
 			);
 		}
 
-		if(! $system) {
-			set_pconfig($ret['channel']['channel_id'],'system','photo_path', '%Y/%Y-%m');
-			set_pconfig($ret['channel']['channel_id'],'system','attach_path','%Y/%Y-%m');
-		}
-
+		set_pconfig($ret['channel']['channel_id'],'system','photo_path', '%Y/%Y-%m');
+		set_pconfig($ret['channel']['channel_id'],'system','attach_path','%Y/%Y-%m');
+	
 		// If this channel has a parent, auto follow them.
 
 		if($parent_channel_hash) {
@@ -811,8 +872,7 @@ function identity_basic_export($channel_id, $sections = null) {
 		'project'     => PLATFORM_NAME,
 		'codebase'    => 'zap',
 		'version'     => STD_VERSION,
-		'database'    => DB_UPDATE_VERSION,
-		'server_role' => System::get_server_role()
+		'database'    => DB_UPDATE_VERSION
 	];
 
 	/*
@@ -1654,7 +1714,7 @@ function auto_channel_create($account_id) {
 
 function get_cover_photo($channel_id,$format = 'bbcode', $res = PHOTO_RES_COVER_1200) {
 
-	$r = q("select height, width, resource_id, mimetype from photo where uid = %d and imgscale = %d and photo_usage = %d",
+	$r = q("select height, width, resource_id, edited, mimetype from photo where uid = %d and imgscale = %d and photo_usage = %d",
 		intval($channel_id),
 		intval($res),
 		intval(PHOTO_COVER)
@@ -1679,6 +1739,7 @@ function get_cover_photo($channel_id,$format = 'bbcode', $res = PHOTO_RES_COVER_
 				'width' => $r[0]['width'],
 				'height' => $r[0]['height'],
 				'type' => $r[0]['mimetype'],
+				'updated' => $r[0]['edited'],
 				'url' => $url
 			);
 			break;
@@ -1844,8 +1905,10 @@ function get_zcard_embed($channel, $observer_hash = '', $args = []) {
  *   - false if no channel with $nick was found
  */
 
-function channelx_by_nick($nick) {
+function channelx_by_nick($nick,$include_removed = false) {
 
+	$sql_extra = (($include_removed) ? "" : " and channel_removed = 0 ");
+	
 	// If we are provided a Unicode nickname convert to IDN
 
 	$nick = punify($nick);
@@ -1859,7 +1922,7 @@ function channelx_by_nick($nick) {
 		return App::$channel;
 	}
 
-	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_address = '%s'  and channel_removed = 0 LIMIT 1",
+	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_address = '%s' $sql_extra LIMIT 1",
 		dbesc($nick)
 	);
 
@@ -1873,14 +1936,16 @@ function channelx_by_nick($nick) {
  * @return array|boolean false if channel ID not found, otherwise the channel array
  */
 
-function channelx_by_hash($hash) {
+function channelx_by_hash($hash, $include_removed = false) {
+
+	$sql_extra = (($include_removed) ? "" : " and channel_removed = 0 ");
 
 	if (App::$channel && is_array(App::$channel) && array_key_exists('channel_hash',App::$channel)
 		&& array_key_exists('xchan_hash',App::$channel) && App::$channel['channel_hash'] === $hash) {
 		return App::$channel;
 	}
 
-	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_hash = '%s' and channel_removed = 0 LIMIT 1",
+	$r = q("SELECT * FROM channel left join xchan on channel_hash = xchan_hash WHERE channel_hash = '%s' $sql_extra LIMIT 1",
 		dbesc($hash)
 	);
 
@@ -1895,14 +1960,16 @@ function channelx_by_hash($hash) {
  * @return array|boolean false if channel ID not found, otherwise the channel array
  */
 
-function channelx_by_n($id) {
+function channelx_by_n($id, $include_removed = false) {
+
+	$sql_extra = (($include_removed) ? "" : " and channel_removed = 0 ");
 
 	if (App::$channel && is_array(App::$channel) && array_key_exists('channel_id',App::$channel)
 		&& array_key_exists('xchan_hash',App::$channel) && intval(App::$channel['channel_id']) === intval($id)) {
 		return App::$channel;
 	}
 
-	$r = q("SELECT * FROM channel LEFT JOIN xchan ON channel_hash = xchan_hash WHERE channel_id = %d AND channel_removed = 0 LIMIT 1",
+	$r = q("SELECT * FROM channel LEFT JOIN xchan ON channel_hash = xchan_hash WHERE channel_id = %d $sql_extra LIMIT 1",
 		dbesc($id)
 	);
 
@@ -2389,9 +2456,20 @@ function anon_identity_init($reqvars) {
 function channel_url($channel) {
 
 	// data validation - if this is wrong, log the call stack so we can find the issue
+
 	if (! is_array($channel)) {
 		btlogger('not a channel array: ' . print_r($channel,true));
 	}
 
+	if ($channel['channel_address'] === App::get_hostname() || intval($channel['channel_system'])) {
+		return z_root();
+	}
+
 	return (($channel) ? z_root() . '/channel/' . $channel['channel_address'] : z_root());
+}
+
+function is_group($uid) {
+	$role = get_pconfig($uid,'system','permissions_role');
+	$rolesettings = PermissionRoles::role_perms($role);
+	return ((isset($rolesettings['channel_type']) && $rolesettings['channel_type'] === 'group') ? true : false);
 }

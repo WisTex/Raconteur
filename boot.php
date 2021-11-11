@@ -17,10 +17,10 @@ use Zotlabs\Daemon\Run;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-define ( 'STD_VERSION',             '21.05.28' );
+define ( 'STD_VERSION',             '21.11.11' );
 define ( 'ZOT_REVISION',            '10.0' );
 
-define ( 'DB_UPDATE_VERSION',       1248 );
+define ( 'DB_UPDATE_VERSION',       1254 );
 
 define ( 'PLATFORM_NAME',           'zap' );
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
@@ -93,6 +93,18 @@ define ( 'DIRECTORY_MODE_STANDALONE',  0x0100); // A detached (off the grid) hub
 
 define ( 'DIRECTORY_REALM',            'ZAP');
 
+
+// Types of xchan records. These are a superset of ActivityStreams Actor types
+
+define ('XCHAN_TYPE_PERSON',           0);
+define ('XCHAN_TYPE_GROUP',            1);
+define ('XCHAN_TYPE_COLLECTION',       2);
+define ('XCHAN_TYPE_SERVICE',          3);
+define ('XCHAN_TYPE_ORGANIZATION',     4);
+define ('XCHAN_TYPE_APPLICATION',      5);
+define ('XCHAN_TYPE_UNKNOWN',        127);
+
+
 /**
  *
  * Image storage quality. Lower numbers save space at cost of image detail.
@@ -133,6 +145,11 @@ if (! defined('STORAGE_DEFAULT_PERMISSIONS')) {
 	define ( 'STORAGE_DEFAULT_PERMISSIONS',   0770 );
 }
 
+// imported followers for friend suggestions.
+
+if (! defined('MAX_IMPORTED_FOLLOW')) {
+	define ( 'MAX_IMPORTED_FOLLOW', 10);
+}
 
 /**
  *
@@ -151,6 +168,11 @@ if (! defined('STORAGE_DEFAULT_PERMISSIONS')) {
  *
  */
 define ( 'MAX_IMAGE_LENGTH',        -1  );
+
+
+define ( 'PUBLIC_STREAM_NONE',       0  );
+define ( 'PUBLIC_STREAM_SITE',       1  );
+define ( 'PUBLIC_STREAM_FULL',       2  );
 
 
 /**
@@ -393,6 +415,7 @@ define ( 'NOTIFY_TAGSELF',  0x0080 );
 define ( 'NOTIFY_TAGSHARE', 0x0100 );
 define ( 'NOTIFY_POKE',     0x0200 );
 define ( 'NOTIFY_LIKE',     0x0400 );
+define ( 'NOTIFY_RESHARE',  0x0800 );
 
 define ( 'NOTIFY_SYSTEM',   0x8000 );
 
@@ -639,8 +662,6 @@ function sys_boot() {
 		App::$config['system']['timezone'] = $default_timezone;
 	}
 
-	App::$config['system']['server_role'] = 'pro';
-
 	App::$timezone = (isset(App::$config['system']['timezone']) ? App::$config['system']['timezone'] : 'UTC');
 	date_default_timezone_set(App::$timezone);
 
@@ -725,7 +746,8 @@ class App {
 	public  static $channel    = null;            // channel record of the current channel of the logged-in account
 	public  static $observer   = null;            // xchan record of the page observer
 	public  static $profile_uid = 0;              // If applicable, the channel_id of the "page owner"
-	public  static $poi        = null;            // "person of interest", generally a referenced connection
+	public  static $sys_channel = null;           // cache sys channel lookups here
+	public  static $poi        = null;            // "person of interest", generally a referenced connection or directory entry
 	private static $oauth_key  = null;            // consumer_id of oauth request, if used
 	public  static $layout     = [];              // Comanche parsed template
 	public  static $pdl        = null;            // Comanche page description
@@ -890,9 +912,13 @@ class App {
 			self::$path = $path;
 		}
 
+		// Rewrite rules on the server will convert incoming paths to a request parameter.
+		// Strip this path information from our stored copy of the query_string, in case
+		// we need to re-use the rest of the original query.
+		
 		if (isset($_SERVER['QUERY_STRING']) && substr($_SERVER['QUERY_STRING'], 0, 4) === "req=") {
 			self::$query_string = str_replace(['<','>'],['&lt;','&gt;'],substr($_SERVER['QUERY_STRING'], 4));
-			// removing trailing / - maybe a nginx problem
+			// removing leading '/' - maybe a nginx problem
 			if (substr(self::$query_string, 0, 1) == "/") {
 				self::$query_string = substr(self::$query_string, 1);
 			}
@@ -900,6 +926,10 @@ class App {
 			self::$query_string = preg_replace('/&/','?',self::$query_string,1);
 		}
 
+		// Here is where start breaking out the URL path information to both route the
+		// web request based on the leading path component, and also to use remaining
+		// path components as C-style arguments to our individual controller modules.
+		
 		if (isset($_GET['req'])) {
 			self::$cmd = escape_tags(trim($_GET['req'],'/\\'));
 		}
@@ -923,6 +953,12 @@ class App {
 		 *
 		 * If $argv[0] has a period in it, for example foo.json; rewrite
 		 * to module = 'foo' and set $_REQUEST['module_format'] = 'json';
+		 *
+		 * As a result, say you offered a feed for member bob. Most applications
+		 * would address it as /feed/bob.xml or /feed/bob.json
+		 * We would address it as /feed.xml/bob  and /feed.json/bob because
+		 * you're altering the output format of the feed module, and bob is
+		 * just an identifier or variable. 
 		 */
 
 		self::$argv = explode('/', self::$cmd);
@@ -1121,19 +1157,30 @@ class App {
 
 		$preload_images = ((local_channel()) ? get_pconfig(local_channel(),'system','preload_images',0) : 0);
 
-		$interval = ((local_channel()) ? get_pconfig(local_channel(),'system','update_interval',60000) : 60000);
-		if ($interval < 10000) {
-			$interval = 60000;
+
+		$interval = ((local_channel()) ? get_pconfig(local_channel(),'system','update_interval', 30000) : 30000);
+		if ($interval < 15000) {
+			$interval = 15000;
+		}
+
+		$alerts_interval = intval(get_config('system','alerts_interval',10000));
+		if ($alerts_interval < 5000) {
+			$alerts_interval = 5000;
 		}
 
 		if (! x(self::$page,'title')) {
-			self::$page['title'] = self::$config['system']['sitename'];
+			self::$page['title'] = ((array_path_exists('system/sitename',self::$config)) ? self::$config['system']['sitename'] : EMPTY_STR);
 		}
 
 		if (! self::$meta->get_field('og:title')) {
 			self::$meta->set('og:title',self::$page['title']);
 		}
+
+		// webmanifest
 		
+		head_add_link( [ 'rel' => 'manifest', 'href' => z_root() . '/manifest.webmanifest' ] );
+		self::$meta->set('application-name', System::get_platform_name() );
+
 		self::$meta->set('generator', System::get_platform_name());
 
 		$i = head_get_icon();
@@ -1142,6 +1189,8 @@ class App {
 		}
 		if ($i) {
 			head_add_link(['rel' => 'shortcut icon', 'href' => $i ]);
+			head_add_link(['rel' => 'icon', 'sizes' => '64x64', 'href' => System::get_site_icon() ]);
+			head_add_link(['rel' => 'icon', 'sizes' => '192x192', 'href' => 'images/' . System::get_platform_name() . '.svg' ]);
 		}
 
 		$x = [ 'header' => '' ];
@@ -1157,6 +1206,10 @@ class App {
 		 * being first
 		 */
 
+		if (! isset(self::$page['htmlhead'])) {
+			self::$page['htmlhead'] = EMPTY_STR; // needed to silence warning
+		}
+		
 		self::$page['htmlhead'] = replace_macros(get_markup_template('head.tpl'),
 			[
 				'$preload_images'  => $preload_images,
@@ -1167,6 +1220,7 @@ class App {
 				'$metas'           => self::$meta->get(),
 				'$plugins'         => $x['header'],
 				'$update_interval' => $interval,
+				'$alerts_interval' => $alerts_interval,
 				'$head_css'        => head_get_css(),
 				'$head_js'         => head_get_js(),
 				'$linkrel'         => head_get_links(),
@@ -1279,10 +1333,10 @@ class App {
 /**
  * @brief Multi-purpose function to check variable state.
  *
- * Usage: x($var) or $x($array, 'key')
+ * Usage: x($var) or x($array, 'key')
  *
  * returns false if variable/key is not set
- * if variable is set, returns 1 if has 'non-zero' value, otherwise returns 0.
+ * if variable is set, returns 1 if variable contains 'truthy' value, otherwise returns 0.
  * e.g. x('') or x(0) returns 0;
  *
  * @param string|array $s variable to check
@@ -1445,13 +1499,11 @@ function check_config() {
 
 	App::set_baseurl(z_root());
 
-	// Make sure each site has a system channel.  This is now created on install
-	// so we just need to keep this around a couple of weeks until the hubs that
-	// already exist have one
-	$syschan_exists = get_sys_channel();
-	if (! $syschan_exists)
-		create_sys_channel();
-
+	// Ensure the site has a system channel and that it has been upgraded.
+	// This function will only do work if work is required.
+	
+	create_sys_channel();
+	
 	$x = new DB_Upgrade(DB_UPDATE_VERSION);
 
 	plugins_sync();
@@ -1776,20 +1828,15 @@ function can_view_public_stream() {
 		return false;
 	}
 
-	if (! (intval(get_config('system','open_pubstream',1)))) {
+	if (! (intval(get_config('system','open_pubstream',0)))) {
 		if (! local_channel()) {
 			return false;
 		}
 	}
 
-	$site_firehose = ((intval(get_config('system','site_firehose',0))) ? true : false);
-	$net_firehose  = ((get_config('system','disable_discover_tab',1)) ? false : true);
-
-	if (! ($site_firehose || $net_firehose)) {
-		return false;
-	}
-
-	return true;
+	$public_stream_mode = intval(get_config('system','public_stream_mode',PUBLIC_STREAM_NONE));
+	return (($public_stream_mode) ? true : false);
+	
 }
 
 
@@ -1804,19 +1851,24 @@ function can_view_public_stream() {
  * @param string $s Text to display
  */
 function notice($s) {
-	if(! session_id())
-		return;
 
-	if(! x($_SESSION, 'sysmsg')) $_SESSION['sysmsg'] = [];
+	if (! session_id()) {
+		return;
+	}
+
+	if (! x($_SESSION, 'sysmsg')) {
+		$_SESSION['sysmsg'] = [];
+	}
 
 	// ignore duplicated error messages which haven't yet been displayed
 	// - typically seen as multiple 'permission denied' messages
 	// as a result of auto-reloading a protected page with &JS=1
 
-	if(in_array($s, $_SESSION['sysmsg']))
+	if (in_array($s, $_SESSION['sysmsg'])) {
 		return;
+	}
 
-	if(App::$interactive) {
+	if (App::$interactive) {
 		$_SESSION['sysmsg'][] = $s;
 	}
 }
@@ -1832,16 +1884,21 @@ function notice($s) {
  * @param string $s Text to display
  */
 function info($s) {
-	if(! session_id())
+	if (! session_id()) {
 		return;
-	if(! x($_SESSION, 'sysmsg_info'))
+	}
+	
+	if (! x($_SESSION, 'sysmsg_info')) {
 		$_SESSION['sysmsg_info'] = [];
+	}
 
-	if(in_array($s, $_SESSION['sysmsg_info']))
+	if (in_array($s, $_SESSION['sysmsg_info'])) {
 		return;
+	}
 
-	if(App::$interactive)
+	if (App::$interactive) {
 		$_SESSION['sysmsg_info'][] = $s;
+	}
 }
 
 /**
@@ -2166,6 +2223,8 @@ function exec_pdl() {
  */
 function construct_page() {
 
+	call_hooks('page_end', App::$page['content']);
+
 	exec_pdl();
 
 	$comanche = ((isset(App::$layout) && is_array(App::$layout) && count(App::$layout)) ? true : false);
@@ -2369,7 +2428,7 @@ function head_set_icon($icon) {
  */
 function head_get_icon() {
 
-	$icon = App::$data['pageicon'];
+	$icon = ((isset(App::$data['pageicon'])) ? App::$data['pageicon'] : EMPTY_STR);
 	if($icon && ! strpos($icon, '://'))
 		$icon = z_root() . $icon;
 

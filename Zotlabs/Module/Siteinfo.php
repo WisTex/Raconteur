@@ -41,7 +41,7 @@ class Siteinfo extends Controller {
 				'$transport_link' => '<a href="https://zotlabs.com">https://zotlabs.com</a>',
 
 				'$ebs' => System::ebs(),
-				'$additional_text' => t('Federated transport protocols:'),
+				'$additional_text' => t('Protocols:'),
 				'$additional_fed' => $federated,
 				'$prj_version' => ((get_config('system','hidden_version_siteinfo')) ? '' : sprintf( t('Version %s'), System::get_project_version())),
 				'$prj_linktxt' => t('Project homepage'),

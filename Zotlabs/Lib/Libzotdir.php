@@ -111,7 +111,7 @@ class Libzotdir {
 			'$forumsurl' => $forumsurl,
 			'$safemode'  => array('safemode', t('Safe Mode'),$safe_mode,'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&safe="+(this.checked ? 1 : 0)\''),
 			'$pubforums' => array('pubforums', t('Groups Only'),(($pubforums == 1) ? true : false),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&type="+(this.checked ? 1 : 0)\''),
-			'$collections' => array('collections', t('Collections Only'),(($pubforums == 2) ? true : false),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&type="+(this.checked ? 2 : 0)\''),
+//			'$collections' => array('collections', t('Collections Only'),(($pubforums == 2) ? true : false),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&type="+(this.checked ? 2 : 0)\''),
 			'$hide_local' => $hide_local,
 			'$globaldir' => array('globaldir', t('This Website Only'), 1-intval($globaldir),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&global="+(this.checked ? 0 : 1)\''),
 			'$activedir' => array('activedir', t('Recently Updated'), intval($activedir),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&active="+(this.checked ? 1 : 0)\''),
@@ -278,20 +278,20 @@ class Libzotdir {
 		$arr = [];
 
 		$arr['xprof_hash']         = $hash;
-		$arr['xprof_dob']          = (($profile['birthday'] === '0000-00-00') ? $profile['birthday'] : datetime_convert('','',$profile['birthday'],'Y-m-d')); // !!!! check this for 0000 year
-		$arr['xprof_age']          = (($profile['age'])         ? intval($profile['age']) : 0);
-		$arr['xprof_desc']         = (($profile['description']) ? htmlspecialchars($profile['description'], ENT_COMPAT,'UTF-8',false) : '');	
-		$arr['xprof_gender']       = (($profile['gender'])      ? htmlspecialchars($profile['gender'],      ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_marital']      = (($profile['marital'])     ? htmlspecialchars($profile['marital'],     ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_sexual']       = (($profile['sexual'])      ? htmlspecialchars($profile['sexual'],      ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_locale']       = (($profile['locale'])      ? htmlspecialchars($profile['locale'],      ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_region']       = (($profile['region'])      ? htmlspecialchars($profile['region'],      ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_postcode']     = (($profile['postcode'])    ? htmlspecialchars($profile['postcode'],    ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_country']      = (($profile['country'])     ? htmlspecialchars($profile['country'],     ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_about']        = (($profile['about'])       ? htmlspecialchars($profile['about'],       ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_pronouns']     = (($profile['pronouns'])    ? htmlspecialchars($profile['pronouns'],    ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_homepage']     = (($profile['homepage'])    ? htmlspecialchars($profile['homepage'],    ENT_COMPAT,'UTF-8',false) : '');
-		$arr['xprof_hometown']     = (($profile['hometown'])    ? htmlspecialchars($profile['hometown'],    ENT_COMPAT,'UTF-8',false) : '');
+		$arr['xprof_dob']          = ((isset($profile['birthday']) && $profile['birthday'] === '0000-00-00') ? $profile['birthday'] : datetime_convert('','',$profile['birthday'],'Y-m-d')); // !!!! check this for 0000 year
+		$arr['xprof_age']          = (isset($profile['age'])    ? intval($profile['age']) : 0);
+		$arr['xprof_desc']         = ((isset($profile['description']) && $profile['description']) ? htmlspecialchars($profile['description'], ENT_COMPAT,'UTF-8',false) : '');	
+		$arr['xprof_gender']       = ((isset($profile['gender']) && $profile['gender'])      ? htmlspecialchars($profile['gender'],      ENT_COMPAT,'UTF-8',false) : '');
+		$arr['xprof_marital']      = ((isset($profile['marital']) && $profile['marital'])     ? htmlspecialchars($profile['marital'],     ENT_COMPAT,'UTF-8',false) : '');
+		$arr['xprof_sexual']       = ((isset($profile['sexual']) && $profile['sexual'])      ? htmlspecialchars($profile['sexual'],      ENT_COMPAT,'UTF-8',false) : '');
+		$arr['xprof_locale']       = ((isset($profile['locale']) && $profile['locale'])      ? htmlspecialchars($profile['locale'],      ENT_COMPAT,'UTF-8',false) : '');
+		$arr['xprof_region']       = ((isset($profile['region']) && $profile['region'])      ? htmlspecialchars($profile['region'],      ENT_COMPAT,'UTF-8',false) : '');
+		$arr['xprof_postcode']     = ((isset($profile['postcode']) && $profile['postcode'])    ? htmlspecialchars($profile['postcode'],    ENT_COMPAT,'UTF-8',false) : '');
+		$arr['xprof_country']      = ((isset($profile['country']) && $profile['country'])     ? htmlspecialchars($profile['country'],     ENT_COMPAT,'UTF-8',false) : '');
+		$arr['xprof_about']        = ((isset($profile['about']) && $profile['about'])       ? htmlspecialchars($profile['about'],       ENT_COMPAT,'UTF-8',false) : '');
+		$arr['xprof_pronouns']     = ((isset($profile['pronouns']) && $profile['pronouns']) ? htmlspecialchars($profile['pronouns'],    ENT_COMPAT,'UTF-8',false) : '');
+		$arr['xprof_homepage']     = ((isset($profile['homepage']) && $profile['homepage'])    ? htmlspecialchars($profile['homepage'],    ENT_COMPAT,'UTF-8',false) : '');
+		$arr['xprof_hometown']     = ((isset($profile['hometown']) && $profile['hometown'])    ? htmlspecialchars($profile['hometown'],    ENT_COMPAT,'UTF-8',false) : '');
 
 		$clean = [];
 		if (array_key_exists('keywords', $profile) and is_array($profile['keywords'])) {

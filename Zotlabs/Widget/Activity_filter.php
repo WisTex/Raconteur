@@ -17,8 +17,10 @@ class Activity_filter {
 
 		$filter_active = false;
 		$events_active = false;
+		$video_active = false;
 		$polls_active = false;
 		$group_active = false;
+		$drafts_active = false;
 		$forum_active = false;
 		
 		$tabs = [];
@@ -63,12 +65,39 @@ class Activity_filter {
 			'title' => t('Show posts that I have saved')
 		];
 
+		if (local_channel() && Apps::system_app_installed(local_channel(),'Drafts')) {
+			$drafts_active = ((isset($_GET['draft']) && intval($_GET['draft'])) ? 'active' : '');
+			if ($drafts_active) {
+				$filter_active = 'drafts';
+			}
+
+			$tabs[] = [
+				'label' => t('Drafts'),
+				'icon'  => 'floppy-o',
+				'url'   => z_root() . '/' . $cmd . '/?draft=1',
+				'sel'   => $drafts_active,
+				'title' => t('Show drafts that I have saved')
+			];
+		}
+
+		if(x($_GET,'search')) {
+			$video_active = (($_GET['search'] == 'video]') ? 'active' : '');
+			$filter_active = (($events_active) ? 'videos' : 'search');
+		}	
+
+		$tabs[] = [
+			'label' => t('Videos'),
+			'icon' => 'video',
+			'url' => z_root() . '/' . $cmd . '/?search=video%5D',
+			'sel' => $video_active,
+			'title' => t('Show posts that include videos')
+		];
 
 		if(x($_GET,'verb')) {
 			$events_active = (($_GET['verb'] == '.Event') ? 'active' : '');
 			$polls_active = (($_GET['verb'] == '.Question') ? 'active' : '');
 			$filter_active = (($events_active) ? 'events' : 'polls');
-		}
+		}	
 
 		$tabs[] = [
 			'label' => t('Events'),

@@ -51,10 +51,10 @@ class ActivityPub {
 		if ($purge_all) {
 
 			$ti = [
-				'id' => channel_url($channel) . '#delete',
-				'actor' => channel_url($channel),
+				'id' => channel_url($arr['channel']) . '?operation=delete',
+				'actor' => channel_url($arr['channel']),
 				'type' => 'Delete',
-				'object' => channel_url($channel),
+				'object' => channel_url($arr['channel']),
 				'to' => [ 'https://www.w3.org/ns/activitystreams#Public' ]
 			];
 
@@ -101,18 +101,18 @@ class ActivityPub {
 					return;
 				}
 
-				$token = IConfig::get($target_item['id'],'ocap','relay');
-				if ($token) {
-					if (defined('USE_BEARCAPS')) {
-						$ti['id'] = 'bear:?u=' . $ti['id'] . '&t=' . $token;
-					}
-					else {
-						$ti['id'] = $ti['id'] . '?token=' . $token;
-					}
-					if ($ti['url'] && is_string($ti['url'])) {
-						$ti['url'] .= '?token=' . $token;
-					}
-				}
+//				$token = IConfig::get($target_item['id'],'ocap','relay');
+//				if ($token) {
+//					if (defined('USE_BEARCAPS')) {
+//						$ti['id'] = 'bear:?u=' . $ti['id'] . '&t=' . $token;
+//					}
+//					else {
+//						$ti['id'] = $ti['id'] . '?token=' . $token;
+//					}
+//					if ($ti['url'] && is_string($ti['url'])) {
+//						$ti['url'] .= '?token=' . $token;
+//					}
+//				}
 
 				$msg = array_merge(['@context' => [
 					ACTIVITYSTREAMS_JSONLD_REV,
@@ -234,14 +234,15 @@ class ActivityPub {
     	]);
 
 	    if ($message_id && (! get_config('system','disable_dreport'))) {
-    	    q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_result, dreport_time, dreport_xchan, dreport_queue ) values ( '%s','%s','%s','%s','%s','%s','%s' ) ",
+    	    q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_result, dreport_time, dreport_xchan, dreport_queue, dreport_log ) values ( '%s','%s','%s','%s','%s','%s','%s','%s' ) ",
         	    dbesc($message_id),
             	dbesc($dest_url),
 	            dbesc($dest_url),
     	        dbesc('queued'),
         	    dbesc(datetime_convert()),
             	dbesc($sender['channel_hash']),
-	            dbesc($hash)
+	            dbesc($hash),
+				dbesc(EMPTY_STR)
     	    );
     	}
 
@@ -293,7 +294,7 @@ class ActivityPub {
 
 		$join_msg = null;
 
-		if (intval($x['recipient']['xchan_type']) === 1) {
+		if (intval($x['recipient']['xchan_type']) === XCHAN_TYPE_GROUP) {
 			$join_msg = $msg;
 			$join_msg['type'] = 'Join';
 			$join_msg['signature'] = LDSignatures::sign($join_msg,$x['sender']);
@@ -415,7 +416,7 @@ class ActivityPub {
 				Activity::ap_schema()
 			]], 
 			[
-				'id'    => z_root() . '/follow/' . $recip[0]['abook_id'] . '/' . md5($orig_activity) . '#reject',
+				'id'    => z_root() . '/follow/' . $recip[0]['abook_id'] . '/' . md5($orig_activity) . '?operation=reject',
 				'type'  => 'Reject',
 				'actor' => $p,
 				'object'     => [
@@ -439,7 +440,7 @@ class ActivityPub {
 				Activity::ap_schema()
 			]], 
 			[
-				'id'    => z_root() . '/follow/' . $recip[0]['abook_id'] . (($orig_activity) ? '/' . md5($orig_activity) : EMPTY_STR) . '#Undo',
+				'id'    => z_root() . '/follow/' . $recip[0]['abook_id'] . (($orig_activity) ? '/' . md5($orig_activity) : EMPTY_STR) . '?operation=unfollow',
 				'type'  => 'Undo',
 				'actor' => $p,
 				'object'     => [

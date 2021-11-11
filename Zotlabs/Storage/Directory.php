@@ -743,18 +743,25 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 	function ChannelList(&$auth) {
 		$ret = [];
 
-		if (intval(get_config('system','cloud_disable_siteroot'))) {
-			return $ret;
-		}
-
-		$r = q("SELECT channel_id, channel_address FROM channel left join profile on profile.uid = channel.channel_id WHERE channel_removed = 0 AND channel_system = 0 AND (channel_pageflags & %d) = 0",
+		$disabled = intval(get_config('system','cloud_disable_siteroot',true));
+		
+		$r = q("SELECT channel_id, channel_address, profile.publish FROM channel left join profile on profile.uid = channel.channel_id WHERE channel_removed = 0 AND channel_system = 0 AND (channel_pageflags & %d) = 0 and profile.is_default = 1",
 			intval(PAGE_HIDDEN)
 		);
-
 		if ($r) {
 			foreach ($r as $rr) {
-				if (perm_is_allowed($rr['channel_id'], $auth->observer, 'view_storage')) {
-					logger('found channel: ' . $rr['channel_address'], LOGGER_DATA);
+				if ((perm_is_allowed($rr['channel_id'], $auth->observer, 'view_storage') && $rr['publish']) || $rr['channel_id'] == $this->auth->channel_id) {
+					logger('found channel: /cloud/' . $rr['channel_address'], LOGGER_DATA);
+					if ($disabled) {
+						$conn = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s' and abook_pending = 0",
+							intval($rr['channel_id']),
+							dbesc($auth->observer)
+						);
+						if (! $conn) {
+							continue;
+						}
+					}
+
 					$ret[] = new Directory($rr['channel_address'], $auth);
 				}
 			}

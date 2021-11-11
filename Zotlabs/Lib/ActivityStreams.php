@@ -160,6 +160,7 @@ class ActivityStreams {
 	 *
 	 * @return boolean Return true if the JSON string could be decoded.
 	 */
+
 	function is_valid() {
 		return $this->valid;
 	}
@@ -343,21 +344,12 @@ class ActivityStreams {
 	function get_actor($property,$base='',$namespace = '') {
 		$x = $this->get_property_obj($property, $base, $namespace);
 		if (self::is_url($x)) {
-
-			// SECURITY: If we have already stored the actor profile, re-generate it 
-			// from cached data - don't refetch it from the network
-
-			$r = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' limit 1",
-				dbesc($x)
-			);
-			if ($r) {
-				// indicate that this is a cached record
-				$y = Activity::encode_person($r[0]);
-				$y['cached'] = true;
-				$y['updated'] = datetime_convert('UTC','UTC',$r[0]['hubloc_updated'],ATOM_TIME);
+			$y = Activity::get_cached_actor($x);
+			if ($y) {
 				return $y;
 			}
 		}
+		
 		$actor = $this->get_compound_property($property,$base,$namespace,true);
 		if (is_array($actor) && self::is_an_actor($actor['type'])) {
 			if (array_key_exists('id',$actor) && (! array_key_exists('inbox',$actor))) {
@@ -465,6 +457,7 @@ class ActivityStreams {
 			'application/ld+json;profile="https://www.w3.org/ns/activitystreams"',
 			'application/activity+json',
 			'application/ld+json;profile="http://www.w3.org/ns/activitystreams"',
+			'application/ld+json', // required for Friendica ~2021-09, can possibly be removed after next release of that project
 			'application/x-zot-activity+json'
 		]);
 

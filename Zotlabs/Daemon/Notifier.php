@@ -205,7 +205,7 @@ class Notifier {
 		elseif ($cmd === 'refresh_all') {
 			logger('notifier: refresh_all: ' . $item_id);
 
-			self::$channel = channelx_by_n($item_id);
+			self::$channel = channelx_by_n($item_id,true);
 			$r = q("select abook_xchan from abook where abook_channel = %d",
 				intval($item_id)
 			);
@@ -214,6 +214,7 @@ class Notifier {
 					self::$recipients[] = $rr['abook_xchan'];
 				}
 			}
+			self::$recipients[] = self::$channel['channel_hash'];
 			self::$private = false;
 			self::$packet_type = 'refresh';
 		}
@@ -224,14 +225,14 @@ class Notifier {
 				return;
 			}
 			
-			self::$channel     = channelx_by_n($item_id);
+			self::$channel     = channelx_by_n($item_id,true);
 			self::$recipients  = [ $xchan ];
 			self::$private     = true;
 			self::$packet_type = 'purge';
 		}
 		elseif ($cmd === 'purge_all') {
 			logger('notifier: purge_all: ' . $item_id);
-			self::$channel = channelx_by_n($item_id);
+			self::$channel = channelx_by_n($item_id,true);
 
 			self::$recipients = [];
 			$r = q("select abook_xchan from abook where abook_channel = %d and abook_self = 0",
@@ -365,8 +366,10 @@ class Notifier {
 					Activity::ap_schema()
 					]], Activity::encode_activity($target_item,true)
 				);
+				self::$encoded_item['signature'] = LDSignatures::sign(self::$encoded_item,self::$channel);
 			}
- 
+
+
 			logger('target_item: ' . print_r($target_item,true), LOGGER_DEBUG);
 			logger('encoded: ' . print_r(self::$encoded_item,true), LOGGER_DEBUG);
 		
@@ -433,8 +436,8 @@ class Notifier {
 				$upstream = true;
 				self::$packet_type = 'response';
 				$is_moderated = their_perms_contains($parent_item['uid'],$sendto,'moderated');
-				if ($relay_to_owner && $thread_is_public && (! $is_moderated)) {
-					if (get_pconfig($target_item['uid'],'system','hyperdrive',false)) {
+				if ($relay_to_owner && $thread_is_public && (! $is_moderated) && (! is_group($parent_item['uid']))) {
+					if (get_pconfig($target_item['uid'],'system','hyperdrive',true)) {
 						Run::Summon([ 'Notifier' , 'hyper', $item_id ]);
 					}
 				}
@@ -450,6 +453,10 @@ class Notifier {
 				$upstream = false;
 
 				if ($parent_item && $parent_item['item_private'] !== $target_item['item_private']) {
+
+					logger('parent_item: ' . $parent_item['id'] . ' item_private: ' . $parent_item['item_private']);
+					logger('target_item: ' . $target_item['id'] . ' item_private: ' . $target_item['item_private']);
+					
 					logger('conversation privacy mismatch - downstream delivery prevented');
 					return;
 				}
@@ -485,7 +492,7 @@ class Notifier {
 					self::$recipients = collect_recipients($parent_item,self::$private);
 				}
 
-				// FIXME add any additional recipients such as mentions, etc.
+				// @FIXME add any additional recipients such as mentions, etc.
 
 				if ($top_level_post) {
 					// remove clones who will receive the post via sync
@@ -604,7 +611,7 @@ class Notifier {
 				}
 			}
 		}
-		
+
 		if (! $hubs) {
 			logger('notifier: no hubs', LOGGER_NORMAL, LOG_NOTICE);
 			return;
@@ -713,6 +720,18 @@ class Notifier {
 
 			// default: zot protocol
 
+			// Prevent zot6 delivery of group comment boosts, which are not required for conversational platforms.
+			// ActivityPub conversational platforms may wish to filter these if they don't want or require them.
+			// We will assume here that if $target_item exists and has a verb that it is an actual item structure
+			// so we won't need to check the existence of the other item fields prior to evaluation.
+
+			// This shouldn't produce false positives on comment boosts that were generated on other platforms
+			// because we won't be delivering them. 
+			
+			if (isset($target_item) && isset($target_item['verb']) && $target_item['verb'] === 'Announce' && $target_item['author_xchan'] === $target_item['owner_xchan'] && ! intval($target_item['item_thread_top'])) {
+				continue;
+			}
+
 			$hash = new_uuid();
 
 			$env = (($hub_env && $hub_env[$hub['hubloc_site_id']]) ? $hub_env[$hub['hubloc_site_id']] : '');
@@ -736,8 +755,8 @@ class Notifier {
 
 			// only create delivery reports for normal undeleted items
 			if (is_array($target_item) && (! $target_item['item_deleted']) && (! get_config('system','disable_dreport'))) {
-				q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan, dreport_queue ) 
-					values ( '%s', '%s','%s','%s','%s','%s','%s','%s' ) ",
+				q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan, dreport_queue, dreport_log ) 
+					values ( '%s', '%s','%s','%s','%s','%s','%s','%s', '%s' ) ",
 					dbesc($target_item['mid']),
 					dbesc($hub['hubloc_host']),
 					dbesc($hub['hubloc_host']),
@@ -745,7 +764,8 @@ class Notifier {
 					dbesc('queued'),
 					dbesc(datetime_convert()),
 					dbesc(self::$channel['channel_hash']),
-					dbesc($hash)
+					dbesc($hash),
+					dbesc(EMPTY_STR)
 				);
 			}
 
@@ -767,8 +787,8 @@ class Notifier {
 		if ($dead) {
 			foreach ($dead as $deceased) {
 				if (is_array($target_item) && (! $target_item['item_deleted']) && (! get_config('system','disable_dreport'))) {
-					q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan, dreport_queue ) 
-						values ( '%s', '%s','%s','%s','%s','%s','%s','%s' ) ",
+					q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan, dreport_queue, dreport_log ) 
+						values ( '%s', '%s','%s','%s','%s','%s','%s','%s','%s' ) ",
 						dbesc($target_item['mid']),
 						dbesc($deceased['hubloc_host']),
 						dbesc($deceased['hubloc_host']),
@@ -776,7 +796,8 @@ class Notifier {
 						dbesc('undeliverable/unresponsive site'),
 						dbesc(datetime_convert()),
 						dbesc(self::$channel['channel_hash']),
-						dbesc(new_uuid())
+						dbesc(new_uuid()),
+						dbesc(EMPTY_STR)
 					);
 				}
 			}

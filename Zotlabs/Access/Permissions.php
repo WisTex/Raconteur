@@ -58,6 +58,7 @@ class Permissions {
 			'view_contacts' => t('Grant viewing access to your address book (connections)'),
 			'view_storage'  => t('Grant viewing access to your file storage and photos'),
 			'post_wall'     => t('Grant permission to post on your channel (wall) page'),
+			'post_mail'     => t('Accept delivery of direct messages and personal mail'),
 			'send_stream'   => t('Accept delivery of their posts and all comments to their posts'),
 			'post_comments' => t('Accept delivery of their comments and likes on your posts'),
 			'write_storage' => t('Grant upload permissions to your file storage and photos'),

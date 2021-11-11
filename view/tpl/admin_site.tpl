@@ -65,7 +65,6 @@
 					{{include file="field_input.tpl" field=$frontpage}}
 					{{include file="field_checkbox.tpl" field=$mirror_frontpage}}
 					{{include file="field_checkbox.tpl" field=$login_on_homepage}}
-					{{include file="field_checkbox.tpl" field=$enable_context_help}}
 					<div class="settings-submit-wrapper" >
 						<button type="submit" name="page_site" class="btn btn-primary" value="1" >{{$submit}}</button>
 					</div>
@@ -83,7 +82,7 @@
 			<div id="reg-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="reg-settings" data-parent="#settings">
 				<div class="section-content-tools-wrapper">
 					{{include file="field_select.tpl" field=$register_policy}}
-					{{include file="field_checkbox.tpl" field=$invite_only}}
+					{{if $invite_working}}{{include file="field_checkbox.tpl" field=$invite_only}}{{/if}}
 					{{include file="field_select.tpl" field=$access_policy}}
 					{{include file="field_input.tpl" field=$register_text}}
 					{{include file="field_select_grouped.tpl" field=$role}}
@@ -112,8 +111,7 @@
 					{{include file="field_checkbox.tpl" field=$ap_contacts}}
 					{{include file="field_checkbox.tpl" field=$animations}}
 					{{include file="field_checkbox.tpl" field=$force_publish}}
-					{{include file="field_checkbox.tpl" field=$disable_discover_tab}}
-					{{include file="field_checkbox.tpl" field=$site_firehose}}
+					{{include file="field_select.tpl" field=$public_stream_mode}}
 					{{include file="field_checkbox.tpl" field=$open_pubstream}}
 					{{include file="field_textarea.tpl" field=$incl}}
 					{{include file="field_textarea.tpl" field=$excl}}
@@ -139,6 +137,7 @@
 					{{include file="field_input.tpl" field=$proxy}}
 					{{include file="field_input.tpl" field=$proxyuser}}
 					{{include file="field_input.tpl" field=$timeout}}
+					{{include file="field_input.tpl" field=$post_timeout}}
 					{{include file="field_input.tpl" field=$delivery_interval}}
 					{{include file="field_input.tpl" field=$delivery_batch_count}}
 					{{include file="field_input.tpl" field=$force_queue}}

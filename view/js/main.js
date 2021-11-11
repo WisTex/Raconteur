@@ -1,36 +1,52 @@
-var src = null;
-var prev = null;
-var livetime = null;
-var msie = false;
-var stopped = false;
-var totStopped = false;
-var timer = null;
-var pr = 0;
-var liking = 0;
-var in_progress = false;
-var langSelect = false;
-var commentBusy = false;
-var last_popup_menu = null;
-var last_popup_button = null;
-var scroll_next = false;
-var next_page = 1;
-var page_load = true;
-var loadingPage = true;
-var pageHasMoreContent = true;
-var divmore_height = 400;
-var last_filestorage_id = null;
-var mediaPlaying = false;
-var contentHeightDiff = 0;
-var liveRecurse = 0;
-var savedTitle = '';
-var initialLoad = true;
+
+let src = null;
+let prev = null;
+let livetime = null;
+let msie = false;
+let stopped = false;
+let totStopped = false;
+let timer = null;
+let alertstimer = null;
+let pr = 0;
+let liking = 0;
+let in_progress = false;
+let langSelect = false;
+let commentBusy = false;
+let last_popup_menu = null;
+let last_popup_button = null;
+let scroll_next = false;
+let next_page = 1;
+let page_load = true;
+let loadingPage = true;
+let pageHasMoreContent = true;
+let divmore_height = 400;
+let last_filestorage_id = null;
+let mediaPlaying = false;
+let contentHeightDiff = 0;
+let liveRecurse = 0;
+let savedTitle = '';
+let initialLoad = true;
+let cached_data = [];
+let mode = '';
+let update_url = '';
+let update_mode = '';
+let orgHeight = 0;
 
 $.ajaxPrefilter(function( options, original_Options, jqXHR ) {
     options.async = true;
 });
+$.ajaxSetup({cache: false});
+
+if ('serviceWorker' in navigator) {
+	navigator.serviceWorker.register('/ServiceWorker.js', { scope: '/' }).then(function(registration) {
+		console.log('Service worker registered. scope is', registration.scope);
+	}).catch(function(error) {
+		console.log('Service worker registration failed because ' + error);
+	});
+}
 
 // Clear the session and local storage if we switch channel or log out
-var cache_uid = '';
+let cache_uid = '';
 if(sessionStorage.getItem('uid') !== null) {
 	cache_uid = sessionStorage.getItem('uid');
 }
@@ -40,9 +56,8 @@ if(cache_uid !== localUser.toString()) {
 	sessionStorage.setItem('uid', localUser.toString());
 }
 
-$.ajaxSetup({cache: false});
 
-var region = 0;
+let region = 0;
 
 $(document).ready(function() {
 
@@ -73,9 +88,10 @@ $(document).ready(function() {
 	savedTitle = document.title;
 
 	updateInit();
-
+	alertsUpdate();
+	
 	$('a.notification-link').click(function(e){
-		var notifyType = $(this).data('type');
+		let notifyType = $(this).data('type');
 
 		if(! $('#nav-' + notifyType + '-sub').hasClass('show')) {
 			loadNotificationItems(notifyType);
@@ -87,15 +103,27 @@ $(document).ready(function() {
 	});
 
 	if(sessionStorage.getItem('notification_open') !== null) {
-		var notifyType = sessionStorage.getItem('notification_open');
+		let notifyType = sessionStorage.getItem('notification_open');
 		$('#nav-' + notifyType + '-sub').addClass('show');
 		loadNotificationItems(notifyType);
 	}
 
+
+	$(document).on('z:handleNetWorkNotificationsItems', function(e, obj) {
+
+//		push_notification(
+//			obj.name,
+//			$('<p>' + obj.message + '</p>').text(),
+//			obj.b64mid
+//		);
+	});
+
+
+	
 	// Allow folks to stop the ajax page updates with the pause/break key
 	$(document).keydown(function(event) {
 		if(event.keyCode == '8') {
-			var target = event.target || event.srcElement;
+			let target = event.target || event.srcElement;
 			if (!/input|textarea/i.test(target.nodeName)) {
 				return false;
 			}
@@ -119,7 +147,7 @@ $(document).ready(function() {
 		}
 	});
 
-	var e = document.getElementById('content-complete');
+	let e = document.getElementById('content-complete');
 	if(e)
 		pageHasMoreContent = false;
 
@@ -139,7 +167,7 @@ function confirmDelete() {
 }
 
 function getSelectedText() { 
-	var selectedText = ''; 
+	let selectedText = ''; 
   
 	// window.getSelection 
 	if (window.getSelection) { 
@@ -165,14 +193,14 @@ function handle_comment_form(e) {
 	e.stopPropagation();
 
 	//handle eventual expanded forms
-	var expanded = $('.comment-edit-text.expanded');
-	var i = 0;
+	let expanded = $('.comment-edit-text.expanded');
+	let i = 0;
 
 	if(expanded.length) {
 		expanded.each(function() {
-			var ex_form = $(expanded[i].form);
-			var ex_fields = ex_form.find(':input[type=text], textarea');
-			var ex_fields_empty = true;
+			let ex_form = $(expanded[i].form);
+			let ex_fields = ex_form.find(':input[type=text], textarea');
+			let ex_fields_empty = true;
 
 			ex_fields.each(function() {
 				if($(this).val() != '')
@@ -187,14 +215,15 @@ function handle_comment_form(e) {
 	}
 
 	// handle clicked form
-	var form = $(this);
-	var fields = form.find(':input[type=text], textarea');
-	var fields_empty = true;
-
+	let form = $(this);
+	let fields = form.find(':input[type=text], textarea');
+	let fields_empty = true;
+	let commentElm = false;
+	
 	if(form.find('.comment-edit-text').length) {
-		var commentElm = form.find('.comment-edit-text').attr('id');
-		var commentId = commentElm.replace('comment-edit-text-','');
-		var submitElm = commentElm.replace(/text/,'submit');
+		commentElm = form.find('.comment-edit-text').attr('id');
+		let commentId = commentElm.replace('comment-edit-text-','');
+		let submitElm = commentElm.replace(/text/,'submit');
 
 		$('#' + commentElm).addClass('expanded').removeAttr('placeholder');
 		$('#' + commentElm).attr('tabindex','9');
@@ -203,8 +232,8 @@ function handle_comment_form(e) {
 		form.find(':not(:visible)').show();
 		commentAuthors(commentId);
 
-		var quoted = getSelectedText();
-		var tmpStr = $("#comment-edit-text-" + commentId).val();
+		let quoted = getSelectedText();
+		let tmpStr = $("#comment-edit-text-" + commentId).val();
 		if(quoted != '') {
 			$("#comment-edit-text-" + commentId).val(tmpStr + '[quote]' + quoted + '[/quote]');
 		}
@@ -218,8 +247,8 @@ function handle_comment_form(e) {
 				fields_empty = false;
 		});
 		if(fields_empty) {
-			var emptyCommentElm = form.find('.comment-edit-text').attr('id');
-        	var emptySubmitElm = commentElm.replace(/text/,'submit');
+			let emptyCommentElm = form.find('.comment-edit-text').attr('id');
+        	let emptySubmitElm = commentElm.replace(/text/,'submit');
 
 			$('#' + emptyCommentElm).removeClass('expanded').attr('placeholder', aStr.comment);
 			$('#' + emptyCommentElm).removeAttr('tabindex');
@@ -228,9 +257,9 @@ function handle_comment_form(e) {
 		}
 	});
 	
-	var commentSaveTimer = null;
-	var emptyCommentElm = form.find('.comment-edit-text').attr('id');
-	var convId = emptyCommentElm.replace('comment-edit-text-','');
+	let commentSaveTimer = null;
+	let emptyCommentElm = form.find('.comment-edit-text').attr('id');
+	let convId = emptyCommentElm.replace('comment-edit-text-','');
 
 	$(document).on('focusout','#' + emptyCommentElm,function(e){
 		if(commentSaveTimer)
@@ -261,6 +290,12 @@ function handle_comment_form(e) {
 	}
 }
 
+function doreply(parent, ident) {
+	showHideCommentBox(parent);
+	openClose('wall-item-comment-wrapper-' + ident.toString());
+}
+
+
 function commentClose(obj, id) {
 	if(obj.value === '') {
 		obj.value = aStr.comment;
@@ -282,13 +317,13 @@ function showHideCommentBox(id) {
 }
 
 function commentInsert(obj, id) {
-	var tmpStr = $("#comment-edit-text-" + id).val();
+	let tmpStr = $("#comment-edit-text-" + id).val();
 	if(tmpStr == '$comment') {
 		tmpStr = '';
 		$("#comment-edit-text-" + id).addClass("expanded");
 		openMenu("comment-tools-" + id);
 	}
-	var ins = $(obj).html();
+	let ins = $(obj).html();
 	ins = ins.replace('&lt;','<');
 	ins = ins.replace('&gt;','>');
 	ins = ins.replace('&amp;','&');
@@ -305,7 +340,7 @@ function insertbbcomment(comment, BBcode, id) {
 	if(typeof(insertFormatting) != 'undefined')
 		return(insertFormatting(comment, BBcode, id));
 
-	var tmpStr = $("#comment-edit-text-" + id).val();
+	let tmpStr = $("#comment-edit-text-" + id).val();
 	if(tmpStr == comment) {
 		tmpStr = "";
 		$("#comment-edit-text-" + id).addClass("expanded");
@@ -319,8 +354,8 @@ function insertbbcomment(comment, BBcode, id) {
 		selected = document.selection.createRange();
 		selected.text = "["+BBcode+"]" + selected.text + "[/"+BBcode+"]";
 	} else if (textarea.selectionStart || textarea.selectionStart == "0") {
-		var start = textarea.selectionStart;
-		var end = textarea.selectionEnd;
+		let start = textarea.selectionStart;
+		let end = textarea.selectionEnd;
 		textarea.value = textarea.value.substring(0, start) + "["+BBcode+"]" + textarea.value.substring(start, end) + "[/"+BBcode+"]" + textarea.value.substring(end, textarea.value.length);
 	}
 	return true;
@@ -337,8 +372,8 @@ function inserteditortag(BBcode, id) {
 		selected = document.selection.createRange();
 		selected.text = urlprefix+"["+BBcode+"]" + selected.text + "[/"+BBcode+"]";
 	} else if (textarea.selectionStart || textarea.selectionStart == "0") {
-		var start = textarea.selectionStart;
-		var end = textarea.selectionEnd;
+		let start = textarea.selectionStart;
+		let end = textarea.selectionEnd;
 		textarea.value = textarea.value.substring(0, start) + "["+BBcode+"]" + textarea.value.substring(start, end) + "[/"+BBcode+"]" + textarea.value.substring(end, textarea.value.length);
 	}
 	return true;
@@ -358,14 +393,14 @@ function insertCommentAttach(comment,id) {
 }
 
 // used by link modal to pass data to callbacks and still allow handler removal
-var currentComment = null;
-var currentID = null;
+let currentComment = null;
+let currentID = null;
 
 function insertCommentURL(comment, id) {
 	textarea = document.getElementById("comment-edit-text-" +id);
     if (textarea.selectionStart || textarea.selectionStart == "0") {
-       var start = textarea.selectionStart;
-       var end = textarea.selectionEnd;	
+       let start = textarea.selectionStart;
+       let end = textarea.selectionEnd;	
        if (end > start) {
           reply = prompt(aStr['linkurl']);
           if(reply && reply.length) {
@@ -380,7 +415,7 @@ function insertCommentURL(comment, id) {
 	currentComment = comment;
 	currentID = id;
 	
-	$('#linkModal').modal();
+	$('#linkModal').modal('show');
 	$('#id_link_url').focus();
 	$('#link-modal-CancelButton').on('click', commentclearlinkmodal);
 	$('#link-modal-OKButton').on('click', commentgetlinkmodal);
@@ -394,18 +429,18 @@ function commentclearlinkmodal() {
 }
 
 function commentgetlinkmodal() {
-	var reply=$('#id_link_url').val();
+	let reply=$('#id_link_url').val();
 	if(reply && reply.length) {
-		var radioValue = $("input[name='link_style']:checked"). val();
+		let radioValue = $("input[name='link_style']:checked"). val();
 		if(radioValue == '0') {
 			reply = '!' + reply;
 		}
-		var optstr = '';
-		var opts =  $("input[name='oembed']:checked"). val();
+		let optstr = '';
+		let opts =  $("input[name='oembed']:checked"). val();
 		if(opts) {
 			optstr = optstr + '&oembed=1';
 		}
-		var opts =  $("input[name='zotobj']:checked"). val();
+		opts =  $("input[name='zotobj']:checked"). val();
 		if(opts) {
 			optstr = optstr + '&zotobj=1';
 		}
@@ -416,7 +451,7 @@ function commentgetlinkmodal() {
 			$("#comment-edit-text-" + currentID).focus();
 			$("#comment-edit-text-" + currentID).addClass("expanded");
 			openMenu("comment-tools-" + currentID);
-			var tmpStr = $("#comment-edit-text-" + currentID).val();
+			let tmpStr = $("#comment-edit-text-" + currentID).val();
 	
 			textarea = document.getElementById("comment-edit-text-" + currentID);
 			textarea.value = textarea.value + data;
@@ -434,9 +469,15 @@ function doFollowAuthor(url) {
 	return true;
 }
 
+function doPoke(xchan) {
+	$.get('poke?xchan=' + xchan, function(data) { notificationsUpdate(); });
+	return true;
+}
+
+
 
 function update_role_text() {
-	var new_role = $("#id_permissions_role").val();
+	let new_role = $("#id_permissions_role").val();
 	if (typeof(new_role) !== 'undefined') {
 		$("#channel_role_text").html(aStr[new_role]);
 	}	
@@ -523,59 +564,69 @@ function markItemRead(itemId) {
 	$('.unseen-wall-indicator-'+itemId).hide();
 }
 
+function alertsUpdate() {
+	
+	let alertspingCmd = 'fastping' + ((localUser != 0) ? '?f=&uid=' + localUser : '');
+
+	$.get(alertspingCmd,function(data) {
+		if (! data) {
+			return;
+		}
+
+		if(data.invalid == 1) {
+			window.location.href=window.location.href;
+		}
+
+		$.jGrowl.defaults.closerTemplate = '<div>[ ' + aStr.closeAll + ']</div>';
+
+		$(data.notice).each(function() { $.jGrowl(this.message, { sticky: false, theme: 'notice', life: 10000 }); });
+
+		$(data.info).each(function() { $.jGrowl(this.message, { sticky: false, theme: 'info' }); });
+	});
+
+	if (alertstimer) {
+		clearTimeout(alertstimer);
+	}
+	alertstimer = setTimeout(alertsUpdate,alertsInterval);
+}
+
+
+
+
 function notificationsUpdate(cached_data) {
-	var pingCmd = 'ping' + ((localUser != 0) ? '?f=&uid=' + localUser : '');
+	let pingCmd = 'ping' + ((localUser != 0) ? '?f=&uid=' + localUser : '');
 
 	if(cached_data !== undefined) {
 		handleNotifications(cached_data);
-	}
-	else {
+	} else {
+
 		$.get(pingCmd,function(data) {
 
-			if(! data)
-				return;
+			if(! data) return;
 
 			// Put the object into storage
-			sessionStorage.setItem('notifications_cache', JSON.stringify(data));
+			sessionStorage.setItem('notifications_cache',
+			JSON.stringify(data));
 
-			var fnotifs = [];
-			if(data.forums) {
-				$.each(data.forums_sub, function() {
-					fnotifs.push(this);
-				});
-				handleNotificationsItems('forums', fnotifs);
-			}
+			let fnotifs = []; if(data.forums) {
+			$.each(data.forums_sub, function() { fnotifs.push(this);
+			}); handleNotificationsItems('forums', fnotifs); }
 
 			if(data.invalid == 1) {
-				window.location.href=window.location.href;
-			}
+				window.location.href=window.location.href; }
 
 			handleNotifications(data);
-
-			$.jGrowl.defaults.closerTemplate = '<div>[ ' + aStr.closeAll + ']</div>';
-
-			$(data.notice).each(function() {
-				$.jGrowl(this.message, { sticky: false, theme: 'notice', life: 10000 });
-			});
-
-			$(data.info).each(function(){
-				$.jGrowl(this.message, { sticky: false, theme: 'info' });
-			});
 		});
 	}
 
-	var notifyType = null;
-	if($('.notification-content.show').length) {
-		notifyType = $('.notification-content.show').data('type');
-	}
-	if(notifyType !== null) {
-		loadNotificationItems(notifyType);
-	}
+	let notifyType = null; if($('.notification-content.show').length)
+	{ notifyType = $('.notification-content.show').data('type'); }
+	if(notifyType !== null) { loadNotificationItems(notifyType); }
 
 	if(timer) clearTimeout(timer);
 	timer = setTimeout(updateInit,updateInterval);
 }
-
+					  
 function handleNotifications(data) {
 	if(data.stream || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs || data.forums) {
 		$('.notifications-btn').css('opacity', 1);
@@ -604,9 +655,10 @@ function handleNotifications(data) {
 		$('.all_events-update').addClass('badge-secondary');
 	}
 
+	
 	$.each(data, function(index, item) {
 		//do not process those
-		var arr = ['notice', 'info', 'invalid'];
+		let arr = ['invalid'];
 		if(arr.indexOf(index) !== -1)
 			return;
 
@@ -621,12 +673,16 @@ function handleNotifications(data) {
 }
 
 function handleNotificationsItems(notifyType, data) {
-	var notifications_tpl = ((notifyType == 'forums') ? unescape($("#nav-notifications-forums-template[rel=template]").html()) : unescape($("#nav-notifications-template[rel=template]").html()));
-	var notify_menu = $("#nav-" + notifyType + "-menu");
+	let notifications_tpl = ((notifyType == 'forums') ? unescape($("#nav-notifications-forums-template[rel=template]").html()) : unescape($("#nav-notifications-template[rel=template]").html()));
+	let notify_menu = $("#nav-" + notifyType + "-menu");
 
 	notify_menu.html('');
 
 	$(data).each(function() {
+		if (notifyType == 'notify') {
+			$(document).trigger('z:handleNetWorkNotificationsItems', this);
+		}
+			
 		html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.addr,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top,this.unseen,this.private_forum);
 		notify_menu.append(html);
 	});
@@ -637,10 +693,10 @@ function handleNotificationsItems(notifyType, data) {
 		$('#nav-' + notifyType + '-menu [data-thread_top=false]').hide();
 
 	if($('#cn-' + notifyType + '-input').length) {
-		var filter = $('#cn-' + notifyType + '-input').val().toString().toLowerCase();
+		let filter = $('#cn-' + notifyType + '-input').val().toString().toLowerCase();
 		if(filter) {
 			$('#nav-' + notifyType + '-menu .notification').each(function(i, el){
-				var cn = $(el).data('contact_name').toString().toLowerCase();
+				let cn = $(el).data('contact_name').toString().toLowerCase();
 				if(cn.indexOf(filter) === -1)
 					$(el).addClass('d-none');
 				else
@@ -651,7 +707,7 @@ function handleNotificationsItems(notifyType, data) {
 }
 
 function contextualHelp() {
-	var container = $("#contextual-help-content");
+	let container = $("#contextual-help-content");
 
 	if(container.hasClass('contextual-help-content-open')) {
 		container.removeClass('contextual-help-content-open');
@@ -659,7 +715,7 @@ function contextualHelp() {
 	}
 	else {
 		container.addClass('contextual-help-content-open');
-		var mainTop = container.outerHeight(true);
+		let mainTop = container.outerHeight(true);
 		$('main').css('margin-top', mainTop + 'px');
 	}
 }
@@ -673,7 +729,7 @@ function contextualHelpFocus(target, openSidePanel) {
                     $("main").removeClass('region_1-on');
             }
 
-	    var css_position = $(target).parent().css('position');
+	    let css_position = $(target).parent().css('position');
 	    if (css_position === 'fixed') {
 	            $(target).parent().css('position', 'static');
 	    }
@@ -699,7 +755,7 @@ function updatePageItems(mode, data) {
 		}
 	}
 
-	var e = document.getElementById('content-complete');
+	let e = document.getElementById('content-complete');
 	if(e) {
 		pageHasMoreContent = false;
 	}
@@ -723,13 +779,13 @@ function updateConvItems(mode,data) {
 
 	$('.thread-wrapper.toplevel_item',data).each(function() {
 
-		var ident = $(this).attr('id');
-		var convId = ident.replace('thread-wrapper-','');
-		var commentWrap = $('#'+ident+' .collapsed-comments').attr('id');
+		let ident = $(this).attr('id');
+		let convId = ident.replace('thread-wrapper-','');
+		let commentWrap = $('#'+ident+' .collapsed-comments').attr('id');
 
 
-		var itmId = 0;
-		var isVisible = false;
+		let itmId = 0;
+		let isVisible = false;
 
 		// figure out the comment state
 		if(typeof commentWrap !== 'undefined')
@@ -762,10 +818,10 @@ function updateConvItems(mode,data) {
 		if(isVisible)
 			showHideComments(itmId);
 
-		var commentBody = localStorage.getItem("comment_body-" + convId);
+		let commentBody = localStorage.getItem("comment_body-" + convId);
 
 		if(commentBody) {
-			var commentElm = $('#comment-edit-text-' + convId);
+			commentElm = $('#comment-edit-text-' + convId);
 			if(auto_save_draft) {
 				if($(commentElm).val() === '') {
 					$('#comment-edit-form-' + convId).show();
@@ -792,7 +848,7 @@ function updateConvItems(mode,data) {
 
 		if(mode === 'replace') {
 			if (window.location.search.indexOf("mid=") != -1 || window.location.pathname.indexOf("display") != -1) {
-				var title = $(".wall-item-title").text();
+				let title = $(".wall-item-title").text();
 				title.replace(/^\s+/, '');
 				title.replace(/\s+$/, '');
 				if (title) {
@@ -838,8 +894,8 @@ function updateConvItems(mode,data) {
 	/* autocomplete bbcode */
 	$(".comment-edit-form  textarea").bbco_autocomplete('bbcode');
 
-	var bimgs = ((preloadImages) ? false : $(".wall-item-body img, .wall-photo-item img").not(function() { return this.complete; }));
-	var bimgcount = bimgs.length;
+	let bimgs = ((preloadImages) ? false : $(".wall-item-body img, .wall-photo-item img").not(function() { return this.complete; }));
+	let bimgcount = bimgs.length;
 
 	if (bimgcount) {
 		bimgs.on('load',function() {
@@ -857,14 +913,14 @@ function updateConvItems(mode,data) {
 	// use the same method to generate the submid as we use in ThreadItem, 
 	// base64_encode + replace(['+','='],['','']);
 
-	var submid = ((bParam_mid.length) ? bParam_mid : 'abcdefg');
-	var encoded = ((submid.substr(0,4) == 'b64.') ? true : false);
-	var submid_encoded = ((encoded) ? submid.substr(4) : window.btoa(submid));
+	let submid = ((bParam_mid.length) ? bParam_mid : 'abcdefg');
+	let encoded = ((submid.substr(0,4) == 'b64.') ? true : false);
+	let submid_encoded = ((encoded) ? submid.substr(4) : window.btoa(submid));
 
 	submid_encoded = submid_encoded.replace(/[\+\=]/g,'');
 	if($('.item_' + submid_encoded).length && !$('.item_' + submid_encoded).hasClass('toplevel_item') && mode == 'replace') {
 		if($('.collapsed-comments').length) {
-			var scrolltoid = $('.collapsed-comments').attr('id').substring(19);
+			let scrolltoid = $('.collapsed-comments').attr('id').substring(19);
 			$('#collapsed-comments-' + scrolltoid + ' .autotime').timeago();
 			$('#collapsed-comments-' + scrolltoid).show();
 			$('#hide-comments-' + scrolltoid).html(aStr.showfewer);
@@ -879,13 +935,13 @@ function updateConvItems(mode,data) {
 }
 
 function collapseHeight() {
-	var origContentHeight = Math.ceil($("#region_2").height());
-	var cDiff = 0;
-	var i = 0;
-	var position = $(window).scrollTop();
+	let origContentHeight = Math.ceil($("#region_2").height());
+	let cDiff = 0;
+	let i = 0;
+	let position = $(window).scrollTop();
 
 	$(".wall-item-content, .directory-collapse").each(function() {
-		var orgHeight = $(this).outerHeight(true);
+		orgHeight = $(this).outerHeight(true);
 		if(orgHeight > divmore_height) {
 			if(! $(this).hasClass('divmore') && $(this).has('div.no-collapse').length == 0) {
 
@@ -915,13 +971,13 @@ function collapseHeight() {
 		}
 	});
 
-	var collapsedContentHeight = Math.ceil($("#region_2").height());
+	let collapsedContentHeight = Math.ceil($("#region_2").height());
 	contentHeightDiff = liking ? 0 : origContentHeight - collapsedContentHeight;
 
 	console.log('collapseHeight() - contentHeightDiff: ' + contentHeightDiff + 'px');
 
 	if(i && ! liking){
-		var sval = position - cDiff + ($(".divgrow-showmore").outerHeight() * i);
+		let sval = position - cDiff + ($(".divgrow-showmore").outerHeight() * i);
 		console.log('collapsed above viewport count: ' + i);
 		$(window).scrollTop(sval);
 	}
@@ -938,10 +994,10 @@ function updateInit() {
 	if($('#live-search').length)     { src = 'search'; }
 
 	if (initialLoad && (sessionStorage.getItem('notifications_cache') !== null)) {
-		var cached_data = JSON.parse(sessionStorage.getItem('notifications_cache'));
+		cached_data = JSON.parse(sessionStorage.getItem('notifications_cache'));
 		notificationsUpdate(cached_data);
 
-		var fnotifs = [];
+		let fnotifs = [];
 		if(cached_data.forums) {
 			$.each(cached_data.forums_sub, function() {
 				fnotifs.push(this);
@@ -968,18 +1024,23 @@ function updateInit() {
 
 function liveUpdate(notify_id) {
 
+	let origHeight = 0;
+	let expanded = $('.comment-edit-text.expanded');
+
+	
 	if(typeof profile_uid === 'undefined') profile_uid = false; /* Should probably be unified with channelId defined in head.tpl */
 
-	if((src === null) || (stopped) || (! profile_uid)) { $('.like-rotator').hide(); return; }
+	if((src === null) || (! profile_uid)) { $('.like-rotator').hide(); return; }
 
-	if(in_progress || mediaPlaying) {
+	if(in_progress || mediaPlaying || expanded.length || stopped) {
+		console.log('liveUpdate: deferred');
 		if(livetime) {
 			clearTimeout(livetime);
 		}
 		livetime = setTimeout(liveUpdate, 10000);
 		return;
 	}
-
+	console.log('liveUpdate');
 	if(timer)
 		clearTimeout(timer);
 
@@ -990,8 +1051,6 @@ function liveUpdate(notify_id) {
 
 	in_progress = true;
 
-	var update_url;
-	var update_mode;
 
 	if(scroll_next) {
 		bParam_page = next_page;
@@ -1012,10 +1071,10 @@ function liveUpdate(notify_id) {
 	}
 	else {
 		update_mode = 'update';
-		var orgHeight = $("#region_2").height();
+		origHeight = $("#region_2").height();
 	}
 
-	var dstart = new Date();
+	let dstart = new Date();
 	console.log('LOADING data...' + update_url);
 	$.get(update_url, function(data) {
 
@@ -1048,14 +1107,14 @@ function liveUpdate(notify_id) {
 			);
 		}
 
-		var dready = new Date();
+		let dready = new Date();
 		console.log('DATA ready in: ' + (dready - dstart)/1000 + ' seconds.');
 
 		if(update_mode === 'update' || preloadImages) {
 			console.log('LOADING images...');
 
 			$('.wall-item-body, .wall-photo-item',data).imagesLoaded( function() {
-				var iready = new Date();
+				let iready = new Date();
 				console.log('IMAGES ready in: ' + (iready - dready)/1000 + ' seconds.');
 
 				page_load = false;
@@ -1066,7 +1125,7 @@ function liveUpdate(notify_id) {
 
 				// adjust scroll position if new content was added above viewport
 				if(update_mode === 'update' && !justifiedGalleryActive) {
-					$(window).scrollTop($(window).scrollTop() + $("#region_2").height() - orgHeight + contentHeightDiff);
+					$(window).scrollTop($(window).scrollTop() + $("#region_2").height() - origHeight + contentHeightDiff);
 				}
 
 				in_progress = false;
@@ -1094,8 +1153,6 @@ function pageUpdate() {
 
 	in_progress = true;
 
-	var update_url;
-	var update_mode;
 
 	if(scroll_next) {
 		bParam_page = next_page;
@@ -1136,18 +1193,18 @@ function justifyPhotosAjax(id) {
 }
 
 function loadNotificationItems(notifyType) {
-	var pingExCmd = 'ping/' + notifyType + ((localUser != 0) ? '?f=&uid=' + localUser : '');
+	let pingExCmd = 'ping/' + notifyType + ((localUser != 0) ? '?f=&uid=' + localUser : '');
 
-	var clicked = $('[data-type=\'' + notifyType + '\']').data('clicked');
+	let clicked = $('[data-type=\'' + notifyType + '\']').data('clicked');
 
 	if((clicked === undefined) && (sessionStorage.getItem(notifyType + '_notifications_cache') !== null)) {
-		var cached_data = JSON.parse(sessionStorage.getItem(notifyType + '_notifications_cache'));
+		cached_data = JSON.parse(sessionStorage.getItem(notifyType + '_notifications_cache'));
 		handleNotificationsItems(notifyType, cached_data);
 		$('[data-type=\'' + notifyType + '\']').data('clicked',true);
 		console.log('updating ' + notifyType + ' notifications from cache...');
 	}
 	else {
-		var cached_data = [];
+		cached_data = [];
 	}
 
 	console.log('updating ' + notifyType + ' notifications...');
@@ -1176,6 +1233,7 @@ function loadNotificationItems(notifyType) {
 // visible feedback that anything changed without all this
 // trickery. This still could cause confusion if the "like" ajax call
 // is delayed and updateInit runs before it completes.
+
 function dolike(ident, verb) {
 	unpause();
 	$('#like-rotator-' + ident.toString()).show();
@@ -1184,7 +1242,7 @@ function dolike(ident, verb) {
 }
 
 function doprofilelike(ident, verb) {
-	$.get('like/' + ident + '?verb=' + verb, function() { window.location.href=window.location.href; });
+	$.get('plike/' + ident + '?verb=' + verb, function() { window.location.href=window.location.href; });
 }
 
 
@@ -1201,9 +1259,9 @@ function dopin(id) {
 }
 
 function dropItem(url, object) {
-	var confirm = confirmDelete();
+	let confirm = confirmDelete();
 	if(confirm) {
-		var id = url.split('/')[2];
+		let id = url.split('/')[2];
 		$('body').css('cursor', 'wait');
 		$(object + ', #pinned-wrapper-' + id).fadeTo('fast', 0.33, function () {
 			$.post('pin', { 'id' : id });
@@ -1222,7 +1280,7 @@ function dropItem(url, object) {
 
 function dropItem(url, object) {
 
-	var confirm = confirmDelete();
+	let confirm = confirmDelete();
 	if(confirm) {
 		$('body').css('cursor', 'wait');
 		$(object).fadeTo('fast', 0.33, function () {
@@ -1264,7 +1322,7 @@ function dostar(ident) {
 			$('#starred-' + ident).removeClass('fa-star-o');
 			$('#star-' + ident).addClass('hidden');
 			$('#unstar-' + ident).removeClass('hidden');
-			var btn_tpl = '<div class="btn-group" id="star-button-' + ident + '"><button type="button" class="btn btn-outline-secondary btn-sm wall-item-like" onclick="dostar(' + ident + ');"><i class="fa fa-star"></i></button></div>'
+			let btn_tpl = '<div class="btn-group" id="star-button-' + ident + '"><button type="button" class="btn btn-outline-secondary btn-sm wall-item-like" onclick="dostar(' + ident + ');"><i class="fa fa-star"></i></button></div>'
 			$('#wall-item-tools-left-' + ident).prepend(btn_tpl);
 		}
 		else {
@@ -1281,7 +1339,7 @@ function dostar(ident) {
 }
 
 function getPosition(e) {
-	var cursor = {x:0, y:0};
+	let cursor = {x:0, y:0};
 	if ( e.pageX || e.pageY  ) {
 		cursor.x = e.pageX;
 		cursor.y = e.pageY;
@@ -1346,7 +1404,7 @@ function post_comment(id) {
 				$("#comment-edit-preview-" + id).hide();
 				$("#comment-edit-wrapper-" + id).hide();
 				$("#comment-edit-text-" + id).val('');
-				var tarea = document.getElementById("comment-edit-text-" + id);
+				let tarea = document.getElementById("comment-edit-text-" + id);
 				if(tarea) {
 					commentClose(tarea, id);
 					$(document).unbind( "click.commentOpen");
@@ -1476,7 +1534,7 @@ function bin2hex(s) {
 	// *     returns 1: '4b6576'  
 	// *     example 2: bin2hex(String.fromCharCode(0x00));  
 	// *     returns 2: '00'  
-	var v,i, f = 0, a = [];
+	let v,i, f = 0, a = [];
 	s += '';
 	f = s.length;
 
@@ -1488,9 +1546,9 @@ function bin2hex(s) {
 }
 
 function hex2bin(hex) {
-	var bytes = [], str;
+	let bytes = [], str;
 
-	for(var i=0; i< hex.length-1; i+=2)
+	for(let i=0; i< hex.length-1; i+=2)
 		bytes.push(parseInt(hex.substr(i, 2), 16));
 
 	return String.fromCharCode.apply(String, bytes);
@@ -1533,9 +1591,9 @@ function checkboxhighlight(box) {
  *  "{0} and {1}".format('zero','uno');
  */
 String.prototype.format = function() {
-	var formatted = this;
-	for (var i = 0; i < arguments.length; i++) {
-		var regexp = new RegExp('\\{'+i+'\\}', 'gi');
+	let formatted = this;
+	for (let i = 0; i < arguments.length; i++) {
+		let regexp = new RegExp('\\{'+i+'\\}', 'gi');
 		formatted = formatted.replace(regexp, arguments[i]);
 	}
 	return formatted;
@@ -1545,7 +1603,7 @@ String.prototype.format = function() {
 Array.prototype.remove = function(item) {
 	to = undefined;
 	from = this.indexOf(item);
-	var rest = this.slice((to || from) + 1 || this.length);
+	let rest = this.slice((to || from) + 1 || this.length);
 	this.length = from < 0 ? this.length + from : from;
 	return this.push.apply(this, rest);
 };
@@ -1586,7 +1644,7 @@ $(window).scroll(function () {
 	}
 });
 
-var chanviewFullSize = false;
+let chanviewFullSize = false;
 
 function chanviewFull() {
 	if(chanviewFullSize) {
@@ -1608,19 +1666,19 @@ function addhtmltext(data) {
 }
 
 function loadText(textRegion,data) {
-	var currentText = $(textRegion).val();
+	let currentText = $(textRegion).val();
 	$(textRegion).val(currentText + data);
 }
 
 function addeditortext(data) {
 	if(plaintext == 'none') {
-		var currentText = $("#profile-jot-text").val();
+		let currentText = $("#profile-jot-text").val();
 		$("#profile-jot-text").val(currentText + data);
 	}
 }
 
 function h2b(s) {
-	var y = s;
+	let y = s;
 	function rep(re, str) {
 		y = y.replace(re,str);
 	}
@@ -1671,7 +1729,7 @@ function h2b(s) {
 }
 
 function b2h(s) {
-	var y = s;
+	let y = s;
 	function rep(re, str) {
 		y = y.replace(re,str);
 	}
@@ -1722,16 +1780,42 @@ function b2h(s) {
 	return y;
 }
 
-function zid(s) {
+function dozid(s) {
 	if((! s.length) || (s.indexOf('zid=') != (-1)))
 		return s;
 
 	if(! zid.length)
 		return s;
 
-	var has_params = ((s.indexOf('?') == (-1)) ? false : true);
-	var achar = ((has_params) ? '&' : '?');
+	let has_params = ((s.indexOf('?') == (-1)) ? false : true);
+	let achar = ((has_params) ? '&' : '?');
 	s = s + achar + 'f=&zid=' + zid;
 
 	return s;
+}
+
+function push_notification_request(e) {
+    if ('Notification' in window) {
+		if (Notification.permission !== 'granted') {
+        	Notification.requestPermission(function(permission) {
+				if(permission === 'granted') {
+					$(e.target).closest('div').hide();
+				}
+			});
+		}
+    }
+}
+
+function push_notification(title, body, b64mid) {
+	let options = {
+		body: body,
+		data: b64mid,
+		icon: aStr.icon,
+		silent: false
+	}
+
+	let n = new Notification(title, options);
+	n.onclick = function (e) {
+		window.location.href = baseurl + '/display/' + e.target.data;
+	}
 }

@@ -102,7 +102,7 @@ class Profile_photo extends Controller {
 				$base_image['content'] = (($base_image['os_storage']) ? @file_get_contents(dbunescbin($base_image['content'])) : dbunescbin($base_image['content']));
 			
 				$im = photo_factory($base_image['content'], $base_image['mimetype']);
-				if ($im->is_valid()) {
+				if ($im &&$im->is_valid()) {
 	
 					$im->cropImage(300,$srcX,$srcY,$srcW,$srcH);
 	

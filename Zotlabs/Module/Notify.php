@@ -1,6 +1,7 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Web\Controller;
 
 
@@ -10,7 +11,12 @@ class Notify extends Controller {
 		if (! local_channel()) {
 			return;
 		}
-	
+
+		$channel = App::get_channel();
+		if (! $channel) {
+			return;
+		}
+
 		if (argc() > 2 && argv(1) === 'view' && intval(argv(2))) {
 			$r = q("select * from notify where id = %d and uid = %d limit 1",
 				intval(argv(2)),
@@ -29,6 +35,7 @@ class Notify extends Controller {
 				}
 				goaway($r[0]['link']);
 			}
+			notice( sprintf( t('A notification with that id was not found for channel \'%s\''), $channel['channel_name']));
 			goaway(z_root());
 		}
 	

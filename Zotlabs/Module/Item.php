@@ -52,8 +52,8 @@ class Item extends Controller {
 
 
 		if (ActivityStreams::is_as_request()) {
-			$item_id = argv(1);
-			if (! $item_id) {
+			$item_uuid = argv(1);
+			if (! $item_uuid) {
 				http_status_exit(404, 'Not found');
 			}
 			$portable_id = EMPTY_STR;
@@ -66,8 +66,8 @@ class Item extends Controller {
 			// add preferential bias to item owners (item_wall = 1)
 
 			$r = q("select * from item where (mid = '%s' or uuid = '%s') $item_normal order by item_wall desc limit 1",
-				dbesc(z_root() . '/item/' . $item_id),
-				dbesc($item_id)
+				dbesc(z_root() . '/item/' . $item_uuid),
+				dbesc($item_uuid)
 			);
 
 			if (! $r) {
@@ -108,6 +108,22 @@ class Item extends Controller {
 				);
 			}
 
+			$bear = Activity::token_from_request();
+			if ($bear) {
+				logger('bear: ' . $bear, LOGGER_DEBUG);
+				if (! $i) {
+					$t = q("select * from iconfig where cat = 'ocap' and k = 'relay' and v = '%s'",
+						dbesc($bear)
+					);
+					if ($t) {
+						$i = q("select id as item_id from item where uuid = '%s' and id = %d $item_normal limit 1",
+							dbesc($item_uuid),
+							intval($t[0]['iid'])
+						);
+					}
+				}
+			}
+
 			if (! $i) {
 				http_status_exit(403,'Forbidden');
 			}
@@ -132,6 +148,7 @@ class Item extends Controller {
 			if (! $i) {
 				http_status_exit(404, 'Not found');
 			}
+
 			
 			if ($portable_id && (! intval($items[0]['item_private']))) {
 				$c = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s'",
@@ -139,7 +156,7 @@ class Item extends Controller {
 					dbesc($portable_id)
 				);
 				if (! $c) {
-					ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
+					ThreadListener::store(z_root() . '/item/' . $item_uuid,$portable_id);
 				}
 			}
 			
@@ -148,13 +165,12 @@ class Item extends Controller {
 
 		if (Libzot::is_zot_request()) {
 
-			$conversation = false;
+			$item_uuid = argv(1);
 
-			$item_id = argv(1);
-
-			if (! $item_id) {
+			if (! $item_uuid) {
 				http_status_exit(404, 'Not found');
 			}
+
 			$portable_id = EMPTY_STR;
 
 			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 and not verb in ( 'Follow', 'Ignore' ) ";
@@ -164,8 +180,8 @@ class Item extends Controller {
 			// do we have the item (at all)?
 
 			$r = q("select * from item where (mid = '%s' or uuid = '%s') $item_normal limit 1",
-				dbesc(z_root() . '/item/' . $item_id),
-				dbesc($item_id)
+				dbesc(z_root() . '/item/' . $item_uuid),
+				dbesc($item_uuid)
 			);
 
 			if (! $r) {
@@ -205,6 +221,22 @@ class Item extends Controller {
 				);
 			}
 
+			$bear = Activity::token_from_request();
+			if ($bear) {
+				logger('bear: ' . $bear, LOGGER_DEBUG);
+				if (! $i) {
+					$t = q("select * from iconfig where cat = 'ocap' and k = 'relay' and v = '%s'",
+						dbesc($bear)
+					);
+					if ($t) {
+						$i = q("select id as item_id from item where uuid = '%s' and id = %d $item_normal limit 1",
+							dbesc($item_uuid),
+							intval($t[0]['iid'])
+						);
+					}
+				}
+			}
+
 			if (! $i) {
 				http_status_exit(403,'Forbidden');
 			}
@@ -235,9 +267,9 @@ class Item extends Controller {
 				http_status_exit(403, 'Forbidden');
 			}
 
-			$i = Activity::encode_item_collection($items,'conversation/' . $item_id,'OrderedCollection',true, count($items));
+			$i = Activity::encode_item_collection($items,'conversation/' . $item_uuid,'OrderedCollection',true, count($items));
 			if ($portable_id && (! intval($items[0]['item_private']))) {
-				ThreadListener::store(z_root() . '/item/' . $item_id,$portable_id);
+				ThreadListener::store(z_root() . '/item/' . $item_uuid,$portable_id);
 			}
 
 			if (! $i) {
@@ -506,9 +538,15 @@ class Item extends Controller {
 				// if interacting with a pubstream item (owned by the sys channel), 
 				// create a copy of the parent in your stream
 
-				if (local_channel()) {
+				// $r may have changed. Check it again before trying to use it.
+				
+				if ($r && local_channel() && (! is_sys_channel(local_channel()))) {
+					$old_id = $r[0]['id'];
 					$r = [ copy_of_pubitem(App::get_channel(), $r[0]['mid']) ];
-					$pub_copy = true;
+					if ($r[0]['id'] !== $old_id) {
+						// keep track that a copy was made to  display a special status notice that is unique to this condition
+						$pub_copy = true;
+					}
 				}
 			}
 
@@ -902,16 +940,15 @@ class Item extends Controller {
 								'term'  => $ng['xchan_name'],
 								'url'   => $ng['xchan_url']
 							);
-							if ($ng['xchan_network'] === 'activitypub') {
-								$colls = get_xconfig($ng['xchan_hash'],'activitypub','collections');
-								if ($colls && is_array($colls) && isset($colls['wall'])) {
-									$datarray['target'] = [
-										'id'           => $colls['wall'],
-										'type'         => 'Collection',
-										'attributedTo' => $ng['xchan_hash']
-									];
-									$datarray['tgt_type'] = 'Collection';
-								}
+
+							$colls = get_xconfig($ng['xchan_hash'],'activitypub','collections');
+							if ($colls && is_array($colls) && isset($colls['wall'])) {
+								$datarray['target'] = [
+									'id'           => $colls['wall'],
+									'type'         => 'Collection',
+									'attributedTo' => (($ng['xchan_network'] === 'zot6') ? $ng['xchan_url'] : $ng['xchan_hash'])
+								];
+								$datarray['tgt_type'] = 'Collection';
 							}
 						}
 					}
@@ -1243,7 +1280,7 @@ class Item extends Controller {
 
 
 		if ($obj) {
-			$obj['url'] = $mid;
+			$obj['url'] = $obj['id'] = $mid;
 			$obj['attributedTo'] = channel_url($channel);
 			$datarray['obj'] = $obj;
 			$obj_type = 'Question';
@@ -1386,6 +1423,15 @@ class Item extends Controller {
 			$copy = $datarray;
 			$copy['author'] = $observer;
 			$datarray['obj'] = Activity::encode_item($copy,((get_config('system','activitypub', ACTIVITYPUB_ENABLED)) ? true : false));
+			$recips = [];
+			$i = $datarray['obj'];
+			if ($i['to']) {
+				$recips['to'] = $i['to'];
+			}
+			if ($i['cc']) {
+				$recips['cc'] = $i['cc'];
+			}
+			IConfig::Set($datarray,'activitypub','recips',$recips);
 		}	
 
 		Activity::rewrite_mentions($datarray);
@@ -1403,9 +1449,14 @@ class Item extends Controller {
 			echo json_encode(array('preview' => $o));
 			killme();
 		}
-		if($orig_post)
+		
+		// Let 'post_local' event listeners know if this is an edit. 
+		// We will unset it immediately afterward.
+		
+		if ($orig_post) {
 			$datarray['edit'] = true;
-	
+		}
+		
 		// suppress duplicates, *unless* you're editing an existing post. This could get picked up
 		// as a duplicate if you're editing it very soon after posting it initially and you edited
 		// some attribute besides the content, such as title or categories. 
@@ -1427,17 +1478,21 @@ class Item extends Controller {
 		}
 	
 		call_hooks('post_local',$datarray);
-	
-		if(x($datarray,'cancel')) {
+		
+		// This is no longer needed
+		unset($datarray['edit']);
+
+		if (x($datarray,'cancel')) {
 			logger('mod_item: post cancelled by plugin or duplicate suppressed.');
-			if($return_path)
+			if ($return_path) {
 				goaway(z_root() . "/" . $return_path);
-			if($api_source)
-				return ( [ 'success' => false, 'message' => 'operation cancelled' ] );	
+			}
+			if ($api_source) {
+				return ( [ 'success' => false, 'message' => 'operation cancelled' ] );
+			}
 			$json = array('cancel' => 1);
 			$json['reload'] = z_root() . '/' . $_REQUEST['jsreload'];
-			echo json_encode($json);
-			killme();
+			json_return_and_die($json);
 		}
 	
 	

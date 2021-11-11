@@ -104,11 +104,12 @@ function localize_item(&$item){
 		}
 
 		$obj = ((is_array($item['obj'])) ? $item['obj'] : json_decode($item['obj'],true));
-		if ((! $obj) && ($item['obj'])) {
+		if (! is_array($obj)) {
 			logger('localize_item: failed to decode object: ' . print_r($item['obj'],true));
+			return;
 		}
 		
-		if ($obj['author'] && $obj['author']['link']) {
+		if (isset($obj['author']) && $obj['author'] && $obj['author']['link']) {
 			$author_link = get_rel_link($obj['author']['link'],'alternate');
 		}
 		else {
@@ -291,103 +292,6 @@ function localize_item(&$item){
 
 		$item['body'] = sprintf($txt, $A, t($verb));
 	}
-
-
-
-/*
-// FIXME store parent item as object or target
-// (and update to json storage)
-
- 	if (activity_match($item['verb'],ACTIVITY_TAG)) {
-		$r = q("SELECT * from item,contact WHERE 
-		item.contact-id=contact.id AND item.mid='%s';",
-		 dbesc($item['parent_mid']));
-		if(count($r)==0) return;
-		$obj=$r[0];
-		
-		$author	 = '[zrl=' . zid($item['author-link']) . ']' . $item['author-name'] . '[/zrl]';
-		$objauthor =  '[zrl=' . zid($obj['author-link']) . ']' . $obj['author-name'] . '[/zrl]';
-		
-		switch($obj['verb']){
-			case ACTIVITY_POST:
-				switch ($obj['obj_type']){
-					case ACTIVITY_OBJ_EVENT:
-						$post_type = t('event');
-						break;
-					default:
-						$post_type = t('status');
-				}
-				break;
-			default:
-				if($obj['resource_id']){
-					$post_type = t('photo');
-					$m=[]; preg_match("/\[[zu]rl=([^]]*)\]/", $obj['body'], $m);
-					$rr['plink'] = $m[1];
-				} else {
-					$post_type = t('status');
-				}
-		}
-		$plink = '[zrl=' . $obj['plink'] . ']' . $post_type . '[/zrl]';
-
-//		$parsedobj = parse_xml_string($xmlhead.$item['obj']);
-
-		$tag = sprintf('#[zrl=%s]%s[/zrl]', $parsedobj->id, $parsedobj->content);
-		$item['body'] = sprintf( t('%1$s tagged %2$s\'s %3$s with %4$s'), $author, $objauthor, $plink, $tag );
-
-	}
-
-	if (activity_match($item['verb'],ACTIVITY_FAVORITE)){
-
-		if ($item['obj_type']== "")
-			return;
-
-		$Aname = $item['author']['xchan_name'];
-		$Alink = $item['author']['xchan_url'];
-
-		$xmlhead="<"."?xml version='1.0' encoding='UTF-8' ?".">";
-
-//		$obj = parse_xml_string($xmlhead.$item['obj']);
-		if(strlen($obj->id)) {
-			$r = q("select * from item where mid = '%s' and uid = %d limit 1",
-					dbesc($obj->id),
-					intval($item['uid'])
-			);
-			if(count($r) && $r[0]['plink']) {
-				$target = $r[0];
-				$Bname = $target['author-name'];
-				$Blink = $target['author-link'];
-				$A = '[zrl=' . zid($Alink) . ']' . $Aname . '[/zrl]';
-				$B = '[zrl=' . zid($Blink) . ']' . $Bname . '[/zrl]';
-				$P = '[zrl=' . $target['plink'] . ']' . t('post/item') . '[/zrl]';
-				$item['body'] = sprintf( t('%1$s marked %2$s\'s %3$s as favorite'), $A, $B, $P)."\n";
-
-			}
-		}
-	}
-*/
-
-/*
-	$matches = null;
-	if(strpos($item['body'],'[zrl') !== false) {
-		if(preg_match_all('/@\[zrl=(.*?)\]/is',$item['body'],$matches,PREG_SET_ORDER)) {
-			foreach($matches as $mtch) {
-				if(! strpos($mtch[1],'zid='))
-					$item['body'] = str_replace($mtch[0],'@[zrl=' . zid($mtch[1]). ']',$item['body']);
-			}
-		}
-	}
-
-	if(strpos($item['body'],'[zmg') !== false) {
-		// add zid's to public images
-		if(preg_match_all('/\[zrl=(.*?)\/photos\/(.*?)\/image\/(.*?)\]\[zmg(.*?)\]h(.*?)\[\/zmg\]\[\/zrl\]/is',$item['body'],$matches,PREG_SET_ORDER)) {
-			foreach($matches as $mtch) {
-				$item['body'] = str_replace($mtch[0],'[zrl=' . zid( $mtch[1] . '/photos/' . $mtch[2] . '/image/' . $mtch[3]) . '][zmg' . $mtch[4] . ']h' . $mtch[5]  . '[/zmg][/zrl]',$item['body']);
-			}
-		}
-	}
-*/
-
-
 }
 
 /**
@@ -426,7 +330,7 @@ function count_descendants($item) {
  * @return boolean
  */
 function visible_activity($item) {
-	$hidden_activities = [ ACTIVITY_LIKE, ACTIVITY_DISLIKE ];
+	$hidden_activities = [ ACTIVITY_LIKE, ACTIVITY_DISLIKE, 'Undo' ];
 
 	if(intval($item['item_notshown']))
 		return false;
@@ -434,7 +338,16 @@ function visible_activity($item) {
 	if ($item['obj_type'] === 'Answer') {
 		return false;
 	}
+
+	// This is an experiment at group federation with microblog platforms.
+	// We need the Announce or "boost" for group replies by non-connections to end up in the personal timeline
+	// of those patforms. Hide them on our own platform because they make the conversation look like dung.
+	// Performance wise this is a mess because we need to send two activities for every group comment. 
 	
+	if ($item['verb'] === 'Announce' && $item['author_xchan'] === $item['owner_xchan']) {
+		return false;
+	}
+
 	foreach($hidden_activities as $act) {
 		if((activity_match($item['verb'], $act)) && ($item['mid'] != $item['parent_mid'])) {
 			return false;
@@ -1014,8 +927,9 @@ function thread_author_menu($item, $mode = '') {
 		}
 	}
 
+	$poke_label = ucfirst( t(get_pconfig($local_channel,'system','pokeverb','poke')) );
+
 	if($contact) {
-		$poke_link = z_root() . '/poke/?f=&c=' . $contact['abook_id'];
 		if (! (isset($contact['abook_self']) && intval($contact['abook_self']))) {  
 			$contact_url = z_root() . '/connedit/' . $contact['abook_id'];
 		}
@@ -1082,6 +996,16 @@ function thread_author_menu($item, $mode = '') {
 			'icon' => 'fw',
 			'action' => '',
 			'href' => $pm_url
+		];
+	}
+
+	if (Apps::system_app_installed($local_channel,'Poke')) {
+		$menu[] = [ 
+			'menu'   => 'poke',
+			'title'  => $poke_label,
+			'icon'   => 'fw',
+			'action' => 'doPoke(\'' . urlencode($item['author_xchan']) . '\'); return false;',
+			'href'   => '#'
 		];
 	}
 
@@ -1397,25 +1321,20 @@ function z_status_editor($x, $popup = false) {
 
 
 	// we only need the comment_perms for the editor, but this logic is complicated enough (from Settings/Channel)
-	// that we will just duplicate the entire code block
+	// that we will just duplicate most of that code block
 
 	$global_perms = Permissions::Perms();
 
 	$permiss = [];
 	
 	$perm_opts = [
-		array( t('Nobody except yourself'), 0),
-		array( t('Only those you specifically allow'), PERMS_SPECIFIC), 
-		array( t('Approved connections'), PERMS_CONTACTS),
-		array( t('Any connections'), PERMS_PENDING),
-		array( t('Anybody on this website'), PERMS_SITE),
-		array( t('Anybody in this network'), PERMS_NETWORK),
-		array( t('Anybody authenticated'), PERMS_AUTHED),
-		array( t('Anybody on the internet'), PERMS_PUBLIC)
+		[ t('Restricted - from connections only'), PERMS_SPECIFIC ], 
+		[ t('Semi-public - from anybody that can be identified'), PERMS_AUTHED ],
+		[ t('Public - from anybody on the internet'), PERMS_PUBLIC ]
 	];
 	
 	$limits = PermissionLimits::Get(local_channel());
-	$anon_comments = get_config('system','anonymous_comments',true);
+	$anon_comments = get_config('system','anonymous_comments');
 	
 	foreach($global_perms as $k => $perm) {
 		$options = [];
@@ -1424,9 +1343,6 @@ function z_status_editor($x, $popup = false) {
 			if($opt[1] == PERMS_PUBLIC && (! $can_be_public))
 				continue;
 			$options[$opt[1]] = $opt[0];
-		}
-		if($k === 'view_stream') {
-			$options = [$perm_opts[7][1] => $perm_opts[7][0]];
 		}
 		if($k === 'post_comments') {
 			$comment_perms = [ $k, t('Accept delivery of comments and likes on this post from'), $limits[$k],'',$options ];
@@ -1486,7 +1402,6 @@ function z_status_editor($x, $popup = false) {
 		'$embedPhotosModalCancel' => t('Cancel'),
 		'$embedPhotosModalOK' => t('OK'),
 		'$setloc' => $setloc,
-		'$voting' => t('Toggle voting'),
 		'$poll' => t('Toggle poll'),
 		'$poll_option_label' => t('Option'),
 		'$poll_add_option_label' => t('Add option'),
@@ -1502,7 +1417,7 @@ function z_status_editor($x, $popup = false) {
 		'$feature_comment_control' => $feature_comment_control,
 		'$commctrl' => t('Comment Control'),
 		'$comments_closed' => ((isset($x['item']) && isset($x['item']['comments_closed']) && $x['item']['comments_closed']) ? $x['item']['comments_closed'] : ''),
-		'$commclosedate' => t('Disable comments after (date)'),
+		'$commclosedate' => t('Optional: disable comments after (date)'),
 		'$comment_perms' => $comment_perms,
 		'$defcommpolicy' => $defcommpolicy,
 		'$defcommuntil' => $defcommuntil,

@@ -104,6 +104,7 @@ class ThreadItem {
 		$osparkle = '';
 		$total_children = $this->count_descendants();
 		$unseen_comments = ((isset($item['real_uid']) && $item['real_uid']) ? 0 : $this->count_unseen_descendants());
+		$privacy_warning = false;
 
 		$conv = $this->get_conversation();
 		$observer = $conv->get_observer();
@@ -115,13 +116,27 @@ class ThreadItem {
 
 		$locktype = $item['item_private'];
 
-		$shareable = ((($conv->get_profile_owner() == local_channel() && local_channel()) && ($item['item_private'] != 1)) ? true : false);
+		$shareable = ((($conv->get_profile_owner() == local_channel() && local_channel()) && (! intval($item['item_private']))) ? true : false);
 
 		// allow an exemption for sharing stuff from your private feeds
 		if($item['author']['xchan_network'] === 'rss')
 			$shareable = true;
 
-		$privacy_warning = false;
+		// @fixme
+		// Have recently added code to properly handle polls in group reshares by redirecting all of the poll responses to the group.
+		// Sharing a poll using a regular embedded share is harder because the poll will need to fork. This is due to comment permissions.
+		// The original poll author may not accept responses from strangers. Forking the poll will receive responses from the sharer's
+		// followers, but there's no elegant way to merge these two sets of results together. For now, we'll disable sharing polls. 
+		
+		if ($item['obj_type'] === 'Question') {
+			$shareable = false;
+		}
+
+
+		if ($item['item_restrict'] & 2) {
+			$privacy_warning = true;
+			$lock = t('This comment is part of a private conversation, yet was shared with the public. Discretion advised.');
+		}
 
 		$mode = $conv->get_mode();
 
@@ -131,6 +146,12 @@ class ThreadItem {
 			$edpost = array(z_root() . '/' . $edlink . '/' . $item['id'], t('Edit'));
 		else
 			$edpost = false;
+
+		if(local_channel() && $observer['xchan_hash'] === $item['owner_xchan'])
+			$myconv = true;
+		else
+			$myconv = false;
+
 
 		if($item['verb'] === 'Announce') {
 			$edpost = false;
@@ -173,8 +194,7 @@ class ThreadItem {
 		$profile_link   = chanlink_hash($item['author_xchan']);
 		$profile_name   = $item['author']['xchan_name'];
 
-		$profile_addr = $item['author']['xchan_addr'] ? : $item['author']['xchan_url'];
-
+		$profile_addr = $item['author']['xchan_addr'] ? $item['author']['xchan_addr'] : $item['author']['xchan_url'];
 
 		$location = format_location($item);
 		$isevent = false;
@@ -191,6 +211,7 @@ class ThreadItem {
 			if($this->is_commentable() && $observer) {
 				$isevent = true;
 				$attend = array( t('I will attend'), t('I will not attend'), t('I might attend'));
+				$undo_attend = t('Undo attendance');
 			}
 		}
 
@@ -246,11 +267,11 @@ class ThreadItem {
 		$this->check_wall_to_wall();
 		
 		if($this->is_toplevel()) {
-			if(($conv->get_profile_owner() == local_channel()) && (! array_key_exists('real_uid',$item))) {
-				$star = array(
+			if(local_channel() && $conv->get_profile_owner() == local_channel() && (! array_key_exists('real_uid',$item))) {
+				$star = [
 					'toggle' => t('Save'),
 					'isstarred' => ((intval($item['item_starred'])) ? true : false),
-				);
+				];
 			}
 		} 
 		else {
@@ -283,8 +304,8 @@ class ThreadItem {
 			$has_event = true;
 
 		if($this->is_commentable() && $observer) {
-			$like = array( t("I like this \x28toggle\x29"), t("like"));
-			$dislike = array( t("I don't like this \x28toggle\x29"), t("dislike"));
+			$like = array( t('I like this'), t('Undo like'));
+			$dislike = array( t('I don\'t like this'), t('Undo dislike') );
 		}
 
 		$share = $embed = EMPTY_STR;
@@ -365,6 +386,7 @@ class ThreadItem {
 			'mid' => $item['mid'],
 			'isevent' => $isevent,
 			'attend' => $attend,
+			'undo_attend' => $undo_attend,
 			'consensus' => '',
 			'conlabels' => '',
 			'canvote' => $canvote,
@@ -381,6 +403,7 @@ class ThreadItem {
 			'thread_author_menu' => thread_author_menu($item,$conv->get_mode()),
 			'dreport' => $dreport,
 			'dreport_link' => ((isset($dreport_link) && $dreport_link) ? $dreport_link : EMPTY_STR),
+			'myconv' => $myconv, 
 			'name' => $profile_name,
 			'thumb' => $profile_avatar,
 			'osparkle' => $osparkle,
@@ -906,6 +929,7 @@ class ThreadItem {
 			'$anonurl'  => [ 'anonurl',  t('Your website URL (optional)') ],
 			'$auto_save_draft' => $feature_auto_save_draft,
 			'$save' => $permanent_draft,
+			'$top' => $this->is_toplevel()
 		));
 
 		return $comment_box;

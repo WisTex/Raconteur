@@ -345,14 +345,14 @@ function get_features($filtered = true, $level = (-1)) {
 //				feature_level('content_expire',1),
 //			],
 
-//			[
-//				'suppress_duplicates', 
-//				t('Suppress Duplicate Posts/Comments'),  
-//				t('Prevent posts with identical content to be published with less than two minutes in between submissions.'),
-//				true,
-//				get_config('feature_lock','suppress_duplicates'),
-//				feature_level('suppress_duplicates',1),
-//			],
+			[
+				'suppress_duplicates', 
+				t('Suppress Duplicate Posts/Comments'),  
+				t('Prevent posts with identical content to be published with less than two minutes in between submissions.'),
+				true,
+				get_config('feature_lock','suppress_duplicates'),
+				feature_level('suppress_duplicates',1),
+			],
 
 			[
 				'auto_save_draft', 

@@ -87,7 +87,7 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = []) {
 		$passthru = true;
 	}
 
-	if (x($opts['useragent'])) {
+	if (x($opts,'useragent')) {
 		@curl_setopt($ch, CURLOPT_USERAGENT, $opts['useragent']);
 	}
 	else {
@@ -234,7 +234,7 @@ function z_fetch_url($url, $binary = false, $redirects = 0, $opts = []) {
 		$dbg = [ 
 			'url' => $ret['debug']['url'],
 			'content_type' => $ret['debug']['content_type'],
-			'error_code'  => $ret['debug']['error_code'],
+			'error_code'  => ((isset($ret['debug']['error_code'])) ? $ret['debug']['error_code'] : 0),
 			'request_header' => $ret['debug']['request_header']
 		];
 		logger('z_fetch_url: error: ' . $url . ': ' . $ret['error'], LOGGER_DEBUG);
@@ -313,7 +313,7 @@ function z_post_url($url, $params, $redirects = 0, $opts = []) {
 		@curl_setopt($ch, CURLOPT_HEADER, false);
 	}
 
-	if (x($opts['useragent'])) {
+	if (x($opts,'useragent')) {
 		@curl_setopt($ch, CURLOPT_USERAGENT, $opts['useragent']);
 	}
 	else {
@@ -344,7 +344,7 @@ function z_post_url($url, $params, $redirects = 0, $opts = []) {
 		@curl_setopt($ch, CURLOPT_TIMEOUT, intval($opts['timeout']));
 	}
 	else {
-		$curl_time = intval(@get_config('system','curl_timeout',60));
+		$curl_time = intval(@get_config('system','curl_post_timeout',90));
 		@curl_setopt($ch, CURLOPT_TIMEOUT, $curl_time);
 	}
 
@@ -352,7 +352,7 @@ function z_post_url($url, $params, $redirects = 0, $opts = []) {
 		@curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, intval($opts['connecttimeout']));
 	}
 	else {
-		$curl_contime = intval(@get_config('system','curl_connecttimeout',60));
+		$curl_contime = intval(@get_config('system','curl_post_connecttimeout',90));
 		@curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $curl_contime);
 	}
 
@@ -464,6 +464,18 @@ function z_post_url($url, $params, $redirects = 0, $opts = []) {
 
 	curl_close($ch);
 	return($ret);
+}
+
+function z_curl_error($ret) {
+	$output = EMPTY_STR;
+	if (isset($ret['debug'])) {
+		$output .= datetime_convert() . EOL;
+		$output .= t('url: ') . $ret['debug']['url'] . EOL;
+		$output .= t('error_code: ') . $ret['debug']['error_code'] . EOL;
+		$output .= t('error_string: ') . $ret['error'] . EOL;
+		$output .= t('content-type: ') . $ret['debug']['content_type'] . EOL;
+	}
+	return $output;
 }
 
 function json_return_and_die($x, $content_type = 'application/json', $debug = false) {
@@ -1271,7 +1283,7 @@ function get_site_info() {
 		}
 	}
 
-	$protocols = [ 'zot' ];
+	$protocols = [ 'nomad' ];
 	if (get_config('system','activitypub', ACTIVITYPUB_ENABLED)) {
 		$protocols[] = 'activitypub';
 	}
@@ -1283,12 +1295,11 @@ function get_site_info() {
 		'version'                      => $version,
 //		'version_tag'                  => $tag,
 		'addon_version'                => defined('ADDON_VERSION') ? ADDON_VERSION : 'unknown',
-		'server_role'                  => System::get_server_role(),
 		'commit'                       => $commit,
 		'protocols'                    => $protocols,
 		'plugins'                      => $visible_plugins,
 		'register_policy'              =>  $register_policy[get_config('system','register_policy')],
-		'invitation_only'              => (bool) intval(get_config('system','invitation_only')),
+		'invitation_only'              => (bool) (defined('INVITE_WORKING') && intval(get_config('system','invitation_only'))),
 		'directory_mode'               =>  $directory_mode[get_config('system','directory_mode')],
 //		'directory_server'             => get_config('system','directory_server'),
 		'language'                     => get_config('system','language'),
@@ -1299,7 +1310,7 @@ function get_site_info() {
 		'admin'                        => $admin,
 		'dbdriver'                     => DBA::$dba->getdriver() . ' ' . ((ACTIVE_DBTYPE == DBTYPE_POSTGRES) ? 'postgres' : 'mysql'),
 		'lastpoll'                     => get_config('system','lastpoll'),
-		'ebs'                          => System::ebs(),
+		'ebs'                          => System::ebs(), // bit.ly/3DGCmki
 		'info'                         => (($site_info) ? $site_info : '')
 
 	];
@@ -1843,16 +1854,22 @@ function is_https_request() {
 }
 
 /**
- * @brief Given a URL, return everything after the host portion.
+ * @brief Given a URL, return everything after the host portion, but exclude any fragments.
  * example https://foobar.com/gravy?g=5&y=6
  * returns /gravy?g=5&y=6
+ * example https:://foobar.com/gravy?g=5&y=6#fragment
+ * also returns /gravy?g=5&y=6
  * result always returns the leading slash
  */
 
 function get_request_string($url) {
 
-	$a = explode('/',$url,4);
-	return '/' . ((count($a) > 3) ? $a[3] : EMPTY_STR);
+	$m = parse_url($url);
+	if ($m) {
+		return ( (isset($m['path']) ? $m['path'] : '/' ) . (isset($m['query']) ? '?' . $m['query'] : EMPTY_STR) );
+	}
+
+	return EMPTY_STR;
 
 }
 

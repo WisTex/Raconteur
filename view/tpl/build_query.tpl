@@ -1,43 +1,43 @@
 <script> 
 
-	var bParam_cmd = "{{$baseurl}}/update/{{$pgtype}}";
+	let bParam_cmd = "{{$baseurl}}/update/{{$pgtype}}";
 
 
-	var bParam_uid = {{$uid}};
+	let bParam_uid = {{$uid}};
 	// lists can be either type string (virtual lists) or integer (normal accesslists)
-	var bParam_gid = "{{$gid}}";
-	var bParam_cid = {{$cid}};
-	var bParam_cmin = {{$cmin}};
-	var bParam_cmax = {{$cmax}};
-	var bParam_star = {{$star}};
-	var bParam_liked = {{$liked}};
-	var bParam_conv = {{$conv}};
-	var bParam_spam = {{$spam}};
-	var bParam_new = {{$nouveau}};
-	var bParam_page = {{$page}};
-	var bParam_wall = {{$wall}};
-	var bParam_draft = {{$draft}};
-	var bParam_list = {{$list}};
-	var bParam_fh = {{$fh}};
-	var bParam_dm = {{$dm}};
-	var bParam_static = {{$static}};
+	let bParam_gid = "{{$gid}}";
+	let bParam_cid = {{$cid}};
+	let bParam_cmin = {{$cmin}};
+	let bParam_cmax = {{$cmax}};
+	let bParam_star = {{$star}};
+	let bParam_liked = {{$liked}};
+	let bParam_conv = {{$conv}};
+	let bParam_spam = {{$spam}};
+	let bParam_new = {{$nouveau}};
+	let bParam_page = {{$page}};
+	let bParam_wall = {{$wall}};
+	let bParam_draft = {{$draft}};
+	let bParam_list = {{$list}};
+	let bParam_fh = {{$fh}};
+	let bParam_dm = {{$dm}};
+	let bParam_static = {{$static}};
 
-	var bParam_search = "{{$search}}";
-	var bParam_xchan = "{{$xchan}}";
-	var bParam_order = "{{$order}}";
-	var bParam_file = "{{$file}}";
-	var bParam_cats = "{{$cats}}";
-	var bParam_tags = "{{$tags}}";
-	var bParam_dend = "{{$dend}}";
-	var bParam_dbegin = "{{$dbegin}}";
-	var bParam_mid = "{{$mid}}";
-	var bParam_verb = "{{$verb}}";
-	var bParam_net = "{{$net}}";
-	var bParam_pf = "{{$pf}}";
+	let bParam_search = "{{$search}}";
+	let bParam_xchan = "{{$xchan}}";
+	let bParam_order = "{{$order}}";
+	let bParam_file = "{{$file}}";
+	let bParam_cats = "{{$cats}}";
+	let bParam_tags = "{{$tags}}";
+	let bParam_dend = "{{$dend}}";
+	let bParam_dbegin = "{{$dbegin}}";
+	let bParam_mid = "{{$mid}}";
+	let bParam_verb = "{{$verb}}";
+	let bParam_net = "{{$net}}";
+	let bParam_pf = "{{$pf}}";
 
 	function buildCmd() {
-		var udargs = ((page_load) ? "/load" : "");
-		var bCmd = bParam_cmd + udargs + "?f=" ;
+		let udargs = ((page_load) ? "/load" : "");
+		let bCmd = bParam_cmd + udargs + "?f=" ;
 		if(bParam_uid) bCmd = bCmd + "&p=" + bParam_uid;
 		if(bParam_cmin != (-1)) bCmd = bCmd + "&cmin=" + bParam_cmin;
 		if(bParam_cmax != (-1)) bCmd = bCmd + "&cmax=" + bParam_cmax;

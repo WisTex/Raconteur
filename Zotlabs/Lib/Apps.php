@@ -57,7 +57,19 @@ class Apps {
 	}
 
 	static public function get_base_apps() {
-		$x = get_config('system','base_apps',[ 
+
+		// to add additional default "base" apps to your site, put their English name, one per line,
+		// into 'cache/default_apps'. This will be merged with the default project base apps.
+
+		if (file_exists('cache/default_apps')) {
+			$custom_apps = file('cache/default_apps', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+			// do some cleanup in case the file was edited by hand and contains accidentally introduced whitespace
+			if (is_array($custom_apps) && $custom_apps) {
+				$custom_apps = array_map('trim', $custom_apps);
+			}
+		}
+
+		$default_apps = [ 
 			'Channel Home',
 			'Connections',
 			'Directory',
@@ -72,12 +84,15 @@ class Apps {
 			'Stream',
 			'Suggest Channels',
 			'View Profile'
-		]);
+		];
+		if (is_array($custom_apps)) {
+			$default_apps = array_values(array_unique(array_merge($default_apps,$custom_apps)));
+		}
+
+		$x = get_config('system','base_apps',$default_apps);
 		call_hooks('get_base_apps',$x);
 		return $x;
 	}
-
-
 
 	static public function import_system_apps() {
 		if (! local_channel()) {
@@ -543,6 +558,9 @@ class Apps {
 		if (local_channel()) {
 			if (self::app_installed(local_channel(),$papp) && (! (isset($papp['deleted']) && intval($papp['deleted'])))) {
 				$installed = true;
+				if ($mode === 'install') {
+					return '';
+				}
 			}
 
 			$hosturl = z_root() . '/';
@@ -558,7 +576,7 @@ class Apps {
 			} 
 		}
 
-		$install_action = (($installed) ? t('Update') : t('Install'));
+		$install_action = (($installed) ? t('Installed') : t('Install'));
 		$icon = ((strpos($papp['photo'],'icon:') === 0) ? substr($papp['photo'],5) : '');
 
 		if ($mode === 'navbar') {
@@ -571,6 +589,13 @@ class Apps {
 		if ($mode === 'install') {
 			$papp['embed'] = true;
 		}
+
+		$featured = $pinned = false;
+		if (isset($papp['categories'])) {
+			$featured = ((strpos($papp['categories'],'nav_featured_app') !== false) ? true : false);
+			$pinned = ((strpos($papp['categories'],'nav_pinned_app') !== false) ? true : false);
+		}
+
 		return replace_macros(get_markup_template('app.tpl'), [
 			'$app' => $papp,
 			'$icon' => $icon,
@@ -585,8 +610,8 @@ class Apps {
 			'$deleted' => ((isset($papp['deleted'])) ? intval($papp['deleted']) : false),
 			'$feature' => (((isset($papp['embed']) && $papp['embed']) || $mode === 'edit') ? false : true),
 			'$pin' => (((isset($papp['embed']) && $papp['embed']) || $mode === 'edit') ? false : true),
-			'$featured' => ((strpos($papp['categories'], 'nav_featured_app') === false) ? false : true),
-			'$pinned' => ((strpos($papp['categories'], 'nav_pinned_app') === false) ? false : true),
+			'$featured' => $featured,
+			'$pinned' => $pinned,
 			'$navapps' => (($mode === 'nav') ? true : false),
 			'$order' => (($mode === 'nav-order' || $mode === 'nav-order-pinned') ? true : false),
 			'$mode' => $mode,
@@ -1220,7 +1245,7 @@ class Apps {
 				intval(TERM_OBJ_APP),
 				intval($x[0]['id'])
 			);
-			if ($arr['categories']) {
+			if (isset($arr['categories']) && $arr['categories']) {
 				$y = explode(',',$arr['categories']);
 				if ($y) {
 					foreach ($y as $t) {

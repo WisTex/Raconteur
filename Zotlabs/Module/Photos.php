@@ -17,17 +17,18 @@ require_once('include/bbcode.php');
 require_once('include/security.php');
 require_once('include/attach.php');
 require_once('include/text.php');
+require_once('include/conversation.php');
 
 
 class Photos extends Controller {
 
 	function init() {
 	
-		if(observer_prohibited()) {
+		if (observer_prohibited()) {
 			return;
 		}
 	
-		if(argc() > 1) {
+		if (argc() > 1) {
 
 			$nick = escape_tags(argv(1));
 	
@@ -37,7 +38,7 @@ class Photos extends Controller {
 
 			$profile_uid = 0;
 	
-			if($channelx) {
+			if ($channelx) {
 				App::$data['channel']  = $channelx;
 				head_set_icon($channelx['xchan_photo_s']);
 				$profile_uid = $channelx['channel_id'];
@@ -61,37 +62,21 @@ class Photos extends Controller {
 	
 		$phototypes = $ph->supportedTypes();
 	
-		$can_post  = false;
-	
 		$page_owner_uid = App::$data['channel']['channel_id'];
 	
-		if(perm_is_allowed($page_owner_uid,get_observer_hash(),'write_storage'))
-			$can_post = true;
-	
-		if(! $can_post) {
+		if (! perm_is_allowed($page_owner_uid,get_observer_hash(),'write_storage')) {
 			notice( t('Permission denied.') . EOL );
 			killme_if_ajax();
 			return;
 		}
 	
-		$s = abook_self($page_owner_uid);
-	
-		if(! $s) {
-			notice( t('Page owner information could not be retrieved.') . EOL);
-			logger('mod_photos: post: unable to locate contact record for page owner. uid=' . $page_owner_uid);
-			killme_if_ajax();
-			return;
-		}
-	
-		$owner_record = $s[0];	
-	
 		$acl = new AccessControl(App::$data['channel']);
 	
-		if((argc() > 3) && (argv(2) === 'album')) {
+		if ((argc() > 3) && (argv(2) === 'album')) {
 	
 			$album = argv(3);
 
-			if(! photos_album_exists($page_owner_uid, get_observer_hash(), $album)) {
+			if (! photos_album_exists($page_owner_uid, get_observer_hash(), $album)) {
 				notice( t('Album not found.') . EOL);
 				goaway(z_root() . '/' . $_SESSION['photo_return']);
 			}
@@ -101,16 +86,15 @@ class Photos extends Controller {
 			 * DELETE photo album and all its photos
 			 */
 	
-			if($_REQUEST['dropalbum'] == t('Delete Album')) {
+			if ($_REQUEST['dropalbum'] === t('Delete Album')) {
 	
-		
 				$folder_hash = '';
 	 
-				$r = q("select * from attach where is_dir = 1 and uid = %d and hash = '%s'",
+				$r = q("select hash from attach where is_dir = 1 and uid = %d and hash = '%s'",
 					intval($page_owner_uid),
 					dbesc($album)
 				);
-				if(! $r) {
+				if (! $r) {
 					notice( t('Album not found.') . EOL);
 					return;
 				}
@@ -122,20 +106,21 @@ class Photos extends Controller {
 
 				// get the list of photos we are about to delete
 	
-				if(remote_channel() && (! local_channel())) {
+				if (remote_channel() && (! local_channel())) {
 					$str = photos_album_get_db_idstr($page_owner_uid,$album,remote_channel());
 				}
-				elseif(local_channel()) {
+				elseif (local_channel()) {
 					$str = photos_album_get_db_idstr(local_channel(),$album);
 				}
-				elseif(is_site_admin()) {
+				elseif (is_site_admin()) {
 					$str = photos_album_get_db_idstr_admin($page_owner_uid,$album);
 					$admin_delete = true;
 				}
 				else {
 					$str = null;
 				}
-				if(! $str) {
+				
+				if (! $str) {
 					goaway(z_root() . '/' . $_SESSION['photo_return']);
 				}
 	
@@ -143,12 +128,12 @@ class Photos extends Controller {
 					intval($page_owner_uid)
 				);
 				if($r) {
-					foreach($r as $i) {
-						attach_delete($page_owner_uid, $i['resource_id'], true );
+					foreach($r as $rv) {
+						attach_delete($page_owner_uid, $rv['resource_id'], true );
 					}
 				}
 	
-				// remove the associated photos in case they weren't attached to an item
+				// remove the associated photos in case they weren't attached to an item (rare)
 	
 				q("delete from photo where resource_id in ( $str ) and uid = %d",
 					intval($page_owner_uid)
@@ -158,12 +143,16 @@ class Photos extends Controller {
 					intval($page_owner_uid)
 				);
 	
-				if($folder_hash) {
+				if ($folder_hash) {
 					attach_delete($page_owner_uid, $folder_hash, true );
-					if(! $admin_delete) {	
+
+					// Sync this action to channel clones, UNLESS it was an admin delete action.
+					// The admin only has authority to moderate content on their own site.
+					
+					if (! $admin_delete) {	
 						$sync = attach_export_data(App::$data['channel'],$folder_hash, true);
-						if($sync) {
-							Libsync::build_sync_packet($page_owner_uid,array('file' => array($sync)));
+						if ($sync) {
+							Libsync::build_sync_packet($page_owner_uid, [ 'file' => [ $sync ] ]);
 						}
 					}
 				}
@@ -171,48 +160,71 @@ class Photos extends Controller {
 			goaway(z_root() . '/photos/' . App::$data['channel']['channel_address']);
 		}
 	
-		if((argc() > 2) && (x($_REQUEST,'delete')) && ($_REQUEST['delete'] === t('Delete Photo'))) {
+		if ((argc() > 2) && (x($_REQUEST,'delete')) && ($_REQUEST['delete'] === t('Delete Photo'))) {
 			// same as above but remove single photo
-	
-			$ob_hash = get_observer_hash();
-			if(! $ob_hash)
-				goaway(z_root() . '/' . $_SESSION['photo_return']);
 
+			$ob_hash = get_observer_hash();
+
+			if (! $ob_hash) {
+				goaway(z_root() . '/' . $_SESSION['photo_return']);
+			}
+
+			// query to verify ownership of the photo by this viewer
+			// We've already checked observer permissions to perfom this action
+			
+			// This implements the policy that remote channels (visitors and guests)
+			// which modify content  can only modify their own content.
+			// The page owner can modify anything within their authority, including
+			// content published by others in their own channel pages.
+			// The site admin can of course modify anything on their own site for
+			// maintenance or legal compliance reasons. 
+			
 			$r = q("SELECT id, resource_id FROM photo WHERE ( xchan = '%s' or uid = %d ) AND resource_id = '%s' LIMIT 1",
 				dbesc($ob_hash),
 				intval(local_channel()),
 				dbesc(argv(2))
 			);
 	
-			if($r) {
+			if ($r) {
 				attach_delete($page_owner_uid, $r[0]['resource_id'], true );
 				$sync = attach_export_data(App::$data['channel'],$r[0]['resource_id'], true);
-				if($sync) {
-					Libsync::build_sync_packet($page_owner_uid,array('file' => array($sync)));
+				if ($sync) {
+					Libsync::build_sync_packet($page_owner_uid, [  'file' => [ $sync ] ]);
 				}
 			}
-			elseif(is_site_admin()) {
-				// If the admin deletes a photo, don't sync
+			elseif (is_site_admin()) {
+				// If the admin deletes a photo, don't check ownership or invoke clone sync
 				attach_delete($page_owner_uid, argv(2), true);
 			}	
 
 			goaway(z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/album/' . $_SESSION['album_return']);
 		}
 
-		if((argc() > 2) && array_key_exists('move_to_album',$_POST)) {
+		// perform move_to_album
+		
+		if ((argc() > 2) && array_key_exists('move_to_album',$_POST)) {
+
 			$m = q("select folder from attach where hash = '%s' and uid = %d limit 1",
 				dbesc(argv(2)),
 				intval($page_owner_uid)
 			);
-			if(($m) && ($m[0]['folder'] != $_POST['move_to_album'])) {
+			
+			// we should sanitize the post variable, but probably pointless because the move
+			// will fail if we can't find the target
+			
+			if (($m) && ($m[0]['folder'] != $_POST['move_to_album'])) {
 				attach_move($page_owner_uid,argv(2),$_POST['move_to_album']);			
 
 				$sync = attach_export_data(App::$data['channel'],argv(2),false);
-				if($sync) 
-					Libsync::build_sync_packet($page_owner_uid,array('file' => array($sync)));
+				if ($sync) {
+					Libsync::build_sync_packet($page_owner_uid, [ 'file' => [ $sync ] ]);
+				}
 
-				if(! ($_POST['desc'] && $_POST['newtag']))
+				// return if this is the only thing being edited
+				
+				if (! ($_POST['desc'] && $_POST['newtag'])) {
 					goaway(z_root() . '/' . $_SESSION['photo_return']);
+				}
 			}
 		}
 
@@ -228,10 +240,10 @@ class Photos extends Controller {
 				dbesc($resource_id),
 				intval($page_owner_uid)
 			);
-			if($r) {
+			if ($r) {
 					
 				$ph = photo_factory(@file_get_contents(dbunescbin($r[0]['content'])), $r[0]['mimetype']);
-				if($ph->is_valid()) {
+				if ($ph && $ph->is_valid()) {
 					$rotate_deg = ( (intval($_POST['rotate']) == 1) ? 270 : 90 );
 					$ph->rotate($rotate_deg);
 
@@ -278,29 +290,35 @@ class Photos extends Controller {
 					$ph->storeThumbnail($arr, PHOTO_RES_320);
 				}
 			}
-		}}
+		}} // end FIXED
 
 
-		if((argc() > 2) && ((x($_POST,'desc') !== false) || (x($_POST,'newtag') !== false))) {
-	
-			$desc        = ((x($_POST,'desc'))    ? notags(trim($_POST['desc']))    : '');
-			$rawtags     = ((x($_POST,'newtag'))  ? notags(trim($_POST['newtag']))  : '');
+		// edit existing photo properties
+		
+		if (x($_POST,'item_id') !== false && intval($_POST['item_id'])) {
+
+			$title = ((x($_POST,'title')) ? escape_tags(trim($_POST['title'])) : EMPTY_STR );
+			$desc  = ((x($_POST,'desc'))  ? escape_tags(trim($_POST['desc'])) : EMPTY_STR );
+			$body  = ((x($_POST,'body'))  ? trim($_POST['body'])    : EMPTY_STR);
+			
 			$item_id     = ((x($_POST,'item_id')) ? intval($_POST['item_id'])       : 0);
 			$is_nsfw     = ((x($_POST,'adult'))   ? intval($_POST['adult'])         : 0);
-		
+
+			// convert any supplied posted permissions for storage
+			
 			$acl->set_from_array($_POST);
 			$perm = $acl->get();
 	
 			$resource_id = argv(2);
 	
-			$p = q("SELECT mimetype, is_nsfw, filename, description, resource_id, imgscale, allow_cid, allow_gid, deny_cid, deny_gid FROM photo WHERE resource_id = '%s' AND uid = %d ORDER BY imgscale DESC",
+			$p = q("SELECT mimetype, is_nsfw, filename, title, description, resource_id, imgscale, allow_cid, allow_gid, deny_cid, deny_gid FROM photo WHERE resource_id = '%s' AND uid = %d ORDER BY imgscale DESC",
 				dbesc($resource_id),
 				intval($page_owner_uid)
 			);
-			if($p) {
-				$ext = $phototypes[$p[0]['mimetype']];
-	
-				$r = q("UPDATE photo SET description = '%s', allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s' WHERE resource_id = '%s' AND uid = %d",
+			if ($p) {
+				// update the photo structure with any of the changed elements which are common to all resolutions 	
+				$r = q("UPDATE photo SET title = '%s', description = '%s', allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s' WHERE resource_id = '%s' AND uid = %d",
+					dbesc($title),
 					dbesc($desc),
 					dbesc($perm['allow_cid']),
 					dbesc($perm['allow_gid']),
@@ -314,7 +332,7 @@ class Photos extends Controller {
 			$item_private = (($str_contact_allow || $str_group_allow || $str_contact_deny || $str_group_deny) ? true : false);
 	
 			$old_is_nsfw = $p[0]['is_nsfw'];
-			if($old_is_nsfw != $is_nsfw) {
+			if ($old_is_nsfw != $is_nsfw) {
 				$r = q("update photo set is_nsfw = %d where resource_id = '%s' and uid = %d",
 					intval($is_nsfw),
 					dbesc($resource_id),
@@ -325,112 +343,122 @@ class Photos extends Controller {
 			/* Don't make the item visible if the only change was the album name */
 	
 			$visibility = 0;
-			if($p[0]['description'] !== $desc || strlen($rawtags))
+			if ($p[0]['description'] !== $desc || $p[0]['title'] !== $title || $body !== EMPTY_STR) {
 				$visibility = 1;
-	
-			if(! $item_id) {
-				$item_id = photos_create_item(App::$data['channel'],get_observer_hash(),$p[0],$visibility);
-	
 			}
+
+			$r = q("SELECT * FROM item WHERE id = %d AND uid = %d LIMIT 1",
+				intval($item_id),
+				intval($page_owner_uid)
+			);
+			if (! $r) {
+				logger('linked photo item not found.');
+				notice ( t('linked item not found.') . EOL);
+				return;
+			}
+
+			$linked_item = array_shift($r);
+			
+			// extract the original footer text
+			$footer_text = EMPTY_STR;
+			$orig_text = $linked_item['body'];
+			$matches = [];
+
+			if (preg_match('/\[footer\](.*?)\[\/footer\]/ism',$orig_text,$matches)) {
+				$footer_text = $matches[0];
+			}
+	
+			$body = cleanup_bbcode($body);
+			$tags = linkify_tags($body, $page_owner_uid);
+
+			$post_tags = [];
+			if ($tags) {
+				foreach ($tags as $tag) {
+					$success = $tag['success'];
+					if ($success['replaced']) {
+						// suppress duplicate mentions/tags
+						$already_tagged = false;
+						foreach ($post_tags as $pt) {
+							if ($pt['term'] === $success['term'] && $pt['url'] === $success['url'] && intval($pt['ttype']) === intval($success['termtype'])) {
+								$already_tagged = true;
+								break;
+							}
+						}
+						if ($already_tagged) {
+							continue;
+						}
+
+						$post_tags[] = [
+							'uid'   => $page_owner_uid, 
+							'ttype' => $success['termtype'],
+							'otype' => TERM_OBJ_POST,
+							'term'  => $success['term'],
+							'url'   => $success['url']
+						];
+					}
+				}
+			}
+			if ($post_tags) {
+				q("delete from term where otype = 1 and oid = %d",
+					intval($linked_item['id'])
+				);
+				foreach($post_tags as $t) {
+					q("insert into term (uid,oid,otype,ttype,term,url)
+						values(%d,%d,%d,%d,'%s','%s') ",
+		                intval($page_owner_uid),
+	    	            intval($linked_item['id']),
+	        	        intval(TERM_OBJ_POST),
+       		    	    intval($t['ttype']),
+               			dbesc($t['term']),
+						dbesc($t['url'])
+   	        		);
+				}
+			}
+
+			$body = z_input_filter($body,'text/bbcode');
 
 			$obj = EMPTY_STR;
 
-			if($item_id) {
-				$r = q("SELECT * FROM item WHERE id = %d AND uid = %d LIMIT 1",
-					intval($item_id),
-					intval($page_owner_uid)
-				);
-	
-				if($r) {
-					$old_tag    = $r[0]['tag'];
-					$old_inform = $r[0]['inform'];
+			if (isset($linked_item['obj']) && strlen($linked_item['obj'])) {
+				$obj = json_decode($linked_item['obj'],true);
+					
+				$obj['name'] = (($title) ? $title : $p[0]['filename']);
+				$obj['summary'] = (($desc) ? $desc : $p[0]['filename']);
+				$obj['updated'] = datetime_convert('UTC','UTC','now',ATOM_TIME);
+				$obj['source'] = [ 'content' => $body, 'mediaType' => 'text/bbcode' ];
+				$obj['content'] = bbcode($body . $footer_text, [ 'export' => true ]);
+				if (isset($obj['url']) && is_array($obj['url'])) {
+					for ($x = 0; $x < count($obj['url']); $x ++) {
+						$obj['url'][$x]['summary'] = $obj['summary'];
+					}
 				}
-
-				if($r[0]['obj']) {
-					$obj = json_decode($r[0]['obj'],true);
-					$obj['name'] = (($desc) ? $desc : $p[0]['filename']);
-					$obj['updated'] = datetime_convert('UTC','UTC','now',ATOM_TIME);
-					$obj = json_encode($obj);
-				}
+				$obj = json_encode($obj);
 			}
 
-
-	
-	
 			// make sure the linked item has the same permissions as the photo regardless of any other changes
-			$x = q("update item set allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', title = '%s', obj = '%s', edited = '%s', item_private = %d
-				where id = %d",
-					dbesc($perm['allow_cid']),
-					dbesc($perm['allow_gid']),
-					dbesc($perm['deny_cid']),
-					dbesc($perm['deny_gid']),
-					dbesc(($desc) ? $desc : $p[0]['filename']),
-					dbesc($obj),
-					dbesc(datetime_convert()),
-					intval($acl->is_private()),
-					intval($item_id)
+			$x = q("update item set allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', title = '%s', obj = '%s', body = '%s', edited = '%s', item_private = %d where id = %d",
+				dbesc($perm['allow_cid']),
+				dbesc($perm['allow_gid']),
+				dbesc($perm['deny_cid']),
+				dbesc($perm['deny_gid']),
+				dbesc(($desc) ? $desc : $p[0]['filename']),
+				dbesc($obj),
+				dbesc($body . $footer_text),
+				dbesc(datetime_convert()),
+				intval($acl->is_private()),
+				intval($item_id)
 			);
 	
 			// make sure the attach has the same permissions as the photo regardless of any other changes
 			$x = q("update attach set allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s' where hash = '%s' and uid = %d and is_photo = 1",
-					dbesc($perm['allow_cid']),
-					dbesc($perm['allow_gid']),
-					dbesc($perm['deny_cid']),
-					dbesc($perm['deny_gid']),
-					dbesc($resource_id),
-					intval($page_owner_uid)
+				dbesc($perm['allow_cid']),
+				dbesc($perm['allow_gid']),
+				dbesc($perm['deny_cid']),
+				dbesc($perm['deny_gid']),
+				dbesc($resource_id),
+				intval($page_owner_uid)
 			);
 		
-			if(strlen($rawtags)) {
-	
-				$str_tags = '';
-				$inform   = '';
-	
-				// if the new tag doesn't have a namespace specifier (@foo or #foo) give it a mention
-	
-				$x = substr($rawtags,0,1);
-				if($x !== '@' && $x !== '#')
-					$rawtags = '@' . $rawtags;
-	
-				require_once('include/text.php');
-				$profile_uid = App::$profile['profile_uid'];
-	
-				$results = linkify_tags($rawtags, (local_channel()) ? local_channel() : $profile_uid);
-	
-				$success = $results['success'];
-				$post_tags = [];
-	
-				foreach($results as $result) {
-					$success = $result['success'];
-					if($success['replaced']) {
-						$post_tags[] = array(
-							'uid'   => $profile_uid, 
-							'ttype'  => $success['termtype'],
-							'otype' => TERM_OBJ_POST,
-							'term'  => $success['term'],
-							'url'   => $success['url']
-						); 				
-					}
-				}
-	
-				$r = q("select * from item where id = %d and uid = %d limit 1",
-					intval($item_id),
-					intval($page_owner_uid)
-				);
-	
-				if($r) {
-					$r = fetch_post_tags($r,true);
-					$datarray = $r[0];
-					if($post_tags) {
-						if((! array_key_exists('term',$datarray)) || (! is_array($datarray['term'])))
-							$datarray['term'] = $post_tags;
-						else
-							$datarray['term'] = array_merge($datarray['term'],$post_tags);  
-					}
-					item_store_update($datarray,$execflag);
-				}
-	
-			}
 
 			if($visibility) {
 				Run::Summon( [ 'Notifier', 'edit_post', $item_id ] );
@@ -439,12 +467,12 @@ class Photos extends Controller {
 			$sync = attach_export_data(App::$data['channel'],$resource_id);
 	
 			if($sync) 
-				Libsync::build_sync_packet($page_owner_uid,array('file' => array($sync)));
+				Libsync::build_sync_packet($page_owner_uid, [ 'file' => [ $sync ] ]);
 		
 			goaway(z_root() . '/' . $_SESSION['photo_return']);
 			return; // NOTREACHED
 	
-	
+		
 		}
 	
 	
@@ -468,8 +496,6 @@ class Photos extends Controller {
 
 		$matches = [];
 		$partial = false;
-
-
 
 		if(array_key_exists('HTTP_CONTENT_RANGE',$_SERVER)) {
 			$pm = preg_match('/bytes (\d*)\-(\d*)\/(\d*)/',$_SERVER['HTTP_CONTENT_RANGE'],$matches);
@@ -514,9 +540,18 @@ class Photos extends Controller {
 	
 		if(! $r['success']) {
 			notice($r['message'] . EOL);
+			if (is_ajax()) {
+				killme();
+			}
 			goaway(z_root() . '/photos/' . App::$data['channel']['channel_address']);
-		}		
-
+		}
+		if ($r['success'] && ! intval($r['data']['is_photo'])) {
+			notice( sprintf( t('%s: Unsupported photo type. Saved as file.'), escape_tags($r['data']['filename'])));
+		}
+		if (is_ajax()) {
+			killme();
+		}
+		
 		goaway(z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/album/' . $r['data']['folder']);
 	
 	}
@@ -538,9 +573,6 @@ class Photos extends Controller {
 	
 		$unsafe = 1 - get_safemode();
 			
-		require_once('include/bbcode.php');
-		require_once('include/security.php');
-		require_once('include/conversation.php');
 	
 		if(! x(App::$data,'channel')) {
 			notice( t('No photos selected') . EOL );
@@ -561,7 +593,8 @@ class Photos extends Controller {
 		if(argc() > 3) {
 			$datatype = argv(2);
 			$datum = argv(3);
-		} else {
+		}
+		else {
 			if(argc() > 2) {
 				$datatype = argv(2);
 				$datum = '';
@@ -616,7 +649,7 @@ class Photos extends Controller {
 		 * Display upload form
 		 */
 	
-		if( $can_post) {
+		if ($can_post) {
 	
 			$uploader = '';
 	
@@ -686,9 +719,10 @@ class Photos extends Controller {
 				'$nickname' => App::$data['channel']['channel_address'],
 				'$newalbum_label' => t('Enter an album name'),
 				'$newalbum_placeholder' => t('or select an existing album (doubleclick)'),
-				'$visible' => array('visible', t('Create a status post for this upload'), 0,'', array(t('No'), t('Yes')), 'onclick="showHideBodyTextarea();"'),
-				'$caption' => array('description', t('Title (optional)')),
-				'$body' => array('body', t('Description (optional)'),'', 'Description will only appear in the status post'),
+				'$visible' => array('visible', t('Create a status post for this upload'), 0, t('If multiple files are selected, the message will be repeated for each photo'), array(t('No'), t('Yes')), 'onclick="showHideBodyTextarea();"'),
+				'$caption' => array('description', t('Please briefly describe this photo for vision-impaired viewers')),
+				'title' => [ 'title', t('Title (optional)') ],
+				'$body' => array('body', t('Your message (optional)'),'', 'This will only appear in the status post'),
 				'$albums' => $albums['albums'],
 				'$selname' => $selname,
 				'$permissions' => t('Permissions'),
@@ -836,6 +870,8 @@ class Photos extends Controller {
 					'$photos' => $photos,
 					'$album' => $album,
 					'$album_id' => $datum,
+					'$file_view' => t('View files'),
+					'$files_path' => z_root() . '/cloud/' . App::$data['channel']['channel_address'] . '/' . $x['display_path'],
 					'$album_edit' => array(t('Edit Album'), $album_edit),
 					'$can_post' => $can_post,
 					'$upload' => array(t('Add Photos'), z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/upload/' . $datum),
@@ -979,13 +1015,15 @@ class Photos extends Controller {
 	
 			// Do we have an item for this photo?
 	
-			$linked_items = q("SELECT * FROM item WHERE resource_id = '%s' and resource_type = 'photo' 
+			$linked_items = q("SELECT * FROM item WHERE resource_id = '%s' and resource_type = 'photo' and uid = %d
 				$sql_item LIMIT 1",
-				dbesc($datum)
+				dbesc($datum),
+				intval($owner_uid)
 			);
 	
 			$map = null;
-	
+			$link_item = null;
+			
 			if($linked_items) {
 	
 				xchan_query($linked_items);
@@ -1003,8 +1041,8 @@ class Photos extends Controller {
 	
 				if($r) {
 					xchan_query($r);
-					$r = fetch_post_tags($r,true);
-					$r = conv_sort($r,'commented');
+					$items = fetch_post_tags($r,true);
+					$sorted_items = conv_sort($items,'commented');
 				}
 	
 				$tags = [];
@@ -1036,7 +1074,7 @@ class Photos extends Controller {
 	
 			// FIXME - remove this when we move to conversation module 
 	
-			$r = $r[0]['children'];
+			$comment_items = $sorted_items[0]['children'];
 
 			$edit = null;
 			if($can_post) {
@@ -1049,10 +1087,13 @@ class Photos extends Controller {
 				$_SESSION['album_return'] = bin2hex($ph[0]['album']);
 
 				$folder_list = attach_folder_select_list($ph[0]['uid']);
-	
+				$edit_body = htmlspecialchars_decode(undo_post_tagging($link_item['body']),ENT_COMPAT);
+				// We will regenerate the body footer
+				$edit_body = preg_replace('/\[footer\](.*?)\[\/footer\]/ism','',$edit_body);
+
 				$edit = [
-					'edit' => t('Edit photo'),
-					'id' => $link_item['id'],
+					'edit'                 => t('Edit photo'),
+					'id'                   => $link_item['id'],
 					'albums'               => $albums['albums'],
 					'album'                => $album_e,
 					'album_select'         => [ 'move_to_album', t('Move photo to album'), $x[0]['folder'], '', $folder_list ],
@@ -1060,8 +1101,9 @@ class Photos extends Controller {
 					'newalbum_placeholder' => t('or select an existing one (doubleclick)'),
 					'nickname'             => App::$data['channel']['channel_address'],
 					'resource_id'          => $ph[0]['resource_id'],
-					'capt_label'           => t('Title (optional)'),
-					'caption'              => $caption_e,
+					'desc'                 => [ 'desc', t('Please briefly describe this photo for vision-impaired viewers'), $ph[0]['description'] ],
+					'title'                => [ 'title', t('Title (optional)'), $ph[0]['title'] ],
+					'body'                 => [ 'body', t('Your message (optional)'),$edit_body, t('This will only appear in the optional status post attached to this photo') ],
 					'tag_label'            => t('Add a Tag'),
 					'permissions'          => t('Permissions'),
 					'aclselect'            => $aclselect_e,
@@ -1075,7 +1117,8 @@ class Photos extends Controller {
 					'adult_enabled'        => feature_enabled($owner_uid,'adult_photo_flagging'),
 					'adult'                => array('adult',t('Flag as adult in album view'), intval($ph[0]['is_nsfw']),''),
 					'submit'               => t('Submit'),
-					'delete'               => t('Delete Photo')
+					'delete'               => t('Delete Photo'),
+					'expandform'	       => ((x($_GET,'expandform')) ? true : false)
 				];
 			}
 	
@@ -1088,19 +1131,37 @@ class Photos extends Controller {
 				$like_tpl = get_markup_template('like_noshare.tpl');
 	
 				$likebuttons = '';
+				$ilike = false;
+				$inolike = false;
+
+
+				if ($items) {
+					foreach ($items as $i) {
+						if ($i['verb'] === 'Like' && $i['author_xchan'] === get_observer_hash() && $i['thr_parent'] = $link_item['mid']) {
+							$ilike = true;
+						}
+						if ($i['verb'] === 'Dislike' && $i['author_xchan'] === get_observer_hash() && $i['thr_parent'] === $link_item['mid']) {
+							$inolike = true;
+						}
+					}
+				}
 	
 				if($observer && ($can_post || $can_comment)) {
 					$likebuttons = [
 						'id'       => $link_item['id'],
-						'likethis' => t("I like this \x28toggle\x29"),
-						'nolike'   => t("I don't like this \x28toggle\x29"),
+						'likethis' => t('I like this'),
+						'ilike'    => $ilike,
+						'inolike'  => $inolike,
+						'nolike'   => t('I don\'t like this'),
+						'unlikethis' => t('Undo like'),
+						'unnolike' => t('Undo dislike'),
 						'share'    => t('Share'),
 						'wait'     => t('Please wait')
 					];
 				}
-	
+
 				$comments = '';
-				if(! $r) {
+				if(! $comment_items) {
 					if($observer && ($can_post || $can_comment)) {
 						$commentbox = replace_macros($cmnt_tpl,array(
 							'$return_path' => '', 
@@ -1116,6 +1177,7 @@ class Photos extends Controller {
 							'$comment' => t('Comment'),
 							'$submit' => t('Submit'),
 							'$preview' => t('Preview'),
+							'$auto_save_draft' => 'true',
 							'$ww' => '',
 							'$feature_encrypt' => false
 						));
@@ -1153,7 +1215,6 @@ class Photos extends Controller {
 					}
 					$like_button_label = tt('Like','Likes',$like_count,'noun');
 	
-					//if (feature_enabled($conv->get_profile_owner(),'dislike')) {
 						$dislike_count = ((x($dlike,$link_item['mid'])) ? $dlike[$link_item['mid']] : '');
 						$dislike_list = ((x($dlike,$link_item['mid'])) ? $dlike[$link_item['mid'] . '-l'] : '');
 						$dislike_button_label = tt('Dislike','Dislikes',$dislike_count,'noun');
@@ -1163,7 +1224,7 @@ class Photos extends Controller {
 						} else {
 							$dislike_list_part = '';
 						}
-					//}
+
 	
 	
 					$like    = ((isset($alike[$link_item['mid']])) ? format_like($alike[$link_item['mid']],$alike[$link_item['mid'] . '-l'],'like',$link_item['mid']) : '');
@@ -1171,7 +1232,7 @@ class Photos extends Controller {
 	
 					// display comments
 	
-					foreach($r as $item) {
+					foreach ($comment_items as $item) {
 						$comment = '';
 						$template = $tpl;
 						$sparkle = '';
@@ -1180,13 +1241,7 @@ class Photos extends Controller {
 							continue;
 						}
 	
-						$redirect_url = z_root() . '/redir/' . $item['cid'] ;
-				
-	
-						$profile_url = zid($item['author']['xchan_url']);
-						$sparkle = '';
-	
-	
+						$profile_url = zid($item['author']['xchan_url']);	
 						$profile_name   = $item['author']['xchan_name'];
 						$profile_avatar = $item['author']['xchan_photo_m'];
 	
@@ -1259,6 +1314,7 @@ class Photos extends Controller {
 				'$photo'                => $photo,
 				'$prevlink'             => $prevlink,
 				'$nextlink'             => $nextlink,
+				'$title'                => $ph[0]['title'],
 				'$desc'                 => $ph[0]['description'],
 				'$filename'             => $ph[0]['filename'],
 				'$unknown'              => t('Unknown'),
@@ -1363,6 +1419,8 @@ class Photos extends Controller {
 			$o .= replace_macros(get_markup_template('photos_recent.tpl'), [
 				'$title'       => t('Recent Photos'),
 				'$album_id'    => bin2hex(t('Recent Photos')),
+				'$file_view' => t('View files'),
+				'$files_path' => z_root() . '/cloud/' . App::$data['channel']['channel_address'],
 				'$can_post'    => $can_post,
 				'$upload'      => t('Add Photos'),
 				'$photos'      => $photos,

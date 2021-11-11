@@ -15,6 +15,7 @@ use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ASCollection;
+use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Daemon\Run;
 
 require_once('include/html2bbcode.php');
@@ -93,22 +94,19 @@ class Libzot {
 	 * @param array $channel
 	 *   sender channel structure
 	 * @param string $type
-	 *   packet type: one of 'ping', 'pickup', 'purge', 'refresh', 'keychange', 'force_refresh', 'notify', 'auth_check'
+	 *   packet type: one of 'activity', 'response', 'sync', 'purge', 'refresh', 'force_refresh', 'rekey'
 	 * @param array $recipients
 	 *   envelope recipients, array of portable_id's; empty for public posts
 	 * @param string msg
 	 *   optional message
 	 * @param string $remote_key
 	 *   optional public site key of target hub used to encrypt entire packet
-	 *   NOTE: remote_key and encrypted packets are required for 'auth_check' packets, optional for all others
 	 * @param string $methods
 	 *   optional comma separated list of encryption methods @ref self::best_algorithm()
 	 * @returns string json encoded zot packet
 	 */
 
 	static function build_packet($channel, $type = 'activity', $recipients = null, $msg = '', $encoding = 'activitystreams', $remote_key = null, $methods = '') {
-
-		$sig_method = get_config('system','signature_algorithm','sha256');
 
 		$data = [
 			'type'      => $type,
@@ -152,7 +150,19 @@ class Libzot {
 	 * @param string $methods
 	 *   comma separated list of encryption methods
 	 * @return string first match from our site method preferences crypto_methods() array
-	 * of a method which is common to both sites; or 'aes256cbc' if no matches are found.
+	 * of a method which is common to both sites; or an empty string if no matches are found.
+	 *
+	 * Failure to find a common algorithm is not an issue as our communications
+	 * take place primarily over https, so this is just redundant encryption in many cases.
+	 *
+	 * In any case, the receiver is free to reject unencrypted private content if they have
+	 * reason to distrust https.
+	 *
+	 * We are not using array_intersect() here because the specification for that function
+	 * does not guarantee the order of results. It probably returns entries in the correct
+	 * order for our needs and would simplify this function dramatically, but we cannot be
+	 * certain that it will always do so on all operating systems.
+	 *
 	 */
 
 	static function best_algorithm($methods) {
@@ -176,8 +186,10 @@ class Libzot {
 		}
 
 		if ($methods) {
+			// $x = their methods as an array
 			$x = explode(',', $methods);
 			if ($x) {
+				// $y = our methods as an array
 				$y = Crypto::methods();
 				if ($y) {
 					foreach ($y as $yv) {
@@ -190,7 +202,7 @@ class Libzot {
 			}
 		}
 
-		return '';
+		return EMPTY_STR;
 	}
 
 
@@ -239,14 +251,17 @@ class Libzot {
 	 *
 	 * Friending in zot is accomplished by sending a refresh packet to a specific channel which indicates a
 	 * permission change has been made by the sender which affects the target channel. The hub controlling
-	 * the target channel does targetted discovery (a zot-finger request requesting permissions for the local
-	 * channel). These are decoded here, and if necessary and abook structure (addressbook) is created to store
-	 * the permissions assigned to this channel.
+	 * the target channel does targeted discovery (in which a zot discovery request contains permissions for
+	 * the sender which were set by the local channel). These are decoded here, and if necessary an abook
+	 * structure (addressbook) is created to store the permissions assigned to this channel.
 	 *
 	 * Initially these abook structures are created with a 'pending' flag, so that no reverse permissions are
 	 * implied until this is approved by the owner channel. A channel can also auto-populate permissions in
 	 * return and send back a refresh packet of its own. This is used by forum and group communication channels
 	 * so that friending and membership in the channel's "club" is automatic.
+	 *
+	 * If $force is set when calling this function, this operation will be attempted even if our records indicate
+	 * the remote site is permanently down.
 	 *
 	 * @param array $them => xchan structure of sender
 	 * @param array $channel => local channel structure of target recipient, required for "friending" operations
@@ -273,27 +288,21 @@ class Libzot {
 		}
 		else {
 			$r = null;
-	
-			// if they re-installed the server we could end up with the wrong record - pointing to the old install.
-			// We'll order by reverse id to try and pick off the newest one first and hopefully end up with the
-			// correct hubloc. If this doesn't work we may have to re-write this section to try them all.
-
-//			if(array_key_exists('xchan_addr',$them) && $them['xchan_addr']) {
-//				$r = q("select hubloc_id_url, hubloc_primary from hubloc where hubloc_addr = '%s' and hubloc_network = 'zot6' order by hubloc_id desc",
-//					dbesc($them['xchan_addr'])
-//				);
-//			}
-//			if (! $r) {
-				$r = q("select hubloc_id_url, hubloc_primary from hubloc where hubloc_hash = '%s' and hubloc_network = 'zot6' order by hubloc_id desc",
-					dbesc($them['xchan_hash'])
-				);
-//			}
+			
+			// if they re-installed the server we could end up with the wrong record - pointing to a hash generated by the old install.
+			// We'll order by reverse id to try and pick off the most recently created ones first and hopefully end up with the correct hubloc.
+			// We are looking for the most recently created primary hub, and the most recently created if for some reason we do not have a primary.
+			// hubloc_id_url is set to the channel home, which corresponds to an ActivityStreams actor id.
+			
+			$r = q("select hubloc_id_url, hubloc_primary from hubloc where hubloc_hash = '%s' and hubloc_network = 'zot6' order by hubloc_id desc",
+				dbesc($them['xchan_hash'])
+			);
 
 			if ($r) {
 				foreach ($r as $rr) {
 					if (intval($rr['hubloc_primary'])) {
 						$url = $rr['hubloc_id_url'];
-						$record = $rr;
+						break;
 					}
 				}
 				if (! $url) {
@@ -301,6 +310,7 @@ class Libzot {
 				}
 			}
 		}
+		
 		if (! $url) {
 			logger('zot_refresh: no url');
 			return false;
@@ -333,6 +343,9 @@ class Libzot {
 			return false;
 		}
 
+		// If we reach this point, the signature is valid and we can trust the channel discovery data, so try and store
+		// the generic information in the returned discovery packet.
+
 		logger('zot-info: ' . print_r($record,true), LOGGER_DATA, LOG_DEBUG);
 
 		$x = self::import_xchan($record['data'], (($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
@@ -341,6 +354,9 @@ class Libzot {
 			return false;
 		}
 
+		// Here we handle discovery packets that return targeted permissions and require an abook (either an existing connection
+		// or a new one)
+		
 		if ($channel && $record['data']['permissions']) {
 			$old_read_stream_perm = their_perms_contains($channel['channel_id'],$x['hash'],'view_stream');
 			set_abconfig($channel['channel_id'],$x['hash'],'system','their_perms',$record['data']['permissions']);
@@ -806,6 +822,15 @@ class Libzot {
 				set_xconfig($xchan_hash,'activitypub','collections',$collections);
 			}
 
+			if (isset($arr['cover_photo']) && isset($arr['cover_photo']['url']) && strlen($arr['cover_photo']['url'])) {
+				set_xconfig($xchan_hash,'system','cover_photo',$arr['cover_photo']['url']);
+			}
+
+			if (isset($arr['signing_algorithm']) && strlen($arr['signing_algorithm'])) {
+				set_xconfig($xchan_hash,'system','signing_algorithm',$arr['signing_algorithm']);
+			}
+
+
 			if (($r[0]['xchan_name_date'] != $arr['name_updated'])
 				|| ($r[0]['xchan_connurl'] != $arr['primary_location']['connections_url'])
 				|| ($r[0]['xchan_addr'] != $arr['primary_location']['address'])
@@ -891,6 +916,10 @@ class Libzot {
 			$changed = true;
 		}
 
+		if (isset($arr['cover_photo']) && isset($arr['cover_photo']['url']) && strlen($arr['cover_photo']['url'])) {
+			set_xconfig($xchan_hash,'system','cover_photo',$arr['cover_photo']['url']);
+		}
+
 		if ($import_photos) {
 
 			require_once('include/photo_factory.php');
@@ -965,7 +994,7 @@ class Libzot {
 					$r = q("update xchan set xchan_updated = '%s', xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
 						where xchan_hash = '%s'",
 						dbesc(datetime_convert()),
-						dbesc(datetime_convert('UTC','UTC',$arr['photo_updated'])),
+						dbesc(datetime_convert('UTC','UTC',((isset($arr['photo_updated'])) ? $arr['photo_updated'] : 'now'))),
 						dbesc($photos[0]),
 						dbesc($photos[1]),
 						dbesc($photos[2]),
@@ -984,25 +1013,27 @@ class Libzot {
 		$s = Libsync::sync_locations($arr, $arr);
 
 		if ($s) {
-			if ($s['change_message']) {
+			if (isset($s['change_message']) && $s['change_message']) {
 				$what .= $s['change_message'];
 			}
-			if ($s['changed']) {
+			if (isset($s['changed']) && $s['changed']) {
 				$changed = $s['changed'];
 			}
-			if ($s['message']) {
+			if (isset($s['message']) && $s['message']) {
 				$ret['message'] .= $s['message'];
 			}
 		}
 
 		// Which entries in the update table are we interested in updating?
-
-		$address = (($ud_arr && $ud_arr['ud_addr']) ? $ud_arr['ud_addr'] : $arr['address']);
-
+		$address = ((isset($arr['address']) && $arr['address']) ? $arr['address'] : EMPTY_STR);
+		if (isset($ud_arr) && isset($ud_arr['ud_addr'])) {
+			$address = $ud_arr['ud_addr'];
+		}
 
 		// Are we a directory server of some kind?
 
-//		$other_realm = false;
+		$other_realm = false;
+
 //		$realm = get_directory_realm();
 //		if (array_key_exists('site',$arr)
 //			&& array_key_exists('realm',$arr['site'])
@@ -1119,14 +1150,15 @@ class Libzot {
 				foreach ($x['delivery_report'] as $xx) {
 					call_hooks('dreport_process',$xx);
 					if (is_array($xx) && array_key_exists('message_id',$xx) && DReport::is_storable($xx)) {
-						q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan ) values ( '%s', '%s', '%s','%s','%s','%s','%s' ) ",
+						q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan, dreport_log ) values ( '%s', '%s', '%s','%s','%s','%s','%s','%s' ) ",
 							dbesc($xx['message_id']),
 							dbesc($xx['location']),
 							dbesc($xx['recipient']),
 							dbesc($xx['name']),
 							dbesc($xx['status']),
 							dbesc(datetime_convert('UTC','UTC',$xx['date'])),
-							dbesc($xx['sender'])
+							dbesc($xx['sender']),
+							dbesc(EMPTY_STR)
 						);
 					}
 				}
@@ -1262,7 +1294,6 @@ class Libzot {
 				logger($AS->debug(), LOGGER_DATA);
 		}
 
-
 		// There is nothing inherently wrong with getting a message-id which isn't a canonical URI/URL, but 
 		// at the present time (2019/02) during the Hubzilla transition to zot6 it is likely to cause lots of duplicates for 
 		// messages arriving from different protocols and sources with different message-id semantics. This
@@ -1283,8 +1314,6 @@ class Libzot {
 			}
 
 		}
-
-
 
 		$deliveries = null;
 
@@ -1342,6 +1371,11 @@ class Libzot {
 
 			if (in_array($env['type'],['activity','response'])) {
 
+				if (! (is_array($AS->actor) && isset($AS->actor['id']))) {
+					logger('No author!');
+					return;
+				}
+				
 				$r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s'",
 					dbesc($AS->actor['id'])
 				); 
@@ -1500,8 +1534,8 @@ class Libzot {
 		$include_sys = false;
 
 		if ($msg['type'] === 'activity') {
-			$disable_discover_tab = get_config('system','disable_discover_tab') || get_config('system','disable_discover_tab') === false;
-			if (! $disable_discover_tab) {
+			$public_stream_mode = intval(get_config('system','public_stream_mode',PUBLIC_STREAM_NONE));
+			if ($public_stream_mode === PUBLIC_STREAM_FULL) {
 				$include_sys = true;
 			}
 
@@ -1641,7 +1675,7 @@ class Libzot {
 
 		$result = [];
 
-		//logger('msg_arr: ' . print_r($msg_arr,true),LOGGER_ALL);
+		// logger('msg_arr: ' . print_r($msg_arr,true),LOGGER_ALL);
 
 		// If an upstream hop used ActivityPub, set the identities to zot6 nomadic identities where applicable
 		// else things could easily get confused
@@ -1669,6 +1703,12 @@ class Libzot {
 
 			// if any further changes are to be made, change a copy and not the original
 			$arr = $msg_arr;
+
+//			if (! $msg_arr['mid']) {
+//				logger('no mid2: ' . print_r($msg_arr,true));
+//				logger('recip: ' . $d);
+//			}
+
 
 			$DR = new DReport(z_root(),$sender,$d,$arr['mid']);
 
@@ -1780,6 +1820,8 @@ class Libzot {
 				}
 			}
 
+			// perform pre-storage check to see if it's "likely" that this is a group or collection post
+
 			$tag_delivery = tgroup_check($channel['channel_id'],$arr);
 
 			$perm = 'send_stream';
@@ -1859,7 +1901,7 @@ class Libzot {
 					// doesn't exist. 
 
 					if ($perm === 'send_stream') {
-						if (get_pconfig($channel['channel_id'],'system','hyperdrive',false)) {
+						if (get_pconfig($channel['channel_id'],'system','hyperdrive',true)) {
 							$allowed = true;
 						}
 					}
@@ -1868,6 +1910,12 @@ class Libzot {
 					}
 
 					$friendofriend = true;
+				}
+
+				if (intval($arr['item_private']) === 2) {
+					if (! perm_is_allowed($channel['channel_id'],$sender,'post_mail')) {
+						$allowed = false;
+					}
 				}
 
 				if (get_abconfig($channel['channel_id'],$sender,'system','block_announce', false)) {
@@ -1895,16 +1943,33 @@ class Libzot {
 				// this is so that permissions mismatches between senders apply to the entire conversation
 				// As a side effect we will also do a preliminary check that we have the top-level-post, otherwise
 				// processing it is pointless.
-	
+
+				// The original author won't have a token in their copy of the message
+				
+				$prnt = ((strpos($arr['parent_mid'],'token=') !== false) ? substr($arr['parent_mid'],0,strpos($arr['parent_mid'],'?')) : '');
+
 				$r = q("select route, id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
 					dbesc($arr['parent_mid']),
 					intval($channel['channel_id'])
 				);
+				if (! $r) {
+					$r = q("select route, id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
+						dbesc($prnt),
+						intval($channel['channel_id'])
+					);
+				}
+
 				if ($r) {
 					// if this is a multi-threaded conversation, preserve the threading information
 					if ($r[0]['parent_mid'] !== $r[0]['mid']) {
 						$arr['thr_parent'] = $arr['parent_mid'];
 						$arr['parent_mid'] = $r[0]['parent_mid'];
+						if ($act->replyto) {
+							q("update item set replyto = '%s' where id = %d",
+								dbesc($act->replyto),
+								intval($r[0]['id'])
+							);
+						}
 					}	
 
 					if ($r[0]['obj_type'] === 'Question') {
@@ -1917,8 +1982,6 @@ class Libzot {
 					}
 				}
 				else {
-					$DR->update('comment parent not found');
-					$result[] = $DR->get();
 
 					// We don't seem to have a copy of this conversation or at least the parent
 					// - so request a copy of the entire conversation to date.
@@ -1933,8 +1996,33 @@ class Libzot {
 
 					if ((! $relay) && (! $request) && (! $local_public)
 						&& perm_is_allowed($channel['channel_id'],$sender,'send_stream')) {													
-						self::fetch_conversation($channel,$arr['parent_mid']);
+						$reports = self::fetch_conversation($channel,$arr['mid']);
+						
+						// extract our delivery report from the fetched conversation
+						// if we can find it.
+						logger('fetch_report for ' . $arr['mid'], LOGGER_ALL);
+						logger('fetch_report: ' . print_r($reports,true), LOGGER_ALL);
+
+						if ($reports && is_array($reports)) {
+							$found_report = false;
+							foreach ($reports as $report) {
+								if ($report['message_id'] === $arr['mid']) {
+									$found_report = true;
+									$DR->update($report['status']);
+								}
+							}
+							if (! $found_report) {
+								$DR->update('conversation fetch failed');
+							}
+						}
+						else {
+							$DR->update('conversation fetch failed');
+						}
 					}
+					else {
+						$DR->update('comment parent not found');
+					}
+					$result[] = $DR->get();
 					continue;
 				}
 
@@ -1996,7 +2084,7 @@ class Libzot {
 			);
 			$abook = (($ab) ? $ab[0] : null);
 
-			if (intval($arr['item_deleted'])) {
+			if (isset($arr['item_deleted']) && intval($arr['item_deleted'])) {
 
 				// set these just in case we need to store a fresh copy of the deleted post.
 				// This could happen if the delete got here before the original post did.
@@ -2508,7 +2596,15 @@ class Libzot {
 					);
 				}
 			}
-
+			else {
+				if ($stored['id'] !== $stored['parent']) {
+					q("update item set commented = '%s', changed = '%s' where id = %d",
+						dbesc(datetime_convert()),
+						dbesc(datetime_convert()),
+						intval($stored['parent'])
+					);
+				}
+			}
 
 			// Use phased deletion to set the deleted flag, call both tag_deliver and the notifier to notify downstream channels
 			// and then clean up after ourselves with a cron job after several days to do the delete_item_lowlevel() (DROPITEM_PHASE2).
@@ -2765,7 +2861,11 @@ class Libzot {
 				$access_policy = ACCESS_PRIVATE;
 		}
 
-		$directory_url = htmlspecialchars($arr['directory_url'],ENT_COMPAT,'UTF-8',false);
+		$site_about = EMPTY_STR;
+		$site_logo  = EMPTY_STR;
+		$sitename   = EMPTY_STR;
+
+		$directory_url = htmlspecialchars(isset($arr['directory_url']) ? $arr['directory_url'] : EMPTY_STR,ENT_COMPAT,'UTF-8',false);
 		$url = htmlspecialchars(strtolower($arr['url']),ENT_COMPAT,'UTF-8',false);
 		$sellpage = htmlspecialchars($arr['sellpage'],ENT_COMPAT,'UTF-8',false);
 		$site_location = htmlspecialchars($arr['location'],ENT_COMPAT,'UTF-8',false);
@@ -2911,21 +3011,26 @@ class Libzot {
 
 		$desturl = $x['url'];
 
+		$found_primary = false;
+
 		$r1 = q("select hubloc_url, hubloc_updated, site_dead from hubloc left join site on
 			hubloc_url = site_url where hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_primary = 1 limit 1",
 			dbesc($x['id']),
 			dbesc($x['id_sig'])
 		);
+		if ($r1) {
+			$found_primary = true;
+		}
 
 		$r2 = q("select xchan_hash from xchan where xchan_guid = '%s' and xchan_guid_sig = '%s' limit 1",
 			dbesc($x['id']),
 			dbesc($x['id_sig'])
 		);
 
-		$site_dead = false;
+		$primary_dead = false;
 
 		if ($r1 && intval($r1[0]['site_dead'])) {
-			$site_dead = true;
+			$primary_dead = true;
 		}
 
 		// We have valid and somewhat fresh information. Always true if it is our own site.
@@ -2943,16 +3048,16 @@ class Libzot {
 		// cached entry and the identity is valid. It's just unreachable until they bring back their
 		// server from the grave or create another clone elsewhere.
 
-		if ($site_dead) {
-			logger('dead site - ignoring', LOGGER_DEBUG,LOG_INFO);
+		if ($primary_dead || ! $found_primary) {
+			logger('dead or site - ignoring', LOGGER_DEBUG,LOG_INFO);
 
 			$r = q("select hubloc_id_url from hubloc left join site on hubloc_url = site_url
 				where hubloc_hash = '%s' and site_dead = 0",
 				dbesc($hash)
 			);
 			if ($r) {
-				logger('found another site that is not dead: ' . $r[0]['hubloc_url'], LOGGER_DEBUG,LOG_INFO);
-				$desturl = $r[0]['hubloc_url'];
+				logger('found another site that is not dead: ' . $r[0]['hubloc_id_url'], LOGGER_DEBUG,LOG_INFO);
+				$desturl = $r[0]['hubloc_id_url'];
 			}
 			else {
 				return $hash;
@@ -3104,7 +3209,7 @@ class Libzot {
 			$profile['region']        = $p[0]['region'];
 			$profile['postcode']      = $p[0]['postal_code'];
 			$profile['country']       = $p[0]['country_name'];
-			$profile['about']         = $p[0]['about'];
+			$profile['about']         = ((is_sys_channel($e['channel_id'])) ? get_config('system','siteinfo') : $p[0]['about']);
 			$profile['homepage']      = $p[0]['homepage'];
 			$profile['hometown']      = $p[0]['hometown'];
 
@@ -3124,6 +3229,8 @@ class Libzot {
 			}
 		}
 
+		$cover_photo = get_cover_photo($e['channel_id'],'array');
+		
 		// Communication details
 
 		$ret['id']             = $e['xchan_guid'];
@@ -3139,15 +3246,24 @@ class Libzot {
 			'following'          => z_root() . '/following/' . $e['channel_address']
 		];
 
-		$ret['public_key']     = $e['xchan_pubkey'];
-		$ret['username']       = $e['channel_address'];
-		$ret['name']           = $e['xchan_name'];
-		$ret['name_updated']   = $e['xchan_name_date'];
+		$ret['public_key']        = $e['xchan_pubkey'];
+		$ret['signing_algorithm'] = 'rsa-sha256';
+		$ret['username']          = $e['channel_address'];
+		$ret['name']              = $e['xchan_name'];
+		$ret['name_updated']      = $e['xchan_name_date'];
 		$ret['photo'] = [
 			'url'     => $e['xchan_photo_l'],
 			'type'    => $e['xchan_photo_mimetype'],
 			'updated' => $e['xchan_photo_date']
 		];
+
+		if ($cover_photo) {
+			$ret['cover_photo'] = [
+				'url'     => $cover_photo['url'],
+				'type'    => $cover_photo['type'],
+				'updated' => $cover_photo['updated']
+			];
+		}
 
 		$ret['channel_role']   = get_pconfig($e['channel_id'],'system','permissions_role','custom');
 		$ret['channel_type']   = $channel_type;
@@ -3447,6 +3563,13 @@ class Libzot {
 			}
 		}
 		return $arr[0];
+	}
+
+	static function update_cached_hubloc($hubloc) {
+		if ($hubloc['hubloc_updated'] > datetime_convert('UTC','UTC','now - 1 week') || $hubloc['hubloc_url'] === z_root()) {
+			return;
+		}
+		self::refresh( [ 'hubloc_id_url' => $hubloc['hubloc_id_url'] ] );
 	}
 
 }

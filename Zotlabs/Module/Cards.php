@@ -28,7 +28,7 @@ class Cards extends Controller {
 	 * {@inheritDoc}
 	 * @see \Zotlabs\Web\Controller::get()
 	 */
-	function get($update = 0, $load = false) {
+	function get() {
 
 		if(observer_prohibited(true)) {
 			return login();

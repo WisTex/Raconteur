@@ -20,8 +20,8 @@ class Admin {
 
 		$aside = [
 			'site'          => array(z_root() . '/admin/site/',     t('Site'),           'site'),
-			'profile_photo' => array(z_root() . '/admin/profile_photo', t('Site icon/logo'), 'profile_photo'),
-			'cover_photo'   => array(z_root() . '/admin/cover_photo', t('Site photo'), 'cover_photo'),
+//			'profile_photo' => array(z_root() . '/admin/profile_photo', t('Site icon/logo'), 'profile_photo'),
+//			'cover_photo'   => array(z_root() . '/admin/cover_photo', t('Site photo'), 'cover_photo'),
 			'accounts'      => array(z_root() . '/admin/accounts/', t('Accounts'),       'accounts', 'pending-update', t('Member registrations waiting for confirmation')),
 			'channels'      => array(z_root() . '/admin/channels/', t('Channels'),       'channels'),
 			'security'      => array(z_root() . '/admin/security/', t('Security'),       'security'),

@@ -8,6 +8,12 @@
  *
  */
 
+if ($argc > 2) {
+	$dest_tz = $argv[2];
+}
+else {
+	$dest_tz = 'UTC';
+}
 
 if ($argc > 1) {
 	$file = $argv[1];
@@ -34,7 +40,7 @@ if ($lines) {
 				if (count($arr) === 3) {
 					$ti = new DateTimeZone($arr[2]);
 					$d = new DateTime($arr[1] . ' ' . $arr[2]);
-					$to = new DateTimeZone('UTC');
+					$to = new DateTimeZone($dest_tz);
 					$d->setTimeZone($to);
 					$o = $d->format("Y-m-d H:i:s");
 					echo "[" . $o . "]" . substr($line,strlen($ts) + 2);

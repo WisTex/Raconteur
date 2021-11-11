@@ -150,6 +150,11 @@ class Directory extends Controller {
 			$r = suggestion_query(local_channel(),get_observer_hash(),App::$pager['start'],DIRECTORY_PAGESIZE);
 
 			if (! $r) {
+				if ($_REQUEST['aj']) {
+					echo '<div id="content-complete"></div>';
+					killme();
+				}
+
 				notice( t('No default suggestions were found.') . EOL);
 				return;
 			}
@@ -497,7 +502,7 @@ class Directory extends Controller {
 							echo $o;
 							killme();
 						}
-						if (App::$pager['page'] == 1 && $j['records'] == 0) {
+						if ($search && App::$pager['page'] == 1 && $j['records'] == 0) {
 							if (strpos($search,'@')) {
 								goaway(z_root() . '/chanview/?f=&address=' . $search);
 							}

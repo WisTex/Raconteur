@@ -893,6 +893,18 @@ class Libsync {
 	static function sync_locations($sender, $arr, $absolute = false) {
 
 		$ret = [];
+		$what = EMPTY_STR;
+		$changed = false;
+
+		// If a sender reports that the channel has been deleted, delete its hubloc
+
+		if (isset($arr['deleted_locally']) && intval($arr['deleted_locally'])) {
+			q("UPDATE hubloc SET hubloc_deleted = 1, hubloc_updated = '%s' WHERE hubloc_hash = '%s' AND hubloc_url = '%s'",
+				dbesc(datetime_convert()),
+				dbesc($sender['hash']),
+				dbesc($sender['site']['url'])
+			);
+		}
 
 		if($arr['locations']) {
 
@@ -932,7 +944,7 @@ class Libsync {
 
 			foreach($arr['locations'] as $location) {
 				if(! Libzot::verify($location['url'],$location['url_sig'],$sender['public_key'])) {
-					logger('Unable to verify site signature for ' . $location['url']);
+					logger('Unable to verify site signature for ' . $location['url']);					
 					$ret['message'] .= sprintf( t('Unable to verify site signature for %s'), $location['url']) . EOL;
 					continue;
 				}

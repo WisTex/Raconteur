@@ -154,6 +154,11 @@ function purify_html($s, $opts = []) {
 	$config->set('Cache.DefinitionImpl', null);
 	$config->set('Attr.EnableID', true);
 
+
+	// disable Unicode version of RTL over-ride 
+	$s = str_replace([ '&#x202e;', '&#x202E;', html_entity_decode('&#x202e;', ENT_QUOTES,'UTF-8') ],[ '','','' ],$s); 
+
+
 	// This will escape invalid tags in the output instead of removing.
 	// This is necessary for mixed format (text+bbcode+html+markdown) messages or
 	// some angle brackets in plaintext may get stripped if they look like an HTML tag
@@ -1425,10 +1430,12 @@ function theme_attachments(&$item) {
 				$label = urldecode(htmlspecialchars($r['name'], ENT_COMPAT, 'UTF-8'));
 			}
 
+			if (isset($r['href']) && $r['href']) {
+				$m = parse_url($r['href']);
+			}
 			if (! $label) {
 				if (isset($r['href']) && $r['href']) {
-					$m = parse_url($r['href']);
-					if ($m && $m['path']) {
+					if (isset($m) && $m && $m['path']) {
 						$label = basename($m['path']);
 					}
 				}
@@ -1442,6 +1449,10 @@ function theme_attachments(&$item) {
 			$title = t('Size') . ' ' . ((isset($r['length']) && $r['length']) ? userReadableSize($r['length']) : t('unknown'));
 
 			if (! (isset($r['href']))) {
+				continue;
+			}
+
+			if (isset($m) && $m && $m['scheme'] === 'data')  {
 				continue;
 			}
 
@@ -1704,7 +1715,7 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 		$object = json_decode($item['obj'],true);
 		$ptr = null;
 
-		if (array_key_exists('url',$object) && is_array($object['url'])) {
+		if (is_array($object) && array_key_exists('url',$object) && is_array($object['url'])) {
 			if (array_key_exists(0,$object['url'])) {
 				foreach ($object['url'] as $link) {
 					if(array_key_exists('width',$link) && $link['width'] >= 640 && $link['width'] <= 1024) {
@@ -1721,11 +1732,14 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 
 			// if original photo width is > 640px make it a cover photo
 			if ($ptr) {
+				$alt_text = ' alt="' . ((isset($ptr['summary']) && $ptr['summary']) ? htmlspecialchars($ptr['summary'], ENT_QUOTES, 'UTF-8') : t('Image/photo')) . '"';
+				$title_text = ' title="' . ((isset($ptr['summary']) && $ptr['summary']) ? htmlspecialchars($ptr['summary'], ENT_QUOTES, 'UTF-8') : t('Image/photo')) . '"';
+
 				if (array_key_exists('width',$ptr) && $ptr['width'] > 640) {
-				$photo = '<a href="' . zid(rawurldecode($object['id'])) . '" target="_blank" rel="nofollow noopener"><img style="max-width:' . $ptr['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($ptr['href'])) . '"></a>';
+					$photo = '<a href="' . zid(rawurldecode($object['id'])) . '"' . $title_text . ' target="_blank" rel="nofollow noopener"><img style="max-width:' . $ptr['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($ptr['href'])) . '"' . $alt_text . '></a>';
 				}
 				else {
-					$item['body'] = '[zmg]' . $ptr['href'] . '[/zmg]' . "\n\n" . $item['body'];
+					$item['body'] = '[zmg' . $alt_text . ']' . $ptr['href'] . '[/zmg]' . "\n\n" . $item['body'];
 				}
 			}
 		}
@@ -1818,7 +1832,8 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 	}
 	$cache_enable = ((($cache_expire) && ($item['created'] < datetime_convert('UTC','UTC', 'now - ' . $cache_expire . ' days'))) ? false : true);
 
-
+	// disable Unicode RTL over-ride since it can destroy presentation in some cases, use HTML or CSS instead 
+	$s = str_replace([ '&#x202e;', '&#x202E;', html_entity_decode('&#x202e;', ENT_QUOTES,'UTF-8') ],[ '','','' ],$s); 
 
 	if($s)
 		$s = sslify($s, $cache_enable);
@@ -2225,7 +2240,7 @@ function reltoabs($text, $base) {
 }
 
 function item_post_type($item) {
-	switch($item['resource_type']) {
+	switch ($item['resource_type']) {
 		case 'photo':
 			$post_type = t('photo');
 			break;
@@ -2233,13 +2248,13 @@ function item_post_type($item) {
 			$post_type = t('event');
 			break;
 		default:
-			$post_type = t('status');
-			if($item['mid'] != $item['parent_mid'])
+			$post_type = t('post');
+			if ($item['mid'] !== $item['parent_mid'])
 				$post_type = t('comment');
 			break;
 	}
 
-	if(strlen($item['verb']) && (! activity_match($item['verb'],ACTIVITY_POST)))
+	if (strlen($item['verb']) && (! activity_match($item['verb'],ACTIVITY_POST)))
 		$post_type = t('activity');
 
 	return $post_type;
@@ -3226,37 +3241,44 @@ function item_url_replace($channel,&$item,$old,$new,$oldnick = '') {
 
 	if($item['attach']) {
 		json_url_replace($old,$new,$item['attach']);
-		if($oldnick)
+		if($oldnick && ($oldnick !== $channel['channel_address']))
 			json_url_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['attach']);
 	}
 	if($item['object']) {
 		json_url_replace($old,$new,$item['object']);
-		if($oldnick)
+		if($oldnick && ($oldnick !== $channel['channel_address']))
 			json_url_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['object']);
 	}
 	if($item['target']) {
 		json_url_replace($old,$new,$item['target']);
-		if($oldnick)
+		if($oldnick && ($oldnick !== $channel['channel_address']))
 			json_url_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['target']);
 	}
 
-	if(string_replace($old,$new,$item['body'])) {
-		$item['sig'] = Libzot::sign($item['body'],$channel['channel_prvkey']);
-		$item['item_verified']  = 1;
-	}
+	$root_replaced = null;
+	$nick_replaced = null;
 
+	$item['body'] = str_replace($old, $new, $item['body']);
+
+	if($oldnick && ($oldnick !== $channel['channel_address'])) {
+		$item['body'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['body']);
+	}
+	
+	$item['sig'] = Libzot::sign($item['body'],$channel['channel_prvkey']);
+	$item['item_verified'] = 1;
+	
 	$item['plink'] = str_replace($old,$new,$item['plink']);
-	if($oldnick)
+	if($oldnick && ($oldnick !== $channel['channel_address']))
 		$item['plink'] = str_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['plink']);
 
 	$item['llink'] = str_replace($old,$new,$item['llink']);
-	if($oldnick)
+	if($oldnick && ($oldnick !== $channel['channel_address']))
 		$item['llink'] = str_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['llink']);
 
 	if($item['term']) {
 		for($x = 0; $x < count($item['term']); $x ++) {
 			$item['term'][$x]['url'] =  str_replace($old,$new,$item['term'][$x]['url']);
-			if ($oldnick) {
+			if($oldnick && ($oldnick !== $channel['channel_address'])) {
 				$item['term'][$x]['url'] = str_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['term'][$x]['url']);
 			}
 		}
@@ -3596,8 +3618,16 @@ function cleanup_bbcode($body) {
 }
 
 function gen_link_id($mid) {
-	if(strpbrk($mid,':/&?<>"\'') !== false)
+	if (strpbrk($mid,':/&?<>"\'') !== false) {
 		return 'b64.' . base64url_encode($mid);
+	}
+	return $mid;
+}
+
+function unpack_link_id($mid) {
+	if (strpos($mid,'b64.') === 0) {
+		$mid = base64url_decode(preg_replace('/[^A-Za-z0-9\-_].*/','',substr($mid,4)));
+	}
 	return $mid;
 }
 
@@ -3751,7 +3781,7 @@ function get_forum_channels($uid,$collections = 0) {
 		$pagetype = 1;
 	}
 
-	$r = q("select abook_id, xchan_hash, xchan_network, xchan_name, xchan_url, xchan_photo_s from abook left join xchan on abook_xchan = xchan_hash where xchan_deleted = 0 and abook_channel = %d and abook_pending = 0 and abook_ignored = 0 and abook_blocked = 0 and abook_archived = 0 and xchan_type = %d order by xchan_name",
+	$r = q("select abook_id, xchan_hash, xchan_network, xchan_name, xchan_url, xchan_photo_s from abook left join xchan on abook_xchan = xchan_hash where xchan_deleted = 0 and abook_channel = %d and abook_pending = 0 and abook_ignored = 0 and abook_blocked = 0 and abook_archived = 0 and abook_self = 0 and xchan_type = %d order by xchan_name",
 		intval($uid),
 		intval($pagetype)
 	);

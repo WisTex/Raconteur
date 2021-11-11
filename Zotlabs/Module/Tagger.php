@@ -45,7 +45,7 @@ class Tagger extends \Zotlabs\Web\Controller {
 					intval($item_id)
 				);
 			}
-			if ($r) {
+			if ($r && local_channel() && (! is_sys_channel(local_channel()))) {
 				$r = [ copy_of_pubitem($channel, $i[0]['mid']) ];
                 $item_id = (($r) ? $r[0]['id'] : 0);
 			}

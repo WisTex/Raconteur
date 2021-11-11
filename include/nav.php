@@ -38,6 +38,10 @@ function nav($template = 'default') {
 			$chans = q("select channel_name, channel_id from channel left join pconfig on channel_id = pconfig.uid where channel_account_id = %d and channel_removed = 0 and pconfig.cat = 'system' and pconfig.k = 'include_in_menu' and pconfig.v = '1' order by channel_name ",
 				intval(get_account_id())
 			);
+			$q = get_sys_channel();
+			if (is_site_admin() && intval(get_pconfig($q['channel_id'],'system','include_in_menu'))) {
+				$chans = array_merge([$q],$chans);
+			}
 		}
 
 		$sitelocation = (($is_owner) ? '' : App::$profile['reddress']);
@@ -109,22 +113,22 @@ function nav($template = 'default') {
 		$nav['logout'] = ['logout',t('Logout'), "", t('End this session'),'logout_nav_btn'];
 		
 		// user menu
-		$nav['usermenu'][] = ['profile/' . $channel['channel_address'], t('View Profile'), ((\App::$nav_sel['raw_name'] == 'Profile') ? 'active' : ''), t('Your profile page'),'profile_nav_btn'];
+		$nav['usermenu'][] = ['profile/' . $channel['channel_address'], t('View Profile'), ((App::$nav_sel['raw_name'] == 'Profile') ? 'active' : ''), t('Your profile page'),'profile_nav_btn'];
 
 		if(feature_enabled(local_channel(),'multi_profiles'))
-			$nav['usermenu'][]   = ['profiles', t('Edit Profiles'), ((\App::$nav_sel['raw_name'] == 'Profiles') ? 'active' : '') , t('Manage/Edit profiles'),'profiles_nav_btn'];
+			$nav['usermenu'][]   = ['profiles', t('Edit Profiles'), ((App::$nav_sel['raw_name'] == 'Profiles') ? 'active' : '') , t('Manage/Edit profiles'),'profiles_nav_btn'];
 		else
-			$nav['usermenu'][]   = ['profiles/' . $prof[0]['id'], t('Edit Profile'), ((\App::$nav_sel['raw_name'] == 'Profiles') ? 'active' : ''), t('Edit your profile'),'profiles_nav_btn'];
+			$nav['usermenu'][]   = ['profiles/' . $prof[0]['id'], t('Edit Profile'), ((App::$nav_sel['raw_name'] == 'Profiles') ? 'active' : ''), t('Edit your profile'),'profiles_nav_btn'];
 
 	}
 	else {
 		if(! get_account_id())  {
 			if(App::$module === 'channel') {
-				$nav['login'] = login(true,'main-login',false,false);
+				$nav['login'] = login(true,'navbar-login',false,false);
 				$nav['loginmenu'][] = ['login',t('Login'),'',t('Sign in'),''];
 			}
 			else {
-				$nav['login'] = login(true,'main-login',false,false);
+				$nav['login'] = login(true,'navbar-login',false,false);
 				$nav['loginmenu'][] = ['login',t('Login'),'',t('Sign in'),'login_nav_btn'];
 				App::$page['content'] .= replace_macros(get_markup_template('nav_login.tpl'),
 					[ 
@@ -252,7 +256,7 @@ function nav($template = 'default') {
 
 	if($pinned_list) {
 		foreach($pinned_list as $app) {
-			if(\App::$nav_sel['name'] == $app['name'])
+			if(App::$nav_sel['name'] == $app['name'])
 				$app['active'] = true;
 
 			if($is_owner) {
@@ -266,7 +270,7 @@ function nav($template = 'default') {
 
 	if($syslist) {
 		foreach($syslist as $app) {
-			if(\App::$nav_sel['name'] == $app['name'])
+			if(App::$nav_sel['name'] == $app['name'])
 				$app['active'] = true;
 
 			if($is_owner) {
@@ -310,7 +314,7 @@ function nav($template = 'default') {
 		'$channel_menu' => get_pconfig(App::$profile_uid,'system','channel_menu',get_config('system','channel_menu')),
 		'$channel_thumb' => ((App::$profile) ? App::$profile['thumb'] : ''),
 		'$channel_apps' => ((isset($channel_apps)) ? $channel_apps : []),
-		'$manageapps' => t('My Apps'),
+		'$manageapps' => t('Installed Apps'),
 		'$addapps' => t('Available Apps'),
 		'$orderapps' => t('Arrange Apps'),
 		'$sysapps_toggle' => t('Toggle System Apps'),

@@ -13,6 +13,14 @@ require_once('include/acl_selectors.php');
 
 class Hq extends Controller {
 
+
+	// State passed in from the Update module.
+	
+	public $profile_uid = 0;
+	public $loading     = 0;
+	public $updating    = 0;
+
+
 	function init() {
 		if(! local_channel())
 			return;
@@ -36,12 +44,12 @@ class Hq extends Controller {
 
 	}
 
-	function get($update = 0, $load = false) {
+	function get() {
 
 		if(!local_channel())
 			return;
 
-		if($load)
+		if($this->loading)
 			$_SESSION['loadtime_hq'] = datetime_convert();
 	
 		if(argc() > 1 && argv(1) !== 'load') {
@@ -63,17 +71,13 @@ class Hq extends Controller {
 			);
 
 			if($r[0]['mid']) {
-				$item_hash = 'b64.' . base64url_encode($r[0]['mid']);
+				$item_hash = gen_link_id($r[0]['mid']);
 			}
 		}
 
 		if($item_hash) {
 
-			if(strpos($item_hash,'b64.') === 0)
-				$decoded = @base64url_decode(substr($item_hash,4));
-
-			if($decoded)
-				$item_hash = $decoded;
+			$item_hash = unpack_link_id($item_hash);
 
 			$target_item = null;
 
@@ -92,9 +96,9 @@ class Hq extends Controller {
 		
 			$static = ((array_key_exists('static',$_REQUEST)) ? intval($_REQUEST['static']) : 0);
 
-			$simple_update = (($update) ? " AND item_unseen = 1 " : '');
+			$simple_update = (($this->updating) ? " AND item_unseen = 1 " : '');
 				
-			if($update && $_SESSION['loadtime_hq'])
+			if($this->updating && $_SESSION['loadtime_hq'])
 				$simple_update = " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime_hq']) . "' ";
 		
 			if($static && $simple_update)
@@ -107,7 +111,7 @@ class Hq extends Controller {
 
 		}
 	
-		if(! $update) {
+		if(! $this->updating) {
 			$channel = App::get_channel();
 
 			$channel_acl = [
@@ -147,7 +151,7 @@ class Hq extends Controller {
 
 		}
 
-		if(! $update && ! $load) {
+		if(! $this->updating && ! $this->loading) {
 
 			nav_set_selected('HQ');
 
@@ -158,8 +162,7 @@ class Hq extends Controller {
 				$mid = ((($target_item['verb'] == ACTIVITY_LIKE) || ($target_item['verb'] == ACTIVITY_DISLIKE)) ? $target_item['thr_parent'] : $target_item['mid']);
 
 				// if we got a decoded hash we must encode it again before handing to javascript 
-				if($decoded)
-					$mid = 'b64.' . base64url_encode($mid);
+				$mid = gen_link_id($mid);
 			}
 			else {
 				$mid = '';
@@ -205,7 +208,7 @@ class Hq extends Controller {
 
 		$updateable = false;
 
-		if($load && $target_item) {
+		if($this->loading && $target_item) {
 			$r = null;
 
 			$r = q("SELECT item.id AS item_id FROM item
@@ -234,7 +237,7 @@ class Hq extends Controller {
 				);
 			}
 		}
-		elseif($update && $target_item) {
+		elseif($this->updating && $target_item) {
 			$r = null;
 
 			$r = q("SELECT item.parent AS item_id FROM item
@@ -285,7 +288,7 @@ class Hq extends Controller {
 			$items = [];
 		}
 
-		$o .= conversation($items, 'hq', $update, 'client');
+		$o .= conversation($items, 'hq', $this->updating, 'client');
 
 		if($updateable) {
 			$x = q("UPDATE item SET item_unseen = 0 WHERE item_unseen = 1 AND uid = %d AND parent = %d ",

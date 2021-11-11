@@ -1,10 +1,11 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Lib as Zlib;
+use Zotlabs\Web\Controller;
 
-use \Zotlabs\Lib as Zlib;
-
-class Apps extends \Zotlabs\Web\Controller {
+class Apps extends Controller {
 
 	function get() {
 
@@ -17,7 +18,7 @@ class Apps extends \Zotlabs\Web\Controller {
 
 		$available = ((argc() == 2 && argv(1) === 'available') ? true : false);
 
-		$_SESSION['return_url'] = \App::$query_string;
+		$_SESSION['return_url'] = App::$query_string;
 	
 		$apps = [];
 	

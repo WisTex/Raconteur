@@ -9,6 +9,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Apps;
 
 use Zotlabs\Lib as Zlib;
@@ -132,8 +133,23 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 					}
 				}
 			}
+			
+			// We've determined it is public. If it is also a wall post and not owned by the sys channel,
+			// send this also to followers of the sys_channel
+			
+			$sys = get_sys_channel();
+			if ($sys && intval($item['uid']) !== intval($sys['channel_id']) && intval($item['item_wall'])) {
+				$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
+					intval($sys['channel_id'])
+				);
+				if ($r) {
+					foreach ($r as $rv) {
+						$recipients[] = $rv['abook_xchan'];
+					}
+				}
+			}
 		}
-
+		
 		// Add the authors of any posts in this thread, if they are known to us.
 		// This is specifically designed to forward wall-to-wall posts to the original author,
 		// in case they aren't a connection but have permission to write on our wall.
@@ -157,7 +173,8 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 	// This is a somewhat expensive operation but important.
 	// Don't send this item to anybody who isn't allowed to see it
 
-	$recipients = check_list_permissions($item['uid'],$recipients,'view_stream');
+	// Note: commented out - no longer needed in zap and later projects because we do not allow this permission to be changed.
+	// $recipients = check_list_permissions($item['uid'],$recipients,'view_stream');
 
 	// remove any upstream recipients from our list.
 	// If it is ourself we'll add it back in a second.
@@ -464,7 +481,7 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 		$arr['mimetype'] = 'text/bbcode';
 	}
 
-    if (! isset($arr['mid']) && $arr['mid']) {
+    if (! (isset($arr['mid']) && $arr['mid'])) {
         $arr['uuid'] = ((isset($arr['uuid'])) ? $arr['uuid'] : new_uuid());
     }
     $arr['mid']          = ((isset($arr['mid'])) ? $arr['mid'] : z_root() . '/item/' . $arr['uuid']);
@@ -491,7 +508,6 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 	if ((! $arr['plink']) && (intval($arr['item_thread_top']))) {
 		$arr['plink'] = substr(z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . urlencode($arr['mid']),0,190);
 	}
-
 
 	// for the benefit of plugins, we will behave as if this is an API call rather than a normal online post
 
@@ -1511,6 +1527,33 @@ function item_sign(&$item) {
 	$item['item_verified'] = 1;
 }
 
+// packs  json data for storage.
+// if it is a string, check if it is already json encoded.
+// Otherwise json encode it
+// If it is an array, sanitise it and  then json_encode it.
+
+
+function item_json_encapsulate($arr,$k)  {
+	$retval = null;
+	
+	if (isset($arr[$k])) {
+		if (is_string($arr[$k])) {
+			// determine if it is json encoded already
+			$test = json_decode($arr[$k]);
+			// assume it is json encoded already
+			$retval = $arr[$k];
+			if ($test === NULL) {
+				$retval = json_encode($arr[$k], JSON_UNESCAPED_SLASHES);
+			}
+		}
+		else {
+			activity_sanitise($arr[$k]);
+			$retval = json_encode($arr[$k], JSON_UNESCAPED_SLASHES);
+		}
+	}
+
+	return $retval;
+}
 
 /**
  * @brief Stores an item type record.
@@ -1638,20 +1681,18 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 		$arr = $translate['item'];
 	}
 
-	if((x($arr,'obj')) && is_array($arr['obj'])) {
-		activity_sanitise($arr['obj']);
-		$arr['obj'] = json_encode($arr['obj'],JSON_UNESCAPED_SLASHES);
+	if(x($arr,'obj')) {
+		$arr['obj'] = item_json_encapsulate($arr,'obj');
 	}
 
-	if((x($arr,'target')) && is_array($arr['target'])) {
-		activity_sanitise($arr['target']);
-		$arr['target'] = json_encode($arr['target'],JSON_UNESCAPED_SLASHES);
+	if(x($arr,'target')) {
+		$arr['target'] = item_json_encapsulate($arr,'target');
 	}
 
-	if((x($arr,'attach')) && is_array($arr['attach'])) {
-		activity_sanitise($arr['attach']);
-		$arr['attach'] = json_encode($arr['attach'],JSON_UNESCAPED_SLASHES);
+	if(x($arr,'attach')) {
+		$arr['attach'] = item_json_encapsulate($arr,'attach');
 	}
+
 
 	$arr['aid']           = ((x($arr,'aid'))           ? intval($arr['aid'])                           : 0);
 	$arr['mid']           = ((x($arr,'mid'))           ? notags(trim($arr['mid']))                     : random_string());
@@ -1750,8 +1791,21 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 			intval($arr['uid'])
 		);
 
+		// We may have this parent_mid without a token, so try that if we find a token
 
-		if($r) {
+		if (! $r) {
+			if (strpos($arr['parent_mid'],'token=')) {
+				$r = q("SELECT * FROM item WHERE mid = '%s' AND uid = %d ORDER BY id ASC LIMIT 1",
+					dbesc(substr($arr['parent_mid'],0,strpos($arr['parent_mid'],'?'))),
+					intval($arr['uid'])
+				);
+				if ($r) {
+					$arr['parent_mid'] = $arr['thr_parent'] = substr($arr['parent_mid'],0,strpos($arr['parent_mid'],'?'));
+				}
+			}
+		}
+
+		if ($r) {
 
 			// in case item_store was killed before the parent's parent attribute got set,
 			// set it now. This happens with some regularity on Dreamhost. This will keep
@@ -1853,7 +1907,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 		return $ret;
 	}
 
-	if (LibBlock::fetch_by_entity($arr['uid'],$arr['owner_chan']) || LibBlock::fetch_by_entity($arr['uid'],$arr['author_xchan'])) {
+	if (LibBlock::fetch_by_entity($arr['uid'],$arr['owner_xchan']) || LibBlock::fetch_by_entity($arr['uid'],$arr['author_xchan'])) {
 		logger('Post cancelled by block rule.');
 		$ret['message'] = 'cancelled.';
 		return $ret;
@@ -2130,19 +2184,17 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 		$arr = $translate['item'];
 	}
 
-	if((array_key_exists('obj',$arr)) && is_array($arr['obj'])) {
-		activity_sanitise($arr['obj']);
-		$arr['obj'] = json_encode($arr['obj'],JSON_UNESCAPED_SLASHES);
+
+	if(x($arr,'obj')) {
+		$arr['obj'] = item_json_encapsulate($arr,'obj');
 	}
 
-	if((array_key_exists('target',$arr)) && is_array($arr['target'])) {
-		activity_sanitise($arr['target']);
-		$arr['target'] = json_encode($arr['target'],JSON_UNESCAPED_SLASHES);
+	if(x($arr,'target')) {
+		$arr['target'] = item_json_encapsulate($arr,'target');
 	}
 
-	if((array_key_exists('attach',$arr)) && is_array($arr['attach'])) {
-		activity_sanitise($arr['attach']);
-		$arr['attach'] = json_encode($arr['attach'],JSON_UNESCAPED_SLASHES);
+	if(x($arr,'attach')) {
+		$arr['attach'] = item_json_encapsulate($arr,'attach');
 	}
 
 	unset($arr['id']);
@@ -2367,6 +2419,16 @@ function item_update_parent_commented($item) {
 
 
 	$update_parent = true;
+	$update_changed = true;
+	
+	$c = channelx_by_n($item['uid']);
+
+	// don't modify the changed time on the parent if we commented on it.
+	// This messes up the notification system, which ignores changes made by us
+	
+	if ($c && $item['author_xchan'] === $c['channel_hash']) {
+		$update_changed = false;
+	}
 
 	// update the commented timestamp on the parent 
 	// - unless this is a moderated comment or a potential clone of an older item
@@ -2386,11 +2448,16 @@ function item_update_parent_commented($item) {
 			intval($item['uid'])
 		);
 
-		q("UPDATE item set commented = '%s', changed = '%s' WHERE id = %d",
+		q("UPDATE item set commented = '%s' WHERE id = %d",
 			dbesc(($z) ? $z[0]['commented'] : datetime_convert()),
-			dbesc(datetime_convert()),
 			intval($item['parent'])
 		);
+		if ($update_changed) {
+			q("UPDATE item set changed = '%s' WHERE id = %d",
+				dbesc(datetime_convert()),
+				intval($item['parent'])
+			);
+		}
 	}
 }
 
@@ -2430,7 +2497,7 @@ function send_status_notifications($post_id,$item) {
 
 	// I'm the owner - notify me
 
-	if($item['owner_hash'] === $r[0]['channel_hash'])
+	if($item['owner_xchan'] === $r[0]['channel_hash'])
 		$notify = true;
 
 	// Was I involved in this conversation?
@@ -2469,20 +2536,24 @@ function send_status_notifications($post_id,$item) {
 		intval($item['uid'])
 	);
 
-	if($y)
+	if ($y) {
 		$notify = false;
-
+	}
 
 	if (intval($item['item_private']) === 2) {
 		$notify_type = NOTIFY_MAIL;
+	}
+	elseif (item['verb'] === 'Announce') {
+		$notify_type = NOTIFY_RESHARE;
 	}
 	else {
 		$notify_type = NOTIFY_COMMENT;
 	}
 
 
-	if(! $notify)
+	if (! $notify) {
 		return;
+	}
 
 
 	Enotify::submit(array(
@@ -2496,21 +2567,6 @@ function send_status_notifications($post_id,$item) {
 		'parent'       => $thr_parent_id ? $thr_parent_id : $parent,
 		'parent_mid'   => $thr_parent_id ? $item['thr_parent'] : $item['parent_mid']
 	));
-}
-
-
-function get_item_contact($item,$contacts) {
-	if(! count($contacts) || (! is_array($item)))
-		return false;
-
-	foreach($contacts as $contact) {
-		if($contact['id'] == $item['contact-id']) {
-			return $contact;
-			break; // NOTREACHED
-		}
-	}
-
-	return false;
 }
 
 /**
@@ -2577,7 +2633,7 @@ function tag_deliver($uid, $item_id) {
 			'from_xchan'   => $item['author_xchan'],
 			'type'         => NOTIFY_MAIL,
 			'item'         => $item,
-			'link'         => $i[0]['llink'],
+			'link'         => $item['llink'],
 			'verb'         => 'DM',
 			'otype'        => 'item'
 		));
@@ -2656,7 +2712,7 @@ function tag_deliver($uid, $item_id) {
 		logger('check_item_source returns true');
 	}
 
-	// This might be a followup (e.g. comment) by the original post author to an already uplinked item
+	// This might be a followup (e.g. comment) to an already uplinked item
 	// If so setup a second delivery chain
 
 	if (! intval($item['item_thread_top'])) {
@@ -2665,8 +2721,34 @@ function tag_deliver($uid, $item_id) {
 			intval($uid)
 		);
 
-		if (($x) && intval($x[0]['item_uplink'])) {
-			start_delivery_chain($u,$item,$item_id,$x[0]);
+		if ($x) {
+
+			// group comments don't normally require a second delivery chain
+			// but we create a linked Announce so they will show up in the home timeline
+			// on microblog platforms and this creates a second delivery chain
+		
+			if ($is_group && intval($x[0]['item_wall'])) {
+				// don't let the forked delivery chain recurse
+				if ($item['verb'] === 'Announce' && $item['author_xchan'] === $u['channel_hash']) {
+					return;
+				}
+				// don't boost moderated content until it has been approved
+				if (intval($item['item_blocked']) === ITEM_MODERATED) {
+					return;
+				}
+				
+				// don't boost likes and other response activities as it is likely that
+				// few platforms will handle this in an elegant way
+				
+				if (ActivityStreams::is_response_activity($item['verb'])) {
+					return;
+				}
+				logger('group_comment');
+				start_delivery_chain($u, $item, $item_id, $x[0], true, (($item['edited'] != $item['created']) || $item['item_deleted']));
+			}
+			elseif (intval($x[0]['item_uplink'])) {
+				start_delivery_chain($u,$item,$item_id,$x[0]);
+			}
 		}
 	}
 
@@ -2770,7 +2852,7 @@ function tag_deliver($uid, $item_id) {
 					'from_xchan'   => $item['author_xchan'],
 					'type'         => NOTIFY_TAGSELF,
 					'item'         => $item,
-					'link'         => $i[0]['llink'],
+					'link'         => $item['llink'],
 					'verb'         => ACTIVITY_TAG,
 					'otype'        => 'item'
 				));
@@ -3025,9 +3107,18 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		}
 	}
 
+	// This creates an embedded share authored by the group actor.
+	// The original message is no longer needed and its presence can cause
+	// confusion so make it hidden.
+
 	if ($group && (! $parent)) {
 
 		$arr = [];
+
+		// hide original message
+		q("update item set item_hidden = 1 where id = %d",
+			intval($item_id)
+		);
 		
 		if ($edit) {
 			// process edit or delete action
@@ -3055,8 +3146,9 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 
 		}
 		else {
-			$arr['mid'] = str_replace('/item/','/activity/',item_message_id());
+			$arr['mid'] = item_message_id();
 			$arr['parent_mid'] = $arr['mid'];
+			IConfig::Set($arr,'activitypub','context', str_replace('/item/','/conversation/',$arr['mid']));
 		}
 		
 		$arr['aid'] = $channel['channel_account_id'];
@@ -3090,14 +3182,35 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		$bb .= "[/share]";
 
 		$arr['body'] = $bb;
+		
+		// Conversational objects shouldn't be copied, but other objects should.
+		if (in_array($item['obj_type'], [ 'Image', 'Event', 'Question' ])) { 
+			$arr['obj'] = $item['obj'];
+			$t = json_decode($arr['obj'],true);
+			if ($t !== NULL) {
+				$arr['obj'] = $t;
+			}
+			$arr['obj']['content'] = bbcode($bb, [ 'export' => true ]);
+			$arr['obj']['source']['content'] = $bb;
+			$arr['obj']['id'] = $arr['mid'];
+			
+			if (! array_path_exists('obj/source/mediaType',$arr)) {
+				$arr['obj']['source']['mediaType'] = 'text/bbcode';
+			}
+		}
 
+		$arr['tgt_type'] = $item['tgt_type'];
+		$arr['target'] = $item['target'];
+		
 		$arr['term'] = $item['term'];
 
 		$arr['author_xchan'] = $channel['channel_hash'];
 		$arr['owner_xchan']  = $channel['channel_hash'];
 
 		$arr['obj_type'] = $item['obj_type'];
+
 		$arr['verb'] = 'Create';
+	
 		$arr['item_restrict'] = 1;
 
 		$arr['allow_cid'] = $channel['channel_allow_cid'];
@@ -3107,7 +3220,6 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		$arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
 
 		$arr['replyto'] = z_root() . '/channel/' . $channel['channel_address'];
-
 
 		if ($arr['id']) {
 			$post = item_store_update($arr);
@@ -3129,6 +3241,97 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 
 		return;
 	}
+
+
+	// Send Announce activities for group comments so they will show up in microblog streams
+
+	if ($group && $parent) {
+		logger('comment arrived in group', LOGGER_DEBUG);
+		$arr = [];
+
+		// don't let this recurse. We checked for this before calling, but this ensures
+		// it doesn't sneak through another way because recursion is nasty.
+		
+		if ($item['verb'] === 'Announce' && $item['author_xchan'] === $channel['channel_hash']) {
+			return;
+		}
+
+		// Don't send Announce activities for poll responses.
+		
+		if ($item['obj_type'] === 'Answer') {
+			return;
+		}
+
+		if ($edit) {
+			if (intval($item['item_deleted'])) {
+				drop_item($item['id'],false,DROPITEM_PHASE1);
+				Run::Summon([ 'Notifier','drop',$item['id'] ]);
+				return;
+			}
+			return;
+		}
+		else {
+			$arr['mid'] = item_message_id();
+			$arr['parent_mid'] = $item['parent_mid'];
+			IConfig::Set($arr,'activitypub','context', str_replace('/item/','/conversation/',$item['parent_mid']));
+		}
+		
+		$arr['aid'] = $channel['channel_account_id'];
+		$arr['uid'] = $channel['channel_id'];
+
+		$arr['verb'] = 'Announce';
+
+		if (is_array($item['obj'])) {
+			$arr['obj'] = $item['obj'];
+		}
+		elseif (is_string($item['obj']) && strlen($item['obj'])) {
+			$arr['obj'] = json_decode($item['obj'],true);
+		}
+		
+		if (! $arr['obj']) {
+			$arr['obj'] = $item['mid'];
+		}
+
+		if (is_array($arr['obj'])) {
+			$obj_actor = ((isset($arr['obj']['actor'])) ? $arr['obj']['actor'] : $arr['obj']['attributedTo']);
+			$mention = Activity::get_actor_bbmention($obj_actor);
+			$arr['body'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $arr['obj']['type']);
+		}
+
+		$arr['author_xchan'] = $channel['channel_hash'];
+
+		$arr['item_wall'] = 1;
+
+		$arr['item_private'] = (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
+
+		$arr['item_origin'] = 1;
+		
+		$arr['item_thread_top'] = 0;
+	
+		$arr['allow_cid'] = $channel['channel_allow_cid'];
+		$arr['allow_gid'] = $channel['channel_allow_gid'];
+		$arr['deny_cid']  = $channel['channel_deny_cid'];
+		$arr['deny_gid']  = $channel['channel_deny_gid'];
+		$arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
+
+		$arr['replyto'] = z_root() . '/channel/' . $channel['channel_address'];
+
+
+		$post = item_store($arr);
+		$post_id = $post['item_id'];
+
+		if ($post_id) {
+			Run::Summon([ 'Notifier','tgroup',$post_id ]);
+		}
+
+		q("update channel set channel_lastpost = '%s' where channel_id = %d",
+			dbesc(datetime_convert()),
+			intval($channel['channel_id'])
+		);
+
+		return;
+	}
+
 
 
 	// Change this copy of the post to a forum head message and deliver to all the tgroup members
@@ -3213,7 +3416,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 function check_item_source($uid, $item) {
 
 	logger('source: uid: ' . $uid, LOGGER_DEBUG);
-	$xchan = (($item['source_xchan'] && intval($item['item_uplink'])) ?  $item['source_xchan'] : $item['owner_xchan']);
+	$xchan = ((isset($item['source_xchan']) && $item['source_xchan'] && isset($item['item_uplink']) && intval($item['item_uplink'])) ?  $item['source_xchan'] : $item['owner_xchan']);
 
 	$r = q("select * from source where src_channel_id = %d and ( src_xchan = '%s' or src_xchan = '*' ) limit 1",
 		intval($uid),
@@ -3335,7 +3538,7 @@ function compare_permissions($obj1,$obj2) {
 }
 
 /**
- * @brief Returns an array of contact-ids that are allowed to see this object.
+ * @brief Returns an array of connection identifiers that are allowed to see this object.
  *
  * @param object $obj
  * @return array

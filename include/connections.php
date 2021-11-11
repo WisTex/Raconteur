@@ -43,7 +43,7 @@ function abook_store_lowlevel($arr) {
 function rconnect_url($channel_id,$xchan) {
 
 	if (! $xchan) {
-		return EMPTY_STR;
+		return z_root() . '/fedi_id/' . $channel_id;
 	}
 
 	$r = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s' limit 1",
@@ -463,9 +463,9 @@ function contact_remove($channel_id, $abook_id, $atoken_sync = false) {
 
 function remove_abook_items($channel_id,$xchan_hash) {
 
-	$r = q("select id from item where (owner_xchan = '%s' or author_xchan = '%s') and uid = %d and item_retained = 0 and item_starred = 0",
-		dbesc($abook['xchan_hash']),
-		dbesc($abook['xchan_hash']),
+	$r = q("select id, parent from item where (owner_xchan = '%s' or author_xchan = '%s') and uid = %d and item_retained = 0 and item_starred = 0",
+		dbesc($xchan_hash),
+		dbesc($xchan_hash),
 		intval($channel_id)
 	);
 	if (! $r) {
@@ -525,9 +525,8 @@ function random_profile() {
 	for ($i = 0; $i < $retryrandom; $i++) {
 
 		$r = q("select xchan_url, xchan_hash from xchan left join hubloc on hubloc_hash = xchan_hash where
-			xchan_hidden = 0 and xchan_system = 0 and
-			xchan_network = 'zot6' and xchan_deleted = 0 and
-			hubloc_connected > %s - interval %s order by $randfunc limit 1",
+			xchan_hidden = 0 and xchan_network = 'zot6' and xchan_deleted = 0
+			and hubloc_connected > %s - interval %s order by $randfunc limit 1",
 			db_utcnow(),
 			db_quoteinterval('30 day')
 		);

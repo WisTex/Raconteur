@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Module\Admin;
 
+use App;
 use Zotlabs\Lib\System;
 use Zotlabs\Access\PermissionRoles;
 
@@ -21,9 +22,11 @@ class Site {
 			return;
 		}
 
+		$sys = get_sys_channel();
+
 		check_form_security_token_redirectOnErr('/admin/site', 'admin_site');
 
-		$sitename 			=	((x($_POST,'sitename'))			? notags(trim($_POST['sitename']))			: '');
+		$sitename 			=	((x($_POST,'sitename'))			? notags(trim($_POST['sitename']))			: App::get_hostname());
 
 		$admininfo			=	((x($_POST,'admininfo'))		? trim($_POST['admininfo'])				: false);
 		$siteinfo			=	((x($_POST,'siteinfo'))		    ? trim($_POST['siteinfo'])				: '');
@@ -52,9 +55,8 @@ class Site {
 		$mirror_frontpage	=	((x($_POST,'mirror_frontpage'))	? intval(trim($_POST['mirror_frontpage']))		: 0);
 		$directory_server	=	((x($_POST,'directory_server')) ? trim($_POST['directory_server']) : '');
 		$force_publish		=	((x($_POST,'publish_all'))		? True	: False);
-		$disable_discover_tab =	((x($_POST,'disable_discover_tab'))		? False	:	True);
-		$site_firehose      =   ((x($_POST,'site_firehose')) ? True : False);
-		$open_pubstream     =   ((x($_POST,'open_pubstream')) ? True : False);
+		$open_pubstream     =   ((x($_POST,'open_pubstream'))   ? True  : False);
+		$public_stream_mode =   ((x($_POST,'public_stream_mode')) ? intval($_POST['public_stream_mode']) : PUBLIC_STREAM_NONE);
 		$animations         =   ((x($_POST,'animations')) ? True : False);
 		$login_on_homepage	=	((x($_POST,'login_on_homepage'))		? True	:	False);
 		$enable_context_help = ((x($_POST,'enable_context_help'))		? True	:	False);
@@ -62,7 +64,7 @@ class Site {
 		$no_community_page    = !((x($_POST,'no_community_page'))	? True	:	False);
 		$default_expire_days  = ((array_key_exists('default_expire_days',$_POST)) ? intval($_POST['default_expire_days']) : 0);
 		$active_expire_days  = ((array_key_exists('active_expire_days',$_POST)) ? intval($_POST['active_expire_days']) : 7);
-		$max_imported_follow = ((x($_POST,'max_imported_follow'))	? intval(trim($_POST['max_imported_follow']))	    :  10);
+		$max_imported_follow = ((x($_POST,'max_imported_follow'))	? intval(trim($_POST['max_imported_follow']))	    :  MAX_IMPORTED_FOLLOW);
 
 		$reply_address      = ((array_key_exists('reply_address',$_POST) && trim($_POST['reply_address'])) ? trim($_POST['reply_address']) : 'noreply@' . \App::get_hostname());
 		$from_email         = ((array_key_exists('from_email',$_POST) && trim($_POST['from_email'])) ? trim($_POST['from_email']) : 'Administrator@' . \App::get_hostname());
@@ -72,6 +74,7 @@ class Site {
 		$proxyuser         = ((x($_POST,'proxyuser'))        ? notags(trim($_POST['proxyuser']))  : '');
 		$proxy             = ((x($_POST,'proxy'))            ? notags(trim($_POST['proxy']))      : '');
 		$timeout           = ((x($_POST,'timeout'))          ? intval(trim($_POST['timeout']))    : 60);
+		$post_timeout      = ((x($_POST,'post_timeout'))     ? intval(trim($_POST['post_timeout']))    : 90);
 		$show_like_counts  = ((x($_POST,'show_like_counts')) ? intval(trim($_POST['show_like_counts'])) : 0);
 		$cache_images      = ((x($_POST,'cache_images')) ? intval(trim($_POST['cache_images'])) : 0);
 		$delivery_interval = ((x($_POST,'delivery_interval'))? intval(trim($_POST['delivery_interval'])) : 0);
@@ -131,6 +134,27 @@ class Site {
 			set_config('system', 'admininfo', $admininfo);
 		}
 		set_config('system','siteinfo',$siteinfo);
+
+		// sync sitename and siteinfo updates to the system channel
+		
+		q("update profile set about = '%s' where uid = %d and is_default = 1",
+			dbesc($siteinfo),
+			intval($sys['channel_id'])
+		);
+		q("update profile set fullname = '%s' where uid = %d and is_default = 1",
+			dbesc($sitename),
+			intval($sys['channel_id'])
+		);
+		q("update channel set channel_name = '%s' where channel_id  = %d",
+			dbesc($sitename),
+			intval($sys['channel_id'])
+		);
+		q("update xchan set xchan_name = '%s' , xchan_name_updated = '%s' where xchan_hash = '%s'",
+			dbesc($sitename),
+			dbesc(datetime_convert()),
+			dbesc($sys['channel_hash'])
+		);
+				
 		set_config('system', 'language', $language);
 		set_config('system', 'theme', $theme);
 	//	set_config('system','site_channel', $site_channel);
@@ -143,8 +167,7 @@ class Site {
 		set_config('system','account_abandon_days', $abandon_days);
 		set_config('system','register_text', $register_text);
 		set_config('system','publish_all', $force_publish);
-		set_config('system','disable_discover_tab', $disable_discover_tab);
-		set_config('system','site_firehose', $site_firehose);
+		set_config('system','public_stream_mode', $public_stream_mode);
 		set_config('system','open_pubstream', $open_pubstream);
 		set_config('system','force_queue_threshold', $force_queue);
 		if ($global_directory == '') {
@@ -159,6 +182,7 @@ class Site {
 		set_config('system','proxyuser', $proxyuser);
 		set_config('system','proxy', $proxy);
 		set_config('system','curl_timeout', $timeout);
+		set_config('system','curl_post_timeout', $post_timeout);
 
 		info( t('Site settings updated.') . EOL);
 		goaway(z_root() . '/admin/site' );
@@ -262,15 +286,6 @@ class Site {
 			ACCESS_TIERED  => t("My site provides free public access and premium paid plans")
 		];
 
-		$discover_tab = get_config('system','disable_discover_tab');
-
-		// $disable public streams by default
-		if($discover_tab === false)
-			$discover_tab = 1;
-		// now invert the logic for the setting.
-		$discover_tab = (1 - intval($discover_tab));
-
-
 		$perm_roles = PermissionRoles::roles();
 		$default_role = get_config('system','default_permissions_role','social');
 
@@ -290,7 +305,7 @@ class Site {
 			'$corporate'            => t('Policies'),
 			'$advanced'             => t('Advanced'),
 			'$baseurl'              => z_root(),
-			'$sitename'             => [ 'sitename', t("Site name"), htmlspecialchars(get_config('system','sitename'), ENT_QUOTES, 'UTF-8'),'' ],
+			'$sitename'             => [ 'sitename', t("Site name"), htmlspecialchars(get_config('system','sitename', App::get_hostname()), ENT_QUOTES, 'UTF-8'),'' ],
 			'$admininfo'            => [ 'admininfo', t("Administrator Information"), $admininfo, t("Contact information for site administrators.  Displayed on siteinfo page.  BBCode may be used here.") ],
 			'$siteinfo'		        => [ 'siteinfo', t('Site Information'), get_config('system','siteinfo'), t("Publicly visible description of this site.  Displayed on siteinfo page.  BBCode may be used here.") ],
 			'$language'             => [ 'language', t("System language"), get_config('system','language','en'), "", $lang_choices ],
@@ -302,6 +317,7 @@ class Site {
 			'$cache_images'         => [ 'cache_images', t('Cache all public images'), intval(get_config('system','cache_images',1)), t('If disabled, proxy non-SSL images, but do not store locally') ], 
 			'$register_policy'      => [ 'register_policy', t("Does this site allow new member registration?"), get_config('system','register_policy'), "", $register_choices ],
 			'$invite_only'          => [ 'invite_only', t("Invitation only"), get_config('system','invitation_only'), t("Only allow new member registrations with an invitation code. New member registration must be allowed for this to work.") ],
+			'$invite_working'       => defined('INVITE_WORKING'),
 			'$minimum_age'          => [ 'minimum_age', t("Minimum age"), (x(get_config('system','minimum_age'))?get_config('system','minimum_age'):13), t("Minimum age (in years) for who may register on this site.") ],
 			'$access_policy'        => [ 'access_policy', t("Which best describes the types of account offered by this hub?"), get_config('system','access_policy'), t("If a public server policy is selected, this information may be displayed on the public server site list."), $access_choices ],
 			'$register_text'        => [ 'register_text', t("Register text"), htmlspecialchars(get_config('system','register_text'), ENT_QUOTES, 'UTF-8'), t("Will be displayed prominently on the registration page.") ],
@@ -312,14 +328,19 @@ class Site {
 			'$block_public_dir'     => [ 'block_public_directory', t('Block directory from visitors'), get_config('system','block_public_directory',true), t('Only allow authenticated access to directory.') ],
 			'$verify_email'         => [ 'verify_email', t("Verify Email Addresses"), get_config('system','verify_email'), t("Check to verify email addresses used in account registration (recommended).") ],
 			'$force_publish'        => [ 'publish_all', t("Force publish in directory"), get_config('system','publish_all'), t("Check to force all profiles on this site to be listed in the site directory.") ],
-			'$disable_discover_tab'	=> [ 'disable_discover_tab', t('Public stream'), $discover_tab, t('Provide access to public content from other sites. Warning: this content is unmoderated.') ],
-			'$site_firehose'	    => [ 'site_firehose', t('Site only Public stream'), get_config('system','site_firehose'), t('Provide access to public content originating only from this site if Public stream is disabled.') ],
+
+			'$public_stream_mode'   => [ 'public_stream_mode', t('Public stream'), intval(get_config('system','public_stream_mode',0)), t('Provide a Public stream on your site. This content is unmoderated.'), [
+					0 => t('the Public stream is disabled'),
+					1 => t('the Public stream contains public conversations from this site only'),
+					2 => t('the Public stream contains public conversations from anywhere on the internet'),
+				]],
+			
 			'$open_pubstream'	    => [ 'open_pubstream', t('Allow anybody on the internet to access the Public stream'), get_config('system','open_pubstream',0), t('Default is to only allow viewing by site members. Warning: this content is unmoderated.') ],
 			'$show_like_counts'	    => [ 'show_like_counts', t('Show numbers of likes and dislikes in conversations'), get_config('system','show_like_counts',1), t('If disabled, the presence of likes and dislikes will be shown, but without totals.') ],
 			'$animations'           => [ 'animations', t('Permit animated profile photos'), get_config('system','animated_avatars',true), t('Changing this may take several days to work through the system') ],
 			'$incl'                 => [ 'pub_incl',t('Only import Public stream posts with this text'), get_config('system','pubstream_incl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts') ],
 			'$excl'                 => [ 'pub_excl',t('Do not import Public stream posts with this text'), get_config('system','pubstream_excl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts') ],
-			'$max_imported_follow'  => [ 'max_imported_follow', t('Maximum number of imported friends of friends'), get_config('system','max_imported_follow',10), t('Warning: higher numbers will improve the quality of friend suggestions and directory results but can exponentially increase resource usage') ], 
+			'$max_imported_follow'  => [ 'max_imported_follow', t('Maximum number of imported friends of friends'), get_config('system','max_imported_follow', MAX_IMPORTED_FOLLOW), t('Warning: higher numbers will improve the quality of friend suggestions and directory results but can exponentially increase resource usage') ], 
 			'$login_on_homepage'	=> [ 'login_on_homepage', t("Login on Homepage"),((intval($homelogin) || $homelogin === false) ? 1 : '') , t("Present a login box to visitors on the home page if no other content has been configured.") ],
 			'$enable_context_help'	=> [ 'enable_context_help', t("Enable context help"),((intval($enable_context_help) === 1 || $enable_context_help === false) ? 1 : 0) , t("Display contextual help for the current page when the help button is pressed.") ],
 			'$reply_address'        => [ 'reply_address', t('Reply-to email address for system generated email.'), get_config('system','reply_address','noreply@' . \App::get_hostname()),'' ],
@@ -328,7 +349,8 @@ class Site {
 			'$directory_server'     => (($dir_choices) ?  [ 'directory_server', t("Directory Server URL"), get_config('system','directory_server'), t("Default directory server"), $dir_choices ] : null),
 			'$proxyuser'            => [ 'proxyuser', t("Proxy user"), get_config('system','proxyuser'), "" ],
 			'$proxy'                => [ 'proxy', t("Proxy URL"), get_config('system','proxy'), "" ],
-			'$timeout'              => [ 'timeout', t("Network timeout"), (x(get_config('system','curl_timeout'))?get_config('system','curl_timeout'):60), t("Value is in seconds. Set to 0 for unlimited (not recommended).") ],
+			'$timeout'              => [ 'timeout', t("Network fetch timeout"), (x(get_config('system','curl_timeout'))?get_config('system','curl_timeout'):60), t("Value is in seconds. Set to 0 for unlimited (not recommended).") ],
+			'$post_timeout'         => [ 'post_timeout', t("Network post timeout"), (x(get_config('system','curl_post_timeout'))?get_config('system','curl_post_timeout'):90), t("Value is in seconds. Set to 0 for unlimited (not recommended).") ],
 			'$delivery_interval'    => [ 'delivery_interval', t("Delivery interval"), (x(get_config('system','delivery_interval'))?get_config('system','delivery_interval'):2), t("Delay background delivery processes by this many seconds to reduce system load. Recommend: 4-5 for shared hosts, 2-3 for virtual private servers. 0-1 for large dedicated servers.") ],
 			'$delivery_batch_count' => [ 'delivery_batch_count', t('Deliveries per process'),(x(get_config('system','delivery_batch_count'))?get_config('system','delivery_batch_count'):3), t("Number of deliveries to attempt in a single operating system process. Adjust if necessary to tune system performance. Recommend: 1-5.") ],
 			'$force_queue'          => [ 'force_queue', t("Queue Threshold"), get_config('system','force_queue_threshold',3000), t("Always defer immediate delivery if queue contains more than this number of entries.") ],

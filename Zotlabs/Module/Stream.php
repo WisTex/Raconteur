@@ -14,11 +14,21 @@ require_once('include/acl_selectors.php');
 
 class Stream extends Controller {
 
+
+	// State passed in from the Update module.
+	
+	public $profile_uid = 0;
+	public $loading     = 0;
+	public $updating    = 0;
+
+
+
 	function init() {
 		if (! local_channel()) {
 			return;
 		}
-	
+
+		// setup identity information for page
 		$channel = App::get_channel();
 		App::$profile_uid = local_channel();
 		App::$data['channel'] = $channel;
@@ -26,7 +36,7 @@ class Stream extends Controller {
 	}
 	
 	
-	function get($update = 0, $load = false) {
+	function get() {
 	
 		if (! local_channel()) {
 			$_SESSION['return_url'] = App::$query_string;
@@ -35,9 +45,12 @@ class Stream extends Controller {
 
 		$o = '';
 
-		if ($load) {
+		if ($this->loading) {
 			$_SESSION['loadtime_stream'] = datetime_convert();
 			PConfig::Set(local_channel(),'system','loadtime_stream',$_SESSION['loadtime_stream']);
+			// stream is a superset of channel when it comes to notifications
+			$_SESSION['loadtime_channel'] = datetime_convert();
+			PConfig::Set(local_channel(),'system','loadtime_channel',$_SESSION['loadtime_channel']);
 		}
 
 		$arr = [ 'query' => App::$query_string ];
@@ -45,7 +58,7 @@ class Stream extends Controller {
 	
 		$channel = ((isset(App::$data['channel'])) ? App::$data['channel'] : null);
 
-		// if called from liveUpdate() we will not have called Stream::init() on this request and $channel will not be set
+		// if called from liveUpdate() we will not have called Stream->init() on this request and $channel will not be set
 		
 		if (! $channel) {
 			$channel = App::get_channel();
@@ -136,7 +149,7 @@ class Stream extends Controller {
 					intval(local_channel())
 				);
 				if (! $r) {
-					if ($update) {
+					if ($this->updating) {
 						killme();
 					}
 					notice( t('Access list not found') . EOL );
@@ -182,7 +195,7 @@ class Stream extends Controller {
 			);
 
 			if (! $cid_r) {
-				if ($update) {
+				if ($this->updating) {
 					killme();
 				}
 				notice( t('No such channel') . EOL );
@@ -191,10 +204,13 @@ class Stream extends Controller {
 			
 		}
 	
-		if (! $update) {
+		if (! $this->updating) {
 	
 			// search terms header
-			if ($search) {
+			
+			// hide the terms we use to search for videos from
+			// the activity_filter widget because it doesn't look very good
+			if ($search && $search !== 'video]') {
 				$o .= replace_macros(get_markup_template("section_title.tpl"),
 					[ '$title' => t('Search Results For:') . ' ' . htmlspecialchars($search, ENT_COMPAT,'UTF-8') ]
 				);
@@ -270,7 +286,7 @@ class Stream extends Controller {
 			}
 			else {
 				$contact_str = " '0' ";
-				if (! $update) {
+				if (! $this->updating) {
 					info( t('Access list is empty'));
 				}
 			}
@@ -295,7 +311,7 @@ class Stream extends Controller {
 		elseif (isset($cid_r) && $cid_r) {
 			$item_thread_top = EMPTY_STR;
 
-			if ($load || $update) {
+			if ($this->loading || $this->updating) {
 				if (!$pf && $nouveau) {
 					$sql_extra = " AND author_xchan = '" . dbesc($cid_r[0]['abook_xchan']) . "' ";
 				}
@@ -346,7 +362,7 @@ class Stream extends Controller {
 			$sql_extra .= protect_sprintf(term_query('item', $hashtags, TERM_HASHTAG, TERM_COMMUNITYTAG));
 		}
 	
-		if (! $update) {
+		if (! $this->updating) {
 			// The special div is needed for liveUpdate to kick in for this page.
 			// We only launch liveUpdate if you aren't filtering in some incompatible
 			// way and also you aren't writing a comment (discovered in javascript).
@@ -463,7 +479,7 @@ class Stream extends Controller {
 			}
 		}
 	
-		if ($update && ! $load) {
+		if ($this->updating && ! $this->loading) {
 	
 			// only setup pagination on initial page view
 			$pager_sql = '';
@@ -508,7 +524,7 @@ class Stream extends Controller {
 		else
 			$page_mode = 'client';
 	
-		$simple_update = (($update) ? " and item_changed >  = '" . $_SESSION['loadtime_stream'] . "' " : '');
+		$simple_update = (($this->updating) ? " and item_changed >  = '" . $_SESSION['loadtime_stream'] . "' " : '');
 
 		$parents_str = '';
 		$update_unseen = '';
@@ -526,9 +542,9 @@ class Stream extends Controller {
 		// by storing in your session the current UTC time whenever you LOAD a network page, and only UPDATE items
 		// which are both ITEM_UNSEEN and have "changed" since that time. Cross fingers...
 	
-		if ($update && $_SESSION['loadtime_stream'])
+		if ($this->updating && $_SESSION['loadtime_stream'])
 			$simple_update = " AND item.changed > '" . datetime_convert('UTC','UTC',$_SESSION['loadtime_stream']) . "' ";
-		if ($load)
+		if ($this->loading)
 			$simple_update = '';
 
 		if ($static && $simple_update)
@@ -546,7 +562,7 @@ class Stream extends Controller {
 			}
 		}
 
-		if ($nouveau && $load) {
+		if ($nouveau && $this->loading) {
 			// "New Item View" - show all items unthreaded in reverse created date order
 	
 			$items = q("SELECT item.*, item.id AS item_id, created FROM item 
@@ -564,7 +580,7 @@ class Stream extends Controller {
 	
 			$items = fetch_post_tags($items,true);
 		}
-		elseif ($update) {
+		elseif ($this->updating) {
 	
 			// Normal conversation view
 
@@ -573,7 +589,7 @@ class Stream extends Controller {
 			else
 				$ordering = "commented";
 
-			if ($load) {
+			if ($this->loading) {
 				// Fetch a page full of parent items for this page
 				$r = q("SELECT item.parent AS item_id FROM item 
 					left join abook on ( item.owner_xchan = abook.abook_xchan $abook_uids )
@@ -597,7 +613,6 @@ class Stream extends Controller {
 					and (abook.abook_blocked = 0 or abook.abook_flags is null)
 					$sql_extra3 $sql_extra $sql_options $sql_nets $net_query2"
 				);
-				$_SESSION['loadtime_stream'] = datetime_convert();
 			}
 
 			if ($r) {
@@ -654,9 +669,9 @@ class Stream extends Controller {
 			$mode = 'search';
 		}
 		
-		$o .= conversation($items,$mode,$update,$page_mode);
+		$o .= conversation($items,$mode,$this->updating,$page_mode);
 	
-		if (($items) && (! $update)) {
+		if (($items) && (! $this->updating)) {
 			$o .= alt_pager(count($items));
 		}
 	

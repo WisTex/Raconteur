@@ -15,13 +15,15 @@ Events and RSVP are supported per AS-vocabulary with the exception that a Create
 
 Nomadic Identity
 
-Nomadic identity describes a mechanism where the data stored by your social network can be mirrored to multiple servers in near realtime and any of these servers can be used at any time should your "primary" server be unavailable (temporarily or permanently). The mechanisms for creating nomadic accounts and maintaining mirrors are currently not supported by ActivityPub but are available via the Zot6 protocol. However, the instance information is provided to ActivityPub services which wish to support it in a more seamless manner. Otherwise DMs (for example) may need to be sent to all actor instances to ensure the nomadic actor receives them. There are many other examples. 
+Nomadic identity describes a mechanism where the data stored by your social network can be mirrored to multiple servers in near realtime and any of these servers can be used at any time should your "primary" server be unavailable (temporarily or permanently). The mechanisms for creating nomadic accounts and maintaining mirrors are currently not supported by ActivityPub but are available via the Nomad protocol. However, the instance information is provided to ActivityPub services which wish to support it in a more seamless manner. Otherwise DMs (for example) may need to be sent to all actor instances to ensure the nomadic actor receives them. There are many other examples. 
 
 The actor record for nomadic accounts contains a 'copiedTo' property which is otherwise identical to Mastodon's 'movedTo' property. ActivityPub services wishing to support compatibility with this mechanism should ensure that each nomadic instance is "folded" into a single fediverse identity so that messages from the same actor across different instances are recognised as being the same author. Additionally, any posts sent to a nomadic account should be sent to all instances and private data should be made accessible to all actor instances. This includes historical data and posts as new instances can be created at any time.  
 
 Groups
 
 Groups may be public or private. The initial thread starting post to a group is sent using a DM to the group and should be the only DM recipient. This helps preserve the sanctity of private groups and is a posting method available to most ActivityPub software, as opposed to bang tags (!groupname) which lack widespread support and normal @mentions which can create privacy issues and their associated drama.  It will be converted to an embedded post authored by the group Actor (and attributed to the original Actor) and resent to all members. Followups and replies to group posts use normal federation methods. The actor type is 'Group' and can be followed using Follow/Group *or* Join/Group, and unfollowed by Undo/Follow *or* Leave/Group.
+
+Update: as of June 2021 comments to a group are sent via normal methods, but an additional Announce activity is now sent to ActivityPub connections so that the comments will be seen in the home timeline on microblog sites (Mastodon, etc.). Conversational or macroblog sites with working conversation view should filter/hide this redundant post.
 
 Update: as of 2021-04-08 @mentions are now permitted for posting to public and moderated groups but are not permitted for posting to  restricted or private groups. The group owner can over-ride this behaviour as desired based on the group's security and privacy expectations. DMs (and wall-to-wall posts) are still the recommended methods for posting to groups because they can be used for any groups without needing to remember which are public and which are private; and which may have allowed or disallowed posting via mentions. 
 
@@ -41,8 +43,6 @@ This project provides permission control and moderation of comments. By default 
 
 'site: foobar.com' - matches any actor or clone instance from 'foobar.com'
 
-'network: red' - matches any actor from the 'red' network
-
 'public' - matches anybody at all, may require moderation if the network isn't known
 
 'self' - matches the activity author only
@@ -50,15 +50,18 @@ This project provides permission control and moderation of comments. By default 
 'until=2001-01-01T00:00Z' - comments are closed after the date given. This can be supplied on its own or appended to any other commentPolicy string by preceding with a space; for example 'contacts until=2001-01-01T00:00Z'.
 
 
+Expiring content
+
+Activity objects may include an 'expires' field; after which time they are removed. The removal occurs with a federated Delete, but this is a best faith effort. We automatically delete any local objects we receive with an 'exires' field after it expires regardless of whether or not we receive a Delete activity. We also record external (3rd party) fetches of these items and send Delete activities to them as well. The expiration is specified as an ISO8601 date/time. 
 
 Private Media
 
-Private media MAY be accessed using OCAP or OpenWebAuth. Bearcaps are supported but not generated. 
+Private media MAY be accessed using OCAP or OpenWebAuth. Bearcaps are supported but not currently generated. 
 
 
 Permission System
 
-The Zot permission system has years of historical use and is different than and the reverse of the typical ActivityPub project. We consider 'Follow' to be an anti-pattern which encourages pseudo anonymous stalking. A Follow activity by an actor on this project typically means the actor on this project will send activities to the recipient. It may also confer other permissions. Accept/Follow usually provides permission to receive content from the referenced actor, depending on their privacy settings. 
+The Nomad permission system has years of historical use and is different than and the reverse of the typical ActivityPub project. We consider 'Follow' to be an anti-pattern which encourages pseudo anonymous stalking. A Follow activity by an actor on this project typically means the actor on this project will send activities to the recipient. It may also confer other permissions. Accept/Follow usually provides permission to receive content from the referenced actor, depending on their privacy settings. 
 
 
 Delivery model
@@ -94,7 +97,6 @@ Mentions and private mentions
 
 By default the mention format is '@Display Name', but other options are available, such as '@username' and both '@Display Name (username)'. Mentions may also contain an exclamation character, for example '@!Display Name'. This indicates a Direct or private message to 'Display Name' and post addressing/privacy are altered accordingly. All incoming and outgoing content to your stream is re-written to display mentions in your chosen style. This mechanism may need to be adopted by other projects to provide consistency as there are strong feelings on both sides of the debate about which form should be prevalent in the fediverse.  
 
-
 (Mastodon) Comment Notifications
 
 Our projects send comment notifications if somebody replies to a post you either created or have previously interacted with in some way. They also are able to send a "mention" notification if you were mentioned in the post. This differs from Mastodon which does not appear to support comment notifications at all and only provides mention notifications. For this reason, Mastodon users don't typically get notified unless the author they are replying to is mentioned in the post. We provide this mention in the 'tag' field of the generated Activity, but normally don't include it in the message body, as we don't actually require mentions that were created for the sole purpose of triggering a comment notification.
@@ -103,3 +105,6 @@ Conversation Completion
 
 (2021-04-17) It's easy to fetch missing pieces of a conversation going "upstream", but there is no agreed-on method to fetch a complete conversation from the viewpoint of the origin actor and upstream fetching only provides a single conversation branch, rather than the entire tree. We provide 'context' as a URL to a collection containing the entire conversation (all known branches) as seen by its creator. This requires special treatment and is very similar to ostatus:conversation in that if context is present, it needs to be replicated in conversation descendants. We still support ostatus:conversation but usage is deprecated. We do not use 'replies' to achieve the same purposes because 'replies' only applies to direct descendants at any point in the conversation tree. 
 
+Site Actors
+
+(2021-08-25) An actor record of type 'Service' is now available from an ActivityStreams fetch of the domain root. This was discussed recently in the Socialhub as it may open some novel applications which involve communication with sites and site administators; and also provides a simple ActivityPub centric method for discovering very basic information about a site that doesn't involve platform-centric APIS. At present this is just a skeleton which will be filled in as we better define the ways we see it being used.

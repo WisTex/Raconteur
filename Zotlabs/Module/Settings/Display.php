@@ -40,8 +40,8 @@ class Display {
 
 		$browser_update   = ((x($_POST,'browser_update')) ? intval($_POST['browser_update']) : 0);
 		$browser_update   = $browser_update * 1000;
-		if($browser_update < 10000)
-			$browser_update = 10000;
+		if($browser_update < 15000)
+			$browser_update = 15000;
 
 		$itemspage   = ((x($_POST,'itemspage')) ? intval($_POST['itemspage']) : 20);
 		if($itemspage > 100)
@@ -158,8 +158,8 @@ class Display {
 
 		$user_scalable = get_pconfig(local_channel(),'system','user_scalable', '0');
 
-		$browser_update = intval(get_pconfig(local_channel(), 'system','update_interval'));
-		$browser_update = (($browser_update == 0) ? 80 : $browser_update / 1000); // default if not set: 40 seconds
+		$browser_update = intval(get_pconfig(local_channel(), 'system','update_interval',30000)); // default if not set: 30 seconds
+		$browser_update = (($browser_update < 15000) ? 15 : $browser_update / 1000); // minimum 15 seconds
 
 		$itemspage = intval(get_pconfig(local_channel(), 'system','itemspage'));
 		$itemspage = (($itemspage > 0 && $itemspage < 101) ? $itemspage : 20); // default if not set: 20 items
@@ -196,7 +196,7 @@ class Display {
 
 			'$preload_images' => array('preload_images', t("Preload images before rendering the page"), $preload_images, t("The subjective page load time will be longer but the page will be ready when displayed"), $yes_no),
 			'$user_scalable' => array('user_scalable', t("Enable user zoom on mobile devices"), $user_scalable, '', $yes_no),
-			'$ajaxint'   => array('browser_update',  t("Update browser every xx seconds"), $browser_update, t('Minimum of 10 seconds, no maximum')),
+			'$ajaxint'   => array('browser_update',  t("Update notifications every xx seconds"), $browser_update, t('Minimum of 15 seconds, no maximum')),
 			'$itemspage'   => array('itemspage',  t("Maximum number of conversations to load at any time:"), $itemspage, t('Maximum of 100 items')),
 			'$nosmile'	=> array('nosmile', t("Show emoticons (smilies) as images"), 1-intval($nosmile), '', $yes_no),
 			'$channel_menu' => [ 'channel_menu', t('Provide channel menu in navigation bar'), get_pconfig(local_channel(),'system','channel_menu',get_config('system','channel_menu',0)), t('Default: channel menu located in app menu'),$yes_no ],

@@ -9,11 +9,14 @@ use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\PConfig;
+use Zotlabs\Lib\XConfig;
 use Zotlabs\Lib\Config;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Markdown;
 use Zotlabs\Lib\Libzotdir;
+use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Nodeinfo;
+use Zotlabs\Lib\System;
 use Emoji;
 
 require_once('include/html2bbcode.php');
@@ -24,10 +27,24 @@ class Activity {
 
 	static $ACTOR_CACHE_DAYS = 3;
 
+	// $x (string|array)
+	// if json string, decode it
+	// returns activitystreams object as an array except if it is a URL
+	// which returns the URL as string
+	
 	static function encode_object($x) {
 
-		if (($x) && (! is_array($x)) && (substr(trim($x),0,1)) === "{" ) {
-			$x = json_decode($x,true);
+		if ($x) {
+			if (is_string($x)) {
+				$tmp = json_decode($x,true);
+				if ($tmp !== NULL) {
+					$x = $tmp;
+				}
+			}
+		}
+
+		if (is_string($x)) {
+			return ($x);
 		}
 
 		if ($x['type'] === ACTIVITY_OBJ_PERSON) {
@@ -56,7 +73,7 @@ class Activity {
 
 
 
-	static function fetch($url,$channel = null,$hub = null) {
+	static function fetch($url,$channel = null,$hub = null,$debug = false) {
 		$redirects = 0;
 		if (! check_siteallowed($url)) {
 			logger('denied: ' . $url);
@@ -66,22 +83,23 @@ class Activity {
 			$channel = get_sys_channel();
 		}
 
-		$idn = parse_url($url);
-		if ($idn['host'] !== punify($idn['host'])) {
-			$url = str_replace($idn['host'],punify($idn['host']),$url);
+		$parsed = parse_url($url);
+
+		// perform IDN substitution
+		
+		if ($parsed['host'] !== punify($parsed['host'])) {
+			$url = str_replace($parsed['host'],punify($parsed['host']),$url);
 		}
 
 		logger('fetch: ' . $url, LOGGER_DEBUG);
 
-		if (strpos($url,'x-zot:') === 0) {
+		if (isset($parsed['scheme']) && $parsed['scheme'] === 'x-zot') {
 			$x = ZotURL::fetch($url,$channel,$hub);
 		}
 		else {
-			$m = parse_url($url);
-
 			// handle bearcaps
-			if ($m['scheme'] === 'bear' && $m['query']) {
-				$params = explode('&',$m['query']);
+			if (isset($parsed['scheme']) && isset($parsed['query']) && $parsed['scheme'] === 'bear' && $parsed['query'] !== EMPTY_STR) {
+				$params = explode('&', $parsed['query']);
 				if ($params) {
 					foreach ($params as $p) {
 						if (substr($p,0,2) === 'u=') {
@@ -91,18 +109,26 @@ class Activity {
 							$token = substr($p,2);
 						}
 					}
-					// re-parse the URL because it changed and we need the host in the next section
-					$m = parse_url($url);
+					// the entire URL just changed so parse it again
+					$parsed = parse_url($url);
 				}
-
 			}
+			
+			// Ignore fragments; as we are not in a browser and some platforms (e.g. Django or at least funkwhale) don't handle them well
+			unset($parsed['fragment']);
+
+			// rebuild the url
+			$url = unparse_url($parsed);
+
+			logger('fetch_actual: ' . $url, LOGGER_DEBUG);
 
 			$headers = [
 				'Accept'           => 'application/activity+json, application/x-zot-activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
-				'Host'             => $m['host'],
+				'Host'             => $parsed['host'],
 				'Date'             => datetime_convert('UTC','UTC', 'now', 'D, d M Y H:i:s \\G\\M\\T'),
 				'(request-target)' => 'get ' . get_request_string($url)
 			];
+			
 			if (isset($token)) {
 				$headers['Authorization'] = 'Bearer ' . $token;
 			}
@@ -115,15 +141,12 @@ class Activity {
 			$y = json_decode($x['body'],true);
 			logger('returned: ' . json_encode($y,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
 
-			$m = parse_url($url);
-			if ($m) {
-				$site_url = unparse_url( ['scheme' => $m['scheme'], 'host' => $m['host'], 'port' => ((array_key_exists('port',$m) && intval($m['port'])) ? $m['port'] : 0) ] );
-				q("update site set site_update = '%s' where site_url = '%s' and site_update < %s - INTERVAL %s",
-					dbesc(datetime_convert()),
-					dbesc($site_url),
-					db_utcnow(), db_quoteinterval('1 DAY')
-				);
-			}
+			$site_url = unparse_url( ['scheme' => $parsed['scheme'], 'host' => $parsed['host'], 'port' => ((array_key_exists('port',$parsed) && intval($parsed['port'])) ? $parsed['port'] : 0) ] );
+			q("update site set site_update = '%s' where site_url = '%s' and site_update < %s - INTERVAL %s",
+				dbesc(datetime_convert()),
+				dbesc($site_url),
+				db_utcnow(), db_quoteinterval('1 DAY')
+			);
 
 			// check for a valid signature, but only if this is not an actor object. If it is signed, it must be valid.
 			// Ignore actors because of the potential for infinite recursion if we perform this step while
@@ -139,11 +162,12 @@ class Activity {
 			}
 
 			return json_decode($x['body'], true);
-
-
 		}
 		else {
 			logger('fetch failed: ' . $url);
+			if ($debug) {
+				return $x;
+			}
 		}
 		return null;
 	}
@@ -400,6 +424,9 @@ class Activity {
 				$ptr = [ $ptr ];
 			}
 			foreach ($ptr as $t) {
+				if (! is_array($t)) {
+					continue;
+				}
 				if (! array_key_exists('type',$t)) {
 					$t['type'] = 'Hashtag';
 				}
@@ -776,7 +803,7 @@ class Activity {
 			$ret['context'] = $cnv;
 			$ret['conversation'] = $cnv;
 		}
-
+		
 		if (intval($i['item_private']) === 2) {
 			$ret['directMessage'] = true;
 		}
@@ -792,7 +819,10 @@ class Activity {
 		if ($replyto) {
 			$ret['replyTo'] = $replyto;
 		}
-		
+
+
+
+
 		if (! isset($ret['url'])) {
 			$urls = [];
 			if (intval($i['item_wall'])) {
@@ -839,8 +869,11 @@ class Activity {
 
 
 		if ($i['obj']) {
-			if (! is_array($i['obj'])) {
-				$i['obj'] = json_decode($i['obj'],true);
+			if (is_string($i['obj'])) {
+				$tmp = json_decode($i['obj'],true);
+				if ($tmp !== NULL) {
+					$i['obj'] = $tmp;
+				}
 			}
 			$obj = self::encode_object($i['obj']);
 			if ($obj)
@@ -850,15 +883,20 @@ class Activity {
 		}
 		else {
 			$obj = self::encode_item($i,$activitypub);
-			if ($obj)
+			if ($obj) {
 				$ret['object'] = $obj;
-			else
+			}
+			else {
 				return [];
+			}
 		}
 
 		if ($i['target']) {
-			if (! is_array($i['target'])) {
-				$i['target'] = json_decode($i['target'],true);
+			if (is_string($i['target'])) {
+				$tmp = json_decode($i['target'],true);
+				if ($tmp !== NULL) {
+					$i['target'] = $tmp;
+				}
 			}
 			$tgt = self::encode_object($i['target']);
 			if ($tgt) {
@@ -875,12 +913,31 @@ class Activity {
 		
 		if ($activitypub) {
 
+			$parent_i = [];
 			$public = (($i['item_private']) ? false : true);
 			$top_level = (($reply) ? false : true);
-			
+			$ret['to'] = [];
+			$ret['cc'] = [];
+
+			if (! $top_level) {
+				$recips = get_iconfig($i['parent'], 'activitypub', 'recips');
+				if ($recips) {
+					$parent_i['to'] = $recips['to'];
+					$parent_i['cc'] = $recips['cc'];
+				}
+			}
+
 			if ($public) {
 				$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
-				$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
+				if (isset($parent_i['to']) && is_array($parent_i['to'])) {
+					$ret['to'] = array_values(array_unique(array_merge($ret['to'],$parent_i['to'])));
+				}
+				if ($i['item_origin']) {
+					$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
+				}
+				if (isset($parent_i['cc']) && is_array($parent_i['cc'])) {
+					$ret['cc'] = array_values(array_unique(array_merge($ret['cc'],$parent_i['cc'])));
+				}
 			}
 			else {
 			
@@ -888,9 +945,16 @@ class Activity {
 				
 				if ($top_level) {
 					$ret['to'] = self::map_acl($i);
+					if (isset($parent_i['to']) && is_array($parent_i['to'])) {
+						$ret['to'] = array_values(array_unique(array_merge($ret['to'],$parent_i['to'])));
+					}
 				}
 				else {
 					$ret['cc'] = self::map_acl($i);
+					if (isset($parent_i['cc']) && is_array($parent_i['cc'])) {
+						$ret['cc'] = array_values(array_unique(array_merge($ret['cc'],$parent_i['cc'])));
+					}
+
 					if ($ret['tag']) {
 						foreach ($ret['tag'] as $mention) {
 							if (is_array($mention) && array_key_exists('ttype',$mention) && in_array($mention['ttype'],[ TERM_FORUM, TERM_MENTION]) && array_key_exists('href',$mention) && $mention['href']) {
@@ -999,14 +1063,19 @@ class Activity {
 			return $ret;
 		}
 
-		if (isset($i['obj'])) {
-			if (is_array($i['obj'])) {
-				$ret = $i['obj'];
+		if (isset($i['obj']) && $i['obj']) {
+			if (is_string($i['obj'])) {
+				$tmp = json_decode($i['obj'],true);
+				if ($tmp !== NULL) {
+					$i['obj'] = $tmp;
+				}
 			}
-			else {
-				$ret = json_decode($i['obj'],true);
+			$ret = $i['obj'];
+			if (is_string($ret)) {
+				return $ret;
 			}
 		}
+
 
 		$ret['type'] = $objtype;
 
@@ -1030,6 +1099,16 @@ class Activity {
 		$has_images = preg_match_all('/\[[zi]mg(.*?)\](.*?)\[/ism',$i['body'],$images,PREG_SET_ORDER);
 
 		$ret['id'] = $i['mid'];
+
+//		$token = IConfig::get($i,'ocap','relay');
+//		if ($token) {
+//			if (defined('USE_BEARCAPS')) {
+//				$ret['id'] = 'bear:?u=' . $ret['id'] . '&t=' . $token;
+//			}
+//			else {
+//				$ret['id'] = $ret['id'] . '?token=' . $token;
+//			}
+//		}
 
 		$ret['published'] = datetime_convert('UTC','UTC',$i['created'],ATOM_TIME);
 		if ($i['created'] !== $i['edited']) {
@@ -1274,12 +1353,47 @@ class Activity {
 		
 		if ($activitypub) {
 
+			$parent_i = [];
+			$ret['to'] = [];
+			$ret['cc'] = [];
+			
 			$public = (($i['item_private']) ? false : true);
 			$top_level = (($i['mid'] === $i['parent_mid']) ? true : false);
-			
+
+			if (! $top_level) {
+				
+				if (intval($i['parent'])) {
+					$recips = get_iconfig($i['parent'], 'activitypub', 'recips');
+				}
+				else {
+					// if we are encoding this item for storage there won't be a parent. 
+					$p = q("select parent from item where parent_mid = '%s' and uid = %d",
+						dbesc($i['parent_mid']),
+						intval($i['uid'])
+					);
+					if ($p) {
+						$recips = get_iconfig($p[0]['parent'], 'activitypub', 'recips');
+					}
+				}
+				if ($recips) {
+					$parent_i['to'] = $recips['to'];
+					$parent_i['cc'] = $recips['cc'];
+				}
+			}
+
+
 			if ($public) {
 				$ret['to'] = [ ACTIVITY_PUBLIC_INBOX ];
-				$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
+				if (isset($parent_i['to']) && is_array($parent_i['to'])) {
+					$ret['to'] = array_values(array_unique(array_merge($ret['to'],$parent_i['to'])));
+				}
+				if ($i['item_origin']) {
+					$ret['cc'] = [ z_root() . '/followers/' . substr($i['author']['xchan_addr'],0,strpos($i['author']['xchan_addr'],'@')) ];
+				}
+				if (isset($parent_i['cc']) && is_array($parent_i['cc'])) {
+					$ret['cc'] = array_values(array_unique(array_merge($ret['cc'],$parent_i['cc'])));
+				}
+
 			}
 			else {
 			
@@ -1287,9 +1401,15 @@ class Activity {
 				
 				if ($top_level) {
 					$ret['to'] = self::map_acl($i);
+					if (isset($parent_i['to']) && is_array($parent_i['to'])) {
+						$ret['to'] = array_values(array_unique(array_merge($ret['to'],$parent_i['to'])));
+					}
 				}
 				else {
 					$ret['cc'] = self::map_acl($i);
+					if (isset($parent_i['cc']) && is_array($parent_i['cc'])) {
+						$ret['cc'] = array_values(array_unique(array_merge($ret['cc'],$parent_i['cc'])));
+					}
 					if ($ret['tag']) {
 						foreach ($ret['tag'] as $mention) {
 							if (is_array($mention) && array_key_exists('ttype',$mention) && in_array($mention['ttype'],[ TERM_FORUM, TERM_MENTION]) && array_key_exists('href',$mention) && $mention['href']) {
@@ -1463,11 +1583,16 @@ class Activity {
 		$c = ((array_key_exists('channel_id',$p)) ? $p : channelx_by_hash($p['xchan_hash']));
 
 		$ret['type']  = 'Person';
-
+		$auto_follow = false;
+		
 		if ($c) {
 			$role = PConfig::Get($c['channel_id'],'system','permissions_role');
 			if (strpos($role,'forum') !== false) {
 				$ret['type'] = 'Group';
+			}
+			$role_permissions = PermissionRoles::role_perms($role);
+			if (is_array($role_permissions) && isset($role_permissions['perms_auto'])) {
+				$auto_follow = intval($role_permissions['perms_auto']);
 			}
 		}
 
@@ -1490,15 +1615,18 @@ class Activity {
 			'width'     => 300,
 		];
 		$ret['url'] = $p['xchan_url'];
-		if ($p['channel_location']) {
+		if (isset($p['channel_location']) && $p['channel_location']) {
 			$ret['location'] = [ 'type' => 'Place', 'name' => $p['channel_location'] ];
 		}
+
+		$ret['tag'] = [ [ 'type' => 'PropertyValue','name' => 'Protocol','value' => 'zot6'] ];
 
 		if ($activitypub && get_config('system','activitypub', ACTIVITYPUB_ENABLED)) {	
 
 			if ($c) {
 				if (get_pconfig($c['channel_id'],'system','activitypub', ACTIVITYPUB_ENABLED)) {
-					$ret['inbox']       = z_root() . '/inbox/'     . $c['channel_address'];
+					$ret['inbox'] = z_root() . '/inbox/'     . $c['channel_address'];
+					$ret['tag'][] = [ 'type' => 'PropertyValue','name' => 'Protocol','value' => 'activitypub'];
 				}
 				else {
 					$ret['inbox'] = null;
@@ -1517,11 +1645,16 @@ class Activity {
 				
 				$ret['discoverable'] = ((1 - intval($p['xchan_hidden'])) ? true : false);				
 				$ret['publicKey'] = [
-					'id'           => $p['xchan_url'],
-					'owner'        => $p['xchan_url'],
-					'publicKeyPem' => $p['xchan_pubkey']
+					'id'                 => $p['xchan_url'] . '?operation=getkey',
+					'owner'              => $p['xchan_url'],
+					'signatureAlgorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+					'publicKeyPem'       => $p['xchan_pubkey']
 				];
 
+				$ret['manuallyApprovesFollowers'] = (($auto_follow) ? false : true);
+				if ($ret['type'] === 'Group') {
+					$ret['capabilities'] = [ 'acceptsJoins' => true ];
+				}
 				// map other nomadic identities linked with this channel
 				
 				$locations = [];
@@ -1550,12 +1683,44 @@ class Activity {
 						'url' => $cp['url']
 					];
 				}
-				$dp = q("select about from profile where uid = %d and is_default = 1",
-					intval($c['channel_id'])
-				);
-				if ($dp && $dp[0]['about']) {
-					$ret['summary'] = bbcode($dp[0]['about'],['export' => true ]);
-				}	
+				// only fill in profile information if the profile is publicly visible
+				if (perm_is_allowed($c['channel_id'],EMPTY_STR,'view_profile')) {
+					$dp = q("select * from profile where uid = %d and is_default = 1",
+						intval($c['channel_id'])
+					);
+					if ($dp) {
+						if ($dp[0]['about']) {
+							$ret['summary'] = bbcode($dp[0]['about'],['export' => true ]);
+						}
+						foreach ( [ 'pdesc', 'address', 'locality', 'region', 'postal_code', 'country_name',
+							'hometown', 'gender', 'marital', 'sexual', 'politic', 'religion', 'pronouns',
+							'homepage', 'contact', 'dob' ] as $k ) {
+							if ($dp[0][$k]) {
+								$key = $k;
+								if ($key === 'pdesc') {
+									$key = 'description';
+								}
+								if ($key == 'politic') {
+									$key = 'political';
+								}
+								if ($key === 'dob') {
+									$key = 'birthday';
+								}
+								$ret['attachment'][]  = [ 'type' => 'PropertyValue', 'name' => $key, 'value' => $dp[0][$k] ];
+							}
+						}
+						if ($dp[0]['keywords']) {
+							$kw = explode(' ', $dp[0]['keywords']);
+							if ($kw) {
+								foreach ($kw as $k) {
+									$k = trim($k);
+									$k = trim($k,'#,');
+									$ret['tag'][] = [ 'id' => z_root() . '/search?tag=' . urlencode($k), 'name' => '#' . urlencode($k) ];
+								}
+							}
+						}
+					}
+				}
 			}
 			else {
 				$collections = get_xconfig($p['xchan_hash'],'activitypub','collections',[]);
@@ -1583,6 +1748,61 @@ class Activity {
 
 		return $ret;
 	}
+
+
+
+	static function encode_site() {
+
+
+		$sys = get_sys_channel();		
+
+		// encode  the sys channel information and over-ride with site
+		// information
+		$ret = self::encode_person($sys,true,true);
+
+		$ret['type']  = ((is_group($sys['channel_id'])) ? 'Group' : 'Service');
+		$ret['id'] = z_root();
+		$ret['alsoKnownAs'] = z_root() . '/channel/sys';
+		$auto_follow = false;
+
+		$ret['preferredUsername'] = 'sys';
+		$ret['name']  = System::get_site_name();
+
+		$ret['icon']  = [
+			'type'      => 'Image',
+			'url'       => 	System::get_site_icon(),
+		];
+
+		$ret['generator'] = [ 'type' => 'Application', 'name' => System::get_platform_name() ];
+
+		$ret['url'] = z_root();
+
+		$ret['manuallyApprovesFollowers'] = ((get_config('system','allowed_sites')) ? true : false);
+				
+		$cp = get_cover_photo($sys['channel_id'],'array');
+		if ($cp) {
+			$ret['image'] = [
+				'type' => 'Image',
+				'mediaType' => $cp['type'],
+				'url' => $cp['url']
+			];
+		}
+
+		$ret['summary'] = bbcode(get_config('system','siteinfo',''),[ 'export' => true ]);
+		$ret['source'] = [
+			'mediaType' => 'text/bbcode',
+			'summary' => get_config('system','siteinfo','')
+		];
+
+		$ret['publicKey'] = [
+			'id'           => z_root() . '?operation=getkey',
+			'owner'        => z_root(),
+			'publicKeyPem' => get_config('system','pubkey')
+		];
+
+		return $ret;
+	}
+
 
 
 	static function activity_mapper($verb) {
@@ -1936,31 +2156,57 @@ class Activity {
 
 //		logger('person_obj: ' . print_r($person_obj,true));
 
-		// We may have been passed a cached entry. If it is, and the cache duration has expired
-		// fetch a fresh copy before continuing.
+		if (array_key_exists('movedTo',$person_obj) && $person_obj['movedTo'] && ! is_array($person_obj['movedTo'])) {
+			$tgt = self::fetch($person_obj['movedTo']);
+			if (is_array($tgt)) {
+				self::actor_store($person_obj['movedTo'],$tgt);
+				ActivityPub::move($person_obj['id'],$tgt);
+			}
+			return;
+		}
 
-		if (array_key_exists('cached',$person_obj)) {
-			if (array_key_exists('updated',$person_obj) && (datetime_convert('UTC','UTC',$person_obj['updated']) < datetime_convert('UTC','UTC','now - ' . self::$ACTOR_CACHE_DAYS . ' days') || $force)) {
+
+		$ap_hubloc = null;
+
+		$hublocs = self::get_actor_hublocs($url);
+		if ($hublocs) {
+			foreach ($hublocs as $hub) {
+				if ($hub['hubloc_network'] === 'activitypub') {
+					$ap_hubloc = $hub;
+				}
+				if ($hub['hubloc_network'] === 'zot6') {
+					Libzot::update_cached_hubloc($hub);
+				}
+			}
+		}
+
+		if ($ap_hubloc) {
+			// we already have a stored record. Determine if it needs updating.
+			if ($ap_hubloc['hubloc_updated'] < datetime_convert('UTC','UTC',' now - ' . self::$ACTOR_CACHE_DAYS . ' days') || $force) {
 				$person_obj = self::fetch($url);
+				// ensure we received something
+				if (! is_array($person_obj)) {
+					return;
+				}
 			}
 			else {
 				return;
 			}
 		}
-
-		if (is_array($person_obj) && array_key_exists('movedTo',$person_obj) && $person_obj['movedTo'] && ! is_array($person_obj['movedTo'])) {
-			$tgt = self::fetch($person_obj['movedTo']);
-			self::actor_store($person_obj['movedTo'],$tgt);
-			ActivityPub::move($person_obj['id'],$tgt);
-			return;
-		}
 		
-		$url = $person_obj['id'];
+
+
+		if (isset($person_obj['id'])) {
+			$url = $person_obj['id'];
+		}
 
 		if (! $url) {
 			return;
 		}
 
+		// store the actor record in XConfig 
+		XConfig::Set($url,'system','actor_record',$person_obj);
+	
 		$name = escape_tags($person_obj['name']);
 		if (! $name)
 			$name = escape_tags($person_obj['preferredUsername']);
@@ -1992,6 +2238,17 @@ class Activity {
 		}
 		if (! (isset($icon) && $icon)) {
 			$icon = z_root() . '/' . get_default_profile_photo();
+		}
+
+		$cover_photo = false;
+
+		if (isset($person_obj['image'])) {
+			if (is_string($person_obj['image'])) {
+				$cover_photo = $person_obj['image'];
+			}
+			if (isset($person_obj['image']['url'])) {
+				$cover_photo = $person_obj['image']['url'];
+			}
 		}
 
 		$hidden = false;
@@ -2070,7 +2327,7 @@ class Activity {
 
 		$keywords = [];
 		
-		if (is_array($person_obj['tag'])) {
+		if (isset($person_obj['tag']) && is_array($person_obj['tag'])) {
 			foreach ($person_obj['tag'] as $t) {
 				if (is_array($t) && isset($t['type']) && $t['type'] === 'Hashtag') {
 					if (isset($t['name'])) {
@@ -2080,10 +2337,15 @@ class Activity {
 						}
 					}
 				}
+				if (is_array($t) && isset($t['type']) && $t['type'] === 'PropertyValue') {
+					if (isset($t['name']) && isset($t['value']) && $t['name'] === 'Protocol') {
+						self::update_protocols($url,trim($t['value']));
+					}
+				}
 			}
 		}
 
-		$xchan_type = (($person_obj['type'] === 'Group') ? 1 : 0);
+		$xchan_type = self::get_xchan_type($person_obj['type']);
 		$about = ((isset($person_obj['summary'])) ? html2bbcode(purify_html($person_obj['summary'])) : EMPTY_STR);
 
 		$p = q("select * from xchan where xchan_url = '%s' and xchan_network = 'zot6' limit 1",
@@ -2093,6 +2355,11 @@ class Activity {
 			set_xconfig($url,'system','protocols','zot6,activitypub');
 		}
 
+		// there is no standard way to represent an 'instance actor' but this will at least subdue the multiple
+		// pages of Mastodon and Pleroma instance actors in the directory.
+		// @TODO - (2021-08-27) remove this if they provide a non-person xchan_type
+		// once extended xchan_type directory filtering is implemented.
+		$censored = ((strpos($profile,'instance_actor') || strpos($profile,'/internal/fetch')) ? 1 : 0);
 
 		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 			dbesc($url)
@@ -2116,7 +2383,8 @@ class Activity {
 					'xchan_photo_l'        => z_root() . '/' . get_default_profile_photo(),
 					'xchan_photo_m'        => z_root() . '/' . get_default_profile_photo(80),
 					'xchan_photo_s'        => z_root() . '/' . get_default_profile_photo(48),
-					'xchan_photo_mimetype' => 'image/png',					
+					'xchan_photo_mimetype' => 'image/png',
+					'xchan_censored'       => $censored
 
 				]
 			);
@@ -2131,7 +2399,7 @@ class Activity {
 			}
 
 			// update existing record
-			$u = q("update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s', xchan_hidden = %d, xchan_type = %d where xchan_hash = '%s'",
+			$u = q("update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s', xchan_hidden = %d, xchan_type = %d, xchan_censored = %d where xchan_hash = '%s'",
 				dbesc(datetime_convert()),
 				dbesc($name),
 				dbesc($pubkey),
@@ -2139,6 +2407,7 @@ class Activity {
 				dbesc(datetime_convert()),
 				intval($hidden),
 				intval($xchan_type),
+				intval($censored),
 				dbesc($url)
 			);
 
@@ -2149,6 +2418,11 @@ class Activity {
 				);
 			}
 		}
+
+		if ($cover_photo) {
+			set_xconfig($url,'system','cover_photo',$cover_photo);
+		}
+
 
 		$m = parse_url($url);
 		if ($m['scheme'] && $m['host']) {
@@ -2208,7 +2482,7 @@ class Activity {
 		$m = parse_url($url);
 		if ($m) {
 			$hostname = $m['host'];
-			$baseurl = $m['scheme'] . '://' . $m['host'] . (($m['port']) ? ':' . $m['port'] : '');
+			$baseurl = $m['scheme'] . '://' . $m['host'] . ((isset($m['port']) && intval($m['port'])) ? ':' . $m['port'] : '');
 		}
 
 		if (! $h) {
@@ -2272,6 +2546,15 @@ class Activity {
 		Run::Summon( [ 'Xchan_photo', bin2hex($icon), bin2hex($url) ] );
 
 	}
+
+	static function update_protocols($xchan,$str) {
+		$existing = explode(',',get_xconfig($xchan,'system','protocols',EMPTY_STR));
+		if (! in_array($str,$existing)) {
+			$existing[] = $str;
+			set_xconfig($xchan,'system','protocols', implode(',',$existing));
+		}
+	}
+			
 
 	static function drop($channel,$observer,$act) {
 		$r = q("select * from item where mid = '%s' and uid = %d limit 1",
@@ -2340,6 +2623,9 @@ class Activity {
 	}
 
 	static function update_poll($item,$post) {
+
+		logger('updating poll');
+		
 		$multi = false;
 		$mid = $post['mid'];
 		$content = $post['title'];
@@ -2497,6 +2783,12 @@ class Activity {
 			return false;
 		}
 
+		// Do not proceed further if there is no actor.
+		
+		if (! isset($act->actor['id'])) {
+			logger('No actor!');
+			return false;
+		}
 
 		$s['owner_xchan']  = $act->actor['id'];
 		$s['author_xchan'] = $act->actor['id'];
@@ -2504,7 +2796,12 @@ class Activity {
 		// ensure we store the original actor
 		self::actor_store($act->actor['id'],$act->actor);
 
-		$s['mid']        = $act->obj['id'];
+		$s['mid']        = ((is_array($act->obj) && isset($act->obj['id'])) ? $act->obj['id'] : $act->obj);
+		
+		if (! $s['mid']) {
+			return false;
+		}
+		
 		$s['parent_mid'] = $act->parent_id;
 
 		if (array_key_exists('published',$act->data) && $act->data['published']) {
@@ -2526,7 +2823,7 @@ class Activity {
 			$s['expires'] = datetime_convert('UTC','UTC',$act->obj['expires']);
 		}
 
-		if ($act->type === 'Invite' && array_key_exists('type',$act->obj) && $act->obj['type'] === 'Event') {
+		if ($act->type === 'Invite' && is_array($act->obj) && array_key_exists('type',$act->obj) && $act->obj['type'] === 'Event') {
 			$s['mid'] = $s['parent_mid'] = $act->id;
 		}
 
@@ -2544,20 +2841,25 @@ class Activity {
 			$response_activity = true;
 
 			$s['mid'] = $act->id;
-			$s['parent_mid'] = $act->obj['id'];
+			$s['parent_mid'] = ((is_array($act->obj) && isset($act->obj['id'])) ? $act->obj['id'] : $act->obj);
 
 			
 			// over-ride the object timestamp with the activity
 
-			if ($act->data['published']) {
+			if (isset($act->data['published']) && $act->data['published']) {
 				$s['created'] = datetime_convert('UTC','UTC',$act->data['published']);
 			}
 
-			if ($act->data['updated']) {
+			if (isset($act->data['updated']) && $act->data['updated']) {
 				$s['edited'] = datetime_convert('UTC','UTC',$act->data['updated']);
 			}
 
 			$obj_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj));
+
+			// Actor records themselves do not have an actor or attributedTo
+			if ((! $obj_actor) && isset($act->obj['type']) && Activitystreams::is_an_actor($act->obj['type'])) {
+				$obj_actor = $act->obj;
+			}
 
 			// We already check for admin blocks of third-party objects when fetching them explicitly.
 			// Repeat here just in case the entire object was supplied inline and did not require fetching
@@ -2574,15 +2876,14 @@ class Activity {
 				}
 			}
 
-			// if the object is an actor, it is not really a response activity, so reset a couple of things
+			// if the object is an actor, it is not really a response activity, so reset it to a top level post
 			
 			if (ActivityStreams::is_an_actor($act->obj['type'])) {
-				$obj_actor = $act->actor;
 				$s['parent_mid'] = $s['mid'];
 			}
 
 
-			// ensure we store the original actor
+			// ensure we store the original actor of the associated (parent) object
 			self::actor_store($obj_actor['id'],$obj_actor);
 
 			$mention = self::get_actor_bbmention($obj_actor['id']);
@@ -2613,7 +2914,7 @@ class Activity {
 			}
 			
 			if ($act->type === 'Announce') {
-				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $act->obj['type']);
+				$content['content'] = sprintf( t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type']));
 			}
 
 			if ($act->type === 'emojiReaction') {
@@ -2738,8 +3039,12 @@ class Activity {
 				$s['term'] = $a;
 				foreach ($a as $b) {
 					if ($b['ttype'] === TERM_EMOJI) {
-						// $s['title'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['title']);
 						$s['summary'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['summary']);
+
+						// @todo - @bug
+						// The emoji reference in the body might be inside a code block. In that case we shouldn't replace it.
+						// Currently we do.  
+						
 						$s['body'] = str_replace($b['term'],'[img=16x16]' . $b['url'] . '[/img]',$s['body']);
 					}
 				}
@@ -2756,9 +3061,10 @@ class Activity {
 			}
 		}
 
-
-
-		if ($act->obj['type'] === 'Note' && $s['attach']) {
+		// Objects that might have media attachments which aren't already provided in the content element.
+		// We'll check specific media objects separately.
+		
+		if (in_array($act->obj['type'], [ 'Article', 'Document', 'Event', 'Note', 'Page', 'Place', 'Question' ]) && isset($s['attach']) && $s['attach']) {
 			$s['body'] .= self::bb_attach($s['attach'],$s['body']);
 		}
 
@@ -2989,7 +3295,7 @@ class Activity {
 			}
 		}
 
-		if (! $s['plink']) {
+		if (! (isset($s['plink']) && $s['plink'])) {
 			$s['plink'] = $s['mid'];
 		}
 
@@ -3013,10 +3319,8 @@ class Activity {
 				$s['item_private'] = 2;
 		}
 
-		if ($parent) {
-			set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
-		}
 
+		set_iconfig($s,'activitypub','rawmsg',$act->raw,1);
 
 		// Restrict html caching to ActivityPub senders.
 		// Zot has dynamic content and this library is used by both. 
@@ -3132,7 +3436,7 @@ class Activity {
 		// $s['html'] will be populated if caching was enabled.
 		// This is usually the case for ActivityPub sourced content, while Zot6 content is not cached.
 
-		if ($s['html']) {
+		if (isset($s['html']) && $s['html']) {
 			$s['html'] = bbcode($s['body'], [ 'bbonly' => true ] );
 		}
 
@@ -3193,6 +3497,7 @@ class Activity {
 		}
 
 
+
 		if ($item['parent_mid'] && $item['parent_mid'] !== $item['mid']) {
 			$is_child_node = true;
 		}
@@ -3209,6 +3514,18 @@ class Activity {
 			if ($p) {
 				// set the owner to the owner of the parent
 				$item['owner_xchan'] = $p[0]['owner_xchan'];
+
+				// quietly reject group comment boosts by group owner
+				// (usually only sent via ActivityPub so groups will work on microblog platforms)
+				// This catches those activities if they slipped in via a conversation fetch
+				
+				if ($p[0]['parent_mid'] !== $item['parent_mid']) {
+					if ($item['verb'] === 'Announce' && $item['author_xchan'] === $item['owner_xchan']) {
+						logger('group boost activity by group owner rejected');
+						return;
+					}
+				}
+
 				// check permissions against the author, not the sender
 				$allowed = perm_is_allowed($channel['channel_id'],$item['author_xchan'],'post_comments');
 				if (! $allowed) {
@@ -3227,7 +3544,7 @@ class Activity {
 					$allowed = false;
 					$reason[] = 'absolutely';
 				}
-				
+
 				if (! $allowed) {
 					logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
 					logger('rejected reason ' . print_r($reason,true));
@@ -3242,6 +3559,11 @@ class Activity {
 				}
 			}
 			else {
+			
+				// By default if we allow you to send_stream and comments and this is a comment, it is allowed.
+				// A side effect of this action is that if you take away send_stream permission, comments to those
+				// posts you previously allowed will still be accepted. It is possible but might be difficult to fix this.
+				
 				$allowed = true;
 
 				// reject public stream comments that weren't sent by the conversation owner
@@ -3261,9 +3583,11 @@ class Activity {
 		}
 		else {
 			if (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') || ($is_sys_channel && $pubstream)) {
+				logger('allowed: permission allowed', LOGGER_DATA);
 				$allowed = true;
 			}
 			if ($permit_mentions) {
+				logger('allowed: permitted mention', LOGGER_DATA);
 				$allowed = true;
 			}
 		}
@@ -3271,6 +3595,7 @@ class Activity {
 		if (tgroup_check($channel['channel_id'],$item) && (! $is_child_node)) {
 			// for forum deliveries, make sure we keep a copy of the signed original
 			set_iconfig($item,'activitypub','rawmsg',$act->raw,1);
+			logger('allowed: tgroup');
 			$allowed = true;
 		}
 
@@ -3280,13 +3605,13 @@ class Activity {
 			}
 		}
 
-
-		if ($is_sys_channel) {
-
-			if (! $pubstream) {
+		if (intval($item['item_private']) === 2) {
+			if (! perm_is_allowed($channel['channel_id'],$observer_hash,'post_mail')) {
 				$allowed = false;
-				$reason[] = 'unlisted post delivered to sys channel';
 			}
+		}
+		
+		if ($is_sys_channel) {
 
 			if (! check_pubstream_channelallowed($observer_hash)) {
 				$allowed = false;
@@ -3384,17 +3709,6 @@ class Activity {
 
 		set_iconfig($item,'activitypub','recips',$act->raw_recips);
 
-		if (! (isset($act->data['inheritPrivacy']) && $act->data['inheritPrivacy'])) {				
-			if ($item['item_private']) {
-				$item['item_restrict'] = $item['item_restrict'] & 1;
-				if ($is_child_node) {
-					$item['allow_cid'] = '<' . $channel['channel_hash'] . '>';
-					$item['allow_gid'] = $item['deny_cid'] = $item['deny_gid'] = '';
-				}
-				logger('restricted');
-			}				
-		}
-
 		if (intval($act->sigok)) {
 			$item['item_verified'] = 1;
 		}
@@ -3440,6 +3754,32 @@ class Activity {
 				$item['thr_parent'] = $parent[0]['parent_mid'];
 			}
 			$item['parent_mid'] = $parent[0]['parent_mid'];
+
+			/*
+			 *
+			 * Check for conversation privacy mismatches
+			 * We can only do this if we have a channel and we have fetched the parent
+			 *
+			 */
+			 
+			// public conversation, but this comment went rogue and was published privately
+			// hide it from everybody except the channel owner
+			
+			if (intval($parent[0]['item_private']) === 0) {
+				if (intval($item['item_private'])) {
+					$item['item_restrict'] = $item['item_restrict'] | 1;
+					$item['allow_cid'] = '<' . $channel['channel_hash'] . '>';
+					$item['allow_gid'] = $item['deny_cid'] = $item['deny_gid'] = '';
+				}
+			}
+
+			// Private conversation, but this comment went rogue and was published publicly
+			// Set item_restrict to indicate this condition so we can flag it in the UI
+
+			if (intval($parent[0]['item_private']) !== 0 && $act->recips && (in_array(ACTIVITY_PUBLIC_INBOX,$act->recips) || in_array('Public',$act->recips) || in_array('as:Public',$act->recips))) {
+				$item['item_restrict'] = $item['item_restrict'] | 2;
+			}
+
 		}
 
 		self::rewrite_mentions($item);
@@ -3460,6 +3800,12 @@ class Activity {
 		else {
 			$x = item_store($item);
 		}
+
+// experimental code that needs more work. What this did was once we fetched a conversation to find the root node,
+// start at that root node and fetch children so you get all the branches and not just the branch related to the current node.
+// Unfortunately there is no standard method for achieving this. Mastodon provides a 'replies' collection and Nomad projects
+// can fetch the 'context'. For other platforms it's a wild guess. Additionally when we tested this, it started an infinite
+// recursion and has been disabled until the recursive behaviour is tracked down and fixed. 
 
 //		if ($fetch_parents && $parent && ! intval($parent[0]['item_private'])) {
 //			logger('topfetch', LOGGER_DEBUG);
@@ -3548,11 +3894,11 @@ class Activity {
 				break;
 			}
 			if (is_array($a->actor) && array_key_exists('id',$a->actor)) {
-				Activity::actor_store($a->actor['id'],$a->actor);
+				self::actor_store($a->actor['id'],$a->actor);
 			}
 
 			// ActivityPub sourced items are cacheable
-			$item = Activity::decode_note($a,true);
+			$item = self::decode_note($a,true);
 
 			if (! $item) {
 				break;
@@ -3600,7 +3946,7 @@ class Activity {
 		if ($p) {
 			foreach ($p as $pv) {
 				if ($pv[0]->is_valid()) {
-					Activity::store($channel,$observer_hash,$pv[0],$pv[1],false);
+					self::store($channel,$observer_hash,$pv[0],$pv[1],false);
 				}
 			}			
 			return true;
@@ -3610,21 +3956,22 @@ class Activity {
 	}
 
 
-	// This function is designed to work with both ActivityPub and Zot attachments.
-	// The 'type' of each is different ('Image' vs 'image/jpeg' for example).
-	// If editing this function please be aware of the need to support both formats
-	// which we accomplish here through the use of stripos(). 
+	// This function is designed to work with Zot attachments and item body
 
 	static function bb_attach($attach,$body) {
 
 		$ret = false;
 
-		if (! $attach) {
+		if (! (is_array($attach) && $attach)) {
 			return EMPTY_STR;
 		}
 
 		foreach ($attach as $a) {
 			if (array_key_exists('type',$a) && stripos($a['type'],'image') !== false) {
+				// don't add inline image if it's an svg and we already have an inline svg
+				if ($a['type'] === 'image/svg+xml' && strpos($body,'[/svg]')) {
+					continue;
+				}
 				if (self::media_not_in_body($a['href'],$body)) {
 					if (isset($a['name']) && $a['name']) {
 						$alt = htmlspecialchars($a['name'],ENT_QUOTES);
@@ -3654,13 +4001,21 @@ class Activity {
 	// check for the existence of existing media link in body
 
 	static function media_not_in_body($s,$body) {
-		
+
+		$s_alt = htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
+
 		if ((strpos($body,']' . $s . '[/img]') === false) && 
 			(strpos($body,']' . $s . '[/zmg]') === false) && 
 			(strpos($body,']' . $s . '[/video]') === false) && 
 			(strpos($body,']' . $s . '[/zvideo]') === false) && 
 			(strpos($body,']' . $s . '[/audio]') === false) && 
-			(strpos($body,']' . $s . '[/zaudio]') === false)) {
+			(strpos($body,']' . $s . '[/zaudio]') === false) &&
+			(strpos($body,']' . $s_alt . '[/img]') === false) && 
+			(strpos($body,']' . $s_alt . '[/zmg]') === false) && 
+			(strpos($body,']' . $s_alt . '[/video]') === false) && 
+			(strpos($body,']' . $s_alt . '[/zvideo]') === false) && 
+			(strpos($body,']' . $s_alt . '[/audio]') === false) && 
+			(strpos($body,']' . $s_alt . '[/zaudio]') === false)) {
 			return true;
 		}
 		return false;
@@ -3683,7 +4038,7 @@ class Activity {
 				// $ret .= '[language=' . $k . ']' . html2bbcode($v) . '[/language]';
 			}
 		}
-		else {
+		elseif (isset($content[$field])) {
 			if ($field === 'bbcode' && array_key_exists('bbcode',$content)) {
 				$ret = $content[$field];
 			}
@@ -3691,7 +4046,10 @@ class Activity {
 				$ret = html2bbcode($content[$field]);
 			}
 		}
-		if ($field === 'content' && $content['event'] && (! strpos($ret,'[event'))) {
+		else {
+			$ret = EMPTY_STR;
+		}
+		if ($field === 'content' && isset($content['event']) && (! strpos($ret,'[event'))) {
 			$ret .= format_event_bbcode($content['event']);
 		}
 
@@ -3842,11 +4200,92 @@ class Activity {
 		return $auth;
 	}
 
+	static function get_xchan_type($type) {
+		switch ($type) {
+			case 'Person':
+				return XCHAN_TYPE_PERSON;
+			case 'Group':
+				return XCHAN_TYPE_GROUP;
+			case 'Service':
+				return XCHAN_TYPE_SERVICE;
+			case 'Organization':
+				return XCHAN_TYPE_ORGANIZATION;
+			case 'Application':
+				return XCHAN_TYPE_APPLICATION;
+			default:
+				return XCHAN_TYPE_UNKNOWN;
+		}
+	}
+
+	static function get_cached_actor($id) {
+		return (XConfig::Get($id,'system','actor_record'));
+	}
+
+
+	static function get_actor_hublocs($url, $options = 'all,not_deleted') {
+
+		$hublocs = false;
+		$sql_options = EMPTY_STR;
+		
+		$options_arr = explode(',',$options);
+		if (count($options_arr) > 1) {
+			for ($x = 1; $x < count($options_arr); $x ++) {
+				switch (trim($options_arr[$x])) {
+					case 'not_deleted':
+						$sql_options .= ' and hubloc_deleted = 0 ';
+						break;
+					default:
+					break;
+				}
+			}
+		}
+
+		switch (trim($options_arr[0])) {
+			case 'activitypub':
+				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_hash = '%s' $sql_options ",
+					dbesc($url)
+				);
+				break;
+			case 'zot6':
+				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_id_url = '%s' $sql_options ",
+					dbesc($url)
+				);
+				break;
+			case 'all':
+			default:
+				$hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where ( hubloc_id_url = '%s' OR hubloc_hash = '%s' ) $sql_options ",
+					dbesc($url),
+					dbesc($url)
+				);
+				break;
+		}
+
+		return $hublocs;		
+	}
+
+	static function get_actor_collections($url) {
+		$ret = [];
+		$actor_record = XConfig::Get($url,'system','actor_record');
+		if (! $actor_record) {
+			return $ret;
+		}
+
+		foreach ( [ 'inbox','outbox','followers','following' ] as $collection) {
+			if (isset($actor_record[$collection]) && $actor_record[$collection]) {
+				$ret[$collection] = $actor_record[$collection];
+			}
+		}
+		if (array_path_exists('endpoints/sharedInbox',$actor_record) && $actor_record['endpoints']['sharedInbox']) {
+			$ret['sharedInbox'] = $actor_record['endpoints']['sharedInbox'];
+		}
+
+		return $ret;
+	}
+
 	static function ap_schema() {
 
 		return [
 			'zot'                       => z_root() . '/apschema#',
-//			'as'                        => 'https://www.w3.org/ns/activitystreams#',
 			'toot'                      => 'http://joinmastodon.org/ns#',
 			'ostatus'                   => 'http://ostatus.org#',
 			'schema'                    => 'http://schema.org#',
@@ -3859,7 +4298,6 @@ class Activity {
 			'movedTo'                   => 'as:movedTo',
 			'copiedTo'                  => 'as:copiedTo',
 			'alsoKnownAs'               => 'as:alsoKnownAs',
-			'inheritPrivacy'            => 'as:inheritPrivacy',
 			'EmojiReact'                => 'as:EmojiReact',
 			'commentPolicy'             => 'zot:commentPolicy',
 			'topicalCollection'         => 'zot:topicalCollection',
@@ -3873,8 +4311,13 @@ class Activity {
 			'value'                     => 'schema:value',
 			'discoverable'              => 'toot:discoverable',
 			'wall'                      => 'sm:wall',
+			'capabilities'              => 'litepub:capabilities',
+			'acceptsJoins'              => 'litepub:acceptsJoins',
 		];
 
 	}
+
+
+
 
 }

@@ -48,7 +48,7 @@ class Subthread extends Controller {
 				);
 			}
 
-			if ($i) {
+			if ($i && local_channel() && (! is_sys_channel(local_channel()))) {
 				$i = [ copy_of_pubitem($channel, $i[0]['mid']) ];
 				$item_id = (($i) ? $i[0]['id'] : 0);
 			}

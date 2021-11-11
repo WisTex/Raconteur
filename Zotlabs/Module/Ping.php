@@ -44,8 +44,6 @@ class Ping extends Controller {
 		$result['birthdays_today'] = 0;
 		$result['all_events'] = 0;
 		$result['all_events_today'] = 0;
-		$result['notice'] = [];
-		$result['info'] = [];
 		$result['pubs'] = 0;
 		$result['files'] = 0;
 		$result['forums'] = 0;
@@ -81,32 +79,6 @@ class Ping extends Controller {
 		 */
 
 		$result['invalid'] = ((isset($_GET['uid']) && intval($_GET['uid'])) && (intval($_GET['uid']) != local_channel()) ? 1 : 0);
-
-		/**
-		 * Send all system messages (alerts) to the browser.
-		 * Some are marked as informational and some represent
-		 * errors or serious notifications. These typically
-		 * will popup on the current page (no matter what page it is)
-		 */
-
-		if (x($_SESSION, 'sysmsg')) {
-			foreach ($_SESSION['sysmsg'] as $m) {
-				$result['notice'][] = array('message' => $m);
-			}
-			unset($_SESSION['sysmsg']);
-		}
-		if (x($_SESSION, 'sysmsg_info')) {
-			foreach ($_SESSION['sysmsg_info'] as $m) {
-				$result['info'][] = array('message' => $m);
-			}
-			unset($_SESSION['sysmsg_info']);
-		}
-		if (! ($vnotify & VNOTIFY_INFO)) {
-			$result['info'] = [];
-		}
-		if (! ($vnotify & VNOTIFY_ALERT)) {
-			$result['notice'] = [];
-		}
 
 		// If we're currently installing, there won't be a populated database.
 		// So just send back what we have and stop here.
@@ -252,6 +224,8 @@ class Ping extends Controller {
 					);
 					$_SESSION['loadtime_stream'] = datetime_convert();
 					PConfig::Set(local_channel(),'system','loadtime_stream',$_SESSION['loadtime_stream']);
+					$_SESSION['loadtime_channel'] = datetime_convert();
+					PConfig::Set(local_channel(),'system','loadtime_channel',$_SESSION['loadtime_channel']);
 					break;
 				case 'home':
 					$r = q("UPDATE item SET item_unseen = 0 WHERE uid = %d AND item_unseen = 1 AND item_wall = 1",
@@ -315,7 +289,7 @@ class Ping extends Controller {
 
 
 					$mid = basename($tt['link']);
-					$mid = ((strpos($mid, 'b64.') === 0) ? @base64url_decode(substr($mid, 4)) : $mid);
+					$mid = unpack_link_id($mid);
 
 					if (in_array($tt['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) {
 						// we need the thread parent
@@ -324,10 +298,10 @@ class Ping extends Controller {
 							intval(local_channel())
 						);
 
-						$b64mid = ((strpos($r[0]['thr_parent'], 'b64.') === 0) ? $r[0]['thr_parent'] : 'b64.' . base64url_encode($r[0]['thr_parent']));
+						$b64mid = ((strpos($r[0]['thr_parent'], 'b64.') === 0) ? $r[0]['thr_parent'] : gen_link_id($r[0]['thr_parent']));
 					}
 					else {
-						$b64mid = ((strpos($mid, 'b64.') === 0) ? $mid : 'b64.' . base64url_encode($mid));
+						$b64mid = ((strpos($mid, 'b64.') === 0) ? $mid : gen_link_id($mid));
 					}
 
 					$notifs[] = array(

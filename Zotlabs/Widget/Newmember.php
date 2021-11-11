@@ -52,13 +52,10 @@ class Newmember {
 			]
 		];
 
-		$site_firehose = ((intval(get_config('system','site_firehose',0))) ? true : false);
-		$net_firehose  = ((get_config('system','disable_discover_tab',1)) ? false : true);
-
-
+		$public_stream_mode = intval(get_config('system','public_stream_mode', PUBLIC_STREAM_NONE));
 		// hack to put this in the correct spot of the array
 
-		if ($site_firehose || $net_firehose) {
+		if ($public_stream_mode) {
 			$options[5]['pubstream'] = t('View public stream');
 		}
 

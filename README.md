@@ -1,6 +1,4 @@
-ZAP
+Zap
 ===
 
 A fediverse server.
-
-

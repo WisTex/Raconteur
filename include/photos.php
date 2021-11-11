@@ -100,7 +100,6 @@ function photo_upload($channel, $observer, $args) {
 
 				$imagedata = @file_get_contents($tmp_name);
 				$filesize = @filesize($args['os_syspath']);
-//				@unlink($tmp_name);
 			}
 			else {
 				$imagedata = @file_get_contents($args['os_syspath']);
@@ -195,7 +194,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$ph = photo_factory($imagedata, $type);
 
-	if (! $ph->is_valid()) {
+	if (! ($ph && $ph->is_valid())) {
 		$ret['message'] = t('Unable to process image');
 		logger('unable to process image');
 		@unlink($src);
@@ -262,15 +261,21 @@ function photo_upload($channel, $observer, $args) {
 		$p['edited'] = $args['edited'];
 	if($args['title'])
 		$p['title'] = $args['title'];
-	if($args['description'])
+
+	if ($args['description']) {
 		$p['description'] = $args['description'];
+	}
+
+	$alt_desc = ((isset($p['description']) && $p['description']) ? $p['description'] : $p['filename']);
 
 	$url = [];
 
 	$r0 = $ph->save($p);
 	$url[0] = [
 		'type' => 'Link',
+		'rel' => 'alternate',
 		'mediaType' => $type,
+		'summary' => $alt_desc,
 		'href' => z_root() . '/photo/' . $photo_hash . '-0.' . $ph->getExt(),
 		'width' => $width,
 		'height' => $height
@@ -290,7 +295,9 @@ function photo_upload($channel, $observer, $args) {
 	$r1 = $ph->storeThumbnail($p, PHOTO_RES_1024);
 	$url[1] = [
 		'type' => 'Link',
+		'rel' => 'alternate',
 		'mediaType' => $type,
+		'summary' => $alt_desc,
 		'href' => z_root() . '/photo/' . $photo_hash . '-1.' . $ph->getExt(),
 		'width' => $ph->getWidth(),
 		'height' => $ph->getHeight()
@@ -305,7 +312,9 @@ function photo_upload($channel, $observer, $args) {
 	$r2 = $ph->storeThumbnail($p, PHOTO_RES_640);
 	$url[2] = [
 		'type' => 'Link',
+		'rel' => 'alternate',
 		'mediaType' => $type,
+		'summary' => $alt_desc,
 		'href' => z_root() . '/photo/' . $photo_hash . '-2.' . $ph->getExt(),
 		'width' => $ph->getWidth(),
 		'height' => $ph->getHeight()
@@ -320,7 +329,9 @@ function photo_upload($channel, $observer, $args) {
 	$r3 = $ph->storeThumbnail($p, PHOTO_RES_320);
 	$url[3] = [
 		'type' => 'Link',
+		'rel' => 'alternate',
 		'mediaType' => $type,
+		'summary' => $alt_desc,
 		'href' => z_root() . '/photo/' . $photo_hash . '-3.' . $ph->getExt(),
 		'width' => $ph->getWidth(),
 		'height' => $ph->getHeight()
@@ -345,6 +356,7 @@ function photo_upload($channel, $observer, $args) {
 
 	$url[] = [ 
 		'type'      => 'Link',
+		'rel'       => 'about',
 		'mediaType' => 'text/html',
 		'href'      => z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo_hash
 	];
@@ -367,26 +379,18 @@ function photo_upload($channel, $observer, $args) {
 		}
 	}
 
-	$title = (($args['description']) ? $args['description'] : $args['filename']);
+	$title = ((isset($args['title']) && $args['title']) ? $args['title'] : $args['filename']);
 
-	$large_photos = 1;
-
-	linkify_tags($args['body'], $channel_id);
+	$desc = htmlspecialchars($alt_desc);
 	
-	$alt = ' alt="' . $title . '"' ;
+	$found_tags = linkify_tags($args['body'], $channel_id);
+	
+	$alt = ' alt="' . $desc . '"' ;
 
-	if($large_photos) {
-		$scale = 1;
-		$width = $url[1]['width'];
-		$height = $url[1]['height'];
-		$tag = (($r1) ? '[zmg width="' . $width . '" height="' . $height . '"' . $alt . ']' : '[zmg' . $alt . ']');
-	}
-	else {
-		$scale = 2;
-		$width = $url[2]['width'];
-		$height = $url[2]['height'];
-		$tag = (($r2) ? '[zmg width="' . $width . '" height="' . $height . '"' . $alt . ']' : '[zmg' . $alt . ']');
-	}
+	$scale = 1;
+	$width = $url[1]['width'];
+	$height = $url[1]['height'];
+	$tag = (($r1) ? '[zmg width="' . $width . '" height="' . $height . '"' . $alt . ']' : '[zmg' . $alt . ']');
 
 	$author_link = '[zrl=' . z_root() . '/channel/' . $channel['channel_address'] . ']' . $channel['channel_name'] . '[/zrl]';
 
@@ -396,13 +400,15 @@ function photo_upload($channel, $observer, $args) {
 
 	$activity_format = sprintf(t('%1$s posted %2$s to %3$s','photo_upload'), $author_link, $photo_link, $album_link);
 
-	$summary = (($args['body']) ? $args['body'] : '') . '[footer]' . $activity_format . '[/footer]';
+	$body = (($args['body']) ? $args['body'] : '') . '[footer]' . $activity_format . '[/footer]';
 
 	// If uploaded into a post, this is the text that is returned to the webapp for inclusion in the post.
 
 	$obj_body =  '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo_hash . ']'
 		. $tag . z_root() . "/photo/{$photo_hash}-{$scale}." . $ph->getExt() . '[/zmg]'
 		. '[/zrl]';
+
+	$attribution = (($visitor) ? $visitor['xchan_url'] : $channel['xchan_url']);
 
 	// Create item object
 	$object = [
@@ -411,11 +417,12 @@ function photo_upload($channel, $observer, $args) {
 		'summary'   => $p['description'],
 		'published' => datetime_convert('UTC','UTC',$p['created'],ATOM_TIME),
 		'updated'   => datetime_convert('UTC','UTC',$p['edited'],ATOM_TIME),
+		'attributedTo' => $attribution,
 		// This is a placeholder and will get over-ridden by the item mid, which is critical for sharing as a conversational item over activitypub
 		'id'        => z_root() . '/photo/' . $photo_hash,
 		'url'       => $url,
-		'source'    => [ 'content' => $summary, 'mediaType' => 'text/bbcode' ],
-		'content'   => bbcode($summary)
+		'source'    => [ 'content' => $body, 'mediaType' => 'text/bbcode' ],
+		'content'   => bbcode($body)
 	];
 
 	$public = (($ac['allow_cid'] || $ac['allow_gid'] || $ac['deny_cid'] || $ac['deny_gid']) ? false : true);
@@ -434,9 +441,26 @@ function photo_upload($channel, $observer, $args) {
 		'id'      => z_root() . '/album/' . $channel['channel_address'] . ((isset($args['folder'])) ? '/' . $args['folder'] : EMPTY_STR)
 	];
 
+	$post_tags = [];
+
+	if ($found_tags) {
+		foreach($found_tags as $result) {
+			$success = $result['success'];
+			if($success['replaced']) {
+				$post_tags[] = array(
+					'uid'   => $channel['channel_id'],
+					'ttype' => $success['termtype'],
+					'otype' => TERM_OBJ_POST,
+					'term'  => $success['term'],
+					'url'   => $success['url']
+				);
+			}
+		}
+	}
+
 	// Create item container
-	if($args['item']) {
-		foreach($args['item'] as $i) {
+	if ($args['item']) {
+		foreach ($args['item'] as $i) {
 
 			$item = get_item_elements($i);
 			$force = false;
@@ -444,22 +468,25 @@ function photo_upload($channel, $observer, $args) {
 			if($item['mid'] === $item['parent_mid']) {
 
 				$object['id'] = $item['mid'];
-				$item['body'] = $summary;
+				$item['summary'] = $summary;
+				$item['body'] = $body; 
 				$item['mimetype'] = 'text/bbcode';
 				$item['obj_type'] = ACTIVITY_OBJ_PHOTO;
 				$item['obj']	= json_encode($object);
 
 				$item['tgt_type'] = 'orderedCollection';
 				$item['target']	= json_encode($target);
-
+				if ($post_tags) {
+					$arr['term'] = $post_tags;
+				}
 				$force = true;
 			}
 			$r = q("select id, edited from item where mid = '%s' and uid = %d limit 1",
 				dbesc($item['mid']),
 				intval($channel['channel_id'])
 			);
-			if($r) {
-				if(($item['edited'] > $r[0]['edited']) || $force) {
+			if ($r) {
+				if (($item['edited'] > $r[0]['edited']) || $force) {
 					$item['id'] = $r[0]['id'];
 					$item['uid'] = $channel['channel_id'];
 					item_store_update($item,false,$deliver);
@@ -507,8 +534,13 @@ function photo_upload($channel, $observer, $args) {
 			'item_origin'     => 1,
 			'item_thread_top' => 1,
 			'item_private'    => intval($acl->is_private()),
-			'body'            => $summary
+			'summary'         => $summary,
+			'body'            => $body
 		];
+
+		if ($post_tags) {
+			$arr['term'] = $post_tags;
+		}
 
 		$arr['plink']           = z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . urlencode($arr['mid']);
 
@@ -803,7 +835,9 @@ function photos_album_rename($channel_id, $oldname, $newname) {
 }
 
 /**
- * @brief
+ * @brief returns the DB escaped comma separated list of the contents (by hash name) of a given photo album
+ * based on the creator. This is used to ensure guests can only edit content they created. The page owner and site
+ * admin can edit any content owned by this channel.
  *
  * @param int $channel_id
  * @param string $album
@@ -1054,3 +1088,44 @@ function fetch_image_from_url($url,&$mimetype) {
 
 	return EMPTY_STR;
 }
+
+
+function isAnimatedGif($fileName)
+{
+    $fh = fopen($fileName, 'rb');
+
+    if (!$fh) {
+        return false;
+    }
+
+    $totalCount = 0;
+    $chunk = '';
+
+    // An animated gif contains multiple "frames", with each frame having a header made up of:
+    // * a static 4-byte sequence (\x00\x21\xF9\x04)
+    // * 4 variable bytes
+    // * a static 2-byte sequence (\x00\x2C) (some variants may use \x00\x21 ?)
+
+    // We read through the file until we reach the end of it, or we've found at least 2 frame headers.
+    while (!feof($fh) && $totalCount < 2) {
+        // Read 100kb at a time and append it to the remaining chunk.
+        $chunk .= fread($fh, 1024 * 100);
+        $count = preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+        $totalCount += $count;
+
+        // Execute this block only if we found at least one match,
+        // and if we did not reach the maximum number of matches needed.
+        if ($count > 0 && $totalCount < 2) {
+            // Get the last full expression match.
+            $lastMatch = end($matches[0]);
+            // Get the string after the last match.
+            $end = strrpos($chunk, $lastMatch) + strlen($lastMatch);
+            $chunk = substr($chunk, $end);
+        }
+    }
+
+    fclose($fh);
+
+    return $totalCount > 1;
+}
+

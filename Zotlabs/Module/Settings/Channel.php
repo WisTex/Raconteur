@@ -131,6 +131,10 @@ class Channel {
 		$post_comments   = array_key_exists('post_comments',$_POST) ? intval($_POST['post_comments']) : PERMS_SPECIFIC;
 		PermissionLimits::Set(local_channel(),'post_comments',$post_comments);
 
+		$post_mail       = array_key_exists('post_mail',$_POST) ? intval($_POST['post_mail']) : PERMS_SPECIFIC;
+		PermissionLimits::Set(local_channel(),'post_mail',$post_mail);
+
+
 
 		$publish          = (((x($_POST,'profile_in_directory')) && (intval($_POST['profile_in_directory']) == 1)) ? 1: 0);
 		$username         = ((x($_POST,'username'))   ? escape_tags(trim($_POST['username']))     : '');
@@ -210,6 +214,8 @@ class Channel {
 			$notify += intval($_POST['notify7']);
 		if(x($_POST,'notify8'))
 			$notify += intval($_POST['notify8']);
+		if(x($_POST,'notify10'))
+			$notify += intval($_POST['notify10']);
 	
 	
 		$vnotify = 0;
@@ -332,7 +338,7 @@ class Channel {
 			intval($channel['channel_hash'])
 		);
 
-		if($name_change) {
+		if ($name_change) {
 			// catch xchans for all protocols by matching the url
 			$r = q("update xchan set xchan_name = '%s', xchan_name_date = '%s' where xchan_url = '%s'",
 				dbesc($username),
@@ -343,6 +349,9 @@ class Channel {
 				dbesc($username),
 				intval($channel['channel_id'])
 			);
+			if (is_sys_channel($channel['channel_id'])) {
+				set_config('system','sitename', $username);
+			}
 		}
 	
 		Run::Summon( [ 'Directory', local_channel() ] );
@@ -385,18 +394,13 @@ class Channel {
 		$permiss = [];
 	
 		$perm_opts = [
-			array( t('Nobody except yourself'), 0),
-			array( t('Only those you specifically allow'), PERMS_SPECIFIC), 
-			array( t('Approved connections'), PERMS_CONTACTS),
-			array( t('Any connections'), PERMS_PENDING),
-			array( t('Anybody on this website'), PERMS_SITE),
-			array( t('Anybody in this network'), PERMS_NETWORK),
-			array( t('Anybody authenticated'), PERMS_AUTHED),
-			array( t('Anybody on the internet'), PERMS_PUBLIC)
+			[ t('Restricted - from connections only'), PERMS_SPECIFIC ], 
+			[ t('Semi-public - from anybody that can be identified'), PERMS_AUTHED ],
+			[ t('Public - from anybody on the internet'), PERMS_PUBLIC ]
 		];
 	
 		$limits = PermissionLimits::Get(local_channel());
-		$anon_comments = get_config('system','anonymous_comments',true);
+		$anon_comments = get_config('system','anonymous_comments');
 	
 		foreach($global_perms as $k => $perm) {
 			$options = [];
@@ -406,11 +410,11 @@ class Channel {
 					continue;
 				$options[$opt[1]] = $opt[0];
 			}
-			if($k === 'view_stream') {
-				$options = [$perm_opts[7][1] => $perm_opts[7][0]];
-			}
 			if($k === 'post_comments') {
 				$comment_perms = [ $k, $perm, $limits[$k],'',$options ];
+			}
+			elseif ($k === 'post_mail') {
+				$mail_perms = [ $k, $perm, $limits[$k],'',$options ];
 			}
 			else {
 				$permiss[] = array($k,$perm,$limits[$k],'',$options);			
@@ -572,8 +576,7 @@ class Channel {
 		$plugin = [ 'basic' => '', 'security' => '', 'notify' => '', 'misc' => '' ];
 		call_hooks('channel_settings',$plugin);
 
-		$disable_discover_tab = intval(get_config('system','disable_discover_tab',1)) == 1;
-		$site_firehose = intval(get_config('system','site_firehose',0)) == 1;
+		$public_stream_mode = intval(get_config('system','public_stream_mode', PUBLIC_STREAM_NONE));
 
 		$ft = get_pconfig(local_channel(),'system','followed_tags','');
 		if ($ft && is_array($ft)) {
@@ -609,6 +612,7 @@ class Channel {
 			'$hidefriends' => array('hide_friends', t('Allow others to view your friends and connections'), 1 - intval($profile['hide_friends']), '', $yes_no ),
 			'$permiss_arr' => $permiss,
 			'$comment_perms' => $comment_perms,
+			'$mail_perms' => $mail_perms,
 			'$noindex' => [ 'noindex', t('Forbid indexing of your channel content by search engines'), get_pconfig($channel['channel_id'],'system','noindex'), '', $yes_no],
 			'$close_comments' => [ 'close_comments', t('Disable acceptance of comments on my posts after this many days'), ((intval(get_pconfig(local_channel(),'system','close_comments'))) ? intval(get_pconfig(local_channel(),'system','close_comments')) : EMPTY_STR), t('Leave unset or enter 0 to allow comments indefinitely') ],
 			'$blocktags' => array('blocktags',t('Allow others to tag your posts'), 1-$blocktags, t('Often used by the community to retro-actively flag inappropriate content'), $yes_no),
@@ -631,7 +635,7 @@ class Channel {
 			'$group_select' => $group_select,
 			'$can_change_role' => ((in_array($permissions_role, [ 'collection', 'collection_restricted'] )) ? false : true),
 			'$permissions_role' => $permissions_role,
-			'$role' => array('permissions_role' , t('Channel role and privacy'), $permissions_role, '', $perm_roles, ' onchange="update_role_text(); return false;"'),
+			'$role' => array('permissions_role' , t('Channel type and privacy'), $permissions_role, '', $perm_roles, ' onchange="update_role_text(); return false;"'),
 			'$defpermcat' => [ 'defpermcat', t('Default Permissions Group'), $default_permcat, '', $permcats ],	
 			'$permcat_enable' => feature_enabled(local_channel(),'permcats'),
 			'$profile_in_dir' => $profile_in_dir,
@@ -656,6 +660,7 @@ class Channel {
 //			'$notify2'	=> array('notify2', t('Your connections are confirmed'), ($notify & NOTIFY_CONFIRM), NOTIFY_CONFIRM, '', $yes_no),
 			'$notify3'	=> array('notify3', t('Someone writes on your profile wall'), ($notify & NOTIFY_WALL), NOTIFY_WALL, '', $yes_no),
 			'$notify4'	=> array('notify4', t('Someone writes a followup comment'), ($notify & NOTIFY_COMMENT), NOTIFY_COMMENT, '', $yes_no),
+			'$notify10'	=> array('notify10', t('Someone shares a followed conversation'), ($notify & NOTIFY_RESHARE), NOTIFY_RESHARE, '', $yes_no),
 			'$notify5'	=> array('notify5', t('You receive a direct (private) message'), ($notify & NOTIFY_MAIL), NOTIFY_MAIL, '', $yes_no),
 //			'$notify6'  => array('notify6', t('You receive a friend suggestion'), ($notify & NOTIFY_SUGGEST), NOTIFY_SUGGEST, '', $yes_no),
 			'$notify7'  => array('notify7', t('You are tagged in a post'), ($notify & NOTIFY_TAGSELF), NOTIFY_TAGSELF, '', $yes_no),
@@ -678,10 +683,12 @@ class Channel {
 			'$vnotify10'  => array('vnotify10', t('New connections'), ($vnotify & VNOTIFY_INTRO), VNOTIFY_INTRO, t('Recommended'), $yes_no),
 			'$vnotify11'  => ((is_site_admin()) ? array('vnotify11', t('System Registrations'), ($vnotify & VNOTIFY_REGISTER), VNOTIFY_REGISTER, '', $yes_no) : []),
 //			'$vnotify12'  => array('vnotify12', t('Unseen shared files'), ($vnotify & VNOTIFY_FILES), VNOTIFY_FILES, '', $yes_no),
-			'$vnotify13'  => (($disable_discover_tab && !$site_firehose) ? [] : array('vnotify13', t('Unseen public activity'), ($vnotify & VNOTIFY_PUBS), VNOTIFY_PUBS, '', $yes_no)),
+			'$vnotify13'  => (($public_stream_mode) ? [ 'vnotify13', t('Unseen public stream activity'), ($vnotify & VNOTIFY_PUBS), VNOTIFY_PUBS, '', $yes_no] : []),
 			'$vnotify14'	=> array('vnotify14', t('Unseen likes and dislikes'), ($vnotify & VNOTIFY_LIKE), VNOTIFY_LIKE, '', $yes_no),
 			'$vnotify15'	=> array('vnotify15', t('Unseen forum posts'), ($vnotify & VNOTIFY_FORUMS), VNOTIFY_FORUMS, '', $yes_no),
 			'$vnotify16'	=> ((is_site_admin()) ? array('vnotify16', t('Reported content'), ($vnotify & VNOTIFY_REPORTS), VNOTIFY_REPORTS, '', $yes_no) : [] ),
+			'$desktop_notifications_info' => t('Desktop notifications are unavailable because the required browser permission has not been granted'),
+			'$desktop_notifications_request' => t('Grant permission'),
 			'$mailhost' => [ 'mailhost', t('Email notifications sent from (hostname)'), get_pconfig(local_channel(),'system','email_notify_host',App::get_hostname()), sprintf( t('If your channel is mirrored to multiple locations, set this to your preferred location. This will prevent duplicate email notifications. Example: %s'),App::get_hostname()) ],
 			'$always_show_in_notices'  => array('always_show_in_notices', t('Show new wall posts, private messages and connections under Notices'), $always_show_in_notices, 1, '', $yes_no),
 			'$permit_all_mentions' => [ 'permit_all_mentions', t('Accept messages from strangers which mention me'), get_pconfig(local_channel(),'system','permit_all_mentions'), t('This setting bypasses normal permissions'), $yes_no ],

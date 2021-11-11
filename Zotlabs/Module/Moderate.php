@@ -36,10 +36,8 @@ class Moderate extends Controller {
 
 		// show a single item
 		if(argc() == 2) {
-			$post_id = escape_tags(argv(1));
-			if(strpos($post_id,'b64.') === 0) {
-				$post_id = @base64url_decode(substr($post_id,4));
-			}
+			$post_id = unpack_link_id(escape_tags(argv(1)));
+
 			$r = q("select item.id as item_id, item.* from item where item.mid = '%s' and item.uid = %d and item_blocked = %d and item_deleted = 0 order by created desc $pager_sql",
 				dbesc($post_id),
 				intval(local_channel()),
@@ -91,6 +89,18 @@ class Moderate extends Controller {
 					Libsync::build_sync_packet(local_channel(),array('item' => array(encode_item($sync_item[0],true))));
 				}
 				if($action === 'approve') {
+					if ($item['id'] !== $item['parent']) {
+						// if this is a group comment, call tag_deliver() to generate the associated
+						// Announce activity so microblog destinations will see it in their home timeline
+						$role = get_pconfig(local_channel(),'system','permissions_role');
+						$rolesettings = PermissionRoles::role_perms($role);
+						$channel_type = isset($rolesettings['channel_type']) ? $rolesettings['channel_type'] : 'normal';
+
+						$is_group = (($channel_type === 'group') ? true : false);
+						if ($is_group) {
+							tag_deliver(local_channel(),$post_id);
+						}
+					}
 					Run::Summon( [ 'Notifier', 'comment-new', $post_id ] );
 				}
 				goaway(z_root() . '/moderate');

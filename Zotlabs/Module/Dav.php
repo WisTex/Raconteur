@@ -14,6 +14,7 @@ use Sabre\DAV as SDAV;
 use Zotlabs\Storage;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Web\Controller;
+use Zotlabs\Web\HTTPSig;
 
 require_once('include/attach.php');
 require_once('include/auth.php');
@@ -28,13 +29,13 @@ class Dav extends Controller {
 	 */
 	function init() {
 
-		foreach([ 'REDIRECT_REMOTE_USER', 'HTTP_AUTHORIZATION' ] as $head) {
+		foreach ([ 'REDIRECT_REMOTE_USER', 'HTTP_AUTHORIZATION' ] as $head) {
 
 			/* Basic authentication */
 
-			if(array_key_exists($head,$_SERVER) && substr(trim($_SERVER[$head]),0,5) === 'Basic') {
+			if (array_key_exists($head,$_SERVER) && substr(trim($_SERVER[$head]),0,5) === 'Basic') {
 				$userpass = @base64_decode(substr(trim($_SERVER[$head]),6)) ;
-				if(strlen($userpass)) {
+				if (strlen($userpass)) {
 					list($name, $password) = explode(':', $userpass);
 					$_SERVER['PHP_AUTH_USER'] = $name;
 					$_SERVER['PHP_AUTH_PW']   = $password;
@@ -44,42 +45,45 @@ class Dav extends Controller {
 
 			/* Signature authentication */
 
-			if(array_key_exists($head,$_SERVER) && substr(trim($_SERVER[$head]),0,9) === 'Signature') {
-				if($head !== 'HTTP_AUTHORIZATION') {
+			if (array_key_exists($head,$_SERVER) && substr(trim($_SERVER[$head]),0,9) === 'Signature') {
+				if ($head !== 'HTTP_AUTHORIZATION') {
 					$_SERVER['HTTP_AUTHORIZATION'] = $_SERVER[$head];
 					continue;
 				}
 
-				$sigblock = \Zotlabs\Web\HTTPSig::parse_sigheader($_SERVER[$head]);
-				if($sigblock) {
+				$sigblock = HTTPSig::parse_sigheader($_SERVER[$head]);
+				if ($sigblock) {
 					$keyId = str_replace('acct:','',$sigblock['keyId']);
-					if($keyId) {
-						$r = q("select * from hubloc where hubloc_addr = '%s' limit 1",
+					if ($keyId) {
+						$r = q("select * from hubloc where ( hubloc_addr = '%s' OR hubloc_id_url = '%s' OR hubloc_hash = '%s') limit 1",
+							dbesc($keyId),
+							dbesc($keyId),
 							dbesc($keyId)
 						);
-						if($r) {
+						if ($r) {
 							$c = channelx_by_hash($r[0]['hubloc_hash']);
-							if($c) {
+							if ($c) {
 								$a = q("select * from account where account_id = %d limit 1",
 									intval($c['channel_account_id'])
 								);
-								if($a) {
+								if ($a) {
 									$record = [ 'channel' => $c, 'account' => $a[0] ];
 									$channel_login = $c['channel_id'];
 								}
 							}
 						}
-						if(! $record)
+						if (! $record) {
 							continue;
+						}
 
-						if($record) {
-							$verified = \Zotlabs\Web\HTTPSig::verify('',$record['channel']['channel_pubkey']);
-							if(! ($verified && $verified['header_signed'] && $verified['header_valid'])) {
+						if ($record) {
+							$verified = HTTPSig::verify('',$record['channel']['channel_pubkey']);
+							if (! ($verified && $verified['header_signed'] && $verified['header_valid'])) {
 								$record = null;
 							}
-							if($record['account']) {
+							if ($record['account']) {
 						        authenticate_success($record['account']);
-						        if($channel_login) {
+						        if ($channel_login) {
 						            change_channel($channel_login);
 								}
 							}

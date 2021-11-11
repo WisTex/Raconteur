@@ -5,6 +5,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Webfinger;
+use Zotlabs\Lib\Activity;
 
 class Chanview extends Controller {
 
@@ -104,32 +105,68 @@ class Chanview extends Controller {
 			$is_zot = true;
 		}			
 		if (local_channel()) {
-			$c = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s' limit 1",
+			$c = q("select abook_id, abook_pending from abook where abook_channel = %d and abook_xchan = '%s' limit 1",
 				intval(local_channel()),
 				dbesc(App::$poi['xchan_hash'])
 			);
-			if ($c) {
+			
+			// if somebody followed us and we want to find out more, start
+			// by viewing their publicly accessible information.
+			// Otherwise the primary use of this page is to provide a connect
+			// button for anybody in the fediverse - which doesn't have to ask
+			// you who you are.
+			
+			if ($c  && intval($c[0]['abook_pending']) === 0) {
 				$connected = true;
 			}
 		}
-		
-		// We will load the chanview template if it's a foreign network, 
-		// just so that we can provide a connect button along with a profile
-		// photo. Chances are we can't load the remote profile into an iframe
-		// because of cross-domain security headers. So provide a link to
-		// the remote profile. 
+
+		if ($is_zot && $observer) {
+			$url = zid($url);
+		}
+
 		// If we are already connected, just go to the profile.
-		// Zot channels will usually have a connect link.
 	
-		if ($is_zot || $connected) {
-			if ($is_zot && $observer) {
-				$url = zid($url);
-			}
+		if ($connected) {
 			goaway($url);
 		}
 		else {	
+
+			$about = false;
+			$xprof = q("select * from xprof where xprof_hash = '%s'",
+				dbesc(App::$poi['xchan_hash'])
+			);
+			if ($xprof) {
+				$about = zidify_links(bbcode($xprof[0]['xprof_about']));
+			}
+
+			$followers = t('Not available');
+			$following = t('Not available');
+
+			$f = get_xconfig(App::$poi['xchan_hash'],'activitypub','collections');
+			if ($f && isset($f['followers'])) {
+				$m = Activity::fetch($f['followers']);
+				if (is_array($m) && isset($m['totalItems'])) {
+					$followers = intval($m['totalItems']);
+				}
+			}
+			if ($f && isset($f['following'])) {
+				$m = Activity::fetch($f['following']);
+				if (is_array($m) && isset($m['totalItems'])) {
+					$following = intval($m['totalItems']);
+				}
+			}
+
 			$o = replace_macros(get_markup_template('chanview.tpl'), [
 				'$url' => $url,
+				'$photo' => get_xconfig(App::$poi['xchan_hash'],'system','cover_photo'),
+				'$alt' => t('Cover photo for this channel'),
+				'$about' => $about,
+				'$followers_txt' => t('Followers'),
+				'$following_txt' => t('Following'),
+				'$followers' => $followers,
+				'$following' => $following,
+				'$visit' => t('Visit'),
 				'$full' => t('toggle full screen mode')
 			]);
 	

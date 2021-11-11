@@ -376,10 +376,16 @@ function import_hublocs($channel, $hublocs, $seize, $moving = false) {
 	if ($channel && $hublocs) {
 		foreach ($hublocs as $hubloc) {
 
+			// Provide backward compatibility for zot11 based projects
+			
+			if ($hubloc['hubloc_network'] === 'nomad' && version_compare(ZOT_REVISION, '10.0') <= 0) {
+				$hubloc['hubloc_network'] = 'zot6';
+			}
+
 			// verify the hash. We can only do this if we already stored the xchan corresponding to this hubloc
 			// as we need the public key from there
 
-			if ($hubloc['hubloc_network'] === 'zot6') {
+			if (in_array($hubloc['hubloc_network'],['nomad','zot6'])) {
 				$x = q("select xchan_pubkey from xchan where xchan_guid = '%s' and xchan_hash = '%s'",
 					dbesc($hubloc['hubloc_guid']),
 					dbesc($hubloc['hubloc_hash'])
@@ -404,7 +410,8 @@ function import_hublocs($channel, $hublocs, $seize, $moving = false) {
 				'id'           => $hubloc['hubloc_guid'],
 				'id_sig'       => $hubloc['hubloc_guid_sig'],
 				'location'     => $hubloc['hubloc_url'],
-				'location_sig' => $hubloc['hubloc_url_sig']
+				'location_sig' => $hubloc['hubloc_url_sig'],
+				'site_id'      => $hubloc['hubloc_site_id']
 			];
 
 			if (($hubloc['hubloc_hash'] === $channel['channel_hash']) && intval($hubloc['hubloc_primary']) && ($seize)) {

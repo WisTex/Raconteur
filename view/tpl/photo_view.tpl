@@ -38,13 +38,13 @@
 			</div>
 			{{/if}}
 		</div>
-		<h2>{{if $desc}}{{$desc}}{{elseif $filename}}{{$filename}}{{else}}{{$unknown}}{{/if}}</h2>
+		<h2>{{if $title}}{{$title}}{{elseif $filename}}{{$filename}}{{else}}{{$unknown}}{{/if}}</h2>
 		<div class="clear"></div>
 	</div>
 	<div id="photo-map">
 	{{$map}}
 	</div>
-	<div id="photo-edit" class="section-content-tools-wrapper">
+	<div id="photo-edit" class="section-content-tools-wrapper" style="display:{{if $edit.expandform}} block; {{else}} none;{{/if}}" >
 		<form action="photos/{{$edit.nickname}}/{{$edit.resource_id}}" method="post" id="photo_edit_form" class="acl-form" data-form_id="photo_edit_form" data-allow_cid='{{$edit.allow_cid}}' data-allow_gid='{{$edit.allow_gid}}' data-deny_cid='{{$edit.deny_cid}}' data-deny_gid='{{$edit.deny_gid}}'>
 			<input type="hidden" name="item_id" value="{{$edit.item_id}}" />
 			{{* album renaming is not supported atm.
@@ -63,13 +63,16 @@
 			</div>
 			*}}
 			<div class="form-group">
-				<label id="photo-edit-caption-label" for="photo-edit-caption">{{$edit.capt_label}}</label>
-				<input id="photo-edit-caption" class="form-control" type="text" name="desc" value="{{$edit.caption}}" />
+
+				{{include file="field_input.tpl" field=$edit.desc}}
+				{{include file="field_input.tpl" field=$edit.title}}
+				{{include file="field_textarea.tpl" field=$edit.body}}
+
 			</div>
-			<div class="form-group">
+			{{* <div class="form-group">
 				<label id="photo-edit-tags-label" for="photo-edit-newtag">{{$edit.tag_label}}</label>
 				<input name="newtag" id="photo-edit-newtag" class="form-control" title="{{$edit.help_tags}}" type="text" />
-			</div>
+			</div> *}}
 			<div class="form-group">
 				{{include file="field_select.tpl" field=$edit.album_select}}
 			</div>
@@ -95,7 +98,7 @@
 		<div id="photo-edit-end" class="clear"></div>
 	</div>
 	<div id="photo-view-wrapper">
-		<div id="photo-photo"><a href="{{$photo.href}}" title="{{$photo.title}}" onclick="$.colorbox({href: '{{$photo.href}}'}); return false;"><img style="width: 100%;" src="{{$photo.src}}"></a></div>
+		<div id="photo-photo"><a href="{{$photo.href}}" title="{{$desc}}" onclick="$.colorbox({href: '{{$photo.href}}'}); return false;"><img style="width: 100%;" src="{{$photo.src}}" alt="{{$desc}}"></a></div>
 		<div id="photo-photo-end" class="clear"></div>
 		{{if $tags}}
 		<div class="photo-item-tools-left" id="in-this-photo">
@@ -144,11 +147,11 @@
 			{{/if}}
 			{{if $likebuttons}}
 			<div class="photo-item-tools-right btn-group pull-right">
-				<button type="button" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$likebuttons.id}},'like'); return false">
-					<i class="fa fa-thumbs-o-up" title="{{$likebuttons.likethis}}"></i>
+				<button type="button" title="{{if $likebuttons.ilike}}{{$likebuttons.unlikethis}}{{else}}{{$likebuttons.likethis}}{{/if}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$likebuttons.id}},{{if $likebuttons.ilike}} 'Undo/' + {{/if}} 'Like' ); return false;">
+					<i class="fa fa-thumbs-o-up item-tool{{if $likebuttons.ilike}} ivoted{{/if}}" ></i>
 				</button>
-				<button type="button" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$likebuttons.id}},'dislike'); return false">
-					<i class="fa fa-thumbs-o-down" title="{{$likebuttons.nolike}}"></i>
+				<button type="button" title="{{if $likebuttons.inolike}}{{$likebuttons.unnolike}}{{else}}{{$likebuttons.nolike}}{{/if}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$likebuttons.id}},{{if $likebuttons.inolike}} 'Undo/' + {{/if}} 'Dislike'); return false;">
+					<i class="fa fa-thumbs-o-down item-tool{{if $likebuttons.inolike}} ivoted{{/if}}" ></i>
 				</button>
 			</div>
 			<div id="like-rotator-{{$likebuttons.id}}" class="photo-like-rotator pull-right"></div>
