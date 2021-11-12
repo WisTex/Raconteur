@@ -1929,7 +1929,7 @@ function proc_run() {
 
 	$args = func_get_args();
 
-	if(! count($args))
+	if (! count($args))
 		return;
 
 	$args = flatten_array_recursive($args);
@@ -1948,12 +1948,17 @@ function proc_run() {
 
 	call_hooks('proc_run', $arr);
 
-	if (! $arr['run_cmd'])
+	if (! $arr['run_cmd']) {
 		return;
+	}
 
-	if (count($args) && $args[0] === 'php')
-		$args[0] = ((x(App::$config,'system')) && (x(App::$config['system'],'php_path')) && (strlen(App::$config['system']['php_path'])) ? App::$config['system']['php_path'] : 'php');
-
+	if (count($args) > 1  && $args[0] === 'php') {
+		$php = check_php_cli();
+		if (! $php) {
+			return;
+		}
+		$args[0] = $php;
+	}
 
 	$args = array_map('escapeshellarg',$args);
 	$cmdline = implode(' ', $args);
@@ -1970,6 +1975,27 @@ function proc_run() {
 			exec($cmdline . ' > /dev/null &');
 	}
 }
+
+function check_php_cli() {
+
+	$cfg = (isset(App::$config['system']['php_path']))
+		? App::$config['system']['php_path']
+		: NULL;
+
+	if (isset($cfg) && is_executable(realpath($cfg))) {
+		return realpath($cfg);
+	}
+
+	$path = shell_exec('which php');
+	if ($path && is_executable(realpath(trim($path)))) {
+		return realpath(trim($path));
+	}
+
+	logger('PHP command line interpreter not found.');
+	throw new Exception('interpreter not  found.');
+	return false;
+}
+
 
 /**
  * @brief Checks if we are running on M$ Windows.
