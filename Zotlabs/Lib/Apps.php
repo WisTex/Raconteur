@@ -158,7 +158,7 @@ class Apps {
 		foreach (self::$available_apps as $iapp) {
 			if ($iapp['app_id'] == hash('whirlpool',$app['name'])) {
 				$notfound = false;
-				if (($iapp['app_version'] !== $app['version'])
+				if ((isset($app['version']) && $iapp['app_version'] !== $app['version'])
 					|| ((isset($app['plugin']) && $app['plugin']) && (! (isset($iapp['app_plugin']) && $iapp['app_plugin'])))) {
 					return intval($iapp['app_id']);
 				}
@@ -558,6 +558,9 @@ class Apps {
 		if (local_channel()) {
 			if (self::app_installed(local_channel(),$papp) && (! (isset($papp['deleted']) && intval($papp['deleted'])))) {
 				$installed = true;
+				if ($mode === 'install') {
+					return '';
+				}
 			}
 
 			$hosturl = z_root() . '/';
@@ -573,7 +576,7 @@ class Apps {
 			} 
 		}
 
-		$install_action = (($installed) ? t('Update') : t('Install'));
+		$install_action = (($installed) ? t('Installed') : t('Install'));
 		$icon = ((strpos($papp['photo'],'icon:') === 0) ? substr($papp['photo'],5) : '');
 
 		if ($mode === 'navbar') {
@@ -603,7 +606,7 @@ class Apps {
 			'$edit' => ((local_channel() && $installed && $mode === 'edit') ? t('Edit') : ''),
 			'$delete' => ((local_channel() && $installed && $mode === 'edit') ? t('Delete') : ''),
 			'$undelete' => ((local_channel() && $installed && $mode === 'edit') ? t('Undelete') : ''),
-			'$settings_url' => ((local_channel() && $installed && $mode === 'list') ? $papp['settings_url'] : ''),
+			'$settings_url' => ((local_channel() && $installed && $mode === 'list' && isset($papp['settings_url'])) ? $papp['settings_url'] : ''),
 			'$deleted' => ((isset($papp['deleted'])) ? intval($papp['deleted']) : false),
 			'$feature' => (((isset($papp['embed']) && $papp['embed']) || $mode === 'edit') ? false : true),
 			'$pin' => (((isset($papp['embed']) && $papp['embed']) || $mode === 'edit') ? false : true),

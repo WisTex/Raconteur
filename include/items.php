@@ -2544,7 +2544,7 @@ function send_status_notifications($post_id,$item) {
 	if (intval($item['item_private']) === 2) {
 		$notify_type = NOTIFY_MAIL;
 	}
-	elseif (item['verb'] === 'Announce') {
+	elseif ($item['verb'] === 'Announce') {
 		$notify_type = NOTIFY_RESHARE;
 	}
 	else {
@@ -2568,21 +2568,6 @@ function send_status_notifications($post_id,$item) {
 		'parent'       => $thr_parent_id ? $thr_parent_id : $parent,
 		'parent_mid'   => $thr_parent_id ? $item['thr_parent'] : $item['parent_mid']
 	));
-}
-
-
-function get_item_contact($item,$contacts) {
-	if(! count($contacts) || (! is_array($item)))
-		return false;
-
-	foreach($contacts as $contact) {
-		if($contact['id'] == $item['contact-id']) {
-			return $contact;
-			break; // NOTREACHED
-		}
-	}
-
-	return false;
 }
 
 /**
