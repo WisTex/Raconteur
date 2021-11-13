@@ -48,6 +48,8 @@ use Zotlabs\Lib as Zlib;
 
 class Item extends Controller {
 
+	public $return_404 = false;
+
 	function init() {
 
 
@@ -315,7 +317,9 @@ class Item extends Controller {
 				}
 				goaway($x[0]['llink']);
 			}
-			http_status_exit(404, 'Not found');
+
+			// save this state and catch it in the get() function
+			$this->return_404 = true;
 		}
 	}
 
@@ -1692,7 +1696,13 @@ class Item extends Controller {
 	
 	
 	function get() {
-	
+
+
+		if ($this->return_404) {
+			notice( t('Not found') );
+			return;
+		}
+
 		if((! local_channel()) && (! remote_channel()))
 			return;
 
