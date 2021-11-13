@@ -1193,6 +1193,8 @@ function map_scope($scope, $strip = false) {
 			return 'site: ' . App::get_hostname();
 		case PERMS_PENDING:
 			return 'any connections';
+		case PERMS_SPECIFIC:
+			return 'specific';
 		case PERMS_CONTACTS:
 		default:
 			return 'contacts';
