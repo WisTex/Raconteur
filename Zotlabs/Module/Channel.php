@@ -223,6 +223,7 @@ class Channel extends Controller {
 
 
 		if ($this->loading && ! $mid) {
+
 			$_SESSION['loadtime_channel'] = datetime_convert();
 			if ($is_owner) {
 				PConfig::Set(local_channel(),'system','loadtime_channel',$_SESSION['loadtime_channel']);
@@ -360,7 +361,6 @@ class Channel extends Controller {
 		}
 		
 		if (($this->updating) && (! $this->loading)) {
-
 			if ($mid) {
 				$r = q("SELECT parent AS item_id from item where mid like '%s' and uid = %d $item_normal_update
 					AND item_wall = 1 $simple_update $sql_extra limit 1",
@@ -379,7 +379,6 @@ class Channel extends Controller {
 					intval(App::$profile['profile_uid'])
 				);
 			}
-
 		}
 		else {
 

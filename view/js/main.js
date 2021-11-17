@@ -1028,7 +1028,7 @@ function liveUpdate(notify_id) {
 	let expanded = $('.comment-edit-text.expanded');
 
 	
-	if(typeof profile_uid === 'undefined') profile_uid = false; /* Should probably be unified with channelId defined in head.tpl */
+	if(typeof profile_uid === 'undefined') profile_uid = false;
 
 	if((src === null) || (! profile_uid)) { $('.like-rotator').hide(); return; }
 
