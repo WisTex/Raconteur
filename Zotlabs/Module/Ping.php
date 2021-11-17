@@ -52,7 +52,9 @@ class Ping extends Controller {
 		
 		$vnotify = false;
 		$evdays = 3;
-		
+
+		$my_activity = 0;
+
 		$item_normal = item_normal();
 
 		if (local_channel()) {
@@ -154,20 +156,25 @@ class Ping extends Controller {
 		$loadtime = get_loadtime('pubstream');
 
 		if ($notify_pubs) {
-			$pubs = q("SELECT count(id) as total from item
+			$pubs = q("SELECT id, author_xchan from item
 				WHERE uid = %d
-				AND author_xchan != '%s'
 				AND created > '%s'
 				$seenstr
 				$item_normal
 				$sql_extra",
 				intval($sys['channel_id']),
-				dbesc(get_observer_hash()),
 				dbesc($loadtime)
 			);
 
 			if ($pubs) {
-				$result['pubs'] = intval($pubs[0]['total']);
+				foreach($pubs as $p) {
+					if ($p['author_xchan'] === get_observer_hash()) {
+						$my_activity ++;
+					}
+					else {
+						$result['pubs'] ++;
+					}
+				}
 			}
 		}
 		
@@ -545,7 +552,8 @@ class Ping extends Controller {
 		/**
 		 * Normal ping - just the counts, no detail
 		 */
-		 
+
+		
 		if ($vnotify & VNOTIFY_SYSTEM) {
 			$t = q("select count(*) as total from notify where uid = %d and seen = 0",
 				intval(local_channel())
@@ -573,15 +581,13 @@ class Ping extends Controller {
 
 		if ($vnotify & VNOTIFY_NETWORK) {
 			$loadtime = get_loadtime('stream');
-			$r = q("SELECT id FROM item 
+			$r = q("SELECT id, author_xchan FROM item 
 				WHERE uid = %d and changed > '%s' 
 				$seenstr
 				$item_normal
-				$sql_extra
-				AND author_xchan != '%s'",
+				$sql_extra ",
 				intval(local_channel()),
-				dbesc($loadtime),
-				dbesc($ob_hash)
+				dbesc($loadtime)
 			);
 
 			if($r) {
@@ -589,7 +595,12 @@ class Ping extends Controller {
 				call_hooks('network_ping', $arr);
 
 				foreach ($r as $it) {
-					$result['stream'] ++;
+					if ($it['author_xchan'] === $ob_hash) {
+						$my_activity ++;
+					}
+					else {
+						$result['stream'] ++;
+					}
 				}
 			}
 		}
@@ -599,20 +610,23 @@ class Ping extends Controller {
 
 		if ($vnotify & VNOTIFY_CHANNEL) {
 			$loadtime = get_loadtime('channel');
-			$r = q("SELECT id FROM item 
+			$r = q("SELECT id, author_xchan FROM item 
 				WHERE item_wall = 1 and uid = %d and changed > '%s'
 				$seenstr 
 				$item_normal
-				$sql_extra
-				AND author_xchan != '%s'",
+				$sql_extra ",
 				intval(local_channel()),
-				dbesc($loadtime),
-				dbesc($ob_hash)
+				dbesc($loadtime)
 			);
 
 			if ($r) {
 				foreach ($r as $it) {
-					$result['home'] ++;
+					if ($it['author_xchan'] === $ob_hash) {
+						$my_activity ++;
+					}
+					else {
+						$result['home'] ++;
+					}
 				}
 			}
 		}
@@ -752,9 +766,9 @@ class Ping extends Controller {
 		// Mark all of the stream notifications seen if all three of them are caught up.
 		// This also resets the pconfig storage for items_seen
 		
-		if (! (intval($result['home']) + intval($result['stream']) + intval($result['pubs']))) {
+		if ((! $my_activity) && (! (intval($result['home']) + intval($result['stream']) + intval($result['pubs'])))) {
 			PConfig::Delete(local_channel(),'system','seen_items');
-			
+
 			$_SESSION['loadtime_channel']   = datetime_convert();
 			$_SESSION['loadtime_stream']    = datetime_convert();
 			$_SESSION['loadtime_pubstream'] = datetime_convert();
