@@ -1193,8 +1193,9 @@ function map_scope($scope, $strip = false) {
 			return 'site: ' . App::get_hostname();
 		case PERMS_PENDING:
 			return 'any connections';
-		case PERMS_SPECIFIC:
-			return 'specific';
+// uncomment a few releases after the corresponding changes are made in can_comment_on_post. Here it was done on 2021-11-18 			
+//		case PERMS_SPECIFIC:
+//			return 'specific';
 		case PERMS_CONTACTS:
 		default:
 			return 'contacts';
