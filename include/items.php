@@ -348,6 +348,7 @@ function can_comment_on_post($observer_xchan, $item) {
 			return true;
 			break;
 		case 'any connections':
+		case 'specific':
 		case 'contacts':
 		case '':
 
@@ -1194,6 +1195,9 @@ function map_scope($scope, $strip = false) {
 			return 'site: ' . App::get_hostname();
 		case PERMS_PENDING:
 			return 'any connections';
+// uncomment a few releases after the corresponding changes are made in can_comment_on_post. Here it was done on 2021-11-18 			
+//		case PERMS_SPECIFIC:
+//			return 'specific';
 		case PERMS_CONTACTS:
 		default:
 			return 'contacts';
@@ -2420,17 +2424,7 @@ function item_update_parent_commented($item) {
 
 
 	$update_parent = true;
-	$update_changed = true;
 	
-	$c = channelx_by_n($item['uid']);
-
-	// don't modify the changed time on the parent if we commented on it.
-	// This messes up the notification system, which ignores changes made by us
-	
-	if ($c && $item['author_xchan'] === $c['channel_hash']) {
-		$update_changed = false;
-	}
-
 	// update the commented timestamp on the parent 
 	// - unless this is a moderated comment or a potential clone of an older item
 	// which we don't wish to bring to the surface. As the queue only holds deliveries 
@@ -2449,16 +2443,11 @@ function item_update_parent_commented($item) {
 			intval($item['uid'])
 		);
 
-		q("UPDATE item set commented = '%s' WHERE id = %d",
+		q("UPDATE item set commented = '%s', changed = '%s' WHERE id = %d",
 			dbesc(($z) ? $z[0]['commented'] : datetime_convert()),
+			dbesc(datetime_convert()),
 			intval($item['parent'])
 		);
-		if ($update_changed) {
-			q("UPDATE item set changed = '%s' WHERE id = %d",
-				dbesc(datetime_convert()),
-				intval($item['parent'])
-			);
-		}
 	}
 }
 

@@ -3256,9 +3256,6 @@ function item_url_replace($channel,&$item,$old,$new,$oldnick = '') {
 			json_url_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['target']);
 	}
 
-	$root_replaced = null;
-	$nick_replaced = null;
-
 	$item['body'] = str_replace($old, $new, $item['body']);
 
 	if($oldnick && ($oldnick !== $channel['channel_address'])) {
