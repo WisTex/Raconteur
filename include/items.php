@@ -2440,7 +2440,7 @@ function item_update_parent_commented($item) {
 
 		q("UPDATE item set commented = '%s', changed = '%s' WHERE id = %d",
 			dbesc(($z) ? $z[0]['commented'] : datetime_convert()),
-			dbesc(datetime_convrt()),
+			dbesc(datetime_convert()),
 			intval($item['parent'])
 		);
 	}
