@@ -348,6 +348,7 @@ function can_comment_on_post($observer_xchan, $item) {
 			return true;
 			break;
 		case 'any connections':
+		case 'specific':
 		case 'contacts':
 		case '':
 
