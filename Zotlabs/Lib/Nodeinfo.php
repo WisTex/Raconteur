@@ -15,10 +15,17 @@ class Nodeinfo {
 			if ($n['success']) {
 				$j = json_decode($n['body'], true);
 				if ($j && $j['links']) {
-					foreach ($j['links'] as $l) {
-						if ($l['rel'] === 'http://nodeinfo.diaspora.software/ns/schema/2.0' && $l['href']) {
-							$href = $l['href'];
-							
+					// lemmy just sends one result
+					if (isset($j['links']['rel'])) {
+						if ($j['links']['rel'] === 'http://nodeinfo.diaspora.software/ns/schema/2.0' && isset($j['links']['href'])) {
+							$href = $j['links']['href'];							
+						}
+					}
+					else {
+						foreach ($j['links'] as $l) {
+							if (isset($l['rel']) && $l['rel'] === 'http://nodeinfo.diaspora.software/ns/schema/2.0' && isset($l['href'])) {
+								$href = $l['href'];
+							}						
 						}
 					}
 				}

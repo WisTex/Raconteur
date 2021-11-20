@@ -20,7 +20,7 @@ def base64urlnopad_decode(data: str) -> bytes:
     return base64.urlsafe_b64decode(data)
 
 
-def generate_rsa_keypair() -> (str, str):
+def generate_rsa_keypair() -> tuple(str, str):
     key = rsa.generate_private_key(
         public_exponent = 65537,
         key_size = 4096,

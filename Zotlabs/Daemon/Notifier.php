@@ -153,13 +153,13 @@ class Notifier {
 		}
 		elseif (in_array($cmd, [ 'permissions_update', 'permissions_reject', 'permissions_accept', 'permissions_create' ])) {
 
-			// Get the (single) recipient	
-
+			// Get the (single) recipient
+			
 			$r = q("select * from abook left join xchan on abook_xchan = xchan_hash where abook_id = %d and abook_self = 0",
 				intval($item_id)
 			);
-
 			if ($r) {
+		
 				$recip = array_shift($r);
 				$uid = $recip['abook_channel'];
 				// Get the sender

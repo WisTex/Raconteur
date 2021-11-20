@@ -18,7 +18,7 @@ use Zotlabs\Daemon\Run;
  */
 
 
-define ( 'STD_VERSION',             '21.11.11' );
+define ( 'STD_VERSION',             '21.11.20' );
 define ( 'PLATFORM_NAME',           'streams' );
 
 define ( 'DB_UPDATE_VERSION',       1254 );
