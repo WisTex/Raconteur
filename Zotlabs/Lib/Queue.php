@@ -12,11 +12,31 @@ class Queue {
 	static function update($id, $add_priority = 0) {
 
 		logger('queue: requeue item ' . $id,LOGGER_DEBUG);
-		$x = q("select outq_created, outq_posturl from outq where outq_hash = '%s' limit 1",
+
+		// This queue item failed. Perhaps it was rejected. Perhaps the site is dead.
+		// Since we don't really know, check and see if we've got something else destined
+		// for that server and give it priority. At a minimum it will keep the queue from
+		// getting stuck on a particular message when another one with different content
+		// might actually succeed. 
+		
+		$x = q("select outq_created, outq_hash, outq_posturl from outq where outq_hash = '%s' limit 1",
 			dbesc($id)
 		);
-		if(! $x)
+		if (! $x) {
 			return;
+		}
+
+		$g = q("select outq_created, outq_hash, outq_posturl from outq where outq_posturl = '%s' and outq_hash != '%s' limit 1",
+			dbesc($x[0]['outq_posturl']),
+			dbesc($id)
+		);
+
+		// swap them
+		
+		if ($g) {
+			$x = $g;
+		}
+		
 
 
 		$y = q("select min(outq_created) as earliest from outq where outq_posturl = '%s'",
@@ -46,7 +66,7 @@ class Queue {
 			dbesc($x[0]['outq_posturl'])
 		);
  
-		$since = datetime_convert('UTC','UTC',$x[0]['outq_created']);
+		$since = datetime_convert('UTC','UTC',$y[0]['earliest']);
 
 		if(($might_be_down) || ($since < datetime_convert('UTC','UTC','now - 12 hour'))) {
 			$next = datetime_convert('UTC','UTC','now + 1 hour');
@@ -63,7 +83,7 @@ class Queue {
 			dbesc(datetime_convert()),
 			intval($add_priority),
 			dbesc($next),
-			dbesc($id)
+			dbesc($x[0]['outq_hash'])
 		);
 	}
 
