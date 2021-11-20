@@ -345,15 +345,37 @@ class HTTPSig {
 		// The record wasn't in cache. Fetch it now. 
 
 		$r = Activity::fetch($id);
+		$signatureAlgorithm = EMPTY_STR;
 
 		if ($r) {
 			if (array_key_exists('publicKey',$r) && array_key_exists('publicKeyPem',$r['publicKey']) && array_key_exists('id',$r['publicKey'])) {
 				if ($r['publicKey']['id'] === $id || $r['id'] === $id) {
 					$portable_id = ((array_key_exists('owner',$r['publicKey'])) ? $r['publicKey']['owner'] : EMPTY_STR);
+					
+					// the w3c sec context has conflicting names and no defined values for this property except
+					// "http://www.w3.org/2000/09/xmldsig#rsa-sha1"
+					
+					// Since the names conflict, it could mess up LD-signatures but we will accept both, and at this
+					// time we will only look for the substrings 'rsa-sha256' and 'rsa-sha512' within those properties.
+					// We will also accept a toplevel 'sigAlgorithm' regardless of namespace with the same constraints.
+					// Default to rsa-sha256 if we can't figure out. If they're sending 'hs2019' we have to
+					// look for something.
+						
 					if (isset($r['publicKey']['signingAlgorithm'])) {
-						set_xconfig($portable_id,'system','signing_algorithm',$r['publicKey']['signingAlgorithm']);
+						$signatureAlgorithm = $r['publicKey']['signingAlgorithm'];
+						set_xconfig($portable_id,'system','signing_algorithm',$signatureAlgorithm);
 					}
-					return [ 'public_key' => self::convertKey($r['publicKey']['publicKeyPem']), 'portable_id' => $portable_id, 'algorithm' => ((isset($r['publicKey']['signingAlgorithm'])) ? $r['publicKey']['signingAlgorithm'] : EMPTY_STR), 'hubloc' => [] ];
+					if (isset($r['publicKey']['signatureAlgorithm'])) {
+						$signatureAlgorithm = $r['publicKey']['signatureAlgorithm'];
+						set_xconfig($portable_id,'system','signing_algorithm',$signatureAlgorithm);
+					}
+
+					if (isset($r['sigAlgorithm'])) {
+						$signatureAlgorithm = $r['sigAlgorithm'];
+						set_xconfig($portable_id,'system','signing_algorithm',$signatureAlgorithm);
+					}
+
+					return [ 'public_key' => self::convertKey($r['publicKey']['publicKeyPem']), 'portable_id' => $portable_id, 'algorithm' => (($signatureAlgorithm) ? $signatureAlgorithm : 'rsa-sha256'), 'hubloc' => [] ];
 				}
 			}
 		}
