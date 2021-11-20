@@ -357,10 +357,10 @@ class HTTPSig {
 					
 					// Since the names conflict, it could mess up LD-signatures but we will accept both, and at this
 					// time we will only look for the substrings 'rsa-sha256' and 'rsa-sha512' within those properties.
-					// We will also accept a toplevel 'signatureAlgorithm' regardless of namespace with the same constraints.
-					// And since this spec is such a mess, we'll default to rsa-sha256, because very few projects have a
-					// clue what to do with hs2019. 
-					
+					// We will also accept a toplevel 'sigAlgorithm' regardless of namespace with the same constraints.
+					// Default to rsa-sha256 if we can't figure out. If they're sending 'hs2019' we have to
+					// look for something.
+						
 					if (isset($r['publicKey']['signingAlgorithm'])) {
 						$signatureAlgorithm = $r['publicKey']['signingAlgorithm'];
 						set_xconfig($portable_id,'system','signing_algorithm',$signatureAlgorithm);
@@ -370,8 +370,8 @@ class HTTPSig {
 						set_xconfig($portable_id,'system','signing_algorithm',$signatureAlgorithm);
 					}
 
-					if (isset($r['signatureAlgorithm'])) {
-						$signatureAlgorithm = $r['signatureAlgorithm'];
+					if (isset($r['sigAlgorithm'])) {
+						$signatureAlgorithm = $r['sigAlgorithm'];
 						set_xconfig($portable_id,'system','signing_algorithm',$signatureAlgorithm);
 					}
 
