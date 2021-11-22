@@ -18,7 +18,8 @@ use Zotlabs\Daemon\Run;
  */
 
 
-define ( 'STD_VERSION',             '21.11.20' );
+require_once('version.php');
+
 define ( 'PLATFORM_NAME',           'streams' );
 
 define ( 'DB_UPDATE_VERSION',       1254 );
