@@ -513,7 +513,7 @@ class HTTPSig {
 
 		$x = self::sign($head,$prvkey,$alg);
 
-		$headerval = 'keyId="' . $keyid . '",algorithm="' . $algorithm . '",headers="' . $x['headers'] . '",signature="' . $x['signature'] . '"';
+		$headerval = 'keyId="' . $keyid . '",algorithm="hs2019",headers="' . $x['headers'] . '",signature="' . $x['signature'] . '"';
 
 		if ($encryption) {
 			$x = Crypto::encapsulate($headerval,$encryption['key'],$encryption['algorithm']);
