@@ -9,6 +9,7 @@ use Zotlabs\Render\Theme;
 use Zotlabs\Lib\DB_Upgrade;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\PConfig;
+use Zotlabs\Lib\Config;
 use Zotlabs\Daemon\Run;
 
 /**
@@ -1576,11 +1577,13 @@ function fix_system_urls($oldurl, $newurl) {
 				dbesc($rv['xchan_hash'])
 			);
 
-			$y = q("update hubloc set hubloc_addr = '%s', hubloc_url = '%s', hubloc_id_url = '%s', hubloc_url_sig = '%s', hubloc_host = '%s', hubloc_callback = '%s' where hubloc_hash = '%s' and hubloc_url = '%s'",
+
+			$y = q("update hubloc set hubloc_addr = '%s', hubloc_url = '%s', hubloc_id_url = '%s', hubloc_url_sig = '%s', hubloc_site_id = '%s', hubloc_host = '%s', hubloc_callback = '%s' where hubloc_hash = '%s' and hubloc_url = '%s'",
 				dbesc($channel_address . '@' . $rhs),
 				dbesc($newurl),
 				dbesc(str_replace($oldurl,$newurl,$rv['hubloc_id_url'])),
 				dbesc(Libzot::sign($newurl,$c[0]['channel_prvkey'])),
+				dbesc(Libzot::make_xchan_hash($newurl,Config::Get('system','pubkey'))),
 				dbesc($newhost),
 				dbesc($newurl . '/post'),
 				dbesc($rv['xchan_hash']),
@@ -2064,7 +2067,7 @@ function load_contact_links($uid) {
 
 //	logger('load_contact_links');
 
-	$r = q("SELECT abook_id, abook_flags, abook_my_perms, abook_their_perms, xchan_hash, xchan_photo_m, xchan_name, xchan_url, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d ",
+	$r = q("SELECT abook_id, abook_flags, abook_self, abook_incl, abook_excl, abook_my_perms, abook_their_perms, xchan_hash, xchan_photo_m, xchan_name, xchan_url, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d ",
 		intval($uid)
 	);
 	if($r) {

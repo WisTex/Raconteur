@@ -2078,11 +2078,13 @@ class Libzot {
 				}
 			}
 
-			$ab = q("select * from abook where abook_channel = %d and abook_xchan = '%s'",
+			// This is used to fetch allow/deny rules if either the sender
+			// or  owner is  a connection. post_is_importable() evaluates all of them
+			$abook = q("select * from abook where abook_channel = %d and ( abook_xchan = '%s' OR abook_xchan = '%s' )",
 				intval($channel['channel_id']),
-				dbesc($arr['owner_xchan'])
+				dbesc($arr['owner_xchan']),
+				dbesc($arr['author_xchan'])
 			);
-			$abook = (($ab) ? $ab[0] : null);
 
 			if (isset($arr['item_deleted']) && intval($arr['item_deleted'])) {
 
@@ -2129,16 +2131,17 @@ class Libzot {
 				elseif ($arr['edited'] > $r[0]['edited']) {
 					$arr['id'] = $r[0]['id'];
 					$arr['uid'] = $channel['channel_id'];
-					if (($arr['mid'] == $arr['parent_mid']) && (! post_is_importable($channel['channel_id'],$arr,$abook))) {
-						$DR->update('update ignored');
-						$result[] = $DR->get();
-					}
-					else {
+					if (post_is_importable($channel['channel_id'],$arr,$abook)) {
 						$item_result = self::update_imported_item($sender,$arr,$r[0],$channel['channel_id'],$tag_delivery);
 						$DR->update('updated');
 						$result[] = $DR->get();
-						if(! $relay)
+						if (! $relay) {
 							add_source_route($item_id,$sender);
+						}
+					}
+					else {
+						$DR->update('update ignored');
+						$result[] = $DR->get();
 					}
 				}
 				else {
@@ -2185,11 +2188,7 @@ class Libzot {
 					logger('message summary length exceeds max_import_size: truncated');
 				}
 
-				if (($arr['mid'] == $arr['parent_mid']) && (! post_is_importable($arr['uid'],$arr,$abook))) {
-					$DR->update('post ignored');
-					$result[] = $DR->get();
-				}
-				else {
+				if (post_is_importable($arr['uid'],$arr,$abook)) {
 
 					// Strip old-style hubzilla bookmarks
 					if (strpos($arr['body'],"#^[") !== false) {
@@ -2220,6 +2219,10 @@ class Libzot {
 						}
 					}
 					$DR->update(($item_id) ? 'posted' : 'storage failed: ' . $item_result['message']);
+					$result[] = $DR->get();
+				}
+				else {
+					$DR->update('post ignored');
 					$result[] = $DR->get();
 				}
 			}

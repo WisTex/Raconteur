@@ -3675,14 +3675,21 @@ class Activity {
 				return;
 			}
 		}
-
-		$abook = q("select * from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
-			dbesc($observer_hash),
+		
+		// fetch allow/deny lists for the sender, author, or both
+		// if you have them. post_is_importable() assumes true
+		// and only fails if there was intentional rejection
+		// due to this channel's filtering rules for content
+		// provided by either of these entities.
+		
+		$abook = q("select * from abook where ( abook_xchan = '%s' OR abook_xchan  = '%s') and abook_channel = %d ",
+			dbesc($item['author_xchan']),
+			dbesc($item['owner_xchan']),
 			intval($channel['channel_id'])
 		);
 
 
-		if (! post_is_importable($channel['channel_id'],$item,$abook[0])) {
+		if (! post_is_importable($channel['channel_id'],$item,$abook)) {
 			logger('post is filtered');
 			return;
 		}
