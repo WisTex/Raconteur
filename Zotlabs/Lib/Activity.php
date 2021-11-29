@@ -1335,6 +1335,9 @@ class Activity {
 				if ($img) {
 					for ($pc = 0; $pc < count($ret['attachment']); $pc ++) {
 						// caution: image attachments use url and links use href, and our own links will be 'attach' links based on the image href
+						// We could alternatively supply the correct attachment info when item is saved, but by replacing here we will pick up
+						// any "per-post" or manual changes to the image alt-text before sending. 
+
 						if ((isset($ret['attachment'][$pc]['href']) && strpos($img[0]['url'],str_replace('/attach/','/photo/',$ret['attachment'][$pc]['href'])) !== false) || (isset($ret['attachment'][$pc]['url']) && $ret['attachment'][$pc]['url'] === $img[0]['url'])) {
 							// if it's already there, replace it with our alt-text aware version
 							$ret['attachment'][$pc] = $img[0];
