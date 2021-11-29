@@ -1335,6 +1335,9 @@ class Activity {
 				if ($img) {
 					for ($pc = 0; $pc < count($ret['attachment']); $pc ++) {
 						// caution: image attachments use url and links use href, and our own links will be 'attach' links based on the image href
+						// We could alternatively supply the correct attachment info when item is saved, but by replacing here we will pick up
+						// any "per-post" or manual changes to the image alt-text before sending. 
+
 						if ((isset($ret['attachment'][$pc]['href']) && strpos($img[0]['url'],str_replace('/attach/','/photo/',$ret['attachment'][$pc]['href'])) !== false) || (isset($ret['attachment'][$pc]['url']) && $ret['attachment'][$pc]['url'] === $img[0]['url'])) {
 							// if it's already there, replace it with our alt-text aware version
 							$ret['attachment'][$pc] = $img[0];
@@ -3675,14 +3678,21 @@ class Activity {
 				return;
 			}
 		}
-
-		$abook = q("select * from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
-			dbesc($observer_hash),
+		
+		// fetch allow/deny lists for the sender, author, or both
+		// if you have them. post_is_importable() assumes true
+		// and only fails if there was intentional rejection
+		// due to this channel's filtering rules for content
+		// provided by either of these entities.
+		
+		$abook = q("select * from abook where ( abook_xchan = '%s' OR abook_xchan  = '%s') and abook_channel = %d ",
+			dbesc($item['author_xchan']),
+			dbesc($item['owner_xchan']),
 			intval($channel['channel_id'])
 		);
 
 
-		if (! post_is_importable($channel['channel_id'],$item,$abook[0])) {
+		if (! post_is_importable($channel['channel_id'],$item,$abook)) {
 			logger('post is filtered');
 			return;
 		}

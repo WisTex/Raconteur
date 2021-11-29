@@ -1628,50 +1628,70 @@ function conv_sort($arr, $order) {
 	
 	foreach ($arr as $item) {
 
-		if (LibBlock::fetch_by_entity(local_channel(),$item['author_xchan']) || LibBlock::fetch_by_entity(local_channel(),$item['owner_xchan'])) {
-			continue;
-		}
-
-		$matches = null;
-		$found = false;
+		// perform view filtering if viewer is logged in locally
+		// This allows blocking and message filters to work on public stream items
+		// or other channel streams on this site which are not owned by the viewer
 		
-		$cnt = preg_match_all("/\[share(.*?)portable_id='(.*?)'(.*?)\]/ism", $item['body'], $matches, PREG_SET_ORDER);
-		if ($cnt) {
-			foreach ($matches as $match) {
-				if (LibBlock::fetch_by_entity(local_channel(),$match[2])) {
-					$found = true;
-				}
+		if (local_channel()) {
+		
+			if (LibBlock::fetch_by_entity(local_channel(),$item['author_xchan']) || LibBlock::fetch_by_entity(local_channel(),$item['owner_xchan'])) {
+				continue;
 			}
-		}
 
-		if ($found) {
-			continue;
-		}
+			$message_filter_abook = [];
+			if (App::$contacts && array_key_exists($item['author_xchan'], App::$contacts)) {
+				$message_filter_abook[] = App::$contacts[$item['author_xchan']];
+			}
+			if (App::$contacts && array_key_exists($item['owner_xchan'], App::$contacts)) {
+				$message_filter_abook[] = App::$contacts[$item['owner_xchan']];
+			}
+
+			if (! post_is_importable(local_channel(), $item, $message_filter_abook ? $message_filter_abook : false)) {
+				continue;
+			}
 
 
-		$matches = null;
-		$found = false;
-		$cnt = preg_match_all("/\[share(.*?)profile='(.*?)'(.*?)\]/ism", $item['body'], $matches, PREG_SET_ORDER);
-		if ($cnt) {
-			foreach ($matches as $match) {
-				$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s'",
-					dbesc($match[2])
-				);
-				if ($r) {
-					if (LibBlock::fetch_by_entity(local_channel(),$r[0]['hubloc_hash'])) {
+			$matches = null;
+			$found = false;
+		
+			$cnt = preg_match_all("/\[share(.*?)portable_id='(.*?)'(.*?)\]/ism", $item['body'], $matches, PREG_SET_ORDER);
+			if ($cnt) {
+				foreach ($matches as $match) {
+					if (LibBlock::fetch_by_entity(local_channel(),$match[2])) {
 						$found = true;
 					}
 				}
 			}
-		}
 
-		if ($found) {
-			continue;
-		}
+			if ($found) {
+				continue;
+			}
 
+
+			$matches = null;
+			$found = false;
+			$cnt = preg_match_all("/\[share(.*?)profile='(.*?)'(.*?)\]/ism", $item['body'], $matches, PREG_SET_ORDER);
+			if ($cnt) {
+				foreach ($matches as $match) {
+					$r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s'",
+						dbesc($match[2])
+					);
+					if ($r) {
+						if (LibBlock::fetch_by_entity(local_channel(),$r[0]['hubloc_hash'])) {
+							$found = true;
+						}
+					}
+				}
+			}
+
+			if ($found) {
+				continue;
+			}
+
+		}
+		
 		$narr[] = $item;
 	}
-
 
 	$data = [ 'items' => $narr, 'order' => $order ];
 

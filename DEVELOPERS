@@ -1,3 +1,13 @@
+For reasons which will hopefully become obvious over time, I will be migrating a few repositories to PSR-12. PSR-12 is about coding style and in particular whitespace and it conflicts with a lot of our current codebase. This migration will take time. Once the migration has completed we will be adding these constraints to our integration tests.
+
+I will apologise in advance because I actually have a number of serious issues with these conventions and the fact that they are so bloody inconsistent internally. My other gripe is that they actually make it harder for many developers to participate in a project because they might provide working code (the primary currency of open source) only to have it knocked back because the project involved is fascist about whitespace and coding style. I've been on the receiving end of this more time than I count and left a number of promising software projects over these barriers they put in place to reduce free and open collaboration and bury it in layers of bureaucratic muck.
+
+But that is at a project level, and what this kind of standard provides is reduced friction in cross-project collaboration and code re-use across the commons. So it's a "looking at the bigger picture" move. Anyway, we're at kind of a quiet space in development and the target projects have very few external contributors at the moment. As the saying goes, "The best time to plant an oak tree is 25 years ago. The second best time is now."
+
+
+
+
+
 Developer Certificate of Origin
 Version 1.1
 
