@@ -971,14 +971,13 @@ class Libsync {
 
 				// match as many fields as possible in case anything at all changed.
 
-				$r = q("select * from hubloc where hubloc_hash = '%s' and hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_id_url = '%s' and hubloc_url = '%s' and hubloc_url_sig = '%s' and hubloc_site_id = '%s' and hubloc_host = '%s' and hubloc_addr = '%s' and hubloc_callback = '%s' and hubloc_sitekey = '%s' ",
+				$r = q("select * from hubloc where hubloc_hash = '%s' and hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_id_url = '%s' and hubloc_url = '%s' and hubloc_url_sig = '%s' and hubloc_host = '%s' and hubloc_addr = '%s' and hubloc_callback = '%s' and hubloc_sitekey = '%s' ",
 					dbesc($sender['hash']),
 					dbesc($sender['id']),
 					dbesc($sender['id_sig']),
 					dbesc($location['id_url']),
 					dbesc($location['url']),
 					dbesc($location['url_sig']),
-					dbesc($location['site_id']),
 					dbesc($location['host']),
 					dbesc($location['address']),
 					dbesc($location['callback']),
@@ -986,7 +985,16 @@ class Libsync {
 				);
 				if ($r) {
 					logger('Hub exists: ' . $location['url'], LOGGER_DEBUG);
-	
+
+					// generate a new hubloc_site_id if it's wrong due to historical bugs 2021-11-30
+					
+					if ($r[0]['hubloc_site_id'] !== $location['site_id']) {
+						q("update hubloc set hubloc_site_id = '%s' where hubloc_id = %d",
+							dbesc(Libzot::make_xchan_hash($location['url'],$location['sitekey'])),
+							intval($r[0]['hubloc_id'])
+						);
+					}
+					
 					// update connection timestamp if this is the site we're talking to
 					// This only happens when called from import_xchan
 
