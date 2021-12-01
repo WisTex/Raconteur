@@ -3485,13 +3485,24 @@ function post_is_importable($channel_id,$item,$abook) {
 	if (! $abook) {
 		return true;
 	}
+	
+	foreach ($abook  as  $ab) {
+		// check eligibility
+		if (intval($ab['abook_self'])) {
+			continue;
+		}
+		if (! ($ab['abook_incl'] || $ab['abook_excl']) ) {
+			continue;
+		}
 
-	if (! ($abook['abook_incl'] || $abook['abook_excl'])) {
-		return true;
+		$evaluator = MessageFilter::evaluate($item,$ab['abook_incl'],$ab['abook_excl']);
+		// A negative assessment for any individual connections
+		// is an instant fail
+		if (! $evaluater) {
+			return false;
+		}
 	}
-
-	return MessageFilter::evaluate($item,$abook['abook_incl'],$abook['abook_excl']);
-
+	return true;	
 }
 
 
