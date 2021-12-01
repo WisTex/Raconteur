@@ -513,8 +513,13 @@ class Notifier {
 
 		logger('encoded item: ' . print_r(self::$encoded_item,true), LOGGER_DATA, LOG_DEBUG);
 
+		// This addresses an issue that crossposting addons weren't being called if the sender had no friends
+		// and only wanted to crosspost. 
+		
+		$crossposting = (isset($target_item['postopts']) && $target_item['postopts']) ? true : false;
+
 		stringify_array_elms(self::$recipients);
-		if (! self::$recipients) {
+		if ( (! self::$recipients && ! $crossposting)) {
 			logger('no recipients');
 			return;
 		}
@@ -527,8 +532,13 @@ class Notifier {
 
 		$recip_list = [];
 
-		$details = q("select xchan_hash, xchan_network, xchan_addr, xchan_guid, xchan_guid_sig from xchan 
-			where xchan_hash in (" . protect_sprintf(implode(',',self::$recipients)) . ")");
+		if (self::$recipients) {
+			$details = q("select xchan_hash, xchan_network, xchan_addr, xchan_guid, xchan_guid_sig from xchan 
+				where xchan_hash in (" . protect_sprintf(implode(',',self::$recipients)) . ")");
+		}
+		else {
+			$details = [];
+		}
 
 		if ($details) {
 			foreach ($details as $d) {
@@ -583,10 +593,15 @@ class Notifier {
 		// Now we have collected recipients (except for external mentions, @FIXME)
 		// Let's reduce this to a set of hubs; checking that the site is not dead.
 
-		$hubs = q("select hubloc.*, site.site_crypto, site.site_flags from hubloc left join site on site_url = hubloc_url 
-			where hubloc_hash in (" . protect_sprintf(implode(',',self::$recipients)) . ") 
-			and hubloc_error = 0 and hubloc_deleted = 0 "
-		);		
+		if (self::$recipients) {
+			$hubs = q("select hubloc.*, site.site_crypto, site.site_flags from hubloc left join site on site_url = hubloc_url 
+				where hubloc_hash in (" . protect_sprintf(implode(',',self::$recipients)) . ") 
+				and hubloc_error = 0 and hubloc_deleted = 0 "
+			);
+		}
+		else {
+			$hubs = [];
+		}
 
 		// public posts won't make it to the local public stream unless there's a recipient on this site. 
 		// This code block sees if it's a public post and localhost is missing, and if so adds an entry for the local sys channel to the $hubs list
